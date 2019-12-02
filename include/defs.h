@@ -1,7 +1,7 @@
 #ifndef __INC_DEFS
 #define __INC_DEFS
 #ifndef __GNUC__
-#define __LIBC__ 228
+#define __LIBC__ 230
 #endif
 
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ typedef wchar_t wint_t;
 typedef wchar_t wctype_t;
 typedef long off32_t;
 typedef __int64 off64_t;
-
+#ifndef NULL
 #define NULL	0
-
+#endif
 #ifdef __cplusplus
  }
 #endif

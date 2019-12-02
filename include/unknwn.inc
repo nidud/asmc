@@ -31,6 +31,7 @@ DEFINE_IIDX(IUnknown, "00000000-0000-0000-C000-000000000046")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
+
     .ends
 
 LPUNKNOWN		typedef ptr IUnknown
@@ -42,13 +43,11 @@ __IClassFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IClassFactory, "00000001-0000-0000-C000-000000000046")
 
-.comdef IClassFactory
+.comdef IClassFactory : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateInstance	proc :ptr, :REFIID, :ptr
     LockServer		proc :BOOL
+
     .ends
 
 LPCLASSFACTORY		typedef ptr IClassFactory

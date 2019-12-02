@@ -784,7 +784,7 @@ if(WINVER GE 0x0500)
 
 .comdef IPrintDialogCallback
 
-    QueryInterface	proc riid:REFIID, ppvObj:ptr
+    QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
 
@@ -797,7 +797,7 @@ if(WINVER GE 0x0500)
 
 .comdef IPrintDialogServices
 
-    QueryInterface	proc riid:REFIID, ppvObj:ptr
+    QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
 

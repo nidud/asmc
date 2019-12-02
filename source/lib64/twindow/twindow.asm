@@ -6,7 +6,7 @@
 
 include malloc.inc
 include stdio.inc
-include strlib.inc
+include crtl.inc
 include twindow.inc
 
 TWindow::Load           proto :idd_t

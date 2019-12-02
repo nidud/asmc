@@ -84,16 +84,14 @@ __IDot11AdHocManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocManager, "8F10CC26-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocManager
+.comdef IDot11AdHocManager : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateNetwork	proc :LPCWSTR, :LPCWSTR, :LONG, :ptr, :ptr, :ptr, :ptr
     CommitCreatedNetwork proc :ptr, :BOOLEAN, :BOOLEAN
     GetIEnumDot11AdHocNetworks proc :ptr, :ptr
     GetIEnumDot11AdHocInterfaces proc :ptr
     GetNetwork		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -103,15 +101,13 @@ __IDot11AdHocManagerNotificationSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocManagerNotificationSink, "8F10CC27-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocManagerNotificationSink
+.comdef IDot11AdHocManagerNotificationSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnNetworkAdd	proc :ptr
     OnNetworkRemove	proc :ptr
     OnInterfaceAdd	proc :ptr
     OnInterfaceRemove	proc :ptr
+
     .ends
 
 endif
@@ -121,15 +117,13 @@ __IEnumDot11AdHocNetworks_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumDot11AdHocNetworks, "8F10CC28-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IEnumDot11AdHocNetworks
+.comdef IEnumDot11AdHocNetworks : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -139,11 +133,8 @@ __IDot11AdHocNetwork_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocNetwork, "8F10CC29-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocNetwork
+.comdef IDot11AdHocNetwork : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetStatus		proc :ptr
     GetSSID		proc :ptr
     HasProfile		proc :ptr
@@ -156,6 +147,7 @@ DEFINE_IIDX(IDot11AdHocNetwork, "8F10CC29-CF0D-42a0-ACBE-E2DE7007384D")
     GetInterface	proc :ptr
     Connect		proc :LPCWSTR, :LONG, :BOOLEAN, :BOOLEAN
     Disconnect		proc
+
     .ends
 
 endif
@@ -165,13 +157,11 @@ __IDot11AdHocNetworkNotificationSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocNetworkNotificationSink, "8F10CC2A-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocNetworkNotificationSink
+.comdef IDot11AdHocNetworkNotificationSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnStatusChange	proc :DOT11_ADHOC_NETWORK_CONNECTION_STATUS
     OnConnectFail	proc :DOT11_ADHOC_CONNECT_FAIL_REASON
+
     .ends
 
 endif
@@ -181,11 +171,8 @@ __IDot11AdHocInterface_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocInterface, "8F10CC2B-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocInterface
+.comdef IDot11AdHocInterface : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDeviceSignature	proc :ptr
     GetFriendlyName	proc :ptr
     IsDot11d		proc :ptr
@@ -195,6 +182,7 @@ DEFINE_IIDX(IDot11AdHocInterface, "8F10CC2B-CF0D-42a0-ACBE-E2DE7007384D")
     GetIEnumSecuritySettings proc :ptr
     GetIEnumDot11AdHocNetworks proc :ptr, :ptr
     GetStatus		proc :ptr
+
     .ends
 
 endif
@@ -204,15 +192,8 @@ __IEnumDot11AdHocInterfaces_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumDot11AdHocInterfaces, "8F10CC2C-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IEnumDot11AdHocInterfaces
+.comdef IEnumDot11AdHocInterfaces : public IEnumDot11AdHocNetworks
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Next		proc :ULONG, :ptr, :ptr
-    Skip		proc :ULONG
-    Reset		proc
-    Clone		proc :ptr
     .ends
 
 endif
@@ -222,15 +203,8 @@ __IEnumDot11AdHocSecuritySettings_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumDot11AdHocSecuritySettings, "8F10CC2D-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IEnumDot11AdHocSecuritySettings
+.comdef IEnumDot11AdHocSecuritySettings : public IEnumDot11AdHocNetworks
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Next		proc :ULONG, :ptr, :ptr
-    Skip		proc :ULONG
-    Reset		proc
-    Clone		proc :ptr
     .ends
 
 endif
@@ -240,13 +214,11 @@ __IDot11AdHocSecuritySettings_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocSecuritySettings, "8F10CC2E-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocSecuritySettings
+.comdef IDot11AdHocSecuritySettings : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDot11AuthAlgorithm proc :ptr
     GetDot11CipherAlgorithm proc :ptr
+
     .ends
 
 endif
@@ -256,12 +228,10 @@ __IDot11AdHocInterfaceNotificationSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDot11AdHocInterfaceNotificationSink, "8F10CC2F-CF0D-42a0-ACBE-E2DE7007384D")
 
-.comdef IDot11AdHocInterfaceNotificationSink
+.comdef IDot11AdHocInterfaceNotificationSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnConnectionStatusChange proc :DOT11_ADHOC_NETWORK_CONNECTION_STATUS
+
     .ends
 
 endif

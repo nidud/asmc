@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .CLASS
 
-**.CLASS** _name_ [args]
+**.CLASS** _name_ [[ : _args_ ]] [[ : public _class_ ]]
 
 Declares a structure type for a [COM interface](dot_comdef.md).
 
@@ -26,12 +26,11 @@ Declares a structure type for a [COM interface](dot_comdef.md).
 
 LOCAL means a pointer in the base class.
 
-- assume rcx:LPCLASS
-- [rcx].foo()
-  - _call [rcx+0x10]_
-- [rcx].bar(rdx)
-  - _mov rax,[rcx]_
-  - _call [rax]_
+    [rcx].foo()
+      * call [rcx+0x10]
+    [rcx].bar(rdx)
+      * mov rax,[rcx]
+      * call [rax]
 
 #### See Also
 

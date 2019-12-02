@@ -49,14 +49,12 @@ __IActiveScriptProfilerControl_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IActiveScriptProfilerControl, "784b5ff0-69b0-47d1-a7dc-2518f4230e90")
 
-.comdef IActiveScriptProfilerControl
+.comdef IActiveScriptProfilerControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    StartProfiling	proc :REFCLSID, :DWORD, :DWORD
+    StartProfiling proc :REFCLSID, :DWORD, :DWORD
     SetProfilerEventMask proc :DWORD
-    StopProfiling	proc :HRESULT
+    StopProfiling proc :HRESULT
+
     .ends
 
 endif
@@ -66,17 +64,15 @@ __IActiveScriptProfilerCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IActiveScriptProfilerCallback, "740eca23-7d9d-42e5-ba9d-f8b24b1c7a9b")
 
-.comdef IActiveScriptProfilerCallback
+.comdef IActiveScriptProfilerCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Initialize		proc :DWORD
     Shutdown		proc :HRESULT
     ScriptCompiled	proc :PROFILER_TOKEN, :PROFILER_SCRIPT_TYPE, :ptr
     FunctionCompiled	proc :PROFILER_TOKEN, :PROFILER_TOKEN, :ptr, :ptr, :ptr
     OnFunctionEnter	proc :PROFILER_TOKEN, :PROFILER_TOKEN
     OnFunctionExit	proc :PROFILER_TOKEN, :PROFILER_TOKEN
+
     .ends
 
 endif

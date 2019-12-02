@@ -1,16 +1,25 @@
-..\..\lib\uuid.lib:
-    asmc -q uuid.asm > list.txt
-    asmc -pe src.asm
-    src.exe
-    asmc -coff -r src\*.asm
-    libw -q -b -n -c -fac $@ *.obj
-    del *.obj
-    asmc64 -r src\*.asm
-    libw -q -b -n -c -fac ..\..\lib\amd64\uuid.lib *.obj
-    del *.obj
-    del src.exe
-    del list.txt
-    dir /W src\*.*
-    del src\*.asm
-    pause
 
+UUID32 = ..\..\lib\uuid.lib
+UUID64 = ..\..\lib\amd64\uuid.lib
+
+all: list.exe $(UUID32) $(UUID64) clean
+
+$(UUID32):
+        asmc -coff *.u
+        libw -q -b -n -c -fac $@ *.obj
+        del *.obj
+
+$(UUID64):
+        asmc -win64 *.u
+        libw -q -b -n -c -fac $@ *.obj
+        del *.obj
+
+list.exe:
+        asmc -q guid.asm > list.txt
+        asmc -pe $*.asm
+        $@
+
+clean:
+        del *.u
+        del list.txt
+        del list.exe

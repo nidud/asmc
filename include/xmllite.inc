@@ -225,11 +225,8 @@ __IXmlReader_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
 
-.comdef IXmlReader
+.comdef IXmlReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetInput		proc :ptr
     GetProperty		proc :UINT, :ptr
     SetProperty		proc :UINT, :LONG_PTR
@@ -253,6 +250,7 @@ DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
     GetAttributeCount	proc :ptr
     GetDepth		proc :ptr
     IsEOF		proc
+
     .ends
 
 endif
@@ -262,12 +260,10 @@ __IXmlResolver_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IXmlResolver, "7279FC82-709D-4095-B63D-69FE4B0D9030")
 
-.comdef IXmlResolver
+.comdef IXmlResolver : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ResolveUri		proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -277,11 +273,8 @@ __IXmlWriter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
 
-.comdef IXmlWriter
+.comdef IXmlWriter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetOutput		proc :ptr
     GetProperty		proc :UINT, :ptr
     SetProperty		proc :UINT, :LONG_PTR
@@ -311,6 +304,7 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteSurrogateCharEntity proc :WCHAR, :WCHAR
     WriteWhitespace	proc :LPCWSTR
     Flush		proc
+
     .ends
 
 endif

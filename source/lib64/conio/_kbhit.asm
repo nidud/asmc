@@ -4,7 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include consx.inc
+include conio.inc
 include stdio.inc
 
     .code
@@ -44,6 +44,7 @@ _kbhit PROC USES rbx rdi rsi
     .endif
     mov eax,edi
     ret
+
 _kbhit endp
 
     end

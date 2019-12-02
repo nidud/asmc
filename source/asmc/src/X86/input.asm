@@ -458,7 +458,7 @@ print_source_nesting_structure proc uses esi edi ebx
                     "MacroLoop", [ebx].line_num, edx )
             .else
                 push eax
-                mov edx,[ecx].dsym.macroinfo
+                mov edx,[ecx].esym.macroinfo
                 mov eax,[edx].macro_info.srcfile
                 GetFNamePart(GetFName(eax))
                 pop ecx

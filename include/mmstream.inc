@@ -83,11 +83,8 @@ __IMultiMediaStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMultiMediaStream, "B502D1BC-9A57-11d0-8FDE-00C04FD9189D")
 
-.comdef IMultiMediaStream
+.comdef IMultiMediaStream : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetInformation	proc :ptr, :ptr
     GetMediaStream	proc :REFMSPID, :ptr
     EnumMediaStreams	proc :LONG, :ptr
@@ -97,6 +94,7 @@ DEFINE_IIDX(IMultiMediaStream, "B502D1BC-9A57-11d0-8FDE-00C04FD9189D")
     GetDuration		proc :ptr
     Seek		proc :STREAM_TIME
     GetEndOfStreamEventHandle proc :ptr
+
     .ends
 
 endif
@@ -106,17 +104,15 @@ __IMediaStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaStream, "B502D1BD-9A57-11d0-8FDE-00C04FD9189D")
 
-.comdef IMediaStream
+.comdef IMediaStream : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMultiMediaStream proc :ptr
     GetInformation	proc :ptr, :ptr
     SetSameFormat	proc :ptr, :DWORD
     AllocateSample	proc :DWORD, :ptr
     CreateSharedSample	proc :ptr, :DWORD, :ptr
     SendEndOfStream	proc :DWORD
+
     .ends
 
 endif
@@ -126,16 +122,14 @@ __IStreamSample_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStreamSample, "B502D1BE-9A57-11d0-8FDE-00C04FD9189D")
 
-.comdef IStreamSample
+.comdef IStreamSample : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMediaStream	proc :ptr
     GetSampleTimes	proc :ptr, :ptr, :ptr
     SetSampleTimes	proc :ptr, :ptr
     Update		proc :DWORD, :HANDLE, :PAPCFUNC, :DWORD_PTR
     CompletionStatus	proc :DWORD, :DWORD
+
     .ends
 
 endif

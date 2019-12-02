@@ -706,13 +706,14 @@ adSimpleRecord		equ 0
 adCollectionRecord	equ 1
 adStructDoc		equ 2
 externdef		LIBID_ADODB:IID
+
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
-.comdef _ADOCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef _ADOCollection : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -720,50 +721,49 @@ DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
+
     .ends
+
 endif
 
 ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_ADODynaCollection, "00000513-0000-0010-8000-00AA006D2EA4")
-.comdef _ADODynaCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
+
+.comdef _ADODynaCollection : public _ADOCollection
+
     Append		proc :ptr
     Delete		proc :VARIANT
+
     .ends
 
 endif
+
 ifndef ___ADO_INTERFACE_DEFINED__
 ___ADO_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_ADO, "00000534-0000-0010-8000-00AA006D2EA4")
-.comdef _ADO
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef _ADO : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Properties	proc :ptr
+
     .ends
 
 endif
+
 ifndef __Error_INTERFACE_DEFINED__
 __Error_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Error, "00000500-0000-0010-8000-00AA006D2EA4")
-.comdef Error
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef Error : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -775,16 +775,18 @@ DEFINE_IIDX(Error, "00000500-0000-0010-8000-00AA006D2EA4")
     get_HelpContext	proc :ptr
     get_SQLState	proc :ptr
     get_NativeError	proc :ptr
+
     .ends
 
 endif
+
 ifndef __Errors_INTERFACE_DEFINED__
 __Errors_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Errors, "00000501-0000-0010-8000-00AA006D2EA4")
-.comdef Errors
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef Errors : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -792,23 +794,21 @@ DEFINE_IIDX(Errors, "00000501-0000-0010-8000-00AA006D2EA4")
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
+
     get_Item		proc :VARIANT, :ptr
     Clear		proc
+
     .ends
 
 endif
+
 ifndef __Command15_INTERFACE_DEFINED__
 __Command15_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Command15, "00000508-0000-0010-8000-00AA006D2EA4")
-.comdef Command15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
+
+.comdef Command15 : public _ADO
+
     get_ActiveConnection proc :ptr
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
@@ -825,54 +825,32 @@ DEFINE_IIDX(Command15, "00000508-0000-0010-8000-00AA006D2EA4")
     get_CommandType	proc :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
+
     .ends
 
 endif
+
 ifndef __Command25_INTERFACE_DEFINED__
 __Command25_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Command25, "0000054E-0000-0010-8000-00AA006D2EA4")
-.comdef Command25
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_ActiveConnection proc :ptr
-    putref_ActiveADOConnection proc :ptr
-    put_ActiveConnection proc :VARIANT
-    get_CommandText	proc :ptr
-    put_CommandText	proc :BSTR
-    get_CommandTimeout	proc :ptr
-    put_CommandTimeout	proc :LONG
-    get_Prepared	proc :ptr
-    put_Prepared	proc :VARIANT_BOOL
-    Execute		proc :ptr, :ptr, :LONG, :ptr
-    CreateParameter	proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
-    get_Parameters	proc :ptr
-    put_CommandType	proc :CommandTypeEnum
-    get_CommandType	proc :ptr
-    get_Name		proc :ptr
-    put_Name		proc :BSTR
+
+.comdef Command25 : public Command15
+
     get_State		proc :ptr
     Cancel		proc
+
     .ends
 
 endif
+
 ifndef ___Command_INTERFACE_DEFINED__
 ___Command_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Command, "B08400BD-F9D1-4D02-B856-71D5DBA123E9")
-.comdef _Command
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
+
+.comdef _Command : public _ADO
+
     get_ActiveConnection proc :ptr
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
@@ -897,16 +875,18 @@ DEFINE_IIDX(_Command, "B08400BD-F9D1-4D02-B856-71D5DBA123E9")
     get_Dialect		proc :ptr
     put_NamedParameters proc :VARIANT_BOOL
     get_NamedParameters proc :ptr
+
     .ends
 
 endif
+
 ifndef __ConnectionEventsVt_INTERFACE_DEFINED__
 __ConnectionEventsVt_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ConnectionEventsVt, "00000402-0000-0010-8000-00AA006D2EA4")
-.comdef ConnectionEventsVt
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ConnectionEventsVt : public IUnknown
+
     InfoMessage		proc :ptr, :ptr, :ptr
     BeginTransComplete	proc :LONG, :ptr, :ptr, :ptr
     CommitTransComplete proc :ptr, :ptr, :ptr
@@ -916,16 +896,18 @@ DEFINE_IIDX(ConnectionEventsVt, "00000402-0000-0010-8000-00AA006D2EA4")
     WillConnect		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     ConnectComplete	proc :ptr, :ptr, :ptr
     Disconnect		proc :ptr, :ptr
+
     .ends
 
 endif
+
 ifndef __RecordsetEventsVt_INTERFACE_DEFINED__
 __RecordsetEventsVt_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(RecordsetEventsVt, "00000403-0000-0010-8000-00AA006D2EA4")
-.comdef RecordsetEventsVt
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef RecordsetEventsVt : public IUnknown
+
     WillChangeADOField	proc :LONG, :VARIANT, :ptr, :ptr
     FieldChangeComplete proc :LONG, :VARIANT, :ptr, :ptr, :ptr
     WillChangeADORecord proc :EventReasonEnum, :LONG, :ptr, :ptr
@@ -937,48 +919,50 @@ DEFINE_IIDX(RecordsetEventsVt, "00000403-0000-0010-8000-00AA006D2EA4")
     EndOfADORecordset	proc :ptr, :ptr, :ptr
     FetchProgress	proc :LONG, :LONG, :ptr, :ptr
     FetchComplete	proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
+
 ifndef __ConnectionEvents_DISPINTERFACE_DEFINED__
 __ConnectionEvents_DISPINTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ConnectionEvents, "00000400-0000-0010-8000-00AA006D2EA4")
-.comdef ConnectionEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ConnectionEvents : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 endif
+
 ifndef __RecordsetEvents_DISPINTERFACE_DEFINED__
 __RecordsetEvents_DISPINTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(RecordsetEvents, "00000266-0000-0010-8000-00AA006D2EA4")
-.comdef RecordsetEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef RecordsetEvents : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 endif
+
 ifndef __Connection15_INTERFACE_DEFINED__
 __Connection15_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Connection15, "00000515-0000-0010-8000-00AA006D2EA4")
-.comdef Connection15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Connection15 : public RecordsetEvents
+
     get_Properties	proc :ptr
     get_ConnectionString proc :ptr
     put_ConnectionString proc :BSTR
@@ -1008,92 +992,58 @@ DEFINE_IIDX(Connection15, "00000515-0000-0010-8000-00AA006D2EA4")
     put_Provider	proc :BSTR
     get_State		proc :ptr
     OpenSchema		proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
+
     .ends
 
 endif
+
 ifndef ___Connection_INTERFACE_DEFINED__
 ___Connection_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Connection, "00000550-0000-0010-8000-00AA006D2EA4")
-.comdef _Connection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_ConnectionString proc :ptr
-    put_ConnectionString proc :BSTR
-    get_CommandTimeout	proc :ptr
-    put_CommandTimeout	proc :LONG
-    get_ConnectionTimeout proc :ptr
-    put_ConnectionTimeout proc :LONG
-    get_Version		proc :ptr
-    Close		proc
-    Execute		proc :BSTR, :ptr, :LONG, :ptr
-    BeginTrans		proc :ptr
-    CommitTrans		proc
-    RollbackTrans	proc
-    Open		proc :BSTR, :BSTR, :BSTR, :LONG
-    get_Errors		proc :ptr
-    get_DefaultDatabase proc :ptr
-    put_DefaultDatabase proc :BSTR
-    get_IsolationLevel	proc :ptr
-    put_IsolationLevel	proc :IsolationLevelEnum
-    get_Attributes	proc :ptr
-    put_Attributes	proc :LONG
-    get_CursorLocation	proc :ptr
-    put_CursorLocation	proc :CursorLocationEnum
-    get_Mode		proc :ptr
-    put_Mode		proc :ConnectModeEnum
-    get_Provider	proc :ptr
-    put_Provider	proc :BSTR
-    get_State		proc :ptr
-    OpenSchema		proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
+
+.comdef _Connection : public Connection15
+
     Cancel		proc
+
     .ends
 
 endif
+
 ifndef __ADOConnectionConstruction15_INTERFACE_DEFINED__
 __ADOConnectionConstruction15_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ADOConnectionConstruction15, "00000516-0000-0010-8000-00AA006D2EA4")
-.comdef ADOConnectionConstruction15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ADOConnectionConstruction15 : public IUnknown
+
     get_DSO		proc :ptr
     get_Session		proc :ptr
     WrapDSOandSession	proc :ptr, :ptr
+
     .ends
 
 endif
+
 ifndef __ADOConnectionConstruction_INTERFACE_DEFINED__
 __ADOConnectionConstruction_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ADOConnectionConstruction, "00000551-0000-0010-8000-00AA006D2EA4")
-.comdef ADOConnectionConstruction
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    get_DSO		proc :ptr
-    get_Session		proc :ptr
-    WrapDSOandSession	proc :ptr, :ptr
+
+.comdef ADOConnectionConstruction : public ADOConnectionConstruction15
+
     .ends
 
 endif
 externdef		CLSID_Connection:CLSID
+
 ifndef ___Record_INTERFACE_DEFINED__
 ___Record_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Record, "00000562-0000-0010-8000-00AA006D2EA4")
-.comdef _Record
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
+
+.comdef _Record : public _ADO
+
     get_ActiveConnection proc :ptr
     put_ActiveConnection proc :BSTR
     putref_ActiveADOConnection proc :ptr
@@ -1113,21 +1063,19 @@ DEFINE_IIDX(_Record, "00000562-0000-0010-8000-00AA006D2EA4")
     get_RecordType	proc :ptr
     GetChildren		proc :ptr
     Cancel		proc
+
     .ends
 
 endif
 externdef		CLSID_Record:CLSID
+
 ifndef ___Stream_INTERFACE_DEFINED__
 ___Stream_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Stream, "00000565-0000-0010-8000-00AA006D2EA4")
-.comdef _Stream
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef _Stream : public RecordsetEvents
+
     get_Size		proc :ptr
     get_EOS		proc :ptr
     get_Position	proc :ptr
@@ -1154,52 +1102,51 @@ DEFINE_IIDX(_Stream, "00000565-0000-0010-8000-00AA006D2EA4")
     ReadText		proc :LONG, :ptr
     WriteText		proc :BSTR, :StreamWriteEnum
     Cancel		proc
+
     .ends
 
 endif
 externdef		CLSID_Stream:CLSID
+
 ifndef __ADORecordConstruction_INTERFACE_DEFINED__
 __ADORecordConstruction_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ADORecordConstruction, "00000567-0000-0010-8000-00AA006D2EA4")
-.comdef ADORecordConstruction
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef ADORecordConstruction : public RecordsetEvents
+
     get_Row		proc :ptr
     put_Row		proc :ptr
     put_ParentRow	proc :ptr
+
     .ends
 
 endif
+
 ifndef __ADOStreamConstruction_INTERFACE_DEFINED__
 __ADOStreamConstruction_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ADOStreamConstruction, "00000568-0000-0010-8000-00AA006D2EA4")
-.comdef ADOStreamConstruction
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef ADOStreamConstruction : public RecordsetEvents
+
     get_Stream		proc :ptr
     put_Stream		proc :ptr
+
     .ends
 
 endif
+
 ifndef __ADOCommandConstruction_INTERFACE_DEFINED__
 __ADOCommandConstruction_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(ADOCommandConstruction, "00000517-0000-0010-8000-00AA006D2EA4")
-.comdef ADOCommandConstruction
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ADOCommandConstruction : public IUnknown
+
     get_OLEDBCommand	proc :ptr
     put_OLEDBCommand	proc :ptr
+
     .ends
 
 endif
@@ -1208,16 +1155,11 @@ externdef		CLSID_Recordset:CLSID
 
 ifndef __Recordset15_INTERFACE_DEFINED__
 __Recordset15_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Recordset15, "0000050E-0000-0010-8000-00AA006D2EA4")
-.comdef Recordset15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
+
+.comdef Recordset15 : public _ADO
+
     get_AbsolutePosition proc :ptr
     put_AbsolutePosition proc :PositionEnum_Param
     putref_ActiveADOConnection proc :ptr
@@ -1278,81 +1220,18 @@ DEFINE_IIDX(Recordset15, "0000050E-0000-0010-8000-00AA006D2EA4")
     get_MarshalOptions	proc :ptr
     put_MarshalOptions	proc :MarshalOptionsEnum
     Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+
     .ends
 
 endif
+
 ifndef __Recordset20_INTERFACE_DEFINED__
 __Recordset20_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Recordset20, "0000054F-0000-0010-8000-00AA006D2EA4")
-.comdef Recordset20
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_AbsolutePosition proc :ptr
-    put_AbsolutePosition proc :PositionEnum_Param
-    putref_ActiveADOConnection proc :ptr
-    put_ActiveConnection proc :VARIANT
-    get_ActiveConnection proc :ptr
-    get_BOF		proc :ptr
-    get_Bookmark	proc :ptr
-    put_Bookmark	proc :VARIANT
-    get_CacheSize	proc :ptr
-    put_CacheSize	proc :LONG
-    get_CursorType	proc :ptr
-    put_CursorType	proc :CursorTypeEnum
-    get_EOF		proc :ptr
-    get_Fields		proc :ptr
-    get_LockType	proc :ptr
-    put_LockType	proc :LockTypeEnum
-    get_MaxRecords	proc :ptr
-    put_MaxRecords	proc :ADO_LONGPTR
-    get_RecordCount	proc :ptr
-    putref_Source	proc :ptr
-    put_Source		proc :BSTR
-    get_Source		proc :ptr
-    AddNew		proc :VARIANT, :VARIANT
-    CancelUpdate	proc
-    Close		proc
-    Delete		proc :AffectEnum
-    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move		proc :ADO_LONGPTR, :VARIANT
-    MoveNext		proc
-    MovePrevious	proc
-    MoveFirst		proc
-    MoveLast		proc
-    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery		proc :LONG
-    _xResync		proc :AffectEnum
-    Update		proc :VARIANT, :VARIANT
-    get_AbsolutePage	proc :ptr
-    put_AbsolutePage	proc :PositionEnum_Param
-    get_EditMode	proc :ptr
-    get_Filter		proc :ptr
-    put_Filter		proc :VARIANT
-    get_PageCount	proc :ptr
-    get_PageSize	proc :ptr
-    put_PageSize	proc :LONG
-    get_Sort		proc :ptr
-    put_Sort		proc :BSTR
-    get_Status		proc :ptr
-    get_State		proc :ptr
-    _xClone		proc :ptr
-    UpdateBatch		proc :AffectEnum
-    CancelBatch		proc :AffectEnum
-    get_CursorLocation	proc :ptr
-    put_CursorLocation	proc :CursorLocationEnum
-    NextADORecordset	proc :ptr, :ptr
-    Supports		proc :CursorOptionEnum, :ptr
-    get_Collect		proc :VARIANT, :ptr
-    put_Collect		proc :VARIANT, :VARIANT
-    get_MarshalOptions	proc :ptr
-    put_MarshalOptions	proc :MarshalOptionsEnum
-    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+
+.comdef Recordset20 : public Recordset15
+
     Cancel		proc
     get_DataSource	proc :ptr
     putref_DataSource	proc :ptr
@@ -1366,223 +1245,62 @@ DEFINE_IIDX(Recordset20, "0000054F-0000-0010-8000-00AA006D2EA4")
     CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
     Clone		proc :LockTypeEnum, :ptr
     Resync		proc :AffectEnum, :ResyncEnum
+
     .ends
 
 endif
+
 ifndef __Recordset21_INTERFACE_DEFINED__
 __Recordset21_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Recordset21, "00000555-0000-0010-8000-00AA006D2EA4")
-.comdef Recordset21
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_AbsolutePosition proc :ptr
-    put_AbsolutePosition proc :PositionEnum_Param
-    putref_ActiveADOConnection proc :ptr
-    put_ActiveConnection proc :VARIANT
-    get_ActiveConnection proc :ptr
-    get_BOF		proc :ptr
-    get_Bookmark	proc :ptr
-    put_Bookmark	proc :VARIANT
-    get_CacheSize	proc :ptr
-    put_CacheSize	proc :LONG
-    get_CursorType	proc :ptr
-    put_CursorType	proc :CursorTypeEnum
-    get_EOF		proc :ptr
-    get_Fields		proc :ptr
-    get_LockType	proc :ptr
-    put_LockType	proc :LockTypeEnum
-    get_MaxRecords	proc :ptr
-    put_MaxRecords	proc :ADO_LONGPTR
-    get_RecordCount	proc :ptr
-    putref_Source	proc :ptr
-    put_Source		proc :BSTR
-    get_Source		proc :ptr
-    AddNew		proc :VARIANT, :VARIANT
-    CancelUpdate	proc
-    Close		proc
-    Delete		proc :AffectEnum
-    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move		proc :ADO_LONGPTR, :VARIANT
-    MoveNext		proc
-    MovePrevious	proc
-    MoveFirst		proc
-    MoveLast		proc
-    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery		proc :LONG
-    _xResync		proc :AffectEnum
-    Update		proc :VARIANT, :VARIANT
-    get_AbsolutePage	proc :ptr
-    put_AbsolutePage	proc :PositionEnum_Param
-    get_EditMode	proc :ptr
-    get_Filter		proc :ptr
-    put_Filter		proc :VARIANT
-    get_PageCount	proc :ptr
-    get_PageSize	proc :ptr
-    put_PageSize	proc :LONG
-    get_Sort		proc :ptr
-    put_Sort		proc :BSTR
-    get_Status		proc :ptr
-    get_State		proc :ptr
-    _xClone		proc :ptr
-    UpdateBatch		proc :AffectEnum
-    CancelBatch		proc :AffectEnum
-    get_CursorLocation	proc :ptr
-    put_CursorLocation	proc :CursorLocationEnum
-    NextADORecordset	proc :ptr, :ptr
-    Supports		proc :CursorOptionEnum, :ptr
-    get_Collect		proc :VARIANT, :ptr
-    put_Collect		proc :VARIANT, :VARIANT
-    get_MarshalOptions	proc :ptr
-    put_MarshalOptions	proc :MarshalOptionsEnum
-    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-    Cancel		proc
-    get_DataSource	proc :ptr
-    putref_DataSource	proc :ptr
-    _xSave		proc :BSTR, :PersistFormatEnum
-    get_ActiveCommand	proc :ptr
-    put_StayInSync	proc :VARIANT_BOOL
-    get_StayInSync	proc :ptr
-    GetString		proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
-    get_DataMember	proc :ptr
-    put_DataMember	proc :BSTR
-    CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
-    Clone		proc :LockTypeEnum, :ptr
-    Resync		proc :AffectEnum, :ResyncEnum
+
+.comdef Recordset21 : public Recordset20
+
     Seek		proc :VARIANT, :SeekEnum
     put_Index		proc :BSTR
     get_Index		proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Recordset_INTERFACE_DEFINED__
 ___Recordset_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Recordset, "00000556-0000-0010-8000-00AA006D2EA4")
-.comdef _Recordset
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_AbsolutePosition proc :ptr
-    put_AbsolutePosition proc :PositionEnum_Param
-    putref_ActiveADOConnection proc :ptr
-    put_ActiveConnection proc :VARIANT
-    get_ActiveConnection proc :ptr
-    get_BOF		proc :ptr
-    get_Bookmark	proc :ptr
-    put_Bookmark	proc :VARIANT
-    get_CacheSize	proc :ptr
-    put_CacheSize	proc :LONG
-    get_CursorType	proc :ptr
-    put_CursorType	proc :CursorTypeEnum
-    get_EOF		proc :ptr
-    get_Fields		proc :ptr
-    get_LockType	proc :ptr
-    put_LockType	proc :LockTypeEnum
-    get_MaxRecords	proc :ptr
-    put_MaxRecords	proc :ADO_LONGPTR
-    get_RecordCount	proc :ptr
-    putref_Source	proc :ptr
-    put_Source		proc :BSTR
-    get_Source		proc :ptr
-    AddNew		proc :VARIANT, :VARIANT
-    CancelUpdate	proc
-    Close		proc
-    Delete		proc :AffectEnum
-    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move		proc :ADO_LONGPTR, :VARIANT
-    MoveNext		proc
-    MovePrevious	proc
-    MoveFirst		proc
-    MoveLast		proc
-    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery		proc :LONG
-    _xResync		proc :AffectEnum
-    Update		proc :VARIANT, :VARIANT
-    get_AbsolutePage	proc :ptr
-    put_AbsolutePage	proc :PositionEnum_Param
-    get_EditMode	proc :ptr
-    get_Filter		proc :ptr
-    put_Filter		proc :VARIANT
-    get_PageCount	proc :ptr
-    get_PageSize	proc :ptr
-    put_PageSize	proc :LONG
-    get_Sort		proc :ptr
-    put_Sort		proc :BSTR
-    get_Status		proc :ptr
-    get_State		proc :ptr
-    _xClone		proc :ptr
-    UpdateBatch		proc :AffectEnum
-    CancelBatch		proc :AffectEnum
-    get_CursorLocation	proc :ptr
-    put_CursorLocation	proc :CursorLocationEnum
-    NextADORecordset	proc :ptr, :ptr
-    Supports		proc :CursorOptionEnum, :ptr
-    get_Collect		proc :VARIANT, :ptr
-    put_Collect		proc :VARIANT, :VARIANT
-    get_MarshalOptions	proc :ptr
-    put_MarshalOptions	proc :MarshalOptionsEnum
-    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-    Cancel		proc
-    get_DataSource	proc :ptr
-    putref_DataSource	proc :ptr
-    _xSave		proc :BSTR, :PersistFormatEnum
-    get_ActiveCommand	proc :ptr
-    put_StayInSync	proc :VARIANT_BOOL
-    get_StayInSync	proc :ptr
-    GetString		proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
-    get_DataMember	proc :ptr
-    put_DataMember	proc :BSTR
-    CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
-    Clone		proc :LockTypeEnum, :ptr
-    Resync		proc :AffectEnum, :ResyncEnum
-    Seek		proc :VARIANT, :SeekEnum
-    put_Index		proc :BSTR
-    get_Index		proc :ptr
+
+.comdef _Recordset : public Recordset21
+
     Save		proc :VARIANT, :PersistFormatEnum
+
     .ends
 
 endif
+
 ifndef __ADORecordsetConstruction_INTERFACE_DEFINED__
 __ADORecordsetConstruction_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(ADORecordsetConstruction, "00000283-0000-0010-8000-00AA006D2EA4")
-.comdef ADORecordsetConstruction
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef ADORecordsetConstruction : public RecordsetEvents
+
     get_Rowset		proc :ptr
     put_Rowset		proc :ptr
     get_Chapter		proc :ptr
     put_Chapter		proc :ADO_LONGPTR
     get_RowPosition	proc :ptr
     put_RowPosition	proc :ptr
+
     .ends
 
 endif
+
 ifndef __Field15_INTERFACE_DEFINED__
 __Field15_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(Field15, "00000505-0000-0010-8000-00AA006D2EA4")
-.comdef Field15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Field15 : public RecordsetEvents
+
     get_Properties	proc :ptr
     get_ActualSize	proc :ptr
     get_Attributes	proc :ptr
@@ -1597,34 +1315,18 @@ DEFINE_IIDX(Field15, "00000505-0000-0010-8000-00AA006D2EA4")
     GetChunk		proc :LONG, :ptr
     get_OriginalValue	proc :ptr
     get_UnderlyingValue proc :ptr
+
     .ends
 
 endif
+
 ifndef __Field20_INTERFACE_DEFINED__
 __Field20_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Field20, "0000054C-0000-0010-8000-00AA006D2EA4")
-.comdef Field20
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_ActualSize	proc :ptr
-    get_Attributes	proc :ptr
-    get_DefinedSize	proc :ptr
-    get_Name		proc :ptr
-    get_Type		proc :ptr
-    get_Value		proc :ptr
-    put_Value		proc :VARIANT
-    get_Precision	proc :ptr
-    get_NumericScale	proc :ptr
-    AppendChunk		proc :VARIANT
-    GetChunk		proc :LONG, :ptr
-    get_OriginalValue	proc :ptr
-    get_UnderlyingValue proc :ptr
+
+.comdef Field20 : public Field15
+
     get_DataFormat	proc :ptr
     putref_DataFormat	proc :ptr
     put_Precision	proc :BYTE
@@ -1632,118 +1334,76 @@ DEFINE_IIDX(Field20, "0000054C-0000-0010-8000-00AA006D2EA4")
     put_Type		proc :DataTypeEnum
     put_DefinedSize	proc :ADO_LONGPTR
     put_Attributes	proc :LONG
+
     .ends
 
 endif
+
 ifndef __Field_INTERFACE_DEFINED__
 __Field_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(Field, "00000569-0000-0010-8000-00AA006D2EA4")
-.comdef Field
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties	proc :ptr
-    get_ActualSize	proc :ptr
-    get_Attributes	proc :ptr
-    get_DefinedSize	proc :ptr
-    get_Name		proc :ptr
-    get_Type		proc :ptr
-    get_Value		proc :ptr
-    put_Value		proc :VARIANT
-    get_Precision	proc :ptr
-    get_NumericScale	proc :ptr
-    AppendChunk		proc :VARIANT
-    GetChunk		proc :LONG, :ptr
-    get_OriginalValue	proc :ptr
-    get_UnderlyingValue proc :ptr
-    get_DataFormat	proc :ptr
-    putref_DataFormat	proc :ptr
-    put_Precision	proc :BYTE
-    put_NumericScale	proc :BYTE
-    put_Type		proc :DataTypeEnum
-    put_DefinedSize	proc :ADO_LONGPTR
-    put_Attributes	proc :LONG
+
+.comdef Field : public Field20
+
     get_Status		proc :ptr
+
     .ends
 
 endif
+
 ifndef __Fields15_INTERFACE_DEFINED__
 __Fields15_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Fields15, "00000506-0000-0010-8000-00AA006D2EA4")
-.comdef Fields15
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Fields15 : public RecordsetEvents
+
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
     get_Item		proc :VARIANT, :ptr
+
     .ends
 
 endif
+
 ifndef __Fields20_INTERFACE_DEFINED__
 __Fields20_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Fields20, "0000054D-0000-0010-8000-00AA006D2EA4")
-.comdef Fields20
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
+
+.comdef Fields20 : public Fields15
+
     _Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
     Delete		proc :VARIANT
+
     .ends
 
 endif
+
 ifndef __Fields_INTERFACE_DEFINED__
 __Fields_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Fields, "00000564-0000-0010-8000-00AA006D2EA4")
-.comdef Fields
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    _Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
-    Delete		proc :VARIANT
+
+.comdef Fields : public Fields20
+
     Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum, :VARIANT
     Update		proc
     Resync		proc :ResyncEnum
     CancelUpdate	proc
+
     .ends
 
 endif
+
 ifndef ___Parameter_INTERFACE_DEFINED__
 ___Parameter_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(_Parameter, "0000050C-0000-0010-8000-00AA006D2EA4")
-.comdef _Parameter
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef _Parameter : public RecordsetEvents
+
     get_Properties	proc :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
@@ -1762,85 +1422,69 @@ DEFINE_IIDX(_Parameter, "0000050C-0000-0010-8000-00AA006D2EA4")
     AppendChunk		proc :VARIANT
     get_Attributes	proc :ptr
     put_Attributes	proc :LONG
+
     .ends
 
 endif
 externdef		CLSID_Parameter:CLSID
+
 ifdef __cplusplus
 Parameter;
 endif
+
 ifndef __Parameters_INTERFACE_DEFINED__
 __Parameters_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Parameters, "0000050D-0000-0010-8000-00AA006D2EA4")
-.comdef Parameters
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Parameters : public RecordsetEvents
+
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
     Append		proc :ptr
     Delete		proc :VARIANT
     get_Item		proc :VARIANT, :ptr
+
     .ends
 
 endif
+
 ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
-.comdef Property
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Property : public RecordsetEvents
+
     get_Value		proc :ptr
     put_Value		proc :VARIANT
     get_Name		proc :ptr
     get_Type		proc :ptr
     get_Attributes	proc :ptr
     put_Attributes	proc :LONG
+
     .ends
 
 endif
+
 ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
+
 DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
-.comdef Properties
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
+.comdef Properties : public RecordsetEvents
+
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
     get_Item		proc :VARIANT, :ptr
+
     .ends
 
 endif
-endif
 
 endif
-if 0
-ADOCommand		equ <_ADOCommand>
-ADORecordset		equ <_ADORecordset>
-ADOTransaction		equ <_ADOTransaction>
-ADOParameter		equ <_ADOParameter>
-ADOConnection		equ <_ADOConnection>
-ADOCollection		equ <_ADOCollection>
-ADODynaCollection	equ <_ADODynaCollection>
-ADORecord		equ <_ADORecord>
-ADORecField		equ <_ADORecField>
-ADOStream		equ <_ADOStream>
 endif
 
 .pragma list(pop)

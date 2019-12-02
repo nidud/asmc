@@ -134,6 +134,7 @@ setsselevel proc uses ebx
             .endif
         .endif
     .endif
+    mov eax,sselevel
     ret
 
 setsselevel endp

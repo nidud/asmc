@@ -37,16 +37,14 @@ DEFINE_GUID(CLSID_MSCryptoAdmEx, 0x9f0bd3a0, 0xec01, 0x11d0, 0xa6, 0xa0, 0x0,0xa
 ifndef __IMSAdminReplication_INTERFACE_DEFINED__
 __IMSAdminReplication_INTERFACE_DEFINED__ equ 1
 
-.comdef IMSAdminReplication
+.comdef IMSAdminReplication : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSignature	proc :DWORD, :ptr, :ptr
     Propagate		proc :DWORD, :ptr
     Propagate2		proc :DWORD, :ptr, :DWORD
     Serialize		proc :DWORD, :ptr, :ptr
     DeSerialize		proc :DWORD, :ptr
+
     .ends
 
 endif
@@ -54,16 +52,14 @@ endif
 ifndef __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__
 __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__ equ 1
 
-.comdef IMSAdminCryptoCapabilities
+.comdef IMSAdminCryptoCapabilities : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProtocols	proc :DWORD, :ptr, :ptr
     GetMaximumCipherStrength proc :LPDWORD
     GetRootCertificates proc :DWORD, :ptr, :ptr
     GetSupportedAlgs	proc :DWORD, :ptr, :ptr
     SetCAList		proc :DWORD, :ptr
+
     .ends
 
 endif

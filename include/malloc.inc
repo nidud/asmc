@@ -74,11 +74,10 @@ alloca	macro dwSize:req, ReservedStack:=<@ReservedStack>
 	exitm<_alloca64( dwSize, ReservedStack )>
 	endm
 else
-alloca		proto __cdecl :dword
+alloca	proto __cdecl :dword
 endif
-__coreleft	proto __cdecl
 else
-alloca		proto __cdecl :dword
+alloca	proto __cdecl :dword
 endif
 ;;;;;;;;;;;;;;; kernel32
 

@@ -6,7 +6,6 @@
 
 include stdlib.inc
 include string.inc
-include strlib.inc
 include malloc.inc
 include crtl.inc
 

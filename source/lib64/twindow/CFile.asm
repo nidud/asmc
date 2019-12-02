@@ -7,6 +7,7 @@
 include CFile.inc
 include strlib.inc
 include malloc.inc
+include crtl.inc
 
     .code
 

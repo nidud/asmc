@@ -3,20 +3,18 @@ __DZLIB_INC equ <>
 include strlib.inc
 .xlist
 
-xtol		proto __cdecl :LPSTR
-_xtoi64		proto __cdecl :LPSTR
 mkbstring	proto __cdecl :LPSTR, :QWORD
 searchp		proto __cdecl :LPSTR
 getenvp		proto __cdecl :LPSTR
 expenviron	proto __cdecl :LPSTR
 SaveEnvironment proto __cdecl :LPSTR
 ReadEnvironment proto __cdecl :LPSTR
+CreateBatch	proto __cdecl cmd:string_t, call_cmd:int_t, update_environ:int_t
+
 GetEnvironmentTEMP proto __cdecl
 GetEnvironmentPATH proto __cdecl
 GetEnvironmentSize proto __cdecl :LPSTR
 _print		proto _CDecl :LPSTR, :VARARG
-
-__allocwpath	PROTO :LPSTR
 
 ;;;;;;;;;;;;;;; drvinfo
 
@@ -93,21 +91,6 @@ osopen		proto __cdecl :LPSTR, :UINT, :UINT, :UINT
 
 externdef	console:DWORD
 externdef	_diskflag:DWORD
-
-SSE_MMX		equ 0x0001
-SSE_SSE		equ 0x0002
-SSE_SSE2	equ 0x0004
-SSE_SSE3	equ 0x0008
-SSE_SSSE3	equ 0x0010
-SSE_SSE41	equ 0x0020
-SSE_SSE42	equ 0x0040
-SSE_XGETBV	equ 0x0080
-SSE_AVX		equ 0x0100
-SSE_AVX2	equ 0x0200
-SSE_AVXOS	equ 0x0400
-
-externdef	sselevel:DWORD
-GetSSELevel	proto
 
 .list
 endif ;; __DZLIB_INC

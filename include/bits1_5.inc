@@ -66,11 +66,8 @@ PBG_AUTH_CREDENTIALS	typedef ptr BG_AUTH_CREDENTIALS
 
 externdef		IID_IBackgroundCopyJob2:IID
 
-.comdef IBackgroundCopyJob2
+.comdef IBackgroundCopyJob2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFileSet		proc :ULONG, :ptr
     AddFile		proc :LPCWSTR, :LPCWSTR
     EnumFiles		proc :ptr
@@ -111,6 +108,7 @@ externdef		IID_IBackgroundCopyJob2:IID
     GetReplyFileName	proc :ptr
     SetCredentials	proc :ptr
     RemoveCredentials	proc :BG_AUTH_TARGET, :BG_AUTH_SCHEME
+
     .ends
 
 endif

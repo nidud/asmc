@@ -25,8 +25,4 @@ externdef	__pCommandArg:LPSTR	; "/C "
 
 __initcomspec	proto	; Auto install..
 
-CreateConsole	PROTO :LPSTR, :DWORD
-CreateBatch	PROTO :LPSTR, :DWORD, :DWORD
-CmdIsExe	PROTO :LPSTR
-
 .pragma list(pop)

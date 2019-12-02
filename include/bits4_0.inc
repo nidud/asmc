@@ -43,16 +43,14 @@ BG_TOKEN_NETWORK	equ 0x0002
 
 DEFINE_IIDX(IBitsTokenOptions, "9a2584c3-f7d2-457a-9a5e-22b67bffc7d2")
 
-.comdef IBitsTokenOptions
+.comdef IBitsTokenOptions : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetHelperTokenFlags proc :DWORD
     GetHelperTokenFlags proc :ptr
     SetHelperToken	proc
     ClearHelperToken	proc
     GetHelperTokenSid	proc :ptr
+
     .ends
 
 endif
@@ -62,11 +60,8 @@ __IBackgroundCopyFile4_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyFile4, "ef7e0655-7888-4960-b0e5-730846e03492")
 
-.comdef IBackgroundCopyFile4
+.comdef IBackgroundCopyFile4 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRemoteName	proc :ptr
     GetLocalName	proc :ptr
     GetProgress		proc :ptr
@@ -77,6 +72,7 @@ DEFINE_IIDX(IBackgroundCopyFile4, "ef7e0655-7888-4960-b0e5-730846e03492")
     GetValidationState	proc :ptr
     IsDownloadedFromPeer proc :ptr
     GetPeerDownloadStats proc :PUINT64, :PUINT64
+
     .ends
 
 endif

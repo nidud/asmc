@@ -1,22 +1,24 @@
+
 include malloc.inc
+include crtl.inc
 
 	.data
 	core dd 20 dup(?)
 	diff dd 20 dup(?)
 	memp dd 20 dup(?)
 	.code
+
 	getcore macro i
-		call	__coreleft
-		mov	core[i*4],eax
+		mov core[i*4],__coreleft()
 		endm
 	getmemp macro i,z
 		.assert malloc(z)
-		mov	memp[i*4],eax
+		mov memp[i*4],eax
 		endm
 	setdiff macro i,x
-		mov	eax,core
-		sub	eax,core[x*4]
-		mov	diff[i*4],eax
+		mov eax,core
+		sub eax,core[x*4]
+		mov diff[i*4],eax
 		endm
 	getcdm macro i,d,m
 		getcore i
@@ -25,7 +27,7 @@ include malloc.inc
 		endm
 
 main	proc c
-;	int 3
+
 	.assert malloc(8)
 	.assert free(eax)
 	getcore 0

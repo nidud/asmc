@@ -2010,8 +2010,6 @@
     vpsrlq zmm30,qword ptr [rdx-0x400]{1to8},0x7b
     vpsrlq zmm30,qword ptr [rdx-0x408]{1to8},0x7b
 
-    ;vpmovsxwd	 zmm1{k1}{z},xmm3
-    ;vpmovsxwq	 zmm1{k1}{z},ymm3
     vpsubb	zmm1{k1}{z},zmm2,zmm3
     vpsubw	zmm1{k1}{z},zmm2,zmm3
     vpsubd	zmm1{k1}{z},zmm2,zmm3
@@ -2033,7 +2031,6 @@
     vcvtps2dq xmm20,oword ptr [rax]
     vcvtps2dq ymm20,ymm1
     vcvtps2dq ymm20,yword ptr [rax]
-    ;vcvtps2dq ymm1{k1}{z},zmm2
     vcvtps2dq ymm1{k1}{z},[rax]
     vcvtps2dq zmm30,zmm29
     vcvtps2dq zmm30{k7},zmm29
@@ -2641,18 +2638,18 @@
     kshiftrd	k1,k2,3
     kshiftrq	k1,k2,3
 
-    kmovb	k1,k2
-    kmovd	k1,k2
-    kmovq	k1,k2
-    kmovw	k1,k2
-    kmovb	k1,[rax]
-    kmovd	k1,[rax]
-    kmovq	k1,[rax]
-    kmovw	k1,[rax]
-    kmovb	[rax],k2
-    kmovd	[rax],k2
-    kmovq	[rax],k2
-    kmovw	[rax],k2
+    kmovb k1,k2
+    kmovd k1,k2
+    kmovq k1,k2
+    kmovw k1,k2
+    kmovb k1,[rax]
+    kmovd k1,[rax]
+    kmovq k1,[rax]
+    kmovw k1,[rax]
+    kmovb [rax],k2
+    kmovd [rax],k2
+    kmovq [rax],k2
+    kmovw [rax],k2
 
     kandw  k5,k6,k7
     kandnw k5,k6,k7
@@ -3900,12 +3897,6 @@ endif
     vreduceps zmm1,[rax],3
     vreducesd xmm1,xmm2,[rax],3
     vreducess xmm1,xmm2,[rax],3
-    ;vreducepd xmm1,qword ptr [rax],3
-    ;vreducepd ymm1,qword ptr [rax],3
-    ;vreducepd zmm1,qword ptr [rax],3
-    ;vreduceps xmm1,dword ptr [rax],3
-    ;vreduceps ymm1,dword ptr [rax],3
-    ;vreduceps zmm1,dword ptr [rax],3
     vreducesd xmm1,xmm2,qword ptr [rax],3
     vreducess xmm1,xmm2,dword ptr [rax],3
 
@@ -3925,12 +3916,6 @@ endif
     vrndscaleps zmm1,[rax],7
     vrndscalesd xmm1,xmm2,[rax],7
     vrndscaless xmm1,xmm2,[rax],3
-    ;vrndscalepd xmm1,qword ptr [rax],7
-    ;vrndscalepd ymm1,qword ptr [rax],7
-    ;vrndscalepd zmm1,qword ptr [rax],7
-    ;vrndscaleps xmm1,dword ptr [rax],7
-    ;vrndscaleps ymm1,dword ptr [rax],7
-    ;vrndscaleps zmm1,dword ptr [rax],7
     vrndscalesd xmm1,xmm2,qword ptr [rax],7
     vrndscaless xmm1,xmm2,dword ptr [rax],3
 
@@ -7001,5 +6986,4487 @@ endif
     {evex} vpsrlvd ymm2,ymm6,YMMWORD PTR [rcx]
     {evex} vpsrlvq ymm2,ymm6,ymm4
     {evex} vpsrlvq ymm2,ymm6,YMMWORD PTR [rcx]
+
+; 2.30.26
+
+    vmovd xmm0,eax
+    vmovd xmm0,ebp
+    vmovd xmm0,r13d
+    vmovd xmm0,dword ptr [rcx]
+    vmovd xmm0,dword ptr [rax+r14*8+0x123]
+    vmovd xmm0,dword ptr [rdx+0x1fc]
+    vmovd xmm0,dword ptr [rdx+0x200]
+    vmovd xmm0,dword ptr [rdx-0x200]
+    vmovd xmm0,dword ptr [rdx-0x204]
+    vmovd dword ptr [rcx],xmm0
+    vmovd dword ptr [rax+r14*8+0x123],xmm0
+    vmovd dword ptr [rdx+0x1fc],xmm0
+    vmovd dword ptr [rdx+0x200],xmm0
+    vmovd dword ptr [rdx-0x200],xmm0
+    vmovd dword ptr [rdx-0x204],xmm0
+
+    vmovq xmm0,qword ptr [rcx]
+    vmovq xmm0,qword ptr [rax+r14*8+0x123]
+    vmovq xmm0,qword ptr [rdx+0x3f8]
+    vmovq xmm0,qword ptr [rdx+0x400]
+    vmovq xmm0,qword ptr [rdx-0x400]
+    vmovq xmm0,qword ptr [rdx-0x408]
+    vmovq qword ptr [rax],xmm0
+    vmovq qword ptr [rcx],xmm0
+    vmovq qword ptr [rax+r14*8+0x123],xmm0
+    vmovq qword ptr [rdx+0x3f8],xmm0
+    vmovq qword ptr [rdx+0x400],xmm0
+    vmovq qword ptr [rdx-0x400],xmm0
+    vmovq qword ptr [rdx-0x408],xmm0
+    vmovq xmm0,xmm1
+
+    vaddpd xmm0,xmm1,xmm2
+    vaddpd xmm0,xmm1,xmm2
+    vxorpd xmm0,xmm1,xmm2
+    vxorpd xmm0,xmm1,[rax]
+    vaddps xmm0,xmm1,xmm2
+    vaddps xmm0,xmm1,[rax]
+    vaddps ymm0,ymm1,ymm2
+    vaddps ymm0,ymm1,[rax]
+    vaddsd xmm0,xmm1,xmm2
+    vaddsd xmm0,xmm1,[rax]
+    vaddss xmm0,xmm1,xmm2
+    vaddss xmm0,xmm1,[rax]
+
+    vaddpd xmm0,xmm2,xmm3
+    vaddps xmm0,xmm2,xmm3
+    vaddsd xmm0,xmm2,xmm3
+    vaddss xmm0,xmm2,xmm3
+    vaddpd xmm0{k1}{z},xmm2,xmm3
+    vaddps xmm0{k1}{z},xmm2,xmm3
+    vaddsd xmm0{k1}{z},xmm2,xmm3
+    vaddss xmm0{k1}{z},xmm2,xmm3
+    vaddpd ymm0,ymm2,ymm3
+    vaddps ymm0,ymm2,ymm3
+    vaddpd ymm0{k1}{z},ymm2,ymm3
+    vaddps ymm0{k1}{z},ymm2,ymm3
+    vaddpd xmm0,xmm2,[rax]
+    vaddps xmm0,xmm2,[rax]
+    vaddsd xmm0,xmm2,[rax]
+    vaddss xmm0,xmm2,[rax]
+    vaddpd xmm0{k1}{z},xmm2,[rax]
+    vaddps xmm0{k1}{z},xmm2,[rax]
+    vaddsd xmm0{k1}{z},xmm2,[rax]
+    vaddss xmm0{k1}{z},xmm2,[rax]
+    vaddpd ymm0,ymm2,[rax]
+    vaddps ymm0,ymm2,[rax]
+    vaddpd ymm0{k1}{z},ymm2,[rax]
+    vaddps ymm0{k1}{z},ymm2,[rax]
+
+    vaddpd zmm0,zmm1,zmm2
+    vaddpd zmm0{k7},zmm1,zmm2
+    vaddpd zmm0{k7}{z},zmm1,zmm2
+    vaddpd zmm0,zmm1,zmm2,{rn-sae}
+    vaddpd zmm0,zmm1,zmm2,{ru-sae}
+    vaddpd zmm0,zmm1,zmm2,{rd-sae}
+    vaddpd zmm0,zmm1,zmm2,{rz-sae}
+    vaddpd zmm0,zmm1,zword ptr [rcx]
+    vaddpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vaddpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vaddpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vaddpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vaddpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vaddpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vaddpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vaddpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vaddpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vaddpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vaddps zmm0,zmm1,zmm2
+    vaddps zmm0{k7},zmm1,zmm2
+    vaddps zmm0{k7}{z},zmm1,zmm2
+    vaddps zmm0,zmm1,zmm2,{rn-sae}
+    vaddps zmm0,zmm1,zmm2,{ru-sae}
+    vaddps zmm0,zmm1,zmm2,{rd-sae}
+    vaddps zmm0,zmm1,zmm2,{rz-sae}
+    vaddps zmm0,zmm1,zword ptr [rcx]
+    vaddps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vaddps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vaddps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vaddps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vaddps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vaddps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vaddps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vaddps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vaddps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vaddps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vaddsd xmm0{k7},xmm1,xmm2
+    vaddsd xmm0{k7}{z},xmm1,xmm2
+    vaddsd xmm0{k7},xmm1,xmm2,{rn-sae}
+    vaddsd xmm0{k7},xmm1,xmm2,{ru-sae}
+    vaddsd xmm0{k7},xmm1,xmm2,{rd-sae}
+    vaddsd xmm0{k7},xmm1,xmm2,{rz-sae}
+    vaddsd xmm0{k7},xmm1,qword ptr [rcx]
+    vaddsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vaddsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vaddsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vaddsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vaddsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vaddss xmm0{k7},xmm1,xmm2
+    vaddss xmm0{k7}{z},xmm1,xmm2
+    vaddss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vaddss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vaddss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vaddss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vaddss xmm0{k7},xmm1,dword ptr [rcx]
+    vaddss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vaddss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vaddss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vaddss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vaddss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vdivpd xmm0,xmm1,xmm2
+    vdivpd xmm0,xmm1,[rax]
+    vdivpd ymm0,ymm1,ymm2
+    vdivpd ymm0,ymm1,[rax]
+    vdivps xmm0,xmm1,xmm2
+    vdivps xmm0,xmm1,[rax]
+    vdivps ymm0,ymm1,ymm2
+    vdivps ymm0,ymm1,[rax]
+    vdivsd xmm0,xmm1,xmm2
+    vdivsd xmm0,xmm1,[rax]
+    vdivss xmm0,xmm1,xmm2
+    vdivss xmm0,xmm1,[rax]
+
+    vdivpd zmm0,zmm1,zmm2
+    vdivpd zmm0{k7},zmm1,zmm2
+    vdivpd zmm0{k7}{z},zmm1,zmm2
+    vdivpd zmm0,zmm1,zmm2,{rn-sae}
+    vdivpd zmm0,zmm1,zmm2,{ru-sae}
+    vdivpd zmm0,zmm1,zmm2,{rd-sae}
+    vdivpd zmm0,zmm1,zmm2,{rz-sae}
+    vdivpd zmm0,zmm1,zword ptr [rcx]
+    vdivpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vdivpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vdivpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vdivpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vdivpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vdivpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vdivpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vdivpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vdivpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vdivpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vdivps zmm0,zmm1,zmm2
+    vdivps zmm0{k7},zmm1,zmm2
+    vdivps zmm0{k7}{z},zmm1,zmm2
+    vdivps zmm0,zmm1,zmm2,{rn-sae}
+    vdivps zmm0,zmm1,zmm2,{ru-sae}
+    vdivps zmm0,zmm1,zmm2,{rd-sae}
+    vdivps zmm0,zmm1,zmm2,{rz-sae}
+    vdivps zmm0,zmm1,zword ptr [rcx]
+    vdivps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vdivps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vdivps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vdivps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vdivps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vdivps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vdivps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vdivps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vdivps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vdivps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vdivsd xmm0{k7},xmm1,xmm2
+    vdivsd xmm0{k7}{z},xmm1,xmm2
+    vdivsd xmm0{k7},xmm1,xmm2,{rn-sae}
+    vdivsd xmm0{k7},xmm1,xmm2,{ru-sae}
+    vdivsd xmm0{k7},xmm1,xmm2,{rd-sae}
+    vdivsd xmm0{k7},xmm1,xmm2,{rz-sae}
+    vdivsd xmm0{k7},xmm1,qword ptr [rcx]
+    vdivsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vdivsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vdivsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vdivsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vdivsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vdivss xmm0{k7},xmm1,xmm2
+    vdivss xmm0{k7}{z},xmm1,xmm2
+    vdivss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vdivss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vdivss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vdivss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vdivss xmm0{k7},xmm1,dword ptr [rcx]
+    vdivss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vdivss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vdivss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vdivss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vdivss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vmaxpd zmm0,zmm1,zmm2
+    vmaxpd zmm0{k7},zmm1,zmm2
+    vmaxpd zmm0{k7}{z},zmm1,zmm2
+    vmaxpd zmm0,zmm1,zmm2,{sae}
+    vmaxpd zmm0,zmm1,zword ptr [rcx]
+    vmaxpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vmaxpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vmaxpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vmaxpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vmaxpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vmaxpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vmaxpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vmaxpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vmaxpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vmaxpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vmaxps zmm0,zmm1,zmm2
+    vmaxps zmm0{k7},zmm1,zmm2
+    vmaxps zmm0{k7}{z},zmm1,zmm2
+    vmaxps zmm0,zmm1,zmm2,{sae}
+    vmaxps zmm0,zmm1,zword ptr [rcx]
+    vmaxps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vmaxps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vmaxps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vmaxps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vmaxps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vmaxps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vmaxps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vmaxps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vmaxps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vmaxps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vmaxsd xmm0{k7},xmm1,xmm2
+    vmaxsd xmm0{k7}{z},xmm1,xmm2
+    vmaxsd xmm0{k7},xmm1,xmm2,{sae}
+    vmaxsd xmm0{k7},xmm1,qword ptr [rcx]
+    vmaxsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vmaxsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vmaxsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vmaxsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vmaxsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vmaxss xmm0{k7},xmm1,xmm2
+    vmaxss xmm0{k7}{z},xmm1,xmm2
+    vmaxss xmm0{k7},xmm1,xmm2,{sae}
+    vmaxss xmm0{k7},xmm1,dword ptr [rcx]
+    vmaxss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vmaxss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vmaxss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vmaxss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vmaxss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+
+    vminpd zmm0,zmm1,zmm2
+    vminpd zmm0{k7},zmm1,zmm2
+    vminpd zmm0{k7}{z},zmm1,zmm2
+    vminpd zmm0,zmm1,zmm2,{sae}
+    vminpd zmm0,zmm1,zword ptr [rcx]
+    vminpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vminpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vminpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vminpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vminpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vminpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vminpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vminpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vminpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vminpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vminps zmm0,zmm1,zmm2
+    vminps zmm0{k7},zmm1,zmm2
+    vminps zmm0{k7}{z},zmm1,zmm2
+    vminps zmm0,zmm1,zmm2,{sae}
+    vminps zmm0,zmm1,zword ptr [rcx]
+    vminps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vminps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vminps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vminps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vminps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vminps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vminps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vminps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vminps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vminps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vminsd xmm0{k7},xmm1,xmm2
+    vminsd xmm0{k7}{z},xmm1,xmm2
+    vminsd xmm0{k7},xmm1,xmm2,{sae}
+    vminsd xmm0{k7},xmm1,qword ptr [rcx]
+    vminsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vminsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vminsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vminsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vminsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vminss xmm0{k7},xmm1,xmm2
+    vminss xmm0{k7}{z},xmm1,xmm2
+    vminss xmm0{k7},xmm1,xmm2,{sae}
+    vminss xmm0{k7},xmm1,dword ptr [rcx]
+    vminss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vminss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vminss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vminss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vminss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vmulpd zmm0,zmm1,zmm2
+    vmulpd zmm0{k7},zmm1,zmm2
+    vmulpd zmm0{k7}{z},zmm1,zmm2
+    vmulpd zmm0,zmm1,zmm2,{rn-sae}
+    vmulpd zmm0,zmm1,zmm2,{ru-sae}
+    vmulpd zmm0,zmm1,zmm2,{rd-sae}
+    vmulpd zmm0,zmm1,zmm2,{rz-sae}
+    vmulpd zmm0,zmm1,zword ptr [rcx]
+    vmulpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vmulpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vmulpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vmulpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vmulpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vmulpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vmulpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vmulpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vmulpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vmulpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vmulps zmm0,zmm1,zmm2
+    vmulps zmm0{k7},zmm1,zmm2
+    vmulps zmm0{k7}{z},zmm1,zmm2
+    vmulps zmm0,zmm1,zmm2,{rn-sae}
+    vmulps zmm0,zmm1,zmm2,{ru-sae}
+    vmulps zmm0,zmm1,zmm2,{rd-sae}
+    vmulps zmm0,zmm1,zmm2,{rz-sae}
+    vmulps zmm0,zmm1,zword ptr [rcx]
+    vmulps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vmulps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vmulps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vmulps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vmulps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vmulps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vmulps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vmulps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vmulps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vmulps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vmulsd xmm0{k7},xmm1,xmm2
+    vmulsd xmm0{k7}{z},xmm1,xmm2
+    vmulsd xmm0{k7},xmm1,xmm2,{rn-sae}
+    vmulsd xmm0{k7},xmm1,xmm2,{ru-sae}
+    vmulsd xmm0{k7},xmm1,xmm2,{rd-sae}
+    vmulsd xmm0{k7},xmm1,xmm2,{rz-sae}
+    vmulsd xmm0{k7},xmm1,qword ptr [rcx]
+    vmulsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vmulsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vmulsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vmulsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vmulsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vmulss xmm0{k7},xmm1,xmm2
+    vmulss xmm0{k7}{z},xmm1,xmm2
+    vmulss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vmulss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vmulss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vmulss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vmulss xmm0{k7},xmm1,dword ptr [rcx]
+    vmulss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vmulss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vmulss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vmulss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vmulss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vsubpd zmm0,zmm1,zmm2
+    vsubpd zmm0{k7},zmm1,zmm2
+    vsubpd zmm0{k7}{z},zmm1,zmm2
+    vsubpd zmm0,zmm1,zmm2,{rn-sae}
+    vsubpd zmm0,zmm1,zmm2,{ru-sae}
+    vsubpd zmm0,zmm1,zmm2,{rd-sae}
+    vsubpd zmm0,zmm1,zmm2,{rz-sae}
+    vsubpd zmm0,zmm1,zword ptr [rcx]
+    vsubpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vsubpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vsubpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vsubpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vsubpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vsubpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vsubpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vsubpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vsubpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vsubpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vsubps zmm0,zmm1,zmm2
+    vsubps zmm0{k7},zmm1,zmm2
+    vsubps zmm0{k7}{z},zmm1,zmm2
+    vsubps zmm0,zmm1,zmm2,{rn-sae}
+    vsubps zmm0,zmm1,zmm2,{ru-sae}
+    vsubps zmm0,zmm1,zmm2,{rd-sae}
+    vsubps zmm0,zmm1,zmm2,{rz-sae}
+    vsubps zmm0,zmm1,zword ptr [rcx]
+    vsubps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vsubps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vsubps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vsubps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vsubps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vsubps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vsubps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vsubps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vsubps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vsubps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vsubsd xmm0{k7},xmm1,xmm2
+    vsubsd xmm0{k7}{z},xmm1,xmm2
+    vsubsd xmm0{k7},xmm1,xmm2,{rn-sae}
+    vsubsd xmm0{k7},xmm1,xmm2,{ru-sae}
+    vsubsd xmm0{k7},xmm1,xmm2,{rd-sae}
+    vsubsd xmm0{k7},xmm1,xmm2,{rz-sae}
+    vsubsd xmm0{k7},xmm1,qword ptr [rcx]
+    vsubsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vsubsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vsubsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vsubsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vsubsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vsubss xmm0{k7},xmm1,xmm2
+    vsubss xmm0{k7}{z},xmm1,xmm2
+    vsubss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vsubss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vsubss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vsubss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vsubss xmm0{k7},xmm1,dword ptr [rcx]
+    vsubss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vsubss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vsubss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vsubss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vsubss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vsqrtpd zmm0,zmm1
+    vsqrtpd zmm0{k7},zmm1
+    vsqrtpd zmm0{k7}{z},zmm1
+    vsqrtpd zmm0,zmm1,{rn-sae}
+    vsqrtpd zmm0,zmm1,{ru-sae}
+    vsqrtpd zmm0,zmm1,{rd-sae}
+    vsqrtpd zmm0,zmm1,{rz-sae}
+    vsqrtpd zmm0,zword ptr [rcx]
+    vsqrtpd zmm0,zword ptr [rax+r14*8+0x123]
+    vsqrtpd zmm0,qword ptr [rcx]{1to8}
+    vsqrtpd zmm0,zword ptr [rdx+0x1fc0]
+    vsqrtpd zmm0,zword ptr [rdx+0x2000]
+    vsqrtpd zmm0,zword ptr [rdx-0x2000]
+    vsqrtpd zmm0,zword ptr [rdx-0x2040]
+    vsqrtpd zmm0,qword ptr [rdx+0x3f8]{1to8}
+    vsqrtpd zmm0,qword ptr [rdx+0x400]{1to8}
+    vsqrtpd zmm0,qword ptr [rdx-0x400]{1to8}
+    vsqrtpd zmm0,qword ptr [rdx-0x408]{1to8}
+    vsqrtps zmm0,zmm1
+    vsqrtps zmm0{k7},zmm1
+    vsqrtps zmm0{k7}{z},zmm1
+    vsqrtps zmm0,zmm1,{rn-sae}
+    vsqrtps zmm0,zmm1,{ru-sae}
+    vsqrtps zmm0,zmm1,{rd-sae}
+    vsqrtps zmm0,zmm1,{rz-sae}
+    vsqrtps zmm0,zword ptr [rcx]
+    vsqrtps zmm0,zword ptr [rax+r14*8+0x123]
+    vsqrtps zmm0,dword ptr [rcx]{1to16}
+    vsqrtps zmm0,zword ptr [rdx+0x1fc0]
+    vsqrtps zmm0,zword ptr [rdx+0x2000]
+    vsqrtps zmm0,zword ptr [rdx-0x2000]
+    vsqrtps zmm0,zword ptr [rdx-0x2040]
+    vsqrtps zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vsqrtps zmm0,dword ptr [rdx+0x200]{1to16}
+    vsqrtps zmm0,dword ptr [rdx-0x200]{1to16}
+    vsqrtps zmm0,dword ptr [rdx-0x204]{1to16}
+    vsqrtsd xmm0{k7},xmm1,xmm2
+    vsqrtsd xmm0{k7}{z},xmm1,xmm2
+    vsqrtsd xmm0{k7},xmm1,xmm2,{rn-sae}
+    vsqrtsd xmm0{k7},xmm1,xmm2,{ru-sae}
+    vsqrtsd xmm0{k7},xmm1,xmm2,{rd-sae}
+    vsqrtsd xmm0{k7},xmm1,xmm2,{rz-sae}
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rcx]
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vsqrtsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vsqrtss xmm0{k7},xmm1,xmm2
+    vsqrtss xmm0{k7}{z},xmm1,xmm2
+    vsqrtss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vsqrtss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vsqrtss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vsqrtss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vsqrtss xmm0{k7},xmm1,dword ptr [rcx]
+    vsqrtss xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vsqrtss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vsqrtss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vsqrtss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vsqrtss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vcmppd k5,zmm0,zmm1,0xab
+    vcmppd k5{k7},zmm0,zmm1,0xab
+    vcmppd k5,zmm0,zmm1,{sae},0xab
+    vcmppd k5,zmm0,zmm1,0x7b
+    vcmppd k5,zmm0,zmm1,{sae},0x7b
+    vcmppd k5,zmm0,zword ptr [rcx],0x7b
+    vcmppd k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vcmppd k5,zmm0,qword ptr [rcx]{1to8},0x7b
+    vcmppd k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vcmppd k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vcmppd k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vcmppd k5,zmm0,zword ptr [rdx-0x2040],0x7b
+    vcmppd k5,zmm0,qword ptr [rdx+0x3f8]{1to8},0x7b
+    vcmppd k5,zmm0,qword ptr [rdx+0x400]{1to8},0x7b
+    vcmppd k5,zmm0,qword ptr [rdx-0x400]{1to8},0x7b
+    vcmppd k5,zmm0,qword ptr [rdx-0x408]{1to8},0x7b
+    vcmpps k5,zmm0,zmm1,0xab
+    vcmpps k5{k7},zmm0,zmm1,0xab
+    vcmpps k5,zmm0,zmm1,{sae},0xab
+    vcmpps k5,zmm0,zmm1,0x7b
+    vcmpps k5,zmm0,zmm1,{sae},0x7b
+    vcmpps k5,zmm0,zword ptr [rcx],0x7b
+    vcmpps k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vcmpps k5,zmm0,dword ptr [rcx]{1to16},0x7b
+    vcmpps k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vcmpps k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vcmpps k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vcmpps k5,zmm0,zword ptr [rdx-0x2040],0x7b
+    vcmpps k5,zmm0,dword ptr [rdx+0x1fc]{1to16},0x7b
+    vcmpps k5,zmm0,dword ptr [rdx+0x200]{1to16},0x7b
+    vcmpps k5,zmm0,dword ptr [rdx-0x200]{1to16},0x7b
+    vcmpps k5,zmm0,dword ptr [rdx-0x204]{1to16},0x7b
+    vcmpsd k5{k7},xmm1,xmm2,0xab
+    vcmpsd k5{k7},xmm1,xmm2,{sae},0xab
+    vcmpsd k5{k7},xmm1,xmm2,0x7b
+    vcmpsd k5{k7},xmm1,xmm2,{sae},0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rcx],0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rax+r14*8+0x123],0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rdx+0x3f8],0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rdx+0x400],0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rdx-0x400],0x7b
+    vcmpsd k5{k7},xmm1,qword ptr [rdx-0x408],0x7b
+    vcmpss k5{k7},xmm1,xmm2,0xab
+    vcmpss k5{k7},xmm1,xmm2,{sae},0xab
+    vcmpss k5{k7},xmm1,xmm2,0x7b
+    vcmpss k5{k7},xmm1,xmm2,{sae},0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rcx],0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rax+r14*8+0x123],0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rdx+0x1fc],0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rdx+0x200],0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rdx-0x200],0x7b
+    vcmpss k5{k7},xmm1,dword ptr [rdx-0x204],0x7b
+
+    vandpd xmm0,xmm1,xmm2
+    vandpd ymm0,ymm1,ymm2
+    vandps xmm0,xmm1,xmm2
+    vandps ymm0,ymm1,ymm2
+
+    vandnpd xmm0,xmm1,xmm2
+    vandnpd ymm0,ymm1,ymm2
+    vandnps xmm0,xmm1,xmm2
+    vandnps ymm0,ymm1,ymm2
+
+
+    vcvtdq2pd xmm0,xmm1
+    vcvtdq2pd xmm0,[rax]
+    vcvtdq2pd ymm0,xmm1
+    vcvtdq2pd ymm0,[rax]
+    vcvtdq2pd zmm0{k7},ymm1
+    vcvtdq2pd zmm0{k7}{z},ymm1
+    vcvtdq2pd zmm0{k7},yword ptr [rcx]
+    vcvtdq2pd zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vcvtdq2pd zmm0{k7},dword ptr [rcx]{1to8}
+    vcvtdq2pd zmm0{k7},yword ptr [rdx+0xfe0]
+    vcvtdq2pd zmm0{k7},yword ptr [rdx+0x1000]
+    vcvtdq2pd zmm0{k7},yword ptr [rdx-0x1000]
+    vcvtdq2pd zmm0{k7},yword ptr [rdx-0x1020]
+    vcvtdq2pd zmm0{k7},dword ptr [rdx+0x1fc]{1to8}
+    vcvtdq2pd zmm0{k7},dword ptr [rdx+0x200]{1to8}
+    vcvtdq2pd zmm0{k7},dword ptr [rdx-0x200]{1to8}
+    vcvtdq2pd zmm0{k7},dword ptr [rdx-0x204]{1to8}
+
+    vcvtdq2ps xmm0,xmm1
+    vcvtdq2ps xmm0,[rax]
+    vcvtdq2ps ymm0,ymm1
+    vcvtdq2ps ymm0,[rax]
+    vcvtdq2ps zmm0,zmm1
+    vcvtdq2ps zmm0{k7},zmm1
+    vcvtdq2ps zmm0{k7}{z},zmm1
+    vcvtdq2ps zmm0,zmm1,{rn-sae}
+    vcvtdq2ps zmm0,zmm1,{ru-sae}
+    vcvtdq2ps zmm0,zmm1,{rd-sae}
+    vcvtdq2ps zmm0,zmm1,{rz-sae}
+    vcvtdq2ps zmm0,zword ptr [rcx]
+    vcvtdq2ps zmm0,zword ptr [rax+r14*8+0x123]
+    vcvtdq2ps zmm0,dword ptr [rcx]{1to16}
+    vcvtdq2ps zmm0,zword ptr [rdx+0x1fc0]
+    vcvtdq2ps zmm0,zword ptr [rdx+0x2000]
+    vcvtdq2ps zmm0,zword ptr [rdx-0x2000]
+    vcvtdq2ps zmm0,zword ptr [rdx-0x2040]
+    vcvtdq2ps zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvtdq2ps zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvtdq2ps zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvtdq2ps zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vcvtpd2dq xmm0,xmm1
+    vcvtpd2dq xmm0,oword ptr [rax]
+    vcvtpd2dq xmm0,ymm1
+    vcvtpd2dq xmm0,yword ptr [rax]
+    vcvtpd2dq ymm0{k7},zmm1
+    vcvtpd2dq ymm0{k7}{z},zmm1
+    vcvtpd2dq ymm0{k7},zmm1,{rn-sae}
+    vcvtpd2dq ymm0{k7},zmm1,{ru-sae}
+    vcvtpd2dq ymm0{k7},zmm1,{rd-sae}
+    vcvtpd2dq ymm0{k7},zmm1,{rz-sae}
+    vcvtpd2dq ymm0{k7},zword ptr [rcx]
+    vcvtpd2dq ymm0{k7},zword ptr [rax+r14*8+0x123]
+    vcvtpd2dq ymm0{k7},qword ptr [rcx]{1to8}
+    vcvtpd2dq ymm0{k7},zword ptr [rdx+0x1fc0]
+    vcvtpd2dq ymm0{k7},zword ptr [rdx+0x2000]
+    vcvtpd2dq ymm0{k7},zword ptr [rdx-0x2000]
+    vcvtpd2dq ymm0{k7},zword ptr [rdx-0x2040]
+    vcvtpd2dq ymm0{k7},qword ptr [rdx+0x3f8]{1to8}
+    vcvtpd2dq ymm0{k7},qword ptr [rdx+0x400]{1to8}
+    vcvtpd2dq ymm0{k7},qword ptr [rdx-0x400]{1to8}
+    vcvtpd2dq ymm0{k7},qword ptr [rdx-0x408]{1to8}
+
+    vcvtpd2ps xmm0,xmm1
+    vcvtpd2ps xmm0,oword ptr [rax]
+    vcvtpd2ps xmm0,ymm1
+    vcvtpd2ps xmm0,yword ptr [rax]
+    vcvtpd2ps ymm0{k7},zmm1
+    vcvtpd2ps ymm0{k7}{z},zmm1
+    vcvtpd2ps ymm0{k7},zmm1,{rn-sae}
+    vcvtpd2ps ymm0{k7},zmm1,{ru-sae}
+    vcvtpd2ps ymm0{k7},zmm1,{rd-sae}
+    vcvtpd2ps ymm0{k7},zmm1,{rz-sae}
+    vcvtpd2ps ymm0{k7},zword ptr [rcx]
+    vcvtpd2ps ymm0{k7},zword ptr [rax+r14*8+0x123]
+    vcvtpd2ps ymm0{k7},qword ptr [rcx]{1to8}
+    vcvtpd2ps ymm0{k7},zword ptr [rdx+0x1fc0]
+    vcvtpd2ps ymm0{k7},zword ptr [rdx+0x2000]
+    vcvtpd2ps ymm0{k7},zword ptr [rdx-0x2000]
+    vcvtpd2ps ymm0{k7},zword ptr [rdx-0x2040]
+    vcvtpd2ps ymm0{k7},qword ptr [rdx+0x3f8]{1to8}
+    vcvtpd2ps ymm0{k7},qword ptr [rdx+0x400]{1to8}
+    vcvtpd2ps ymm0{k7},qword ptr [rdx-0x400]{1to8}
+    vcvtpd2ps ymm0{k7},qword ptr [rdx-0x408]{1to8}
+
+    vcvtsd2ss xmm0{k7},xmm1,xmm2
+    vcvtsd2ss xmm0{k7}{z},xmm1,xmm2
+    vcvtsd2ss xmm0{k7},xmm1,xmm2,{rn-sae}
+    vcvtsd2ss xmm0{k7},xmm1,xmm2,{ru-sae}
+    vcvtsd2ss xmm0{k7},xmm1,xmm2,{rd-sae}
+    vcvtsd2ss xmm0{k7},xmm1,xmm2,{rz-sae}
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rcx]
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rax+r14*8+0x123]
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vcvtsd2ss xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vcvtsi2sd xmm0,xmm1,eax
+    vcvtsi2sd xmm0,xmm1,eax
+    vcvtsi2sd xmm0,xmm1,ebp
+    vcvtsi2sd xmm0,xmm1,r13d
+    vcvtsi2sd xmm0,xmm1,dword ptr [rax]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rcx]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rax+r14*8+0x123]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rdx+0x1fc]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rdx+0x200]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rdx-0x200]
+    vcvtsi2sd xmm0,xmm1,dword ptr [rdx-0x204]
+    vcvtsi2sd xmm0,xmm1,rax
+    vcvtsi2sd xmm0,xmm1,r8
+    vcvtsi2sd xmm0,xmm1,qword ptr [rcx]
+    vcvtsi2sd xmm0,xmm1,qword ptr [rax+r14*8+0x123]
+    vcvtsi2sd xmm0,xmm1,qword ptr [rdx+0x3f8]
+    vcvtsi2sd xmm0,xmm1,qword ptr [rdx+0x400]
+    vcvtsi2sd xmm0,xmm1,qword ptr [rdx-0x400]
+    vcvtsi2sd xmm0,xmm1,qword ptr [rdx-0x408]
+
+    vcvtsi2ss xmm0,xmm1,eax
+    vcvtsi2ss xmm0,xmm1,eax
+    vcvtsi2ss xmm0,xmm1,ebp
+    vcvtsi2ss xmm0,xmm1,r13d
+    vcvtsi2ss xmm0,xmm1,dword ptr [rax]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rcx]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rax+r14*8+0x123]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rdx+0x1fc]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rdx+0x200]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rdx-0x200]
+    vcvtsi2ss xmm0,xmm1,dword ptr [rdx-0x204]
+    vcvtsi2ss xmm0,xmm1,rax
+    vcvtsi2ss xmm0,xmm1,r8
+    vcvtsi2ss xmm0,xmm1,qword ptr [rcx]
+    vcvtsi2ss xmm0,xmm1,qword ptr [rax+r14*8+0x123]
+    vcvtsi2ss xmm0,xmm1,qword ptr [rdx+0x3f8]
+    vcvtsi2ss xmm0,xmm1,qword ptr [rdx+0x400]
+    vcvtsi2ss xmm0,xmm1,qword ptr [rdx-0x400]
+    vcvtsi2ss xmm0,xmm1,qword ptr [rdx-0x408]
+
+    vcvtss2sd xmm0,xmm1,xmm2
+    vcvtss2sd xmm0,xmm1,dword ptr [rax]
+    vcvtss2sd xmm0{k7},xmm1,xmm2
+    vcvtss2sd xmm0{k7}{z},xmm1,xmm2
+    vcvtss2sd xmm0{k7},xmm1,xmm2,{sae}
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rcx]
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rax+r14*8+0x123]
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vcvtss2sd xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vcvtss2si eax,xmm1
+    vextractps eax,xmm1,1
+    vextractps [rax],xmm1,1
+    vextractps dword ptr [rcx],xmm1,0x7b
+    vextractps dword ptr [rax+r14*8+0x123],xmm1,0x7b
+    vextractps dword ptr [rdx+0x1fc],xmm1,0x7b
+    vextractps dword ptr [rdx+0x200],xmm1,0x7b
+    vextractps dword ptr [rdx-0x200],xmm1,0x7b
+    vextractps dword ptr [rdx-0x204],xmm1,0x7b
+
+    vinsertps xmm1,xmm2,xmm3,7
+    vinsertps xmm0,xmm1,xmm3,0
+    vinsertps xmm0,xmm1,xmm2,0xab
+    vinsertps xmm0,xmm1,xmm2,0x7b
+    vinsertps xmm0,xmm1,[rax],1
+    vinsertps xmm0,xmm1,dword ptr [rcx],0x7b
+    vinsertps xmm0,xmm1,dword ptr [rax+r14*8+0x123],0x7b
+    vinsertps xmm0,xmm1,dword ptr [rdx+0x1fc],0x7b
+    vinsertps xmm0,xmm1,dword ptr [rdx+0x200],0x7b
+    vinsertps xmm0,xmm1,dword ptr [rdx-0x200],0x7b
+    vinsertps xmm0,xmm1,dword ptr [rdx-0x204],0x7b
+
+    vmovapd xmm0,xmm1
+    vmovapd xmm0,oword ptr [rax]
+    vmovapd oword ptr [rax],xmm21
+    vmovapd ymm0,ymm1
+    vmovapd ymm0,yword ptr [rax]
+    vmovapd yword ptr [rax],ymm1
+    vmovapd zmm2{k1}{z},zmm1
+    vmovapd zmm0,zmm1
+    vmovapd zmm0{k7},zmm1
+    vmovapd zmm0{k7}{z},zmm1
+    vmovapd zmm0,zword ptr [rcx]
+    vmovapd zmm0,zword ptr [rax+r14*8+0x123]
+    vmovapd zmm0,zword ptr [rdx+0x1fc0]
+    vmovapd zmm0,zword ptr [rdx+0x2000]
+    vmovapd zmm0,zword ptr [rdx-0x2000]
+    vmovapd zmm0,zword ptr [rdx-0x2040]
+
+    vmovaps xmm0,xmm1
+    vmovaps xmm0,oword ptr [rax]
+    vmovaps oword ptr [rax],xmm1
+    vmovaps ymm0,ymm1
+    vmovaps ymm0,yword ptr [rax]
+    vmovaps yword ptr [rax],ymm1
+    vmovaps zmm2{k1}{z},zmm1
+    vmovaps zmm0,zmm1
+    vmovaps zmm0{k7},zmm1
+    vmovaps zmm0{k7}{z},zmm1
+    vmovaps zmm0,zword ptr [rcx]
+    vmovaps zmm0,zword ptr [rax+r14*8+0x123]
+    vmovaps zmm0,zword ptr [rdx+0x1fc0]
+    vmovaps zmm0,zword ptr [rdx+0x2000]
+    vmovaps zmm0,zword ptr [rdx-0x2000]
+    vmovaps zmm0,zword ptr [rdx-0x2040]
+
+    vmovapd zword ptr [rcx],zmm0
+    vmovapd zword ptr [rcx]{k7},zmm0
+    vmovapd zword ptr [rax+r14*8+0x123],zmm0
+    vmovapd zword ptr [rdx+0x1fc0],zmm0
+    vmovapd zword ptr [rdx+0x2000],zmm0
+    vmovapd zword ptr [rdx-0x2000],zmm0
+    vmovapd zword ptr [rdx-0x2040],zmm0
+    vmovaps zword ptr [rcx],zmm0
+    vmovaps zword ptr [rcx]{k7},zmm0
+    vmovaps zword ptr [rax+r14*8+0x123],zmm0
+    vmovaps zword ptr [rdx+0x1fc0],zmm0
+    vmovaps zword ptr [rdx+0x2000],zmm0
+    vmovaps zword ptr [rdx-0x2000],zmm0
+    vmovaps zword ptr [rdx-0x2040],zmm0
+
+    vmovhlps xmm0,xmm1,xmm2
+    vmovhlps xmm0,xmm1,xmm2
+
+    vmovlhps xmm0,xmm1,xmm2
+    vmovlhps xmm0,xmm1,xmm2
+
+    vmovsd xmm0{k7},qword ptr [rcx]
+    vmovsd xmm0{k7}{z},qword ptr [rcx]
+    vmovsd xmm0{k7},qword ptr [rax+r14*8+0x123]
+    vmovsd xmm0{k7},qword ptr [rdx+0x3f8]
+    vmovsd xmm0{k7},qword ptr [rdx+0x400]
+    vmovsd xmm0{k7},qword ptr [rdx-0x400]
+    vmovsd xmm0{k7},qword ptr [rdx-0x408]
+    vmovsd qword ptr [rcx]{k7},xmm0
+    vmovsd qword ptr [rax+r14*8+0x123]{k7},xmm0
+    vmovsd qword ptr [rdx+0x3f8]{k7},xmm0
+    vmovsd qword ptr [rdx+0x400]{k7},xmm0
+    vmovsd qword ptr [rdx-0x400]{k7},xmm0
+    vmovsd qword ptr [rdx-0x408]{k7},xmm0
+    vmovsd xmm0{k7},xmm1,xmm2
+    vmovsd xmm0{k7}{z},xmm1,xmm2
+    vmovsd xmm0,xmm1, xmm2
+    vmovsd xmm0,qword ptr [rax]
+    vmovsd qword ptr [rax],xmm0
+    vmovsd xmm0,qword ptr [rbx]
+    vmovsd qword ptr [rbx],xmm0
+
+    vmovss xmm0{k7},dword ptr [rcx]
+    vmovss xmm0{k7}{z},dword ptr [rcx]
+    vmovss xmm0{k7},dword ptr [rax+r14*8+0x123]
+    vmovss xmm0{k7},dword ptr [rdx+0x1fc]
+    vmovss xmm0{k7},dword ptr [rdx+0x200]
+    vmovss xmm0{k7},dword ptr [rdx-0x200]
+    vmovss xmm0{k7},dword ptr [rdx-0x204]
+    vmovss dword ptr [rcx]{k7},xmm0
+    vmovss dword ptr [rax+r14*8+0x123]{k7},xmm0
+    vmovss dword ptr [rdx+0x1fc]{k7},xmm0
+    vmovss dword ptr [rdx+0x200]{k7},xmm0
+    vmovss dword ptr [rdx-0x200]{k7},xmm0
+    vmovss dword ptr [rdx-0x204]{k7},xmm0
+    vmovss xmm0{k7},xmm1,xmm2
+    vmovss xmm0{k7}{z},xmm1,xmm2
+    vmovss xmm0,xmm1,xmm2
+    vmovss xmm0,dword ptr [rax]
+    vmovss dword ptr [rax],xmm0
+    vmovss xmm0,dword ptr [rbx]
+    vmovss dword ptr [rbx],xmm0
+
+    vmovntdq yword ptr [rax],ymm0
+    vmovntdq zword ptr [rcx],zmm0
+    vmovntdq zword ptr [rax+r14*8+0x123],zmm0
+    vmovntdq zword ptr [rdx+0x1fc0],zmm0
+    vmovntdq zword ptr [rdx+0x2000],zmm0
+    vmovntdq zword ptr [rdx-0x2000],zmm0
+    vmovntdq zword ptr [rdx-0x2040],zmm0
+    vmovntdq oword ptr [rax],xmm0
+
+    vmovntdqa xmm0,oword ptr [rax]
+    vmovntdqa ymm0,yword ptr [rax]
+    vmovntdqa zmm0,zword ptr [rcx]
+    vmovntdqa zmm0,zword ptr [rax+r14*8+0x123]
+    vmovntdqa zmm0,zword ptr [rdx+0x1fc0]
+    vmovntdqa zmm0,zword ptr [rdx+0x2000]
+    vmovntdqa zmm0,zword ptr [rdx-0x2000]
+    vmovntdqa zmm0,zword ptr [rdx-0x2040]
+
+    vmovntpd oword ptr [rax],xmm0
+    vmovntpd yword ptr [rax],ymm0
+    vmovntpd zword ptr [rcx],zmm0
+    vmovntpd zword ptr [rax+r14*8+0x123],zmm0
+    vmovntpd zword ptr [rdx+0x1fc0],zmm0
+    vmovntpd zword ptr [rdx+0x2000],zmm0
+    vmovntpd zword ptr [rdx-0x2000],zmm0
+    vmovntpd zword ptr [rdx-0x2040],zmm0
+
+    vmovntps oword ptr [rax],xmm0
+    vmovntps yword ptr [rax],ymm0
+    vmovntps zword ptr [rcx],zmm0
+    vmovntps zword ptr [rax+r14*8+0x123],zmm0
+    vmovntps zword ptr [rdx+0x1fc0],zmm0
+    vmovntps zword ptr [rdx+0x2000],zmm0
+    vmovntps zword ptr [rdx-0x2000],zmm0
+    vmovntps zword ptr [rdx-0x2040],zmm0
+
+    vmovshdup zmm0,zmm1
+    vmovshdup zmm0{k7},zmm1
+    vmovshdup zmm0{k7}{z},zmm1
+    vmovshdup zmm0,zword ptr [rcx]
+    vmovshdup zmm0,zword ptr [rax+r14*8+0x123]
+    vmovshdup zmm0,zword ptr [rdx+0x1fc0]
+    vmovshdup zmm0,zword ptr [rdx+0x2000]
+    vmovshdup zmm0,zword ptr [rdx-0x2000]
+    vmovshdup zmm0,zword ptr [rdx-0x2040]
+
+    vmovsldup zmm0,zmm1
+    vmovsldup zmm0{k7},zmm1
+    vmovsldup zmm0{k7}{z},zmm1
+    vmovsldup zmm0,zword ptr [rcx]
+    vmovsldup zmm0,zword ptr [rax+r14*8+0x123]
+    vmovsldup zmm0,zword ptr [rdx+0x1fc0]
+    vmovsldup zmm0,zword ptr [rdx+0x2000]
+    vmovsldup zmm0,zword ptr [rdx-0x2000]
+    vmovsldup zmm0,zword ptr [rdx-0x2040]
+
+    vmovupd xmm0,xmm1
+    vmovupd xmm0,oword ptr [rax]
+    vmovupd oword ptr [rax],xmm21
+    vmovupd ymm0,ymm1
+    vmovupd ymm0,yword ptr [rax]
+    vmovupd yword ptr [rax],ymm1
+    vmovupd zmm1{k1}{z},zmm2
+    vmovupd zmm0,zmm1
+    vmovupd zmm0{k7},zmm1
+    vmovupd zmm0{k7}{z},zmm1
+    vmovupd zmm0,zword ptr [rcx]
+    vmovupd zmm0,zword ptr [rax+r14*8+0x123]
+    vmovupd zmm0,zword ptr [rdx+0x1fc0]
+    vmovupd zmm0,zword ptr [rdx+0x2000]
+    vmovupd zmm0,zword ptr [rdx-0x2000]
+    vmovupd zmm0,zword ptr [rdx-0x2040]
+
+    vmovups xmm0,xmm1
+    vmovups xmm0,oword ptr [rax]
+    vmovups oword ptr [rax],xmm1
+    vmovups ymm0,ymm1
+    vmovups ymm0,yword ptr [rax]
+    vmovups yword ptr [rax],ymm1
+    vmovups zmm1{k1}{z},zmm2
+    vmovups zmm0,zmm1
+    vmovups zmm0{k7},zmm1
+    vmovups zmm0{k7}{z},zmm1
+    vmovups zmm0,zword ptr [rcx]
+    vmovups zmm0,zword ptr [rax+r14*8+0x123]
+    vmovups zmm0,zword ptr [rdx+0x1fc0]
+    vmovups zmm0,zword ptr [rdx+0x2000]
+    vmovups zmm0,zword ptr [rdx-0x2000]
+    vmovups zmm0,zword ptr [rdx-0x2040]
+
+    vmovupd zword ptr [rcx],zmm0
+    vmovupd zword ptr [rcx]{k7},zmm0
+    vmovupd zword ptr [rax+r14*8+0x123],zmm0
+    vmovupd zword ptr [rdx+0x1fc0],zmm0
+    vmovupd zword ptr [rdx+0x2000],zmm0
+    vmovupd zword ptr [rdx-0x2000],zmm0
+    vmovupd zword ptr [rdx-0x2040],zmm0
+
+    vmovups zword ptr [rcx],zmm0
+    vmovups zword ptr [rcx]{k7},zmm0
+    vmovups zword ptr [rax+r14*8+0x123],zmm0
+    vmovups zword ptr [rdx+0x1fc0],zmm0
+    vmovups zword ptr [rdx+0x2000],zmm0
+    vmovups zword ptr [rdx-0x2000],zmm0
+    vmovups zword ptr [rdx-0x2040],zmm0
+
+    vpabsb xmm0,xmm1
+    vpabsb xmm0,[rax]
+    vpabsw xmm0,xmm1
+    vpabsw xmm0,[rax]
+    vpabsd xmm0,xmm1
+    vpabsd xmm0,[rax]
+
+    vpabsd zmm0,zmm1
+    vpabsd zmm0{k7},zmm1
+    vpabsd zmm0{k7}{z},zmm1
+    vpabsd zmm0,zword ptr [rcx]
+    vpabsd zmm0,zword ptr [rax+r14*8+0x123]
+    vpabsd zmm0,dword ptr [rcx]{1to16}
+    vpabsd zmm0,zword ptr [rdx+0x1fc0]
+    vpabsd zmm0,zword ptr [rdx+0x2000]
+    vpabsd zmm0,zword ptr [rdx-0x2000]
+    vpabsd zmm0,zword ptr [rdx-0x2040]
+    vpabsd zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vpabsd zmm0,dword ptr [rdx+0x200]{1to16}
+    vpabsd zmm0,dword ptr [rdx-0x200]{1to16}
+    vpabsd zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vpaddb   xmm0,xmm1,xmm2
+    vpaddw   xmm0,xmm1,xmm2
+    vpaddd   xmm0,xmm1,xmm2
+    vpaddq   xmm0,xmm1,xmm2
+    vpaddsb  xmm0,xmm1,xmm2
+    vpaddsw  xmm0,xmm1,xmm2
+    vpaddusb xmm0,xmm1,xmm2
+    vpaddusw xmm0,xmm1,xmm2
+    vpavgb   xmm0,xmm1,xmm2
+    vpavgw   xmm0,xmm1,xmm2
+
+    vpaddb   ymm0,ymm1,ymm2
+    vpaddw   ymm0,ymm1,ymm2
+    vpaddd   ymm0,ymm1,ymm2
+    vpaddq   ymm0,ymm1,ymm2
+    vpaddsb  ymm0,ymm1,ymm2
+    vpaddsw  ymm0,ymm1,ymm2
+    vpaddusb ymm0,ymm1,ymm2
+    vpaddusw ymm0,ymm1,ymm2
+    vpavgb   ymm0,ymm1,ymm2
+    vpavgw   ymm0,ymm1,ymm2
+
+    vpaddd zmm0,zmm1,zmm2
+    vpaddd zmm0{k7},zmm1,zmm2
+    vpaddd zmm0{k7}{z},zmm1,zmm2
+    vpaddd zmm0,zmm1,zword ptr [rcx]
+    vpaddd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpaddd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpaddd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpaddd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpaddd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpaddd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpaddd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpaddd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpaddd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpaddd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpaddq zmm0,zmm1,zmm2
+    vpaddq zmm0{k7},zmm1,zmm2
+    vpaddq zmm0{k7}{z},zmm1,zmm2
+    vpaddq zmm0,zmm1,zword ptr [rcx]
+    vpaddq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpaddq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpaddq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpaddq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpaddq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpaddq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpaddq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpaddq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpaddq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpaddq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpcmpeqd k5,zmm0,zmm1
+    vpcmpeqd k5{k7},zmm0,zmm1
+    vpcmpeqd k5,zmm0,zword ptr [rcx]
+    vpcmpeqd k5,zmm0,zword ptr [rax+r14*8+0x123]
+    vpcmpeqd k5,zmm0,dword ptr [rcx]{1to16}
+    vpcmpeqd k5,zmm0,zword ptr [rdx+0x1fc0]
+    vpcmpeqd k5,zmm0,zword ptr [rdx+0x2000]
+    vpcmpeqd k5,zmm0,zword ptr [rdx-0x2000]
+    vpcmpeqd k5,zmm0,zword ptr [rdx-0x2040]
+    vpcmpeqd k5,zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vpcmpeqd k5,zmm0,dword ptr [rdx+0x200]{1to16}
+    vpcmpeqd k5,zmm0,dword ptr [rdx-0x200]{1to16}
+    vpcmpeqd k5,zmm0,dword ptr [rdx-0x204]{1to16}
+    vpcmpeqq k5,zmm0,zmm1
+    vpcmpeqq k5{k7},zmm0,zmm1
+    vpcmpeqq k5,zmm0,zword ptr [rcx]
+    vpcmpeqq k5,zmm0,zword ptr [rax+r14*8+0x123]
+    vpcmpeqq k5,zmm0,zword ptr [rdx+0x1fc0]
+    vpcmpeqq k5,zmm0,zword ptr [rdx+0x2000]
+    vpcmpeqq k5,zmm0,zword ptr [rdx-0x2000]
+    vpcmpeqq k5,zmm0,zword ptr [rdx-0x2040]
+    vpcmpgtd k5,zmm0,zmm1
+    vpcmpgtd k5{k7},zmm0,zmm1
+    vpcmpgtd k5,zmm0,zword ptr [rcx]
+    vpcmpgtd k5,zmm0,zword ptr [rax+r14*8+0x123]
+    vpcmpgtd k5,zmm0,dword ptr [rcx]{1to16}
+    vpcmpgtd k5,zmm0,zword ptr [rdx+0x1fc0]
+    vpcmpgtd k5,zmm0,zword ptr [rdx+0x2000]
+    vpcmpgtd k5,zmm0,zword ptr [rdx-0x2000]
+    vpcmpgtd k5,zmm0,zword ptr [rdx-0x2040]
+    vpcmpgtd k5,zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vpcmpgtd k5,zmm0,dword ptr [rdx+0x200]{1to16}
+    vpcmpgtd k5,zmm0,dword ptr [rdx-0x200]{1to16}
+    vpcmpgtd k5,zmm0,dword ptr [rdx-0x204]{1to16}
+    vpcmpgtq k5,zmm0,zmm1
+    vpcmpgtq k5{k7},zmm0,zmm1
+    vpcmpgtq k5,zmm0,zword ptr [rcx]
+    vpcmpgtq k5,zmm0,zword ptr [rax+r14*8+0x123]
+    vpcmpgtq k5,zmm0,qword ptr [rcx]{1to8}
+    vpcmpgtq k5,zmm0,zword ptr [rdx+0x1fc0]
+    vpcmpgtq k5,zmm0,zword ptr [rdx+0x2000]
+    vpcmpgtq k5,zmm0,zword ptr [rdx-0x2000]
+    vpcmpgtq k5,zmm0,zword ptr [rdx-0x2040]
+    vpcmpgtq k5,zmm0,qword ptr [rdx+0x3f8]{1to8}
+    vpcmpgtq k5,zmm0,qword ptr [rdx+0x400]{1to8}
+    vpcmpgtq k5,zmm0,qword ptr [rdx-0x400]{1to8}
+    vpcmpgtq k5,zmm0,qword ptr [rdx-0x408]{1to8}
+
+    vpmaxsd zmm0,zmm1,zmm2
+    vpmaxsd zmm0{k7},zmm1,zmm2
+    vpmaxsd zmm0{k7}{z},zmm1,zmm2
+    vpmaxsd zmm0,zmm1,zword ptr [rcx]
+    vpmaxsd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpmaxsd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpmaxsd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmaxsd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmaxsd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmaxsd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpmaxsd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpmaxsd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpmaxsd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpmaxsd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpmaxud zmm0,zmm1,zmm2
+    vpmaxud zmm0{k7},zmm1,zmm2
+    vpmaxud zmm0{k7}{z},zmm1,zmm2
+    vpmaxud zmm0,zmm1,zword ptr [rcx]
+    vpmaxud zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpmaxud zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpmaxud zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmaxud zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmaxud zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmaxud zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpmaxud zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpmaxud zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpmaxud zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpmaxud zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpminsd zmm0,zmm1,zmm2
+    vpminsd zmm0{k7},zmm1,zmm2
+    vpminsd zmm0{k7}{z},zmm1,zmm2
+    vpminsd zmm0,zmm1,zword ptr [rcx]
+    vpminsd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpminsd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpminsd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpminsd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpminsd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpminsd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpminsd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpminsd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpminsd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpminsd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpminud zmm0,zmm1,zmm2
+    vpminud zmm0{k7},zmm1,zmm2
+    vpminud zmm0{k7}{z},zmm1,zmm2
+    vpminud zmm0,zmm1,zword ptr [rcx]
+    vpminud zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpminud zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpminud zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpminud zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpminud zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpminud zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpminud zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpminud zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpminud zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpminud zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpmovsxbw xmm0,xmm1
+    vpmovsxbw xmm0,[rax]
+    vpmovsxbd xmm0,xmm1
+    vpmovsxbd xmm0,[rax]
+    vpmovsxbq xmm0,xmm1
+    vpmovsxbq xmm0,[rax]
+    vpmovsxwd xmm0,xmm1
+    vpmovsxwd xmm0,[rax]
+    vpmovsxwq xmm0,xmm1
+    vpmovsxwq xmm0,[rax]
+    vpmovsxdq xmm0,xmm1
+    vpmovsxdq xmm0,[rax]
+
+    vpmovsxbd zmm0{k7},xmm1
+    vpmovsxbd zmm0{k7}{z},xmm1
+    vpmovsxbd zmm0{k7},oword ptr [rcx]
+    vpmovsxbd zmm0{k7},oword ptr [rax+r14*8+0x123]
+    vpmovsxbd zmm0{k7},oword ptr [rdx+0x7f0]
+    vpmovsxbd zmm0{k7},oword ptr [rdx+0x800]
+    vpmovsxbd zmm0{k7},oword ptr [rdx-0x800]
+    vpmovsxbd zmm0{k7},oword ptr [rdx-0x810]
+    vpmovsxbq zmm0{k7},xmm1
+    vpmovsxbq zmm0{k7}{z},xmm1
+    vpmovsxbq zmm0{k7},qword ptr [rcx]
+    vpmovsxbq zmm0{k7},qword ptr [rax+r14*8+0x123]
+    vpmovsxbq zmm0{k7},qword ptr [rdx+0x3f8]
+    vpmovsxbq zmm0{k7},qword ptr [rdx+0x400]
+    vpmovsxbq zmm0{k7},qword ptr [rdx-0x400]
+    vpmovsxbq zmm0{k7},qword ptr [rdx-0x408]
+    vpmovsxdq zmm0{k7},ymm1
+    vpmovsxdq zmm0{k7}{z},ymm1
+    vpmovsxdq zmm0{k7},yword ptr [rcx]
+    vpmovsxdq zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vpmovsxdq zmm0{k7},yword ptr [rdx+0xfe0]
+    vpmovsxdq zmm0{k7},yword ptr [rdx+0x1000]
+    vpmovsxdq zmm0{k7},yword ptr [rdx-0x1000]
+    vpmovsxdq zmm0{k7},yword ptr [rdx-0x1020]
+    vpmovsxwd zmm0{k7},ymm1
+    vpmovsxwd zmm0{k7}{z},ymm1
+    vpmovsxwd zmm0{k7},yword ptr [rcx]
+    vpmovsxwd zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vpmovsxwd zmm0{k7},yword ptr [rdx+0xfe0]
+    vpmovsxwd zmm0{k7},yword ptr [rdx+0x1000]
+    vpmovsxwd zmm0{k7},yword ptr [rdx-0x1000]
+    vpmovsxwd zmm0{k7},yword ptr [rdx-0x1020]
+    vpmovsxwq zmm0{k7},xmm1
+    vpmovsxwq zmm0{k7}{z},xmm1
+    vpmovsxwq zmm0{k7},oword ptr [rcx]
+    vpmovsxwq zmm0{k7},oword ptr [rax+r14*8+0x123]
+    vpmovsxwq zmm0{k7},oword ptr [rdx+0x7f0]
+    vpmovsxwq zmm0{k7},oword ptr [rdx+0x800]
+    vpmovsxwq zmm0{k7},oword ptr [rdx-0x800]
+    vpmovsxwq zmm0{k7},oword ptr [rdx-0x810]
+    vpmovzxbd zmm0{k7},xmm1
+    vpmovzxbd zmm0{k7}{z},xmm1
+    vpmovzxbd zmm0{k7},oword ptr [rcx]
+    vpmovzxbd zmm0{k7},oword ptr [rax+r14*8+0x123]
+    vpmovzxbd zmm0{k7},oword ptr [rdx+0x7f0]
+    vpmovzxbd zmm0{k7},oword ptr [rdx+0x800]
+    vpmovzxbd zmm0{k7},oword ptr [rdx-0x800]
+    vpmovzxbd zmm0{k7},oword ptr [rdx-0x810]
+    vpmovzxbq zmm0{k7},xmm1
+    vpmovzxbq zmm0{k7}{z},xmm1
+    vpmovzxbq zmm0{k7},qword ptr [rcx]
+    vpmovzxbq zmm0{k7},qword ptr [rax+r14*8+0x123]
+    vpmovzxbq zmm0{k7},qword ptr [rdx+0x3f8]
+    vpmovzxbq zmm0{k7},qword ptr [rdx+0x400]
+    vpmovzxbq zmm0{k7},qword ptr [rdx-0x400]
+    vpmovzxbq zmm0{k7},qword ptr [rdx-0x408]
+    vpmovzxdq zmm0{k7},ymm1
+    vpmovzxdq zmm0{k7}{z},ymm1
+    vpmovzxdq zmm0{k7},yword ptr [rcx]
+    vpmovzxdq zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vpmovzxdq zmm0{k7},yword ptr [rdx+0xfe0]
+    vpmovzxdq zmm0{k7},yword ptr [rdx+0x1000]
+    vpmovzxdq zmm0{k7},yword ptr [rdx-0x1000]
+    vpmovzxdq zmm0{k7},yword ptr [rdx-0x1020]
+    vpmovzxwd zmm0{k7},ymm1
+    vpmovzxwd zmm0{k7}{z},ymm1
+    vpmovzxwd zmm0{k7},yword ptr [rcx]
+    vpmovzxwd zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vpmovzxwd zmm0{k7},yword ptr [rdx+0xfe0]
+    vpmovzxwd zmm0{k7},yword ptr [rdx+0x1000]
+    vpmovzxwd zmm0{k7},yword ptr [rdx-0x1000]
+    vpmovzxwd zmm0{k7},yword ptr [rdx-0x1020]
+    vpmovzxwq zmm0{k7},xmm1
+    vpmovzxwq zmm0{k7}{z},xmm1
+    vpmovzxwq zmm0{k7},oword ptr [rcx]
+    vpmovzxwq zmm0{k7},oword ptr [rax+r14*8+0x123]
+    vpmovzxwq zmm0{k7},oword ptr [rdx+0x7f0]
+    vpmovzxwq zmm0{k7},oword ptr [rdx+0x800]
+    vpmovzxwq zmm0{k7},oword ptr [rdx-0x800]
+    vpmovzxwq zmm0{k7},oword ptr [rdx-0x810]
+
+    vpmovzxbw xmm0,xmm1
+    vpmovzxbd xmm0,xmm1
+    vpmovzxbq xmm0,xmm1
+    vpmovzxwd xmm0,xmm1
+    vpmovzxwq xmm0,xmm1
+    vpmovzxdq xmm0,xmm1
+    vpmuldq xmm0,xmm1,xmm2
+    vpmulld xmm0,xmm0,xmm1
+
+    vpmovzxbw xmm0,qword ptr [rax]
+    vpmovzxbd xmm0,dword ptr [rax]
+    vpmovzxbq xmm0,word	 ptr [rax]
+    vpmovzxwd xmm0,qword ptr [rax]
+    vpmovzxwq xmm0,dword ptr [rax]
+    vpmovzxdq xmm0,qword ptr [rax]
+    vpmuldq xmm0,xmm1,oword ptr [rax]
+    vpmulld xmm0,xmm1,oword ptr [rax]
+
+    vpmuldq zmm0,zmm1,zmm2
+    vpmuldq zmm0{k7},zmm1,zmm2
+    vpmuldq zmm0{k7}{z},zmm1,zmm2
+    vpmuldq zmm0,zmm1,zword ptr [rcx]
+    vpmuldq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpmuldq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpmuldq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmuldq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmuldq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmuldq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpmuldq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpmuldq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpmuldq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpmuldq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vpmulld zmm0,zmm1,zmm2
+    vpmulld zmm0{k7},zmm1,zmm2
+    vpmulld zmm0{k7}{z},zmm1,zmm2
+    vpmulld zmm0,zmm1,zword ptr [rcx]
+    vpmulld zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpmulld zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpmulld zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmulld zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmulld zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmulld zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpmulld zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpmulld zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpmulld zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpmulld zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vpmuludq zmm0,zmm1,zmm2
+    vpmuludq zmm0{k7},zmm1,zmm2
+    vpmuludq zmm0{k7}{z},zmm1,zmm2
+    vpmuludq zmm0,zmm1,zword ptr [rcx]
+    vpmuludq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpmuludq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpmuludq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmuludq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmuludq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmuludq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpmuludq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpmuludq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpmuludq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpmuludq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpshufd zmm0,zmm1,0xab
+    vpshufd zmm0{k7},zmm1,0xab
+    vpshufd zmm0{k7}{z},zmm1,0xab
+    vpshufd zmm0,zmm1,0x7b
+    vpshufd zmm0,zword ptr [rcx],0x7b
+    vpshufd zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpshufd zmm0,dword ptr [rcx]{1to16},0x7b
+    vpshufd zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpshufd zmm0,zword ptr [rdx+0x2000],0x7b
+    vpshufd zmm0,zword ptr [rdx-0x2000],0x7b
+    vpshufd zmm0,zword ptr [rdx-0x2040],0x7b
+    vpshufd zmm0,dword ptr [rdx+0x1fc]{1to16},0x7b
+    vpshufd zmm0,dword ptr [rdx+0x200]{1to16},0x7b
+    vpshufd zmm0,dword ptr [rdx-0x200]{1to16},0x7b
+    vpshufd zmm0,dword ptr [rdx-0x204]{1to16},0x7b
+
+    vpslld zmm0{k7},zmm1,xmm2
+    vpslld zmm0{k7}{z},zmm1,xmm2
+    vpslld zmm0{k7},zmm1,oword ptr [rcx]
+    vpslld zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpslld zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpslld zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpslld zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpslld zmm0{k7},zmm1,oword ptr [rdx-0x810]
+    vpslld zmm0,zmm1,0xab
+    vpslld zmm0{k7},zmm1,0xab
+    vpslld zmm0{k7}{z},zmm1,0xab
+    vpslld zmm0,zmm1,0x7b
+    vpslld zmm0,zword ptr [rax+r14*8+0x123],0x7b
+
+    vpsllq zmm0{k7},zmm1,xmm2
+    vpsllq zmm0{k7}{z},zmm1,xmm2
+    vpsllq zmm0{k7},zmm1,oword ptr [rcx]
+    vpsllq zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpsllq zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpsllq zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpsllq zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpsllq zmm0{k7},zmm1,oword ptr [rdx-0x810]
+    vpsllq zmm0,zmm1,0xab
+    vpsllq zmm0{k7},zmm1,0xab
+    vpsllq zmm0{k7}{z},zmm1,0xab
+    vpsllq zmm0,zmm1,0x7b
+    vpsllq zmm0,zword ptr [rax+r14*8+0x123],0x7b
+
+    vpsrlw xmm0,xmm1,xmm2
+    vpsrlw xmm0,xmm1,[rax]
+    vpsrld xmm0,xmm1,xmm2
+    vpsrld xmm0,xmm1,[rax]
+    vpsrlq xmm0,xmm1,xmm2
+    vpsrlq xmm0,xmm1,[rax]
+    vpsraw xmm0,xmm1,xmm2
+    vpsraw xmm0,xmm1,[rax]
+    vpsrad xmm0,xmm1,xmm2
+    vpsrad xmm0,xmm1,[rax]
+    vpsllw xmm0,xmm1,xmm2
+    vpsllw xmm0,xmm1,[rax]
+    vpslld xmm0,xmm1,xmm2
+    vpslld xmm0,xmm1,[rax]
+    vpsllq xmm0,xmm1,xmm2
+    vpsllq xmm0,xmm1,[rax]
+
+    vpslldq xmm0,xmm1,1
+    vpsrldq xmm0,xmm1,2
+    vpsrlw xmm0,xmm1,3
+    vpsrld xmm0,xmm1,4
+    vpsrlq xmm0,xmm1,5
+    vpsraw xmm0,xmm1,6
+    vpsrad xmm0,xmm1,7
+    vpsllw xmm0,xmm1,8
+    vpslld xmm0,xmm1,9
+    vpsllq xmm0,xmm1,10
+
+    vpsrlw xmm0,xmm1,xmm2
+    vpsrlw xmm0,xmm1,[rax]
+    vpsrld xmm0,xmm1,xmm2
+    vpsrld xmm0,xmm1,[rax]
+    vpsrlq xmm0,xmm1,xmm2
+    vpsrlq xmm0,xmm1,[rax]
+    vpsraw xmm0,xmm1,xmm2
+    vpsraw xmm0,xmm1,[rax]
+    vpsrad xmm0,xmm1,xmm2
+    vpsrad xmm0,xmm1,[rax]
+    vpsllw xmm0,xmm1,xmm2
+    vpsllw xmm0,xmm1,[rax]
+    vpslld xmm0,xmm1,xmm2
+    vpslld xmm0,xmm1,[rax]
+    vpsllq xmm0,xmm1,xmm2
+    vpsllq xmm0,xmm1,[rax]
+
+    vpsrad zmm0{k7},zmm1,xmm2
+    vpsrad zmm0{k7}{z},zmm1,xmm2
+    vpsrad zmm0{k7},zmm1,oword ptr [rcx]
+    vpsrad zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpsrad zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpsrad zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpsrad zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpsrad zmm0{k7},zmm1,oword ptr [rdx-0x810]
+    vpsrad zmm0,zmm1,0xab
+    vpsrad zmm0{k7},zmm1,0xab
+    vpsrad zmm0{k7}{z},zmm1,0xab
+    vpsrad zmm0,zmm1,0x7b
+    vpsrad zmm0,zword ptr [rax+r14*8+0x123],0x7b
+
+    vpsrld zmm0{k7},zmm1,xmm2
+    vpsrld zmm0{k7}{z},zmm1,xmm2
+    vpsrld zmm0{k7},zmm1,oword ptr [rcx]
+    vpsrld zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpsrld zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpsrld zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpsrld zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpsrld zmm0{k7},zmm1,oword ptr [rdx-0x810]
+    vpsrld zmm0,zmm1,0xab
+    vpsrld zmm0{k7},zmm1,0xab
+    vpsrld zmm0{k7}{z},zmm1,0xab
+    vpsrld zmm0,zmm1,0x7b
+
+    vpsrlq zmm0{k7},zmm1,xmm2
+    vpsrlq zmm0{k7}{z},zmm1,xmm2
+    vpsrlq zmm0{k7},zmm1,oword ptr [rcx]
+    vpsrlq zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpsrlq zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpsrlq zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpsrlq zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpsrlq zmm0{k7},zmm1,oword ptr [rdx-0x810]
+    vpsrlq zmm0,zmm1,0xab
+    vpsrlq zmm0{k7},zmm1,0xab
+    vpsrlq zmm0{k7}{z},zmm1,0xab
+    vpsrlq zmm0,zmm1,0x7b
+
+    vpsrld zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpsrlq zmm0,zword ptr [rax+r14*8+0x123],0x7b
+
+    vcvtps2dq xmm0,xmm1
+    vcvtps2dq xmm0,oword ptr [rax]
+    vcvtps2dq ymm0,ymm1
+    vcvtps2dq ymm0,yword ptr [rax]
+    vcvtps2dq zmm0,zmm1
+    vcvtps2dq zmm0{k7},zmm1
+    vcvtps2dq zmm0{k7}{z},zmm1
+    vcvtps2dq zmm0,zmm1,{rn-sae}
+    vcvtps2dq zmm0,zmm1,{ru-sae}
+    vcvtps2dq zmm0,zmm1,{rd-sae}
+    vcvtps2dq zmm0,zmm1,{rz-sae}
+    vcvtps2dq zmm0,zword ptr [rcx]
+    vcvtps2dq zmm0,zword ptr [rax+r14*8+0x123]
+    vcvtps2dq zmm0,dword ptr [rcx]{1to16}
+    vcvtps2dq zmm0,zword ptr [rdx+0x1fc0]
+    vcvtps2dq zmm0,zword ptr [rdx+0x2000]
+    vcvtps2dq zmm0,zword ptr [rdx-0x2000]
+    vcvtps2dq zmm0,zword ptr [rdx-0x2040]
+    vcvtps2dq zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvtps2dq zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvtps2dq zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvtps2dq zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vcvtps2pd xmm0,xmm1
+    vcvtps2pd ymm0,xmm1
+    vcvtps2pd zmm0{k7},ymm1
+    vcvtps2pd zmm0{k7}{z},ymm1
+    vcvtps2pd zmm0{k7},ymm1,{sae}
+    vcvtps2pd zmm0{k7},yword ptr [rcx]
+    vcvtps2pd zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vcvtps2pd zmm0{k7},dword ptr [rcx]{1to8}
+    vcvtps2pd zmm0{k7},yword ptr [rdx+0xfe0]
+    vcvtps2pd zmm0{k7},yword ptr [rdx+0x1000]
+    vcvtps2pd zmm0{k7},yword ptr [rdx-0x1000]
+    vcvtps2pd zmm0{k7},yword ptr [rdx-0x1020]
+    vcvtps2pd zmm0{k7},dword ptr [rdx+0x1fc]{1to8}
+    vcvtps2pd zmm0{k7},dword ptr [rdx+0x200]{1to8}
+    vcvtps2pd zmm0{k7},dword ptr [rdx-0x200]{1to8}
+    vcvtps2pd zmm0{k7},dword ptr [rdx-0x204]{1to8}
+
+    vpsubd zmm0,zmm1,zmm2
+    vpsubd zmm0{k7},zmm1,zmm2
+    vpsubd zmm0{k7}{z},zmm1,zmm2
+    vpsubd zmm0,zmm1,zword ptr [rcx]
+    vpsubd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpsubd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpsubd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsubd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsubd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsubd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpsubd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpsubd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpsubd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpsubd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpsubq zmm0,zmm1,zmm2
+    vpsubq zmm0{k7},zmm1,zmm2
+    vpsubq zmm0{k7}{z},zmm1,zmm2
+    vpsubq zmm0,zmm1,zword ptr [rcx]
+    vpsubq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpsubq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpsubq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsubq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsubq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsubq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpsubq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpsubq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpsubq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpsubq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpunpckhdq zmm0,zmm1,zmm2
+    vpunpckhdq zmm0{k7},zmm1,zmm2
+    vpunpckhdq zmm0{k7}{z},zmm1,zmm2
+    vpunpckhdq zmm0,zmm1,zword ptr [rcx]
+    vpunpckhdq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpunpckhdq zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpunpckhdq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpunpckhdq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpunpckhdq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpunpckhdq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpunpckhdq zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpunpckhdq zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpunpckhdq zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpunpckhdq zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpunpckhqdq zmm0,zmm1,zmm2
+    vpunpckhqdq zmm0{k7},zmm1,zmm2
+    vpunpckhqdq zmm0{k7}{z},zmm1,zmm2
+    vpunpckhqdq zmm0,zmm1,zword ptr [rcx]
+    vpunpckhqdq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpunpckhqdq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpunpckhqdq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpunpckhqdq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpunpckhqdq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpunpckhqdq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpunpckhqdq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpunpckhqdq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpunpckhqdq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpunpckhqdq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpunpckldq zmm0,zmm1,zmm2
+    vpunpckldq zmm0{k7},zmm1,zmm2
+    vpunpckldq zmm0{k7}{z},zmm1,zmm2
+    vpunpckldq zmm0,zmm1,zword ptr [rcx]
+    vpunpckldq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpunpckldq zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpunpckldq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpunpckldq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpunpckldq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpunpckldq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpunpckldq zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpunpckldq zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpunpckldq zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpunpckldq zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpunpcklqdq zmm0,zmm1,zmm2
+    vpunpcklqdq zmm0{k7},zmm1,zmm2
+    vpunpcklqdq zmm0{k7}{z},zmm1,zmm2
+    vpunpcklqdq zmm0,zmm1,zword ptr [rcx]
+    vpunpcklqdq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpunpcklqdq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpunpcklqdq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpunpcklqdq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpunpcklqdq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpunpcklqdq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpunpcklqdq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpunpcklqdq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpunpcklqdq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpunpcklqdq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vshufpd zmm0,zmm1,zmm2,0xab
+    vshufpd zmm0{k7},zmm1,zmm2,0xab
+    vshufpd zmm0{k7}{z},zmm1,zmm2,0xab
+    vshufpd zmm0,zmm1,zmm2,0x7b
+    vshufpd zmm0,zmm1,zword ptr [rcx],0x7b
+    vshufpd zmm0,zmm1,zword ptr [rax+r14*8+0x123],0x7b
+    vshufpd zmm0,zmm1,qword ptr [rcx]{1to8},0x7b
+    vshufpd zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshufpd zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshufpd zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshufpd zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vshufpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8},0x7b
+    vshufpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8},0x7b
+    vshufpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8},0x7b
+    vshufpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8},0x7b
+
+    vshufps zmm0,zmm1,zmm2,0xab
+    vshufps zmm0{k7},zmm1,zmm2,0xab
+    vshufps zmm0{k7}{z},zmm1,zmm2,0xab
+    vshufps zmm0,zmm1,zmm2,0x7b
+    vshufps zmm0,zmm1,zword ptr [rcx],0x7b
+    vshufps zmm0,zmm1,zword ptr [rax+r14*8+0x123],0x7b
+    vshufps zmm0,zmm1,dword ptr [rcx]{1to16},0x7b
+    vshufps zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshufps zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshufps zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshufps zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vshufps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16},0x7b
+    vshufps zmm0,zmm1,dword ptr [rdx+0x200]{1to16},0x7b
+    vshufps zmm0,zmm1,dword ptr [rdx-0x200]{1to16},0x7b
+    vshufps zmm0,zmm1,dword ptr [rdx-0x204]{1to16},0x7b
+
+    vunpckhpd zmm0,zmm1,zmm2
+    vunpckhpd zmm0{k7},zmm1,zmm2
+    vunpckhpd zmm0{k7}{z},zmm1,zmm2
+    vunpckhpd zmm0,zmm1,zword ptr [rcx]
+    vunpckhpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vunpckhpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vunpckhpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vunpckhpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vunpckhpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vunpckhpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vunpckhpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vunpckhpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vunpckhpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vunpckhpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vunpckhps zmm0,zmm1,zmm2
+    vunpckhps zmm0{k7},zmm1,zmm2
+    vunpckhps zmm0{k7}{z},zmm1,zmm2
+    vunpckhps zmm0,zmm1,zword ptr [rcx]
+    vunpckhps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vunpckhps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vunpckhps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vunpckhps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vunpckhps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vunpckhps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vunpckhps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vunpckhps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vunpckhps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vunpckhps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vunpcklpd zmm0,zmm1,zmm2
+    vunpcklpd zmm0{k7},zmm1,zmm2
+    vunpcklpd zmm0{k7}{z},zmm1,zmm2
+    vunpcklpd zmm0,zmm1,zword ptr [rcx]
+    vunpcklpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vunpcklpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vunpcklpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vunpcklpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vunpcklpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vunpcklpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vunpcklpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vunpcklpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vunpcklpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vunpcklpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vunpcklps zmm0,zmm1,zmm2
+    vunpcklps zmm0{k7},zmm1,zmm2
+    vunpcklps zmm0{k7}{z},zmm1,zmm2
+    vunpcklps zmm0,zmm1,zword ptr [rcx]
+    vunpcklps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vunpcklps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vunpcklps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vunpcklps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vunpcklps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vunpcklps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vunpcklps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vunpcklps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vunpcklps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vunpcklps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpermw zmm1,zmm2,zmm3
+    vpermw zmm1,zmm1,zmm3
+    vpermw zmm1,zmm1,zmm1
+    vpermw zmm1,zmm2,zmm1
+    vpermw zmm1,zmm2,zmm1
+    vpermw zmm1,zmm0,zmm1
+    vpermw zmm1,zmm0,zmm3
+
+    vpandd zmm0,zmm1,zmm2
+    vpandd zmm0{k7},zmm1,zmm2
+    vpandd zmm0{k7}{z},zmm1,zmm2
+    vpandd zmm0,zmm1,zword ptr [rcx]
+    vpandd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpandd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpandd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpandd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpandd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpandd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpandd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpandd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpandd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpandd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpandq zmm0,zmm1,zmm2
+    vpandq zmm0{k7},zmm1,zmm2
+    vpandq zmm0{k7}{z},zmm1,zmm2
+    vpandq zmm0,zmm1,zword ptr [rcx]
+    vpandq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpandq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpandq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpandq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpandq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpandq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpandq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpandq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpandq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpandq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpandnd zmm0,zmm1,zmm2
+    vpandnd zmm0{k7},zmm1,zmm2
+    vpandnd zmm0{k7}{z},zmm1,zmm2
+    vpandnd zmm0,zmm1,zword ptr [rcx]
+    vpandnd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpandnd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpandnd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpandnd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpandnd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpandnd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpandnd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpandnd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpandnd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpandnd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpandnq zmm0,zmm1,zmm2
+    vpandnq zmm0{k7},zmm1,zmm2
+    vpandnq zmm0{k7}{z},zmm1,zmm2
+    vpandnq zmm0,zmm1,zword ptr [rcx]
+    vpandnq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpandnq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpandnq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpandnq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpandnq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpandnq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpandnq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpandnq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpandnq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpandnq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpxord zmm0,zmm1,zmm2
+    vpxord zmm0{k7},zmm1,zmm2
+    vpxord zmm0{k7}{z},zmm1,zmm2
+    vpxord zmm0,zmm1,zword ptr [rcx]
+    vpxord zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpxord zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpxord zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpxord zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpxord zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpxord zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpxord zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpxord zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpxord zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpxord zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpxorq zmm0,zmm1,zmm2
+    vpxorq zmm0{k7},zmm1,zmm2
+    vpxorq zmm0{k7}{z},zmm1,zmm2
+    vpxorq zmm0,zmm1,zword ptr [rcx]
+    vpxorq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpxorq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpxorq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpxorq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpxorq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpxorq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpxorq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpxorq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpxorq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpxorq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpsraq zmm0{k7},zmm1,xmm2
+    vpsraq zmm0{k7}{z},zmm1,xmm2
+    vpsraq zmm0{k7},zmm1,oword ptr [rcx]
+    vpsraq zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123]
+    vpsraq zmm0{k7},zmm1,oword ptr [rdx+0x7f0]
+    vpsraq zmm0{k7},zmm1,oword ptr [rdx+0x800]
+    vpsraq zmm0{k7},zmm1,oword ptr [rdx-0x800]
+    vpsraq zmm0{k7},zmm1,oword ptr [rdx-0x810]
+
+    vpsraq zmm0,zmm1,0xab
+    vpsraq zmm0{k7},zmm1,0xab
+    vpsraq zmm0{k7}{z},zmm1,0xab
+    vpsraq zmm0,zmm1,0x7b
+    vpsraq zmm0,zword ptr [rax+r14*8+0x123],0x7b
+
+    vpconflictd zmm0,zmm1
+    vpconflictd zmm1,zmm3
+    vpconflictd zmm3,zmm1
+    vpconflictd xmm7,xmm3
+    vpconflictd ymm7,ymm3
+
+    vpconflictd zmm0,zmm1
+    vpconflictd zmm0{k7},zmm1
+    vpconflictd zmm0{k7}{z},zmm1
+    vpconflictd zmm0,zword ptr [rcx]
+    vpconflictd zmm0,zword ptr [rax+r14*8+0x123]
+    vpconflictd zmm0,dword ptr [rcx]{1to16}
+    vpconflictd zmm0,zword ptr [rdx+0x1fc0]
+    vpconflictd zmm0,zword ptr [rdx+0x2000]
+    vpconflictd zmm0,zword ptr [rdx-0x2000]
+    vpconflictd zmm0,zword ptr [rdx-0x2040]
+    vpconflictd zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vpconflictd zmm0,dword ptr [rdx+0x200]{1to16}
+    vpconflictd zmm0,dword ptr [rdx-0x200]{1to16}
+    vpconflictd zmm0,dword ptr [rdx-0x204]{1to16}
+    vpconflictq zmm0,zmm1
+    vpconflictq zmm0{k7},zmm1
+    vpconflictq zmm0{k7}{z},zmm1
+    vpconflictq zmm0,zword ptr [rcx]
+    vpconflictq zmm0,zword ptr [rdx+0x1fc0]
+    vpconflictq zmm0,zword ptr [rdx+0x2000]
+    vpconflictq zmm0,zword ptr [rdx-0x2000]
+    vpconflictq zmm0,zword ptr [rdx-0x2040]
+
+    vplzcntd	zmm0,zmm1
+    vplzcntd	zmm0{k7},zmm1
+    vplzcntd	zmm0{k7}{z},zmm1
+    vplzcntd	zmm0,zword ptr [rcx]
+    vplzcntd	zmm0,zword ptr [rdx+0x1fc0]
+    vplzcntd	zmm0,zword ptr [rdx+0x2000]
+    vplzcntd	zmm0,zword ptr [rdx-0x2000]
+    vplzcntd	zmm0,zword ptr [rdx-0x2040]
+    vplzcntq	zmm0,zmm1
+    vplzcntq	zmm0{k7},zmm1
+    vplzcntq	zmm0{k7}{z},zmm1
+    vplzcntq	zmm0,zword ptr [rcx]
+    vplzcntq	zmm0,zword ptr [rdx+0x1fc0]
+    vplzcntq	zmm0,zword ptr [rdx+0x2000]
+    vplzcntq	zmm0,zword ptr [rdx-0x2000]
+    vplzcntq	zmm0,zword ptr [rdx-0x2040]
+
+    vptestnmd	k5,zmm1,zmm2
+    vptestnmd	k5{k7},zmm1,zmm2
+    vptestnmd	k5,zmm1,zword ptr [rcx]
+    vptestnmd	k5,zmm1,zword ptr [rax+r14*8+0x123]
+    vptestnmd	k5,zmm1,dword ptr [rcx]{1to16}
+    vptestnmd	k5,zmm1,zword ptr [rdx+0x1fc0]
+    vptestnmd	k5,zmm1,zword ptr [rdx+0x2000]
+    vptestnmd	k5,zmm1,zword ptr [rdx-0x2000]
+    vptestnmd	k5,zmm1,zword ptr [rdx-0x2040]
+    vptestnmd	k5,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vptestnmd	k5,zmm1,dword ptr [rdx+0x200]{1to16}
+    vptestnmd	k5,zmm1,dword ptr [rdx-0x200]{1to16}
+    vptestnmd	k5,zmm1,dword ptr [rdx-0x204]{1to16}
+    vptestnmq	k5,zmm1,zmm2
+    vptestnmq	k5{k7},zmm1,zmm2
+    vptestnmq	k5,zmm1,zword ptr [rcx]
+    vptestnmq	k5,zmm1,zword ptr [rax+r14*8+0x123]
+    vptestnmq	k5,zmm1,qword ptr [rcx]{1to8}
+    vptestnmq	k5,zmm1,zword ptr [rdx+0x1fc0]
+    vptestnmq	k5,zmm1,zword ptr [rdx+0x2000]
+    vptestnmq	k5,zmm1,zword ptr [rdx-0x2000]
+    vptestnmq	k5,zmm1,zword ptr [rdx-0x2040]
+    vptestnmq	k5,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vptestnmq	k5,zmm1,qword ptr [rdx+0x400]{1to8}
+    vptestnmq	k5,zmm1,qword ptr [rdx-0x400]{1to8}
+    vptestnmq	k5,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpbroadcastmw2d zmm0,k6
+    vpbroadcastmb2q zmm0,k6
+
+    vexp2ps zmm0,zmm1
+    vexp2ps zmm0,zword ptr [rcx]
+    vexp2ps zmm0,zword ptr [rdx+0x1fc0]
+    vexp2ps zmm0,zword ptr [rdx+0x2000]
+    vexp2ps zmm0,zword ptr [rdx-0x2000]
+    vexp2ps zmm0,zword ptr [rdx-0x2040]
+
+    vexp2pd zmm0,zmm1
+    vexp2pd zmm0,zword ptr [rcx]
+    vexp2pd zmm0,zword ptr [rdx+0x1fc0]
+    vexp2pd zmm0,zword ptr [rdx+0x2000]
+    vexp2pd zmm0,zword ptr [rdx-0x2000]
+    vexp2pd zmm0,zword ptr [rdx-0x2040]
+
+    vrcp28ps zmm0,zmm1
+    vrcp28ps zmm0{k7},zmm1
+    vrcp28ps zmm0{k7}{z},zmm1
+    vrcp28ps zmm0,zword ptr [rcx]
+    vrcp28ps zmm0,zword ptr [rdx+0x1fc0]
+    vrcp28ps zmm0,zword ptr [rdx+0x2000]
+    vrcp28ps zmm0,zword ptr [rdx-0x2000]
+    vrcp28ps zmm0,zword ptr [rdx-0x2040]
+    vrcp28pd zmm0,zmm1
+    vrcp28pd zmm0{k7},zmm1
+    vrcp28pd zmm0{k7}{z},zmm1
+    vrcp28pd zmm0,zword ptr [rcx]
+    vrcp28pd zmm0,zword ptr [rdx+0x1fc0]
+    vrcp28pd zmm0,zword ptr [rdx+0x2000]
+    vrcp28pd zmm0,zword ptr [rdx-0x2000]
+    vrcp28pd zmm0,zword ptr [rdx-0x2040]
+
+    vrcp28ss xmm0{k7},xmm1,xmm2
+    vrcp28ss xmm0{k7}{z},xmm1,xmm2
+    vrcp28ss xmm0{k7},xmm1,dword ptr [rcx]
+    vrcp28ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vrcp28ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vrcp28ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vrcp28ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vrcp28sd xmm0{k7},xmm1,xmm2
+    vrcp28sd xmm0{k7}{z},xmm1,xmm2
+    vrcp28sd xmm0{k7},xmm1,qword ptr [rcx]
+    vrcp28sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vrcp28sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vrcp28sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vrcp28sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vrsqrt28ps zmm0,zmm1
+    vrsqrt28ps zmm0{k7},zmm1
+    vrsqrt28ps zmm0{k7}{z},zmm1
+    vrsqrt28ps zmm0,zword ptr [rcx]
+    vrsqrt28ps zmm0,zword ptr [rdx+0x1fc0]
+    vrsqrt28ps zmm0,zword ptr [rdx+0x2000]
+    vrsqrt28ps zmm0,zword ptr [rdx-0x2000]
+    vrsqrt28ps zmm0,zword ptr [rdx-0x2040]
+    vrsqrt28pd zmm0,zmm1
+    vrsqrt28pd zmm0{k7},zmm1
+    vrsqrt28pd zmm0{k7}{z},zmm1
+    vrsqrt28pd zmm0,zword ptr [rcx]
+    vrsqrt28pd zmm0,zword ptr [rdx+0x1fc0]
+    vrsqrt28pd zmm0,zword ptr [rdx+0x2000]
+    vrsqrt28pd zmm0,zword ptr [rdx-0x2000]
+    vrsqrt28pd zmm0,zword ptr [rdx-0x2040]
+    vrsqrt28ss xmm0{k7},xmm1,xmm2
+    vrsqrt28ss xmm0{k7}{z},xmm1,xmm2
+    vrsqrt28ss xmm0{k7},xmm1,dword ptr [rcx]
+    vrsqrt28ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vrsqrt28ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vrsqrt28ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vrsqrt28ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vrsqrt28sd xmm0{k7},xmm1,xmm2
+    vrsqrt28sd xmm0{k7}{z},xmm1,xmm2
+    vrsqrt28sd xmm0{k7},xmm1,qword ptr [rcx]
+    vrsqrt28sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vrsqrt28sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vrsqrt28sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vrsqrt28sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vrsqrt14ps zmm0,zmm1
+    vrsqrt14ps zmm0{k7},zmm1
+    vrsqrt14ps zmm0{k7}{z},zmm1
+    vrsqrt14ps zmm0,zword ptr [rcx]
+    vrsqrt14ps zmm0,zword ptr [rax+r14*8+0x123]
+    vrsqrt14ps zmm0,dword ptr [rcx]{1to16}
+    vrsqrt14ps zmm0,zword ptr [rdx+0x1fc0]
+    vrsqrt14ps zmm0,zword ptr [rdx+0x2000]
+    vrsqrt14ps zmm0,zword ptr [rdx-0x2000]
+    vrsqrt14ps zmm0,zword ptr [rdx-0x2040]
+    vrsqrt14ps zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx+0x200]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx-0x200]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vrsqrt14pd zmm0,zmm1
+    vrsqrt14pd zmm0{k7},zmm1
+    vrsqrt14pd zmm0{k7}{z},zmm1
+    vrsqrt14pd zmm0,zword ptr [rcx]
+    vrsqrt14pd zmm0,zword ptr [rdx+0x1fc0]
+    vrsqrt14pd zmm0,zword ptr [rdx+0x2000]
+    vrsqrt14pd zmm0,zword ptr [rdx-0x2000]
+    vrsqrt14pd zmm0,zword ptr [rdx-0x2040]
+
+    vrsqrt14ps zmm0,zmm1
+    vrsqrt14ps zmm0{k7},zmm1
+    vrsqrt14ps zmm0{k7}{z},zmm1
+    vrsqrt14ps zmm0,zword ptr [rcx]
+    vrsqrt14ps zmm0,zword ptr [rax+r14*8+0x123]
+    vrsqrt14ps zmm0,dword ptr [rcx]{1to16}
+    vrsqrt14ps zmm0,zword ptr [rdx+0x1fc0]
+    vrsqrt14ps zmm0,zword ptr [rdx+0x2000]
+    vrsqrt14ps zmm0,zword ptr [rdx-0x2000]
+    vrsqrt14ps zmm0,zword ptr [rdx-0x2040]
+    vrsqrt14ps zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx+0x200]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx-0x200]{1to16}
+    vrsqrt14ps zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vrsqrt14sd xmm0{k7},xmm1,xmm2
+    vrsqrt14sd xmm0{k7}{z},xmm1,xmm2
+    vrsqrt14sd xmm0{k7},xmm1,qword ptr [rcx]
+    vrsqrt14sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vrsqrt14sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vrsqrt14sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vrsqrt14sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vrsqrt14ss xmm0,xmm1,xmm3
+    vrsqrt14ss xmm0{k7},xmm1,xmm3
+    vrsqrt14ss xmm0{k7}{z},xmm1,xmm3
+    vrsqrt14ss xmm0,xmm3,dword ptr [rcx]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rcx]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx+0x1fc0]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx+0x2000]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx-0x2000]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx+0x1fc]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx+0x200]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx-0x200]
+    vrsqrt14ss xmm0,xmm3,dword ptr [rdx-0x204]
+    vrsqrt14ss xmm0{k7},xmm1,xmm2
+    vrsqrt14ss xmm0{k7}{z},xmm1,xmm2
+    vrsqrt14ss xmm0{k7},xmm1,dword ptr [rcx]
+    vrsqrt14ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vrsqrt14ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vrsqrt14ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vrsqrt14ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vmovdqa32 zmm0,zmm1
+    vmovdqa32 zmm0{k7},zmm1
+    vmovdqa32 zmm0{k7}{z},zmm1
+    vmovdqa32 zmm0,zword ptr [rcx]
+    vmovdqa32 zmm0,zword ptr [rax+r14*8+0x123]
+    vmovdqa32 zmm0,zword ptr [rdx+0x1fc0]
+    vmovdqa32 zmm0,zword ptr [rdx+0x2000]
+    vmovdqa32 zmm0,zword ptr [rdx-0x2000]
+    vmovdqa32 zmm0,zword ptr [rdx-0x2040]
+    vmovdqa64 zmm0,zmm1
+    vmovdqa64 zmm0{k7},zmm1
+    vmovdqa64 zmm0{k7}{z},zmm1
+    vmovdqa64 zmm0,zword ptr [rcx]
+    vmovdqa64 zmm0,zword ptr [rax+r14*8+0x123]
+    vmovdqa64 zmm0,zword ptr [rdx+0x1fc0]
+    vmovdqa64 zmm0,zword ptr [rdx+0x2000]
+    vmovdqa64 zmm0,zword ptr [rdx-0x2000]
+    vmovdqa64 zmm0,zword ptr [rdx-0x2040]
+    vmovdqu32 zmm0,zmm1
+    vmovdqu32 zmm0{k7},zmm1
+    vmovdqu32 zmm0{k7}{z},zmm1
+    vmovdqu32 zmm0,zword ptr [rcx]
+    vmovdqu32 zmm0,zword ptr [rax+r14*8+0x123]
+    vmovdqu32 zmm0,zword ptr [rdx+0x1fc0]
+    vmovdqu32 zmm0,zword ptr [rdx+0x2000]
+    vmovdqu32 zmm0,zword ptr [rdx-0x2000]
+    vmovdqu32 zmm0,zword ptr [rdx-0x2040]
+    vmovdqu64 zmm0,zmm1
+    vmovdqu64 zmm0{k7},zmm1
+    vmovdqu64 zmm0{k7}{z},zmm1
+    vmovdqu64 zmm0,zword ptr [rcx]
+    vmovdqu64 zmm0,zword ptr [rax+r14*8+0x123]
+    vmovdqu64 zmm0,zword ptr [rdx+0x1fc0]
+    vmovdqu64 zmm0,zword ptr [rdx+0x2000]
+    vmovdqu64 zmm0,zword ptr [rdx-0x2000]
+    vmovdqu64 zmm0,zword ptr [rdx-0x2040]
+
+    vmovdqa32 zword ptr [rcx],zmm0
+    vmovdqa32 zword ptr [rcx]{k7},zmm0
+    vmovdqa32 zword ptr [rax+r14*8+0x123],zmm0
+    vmovdqa32 zword ptr [rdx+0x1fc0],zmm0
+    vmovdqa32 zword ptr [rdx+0x2000],zmm0
+    vmovdqa32 zword ptr [rdx-0x2000],zmm0
+    vmovdqa32 zword ptr [rdx-0x2040],zmm0
+    vmovdqa64 zword ptr [rcx],zmm0
+    vmovdqa64 zword ptr [rcx]{k7},zmm0
+    vmovdqa64 zword ptr [rax+r14*8+0x123],zmm0
+    vmovdqa64 zword ptr [rdx+0x1fc0],zmm0
+    vmovdqa64 zword ptr [rdx+0x2000],zmm0
+    vmovdqa64 zword ptr [rdx-0x2000],zmm0
+    vmovdqa64 zword ptr [rdx-0x2040],zmm0
+    vmovdqu32 zword ptr [rcx],zmm0
+    vmovdqu32 zword ptr [rcx]{k7},zmm0
+    vmovdqu32 zword ptr [rax+r14*8+0x123],zmm0
+    vmovdqu32 zword ptr [rdx+0x1fc0],zmm0
+    vmovdqu32 zword ptr [rdx+0x2000],zmm0
+    vmovdqu32 zword ptr [rdx-0x2000],zmm0
+    vmovdqu32 zword ptr [rdx-0x2040],zmm0
+    vmovdqu64 zword ptr [rcx],zmm0
+    vmovdqu64 zword ptr [rcx]{k7},zmm0
+    vmovdqu64 zword ptr [rax+r14*8+0x123],zmm0
+    vmovdqu64 zword ptr [rdx+0x1fc0],zmm0
+    vmovdqu64 zword ptr [rdx+0x2000],zmm0
+    vmovdqu64 zword ptr [rdx-0x2000],zmm0
+    vmovdqu64 zword ptr [rdx-0x2040],zmm0
+
+    vcompresspd zword ptr [rcx],zmm0
+    vcompresspd zword ptr [rcx]{k7},zmm0
+    vcompresspd zword ptr [rax+r14*8+0x123],zmm0
+    vcompresspd zword ptr [rdx+0x3f8],zmm0
+    vcompresspd zword ptr [rdx+0x400],zmm0
+    vcompresspd zword ptr [rdx-0x400],zmm0
+    vcompresspd zword ptr [rdx-0x408],zmm0
+    vcompresspd zmm0,zmm1
+    vcompresspd zmm0{k7},zmm1
+    vcompresspd zmm0{k7}{z},zmm1
+
+    vcompressps zword ptr [rcx],zmm0
+    vcompressps zword ptr [rcx]{k7},zmm0
+    vcompressps zword ptr [rax+r14*8+0x123],zmm0
+    vcompressps zword ptr [rdx+0x1fc],zmm0
+    vcompressps zword ptr [rdx+0x200],zmm0
+    vcompressps zword ptr [rdx-0x200],zmm0
+    vcompressps zword ptr [rdx-0x204],zmm0
+    vcompressps zmm0,zmm1
+    vcompressps zmm0{k7},zmm1
+    vcompressps zmm0{k7}{z},zmm1
+
+    vcvtpd2qq xmm0,xmm0
+    vcvtpd2qq ymm0,ymm0
+    vcvtpd2qq zmm0,zmm0
+
+    vcvtps2qq xmm0,[rax]
+    vcvtps2qq ymm0,[rax]
+    vcvtps2qq zmm0,[rax]
+
+    vcvtpd2udq ymm0{k7},zmm1
+    vcvtpd2udq ymm0{k7}{z},zmm1
+    vcvtpd2udq ymm0{k7},zmm1,{rn-sae}
+    vcvtpd2udq ymm0{k7},zmm1,{ru-sae}
+    vcvtpd2udq ymm0{k7},zmm1,{rd-sae}
+    vcvtpd2udq ymm0{k7},zmm1,{rz-sae}
+    vcvtpd2udq ymm0{k7},zword ptr [rcx]
+    vcvtpd2udq ymm0{k7},zword ptr [rax+r14*8+0x123]
+    vcvtpd2udq ymm0{k7},qword ptr [rcx]{1to8}
+    vcvtpd2udq ymm0{k7},zword ptr [rdx+0x1fc0]
+    vcvtpd2udq ymm0{k7},zword ptr [rdx+0x2000]
+    vcvtpd2udq ymm0{k7},zword ptr [rdx-0x2000]
+    vcvtpd2udq ymm0{k7},zword ptr [rdx-0x2040]
+    vcvtpd2udq ymm0{k7},qword ptr [rdx+0x3f8]{1to8}
+    vcvtpd2udq ymm0{k7},qword ptr [rdx+0x400]{1to8}
+    vcvtpd2udq ymm0{k7},qword ptr [rdx-0x400]{1to8}
+    vcvtpd2udq ymm0{k7},qword ptr [rdx-0x408]{1to8}
+
+    vcvtps2udq zmm0,zmm1
+    vcvtps2udq zmm0{k7},zmm1
+    vcvtps2udq zmm0{k7}{z},zmm1
+    vcvtps2udq zmm0,zmm1,{rn-sae}
+    vcvtps2udq zmm0,zmm1,{ru-sae}
+    vcvtps2udq zmm0,zmm1,{rd-sae}
+    vcvtps2udq zmm0,zmm1,{rz-sae}
+    vcvtps2udq zmm0,zword ptr [rcx]
+    vcvtps2udq zmm0,zword ptr [rax+r14*8+0x123]
+    vcvtps2udq zmm0,dword ptr [rcx]{1to16}
+    vcvtps2udq zmm0,zword ptr [rdx+0x1fc0]
+    vcvtps2udq zmm0,zword ptr [rdx+0x2000]
+    vcvtps2udq zmm0,zword ptr [rdx-0x2000]
+    vcvtps2udq zmm0,zword ptr [rdx-0x2040]
+    vcvtps2udq zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvtps2udq zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvtps2udq zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvtps2udq zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vcvtph2ps zmm0{k7},ymm1
+    vcvtph2ps zmm0{k7}{z},ymm1
+    vcvtph2ps zmm0{k7},ymm1,{sae}
+    vcvtph2ps zmm0{k7},yword ptr [rcx]
+    vcvtph2ps zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vcvtph2ps zmm0{k7},yword ptr [rdx+0xfe0]
+    vcvtph2ps zmm0{k7},yword ptr [rdx+0x1000]
+    vcvtph2ps zmm0{k7},yword ptr [rdx-0x1000]
+    vcvtph2ps zmm0{k7},yword ptr [rdx-0x1020]
+
+    vcvtps2ph ymm0{k7},zmm1,0xab
+    vcvtps2ph ymm0{k7}{z},zmm1,0xab
+    vcvtps2ph ymm0{k7},zmm1,0x7b
+
+    vcvtps2ph yword ptr [rcx],zmm0,0xab
+    vcvtps2ph yword ptr [rcx]{k7},zmm0,0xab
+    vcvtps2ph yword ptr [rcx],zmm0,0x7b
+    vcvtps2ph yword ptr [rdx+0xfe0],zmm0,0x7b
+    vcvtps2ph yword ptr [rdx+0x1000],zmm0,0x7b
+    vcvtps2ph yword ptr [rdx-0x1000],zmm0,0x7b
+    vcvtps2ph yword ptr [rdx-0x1020],zmm0,0x7b
+
+    vcvttpd2udq ymm0{k7},zmm1
+    vcvttpd2udq ymm0{k7}{z},zmm1
+    vcvttpd2udq ymm0{k7},zmm1,{sae}
+    vcvttpd2udq ymm0{k7},zword ptr [rcx]
+    vcvttpd2udq ymm0{k7},zword ptr [rax+r14*8+0x123]
+    vcvttpd2udq ymm0{k7},qword ptr [rcx]{1to8}
+    vcvttpd2udq ymm0{k7},zword ptr [rdx+0x1fc0]
+    vcvttpd2udq ymm0{k7},zword ptr [rdx+0x2000]
+    vcvttpd2udq ymm0{k7},zword ptr [rdx-0x2000]
+    vcvttpd2udq ymm0{k7},zword ptr [rdx-0x2040]
+    vcvttpd2udq ymm0{k7},qword ptr [rdx+0x3f8]{1to8}
+    vcvttpd2udq ymm0{k7},qword ptr [rdx+0x400]{1to8}
+    vcvttpd2udq ymm0{k7},qword ptr [rdx-0x400]{1to8}
+    vcvttpd2udq ymm0{k7},qword ptr [rdx-0x408]{1to8}
+    vcvttps2udq zmm0,zmm1
+    vcvttps2udq zmm0{k7},zmm1
+    vcvttps2udq zmm0{k7}{z},zmm1
+    vcvttps2udq zmm0,zmm1,{sae}
+    vcvttps2udq zmm0,zword ptr [rcx]
+    vcvttps2udq zmm0,zword ptr [rax+r14*8+0x123]
+    vcvttps2udq zmm0,dword ptr [rcx]{1to16}
+    vcvttps2udq zmm0,zword ptr [rdx+0x1fc0]
+    vcvttps2udq zmm0,zword ptr [rdx+0x2000]
+    vcvttps2udq zmm0,zword ptr [rdx-0x2000]
+    vcvttps2udq zmm0,zword ptr [rdx-0x2040]
+    vcvttps2udq zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvttps2udq zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvttps2udq zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvttps2udq zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vcvtudq2pd zmm0{k7},ymm1
+    vcvtudq2pd zmm0{k7}{z},ymm1
+    vcvtudq2pd zmm0{k7},yword ptr [rcx]
+    vcvtudq2pd zmm0{k7},yword ptr [rax+r14*8+0x123]
+    vcvtudq2pd zmm0{k7},dword ptr [rcx]{1to8}
+    vcvtudq2pd zmm0{k7},yword ptr [rdx+0xfe0]
+    vcvtudq2pd zmm0{k7},yword ptr [rdx+0x1000]
+    vcvtudq2pd zmm0{k7},yword ptr [rdx-0x1000]
+    vcvtudq2pd zmm0{k7},yword ptr [rdx-0x1020]
+    vcvtudq2pd zmm0{k7},dword ptr [rdx+0x1fc]{1to8}
+    vcvtudq2pd zmm0{k7},dword ptr [rdx+0x200]{1to8}
+    vcvtudq2pd zmm0{k7},dword ptr [rdx-0x200]{1to8}
+    vcvtudq2pd zmm0{k7},dword ptr [rdx-0x204]{1to8}
+
+    vcvtudq2ps zmm0,zmm1
+    vcvtudq2ps zmm0{k7},zmm1
+    vcvtudq2ps zmm0{k7}{z},zmm1
+    vcvtudq2ps zmm0,zmm1,{rn-sae}
+    vcvtudq2ps zmm0,zmm1,{ru-sae}
+    vcvtudq2ps zmm0,zmm1,{rd-sae}
+    vcvtudq2ps zmm0,zmm1,{rz-sae}
+    vcvtudq2ps zmm0,zword ptr [rcx]
+    vcvtudq2ps zmm0,zword ptr [rax+r14*8+0x123]
+    vcvtudq2ps zmm0,dword ptr [rcx]{1to16}
+    vcvtudq2ps zmm0,zword ptr [rdx+0x1fc0]
+    vcvtudq2ps zmm0,zword ptr [rdx+0x2000]
+    vcvtudq2ps zmm0,zword ptr [rdx-0x2000]
+    vcvtudq2ps zmm0,zword ptr [rdx-0x2040]
+    vcvtudq2ps zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvtudq2ps zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvtudq2ps zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvtudq2ps zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vexpandpd zmm0,zword ptr [rcx]
+    vexpandpd zmm0{k7},zword ptr [rcx]
+    vexpandpd zmm0{k7}{z},zword ptr [rcx]
+    vexpandpd zmm0,zword ptr [rax+r14*8+0x123]
+    vexpandpd zmm0,zword ptr [rdx+0x3f8]
+    vexpandpd zmm0,zword ptr [rdx+0x400]
+    vexpandpd zmm0,zword ptr [rdx-0x400]
+    vexpandpd zmm0,zword ptr [rdx-0x408]
+    vexpandpd zmm0,zmm1
+    vexpandpd zmm0{k7},zmm1
+    vexpandpd zmm0{k7}{z},zmm1
+
+    vexpandps zmm0,zword ptr [rcx]
+    vexpandps zmm0{k7},zword ptr [rcx]
+    vexpandps zmm0{k7}{z},zword ptr [rcx]
+    vexpandps zmm0,zword ptr [rax+r14*8+0x123]
+    vexpandps zmm0,zword ptr [rdx+0x1fc]
+    vexpandps zmm0,zword ptr [rdx+0x200]
+    vexpandps zmm0,zword ptr [rdx-0x200]
+    vexpandps zmm0,zword ptr [rdx-0x204]
+    vexpandps zmm0,zmm1
+    vexpandps zmm0{k7},zmm1
+    vexpandps zmm0{k7}{z},zmm1
+
+    vextractf32x4 xmm0{k7},zmm1,0xab
+    vextractf32x4 xmm0{k7}{z},zmm1,0xab
+    vextractf32x4 xmm0{k7},zmm1,0x7b
+    vextractf64x4 ymm0{k7},zmm1,0xab
+    vextractf64x4 ymm0{k7}{z},zmm1,0xab
+    vextractf64x4 ymm0{k7},zmm1,0x7b
+    vextracti32x4 xmm0{k7},zmm1,0xab
+    vextracti32x4 xmm0{k7}{z},zmm1,0xab
+    vextracti32x4 xmm0{k7},zmm1,0x7b
+    vextracti64x4 ymm0{k7},zmm1,0xab
+    vextracti64x4 ymm0{k7}{z},zmm1,0xab
+    vextracti64x4 ymm0{k7},zmm1,0x7b
+
+    vextractf32x4 oword ptr [rcx],zmm0,0xab
+    vextractf32x4 oword ptr [rcx]{k7},zmm0,0xab
+    vextractf32x4 oword ptr [rcx],zmm0,0x7b
+    vextractf32x4 oword ptr [rdx+0x7f0],zmm0,0x7b
+    vextractf32x4 oword ptr [rdx+0x800],zmm0,0x7b
+    vextractf32x4 oword ptr [rdx-0x800],zmm0,0x7b
+    vextractf32x4 oword ptr [rdx-0x810],zmm0,0x7b
+    vextractf64x4 yword ptr [rcx],zmm0,0xab
+    vextractf64x4 yword ptr [rcx]{k7},zmm0,0xab
+    vextractf64x4 yword ptr [rcx],zmm0,0x7b
+    vextractf64x4 yword ptr [rdx+0xfe0],zmm0,0x7b
+    vextractf64x4 yword ptr [rdx+0x1000],zmm0,0x7b
+    vextractf64x4 yword ptr [rdx-0x1000],zmm0,0x7b
+    vextractf64x4 yword ptr [rdx-0x1020],zmm0,0x7b
+    vextracti32x4 oword ptr [rcx],zmm0,0xab
+    vextracti32x4 oword ptr [rcx]{k7},zmm0,0xab
+    vextracti32x4 oword ptr [rcx],zmm0,0x7b
+    vextracti32x4 oword ptr [rdx+0x7f0],zmm0,0x7b
+    vextracti32x4 oword ptr [rdx+0x800],zmm0,0x7b
+    vextracti32x4 oword ptr [rdx-0x800],zmm0,0x7b
+    vextracti32x4 oword ptr [rdx-0x810],zmm0,0x7b
+    vextracti64x4 yword ptr [rcx],zmm0,0xab
+    vextracti64x4 yword ptr [rcx]{k7},zmm0,0xab
+    vextracti64x4 yword ptr [rcx],zmm0,0x7b
+    vextracti64x4 yword ptr [rdx+0xfe0],zmm0,0x7b
+    vextracti64x4 yword ptr [rdx+0x1000],zmm0,0x7b
+    vextracti64x4 yword ptr [rdx-0x1000],zmm0,0x7b
+    vextracti64x4 yword ptr [rdx-0x1020],zmm0,0x7b
+
+    vgatherdpd zmm0{k1}, [r14+ymm31*8+0x7b]
+    vgatherdpd zmm0{k1}, [r14+ymm31*8+0x7b]
+    vgatherdpd zmm0{k1}, [r9+ymm31*1+0x100]
+    vgatherdpd zmm0{k1}, [rcx+ymm31*4+0x400]
+    vgatherqpd zmm0{k1}, [r14+zmm31*8+0x7b]
+    vgatherqpd zmm0{k1}, [r14+zmm31*8+0x7b]
+    vgatherqpd zmm0{k1}, [r9+zmm31*1+0x100]
+    vgatherqpd zmm0{k1}, [rcx+zmm31*4+0x400]
+
+    vgatherdps zmm0{k1}, [r14+zmm31*8+0x7b]
+    vgatherdps zmm0{k1}, [r14+zmm31*8+0x7b]
+    vgatherdps zmm0{k1}, [r9+zmm31*1+0x100]
+    vgatherdps zmm0{k1}, [rcx+zmm31*4+0x400]
+
+    vpgatherdd zmm0{k1}, [r14+zmm31*8+0x7b]
+    vpgatherdd zmm0{k1}, [r14+zmm31*8+0x7b]
+    vpgatherdd zmm0{k1}, [r9+zmm31*1+0x100]
+    vpgatherdd zmm0{k1}, [rcx+zmm31*4+0x400]
+    vpgatherdq zmm0{k1}, [r14+ymm31*8+0x7b]
+    vpgatherdq zmm0{k1}, [r14+ymm31*8+0x7b]
+    vpgatherdq zmm0{k1}, [r9+ymm31*1+0x100]
+    vpgatherdq zmm0{k1}, [rcx+ymm31*4+0x400]
+    vpgatherqq zmm0{k1}, [r14+zmm31*8+0x7b]
+    vpgatherqq zmm0{k1}, [r14+zmm31*8+0x7b]
+    vpgatherqq zmm0{k1}, [r9+zmm31*1+0x100]
+    vpgatherqq zmm0{k1}, [rcx+zmm31*4+0x400]
+
+
+    vscatterdpd	 [r14+ymm31*8+0x7b]{k1},zmm0
+    vscatterdpd	 [r14+ymm31*8+0x7b]{k1},zmm0
+    vscatterdpd	 [r9+ymm31*1+0x100]{k1},zmm0
+    vscatterdpd	 [rcx+ymm31*4+0x400]{k1},zmm0
+    vscatterdps	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vscatterdps	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vscatterdps	 [r9+zmm31*1+0x100]{k1},zmm0
+    vscatterdps	 [rcx+zmm31*4+0x400]{k1},zmm0
+    vscatterqpd	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vscatterqpd	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vscatterqpd	 [r9+zmm31*1+0x100]{k1},zmm0
+    vscatterqpd	 [rcx+zmm31*4+0x400]{k1},zmm0
+
+    vpscatterdd	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vpscatterdd	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vpscatterdd	 [r9+zmm31*1+0x100]{k1},zmm0
+    vpscatterdd	 [rcx+zmm31*4+0x400]{k1},zmm0
+    vpscatterdq	 [r14+ymm31*8+0x7b]{k1},zmm0
+    vpscatterdq	 [r14+ymm31*8+0x7b]{k1},zmm0
+    vpscatterdq	 [r9+ymm31*1+0x100]{k1},zmm0
+    vpscatterdq	 [rcx+ymm31*4+0x400]{k1},zmm0
+    vpscatterqq	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vpscatterqq	 [r14+zmm31*8+0x7b]{k1},zmm0
+    vpscatterqq	 [r9+zmm31*1+0x100]{k1},zmm0
+    vpscatterqq	 [rcx+zmm31*4+0x400]{k1},zmm0
+
+    vgetexppd zmm0,zmm1
+    vgetexppd zmm0{k7},zmm1
+    vgetexppd zmm0{k7}{z},zmm1
+    vgetexppd zmm0,zword ptr [rcx]
+    vgetexppd zmm0,zword ptr [rdx+0x1fc0]
+    vgetexppd zmm0,zword ptr [rdx+0x2000]
+    vgetexppd zmm0,zword ptr [rdx-0x2000]
+    vgetexppd zmm0,zword ptr [rdx-0x2040]
+
+    vgetexpps zmm0,zmm1
+    vgetexpps zmm0{k7},zmm1
+    vgetexpps zmm0{k7}{z},zmm1
+    vgetexpps zmm0,zword ptr [rcx]
+    vgetexpps zmm0,zword ptr [rdx+0x1fc0]
+    vgetexpps zmm0,zword ptr [rdx+0x2000]
+    vgetexpps zmm0,zword ptr [rdx-0x2000]
+    vgetexpps zmm0,zword ptr [rdx-0x2040]
+
+    vgetexpsd xmm0{k7},xmm1,xmm2
+    vgetexpsd xmm0{k7}{z},xmm1,xmm2
+    vgetexpsd xmm0{k7},xmm1,qword ptr [rcx]
+    vgetexpsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vgetexpsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vgetexpsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vgetexpsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vgetexpss xmm0{k7},xmm1,xmm2
+    vgetexpss xmm0{k7}{z},xmm1,xmm2
+    vgetexpss xmm0{k7},xmm1,dword ptr [rcx]
+    vgetexpss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vgetexpss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vgetexpss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vgetexpss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vpcompressd zword ptr [rcx],zmm0
+    vpcompressd zword ptr [rcx]{k7},zmm0
+    vpcompressd zword ptr [rax+r14*8+0x123],zmm0
+    vpcompressd zword ptr [rdx+0x1fc],zmm0
+    vpcompressd zword ptr [rdx+0x200],zmm0
+    vpcompressd zword ptr [rdx-0x200],zmm0
+    vpcompressd zword ptr [rdx-0x204],zmm0
+    vpcompressd zmm0,zmm1
+    vpcompressd zmm0{k7},zmm1
+    vpcompressd zmm0{k7}{z},zmm1
+
+    vpcompressq zword ptr [rcx],zmm0
+    vpcompressq zword ptr [rcx]{k7},zmm0
+    vpcompressq zword ptr [rax+r14*8+0x123],zmm0
+    vpcompressq zword ptr [rdx+0x3f8],zmm0
+    vpcompressq zword ptr [rdx+0x400],zmm0
+    vpcompressq zword ptr [rdx-0x400],zmm0
+    vpcompressq zword ptr [rdx-0x408],zmm0
+    vpcompressq zmm0,zmm1
+    vpcompressq zmm0{k7},zmm1
+    vpcompressq zmm0{k7}{z},zmm1
+
+    vbroadcastf32x4 zmm0,oword ptr [rcx]
+    vbroadcastf32x4 zmm0{k7},oword ptr [rcx]
+    vbroadcastf32x4 zmm0{k7}{z},oword ptr [rcx]
+    vbroadcastf32x4 zmm0,oword ptr [rax+r14*8+0x123]
+    vbroadcastf32x4 zmm0,oword ptr [rdx+0x7f0]
+    vbroadcastf32x4 zmm0,oword ptr [rdx+0x800]
+    vbroadcastf32x4 zmm0,oword ptr [rdx-0x800]
+    vbroadcastf32x4 zmm0,oword ptr [rdx-0x810]
+    vbroadcastf64x4 zmm0,yword ptr [rcx]
+    vbroadcastf64x4 zmm0{k7},yword ptr [rcx]
+    vbroadcastf64x4 zmm0{k7}{z},yword ptr [rcx]
+    vbroadcastf64x4 zmm0,yword ptr [rax+r14*8+0x123]
+    vbroadcastf64x4 zmm0,yword ptr [rdx+0xfe0]
+    vbroadcastf64x4 zmm0,yword ptr [rdx+0x1000]
+    vbroadcastf64x4 zmm0,yword ptr [rdx-0x1000]
+    vbroadcastf64x4 zmm0,yword ptr [rdx-0x1020]
+    vbroadcasti32x4 zmm0,oword ptr [rcx]
+    vbroadcasti32x4 zmm0{k7},oword ptr [rcx]
+    vbroadcasti32x4 zmm0{k7}{z},oword ptr [rcx]
+    vbroadcasti32x4 zmm0,oword ptr [rax+r14*8+0x123]
+    vbroadcasti32x4 zmm0,oword ptr [rdx+0x7f0]
+    vbroadcasti32x4 zmm0,oword ptr [rdx+0x800]
+    vbroadcasti32x4 zmm0,oword ptr [rdx-0x800]
+    vbroadcasti32x4 zmm0,oword ptr [rdx-0x810]
+    vbroadcasti64x4 zmm0,yword ptr [rcx]
+    vbroadcasti64x4 zmm0{k7},yword ptr [rcx]
+    vbroadcasti64x4 zmm0{k7}{z},yword ptr [rcx]
+    vbroadcasti64x4 zmm0,yword ptr [rax+r14*8+0x123]
+    vbroadcasti64x4 zmm0,yword ptr [rdx+0xfe0]
+    vbroadcasti64x4 zmm0,yword ptr [rdx+0x1000]
+    vbroadcasti64x4 zmm0,yword ptr [rdx-0x1000]
+    vbroadcasti64x4 zmm0,yword ptr [rdx-0x1020]
+
+    vpexpandd zmm0,zword ptr [rcx]
+    vpexpandd zmm0{k7},zword ptr [rcx]
+    vpexpandd zmm0{k7}{z},zword ptr [rcx]
+    vpexpandd zmm0,zword ptr [rdx+0x1fc]
+    vpexpandd zmm0,zword ptr [rdx+0x200]
+    vpexpandd zmm0,zword ptr [rdx-0x200]
+    vpexpandd zmm0,zword ptr [rdx-0x204]
+    vpexpandd zmm0,zmm1
+    vpexpandd zmm0{k7},zmm1
+    vpexpandd zmm0{k7}{z},zmm1
+    vpexpandq zmm0,zword ptr [rcx]
+    vpexpandq zmm0{k7},zword ptr [rcx]
+    vpexpandq zmm0{k7}{z},zword ptr [rcx]
+    vpexpandq zmm0,zword ptr [rdx+0x3f8]
+    vpexpandq zmm0,zword ptr [rdx+0x400]
+    vpexpandq zmm0,zword ptr [rdx-0x400]
+    vpexpandq zmm0,zword ptr [rdx-0x408]
+    vpexpandq zmm0,zmm1
+    vpexpandq zmm0{k7},zmm1
+    vpexpandq zmm0{k7}{z},zmm1
+
+    vrcp14pd zmm0,zmm1
+    vrcp14pd zmm0{k7},zmm1
+    vrcp14pd zmm0{k7}{z},zmm1
+    vrcp14pd zmm0,zword ptr [rcx]
+    vrcp14pd zmm0,zword ptr [rdx+0x1fc0]
+    vrcp14pd zmm0,zword ptr [rdx+0x2000]
+    vrcp14pd zmm0,zword ptr [rdx-0x2000]
+    vrcp14pd zmm0,zword ptr [rdx-0x2040]
+
+    vrcp14ps zmm0,zmm1
+    vrcp14ps zmm0{k7},zmm1
+    vrcp14ps zmm0{k7}{z},zmm1
+    vrcp14ps zmm0,zword ptr [rcx]
+    vrcp14ps zmm0,zword ptr [rdx+0x1fc0]
+    vrcp14ps zmm0,zword ptr [rdx+0x2000]
+    vrcp14ps zmm0,zword ptr [rdx-0x2000]
+    vrcp14ps zmm0,zword ptr [rdx-0x2040]
+
+    vrcp14sd xmm0{k7},xmm1,xmm2
+    vrcp14sd xmm0{k7}{z},xmm1,xmm2
+    vrcp14sd xmm0{k7},xmm1,qword ptr [rcx]
+    vrcp14sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vrcp14sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vrcp14sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vrcp14sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vrcp14ss xmm0{k7},xmm1,xmm2
+    vrcp14ss xmm0{k7}{z},xmm1,xmm2
+    vrcp14ss xmm0{k7},xmm1,dword ptr [rcx]
+    vrcp14ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vrcp14ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vrcp14ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vrcp14ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vrndscalepd zmm0,zmm1,0xab
+    vrndscalepd zmm0{k7},zmm1,0xab
+    vrndscalepd zmm0{k7}{z},zmm1,0xab
+    vrndscalepd zmm0,zmm1,0x7b
+    vrndscalepd zmm0,zword ptr [rcx],0x7b
+    vrndscalepd zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vrndscalepd zmm0,zword ptr [rdx+0x2000],0x7b
+    vrndscalepd zmm0,zword ptr [rdx-0x2000],0x7b
+    vrndscalepd zmm0,zword ptr [rdx-0x2040],0x7b
+    vrndscaleps zmm0,zmm1,0xab
+    vrndscaleps zmm0{k7},zmm1,0xab
+    vrndscaleps zmm0{k7}{z},zmm1,0xab
+    vrndscaleps zmm0,zmm1,0x7b
+    vrndscaleps zmm0,zword ptr [rcx],0x7b
+    vrndscaleps zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vrndscaleps zmm0,zword ptr [rdx+0x2000],0x7b
+    vrndscaleps zmm0,zword ptr [rdx-0x2000],0x7b
+    vrndscaleps zmm0,zword ptr [rdx-0x2040],0x7b
+    vrndscalesd xmm0{k7},xmm1,xmm2,0xab
+    vrndscalesd xmm0{k7}{z},xmm1,xmm2,0xab
+    vrndscalesd xmm0{k7},xmm1,xmm2,0x7b
+    vrndscalesd xmm0{k7},xmm1,qword ptr [rcx],0x7b
+    vrndscalesd xmm0{k7},xmm1,qword ptr [rdx+0x3f8],0x7b
+    vrndscalesd xmm0{k7},xmm1,qword ptr [rdx+0x400],0x7b
+    vrndscalesd xmm0{k7},xmm1,qword ptr [rdx-0x400],0x7b
+    vrndscalesd xmm0{k7},xmm1,qword ptr [rdx-0x408],0x7b
+    vrndscaless xmm0{k7},xmm1,xmm2,0xab
+    vrndscaless xmm0{k7}{z},xmm1,xmm2,0xab
+    vrndscaless xmm0{k7},xmm1,xmm2,0x7b
+    vrndscaless xmm0{k7},xmm1,dword ptr [rcx],0x7b
+    vrndscaless xmm0{k7},xmm1,dword ptr [rdx+0x1fc],0x7b
+    vrndscaless xmm0{k7},xmm1,dword ptr [rdx+0x200],0x7b
+    vrndscaless xmm0{k7},xmm1,dword ptr [rdx-0x200],0x7b
+    vrndscaless xmm0{k7},xmm1,dword ptr [rdx-0x204],0x7b
+
+    vpmovqb xmm0{k7},zmm1
+    vpmovqb xmm0{k7}{z},zmm1
+    vpmovsqb xmm0{k7},zmm1
+    vpmovsqb xmm0{k7}{z},zmm1
+    vpmovusqb xmm0{k7},zmm1
+    vpmovusqb xmm0{k7}{z},zmm1
+    vpmovqw xmm0{k7},zmm1
+    vpmovqw xmm0{k7}{z},zmm1
+    vpmovsqw xmm0{k7},zmm1
+    vpmovsqw xmm0{k7}{z},zmm1
+    vpmovusqw xmm0{k7},zmm1
+    vpmovusqw xmm0{k7}{z},zmm1
+    vpmovqd ymm0{k7},zmm1
+    vpmovqd ymm0{k7}{z},zmm1
+    vpmovsqd ymm0{k7},zmm1
+    vpmovsqd ymm0{k7}{z},zmm1
+    vpmovusqd ymm0{k7},zmm1
+    vpmovusqd ymm0{k7}{z},zmm1
+    vpmovdb xmm0{k7},zmm1
+    vpmovdb xmm0{k7}{z},zmm1
+    vpmovsdb xmm0{k7},zmm1
+    vpmovsdb xmm0{k7}{z},zmm1
+    vpmovusdb xmm0{k7},zmm1
+    vpmovusdb xmm0{k7}{z},zmm1
+    vpmovdw ymm0{k7},zmm1
+    vpmovdw ymm0{k7}{z},zmm1
+    vpmovsdw ymm0{k7},zmm1
+    vpmovsdw ymm0{k7}{z},zmm1
+    vpmovusdw ymm0{k7},zmm1
+    vpmovusdw ymm0{k7}{z},zmm1
+
+    vpmovqb qword ptr [rcx],zmm0
+    vpmovqb qword ptr [rcx]{k7},zmm0
+    vpmovqb qword ptr [rdx+0x3f8],zmm0
+    vpmovqb qword ptr [rdx+0x400],zmm0
+    vpmovqb qword ptr [rdx-0x400],zmm0
+    vpmovqb qword ptr [rdx-0x408],zmm0
+
+    vpmovqw oword ptr [rcx],zmm0
+    vpmovqw oword ptr [rcx]{k7},zmm0
+    vpmovqw oword ptr [rdx+0x7f0],zmm0
+    vpmovqw oword ptr [rdx+0x800],zmm0
+    vpmovqw oword ptr [rdx-0x800],zmm0
+    vpmovqw oword ptr [rdx-0x810],zmm0
+
+    vpmovqd yword ptr [rcx],zmm0
+    vpmovqd yword ptr [rcx]{k7},zmm0
+    vpmovqd yword ptr [rdx+0xfe0],zmm0
+    vpmovqd yword ptr [rdx+0x1000],zmm0
+    vpmovqd yword ptr [rdx-0x1000],zmm0
+    vpmovqd yword ptr [rdx-0x1020],zmm0
+
+    vpmovdb oword ptr [rcx],zmm0
+    vpmovdb oword ptr [rcx]{k7},zmm0
+    vpmovdb oword ptr [rdx+0x7f0],zmm0
+    vpmovdb oword ptr [rdx+0x800],zmm0
+    vpmovdb oword ptr [rdx-0x800],zmm0
+    vpmovdb oword ptr [rdx-0x810],zmm0
+
+    vpmovdw yword ptr [rcx],zmm0
+    vpmovdw yword ptr [rcx]{k7},zmm0
+    vpmovdw yword ptr [rdx+0xfe0],zmm0
+    vpmovdw yword ptr [rdx+0x1000],zmm0
+    vpmovdw yword ptr [rdx-0x1000],zmm0
+    vpmovdw yword ptr [rdx-0x1020],zmm0
+
+    vpmovsdb xmm0{k7},zmm1
+    vpmovsdb xmm0{k7}{z},zmm1
+    vpmovsdb oword ptr [rcx],zmm0
+    vpmovsdb oword ptr [rcx]{k7},zmm0
+    vpmovsdb oword ptr [rdx+0x7f0],zmm0
+    vpmovsdb oword ptr [rdx+0x800],zmm0
+    vpmovsdb oword ptr [rdx-0x800],zmm0
+    vpmovsdb oword ptr [rdx-0x810],zmm0
+
+    vpmovsdw ymm0{k7},zmm1
+    vpmovsdw ymm0{k7}{z},zmm1
+    vpmovsdw yword ptr [rcx],zmm0
+    vpmovsdw yword ptr [rcx]{k7},zmm0
+    vpmovsdw yword ptr [rdx+0xfe0],zmm0
+    vpmovsdw yword ptr [rdx+0x1000],zmm0
+    vpmovsdw yword ptr [rdx-0x1000],zmm0
+    vpmovsdw yword ptr [rdx-0x1020],zmm0
+
+    vpmovsqb xmm0{k7},zmm1
+    vpmovsqb xmm0{k7}{z},zmm1
+    vpmovsqb qword ptr [rcx],zmm0
+    vpmovsqb qword ptr [rcx]{k7},zmm0
+    vpmovsqb qword ptr [rdx+0x3f8],zmm0
+    vpmovsqb qword ptr [rdx+0x400],zmm0
+    vpmovsqb qword ptr [rdx-0x400],zmm0
+    vpmovsqb qword ptr [rdx-0x408],zmm0
+
+    vpmovsqd ymm0{k7},zmm1
+    vpmovsqd ymm0{k7}{z},zmm1
+    vpmovsqd yword ptr [rcx],zmm0
+    vpmovsqd yword ptr [rcx]{k7},zmm0
+    vpmovsqd yword ptr [rdx+0xfe0],zmm0
+    vpmovsqd yword ptr [rdx+0x1000],zmm0
+    vpmovsqd yword ptr [rdx-0x1000],zmm0
+    vpmovsqd yword ptr [rdx-0x1020],zmm0
+
+    vpmovsqw xmm0{k7},zmm1
+    vpmovsqw xmm0{k7}{z},zmm1
+    vpmovsqw oword ptr [rcx],zmm0
+    vpmovsqw oword ptr [rcx]{k7},zmm0
+    vpmovsqw oword ptr [rdx+0x7f0],zmm0
+    vpmovsqw oword ptr [rdx+0x800],zmm0
+    vpmovsqw oword ptr [rdx-0x800],zmm0
+    vpmovsqw oword ptr [rdx-0x810],zmm0
+
+    vpmovusdb xmm0{k7},zmm1
+    vpmovusdb xmm0{k7}{z},zmm1
+    vpmovusdb oword ptr [rcx],zmm0
+    vpmovusdb oword ptr [rcx]{k7},zmm0
+    vpmovusdb oword ptr [rdx+0x7f0],zmm0
+    vpmovusdb oword ptr [rdx+0x800],zmm0
+    vpmovusdb oword ptr [rdx-0x800],zmm0
+    vpmovusdb oword ptr [rdx-0x810],zmm0
+
+    vpmovusdw ymm0{k7},zmm1
+    vpmovusdw ymm0{k7}{z},zmm1
+    vpmovusdw yword ptr [rcx],zmm0
+    vpmovusdw yword ptr [rcx]{k7},zmm0
+    vpmovusdw yword ptr [rdx+0xfe0],zmm0
+    vpmovusdw yword ptr [rdx+0x1000],zmm0
+    vpmovusdw yword ptr [rdx-0x1000],zmm0
+    vpmovusdw yword ptr [rdx-0x1020],zmm0
+
+    vpmovusqb xmm0{k7},zmm1
+    vpmovusqb xmm0{k7}{z},zmm1
+    vpmovusqb qword ptr [rcx],zmm0
+    vpmovusqb qword ptr [rcx]{k7},zmm0
+    vpmovusqb qword ptr [rdx+0x3f8],zmm0
+    vpmovusqb qword ptr [rdx+0x400],zmm0
+    vpmovusqb qword ptr [rdx-0x400],zmm0
+    vpmovusqb qword ptr [rdx-0x408],zmm0
+
+    vpmovusqd ymm0{k7},zmm1
+    vpmovusqd ymm0{k7}{z},zmm1
+    vpmovusqd yword ptr [rcx],zmm0
+    vpmovusqd yword ptr [rcx]{k7},zmm0
+    vpmovusqd yword ptr [rdx+0xfe0],zmm0
+    vpmovusqd yword ptr [rdx+0x1000],zmm0
+    vpmovusqd yword ptr [rdx-0x1000],zmm0
+    vpmovusqd yword ptr [rdx-0x1020],zmm0
+
+    vpmovusqw xmm0{k7},zmm1
+    vpmovusqw xmm0{k7}{z},zmm1
+    vpmovusqw oword ptr [rcx],zmm0
+    vpmovusqw oword ptr [rcx]{k7},zmm0
+    vpmovusqw oword ptr [rdx+0x7f0],zmm0
+    vpmovusqw oword ptr [rdx+0x800],zmm0
+    vpmovusqw oword ptr [rdx-0x800],zmm0
+    vpmovusqw oword ptr [rdx-0x810],zmm0
+
+    valignd zmm0,zmm1,zmm2,0xab
+    valignd zmm0{k7},zmm1,zmm2,0xab
+    valignd zmm0{k7}{z},zmm1,zmm2,0xab
+    valignd zmm0,zmm1,zmm2,0x7b
+    valignd zmm0,zmm1,zword ptr [rcx],0x7b
+    valignd zmm0,zmm1,zword ptr [rax+r14*8+0x123],0x7b
+    valignd zmm0,zmm1,dword ptr [rcx]{1to16},0x7b
+    valignd zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    valignd zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    valignd zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    valignd zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    valignd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16},0x7b
+    valignd zmm0,zmm1,dword ptr [rdx+0x200]{1to16},0x7b
+    valignd zmm0,zmm1,dword ptr [rdx-0x200]{1to16},0x7b
+    valignd zmm0,zmm1,dword ptr [rdx-0x204]{1to16},0x7b
+
+    vblendmpd zmm0,zmm1,zmm2
+    vblendmpd zmm0{k7},zmm1,zmm2
+    vblendmpd zmm0{k7}{z},zmm1,zmm2
+    vblendmpd zmm0,zmm1,zword ptr [rcx]
+    vblendmpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vblendmpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vblendmpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vblendmpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vblendmpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vblendmpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vblendmpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vblendmpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vblendmpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vblendmpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vblendmps zmm0,zmm1,zmm2
+    vblendmps zmm0{k7},zmm1,zmm2
+    vblendmps zmm0{k7}{z},zmm1,zmm2
+    vblendmps zmm0,zmm1,zword ptr [rcx]
+    vblendmps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vblendmps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vblendmps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vblendmps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vblendmps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vblendmps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vblendmps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vblendmps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vblendmps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vblendmps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vbroadcastsd ymm0,qword ptr [rax]
+    vbroadcastsd zmm0,qword ptr [rcx]
+    vbroadcastsd zmm0{k7},qword ptr [rcx]
+    vbroadcastsd zmm0{k7}{z},qword ptr [rcx]
+    vbroadcastsd zmm0,qword ptr [rdx+0x3f8]
+    vbroadcastsd zmm0,qword ptr [rdx+0x400]
+    vbroadcastsd zmm0,qword ptr [rdx-0x400]
+    vbroadcastsd zmm0,qword ptr [rdx-0x408]
+    vbroadcastsd zmm0{k7},xmm1
+    vbroadcastsd zmm0{k7}{z},xmm1
+
+    vbroadcastss xmm0,dword ptr [rax]
+    vbroadcastss ymm0,dword ptr [rax]
+    vbroadcastss zmm0,dword ptr [rcx]
+    vbroadcastss zmm0{k7},dword ptr [rcx]
+    vbroadcastss zmm0{k7}{z},dword ptr [rcx]
+    vbroadcastss zmm0,dword ptr [rdx+0x1fc]
+    vbroadcastss zmm0,dword ptr [rdx+0x200]
+    vbroadcastss zmm0,dword ptr [rdx-0x200]
+    vbroadcastss zmm0,dword ptr [rdx-0x204]
+    vbroadcastss zmm0{k7},xmm1
+    vbroadcastss zmm0{k7}{z},xmm1
+
+    vcomisd xmm0,xmm1
+    vcomisd xmm0,[rax]
+    vcomiss xmm0,xmm1
+    vcomiss xmm0,[rax]
+    vcomisd xmm7,xmm0
+    vcomisd xmm0,xmm0
+    vcomisd xmm0,[rax]
+    vcomisd xmm0,xmm1
+    vcomisd xmm0,xmm0
+    vcomisd xmm1,xmm1
+    vcomisd xmm0,xmm0
+    vcomisd xmm0,xmm1
+    vcomisd xmm0,qword ptr [rcx]
+    vcomisd xmm0,qword ptr [rdx+0x3f8]
+    vcomisd xmm0,qword ptr [rdx+0x400]
+    vcomisd xmm0,qword ptr [rdx-0x400]
+    vcomisd xmm0,qword ptr [rdx-0x408]
+
+    vcomiss xmm0,xmm1
+    vcomiss xmm0,dword ptr [rcx]
+    vcomiss xmm0,dword ptr [rax+r14*8+0x123]
+    vcomiss xmm0,dword ptr [rdx+0x1fc]
+    vcomiss xmm0,dword ptr [rdx+0x200]
+    vcomiss xmm0,dword ptr [rdx-0x200]
+    vcomiss xmm0,dword ptr [rdx-0x204]
+
+    vcvttpd2dq xmm0,xmm1
+    vcvttpd2dq xmm0,oword ptr [rax]
+    vcvttpd2dq xmm0,ymm1
+    vcvttpd2dq xmm0,yword ptr [rax]
+    vcvttpd2dq ymm0{k7},zmm1
+    vcvttpd2dq ymm0{k7}{z},zmm1
+    vcvttpd2dq ymm0{k7},zmm1,{sae}
+    vcvttpd2dq ymm0{k7},zword ptr [rcx]
+    vcvttpd2dq ymm0{k7},zword ptr [rax+r14*8+0x123]
+    vcvttpd2dq ymm0{k7},qword ptr [rcx]{1to8}
+    vcvttpd2dq ymm0{k7},zword ptr [rdx+0x1fc0]
+    vcvttpd2dq ymm0{k7},zword ptr [rdx+0x2000]
+    vcvttpd2dq ymm0{k7},zword ptr [rdx-0x2000]
+    vcvttpd2dq ymm0{k7},zword ptr [rdx-0x2040]
+    vcvttpd2dq ymm0{k7},qword ptr [rdx+0x3f8]{1to8}
+    vcvttpd2dq ymm0{k7},qword ptr [rdx+0x400]{1to8}
+    vcvttpd2dq ymm0{k7},qword ptr [rdx-0x400]{1to8}
+    vcvttpd2dq ymm0{k7},qword ptr [rdx-0x408]{1to8}
+
+    vcvttps2dq xmm0,xmm1
+    vcvttps2dq xmm0,oword ptr [rax]
+    vcvttps2dq ymm0,ymm1
+    vcvttps2dq ymm0,yword ptr [rax]
+    vcvttps2dq zmm0,zmm1
+    vcvttps2dq zmm1{k1}{z},zmm2
+    vcvttps2dq zmm0{k7},zmm1
+    vcvttps2dq zmm0{k7}{z},zmm1
+    vcvttps2dq zmm0,zmm1,{sae}
+    vcvttps2dq zmm0,zword ptr [rcx]
+    vcvttps2dq zmm0,zword ptr [rax+r14*8+0x123]
+    vcvttps2dq zmm0,dword ptr [rcx]{1to16}
+    vcvttps2dq zmm0,zword ptr [rdx+0x1fc0]
+    vcvttps2dq zmm0,zword ptr [rdx+0x2000]
+    vcvttps2dq zmm0,zword ptr [rdx-0x2000]
+    vcvttps2dq zmm0,zword ptr [rdx-0x2040]
+    vcvttps2dq zmm0,dword ptr [rdx+0x1fc]{1to16}
+    vcvttps2dq zmm0,dword ptr [rdx+0x200]{1to16}
+    vcvttps2dq zmm0,dword ptr [rdx-0x200]{1to16}
+    vcvttps2dq zmm0,dword ptr [rdx-0x204]{1to16}
+
+    vfmadd132pd zmm0,zmm1,zmm2
+    vfmadd132pd zmm0{k7},zmm1,zmm2
+    vfmadd132pd zmm0{k7}{z},zmm1,zmm2
+    vfmadd132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd132pd zmm0,zmm1,zword ptr [rcx]
+    vfmadd132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmadd132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmadd132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmadd132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmadd132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmadd132ps zmm0,zmm1,zmm2
+    vfmadd132ps zmm0{k7},zmm1,zmm2
+    vfmadd132ps zmm0{k7}{z},zmm1,zmm2
+    vfmadd132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd132ps zmm0,zmm1,zword ptr [rcx]
+    vfmadd132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmadd132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmadd132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmadd132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmadd132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmadd132sd xmm0{k7},xmm1,xmm2
+    vfmadd132sd xmm0{k7}{z},xmm1,xmm2
+    vfmadd132sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmadd132sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmadd132sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmadd132sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmadd132sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmadd132ss xmm0{k7},xmm1,xmm2
+    vfmadd132ss xmm0{k7}{z},xmm1,xmm2
+    vfmadd132ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmadd132ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmadd132ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmadd132ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmadd132ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmadd213pd zmm0,zmm1,zmm2
+    vfmadd213pd zmm0{k7},zmm1,zmm2
+    vfmadd213pd zmm0{k7}{z},zmm1,zmm2
+    vfmadd213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd213pd zmm0,zmm1,zword ptr [rcx]
+    vfmadd213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmadd213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmadd213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmadd213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmadd213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmadd213ps zmm0,zmm1,zmm2
+    vfmadd213ps zmm0{k7},zmm1,zmm2
+    vfmadd213ps zmm0{k7}{z},zmm1,zmm2
+    vfmadd213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd213ps zmm0,zmm1,zword ptr [rcx]
+    vfmadd213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmadd213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmadd213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmadd213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmadd213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmadd213sd xmm0{k7},xmm1,xmm2
+    vfmadd213sd xmm0{k7}{z},xmm1,xmm2
+    vfmadd213sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmadd213sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmadd213sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmadd213sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmadd213sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmadd213ss xmm0{k7},xmm1,xmm2
+    vfmadd213ss xmm0{k7}{z},xmm1,xmm2
+    vfmadd213ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmadd213ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmadd213ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmadd213ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmadd213ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmadd231pd zmm0,zmm1,zmm2
+    vfmadd231pd zmm0{k7},zmm1,zmm2
+    vfmadd231pd zmm0{k7}{z},zmm1,zmm2
+    vfmadd231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd231pd zmm0,zmm1,zword ptr [rcx]
+    vfmadd231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmadd231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmadd231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmadd231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmadd231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmadd231ps zmm0,zmm1,zmm2
+    vfmadd231ps zmm0{k7},zmm1,zmm2
+    vfmadd231ps zmm0{k7}{z},zmm1,zmm2
+    vfmadd231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmadd231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmadd231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmadd231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmadd231ps zmm0,zmm1,zword ptr [rcx]
+    vfmadd231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmadd231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmadd231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmadd231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmadd231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmadd231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmadd231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmadd231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmadd231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmadd231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmadd231sd xmm0{k7},xmm1,xmm2
+    vfmadd231sd xmm0{k7}{z},xmm1,xmm2
+    vfmadd231sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmadd231sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmadd231sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmadd231sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmadd231sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmadd231ss xmm0{k7},xmm1,xmm2
+    vfmadd231ss xmm0{k7}{z},xmm1,xmm2
+    vfmadd231ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmadd231ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmadd231ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmadd231ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmadd231ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmaddsub132pd zmm0,zmm1,zmm2
+    vfmaddsub132pd zmm0{k7},zmm1,zmm2
+    vfmaddsub132pd zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmaddsub132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmaddsub132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmaddsub132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmaddsub132ps zmm0,zmm1,zmm2
+    vfmaddsub132ps zmm0{k7},zmm1,zmm2
+    vfmaddsub132ps zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmaddsub132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmaddsub132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmaddsub132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmaddsub213pd zmm0,zmm1,zmm2
+    vfmaddsub213pd zmm0{k7},zmm1,zmm2
+    vfmaddsub213pd zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmaddsub213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmaddsub213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmaddsub213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmaddsub213ps zmm0,zmm1,zmm2
+    vfmaddsub213ps zmm0{k7},zmm1,zmm2
+    vfmaddsub213ps zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmaddsub213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmaddsub213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmaddsub213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmaddsub231pd zmm0,zmm1,zmm2
+    vfmaddsub231pd zmm0{k7},zmm1,zmm2
+    vfmaddsub231pd zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmaddsub231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmaddsub231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmaddsub231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmaddsub231ps zmm0,zmm1,zmm2
+    vfmaddsub231ps zmm0{k7},zmm1,zmm2
+    vfmaddsub231ps zmm0{k7}{z},zmm1,zmm2
+    vfmaddsub231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmaddsub231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmaddsub231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmaddsub231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rcx]
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmaddsub231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmaddsub231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmaddsub231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmaddsub231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmaddsub231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmaddsub231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsub132pd zmm0,zmm1,zmm2
+    vfmsub132pd zmm0{k7},zmm1,zmm2
+    vfmsub132pd zmm0{k7}{z},zmm1,zmm2
+    vfmsub132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub132pd zmm0,zmm1,zword ptr [rcx]
+    vfmsub132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsub132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsub132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsub132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsub132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsub132ps zmm0,zmm1,zmm2
+    vfmsub132ps zmm0{k7},zmm1,zmm2
+    vfmsub132ps zmm0{k7}{z},zmm1,zmm2
+    vfmsub132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub132ps zmm0,zmm1,zword ptr [rcx]
+    vfmsub132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsub132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsub132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsub132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsub132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsub132sd xmm0{k7},xmm1,xmm2
+    vfmsub132sd xmm0{k7}{z},xmm1,xmm2
+    vfmsub132sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmsub132sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmsub132sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmsub132sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmsub132sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmsub132ss xmm0{k7},xmm1,xmm2
+    vfmsub132ss xmm0{k7}{z},xmm1,xmm2
+    vfmsub132ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmsub132ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmsub132ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmsub132ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmsub132ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmsub213pd zmm0,zmm1,zmm2
+    vfmsub213pd zmm0{k7},zmm1,zmm2
+    vfmsub213pd zmm0{k7}{z},zmm1,zmm2
+    vfmsub213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub213pd zmm0,zmm1,zword ptr [rcx]
+    vfmsub213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsub213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsub213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsub213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsub213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsub213ps zmm0,zmm1,zmm2
+    vfmsub213ps zmm0{k7},zmm1,zmm2
+    vfmsub213ps zmm0{k7}{z},zmm1,zmm2
+    vfmsub213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub213ps zmm0,zmm1,zword ptr [rcx]
+    vfmsub213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsub213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsub213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsub213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsub213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsub213sd xmm0{k7},xmm1,xmm2
+    vfmsub213sd xmm0{k7}{z},xmm1,xmm2
+    vfmsub213sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmsub213sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmsub213sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmsub213sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmsub213sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmsub213ss xmm0{k7},xmm1,xmm2
+    vfmsub213ss xmm0{k7}{z},xmm1,xmm2
+    vfmsub213ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmsub213ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmsub213ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmsub213ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmsub213ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmsub231pd zmm0,zmm1,zmm2
+    vfmsub231pd zmm0{k7},zmm1,zmm2
+    vfmsub231pd zmm0{k7}{z},zmm1,zmm2
+    vfmsub231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub231pd zmm0,zmm1,zword ptr [rcx]
+    vfmsub231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsub231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsub231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsub231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsub231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsub231ps zmm0,zmm1,zmm2
+    vfmsub231ps zmm0{k7},zmm1,zmm2
+    vfmsub231ps zmm0{k7}{z},zmm1,zmm2
+    vfmsub231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsub231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsub231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsub231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsub231ps zmm0,zmm1,zword ptr [rcx]
+    vfmsub231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsub231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsub231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsub231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsub231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsub231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsub231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsub231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsub231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsub231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsub231sd xmm0{k7},xmm1,xmm2
+    vfmsub231sd xmm0{k7}{z},xmm1,xmm2
+    vfmsub231sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfmsub231sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfmsub231sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfmsub231sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfmsub231sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfmsub231ss xmm0{k7},xmm1,xmm2
+    vfmsub231ss xmm0{k7}{z},xmm1,xmm2
+    vfmsub231ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfmsub231ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfmsub231ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfmsub231ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfmsub231ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfmsubadd132pd zmm0,zmm1,zmm2
+    vfmsubadd132pd zmm0{k7},zmm1,zmm2
+    vfmsubadd132pd zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsubadd132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsubadd132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsubadd132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsubadd132ps zmm0,zmm1,zmm2
+    vfmsubadd132ps zmm0{k7},zmm1,zmm2
+    vfmsubadd132ps zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsubadd132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsubadd132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsubadd132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsubadd213pd zmm0,zmm1,zmm2
+    vfmsubadd213pd zmm0{k7},zmm1,zmm2
+    vfmsubadd213pd zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsubadd213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsubadd213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsubadd213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsubadd213ps zmm0,zmm1,zmm2
+    vfmsubadd213ps zmm0{k7},zmm1,zmm2
+    vfmsubadd213ps zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsubadd213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsubadd213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsubadd213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfmsubadd231pd zmm0,zmm1,zmm2
+    vfmsubadd231pd zmm0{k7},zmm1,zmm2
+    vfmsubadd231pd zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfmsubadd231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfmsubadd231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfmsubadd231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfmsubadd231ps zmm0,zmm1,zmm2
+    vfmsubadd231ps zmm0{k7},zmm1,zmm2
+    vfmsubadd231ps zmm0{k7}{z},zmm1,zmm2
+    vfmsubadd231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfmsubadd231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfmsubadd231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfmsubadd231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rcx]
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfmsubadd231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfmsubadd231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfmsubadd231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfmsubadd231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfmsubadd231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfmsubadd231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmadd132pd zmm0,zmm1,zmm2
+    vfnmadd132pd zmm0{k7},zmm1,zmm2
+    vfnmadd132pd zmm0{k7}{z},zmm1,zmm2
+    vfnmadd132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd132pd zmm0,zmm1,zword ptr [rcx]
+    vfnmadd132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmadd132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmadd132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmadd132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmadd132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmadd132ps zmm0,zmm1,zmm2
+    vfnmadd132ps zmm0{k7},zmm1,zmm2
+    vfnmadd132ps zmm0{k7}{z},zmm1,zmm2
+    vfnmadd132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd132ps zmm0,zmm1,zword ptr [rcx]
+    vfnmadd132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmadd132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmadd132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmadd132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmadd132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmadd132sd xmm0{k7},xmm1,xmm2
+    vfnmadd132sd xmm0{k7}{z},xmm1,xmm2
+    vfnmadd132sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmadd132sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmadd132sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmadd132sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmadd132sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmadd132ss xmm0{k7},xmm1,xmm2
+    vfnmadd132ss xmm0{k7}{z},xmm1,xmm2
+    vfnmadd132ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmadd132ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmadd132ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmadd132ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmadd132ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfnmadd213pd zmm0,zmm1,zmm2
+    vfnmadd213pd zmm0{k7},zmm1,zmm2
+    vfnmadd213pd zmm0{k7}{z},zmm1,zmm2
+    vfnmadd213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd213pd zmm0,zmm1,zword ptr [rcx]
+    vfnmadd213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmadd213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmadd213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmadd213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmadd213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmadd213ps zmm0,zmm1,zmm2
+    vfnmadd213ps zmm0{k7},zmm1,zmm2
+    vfnmadd213ps zmm0{k7}{z},zmm1,zmm2
+    vfnmadd213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd213ps zmm0,zmm1,zword ptr [rcx]
+    vfnmadd213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmadd213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmadd213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmadd213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmadd213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmadd213sd xmm0{k7},xmm1,xmm2
+    vfnmadd213sd xmm0{k7}{z},xmm1,xmm2
+    vfnmadd213sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmadd213sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmadd213sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmadd213sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmadd213sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmadd213ss xmm0{k7},xmm1,xmm2
+    vfnmadd213ss xmm0{k7}{z},xmm1,xmm2
+    vfnmadd213ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmadd213ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmadd213ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmadd213ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmadd213ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfnmadd231pd zmm0,zmm1,zmm2
+    vfnmadd231pd zmm0{k7},zmm1,zmm2
+    vfnmadd231pd zmm0{k7}{z},zmm1,zmm2
+    vfnmadd231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd231pd zmm0,zmm1,zword ptr [rcx]
+    vfnmadd231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmadd231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmadd231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmadd231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmadd231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmadd231ps zmm0,zmm1,zmm2
+    vfnmadd231ps zmm0{k7},zmm1,zmm2
+    vfnmadd231ps zmm0{k7}{z},zmm1,zmm2
+    vfnmadd231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmadd231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmadd231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmadd231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmadd231ps zmm0,zmm1,zword ptr [rcx]
+    vfnmadd231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmadd231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmadd231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmadd231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmadd231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmadd231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmadd231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmadd231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmadd231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmadd231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmadd231sd xmm0{k7},xmm1,xmm2
+    vfnmadd231sd xmm0{k7}{z},xmm1,xmm2
+    vfnmadd231sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmadd231sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmadd231sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmadd231sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmadd231sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmadd231ss xmm0{k7},xmm1,xmm2
+    vfnmadd231ss xmm0{k7}{z},xmm1,xmm2
+    vfnmadd231ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmadd231ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmadd231ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmadd231ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmadd231ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfnmsub132pd zmm0,zmm1,zmm2
+    vfnmsub132pd zmm0{k7},zmm1,zmm2
+    vfnmsub132pd zmm0{k7}{z},zmm1,zmm2
+    vfnmsub132pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub132pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub132pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub132pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub132pd zmm0,zmm1,zword ptr [rcx]
+    vfnmsub132pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub132pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmsub132pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub132pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub132pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub132pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub132pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmsub132pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmsub132pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmsub132pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmsub132ps zmm0,zmm1,zmm2
+    vfnmsub132ps zmm0{k7},zmm1,zmm2
+    vfnmsub132ps zmm0{k7}{z},zmm1,zmm2
+    vfnmsub132ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub132ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub132ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub132ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub132ps zmm0,zmm1,zword ptr [rcx]
+    vfnmsub132ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub132ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmsub132ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub132ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub132ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub132ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub132ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmsub132ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmsub132ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmsub132ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmsub132sd xmm0{k7},xmm1,xmm2
+    vfnmsub132sd xmm0{k7}{z},xmm1,xmm2
+    vfnmsub132sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmsub132sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmsub132sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmsub132sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmsub132sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmsub132ss xmm0{k7},xmm1,xmm2
+    vfnmsub132ss xmm0{k7}{z},xmm1,xmm2
+    vfnmsub132ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmsub132ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmsub132ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmsub132ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmsub132ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfnmsub213pd zmm0,zmm1,zmm2
+    vfnmsub213pd zmm0{k7},zmm1,zmm2
+    vfnmsub213pd zmm0{k7}{z},zmm1,zmm2
+    vfnmsub213pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub213pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub213pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub213pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub213pd zmm0,zmm1,zword ptr [rcx]
+    vfnmsub213pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub213pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmsub213pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub213pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub213pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub213pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub213pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmsub213pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmsub213pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmsub213pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmsub213ps zmm0,zmm1,zmm2
+    vfnmsub213ps zmm0{k7},zmm1,zmm2
+    vfnmsub213ps zmm0{k7}{z},zmm1,zmm2
+    vfnmsub213ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub213ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub213ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub213ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub213ps zmm0,zmm1,zword ptr [rcx]
+    vfnmsub213ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub213ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmsub213ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub213ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub213ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub213ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub213ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmsub213ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmsub213ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmsub213ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmsub213sd xmm0{k7},xmm1,xmm2
+    vfnmsub213sd xmm0{k7}{z},xmm1,xmm2
+    vfnmsub213sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmsub213sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmsub213sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmsub213sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmsub213sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmsub213ss xmm0{k7},xmm1,xmm2
+    vfnmsub213ss xmm0{k7}{z},xmm1,xmm2
+    vfnmsub213ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmsub213ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmsub213ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmsub213ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmsub213ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+    vfnmsub231pd zmm0,zmm1,zmm2
+    vfnmsub231pd zmm0{k7},zmm1,zmm2
+    vfnmsub231pd zmm0{k7}{z},zmm1,zmm2
+    vfnmsub231pd zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub231pd zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub231pd zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub231pd zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub231pd zmm0,zmm1,zword ptr [rcx]
+    vfnmsub231pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub231pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vfnmsub231pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub231pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub231pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub231pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub231pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vfnmsub231pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vfnmsub231pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vfnmsub231pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+    vfnmsub231ps zmm0,zmm1,zmm2
+    vfnmsub231ps zmm0{k7},zmm1,zmm2
+    vfnmsub231ps zmm0{k7}{z},zmm1,zmm2
+    vfnmsub231ps zmm0,zmm1,zmm2,{rn-sae}
+    vfnmsub231ps zmm0,zmm1,zmm2,{ru-sae}
+    vfnmsub231ps zmm0,zmm1,zmm2,{rd-sae}
+    vfnmsub231ps zmm0,zmm1,zmm2,{rz-sae}
+    vfnmsub231ps zmm0,zmm1,zword ptr [rcx]
+    vfnmsub231ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vfnmsub231ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vfnmsub231ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vfnmsub231ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vfnmsub231ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vfnmsub231ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vfnmsub231ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vfnmsub231ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vfnmsub231ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vfnmsub231ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vfnmsub231sd xmm0{k7},xmm1,xmm2
+    vfnmsub231sd xmm0{k7}{z},xmm1,xmm2
+    vfnmsub231sd xmm0{k7},xmm1,qword ptr [rcx]
+    vfnmsub231sd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vfnmsub231sd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vfnmsub231sd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vfnmsub231sd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+    vfnmsub231ss xmm0{k7},xmm1,xmm2
+    vfnmsub231ss xmm0{k7}{z},xmm1,xmm2
+    vfnmsub231ss xmm0{k7},xmm1,dword ptr [rcx]
+    vfnmsub231ss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vfnmsub231ss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vfnmsub231ss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vfnmsub231ss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vgetmantpd zmm0,zmm1,0xab
+    vgetmantpd zmm0{k7},zmm1,0xab
+    vgetmantpd zmm0{k7}{z},zmm1,0xab
+    vgetmantpd zmm0,zmm1,0x7b
+    vgetmantpd zmm0,zword ptr [rcx],0x7b
+    vgetmantpd zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vgetmantpd zmm0,zword ptr [rdx+0x2000],0x7b
+    vgetmantpd zmm0,zword ptr [rdx-0x2000],0x7b
+    vgetmantpd zmm0,zword ptr [rdx-0x2040],0x7b
+    vgetmantps zmm0,zmm1,0xab
+    vgetmantps zmm0{k7},zmm1,0xab
+    vgetmantps zmm0{k7}{z},zmm1,0xab
+    vgetmantps zmm0,zmm1,0x7b
+    vgetmantps zmm0,zword ptr [rcx],0x7b
+    vgetmantps zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vgetmantps zmm0,zword ptr [rdx+0x2000],0x7b
+    vgetmantps zmm0,zword ptr [rdx-0x2000],0x7b
+    vgetmantps zmm0,zword ptr [rdx-0x2040],0x7b
+    vgetmantsd xmm0{k7},xmm1,xmm2,0xab
+    vgetmantsd xmm0{k7}{z},xmm1,xmm2,0xab
+    vgetmantsd xmm0{k7},xmm1,xmm2,0x7b
+    vgetmantsd xmm0{k7},xmm1,qword ptr [rcx],0x7b
+    vgetmantsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8],0x7b
+    vgetmantsd xmm0{k7},xmm1,qword ptr [rdx+0x400],0x7b
+    vgetmantsd xmm0{k7},xmm1,qword ptr [rdx-0x400],0x7b
+    vgetmantsd xmm0{k7},xmm1,qword ptr [rdx-0x408],0x7b
+    vgetmantss xmm0{k7},xmm1,xmm2,0xab
+    vgetmantss xmm0{k7}{z},xmm1,xmm2,0xab
+    vgetmantss xmm0{k7},xmm1,xmm2,0x7b
+    vgetmantss xmm0{k7},xmm1,dword ptr [rcx],0x7b
+    vgetmantss xmm0{k7},xmm1,dword ptr [rdx+0x1fc],0x7b
+    vgetmantss xmm0{k7},xmm1,dword ptr [rdx+0x200],0x7b
+    vgetmantss xmm0{k7},xmm1,dword ptr [rdx-0x200],0x7b
+    vgetmantss xmm0{k7},xmm1,dword ptr [rdx-0x204],0x7b
+
+    vinsertf32x4 zmm0{k7},zmm1,xmm2,0xab
+    vinsertf32x4 zmm0{k7}{z},zmm1,xmm2,0xab
+    vinsertf32x4 zmm0{k7},zmm1,xmm2,0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rcx],0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123],0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rdx+0x7f0],0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rdx+0x800],0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rdx-0x800],0x7b
+    vinsertf32x4 zmm0{k7},zmm1,oword ptr [rdx-0x810],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,ymm2,0xab
+    vinsertf64x4 zmm0{k7}{z},zmm1,ymm2,0xab
+    vinsertf64x4 zmm0{k7},zmm1,ymm2,0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rcx],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rax+r14*8+0x123],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rdx+0xfe0],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rdx+0x1000],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rdx-0x1000],0x7b
+    vinsertf64x4 zmm0{k7},zmm1,yword ptr [rdx-0x1020],0x7b
+    vinserti32x4 zmm0{k7},zmm1,xmm2,0xab
+    vinserti32x4 zmm0{k7}{z},zmm1,xmm2,0xab
+    vinserti32x4 zmm0{k7},zmm1,xmm2,0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rcx],0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rax+r14*8+0x123],0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rdx+0x7f0],0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rdx+0x800],0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rdx-0x800],0x7b
+    vinserti32x4 zmm0{k7},zmm1,oword ptr [rdx-0x810],0x7b
+    vinserti64x4 zmm0{k7},zmm1,ymm2,0xab
+    vinserti64x4 zmm0{k7}{z},zmm1,ymm2,0xab
+    vinserti64x4 zmm0{k7},zmm1,ymm2,0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rcx],0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rax+r14*8+0x123],0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rdx+0xfe0],0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rdx+0x1000],0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rdx-0x1000],0x7b
+    vinserti64x4 zmm0{k7},zmm1,yword ptr [rdx-0x1020],0x7b
+
+    vmovddup xmm0,xmm1
+    vmovddup xmm0,qword ptr [rax]
+    vmovddup ymm0,ymm1
+    vmovddup ymm0,yword ptr [rax]
+    vmovddup zmm0,zmm1
+    vmovddup zmm0{k7},zmm1
+    vmovddup zmm0{k7}{z},zmm1
+    vmovddup zmm0,zword ptr [rcx]
+    vmovddup zmm0,zword ptr [rax+r14*8+0x123]
+    vmovddup zmm0,zword ptr [rdx+0x1fc0]
+    vmovddup zmm0,zword ptr [rdx+0x2000]
+    vmovddup zmm0,zword ptr [rdx-0x2000]
+    vmovddup zmm0,zword ptr [rdx-0x2040]
+
+    vmovhpd xmm0,xmm1,qword ptr [rax]
+    vmovhpd xmm1,xmm0,qword ptr [rcx]
+    vmovhpd xmm1,xmm0,qword ptr [rdx+0x3f8]
+    vmovhpd xmm1,xmm0,qword ptr [rdx+0x400]
+    vmovhpd xmm1,xmm0,qword ptr [rdx-0x400]
+    vmovhpd xmm1,xmm0,qword ptr [rdx-0x408]
+    vmovhpd qword ptr [rax],xmm1
+    vmovhpd qword ptr [rcx],xmm0
+    vmovhpd qword ptr [rdx+0x3f8],xmm0
+    vmovhpd qword ptr [rdx+0x400],xmm0
+    vmovhpd qword ptr [rdx-0x400],xmm0
+    vmovhpd qword ptr [rdx-0x408],xmm0
+
+    vmovhps xmm0,xmm1,qword ptr [rax]
+    vmovhps xmm1,xmm0,qword ptr [rcx]
+    vmovhps xmm1,xmm0,qword ptr [rdx+0x3f8]
+    vmovhps xmm1,xmm0,qword ptr [rdx+0x400]
+    vmovhps xmm1,xmm0,qword ptr [rdx-0x400]
+    vmovhps xmm1,xmm0,qword ptr [rdx-0x408]
+    vmovhps qword ptr [rax],xmm1
+    vmovhps qword ptr [rcx],xmm0
+    vmovhps qword ptr [rax+r14*8+0x123],xmm0
+    vmovhps qword ptr [rdx+0x3f8],xmm0
+    vmovhps qword ptr [rdx+0x400],xmm0
+    vmovhps qword ptr [rdx-0x400],xmm0
+    vmovhps qword ptr [rdx-0x408],xmm0
+
+    vmovlpd xmm0,xmm1,qword ptr [rax]
+    vmovlpd xmm1,xmm0,qword ptr [rcx]
+    vmovlpd xmm1,xmm0,qword ptr [rdx+0x3f8]
+    vmovlpd xmm1,xmm0,qword ptr [rdx+0x400]
+    vmovlpd xmm1,xmm0,qword ptr [rdx-0x400]
+    vmovlpd xmm1,xmm0,qword ptr [rdx-0x408]
+    vmovlpd qword ptr [rax],xmm1
+    vmovlpd qword ptr [rcx],xmm0
+    vmovlpd qword ptr [rdx+0x3f8],xmm0
+    vmovlpd qword ptr [rdx+0x400],xmm0
+    vmovlpd qword ptr [rdx-0x400],xmm0
+    vmovlpd qword ptr [rdx-0x408],xmm0
+
+    vmovlps xmm0,xmm1,qword ptr [rax]
+    vmovlps xmm1,xmm0,qword ptr [rcx]
+    vmovlps xmm1,xmm0,qword ptr [rax+r14*8+0x123]
+    vmovlps xmm1,xmm0,qword ptr [rdx+0x3f8]
+    vmovlps xmm1,xmm0,qword ptr [rdx+0x400]
+    vmovlps xmm1,xmm0,qword ptr [rdx-0x400]
+    vmovlps xmm1,xmm0,qword ptr [rdx-0x408]
+    vmovlps qword ptr [rax],xmm1
+    vmovlps qword ptr [rcx],xmm0
+    vmovlps qword ptr [rax+r14*8+0x123],xmm0
+    vmovlps qword ptr [rdx+0x3f8],xmm0
+    vmovlps qword ptr [rdx+0x400],xmm0
+    vmovlps qword ptr [rdx-0x400],xmm0
+    vmovlps qword ptr [rdx-0x408],xmm0
+
+    vpabsq zmm0,zmm1
+    vpabsq zmm0{k7},zmm1
+    vpabsq zmm0{k7}{z},zmm1
+    vpabsq zmm0,zword ptr [rcx]
+    vpabsq zmm0,zword ptr [rax+r14*8+0x123]
+    vpabsq zmm0,qword ptr [rcx]{1to8}
+    vpabsq zmm0,zword ptr [rdx+0x1fc0]
+    vpabsq zmm0,zword ptr [rdx+0x2000]
+    vpabsq zmm0,zword ptr [rdx-0x2000]
+    vpabsq zmm0,zword ptr [rdx-0x2040]
+    vpabsq zmm0,qword ptr [rdx+0x3f8]{1to8}
+    vpabsq zmm0,qword ptr [rdx+0x400]{1to8}
+    vpabsq zmm0,qword ptr [rdx-0x400]{1to8}
+    vpabsq zmm0,qword ptr [rdx-0x408]{1to8}
+
+    vpblendmd zmm0,zmm1,zmm2
+    vpblendmd zmm0{k7},zmm1,zmm2
+    vpblendmd zmm0{k7}{z},zmm1,zmm2
+    vpblendmd zmm0,zmm1,zword ptr [rcx]
+    vpblendmd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpblendmd zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpblendmd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpblendmd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpblendmd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpblendmd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpblendmd zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpblendmd zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpblendmd zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpblendmd zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vpbroadcastd zmm0,dword ptr [rcx]
+    vpbroadcastd zmm0{k7},dword ptr [rcx]
+    vpbroadcastd zmm0{k7}{z},dword ptr [rcx]
+    vpbroadcastd zmm0,dword ptr [rdx+0x1fc]
+    vpbroadcastd zmm0,dword ptr [rdx+0x200]
+    vpbroadcastd zmm0,dword ptr [rdx-0x200]
+    vpbroadcastd zmm0,dword ptr [rdx-0x204]
+    vpbroadcastd zmm0{k7},xmm1
+    vpbroadcastd zmm0{k7}{z},xmm1
+    vpbroadcastd zmm0,eax
+    vpbroadcastd zmm0{k7},eax
+    vpbroadcastd zmm0{k7}{z},eax
+    vpbroadcastd zmm0,ebp
+
+    vpbroadcastq zmm0,qword ptr [rcx]
+    vpbroadcastq zmm0{k7},qword ptr [rcx]
+    vpbroadcastq zmm0{k7}{z},qword ptr [rcx]
+    vpbroadcastq zmm0,qword ptr [rdx+0x3f8]
+    vpbroadcastq zmm0,qword ptr [rdx+0x400]
+    vpbroadcastq zmm0,qword ptr [rdx-0x400]
+    vpbroadcastq zmm0,qword ptr [rdx-0x408]
+    vpbroadcastq zmm0{k7},xmm1
+    vpbroadcastq zmm0{k7}{z},xmm1
+    vpbroadcastq zmm0,rax
+    vpbroadcastq zmm0{k7},rax
+    vpbroadcastq zmm0{k7}{z},rax
+
+    vpcmpd k5,zmm0,zmm1,0xab
+    vpcmpd k5{k7},zmm0,zmm1,0xab
+    vpcmpd k5,zmm0,zmm1,0x7b
+    vpcmpd k5,zmm0,zword ptr [rcx],0x7b
+    vpcmpd k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpcmpd k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpcmpd k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vpcmpd k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vpcmpd k5,zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpcmpq k5,zmm0,zmm1,0xab
+    vpcmpq k5{k7},zmm0,zmm1,0xab
+    vpcmpq k5,zmm0,zmm1,0x7b
+    vpcmpq k5,zmm0,zword ptr [rcx],0x7b
+    vpcmpq k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpcmpq k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpcmpq k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vpcmpq k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vpcmpq k5,zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpcmpud k5,zmm0,zmm1,0xab
+    vpcmpud k5{k7},zmm0,zmm1,0xab
+    vpcmpud k5,zmm0,zmm1,0x7b
+    vpcmpud k5,zmm0,zword ptr [rcx],0x7b
+    vpcmpud k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpcmpud k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpcmpud k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vpcmpud k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vpcmpud k5,zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpcmpuq k5,zmm0,zmm1,0xab
+    vpcmpuq k5{k7},zmm0,zmm1,0xab
+    vpcmpuq k5,zmm0,zmm1,0x7b
+    vpcmpuq k5,zmm0,zword ptr [rcx],0x7b
+    vpcmpuq k5,zmm0,zword ptr [rax+r14*8+0x123],0x7b
+    vpcmpuq k5,zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpcmpuq k5,zmm0,zword ptr [rdx+0x2000],0x7b
+    vpcmpuq k5,zmm0,zword ptr [rdx-0x2000],0x7b
+    vpcmpuq k5,zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpblendmq zmm0,zmm1,zmm2
+    vpblendmq zmm0{k7},zmm1,zmm2
+    vpblendmq zmm0{k7}{z},zmm1,zmm2
+    vpblendmq zmm0,zmm1,zword ptr [rcx]
+    vpblendmq zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpblendmq zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpblendmq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpblendmq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpblendmq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpblendmq zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpblendmq zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpblendmq zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpblendmq zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpblendmq zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpermd zmm0,zmm1,zmm2
+    vpermd zmm0{k7},zmm1,zmm2
+    vpermd zmm0{k7}{z},zmm1,zmm2
+    vpermd zmm0,zmm1,zword ptr [rcx]
+    vpermd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermd zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpermilpd xmm0,xmm1,xmm2
+    vpermilpd xmm0,xmm1,oword ptr [rax]
+    vpermilpd xmm0,xmm1,1
+    vpermilpd ymm0,ymm1,ymm2
+    vpermilpd ymm0,ymm1,yword ptr [rax]
+    vpermilpd ymm0,ymm1,1
+    vpermilpd zmm0,zmm1,0xab
+    vpermilpd zmm0{k7},zmm1,0xab
+    vpermilpd zmm0{k7}{z},zmm1,0xab
+    vpermilpd zmm0,zmm1,0x7b
+    vpermilpd zmm0,zword ptr [rcx],0x7b
+    vpermilpd zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpermilpd zmm0,zword ptr [rdx+0x2000],0x7b
+    vpermilpd zmm0,zword ptr [rdx-0x2000],0x7b
+    vpermilpd zmm0,zword ptr [rdx-0x2040],0x7b
+    vpermilpd zmm0,zmm1,zmm2
+    vpermilpd zmm0{k7},zmm1,zmm2
+    vpermilpd zmm0{k7}{z},zmm1,zmm2
+    vpermilpd zmm0,zmm1,zword ptr [rcx]
+    vpermilpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermilpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermilpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermilpd zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpermilps xmm0,xmm1,xmm2
+    vpermilps xmm0,xmm1,oword ptr [rax]
+    vpermilps xmm0,xmm1,1
+    vpermilps ymm0,ymm1,ymm2
+    vpermilps ymm0,ymm1,yword ptr [rax]
+    vpermilps ymm0,ymm1,1
+    vpermilps zmm0,zmm1,0xab
+    vpermilps zmm0{k7},zmm1,0xab
+    vpermilps zmm0{k7}{z},zmm1,0xab
+    vpermilps zmm0,zmm1,0x7b
+    vpermilps zmm0,zword ptr [rcx],0x7b
+    vpermilps zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpermilps zmm0,zword ptr [rdx+0x2000],0x7b
+    vpermilps zmm0,zword ptr [rdx-0x2000],0x7b
+    vpermilps zmm0,zword ptr [rdx-0x2040],0x7b
+    vpermilps zmm0,zmm1,zmm2
+    vpermilps zmm0{k7},zmm1,zmm2
+    vpermilps zmm0{k7}{z},zmm1,zmm2
+    vpermilps zmm0,zmm1,zword ptr [rcx]
+    vpermilps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermilps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermilps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermilps zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpermpd ymm0,ymm6,0x7
+    vpermpd ymm0,yword ptr [rcx],0x7
+    vpermpd zmm0,zmm1,0xab
+    vpermpd zmm0{k7},zmm1,0xab
+    vpermpd zmm0{k7}{z},zmm1,0xab
+    vpermpd zmm0,zmm1,0x7b
+    vpermpd zmm0,zword ptr [rcx],0x7b
+    vpermpd zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpermpd zmm0,zword ptr [rdx+0x2000],0x7b
+    vpermpd zmm0,zword ptr [rdx-0x2000],0x7b
+    vpermpd zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpermpd zmm0,zmm1,zmm2
+    vpermpd zmm0{k7},zmm1,zmm2
+    vpermpd zmm0{k7}{z},zmm1,zmm2
+    vpermpd zmm0,zmm1,zword ptr [rcx]
+    vpermpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermpd zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpermps ymm0,ymm6,ymm4
+    vpermps ymm0,ymm6,YMMWORD PTR [rcx]
+    vpermps zmm0,zmm1,zmm2
+    vpermps zmm0{k7},zmm1,zmm2
+    vpermps zmm0{k7}{z},zmm1,zmm2
+    vpermps zmm0,zmm1,zword ptr [rcx]
+    vpermps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermps zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpermq ymm0,ymm6,0x7
+    vpermq ymm0,YMMWORD PTR [rcx],0x7
+    vpermd ymm0,ymm6,ymm4
+    vpermd ymm0,ymm6,YMMWORD PTR [rcx]
+    vpermq zmm0,zmm1,0xab
+    vpermq zmm0{k7},zmm1,0xab
+    vpermq zmm0{k7}{z},zmm1,0xab
+    vpermq zmm0,zmm1,0x7b
+    vpermq zmm0,zword ptr [rcx],0x7b
+    vpermq zmm0,zword ptr [rdx+0x1fc0],0x7b
+    vpermq zmm0,zword ptr [rdx+0x2000],0x7b
+    vpermq zmm0,zword ptr [rdx-0x2000],0x7b
+    vpermq zmm0,zword ptr [rdx-0x2040],0x7b
+
+    vpermq zmm0,zmm1,zmm2
+    vpermq zmm0{k7},zmm1,zmm2
+    vpermq zmm0{k7}{z},zmm1,zmm2
+    vpermq zmm0,zmm1,zword ptr [rcx]
+    vpermq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpmaxsq zmm0,zmm1,zmm2
+    vpmaxsq zmm0{k7},zmm1,zmm2
+    vpmaxsq zmm0{k7}{z},zmm1,zmm2
+    vpmaxsq zmm0,zmm1,zword ptr [rcx]
+    vpmaxsq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmaxsq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmaxsq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmaxsq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpmaxuq zmm0,zmm1,zmm2
+    vpmaxuq zmm0{k7},zmm1,zmm2
+    vpmaxuq zmm0{k7}{z},zmm1,zmm2
+    vpmaxuq zmm0,zmm1,zword ptr [rcx]
+    vpmaxuq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpmaxuq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpmaxuq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpmaxuq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpminsq zmm0,zmm1,zmm2
+    vpminsq zmm0{k7},zmm1,zmm2
+    vpminsq zmm0{k7}{z},zmm1,zmm2
+    vpminsq zmm0,zmm1,zword ptr [rcx]
+    vpminsq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpminsq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpminsq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpminsq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpminuq zmm0,zmm1,zmm2
+    vpminuq zmm0{k7},zmm1,zmm2
+    vpminuq zmm0{k7}{z},zmm1,zmm2
+    vpminuq zmm0,zmm1,zword ptr [rcx]
+    vpminuq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpminuq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpminuq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpminuq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpord  zmm0,zmm1,zmm2
+    vpord  zmm0{k7},zmm1,zmm2
+    vpord  zmm0{k7}{z},zmm1,zmm2
+    vpord  zmm0,zmm1,zword ptr [rcx]
+    vpord  zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpord  zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpord  zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpord  zmm0,zmm1,zword ptr [rdx-0x2040]
+    vporq  zmm0,zmm1,zmm2
+    vporq  zmm0{k7},zmm1,zmm2
+    vporq  zmm0{k7}{z},zmm1,zmm2
+    vporq  zmm0,zmm1,zword ptr [rcx]
+    vporq  zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vporq  zmm0,zmm1,zword ptr [rdx+0x2000]
+    vporq  zmm0,zmm1,zword ptr [rdx-0x2000]
+    vporq  zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpsllvd ymm0,ymm6,ymm4
+    vpsllvd ymm0,ymm6,yword ptr [rcx]
+    vpsllvq ymm0,ymm6,ymm4
+    vpsllvq ymm0,ymm6,yword ptr [rcx]
+    vpsravd ymm0,ymm6,ymm4
+    vpsravd ymm0,ymm6,yword ptr [rcx]
+    vpsrlvd ymm0,ymm6,ymm4
+    vpsrlvd ymm0,ymm6,yword ptr [rcx]
+    vpsrlvq ymm0,ymm6,ymm4
+    vpsrlvq ymm0,ymm6,yword ptr [rcx]
+
+    vpsllvd zmm0,zmm1,zmm2
+    vpsllvd zmm0{k7},zmm1,zmm2
+    vpsllvd zmm0{k7}{z},zmm1,zmm2
+    vpsllvd zmm0,zmm1,zword ptr [rcx]
+    vpsllvd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsllvd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsllvd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsllvd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpsllvq zmm0,zmm1,zmm2
+    vpsllvq zmm0{k7},zmm1,zmm2
+    vpsllvq zmm0{k7}{z},zmm1,zmm2
+    vpsllvq zmm0,zmm1,zword ptr [rcx]
+    vpsllvq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsllvq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsllvq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsllvq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpsravd zmm0,zmm1,zmm2
+    vpsravd zmm0{k7},zmm1,zmm2
+    vpsravd zmm0{k7}{z},zmm1,zmm2
+    vpsravd zmm0,zmm1,zword ptr [rcx]
+    vpsravd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsravd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsravd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsravd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpsravq zmm0,zmm1,zmm2
+    vpsravq zmm0{k7},zmm1,zmm2
+    vpsravq zmm0{k7}{z},zmm1,zmm2
+    vpsravq zmm0,zmm1,zword ptr [rcx]
+    vpsravq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsravq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsravq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsravq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vpsrlvd zmm0,zmm1,zmm2
+    vpsrlvd zmm0{k7},zmm1,zmm2
+    vpsrlvd zmm0{k7}{z},zmm1,zmm2
+    vpsrlvd zmm0,zmm1,zword ptr [rcx]
+    vpsrlvd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsrlvd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsrlvd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsrlvd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpsrlvq zmm0,zmm1,zmm2
+    vpsrlvq zmm0{k7},zmm1,zmm2
+    vpsrlvq zmm0{k7}{z},zmm1,zmm2
+    vpsrlvq zmm0,zmm1,zword ptr [rcx]
+    vpsrlvq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpsrlvq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpsrlvq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpsrlvq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vptestmd k5,zmm0,zmm1
+    vptestmd k5{k7},zmm0,zmm1
+    vptestmd k5,zmm0,zword ptr [rcx]
+    vptestmd k5,zmm0,zword ptr [rdx+0x1fc0]
+    vptestmd k5,zmm0,zword ptr [rdx+0x2000]
+    vptestmd k5,zmm0,zword ptr [rdx-0x2000]
+    vptestmd k5,zmm0,zword ptr [rdx-0x2040]
+    vptestmq k5,zmm0,zmm1
+    vptestmq k5{k7},zmm0,zmm1
+    vptestmq k5,zmm0,zword ptr [rcx]
+    vptestmq k5,zmm0,zword ptr [rdx+0x1fc0]
+    vptestmq k5,zmm0,zword ptr [rdx+0x2000]
+    vptestmq k5,zmm0,zword ptr [rdx-0x2000]
+    vptestmq k5,zmm0,zword ptr [rdx-0x2040]
+
+    vucomisd xmm0,xmm1
+    vucomisd xmm0,[rax]
+    vucomisd xmm0,xmm1
+    vucomisd xmm0,qword ptr [rcx]
+    vucomisd xmm0,qword ptr [rdx+0x3f8]
+    vucomisd xmm0,qword ptr [rdx+0x400]
+    vucomisd xmm0,qword ptr [rdx-0x400]
+    vucomisd xmm0,qword ptr [rdx-0x408]
+
+    vucomiss xmm0,xmm1
+    vucomiss xmm0,[rax]
+    vucomiss xmm0,xmm1
+    vucomiss xmm0,dword ptr [rcx]
+    vucomiss xmm0,dword ptr [rax+r14*8+0x123]
+    vucomiss xmm0,dword ptr [rdx+0x1fc]
+    vucomiss xmm0,dword ptr [rdx+0x200]
+    vucomiss xmm0,dword ptr [rdx-0x200]
+    vucomiss xmm0,dword ptr [rdx-0x204]
+
+    vpternlogd zmm0,zmm1,zmm2,0xab
+    vpternlogd zmm0{k7},zmm1,zmm2,0xab
+    vpternlogd zmm0{k7}{z},zmm1,zmm2,0xab
+    vpternlogd zmm0,zmm1,zmm2,0x7b
+    vpternlogd zmm0,zmm1,zword ptr [rcx],0x7b
+    vpternlogd zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vpternlogd zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vpternlogd zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vpternlogd zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vpternlogq zmm0,zmm1,zmm2,0xab
+    vpternlogq zmm0{k7},zmm1,zmm2,0xab
+    vpternlogq zmm0{k7}{z},zmm1,zmm2,0xab
+    vpternlogq zmm0,zmm1,zmm2,0x7b
+    vpternlogq zmm0,zmm1,zword ptr [rcx],0x7b
+    vpternlogq zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vpternlogq zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vpternlogq zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vpternlogq zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+
+    vshuff32x4 zmm0,zmm1,zmm2,0xab
+    vshuff32x4 zmm0{k7},zmm1,zmm2,0xab
+    vshuff32x4 zmm0{k7}{z},zmm1,zmm2,0xab
+    vshuff32x4 zmm0,zmm1,zmm2,0x7b
+    vshuff32x4 zmm0,zmm1,zword ptr [rcx],0x7b
+    vshuff32x4 zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshuff32x4 zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshuff32x4 zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshuff32x4 zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vshuff64x2 zmm0,zmm1,zmm2,0xab
+    vshuff64x2 zmm0{k7},zmm1,zmm2,0xab
+    vshuff64x2 zmm0{k7}{z},zmm1,zmm2,0xab
+    vshuff64x2 zmm0,zmm1,zmm2,0x7b
+    vshuff64x2 zmm0,zmm1,zword ptr [rcx],0x7b
+    vshuff64x2 zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshuff64x2 zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshuff64x2 zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshuff64x2 zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vshufi32x4 zmm0,zmm1,zmm2,0xab
+    vshufi32x4 zmm0{k7},zmm1,zmm2,0xab
+    vshufi32x4 zmm0{k7}{z},zmm1,zmm2,0xab
+    vshufi32x4 zmm0,zmm1,zmm2,0x7b
+    vshufi32x4 zmm0,zmm1,zword ptr [rcx],0x7b
+    vshufi32x4 zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshufi32x4 zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshufi32x4 zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshufi32x4 zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vshufi64x2 zmm0,zmm1,zmm2,0xab
+    vshufi64x2 zmm0{k7},zmm1,zmm2,0xab
+    vshufi64x2 zmm0{k7}{z},zmm1,zmm2,0xab
+    vshufi64x2 zmm0,zmm1,zmm2,0x7b
+    vshufi64x2 zmm0,zmm1,zword ptr [rcx],0x7b
+    vshufi64x2 zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vshufi64x2 zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vshufi64x2 zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vshufi64x2 zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+
+    valignq zmm0,zmm1,zmm2,0xab
+    valignq zmm0{k7},zmm1,zmm2,0xab
+    valignq zmm0{k7}{z},zmm1,zmm2,0xab
+    valignq zmm0,zmm1,zmm2,0x7b
+    valignq zmm0,zmm1,zword ptr [rcx],0x7b
+    valignq zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    valignq zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    valignq zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    valignq zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+
+    vcvtsd2usi eax,xmm0
+    vcvtsd2usi eax,xmm0,{rn-sae}
+    vcvtsd2usi eax,xmm0,{ru-sae}
+    vcvtsd2usi eax,xmm0,{rd-sae}
+    vcvtsd2usi eax,xmm0,{rz-sae}
+    vcvtsd2usi ebp,xmm0
+    vcvtsd2usi ebp,xmm0,{rn-sae}
+    vcvtsd2usi ebp,xmm0,{ru-sae}
+    vcvtsd2usi ebp,xmm0,{rd-sae}
+    vcvtsd2usi ebp,xmm0,{rz-sae}
+    vcvtsd2usi r13d,xmm0
+    vcvtsd2usi r13d,xmm0,{rn-sae}
+    vcvtsd2usi r13d,xmm0,{ru-sae}
+    vcvtsd2usi r13d,xmm0,{rd-sae}
+    vcvtsd2usi r13d,xmm0,{rz-sae}
+    vcvtsd2usi rax,xmm0
+    vcvtsd2usi rax,xmm0,{rn-sae}
+    vcvtsd2usi rax,xmm0,{ru-sae}
+    vcvtsd2usi rax,xmm0,{rd-sae}
+    vcvtsd2usi rax,xmm0,{rz-sae}
+
+    vcvtsd2usi r8,xmm0
+    vcvtsd2usi r8,xmm0,{rn-sae}
+    vcvtsd2usi r8,xmm0,{ru-sae}
+    vcvtsd2usi r8,xmm0,{rd-sae}
+    vcvtsd2usi r8,xmm0,{rz-sae}
+
+    vcvtss2usi eax,xmm0
+    vcvtss2usi eax,xmm0,{rn-sae}
+    vcvtss2usi eax,xmm0,{ru-sae}
+    vcvtss2usi eax,xmm0,{rd-sae}
+    vcvtss2usi eax,xmm0,{rz-sae}
+    vcvtss2usi eax,dword ptr [rcx]
+    vcvtss2usi eax,dword ptr [rax+r14*8+0x123]
+    vcvtss2usi eax,dword ptr [rdx+0x1fc]
+    vcvtss2usi eax,dword ptr [rdx+0x200]
+    vcvtss2usi eax,dword ptr [rdx-0x200]
+    vcvtss2usi eax,dword ptr [rdx-0x204]
+
+    vcvtss2usi ebp,xmm0
+    vcvtss2usi ebp,xmm0,{rn-sae}
+    vcvtss2usi ebp,xmm0,{ru-sae}
+    vcvtss2usi ebp,xmm0,{rd-sae}
+    vcvtss2usi ebp,xmm0,{rz-sae}
+    vcvtss2usi ebp,dword ptr [rcx]
+    vcvtss2usi ebp,dword ptr [rax+r14*8+0x123]
+    vcvtss2usi ebp,dword ptr [rdx+0x1fc]
+    vcvtss2usi ebp,dword ptr [rdx+0x200]
+    vcvtss2usi ebp,dword ptr [rdx-0x200]
+    vcvtss2usi ebp,dword ptr [rdx-0x204]
+    vcvtss2usi r13d,xmm0
+    vcvtss2usi r13d,xmm0,{rn-sae}
+    vcvtss2usi r13d,xmm0,{ru-sae}
+    vcvtss2usi r13d,xmm0,{rd-sae}
+    vcvtss2usi r13d,xmm0,{rz-sae}
+    vcvtss2usi r13d,dword ptr [rcx]
+    vcvtss2usi r13d,dword ptr [rax+r14*8+0x123]
+    vcvtss2usi r13d,dword ptr [rdx+0x1fc]
+    vcvtss2usi r13d,dword ptr [rdx+0x200]
+    vcvtss2usi r13d,dword ptr [rdx-0x200]
+    vcvtss2usi r13d,dword ptr [rdx-0x204]
+    vcvtss2usi rax,xmm0
+    vcvtss2usi rax,xmm0,{rn-sae}
+    vcvtss2usi rax,xmm0,{ru-sae}
+    vcvtss2usi rax,xmm0,{rd-sae}
+    vcvtss2usi rax,xmm0,{rz-sae}
+    vcvtss2usi r8,xmm0
+    vcvtss2usi r8,xmm0,{rn-sae}
+    vcvtss2usi r8,xmm0,{ru-sae}
+    vcvtss2usi r8,xmm0,{rd-sae}
+    vcvtss2usi r8,xmm0,{rz-sae}
+
+    vcvtusi2sd xmm0,xmm1,eax
+    vcvtusi2sd xmm0,xmm1,ebp
+    vcvtusi2sd xmm0,xmm1,dword ptr [rcx]
+    vcvtusi2sd xmm0,xmm1,dword ptr [rdx+0x1fc]
+    vcvtusi2sd xmm0,xmm1,dword ptr [rdx+0x200]
+    vcvtusi2sd xmm0,xmm1,dword ptr [rdx-0x200]
+    vcvtusi2sd xmm0,xmm1,dword ptr [rdx-0x204]
+    vcvtusi2sd xmm0,xmm1,{rn-sae},rax
+    vcvtusi2sd xmm0,xmm1,{ru-sae},rax
+    vcvtusi2sd xmm0,xmm1,{rd-sae},rax
+    vcvtusi2sd xmm0,xmm1,{rz-sae},rax
+    vcvtusi2sd xmm0,xmm1,qword ptr [rcx]
+    vcvtusi2sd xmm0,xmm1,qword ptr [rdx+0x3f8]
+    vcvtusi2sd xmm0,xmm1,qword ptr [rdx+0x400]
+    vcvtusi2sd xmm0,xmm1,qword ptr [rdx-0x400]
+    vcvtusi2sd xmm0,xmm1,qword ptr [rdx-0x408]
+
+    vcvtusi2ss xmm0,xmm1,eax
+    vcvtusi2ss xmm0,xmm1,{rn-sae},eax
+    vcvtusi2ss xmm0,xmm1,{ru-sae},eax
+    vcvtusi2ss xmm0,xmm1,{rd-sae},eax
+    vcvtusi2ss xmm0,xmm1,{rz-sae},eax
+    vcvtusi2ss xmm0,xmm1,ebp
+    vcvtusi2ss xmm0,xmm1,{rn-sae},ebp
+    vcvtusi2ss xmm0,xmm1,{ru-sae},ebp
+    vcvtusi2ss xmm0,xmm1,{rd-sae},ebp
+    vcvtusi2ss xmm0,xmm1,{rz-sae},ebp
+    vcvtusi2ss xmm0,xmm1,dword ptr [rcx]
+    vcvtusi2ss xmm0,xmm1,dword ptr [rdx+0x1fc]
+    vcvtusi2ss xmm0,xmm1,dword ptr [rdx+0x200]
+    vcvtusi2ss xmm0,xmm1,dword ptr [rdx-0x200]
+    vcvtusi2ss xmm0,xmm1,dword ptr [rdx-0x204]
+    vcvtusi2ss xmm0,xmm1,{rn-sae},rax
+    vcvtusi2ss xmm0,xmm1,{ru-sae},rax
+    vcvtusi2ss xmm0,xmm1,{rd-sae},rax
+    vcvtusi2ss xmm0,xmm1,{rz-sae},rax
+    vcvtusi2ss xmm0,xmm1,qword ptr [rcx]
+    vcvtusi2ss xmm0,xmm1,qword ptr [rdx+0x3f8]
+    vcvtusi2ss xmm0,xmm1,qword ptr [rdx+0x400]
+    vcvtusi2ss xmm0,xmm1,qword ptr [rdx-0x400]
+    vcvtusi2ss xmm0,xmm1,qword ptr [rdx-0x408]
+
+    vscalefpd zmm0,zmm1,zmm2
+    vscalefpd zmm0{k7},zmm1,zmm2
+    vscalefpd zmm0{k7}{z},zmm1,zmm2
+    vscalefpd zmm0,zmm1,zmm2,{rn-sae}
+    vscalefpd zmm0,zmm1,zmm2,{ru-sae}
+    vscalefpd zmm0,zmm1,zmm2,{rd-sae}
+    vscalefpd zmm0,zmm1,zmm2,{rz-sae}
+    vscalefpd zmm0,zmm1,zword ptr [rcx]
+    vscalefpd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vscalefpd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vscalefpd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vscalefpd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vscalefpd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vscalefpd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vscalefpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vscalefpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vscalefpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vscalefpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vscalefps zmm0,zmm1,zmm2
+    vscalefps zmm0{k7},zmm1,zmm2
+    vscalefps zmm0{k7}{z},zmm1,zmm2
+    vscalefps zmm0,zmm1,zmm2,{rn-sae}
+    vscalefps zmm0,zmm1,zmm2,{ru-sae}
+    vscalefps zmm0,zmm1,zmm2,{rd-sae}
+    vscalefps zmm0,zmm1,zmm2,{rz-sae}
+    vscalefps zmm0,zmm1,zword ptr [rcx]
+    vscalefps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vscalefps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vscalefps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vscalefps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vscalefps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vscalefps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vscalefps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vscalefps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vscalefps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vscalefps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+
+    vscalefsd xmm0{k7},xmm1,xmm2
+    vscalefsd xmm0{k7}{z},xmm1,xmm2
+    vscalefsd xmm0{k7},xmm1,qword ptr [rcx]
+    vscalefsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8]
+    vscalefsd xmm0{k7},xmm1,qword ptr [rdx+0x400]
+    vscalefsd xmm0{k7},xmm1,qword ptr [rdx-0x400]
+    vscalefsd xmm0{k7},xmm1,qword ptr [rdx-0x408]
+
+    vscalefss xmm0{k7},xmm1,xmm2
+    vscalefss xmm0{k7}{z},xmm1,xmm2
+    vscalefss xmm0{k7},xmm1,dword ptr [rcx]
+    vscalefss xmm0{k7},xmm1,dword ptr [rdx+0x1fc]
+    vscalefss xmm0{k7},xmm1,dword ptr [rdx+0x200]
+    vscalefss xmm0{k7},xmm1,dword ptr [rdx-0x200]
+    vscalefss xmm0{k7},xmm1,dword ptr [rdx-0x204]
+
+    vfixupimmps zmm0,zmm1,zmm2,0xab
+    vfixupimmps zmm0{k7},zmm1,zmm2,0xab
+    vfixupimmps zmm0{k7}{z},zmm1,zmm2,0xab
+    vfixupimmps zmm0,zmm1,zmm2,{sae},0xab
+    vfixupimmps zmm0,zmm1,zmm2,0x7b
+    vfixupimmps zmm0,zmm1,zmm2,{sae},0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rcx],0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rax+r14*8+0x123],0x7b
+    vfixupimmps zmm0,zmm1,dword ptr [rcx]{1to16},0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vfixupimmps zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vfixupimmps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16},0x7b
+    vfixupimmps zmm0,zmm1,dword ptr [rdx+0x200]{1to16},0x7b
+    vfixupimmps zmm0,zmm1,dword ptr [rdx-0x200]{1to16},0x7b
+    vfixupimmps zmm0,zmm1,dword ptr [rdx-0x204]{1to16},0x7b
+    vfixupimmpd zmm0,zmm1,zmm2,0xab
+    vfixupimmpd zmm0{k7},zmm1,zmm2,0xab
+    vfixupimmpd zmm0{k7}{z},zmm1,zmm2,0xab
+    vfixupimmpd zmm0,zmm1,zmm2,{sae},0xab
+    vfixupimmpd zmm0,zmm1,zmm2,0x7b
+    vfixupimmpd zmm0,zmm1,zmm2,{sae},0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rcx],0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rax+r14*8+0x123],0x7b
+    vfixupimmpd zmm0,zmm1,qword ptr [rcx]{1to8},0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rdx+0x1fc0],0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rdx+0x2000],0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rdx-0x2000],0x7b
+    vfixupimmpd zmm0,zmm1,zword ptr [rdx-0x2040],0x7b
+    vfixupimmpd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8},0x7b
+    vfixupimmpd zmm0,zmm1,qword ptr [rdx+0x400]{1to8},0x7b
+    vfixupimmpd zmm0,zmm1,qword ptr [rdx-0x400]{1to8},0x7b
+    vfixupimmpd zmm0,zmm1,qword ptr [rdx-0x408]{1to8},0x7b
+    vfixupimmss xmm0{k7},xmm1,xmm2,0xab
+    vfixupimmss xmm0{k7}{z},xmm1,xmm2,0xab
+    vfixupimmss xmm0{k7},xmm1,xmm2,0x7b
+    vfixupimmss xmm0{k7},xmm1,dword ptr [rcx],0x7b
+    vfixupimmss xmm0{k7},xmm1,dword ptr [rdx+0x1fc],0x7b
+    vfixupimmss xmm0{k7},xmm1,dword ptr [rdx+0x200],0x7b
+    vfixupimmss xmm0{k7},xmm1,dword ptr [rdx-0x200],0x7b
+    vfixupimmss xmm0{k7},xmm1,dword ptr [rdx-0x204],0x7b
+    vfixupimmsd xmm0{k7},xmm1,xmm2,0xab
+    vfixupimmsd xmm0{k7}{z},xmm1,xmm2,0xab
+    vfixupimmsd xmm0{k7},xmm1,xmm2,0x7b
+    vfixupimmsd xmm0{k7},xmm1,qword ptr [rcx],0x7b
+    vfixupimmsd xmm0{k7},xmm1,qword ptr [rdx+0x3f8],0x7b
+    vfixupimmsd xmm0{k7},xmm1,qword ptr [rdx+0x400],0x7b
+    vfixupimmsd xmm0{k7},xmm1,qword ptr [rdx-0x400],0x7b
+    vfixupimmsd xmm0{k7},xmm1,qword ptr [rdx-0x408],0x7b
+
+    vprolvd zmm0,zmm1,zmm2
+    vprolvd zmm0{k7},zmm1,zmm2
+    vprolvd zmm0{k7}{z},zmm1,zmm2
+    vprolvd zmm0,zmm1,zword ptr [rcx]
+    vprolvd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vprolvd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vprolvd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vprolvd zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vprolvq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vprolvq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vprolvq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vprolvq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vprorvd zmm0,zmm1,zmm2
+    vprorvd zmm0{k7},zmm1,zmm2
+    vprorvd zmm0{k7}{z},zmm1,zmm2
+    vprorvd zmm0,zmm1,zword ptr [rcx]
+    vprorvd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vprorvd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vprorvd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vprorvd zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vprorvq zmm0,zmm1,zmm2
+    vprorvq zmm0{k7},zmm1,zmm2
+    vprorvq zmm0{k7}{z},zmm1,zmm2
+    vprorvq zmm0,zmm1,zword ptr [rcx]
+    vprorvq zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vprorvq zmm0,zmm1,zword ptr [rdx+0x2000]
+    vprorvq zmm0,zmm1,zword ptr [rdx-0x2000]
+    vprorvq zmm0,zmm1,zword ptr [rdx-0x2040]
+
+    vcvttsd2usi eax,xmm0
+    vcvttsd2usi eax,xmm0,{sae}
+    vcvttsd2usi ebp,xmm0
+    vcvttsd2usi ebp,xmm0,{sae}
+    vcvttsd2usi r13d,xmm0
+    vcvttsd2usi r13d,xmm0,{sae}
+    vcvttsd2usi rax,xmm0
+    vcvttsd2usi rax,xmm0,{sae}
+    vcvttsd2usi r8,xmm0
+    vcvttsd2usi r8,xmm0,{sae}
+    vcvttss2usi eax,xmm0
+    vcvttss2usi eax,xmm0,{sae}
+    vcvttss2usi ebp,xmm0
+    vcvttss2usi ebp,xmm0,{sae}
+    vcvttss2usi r13d,xmm0
+    vcvttss2usi r13d,xmm0,{sae}
+    vcvttss2usi rax,xmm0
+    vcvttss2usi rax,xmm0,{sae}
+    vcvttss2usi r8,xmm0
+    vcvttss2usi r8,xmm0,{sae}
+
+    vpermi2d zmm0,zmm1,zmm2
+    vpermi2d zmm0{k7},zmm1,zmm2
+    vpermi2d zmm0{k7}{z},zmm1,zmm2
+    vpermi2d zmm0,zmm1,zword ptr [rcx]
+    vpermi2d zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpermi2d zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpermi2d zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermi2d zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermi2d zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermi2d zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpermi2d zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpermi2d zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpermi2d zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpermi2d zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vpermi2q zmm0,zmm1,zmm2
+    vpermi2q zmm0{k7},zmm1,zmm2
+    vpermi2q zmm0{k7}{z},zmm1,zmm2
+    vpermi2q zmm0,zmm1,zword ptr [rcx]
+    vpermi2q zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpermi2q zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpermi2q zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermi2q zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermi2q zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermi2q zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpermi2q zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpermi2q zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpermi2q zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpermi2q zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
+
+    vpermi2ps zmm0,zmm1,zmm2
+    vpermi2ps zmm0{k7},zmm1,zmm2
+    vpermi2ps zmm0{k7}{z},zmm1,zmm2
+    vpermi2ps zmm0,zmm1,zword ptr [rcx]
+    vpermi2ps zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpermi2ps zmm0,zmm1,dword ptr [rcx]{1to16}
+    vpermi2ps zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermi2ps zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermi2ps zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermi2ps zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpermi2ps zmm0,zmm1,dword ptr [rdx+0x1fc]{1to16}
+    vpermi2ps zmm0,zmm1,dword ptr [rdx+0x200]{1to16}
+    vpermi2ps zmm0,zmm1,dword ptr [rdx-0x200]{1to16}
+    vpermi2ps zmm0,zmm1,dword ptr [rdx-0x204]{1to16}
+    vpermi2pd zmm0,zmm1,zmm2
+    vpermi2pd zmm0{k7},zmm1,zmm2
+    vpermi2pd zmm0{k7}{z},zmm1,zmm2
+    vpermi2pd zmm0,zmm1,zword ptr [rcx]
+    vpermi2pd zmm0,zmm1,zword ptr [rax+r14*8+0x123]
+    vpermi2pd zmm0,zmm1,qword ptr [rcx]{1to8}
+    vpermi2pd zmm0,zmm1,zword ptr [rdx+0x1fc0]
+    vpermi2pd zmm0,zmm1,zword ptr [rdx+0x2000]
+    vpermi2pd zmm0,zmm1,zword ptr [rdx-0x2000]
+    vpermi2pd zmm0,zmm1,zword ptr [rdx-0x2040]
+    vpermi2pd zmm0,zmm1,qword ptr [rdx+0x3f8]{1to8}
+    vpermi2pd zmm0,zmm1,qword ptr [rdx+0x400]{1to8}
+    vpermi2pd zmm0,zmm1,qword ptr [rdx-0x400]{1to8}
+    vpermi2pd zmm0,zmm1,qword ptr [rdx-0x408]{1to8}
 
     end

@@ -59,11 +59,9 @@ local PI:PROCESS_INFORMATION, SINFO:STARTUPINFO, ConsoleMode:dword
     mov hStdInput,  GetStdHandle(STD_INPUT_HANDLE)
     SetConsoleMode(eax, ConsoleMode)
     SetErrorMode(SEM_FAILCRITICALERRORS)
-ifdef __DZ__
-    mov byte ptr _diskflag,3
-endif
     mov eax,edi
     ret
+
 process endp
 
     END

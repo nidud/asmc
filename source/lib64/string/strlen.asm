@@ -8,7 +8,45 @@
 
 strlen::
 
-if defined(__AVX__) or defined(__AVX2__)
+ifdef _NOINTRINSICS
+
+    push    rdi
+    xor     eax,eax
+    mov     rdi,rcx
+    mov     rcx,-1
+    repne   scasb
+    not     rcx
+    dec     rcx
+    mov     rax,rcx
+    pop     rdi
+    ret
+
+elseifdef __AVX512__
+
+    mov             r8,rcx
+    xor             eax,eax
+    vpbroadcastq    zmm0,rax
+    dec             rax
+    and             ecx,64-1
+    shl             rax,cl
+    kmovq           k2,rax
+    mov             rax,r8
+    and             rax,-64
+    vpcmpeqb        k1{k2},zmm0,[rax]
+    jmp             L2
+L1:
+    vpcmpeqb        k1,zmm0,[rax]
+L2:
+    kmovq           rcx,k1
+    add             rax,64
+    test            rcx,rcx
+    jz              L1
+    bsf             rcx,rcx
+    lea             rax,[rax+rcx-64]
+    sub             rax,r8
+    ret
+
+elseif defined(__AVX__) or defined(__AVX2__)
 
     mov     r8,rcx
     mov     rax,rcx

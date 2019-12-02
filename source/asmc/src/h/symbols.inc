@@ -89,7 +89,7 @@ dlldesc_t	typedef ptr dll_desc
 segitem_t	typedef ptr seg_item
 debug_t		typedef ptr debug_info
 asym_t		typedef ptr asym
-dsym_t		typedef ptr dsym
+dsym_t		typedef ptr esym
 group_t		typedef ptr grp_info
 segment_t	typedef ptr seg_info
 proc_t		typedef ptr proc_info
@@ -372,7 +372,7 @@ struct_info	ends
 ;; However, currently all symbols except SYM_STRUCT_FIELDs are allocated as a dsym.
 ;; the additional 3 fields are used differently depending on symbol's type.
 
-dsym		struct
+esym		struct
 sym		asym <>
 union
  seginfo	segment_t ?	;; SYM_SEG (segments)
@@ -406,7 +406,7 @@ union
  nextlocal	dsym_t ? ;; used by PROC params (SYM_STACK) for linked list
  nextparam	dsym_t ? ;; used by SYM_EXTERNAL (weak=FALSE) if altname is set
 ends
-dsym		ends
+esym		ends
 
 SymAlloc	proto :string_t
 SymFree		proto :asym_t

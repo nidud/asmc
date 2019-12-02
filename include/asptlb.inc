@@ -83,10 +83,8 @@ __IStringList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IStringList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStringList : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -94,6 +92,7 @@ DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x
     get_Item		proc :VARIANT, :ptr
     get_Count		proc :ptr
     get__NewEnum	proc :ptr
+
     .ends
 
 endif
@@ -103,10 +102,8 @@ __IRequestDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IRequestDictionary,0xD97A6DA0,0xA85F,0x11df,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IRequestDictionary
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRequestDictionary : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -115,6 +112,7 @@ DEFINE_GUID(IID_IRequestDictionary,0xD97A6DA0,0xA85F,0x11df,0x83,0xAE,0x00,0xA0,
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     get_Key		proc :VARIANT, :ptr
+
     .ends
 endif
 
@@ -123,10 +121,8 @@ __IRequest_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IRequest,0xD97A6DA0,0xA861,0x11cf,0x93,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IRequest
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRequest : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -140,6 +136,7 @@ DEFINE_GUID(IID_IRequest,0xD97A6DA0,0xA861,0x11cf,0x93,0xAE,0x00,0xA0,0xC9,0x0C,
     get_Cookies		proc :ptr
     get_TotalBytes	proc :ptr
     BinaryRead		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -151,10 +148,8 @@ __IReadCookie_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IReadCookie,0x71EAF260,0x0CE0,0x11D0,0xA5,0x3E,0x00,0xA0,0xC9,0x0C,0x20,0x91)
 
-.comdef IReadCookie
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IReadCookie : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -164,6 +159,7 @@ DEFINE_GUID(IID_IReadCookie,0x71EAF260,0x0CE0,0x11D0,0xA5,0x3E,0x00,0xA0,0xC9,0x
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     get_Key		proc :VARIANT, :ptr
+
     .ends
 
 endif
@@ -173,10 +169,8 @@ __IWriteCookie_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IWriteCookie,0xD97A6DA0,0xA862,0x11cf,0x84,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IWriteCookie
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IWriteCookie : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -188,6 +182,7 @@ DEFINE_GUID(IID_IWriteCookie,0xD97A6DA0,0xA862,0x11cf,0x84,0xAE,0x00,0xA0,0xC9,0
     put_Secure		proc :VARIANT_BOOL
     get_HasKeys		proc :ptr
     get__NewEnum	proc :ptr
+
     .ends
 
 endif
@@ -197,10 +192,8 @@ __IResponse_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IResponse,0xD97A6DA0,0xA864,0x11cf,0x83,0xBE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IResponse
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IResponse : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -236,6 +229,7 @@ DEFINE_GUID(IID_IResponse,0xD97A6DA0,0xA864,0x11cf,0x83,0xBE,0x00,0xA0,0xC9,0x0C
     put_CodePage	proc :sdword
     get_LCID		proc :ptr
     put_LCID		proc :sdword
+
     .ends
 
 endif
@@ -247,10 +241,8 @@ __IVariantDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IVariantDictionary,0x4a7deb90,0xb069,0x11d0,0xb3,0x73,0x00,0xa0,0xc9,0x0c,0x2b,0xd8)
 
-.comdef IVariantDictionary
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IVariantDictionary : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -263,6 +255,7 @@ DEFINE_GUID(IID_IVariantDictionary,0x4a7deb90,0xb069,0x11d0,0xb3,0x73,0x00,0xa0,
     get__NewEnum	proc :ptr
     Remove		proc :VARIANT
     RemoveAll		proc
+
     .ends
 
 endif
@@ -272,10 +265,8 @@ __ISessionObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ISessionObject,0xD97A6DA0,0xA865,0x11cf,0x83,0xAF,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef ISessionObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISessionObject : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -293,6 +284,7 @@ DEFINE_GUID(IID_ISessionObject,0xD97A6DA0,0xA865,0x11cf,0x83,0xAF,0x00,0xA0,0xC9
     put_LCID		proc :sdword
     get_StaticObjects	proc :ptr
     get_Contents	proc :ptr
+
     .ends
 
 endif
@@ -304,10 +296,8 @@ __IApplicationObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IApplicationObject,0xD97A6DA0,0xA866,0x11cf,0x83,0xAE,0x10,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IApplicationObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationObject : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -319,6 +309,7 @@ DEFINE_GUID(IID_IApplicationObject,0xD97A6DA0,0xA866,0x11cf,0x83,0xAE,0x10,0xA0,
     UnLock		proc
     get_StaticObjects	proc :ptr
     get_Contents	proc :ptr
+
     .ends
 
 endif
@@ -330,10 +321,8 @@ __IASPError_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IASPError,0xF5A6893E,0xA0F5,0x11d1,0x8C,0x4B,0x00,0xC0,0x4F,0xC3,0x24,0xA4)
 
-.comdef IASPError
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IASPError : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -347,6 +336,7 @@ DEFINE_GUID(IID_IASPError,0xF5A6893E,0xA0F5,0x11d1,0x8C,0x4B,0x00,0xC0,0x4F,0xC3
     get_ASPDescription	proc :ptr
     get_Column		proc :ptr
     get_Source		proc :ptr
+
     .ends
 
 endif
@@ -356,10 +346,8 @@ __IServer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IServer,0xD97A6DA0,0xA867,0x11cf,0x83,0xAE,0x01,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IServer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IServer : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -374,6 +362,7 @@ DEFINE_GUID(IID_IServer,0xD97A6DA0,0xA867,0x11cf,0x83,0xAE,0x01,0xA0,0xC9,0x0C,0
     Execute		proc :BSTR
     Transfer		proc :BSTR
     GetLastError	proc :ptr
+
     .ends
 
 endif
@@ -385,10 +374,8 @@ __IScriptingContext_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x00,0xB0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IScriptingContext
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IScriptingContext : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -398,6 +385,7 @@ DEFINE_GUID(IID_IScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x00,0xB0,0
     get_Server		proc :ptr
     get_Session		proc :ptr
     get_Application	proc :ptr
+
     .ends
 
 endif

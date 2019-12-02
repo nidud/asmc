@@ -5,7 +5,7 @@
 ;
 
 include string.inc
-include strlib.inc
+include crtl.inc
 include io.inc
 include direct.inc
 include stdlib.inc
@@ -13,7 +13,8 @@ include stdlib.inc
     .code
 
 CreateBatch proc uses ebx cmd, CallBatch, UpdateEnviron
-local batch[_MAX_PATH]:sbyte, argv0[_MAX_PATH]:sbyte, temp:ptr byte
+
+  local batch[_MAX_PATH]:sbyte, argv0[_MAX_PATH]:sbyte, temp:ptr byte
 
     mov temp,offset @CStr(".")
     .if getenv("TEMP")

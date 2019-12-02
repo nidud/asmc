@@ -173,20 +173,18 @@ DX_FEATURE_LEVEL_9	equ 1
 DX_FEATURE_LEVEL_10	equ 2
 DX_FEATURE_LEVEL_11	equ 3
 
-externdef		LIBID_APPXPACKAGING:IID
+externdef LIBID_APPXPACKAGING:IID
 
 ifndef __IAppxPackageWriter_INTERFACE_DEFINED__
 __IAppxPackageWriter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxPackageWriter:IID
+externdef IID_IAppxPackageWriter:IID
 
-.comdef IAppxPackageWriter
+.comdef IAppxPackageWriter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddPayloadFile	proc :LPCWSTR, :LPCWSTR, :APPX_COMPRESSION_OPTION, :ptr
     Close		proc :ptr
+
     .ends
 
 endif
@@ -194,18 +192,16 @@ endif
 ifndef __IAppxPackageReader_INTERFACE_DEFINED__
 __IAppxPackageReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxPackageReader:IID
+externdef IID_IAppxPackageReader:IID
 
-.comdef IAppxPackageReader
+.comdef IAppxPackageReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetBlockMap		proc :ptr
     GetFootprintFile	proc :APPX_FOOTPRINT_FILE_TYPE, :ptr
     GetPayloadFile	proc :LPCWSTR, :ptr
     GetPayloadFiles	proc :ptr
     GetManifest		proc :ptr
+
     .ends
 
 endif
@@ -213,18 +209,16 @@ endif
 ifndef __IAppxFile_INTERFACE_DEFINED__
 __IAppxFile_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxFile:IID
+externdef IID_IAppxFile:IID
 
-.comdef IAppxFile
+.comdef IAppxFile : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCompressionOption proc :ptr
     GetContentType	proc :ptr
     GetName		proc :ptr
     GetSize		proc :ptr
     GetStream		proc :ptr
+
     .ends
 
 endif
@@ -232,16 +226,14 @@ endif
 ifndef __IAppxFilesEnumerator_INTERFACE_DEFINED__
 __IAppxFilesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxFilesEnumerator:IID
+externdef IID_IAppxFilesEnumerator:IID
 
-.comdef IAppxFilesEnumerator
+.comdef IAppxFilesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -249,17 +241,15 @@ endif
 ifndef __IAppxBlockMapReader_INTERFACE_DEFINED__
 __IAppxBlockMapReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBlockMapReader:IID
+externdef IID_IAppxBlockMapReader:IID
 
-.comdef IAppxBlockMapReader
+.comdef IAppxBlockMapReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetFile		proc :LPCWSTR, :ptr
     GetFiles		proc :ptr
     GetHashMethod	proc :ptr
     GetStream		proc :ptr
+
     .ends
 
 endif
@@ -267,18 +257,16 @@ endif
 ifndef __IAppxBlockMapFile_INTERFACE_DEFINED__
 __IAppxBlockMapFile_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBlockMapFile:IID
+externdef IID_IAppxBlockMapFile:IID
 
-.comdef IAppxBlockMapFile
+.comdef IAppxBlockMapFile : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetBlocks		proc :ptr
     GetLocalFileHeaderSize proc :ptr
     GetName		proc :ptr
     GetUncompressedSize proc :ptr
     ValidateFileHash	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -286,16 +274,14 @@ endif
 ifndef __IAppxBlockMapFilesEnumerator_INTERFACE_DEFINED__
 __IAppxBlockMapFilesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBlockMapFilesEnumerator:IID
+externdef IID_IAppxBlockMapFilesEnumerator:IID
 
-.comdef IAppxBlockMapFilesEnumerator
+.comdef IAppxBlockMapFilesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -303,15 +289,13 @@ endif
 ifndef __IAppxBlockMapBlock_INTERFACE_DEFINED__
 __IAppxBlockMapBlock_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBlockMapBlock:IID
+externdef IID_IAppxBlockMapBlock:IID
 
-.comdef IAppxBlockMapBlock
+.comdef IAppxBlockMapBlock : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetHash		proc :ptr, :ptr
     GetCompressedSize	proc :ptr
+
     .ends
 
 endif
@@ -319,16 +303,14 @@ endif
 ifndef __IAppxBlockMapBlocksEnumerator_INTERFACE_DEFINED__
 __IAppxBlockMapBlocksEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBlockMapBlocksEnumerator:IID
+externdef IID_IAppxBlockMapBlocksEnumerator:IID
 
-.comdef IAppxBlockMapBlocksEnumerator
+.comdef IAppxBlockMapBlocksEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -336,13 +318,10 @@ endif
 ifndef __IAppxManifestReader_INTERFACE_DEFINED__
 __IAppxManifestReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestReader:IID
+externdef IID_IAppxManifestReader:IID
 
-.comdef IAppxManifestReader
+.comdef IAppxManifestReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPackageId	proc :ptr
     GetProperties	proc :ptr
     GetPackageDependencies proc :ptr
@@ -352,6 +331,7 @@ externdef		IID_IAppxManifestReader:IID
     GetPrerequisite	proc :LPCWSTR, :ptr
     GetApplications	proc :ptr
     GetStream		proc :ptr
+
     .ends
 
 endif
@@ -359,13 +339,10 @@ endif
 ifndef __IAppxManifestPackageId_INTERFACE_DEFINED__
 __IAppxManifestPackageId_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestPackageId:IID
+externdef IID_IAppxManifestPackageId:IID
 
-.comdef IAppxManifestPackageId
+.comdef IAppxManifestPackageId : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetName		proc :ptr
     GetArchitecture	proc :ptr
     GetPublisher	proc :ptr
@@ -374,6 +351,7 @@ externdef		IID_IAppxManifestPackageId:IID
     ComparePublisher	proc :LPCWSTR, :ptr
     GetPackageFullName	proc :ptr
     GetPackageFamilyName proc :ptr
+
     .ends
 
 endif
@@ -381,15 +359,13 @@ endif
 ifndef __IAppxManifestProperties_INTERFACE_DEFINED__
 __IAppxManifestProperties_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestProperties:IID
+externdef IID_IAppxManifestProperties:IID
 
-.comdef IAppxManifestProperties
+.comdef IAppxManifestProperties : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetBoolValue	proc :LPCWSTR, :ptr
     GetStringValue	proc :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -397,16 +373,14 @@ endif
 ifndef __IAppxManifestPackageDependency_INTERFACE_DEFINED__
 __IAppxManifestPackageDependency_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestPackageDependency:IID
+externdef IID_IAppxManifestPackageDependency:IID
 
-.comdef IAppxManifestPackageDependency
+.comdef IAppxManifestPackageDependency : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetName		proc :ptr
     GetPublisher	proc :ptr
     GetMinVersion	proc :ptr
+
     .ends
 
 endif
@@ -414,16 +388,14 @@ endif
 ifndef __IAppxManifestPackageDependenciesEnumerator_INTERFACE_DEFINED__
 __IAppxManifestPackageDependenciesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestPackageDependenciesEnumerator:IID
+externdef IID_IAppxManifestPackageDependenciesEnumerator:IID
 
-.comdef IAppxManifestPackageDependenciesEnumerator
+.comdef IAppxManifestPackageDependenciesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -431,16 +403,14 @@ endif
 ifndef __IAppxManifestResourcesEnumerator_INTERFACE_DEFINED__
 __IAppxManifestResourcesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestResourcesEnumerator:IID
+externdef IID_IAppxManifestResourcesEnumerator:IID
 
-.comdef IAppxManifestResourcesEnumerator
+.comdef IAppxManifestResourcesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -448,16 +418,14 @@ endif
 ifndef __IAppxManifestDeviceCapabilitiesEnumerator_INTERFACE_DEFINED__
 __IAppxManifestDeviceCapabilitiesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestDeviceCapabilitiesEnumerator:IID
+externdef IID_IAppxManifestDeviceCapabilitiesEnumerator:IID
 
-.comdef IAppxManifestDeviceCapabilitiesEnumerator
+.comdef IAppxManifestDeviceCapabilitiesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -465,16 +433,14 @@ endif
 ifndef __IAppxManifestApplicationsEnumerator_INTERFACE_DEFINED__
 __IAppxManifestApplicationsEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestApplicationsEnumerator:IID
+externdef IID_IAppxManifestApplicationsEnumerator:IID
 
-.comdef IAppxManifestApplicationsEnumerator
+.comdef IAppxManifestApplicationsEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -482,15 +448,13 @@ endif
 ifndef __IAppxManifestApplication_INTERFACE_DEFINED__
 __IAppxManifestApplication_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestApplication:IID
+externdef IID_IAppxManifestApplication:IID
 
-.comdef IAppxManifestApplication
+.comdef IAppxManifestApplication : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetStringValue	proc :LPCWSTR, :ptr
     GetAppUserModelId	proc :ptr
+
     .ends
 
 endif
@@ -498,16 +462,14 @@ endif
 ifndef __IAppxManifestQualifiedResourcesEnumerator_INTERFACE_DEFINED__
 __IAppxManifestQualifiedResourcesEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestQualifiedResourcesEnumerator:IID
+externdef IID_IAppxManifestQualifiedResourcesEnumerator:IID
 
-.comdef IAppxManifestQualifiedResourcesEnumerator
+.comdef IAppxManifestQualifiedResourcesEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -515,16 +477,14 @@ endif
 ifndef __IAppxManifestQualifiedResource_INTERFACE_DEFINED__
 __IAppxManifestQualifiedResource_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestQualifiedResource:IID
+externdef IID_IAppxManifestQualifiedResource:IID
 
-.comdef IAppxManifestQualifiedResource
+.comdef IAppxManifestQualifiedResource : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetLanguage		proc :ptr
     GetScale		proc :ptr
     GetDXFeatureLevel	proc :ptr
+
     .ends
 
 endif
@@ -532,16 +492,14 @@ endif
 ifndef __IAppxBundleFactory_INTERFACE_DEFINED__
 __IAppxBundleFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleFactory:IID
+externdef IID_IAppxBundleFactory:IID
 
-.comdef IAppxBundleFactory
+.comdef IAppxBundleFactory : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateBundleWriter	proc :ptr, :UINT64, :ptr
     CreateBundleReader	proc :ptr, :ptr
     CreateBundleManifestReader proc :ptr, :ptr
+
     .ends
 
 endif
@@ -549,15 +507,13 @@ endif
 ifndef __IAppxBundleWriter_INTERFACE_DEFINED__
 __IAppxBundleWriter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleWriter:IID
+externdef IID_IAppxBundleWriter:IID
 
-.comdef IAppxBundleWriter
+.comdef IAppxBundleWriter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddPayloadPackage	proc :LPCWSTR, :ptr
     Close		proc
+
     .ends
 
 endif
@@ -565,18 +521,16 @@ endif
 ifndef __IAppxBundleReader_INTERFACE_DEFINED__
 __IAppxBundleReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleReader:IID
+externdef IID_IAppxBundleReader:IID
 
-.comdef IAppxBundleReader
+.comdef IAppxBundleReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetFootprintFile	proc :APPX_BUNDLE_FOOTPRINT_FILE_TYPE, :ptr
     GetBlockMap		proc :ptr
     GetManifest		proc :ptr
     GetPayloadPackages	proc :ptr
     GetPayloadPackage	proc :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -584,16 +538,14 @@ endif
 ifndef __IAppxBundleManifestReader_INTERFACE_DEFINED__
 __IAppxBundleManifestReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleManifestReader:IID
+externdef IID_IAppxBundleManifestReader:IID
 
-.comdef IAppxBundleManifestReader
+.comdef IAppxBundleManifestReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPackageId	proc :ptr
     GetPackageInfoItems proc :ptr
     GetStream		proc :ptr
+
     .ends
 
 endif
@@ -601,16 +553,14 @@ endif
 ifndef __IAppxBundleManifestPackageInfoEnumerator_INTERFACE_DEFINED__
 __IAppxBundleManifestPackageInfoEnumerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleManifestPackageInfoEnumerator:IID
+externdef IID_IAppxBundleManifestPackageInfoEnumerator:IID
 
-.comdef IAppxBundleManifestPackageInfoEnumerator
+.comdef IAppxBundleManifestPackageInfoEnumerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrent		proc :ptr
     GetHasCurrent	proc :ptr
     MoveNext		proc :ptr
+
     .ends
 
 endif
@@ -618,19 +568,17 @@ endif
 ifndef __IAppxBundleManifestPackageInfo_INTERFACE_DEFINED__
 __IAppxBundleManifestPackageInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxBundleManifestPackageInfo:IID
+externdef IID_IAppxBundleManifestPackageInfo:IID
 
-.comdef IAppxBundleManifestPackageInfo
+.comdef IAppxBundleManifestPackageInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPackageType	proc :ptr
     GetPackageId	proc :ptr
     GetFileName		proc :ptr
     GetOffset		proc :ptr
     GetSize		proc :ptr
     GetResources	proc :ptr
+
     .ends
 
 endif
@@ -638,23 +586,21 @@ endif
 ifndef __IAppxFactory_INTERFACE_DEFINED__
 __IAppxFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxFactory:IID
+externdef IID_IAppxFactory:IID
 
-.comdef IAppxFactory
+.comdef IAppxFactory : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreatePackageWriter proc :ptr, :ptr, :ptr
     CreatePackageReader proc :ptr, :ptr
     CreateManifestReader proc :ptr, :ptr
     CreateBlockMapReader proc :ptr, :ptr
     CreateValidatedBlockMapReader proc :ptr, :LPCWSTR, :ptr
+
     .ends
 
 endif
 
-externdef		CLSID_AppxFactory:CLSID
+externdef CLSID_AppxFactory:CLSID
 DEFINE_GUID(CLSID_AppxFactory, 0x5842a140, 0xff9f, 0x4166, 0x8f, 0x5c, 0x62, 0xf5, 0xb7, 0xb0, 0xc7, 0x81)
 ifdef __cplusplus
 DECLSPEC_UUID("5842a140-ff9f-4166-8f5c-62f5b7b0c781")
@@ -663,13 +609,10 @@ endif
 ifndef __IAppxManifestReader2_INTERFACE_DEFINED__
 __IAppxManifestReader2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAppxManifestReader2:IID
+externdef IID_IAppxManifestReader2:IID
 
-.comdef IAppxManifestReader2
+.comdef IAppxManifestReader2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPackageId	proc :ptr
     GetProperties	proc :ptr
     GetPackageDependencies proc :ptr
@@ -680,11 +623,12 @@ externdef		IID_IAppxManifestReader2:IID
     GetApplications	proc :ptr
     GetStream		proc :ptr
     GetQualifiedResources proc :ptr
+
     .ends
 
 endif
 
-externdef		CLSID_AppxBundleFactory:CLSID
+externdef CLSID_AppxBundleFactory:CLSID
 
 DEFINE_GUID(CLSID_AppxBundleFactory, 0x378E0446, 0x5384, 0x43B7, 0x88, 0x77, 0xE7, 0xDB, 0xDD, 0x88, 0x34, 0x46)
 ifdef __cplusplus

@@ -132,7 +132,7 @@ BackPatch proc uses esi edi ebx sym:asym_t
                         inc edi         ;; fall through
                     .default            ;; normal JMP (and PUSH)
                         mov edx,[esi]._segment
-                        mov edx,[edx].dsym.seginfo
+                        mov edx,[edx].esym.seginfo
                         assume edx:segment_t
                         .if( [edx].Ofssize )
                             add edi,2 ;; NEAR32 instead of NEAR16
@@ -161,7 +161,7 @@ if LABELOPT
                         ;; ( PROCs are NOT contained in this list because they
                         ;; use the <next>-field of dsym already!)
 
-                        .for ( ecx = [edx].label_list: ecx: ecx = [ecx].dsym.next )
+                        .for ( ecx = [edx].label_list: ecx: ecx = [ecx].esym.next )
 
                             .break .if ( [ecx].asym._offset <= eax )
 

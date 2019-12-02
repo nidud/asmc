@@ -65,14 +65,12 @@ BG_FILE_PROGRESS	ENDS
 
 DEFINE_IIDX(IBackgroundCopyFile, "01b7bd23-fb88-4a77-8490-5891d3e4653a")
 
-.comdef IBackgroundCopyFile
+.comdef IBackgroundCopyFile : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRemoteName	proc :ptr
     GetLocalName	proc :ptr
     GetProgress		proc :ptr
+
     .ends
 
 endif
@@ -82,16 +80,14 @@ __IEnumBackgroundCopyFiles_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumBackgroundCopyFiles, "ca51e165-c365-424c-8d41-24aaa4ff3c40")
 
-.comdef IEnumBackgroundCopyFiles
+.comdef IEnumBackgroundCopyFiles : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
+
     .ends
 
 endif
@@ -111,16 +107,14 @@ BG_ERROR_CONTEXT_REMOTE_APPLICATION equ 7
 
 DEFINE_IIDX(IBackgroundCopyError, "19c613a0-fcb8-4f28-81ae-897c3d078f81")
 
-.comdef IBackgroundCopyError
+.comdef IBackgroundCopyError : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetError		proc :ptr, :ptr
     GetFile		proc :ptr
     GetErrorDescription proc :DWORD, :ptr
     GetErrorContextDescription proc :DWORD, :ptr
     GetProtocol		proc :ptr
+
     .ends
 endif
 
@@ -175,11 +169,8 @@ BG_JOB_PROXY_USAGE_AUTODETECT equ ( BG_JOB_PROXY_USAGE_OVERRIDE + 1 )
 
 DEFINE_IIDX(IBackgroundCopyJob, "37668d37-507e-4160-9316-26306d150b12")
 
-.comdef IBackgroundCopyJob
+.comdef IBackgroundCopyJob : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFileSet		proc :ULONG, :ptr
     AddFile		proc :LPCWSTR, :LPCWSTR
     EnumFiles		proc :ptr
@@ -212,6 +203,7 @@ DEFINE_IIDX(IBackgroundCopyJob, "37668d37-507e-4160-9316-26306d150b12")
     SetProxySettings	proc :BG_JOB_PROXY_USAGE, :ptr, :ptr
     GetProxySettings	proc :ptr, :ptr, :ptr
     TakeOwnership	proc
+
     .ends
 
 endif
@@ -221,16 +213,14 @@ __IEnumBackgroundCopyJobs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumBackgroundCopyJobs, "1af4f612-3b71-466f-8f58-7b6f73ac57ad")
 
-.comdef IEnumBackgroundCopyJobs
+.comdef IEnumBackgroundCopyJobs : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
+
     .ends
 
 endif
@@ -246,14 +236,12 @@ __IBackgroundCopyCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyCallback, "97ea99c7-0186-4ad4-8df9-c5b4e0ed6b22")
 
-.comdef IBackgroundCopyCallback
+.comdef IBackgroundCopyCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     JobTransferred	proc :ptr
     JobError		proc :ptr, :ptr
     JobModification	proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -263,17 +251,15 @@ __AsyncIBackgroundCopyCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(AsyncIBackgroundCopyCallback, "ca29d251-b4bb-4679-a3d9-ae8006119d54")
 
-.comdef AsyncIBackgroundCopyCallback
+.comdef AsyncIBackgroundCopyCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Begin_JobTransferred proc :ptr
     Finish_JobTransferred proc
     Begin_JobError	proc :ptr, :ptr
     Finish_JobError	proc
     Begin_JobModification proc :ptr, :DWORD
     Finish_JobModification proc
+
     .ends
 
 endif
@@ -285,15 +271,13 @@ BG_JOB_ENUM_ALL_USERS	equ 0x0001
 
 DEFINE_IIDX(IBackgroundCopyManager, "5ce34c0d-0dc9-4c1f-897c-daa1b78cee7c")
 
-.comdef IBackgroundCopyManager
+.comdef IBackgroundCopyManager : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateJob		proc :LPCWSTR, :BG_JOB_TYPE, :ptr, :ptr
     GetJob		proc :REFGUID, :ptr
     EnumJobs		proc :DWORD, :ptr
     GetErrorDescription proc :HRESULT, :DWORD, :ptr
+
     .ends
 
 endif

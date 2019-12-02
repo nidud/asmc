@@ -690,7 +690,7 @@ CreateMacro proc name:string_t
         push eax
         mov ecx,LclAlloc(sizeof(macro_info))
         pop eax
-        mov [eax].dsym.macroinfo,ecx
+        mov [eax].esym.macroinfo,ecx
         xor edx,edx
         mov [ecx].parmcnt,dx
         mov [ecx].localcnt,dx
@@ -708,7 +708,7 @@ ReleaseMacroData proc mac:dsym_t
 
     mov eax,mac
     and [eax].asym.mac_flag,not M_ISVARARG
-    mov ecx,[eax].dsym.macroinfo
+    mov ecx,[eax].esym.macroinfo
     xor eax,eax
     mov [ecx].parmcnt,ax
     mov [ecx].localcnt,ax
@@ -867,7 +867,7 @@ MacroInit proc pass:int_t
         or  byte ptr [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
         or  [eax].asym.mac_flag,M_ISFUNC
         mov [eax].asym.func_ptr,EnvironFunc
-        mov eax,[eax].dsym.macroinfo
+        mov eax,[eax].esym.macroinfo
         mov [eax].macro_info.parmcnt,1
         push eax
         LclAlloc(sizeof(mparm_list))

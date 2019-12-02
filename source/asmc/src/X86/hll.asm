@@ -1131,15 +1131,15 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
         .if GetProc(eax)
 
             mov sym,eax
-            mov edx,[eax].dsym.procinfo
+            mov edx,[eax].esym.procinfo
             mov info,edx
             mov ecx,[edx].proc_info.paralist
             movzx eax,[eax].asym.langtype
 
             .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
                   eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-                .while ecx && [ecx].dsym.nextparam
-                    mov ecx,[ecx].dsym.nextparam
+                .while ecx && [ecx].esym.nextparam
+                    mov ecx,[ecx].esym.nextparam
                 .endw
             .endif
             mov curr,ecx
@@ -1153,11 +1153,11 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
                 .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
                       eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
                     .for ( ecx = [edx].proc_info.paralist,
-                           eax = curr : ecx && [ecx].dsym.nextparam != eax : ecx = [ecx].dsym.nextparam )
+                           eax = curr : ecx && [ecx].esym.nextparam != eax : ecx = [ecx].esym.nextparam )
                     .endf
                     mov curr,ecx
                 .else
-                    mov ecx,[ecx].dsym.nextparam
+                    mov ecx,[ecx].esym.nextparam
                 .endif
                 dec parg_id
             .endw

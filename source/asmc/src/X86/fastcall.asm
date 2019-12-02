@@ -127,7 +127,7 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:s
     .elseif eax && [eax].asym._segment
 
         mov ebx,[eax].asym._segment
-        mov ecx,[ebx].dsym.seginfo
+        mov ecx,[ebx].esym.seginfo
 
         .if [ecx].seg_info.segtype == SEGTYPE_DATA || \
             [ecx].seg_info.segtype == SEGTYPE_BSS
@@ -194,8 +194,8 @@ ms32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
             .break
         .endif
 
-        .for eax=pp, eax=[eax].dsym.procinfo,
-             eax=[eax].proc_info.paralist: eax: eax=[eax].dsym.nextparam
+        .for eax=pp, eax=[eax].esym.procinfo,
+             eax=[eax].proc_info.paralist: eax: eax=[eax].esym.nextparam
 
             .if [eax].asym.state == SYM_TMACRO
 
@@ -290,8 +290,8 @@ vc32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:tok_t, value:ptr int_t
 
     .repeat
-        .for eax=pp, eax=[eax].dsym.procinfo,
-             eax=[eax].proc_info.paralist: eax: eax=[eax].dsym.nextparam
+        .for eax=pp, eax=[eax].esym.procinfo,
+             eax=[eax].proc_info.paralist: eax: eax=[eax].esym.nextparam
 
             .if [eax].asym.state == SYM_TMACRO || \
                 ( [eax].asym.state == SYM_STACK && [eax].asym.total_size <= 16 )
@@ -585,7 +585,7 @@ watc_param endp
 watc_fcend proc pp, numparams, value
 
     mov eax,pp
-    mov edx,[eax].dsym.procinfo
+    mov edx,[eax].esym.procinfo
     mov eax,[edx].proc_info.parasize
     .if [edx].proc_info.flags & PROC_HAS_VARARG
         add eax,size_vararg
@@ -632,7 +632,7 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     mov eax,numparams
     mov esi,4
     mov edi,8
-    .if [edx].dsym.sym.langtype == LANG_VECTORCALL
+    .if [edx].esym.sym.langtype == LANG_VECTORCALL
 
         mov esi,6
         mov edi,16
@@ -640,7 +640,7 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
 
     ; v2.04: VARARG didn't work
 
-    mov edx,[edx].dsym.procinfo
+    mov edx,[edx].esym.procinfo
     .if ( [edx].proc_info.flags & PROC_HAS_VARARG )
 
         .for ( ecx = start,
@@ -939,7 +939,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
     mov arg_offset,eax
 
     mov ecx,pp
-    .if [ecx].dsym.sym.langtype == LANG_VECTORCALL
+    .if [ecx].esym.sym.langtype == LANG_VECTORCALL
 
         mov vector_call,TRUE
         .if index < 6
@@ -1502,7 +1502,7 @@ elf64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     ; v2.28: xmm id to fcscratch
 
     mov edx,pp
-    mov edx,[edx].dsym.procinfo
+    mov edx,[edx].esym.procinfo
     xor esi,esi
 
     .if [edx].proc_info.flags & PROC_HAS_VARARG
@@ -1534,7 +1534,7 @@ elf64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
         mov eax,fcscratch
     .else
 
-        .for ( ebx = 0, edi = [edx].proc_info.paralist : edi : edi = [edi].dsym.prev, esi++ )
+        .for ( ebx = 0, edi = [edx].proc_info.paralist : edi : edi = [edi].esym.prev, esi++ )
 
             movzx eax,[edi].asym.regist[0]
             .if GetValueSp(eax) & OP_XMM

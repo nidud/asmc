@@ -94,9 +94,6 @@ endif
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE
 externdef	_osfhnd:HANDLE
-ifdef __DZ__
-externdef	_diskflag:DWORD
-endif
 
 A_CREATE	equ 1 ; fails if exists
 A_CREATETRUNC	equ 2 ; trunc if exists

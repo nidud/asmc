@@ -25,8 +25,5 @@ _wgetdcwd	proto __cdecl :SINT, :LPWSTR, :SINT
 
 ifndef _MSVCRT
 __allocwpath	proto __cdecl :LPSTR
-ifdef __DZ__
-externdef	_diskflag:DWORD
-endif
 endif
 .pragma list(pop)

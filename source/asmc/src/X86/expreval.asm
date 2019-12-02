@@ -454,7 +454,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
 
         .switch [eax].asym.state
         .case SYM_TYPE
-            mov ecx,[eax].dsym.structinfo
+            mov ecx,[eax].esym.structinfo
             .if ( [eax].asym.typekind != TYPE_TYPEDEF && [ecx].struct_info.flags & STINF_ISOPEN )
                 mov [edi].kind,EXPR_ERROR
                 .endc
@@ -541,7 +541,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
                     or  [edi].flags,E_INDIRECT
                     mov [edi].base_reg,ebx
                     mov ecx,CurrProc
-                    mov ecx,[ecx].dsym.procinfo
+                    mov ecx,[ecx].esym.procinfo
                     movzx eax,[ecx].proc_info.basereg
                     mov [ebx].tokval,eax
                     imul eax,eax,special_item
@@ -1428,7 +1428,7 @@ wimask_op proc uses esi edi ebx oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym
         mov [ecx].hvalue,edx
     .else
         .if [edx].flags & E_IS_TYPE
-            mov eax,[eax].dsym.structinfo
+            mov eax,[eax].esym.structinfo
             mov esi,[eax].struct_info.head
             .for ( : esi : esi = [esi].sfield.next )
                 mov ebx,[esi].sfield.sym

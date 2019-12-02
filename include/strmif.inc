@@ -459,12 +459,10 @@ __ICreateDevEnum_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateDevEnum,"29840822-5B84-11D0-BD3B-00A0C911CE86")
 
-.comdef ICreateDevEnum
+.comdef ICreateDevEnum : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateClassEnumerator proc :REFCLSID, :ptr, :DWORD
+
     .ends
 
 endif
@@ -513,11 +511,8 @@ PIN_INFO		ENDS
 
 DEFINE_IIDX(IPin, "56a86891-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IPin
+.comdef IPin : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Connect		proc :ptr, :ptr
     ReceiveConnection	proc :ptr, :ptr
     Disconnect		proc
@@ -533,6 +528,7 @@ DEFINE_IIDX(IPin, "56a86891-0ad4-11ce-b03a-0020af0ba770")
     BeginFlush		proc
     EndFlush		proc
     NewSegment		proc :REFERENCE_TIME, :REFERENCE_TIME, :REAL8
+
     .ends
 
 endif
@@ -544,15 +540,13 @@ __IEnumPins_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumPins, "56a86892-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IEnumPins
+.comdef IEnumPins : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -564,15 +558,13 @@ __IEnumMediaTypes_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumMediaTypes, "89c31040-846b-11ce-97d3-00aa0055595a")
 
-.comdef IEnumMediaTypes
+.comdef IEnumMediaTypes : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -584,11 +576,8 @@ __IFilterGraph_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterGraph, "56a8689f-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IFilterGraph
+.comdef IFilterGraph : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFilter		proc :ptr, :LPCWSTR
     RemoveFilter	proc :ptr
     EnumFilters		proc :ptr
@@ -597,6 +586,7 @@ DEFINE_IIDX(IFilterGraph, "56a8689f-0ad4-11ce-b03a-0020af0ba770")
     Reconnect		proc :ptr
     Disconnect		proc :ptr
     SetDefaultSyncSource proc
+
     .ends
 
 PFILTERGRAPH		typedef ptr IFilterGraph
@@ -608,15 +598,13 @@ __IEnumFilters_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumFilters, "56a86893-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IEnumFilters
+.comdef IEnumFilters : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 PENUMFILTERS		typedef ptr IEnumFilters
@@ -633,11 +621,8 @@ State_Running		equ ( State_Paused + 1 )
 
 DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMediaFilter
+.comdef IMediaFilter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetClassID		proc :ptr
     Stop		proc
     _Pause		proc
@@ -645,6 +630,7 @@ DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
     GetState		proc :DWORD, :ptr
     SetSyncSource	proc :ptr
     GetSyncSource	proc :ptr
+
     .ends
 
 PMEDIAFILTER		typedef ptr IMediaFilter
@@ -661,11 +647,8 @@ FILTER_INFO		ENDS
 
 DEFINE_IIDX(IBaseFilter, "56a86895-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IBaseFilter
+.comdef IBaseFilter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetClassID		proc :ptr
     Stop		proc
     _Pause		proc
@@ -678,6 +661,7 @@ DEFINE_IIDX(IBaseFilter, "56a86895-0ad4-11ce-b03a-0020af0ba770")
     QueryFilterInfo	proc :ptr
     JoinFilterGraph	proc :ptr, :LPCWSTR
     QueryVendorInfo	proc :ptr
+
     .ends
 
 PFILTER			typedef ptr IBaseFilter
@@ -689,15 +673,13 @@ __IReferenceClock_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReferenceClock, "56a86897-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IReferenceClock
+.comdef IReferenceClock : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTime		proc :ptr
     AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HEVENT, :ptr
     AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HSEMAPHORE, :ptr
     Unadvise		proc :DWORD_PTR
+
     .ends
 
 PREFERENCECLOCK		typedef ptr IReferenceClock
@@ -709,13 +691,11 @@ __IReferenceClockTimerControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReferenceClockTimerControl, "ebec459c-2eca-4d42-a8af-30df557614b8")
 
-.comdef IReferenceClockTimerControl
+.comdef IReferenceClockTimerControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetDefaultTimerResolution proc :REFERENCE_TIME
     GetDefaultTimerResolution proc :ptr
+
     .ends
 
 endif
@@ -725,15 +705,13 @@ __IReferenceClock2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReferenceClock2, "36b73885-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IReferenceClock2
+.comdef IReferenceClock2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTime		proc :ptr
     AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HEVENT, :ptr
     AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HSEMAPHORE, :ptr
     Unadvise		proc :DWORD_PTR
+
     .ends
 
 PREFERENCECLOCK2	typedef ptr IReferenceClock2
@@ -745,11 +723,8 @@ __IMediaSample_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaSample, "56a8689a-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMediaSample
+.comdef IMediaSample : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPointer		proc :ptr
     GetSize		proc
     GetTime		proc :ptr, :ptr
@@ -766,6 +741,7 @@ DEFINE_IIDX(IMediaSample, "56a8689a-0ad4-11ce-b03a-0020af0ba770")
     SetDiscontinuity	proc :BOOL
     GetMediaTime	proc :ptr, :ptr
     SetMediaTime	proc :ptr, :ptr
+
     .ends
 
 PMEDIASAMPLE		typedef ptr IMediaSample
@@ -802,11 +778,8 @@ __IMediaSample2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IMediaSample2
+.comdef IMediaSample2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPointer		proc :ptr
     GetSize		proc
     GetTime		proc :ptr, :ptr
@@ -825,6 +798,7 @@ DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
     SetMediaTime	proc :ptr, :ptr
     GetProperties	proc :DWORD, :ptr
     SetProperties	proc :DWORD, :ptr
+
     .ends
 
 PMEDIASAMPLE2		typedef ptr IMediaSample2
@@ -836,12 +810,10 @@ __IMediaSample2Config_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaSample2Config, "68961E68-832B-41ea-BC91-63593F3E70E3")
 
-.comdef IMediaSample2Config
+.comdef IMediaSample2Config : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSurface		proc :ptr
+
     .ends
 
 endif
@@ -856,17 +828,15 @@ __IMemAllocator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemAllocator, "56a8689c-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMemAllocator
+.comdef IMemAllocator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetProperties	proc :ptr, :ptr
     GetProperties	proc :ptr
     Commit		proc
     Decommit		proc
     GetBuffer		proc :ptr, :ptr, :ptr, :DWORD
     ReleaseBuffer	proc :ptr
+
     .ends
 
 PMEMALLOCATOR		typedef ptr IMemAllocator
@@ -878,11 +848,8 @@ __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
 
-.comdef IMemAllocatorCallbackTemp
+.comdef IMemAllocatorCallbackTemp : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetProperties	proc :ptr, :ptr
     GetProperties	proc :ptr
     Commit		proc
@@ -891,6 +858,7 @@ DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
     ReleaseBuffer	proc :ptr
     SetNotify		proc :ptr
     GetFreeCount	proc :ptr
+
     .ends
 
 endif
@@ -900,12 +868,10 @@ __IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemAllocatorNotifyCallbackTemp, "92980b30-c1de-11d2-abf5-00a0c905f375")
 
-.comdef IMemAllocatorNotifyCallbackTemp
+.comdef IMemAllocatorNotifyCallbackTemp : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     NotifyRelease	proc
+
     .ends
 
 endif
@@ -915,17 +881,15 @@ __IMemInputPin_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemInputPin, "56a8689d-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMemInputPin
+.comdef IMemInputPin : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetAllocator	proc :ptr
     NotifyAllocator	proc :ptr, :BOOL
     GetAllocatorRequirements proc :ptr
     Receive		proc :ptr
     ReceiveMultiple	proc
     ReceiveCanBlock	proc
+
     .ends
 
 PMEMINPUTPIN		typedef ptr IMemInputPin
@@ -937,13 +901,11 @@ __IAMovieSetup_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMovieSetup, "a3d8cec0-7e5a-11cf-bbc5-00805f6cef20")
 
-.comdef IAMovieSetup
+.comdef IAMovieSetup : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Register		proc
     Unregister		proc
+
     .ends
 
 PAMOVIESETUP		typedef ptr IAMovieSetup
@@ -977,11 +939,8 @@ __IMediaSeeking_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaSeeking, "36b73880-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IMediaSeeking
+.comdef IMediaSeeking : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCapabilities	proc :ptr
     CheckCapabilities	proc :ptr
     IsFormatSupported	proc :ptr
@@ -999,6 +958,7 @@ DEFINE_IIDX(IMediaSeeking, "36b73880-c2c8-11cf-8b46-00805f6cef60")
     SetRate		proc :REAL8
     GetRate		proc :ptr
     GetPreroll		proc :ptr
+
     .ends
 
 PMEDIASEEKING		typedef ptr IMediaSeeking
@@ -1018,15 +978,13 @@ __IEnumRegFilters_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumRegFilters, "901db4c7-31ce-41a2-85dc-8fa0bf41b8da")
 
-.comdef IEnumRegFilters
+.comdef IEnumRegFilters : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 PENUMREGFILTERS		typedef ptr IEnumRegFilters
@@ -1046,11 +1004,8 @@ MERIT_HW_COMPRESSOR	equ 0x100050
 
 DEFINE_IIDX(IFilterMapper, "56a868a4-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IFilterMapper
+.comdef IFilterMapper : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     RegisterFilter	proc :CLSID, :LPCWSTR, :DWORD
     RegisterFilterInstance proc :CLSID, :LPCWSTR, :ptr
     RegisterPin		proc :CLSID, :LPCWSTR, :BOOL, :BOOL, :BOOL, :BOOL, :CLSID, :LPCWSTR
@@ -1059,6 +1014,7 @@ DEFINE_IIDX(IFilterMapper, "56a868a4-0ad4-11ce-b03a-0020af0ba770")
     UnregisterFilterInstance proc :CLSID
     UnregisterPin	proc :CLSID, :LPCWSTR
     EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :CLSID, :CLSID, :BOOL, :BOOL, :CLSID, :CLSID
+
     .ends
 
 endif
@@ -1126,15 +1082,13 @@ __IFilterMapper2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterMapper2, "56a868a3-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IFilterMapper2
+.comdef IFilterMapper2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateCategory	proc :REFCLSID, :DWORD, :LPCWSTR
     UnregisterFilter	proc :ptr, :LPCOLESTR, :REFCLSID
     RegisterFilter	proc :REFCLSID, :LPCWSTR, :ptr, :ptr, :LPCOLESTR, :ptr
     EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :DWORD, :BOOL, :DWORD, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -1144,16 +1098,14 @@ __IFilterMapper3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterMapper3, "b79bb0b0-33c1-11d1-abe1-00a0c905f375")
 
-.comdef IFilterMapper3
+.comdef IFilterMapper3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateCategory	proc :REFCLSID, :DWORD, :LPCWSTR
     UnregisterFilter	proc :ptr, :LPCOLESTR, :REFCLSID
     RegisterFilter	proc :REFCLSID, :LPCWSTR, :ptr, :ptr, :LPCOLESTR, :ptr
     EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :DWORD, :BOOL, :DWORD, :ptr, :ptr, :ptr
     GetICreateDevEnum	proc :ptr
+
     .ends
 
 endif
@@ -1174,13 +1126,11 @@ __IQualityControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IQualityControl, "56a868a5-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IQualityControl
+.comdef IQualityControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Notify		proc :ptr, :Quality
     SetSink		proc :ptr
+
     .ends
 
 PQUALITYCONTROL		typedef ptr IQualityControl
@@ -1229,15 +1179,13 @@ __IOverlayNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOverlayNotify, "56a868a0-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IOverlayNotify
+.comdef IOverlayNotify : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnPaletteChange	proc :DWORD, :ptr
     OnClipChange	proc :ptr, :ptr, :ptr
     OnColorKeyChange	proc :ptr
     OnPositionChange	proc :ptr, :ptr
+
     .ends
 
 POVERLAYNOTIFY		typedef ptr IOverlayNotify
@@ -1257,16 +1205,14 @@ __IOverlayNotify2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOverlayNotify2, "680EFA10-D535-11D1-87C8-00A0C9223196")
 
-.comdef IOverlayNotify2
+.comdef IOverlayNotify2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnPaletteChange	proc :DWORD, :ptr
     OnClipChange	proc :ptr, :ptr, :ptr
     OnColorKeyChange	proc :ptr
     OnPositionChange	proc :ptr, :ptr
     OnDisplayChange	proc :HMONITOR
+
     .ends
 
 POVERLAYNOTIFY2		typedef ptr IOverlayNotify2
@@ -1278,11 +1224,8 @@ __IOverlay_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOverlay, "56a868a1-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IOverlay
+.comdef IOverlay : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPalette		proc :ptr, :ptr
     SetPalette		proc :DWORD, :ptr
     GetDefaultColorKey	proc :ptr
@@ -1304,12 +1247,10 @@ __IMediaEventSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaEventSink, "56a868a2-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMediaEventSink
+.comdef IMediaEventSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Notify		proc :LONG, :LONG_PTR, :LONG_PTR
+
     .ends
 
 PMEDIAEVENTSINK		typedef ptr IMediaEventSink
@@ -1321,13 +1262,11 @@ __IFileSourceFilter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSourceFilter, "56a868a6-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IFileSourceFilter
+.comdef IFileSourceFilter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Load		proc :LPCOLESTR, :ptr
     GetCurFile		proc :ptr, :ptr
+
     .ends
 
 PFILTERFILESOURCE	typedef ptr IFileSourceFilter
@@ -1339,13 +1278,11 @@ __IFileSinkFilter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSinkFilter, "a2104830-7c70-11cf-8bce-00aa00a3f1a6")
 
-.comdef IFileSinkFilter
+.comdef IFileSinkFilter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFileName		proc :LPCOLESTR, :ptr
     GetCurFile		proc :ptr, :ptr
+
     .ends
 
 PFILTERFILESINK		typedef ptr IFileSinkFilter
@@ -1357,15 +1294,13 @@ __IFileSinkFilter2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSinkFilter2, "00855B90-CE1B-11d0-BD4F-00A0C911CE86")
 
-.comdef IFileSinkFilter2
+.comdef IFileSinkFilter2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFileName		proc :LPCOLESTR, :ptr
     GetCurFile		proc :ptr, :ptr
     SetMode		proc :DWORD
     GetMode		proc :ptr
+
     .ends
 
 PFILESINKFILTER2	typedef ptr IFileSinkFilter2
@@ -1380,11 +1315,8 @@ __IGraphBuilder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IGraphBuilder
+.comdef IGraphBuilder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFilter		proc :ptr, :LPCWSTR
     RemoveFilter	proc :ptr
     EnumFilters		proc :ptr
@@ -1400,6 +1332,7 @@ DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
     SetLogFile		proc :DWORD_PTR
     Abort		proc
     ShouldOperationContinue proc
+
     .ends
 
 endif
@@ -1409,11 +1342,8 @@ __ICaptureGraphBuilder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICaptureGraphBuilder, "bf87b6e0-8c27-11d0-b3f0-00aa003761c5")
 
-.comdef ICaptureGraphBuilder
+.comdef ICaptureGraphBuilder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFiltergraph	proc :ptr
     GetFiltergraph	proc :ptr
     SetOutputFileName	proc :ptr, :LPCOLESTR, :ptr, :ptr
@@ -1422,6 +1352,7 @@ DEFINE_IIDX(ICaptureGraphBuilder, "bf87b6e0-8c27-11d0-b3f0-00aa003761c5")
     ControlStream	proc :ptr, :ptr, :ptr, :ptr, :WORD, :WORD
     AllocCapFile	proc :LPCOLESTR, :DWORDLONG
     CopyCaptureFile	proc :LPOLESTR, :LPOLESTR, :SINT, :ptr
+
     .ends
 
 endif
@@ -1431,12 +1362,10 @@ __IAMCopyCaptureFileProgress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMCopyCaptureFileProgress, "670d1d20-a068-11d0-b3f0-00aa003761c5")
 
-.comdef IAMCopyCaptureFileProgress
+.comdef IAMCopyCaptureFileProgress : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Progress		proc :SINT
+
     .ends
 
 endif
@@ -1446,11 +1375,8 @@ __ICaptureGraphBuilder2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICaptureGraphBuilder2, "93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")
 
-.comdef ICaptureGraphBuilder2
+.comdef ICaptureGraphBuilder2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFiltergraph	proc :ptr
     GetFiltergraph	proc :ptr
     SetOutputFileName	proc :ptr, :LPCOLESTR, :ptr, :ptr
@@ -1460,6 +1386,7 @@ DEFINE_IIDX(ICaptureGraphBuilder2, "93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")
     AllocCapFile	proc :LPCOLESTR, :DWORDLONG
     CopyCaptureFile	proc :LPOLESTR, :LPOLESTR, :SINT, :ptr
     FindPin		proc :ptr, :PIN_DIRECTION, :ptr, :ptr, :BOOL, :SINT, :ptr
+
     .ends
 
 endif
@@ -1472,11 +1399,8 @@ __IFilterGraph2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IFilterGraph2
+.comdef IFilterGraph2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFilter		proc :ptr, :LPCWSTR
     RemoveFilter	proc :ptr
     EnumFilters		proc :ptr
@@ -1495,6 +1419,7 @@ DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
     AddSourceFilterForMoniker proc :ptr, :ptr, :LPCWSTR, :ptr
     ReconnectEx		proc :ptr, :ptr
     RenderEx		proc :ptr, :DWORD, :ptr
+
     .ends
 
 endif
@@ -1504,11 +1429,8 @@ __IFilterGraph3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterGraph3, "aaf38154-b80b-422f-91e6-b66467509a07")
 
-.comdef IFilterGraph3
+.comdef IFilterGraph3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFilter		proc :ptr, :LPCWSTR
     RemoveFilter	proc :ptr
     EnumFilters		proc :ptr
@@ -1528,6 +1450,7 @@ DEFINE_IIDX(IFilterGraph3, "aaf38154-b80b-422f-91e6-b66467509a07")
     ReconnectEx		proc :ptr, :ptr
     RenderEx		proc :ptr, :DWORD, :ptr
     SetSyncSourceEx	proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -1537,13 +1460,11 @@ __IStreamBuilder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStreamBuilder, "56a868bf-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IStreamBuilder
+.comdef IStreamBuilder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Render		proc :ptr, :ptr
     Backout		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -1553,11 +1474,8 @@ __IAsyncReader_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IAsyncReader
+.comdef IAsyncReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     RequestAllocator	proc :ptr, :ptr, :ptr
     Request		proc :ptr, :DWORD_PTR
     WaitForNext		proc :DWORD, :ptr, :ptr
@@ -1566,6 +1484,7 @@ DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
     Length		proc :ptr, :ptr
     BeginFlush		proc
     EndFlush		proc
+
     .ends
 
 endif
@@ -1575,12 +1494,10 @@ __IGraphVersion_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGraphVersion, "56a868ab-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IGraphVersion
+.comdef IGraphVersion : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryVersion	proc :ptr
+
     .ends
 
 endif
@@ -1590,13 +1507,11 @@ __IResourceConsumer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IResourceConsumer, "56a868ad-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IResourceConsumer
+.comdef IResourceConsumer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AcquireResource	proc :LONG
     ReleaseResource	proc :LONG
+
     .ends
 
 endif
@@ -1606,11 +1521,8 @@ __IResourceManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IResourceManager, "56a868ac-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IResourceManager
+.comdef IResourceManager : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Register		proc :LPCWSTR, :LONG, :ptr
     RegisterGroup	proc :LPCWSTR, :LONG
     RequestResource	proc :LONG, :ptr, :ptr
@@ -1619,6 +1531,7 @@ DEFINE_IIDX(IResourceManager, "56a868ac-0ad4-11ce-b03a-0020af0ba770")
     CancelRequest	proc :LONG, :ptr
     SetFocus		proc :ptr
     ReleaseFocus	proc :ptr
+
     .ends
 
 endif
@@ -1628,16 +1541,14 @@ __IDistributorNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDistributorNotify, "56a868af-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IDistributorNotify
+.comdef IDistributorNotify : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Stop		proc
     _Pause		proc
     Run			proc :REFERENCE_TIME
     SetSyncSource	proc :ptr
     NotifyGraphChange	proc
+
     .ends
 
 endif
@@ -1661,14 +1572,12 @@ __IAMStreamControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMStreamControl, "36b73881-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IAMStreamControl
+.comdef IAMStreamControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StartAt		proc :ptr, :DWORD
     StopAt		proc :ptr, :BOOL, :DWORD
     GetInfo		proc :ptr
+
     .ends
 
 endif
@@ -1678,12 +1587,10 @@ __ISeekingPassThru_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISeekingPassThru, "36b73883-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef ISeekingPassThru
+.comdef ISeekingPassThru : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Init		proc :BOOL, :ptr
+
     .ends
 
 endif
@@ -1730,15 +1637,13 @@ AUDIO_STREAM_CONFIG_CAPS ENDS
 
 DEFINE_IIDX(IAMStreamConfig, "C6E13340-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMStreamConfig
+.comdef IAMStreamConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFormat		proc :ptr
     GetFormat		proc :ptr
     GetNumberOfCapabilities proc :ptr, :ptr
     GetStreamCaps	proc :SINT, :ptr, :ptr
+
     .ends
 
 endif
@@ -1754,15 +1659,13 @@ INTERLEAVE_NONE_BUFFERED equ ( INTERLEAVE_FULL + 1 )
 
 DEFINE_IIDX(IConfigInterleaving, "BEE3D220-157B-11d0-BD23-00A0C911CE86")
 
-.comdef IConfigInterleaving
+.comdef IConfigInterleaving : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_Mode		proc :InterleavingMode
     get_Mode		proc :ptr
     put_Interleaving	proc :ptr, :ptr
     get_Interleaving	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -1772,15 +1675,13 @@ __IConfigAviMux_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IConfigAviMux, "5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6")
 
-.comdef IConfigAviMux
+.comdef IConfigAviMux : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetMasterStream	proc :LONG
     GetMasterStream	proc :ptr
     SetOutputCompatibilityIndex proc :BOOL
     GetOutputCompatibilityIndex proc :ptr
+
     .ends
 
 endif
@@ -1797,11 +1698,8 @@ __IAMVideoCompression_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVideoCompression, "C6E13343-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMVideoCompression
+.comdef IAMVideoCompression : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_KeyFrameRate	proc :LONG
     get_KeyFrameRate	proc :ptr
     put_PFramesPerKeyFrame proc :LONG
@@ -1813,6 +1711,7 @@ DEFINE_IIDX(IAMVideoCompression, "C6E13343-30AC-11d0-A18C-00A0C9118956")
     GetInfo		proc :LPWSTR, :ptr, :ptr, :ptr, :ptr, :ptr
     OverrideKeyFrame	proc :LONG
     OverrideFrameSize	proc :LONG, :LONG
+
     .ends
 
 endif
@@ -1833,14 +1732,12 @@ __IAMVfwCaptureDialogs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVfwCaptureDialogs, "D8D715A0-6E5E-11D0-B3F0-00AA003761C5")
 
-.comdef IAMVfwCaptureDialogs
+.comdef IAMVfwCaptureDialogs : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     HasDialog		proc :SINT
     ShowDialog		proc :SINT, :HWND
     SendDriverMessage	proc :SINT, :SINT, :LONG, :LONG
+
     .ends
 
 endif
@@ -1850,15 +1747,13 @@ __IAMVfwCompressDialogs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVfwCompressDialogs, "D8D715A3-6E5E-11D0-B3F0-00AA003761C5")
 
-.comdef IAMVfwCompressDialogs
+.comdef IAMVfwCompressDialogs : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ShowDialog		proc :SINT, :HWND
     GetState		proc :LPVOID, :ptr
     SetState		proc
     SendDriverMessage	proc :SINT, :LONG, :LONG
+
     .ends
 
 endif
@@ -1868,15 +1763,13 @@ __IAMDroppedFrames_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMDroppedFrames, "C6E13344-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMDroppedFrames
+.comdef IAMDroppedFrames : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetNumDropped	proc :ptr
     GetNumNotDropped	proc :ptr
     GetDroppedInfo	proc :LONG, :ptr, :ptr
     GetAverageFrameSize proc :ptr
+
     .ends
 
 endif
@@ -1888,11 +1781,8 @@ __IAMAudioInputMixer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMAudioInputMixer, "54C39221-8380-11d0-B3F0-00AA003761C5")
 
-.comdef IAMAudioInputMixer
+.comdef IAMAudioInputMixer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_Enable		proc :BOOL
     get_Enable		proc :ptr
     put_Mono		proc :BOOL
@@ -1909,6 +1799,7 @@ DEFINE_IIDX(IAMAudioInputMixer, "54C39221-8380-11d0-B3F0-00AA003761C5")
     put_Bass		proc :REAL8
     get_Bass		proc :ptr
     get_BassRange	proc :ptr
+
     .ends
 
 endif
@@ -1918,13 +1809,11 @@ __IAMBufferNegotiation_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMBufferNegotiation, "56ED71A0-AF5F-11D0-B3F0-00AA003761C5")
 
-.comdef IAMBufferNegotiation
+.comdef IAMBufferNegotiation : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SuggestAllocatorProperties proc :ptr
     GetAllocatorProperties proc :ptr
+
     .ends
 
 endif
@@ -1998,11 +1887,8 @@ __IAMAnalogVideoDecoder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMAnalogVideoDecoder
+.comdef IAMAnalogVideoDecoder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_AvailableTVFormats proc :ptr
     put_TVFormat	proc :LONG
     get_TVFormat	proc :ptr
@@ -2012,6 +1898,7 @@ DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
     get_NumberOfLines	proc :ptr
     put_OutputEnable	proc :LONG
     get_OutputEnable	proc :ptr
+
     .ends
 
 endif
@@ -2037,14 +1924,12 @@ __IAMVideoProcAmp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVideoProcAmp, "C6E13360-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMVideoProcAmp
+.comdef IAMVideoProcAmp : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRange		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
     Set			proc :LONG, :LONG, :LONG
     Get			proc :LONG, :ptr, :ptr
+
     .ends
 
 endif
@@ -2067,14 +1952,12 @@ __IAMCameraControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMCameraControl, "C6E13370-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMCameraControl
+.comdef IAMCameraControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRange		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
     Set			proc :LONG, :LONG, :LONG
     Get			proc :LONG, :ptr, :ptr
+
     .ends
 
 endif
@@ -2090,17 +1973,15 @@ __IAMVideoControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVideoControl, "6a2e0670-28e4-11d0-a18c-00a0c9118956")
 
-.comdef IAMVideoControl
+.comdef IAMVideoControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCaps		proc :ptr, :ptr
     SetMode		proc :ptr, :LONG
     GetMode		proc :ptr, :ptr
     GetCurrentActualFrameRate proc :ptr, :ptr
     GetMaxAvailableFrameRate proc :ptr, :LONG, :SIZEL, :ptr
     GetFrameRateList	proc :ptr, :LONG, :SIZEL, :ptr, :ptr
+
     .ends
 
 endif
@@ -2110,16 +1991,14 @@ __IAMCrossbar_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMCrossbar, "C6E13380-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMCrossbar
+.comdef IAMCrossbar : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_PinCounts	proc :ptr, :ptr
     CanRoute		proc :LONG, :LONG
     Route		proc :LONG, :LONG
     get_IsRoutedTo	proc :LONG, :ptr
     get_CrossbarPinInfo proc :BOOL, :LONG, :ptr, :ptr
+
     .ends
 
 endif
@@ -2148,11 +2027,8 @@ __IAMTuner_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTuner, "211A8761-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IAMTuner
+.comdef IAMTuner : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_Channel		proc :LONG, :LONG, :LONG
     get_Channel		proc :ptr, :ptr, :ptr
     ChannelMinMax	proc :ptr, :ptr
@@ -2168,6 +2044,7 @@ DEFINE_IIDX(IAMTuner, "211A8761-03AC-11d1-8D13-00AA00BD8339")
     GetAvailableModes	proc :ptr
     RegisterNotificationCallBack proc :ptr, :LONG
     UnRegisterNotificationCallBack proc :ptr
+
     .ends
 
 endif
@@ -2177,12 +2054,10 @@ __IAMTunerNotification_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTunerNotification, "211A8760-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IAMTunerNotification
+.comdef IAMTunerNotification : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnEvent		proc :AMTunerEventType
+
     .ends
 
 endif
@@ -2192,11 +2067,8 @@ __IAMTVTuner_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IAMTVTuner
+.comdef IAMTVTuner : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_Channel		proc :LONG, :LONG, :LONG
     get_Channel		proc :ptr, :ptr, :ptr
     ChannelMinMax	proc :ptr, :ptr
@@ -2223,6 +2095,7 @@ DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
     get_ConnectInput	proc :ptr
     get_VideoFrequency	proc :ptr
     get_AudioFrequency	proc :ptr
+
     .ends
 
 endif
@@ -2232,11 +2105,8 @@ __IBPCSatelliteTuner_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IBPCSatelliteTuner
+.comdef IBPCSatelliteTuner : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     put_Channel		proc :LONG, :LONG, :LONG
     get_Channel		proc :ptr, :ptr, :ptr
     ChannelMinMax	proc :ptr, :ptr
@@ -2255,6 +2125,7 @@ DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
     get_DefaultSubChannelTypes proc :ptr, :ptr
     put_DefaultSubChannelTypes proc :LONG, :LONG
     IsTapingPermitted	proc
+
     .ends
 
 endif
@@ -2278,17 +2149,15 @@ __IAMTVAudio_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTVAudio, "83EC1C30-23D1-11d1-99E6-00A0C9560266")
 
-.comdef IAMTVAudio
+.comdef IAMTVAudio : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetHardwareSupportedTVAudioModes proc :ptr
     GetAvailableTVAudioModes proc :ptr
     get_TVAudioMode	proc :ptr
     put_TVAudioMode	proc :LONG
     RegisterNotificationCallBack proc :ptr, :LONG
     UnRegisterNotificationCallBack proc :ptr
+
     .ends
 
 endif
@@ -2298,12 +2167,10 @@ __IAMTVAudioNotification_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTVAudioNotification, "83EC1C33-23D1-11d1-99E6-00A0C9560266")
 
-.comdef IAMTVAudioNotification
+.comdef IAMTVAudioNotification : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnEvent		proc :AMTVAudioEventType
+
     .ends
 
 endif
@@ -2313,11 +2180,8 @@ __IAMAnalogVideoEncoder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
 
-.comdef IAMAnalogVideoEncoder
+.comdef IAMAnalogVideoEncoder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_AvailableTVFormats proc :ptr
     put_TVFormat	proc :LONG
     get_TVFormat	proc :ptr
@@ -2325,6 +2189,7 @@ DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
     get_CopyProtection	proc :ptr
     put_CCEnable	proc :LONG
     get_CCEnable	proc :ptr
+
     .ends
 
 endif
@@ -2343,14 +2208,12 @@ __IKsPropertySet_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IKsPropertySet, "31EFAC30-515C-11d0-A9AA-00AA0061BE93")
 
-.comdef IKsPropertySet
+.comdef IKsPropertySet : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Set			proc :REFGUID, :DWORD, :LPVOID, :DWORD
     Get			proc :REFGUID, :DWORD, :LPVOID, :DWORD, :ptr
     QuerySupported	proc :REFGUID, :DWORD, :ptr
+
     .ends
 
 endif
@@ -2362,14 +2225,12 @@ __IMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaPropertyBag, "6025A880-C0D5-11d0-BD4E-00A0C911CE86")
 
-.comdef IMediaPropertyBag
+.comdef IMediaPropertyBag : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Read		proc :LPCOLESTR, :ptr, :ptr
     Write		proc :LPCOLESTR, :ptr
     EnumProperty	proc :ULONG, :ptr, :ptr
+
     .ends
 
 LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
@@ -2381,15 +2242,13 @@ __IPersistMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistMediaPropertyBag, "5738E040-B67F-11d0-BD4D-00A0C911CE86")
 
-.comdef IPersistMediaPropertyBag
+.comdef IPersistMediaPropertyBag : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetClassID		proc :ptr
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
+
     .ends
 
 LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
@@ -2401,12 +2260,10 @@ __IAMPhysicalPinInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMPhysicalPinInfo, "F938C991-3029-11cf-8C44-00AA006B6814")
 
-.comdef IAMPhysicalPinInfo
+.comdef IAMPhysicalPinInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPhysicalType	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -2418,11 +2275,8 @@ __IAMExtDevice_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMExtDevice, "B5730A90-1A2C-11cf-8C23-00AA006B6814")
 
-.comdef IAMExtDevice
+.comdef IAMExtDevice : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCapability	proc :LONG, :ptr, :ptr
     get_ExternalDeviceID proc :ptr
     get_ExternalDeviceVersion proc :ptr
@@ -2431,6 +2285,7 @@ DEFINE_IIDX(IAMExtDevice, "B5730A90-1A2C-11cf-8C23-00AA006B6814")
     Calibrate		proc :HEVENT, :LONG, :ptr
     put_DevicePort	proc :LONG
     get_DevicePort	proc :ptr
+
     .ends
 
 PEXTDEVICE		typedef ptr IAMExtDevice
@@ -2442,11 +2297,8 @@ __IAMExtTransport_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMExtTransport, "A03CD5F0-3045-11cf-8C44-00AA006B6814")
 
-.comdef IAMExtTransport
+.comdef IAMExtTransport : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCapability	proc :LONG, :ptr, :ptr
     put_MediaState	proc :LONG
     get_MediaState	proc :ptr
@@ -2475,6 +2327,7 @@ DEFINE_IIDX(IAMExtTransport, "A03CD5F0-3045-11cf-8C44-00AA006B6814")
     SetEditProperty	proc :LONG, :LONG, :LONG
     get_EditStart	proc :ptr
     put_EditStart	proc :LONG
+
     .ends
 
 endif
@@ -2507,16 +2360,14 @@ __IAMTimecodeReader_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTimecodeReader, "9B496CE1-811B-11cf-8C77-00AA006B6814")
 
-.comdef IAMTimecodeReader
+.comdef IAMTimecodeReader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTCRMode		proc :LONG, :ptr
     SetTCRMode		proc :LONG, :LONG
     put_VITCLine	proc :LONG
     get_VITCLine	proc :ptr
     GetTimecode		proc :PTIMECODE_SAMPLE
+
     .ends
 
 PIAMTIMECODEREADER	typedef ptr IAMTimecodeReader
@@ -2528,17 +2379,15 @@ __IAMTimecodeGenerator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTimecodeGenerator, "9B496CE0-811B-11cf-8C77-00AA006B6814")
 
-.comdef IAMTimecodeGenerator
+.comdef IAMTimecodeGenerator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTCGMode		proc :LONG, :ptr
     SetTCGMode		proc :LONG, :LONG
     put_VITCLine	proc :LONG
     get_VITCLine	proc :ptr
     SetTimecode		proc :PTIMECODE_SAMPLE
     GetTimecode		proc :PTIMECODE_SAMPLE
+
     .ends
 
 PIAMTIMECODEGENERATOR	typedef ptr IAMTimecodeGenerator
@@ -2550,15 +2399,13 @@ __IAMTimecodeDisplay_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTimecodeDisplay, "9B496CE2-811B-11cf-8C77-00AA006B6814")
 
-.comdef IAMTimecodeDisplay
+.comdef IAMTimecodeDisplay : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTCDisplayEnable	proc :ptr
     SetTCDisplayEnable	proc :LONG
     GetTCDisplay	proc :LONG, :ptr
     SetTCDisplay	proc :LONG, :LONG
+
     .ends
 
 PIAMTIMECODEDISPLAY	typedef ptr IAMTimecodeDisplay
@@ -2570,16 +2417,14 @@ __IAMDevMemoryAllocator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMDevMemoryAllocator, "c6545bf0-e76b-11d0-bd52-00a0c911ce86")
 
-.comdef IAMDevMemoryAllocator
+.comdef IAMDevMemoryAllocator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetInfo		proc :ptr, :ptr, :ptr, :ptr
     CheckMemory		proc :ptr
     Alloc		proc
     Free		proc :ptr
     GetDevMemoryObject	proc :ptr, :ptr
+
     .ends
 
 PAMDEVMEMORYALLOCATOR	typedef ptr IAMDevMemoryAllocator
@@ -2591,14 +2436,12 @@ __IAMDevMemoryControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMDevMemoryControl, "c6545bf1-e76b-11d0-bd52-00a0c911ce86")
 
-.comdef IAMDevMemoryControl
+.comdef IAMDevMemoryControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryWriteSync	proc
     WriteSync		proc
     GetDevId		proc :ptr
+
     .ends
 
 PAMDEVMEMORYCONTROL	typedef ptr IAMDevMemoryControl
@@ -2618,14 +2461,12 @@ __IAMStreamSelect_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMStreamSelect, "c1960960-17f5-11d1-abe1-00a0c905f375")
 
-.comdef IAMStreamSelect
+.comdef IAMStreamSelect : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Count		proc :ptr
     Info		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     Enable		proc :LONG, :DWORD
+
     .ends
 
 PAMSTREAMSELECT		typedef ptr IAMStreamSelect
@@ -2641,12 +2482,10 @@ __IAMResourceControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMResourceControl, "8389d2d0-77d7-11d1-abe6-00a0c905f375")
 
-.comdef IAMResourceControl
+.comdef IAMResourceControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Reserve		proc :DWORD, :PVOID
+
     .ends
 
 endif
@@ -2656,12 +2495,10 @@ __IAMClockAdjust_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMClockAdjust, "4d5466b0-a49c-11d1-abe8-00a0c905f375")
 
-.comdef IAMClockAdjust
+.comdef IAMClockAdjust : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetClockDelta	proc :REFERENCE_TIME
+
     .ends
 
 endif
@@ -2675,12 +2512,10 @@ __IAMFilterMiscFlags_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMFilterMiscFlags, "2dd74950-a890-11d1-abe8-00a0c905f375")
 
-.comdef IAMFilterMiscFlags
+.comdef IAMFilterMiscFlags : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMiscFlags	proc
+
     .ends
 
 endif
@@ -2690,14 +2525,12 @@ __IDrawVideoImage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDrawVideoImage, "48efb120-ab49-11d2-aed2-00a0c995e8d5")
 
-.comdef IDrawVideoImage
+.comdef IDrawVideoImage : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     DrawVideoImageBegin proc
     DrawVideoImageEnd	proc
     DrawVideoImageDraw	proc :HDC, :LPRECT, :LPRECT
+
     .ends
 
 endif
@@ -2707,13 +2540,11 @@ __IDecimateVideoImage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDecimateVideoImage, "2e5ea3e0-e924-11d2-b6da-00a0c995e8df")
 
-.comdef IDecimateVideoImage
+.comdef IDecimateVideoImage : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetDecimationImageSize proc :LONG, :LONG
     ResetDecimationImageSize proc
+
     .ends
 
 endif
@@ -2730,12 +2561,10 @@ __IAMVideoDecimationProperties_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMVideoDecimationProperties, "60d32930-13da-11d3-9ec6-c4fcaef5c7be")
 
-.comdef IAMVideoDecimationProperties
+.comdef IAMVideoDecimationProperties : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryDecimationUsage proc :ptr
+
     SetDecimationUsage	proc :DECIMATION_USAGE
     .ends
 
@@ -2746,14 +2575,12 @@ __IVideoFrameStep_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVideoFrameStep, "e46a9787-2b71-444d-a4b5-1fab7b708d6a")
 
-.comdef IVideoFrameStep
+.comdef IVideoFrameStep : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Step		proc :DWORD, :ptr
     CanStep		proc :LONG, :ptr
     CancelStep		proc
+
     .ends
 
 endif
@@ -2770,12 +2597,10 @@ __IAMLatency_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMLatency, "62EA93BA-EC62-11d2-B770-00C04FB6BD3D")
 
-.comdef IAMLatency
+.comdef IAMLatency : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetLatency		proc :ptr
+
     .ends
 
 endif
@@ -2785,11 +2610,8 @@ __IAMPushSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
 
-.comdef IAMPushSource
+.comdef IAMPushSource : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetLatency		proc :ptr
     GetPushSourceFlags	proc :ptr
     SetPushSourceFlags	proc :ULONG
@@ -2797,6 +2619,7 @@ DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
     GetStreamOffset	proc :ptr
     GetMaxStreamOffset	proc :ptr
     SetMaxStreamOffset	proc :REFERENCE_TIME
+
     .ends
 
 endif
@@ -2806,14 +2629,12 @@ __IAMDeviceRemoval_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMDeviceRemoval, "f90a6130-b658-11d2-ae49-0000f8754b99")
 
-.comdef IAMDeviceRemoval
+.comdef IAMDeviceRemoval : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     DeviceInfo		proc :ptr, :ptr
     Reassociate		proc
     Disassociate	proc
+
     .ends
 
 endif
@@ -2850,13 +2671,11 @@ __IDVEnc_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDVEnc, "d18e17a0-aacb-11d0-afb0-00aa00b67a42")
 
-.comdef IDVEnc
+.comdef IDVEnc : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_IFormatResolution proc :ptr, :ptr, :ptr, :BYTE, :ptr
     put_IFormatResolution proc :SINT, :SINT, :SINT, :BYTE, :ptr
+
     .ends
 
 endif
@@ -2878,13 +2697,11 @@ __IIPDVDec_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IIPDVDec, "b8e8bd60-0bfe-11d0-af91-00aa00b67a42")
 
-.comdef IIPDVDec
+.comdef IIPDVDec : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_IPDisplay	proc :ptr
     put_IPDisplay	proc :SINT
+
     .ends
 
 endif
@@ -2894,12 +2711,10 @@ __IDVRGB219_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDVRGB219, "58473A19-2BC8-4663-8012-25F81BABDDD1")
 
-.comdef IDVRGB219
+.comdef IDVRGB219 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetRGB219		proc :BOOL
+
     .ends
 
 endif
@@ -2909,12 +2724,10 @@ __IDVSplitter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDVSplitter, "92a3a302-da7c-4a1f-ba7e-1802bb5d2d02")
 
-.comdef IDVSplitter
+.comdef IDVSplitter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     DiscardAlternateVideoFrames proc :SINT
+
     .ends
 
 endif
@@ -2938,12 +2751,10 @@ __IAMAudioRendererStats_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMAudioRendererStats, "22320CB2-D41A-11d2-BF7C-D7CB9DF0BF93")
 
-.comdef IAMAudioRendererStats
+.comdef IAMAudioRendererStats : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetStatParam	proc :DWORD, :ptr, :ptr
+
     .ends
 
 endif
@@ -2958,14 +2769,12 @@ __IAMGraphStreams_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMGraphStreams, "632105FA-072E-11d3-8AF9-00C04FB6BD3D")
 
-.comdef IAMGraphStreams
+.comdef IAMGraphStreams : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     FindUpstreamInterface proc :ptr, :REFIID, :ptr, :DWORD
     SyncUsingStreamOffset proc :BOOL
     SetMaxGraphLatency	proc :REFERENCE_TIME
+
     .ends
 
 endif
@@ -2981,14 +2790,12 @@ __IAMOverlayFX_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMOverlayFX, "62fae250-7e65-4460-bfc9-6398b322073c")
 
-.comdef IAMOverlayFX
+.comdef IAMOverlayFX : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryOverlayFXCaps	proc :ptr
     SetOverlayFX	proc :DWORD
     GetOverlayFX	proc :ptr
+
     .ends
 
 endif
@@ -2998,13 +2805,11 @@ __IAMOpenProgress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMOpenProgress, "8E1C39A1-DE53-11cf-AA63-0080C744528D")
 
-.comdef IAMOpenProgress
+.comdef IAMOpenProgress : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryProgress	proc :ptr, :ptr
     AbortOperation	proc
+
     .ends
 
 endif
@@ -3014,14 +2819,12 @@ __IMpeg2Demultiplexer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMpeg2Demultiplexer, "436eee9c-264f-4242-90e1-4e330c107512")
 
-.comdef IMpeg2Demultiplexer
+.comdef IMpeg2Demultiplexer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateOutputPin	proc :ptr, :LPWSTR, :ptr
     SetOutputPinMediaType proc :LPWSTR, :ptr
     DeleteOutputPin	proc :LPWSTR
+
     .ends
 
 endif
@@ -3045,15 +2848,13 @@ __IEnumStreamIdMap_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumStreamIdMap, "945C1566-6202-46fc-96C7-D87F289C6534")
 
-.comdef IEnumStreamIdMap
+.comdef IEnumStreamIdMap : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -3063,14 +2864,12 @@ __IMPEG2StreamIdMap_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMPEG2StreamIdMap, "D0E04C47-25B8-4369-925A-362A01D95444")
 
-.comdef IMPEG2StreamIdMap
+.comdef IMPEG2StreamIdMap : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     MapStreamId		proc :ULONG, :DWORD, :ULONG, :SINT
     UnmapStreamId	proc :ULONG, :ptr
     EnumStreamIdMap	proc :ptr
+
     .ends
 
 endif
@@ -3080,12 +2879,10 @@ __IRegisterServiceProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRegisterServiceProvider, "7B3A2F01-0751-48DD-B556-004785171C54")
 
-.comdef IRegisterServiceProvider
+.comdef IRegisterServiceProvider : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     RegisterService	proc :REFGUID, :ptr
+
     .ends
 
 endif
@@ -3095,13 +2892,11 @@ __IAMClockSlave_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMClockSlave, "9FD52741-176D-4b36-8F51-CA8F933223BE")
 
-.comdef IAMClockSlave
+.comdef IAMClockSlave : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetErrorTolerance	proc :DWORD
     GetErrorTolerance	proc :ptr
+
     .ends
 
 endif
@@ -3111,13 +2906,11 @@ __IAMGraphBuilderCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMGraphBuilderCallback, "4995f511-9ddb-4f12-bd3b-f04611807b79")
 
-.comdef IAMGraphBuilderCallback
+.comdef IAMGraphBuilderCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SelectedFilter	proc :ptr
     CreatedFilter	proc :ptr
+
     .ends
 
 endif
@@ -3159,15 +2952,13 @@ __IAMCertifiedOutputProtection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMCertifiedOutputProtection, "6feded3e-0ff1-4901-a2f1-43f7012c8515")
 
-.comdef IAMCertifiedOutputProtection
+.comdef IAMCertifiedOutputProtection : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     KeyExchange		proc :ptr
     SessionSequenceStart proc :ptr
     ProtectionCommand	proc :ptr
     ProtectionStatus	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -3177,13 +2968,11 @@ __IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMAsyncReaderTimestampScaling, "cf7b26fc-9a00-485b-8147-3e789d5e8f67")
 
-.comdef IAMAsyncReaderTimestampScaling
+.comdef IAMAsyncReaderTimestampScaling : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTimestampMode	proc :ptr
     SetTimestampMode	proc :BOOL
+
     .ends
 
 endif
@@ -3193,11 +2982,8 @@ __IAMPluginControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMPluginControl, "0e26a181-f40c-4635-8786-976284b52981")
 
-.comdef IAMPluginControl
+.comdef IAMPluginControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPreferredClsid	proc :REFGUID, :ptr
     GetPreferredClsidByIndex proc :DWORD, :ptr, :ptr
     SetPreferredClsid	proc :REFGUID, :ptr
@@ -3205,6 +2991,7 @@ DEFINE_IIDX(IAMPluginControl, "0e26a181-f40c-4635-8786-976284b52981")
     GetDisabledByIndex	proc :DWORD, :ptr
     SetDisabled		proc :REFCLSID, :BOOL
     IsLegacyDisabled	proc :LPCWSTR
+
     .ends
 
 endif
@@ -3548,11 +3335,8 @@ __IDvdControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdControl, "A70EFE61-E2A3-11d0-A9BE-00AA0061BE93")
 
-.comdef IDvdControl
+.comdef IDvdControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     TitlePlay		proc :ULONG
     ChapterPlay		proc :ULONG, :ULONG
     TimePlay		proc :ULONG, :ULONG
@@ -3588,6 +3372,7 @@ DEFINE_IIDX(IDvdControl, "A70EFE61-E2A3-11d0-A9BE-00AA0061BE93")
     MouseActivate	proc :POINT
     MouseSelect		proc :POINT
     ChapterPlayAutoStop proc :ULONG, :ULONG, :ULONG
+
     .ends
 
 endif
@@ -3597,11 +3382,8 @@ __IDvdInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdInfo, "A70EFE60-E2A3-11d0-A9BE-00AA0061BE93")
 
-.comdef IDvdInfo
+.comdef IDvdInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrentDomain	proc :ptr
     GetCurrentLocation	proc :ptr
     GetTotalTitleTime	proc :ptr
@@ -3625,6 +3407,7 @@ DEFINE_IIDX(IDvdInfo, "A70EFE60-E2A3-11d0-A9BE-00AA0061BE93")
     GetNumberOfChapters proc :ULONG, :ptr
     GetTitleParentalLevels proc :ULONG, :ptr
     GetRoot		proc :LPSTR, :ULONG, :ptr
+
     .ends
 
 endif
@@ -3634,13 +3417,11 @@ __IDvdCmd_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdCmd, "5a4a97e4-94ee-4a55-9751-74b5643aa27d")
 
-.comdef IDvdCmd
+.comdef IDvdCmd : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     WaitForStart	proc
     WaitForEnd		proc
+
     .ends
 
 endif
@@ -3650,13 +3431,11 @@ __IDvdState_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdState, "86303d6d-1c4a-4087-ab42-f711167048ef")
 
-.comdef IDvdState
+.comdef IDvdState : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDiscID		proc :ptr
     GetParentalLevel	proc :ptr
+
     .ends
 
 endif
@@ -3666,11 +3445,8 @@ __IDvdControl2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdControl2, "33BC7430-EEC0-11D2-8201-00A0C9D74842")
 
-.comdef IDvdControl2
+.comdef IDvdControl2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     PlayTitle		proc :ULONG, :DWORD, :ptr
     PlayChapterInTitle	proc :ULONG, :ULONG, :DWORD, :ptr
     PlayAtTimeInTitle	proc :ULONG, :ptr, :DWORD, :ptr
@@ -3711,6 +3487,7 @@ DEFINE_IIDX(IDvdControl2, "33BC7430-EEC0-11D2-8201-00A0C9D74842")
     SelectDefaultMenuLanguage proc :LCID
     SelectDefaultAudioLanguage proc :LCID, :DVD_AUDIO_LANG_EXT
     SelectDefaultSubpictureLanguage proc :LCID, :DVD_SUBPICTURE_LANG_EXT
+
     .ends
 
 endif
@@ -3786,11 +3563,8 @@ __IDvdInfo2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdInfo2, "34151510-EEC0-11D2-8201-00A0C9D74842")
 
-.comdef IDvdInfo2
+.comdef IDvdInfo2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetCurrentDomain	proc :ptr
     GetCurrentLocation	proc :ptr
     GetTotalTitleTime	proc :ptr, :ptr
@@ -3830,6 +3604,7 @@ DEFINE_IIDX(IDvdInfo2, "34151510-EEC0-11D2-8201-00A0C9D74842")
     GetDecoderCaps	proc :ptr
     GetButtonRect	proc :ULONG, :ptr
     IsSubpictureStreamEnabled proc :ULONG, :ptr
+
     .ends
 
 endif
@@ -3868,14 +3643,12 @@ __IDvdGraphBuilder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDvdGraphBuilder, "FCC152B6-F372-11d0-8E00-00C04FD7C08B")
 
-.comdef IDvdGraphBuilder
+.comdef IDvdGraphBuilder : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetFiltergraph	proc :ptr
     GetDvdInterface	proc :REFIID, :ptr
     RenderDvdVideoVolume proc :LPCWSTR, :DWORD, :ptr
+
     .ends
 
 endif
@@ -3885,11 +3658,8 @@ __IDDrawExclModeVideo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDDrawExclModeVideo, "153ACC21-D83B-11d1-82BF-00A0C9696C8F")
 
-.comdef IDDrawExclModeVideo
+.comdef IDDrawExclModeVideo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetDDrawObject	proc :ptr
     GetDDrawObject	proc :ptr, :ptr
     SetDDrawSurface	proc :ptr
@@ -3897,6 +3667,7 @@ DEFINE_IIDX(IDDrawExclModeVideo, "153ACC21-D83B-11d1-82BF-00A0C9696C8F")
     SetDrawParameters	proc :ptr, :ptr
     GetNativeVideoProps proc :ptr, :ptr, :ptr, :ptr
     SetCallbackInterface proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -3911,14 +3682,12 @@ __IDDrawExclModeVideoCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDDrawExclModeVideoCallback, "913c24a0-20ab-11d2-9038-00a0c9697298")
 
-.comdef IDDrawExclModeVideoCallback
+.comdef IDDrawExclModeVideoCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnUpdateOverlay	proc :BOOL, :DWORD, :BOOL, :ptr, :ptr, :BOOL, :ptr, :ptr
     OnUpdateColorKey	proc :ptr, :DWORD
     OnUpdateSize	proc :DWORD, :DWORD, :DWORD, :DWORD
+
     .ends
 
 endif
@@ -3928,15 +3697,13 @@ __IPinConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPinConnection, "4a9a62d3-27d4-403d-91e9-89f540e55534")
 
-.comdef IPinConnection
+.comdef IPinConnection : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     DynamicQueryAccept	proc :ptr
     NotifyEndOfStream	proc :HANDLE
     IsEndPin		proc
     DynamicDisconnect	proc
+
     .ends
 
 endif
@@ -3946,12 +3713,10 @@ __IPinFlowControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPinFlowControl, "c56e9858-dbf3-4f6b-8119-384af2060deb")
 
-.comdef IPinFlowControl
+.comdef IPinFlowControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Block		proc :DWORD, :HANDLE
+
     .ends
 
 endif
@@ -3973,11 +3738,8 @@ __IGraphConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGraphConfig, "03A1EB8E-32BF-4245-8502-114D08A9CB88")
 
-.comdef IGraphConfig
+.comdef IGraphConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Reconnect		proc :ptr, :ptr, :ptr, :ptr, :HANDLE, :DWORD
     Reconfigure		proc :ptr, :PVOID, :DWORD, :HANDLE
     AddFilterToCache	proc :ptr
@@ -3988,6 +3750,7 @@ DEFINE_IIDX(IGraphConfig, "03A1EB8E-32BF-4245-8502-114D08A9CB88")
     SetFilterFlags	proc :ptr, :DWORD
     GetFilterFlags	proc :ptr, :ptr
     RemoveFilterEx	proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -3997,12 +3760,10 @@ __IGraphConfigCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGraphConfigCallback, "ade0fd60-d19d-11d2-abf6-00a0c905f375")
 
-.comdef IGraphConfigCallback
+.comdef IGraphConfigCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Reconfigure		proc :PVOID, :DWORD
+
     .ends
 
 endif
@@ -4012,15 +3773,13 @@ __IFilterChain_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterChain, "DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29")
 
-.comdef IFilterChain
+.comdef IFilterChain : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StartChain		proc :ptr, :ptr
     PauseChain		proc :ptr, :ptr
     StopChain		proc :ptr, :ptr
     RemoveChain		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4064,14 +3823,12 @@ __IVMRImagePresenter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRImagePresenter, "CE704FE7-E71E-41fb-BAA2-C4403E1182F5")
 
-.comdef IVMRImagePresenter
+.comdef IVMRImagePresenter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StartPresenting	proc :DWORD_PTR
     StopPresenting	proc :DWORD_PTR
     PresentImage	proc :DWORD_PTR, :ptr
+
     .ends
 
 endif
@@ -4100,15 +3857,13 @@ __IVMRSurfaceAllocator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRSurfaceAllocator, "31ce832e-4484-458b-8cca-f4d7e3db0b52")
 
-.comdef IVMRSurfaceAllocator
+.comdef IVMRSurfaceAllocator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AllocateSurface	proc :DWORD_PTR, :ptr, :ptr, :ptr
     FreeSurface		proc :DWORD_PTR
     PrepareSurface	proc :DWORD_PTR, :LPDIRECTDRAWSURFACE7, :DWORD
     AdviseNotify	proc :ptr
+
     .ends
 
 endif
@@ -4119,17 +3874,15 @@ __IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRSurfaceAllocatorNotify, "aada05a8-5a4e-4729-af0b-cea27aed51e2")
 
-.comdef IVMRSurfaceAllocatorNotify
+.comdef IVMRSurfaceAllocatorNotify : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AdviseSurfaceAllocator proc :DWORD_PTR, :ptr
     SetDDrawDevice	proc :LPDIRECTDRAW7, :HMONITOR
     ChangeDDrawDevice	proc :LPDIRECTDRAW7, :HMONITOR
     RestoreDDrawSurfaces proc
     NotifyEvent		proc :LONG, :LONG_PTR, :LONG_PTR
     SetBorderColor	proc :COLORREF
+
     .ends
 
 endif
@@ -4143,11 +3896,8 @@ __IVMRWindowlessControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRWindowlessControl, "0eb1088c-4dcd-46f0-878f-39dae86a51b7")
 
-.comdef IVMRWindowlessControl
+.comdef IVMRWindowlessControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetNativeVideoSize	proc :ptr, :ptr, :ptr, :ptr
     GetMinIdealVideoSize proc :ptr, :ptr
     GetMaxIdealVideoSize proc :ptr, :ptr
@@ -4163,6 +3913,7 @@ DEFINE_IIDX(IVMRWindowlessControl, "0eb1088c-4dcd-46f0-878f-39dae86a51b7")
     GetBorderColor	proc :ptr
     SetColorKey		proc :COLORREF
     GetColorKey		proc :ptr
+
     .ends
 
 endif
@@ -4202,11 +3953,8 @@ __IVMRMixerControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRMixerControl, "1c1a17b0-bed0-415d-974b-dc6696131599")
 
-.comdef IVMRMixerControl
+.comdef IVMRMixerControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetAlpha		proc :DWORD, :REAL4
     GetAlpha		proc :DWORD, :ptr
     SetZOrder		proc :DWORD, :DWORD
@@ -4217,6 +3965,7 @@ DEFINE_IIDX(IVMRMixerControl, "1c1a17b0-bed0-415d-974b-dc6696131599")
     GetBackgroundClr	proc :ptr
     SetMixingPrefs	proc :DWORD
     GetMixingPrefs	proc :ptr
+
     .ends
 
 endif
@@ -4245,16 +3994,14 @@ __IVMRMonitorConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRMonitorConfig, "9cf0b1b6-fbaa-4b7f-88cf-cf1f130a0dce")
 
-.comdef IVMRMonitorConfig
+.comdef IVMRMonitorConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetMonitor		proc :ptr
     GetMonitor		proc :ptr
     SetDefaultMonitor	proc :ptr
     GetDefaultMonitor	proc :ptr
     GetAvailableMonitors proc :ptr, :DWORD, :ptr
+
     .ends
 
 endif
@@ -4284,11 +4031,8 @@ __IVMRFilterConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRFilterConfig, "9e5530c5-7034-48b4-bb46-0b8a6efc8e36")
 
-.comdef IVMRFilterConfig
+.comdef IVMRFilterConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetImageCompositor	proc :ptr
     SetNumberOfStreams	proc :DWORD
     GetNumberOfStreams	proc :ptr
@@ -4296,6 +4040,7 @@ DEFINE_IIDX(IVMRFilterConfig, "9e5530c5-7034-48b4-bb46-0b8a6efc8e36")
     GetRenderingPrefs	proc :ptr
     SetRenderingMode	proc :DWORD
     GetRenderingMode	proc :ptr
+
     .ends
 
 endif
@@ -4305,13 +4050,11 @@ __IVMRAspectRatioControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRAspectRatioControl, "ede80b5c-bad6-4623-b537-65586c9f8dfd")
 
-.comdef IVMRAspectRatioControl
+.comdef IVMRAspectRatioControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetAspectRatioMode	proc :LPDWORD
     SetAspectRatioMode	proc :DWORD
+
     .ends
 
 endif
@@ -4360,11 +4103,8 @@ __IVMRDeinterlaceControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRDeinterlaceControl, "bb057577-0db8-4e6a-87a7-1a8c9a505a0f")
 
-.comdef IVMRDeinterlaceControl
+.comdef IVMRDeinterlaceControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetNumberOfDeinterlaceModes proc :ptr, :LPDWORD, :LPGUID
     GetDeinterlaceModeCaps proc :LPGUID, :ptr, :ptr
     GetDeinterlaceMode	proc :DWORD, :LPGUID
@@ -4372,6 +4112,7 @@ DEFINE_IIDX(IVMRDeinterlaceControl, "bb057577-0db8-4e6a-87a7-1a8c9a505a0f")
     GetDeinterlacePrefs proc :LPDWORD
     SetDeinterlacePrefs proc :DWORD
     GetActualDeinterlaceMode proc :DWORD, :LPGUID
+
     .ends
 
 endif
@@ -4399,14 +4140,12 @@ __IVMRMixerBitmap_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRMixerBitmap, "1E673275-0257-40aa-AF20-7C608D4A0428")
 
-.comdef IVMRMixerBitmap
+.comdef IVMRMixerBitmap : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetAlphaBitmap	proc :ptr
     UpdateAlphaBitmapParameters proc :PVMRALPHABITMAP
     GetAlphaBitmapParameters proc :PVMRALPHABITMAP
+
     .ends
 
 endif
@@ -4426,15 +4165,13 @@ __IVMRImageCompositor_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRImageCompositor, "7a4fb5af-479f-4074-bb40-ce6722e43c82")
 
-.comdef IVMRImageCompositor
+.comdef IVMRImageCompositor : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     InitCompositionTarget proc :ptr, :LPDIRECTDRAWSURFACE7
     TermCompositionTarget proc :ptr, :LPDIRECTDRAWSURFACE7
     SetStreamMediaType	proc :DWORD, :ptr, :BOOL
     CompositeImage	proc :ptr, :LPDIRECTDRAWSURFACE7, :ptr, :REFERENCE_TIME, :REFERENCE_TIME, :DWORD, :ptr, :UINT
+
     .ends
 
 endif
@@ -4444,15 +4181,13 @@ __IVMRVideoStreamControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRVideoStreamControl, "058d1f11-2a54-4bef-bd54-df706626b727")
 
-.comdef IVMRVideoStreamControl
+.comdef IVMRVideoStreamControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetColorKey		proc :LPDDCOLORKEY
     GetColorKey		proc :LPDDCOLORKEY
     SetStreamActiveState proc :BOOL
     GetStreamActiveState proc :ptr
+
     .ends
 
 endif
@@ -4463,15 +4198,13 @@ __IVMRSurface_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRSurface, "a9849bbe-9ec8-4263-b764-62730f0d15d0")
 
-.comdef IVMRSurface
+.comdef IVMRSurface : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     IsSurfaceLocked	proc
     LockSurface		proc :ptr
     UnlockSurface	proc
     GetSurface		proc :ptr
+
     .ends
 
 endif
@@ -4481,13 +4214,11 @@ __IVMRImagePresenterConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRImagePresenterConfig, "9f3a1c85-8555-49ba-935f-be5b5b29d178")
 
-.comdef IVMRImagePresenterConfig
+.comdef IVMRImagePresenterConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetRenderingPrefs	proc :DWORD
     GetRenderingPrefs	proc :ptr
+
     .ends
 
 endif
@@ -4497,15 +4228,13 @@ __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRImagePresenterExclModeConfig, "e6f7ce40-4673-44f1-8f77-5499d68cb4ea")
 
-.comdef IVMRImagePresenterExclModeConfig
+.comdef IVMRImagePresenterExclModeConfig : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetRenderingPrefs	proc :DWORD
     GetRenderingPrefs	proc :ptr
     SetXlcModeDDObjAndPrimarySurface proc :LPDIRECTDRAW7, :LPDIRECTDRAWSURFACE7
     GetXlcModeDDObjAndPrimarySurface proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4516,13 +4245,11 @@ __IVPManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVPManager, "aac18c18-e186-46d2-825d-a1f8dc8e395a")
 
-.comdef IVPManager
+.comdef IVPManager : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetVideoPortIndex	proc :DWORD
     GetVideoPortIndex	proc :ptr
+
     .ends
 
 endif

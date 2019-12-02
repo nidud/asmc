@@ -218,19 +218,18 @@ adInheritObjects	equ 1
 adInheritContainers	equ 2
 adInheritBoth		equ 3
 adInheritNoPropogate	equ 4
+
 ifndef __ADOX_LIBRARY_DEFINED__
 __ADOX_LIBRARY_DEFINED__ equ 1
 externdef		LIBID_ADOX:IID
+
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
 
-.comdef ADOCollection
+.comdef ADOCollection : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -238,41 +237,32 @@ DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
+
     .ends
 
 endif
+
 ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_ADODynaCollection, "00000513-0000-0010-8000-00AA006D2EA4")
 
-.comdef ADODynaCollection
+.comdef ADODynaCollection : public ADOCollection
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
     Append		proc :ptr
     Delete		proc :VARIANT
+
     .ends
 
 endif
+
 ifndef ___Catalog_INTERFACE_DEFINED__
 ___Catalog_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Catalog, "00000603-0000-0010-8000-00AA006D2EA4")
 
-.comdef Catalog
+.comdef Catalog : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -288,19 +278,19 @@ DEFINE_IIDX(_Catalog, "00000603-0000-0010-8000-00AA006D2EA4")
     Create		proc :BSTR, :ptr
     GetObjectOwner	proc :BSTR, :ObjectTypeEnum, :VARIANT, :ptr
     SetObjectOwner	proc :BSTR, :ObjectTypeEnum, :BSTR, :VARIANT
+
     .ends
 
 endif
+
 ifndef ___Table_INTERFACE_DEFINED__
 ___Table_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Table, "00000610-0000-0010-8000-00AA006D2EA4")
 
-.comdef Table
+.comdef Table : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -317,19 +307,18 @@ DEFINE_IIDX(_Table, "00000610-0000-0010-8000-00AA006D2EA4")
     get_ParentCatalog	proc :ptr
     put_ParentCatalog	proc :ptr
     putref_ParentADOCatalog proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Group25_INTERFACE_DEFINED__
 ___Group25_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Group25, "00000616-0000-0010-8000-00AA006D2EA4")
 
-.comdef Group25
+.comdef Group25 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -339,45 +328,34 @@ DEFINE_IIDX(_Group25, "00000616-0000-0010-8000-00AA006D2EA4")
     GetPermissions	proc :VARIANT, :ObjectTypeEnum, :VARIANT, :ptr
     SetPermissions	proc :VARIANT, :ObjectTypeEnum, :ActionEnum, :RightsEnum, :InheritTypeEnum, :VARIANT
     get_Users		proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Group_INTERFACE_DEFINED__
 ___Group_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Group, "00000628-0000-0010-8000-00AA006D2EA4")
 
-.comdef _Group
+.comdef _Group : public Group25
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    put_Name		proc :BSTR
-    GetPermissions	proc :VARIANT, :ObjectTypeEnum, :VARIANT, :ptr
-    SetPermissions	proc :VARIANT, :ObjectTypeEnum, :ActionEnum, :RightsEnum, :InheritTypeEnum, :VARIANT
-    get_Users		proc :ptr
     get_Properties	proc :ptr
     get_ParentCatalog	proc :ptr
     put_ParentCatalog	proc :ptr
     putref_ParentADOCatalog proc :ptr
+
     .ends
 
 endif
+
 ifndef ___User25_INTERFACE_DEFINED__
 ___User25_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_User25, "00000619-0000-0010-8000-00AA006D2EA4")
 
-.comdef User25
+.comdef User25 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -388,46 +366,34 @@ DEFINE_IIDX(_User25, "00000619-0000-0010-8000-00AA006D2EA4")
     SetPermissions	proc :VARIANT, :ObjectTypeEnum, :ActionEnum, :RightsEnum, :InheritTypeEnum, :VARIANT
     ChangePassword	proc :BSTR, :BSTR
     get_Groups		proc :ptr
+
     .ends
 
 endif
+
 ifndef ___User_INTERFACE_DEFINED__
 ___User_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_User, "00000627-0000-0010-8000-00AA006D2EA4")
 
-.comdef User
+.comdef User : public User25
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    put_Name		proc :BSTR
-    GetPermissions	proc :VARIANT, :ObjectTypeEnum, :VARIANT, :ptr
-    SetPermissions	proc :VARIANT, :ObjectTypeEnum, :ActionEnum, :RightsEnum, :InheritTypeEnum, :VARIANT
-    ChangePassword	proc :BSTR, :BSTR
-    get_Groups		proc :ptr
     get_Properties	proc :ptr
     get_ParentCatalog	proc :ptr
     put_ParentCatalog	proc :ptr
     putref_ParentADOCatalog proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Column_INTERFACE_DEFINED__
 ___Column_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Column, "0000061C-0000-0010-8000-00AA006D2EA4")
 
-.comdef Column
+.comdef Column : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -452,19 +418,18 @@ DEFINE_IIDX(_Column, "0000061C-0000-0010-8000-00AA006D2EA4")
     get_ParentCatalog	proc :ptr
     put_ParentCatalog	proc :ptr
     putref_ParentADOCatalog proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Index_INTERFACE_DEFINED__
 ___Index_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Index, "0000061F-0000-0010-8000-00AA006D2EA4")
 
-.comdef Index
+.comdef Index : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -481,19 +446,18 @@ DEFINE_IIDX(_Index, "0000061F-0000-0010-8000-00AA006D2EA4")
     put_Unique		proc :VARIANT_BOOL
     get_Columns		proc :ptr
     get_Properties	proc :ptr
+
     .ends
 
 endif
+
 ifndef ___Key_INTERFACE_DEFINED__
 ___Key_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(_Key, "00000622-0000-0010-8000-00AA006D2EA4")
 
-.comdef Key
+.comdef Key : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -509,19 +473,18 @@ DEFINE_IIDX(_Key, "00000622-0000-0010-8000-00AA006D2EA4")
     get_UpdateRule	proc :ptr
     put_UpdateRule	proc :RuleEnum
     get_Columns		proc :ptr
+
     .ends
 
 endif
+
 ifndef __View_INTERFACE_DEFINED__
 __View_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(View, "00000613-0000-0010-8000-00AA006D2EA4")
 
-.comdef View
+.comdef View : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -532,19 +495,18 @@ DEFINE_IIDX(View, "00000613-0000-0010-8000-00AA006D2EA4")
     get_Name		proc :ptr
     get_DateCreated	proc :ptr
     get_DateModified	proc :ptr
+
     .ends
 
 endif
+
 ifndef __Procedure_INTERFACE_DEFINED__
 __Procedure_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Procedure, "00000625-0000-0010-8000-00AA006D2EA4")
 
-.comdef Procedure
+.comdef Procedure : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -555,21 +517,21 @@ DEFINE_IIDX(Procedure, "00000625-0000-0010-8000-00AA006D2EA4")
     get_Name		proc :ptr
     get_DateCreated	proc :ptr
     get_DateModified	proc :ptr
+
     .ends
 
 endif
+
 externdef		CLSID_Catalog:CLSID
 externdef		CLSID_Table:CLSID
+
 ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
 
-.comdef Property
+.comdef Property : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -580,208 +542,18 @@ DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
     get_Type		proc :ptr
     get_Attributes	proc :ptr
     put_Attributes	proc :LONG
+
     .ends
 
 endif
-externdef		CLSID_Group:CLSID
-externdef		CLSID_User:CLSID
-externdef		CLSID_Column:CLSID
-externdef		CLSID_Index:CLSID
-externdef		CLSID_Key:CLSID
-ifndef __Tables_INTERFACE_DEFINED__
-__Tables_INTERFACE_DEFINED__ equ 1
 
-DEFINE_IIDX(Tables, "00000611-0000-0010-8000-00AA006D2EA4")
-
-.comdef Tables
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Columns_INTERFACE_DEFINED__
-__Columns_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Columns, "0000061D-0000-0010-8000-00AA006D2EA4")
-
-.comdef Columns
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT, :DataTypeEnum, :LONG
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Procedures_INTERFACE_DEFINED__
-__Procedures_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Procedures, "00000626-0000-0010-8000-00AA006D2EA4")
-
-.comdef Procedures
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :BSTR, :ptr
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Views_INTERFACE_DEFINED__
-__Views_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Views, "00000614-0000-0010-8000-00AA006D2EA4")
-
-.comdef Views
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :BSTR, :ptr
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Indexes_INTERFACE_DEFINED__
-__Indexes_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Indexes, "00000620-0000-0010-8000-00AA006D2EA4")
-
-.comdef Indexes
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT, :VARIANT
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Keys_INTERFACE_DEFINED__
-__Keys_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Keys, "00000623-0000-0010-8000-00AA006D2EA4")
-
-.comdef Keys
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT, :KeyTypeEnum, :VARIANT, :BSTR, :BSTR
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Users_INTERFACE_DEFINED__
-__Users_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Users, "0000061A-0000-0010-8000-00AA006D2EA4")
-
-.comdef Users
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT, :BSTR
-    Delete		proc :VARIANT
-    .ends
-
-endif
-ifndef __Groups_INTERFACE_DEFINED__
-__Groups_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(Groups, "00000617-0000-0010-8000-00AA006D2EA4")
-
-.comdef Groups
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count		proc :ptr
-    _NewEnum		proc :ptr
-    Refresh		proc
-    get_Item		proc :VARIANT, :ptr
-    Append		proc :VARIANT
-    Delete		proc :VARIANT
-    .ends
-
-endif
 ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
 
-.comdef Properties
+.comdef Properties : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -790,9 +562,129 @@ DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
     _NewEnum		proc :ptr
     Refresh		proc
     get_Item		proc :VARIANT, :ptr
+
     .ends
 
 endif
+
+externdef		CLSID_Group:CLSID
+externdef		CLSID_User:CLSID
+externdef		CLSID_Column:CLSID
+externdef		CLSID_Index:CLSID
+externdef		CLSID_Key:CLSID
+
+ifndef __Tables_INTERFACE_DEFINED__
+__Tables_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Tables, "00000611-0000-0010-8000-00AA006D2EA4")
+
+.comdef Tables : public Properties
+
+    Append		proc :VARIANT
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Columns_INTERFACE_DEFINED__
+__Columns_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Columns, "0000061D-0000-0010-8000-00AA006D2EA4")
+
+.comdef Columns : public Properties
+
+    Append		proc :VARIANT, :DataTypeEnum, :LONG
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Procedures_INTERFACE_DEFINED__
+__Procedures_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Procedures, "00000626-0000-0010-8000-00AA006D2EA4")
+
+.comdef Procedures : public Properties
+
+    Append		proc :BSTR, :ptr
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Views_INTERFACE_DEFINED__
+__Views_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Views, "00000614-0000-0010-8000-00AA006D2EA4")
+
+.comdef Views : public Properties
+
+    Append		proc :BSTR, :ptr
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Indexes_INTERFACE_DEFINED__
+__Indexes_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Indexes, "00000620-0000-0010-8000-00AA006D2EA4")
+
+.comdef Indexes : public Properties
+
+    Append		proc :VARIANT, :VARIANT
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Keys_INTERFACE_DEFINED__
+__Keys_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Keys, "00000623-0000-0010-8000-00AA006D2EA4")
+
+.comdef Keys : public Properties
+
+    Append		proc :VARIANT, :KeyTypeEnum, :VARIANT, :BSTR, :BSTR
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Users_INTERFACE_DEFINED__
+__Users_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Users, "0000061A-0000-0010-8000-00AA006D2EA4")
+
+.comdef Users : public Properties
+
+    Append		proc :VARIANT, :BSTR
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
+ifndef __Groups_INTERFACE_DEFINED__
+__Groups_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(Groups, "00000617-0000-0010-8000-00AA006D2EA4")
+
+.comdef Groups : public Properties
+
+    Append		proc :VARIANT
+    Delete		proc :VARIANT
+
+    .ends
+
+endif
+
 endif
 endif
 

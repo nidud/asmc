@@ -60,7 +60,7 @@ static int GetValue( int i, struct asm_tok tokenarray[], int *count, int *direct
 
 extern const unsigned int regax[];
 
-static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
+static void AssignValue( int *iptr, struct asm_tok tokenarray[], int count )
 {
     struct  expr opnd;
     int     reg = regax[ModuleInfo.Ofssize];
@@ -73,46 +73,52 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
     char *  p;
     char *  q;
     int     last_id;
+    int     i = *iptr;
 
-    if ( ExpandHllProc(buffer, *i, tokenarray) != ERROR ) {
+    if ( ExpandHllProc(buffer, i, tokenarray) != ERROR ) {
 
         if ( *buffer ) {
 
             QueueTestLines(buffer);
-            GetValue(*i, tokenarray, &count, &directive, &retval);
+            GetValue(i, tokenarray, &count, &directive, &retval);
         }
     }
 
     if ( count ) {
 
-        x = (int)(tokenarray[*i+count].tokpos - tokenarray[*i].tokpos);
+        x = (int)(tokenarray[i+count].tokpos - tokenarray[i].tokpos);
 
         buffer[x] = 0;
-        memcpy(buffer, tokenarray[*i].tokpos, x);
+        memcpy(buffer, tokenarray[i].tokpos, x);
     } else {
-        strcpy(buffer, tokenarray[*i].string_ptr);
+        strcpy(buffer, tokenarray[i].string_ptr);
     }
 
     p = buffer;
     address = 0;
-    last_id = count + *i;
-    if ( tokenarray[*i].token == '(' && tokenarray[*i+1].token == '&' ) {
+    last_id = count + i;
+    if ( tokenarray[i].token == '(' && tokenarray[i+1].token == '&' ) {
         while ( *p != '&' )
             p++;
         p++;
         for ( q = p; *q; q++ ) ;
         q--;
+        while ( *q <= ' ' ) {
+            *q = '\0';
+            q--;
+        }
         if ( *q == ')' )
             *q = '\0';
         address++;
-        (*i) += 2;
+        i += 2;
     } else if ( *p == '&' ) {
         p++;
         address++;
-        (*i)++;
+        i++;
     }
+    *iptr = i;
 
-    if ( EvalOperand( i, tokenarray, last_id, &opnd, EXPF_NOUNDEF ) == NOT_ERROR ) {
+    if ( EvalOperand( iptr, tokenarray, last_id, &opnd, EXPF_NOUNDEF ) == NOT_ERROR ) {
 
         Assign = 1;
 

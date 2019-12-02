@@ -1,21 +1,22 @@
 debug  = 0
 asmc   = \asmc
 watcom = \watcom
+msvc   = \vc
 
 all: make.res make.exe clean
 
 make.exe:
- asmc -q -coff -Zi -Cs $(asmc)\source\tools\make\$*.asm
+    $(asmc)\bin\asmc -q -coff -Zi -Cs $(asmc)\source\tools\make\$*.asm
 !if $(debug)
- link /debug /subsystem:console /libpath:$(asmc)\lib libc.lib $*.obj
+    $(msvc)\bin\link /debug /subsystem:console /libpath:$(asmc)\lib libc.lib $*.obj
 !else
- linkw sys con_32 file $*
- wrc -q $*.res $@
+    $(asmc)\bin\linkw sys con_32 file $*
+    $(watcom)\binnt\wrc.exe -q $*.res $@
 !endif
 
 make.res:
- $(watcom)\binnt\rc.exe -nologo -I$(watcom)\h\win $*.rc
+    $(watcom)\binnt\rc.exe -nologo -I$(watcom)\h\win $*.rc
 
 clean:
- del make.obj
- del make.res
+    del make.obj
+    del make.res

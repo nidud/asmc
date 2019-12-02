@@ -18,8 +18,8 @@ MAXARGSIZE  equ 0x8000	; Max argument size: 32K
 
 setwargv proc uses rsi rdi rbx argc:ptr, cmdline:ptr wchar_t
 
-local argv[MAXARGCOUNT]:QWORD
-local buffer:QWORD
+  local argv[MAXARGCOUNT]:QWORD
+  local buffer:QWORD, tmp:DWORD
 
     mov buffer,alloca(MAXARGSIZE*2)
     mov rdi,buffer
@@ -72,14 +72,14 @@ local buffer:QWORD
 	lea rbx,[rdi+2]
 	mov rdi,buffer
 	.break .if cx == [rdi]
-	push rax
+	mov tmp,eax
 	sub rbx,rdi
 	memcpy(malloc(rbx), rdi, rbx)
 	mov rdx,argc
 	mov rcx,[rdx]
 	mov argv[rcx*8],rax
 	inc qword ptr [rdx]
-	pop rax
+	mov eax,tmp
 	.break .if !( ecx < MAXARGCOUNT )
     .endw
     xor eax,eax

@@ -2,6 +2,15 @@ include conio.inc
 
 .pragma list(push, 0)
 
+ifdef _WIN64
+.err <ERROR: Only Win32 target supported>
+endif
+ifdef _STDCALL_SUPPORTED
+.pragma comment(lib, consxs)
+else
+.pragma comment(lib, consxc)
+endif
+
 B_Desktop	equ 0		; at_background
 B_Panel		equ 1
 B_Dialog	equ 2
@@ -346,6 +355,10 @@ SetConsoleSize	PROTO __cdecl cols:DWORD, rows:DWORD
 ConsoleIdle	PROTO __cdecl
 GetScreenRect	PROTO __cdecl
 ConsolePush	PROTO __cdecl
+CreateConsole	PROTO __cdecl :LPSTR, :DWORD
+
+__mktempcmd	proto __cdecl :string_t, :int_t
+__mktempname	proto __cdecl :string_t, :string_t
 
 ;;;;;;;;;;;;;;; keyb
 

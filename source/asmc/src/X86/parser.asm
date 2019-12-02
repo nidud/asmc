@@ -120,7 +120,7 @@ sym_add_table proc queue:ptr symbol_queue, item:dsym_t
         mov [edx].prev,eax
     .else
         mov [edx].prev,[ecx].tail
-        mov [eax].dsym.next,edx
+        mov [eax].esym.next,edx
         mov [ecx].tail,edx
         mov [edx].next,NULL
     .endif
@@ -3534,7 +3534,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     mov eax,CurrSeg
     .return asmerr(2034) .if eax == NULL
 
-    mov eax,[eax].dsym.seginfo
+    mov eax,[eax].esym.seginfo
 
     .if [eax].seg_info.segtype == SEGTYPE_UNDEF
         mov [eax].seg_info.segtype,SEGTYPE_CODE

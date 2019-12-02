@@ -6,9 +6,10 @@
 // item for .CLASS, .ENDS, and .COMDEF
 //
 struct com_item {
-    int     cmd;
-    char   *class;
-    int     langtype;
+    int         cmd;
+    char        *class;
+    int         langtype;
+    struct asym *sym;
 };
 
 int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
@@ -17,9 +18,11 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     char    l_p[16];
     char    l_t[16];
     char    language[32];
+    char    pubclass[128];
     char    *p, *id = tokenarray[i-1].string_ptr;
     int     x, q, IsCom = 0;
     struct  com_item *o = ModuleInfo.g.ComStack;
+    struct  asym *sym;
 
     ModuleInfo.class_label++;
     sprintf(l_t, "T$%04X", ModuleInfo.class_label );
@@ -40,6 +43,25 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 
             AddLineQueueX( "%s ends", o->class );
             AddLineQueueX( "%sVtbl struct", o->class );
+
+            /* v2.30.32 - : public class */
+
+            sym = ModuleInfo.g.ComStack->sym;
+
+            if ( sym != NULL ) {
+
+                sym = SymFind( strcat( strcpy( pubclass, sym->name ), "Vtbl" ) );
+
+                if ( sym != NULL ) {
+
+                    if ( sym->total_size )
+                        AddLineQueueX( "%s <>", pubclass );
+
+                } else {
+                    rc = asmerr( 2006, pubclass );
+                }
+            }
+
             IsCom++;
         }
     }
@@ -128,6 +150,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
     char LPClass[64];
     char LPClassVtbl[64];
     char *p;
+    char *public_class;
+    struct asym *sym;
     struct com_item *o = ModuleInfo.g.ComStack;
 
     cmd = tokenarray[i].tokval;
@@ -177,13 +201,37 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
         if ( cmd == T_DOT_CLASS ) {
             AddLineQueueX( "%s typedef ptr %s", LPClass, p );
-            for ( x = 0, q = args; tokenarray[q].token != T_FINAL; q++ ) {
+        }
 
-                if ( tokenarray[q].token == T_COLON ) {
-                    x++;
+        sym = NULL;
+        public_class = NULL;
+
+        for ( x = 0, q = args; tokenarray[q].token != T_FINAL; q++ ) {
+
+            if ( tokenarray[q].token == T_COLON ) {
+
+                /* v2.30.32 - : public class */
+
+                if ( tokenarray[q+1].token  == T_DIRECTIVE &&
+                     tokenarray[q+1].tokval == T_PUBLIC ) {
+
+                    public_class = tokenarray[q].tokpos;
+                    sym = SymFind( tokenarray[q+2].string_ptr );
+                    if ( sym == NULL )
+                        return asmerr( 2006, tokenarray[q+2].string_ptr );
+
+                    public_class[0] = '\0';
+                    ModuleInfo.g.ComStack->sym = sym;
                     break;
+
+                } else {
+
+                    x++;
                 }
             }
+        }
+
+        if ( cmd == T_DOT_CLASS ) {
             if ( o->langtype ) {
                 if ( x )
                     AddLineQueueX( "%s::%s proto %s %s", p, p, tokenarray[args-1].string_ptr, tokenarray[args].tokpos );
@@ -195,6 +243,10 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                 else
                     AddLineQueueX( "%s::%s proto", p, p );
             }
+
+            if ( public_class != NULL )
+                public_class[0] = ':';
+
             x = 4;
             if ( ModuleInfo.Ofssize == USE64 )
                 x = 8;
@@ -204,7 +256,11 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                 AddLineQueueX( "%s struct", p );
         } else
             AddLineQueueX( "%s struct", p );
-        AddLineQueueX( "lpVtbl %sVtbl ?", LPClass );
+
+        if ( sym != NULL )
+            AddLineQueueX( "%s <>", sym->name );
+        else
+            AddLineQueueX( "lpVtbl %sVtbl ?", LPClass );
         break;
     }
 

@@ -5,15 +5,13 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _MSVCRT
-.pragma comment(lib, libc)
 
-memxchg		proto __cdecl :string_t, :string_t, :size_t
+.pragma comment(lib, strlib)
+
 memstri		proto __cdecl :string_t, :size_t, :string_t, :size_t
 memrchr		proto __cdecl :string_t, :size_t, :size_t
 memquote	proto __cdecl :string_t, :size_t
 
-strfn		proto __cdecl :string_t
-strext		proto __cdecl :string_t
 setfext		proto __cdecl :string_t, :string_t
 strfcat		proto __cdecl :string_t, :string_t, :string_t
 strxchg		proto __cdecl :string_t, :string_t, :string_t
@@ -38,8 +36,6 @@ unixtodos	proto __cdecl :string_t
 btohex		proto __cdecl :string_t, :int_t
 hextob		proto __cdecl :string_t
 
-xtol		proto __cdecl :string_t
-_xtoi64		proto __cdecl :string_t
 endif ;; _MSVCRT
 endif
 .pragma list(pop)

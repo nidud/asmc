@@ -28,9 +28,6 @@ _mkdir proc directory:LPSTR
 
         osmaperr()
     .else
-ifdef __DZ__
-        mov _diskflag,1
-endif
         xor eax,eax
     .endif
     ret

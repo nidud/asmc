@@ -4,11 +4,7 @@ __AMAUDIO__ equ <>
 include mmsystem.inc
 include dsound.inc
 
-.comdef IAMDirectSound
-
-	QueryInterface	proc :REFIID, :PVOID
-	AddRef		proc
-	Release		proc
+.comdef IAMDirectSound : public IUnknown
 
 	GetDirectSoundInterface proc :ptr LPDIRECTSOUND
 	GetPrimaryBufferInterface proc :ptr LPDIRECTSOUNDBUFFER

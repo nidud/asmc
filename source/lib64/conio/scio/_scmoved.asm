@@ -6,7 +6,7 @@
 
 include conio.inc
 include malloc.inc
-include strlib.inc
+include crtl.inc
 
     .code
 

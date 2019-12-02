@@ -11,9 +11,9 @@ include helpid.inc
 
 	.xlist
 
-DOSZIP_VERSION	equ 0355h
+DOSZIP_VERSION	equ 0356h
 DOSZIP_MINVERS	equ 0349h
-DOSZIP_VSTRING	equ <"3.55">
+DOSZIP_VSTRING	equ <"3.56">
 DOSZIP_VSTRPRE	equ <"      ">
 
 MAXHISTORY	equ 32
@@ -88,7 +88,7 @@ sb_file		db 4 dup(?)
 S_SBLK		ENDS
 
 INFOSIZE	equ 38
-BLOCKSIZE	equ SIZE S_SBLK + INFOSIZE
+BLOCKSIZE	equ S_SBLK + INFOSIZE
 
 _XY_DRVINFO	equ 8
 _XY_CONFIG	equ 7

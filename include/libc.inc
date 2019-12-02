@@ -39,7 +39,7 @@ ifdef _LINUX
 _CType	equ <syscall>
 _CDecl	equ <syscall>
 __cdecl equ <syscall>
-elseifdef __DZ__
+elseifdef _STDCALL_SUPPORTED
 _CDecl	equ <c>
 _CType	equ <stdcall>
 __cdecl equ <stdcall>

@@ -61,10 +61,8 @@ __IXMLElementCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IXMLElementCollection, "65725580-9B5D-11d0-9BFE-00C04FC99C8E")
 
-.comdef IXMLElementCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IXMLElementCollection : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -73,6 +71,7 @@ DEFINE_IIDX(IXMLElementCollection, "65725580-9B5D-11d0-9BFE-00C04FC99C8E")
     get_length		proc :ptr
     get__newEnum	proc :ptr
     item		proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -82,10 +81,8 @@ __IXMLDocument_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IXMLDocument, "F52E2B61-18A1-11d1-B105-00805F49916B")
 
-.comdef IXMLDocument
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IXMLDocument : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -104,6 +101,7 @@ DEFINE_IIDX(IXMLDocument, "F52E2B61-18A1-11d1-B105-00805F49916B")
     get_doctype		proc :ptr
     get_dtdURL		proc :ptr
     createElement	proc :VARIANT, :VARIANT, :ptr
+
     .ends
 
 endif
@@ -113,10 +111,8 @@ __IXMLElement_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IXMLElement, "3F7F31AC-E15F-11d0-9C25-00C04FC99C8E")
 
-.comdef IXMLElement
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IXMLElement : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -133,6 +129,7 @@ DEFINE_IIDX(IXMLElement, "3F7F31AC-E15F-11d0-9C25-00C04FC99C8E")
     put_text		proc :BSTR
     addChild		proc :ptr
     removeChild		proc :ptr, :LONG, :LONG
+
     .ends
 
 endif
@@ -142,11 +139,10 @@ __IXMLError_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IXMLError, "948C5AD3-C58D-11d0-9C0B-00C04FC99C8E")
 
-.comdef IXMLError
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IXMLError : public IUnknown
+
     GetErrorInfo	proc :ptr
+
     .ends
 
 endif
@@ -157,15 +153,14 @@ __IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
 
 externdef IID_IXMLElementNotificationSink:IID
 
-.comdef IXMLElementNotificationSink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IXMLElementNotificationSink : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     ChildAdded		proc :ptr
+
     .ends
 
 endif

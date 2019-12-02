@@ -44,11 +44,8 @@ __IAudioMediaStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAudioMediaStream, "f7537560-a3be-11d0-8212-00c04fc32c45")
 
-.comdef IAudioMediaStream
+.comdef IAudioMediaStream : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMultiMediaStream proc :ptr
     GetInformation	proc :ptr, :ptr
     SetSameFormat	proc :ptr, :DWORD
@@ -58,6 +55,7 @@ DEFINE_IIDX(IAudioMediaStream, "f7537560-a3be-11d0-8212-00c04fc32c45")
     GetFormat		proc :ptr
     SetFormat		proc :ptr
     CreateSample	proc :ptr, :DWORD, :ptr
+
     .ends
 
 endif
@@ -67,17 +65,15 @@ __IAudioStreamSample_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAudioStreamSample, "345fee00-aba5-11d0-8212-00c04fc32c45")
 
-.comdef IAudioStreamSample
+.comdef IAudioStreamSample : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMediaStream	proc :ptr
     GetSampleTimes	proc :ptr, :ptr, :ptr
     SetSampleTimes	proc :ptr, :ptr
     Update		proc :DWORD, :HANDLE, :PAPCFUNC, :DWORD_PTR
     CompletionStatus	proc :DWORD, :DWORD
     GetAudioData	proc :ptr
+
     .ends
 
 endif
@@ -87,14 +83,12 @@ __IMemoryData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemoryData, "327fc560-af60-11d0-8212-00c04fc32c45")
 
-.comdef IMemoryData
+.comdef IMemoryData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetBuffer		proc :DWORD, :ptr, :DWORD
     GetInfo		proc :ptr, :ptr, :ptr
     SetActual		proc :DWORD
+
     .ends
 
 endif
@@ -104,16 +98,14 @@ __IAudioData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAudioData, "54c719c0-af60-11d0-8212-00c04fc32c45")
 
-.comdef IAudioData
+.comdef IAudioData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetBuffer		proc :DWORD, :ptr, :DWORD
     GetInfo		proc :ptr, :ptr, :ptr
     SetActual		proc :DWORD
     GetFormat		proc :ptr
     SetFormat		proc :ptr
+
     .ends
 
 endif

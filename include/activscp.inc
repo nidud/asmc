@@ -263,11 +263,8 @@ SCRIPTTHREADID_ALL	equ (-3)
 ifndef __IActiveScriptSite_INTERFACE_DEFINED__
 __IActiveScriptSite_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSite
+.comdef IActiveScriptSite : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetLCID		proc :ptr
     GetItemInfo		proc :LPCOLESTR, :DWORD, :ptr, :ptr
     GetDocVersionString proc :ptr
@@ -276,6 +273,7 @@ __IActiveScriptSite_INTERFACE_DEFINED__ equ 1
     OnScriptError	proc :ptr
     OnEnterScript	proc
     OnLeaveScript	proc
+
     .ends
 
 endif
@@ -283,14 +281,12 @@ endif
 ifndef __IActiveScriptError_INTERFACE_DEFINED__
 __IActiveScriptError_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptError
+.comdef IActiveScriptError : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetExceptionInfo	proc :ptr
     GetSourcePosition	proc :ptr, :ptr, :ptr
     GetSourceLineText	proc :ptr
+
     .ends
 
 endif
@@ -298,15 +294,13 @@ endif
 ifndef __IActiveScriptError64_INTERFACE_DEFINED__
 __IActiveScriptError64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptError64
+.comdef IActiveScriptError64 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetExceptionInfo	proc :ptr
     GetSourcePosition	proc :ptr, :ptr, :ptr
     GetSourceLineText	proc :ptr
     GetSourcePosition64 proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -314,13 +308,11 @@ endif
 ifndef __IActiveScriptSiteWindow_INTERFACE_DEFINED__
 __IActiveScriptSiteWindow_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSiteWindow
+.comdef IActiveScriptSiteWindow : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetWindow		proc :ptr
     EnableModeless	proc :BOOL
+
     .ends
 
 endif
@@ -328,12 +320,10 @@ endif
 ifndef __IActiveScriptSiteUIControl_INTERFACE_DEFINED__
 __IActiveScriptSiteUIControl_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSiteUIControl
+.comdef IActiveScriptSiteUIControl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetUIBehavior	proc :SCRIPTUICITEM, :ptr
+
     .ends
 
 endif
@@ -341,12 +331,10 @@ endif
 ifndef __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__
 __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSiteInterruptPoll
+.comdef IActiveScriptSiteInterruptPoll : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryContinue	proc
+
     .ends
 
 endif
@@ -354,11 +342,8 @@ endif
 ifndef __IActiveScript_INTERFACE_DEFINED__
 __IActiveScript_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScript
+.comdef IActiveScript : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetScriptSite	proc :ptr
     GetScriptSite	proc :REFIID, :ptr
     SetScriptState	proc :SCRIPTSTATE
@@ -372,6 +357,7 @@ __IActiveScript_INTERFACE_DEFINED__ equ 1
     GetScriptThreadState proc :SCRIPTTHREADID, :ptr
     InterruptScriptThread proc :SCRIPTTHREADID, :ptr, :DWORD
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -379,14 +365,12 @@ endif
 ifndef __IActiveScriptParse32_INTERFACE_DEFINED__
 __IActiveScriptParse32_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParse32
+.comdef IActiveScriptParse32 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     InitNew		proc
     AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr, :ptr
     ParseScriptText	proc :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr, :ptr
+
     .ends
 
 endif
@@ -394,14 +378,12 @@ endif
 ifndef __IActiveScriptParse64_INTERFACE_DEFINED__
 __IActiveScriptParse64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParse64
+.comdef IActiveScriptParse64 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     InitNew		proc
     AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr, :ptr
     ParseScriptText	proc :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr, :ptr
+
     .ends
 
 endif
@@ -418,12 +400,10 @@ PIActiveScriptParse	typedef ptr IActiveScriptParse
 ifndef __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedureOld32
+.comdef IActiveScriptParseProcedureOld32 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
+
     .ends
 
 endif
@@ -431,12 +411,10 @@ endif
 ifndef __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedureOld64
+.comdef IActiveScriptParseProcedureOld64 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
+
     .ends
 
 endif
@@ -453,12 +431,10 @@ PIActiveScriptParseProcedureOld typedef ptr IActiveScriptParseProcedureOld
 ifndef __IActiveScriptParseProcedure32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure32_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure32
+.comdef IActiveScriptParseProcedure32 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
+
     .ends
 
 endif
@@ -466,12 +442,10 @@ endif
 ifndef __IActiveScriptParseProcedure64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure64
+.comdef IActiveScriptParseProcedure64 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
+
     .ends
 
 endif
@@ -488,11 +462,8 @@ PIActiveScriptParseProcedure typedef ptr IActiveScriptParseProcedure
 ifndef __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure2_32
+.comdef IActiveScriptParseProcedure2_32 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
     .ends
 
@@ -501,12 +472,10 @@ endif
 ifndef __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure2_64
+.comdef IActiveScriptParseProcedure2_64 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
+
     .ends
 
 endif
@@ -523,14 +492,12 @@ PIActiveScriptParseProcedure2 typedef ptr IActiveScriptParseProcedure2
 ifndef __IActiveScriptEncode_INTERFACE_DEFINED__
 __IActiveScriptEncode_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptEncode
+.comdef IActiveScriptEncode : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     EncodeSection	proc :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr
     DecodeScript	proc :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr
     GetEncodeProgId	proc :ptr
+
     .ends
 
 endif
@@ -538,12 +505,10 @@ endif
 ifndef __IActiveScriptHostEncode_INTERFACE_DEFINED__
 __IActiveScriptHostEncode_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptHostEncode
+.comdef IActiveScriptHostEncode : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     EncodeScriptHostFile proc :BSTR, :ptr, :sdword, :BSTR
+
     .ends
 
 endif
@@ -551,12 +516,10 @@ endif
 ifndef __IBindEventHandler_INTERFACE_DEFINED__
 __IBindEventHandler_INTERFACE_DEFINED__ equ 1
 
-.comdef IBindEventHandler
+.comdef IBindEventHandler : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     BindHandler		proc :LPCOLESTR, :ptr
+
     .ends
 
 endif
@@ -564,14 +527,12 @@ endif
 ifndef __IActiveScriptStats_INTERFACE_DEFINED__
 __IActiveScriptStats_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptStats
+.comdef IActiveScriptStats : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetStat		proc :DWORD, :ptr, :ptr
     GetStatEx		proc :REFGUID, :ptr, :ptr
     ResetStats		proc
+
     .ends
 
 endif
@@ -579,13 +540,11 @@ endif
 ifndef __IActiveScriptProperty_INTERFACE_DEFINED__
 __IActiveScriptProperty_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptProperty
+.comdef IActiveScriptProperty : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperty		proc :DWORD, :ptr, :ptr
     SetProperty		proc :DWORD, :ptr, :ptr
+
     .ends
 
 endif
@@ -593,12 +552,10 @@ endif
 ifndef __ITridentEventSink_INTERFACE_DEFINED__
 __ITridentEventSink_INTERFACE_DEFINED__ equ 1
 
-.comdef ITridentEventSink
+.comdef ITridentEventSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     FireEvent		proc :LPCOLESTR, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -606,12 +563,10 @@ endif
 ifndef __IActiveScriptGarbageCollector_INTERFACE_DEFINED__
 __IActiveScriptGarbageCollector_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptGarbageCollector
+.comdef IActiveScriptGarbageCollector : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CollectGarbage	proc :SCRIPTGCTYPE
+
     .ends
 
 endif
@@ -619,12 +574,10 @@ endif
 ifndef __IActiveScriptSIPInfo_INTERFACE_DEFINED__
 __IActiveScriptSIPInfo_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSIPInfo
+.comdef IActiveScriptSIPInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSIPOID		proc :ptr
+
     .ends
 
 endif
@@ -632,12 +585,10 @@ endif
 ifndef __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__
 __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptSiteTraceInfo
+.comdef IActiveScriptSiteTraceInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SendScriptTraceInfo proc :SCRIPTTRACEINFO, :GUID, :DWORD, :LONG, :LONG, :DWORD64
+
     .ends
 
 endif
@@ -645,13 +596,11 @@ endif
 ifndef __IActiveScriptTraceInfo_INTERFACE_DEFINED__
 __IActiveScriptTraceInfo_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptTraceInfo
+.comdef IActiveScriptTraceInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StartScriptTracing	proc :ptr, :GUID
     StopScriptTracing	proc
+
     .ends
 
 endif
@@ -659,12 +608,10 @@ endif
 ifndef __IActiveScriptStringCompare_INTERFACE_DEFINED__
 __IActiveScriptStringCompare_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptStringCompare
+.comdef IActiveScriptStringCompare : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StrComp		proc :BSTR, :BSTR, :ptr
+
     .ends
 
 endif

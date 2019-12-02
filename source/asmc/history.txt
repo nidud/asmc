@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added @Cstr( n ) - get prev string labels
+- added _STDCALL_SUPPORTED to switch /Gz
+- added [: public class] to .class and .comdef
 - fixed bug in clearing the input source stack (include files)
 - fixed bug in zmm[n] registers (AVX-512)
 - fixed bug in indirect addressing (AVX-512)

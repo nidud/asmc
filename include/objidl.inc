@@ -268,16 +268,15 @@ __IMarshal_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
 
-.comdef IMarshal
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMarshal : public IUnknown
+
     GetUnmarshalClass	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
     GetMarshalSizeMax	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
     MarshalInterface	proc :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
     UnmarshalInterface	proc :ptr, :REFIID, :ptr
     ReleaseMarshalData	proc :ptr
     DisconnectObject	proc :DWORD
+
     .ends
 
 LPMARSHAL		typedef ptr IMarshal
@@ -286,17 +285,17 @@ endif
 
 DEFINE_IIDX(IMarshal2, "000001cf-0000-0000-C000-000000000046")
 
-.comdef IMarshal2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMarshal2 : public IUnknown
+
     GetUnmarshalClass	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
     GetMarshalSizeMax	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
     MarshalInterface	proc :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
     UnmarshalInterface	proc :ptr, :REFIID, :ptr
     ReleaseMarshalData	proc :ptr
     DisconnectObject	proc :DWORD
+
     .ends
+
 LPMARSHAL2		typedef ptr IMarshal2
 
 ifndef __IMalloc_INTERFACE_DEFINED__
@@ -304,16 +303,15 @@ __IMalloc_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMalloc, "00000002-0000-0000-C000-000000000046")
 
-.comdef IMalloc
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMalloc : public IUnknown
+
     Alloc		proc :DWORD
     Realloc		proc :ptr ,:DWORD
     Free		proc :ptr
     GetSize		proc :ptr
     DidAlloc		proc :ptr
     HeapMinimize	proc
+
     .ends
 
 LPMALLOC		typedef ptr IMalloc
@@ -326,10 +324,8 @@ __IMallocSpy_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMallocSpy, "0000001d-0000-0000-C000-000000000046")
 
-.comdef IMallocSpy
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMallocSpy : public IUnknown
+
     PreAlloc		proc :DWORD
     PostAlloc		proc :ptr
     PreFree		proc :ptr, :BOOL
@@ -342,6 +338,7 @@ DEFINE_IIDX(IMallocSpy, "0000001d-0000-0000-C000-000000000046")
     PostDidAlloc	proc :ptr, :BOOL, :DWORD
     PreHeapMinimize	proc
     PostHeapMinimize	proc
+
     .ends
 
 LPMALLOCSPY		typedef ptr IMallocSpy
@@ -353,12 +350,12 @@ __IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStdMarshalInfo, "00000018-0000-0000-C000-000000000046")
 
-.comdef IStdMarshalInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStdMarshalInfo : public IUnknown
+
     GetClassForHandler	proc :DWORD, :ptr, :ptr
+
     .ends
+
 LPSTDMARSHALINFO	typedef ptr IStdMarshalInfo
 
 endif
@@ -373,12 +370,11 @@ EXTCONN_CALLABLE	equ 0x4
 
 DEFINE_IIDX(IExternalConnection, "00000019-0000-0000-C000-000000000046")
 
-.comdef IExternalConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExternalConnection : public IUnknown
+
     AddConnection	proc :DWORD, :DWORD
     ReleaseConnection	proc :DWORD, :DWORD, :BOOL
+
     .ends
 
 LPEXTERNALCONNECTION	typedef ptr IExternalConnection
@@ -396,11 +392,10 @@ MULTI_QI		ENDS
 
 DEFINE_IIDX(IMultiQI, "00000020-0000-0000-C000-000000000046")
 
-.comdef IMultiQI
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMultiQI : public IUnknown
+
     QueryMultipleInterfaces proc :DWORD, :ptr
+
     .ends
 
 LPMULTIQI		typedef ptr IMultiQI
@@ -409,21 +404,19 @@ endif
 
 DEFINE_IIDX(AsyncIMultiQI, "000e0020-0000-0000-C000-000000000046")
 
-.comdef AsyncIMultiQI
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIMultiQI : public IUnknown
+
     Begin_QueryMultipleInterfaces proc :ULONG, :ptr MULTI_QI
     Finish_QueryMultipleInterfaces proc :ptr MULTI_QI
+
     .ends
 
 DEFINE_IIDX(IInternalUnknown, "00000021-0000-0000-C000-000000000046")
 
-.comdef IInternalUnknown
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInternalUnknown : public IUnknown
+
     QueryInternalInterface proc :REFIID, :ptr
+
     .ends
 
 ifndef __IEnumUnknown_INTERFACE_DEFINED__
@@ -431,14 +424,13 @@ __IEnumUnknown_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumUnknown, "00000100-0000-0000-C000-000000000046")
 
-.comdef IEnumUnknown
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumUnknown : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMUNKNOWN		typedef ptr IEnumUnknown
@@ -476,10 +468,8 @@ BIND_JUSTTESTEXISTENCE	equ 2
 
 DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
 
-.comdef IBindCtx
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBindCtx : public IUnknown
+
     RegisterObjectBound proc :ptr
     RevokeObjectBound	proc :ptr
     ReleaseBoundObjects proc
@@ -490,7 +480,9 @@ DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
     GetObjectParam	proc :LPOLESTR, :ptr
     EnumObjectParam	proc :ptr
     RevokeObjectParam	proc :LPOLESTR
+
     .ends
+
 LPBC			typedef ptr IBindCtx
 LPBINDCTX		typedef ptr IBindCtx
 
@@ -501,14 +493,13 @@ __IEnumMoniker_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumMoniker, "00000102-0000-0000-C000-000000000046")
 
-.comdef IEnumMoniker
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumMoniker : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMMONIKER		typedef ptr IEnumMoniker
@@ -520,15 +511,14 @@ __IRunnableObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRunnableObject, "00000126-0000-0000-C000-000000000046")
 
-.comdef IRunnableObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRunnableObject : public IUnknown
+
     GetRunningClass	proc :LPCLSID
     Run			proc :LPBINDCTX
     IsRunning		proc
     LockRunning		proc :BOOL, :BOOL
     SetContainedObject	proc :BOOL
+
     .ends
 
 LPRUNNABLEOBJECT	typedef ptr IRunnableObject
@@ -540,10 +530,8 @@ __IRunningObjectTable_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRunningObjectTable, "00000010-0000-0000-C000-000000000046")
 
-.comdef IRunningObjectTable
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRunningObjectTable : public IUnknown
+
     Register		proc :DWORD, :ptr, :ptr, :ptr
     Revoke		proc :DWORD
     IsRunning		proc :ptr
@@ -551,6 +539,7 @@ DEFINE_IIDX(IRunningObjectTable, "00000010-0000-0000-C000-000000000046")
     NoteChangeTime	proc :DWORD, :ptr
     GetTimeOfLastChange proc :ptr, :ptr
     EnumRunning		proc :ptr
+
     .ends
 
 LPRUNNINGOBJECTTABLE	typedef ptr IRunningObjectTable
@@ -562,11 +551,10 @@ __IPersist_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersist, "0000010c-0000-0000-C000-000000000046")
 
-.comdef IPersist
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersist : public IUnknown
+
     GetClassID		proc :ptr
+
     .ends
 
 LPPERSIST		typedef ptr IPersist
@@ -578,15 +566,14 @@ __IPersistStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistStream, "00000109-0000-0000-C000-000000000046")
 
-.comdef IPersistStream
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistStream : public IUnknown
+
     GetClassID		proc :ptr
     IsDirty		proc
     Load		proc :ptr
     Save		proc :ptr, :BOOL
     GetSizeMax		proc :ptr
+
     .ends
 
 LPPERSISTSTREAM		typedef ptr IPersistStream
@@ -613,10 +600,8 @@ MKRREDUCE_ALL		equ 0
 
 DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
 
-.comdef IMoniker
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMoniker : public IUnknown
+
     GetClassID		proc :ptr
     IsDirty		proc
     Load		proc :ptr
@@ -637,6 +622,7 @@ DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
     GetDisplayName	proc :ptr, :ptr, :ptr
     ParseDisplayName	proc :ptr, :ptr, :LPOLESTR, :ptr, :ptr
     IsSystemMoniker	proc :ptr
+
     .ends
 
 LPMONIKER		typedef ptr IMoniker
@@ -648,11 +634,10 @@ __IROTData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IROTData, "f29f6bc0-5021-11ce-aa15-00006901293f")
 
-.comdef IROTData
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IROTData : public IUnknown
+
     GetComparisonData	proc :ptr, :DWORD, :ptr
+
     .ends
 
 endif
@@ -662,15 +647,15 @@ __IEnumString_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumString, "00000101-0000-0000-C000-000000000046")
 
-.comdef IEnumString
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumString : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
+
 LPENUMSTRING		typedef ptr IEnumString
 
 endif
@@ -680,12 +665,11 @@ __ISequentialStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISequentialStream, "0c733a30-2a1c-11ce-ade5-00aa0044773d")
 
-.comdef ISequentialStream
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISequentialStream : public IUnknown
+
     Read		proc :ptr, :DWORD, :ptr
     Write		proc :ptr, :DWORD, :ptr
+
     .ends
 
 endif
@@ -725,10 +709,8 @@ LOCK_ONLYONCE		equ 4
 
 DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
 
-.comdef IStream
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStream : public IUnknown
+
     Read		proc :ptr, :DWORD, :ptr
     Write		proc :ptr, :DWORD, :ptr
     Seek		proc :LARGE_INTEGER, :DWORD, :ptr
@@ -740,6 +722,7 @@ DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
     UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
     Stat		proc :ptr, :DWORD
     Clone		proc :ptr
+
     .ends
 
 LPSTREAM		typedef ptr IStream
@@ -751,14 +734,13 @@ __IEnumSTATSTG_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumSTATSTG, "0000000d-0000-0000-C000-000000000046")
 
-.comdef IEnumSTATSTG
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumSTATSTG : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMSTATSTG		typedef ptr IEnumSTATSTG
@@ -779,10 +761,8 @@ SNB			typedef ptr OLECHAR
 
 DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
 
-.comdef IStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStorage : public IUnknown
+
     CreateStream	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr
     OpenStream		proc :ptr, :ptr, :DWORD, :DWORD, :ptr
     CreateStorage	proc :ptr, :DWORD, :DWORD, :DWORD, :ptr
@@ -798,6 +778,7 @@ DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
     SetClass		proc :REFCLSID
     SetStateBits	proc :DWORD, :DWORD
     Stat		proc :ptr, :DWORD
+
     .ends
 
 LPSTORAGE		typedef ptr IStorage
@@ -809,16 +790,15 @@ __IPersistFile_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IPersistFile,	0x0000010b,0,0,0xC0,0,0,0,0,0,0,0x46)
 
-.comdef IPersistFile
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistFile : public IUnknown
+
     GetClassID		proc :ptr
     IsDirty		proc
     Load		proc :LPCOLESTR, :DWORD
     Save		proc :LPCOLESTR, :BOOL
     SaveCompleted	proc :LPCOLESTR
     GetCurFile		proc :ptr
+
     .ends
 
 LPPERSISTFILE		typedef ptr IPersistFile
@@ -830,10 +810,8 @@ __IPersistStorage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistStorage, "0000010a-0000-0000-C000-000000000046")
 
-.comdef IPersistStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistStorage : public IUnknown
+
     GetClassID		proc :ptr
     IsDirty		proc
     InitNew		proc :ptr
@@ -841,6 +819,7 @@ DEFINE_IIDX(IPersistStorage, "0000010a-0000-0000-C000-000000000046")
     Save		proc :ptr, :BOOL
     SaveCompleted	proc :ptr
     HandsOffStorage	proc
+
     .ends
 
 LPPERSISTSTORAGE	typedef ptr IPersistStorage
@@ -852,10 +831,8 @@ __ILockBytes_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ILockBytes, "0000000a-0000-0000-C000-000000000046")
 
-.comdef ILockBytes
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ILockBytes : public IUnknown
+
     ReadAt		proc :ULARGE_INTEGER, :ptr, :DWORD, :ptr
     WriteAt		proc :ULARGE_INTEGER, :ptr, :DWORD, :ptr
     Flush		proc
@@ -863,6 +840,7 @@ DEFINE_IIDX(ILockBytes, "0000000a-0000-0000-C000-000000000046")
     LockRegion		proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
     UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
     Stat		proc :ptr, :DWORD
+
     .ends
 
 LPLOCKBYTES		typedef ptr ILockBytes
@@ -895,15 +873,15 @@ LPFORMATETC		typedef ptr FORMATETC
 
 DEFINE_IIDX(IEnumFORMATETC, "00000103-0000-0000-C000-000000000046")
 
-.comdef IEnumFORMATETC
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumFORMATETC : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
+
 LPENUMFORMATETC		typedef ptr IEnumFORMATETC
 
 endif
@@ -932,14 +910,13 @@ LPSTATDATA		typedef ptr STATDATA
 
 DEFINE_IIDX(IEnumSTATDATA, "00000105-0000-0000-C000-000000000046")
 
-.comdef IEnumSTATDATA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumSTATDATA : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMSTATDATA		typedef ptr IEnumSTATDATA
@@ -949,12 +926,12 @@ endif
 ifndef __IRootStorage_INTERFACE_DEFINED__
 __IRootStorage_INTERFACE_DEFINED__ equ 1
 
-.comdef IRootStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRootStorage : public IUnknown
+
     SwitchToFile	proc :LPOLESTR
+
     .ends
+
 LPROOTSTORAGE		typedef ptr IRootStorage
 
 DEFINE_IIDX(IRootStorage, "00000012-0000-0000-C000-000000000046")
@@ -1062,15 +1039,14 @@ FLAG_STGMEDIUM		ENDS
 
 DEFINE_IIDX(IAdviseSink, "0000010f-0000-0000-C000-000000000046")
 
-.comdef IAdviseSink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAdviseSink : public IUnknown
+
     OnDataChange	proc :ptr, :ptr
     OnViewChange	proc :DWORD, :SDWORD
     OnRename		proc :ptr
     OnSave		proc
     OnClose		proc
+
     .ends
 
 LPADVISESINK		typedef ptr IAdviseSink
@@ -1079,10 +1055,8 @@ endif
 
 DEFINE_IIDX(AsyncIAdviseSink, "00000150-0000-0000-C000-000000000046")
 
-.comdef AsyncIAdviseSink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIAdviseSink : public IUnknown
+
     Begin_OnDataChange	proc :ptr FORMATETC, :ptr STGMEDIUM
     Finish_OnDataChange proc
     Begin_OnViewChange	proc :DWORD, :LONG
@@ -1093,21 +1067,21 @@ DEFINE_IIDX(AsyncIAdviseSink, "00000150-0000-0000-C000-000000000046")
     Finish_OnSave	proc
     Begin_OnClose	proc
     Finish_OnClose	proc
+
     .ends
 
 ifndef __IAdviseSink2_INTERFACE_DEFINED__
 __IAdviseSink2_INTERFACE_DEFINED__ equ 1
 
-.comdef IAdviseSink2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAdviseSink2 : public IUnknown
+
     OnDataChange	proc :ptr, :ptr
     OnViewChange	proc :DWORD, :SDWORD
     OnRename		proc :ptr
     OnSave		proc
     OnClose		proc
     OnLinkSrcChange	proc :ptr
+
     .ends
 
 LPADVISESINK2		typedef ptr IAdviseSink2
@@ -1118,10 +1092,8 @@ endif
 
 DEFINE_IIDX(AsyncIAdviseSink2, "00000151-0000-0000-C000-000000000046")
 
-.comdef AsyncIAdviseSink2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIAdviseSink2 : public IUnknown
+
     Begin_OnDataChange	proc :ptr FORMATETC, :ptr STGMEDIUM
     Finish_OnDataChange proc
     Begin_OnViewChange	proc :DWORD, :LONG
@@ -1134,6 +1106,7 @@ DEFINE_IIDX(AsyncIAdviseSink2, "00000151-0000-0000-C000-000000000046")
     Finish_OnClose	proc
     Begin_OnLinkSrcChange proc :ptr IMoniker
     Finish_OnLinkSrcChange proc
+
     .ends
 
 ifndef __IDataObject_INTERFACE_DEFINED__
@@ -1145,10 +1118,8 @@ DATADIR_SET		equ 2
 
 DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
 
-.comdef IDataObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDataObject : public IUnknown
+
     GetData		proc :ptr, :ptr
     GetDataHere		proc :ptr, :ptr
     QueryGetData	proc :ptr
@@ -1158,6 +1129,7 @@ DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
     DAdvise		proc :ptr, :dword, :ptr, :ptr
     DUnadvise		proc :DWORD
     EnumDAdvise		proc :ptr ptr
+
     .ends
 
 LPDATAOBJECT		typedef ptr IDataObject
@@ -1169,14 +1141,13 @@ __IDataAdviseHolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDataAdviseHolder, "00000110-0000-0000-C000-000000000046")
 
-.comdef IDataAdviseHolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDataAdviseHolder : public IUnknown
+
     Advise		proc :ptr IDataObject, :ptr FORMATETC, :DWORD, :ptr IAdviseSink, :ptr DWORD
     Unadvise		proc :DWORD
     EnumAdvise		proc :ptr ptr IEnumSTATDATA
     SendOnDataChange	proc :ptr IDataObject, :DWORD, :DWORD
+
     .ends
 
 LPDATAADVISEHOLDER	typedef ptr IDataAdviseHolder
@@ -1216,13 +1187,12 @@ LPINTERFACEINFO		typedef ptr INTERFACEINFO
 
 DEFINE_IIDX(IMessageFilter, "00000016-0000-0000-C000-000000000046")
 
-.comdef IMessageFilter
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMessageFilter : public IUnknown
+
     HandleInComingCall	proc :DWORD, :HTASK, :DWORD, :LPINTERFACEINFO
     RetryRejectedCall	proc :HTASK, :DWORD, :DWORD
     MessagePending	proc :HTASK, :DWORD, :DWORD
+
     .ends
 
 LPMESSAGEFILTER		typedef ptr IMessageFilter
@@ -1248,15 +1218,14 @@ PRPCOLEMESSAGE		typedef ptr RPCOLEMESSAGE
 
 DEFINE_IIDX(IRpcChannelBuffer, "D5F56B60-593B-101A-B569-08002B2DBF7A")
 
-.comdef IRpcChannelBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcChannelBuffer : public IUnknown
+
     GetBuffer		proc :ptr, :REFIID
     SendReceive		proc :ptr, :ptr
     FreeBuffer		proc :ptr
     GetDestCtx		proc :ptr, :ptr
     IsConnected		proc
+
     .ends
 
 endif
@@ -1266,26 +1235,23 @@ __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcChannelBuffer2, "594f31d0-7f19-11d0-b194-00a0c90dc8bf")
 
-.comdef IRpcChannelBuffer2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcChannelBuffer2 : public IUnknown
+
     GetBuffer		proc :ptr, :REFIID
     SendReceive		proc :ptr, :ptr
     FreeBuffer		proc :ptr
     GetDestCtx		proc :ptr, :ptr
     IsConnected		proc
     GetProtocolVersion	proc :ptr
+
     .ends
 
 endif
 
 DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
 
-.comdef IAsyncRpcChannelBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAsyncRpcChannelBuffer : public IUnknown
+
     GetBuffer		proc :ptr, :REFIID
     SendReceive		proc :ptr, :ptr
     FreeBuffer		proc :ptr
@@ -1295,6 +1261,7 @@ DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
     Send		proc :ptr RPCOLEMESSAGE, :ptr ISynchronize, :ptr ULONG
     Receive		proc :ptr RPCOLEMESSAGE, :ptr ULONG
     GetDestCtxEx	proc :ptr RPCOLEMESSAGE, :ptr DWORD, :ptr
+
     .ends
 
 ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
@@ -1302,10 +1269,8 @@ __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
 
-.comdef IRpcChannelBuffer3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcChannelBuffer3 : public IUnknown
+
     GetBuffer		proc :ptr, :REFIID
     SendReceive		proc :ptr, :ptr
     FreeBuffer		proc :ptr
@@ -1319,17 +1284,17 @@ DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
     GetDestCtxEx	proc :ptr, :ptr, :ptr
     GetState		proc :ptr, :ptr
     RegisterAsync	proc :ptr, :ptr
+
     .ends
 
 endif
 
 DEFINE_IIDX(IRpcSyntaxNegotiate, "58a08519-24c8-4935-b482-3fd823333a4f")
 
-.comdef IRpcSyntaxNegotiate
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcSyntaxNegotiate : public IUnknown
+
     NegotiateSyntax	proc :ptr RPCOLEMESSAGE
+
     .ends
 
 ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
@@ -1337,12 +1302,11 @@ __IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcProxyBuffer, "D5F56A34-593B-101A-B569-08002B2DBF7A")
 
-.comdef IRpcProxyBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcProxyBuffer : public IUnknown
+
     Connect		proc :ptr
     Disconnect		proc
+
     .ends
 
 endif
@@ -1352,10 +1316,8 @@ __IRpcStubBuffer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
 
-.comdef IRpcStubBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcStubBuffer : public IUnknown
+
     Connect		proc :ptr
     Disconnect		proc
     _Invoke		proc :ptr, :ptr
@@ -1363,6 +1325,7 @@ DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
     CountRefs		proc
     DebugServerQueryInterface proc :ptr
     DebugServerRelease	proc :ptr
+
     .ends
 
 CALLBACK(IRpcStubBuffer_IsIIDSupported_Proxy, :ptr IRpcStubBuffer, :REFIID)
@@ -1374,12 +1337,11 @@ __IPSFactoryBuffer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPSFactoryBuffer, "D5F569D0-593B-101A-B569-08002B2DBF7A")
 
-.comdef IPSFactoryBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPSFactoryBuffer : public IUnknown
+
     CreateProxy		proc :ptr, :REFIID, :ptr, :ptr
     CreateStub		proc :REFIID, :ptr, :ptr
+
     .ends
 
 endif
@@ -1399,16 +1361,15 @@ __IChannelHook_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IChannelHook, "1008c4a0-7613-11cf-9af1-0020af6e72f4")
 
-.comdef IChannelHook
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IChannelHook : public IUnknown
+
     ClientGetSize	proc :REFGUID, :REFIID, :ptr
     ClientFillBuffer	proc :REFGUID, :REFIID, :ptr, :ptr
     ClientNotify	proc :REFGUID, :REFIID, :DWORD, :ptr, :DWORD, :HRESULT
     ServerNotify	proc :REFGUID, :REFIID, :DWORD, :ptr, :DWORD
     ServerGetSize	proc :REFGUID, :REFIID, :HRESULT, :ptr
     ServerFillBuffer	proc :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
+
     .ends
 
 endif
@@ -1668,10 +1629,8 @@ atime			FILETIME <>
 dwOSVersion		dd ?
 STATPROPSETSTG		ENDS
 
-.comdef IPropertyStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyStorage : public IUnknown
+
     ReadMultiple	proc :ULONG, :PROPSPEC, :PROPVARIANT
     WriteMultiple	proc :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
     DeleteMultiple	proc :ULONG, :PROPSPEC
@@ -1684,6 +1643,7 @@ STATPROPSETSTG		ENDS
     SetTimes		proc :ptr, :ptr, :ptr
     SetClass		proc :REFCLSID
     Stat		proc :ptr
+
     .ends
 
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
@@ -1694,10 +1654,8 @@ endif
 ifndef __IPropertySetStorage_INTERFACE_DEFINED__
 __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
-.comdef IPropertySetStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertySetStorage : public IUnknown
+
     .ends
 
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
@@ -1708,10 +1666,8 @@ endif
 ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
-.comdef IEnumSTATPROPSTG
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumSTATPROPSTG : public IUnknown
+
     .ends
 
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
@@ -1722,10 +1678,8 @@ endif
 ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
-.comdef IEnumSTATPROPSETSTG
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumSTATPROPSETSTG : public IUnknown
+
     .ends
 
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
@@ -1811,13 +1765,12 @@ EOAC_APPID		equ 0x8
 
 DEFINE_IIDX(IClientSecurity, "0000013D-0000-0000-C000-000000000046")
 
-.comdef IClientSecurity
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IClientSecurity : public IUnknown
+
     QueryBlanket	proc  :ptr IUnknown, :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
     SetBlanket		proc  :ptr IUnknown, :DWORD, :DWORD, :ptr OLECHAR, :DWORD, :DWORD, :ptr, :DWORD
     CopyProxy		proc  :ptr IUnknown, :ptr ptr IUnknown
+
     .ends
 
 endif
@@ -1827,14 +1780,13 @@ __IServerSecurity_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IServerSecurity, "0000013E-0000-0000-C000-000000000046")
 
-.comdef IServerSecurity
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IServerSecurity : public IUnknown
+
     QueryBlanket	proc :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
     ImpersonateClient	proc
     RevertToSelf	proc
     IsImpersonating	proc
+
     .ends
 
 endif
@@ -1844,11 +1796,10 @@ __IClassActivator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IClassActivator, "00000140-0000-0000-C000-000000000046")
 
-.comdef IClassActivator
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IClassActivator : public IUnknown
+
     GetClassObject	proc :REFCLSID, :DWORD, :LCID, :REFIID, :ptr ptr
+
     .ends
 
 endif
@@ -1867,12 +1818,11 @@ __IRpcOptions_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcOptions, "00000144-0000-0000-C000-000000000046")
 
-.comdef IRpcOptions
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcOptions : public IUnknown
+
     Set			proc :ptr IUnknown, :RPCOPT_PROPERTIES, :ULONG_PTR
     Query		proc :ptr IUnknown, :RPCOPT_PROPERTIES, :ptr ULONG_PTR
+
     .ends
 
 endif
@@ -1896,12 +1846,11 @@ COMGLB_RPC_THREADPOOL_SETTING_PRIVATE_POOL equ 1
 
 DEFINE_IIDX(IGlobalOptions, "0000015B-0000-0000-C000-000000000046")
 
-.comdef IGlobalOptions
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IGlobalOptions : public IUnknown
+
     Set			proc :GLOBALOPT_PROPERTIES, :ULONG_PTR
     Query		proc :GLOBALOPT_PROPERTIES, :ptr ULONG_PTR
+
     .ends
 
 ifndef __IComBinding_INTERFACE_DEFINED__
@@ -1909,12 +1858,11 @@ __IComBinding_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IComBinding:IID
 
-.comdef IComBinding
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IComBinding : public IUnknown
+
     InitBinding		proc :DWORD, :DWORD, :DWORD, :DWORD, :LPOLESTR
     QueryBinding	proc :ptr, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -1925,14 +1873,13 @@ __IFillLockBytes_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFillLockBytes, "99caf010-415e-11cf-8814-00aa00b569f5")
 
-.comdef IFillLockBytes
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFillLockBytes : public IUnknown
+
     FillAppend		proc :ptr, :ULONG, :ptr ULONG
     FillAt		proc :ULARGE_INTEGER, :ptr, :ULONG, :ptr ULONG
     SetFillSize		proc :ULARGE_INTEGER
     Terminate		proc :BOOL
+
     .ends
 
 endif
@@ -1942,11 +1889,10 @@ __IProgressNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProgressNotify, "a9d758a0-4617-11cf-95fc-00aa00680db4")
 
-.comdef IProgressNotify
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProgressNotify : public IUnknown
+
     OnProgress		proc :DWORD, :DWORD, :BOOL, :BOOL
+
     .ends
 
 endif
@@ -1963,15 +1909,14 @@ StorageLayout		ENDS
 
 DEFINE_IIDX(ILayoutStorage, "0e6d4d90-6738-11cf-9608-00aa00680db4")
 
-.comdef ILayoutStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ILayoutStorage : public IUnknown
+
     LayoutScript	proc :ptr, :DWORD, :DWORD
     BeginMonitor	proc
     EndMonitor		proc
     ReLayoutDocfile	proc :ptr
     ReLayoutDocfileOnILockBytes proc :ptr
+
     .ends
 
 endif
@@ -1981,12 +1926,11 @@ __IBlockingLock_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBlockingLock, "30f3d47a-6447-11d1-8e3c-00c04fb9386d")
 
-.comdef IBlockingLock
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBlockingLock : public IUnknown
+
     _Lock		proc :DWORD
     Unlock		proc
+
     .ends
 
 endif
@@ -1996,11 +1940,10 @@ __ITimeAndNoticeControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITimeAndNoticeControl, "bc0bf6ae-8878-11d1-83e9-00c04fc2c6d4")
 
-.comdef ITimeAndNoticeControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITimeAndNoticeControl : public IUnknown
+
     SuppressChanges	proc :DWORD, :DWORD
+
     .ends
 
 endif
@@ -2010,12 +1953,11 @@ __IOplockStorage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOplockStorage, "8d19c834-8879-11d1-83e9-00c04fc2c6d4")
 
-.comdef IOplockStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOplockStorage : public IUnknown
+
     CreateStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
     OpenStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
+
     .ends
 
 endif
@@ -2025,12 +1967,11 @@ __ISurrogate_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
 
-.comdef ISurrogate
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISurrogate : public IUnknown
+
     LoadDllServer	proc :REFCLSID
     FreeSurrogate	proc
+
     .ends
 
 LPSURROGATE		typedef ptr ISurrogate
@@ -2042,13 +1983,12 @@ __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
 
-.comdef IGlobalInterfaceTable
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IGlobalInterfaceTable : public IUnknown
+
     RegisterInterfaceInGlobal proc :ptr, :REFIID, :ptr DWORD
     RevokeInterfaceFromGlobal proc :DWORD
     GetInterfaceFromGlobal proc :DWORD, :REFIID, :ptr ptr
+
     .ends
 
 LPGLOBALINTERFACETABLE	typedef ptr IGlobalInterfaceTable
@@ -2060,13 +2000,12 @@ __IDirectWriterLock_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDirectWriterLock, "0e6d4d92-6738-11cf-9608-00aa00680db4")
 
-.comdef IDirectWriterLock
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirectWriterLock : public IUnknown
+
     WaitForWriteAccess	proc :DWORD
     ReleaseWriteAccess	proc
     HaveWriteAccess	proc
+
     .ends
 
 endif
@@ -2076,13 +2015,12 @@ __ISynchronize_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronize, "00000030-0000-0000-C000-000000000046")
 
-.comdef ISynchronize
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISynchronize : public IUnknown
+
     _Wait		proc :DWORD, :DWORD
     Signal		proc
     Reset		proc
+
     .ends
 
 endif
@@ -2092,11 +2030,10 @@ __ISynchronizeHandle_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeHandle, "00000031-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeHandle
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISynchronizeHandle : public IUnknown
+
     GetHandle		proc :ptr HANDLE
+
     .ends
 
 endif
@@ -2106,14 +2043,13 @@ __ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeMutex, "00000025-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeMutex
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISynchronizeMutex : public IUnknown
+
     _Wait		proc :DWORD, :DWORD
     Signal		proc
     Reset		proc
     ReleaseMutex	proc
+
     .ends
 
 endif
@@ -2123,11 +2059,10 @@ __IAsyncSetup_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IAsyncSetup:IID
 
-.comdef IAsyncSetup
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAsyncSetup : public IUnknown
+
     GetAsyncManager	proc :REFIID, :ptr, :DWORD, :ptr, :ptr
+
     .ends
 
 endif
@@ -2137,12 +2072,11 @@ __ICancelMethodCalls_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
 
-.comdef ICancelMethodCalls
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICancelMethodCalls : public IUnknown
+
     Cancel		proc :ULONG
     TestCancel		proc
+
     .ends
 
 LPCANCELMETHODCALLS	typedef ptr ICancelMethodCalls
@@ -2158,13 +2092,12 @@ DCOM_CALL_CANCELED	equ 0x2
 
 DEFINE_IIDX(IAsyncManager, "0000002A-0000-0000-C000-000000000046")
 
-.comdef IAsyncManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAsyncManager : public IUnknown
+
     CompleteCall	proc :HRESULT
     GetCallContext	proc :REFIID, :ptr
     GetState		proc :ptr
+
     .ends
 
 endif
@@ -2174,11 +2107,10 @@ __ICallFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICallFactory, "1c733a30-2a1c-11ce-ade5-00aa0044773d")
 
-.comdef ICallFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICallFactory : public IUnknown
+
     CreateCall		proc :REFIID, :ptr IUnknown, :REFIID, :ptr ptr IUnknown
+
     .ends
 
 endif
@@ -2188,12 +2120,11 @@ __IRpcHelper_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcHelper, "00000149-0000-0000-C000-000000000046")
 
-.comdef IRpcHelper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRpcHelper : public IUnknown
+
     GetDCOMProtocolVersion proc :ptr DWORD
     GetIIDFromOBJREF	proc :ptr, :ptr ptr IID
+
     .ends
 endif
 
@@ -2202,11 +2133,10 @@ __IReleaseMarshalBuffers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReleaseMarshalBuffers, "eb0cb9e8-7996-11d2-872e-0000f8080859")
 
-.comdef IReleaseMarshalBuffers
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IReleaseMarshalBuffers : public IUnknown
+
     ReleaseMarshalBuffer proc :ptr RPCOLEMESSAGE, :DWORD, :ptr IUnknown
+
     .ends
 
 endif
@@ -2216,12 +2146,11 @@ __IWaitMultiple_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWaitMultiple, "0000002B-0000-0000-C000-000000000046")
 
-.comdef IWaitMultiple
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IWaitMultiple : public IUnknown
+
     WaitMultiple	proc :DWORD, :ptr
     AddSynchronize	proc :ptr
+
     .ends
 
 endif
@@ -2231,11 +2160,10 @@ __IUrlMon_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUrlMon, "00000026-0000-0000-C000-000000000046")
 
-.comdef IUrlMon
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUrlMon : public IUnknown
+
     AsyncGetClassBits	proc :REFCLSID, :LPWSTR, :LPWSTR, :DWORD, :DWORD, :LPWSTR, :ptr, :DWORD, :REFIID, :DWORD
+
     .ends
 
 endif
@@ -2245,11 +2173,10 @@ __IForegroundTransfer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IForegroundTransfer, "00000145-0000-0000-C000-000000000046")
 
-.comdef IForegroundTransfer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IForegroundTransfer : public IUnknown
+
     AllowForegroundTransfer proc :ptr
+
     .ends
 
 endif
@@ -2259,12 +2186,11 @@ __IAddrTrackingControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAddrTrackingControl, "00000147-0000-0000-C000-000000000046")
 
-.comdef IAddrTrackingControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAddrTrackingControl : public IUnknown
+
     EnableCOMDynamicAddrTracking proc
     DisableCOMDynamicAddrTracking proc
+
     .ends
 
 LPADDRTRACKINGCONTROL	typedef ptr IAddrTrackingControl
@@ -2276,12 +2202,11 @@ __IAddrExclusionControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAddrExclusionControl, "00000148-0000-0000-C000-000000000046")
 
-.comdef IAddrExclusionControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAddrExclusionControl : public IUnknown
+
     GetCurrentAddrExclusionList proc :REFIID, :ptr ptr
     UpdateAddrExclusionList proc :ptr IUnknown
+
     .ends
 
 LPADDREXCLUSIONCONTROL	typedef ptr IAddrExclusionControl
@@ -2293,12 +2218,11 @@ __IPipeByte_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPipeByte, "DB2F3ACA-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef IPipeByte
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPipeByte : public IUnknown
+
     Pull		proc :ptr BYTE, :ULONG, :ptr ULONG
     _Push		proc :ptr BYTE, :ULONG
+
     .ends
 
 endif
@@ -2308,14 +2232,13 @@ __AsyncIPipeByte_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(AsyncIPipeByte, "DB2F3ACB-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef AsyncIPipeByte
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIPipeByte : public IUnknown
+
     Begin_Pull		proc :ULONG
     Finish_Pull		proc :ptr BYTE, :ptr ULONG
     Begin_Push		proc :ptr BYTE, :ULONG
     Finish_Push		proc
+
     .ends
 
 endif
@@ -2325,12 +2248,11 @@ __IPipeLong_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPipeLong, "DB2F3ACC-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef IPipeLong
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPipeLong : public IUnknown
+
     Pull		proc :ptr LONG, :ULONG, :ptr ULONG
     _Push		proc :ptr LONG, :ULONG
+
     .ends
 
 endif
@@ -2340,14 +2262,13 @@ __AsyncIPipeLong_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(AsyncIPipeLong, "DB2F3ACD-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef AsyncIPipeLong
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIPipeLong : public IUnknown
+
     Begin_Pull		proc :ULONG
     Finish_Pull		proc :ptr LONG, :ptr ULONG
     Begin_Push		proc :ptr LONG, :ULONG
     Finish_Push		proc
+
     .ends
 
 endif
@@ -2357,12 +2278,11 @@ __IPipeDouble_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPipeDouble, "DB2F3ACE-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef IPipeDouble
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPipeDouble : public IUnknown
+
     Pull		proc :ptr real8, :ULONG, :ptr ULONG
     _Push		proc :ptr real8, :ULONG
+
     .ends
 
 endif
@@ -2372,14 +2292,13 @@ __AsyncIPipeDouble_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(AsyncIPipeDouble, "DB2F3ACF-2F86-11d1-8E04-00C04FB9989A")
 
-.comdef AsyncIPipeDouble
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef AsyncIPipeDouble : public IUnknown
+
     Begin_Pull		proc :ULONG
     Finish_Pull		proc :ptr real8, :ptr ULONG
     Begin_Push		proc :ptr real8, :ptr ULONG
     Finish_Push		proc
+
     .ends
 
 endif
@@ -2389,12 +2308,11 @@ __IThumbnailExtractor_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IThumbnailExtractor, "969dc708-5c76-11d1-8d86-0000f804b057")
 
-.comdef IThumbnailExtractor
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IThumbnailExtractor : public IUnknown
+
     ExtractThumbnail	proc :ptr IStorage, :ULONG, :ULONG, :ptr ULONG, :ptr ULONG, :ptr HBITMAP
     OnFileUpdated	proc :ptr IStorage
+
     .ends
 
 endif
@@ -2404,11 +2322,10 @@ __IDummyHICONIncluder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDummyHICONIncluder, "947990de-cc28-11d2-a0f7-00805f858fb1")
 
-.comdef IDummyHICONIncluder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDummyHICONIncluder : public IUnknown
+
     Dummy		proc :HICON, :HDC
+
     .ends
 
 endif
@@ -2428,15 +2345,14 @@ __IEnumContextProps_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumContextProps, "000001c1-0000-0000-C000-000000000046")
 
-.comdef IEnumContextProps
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumContextProps : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr ULONG
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr ptr IEnumContextProps
     Count		proc :ptr ULONG
+
     .ends
 
 LPENUMCONTEXTPROPS	typedef ptr IEnumContextProps
@@ -2448,14 +2364,13 @@ __IContext_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContext, "000001c0-0000-0000-C000-000000000046")
 
-.comdef IContext
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContext : public IUnknown
+
     SetProperty		proc :REFGUID, :CPFLAGS, :ptr IUnknown
     RemoveProperty	proc :REFGUID
     GetProperty		proc :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
     EnumContextProps	proc :ptr ptr IEnumContextProps
+
     .ends
 
 endif
@@ -2467,10 +2382,8 @@ __IObjContext_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
 
-.comdef IObjContext
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjContext : public IUnknown
+
     SetProperty		proc :REFGUID, :CPFLAGS, :ptr IUnknown
     RemoveProperty	proc :REFGUID
     GetProperty		proc :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
@@ -2482,6 +2395,7 @@ DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
     Reserved5		proc
     Reserved6		proc
     Reserved7		proc
+
     .ends
 
 endif
@@ -2502,12 +2416,11 @@ __IProcessLock_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProcessLock, "000001d5-0000-0000-C000-000000000046")
 
-.comdef IProcessLock
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProcessLock : public IUnknown
+
     AddRefOnProcess	proc
     ReleaseRefOnProcess proc
+
     .ends
 
 endif
@@ -2517,15 +2430,14 @@ __ISurrogateService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISurrogateService, "000001d4-0000-0000-C000-000000000046")
 
-.comdef ISurrogateService
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISurrogateService : public IUnknown
+
     Init		proc :REFGUID, :ptr IProcessLock, :ptr BOOL
     ApplicationLaunch	proc :REFGUID, :ptr
     ApplicationFree	proc :REFGUID
     CatalogRefresh	proc :ULONG
     ProcessShutdown	proc :ptr
+
     .ends
 
 endif
@@ -2556,14 +2468,13 @@ __IComThreadingInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IComThreadingInfo, "000001ce-0000-0000-C000-000000000046")
 
-.comdef IComThreadingInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IComThreadingInfo : public IUnknown
+
     GetCurrentApartmentType proc :ptr APTTYPE
     GetCurrentThreadType proc :ptr THDTYPE
     GetCurrentLogicalThreadId proc :ptr GUID
     SetCurrentLogicalThreadId proc :REFGUID
+
     .ends
 
 endif
@@ -2573,11 +2484,10 @@ __IProcessInitControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProcessInitControl, "72380d55-8d2b-43a3-8513-2b6ef31434e9")
 
-.comdef IProcessInitControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProcessInitControl : public IUnknown
+
     ResetInitializerTimeout proc :DWORD
+
     .ends
 
 endif
@@ -2588,14 +2498,13 @@ __IInitializeSpy_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeSpy, "00000034-0000-0000-C000-000000000046")
 
-.comdef IInitializeSpy
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeSpy : public IUnknown
+
     PreInitialize	proc :DWORD, :DWORD
     PostInitialize	proc :HRESULT, :DWORD, :DWORD
     PreUninitialize	proc :DWORD
     PostUninitialize	proc :DWORD
+
     .ends
 
 LPINITIALIZESPY		typedef ptr IInitializeSpy
@@ -2608,12 +2517,11 @@ __ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeEvent, "00000032-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeEvent
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISynchronizeEvent : public IUnknown
+
     GetHandle		proc :ptr
     SetEventHandle	proc :ptr HANDLE
+
     .ends
 
 endif
@@ -2623,12 +2531,11 @@ __ISynchronizeContainer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeContainer, "00000033-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeContainer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISynchronizeContainer : public IUnknown
+
     AddSynchronize	proc :ptr ISynchronize
     WaitMultiple	proc :DWORD, :DWORD, :ptr ptr ISynchronize
+
     .ends
 
 endif
@@ -2645,13 +2552,12 @@ PUBLISHEDINFOLIST	ENDS
 
 externdef		IID_IClassAccess:IID
 
-.comdef IClassAccess
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IClassAccess : public IUnknown
+
     GetClassInfo	proc :REFCLSID, :QUERYCONTEXT, :ptr
     GetClassSpecInfo	proc :ptr, :QUERYCONTEXT, :ptr
     GetInstallablePackages proc :DWORD, :ptr
+
     .ends
 
 endif
@@ -2668,12 +2574,11 @@ PACKAGEINFOLIST		ENDS
 
 externdef		IID_IClassRefresh:IID
 
-.comdef IClassRefresh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IClassRefresh : public IUnknown
+
     GetUpgrades		proc :ULONG, :ptr, :CSPLATFORM, :LCID, :ptr
     CommitUpgrades	proc
+
     .ends
 
 endif
@@ -2700,14 +2605,13 @@ __IEnumPackage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumPackage:IID
 
-.comdef IEnumPackage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumPackage : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -2717,14 +2621,13 @@ __IEnumClass_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumClass:IID
 
-.comdef IEnumClass
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumClass : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -2735,10 +2638,8 @@ __IClassAdmin_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IClassAdmin:IID
 
-.comdef IClassAdmin
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IClassAdmin : public IUnknown
+
     NewClass		proc :ptr
     DeleteClass		proc :REFCLSID
     NewInterface	proc :REFIID, :LPOLESTR, :REFCLSID, :REFCLSID
@@ -2750,6 +2651,7 @@ externdef		IID_IClassAdmin:IID
     GetClassDetails	proc :REFCLSID, :ptr
     GetIidDetails	proc :REFIID, :ptr, :ptr, :ptr
     GetPackageDetails	proc :LPOLESTR, :ptr
+
     .ends
 
 endif

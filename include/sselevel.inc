@@ -43,4 +43,6 @@ SSE_AVXOS               equ 0x40000000
 
 externdef               sselevel:uint_t
 
+setsselevel             proto __cdecl
+
 endif

@@ -80,11 +80,8 @@ endif
 PSPCB_SI_INITDIALOG	equ (WM_USER + 1)
 DEFINE_IIDX(ISecurityInformation, "965FC360-16FF-11d0-91CB-00AA00BBB723")
 
-.comdef ISecurityInformation
+.comdef ISecurityInformation : public IUnknown
 
-	QueryInterface		proc :REFIID, :PVOID
-	AddRef			proc
-	Release			proc
 	GetObjectInformation	proc :PSI_OBJECT_INFO
 	GetSecurity		proc :SECURITY_INFORMATION, :ptr PSECURITY_DESCRIPTOR, :BOOL
 	SetSecurity		proc :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR
@@ -92,19 +89,18 @@ DEFINE_IIDX(ISecurityInformation, "965FC360-16FF-11d0-91CB-00AA00BBB723")
 	MapGeneric		proc :ptr GUID, :ptr UCHAR, :ptr ACCESS_MASK
 	GetInheritTypes		proc :PSI_INHERIT_TYPE, :ULONG
 	PropertySheetPageCallback proc :HWND, :UINT, :SI_PAGE_TYPE
+
 	.ends
 
 LPSECURITYINFO		typedef ptr ISecurityInformation
 
 DEFINE_IIDX(ISecurityInformation2, "c3ccfdb4-6f88-11d2-a3ce-00c04fb1782a")
 
-.comdef ISecurityInformation2
+.comdef ISecurityInformation2 : public IUnknown
 
-	QueryInterface		proc :REFIID, :PVOID
-	AddRef			proc
-	Release			proc
 	IsDaclCanonical		proc :PACL
 	LookupSids		proc :ULONG, :ptr PSID, :ptr LPDATAOBJECT
+
 	.ends
 
 LPSECURITYINFO2		typedef ptr ISecurityInformation2
@@ -126,24 +122,20 @@ PSID_INFO_LIST		typedef ptr SID_INFO_LIST
 
 DEFINE_IIDX(IEffectivePermission, "3853DC76-9F35-407c-88A1-D19344365FBC")
 
-.comdef IEffectivePermission
+.comdef IEffectivePermission : public IUnknown
 
-	QueryInterface		proc :REFIID, :PVOID
-	AddRef			proc
-	Release			proc
-	GetEffectivePermission	proc :ptr GUID, :PSID, :LPCWSTR, :PSECURITY_DESCRIPTOR, :ptr POBJECT_TYPE_LIST, :ptr ULONG, :ptr PACCESS_MASK, :ULONG
+	GetEffectivePermission proc :ptr GUID, :PSID, :LPCWSTR, :PSECURITY_DESCRIPTOR, :ptr POBJECT_TYPE_LIST, :ptr ULONG, :ptr PACCESS_MASK, :ULONG
+
 	.ends
 
-LPEFFECTIVEPERMISSION	typedef ptr IEffectivePermission
+LPEFFECTIVEPERMISSION typedef ptr IEffectivePermission
 
 DEFINE_IIDX(ISecurityObjectTypeInfo, "FC3066EB-79EF-444b-9111-D18A75EBF2FA")
 
-.comdef ISecurityObjectTypeInfo
+.comdef ISecurityObjectTypeInfo : public IUnknown
 
-	QueryInterface		proc :REFIID, :PVOID
-	AddRef			proc
-	Release			proc
-	GetInheritSource	proc :SECURITY_INFORMATION, :PACL, :ptr PINHERITED_FROM
+	GetInheritSource proc :SECURITY_INFORMATION, :PACL, :ptr PINHERITED_FROM
+
 	.ends
 
 LPSecurityObjectTypeInfo typedef ptr ISecurityObjectTypeInfo
@@ -152,16 +144,14 @@ if (NTDDI_VERSION GE NTDDI_VISTA)
 
 DEFINE_IIDX(ISecurityInformation3, "E2CDC9CC-31BD-4f8f-8C8B-B641AF516A1A")
 
-.comdef ISecurityInformation3
+.comdef ISecurityInformation3 : public IUnknown
 
-	QueryInterface		proc :REFIID, :PVOID
-	AddRef			proc
-	Release			proc
-	GetFullResourceName	proc :ptr LPWSTR
-	OpenElevatedEditor	proc :HWND, :SI_PAGE_TYPE
+	GetFullResourceName proc :ptr LPWSTR
+	OpenElevatedEditor proc :HWND, :SI_PAGE_TYPE
+
 	.ends
 
-LPSECURITYINFO3		typedef ptr ISecurityInformation3
+LPSECURITYINFO3 typedef ptr ISecurityInformation3
 endif
 
 DEFINE_GUID(IID_ISecurityInformation, 0x965fc360, 0x16ff, 0x11d0, 0x91, 0xcb, 0x0, 0xaa, 0x0, 0xbb, 0xb7, 0x23)

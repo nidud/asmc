@@ -74,11 +74,8 @@ __IReplica_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReplica, "D2D139E0-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef IReplica
+.comdef IReplica : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -104,6 +101,7 @@ DEFINE_IIDX(IReplica, "D2D139E0-B6CA-11d1-9F31-00C04FC29D52")
     PopulatePartial	proc :BSTR
     Synchronize		proc :BSTR, :SyncTypeEnum, :SyncModeEnum
     get_Filters		proc :ptr
+
     .ends
 
 endif
@@ -113,11 +111,8 @@ __Filter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Filter, "D2D139E1-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef Filter
+.comdef Filter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -125,6 +120,7 @@ DEFINE_IIDX(Filter, "D2D139E1-B6CA-11d1-9F31-00C04FC29D52")
     get_TableName	proc :ptr
     get_FilterType	proc :ptr
     get_FilterCriteria	proc :ptr
+
     .ends
 
 endif
@@ -134,11 +130,8 @@ __Filters_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Filters, "D2D139E2-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef Filters
+.comdef Filters : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
@@ -149,6 +142,7 @@ DEFINE_IIDX(Filters, "D2D139E2-B6CA-11d1-9F31-00C04FC29D52")
     get_Item		proc :VARIANT, :ptr
     Append		proc :BSTR, :FilterTypeEnum, :BSTR
     Delete		proc :VARIANT
+
     .ends
 
 endif
@@ -158,17 +152,15 @@ __IJetEngine_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IJetEngine, "9F63D980-FF25-11D1-BB6F-00C04FAE22DA")
 
-.comdef IJetEngine
+.comdef IJetEngine : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     CompactDatabase	proc :BSTR, :BSTR
     RefreshCache	proc :ptr
+
     .ends
 
 endif

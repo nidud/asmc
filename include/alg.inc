@@ -160,14 +160,12 @@ __IAdapterInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAdapterInfo, "480BF94A-09FD-4F8A-A3E0-B0700282D84D")
 
-.comdef IAdapterInfo
+.comdef IAdapterInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetAdapterIndex	proc :ptr
     GetAdapterType	proc :ptr
     GetAdapterAddresses proc :ptr, :ptr
+
     .ends
 
 endif
@@ -177,12 +175,10 @@ __IPendingProxyConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPendingProxyConnection, "B68E5043-3E3D-4CC2-B9C1-5F8F88FEE81C")
 
-.comdef IPendingProxyConnection
+.comdef IPendingProxyConnection : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
+
     .ends
 
 endif
@@ -192,15 +188,13 @@ __IDataChannel_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDataChannel, "AD42D12A-4AD0-4856-919E-E854C91D1856")
 
-.comdef IDataChannel
+.comdef IDataChannel : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
     GetChannelProperties proc :ptr
     GetSessionCreationEventHandle proc :ptr
     GetSessionDeletionEventHandle proc :ptr
+
     .ends
 
 endif
@@ -210,13 +204,11 @@ __IPersistentDataChannel_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistentDataChannel, "A180E934-D92A-415D-9144-759F8054E8F6")
 
-.comdef IPersistentDataChannel
+.comdef IPersistentDataChannel : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
     GetChannelProperties proc :ptr
+
     .ends
 
 endif
@@ -226,14 +218,12 @@ __IPrimaryControlChannel_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPrimaryControlChannel, "1A2E8B62-9012-4BE6-84AE-32BD66BA657A")
 
-.comdef IPrimaryControlChannel
+.comdef IPrimaryControlChannel : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
     GetChannelProperties proc :ptr
     GetOriginalDestinationInformation proc :ULONG, :USHORT, :ptr, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -243,14 +233,12 @@ __ISecondaryControlChannel_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISecondaryControlChannel, "A23F9D10-714C-41FE-8471-FFB19BC28454")
 
-.comdef ISecondaryControlChannel
+.comdef ISecondaryControlChannel : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
     GetChannelProperties proc :ptr
     GetOriginalDestinationInformation proc :ULONG, :USHORT, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -260,15 +248,13 @@ __IEnumAdapterInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumAdapterInfo, "A23F9D11-714C-41FE-8471-FFB19BC28454")
 
-.comdef IEnumAdapterInfo
+.comdef IEnumAdapterInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -278,15 +264,13 @@ __IAdapterNotificationSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAdapterNotificationSink, "44AB2DC3-23B2-47DE-8228-2E1CCEEB9911")
 
-.comdef IAdapterNotificationSink
+.comdef IAdapterNotificationSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AdapterAdded	proc :ptr
     AdapterRemoved	proc :ptr
     AdapterModified	proc :ptr
     AdapterUpdatePortMapping proc :ptr
+
     .ends
 
 endif
@@ -296,11 +280,8 @@ __IApplicationGatewayServices_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationGatewayServices, "5134842A-FDCE-485D-93CD-DE1640643BBE")
 
-.comdef IApplicationGatewayServices
+.comdef IApplicationGatewayServices : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreatePrimaryControlChannel proc :ULONG, :ALG_PROTOCOL, :USHORT, :ALG_CAPTURE, :BOOL, :ULONG, :USHORT, :ptr
     CreateSecondaryControlChannel proc :ALG_PROTOCOL, :ULONG, :USHORT, :ULONG, :USHORT, :ULONG, :USHORT, :ULONG, :USHORT, :ALG_DIRECTION, :BOOL, :ptr
     GetBestSourceAddressForDestinationAddress proc :ULONG, :BOOL, :ptr
@@ -314,6 +295,7 @@ DEFINE_IIDX(IApplicationGatewayServices, "5134842A-FDCE-485D-93CD-DE1640643BBE")
     StartAdapterNotifications proc :ptr, :ptr
     StopAdapterNotifications proc :DWORD
     LookupAdapterPortMapping proc :ULONG, :UCHAR, :ULONG, :USHORT, :ptr, :ptr
+
     .ends
 
 endif
@@ -323,13 +305,11 @@ __IApplicationGateway_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationGateway, "5134842B-FDCE-485D-93CD-DE1640643BBE")
 
-.comdef IApplicationGateway
+.comdef IApplicationGateway : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Initialize		proc :ptr
     Stop		proc
+
     .ends
 
 endif

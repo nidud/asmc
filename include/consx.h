@@ -118,12 +118,20 @@ typedef struct {
 	BYTE	foregr[16];
 	BYTE	backgr[16];
       } COLOR;
-
-typedef struct {
-	BYTE	ch;
-	BYTE	at;
+#if 0
+typedef union {
+	WORD	w;
+	struct {
+	 BYTE	ch;
+	 BYTE	at;
+	};
       } WCHR;
-
+#else
+typedef struct {
+	 BYTE	ch;
+	 BYTE	at;
+      } WCHR;
+#endif
 typedef struct {
 	BYTE	x;
 	BYTE	y;
@@ -220,10 +228,12 @@ extern BYTE tclrascii;
 extern BYTE at_background[16];
 extern BYTE at_foreground[16];
 
-extern int __cdecl (*thelp)(void);
-extern int __cdecl (*tdidle)(void);
-extern int __cdecl (*tupdate)(void);
-extern int __cdecl (*tgetevent)(void);
+typedef int (*iddfp_t)(void);
+
+extern iddfp_t thelp;
+extern iddfp_t tdidle;
+extern iddfp_t tupdate;
+extern iddfp_t tgetevent;
 
 int __cdecl CursorGet(COBJ *);
 int __cdecl CursorSet(COBJ *);
@@ -331,6 +341,7 @@ int __cdecl ConsolePush(void);
 void __cdecl SetMaxConsole(void);
 void __cdecl SetConsoleSize(int __cols, int __rows);
 RECT __cdecl GetScreenRect(void);
+int __cdecl eropen(const char *__file);
 
 #define ENABLE_WINDOW_INPUT	8
 #define ENABLE_MOUSE_INPUT	16

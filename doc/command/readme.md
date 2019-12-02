@@ -24,8 +24,8 @@ The options listed in the following table.
 | **/Cx** | Preserves case in public and extern symbols. |
 | **/D**_symbol_[[=_value_]] | Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks. |
 | **/e**_number_ | Set error limit number. |
-| **/elf** | Generate 32-bit ELF object file. |
-| **/elf64** | Generate 64-bit ELF object file. |
+| **/elf** | Generate 32-bit ELF object file. Defines _LINUX(1). |
+| **/elf64** | Generate 64-bit ELF object file. Defines _LINUX(2) and _WIN64. |
 | **/EP** | Generates a preprocessed source listing (sent to STDOUT). See /Sf. |
 | **/eq** | Don't display error messages. |
 | **/Fd**[_file_] | Write import definition file. |
@@ -42,9 +42,10 @@ The options listed in the following table.
 | **/Ge** | Emit a conditional _chkstk() inside the prologue. |
 | **/gui** | Link switch used with **/pe** -- subsystem:windows. |
 | **/Gv** | Specifies use of VECTORCALL-style function calling and naming conventions. |
-| **/Gz** | Specifies use of STDCALL-style function calling and naming conventions. Same as **OPTION LANGUAGE:STDCALL**. |
+| **/Gz** | Specifies use of STDCALL-style function calling and naming conventions. Defines _STDCALL_SUPPORTED. Same as **OPTION LANGUAGE:STDCALL**. |
 | **/homeparams** | Forces parameters passed in registers to be written to their locations on the stack upon function entry. |
 | **/I**_pathname_ | Sets path for include file. |
+| **/logo** | Print logo string and exit. |
 | **/m**[_tscmlhf_] | Set memory model. |
 | **/mz** | Generate DOS MZ binary file. |
 | **/nc**_name_ | Set class name of code segment. |
@@ -73,8 +74,8 @@ The options listed in the following table.
 | **/Sx** | Turns on false conditionals in listing. |
 | **/w** | Same as /W0. |
 | **/W**_level_ | Sets the warning level, where _level_ = 0, 1, 2, or 3.|
-| **/win64** | Generate 64-bit COFF object. |
-| **/ws**[_CodePage_] | Store quoted strings as Unicode. See [OPTION WSTRING](../directive/opt_wstring.md). |
+| **/win64** | Generate 64-bit COFF object. Defines _WIN64. |
+| **/ws**[_CodePage_] | Store quoted strings as Unicode. Defines _UNICODE. See [OPTION WSTRING](../directive/opt_wstring.md). |
 | **/WX** | Returns an error code if warnings are generated. |
 | **/X** | Ignore INCLUDE environment path. |
 | **/zcw** | No decoration for C symbols. |

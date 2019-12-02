@@ -48,11 +48,8 @@ BG_CERT_STORE_LOCATION_LOCAL_MACHINE_ENTERPRISE equ ( BG_CERT_STORE_LOCATION_LOC
 
 DEFINE_IIDX(IBackgroundCopyJobHttpOptions, "f1bd1079-9f01-4bdc-8036-f09b70095066")
 
-.comdef IBackgroundCopyJobHttpOptions
+.comdef IBackgroundCopyJobHttpOptions : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetClientCertificateByID proc :BG_CERT_STORE_LOCATION, :LPCWSTR, :ptr
     SetClientCertificateByName proc :BG_CERT_STORE_LOCATION, :LPCWSTR, :LPCWSTR
     RemoveClientCertificate proc
@@ -61,6 +58,7 @@ DEFINE_IIDX(IBackgroundCopyJobHttpOptions, "f1bd1079-9f01-4bdc-8036-f09b70095066
     GetCustomHeaders	proc :ptr
     SetSecurityFlags	proc :ULONG
     GetSecurityFlags	proc :ptr
+
     .ends
 
 endif

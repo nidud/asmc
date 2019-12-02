@@ -70,14 +70,13 @@ LPENUMGUID typedef ptr IEnumGUID
 
 DEFINE_IIDX(IEnumGUID, "0002E000-0000-0000-C000-000000000046")
 
-.comdef IEnumGUID
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumGUID : public IUnknown
+
     Next		proc
     Skip		proc
     Reset		proc
     Clone		proc
+
     .ends
 
 endif
@@ -100,14 +99,13 @@ LPCATEGORYINFO	typedef ptr CATEGORYINFO
 
 DEFINE_IIDX(IEnumCATEGORYINFO, "0002E011-0000-0000-C000-000000000046")
 
-.comdef IEnumCATEGORYINFO
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumCATEGORYINFO : public IUnknown
+
     Next		proc
     Skip		proc
     Reset		proc
     Clone		proc
+
     .ends
 endif
 endif
@@ -120,16 +118,15 @@ __ICatRegister_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(ICatRegister, "0002E012-0000-0000-C000-000000000046")
 
-.comdef ICatRegister
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICatRegister : public IUnknown
+
     RegisterCategories	proc
     UnRegisterCategories proc
     RegisterClassImplCategories proc
     UnRegisterClassImplCategories proc
     RegisterClassReqCategories proc
     UnRegisterClassReqCategories proc
+
     .ends
 
 LPCATREGISTER typedef ptr ICatRegister
@@ -145,16 +142,15 @@ __ICatInformation_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(ICatInformation, "0002E013-0000-0000-C000-000000000046")
 
-.comdef ICatInformation
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICatInformation : public IUnknown
+
     EnumCategories	proc
     GetCategoryDesc	proc
     EnumClassesOfCategories proc
     IsClassOfCategories proc
     EnumImplCategoriesOfClass proc
     EnumReqCategoriesOfClass proc
+
     .ends
 
 LPCATINFORMATION typedef ptr ICatInformation

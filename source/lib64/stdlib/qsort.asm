@@ -5,11 +5,42 @@
 ;
 
 include stdlib.inc
-include strlib.inc
 
     .code
 
-qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
+    option procalign:16
+    option win64:rsp noauto
+
+memxchg proc private a:ptr, b:ptr, size:size_t
+
+    .while r8 >= 8
+
+        sub r8,8
+        mov rax,[rcx+r8]
+        mov r10,[rdx+r8]
+        mov [rcx+r8],r10
+        mov [rdx+r8],rax
+
+    .endw
+
+    .while r8
+
+        dec r8
+        mov al,[rcx+r8]
+        mov r10b,[rdx+r8]
+        mov [rcx+r8],r10b
+        mov [rdx+r8],al
+
+    .endw
+
+    mov rax,rcx
+    ret
+
+memxchg endp
+
+    option win64:rbp auto
+
+qsort proc uses rsi rdi rbx p:ptr, n:size_t, w:size_t, compare:LPQSORTCMD
 
   local stack_level
 

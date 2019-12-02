@@ -16,6 +16,8 @@ include time.inc
 include winnt.inc
 include tchar.inc
 
+__IDDC__        equ 106
+
 MAXIDDSIZE      equ 2048
 OMF_THEADR      equ 080h
 OMF_COMENT      equ 088h
@@ -35,20 +37,6 @@ o_cksum         db ?
 S_OMFR          ENDS
 
 .data
-
-cpinfo          db "Doszip Resource Compiler v1.04 Copyright (c) 2016 GNU General Public License",10,0
-cpusage         db "USAGE: IDDC [-/options] <idd-file>",10
-                db 10
-                db " -mc     output 16-bit .compact",10
-                db " -ml     output 16-bit .large",10
-                db " -mf     output 32-bit .flat (default)",10
-                db " -win64  output 64-bit .flat",10
-                db " -omf    output OMF object (default)",10
-                db " -coff   output COFF object",10
-                db " -f#     full pathname of .OBJ file",10
-                db " -r      recurse subdirectories",10
-                db " -t      compile text file (add zero)",10
-                db 10,0
 
 console         dd 0
 PUBLIC          console
@@ -145,11 +133,14 @@ strfcat PROC USES esi edi ecx edx buffer:LPSTR, path:LPSTR, file:LPSTR
 strfcat ENDP
 
 owrite proc fp, b, l
+
     .if fwrite(b, 1, l, fp) != l
+
         perror(addr fileobj)
         exit(2)
     .endif
     ret
+
 owrite  ENDP
 
 omf_write proc uses esi
@@ -365,9 +356,11 @@ local is:IMAGE_SYMBOL
     .if edi
         owrite(handle, ebx, edi)
     .endif
+
     fclose(handle)
     xor eax,eax
     ret
+
 WR_COFF endp
 
 WR_OMF proc uses esi edi ebx handle, rbuf, len
@@ -513,45 +506,66 @@ WR_OMF proc uses esi edi ebx handle, rbuf, len
     ret
 WR_OMF endp
 
+
 AssembleModule PROC USES esi edi ebx module
+
     .if _access(module, 0)
+
         perror(module)
         exit(1)
     .endif
+
     .if strrchr(strcpy(&dlname, strfn(module)), '.')
+
         mov byte ptr [eax],0
     .endif
+
     lea edi,fileobj
+
     .if !option_f
+
         _getcwd(edi, _MAX_PATH)
         strfcat(edi, 0, strfn(module))
+
         .if strrchr(edi, '.')
+
             mov byte ptr [eax],0
         .endif
         strcat(edi, &extobj)
     .endif
+
     .if !fopen(module, "rb")
+
         perror(module)
         exit(2)
     .endif
     mov ebx,eax
+
     mov esi,fread(&dialog, 1, MAXIDDSIZE, ebx)
     fclose(ebx)
+
     .if !esi
+
         perror(module)
         exit(3)
     .endif
+
     .if option_t
         inc esi
     .endif
+
     .if esi > 1020
+
         perror("Resource is to big -- > 1024")
         exit(3)
     .endif
+
     .if !fopen(edi, "wb")
+
         perror(edi)
         exit(2)
     .endif
+
     mov edi,eax
     .if option_omf
         WR_OMF(edi, &dialog, esi)
@@ -559,113 +573,172 @@ AssembleModule PROC USES esi edi ebx module
         WR_COFF(edi, &dialog, esi)
     .endif
     ret
+
 AssembleModule ENDP
 
+
 AssembleSubdir PROC USES esi edi ebx directory, wild
-local path[_MAX_PATH]:BYTE
-local ff:_finddata_t
-local h:HANDLE
-local rc:DWORD
+
+  local path[_MAX_PATH]:BYTE
+  local ff:_finddata_t
+  local h:HANDLE
+  local rc:DWORD
+
     lea esi,path
     lea edi,ff
-    lea ebx,ff._name
+    lea ebx,ff.name
     mov rc,0
+
     .if _findfirst(strfcat(esi, directory, wild), edi) != -1
+
         mov h,eax
+
         .repeat
+
             mov rc,AssembleModule(strfcat(esi, directory, ebx))
+
         .until _findnext(h, edi)
+
         _findclose(h)
+
     .endif
+
     .if _findfirst(strfcat(esi, directory, "*.*"), edi) != -1
+
         mov h,eax
+
         .repeat
+
             mov eax,[ebx]
             and eax,00FFFFFFh
+
             .if ff.attrib & _A_SUBDIR && ax != '.' && eax != '..'
+
                 perror(ebx)
+
                 .if AssembleSubdir(strfcat(esi, directory, ebx), wild)
+
                     mov rc,eax
                     .break
                 .endif
             .endif
+
         .until _findnext(h, edi)
+
         _findclose(h)
     .endif
     mov eax,rc
     ret
+
 AssembleSubdir ENDP
 
 arg_option proc uses ebx arg:ptr
+
     mov ebx,arg
     mov eax,[ebx]
+
     .switch al
+
       .case '?'
-        printf(&cpinfo)
-        printf(&cpusage)
+
+        printf( "Binary Resource Compiler Version %d.%d.%d.%d\n"
+                "Usage: IDDC [-/Options] <idd-file>\n"
+                " Options:\n"
+                "  -mc     output 16-bit .compact\n"
+                "  -ml     output 16-bit .large\n"
+                "  -mf     output 32-bit .flat (default)\n"
+                "  -win64  output 64-bit .flat\n"
+                "  -omf    output OMF object (default)\n"
+                "  -coff   output COFF object\n"
+                "  -f#     full pathname of .OBJ file\n"
+                "  -r      recurse subdirectories\n"
+                "  -t      compile text file (add zero)\n"
+                "\n",
+                __IDDC__ / 100, __IDDC__ mod 100,
+                __ASMC__ / 100, __ASMC__ mod 100 )
         exit(0)
+
       .case '-'
       .case '/'
+
         shr eax,8
         or  eax,0x202020
+
         .switch al
+
           .case 'w'
             inc option_win64
+
           .case 'c'
             mov option_omf,0
             inc option_coff
             .endc
+
           .case 'm'
             mov option_m,ah
             .endc
+
           .case 'o'
             mov option_coff,0
             inc option_omf
             .endc
+
           .case 'f'
             inc option_f
             add ebx,2
             strcpy(&fileobj, ebx)
             .endc
+
           .case 'r'
             inc option_r
             .endc
+
           .case 't'
             inc option_t
             .endc
+
           .default
-            .gotosw1('?')
+            .gotosw(1:'?')
         .endsw
         .endc
+
       .default
         .if !fileidd
             strcpy(&fileidd, ebx)
         .else
             .gotosw('?')
         .endif
-        .endc
     .endsw
+
     xor eax,eax
     inc eax
     ret
+
 arg_option endp
 
-main proc
-local path[_MAX_PATH]:BYTE
-    mov edi,ecx
-    mov esi,edx
+
+main proc argc:int_t, argv:array_t
+
+  local path[_MAX_PATH]:BYTE
+
+    mov edi,argc
+    mov esi,argv
+
     .if edi == 1
         arg_option("?")
     .endif
     dec edi
+
     lodsd
     .repeat
         lodsd
         arg_option(eax)
         dec edi
     .until !edi
+
     lea esi,fileidd
     lea edi,path
+
     .if !option_r
         AssembleModule(esi)
     .else
@@ -677,6 +750,7 @@ local path[_MAX_PATH]:BYTE
         AssembleSubdir(esi, strfn(edi))
     .endif
     ret
+
 main endp
 
     end _tstart

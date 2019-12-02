@@ -450,6 +450,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 #ifndef __ASMC64__
     case 'zG':		// -Gz
 	Options.langtype = LANG_STDCALL;
+	define_name( "_STDCALL_SUPPORTED", "1" );
 	return;
 #endif
     case 'iug':		// -gui - subsystem:windows

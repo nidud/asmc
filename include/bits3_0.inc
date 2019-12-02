@@ -60,11 +60,8 @@ __IBitsPeerCacheRecord_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBitsPeerCacheRecord, "659cdeaf-489e-11d9-a9cd-000d56965251")
 
-.comdef IBitsPeerCacheRecord
+.comdef IBitsPeerCacheRecord : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetId		proc :ptr
     GetOriginUrl	proc :ptr
     GetFileSize		proc :ptr
@@ -72,6 +69,7 @@ DEFINE_IIDX(IBitsPeerCacheRecord, "659cdeaf-489e-11d9-a9cd-000d56965251")
     GetLastAccessTime	proc :ptr
     IsFileValidated	proc
     GetFileRanges	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -81,16 +79,14 @@ __IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumBitsPeerCacheRecords, "659cdea4-489e-11d9-a9cd-000d56965251")
 
-.comdef IEnumBitsPeerCacheRecords
+.comdef IEnumBitsPeerCacheRecords : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
+
     .ends
 
 endif
@@ -100,14 +96,12 @@ __IBitsPeer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBitsPeer, "659cdea2-489e-11d9-a9cd-000d56965251")
 
-.comdef IBitsPeer
+.comdef IBitsPeer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPeerName		proc :ptr
     IsAuthenticated	proc :ptr
     IsAvailable		proc :ptr
+
     .ends
 
 endif
@@ -117,16 +111,14 @@ __IEnumBitsPeers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumBitsPeers, "659cdea5-489e-11d9-a9cd-000d56965251")
 
-.comdef IEnumBitsPeers
+.comdef IEnumBitsPeers : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
+
     .ends
 
 endif
@@ -140,11 +132,8 @@ BG_DISABLE_BRANCH_CACHE equ 0x0004
 
 DEFINE_IIDX(IBitsPeerCacheAdministration, "659cdead-489e-11d9-a9cd-000d56965251")
 
-.comdef IBitsPeerCacheAdministration
+.comdef IBitsPeerCacheAdministration : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMaximumCacheSize proc :ptr
     SetMaximumCacheSize proc :DWORD
     GetMaximumContentAge proc :ptr
@@ -159,6 +148,7 @@ DEFINE_IIDX(IBitsPeerCacheAdministration, "659cdead-489e-11d9-a9cd-000d56965251"
     EnumPeers		proc :ptr
     ClearPeers		proc
     DiscoverPeers	proc
+
     .ends
 
 endif
@@ -172,11 +162,8 @@ BG_JOB_DISABLE_BRANCH_CACHE equ 0x0004
 
 DEFINE_IIDX(IBackgroundCopyJob4, "659cdeae-489e-11d9-a9cd-000d56965251")
 
-.comdef IBackgroundCopyJob4
+.comdef IBackgroundCopyJob4 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFileSet		proc :ULONG, :ptr
     AddFile		proc :LPCWSTR, :LPCWSTR
     EnumFiles		proc :ptr
@@ -227,6 +214,7 @@ DEFINE_IIDX(IBackgroundCopyJob4, "659cdeae-489e-11d9-a9cd-000d56965251")
     GetOwnerElevationState proc :ptr
     SetMaximumDownloadTime proc :ULONG
     GetMaximumDownloadTime proc :ptr
+
     .ends
 
 endif
@@ -236,11 +224,8 @@ __IBackgroundCopyFile3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyFile3, "659cdeaa-489e-11d9-a9cd-000d56965251")
 
-.comdef IBackgroundCopyFile3
+.comdef IBackgroundCopyFile3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRemoteName	proc :ptr
     GetLocalName	proc :ptr
     GetProgress		proc :ptr
@@ -250,6 +235,7 @@ DEFINE_IIDX(IBackgroundCopyFile3, "659cdeaa-489e-11d9-a9cd-000d56965251")
     SetValidationState	proc :BOOL
     GetValidationState	proc :ptr
     IsDownloadedFromPeer proc :ptr
+
     .ends
 
 endif
@@ -259,15 +245,13 @@ __IBackgroundCopyCallback2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyCallback2, "659cdeac-489e-11d9-a9cd-000d56965251")
 
-.comdef IBackgroundCopyCallback2
+.comdef IBackgroundCopyCallback2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     JobTransferred	proc :ptr
     JobError		proc :ptr, :ptr
     JobModification	proc :ptr, :DWORD
     FileTransferred	proc :ptr, :ptr
+
     .ends
 
 endif

@@ -6,7 +6,7 @@
 
 include conio.inc
 include malloc.inc
-include strlib.inc
+include crtl.inc
 
     .code
 
@@ -15,6 +15,7 @@ _scmoveu proc uses rsi rdi rbx r12 rc:TRECT, p:PCHAR_INFO
   local x,l,z
 
     movzx eax,rc.y
+
     .if eax > 1
 
         movzx   esi,rc.row

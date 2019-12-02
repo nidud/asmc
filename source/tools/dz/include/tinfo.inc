@@ -1,5 +1,4 @@
 include consx.inc
-include syserrls.inc
 
 .xlist
 

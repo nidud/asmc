@@ -5,7 +5,6 @@
 ;
 
 include crtl.inc
-include strlib.inc
 
     .code   ; Test if <ext> == bat | cmd | com | exe
 

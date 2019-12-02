@@ -146,7 +146,7 @@ _output proc public uses edx ecx esi edi ebx fp:LPFILE, format:string_t, arglist
               .case ST_NORMAL
 
                 mov bufferiswide,0
-ifndef __DZ__
+ifndef _STDCALL_SUPPORTED
                 .if isleadbyte(edx)
 
                     write_char(edx, fp, addr charsout)
@@ -363,7 +363,9 @@ endif
                         mov no_output,1
                     .endif
                     .endc
-ifndef __DZ__
+
+ifndef _STDCALL_SUPPORTED
+
                   .case 'E'
                   .case 'G'
                   .case 'A'
@@ -455,7 +457,9 @@ ifndef __DZ__
                     .endif
                     mov textlen,strlen(text) ; compute length of text
                     .endc
-endif
+
+endif ; _STDCALL_SUPPORTED
+
                   .case 'd'
                   .case 'i'
 

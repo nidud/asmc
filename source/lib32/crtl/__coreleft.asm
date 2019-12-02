@@ -4,26 +4,29 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include crtl.inc
 include malloc.inc
 
     .code
 
 __coreleft proc uses ebx
-    xor eax,eax  ; EAX: free memory
-    xor ecx,ecx  ; ECX: total allocated
-    mov ebx,_heap_base
-    .while ebx
-        mov edx,ebx
-        .while [edx].HEAP.size
+
+    .for eax = 0, ; EAX: free memory
+        ecx = 0, ; ECX: total allocated
+        ebx = _heap_base : ebx : ebx = [ebx].HEAP.next
+
+        .for edx = ebx : [edx].HEAP.size : edx += [edx].HEAP.size
+
             add ecx,[edx].HEAP.size
+
             .if [edx].HEAP.type == 0
+
                 add eax,[edx].HEAP.size
             .endif
-            add edx,[edx].HEAP.size
-        .endw
-        mov ebx,[ebx].HEAP.next
-    .endw
+        .endf
+    .endf
     ret
+
 __coreleft endp
 
     end

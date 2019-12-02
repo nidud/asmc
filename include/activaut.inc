@@ -75,11 +75,8 @@ SOURCE_TEXT_ATTR	typedef WORD
 ifndef __IScriptNode_INTERFACE_DEFINED__
 __IScriptNode_INTERFACE_DEFINED__ equ 1
 
-.comdef IScriptNode
+.comdef IScriptNode : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Alive		proc
     Delete		proc
     GetParent		proc :ptr
@@ -90,6 +87,7 @@ __IScriptNode_INTERFACE_DEFINED__ equ 1
     GetLanguage		proc :ptr
     CreateChildEntry	proc :ULONG, :DWORD, :LPCOLESTR, :ptr
     CreateChildHandler	proc :LPCOLESTR
+
     .ends
 
 endif
@@ -97,21 +95,8 @@ endif
 ifndef __IScriptEntry_INTERFACE_DEFINED__
 __IScriptEntry_INTERFACE_DEFINED__ equ 1
 
-.comdef IScriptEntry
+.comdef IScriptEntry : public IScriptNode
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Alive		proc
-    Delete		proc
-    GetParent		proc :ptr
-    GetIndexInParent	proc :ptr
-    GetCookie		proc :ptr
-    GetNumberOfChildren proc :ptr
-    GetChild		proc :ULONG, :ptr
-    GetLanguage		proc :ptr
-    CreateChildEntry	proc :ULONG, :DWORD, :LPCOLESTR, :ptr
-    CreateChildHandler	proc :LPCOLESTR
     GetText		proc :ptr
     SetText		proc :LPCOLESTR
     GetBody		proc :ptr
@@ -123,6 +108,7 @@ __IScriptEntry_INTERFACE_DEFINED__ equ 1
     GetSignature	proc :ptr, :ptr
     SetSignature	proc :ptr, :ULONG
     GetRange		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -130,38 +116,15 @@ endif
 ifndef __IScriptScriptlet_INTERFACE_DEFINED__
 __IScriptScriptlet_INTERFACE_DEFINED__ equ 1
 
-.comdef IScriptScriptlet
+.comdef IScriptScriptlet : public IScriptEntry
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Alive		proc
-    Delete		proc
-    GetParent		proc :ptr
-    GetIndexInParent	proc :ptr
-    GetCookie		proc :ptr
-    GetNumberOfChildren proc :ptr
-    GetChild		proc :ULONG, :ptr
-    GetLanguage		proc :ptr
-    CreateChildEntry	proc :ULONG, :DWORD, :LPCOLESTR, :ptr
-    CreateChildHandler	proc :LPCOLESTR
-    GetText		proc :ptr
-    SetText		proc :LPCOLESTR
-    GetBody		proc :ptr
-    SetBody		proc :LPCOLESTR
-    GetName		proc :ptr
-    SetName		proc :LPCOLESTR
-    GetItemName		proc :ptr
-    SetItemName		proc :LPCOLESTR
-    GetSignature	proc :ptr, :ptr
-    SetSignature	proc :ptr, :ULONG
-    GetRange		proc :ptr, :ptr
     GetSubItemName	proc :ptr
     SetSubItemName	proc :LPCOLESTR
     GetEventName	proc :ptr
     SetEventName	proc :LPCOLESTR
     GetSimpleEventName	proc :ptr
     SetSimpleEventName	proc :LPCOLESTR
+
     .ends
 
 endif
@@ -169,13 +132,11 @@ endif
 ifndef __IActiveScriptAuthor_INTERFACE_DEFINED__
 __IActiveScriptAuthor_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptAuthor
+.comdef IActiveScriptAuthor : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddNamedItem	proc :LPCOLESTR, :DWORD, :ptr
-    AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD
+    AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR,
+			     :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD
     ParseScriptText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD
     GetScriptTextAttributes proc :ptr
     GetScriptletTextAttributes proc :ptr
@@ -188,6 +149,7 @@ __IActiveScriptAuthor_INTERFACE_DEFINED__ equ 1
     GetChars		proc :DWORD, :ptr
     GetInfoFromContext	proc :LPCOLESTR, :ULONG, :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     IsCommitChar	proc :OLECHAR, :ptr
+
     .ends
 
 endif
@@ -195,12 +157,11 @@ endif
 ifndef __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__
 __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptAuthorProcedure
+.comdef IActiveScriptAuthorProcedure : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD, :ptr
+    ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR,
+		:LPCOLESTR, :DWORD, :DWORD, :ptr
+
     .ends
 
 endif

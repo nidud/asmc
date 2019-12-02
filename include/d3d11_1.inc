@@ -88,17 +88,16 @@ ifndef __ID3D11BlendState1_INTERFACE_DEFINED__
 __ID3D11BlendState1_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3D11BlendState1, 0xcc86fabe, 0xda55, 0x401d, 0x85,0xe7, 0xe3,0xc9,0xde,0x28,0x77,0xe9)
-.comdef ID3D11BlendState1
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3D11BlendState1 : public IUnknown
+
     GetDevice		proc :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetDesc		proc :ptr
     GetDesc1		proc :ptr
+
     .ends
 
 endif
@@ -107,15 +106,14 @@ ifndef __ID3DDeviceContextState_INTERFACE_DEFINED__
 __ID3DDeviceContextState_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3DDeviceContextState, 0x5c1e0d8a, 0x7c23, 0x48f9, 0x8c,0x59, 0xa9,0x29,0x58,0xce,0xff,0x11);
-.comdef ID3DDeviceContextState
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DDeviceContextState : public IUnknown
+
     GetDevice		proc :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
+
     .ends
 
 endif
@@ -124,11 +122,9 @@ ifndef __ID3D11DeviceContext1_INTERFACE_DEFINED__
 __ID3D11DeviceContext1_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3D11DeviceContext1, 0xbb2c6faa, 0xb5fb, 0x4082, 0x8e,0x6b, 0x38,0x8b,0x8c,0xfa,0x90,0xe1)
-.comdef ID3D11DeviceContext1
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3D11DeviceContext1 : public IUnknown
+
     GetDevice		proc :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
@@ -269,15 +265,14 @@ ifndef __ID3DUserDefinedAnnotation_INTERFACE_DEFINED__
 __ID3DUserDefinedAnnotation_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3DUserDefinedAnnotation, 0xb2daad8b, 0x03d4, 0x4dbf, 0x95,0xeb, 0x32,0xab,0x4b,0x63,0xd0,0xab)
-.comdef ID3DUserDefinedAnnotation
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DUserDefinedAnnotation : public IUnknown
+
     BeginEvent		proc :LPCWSTR
     EndEvent		proc
     SetMarker		proc :LPCWSTR
     GetStatus		proc
+
     .ends
 endif
 
@@ -285,17 +280,16 @@ ifndef __ID3D11RasterizerState1_INTERFACE_DEFINED__
 __ID3D11RasterizerState1_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3D11RasterizerState1, 0x1217d7a6, 0x5039, 0x418c, 0xb0,0x42, 0x9c,0xbe,0x25,0x6a,0xfd,0x6e)
-.comdef ID3D11RasterizerState1
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3D11RasterizerState1 : public IUnknown
+
     GetDevice		proc :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetDesc		proc :ptr
     GetDesc1		proc :ptr
+
     .ends
 
 endif
@@ -304,11 +298,9 @@ ifndef __ID3D11Device1_INTERFACE_DEFINED__
 __ID3D11Device1_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ID3D11Device1, 0xa04bfb29, 0x08ef, 0x43d6, 0xa4,0x9c, 0xa9,0xbd,0xbd,0xcb,0xe6,0x86)
-.comdef ID3D11Device1
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3D11Device1 : public IUnknown
+
     CreateBuffer	proc :ptr, :ptr, :ptr
     CreateTexture1D	proc :ptr, :ptr, :ptr
     CreateTexture2D	proc :ptr, :ptr, :ptr
@@ -356,6 +348,7 @@ DEFINE_GUID(IID_ID3D11Device1, 0xa04bfb29, 0x08ef, 0x43d6, 0xa4,0x9c, 0xa9,0xbd,
     CreateDeviceContextState proc :UINT, :ptr, :UINT, :UINT, :REFIID, :ptr, :ptr
     OpenSharedResource1 proc :HANDLE, :REFIID, :ptr
     OpenSharedResourceByName proc :LPCWSTR, :DWORD, :REFIID, :ptr
+
     .ends
 
 LPID3D11Device1		typedef ptr ID3D11Device1

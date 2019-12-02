@@ -2,6 +2,12 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
+Changes in 3.56 - xx xxx 2019
+- added exit as inline command
+- added /nologo command line option - suppress copyright message
+- added /cmd command line option - start with command prompt only
+- added AVX512 to System Information (Alt-M)
+
 Changes in 3.55 - 9 Mar 2019
 - fixed bug in delete - stack fault in _rmdir()
 - fixed bug %edit% command - failed if panel not visible.

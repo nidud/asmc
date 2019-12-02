@@ -15,9 +15,7 @@ _wrmdir proc directory:LPWSTR
     .if RemoveDirectoryW(directory)
 
         xor eax,eax
-ifdef __DZ__
-        mov _diskflag,1
-endif
+
     .else
         osmaperr()
     .endif

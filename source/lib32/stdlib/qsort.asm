@@ -7,13 +7,12 @@
 include stdlib.inc
 include string.inc
 include crtl.inc
-include strlib.inc
 
-.code
+    .code
 
 qsort proc uses esi edi ebx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
-local stack_level
+  local stack_level
 
     mov eax,n
     .if eax > 1
@@ -24,7 +23,7 @@ local stack_level
         lea edi,[esi+eax]
         mov stack_level,0
 
-        .while  1
+        .while 1
 
             mov ecx,w
             lea eax,[edi+ecx]   ; middle from (hi - lo) / 2
@@ -55,7 +54,7 @@ local stack_level
             mov p,esi
             mov n,edi
 
-            .while  1
+            .while 1
 
                 mov eax,w
                 add p,eax
@@ -64,7 +63,7 @@ local stack_level
                     .continue .ifs compare( p, ebx ) <= 0
                 .endif
 
-                .while  1
+                .while 1
 
                     mov eax,w
                     sub n,eax
@@ -88,7 +87,7 @@ local stack_level
             mov eax,w
             add n,eax
 
-            .while  1
+            .while 1
 
                 mov eax,w
                 sub n,eax

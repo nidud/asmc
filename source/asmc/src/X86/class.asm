@@ -17,6 +17,7 @@ com_item    STRUC
 cmd         dd ?
 class       string_t ?
 langtype    dd ?
+sym         asym_t ?    ; .class name : public class
 com_item    ENDS
 LPCLASS     typedef ptr com_item
 
@@ -26,31 +27,31 @@ LPCLASS     typedef ptr com_item
 
 ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
 
-  local retval          : int_t,
-        P$[16]          : char_t,
-        T$[16]          : char_t,
-        name            : string_t,
-        IsCom           : uchar_t,
-        language[32]    : char_t,
-        dir             : dsym_t,
-        size            : int_t
+  local retval:int_t
+  local name:string_t
+  local IsCom:uchar_t
+  local language[32]:char_t
+  local P$[16]:char_t
+  local T$[16]:char_t
 
     mov ebx,i
     shl ebx,4
     add ebx,tokenarray
     mov edi,buffer
-    mov eax,[ebx-16].string_ptr
-    mov name,eax
+
+    mov name,[ebx-16].string_ptr
     mov retval,NOT_ERROR
 
     inc ModuleInfo.class_label
-    sprintf(&T$, "T$%04X", ModuleInfo.class_label )
-    sprintf(&P$, "P$%04X", ModuleInfo.class_label )
+
+    sprintf( &T$, "T$%04X", ModuleInfo.class_label )
+    sprintf( &P$, "P$%04X", ModuleInfo.class_label )
 
     mov IsCom,0
+
     mov eax,CurrStruct
     mov esi,[eax].asym.name
-    .if ( strlen(esi) > 4 )
+    .if strlen(esi) > 4
         mov eax,[esi+eax-4]
     .endif
     mov esi,ModuleInfo.ComStack
@@ -65,8 +66,45 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
 
             add ebx,16
         .else
+
             AddLineQueueX( "%s ends", [esi].com_item.class )
             AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
+
+            ; v2.30.32 - : public class
+
+            .if [esi].com_item.sym
+
+                .new public_class[64]:char_t
+
+                mov edx,[esi].com_item.sym
+
+                .if SymFind( strcat( strcpy( &public_class, [edx].asym.name ), "Vtbl" ) )
+
+                    .if ( [eax].asym.total_size )
+if 1
+                        AddLineQueueX( "%s <>", &public_class )
+else
+                        .for ( edx = [eax].esym.structinfo,
+                               edi = [edx].struct_info.head,
+                             : edi : edi = [edi].sfield.next )
+
+                            mov ecx,[edi].sfield.sym.name
+                            mov edx,[edi].sfield.sym.type
+                            .if edx
+                                AddLineQueueX( "%s %s ?", ecx, [edx].asym.name )
+                            .else
+                                mov retval,asmerr( 2006, ecx )
+                                .break
+                            .endif
+                        .endf
+                        mov edi,buffer
+endif
+                    .endif
+                .else
+                    mov retval,asmerr( 2006, &public_class )
+                .endif
+            .endif
+
             inc IsCom
         .endif
     .endif
@@ -176,10 +214,11 @@ ProcType endp
 
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local rc:int_t,
-        args:int_t,
-        cmd:uint_t,
-        LPClass[64]:char_t
+  local rc          : int_t,
+        args        : int_t,
+        cmd         : uint_t,
+        public_pos  : string_t,
+        LPClass[64] : char_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -214,6 +253,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov ecx,cmd
         mov [eax].com_item.cmd,ecx
         mov [eax].com_item.langtype,0
+        mov [eax].com_item.sym,NULL
 
         mov esi,[ebx].string_ptr
         .if LclAlloc( &[strlen(esi) + 1] )
@@ -253,30 +293,56 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if ( cmd == T_DOT_CLASS )
 
             AddLineQueueX( "%s typedef ptr %s", edi, esi )
+        .endif
 
-            .for ( edx = 0, eax = args : !edx && [eax].asm_tok.token != T_FINAL : eax += 16 )
+        mov public_pos,NULL
 
-                .if ( [eax].asm_tok.token == T_COLON )
+        .for ( edi = 0, ebx = args : !edi && [ebx].token != T_FINAL : eax += 16 )
 
-                    inc edx
+            .if ( [ebx].token == T_COLON )
+
+                .if ( [ebx+asm_tok].token  == T_DIRECTIVE && \
+                      [ebx+asm_tok].tokval == T_PUBLIC )
+
+
+                    mov public_pos,[ebx].tokpos
+                    mov byte ptr [eax],0
+                    mov ebx,[ebx+asm_tok*2].string_ptr
+                    .return asmerr( 2006, ebx ) .if !SymFind( ebx )
+
+                    mov ecx,ModuleInfo.ComStack
+                    mov [ecx].com_item.sym,eax
+                    .break
+
+                .else
+
+                    inc edi
                 .endif
-            .endf
+            .endif
+        .endf
+
+        .if ( cmd == T_DOT_CLASS )
 
             mov ebx,args
             mov ecx,ModuleInfo.ComStack
 
             .if ( [ecx].com_item.langtype )
-                .if edx
+                .if edi
                     AddLineQueueX( "%s::%s proto %s %s", esi, esi, [ebx-16].string_ptr, [ebx].tokpos )
                 .else
                     AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx-16].string_ptr )
                 .endif
             .else
-                .if edx
+                .if edi
                     AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx].tokpos )
                 .else
                     AddLineQueueX( "%s::%s proto", esi, esi )
                 .endif
+            .endif
+
+            mov eax,public_pos
+            .if eax
+                mov byte ptr [eax],':'
             .endif
 
             mov eax,8
@@ -294,8 +360,14 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .else
             AddLineQueueX( "%s struct", esi )
         .endif
-        AddLineQueueX( "lpVtbl %sVtbl ?", &LPClass )
-        .endc
+
+        mov ecx,ModuleInfo.ComStack
+        mov eax,[ecx].com_item.sym
+        .if eax
+            AddLineQueueX( "%s <>", [eax].asym.name )
+        .else
+            AddLineQueueX( "lpVtbl %sVtbl ?", &LPClass )
+        .endif
     .endsw
 
     .if ModuleInfo.list

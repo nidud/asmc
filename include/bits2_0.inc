@@ -53,11 +53,8 @@ __IBackgroundCopyJob3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyJob3, "443c8934-90ff-48ed-bcde-26f5c7450042")
 
-.comdef IBackgroundCopyJob3
+.comdef IBackgroundCopyJob3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AddFileSet		proc :ULONG, :ptr
     AddFile		proc :LPCWSTR, :LPCWSTR
     EnumFiles		proc :ptr
@@ -102,6 +99,7 @@ DEFINE_IIDX(IBackgroundCopyJob3, "443c8934-90ff-48ed-bcde-26f5c7450042")
     AddFileWithRanges	proc :LPCWSTR, :LPCWSTR, :DWORD, :BG_FILE_RANGE
     SetFileACLFlags	proc :DWORD
     GetFileACLFlags	proc :ptr
+
     .ends
 
 endif
@@ -111,16 +109,14 @@ __IBackgroundCopyFile2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBackgroundCopyFile2, "83e81b93-0873-474d-8a8c-f2018b1a939c")
 
-.comdef IBackgroundCopyFile2
+.comdef IBackgroundCopyFile2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetRemoteName	proc :ptr
     GetLocalName	proc :ptr
     GetProgress		proc :ptr
     GetFileRanges	proc :ptr, :ptr
     SetRemoteName	proc :LPCWSTR
+
     .ends
 
 endif

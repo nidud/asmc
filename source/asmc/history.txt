@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+
+Changes in 2.30 - 3 Des 2019
 - added @Cstr( n ) - get prev string labels
 - added _STDCALL_SUPPORTED to switch /Gz
 - added [: public class] to .class and .comdef
@@ -26,8 +28,6 @@ Changes in 2.31 - xx xxx 2019
 - renamed .SWITCH NOTEST to .SWITCH JMP
 - renamed .CLASSDEF to .CLASS
 - removed .UNTILAXZ, .UNTILDXZ, .UNTILBXZ
-
-Changes in 2.30 - 19 Apr 2019
 - added .pragma asmc(push/pop)
 - removed switch /Xc
 - removed option asmc

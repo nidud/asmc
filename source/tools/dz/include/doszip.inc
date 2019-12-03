@@ -56,7 +56,7 @@ _C_CONFEXIT	equ 00400000h
 _C_ZINCSUBDIR	equ 00800000h
 _C_VISUALUPDATE equ 01000000h
 _C_PANELEDIT	equ 02000000h
-_C_DEFAULT	equ 017F70A4h
+_C_DEFAULT	equ 017F40A4h
 
 _MKL_APPEND	equ 0001h	; add to list or create new
 _MKL_UNIX	equ 0002h	; convert to unix

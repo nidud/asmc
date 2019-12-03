@@ -1,10 +1,7 @@
-;
-; https://github.com/RednibCoding/glut_startingpoint
-;
 
 include gl/glut.inc
 
-.code
+    .code
 
 renderScene proc
 

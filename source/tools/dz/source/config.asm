@@ -28,14 +28,14 @@ __outpath   dd 0
 entryname   dd 0
 mainswitch  dd 0            ; program switch
 dzexitcode  dd 0            ; return code (23 if exec)
-numfblock   dd MAXFBLOCK        ; number of file pointers allocated
+numfblock   dd MAXFBLOCK    ; number of file pointers allocated
 
 ;;;;;;;;;-------------------------------
     ; Configuration file (DZCONFIG)
     ;-------------------------------
 config          label S_CONFIG
 version         dd DOSZIP_VERSION
-cflag           dd _C_DEFAULT and not (_C_MENUSLINE or _C_STATUSLINE)
+cflag           dd _C_DEFAULT
 console         dd CON_DEFAULT
 fsflag          dd IO_SEARCHSUB
 tvflag          dd _TV_HEXOFFSET or _TV_USEMLINE
@@ -53,7 +53,7 @@ path_b          S_WSUB <_W_DEFAULT or _W_PANELID,0,MAXFBLOCK>
 opfilter        S_FILT <-1,0,0,0,0,'*.*'>
 at_foreground   db 0x07,0x07,0x0F,0x07,0x08,0x08,0x07,0x07
                 db 0x08,0x07,0x0A,0x0B,0x0F,0x0B,0x0B,0x0B
-at_background   db 0x00,0x00,0x00,0x10,0x30,0x10,0x10,0x00
+at_background   db 0x00,0x00,0x00,0x10,0x30,0x10,0x30,0x00
                 db 0x10,0x10,0x00,0x00,0x00,0x00,0x07,0x07
 mklist          S_MKLST <0,0,0,-1,0>
 

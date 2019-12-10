@@ -10,6 +10,7 @@ include time.inc
 include cfini.inc
 include stdlib.inc
 include crtl.inc
+include tview.inc
 
 ifdef __WIN95__
 MAXHIT equ 100000
@@ -20,12 +21,12 @@ endif
 externdef   IDD_DZCompareDirectories:dword
 externdef   IDD_DZRecursiveCompare:dword
 externdef   cp_emaxfb:byte
-externdef   cp_formatID:byte
+;externdef   cp_formatID:byte
 ;
 ; from cmsearch.asm
 ;
-externdef   ff_basedir:dword
-externdef   DLG_FindFile:dword
+;externdef   ff_basedir:dword
+;externdef   DLG_FindFile:dword
 
 ff_close        proto
 ff_close_dlg    proto
@@ -76,11 +77,16 @@ GCMD_search dd KEY_F2,      event_mklist
             dd KEY_CTRLF6,  event_flip
             dd 0
 
+ff_basedir      dd 0
+DLG_FindFile    dd 0
+
 ff_table        dd 0
 ff_count        dd 0
 ff_recursive    dd 0
 source          dd 0
 target          dd 0
+
+cp_formatID     db '[%04d:%04d]',0
 
 _COMP_NAME      equ 0x01 ; Compare File names
 _COMP_CREATE    equ 0x02 ; Compare File creation time
@@ -98,6 +104,56 @@ flags           dd _COMP_NAME or _COMP_WRITE or _COMP_SUBDIR
     .code
 
     option proc: private
+
+ff_event_xcell proc
+    ff_putcelid(addr cp_formatID)
+    dlxcellevent()
+    ret
+ff_event_xcell endp
+
+ff_getcurobj proc
+    xor eax,eax
+    mov edx,tdllist
+    .if [edx].S_LOBJ.ll_count != eax
+
+        mov eax,[edx].S_LOBJ.ll_index
+        add eax,[edx].S_LOBJ.ll_celoff
+        shl eax,2
+        mov edx,[edx].S_LOBJ.ll_list
+        add edx,eax
+        mov eax,[edx]
+    .endif
+    ret
+ff_getcurobj endp
+
+ff_getcurfile proc
+    ff_getcurobj()
+    .ifnz
+
+        add eax,S_SBLK.sb_file
+    .endif
+    ret
+ff_getcurfile endp
+
+ff_putcelid proc uses ebx format
+
+    mov  ebx,DLG_FindFile
+    movzx eax,[ebx].S_DOBJ.dl_index
+    .if al >= ID_FILE
+
+        xor eax,eax
+    .endif
+    inc eax
+    mov edx,tdllist
+    add eax,[edx].S_LOBJ.ll_index
+    mov ecx,[edx].S_LOBJ.ll_count
+    mov bx,[ebx+4]
+    add bx,0F03h
+    mov dl,bh
+    scputf(ebx, edx, 0, 0, format, eax, ecx)
+    ret
+
+ff_putcelid endp
 
 ff_alloc proc uses esi edi ebx path, fb
     strlen(path)
@@ -403,6 +459,101 @@ ff_directory proc directory
     ret
 ff_directory endp
 
+ffsearchinitpath proc private path
+
+    mov esi,path
+    mov ah,0
+    mov dl,' '
+    .if [esi] == dl
+
+        inc esi
+    .endif
+    .if byte ptr [esi] == '"'
+
+        inc esi
+        mov dl,'"'
+    .endif
+    push esi
+    .repeat
+        mov  al,[esi]
+        test al,al
+        jz   @F
+        inc  esi
+    .until  al == dl
+    mov [esi-1],ah
+@@:
+    pop eax
+    ret
+ffsearchinitpath endp
+
+ff_searchpath proc uses esi edi ebx directory
+
+  local path[_MAX_PATH]:byte
+
+    strcpy(addr path, directory)
+    xor ecx,ecx
+    xor ebx,ebx
+    mov ff_basedir,eax
+    .if path == cl
+
+        mov path,'"'
+        inc eax
+        mov edx,com_wsub
+        strcpy(eax, [edx].S_WSUB.ws_path)
+    .endif
+
+    .repeat
+        ;
+        ; Multi search using quotes:
+        ; Find Files: ["Long Name.type" *.c *.asm.......]
+        ; Location:   ["D:\My Documents" c: f:\doc......]
+        ;
+        ffsearchinitpath(ff_basedir)
+        mov ff_basedir,eax
+        push esi
+        .if strlen(eax)
+            push eax
+            add eax,ff_basedir
+            .if byte ptr [eax-1] == '\'
+
+                mov byte ptr [eax-1],0
+            .endif
+            mov eax,DLG_FindFile
+            mov edi,[eax+OF_SUBD]
+            mov eax,[eax].S_TOBJ.to_data[OF_MASK]
+            mov fp_maskp,eax
+            .repeat
+                ffsearchinitpath(fp_maskp)
+                mov  fp_maskp,eax
+                push edx
+                .if edi & _O_FLAGB
+
+                    scan_directory(1, ff_basedir)
+                .else
+                    push ff_basedir
+                    call fp_directory
+                .endif
+                mov ebx,eax
+                pop edx
+                mov fp_maskp,esi
+                .if dl == '"'
+
+                    mov [esi-1],dl
+                .endif
+                .break .if byte ptr [esi] == 0
+                mov [esi-1],dl
+            .until eax
+            pop eax
+        .endif
+        pop esi
+        mov ff_basedir,esi
+        .break .if ebx
+        .break .if byte ptr [esi] == 0
+    .until !eax
+    mov eax,ebx
+    ret
+ff_searchpath endp
+
 event_find proc uses esi edi ebx
   local cursor:S_CURSOR
     CursorGet(&cursor)
@@ -590,6 +741,208 @@ event_flip proc
     ret
 
 event_flip endp
+
+ff_event_edit proc
+    ff_getcurfile()
+    jz event_normal
+    push eax
+    dlhide(DLG_FindFile)
+    pop eax
+    tedit(eax, [eax-8])
+    dlshow(DLG_FindFile)
+event_normal:
+    mov eax,_C_NORMAL
+    ret
+ff_event_edit endp
+
+ff_event_exit proc
+    mov eax,_C_ESCAPE
+    ret
+ff_event_exit endp
+
+ff_event_view proc
+    mov eax,DLG_FindFile
+    cmp [eax].S_DOBJ.dl_index,ID_FILE
+    jnb event_normal
+    ff_getcurfile()
+    jz  event_normal
+    tview(eax, [eax-4]) ; .S_SBLK.sb_offs
+event_normal:
+    mov eax,_C_NORMAL
+    ret
+ff_event_view endp
+
+ff_event_filter proc
+    cmfilter()
+    mov edx,DLG_FindFile
+    mov dx,[edx+4]
+    add dx,1410h
+    mov cl,dh
+    mov eax,filter
+    test eax,eax
+    mov eax,7
+    .if ZERO?
+        mov al,' '
+    .endif
+    scputw(edx, ecx, 1, eax)
+    mov eax,_C_NORMAL
+    ret
+ff_event_filter endp
+
+ff_update_cellid proc uses edi ebx
+
+    mov ebx,DLG_FindFile
+    mov edi,tdllist
+    mov ecx,ID_FILE
+    mov eax,_O_STATE
+    .repeat
+        add ebx,16
+        or  [ebx],ax
+    .untilcxz
+    mov ebx,DLG_FindFile
+    mov eax,not _O_STATE
+    mov ecx,[edi].S_LOBJ.ll_numcel
+    .while ecx
+        add ebx,16
+        and [ebx],ax
+        dec ecx
+    .endw
+    mov eax,_C_NORMAL
+    ret
+
+ff_update_cellid endp
+
+ff_deleteobj proc uses ebx
+
+    ff_getcurobj()
+    .if !ZERO?
+        .repeat
+            mov ecx,[edx+4]
+            mov [edx],ecx
+            add edx,4
+        .until !ecx
+
+        free(eax)
+        mov ebx,tdllist
+        dec [ebx].S_LOBJ.ll_count
+        mov eax,[ebx].S_LOBJ.ll_count
+        mov edx,[ebx].S_LOBJ.ll_index
+        mov ecx,[ebx].S_LOBJ.ll_celoff
+        .if ZERO?
+
+            mov edx,eax
+            mov ecx,eax
+        .else
+            .if edx
+
+                mov ebx,eax
+                sub ebx,edx
+                .if ebx < ID_FILE
+                    dec edx
+                    inc ecx
+                .endif
+            .endif
+            sub eax,edx
+            .if eax >= ID_FILE
+
+                mov eax,ID_FILE
+            .endif
+            .if ecx >= eax
+
+                dec ecx
+            .endif
+        .endif
+        mov ebx,tdllist
+        mov [ebx].S_LOBJ.ll_index,edx
+        mov [ebx].S_LOBJ.ll_celoff,ecx
+        mov [ebx].S_LOBJ.ll_numcel,eax
+        mov ebx,DLG_FindFile
+        test eax,eax
+        mov al,cl
+        .if ZERO?
+            mov al,ID_FILE
+        .endif
+        mov [ebx].S_DOBJ.dl_index,al
+        mov eax,1
+    .endif
+    ret
+
+ff_deleteobj endp
+
+ff_close proc uses esi edi
+
+    mov edi,tdllist
+    mov esi,[edi].S_LOBJ.ll_list
+    .if esi
+        mov edi,[edi].S_LOBJ.ll_count
+        .while  edi
+            lodsd
+            free(eax)
+            dec edi
+        .endw
+        mov edi,tdllist
+        free([edi].S_LOBJ.ll_list)
+    .endif
+    ret
+
+ff_close endp
+
+ff_close_dlg proc
+
+    mov byte ptr fsflag,ah
+    movzx eax,[ebx].S_DOBJ.dl_index
+    dlclose(ebx)
+
+    .if edx == ID_GOTO
+
+        mov ebx,tdllist
+        .if [ebx].S_LOBJ.ll_count
+
+            .if panel_state(cpanel)
+
+                mov eax,[ebx].S_LOBJ.ll_index
+                add eax,[ebx].S_LOBJ.ll_celoff
+                mov ebx,[ebx].S_LOBJ.ll_list
+                mov ebx,[ebx+eax*4]
+                add ebx,S_SBLK.sb_file
+
+                .if strrchr(ebx, '\')
+
+                    mov byte ptr [eax],0
+                    cpanel_setpath(ebx)
+                .endif
+            .endif
+        .endif
+    .endif
+    ret
+ff_close_dlg endp
+
+ff_rsevent proc idd, find
+
+    .repeat
+        mov [edx],eax
+        add edx,sizeof(S_TOBJ)
+    .untilcxz
+    dlshow(ebx)
+    dlinit(ebx)
+
+    mov filter,0
+    .while rsevent(idd, ebx)
+
+        mov esi,eax
+        mov edi,ecx
+        mov al,[ebx].S_DOBJ.dl_index
+        .if al < ID_FILE
+
+            .break .if ff_event_view() != _C_NORMAL
+        .else
+            .break .if al == ID_GOTO
+            find()
+        .endif
+    .endw
+    mov ah,byte ptr fsflag
+    ret
+ff_rsevent endp
 
 cmcompsub proc PUBLIC uses esi edi ebx
 

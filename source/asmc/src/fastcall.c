@@ -266,6 +266,71 @@ static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
 
 #endif
 
+int get_x32_regno(int reg)
+{
+    if ( reg >= T_RAX && reg <= T_RDI )
+	return ( reg - ( T_RAX - T_EAX ) );
+    if ( reg >= T_R8 && reg <= T_R15 )
+	return ( reg - ( T_R8 - T_R8D ) );
+    if ( ( reg >= T_AX && reg <= T_DI ) || ( reg >= T_R8W && reg <= T_R15W ) )
+	return (reg + ( T_EAX - T_AX ) );
+    if ( ( reg >= T_AL && reg <= T_BH ) || ( reg >= T_R8B && reg <= T_R15B ) )
+	return (reg + ( T_EAX - T_AL ) );
+    if ( reg >= T_SPL && reg <= T_DIL )
+	return ( reg - ( T_SPL - T_ESP ) );
+    return reg;
+}
+
+int get_x64_regno(int reg)
+{
+    reg = get_x32_regno(reg);
+    if ( reg >= T_EAX && reg <= T_EDI )
+	return ( reg + ( T_RAX - T_EAX ) );
+    return ( reg + ( T_R8 - T_R8D ) );
+}
+
+int GetAccumulator(int size, uint_8 *regs)
+{
+    int i = T_RAX;
+    switch ( size ) {
+    case 1: i = T_AL;  break;
+    case 2: i = T_AX;  break;
+    case 4: i = T_EAX; break;
+    }
+    *regs |= R0_USED;
+    return i;
+}
+
+static int GetPSize( int address, struct asym *param, struct expr *opnd )
+{
+    int psize;
+
+    /* v2.11: default size is 32-bit, not 64-bit */
+
+    if ( param->is_vararg ) {
+
+	psize = 0;
+
+	if ( address || opnd->inst == T_OFFSET )
+	    psize = 8;
+	else if ( opnd->kind == EXPR_REG ) {
+	    if ( opnd->indirect == FALSE )
+		psize = SizeFromRegister( opnd->base_reg->tokval );
+	    else
+		psize = 8;
+	} else if ( opnd->mem_type != MT_EMPTY )
+	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
+
+	if ( psize < 4 )
+	    psize = 4;
+
+    } else {
+	psize = SizeFromMemtype( param->mem_type, USE64, param->type );
+    }
+    return psize;
+}
+
+
 static int ms64_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
     int i;
@@ -434,7 +499,9 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     int reg;
     int reg_64;
     int reg2;
-    int m3, i, i32;
+    int m3;
+    int i;
+    int i32;
     int base;
     int offset;
     bool destroyed = FALSE;
@@ -442,21 +509,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
     /* v2.11: default size is 32-bit, not 64-bit */
     /* v2.24: 64-bit if [reg].. */
-    if ( param->sym.is_vararg ) {
-	psize = 0;
-	if ( addr || opnd->inst == T_OFFSET )
-	    psize = 8;
-	else if ( opnd->kind == EXPR_REG ) {
-	    if ( opnd->indirect == FALSE )
-		psize = SizeFromRegister( opnd->base_reg->tokval );
-	    else
-		psize = 8;
-	} else if ( opnd->mem_type != MT_EMPTY )
-	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
-	if ( psize < 4 )
-	    psize = 4;
-    } else
-	psize = SizeFromMemtype( param->sym.mem_type, USE64, param->sym.type );
+
+    psize = GetPSize( addr, (struct asym *)param, opnd );
 
     /* check for register overwrites; v2.11: moved out the if( index >= 4 ) block */
     if ( opnd->base_reg != NULL ) {
@@ -495,21 +549,26 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     if ( vector_call && index < 6 )
 	offset += offset;
 
-    if ( index >= 4 && !( vector_call && index < 6 && param->sym.mem_type == MT_REAL16 ) ) {
+    if ( index >= 4 && ( addr || psize > 8 ) ) {
 
-	if ( addr || psize > 8 ) {
-	    if ( psize == 4 )
-		i = T_EAX;
-	    else {
-		i = T_RAX;
-		if ( psize < 8 )
-		    asmerr( 2114, index+1 );
+	if ( psize == 4 ) {
+	    i = T_EAX;
+	} else {
+	    if ( psize < 8 ) {
+		asmerr( 2114, index+1 );
+	    } else if ( vector_call && index < 6 &&
+		    ( param->sym.mem_type == MT_REAL16 || param->sym.mem_type == MT_OWORD ) ) {
+		return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 	    }
-	    *regs_used |= R0_USED;
-	    AddLineQueueX( " lea %r, %s", i, paramvalue );
-	    AddLineQueueX( " mov [%r+%u], %r", T_RSP, NUMQUAL offset, i );
-	    return( 1 );
+	    i = T_RAX;
 	}
+	*regs_used |= R0_USED;
+	AddLineQueueX( " lea %r, %s", i, paramvalue );
+	AddLineQueueX( " mov [%r+%u], %r", T_RSP, NUMQUAL offset, i );
+	return( 1 );
+    }
+
+    if ( index >= 4 ) {
 
 	if ( opnd->kind == EXPR_CONST ||
 	   ( opnd->kind == EXPR_ADDR && opnd->indirect == FALSE &&
@@ -527,6 +586,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		if ( param->sym.mem_type == MT_PTR && opnd->kind == EXPR_ADDR && opnd->sym->state != SYM_UNDEFINED ) {
 		    asmerr( 2114, index+1 );
 		}
+
 		switch ( psize ) {
 		case 1:	  i = T_BYTE; break;
 		case 2:	  i = T_WORD; break;
@@ -559,29 +619,20 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 			asmerr( 2114, index+1 );
 			psize = size;
 		    }
-		    switch ( psize ) {
-		    case 1:  i = T_AL;	break;
-		    case 2:  i = T_AX;	break;
-		    case 4:  i = T_EAX; break;
-		    default: i = T_RAX; break;
-		    }
-		    *regs_used |= R0_USED;
+		    i = GetAccumulator( psize, regs_used );
 		}
 	    } else {
 		if ( opnd->mem_type == MT_EMPTY )
 		    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
 		else
 		    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
-		switch ( psize ) {
-		case 1:	 i = T_AL;  break;
-		case 2:	 i = T_AX;  break;
-		case 4:	 i = T_EAX; break;
-		default: i = T_RAX; break;
-		}
-		*regs_used |= R0_USED;
+		i = GetAccumulator( psize, regs_used );
 	    }
 
 	    /* v2.11: no expansion if target type is a pointer */
+
+	    i32 = get_x32_regno(i);
+
 	    if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
 		asmerr( 2114, index+1 );
 	    }
@@ -596,7 +647,9 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    } else if ( opnd->kind != EXPR_REG || opnd->indirect == TRUE ) {
 		if ( ( paramvalue[0] == '0' && paramvalue[1] == 0 ) ||
 		     ( opnd->kind == EXPR_CONST && opnd->value == 0 ) )
-		    AddLineQueueX(" xor %r, %r", i, i );
+		    AddLineQueueX(" xor %r, %r", i32, i32 );
+		else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 )
+		    AddLineQueueX( " mov %r, %s", i32, paramvalue );
 		else
 		    AddLineQueueX( " mov %r, %s", i, paramvalue );
 	    }
@@ -672,9 +725,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    base = 3*4; break;
 	}
 	i = ms64_regs[index+base];
-	i32 = i;
-	if ( base == 3*4 )
-	    i32 = ms64_regs[index+2*4];
+	i32 = get_x32_regno(i);
 
 	/* optimization if the register holds the value already */
 	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
@@ -710,23 +761,26 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    } else
 		AddLineQueueX( " mov%sx %r, %s", IS_SIGNED( opnd->mem_type ) ? "s" : "z", i, paramvalue );
 	else {
+
 	    if ( ( paramvalue[0] == '0' && paramvalue[1] == 0 ) ||
 		 ( opnd->kind == EXPR_CONST && opnd->value == 0 ) )
+
 		AddLineQueueX( " xor %r, %r", i32, i32 );
+
 	    else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 ) {
-		if ( i32 >= T_AX && i32 <= T_DI )
-		    i32 += (T_EAX - T_AX);
-		else if ( i32 >= T_R8W && i32 <= T_R15W )
-		    i32 += (T_R8D - T_R8W);
+
 		AddLineQueueX( " mov %r, %s", i32, paramvalue );
+
 	    } else if ( m3 && opnd->kind == EXPR_ADDR ) { /* added v2.29 */
 
 		*regs_used |= R0_USED;
 		if ( size == 3 ) {
+
 		    if ( i32 >= T_EAX && i32 <= T_EDI )
 			i = i32 - (T_EAX - T_AL);
 		    else
 			i = i32 - (T_R8D - T_R8B);
+
 		    AddLineQueueX( " mov %r, byte ptr %s[2]", i, paramvalue );
 		    AddLineQueueX( " shl %r, 16", i32 );
 		    if ( i32 >= T_EAX && i32 <= T_EDI )
@@ -822,6 +876,9 @@ int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     return( 1 );
 }
 
+/* added v2.31 */
+static int *elf64_valptr = NULL;
+
 static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 	struct asm_tok tokenarray[], int *value )
 {
@@ -840,8 +897,10 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 		sym = SymFind( tokenarray[start].string_ptr );
 		if ( sym && ( sym->mem_type & MT_FLOAT ) )
 		    fcscratch++;
-	    }
+	    } else if ( tokenarray[start].token == T_COMMA )
+		stack_params++; /* added v2.31 */
 	}
+	stack_params -= fcscratch;
     } else {
 
 	for ( p = proc->e.procinfo->paralist; p; p = p->prev ) {
@@ -851,9 +910,11 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 		stack_params++;
 	}
     }
-    if ( stack_params > 5 )
+    if ( stack_params > 6 ) {
 	*value = stack_params - 6;
-    else
+	if ( *value & 1 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+	    elf64_valptr = value;
+    } else
 	*value = 0;
     return( fcscratch );
 }
@@ -890,8 +951,10 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     uint_32 size;
     uint_32 psize;
     int reg;
-    int i, i32;
+    int i32;
+    int i;
     int base;
+    int stack = FALSE; /* added v2.31 */
     int destroyed = FALSE;
     struct asym *sym;
     struct dsym *dpar;
@@ -899,20 +962,20 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     if ( *paramvalue == 0 )
 	return 1;
 
+    /* v2.31 - align 16 if arg count is odd.. */
+
+    if ( elf64_valptr ) {
+
+	(*elf64_valptr)++;
+	elf64_valptr = NULL;
+	AddLineQueueX( " sub %r, 8", T_RSP );
+    }
+
+    psize = GetPSize( addr, (struct asym *)param, opnd );
+
     /* v2.11: default size is 32-bit, not 64-bit */
+
     if ( param->sym.is_vararg ) {
-	psize = 0;
-	if ( addr || opnd->inst == T_OFFSET )
-	    psize = 8;
-	else if ( opnd->kind == EXPR_REG ) {
-	    if ( opnd->indirect == FALSE )
-		psize = SizeFromRegister( opnd->base_reg->tokval );
-	    else
-		psize = 8;
-	} else if ( opnd->mem_type != MT_EMPTY )
-	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
-	if ( psize < 4 )
-	    psize = 4;
 
 	if ( psize == 16 || opnd->mem_type & MT_FLOAT ) {
 	    fcscratch--;
@@ -920,18 +983,18 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    i = index + T_XMM0;
 	} else {
 	    index = index - fcscratch;
-	    if ( index > 5 )
-		return 0;
-	    base = 3*6;
-	    switch ( psize ) {
-	    case 1: base = 0;	break;
-	    case 2: base = 1*6; break;
-	    case 4: base = 2*6; break;
-	    }
-	    i = elf64_regs[index+base];
+	    if ( index < 6 ) {
+		base = 3*6;
+		switch ( psize ) {
+		 case 1: base = 0; break;
+		 case 2: base = 1*6; break;
+		 case 4: base = 2*6; break;
+		}
+		i = elf64_regs[index+base];
+	    } else
+		stack = TRUE;
 	}
     } else {
-	psize = SizeFromMemtype( param->sym.mem_type, USE64, param->sym.type );
 	i = param->sym.regist[0];
 	index = param->sym.regist[1];
     }
@@ -943,148 +1006,175 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    sym = (struct asym *)param;
     }
 
-    if ( !( sym->mem_type & MT_FLOAT ) && index >= 6 )
-	return 0;
+    if ( !( sym->mem_type & MT_FLOAT ) && index >= 6 ) {
+
+	if ( stack == FALSE )
+	    return 0;
+
+	i = T_RAX;
+    }
 
     if ( sym->mem_type == MT_REAL4 || sym->mem_type == MT_REAL8 || sym->mem_type == MT_REAL16 ) {
 
 	if ( opnd->base_reg )
 	    i = opnd->base_reg->tokval;
-	CheckXMM( i, index, (struct dsym *)sym, opnd, paramvalue, regs_used );
+
+	return CheckXMM( i, index, (struct dsym *)sym, opnd, paramvalue, regs_used );
+    }
+
+    i32 = get_x32_regno(i);
+
+    if ( addr ) {
+	if ( psize >= 4 ) {
+	    AddLineQueueX( " lea %r, %s", i, paramvalue );
+	    if ( stack == TRUE ) {
+		AddLineQueueX( " push %r", i );
+		*regs_used |= R0_USED;
+		return( 1 );
+	    }
+	} else
+	    asmerr( 2114, index + 1 );
+	*regs_used |= ( 1 << ( index + RPAR_START ) );
+	return( 1 );
+    }
+
+    if ( opnd->kind == EXPR_REG ) {
+	if ( opnd->indirect == FALSE ) {
+	    reg = opnd->base_reg->tokval;
+	    size = SizeFromRegister( reg );
+	} else {
+	    size = 8;
+	}
+    } else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
+	size = psize;
+    } else if ( opnd->mem_type != MT_EMPTY ) {
+	size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
+    } else if ( opnd->kind == EXPR_ADDR && opnd->sym->state == SYM_UNDEFINED ) {
+	size = psize;
+    } else
+	size = ( opnd->inst == T_OFFSET ? 8 : 4 );
+
+    if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
+	asmerr( 2114, index+1 );
+    }
+
+    /* optimization if the register holds the value already */
+
+    if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
+
+	if ( GetValueSp( reg ) & OP_XMM ) {
+
+	    CheckXMM( opnd->base_reg->tokval, index, param, opnd, paramvalue, regs_used );
+	    return 1;
+
+	} else if ( GetValueSp( reg ) & OP_R ) {
+
+	    /* case <reg>::<reg> */
+
+	    if ( psize == 16 && size == 8 && opnd->base_reg[1].token == T_DBL_COLON ) {
+
+		if ( i != opnd->base_reg[2].tokval )
+		    AddLineQueueX( " mov %r, %r", i, opnd->base_reg[2].tokval );
+		i = elf64_regs[index+3*6+1];
+		if ( i != reg )
+		    AddLineQueueX( " mov %r, %r", i, reg );
+
+		return( 1 );
+	    }
+
+	    if ( stack == TRUE ) {
+
+		AddLineQueueX( " push %r", get_x64_regno(reg) );
+		return( 1 );
+	    }
+
+	    if ( i == reg ) {
+		return( 1 );
+	    }
+	    if ( opnd->mem_type == MT_EMPTY ) {
+
+		/* get type info (signed) */
+		opnd->mem_type = param->sym.mem_type;
+	    }
+	    base = GetRegNo( reg );
+	    if ( REGPAR_ELF64 & ( 1 << base ) ) {
+		base = GetParmIndexS( base );
+		if ( *regs_used & ( 1 << ( base + ELF64_START ) ) )
+			asmerr( 2133 );
+	    }
+	}
+    }
+    /* v2.11: allow argument extension */
+    if ( size < psize ) {
+	if ( size == 4 ) {
+	    if ( IS_SIGNED( opnd->mem_type ) ) {
+		AddLineQueueX( " movsxd %r, %s", i, paramvalue );
+	    } else {
+		AddLineQueueX( " mov %r, %s", i32, paramvalue );
+	    }
+	} else {
+	    AddLineQueueX( " mov%sx %r, %s",
+		IS_SIGNED( opnd->mem_type ) ? "s" : "z", i32, paramvalue );
+	}
+
+	if ( stack == TRUE ) {
+	    AddLineQueueX( " push %r", i );
+	    *regs_used |= R0_USED;
+	    return 1;
+	}
 
     } else {
 
-	base = 3*6;
-	switch ( psize ) {
-	case 1: base = 0;   break;
-	case 2: base = 1*6; break;
-	case 4: base = 2*6; break;
-	}
-	i32 = i;
-	if ( base == 3*6 )
-	    i32 = elf64_regs[index+2*6];
+	if ( stack == TRUE ) {
 
-	if ( addr ) {
-	    if ( psize >= 4 )
-		AddLineQueueX( " lea %r, %s", i, paramvalue );
-	    else
-		asmerr( 2114, index + 1 );
-	    *regs_used |= ( 1 << ( index + RPAR_START ) );
-	    return( 1 );
+	    AddLineQueueX( " push %s", paramvalue );
+	    return 1;
 	}
 
-	if ( opnd->kind == EXPR_REG ) {
-	    if ( opnd->indirect == FALSE ) {
-		reg = opnd->base_reg->tokval;
-		size = SizeFromRegister( reg );
-	    } else {
-		size = 8;
-	    }
-	} else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
-	    size = psize;
-	} else if ( opnd->mem_type != MT_EMPTY ) {
-	    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
-	} else if ( opnd->kind == EXPR_ADDR && opnd->sym->state == SYM_UNDEFINED ) {
-	    size = psize;
-	} else
-	    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
+	if ( ( paramvalue[0] == '0' && paramvalue[1] == 0 ) ||
+	     ( opnd->kind == EXPR_CONST && opnd->value == 0 ) ) {
 
-	if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
-	    asmerr( 2114, index+1 );
-	}
-
-	/* optimization if the register holds the value already */
-	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
-
-	    if ( GetValueSp( reg ) & OP_XMM ) {
-		CheckXMM( opnd->base_reg->tokval, index, param, opnd, paramvalue, regs_used );
-		return 1;
-	    } else if ( GetValueSp( reg ) & OP_R ) {
-
-		/* case <reg>::<reg> */
-
-		if ( psize == 16 && size == 8 && opnd->base_reg[1].token == T_DBL_COLON ) {
-
-		    if ( i != opnd->base_reg[2].tokval )
-			AddLineQueueX( " mov %r, %r", i, opnd->base_reg[2].tokval );
-		    i = elf64_regs[index+3*6+1];
-		    if ( i != reg )
-			AddLineQueueX( " mov %r, %r", i, reg );
-		    return( 1 );
-		}
-
-		if ( i == reg ) {
-		    return( 1 );
-		}
-		if ( opnd->mem_type == MT_EMPTY ) {
-
-		    /* get type info (signed) */
-		    opnd->mem_type = param->sym.mem_type;
-		}
-		base = GetRegNo( reg );
-		if ( REGPAR_ELF64 & ( 1 << base ) ) {
-		    base = GetParmIndexS( base );
-		    if ( *regs_used & ( 1 << ( base + ELF64_START ) ) )
-			asmerr( 2133 );
-		}
-	    }
-	}
-	/* v2.11: allow argument extension */
-	if ( size < psize )
-	    if ( size == 4 ) {
-		if ( IS_SIGNED( opnd->mem_type ) )
-		    AddLineQueueX( " movsxd %r, %s", i, paramvalue );
-		else
-		    AddLineQueueX( " mov %r, %s", i32, paramvalue );
-	    } else {
-		if ( psize == 2 )
-		    i = elf64_regs[index + 2*6];
-		AddLineQueueX( " mov%sx %r, %s", IS_SIGNED( opnd->mem_type ) ? "s" : "z", i, paramvalue );
-	    }
-	else {
-	    if ( ( paramvalue[0] == '0' && paramvalue[1] == 0 ) ||
-		 ( opnd->kind == EXPR_CONST && opnd->value == 0 ) ) {
-		AddLineQueueX( " xor %r, %r", i32, i32 );
-		if ( size == 16 ) {
-		    i = elf64_regs[index + 3 * 6 + 1];
-		    if ( opnd->hlvalue == 0 ) {
-			i = elf64_regs[index + 2 * 6 + 1];
-			AddLineQueueX( " xor %r, %r", i, i );
-		    } else
-			elf64_const( i, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
-		}
-	    } else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 ) {
-		if ( i32 >= T_AX && i32 <= T_DI )
-		    i32 += (T_EAX - T_AX);
-		else if ( i32 >= T_R8W && i32 <= T_R15W )
-		    i32 += (T_R8D - T_R8W);
-		AddLineQueueX( " mov %r, %s", i32, paramvalue );
-		if ( size == 16 ) {
-		    i = elf64_regs[index + 3 * 6 + 1];
+	    AddLineQueueX( " xor %r, %r", i32, i32 );
+	    if ( size == 16 ) {
+		i = elf64_regs[index + 3 * 6 + 1];
+		if ( opnd->hlvalue == 0 ) {
+		    i = elf64_regs[index + 2 * 6 + 1];
+		    AddLineQueueX( " xor %r, %r", i, i );
+		} else
 		    elf64_const( i, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
-		}
-	    } else if ( size == 16 ) {
-		reg = elf64_regs[index + 3 * 6 + 1];
-		if ( opnd->kind == EXPR_CONST ) {
-		    elf64_const( i, T_LOW64, opnd->llvalue, paramvalue, 0 );
-		    elf64_const( reg, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
-		} else {
-		    AddLineQueueX( " mov %r, qword ptr %s", i, paramvalue );
-		    AddLineQueueX( " mov %r, qword ptr %s[8]", reg, paramvalue );
-		}
-	    } else {
-		AddLineQueueX( " mov %r, %s", i, paramvalue );
 	    }
+
+	} else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 ) {
+
+	    AddLineQueueX( " mov %r, %s", i32, paramvalue );
+	    if ( size == 16 ) {
+		i = elf64_regs[index + 3 * 6 + 1];
+		elf64_const( i, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
+	    }
+
+	} else if ( size == 16 ) {
+
+	    reg = elf64_regs[index + 3 * 6 + 1];
+	    if ( opnd->kind == EXPR_CONST ) {
+		elf64_const( i, T_LOW64, opnd->llvalue, paramvalue, 0 );
+		elf64_const( reg, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
+	    } else {
+		AddLineQueueX( " mov %r, qword ptr %s", i, paramvalue );
+		AddLineQueueX( " mov %r, qword ptr %s[8]", reg, paramvalue );
+	    }
+	} else {
+
+	    AddLineQueueX( " mov %r, %s", i, paramvalue );
 	}
-	*regs_used |= ( 1 << ( index + ELF64_START ) );
     }
+    *regs_used |= ( 1 << ( index + ELF64_START ) );
     return( 1 );
 }
 
 static void elf64_fcend( struct dsym const *proc, int numparams, int value )
 {
     if ( value )
-	AddLineQueueX( " sub rsp, %u*8", value );
+	AddLineQueueX( " add rsp, %u*8", value );
 }
 
 /* get segment part of an argument

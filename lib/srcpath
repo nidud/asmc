@@ -1,5 +1,4 @@
 # SRCPATH--
-# Default root directories from %AsmcDir%
 #
 # %AsmcDir%\lib is used by MAKE.EXE
 # as !include directory if defined

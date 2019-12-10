@@ -159,23 +159,35 @@ rs_index	db ?
 rs_rect		S_RECT <?>
 S_ROBJ		ENDS
 
-S_DOBJ		STRUC
-dl_flag		dw ?
-dl_count	db ?
-dl_index	db ?
-dl_rect		S_RECT <?>
-dl_wp		PVOID ?
-dl_object	PVOID ?
-S_DOBJ		ENDS
+CALLBACKC(FPDLPROC)
 
 S_TOBJ		STRUC
 to_flag		dw ?
 to_count	db ?
 to_ascii	db ?
-to_rect		S_RECT <?>
+to_rect		S_RECT <>
 to_data		PVOID ?
-to_proc		PVOID ?
+to_proc		FPDLPROC ?
 S_TOBJ		ENDS
+LPTOBJ		typedef ptr S_TOBJ
+
+DOBJ		STRUC
+flag		dw ?
+count		db ?
+index		db ?
+rc		S_RECT <>
+wp		PVOID ?
+tobj		LPTOBJ ?
+DOBJ		ENDS
+
+S_DOBJ		STRUC
+dl_flag		dw ?
+dl_count	db ?
+dl_index	db ?
+dl_rect		S_RECT <>
+dl_wp		PVOID ?
+dl_object	LPTOBJ ?
+S_DOBJ		ENDS
 
 S_LOBJ		STRUC
 ll_dlgoff	dd ?	; start index in dialog

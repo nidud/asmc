@@ -367,7 +367,7 @@ comevent		PROTO :DWORD
 comhndlevent		PROTO
 command			PROTO :DWORD
 
-FindFile		PROTO :DWORD
+FindFile		PROTO :string_t
 cmfilter_load		PROTO
 
 cm_loadfblk		PROTO

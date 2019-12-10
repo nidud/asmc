@@ -608,7 +608,9 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			case 1:
 			    if ( reg >= T_AL && reg <= T_BH )
 				reg += (T_RAX - T_AL);
-			    else if ( reg >= T_SPL && reg <= T_R15B )
+			    else if ( reg >= T_SPL && reg <= T_DIL )
+				reg += (T_RSP - T_SPL);
+			    else if ( reg >= T_R8B && reg <= T_R15B )
 				reg += (T_R8 - T_R8B);
 			    break;
 			case 2:
@@ -1066,9 +1068,18 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	} else if ( ModuleInfo.Ofssize == USE32 ) {
 
-	    if ( tokenarray[parmpos+1].tokval != T_EAX )
-		AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
-	    AddLineQueueX( " mov %r, [%r]", T_EAX, T_EAX );
+	    int reg = T_EAX; /* v2.31 - skip mov eax,reg */
+
+	    if ( tokenarray[parmpos+1].tokval != T_EAX ) {
+
+		if ( tokenarray[parmpos+1].token == T_REG &&
+		     tokenarray[parmpos+1].tokval > T_EAX &&
+		     tokenarray[parmpos+1].tokval <= T_EDI )
+		    reg = tokenarray[parmpos+1].tokval;
+		else
+		    AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
+	    }
+	    AddLineQueueX( " mov %r, [%r]", T_EAX, reg );
 	}
     }
 

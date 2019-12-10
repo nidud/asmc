@@ -1,8 +1,9 @@
-.code
+
+    .code
 
 main proc
 
-    mov rsi,@CStr( "Hello world!\n" )
+    lea rsi,@CStr( "Hello world!\n" )
     mov edx,sizeof(@CStr( "Hello world!\n" ))
     mov edi,0x0001 ; stdout
     mov eax,0x0001 ; write()

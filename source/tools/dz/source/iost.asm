@@ -16,8 +16,8 @@ public odecrypt
     .data
     oupdate  dd 0
     odecrypt dd 0
-    STDI S_IOST <0,0,0,0x8000,0,0,0,0,0,0,0>
-    STDO S_IOST <0,0,0,0x8000,0,0,0,0,0,0,0>
+    STDI S_IOST {0,0,0,0x8000,0,0,0,0,{0},{0},{0}}
+    STDO S_IOST {0,0,0,0x8000,0,0,0,0,{0},{0},{0}}
 
     .code
 

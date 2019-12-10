@@ -1,9 +1,11 @@
+
 all: import build clean
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lbc .lib
 
 source_path = def
+target_path = ..\..\lib
 
 targets = \
 	aclui.lib	\
@@ -117,10 +119,10 @@ targets = \
 
 {$(source_path)}.def.lib:
 	import $<
-	libw /n /c /q /b /fac /ii $*.lib @$*.lbc
+	libw /n /c /q /b /fac /ii $(target_path)\$*.lib @$*.lbc
 
 build: $(targets)
-	libw /n /c /q /b /fac /ii ntvdm.lib @def\ntvdm.lbc
+	libw /n /c /q /b /fac /ii $(target_path)\ntvdm.lib @def\ntvdm.lbc
 
 import:
 	asmc -pe import.asm

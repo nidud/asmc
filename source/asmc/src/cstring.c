@@ -417,6 +417,8 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 	int rc = 0;
 	int d, x;
 	struct asym *sym;
+	struct expr opnd;
+	struct str_item *sp;
 
 	equal = _stricmp( tokenarray[0].string_ptr, "@CStr" );
 
@@ -433,6 +435,36 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 		i++;
 	    else
 		i = 0;
+	}
+
+	if ( tokenarray[i].token == T_OP_BRACKET &&
+	     tokenarray[i+1].token == T_NUM &&
+	     tokenarray[i+2].token == T_CL_BRACKET ) {
+
+	     /* v2.31 - return label[-value] */
+
+	    i++;
+
+	    _atoow( &opnd, tokenarray[i].string_ptr, tokenarray[i].numbase, tokenarray[i].itemlen );
+
+	    /* the number must be 32-bit */
+
+	    if ( opnd.hlvalue ) {
+
+		asmerr( 2156 );
+		return 0;
+	    }
+
+	    for ( x = opnd.value, sp = ModuleInfo.g.StrStack; x && sp; x--, sp = sp->next );
+
+	    if ( sp == NULL ) {
+
+		asmerr( 2156 );
+		return 0;
+	    }
+
+	    sprintf(buffer, "DS%04X", sp->index);
+	    return 1;
 	}
 
 	while ( tokenarray[i].token != T_FINAL ) {

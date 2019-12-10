@@ -5,7 +5,7 @@
 #include <globals.h>
 #include <hllext.h>
 
-#ifndef _LIBC
+//#ifndef _LIBC
 
 int strtrim( char *string )
 {
@@ -21,7 +21,7 @@ int strtrim( char *string )
     return (p - string + 1);
 }
 
-#endif
+//#endif
 
 static char *GetCondition( char *string, char **pp )
 {

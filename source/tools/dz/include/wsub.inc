@@ -230,9 +230,27 @@ ios_flag	dd ?
 ios_file	dd ?
 ios_crc		dd ?
 ios_line	dd ?		; line offset
-ios_offset	dq ?		; seek offset
-ios_total	dq ?		; count read/write
-ios_fsize	dq ?
+union
+ ios_offset	dq ?		; seek offset
+ struct
+  offset_l	dd ?
+  offset_h	dd ?
+ ends
+ends
+union
+ ios_total	dq ?		; count read/write
+ struct
+  total_l	dd ?
+  total_h	dd ?
+ ends
+ends
+union
+ ios_fsize	dq ?
+ struct
+  fsize_l	dd ?
+  fsize_h	dd ?
+ ends
+ends
 S_IOST		ENDS
 LPIOST		TYPEDEF PTR S_IOST
 

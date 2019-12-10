@@ -36,25 +36,15 @@ BuildImportLib proc uses rsi rdi rbx r12 r13 dll:LPSTR, path:LPSTR
             mov r13d,[rbx+rax].IMAGE_EXPORT_DIRECTORY.NumberOfNames
             mov esi,[rbx+rax].IMAGE_EXPORT_DIRECTORY.AddressOfNames
             add rsi,rbx
-ifdef __LIB__
-            fprintf(r12, "LIBRARY %s\nEXPORTS\n", rdi)
-endif
+
             .while r13d
                 lodsd
-ifdef __LIB__
-                fprintf(r12, "%s\n", &[rax+rbx])
-else
                 fprintf(r12, "++%s.\'%s.dll\'\n", &[rax+rbx], rdi)
-endif
                 dec r13d
             .endw
             fclose(r12)
             lea rbx,buffer
-ifdef __LIB__
-            sprintf(rbx, "lib /nologo /machine:x64 /def:%s.def /out:%s\\%s.lib", rdi, path, rdi)
-else
             sprintf(rbx, "libw /n /c /q /b /fac /i6 %s\\%s.lib @%s.def", path, rdi, rdi)
-endif
             system(rbx)
             strcat(rdi, ".def")
             remove(rdi)
@@ -77,61 +67,58 @@ main proc argc:SINT, argv:ptr
   local list:LPSTR
   local path:LPSTR
 
-    .repeat
+    .if ecx < 2
 
-        .if ecx < 2
+        printf("Usage: import <list> [<out_path>]\n")
 
-            printf("Usage: implib <list> [<out_path>]\n")
+        .return 1
 
-            mov eax,1
-            .break
-        .endif
+    .endif
 
-        mov rax,[rdx+8]
-        mov list,rax
+    mov list,[rdx+8]
 
-        .if ecx > 2
-            mov rax,[rdx+16]
-        .else
-            lea rax,@CStr(".")
-        .endif
-        mov path,rax
+    .if ecx > 2
+        mov rax,[rdx+16]
+    .else
+        lea rax,@CStr(".")
+    .endif
+    mov path,rax
 
-        .if fopen(list, "rt")
+    .if fopen(list, "rt")
 
-            mov rsi,rax
-            lea rdi,lbuf
+        mov rsi,rax
+        lea rdi,lbuf
 
-            .while fgets(rdi, 256, rsi)
+        .while fgets(rdi, 256, rsi)
 
-                mov al,[rdi]
-                .if al == ' ' || al == 9 || al == ';'
+            mov al,[rdi]
+            .if al == ' ' || al == 9 || al == ';'
 
-                    xor eax,eax
+                xor eax,eax
 
-                .elseif strlen(rdi)
+            .elseif strlen(rdi)
 
-                    lea rcx,[rdi+rax]
-                    .repeat
-                        dec rcx
-                        .break .if byte ptr [rcx] > ' '
-                        mov byte ptr [rcx],0
-                        dec rax
-                    .untilz
-                .endif
+                lea rcx,[rdi+rax]
+                .repeat
+                    dec rcx
+                    .break .if byte ptr [rcx] > ' '
+                    mov byte ptr [rcx],0
+                    dec rax
+                .untilz
+            .endif
 
-                .if eax
+            .if eax
 
-                    printf("  %s.lib\n", rdi)
-                    BuildImportLib(rdi, path)
-                .endif
-            .endw
-            xor eax,eax
-        .else
-            perror(list)
-            mov eax,1
-        .endif
-    .until 1
+                printf("  %s.lib\n", rdi)
+                BuildImportLib(rdi, path)
+            .endif
+        .endw
+        xor eax,eax
+    .else
+
+        perror(list)
+        mov eax,1
+    .endif
     ret
 
 main endp

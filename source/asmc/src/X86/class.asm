@@ -297,13 +297,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         mov public_pos,NULL
 
-        .for ( edi = 0, ebx = args : !edi && [ebx].token != T_FINAL : eax += 16 )
+        .for ( edi = 0, ebx = args : [ebx].token != T_FINAL : ebx += 16 )
 
             .if ( [ebx].token == T_COLON )
 
                 .if ( [ebx+asm_tok].token  == T_DIRECTIVE && \
                       [ebx+asm_tok].tokval == T_PUBLIC )
-
 
                     mov public_pos,[ebx].tokpos
                     mov byte ptr [eax],0
@@ -312,12 +311,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
                     mov ecx,ModuleInfo.ComStack
                     mov [ecx].com_item.sym,eax
-                    .break
 
                 .else
 
                     inc edi
                 .endif
+                .break
             .endif
         .endf
 

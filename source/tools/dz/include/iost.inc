@@ -39,13 +39,31 @@ ios_bp		SIZE_T ?
 ios_i		SIZE_T ?
 ios_c		SIZE_T ?
 ios_size	SIZE_T ?
-ios_flag	DWORD ?
-ios_file	DWORD ?
+ios_flag	dd ?
+ios_file	dd ?
 ios_crc		SIZE_T ?
 ios_line	SIZE_T ?	; line offset
-ios_offset	QWORD ?		; seek offset
-ios_total	QWORD ?		; count read/write
-ios_fsize	QWORD ?
+union
+ ios_offset	dq ?		; seek offset
+ struct
+  offset_l	dd ?
+  offset_h	dd ?
+ ends
+ends
+union
+ ios_total	dq ?		; count read/write
+ struct
+  total_l	dd ?
+  total_h	dd ?
+ ends
+ends
+union
+ ios_fsize	dq ?
+ struct
+  fsize_l	dd ?
+  fsize_h	dd ?
+ ends
+ends
 S_IOST		ENDS
 
 externdef	STDI:S_IOST

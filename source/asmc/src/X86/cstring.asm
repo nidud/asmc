@@ -6,6 +6,7 @@ include input.inc
 include tokenize.inc
 include memalloc.inc
 include fastpass.inc
+include expreval.inc
 
 MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
@@ -72,7 +73,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov Unicode,al
 
     movsb
-    .while  BYTE PTR [esi]
+    .while BYTE PTR [esi]
 
         mov al,[esi]
         .if al == '\'
@@ -240,27 +241,28 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov eax,pStringOffset
     mov [eax],esi
 
-    mov ebx,strlen(&sbuf)
-    mov esi,ModuleInfo.StrStack
-    xor edi,edi
+    assume esi:ptr str_item
 
-    .while  esi
+    .for ebx = strlen(&sbuf), edi = 0,
+         esi = ModuleInfo.StrStack : esi : edi++, esi = [esi].next
 
-        mov cl,[esi].str_item.unicode
-        mov eax,[esi].str_item.count
+        mov cl,[esi].unicode
+        mov eax,[esi].count
+
         .if eax >= ebx && cl == Unicode
 
-            mov edx,[esi].str_item.string
+            mov edx,[esi].string
+
             .if eax > ebx
 
-                add edx,eax
+                add edx,eax ; to end of string
                 sub edx,ebx
             .endif
 
             .if !strcmp( &sbuf, edx )
 
-                movzx eax,[esi].str_item.index
-                sub edx,[esi].str_item.string
+                movzx eax,[esi].index
+                sub edx,[esi].string
                 .if edx
                     .if Unicode
                         add edx,edx
@@ -272,9 +274,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 .return 0
             .endif
         .endif
-        add edi,1
-        mov esi,[esi].str_item.next
-    .endw
+    .endf
 
     sprintf(lbuf, "DS%04X", edi)
     LclAlloc(&[ebx+str_item+1])
@@ -290,9 +290,12 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov [eax].str_item.string,ecx
     strcpy(ecx, &sbuf)
     ret
+
 ParseCString ENDP
 
-option cstack:on
+    assume esi:nothing
+
+    option cstack:on
 
 GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
 
@@ -539,40 +542,80 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
     add eax,MAX_LINE_LEN
     mov dlabel,eax
 
+    assume ebx:ptr asm_tok
+
     mov ebx,tokenarray
-    mov edi,_stricmp([ebx].asm_tok.string_ptr, "@CStr")
+
+    ; find first instance of macro in line
+
+    mov edi,_stricmp([ebx].string_ptr, "@CStr")
 
     .if edi
 
-        .while [ebx].asm_tok.token != T_FINAL
+        .while [ebx].token != T_FINAL
 
-            .break .if !_stricmp([ebx].asm_tok.string_ptr, "@CStr")
+            .if [ebx].token == T_ID
+
+                .break .if !_stricmp([ebx].string_ptr, "@CStr")
+            .endif
             add ebx,16
         .endw
 
-        .if [ebx].asm_tok.token == T_FINAL && [ebx+16].asm_tok.token == T_OP_BRACKET
+        .if [ebx].token == T_FINAL && [ebx+16].token == T_OP_BRACKET
             add ebx,16
-        .elseif [ebx].asm_tok.token != T_FINAL
+        .elseif [ebx].token != T_FINAL
             add ebx,16
         .else
             mov ebx,tokenarray
         .endif
     .endif
 
-    xor eax,eax
+    .if [ebx].token == T_OP_BRACKET && [ebx+asm_tok].token == T_NUM && \
+        [ebx+asm_tok*2].token == T_CL_BRACKET
 
-    .while [ebx].asm_tok.token != T_FINAL
+        ; return label[-value]
 
-        mov esi,[ebx].asm_tok.tokpos
-        ;
+        .new opnd:expr
+
+        add ebx,16
+
+        _atoow( &opnd, [ebx].string_ptr, [ebx].numbase, [ebx].itemlen )
+
+        ; the number must be 32-bit
+
+        .if dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4]
+
+            asmerr( 2156 )
+            .return 0
+        .endif
+
+        .for eax = opnd.value,
+             edx = ModuleInfo.StrStack : eax && edx : eax--, edx=[edx].str_item.next
+        .endf
+
+        .if edx == NULL
+
+            asmerr( 2156 )
+            .return 0
+        .endif
+
+        movzx eax,[edx].str_item.index
+        sprintf(buffer, "DS%04X", eax)
+        .return 1
+    .endif
+
+    .for : [ebx].token != T_FINAL : ebx += asm_tok
+
+        mov esi,[ebx].tokpos
+
         ; v2.28 - .data --> .const
         ;
         ; - dq @CStr(L"CONST")
         ; - dq @CStr(ID)
-        ;
-        .if [ebx].asm_tok.token == T_ID && [ebx-16].asm_tok.token == T_OP_BRACKET
 
-            .if SymFind( [ebx].asm_tok.string_ptr )
+        .if [ebx].token == T_ID && [ebx-16].token == T_OP_BRACKET
+
+            .if SymFind( [ebx].string_ptr )
 
                 mov eax,[eax].asym.string_ptr
                 .if BYTE PTR [eax] == '"' || WORD PTR [eax] == '"L'
@@ -581,8 +624,7 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
             .endif
         .endif
 
-        .if BYTE PTR [esi] == '"' || \
-            WORD PTR [esi] == '"L'
+        .if BYTE PTR [esi] == '"' || WORD PTR [esi] == '"L'
 
             ParseCString(dlabel, string, esi, &StringOffset, &Unicode)
 
@@ -623,12 +665,14 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
                     .endif
                     sprintf(cursrc, ecx, dlabel)
                 .endif
-                ;
+
                 ; v2.24 skip .data/.code if already in .data segment
+
+                assume ebx:ptr asym
 
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
-                .if _stricmp( [ebx].asym.name, "_DATA" )
+                .if _stricmp( [ebx].name, "_DATA" )
                     inc esi
                     InsertLine(".data")
                 .elseif edi
@@ -637,7 +681,7 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
                 .endif
                 InsertLine(cursrc)
                 .if esi
-                    .if !_stricmp( [ebx].asym.name, "CONST" )
+                    .if !_stricmp( [ebx].name, "CONST" )
                         InsertLine(".const")
                     .elseif esi == 2
                         InsertLine(".data")
@@ -646,12 +690,14 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
                     .endif
                 .endif
             .endif
-            mov eax,1
-            .break
+            .return 1
         .endif
-        add ebx,16
-    .endw
+    .endf
+    xor eax,eax
     ret
+
 CString ENDP
+
 endif
+
     END

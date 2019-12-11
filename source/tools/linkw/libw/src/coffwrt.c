@@ -472,9 +472,10 @@ void CoffWriteImport( libfile io, sym_file *sfile )
             }
             imphdr->object_type = IMPORT_OBJECT_CODE;
             if( sfile->import->type == NAMED ) {
-                if ( symName )
+                                /* Added v2.0 -- missing _underscore in 64-bit */
+                if ( symName && imphdr->machine != IMAGE_FILE_MACHINE_AMD64 ) {
                     imphdr->name_type = IMPORT_OBJECT_NAME_UNDECORATE; /* =3 */
-                else
+                } else
                     imphdr->name_type = IMPORT_OBJECT_NAME; /* =1 */
             } else
                 imphdr->name_type = IMPORT_OBJECT_ORDINAL; /* =0 */

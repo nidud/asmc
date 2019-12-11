@@ -7,4 +7,4 @@ import.exe: $(target_path)
     del $@
 
 $(target_path):
-    md $(target_path)
+    if not exist $(target_path) md $(target_path)

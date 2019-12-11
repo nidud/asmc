@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Open Watcom banner strings and version defines.
+* Description:	Open Watcom banner strings and version defines.
 *
 ****************************************************************************/
 
@@ -39,12 +39,12 @@
 //#endif
 
 //#ifdef _BETAVER
-//#define _BETA_		  _BETASTR_ BANSTR( _BETAVER )  _BANEXTRA
+//#define _BETA_		  _BETASTR_ BANSTR( _BETAVER )	_BANEXTRA
 //#else
 //#define _BETA_		  _BANEXTRA
 //#endif
 
-#define CURR_YEAR	"2014"
+#define CURR_YEAR	"2019"
 
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
@@ -62,7 +62,7 @@
 #define banner3	      "Source code is available under the Sybase Open Watcom Public License."
 //define banner3a      "See http://www.openwatcom.org/ for details."
 
-#define banner1ps(p,v)  "Powersoft " banner1p1(p) " " banner1p2(v)
+#define banner1ps(p,v)	"Powersoft " banner1p1(p) " " banner1p2(v)
 #define banner2ps	banner2a()
 #define banner3ps	"All rights reserved.  Powersoft is a trademark of Sybase, Inc."
 
@@ -75,7 +75,7 @@
 #define _RC_DELIM_LEFT_		[
 #define _RC_DELIM_RIGHT_	]
 
-#define BAN_VER_STR "1.0" //" (JWlib 1.9beta 8)"
+#define BAN_VER_STR "2.0" //" (JWlib 1.9beta 8)"
 
 /* these should all be _BANVER/100.0 */
 #define _I86WCGL_VERSION_	BAN_VER_STR
@@ -126,7 +126,7 @@
 #define _VI_VERSION_		BAN_VER_STR
 #define _ASAXP_CLONE_VERSION_	BAN_VER_STR
 #define _CL_CLONE_VERSION_	BAN_VER_STR
-#define _CVTRES_CLONE_VERSION_  BAN_VER_STR
+#define _CVTRES_CLONE_VERSION_	BAN_VER_STR
 #define _LIB_CLONE_VERSION_	BAN_VER_STR
 #define _LINK_CLONE_VERSION_	BAN_VER_STR
 #define _NMAKE_CLONE_VERSION_	BAN_VER_STR

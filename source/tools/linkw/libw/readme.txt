@@ -15,3 +15,4 @@
  The changes in the jwlib sources are:
 
   - accept wildargs as argument: LIBW my.lib *.obj
+  - fixed bug in _name stripping using -i6 -- "_getch" --> "getch"

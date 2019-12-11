@@ -12,71 +12,81 @@ include tchar.inc
 
     .code
 
-BuildImportLib proc uses rsi rdi rbx r12 r13 dll:LPSTR, path:LPSTR
+BuildImportLib proc uses rsi rdi rbx dll_name:string_t, dll_path:string_t
 
-  local buffer[256]:sbyte
-  local fn_dll[128]:sbyte
+  local dll[256] :char_t,
+        def[256] :char_t,
+        cmd[256] :char_t,
+        count    :uint_t,
+        module   :HMODULE,
+        fp       :LPFILE
 
-    lea rdi,fn_dll
-    mov rdx,rcx
-    .if strrchr(strcpy(rdi, rdx), '.')
-        mov byte ptr [rax],0
+    lea rdi,dll
+    .if !strrchr(strcpy(rdi, dll_name), '.')
+        strcat(rdi, ".dll")
     .endif
-    .if LoadLibrary(strcat(rdi, ".dll"))
-
-        mov rbx,rax
-        strcpy(strrchr(rdi, '.'), ".def")
-        .if fopen(rdi, "wt")
-
-            mov r12,rax
-            strrchr(rdi, '.')
-            mov byte ptr [rax],0
-            mov eax,[rbx].IMAGE_DOS_HEADER.e_lfanew
-            mov eax,[rbx+rax].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
-            mov r13d,[rbx+rax].IMAGE_EXPORT_DIRECTORY.NumberOfNames
-            mov esi,[rbx+rax].IMAGE_EXPORT_DIRECTORY.AddressOfNames
-            add rsi,rbx
-
-            .while r13d
-                lodsd
-                fprintf(r12, "++%s.\'%s.dll\'\n", &[rax+rbx], rdi)
-                dec r13d
-            .endw
-            fclose(r12)
-            lea rbx,buffer
-            sprintf(rbx, "libw /n /c /q /b /fac /i6 %s\\%s.lib @%s.def", path, rdi, rdi)
-            system(rbx)
-            strcat(rdi, ".def")
-            remove(rdi)
-        .else
-            perror(rdi)
-        .endif
-        FreeLibrary(rbx)
-        xor eax,eax
-    .else
+    .if !LoadLibrary(rdi)
         perror(rdi)
-        mov eax,1
+        .return 1
     .endif
+    mov module,rax
+
+    mov rcx,rax
+    mov eax,[rcx].IMAGE_DOS_HEADER.e_lfanew
+    mov esi,[rcx+rax].IMAGE_NT_HEADERS.OptionalHeader.DataDirectory.VirtualAddress
+    add rsi,rcx
+    mov count,[rsi].IMAGE_EXPORT_DIRECTORY.NumberOfNames
+    mov ebx,[rsi].IMAGE_EXPORT_DIRECTORY.AddressOfNames
+    add rbx,rcx
+
+    strcpy(strrchr(strcpy(&def, rdi), '.'), ".def")
+
+    .if fopen(&def, "wt")
+
+        mov fp,rax
+
+        .for esi = 0 : esi < count : esi++
+
+            mov eax,[rbx+rsi*4]
+            add rax,module
+            .continue .if byte ptr [rax] == '?'
+
+            fprintf(fp, "++%s.'%s'\n", rax, rdi)
+        .endf
+
+        fclose(fp)
+
+        lea rsi,cmd
+        mov byte ptr [strrchr(rdi, '.')],0
+        sprintf(rsi, "libw /n /c /q /b /fac /i6 %s\\%s.lib @%s.def", dll_path, rdi, rdi)
+        system(rsi)
+        remove(&def)
+
+    .else
+
+        perror(&def)
+    .endif
+
+    FreeLibrary(module)
+    xor eax,eax
     ret
 
 BuildImportLib endp
 
-main proc argc:SINT, argv:ptr
 
-  local lbuf[256]:sbyte
-  local list:LPSTR
-  local path:LPSTR
+main proc argc:int_t, argv:array_t
+
+  local lbuf[256]:char_t
+  local list:string_t
+  local path:string_t
 
     .if ecx < 2
 
         printf("Usage: import <list> [<out_path>]\n")
-
         .return 1
-
     .endif
 
     mov list,[rdx+8]
-
     .if ecx > 2
         mov rax,[rdx+16]
     .else
@@ -106,9 +116,7 @@ main proc argc:SINT, argv:ptr
                     dec rax
                 .untilz
             .endif
-
             .if eax
-
                 printf("  %s.lib\n", rdi)
                 BuildImportLib(rdi, path)
             .endif

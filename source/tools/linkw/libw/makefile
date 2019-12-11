@@ -1,13 +1,13 @@
 #
 # Makefile for LIBW using Open Watcom
 #
-#BIN  = \DZ\bin\
+
 OW    = \WATCOM
 
 OBJS  = wlib.obj     libio.obj	  symtable.obj omfproc.obj  writelib.obj convert.obj &
-	wlibutil.obj libwalk.obj  symlist.obj  proclib.obj  cmdline.obj  error.obj &
+	wlibutil.obj libwalk.obj  symlist.obj  proclib.obj  cmdline.obj	 error.obj &
 	implib.obj   elfobjs.obj  orlrtns.obj  memfuncs.obj ideentry.obj idedrv.obj &
-	idemsgfm.obj idemsgpr.obj maindrv.obj  demangle.obj omfutil.obj  coffwrt.obj &
+	idemsgfm.obj idemsgpr.obj maindrv.obj  demangle.obj omfutil.obj	 coffwrt.obj &
 	inlib.obj    debug.obj
 
 OWOBJ = orlentry.obj orlflhnd.obj orlhash.obj &

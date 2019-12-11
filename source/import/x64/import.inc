@@ -91,7 +91,7 @@ mspatcha
 msrating
 mstask
 msv1_0
-;msvcrt
+msvcrt
 msvfw32
 mswsock
 msxml3
@@ -161,7 +161,7 @@ vssapi
 webservices
 wer
 winbio
-winfax
+;winfax
 winhttp
 wininet
 winmm

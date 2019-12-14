@@ -122,9 +122,14 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         inc i
         mov opndx.value,[esi].value
         add [esi].value,1
+
+        mov edi,1
+
         .if [ebx].token == T_DIRECTIVE && [ebx].tokval == T_EQU
+
             add ebx,16
             inc i
+
             .for ( ecx = i, edx = ebx : ecx < Token_Count : ecx++, edx += 16 )
                 .break .if [edx].asm_tok.token == T_COMMA
                 .break .if [edx].asm_tok.token == T_FINAL
@@ -136,6 +141,9 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if opndx.kind != EXPR_CONST
                 mov rc,asmerr(2026)
                 .break
+            .endif
+            .if [ebx].token =='-' && [ebx+16].token == T_NUM && [ebx+16].numbase == 10
+                xor edi,edi
             .endif
             mov ecx,1
             mov eax,opndx.value
@@ -164,10 +172,10 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .elseif [ebx].token == T_FINAL && [esi].name == NULL
             mov CurrEnum,NULL
         .endif
-        .if [esi].mem_type & MT_SIGNED
-            lea edx,@CStr("%s equ %d")
+        .if edi
+            lea edx,@CStr("%s equ 0x%x")
         .else
-            lea edx,@CStr("%s equ %u")
+            lea edx,@CStr("%s equ %d")
         .endif
         AddLineQueueX(edx, name, opndx.value)
     .endw

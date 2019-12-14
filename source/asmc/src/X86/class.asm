@@ -23,6 +23,48 @@ LPCLASS     typedef ptr com_item
 
     .code
 
+OpenVtbl proc private uses esi this:LPCLASS
+
+  local public_class[64]:char_t
+
+    mov esi,this
+    AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
+
+    ; v2.30.32 - : public class
+
+    .return 0 .if ![esi].com_item.sym
+
+    mov edx,[esi].com_item.sym
+    .if !SymFind( strcat( strcpy( &public_class, [edx].asym.name ), "Vtbl" ) )
+
+        .return asmerr( 2006, &public_class )
+    .endif
+
+    mov ecx,eax
+    xor eax,eax
+
+    .if ( [ecx].asym.total_size )
+if 1
+        AddLineQueueX( "%s <>", &public_class )
+else
+        .for ( edx = [ecx].esym.structinfo,
+               esi = [edx].struct_info.head : esi : esi = [esi].sfield.next )
+
+            mov ecx,[esi].sfield.sym.name
+            mov edx,[esi].sfield.sym.type
+            .if edx
+                AddLineQueueX( "%s %s ?", ecx, [edx].asym.name )
+            .else
+                .return asmerr( 2006, ecx )
+            .endif
+        .endf
+endif
+        mov eax,1
+    .endif
+    ret
+
+OpenVtbl endp
+
     assume ebx:tok_t
 
 ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
@@ -68,43 +110,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
         .else
 
             AddLineQueueX( "%s ends", [esi].com_item.class )
-            AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
-
-            ; v2.30.32 - : public class
-
-            .if [esi].com_item.sym
-
-                .new public_class[64]:char_t
-
-                mov edx,[esi].com_item.sym
-
-                .if SymFind( strcat( strcpy( &public_class, [edx].asym.name ), "Vtbl" ) )
-
-                    .if ( [eax].asym.total_size )
-if 1
-                        AddLineQueueX( "%s <>", &public_class )
-else
-                        .for ( edx = [eax].esym.structinfo,
-                               edi = [edx].struct_info.head,
-                             : edi : edi = [edi].sfield.next )
-
-                            mov ecx,[edi].sfield.sym.name
-                            mov edx,[edi].sfield.sym.type
-                            .if edx
-                                AddLineQueueX( "%s %s ?", ecx, [edx].asym.name )
-                            .else
-                                mov retval,asmerr( 2006, ecx )
-                                .break
-                            .endif
-                        .endf
-                        mov edi,buffer
-endif
-                    .endif
-                .else
-                    mov retval,asmerr( 2006, &public_class )
-                .endif
-            .endif
-
+            mov retval,OpenVtbl(esi)
             inc IsCom
         .endif
     .endif
@@ -232,16 +238,23 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     .switch eax
       .case T_DOT_ENDS
-        mov eax,CurrStruct
-        .if !ModuleInfo.ComStack
-            .if eax
+        mov edi,ModuleInfo.ComStack
+        mov esi,CurrStruct
+        .if !edi
+            .if esi
                 mov rc,asmerr(1011)
             .endif
             .return rc
         .endif
         mov ModuleInfo.ComStack,0
-        mov edx,[eax].asym.name
-        AddLineQueueX( "%s ends", edx )
+        AddLineQueueX( "%s ends", [esi].asym.name )
+        mov edx,[edi].com_item.sym
+        .if edx
+            .if !strcmp([edi].com_item.class, [esi].asym.name)
+                OpenVtbl(edi)
+                AddLineQueueX( "%sVtbl ends", [esi].asym.name )
+            .endif
+        .endif
         .endc
 
       .case T_DOT_COMDEF

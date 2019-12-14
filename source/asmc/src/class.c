@@ -12,6 +12,30 @@ struct com_item {
     struct asym *sym;
 };
 
+static int OpenVtbl(struct com_item* p)
+{
+    char pubclass[64];
+    struct asym *sym;
+
+    AddLineQueueX( "%sVtbl struct", p->class );
+
+    /* v2.30.32 - : public class */
+
+    sym = p->sym;
+    if ( sym == NULL )
+        return 0;
+
+    sym = SymFind( strcat( strcpy( pubclass, sym->name ), "Vtbl" ) );
+    if ( sym == NULL )
+        return asmerr( 2006, pubclass );
+
+    if ( sym->total_size ) {
+        AddLineQueueX( "%s <>", pubclass );
+        return 1;
+    }
+    return 0;
+}
+
 int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 {
     int     rc = NOT_ERROR;
@@ -42,26 +66,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
         } else {
 
             AddLineQueueX( "%s ends", o->class );
-            AddLineQueueX( "%sVtbl struct", o->class );
-
-            /* v2.30.32 - : public class */
-
-            sym = ModuleInfo.g.ComStack->sym;
-
-            if ( sym != NULL ) {
-
-                sym = SymFind( strcat( strcpy( pubclass, sym->name ), "Vtbl" ) );
-
-                if ( sym != NULL ) {
-
-                    if ( sym->total_size )
-                        AddLineQueueX( "%s <>", pubclass );
-
-                } else {
-                    rc = asmerr( 2006, pubclass );
-                }
-            }
-
+            rc = OpenVtbl(o);
             IsCom++;
         }
     }
@@ -159,13 +164,19 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
     switch ( cmd ) {
     case T_DOT_ENDS:
-        if ( ModuleInfo.g.ComStack == NULL ) {
+        if ( o == NULL ) {
             if ( CurrStruct )
                 return ( asmerr( 1011 ) );
             break;
         }
         ModuleInfo.g.ComStack = NULL;
         AddLineQueueX( "%s ends", CurrStruct->sym.name );
+        if ( o->sym ) {
+            if ( !strcmp( o->class, CurrStruct->sym.name ) ) {
+                OpenVtbl(o);
+                AddLineQueueX( "%sVtbl ends", CurrStruct->sym.name );
+            }
+        }
         break;
 
     case T_DOT_COMDEF:

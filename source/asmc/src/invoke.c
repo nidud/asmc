@@ -851,6 +851,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     struct expr		opnd;
     char		buffer[MAX_LINE_LEN];
     int			fastcall_id;
+    int			macrocall = 0;
+    struct asym *	macro;
 
     i++; /* skip INVOKE directive */
     namepos = i;
@@ -1061,32 +1063,69 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	if ( ModuleInfo.Ofssize == USE64 ) {
 
-	    if ( sym->langtype == LANG_SYSCALL )
-		AddLineQueueX( " mov %r, [%r]", T_R10, T_RDI );
-	    else
-		AddLineQueueX( " mov %r, [%r]", T_RAX, T_RCX );
+	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
+	    strcpy(buffer + strlen(buffer) - 4, "_");
+	    strcat(buffer, opnd.mbr->name);
+	    macro = SymSearch( buffer );
+	    if ( macro && macro->state == SYM_MACRO )
+		macrocall = 1;
+	}
 
-	} else if ( ModuleInfo.Ofssize == USE32 ) {
+	if ( macrocall == 1 ) {
 
-	    int reg = T_EAX; /* v2.31 - skip mov eax,reg */
+	    p = &StringBufferEnd[1];
+	    strcpy( p, buffer );
+	    strcat( p, "( " );
+	    p += strlen(p);
 
-	    if ( tokenarray[parmpos+1].tokval != T_EAX ) {
-
-		if ( tokenarray[parmpos+1].token == T_REG &&
-		     tokenarray[parmpos+1].tokval > T_EAX &&
-		     tokenarray[parmpos+1].tokval <= T_EDI )
-		    reg = tokenarray[parmpos+1].tokval;
-		else
-		    AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
+	    curr = info->paralist;
+	    if ( curr->sym.string_ptr == NULL ) {
+		char *regs[] = { "rcx","rdx","r8","r9" };
+		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ )
+		    curr->sym.string_ptr = regs[parmpos];
+		curr = info->paralist;
 	    }
-	    AddLineQueueX( " mov %r, [%r]", T_EAX, reg );
+	    strcat( p, curr->sym.string_ptr );
+
+	    for ( curr = curr->nextparam; curr; curr = curr->nextparam ) {
+
+		strcat( p, ", " );
+		strcat( p, curr->sym.string_ptr );
+	    }
+	    strcat( p, ")" );
+
+	} else {
+
+	    if ( ModuleInfo.Ofssize == USE64 ) {
+
+		if ( sym->langtype == LANG_SYSCALL )
+		    AddLineQueueX( " mov %r, [%r]", T_R10, T_RDI );
+		else
+		    AddLineQueueX( " mov %r, [%r]", T_RAX, T_RCX );
+
+	    } else if ( ModuleInfo.Ofssize == USE32 ) {
+
+		int reg = T_EAX; /* v2.31 - skip mov eax,reg */
+
+		if ( tokenarray[parmpos+1].tokval != T_EAX ) {
+
+		    if ( tokenarray[parmpos+1].token == T_REG &&
+			 tokenarray[parmpos+1].tokval > T_EAX &&
+			 tokenarray[parmpos+1].tokval <= T_EDI )
+			reg = tokenarray[parmpos+1].tokval;
+		    else
+			AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
+		}
+		AddLineQueueX( " mov %r, [%r]", T_EAX, reg );
+	    }
 	}
     }
 
-    size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
-    memcpy( p, tokenarray[namepos].tokpos, size );
-    *(p+size) = NULLC;
-
+    if ( macrocall == 0 ) {
+	size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
+	memcpy( p, tokenarray[namepos].tokpos, size );
+	*(p+size) = NULLC;
+    }
 
     AddLineQueue( StringBufferEnd );
 

@@ -1052,9 +1052,13 @@ static ret_code elf_write_data( struct module_info *modinfo, struct elfmod *em )
     for( curr = SymTables[TAB_SEG].head; curr; curr = curr->next ) {
 	size = curr->sym.max_offset - curr->e.seginfo->start_loc;
 	if ( curr->e.seginfo->segtype != SEGTYPE_BSS && size != 0 ) {
-	    fseek( CurrFile[OBJ], curr->e.seginfo->fileoffset + curr->e.seginfo->start_loc, SEEK_SET );
-	    if ( fwrite( curr->e.seginfo->CodeBuffer, 1, size, CurrFile[OBJ] ) != size )
-		WriteError();
+	    if ( curr->e.seginfo->CodeBuffer == NULL ) {
+		fseek( CurrFile[OBJ], size, SEEK_CUR );
+	    } else {
+		fseek( CurrFile[OBJ], curr->e.seginfo->fileoffset + curr->e.seginfo->start_loc, SEEK_SET );
+		if ( fwrite( curr->e.seginfo->CodeBuffer, 1, size, CurrFile[OBJ] ) != size )
+		    WriteError();
+	    }
 	}
     }
 

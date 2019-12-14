@@ -120,7 +120,7 @@ ConcatLine proc uses esi edi edx ecx src, cnt, o, ls
 
     mov eax,src
     mov esi,eax
-    add eax,1
+    inc eax
 
     .if SkipSpace(ecx, eax)
 
@@ -273,7 +273,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         .endif
         add esi,1
 
-        .while  ecx < MAX_STRING_LEN
+        .while ecx < MAX_STRING_LEN
 
             mov ax,[esi]
             .if al == symbol_o      ; < or { ?
@@ -326,6 +326,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                     mov ecx,tcount
                     .continue
                 .endif
+
             .elseif al == '!' && symbol_o == '<' && ah
                 ;
                 ; handle literal-character operator '!'.
@@ -334,6 +335,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 ; v2.09: don't store the '!'
                 ;
                 add esi,1
+
             .elseif al == '\'
 
                 .if ConcatLine(esi, ecx, edi, edx) != EMPTY
@@ -341,18 +343,34 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                     or [edx].flags3,TF3_ISCONCAT
                     .continue
                 .endif
+
             .elseif !al || ( al == ';' && symbol_o == '{' )
 
-                .if [edx].flags == TOK_DEFAULT && !([edx].flags2 & DF_NOCONCAT)
-                    ;
+                .if [edx].flags == TOK_DEFAULT && !( [edx].flags2 & DF_NOCONCAT )
+
                     ; if last nonspace character was a comma
                     ; get next line and continue string scan
-                    ;
+
                     mov tdst,edi
                     mov tcount,ecx
-                    sub edi,1
 
-                    .if SkipSpaceR(eax, edi) == ','
+                    .if ( ( al == 0 || al == ';' ) && symbol_o == '{' )
+
+                        mov eax,1
+
+                    .else
+
+                        sub edi,1
+
+                        .if SkipSpaceR(eax, edi) == ','
+
+                            mov eax,1
+                        .else
+                            xor eax,eax
+                        .endif
+                    .endif
+
+                    .if eax
 
                         strlen([edx].output)
                         add eax,4
@@ -366,7 +384,6 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                             strlen(edi)
                             add eax,tcount
                             .if eax >= MAX_LINE_LEN
-
                                 asmerr(2039)
                                 jmp toend
                             .endif
@@ -1241,6 +1258,7 @@ StartComment proc fastcall p:string_t
         asmerr(2110)
     .endif
     ret
+
 StartComment endp
 
     option proc:public
@@ -1347,6 +1365,7 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
     .endsw
     jmp get_special_symbol
     ret
+
 GetToken ENDP
 
 Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, flags:uint_t
@@ -1421,11 +1440,11 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             mov [ebx].tokpos,edx
 
             .if BYTE PTR [edx] == 0
-                ;
+
                 ; if a comma is last token, concat lines ... with some exceptions
                 ; v2.05: moved from PreprocessLine(). Moved because the
                 ; concatenation may be triggered by a comma AFTER expansion.
-                ;
+
                 .if p.index > 1 && \
                     ([ebx-16].token == T_COMMA || _brachets) && \
                     ( Parse_Pass == PASS_1 || !UseSavedState ) && !start

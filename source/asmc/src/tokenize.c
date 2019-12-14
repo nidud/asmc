@@ -307,9 +307,16 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 		    /* if last nonspace character was a comma
 		     * get next line and continue string scan
 		     */
+		    int nl = 0;
 		    char *tmp = dst-1;
-		    while ( islspace(*tmp) ) tmp--;
-		    if ( *tmp == ',' ) {
+		    if ( ( c == 0 || c == ';' ) && symbol_o == '{' ) {
+			nl++;
+		    } else {
+			while ( islspace(*tmp) ) tmp--;
+			if ( *tmp == ',' )
+			    nl++;
+		    }
+		    if ( nl ) {
 
 			tmp = GetAlignedPointer( p->output, strlen( p->output ) );
 			if( GetTextLine( tmp ) ) {

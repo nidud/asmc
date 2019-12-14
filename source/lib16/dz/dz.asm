@@ -137,7 +137,7 @@ cp_file_not_found label byte
 	db	' 5 Access',10
 	db	' 8 Memory',10
 	db	'10 Environment'
-	org	SIZE S_DZDS - 14
+	org	S_DZDS - 14
 	dw	0
 	dw	0	; dz_errno
 	dw	0	; dz_eflag

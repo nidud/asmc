@@ -410,7 +410,7 @@ local	buf[190]:BYTE
 		    mov ax,[si]
 		    mov es:[bx],ax
 		    mov es:[bx+2],ds
-		    add bx,SIZE S_TOBJ
+		    add bx,S_TOBJ
 ifdef __l__
 		    add si,6
 else
@@ -486,7 +486,7 @@ endif
 			    add bx,bx
 			    mov bx,MENUS_OID[bx]
 			  ifdef __l__
-			    mov ah,SIZE S_GLCMD
+			    mov ah,S_GLCMD
 			    mul ah
 			  else
 			    shl ax,2

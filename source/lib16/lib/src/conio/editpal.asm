@@ -244,7 +244,7 @@ local tmp:S_COLOR
 	    .repeat
 		mov es:[bx],ax
 		movl es:[bx+2],cs
-		add bx,SIZE S_TOBJ
+		add bx,S_TOBJ
 	    .untilcxz
 	    invoke edit_event
 	.endif
@@ -270,14 +270,14 @@ local tmp:S_COLOR
 	    .repeat
 		mov es:[bx],ax
 		movl es:[bx+2],cs
-		add bx,SIZE S_TOBJ
+		add bx,S_TOBJ
 	    .untilcxz
 	    sub bx,S_TOBJ.to_proc
 	    mov ax,_O_STATE
 	    mov cx,16
 	    .repeat
 		or es:[bx].S_TOBJ.to_flag,ax
-		add bx,SIZE S_TOBJ
+		add bx,S_TOBJ
 	    .untilcxz
 	    .if !edit_event()
 		invoke loadpal,addr at_palett

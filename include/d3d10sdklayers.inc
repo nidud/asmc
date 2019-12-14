@@ -36,11 +36,8 @@ D3D10_DEBUG_FEATURE_PRESENT_PER_RENDER_OP equ ( 0x4 )
 ifndef __ID3D10Debug_INTERFACE_DEFINED__
 __ID3D10Debug_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Debug
+.comdef ID3D10Debug : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFeatureMask	proc :UINT
     GetFeatureMask	proc
     SetPresentPerRenderOpDelay proc :UINT
@@ -48,19 +45,18 @@ __ID3D10Debug_INTERFACE_DEFINED__ equ 1
     SetSwapChain	proc :ptr
     GetSwapChain	proc :ptr
     Validate		proc
+
     .ends
 endif
 
 ifndef __ID3D10SwitchToRef_INTERFACE_DEFINED__
 __ID3D10SwitchToRef_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10SwitchToRef
+.comdef ID3D10SwitchToRef : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetUseRef		proc :BOOL
     GetUseRef		proc
+
     .ends
 endif
 
@@ -600,11 +596,8 @@ D3D10_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 ifndef __ID3D10InfoQueue_INTERFACE_DEFINED__
 __ID3D10InfoQueue_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10InfoQueue
+.comdef ID3D10InfoQueue : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetMessageCountLimit proc :UINT64
     ClearStoredMessages proc
     GetMessage		proc :UINT64
@@ -640,6 +633,7 @@ __ID3D10InfoQueue_INTERFACE_DEFINED__ equ 1
     GetBreakOnID	proc :D3D10_MESSAGE_ID
     SetMuteDebugOutput	proc :BOOL
     GetMuteDebugOutput	proc
+
     .ends
 endif
 

@@ -51,21 +51,22 @@ GIL_DONTCACHE		equ 0x0010
 GIL_SHIELD		equ 0x0200
 GIL_FORCENOSHIELD	equ 0x0400
 
-.comdef IExtractIconA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExtractIconA : public IUnknown
+
     GetIconLocation	proc :UINT, :LPSTR, :UINT, :ptr, :ptr
     Extract		proc :LPCSTR, :UINT, :ptr, :ptr, :UINT
+
     .ends
+
 LPEXTRACTICONA		typedef ptr IExtractIconA
-.comdef IExtractIconW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IExtractIconW : public IUnknown
+
     GetIconLocation	proc :UINT, :LPWSTR, :UINT, :ptr, :ptr
     Extract		proc :LPCWSTR, :UINT, :ptr, :ptr, :UINT
+
     .ends
+
 LPEXTRACTICONW		typedef ptr IExtractIconW
 ifdef _UNICODE
 IExtractIcon		equ <IExtractIconW>
@@ -75,27 +76,25 @@ IExtractIcon		equ <IExtractIconA>
 LPEXTRACTICON		equ <LPEXTRACTICONA>
 endif
 
-.comdef IShellIconOverlayIdentifier
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellIconOverlayIdentifier : public IUnknown
+
     IsMemberOf		proc :LPCWSTR, :DWORD
     GetOverlayInfo	proc :LPWSTR, :SINT, :ptr, :ptr
     GetPriority		proc :ptr
+
     .ends
 
 ISIOI_ICONFILE		equ 0x00000001
 ISIOI_ICONINDEX		equ 0x00000002
 
-.comdef IShellIconOverlayManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellIconOverlayManager : public IUnknown
+
     GetFileOverlayInfo	proc :LPCWSTR, :DWORD, :ptr, :DWORD
     GetReservedOverlayInfo proc :LPCWSTR, :DWORD, :ptr, :DWORD, :SINT
     RefreshOverlayImages proc :DWORD
     LoadNonloadedOverlayIdentifiers proc
     OverlayIndexFromImageIndex proc :SINT, :ptr, :BOOL
+
     .ends
 
 SIOM_OVERLAYINDEX	equ 1
@@ -105,12 +104,11 @@ SIOM_RESERVED_LINK	equ 1
 SIOM_RESERVED_SLOWFILE	equ 2
 SIOM_RESERVED_DEFAULT	equ 3
 
-.comdef IShellIconOverlay
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellIconOverlay : public IUnknown
+
     GetOverlayIndex	proc :PCUITEMID_CHILD, :ptr
     GetOverlayIconIndex proc :PCUITEMID_CHILD, :ptr
+
     .ends
 
 OI_DEFAULT		equ 0x00000000
@@ -268,18 +266,16 @@ endif
 
 
 ifdef _INC_SHELLAPI
-.comdef IShellExecuteHookA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellExecuteHookA : public IUnknown
+
     Execute		proc :LPSHELLEXECUTEINFOA
     .ends
-.comdef IShellExecuteHookW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IShellExecuteHookW : public IUnknown
+
     Execute		proc :LPSHELLEXECUTEINFOW
     .ends
+
 ifdef _UNICODE
 IShellExecuteHook	equ <IShellExecuteHookW>
 else
@@ -287,73 +283,66 @@ IShellExecuteHook	equ <IShellExecuteHookA>
 endif
 endif
 
+.comdef IURLSearchHook : public IUnknown
 
-.comdef IURLSearchHook
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Translate		proc :LPWSTR, :DWORD
     .ends
 
-.comdef ISearchContext
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISearchContext : public IUnknown
+
     GetSearchUrl	proc :ptr
     GetSearchText	proc :ptr
     GetSearchStyle	proc :ptr
     .ends
 
-.comdef IURLSearchHook2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Translate		proc :LPWSTR, :DWORD
+.comdef IURLSearchHook2 : public IURLSearchHook
+
     TranslateWithSearchContext proc :LPWSTR, :DWORD, :ptr
     .ends
 
 
-.comdef INewShortcutHookA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INewShortcutHookA : public IUnknown
+
     SetReferent		proc :LPCSTR, :HWND
     GetReferent		proc :LPSTR, :SINT
     SetFolder		proc :LPCSTR
     GetFolder		proc :LPSTR, :SINT
     GetName		proc :LPSTR, :SINT
     GetExtension	proc :LPSTR, :SINT
+
     .ends
-.comdef INewShortcutHookW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef INewShortcutHookW : public IUnknown
+
     SetReferent		proc :LPCWSTR, :HWND
     GetReferent		proc :LPWSTR, :SINT
     SetFolder		proc :LPCWSTR
     GetFolder		proc :LPWSTR, :SINT
     GetName		proc :LPWSTR, :SINT
     GetExtension	proc :LPWSTR, :SINT
+
     .ends
+
 ifdef _UNICODE
 INewShortcutHook	equ <INewShortcutHookW>
 else
 INewShortcutHook	equ <INewShortcutHookA>
 endif
 
-.comdef ICopyHookA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICopyHookA : public IUnknown
+
     CopyCallback	proc :HWND, :UINT, :UINT, :LPCSTR, :DWORD, :LPCSTR, :DWORD
+
     .ends
+
 LPCOPYHOOKA		typedef ptr ICopyHookA
-.comdef ICopyHookW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ICopyHookW : public IUnknown
+
     CopyCallback	proc :HWND, :UINT, :UINT, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
+
     .ends
+
 LPCOPYHOOKW		typedef ptr ICopyHookW
 ifdef _UNICODE
 ICopyHook		equ <ICopyHookW>
@@ -365,13 +354,13 @@ endif
 
 if (NTDDI_VERSION LT NTDDI_WIN2K)
 
-.comdef IFileViewerSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileViewerSite : public IUnknown
+
     SetPinnedWindow	proc :HWND
     GetPinnedWindow	proc :ptr
+
     .ends
+
 LPFILEVIEWERSITE	typedef ptr IFileViewerSite
 
 .pragma pack(push, 8)
@@ -400,24 +389,24 @@ FVSIF_NEWFAILED		equ 0x08000000
 FVSIF_NEWFILE		equ 0x80000000
 FVSIF_CANVIEWIT		equ 0x40000000
 
-.comdef IFileViewerA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileViewerA : public IUnknown
+
     ShowInitialize	proc :LPFILEVIEWERSITE
     Show		proc :LPFVSHOWINFO
     PrintTo		proc :LPSTR, :BOOL
     .ends
+
 LPFILEVIEWERA		typedef ptr IFileViewerA
-.comdef IFileViewerW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IFileViewerW : public IUnknown
+
     ShowInitialize	proc :LPFILEVIEWERSITE
     Show		proc :LPFVSHOWINFO
     PrintTo		proc :LPWSTR, :BOOL
     .ends
+
 LPFILEVIEWERW		typedef ptr IFileViewerW
+
 ifdef _UNICODE
 IFileViewer		equ <IFileViewerW>
 LPFILEVIEWER		equ <LPFILEVIEWERW>
@@ -1130,35 +1119,31 @@ SHGetDesktopFolder proto WINAPI \
 
 
 
-.comdef IShellDetails
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellDetails : public IUnknown
+
     GetDetailsOf	proc :PCUITEMID_CHILD, :UINT, :ptr
     ColumnClick		proc :UINT
+
     .ends
 
-.comdef IObjMgr
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjMgr : public IUnknown
+
     Append		proc :ptr
     Remove		proc :ptr
+
     .ends
 
-.comdef ICurrentWorkingDirectory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICurrentWorkingDirectory : public IUnknown
+
     GetDirectory	proc :LPWSTR, :DWORD
     SetDirectory	proc :LPCWSTR
+
     .ends
 
-.comdef IACList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IACList : public IUnknown
+
     Expand		proc :LPCWSTR
+
     .ends
 
 
@@ -1176,12 +1161,11 @@ if (_WIN32_IE GE _WIN32_IE_IE70)
 ACLO_VIRTUALNAMESPACE	equ 64	; enumereate on the virual namespace
 endif
 
-.comdef IACList2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IACList2 : public IUnknown
+
     SetOptions		proc :DWORD
     GetOptions		proc :ptr
+
     .ends
 
 
@@ -1202,10 +1186,8 @@ PDTIMER_PAUSE		equ 0x00000002
 PDTIMER_RESUME		equ 0x00000003
 endif
 
-.comdef IProgressDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProgressDialog : public IUnknown
+
     StartProgressDialog proc :HWND, :ptr, :DWORD, :LPCVOID
     StopProgressDialog	proc
     SetTitle		proc :LPCWSTR
@@ -1216,18 +1198,18 @@ endif
     SetLine		proc :DWORD, :LPCWSTR, :BOOL, :LPCVOID
     SetCancelMsg	proc :LPCWSTR, :LPCVOID
     Timer		proc :DWORD, :LPCVOID
+
     .ends
 
 
-.comdef IDockingWindowSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDockingWindowSite : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     GetBorderDW		proc :ptr, :LPRECT
     RequestBorderSpaceDW proc :ptr, :LPCBORDERWIDTHS
     SetBorderSpaceDW	proc :ptr, :LPCBORDERWIDTHS
+
     .ends
 
 DWFRF_NORMAL		equ 0x0000
@@ -1237,24 +1219,22 @@ DWFAF_GROUP1		equ 0x0002
 DWFAF_GROUP2		equ 0x0004
 DWFAF_AUTOHIDE		equ 0x0010
 
-.comdef IDockingWindowFrame
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDockingWindowFrame : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     AddToolbar		proc :ptr, :LPCWSTR, :DWORD
     RemoveToolbar	proc :ptr, :DWORD
     FindToolbar		proc :LPCWSTR, :REFIID, :ptr
+
     .ends
 
 if (_WIN32_IE GE 0x0400)
 
-.comdef IThumbnailCapture
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IThumbnailCapture : public IUnknown
+
     CaptureThumbnail	proc :ptr, :ptr, :ptr
+
     .ends
 
 LPTHUMBNAILCAPTURE	typedef ptr IThumbnailCapture
@@ -1273,25 +1253,23 @@ PENUMSHELLIMAGESTOREDATA typedef ptr ENUMSHELLIMAGESTOREDATA
 
 .pragma pack(pop)
 
-.comdef IEnumShellImageStore
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumShellImageStore : public IUnknown
+
     Reset		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Clone		proc :ptr
+
     .ends
+
 LPENUMSHELLIMAGESTORE	typedef ptr IEnumShellImageStore
 
 
 SHIMSTCAPFLAG_LOCKABLE	equ 0x0001
 SHIMSTCAPFLAG_PURGEABLE equ 0x0002
 
-.comdef IShellImageStore
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellImageStore : public IUnknown
+
     Open		proc :DWORD, :ptr
     Create		proc :DWORD, :ptr
     ReleaseLock		proc :ptr
@@ -1305,7 +1283,9 @@ SHIMSTCAPFLAG_PURGEABLE equ 0x0002
     DeleteEntry		proc :LPCWSTR
     IsEntryInStore	proc :LPCWSTR, :ptr
     Enum		proc :ptr
+
     .ends
+
 LPSHELLIMAGESTORE	typedef ptr IShellImageStore
 
 endif
@@ -1356,25 +1336,23 @@ PBANDINFOSFB		typedef ptr BANDINFOSFB
 
 .pragma pack(pop)
 
-.comdef IShellFolderBand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellFolderBand : public IUnknown
+
     InitializeSFB	proc :ptr, :PCIDLIST_ABSOLUTE
     SetBandInfoSFB	proc :PBANDINFOSFB
     GetBandInfoSFB	proc :PBANDINFOSFB
+
     .ends
 
-.comdef IDeskBarClient
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDeskBarClient : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     SetDeskBarSite	proc :ptr
     SetModeDBC		proc :DWORD
     UIActivateDBC	proc :DWORD
     GetSize		proc :DWORD, :LPRECT
+
     .ends
 
 DBC_GS_IDEAL		equ 0
@@ -1551,10 +1529,8 @@ COMPONENT_DEFAULT_LEFT	equ (0xFFFF)
 COMPONENT_DEFAULT_TOP	equ (0xFFFF)
 
 
-.comdef IActiveDesktop
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IActiveDesktop : public IUnknown
+
     ApplyChanges	proc :DWORD
     GetWallpaper	proc :LPWSTR, :UINT, :DWORD
     SetWallpaper	proc :LPCWSTR, :DWORD
@@ -1574,7 +1550,9 @@ COMPONENT_DEFAULT_TOP	equ (0xFFFF)
     GenerateDesktopItemHtml proc :LPCWSTR, :LPCOMPONENT, :DWORD
     AddUrl		proc :HWND, :LPCWSTR, :LPCOMPONENT, :DWORD
     GetDesktopItemBySource proc :LPCWSTR, :LPCOMPONENT, :DWORD
+
     .ends
+
 LPACTIVEDESKTOP		typedef ptr IActiveDesktop
 
 SSM_CLEAR		equ 0x0000
@@ -1591,28 +1569,28 @@ SCHEME_UPDATE		equ 0x0020
 SCHEME_DONOTUSE		equ 0x0040
 SCHEME_CREATE		equ 0x0080
 
-.comdef IActiveDesktopP
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IActiveDesktopP : public IUnknown
+
     SetSafeMode		proc :DWORD
     EnsureUpdateHTML	proc
     SetScheme		proc :LPCWSTR, :DWORD
     GetScheme		proc :LPWSTR, :ptr, :DWORD
+
     .ends
+
 LPACTIVEDESKTOPP	typedef ptr IActiveDesktopP
 
 GADOF_DIRTY		equ 0x00000001
 
-.comdef IADesktopP2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IADesktopP2 : public IUnknown
+
     ReReadWallpaper	proc
     GetADObjectFlags	proc :ptr, :DWORD
     UpdateAllDesktopSubscriptions proc
     MakeDynamicChanges	proc :ptr
+
     .ends
+
 LPADESKTOPP2		typedef ptr IADesktopP2
 
 
@@ -1663,13 +1641,12 @@ LPCSHCOLUMNDATA		typedef ptr SHCOLUMNDATA
 
 .pragma pack(pop)
 
-.comdef IColumnProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IColumnProvider : public IUnknown
+
     Initialize		proc :LPCSHCOLUMNINIT
     GetColumnInfo	proc :DWORD, :ptr
     GetItemData		proc :LPCSHCOLUMNID, :LPCSHCOLUMNDATA, :ptr
+
     .ends
 
 endif
@@ -1928,20 +1905,18 @@ SHChangeNotify proto WINAPI \
 
 
 
-.comdef IShellChangeNotify
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellChangeNotify : public IUnknown
+
     OnChange		proc :LONG, :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
+
     .ends
 
 
-.comdef IQueryInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IQueryInfo : public IUnknown
+
     GetInfoTip		proc :DWORD, :ptr
     GetInfoFlags	proc :ptr
+
     .ends
 
 QITIPF_DEFAULT		equ 0x00000000
@@ -2452,13 +2427,12 @@ SHReplaceFromPropSheetExtArray proto WINAPI \
 		lParam: LPARAM
 
 if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
-.comdef IDefViewFrame
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDefViewFrame : public IUnknown
+
     GetWindowLV		proc :ptr
     ReleaseWindowLV	proc
     GetShellFolder	proc :ptr
+
     .ends
 endif
 RESTRICTIONS		typedef SDWORD
@@ -2850,11 +2824,10 @@ Shell_GetCachedImageIndex equ <Shell_GetCachedImageIndexA>
 endif
 endif
 
-.comdef IDocViewSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDocViewSite : public IUnknown
+
     OnSetTitle		proc :ptr
+
     .ends
 
 VALIDATEUNC_CONNECT	equ 0x0001
@@ -2943,24 +2916,22 @@ SHSetInstanceExplorer proto WINAPI \
 ;SHSTDAPI
 IsUserAnAdmin proto WINAPI
 
-.comdef IInitializeObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeObject : public IUnknown
+
     Initialize		proc
+
     .ends
 
 
 BMICON_LARGE		equ 0
 
-.comdef IBanneredBar
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBanneredBar : public IUnknown
+
     SetIconSize		proc :DWORD
     GetIconSize		proc :ptr
     SetBitmap		proc :HBITMAP
     GetBitmap		proc :ptr
+
     .ends
 
 ;SHSTDAPI_(LRESULT)
@@ -2970,12 +2941,12 @@ SHShellFolderView_Message proto WINAPI \
 		lParam: LPARAM
 
 
-.comdef IShellFolderViewCB
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellFolderViewCB : public IUnknown
+
     MessageSFVCB	proc :UINT, :WPARAM, :LPARAM
+
     .ends
+
 LPIShellFolderViewCB	typedef ptr IShellFolderViewCB
 
 .pragma pack(push, 8)
@@ -3083,10 +3054,8 @@ SFVS_SELECT_NONE	equ 0x0
 SFVS_SELECT_ALLITEMS	equ 0x1
 SFVS_SELECT_INVERT	equ 0x2
 
-.comdef IShellFolderView
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellFolderView : public IUnknown
+
     Rearrange		proc :LPARAM
     GetArrangeParam	proc :ptr
     ArrangeGrid		proc
@@ -3115,6 +3084,7 @@ SFVS_SELECT_INVERT	equ 0x2
     Select		proc :UINT
     QuerySupport	proc :ptr
     SetAutomationObject proc :ptr
+
     .ends
 
 LPIShellView		typedef ptr IShellView
@@ -3529,13 +3499,12 @@ else
 SHPathPrepareForWrite	equ <SHPathPrepareForWriteA>
 endif
 
-.comdef INamedPropertyBag
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INamedPropertyBag : public IUnknown
+
     ReadPropertyNPB	proc :LPCWSTR, :LPCWSTR, :ptr
     WritePropertyNPB	proc :LPCWSTR, :LPCWSTR, :ptr
     RemovePropertyNPB	proc :LPCWSTR, :LPCWSTR
+
     .ends
 
 ifdef __urlmon_h__

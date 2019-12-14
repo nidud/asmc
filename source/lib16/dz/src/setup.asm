@@ -218,11 +218,11 @@ event_reload ENDP
 event_loadcolor PROC _CType PRIVATE USES si
 	.if wgetfile(addr cp_pal,3)
 	    push ax
-	    invoke osread,ax,addr at_foreground,SIZE S_COLOR
+	    invoke osread,ax,addr at_foreground,S_COLOR
 	    mov si,ax
 	    call close
 	    mov ax,_C_NORMAL
-	    .if si == SIZE S_COLOR
+	    .if si == S_COLOR
 		call event_reload
 	    .endif
 	.endif
@@ -232,7 +232,7 @@ event_loadcolor ENDP
 event_savecolor PROC _CType PRIVATE
 	.if wgetfile(addr cp_pal,2)
 	    push ax
-	    invoke oswrite,ax,addr at_foreground,SIZE S_COLOR
+	    invoke oswrite,ax,addr at_foreground,S_COLOR
 	    call close
 	.endif
 	mov ax,_C_NORMAL
@@ -280,7 +280,7 @@ event_standard PROC _CType PRIVATE USES bx
 	.endif
 	.if ax
 	    mov dx,ds
-	    invoke memcpy,addr at_foreground,dx::ax,SIZE S_COLOR
+	    invoke memcpy,addr at_foreground,dx::ax,S_COLOR
 	    call event_reload
 	.else
 	    inc ax
@@ -564,7 +564,7 @@ cmcompression PROC _CType
 	mov	compressflag,ax
 	xor	ax,ax
     compression_loop:
-	add	bx,SIZE S_TOBJ
+	add	bx,S_TOBJ
 	test	es:[bx].S_DOBJ.dl_flag,_O_RADIO
 	jnz	compression_lev
 	inc	ax

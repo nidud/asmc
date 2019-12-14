@@ -30,7 +30,7 @@ create_heap:
 
 extend_heap:
 	mov	ax,ss_brkl
-	add	ax,SIZE mb
+	add	ax,mb
 	add	ax,cx
 	sub	ax,ss_base
 	cmp	ax,MAXHEAPLEN
@@ -94,7 +94,7 @@ nalloc	PROC _CType PUBLIC USES bx dx cx msize:WORD
 	mov	ax,msize
 	test	ax,ax
 	jz	nalloc_failed
-	add	ax,SIZE mb
+	add	ax,mb
 	mov	cx,ax
 	mov	ax,ss_free
 	test	ax,ax
@@ -127,7 +127,7 @@ nalloc	PROC _CType PUBLIC USES bx dx cx msize:WORD
 	mov	ss_free,ax
     nalloc_seto:
 	mov	ax,dx
-	add	ax,SIZE mb
+	add	ax,mb
     nalloc_end:
 	test	ax,ax
 	ret
@@ -145,7 +145,7 @@ nalloc	ENDP
 
 nfree	PROC _CType PUBLIC USES ax bx maddr:WORD
 	mov ax,maddr
-	sub ax,SIZE mb
+	sub ax,mb
 	.if ax >= ss_base && ax < ss_brkl
 	    mov bx,ax
 	    add ax,[bx].mb.mb_size

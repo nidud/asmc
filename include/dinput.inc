@@ -285,10 +285,8 @@ LPDIEFFESCAPE		typedef ptr DIEFFESCAPE
 
 ifndef DIJ_RINGZERO
 
-.comdef IDirectInputEffect
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirectInputEffect : public IUnknown
+
     Initialize		proc :HINSTANCE, :DWORD, :REFGUID
     GetEffectGuid	proc :LPGUID
     GetParameters	proc :LPDIEFFECT, :DWORD
@@ -299,8 +297,9 @@ ifndef DIJ_RINGZERO
     Download		proc
     Unload		proc
     Escape		proc :LPDIEFFESCAPE
+
     .ends
-LPDIRECTINPUTEFFECT	typedef ptr IDirectInputEffect
+    LPDIRECTINPUTEFFECT typedef ptr IDirectInputEffect
 
 endif
 endif
@@ -1229,10 +1228,8 @@ LPCDIDEVICEINSTANCE	typedef LPCDIDEVICEINSTANCEA
 endif
 LPCDIDEVICEINSTANCE	typedef ptr DIDEVICEINSTANCE
 
-.comdef IDirectInputDeviceW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirectInputDeviceW : public IUnknown
+
     GetCapabilities	proc :LPDIDEVCAPS
     EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
     GetProperty		proc :REFGUID, :LPDIPROPHEADER
@@ -1248,13 +1245,13 @@ LPCDIDEVICEINSTANCE	typedef ptr DIDEVICEINSTANCE
     GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
     RunControlPanel	proc :HWND, :DWORD
     Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+
     .ends
+
 LPDIRECTINPUTDEVICEW	typedef ptr IDirectInputDeviceW
 
-.comdef IDirectInputDeviceA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirectInputDeviceA : public IUnknown
+
     GetCapabilities	proc :LPDIDEVCAPS
     EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
     GetProperty		proc :REFGUID, :LPDIPROPHEADER
@@ -1270,7 +1267,9 @@ LPDIRECTINPUTDEVICEW	typedef ptr IDirectInputDeviceW
     GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
     RunControlPanel	proc :HWND, :DWORD
     Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+
     .ends
+
 LPDIRECTINPUTDEVICEA	typedef ptr IDirectInputDeviceA
 
 ifdef _UNICODE
@@ -1349,25 +1348,8 @@ LPDIENUMEFFECTSCALLBACK equ <LPDIENUMEFFECTSCALLBACKA>
 endif
 CALLBACK(LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :LPDIRECTINPUTEFFECT, :PVOID)
 
-.comdef IDirectInputDevice2W
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW,  :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+.comdef IDirectInputDevice2W : public IDirectInputDeviceW
+
     CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
     EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
     GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
@@ -1377,28 +1359,13 @@ CALLBACK(LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :LPDIRECTINPUTEFFECT, :PVOID)
     Escape		proc :LPDIEFFESCAPE
     Poll		proc
     SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+
     .ends
+
 LPDIRECTINPUTDEVICE2W	typedef ptr IDirectInputDevice2W
 
-.comdef IDirectInputDevice2A
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+.comdef IDirectInputDevice2A : public IDirectInputDeviceA
+
     CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
     EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
     GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
@@ -1408,7 +1375,9 @@ LPDIRECTINPUTDEVICE2W	typedef ptr IDirectInputDevice2W
     Escape		proc :LPDIEFFESCAPE
     Poll		proc
     SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+
     .ends
+
 LPDIRECTINPUTDEVICE2A	typedef ptr IDirectInputDevice2A
 
 ifdef _UNICODE
@@ -1430,70 +1399,22 @@ DIFEF_MODIFYIFNEEDED	equ 0x00000010
 
 ifndef DIJ_RINGZERO
 
-.comdef IDirectInputDevice7W
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
-    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
-    GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
-    GetForceFeedbackState proc :LPDWORD
-    SendForceFeedbackCommand proc :DWORD
-    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-    Escape		proc :LPDIEFFESCAPE
-    Poll		proc
-    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+.comdef IDirectInputDevice7W : public IDirectInputDevice2W
+
     EnumEffectsInFile	proc :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
     WriteEffectToFile	proc :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+
     .ends
+
 LPDIRECTINPUTDEVICE7W	typedef ptr IDirectInputDevice7W
 
-.comdef IDirectInputDevice7A
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
-    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
-    GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
-    GetForceFeedbackState proc :LPDWORD
-    SendForceFeedbackCommand proc :DWORD
-    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-    Escape		proc :LPDIEFFESCAPE
-    Poll		proc
-    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+.comdef IDirectInputDevice7A : public IDirectInputDevice2A
+
     EnumEffectsInFile	proc :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
     WriteEffectToFile	proc :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+
     .ends
+
 LPDIRECTINPUTDEVICE7A	typedef ptr IDirectInputDevice7A
 
 ifdef _UNICODE
@@ -1512,76 +1433,24 @@ if(DIRECTINPUT_VERSION GE 0x0800)
 
 ifndef DIJ_RINGZERO
 
-.comdef IDirectInputDevice8W
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
-    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
-    GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
-    GetForceFeedbackState proc :LPDWORD
-    SendForceFeedbackCommand proc :DWORD
-    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-    Escape		proc :LPDIEFFESCAPE
-    Poll		proc
-    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    EnumEffectsInFile	proc :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-    WriteEffectToFile	proc :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+.comdef IDirectInputDevice8W : public IDirectInputDevice7W
+
     BuildActionMap	proc :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
     SetActionMap	proc :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
     GetImageInfo	proc :LPDIDEVICEIMAGEINFOHEADERW
+
     .ends
+
 LPDIRECTINPUTDEVICE8W	typedef ptr IDirectInputDevice8W
 
-.comdef IDirectInputDevice8A
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCapabilities	proc :LPDIDEVCAPS
-    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-    GetProperty		proc :REFGUID, :LPDIPROPHEADER
-    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
-    Acquire		proc
-    Unacquire		proc
-    GetDeviceState	proc :DWORD, :PVOID
-    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    SetDataFormat	proc :LPCDIDATAFORMAT
-    SetEventNotification proc :HANDLE
-    SetCooperativeLevel proc :HWND, :DWORD
-    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
-    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
-    GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
-    GetForceFeedbackState proc :LPDWORD
-    SendForceFeedbackCommand proc :DWORD
-    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-    Escape		proc :LPDIEFFESCAPE
-    Poll		proc
-    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-    EnumEffectsInFile	proc :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-    WriteEffectToFile	proc :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+.comdef IDirectInputDevice8A : public IDirectInputDevice7A
+
     BuildActionMap	proc :LPDIACTIONFORMATA, :LPCSTR, :DWORD
     SetActionMap	proc :LPDIACTIONFORMATA, :LPCSTR, :DWORD
     GetImageInfo	proc :LPDIDEVICEIMAGEINFOHEADERA
+
     .ends
+
 LPDIRECTINPUTDEVICE8A	typedef ptr IDirectInputDevice8A
 
 ifdef _UNICODE
@@ -1956,25 +1825,24 @@ DIEDBSFL_NONGAMINGDEVICES equ 0x00004000
 DIEDBSFL_VALID		equ 0x00007110
 endif
 
-.comdef IDirectInputW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirectInputW : public IUnknown
+
     CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
     EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
     GetDeviceStatus	proc :REFGUID
     RunControlPanel	proc :HWND, :DWORD
     Initialize		proc :HINSTANCE, :DWORD
+
     .ends
-.comdef IDirectInputA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IDirectInputA : public IUnknown
+
     CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
     EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
     GetDeviceStatus	proc :REFGUID
     RunControlPanel	proc :HWND, :DWORD
     Initialize		proc :HINSTANCE, :DWORD
+
     .ends
 
 ifdef _UNICODE
@@ -1986,28 +1854,16 @@ IDirectInput		equ <IDirectInputA>
 endif
 LPDIRECTINPUT		typedef ptr IDirectInput
 
-.comdef IDirectInput2W
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
+.comdef IDirectInput2W : public IDirectInputW
+
     FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
+
     .ends
 
-.comdef IDirectInput2A
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
+.comdef IDirectInput2A : public IDirectInputA
+
     FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
+
     .ends
 
 ifdef _UNICODE
@@ -2019,30 +1875,16 @@ IDirectInput2		equ <IDirectInput2A>
 endif
 LPDIRECTINPUT2		typedef ptr IDirectInput2
 
-.comdef IDirectInput7W
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
-    FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
+.comdef IDirectInput7W : public IDirectInput2W
+
     CreateDeviceEx	proc :REFGUID, :REFIID, :ptr, :LPUNKNOWN
+
     .ends
 
-.comdef IDirectInput7A
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
-    FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
+.comdef IDirectInput7A : public IDirectInput2A
+
     CreateDeviceEx	proc :REFGUID, :REFIID, :ptr, :LPUNKNOWN
+
     .ends
 
 ifdef _UNICODE
@@ -2056,35 +1898,15 @@ LPDIRECTINPUT7		typedef ptr IDirectInput7
 
 if(DIRECTINPUT_VERSION GE 0x0800)
 
-.comdef IDirectInput8W
+.comdef IDirectInput8W : public IDirectInput2W
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
-    FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
     EnumDevicesBySemantics proc :LPCWSTR, :LPDIACTIONFORMATW, :LPDIENUMDEVICESBYSEMANTICSCBW, :LPVOID, :DWORD
     ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSW, :DWORD, :PVOID
 
     .ends
 
-.comdef IDirectInput8A
+.comdef IDirectInput8A : public IDirectInput2A
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-
-    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
-    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :ptr, :DWORD
-    GetDeviceStatus	proc :REFGUID
-    RunControlPanel	proc :HWND, :DWORD
-    Initialize		proc :HINSTANCE, :DWORD
-    FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
     EnumDevicesBySemantics proc :LPCSTR, :LPDIACTIONFORMATA, :LPDIENUMDEVICESBYSEMANTICSCBA, :PVOID, :DWORD
     ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSA, :DWORD, :PVOID
 

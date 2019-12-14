@@ -308,7 +308,7 @@ endif
         mov adapter,NULL
         .ifd dxgiDevice.GetAdapter(&adapter) == S_OK
 
-            adapter._GetParent( &IID_IDXGIFactory1, &dxgiFactory )
+            adapter.GetParent( &IID_IDXGIFactory1, &dxgiFactory )
             mov hr,eax
             adapter.Release()
         .endif

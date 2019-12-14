@@ -5,12 +5,11 @@ include d3d10.inc
 
 DEFINE_GUID(IID_ID3D10Blob, 0x8ba5fb08, 0x5195, 0x40e2, 0xac, 0x58, 0xd, 0x98, 0x9c, 0x3a, 0x1, 0x2)
 
-.comdef ID3D10Blob
-    QueryInterface	proc :REFIID, :PVOID
-    AddRef		proc
-    Release		proc
+.comdef ID3D10Blob : public IUnknown
+
     GetBufferPointer	proc
     GetBufferSize	proc
+
     .ends
 
 D3D10_DRIVER_TYPE	typedef SDWORD

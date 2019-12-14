@@ -188,13 +188,13 @@ local entry:WORD
 local boff:WORD
 local xoff:WORD
 local loff:WORD
-	invoke	malloc,SIZE S_HISTORY
+	invoke	malloc,S_HISTORY
 	mov	WORD PTR history,ax
 	mov	WORD PTR history[2],dx
 	jnz	@F
 	jmp	toend
      @@:
-	invoke	memzero,dx::ax,SIZE S_HISTORY
+	invoke	memzero,dx::ax,S_HISTORY
 	invoke	strcpy,addr fname,addr configfile
 	invoke	strfcat,addr configfile,addr configpath,addr cp_history
 	mov	di,WORD PTR history
@@ -228,7 +228,7 @@ local loff:WORD
 	mov	ax,boff
 	mov	es:[di].S_DIRECTORY.cel_index,ax
      @@:
-	add	di,SIZE S_DIRECTORY
+	add	di,S_DIRECTORY
 	inc	entry
 	jmp	do
 break:
@@ -315,7 +315,7 @@ local loff:WORD
 	oprintf("%d=%X,%d,%d,%s\n",si,es:[di].S_DIRECTORY.flag,
 		es:[di].S_DIRECTORY.fcb_index,es:[di].S_DIRECTORY.cel_index,
 		addr es:[di].S_DIRECTORY.path)
-	add	di,SIZE S_DIRECTORY
+	add	di,S_DIRECTORY
 	inc	si
 	cmp	si,MAXHISTORY
 	jb	@B
@@ -377,8 +377,8 @@ local dirptr:DWORD
 	mov	WORD PTR dirptr,di
 	lds	si,history
 	les	di,dirptr
-	mov	cx,SIZE S_DIRECTORY
-	mov	dx,SIZE S_DIRECTORY * (MAXHISTORY-1)
+	mov	cx,S_DIRECTORY
+	mov	dx,S_DIRECTORY * (MAXHISTORY-1)
 	test	al,al
 	jnz	@F
 	add	si,dx
@@ -387,7 +387,7 @@ local dirptr:DWORD
 	lds	si,dirptr
 	les	di,history
 	lds	si,history
-	add	si,SIZE S_DIRECTORY
+	add	si,S_DIRECTORY
 	mov	cx,dx
 	test	al,al
 	jnz	@F
@@ -401,7 +401,7 @@ local dirptr:DWORD
 	rep	movsb
 	lds	si,dirptr
 	les	di,history
-	mov	cx,SIZE S_DIRECTORY
+	mov	cx,S_DIRECTORY
 	cld
 	test	al,al
 	jz	@F
@@ -532,7 +532,7 @@ cmhistory PROC _CType PUBLIC USES si di bx
 	cmp	BYTE PTR es:[di],0
 	jz	event
 	and	[bx],dx
-	add	bx,SIZE S_TOBJ
+	add	bx,S_TOBJ
 	add	di,MAXDOSKEY
 	inc	cx
 	cmp	cx,MAXDOSKEYS

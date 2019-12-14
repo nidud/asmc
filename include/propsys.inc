@@ -14,8 +14,8 @@ include windows.inc
 include ole2.inc
 endif
 
-ifndef __propsys_h__
-__propsys_h__ equ <>
+ifndef __PROPSYS_INC
+__PROPSYS_INC equ <>
 .pragma list(push, 0)
 
 include objidl.inc
@@ -30,11 +30,10 @@ __IInitializeWithFile_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithFile, "b7d14566-0509-4cce-a71f-0a554233bd9b")
 
-.comdef IInitializeWithFile
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeWithFile : public IUnknown
+
     Initialize		proc :LPCWSTR, :DWORD
+
     .ends
 
 endif
@@ -44,11 +43,10 @@ __IInitializeWithStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithStream, "b824b49d-22ac-4161-ac8a-9916e8fa3f7f")
 
-.comdef IInitializeWithStream
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeWithStream : public IUnknown
+
     Initialize		proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -58,19 +56,16 @@ __IPropertyStore_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyStore, "886d8eeb-8cf2-4446-8d02-cdba1dbdcf99")
 
-.comdef IPropertyStore
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyStore : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :DWORD, :ptr
     GetValue		proc :REFPROPERTYKEY, :ptr
     SetValue		proc :REFPROPERTYKEY, :REFPROPVARIANT
     Commit		proc
+
     .ends
-
-LPPROPERTYSTORE		typedef ptr IPropertyStore
-
+    LPPROPERTYSTORE	typedef ptr IPropertyStore
 endif
 
 ifndef __INamedPropertyStore_INTERFACE_DEFINED__
@@ -78,16 +73,14 @@ __INamedPropertyStore_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INamedPropertyStore, "71604b0f-97b0-4764-8577-2f13e98a1422")
 
-.comdef INamedPropertyStore
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INamedPropertyStore : public IUnknown
+
     GetNamedValue	proc :LPCWSTR, :ptr
     SetNamedValue	proc :LPCWSTR, :REFPROPVARIANT
     GetNameCount	proc :ptr
     GetNameAt		proc :DWORD, :ptr
-    .ends
 
+    .ends
 endif
 
 GETPROPERTYSTOREFLAGS	typedef SDWORD
@@ -109,35 +102,30 @@ __IObjectWithPropertyKey_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithPropertyKey, "fc0ca0a7-c316-4fd2-9031-3e628e6d4f23")
 
-.comdef IObjectWithPropertyKey
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithPropertyKey : public IUnknown
+
     SetPropertyKey	proc :REFPROPERTYKEY
     GetPropertyKey	proc :ptr
-    .ends
 
+    .ends
 endif
 
-PKA_FLAGS		typedef SDWORD
-PKA_SET			equ 0
-PKA_APPEND		equ ( PKA_SET + 1 )
-PKA_DELETE		equ ( PKA_APPEND + 1 )
+.enum PKA_FLAGS {
+	PKA_SET		= 0,
+	PKA_APPEND	= PKA_SET + 1,
+	PKA_DELETE	= PKA_APPEND + 1
+    }
 
 ifndef __IPropertyChange_INTERFACE_DEFINED__
 __IPropertyChange_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyChange, "f917bc8a-1bba-4478-a245-1bde03eb9431")
 
-.comdef IPropertyChange
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPropertyKey	proc :REFPROPERTYKEY
-    GetPropertyKey	proc :ptr
-    ApplyToPropVariant	proc :REFPROPVARIANT, :ptr
-    .ends
+.comdef IPropertyChange : public IObjectWithPropertyKey
 
+    ApplyToPropVariant	proc :REFPROPVARIANT, :ptr
+
+    .ends
 endif
 
 ifndef __IPropertyChangeArray_INTERFACE_DEFINED__
@@ -145,10 +133,8 @@ __IPropertyChangeArray_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyChangeArray, "380f5cad-1b5e-42f2-805d-637fd392d31e")
 
-.comdef IPropertyChangeArray
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyChangeArray : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :UINT, :REFIID, :ptr
     InsertAt		proc :UINT, :ptr
@@ -156,8 +142,8 @@ DEFINE_IIDX(IPropertyChangeArray, "380f5cad-1b5e-42f2-805d-637fd392d31e")
     AppendOrReplace	proc :ptr
     RemoveAt		proc :UINT
     IsKeyInArray	proc :REFPROPERTYKEY
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyStoreCapabilities_INTERFACE_DEFINED__
@@ -165,65 +151,56 @@ __IPropertyStoreCapabilities_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyStoreCapabilities, "c8e2d566-186e-4d49-bf41-6909ead56acc")
 
-.comdef IPropertyStoreCapabilities
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    IsPropertyWritable	proc :REFPROPERTYKEY
-    .ends
+.comdef IPropertyStoreCapabilities : public IUnknown
 
+    IsPropertyWritable	proc :REFPROPERTYKEY
+
+    .ends
 endif
 
 ifndef __IPropertyStoreCache_INTERFACE_DEFINED__
 __IPropertyStoreCache_INTERFACE_DEFINED__ equ 1
 
-PSC_STATE		typedef ptr SDWORD
-PSC_NORMAL		equ 0
-PSC_NOTINSOURCE		equ 1
-PSC_DIRTY		equ 2
-PSC_READONLY		equ 3
+.enum PSC_STATE {
+    PSC_NORMAL		= 0,
+    PSC_NOTINSOURCE	= 1,
+    PSC_DIRTY		= 2,
+    PSC_READONLY	= 3
+}
 
 DEFINE_IIDX(IPropertyStoreCache, "3017056d-9a91-4e90-937d-746c72abbf4f")
 
-.comdef IPropertyStoreCache
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCount		proc :ptr
-    GetAt		proc :DWORD, :ptr
-    GetValue		proc :REFPROPERTYKEY, :ptr
-    SetValue		proc :REFPROPERTYKEY, :REFPROPVARIANT
-    Commit		proc
+.comdef IPropertyStoreCache : public IPropertyStore
+
     GetState		proc :REFPROPERTYKEY, :ptr
     GetValueAndState	proc :REFPROPERTYKEY, :ptr, :ptr
     SetState		proc :REFPROPERTYKEY, :PSC_STATE
     SetValueAndState	proc :REFPROPERTYKEY, :ptr, :PSC_STATE
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyEnumType_INTERFACE_DEFINED__
 __IPropertyEnumType_INTERFACE_DEFINED__ equ 1
 
-PROPENUMTYPE		typedef SDWORD
-PET_DISCRETEVALUE	equ 0
-PET_RANGEDVALUE		equ 1
-PET_DEFAULTVALUE	equ 2
-PET_ENDRANGE		equ 3
+.enum PROPENUMTYPE {
+    PET_DISCRETEVALUE	= 0,
+    PET_RANGEDVALUE	= 1,
+    PET_DEFAULTVALUE	= 2,
+    PET_ENDRANGE	= 3
+}
 
 DEFINE_IIDX(IPropertyEnumType, "11e1fbf9-2d56-4a6b-8db3-7cd193a471f2")
 
-.comdef IPropertyEnumType
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyEnumType : public IUnknown
+
     GetEnumType		proc :ptr
     GetValue		proc :ptr
     GetRangeMinValue	proc :ptr
     GetRangeSetValue	proc :ptr
     GetDisplayText	proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyEnumType2_INTERFACE_DEFINED__
@@ -231,18 +208,11 @@ __IPropertyEnumType2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyEnumType2, "9b6e051c-5ddd-4321-9070-fe2acb55e794")
 
-.comdef IPropertyEnumType2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetEnumType		proc :ptr
-    GetValue		proc :ptr
-    GetRangeMinValue	proc :ptr
-    GetRangeSetValue	proc :ptr
-    GetDisplayText	proc :ptr
-    GetImageReference	proc :ptr
-    .ends
+.comdef IPropertyEnumType2 : public IPropertyEnumType
 
+    GetImageReference	proc :ptr
+
+    .ends
 endif
 
 ifndef __IPropertyEnumTypeList_INTERFACE_DEFINED__
@@ -250,135 +220,135 @@ __IPropertyEnumTypeList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyEnumTypeList, "a99400f4-3d84-4557-94ba-1242fb2cc9a6")
 
-.comdef IPropertyEnumTypeList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyEnumTypeList : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :UINT, :REFIID, :ptr
     GetConditionAt	proc :UINT, :REFIID, :ptr
     FindMatchingIndex	proc :REFPROPVARIANT, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyDescription_INTERFACE_DEFINED__
 __IPropertyDescription_INTERFACE_DEFINED__ equ 1
 
+.enum PROPDESC_TYPE_FLAGS {
+    PDTF_DEFAULT	= 0,
+    PDTF_MULTIPLEVALUES = 0x1,
+    PDTF_ISINNATE	= 0x2,
+    PDTF_ISGROUP	= 0x4,
+    PDTF_CANGROUPBY	= 0x8,
+    PDTF_CANSTACKBY	= 0x10,
+    PDTF_ISTREEPROPERTY = 0x20,
+    PDTF_INCLUDEINFULLTEXTQUERY = 0x40,
+    PDTF_ISVIEWABLE	= 0x80,
+    PDTF_ISQUERYABLE	= 0x100,
+    PDTF_CANBEPURGED	= 0x200,
+    PDTF_SEARCHRAWVALUE = 0x400,
+    PDTF_ISSYSTEMPROPERTY = 0x80000000,
+    PDTF_MASK_ALL	= 0x800007ff
+}
 
-PROPDESC_TYPE_FLAGS	typedef SDWORD
-PDTF_DEFAULT		equ 0
-PDTF_MULTIPLEVALUES	equ 0x1
-PDTF_ISINNATE		equ 0x2
-PDTF_ISGROUP		equ 0x4
-PDTF_CANGROUPBY		equ 0x8
-PDTF_CANSTACKBY		equ 0x10
-PDTF_ISTREEPROPERTY	equ 0x20
-PDTF_INCLUDEINFULLTEXTQUERY equ 0x40
-PDTF_ISVIEWABLE		equ 0x80
-PDTF_ISQUERYABLE	equ 0x100
-PDTF_CANBEPURGED	equ 0x200
-PDTF_SEARCHRAWVALUE	equ 0x400
-PDTF_ISSYSTEMPROPERTY	equ 0x80000000
-PDTF_MASK_ALL		equ 0x800007ff
+.enum PROPDESC_VIEW_FLAGS {
+    PDVF_DEFAULT	= 0,
+    PDVF_CENTERALIGN	= 0x1,
+    PDVF_RIGHTALIGN	= 0x2,
+    PDVF_BEGINNEWGROUP	= 0x4,
+    PDVF_FILLAREA	= 0x8,
+    PDVF_SORTDESCENDING = 0x10,
+    PDVF_SHOWONLYIFPRESENT = 0x20,
+    PDVF_SHOWBYDEFAULT	= 0x40,
+    PDVF_SHOWINPRIMARYLIST = 0x80,
+    PDVF_SHOWINSECONDARYLIST = 0x100,
+    PDVF_HIDELABEL	= 0x200,
+    PDVF_HIDDEN		= 0x800,
+    PDVF_CANWRAP	= 0x1000,
+    PDVF_MASK_ALL	= 0x1bff
+}
 
-DEFINE_ENUM_FLAG_OPERATORS(PROPDESC_TYPE_FLAGS)
-PROPDESC_VIEW_FLAGS	typedef SDWORD
-PDVF_DEFAULT		equ 0
-PDVF_CENTERALIGN	equ 0x1
-PDVF_RIGHTALIGN		equ 0x2
-PDVF_BEGINNEWGROUP	equ 0x4
-PDVF_FILLAREA		equ 0x8
-PDVF_SORTDESCENDING	equ 0x10
-PDVF_SHOWONLYIFPRESENT	equ 0x20
-PDVF_SHOWBYDEFAULT	equ 0x40
-PDVF_SHOWINPRIMARYLIST	equ 0x80
-PDVF_SHOWINSECONDARYLIST equ 0x100
-PDVF_HIDELABEL		equ 0x200
-PDVF_HIDDEN		equ 0x800
-PDVF_CANWRAP		equ 0x1000
-PDVF_MASK_ALL		equ 0x1bff
+.enum PROPDESC_DISPLAYTYPE {
+    PDDT_STRING		= 0,
+    PDDT_NUMBER		= 1,
+    PDDT_BOOLEAN	= 2,
+    PDDT_DATETIME	= 3,
+    PDDT_ENUMERATED	= 4
+}
 
-DEFINE_ENUM_FLAG_OPERATORS(PROPDESC_VIEW_FLAGS)
-PROPDESC_DISPLAYTYPE	typedef SDWORD
-PDDT_STRING		equ 0
-PDDT_NUMBER		equ 1
-PDDT_BOOLEAN		equ 2
-PDDT_DATETIME		equ 3
-PDDT_ENUMERATED		equ 4
+.enum PROPDESC_GROUPING_RANGE {
+    PDGR_DISCRETE	= 0,
+    PDGR_ALPHANUMERIC	= 1,
+    PDGR_SIZE		= 2,
+    PDGR_DYNAMIC	= 3,
+    PDGR_DATE		= 4,
+    PDGR_PERCENT	= 5,
+    PDGR_ENUMERATED	= 6
+}
 
-PROPDESC_GROUPING_RANGE typedef SDWORD
-PDGR_DISCRETE		equ 0
-PDGR_ALPHANUMERIC	equ 1
-PDGR_SIZE		equ 2
-PDGR_DYNAMIC		equ 3
-PDGR_DATE		equ 4
-PDGR_PERCENT		equ 5
-PDGR_ENUMERATED		equ 6
+.enum PROPDESC_FORMAT_FLAGS {
+    PDFF_DEFAULT	= 0,
+    PDFF_PREFIXNAME	= 0x1,
+    PDFF_FILENAME	= 0x2,
+    PDFF_ALWAYSKB	= 0x4,
+    PDFF_RESERVED_RIGHTTOLEFT = 0x8,
+    PDFF_SHORTTIME	= 0x10,
+    PDFF_LONGTIME	= 0x20,
+    PDFF_HIDETIME	= 0x40,
+    PDFF_SHORTDATE	= 0x80,
+    PDFF_LONGDATE	= 0x100,
+    PDFF_HIDEDATE	= 0x200,
+    PDFF_RELATIVEDATE	= 0x400,
+    PDFF_USEEDITINVITATION = 0x800,
+    PDFF_READONLY	= 0x1000,
+    PDFF_NOAUTOREADINGORDER = 0x2000
+}
 
-PROPDESC_FORMAT_FLAGS	typedef SDWORD
-PDFF_DEFAULT		equ 0
-PDFF_PREFIXNAME		equ 0x1
-PDFF_FILENAME		equ 0x2
-PDFF_ALWAYSKB		equ 0x4
-PDFF_RESERVED_RIGHTTOLEFT equ 0x8
-PDFF_SHORTTIME		equ 0x10
-PDFF_LONGTIME		equ 0x20
-PDFF_HIDETIME		equ 0x40
-PDFF_SHORTDATE		equ 0x80
-PDFF_LONGDATE		equ 0x100
-PDFF_HIDEDATE		equ 0x200
-PDFF_RELATIVEDATE	equ 0x400
-PDFF_USEEDITINVITATION	equ 0x800
-PDFF_READONLY		equ 0x1000
-PDFF_NOAUTOREADINGORDER equ 0x2000
+.enum PROPDESC_SORTDESCRIPTION {
+    PDSD_GENERAL	= 0,
+    PDSD_A_Z		= 1,
+    PDSD_LOWEST_HIGHEST = 2,
+    PDSD_SMALLEST_BIGGEST = 3,
+    PDSD_OLDEST_NEWEST	= 4
+}
 
-DEFINE_ENUM_FLAG_OPERATORS(PROPDESC_FORMAT_FLAGS)
+.enum PROPDESC_RELATIVEDESCRIPTION_TYPE {
+    PDRDT_GENERAL	= 0,
+    PDRDT_DATE		= 1,
+    PDRDT_SIZE		= 2,
+    PDRDT_COUNT		= 3,
+    PDRDT_REVISION	= 4,
+    PDRDT_LENGTH	= 5,
+    PDRDT_DURATION	= 6,
+    PDRDT_SPEED		= 7,
+    PDRDT_RATE		= 8,
+    PDRDT_RATING	= 9,
+    PDRDT_PRIORITY	= 10
+}
 
-PROPDESC_SORTDESCRIPTION typedef SDWORD
-PDSD_GENERAL		equ 0
-PDSD_A_Z		equ 1
-PDSD_LOWEST_HIGHEST	equ 2
-PDSD_SMALLEST_BIGGEST	equ 3
-PDSD_OLDEST_NEWEST	equ 4
+.enum PROPDESC_AGGREGATION_TYPE {
+    PDAT_DEFAULT	= 0,
+    PDAT_FIRST		= 1,
+    PDAT_SUM		= 2,
+    PDAT_AVERAGE	= 3,
+    PDAT_DATERANGE	= 4,
+    PDAT_UNION		= 5,
+    PDAT_MAX		= 6,
+    PDAT_MIN		= 7
+}
 
-PROPDESC_RELATIVEDESCRIPTION_TYPE typedef SDWORD
-PDRDT_GENERAL		equ 0
-PDRDT_DATE		equ 1
-PDRDT_SIZE		equ 2
-PDRDT_COUNT		equ 3
-PDRDT_REVISION		equ 4
-PDRDT_LENGTH		equ 5
-PDRDT_DURATION		equ 6
-PDRDT_SPEED		equ 7
-PDRDT_RATE		equ 8
-PDRDT_RATING		equ 9
-PDRDT_PRIORITY		equ 10
-
-PROPDESC_AGGREGATION_TYPE typedef SDWORD
-PDAT_DEFAULT		equ 0
-PDAT_FIRST		equ 1
-PDAT_SUM		equ 2
-PDAT_AVERAGE		equ 3
-PDAT_DATERANGE		equ 4
-PDAT_UNION		equ 5
-PDAT_MAX		equ 6
-PDAT_MIN		equ 7
-
-PROPDESC_CONDITION_TYPE typedef SDWORD
-PDCOT_NONE		equ 0
-PDCOT_STRING		equ 1
-PDCOT_SIZE		equ 2
-PDCOT_DATETIME		equ 3
-PDCOT_BOOLEAN		equ 4
-PDCOT_NUMBER		equ 5
+.enum PROPDESC_CONDITION_TYPE {
+    PDCOT_NONE		= 0,
+    PDCOT_STRING	= 1,
+    PDCOT_SIZE		= 2,
+    PDCOT_DATETIME	= 3,
+    PDCOT_BOOLEAN	= 4,
+    PDCOT_NUMBER	= 5
+}
 
 DEFINE_IIDX(IPropertyDescription, "6f79d558-3e96-4549-a1d1-7d75d2288814")
 
-.comdef IPropertyDescription
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyDescription : public IUnknown
+
     GetPropertyKey	proc :ptr
     GetCanonicalName	proc :ptr
     GetPropertyType	proc :ptr
@@ -400,8 +370,8 @@ DEFINE_IIDX(IPropertyDescription, "6f79d558-3e96-4549-a1d1-7d75d2288814")
     CoerceToCanonicalValue proc :ptr
     FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
     IsValueCanonical	proc :REFPROPVARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyDescription2_INTERFACE_DEFINED__
@@ -409,34 +379,11 @@ __IPropertyDescription2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyDescription2, "57d2eded-5062-400e-b107-5dae79fe57a6")
 
-.comdef IPropertyDescription2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetPropertyKey	proc :ptr
-    GetCanonicalName	proc :ptr
-    GetPropertyType	proc :ptr
-    GetDisplayName	proc :ptr
-    GetEditInvitation	proc :ptr
-    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags	proc :ptr
-    GetDefaultColumnWidth proc :ptr
-    GetDisplayType	proc :ptr
-    GetColumnState	proc :ptr
-    GetGroupingRange	proc :ptr
-    GetRelativeDescriptionType proc :ptr
-    GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription	proc :ptr
-    GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType	proc :ptr
-    GetConditionType	proc :ptr, :ptr
-    GetEnumTypeList	proc :REFIID, :ptr
-    CoerceToCanonicalValue proc :ptr
-    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical	proc :REFPROPVARIANT
-    GetImageReferenceForValue proc :REFPROPVARIANT, :ptr
-    .ends
+.comdef IPropertyDescription2 : public IPropertyDescription
 
+    GetImageReferenceForValue proc :REFPROPVARIANT, :ptr
+
+    .ends
 endif
 
 ifndef __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__
@@ -444,89 +391,44 @@ __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyDescriptionAliasInfo, "f67104fc-2af9-46fd-b32d-243c1404f3d1")
 
-.comdef IPropertyDescriptionAliasInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetPropertyKey	proc :ptr
-    GetCanonicalName	proc :ptr
-    GetPropertyType	proc :ptr
-    GetDisplayName	proc :ptr
-    GetEditInvitation	proc :ptr
-    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags	proc :ptr
-    GetDefaultColumnWidth proc :ptr
-    GetDisplayType	proc :ptr
-    GetColumnState	proc :ptr
-    GetGroupingRange	proc :ptr
-    GetRelativeDescriptionType proc :ptr
-    GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription	proc :ptr
-    GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType	proc :ptr
-    GetConditionType	proc :ptr, :ptr
-    GetEnumTypeList	proc :REFIID, :ptr
-    CoerceToCanonicalValue proc :ptr
-    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical	proc :REFPROPVARIANT
+.comdef IPropertyDescriptionAliasInfo : public IPropertyDescription
+
     GetSortByAlias	proc :REFIID, :ptr
     GetAdditionalSortByAliases proc :REFIID, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyDescriptionSearchInfo_INTERFACE_DEFINED__
 __IPropertyDescriptionSearchInfo_INTERFACE_DEFINED__ equ 1
 
-PROPDESC_SEARCHINFO_FLAGS typedef SDWORD
-PDSIF_DEFAULT		equ 0
-PDSIF_ININVERTEDINDEX	equ 0x1
-PDSIF_ISCOLUMN		equ 0x2
-PDSIF_ISCOLUMNSPARSE	equ 0x4
-PDSIF_ALWAYSINCLUDE	equ 0x8
+.enum PROPDESC_SEARCHINFO_FLAGS {
+    PDSIF_DEFAULT		= 0,
+    PDSIF_ININVERTEDINDEX	= 0x1,
+    PDSIF_ISCOLUMN		= 0x2,
+    PDSIF_ISCOLUMNSPARSE	= 0x4,
+    PDSIF_ALWAYSINCLUDE		= 0x8
+}
 
-DEFINE_ENUM_FLAG_OPERATORS(PROPDESC_SEARCHINFO_FLAGS)
-PROPDESC_COLUMNINDEX_TYPE typedef SDWORD
-PDCIT_NONE		equ 0
-PDCIT_ONDISK		equ 1
-PDCIT_INMEMORY		equ 2
-PDCIT_ONDEMAND		equ 3
-PDCIT_ONDISKALL		equ 4
-PDCIT_ONDISKVECTOR	equ 5
+.enum PROPDESC_COLUMNINDEX_TYPE {
+    PDCIT_NONE		= 0,
+    PDCIT_ONDISK	= 1,
+    PDCIT_INMEMORY	= 2,
+    PDCIT_ONDEMAND	= 3,
+    PDCIT_ONDISKALL	= 4,
+    PDCIT_ONDISKVECTOR	= 5
+}
 
 DEFINE_IIDX(IPropertyDescriptionSearchInfo, "078f91bd-29a2-440f-924e-46a291524520")
 
-.comdef IPropertyDescriptionSearchInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetPropertyKey	proc :ptr
-    GetCanonicalName	proc :ptr
-    GetPropertyType	proc :ptr
-    GetDisplayName	proc :ptr
-    GetEditInvitation	proc :ptr
-    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags	proc :ptr
-    GetDefaultColumnWidth proc :ptr
-    GetDisplayType	proc :ptr
-    GetColumnState	proc :ptr
-    GetGroupingRange	proc :ptr
-    GetRelativeDescriptionType proc :ptr
-    GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription	proc :ptr
-    GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType	proc :ptr
-    GetConditionType	proc :ptr, :ptr
-    GetEnumTypeList	proc :REFIID, :ptr
-    CoerceToCanonicalValue proc :ptr
-    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical	proc :REFPROPVARIANT
+.comdef IPropertyDescriptionSearchInfo : public IPropertyDescription
+
     GetSearchInfoFlags	proc :ptr
     GetColumnIndexType	proc :ptr
     GetProjectionString proc :ptr
     GetMaxSize		proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__
@@ -534,55 +436,31 @@ __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyDescriptionRelatedPropertyInfo, "507393f4-2a3d-4a60-b59e-d9c75716c2dd")
 
-.comdef IPropertyDescriptionRelatedPropertyInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetPropertyKey	proc :ptr
-    GetCanonicalName	proc :ptr
-    GetPropertyType	proc :ptr
-    GetDisplayName	proc :ptr
-    GetEditInvitation	proc :ptr
-    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags	proc :ptr
-    GetDefaultColumnWidth proc :ptr
-    GetDisplayType	proc :ptr
-    GetColumnState	proc :ptr
-    GetGroupingRange	proc :ptr
-    GetRelativeDescriptionType proc :ptr
-    GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription	proc :ptr
-    GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType	proc :ptr
-    GetConditionType	proc :ptr, :ptr
-    GetEnumTypeList	proc :REFIID, :ptr
-    CoerceToCanonicalValue proc :ptr
-    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical	proc :REFPROPVARIANT
-    GetRelatedProperty	proc :LPCWSTR, :REFIID, :ptr
-    .ends
+.comdef IPropertyDescriptionRelatedPropertyInfo : public IPropertyDescription
 
+    GetRelatedProperty	proc :LPCWSTR, :REFIID, :ptr
+
+    .ends
 endif
 
 
-PROPDESC_ENUMFILTER	typedef SDWORD
-PDEF_ALL		equ 0
-PDEF_SYSTEM		equ 1
-PDEF_NONSYSTEM		equ 2
-PDEF_VIEWABLE		equ 3
-PDEF_QUERYABLE		equ 4
-PDEF_INFULLTEXTQUERY	equ 5
-PDEF_COLUMN		equ 6
+.enum PROPDESC_ENUMFILTER {
+    PDEF_ALL		= 0,
+    PDEF_SYSTEM		= 1,
+    PDEF_NONSYSTEM	= 2,
+    PDEF_VIEWABLE	= 3,
+    PDEF_QUERYABLE	= 4,
+    PDEF_INFULLTEXTQUERY = 5,
+    PDEF_COLUMN		= 6
+}
 
 ifndef __IPropertySystem_INTERFACE_DEFINED__
 __IPropertySystem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertySystem, "ca724e8a-c3e6-442b-88a4-6fb0db8035a3")
 
-.comdef IPropertySystem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertySystem : public IUnknown
+
     GetPropertyDescription proc :REFPROPERTYKEY, :REFIID, :ptr
     GetPropertyDescriptionByName proc :LPCWSTR, :REFIID, :ptr
     GetPropertyDescriptionListFromString proc :LPCWSTR, :REFIID, :ptr
@@ -592,8 +470,8 @@ DEFINE_IIDX(IPropertySystem, "ca724e8a-c3e6-442b-88a4-6fb0db8035a3")
     RegisterPropertySchema proc :LPCWSTR
     UnregisterPropertySchema proc :LPCWSTR
     RefreshPropertySchema proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyDescriptionList_INTERFACE_DEFINED__
@@ -601,14 +479,12 @@ __IPropertyDescriptionList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyDescriptionList, "1f9fc1d0-c39b-4b26-817f-011967d3440e")
 
-.comdef IPropertyDescriptionList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyDescriptionList : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :UINT, :REFIID, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertyStoreFactory_INTERFACE_DEFINED__
@@ -616,14 +492,12 @@ __IPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyStoreFactory, "bc110b6d-57e8-4148-a9c6-91015ab2f3a5")
 
-.comdef IPropertyStoreFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyStoreFactory : public IUnknown
+
     GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
     GetPropertyStoreForKeys proc :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__
@@ -631,15 +505,11 @@ __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDelayedPropertyStoreFactory, "40d4577f-e237-4bdb-bd69-58f089431b6a")
 
-.comdef IDelayedPropertyStoreFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
-    GetPropertyStoreForKeys proc :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
-    GetDelayedPropertyStore proc :GETPROPERTYSTOREFLAGS, :DWORD, :REFIID, :ptr
-    .ends
+.comdef IDelayedPropertyStoreFactory : public IPropertyStoreFactory
 
+    GetDelayedPropertyStore proc :GETPROPERTYSTOREFLAGS, :DWORD, :REFIID, :ptr
+
+    .ends
 endif
 
 PERSIST_SPROPSTORE_FLAGS typedef SDWORD
@@ -656,15 +526,13 @@ __IPersistSerializedPropStorage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistSerializedPropStorage, "e318ad57-0aa0-450f-aca5-6fab7103d917")
 
-.comdef IPersistSerializedPropStorage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistSerializedPropStorage : public IUnknown
+
     SetFlags		proc :PERSIST_SPROPSTORE_FLAGS
     SetPropertyStorage	proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
     GetPropertyStorage	proc :ptr, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPersistSerializedPropStorage2_INTERFACE_DEFINED__
@@ -672,17 +540,12 @@ __IPersistSerializedPropStorage2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistSerializedPropStorage2, "77effa68-4f98-4366-ba72-573b3d880571")
 
-.comdef IPersistSerializedPropStorage2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetFlags		proc :PERSIST_SPROPSTORE_FLAGS
-    SetPropertyStorage	proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
-    GetPropertyStorage	proc :ptr, :ptr
+.comdef IPersistSerializedPropStorage2 : public IPersistSerializedPropStorage
+
     GetPropertyStorageSize proc :ptr
     GetPropertyStorageBuffer proc :ptr, :DWORD, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPropertySystemChangeNotify_INTERFACE_DEFINED__
@@ -690,13 +553,11 @@ __IPropertySystemChangeNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertySystemChangeNotify, "fa955fd9-38be-4879-a6ce-824cf52d609f")
 
-.comdef IPropertySystemChangeNotify
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SchemaRefreshed	proc
-    .ends
+.comdef IPropertySystemChangeNotify : public IUnknown
 
+    SchemaRefreshed	proc
+
+    .ends
 endif
 
 ifndef __ICreateObject_INTERFACE_DEFINED__
@@ -704,13 +565,11 @@ __ICreateObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateObject, "75121952-e0d0-43e5-9380-1d80483acf72")
 
-.comdef ICreateObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateObject	proc :REFCLSID, :ptr, :REFIID, :ptr
-    .ends
+.comdef ICreateObject : public IUnknown
 
+    CreateObject	proc :REFCLSID, :ptr, :REFIID, :ptr
+
+    .ends
 endif
 
 ;PSSTDAPI
@@ -1121,9 +980,11 @@ PSPropertyBag_WritePropertyKey proto WINAPI \
 
 ifndef __PropSysObjects_LIBRARY_DEFINED__
 __PropSysObjects_LIBRARY_DEFINED__ equ 1
-externdef		LIBID_PropSysObjects:IID
+
+externdef LIBID_PropSysObjects:IID
 DEFINE_GUIDS(CLSID_InMemoryPropertyStore, "9a02e012-6303-4e1e-b9a1-630f802592c5")
 DEFINE_GUIDS(CLSID_PropertySystem,	  "b8967f85-58ae-4f46-9fb2-5d7904798f4b")
+
 endif
 
 ;DWORD

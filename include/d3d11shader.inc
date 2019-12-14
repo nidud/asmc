@@ -107,6 +107,7 @@ D3D11_SIGNATURE_PARAMETER_DESC ENDS
 DEFINE_GUID(IID_ID3D11ShaderReflectionType, 0x6e6ffa6a, 0x9bae, 0x4613, 0xa5, 0x1e, 0x91, 0x65, 0x2d, 0x50, 0x8c, 0x21);
 
 .comdef ID3D11ShaderReflectionType
+
     GetDesc		proc :ptr
     GetMemberTypeByIndex proc :UINT
     GetMemberTypeByName proc :LPSTR
@@ -118,31 +119,34 @@ DEFINE_GUID(IID_ID3D11ShaderReflectionType, 0x6e6ffa6a, 0x9bae, 0x4613, 0xa5, 0x
     GetInterfaceByIndex proc :UINT
     IsOfType		proc :ptr
     ImplementsInterface proc :ptr
+
     .ends
 
 DEFINE_GUID(IID_ID3D11ShaderReflectionVariable, 0x51f23923, 0xf3e5, 0x4bd1, 0x91, 0xcb, 0x60, 0x61, 0x77, 0xd8, 0xdb, 0x4c);
 
 .comdef ID3D11ShaderReflectionVariable
+
     GetDesc		proc :ptr
     GetType		proc
     GetBuffer		proc
     GetInterfaceSlot	proc :UINT
+
     .ends
 
 DEFINE_GUID(IID_ID3D11ShaderReflectionConstantBuffer, 0xeb62d63d, 0x93dd, 0x4318, 0x8a, 0xe8, 0xc6, 0xf8, 0x3a, 0xd3, 0x71, 0xb8);
 
 .comdef ID3D11ShaderReflectionConstantBuffer
+
     GetDesc		proc :ptr
     GetVariableByIndex	proc :UINT
     GetVariableByName	proc :LPSTR
+
     .ends
 
 DEFINE_GUID(IID_ID3D11ShaderReflection, 0x0a233719, 0x3960, 0x4578, 0x9d, 0x7c, 0x20, 0x3b, 0x8b, 0x1d, 0x9c, 0xc1);
 
-.comdef ID3D11ShaderReflection
-    QueryInterface	proc :REFIID, :ptr PVOID
-    AddRef		proc
-    Release		proc
+.comdef ID3D11ShaderReflection : public IUnknown
+
     GetDesc		proc :ptr
     GetConstantBufferByIndex proc :UINT
     GetConstantBufferByName proc :LPSTR
@@ -161,6 +165,7 @@ DEFINE_GUID(IID_ID3D11ShaderReflection, 0x0a233719, 0x3960, 0x4578, 0x9d, 0x7c, 
     GetNumInterfaceSlots proc
     GetMinFeatureLevel	proc :ptr
     GetThreadGroupSize	proc :ptr, :ptr, :ptr
+
     .ends
 
 .pragma list(pop)

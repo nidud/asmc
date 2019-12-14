@@ -54,10 +54,8 @@ RECO_COPY		equ 0x00000002
 RECO_CUT		equ 0x00000003
 RECO_DRAG		equ 0x00000004
 
-.comdef IRichEditOle
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRichEditOle : public IUnknown
+
     GetClientSite	proc :ptr LPOLECLIENTSITE
     GetObjectCount	proc
     GetLinkCount	proc
@@ -74,14 +72,12 @@ RECO_DRAG		equ 0x00000004
     ContextSensitiveHelp proc :BOOL
     GetClipboardData	proc :ptr CHARRANGE, :DWORD, :ptr LPDATAOBJECT
     ImportDataObject	proc :LPDATAOBJECT, :CLIPFORMAT, :HGLOBAL
+
     .ends
+    LPRICHEDITOLE	typedef ptr IRichEditOle
 
-LPRICHEDITOLE		typedef ptr IRichEditOle
+.comdef IRichEditOleCallback : public IUnknown
 
-.comdef IRichEditOleCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetNewStorage	proc :ptr LPSTORAGE
     GetInPlaceContext	proc :ptr LPOLEINPLACEFRAME, :ptr LPOLEINPLACEUIWINDOW, :LPOLEINPLACEFRAMEINFO
     ShowContainerUI	proc :BOOL
@@ -92,9 +88,9 @@ LPRICHEDITOLE		typedef ptr IRichEditOle
     GetClipboardData	proc :ptr CHARRANGE, :DWORD, :ptr LPDATAOBJECT
     GetDragDropEffect	proc :BOOL, :DWORD, :LPDWORD
     GetContextMenu	proc :WORD, :LPOLEOBJECT, :ptr CHARRANGE, :ptr HMENU
-    .ends
 
-LPRICHEDITOLECALLBACK	typedef ptr IRichEditOleCallback
+    .ends
+    LPRICHEDITOLECALLBACK typedef ptr IRichEditOleCallback
 
 ifndef MAC
 DEFINE_GUID(IID_IRichEditOle,	      0x00020D00, 0, 0, 0xC0,0,0,0,0,0,0,0x46)

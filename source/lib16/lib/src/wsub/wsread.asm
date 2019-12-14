@@ -24,7 +24,7 @@ wsvolid PROC _CType PRIVATE USES bx wsub:DWORD
 	mov	al,path
 	or	al,20h
 	sub	al,'a'
-	mov	ah,SIZE S_DISK
+	mov	ah,S_DISK
 	mul	ah
 	mov	bx,ax
 	mov	drvinfo[bx].di_name[2],' '

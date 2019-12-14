@@ -815,10 +815,8 @@ D3DXSHScale proto WINAPI \
 
 DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 0x15, 0xe4, 0x77, 0xdd, 0x85);
 
-.comdef ID3DXMatrixStack
-    QueryInterface		proc :REFIID, :ptr
-    AddRef			proc
-    Release			proc
+.comdef ID3DXMatrixStack : public IUnknown
+
     _Pop			proc
     _Push			proc
     LoadIdentity		proc
@@ -834,6 +832,7 @@ DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 
     Translate			proc :FLOAT, :FLOAT, :FLOAT
     TranslateLocal		proc :FLOAT, :FLOAT, :FLOAT
     GetTop			proc :ptr D3DXMATRIX
+
     .ends
 
 ;HRESULT

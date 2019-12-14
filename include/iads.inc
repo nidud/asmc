@@ -870,11 +870,8 @@ __IADs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADs, "fd8256d0-fd15-11ce-abc4-02608c9e7553")
 
-.comdef IADs
+.comdef IADs : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -901,11 +898,8 @@ __IADsContainer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsContainer, "001677d0-fd16-11ce-abc4-02608c9e7553")
 
-.comdef IADsContainer
+.comdef IADsContainer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -930,11 +924,8 @@ __IADsCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsCollection, "72b945e0-253b-11cf-a988-00aa006bc149")
 
-.comdef IADsCollection
+.comdef IADsCollection : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -952,11 +943,8 @@ __IADsMembers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsMembers, "451a0030-72ec-11cf-b03b-00aa006e0975")
 
-.comdef IADsMembers
+.comdef IADsMembers : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -974,11 +962,8 @@ __IADsPropertyList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyList, "c6f602b6-8f69-11d0-8528-00c04fd8d503")
 
-.comdef IADsPropertyList
+.comdef IADsPropertyList : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1001,11 +986,8 @@ __IADsPropertyEntry_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyEntry, "05792c8e-941f-11d0-8529-00c04fd8d503")
 
-.comdef IADsPropertyEntry
+.comdef IADsPropertyEntry : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1030,11 +1012,8 @@ __IADsPropertyValue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyValue, "79fa9ad0-a97c-11d0-8534-00c04fd8d503")
 
-.comdef IADsPropertyValue
+.comdef IADsPropertyValue : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1073,11 +1052,8 @@ __IADsPropertyValue2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyValue2, "306e831c-5bc7-11d1-a3b8-00c04fb950dc")
 
-.comdef IADsPropertyValue2
+.comdef IADsPropertyValue2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1095,11 +1071,8 @@ __IPrivateDispatch_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPrivateDispatch, "86ab4bbe-65f6-11d1-8c13-00c04fd8d503")
 
-.comdef IPrivateDispatch
+.comdef IPrivateDispatch : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ADSIInitializeDispatchManager proc :LONG
     ADSIGetTypeInfoCount proc :ptr
     ADSIGetTypeInfo	proc :UINT, :LCID, :ptr
@@ -1114,11 +1087,8 @@ __IPrivateUnknown_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPrivateUnknown, "89126bab-6ead-11d1-8c18-00c04fd8d503")
 
-.comdef IPrivateUnknown
+.comdef IPrivateUnknown : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ADSIInitializeObject proc :BSTR, :BSTR, :LONG
     ADSIReleaseObject	proc
     .ends
@@ -1130,11 +1100,8 @@ __IADsExtension_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsExtension, "3d35553c-d2b0-11d1-b17b-0000f87593a0")
 
-.comdef IADsExtension
+.comdef IADsExtension : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Operate		proc :DWORD, :VARIANT, :VARIANT, :VARIANT
     PrivateGetIDsOfNames proc :REFIID, :ptr, :SINT, :LCID, :ptr
     PrivateInvoke	proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
@@ -1147,11 +1114,8 @@ __IADsDeleteOps_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDeleteOps, "b2bd0902-8878-11d1-8c21-00c04fd8d503")
 
-.comdef IADsDeleteOps
+.comdef IADsDeleteOps : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1166,11 +1130,8 @@ __IADsNamespaces_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNamespaces, "28b96ba0-b330-11cf-a9ad-00aa006bc149")
 
-.comdef IADsNamespaces
+.comdef IADsNamespaces : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1199,11 +1160,8 @@ __IADsClass_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsClass, "c8f93dd0-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsClass
+.comdef IADsClass : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1260,11 +1218,8 @@ __IADsProperty_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsProperty, "c8f93dd3-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsProperty
+.comdef IADsProperty : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1302,11 +1257,8 @@ __IADsSyntax_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSyntax, "c8f93dd2-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsSyntax
+.comdef IADsSyntax : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1335,11 +1287,8 @@ __IADsLocality_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsLocality, "a05e03a2-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsLocality
+.comdef IADsLocality : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1374,11 +1323,8 @@ __IADsO_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsO, "a1cd2dc6-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsO
+.comdef IADsO : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1417,11 +1363,8 @@ __IADsOU_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOU, "a2f733b8-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsOU
+.comdef IADsOU : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1462,11 +1405,8 @@ __IADsDomain_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDomain, "00e4c220-fd16-11ce-abc4-02608c9e7553")
 
-.comdef IADsDomain
+.comdef IADsDomain : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1510,11 +1450,8 @@ __IADsComputer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsComputer, "efe3cc70-1d9f-11cf-b1f3-02608c9e7553")
 
-.comdef IADsComputer
+.comdef IADsComputer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1573,11 +1510,8 @@ __IADsComputerOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsComputerOperations, "ef497680-1d9f-11cf-b1f3-02608c9e7553")
 
-.comdef IADsComputerOperations
+.comdef IADsComputerOperations : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1606,11 +1540,8 @@ __IADsGroup_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsGroup, "27636b00-410f-11cf-b1ff-02608c9e7553")
 
-.comdef IADsGroup
+.comdef IADsGroup : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1643,11 +1574,8 @@ __IADsUser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsUser, "3e37e320-17e2-11cf-abc4-02608c9e7553")
 
-.comdef IADsUser
+.comdef IADsUser : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1765,11 +1693,8 @@ __IADsPrintQueue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintQueue, "b15160d0-1226-11cf-a985-00aa006bc149")
 
-.comdef IADsPrintQueue
+.comdef IADsPrintQueue : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1822,11 +1747,8 @@ __IADsPrintQueueOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintQueueOperations, "124be5c0-156e-11cf-a986-00aa006bc149")
 
-.comdef IADsPrintQueueOperations
+.comdef IADsPrintQueueOperations : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1858,11 +1780,8 @@ __IADsPrintJob_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintJob, "32fb6780-1ed0-11cf-a988-00aa006bc149")
 
-.comdef IADsPrintJob
+.comdef IADsPrintJob : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1907,11 +1826,8 @@ __IADsPrintJobOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintJobOperations, "9a52db30-1ecf-11cf-a988-00aa006bc149")
 
-.comdef IADsPrintJobOperations
+.comdef IADsPrintJobOperations : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -1945,11 +1861,8 @@ __IADsService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsService, "68af66e0-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsService
+.comdef IADsService : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2000,11 +1913,8 @@ __IADsServiceOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsServiceOperations, "5d7b33f0-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsServiceOperations
+.comdef IADsServiceOperations : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2037,11 +1947,8 @@ __IADsFileService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileService, "a89d1900-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsFileService
+.comdef IADsFileService : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2096,11 +2003,8 @@ __IADsFileServiceOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileServiceOperations, "a02ded10-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsFileServiceOperations
+.comdef IADsFileServiceOperations : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2135,11 +2039,8 @@ __IADsFileShare_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileShare, "eb6dcaf0-4b83-11cf-a995-00aa006bc149")
 
-.comdef IADsFileShare
+.comdef IADsFileShare : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2175,11 +2076,8 @@ __IADsSession_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSession, "398b7da0-4aab-11cf-ae2c-00aa006ebfb9")
 
-.comdef IADsSession
+.comdef IADsSession : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2212,11 +2110,8 @@ __IADsResource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsResource, "34a05b20-4aab-11cf-ae2c-00aa006ebfb9")
 
-.comdef IADsResource
+.comdef IADsResource : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2247,11 +2142,8 @@ __IADsOpenDSObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOpenDSObject, "ddf2891e-0f9c-11d0-8ad4-00c04fd8d503")
 
-.comdef IADsOpenDSObject
+.comdef IADsOpenDSObject : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2266,11 +2158,8 @@ __IDirectoryObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDirectoryObject, "e798de2c-22e4-11d0-84fe-00c04fd8d503")
 
-.comdef IDirectoryObject
+.comdef IDirectoryObject : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetObjectInformation proc :ptr
     GetObjectAttributes proc :ptr, :DWORD, :ptr, :ptr
     SetObjectAttributes proc :PADS_ATTR_INFO, :DWORD, :ptr
@@ -2285,11 +2174,8 @@ __IDirectorySearch_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDirectorySearch, "109ba8ec-92f0-11d0-a790-00c04fd8d5a8")
 
-.comdef IDirectorySearch
+.comdef IDirectorySearch : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetSearchPreference proc :PADS_SEARCHPREF_INFO, :DWORD
     ExecuteSearch	proc :LPWSTR, :ptr, :DWORD, :PADS_SEARCH_HANDLE
     AbandonSearch	proc :ADS_SEARCH_HANDLE
@@ -2309,11 +2195,8 @@ __IDirectorySchemaMgmt_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDirectorySchemaMgmt, "75db3b9c-a4d8-11d0-a79c-00c04fd8d5a8")
 
-.comdef IDirectorySchemaMgmt
+.comdef IDirectorySchemaMgmt : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     EnumAttributes	proc :ptr, :DWORD, :ptr, :ptr
     CreateAttributeDefinition proc :LPWSTR, :PADS_ATTR_DEF
     WriteAttributeDefinition proc :LPWSTR, :PADS_ATTR_DEF
@@ -2331,11 +2214,8 @@ __IADsAggregatee_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAggregatee, "1346ce8c-9039-11d0-8528-00c04fd8d503")
 
-.comdef IADsAggregatee
+.comdef IADsAggregatee : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ConnectAsAggregatee proc :ptr
     DisconnectAsAggregatee proc
     RelinquishInterface proc :REFIID
@@ -2349,11 +2229,8 @@ __IADsAggregator_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAggregator, "52db5fb0-941f-11d0-8529-00c04fd8d503")
 
-.comdef IADsAggregator
+.comdef IADsAggregator : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ConnectAsAggregator proc :ptr
     DisconnectAsAggregator proc
     .ends
@@ -2365,11 +2242,8 @@ __IADsAccessControlEntry_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAccessControlEntry, "b4f3a14c-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsAccessControlEntry
+.comdef IADsAccessControlEntry : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2399,11 +2273,8 @@ __IADsAccessControlList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAccessControlList, "b7ee91cc-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsAccessControlList
+.comdef IADsAccessControlList : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2427,11 +2298,8 @@ __IADsSecurityDescriptor_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSecurityDescriptor, "b8c787ca-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsSecurityDescriptor
+.comdef IADsSecurityDescriptor : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2468,11 +2336,8 @@ __IADsLargeInteger_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsLargeInteger, "9068270b-0939-11d1-8be1-00c04fd8d503")
 
-.comdef IADsLargeInteger
+.comdef IADsLargeInteger : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2492,11 +2357,8 @@ __IADsNameTranslate_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNameTranslate, "b1b272a3-3625-11d1-a3a4-00c04fb950dc")
 
-.comdef IADsNameTranslate
+.comdef IADsNameTranslate : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2519,11 +2381,8 @@ __IADsCaseIgnoreList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsCaseIgnoreList, "7b66b533-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsCaseIgnoreList
+.comdef IADsCaseIgnoreList : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2541,11 +2400,8 @@ __IADsFaxNumber_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFaxNumber, "a910dea9-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsFaxNumber
+.comdef IADsFaxNumber : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2565,11 +2421,8 @@ __IADsNetAddress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNetAddress, "b21a50a9-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsNetAddress
+.comdef IADsNetAddress : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2589,11 +2442,8 @@ __IADsOctetList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOctetList, "7b28b80f-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsOctetList
+.comdef IADsOctetList : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2611,11 +2461,8 @@ __IADsEmail_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsEmail, "97af011a-478e-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsEmail
+.comdef IADsEmail : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2635,11 +2482,8 @@ __IADsPath_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPath, "b287fcd5-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsPath
+.comdef IADsPath : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2661,11 +2505,8 @@ __IADsReplicaPointer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsReplicaPointer, "f60fb803-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsReplicaPointer
+.comdef IADsReplicaPointer : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2691,11 +2532,8 @@ __IADsAcl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAcl, "8452d3ab-0869-11d1-a377-00c04fb950dc")
 
-.comdef IADsAcl
+.comdef IADsAcl : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2716,11 +2554,8 @@ __IADsTimestamp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsTimestamp, "b2f5a901-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsTimestamp
+.comdef IADsTimestamp : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2740,11 +2575,8 @@ __IADsPostalAddress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPostalAddress, "7adecf29-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsPostalAddress
+.comdef IADsPostalAddress : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2762,11 +2594,8 @@ __IADsBackLink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsBackLink, "fd1302bd-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsBackLink
+.comdef IADsBackLink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2786,11 +2615,8 @@ __IADsTypedName_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsTypedName, "b371a349-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsTypedName
+.comdef IADsTypedName : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2812,11 +2638,8 @@ __IADsHold_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsHold, "b3eb3b37-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsHold
+.comdef IADsHold : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2836,11 +2659,8 @@ __IADsObjectOptions_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsObjectOptions, "46f14fda-232b-11d1-a808-00c04fd8d5a8")
 
-.comdef IADsObjectOptions
+.comdef IADsObjectOptions : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2856,11 +2676,8 @@ __IADsPathname_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPathname, "d592aed4-f420-11d0-a36e-00c04fb950dc")
 
-.comdef IADsPathname
+.comdef IADsPathname : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2887,11 +2704,8 @@ __IADsADSystemInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsADSystemInfo, "5BB11929-AFD1-11d2-9CB9-0000F87A369E")
 
-.comdef IADsADSystemInfo
+.comdef IADsADSystemInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2920,11 +2734,8 @@ __IADsWinNTSystemInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsWinNTSystemInfo, "6C6D65DC-AFD1-11d2-9CB9-0000F87A369E")
 
-.comdef IADsWinNTSystemInfo
+.comdef IADsWinNTSystemInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2944,11 +2755,8 @@ __IADsDNWithBinary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDNWithBinary, "7e99c0a2-f935-11d2-ba96-00c04fb6d0d1")
 
-.comdef IADsDNWithBinary
+.comdef IADsDNWithBinary : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2968,11 +2776,8 @@ __IADsDNWithString_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDNWithString, "370df02e-f934-11d2-ba96-00c04fb6d0d1")
 
-.comdef IADsDNWithString
+.comdef IADsDNWithString : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -2992,11 +2797,8 @@ __IADsSecurityUtility_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSecurityUtility, "a63251b2-5f21-474b-ab52-4a8efad10895")
 
-.comdef IADsSecurityUtility
+.comdef IADsSecurityUtility : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr

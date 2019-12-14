@@ -137,10 +137,12 @@ DXGI_RESOURCE_PRIORITY_NORMAL equ ( 0x78000000 )
 DXGI_RESOURCE_PRIORITY_HIGH equ ( 0xa0000000 )
 DXGI_RESOURCE_PRIORITY_MAXIMUM equ ( 0xc8000000 )
 
-DXGI_RESIDENCY		typedef SDWORD
-DXGI_RESIDENCY_FULLY_RESIDENT equ 1
-DXGI_RESIDENCY_RESIDENT_IN_SHARED_MEMORY equ 2
-DXGI_RESIDENCY_EVICTED_TO_DISK equ 3
+.enum DXGI_RESIDENCY {
+
+    DXGI_RESIDENCY_FULLY_RESIDENT = 1,
+    DXGI_RESIDENCY_RESIDENT_IN_SHARED_MEMORY = 2,
+    DXGI_RESIDENCY_EVICTED_TO_DISK = 3
+}
 
 DXGI_SURFACE_DESC	STRUC
 Width			UINT ?
@@ -149,14 +151,16 @@ Format			DXGI_FORMAT ?
 SampleDesc		DXGI_SAMPLE_DESC <>
 DXGI_SURFACE_DESC	ENDS
 
-DXGI_SWAP_EFFECT	typedef SDWORD
-DXGI_SWAP_EFFECT_DISCARD equ 0
-DXGI_SWAP_EFFECT_SEQUENTIAL equ 1
+.enum DXGI_SWAP_EFFECT {
+    DXGI_SWAP_EFFECT_DISCARD = 0,
+    DXGI_SWAP_EFFECT_SEQUENTIAL = 1
+}
 
-DXGI_SWAP_CHAIN_FLAG	typedef SDWORD
-DXGI_SWAP_CHAIN_FLAG_NONPREROTATED equ 1
-DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH equ 2
-DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE equ 4
+.enum DXGI_SWAP_CHAIN_FLAG {
+    DXGI_SWAP_CHAIN_FLAG_NONPREROTATED = 1,
+    DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH = 2,
+    DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE = 4
+}
 
 DXGI_SWAP_CHAIN_DESC	STRUC
 BufferDesc		DXGI_MODE_DESC <>
@@ -172,69 +176,47 @@ DXGI_SWAP_CHAIN_DESC	ENDS
 ifndef __IDXGIObject_INTERFACE_DEFINED__
 __IDXGIObject_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIObject
+.comdef IDXGIObject : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
+    GetParent		proc :REFIID, :ptr
+
     .ends
 endif
 
 ifndef __IDXGIDeviceSubObject_INTERFACE_DEFINED__
 __IDXGIDeviceSubObject_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIDeviceSubObject
+.comdef IDXGIDeviceSubObject : public IDXGIObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
+
     .ends
 endif
 
 ifndef __IDXGIResource_INTERFACE_DEFINED__
 __IDXGIResource_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIResource
+.comdef IDXGIResource : public IDXGIDeviceSubObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetDevice		proc :REFIID, :ptr
     GetSharedHandle	proc :ptr
     GetUsage		proc :ptr
     SetEvictionPriority proc :UINT
     GetEvictionPriority proc :ptr
+
     .ends
 endif
 
 ifndef __IDXGIKeyedMutex_INTERFACE_DEFINED__
 __IDXGIKeyedMutex_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIKeyedMutex
+.comdef IDXGIKeyedMutex : public IDXGIDeviceSubObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetDevice		proc :REFIID, :ptr
     AcquireSync		proc :UINT64, :DWORD
     ReleaseSync		proc :UINT64
+
     .ends
 endif
 
@@ -245,61 +227,37 @@ DXGI_MAP_DISCARD	equ 4
 ifndef __IDXGISurface_INTERFACE_DEFINED__
 __IDXGISurface_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGISurface
+.comdef IDXGISurface : public IDXGIDeviceSubObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetDevice		proc :REFIID, :ptr
     GetDesc		proc :ptr
     Map			proc :ptr, :UINT
     Unmap		proc
+
     .ends
 endif
 
 ifndef __IDXGISurface1_INTERFACE_DEFINED__
 __IDXGISurface1_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGISurface1
+.comdef IDXGISurface1 : public IDXGISurface
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetDevice		proc :REFIID, :ptr
-    GetDesc		proc :ptr
-    Map			proc :ptr, :UINT
-    Unmap		proc
     GetDC		proc :BOOL, :ptr
     ReleaseDC		proc :ptr
+
     .ends
 endif
 
 ifndef __IDXGIAdapter_INTERFACE_DEFINED__
 __IDXGIAdapter_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIAdapter
+.comdef IDXGIAdapter : public IDXGIObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
     EnumOutputs		proc :UINT, :ptr
     GetDesc		proc :ptr
     CheckInterfaceSupport proc :REFGUID, :ptr
-    .ends
 
-LPIDXGIAdapter		typedef ptr IDXGIAdapter
+    .ends
+    LPIDXGIAdapter	typedef ptr IDXGIAdapter
 endif
 
 DXGI_ENUM_MODES_INTERLACED equ 1
@@ -308,15 +266,8 @@ DXGI_ENUM_MODES_SCALING equ 2
 ifndef __IDXGIOutput_INTERFACE_DEFINED__
 __IDXGIOutput_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIOutput
+.comdef IDXGIOutput : public IDXGIObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
     GetDesc		proc :ptr
     GetDisplayModeList	proc :DXGI_FORMAT, :UINT, :ptr, :ptr
     FindClosestMatchingMode proc :ptr, :ptr, :ptr
@@ -329,27 +280,20 @@ __IDXGIOutput_INTERFACE_DEFINED__ equ 1
     SetDisplaySurface	proc :ptr
     GetDisplaySurfaceData proc :ptr
     GetFrameStatistics	proc :ptr
+
     .ends
 endif
 
 DXGI_MAX_SWAP_CHAIN_BUFFERS equ ( 16 )
-DXGI_PRESENT_TEST	equ 0x00000001UL
-DXGI_PRESENT_DO_NOT_SEQUENCE equ 0x00000002UL
-DXGI_PRESENT_RESTART	equ 0x00000004UL
+DXGI_PRESENT_TEST	equ 0x00000001
+DXGI_PRESENT_DO_NOT_SEQUENCE equ 0x00000002
+DXGI_PRESENT_RESTART	equ 0x00000004
 
 ifndef __IDXGISwapChain_INTERFACE_DEFINED__
 __IDXGISwapChain_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGISwapChain
+.comdef IDXGISwapChain : public IDXGIDeviceSubObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetDevice		proc :REFIID, :ptr
     Present		proc :UINT, :UINT
     GetBuffer		proc :UINT, :REFIID, :ptr
     SetFullscreenState	proc :BOOL, :ptr
@@ -360,9 +304,9 @@ __IDXGISwapChain_INTERFACE_DEFINED__ equ 1
     GetContainingOutput proc :ptr
     GetFrameStatistics	proc :ptr
     GetLastPresentCount proc :ptr
-    .ends
 
-LPIDXGISwapChain	typedef ptr IDXGISwapChain
+    .ends
+    LPIDXGISwapChain	typedef ptr IDXGISwapChain
 endif
 
 DXGI_MWA_NO_WINDOW_CHANGES equ ( 1 SHL 0 )
@@ -373,20 +317,14 @@ DXGI_MWA_VALID		equ ( 0x7 )
 ifndef __IDXGIFactory_INTERFACE_DEFINED__
 __IDXGIFactory_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIFactory
+.comdef IDXGIFactory : public IDXGIObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
     EnumAdapters	proc :UINT, :ptr
     MakeWindowAssociation proc :HWND, :UINT
     GetWindowAssociation proc :ptr
     CreateSwapChain	proc :ptr, :ptr, :ptr
     CreateSoftwareAdapter proc :HMODULE, :ptr
+
     .ends
 endif
 
@@ -403,23 +341,16 @@ CreateDXGIFactory1 proto WINAPI \
 ifndef __IDXGIDevice_INTERFACE_DEFINED__
 __IDXGIDevice_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIDevice
+.comdef IDXGIDevice : public IDXGIObject
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
     GetAdapter		proc :ptr
     CreateSurface	proc :ptr, :UINT, :DXGI_USAGE, :ptr, :ptr
     QueryResourceResidency proc :ptr, :ptr, :UINT
     SetGPUThreadPriority proc :SINT
     GetGPUThreadPriority proc :ptr
-    .ends
 
-LPIDXGIDevice		typedef ptr IDXGIDevice
+    .ends
+    LPIDXGIDevice	typedef ptr IDXGIDevice
 endif
 
 DXGI_ADAPTER_FLAG	typedef SDWORD
@@ -448,65 +379,33 @@ DXGI_DISPLAY_COLOR_SPACE ENDS
 ifndef __IDXGIFactory1_INTERFACE_DEFINED__
 __IDXGIFactory1_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIFactory1
+.comdef IDXGIFactory1 : public IDXGIFactory
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    EnumAdapters	proc :UINT, :ptr
-    MakeWindowAssociation proc :HWND, :UINT
-    GetWindowAssociation proc :ptr
-    CreateSwapChain	proc :ptr, :ptr, :ptr
-    CreateSoftwareAdapter proc :HMODULE, :ptr
     EnumAdapters1	proc :UINT, :ptr
     IsCurrent		proc
-    .ends
 
-LPIDXGIFactory1		typedef ptr IDXGIFactory1
+    .ends
+    LPIDXGIFactory1	typedef ptr IDXGIFactory1
 endif
 
 ifndef __IDXGIAdapter1_INTERFACE_DEFINED__
 __IDXGIAdapter1_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIAdapter1
+.comdef IDXGIAdapter1 : public IDXGIAdapter
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    EnumOutputs		proc :UINT, :ptr
-    GetDesc		proc :ptr
-    CheckInterfaceSupport proc :REFGUID, :ptr
     GetDesc1		proc :ptr
+
     .ends
 endif
 
 ifndef __IDXGIDevice1_INTERFACE_DEFINED__
 __IDXGIDevice1_INTERFACE_DEFINED__ equ 1
 
-.comdef IDXGIDevice1
+.comdef IDXGIDevice1 : public IDXGIDevice
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    _GetParent		proc :REFIID, :ptr
-    GetAdapter		proc :ptr
-    CreateSurface	proc :ptr, :UINT, :DXGI_USAGE, :ptr, :ptr
-    QueryResourceResidency proc :ptr, :ptr, :UINT
-    SetGPUThreadPriority proc :SINT
-    GetGPUThreadPriority proc :ptr
     SetMaximumFrameLatency proc :UINT
     GetMaximumFrameLatency proc :ptr
+
     .ends
 endif
 

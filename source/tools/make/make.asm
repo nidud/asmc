@@ -22,7 +22,7 @@ include process.inc
 include ltype.inc
 include winbase.inc
 
-__MAKE__        equ 106
+__MAKE__        equ 107
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -1470,6 +1470,7 @@ AddMakefile proc uses ebx file:string_t
 
 AddMakefile endp
 
+
 print_copyright proc
     printf(
         "Asmc Program Maintenance Utility Version %d.%d.%d.%d\n",
@@ -1479,6 +1480,42 @@ print_copyright proc
     ret
 print_copyright endp
 
+
+; Create vars32.bat and vars64.bat
+
+install proc uses esi edi ebx
+
+  local fp:LPFILE
+  local base[_MAX_PATH]:char_t
+  local path[_MAX_PATH]:char_t
+
+    lea esi,base
+    lea edi,path
+
+    strpath(strpath(strcpy(esi, _pgmptr)))
+    .return .if !fopen(strfcat(edi, esi, "bin\\envars32.bat"), "wt")
+    mov ebx,eax
+    fprintf(eax,
+        "@echo off\n"
+        "set AsmcDir=%s\n"
+        "set PATH=%s\\bin;%%PATH%%\n"
+        "set LIB=%s\\lib;%%LIB%%\n"
+        "set INCLUDE=%s\\include;%%INCLUDE%%\n",
+        esi, esi, esi, esi)
+    fclose(ebx)
+    .return .if !fopen(strfcat(edi, esi, "bin\\envars64.bat"), "wt")
+    mov ebx,eax
+    fprintf(eax,
+        "@echo off\n"
+        "set AsmcDir=%s\n"
+        "set PATH=%s\\bin;%%PATH%%\n"
+        "set LIB=%s\\lib\\amd64;%%LIB%%\n"
+        "set INCLUDE=%s\\include;%%INCLUDE%%\n",
+        esi, esi, esi, esi)
+    fclose(ebx)
+    ret
+
+install endp
 
 main proc argc:int_t, argv:array_t
 
@@ -1540,6 +1577,13 @@ main proc argc:int_t, argv:array_t
                 dec edi
                 .break .ifz
                 .endc
+
+            .case 'i'
+                .if eax == 'sni'
+
+                    install()
+                    .return 0
+                .endif
 
             .default
                 print_copyright()

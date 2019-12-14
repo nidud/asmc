@@ -146,49 +146,51 @@ include oaidl.inc
 include propidl.inc
 include cvconst.inc
 
-.pragma comment(lib, diaguid.lib, msdia80.dll)
+.pragma comment(lib, diaguid, msdia80)
 
-NameSearchOptions	typedef SDWORD
-nsNone			equ 0
-nsfCaseSensitive	equ 0x1
-nsfCaseInsensitive	equ 0x2
-nsfFNameExt		equ 0x4
-nsfRegularExpression	equ 0x8
-nsfUndecoratedName	equ 0x10
-nsCaseSensitive		equ nsfCaseSensitive
-nsCaseInsensitive	equ nsfCaseInsensitive
-nsFNameExt		equ ( nsfCaseInsensitive or nsfFNameExt )
-nsRegularExpression	equ ( nsfRegularExpression or nsfCaseSensitive )
-nsCaseInRegularExpression equ ( nsfRegularExpression or nsfCaseInsensitive )
+.enum NameSearchOptions {
+    nsNone		= 0,
+    nsfCaseSensitive	= 0x1,
+    nsfCaseInsensitive	= 0x2,
+    nsfFNameExt		= 0x4,
+    nsfRegularExpression = 0x8,
+    nsfUndecoratedName	= 0x10,
+    nsCaseSensitive	= nsfCaseSensitive,
+    nsCaseInsensitive	= nsfCaseInsensitive,
+    nsFNameExt		= ( nsfCaseInsensitive or nsfFNameExt ) ,
+    nsRegularExpression = ( nsfRegularExpression or nsfCaseSensitive ) ,
+    nsCaseInRegularExpression = ( nsfRegularExpression or nsfCaseInsensitive )
+}
 
-_MIDL___MIDL_itf_dia2_0000_0000_0001 typedef SDWORD
-E_PDB_OK		equ (((( 1 shl 31 ) or ( 0x6d shl 16 )) or 1 ))
-E_PDB_USAGE		equ ( E_PDB_OK + 1 )
-E_PDB_OUT_OF_MEMORY	equ ( E_PDB_USAGE + 1 )
-E_PDB_FILE_SYSTEM	equ ( E_PDB_OUT_OF_MEMORY + 1 )
-E_PDB_NOT_FOUND		equ ( E_PDB_FILE_SYSTEM + 1 )
-E_PDB_INVALID_SIG	equ ( E_PDB_NOT_FOUND + 1 )
-E_PDB_INVALID_AGE	equ ( E_PDB_INVALID_SIG + 1 )
-E_PDB_PRECOMP_REQUIRED	equ ( E_PDB_INVALID_AGE + 1 )
-E_PDB_OUT_OF_TI		equ ( E_PDB_PRECOMP_REQUIRED + 1 )
-E_PDB_NOT_IMPLEMENTED	equ ( E_PDB_OUT_OF_TI + 1 )
-E_PDB_V1_PDB		equ ( E_PDB_NOT_IMPLEMENTED + 1 )
-E_PDB_FORMAT		equ ( E_PDB_V1_PDB + 1 )
-E_PDB_LIMIT		equ ( E_PDB_FORMAT + 1 )
-E_PDB_CORRUPT		equ ( E_PDB_LIMIT + 1 )
-E_PDB_TI16		equ ( E_PDB_CORRUPT + 1 )
-E_PDB_ACCESS_DENIED	equ ( E_PDB_TI16 + 1 )
-E_PDB_ILLEGAL_TYPE_EDIT equ ( E_PDB_ACCESS_DENIED + 1 )
-E_PDB_INVALID_EXECUTABLE equ ( E_PDB_ILLEGAL_TYPE_EDIT + 1 )
-E_PDB_DBG_NOT_FOUND	equ ( E_PDB_INVALID_EXECUTABLE + 1 )
-E_PDB_NO_DEBUG_INFO	equ ( E_PDB_DBG_NOT_FOUND + 1 )
-E_PDB_INVALID_EXE_TIMESTAMP equ ( E_PDB_NO_DEBUG_INFO + 1 )
-E_PDB_RESERVED		equ ( E_PDB_INVALID_EXE_TIMESTAMP + 1 )
-E_PDB_DEBUG_INFO_NOT_IN_PDB equ ( E_PDB_RESERVED + 1 )
-E_PDB_SYMSRV_BAD_CACHE_PATH equ ( E_PDB_DEBUG_INFO_NOT_IN_PDB + 1 )
-E_PDB_SYMSRV_CACHE_FULL equ ( E_PDB_SYMSRV_BAD_CACHE_PATH + 1 )
-E_PDB_OBJECT_DISPOSED	equ ( E_PDB_SYMSRV_CACHE_FULL + 1 )
-E_PDB_MAX		equ ( E_PDB_OBJECT_DISPOSED + 1 )
+.enum __MIDL___MIDL_itf_dia2_0000_0000_0001 {
+    E_PDB_OK		= ( ( ( ( 1 shl 31 ) or ( 0x6d shl 16 ) ) or 1 ) ),
+    E_PDB_USAGE		= ( E_PDB_OK + 1 ),
+    E_PDB_OUT_OF_MEMORY = ( E_PDB_USAGE + 1 ),
+    E_PDB_FILE_SYSTEM	= ( E_PDB_OUT_OF_MEMORY + 1 ),
+    E_PDB_NOT_FOUND	= ( E_PDB_FILE_SYSTEM + 1 ),
+    E_PDB_INVALID_SIG	= ( E_PDB_NOT_FOUND + 1 ),
+    E_PDB_INVALID_AGE	= ( E_PDB_INVALID_SIG + 1 ),
+    E_PDB_PRECOMP_REQUIRED = ( E_PDB_INVALID_AGE + 1 ),
+    E_PDB_OUT_OF_TI	= ( E_PDB_PRECOMP_REQUIRED + 1 ),
+    E_PDB_NOT_IMPLEMENTED = ( E_PDB_OUT_OF_TI + 1 ),
+    E_PDB_V1_PDB	= ( E_PDB_NOT_IMPLEMENTED + 1 ),
+    E_PDB_FORMAT	= ( E_PDB_V1_PDB + 1 ),
+    E_PDB_LIMIT		= ( E_PDB_FORMAT + 1 ),
+    E_PDB_CORRUPT	= ( E_PDB_LIMIT + 1 ),
+    E_PDB_TI16		= ( E_PDB_CORRUPT + 1 ),
+    E_PDB_ACCESS_DENIED = ( E_PDB_TI16 + 1 ),
+    E_PDB_ILLEGAL_TYPE_EDIT = ( E_PDB_ACCESS_DENIED + 1 ),
+    E_PDB_INVALID_EXECUTABLE = ( E_PDB_ILLEGAL_TYPE_EDIT + 1 ),
+    E_PDB_DBG_NOT_FOUND = ( E_PDB_INVALID_EXECUTABLE + 1 ),
+    E_PDB_NO_DEBUG_INFO = ( E_PDB_DBG_NOT_FOUND + 1 ),
+    E_PDB_INVALID_EXE_TIMESTAMP = ( E_PDB_NO_DEBUG_INFO + 1 ),
+    E_PDB_RESERVED	= ( E_PDB_INVALID_EXE_TIMESTAMP + 1 ),
+    E_PDB_DEBUG_INFO_NOT_IN_PDB = ( E_PDB_RESERVED + 1 ),
+    E_PDB_SYMSRV_BAD_CACHE_PATH = ( E_PDB_DEBUG_INFO_NOT_IN_PDB + 1 ),
+    E_PDB_SYMSRV_CACHE_FULL = ( E_PDB_SYMSRV_BAD_CACHE_PATH + 1 ),
+    E_PDB_OBJECT_DISPOSED = ( E_PDB_SYMSRV_CACHE_FULL + 1 ),
+    E_PDB_MAX		= ( E_PDB_OBJECT_DISPOSED + 1 )
+}
 
 CALLBACKC(PfnPDBDebugDirV, :BOOL, :ptr)
 
@@ -197,18 +199,14 @@ __IDiaLoadCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaLoadCallback, "C32ADB82-73F4-421b-95D5-A4706EDF5DBE")
 
-.comdef IDiaLoadCallback
+.comdef IDiaLoadCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     NotifyDebugDir	proc :BOOL, :DWORD, :ptr
     NotifyOpenDBG	proc :LPCOLESTR, :HRESULT
     NotifyOpenPDB	proc :LPCOLESTR, :HRESULT
     RestrictRegistryAccess proc
     RestrictSymbolServerAccess proc
     .ends
-
 endif
 
 
@@ -217,22 +215,13 @@ __IDiaLoadCallback2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaLoadCallback2, "4688a074-5a4d-4486-aea8-7b90711d9f7c")
 
-.comdef IDiaLoadCallback2
+.comdef IDiaLoadCallback2 : public IDiaLoadCallback
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    NotifyDebugDir	proc :BOOL, :DWORD, :ptr
-    NotifyOpenDBG	proc :LPCOLESTR, :HRESULT
-    NotifyOpenPDB	proc :LPCOLESTR, :HRESULT
-    RestrictRegistryAccess proc
-    RestrictSymbolServerAccess proc
     RestrictOriginalPathAccess proc
     RestrictReferencePathAccess proc
     RestrictDBGAccess	proc
     RestrictSystemRootAccess proc
     .ends
-
 endif
 
 ifndef __IDiaReadExeAtOffsetCallback_INTERFACE_DEFINED__
@@ -240,14 +229,10 @@ __IDiaReadExeAtOffsetCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaReadExeAtOffsetCallback, "587A461C-B80B-4f54-9194-5032589A6319")
 
-.comdef IDiaReadExeAtOffsetCallback
+.comdef IDiaReadExeAtOffsetCallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ReadExecutableAt	proc :DWORDLONG, :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaReadExeAtRVACallback_INTERFACE_DEFINED__
@@ -255,14 +240,10 @@ __IDiaReadExeAtRVACallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaReadExeAtRVACallback, "8E3F80CA-7517-432a-BA07-285134AAEA8E")
 
-.comdef IDiaReadExeAtRVACallback
+.comdef IDiaReadExeAtRVACallback : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ReadExecutableAtRVA proc :DWORD, :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaDataSource_INTERFACE_DEFINED__
@@ -270,11 +251,8 @@ __IDiaDataSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaDataSource, "79F1BB5F-B66E-48e5-B6A9-1545C323CA3D")
 
-.comdef IDiaDataSource
+.comdef IDiaDataSource : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_lastError	proc :ptr
     loadDataFromPdb	proc :LPCOLESTR
     loadAndValidateDataFromPdb proc :LPCOLESTR, :ptr, :DWORD, :DWORD
@@ -284,7 +262,6 @@ DEFINE_IIDX(IDiaDataSource, "79F1BB5F-B66E-48e5-B6A9-1545C323CA3D")
     loadDataFromCodeViewInfo proc :LPCOLESTR, :LPCOLESTR, :DWORD, :ptr, :ptr
     loadDataFromMiscInfo proc :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumSymbols_INTERFACE_DEFINED__
@@ -292,11 +269,8 @@ __IDiaEnumSymbols_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumSymbols, "CAB72C48-443B-48f5-9B0B-42F0820AB29A")
 
-.comdef IDiaEnumSymbols
+.comdef IDiaEnumSymbols : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -305,7 +279,6 @@ DEFINE_IIDX(IDiaEnumSymbols, "CAB72C48-443B-48f5-9B0B-42F0820AB29A")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumSymbolsByAddr_INTERFACE_DEFINED__
@@ -313,11 +286,8 @@ __IDiaEnumSymbolsByAddr_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumSymbolsByAddr, "624B7D9C-24EA-4421-9D06-3B577471C1FA")
 
-.comdef IDiaEnumSymbolsByAddr
+.comdef IDiaEnumSymbolsByAddr : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     symbolByAddr	proc :DWORD, :DWORD, :ptr
     symbolByRVA		proc :DWORD, :ptr
     symbolByVA		proc :ULONGLONG, :ptr
@@ -325,7 +295,6 @@ DEFINE_IIDX(IDiaEnumSymbolsByAddr, "624B7D9C-24EA-4421-9D06-3B577471C1FA")
     Prev		proc :ULONG, :ptr, :ptr
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumSourceFiles_INTERFACE_DEFINED__
@@ -333,11 +302,8 @@ __IDiaEnumSourceFiles_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumSourceFiles, "10F3DBD9-664F-4469-B808-9471C7A50538")
 
-.comdef IDiaEnumSourceFiles
+.comdef IDiaEnumSourceFiles : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -346,7 +312,6 @@ DEFINE_IIDX(IDiaEnumSourceFiles, "10F3DBD9-664F-4469-B808-9471C7A50538")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumInputAssemblyFiles_INTERFACE_DEFINED__
@@ -354,11 +319,8 @@ __IDiaEnumInputAssemblyFiles_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumInputAssemblyFiles, "1C7FF653-51F7-457E-8419-B20F57EF7E4D")
 
-.comdef IDiaEnumInputAssemblyFiles
+.comdef IDiaEnumInputAssemblyFiles : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -367,7 +329,6 @@ DEFINE_IIDX(IDiaEnumInputAssemblyFiles, "1C7FF653-51F7-457E-8419-B20F57EF7E4D")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumLineNumbers_INTERFACE_DEFINED__
@@ -375,11 +336,8 @@ __IDiaEnumLineNumbers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumLineNumbers, "FE30E878-54AC-44f1-81BA-39DE940F6052")
 
-.comdef IDiaEnumLineNumbers
+.comdef IDiaEnumLineNumbers : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -388,7 +346,6 @@ DEFINE_IIDX(IDiaEnumLineNumbers, "FE30E878-54AC-44f1-81BA-39DE940F6052")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumInjectedSources_INTERFACE_DEFINED__
@@ -396,11 +353,8 @@ __IDiaEnumInjectedSources_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumInjectedSources, "D5612573-6925-4468-8883-98CDEC8C384A")
 
-.comdef IDiaEnumInjectedSources
+.comdef IDiaEnumInjectedSources : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -409,7 +363,6 @@ DEFINE_IIDX(IDiaEnumInjectedSources, "D5612573-6925-4468-8883-98CDEC8C384A")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumSegments_INTERFACE_DEFINED__
@@ -417,11 +370,8 @@ __IDiaEnumSegments_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumSegments, "E8368CA9-01D1-419d-AC0C-E31235DBDA9F")
 
-.comdef IDiaEnumSegments
+.comdef IDiaEnumSegments : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -430,7 +380,6 @@ DEFINE_IIDX(IDiaEnumSegments, "E8368CA9-01D1-419d-AC0C-E31235DBDA9F")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumSectionContribs_INTERFACE_DEFINED__
@@ -438,11 +387,8 @@ __IDiaEnumSectionContribs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumSectionContribs, "1994DEB2-2C82-4b1d-A57F-AFF424D54A68")
 
-.comdef IDiaEnumSectionContribs
+.comdef IDiaEnumSectionContribs : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -451,7 +397,6 @@ DEFINE_IIDX(IDiaEnumSectionContribs, "1994DEB2-2C82-4b1d-A57F-AFF424D54A68")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumFrameData_INTERFACE_DEFINED__
@@ -459,11 +404,8 @@ __IDiaEnumFrameData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumFrameData, "9FC77A4B-3C1C-44ed-A798-6C1DEEA53E1F")
 
-.comdef IDiaEnumFrameData
+.comdef IDiaEnumFrameData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
@@ -474,7 +416,6 @@ DEFINE_IIDX(IDiaEnumFrameData, "9FC77A4B-3C1C-44ed-A798-6C1DEEA53E1F")
     frameByRVA		proc :DWORD, :ptr
     frameByVA		proc :ULONGLONG, :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumDebugStreamData_INTERFACE_DEFINED__
@@ -482,11 +423,8 @@ __IDiaEnumDebugStreamData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumDebugStreamData, "486943E8-D187-4a6b-A3C4-291259FFF60D")
 
-.comdef IDiaEnumDebugStreamData
+.comdef IDiaEnumDebugStreamData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     get_name		proc :ptr
@@ -496,7 +434,6 @@ DEFINE_IIDX(IDiaEnumDebugStreamData, "486943E8-D187-4a6b-A3C4-291259FFF60D")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumDebugStreams_INTERFACE_DEFINED__
@@ -504,11 +441,8 @@ __IDiaEnumDebugStreams_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumDebugStreams, "08CBB41E-47A6-4f87-92F1-1C9C87CED044")
 
-.comdef IDiaEnumDebugStreams
+.comdef IDiaEnumDebugStreams : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :VARIANT, :ptr
@@ -517,7 +451,6 @@ DEFINE_IIDX(IDiaEnumDebugStreams, "08CBB41E-47A6-4f87-92F1-1C9C87CED044")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 DiaAddressMapEntry	STRUC
@@ -530,11 +463,8 @@ __IDiaAddressMap_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaAddressMap, "B62A2E7A-067A-4ea3-B598-04C09717502C")
 
-.comdef IDiaAddressMap
+.comdef IDiaAddressMap : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_addressMapEnabled proc :ptr
     put_addressMapEnabled proc :BOOL
     get_relativeVirtualAddressEnabled proc :ptr
@@ -544,7 +474,6 @@ DEFINE_IIDX(IDiaAddressMap, "B62A2E7A-067A-4ea3-B598-04C09717502C")
     set_imageHeaders	proc :DWORD, :ptr, :BOOL
     set_addressMap	proc :DWORD, :ptr, :BOOL
     .ends
-
 endif
 
 ifndef __IDiaSession_INTERFACE_DEFINED__
@@ -552,11 +481,8 @@ __IDiaSession_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaSession, "2F609EE1-D1C8-4E24-8288-3326BADCD211")
 
-.comdef IDiaSession
+.comdef IDiaSession : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_loadAddress	proc :ptr
     put_loadAddress	proc :ULONGLONG
     get_globalScope	proc :ptr
@@ -617,7 +543,6 @@ DEFINE_IIDX(IDiaSession, "2F609EE1-D1C8-4E24-8288-3326BADCD211")
     getHeapAllocationSites proc :ptr
     findInputAssemblyFile proc :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaSymbol_INTERFACE_DEFINED__
@@ -625,11 +550,8 @@ __IDiaSymbol_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaSymbol, "cb787b2f-bd6c-4635-ba52-933126bd2dcd")
 
-.comdef IDiaSymbol
+.comdef IDiaSymbol : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_symIndexId	proc :ptr
     get_symTag		proc :ptr
     get_name		proc :ptr
@@ -867,7 +789,6 @@ DEFINE_IIDX(IDiaSymbol, "cb787b2f-bd6c-4635-ba52-933126bd2dcd")
     get_bindSpace	proc :ptr
     get_bindSlot	proc :ptr
     .ends
-
 endif
 
 
@@ -876,18 +797,14 @@ __IDiaSourceFile_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaSourceFile, "A2EF5353-F5A8-4eb3-90D2-CB526ACB3CDD")
 
-.comdef IDiaSourceFile
+.comdef IDiaSourceFile : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_uniqueId	proc :ptr
     get_fileName	proc :ptr
     get_checksumType	proc :ptr
     get_compilands	proc :ptr
     get_checksum	proc :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaInputAssemblyFile_INTERFACE_DEFINED__
@@ -895,11 +812,8 @@ __IDiaInputAssemblyFile_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaInputAssemblyFile, "3BFE56B0-390C-4863-9430-1F3D083B7684")
 
-.comdef IDiaInputAssemblyFile
+.comdef IDiaInputAssemblyFile : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_uniqueId	proc :ptr
     get_index		proc :ptr
     get_timestamp	proc :ptr
@@ -907,7 +821,6 @@ DEFINE_IIDX(IDiaInputAssemblyFile, "3BFE56B0-390C-4863-9430-1F3D083B7684")
     get_fileName	proc :ptr
     get_version		proc :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaLineNumber_INTERFACE_DEFINED__
@@ -915,11 +828,8 @@ __IDiaLineNumber_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaLineNumber, "B388EB14-BE4D-421d-A8A1-6CF7AB057086")
 
-.comdef IDiaLineNumber
+.comdef IDiaLineNumber : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_compiland	proc :ptr
     get_sourceFile	proc :ptr
     get_lineNumber	proc :ptr
@@ -935,7 +845,6 @@ DEFINE_IIDX(IDiaLineNumber, "B388EB14-BE4D-421d-A8A1-6CF7AB057086")
     get_statement	proc :ptr
     get_compilandId	proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaSectionContrib_INTERFACE_DEFINED__
@@ -943,11 +852,8 @@ __IDiaSectionContrib_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaSectionContrib, "0CF4B60E-35B1-4c6c-BDD8-854B9C8E3857")
 
-.comdef IDiaSectionContrib
+.comdef IDiaSectionContrib : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_compiland	proc :ptr
     get_addressSection	proc :ptr
     get_addressOffset	proc :ptr
@@ -971,7 +877,6 @@ DEFINE_IIDX(IDiaSectionContrib, "0CF4B60E-35B1-4c6c-BDD8-854B9C8E3857")
     get_compilandId	proc :ptr
     get_code16bit	proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaSegment_INTERFACE_DEFINED__
@@ -979,11 +884,8 @@ __IDiaSegment_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaSegment, "0775B784-C75B-4449-848B-B7BD3159545B")
 
-.comdef IDiaSegment
+.comdef IDiaSegment : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_frame		proc :ptr
     get_offset		proc :ptr
     get_length		proc :ptr
@@ -994,7 +896,6 @@ DEFINE_IIDX(IDiaSegment, "0775B784-C75B-4449-848B-B7BD3159545B")
     get_relativeVirtualAddress proc :ptr
     get_virtualAddress	proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaInjectedSource_INTERFACE_DEFINED__
@@ -1002,11 +903,8 @@ __IDiaInjectedSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaInjectedSource, "AE605CDC-8105-4a23-B710-3259F1E26112")
 
-.comdef IDiaInjectedSource
+.comdef IDiaInjectedSource : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_crc		proc :ptr
     get_length		proc :ptr
     get_filename	proc :ptr
@@ -1015,7 +913,6 @@ DEFINE_IIDX(IDiaInjectedSource, "AE605CDC-8105-4a23-B710-3259F1E26112")
     get_sourceCompression proc :ptr
     get_source		proc :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 _MIDL___MIDL_itf_dia2_0000_0025_0001 typedef SDWORD
@@ -1029,18 +926,14 @@ __IDiaStackWalkFrame_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackWalkFrame, "07C590C1-438D-4F47-BDCD-4397BC81AD75")
 
-.comdef IDiaStackWalkFrame
+.comdef IDiaStackWalkFrame : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_registerValue	proc :DWORD, :ptr
     put_registerValue	proc :DWORD, :ULONGLONG
     readMemory		proc :MemoryTypeEnum, :ULONGLONG, :DWORD, :ptr, :ptr
     searchForReturnAddress proc :ptr, :ptr
     searchForReturnAddressStart proc :ptr, :ULONGLONG, :ptr
     .ends
-
 endif
 
 ifndef __IDiaFrameData_INTERFACE_DEFINED__
@@ -1048,11 +941,8 @@ __IDiaFrameData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaFrameData, "A39184B7-6A36-42de-8EEC-7DF9F3F59F33")
 
-.comdef IDiaFrameData
+.comdef IDiaFrameData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_addressSection	proc :ptr
     get_addressOffset	proc :ptr
     get_relativeVirtualAddress proc :ptr
@@ -1072,7 +962,6 @@ DEFINE_IIDX(IDiaFrameData, "A39184B7-6A36-42de-8EEC-7DF9F3F59F33")
     get_functionParent	proc :ptr
     execute		proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaImageData_INTERFACE_DEFINED__
@@ -1080,16 +969,12 @@ __IDiaImageData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaImageData, "C8E40ED2-A1D9-4221-8692-3CE661184B44")
 
-.comdef IDiaImageData
+.comdef IDiaImageData : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_relativeVirtualAddress proc :ptr
     get_virtualAddress	proc :ptr
     get_imageBase	proc :ptr
     .ends
-
 endif
 
 ifndef __IDiaTable_INTERFACE_DEFINED__
@@ -1097,21 +982,13 @@ __IDiaTable_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaTable, "4A59FB77-ABAC-469b-A30B-9ECC85BFEF14")
 
-.comdef IDiaTable
+.comdef IDiaTable : public IEnumUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Next		proc :ULONG, :ptr, :ptr
-    Skip		proc :ULONG
-    Reset		proc
-    Clone		proc :ptr
     get__NewEnum	proc :ptr
     get_name		proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumTables_INTERFACE_DEFINED__
@@ -1119,11 +996,8 @@ __IDiaEnumTables_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumTables, "C65C2B0A-1150-4d7a-AFCC-E05BF3DEE81E")
 
-.comdef IDiaEnumTables
+.comdef IDiaEnumTables : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
     Item		proc :VARIANT, :ptr
@@ -1132,7 +1006,6 @@ DEFINE_IIDX(IDiaEnumTables, "C65C2B0A-1150-4d7a-AFCC-E05BF3DEE81E")
     Reset		proc
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __Dia2Lib_LIBRARY_DEFINED__
@@ -1159,11 +1032,8 @@ __IDiaPropertyStorage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaPropertyStorage, "9d416f9c-e184-45b2-a4f0-ce517f719e9b")
 
-.comdef IDiaPropertyStorage
+.comdef IDiaPropertyStorage : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ReadMultiple	proc :ULONG, :ptr, :ptr
     ReadPropertyNames	proc :ULONG, :ptr, :ptr
     Enum		proc :ptr
@@ -1173,7 +1043,6 @@ DEFINE_IIDX(IDiaPropertyStorage, "9d416f9c-e184-45b2-a4f0-ce517f719e9b")
     ReadULONGLONG	proc :PROPID, :ptr
     ReadBSTR		proc :PROPID, :ptr
     .ends
-
 endif
 
 ifndef __IDiaStackFrame_INTERFACE_DEFINED__
@@ -1181,11 +1050,8 @@ __IDiaStackFrame_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackFrame, "5edbc96d-cdd6-4792-afbe-cc89007d9610")
 
-.comdef IDiaStackFrame
+.comdef IDiaStackFrame : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_type		proc :ptr
     get_base		proc :ptr
     get_size		proc :ptr
@@ -1202,7 +1068,6 @@ DEFINE_IIDX(IDiaStackFrame, "5edbc96d-cdd6-4792-afbe-cc89007d9610")
     get_maxStack	proc :ptr
     get_registerValue	proc :DWORD, :ptr
     .ends
-
 endif
 
 ifndef __IDiaEnumStackFrames_INTERFACE_DEFINED__
@@ -1210,15 +1075,11 @@ __IDiaEnumStackFrames_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaEnumStackFrames, "ec9d461d-ce74-4711-a020-7d8f9a1dd255")
 
-.comdef IDiaEnumStackFrames
+.comdef IDiaEnumStackFrames : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Reset		proc
     .ends
-
 endif
 
 FPODATA			STRUC
@@ -1234,11 +1095,8 @@ __IDiaStackWalkHelper_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackWalkHelper, "21F81B1B-C5BB-42A3-BC4F-CCBAA75B9F19")
 
-.comdef IDiaStackWalkHelper
+.comdef IDiaStackWalkHelper : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     get_registerValue	proc :DWORD, :ptr
     put_registerValue	proc :DWORD, :ULONGLONG
     readMemory		proc :MemoryTypeEnum, :ULONGLONG, :DWORD, :ptr, :ptr
@@ -1252,7 +1110,6 @@ DEFINE_IIDX(IDiaStackWalkHelper, "21F81B1B-C5BB-42A3-BC4F-CCBAA75B9F19")
     numberOfFunctionFragmentsForVA proc :ULONGLONG, :DWORD, :ptr
     functionFragmentsForVA proc :ULONGLONG, :DWORD, :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaStackWalker_INTERFACE_DEFINED__
@@ -1260,15 +1117,11 @@ __IDiaStackWalker_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackWalker, "5485216b-a54c-469f-9670-52b24d5229bb")
 
-.comdef IDiaStackWalker
+.comdef IDiaStackWalker : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     getEnumFrames	proc :ptr, :ptr
     getEnumFrames2	proc :CV_CPU_TYPE_e, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaStackWalkHelper2_INTERFACE_DEFINED__
@@ -1276,25 +1129,9 @@ __IDiaStackWalkHelper2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackWalkHelper2, "8222c490-507b-4bef-b3bd-41dca7b5934c")
 
-.comdef IDiaStackWalkHelper2
+.comdef IDiaStackWalkHelper2 : public IDiaStackWalkHelper
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    get_registerValue	proc :DWORD, :ptr
-    put_registerValue	proc :DWORD, :ULONGLONG
-    readMemory		proc :MemoryTypeEnum, :ULONGLONG, :DWORD, :ptr, :ptr
-    searchForReturnAddress proc :ptr, :ptr
-    searchForReturnAddressStart proc :ptr, :ULONGLONG, :ptr
-    frameForVA		proc :ULONGLONG, :ptr
-    symbolForVA		proc :ULONGLONG, :ptr
-    pdataForVA		proc :ULONGLONG, :DWORD, :ptr, :ptr
-    imageForVA		proc :ULONGLONG, :ptr
-    addressForVA	proc :ULONGLONG, :ptr, :ptr
-    numberOfFunctionFragmentsForVA proc :ULONGLONG, :DWORD, :ptr
-    functionFragmentsForVA proc :ULONGLONG, :DWORD, :DWORD, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __IDiaStackWalker2_INTERFACE_DEFINED__
@@ -1302,15 +1139,9 @@ __IDiaStackWalker2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDiaStackWalker2, "7c185885-a015-4cac-9411-0f4fb39b1f3a")
 
-.comdef IDiaStackWalker2
+.comdef IDiaStackWalker2 : public IDiaStackWalker
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    getEnumFrames	proc :ptr, :ptr
-    getEnumFrames2	proc :CV_CPU_TYPE_e, :ptr, :ptr
     .ends
-
 endif
 
 endif

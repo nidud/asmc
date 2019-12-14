@@ -102,7 +102,7 @@ m_maph		dd EMMPAGES dup(?)
 m_mapp		dd EMMPAGES dup(?)
 S_EMAP		ENDS
 
-SIZESAVEARRAY	equ	SIZE S_EMAP
+SIZESAVEARRAY	equ	S_EMAP
 
 	.data
 	ALIGN		4
@@ -181,7 +181,7 @@ emm_gethandle:
       @@:
 	cmp	emm_flag[ecx],al
 	je	@F
-	add	edx,SIZE S_HANDLE
+	add	edx,S_HANDLE
 	inc	ecx
 	cmp	ecx,MAXHANDLES
 	jb	@B
@@ -455,7 +455,7 @@ emm_03: ; Get Unallocated Page Count			42h
 			shr	eax,14
 			add	ebx,eax
 		.endif
-		add	edx,SIZE S_HANDLE
+		add	edx,S_HANDLE
 	.untilcxz
 	mov	eax,MAXPAGES
 	.if	ebx > eax
@@ -559,7 +559,7 @@ emm_08: ; Save Page Map					47h
 	call	emm_pushmap
 	mov	esi,offset emm_maph
 	mov	edi,offset emm_tmph
-	mov	ecx,SIZE S_EMAP * MAXMAPLEVEL - 1
+	mov	ecx,S_EMAP * MAXMAPLEVEL - 1
 	add	esi,ecx
 	add	edi,ecx
 	inc	ecx
@@ -592,7 +592,7 @@ emm_09: ; Restore Page Map				48h
 	dec	emm_maplevel
 	mov	edi,offset emm_maph
 	mov	esi,offset emm_tmph
-	mov	ecx,SIZE S_EMAP * MAXMAPLEVEL
+	mov	ecx,S_EMAP * MAXMAPLEVEL
 	rep	movsb
 	mov	eax,emm_maplevel
 	shl	eax,2
@@ -627,7 +627,7 @@ emm_12: ; Get Handle Count				4Bh
 		.if	[edx].h_memp
 			inc	eax
 		.endif
-		add	edx,SIZE S_HANDLE
+		add	edx,S_HANDLE
 	.untilcxz
 	invoke	setBX,eax
 	jmp	emm_success
@@ -670,7 +670,7 @@ emm_14: ; Get All Handle Pages				4Dh
 			inc	ebx
 		.endif
 		inc	esi
-		add	edx,SIZE S_HANDLE
+		add	edx,S_HANDLE
 	.untilcxz
 	invoke	setBX,ebx
 	jmp	emm_success
@@ -973,7 +973,7 @@ emm_21: ; Get Handle Directory				54h
 			stosd
 			inc ebx
 		.endif
-		add	edx,SIZE S_HANDLE
+		add	edx,S_HANDLE
 	.untilcxz
 	invoke	setAX,ebx
 	ret
@@ -997,7 +997,7 @@ emm_2101:; Search for Named Handle		      5401h
 			.break
 		.endif
 		inc	edi
-		add	esi,SIZE S_HANDLE
+		add	esi,S_HANDLE
 	.until	edi == MAXHANDLES
 	.if	ebx
 		.if !eax && !edx
@@ -1221,7 +1221,7 @@ des_seg_page	dw ? ;
 S_EMM		ENDS
 
 ;	call	emm_pushmap
-	mov	eax,SIZE S_EMM
+	mov	eax,S_EMM
 	call	emm_getdssi
 	mov	ebx,esi
 
@@ -1836,7 +1836,7 @@ emm_dispatch:
 		.if	eax
 			invoke GlobalFree,eax
 		.endif
-		add esi,SIZE S_HANDLE
+		add esi,S_HANDLE
 		dec edi
 	.until	!edi
 	pop	edi

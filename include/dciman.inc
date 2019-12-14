@@ -62,7 +62,7 @@ WinWatchClose proto WINAPI \
 WinWatchGetClipList proto WINAPI \
 		   hWW: HWINWATCH,
 		   prc: LPRECT,
-		 _size: UINT,
+		  size: UINT,
 		   prd: LPRGNDATA
 
 ;BOOL
@@ -73,13 +73,13 @@ WinWatchDidStatusChange proto WINAPI \
 ;DWORD
 GetWindowRegionData proto WINAPI \
 		  hwnd: HWND,
-		 _size: DWORD,
+		  size: DWORD,
 		   prd: LPRGNDATA
 
 ;DWORD
 GetDCRegionData proto WINAPI \
 		   hdc: HDC,
-		 _size: DWORD,
+		  size: DWORD,
 		   prd: LPRGNDATA
 
 WINWATCHNOTIFY_START	equ 0

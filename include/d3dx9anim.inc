@@ -126,46 +126,39 @@ LPD3DXEVENT_DESC	typedef ptr D3DXEVENT_DESC
 D3DXEVENTHANDLE		typedef DWORD
 LPD3DXEVENTHANDLE	typedef ptr DWORD
 
-ID3DXAllocateHierarchy	STRUC
-CreateFrame		PVOID ?
-CreateMeshContainer	PVOID ?
-DestroyFrame		PVOID ?
-DestroyMeshContainer	PVOID ?
-ID3DXAllocateHierarchy	ENDS
+.comdef ID3DXAllocateHierarchy
 
-ID3DXLoadUserData	STRUC
-LoadTopLevelData	PVOID ?
-LoadFrameChildData	PVOID ?
-LoadMeshChildData	PVOID ?
-ID3DXLoadUserData	ENDS
+    CreateFrame		proc :ptr, :ptr
+    CreateMeshContainer proc :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr ptr
+    DestroyFrame	proc :LPD3DXFRAME
+    DestroyMeshContainer proc :LPD3DXMESHCONTAINER
 
-ID3DXSaveUserData	STRUC
-AddFrameChildData	PVOID ?
-AddMeshChildData	PVOID ?
-AddTopLevelDataObjectsPre PVOID ?
-AddTopLevelDataObjectsPost PVOID ?
-RegisterTemplates	PVOID ?
-SaveTemplates		PVOID ?
-ID3DXSaveUserData	ENDS
-
-.comdef ID3DXAnimationSet
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetName		proc
-    GetPeriod		proc
-    GetPeriodicPosition proc :DOUBLE
-    GetNumAnimations	proc
-    GetAnimationNameByIndex proc :UINT, :ptr
-    GetAnimationIndexByName proc :ptr, :ptr
-    GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
-    GetCallback		proc :double, :DWORD, :ptr, :ptr
     .ends
 
-.comdef ID3DXKeyframedAnimationSet
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXLoadUserData
+
+    LoadTopLevelData	proc :ptr
+    LoadFrameChildData	proc :ptr, :ptr
+    LoadMeshChildData	proc :ptr, :ptr
+
+    .ends
+
+
+.comdef ID3DXSaveUserData
+
+    AddFrameChildData	proc :ptr, :ptr, :ptr
+    AddMeshChildData	proc :ptr, :ptr, :ptr
+    AddTopLevelDataObjectsPre proc :ptr
+    AddTopLevelDataObjectsPost proc :ptr
+    RegisterTemplates	proc :ptr
+    SaveTemplates	proc :ptr
+
+    .ends
+
+
+.comdef ID3DXAnimationSet : public IUnknown
+
     GetName		proc
     GetPeriod		proc
     GetPeriodicPosition proc :DOUBLE
@@ -174,6 +167,12 @@ ID3DXSaveUserData	ENDS
     GetAnimationIndexByName proc :ptr, :ptr
     GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
     GetCallback		proc :double, :DWORD, :ptr, :ptr
+
+    .ends
+
+
+.comdef ID3DXKeyframedAnimationSet : public ID3DXAnimationSet
+
     GetPlaybackType	proc
     GetSourceTicksPerSecond proc
     GetNumScaleKeys	proc :UINT
@@ -198,35 +197,30 @@ ID3DXSaveUserData	ENDS
     RegisterAnimationSRTKeys proc :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
     Compress		proc :DWORD, :float, :ptr, :ptr
     UnregisterAnimation proc :UINT
+
     .ends
 
-.comdef ID3DXCompressedAnimationSet
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetName		proc
-    GetPeriod		proc
-    GetPeriodicPosition proc :DOUBLE
-    GetNumAnimations	proc
-    GetAnimationNameByIndex proc :UINT, :ptr
-    GetAnimationIndexByName proc :ptr, :ptr
-    GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
-    GetCallback		proc :double, :DWORD, :ptr, :ptr
+
+.comdef ID3DXCompressedAnimationSet : public ID3DXAnimationSet
+
     GetPlaybackType	proc
     GetSourceTicksPerSecond proc
     GetCompressedData	proc :ptr
     GetNumCallbackKeys	proc
     GetCallbackKeys	proc :LPD3DXKEY_CALLBACK
+
     .ends
+
 
 .comdef ID3DXAnimationCallbackHandler
+
     HandleCallback	proc :UINT, :ptr
+
     .ends
 
-.comdef ID3DXAnimationController
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXAnimationController : public IUnknown
+
     GetMaxNumAnimationOutputs proc
     GetMaxNumAnimationSets proc
     GetMaxNumTracks	proc
@@ -266,6 +260,7 @@ ID3DXSaveUserData	ENDS
     ValidateEvent	proc :D3DXEVENTHANDLE
     GetEventDesc	proc :D3DXEVENTHANDLE, :ptr
     CloneAnimationController proc :UINT, :UINT, :UINT, :UINT, :ptr
+
     .ends
 
 ;HRESULT

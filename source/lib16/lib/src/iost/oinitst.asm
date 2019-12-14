@@ -12,7 +12,7 @@ include string.inc
 oinitst PROC _CType PUBLIC USES bx io:DWORD, bsize:size_t
 	mov	bx,WORD PTR io
 	mov	dx,[bx].S_IOST.ios_file
-	invoke	memzero,io,SIZE S_IOST
+	invoke	memzero,io,S_IOST
 	mov	[bx].S_IOST.ios_file,dx
 	dec	ax
 	mov	dx,ax

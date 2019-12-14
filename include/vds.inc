@@ -759,15 +759,13 @@ __IEnumVdsObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumVdsObject, "118610b7-8d94-4030-b5b8-500889788e4e")
 
-.comdef IEnumVdsObject
+.comdef IEnumVdsObject : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -777,14 +775,12 @@ __IVdsAsync_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsAsync, "d5d23b6d-5a55-4492-9889-397a3c2d2dbc")
 
-.comdef IVdsAsync
+.comdef IVdsAsync : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Cancel		proc
     _Wait		proc :ptr, :ptr
     QueryStatus		proc :ptr, :ptr
+
     .ends
 
 endif
@@ -794,12 +790,10 @@ __IVdsAdviseSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsAdviseSink, "8326cd1d-cf59-4936-b786-5efc08798e25")
 
-.comdef IVdsAdviseSink
+.comdef IVdsAdviseSink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     OnNotify		proc :LONG, :ptr
+
     .ends
 
 endif
@@ -809,12 +803,10 @@ __IVdsProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsProvider, "10c5e575-7984-4e81-a56b-431f5f92ae42")
 
-.comdef IVdsProvider
+.comdef IVdsProvider : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
+
     .ends
 
 endif
@@ -824,12 +816,10 @@ __IVdsProviderSupport_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsProviderSupport, "1732be13-e8f9-4a03-bfbc-5f616aa66ce1")
 
-.comdef IVdsProviderSupport
+.comdef IVdsProviderSupport : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetVersionSupport	proc :ptr
+
     .ends
 
 endif
@@ -1222,13 +1212,11 @@ __IVdsSwProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSwProvider, "9aa58360-ce33-4f92-b658-ed24b14425b8")
 
-.comdef IVdsSwProvider
+.comdef IVdsSwProvider : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryPacks		proc :ptr
     CreatePack		proc :ptr
+
     .ends
 
 endif
@@ -1238,11 +1226,8 @@ __IVdsPack_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsPack, "3b69d7f5-9d94-4648-91ca-79939ba263bf")
 
-.comdef IVdsPack
+.comdef IVdsPack : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetProvider		proc :ptr
     QueryVolumes	proc :ptr
@@ -1253,6 +1238,7 @@ DEFINE_IIDX(IVdsPack, "3b69d7f5-9d94-4648-91ca-79939ba263bf")
     ReplaceDisk		proc :VDS_OBJECT_ID, :VDS_OBJECT_ID, :ptr
     RemoveMissingDisk	proc :VDS_OBJECT_ID
     Recover		proc :ptr
+
     .ends
 
 endif
@@ -1262,12 +1248,10 @@ __IVdsPack2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsPack2, "13B50BFF-290A-47DD-8558-B7C58DB1A71A")
 
-.comdef IVdsPack2
+.comdef IVdsPack2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreateVolume2	proc :VDS_VOLUME_TYPE
+
     .ends
 
 endif
@@ -1277,11 +1261,8 @@ __IVdsDisk_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDisk, "07e5c822-f00c-47a1-8fce-b244da56fd06")
 
-.comdef IVdsDisk
+.comdef IVdsDisk : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetPack		proc :ptr
     GetIdentificationData proc :ptr
@@ -1289,6 +1270,7 @@ DEFINE_IIDX(IVdsDisk, "07e5c822-f00c-47a1-8fce-b244da56fd06")
     ConvertStyle	proc :VDS_PARTITION_STYLE
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
+
     .ends
 
 endif
@@ -1298,12 +1280,10 @@ __IVdsDisk2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDisk2, "40F73C8B-687D-4a13-8D96-3D7F2E683936")
 
-.comdef IVdsDisk2
+.comdef IVdsDisk2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetSANMode		proc :BOOL
+
     .ends
 
 endif
@@ -1313,13 +1293,11 @@ __IVdsDiskOnline_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDiskOnline, "90681B1D-6A7F-48e8-9061-31B7AA125322")
 
-.comdef IVdsDiskOnline
+.comdef IVdsDiskOnline : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Online		proc
     Offline		proc
+
     .ends
 
 endif
@@ -1329,11 +1307,8 @@ __IVdsAdvancedDisk_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsAdvancedDisk, "6e6f6b40-977c-4069-bddd-ac710059f8c0")
 
-.comdef IVdsAdvancedDisk
+.comdef IVdsAdvancedDisk : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPartitionProperties proc :ULONGLONG, :ptr
     QueryPartitions	proc
     CreatePartition	proc :ULONGLONG, :ULONGLONG, :ptr, :ptr
@@ -1344,6 +1319,7 @@ DEFINE_IIDX(IVdsAdvancedDisk, "6e6f6b40-977c-4069-bddd-ac710059f8c0")
     GetDriveLetter	proc :ULONGLONG, :ptr
     FormatPartition	proc :ULONGLONG, :VDS_FILE_SYSTEM_TYPE, :LPWSTR, :DWORD, :BOOL, :BOOL, :BOOL, :ptr
     Clean		proc :BOOL, :BOOL, :BOOL, :ptr
+
     .ends
 
 endif
@@ -1353,12 +1329,10 @@ __IVdsAdvancedDisk2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsAdvancedDisk2, "9723f420-9355-42de-ab66-e31bb15beeac")
 
-.comdef IVdsAdvancedDisk2
+.comdef IVdsAdvancedDisk2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ChangePartitionType proc :ULONGLONG, :BOOL, :ptr
+
     .ends
 
 endif
@@ -1368,13 +1342,11 @@ __IVdsAdvancedDisk3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsAdvancedDisk3, "3858C0D5-0F35-4BF5-9714-69874963BC36")
 
-.comdef IVdsAdvancedDisk3
+.comdef IVdsAdvancedDisk3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetUniqueId		proc :ptr
+
     .ends
 
 endif
@@ -1384,12 +1356,10 @@ __IVdsCreatePartitionEx_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsCreatePartitionEx, "9882f547-cfc3-420b-9750-00dfbec50662")
 
-.comdef IVdsCreatePartitionEx
+.comdef IVdsCreatePartitionEx : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     CreatePartitionEx	proc :ULONGLONG, :ULONGLONG, :ULONG, :ptr, :ptr
+
     .ends
 
 endif
@@ -1399,13 +1369,11 @@ __IVdsRemovable_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsRemovable, "0316560b-5db4-4ed9-bbb5-213436ddc0d9")
 
-.comdef IVdsRemovable
+.comdef IVdsRemovable : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryMedia		proc
     Eject		proc
+
     .ends
 
 endif
@@ -1415,11 +1383,8 @@ __IVdsVolume_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolume, "88306bb2-e71f-478c-86a2-79da200a0f11")
 
-.comdef IVdsVolume
+.comdef IVdsVolume : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetPack		proc :ptr
     QueryPlexes		proc :ptr
@@ -1431,6 +1396,7 @@ DEFINE_IIDX(IVdsVolume, "88306bb2-e71f-478c-86a2-79da200a0f11")
     Delete		proc :BOOL
     SetFlags		proc :ULONG, :BOOL
     ClearFlags		proc :ULONG
+
     .ends
 
 endif
@@ -1440,12 +1406,10 @@ __IVdsVolume2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolume2, "72AE6713-DCBB-4a03-B36B-371F6AC6B53D")
 
-.comdef IVdsVolume2
+.comdef IVdsVolume2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties2	proc :ptr
+
     .ends
 
 endif
@@ -1455,12 +1419,10 @@ __IVdsVolumeOnline_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumeOnline, "1BE2275A-B315-4f70-9E44-879B3A2A53F2")
 
-.comdef IVdsVolumeOnline
+.comdef IVdsVolumeOnline : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Online		proc
+
     .ends
 
 endif
@@ -1470,15 +1432,13 @@ __IVdsVolumePlex_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumePlex, "4daa0135-e1d1-40f1-aaa5-3cc1e53221c3")
 
-.comdef IVdsVolumePlex
+.comdef IVdsVolumePlex : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetVolume		proc :ptr
     QueryExtents	proc
     Repair		proc
+
     .ends
 
 endif
@@ -1488,13 +1448,11 @@ __IVdsDisk3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDisk3, "8F4B2F5D-EC15-4357-992F-473EF10975B9")
 
-.comdef IVdsDisk3
+.comdef IVdsDisk3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties2	proc :ptr
     QueryFreeExtents	proc :ULONG
+
     .ends
 
 endif
@@ -2055,14 +2013,12 @@ __IVdsHwProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsHwProvider, "d99bdaae-b13a-4178-9fdb-e27f16b4603e")
 
-.comdef IVdsHwProvider
+.comdef IVdsHwProvider : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QuerySubSystems	proc :ptr
     Reenumerate		proc
     Refresh		proc
+
     .ends
 
 endif
@@ -2072,12 +2028,10 @@ __IVdsHwProviderType_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsHwProviderType, "3e0f5166-542d-4fc6-947a-012174240b7e")
 
-.comdef IVdsHwProviderType
+.comdef IVdsHwProviderType : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProviderType	proc :ptr
+
     .ends
 
 endif
@@ -2087,12 +2041,10 @@ __IVdsHwProviderType2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsHwProviderType2, "8190236f-c4d0-4e81-8011-d69512fcc984")
 
-.comdef IVdsHwProviderType2
+.comdef IVdsHwProviderType2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProviderType2	proc :ptr
+
     .ends
 
 endif
@@ -2102,14 +2054,12 @@ __IVdsHwProviderStoragePools_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsHwProviderStoragePools, "d5b5937a-f188-4c79-b86c-11c920ad11b8")
 
-.comdef IVdsHwProviderStoragePools
+.comdef IVdsHwProviderStoragePools : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryStoragePools	proc :ULONG, :ULONGLONG, :ptr, :ptr
     CreateLunInStoragePool proc :VDS_LUN_TYPE, :ULONGLONG, :VDS_OBJECT_ID, :LPWSTR, :ptr, :ptr
     QueryMaxLunCreateSizeInStoragePool proc :VDS_LUN_TYPE, :VDS_OBJECT_ID, :ptr, :ptr
+
     .ends
 
 endif
@@ -2119,11 +2069,8 @@ __IVdsSubSystem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystem, "6fcee2d3-6d90-4f91-80e2-a5c7caaca9d8")
 
-.comdef IVdsSubSystem
+.comdef IVdsSubSystem : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetProvider		proc :ptr
     QueryControllers	proc :ptr
@@ -2136,6 +2083,7 @@ DEFINE_IIDX(IVdsSubSystem, "6fcee2d3-6d90-4f91-80e2-a5c7caaca9d8")
     ReplaceDrive	proc :VDS_OBJECT_ID, :VDS_OBJECT_ID
     SetStatus		proc :VDS_SUB_SYSTEM_STATUS
     QueryMaxLunCreateSize proc :VDS_LUN_TYPE
+
     .ends
 
 endif
@@ -2145,15 +2093,13 @@ __IVdsSubSystem2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystem2, "be666735-7800-4a77-9d9c-40f85b87e292")
 
-.comdef IVdsSubSystem2
+.comdef IVdsSubSystem2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties2	proc :ptr
     GetDrive2		proc :SWORD, :SWORD, :ULONG, :ptr
     CreateLun2		proc :VDS_LUN_TYPE, :ULONGLONG
     QueryMaxLunCreateSize2 proc :VDS_LUN_TYPE
+
     .ends
 
 endif
@@ -2163,12 +2109,10 @@ __IVdsSubSystemNaming_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystemNaming, "0d70faa3-9cd4-4900-aa20-6981b6aafc75")
 
-.comdef IVdsSubSystemNaming
+.comdef IVdsSubSystemNaming : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFriendlyName	proc :LPWSTR
+
     .ends
 
 endif
@@ -2178,15 +2122,13 @@ __IVdsSubSystemIscsi_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystemIscsi, "0027346f-40d0-4b45-8cec-5906dc0380c8")
 
-.comdef IVdsSubSystemIscsi
+.comdef IVdsSubSystemIscsi : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryTargets	proc :ptr
     QueryPortals	proc :ptr
     CreateTarget	proc :LPWSTR, :LPWSTR, :ptr
     SetIpsecGroupPresharedKey proc :ptr
+
     .ends
 
 endif
@@ -2196,12 +2138,10 @@ __IVdsSubSystemInterconnect_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystemInterconnect, "9e6fa560-c141-477b-83ba-0b6c38f7febf")
 
-.comdef IVdsSubSystemInterconnect
+.comdef IVdsSubSystemInterconnect : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSupportedInterconnects proc :ptr
+
     .ends
 
 endif
@@ -2211,16 +2151,14 @@ __IVdsControllerPort_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsControllerPort, "18691d0d-4e7f-43e8-92e4-cf44beeed11c")
 
-.comdef IVdsControllerPort
+.comdef IVdsControllerPort : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetController	proc :ptr
     QueryAssociatedLuns proc :ptr
     Reset		proc
     SetStatus		proc :VDS_PORT_STATUS
+
     .ends
 
 endif
@@ -2230,11 +2168,8 @@ __IVdsController_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsController, "cb53d96e-dffb-474a-a078-790d1e2bc082")
 
-.comdef IVdsController
+.comdef IVdsController : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetSubSystem	proc :ptr
     GetPortProperties	proc :SWORD, :ptr
@@ -2243,6 +2178,7 @@ DEFINE_IIDX(IVdsController, "cb53d96e-dffb-474a-a078-790d1e2bc082")
     Reset		proc
     QueryAssociatedLuns proc :ptr
     SetStatus		proc :VDS_CONTROLLER_STATUS
+
     .ends
 
 endif
@@ -2252,12 +2188,10 @@ __IVdsControllerControllerPort_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsControllerControllerPort, "ca5d735f-6bae-42c0-b30e-f2666045ce71")
 
-.comdef IVdsControllerControllerPort
+.comdef IVdsControllerControllerPort : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryControllerPorts proc :ptr
+
     .ends
 
 endif
@@ -2267,17 +2201,15 @@ __IVdsDrive_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDrive, "ff24efa4-aade-4b6b-898b-eaa6a20887c7")
 
-.comdef IVdsDrive
+.comdef IVdsDrive : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetSubSystem	proc :ptr
     QueryExtents	proc
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
     SetStatus		proc :VDS_DRIVE_STATUS
+
     .ends
 
 endif
@@ -2287,12 +2219,10 @@ __IVdsDrive2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDrive2, "60b5a730-addf-4436-8ca7-5769e2d1ffa4")
 
-.comdef IVdsDrive2
+.comdef IVdsDrive2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties2	proc :ptr
+
     .ends
 
 endif
@@ -2302,11 +2232,8 @@ __IVdsLun_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLun, "3540a9c7-e60f-4111-a840-8bba6c2c83d8")
 
-.comdef IVdsLun
+.comdef IVdsLun : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetSubSystem	proc :ptr
     GetIdentificationData proc :ptr
@@ -2324,6 +2251,7 @@ DEFINE_IIDX(IVdsLun, "3540a9c7-e60f-4111-a840-8bba6c2c83d8")
     ApplyHints		proc :ptr
     SetStatus		proc :VDS_LUN_STATUS
     QueryMaxLunExtendSize proc
+
     .ends
 
 endif
@@ -2333,13 +2261,11 @@ __IVdsLun2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLun2, "e5b3a735-9efb-499a-8071-4394d9ee6fcb")
 
-.comdef IVdsLun2
+.comdef IVdsLun2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryHints2		proc :ptr
     ApplyHints2		proc :ptr
+
     .ends
 
 endif
@@ -2349,12 +2275,10 @@ __IVdsLunNaming_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunNaming, "907504cb-6b4e-4d88-a34d-17ba661fbb06")
 
-.comdef IVdsLunNaming
+.comdef IVdsLunNaming : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFriendlyName	proc :LPWSTR
+
     .ends
 
 endif
@@ -2364,12 +2288,10 @@ __IVdsLunNumber_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunNumber, "d3f95e46-54b3-41f9-b678-0f1871443a08")
 
-.comdef IVdsLunNumber
+.comdef IVdsLunNumber : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetLunNumber	proc :ptr
+
     .ends
 
 endif
@@ -2379,13 +2301,11 @@ __IVdsLunControllerPorts_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunControllerPorts, "451fe266-da6d-406a-bb60-82e534f85aeb")
 
-.comdef IVdsLunControllerPorts
+.comdef IVdsLunControllerPorts : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AssociateControllerPorts proc :ptr, :LONG
     QueryActiveControllerPorts proc :ptr
+
     .ends
 
 endif
@@ -2395,15 +2315,13 @@ __IVdsLunMpio_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunMpio, "7c5fbae3-333a-48a1-a982-33c15788cde3")
 
-.comdef IVdsLunMpio
+.comdef IVdsLunMpio : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPathInfo		proc
     GetLoadBalancePolicy proc :ptr
     SetLoadBalancePolicy proc :VDS_LOADBALANCE_POLICY_ENUM
     GetSupportedLbPolicies proc :ptr
+
     .ends
 
 endif
@@ -2413,13 +2331,11 @@ __IVdsLunIscsi_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunIscsi, "0d7c1e64-b59b-45ae-b86a-2c2cc6a42067")
 
-.comdef IVdsLunIscsi
+.comdef IVdsLunIscsi : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     AssociateTargets	proc
     QueryAssociatedTargets proc :ptr
+
     .ends
 
 endif
@@ -2429,16 +2345,14 @@ __IVdsLunPlex_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsLunPlex, "0ee1a790-5d2e-4abb-8c99-c481e8be2138")
 
-.comdef IVdsLunPlex
+.comdef IVdsLunPlex : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetLun		proc :ptr
     QueryExtents	proc
     QueryHints		proc :ptr
     ApplyHints		proc :ptr
+
     .ends
 
 endif
@@ -2448,11 +2362,8 @@ __IVdsIscsiPortal_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiPortal, "7fa1499d-ec85-4a8a-a47b-ff69201fcd34")
 
-.comdef IVdsIscsiPortal
+.comdef IVdsIscsiPortal : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetSubSystem	proc :ptr
     QueryAssociatedPortalGroups proc :ptr
@@ -2460,6 +2371,7 @@ DEFINE_IIDX(IVdsIscsiPortal, "7fa1499d-ec85-4a8a-a47b-ff69201fcd34")
     SetIpsecTunnelAddress proc :ptr, :ptr
     GetIpsecSecurity	proc :ptr, :ptr
     SetIpsecSecurity	proc :ptr, :ULONGLONG, :ptr
+
     .ends
 
 endif
@@ -2469,11 +2381,8 @@ __IVdsIscsiTarget_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiTarget, "aa8f5055-83e5-4bcc-aa73-19851a36a849")
 
-.comdef IVdsIscsiTarget
+.comdef IVdsIscsiTarget : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetSubSystem	proc :ptr
     QueryPortalGroups	proc :ptr
@@ -2484,6 +2393,7 @@ DEFINE_IIDX(IVdsIscsiTarget, "aa8f5055-83e5-4bcc-aa73-19851a36a849")
     SetSharedSecret	proc :ptr, :LPWSTR
     RememberInitiatorSharedSecret proc :LPWSTR, :ptr
     GetConnectedInitiators proc
+
     .ends
 
 endif
@@ -2493,17 +2403,15 @@ __IVdsIscsiPortalGroup_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiPortalGroup, "fef5f89d-a3dd-4b36-bf28-e7dde045c593")
 
-.comdef IVdsIscsiPortalGroup
+.comdef IVdsIscsiPortalGroup : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetTarget		proc :ptr
     QueryAssociatedPortals proc :ptr
     AddPortal		proc :VDS_OBJECT_ID, :ptr
     RemovePortal	proc :VDS_OBJECT_ID, :ptr
     Delete		proc :ptr
+
     .ends
 
 endif
@@ -2513,17 +2421,15 @@ __IVdsStoragePool_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsStoragePool, "932ca8cf-0eb3-4ba8-9620-22665d7f8450")
 
-.comdef IVdsStoragePool
+.comdef IVdsStoragePool : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProvider		proc :ptr
     GetProperties	proc :ptr
     GetAttributes	proc :ptr
     QueryDriveExtents	proc
     QueryAllocatedLuns	proc :ptr
     QueryAllocatedStoragePools proc :ptr
+
     .ends
 
 endif
@@ -2533,14 +2439,12 @@ __IVdsMaintenance_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsMaintenance, "daebeef3-8523-47ed-a2b9-05cecce2a1ae")
 
-.comdef IVdsMaintenance
+.comdef IVdsMaintenance : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     StartMaintenance	proc :VDS_MAINTENANCE_OPERATION
     StopMaintenance	proc :VDS_MAINTENANCE_OPERATION
     PulseMaintenance	proc :VDS_MAINTENANCE_OPERATION, :ULONG
+
     .ends
 
 endif
@@ -2568,16 +2472,14 @@ __IVdsVdProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVdProvider, "b481498c-8354-45f9-84a0-0bdd2832a91f")
 
-.comdef IVdsVdProvider
+.comdef IVdsVdProvider : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryVDisks		proc :ptr
     CreateVDisk		proc :PVIRTUAL_STORAGE_TYPE, :LPWSTR, :LPWSTR, :CREATE_VIRTUAL_DISK_FLAG, :ULONG, :ULONG, :PVDS_CREATE_VDISK_PARAMETERS, :ptr
     AddVDisk		proc :PVIRTUAL_STORAGE_TYPE, :LPWSTR, :ptr
     GetDiskFromVDisk	proc :ptr, :ptr
     GetVDiskFromDisk	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -2616,15 +2518,13 @@ __IVdsVDisk_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVDisk, "1e062b84-e5e6-4b4b-8a25-67b81e8f13e8")
 
-.comdef IVdsVDisk
+.comdef IVdsVDisk : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Open		proc :VIRTUAL_DISK_ACCESS_MASK, :OPEN_VIRTUAL_DISK_FLAG, :ULONG, :ptr
     GetProperties	proc :PVDS_VDISK_PROPERTIES
     GetHostVolume	proc :ptr
     GetDeviceName	proc :ptr
+
     .ends
 
 endif
@@ -2634,17 +2534,15 @@ __IVdsOpenVDisk_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsOpenVDisk, "75c8f324-f715-4fe3-a28e-f9011b61a4a1")
 
-.comdef IVdsOpenVDisk
+.comdef IVdsOpenVDisk : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Attach		proc :LPWSTR, :ATTACH_VIRTUAL_DISK_FLAG, :ULONG, :ULONG, :ptr
     Detach		proc :DETACH_VIRTUAL_DISK_FLAG, :ULONG
     DetachAndDelete	proc :DETACH_VIRTUAL_DISK_FLAG, :ULONG
     Compact		proc :COMPACT_VIRTUAL_DISK_FLAG, :ULONG, :ptr
     Merge		proc :MERGE_VIRTUAL_DISK_FLAG, :ULONG, :ptr
     Expand		proc :EXPAND_VIRTUAL_DISK_FLAG, :ULONGLONG, :ptr
+
     .ends
 
 endif
@@ -2783,12 +2681,10 @@ __IVdsServiceLoader_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceLoader, "e0393303-90d4-4a97-ab71-e9b671ee2729")
 
-.comdef IVdsServiceLoader
+.comdef IVdsServiceLoader : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     LoadService		proc :LPWSTR, :ptr
+
     .ends
 
 endif
@@ -2798,11 +2694,8 @@ __IVdsService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsService, "0818a8ef-9ba9-40d8-a6f9-e22833cc771e")
 
-.comdef IVdsService
+.comdef IVdsService : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     IsServiceReady	proc
     WaitForServiceReady proc
     GetProperties	proc :ptr
@@ -2820,6 +2713,7 @@ DEFINE_IIDX(IVdsService, "0818a8ef-9ba9-40d8-a6f9-e22833cc771e")
     Reboot		proc
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
+
     .ends
 
 endif
@@ -2829,13 +2723,11 @@ __IVdsServiceUninstallDisk_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceUninstallDisk, "B6B22DA8-F903-4be7-B492-C09D875AC9DA")
 
-.comdef IVdsServiceUninstallDisk
+.comdef IVdsServiceUninstallDisk : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDiskIdFromLunInfo proc :ptr, :ptr
     UninstallDisks	proc :ptr
+
     .ends
 
 endif
@@ -2845,12 +2737,10 @@ __IVdsServiceHba_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceHba, "0ac13689-3134-47c6-a17c-4669216801be")
 
-.comdef IVdsServiceHba
+.comdef IVdsServiceHba : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryHbaPorts	proc :ptr
+
     .ends
 
 endif
@@ -2860,11 +2750,8 @@ __IVdsServiceIscsi_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceIscsi, "14fbe036-3ed7-4e10-90e9-a5ff991aff01")
 
-.comdef IVdsServiceIscsi
+.comdef IVdsServiceIscsi : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetInitiatorName	proc :ptr
     QueryInitiatorAdapters proc :ptr
     SetIpsecGroupPresharedKey proc :ptr
@@ -2872,6 +2759,7 @@ DEFINE_IIDX(IVdsServiceIscsi, "14fbe036-3ed7-4e10-90e9-a5ff991aff01")
     SetAllIpsecSecurity proc :VDS_OBJECT_ID, :ULONGLONG, :ptr
     SetInitiatorSharedSecret proc :ptr, :VDS_OBJECT_ID
     RememberTargetSharedSecret proc :VDS_OBJECT_ID, :ptr
+
     .ends
 
 endif
@@ -2881,12 +2769,10 @@ __IVdsServiceInitialization_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceInitialization, "4afc3636-db01-4052-80c3-03bbcb8d3c69")
 
-.comdef IVdsServiceInitialization
+.comdef IVdsServiceInitialization : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Initialize		proc :LPWSTR
+
     .ends
 
 endif
@@ -2896,13 +2782,11 @@ __IVdsHbaPort_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsHbaPort, "2abd757f-2851-4997-9a13-47d2a885d6ca")
 
-.comdef IVdsHbaPort
+.comdef IVdsHbaPort : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     SetAllPathStatuses	proc :VDS_PATH_STATUS
+
     .ends
 
 endif
@@ -2912,15 +2796,13 @@ __IVdsIscsiInitiatorAdapter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiInitiatorAdapter, "b07fedd4-1682-4440-9189-a39b55194dc5")
 
-.comdef IVdsIscsiInitiatorAdapter
+.comdef IVdsIscsiInitiatorAdapter : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     QueryInitiatorPortals proc :ptr
     LoginToTarget	proc :VDS_ISCSI_LOGIN_TYPE, :VDS_OBJECT_ID, :VDS_OBJECT_ID, :VDS_OBJECT_ID, :ULONG, :BOOL, :BOOL, :VDS_ISCSI_AUTH_TYPE, :ptr
     LogoutFromTarget	proc :VDS_OBJECT_ID, :ptr
+
     .ends
 
 endif
@@ -2930,16 +2812,14 @@ __IVdsIscsiInitiatorPortal_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiInitiatorPortal, "38a0a9ab-7cc8-4693-ac07-1f28bd03c3da")
 
-.comdef IVdsIscsiInitiatorPortal
+.comdef IVdsIscsiInitiatorPortal : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetProperties	proc :ptr
     GetInitiatorAdapter proc :ptr
     SetIpsecTunnelAddress proc :ptr, :ptr
     GetIpsecSecurity	proc :VDS_OBJECT_ID, :ptr
     SetIpsecSecurity	proc :VDS_OBJECT_ID, :ULONGLONG, :ptr
+
     .ends
 
 endif
@@ -2949,15 +2829,13 @@ __IVdsDiskPartitionMF_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDiskPartitionMF, "538684e0-ba3d-4bc0-aca9-164aff85c2a9")
 
-.comdef IVdsDiskPartitionMF
+.comdef IVdsDiskPartitionMF : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetPartitionFileSystemProperties proc :ULONGLONG, :ptr
     GetPartitionFileSystemTypeName proc :ULONGLONG, :ptr
     QueryPartitionFileSystemFormatSupport proc :ULONGLONG
     FormatPartitionEx	proc :ULONGLONG, :LPWSTR, :USHORT, :ULONG, :LPWSTR, :BOOL, :BOOL, :BOOL, :ptr
+
     .ends
 
 endif
@@ -2967,11 +2845,8 @@ __IVdsVolumeMF_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumeMF, "ee2d5ded-6236-4169-931d-b9778ce03dc6")
 
-.comdef IVdsVolumeMF
+.comdef IVdsVolumeMF : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetFileSystemProperties proc :ptr
     Format		proc :VDS_FILE_SYSTEM_TYPE, :LPWSTR, :DWORD, :BOOL, :BOOL, :BOOL, :ptr
     AddAccessPath	proc :LPWSTR
@@ -2982,6 +2857,7 @@ DEFINE_IIDX(IVdsVolumeMF, "ee2d5ded-6236-4169-931d-b9778ce03dc6")
     Dismount		proc :BOOL, :BOOL
     SetFileSystemFlags	proc :ULONG
     ClearFileSystemFlags proc :ULONG
+
     .ends
 
 endif
@@ -2991,14 +2867,12 @@ __IVdsVolumeMF2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumeMF2, "4dbcee9a-6343-4651-b85f-5e75d74d983c")
 
-.comdef IVdsVolumeMF2
+.comdef IVdsVolumeMF2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetFileSystemTypeName proc :ptr
     QueryFileSystemFormatSupport proc
     FormatEx		proc :LPWSTR, :USHORT, :ULONG, :LPWSTR, :BOOL, :BOOL, :BOOL, :ptr
+
     .ends
 
 endif
@@ -3008,13 +2882,11 @@ __IVdsVolumeShrink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumeShrink, "d68168c9-82a2-4f85-b6e9-74707c49a58f")
 
-.comdef IVdsVolumeShrink
+.comdef IVdsVolumeShrink : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryMaxReclaimableBytes proc :ptr
     Shrink		proc :ULONGLONG, :ULONGLONG, :ptr
+
     .ends
 
 endif
@@ -3024,13 +2896,11 @@ __IVdsSubSystemImportTarget_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsSubSystemImportTarget, "83bfb87f-43fb-4903-baa6-127f01029eec")
 
-.comdef IVdsSubSystemImportTarget
+.comdef IVdsSubSystemImportTarget : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetImportTarget	proc :ptr
     SetImportTarget	proc :LPWSTR
+
     .ends
 
 endif
@@ -3040,12 +2910,10 @@ __IVdsIscsiPortalLocal_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsIscsiPortalLocal, "ad837c28-52c1-421d-bf04-fae7da665396")
 
-.comdef IVdsIscsiPortalLocal
+.comdef IVdsIscsiPortalLocal : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetIpsecSecurityLocal proc :ULONGLONG, :ptr
+
     .ends
 
 endif
@@ -3055,13 +2923,11 @@ __IVdsServiceSAN_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceSAN, "FC5D23E8-A88B-41a5-8DE0-2D2F73C5A630")
 
-.comdef IVdsServiceSAN
+.comdef IVdsServiceSAN : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSANPolicy	proc :ptr
     SetSANPolicy	proc :VDS_SAN_POLICY
+
     .ends
 
 endif
@@ -3071,14 +2937,12 @@ __IVdsVolumeMF3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsVolumeMF3, "6788FAF9-214E-4b85-BA59-266953616E09")
 
-.comdef IVdsVolumeMF3
+.comdef IVdsVolumeMF3 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     QueryVolumeGuidPathnames proc
     FormatEx2		proc :LPWSTR, :USHORT, :ULONG, :LPWSTR, :DWORD, :ptr
     OfflineVolume	proc
+
     .ends
 
 endif
@@ -3088,12 +2952,10 @@ __IVdsDiskPartitionMF2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsDiskPartitionMF2, "9CBE50CA-F2D2-4bf4-ACE1-96896B729625")
 
-.comdef IVdsDiskPartitionMF2
+.comdef IVdsDiskPartitionMF2 : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     FormatPartitionEx2	proc :ULONGLONG, :LPWSTR, :USHORT, :ULONG, :LPWSTR, :DWORD, :ptr
+
     .ends
 
 endif
@@ -3103,12 +2965,10 @@ __IVdsServiceSw_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVdsServiceSw, "15fc031c-0652-4306-b2c3-f558b8f837e2")
 
-.comdef IVdsServiceSw
+.comdef IVdsServiceSw : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDiskObject	proc :LPCWSTR, :ptr
+
     .ends
 
 endif

@@ -519,15 +519,13 @@ D3D10_BOX		ENDS
 ifndef __ID3D10DeviceChild_INTERFACE_DEFINED__
 __ID3D10DeviceChild_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10DeviceChild
+.comdef ID3D10DeviceChild : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetDevice		proc :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
+
     .ends
 endif
 
@@ -576,16 +574,10 @@ D3D10_DEPTH_STENCIL_DESC ENDS
 ifndef __ID3D10DepthStencilState_INTERFACE_DEFINED__
 __ID3D10DepthStencilState_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10DepthStencilState
+.comdef ID3D10DepthStencilState : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     GetDesc		proc :ptr
+
     .ends
 endif
 
@@ -637,16 +629,8 @@ D3D10_BLEND_DESC	ENDS
 ifndef __ID3D10BlendState_INTERFACE_DEFINED__
 __ID3D10BlendState_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10BlendState
+.comdef ID3D10BlendState : public ID3D10DepthStencilState
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -666,16 +650,8 @@ D3D10_RASTERIZER_DESC	ENDS
 ifndef __ID3D10RasterizerState_INTERFACE_DEFINED__
 __ID3D10RasterizerState_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10RasterizerState
+.comdef ID3D10RasterizerState : public ID3D10DepthStencilState
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -688,18 +664,12 @@ D3D10_SUBRESOURCE_DATA	ENDS
 ifndef __ID3D10Resource_INTERFACE_DEFINED__
 __ID3D10Resource_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Resource
+.comdef ID3D10Resource : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     GetType		proc :ptr
     SetEvictionPriority proc :UINT
     GetEvictionPriority proc
+
     .ends
 endif
 
@@ -714,21 +684,12 @@ D3D10_BUFFER_DESC	ENDS
 ifndef __ID3D10Buffer_INTERFACE_DEFINED__
 __ID3D10Buffer_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Buffer
+.comdef ID3D10Buffer : public ID3D10Resource
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetType		proc :ptr
-    SetEvictionPriority proc :UINT
-    GetEvictionPriority proc
     Map			proc :D3D10_MAP, :UINT, :ptr
     Unmap		proc
     GetDesc		proc :ptr
+
     .ends
 endif
 
@@ -746,21 +707,12 @@ D3D10_TEXTURE1D_DESC	ENDS
 ifndef __ID3D10Texture1D_INTERFACE_DEFINED__
 __ID3D10Texture1D_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Texture1D
+.comdef ID3D10Texture1D : public ID3D10Resource
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetType		proc :ptr
-    SetEvictionPriority proc :UINT
-    GetEvictionPriority proc
     Map			proc :UINT, :D3D10_MAP, :UINT, :ptr
     Unmap		proc :UINT
     GetDesc		proc :ptr
+
     .ends
 endif
 
@@ -785,21 +737,8 @@ D3D10_MAPPED_TEXTURE2D	ENDS
 ifndef __ID3D10Texture2D_INTERFACE_DEFINED__
 __ID3D10Texture2D_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Texture2D
+.comdef ID3D10Texture2D : public ID3D10Texture1D
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetType		proc :ptr
-    SetEvictionPriority proc :UINT
-    GetEvictionPriority proc
-    Map			proc :UINT, :D3D10_MAP, :UINT, :ptr
-    Unmap		proc :UINT
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -824,21 +763,8 @@ D3D10_MAPPED_TEXTURE3D	ENDS
 ifndef __ID3D10Texture3D_INTERFACE_DEFINED__
 __ID3D10Texture3D_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Texture3D
+.comdef ID3D10Texture3D : public ID3D10Texture1D
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetType		proc :ptr
-    SetEvictionPriority proc :UINT
-    GetEvictionPriority proc
-    Map			proc :UINT, :D3D10_MAP, :UINT, :ptr
-    Unmap		proc :UINT
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -853,16 +779,10 @@ D3D10_TEXTURECUBE_FACE_NEGATIVE_Z equ 5
 ifndef __ID3D10View_INTERFACE_DEFINED__
 __ID3D10View_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10View
+.comdef ID3D10View : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     GetResource		proc :ptr
+
     .ends
 endif
 
@@ -939,17 +859,10 @@ D3D10_SHADER_RESOURCE_VIEW_DESC ENDS
 ifndef __ID3D10ShaderResourceView_INTERFACE_DEFINED__
 __ID3D10ShaderResourceView_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10ShaderResourceView
+.comdef ID3D10ShaderResourceView : public ID3D10View
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetResource		proc :ptr
     GetDesc		proc :ptr
+
     .ends
 endif
 
@@ -1017,17 +930,8 @@ D3D10_RENDER_TARGET_VIEW_DESC ENDS
 ifndef __ID3D10RenderTargetView_INTERFACE_DEFINED__
 __ID3D10RenderTargetView_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10RenderTargetView
+.comdef ID3D10RenderTargetView : public ID3D10ShaderResourceView
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetResource		proc :ptr
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -1076,77 +980,40 @@ D3D10_DEPTH_STENCIL_VIEW_DESC ENDS
 ifndef __ID3D10DepthStencilView_INTERFACE_DEFINED__
 __ID3D10DepthStencilView_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10DepthStencilView
+.comdef ID3D10DepthStencilView : public ID3D10ShaderResourceView
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    GetResource		proc :ptr
-    GetDesc		proc :ptr
     .ends
 endif
 
 ifndef __ID3D10VertexShader_INTERFACE_DEFINED__
 __ID3D10VertexShader_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10VertexShader
+.comdef ID3D10VertexShader : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
 endif
 
 ifndef __ID3D10GeometryShader_INTERFACE_DEFINED__
 __ID3D10GeometryShader_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10GeometryShader
+.comdef ID3D10GeometryShader : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
 endif
 
 ifndef __ID3D10PixelShader_INTERFACE_DEFINED__
 __ID3D10PixelShader_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10PixelShader
+.comdef ID3D10PixelShader : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
 endif
 
 ifndef __ID3D10InputLayout_INTERFACE_DEFINED__
 __ID3D10InputLayout_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10InputLayout
+.comdef ID3D10InputLayout : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
 endif
 
@@ -1229,16 +1096,10 @@ D3D10_SAMPLER_DESC	ENDS
 ifndef __ID3D10SamplerState_INTERFACE_DEFINED__
 __ID3D10SamplerState_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10SamplerState
+.comdef ID3D10SamplerState : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     GetDesc		proc :ptr
+
     .ends
 endif
 
@@ -1272,19 +1133,13 @@ D3D10_FORMAT_SUPPORT_BACK_BUFFER_CAST equ 0x1000000
 ifndef __ID3D10Asynchronous_INTERFACE_DEFINED__
 __ID3D10Asynchronous_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Asynchronous
+.comdef ID3D10Asynchronous : public ID3D10DeviceChild
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
     Begin		proc
     _End		proc
     GetData		proc
     GetDataSize		proc
+
     .ends
 endif
 
@@ -1312,40 +1167,18 @@ D3D10_QUERY_DESC	ENDS
 ifndef __ID3D10Query_INTERFACE_DEFINED__
 __ID3D10Query_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Query
+.comdef ID3D10Query : public ID3D10Asynchronous
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    Begin		proc
-    _End		proc
-    GetData		proc
-    GetDataSize		proc
     GetDesc		proc :ptr
+
     .ends
 endif
 
 ifndef __ID3D10Predicate_INTERFACE_DEFINED__
 __ID3D10Predicate_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Predicate
+.comdef ID3D10Predicate : public ID3D10Query
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    Begin		proc
-    _End		proc
-    GetData		proc
-    GetDataSize		proc
-    GetDesc		proc :ptr
     .ends
 endif
 
@@ -1411,31 +1244,18 @@ D3D10_COUNTER_INFO	ENDS
 ifndef __ID3D10Counter_INTERFACE_DEFINED__
 __ID3D10Counter_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Counter
+.comdef ID3D10Counter : public ID3D10Asynchronous
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    SetPrivateData	proc :REFGUID, :UINT, :ptr
-    SetPrivateDataInterface proc :REFGUID, :ptr
-    Begin		proc
-    _End		proc
-    GetData		proc
-    GetDataSize		proc
     GetDesc		proc :ptr
+
     .ends
 endif
 
 ifndef __ID3D10Device_INTERFACE_DEFINED__
 __ID3D10Device_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Device
+.comdef ID3D10Device : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     VSSetConstantBuffers proc :UINT, :UINT, :ptr
     PSSetShaderResources proc :UINT, :UINT, :ptr
     PSSetShader		proc :ptr
@@ -1531,21 +1351,20 @@ __ID3D10Device_INTERFACE_DEFINED__ equ 1
     OpenSharedResource	proc :HANDLE, :REFIID, :ptr
     SetTextFilterSize	proc :UINT, :UINT
     GetTextFilterSize	proc :ptr, :ptr
+
     .ends
 endif
 
 ifndef __ID3D10Multithread_INTERFACE_DEFINED__
 __ID3D10Multithread_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Multithread
+.comdef ID3D10Multithread : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     _Enter		proc
     _Leave		proc
     SetMultithreadProtected proc :BOOL
     GetMultithreadProtected proc
+
     .ends
 endif
 

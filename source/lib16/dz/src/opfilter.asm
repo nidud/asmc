@@ -57,7 +57,7 @@ filter_edit_clear:
 	mov	[bx],al
 	mov	ds,dx
 	mov	si,cx
-	invoke	memzero,filter,SIZE S_FILT
+	invoke	memzero,filter,S_FILT
 	les	bx,filter
 	invoke	strcpy,addr es:[bx].S_FILT.of_include,addr cp_stdmask
 	mov	es:[bx].S_FILT.of_flag,-1

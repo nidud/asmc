@@ -122,18 +122,19 @@ apUnknown		LPIUnknown ?
 iid			IID <>
 SAFEARR_HAVEIID		ENDS
 
-;tagSF_TYPE		typedef SDWORD
-SF_ERROR		equ VT_ERROR
-SF_I1			equ VT_I1
-SF_I2			equ VT_I2
-SF_I4			equ VT_I4
-SF_I8			equ VT_I8
-SF_BSTR			equ VT_BSTR
-SF_UNKNOWN		equ VT_UNKNOWN
-SF_DISPATCH		equ VT_DISPATCH
-SF_VARIANT		equ VT_VARIANT
-SF_RECORD		equ VT_RECORD
-SF_HAVEIID		equ VT_UNKNOWN | VT_RESERVED
+.enum tagSF_TYPE {
+    SF_ERROR		= VT_ERROR,
+    SF_I1		= VT_I1,
+    SF_I2		= VT_I2,
+    SF_I4		= VT_I4,
+    SF_I8		= VT_I8,
+    SF_BSTR		= VT_BSTR,
+    SF_UNKNOWN		= VT_UNKNOWN,
+    SF_DISPATCH		= VT_DISPATCH,
+    SF_VARIANT		= VT_VARIANT,
+    SF_RECORD		= VT_RECORD,
+    SF_HAVEIID		= ( VT_UNKNOWN or VT_RESERVED )
+}
 
 SAFEARRAYUNION		STRUC
 sfType			ULONG ?
@@ -328,16 +329,17 @@ DISPID			typedef LONG
 MEMBERID		typedef DISPID
 HREFTYPE		typedef DWORD
 
-TYPEKIND		typedef SDWORD
-TKIND_ENUM		equ 0
-TKIND_RECORD		equ TKIND_ENUM + 1
-TKIND_MODULE		equ TKIND_RECORD + 1
-TKIND_INTERFACE		equ TKIND_MODULE + 1
-TKIND_DISPATCH		equ TKIND_INTERFACE + 1
-TKIND_COCLASS		equ TKIND_DISPATCH + 1
-TKIND_ALIAS		equ TKIND_COCLASS + 1
-TKIND_UNION		equ TKIND_ALIAS + 1
-TKIND_MAX		equ TKIND_UNION + 1
+.enum TYPEKIND {
+    TKIND_ENUM		= 0,
+    TKIND_RECORD	= TKIND_ENUM + 1,
+    TKIND_MODULE	= TKIND_RECORD + 1,
+    TKIND_INTERFACE	= TKIND_MODULE + 1,
+    TKIND_DISPATCH	= TKIND_INTERFACE + 1,
+    TKIND_COCLASS	= TKIND_DISPATCH + 1,
+    TKIND_ALIAS		= TKIND_COCLASS + 1,
+    TKIND_UNION		= TKIND_ALIAS + 1,
+    TKIND_MAX		= TKIND_UNION + 1
+}
 
 TYPEDESC		STRUC
 UNION
@@ -391,21 +393,15 @@ IDLFLAG_FOUT		equ <PARAMFAG_FOUT>
 IDLFLAG_FLCID		equ <PARAMFLAG_FCID>
 IDLFLAG_FRETVAL		equ <PARAMFLAG_FRETVA>
 
-if 0
-ELEMDESC		STRUC
-tdesc			TYPEDESC ?
-paramdesc		PARAMDESC ?
-ELEMDESC		ENDS
-else
 ELEMDESC		STRUC
 tdesc			TYPEDESC <>
-UNION ; {
+UNION
 idldesc			IDLDESC <>
 paramdesc		PARAMDESC <>
-ENDS ;
+ENDS
 ELEMDESC		ENDS
 LPELEMDESC		typedef ptr ELEMDESC
-endif
+
 TYPEATTR		STRUC
 guid			GUID <>
 lcid			LCID ?
@@ -436,19 +432,6 @@ cArgs			UINT ?
 cNamedArgs		UINT ?
 DISPPARAMS		ENDS
 
-if 0
-EXCEPINFO		STRUC
-wCode			dw ?
-wReserved		dw ?
-bstrSource		BSTR ?
-bstrDescription		BSTR ?
-bstrHelpFile		BSTR ?
-dwHelpContext		dd ?
-pvReserved		ULONG ?
-pfnDeferredFillIn	ULONG ?
-scode			SCODE ?
-EXCEPINFO		ENDS
-else
 EXCEPINFO		STRUC
 wCode			dw ?
 wReserved		dw ?
@@ -461,32 +444,36 @@ pfnDeferredFillIn	PVOID ?;HRESULT (__stdcall *pfnDeferredFillIn)(struct tagEXCEP
 scode			SCODE ?
 EXCEPINFO		ENDS
 LPEXCEPINFO		typedef ptr EXCEPINFO
-endif
-CALLCONV		typedef SDWORD
-CC_FASTCALL		equ 0
-CC_CDECL		equ 1
-CC_MSCPASCAL		equ CC_CDECL + 1
-CC_PASCAL		equ CC_MSCPASCAL
-CC_MACPASCAL		equ CC_PASCAL + 1
-CC_STDCALL		equ CC_MACPASCAL + 1
-CC_FPFASTCALL		equ CC_STDCALL + 1
-CC_SYSCALL		equ CC_FPFASTCALL + 1
-CC_MPWCDECL		equ CC_SYSCALL + 1
-CC_MPWPASCAL		equ CC_MPWCDECL + 1
-CC_MAX			equ CC_MPWPASCAL + 1
 
-FUNCKIND		typedef SDWORD
-FUNC_VIRTUAL		equ 0
-FUNC_PUREVIRTUAL	equ FUNC_VIRTUAL + 1
-FUNC_NONVIRTUAL		equ FUNC_PUREVIRTUAL + 1
-FUNC_STATIC		equ FUNC_NONVIRTUAL + 1
-FUNC_DISPATCH		equ FUNC_STATIC + 1
+.enum CALLCONV {
+    CC_FASTCALL		= 0,
+    CC_CDECL		= 1,
+    CC_MSCPASCAL	= CC_CDECL + 1,
+    CC_PASCAL		= CC_MSCPASCAL,
+    CC_MACPASCAL	= CC_PASCAL + 1,
+    CC_STDCALL		= CC_MACPASCAL + 1,
+    CC_FPFASTCALL	= CC_STDCALL + 1,
+    CC_SYSCALL		= CC_FPFASTCALL + 1,
+    CC_MPWCDECL		= CC_SYSCALL + 1,
+    CC_MPWPASCAL	= CC_MPWCDECL + 1,
+    CC_MAX		= CC_MPWPASCAL + 1
+}
 
-INVOKEKIND		typedef SDWORD
-INVOKE_FUNC		equ 1
-INVOKE_PROPERTYGET	equ 2
-INVOKE_PROPERTYPUT	equ 4
-INVOKE_PROPERTYPUTREF	equ 8
+.enum FUNCKIND {
+    FUNC_VIRTUAL	= 0,
+    FUNC_PUREVIRTUAL	= FUNC_VIRTUAL + 1,
+    FUNC_NONVIRTUAL	= FUNC_PUREVIRTUAL + 1,
+    FUNC_STATIC		= FUNC_NONVIRTUAL + 1,
+    FUNC_DISPATCH	= FUNC_STATIC + 1
+}
+
+.enum INVOKEKIND {
+    INVOKE_FUNC		= 1,
+    INVOKE_PROPERTYGET	= 2,
+    INVOKE_PROPERTYPUT	= 4,
+    INVOKE_PROPERTYPUTREF = 8
+}
+
 
 FUNCDESC		STRUC
 memid			MEMBERID ?
@@ -505,11 +492,12 @@ FUNCDESC		ENDS
 
 LPFUNCDESC		typedef ptr FUNCDESC
 
-VARKIND			typedef SDWORD
-VAR_PERINSTANCE		equ 0
-VAR_STATIC		equ VAR_PERINSTANCE + 1
-VAR_CONST		equ VAR_STATIC + 1
-VAR_DISPATCH		equ VAR_CONST + 1
+.enum VARKIND {
+    VAR_PERINSTANCE	= 0,
+    VAR_STATIC		= VAR_PERINSTANCE + 1,
+    VAR_CONST		= VAR_STATIC + 1,
+    VAR_DISPATCH	= VAR_CONST + 1
+}
 
 IMPLTYPEFLAG_FDEFAULT	equ 0x1
 IMPLTYPEFLAG_FSOURCE	equ 0x2
@@ -530,51 +518,55 @@ VARDESC			ENDS
 
 LPVARDESC		typedef ptr VARDESC
 
-;tagTYPEFLAGS		typedef SDWORD
-TYPEFLAG_FAPPOBJECT	equ 0x1
-TYPEFLAG_FCANCREATE	equ 0x2
-TYPEFLAG_FLICENSED	equ 0x4
-TYPEFLAG_FPREDECLID	equ 0x8
-TYPEFLAG_FHIDDEN	equ 0x10
-TYPEFLAG_FCONTROL	equ 0x20
-TYPEFLAG_FDUAL		equ 0x40
-TYPEFLAG_FNONEXTENSIBLE equ 0x80
-TYPEFLAG_FOLEAUTOMATION equ 0x100
-TYPEFLAG_FRESTRICTED	equ 0x200
-TYPEFLAG_FAGGREGATABLE	equ 0x400
-TYPEFLAG_FREPLACEABLE	equ 0x800
-TYPEFLAG_FDISPATCHABLE	equ 0x1000
-TYPEFLAG_FREVERSEBIND	equ 0x2000
+.enum tagTYPEFLAGS {
+    TYPEFLAG_FAPPOBJECT		= 0x1,
+    TYPEFLAG_FCANCREATE		= 0x2,
+    TYPEFLAG_FLICENSED		= 0x4,
+    TYPEFLAG_FPREDECLID		= 0x8,
+    TYPEFLAG_FHIDDEN		= 0x10,
+    TYPEFLAG_FCONTROL		= 0x20,
+    TYPEFLAG_FDUAL		= 0x40,
+    TYPEFLAG_FNONEXTENSIBLE	= 0x80,
+    TYPEFLAG_FOLEAUTOMATION	= 0x100,
+    TYPEFLAG_FRESTRICTED	= 0x200,
+    TYPEFLAG_FAGGREGATABLE	= 0x400,
+    TYPEFLAG_FREPLACEABLE	= 0x800,
+    TYPEFLAG_FDISPATCHABLE	= 0x1000,
+    TYPEFLAG_FREVERSEBIND	= 0x2000,
+    TYPEFLAG_FPROXY		= 0x4000
+}
 
-;tagFUNCFLAGS		typedef SDWORD
-FUNCFLAG_FRESTRICTED	equ 0x1
-FUNCFLAG_FSOURCE	equ 0x2
-FUNCFLAG_FBINDABLE	equ 0x4
-FUNCFLAG_FREQUESTEDIT	equ 0x8
-FUNCFLAG_FDISPLAYBIND	equ 0x10
-FUNCFLAG_FDEFAULTBIND	equ 0x20
-FUNCFLAG_FHIDDEN	equ 0x40
-FUNCFLAG_FUSESGETLASTERROR equ 0x80
-FUNCFLAG_FDEFAULTCOLLELEM equ 0x100
-FUNCFLAG_FUIDEFAULT	equ 0x200
-FUNCFLAG_FNONBROWSABLE	equ 0x400
-FUNCFLAG_FREPLACEABLE	equ 0x800
-FUNCFLAG_FIMMEDIATEBIND equ 0x1000
+.enum tagFUNCFLAGS {
+    FUNCFLAG_FRESTRICTED	= 0x1,
+    FUNCFLAG_FSOURCE		= 0x2,
+    FUNCFLAG_FBINDABLE		= 0x4,
+    FUNCFLAG_FREQUESTEDIT	= 0x8,
+    FUNCFLAG_FDISPLAYBIND	= 0x10,
+    FUNCFLAG_FDEFAULTBIND	= 0x20,
+    FUNCFLAG_FHIDDEN		= 0x40,
+    FUNCFLAG_FUSESGETLASTERROR	= 0x80,
+    FUNCFLAG_FDEFAULTCOLLELEM	= 0x100,
+    FUNCFLAG_FUIDEFAULT		= 0x200,
+    FUNCFLAG_FNONBROWSABLE	= 0x400,
+    FUNCFLAG_FREPLACEABLE	= 0x800,
+    FUNCFLAG_FIMMEDIATEBIND	= 0x1000
+}
 
-;tagVARFLAGS		typedef SDWORD
-VARFLAG_FREADONLY	equ 0x1
-VARFLAG_FSOURCE		equ 0x2
-VARFLAG_FBINDABLE	equ 0x4
-VARFLAG_FREQUESTEDIT	equ 0x8
-VARFLAG_FDISPLAYBIND	equ 0x10
-VARFLAG_FDEFAULTBIND	equ 0x20
-VARFLAG_FHIDDEN		equ 0x40
-VARFLAG_FRESTRICTED	equ 0x80
-VARFLAG_FDEFAULTCOLLELEM equ 0x100
-VARFLAG_FUIDEFAULT	equ 0x200
-VARFLAG_FNONBROWSABLE	equ 0x400
-VARFLAG_FREPLACEABLE	equ 0x800
-VARFLAG_FIMMEDIATEBIND	equ 0x1000
+.enum tagVARFLAGS {
+    VARFLAG_FREADONLY		= 0x1,
+    VARFLAG_FSOURCE		= 0x2,
+    VARFLAG_FBINDABLE		= 0x4,
+    VARFLAG_FREQUESTEDIT	= 0x8,
+    VARFLAG_FDISPLAYBIND	= 0x10,
+    VARFLAG_FDEFAULTBIND	= 0x20,
+    VARFLAG_FHIDDEN		= 0x40,
+    VARFLAG_FRESTRICTED		= 0x80,
+    VARFLAG_FDEFAULTCOLLELEM	= 0x100,
+    VARFLAG_FUIDEFAULT		= 0x200,
+    VARFLAG_FNONBROWSABLE	= 0x400,
+    VARFLAG_FREPLACEABLE	= 0x800,
+    VARFLAG_FIMMEDIATEBIND	= 0x1000
+}
 
 CLEANLOCALSTORAGE	STRUC
 pInterface		LPIUnknown ?
@@ -603,10 +595,8 @@ __ICreateTypeInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateTypeInfo, "00020405-0000-0000-C000-000000000046")
 
-.comdef ICreateTypeInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICreateTypeInfo : public IUnknown
+
     SetGuid		proc :REFGUID
     SetTypeFlags	proc :UINT
     SetDocString	proc :LPOLESTR
@@ -630,6 +620,7 @@ DEFINE_IIDX(ICreateTypeInfo, "00020405-0000-0000-C000-000000000046")
     SetMops		proc :UINT, :BSTR
     SetTypeIdldesc	proc :ptr
     LayOut		proc
+
     .ends
 
 LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
@@ -641,33 +632,8 @@ __ICreateTypeInfo2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateTypeInfo2, "0002040E-0000-0000-C000-000000000046")
 
-.comdef ICreateTypeInfo2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetGuid		proc :REFGUID
-    SetTypeFlags	proc :UINT
-    SetDocString	proc :LPOLESTR
-    SetHelpContext	proc :DWORD
-    SetVersion		proc :WORD, :WORD
-    AddRefTypeInfo	proc :ptr, :ptr
-    AddFuncDesc		proc :UINT, :ptr
-    AddImplType		proc :UINT, :HREFTYPE
-    SetImplTypeFlags	proc :UINT, :SINT
-    SetAlignment	proc :WORD
-    SetSchema		proc :LPOLESTR
-    AddVarDesc		proc :UINT, :ptr
-    SetFuncAndParamNames proc :UINT, :ptr, :UINT
-    SetVarName		proc :UINT, :LPOLESTR
-    SetTypeDescAlias	proc :ptr
-    DefineFuncAsDllEntry proc :UINT, :LPOLESTR, :LPOLESTR
-    SetFuncDocString	proc :UINT, :LPOLESTR
-    SetVarDocString	proc :UINT, :LPOLESTR
-    SetFuncHelpContext	proc :UINT, :DWORD
-    SetVarHelpContext	proc :UINT, :DWORD
-    SetMops		proc :UINT, :BSTR
-    SetTypeIdldesc	proc :ptr
-    LayOut		proc
+.comdef ICreateTypeInfo2 : public ICreateTypeInfo
+
     DeleteFuncDesc	proc :DWORD
     DeleteFuncDescByMemId proc :MEMBERID, :INVOKEKIND
     DeleteVarDesc	proc :DWORD
@@ -683,10 +649,9 @@ DEFINE_IIDX(ICreateTypeInfo2, "0002040E-0000-0000-C000-000000000046")
     SetVarHelpStringContext proc :DWORD, :DWORD
     Invalidate		proc
     SetName		proc :LPOLESTR
+
     .ends
-
-LPCREATETYPEINFO2	typedef ptr ICreateTypeInfo2
-
+    LPCREATETYPEINFO2	typedef ptr ICreateTypeInfo2
 endif
 
 ifndef __ICreateTypeLib_INTERFACE_DEFINED__
@@ -694,10 +659,8 @@ __ICreateTypeLib_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateTypeLib, "00020406-0000-0000-C000-000000000046")
 
-.comdef ICreateTypeLib
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICreateTypeLib : public IUnknown
+
     CreateTypeInfo	proc :LPOLESTR, :TYPEKIND, :ptr
     SetName		proc :LPOLESTR
     SetVersion		proc :WORD, :WORD
@@ -708,10 +671,9 @@ DEFINE_IIDX(ICreateTypeLib, "00020406-0000-0000-C000-000000000046")
     SetLcid		proc :LCID
     SetLibFlags		proc :DWORD
     SaveAllChanges	proc
+
     .ends
-
-LPCREATETYPELIB		typedef ptr ICreateTypeLib
-
+    LPCREATETYPELIB	typedef ptr ICreateTypeLib
 endif
 
 ifndef __ICreateTypeLib2_INTERFACE_DEFINED__
@@ -719,28 +681,15 @@ __ICreateTypeLib2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateTypeLib2, "0002040F-0000-0000-C000-000000000046")
 
-.comdef ICreateTypeLib2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateTypeInfo	proc :LPOLESTR, :TYPEKIND, :ptr
-    SetName		proc :LPOLESTR
-    SetVersion		proc :WORD, :WORD
-    SetGuid		proc :REFGUID
-    SetDocString	proc :LPOLESTR
-    SetHelpFileName	proc :LPOLESTR
-    SetHelpContext	proc :DWORD
-    SetLcid		proc :LCID
-    SetLibFlags		proc :DWORD
-    SaveAllChanges	proc
+.comdef ICreateTypeLib2 : public ICreateTypeLib
+
     DeleteTypeInfo	proc :LPOLESTR
     SetCustData		proc :REFGUID, :ptr
     SetHelpStringContext proc :DWORD
     SetHelpStringDll	proc :LPOLESTR
+
     .ends
-
-LPCREATETYPELIB2	typedef ptr ICreateTypeLib2
-
+    LPCREATETYPELIB2	typedef ptr ICreateTypeLib2
 endif
 
 ifndef __IDispatch_INTERFACE_DEFINED__
@@ -758,14 +707,13 @@ DISPID_COLLECT		equ ( -8 )
 
 DEFINE_IIDX(IDispatch, "00020400-0000-0000-C000-000000000046")
 
-.comdef IDispatch
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDispatch : public IUnknown
+
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -775,30 +723,28 @@ __IEnumVARIANT_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumVARIANT, "00020404-0000-0000-C000-000000000046")
 
-.comdef IEnumVARIANT
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumVARIANT : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
-
-LPENUMVARIANT		typedef ptr IEnumVARIANT
-
+    LPENUMVARIANT	typedef ptr IEnumVARIANT
 endif
 
 ifndef __ITypeComp_INTERFACE_DEFINED__
 __ITypeComp_INTERFACE_DEFINED__ equ 1
 
-DESCKIND		typedef SDWORD
-DESCKIND_NONE		equ 0
-DESCKIND_FUNCDESC	equ DESCKIND_NONE + 1
-DESCKIND_VARDESC	equ DESCKIND_FUNCDESC + 1
-DESCKIND_TYPECOMP	equ DESCKIND_VARDESC + 1
-DESCKIND_IMPLICITAPPOBJ equ DESCKIND_TYPECOMP + 1
-DESCKIND_MAX		equ DESCKIND_IMPLICITAPPOBJ + 1
+.enum DESCKIND {
+    DESCKIND_NONE	= 0,
+    DESCKIND_FUNCDESC	= DESCKIND_NONE + 1,
+    DESCKIND_VARDESC	= DESCKIND_FUNCDESC + 1,
+    DESCKIND_TYPECOMP	= DESCKIND_VARDESC + 1,
+    DESCKIND_IMPLICITAPPOBJ = DESCKIND_TYPECOMP + 1,
+    DESCKIND_MAX	= DESCKIND_IMPLICITAPPOBJ + 1
+}
 
 BINDPTR			UNION
 lpfuncdesc		LPFUNCDESC ?
@@ -809,16 +755,13 @@ LPBINDPTR		typedef ptr BINDPTR
 
 DEFINE_IIDX(ITypeComp, "00020403-0000-0000-C000-000000000046")
 
-.comdef ITypeComp
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITypeComp : public IUnknown
+
     Bind		proc
     BindType		proc
+
     .ends
-
-LPTYPECOMP		typedef ptr ITypeComp
-
+    LPTYPECOMP		typedef ptr ITypeComp
 endif
 
 
@@ -827,10 +770,8 @@ __ITypeInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITypeInfo, "00020401-0000-0000-C000-000000000046")
 
-.comdef ITypeInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITypeInfo : public IUnknown
+
     GetTypeAttr		proc :ptr
     GetTypeComp		proc :ptr
     GetFuncDesc		proc :DWORD, :ptr
@@ -850,9 +791,9 @@ DEFINE_IIDX(ITypeInfo, "00020401-0000-0000-C000-000000000046")
     ReleaseTypeAttr	proc :ptr
     ReleaseFuncDesc	proc :ptr
     ReleaseVarDesc	proc :ptr
-    .ends
 
-LPTYPEINFO		typedef ptr ITypeInfo
+    .ends
+    LPTYPEINFO		typedef ptr ITypeInfo
 endif
 
 ifndef __ITypeInfo2_INTERFACE_DEFINED__
@@ -860,29 +801,8 @@ __ITypeInfo2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITypeInfo2, "00020412-0000-0000-C000-000000000046")
 
-.comdef ITypeInfo2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeAttr		proc :ptr
-    GetTypeComp		proc :ptr
-    GetFuncDesc		proc :DWORD, :ptr
-    GetVarDesc		proc :DWORD, :ptr
-    GetNames		proc :MEMBERID, :ptr, :DWORD, :ptr
-    GetRefTypeOfImplType proc :DWORD, :ptr
-    GetImplTypeFlags	proc :DWORD, :ptr
-    GetIDsOfNames	proc :ptr, :DWORD, :ptr
-    Invoke_		proc :PVOID, :MEMBERID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GetDocumentation	proc :MEMBERID, :ptr, :ptr, :ptr, :ptr
-    GetDllEntry		proc :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
-    GetRefTypeInfo	proc :HREFTYPE, :ptr
-    AddressOfMember	proc :MEMBERID, :INVOKEKIND, :ptr
-    CreateInstance	proc :ptr, :REFIID, :ptr
-    GetMops		proc :MEMBERID, :ptr
-    GetContainingTypeLib proc :ptr, :ptr
-    ReleaseTypeAttr	proc :ptr
-    ReleaseFuncDesc	proc :ptr
-    ReleaseVarDesc	proc :ptr
+.comdef ITypeInfo2 : public ITypeInfo
+
     GetTypeKind		proc :ptr
     GetTypeFlags	proc :ptr
     GetFuncIndexOfMemId proc :MEMBERID, :INVOKEKIND, :ptr
@@ -898,24 +818,27 @@ DEFINE_IIDX(ITypeInfo2, "00020412-0000-0000-C000-000000000046")
     GetAllParamCustData proc :DWORD, :DWORD, :ptr
     GetAllVarCustData	proc :DWORD, :ptr
     GetAllImplTypeCustData proc :DWORD, :ptr
-    .ends
 
-LPTYPEINFO2		typedef ptr ITypeInfo2
+    .ends
+    LPTYPEINFO2		typedef ptr ITypeInfo2
 endif
 
 ifndef __ITypeLib_INTERFACE_DEFINED__
 __ITypeLib_INTERFACE_DEFINED__ equ 1
 
-SYSKIND			typedef SDWORD
-SYS_WIN16		equ 0
-SYS_WIN32		equ SYS_WIN16 + 1
-SYS_MAC			equ SYS_WIN32 + 1
+.enum SYSKIND {
+    SYS_WIN16		= 0,
+    SYS_WIN32		= SYS_WIN16 + 1,
+    SYS_MAC		= SYS_WIN32 + 1,
+    SYS_WIN64		= SYS_MAC + 1
+}
 
-LIBFLAGS		typedef SDWORD
-LIBFLAG_FRESTRICTED	equ 0x1
-LIBFLAG_FCONTROL	equ 0x2
-LIBFLAG_FHIDDEN		equ 0x4
-LIBFLAG_FHASDISKIMAGE	equ 0x8
+.enum LIBFLAGS {
+    LIBFLAG_FRESTRICTED = 0x1,
+    LIBFLAG_FCONTROL	= 0x2,
+    LIBFLAG_FHIDDEN	= 0x4,
+    LIBFLAG_FHASDISKIMAGE = 0x8
+}
 
 TLIBATTR		STRUC
 guid			GUID <>
@@ -930,10 +853,8 @@ LPTLIBATTR		typedef ptr TLIBATTR
 
 DEFINE_IIDX(ITypeLib, "00020402-0000-0000-C000-000000000046")
 
-.comdef ITypeLib
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITypeLib : public IUnknown
+
     GetTypeInfoCount	proc
     GetTypeInfo		proc :DWORD, :ptr
     GetTypeInfoType	proc :DWORD, :ptr
@@ -944,9 +865,9 @@ DEFINE_IIDX(ITypeLib, "00020402-0000-0000-C000-000000000046")
     IsName		proc :LPOLESTR, :DWORD, :ptr
     FindName		proc :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
     ReleaseTLibAttr	proc :ptr
-    .ends
 
-LPTYPELIB		typedef ptr ITypeLib
+    .ends
+    LPTYPELIB		typedef ptr ITypeLib
 endif
 
 ifndef __ITypeLib2_INTERFACE_DEFINED__
@@ -954,27 +875,15 @@ __ITypeLib2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITypeLib2, "00020411-0000-0000-C000-000000000046")
 
-.comdef ITypeLib2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc
-    GetTypeInfo		proc :DWORD, :ptr
-    GetTypeInfoType	proc :DWORD, :ptr
-    GetTypeInfoOfGuid	proc :REFGUID, :ptr
-    GetLibAttr		proc :ptr
-    GetTypeComp		proc :ptr
-    GetDocumentation	proc :DWORD, :ptr, :ptr, :ptr, :ptr
-    IsName		proc :LPOLESTR, :DWORD, :ptr
-    FindName		proc :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
-    ReleaseTLibAttr	proc :ptr
+.comdef ITypeLib2 : public ITypeLib
+
     GetCustData		proc :REFGUID, :ptr
     GetLibStatistics	proc :ptr, :ptr
     GetDocumentation2	proc :DWORD, :LCID, :ptr, :ptr, :ptr
     GetAllCustData	proc :ptr
-    .ends
 
-LPTYPELIB2		typedef ptr ITypeLib2
+    .ends
+    LPTYPELIB2		typedef ptr ITypeLib2
 endif
 
 ifndef __ITypeChangeEvents_INTERFACE_DEFINED__
@@ -992,15 +901,13 @@ CHANGEKIND_MAX		equ CHANGEKIND_CHANGEFAILED + 1
 
 DEFINE_IIDX(ITypeChangeEvents, "00020410-0000-0000-C000-000000000046")
 
-.comdef ITypeChangeEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITypeChangeEvents : public IUnknown
+
     RequestTypeChange	proc :CHANGEKIND, :ptr, :LPOLESTR, :ptr
     AfterTypeChange	proc :CHANGEKIND, :ptr, :LPOLESTR
-    .ends
 
-LPTYPECHANGEEVENTS	typedef ptr ITypeChangeEvents
+    .ends
+    LPTYPECHANGEEVENTS	typedef ptr ITypeChangeEvents
 
 endif
 
@@ -1010,18 +917,16 @@ __IErrorInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IErrorInfo, "1CF2B120-547D-101B-8E65-08002B2BD119")
 
-.comdef IErrorInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IErrorInfo : public IUnknown
+
     GetGUID		proc :ptr
     GetSource		proc :ptr
     GetDescription	proc :ptr
     GetHelpFile		proc :ptr
     GetHelpContext	proc :ptr
-    .ends
 
-LPERRORINFO		typedef ptr IErrorInfo
+    .ends
+    LPERRORINFO		typedef ptr IErrorInfo
 endif
 
 ifndef __ICreateErrorInfo_INTERFACE_DEFINED__
@@ -1029,18 +934,16 @@ __ICreateErrorInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICreateErrorInfo, "22F03340-547D-101B-8E65-08002B2BD119")
 
-.comdef ICreateErrorInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICreateErrorInfo : public IUnknown
+
     SetGUID		proc :REFGUID
     SetSource		proc :LPOLESTR
     SetDescription	proc :LPOLESTR
     SetHelpFile		proc :LPOLESTR
     SetHelpContext	proc :DWORD
-    .ends
 
-LPCREATEERRORINFO	typedef ptr ICreateErrorInfo
+    .ends
+    LPCREATEERRORINFO	typedef ptr ICreateErrorInfo
 endif
 
 ifndef __ISupportErrorInfo_INTERFACE_DEFINED__
@@ -1048,14 +951,12 @@ __ISupportErrorInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISupportErrorInfo, "DF0B3D60-548F-101B-8E65-08002B2BD119")
 
-.comdef ISupportErrorInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    InterfaceSupportsErrorInfo proc :REFIID
-    .ends
+.comdef ISupportErrorInfo : public IUnknown
 
-LPSUPPORTERRORINFO	typedef ptr ISupportErrorInfo
+    InterfaceSupportsErrorInfo proc :REFIID
+
+    .ends
+    LPSUPPORTERRORINFO	typedef ptr ISupportErrorInfo
 endif
 
 ifndef __ITypeFactory_INTERFACE_DEFINED__
@@ -1063,11 +964,10 @@ __ITypeFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITypeFactory, "0000002E-0000-0000-C000-000000000046")
 
-.comdef ITypeFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITypeFactory : public IUnknown
+
     CreateFromTypeInfo	proc :ptr, :REFIID, :ptr
+
     .ends
 
 endif
@@ -1077,14 +977,13 @@ __ITypeMarshal_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITypeMarshal, "0000002D-0000-0000-C000-000000000046")
 
-.comdef ITypeMarshal
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    _Size		proc :PVOID, :DWORD, :PVOID, :ptr
+.comdef ITypeMarshal : public IUnknown
+
+    Size		proc :PVOID, :DWORD, :PVOID, :ptr
     Marshal		proc :PVOID, :DWORD, :PVOID, :DWORD, :ptr, :ptr
     Unmarshal		proc :PVOID, :DWORD, :DWORD, :ptr, :ptr
     Free		proc :PVOID
+
     .ends
 
 endif
@@ -1094,10 +993,8 @@ __IRecordInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
 
-.comdef IRecordInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRecordInfo : public IUnknown
+
     RecordInit		proc :PVOID
     RecordClear		proc :PVOID
     RecordCopy		proc :PVOID, :PVOID
@@ -1114,6 +1011,7 @@ DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
     RecordCreate	proc
     RecordCreateCopy	proc :PVOID, :ptr
     RecordDestroy	proc :PVOID
+
     .ends
 
 LPRECORDINFO		typedef ptr IRecordInfo

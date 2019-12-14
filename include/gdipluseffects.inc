@@ -96,14 +96,14 @@ GdipDeleteEffect proto WINAPI \
 		effect: ptr
 GdipGetEffectParameterSize proto WINAPI \
 		effect: ptr,
-		 _size: ptr
+		  size: ptr
 GdipSetEffectParameters proto WINAPI \
 		effect: ptr,
 		params: ptr,
-		 _size: ptr
+		  size: ptr
 GdipGetEffectParameters proto WINAPI \
 		effect: ptr,
-		 _size: ptr,
+		  size: ptr,
 		params: ptr
 
 ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS

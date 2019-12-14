@@ -160,7 +160,7 @@ handle_event:
 	jz	handle_event_null
 	cmp	es:[bx].S_GLCMD.gl_key,ax
 	je	handle_event_found
-	add	bx,SIZE S_GLCMD
+	add	bx,S_GLCMD
 	jmp	handle_event_gloop
     handle_event_found:
 	call	es:[bx].S_GLCMD.gl_proc
@@ -336,7 +336,7 @@ previtem:
 	    .repeat
 		call item_SetIndex?
 		.break .if !ZERO?
-		sub di,SIZE S_TOBJ
+		sub di,S_TOBJ
 	    .untilcxz
 	    .if !ax
 	     @@:
@@ -356,7 +356,7 @@ previtem:
 			    call item_SetIndex
 			    jmp ?item_exit
 			.endif
-			sub di,SIZE S_TOBJ
+			sub di,S_TOBJ
 		    .untilcxz
 		.endif
 		jmp ?item_null
@@ -572,7 +572,7 @@ cmdmouse:
 		    .endif
 		    .break
 		.endif
-		add bx,SIZE S_TOBJ
+		add bx,S_TOBJ
 		dec si
 	    .endw
 	    pop ax

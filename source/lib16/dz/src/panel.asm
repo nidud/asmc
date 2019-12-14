@@ -360,7 +360,7 @@ local	selected:WORD
 	mov ax,[si].S_PANEL.pn_flag
 	mov dx,offset spanela
 	.if !(ax & _P_PANELID)
-	    add dx,SIZE S_PANEL
+	    add dx,S_PANEL
 	.endif
 	push dx
 	call mousex
@@ -1101,7 +1101,7 @@ ministatus_putvolinfo:
 	call volinfo_putinfo
 	call volinfo_putvolid
 	call volinfo_putlfn
-	invoke memzero,ss::di,SIZE S_DISKFREE
+	invoke memzero,ss::di,S_DISKFREE
 	push ss
 	pop es
 	stc
@@ -1129,13 +1129,13 @@ ministatus_putvolinfo:
 	push eax
 	mul [di].S_DISKFREE.df_total
 	mul [di].S_DISKFREE.df_bsec
-	add di,SIZE S_DISKFREE
+	add di,S_DISKFREE
 	invoke mkbstring,ss::di,edx,eax
 	pop eax
-	sub di,SIZE S_DISKFREE
+	sub di,S_DISKFREE
 	mul [di].S_DISKFREE.df_avail
 	mul [di].S_DISKFREE.df_bsec
-	add di,SIZE S_DISKFREE+20
+	add di,S_DISKFREE+20
 	invoke mkbstring,ss::di,edx,eax
     else
 	lodm [di].S_DISKFREE.df_sclus
@@ -1147,18 +1147,18 @@ ministatus_putvolinfo:
 	mov bx,WORD PTR [di].S_DISKFREE.df_bsec
 	mov cx,WORD PTR [di].S_DISKFREE.df_bsec[2]
 	call _mul32
-	add di,SIZE S_DISKFREE
+	add di,S_DISKFREE
 	invoke mkbstring,ss::di,cx::bx,dx::ax
 	pop dx
 	pop ax
-	sub di,SIZE S_DISKFREE
+	sub di,S_DISKFREE
 	mov bx,WORD PTR [di].S_DISKFREE.df_avail
 	mov cx,WORD PTR [di].S_DISKFREE.df_avail[2]
 	call _mul32
 	mov bx,WORD PTR [di].S_DISKFREE.df_bsec
 	mov cx,WORD PTR [di].S_DISKFREE.df_bsec[2]
 	call _mul32
-	add di,SIZE S_DISKFREE + 20
+	add di,S_DISKFREE + 20
 	invoke mkbstring,ss::di,cx::bx,dx::ax
     endif
 	push ss
@@ -1379,7 +1379,7 @@ local	index:	WORD
 	.while si < MAXDRIVES
 	    .if _disk_type(si)
 		mov ax,si
-		mov ah,SIZE S_DISK
+		mov ah,S_DISK
 		mul ah
 		mov bx,ax
 		add bx,offset drvinfo
@@ -1827,7 +1827,7 @@ cpanel_deselect PROC pascal PUBLIC USES si di fblk:DWORD
 	    lodm fblk
 	    add ax,S_FBLK.fb_name
 	    invoke strlen,dx::ax
-	    add ax,SIZE S_FBLK
+	    add ax,S_FBLK
 	    push ax
 	    invoke malloc,ax
 	    pop bx

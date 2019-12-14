@@ -535,7 +535,7 @@ DEFINE_IIDX(IRunningObjectTable, "00000010-0000-0000-C000-000000000046")
     Register		proc :DWORD, :ptr, :ptr, :ptr
     Revoke		proc :DWORD
     IsRunning		proc :ptr
-    GetObject_		proc :ptr, :ptr
+    GetObject		proc :ptr, :ptr
     NoteChangeTime	proc :DWORD, :ptr
     GetTimeOfLastChange proc :ptr, :ptr
     EnumRunning		proc :ptr

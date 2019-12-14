@@ -11,7 +11,7 @@ sb_file	  DB 2 dup(?)
 S_SBLK	  ENDS
 
 INFOSIZE  equ 38
-BLOCKSIZE equ SIZE S_SBLK + INFOSIZE
+BLOCKSIZE equ S_SBLK + INFOSIZE
 
 ;externdef DLG_FindFile:DWORD
 ;externdef FCB_FindFile:WORD

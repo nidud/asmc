@@ -251,10 +251,8 @@ CALLBACK(LPD3DXUVATLASCB, :FLOAT, :PVOID)
 CALLBACK(LPD3DXIMTSIGNALCALLBACK, :ptr D3DXVECTOR2, :UINT, :UINT, :PVOID, :ptr FLOAT)
 CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
 
-.comdef ID3DXBaseMesh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXBaseMesh : public IUnknown
+
     DrawSubset		proc :DWORD
     GetNumFaces		proc
     GetNumVertices	proc
@@ -276,65 +274,22 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     ConvertAdjacencyToPointReps proc :ptr, :ptr
     GenerateAdjacency	proc :FLOAT, :ptr
     UpdateSemantics	proc :ptr
+
     .ends
 
-.comdef ID3DXMesh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    DrawSubset		proc :DWORD
-    GetNumFaces		proc
-    GetNumVertices	proc
-    GetFVF		proc
-    GetDeclaration	proc :ptr
-    GetNumBytesPerVertex proc
-    GetOptions		proc
-    GetDevice		proc :ptr
-    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
-    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr
-    GetVertexBuffer	proc :ptr
-    GetIndexBuffer	proc :ptr
-    LockVertexBuffer	proc :DWORD, :ptr
-    UnlockVertexBuffer	proc
-    LockIndexBuffer	proc :DWORD, :ptr
-    UnlockIndexBuffer	proc
-    GetAttributeTable	proc :ptr, :ptr
-    ConvertPointRepsToAdjacency proc :ptr, :ptr
-    ConvertAdjacencyToPointReps proc :ptr, :ptr
-    GenerateAdjacency	proc :FLOAT, :ptr
-    UpdateSemantics	proc :ptr
+.comdef ID3DXMesh : public ID3DXBaseMesh
+
     LockAttributeBuffer proc :DWORD, :ptr
     UnlockAttributeBuffer proc
     Optimize		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
     OptimizeInplace	proc :DWORD, :ptr, :ptr, :ptr, :ptr
     SetAttributeTable	proc :ptr, :DWORD
+
     .ends
 
-.comdef ID3DXPMesh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    DrawSubset		proc :DWORD
-    GetNumFaces		proc
-    GetNumVertices	proc
-    GetFVF		proc
-    GetDeclaration	proc :ptr
-    GetNumBytesPerVertex proc
-    GetOptions		proc
-    GetDevice		proc :ptr
-    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
-    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr
-    GetVertexBuffer	proc :ptr
-    GetIndexBuffer	proc :ptr
-    LockVertexBuffer	proc :DWORD, :ptr
-    UnlockVertexBuffer	proc
-    LockIndexBuffer	proc :DWORD, :ptr
-    UnlockIndexBuffer	proc
-    GetAttributeTable	proc :ptr, :ptr
-    ConvertPointRepsToAdjacency proc :ptr, :ptr
-    ConvertAdjacencyToPointReps proc :ptr, :ptr
-    GenerateAdjacency	proc :FLOAT, :ptr
-    UpdateSemantics	proc :ptr
+
+.comdef ID3DXPMesh : public ID3DXBaseMesh
+
     ClonePMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
     ClonePMesh		proc :DWORD, :ptr, :ptr, :ptr
     SetNumFaces		proc :DWORD
@@ -350,12 +305,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     TrimByVertices	proc :DWORD, :DWORD, :ptr, :ptr
     GetAdjacency	proc :ptr
     GenerateVertexHistory proc :ptr
+
     .ends
 
-.comdef ID3DXSPMesh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXSPMesh : public IUnknown
+
     GetNumFaces		proc
     GetNumVertices	proc
     GetNumFVF		proc
@@ -372,12 +327,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     GetMaxVertices	proc
     GetVertexAttributeWeights proc :LPD3DXATTRIBUTEWEIGHTS
     GetVertexWeights	proc :ptr
+
     .ends
 
-.comdef ID3DXPatchMesh
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXPatchMesh : public IUnknown
+
     GetNumPatches	proc
     GetNumVertices	proc
     GetDeclaration	proc :ptr
@@ -401,12 +356,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     GetDisplaceParam	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     Tessellate		proc :float, :ptr
     TessellateAdaptive	proc :ptr, :DWORD, :DWORD, :ptr
+
     .ends
 
-.comdef ID3DXSkinInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXSkinInfo : public IUnknown
+
     SetBoneInfluence	proc :DWORD, :DWORD, :ptr, :ptr
     SetBoneVertexInfluence proc :DWORD, :DWORD, :float
     GetNumBoneInfluences proc :DWORD
@@ -431,12 +386,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     UpdateSkinnedMesh	proc :ptr, :ptr, :ptr, :ptr
     ConvertToBlendedMesh proc :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     ConvertToIndexedBlendedMesh proc :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
-.comdef ID3DXPRTBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXPRTBuffer : public IUnknown
+
     GetNumSamples	proc
     GetNumCoeffs	proc
     GetNumChannels	proc
@@ -453,12 +408,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     EvalGH		proc
     ExtractTexture	proc :UINT, :UINT, :UINT, :ptr
     ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
+
     .ends
 
-.comdef ID3DXPRTCompBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXPRTCompBuffer : public IUnknown
+
     GetNumSamples	proc
     GetNumCoeffs	proc
     GetNumChannels	proc
@@ -473,12 +428,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     ExtractPCA		proc :UINT, :UINT, :ptr
     ExtractTexture	proc :UINT, :UINT, :ptr
     ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
+
     .ends
 
-.comdef ID3DXTextureGutterHelper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXTextureGutterHelper : public IUnknown
+
     GetWidth		proc
     GetHeight		proc
     ApplyGuttersFloat	proc :ptr, :UINT, :ptr, :UINT
@@ -493,12 +448,12 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     SetBaryMap		proc :ptr
     SetTexelMap		proc :ptr
     SetGutterMap	proc :ptr
+
     .ends
 
-.comdef ID3DXPRTEngine
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXPRTEngine : public IUnknown
+
     SetMeshMaterials	proc :ptr, :UINT, :UINT, :BOOL, :FLOAT
     SetPerVertexAlbedo	proc :ptr, :UINT, :UINT
     SetPerTexelAlbedo	proc :ptr, :UINT, :ptr
@@ -531,6 +486,7 @@ CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
     SetCallback		proc :LPD3DXSHPRTSIMCB, :float, :ptr
     ShadowRayIntersects proc :ptr, :ptr
     ClosestRayIntersects proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 ;HRESULT

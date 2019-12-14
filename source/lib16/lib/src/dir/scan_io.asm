@@ -120,7 +120,7 @@ scan_copy:
 	push	si
 	les	di,[bp-8]
 	mov	si,di
-	mov	cx,SIZE S_WFBLK/2
+	mov	cx,S_WFBLK/2
 	xor	ax,ax
 	cld?
 	rep	stosw

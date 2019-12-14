@@ -47,7 +47,7 @@ Init20: call	dostime
       @@:
 	stom	[bx].S_DISK.di_time
 	mov	WORD PTR [bx].S_DISK.di_sizeax,cx
-	add	bx,SIZE S_DISK
+	add	bx,S_DISK
 	inc	cx
 	cmp	cx,MAXDRIVES
 	jb	@B

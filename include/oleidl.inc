@@ -90,16 +90,15 @@ __IOleAdviseHolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleAdviseHolder, "00000111-0000-0000-C000-000000000046")
 
-.comdef IOleAdviseHolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleAdviseHolder : public IUnknown
+
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     EnumAdvise		proc :ptr ptr
     SendOnRename	proc :ptr
     SendOnSave		proc
     SendOnClose		proc
+
     .ends
 
 LPOLEADVISEHOLDER	typedef ptr IOleAdviseHolder
@@ -111,15 +110,14 @@ __IOleCache_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleCache, "0000011e-0000-0000-C000-000000000046")
 
-.comdef IOleCache
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleCache : public IUnknown
+
     Cache		proc :ptr, :DWORD, :ptr
     Uncache		proc :DWORD
     EnumCache		proc :ptr
     InitCache		proc :ptr
     SetData		proc :ptr, :ptr, :BOOL
+
     .ends
 
 LPOLECACHE		typedef ptr IOleCache
@@ -145,17 +143,11 @@ DISCARDCACHE_NOSAVE	equ 1
 
 DEFINE_IIDX(IOleCache2, "00000128-0000-0000-C000-000000000046")
 
-.comdef IOleCache2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Cache		proc :ptr, :DWORD, :ptr
-    Uncache		proc :DWORD
-    EnumCache		proc :ptr
-    InitCache		proc :ptr
-    SetData		proc :ptr, :ptr, :BOOL
+.comdef IOleCache2 : public IOleCache
+
     UpdateCache		proc :LPDATAOBJECT, :DWORD, :LPVOID
     DiscardCache	proc :DWORD
+
     .ends
 
 LPOLECACHE2		typedef ptr IOleCache2
@@ -167,12 +159,11 @@ __IOleCacheControl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleCacheControl, "00000129-0000-0000-C000-000000000046")
 
-.comdef IOleCacheControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleCacheControl : public IUnknown
+
     OnRun		proc :LPDATAOBJECT
     OnStop		proc
+
     .ends
 
 PPOLECACHECONTROL	typedef ptr IOleCacheControl
@@ -184,11 +175,10 @@ __IParseDisplayName_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IParseDisplayName, "0000011a-0000-0000-C000-000000000046")
 
-.comdef IParseDisplayName
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IParseDisplayName : public IUnknown
+
     ParseDisplayName	proc :ptr, :LPOLESTR, :ptr, :ptr
+
     .ends
 
 LPPARSEDISPLAYNAME	typedef ptr IParseDisplayName
@@ -200,13 +190,11 @@ __IOleContainer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleContainer, "0000011b-0000-0000-C000-000000000046")
 
-.comdef IOleContainer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    ParseDisplayName	proc :ptr, :LPOLESTR, :ptr, :ptr
-    EnumObjects_	proc :DWORD, :ptr
+.comdef IOleContainer : public IParseDisplayName
+
+    EnumObjects		proc :DWORD, :ptr
     LockContainer	proc :BOOL
+
     .ends
 
 LPOLECONTAINER		typedef ptr IOleContainer
@@ -218,16 +206,15 @@ __IOleClientSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleClientSite, "00000118-0000-0000-C000-000000000046")
 
-.comdef IOleClientSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleClientSite : public IUnknown
+
     SaveObject		proc
     GetMoniker		proc :DWORD, :DWORD, :ptr
     GetContainer	proc :ptr
     ShowObject		proc
     OnShowWindow	proc :BOOL
     RequestNewObjectLayout proc
+
     .ends
 
 LPOLECLIENTSITE		typedef ptr IOleClientSite
@@ -288,10 +275,8 @@ OLECLOSE_PROMPTSAVE	equ 2
 
 DEFINE_IIDX(IOleObject, "00000112-0000-0000-C000-000000000046")
 
-.comdef IOleObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleObject : public IUnknown
+
     SetClientSite	proc :ptr
     GetClientSite	proc :ptr
     SetHostNames	proc :LPCOLESTR, :LPCOLESTR
@@ -299,7 +284,7 @@ DEFINE_IIDX(IOleObject, "00000112-0000-0000-C000-000000000046")
     SetMoniker		proc :DWORD, :ptr
     GetMoniker		proc :DWORD, :DWORD, :ptr
     InitFromData	proc :ptr, :BOOL, :DWORD
-    GetClipboardData_	proc :DWORD ,:ptr
+    GetClipboardData	proc :DWORD ,:ptr
     DoVerb		proc :SDWORD,: LPMSG, :ptr, :SDWORD, :HWND, :LPCRECT
     EnumVerbs		proc :ptr
     Update		proc
@@ -354,12 +339,11 @@ __IOleWindow_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleWindow, "00000114-0000-0000-C000-000000000046")
 
-.comdef IOleWindow
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
+.comdef IOleWindow : public IUnknown
+
+    GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
+
     .ends
 
 LPOLEWINDOW		typedef ptr IOleWindow
@@ -383,10 +367,8 @@ OLELINKBIND_EVENIFCLASSDIFF equ 1
 
 DEFINE_IIDX(IOleLink, "0000011d-0000-0000-C000-000000000046")
 
-.comdef IOleLink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleLink : public IUnknown
+
     SetUpdateOptions	proc :DWORD
     GetUpdateOptions	proc :ptr
     SetSourceMoniker	proc :ptr, :REFCLSID
@@ -398,6 +380,7 @@ DEFINE_IIDX(IOleLink, "0000011d-0000-0000-C000-000000000046")
     GetBoundSource	proc :ptr
     UnbindSource	proc
     Update		proc :ptr
+
     .ends
 
 LPOLELINK		typedef ptr IOleLink
@@ -423,16 +406,12 @@ OLECONTF_ONLYIFRUNNING	equ 16
 
 DEFINE_IIDX(IOleItemContainer, "0000011c-0000-0000-C000-000000000046")
 
-.comdef IOleItemContainer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    ParseDisplayName	proc :ptr, :LPOLESTR, :ptr, :ptr
-    EnumObjects_	proc :DWORD, :ptr
-    LockContainer	proc :BOOL
-    GetObject_		proc :LPOLESTR, :DWORD, :ptr, :REFIID, :ptr
+.comdef IOleItemContainer : public IOleContainer
+
+    GetObject		proc :LPOLESTR, :DWORD, :ptr, :REFIID, :ptr
     GetObjectStorage	proc :LPOLESTR, :ptr, :REFIID, :ptr
     IsRunning		proc :LPOLESTR
+
     .ends
 
 LPOLEITEMCONTAINER	typedef ptr IOleItemContainer
@@ -448,16 +427,13 @@ LPCBORDERWIDTHS		typedef LPCRECT
 
 DEFINE_IIDX(IOleInPlaceUIWindow, "00000115-0000-0000-C000-000000000046")
 
-.comdef IOleInPlaceUIWindow
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
-    ContextSensitiveHelp proc :BOOL
+.comdef IOleInPlaceUIWindow : public IOleWindow
+
     GetBorder		proc :LPRECT
     RequestBorderSpace	proc :LPCBORDERWIDTHS
     SetBorderSpace	proc :LPCBORDERWIDTHS
     SetActiveObject	proc :ptr, :LPCOLESTR
+
     .ends
 
 LPOLEINPLACEUIWINDOW	typedef ptr IOleInPlaceUIWindow
@@ -469,17 +445,14 @@ __IOleInPlaceActiveObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleInPlaceActiveObject, "00000117-0000-0000-C000-000000000046")
 
-.comdef IOleInPlaceActiveObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    TranslateAccelerator_ proc :LPMSG
+.comdef IOleInPlaceActiveObject : public IOleWindow
+
+    TranslateAccelerator proc :LPMSG
     OnFrameWindowActivate proc :BOOL
     OnDocWindowActivate proc :BOOL
     ResizeBorder	proc :LPCRECT, :ptr, :BOOL
     EnableModeless	proc :BOOL
+
     .ends
 
 LPOLEINPLACEACTIVEOBJECT typedef ptr IOleInPlaceActiveObject
@@ -507,22 +480,15 @@ HOLEMENU		typedef HGLOBAL
 
 DEFINE_IIDX(IOleInPlaceFrame, "00000116-0000-0000-C000-000000000046")
 
-.comdef IOleInPlaceFrame
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    GetBorder		proc :LPRECT
-    RequestBorderSpace	proc :LPCBORDERWIDTHS
-    SetBorderSpace	proc :LPCBORDERWIDTHS
-    SetActiveObject	proc :ptr, :LPCOLESTR
+.comdef IOleInPlaceFrame : public IOleInPlaceUIWindow
+
     InsertMenus		proc :HMENU, :LPOLEMENUGROUPWIDTHS
-    SetMenu_		proc :HMENU, :HOLEMENU, :HWND
+    SetMenu		proc :HMENU, :HOLEMENU, :HWND
     RemoveMenus		proc :HMENU
     SetStatusText	proc :LPCOLESTR
     EnableModeless	proc :BOOL
-    TranslateAccelerator_ proc :LPMSG, :WORD
+    TranslateAccelerator proc :LPMSG, :WORD
+
     .ends
 
 LPOLEINPLACEFRAME	typedef ptr IOleInPlaceFrame
@@ -534,16 +500,13 @@ __IOleInPlaceObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleInPlaceObject, "00000113-0000-0000-C000-000000000046")
 
-.comdef IOleInPlaceObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
-    ContextSensitiveHelp proc :BOOL
+.comdef IOleInPlaceObject : public IOleWindow
+
     InPlaceDeactivate	proc
     UIDeactivate	proc
     SetObjectRects	proc :LPCRECT, :LPCRECT
     ReactivateAndUndo	proc
+
     .ends
 
 LPOLEINPLACEOBJECT	typedef ptr IOleInPlaceObject
@@ -555,12 +518,8 @@ __IOleInPlaceSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleInPlaceSite, "00000119-0000-0000-C000-000000000046")
 
-.comdef IOleInPlaceSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow_		proc :ptr
-    ContextSensitiveHelp proc :BOOL
+.comdef IOleInPlaceSite : public IOleWindow
+
     CanInPlaceActivate	proc
     OnInPlaceActivate	proc
     OnUIActivate	proc
@@ -571,6 +530,7 @@ DEFINE_IIDX(IOleInPlaceSite, "00000119-0000-0000-C000-000000000046")
     DiscardUndoState	proc
     DeactivateAndUndo	proc
     OnPosRectChange	proc :LPCRECT
+
     .ends
 
 LPOLEINPLACESITE	typedef ptr IOleInPlaceSite
@@ -582,11 +542,10 @@ __IContinue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContinue, "0000012a-0000-0000-C000-000000000046")
 
-.comdef IContinue
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContinue : public IUnknown
+
     FContinue		proc
+
     .ends
 
 endif
@@ -596,16 +555,15 @@ __IViewObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IViewObject, "0000010d-0000-0000-C000-000000000046")
 
-.comdef IViewObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IViewObject : public IUnknown
+
     Draw		proc :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
     GetColorSet		proc :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :ptr
     Freeze		proc :DWORD, :SDWORD, :ptr ,:ptr
     Unfreeze		proc :DWORD
     SetAdvise		proc :DWORD, :DWORD, :ptr
     GetAdvise		proc :ptr, :ptr, :ptr
+
     .ends
 
 LPVIEWOBJECT		typedef ptr IViewObject
@@ -617,17 +575,10 @@ __IViewObject2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IViewObject2, "00000127-0000-0000-C000-000000000046")
 
-.comdef IViewObject2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Draw		proc :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
-    GetColorSet		proc :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
-    Freeze		proc :DWORD, :SDWORD, :ptr, :ptr
-    Unfreeze		proc :DWORD
-    SetAdvise		proc :DWORD, :DWORD, :ptr
-    GetAdvise		proc :ptr, :ptr, :ptr
+.comdef IViewObject2 : public IViewObject
+
     GetExtent		proc :DWORD, :SDWORD, :ptr, :LPSIZEL
+
     .ends
 
 LPVIEWOBJECT2		typedef ptr IViewObject2
@@ -639,12 +590,11 @@ __IDropSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDropSource, "00000121-0000-0000-C000-000000000046")
 
-.comdef IDropSource
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDropSource : public IUnknown
+
     QueryContinueDrag	proc :BOOL, :DWORD
     GiveFeedback	proc :DWORD
+
     .ends
 
 LPDROPSOURCE		typedef ptr IDropSource
@@ -668,14 +618,13 @@ DD_DEFDRAGMINDIST	equ ( 2 )
 
 DEFINE_IIDX(IDropTarget, "00000122-0000-0000-C000-000000000046")
 
-.comdef IDropTarget
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDropTarget : public IUnknown
+
     DragEnter		proc :ptr, :DWORD, :POINTL, :ptr
     DragOver		proc :DWORD, :POINTL, :ptr
     DragLeave		proc
     Drop		proc :ptr, :DWORD, :POINTL, :ptr
+
     .ends
 
 LPDROPTARGET		typedef ptr IDropTarget
@@ -700,14 +649,13 @@ OLEVERBATTRIB_ONCONTAINERMENU equ 2
 
 DEFINE_IIDX(IEnumOLEVERB, "0000012B-0000-0000-C000-000000000046")
 
-.comdef IEnumOLEVERB
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumOLEVERB : public IUnknown
+
     Next		proc :DWORD, :LPOLEVERB, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMOLEVERB		typedef ptr IEnumOLEVERB

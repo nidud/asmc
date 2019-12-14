@@ -955,13 +955,12 @@ __IContextMenu_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenu, "000214e4-0000-0000-c000-000000000046")
 
-.comdef IContextMenu
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContextMenu : public IUnknown
+
     QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
     InvokeCommand	proc :ptr
     GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
+
     .ends
 
 LPCONTEXTMENU		typedef ptr IContextMenu
@@ -972,14 +971,10 @@ __IContextMenu2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenu2, "000214f4-0000-0000-c000-000000000046")
 
-.comdef IContextMenu2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
-    InvokeCommand	proc :ptr
-    GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
+.comdef IContextMenu2 : public IContextMenu
+
     HandleMenuMsg	proc :UINT, :WPARAM, :LPARAM
+
     .ends
 
 LPCONTEXTMENU2		typedef ptr IContextMenu2
@@ -990,15 +985,10 @@ __IContextMenu3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenu3, "BCFCE0A0-EC17-11d0-8D10-00A0C90F2719")
 
-.comdef IContextMenu3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
-    InvokeCommand	proc :ptr
-    GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
-    HandleMenuMsg	proc :UINT, :WPARAM, :LPARAM
+.comdef IContextMenu3 : public IContextMenu2
+
     HandleMenuMsg2	proc :UINT, :WPARAM, :LPARAM, :ptr
+
     .ends
 
 LPCONTEXTMENU3		typedef ptr IContextMenu3
@@ -1010,10 +1000,8 @@ __IExecuteCommand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExecuteCommand, "7F9185B0-CB92-43c5-80A9-92277A4F7B54")
 
-.comdef IExecuteCommand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExecuteCommand : public IUnknown
+
     SetKeyState		proc :DWORD
     SetParameters	proc :LPCWSTR
     SetPosition		proc :POINT
@@ -1021,6 +1009,7 @@ DEFINE_IIDX(IExecuteCommand, "7F9185B0-CB92-43c5-80A9-92277A4F7B54")
     SetNoShowUI		proc :BOOL
     SetDirectory	proc :LPCWSTR
     Execute		proc
+
     .ends
 
 endif
@@ -1030,12 +1019,11 @@ __IPersistFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistFolder, "000214EA-0000-0000-C000-000000000046")
 
-.comdef IPersistFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistFolder : public IUnknown
+
     GetClassID		proc :ptr
     Initialize		proc :PCIDLIST_ABSOLUTE
+
     .ends
 
 LPPERSISTFOLDER		typedef ptr IPersistFolder
@@ -1054,15 +1042,14 @@ __IRunnableTask_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRunnableTask, "85788d00-6807-11d0-b810-00c04fd706ec")
 
-.comdef IRunnableTask
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRunnableTask : public IUnknown
+
     Run			proc
     Kill		proc :BOOL
     Suspend		proc
     Resume		proc
     IsRunning		proc
+
     .ends
 
 endif
@@ -1085,14 +1072,13 @@ __IShellTaskScheduler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellTaskScheduler, "6CCB7BE0-6807-11d0-B810-00C04FD706EC")
 
-.comdef IShellTaskScheduler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellTaskScheduler : public IUnknown
+
     AddTask		proc :ptr, :REFTASKOWNERID, :DWORD_PTR, :DWORD
     RemoveTasks		proc :REFTASKOWNERID, :DWORD_PTR, :BOOL
     CountTasks		proc :REFTASKOWNERID
     Status		proc :DWORD, :DWORD
+
     .ends
 
 endif
@@ -1104,12 +1090,11 @@ __IQueryCodePage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IQueryCodePage, "C7B236CE-EE80-11D0-985F-006008059382")
 
-.comdef IQueryCodePage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IQueryCodePage : public IUnknown
+
     GetCodePage		proc :ptr
     SetCodePage		proc :UINT
+
     .ends
 
 endif
@@ -1119,13 +1104,10 @@ __IPersistFolder2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistFolder2, "1AC3D9F0-175C-11d1-95BE-00609797EA4F")
 
-.comdef IPersistFolder2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
-    Initialize		proc :PCIDLIST_ABSOLUTE
+.comdef IPersistFolder2 : public IPersistFolder
+
     GetCurFolder	proc :ptr
+
     .ends
 
 endif
@@ -1152,15 +1134,11 @@ __IPersistFolder3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistFolder3, "CEF04FDF-FE72-11d2-87A5-00C04F6837CF")
 
-.comdef IPersistFolder3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
-    Initialize		proc :PCIDLIST_ABSOLUTE
-    GetCurFolder	proc :ptr
+.comdef IPersistFolder3 : public IPersistFolder2
+
     InitializeEx	proc :ptr, :PCIDLIST_ABSOLUTE, :ptr
     GetFolderTargetInfo proc :ptr
+
     .ends
 
 endif
@@ -1173,13 +1151,12 @@ __IPersistIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistIDList, "1079acfc-29bd-11d3-8e0d-00c04f6837d5")
 
-.comdef IPersistIDList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPersistIDList : public IUnknown
+
     GetClassID		proc :ptr
     SetIDList		proc :PCIDLIST_ABSOLUTE
     GetIDList		proc :ptr
+
     .ends
 
 endif
@@ -1190,14 +1167,13 @@ __IEnumIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumIDList, "000214F2-0000-0000-C000-000000000046")
 
-.comdef IEnumIDList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumIDList : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMIDLIST		typedef ptr IEnumIDList
@@ -1208,14 +1184,8 @@ __IEnumFullIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumFullIDList, "d0191542-7954-4908-bc06-b2360bbe45ba")
 
-.comdef IEnumFullIDList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Next		proc :ULONG, :ptr, :ptr
-    Skip		proc :ULONG
-    Reset		proc
-    Clone		proc :ptr
+.comdef IEnumFullIDList : public IEnumIDList
+
     .ends
 
 endif
@@ -1225,12 +1195,11 @@ __IFileSyncMergeHandler_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IFileSyncMergeHandler, "d97b5aac-c792-433c-975d-35c4eadc7a9d")
 
-.comdef IFileSyncMergeHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileSyncMergeHandler : public IUnknown
+
     Merge		proc :LPCWSTR, :LPCWSTR, :ptr MERGE_UPDATE_STATUS
     ShowResolveConflictUIAsync proc :LPCWSTR, :HMONITOR
+
     .ends
 
 endif
@@ -1333,12 +1302,11 @@ __IObjectWithFolderEnumMode_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithFolderEnumMode, "6a9d9026-0e6e-464c-b000-42ecc07de673")
 
-.comdef IObjectWithFolderEnumMode
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithFolderEnumMode : public IUnknown
+
     SetMode		proc :FOLDER_ENUM_MODE
     GetMode		proc :ptr
+
     .ends
 
 endif
@@ -1354,12 +1322,11 @@ __IParseAndCreateItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IParseAndCreateItem, "67efed0e-e827-4408-b493-78f3982b685c")
 
-.comdef IParseAndCreateItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IParseAndCreateItem : public IUnknown
+
     SetItem		proc :ptr
     GetItem		proc :REFIID, :ptr
+
     .ends
 
 endif
@@ -1372,10 +1339,8 @@ __IShellFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellFolder, "000214E6-0000-0000-C000-000000000046")
 
-.comdef IShellFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellFolder : public IUnknown
+
     ParseDisplayName	proc :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
     EnumObjects		proc :HWND, :SHCONTF, :ptr
     BindToObject	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
@@ -1386,6 +1351,7 @@ DEFINE_IIDX(IShellFolder, "000214E6-0000-0000-C000-000000000046")
     GetUIObjectOf	proc :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
     GetDisplayNameOf	proc :PCUITEMID_CHILD, :SHGDNF, :ptr
     SetNameOf		proc :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
+
     .ends
 
 LPIShellFolder		typedef ptr IShellFolder
@@ -1406,14 +1372,8 @@ __IEnumExtraSearch_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumExtraSearch, "0E700BE1-9DB6-11d1-A1CE-00C04FD75D13")
 
-.comdef IEnumExtraSearch
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Next		proc :ULONG, :ptr, :ptr
-    Skip		proc :ULONG
-    Reset		proc
-    Clone		proc :ptr
+.comdef IEnumExtraSearch : public IEnumIDList
+
     .ends
 
 LPENUMEXTRASEARCH	typedef ptr IEnumExtraSearch
@@ -1425,20 +1385,8 @@ __IShellFolder2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellFolder2, "93F2F68C-1D1B-11d3-A30E-00C04F79ABD1")
 
-.comdef IShellFolder2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    ParseDisplayName	proc :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
-    EnumObjects		proc :HWND, :SHCONTF, :ptr
-    BindToObject	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-    BindToStorage	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-    CompareIDs		proc :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
-    CreateViewObject	proc :HWND, :REFIID, :ptr
-    GetAttributesOf	proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
-    GetUIObjectOf	proc :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
-    GetDisplayNameOf	proc :PCUITEMID_CHILD, :SHGDNF, :ptr
-    SetNameOf		proc :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
+.comdef IShellFolder2 : public IShellFolder
+
     GetDefaultSearchGUID proc :ptr
     EnumSearches	proc :ptr
     GetDefaultColumn	proc :DWORD, :ptr, :ptr
@@ -1446,6 +1394,7 @@ DEFINE_IIDX(IShellFolder2, "93F2F68C-1D1B-11d3-A30E-00C04F79ABD1")
     GetDetailsEx	proc :PCUITEMID_CHILD, :ptr, :ptr
     GetDetailsOf	proc :PCUITEMID_CHILD, :UINT, :ptr
     MapColumnToSCID	proc :UINT, :ptr
+
     .ends
 
 endif
@@ -1538,12 +1487,11 @@ DEFINE_ENUM_FLAG_OPERATORS(FOLDERVIEWOPTIONS)
 
 DEFINE_IIDX(IFolderViewOptions, "3cc974d2-b302-4d36-ad3e-06d93f695d3f")
 
-.comdef IFolderViewOptions
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderViewOptions : public IUnknown
+
     SetFolderViewOptions proc :FOLDERVIEWOPTIONS, :FOLDERVIEWOPTIONS
     GetFolderViewOptions proc :ptr
+
     .ends
 
 endif
@@ -1600,10 +1548,8 @@ __IShellView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellView, "000214E3-0000-0000-C000-000000000046")
 
-.comdef IShellView
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellView : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     TranslateAccelerator proc :ptr
@@ -1617,6 +1563,7 @@ DEFINE_IIDX(IShellView, "000214E3-0000-0000-C000-000000000046")
     SaveViewState	proc
     SelectItem		proc :PCUITEMID_CHILD, :SVSIF
     GetItemObject	proc :UINT, :REFIID, :ptr
+
     .ends
 
 LPSHELLVIEW		typedef ptr IShellView
@@ -1650,27 +1597,13 @@ LPSV2CVW2_PARAMS	typedef ptr SV2CVW2_PARAMS
 
 DEFINE_IIDX(IShellView2, "88E39E80-3578-11CF-AE69-08002B2E1262")
 
-.comdef IShellView2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    TranslateAccelerator proc :ptr
-    EnableModeless	proc :BOOL
-    UIActivate		proc :UINT
-    Refresh		proc
-    CreateViewWindow	proc :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
-    DestroyViewWindow	proc
-    GetCurrentInfo	proc :LPFOLDERSETTINGS
-    AddPropertySheetPages proc :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-    SaveViewState	proc
-    SelectItem		proc :PCUITEMID_CHILD, :SVSIF
-    GetItemObject	proc :UINT, :REFIID, :ptr
+.comdef IShellView2 : public IShellView
+
     GetView		proc :ptr, :ULONG
     CreateViewWindow2	proc :LPSV2CVW2_PARAMS
     HandleRename	proc :PCUITEMID_CHILD
     SelectAndPositionItem proc :PCUITEMID_CHILD, :UINT, :ptr
+
     .ends
 
 endif
@@ -1688,28 +1621,11 @@ SV3CVW3_FLAGS		typedef DWORD
 
 DEFINE_IIDX(IShellView3, "ec39fa88-f8af-41c5-8421-38bed28f4673")
 
-.comdef IShellView3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    TranslateAccelerator proc :ptr
-    EnableModeless	proc :BOOL
-    UIActivate		proc :UINT
-    Refresh		proc
-    CreateViewWindow	proc :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
-    DestroyViewWindow	proc
-    GetCurrentInfo	proc :LPFOLDERSETTINGS
-    AddPropertySheetPages proc :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-    SaveViewState	proc
-    SelectItem		proc :PCUITEMID_CHILD, :SVSIF
-    GetItemObject	proc :UINT, :REFIID, :ptr
-    GetView		proc :ptr, :ULONG
-    CreateViewWindow2	proc :LPSV2CVW2_PARAMS
-    HandleRename	proc :PCUITEMID_CHILD
-    SelectAndPositionItem proc :PCUITEMID_CHILD, :UINT, :ptr
-    CreateViewWindow3	proc :ptr, :ptr, :SV3CVW3_FLAGS, :FOLDERFLAGS, :FOLDERFLAGS, :FOLDERVIEWMODE, :ptr, :ptr, :ptr
+.comdef IShellView3 : public IShellView2
+
+    CreateViewWindow3	proc :ptr, :ptr, :SV3CVW3_FLAGS, :FOLDERFLAGS,
+		:FOLDERFLAGS, :FOLDERVIEWMODE, :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -1724,10 +1640,8 @@ __IFolderView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderView, "cde725b0-ccc9-4519-917e-325d72fab4ce")
 
-.comdef IFolderView
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderView : public IUnknown
+
     GetCurrentViewMode	proc :ptr
     SetCurrentViewMode	proc :UINT
     GetFolder		proc :REFIID, :ptr
@@ -1742,6 +1656,7 @@ DEFINE_IIDX(IFolderView, "cde725b0-ccc9-4519-917e-325d72fab4ce")
     GetAutoArrange	proc
     SelectItem		proc :SINT, :DWORD
     SelectAndPositionItems proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
+
     .ends
 
 endif
@@ -1754,12 +1669,11 @@ __ISearchBoxInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISearchBoxInfo, "6af6e03f-d664-4ef4-9626-f7e0ed36755e")
 
-.comdef ISearchBoxInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISearchBoxInfo : public IUnknown
+
     GetCondition	proc :REFIID, :ptr
     GetText		proc :ptr
+
     .ends
 
 endif
@@ -1787,24 +1701,8 @@ DEPRECATED_HRESULT	typedef HRESULT
 
 DEFINE_IIDX(IFolderView2, "1af3a467-214f-4298-908e-06b03e0b39f9")
 
-.comdef IFolderView2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetCurrentViewMode	proc :ptr
-    SetCurrentViewMode	proc :UINT
-    GetFolder		proc :REFIID, :ptr
-    Item		proc :SINT, :ptr
-    ItemCount		proc :UINT, :ptr
-    Items		proc :UINT, :REFIID, :ptr
-    GetSelectionMarkedItem proc :ptr
-    GetFocusedItem	proc :ptr
-    GetItemPosition	proc :PCUITEMID_CHILD, :ptr
-    GetSpacing		proc :ptr
-    GetDefaultSpacing	proc :ptr
-    GetAutoArrange	proc
-    SelectItem		proc :SINT, :DWORD
-    SelectAndPositionItems proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
+.comdef IFolderView2 : public IFolderView
+
     SetGroupBy		proc :REFPROPERTYKEY, :BOOL
     GetGroupBy		proc :ptr, :ptr
     SetViewProperty	proc :PCUITEMID_CHILD, :REFPROPERTYKEY, :REFPROPVARIANT
@@ -1830,6 +1728,7 @@ DEFINE_IIDX(IFolderView2, "1af3a467-214f-4298-908e-06b03e0b39f9")
     SetRedraw		proc :BOOL
     IsMoveInSameFolder	proc
     DoRename		proc
+
     .ends
 
 endif
@@ -1841,10 +1740,8 @@ __IFolderViewSettings_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderViewSettings, "ae8c987d-8797-4ed3-be72-2a47dd938db0")
 
-.comdef IFolderViewSettings
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderViewSettings : public IUnknown
+
     GetColumnPropertyList proc :REFIID, :ptr
     GetGroupByProperty	proc :ptr, :ptr
     GetViewMode		proc :ptr
@@ -1852,6 +1749,7 @@ DEFINE_IIDX(IFolderViewSettings, "ae8c987d-8797-4ed3-be72-2a47dd938db0")
     GetFolderFlags	proc :ptr, :ptr
     GetSortColumns	proc :ptr, :UINT, :ptr
     GetGroupSubsetCount proc :ptr
+
     .ends
 
 endif ; __IFolderViewSettings_INTERFACE_DEFINED__
@@ -1864,13 +1762,12 @@ __IPreviewHandlerVisuals_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPreviewHandlerVisuals, "196bf9a5-b346-4ef0-aa1e-5dcdb76768b1")
 
-.comdef IPreviewHandlerVisuals
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPreviewHandlerVisuals : public IUnknown
+
     SetBackgroundColor	proc :COLORREF
     SetFont		proc :ptr
     SetTextColor	proc :COLORREF
+
     .ends
 
 endif
@@ -1892,10 +1789,8 @@ VPCF_TEXTBACKGROUND	equ 5
 
 DEFINE_IIDX(IVisualProperties, "e693cf68-d967-4112-8763-99172aee5e5a")
 
-.comdef IVisualProperties
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IVisualProperties : public IUnknown
+
     SetWatermark	proc :HBITMAP, :VPWATERMARKFLAGS
     SetColor		proc :VPCOLORFLAGS, :COLORREF
     GetColor		proc :VPCOLORFLAGS, :ptr
@@ -1904,6 +1799,7 @@ DEFINE_IIDX(IVisualProperties, "e693cf68-d967-4112-8763-99172aee5e5a")
     SetFont		proc :ptr, :BOOL
     GetFont		proc :ptr
     SetTheme		proc :LPCWSTR, :LPCWSTR
+
     .ends
 
 endif
@@ -1921,13 +1817,12 @@ __ICommDlgBrowser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICommDlgBrowser, "000214F1-0000-0000-C000-000000000046")
 
-.comdef ICommDlgBrowser
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICommDlgBrowser : public IUnknown
+
     OnDefaultCommand	proc :ptr
     OnStateChange	proc :ptr, :ULONG
     IncludeObject	proc :ptr, :PCUITEMID_CHILD
+
     .ends
 
 endif
@@ -1953,16 +1848,12 @@ __ICommDlgBrowser2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICommDlgBrowser2, "10339516-2894-11d2-9039-00C04F8EEB3E")
 
-.comdef ICommDlgBrowser2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    OnDefaultCommand	proc :ptr
-    OnStateChange	proc :ptr, :ULONG
-    IncludeObject	proc :ptr, :PCUITEMID_CHILD
+.comdef ICommDlgBrowser2 : public ICommDlgBrowser
+
     Notify		proc :ptr, :DWORD
     GetDefaultMenuText	proc :ptr, :LPWSTR, :SINT
     GetViewFlags	proc :ptr
+
     .ends
 
 LPCOMMDLGBROWSER2	typedef ptr ICommDlgBrowser2
@@ -1977,19 +1868,12 @@ __ICommDlgBrowser3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICommDlgBrowser3, "c8ad25a1-3294-41ee-8165-71174bd01c57")
 
-.comdef ICommDlgBrowser3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    OnDefaultCommand	proc :ptr
-    OnStateChange	proc :ptr, :ULONG
-    IncludeObject	proc :ptr, :PCUITEMID_CHILD
-    Notify		proc :ptr, :DWORD
-    GetDefaultMenuText	proc :ptr, :LPWSTR, :SINT
-    GetViewFlags	proc :ptr
+.comdef ICommDlgBrowser3 : public ICommDlgBrowser2
+
     OnColumnClicked	proc :ptr, :SINT
     GetCurrentFilter	proc :LPWSTR, :SINT
     OnPreViewCreated	proc :ptr
+
     .ends
 
 endif
@@ -2034,15 +1918,14 @@ __IColumnManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IColumnManager, "d8ec27bb-3f3b-4042-b10a-4acfd924d453")
 
-.comdef IColumnManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IColumnManager : public IUnknown
+
     SetColumnInfo	proc :REFPROPERTYKEY, :ptr
     GetColumnInfo	proc :REFPROPERTYKEY, :ptr
     GetColumnCount	proc :CM_ENUM_FLAGS, :ptr
     GetColumns		proc :CM_ENUM_FLAGS, :ptr, :UINT
     SetColumns		proc :ptr, :UINT
+
     .ends
 
 endif
@@ -2053,11 +1936,10 @@ __IFolderFilterSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderFilterSite, "C0A651F5-B48B-11d2-B5ED-006097C686F6")
 
-.comdef IFolderFilterSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderFilterSite : public IUnknown
+
     SetFilter		proc :ptr
+
     .ends
 
 endif
@@ -2067,12 +1949,11 @@ __IFolderFilter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderFilter, "9CC22886-DC8E-11d2-B1D0-00C04F8EEB3E")
 
-.comdef IFolderFilter
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderFilter : public IUnknown
+
     ShouldShow		proc :ptr, :PCIDLIST_ABSOLUTE, :PCUITEMID_CHILD
     GetEnumFlags	proc :ptr, :PCIDLIST_ABSOLUTE, :ptr, :ptr
+
     .ends
 
 endif
@@ -2082,11 +1963,10 @@ __IInputObjectSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInputObjectSite, "F1DB8392-7331-11D0-8C99-00A0C92DBFE8")
 
-.comdef IInputObjectSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInputObjectSite : public IUnknown
+
     OnFocusChangeIS	proc :ptr, :BOOL
+
     .ends
 
 endif
@@ -2096,13 +1976,12 @@ __IInputObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInputObject, "68284fAA-6A48-11D0-8c78-00C04fd918b4")
 
-.comdef IInputObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInputObject : public IUnknown
+
     UIActivateIO	proc :BOOL, :ptr
     HasFocusIO		proc
     TranslateAcceleratorIO proc :ptr
+
     .ends
 
 endif
@@ -2112,14 +1991,10 @@ __IInputObject2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInputObject2, "6915C085-510B-44cd-94AF-28DFA56CF92B")
 
-.comdef IInputObject2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    UIActivateIO	proc :BOOL, :ptr
-    HasFocusIO		proc
-    TranslateAcceleratorIO proc :ptr
+.comdef IInputObject2 : public IInputObject
+
     TranslateAcceleratorGlobal proc :ptr
+
     .ends
 
 endif
@@ -2129,11 +2004,10 @@ __IShellIcon_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellIcon, "000214E5-0000-0000-C000-000000000046")
 
-.comdef IShellIcon
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellIcon : public IUnknown
+
     GetIconOf		proc :PCUITEMID_CHILD, :UINT, :ptr
+
     .ends
 
 endif
@@ -2198,10 +2072,8 @@ __IShellBrowser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellBrowser, "000214E2-0000-0000-C000-000000000046")
 
-.comdef IShellBrowser
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellBrowser : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     InsertMenusSB	proc :HMENU, :LPOLEMENUGROUPWIDTHS
@@ -2217,6 +2089,7 @@ DEFINE_IIDX(IShellBrowser, "000214E2-0000-0000-C000-000000000046")
     QueryActiveShellView proc :ptr
     OnViewWindowActive	proc :ptr
     SetToolbarItems	proc :LPTBBUTTONSB, :UINT, :UINT
+
     .ends
 
 endif
@@ -2228,12 +2101,11 @@ __IProfferService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProfferService, "cb728b20-f786-11ce-92ad-00aa00a74cd0")
 
-.comdef IProfferService
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProfferService : public IUnknown
+
     ProfferService	proc :REFGUID, :ptr, :ptr
     RevokeService	proc :DWORD
+
     .ends
 
 endif
@@ -2265,16 +2137,16 @@ SICHINTF		typedef DWORD
 
 DEFINE_IIDX(IShellItem, "43826d1e-e718-42ee-bc55-a1e261c37bfe")
 
-.comdef IShellItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellItem : public IUnknown
+
     BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
     GetParent		proc :ptr
     GetDisplayName	proc :SIGDN, :ptr
     GetAttributes	proc :SFGAOF, :ptr
     Compare		proc :ptr, :SICHINTF, :ptr
+
     .ends
+
 LPIShellItem		typedef ptr IShellItem
 endif
 
@@ -2384,15 +2256,8 @@ __IShellItem2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellItem2, "7e9fb0d3-919f-4307-ab2e-9b1860310c93")
 
-.comdef IShellItem2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
-    GetParent		proc :ptr
-    GetDisplayName	proc :SIGDN, :ptr
-    GetAttributes	proc :SFGAOF, :ptr
-    Compare		proc :ptr, :SICHINTF, :ptr
+.comdef IShellItem2 : public IShellItem
+
     GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
     GetPropertyStoreWithCreateObject proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
     GetPropertyStoreForKeys proc :ptr, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
@@ -2406,6 +2271,7 @@ DEFINE_IIDX(IShellItem2, "7e9fb0d3-919f-4307-ab2e-9b1860310c93")
     GetUInt32		proc :REFPROPERTYKEY, :ptr
     GetUInt64		proc :REFPROPERTYKEY, :ptr
     GetBool		proc :REFPROPERTYKEY, :ptr
+
     .ends
 
 endif
@@ -2423,11 +2289,10 @@ __IShellItemImageFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellItemImageFactory, "bcc18b79-ba16-442f-80c4-8a59c30c463b")
 
-.comdef IShellItemImageFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellItemImageFactory : public IUnknown
+
     GetImage		proc :SIZEL, :SIIGBF, :ptr
+
     .ends
 
 endif
@@ -2437,11 +2302,10 @@ __IUserAccountChangeCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUserAccountChangeCallback, "a561e69a-b4b8-4113-91a5-64c6bcca3430")
 
-.comdef IUserAccountChangeCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUserAccountChangeCallback : public IUnknown
+
     OnPictureChange	proc :LPCWSTR
+
     .ends
 
 endif
@@ -2453,15 +2317,15 @@ __IEnumShellItems_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumShellItems, "70629033-e363-4a28-a567-0db78006e6d7")
 
-.comdef IEnumShellItems
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumShellItems : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
+
 LPIEnumShellItems	typedef ptr IEnumShellItems
 
 endif
@@ -2508,10 +2372,8 @@ TRANSFER_ADVISE_STATE	typedef DWORD
 
 DEFINE_IIDX(ITransferAdviseSink, "d594d0d8-8da7-457b-b3b4-ce5dbaac0b88")
 
-.comdef ITransferAdviseSink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITransferAdviseSink : public IUnknown
+
     UpdateProgress	proc :ULONGLONG, :ULONGLONG, :SINT, :SINT, :SINT, :SINT
     UpdateTransferState proc :TRANSFER_ADVISE_STATE
     ConfirmOverwrite	proc :ptr, :ptr, :LPCWSTR
@@ -2519,6 +2381,7 @@ DEFINE_IIDX(ITransferAdviseSink, "d594d0d8-8da7-457b-b3b4-ce5dbaac0b88")
     FileFailure		proc :ptr, :LPCWSTR, :HRESULT, :LPWSTR, :ULONG
     SubStreamFailure	proc :ptr, :LPCWSTR, :HRESULT
     PropertyFailure	proc :ptr, :ptr, :HRESULT
+
     .ends
 
 endif
@@ -2532,10 +2395,8 @@ __ITransferSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITransferSource, "00adb003-bde9-45c6-8e29-d09f9353e108")
 
-.comdef ITransferSource
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITransferSource : public IUnknown
+
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     SetProperties	proc :ptr
@@ -2549,6 +2410,7 @@ DEFINE_IIDX(ITransferSource, "00adb003-bde9-45c6-8e29-d09f9353e108")
     GetDefaultDestinationName proc :ptr, :ptr, :ptr
     EnterFolder		proc :ptr
     LeaveFolder		proc :ptr
+
     .ends
 
 endif
@@ -2564,14 +2426,13 @@ __IEnumResources_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumResources, "2dd81fe3-a83c-4da9-a330-47249d345ba1")
 
-.comdef IEnumResources
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumResources : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -2581,10 +2442,8 @@ __IShellItemResources_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellItemResources, "ff5693be-2ce0-4d48-b5c5-40817d1acdb9")
 
-.comdef IShellItemResources
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellItemResources : public IUnknown
+
     GetAttributes	proc :ptr
     GetSize		proc :ptr
     GetTimes		proc :ptr, :ptr, :ptr
@@ -2595,6 +2454,7 @@ DEFINE_IIDX(IShellItemResources, "ff5693be-2ce0-4d48-b5c5-40817d1acdb9")
     OpenResource	proc :ptr, :REFIID, :ptr
     CreateResource	proc :ptr, :REFIID, :ptr
     MarkForDelete	proc
+
     .ends
 
 endif
@@ -2604,13 +2464,12 @@ __ITransferDestination_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITransferDestination, "48addd32-3ca5-4124-abe3-b5a72531b207")
 
-.comdef ITransferDestination
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITransferDestination : public IUnknown
+
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     CreateItem		proc :LPCWSTR, :DWORD, :ULONGLONG, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr, :REFIID, :ptr
+
     .ends
 
 endif
@@ -2637,10 +2496,8 @@ __IStreamAsync_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStreamAsync, "fe0b6665-e0ca-49b9-a178-2b5cb48d92a5")
 
-.comdef IStreamAsync
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStreamAsync : public IUnknown
+
     Read		proc :ptr, :ULONG, :ptr
     Write		proc :ptr, :ULONG, :ptr
     Seek		proc :LARGE_INTEGER, :DWORD, :ptr
@@ -2656,6 +2513,7 @@ DEFINE_IIDX(IStreamAsync, "fe0b6665-e0ca-49b9-a178-2b5cb48d92a5")
     WriteAsync		proc :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
     OverlappedResult	proc :LPOVERLAPPED, :LPDWORD, :BOOL
     CancelIo		proc
+
     .ends
 
 endif
@@ -2665,11 +2523,10 @@ __IStreamUnbufferedInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStreamUnbufferedInfo, "8a68fdda-1fdc-4c20-8ceb-416643b5a625")
 
-.comdef IStreamUnbufferedInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStreamUnbufferedInfo : public IUnknown
+
     GetSectorSize	proc :ptr
+
     .ends
 
 endif
@@ -2681,10 +2538,8 @@ __IFileOperationProgressSink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileOperationProgressSink, "04b0f1a7-9490-44bc-96e1-4296a31252e2")
 
-.comdef IFileOperationProgressSink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileOperationProgressSink : public IUnknown
+
     StartOperations	proc
     FinishOperations	proc :HRESULT
     PreRenameItem	proc :DWORD, :ptr, :LPCWSTR
@@ -2701,6 +2556,7 @@ DEFINE_IIDX(IFileOperationProgressSink, "04b0f1a7-9490-44bc-96e1-4296a31252e2")
     ResetTimer		proc
     PauseTimer		proc
     ResumeTimer		proc
+
     .ends
 
 endif
@@ -2720,10 +2576,8 @@ DEFINE_ENUM_FLAG_OPERATORS(SIATTRIBFLAGS)
 
 DEFINE_IIDX(IShellItemArray, "b63ea76d-1f85-456f-a19c-48159efa858b")
 
-.comdef IShellItemArray
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellItemArray : public IUnknown
+
     BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
     GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
     GetPropertyDescriptionList proc :REFPROPERTYKEY, :REFIID, :ptr
@@ -2731,6 +2585,7 @@ DEFINE_IIDX(IShellItemArray, "b63ea76d-1f85-456f-a19c-48159efa858b")
     GetCount		proc :ptr
     GetItemAt		proc :DWORD, :ptr
     EnumItems		proc :ptr
+
     .ends
 
 endif
@@ -2769,11 +2624,10 @@ __IInitializeWithItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithItem, "7f73be3f-fb79-493c-a6c7-7ee14e245841")
 
-.comdef IInitializeWithItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeWithItem : public IUnknown
+
     Initialize		proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -2783,12 +2637,11 @@ __IObjectWithSelection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithSelection, "1c9cd5bb-98e9-4491-a60f-31aacc72b83c")
 
-.comdef IObjectWithSelection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithSelection : public IUnknown
+
     SetSelection	proc :ptr
     GetSelection	proc :REFIID, :ptr
+
     .ends
 
 endif
@@ -2798,11 +2651,10 @@ __IObjectWithBackReferences_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithBackReferences, "321a6a6a-d61f-4bf3-97ae-14be2986bb36")
 
-.comdef IObjectWithBackReferences
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithBackReferences : public IUnknown
+
     RemoveBackReferences proc
+
     .ends
 
 endif
@@ -2828,10 +2680,8 @@ __IPropertyUI_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyUI, "757a7d9f-919a-4118-99d7-dbb208c8cc66")
 
-.comdef IPropertyUI
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyUI : public IUnknown
+
     ParsePropertyName	proc :LPCWSTR, :ptr, :ptr, :ptr
     GetCannonicalName	proc :REFFMTID, :PROPID, :LPWSTR, :DWORD
     GetDisplayName	proc :REFFMTID, :PROPID, :PROPERTYUI_NAME_FLAGS, :LPWSTR, :DWORD
@@ -2840,6 +2690,7 @@ DEFINE_IIDX(IPropertyUI, "757a7d9f-919a-4118-99d7-dbb208c8cc66")
     GetFlags		proc :REFFMTID, :PROPID, :ptr
     FormatForDisplay	proc :REFFMTID, :PROPID, :ptr, :PROPERTYUI_FORMAT_FLAGS, :LPWSTR, :DWORD
     GetHelpInfo		proc :REFFMTID, :PROPID, :LPWSTR, :DWORD, :ptr
+
     .ends
 
 endif
@@ -2874,16 +2725,15 @@ __ICategoryProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICategoryProvider, "9af64809-5864-4c26-a720-c1f78c086ee3")
 
-.comdef ICategoryProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICategoryProvider : public IUnknown
+
     CanCategorizeOnSCID proc :ptr
     GetDefaultCategory	proc :ptr, :ptr
     GetCategoryForSCID	proc :ptr, :ptr
     EnumCategories	proc :ptr
     GetCategoryName	proc :ptr, :LPWSTR, :UINT
     CreateCategory	proc :ptr, :REFIID, :ptr
+
     .ends
 
 endif
@@ -2914,14 +2764,13 @@ __ICategorizer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICategorizer, "a3b14589-9174-49a8-89a3-06a1ae2b9ba7")
 
-.comdef ICategorizer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICategorizer : public IUnknown
+
     GetDescription	proc :LPWSTR, :UINT
     GetCategory		proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
     GetCategoryInfo	proc :DWORD, :ptr
     CompareCategory	proc :CATSORT_FLAGS, :DWORD, :DWORD
+
     .ends
 
 endif
@@ -2946,15 +2795,14 @@ __IDropTargetHelper_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDropTargetHelper, "4657278B-411B-11D2-839A-00C04FD918D0")
 
-.comdef IDropTargetHelper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDropTargetHelper : public IUnknown
+
     DragEnter		proc :HWND, :ptr, :ptr, :DWORD
     DragLeave		proc
     DragOver		proc :ptr, :DWORD
     Drop		proc :ptr, :ptr, :DWORD
     Show		proc :BOOL
+
     .ends
 
 endif
@@ -2964,12 +2812,11 @@ __IDragSourceHelper_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDragSourceHelper, "DE5BF786-477A-11D2-839D-00C04FD918D0")
 
-.comdef IDragSourceHelper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDragSourceHelper : public IUnknown
+
     InitializeFromBitmap proc :LPSHDRAGIMAGE, :ptr
     InitializeFromWindow proc :HWND, :ptr, :ptr
+
     .ends
 
 endif
@@ -2985,13 +2832,10 @@ __IDragSourceHelper2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDragSourceHelper2, "83E07D0D-0C5F-4163-BF1A-60B274051E40")
 
-.comdef IDragSourceHelper2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    InitializeFromBitmap proc :LPSHDRAGIMAGE, :ptr
-    InitializeFromWindow proc :HWND, :ptr, :ptr
+.comdef IDragSourceHelper2 : public IDragSourceHelper
+
     SetFlags		proc :DWORD
+
     .ends
 
 endif
@@ -3032,10 +2876,8 @@ __IShellLinkA_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellLinkA, "000214EE-0000-0000-C000-000000000046")
 
-.comdef IShellLinkA
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellLinkA : public IUnknown
+
     GetPath		proc :LPSTR, :SINT, :ptr, :DWORD
     GetIDList		proc :ptr
     SetIDList		proc :PCIDLIST_ABSOLUTE
@@ -3054,6 +2896,7 @@ DEFINE_IIDX(IShellLinkA, "000214EE-0000-0000-C000-000000000046")
     SetRelativePath	proc :LPCSTR, :DWORD
     Resolve		proc :HWND, :DWORD
     SetPath		proc :LPCSTR
+
     .ends
 
 endif
@@ -3063,10 +2906,8 @@ __IShellLinkW_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellLinkW, "000214F9-0000-0000-C000-000000000046")
 
-.comdef IShellLinkW
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellLinkW : public IUnknown
+
     GetPath		proc :LPWSTR, :SINT, :ptr, :DWORD
     GetIDList		proc :ptr
     SetIDList		proc :PCIDLIST_ABSOLUTE
@@ -3085,6 +2926,7 @@ DEFINE_IIDX(IShellLinkW, "000214F9-0000-0000-C000-000000000046")
     SetRelativePath	proc :LPCWSTR, :DWORD
     Resolve		proc :HWND, :DWORD
     SetPath		proc :LPCWSTR
+
     .ends
 
 endif
@@ -3094,15 +2936,14 @@ __IShellLinkDataList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellLinkDataList, "45e2b4ae-b1c3-11d0-b92f-00a0c90312e1")
 
-.comdef IShellLinkDataList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellLinkDataList : public IUnknown
+
     AddDataBlock	proc :ptr
     CopyDataBlock	proc :DWORD, :ptr
     RemoveDataBlock	proc :DWORD
     GetFlags		proc :ptr
     SetFlags		proc :DWORD
+
     .ends
 
 endif
@@ -3114,11 +2955,10 @@ __IResolveShellLink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IResolveShellLink, "5cd52983-9449-11d2-963a-00c04f79adf0")
 
-.comdef IResolveShellLink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IResolveShellLink : public IUnknown
+
     ResolveShellLink	proc :ptr, :HWND, :DWORD
+
     .ends
 
 endif
@@ -3134,12 +2974,11 @@ SPINITF			typedef DWORD
 
 DEFINE_IIDX(IActionProgressDialog, "49ff1172-eadc-446d-9285-156453a6431c")
 
-.comdef IActionProgressDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IActionProgressDialog : public IUnknown
+
     Initialize		proc :SPINITF, :LPCWSTR, :LPCWSTR
     Stop		proc
+
     .ends
 
 endif
@@ -3149,13 +2988,12 @@ __IHWEventHandler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IHWEventHandler, "C1FB73D0-EC3A-4ba2-B512-8CDB9187B6D1")
 
-.comdef IHWEventHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IHWEventHandler : public IUnknown
+
     Initialize		proc :LPCWSTR
     HandleEvent		proc :LPCWSTR, :LPCWSTR, :LPCWSTR
     HandleEventWithContent proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -3165,14 +3003,13 @@ __IHWEventHandler2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IHWEventHandler2, "CFCC809F-295D-42e8-9FFC-424B33C487E6")
 
-.comdef IHWEventHandler2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IHWEventHandler2 : public IUnknown
+
     Initialize		proc :LPCWSTR
     HandleEvent		proc :LPCWSTR, :LPCWSTR, :LPCWSTR
     HandleEventWithContent proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
     HandleEventWithHWND proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :HWND
+
     .ends
 
 endif
@@ -3206,11 +3043,10 @@ __IQueryCancelAutoPlay_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IQueryCancelAutoPlay, "DDEFE873-6997-4e68-BE26-39B633ADBE12")
 
-.comdef IQueryCancelAutoPlay
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IQueryCancelAutoPlay : public IUnknown
+
     AllowAutoPlay	proc :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
+
     .ends
 
 endif
@@ -3222,11 +3058,10 @@ __IDynamicHWHandler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDynamicHWHandler, "DC2601D7-059E-42fc-A09D-2AFD21B6D5F7")
 
-.comdef IDynamicHWHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDynamicHWHandler : public IUnknown
+
     GetDynamicInfo	proc :LPCWSTR, :DWORD, :ptr
+
     .ends
 
 endif
@@ -3264,16 +3099,15 @@ SPTEXT_ACTIONDETAIL	equ ( SPTEXT_ACTIONDESCRIPTION + 1 )
 
 DEFINE_IIDX(IActionProgress, "49ff1173-eadc-446d-9285-156453a6431c")
 
-.comdef IActionProgress
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IActionProgress : public IUnknown
+
     Begin		proc :SPACTION, :SPBEGINF
     UpdateProgress	proc :ULONGLONG, :ULONGLONG
     UpdateText		proc :SPTEXT, :LPCWSTR, :BOOL
     QueryCancel		proc :ptr
     ResetCancel		proc
     _End		proc
+
     .ends
 
 endif
@@ -3283,11 +3117,10 @@ __IShellExtInit_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellExtInit, "000214E8-0000-0000-C000-000000000046")
 
-.comdef IShellExtInit
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellExtInit : public IUnknown
+
     Initialize		proc :PCIDLIST_ABSOLUTE, :ptr, :HKEY
+
     .ends
 
 LPSHELLEXTINIT		typedef ptr IShellExtInit
@@ -3302,12 +3135,11 @@ EXPPS			typedef UINT
 
 DEFINE_IIDX(IShellPropSheetExt, "000214E9-0000-0000-C000-000000000046")
 
-.comdef IShellPropSheetExt
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellPropSheetExt : public IUnknown
+
     AddPages		proc :LPFNSVADDPROPSHEETPAGE, :LPARAM
     ReplacePage		proc :EXPPS, :LPFNSVADDPROPSHEETPAGE, :LPARAM
+
     .ends
 
 endif
@@ -3319,11 +3151,10 @@ __IRemoteComputer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRemoteComputer, "000214FE-0000-0000-C000-000000000046")
 
-.comdef IRemoteComputer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRemoteComputer : public IUnknown
+
     Initialize		proc :LPCWSTR, :BOOL
+
     .ends
 
 endif
@@ -3333,11 +3164,10 @@ __IQueryContinue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IQueryContinue, "7307055c-b24a-486b-9f25-163e597a28a9")
 
-.comdef IQueryContinue
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IQueryContinue : public IUnknown
+
     QueryContinue	proc
+
     .ends
 
 endif
@@ -3347,11 +3177,10 @@ __IObjectWithCancelEvent_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithCancelEvent, "F279B885-0AE9-4b85-AC06-DDECF9408941")
 
-.comdef IObjectWithCancelEvent
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithCancelEvent : public IUnknown
+
     GetCancelEvent	proc :ptr
+
     .ends
 
 endif
@@ -3361,15 +3190,14 @@ __IUserNotification_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUserNotification, "ba9711ba-5893-4787-a7e1-41277151550b")
 
-.comdef IUserNotification
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUserNotification : public IUnknown
+
     SetBalloonInfo	proc :LPCWSTR, :LPCWSTR, :DWORD
     SetBalloonRetry	proc :DWORD, :DWORD, :UINT
     SetIconInfo		proc :HICON, :LPCWSTR
     Show		proc :ptr, :DWORD
     PlaySound		proc :LPCWSTR
+
     .ends
 
 endif
@@ -3379,13 +3207,12 @@ __IUserNotificationCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUserNotificationCallback, "19108294-0441-4AFF-8013-FA0A730B0BEA")
 
-.comdef IUserNotificationCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUserNotificationCallback : public IUnknown
+
     OnBalloonUserClick	proc :ptr
     OnLeftClick		proc :ptr
     OnContextMenu	proc :ptr
+
     .ends
 
 endif
@@ -3395,15 +3222,14 @@ __IUserNotification2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUserNotification2, "215913CC-57EB-4FAB-AB5A-E5FA7BEA2A6C")
 
-.comdef IUserNotification2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUserNotification2 : public IUnknown
+
     SetBalloonInfo	proc :LPCWSTR, :LPCWSTR, :DWORD
     SetBalloonRetry	proc :DWORD, :DWORD, :UINT
     SetIconInfo		proc :HICON, :LPCWSTR
     Show		proc :ptr, :DWORD, :ptr
     PlaySound		proc :LPCWSTR
+
     .ends
 
 endif
@@ -3413,12 +3239,11 @@ __IItemNameLimits_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IItemNameLimits, "1df0d7f1-b267-4d28-8b10-12e23202a5c4")
 
-.comdef IItemNameLimits
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IItemNameLimits : public IUnknown
+
     GetValidCharacters	proc :ptr, :ptr
     GetMaxLength	proc :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -3430,10 +3255,8 @@ __ISearchFolderItemFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISearchFolderItemFactory, "a0ffbc28-5482-4366-be27-3e81e78e06c2")
 
-.comdef ISearchFolderItemFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISearchFolderItemFactory : public IUnknown
+
     SetDisplayName	proc :LPCWSTR
     SetFolderTypeID	proc :FOLDERTYPEID
     SetFolderLogicalViewMode proc :FOLDERLOGICALVIEWMODE
@@ -3446,6 +3269,7 @@ DEFINE_IIDX(ISearchFolderItemFactory, "a0ffbc28-5482-4366-be27-3e81e78e06c2")
     SetCondition	proc :ptr
     GetShellItem	proc :REFIID, :ptr
     GetIDList		proc :ptr
+
     .ends
 
 endif
@@ -3472,12 +3296,11 @@ __IExtractImage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExtractImage, "BB2E617C-0920-11d1-9A0B-00C04FC2D6C1")
 
-.comdef IExtractImage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExtractImage : public IUnknown
+
     GetLocation		proc :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
     Extract		proc :ptr
+
     .ends
 
 LPEXTRACTIMAGE		typedef ptr IExtractImage
@@ -3492,13 +3315,10 @@ __IExtractImage2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExtractImage2, "953BB1EE-93B4-11d1-98A3-00C04FB687DA")
 
-.comdef IExtractImage2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetLocation		proc :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
-    Extract		proc :ptr
+.comdef IExtractImage2 : public IExtractImage
+
     GetDateStamp	proc :ptr
+
     .ends
 
 LPEXTRACTIMAGE2		typedef ptr IExtractImage2
@@ -3510,11 +3330,10 @@ __IThumbnailHandlerFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IThumbnailHandlerFactory, "e35b4b2e-00da-4bc1-9f13-38bc11f5d417")
 
-.comdef IThumbnailHandlerFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IThumbnailHandlerFactory : public IUnknown
+
     GetThumbnailHandler proc :PCUITEMID_CHILD, :ptr, :REFIID, :ptr
+
     .ends
 
 endif
@@ -3524,12 +3343,11 @@ __IParentAndItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IParentAndItem, "b3a4b685-b685-4805-99d9-5dead2873236")
 
-.comdef IParentAndItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IParentAndItem : public IUnknown
+
     SetParentAndItem	proc :PCIDLIST_ABSOLUTE, :ptr, :PCUITEMID_CHILD
     GetParentAndItem	proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -3540,15 +3358,14 @@ __IDockingWindow_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDockingWindow, "012dd920-7b26-11d0-8ca9-00a0c92dbfe8")
 
-.comdef IDockingWindow
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDockingWindow : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     ShowDW		proc :BOOL
     CloseDW		proc :DWORD
     ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
+
     .ends
 
 endif
@@ -3616,16 +3433,15 @@ __IDeskBand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBand, "EB0FE172-1A3A-11D0-89B3-00A0C90A90AC")
 
-.comdef IDeskBand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDeskBand : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     ShowDW		proc :BOOL
     CloseDW		proc :DWORD
     ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
     GetBandInfo		proc :DWORD, :DWORD, :ptr
+
     .ends
 
 endif
@@ -3637,11 +3453,10 @@ __IDeskBandInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBandInfo, "77E425FC-CBF9-4307-BA6A-BB5727745661")
 
-.comdef IDeskBandInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDeskBandInfo : public IUnknown
+
     GetDefaultBandWidth proc :DWORD, :DWORD, :ptr
+
     .ends
 
 endif
@@ -3651,19 +3466,12 @@ __IDeskBand2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBand2, "79D16DE4-ABEE-4021-8D9D-9169B261D657")
 
-.comdef IDeskBand2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    ShowDW		proc :BOOL
-    CloseDW		proc :DWORD
-    ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
-    GetBandInfo		proc :DWORD, :DWORD, :ptr
+.comdef IDeskBand2 : public IDeskBand
+
     CanRenderComposited proc :ptr
     SetCompositionState proc :BOOL
     GetCompositionState proc :ptr
+
     .ends
 
 endif
@@ -3674,15 +3482,14 @@ __ITaskbarList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITaskbarList, "56FDF342-FD6D-11d0-958A-006097C9A090")
 
-.comdef ITaskbarList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITaskbarList : public IUnknown
+
     HrInit		proc
     AddTab		proc :HWND
     DeleteTab		proc :HWND
     ActivateTab		proc :HWND
     SetActiveAlt	proc :HWND
+
     .ends
 
 endif
@@ -3692,16 +3499,10 @@ __ITaskbarList2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITaskbarList2, "602D4995-B13A-429b-A66E-1935E44F4317")
 
-.comdef ITaskbarList2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    HrInit		proc
-    AddTab		proc :HWND
-    DeleteTab		proc :HWND
-    ActivateTab		proc :HWND
-    SetActiveAlt	proc :HWND
+.comdef ITaskbarList2 : public ITaskbarList
+
     MarkFullscreenWindow proc :HWND, :BOOL
+
     .ends
 
 endif
@@ -3755,16 +3556,8 @@ DEFINE_ENUM_FLAG_OPERATORS(TBPFLAG)
 
 DEFINE_IIDX(ITaskbarList3, "ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")
 
-.comdef ITaskbarList3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    HrInit		proc
-    AddTab		proc :HWND
-    DeleteTab		proc :HWND
-    ActivateTab		proc :HWND
-    SetActiveAlt	proc :HWND
-    MarkFullscreenWindow proc :HWND, :BOOL
+.comdef ITaskbarList3 : public ITaskbarList2
+
     SetProgressValue	proc :HWND, :ULONGLONG, :ULONGLONG
     SetProgressState	proc :HWND, :TBPFLAG
     RegisterTab		proc :HWND, :HWND
@@ -3777,6 +3570,7 @@ DEFINE_IIDX(ITaskbarList3, "ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")
     SetOverlayIcon	proc :HWND, :HICON, :LPCWSTR
     SetThumbnailTooltip proc :HWND, :LPCWSTR
     SetThumbnailClip	proc :HWND, :ptr
+
     .ends
 
 endif
@@ -3795,29 +3589,10 @@ DEFINE_ENUM_FLAG_OPERATORS(STPFLAG)
 
 DEFINE_IIDX(ITaskbarList4, "c43dc798-95d1-4bea-9030-bb99e2983a1a")
 
-.comdef ITaskbarList4
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    HrInit		proc
-    AddTab		proc :HWND
-    DeleteTab		proc :HWND
-    ActivateTab		proc :HWND
-    SetActiveAlt	proc :HWND
-    MarkFullscreenWindow proc :HWND, :BOOL
-    SetProgressValue	proc :HWND, :ULONGLONG, :ULONGLONG
-    SetProgressState	proc :HWND, :TBPFLAG
-    RegisterTab		proc :HWND, :HWND
-    UnregisterTab	proc :HWND
-    SetTabOrder		proc :HWND, :HWND
-    SetTabActive	proc :HWND, :HWND, :DWORD
-    ThumbBarAddButtons	proc :HWND, :UINT, :LPTHUMBBUTTON
-    ThumbBarUpdateButtons proc :HWND, :UINT, :LPTHUMBBUTTON
-    ThumbBarSetImageList proc :HWND, :HIMAGELIST
-    SetOverlayIcon	proc :HWND, :HICON, :LPCWSTR
-    SetThumbnailTooltip proc :HWND, :LPCWSTR
-    SetThumbnailClip	proc :HWND, :ptr
+.comdef ITaskbarList4 : public ITaskbarList3
+
     SetTabProperties	proc :HWND, :STPFLAG
+
     .ends
 
 endif
@@ -3827,11 +3602,10 @@ __IStartMenuPinnedList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStartMenuPinnedList, "4CD19ADA-25A5-4A32-B3B7-347BEE5BE36B")
 
-.comdef IStartMenuPinnedList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IStartMenuPinnedList : public IUnknown
+
     RemoveFromList	proc :ptr
+
     .ends
 
 endif
@@ -3841,13 +3615,12 @@ __ICDBurn_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICDBurn, "3d73a659-e5d0-4d42-afc0-5121ba425c8d")
 
-.comdef ICDBurn
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICDBurn : public IUnknown
+
     GetRecorderDriveLetter proc :LPWSTR, :UINT
     Burn		proc :HWND
     HasRecordableDrive	proc :ptr
+
     .ends
 
 endif
@@ -3860,13 +3633,12 @@ __IWizardSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWizardSite, "88960f5b-422f-4e7b-8013-73415381c3c3")
 
-.comdef IWizardSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IWizardSite : public IUnknown
+
     GetPreviousPage	proc :ptr
     GetNextPage		proc :ptr
     GetCancelledPage	proc :ptr
+
     .ends
 
 endif
@@ -3878,13 +3650,12 @@ __IWizardExtension_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWizardExtension, "c02ea696-86cc-491e-9b23-74394a0444a8")
 
-.comdef IWizardExtension
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IWizardExtension : public IUnknown
+
     AddPages		proc :ptr, :UINT, :ptr
     GetFirstPage	proc :ptr
     GetLastPage		proc :ptr
+
     .ends
 
 endif
@@ -3895,15 +3666,14 @@ __IWebWizardExtension_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWebWizardExtension, "0e6b3f66-98d1-48c0-a222-fbde74e2fbc5")
 
-.comdef IWebWizardExtension
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IWebWizardExtension : public IUnknown
+
     AddPages		proc :ptr, :UINT, :ptr
     GetFirstPage	proc :ptr
     GetLastPage		proc :ptr
     SetInitialURL	proc :LPCWSTR
     SetErrorURL		proc :LPCWSTR
+
     .ends
 
 endif
@@ -3923,15 +3693,14 @@ __IPublishingWizard_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPublishingWizard, "aa9198bb-ccec-472d-beed-19a4f6733f7a")
 
-.comdef IPublishingWizard
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPublishingWizard : public IUnknown
+
     AddPages		proc :ptr, :UINT, :ptr
     GetFirstPage	proc :ptr
     GetLastPage		proc :ptr
     Initialize		proc :ptr, :DWORD, :LPCWSTR
     GetTransferManifest proc :ptr, :ptr
+
     .ends
 
 endif
@@ -3944,11 +3713,10 @@ __IFolderViewHost_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderViewHost, "1ea58f02-d55a-411d-b09e-9e65ac21605b")
 
-.comdef IFolderViewHost
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderViewHost : public IUnknown
+
     Initialize		proc :HWND, :ptr, :ptr
+
     .ends
 
 endif
@@ -3960,14 +3728,13 @@ __IExplorerBrowserEvents_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExplorerBrowserEvents, "361bbdc7-e6ee-4e13-be58-58e2240c810f")
 
-.comdef IExplorerBrowserEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerBrowserEvents : public IUnknown
+
     OnNavigationPending proc :PCIDLIST_ABSOLUTE
     OnViewCreated	proc :ptr
     OnNavigationComplete proc :PCIDLIST_ABSOLUTE
     OnNavigationFailed	proc :PCIDLIST_ABSOLUTE
+
     .ends
 
 endif
@@ -3994,10 +3761,8 @@ __IExplorerBrowser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExplorerBrowser, "dfd3b6b5-c10c-4be9-85f6-a66969f402f6")
 
-.comdef IExplorerBrowser
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerBrowser : public IUnknown
+
     Initialize		proc :HWND, :ptr, :ptr
     Destroy		proc
     SetRect		proc :ptr, :RECT
@@ -4013,6 +3778,7 @@ DEFINE_IIDX(IExplorerBrowser, "dfd3b6b5-c10c-4be9-85f6-a66969f402f6")
     FillFromObject	proc :ptr, :EXPLORER_BROWSER_FILL_FLAGS
     RemoveAll		proc
     GetCurrentView	proc :REFIID, :ptr
+
     .ends
 
 endif
@@ -4022,11 +3788,10 @@ __IAccessibleObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAccessibleObject, "95A391C5-9ED4-4c28-8401-AB9E06719E11")
 
-.comdef IAccessibleObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAccessibleObject : public IUnknown
+
     SetAccessibleName	proc :LPCWSTR
+
     .ends
 
 endif
@@ -4037,15 +3802,14 @@ __IResultsFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IResultsFolder, "96E5AE6D-6AE1-4b1c-900C-C6480EAA8828")
 
-.comdef IResultsFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IResultsFolder : public IUnknown
+
     AddItem		proc :ptr
     AddIDList		proc :PCIDLIST_ABSOLUTE, :ptr
     RemoveItem		proc :ptr
     RemoveIDList	proc :PCIDLIST_ABSOLUTE
     RemoveAll		proc
+
     .ends
 
 endif
@@ -4057,14 +3821,13 @@ __IEnumObjects_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumObjects, "2c1c7e2e-2d0e-4059-831e-1e6f82335c2e")
 
-.comdef IEnumObjects
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumObjects : public IUnknown
+
     Next		proc :ULONG, :REFIID, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -4098,10 +3861,8 @@ PDOPS_ERRORS		equ 5
 
 DEFINE_IIDX(IOperationsProgressDialog, "0C9FB851-E5C9-43EB-A370-F0677B13874C")
 
-.comdef IOperationsProgressDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOperationsProgressDialog : public IUnknown
+
     StartProgressDialog proc :HWND, :OPPROGDLGF
     StopProgressDialog	proc
     SetOperation	proc :SPACTION
@@ -4113,6 +3874,7 @@ DEFINE_IIDX(IOperationsProgressDialog, "0C9FB851-E5C9-43EB-A370-F0677B13874C")
     ResumeTimer		proc
     GetMilliseconds	proc :ptr, :ptr
     GetOperationStatus	proc :ptr
+
     .ends
 
 endif
@@ -4122,12 +3884,11 @@ __IIOCancelInformation_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IIOCancelInformation, "f5b0bf81-8cb5-4b1b-9449-1a159e0c733c")
 
-.comdef IIOCancelInformation
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IIOCancelInformation : public IUnknown
+
     SetCancelInformation proc :DWORD, :UINT
     GetCancelInformation proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4152,10 +3913,8 @@ __IFileOperation_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileOperation, "947aab5f-0a5c-4c13-b4d6-4bf7836fc9f8")
 
-.comdef IFileOperation
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileOperation : public IUnknown
+
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     SetOperationFlags	proc :DWORD
@@ -4176,6 +3935,7 @@ DEFINE_IIDX(IFileOperation, "947aab5f-0a5c-4c13-b4d6-4bf7836fc9f8")
     NewItem		proc :ptr, :DWORD, :LPCWSTR, :LPCWSTR, :ptr
     PerformOperations	proc
     GetAnyOperationsAborted proc :ptr
+
     .ends
 
 endif
@@ -4185,11 +3945,10 @@ __IObjectProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectProvider, "a6087428-3be3-4d73-b308-7c04a540bf1a")
 
-.comdef IObjectProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectProvider : public IUnknown
+
     QueryObject		proc :REFGUID, :REFIID, :ptr
+
     .ends
 
 endif
@@ -4200,14 +3959,13 @@ __INamespaceWalkCB_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INamespaceWalkCB, "d92995f8-cf5e-4a76-bf59-ead39ea2b97e")
 
-.comdef INamespaceWalkCB
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INamespaceWalkCB : public IUnknown
+
     FoundItem		proc :ptr, :PCUITEMID_CHILD
     EnterFolder		proc :ptr, :PCUITEMID_CHILD
     LeaveFolder		proc :ptr, :PCUITEMID_CHILD
     InitializeProgressDialog proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4219,15 +3977,10 @@ __INamespaceWalkCB2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INamespaceWalkCB2, "7ac7492b-c38e-438a-87db-68737844ff70")
 
-.comdef INamespaceWalkCB2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    FoundItem		proc :ptr, :PCUITEMID_CHILD
-    EnterFolder		proc :ptr, :PCUITEMID_CHILD
-    LeaveFolder		proc :ptr, :PCUITEMID_CHILD
-    InitializeProgressDialog proc :ptr, :ptr
+.comdef INamespaceWalkCB2 : public INamespaceWalkCB
+
     WalkComplete	proc :HRESULT
+
     .ends
 
 endif
@@ -4259,12 +4012,11 @@ DEFINE_ENUM_FLAG_OPERATORS(NAMESPACEWALKFLAG)
 
 DEFINE_IIDX(INamespaceWalk, "57ced8a7-3f4a-432c-9350-30f24483f74f")
 
-.comdef INamespaceWalk
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INamespaceWalk : public IUnknown
+
     Walk		proc :ptr, :DWORD, :SINT, :ptr
     GetIDArrayResult	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4279,12 +4031,11 @@ __IAutoCompleteDropDown_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAutoCompleteDropDown, "3CD141F4-3C6A-11d2-BCAA-00C04FD929DB")
 
-.comdef IAutoCompleteDropDown
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAutoCompleteDropDown : public IUnknown
+
     GetDropDownStatus	proc :ptr, :ptr
     ResetEnumerator	proc
+
     .ends
 
 endif
@@ -4329,10 +4080,8 @@ __IBandSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBandSite, "4CF504B0-DE96-11D0-8B3F-00A0C911E8E5")
 
-.comdef IBandSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBandSite : public IUnknown
+
     AddBand		proc :ptr
     EnumBands		proc :UINT, :ptr
     QueryBand		proc :DWORD, :ptr, :ptr, :LPWSTR, :SINT
@@ -4341,6 +4090,7 @@ DEFINE_IIDX(IBandSite, "4CF504B0-DE96-11D0-8B3F-00A0C911E8E5")
     GetBandObject	proc :DWORD, :REFIID, :ptr
     SetBandSiteInfo	proc :ptr
     GetBandSiteInfo	proc :ptr
+
     .ends
 
 endif
@@ -4353,11 +4103,10 @@ __IModalWindow_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IModalWindow, "b4db1657-70d7-485e-8e3e-6fcb5a5c1802")
 
-.comdef IModalWindow
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IModalWindow : public IUnknown
+
     Show		proc :HWND
+
     .ends
 
 endif
@@ -4380,11 +4129,10 @@ __ICDBurnExt_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICDBurnExt, "2271dcca-74fc-4414-8fb7-c56b05ace2d7")
 
-.comdef ICDBurnExt
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICDBurnExt : public IUnknown
+
     GetSupportedActionTypes proc :ptr
+
     .ends
 
 endif
@@ -4395,11 +4143,10 @@ __IContextMenuSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenuSite, "0811AEBE-0B87-4C54-9E72-548CF649016B")
 
-.comdef IContextMenuSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContextMenuSite : public IUnknown
+
     DoContextMenuPopup	proc :ptr, :UINT, :POINT
+
     .ends
 endif
 
@@ -4408,11 +4155,10 @@ __IEnumReadyCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumReadyCallback, "61E00D45-8FFF-4e60-924E-6537B61612DD")
 
-.comdef IEnumReadyCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumReadyCallback : public IUnknown
+
     EnumReady		proc
+
     .ends
 
 endif
@@ -4422,12 +4168,11 @@ __IEnumerableView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumerableView, "8C8BF236-1AEC-495f-9894-91D57C3C686F")
 
-.comdef IEnumerableView
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumerableView : public IUnknown
+
     SetEnumReadyCallback proc :ptr
     CreateEnumIDListFromContents proc :PCIDLIST_ABSOLUTE, :DWORD, :ptr
+
     .ends
 
 endif
@@ -4440,11 +4185,10 @@ __IInsertItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInsertItem, "D2B57227-3D23-4b95-93C0-492BD454C356")
 
-.comdef IInsertItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInsertItem : public IUnknown
+
     InsertItem		proc :PCUIDLIST_RELATIVE
+
     .ends
 
 endif
@@ -4459,12 +4203,11 @@ MBHANDCID_PIDLSELECT	equ 0
 
 DEFINE_IIDX(IMenuBand, "568804CD-CBD7-11d0-9816-00C04FD91972")
 
-.comdef IMenuBand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMenuBand : public IUnknown
+
     IsMenuMessage	proc :ptr
     TranslateMenuMessage proc :ptr, :ptr
+
     .ends
 
 endif
@@ -4474,14 +4217,13 @@ __IFolderBandPriv_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFolderBandPriv, "47c01f95-e185-412c-b5c5-4f27df965aea")
 
-.comdef IFolderBandPriv
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFolderBandPriv : public IUnknown
+
     SetCascade		proc :BOOL
     SetAccelerators	proc :BOOL
     SetNoIcons		proc :BOOL
     SetNoText		proc :BOOL
+
     .ends
 
 endif
@@ -4491,12 +4233,11 @@ __IRegTreeItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRegTreeItem, "A9521922-0812-4d44-9EC3-7FD38C726F3D")
 
-.comdef IRegTreeItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRegTreeItem : public IUnknown
+
     GetCheckState	proc :ptr
     SetCheckState	proc :BOOL
+
     .ends
 
 endif
@@ -4506,11 +4247,10 @@ __IImageRecompress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IImageRecompress, "505f1513-6b3e-4892-a272-59f8889a4d3e")
 
-.comdef IImageRecompress
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IImageRecompress : public IUnknown
+
     RecompressImage	proc :ptr, :SINT, :SINT, :SINT, :ptr, :ptr
+
     .ends
 
 endif
@@ -4524,15 +4264,14 @@ __IDeskBar_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBar, "EB0FE173-1A3A-11D0-89B3-00A0C90A90AC")
 
-.comdef IDeskBar
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDeskBar : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     SetClient		proc :ptr
     GetClient		proc :ptr
     OnPosRectChangeDB	proc :ptr
+
     .ends
 
 endif
@@ -4567,10 +4306,8 @@ MP_POPUPFLAGS		typedef SINT
 
 DEFINE_IIDX(IMenuPopup, "D1E7AFEB-6A2E-11d0-8C78-00C04FD918B4")
 
-.comdef IMenuPopup
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMenuPopup : public IUnknown
+
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
     SetClient		proc :ptr
@@ -4579,6 +4316,7 @@ DEFINE_IIDX(IMenuPopup, "D1E7AFEB-6A2E-11d0-8C78-00C04FD918B4")
     Popup		proc :ptr, :ptr, :MP_POPUPFLAGS
     OnSelect		proc :DWORD
     SetSubMenu		proc :ptr, :BOOL
+
     .ends
 
 endif
@@ -4599,15 +4337,14 @@ __IFileIsInUse_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileIsInUse, "64a1cbf0-3a1a-4461-9158-376969693950")
 
-.comdef IFileIsInUse
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileIsInUse : public IUnknown
+
     GetAppName		proc :ptr
     GetUsage		proc :ptr
     GetCapabilities	proc :ptr
     GetSwitchToHWND	proc :ptr
     CloseFile		proc
+
     .ends
 
 endif
@@ -4631,10 +4368,8 @@ __IFileDialogEvents_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileDialogEvents, "973510db-7d7f-452b-8975-74a85828d354")
 
-.comdef IFileDialogEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileDialogEvents : public IUnknown
+
     OnFileOk		proc :ptr
     OnFolderChanging	proc :ptr, :ptr
     OnFolderChange	proc :ptr
@@ -4642,6 +4377,7 @@ DEFINE_IIDX(IFileDialogEvents, "973510db-7d7f-452b-8975-74a85828d354")
     OnShareViolation	proc :ptr, :ptr, :ptr
     OnTypeChange	proc :ptr
     OnOverwrite		proc :ptr, :ptr, :ptr
+
     .ends
 
 endif
@@ -4675,10 +4411,8 @@ FILEOPENDIALOGOPTIONS	typedef DWORD
 
 DEFINE_IIDX(IFileDialog, "42f85136-db7e-439c-85f1-e4075d135fc8")
 
-.comdef IFileDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileDialog : public IUnknown
+
     Show		proc :HWND
     SetFileTypes	proc :UINT, :ptr
     SetFileTypeIndex	proc :UINT
@@ -4703,6 +4437,7 @@ DEFINE_IIDX(IFileDialog, "42f85136-db7e-439c-85f1-e4075d135fc8")
     SetClientGuid	proc :REFGUID
     ClearClientData	proc
     SetFilter		proc :ptr
+
     .ends
 
 endif
@@ -4712,39 +4447,14 @@ __IFileSaveDialog_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSaveDialog, "84bccd23-5fde-4cdb-aea4-af64b83d78ab")
 
-.comdef IFileSaveDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Show		proc :HWND
-    SetFileTypes	proc :UINT, :ptr
-    SetFileTypeIndex	proc :UINT
-    GetFileTypeIndex	proc :ptr
-    Advise		proc :ptr, :ptr
-    Unadvise		proc :DWORD
-    SetOptions		proc :FILEOPENDIALOGOPTIONS
-    GetOptions		proc :ptr
-    SetDefaultFolder	proc :ptr
-    SetFolder		proc :ptr
-    GetFolder		proc :ptr
-    GetCurrentSelection proc :ptr
-    SetFileName		proc :LPCWSTR
-    GetFileName		proc :ptr
-    SetTitle		proc :LPCWSTR
-    SetOkButtonLabel	proc :LPCWSTR
-    SetFileNameLabel	proc :LPCWSTR
-    GetResult		proc :ptr
-    AddPlace		proc :ptr, :FDAP
-    SetDefaultExtension proc :LPCWSTR
-    Close		proc :HRESULT
-    SetClientGuid	proc :REFGUID
-    ClearClientData	proc
-    SetFilter		proc :ptr
+.comdef IFileSaveDialog : public IFileDialog
+
     SetSaveAsItem	proc :ptr
     SetProperties	proc :ptr
     SetCollectedProperties proc :ptr, :BOOL
     GetProperties	proc :ptr
     ApplyProperties	proc :ptr, :ptr, :HWND, :ptr
+
     .ends
 
 endif
@@ -4754,36 +4464,11 @@ __IFileOpenDialog_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileOpenDialog, "d57c7288-d4ad-4768-be02-9d969532d960")
 
-.comdef IFileOpenDialog
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Show		proc :HWND
-    SetFileTypes	proc :UINT, :ptr
-    SetFileTypeIndex	proc :UINT
-    GetFileTypeIndex	proc :ptr
-    Advise		proc :ptr, :ptr
-    Unadvise		proc :DWORD
-    SetOptions		proc :FILEOPENDIALOGOPTIONS
-    GetOptions		proc :ptr
-    SetDefaultFolder	proc :ptr
-    SetFolder		proc :ptr
-    GetFolder		proc :ptr
-    GetCurrentSelection proc :ptr
-    SetFileName		proc :LPCWSTR
-    GetFileName		proc :ptr
-    SetTitle		proc :LPCWSTR
-    SetOkButtonLabel	proc :LPCWSTR
-    SetFileNameLabel	proc :LPCWSTR
-    GetResult		proc :ptr
-    AddPlace		proc :ptr, :FDAP
-    SetDefaultExtension proc :LPCWSTR
-    Close		proc :HRESULT
-    SetClientGuid	proc :REFGUID
-    ClearClientData	proc
-    SetFilter		proc :ptr
+.comdef IFileOpenDialog : public IFileDialog
+
     GetResults		proc :ptr
     GetSelectedItems	proc :ptr
+
     .ends
 
 endif
@@ -4801,10 +4486,8 @@ __IFileDialogCustomize_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileDialogCustomize, "e6fdd21a-163f-4975-9c8c-a69f1ba37034")
 
-.comdef IFileDialogCustomize
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileDialogCustomize : public IUnknown
+
     EnableOpenDropDown	proc :DWORD
     AddMenu		proc :DWORD, :LPCWSTR
     AddPushButton	proc :DWORD, :LPCWSTR
@@ -4832,6 +4515,7 @@ DEFINE_IIDX(IFileDialogCustomize, "e6fdd21a-163f-4975-9c8c-a69f1ba37034")
     EndVisualGroup	proc
     MakeProminent	proc :DWORD
     SetControlItemText	proc :DWORD, :DWORD, :LPCWSTR
+
     .ends
 
 endif
@@ -4841,14 +4525,13 @@ __IFileDialogControlEvents_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileDialogControlEvents, "36116642-D713-4b97-9B83-7484A9D00433")
 
-.comdef IFileDialogControlEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileDialogControlEvents : public IUnknown
+
     OnItemSelected	proc :ptr, :DWORD, :DWORD
     OnButtonClicked	proc :ptr, :DWORD
     OnCheckButtonToggled proc :ptr, :DWORD, :BOOL
     OnControlActivating proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -4858,36 +4541,11 @@ __IFileDialog2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileDialog2, "61744fc7-85b5-4791-a9b0-272276309b13")
 
-.comdef IFileDialog2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Show		proc :HWND
-    SetFileTypes	proc :UINT, :ptr
-    SetFileTypeIndex	proc :UINT
-    GetFileTypeIndex	proc :ptr
-    Advise		proc :ptr, :ptr
-    Unadvise		proc :DWORD
-    SetOptions		proc :FILEOPENDIALOGOPTIONS
-    GetOptions		proc :ptr
-    SetDefaultFolder	proc :ptr
-    SetFolder		proc :ptr
-    GetFolder		proc :ptr
-    GetCurrentSelection proc :ptr
-    SetFileName		proc :LPCWSTR
-    GetFileName		proc :ptr
-    SetTitle		proc :LPCWSTR
-    SetOkButtonLabel	proc :LPCWSTR
-    SetFileNameLabel	proc :LPCWSTR
-    GetResult		proc :ptr
-    AddPlace		proc :ptr, :FDAP
-    SetDefaultExtension proc :LPCWSTR
-    Close		proc :HRESULT
-    SetClientGuid	proc :REFGUID
-    ClearClientData	proc
-    SetFilter		proc :ptr
+.comdef IFileDialog2 : public IFileDialog
+
     SetCancelButtonLabel proc :LPCWSTR
     SetNavigationRoot	proc :ptr
+
     .ends
 
 endif
@@ -4908,16 +4566,15 @@ __IApplicationAssociationRegistration_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationAssociationRegistration, "4e530b0a-e611-4c77-a3ac-9031d022281b")
 
-.comdef IApplicationAssociationRegistration
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationAssociationRegistration : public IUnknown
+
     QueryCurrentDefault proc :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :ptr
     QueryAppIsDefault	proc :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
     QueryAppIsDefaultAll proc :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
     SetAppAsDefault	proc :LPCWSTR, :LPCWSTR, :ASSOCIATIONTYPE
     SetAppAsDefaultAll	proc :LPCWSTR
     ClearUserAssociations proc
+
     .ends
 
 endif
@@ -4932,11 +4589,10 @@ __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationAssociationRegistrationUI, "1f76a169-f994-40ac-8fc8-0959e8874710")
 
-.comdef IApplicationAssociationRegistrationUI
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationAssociationRegistrationUI : public IUnknown
+
     LaunchAdvancedAssociationUI proc :LPCWSTR
+
     .ends
 
 endif
@@ -4961,11 +4617,10 @@ __IDelegateFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDelegateFolder, "ADD8BA80-002B-11D0-8F0F-00C04FD7D062")
 
-.comdef IDelegateFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDelegateFolder : public IUnknown
+
     SetItemAlloc	proc :ptr
+
     .ends
 
 endif
@@ -4999,11 +4654,10 @@ BROWSERFRAMEOPTIONS	typedef DWORD
 
 DEFINE_IIDX(IBrowserFrameOptions, "10DF43C8-1DBE-11d3-8B34-006097DF5BD4")
 
-.comdef IBrowserFrameOptions
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBrowserFrameOptions : public IUnknown
+
     GetFrameOptions	proc :BROWSERFRAMEOPTIONS, :ptr
+
     .ends
 
 LPBROWSERFRAMEOPTIONS	typedef ptr IBrowserFrameOptions
@@ -5036,11 +4690,10 @@ __INewWindowManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INewWindowManager, "D2BC4C84-3F72-4a52-A604-7BCBF3982CBB")
 
-.comdef INewWindowManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INewWindowManager : public IUnknown
+
     EvaluateNewWindow	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD
+
     .ends
 
 endif
@@ -5061,10 +4714,8 @@ ATTACHMENT_ACTION_EXEC	equ 0x2
 
 DEFINE_IIDX(IAttachmentExecute, "73db1241-1e85-4581-8e4f-a81e1d0f8c57")
 
-.comdef IAttachmentExecute
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAttachmentExecute : public IUnknown
+
     SetClientTitle	proc :LPCWSTR
     SetClientGuid	proc :REFGUID
     SetLocalPath	proc :LPCWSTR
@@ -5077,6 +4728,7 @@ DEFINE_IIDX(IAttachmentExecute, "73db1241-1e85-4581-8e4f-a81e1d0f8c57")
     Execute		proc :HWND, :LPCWSTR, :ptr
     SaveWithUI		proc :HWND
     ClearClientState	proc
+
     .ends
 
 endif
@@ -5185,11 +4837,10 @@ __IShellMenuCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellMenuCallback, "4CA300A1-9B8D-11d1-8B22-00C04FD918D0")
 
-.comdef IShellMenuCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellMenuCallback : public IUnknown
+
     CallbackSM		proc :LPSMDATA, :UINT, :WPARAM, :LPARAM
+
     .ends
 
 endif
@@ -5217,10 +4868,8 @@ __IShellMenu_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellMenu, "EE1F7637-E138-11d1-8379-00C04FD918D0")
 
-.comdef IShellMenu
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellMenu : public IUnknown
+
     Initialize		proc :ptr, :UINT, :UINT, :DWORD
     GetMenuInfo		proc :ptr, :ptr, :ptr, :ptr
     SetShellFolder	proc :ptr, :PCIDLIST_ABSOLUTE, :HKEY, :DWORD
@@ -5230,6 +4879,7 @@ DEFINE_IIDX(IShellMenu, "EE1F7637-E138-11d1-8379-00C04FD918D0")
     InvalidateItem	proc :LPSMDATA, :DWORD
     GetState		proc :LPSMDATA
     SetMenuToolbar	proc :ptr, :DWORD
+
     .ends
 
 endif
@@ -5240,11 +4890,10 @@ __IShellRunDll_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellRunDll, "fce4bde0-4b68-4b80-8e9c-7426315a7388")
 
-.comdef IShellRunDll
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellRunDll : public IUnknown
+
     Run			proc :LPCWSTR
+
     .ends
 
 endif
@@ -5305,10 +4954,8 @@ __IKnownFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IKnownFolder, "3AA7AF7E-9B36-420c-A8E3-F77D4674A488")
 
-.comdef IKnownFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IKnownFolder : public IUnknown
+
     GetId		proc :ptr
     GetCategory		proc :ptr
     GetShellItem	proc :DWORD, :REFIID, :ptr
@@ -5318,6 +4965,7 @@ DEFINE_IIDX(IKnownFolder, "3AA7AF7E-9B36-420c-A8E3-F77D4674A488")
     GetFolderType	proc :ptr
     GetRedirectionCapabilities proc :ptr
     GetFolderDefinition proc :ptr
+
     .ends
 
 endif
@@ -5331,10 +4979,8 @@ FFFP_NEARESTPARENTMATCH equ ( FFFP_EXACTMATCH + 1 )
 
 DEFINE_IIDX(IKnownFolderManager, "8BE2D872-86AA-4d47-B776-32CCA40C7018")
 
-.comdef IKnownFolderManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IKnownFolderManager : public IUnknown
+
     FolderIdFromCsidl	proc :SINT, :ptr
     FolderIdToCsidl	proc :REFKNOWNFOLDERID, :ptr
     GetFolderIds	proc :ptr, :ptr
@@ -5345,6 +4991,7 @@ DEFINE_IIDX(IKnownFolderManager, "8BE2D872-86AA-4d47-B776-32CCA40C7018")
     FindFolderFromPath	proc :LPCWSTR, :FFFP_MODE, :ptr
     FindFolderFromIDList proc :PCIDLIST_ABSOLUTE, :ptr
     Redirect		proc :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr, :ptr
+
     .ends
 
 endif
@@ -5367,10 +5014,8 @@ __ISharingConfigurationManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISharingConfigurationManager, "B4CD448A-9C86-4466-9201-2E62105B87AE")
 
-.comdef ISharingConfigurationManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISharingConfigurationManager : public IUnknown
+
     CreateShare		proc :DEF_SHARE_ID, :SHARE_ROLE
     DeleteShare		proc :DEF_SHARE_ID
     ShareExists		proc :DEF_SHARE_ID
@@ -5378,6 +5023,7 @@ DEFINE_IIDX(ISharingConfigurationManager, "B4CD448A-9C86-4466-9201-2E62105B87AE"
     SharePrinters	proc
     StopSharingPrinters proc
     ArePrintersShared	proc
+
     .ends
 
 endif
@@ -5388,11 +5034,10 @@ __IPreviousVersionsInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPreviousVersionsInfo, "76e54780-ad74-48e3-a695-3ba9a0aff10d")
 
-.comdef IPreviousVersionsInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPreviousVersionsInfo : public IUnknown
+
     AreSnapshotsAvailable proc :LPCWSTR, :BOOL, :ptr
+
     .ends
 
 endif
@@ -5404,12 +5049,11 @@ __IRelatedItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRelatedItem, "a73ce67a-8ab1-44f1-8d43-d2fcbf6b1cd0")
 
-.comdef IRelatedItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IRelatedItem : public IUnknown
+
     GetItemIDList	proc :ptr
     GetItem		proc :ptr
+
     .ends
 
 endif
@@ -5419,12 +5063,8 @@ __IIdentityName_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IIdentityName, "7d903fca-d6f9-4810-8332-946c0177e247")
 
-.comdef IIdentityName
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IIdentityName : public IRelatedItem
+
     .ends
 
 endif
@@ -5434,12 +5074,8 @@ __IDelegateItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDelegateItem, "3c5a1c94-c951-4cb7-bb6d-3b93f30cce93")
 
-.comdef IDelegateItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IDelegateItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5449,12 +5085,8 @@ __ICurrentItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICurrentItem, "240a7174-d653-4a1d-a6d3-d4943cfbfe3d")
 
-.comdef ICurrentItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef ICurrentItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5464,12 +5096,8 @@ __ITransferMediumItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITransferMediumItem, "77f295d5-2d6f-4e19-b8ae-322f3e721ab5")
 
-.comdef ITransferMediumItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef ITransferMediumItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5479,12 +5107,8 @@ __IUseToBrowseItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUseToBrowseItem, "05edda5c-98a3-4717-8adb-c5e7da991eb1")
 
-.comdef IUseToBrowseItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IUseToBrowseItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5494,12 +5118,8 @@ __IDisplayItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDisplayItem, "c6fd5997-9f6b-4888-8703-94e80e8cde3f")
 
-.comdef IDisplayItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IDisplayItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5509,12 +5129,8 @@ __IViewStateIdentityItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IViewStateIdentityItem, "9D264146-A94F-4195-9F9F-3BB12CE0C955")
 
-.comdef IViewStateIdentityItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IViewStateIdentityItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5524,12 +5140,8 @@ __IPreviewItem_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPreviewItem, "36149969-0A8F-49c8-8B00-4AECB20222FB")
 
-.comdef IPreviewItem
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetItemIDList	proc :ptr
-    GetItem		proc :ptr
+.comdef IPreviewItem : public IRelatedItem
+
     .ends
 
 endif
@@ -5540,11 +5152,10 @@ __IDestinationStreamFactory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDestinationStreamFactory, "8a87781b-39a7-4a1f-aab3-a39b9c34a7d9")
 
-.comdef IDestinationStreamFactory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDestinationStreamFactory : public IUnknown
+
     GetDestinationStream proc :ptr
+
     .ends
 
 endif
@@ -5564,12 +5175,11 @@ __INewMenuClient_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INewMenuClient, "dcb07fdc-3bb5-451c-90be-966644fed7b0")
 
-.comdef INewMenuClient
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INewMenuClient : public IUnknown
+
     IncludeItems	proc :ptr
     SelectAndEditItem	proc :PCIDLIST_ABSOLUTE, :NMCSAEI_FLAGS
+
     .ends
 
 endif
@@ -5584,11 +5194,10 @@ __IInitializeWithBindCtx_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithBindCtx, "71c0d2bc-726d-45cc-a6c0-2e31c1db2159")
 
-.comdef IInitializeWithBindCtx
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeWithBindCtx : public IUnknown
+
     Initialize		proc :ptr
+
     .ends
 
 endif
@@ -5598,12 +5207,11 @@ __IShellItemFilter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellItemFilter, "2659B475-EEB8-48b7-8F07-B378810F48CF")
 
-.comdef IShellItemFilter
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellItemFilter : public IUnknown
+
     IncludeItem		proc :ptr
     GetEnumFlagsForItem proc :ptr, :ptr
+
     .ends
 
 endif
@@ -5669,10 +5277,8 @@ NSTCGNI_LASTVISIBLE	equ 7
 
 DEFINE_IIDX(INameSpaceTreeControl, "028212A3-B627-47e9-8856-C14265554E4F")
 
-.comdef INameSpaceTreeControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeControl : public IUnknown
+
     Initialize		proc :HWND, :ptr, :NSTCSTYLE
     TreeAdvise		proc :ptr, :ptr
     TreeUnadvise	proc :DWORD
@@ -5692,6 +5298,7 @@ DEFINE_IIDX(INameSpaceTreeControl, "028212A3-B627-47e9-8856-C14265554E4F")
     HitTest		proc :ptr, :ptr
     GetItemRect		proc :ptr, :ptr
     CollapseAll		proc
+
     .ends
 
 endif
@@ -5712,33 +5319,13 @@ DEFINE_ENUM_FLAG_OPERATORS(NSTCSTYLE2)
 
 DEFINE_IIDX(INameSpaceTreeControl2, "7cc7aed8-290e-49bc-8945-c1401cc9306c")
 
-.comdef INameSpaceTreeControl2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Initialize		proc :HWND, :ptr, :NSTCSTYLE
-    TreeAdvise		proc :ptr, :ptr
-    TreeUnadvise	proc :DWORD
-    AppendRoot		proc :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-    InsertRoot		proc :SINT, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-    RemoveRoot		proc :ptr
-    RemoveAllRoots	proc
-    GetRootItems	proc :ptr
-    SetItemState	proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
-    GetItemState	proc :ptr, :NSTCITEMSTATE, :ptr
-    GetSelectedItems	proc :ptr
-    GetItemCustomState	proc :ptr, :ptr
-    SetItemCustomState	proc :ptr, :SINT
-    EnsureItemVisible	proc :ptr
-    SetTheme		proc :LPCWSTR
-    GetNextItem		proc :ptr, :NSTCGNI, :ptr
-    HitTest		proc :ptr, :ptr
-    GetItemRect		proc :ptr, :ptr
-    CollapseAll		proc
+.comdef INameSpaceTreeControl2 : public INameSpaceTreeControl
+
     SetControlStyle	proc :NSTCSTYLE, :NSTCSTYLE
     GetControlStyle	proc :NSTCSTYLE, :ptr
     SetControlStyle2	proc :NSTCSTYLE2, :NSTCSTYLE2
     GetControlStyle2	proc :NSTCSTYLE2, :ptr
+
     .ends
 
 endif
@@ -5782,10 +5369,8 @@ NSTCECLICKTYPE		typedef DWORD
 
 DEFINE_IIDX(INameSpaceTreeControlEvents, "93D77985-B3D8-4484-8318-672CDDA002CE")
 
-.comdef INameSpaceTreeControlEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeControlEvents : public IUnknown
+
     OnItemClick		proc :ptr, :NSTCEHITTEST, :NSTCECLICKTYPE
     OnPropertyItemCommit proc :ptr
     OnItemStateChanging proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
@@ -5816,16 +5401,15 @@ __INameSpaceTreeControlDropHandler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INameSpaceTreeControlDropHandler, "F9C665D6-C2F2-4c19-BF33-8322D7352F51")
 
-.comdef INameSpaceTreeControlDropHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeControlDropHandler : public IUnknown
+
     OnDragEnter		proc :ptr, :ptr, :BOOL, :DWORD, :ptr
     OnDragOver		proc :ptr, :ptr, :DWORD, :ptr
     OnDragPosition	proc :ptr, :ptr, :SINT, :SINT
     OnDrop		proc :ptr, :ptr, :SINT, :DWORD, :ptr
     OnDropPosition	proc :ptr, :ptr, :SINT, :SINT
     OnDragLeave		proc :ptr
+
     .ends
 
 endif
@@ -5835,13 +5419,12 @@ __INameSpaceTreeAccessible_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INameSpaceTreeAccessible, "71f312de-43ed-4190-8477-e9536b82350b")
 
-.comdef INameSpaceTreeAccessible
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeAccessible : public IUnknown
+
     OnGetDefaultAccessibilityAction proc :ptr, :ptr
     OnDoDefaultAccessibilityAction proc :ptr
     OnGetAccessibilityRole proc :ptr, :ptr
+
     .ends
 
 endif
@@ -5862,14 +5445,13 @@ NSTCCUSTOMDRAW		ENDS
 
 DEFINE_IIDX(INameSpaceTreeControlCustomDraw, "2D3BA758-33EE-42d5-BB7B-5F3431D86C78")
 
-.comdef INameSpaceTreeControlCustomDraw
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeControlCustomDraw : public IUnknown
+
     PrePaSINT		proc :HDC, :ptr, :ptr
     PostPaSINT		proc :HDC, :ptr
     ItemPrePaSINT	proc :HDC, :ptr, :ptr, :ptr, :ptr, :ptr
     ItemPostPaSINT	proc :HDC, :ptr, :ptr
+
     .ends
 
 endif
@@ -5888,11 +5470,10 @@ DEFINE_ENUM_FLAG_OPERATORS(NSTCFOLDERCAPABILITIES)
 
 DEFINE_IIDX(INameSpaceTreeControlFolderCapabilities, "e9701183-e6b3-4ff2-8568-813615fec7be")
 
-.comdef INameSpaceTreeControlFolderCapabilities
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INameSpaceTreeControlFolderCapabilities : public IUnknown
+
     GetFolderCapabilities proc :NSTCFOLDERCAPABILITIES, :ptr
+
     .ends
 
 endif
@@ -5908,10 +5489,8 @@ __IPreviewHandler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPreviewHandler, "8895b1c6-b41f-4c1c-a562-0d564250836f")
 
-.comdef IPreviewHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPreviewHandler : public IUnknown
+
     SetWindow		proc :HWND, :ptr
     SetRect		proc :ptr
     DoPreview		proc
@@ -5919,6 +5498,7 @@ DEFINE_IIDX(IPreviewHandler, "8895b1c6-b41f-4c1c-a562-0d564250836f")
     SetFocus		proc
     QueryFocus		proc :ptr
     TranslateAccelerator proc :ptr
+
     .ends
 
 endif
@@ -5933,12 +5513,11 @@ PREVIEWHANDLERFRAMEINFO ENDS
 
 DEFINE_IIDX(IPreviewHandlerFrame, "fec87aaf-35f9-447a-adb7-20234491401a")
 
-.comdef IPreviewHandlerFrame
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPreviewHandlerFrame : public IUnknown
+
     GetWindowContext	proc :ptr
     TranslateAccelerator proc :ptr
+
     .ends
 
 endif
@@ -5950,14 +5529,13 @@ __ITrayDeskBand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ITrayDeskBand, "6D67E846-5B9C-4db8-9CBC-DDE12F4254F1")
 
-.comdef ITrayDeskBand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ITrayDeskBand : public IUnknown
+
     ShowDeskBand	proc :REFCLSID
     HideDeskBand	proc :REFCLSID
     IsDeskBandShown	proc :REFCLSID
     DeskBandRegistrationChanged proc
+
     .ends
 
 endif
@@ -5967,13 +5545,12 @@ __IBandHost_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBandHost, "B9075C7C-D48E-403f-AB99-D6C77A1084AC")
 
-.comdef IBandHost
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IBandHost : public IUnknown
+
     CreateBand		proc :REFCLSID, :BOOL, :BOOL, :REFIID, :ptr
     SetBandAvailability proc :REFCLSID, :BOOL
     DestroyBand		proc :REFCLSID
+
     .ends
 
 endif
@@ -5995,11 +5572,10 @@ EXPLORERPANESTATE	typedef DWORD
 
 DEFINE_IIDX(IExplorerPaneVisibility, "e07010ec-bc17-44c0-97b0-46c7c95b9edc")
 
-.comdef IExplorerPaneVisibility
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerPaneVisibility : public IUnknown
+
     GetPaneState	proc :REFEXPLORERPANE, :ptr
+
     .ends
 
 endif
@@ -6011,11 +5587,10 @@ __IContextMenuCB_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenuCB, "3409E930-5A39-11d1-83FA-00A0C90DC849")
 
-.comdef IContextMenuCB
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContextMenuCB : public IUnknown
+
     CallBack		proc :ptr, :HWND, :ptr, :UINT, :WPARAM, :LPARAM
+
     .ends
 
 LPIContextMenuCB	typedef ptr IContextMenuCB
@@ -6028,16 +5603,15 @@ __IDefaultExtractIconInit_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDefaultExtractIconInit, "41ded17d-d6b3-4261-997d-88c60e4b1d58")
 
-.comdef IDefaultExtractIconInit
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDefaultExtractIconInit : public IUnknown
+
     SetFlags		proc :UINT
     SetKey		proc :HKEY
     SetNormalIcon	proc :LPCWSTR, :SINT
     SetOpenIcon		proc :LPCWSTR, :SINT
     SetShortcutIcon	proc :LPCWSTR, :SINT
     SetDefaultIcon	proc :LPCWSTR, :SINT
+
     .ends
 
 endif
@@ -6071,10 +5645,8 @@ EXPCMDFLAGS		typedef DWORD
 
 DEFINE_IIDX(IExplorerCommand, "a08ce4d0-fa25-44ab-b57c-c7b1c323e0b9")
 
-.comdef IExplorerCommand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerCommand : public IUnknown
+
     GetTitle		proc :ptr, :ptr
     GetIcon		proc :ptr, :ptr
     GetToolTip		proc :ptr, :ptr
@@ -6083,6 +5655,7 @@ DEFINE_IIDX(IExplorerCommand, "a08ce4d0-fa25-44ab-b57c-c7b1c323e0b9")
     _Invoke		proc :ptr, :ptr
     GetFlags		proc :ptr
     EnumSubCommands	proc :ptr
+
     .ends
 
 endif
@@ -6092,11 +5665,10 @@ __IExplorerCommandState_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExplorerCommandState, "bddacb60-7657-47ae-8445-d23e1acf82ae")
 
-.comdef IExplorerCommandState
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerCommandState : public IUnknown
+
     GetState		proc :ptr, :BOOL, :ptr
+
     .ends
 
 endif
@@ -6106,11 +5678,10 @@ __IInitializeCommand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeCommand, "85075acf-231f-40ea-9610-d26b7b58f638")
 
-.comdef IInitializeCommand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeCommand : public IUnknown
+
     Initialize		proc :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -6120,14 +5691,13 @@ __IEnumExplorerCommand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumExplorerCommand, "a88826f8-186f-4987-aade-ea0cef8fbfe8")
 
-.comdef IEnumExplorerCommand
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumExplorerCommand : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -6137,12 +5707,11 @@ __IExplorerCommandProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExplorerCommandProvider, "64961751-0835-43c0-8ffe-d57686530e64")
 
-.comdef IExplorerCommandProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IExplorerCommandProvider : public IUnknown
+
     GetCommands		proc :ptr, :REFIID, :ptr
     GetCommand		proc :REFGUID, :REFIID, :ptr
+
     .ends
 
 endif
@@ -6152,15 +5721,14 @@ __IMarkupCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMarkupCallback, "4440306e-d79a-48d0-88e6-a42692279bfb")
 
-.comdef IMarkupCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IMarkupCallback : public IUnknown
+
     GetState		proc :DWORD, :UINT
     Notify		proc :DWORD, :SINT, :SINT
     InvalidateRect	proc :DWORD, :ptr
     OnCustomDraw	proc :DWORD, :HDC, :ptr, :DWORD, :SINT, :UINT, :ptr
     CustomDrawText	proc :HDC, :LPCWSTR, :SINT, :ptr, :UINT, :BOOL
+
     .ends
 
 endif
@@ -6194,10 +5762,8 @@ MARKUPMESSAGE_WANTFOCUS equ ( MARKUPMESSAGE_CLICKEXECUTE + 1 )
 
 DEFINE_IIDX(IControlMarkup, "D6D2FBAE-F116-458c-8C34-03569877A2D2")
 
-.comdef IControlMarkup
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IControlMarkup : public IUnknown
+
     SetCallback		proc :ptr
     GetCallback		proc :REFIID, :ptr
     SetId		proc :DWORD
@@ -6226,6 +5792,7 @@ DEFINE_IIDX(IControlMarkup, "D6D2FBAE-F116-458c-8C34-03569877A2D2")
     GetLinkRect		proc :SINT, :ptr
     GetControlRect	proc :ptr
     GetLinkCount	proc :ptr
+
     .ends
 
 endif
@@ -6235,11 +5802,10 @@ __IInitializeNetworkFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeNetworkFolder, "6e0f9881-42a8-4f2a-97f8-8af4e026d92d")
 
-.comdef IInitializeNetworkFolder
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeNetworkFolder : public IUnknown
+
     Initialize		proc :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE, :UINT, :LPCWSTR, :LPCWSTR
+
     .ends
 
 endif
@@ -6255,13 +5821,12 @@ __IOpenControlPanel_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOpenControlPanel, "D11AD862-66DE-4DF4-BF6C-1F5621996AF1")
 
-.comdef IOpenControlPanel
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOpenControlPanel : public IUnknown
+
     Open		proc :LPCWSTR, :LPCWSTR, :ptr
     GetPath		proc :LPCWSTR, :LPWSTR, :UINT
     GetCurrentView	proc :ptr
+
     .ends
 
 endif
@@ -6271,11 +5836,10 @@ __IComputerInfoChangeNotify_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IComputerInfoChangeNotify, "0DF60D92-6818-46d6-B358-D66170DDE466")
 
-.comdef IComputerInfoChangeNotify
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IComputerInfoChangeNotify : public IUnknown
+
     ComputerInfoChanged proc
+
     .ends
 
 endif
@@ -6287,12 +5851,11 @@ __IFileSystemBindData_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSystemBindData, "01E18D10-4D8B-11d2-855D-006008059367")
 
-.comdef IFileSystemBindData
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileSystemBindData : public IUnknown
+
     SetFindData		proc :ptr
     GetFindData		proc :ptr
+
     .ends
 
 endif
@@ -6302,16 +5865,15 @@ __IFileSystemBindData2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSystemBindData2, "3acf075f-71db-4afa-81f0-3fc4fdf2a5b8")
 
-.comdef IFileSystemBindData2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFileSystemBindData2 : public IUnknown
+
     SetFindData		proc :ptr
     GetFindData		proc :ptr
     SetFileID		proc :LARGE_INTEGER
     GetFileID		proc :ptr
     SetJunctionCLSID	proc :REFCLSID
     GetJunctionCLSID	proc :ptr
+
     .ends
 
 endif
@@ -6327,10 +5889,8 @@ KDC_RECENT		equ ( KDC_FREQUENT + 1 )
 
 DEFINE_IIDX(ICustomDestinationList, "6332debf-87b5-4670-90c0-5e57b408a49e")
 
-.comdef ICustomDestinationList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ICustomDestinationList : public IUnknown
+
     SetAppID		proc :LPCWSTR
     BeginList		proc :ptr, :REFIID, :ptr
     AppendCategory	proc :LPCWSTR, :ptr
@@ -6340,6 +5900,7 @@ DEFINE_IIDX(ICustomDestinationList, "6332debf-87b5-4670-90c0-5e57b408a49e")
     GetRemovedDestinations proc :REFIID, :ptr
     DeleteList		proc :LPCWSTR
     AbortList		proc
+
     .ends
 
 endif
@@ -6349,13 +5910,12 @@ __IApplicationDestinations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationDestinations, "12337d35-94c6-48a0-bce7-6a9c69d4d600")
 
-.comdef IApplicationDestinations
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationDestinations : public IUnknown
+
     SetAppID		proc :LPCWSTR
     RemoveDestination	proc :ptr
     RemoveAllDestinations proc
+
     .ends
 
 endif
@@ -6369,12 +5929,11 @@ ADLT_FREQUENT		equ ( ADLT_RECENT + 1 )
 
 DEFINE_IIDX(IApplicationDocumentLists, "3c594f9f-9f30-47a1-979a-c9e83d3d0a06")
 
-.comdef IApplicationDocumentLists
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationDocumentLists : public IUnknown
+
     SetAppID		proc :LPCWSTR
     GetList		proc :APPDOCLISTTYPE, :UINT, :REFIID, :ptr
+
     .ends
 
 endif
@@ -6384,12 +5943,11 @@ __IObjectWithAppUserModelID_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithAppUserModelID, "36db0196-9665-46d1-9ba7-d3709eecf9ed")
 
-.comdef IObjectWithAppUserModelID
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithAppUserModelID : public IUnknown
+
     SetAppID		proc :LPCWSTR
     GetAppID		proc :ptr
+
     .ends
 
 endif
@@ -6399,12 +5957,11 @@ __IObjectWithProgID_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithProgID, "71e806fb-8dee-46fc-bf8c-7748a8a1ae13")
 
-.comdef IObjectWithProgID
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithProgID : public IUnknown
+
     SetProgID		proc :LPCWSTR
     GetProgID		proc :ptr
+
     .ends
 
 endif
@@ -6414,11 +5971,10 @@ __IUpdateIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IUpdateIDList, "6589b6d2-5f8d-4b9e-b7e0-23cdd9717d8c")
 
-.comdef IUpdateIDList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IUpdateIDList : public IUnknown
+
     Update		proc :ptr, :PCUITEMID_CHILD, :ptr
+
     .ends
 
 endif
@@ -6439,11 +5995,10 @@ __IDesktopGadget_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDesktopGadget, "c1646bc4-f298-4f91-a204-eb2dd1709d1a")
 
-.comdef IDesktopGadget
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDesktopGadget : public IUnknown
+
     RunGadget		proc :LPCWSTR
+
     .ends
 
 endif
@@ -6479,10 +6034,8 @@ DWPOS_SPAN		equ 5
 
 DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
 
-.comdef IDesktopWallpaper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDesktopWallpaper : public IUnknown
+
     SetWallpaper	proc :LPCWSTR, :LPCWSTR
     GetWallpaper	proc :LPCWSTR, :ptr LPWSTR
     GetMonitorDevicePathAt proc :UINT, :ptr LPWSTR
@@ -6499,6 +6052,7 @@ DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
     AdvanceSlideshow	proc :LPCWSTR, :DESKTOP_SLIDESHOW_DIRECTION
     GetStatus		proc :ptr DESKTOP_SLIDESHOW_STATE
     Enable		proc :BOOL
+
     .ends
 
 endif
@@ -6521,12 +6075,11 @@ DEFINE_ENUM_FLAG_OPERATORS(HOMEGROUPSHARINGCHOICES)
 
 DEFINE_IIDX(IHomeGroup, "7a3bd1d9-35a9-4fb3-a467-f48cac35e2d0")
 
-.comdef IHomeGroup
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IHomeGroup : public IUnknown
+
     IsMember		proc :ptr
     ShowSharingWizard	proc :HWND, :ptr
+
     .ends
 
 endif
@@ -6536,11 +6089,10 @@ __IInitializeWithPropertyStore_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithPropertyStore, "C3E12EB5-7D8D-44f8-B6DD-0E77B34D6DE4")
 
-.comdef IInitializeWithPropertyStore
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IInitializeWithPropertyStore : public IUnknown
+
     Initialize		proc :ptr
+
     .ends
 
 endif
@@ -6550,11 +6102,10 @@ __IOpenSearchSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOpenSearchSource, "F0EE7333-E6FC-479b-9F25-A860C234A38E")
 
-.comdef IOpenSearchSource
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOpenSearchSource : public IUnknown
+
     GetResults		proc :HWND, :LPCWSTR, :DWORD, :DWORD, :REFIID, :ptr
+
     .ends
 
 endif
@@ -6588,10 +6139,8 @@ DEFINE_ENUM_FLAG_OPERATORS(LIBRARYSAVEFLAGS)
 
 DEFINE_IIDX(IShellLibrary, "11a66efa-382e-451a-9234-1e0e12ef3085")
 
-.comdef IShellLibrary
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellLibrary : public IUnknown
+
     LoadLibraryFromItem proc :ptr, :DWORD
     LoadLibraryFromKnownFolder proc :REFKNOWNFOLDERID, :DWORD
     AddFolder		proc :ptr
@@ -6609,6 +6158,7 @@ DEFINE_IIDX(IShellLibrary, "11a66efa-382e-451a-9234-1e0e12ef3085")
     Commit		proc
     Save		proc :ptr, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
     SaveInKnownFolder	proc :REFKNOWNFOLDERID, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
+
     .ends
 
 endif
@@ -6631,14 +6181,13 @@ __IDefaultFolderMenuInitialize_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IDefaultFolderMenuInitialize, "7690aa79-f8fc-4615-a327-36f7d18f5d91")
 
-.comdef IDefaultFolderMenuInitialize
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDefaultFolderMenuInitialize : public IUnknown
+
     Initialize		proc :HWND, :ptr, :ptr, :ptr, :UINT, :ptr, :ptr, :UINT, :ptr
     SetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS
     GetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS, :ptr DEFAULT_FOLDER_MENU_RESTRICTIONS
     SetHandlerClsid	proc :REFCLSID
+
     .ends
 
 endif
@@ -6658,13 +6207,12 @@ __IApplicationActivationManager_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IApplicationActivationManager, "2e941141-7f97-4756-ba1d-9decde894a3d")
 
-.comdef IApplicationActivationManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IApplicationActivationManager : public IUnknown
+
     ActivateApplication proc :LPCWSTR, :LPCWSTR, :ACTIVATEOPTIONS, :ptr DWORD
     ActivateForFile	proc :LPCWSTR, :ptr IShellItemArray, :LPCWSTR, :ptr DWORD
     ActivateForProtocol proc :LPCWSTR, :ptr IShellItemArray, :ptr DWORD
+
     .ends
 
 endif
@@ -6784,12 +6332,11 @@ __IAssocHandlerInvoker_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAssocHandlerInvoker, "92218CAB-ECAA-4335-8133-807FD234C2EE")
 
-.comdef IAssocHandlerInvoker
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAssocHandlerInvoker : public IUnknown
+
     SupportsSelection	proc
     _Invoke		proc
+
     .ends
 
 endif
@@ -6799,10 +6346,8 @@ __IAssocHandler_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAssocHandler, "F04061AC-1659-4a3f-A954-775AA57FC083")
 
-.comdef IAssocHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAssocHandler : public IUnknown
+
     GetName		proc :ptr
     GetUIName		proc :ptr
     GetIconLocation	proc :ptr, :ptr
@@ -6810,6 +6355,7 @@ DEFINE_IIDX(IAssocHandler, "F04061AC-1659-4a3f-A954-775AA57FC083")
     MakeDefault		proc :LPCWSTR
     _Invoke		proc :ptr
     CreateInvoker	proc :ptr, :ptr
+
     .ends
 
 endif
@@ -6819,11 +6365,10 @@ __IEnumAssocHandlers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumAssocHandlers, "973810ae-9599-4b88-9e4d-6ee98c9552da")
 
-.comdef IEnumAssocHandlers
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumAssocHandlers : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
+
     .ends
 
 endif
@@ -6857,12 +6402,11 @@ __IDataObjectProvider_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IDataObjectProvider, "3D25F6D6-4B2A-433c-9184-7C33AD35D001")
 
-.comdef IDataObjectProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDataObjectProvider : public IUnknown
+
     GetDataObject	proc :ptr ptr IDataObject
     SetDataObject	proc :ptr IDataObject
+
     .ends
 
 endif
@@ -6872,12 +6416,11 @@ __IDataTransferManagerInterop_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IDataTransferManagerInterop, "3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")
 
-.comdef IDataTransferManagerInterop
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDataTransferManagerInterop : public IUnknown
+
     GetForWindow	proc :HWND, :REFIID, :ptr ptr
     ShowShareUIForWindow proc :HWND
+
     .ends
 
 endif
@@ -6891,12 +6434,11 @@ __IFrameworkInputPaneHandler_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IFrameworkInputPaneHandler, "226C537B-1E76-4D9E-A760-33DB29922F18")
 
-.comdef IFrameworkInputPaneHandler
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFrameworkInputPaneHandler : public IUnknown
+
     Showing		proc :ptr RECT, :BOOL
     Hiding		proc :BOOL
+
     .ends
 
 endif
@@ -6906,14 +6448,13 @@ __IFrameworkInputPane_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IFrameworkInputPane, "5752238B-24F0-495A-82F1-2FD593056796")
 
-.comdef IFrameworkInputPane
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFrameworkInputPane : public IUnknown
+
     Advise		proc :ptr IUnknown, :ptr IFrameworkInputPaneHandler, :ptr DWORD
     AdviseWithHWND	proc :HWND, :ptr IFrameworkInputPaneHandler, :ptr DWORD
     Unadvise		proc :DWORD
     Location		proc :ptr RECT
+
     .ends
 
 endif
@@ -6948,11 +6489,10 @@ __IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IAccessibilityDockingServiceCallback, "157733FD-A592-42E5-B594-248468C5A81B")
 
-.comdef IAccessibilityDockingServiceCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAccessibilityDockingServiceCallback : public IUnknown
+
     Undocked		proc :UNDOCK_REASON
+
     .ends
 
 endif
@@ -6962,13 +6502,12 @@ __IAccessibilityDockingService_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IAccessibilityDockingService, "8849DC22-CEDF-4C95-998D-051419DD3F76")
 
-.comdef IAccessibilityDockingService
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAccessibilityDockingService : public IUnknown
+
     GetAvailableSize	proc :HMONITOR, :ptr UINT, :ptr UINT
     DockWindow		proc :HWND, :HMONITOR, :UINT, :ptr IAccessibilityDockingServiceCallback
     UndockWindow	proc :HWND
+
     .ends
 
 endif
@@ -6983,12 +6522,11 @@ __IAppVisibilityEvents_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IAppVisibilityEvents, "6584CE6B-7D82-49C2-89C9-C6BC02BA8C38")
 
-.comdef IAppVisibilityEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAppVisibilityEvents : public IUnknown
+
     AppVisibilityOnMonitorChanged proc :HMONITOR, :MONITOR_APP_VISIBILITY, :MONITOR_APP_VISIBILITY
     LauncherVisibilityChange proc :BOOL
+
     .ends
 
 endif
@@ -6998,14 +6536,13 @@ __IAppVisibility_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IAppVisibility, "2246EA2D-CAEA-4444-A3C4-6DE827E44313")
 
-.comdef IAppVisibility
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IAppVisibility : public IUnknown
+
     GetAppVisibilityOnMonitor proc :HMONITOR, :ptr MONITOR_APP_VISIBILITY
     IsLauncherVisible	proc :ptr BOOL
     Advise		proc :ptr IAppVisibilityEvents, :ptr DWORD
     Unadvise		proc :DWORD
+
     .ends
 
 endif
@@ -7022,11 +6559,10 @@ __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IPackageExecutionStateChangeNotification, "1BB12A62-2AD8-432B-8CCF-0C2C52AFCD5B")
 
-.comdef IPackageExecutionStateChangeNotification
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPackageExecutionStateChangeNotification : public IUnknown
+
     OnStateChanged	proc :LPCWSTR, :PACKAGE_EXECUTION_STATE
+
     .ends
 
 endif
@@ -7036,11 +6572,8 @@ __IPackageDebugSettings_INTERFACE_DEFINED__ equ <>
 
 DEFINE_IIDX(IPackageDebugSettings, "F27C3930-8029-4AD1-94E3-3DBA417810C1")
 
-.comdef IPackageDebugSettings
+.comdef IPackageDebugSettings : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     EnableDebugging	proc :LPCWSTR, :LPCWSTR, :PZZWSTR
     DisableDebugging	proc :LPCWSTR
     Suspend		proc :LPCWSTR
@@ -7056,6 +6589,7 @@ DEFINE_IIDX(IPackageDebugSettings, "F27C3930-8029-4AD1-94E3-3DBA417810C1")
     GetPackageExecutionState proc :LPCWSTR, :ptr
     RegisterForPackageStateChanges proc :LPCWSTR, :ptr, :ptr
     UnregisterForPackageStateChanges proc :DWORD
+
     .ends
 
 endif
@@ -7065,14 +6599,12 @@ __ISuspensionDependencyManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISuspensionDependencyManager, "52B83A42-2543-416A-81D9-C0DE7969C8B3")
 
-.comdef ISuspensionDependencyManager
+.comdef ISuspensionDependencyManager : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     RegisterAsChild	proc :HANDLE
     GroupChildWithParent proc :HANDLE
     UngroupChildFromParent proc :HANDLE
+
     .ends
 
 endif
@@ -7086,12 +6618,10 @@ __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExecuteCommandApplicationHostEnvironment, "18B21AA9-E184-4FF0-9F5E-F882D03771B3")
 
-.comdef IExecuteCommandApplicationHostEnvironment
+.comdef IExecuteCommandApplicationHostEnvironment : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetValue		proc :ptr
+
     .ends
 
 endif
@@ -7106,12 +6636,10 @@ __IExecuteCommandHost_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IExecuteCommandHost, "4b6832a2-5f04-4c9d-b89d-727a15d103e7")
 
-.comdef IExecuteCommandHost
+.comdef IExecuteCommandHost : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetUIMode		proc :ptr
+
     .ends
 
 endif
@@ -7133,17 +6661,15 @@ __IApplicationDesignModeSettings_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationDesignModeSettings, "2A3DEE9A-E31D-46D6-8508-BCC597DB3557")
 
-.comdef IApplicationDesignModeSettings
+.comdef IApplicationDesignModeSettings : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetNativeDisplaySize proc :SIZE
     SetScaleFactor	proc :DEVICE_SCALE_FACTOR
     SetApplicationViewState proc :APPLICATION_VIEW_STATE
     ComputeApplicationSize proc :ptr
     IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZE, :DEVICE_SCALE_FACTOR, :ptr
     TriggerEdgeGesture	proc :EDGE_GESTURE_KIND
+
     .ends
 
 endif
@@ -7175,17 +6701,8 @@ __IApplicationDesignModeSettings2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IApplicationDesignModeSettings2, "490514E1-675A-4D6E-A58D-E54901B4CA2F")
 
-.comdef IApplicationDesignModeSettings2
+.comdef IApplicationDesignModeSettings2 : public IApplicationDesignModeSettings
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetNativeDisplaySize proc :SIZE
-    SetScaleFactor	proc :DEVICE_SCALE_FACTOR
-    SetApplicationViewState proc :APPLICATION_VIEW_STATE
-    ComputeApplicationSize proc :ptr
-    IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZE, :DEVICE_SCALE_FACTOR, :ptr
-    TriggerEdgeGesture	proc :EDGE_GESTURE_KIND
     SetNativeDisplayOrientation proc :NATIVE_DISPLAY_ORIENTATION
     SetApplicationViewOrientation proc :APPLICATION_VIEW_ORIENTATION
     SetAdjacentDisplayEdges proc :ADJACENT_DISPLAY_EDGES
@@ -7193,6 +6710,7 @@ DEFINE_IIDX(IApplicationDesignModeSettings2, "490514E1-675A-4D6E-A58D-E54901B4CA
     SetApplicationViewMinWidth proc :APPLICATION_VIEW_MIN_WIDTH
     GetApplicationSizeBounds proc :ptr, :ptr
     GetApplicationViewOrientation proc :SIZE, :ptr
+
     .ends
 
 endif
@@ -7206,12 +6724,10 @@ __ILaunchTargetMonitor_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ILaunchTargetMonitor,"266FBC7E-490D-46ED-A96B-2274DB252003")
 
-.comdef ILaunchTargetMonitor
+.comdef ILaunchTargetMonitor : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetMonitor		proc :ptr
+
     .ends
 
 endif
@@ -7230,13 +6746,11 @@ __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ILaunchSourceViewSizePreference, "E5AA01F7-1FB8-4830-8720-4E6734CBD5F3")
 
-.comdef ILaunchSourceViewSizePreference
+.comdef ILaunchSourceViewSizePreference : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetSourceViewToPosition proc :ptr
     GetSourceViewSizePreference proc :ptr
+
     .ends
 
 endif
@@ -7248,12 +6762,10 @@ __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ILaunchTargetViewSizePreference, "2F0666C6-12F7-4360-B511-A394A0553725")
 
-.comdef ILaunchTargetViewSizePreference
+.comdef ILaunchTargetViewSizePreference : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetTargetViewSizePreference proc :ptr
+
     .ends
 
 endif
@@ -7265,12 +6777,10 @@ __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ILaunchSourceAppUserModelId, "989191AC-28FF-4CF0-9584-E0D078BC2396")
 
-.comdef ILaunchSourceAppUserModelId
+.comdef ILaunchSourceAppUserModelId : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetAppUserModelId	proc :ptr
+
     .ends
 
 endif
@@ -7285,12 +6795,10 @@ __IInitializeWithWindow_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IInitializeWithWindow, "3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")
 
-.comdef IInitializeWithWindow
+.comdef IInitializeWithWindow : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     Initialize		proc :HWND
+
     .ends
 
 endif
@@ -7300,14 +6808,12 @@ __IHandlerInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IHandlerInfo, "997706ef-f880-453b-8118-39e1a2d2655a")
 
-.comdef IHandlerInfo
+.comdef IHandlerInfo : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     GetApplicationDisplayName proc :ptr
     GetApplicationPublisher proc :ptr
     GetApplicationIconReference proc :ptr
+
     .ends
 
 endif
@@ -7317,13 +6823,11 @@ __IHandlerActivationHost_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IHandlerActivationHost, "35094a87-8bb1-4237-96c6-c417eebdb078")
 
-.comdef IHandlerActivationHost
+.comdef IHandlerActivationHost : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     BeforeCoCreateInstance proc :REFCLSID, :ptr, :ptr
     BeforeCreateProcess proc :LPCWSTR, :LPCWSTR, :ptr
+
     .ends
 
 endif
@@ -7347,12 +6851,10 @@ __IContactManagerInterop_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContactManagerInterop, "99eacba7-e073-43b6-a896-55afe48a0833")
 
-.comdef IContactManagerInterop
+.comdef IContactManagerInterop : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     ShowContactCardForWindow proc :HWND, :ptr, :ptr, :FLYOUT_PLACEMENT
+
     .ends
 
 endif

@@ -2624,10 +2624,9 @@ ASSOCENUM		typedef DWORD
 ASSOCENUM_NONE		equ 0
 
 DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
-.comdef IQueryAssociations
-    QueryInterface	proc :REFIID, :PVOID
-    AddRef		proc
-    Release		proc
+
+.comdef IQueryAssociations : public IUnknown
+
     Init		proc :ASSOCF, :LPCWSTR, :HKEY, :HWND
     GetString		proc :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr DWORD
     GetKey		proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY

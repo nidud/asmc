@@ -9,7 +9,7 @@ include string.inc
 
 fballoc PROC _CType PUBLIC USES bx fname:PTR BYTE, ftime:DWORD, fsize:DWORD, flag:size_t
 	invoke strlen,fname
-	add ax,SIZE S_FBLK
+	add ax,S_FBLK
 	.if malloc(ax)
 	    add ax,S_FBLK.fb_name
 	    invoke strcpy,dx::ax,fname

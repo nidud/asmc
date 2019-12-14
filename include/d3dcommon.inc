@@ -31,13 +31,11 @@ ifndef __ID3D10Blob_INTERFACE_DEFINED__
 __ID3D10Blob_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_ID3D10Blob, 0x8ba5fb08, 0x5195, 0x40e2, 0xac,0x58, 0x0d,0x98,0x9c,0x3a,0x01,0x02)
 
-.comdef ID3D10Blob
+.comdef ID3D10Blob : public IUnknown
 
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
     GetBufferPointer    proc
     GetBufferSize       proc
+
     .ends
 endif
 

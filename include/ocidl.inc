@@ -174,14 +174,13 @@ LPCONNECTDATA		typedef ptr CONNECTDATA
 
 DEFINE_IIDX(IEnumConnections, "B196B287-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IEnumConnections
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumConnections : public IUnknown
+
     Next		proc :DWORD, :LPCONNECTDATA, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -191,15 +190,14 @@ __IConnectionPoint_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IConnectionPoint, "B196B286-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IConnectionPoint
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IConnectionPoint : public IUnknown
+
     GetConnectionInterface proc :ptr
     GetConnectionPointContainer proc :ptr
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     EnumConnections	proc :ptr
+
     .ends
 
 PCONNECTIONPOINT	typedef ptr IConnectionPoint
@@ -212,14 +210,13 @@ __IEnumConnectionPoints_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumConnectionPoints, "B196B285-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IEnumConnectionPoints
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumConnectionPoints : public IUnknown
+
     Next		proc :DWORD, :ptr, :ptr
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 PENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
@@ -232,12 +229,11 @@ __IConnectionPointContainer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IConnectionPointContainer, "B196B284-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IConnectionPointContainer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IConnectionPointContainer : public IUnknown
+
     EnumConnectionPoints proc :ptr
     FindConnectionPoint proc :REFIID, :ptr
+
     .ends
 
 PCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
@@ -258,15 +254,12 @@ LPLICINFO		typedef ptr LICINFO
 
 DEFINE_IIDX(IClassFactory2, "B196B28F-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IClassFactory2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CreateInstance	proc :ptr, :REFIID, :ptr
-    LockServer		proc :BOOL
+.comdef IClassFactory2 : public IClassFactory
+
     GetLicInfo		proc :ptr
     RequestLicKey	proc :DWORD, :ptr
     CreateInstanceLic	proc :ptr, :ptr, :REFIID, :BSTR, :ptr
+
     .ends
 
 LPCLASSFACTORY2		typedef ptr IClassFactory2
@@ -278,11 +271,10 @@ __IProvideClassInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProvideClassInfo, "B196B283-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IProvideClassInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProvideClassInfo : public IUnknown
+
     GetClassInfo	proc :ptr
+
     .ends
 
 LPPROVIDECLASSINFO	typedef ptr IProvideClassInfo
@@ -298,12 +290,10 @@ GUIDKIND_DEFAULT_SOURCE_DISP_IID equ 1
 
 DEFINE_IIDX(IProvideClassInfo2, "A6BC3AC0-DBAA-11CE-9DE3-00AA004BB851")
 
-.comdef IProvideClassInfo2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassInfo	proc :ptr
+.comdef IProvideClassInfo2 : public IProvideClassInfo
+
     GetGUID		proc :DWORD, :ptr
+
     .ends
 
 LPPROVIDECLASSINFO2	typedef ptr IProvideClassInfo2
@@ -323,14 +313,11 @@ TIFLAGS_EXTENDDISPATCHONLY equ 0x00000001
 
 DEFINE_IIDX(IProvideMultipleClassInfo, "A7ABA9C1-8983-11cf-8F20-00805F2CD064")
 
-.comdef IProvideMultipleClassInfo
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassInfo	proc :ptr
-    GetGUID		proc :DWORD, :ptr
+.comdef IProvideMultipleClassInfo : public IProvideClassInfo2
+
     GetMultiTypeInfoCount proc :ptr
     GetInfoOfIndex	proc :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+
     .ends
 
 LPPROVIDEMULTIPLECLASSINFO typedef ptr IProvideMultipleClassInfo
@@ -354,14 +341,13 @@ CTRLINFO_EATS_ESCAPE	equ 2
 
 DEFINE_IIDX(IOleControl, "B196B288-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IOleControl
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleControl : public IUnknown
+
     GetControlInfo	proc :ptr
     OnMnemonic		proc :ptr
     OnAmbientPropertyChange proc :DISPID
     FreezeEvents	proc :BOOL
+
     .ends
 
 LPOLECONTROL		typedef ptr IOleControl
@@ -386,10 +372,8 @@ XFORMCOORDS_EVENTCOMPAT equ 0x10
 
 DEFINE_IIDX(IOleControlSite, "B196B289-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IOleControlSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleControlSite : public IUnknown
+
     OnControlInfoChanged proc
     LockInPlaceActive	proc :BOOL
     GetExtendedControl	proc :ptr
@@ -397,6 +381,7 @@ DEFINE_IIDX(IOleControlSite, "B196B289-BAB4-101A-B69C-00AA00341D07")
     TranslateAccelerator proc :ptr, :DWORD
     OnFocus		proc :BOOL
     ShowPropertyFrame	proc
+
     .ends
 
 LPOLECONTROLSITE	typedef ptr IOleControlSite
@@ -418,10 +403,8 @@ LPPROPPAGEINFO		typedef ptr PROPPAGEINFO
 
 DEFINE_IIDX(IPropertyPage, "B196B28D-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IPropertyPage
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyPage : public IUnknown
+
     SetPageSite		proc :ptr
     Activate		proc :HWND, :LPCRECT, :BOOL
     Deactivate		proc
@@ -433,6 +416,7 @@ DEFINE_IIDX(IPropertyPage, "B196B28D-BAB4-101A-B69C-00AA00341D07")
     Apply		proc
     Help		proc :LPCOLESTR
     TranslateAccelerator proc :ptr
+
     .ends
 
 LPPROPERTYPAGE		typedef ptr IPropertyPage
@@ -445,22 +429,10 @@ __IPropertyPage2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyPage2, "01E44665-24AC-101B-84ED-08002B2EC713")
 
-.comdef IPropertyPage2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    SetPageSite		proc :ptr
-    Activate		proc :HWND, :LPCRECT, :BOOL
-    Deactivate		proc
-    GetPageInfo		proc :ptr
-    SetObjects		proc :DWORD, :ptr
-    Show		proc :DWORD
-    Move		proc :LPCRECT
-    IsPageDirty		proc
-    Apply		proc
-    Help		proc :LPCOLESTR
-    TranslateAccelerator_ proc :ptr
+.comdef IPropertyPage2 : public IPropertyPage
+
     EditProperty	proc :DISPID
+
     .ends
 
 LPPROPERTYPAGE2		typedef ptr IPropertyPage2
@@ -478,14 +450,13 @@ PROPPAGESTATUS_CLEAN	equ 0x4
 
 DEFINE_IIDX(IPropertyPageSite, "B196B28C-BAB4-101A-B69C-00AA00341D07")
 
-.comdef IPropertyPageSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyPageSite : public IUnknown
+
     OnStatusChange	proc :DWORD
     GetLocaleID		proc :ptr
     GetPageContainer	proc :ptr
-    TranslateAccelerator_ proc :ptr
+    TranslateAccelerator proc :ptr
+
     .ends
 
 LPPROPERTYPAGESITE	typedef ptr IPropertyPageSite
@@ -498,12 +469,11 @@ __IPropertyNotifySink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPropertyNotifySink, "9BFBBC02-EFF1-101A-84ED-00AA00341D07")
 
-.comdef IPropertyNotifySink
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyNotifySink : public IUnknown
+
     OnChanged		proc :DISPID
     OnRequestEdit	proc :DISPID
+
     .ends
 
 LPPROPERTYNOTIFYSINK	typedef ptr IPropertyNotifySink
@@ -522,11 +492,10 @@ pElems			LPGUID ?
 CAUUID			ENDS
 LPCAUUID		typedef ptr CAUUID
 
-.comdef ISpecifyPropertyPages
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISpecifyPropertyPages : public IUnknown
+
     GetPages		proc :ptr
+
     .ends
 
 LPSPECIFYPROPERTYPAGES	typedef ptr ISpecifyPropertyPages
@@ -538,16 +507,14 @@ __IPersistMemory_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistMemory, "BD1AE5E0-A6AE-11CE-BD37-504200C10000")
 
-.comdef IPersistMemory
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
+.comdef IPersistMemory : public IPersist
+
     IsDirty		proc
     Load		proc :LPVOID, :ULONG
     Save		proc :LPVOID, :BOOL, :ULONG
     GetSizeMax		proc :ptr
     InitNew		proc
+
     .ends
 
 LPPERSISTMEMORY		typedef ptr IPersistMemory
@@ -559,16 +526,14 @@ __IPersistStreamInit_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistStreamInit, "7FD52380-4E07-101B-AE2D-08002B2EC713")
 
-.comdef IPersistStreamInit
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
+.comdef IPersistStreamInit : public IPersist
+
     IsDirty		proc
     Load		proc :LPSTREAM
     Save		proc :LPSTREAM, :BOOL
     GetSizeMax		proc :ptr
     InitNew		proc
+
     .ends
 
 LPPERSISTSTREAMINIT	typedef ptr IPersistStreamInit
@@ -581,14 +546,12 @@ __IPersistPropertyBag_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistPropertyBag, "37D84F60-42CB-11CE-8135-00AA004BB851")
 
-.comdef IPersistPropertyBag
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
+.comdef IPersistPropertyBag : public IPersist
+
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
+
     .ends
 
 LPPERSISTPROPERTYBAG	typedef ptr IPersistPropertyBag
@@ -600,12 +563,11 @@ __ISimpleFrameSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISimpleFrameSite, "742B0E01-14E6-101B-914E-00AA00300CAB")
 
-.comdef ISimpleFrameSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ISimpleFrameSite : public IUnknown
+
     PreMessageFilter	proc :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :ptr
     PostMessageFilter	proc :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :DWORD
+
     .ends
 
 LPSIMPLEFRAMESITE	typedef ptr ISimpleFrameSite
@@ -624,10 +586,8 @@ LPTEXTMETRICOLE		typedef ptr TEXTMETRICOLE
 
 DEFINE_IIDX(IFont, "BEF6E002-A874-101A-8BBA-00AA00300CAB")
 
-.comdef IFont
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IFont : public IUnknown
+
     get_Name		proc :ptr
     put_Name		proc :BSTR
     get_Size		proc :ptr
@@ -652,6 +612,7 @@ DEFINE_IIDX(IFont, "BEF6E002-A874-101A-8BBA-00AA00300CAB")
     AddRefHfont		proc :HFONT
     ReleaseHfont	proc :HFONT
     SetHdc		proc :HDC
+
     .ends
 
 LPFONT			typedef ptr IFont
@@ -674,10 +635,8 @@ OLE_YSIZE_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504309-BE0F-101A-8BBB-00A
 
 DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
 
-.comdef IPicture
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPicture : public IUnknown
+
     get_Handle		proc :ptr
     get_hPal		proc :ptr
     get_Type		proc :ptr
@@ -692,6 +651,7 @@ DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
     PictureChanged	proc
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
+
     .ends
 
 LPPICTURE		typedef ptr IPicture
@@ -705,10 +665,8 @@ HHANDLE			typedef UINT_PTR
 
 DEFINE_IIDX(IPicture2, "F5185DD8-2012-4b0b-AAD9-F052C6BD482B")
 
-.comdef IPicture2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPicture2 : public IUnknown
+
     get_Handle		proc :ptr
     get_hPal		proc :ptr
     get_Type		proc :ptr
@@ -723,6 +681,7 @@ DEFINE_IIDX(IPicture2, "F5185DD8-2012-4b0b-AAD9-F052C6BD482B")
     PictureChanged	proc
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
+
     .ends
 
 LPPICTURE2		typedef ptr IPicture2
@@ -735,14 +694,8 @@ __IFontEventsDisp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFontEventsDisp, "4EF6100A-AF88-11D0-9846-00C04FC29993")
 
-.comdef IFontEventsDisp
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IFontEventsDisp : public IDispatch
+
     .ends
 
 LPFONTEVENTS		typedef ptr IFontEventsDisp
@@ -754,14 +707,8 @@ __IFontDisp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFontDisp, "BEF6E003-A874-101A-8BBA-00AA00300CAB")
 
-.comdef IFontDisp
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IFontDisp : public IDispatch
+
     .ends
 
 LPFONTDISP		typedef ptr IFontDisp
@@ -773,14 +720,8 @@ __IPictureDisp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPictureDisp, "7BF80981-BF32-101A-8BBB-00AA00300CAB")
 
-.comdef IPictureDisp
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IPictureDisp : public IDispatch
+
     .ends
 
 LPPICTUREDISP		typedef ptr IPictureDisp
@@ -792,18 +733,11 @@ __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleInPlaceObjectWindowless, "1C2056CC-5EF4-101B-8BC8-00AA003E3B29")
 
-.comdef IOleInPlaceObjectWindowless
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    InPlaceDeactivate	proc
-    UIDeactivate	proc
-    SetObjectRects	proc :LPCRECT, :LPCRECT
-    ReactivateAndUndo	proc
+.comdef IOleInPlaceObjectWindowless : public IOleInPlaceObject
+
     OnWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
     GetDropTarget	proc :ptr
+
     .ends
 
 LPOLEINPLACEOBJECTWINDOWLESS typedef ptr IOleInPlaceObjectWindowless
@@ -820,25 +754,12 @@ ACTIVATE_WINDOWLESS	equ 1
 
 DEFINE_IIDX(IOleInPlaceSiteEx, "9C2CAD80-3424-11CF-B670-00AA004CD6D8")
 
-.comdef IOleInPlaceSiteEx
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    CanInPlaceActivate	proc
-    OnInPlaceActivate	proc
-    OnUIActivate	proc
-    GetWindowContext	proc :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
-    Scroll		proc :tagSIZE
-    OnUIDeactivate	proc :BOOL
-    OnInPlaceDeactivate proc
-    DiscardUndoState	proc
-    DeactivateAndUndo	proc
-    OnPosRectChange	proc :LPCRECT
+.comdef IOleInPlaceSiteEx : public IOleInPlaceSite
+
     OnInPlaceActivateEx proc :ptr, :DWORD
     OnInPlaceDeactivateEx proc :BOOL
     RequestUIActivate	proc
+
     .ends
 
 LPOLEINPLACESITEEX	typedef ptr IOleInPlaceSiteEx
@@ -857,37 +778,21 @@ OLEDC_OFFSCREEN		equ 0x4
 
 DEFINE_IIDX(IOleInPlaceSiteWindowless, "922EADA0-3424-11CF-B670-00AA004CD6D8")
 
-.comdef IOleInPlaceSiteWindowless
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    CanInPlaceActivate	proc
-    OnInPlaceActivate	proc
-    OnUIActivate	proc
-    GetWindowContext	proc :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
-    Scroll		proc :tagSIZE
-    OnUIDeactivate	proc :BOOL
-    OnInPlaceDeactivate proc
-    DiscardUndoState	proc
-    DeactivateAndUndo	proc
-    OnPosRectChange	proc :LPCRECT
-    OnInPlaceActivateEx proc :ptr, :DWORD
-    OnInPlaceDeactivateEx proc :BOOL
-    RequestUIActivate	proc
+.comdef IOleInPlaceSiteWindowless : public IOleInPlaceSiteEx
+
     CanWindowlessActivate proc
-    GetCapture_		proc
-    SetCapture_		proc :BOOL
-    GetFocus_		proc
-    SetFocus_		proc :BOOL
-    GetDC_		proc :LPCRECT, :DWORD, :ptr
-    ReleaseDC_		proc :HDC
+    GetCapture		proc
+    SetCapture		proc :BOOL
+    GetFocus		proc
+    SetFocus		proc :BOOL
+    GetDC		proc :LPCRECT, :DWORD, :ptr
+    ReleaseDC		proc :HDC
     InvalidateRect	proc :LPCRECT, :BOOL
     InvalidateRgn	proc :HRGN, :BOOL
     ScrollRect		proc :DWORD, :DWORD, :LPCRECT, :LPCRECT
     AdjustRect		proc :LPRECT
     OnDefWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
+
     .ends
 
 LPOLEINPLACESITEWINDOWLESS typedef ptr IOleInPlaceSiteWindowless
@@ -938,22 +843,14 @@ CALLBACK(pDraw_pfnContinue, :DWORD)
 
 DEFINE_IIDX(IViewObjectEx, "3AF24292-0C96-11CE-A0CF-00AA00600AB8")
 
-.comdef IViewObjectEx
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Draw		proc :DWORD, :SDWORD, :ptr, :ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :pDraw_pfnContinue, :DWORD
-    GetColorSet		proc :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
-    Freeze		proc :DWORD, :SDWORD, :ptr, :ptr
-    Unfreeze		proc :DWORD
-    SetAdvise		proc :DWORD, :DWORD, :ptr
-    GetAdvise		proc :ptr, :ptr, :ptr
-    GetExtent		proc :DWORD, :SDWORD, :ptr, :LPSIZEL
+.comdef IViewObjectEx : public IViewObject2
+
     GetRect		proc :DWORD, :LPRECTL
     GetViewStatus	proc :ptr
     QueryHitPoint	proc :DWORD, :LPCRECT, :POINT, :SDWORD, :ptr
     QueryHitRect	proc :DWORD, :LPCRECT, :LPCRECT, :SDWORD, :ptr
     GetNaturalExtent	proc :DWORD, :SDWORD, :ptr, :HDC, :ptr, :LPSIZEL
+
     .ends
 
 endif
@@ -963,14 +860,13 @@ __IOleUndoUnit_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleUndoUnit, "894AD3B0-EF97-11CE-9BC9-00AA00608E01")
 
-.comdef IOleUndoUnit
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleUndoUnit : public IUnknown
+
     Do			proc :ptr
     GetDescription	proc :ptr
     GetUnitType		proc :ptr, :ptr
     OnNextAdd		proc
+
     .ends
 
 LPOLEUNDOUNIT		typedef ptr IOleUndoUnit
@@ -982,19 +878,14 @@ __IOleParentUndoUnit_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOleParentUndoUnit, "A1FAF330-EF97-11CE-9BC9-00AA00608E01")
 
-.comdef IOleParentUndoUnit
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Do			proc :ptr
-    GetDescription	proc :ptr
-    GetUnitType		proc :ptr, :ptr
-    OnNextAdd		proc
+.comdef IOleParentUndoUnit : public IOleUndoUnit
+
     Open		proc :ptr
     Close		proc :ptr, :BOOL
     _Add		proc :ptr
     FindUnit		proc :ptr
     GetParentState	proc :ptr
+
     .ends
 
 endif
@@ -1005,14 +896,13 @@ __IEnumOleUndoUnits_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumOleUndoUnits, "B3E7C340-EF97-11CE-9BC9-00AA00608E01")
 
-.comdef IEnumOleUndoUnits
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumOleUndoUnits : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 LPENUMOLEUNDOUNITS	typedef ptr IEnumOleUndoUnits
@@ -1026,10 +916,8 @@ __IOleUndoManager_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(IOleUndoManager, "D001F200-EF97-11CE-9BC9-00AA00608E01")
 SID_SOleUndoManager	equ <IID_IOleUndoManager>
 
-.comdef IOleUndoManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleUndoManager : public IUnknown
+
     Open		proc :ptr
     Close		proc :ptr, :BOOL
     _Add		proc :ptr
@@ -1042,6 +930,7 @@ SID_SOleUndoManager	equ <IID_IOleUndoManager>
     GetLastUndoDescription proc :ptr
     GetLastRedoDescription proc :ptr
     Enable		proc :BOOL
+
     .ends
 
 LPOLEUNDOMANAGER	typedef ptr IOleUndoManager
@@ -1058,14 +947,14 @@ POINTERINACTIVE_ACTIVATEONDRAG	  equ 4
 
 DEFINE_IIDX(IPointerInactive, "55980BA0-35AA-11CF-B671-00AA004CD6D8")
 
-.comdef IPointerInactive
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPointerInactive : public IUnknown
+
     GetActivationPolicy proc :ptr
     OnInactiveMouseMove proc :LPCRECT, :LONG, :LONG, :DWORD
     OnInactiveSetCursor proc :LPCRECT, :LONG, :LONG, :DWORD, :BOOL
+
     .ends
+
 LPPOINTERINACTIVE	typedef ptr IPointerInactive
 
 endif
@@ -1075,12 +964,11 @@ __IObjectWithSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjectWithSite, "FC4801A3-2BA9-11CF-A229-00AA003D7352")
 
-.comdef IObjectWithSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IObjectWithSite : public IUnknown
+
     SetSite		proc :ptr
     GetSite		proc :REFIID, :ptr
+
     .ends
 
 LPOBJECTWITHSITE	typedef ptr IObjectWithSite
@@ -1105,14 +993,13 @@ LPCADWORD		typedef ptr CADWORD
 
 DEFINE_IIDX(IPerPropertyBrowsing, "376BD3AA-3845-101B-84ED-08002B2EC713")
 
-.comdef IPerPropertyBrowsing
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPerPropertyBrowsing : public IUnknown
+
     GetDisplayString	proc :DISPID, :ptr
     MapPropertyToPage	proc :DISPID, :ptr
     GetPredefinedStrings proc :DISPID, :ptr, :ptr
     GetPredefinedValue	proc :DISPID, :DWORD, :ptr
+
     .ends
 
 LPPERPROPERTYBROWSING	typedef ptr IPerPropertyBrowsing
@@ -1136,15 +1023,14 @@ PROPBAG2		ENDS
 
 DEFINE_IIDX(IPropertyBag2, "22F55882-280B-11d0-A8A9-00A0C90C2004")
 
-.comdef IPropertyBag2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPropertyBag2 : public IUnknown
+
     Read		proc :DWORD,:ptr, :ptr, :ptr, :ptr
     Write		proc :DWORD, :ptr, :ptr
     CountProperties	proc :ptr
     GetPropertyInfo	proc :DWORD, :DWORD, :ptr, :ptr
     LoadObject		proc :LPCOLESTR, :DWORD, :ptr, :ptr
+
     .ends
 
 LPPROPERTYBAG2		typedef ptr IPropertyBag2
@@ -1157,15 +1043,13 @@ __IPersistPropertyBag2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistPropertyBag2, "22F55881-280B-11d0-A8A9-00A0C90C2004")
 
-.comdef IPersistPropertyBag2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
+.comdef IPersistPropertyBag2 : public IPersist
+
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
     IsDirty		proc
+
     .ends
 
 LPPERSISTPROPERTYBAG2	typedef ptr IPersistPropertyBag2
@@ -1178,16 +1062,10 @@ __IAdviseSinkEx_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAdviseSinkEx, "3AF24290-0C96-11CE-A0CF-00AA00600AB8")
 
-.comdef IAdviseSinkEx
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    OnDataChange	proc :ptr, :ptr
-    OnViewChange	proc :DWORD, :SDWORD
-    OnRename		proc :ptr
-    OnSave		proc
-    OnClose		proc
+.comdef IAdviseSinkEx : public IAdviseSink
+
     OnViewStatusChange	proc :DWORD
+
     .ends
 
 LPADVISESINKEX		typedef ptr IAdviseSinkEx
@@ -1242,13 +1120,12 @@ QACONTROL		ENDS
 
 DEFINE_IIDX(IQuickActivate, "CF51ED10-62FE-11CF-BF86-00A0C9034836")
 
-.comdef IQuickActivate
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IQuickActivate : public IUnknown
+
     QuickActivate	proc :ptr, :ptr
     SetContentExtent	proc :LPSIZEL
     GetContentExtent	proc :LPSIZEL
+
     .ends
 
 LPQUICKACTIVATE		typedef ptr IQuickActivate

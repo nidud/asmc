@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added inline class members -- macros
+- updated 16-bit source - removed SIZE (/Zne)
+- fixed bug in public class - publics not added in base was empty..
 - fixed bug in syscall 64-bit - :vararg-stack error
 - fixed bug in .class <name> <arg>:<type> - error if arg used..
 

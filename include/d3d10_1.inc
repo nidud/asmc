@@ -89,17 +89,15 @@ D3D10_BLEND_DESC1	ENDS
 ifndef __ID3D10BlendState1_INTERFACE_DEFINED__
 __ID3D10BlendState1_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10BlendState1
+.comdef ID3D10BlendState1 : public IUnknown
 
-    QueryInterface		proc :REFIID, :ptr
-    AddRef			proc
-    Release			proc
     GetDevice			proc :ptr
     GetPrivateData		proc :REFGUID, :ptr, :ptr
     SetPrivateData		proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface	proc :REFGUID, :ptr
     GetDesc			proc :ptr
     GetDesc1			proc :ptr
+
     .ends
 endif
 
@@ -143,11 +141,8 @@ D3D10_SHADER_RESOURCE_VIEW_DESC1 ENDS
 ifndef __ID3D10ShaderResourceView1_INTERFACE_DEFINED__
 __ID3D10ShaderResourceView1_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10ShaderResourceView1
+.comdef ID3D10ShaderResourceView1 : public IUnknown
 
-    QueryInterface		proc :REFIID, :ptr
-    AddRef			proc
-    Release			proc
     GetDevice			proc :ptr
     GetPrivateData		proc :REFGUID, :ptr, :ptr
     SetPrivateData		proc :REFGUID, :UINT, :ptr
@@ -155,6 +150,7 @@ __ID3D10ShaderResourceView1_INTERFACE_DEFINED__ equ 1
     GetResource			proc :ptr
     GetDesc			proc :ptr
     GetDesc1			proc :ptr
+
     .ends
 endif
 
@@ -165,11 +161,8 @@ D3D10_CENTER_MULTISAMPLE_PATTERN equ 0xfffffffe
 ifndef __ID3D10Device1_INTERFACE_DEFINED__
 __ID3D10Device1_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D10Device1
+.comdef ID3D10Device1 : public IUnknown
 
-    QueryInterface		proc :REFIID, :ptr
-    AddRef			proc
-    Release			proc
     VSSetConstantBuffers	proc :UINT, :UINT, :ptr
     PSSetShaderResources	proc :UINT, :UINT, :ptr
     PSSetShader			proc :ptr
@@ -268,6 +261,7 @@ __ID3D10Device1_INTERFACE_DEFINED__ equ 1
     CreateShaderResourceView1	proc :ptr, :ptr, :ptr
     CreateBlendState1		proc :ptr, :ptr
     GetFeatureLevel		proc
+
     .ends
 endif
 

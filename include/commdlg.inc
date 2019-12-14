@@ -523,7 +523,6 @@ endif
 
 ;HWND
 FindTextA proto WINAPI :LPFINDREPLACEA
-;HWND
 FindTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
 FindText equ <FindTextW>
@@ -533,7 +532,6 @@ endif
 ifndef _MAC
 ;HWND
 ReplaceTextA proto WINAPI :LPFINDREPLACEA
-;HWND
 ReplaceTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
 ReplaceText equ <ReplaceTextW>
@@ -543,7 +541,6 @@ endif
 else
 ;HWND
 AfxReplaceTextA proto WINAPI :LPFINDREPLACEA
-;HWND
 AfxReplaceTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
 AfxReplaceText equ <AfxReplaceTextW>
@@ -780,13 +777,9 @@ endif
 
 if(WINVER GE 0x0500)
 
-;ifdef STDMETHOD
+ifdef __UNKNWN_INC
 
-.comdef IPrintDialogCallback
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPrintDialogCallback : public IUnknown
 
     InitDone		proc
     SelectionChange	proc
@@ -795,11 +788,7 @@ if(WINVER GE 0x0500)
     .ends
 
 
-.comdef IPrintDialogServices
-
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPrintDialogServices : public IUnknown
 
     GetCurrentDevMode	proc pDevMode:LPDEVMODE, pcbSize:ptr UINT
     GetCurrentPrinterName proc pPrinterName:LPWSTR, pcchSize:ptr UINT
@@ -882,7 +871,7 @@ else
 PrintDlgEx		equ <PrintDlgExA>
 endif
 
-;endif
+endif
 endif ;; (WINVER GE 0x0500)
 
 PD_ALLPAGES		equ 0x00000000

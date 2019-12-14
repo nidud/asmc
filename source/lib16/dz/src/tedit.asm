@@ -2349,9 +2349,9 @@ tihide PROC pascal PRIVATE USES si ti:size_t
 tihide ENDP
 
 tiopen PROC PRIVATE USES si bx
-	.if nalloc(SIZE S_TEDIT)
+	.if nalloc(S_TEDIT)
 	    push ax
-	    invoke memzero,ss::ax,SIZE S_TEDIT
+	    invoke memzero,ss::ax,S_TEDIT
 	    pop si
 	    mov al,at_background[B_TextEdit]
 	    or	al,at_foreground[F_TextEdit]
@@ -2698,7 +2698,7 @@ tireaderror:
 
 tiiost:
 	push	ax
-	invoke	memzero,ss::bx,SIZE S_IOST
+	invoke	memzero,ss::bx,S_IOST
 	pop	ax
 	mov	[bx].S_IOST.ios_file,ax
 	mov	[bx].S_IOST.ios_size,2048
@@ -2904,11 +2904,11 @@ event_list:
 	push bx
 	invoke dlinit,DLG_OpenFiles
 	les bx,DLG_OpenFiles
-	add bx,SIZE S_TOBJ
+	add bx,S_TOBJ
 	mov cx,MAXDLGOBJECT
 	.repeat
 	    or es:[bx].S_TOBJ.to_flag,_O_STATE
-	    add bx,SIZE S_TOBJ
+	    add bx,S_TOBJ
 	.untilcxz
 	mov bx,WORD PTR DLG_OpenFiles
 	sub ax,ax
@@ -2936,7 +2936,7 @@ event_list:
 		invoke scputc,ax,di,1,'*'
 	    .endif
 	    invoke scpath,si,di,MAXOBJECTLEN,[bx].S_TEDIT.ti_file
-	    add cx,SIZE S_TOBJ
+	    add cx,S_TOBJ
 	    mov es,dx
 	    mov bx,cx
 	    and es:[bx].S_TOBJ.to_flag,not _O_STATE
@@ -2955,7 +2955,7 @@ local ll:S_LOBJ
 local ti[TIMAXFILES]:WORD
 	lea	ax,ll
 	mov	FCB_OpenFiles,ax
-	invoke	memzero,ss::ax,SIZE S_LOBJ
+	invoke	memzero,ss::ax,S_LOBJ
 	lea	ax,ti
 	mov	WORD PTR ll.ll_list,ax
 	mov	WORD PTR ll.ll_list+2,ss
@@ -2987,7 +2987,7 @@ local ti[TIMAXFILES]:WORD
 		mov  ax,offset event_xcell
 		movl dx,cs
 		.repeat
-		    add	 di,SIZE S_TOBJ
+		    add	 di,S_TOBJ
 		    stom es:[di].S_TOBJ.to_proc
 		.untilcxz
 		invoke dlshow,DLG_OpenFiles

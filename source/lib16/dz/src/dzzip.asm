@@ -1994,7 +1994,7 @@ ct_init PROC private
     ct_init_code:
 	inc	bl_count[bx]
 	mov	[di].CT_UNION.ct_len,ax
-	add	di,SIZE CT_DATA
+	add	di,CT_DATA
 	dec	cx
 	jnz	ct_init_code
 	ret
@@ -2010,7 +2010,7 @@ ct_init PROC private
 	mov	ax,si
 	call	bi_reverse
 	mov	[di].CT_UNION.ct_code,ax
-	add	di,SIZE CT_DATA
+	add	di,CT_DATA
 	inc	si
 	cmp	si,D_CODES
 	jb	ct_init_dtree
@@ -2024,21 +2024,21 @@ init_block PROC private
 	mov	cx,L_CODES
     init_block_ltree:
 	mov	[bx].CT_DATA.ct_freq,ax
-	add	bx,SIZE CT_DATA
+	add	bx,CT_DATA
 	dec	cx
 	jnz	init_block_ltree
 	lea	bx,[bp].S_LOCAL.dyn_dtree
 	mov	cx,D_CODES
     init_block_dtree:
 	mov	[bx].CT_DATA.ct_freq,ax
-	add	bx,SIZE CT_DATA
+	add	bx,CT_DATA
 	dec	cx
 	jnz	init_block_dtree
 	lea	bx,[bp].S_LOCAL.bl_tree
 	mov	cx,BL_CODES
     init_block_bltree:
 	mov	[bx].CT_DATA.ct_freq,ax
-	add	bx,SIZE CT_DATA
+	add	bx,CT_DATA
 	dec	cx
 	jnz	init_block_bltree
 	mov	bx,bp
@@ -2242,7 +2242,7 @@ gen_codes PROC private
 	call	bi_reverse
 	mov	[si].CT_UNION.ct_code,ax
     gen_codes_next:
-	add	si,SIZE CT_DATA
+	add	si,CT_DATA
 	dec	cx
 	jnz	gen_codes_loop
     gen_codes_end:
@@ -2279,7 +2279,7 @@ build_tree PROC private
 	shr	di,1
 	mov	dx,cx
     build_tree_next:
-	add	bx,SIZE CT_DATA
+	add	bx,CT_DATA
 	inc	cx
     build_tree_elems:
 	cmp	cx,[si].TREE_DESC.td_elems
@@ -4091,7 +4091,7 @@ local	zip_stack:S_LOCAL
 	lea	bp,zip_stack
 	push	ss
 	push	bp
-	push	SIZE S_LOCAL
+	push	S_LOCAL
 	call	memzero
 	pop	ax
 	mov	[bp].S_LOCAL.compr_level,ax
@@ -4404,7 +4404,7 @@ local	offset_local:dword
 	mov	[bp-2],ax
 	mov	[bp-4],ax
     copylocal_loop:
-	mov	ax,SIZE S_ZEND
+	mov	ax,S_ZEND
 	call	oread
 	jnz	copylocal_test_local
     copylocal_error:
@@ -4417,13 +4417,13 @@ local	offset_local:dword
 	mov	ax,si
 	cmp	word ptr es:[bx+2],ZIPLOCALID
 	jne	copylocal_toend
-	mov	ax,SIZE S_LZIP
+	mov	ax,S_LZIP
 	add	ax,di
     copylocal_oread:
 	call	oread
 	jz	copylocal_error
 	mov	dx,word ptr es:[bx].S_LZIP.lz_csize[2]
-	mov	ax,SIZE S_LZIP
+	mov	ax,S_LZIP
 	add	ax,es:[bx].S_LZIP.lz_fnsize
 	cmp	cx,ax
 	jb	copylocal_oread
@@ -4449,7 +4449,7 @@ local	offset_local:dword
 	jbe	copylocal_copy
     copylocal_compare:
 	push	bx
-	add	bx,SIZE S_LZIP
+	add	bx,S_LZIP
 	invoke	strnicmp,addr __outpath,es::bx,di
 	pop	bx
 	jnz	copylocal_copy
@@ -4459,7 +4459,7 @@ local	offset_local:dword
 	mov	[bp-6],ax
 	mov	ax,es:[bx].S_LZIP.lz_fnsize
 	push	ax
-	add	bx,SIZE S_LZIP
+	add	bx,S_LZIP
 	and	ax,01FFh
 	invoke	memcpy,addr entryname,es::bx,ax
 	pop	bx
@@ -4490,7 +4490,7 @@ zip_copycentral proc _CType uses si di loffset:dword,
 	mov	di,ax
 	xor	si,si
     copycentral_loop:
-	mov	ax,SIZE S_ZEND
+	mov	ax,S_ZEND
 	call	oread
 	jnz	copycentral_03
     copycentral_ioerror:
@@ -4503,14 +4503,14 @@ zip_copycentral proc _CType uses si di loffset:dword,
 	jne	copycentral_ioerror
 	cmp	es:[bx].S_CZIP.cz_zipid,ZIPCENTRALID	; 1,2	0201h
 	jne	copycentral_end
-	mov	ax,SIZE S_CZIP
+	mov	ax,S_CZIP
 	call	oread
 	jz	copycentral_ioerror
-	mov	ax,SIZE S_CZIP
+	mov	ax,S_CZIP
 	add	ax,es:[bx].S_CZIP.cz_fnsize
 	call	oread
 	jz	copycentral_ioerror
-	mov	ax,SIZE S_CZIP		; Central directory
+	mov	ax,S_CZIP		; Central directory
 	add	ax,es:[bx].S_CZIP.cz_fnsize	; file name length (*this)
 	add	ax,es:[bx].S_CZIP.cz_extsize
 	add	ax,es:[bx].S_CZIP.cz_cmtsize
@@ -4546,7 +4546,7 @@ zip_copycentral proc _CType uses si di loffset:dword,
     copycentral_subdir:
 	cmp	di,ax
 	ja	copycentral_copy
-	add	bx,SIZE S_CZIP
+	add	bx,S_CZIP
 	invoke	strnicmp,addr __outpath,es::bx,di
 	test	ax,ax
 	jz	copycentral_delete
@@ -4577,24 +4577,24 @@ getendcentral proc pascal private wsub:dword, zend:dword
 	    .if !ZERO?
 		mov ax,word ptr STDI.ios_offset
 		stom arc_flength
-		.if dx || ax >= SIZE S_ZEND
+		.if dx || ax >= S_ZEND
 		    call oungetc
-		    .if !ZERO? && STDI.ios_i >= SIZE S_ZEND-1
-			sub STDI.ios_i,SIZE S_ZEND-2
+		    .if !ZERO? && STDI.ios_i >= S_ZEND-1
+			sub STDI.ios_i,S_ZEND-2
 			.while 1
 			    call oungetc
 			    .if !ZERO?
 				.if al != 'P'
 				    .continue
 				.endif
-				mov ax,SIZE S_ZEND
+				mov ax,S_ZEND
 				call oread
 				.if !ZERO?
 				    lodm es:[bx]
 				    .if ax != ZIPHEADERID || dx != ZIPENDSENTRID
 					.continue
 				    .endif
-				    invoke memcpy,zend,es::bx,SIZE S_ZEND
+				    invoke memcpy,zend,es::bx,S_ZEND
 				    mov ax,1
 				    jmp @F
 				.endif
@@ -4619,7 +4619,7 @@ zip_allocfblk proc private
 	mov si,offset entryname
 	mov di,ax
 	invoke strlen,ds::si
-	add ax,SIZE S_FBLK
+	add ax,S_FBLK
 	push ax
 	add ax,12
 	invoke malloc,ax
@@ -4688,7 +4688,7 @@ zip_allocfblk endp
 zip_readcentral proc private
 	push	si
 	push	di
-	mov	ax,SIZE S_CZIP
+	mov	ax,S_CZIP
 	call	oread
 	jz	toend
 	sub	ax,ax
@@ -4696,7 +4696,7 @@ zip_readcentral proc private
 	jne	toend
 	cmp	es:[bx].S_CZIP.cz_zipid,ZIPCENTRALID
 	jne	toend
-	add	STDI.ios_i,SIZE S_CZIP
+	add	STDI.ios_i,S_CZIP
 	dec	ax
 	mov	dx,arc_pathz
 	cmp	es:[bx].S_CZIP.cz_fnsize,dx
@@ -4708,12 +4708,12 @@ zip_readcentral proc private
 	mov	di,offset zip_central
 	mov	si,bx
 	mov	ax,cx
-	mov	cx,SIZE S_CZIP / 2
+	mov	cx,S_CZIP / 2
 	cld?
 	rep	movsw
 	mov	cx,[bx].S_CZIP.cz_fnsize
-	add	bx,SIZE S_CZIP
-	sub	ax,SIZE S_CZIP
+	add	bx,S_CZIP
+	sub	ax,S_CZIP
 	cmp	ax,cx
 	jae	@F
 	mov	ax,ss
@@ -4972,11 +4972,11 @@ wzipfindentry proc _CType private uses si di fblk:dword, ziph:size_t
 	mov si,ziph
 	les di,fblk
 	invoke strlen, addr es:[di].S_FBLK.fb_name
-	add ax,SIZE S_FBLK
+	add ax,S_FBLK
 	add di,ax
 	invoke lseek,si,es:[di],SEEK_SET
-	invoke osread,si,addr zip_local,SIZE S_LZIP
-	.if ax == SIZE S_LZIP && zip_local.lz_pkzip == ZIPHEADERID && \
+	invoke osread,si,addr zip_local,S_LZIP
+	.if ax == S_LZIP && zip_local.lz_pkzip == ZIPHEADERID && \
 	    zip_local.lz_zipid == ZIPLOCALID
 	    mov ax,zip_local.lz_fnsize
 	    add ax,zip_local.lz_extsize
@@ -5138,12 +5138,12 @@ local	zs:S_ZSUB
 	.endif
 	push	ds
 	push	si
-	add	si,SIZE S_PATH.wp_file
+	add	si,.size S_PATH.wp_file
 	invoke	strlen,ds::si
 	add	ax,si
 	mov	zs.zs_off_file,ax
 	call	strlen
-	sub	si,SIZE S_PATH.wp_file
+	sub	si,.size S_PATH.wp_file
 	add	ax,si
 	mov	zs.zs_off_path,ax
 	les	bx,fblk
@@ -5292,12 +5292,12 @@ zip_copyendcentral proc _CType public
 	sub	ax,word ptr zip_endcent.ze_off_cent
 	sbb	dx,word ptr zip_endcent.ze_off_cent+2
 	stom	zip_endcent.ze_size_cent
-	mov	ax,SIZE S_ZEND
+	mov	ax,S_ZEND
 	call	oread
 	jz	copyendcentral_fail
-	invoke	memcpy,es::bx,addr zip_endcent,SIZE S_ZEND
+	invoke	memcpy,es::bx,addr zip_endcent,S_ZEND
 	mov	ax,zip_endcent.ze_comment_size
-	add	ax,SIZE S_ZEND
+	add	ax,S_ZEND
 	invoke	ocopy,cx::ax
 	jz	copyendcentral_fail
 	call	oflush
@@ -5319,13 +5319,13 @@ update_local proc private
 	sub	ax,word ptr STDO.ios_total
 	mov	dx,word ptr STDO.ios_bp+2
 	add	ax,word ptr STDO.ios_bp
-	invoke	memcpy,dx::ax,addr zip_local,SIZE S_LZIP
+	invoke	memcpy,dx::ax,addr zip_local,S_LZIP
 	ret
       @@:
 	call	oflush
 	jz	@F
 	invoke	lseek,STDO.ios_file,zip_central.cz_off_local,SEEK_SET
-	invoke	oswrite,STDO.ios_file,addr zip_local,SIZE S_LZIP
+	invoke	oswrite,STDO.ios_file,addr zip_local,S_LZIP
 	invoke	lseek,STDO.ios_file,0,SEEK_END
       @@:
 	ret
@@ -5390,8 +5390,8 @@ initentry proc private			; AX	offset file name buffer
 initentry endp
 
 clearentry proc private
-	invoke	memzero,addr zip_local,SIZE S_LZIP
-	invoke	memzero,addr zip_central,SIZE S_CZIP
+	invoke	memzero,addr zip_local,S_LZIP
+	invoke	memzero,addr zip_central,S_CZIP
 	mov	zip_local.lz_pkzip,ZIPHEADERID
 	mov	zip_local.lz_zipid,ZIPLOCALID
 	mov	byte ptr zip_local.lz_version,20
@@ -5449,7 +5449,7 @@ initcrc endp
 
 popstdi proc private
 	mov	ax,OSTDI
-	invoke	memcpy,ds::ax,ss::si,SIZE S_IOST
+	invoke	memcpy,ds::ax,ss::si,S_IOST
 	sub	ax,ax
 	ret
 popstdi endp
@@ -5550,7 +5550,7 @@ local	arch[384]:byte
 	jz	wzipclose_close
 	push	ds
 	pop	es
-	mov	cx,SIZE S_ZEND
+	mov	cx,S_ZEND
 	mov	bx,offset zip_endcent
 	call	owrite
 	jz	wzipclose_close
@@ -5668,7 +5668,7 @@ local	deflate_begin:dword
 	push	ds
 	pop	es
 	mov	bx,offset zip_local
-	mov	cx,SIZE S_LZIP
+	mov	cx,S_LZIP
 	call	owrite
 	jz	wzipfast_ercopy
 	lea	bx,zpath
@@ -5693,8 +5693,8 @@ local	deflate_begin:dword
 	stom	zip_central.cz_csize
 	call	update_local
       @@:
-	invoke	oswrite,centhnd,addr zip_central,SIZE S_CZIP
-	cmp	ax,SIZE S_CZIP
+	invoke	oswrite,centhnd,addr zip_central,S_CZIP
+	cmp	ax,S_CZIP
 	je	@F
 	jmp	wzipfast_error
       @@:
@@ -5761,7 +5761,7 @@ local	deflate_begin:dword
 	mov	word ptr local_size+2,cx
 	mov	word ptr local_size,bx
       @@:
-	invoke	memcpy,addr ios,addr STDI,SIZE S_IOST
+	invoke	memcpy,addr ios,addr STDI,S_IOST
 	test	si,_A_SUBDIR
 	lea	si,ios
 	jnz	@F;wzipslow_subdir
@@ -5780,7 +5780,7 @@ local	deflate_begin:dword
 	push	ds
 	pop	es
 	mov	bx,offset zip_local
-	mov	cx,SIZE S_LZIP
+	mov	cx,S_LZIP
 	call	owrite
 	jz	wzipadd_ersource
 	mov	bx,offset __outpath
@@ -5844,7 +5844,7 @@ local	deflate_begin:dword
 	push	ds
 	pop	es
 	mov	bx,offset zip_central
-	mov	cx,SIZE S_CZIP
+	mov	cx,S_CZIP
 	call	owrite
 	jz	wzipadd_ioerror
 	mov	bx,offset __outpath
@@ -5926,15 +5926,15 @@ cmzipattrib proc _CType public wsub:word
 		mov ax,di
 		add ax,S_FBLK.fb_name
 		invoke strlen,si::ax
-		add ax,SIZE S_FBLK
+		add ax,S_FBLK
 		add di,ax
 		movmx zip_central.cz_crc,es:[di][4]
 		movmx zip_central.cz_csize,es:[di][8]
 		movmm zip_central.cz_off_local,es:[di]
 		invoke lseek,bp,dx::ax,SEEK_SET ; seek to and read local offset
-		invoke osread,bp,addr zip_local,SIZE S_LZIP
+		invoke osread,bp,addr zip_local,S_LZIP
 		pop di ; FBLK.flag
-		.if ax == SIZE S_LZIP && word ptr zip_local.lz_zipid == ZIPLOCALID \
+		.if ax == S_LZIP && word ptr zip_local.lz_zipid == ZIPLOCALID \
 			&& word ptr zip_local.lz_pkzip == ZIPHEADERID
 		    invoke osread,bp,addr entryname,zip_local.lz_fnsize
 		    mov si,ax
@@ -5962,7 +5962,7 @@ cmzipattrib proc _CType public wsub:word
 			    push di
 			    mov	 cx,15
 			    std
-			    mov si,offset zip_local + SIZE S_LZIP - 2
+			    mov si,offset zip_local + S_LZIP - 2
 			    .repeat
 				lodsw
 				push ax

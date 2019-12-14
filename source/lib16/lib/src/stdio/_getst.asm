@@ -3,7 +3,7 @@
 
 include stdio.inc
 
-lastiob equ (offset _iob + (_NSTREAM_ * (SIZE S_FILE)))
+lastiob equ (offset _iob + (_NSTREAM_ * S_FILE))
 
 	.code
 
@@ -23,7 +23,7 @@ _getst	PROC _CType PUBLIC USES bx
 		mov dx,ds
 		.break
 	    .endif
-	    add bx,SIZE S_FILE
+	    add bx,S_FILE
 	.until bx == lastiob
 	ret
 _getst	ENDP

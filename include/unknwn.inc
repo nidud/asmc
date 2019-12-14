@@ -1,5 +1,5 @@
-ifndef __unknwn_h__
-__unknwn_h__ equ <>
+ifndef __UNKNWN_INC
+__UNKNWN_INC equ <>
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 440

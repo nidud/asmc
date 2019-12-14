@@ -30,55 +30,49 @@ include oaidl.inc
 include ocidl.inc
 include propidl.inc
 
-CONDITION_TYPE		typedef SDWORD
-CT_AND_CONDITION	equ 0
-CT_OR_CONDITION		equ ( CT_AND_CONDITION + 1 )
-CT_NOT_CONDITION	equ ( CT_OR_CONDITION + 1 )
-CT_LEAF_CONDITION	equ ( CT_NOT_CONDITION + 1 )
+.enum CONDITION_TYPE {
+    CT_AND_CONDITION	= 0,
+    CT_OR_CONDITION	= ( CT_AND_CONDITION + 1 ),
+    CT_NOT_CONDITION	= ( CT_OR_CONDITION + 1 ),
+    CT_LEAF_CONDITION	= ( CT_NOT_CONDITION + 1 )
+}
 
-CONDITION_OPERATION	typedef SDWORD
-COP_IMPLICIT		equ 0
-COP_EQUAL		equ ( COP_IMPLICIT + 1 )
-COP_NOTEQUAL		equ ( COP_EQUAL + 1 )
-COP_LESSTHAN		equ ( COP_NOTEQUAL + 1 )
-COP_GREATERTHAN		equ ( COP_LESSTHAN + 1 )
-COP_LESSTHANOREQUAL	equ ( COP_GREATERTHAN + 1 )
-COP_GREATERTHANOREQUAL	equ ( COP_LESSTHANOREQUAL + 1 )
-COP_VALUE_STARTSWITH	equ ( COP_GREATERTHANOREQUAL + 1 )
-COP_VALUE_ENDSWITH	equ ( COP_VALUE_STARTSWITH + 1 )
-COP_VALUE_CONTAINS	equ ( COP_VALUE_ENDSWITH + 1 )
-COP_VALUE_NOTCONTAINS	equ ( COP_VALUE_CONTAINS + 1 )
-COP_DOSWILDCARDS	equ ( COP_VALUE_NOTCONTAINS + 1 )
-COP_WORD_EQUAL		equ ( COP_DOSWILDCARDS + 1 )
-COP_WORD_STARTSWITH	equ ( COP_WORD_EQUAL + 1 )
-COP_APPLICATION_SPECIFIC equ ( COP_WORD_STARTSWITH + 1 )
+.enum CONDITION_OPERATION {
+    COP_IMPLICIT	= 0,
+    COP_EQUAL		= ( COP_IMPLICIT + 1 ),
+    COP_NOTEQUAL	= ( COP_EQUAL + 1 ),
+    COP_LESSTHAN	= ( COP_NOTEQUAL + 1 ),
+    COP_GREATERTHAN	= ( COP_LESSTHAN + 1 ),
+    COP_LESSTHANOREQUAL = ( COP_GREATERTHAN + 1 ),
+    COP_GREATERTHANOREQUAL = ( COP_LESSTHANOREQUAL + 1 ),
+    COP_VALUE_STARTSWITH = ( COP_GREATERTHANOREQUAL + 1 ),
+    COP_VALUE_ENDSWITH	= ( COP_VALUE_STARTSWITH + 1 ),
+    COP_VALUE_CONTAINS	= ( COP_VALUE_ENDSWITH + 1 ),
+    COP_VALUE_NOTCONTAINS = ( COP_VALUE_CONTAINS + 1 ),
+    COP_DOSWILDCARDS	= ( COP_VALUE_NOTCONTAINS + 1 ),
+    COP_WORD_EQUAL	= ( COP_DOSWILDCARDS + 1 ),
+    COP_WORD_STARTSWITH = ( COP_WORD_EQUAL + 1 ),
+    COP_APPLICATION_SPECIFIC = ( COP_WORD_STARTSWITH + 1 )
+}
 
 ifndef __IRichChunk_INTERFACE_DEFINED__
 __IRichChunk_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRichChunk:IID
-.comdef IRichChunk
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+externdef IID_IRichChunk:IID
+
+.comdef IRichChunk : public IUnknown
+
     GetData		proc :ptr, :ptr, :ptr, :ptr
     .ends
-
 endif
 
 ifndef __ICondition_INTERFACE_DEFINED__
 __ICondition_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICondition:IID
-.comdef ICondition
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
-    IsDirty		proc
-    Load		proc :ptr
-    Save		proc :ptr, :BOOL
-    GetSizeMax		proc :ptr
+externdef IID_ICondition:IID
+
+.comdef ICondition : public IPersistStream
+
     GetConditionType	proc :ptr
     GetSubConditions	proc :REFIID, :ptr
     GetComparisonInfo	proc :ptr, :ptr, :ptr
@@ -87,33 +81,18 @@ externdef		IID_ICondition:IID
     GetInputTerms	proc :ptr, :ptr, :ptr
     Clone		proc :ptr
     .ends
-
 endif
 
 ifndef __ICondition2_INTERFACE_DEFINED__
 __ICondition2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICondition2:IID
-.comdef ICondition2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetClassID		proc :ptr
-    IsDirty		proc
-    Load		proc :ptr
-    Save		proc :ptr, :BOOL
-    GetSizeMax		proc :ptr
-    GetConditionType	proc :ptr
-    GetSubConditions	proc :REFIID, :ptr
-    GetComparisonInfo	proc :ptr, :ptr, :ptr
-    GetValueType	proc :ptr
-    GetValueNormalization proc :ptr
-    GetInputTerms	proc :ptr, :ptr, :ptr
-    Clone		proc :ptr
+externdef IID_ICondition2:IID
+
+.comdef ICondition2 : public ICondition
+
     GetLocale		proc :ptr
     GetLeafConditionInfo proc :ptr, :ptr, :ptr
     .ends
-
 endif
 
 ;; Additional Prototypes for ALL interfaces

@@ -27,14 +27,13 @@ _LPSERVICEPROVIDER_DEFINED equ 1
 ifndef __IServiceProvider_INTERFACE_DEFINED__
 __IServiceProvider_INTERFACE_DEFINED__ equ 1
 
-.comdef IServiceProvider
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IServiceProvider : public IUnknown
+
     QueryService	proc :REFGUID, :REFIID, :ptr
     .ends
-LPSERVICEPROVIDER	typedef ptr IServiceProvider
-externdef		IID_IServiceProvider:IID
+    LPSERVICEPROVIDER	typedef ptr IServiceProvider
+
+externdef IID_IServiceProvider:IID
 
 endif
 endif

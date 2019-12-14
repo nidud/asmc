@@ -21,7 +21,7 @@ tosetbitflag PROC _CType PUBLIC USES si di bx tobj:DWORD,
 		.if CARRY?
 		    or es:[bx],si
 		.endif
-		add bx,SIZE S_TOBJ
+		add bx,S_TOBJ
 		dec di
 		.if ZERO?
 		    mov dx,WORD PTR bitflag+2

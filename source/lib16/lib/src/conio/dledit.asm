@@ -20,7 +20,7 @@ local	cursor:S_CURSOR
 	mov	di,tinfo
 	lea	ax,ti
 	mov	tinfo,ax
-	invoke	memzero,addr ti,SIZE S_TINFO
+	invoke	memzero,addr ti,S_TINFO
 	mov	al,rc.S_RECT.rc_x
 	mov	ti.ti_xpos,ax
 	mov	al,rc.S_RECT.rc_y

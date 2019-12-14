@@ -43,53 +43,50 @@ D3DXFileCreate proto WINAPI \
 		  file: ptr ID3DXFile
 
 
-.comdef ID3DXFile
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXFile : public IUnknown
+
     CreateEnumObject	proc :ptr, :D3DXF_FILELOADOPTIONS, :ptr
     CreateSaveObject	proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
     RegisterTemplates	proc :ptr, :SIZE_T
     RegisterEnumTemplates proc :ptr
+
     .ends
 
-.comdef ID3DXFileSaveObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXFileSaveObject : public IUnknown
+
     GetFile		proc :ptr
     AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
     Save		proc
+
     .ends
 
-.comdef ID3DXFileSaveData
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXFileSaveData : public IUnknown
+
     GetSave		proc :ptr
     GetName		proc :ptr, :ptr
     GetId		proc :LPGUID
     GetType		proc :ptr
     AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
     AddDataReference	proc :ptr, :ptr
+
     .ends
 
 
-.comdef ID3DXFileEnumObject
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXFileEnumObject : public IUnknown
+
     GetFile		proc :ptr
     GetChildren		proc :ptr
     GetChild		proc :SIZE_T, :ptr
     GetDataObjectById	proc :REFGUID, :ptr
     GetDataObjectByName proc :ptr, :ptr
+
     .ends
 
-.comdef ID3DXFileData
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXFileData : public IUnknown
+
     GetEnum		proc :ptr
     GetName		proc :ptr, :ptr
     GetId		proc :LPGUID
@@ -99,6 +96,7 @@ D3DXFileCreate proto WINAPI \
     IsReference		proc
     GetChildren		proc :ptr
     GetChild		proc :SIZE_T, :ptr
+
     .ends
 
 ;; D3DX File errors

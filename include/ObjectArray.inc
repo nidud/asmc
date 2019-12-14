@@ -29,30 +29,30 @@ include ocidl.inc
 ifndef __IObjectArray_INTERFACE_DEFINED__
 __IObjectArray_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectArray:IID
-.comdef IObjectArray
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+externdef IID_IObjectArray:IID
+
+.comdef IObjectArray : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :UINT, :REFIID, :ptr
+
     .ends
 endif
 
 ifndef __IObjectCollection_INTERFACE_DEFINED__
 __IObjectCollection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectCollection:IID
-.comdef IObjectCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+externdef IID_IObjectCollection:IID
+
+.comdef IObjectCollection : public IUnknown
+
     GetCount		proc :ptr
     GetAt		proc :UINT, :REFIID, :ptr
     AddObject		proc :ptr
     AddFromArray	proc :ptr
     RemoveObjectAt	proc :UINT
     Clear		proc
+
     .ends
 endif
 

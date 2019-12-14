@@ -163,7 +163,7 @@ local	object:DWORD
 	assert	ax,0,jne,"dlinit"
 	.while si
 	    invoke dlinitobj,td,object
-	    add WORD PTR object,SIZE S_TOBJ
+	    add WORD PTR object,S_TOBJ
 	    dec si
 	.endw
 	ret

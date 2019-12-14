@@ -41,16 +41,13 @@ DEFINE_GUID(CodecIImageBytes,0x025d1823,0x6c7d,0x447b,0xbb, 0xdb, 0xa3, 0xcb, 0x
 
 ;MIDL_INTERFACE("025D1823-6C7D-447B-BBDB-A3CBC3DFA2FC")
 
-.comdef IImageBytes
+.comdef IImageBytes : public IUnknown
 
-	QueryInterface	proc :REFIID, :ptr
-	AddRef		proc
-	Release		proc
+    CountBytes	proc :ptr
+    LockBytes	proc :UINT, :ULONG, :ptr
+    UnlockBytes proc :ptr, :UINT, :ULONG
 
-	CountBytes	proc :ptr
-	LockBytes	proc :UINT, :ULONG, :ptr
-	UnlockBytes	proc :ptr, :UINT, :ULONG
-	.ends
+    .ends
 
 ImageCodecInfo		STRUC
 Clsid			CLSID <>

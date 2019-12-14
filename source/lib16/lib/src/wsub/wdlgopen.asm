@@ -248,7 +248,7 @@ local	list:	S_LOBJ
 	lea	di,list
 	mov	WORD PTR o_list+2,ss
 	mov	WORD PTR o_list,di
-	mov	cx,(SIZE S_LOBJ + SIZE S_PATH)/2
+	mov	cx,(S_LOBJ + S_PATH)/2
 	sub	ax,ax
 	rep	stosw
 	mov	si,di

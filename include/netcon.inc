@@ -19,8 +19,8 @@ include windows.inc
 include ole2.inc
 endif
 
-ifndef __netcon_h__
-__netcon_h__ equ <>
+ifndef __NETCON_INC
+__NETCON_INC equ <>
 
 ifndef __IEnumNetConnection_FWD_DEFINED__
 __IEnumNetConnection_FWD_DEFINED__ equ 1
@@ -73,96 +73,98 @@ endif
 ifndef __INetSharingManager_FWD_DEFINED__
 __INetSharingManager_FWD_DEFINED__ equ 1
 endif
-
 ifndef __NetSharingManager_FWD_DEFINED__
 __NetSharingManager_FWD_DEFINED__ equ 1
-NetSharingManager	typedef NetSharingManager
 endif
 
 include oaidl.inc
 include prsht.inc
 
-externdef		CLSID_ConnectionManager:CLSID
-externdef		CLSID_NetSharingManager:CLSID
+externdef CLSID_ConnectionManager:CLSID
+externdef CLSID_NetSharingManager:CLSID
 
-NETCON_MAX_NAME_LEN	equ 256
+NETCON_MAX_NAME_LEN equ 256
 
 ifndef __IEnumNetConnection_INTERFACE_DEFINED__
 __IEnumNetConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumNetConnection, "C08956A0-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef IEnumNetConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumNetConnection : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 endif
 
 ifndef __INetConnection_INTERFACE_DEFINED__
 __INetConnection_INTERFACE_DEFINED__ equ 1
 
-NETCON_CHARACTERISTIC_FLAGS typedef SDWORD
-NCCF_NONE		equ 0
-NCCF_ALL_USERS		equ 0x1
-NCCF_ALLOW_DUPLICATION	equ 0x2
-NCCF_ALLOW_REMOVAL	equ 0x4
-NCCF_ALLOW_RENAME	equ 0x8
-NCCF_INCOMING_ONLY	equ 0x20
-NCCF_OUTGOING_ONLY	equ 0x40
-NCCF_BRANDED		equ 0x80
-NCCF_SHARED		equ 0x100
-NCCF_BRIDGED		equ 0x200
-NCCF_FIREWALLED		equ 0x400
-NCCF_DEFAULT		equ 0x800
-NCCF_HOMENET_CAPABLE	equ 0x1000
-NCCF_SHARED_PRIVATE	equ 0x2000
-NCCF_QUARANTINED	equ 0x4000
-NCCF_RESERVED		equ 0x8000
-NCCF_HOSTED_NETWORK	equ 0x10000
-NCCF_VIRTUAL_STATION	equ 0x20000
-NCCF_BLUETOOTH_MASK	equ 0xf0000
-NCCF_LAN_MASK		equ 0xf00000
+.enum NETCON_CHARACTERISTIC_FLAGS {
+	NCCF_NONE		= 0,
+	NCCF_ALL_USERS		= 0x1,
+	NCCF_ALLOW_DUPLICATION	= 0x2,
+	NCCF_ALLOW_REMOVAL	= 0x4,
+	NCCF_ALLOW_RENAME	= 0x8,
+	NCCF_INCOMING_ONLY	= 0x20,
+	NCCF_OUTGOING_ONLY	= 0x40,
+	NCCF_BRANDED		= 0x80,
+	NCCF_SHARED		= 0x100,
+	NCCF_BRIDGED		= 0x200,
+	NCCF_FIREWALLED		= 0x400,
+	NCCF_DEFAULT		= 0x800,
+	NCCF_HOMENET_CAPABLE	= 0x1000,
+	NCCF_SHARED_PRIVATE	= 0x2000,
+	NCCF_QUARANTINED	= 0x4000,
+	NCCF_RESERVED		= 0x8000,
+	NCCF_HOSTED_NETWORK	= 0x10000,
+	NCCF_VIRTUAL_STATION	= 0x20000,
+	NCCF_BLUETOOTH_MASK	= 0xf0000,
+	NCCF_LAN_MASK		= 0xf00000
+    }
 
-NETCON_STATUS		typedef SDWORD
-NCS_DISCONNECTED	equ 0
-NCS_CONNECTING		equ ( NCS_DISCONNECTED + 1 )
-NCS_CONNECTED		equ ( NCS_CONNECTING + 1 )
-NCS_DISCONNECTING	equ ( NCS_CONNECTED + 1 )
-NCS_HARDWARE_NOT_PRESENT equ ( NCS_DISCONNECTING + 1 )
-NCS_HARDWARE_DISABLED	equ ( NCS_HARDWARE_NOT_PRESENT + 1 )
-NCS_HARDWARE_MALFUNCTION equ ( NCS_HARDWARE_DISABLED + 1 )
-NCS_MEDIA_DISCONNECTED	equ ( NCS_HARDWARE_MALFUNCTION + 1 )
-NCS_AUTHENTICATING	equ ( NCS_MEDIA_DISCONNECTED + 1 )
-NCS_AUTHENTICATION_SUCCEEDED equ ( NCS_AUTHENTICATING + 1 )
-NCS_AUTHENTICATION_FAILED equ ( NCS_AUTHENTICATION_SUCCEEDED + 1 )
-NCS_INVALID_ADDRESS	equ ( NCS_AUTHENTICATION_FAILED + 1 )
-NCS_CREDENTIALS_REQUIRED equ ( NCS_INVALID_ADDRESS + 1 )
+.enum NETCON_STATUS {
+	NCS_DISCONNECTED	= 0,
+	NCS_CONNECTING		= ( NCS_DISCONNECTED + 1 ) ,
+	NCS_CONNECTED		= ( NCS_CONNECTING + 1 ) ,
+	NCS_DISCONNECTING	= ( NCS_CONNECTED + 1 ) ,
+	NCS_HARDWARE_NOT_PRESENT = ( NCS_DISCONNECTING + 1 ) ,
+	NCS_HARDWARE_DISABLED	= ( NCS_HARDWARE_NOT_PRESENT + 1 ) ,
+	NCS_HARDWARE_MALFUNCTION = ( NCS_HARDWARE_DISABLED + 1 ) ,
+	NCS_MEDIA_DISCONNECTED	= ( NCS_HARDWARE_MALFUNCTION + 1 ) ,
+	NCS_AUTHENTICATING	= ( NCS_MEDIA_DISCONNECTED + 1 ) ,
+	NCS_AUTHENTICATION_SUCCEEDED = ( NCS_AUTHENTICATING + 1 ) ,
+	NCS_AUTHENTICATION_FAILED = ( NCS_AUTHENTICATION_SUCCEEDED + 1 ) ,
+	NCS_INVALID_ADDRESS	= ( NCS_AUTHENTICATION_FAILED + 1 ) ,
+	NCS_CREDENTIALS_REQUIRED = ( NCS_INVALID_ADDRESS + 1 )
+    }
 
-NETCON_TYPE		typedef SDWORD
-NCT_DIRECT_CONNECT	equ 0
-NCT_INBOUND		equ 1
-NCT_INTERNET		equ ( NCT_INBOUND + 1 )
-NCT_LAN			equ ( NCT_INTERNET + 1 )
-NCT_PHONE		equ ( NCT_LAN + 1 )
-NCT_TUNNEL		equ ( NCT_PHONE + 1 )
-NCT_BRIDGE		equ ( NCT_TUNNEL + 1 )
+.enum NETCON_TYPE {
+	NCT_DIRECT_CONNECT = 0,
+	NCT_INBOUND	= 1,
+	NCT_INTERNET	= ( NCT_INBOUND + 1 ) ,
+	NCT_LAN		= ( NCT_INTERNET + 1 ) ,
+	NCT_PHONE	= ( NCT_LAN + 1 ) ,
+	NCT_TUNNEL	= ( NCT_PHONE + 1 ) ,
+	NCT_BRIDGE	= ( NCT_TUNNEL + 1 )
+    }
 
-NETCON_MEDIATYPE	typedef SDWORD
-NCM_NONE		equ 0
-NCM_DIRECT		equ ( NCM_NONE + 1 )
-NCM_ISDN		equ 2
-NCM_LAN			equ ( NCM_ISDN + 1 )
-NCM_PHONE		equ ( NCM_LAN + 1 )
-NCM_TUNNEL		equ ( NCM_PHONE + 1 )
-NCM_PPPOE		equ ( NCM_TUNNEL + 1 )
-NCM_BRIDGE		equ ( NCM_PPPOE + 1 )
-NCM_SHAREDACCESSHOST_LAN equ ( NCM_BRIDGE + 1 )
-NCM_SHAREDACCESSHOST_RAS equ ( NCM_SHAREDACCESSHOST_LAN + 1 )
+.enum NETCON_MEDIATYPE {
+	NCM_NONE	= 0,
+	NCM_DIRECT	= ( NCM_NONE + 1 ) ,
+	NCM_ISDN	= 2,
+	NCM_LAN		= ( NCM_ISDN + 1 ) ,
+	NCM_PHONE	= ( NCM_LAN + 1 ) ,
+	NCM_TUNNEL	= ( NCM_PHONE + 1 ) ,
+	NCM_PPPOE	= ( NCM_TUNNEL + 1 ) ,
+	NCM_BRIDGE	= ( NCM_PPPOE + 1 ) ,
+	NCM_SHAREDACCESSHOST_LAN = ( NCM_BRIDGE + 1 ) ,
+	NCM_SHAREDACCESSHOST_RAS = ( NCM_SHAREDACCESSHOST_LAN + 1 )
+    }
+
 
 NETCON_PROPERTIES	STRUC
 guidId			GUID <>
@@ -179,10 +181,8 @@ S_OBJECT_NO_LONGER_VALID equ (0x00000002)
 
 DEFINE_IIDX(INetConnection, "C08956A1-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INetConnection : public IUnknown
+
     Connect		proc
     Disconnect		proc
     Delete		proc
@@ -190,6 +190,7 @@ DEFINE_IIDX(INetConnection, "C08956A1-1CD3-11D1-B1C5-00805FC1270E")
     GetProperties	proc :ptr
     GetUiObjectClassId	proc :ptr
     Rename		proc :LPCWSTR
+
     .ends
 endif
 
@@ -211,11 +212,10 @@ NCME_HIDDEN		equ 0x1
 
 DEFINE_IIDX(INetConnectionManager, "C08956A2-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetConnectionManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INetConnectionManager : public IUnknown
+
     EnumConnections	proc :NETCONMGR_ENUM_FLAGS, :ptr
+
     .ends
 
 endif
@@ -230,13 +230,12 @@ NCUC_ENABLE_DISABLE	equ 0x2
 
 DEFINE_IIDX(INetConnectionConnectUi, "C08956A3-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetConnectionConnectUi
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef INetConnectionConnectUi : public IUnknown
+
     SetConnection	proc :ptr
     Connect		proc :HWND, :DWORD
     Disconnect		proc :HWND, :DWORD
+
     .ends
 
 endif
@@ -246,14 +245,13 @@ __IEnumNetSharingPortMapping_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumNetSharingPortMapping, "C08956B0-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef IEnumNetSharingPortMapping
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumNetSharingPortMapping : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -263,14 +261,8 @@ __INetSharingPortMappingProps_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingPortMappingProps, "24B7E9B5-E38F-4685-851B-00892CF5F940")
 
-.comdef INetSharingPortMappingProps
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingPortMappingProps : public IDispatch
+
     get_Name		proc :ptr
     get_IPProtocol	proc :ptr
     get_ExternalPort	proc :ptr
@@ -279,6 +271,7 @@ DEFINE_IIDX(INetSharingPortMappingProps, "24B7E9B5-E38F-4685-851B-00892CF5F940")
     get_TargetName	proc :ptr
     get_TargetIPAddress proc :ptr
     get_Enabled		proc :ptr
+
     .ends
 
 endif
@@ -288,18 +281,13 @@ __INetSharingPortMapping_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingPortMapping, "C08956B1-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetSharingPortMapping
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingPortMapping : public IDispatch
+
     Disable		proc
     Enable		proc
     get_Properties	proc :ptr
     Delete		proc
+
     .ends
 
 endif
@@ -309,14 +297,13 @@ __IEnumNetSharingEveryConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumNetSharingEveryConnection, "C08956B8-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef IEnumNetSharingEveryConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumNetSharingEveryConnection : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -326,14 +313,13 @@ __IEnumNetSharingPublicConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumNetSharingPublicConnection, "C08956B4-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef IEnumNetSharingPublicConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumNetSharingPublicConnection : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -343,14 +329,13 @@ __IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumNetSharingPrivateConnection, "C08956B5-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef IEnumNetSharingPrivateConnection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumNetSharingPrivateConnection : public IUnknown
+
     Next		proc :ULONG, :ptr, :ptr
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
+
     .ends
 
 endif
@@ -360,16 +345,11 @@ __INetSharingPortMappingCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingPortMappingCollection, "02E4A2DE-DA20-4E34-89C8-AC22275A010B")
 
-.comdef INetSharingPortMappingCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingPortMappingCollection : public IDispatch
+
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
+
     .ends
 
 endif
@@ -379,20 +359,15 @@ __INetConnectionProps_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetConnectionProps, "F4277C95-CE5B-463D-8167-5662D9BCAA72")
 
-.comdef INetConnectionProps
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetConnectionProps : public IDispatch
+
     get_Guid		proc :ptr
     get_Name		proc :ptr
     get_DeviceName	proc :ptr
     get_Status		proc :ptr
     get_MediaType	proc :ptr
     get_Characteristics proc :ptr
+
     .ends
 
 endif
@@ -416,14 +391,8 @@ ICSTT_IPADDRESS		equ ( ICSTT_NAME + 1 )
 
 DEFINE_IIDX(INetSharingConfiguration, "C08956B6-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetSharingConfiguration
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingConfiguration : public IDispatch
+
     get_SharingEnabled	proc :ptr
     get_SharingConnectionType proc :ptr
     DisableSharing	proc
@@ -434,6 +403,7 @@ DEFINE_IIDX(INetSharingConfiguration, "C08956B6-1CD3-11D1-B1C5-00805FC1270E")
     get_EnumPortMappings proc :SHARINGCONNECTION_ENUM_FLAGS, :ptr
     AddPortMapping	proc :BSTR, :UCHAR, :USHORT, :USHORT, :DWORD, :BSTR, :ICS_TARGETTYPE, :ptr
     RemovePortMapping	proc :ptr
+
     .ends
 
 endif
@@ -443,16 +413,11 @@ __INetSharingEveryConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingEveryConnectionCollection, "33C4643C-7811-46FA-A89A-768597BD7223")
 
-.comdef INetSharingEveryConnectionCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingEveryConnectionCollection : public IDispatch
+
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
+
     .ends
 
 endif
@@ -462,16 +427,11 @@ __INetSharingPublicConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingPublicConnectionCollection, "7D7A6355-F372-4971-A149-BFC927BE762A")
 
-.comdef INetSharingPublicConnectionCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingPublicConnectionCollection : public IDispatch
+
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
+
     .ends
 
 endif
@@ -481,16 +441,11 @@ __INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingPrivateConnectionCollection, "38AE69E0-4409-402A-A2CB-E965C727F840")
 
-.comdef INetSharingPrivateConnectionCollection
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingPrivateConnectionCollection : public IDispatch
+
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
+
     .ends
 
 endif
@@ -500,20 +455,15 @@ __INetSharingManager_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(INetSharingManager, "C08956B7-1CD3-11D1-B1C5-00805FC1270E")
 
-.comdef INetSharingManager
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef INetSharingManager : public IDispatch
+
     get_SharingInstalled proc :ptr
     get_EnumPublicConnections proc :SHARINGCONNECTION_ENUM_FLAGS, :ptr
     get_EnumPrivateConnections proc :SHARINGCONNECTION_ENUM_FLAGS, :ptr
     get_INetSharingConfigurationForINetConnection proc :ptr, :ptr
     get_EnumEveryConnection proc :ptr
     get_NetConnectionProps proc :ptr, :ptr
+
     .ends
 
 endif

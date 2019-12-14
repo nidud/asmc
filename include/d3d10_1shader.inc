@@ -150,10 +150,8 @@ D3D10_SHADER_DEBUG_INFO ENDS
 
 DEFINE_GUID(IID_ID3D10ShaderReflection1, 0xc3457783, 0xa846, 0x47ce, 0x95, 0x20, 0xce, 0xa6, 0xf6, 0x6e, 0x74, 0x47);
 
-.comdef ID3D10ShaderReflection1
-    QueryInterface		proc :REFIID, :ptr
-    AddRef			proc
-    Release			proc
+.comdef ID3D10ShaderReflection1 : public IUnknown
+
     GetDesc			proc :ptr
     GetConstantBufferByIndex	proc :UINT
     GetConstantBufferByName	proc :LPCSTR
@@ -169,6 +167,7 @@ DEFINE_GUID(IID_ID3D10ShaderReflection1, 0xc3457783, 0xa846, 0x47ce, 0x95, 0x20,
     GetGSInputPrimitive		proc :ptr
     IsLevel9Shader		proc :ptr
     IsSampleFrequencyShader	proc :ptr
+
     .ends
 
 endif

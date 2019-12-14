@@ -797,7 +797,7 @@ event_delete ENDP
 
 FFOpen PROC _CType PRIVATE ll:WORD
 	mov ax,ll
-	invoke memzero,ss::ax,SIZE S_LOBJ
+	invoke memzero,ss::ax,S_LOBJ
 	mov bx,ll
 	mov [bx].S_LOBJ.ll_dcount,ID_FILE
 	movp [bx].S_LOBJ.ll_proc,event_list

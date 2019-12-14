@@ -100,76 +100,75 @@ SID_SkipHung		equ <IID_IEnumVARIANT>
 ifndef __SHDocVw_LIBRARY_DEFINED__
 __SHDocVw_LIBRARY_DEFINED__ equ 1
 
-CommandStateChangeConstants typedef SDWORD
-CSC_UPDATECOMMANDS	equ 0xffffffff
-CSC_NAVIGATEFORWARD	equ 0x1
-CSC_NAVIGATEBACK	equ 0x2
+.enum CommandStateChangeConstants {
+	CSC_UPDATECOMMANDS	= 0xffffffff,
+	CSC_NAVIGATEFORWARD	= 0x1,
+	CSC_NAVIGATEBACK	= 0x2
+    }
 
-SecureLockIconConstants typedef SDWORD
-secureLockIconUnsecure		equ 0
-secureLockIconMixed		equ 0x1
-secureLockIconSecureUnknownBits equ 0x2
-secureLockIconSecure40Bit	equ 0x3
-secureLockIconSecure56Bit	equ 0x4
-secureLockIconSecureFortezza	equ 0x5
-secureLockIconSecure128Bit	equ 0x6
+.enum SecureLockIconConstants {
+	secureLockIconUnsecure	= 0,
+	secureLockIconMixed	= 0x1,
+	secureLockIconSecureUnknownBits = 0x2,
+	secureLockIconSecure40Bit	= 0x3,
+	secureLockIconSecure56Bit	= 0x4,
+	secureLockIconSecureFortezza	= 0x5,
+	secureLockIconSecure128Bit	= 0x6
+    }
 
-NewProcessCauseConstants typedef SDWORD
-ProtectedModeRedirect	equ 0x1
+.enum NewProcessCauseConstants {
+	ProtectedModeRedirect	= 0x1
+    }
 
-ShellWindowTypeConstants typedef SDWORD
-SWC_EXPLORER		equ 0
-SWC_BROWSER		equ 0x1
-SWC_3RDPARTY		equ 0x2
-SWC_CALLBACK		equ 0x4
-SWC_DESKTOP		equ 0x8
+.enum ShellWindowTypeConstants {
+	SWC_EXPLORER	= 0,
+	SWC_BROWSER	= 0x1,
+	SWC_3RDPARTY	= 0x2,
+	SWC_CALLBACK	= 0x4,
+	SWC_DESKTOP	= 0x8
+    }
 
-ShellWindowFindWindowOptions typedef SDWORD
-SWFO_NEEDDISPATCH	equ 0x1
-SWFO_INCLUDEPENDING	equ 0x2
-SWFO_COOKIEPASSED	equ 0x4
+.enum ShellWindowFindWindowOptions {
+	SWFO_NEEDDISPATCH	= 0x1,
+	SWFO_INCLUDEPENDING	= 0x2,
+	SWFO_COOKIEPASSED	= 0x4
+    }
 
-
-externdef		LIBID_SHDocVw:IID
+externdef LIBID_SHDocVw:IID
 
 ifndef __IWebBrowser_INTERFACE_DEFINED__
 __IWebBrowser_INTERFACE_DEFINED__ equ 1
 
+.enum BrowserNavConstants {
+	navOpenInNewWindow	= 0x1,
+	navNoHistory		= 0x2,
+	navNoReadFromCache	= 0x4,
+	navNoWriteToCache	= 0x8,
+	navAllowAutosearch	= 0x10,
+	navBrowserBar		= 0x20,
+	navHyperlink		= 0x40,
+	navEnforceRestricted	= 0x80,
+	navNewWindowsManaged	= 0x100,
+	navUntrustedForDownload = 0x200,
+	navTrustedForActiveX	= 0x400,
+	navOpenInNewTab		= 0x800,
+	navOpenInBackgroundTab	= 0x1000,
+	navKeepWordWheelText	= 0x2000,
+	navVirtualTab		= 0x4000,
+	navBlockRedirectsXDomain = 0x8000,
+	navOpenNewForegroundTab = 0x10000
+    }
 
-BrowserNavConstants	typedef SDWORD
-navOpenInNewWindow	equ 0x1
-navNoHistory		equ 0x2
-navNoReadFromCache	equ 0x4
-navNoWriteToCache	equ 0x8
-navAllowAutosearch	equ 0x10
-navBrowserBar		equ 0x20
-navHyperlink		equ 0x40
-navEnforceRestricted	equ 0x80
-navNewWindowsManaged	equ 0x100
-navUntrustedForDownload equ 0x200
-navTrustedForActiveX	equ 0x400
-navOpenInNewTab		equ 0x800
-navOpenInBackgroundTab	equ 0x1000
-navKeepWordWheelText	equ 0x2000
-navVirtualTab		equ 0x4000
-navBlockRedirectsXDomain equ 0x8000
-navOpenNewForegroundTab equ 0x10000
-
-RefreshConstants	typedef SDWORD
-REFRESH_NORMAL		equ 0
-REFRESH_IFEXPIRED	equ 1
-REFRESH_COMPLETELY	equ 3
+.enum RefreshConstants {
+	REFRESH_NORMAL		= 0,
+	REFRESH_IFEXPIRED	= 1,
+	REFRESH_COMPLETELY	= 3
+    }
 
 DEFINE_IIDX(IWebBrowser, "EAB22AC1-30C1-11CF-A7EB-0000C05BAE0B")
 
-.comdef IWebBrowser
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IWebBrowser : public IDispatch
+
     GoBack		proc
     GoForward		proc
     GoHome		proc
@@ -195,6 +194,7 @@ DEFINE_IIDX(IWebBrowser, "EAB22AC1-30C1-11CF-A7EB-0000C05BAE0B")
     get_LocationName	proc :ptr
     get_LocationURL	proc :ptr
     get_Busy		proc :ptr
+
     .ends
 
 endif
@@ -206,14 +206,8 @@ __DWebBrowserEvents_DISPINTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(DWebBrowserEvents,"EAB22AC2-30C1-11CF-A7EB-0000C05BAE0B")
 
-.comdef DWebBrowserEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef DWebBrowserEvents : public IDispatch
+
     .ends
 
 endif
@@ -223,39 +217,8 @@ __IWebBrowserApp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
 
-.comdef IWebBrowserApp
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GoBack		proc
-    GoForward		proc
-    GoHome		proc
-    GoSearch		proc
-    Navigate		proc :BSTR, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    Refresh2		proc :ptr
-    Stop		proc
-    get_Application	proc :ptr
-    get_Parent		proc :ptr
-    get_Container	proc :ptr
-    get_Document	proc :ptr
-    get_TopLevelContainer proc :ptr
-    get_Type		proc :ptr
-    get_Left		proc :ptr
-    put_Left		proc :SDWORD
-    get_Top		proc :ptr
-    put_Top		proc :SDWORD
-    get_Width		proc :ptr
-    put_Width		proc :SDWORD
-    get_Height		proc :ptr
-    put_Height		proc :SDWORD
-    get_LocationName	proc :ptr
-    get_LocationURL	proc :ptr
-    get_Busy		proc :ptr
+.comdef IWebBrowserApp : public IWebBrowser
+
     Quit		proc
     ClientToWindow	proc :ptr, :ptr
     PutProperty		proc :BSTR, :VARIANT
@@ -276,6 +239,7 @@ DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00
     put_MenuBar		proc :VARIANT_BOOL
     get_FullScreen	proc :ptr
     put_FullScreen	proc :VARIANT_BOOL
+
     .ends
 
 endif
@@ -285,59 +249,8 @@ __IWebBrowser2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWebBrowser2, "D30C1661-CDAF-11d0-8A3E-00C04FC9E26E")
 
-.comdef IWebBrowser2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GoBack		proc
-    GoForward		proc
-    GoHome		proc
-    GoSearch		proc
-    Navigate		proc :BSTR, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    Refresh2		proc :ptr
-    Stop		proc
-    get_Application	proc :ptr
-    get_Parent		proc :ptr
-    get_Container	proc :ptr
-    get_Document	proc :ptr
-    get_TopLevelContainer proc :ptr
-    get_Type		proc :ptr
-    get_Left		proc :ptr
-    put_Left		proc :SDWORD
-    get_Top		proc :ptr
-    put_Top		proc :SDWORD
-    get_Width		proc :ptr
-    put_Width		proc :SDWORD
-    get_Height		proc :ptr
-    put_Height		proc :SDWORD
-    get_LocationName	proc :ptr
-    get_LocationURL	proc :ptr
-    get_Busy		proc :ptr
-    Quit		proc
-    ClientToWindow	proc :ptr, :ptr
-    PutProperty		proc :BSTR, :VARIANT
-    GetProperty		proc :BSTR, :ptr
-    get_Name		proc :ptr
-    get_HWND		proc :ptr
-    get_FullName	proc :ptr
-    get_Path		proc :ptr BSTR
-    get_Visible		proc :ptr
-    put_Visible		proc :VARIANT_BOOL
-    get_StatusBar	proc :ptr
-    put_StatusBar	proc :VARIANT_BOOL
-    get_StatusText	proc :ptr
-    put_StatusText	proc :BSTR
-    get_ToolBar		proc :ptr
-    put_ToolBar		proc :DWORD
-    get_MenuBar		proc :ptr
-    put_MenuBar		proc :VARIANT_BOOL
-    get_FullScreen	proc :ptr
-    put_FullScreen	proc :VARIANT_BOOL
+.comdef IWebBrowser2 : public IWebBrowserApp
+
     Navigate2		proc :ptr, :ptr, :ptr, :ptr, :ptr
     QueryStatusWB	proc :OLECMDID, :ptr
     ExecWB		proc :OLECMDID, :OLECMDEXECOPT, :ptr, :ptr
@@ -357,6 +270,7 @@ DEFINE_IIDX(IWebBrowser2, "D30C1661-CDAF-11d0-8A3E-00C04FC9E26E")
     put_AddressBar	proc :VARIANT_BOOL
     get_Resizable	proc :ptr
     put_Resizable	proc :VARIANT_BOOL
+
     .ends
 
 endif
@@ -366,14 +280,8 @@ __DWebBrowserEvents2_DISPINTERFACE_DEFINED__ equ 1
 
 DEFINE_GUIDS(DIID_DWebBrowserEvents2, "34A715A0-6587-11D0-924A-0020AFC7AC4D")
 
-.comdef DWebBrowserEvents2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef DWebBrowserEvents2 : public IDispatch
+
     .ends
 endif
 
@@ -386,16 +294,9 @@ __DShellWindowsEvents_DISPINTERFACE_DEFINED__ equ 1
 
 DEFINE_GUIDS(DIID_DShellWindowsEvents, "fe4106e0-399a-11d0-a48c-00a0c90a8f39")
 
-.comdef DShellWindowsEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    .ends
+.comdef DShellWindowsEvents : public IDispatch
 
+    .ends
 endif
 
 
@@ -404,17 +305,11 @@ __IShellWindows_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellWindows, "85CB6900-4D95-11CF-960C-0080C7F4EE85")
 
-.comdef IShellWindows
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IShellWindows : public IDispatch
+
     get_Count		proc :ptr
     Item		proc :VARIANT, :ptr
-    _NewEnum		proc :ptr
+    NewEnum		proc :ptr
     Register		proc :ptr, :SDWORD, :DWORD, :ptr
     RegisterPending	proc :SDWORD, :ptr, :ptr, :DWORD, :ptr
     Revoke		proc :SDWORD
@@ -423,6 +318,7 @@ DEFINE_IIDX(IShellWindows, "85CB6900-4D95-11CF-960C-0080C7F4EE85")
     FindWindowSW	proc :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
     OnCreated		proc :SDWORD, :ptr
     ProcessAttachDetach proc :VARIANT_BOOL
+
     .ends
 
 endif
@@ -434,14 +330,8 @@ __IShellUIHelper_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellUIHelper, "729FE2F8-1EA8-11d1-8F85-00C04FC2FBE1")
 
-.comdef IShellUIHelper
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IShellUIHelper : public IDispatch
+
     ResetFirstBootMode	proc
     ResetSafeMode	proc
     RefreshOfflineDesktop proc
@@ -455,6 +345,7 @@ DEFINE_IIDX(IShellUIHelper, "729FE2F8-1EA8-11d1-8F85-00C04FC2FBE1")
     AutoScan		proc :BSTR, :BSTR, :ptr
     AutoCompleteAttach	proc :ptr
     ShowBrowserUI	proc :BSTR, :ptr, :ptr
+
     .ends
 
 endif
@@ -465,10 +356,25 @@ __IShellUIHelper2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellUIHelper2, "a7fe6eda-1932-4281-b881-87b31b8bc52c")
 
-.comdef IShellUIHelper2
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IShellUIHelper2 : public IShellUIHelper
+
+    AddSearchProvider	proc :BSTR
+    RunOnceShown	proc
+    SkipRunOnce		proc
+    CustomizeSettings	proc :VARIANT_BOOL, :VARIANT_BOOL
+    SqmEnabled		proc :ptr
+    PhishingEnabled	proc :ptr
+    BrandImageUri	proc :ptr
+    SkipTabsWelcome	proc
+    DiagnoseConnection	proc
+    CustomizeClearType	proc :VARIANT_BOOL
+    IsSearchProviderInstalled proc :BSTR, :ptr
+    IsSearchMigrated	proc :ptr
+    DefaultSearchProvider proc :ptr
+    RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
+    RunOnceHasShown	proc :ptr
+    SearchGuideUrl	proc :ptr
+
     .ends
 
 endif
@@ -478,43 +384,8 @@ __IShellUIHelper3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellUIHelper3, "528DF2EC-D419-40bc-9B6D-DCDBF9C1B25D")
 
-.comdef IShellUIHelper3
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    ResetFirstBootMode	proc
-    ResetSafeMode	proc
-    RefreshOfflineDesktop proc
-    AddFavorite		proc :BSTR, :ptr
-    AddChannel		proc :BSTR
-    AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-    IsSubscribed	proc :BSTR, :ptr
-    NavigateAndFind	proc :BSTR, :BSTR, :ptr
-    ImportExportFavorites proc :VARIANT_BOOL, :BSTR
-    AutoCompleteSaveForm proc :ptr
-    AutoScan		proc :BSTR, :BSTR, :ptr
-    AutoCompleteAttach	proc :ptr
-    ShowBrowserUI	proc :BSTR, :ptr, :ptr
-    AddSearchProvider	proc :BSTR
-    RunOnceShown	proc
-    SkipRunOnce		proc
-    CustomizeSettings	proc :VARIANT_BOOL, :VARIANT_BOOL
-    SqmEnabled		proc :ptr
-    PhishingEnabled	proc :ptr
-    BrandImageUri	proc :ptr
-    SkipTabsWelcome	proc
-    DiagnoseConnection	proc
-    CustomizeClearType	proc :VARIANT_BOOL
-    IsSearchProviderInstalled proc :BSTR, :ptr
-    IsSearchMigrated	proc :ptr
-    DefaultSearchProvider proc :ptr
-    RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
-    RunOnceHasShown	proc :ptr
-    SearchGuideUrl	proc :ptr
+.comdef IShellUIHelper3 : public IShellUIHelper2
+
     AddService		proc :BSTR
     IsServiceInstalled	proc :BSTR, :BSTR, :ptr
     InPrivateFilteringEnabled proc :ptr
@@ -528,6 +399,7 @@ DEFINE_IIDX(IShellUIHelper3, "528DF2EC-D419-40bc-9B6D-DCDBF9C1B25D")
     NavigateToSuggestedSites proc :BSTR
     ShowTabsHelp	proc
     ShowInPrivateHelp	proc
+
     .ends
 
 endif
@@ -537,56 +409,8 @@ __IShellUIHelper4_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellUIHelper4, "B36E6A53-8073-499E-824C-D776330A333E")
 
-.comdef IShellUIHelper4
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    ResetFirstBootMode	proc
-    ResetSafeMode	proc
-    RefreshOfflineDesktop proc
-    AddFavorite		proc :BSTR, :ptr
-    AddChannel		proc :BSTR
-    AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-    IsSubscribed	proc :BSTR, :ptr
-    NavigateAndFind	proc :BSTR, :BSTR, :ptr
-    ImportExportFavorites proc :VARIANT_BOOL, :BSTR
-    AutoCompleteSaveForm proc :ptr
-    AutoScan		proc :BSTR, :BSTR, :ptr
-    AutoCompleteAttach	proc :ptr
-    ShowBrowserUI	proc :BSTR, :ptr, :ptr
-    AddSearchProvider	proc :BSTR
-    RunOnceShown	proc
-    SkipRunOnce		proc
-    CustomizeSettings	proc :VARIANT_BOOL, :VARIANT_BOOL
-    SqmEnabled		proc :ptr
-    PhishingEnabled	proc :ptr
-    BrandImageUri	proc :ptr
-    SkipTabsWelcome	proc
-    DiagnoseConnection	proc
-    CustomizeClearType	proc :VARIANT_BOOL
-    IsSearchProviderInstalled proc :BSTR, :ptr
-    IsSearchMigrated	proc :ptr
-    DefaultSearchProvider proc :ptr
-    RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
-    RunOnceHasShown	proc :ptr
-    SearchGuideUrl	proc :ptr
-    AddService		proc :BSTR
-    IsServiceInstalled	proc :BSTR, :BSTR, :ptr
-    InPrivateFilteringEnabled proc :ptr
-    AddToFavoritesBar	proc :BSTR, :BSTR, :ptr
-    BuildNewTabPage	proc
-    SetRecentlyClosedVisible proc :VARIANT_BOOL
-    SetActivitiesVisible proc :VARIANT_BOOL
-    ContentDiscoveryResetSTDMETHOD proc
-    IsSuggestedSitesEnabled proc :ptr
-    EnableSuggestedSites proc :VARIANT_BOOL
-    NavigateToSuggestedSites proc :BSTR
-    ShowTabsHelp	proc
-    ShowInPrivateHelp	proc
+.comdef IShellUIHelper4 : public IShellUIHelper3
+
     msIsSiteMode	proc :ptr
     msSiteModeShowThumbBar proc
     msSiteModeAddThumbBarButton proc :BSTR, :BSTR, :ptr
@@ -605,6 +429,7 @@ DEFINE_IIDX(IShellUIHelper4, "B36E6A53-8073-499E-824C-D776330A333E")
     msAddTrackingProtectionList proc :BSTR, :BSTR
     msTrackingProtectionEnabled proc :ptr VARIANT_BOOL
     msActiveXFilteringEnabled proc :ptr VARIANT_BOOL
+
     .ends
 
 endif
@@ -614,74 +439,8 @@ __IShellUIHelper5_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellUIHelper5, "A2A08B09-103D-4D3F-B91C-EA455CA82EFA")
 
-.comdef IShellUIHelper5
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    ResetFirstBootMode	proc
-    ResetSafeMode	proc
-    RefreshOfflineDesktop proc
-    AddFavorite		proc :BSTR, :ptr
-    AddChannel		proc :BSTR
-    AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-    IsSubscribed	proc :BSTR, :ptr
-    NavigateAndFind	proc :BSTR, :BSTR, :ptr
-    ImportExportFavorites proc :VARIANT_BOOL, :BSTR
-    AutoCompleteSaveForm proc :ptr
-    AutoScan		proc :BSTR, :BSTR, :ptr
-    AutoCompleteAttach	proc :ptr
-    ShowBrowserUI	proc :BSTR, :ptr, :ptr
-    AddSearchProvider	proc :BSTR
-    RunOnceShown	proc
-    SkipRunOnce		proc
-    CustomizeSettings	proc :VARIANT_BOOL, :VARIANT_BOOL
-    SqmEnabled		proc :ptr
-    PhishingEnabled	proc :ptr
-    BrandImageUri	proc :ptr
-    SkipTabsWelcome	proc
-    DiagnoseConnection	proc
-    CustomizeClearType	proc :VARIANT_BOOL
-    IsSearchProviderInstalled proc :BSTR, :ptr
-    IsSearchMigrated	proc :ptr
-    DefaultSearchProvider proc :ptr
-    RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
-    RunOnceHasShown	proc :ptr
-    SearchGuideUrl	proc :ptr
-    AddService		proc :BSTR
-    IsServiceInstalled	proc :BSTR, :BSTR, :ptr
-    InPrivateFilteringEnabled proc :ptr
-    AddToFavoritesBar	proc :BSTR, :BSTR, :ptr
-    BuildNewTabPage	proc
-    SetRecentlyClosedVisible proc :VARIANT_BOOL
-    SetActivitiesVisible proc :VARIANT_BOOL
-    ContentDiscoveryResetSTDMETHOD proc
-    IsSuggestedSitesEnabled proc :ptr
-    EnableSuggestedSites proc :VARIANT_BOOL
-    NavigateToSuggestedSites proc :BSTR
-    ShowTabsHelp	proc
-    ShowInPrivateHelp	proc
-    msIsSiteMode	proc :ptr
-    msSiteModeShowThumbBar proc
-    msSiteModeAddThumbBarButton proc :BSTR, :BSTR, :ptr
-    msSiteModeUpdateThumbBarButton proc :VARIANT, :VARIANT_BOOL, :VARIANT_BOOL
-    msSiteModeSetIconOverlay proc :BSTR, :ptr VARIANT
-    msSiteModeClearIconOverlay proc
-    msAddSiteMode	proc
-    msSiteModeCreateJumpList proc :BSTR
-    msSiteModeAddJumpListItem proc :BSTR, :BSTR, :BSTR, :ptr VARIANT
-    msSiteModeClearJumpList proc
-    msSiteModeShowJumpList proc
-    msSiteModeAddButtonStyle proc :VARIANT, :BSTR, :BSTR, :ptr VARIANT
-    msSiteModeShowButtonStyle proc :VARIANT, :VARIANT
-    msSiteModeActivate	proc
-    msIsSiteModeFirstRun proc :VARIANT_BOOL, :ptr VARIANT
-    msAddTrackingProtectionList proc :BSTR, :BSTR
-    msTrackingProtectionEnabled proc :ptr VARIANT_BOOL
-    msActiveXFilteringEnabled proc :ptr VARIANT_BOOL
+.comdef IShellUIHelper5 : public IShellUIHelper4
+
     msProvisionNetworks proc :BSTR, :ptr VARIANT
     msReportSafeUrl  proc
     msSiteModeRefreshBadge  proc
@@ -689,6 +448,7 @@ DEFINE_IIDX(IShellUIHelper5, "A2A08B09-103D-4D3F-B91C-EA455CA82EFA")
     msDiagnoseConnectionUILess	proc
     msLaunchNetworkClientHelp  proc
     msChangeDefaultBrowser proc :VARIANT_BOOL
+
     .ends
 
 endif
@@ -700,14 +460,8 @@ __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__ equ 1
 
 DEFINE_GUIDS(DIID_DShellNameSpaceEvents, "55136806-B2DE-11D1-B9F2-00A0C98BC547")
 
-.comdef DShellNameSpaceEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef DShellNameSpaceEvents : public IDispatch
+
     .ends
 
 endif
@@ -718,14 +472,8 @@ __IShellFavoritesNameSpace_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellFavoritesNameSpace, "55136804-B2DE-11D1-B9F2-00A0C98BC547")
 
-.comdef IShellFavoritesNameSpace
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IShellFavoritesNameSpace : public IDispatch
+
     MoveSelectionUp	proc
     MoveSelectionDown	proc
     ResetSort		proc
@@ -739,6 +487,7 @@ DEFINE_IIDX(IShellFavoritesNameSpace, "55136804-B2DE-11D1-B9F2-00A0C98BC547")
     CreateSubscriptionForSelection proc :ptr
     DeleteSubscriptionForSelection proc :ptr
     SetRoot		proc :BSTR
+
     .ends
 
 endif
@@ -749,27 +498,8 @@ __IShellNameSpace_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellNameSpace, "e572d3c9-37be-4ae2-825d-d521763e3108")
 
-.comdef IShellNameSpace
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    MoveSelectionUp	proc
-    MoveSelectionDown	proc
-    ResetSort		proc
-    NewFolder		proc
-    Synchronize		proc
-    Import		proc
-    Export		proc
-    InvokeContextMenuCommand proc :BSTR
-    MoveSelectionTo	proc
-    get_SubscriptionsEnabled proc :ptr
-    CreateSubscriptionForSelection proc :ptr
-    DeleteSubscriptionForSelection proc :ptr
-    SetRoot		proc :BSTR
+.comdef IShellNameSpace : public IShellFavoritesNameSpace
+
     get_EnumOptions	proc :ptr
     put_EnumOptions	proc :SDWORD
     get_SelectedItem	proc :ptr
@@ -791,6 +521,7 @@ DEFINE_IIDX(IShellNameSpace, "e572d3c9-37be-4ae2-825d-d521763e3108")
     SelectedItems	proc :ptr
     Expand		proc :VARIANT, :DWORD
     UnselectAll		proc
+
     .ends
 
 endif
@@ -802,14 +533,8 @@ __IScriptErrorList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IScriptErrorList, "F3470F24-15FD-11d2-BB2E-00805FF7EFCA")
 
-.comdef IScriptErrorList
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :DWORD, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+.comdef IScriptErrorList : public IDispatch
+
     advanceError	proc
     retreatError	proc
     canAdvanceError	proc :ptr
@@ -824,6 +549,7 @@ DEFINE_IIDX(IScriptErrorList, "F3470F24-15FD-11d2-BB2E-00805FF7EFCA")
     setDetailsPaneOpen	proc :BOOL
     getPerErrorDisplay	proc :ptr
     setPerErrorDisplay	proc :BOOL
+
     .ends
 
 endif

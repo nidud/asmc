@@ -30,12 +30,11 @@ LPD3DXRenderToEnvMap	typedef ptr ID3DXRenderToEnvMap
 LPD3DXRENDERTOSURFACE	typedef ptr ID3DXRenderToSurface
 LPD3DXSPRITE		typedef ptr ID3DXSprite
 
-.comdef ID3DXBuffer
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXBuffer : public IUnknown
+
     GetBufferPointer	proc
     GetBufferSize	proc
+
     .ends
 
 D3DXFONT_DESCA		STRUC
@@ -66,10 +65,8 @@ FaceName		WCHAR LF_FACESIZE dup(?)
 D3DXFONT_DESCW		ENDS
 LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
 
-.comdef ID3DXFont
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXFont : public IUnknown
+
     GetDevice		proc :ptr
     GetDescA		proc :ptr
     GetDescW		proc :ptr
@@ -85,12 +82,11 @@ LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
     DrawTextW		proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
     OnLostDevice	proc
     OnResetDevice	proc
+
     .ends
 
-.comdef ID3DXLine
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXLine : public IUnknown
+
     GetDevice		proc :ptr
     Begin		proc
     Draw		proc :ptr, :DWORD, :D3DCOLOR
@@ -108,6 +104,7 @@ LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
     _End		proc
     OnLostDevice	proc
     OnResetDevice	proc
+
     .ends
 
 D3DXRTE_DESC		STRUC
@@ -118,10 +115,8 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTE_DESC		ENDS
 
-.comdef ID3DXRenderToEnvMap
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXRenderToEnvMap : public IUnknown
+
     GetDevice		proc :ptr
     GetDesc		proc :ptr
     BeginCube		proc :ptr
@@ -132,6 +127,7 @@ D3DXRTE_DESC		ENDS
     _End		proc :DWORD
     OnLostDevice	proc
     OnResetDevice	proc
+
     .ends
 
 D3DXRTS_DESC		STRUC
@@ -142,22 +138,20 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTS_DESC		ENDS
 
-.comdef ID3DXRenderToSurface
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXRenderToSurface : public IUnknown
+
     GetDevice		proc :ptr
     GetDesc		proc :ptr
     BeginScene		proc :ptr, :ptr
     EndScene		proc :DWORD
     OnLostDevice	proc
     OnResetDevice	proc
+
     .ends
 
-.comdef ID3DXSprite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef ID3DXSprite : public IUnknown
+
     GetDevice		proc :ptr
     GetTransform	proc :ptr
     SetTransform	proc :ptr
@@ -169,6 +163,7 @@ D3DXRTS_DESC		ENDS
     _End		proc
     OnLostDevice	proc
     OnResetDevice	proc
+
     .ends
 
 

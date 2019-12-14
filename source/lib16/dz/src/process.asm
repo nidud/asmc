@@ -110,7 +110,7 @@ ex_initblock PROC PRIVATE
 ex_initblock ENDP
 
 ex_copyblock PROC PRIVATE
-	invoke	memcpy,dzexe,ss::si,SIZE S_EXEC
+	invoke	memcpy,dzexe,ss::si,S_EXEC
 	mov	ax,1
 	mov	mainswitch,ax
 	mov	dzexitcode,23

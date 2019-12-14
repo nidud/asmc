@@ -67,24 +67,24 @@ _LPOLEDOCUMENT_DEFINED equ 1
 ifndef __IOleDocument_INTERFACE_DEFINED__
 __IOleDocument_INTERFACE_DEFINED__ equ 1
 
+.enum DOCMISC {
 
-_MIDL_IOleDocument_0001 typedef SDWORD
-DOCMISC_CANCREATEMULTIPLEVIEWS equ 1
-DOCMISC_SUPPORTCOMPLEXRECTANGLES equ 2
-DOCMISC_CANTOPENEDIT	equ 4
-DOCMISC_NOFILESUPPORT	equ 8
+	DOCMISC_CANCREATEMULTIPLEVIEWS = 1,
+	DOCMISC_SUPPORTCOMPLEXRECTANGLES = 2,
+	DOCMISC_CANTOPENEDIT  = 4,
+	DOCMISC_NOFILESUPPORT = 8
+    }
 
 DEFINE_GUID(IID_IOleDocument, 0xb722bcc5, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-.comdef IOleDocument
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleDocument : public IUnknown
+
     CreateView		proc :ptr, :ptr, :DWORD, :ptr
     GetDocMiscStatus	proc :ptr
     EnumViews		proc :ptr, :ptr
+
     .ends
-LPOLEDOCUMENT		typedef ptr IOleDocument
+    LPOLEDOCUMENT	typedef ptr IOleDocument
 
 endif
 endif
@@ -97,14 +97,12 @@ __IOleDocumentSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IOleDocumentSite, 0xb722bcc7, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-.comdef IOleDocumentSite
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    ActivateMe		proc :ptr
-    .ends
+.comdef IOleDocumentSite : public IUnknown
 
-LPOLEDOCUMENTSITE	typedef ptr IOleDocumentSite
+    ActivateMe		proc :ptr
+
+    .ends
+    LPOLEDOCUMENTSITE	typedef ptr IOleDocumentSite
 
 endif
 endif
@@ -117,10 +115,8 @@ __IOleDocumentView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-.comdef IOleDocumentView
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleDocumentView : public IUnknown
+
     SetInPlaceSite	proc :ptr
     GetInPlaceSite	proc :ptr
     GetDocument		proc :ptr
@@ -134,9 +130,9 @@ DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0x
     SaveViewState	proc :ptr
     ApplyViewState	proc :ptr
     Clone		proc :ptr, :ptr
-    .ends
 
-LPOLEDOCUMENTVIEW	typedef ptr IOleDocumentView
+    .ends
+    LPOLEDOCUMENTVIEW	typedef ptr IOleDocumentView
 
 endif
 endif
@@ -149,17 +145,14 @@ __IEnumOleDocumentViews_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IEnumOleDocumentViews, 0xb722bcc8, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-.comdef IEnumOleDocumentViews
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IEnumOleDocumentViews : public IUnknown
+
     Next		proc :ULONG, :LPOLEDOCUMENTVIEW, :PULONG
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
     .ends
-
-LPENUMOLEDOCUMENTVIEWS	typedef ptr IEnumOleDocumentViews
+    LPENUMOLEDOCUMENTVIEWS typedef ptr IEnumOleDocumentViews
 
 endif
 endif
@@ -172,15 +165,13 @@ __IContinueCallback_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContinueCallback, "b722bcca-4e68-101b-a2bc-00aa00404770")
 
-.comdef IContinueCallback
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IContinueCallback : public IUnknown
+
     FContinue		proc
     FContinuePrinting	proc :LONG, :LONG, :ptr
-    .ends
 
-LPCONTINUECALLBACK	typedef ptr IContinueCallback
+    .ends
+    LPCONTINUECALLBACK	typedef ptr IContinueCallback
 
 endif ; __IContinueCallback_INTERFACE_DEFINED__
 endif ; _LPCONTINUECALLBACK_DEFINED
@@ -218,16 +209,14 @@ PAGESET_TOLASTPAGE	equ (-1)
 
 DEFINE_IIDX(IPrint, "b722bcc9-4e68-101b-a2bc-00aa00404770")
 
-.comdef IPrint
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IPrint : public IUnknown
+
     SetInitialPageNum	proc :LONG
     GetPageInfo		proc :ptr, :ptr
     Print		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :LONG, :ptr, :ptr
-    .ends
 
-LPPRINT			typedef ptr IPrint
+    .ends
+    LPPRINT		typedef ptr IPrint
 
 endif  ; __IPrint_INTERFACE_DEFINED__
 endif  ; _LPPRINT_DEFINED
@@ -371,15 +360,13 @@ endif
 
 DEFINE_GUID(IID_IOleCommandTarget, 0xb722bccb, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-.comdef IOleCommandTarget
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IOleCommandTarget : public IUnknown
+
     QueryStatus		proc :ptr, :ULONG, :OLECMD, :ptr
     Exec		proc :ptr, :DWORD, :DWORD, :ptr, :ptr
-    .ends
 
-LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
+    .ends
+    LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
 
 endif ; __IOleCommandTarget_INTERFACE_DEFINED__
 endif ; _LPOLECOMMANDTARGET_DEFINED
@@ -520,11 +507,10 @@ __IZoomEvents_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IZoomEvents, "41B68150-904C-4e17-A0BA-A438182E359D")
 
-.comdef IZoomEvents
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IZoomEvents : public IUnknown
+
     OnZoomPercentChanged proc :ULONG
+
     .ends
 
 endif
@@ -534,11 +520,10 @@ __IProtectFocus_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IProtectFocus, 0xd81f90a3, 0x8156, 0x44f7, 0xad,0x28, 0x5a,0xbb,0x87,0x00,0x32,0x74)
 
-.comdef IProtectFocus
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProtectFocus : public IUnknown
+
     AllowFocusChange	proc :ptr
+
     .ends
 
 endif
@@ -552,13 +537,12 @@ __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
 
-.comdef IProtectedModeMenuServices
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IProtectedModeMenuServices : public IUnknown
+
     CreateMenu		proc :ptr
     LoadMenu		proc :LPCWSTR, :LPCWSTR, :ptr
     LoadMenuID		proc :LPCWSTR, :WORD, :ptr
+
     .ends
 
 endif

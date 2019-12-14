@@ -658,7 +658,7 @@ cmswap	PROC _CType PUBLIC
 	    mov ax,offset spanela.pn_fcb_index
 	    mov dx,offset spanelb.pn_fcb_index
 	    invoke memxchg,ds::ax,ds::dx,4
-	    invoke memxchg,addr path_a,addr path_b,SIZE S_PATH
+	    invoke memxchg,addr path_a,addr path_b,S_PATH
 	    xor si,_P_PANELID
 	    xor di,_P_PANELID
 	    mov flaga,di

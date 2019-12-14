@@ -36,7 +36,7 @@ local DLG_DZHistory:DWORD
 local OBJ_DZHistory:DWORD
 	.if rsopen(IDD_DZHistory)
 	    stom DLG_DZHistory
-	    add ax,SIZE S_DOBJ
+	    add ax,S_DOBJ
 	    stom OBJ_DZHistory
 	    sub si,si
 	    .while inientryid(Section,si)
@@ -44,7 +44,7 @@ local OBJ_DZHistory:DWORD
 		and es:[di].S_TOBJ.to_flag,not _O_STATE
 		invoke strnzcpy,es:[di].S_TOBJ.to_data,dx::ax,128
 		inc si
-		add WORD PTR OBJ_DZHistory,SIZE S_TOBJ
+		add WORD PTR OBJ_DZHistory,S_TOBJ
 	    .endw
 	    mov ax,si
 	    .if ax
@@ -215,7 +215,7 @@ local	path[WMAXPATH]:BYTE
 			mov cx,9
 			xor ax,ax
 			rep stosw
-			invoke oswrite,si,ss::bx,SIZE S_ZEND
+			invoke oswrite,si,ss::bx,S_ZEND
 			invoke close,si
 			call ret_update_AB
 		    .endif

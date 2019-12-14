@@ -1,6 +1,6 @@
 include d3dx9.inc
-ifndef __D3DX9SHADER_H__
-__D3DX9SHADER_H__ equ <>
+ifndef __D3DX9SHADER_INC
+__D3DX9SHADER_INC equ <>
 
 D3DXSHADER_DEBUG	equ 0x1
 D3DXSHADER_SKIPVALIDATION equ 0x2
@@ -96,12 +96,8 @@ else
 DEFINE_GUID(IID_ID3DXConstantTable, 0xab3c758f, 0x093e, 0x4356, 0xb7, 0x62, 0x4d, 0xb1, 0x8f, 0x1b, 0x3a, 0x01);
 endif
 
-.comdef ID3DXConstantTable
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetBufferPointer	proc
-    GetBufferSize	proc
+.comdef ID3DXConstantTable : public ID3DXBuffer
+
     GetDesc		proc :ptr
     GetConstantDesc	proc :D3DXHANDLE, :ptr, :ptr
     GetSamplerIndex	proc :D3DXHANDLE
@@ -124,14 +120,14 @@ endif
     SetMatrixTranspose	proc :ptr, :D3DXHANDLE, :ptr
     SetMatrixTransposeArray proc :ptr, :D3DXHANDLE, :ptr, :UINT
     SetMatrixTransposePointerArray proc :ptr, :D3DXHANDLE, :ptr, :UINT
+
     .ends
+
 
 DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba, 0x1, 0xd4, 0x75, 0x84, 0x26);
 
-.comdef ID3DXTextureShader
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXTextureShader : public IUnknown
+
     GetFunction		proc :ptr
     GetConstantBuffer	proc :ptr
     GetDesc		proc :ptr
@@ -155,6 +151,7 @@ DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba
     SetMatrixTranspose	proc :D3DXHANDLE, :ptr
     SetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
     SetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+
     .ends
 
 D3DXMACRO		STRUC
@@ -190,10 +187,8 @@ LPD3DXFRAGMENT_DESC	typedef ptr D3DXFRAGMENT_DESC
 
 DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x39, 0xe, 0x5, 0x78, 0x11, 0xb6);
 
-.comdef ID3DXFragmentLinker
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef ID3DXFragmentLinker : public IUnknown
+
     GetDevice		proc :ptr
     GetNumberOfFragments proc
     GetFragmentHandleByIndex proc :UINT
@@ -206,6 +201,7 @@ DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x3
     LinkVertexShader	proc :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
     LinkPixelShader	proc :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
     ClearCache		proc
+
     .ends
 
 

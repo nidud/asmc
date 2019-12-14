@@ -98,10 +98,8 @@ D3DPERF_SetOptions proto WINAPI \
 D3DPERF_GetStatus proto WINAPI
 
 
-.comdef IDirect3D9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3D9 : public IUnknown
+
     RegisterSoftwareDevice proc :ptr
     GetAdapterCount	proc
     GetAdapterIdentifier proc :UINT, :DWORD, :ptr
@@ -116,14 +114,14 @@ D3DPERF_GetStatus proto WINAPI
     GetDeviceCaps	proc :UINT, :D3DDEVTYPE, :ptr
     GetAdapterMonitor	proc :UINT
     CreateDevice	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
+
     .ends
+
 LPDIRECT3D9		typedef ptr IDirect3D9
 PDIRECT3D9		typedef ptr IDirect3D9
 
-.comdef IDirect3DDevice9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DDevice9 : public IUnknown
+
     TestCooperativeLevel proc
     GetAvailableTextureMem proc
     EvictManagedResources proc
@@ -240,25 +238,25 @@ PDIRECT3D9		typedef ptr IDirect3D9
     DrawTriPatch	proc :UINT, :ptr, :ptr
     DeletePatch		proc :UINT
     CreateQuery		proc :D3DQUERYTYPE, :ptr
+
     .ends
+
 LPDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 PDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 
-.comdef IDirect3DStateBlock9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DStateBlock9 : public IUnknown
+
     GetDevice		proc :ptr
     Capture		proc
     Apply		proc
+
     .ends
+
 LPDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 
-.comdef IDirect3DSwapChain9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DSwapChain9 : public IUnknown
+
     Present		proc :ptr, :ptr, :HWND, :ptr, :DWORD
     GetFrontBufferData	proc :ptr
     GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr
@@ -266,14 +264,15 @@ PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
     GetDisplayMode	proc :ptr
     GetDevice		proc :ptr
     GetPresentParameters proc :ptr
+
     .ends
+
 LPDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 
-.comdef IDirect3DResource9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IDirect3DResource9 : public IUnknown
+
     GetDevice		proc :ptr
     SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
     GetPrivateData	proc :REFGUID, :ptr, :ptr
@@ -282,207 +281,142 @@ PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
     GetPriority		proc
     PreLoad		proc
     GetType		proc
+
     .ends
+
 LPDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 PDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 
-.comdef IDirect3DVertexDeclaration9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IDirect3DVertexDeclaration9 : public IUnknown
+
     GetDevice		proc :ptr
     GetDeclaration	proc :ptr, :ptr
+
     .ends
+
 LPDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 
-.comdef IDirect3DVertexShader9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DVertexShader9 : public IUnknown
+
     GetDevice		proc :ptr
     GetFunction		proc :ptr, :ptr
+
     .ends
+
 LPDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
 PDIRECT3DVERTEXSHADER9	typedef ptr IDirect3DVertexShader9
 
-.comdef IDirect3DPixelShader9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DPixelShader9 : public IUnknown
+
     GetDevice		proc :ptr
     GetFunction		proc :ptr, :ptr
+
     .ends
+
 LPDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 PDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 
-.comdef IDirect3DBaseTexture9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
+
+.comdef IDirect3DBaseTexture9 : public IDirect3DResource9
+
     SetLOD		proc :DWORD
     GetLOD		proc
     GetLevelCount	proc
     SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
     GetAutoGenFilterType proc
     GenerateMipSubLevels proc
+
     .ends
+
 LPDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 PDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 
-.comdef IDirect3DTexture9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
-    SetLOD		proc :DWORD
-    GetLOD		proc
-    GetLevelCount	proc
-    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
-    GetAutoGenFilterType proc
-    GenerateMipSubLevels proc
+
+.comdef IDirect3DTexture9 : public IDirect3DBaseTexture9
+
     GetLevelDesc	proc :UINT, :ptr
     GetSurfaceLevel	proc :UINT, :ptr
     LockRect		proc :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :UINT
     AddDirtyRect	proc :ptr
+
     .ends
+
 LPDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 PDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 
-.comdef IDirect3DVolumeTexture9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
-    SetLOD		proc :DWORD
-    GetLOD		proc
-    GetLevelCount	proc
-    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
-    GetAutoGenFilterType proc
-    GenerateMipSubLevels proc
+
+.comdef IDirect3DVolumeTexture9 : public IDirect3DBaseTexture9
+
     GetLevelDesc	proc :UINT, :ptr
     GetVolumeLevel	proc :UINT, :ptr
     LockBox		proc :UINT, :ptr, :ptr, :DWORD
     UnlockBox		proc :UINT
     AddDirtyBox		proc :ptr
+
     .ends
+
 LPDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 
-.comdef IDirect3DCubeTexture9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
-    SetLOD		proc :DWORD
-    GetLOD		proc
-    GetLevelCount	proc
-    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
-    GetAutoGenFilterType proc
-    GenerateMipSubLevels proc
+
+.comdef IDirect3DCubeTexture9 : public IDirect3DBaseTexture9
+
     GetLevelDesc	proc :UINT, :ptr
     GetCubeMapSurface	proc :D3DCUBEMAP_FACES, :UINT, :ptr
     LockRect		proc :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
     UnlockRect		proc :D3DCUBEMAP_FACES, :UINT
     AddDirtyRect	proc :D3DCUBEMAP_FACES, :ptr
+
     .ends
+
 LPDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 PDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 
-.comdef IDirect3DVertexBuffer9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
+
+.comdef IDirect3DVertexBuffer9 : public IDirect3DResource9
+
     _Lock		proc :UINT, :UINT, :ptr, :DWORD
     Unlock		proc
     GetDesc		proc :ptr
+
     .ends
+
 LPDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
 PDIRECT3DVERTEXBUFFER9	typedef ptr IDirect3DVertexBuffer9
 
-.comdef IDirect3DIndexBuffer9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
+
+.comdef IDirect3DIndexBuffer9 : public IDirect3DResource9
+
     _Lock		proc :UINT, :UINT, :ptr, :DWORD
     Unlock		proc
     GetDesc		proc :ptr
+
     .ends
+
 LPDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 PDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 
-.comdef IDirect3DSurface9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetDevice		proc :ptr
-    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
-    GetPrivateData	proc :REFGUID, :ptr, :ptr
-    FreePrivateData	proc :REFGUID
-    SetPriority		proc :DWORD
-    GetPriority		proc
-    PreLoad		proc
-    GetType		proc
+
+.comdef IDirect3DSurface9 : public IDirect3DResource9
+
     GetContainer	proc :REFIID, :ptr
     GetDesc		proc :ptr
     LockRect		proc :ptr, :ptr, :DWORD
     UnlockRect		proc
     GetDC		proc :ptr
     ReleaseDC		proc :HDC
+
     .ends
+
 LPDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 
-.comdef IDirect3DVolume9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IDirect3DVolume9 : public IUnknown
+
     GetDevice		proc :ptr
     SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
     GetPrivateData	proc :REFGUID, :ptr, :ptr
@@ -491,20 +425,23 @@ PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
     GetDesc		proc :ptr
     LockBox		proc :ptr, :ptr, :DWORD
     UnlockBox		proc
+
     .ends
+
 LPDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 PDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 
-.comdef IDirect3DQuery9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+
+.comdef IDirect3DQuery9 : public IUnknown
+
     GetDevice		proc :ptr
     GetType		proc
     GetDataSize		proc
     Issue		proc :DWORD
     GetData		proc :ptr, :DWORD, :DWORD
+
     .ends
+
 LPDIRECT3DQUERY9	typedef ptr IDirect3DQuery9
 PDIRECT3DQUERY9		typedef ptr IDirect3DQuery9
 
@@ -622,152 +559,22 @@ Direct3DCreate9Ex proto WINAPI \
 		      : ptr ptr IDirect3D9Ex
 
 
-.comdef IDirect3D9Ex
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetAdapterCount	proc
-    GetAdapterIdentifier proc :UINT, :DWORD, :ptr
-    GetAdapterModeCount proc :UINT, :D3DFORMAT
-    EnumAdapterModes	proc :UINT, :D3DFORMAT, :UINT, :ptr
-    GetAdapterDisplayMode proc :UINT, :ptr
-    CheckDeviceType	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
-    CheckDeviceFormat	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
-    CheckDeviceMultiSampleType proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr
-    CheckDepthStencilMatch proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
-    CheckDeviceFormatConversion proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
-    GetDeviceCaps	proc :UINT, :D3DDEVTYPE, :ptr
-    GetAdapterMonitor	proc :UINT
-    CreateDevice	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
+.comdef IDirect3D9Ex : public IDirect3D9
+
     GetAdapterModeCountEx proc :UINT, :ptr
     EnumAdapterModesEx	proc :UINT, :ptr, :UINT, :ptr
     GetAdapterDisplayModeEx proc :UINT, :ptr, :ptr
     CreateDeviceEx	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr, :ptr
     GetAdapterLUID	proc :UINT, :ptr
+
     .ends
+
 LPDIRECT3D9EX		typedef ptr IDirect3D9Ex
 PDIRECT3D9EX		typedef ptr IDirect3D9Ex
 
-.comdef IDirect3DDevice9Ex
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    TestCooperativeLevel proc
-    GetAvailableTextureMem proc
-    EvictManagedResources proc
-    GetDirect3D		proc :ptr
-    GetDeviceCaps	proc :ptr
-    GetDisplayMode	proc :UINT, :ptr
-    GetCreationParameters proc :ptr
-    SetCursorProperties proc :UINT, :UINT, :ptr
-    SetCursorPosition	proc :SINT, :SINT, :DWORD
-    ShowCursor		proc :BOOL
-    CreateAdditionalSwapChain proc :ptr, :ptr
-    GetSwapChain	proc :UINT, :ptr
-    GetNumberOfSwapChains proc
-    Reset		proc :ptr
-    Present		proc :ptr, :ptr, :HWND, :ptr
-    GetBackBuffer	proc :UINT, :UINT, :D3DBACKBUFFER_TYPE, :ptr
-    GetRasterStatus	proc :UINT, :ptr
-    SetDialogBoxMode	proc :BOOL
-    SetGammaRamp	proc :UINT, :DWORD, :ptr
-    GetGammaRamp	proc :UINT, :ptr
-    CreateTexture	proc :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-    CreateVolumeTexture proc :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-    CreateCubeTexture	proc :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-    CreateVertexBuffer	proc :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr, :ptr
-    CreateIndexBuffer	proc :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-    CreateRenderTarget	proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-    CreateDepthStencilSurface proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-    UpdateSurface	proc :ptr, :ptr, :ptr, :ptr
-    UpdateTexture	proc :ptr, :ptr
-    GetRenderTargetData proc :ptr, :ptr
-    GetFrontBufferData	proc :UINT, :ptr
-    StretchRect		proc :ptr, :ptr, :ptr, :ptr, :D3DTEXTUREFILTERTYPE
-    ColorFill		proc :ptr, :ptr, :D3DCOLOR
-    CreateOffscreenPlainSurface proc :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-    SetRenderTarget	proc :DWORD, :ptr
-    GetRenderTarget	proc :DWORD, :ptr
-    SetDepthStencilSurface proc :ptr
-    GetDepthStencilSurface proc :ptr
-    BeginScene		proc
-    EndScene		proc
-    Clear		proc :DWORD, :ptr, :DWORD, :D3DCOLOR, :FLOAT, :DWORD
-    SetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
-    GetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
-    MultiplyTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
-    SetViewport		proc :ptr
-    GetViewport		proc :ptr
-    SetMaterial		proc :ptr
-    GetMaterial		proc :ptr
-    SetLight		proc :DWORD, :ptr
-    GetLight		proc :DWORD, :ptr
-    LightEnable		proc :DWORD, :BOOL
-    GetLightEnable	proc :DWORD, :ptr
-    SetClipPlane	proc :DWORD, :ptr
-    GetClipPlane	proc :DWORD, :ptr
-    SetRenderState	proc :D3DRENDERSTATETYPE, :DWORD
-    GetRenderState	proc :D3DRENDERSTATETYPE, :ptr
-    CreateStateBlock	proc :D3DSTATEBLOCKTYPE, :ptr
-    BeginStateBlock	proc
-    EndStateBlock	proc :ptr
-    SetClipStatus	proc :ptr
-    GetClipStatus	proc :ptr
-    GetTexture		proc :DWORD, :ptr
-    SetTexture		proc :DWORD, :ptr
-    GetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :ptr
-    SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
-    GetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :ptr
-    SetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
-    ValidateDevice	proc :ptr
-    SetPaletteEntries	proc :UINT, :ptr
-    GetPaletteEntries	proc :UINT, :ptr
-    SetCurrentTexturePalette proc :UINT
-    GetCurrentTexturePalette proc :ptr
-    SetScissorRect	proc :ptr
-    GetScissorRect	proc :ptr
-    SetSoftwareVertexProcessing proc :BOOL
-    GetSoftwareVertexProcessing proc
-    SetNPatchMode	proc :FLOAT
-    GetNPatchMode	proc
-    DrawPrimitive	proc :D3DPRIMITIVETYPE, :UINT, :UINT
-    DrawIndexedPrimitive proc :D3DPRIMITIVETYPE, :SINT, :UINT, :UINT, :UINT, :UINT
-    DrawPrimitiveUP	proc :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
-    DrawIndexedPrimitiveUP proc :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
-    ProcessVertices	proc :UINT, :UINT, :UINT, :ptr, :ptr, :DWORD
-    CreateVertexDeclaration proc :ptr, :ptr
-    SetVertexDeclaration proc :ptr
-    GetVertexDeclaration proc :ptr
-    SetFVF		proc :DWORD
-    GetFVF		proc :ptr
-    CreateVertexShader	proc :ptr, :ptr
-    SetVertexShader	proc :ptr
-    GetVertexShader	proc :ptr
-    SetVertexShaderConstantF proc :UINT, :ptr, :UINT
-    GetVertexShaderConstantF proc :UINT, :ptr, :UINT
-    SetVertexShaderConstantI proc :UINT, :ptr, :UINT
-    GetVertexShaderConstantI proc :UINT, :ptr, :UINT
-    SetVertexShaderConstantB proc :UINT, :ptr, :UINT
-    GetVertexShaderConstantB proc :UINT, :ptr, :UINT
-    SetStreamSource	proc :UINT, :ptr, :UINT, :UINT
-    GetStreamSource	proc :UINT, :ptr, :ptr, :ptr
-    SetStreamSourceFreq proc :UINT, :UINT
-    GetStreamSourceFreq proc :UINT, :ptr
-    SetIndices		proc :ptr
-    GetIndices		proc :ptr
-    CreatePixelShader	proc :ptr, :ptr
-    SetPixelShader	proc :ptr
-    GetPixelShader	proc :ptr
-    SetPixelShaderConstantF proc :UINT, :ptr, :UINT
-    GetPixelShaderConstantF proc :UINT, :ptr, :UINT
-    SetPixelShaderConstantI proc :UINT, :ptr, :UINT
-    GetPixelShaderConstantI proc :UINT, :ptr, :UINT
-    SetPixelShaderConstantB proc :UINT, :ptr, :UINT
-    GetPixelShaderConstantB proc :UINT, :ptr, :UINT
-    DrawRectPatch	proc :UINT, :ptr, :ptr
-    DrawTriPatch	proc :UINT, :ptr, :ptr
-    DeletePatch		proc :UINT
-    CreateQuery		proc :D3DQUERYTYPE, :ptr
+
+.comdef IDirect3DDevice9Ex : public IDirect3DDevice9
+
     SetConvolutionMonoKernel proc :UINT, :UINT, :ptr, :ptr
     ComposeRects	proc :ptr, :ptr, :ptr, :UINT, :ptr, :D3DCOMPOSERECTSOP, :SINT, :SINT
     PresentEx		proc :ptr, :ptr, :HWND, :ptr, :DWORD
@@ -783,67 +590,62 @@ PDIRECT3D9EX		typedef ptr IDirect3D9Ex
     CreateDepthStencilSurfaceEx proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :ptr, :ptr, :DWORD
     ResetEx		proc :ptr, :ptr
     GetDisplayModeEx	proc :UINT, :ptr, :ptr
+
     .ends
+
 LPDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 PDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 
-.comdef IDirect3DSwapChain9Ex
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    Present		proc :ptr, :ptr, :HWND, :ptr, :DWORD
-    GetFrontBufferData	proc :ptr
-    GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr
-    GetRasterStatus	proc :ptr
-    GetDisplayMode	proc :ptr
-    GetDevice		proc :ptr
-    GetPresentParameters proc :ptr
+
+.comdef IDirect3DSwapChain9Ex : public IDirect3DSwapChain9
+
     GetLastPresentCount proc :ptr
     GetPresentStats	proc :ptr
     GetDisplayModeEx	proc :ptr, :ptr
+
     .ends
+
 LPDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 PDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 
 endif ; ifndef D3D_DISABLE_9EX
 
-.comdef IDirect3D9ExOverlayExtension
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    CheckDeviceOverlayType proc :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr, :D3DDISPLAYROTATION, :ptr
+.comdef IDirect3D9ExOverlayExtension : public IUnknown
+
+    CheckDeviceOverlayType proc :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT,
+		:ptr, :D3DDISPLAYROTATION, :ptr
+
     .ends
+
 LPDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
 PDIRECT3D9EXOVERLAYEXTENSION  typedef ptr IDirect3D9ExOverlayExtension
 
-.comdef IDirect3DDevice9Video
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DDevice9Video : public IUnknown
+
     GetContentProtectionCaps proc :ptr, :ptr, :ptr
     CreateAuthenticatedChannel proc :D3DAUTHENTICATEDCHANNELTYPE, :ptr, :ptr
     CreateCryptoSession proc :ptr, :ptr, :ptr, :ptr
+
     .ends
+
 LPDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 PDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 
-.comdef IDirect3DAuthenticatedChannel9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DAuthenticatedChannel9 : public IUnknown
+
     GetCertificateSize	proc :ptr
     GetCertificate	proc :UINT, :ptr
     NegotiateKeyExchange proc :UINT, :ptr
     Query		proc :UINT, :ptr, :UINT, :ptr
     Configure		proc :UINT, :ptr, :ptr
+
     .ends
+
 LPDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
 PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
 
-.comdef IDirect3DCryptoSession9
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
+.comdef IDirect3DCryptoSession9 : public IUnknown
+
     GetCertificateSize	proc :ptr
     GetCertificate	proc :UINT, :ptr
     NegotiateKeyExchange proc :UINT, :ptr
@@ -853,7 +655,9 @@ PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
     StartSessionKeyRefresh proc :ptr, :UINT
     FinishSessionKeyRefresh proc
     GetEncryptionBltKey proc :ptr, :UINT
+
     .ends
+
 LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 

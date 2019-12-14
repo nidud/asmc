@@ -122,7 +122,7 @@ _tmain proc
             .endif
             movzx eax,[rdi].Cache.LineSize
             mov LineSize,eax
-            mov eax,[rdi].Cache._Size
+            mov eax,[rdi].Cache.Size
             mov CacheSize,eax
             .endc
 

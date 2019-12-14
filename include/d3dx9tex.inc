@@ -322,7 +322,7 @@ D3DXCheckTextureRequirements proto WINAPI \
 ;HRESULT
 D3DXCheckCubeTextureRequirements proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		 _size: ptr UINT,
+		  size: ptr UINT,
 	     miplevels: ptr UINT,
 		 usage: DWORD,
 		format: ptr D3DFORMAT,
@@ -353,7 +353,7 @@ D3DXCreateTexture proto WINAPI \
 ;HRESULT
 D3DXCreateCubeTexture proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,
@@ -489,7 +489,7 @@ D3DXCreateTextureFromFileExW proto WINAPI \
 D3DXCreateCubeTextureFromFileExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcfile: LPSTR,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,
@@ -505,7 +505,7 @@ D3DXCreateCubeTextureFromFileExA proto WINAPI \
 D3DXCreateCubeTextureFromFileExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcfile: LPWSTR,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,
@@ -594,7 +594,7 @@ D3DXCreateCubeTextureFromResourceExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPSTR,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,
@@ -611,7 +611,7 @@ D3DXCreateCubeTextureFromResourceExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPWSTR,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,
@@ -706,7 +706,7 @@ D3DXCreateCubeTextureFromFileInMemoryEx proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcdata: PVOID,
 	   srcdatasize: UINT,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
 		format: D3DFORMAT,

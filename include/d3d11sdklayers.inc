@@ -40,11 +40,8 @@ D3D11_RLDO_DETAIL	equ 0x2
 ifndef __ID3D11Debug_INTERFACE_DEFINED__
 __ID3D11Debug_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D11Debug
+.comdef ID3D11Debug : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetFeatureMask	proc :UINT
     GetFeatureMask	proc
     SetPresentPerRenderOpDelay proc :UINT
@@ -54,19 +51,18 @@ __ID3D11Debug_INTERFACE_DEFINED__ equ 1
     ValidateContext	proc :ptr
     ReportLiveDeviceObjects proc :D3D11_RLDO_FLAGS
     ValidateContextForDispatch proc :ptr
+
     .ends
 endif
 
 ifndef __ID3D11SwitchToRef_INTERFACE_DEFINED__
 __ID3D11SwitchToRef_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D11SwitchToRef
+.comdef ID3D11SwitchToRef : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetUseRef		proc :BOOL
     GetUseRef		proc
+
     .ends
 endif
 
@@ -863,11 +859,8 @@ D3D11_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 ifndef __ID3D11InfoQueue_INTERFACE_DEFINED__
 __ID3D11InfoQueue_INTERFACE_DEFINED__ equ 1
 
-.comdef ID3D11InfoQueue
+.comdef ID3D11InfoQueue : public IUnknown
 
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
     SetMessageCountLimit proc :UINT64
     ClearStoredMessages proc
     GetMessage		proc :UINT64
@@ -903,6 +896,7 @@ __ID3D11InfoQueue_INTERFACE_DEFINED__ equ 1
     GetBreakOnID	proc :D3D11_MESSAGE_ID
     SetMuteDebugOutput	proc :BOOL
     GetMuteDebugOutput	proc
+
     .ends
 endif
 

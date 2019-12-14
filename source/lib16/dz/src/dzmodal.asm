@@ -394,7 +394,7 @@ globalcmd PROC PRIVATE
 	or	ax,ax
 	jz	@F
 	mov	dx,bx
-	add	bx,SIZE S_GLCMD
+	add	bx,S_GLCMD
 	cmp	ax,si
 	jne	@B
 	mov	bx,dx

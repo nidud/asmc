@@ -957,7 +957,7 @@ read_class:
 	mov	cl,[bp].S_TVIEW.tv_CLDLG.dl_count
       @@:
 	add	ax,[bx].S_CLASS.cl_size
-	add	bx,SIZE S_CLASS
+	add	bx,S_CLASS
 	dec	cx
 	jnz	@B
 	mov	tv_classsize,ax
@@ -1225,7 +1225,7 @@ event_clload:
 	jbe	event_clload_l04
 	mov	[di].S_CLASS.cl_format,CLFORM_BINARY
     event_clload_l04:
-	add	di,SIZE S_CLASS
+	add	di,S_CLASS
 	dec	cx
 	jnz	event_clload_loop
 	mov	tv_classsize,dx
@@ -2838,10 +2838,10 @@ local	tv:S_TVIEW
 	mov	ax,bp
   ifdef __MEMVIEW__
 	add	ax,12
-	invoke	memzero, ss::ax, SIZE S_TVIEW - 12
+	invoke	memzero, ss::ax, S_TVIEW - 12
   else
 	add	ax,8
-	invoke	memzero, ss::ax, SIZE S_TVIEW - 8
+	invoke	memzero, ss::ax, S_TVIEW - 8
   endif
 	mov	STDI.ios_flag,si
 	movmx	STDI.ios_bb,[bp].S_TVIEW.tv_offset

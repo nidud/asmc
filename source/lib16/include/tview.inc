@@ -23,7 +23,7 @@ cl_type		db ?
 cl_format	db ?
 S_CLASS		ENDS
 
-TCLSIZE		equ (CLCOUNT*SIZE S_CLASS) + 6
+TCLSIZE		equ (CLCOUNT*S_CLASS) + 6
 CLFLAGS		equ _D_DOPEN or _D_ONSCR or _D_MYBUF
 
 CLTYPE_CHAR	equ 0

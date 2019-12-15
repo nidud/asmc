@@ -1019,9 +1019,8 @@ __IPersistFolder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistFolder, "000214EA-0000-0000-C000-000000000046")
 
-.comdef IPersistFolder : public IUnknown
+.comdef IPersistFolder : public IPersist
 
-    GetClassID		proc :ptr
     Initialize		proc :PCIDLIST_ABSOLUTE
 
     .ends
@@ -1151,9 +1150,8 @@ __IPersistIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistIDList, "1079acfc-29bd-11d3-8e0d-00c04f6837d5")
 
-.comdef IPersistIDList : public IUnknown
+.comdef IPersistIDList : public IPersist
 
-    GetClassID		proc :ptr
     SetIDList		proc :PCIDLIST_ABSOLUTE
     GetIDList		proc :ptr
 
@@ -1184,7 +1182,12 @@ __IEnumFullIDList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumFullIDList, "d0191542-7954-4908-bc06-b2360bbe45ba")
 
-.comdef IEnumFullIDList : public IEnumIDList
+.comdef IEnumFullIDList : public IUnknown
+
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
 
     .ends
 
@@ -1372,12 +1375,15 @@ __IEnumExtraSearch_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IEnumExtraSearch, "0E700BE1-9DB6-11d1-A1CE-00C04FD75D13")
 
-.comdef IEnumExtraSearch : public IEnumIDList
+.comdef IEnumExtraSearch : public IUnknown
+
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
 
     .ends
-
-LPENUMEXTRASEARCH	typedef ptr IEnumExtraSearch
-
+    LPENUMEXTRASEARCH	typedef ptr IEnumExtraSearch
 endif
 
 ifndef __IShellFolder2_INTERFACE_DEFINED__
@@ -1548,10 +1554,8 @@ __IShellView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellView, "000214E3-0000-0000-C000-000000000046")
 
-.comdef IShellView : public IUnknown
+.comdef IShellView : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     TranslateAccelerator proc :ptr
     EnableModeless	proc :BOOL
     UIActivate		proc :UINT
@@ -1565,9 +1569,7 @@ DEFINE_IIDX(IShellView, "000214E3-0000-0000-C000-000000000046")
     GetItemObject	proc :UINT, :REFIID, :ptr
 
     .ends
-
-LPSHELLVIEW		typedef ptr IShellView
-
+    LPSHELLVIEW		typedef ptr IShellView
 endif
 
 ifndef __IShellView2_INTERFACE_DEFINED__
@@ -2072,10 +2074,8 @@ __IShellBrowser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IShellBrowser, "000214E2-0000-0000-C000-000000000046")
 
-.comdef IShellBrowser : public IUnknown
+.comdef IShellBrowser : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     InsertMenusSB	proc :HMENU, :LPOLEMENUGROUPWIDTHS
     SetMenuSB		proc :HMENU, :HOLEMENU, :HWND
     RemoveMenusSB	proc :HMENU
@@ -2496,19 +2496,8 @@ __IStreamAsync_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IStreamAsync, "fe0b6665-e0ca-49b9-a178-2b5cb48d92a5")
 
-.comdef IStreamAsync : public IUnknown
+.comdef IStreamAsync : public IStream
 
-    Read		proc :ptr, :ULONG, :ptr
-    Write		proc :ptr, :ULONG, :ptr
-    Seek		proc :LARGE_INTEGER, :DWORD, :ptr
-    SetSize		proc :ULARGE_INTEGER
-    CopyTo		proc :ptr, :ULARGE_INTEGER, :ptr, :ptr
-    Commit		proc :DWORD
-    Revert		proc
-    LockRegion		proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-    UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-    Stat		proc :ptr, :DWORD
-    Clone		proc :ptr
     ReadAsync		proc :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
     WriteAsync		proc :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
     OverlappedResult	proc :LPOVERLAPPED, :LPDWORD, :BOOL
@@ -3003,11 +2992,8 @@ __IHWEventHandler2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IHWEventHandler2, "CFCC809F-295D-42e8-9FFC-424B33C487E6")
 
-.comdef IHWEventHandler2 : public IUnknown
+.comdef IHWEventHandler2 : public IHWEventHandler
 
-    Initialize		proc :LPCWSTR
-    HandleEvent		proc :LPCWSTR, :LPCWSTR, :LPCWSTR
-    HandleEventWithContent proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
     HandleEventWithHWND proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :HWND
 
     .ends
@@ -3358,10 +3344,8 @@ __IDockingWindow_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDockingWindow, "012dd920-7b26-11d0-8ca9-00a0c92dbfe8")
 
-.comdef IDockingWindow : public IUnknown
+.comdef IDockingWindow : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     ShowDW		proc :BOOL
     CloseDW		proc :DWORD
     ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
@@ -3433,13 +3417,8 @@ __IDeskBand_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBand, "EB0FE172-1A3A-11D0-89B3-00A0C90A90AC")
 
-.comdef IDeskBand : public IUnknown
+.comdef IDeskBand : public IDockingWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    ShowDW		proc :BOOL
-    CloseDW		proc :DWORD
-    ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
     GetBandInfo		proc :DWORD, :DWORD, :ptr
 
     .ends
@@ -3657,7 +3636,6 @@ DEFINE_IIDX(IWizardExtension, "c02ea696-86cc-491e-9b23-74394a0444a8")
     GetLastPage		proc :ptr
 
     .ends
-
 endif
 
 
@@ -3666,16 +3644,12 @@ __IWebWizardExtension_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWebWizardExtension, "0e6b3f66-98d1-48c0-a222-fbde74e2fbc5")
 
-.comdef IWebWizardExtension : public IUnknown
+.comdef IWebWizardExtension : public IWizardExtension
 
-    AddPages		proc :ptr, :UINT, :ptr
-    GetFirstPage	proc :ptr
-    GetLastPage		proc :ptr
     SetInitialURL	proc :LPCWSTR
     SetErrorURL		proc :LPCWSTR
 
     .ends
-
 endif
 
 SID_WebWizardHost	equ <IID_IWebWizardExtension>
@@ -3693,16 +3667,12 @@ __IPublishingWizard_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPublishingWizard, "aa9198bb-ccec-472d-beed-19a4f6733f7a")
 
-.comdef IPublishingWizard : public IUnknown
+.comdef IPublishingWizard : public IWizardExtension
 
-    AddPages		proc :ptr, :UINT, :ptr
-    GetFirstPage	proc :ptr
-    GetLastPage		proc :ptr
     Initialize		proc :ptr, :DWORD, :LPCWSTR
     GetTransferManifest proc :ptr, :ptr
 
     .ends
-
 endif
 
 
@@ -4264,10 +4234,8 @@ __IDeskBar_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IDeskBar, "EB0FE173-1A3A-11D0-89B3-00A0C90A90AC")
 
-.comdef IDeskBar : public IUnknown
+.comdef IDeskBar : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     SetClient		proc :ptr
     GetClient		proc :ptr
     OnPosRectChangeDB	proc :ptr
@@ -4306,13 +4274,8 @@ MP_POPUPFLAGS		typedef SINT
 
 DEFINE_IIDX(IMenuPopup, "D1E7AFEB-6A2E-11d0-8C78-00C04FD918B4")
 
-.comdef IMenuPopup : public IUnknown
+.comdef IMenuPopup : public IDeskBar
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
-    SetClient		proc :ptr
-    GetClient		proc :ptr
-    OnPosRectChangeDB	proc :ptr
     Popup		proc :ptr, :ptr, :MP_POPUPFLAGS
     OnSelect		proc :DWORD
     SetSubMenu		proc :ptr, :BOOL
@@ -4411,9 +4374,8 @@ FILEOPENDIALOGOPTIONS	typedef DWORD
 
 DEFINE_IIDX(IFileDialog, "42f85136-db7e-439c-85f1-e4075d135fc8")
 
-.comdef IFileDialog : public IUnknown
+.comdef IFileDialog : public IModalWindow
 
-    Show		proc :HWND
     SetFileTypes	proc :UINT, :ptr
     SetFileTypeIndex	proc :UINT
     GetFileTypeIndex	proc :ptr
@@ -5865,10 +5827,8 @@ __IFileSystemBindData2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSystemBindData2, "3acf075f-71db-4afa-81f0-3fc4fdf2a5b8")
 
-.comdef IFileSystemBindData2 : public IUnknown
+.comdef IFileSystemBindData2 : public IFileSystemBindData
 
-    SetFindData		proc :ptr
-    GetFindData		proc :ptr
     SetFileID		proc :LARGE_INTEGER
     GetFileID		proc :ptr
     SetJunctionCLSID	proc :REFCLSID

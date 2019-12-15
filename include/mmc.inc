@@ -798,9 +798,8 @@ __IContextMenuProvider_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IContextMenuProvider, "43136EB6-D36C-11CF-ADBC-00AA00A80033")
 
-.comdef IContextMenuProvider : public IUnknown
+.comdef IContextMenuProvider : public IContextMenuCallback
 
-    AddItem		proc :ptr
     EmptyMenuList	proc
     AddPrimaryExtensionItems proc :LPUNKNOWN, :LPDATAOBJECT
     AddThirdPartyExtensionItems proc :LPDATAOBJECT
@@ -1424,15 +1423,8 @@ __IComponentData2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IComponentData2, "CCA0F2D2-82DE-41B5-BF47-3B2076273D5C")
 
-.comdef IComponentData2 : public IUnknown
+.comdef IComponentData2 : public IComponentData
 
-    Initialize		proc :LPUNKNOWN
-    CreateComponent	proc :ptr
-    Notify		proc :LPDATAOBJECT, :MMC_NOTIFY_TYPE, :LPARAM, :LPARAM
-    Destroy		proc
-    QueryDataObject	proc :MMC_COOKIE, :DATA_OBJECT_TYPES, :ptr
-    GetDisplayInfo	proc :ptr
-    CompareObjects	proc :LPDATAOBJECT, :LPDATAOBJECT
     QueryDispatch	proc :MMC_COOKIE, :DATA_OBJECT_TYPES, :ptr
 
     .ends
@@ -1443,21 +1435,13 @@ __IComponent2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IComponent2, "79A2D615-4A10-4ED4-8C65-8633F9335095")
 
-.comdef IComponent2 : public IUnknown
+.comdef IComponent2 : public IComponent
 
-    Initialize		proc :LPCONSOLE
-    Notify		proc :LPDATAOBJECT, :MMC_NOTIFY_TYPE, :LPARAM, :LPARAM
-    Destroy		proc :MMC_COOKIE
-    QueryDataObject	proc :MMC_COOKIE, :DATA_OBJECT_TYPES, :ptr
-    GetResultViewType	proc :MMC_COOKIE, :ptr, :ptr
-    GetDisplayInfo	proc :ptr
-    CompareObjects	proc :LPDATAOBJECT, :LPDATAOBJECT
     QueryDispatch	proc :MMC_COOKIE, :DATA_OBJECT_TYPES, :ptr
     GetResultViewType2	proc :MMC_COOKIE, :PRESULT_VIEW_TYPE_INFO
     RestoreResultView	proc :MMC_COOKIE, :PRESULT_VIEW_TYPE_INFO
 
     .ends
-
 endif
 
 ifndef __IContextMenuCallback2_INTERFACE_DEFINED__
@@ -1564,22 +1548,8 @@ __IConsole3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IConsole3, "4F85EFDB-D0E1-498c-8D4A-D010DFDD404F")
 
-.comdef IConsole3 : public IUnknown
+.comdef IConsole3 : public IConsole2
 
-    SetHeader		proc :LPHEADERCTRL
-    SetToolbar		proc :LPTOOLBAR
-    QueryResultView	proc :ptr
-    QueryScopeImageList proc :ptr
-    QueryResultImageList proc :ptr
-    UpdateAllViews	proc :LPDATAOBJECT, :LPARAM, :LONG_PTR
-    MessageBox		proc :LPCWSTR, :LPCWSTR, :UINT, :ptr
-    QueryConsoleVerb	proc :ptr
-    SelectScopeItem	proc :HSCOPEITEM
-    GetMainWindow	proc :ptr
-    NewWindow		proc :HSCOPEITEM, :SDWORD
-    Expand		proc :HSCOPEITEM, :BOOL
-    IsTaskpadViewPreferred proc
-    SetStatusText	proc :LPOLESTR
     RenameScopeItem	proc :HSCOPEITEM
 
     .ends
@@ -1590,23 +1560,8 @@ __IResultData2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IResultData2, "0F36E0EB-A7F1-4a81-BE5A-9247F7DE4B1B")
 
-.comdef IResultData2 : public IUnknown
+.comdef IResultData2 : public IResultData
 
-    InsertItem		proc :LPRESULTDATAITEM
-    DeleteItem		proc :HRESULTITEM, :SINT
-    FindItemByLParam	proc :LPARAM, :ptr
-    DeleteAllRsltItems	proc
-    SetItem		proc :LPRESULTDATAITEM
-    GetItem		proc :LPRESULTDATAITEM
-    GetNextItem		proc :LPRESULTDATAITEM
-    ModifyItemState	proc :SINT, :HRESULTITEM, :UINT, :UINT
-    ModifyViewStyle	proc :MMC_RESULT_VIEW_STYLE, :MMC_RESULT_VIEW_STYLE
-    SetViewMode		proc :SDWORD
-    GetViewMode		proc :ptr
-    UpdateItem		proc :HRESULTITEM
-    Sort		proc :SINT, :DWORD, :LPARAM
-    SetDescBarText	proc :LPOLESTR
-    SetItemCount	proc :SINT, :DWORD
     RenameResultItem	proc :HRESULTITEM
 
     .ends

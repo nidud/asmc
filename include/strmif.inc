@@ -621,9 +621,8 @@ State_Running		equ ( State_Paused + 1 )
 
 DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IMediaFilter : public IUnknown
+.comdef IMediaFilter : public IPersist
 
-    GetClassID		proc :ptr
     Stop		proc
     _Pause		proc
     Run			proc :REFERENCE_TIME
@@ -647,15 +646,8 @@ FILTER_INFO		ENDS
 
 DEFINE_IIDX(IBaseFilter, "56a86895-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IBaseFilter : public IUnknown
+.comdef IBaseFilter : public IMediaFilter
 
-    GetClassID		proc :ptr
-    Stop		proc
-    _Pause		proc
-    Run			proc :REFERENCE_TIME
-    GetState		proc :DWORD, :ptr
-    SetSyncSource	proc :ptr
-    GetSyncSource	proc :ptr
     EnumPins		proc :ptr
     FindPin		proc :LPCWSTR, :ptr
     QueryFilterInfo	proc :ptr
@@ -705,12 +697,7 @@ __IReferenceClock2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReferenceClock2, "36b73885-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IReferenceClock2 : public IUnknown
-
-    GetTime		proc :ptr
-    AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HEVENT, :ptr
-    AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HSEMAPHORE, :ptr
-    Unadvise		proc :DWORD_PTR
+.comdef IReferenceClock2 : public IReferenceClock
 
     .ends
 
@@ -778,24 +765,8 @@ __IMediaSample2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IMediaSample2 : public IUnknown
+.comdef IMediaSample2 : public IMediaSample
 
-    GetPointer		proc :ptr
-    GetSize		proc
-    GetTime		proc :ptr, :ptr
-    SetTime		proc :ptr, :ptr
-    IsSyncPoint		proc
-    SetSyncPoint	proc :BOOL
-    IsPreroll		proc
-    SetPreroll		proc :BOOL
-    GetActualDataLength proc
-    SetActualDataLength proc :LONG
-    GetMediaType	proc :ptr
-    SetMediaType	proc :ptr
-    IsDiscontinuity	proc
-    SetDiscontinuity	proc :BOOL
-    GetMediaTime	proc :ptr, :ptr
-    SetMediaTime	proc :ptr, :ptr
     GetProperties	proc :DWORD, :ptr
     SetProperties	proc :DWORD, :ptr
 
@@ -848,14 +819,8 @@ __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
 
-.comdef IMemAllocatorCallbackTemp : public IUnknown
+.comdef IMemAllocatorCallbackTemp : public IMemAllocator
 
-    SetProperties	proc :ptr, :ptr
-    GetProperties	proc :ptr
-    Commit		proc
-    Decommit		proc
-    GetBuffer		proc :ptr, :ptr, :ptr, :DWORD
-    ReleaseBuffer	proc :ptr
     SetNotify		proc :ptr
     GetFreeCount	proc :ptr
 
@@ -1098,12 +1063,8 @@ __IFilterMapper3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterMapper3, "b79bb0b0-33c1-11d1-abe1-00a0c905f375")
 
-.comdef IFilterMapper3 : public IUnknown
+.comdef IFilterMapper3 : public IFilterMapper2
 
-    CreateCategory	proc :REFCLSID, :DWORD, :LPCWSTR
-    UnregisterFilter	proc :ptr, :LPCOLESTR, :REFCLSID
-    RegisterFilter	proc :REFCLSID, :LPCWSTR, :ptr, :ptr, :LPCOLESTR, :ptr
-    EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :DWORD, :BOOL, :DWORD, :ptr, :ptr, :ptr
     GetICreateDevEnum	proc :ptr
 
     .ends
@@ -1187,9 +1148,7 @@ DEFINE_IIDX(IOverlayNotify, "56a868a0-0ad4-11ce-b03a-0020af0ba770")
     OnPositionChange	proc :ptr, :ptr
 
     .ends
-
-POVERLAYNOTIFY		typedef ptr IOverlayNotify
-
+    POVERLAYNOTIFY	typedef ptr IOverlayNotify
 endif
 
 if NOT defined(HMONITOR_DECLARED) AND NOT defined(HMONITOR) AND (WINVER LT 0x0500)
@@ -1205,18 +1164,12 @@ __IOverlayNotify2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IOverlayNotify2, "680EFA10-D535-11D1-87C8-00A0C9223196")
 
-.comdef IOverlayNotify2 : public IUnknown
+.comdef IOverlayNotify2 : public IOverlayNotify
 
-    OnPaletteChange	proc :DWORD, :ptr
-    OnClipChange	proc :ptr, :ptr, :ptr
-    OnColorKeyChange	proc :ptr
-    OnPositionChange	proc :ptr, :ptr
     OnDisplayChange	proc :HMONITOR
 
     .ends
-
-POVERLAYNOTIFY2		typedef ptr IOverlayNotify2
-
+    POVERLAYNOTIFY2	typedef ptr IOverlayNotify2
 endif
 
 ifndef __IOverlay_INTERFACE_DEFINED__
@@ -1237,9 +1190,7 @@ DEFINE_IIDX(IOverlay, "56a868a1-0ad4-11ce-b03a-0020af0ba770")
     Advise		proc :ptr, :DWORD
     Unadvise		proc
     .ends
-
-POVERLAY		typedef ptr IOverlay
-
+    POVERLAY		typedef ptr IOverlay
 endif
 
 ifndef __IMediaEventSink_INTERFACE_DEFINED__
@@ -1268,9 +1219,7 @@ DEFINE_IIDX(IFileSourceFilter, "56a868a6-0ad4-11ce-b03a-0020af0ba770")
     GetCurFile		proc :ptr, :ptr
 
     .ends
-
-PFILTERFILESOURCE	typedef ptr IFileSourceFilter
-
+    PFILTERFILESOURCE	typedef ptr IFileSourceFilter
 endif
 
 ifndef __IFileSinkFilter_INTERFACE_DEFINED__
@@ -1284,9 +1233,7 @@ DEFINE_IIDX(IFileSinkFilter, "a2104830-7c70-11cf-8bce-00aa00a3f1a6")
     GetCurFile		proc :ptr, :ptr
 
     .ends
-
-PFILTERFILESINK		typedef ptr IFileSinkFilter
-
+    PFILTERFILESINK	typedef ptr IFileSinkFilter
 endif
 
 ifndef __IFileSinkFilter2_INTERFACE_DEFINED__
@@ -1294,17 +1241,13 @@ __IFileSinkFilter2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFileSinkFilter2, "00855B90-CE1B-11d0-BD4F-00A0C911CE86")
 
-.comdef IFileSinkFilter2 : public IUnknown
+.comdef IFileSinkFilter2 : public IFileSinkFilter
 
-    SetFileName		proc :LPCOLESTR, :ptr
-    GetCurFile		proc :ptr, :ptr
     SetMode		proc :DWORD
     GetMode		proc :ptr
 
     .ends
-
-PFILESINKFILTER2	typedef ptr IFileSinkFilter2
-
+    PFILESINKFILTER2	typedef ptr IFileSinkFilter2
 endif
 
 AM_FILESINK_FLAGS	typedef SDWORD
@@ -1315,16 +1258,8 @@ __IGraphBuilder_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
 
-.comdef IGraphBuilder : public IUnknown
+.comdef IGraphBuilder : public IFilterGraph
 
-    AddFilter		proc :ptr, :LPCWSTR
-    RemoveFilter	proc :ptr
-    EnumFilters		proc :ptr
-    FindFilterByName	proc :LPCWSTR, :ptr
-    ConnectDirect	proc :ptr, :ptr, :ptr
-    Reconnect		proc :ptr
-    Disconnect		proc :ptr
-    SetDefaultSyncSource proc
     Connect		proc :ptr, :ptr
     Render		proc :ptr
     RenderFile		proc :LPCWSTR, :LPCWSTR
@@ -1334,7 +1269,6 @@ DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
     ShouldOperationContinue proc
 
     .ends
-
 endif
 
 ifndef __ICaptureGraphBuilder_INTERFACE_DEFINED__
@@ -1399,23 +1333,8 @@ __IFilterGraph2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
 
-.comdef IFilterGraph2 : public IUnknown
+.comdef IFilterGraph2 : public IGraphBuilder
 
-    AddFilter		proc :ptr, :LPCWSTR
-    RemoveFilter	proc :ptr
-    EnumFilters		proc :ptr
-    FindFilterByName	proc :LPCWSTR, :ptr
-    ConnectDirect	proc :ptr, :ptr, :ptr
-    Reconnect		proc :ptr
-    Disconnect		proc :ptr
-    SetDefaultSyncSource proc
-    Connect		proc :ptr, :ptr
-    Render		proc :ptr
-    RenderFile		proc :LPCWSTR, :LPCWSTR
-    AddSourceFilter	proc :LPCWSTR, :LPCWSTR, :ptr
-    SetLogFile		proc :DWORD_PTR
-    Abort		proc
-    ShouldOperationContinue proc
     AddSourceFilterForMoniker proc :ptr, :ptr, :LPCWSTR, :ptr
     ReconnectEx		proc :ptr, :ptr
     RenderEx		proc :ptr, :DWORD, :ptr
@@ -1429,26 +1348,8 @@ __IFilterGraph3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IFilterGraph3, "aaf38154-b80b-422f-91e6-b66467509a07")
 
-.comdef IFilterGraph3 : public IUnknown
+.comdef IFilterGraph3 : public IFilterGraph2
 
-    AddFilter		proc :ptr, :LPCWSTR
-    RemoveFilter	proc :ptr
-    EnumFilters		proc :ptr
-    FindFilterByName	proc :LPCWSTR, :ptr
-    ConnectDirect	proc :ptr, :ptr, :ptr
-    Reconnect		proc :ptr
-    Disconnect		proc :ptr
-    SetDefaultSyncSource proc
-    Connect		proc :ptr, :ptr
-    Render		proc :ptr
-    RenderFile		proc :LPCWSTR, :LPCWSTR
-    AddSourceFilter	proc :LPCWSTR, :LPCWSTR, :ptr
-    SetLogFile		proc :DWORD_PTR
-    Abort		proc
-    ShouldOperationContinue proc
-    AddSourceFilterForMoniker proc :ptr, :ptr, :LPCWSTR, :ptr
-    ReconnectEx		proc :ptr, :ptr
-    RenderEx		proc :ptr, :DWORD, :ptr
     SetSyncSourceEx	proc :ptr, :ptr, :ptr
 
     .ends
@@ -2067,23 +1968,8 @@ __IAMTVTuner_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IAMTVTuner : public IUnknown
+.comdef IAMTVTuner : public IAMTuner
 
-    put_Channel		proc :LONG, :LONG, :LONG
-    get_Channel		proc :ptr, :ptr, :ptr
-    ChannelMinMax	proc :ptr, :ptr
-    put_CountryCode	proc :LONG
-    get_CountryCode	proc :ptr
-    put_TuningSpace	proc :LONG
-    get_TuningSpace	proc :ptr
-    Logon		proc :HANDLE
-    Logout		proc
-    SignalPresent	proc :ptr
-    put_Mode		proc :AMTunerModeType
-    get_Mode		proc :ptr
-    GetAvailableModes	proc :ptr
-    RegisterNotificationCallBack proc :ptr, :LONG
-    UnRegisterNotificationCallBack proc :ptr
     get_AvailableTVFormats proc :ptr
     get_TVFormat	proc :ptr
     AutoTune		proc :LONG, :ptr
@@ -2105,23 +1991,8 @@ __IBPCSatelliteTuner_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
 
-.comdef IBPCSatelliteTuner : public IUnknown
+.comdef IBPCSatelliteTuner : public IAMTuner
 
-    put_Channel		proc :LONG, :LONG, :LONG
-    get_Channel		proc :ptr, :ptr, :ptr
-    ChannelMinMax	proc :ptr, :ptr
-    put_CountryCode	proc :LONG
-    get_CountryCode	proc :ptr
-    put_TuningSpace	proc :LONG
-    get_TuningSpace	proc :ptr
-    Logon		proc :HANDLE
-    Logout		proc
-    SignalPresent	proc :ptr
-    put_Mode		proc :AMTunerModeType
-    get_Mode		proc :ptr
-    GetAvailableModes	proc :ptr
-    RegisterNotificationCallBack proc :ptr, :LONG
-    UnRegisterNotificationCallBack proc :ptr
     get_DefaultSubChannelTypes proc :ptr, :ptr
     put_DefaultSubChannelTypes proc :LONG, :LONG
     IsTapingPermitted	proc
@@ -2191,7 +2062,6 @@ DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
     get_CCEnable	proc :ptr
 
     .ends
-
 endif
 
 AMPROPERTY_PIN		typedef SDWORD
@@ -2215,7 +2085,6 @@ DEFINE_IIDX(IKsPropertySet, "31EFAC30-515C-11d0-A9AA-00AA0061BE93")
     QuerySupported	proc :REFGUID, :DWORD, :ptr
 
     .ends
-
 endif
 
 endif
@@ -2225,16 +2094,12 @@ __IMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaPropertyBag, "6025A880-C0D5-11d0-BD4E-00A0C911CE86")
 
-.comdef IMediaPropertyBag : public IUnknown
+.comdef IMediaPropertyBag : public IPropertyBag
 
-    Read		proc :LPCOLESTR, :ptr, :ptr
-    Write		proc :LPCOLESTR, :ptr
     EnumProperty	proc :ULONG, :ptr, :ptr
 
     .ends
-
-LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
-
+    LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
 endif
 
 ifndef __IPersistMediaPropertyBag_INTERFACE_DEFINED__
@@ -2242,17 +2107,14 @@ __IPersistMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistMediaPropertyBag, "5738E040-B67F-11d0-BD4D-00A0C911CE86")
 
-.comdef IPersistMediaPropertyBag : public IUnknown
+.comdef IPersistMediaPropertyBag : public IPersist
 
-    GetClassID		proc :ptr
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
 
     .ends
-
-LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
-
+    LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
 endif
 
 ifndef __IAMPhysicalPinInfo_INTERFACE_DEFINED__
@@ -2265,7 +2127,6 @@ DEFINE_IIDX(IAMPhysicalPinInfo, "F938C991-3029-11cf-8C44-00AA006B6814")
     GetPhysicalType	proc :ptr, :ptr
 
     .ends
-
 endif
 
 PAMPHYSICALPININFO	typedef ptr IAMPhysicalPinInfo
@@ -2610,9 +2471,8 @@ __IAMPushSource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
 
-.comdef IAMPushSource : public IUnknown
+.comdef IAMPushSource : public IAMLatency
 
-    GetLatency		proc :ptr
     GetPushSourceFlags	proc :ptr
     SetPushSourceFlags	proc :ULONG
     SetStreamOffset	proc :REFERENCE_TIME
@@ -4228,10 +4088,8 @@ __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IVMRImagePresenterExclModeConfig, "e6f7ce40-4673-44f1-8f77-5499d68cb4ea")
 
-.comdef IVMRImagePresenterExclModeConfig : public IUnknown
+.comdef IVMRImagePresenterExclModeConfig : public IVMRImagePresenterConfig
 
-    SetRenderingPrefs	proc :DWORD
-    GetRenderingPrefs	proc :ptr
     SetXlcModeDDObjAndPrimarySurface proc :LPDIRECTDRAW7, :LPDIRECTDRAWSURFACE7
     GetXlcModeDDObjAndPrimarySurface proc :ptr, :ptr
 

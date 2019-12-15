@@ -294,11 +294,8 @@ endif
 ifndef __IActiveScriptError64_INTERFACE_DEFINED__
 __IActiveScriptError64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptError64 : public IUnknown
+.comdef IActiveScriptError64 : public IActiveScriptError
 
-    GetExceptionInfo	proc :ptr
-    GetSourcePosition	proc :ptr, :ptr, :ptr
-    GetSourceLineText	proc :ptr
     GetSourcePosition64 proc :ptr, :ptr, :ptr
 
     .ends
@@ -462,9 +459,8 @@ PIActiveScriptParseProcedure typedef ptr IActiveScriptParseProcedure
 ifndef __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure2_32 : public IUnknown
+.comdef IActiveScriptParseProcedure2_32 : public IActiveScriptParseProcedure32
 
-    ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
     .ends
 
 endif
@@ -472,9 +468,7 @@ endif
 ifndef __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__ equ 1
 
-.comdef IActiveScriptParseProcedure2_64 : public IUnknown
-
-    ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
+.comdef IActiveScriptParseProcedure2_64 : public IActiveScriptParseProcedure64
 
     .ends
 

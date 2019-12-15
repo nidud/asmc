@@ -107,12 +107,8 @@ __ICatalog_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICatalog, "228136B1-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef ICatalog : public IUnknown
+.comdef ICatalog : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     putref_ActiveConnection proc :ptr
     put_ActiveConnection proc :BSTR
@@ -120,7 +116,6 @@ DEFINE_IIDX(ICatalog, "228136B1-8BD3-11D0-B4EF-00A0C9138CA4")
     get_CubeDefs	proc :ptr
 
     .ends
-
 endif
 
 ifndef __ICellset_INTERFACE_DEFINED__
@@ -128,12 +123,8 @@ __ICellset_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ICellset, "2281372A-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef ICellset : public IUnknown
+.comdef ICellset : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :ptr, :ptr
     Open		proc :VARIANT, :VARIANT
     Close		proc
@@ -147,8 +138,8 @@ DEFINE_IIDX(ICellset, "2281372A-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Axes		proc :ptr
     get_FilterAxis	proc :ptr
     get_Properties	proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __Cell_INTERFACE_DEFINED__
@@ -156,12 +147,8 @@ __Cell_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Cell, "2281372E-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Cell : public IUnknown
+.comdef Cell : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Value		proc :ptr
     put_Value		proc :VARIANT
     get_Positions	proc :ptr
@@ -171,7 +158,6 @@ DEFINE_IIDX(Cell, "2281372E-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Ordinal		proc :ptr
 
     .ends
-
 endif
 
 ifndef __Axis_INTERFACE_DEFINED__
@@ -179,19 +165,14 @@ __Axis_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Axis, "22813732-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Axis : public IUnknown
+.comdef Axis : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_DimensionCount	proc :ptr
     get_Positions	proc :ptr
     get_Properties	proc :ptr
 
     .ends
-
 endif
 
 ifndef __Position_INTERFACE_DEFINED__
@@ -199,17 +180,12 @@ __Position_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Position, "22813734-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Position : public IUnknown
+.comdef Position : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Ordinal		proc :ptr
     get_Members		proc :ptr
 
     .ends
-
 endif
 
 ifndef __Member_INTERFACE_DEFINED__
@@ -217,12 +193,8 @@ __Member_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Member, "22813736-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Member : public IUnknown
+.comdef Member : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_UniqueName	proc :ptr
     get_Caption		proc :ptr
@@ -238,7 +210,6 @@ DEFINE_IIDX(Member, "22813736-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Children	proc :ptr
 
     .ends
-
 endif
 
 ifndef __Level_INTERFACE_DEFINED__
@@ -246,12 +217,8 @@ __Level_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Level, "2281373A-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Level : public IUnknown
+.comdef Level : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_UniqueName	proc :ptr
     get_Caption		proc :ptr
@@ -261,7 +228,6 @@ DEFINE_IIDX(Level, "2281373A-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Members		proc :ptr
 
     .ends
-
 endif
 
 ifndef __CubeDef25_INTERFACE_DEFINED__
@@ -269,19 +235,14 @@ __CubeDef25_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(CubeDef25, "2281373E-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef CubeDef25 : public IUnknown
+.comdef CubeDef25 : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_Description	proc :ptr
     get_Properties	proc :ptr
     get_Dimensions	proc :ptr
 
     .ends
-
 endif
 
 ifndef __CubeDef_INTERFACE_DEFINED__
@@ -289,20 +250,11 @@ __CubeDef_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(CubeDef, "DA16A34A-7B7A-46fd-AD9D-66DF1E699FA1")
 
-.comdef CubeDef : public IUnknown
+.comdef CubeDef : public CubeDef25
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Description	proc :ptr
-    get_Properties	proc :ptr
-    get_Dimensions	proc :ptr
     GetSchemaObject	proc :SchemaObjectTypeEnum, :BSTR, :ptr
 
     .ends
-
 endif
 
 ifndef __Dimension_INTERFACE_DEFINED__
@@ -310,12 +262,8 @@ __Dimension_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Dimension, "22813742-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Dimension : public IUnknown
+.comdef Dimension : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_UniqueName	proc :ptr
     get_Description	proc :ptr
@@ -323,7 +271,6 @@ DEFINE_IIDX(Dimension, "22813742-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Hierarchies	proc :ptr
 
     .ends
-
 endif
 
 ifndef __Hierarchy_INTERFACE_DEFINED__
@@ -331,12 +278,8 @@ __Hierarchy_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Hierarchy, "22813746-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Hierarchy : public IUnknown
+.comdef Hierarchy : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_UniqueName	proc :ptr
     get_Description	proc :ptr
@@ -344,7 +287,6 @@ DEFINE_IIDX(Hierarchy, "22813746-8BD3-11D0-B4EF-00A0C9138CA4")
     get_Levels		proc :ptr
 
     .ends
-
 endif
 
 ifndef __MD_Collection_INTERFACE_DEFINED__
@@ -352,18 +294,13 @@ __MD_Collection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(MD_Collection, "22813751-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef MD_Collection : public IUnknown
+.comdef MD_Collection : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     Refresh		proc
-    _NewEnum		proc :ptr
+    NewEnum		proc :ptr
     get_Count		proc :ptr
 
     .ends
-
 endif
 
 ifndef __Members_INTERFACE_DEFINED__
@@ -371,19 +308,11 @@ __Members_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Members, "22813757-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Members : public IUnknown
+.comdef Members : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
-
 endif
 
 ifndef __Levels_INTERFACE_DEFINED__
@@ -391,15 +320,8 @@ __Levels_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Levels, "22813758-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Levels : public IUnknown
+.comdef Levels : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
@@ -411,19 +333,11 @@ __Axes_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Axes, "22813759-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Axes : public IUnknown
+.comdef Axes : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
-
 endif
 
 ifndef __Positions_INTERFACE_DEFINED__
@@ -431,19 +345,11 @@ __Positions_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Positions, "2281375A-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Positions : public IUnknown
+.comdef Positions : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
-
 endif
 
 ifndef __Hierarchies_INTERFACE_DEFINED__
@@ -451,15 +357,8 @@ __Hierarchies_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Hierarchies, "2281375B-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Hierarchies : public IUnknown
+.comdef Hierarchies : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
@@ -471,15 +370,8 @@ __Dimensions_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Dimensions, "2281375C-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef Dimensions : public IUnknown
+.comdef Dimensions : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
@@ -491,19 +383,11 @@ __CubeDefs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(CubeDefs, "2281375D-8BD3-11D0-B4EF-00A0C9138CA4")
 
-.comdef CubeDefs : public IUnknown
+.comdef CubeDefs : public MD_Collection
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    Refresh		proc
-    _NewEnum		proc :ptr
-    get_Count		proc :ptr
     get_Item		proc :VARIANT, :ptr
 
     .ends
-
 endif
 
 DEFINE_GUIDS(CLSID_Catalog, "228136B0-8BD3-11D0-B4EF-00A0C9138CA4")

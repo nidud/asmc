@@ -74,12 +74,8 @@ __IReplica_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IReplica, "D2D139E0-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef IReplica : public IUnknown
+.comdef IReplica : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     putref_ActiveConnection proc :ptr
     put_ActiveConnection proc :VARIANT
     get_ActiveConnection proc :ptr
@@ -111,12 +107,8 @@ __Filter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Filter, "D2D139E1-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef Filter : public IUnknown
+.comdef Filter : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_TableName	proc :ptr
     get_FilterType	proc :ptr
     get_FilterCriteria	proc :ptr
@@ -130,12 +122,8 @@ __Filters_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(Filters, "D2D139E2-B6CA-11d1-9F31-00C04FC29D52")
 
-.comdef Filters : public IUnknown
+.comdef Filters : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     Refresh		proc
     _NewEnum		proc :ptr
     get_Count		proc :ptr
@@ -152,12 +140,8 @@ __IJetEngine_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IJetEngine, "9F63D980-FF25-11D1-BB6F-00C04FAE22DA")
 
-.comdef IJetEngine : public IUnknown
+.comdef IJetEngine : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     CompactDatabase	proc :BSTR, :BSTR
     RefreshCache	proc :ptr
 

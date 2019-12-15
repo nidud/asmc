@@ -870,12 +870,8 @@ __IADs_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADs, "fd8256d0-fd15-11ce-abc4-02608c9e7553")
 
-.comdef IADs : public IUnknown
+.comdef IADs : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     get_Class		proc :ptr
     get_GUID		proc :ptr
@@ -889,8 +885,8 @@ DEFINE_IIDX(IADs, "fd8256d0-fd15-11ce-abc4-02608c9e7553")
     GetEx		proc :BSTR, :ptr
     PutEx		proc :LONG, :BSTR, :VARIANT
     GetInfoEx		proc :VARIANT, :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsContainer_INTERFACE_DEFINED__
@@ -898,12 +894,8 @@ __IADsContainer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsContainer, "001677d0-fd16-11ce-abc4-02608c9e7553")
 
-.comdef IADsContainer : public IUnknown
+.comdef IADsContainer : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     get__NewEnum	proc :ptr
     get_Filter		proc :ptr
@@ -915,8 +907,8 @@ DEFINE_IIDX(IADsContainer, "001677d0-fd16-11ce-abc4-02608c9e7553")
     Delete		proc :BSTR, :BSTR
     CopyHere		proc :BSTR, :BSTR, :ptr
     MoveHere		proc :BSTR, :BSTR, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsCollection_INTERFACE_DEFINED__
@@ -924,18 +916,14 @@ __IADsCollection_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsCollection, "72b945e0-253b-11cf-a988-00aa006bc149")
 
-.comdef IADsCollection : public IUnknown
+.comdef IADsCollection : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get__NewEnum	proc :ptr
     _Add		proc :BSTR, :VARIANT
     Remove		proc :BSTR
     GetObject		proc :BSTR, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsMembers_INTERFACE_DEFINED__
@@ -943,18 +931,14 @@ __IADsMembers_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsMembers, "451a0030-72ec-11cf-b03b-00aa006e0975")
 
-.comdef IADsMembers : public IUnknown
+.comdef IADsMembers : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     get__NewEnum	proc :ptr
     get_Filter		proc :ptr
     put_Filter		proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPropertyList_INTERFACE_DEFINED__
@@ -962,12 +946,8 @@ __IADsPropertyList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyList, "c6f602b6-8f69-11d0-8528-00c04fd8d503")
 
-.comdef IADsPropertyList : public IUnknown
+.comdef IADsPropertyList : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_PropertyCount	proc :ptr
     Next		proc :ptr
     Skip		proc :LONG
@@ -977,8 +957,8 @@ DEFINE_IIDX(IADsPropertyList, "c6f602b6-8f69-11d0-8528-00c04fd8d503")
     PutPropertyItem	proc :VARIANT
     ResetPropertyItem	proc :VARIANT
     PurgePropertyList	proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPropertyEntry_INTERFACE_DEFINED__
@@ -986,12 +966,8 @@ __IADsPropertyEntry_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyEntry, "05792c8e-941f-11d0-8529-00c04fd8d503")
 
-.comdef IADsPropertyEntry : public IUnknown
+.comdef IADsPropertyEntry : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     Clear		proc
     get_Name		proc :ptr
     put_Name		proc :BSTR
@@ -1001,8 +977,8 @@ DEFINE_IIDX(IADsPropertyEntry, "05792c8e-941f-11d0-8529-00c04fd8d503")
     put_ControlCode	proc :LONG
     get_Values		proc :ptr
     put_Values		proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_PropertyEntry, "72d3edc2-a4c4-11d0-8533-00c04fd8d503")
@@ -1012,12 +988,8 @@ __IADsPropertyValue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyValue, "79fa9ad0-a97c-11d0-8534-00c04fd8d503")
 
-.comdef IADsPropertyValue : public IUnknown
+.comdef IADsPropertyValue : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     Clear		proc
     get_ADsType		proc :ptr
     put_ADsType		proc :LONG
@@ -1043,8 +1015,8 @@ DEFINE_IIDX(IADsPropertyValue, "79fa9ad0-a97c-11d0-8534-00c04fd8d503")
     put_LargeInteger	proc :ptr
     get_UTCTime		proc :ptr
     put_UTCTime		proc :DATE
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPropertyValue2_INTERFACE_DEFINED__
@@ -1052,16 +1024,12 @@ __IADsPropertyValue2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPropertyValue2, "306e831c-5bc7-11d1-a3b8-00c04fb950dc")
 
-.comdef IADsPropertyValue2 : public IUnknown
+.comdef IADsPropertyValue2 : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     GetObjectProperty	proc :ptr, :ptr
     PutObjectProperty	proc :LONG, :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_PropertyValue, "7b9e38b0-a97c-11d0-8534-00c04fd8d503")
@@ -1078,8 +1046,8 @@ DEFINE_IIDX(IPrivateDispatch, "86ab4bbe-65f6-11d1-8c13-00c04fd8d503")
     ADSIGetTypeInfo	proc :UINT, :LCID, :ptr
     ADSIGetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     ADSIInvoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IPrivateUnknown_INTERFACE_DEFINED__
@@ -1091,8 +1059,8 @@ DEFINE_IIDX(IPrivateUnknown, "89126bab-6ead-11d1-8c18-00c04fd8d503")
 
     ADSIInitializeObject proc :BSTR, :BSTR, :LONG
     ADSIReleaseObject	proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsExtension_INTERFACE_DEFINED__
@@ -1105,8 +1073,8 @@ DEFINE_IIDX(IADsExtension, "3d35553c-d2b0-11d1-b17b-0000f87593a0")
     Operate		proc :DWORD, :VARIANT, :VARIANT, :VARIANT
     PrivateGetIDsOfNames proc :REFIID, :ptr, :SINT, :LCID, :ptr
     PrivateInvoke	proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsDeleteOps_INTERFACE_DEFINED__
@@ -1114,15 +1082,11 @@ __IADsDeleteOps_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDeleteOps, "b2bd0902-8878-11d1-8c21-00c04fd8d503")
 
-.comdef IADsDeleteOps : public IUnknown
+.comdef IADsDeleteOps : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     DeleteObject	proc :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsNamespaces_INTERFACE_DEFINED__
@@ -1130,29 +1094,12 @@ __IADsNamespaces_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNamespaces, "28b96ba0-b330-11cf-a9ad-00aa006bc149")
 
-.comdef IADsNamespaces : public IUnknown
+.comdef IADsNamespaces : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_DefaultContainer proc :ptr
     put_DefaultContainer proc :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsClass_INTERFACE_DEFINED__
@@ -1160,25 +1107,8 @@ __IADsClass_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsClass, "c8f93dd0-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsClass : public IUnknown
+.comdef IADsClass : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_PrimaryInterface proc :ptr
     get_CLSID		proc :ptr
     put_CLSID		proc :BSTR
@@ -1209,8 +1139,8 @@ DEFINE_IIDX(IADsClass, "c8f93dd0-4ae0-11cf-9e73-00aa004a5691")
     get_HelpFileContext proc :ptr
     put_HelpFileContext proc :LONG
     Qualifiers		proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsProperty_INTERFACE_DEFINED__
@@ -1218,25 +1148,8 @@ __IADsProperty_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsProperty, "c8f93dd3-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsProperty : public IUnknown
+.comdef IADsProperty : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_OID		proc :ptr
     put_OID		proc :BSTR
     get_Syntax		proc :ptr
@@ -1248,8 +1161,8 @@ DEFINE_IIDX(IADsProperty, "c8f93dd3-4ae0-11cf-9e73-00aa004a5691")
     get_MultiValued	proc :ptr
     put_MultiValued	proc :VARIANT_BOOL
     Qualifiers		proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsSyntax_INTERFACE_DEFINED__
@@ -1257,29 +1170,12 @@ __IADsSyntax_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSyntax, "c8f93dd2-4ae0-11cf-9e73-00aa004a5691")
 
-.comdef IADsSyntax : public IUnknown
+.comdef IADsSyntax : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_OleAutoDataType proc :ptr
     put_OleAutoDataType proc :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsLocality_INTERFACE_DEFINED__
@@ -1287,25 +1183,8 @@ __IADsLocality_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsLocality, "a05e03a2-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsLocality : public IUnknown
+.comdef IADsLocality : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Description	proc :ptr
     put_Description	proc :BSTR
     get_LocalityName	proc :ptr
@@ -1314,8 +1193,8 @@ DEFINE_IIDX(IADsLocality, "a05e03a2-effe-11cf-8abc-00c04fd8d503")
     put_PostalAddress	proc :BSTR
     get_SeeAlso		proc :ptr
     put_SeeAlso		proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsO_INTERFACE_DEFINED__
@@ -1323,25 +1202,8 @@ __IADsO_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsO, "a1cd2dc6-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsO : public IUnknown
+.comdef IADsO : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Description	proc :ptr
     put_Description	proc :BSTR
     get_LocalityName	proc :ptr
@@ -1354,8 +1216,8 @@ DEFINE_IIDX(IADsO, "a1cd2dc6-effe-11cf-8abc-00c04fd8d503")
     put_FaxNumber	proc :BSTR
     get_SeeAlso		proc :ptr
     put_SeeAlso		proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsOU_INTERFACE_DEFINED__
@@ -1363,25 +1225,8 @@ __IADsOU_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOU, "a2f733b8-effe-11cf-8abc-00c04fd8d503")
 
-.comdef IADsOU : public IUnknown
+.comdef IADsOU : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Description	proc :ptr
     put_Description	proc :BSTR
     get_LocalityName	proc :ptr
@@ -1396,8 +1241,8 @@ DEFINE_IIDX(IADsOU, "a2f733b8-effe-11cf-8abc-00c04fd8d503")
     put_SeeAlso		proc :VARIANT
     get_BusinessCategory proc :ptr
     put_BusinessCategory proc :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsDomain_INTERFACE_DEFINED__
@@ -1405,25 +1250,8 @@ __IADsDomain_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDomain, "00e4c220-fd16-11ce-abc4-02608c9e7553")
 
-.comdef IADsDomain : public IUnknown
+.comdef IADsDomain : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_IsWorkgroup	proc :ptr
     get_MinPasswordLength proc :ptr
     put_MinPasswordLength proc :LONG
@@ -1441,8 +1269,8 @@ DEFINE_IIDX(IADsDomain, "00e4c220-fd16-11ce-abc4-02608c9e7553")
     put_AutoUnlockInterval proc :LONG
     get_LockoutObservationInterval proc :ptr
     put_LockoutObservationInterval proc :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsComputer_INTERFACE_DEFINED__
@@ -1450,25 +1278,8 @@ __IADsComputer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsComputer, "efe3cc70-1d9f-11cf-b1f3-02608c9e7553")
 
-.comdef IADsComputer : public IUnknown
+.comdef IADsComputer : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_ComputerID	proc :ptr
     get_Site		proc :ptr
     get_Description	proc :ptr
@@ -1501,8 +1312,8 @@ DEFINE_IIDX(IADsComputer, "efe3cc70-1d9f-11cf-b1f3-02608c9e7553")
     put_StorageCapacity proc :BSTR
     get_NetAddresses	proc :ptr
     put_NetAddresses	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsComputerOperations_INTERFACE_DEFINED__
@@ -1510,29 +1321,12 @@ __IADsComputerOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsComputerOperations, "ef497680-1d9f-11cf-b1f3-02608c9e7553")
 
-.comdef IADsComputerOperations : public IUnknown
+.comdef IADsComputerOperations : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     Status		proc :ptr
     Shutdown		proc :VARIANT_BOOL
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsGroup_INTERFACE_DEFINED__
@@ -1540,33 +1334,16 @@ __IADsGroup_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsGroup, "27636b00-410f-11cf-b1ff-02608c9e7553")
 
-.comdef IADsGroup : public IUnknown
+.comdef IADsGroup : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Description	proc :ptr
     put_Description	proc :BSTR
     Members		proc :ptr
     IsMember		proc :BSTR, :ptr
     _Add		proc :BSTR
     Remove		proc :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsUser_INTERFACE_DEFINED__
@@ -1574,25 +1351,8 @@ __IADsUser_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsUser, "3e37e320-17e2-11cf-abc4-02608c9e7553")
 
-.comdef IADsUser : public IUnknown
+.comdef IADsUser : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_BadLoginAddress proc :ptr
     get_BadLoginCount	proc :ptr
     get_LastLogin	proc :ptr
@@ -1684,8 +1444,8 @@ DEFINE_IIDX(IADsUser, "3e37e320-17e2-11cf-abc4-02608c9e7553")
     Groups		proc :ptr
     SetPassword		proc :BSTR
     ChangePassword	proc :BSTR, :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPrintQueue_INTERFACE_DEFINED__
@@ -1693,25 +1453,8 @@ __IADsPrintQueue_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintQueue, "b15160d0-1226-11cf-a985-00aa006bc149")
 
-.comdef IADsPrintQueue : public IUnknown
+.comdef IADsPrintQueue : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_PrinterPath	proc :ptr
     put_PrinterPath	proc :BSTR
     get_Model		proc :ptr
@@ -1738,8 +1481,8 @@ DEFINE_IIDX(IADsPrintQueue, "b15160d0-1226-11cf-a985-00aa006bc149")
     put_PrintDevices	proc :VARIANT
     get_NetAddresses	proc :ptr
     put_NetAddresses	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPrintQueueOperations_INTERFACE_DEFINED__
@@ -1747,32 +1490,15 @@ __IADsPrintQueueOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintQueueOperations, "124be5c0-156e-11cf-a986-00aa006bc149")
 
-.comdef IADsPrintQueueOperations : public IUnknown
+.comdef IADsPrintQueueOperations : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Status		proc :ptr
     PrintJobs		proc :ptr
     _Pause		proc
     Resume		proc
     _Purge		proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPrintJob_INTERFACE_DEFINED__
@@ -1780,25 +1506,8 @@ __IADsPrintJob_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintJob, "32fb6780-1ed0-11cf-a988-00aa006bc149")
 
-.comdef IADsPrintJob : public IUnknown
+.comdef IADsPrintJob : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_HostPrintQueue	proc :ptr
     get_User		proc :ptr
     get_UserPath	proc :ptr
@@ -1817,8 +1526,8 @@ DEFINE_IIDX(IADsPrintJob, "32fb6780-1ed0-11cf-a988-00aa006bc149")
     put_Notify		proc :BSTR
     get_NotifyPath	proc :ptr
     put_NotifyPath	proc :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPrintJobOperations_INTERFACE_DEFINED__
@@ -1826,25 +1535,8 @@ __IADsPrintJobOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPrintJobOperations, "9a52db30-1ecf-11cf-a988-00aa006bc149")
 
-.comdef IADsPrintJobOperations : public IUnknown
+.comdef IADsPrintJobOperations : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Status		proc :ptr
     get_TimeElapsed	proc :ptr
     get_PagesPrinted	proc :ptr
@@ -1852,8 +1544,8 @@ DEFINE_IIDX(IADsPrintJobOperations, "9a52db30-1ecf-11cf-a988-00aa006bc149")
     put_Position	proc :LONG
     _Pause		proc
     Resume		proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsService_INTERFACE_DEFINED__
@@ -1861,25 +1553,8 @@ __IADsService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsService, "68af66e0-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsService : public IUnknown
+.comdef IADsService : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_HostComputer	proc :ptr
     put_HostComputer	proc :BSTR
     get_DisplayName	proc :ptr
@@ -1904,8 +1579,8 @@ DEFINE_IIDX(IADsService, "68af66e0-31ca-11cf-a98a-00aa006bc149")
     put_ServiceAccountPath proc :BSTR
     get_Dependencies	proc :ptr
     put_Dependencies	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsServiceOperations_INTERFACE_DEFINED__
@@ -1913,33 +1588,16 @@ __IADsServiceOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsServiceOperations, "5d7b33f0-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsServiceOperations : public IUnknown
+.comdef IADsServiceOperations : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_Status		proc :ptr
     Start		proc
     Stop		proc
     _Pause		proc
     Continue		proc
     SetPassword		proc :BSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsFileService_INTERFACE_DEFINED__
@@ -1947,55 +1605,14 @@ __IADsFileService_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileService, "a89d1900-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsFileService : public IUnknown
+.comdef IADsFileService : public IADsService
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
-    get_HostComputer	proc :ptr
-    put_HostComputer	proc :BSTR
-    get_DisplayName	proc :ptr
-    put_DisplayName	proc :BSTR
-    get_Version		proc :ptr
-    put_Version		proc :BSTR
-    get_ServiceType	proc :ptr
-    put_ServiceType	proc :LONG
-    get_StartType	proc :ptr
-    put_StartType	proc :LONG
-    get_Path		proc :ptr
-    put_Path		proc :BSTR
-    get_StartupParameters proc :ptr
-    put_StartupParameters proc :BSTR
-    get_ErrorControl	proc :ptr
-    put_ErrorControl	proc :LONG
-    get_LoadOrderGroup	proc :ptr
-    put_LoadOrderGroup	proc :BSTR
-    get_ServiceAccountName proc :ptr
-    put_ServiceAccountName proc :BSTR
-    get_ServiceAccountPath proc :ptr
-    put_ServiceAccountPath proc :BSTR
-    get_Dependencies	proc :ptr
-    put_Dependencies	proc :VARIANT
     get_Description	proc :ptr
     put_Description	proc :BSTR
     get_MaxUserCount	proc :ptr
     put_MaxUserCount	proc :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsFileServiceOperations_INTERFACE_DEFINED__
@@ -2003,35 +1620,12 @@ __IADsFileServiceOperations_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileServiceOperations, "a02ded10-31ca-11cf-a98a-00aa006bc149")
 
-.comdef IADsFileServiceOperations : public IUnknown
+.comdef IADsFileServiceOperations : public IADsServiceOperations
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
-    get_Status		proc :ptr
-    Start		proc
-    Stop		proc
-    _Pause		proc
-    Continue		proc
-    SetPassword		proc :BSTR
     Sessions		proc :ptr
     Resources		proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsFileShare_INTERFACE_DEFINED__
@@ -2039,25 +1633,8 @@ __IADsFileShare_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFileShare, "eb6dcaf0-4b83-11cf-a995-00aa006bc149")
 
-.comdef IADsFileShare : public IUnknown
+.comdef IADsFileShare : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_CurrentUserCount proc :ptr
     get_Description	proc :ptr
     put_Description	proc :BSTR
@@ -2067,8 +1644,8 @@ DEFINE_IIDX(IADsFileShare, "eb6dcaf0-4b83-11cf-a995-00aa006bc149")
     put_Path		proc :BSTR
     get_MaxUserCount	proc :ptr
     put_MaxUserCount	proc :LONG
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsSession_INTERFACE_DEFINED__
@@ -2076,33 +1653,16 @@ __IADsSession_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSession, "398b7da0-4aab-11cf-ae2c-00aa006ebfb9")
 
-.comdef IADsSession : public IUnknown
+.comdef IADsSession : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_User		proc :ptr
     get_UserPath	proc :ptr
     get_Computer	proc :ptr
     get_ComputerPath	proc :ptr
     get_ConnectTime	proc :ptr
     get_IdleTime	proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsResource_INTERFACE_DEFINED__
@@ -2110,31 +1670,14 @@ __IADsResource_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsResource, "34a05b20-4aab-11cf-ae2c-00aa006ebfb9")
 
-.comdef IADsResource : public IUnknown
+.comdef IADsResource : public IADs
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Name		proc :ptr
-    get_Class		proc :ptr
-    get_GUID		proc :ptr
-    get_ADsPath		proc :ptr
-    get_Parent		proc :ptr
-    get_Schema		proc :ptr
-    GetInfo		proc
-    SetInfo		proc
-    Get			proc :BSTR, :ptr
-    Put			proc :BSTR, :VARIANT
-    GetEx		proc :BSTR, :ptr
-    PutEx		proc :LONG, :BSTR, :VARIANT
-    GetInfoEx		proc :VARIANT, :LONG
     get_User		proc :ptr
     get_UserPath	proc :ptr
     get_Path		proc :ptr
     get_LockCount	proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsOpenDSObject_INTERFACE_DEFINED__
@@ -2142,12 +1685,8 @@ __IADsOpenDSObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOpenDSObject, "ddf2891e-0f9c-11d0-8ad4-00c04fd8d503")
 
-.comdef IADsOpenDSObject : public IUnknown
+.comdef IADsOpenDSObject : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     OpenDSObject	proc :BSTR, :BSTR, :BSTR, :LONG, :ptr
     .ends
 
@@ -2165,8 +1704,8 @@ DEFINE_IIDX(IDirectoryObject, "e798de2c-22e4-11d0-84fe-00c04fd8d503")
     SetObjectAttributes proc :PADS_ATTR_INFO, :DWORD, :ptr
     CreateDSObject	proc :LPWSTR, :PADS_ATTR_INFO, :DWORD, :ptr
     DeleteDSObject	proc :LPWSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IDirectorySearch_INTERFACE_DEFINED__
@@ -2186,8 +1725,8 @@ DEFINE_IIDX(IDirectorySearch, "109ba8ec-92f0-11d0-a790-00c04fd8d5a8")
     GetColumn		proc :ADS_SEARCH_HANDLE, :LPWSTR, :PADS_SEARCH_COLUMN
     FreeColumn		proc :PADS_SEARCH_COLUMN
     CloseSearchHandle	proc :ADS_SEARCH_HANDLE
-    .ends
 
+    .ends
 endif
 
 ifndef __IDirectorySchemaMgmt_INTERFACE_DEFINED__
@@ -2205,8 +1744,8 @@ DEFINE_IIDX(IDirectorySchemaMgmt, "75db3b9c-a4d8-11d0-a79c-00c04fd8d5a8")
     WriteClassDefinition proc :LPWSTR, :PADS_CLASS_DEF
     CreateClassDefinition proc :LPWSTR, :PADS_CLASS_DEF
     DeleteClassDefinition proc :LPWSTR
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsAggregatee_INTERFACE_DEFINED__
@@ -2220,8 +1759,8 @@ DEFINE_IIDX(IADsAggregatee, "1346ce8c-9039-11d0-8528-00c04fd8d503")
     DisconnectAsAggregatee proc
     RelinquishInterface proc :REFIID
     RestoreInterface	proc :REFIID
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsAggregator_INTERFACE_DEFINED__
@@ -2233,8 +1772,8 @@ DEFINE_IIDX(IADsAggregator, "52db5fb0-941f-11d0-8529-00c04fd8d503")
 
     ConnectAsAggregator proc :ptr
     DisconnectAsAggregator proc
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsAccessControlEntry_INTERFACE_DEFINED__
@@ -2242,12 +1781,8 @@ __IADsAccessControlEntry_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAccessControlEntry, "b4f3a14c-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsAccessControlEntry : public IUnknown
+.comdef IADsAccessControlEntry : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_AccessMask	proc :ptr
     put_AccessMask	proc :LONG
     get_AceType		proc :ptr
@@ -2262,8 +1797,8 @@ DEFINE_IIDX(IADsAccessControlEntry, "b4f3a14c-9bdd-11d0-852c-00c04fd8d503")
     put_InheritedObjectType proc :BSTR
     get_Trustee		proc :ptr
     put_Trustee		proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_AccessControlEntry, "b75ac000-9bdd-11d0-852c-00c04fd8d503")
@@ -2273,12 +1808,8 @@ __IADsAccessControlList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAccessControlList, "b7ee91cc-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsAccessControlList : public IUnknown
+.comdef IADsAccessControlList : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_AclRevision	proc :ptr
     put_AclRevision	proc :LONG
     get_AceCount	proc :ptr
@@ -2287,8 +1818,8 @@ DEFINE_IIDX(IADsAccessControlList, "b7ee91cc-9bdd-11d0-852c-00c04fd8d503")
     RemoveAce		proc :ptr
     CopyAccessList	proc :ptr
     get__NewEnum	proc :ptr
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_AccessControlList, "b85ea052-9bdd-11d0-852c-00c04fd8d503")
@@ -2298,12 +1829,8 @@ __IADsSecurityDescriptor_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSecurityDescriptor, "b8c787ca-9bdd-11d0-852c-00c04fd8d503")
 
-.comdef IADsSecurityDescriptor : public IUnknown
+.comdef IADsSecurityDescriptor : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Revision	proc :ptr
     put_Revision	proc :LONG
     get_Control		proc :ptr
@@ -2325,8 +1852,8 @@ DEFINE_IIDX(IADsSecurityDescriptor, "b8c787ca-9bdd-11d0-852c-00c04fd8d503")
     get_SaclDefaulted	proc :ptr
     put_SaclDefaulted	proc :VARIANT_BOOL
     CopySecurityDescriptor proc :ptr
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_SecurityDescriptor, "b958f73c-9bdd-11d0-852c-00c04fd8d503")
@@ -2336,18 +1863,14 @@ __IADsLargeInteger_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsLargeInteger, "9068270b-0939-11d1-8be1-00c04fd8d503")
 
-.comdef IADsLargeInteger : public IUnknown
+.comdef IADsLargeInteger : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_HighPart	proc :ptr
     put_HighPart	proc :LONG
     get_LowPart		proc :ptr
     put_LowPart		proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_LargeInteger, "927971f5-0939-11d1-8be1-00c04fd8d503")
@@ -2357,12 +1880,8 @@ __IADsNameTranslate_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNameTranslate, "b1b272a3-3625-11d1-a3a4-00c04fb950dc")
 
-.comdef IADsNameTranslate : public IUnknown
+.comdef IADsNameTranslate : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     put_ChaseReferral	proc :LONG
     Init		proc :LONG, :BSTR
     InitEx		proc :LONG, :BSTR, :BSTR, :BSTR, :BSTR
@@ -2370,8 +1889,8 @@ DEFINE_IIDX(IADsNameTranslate, "b1b272a3-3625-11d1-a3a4-00c04fb950dc")
     Get			proc :LONG, :ptr
     SetEx		proc :LONG, :VARIANT
     GetEx		proc :LONG, :ptr
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_NameTranslate, "274fae1f-3626-11d1-a3a4-00c04fb950dc")
@@ -2381,16 +1900,12 @@ __IADsCaseIgnoreList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsCaseIgnoreList, "7b66b533-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsCaseIgnoreList : public IUnknown
+.comdef IADsCaseIgnoreList : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_CaseIgnoreList	proc :ptr
     put_CaseIgnoreList	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_CaseIgnoreList, "15f88a55-4680-11d1-a3b4-00c04fb950dc")
@@ -2400,18 +1915,14 @@ __IADsFaxNumber_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsFaxNumber, "a910dea9-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsFaxNumber : public IUnknown
+.comdef IADsFaxNumber : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_TelephoneNumber proc :ptr
     put_TelephoneNumber proc :BSTR
     get_Parameters	proc :ptr
     put_Parameters	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_FaxNumber, "a5062215-4681-11d1-a3b4-00c04fb950dc")
@@ -2421,18 +1932,14 @@ __IADsNetAddress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsNetAddress, "b21a50a9-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsNetAddress : public IUnknown
+.comdef IADsNetAddress : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_AddressType	proc :ptr
     put_AddressType	proc :LONG
     get_Address		proc :ptr
     put_Address		proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_NetAddress, "b0b71247-4080-11d1-a3ac-00c04fb950dc")
@@ -2442,16 +1949,12 @@ __IADsOctetList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsOctetList, "7b28b80f-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsOctetList : public IUnknown
+.comdef IADsOctetList : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_OctetList	proc :ptr
     put_OctetList	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_OctetList, "1241400f-4680-11d1-a3b4-00c04fb950dc")
@@ -2461,18 +1964,14 @@ __IADsEmail_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsEmail, "97af011a-478e-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsEmail : public IUnknown
+.comdef IADsEmail : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Type		proc :ptr
     put_Type		proc :LONG
     get_Address		proc :ptr
     put_Address		proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_Email, "8f92a857-478e-11d1-a3b4-00c04fb950dc")
@@ -2482,20 +1981,16 @@ __IADsPath_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPath, "b287fcd5-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsPath : public IUnknown
+.comdef IADsPath : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Type		proc :ptr
     put_Type		proc :LONG
     get_VolumeName	proc :ptr
     put_VolumeName	proc :BSTR
     get_Path		proc :ptr
     put_Path		proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_Path, "b2538919-4080-11d1-a3ac-00c04fb950dc")
@@ -2505,12 +2000,8 @@ __IADsReplicaPointer_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsReplicaPointer, "f60fb803-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsReplicaPointer : public IUnknown
+.comdef IADsReplicaPointer : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ServerName	proc :ptr
     put_ServerName	proc :BSTR
     get_ReplicaType	proc :ptr
@@ -2521,8 +2012,8 @@ DEFINE_IIDX(IADsReplicaPointer, "f60fb803-4080-11d1-a3ac-00c04fb950dc")
     put_Count		proc :LONG
     get_ReplicaAddressHints proc :ptr
     put_ReplicaAddressHints proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_ReplicaPointer, "f5d1badf-4080-11d1-a3ac-00c04fb950dc")
@@ -2532,12 +2023,8 @@ __IADsAcl_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsAcl, "8452d3ab-0869-11d1-a377-00c04fb950dc")
 
-.comdef IADsAcl : public IUnknown
+.comdef IADsAcl : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ProtectedAttrName proc :ptr
     put_ProtectedAttrName proc :BSTR
     get_SubjectName	proc :ptr
@@ -2545,8 +2032,8 @@ DEFINE_IIDX(IADsAcl, "8452d3ab-0869-11d1-a377-00c04fb950dc")
     get_Privileges	proc :ptr
     put_Privileges	proc :LONG
     CopyAcl		proc :ptr
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsTimestamp_INTERFACE_DEFINED__
@@ -2554,18 +2041,14 @@ __IADsTimestamp_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsTimestamp, "b2f5a901-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsTimestamp : public IUnknown
+.comdef IADsTimestamp : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_WholeSeconds	proc :ptr
     put_WholeSeconds	proc :LONG
     get_EventID		proc :ptr
     put_EventID		proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_Timestamp, "b2bed2eb-4080-11d1-a3ac-00c04fb950dc")
@@ -2575,16 +2058,12 @@ __IADsPostalAddress_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPostalAddress, "7adecf29-4680-11d1-a3b4-00c04fb950dc")
 
-.comdef IADsPostalAddress : public IUnknown
+.comdef IADsPostalAddress : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_PostalAddress	proc :ptr
     put_PostalAddress	proc :VARIANT
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_PostalAddress, "0a75afcd-4680-11d1-a3b4-00c04fb950dc")
@@ -2594,18 +2073,14 @@ __IADsBackLink_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsBackLink, "fd1302bd-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsBackLink : public IUnknown
+.comdef IADsBackLink : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_RemoteID	proc :ptr
     put_RemoteID	proc :LONG
     get_ObjectName	proc :ptr
     put_ObjectName	proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_BackLink, "fcbf906f-4080-11d1-a3ac-00c04fb950dc")
@@ -2615,20 +2090,16 @@ __IADsTypedName_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsTypedName, "b371a349-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsTypedName : public IUnknown
+.comdef IADsTypedName : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ObjectName	proc :ptr
     put_ObjectName	proc :BSTR
     get_Level		proc :ptr
     put_Level		proc :LONG
     get_Interval	proc :ptr
     put_Interval	proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_TypedName, "b33143cb-4080-11d1-a3ac-00c04fb950dc")
@@ -2638,18 +2109,14 @@ __IADsHold_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsHold, "b3eb3b37-4080-11d1-a3ac-00c04fb950dc")
 
-.comdef IADsHold : public IUnknown
+.comdef IADsHold : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ObjectName	proc :ptr
     put_ObjectName	proc :BSTR
     get_Amount		proc :ptr
     put_Amount		proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_Hold, "b3ad3e13-4080-11d1-a3ac-00c04fb950dc")
@@ -2659,16 +2126,12 @@ __IADsObjectOptions_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsObjectOptions, "46f14fda-232b-11d1-a808-00c04fd8d5a8")
 
-.comdef IADsObjectOptions : public IUnknown
+.comdef IADsObjectOptions : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     GetOption		proc :LONG, :ptr
     SetOption		proc :LONG, :VARIANT
-    .ends
 
+    .ends
 endif
 
 ifndef __IADsPathname_INTERFACE_DEFINED__
@@ -2676,12 +2139,8 @@ __IADsPathname_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsPathname, "d592aed4-f420-11d0-a36e-00c04fb950dc")
 
-.comdef IADsPathname : public IUnknown
+.comdef IADsPathname : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     Set			proc :BSTR, :LONG
     SetDisplayType	proc :LONG
     Retrieve		proc :LONG, :ptr
@@ -2693,8 +2152,8 @@ DEFINE_IIDX(IADsPathname, "d592aed4-f420-11d0-a36e-00c04fb950dc")
     GetEscapedElement	proc :LONG, :BSTR, :ptr
     get_EscapedMode	proc :ptr
     put_EscapedMode	proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_Pathname, "080d0d78-f421-11d0-a36e-00c04fb950dc")
@@ -2704,12 +2163,8 @@ __IADsADSystemInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsADSystemInfo, "5BB11929-AFD1-11d2-9CB9-0000F87A369E")
 
-.comdef IADsADSystemInfo : public IUnknown
+.comdef IADsADSystemInfo : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_UserName	proc :ptr
     get_ComputerName	proc :ptr
     get_SiteName	proc :ptr
@@ -2723,8 +2178,8 @@ DEFINE_IIDX(IADsADSystemInfo, "5BB11929-AFD1-11d2-9CB9-0000F87A369E")
     GetDCSiteName	proc :BSTR, :ptr
     RefreshSchemaCache	proc
     GetTrees		proc :ptr
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_ADSystemInfo, "50B6327F-AFD1-11d2-9CB9-0000F87A369E")
@@ -2734,18 +2189,14 @@ __IADsWinNTSystemInfo_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsWinNTSystemInfo, "6C6D65DC-AFD1-11d2-9CB9-0000F87A369E")
 
-.comdef IADsWinNTSystemInfo : public IUnknown
+.comdef IADsWinNTSystemInfo : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_UserName	proc :ptr
     get_ComputerName	proc :ptr
     get_DomainName	proc :ptr
     get_PDC		proc :ptr
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_WinNTSystemInfo, "66182EC4-AFD1-11d2-9CB9-0000F87A369E")
@@ -2755,18 +2206,14 @@ __IADsDNWithBinary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDNWithBinary, "7e99c0a2-f935-11d2-ba96-00c04fb6d0d1")
 
-.comdef IADsDNWithBinary : public IUnknown
+.comdef IADsDNWithBinary : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_BinaryValue	proc :ptr
     put_BinaryValue	proc :VARIANT
     get_DNString	proc :ptr
     put_DNString	proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_DNWithBinary, "7e99c0a3-f935-11d2-ba96-00c04fb6d0d1")
@@ -2776,18 +2223,14 @@ __IADsDNWithString_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsDNWithString, "370df02e-f934-11d2-ba96-00c04fb6d0d1")
 
-.comdef IADsDNWithString : public IUnknown
+.comdef IADsDNWithString : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_StringValue	proc :ptr
     put_StringValue	proc :BSTR
     get_DNString	proc :ptr
     put_DNString	proc :BSTR
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_DNWithString, "334857cc-f934-11d2-ba96-00c04fb6d0d1")
@@ -2797,19 +2240,15 @@ __IADsSecurityUtility_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IADsSecurityUtility, "a63251b2-5f21-474b-ab52-4a8efad10895")
 
-.comdef IADsSecurityUtility : public IUnknown
+.comdef IADsSecurityUtility : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     GetSecurityDescriptor proc :VARIANT, :LONG, :LONG, :ptr
     SetSecurityDescriptor proc :VARIANT, :LONG, :VARIANT, :LONG
     ConvertSecurityDescriptor proc :VARIANT, :LONG, :LONG, :ptr
     get_SecurityMask	proc :ptr
     put_SecurityMask	proc :LONG
-    .ends
 
+    .ends
 endif
 
 DEFINE_GUIDS(CLSID_ADsSecurityUtility, "f270c64a-ffb8-4ae4-85fe-3a75e5347966")

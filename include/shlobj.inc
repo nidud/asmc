@@ -1161,7 +1161,7 @@ if (_WIN32_IE GE _WIN32_IE_IE70)
 ACLO_VIRTUALNAMESPACE	equ 64	; enumereate on the virual namespace
 endif
 
-.comdef IACList2 : public IUnknown
+.comdef IACList2 : public IACList
 
     SetOptions		proc :DWORD
     GetOptions		proc :ptr
@@ -1202,10 +1202,8 @@ endif
     .ends
 
 
-.comdef IDockingWindowSite : public IUnknown
+.comdef IDockingWindowSite : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     GetBorderDW		proc :ptr, :LPRECT
     RequestBorderSpaceDW proc :ptr, :LPCBORDERWIDTHS
     SetBorderSpaceDW	proc :ptr, :LPCBORDERWIDTHS
@@ -1219,10 +1217,8 @@ DWFAF_GROUP1		equ 0x0002
 DWFAF_GROUP2		equ 0x0004
 DWFAF_AUTOHIDE		equ 0x0010
 
-.comdef IDockingWindowFrame : public IUnknown
+.comdef IDockingWindowFrame : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     AddToolbar		proc :ptr, :LPCWSTR, :DWORD
     RemoveToolbar	proc :ptr, :DWORD
     FindToolbar		proc :LPCWSTR, :REFIID, :ptr
@@ -1344,10 +1340,8 @@ PBANDINFOSFB		typedef ptr BANDINFOSFB
 
     .ends
 
-.comdef IDeskBarClient : public IUnknown
+.comdef IDeskBarClient : public IOleWindow
 
-    GetWindow		proc :ptr
-    ContextSensitiveHelp proc :BOOL
     SetDeskBarSite	proc :ptr
     SetModeDBC		proc :DWORD
     UIActivateDBC	proc :DWORD

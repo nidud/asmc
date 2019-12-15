@@ -48,41 +48,39 @@ include ddraw.inc
 ;include ddstream.inc
 ;include austream.inc
 
-AMMSF_NOGRAPHTHREAD	equ 0x1
+.enum {
+    AMMSF_NOGRAPHTHREAD = 0x1
+}
 
-AMMSF_ADDDEFAULTRENDERER equ 0x1
-AMMSF_CREATEPEER	equ 0x2
-AMMSF_STOPIFNOSAMPLES	equ 0x4
-AMMSF_NOSTALL		equ 0x8
+.enum {
+    AMMSF_ADDDEFAULTRENDERER = 0x1,
+    AMMSF_CREATEPEER	= 0x2,
+    AMMSF_STOPIFNOSAMPLES = 0x4,
+    AMMSF_NOSTALL	= 0x8
+}
 
-AMMSF_RENDERTYPEMASK	equ 0x3
-AMMSF_RENDERTOEXISTING	equ 0
-AMMSF_RENDERALLSTREAMS	equ 0x1
-AMMSF_NORENDER		equ 0x2
-AMMSF_NOCLOCK		equ 0x4
-AMMSF_RUN		equ 0x8
+enum {
+    AMMSF_RENDERTYPEMASK = 0x3,
+    AMMSF_RENDERTOEXISTING = 0,
+    AMMSF_RENDERALLSTREAMS = 0x1,
+    AMMSF_NORENDER	= 0x2,
+    AMMSF_NOCLOCK	= 0x4,
+    AMMSF_RUN		= 0x8
+}
 
-OUTPUT_STATE		typedef SDWORD
-Disabled		equ 0
-ReadData		equ 1
-RenderData		equ 2
+.enum OUTPUT_STATE {
+    Disabled		= 0,
+    ReadData		= 1,
+    RenderData		= 2
+}
 
 ifndef __IAMMultiMediaStream_INTERFACE_DEFINED__
 __IAMMultiMediaStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMMultiMediaStream, "BEBE595C-9A6F-11d0-8FDE-00C04FD9189D")
 
-.comdef IAMMultiMediaStream : public IUnknown
+.comdef IAMMultiMediaStream : public IMultiMediaStream
 
-    GetInformation	proc :ptr, :ptr
-    GetMediaStream	proc :REFMSPID, :ptr
-    EnumMediaStreams	proc :LONG, :ptr
-    GetState		proc :ptr
-    SetState		proc :STREAM_STATE
-    GetTime		proc :ptr
-    GetDuration		proc :ptr
-    Seek		proc :STREAM_TIME
-    GetEndOfStreamEventHandle proc :ptr
     Initialize		proc :STREAM_TYPE, :DWORD, :ptr
     GetFilterGraph	proc :ptr
     GetFilter		proc :ptr
@@ -92,7 +90,6 @@ DEFINE_IIDX(IAMMultiMediaStream, "BEBE595C-9A6F-11d0-8FDE-00C04FD9189D")
     Render		proc :DWORD
 
     .ends
-
 endif
 
 ifndef __IAMMediaStream_INTERFACE_DEFINED__
@@ -100,14 +97,8 @@ __IAMMediaStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMMediaStream, "BEBE595D-9A6F-11d0-8FDE-00C04FD9189D")
 
-.comdef IAMMediaStream : public IUnknown
+.comdef IAMMediaStream : public IMediaStream
 
-    GetMultiMediaStream proc :ptr
-    GetInformation	proc :ptr, :ptr
-    SetSameFormat	proc :ptr, :DWORD
-    AllocateSample	proc :DWORD, :ptr
-    CreateSharedSample	proc :ptr, :DWORD, :ptr
-    SendEndOfStream	proc :DWORD
     Initialize		proc :ptr, :DWORD, :REFMSPID, :STREAM_TYPE
     SetState		proc :FILTER_STATE
     JoinAMMultiMediaStream proc :ptr
@@ -115,7 +106,6 @@ DEFINE_IIDX(IAMMediaStream, "BEBE595D-9A6F-11d0-8FDE-00C04FD9189D")
     JoinFilterGraph	proc :ptr
 
     .ends
-
 endif
 
 ifndef __IMediaStreamFilter_INTERFACE_DEFINED__
@@ -123,20 +113,8 @@ __IMediaStreamFilter_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IMediaStreamFilter, "BEBE595E-9A6F-11d0-8FDE-00C04FD9189D")
 
-.comdef IMediaStreamFilter : public IUnknown
+.comdef IMediaStreamFilter : public IBaseFilter
 
-    GetClassID		proc :ptr
-    Stop		proc
-    _Pause		proc
-    Run			proc :REFERENCE_TIME
-    GetState		proc :DWORD, :ptr
-    SetSyncSource	proc :ptr
-    GetSyncSource	proc :ptr
-    EnumPins		proc :ptr
-    FindPin		proc :LPCWSTR, :ptr
-    QueryFilterInfo	proc :ptr
-    JoinFilterGraph	proc :ptr, :LPCWSTR
-    QueryVendorInfo	proc :ptr
     AddMediaStream	proc :ptr
     GetMediaStream	proc :REFMSPID, :ptr
     EnumMediaStreams	proc :LONG, :ptr
@@ -148,7 +126,6 @@ DEFINE_IIDX(IMediaStreamFilter, "BEBE595E-9A6F-11d0-8FDE-00C04FD9189D")
     EndOfStream		proc
 
     .ends
-
 endif
 
 ifndef __IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__
@@ -175,7 +152,6 @@ DEFINE_IIDX(IDirectDrawMediaSample, "AB6B4AFE-F6E4-11d0-900D-00C04FD9189D")
     LockMediaSamplePointer proc
 
     .ends
-
 endif
 
 ifndef __IAMMediaTypeStream_INTERFACE_DEFINED__
@@ -183,14 +159,8 @@ __IAMMediaTypeStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMMediaTypeStream, "AB6B4AFA-F6E4-11d0-900D-00C04FD9189D")
 
-.comdef IAMMediaTypeStream : public IUnknown
+.comdef IAMMediaTypeStream : public IMediaStream
 
-    GetMultiMediaStream proc :ptr
-    GetInformation	proc :ptr, :ptr
-    SetSameFormat	proc :ptr, :DWORD
-    AllocateSample	proc :DWORD, :ptr
-    CreateSharedSample	proc :ptr, :DWORD, :ptr
-    SendEndOfStream	proc :DWORD
     GetFormat		proc :ptr, :DWORD
     SetFormat		proc :ptr, :DWORD
     CreateSample	proc :LONG, :ptr, :DWORD, :ptr, :ptr
@@ -198,7 +168,6 @@ DEFINE_IIDX(IAMMediaTypeStream, "AB6B4AFA-F6E4-11d0-900D-00C04FD9189D")
     SetStreamAllocatorRequirements proc :ptr
 
     .ends
-
 endif
 
 ifndef __IAMMediaTypeSample_INTERFACE_DEFINED__
@@ -206,13 +175,8 @@ __IAMMediaTypeSample_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IAMMediaTypeSample, "AB6B4AFB-F6E4-11d0-900D-00C04FD9189D")
 
-.comdef IAMMediaTypeSample : public IUnknown
+.comdef IAMMediaTypeSample : public IStreamSample
 
-    GetMediaStream	proc :ptr
-    GetSampleTimes	proc :ptr, :ptr, :ptr
-    SetSampleTimes	proc :ptr, :ptr
-    Update		proc :DWORD, :HANDLE, :PAPCFUNC, :DWORD_PTR
-    CompletionStatus	proc :DWORD, :DWORD
     SetPointer		proc :ptr, :LONG
     GetPointer		proc :ptr
     GetSize		proc

@@ -23,7 +23,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
             mov hRoot,rax
             mov rcx,argv
             mov desc.dwSize,sizeof(desc)
-            mov desc._Type,ObjectIdType
+            mov desc.Type,ObjectIdType
 
             .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK
 

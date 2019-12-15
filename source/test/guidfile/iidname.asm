@@ -23,7 +23,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
         .if (eax != INVALID_HANDLE_VALUE)
 
             mov desc.dwSize,sizeof(desc)
-            mov desc._Type,ObjectIdType
+            mov desc.Type,ObjectIdType
 
             mov rcx,argv
             .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK

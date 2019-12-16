@@ -278,25 +278,15 @@ DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
     DisconnectObject	proc :DWORD
 
     .ends
-
-LPMARSHAL		typedef ptr IMarshal
-
+    LPMARSHAL		typedef ptr IMarshal
 endif
 
 DEFINE_IIDX(IMarshal2, "000001cf-0000-0000-C000-000000000046")
 
-.comdef IMarshal2 : public IUnknown
-
-    GetUnmarshalClass	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
-    GetMarshalSizeMax	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
-    MarshalInterface	proc :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
-    UnmarshalInterface	proc :ptr, :REFIID, :ptr
-    ReleaseMarshalData	proc :ptr
-    DisconnectObject	proc :DWORD
+.comdef IMarshal2 : public IMarshal
 
     .ends
-
-LPMARSHAL2		typedef ptr IMarshal2
+    LPMARSHAL2		typedef ptr IMarshal2
 
 ifndef __IMalloc_INTERFACE_DEFINED__
 __IMalloc_INTERFACE_DEFINED__ equ 1
@@ -556,9 +546,7 @@ DEFINE_IIDX(IPersist, "0000010c-0000-0000-C000-000000000046")
     GetClassID		proc :ptr
 
     .ends
-
-LPPERSIST		typedef ptr IPersist
-
+    LPPERSIST		typedef ptr IPersist
 endif
 
 ifndef __IPersistStream_INTERFACE_DEFINED__
@@ -566,18 +554,15 @@ __IPersistStream_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistStream, "00000109-0000-0000-C000-000000000046")
 
-.comdef IPersistStream : public IUnknown
+.comdef IPersistStream : public IPersist
 
-    GetClassID		proc :ptr
     IsDirty		proc
     Load		proc :ptr
     Save		proc :ptr, :BOOL
     GetSizeMax		proc :ptr
 
     .ends
-
-LPPERSISTSTREAM		typedef ptr IPersistStream
-
+    LPPERSISTSTREAM	typedef ptr IPersistStream
 endif
 
 ifndef __IMoniker_INTERFACE_DEFINED__
@@ -600,13 +585,8 @@ MKRREDUCE_ALL		equ 0
 
 DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
 
-.comdef IMoniker : public IUnknown
+.comdef IMoniker : public IPersistStream
 
-    GetClassID		proc :ptr
-    IsDirty		proc
-    Load		proc :ptr
-    Save		proc :ptr, :BOOL
-    GetSizeMax		proc :ptr
     BindToObject	proc :ptr, :ptr, :REFIID, :ptr
     BindToStorage	proc :ptr, :ptr, :REFIID, :ptr
     Reduce		proc :ptr, :DWORD, :ptr, :ptr
@@ -624,9 +604,7 @@ DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
     IsSystemMoniker	proc :ptr
 
     .ends
-
-LPMONIKER		typedef ptr IMoniker
-
+    LPMONIKER		typedef ptr IMoniker
 endif
 
 ifndef __IROTData_INTERFACE_DEFINED__
@@ -691,28 +669,30 @@ grfStateBits		dd ?
 reserved		dd ?
 STATSTG			ENDS
 
-STGTY			typedef SDWORD
-STGTY_STORAGE		equ 1
-STGTY_STREAM		equ 2
-STGTY_LOCKBYTES		equ 3
-STGTY_PROPERTY		equ 4
+.enum STGTY {
+    STGTY_STORAGE	= 1,
+    STGTY_STREAM	= 2,
+    STGTY_LOCKBYTES	= 3,
+    STGTY_PROPERTY	= 4
+}
 
-STREAM_SEEK		typedef SDWORD
-STREAM_SEEK_SET		equ 0
-STREAM_SEEK_CUR		equ 1
-STREAM_SEEK_END		equ 2
+.enum STREAM_SEEK {
+    STREAM_SEEK_SET	= 0,
+    STREAM_SEEK_CUR	= 1,
+    STREAM_SEEK_END	= 2
+}
 
-LOCKTYPE		typedef SDWORD
-LOCK_WRITE		equ 1
-LOCK_EXCLUSIVE		equ 2
-LOCK_ONLYONCE		equ 4
+.enum LOCKTYPE {
+    LOCK_WRITE		= 1,
+    LOCK_EXCLUSIVE	= 2,
+    LOCK_ONLYONCE	= 4
+}
+
 
 DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
 
-.comdef IStream : public IUnknown
+.comdef IStream : public ISequentialStream
 
-    Read		proc :ptr, :DWORD, :ptr
-    Write		proc :ptr, :DWORD, :ptr
     Seek		proc :LARGE_INTEGER, :DWORD, :ptr
     SetSize		proc :ULARGE_INTEGER
     CopyTo		proc :ptr, :ULARGE_INTEGER, :ptr, :ptr
@@ -724,9 +704,7 @@ DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
     Clone		proc :ptr
 
     .ends
-
-LPSTREAM		typedef ptr IStream
-
+    LPSTREAM		typedef ptr IStream
 endif
 
 ifndef __IEnumSTATSTG_INTERFACE_DEFINED__
@@ -780,9 +758,7 @@ DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
     Stat		proc :ptr, :DWORD
 
     .ends
-
-LPSTORAGE		typedef ptr IStorage
-
+    LPSTORAGE		typedef ptr IStorage
 endif
 
 ifndef __IPersistFile_INTERFACE_DEFINED__
@@ -790,9 +766,8 @@ __IPersistFile_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IPersistFile,	0x0000010b,0,0,0xC0,0,0,0,0,0,0,0x46)
 
-.comdef IPersistFile : public IUnknown
+.comdef IPersistFile : public IPersist
 
-    GetClassID		proc :ptr
     IsDirty		proc
     Load		proc :LPCOLESTR, :DWORD
     Save		proc :LPCOLESTR, :BOOL
@@ -800,9 +775,7 @@ DEFINE_GUID(IID_IPersistFile,	0x0000010b,0,0,0xC0,0,0,0,0,0,0,0x46)
     GetCurFile		proc :ptr
 
     .ends
-
-LPPERSISTFILE		typedef ptr IPersistFile
-
+    LPPERSISTFILE	typedef ptr IPersistFile
 endif
 
 ifndef __IPersistStorage_INTERFACE_DEFINED__
@@ -810,9 +783,8 @@ __IPersistStorage_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IPersistStorage, "0000010a-0000-0000-C000-000000000046")
 
-.comdef IPersistStorage : public IUnknown
+.comdef IPersistStorage : public IPersist
 
-    GetClassID		proc :ptr
     IsDirty		proc
     InitNew		proc :ptr
     Load		proc :ptr
@@ -821,9 +793,7 @@ DEFINE_IIDX(IPersistStorage, "0000010a-0000-0000-C000-000000000046")
     HandsOffStorage	proc
 
     .ends
-
-LPPERSISTSTORAGE	typedef ptr IPersistStorage
-
+    LPPERSISTSTORAGE	typedef ptr IPersistStorage
 endif
 
 ifndef __ILockBytes_INTERFACE_DEFINED__
@@ -842,9 +812,7 @@ DEFINE_IIDX(ILockBytes, "0000000a-0000-0000-C000-000000000046")
     Stat		proc :ptr, :DWORD
 
     .ends
-
-LPLOCKBYTES		typedef ptr ILockBytes
-
+    LPLOCKBYTES		typedef ptr ILockBytes
 endif
 
 ifndef __IEnumFORMATETC_INTERFACE_DEFINED__
@@ -1073,37 +1041,20 @@ DEFINE_IIDX(AsyncIAdviseSink, "00000150-0000-0000-C000-000000000046")
 ifndef __IAdviseSink2_INTERFACE_DEFINED__
 __IAdviseSink2_INTERFACE_DEFINED__ equ 1
 
-.comdef IAdviseSink2 : public IUnknown
+.comdef IAdviseSink2 : public IAdviseSink
 
-    OnDataChange	proc :ptr, :ptr
-    OnViewChange	proc :DWORD, :SDWORD
-    OnRename		proc :ptr
-    OnSave		proc
-    OnClose		proc
     OnLinkSrcChange	proc :ptr
 
     .ends
-
-LPADVISESINK2		typedef ptr IAdviseSink2
+    LPADVISESINK2	typedef ptr IAdviseSink2
 
 DEFINE_IIDX(IAdviseSink2, "00000125-0000-0000-C000-000000000046")
-
 endif
 
 DEFINE_IIDX(AsyncIAdviseSink2, "00000151-0000-0000-C000-000000000046")
 
-.comdef AsyncIAdviseSink2 : public IUnknown
+.comdef AsyncIAdviseSink2 : public AsyncIAdviseSink
 
-    Begin_OnDataChange	proc :ptr FORMATETC, :ptr STGMEDIUM
-    Finish_OnDataChange proc
-    Begin_OnViewChange	proc :DWORD, :LONG
-    Finish_OnViewChange proc
-    Begin_OnRename	proc :ptr IMoniker
-    Finish_OnRename	proc
-    Begin_OnSave	proc
-    Finish_OnSave	proc
-    Begin_OnClose	proc
-    Finish_OnClose	proc
     Begin_OnLinkSrcChange proc :ptr IMoniker
     Finish_OnLinkSrcChange proc
 
@@ -1235,29 +1186,17 @@ __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcChannelBuffer2, "594f31d0-7f19-11d0-b194-00a0c90dc8bf")
 
-.comdef IRpcChannelBuffer2 : public IUnknown
+.comdef IRpcChannelBuffer2 : public IRpcChannelBuffer
 
-    GetBuffer		proc :ptr, :REFIID
-    SendReceive		proc :ptr, :ptr
-    FreeBuffer		proc :ptr
-    GetDestCtx		proc :ptr, :ptr
-    IsConnected		proc
     GetProtocolVersion	proc :ptr
 
     .ends
-
 endif
 
 DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
 
-.comdef IAsyncRpcChannelBuffer : public IUnknown
+.comdef IAsyncRpcChannelBuffer : public IRpcChannelBuffer2
 
-    GetBuffer		proc :ptr, :REFIID
-    SendReceive		proc :ptr, :ptr
-    FreeBuffer		proc :ptr
-    GetDestCtx		proc :ptr, :ptr
-    IsConnected		proc
-    GetProtocolVersion	proc :ptr
     Send		proc :ptr RPCOLEMESSAGE, :ptr ISynchronize, :ptr ULONG
     Receive		proc :ptr RPCOLEMESSAGE, :ptr ULONG
     GetDestCtxEx	proc :ptr RPCOLEMESSAGE, :ptr DWORD, :ptr
@@ -1269,14 +1208,8 @@ __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
 
-.comdef IRpcChannelBuffer3 : public IUnknown
+.comdef IRpcChannelBuffer3 : public IRpcChannelBuffer2
 
-    GetBuffer		proc :ptr, :REFIID
-    SendReceive		proc :ptr, :ptr
-    FreeBuffer		proc :ptr
-    GetDestCtx		proc :ptr, :ptr
-    IsConnected		proc
-    GetProtocolVersion	proc :ptr
     Send		proc :ptr, :ptr
     Receive		proc :ptr, :DWORD, :ptr
     Cancel		proc :ptr
@@ -1286,7 +1219,6 @@ DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
     RegisterAsync	proc :ptr, :ptr
 
     .ends
-
 endif
 
 DEFINE_IIDX(IRpcSyntaxNegotiate, "58a08519-24c8-4935-b482-3fd823333a4f")
@@ -2043,15 +1975,11 @@ __ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeMutex, "00000025-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeMutex : public IUnknown
+.comdef ISynchronizeMutex : public ISynchronize
 
-    _Wait		proc :DWORD, :DWORD
-    Signal		proc
-    Reset		proc
     ReleaseMutex	proc
 
     .ends
-
 endif
 
 ifndef __IAsyncSetup_INTERFACE_DEFINED__
@@ -2382,12 +2310,8 @@ __IObjContext_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
 
-.comdef IObjContext : public IUnknown
+.comdef IObjContext : public IContext
 
-    SetProperty		proc :REFGUID, :CPFLAGS, :ptr IUnknown
-    RemoveProperty	proc :REFGUID
-    GetProperty		proc :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
-    EnumContextProps	proc :ptr ptr IEnumContextProps
     Reserved1		proc
     Reserved2		proc
     Reserved3		proc
@@ -2506,9 +2430,7 @@ DEFINE_IIDX(IInitializeSpy, "00000034-0000-0000-C000-000000000046")
     PostUninitialize	proc :DWORD
 
     .ends
-
-LPINITIALIZESPY		typedef ptr IInitializeSpy
-
+    LPINITIALIZESPY	typedef ptr IInitializeSpy
 endif
 endif
 
@@ -2517,13 +2439,11 @@ __ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(ISynchronizeEvent, "00000032-0000-0000-C000-000000000046")
 
-.comdef ISynchronizeEvent : public IUnknown
+.comdef ISynchronizeEvent : public ISynchronizeHandle
 
-    GetHandle		proc :ptr
     SetEventHandle	proc :ptr HANDLE
 
     .ends
-
 endif
 
 ifndef __ISynchronizeContainer_INTERFACE_DEFINED__

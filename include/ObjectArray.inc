@@ -44,10 +44,8 @@ __IObjectCollection_INTERFACE_DEFINED__ equ 1
 
 externdef IID_IObjectCollection:IID
 
-.comdef IObjectCollection : public IUnknown
+.comdef IObjectCollection : public IObjectArray
 
-    GetCount		proc :ptr
-    GetAt		proc :UINT, :REFIID, :ptr
     AddObject		proc :ptr
     AddFromArray	proc :ptr
     RemoveObjectAt	proc :UINT

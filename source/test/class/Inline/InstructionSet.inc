@@ -12,21 +12,34 @@ MAXCPUSTRING    equ 512
     nExIds      int_t ?
     isIntel     int_t ?
     isAMD       int_t ?
-    f_1_ECX     uint_t ?
-    f_1_EDX     uint_t ?
-    f_7_EBX     uint_t ?
-    f_7_ECX     uint_t ?
-    f_81_ECX    uint_t ?
-    f_81_EDX    uint_t ?
+    union
+     struct
+      f_1_ECX   uint_t ?
+      f_1_EDX   uint_t ?
+     ends
+     f_1_RAX    uint64_t ?
+    ends
+    union
+     struct
+      f_7_EBX   uint_t ?
+      f_7_ECX   uint_t ?
+     ends
+     f_7_RAX    uint64_t ?
+    ends
+    union
+     struct
+      f_81_ECX  uint_t ?
+      f_81_EDX  uint_t ?
+     ends
+     f_81_RAX   uint64_t ?
+    ends
 
     .ends
 
 
 .class InstructionSet : public InstructionSet_Internal
 
-    ; getters
-
-    GetVendor      proc
+    GetVendor      proc ; getters
     GetBrand       proc
     GetSSE3        proc
     GetPCLMULQDQ   proc
@@ -83,11 +96,11 @@ MAXCPUSTRING    equ 512
 
     .ends
 
-undef InstructionSet_InstructionSet
+undef InstructionSet_InstructionSet ; flip the PROTO to a MACRO
 
-InstructionSet_InstructionSet macro this
+InstructionSet_InstructionSet macro this ; .NEW cpu : InstructionSet()
 
-  .new vendor[16]:char_t
+  .new vendor[16]:char_t ; add to local stack
   .new brand[64]:char_t
 
     ifidn @SubStr(this,1,1),<&>
@@ -96,6 +109,9 @@ InstructionSet_InstructionSet macro this
         mov rax,this
     endif
     lea     rdx,vendor
+
+    ; new stack frame
+
     push    rsi
     push    rdi
     push    rbx
@@ -108,35 +124,33 @@ InstructionSet_InstructionSet macro this
 
     ; get the number of the highest valid function ID.
 
-    mov [rsi].nIds,__cpuid(&[rbp-16], 0)
-
-    .for (rdi = rsp, ebx = 0: ebx <= [rsi].nIds: ++ebx)
-
-        __cpuidex(&[rbp-16], ebx, 0)
-        stosd
-        mov eax,[rbp-12]
-        stosd
-        mov eax,ecx
-        stosd
-        mov eax,edx
-        stosd
-    .endf
     mov rdi,rsp
+    xor r8d,r8d
+    xor eax,eax
+    xor ecx,ecx
+    cpuid
+    mov [rsi].nIds,eax
+
+    .fors ( r9 = rdi: r8d <= [rsi].nIds: r8d++, r9 += 16 )
+
+        mov eax,r8d
+        xor ecx,ecx
+        cpuid
+        mov [r9+0x00],eax
+        mov [r9+0x04],ebx
+        mov [r9+0x08],ecx
+        mov [r9+0x0C],edx
+    .endf
 
     ; Capture vendor string
 
-    mov rax,[rbp-24]
-    mov ecx,[rdi+0x04]
-    mov [rax],ecx
-    mov ecx,[rdi+0x0C]
-    mov [rax+4],ecx
-    mov ecx,[rdi+0x08]
-    mov [rax+8],ecx
-    xor ecx,ecx
-    mov [rax+12],ecx
-
-    mov rdx,[rax+8]
-    mov rax,[rax]
+    mov rdx,[rbp-24]
+    mov dword ptr [rdx+0x00],[rdi+0x04]
+    mov dword ptr [rdx+0x04],[rdi+0x0C]
+    mov dword ptr [rdx+0x08],[rdi+0x08]
+    mov dword ptr [rdx+0x0C],0
+    mov rax,[rdx]
+    mov rdx,[rdx+8]
     mov rcx,"IeniuneG"
     mov rbx,"letn"
     .if ( rax == rcx && rdx == rbx )
@@ -155,48 +169,40 @@ InstructionSet_InstructionSet macro this
 
     .if ( [rsi].nIds >= 1 )
 
-        mov eax,[rdi+0x10][0x8]
-        mov edx,[rdi+0x10][0xC]
-        mov [rsi].f_1_ECX,eax
-        mov [rsi].f_1_EDX,edx
+        mov [rsi].f_1_RAX,[rdi+0x10][0x8]
     .endif
 
     ; load bitset with flags for function 0x00000007
 
     .if ( [rsi].nIds >= 7 )
 
-        mov eax,[rdi+0x70][0x4]
-        mov edx,[rdi+0x70][0x8]
-        mov [rsi].f_7_EBX,eax
-        mov [rsi].f_7_ECX,edx
+        mov [rsi].f_7_RAX,[rdi+0x70][0x4]
     .endif
 
     ; get the number of the highest valid extended ID.
 
-    __cpuid(&[rbp-16], 0x80000000)
+    mov r8d,0x80000000
+    mov eax,r8d
+    xor ecx,ecx
+    cpuid
     mov [rsi].nExIds,eax
 
-    .fors ( ebx = 0x80000000: ebx <= [rsi].nExIds: ++ebx )
+    .fors ( r9 = rdi: r8d <= [rsi].nExIds: r8d++, r9 += 16 )
 
-        __cpuidex(&[rbp-16], ebx, 0)
-        stosd
-        mov eax,[rbp-12]
-        stosd
-        mov eax,ecx
-        stosd
-        mov eax,edx
-        stosd
+        mov eax,r8d
+        xor ecx,ecx
+        cpuid
+        mov [r9+0x00],eax
+        mov [r9+0x04],ebx
+        mov [r9+0x08],ecx
+        mov [r9+0x0C],edx
     .endf
-    mov rdi,rsp
 
     ; load bitset with flags for function 0x80000001
 
     .if ( [rsi].nExIds >= 0x80000001 )
 
-        mov eax,[rdi+0x10][0x8]
-        mov edx,[rdi+0x10][0xC]
-        mov [rsi].f_81_ECX,eax
-        mov [rsi].f_81_EDX,edx
+        mov [rsi].f_81_RAX,[rdi+0x10][0x8]
     .endif
 
     ; Interpret CPU brand string if reported
@@ -231,343 +237,71 @@ InstructionSet_GetBrand macro this
     endm
 
 
-InstructionSet_GetSSE3 macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 0
-    exitm<>
+InstructionSetInline macro name, reg, bit, condition
+ InstructionSet_Get&name& macro this
+ ifnb <condition>
+     bt  [this].InstructionSet.condition,0
+     sbb eax,eax
+     and eax,[this].InstructionSet.reg
+     and eax,1 shl bit
+ else
+     mov eax,[this].InstructionSet.reg
+     and eax,1 shl bit
+ endif
+     exitm<>
+     endm
     endm
 
-InstructionSet_GetPCLMULQDQ macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 1
-    exitm<>
-    endm
+InstructionSetInline SSE3,          f_1_ECX,     0
+InstructionSetInline PCLMULQDQ,     f_1_ECX,     1
+InstructionSetInline MONITOR,       f_1_ECX,     3
+InstructionSetInline SSSE3,         f_1_ECX,     9
+InstructionSetInline FMA,           f_1_ECX,    12
+InstructionSetInline CMPXCHG16B,    f_1_ECX,    13
+InstructionSetInline SSE41,         f_1_ECX,    19
+InstructionSetInline SSE42,         f_1_ECX,    20
+InstructionSetInline MOVBE,         f_1_ECX,    22
+InstructionSetInline POPCNT,        f_1_ECX,    23
+InstructionSetInline AES,           f_1_ECX,    25
+InstructionSetInline XSAVE,         f_1_ECX,    26
+InstructionSetInline OSXSAVE,       f_1_ECX,    27
+InstructionSetInline AVX,           f_1_ECX,    28
+InstructionSetInline F16C,          f_1_ECX,    29
+InstructionSetInline RDRAND,        f_1_ECX,    30
+InstructionSetInline MSR,           f_1_EDX,     5
+InstructionSetInline CX8,           f_1_EDX,     8
+InstructionSetInline SEP,           f_1_EDX,    11
+InstructionSetInline CMOV,          f_1_EDX,    15
+InstructionSetInline CLFSH,         f_1_EDX,    19
+InstructionSetInline MMX,           f_1_EDX,    23
+InstructionSetInline FXSR,          f_1_EDX,    24
+InstructionSetInline SSE,           f_1_EDX,    25
+InstructionSetInline SSE2,          f_1_EDX,    26
+InstructionSetInline FSGSBASE,      f_7_EBX,     0
+InstructionSetInline BMI1,          f_7_EBX,     3
+InstructionSetInline HLE,           f_7_EBX,     4, isIntel
+InstructionSetInline AVX2,          f_7_EBX,     5
+InstructionSetInline BMI2,          f_7_EBX,     8
+InstructionSetInline ERMS,          f_7_EBX,     9
+InstructionSetInline INVPCID,       f_7_EBX,    10
+InstructionSetInline RTM,           f_7_EBX,    11, isIntel
+InstructionSetInline AVX512F,       f_7_EBX,    16
+InstructionSetInline RDSEED,        f_7_EBX,    18
+InstructionSetInline ADX,           f_7_EBX,    19
+InstructionSetInline AVX512PF,      f_7_EBX,    26
+InstructionSetInline AVX512ER,      f_7_EBX,    27
+InstructionSetInline AVX512CD,      f_7_EBX,    28
+InstructionSetInline SHA,           f_7_EBX,    29
+InstructionSetInline PREFETCHWT1,   f_7_ECX,     0
+InstructionSetInline LAHF,          f_81_ECX,    0
+InstructionSetInline LZCNT,         f_81_ECX,    5, isIntel
+InstructionSetInline ABM,           f_81_ECX,    5, isAMD
+InstructionSetInline SSE4a,         f_81_ECX,    6, isAMD
+InstructionSetInline XOP,           f_81_ECX,   11, isAMD
+InstructionSetInline TBM,           f_81_ECX,   21, isAMD
+InstructionSetInline SYSCALL,       f_81_EDX,   11, isIntel
+InstructionSetInline MMXEXT,        f_81_EDX,   22, isAMD
+InstructionSetInline RDTSCP,        f_81_EDX,   27, isIntel
+InstructionSetInline 3DNOWEXT,      f_81_EDX,   30, isAMD
+InstructionSetInline 3DNOW,         f_81_EDX,   31, isAMD
 
-InstructionSet_GetMONITOR macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 3
-    exitm<>
-    endm
-
-InstructionSet_GetSSSE3 macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 9
-    exitm<>
-    endm
-
-InstructionSet_GetFMA macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 12
-    exitm<>
-    endm
-
-InstructionSet_GetCMPXCHG16B macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 13
-    exitm<>
-    endm
-
-InstructionSet_GetSSE41 macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 19
-    exitm<>
-    endm
-
-InstructionSet_GetSSE42 macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 20
-    exitm<>
-    endm
-
-InstructionSet_GetMOVBE macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 22
-    exitm<>
-    endm
-
-InstructionSet_GetPOPCNT macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 23
-    exitm<>
-    endm
-
-InstructionSet_GetAES macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 25
-    exitm<>
-    endm
-
-InstructionSet_GetXSAVE macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 26
-    exitm<>
-    endm
-
-InstructionSet_GetOSXSAVE macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 27
-    exitm<>
-    endm
-
-InstructionSet_GetAVX macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 28
-    exitm<>
-    endm
-
-InstructionSet_GetF16C macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 29
-    exitm<>
-    endm
-
-InstructionSet_GetRDRAND macro this
-    mov eax,[this].InstructionSet.f_1_ECX
-    and eax,1 shl 30
-    exitm<>
-    endm
-
-
-InstructionSet_GetMSR macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 5
-    exitm<>
-    endm
-
-InstructionSet_GetCX8 macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 8
-    exitm<>
-    endm
-
-InstructionSet_GetSEP macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 11
-    exitm<>
-    endm
-
-InstructionSet_GetCMOV macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 15
-    exitm<>
-    endm
-
-InstructionSet_GetCLFSH macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 19
-    exitm<>
-    endm
-
-InstructionSet_GetMMX macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 23
-    exitm<>
-    endm
-
-InstructionSet_GetFXSR macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 24
-    exitm<>
-    endm
-
-InstructionSet_GetSSE macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 25
-    exitm<>
-    endm
-
-InstructionSet_GetSSE2 macro this
-    mov eax,[this].InstructionSet.f_1_EDX
-    and eax,1 shl 26
-    exitm<>
-    endm
-
-
-InstructionSet_GetFSGSBASE macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 0
-    exitm<>
-    endm
-
-InstructionSet_GetBMI1 macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 3
-    exitm<>
-    endm
-
-InstructionSet_GetHLE macro this
-    bt  [this].InstructionSet.isIntel,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 4
-    exitm<>
-    endm
-
-InstructionSet_GetAVX2 macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 5
-    exitm<>
-    endm
-
-InstructionSet_GetBMI2 macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 8
-    exitm<>
-    endm
-
-InstructionSet_GetERMS macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 9
-    exitm<>
-    endm
-
-InstructionSet_GetINVPCID macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 10
-    exitm<>
-    endm
-
-InstructionSet_GetRTM macro this
-    bt  [this].InstructionSet.isIntel,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 11
-    exitm<>
-    endm
-
-InstructionSet_GetAVX512F macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 16
-    exitm<>
-    endm
-
-InstructionSet_GetRDSEED macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 18
-    exitm<>
-    endm
-
-InstructionSet_GetADX macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 19
-    exitm<>
-    endm
-
-InstructionSet_GetAVX512PF macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 26
-    exitm<>
-    endm
-
-InstructionSet_GetAVX512ER macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 27
-    exitm<>
-    endm
-
-InstructionSet_GetAVX512CD macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 28
-    exitm<>
-    endm
-
-InstructionSet_GetSHA macro this
-    mov eax,[this].InstructionSet.f_7_EBX
-    and eax,1 shl 19
-    exitm<>
-    endm
-
-
-InstructionSet_GetPREFETCHWT1 macro this
-    mov eax,[this].InstructionSet.f_7_ECX
-    and eax,1 shl 0
-    exitm<>
-    endm
-
-
-InstructionSet_GetLAHF macro this
-    mov eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 0
-    exitm<>
-    endm
-
-InstructionSet_GetLZCNT macro this
-    bt  [this].InstructionSet.isIntel,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 5
-    exitm<>
-    endm
-
-InstructionSet_GetABM macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 5
-    exitm<>
-    endm
-
-InstructionSet_GetSSE4a macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 6
-    exitm<>
-    endm
-
-InstructionSet_GetXOP macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 11
-    exitm<>
-    endm
-
-InstructionSet_GetTBM macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_ECX
-    and eax,1 shl 21
-    exitm<>
-    endm
-
-
-InstructionSet_GetSYSCALL macro this
-    bt  [this].InstructionSet.isIntel,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_EDX
-    and eax,1 shl 11
-    exitm<>
-    endm
-
-InstructionSet_GetMMXEXT macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_EDX
-    and eax,1 shl 22
-    exitm<>
-    endm
-
-InstructionSet_GetRDTSCP macro this
-    bt  [this].InstructionSet.isIntel,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_EDX
-    and eax,1 shl 27
-    exitm<>
-    endm
-
-InstructionSet_Get3DNOWEXT macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_EDX
-    and eax,1 shl 30
-    exitm<>
-    endm
-
-InstructionSet_Get3DNOW macro this
-    bt  [this].InstructionSet.isAMD,0
-    sbb eax,eax
-    and eax,[this].InstructionSet.f_81_EDX
-    and eax,1 shl 31
-    exitm<>
-    endm

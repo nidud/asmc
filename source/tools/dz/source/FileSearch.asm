@@ -10,38 +10,37 @@ include stdio.inc
 include errno.inc
 include FileSearch.inc
 
-FF_CASE         equ 0x01 ; IO_SEARCHCASE
-FF_HEX          equ 0x02 ; IO_SEARCHHEX
-FF_OUTBINARY    equ 0x00 ; Binary dump (default)
-FF_OUTTEXT      equ 0x04 ; Convert tabs, CR/LF
-FF_OUTLINE      equ 0x08 ; Convert tabs, break on LF
-FF_ONEHIT       equ 0x10 ; files only...
-FF_SUBDIR       equ 0x20 ; IO_SEARCHSUB
-
-externdef IDD_DZFFOptions:ptr_t
+externdef IDD_DZFFHelp:ptr
 
 GetPathFromHistory proto :ptr
 
-.enum { ID_SUBDIR,
-        ID_CASE,
-        ID_HEX,
-        ID_ONEHIT,
-        ID_SAVE }
+.enum {
+    OUTPUT_BINARY,  ; Binary dump (default)
+    OUTPUT_TEXT,    ; Convert tabs, CR/LF
+    OUTPUT_LINE,    ; Convert tabs, break on LF
+    OUTPUT_MASK,
+    SINGLE_FILE     ; One hit file per file
+}
 
-.enum { ID_FILE = 12,
-        ID_MASK,
-        ID_LOCATION,
-        ID_STRING,
-        ID_START,
-        ID_OPTIONS,
-        ID_GOTO,
-        ID_QUIT,
-        ID_MOUSEUP,
-        ID_MOUSEDN }
+.enum {
+    ID_FILE = 12,
+    ID_MASK,
+    ID_LOCATION,
+    ID_STRING,
+    ID_SUBDIR,
+    ID_CASE,
+    ID_HEX,
+    ID_START,
+    ID_FILTER,
+    ID_SAVE,
+    ID_GOTO,
+    ID_QUIT,
+    ID_MOUSEUP,
+    ID_MOUSEDN,
+    ID_GCMD = ID_MOUSEUP
+}
 
-        TOFFSET equ <16+16>
-
-ID_GCMD equ ID_MOUSEUP
+    TOFFSET equ <16+16>
 
     .data
 
@@ -53,18 +52,19 @@ ID_GCMD equ ID_MOUSEUP
     GLCMD   ends
 
     GlobalKeys GLCMD \
-        { KEY_F2,     EventProc },
-        { KEY_F3,     EventProc },
-        { KEY_F4,     EventProc },
-        { KEY_F5,     EventProc },
-        { KEY_F6,     EventProc },
-        { KEY_F7,     EventProc },
-        { KEY_F8,     EventProc },
-        { KEY_F9,     EventProc },
-        { KEY_F10,    EventProc },
-        { KEY_F11,    EventProc },
-        { KEY_DEL,    EventProc },
-        { KEY_ALTX,   EventProc },
+        { KEY_F2,     EventProc }, ; List
+        { KEY_F3,     EventProc }, ; View
+        { KEY_F4,     EventProc }, ; Edit
+        { KEY_F5,     EventProc }, ; Filter
+        { KEY_F6,     EventProc }, ; Hex
+        { KEY_F7,     EventProc }, ; Find
+        { KEY_F8,     EventProc }, ; Delete
+        { KEY_F9,     EventProc }, ; Load
+        { KEY_F10,    EventProc }, ; Format
+        { KEY_F11,    EventProc }, ; Path
+        { KEY_F12,    EventProc }, ; Single file
+        { KEY_DEL,    EventProc }, ; Delete
+        { KEY_ALTX,   EventProc }, ; Quit
         { 0,          0         }
 
     .code
@@ -87,10 +87,18 @@ FileSearch::PutCellId proc uses esi ebx
     inc eax
     add eax,[ebx].ll.ll_index
     mov ecx,[ebx].ll.ll_count
-    mov bx,[esi+4]
-    inc bl
+    mov ebx,[esi+4]
+    add ebx,0x0F03
     mov dl,bh
-    scputf(ebx, edx, 0, 0, "%4d:%-4d", eax, ecx)
+    .if scputf(ebx, edx, 0, 0, "[ %u:%u ]", eax, ecx) < 13
+
+        add ebx,eax
+        mov ecx,13
+        sub ecx,eax
+        scputc(ebx, edx, ecx, 196)
+    .endif
+
+    ;"%4d:%-4d", eax, ecx)
     ret
 
 FileSearch::PutCellId endp
@@ -103,14 +111,12 @@ FileSearch::UpdateCell proc uses ebx
     [ebx].PutCellId()
     [ebx].List()
 
-    .for edx = [ebx].dialog,
-         eax = _O_STATE,
+    .for edx = [ebx].dialog, eax = _O_STATE,
          ecx = 0 : ecx <= ID_FILE : ecx++, edx += 16
         or [edx+16],ax
     .endf
 
-    .for edx = [ebx].dialog,
-         eax = not _O_STATE,
+    .for edx = [ebx].dialog, eax = not _O_STATE,
          ecx = [ebx].ll.ll_numcel : ecx : ecx--, edx += 16
         and [edx+16],ax
     .endf
@@ -154,16 +160,23 @@ CallbackFile proc private uses esi edi ebx directory:string_t, wfblk:ptr
 
   local path[_MAX_PATH*2]:byte
   local fblk, offs, line, fbsize, ioflag, result
+  local maxhit:int_t
 
+    mov ebx,ff
     mov edi,wfblk
-    mov result,FFMAXHIT
+
+    mov eax,FFMAXHIT
+    mov result,eax
+    .if ffflag & SINGLE_FILE
+        mov eax,1
+    .endif
+    mov maxhit,eax
 
     xor eax,eax
     mov offs,eax
     mov line,eax
     mov STDI.ios_line,eax
 
-    mov ebx,ff
     xor esi,esi
 
     .if [ebx].ll.ll_count < FFMAXHIT
@@ -223,10 +236,11 @@ CallbackFile proc private uses esi edi ebx directory:string_t, wfblk:ptr
                 .endif
 
                 xor eax,eax
-                .if [ebx].flags & FF_CASE
+                mov edx,[ebx].dialog
+                .if [edx].S_TOBJ.to_flag[ID_CASE*TOFFSET] & _O_FLAGB
                     or STDI.ios_flag,IO_SEARCHCASE
                 .endif
-                .if [ebx].flags & FF_HEX
+                .if [edx].S_TOBJ.to_flag[ID_HEX*TOFFSET] & _O_FLAGB
                     or STDI.ios_flag,IO_SEARCHHEX
                 .endif
 
@@ -246,7 +260,8 @@ CallbackFile proc private uses esi edi ebx directory:string_t, wfblk:ptr
                     mov offs,eax
                     mov line,ecx
 
-found:
+                found:
+
                     lea edi,[strlen(&path)+BLOCKSIZE]
 
                     .if !malloc(edi)
@@ -309,9 +324,12 @@ found:
                         mov eax,STDI.fsize_l
                     .endif
                     oseek(eax, SEEK_SET)
+
                     .break .if result
 
-                .until [ebx].ll.ll_count >= FFMAXHIT
+                    mov ecx,maxhit
+
+                .until [ebx].ll.ll_count >= ecx
 
             .endif
 
@@ -342,20 +360,30 @@ CallbackDirectory endp
 InitPath proc directory:string_t
 
     mov ecx,directory ; *.asm *.inc C: D:
+
     mov edx,' '       ; seperator assumed space
     .if [ecx] == dl
+
         add ecx,1     ; next item
     .endif
+
     .if byte ptr [ecx] == '"'
+
         inc ecx
         mov dl,'"'    ; seperator is quote
     .endif
+
     mov eax,ecx       ; start of item
+
     .repeat
+
         mov dh,[ecx]
         inc ecx
+
         .return .if !dh
+
     .until dh == dl
+
     mov byte ptr [ecx-1],0
     ret
 
@@ -406,7 +434,8 @@ FileSearch::SearchPath proc uses esi edi ebx directory:string_t
                 mov esi,ecx
                 mov retval,edx
 
-                .if [ebx].flags & FF_SUBDIR
+                mov edx,[ebx].dialog
+                .if [edx].S_TOBJ.to_flag[ID_SUBDIR*TOFFSET] & _O_FLAGB
                     scan_directory(1, [ebx].basedir)
                 .else
                     push [ebx].basedir
@@ -501,54 +530,6 @@ FileSearch::Find proc uses esi edi ebx
 FileSearch::Find endp
 
 
-FileSearch::Options proc uses esi edi ebx
-
-    .if rsopen(IDD_DZFFOptions)
-
-        mov esi,eax
-        mov ebx,this
-
-        .if [ebx].flags & FF_CASE
-            or [esi+ID_CASE*TOFFSET].dl_flag,_O_FLAGB
-        .endif
-        .if [ebx].flags & FF_HEX
-            or [esi+ID_HEX*TOFFSET].dl_flag,_O_FLAGB
-        .endif
-        .if [ebx].flags & FF_SUBDIR
-            or [esi+ID_SUBDIR*TOFFSET].dl_flag,_O_FLAGB
-        .endif
-        .if [ebx].flags & FF_ONEHIT
-            or [esi+ID_ONEHIT*TOFFSET].dl_flag,_O_FLAGB
-        .endif
-
-        dlshow(esi)
-        dlinit(esi)
-
-        .if rsevent(IDD_DZFFOptions, esi)
-            mov eax,[ebx].flags
-            and eax,not (FF_CASE or FF_HEX or FF_SUBDIR or FF_ONEHIT)
-            .if [esi+ID_CASE*TOFFSET].dl_flag & _O_FLAGB
-                or eax,FF_CASE
-            .endif
-            .if [esi+ID_HEX*TOFFSET].dl_flag & _O_FLAGB
-                or eax,FF_HEX
-            .endif
-            .if [esi+ID_SUBDIR*TOFFSET].dl_flag & _O_FLAGB
-                or eax,FF_SUBDIR
-            .endif
-            .if [esi+ID_ONEHIT*TOFFSET].dl_flag & _O_FLAGB
-                or eax,FF_ONEHIT
-            .endif
-            mov [ebx].flags,eax
-        .endif
-        dlclose(esi)
-    .endif
-    mov eax,_C_NORMAL
-    ret
-
-FileSearch::Options endp
-
-
 FileSearch::Modal proc uses esi edi ebx
 
     mov ebx,this
@@ -601,8 +582,9 @@ FileSearch::List proc uses esi edi ebx
 
         add eax,esi
         mov x,esi
-        mov esi,edx
 
+        push edx
+        mov esi,edx
         mov edx,[edx]
         mov edx,[edx].S_SBLK.sb_line
 
@@ -613,9 +595,8 @@ FileSearch::List proc uses esi edi ebx
         .endif
 
         mov count,ecx
-        mov edx,esi
-
-        lea ebx,[esi+33]
+        mov edx,x
+        add edx,33
         mov ecx,[esi]
         add ecx,[ecx].S_SBLK.sb_size
         lea esi,[ecx-INFOSIZE]
@@ -625,25 +606,23 @@ FileSearch::List proc uses esi edi ebx
 
             lodsb
 
-            .if ffflag & FF_OUTLINE
+            .if ffflag & OUTPUT_LINE
 
                 .break .if al == 10
                 .break .if al == 13
             .endif
 
-            .if ( ffflag & ( FF_OUTLINE or FF_OUTTEXT ) ) && (al == 9 || al == 10 || al == 13)
+            .if ( ffflag & ( OUTPUT_LINE or OUTPUT_TEXT ) ) && ( al == 9 || al == 10 || al == 13 )
 
                 mov ah,al
                 mov al,'\'
-                scputc(ebx, edi, 1, eax)
-                inc ebx
+                scputc(edx, edi, 1, eax)
+                inc edx
                 mov al,'t'
                 .if ah == 13
-
                     mov al,'n'
                 .endif
                 .if ah == 10
-
                     mov al,'r'
                 .endif
                 dec ecx
@@ -651,12 +630,13 @@ FileSearch::List proc uses esi edi ebx
             .endif
 
             .if al
-                scputc(ebx, edi, 1, eax)
+                scputc(edx, edi, 1, eax)
             .endif
 
-            inc ebx
+            inc edx
         .untilcxz
 
+        pop edx
         mov ecx,count
         mov esi,x
     .endf
@@ -668,8 +648,7 @@ FileSearch::List endp
 
 FileSearch::ClearList proc uses esi edi ebx
 
-    .for ebx = this,
-         esi = [ebx].ll.ll_list,
+    .for ebx = this, esi = [ebx].ll.ll_list,
          edi = [ebx].ll.ll_count : edi : edi--
         lodsd
         free(eax)
@@ -692,26 +671,41 @@ FileSearch::Release proc uses edi ebx
     mov ff,    [ebx].oldff
     CursorSet(&[ebx].cursor)
 
-    mov eax,fsflag
-    and eax,not (IO_SEARCHCASE or IO_SEARCHHEX or IO_SEARCHSUB)
-    mov ecx,[ebx].flags
-    and ecx,IO_SEARCHCASE or IO_SEARCHHEX or IO_SEARCHSUB
-    or  eax,ecx
-    mov fsflag,eax
-
     mov edx,[ebx].dialog
     .if edx
+
+        xor eax,eax
+        .if [edx].S_TOBJ.to_flag[ID_CASE*TOFFSET] & _O_FLAGB
+            or eax,IO_SEARCHCASE
+        .endif
+        .if [edx].S_TOBJ.to_flag[ID_HEX*TOFFSET] & _O_FLAGB
+            or eax,IO_SEARCHHEX
+        .endif
+        .if [edx].S_TOBJ.to_flag[ID_SUBDIR*TOFFSET] & _O_FLAGB
+            or eax,IO_SEARCHSUB
+        .endif
+        mov ecx,fsflag
+        and ecx,not (IO_SEARCHCASE or IO_SEARCHHEX or IO_SEARCHSUB)
+        or  eax,ecx
+        mov fsflag,eax
+
         movzx edi,[edx].S_DOBJ.dl_index
         dlclose(edx)
+
         .if edi == ID_GOTO
+
             .if [ebx].ll.ll_count
+
                 .if panel_state(cpanel)
+
                     mov eax,[ebx].ll.ll_index
                     add eax,[ebx].ll.ll_celoff
                     mov edi,[ebx].ll.ll_list
                     mov edi,[edi+eax*4]
                     add edi,S_SBLK.sb_file
+
                     .if strrchr(edi, '\')
+
                         mov byte ptr [eax],0
                         cpanel_setpath(edi)
                     .endif
@@ -734,8 +728,23 @@ FileSearch::WndProc proc uses esi edi ebx cmd:uint_t
 
     .switch ecx
 
-    .case KEY_F2 ; EventList
-        .return _C_NORMAL
+    .case KEY_F2
+        xor eax,eax
+        .if [ebx].ll.ll_count != eax
+            .if mklistidd()
+                .for esi = [ebx].ll.ll_list,
+                     edi = 0 : edi < [ebx].ll.ll_count : edi++
+                    mov edx,[esi+edi*4]
+                    mov mklist.mkl_offspath,[edx]
+                    mov mklist.mkl_offset,[edx].S_SBLK.sb_offs
+                    lea eax,[edx].S_SBLK.sb_file
+                    mklistadd()
+                .endf
+                _close(mklist.mkl_handle)
+                mov eax,_C_NORMAL
+            .endif
+        .endif
+        .return
 
     .case KEY_F3
         mov esi,[ebx].dialog
@@ -766,8 +775,25 @@ FileSearch::WndProc proc uses esi edi ebx cmd:uint_t
         scputw(edx, ecx, 1, eax)
         .return _C_NORMAL
 
-    .case KEY_F6 ; EventToggleHex
-        .return _C_NORMAL
+    .case KEY_F6
+        mov eax,_C_NORMAL
+        mov esi,[ebx].dialog
+        .if [esi].dl_index == ID_STRING
+            xor [esi].dl_flag[ID_HEX*TOFFSET],_O_FLAGB
+        .elseif [esi].dl_index != ID_HEX
+            .return _C_NORMAL
+        .endif
+        mov edi,[esi].dl_wp[ID_STRING*TOFFSET]
+        .if [esi].dl_flag[ID_HEX*TOFFSET] & _O_FLAGB
+            .if strlen(edi)
+                .if eax < 128 / 2
+                    btohex(edi, eax)
+                .endif
+            .endif
+        .else
+            hextob(edi)
+        .endif
+        .return [ebx].List()
 
     .case KEY_F7
         .return [ebx].Find()
@@ -822,16 +848,16 @@ FileSearch::WndProc proc uses esi edi ebx cmd:uint_t
         .return cmfilter_load()
 
     .case KEY_F10
-        mov eax,[ebx].flags
-        .if eax & FF_OUTLINE
-            and eax,not (FF_OUTTEXT or FF_OUTLINE)
-        .elseif eax & FF_OUTTEXT
-            and eax,not (FF_OUTTEXT or FF_OUTLINE)
-            or  eax,FF_OUTLINE
+        mov eax,ffflag
+        .if eax & OUTPUT_LINE
+            and eax,not (OUTPUT_TEXT or OUTPUT_LINE)
+        .elseif eax & OUTPUT_TEXT
+            and eax,not (OUTPUT_TEXT or OUTPUT_LINE)
+            or  eax,OUTPUT_LINE
         .else
-            or eax,FF_OUTTEXT
+            or eax,OUTPUT_TEXT
         .endif
-        mov [ebx].flags,eax
+        mov ffflag,eax
         .return [ebx].List()
 
     .case KEY_F11
@@ -844,8 +870,21 @@ FileSearch::WndProc proc uses esi edi ebx cmd:uint_t
         .endif
         .return
 
+    .case KEY_F12
+        xor ffflag,SINGLE_FILE
+        mov edx,[ebx].dialog
+        mov dx,[edx+4]
+        add dx,0x1003
+        mov cl,dh
+        mov eax,' '
+        .if ffflag & SINGLE_FILE
+            mov eax,7
+        .endif
+        scputw(edx, ecx, 1, eax)
+        .return _C_NORMAL
+
     .case KEY_ALTX
-        .return _C_ESCAPE
+        mov eax,_C_ESCAPE
     .endsw
     ret
 
@@ -853,34 +892,63 @@ FileSearch::WndProc endp
 
 
 EventXCell proc
+
     ff.PutCellId()
     dlxcellevent()
     ret
+
 EventXCell endp
 
 EventList proc
+
     ff.List()
     ret
+
 EventList endp
 
 EventFind proc
+
     ff.Find()
     ret
+
 EventFind endp
 
-EventOptions proc
-    ff.Options()
-    ret
-EventOptions endp
-
 EventHelp proc
-    view_readme(HELPID_10)
+
+    rsmodal(IDD_DZFFHelp)
     ret
+
 EventHelp endp
 
+EventFilter proc
+
+    mov eax,KEY_F5
+    jmp EventProc
+
+EventFilter endp
+
+EventHex proc
+
+    .if dlcheckevent() == KEY_SPACE
+
+        mov eax,KEY_F6
+        jmp EventProc
+    .endif
+    ret
+
+EventHex endp
+
+EventSave proc
+
+    mov eax,KEY_F6
+
+EventSave endp
+
 EventProc proc
+
     ff.WndProc(eax)
     ret
+
 EventProc endp
 
     option proc: public
@@ -915,7 +983,7 @@ FileSearch::FileSearch proc uses esi edi ebx directory:string_t
     lea eax,[edi+FileSearchVtbl]
     mov [ebx].ll.ll_list,eax
 
-    for m,<Release,WndProc,Find,Modal,Options,PutCellId,UpdateCell,CurItem,\
+    for m,<Release,WndProc,Find,Modal,PutCellId,UpdateCell,CurItem,\
            CurFile,List,ClearList,SearchPath>
         mov [edi].FileSearchVtbl.m,FileSearch_&m&
         endm
@@ -936,7 +1004,7 @@ FileSearch::FileSearch proc uses esi edi ebx directory:string_t
         .return 0
     .endif
 
- assume edi:ptr S_TOBJ
+    assume edi:ptr S_TOBJ
 
     mov edi,eax
     mov [edi].to_data[ID_GCMD*TOFFSET],offset GlobalKeys
@@ -951,26 +1019,29 @@ FileSearch::FileSearch proc uses esi edi ebx directory:string_t
 
     mov [edi].to_data[ID_STRING   * TOFFSET],&searchstring
     mov [edi].to_data[ID_LOCATION * TOFFSET],directory
+    mov [edi].to_proc[ID_HEX      * TOFFSET],EventHex
     mov [edi].to_proc[ID_START    * TOFFSET],EventFind
-    mov [edi].to_proc[ID_OPTIONS  * TOFFSET],EventOptions
+    mov [edi].to_proc[ID_FILTER   * TOFFSET],EventFilter
+    mov [edi].to_proc[ID_SAVE     * TOFFSET],EventSave
 
     mov eax,fsflag
-    and eax,IO_SEARCHCASE or IO_SEARCHHEX or IO_SEARCHSUB
-    or  eax,ffflag
-    mov [ebx].flags,eax
-
-    .for edx = &[edi].to_proc[S_TOBJ],
-         eax = EventXCell,
+    .if eax & IO_SEARCHCASE
+        or [edi].to_flag[ID_CASE*TOFFSET],_O_FLAGB
+    .endif
+    .if eax & IO_SEARCHHEX
+        or [edi].to_flag[ID_HEX*TOFFSET],_O_FLAGB
+    .endif
+    .if eax & IO_SEARCHSUB
+        or [edi].to_flag[ID_SUBDIR*TOFFSET],_O_FLAGB
+    .endif
+    .for edx = &[edi].to_proc[S_TOBJ], eax = EventXCell,
          ecx = 0 : ecx <= ID_FILE : ecx++, edx += S_TOBJ
-
         mov [edx],eax
     .endf
-
- assume edi:nothing
+    and ffflag,OUTPUT_MASK
 
     dlshow(edi)
     dlinit(edi)
-
     mov eax,ebx
     ret
 

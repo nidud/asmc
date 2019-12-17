@@ -11,9 +11,9 @@ include helpid.inc
 
 	.xlist
 
-DOSZIP_VERSION	equ 0356h
+DOSZIP_VERSION	equ 0357h
 DOSZIP_MINVERS	equ 0349h
-DOSZIP_VSTRING	equ <"3.56">
+DOSZIP_VSTRING	equ <"3.57">
 DOSZIP_VSTRPRE	equ <"      ">
 
 MAXHISTORY	equ 32

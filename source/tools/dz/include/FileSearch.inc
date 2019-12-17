@@ -8,7 +8,6 @@ FFMAXHIT equ 9999
 
 .class FileSearch directory:string_t
 
-    flags       uint_t ?
     dialog      ptr_t ?
     basedir     string_t ?
     cursor      S_CURSOR <>
@@ -20,7 +19,6 @@ FFMAXHIT equ 9999
     WndProc     proc :uint_t
     Find        proc
     Modal       proc
-    Options     proc
     PutCellId   proc
     UpdateCell  proc
     CurItem     proc

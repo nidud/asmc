@@ -832,11 +832,15 @@ dlpbuttevent proc uses esi edi ebx
     mov   al,[esi].S_DOBJ.dl_rect.rc_y
     add   al,[edi].S_TOBJ.to_rect.rc_y
     mov   esi,eax
-    _gotoxy(x, eax)
+
     mov al,byte ptr [edi].S_TOBJ.to_flag
     and al,0x0F
     .if al != _O_TBUTT
         CursorOff()
+    .else
+        mov eax,x
+        inc eax
+        _gotoxy(eax, esi)
     .endif
     getxyc(x, esi)
     mov bl,al

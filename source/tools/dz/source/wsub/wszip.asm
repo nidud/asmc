@@ -425,6 +425,7 @@ wsmkzipdir proc wsub, directory
     mov byte ptr [eax],0
 
     strfcat(__outfile, [edx].S_WSUB.ws_path, [edx].S_WSUB.ws_file)
+    mov edx,wsub
     strfcat(__outpath, [edx].S_WSUB.ws_arch, directory)
     dostounix(strcat(eax, "/"))
     wzipadd(0, clock(), _A_SUBDIR)

@@ -1612,24 +1612,22 @@ elf64_const proc reg:uint_t, pos:uint_t, val:qword, paramvalue:string_t, _negati
 
 elf64_const endp
 
+; parameter for elf64 SYSCALL.
+; the first 6 parameters are hold in registers: rdi, rsi, rdx, rcx, r8, r9
+; for non-float arguments, xmm0..xmm31 for float arguments.
+
     assume edx:asym_t
     assume edi:expr_t
 
-elf64_param proc uses esi edi ebx \
-        pp          :dsym_t,
-        index       :int_t,
-        param       :dsym_t,
-        address     :int_t,
-        opnd        :ptr expr,
-        paramvalue  :string_t,
-        regs_used   :ptr byte
+elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
+        address:int_t, opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
 
   local size        :uint_t,
         psize       :uint_t,
         reg         :int_t,
         i           :int_t,
         i32         :int_t,
-        destroyed   :int_t,
+        destroyed   :int_t,     ; added v2.31
         stack       :int_t      ; added v2.31
 
     mov stack,FALSE
@@ -1794,6 +1792,35 @@ elf64_param proc uses esi edi ebx \
             .endif
 
             .if GetValueSp(reg) & OP_R
+
+                ; added v2.31.03
+
+                movzx ecx,GetRegNo(reg)
+                mov eax,1
+                shl eax,cl
+                and eax,REGPAR_ELF64 ; regs 1, 2, 6, 7, 8 and 9
+                .if eax
+                    movzx ecx,elf64_param_index[ecx]
+                    lea ecx,[ecx+ELF64_START]
+                    mov eax,1
+                    shl eax,cl
+                    mov ecx,regs_used
+                    .if [ecx] & al
+                        mov destroyed,TRUE
+                    .endif
+                .else
+                    mov ecx,regs_used
+                    .if byte ptr [ecx] & R0_USED
+                        .if GetValueSp(reg) & OP_A || reg == T_AH
+                            mov destroyed,TRUE
+                        .endif
+                    .endif
+                .endif
+                .if destroyed
+                    asmerr(2133)
+                    mov ecx,regs_used
+                    mov byte ptr [ecx],0
+                .endif
 
                 mov eax,[edi].base_reg
 

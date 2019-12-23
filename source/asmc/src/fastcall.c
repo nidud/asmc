@@ -110,6 +110,11 @@ unsigned char elf64_regs[] = {
  T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9
 };
 
+unsigned char elf64_param_index[] = {
+/* AX CX DX BX SP BP SI DI R8 R9 */
+   0, 3, 2, 0, 0, 0, 1, 0, 4, 5, 0, 0, 0, 0, 0, 0
+};
+
 /* segment register names, order must match ASSUME_ enum */
 
 #ifndef __ASMC64__
@@ -956,6 +961,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     int base;
     int stack = FALSE; /* added v2.31 */
     int destroyed = FALSE;
+    int regno;
     struct asym *sym;
     struct dsym *dpar;
 
@@ -1068,6 +1074,18 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    return 1;
 
 	} else if ( GetValueSp( reg ) & OP_R ) {
+
+	    regno = GetRegNo(reg);
+	    if ( REGPAR_ELF64 & ( 1 << regno ) ) {
+		if ( *regs_used & ( 1 << ( elf64_param_index[regno] + ELF64_START ) ) )
+		    destroyed = TRUE;
+	    } else if ( (*regs_used & R0_USED ) && ( ( GetValueSp( reg ) & OP_A ) || reg == T_AH ) ) {
+		destroyed = TRUE;
+	    }
+	    if ( destroyed ) {
+		asmerr( 2133 );
+		*regs_used = 0;
+	    }
 
 	    /* case <reg>::<reg> */
 

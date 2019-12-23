@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- fixed bug in SystemV -- missing invoke errors..
 - added inline class members -- macros
 - updated 16-bit source - removed SIZE (/Zne)
 - fixed bug in public class - publics not added in base was empty..

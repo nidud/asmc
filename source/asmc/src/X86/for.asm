@@ -376,7 +376,7 @@ local   rc:int_t,
             mov [esi].next,ecx
             mov ModuleInfo.HllFree,esi
 
-            .if [esi].cmd != HLL_WHILE
+            .if [esi].cmd != HLL_FOR
 
                 asmerr( 1011 )
                 .break
@@ -423,7 +423,7 @@ local   rc:int_t,
                 or eax,HLLF_IFS
             .endif
             mov [esi].flags,eax
-            mov [esi].cmd,HLL_WHILE
+            mov [esi].cmd,HLL_FOR
 
             ; create the loop labels
 

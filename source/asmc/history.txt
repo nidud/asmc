@@ -3,6 +3,10 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- fixed bug in mov dword ptr [reg], foo() / mov [reg].RECT.left, foo()
+- fixed bug in SystemV -- stack not correct if > 8 xmm registers used.
+- fixed bug in .for ... .endw
+- fixed bug in vmovq r64,xmm
 - fixed bug in SystemV -- missing invoke errors..
 - added inline class members -- macros
 - updated 16-bit source - removed SIZE (/Zne)

@@ -49,7 +49,8 @@ enum hll_cmd {
     HLL_REPEAT,
     HLL_BREAK,	/* .IF behind .BREAK or .CONTINUE */
     HLL_SWITCH,
-    HLL_RETURN
+    HLL_RETURN,
+    HLL_FOR
 };
 
 /* index values for struct hll_item.labels[] */

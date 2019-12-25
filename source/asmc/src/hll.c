@@ -768,6 +768,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     char *p;
     int k, j,lang;
     int bracket = 0;
+    struct expr opnd;
 
     b[0] = NULLC;
     for ( j = 0; j < i; j++ ) {
@@ -899,6 +900,52 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 			k = 16;
 		    else
 			k = a->total_size;
+		} else if ( tokenarray[j-1].token == T_DOT ) {
+
+		    /* <op> <struct>.id, rax */
+
+		    k = i;
+		    i -= 4;
+		    j -= 2;
+		    if ( tokenarray[j-1].token == T_DOT ) {
+			j -= 2;
+			i -= 2;
+		    }
+
+		size_from_ptr:
+
+		    if ( tokenarray[j].token == T_CL_SQ_BRACKET ) {
+			while ( i && tokenarray[j].token != T_OP_SQ_BRACKET ) {
+			    i--;
+			    j--;
+			}
+		    }
+		    if ( tokenarray[j-1].tokval == T_PTR ) {
+			j -= 2;
+			i -= 2;
+		    }
+
+		    k -= i;
+		    if ( EvalOperand( &i, tokenarray, k, &opnd, EXPF_NOERRMSG ) != ERROR ) {
+			k = 0;
+			if ( opnd.kind == EXPR_ADDR || opnd.indirect ) {
+			    switch ( opnd.mem_type ) {
+			    case MT_BYTE:
+			    case MT_SBYTE:  k = 1; break;
+			    case MT_WORD:
+			    case MT_SWORD:  k = 2; break;
+			    case MT_DWORD:
+			    case MT_SDWORD: k = 4; break;
+			    case MT_OWORD:
+			    case MT_REAL2:
+			    case MT_REAL4:
+			    case MT_REAL8:
+			    case MT_REAL10:
+			    case MT_REAL16: k = 16; break;
+			    }
+			}
+		    } else
+			k = 0;
 		}
 
 		if ( k ) {
@@ -915,6 +962,11 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 			break;
 		    }
 		}
+	    } else if ( tokenarray[j+1].token == T_COMMA && tokenarray[j].token == T_CL_SQ_BRACKET ) {
+
+		k = i;
+		i -= 2;
+		goto size_from_ptr;
 	    }
 	}
     }

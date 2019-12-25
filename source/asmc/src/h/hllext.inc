@@ -34,56 +34,51 @@ endif
 EOLCHAR		equ 10		;; line termination char in generated source
 
 ;; values for struct hll_item.cmd
-
-HLL_IF		equ 0
-HLL_WHILE	equ 1
-HLL_REPEAT	equ 2
-HLL_BREAK	equ 3	; .IF behind .BREAK or .CONTINUE
-HLL_SWITCH	equ 4
-HLL_RETURN	equ 5
+.enum hll_cmd {
+    HLL_IF,
+    HLL_WHILE,
+    HLL_REPEAT,
+    HLL_BREAK,	; .IF behind .BREAK or .CONTINUE
+    HLL_SWITCH,
+    HLL_RETURN,
+    HLL_FOR
+}
 
 ;; index values for struct hll_item.labels[]
-
-LTEST		equ 0 ; test (loop) condition
-LEXIT		equ 1 ; block exit
-LSTART		equ 2 ; loop start
-LSTARTSW	equ 3 ; start of switch
+.enum hll_label_index {
+    LTEST,	;; test (loop) condition
+    LEXIT,	;; block exit
+    LSTART,	;; loop start
+    LSTARTSW,	;; switch start
+}
 
 ;; values for struct hll_item.flags
 
-HLLF_ELSEOCCUR	equ 0x01
-HLLF_ELSEIF	equ 0x02
-HLLF_WHILE	equ 0x04
-HLLF_EXPRESSION equ 0x08
-HLLF_DEFAULT	equ 0x10
-HLLF_DELAYED	equ 0x20	; set by DelayExpand()
-
-; .SWITCH <arg_type>
-
-HLLF_NOTEST	equ 0x40	; direct jump..
-HLLF_ARGREG	equ 0x80	; register 16/32/64-bit size_t
-HLLF_ARGMEM	equ 0x0100	; memory if set, else register
-HLLF_ARG16	equ 0x0200	; size: 8/16/32/64
-HLLF_ARG32	equ 0x0400
-HLLF_ARG64	equ 0x0800
-HLLF_ARG3264	equ 0x1000	; .switch exx in 64-bit extended to rxx
-
-; .CASE flags
-
-HLLF_NUM	equ 0x2000	; .case arg is const
-HLLF_TABLE	equ 0x4000	; .case is in jump table
-HLLF_ENDCOCCUR	equ 0x8000	; jmp exit in .case omitted
-
-; Return type
-
-HLLF_IFB	equ 0x00010000	; .ifb proc() --> al
-HLLF_IFW	equ 0x00020000	; .ifw proc() --> ax
-HLLF_IFD	equ 0x00040000	; .ifd proc() --> eax
-HLLF_IFS	equ 0x00080000	; Signed compare --> CMP REG,val
-
-HLLF_PASCAL	equ 0x00100000	; option switch:pascal | .switch pascal <args>
-HLLF_JTABLE	equ 0x00200000	; if HLLF_NOTEST direct .case jump
-HLLF_JTDATA	equ 0x00400000	; Jump table in data segment -- HLLF_NOTEST
+.enum hll_flags {
+    HLLF_ELSEOCCURED	= 0x01,
+    HLLF_ELSEIF		= 0x02,
+    HLLF_WHILE		= 0x04,
+    HLLF_EXPRESSION	= 0x08,
+    HLLF_DEFAULT	= 0x10,
+    HLLF_DELAYED	= 0x20,		;; set by DelayExpand()
+    HLLF_NOTEST		= 0x40,		;; direct jump..
+    HLLF_ARGREG		= 0x80,		;; register 16/32/64-bit size_t
+    HLLF_ARGMEM		= 0x0100,	;; memory if set, else register
+    HLLF_ARG16		= 0x0200,	;; size: 8/16/32/64
+    HLLF_ARG32		= 0x0400,
+    HLLF_ARG64		= 0x0800,
+    HLLF_ARG3264	= 0x1000,	;; .switch eax in 64-bit assumend rax
+    HLLF_NUM		= 0x2000,	;; .case arg is const
+    HLLF_TABLE		= 0x4000,	;; .case is in jump table
+    HLLF_ENDCOCCUR	= 0x8000,	;; jmp exit in .case omitted
+    HLLF_IFB		= 0x00010000,	;; .ifb proc() --> al
+    HLLF_IFW		= 0x00020000,	;; .ifw proc() --> ax
+    HLLF_IFD		= 0x00040000,	;; .ifd proc() --> eax
+    HLLF_IFS		= 0x00080000,	;; Signed compare --> CMP REG,val
+    HLLF_PASCAL		= 0x00100000,	;; .continue(0) [.if]
+    HLLF_JTABLE		= 0x00200000,	;; if HLLF_NOTEST direct .case jump
+    HLLF_JTDATA		= 0x00400000	;; Jump table in data segment -- HLLF_NOTEST
+}
 
 hll_t		typedef ptr hll_item
 

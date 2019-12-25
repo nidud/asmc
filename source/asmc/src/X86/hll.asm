@@ -1218,6 +1218,7 @@ endif
 
             shl eax,4
             lea ebx,[edi+eax-32]
+
             .if [ebx+16].token == T_COMMA && [ebx].token != T_CL_SQ_BRACKET
 
                 ;
@@ -1247,19 +1248,29 @@ endif
                     mov edx,i
                     sub i,4
                     sub ebx,32
-                    .if [ebx].token == T_CL_SQ_BRACKET
+                    .if [ebx-16].token == T_DOT
+                        sub ebx,32
+                        sub i,2
+                    .endif
 
+                size_from_ptr:
+
+                    .if [ebx].token == T_CL_SQ_BRACKET
                         .while i && [ebx].token != T_OP_SQ_BRACKET
                             dec i
                             sub ebx,16
                         .endw
+                    .endif
+                    .if [ebx-16].tokval == T_PTR
+                        sub ebx,32
+                        sub i,2
                     .endif
 
                     sub edx,i
                     .if EvalOperand( &i, tokenarray, edx, &opnd, EXPF_NOERRMSG ) != ERROR
 
                         xor eax,eax
-                        .if opnd.kind == EXPR_ADDR
+                        .if opnd.kind == EXPR_ADDR || ( opnd.flags & E_INDIRECT )
                             .switch opnd.mem_type
                             .case MT_BYTE
                             .case MT_SBYTE  : mov eax,1 : .endc
@@ -1295,6 +1306,12 @@ endif
                         .endc
                     .endsw
                 .endif
+
+            .elseif [ebx+16].token == T_COMMA && [ebx].token == T_CL_SQ_BRACKET
+
+                mov edx,i
+                sub i,2
+                jmp size_from_ptr
             .endif
         .endif
     .endif
@@ -2979,7 +2996,7 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
         ;
         ; v2.08: check for multiple ELSE clauses
         ;
-        .return asmerr(2142) .if ( [esi].flags & HLLF_ELSEOCCUR )
+        .return asmerr(2142) .if ( [esi].flags & HLLF_ELSEOCCURED )
 
         push eax
         ;
@@ -3020,7 +3037,7 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
                 .endif
             .endif
         .else
-            or [esi].flags,HLLF_ELSEOCCUR
+            or [esi].flags,HLLF_ELSEOCCURED
         .endif
         .endc
 

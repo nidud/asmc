@@ -273,7 +273,7 @@ int ForDirective( int i, struct asm_tok tokenarray[] )
 	    hll->next = HllFree;
 	    HllFree = hll;
 
-	    if ( hll->cmd != HLL_WHILE )
+	    if ( hll->cmd != HLL_FOR )
 		return ( asmerr( 1011 ) );
 
 	    if ( hll->labels[LTEST] )
@@ -300,7 +300,7 @@ int ForDirective( int i, struct asm_tok tokenarray[] )
 
 	    if ( cmd == T_DOT_FORS )
 		hll->flags = HLLF_IFS;
-	    hll->cmd = HLL_WHILE;
+	    hll->cmd = HLL_FOR;
 
 	    // create the loop labels
 

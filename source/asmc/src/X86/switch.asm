@@ -662,7 +662,7 @@ endif
 
     ; flip exit to default if exist
 
-    .if [esi].flags & HLLF_ELSEOCCUR
+    .if [esi].flags & HLLF_ELSEOCCURED
 
         .for eax = esi, ebx = [esi].caselist: ebx: eax = ebx, ebx = [ebx].caselist
 
@@ -1588,10 +1588,10 @@ SwitchExit proc uses esi edi ebx i, tokenarray:tok_t
     .switch eax
 
       .case T_DOT_DEFAULT
-        .return asmerr(2142) .if ( [esi].flags & HLLF_ELSEOCCUR )
+        .return asmerr(2142) .if ( [esi].flags & HLLF_ELSEOCCURED )
         .return asmerr(2008, [ebx].tokpos) .if ( [ebx+16].token != T_FINAL )
 
-        or [esi].flags,HLLF_ELSEOCCUR
+        or [esi].flags,HLLF_ELSEOCCURED
 
       .case T_DOT_CASE
 

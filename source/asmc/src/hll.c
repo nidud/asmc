@@ -1519,14 +1519,19 @@ int ExpandHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarray
 {
     int rc = NOT_ERROR;
     struct input_status oldstat;
-    char *p;
+    char *p = buffer;
+    int delayed = 0;
 
     PushInputStatus( &oldstat );
 
-    if ( hll->flags & HLLF_WHILE )
+    if ( hll->flags & HLLF_WHILE ) {
 	p = hll->condlines;
-    else
-	p = buffer;
+	delayed++;
+    } else if ( hll->flags & HLLF_DELAYED ) {
+	delayed++;
+    } else if ( tokenarray[*i-1].token == T_DIRECTIVE && tokenarray[*i-1].tokval == T_DOT_ELSEIF ) {
+	delayed++;
+    }
 
     strcpy( CurrSource, p );
     Token_Count = Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT );
@@ -1536,7 +1541,7 @@ int ExpandHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarray
 	if ( ModuleInfo.g.line_queue.head )
 	    RunLineQueue();
 
-	if ( hll->flags & HLLF_DELAYED ) {
+	if ( delayed ) {
 	    NoLineStore = 1;
 	    rc = ExpandLine( CurrSource, tokenarray );
 	    NoLineStore = 0;

@@ -1,15 +1,22 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 440
+__REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+__REQUIRED_RPCSAL_H_VERSION__ equ 100
+endif
+
 include rpc.inc
 include rpcndr.inc
+
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __oaidl_h__
 __oaidl_h__ equ <>
 
@@ -67,15 +74,17 @@ endif
 ifndef __IRecordInfo_FWD_DEFINED__
 __IRecordInfo_FWD_DEFINED__ equ 1
 endif
+ifndef __IErrorLog_FWD_DEFINED__
+__IErrorLog_FWD_DEFINED__ equ 1
+endif
+ifndef __IPropertyBag_FWD_DEFINED__
+__IPropertyBag_FWD_DEFINED__ equ 1
+endif
+
 include objidl.inc
 
-;PVOID
-MIDL_user_allocate proto WINAPI \
-		      : size_t
-
-;void
-MIDL_user_free proto WINAPI \
-		      : PVOID
+MIDL_user_allocate proto WINAPI :size_t
+MIDL_user_free proto WINAPI :ptr
 
 ifndef __IOleAutomationTypes_INTERFACE_DEFINED__
 __IOleAutomationTypes_INTERFACE_DEFINED__ equ 1
@@ -87,9 +96,6 @@ cElements		ULONG ?
 lLbound			LONG ?
 SAFEARRAYBOUND		ENDS
 LPSAFEARRAYBOUND	typedef ptr SAFEARRAYBOUND
-
-;wireVARIANT		 typedef ptr wireVARIANT
-;wireBRECORD		 typedef ptr wireBRECORD
 
 SAFEARR_BSTR		STRUC
 Size			ULONG ?
@@ -1013,75 +1019,121 @@ DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
     RecordDestroy	proc :PVOID
 
     .ends
-
-LPRECORDINFO		typedef ptr IRecordInfo
+    LPRECORDINFO	typedef ptr IRecordInfo
 endif
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : LPDWORD,
-		      : DWORD,
-		      : ptr BSTR
-;LPSTR
-BSTR_UserMarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
-;LPSTR
-BSTR_UserUnmarshal proto WINAPI \
-		      : LPDWORD,
-		      : LPSTR,
-		      : ptr BSTR
-;void
-BSTR_UserFree proto WINAPI \
-		      : LPDWORD,
-		      : ptr BSTR
+ifndef __IErrorLog_INTERFACE_DEFINED__
+__IErrorLog_INTERFACE_DEFINED__ equ 1
 
-;DWORD
-CLEANLOCALSTORAGE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr CLEANLOCALSTORAGE
+DEFINE_IIDX(IErrorLog, "3127CA40-446E-11CE-8135-00AA004BB851")
 
-;LPBYTE
-CLEANLOCALSTORAGE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr CLEANLOCALSTORAGE
+.comdef IErrorLog : public IUnknown
 
-;LPBYTE
-CLEANLOCALSTORAGE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr CLEANLOCALSTORAGE
+    AddError		proc :ptr, :ptr
 
-;void
-CLEANLOCALSTORAGE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr CLEANLOCALSTORAGE
+    .ends
+    LPERRORLOG		typedef ptr IErrorLog
+endif
 
+ifndef __IPropertyBag_INTERFACE_DEFINED__
+__IPropertyBag_INTERFACE_DEFINED__ equ <>
 
-;DWORD
-VARIANT_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
+DEFINE_IIDX(IPropertyBag, "55272A00-42CB-11CE-8135-00AA004BB851")
 
-;LPBYTE
-VARIANT_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
+.comdef IPropertyBag : public IUnknown
 
-;LPBYTE
-VARIANT_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
+    Read		proc :LPCOLESTR, :ptr VARIANT, :ptr IErrorLog
+    Write		proc :LPCOLESTR, :ptr VARIANT
 
-;void
-VARIANT_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
+    .ends
+    LPPROPERTYBAG	typedef ptr IPropertyBag
+endif
+
+BSTR_UserSize		proto WINAPI :LPDWORD, :DWORD, :ptr BSTR
+BSTR_UserMarshal	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
+BSTR_UserUnmarshal	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
+BSTR_UserFree		proto WINAPI :LPDWORD, :ptr BSTR
+
+CLEANLOCALSTORAGE_UserSize proto WINAPI :ptr DWORD, :DWORD, : ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserFree proto WINAPI :ptr DWORD, :ptr CLEANLOCALSTORAGE
+
+VARIANT_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
+VARIANT_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserFree	proto WINAPI :ptr DWORD, :ptr VARIANT
+
+BSTR_UserSize64		proto WINAPI :LPDWORD, :DWORD, :ptr BSTR
+BSTR_UserMarshal64	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
+BSTR_UserUnmarshal64	proto WINAPI :LPDWORD, :LPSTR, :ptr BSTR
+BSTR_UserFree64		proto WINAPI :LPDWORD, :ptr BSTR
+
+CLEANLOCALSTORAGE_UserSize64		proto WINAPI :ptr DWORD, :DWORD, : ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserMarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr CLEANLOCALSTORAGE
+CLEANLOCALSTORAGE_UserFree64		proto WINAPI :ptr DWORD, :ptr CLEANLOCALSTORAGE
+
+VARIANT_UserSize64			proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
+VARIANT_UserMarshal64			proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserUnmarshal64			proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserFree64			proto WINAPI :ptr DWORD, :ptr VARIANT
+
+IDispatch_Invoke_Proxy			proto WINAPI :ptr, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+IDispatch_Invoke_Stub			proto WINAPI :ptr, :DISPID, :REFIID, :LCID, :DWORD, :ptr, :ptr, :ptr, :ptr, :UINT, :ptr, :ptr
+IEnumVARIANT_Next_Proxy			proto WINAPI :ptr, :ULONG, :ptr, :ptr
+IEnumVARIANT_Next_Stub			proto WINAPI :ptr, :ULONG, :ptr, :ptr
+ITypeComp_Bind_Proxy			proto WINAPI :ptr, :LPOLESTR, :ULONG, :WORD, :ptr, :ptr, :ptr
+ITypeComp_Bind_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :WORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+ITypeComp_BindType_Proxy		proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr
+ITypeComp_BindType_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr
+ITypeInfo_GetTypeAttr_Proxy		proto WINAPI :ptr, :ptr
+ITypeInfo_GetTypeAttr_Stub		proto WINAPI :ptr, :ptr, :ptr
+ITypeInfo_GetFuncDesc_Proxy		proto WINAPI :ptr, :UINT, :ptr
+ITypeInfo_GetFuncDesc_Stub		proto WINAPI :ptr, :UINT, :ptr, :ptr
+ITypeInfo_GetVarDesc_Proxy		proto WINAPI :ptr, :UINT, :ptr
+ITypeInfo_GetVarDesc_Stub		proto WINAPI :ptr, :UINT, :ptr, :ptr
+ITypeInfo_GetNames_Proxy		proto WINAPI :ptr, :MEMBERID, :ptr, :UINT, :ptr
+ITypeInfo_GetNames_Stub			proto WINAPI :ptr, :MEMBERID, :ptr, :UINT, :ptr
+ITypeInfo_GetIDsOfNames_Proxy		proto WINAPI :ptr, :ptr, :UINT, :ptr
+ITypeInfo_GetIDsOfNames_Stub		proto WINAPI :ptr
+ITypeInfo_Invoke_Proxy			proto WINAPI :ptr, :ptr, :MEMBERID, :WORD, :ptr, :ptr, :ptr, :ptr
+ITypeInfo_Invoke_Stub			proto WINAPI :ptr
+ITypeInfo_GetDocumentation_Proxy	proto WINAPI :ptr, :MEMBERID, :ptr, :ptr, :ptr, :ptr
+ITypeInfo_GetDocumentation_Stub		proto WINAPI :ptr, :MEMBERID, :DWORD, :ptr, :ptr, :ptr, :ptr
+ITypeInfo_GetDllEntry_Proxy		proto WINAPI :ptr, :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
+ITypeInfo_GetDllEntry_Stub		proto WINAPI :ptr, :MEMBERID, :INVOKEKIND, :DWORD, :ptr, :ptr, :ptr
+ITypeInfo_AddressOfMember_Proxy		proto WINAPI :ptr, :MEMBERID, :INVOKEKIND, :ptr
+ITypeInfo_AddressOfMember_Stub		proto WINAPI :ptr
+ITypeInfo_CreateInstance_Proxy		proto WINAPI :ptr, :ptr, :REFIID, :ptr
+ITypeInfo_CreateInstance_Stub		proto WINAPI :ptr, :REFIID, :ptr
+ITypeInfo_GetContainingTypeLib_Proxy	proto WINAPI :ptr, :ptr, :ptr
+ITypeInfo_GetContainingTypeLib_Stub	proto WINAPI :ptr, :ptr, :ptr
+ITypeInfo_ReleaseTypeAttr_Proxy		proto WINAPI :ptr, :ptr
+ITypeInfo_ReleaseTypeAttr_Stub		proto WINAPI :ptr
+ITypeInfo_ReleaseFuncDesc_Proxy		proto WINAPI :ptr, :ptr
+ITypeInfo_ReleaseFuncDesc_Stub		proto WINAPI :ptr
+ITypeInfo_ReleaseVarDesc_Proxy		proto WINAPI :ptr, :ptr
+ITypeInfo_ReleaseVarDesc_Stub		proto WINAPI :ptr
+ITypeInfo2_GetDocumentation2_Proxy	proto WINAPI :ptr, :MEMBERID, :LCID, :ptr, :ptr, :ptr
+ITypeInfo2_GetDocumentation2_Stub	proto WINAPI :ptr, :MEMBERID, :LCID, :DWORD, :ptr, :ptr, :ptr
+ITypeLib_GetTypeInfoCount_Proxy		proto WINAPI :ptr
+ITypeLib_GetTypeInfoCount_Stub		proto WINAPI :ptr, :ptr
+ITypeLib_GetLibAttr_Proxy		proto WINAPI :ptr, :ptr
+ITypeLib_GetLibAttr_Stub		proto WINAPI :ptr, :ptr, :ptr
+ITypeLib_GetDocumentation_Proxy		proto WINAPI :ptr, :int_t, :ptr, :ptr, :ptr, :ptr
+ITypeLib_GetDocumentation_Stub		proto WINAPI :ptr, :int_t, :DWORD, :ptr, :ptr, :ptr, :ptr
+ITypeLib_IsName_Proxy			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr
+ITypeLib_IsName_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr
+ITypeLib_FindName_Proxy			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr, :ptr
+ITypeLib_FindName_Stub			proto WINAPI :ptr, :LPOLESTR, :ULONG, :ptr, :ptr, :ptr, :ptr
+ITypeLib_ReleaseTLibAttr_Proxy		proto WINAPI :ptr, :ptr
+ITypeLib_ReleaseTLibAttr_Stub		proto WINAPI :ptr
+ITypeLib2_GetLibStatistics_Proxy	proto WINAPI :ptr, :ptr, :ptr
+ITypeLib2_GetLibStatistics_Stub		proto WINAPI :ptr, :ptr, :ptr
+ITypeLib2_GetDocumentation2_Proxy	proto WINAPI :ptr, :int_t, :LCID, :ptr, :ptr, :ptr
+ITypeLib2_GetDocumentation2_Stub	proto WINAPI :ptr, :int_t, :LCID, :DWORD, :ptr BSTR, :ptr, :ptr
+IPropertyBag_Read_Proxy			proto WINAPI :ptr, :LPCOLESTR, :ptr VARIANT, :ptr IErrorLog
+IPropertyBag_Read_Stub			proto WINAPI :ptr, :LPCOLESTR, :ptr, :ptr, :DWORD, :ptr
 
 endif

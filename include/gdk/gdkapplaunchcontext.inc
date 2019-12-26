@@ -4,7 +4,7 @@ if NOT defined (__GDK_H_INSIDE__) AND NOT defined (GDK_COMPILATION)
 .err <"Only gdk/gdk.h can be included directly.">
 endif
 
-;include gio/gio.inc
+include gio/gio.inc
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 include gdk/gdkscreen.inc

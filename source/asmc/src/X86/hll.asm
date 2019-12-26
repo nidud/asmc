@@ -2064,12 +2064,24 @@ ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok
     mov esi,hll
     mov ebx,tokenarray
     mov edi,buffer
+    mov delayed,0
 
     PushInputStatus(&oldstat)
 
     .if [esi].hll_item.flags & HLLF_WHILE
 
         mov edi,[esi].hll_item.condlines
+        inc delayed
+    .elseif [esi].hll_item.flags & HLLF_DELAYED
+        inc delayed
+    .else
+        mov ecx,i
+        mov edx,[ecx]
+        shl edx,4
+        .if [ebx+edx-16].asm_tok.token == T_DIRECTIVE && \
+            [ebx+edx-16].asm_tok.tokval == T_DOT_ELSEIF
+            inc delayed
+        .endif
     .endif
 
     strcpy(ModuleInfo.currsource, edi)
@@ -2079,12 +2091,9 @@ ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok
     .if Parse_Pass == PASS_1
 
         .if ModuleInfo.line_queue.head
-
             RunLineQueue()
         .endif
-
-        .if [esi].hll_item.flags & HLLF_DELAYED
-
+        .if delayed
             mov NoLineStore,1
             ExpandLine( ModuleInfo.currsource, ebx )
             mov NoLineStore,0

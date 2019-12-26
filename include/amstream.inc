@@ -59,7 +59,7 @@ include ddraw.inc
     AMMSF_NOSTALL	= 0x8
 }
 
-enum {
+.enum {
     AMMSF_RENDERTYPEMASK = 0x3,
     AMMSF_RENDERTOEXISTING = 0,
     AMMSF_RENDERALLSTREAMS = 0x1,

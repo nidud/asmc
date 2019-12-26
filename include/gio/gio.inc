@@ -63,7 +63,7 @@ include gio/gapplication.inc
 ;include gio/ginetsocketaddress.inc
 ;include gio/ginitable.inc
 ;include gio/ginputstream.inc
-;include gio/gioenums.inc
+include gio/gioenums.inc
 ;include gio/gioenumtypes.inc
 ;include gio/gioerror.inc
 ;include gio/giomodule.inc

@@ -976,7 +976,7 @@ TWindow::Release proc uses rbx
     .if [rbx].Flags & W_CHILD
 
         .for ( rcx = [rbx].PrevInst : rcx && [rcx].Child != rbx : rcx = [rcx].Child )
-        .endw
+        .endf
         .if rcx
             mov [rcx].Child,[rbx].Child
         .endif

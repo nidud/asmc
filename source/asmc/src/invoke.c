@@ -26,6 +26,7 @@
 #include <tokenize.h>
 #include <fastpass.h>
 #include <atofloat.h>
+#include <regno.h>
 
 int QueueTestLines( char * );
 int ExpandHllProc( char *, int, struct asm_tok[] );
@@ -834,11 +835,16 @@ skip_push:
 
 /* generate a call for a prototyped procedure */
 
+static uint_8 win64regs[] = { T_RCX, T_RDX, T_R8, T_R9 };
+static uint_8 elf64regs[] = { T_RDI, T_RSI, T_RDX, T_RCX, T_R8,	 T_R9 };
+
 int InvokeDirective( int i, struct asm_tok tokenarray[] )
 {
     struct asym *	sym;
     struct dsym *	proc;
+    struct dsym *	arg;
     char *		p;
+    uint_8 *		regs;
     int			numParam;
     int			value;
     int			size;
@@ -1073,22 +1079,35 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	if ( macrocall == 1 ) {
 
+	    int cnt = 0;
+	    for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ );
+
 	    p = &StringBufferEnd[1];
 	    strcpy( p, buffer );
 	    strcat( p, "( " );
 	    p += strlen(p);
-
-	    curr = info->paralist;
-	    if ( curr->sym.string_ptr == NULL ) {
-		char *regs[] = { "rcx","rdx","r8","r9" };
-		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ )
-		    curr->sym.string_ptr = regs[parmpos];
+	    if ( Parse_Pass == PASS_1 ) {
+		regs = elf64regs;
 		curr = info->paralist;
+		if ( curr->sym.string_ptr == NULL )
+		    regs = win64regs;
+		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
+
+		    int reg = regs[parmpos];
+		    int ind = cnt - parmpos - 1;
+
+		    for ( arg = info->paralist; ind; arg = arg->nextparam, ind-- );
+		    if ( regs[0] == T_RDI )
+			reg = arg->sym.regist[0];
+		    else if ( arg->sym.mem_type & MT_FLOAT )
+			reg = parmpos + T_XMM0;
+		    size = SizeFromMemtype( arg->sym.mem_type, arg->sym.Ofssize, arg->sym.type );
+		    curr->sym.string_ptr = get_regname(reg, size);
+		}
 	    }
+	    curr = info->paralist;
 	    strcat( p, curr->sym.string_ptr );
-
 	    for ( curr = curr->nextparam; curr; curr = curr->nextparam ) {
-
 		strcat( p, ", " );
 		strcat( p, curr->sym.string_ptr );
 	    }

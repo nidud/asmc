@@ -259,6 +259,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
       .case T_DOT_COMDEF
       .case T_DOT_CLASS
+      .case T_DOT_TEMPLATE
         .return asmerr(1011) .if ModuleInfo.ComStack
         lea ebx,[ebx+edx+16]
 
@@ -301,11 +302,14 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endif
         mov args,eax
 
-        AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
+        .if ( cmd != T_DOT_TEMPLATE )
 
-        .if ( cmd == T_DOT_CLASS )
+            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
 
-            AddLineQueueX( "%s typedef ptr %s", edi, esi )
+            .if ( cmd == T_DOT_CLASS )
+
+                AddLineQueueX( "%s typedef ptr %s", edi, esi )
+            .endif
         .endif
 
         mov public_pos,NULL
@@ -377,7 +381,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov eax,[ecx].com_item.sym
         .if eax
             AddLineQueueX( "%s <>", [eax].asym.name )
-        .else
+        .elseif ( cmd != T_DOT_TEMPLATE )
             AddLineQueueX( "lpVtbl %sVtbl ?", &LPClass )
         .endif
     .endsw

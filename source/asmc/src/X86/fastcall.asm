@@ -12,7 +12,7 @@ include operands.inc
 include expreval.inc
 include atofloat.inc
 include memalloc.inc
-
+include regno.inc
 
 .pragma warning(disable: 6004)
 
@@ -160,44 +160,6 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:s
 
 GetSegmentPart endp
 endif
-
-get_x32_regno proc reg:uint_t
-
-    mov eax,reg
-    .switch eax
-    .case T_RAX .. T_RDI
-        sub eax,T_RAX-T_EAX
-        .endc
-    .case T_R8 .. T_R15
-        sub eax,T_R8-T_R8D
-        .endc
-    .case T_AX .. T_DI
-    .case T_R8W .. T_R15W
-        add eax,T_EAX-T_AX
-        .endc
-    .case T_AL .. T_BH
-    .case T_R8B .. T_R15B
-        add eax,T_EAX-T_AL
-        .endc
-    .case T_SPL .. T_DIL
-        sub eax,T_SPL-T_ESP
-        .endc
-    .endsw
-    ret
-
-get_x32_regno endp
-
-get_x64_regno proc reg:uint_t
-
-    get_x32_regno(reg)
-    .if eax >= T_EAX && eax <= T_EDI
-        add eax,T_RAX - T_EAX
-    .else
-        add eax,T_R8 - T_R8D
-    .endif
-    ret
-
-get_x64_regno endp
 
 option proc:private
 
@@ -1128,7 +1090,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
 
             ; v2.11: no expansion if target type is a pointer
 
-            mov i32,get_x32_regno(i)
+            mov i32,get_register(i, 4)
 
             mov eax,size
             mov edx,param
@@ -1282,7 +1244,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .endc
     .endsw
     movzx ebx,ms64_regs[esi+eax*4]
-    mov i32,get_x32_regno(ebx)
+    mov i32,get_register(ebx, 4)
 
     ; optimization if the register holds the value already
 
@@ -1588,7 +1550,7 @@ elf64_fcstart endp
 elf64_const proc reg:uint_t, pos:uint_t, val:qword, paramvalue:string_t, _negative:uint_t
 
     .if dword ptr val[4] == 0
-        mov eax,get_x32_regno(reg)
+        mov eax,get_register(reg, 4)
         .if dword ptr val == 0
             .if _negative
                 AddLineQueueX(" mov %r, -1", reg)
@@ -1706,7 +1668,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
         .endif
     .endif
 
-    mov i32,get_x32_regno(ebx)
+    mov i32,get_register(ebx, 4)
 
     .repeat
 
@@ -1856,7 +1818,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
 
                 .if stack
 
-                    AddLineQueueX(" push %r", get_x64_regno(reg))
+                    AddLineQueueX(" push %r", get_register(reg, 8))
                     .return 1
                 .endif
 

@@ -10,53 +10,59 @@ _IID_IUpdateInfo	  equ <{0xa0385420,0x62b8,0x11d1,{0x9a,0x06,0x0,0xa0,0xc9,0x03,
 _IID_IRowsetSynchronize	  equ <{0x1be41e60,0x807a,0x11d1,{0x9a,0x14,0x0,0xa0,0xc9,0x03,0xaa,0x45}}>
 _IID_IRowsetProperties	  equ <{0x1e837070,0xbcfc,0x11d1,{0x9a,0x2c,0x0,0xa0,0xc9,0x03,0xaa,0x45}}>
 
-ADCPROPENUM		typedef SDWORD
-DBPROP_ADC_ASYNCHFETCHSIZE equ 3
-DBPROP_ADC_BATCHSIZE	equ 4
-DBPROP_ADC_UPDATECRITERIA equ 5
-DBPROP_ADC_ASYNCHPREFETCHSIZE equ 7
-DBPROP_ADC_ASYNCHTHREADPRIORITY equ 8
-DBPROP_ADC_CACHECHILDROWS equ 9
-DBPROP_ADC_MAINTAINCHANGESTATUS equ 10
-DBPROP_ADC_AUTORECALC	equ 11
-DBPROP_ADC_UNIQUETABLE	equ 13
-DBPROP_ADC_UNIQUESCHEMA equ 14
-DBPROP_ADC_UNIQUECATALOG equ 15
-DBPROP_ADC_CUSTOMRESYNCH equ 16
-DBPROP_ADC_CEVER	equ 17
-DBPROP_ADC_RESHAPENAME	equ 18
-DBPROP_ADC_UPDATERESYNC equ 19
-DBPROP_ADC_BACKINGSTORE equ 21
-DBPROP_ADC_RELEASESHAPEONDISCONNECT equ 22
+.enum ADCPROPENUM {
+  DBPROP_ADC_ASYNCHFETCHSIZE = 3,
+  DBPROP_ADC_BATCHSIZE = 4,
+  DBPROP_ADC_UPDATECRITERIA = 5,
+  DBPROP_ADC_ASYNCHPREFETCHSIZE = 7,
+  DBPROP_ADC_ASYNCHTHREADPRIORITY = 8,
+  DBPROP_ADC_CACHECHILDROWS = 9,
+  DBPROP_ADC_MAINTAINCHANGESTATUS = 10,
+  DBPROP_ADC_AUTORECALC = 11,
+  DBPROP_ADC_UNIQUETABLE = 13,
+  DBPROP_ADC_UNIQUESCHEMA = 14,
+  DBPROP_ADC_UNIQUECATALOG = 15,
+  DBPROP_ADC_CUSTOMRESYNCH = 16,
+  DBPROP_ADC_CEVER = 17,
+  DBPROP_ADC_RESHAPENAME = 18,
+  DBPROP_ADC_UPDATERESYNC = 19,
+  DBPROP_ADC_BACKINGSTORE = 21,
+  DBPROP_ADC_RELEASESHAPEONDISCONNECT = 22
+}
 
 
 ifndef _COMMON_ADC_AND_ADO_PROPS_
 _COMMON_ADC_AND_ADO_PROPS_ equ 1
 
-ADCPROP_UPDATECRITERIA_ENUM typedef SDWORD
-adCriteriaKey		equ 0
-adCriteriaAllCols	equ 1
-adCriteriaUpdCols	equ 2
-adCriteriaTimeStamp	equ 3
+.enum ADCPROP_UPDATECRITERIA_ENUM {
+  adCriteriaKey = 0,
+  adCriteriaAllCols = 1,
+  adCriteriaUpdCols = 2,
+  adCriteriaTimeStamp = 3
+}
 
-ADCPROP_ASYNCTHREADPRIORITY_ENUM typedef SDWORD
-adPriorityLowest	equ 1
-adPriorityBelowNormal	equ 2
-adPriorityNormal	equ 3
-adPriorityAboveNormal	equ 4
-adPriorityHighest	equ 5
+.enum ADCPROP_ASYNCTHREADPRIORITY_ENUM {
+  adPriorityLowest = 1,
+  adPriorityBelowNormal = 2,
+  adPriorityNormal = 3,
+  adPriorityAboveNormal = 4,
+  adPriorityHighest = 5
+}
 
-ADCPROP_UPDATERESYNC_ENUM typedef SDWORD
-adResyncNone		equ 0
-adResyncAutoIncrement	equ 1
-adResyncConflicts	equ 2
-adResyncUpdates		equ 4
-adResyncInserts		equ 8
-adResyncAll		equ 0xF
+.enum ADCPROP_UPDATERESYNC_ENUM {
+  adResyncNone = 0,
+  adResyncAutoIncrement = 1,
+  adResyncConflicts = 2,
+  adResyncUpdates = 4,
+  adResyncInserts = 8,
+  adResyncAll = 0x0F
+}
 
-ADCPROP_AUTORECALC_ENUM typedef SDWORD
-adRecalcUpFront		equ 0
-adRecalcAlways		equ 1
+.enum ADCPROP_AUTORECALC_ENUM {
+  adRecalcUpFront = 0,
+  adRecalcAlways = 1
+}
+
 endif
 
 FOXROWSETPROPENUM	typedef SDWORD

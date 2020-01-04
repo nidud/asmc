@@ -731,26 +731,58 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
     mov ebx,tokenarray
     mov edi,[ebx].string_ptr
     mov esi,SymSearch(edi)
+
     .if eax == NULL
+
         mov esi,CreateMacro(edi)
+
     .elseif [esi].sym.state != SYM_MACRO
+
         .if [esi].sym.state != SYM_UNDEFINED
-            .return asmerr( 2005, edi )
+
+            .if [esi].sym.state == SYM_EXTERNAL
+
+                mov ebx,edx
+                .if SymAlloc(edi)
+
+                    mov [esi].sym.nextitem,eax
+                    mov esi,eax
+                    mov [esi].sym.altname,ebx
+                    mov [esi].sym.state,SYM_MACRO
+                    and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
+                    mov ecx,LclAlloc(macro_info)
+                    mov [esi].macroinfo,ecx
+                    xor edx,edx
+                    mov [ecx].parmcnt,dx
+                    mov [ecx].localcnt,dx
+                    mov [ecx].parmlist,edx
+                    mov [ecx]._data,edx
+                    mov [ecx].srcfile,edx
+
+                .else
+                    .return asmerr( 2005, edi )
+                .endif
+                mov ebx,tokenarray
+            .else
+                .return asmerr( 2005, edi )
+            .endif
+
+        .else
+
+            ;; the macro was used before it's defined. That's
+            ;; a severe error. Nevertheless define the macro now,
+            ;; error msg 'invalid symbol type in expression' will
+            ;; be displayed in second pass when the (unexpanded)
+            ;; macro name is found by the expression evaluator.
+
+            sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], esi )
+            mov [esi].sym.state,SYM_MACRO
+            mov [esi].macroinfo,LclAlloc(macro_info)
+            mov edi,eax
+            mov ecx,macro_info
+            xor eax,eax
+            rep stosb
         .endif
-
-        ;; the macro was used before it's defined. That's
-        ;; a severe error. Nevertheless define the macro now,
-        ;; error msg 'invalid symbol type in expression' will
-        ;; be displayed in second pass when the (unexpanded)
-        ;; macro name is found by the expression evaluator.
-
-        sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], esi )
-        mov [esi].sym.state,SYM_MACRO
-        mov [esi].macroinfo,LclAlloc(macro_info)
-        mov edi,eax
-        mov ecx,macro_info
-        xor eax,eax
-        rep stosb
     .endif
     mov edi,[esi].macroinfo
     mov [edi].srcfile,get_curr_srcfile()

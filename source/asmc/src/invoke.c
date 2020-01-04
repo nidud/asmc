@@ -857,8 +857,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     struct expr		opnd;
     char		buffer[MAX_LINE_LEN];
     int			fastcall_id;
-    int			macrocall = 0;
-    struct asym *	macro;
+    struct asym *	macro = NULL;
 
     i++; /* skip INVOKE directive */
     namepos = i;
@@ -1064,20 +1063,30 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( tokenarray[namepos].token == T_OP_SQ_BRACKET && tokenarray[namepos+3].token == T_DOT &&
-	opnd.mbr && opnd.mbr->method ) {
+    if ( sym->state == SYM_EXTERNAL && sym->nextitem && sym->nextitem->state == SYM_MACRO ) {
 
-	if ( ModuleInfo.Ofssize == USE64 ) {
+	macro = sym->nextitem;
+	if ( macro->altname ) {
+	    *(struct asym **)macro->altname = macro;
+	    strcpy( buffer, macro->name );
+	} else
+	    macro = NULL;
+    }
+
+    if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET && tokenarray[namepos+3].token == T_DOT &&
+	opnd.mbr && opnd.mbr->method ) ) {
+
+	if ( !macro && ModuleInfo.Ofssize == USE64 ) {
 
 	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
 	    strcpy(buffer + strlen(buffer) - 4, "_");
 	    strcat(buffer, opnd.mbr->name);
 	    macro = SymSearch( buffer );
-	    if ( macro && macro->state == SYM_MACRO )
-		macrocall = 1;
+	    if ( macro && macro->state != SYM_MACRO )
+		macro = NULL;
 	}
 
-	if ( macrocall == 1 ) {
+	if ( macro ) {
 
 	    int cnt = 0;
 	    for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ );
@@ -1140,7 +1149,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( macrocall == 0 ) {
+    if ( macro == NULL ) {
 	size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
 	memcpy( p, tokenarray[namepos].tokpos, size );
 	*(p+size) = NULLC;
@@ -1168,5 +1177,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
     RunLineQueue();
+    if ( macro && Parse_Pass == 0 && macro->altname )
+	*(struct asym **)macro->altname = sym;
     return( NOT_ERROR );
 }

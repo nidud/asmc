@@ -1,12 +1,12 @@
 
     option  win64:3
 
-    option  dllimport:<msvcrt>
+    .pragma comment(lib, msvcrt)
     printf  proto :ptr byte, :vararg
     exit    proto :dword
     _getch  proto
 
-    option  dllimport:<kernel32>
+    .pragma comment(lib, kernel32)
     GetCurrentProcess proto
     CreateFileA proto :ptr, :dword, :dword, :ptr, :dword, :dword, :ptr
     ReadFile proto :ptr, :ptr, :ptr, :ptr, :ptr

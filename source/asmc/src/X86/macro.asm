@@ -740,12 +740,12 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         .if [esi].sym.state != SYM_UNDEFINED
 
-            .if [esi].sym.state == SYM_EXTERNAL
+            .if [esi].sym.state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat
 
                 mov ebx,edx
                 .if SymAlloc(edi)
 
-                    mov [esi].sym.nextitem,eax
+                    mov [esi].sym.target_type,eax
                     mov esi,eax
                     mov [esi].sym.altname,ebx
                     mov [esi].sym.state,SYM_MACRO

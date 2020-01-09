@@ -1063,9 +1063,10 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( sym->state == SYM_EXTERNAL && sym->nextitem && sym->nextitem->state == SYM_MACRO ) {
+    if ( !ModuleInfo.strict_masm_compat && sym->state == SYM_EXTERNAL &&
+	 sym->target_type && sym->target_type->state == SYM_MACRO ) {
 
-	macro = sym->nextitem;
+	macro = sym->target_type;
 	if ( macro->altname ) {
 	    *(struct asym **)macro->altname = macro;
 	    strcpy( buffer, macro->name );
@@ -1076,7 +1077,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET && tokenarray[namepos+3].token == T_DOT &&
 	opnd.mbr && opnd.mbr->method ) ) {
 
-	if ( !macro && ModuleInfo.Ofssize == USE64 ) {
+	if ( !ModuleInfo.strict_masm_compat && !macro && ModuleInfo.Ofssize == USE64 ) {
 
 	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
 	    strcpy(buffer + strlen(buffer) - 4, "_");
@@ -1098,7 +1099,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    if ( Parse_Pass == PASS_1 ) {
 		regs = elf64regs;
 		curr = info->paralist;
-		if ( curr->sym.string_ptr == NULL )
+		if ( sym->langtype != LANG_SYSCALL )
 		    regs = win64regs;
 		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
 
@@ -1177,7 +1178,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
     RunLineQueue();
-    if ( macro && Parse_Pass == 0 && macro->altname )
+    if ( macro && macro->altname )
 	*(struct asym **)macro->altname = sym;
     return( NOT_ERROR );
 }

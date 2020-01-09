@@ -1,6 +1,9 @@
 test.exe:
-    asmc64 -ws -Zp8 $*.asm
+    asmc -win64 -ws $*.asm
     linkw sys con_64W file $*
     $@
     pause
+    del $*.obj
+    del $*.exe
+
 

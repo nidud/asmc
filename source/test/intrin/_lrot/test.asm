@@ -1,11 +1,19 @@
+;;
 ;; https://msdn.microsoft.com/en-us/library/a0w705h5.aspx
+;;
+;; _lrotl(unsigned value, int times) rotate left
+;; _lrotr(unsigned value, int times) rotate right
+;;
+
 include stdio.inc
 include intrin.inc
 include tchar.inc
+
 .code
+
 main proc
 
-  local val:dword
+  local val
 
     mov val,0x0fac35791
 

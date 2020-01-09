@@ -1,6 +1,9 @@
+;;
 ;; https://docs.microsoft.com/en-us/cpp/intrinsics/interlockeddecrement-intrinsic-functions
 ;; compiler_intrinsics_interlocked.cpp
 ;; compile with: /Oi
+;;
+
 _CRT_RAND_S equ <>
 
 include stdlib.inc
@@ -21,15 +24,15 @@ include intrin.inc
 pdata LONG 1
 
 .code
-SimpleThread proto pParam:PVOID
+SimpleThread proto pParam:ptr
 
 THREAD_COUNT equ 6
 
-main proc
+main proc uses rsi rdi rbx
 
   local threads[THREAD_COUNT]:HANDLE
-  local ThreadId[THREAD_COUNT]:SINT
-  local param[THREAD_COUNT]:SINT
+  local ThreadId[THREAD_COUNT]:int_t
+  local param[THREAD_COUNT]:int_t
 
     .for (ebx = 0: ebx < THREAD_COUNT: ebx++)
 
@@ -40,7 +43,7 @@ main proc
         mov [r9],eax
 
         CreateThread(NULL, NULL, &SimpleThread, r9, NORMAL_PRIORITY_CLASS, rdi)
-        mov threads[rbx*sizeof(HANDLE)],rax
+        mov threads[rbx*HANDLE],rax
         .break .if !rax ;; error creating threads
     .endf
 
@@ -50,14 +53,13 @@ main proc
 main endp
 
 ;; Code for our simple thread
-SimpleThread proc pParam:PVOID
+SimpleThread proc pParam:ptr
 
-  local threadNum:SINT
-  local randomValue:UINT
-  local time:UINT
+  local threadNum:int_t
+  local randomValue:uint_t
+  local time:uint_t
 
-    mov eax,[rcx]
-    mov threadNum,eax
+    mov threadNum,[rcx]
 
     .if rand_s(&randomValue)
 
@@ -77,11 +79,8 @@ SimpleThread proc pParam:PVOID
             .endif
 
             Sleep(time) ;; wait up to half of a second
-
         .endw
-
     .endif
-
     printf("Thread %d complete: %d\n", threadNum, pdata)
     ret
 

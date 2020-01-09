@@ -1,6 +1,6 @@
 _aligned_malloc.exe:
-    asmc64 $*.asm
-    linkw system con_64 file $*
+    asmc -Fitchar.inc $*.asm
+    linkw system con_32 file $*
     $@
     pause
     del $*.obj

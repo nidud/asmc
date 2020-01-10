@@ -374,7 +374,7 @@ endif
 ifndef __IXMLDOMParseError_INTERFACE_DEFINED__
 __IXMLDOMParseError_INTERFACE_DEFINED__ equ <>
 
-DEFINE_IIDX(,IXMLDOMParseError "3efaa426-272f-11d2-836f-0000f87a7782")
+DEFINE_IIDX(IXMLDOMParseError, "3efaa426-272f-11d2-836f-0000f87a7782")
 
 .comdef IXMLDOMParseError : public IDispatch
 

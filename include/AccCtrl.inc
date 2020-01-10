@@ -113,7 +113,7 @@ TRUSTEE			typedef TRUSTEEA
 PTRUSTEE		typedef PTRUSTEEA
 endif
 
-.enum _ACCESS_MODE {
+.enum ACCESS_MODE {
     NOT_USED_ACCESS = 0,
     GRANT_ACCESS,
     SET_ACCESS,

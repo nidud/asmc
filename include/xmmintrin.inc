@@ -708,17 +708,13 @@ _mm_sfence macro
     exitm<sfence>
     endm
 _mm_getcsr macro
-    sub rsp,16
     stmxcsr [rsp]
     mov eax,[rsp]
-    sub rsp-16
     retm<eax>
     endm
 _mm_setcsr macro reg
-    sub rsp,16
     mov [rsp],reg
     ldmxcsr [rsp]
-    sub rsp-16
     exitm<>
     endm
 

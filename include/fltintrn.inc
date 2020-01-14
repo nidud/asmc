@@ -62,15 +62,6 @@ Q_EXPBITS	equ 15
 Q_EXPMASK	equ (1 shl Q_EXPBITS) - 1
 Q_EXPBIAS	equ Q_EXPMASK shr 1
 Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
-
-; Quadruple precision - binary128 -- real16 (__float128)
-
-Q_SIGBITS	equ 113
-Q_EXPBITS	equ 15
-Q_EXPMASK	equ (1 shl Q_EXPBITS) - 1
-Q_EXPBIAS	equ Q_EXPMASK shr 1
-Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
-
 Q_DIGITS	equ 38
 Q_SIGDIG	equ 49
 

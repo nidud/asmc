@@ -760,7 +760,7 @@ static void output_opc( struct code_info *CodeInfo )
     } else {
 
 	/* the REX prefix must be located after the other prefixes */
-	if( CodeInfo->rex != 0 ) {
+	if( CodeInfo->rex != 0 && CodeInfo->token != T_RDPID ) {
 	    if ( CodeInfo->Ofssize != USE64 ) {
 		asmerr( 2024 );
 	    }
@@ -802,8 +802,12 @@ static void output_opc( struct code_info *CodeInfo )
 	}
 	/* emit ModRM byte; bits 7-6 = Mod, bits 5-3 = Reg, bits 2-0 = R/M */
 	tmp = ins->rm_byte | CodeInfo->rm_byte;
-	if (CodeInfo->base_rip) /* @RIP */
+	if ( CodeInfo->base_rip ) /* @RIP */
 	    tmp &= ~MOD_10;
+	if ( CodeInfo->token == T_RDPID )
+	    tmp = NOT_BIT_012 | CodeInfo->rm_byte;
+	else if ( CodeInfo->token == T_ADOX )
+	    OutputByte(0xF6);
 	OutputByte( (unsigned char)tmp );
 
 	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->adrsiz == 0 ) ||

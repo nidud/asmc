@@ -969,7 +969,7 @@ output_opc proc uses edi ebx
 
         ;; the REX prefix must be located after the other prefixes
 
-        .if [esi].rex != 0
+        .if [esi].rex != 0 && [esi].token != T_RDPID
             .if [esi].Ofssize != USE64
                 asmerr(2024)
             .endif
@@ -1037,6 +1037,12 @@ output_opc proc uses edi ebx
         or  bl,[esi].rm_byte
         .if [esi].flags & CI_BASE_RIP ;; @RIP
             and bl,not MOD_10
+        .endif
+        .if ( [esi].token == T_RDPID )
+            mov bl,NOT_BIT_012
+            or bl,[esi].rm_byte
+        .elseif ( [esi].token == T_ADOX )
+            OutputByte(0xF6)
         .endif
         OutputByte(ebx)
 

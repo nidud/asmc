@@ -1038,12 +1038,17 @@ output_opc proc uses edi ebx
         .if [esi].flags & CI_BASE_RIP ;; @RIP
             and bl,not MOD_10
         .endif
-        .if ( [esi].token == T_RDPID )
+
+        movzx eax,[esi].token
+        .switch eax
+        .case T_RDPID
             mov bl,NOT_BIT_012
             or bl,[esi].rm_byte
-        .elseif ( [esi].token == T_ADOX )
+            .endc
+        .case T_ADOX
             OutputByte(0xF6)
-        .endif
+            .endc
+        .endsw
         OutputByte(ebx)
 
         ;; no SIB for 16bit

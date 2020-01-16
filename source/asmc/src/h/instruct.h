@@ -1352,6 +1352,11 @@ insa(INVPCID, invpcid,  OpCls( RGT8,     MS,       NONE ), F_660F38, 1, no_WDS, 
 insa(RDPID, rdpid,      OpCls( RGT8,     NONE,     NONE ), F_F30F,   0, 0,      0xC7, 0x00, P_686,        0,0)
 insa(ADOX, adox,        OpCls( RGT8,     RGT8_MS,  NONE ), F_F30F,   1, no_WDS, 0x38, 0x00, P_686,        0,0)
 
+insa(RDFSBASE, rdfsbase,OpCls( RGT8,     NONE,     NONE ), F_F30F,   0, no_WDS, 0xAE, 0x00, P_686,        0,0)
+insa(RDGSBASE, rdgsbase,OpCls( RGT8,     NONE,     NONE ), F_F30F,   0, no_WDS, 0xAE, 0x08, P_686,        0,0)
+insa(WRFSBASE, wrfsbase,OpCls( RGT8,     NONE,     NONE ), F_F30F,   0, no_WDS, 0xAE, 0x10, P_686,        0,0)
+insa(WRGSBASE, wrgsbase,OpCls( RGT8,     NONE,     NONE ), F_F30F,   0, no_WDS, 0xAE, 0x18, P_686,        0,0)
+
 insa(XRSTOR, xrstor,    OpCls( M_ANY,    NONE,     NONE ), F_0F,   0,  no_WDS, 0xAE, 0x28, P_686|P_SSE4,0,0)
 insa(XSAVE, xsave,      OpCls( M_ANY,    NONE,     NONE ), F_0F,   0,  no_WDS, 0xAE, 0x20, P_686|P_SSE4,0,0)
 insa(XSAVEOPT, xsaveopt,OpCls( M_ANY,    NONE,     NONE ), F_0F,   0,  no_WDS, 0xAE, 0x30, P_686|P_SSE4,0,0)

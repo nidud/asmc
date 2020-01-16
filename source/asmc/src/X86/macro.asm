@@ -748,17 +748,8 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     mov [esi].sym.target_type,eax
                     mov esi,eax
                     mov [esi].sym.altname,ebx
-                    mov [esi].sym.state,SYM_MACRO
                     and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
-                    mov ecx,LclAlloc(macro_info)
-                    mov [esi].macroinfo,ecx
-                    xor edx,edx
-                    mov [ecx].parmcnt,dx
-                    mov [ecx].localcnt,dx
-                    mov [ecx].parmlist,edx
-                    mov [ecx]._data,edx
-                    mov [ecx].srcfile,edx
-
+                    jmp alloc_macroinfo
                 .else
                     .return asmerr( 2005, edi )
                 .endif
@@ -776,6 +767,9 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
             ;; macro name is found by the expression evaluator.
 
             sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], esi )
+
+            alloc_macroinfo:
+
             mov [esi].sym.state,SYM_MACRO
             mov [esi].macroinfo,LclAlloc(macro_info)
             mov edi,eax

@@ -462,6 +462,8 @@ extern	struct asym	*SymLookupLocal( const char * );
 extern	struct asym	*FASTCALL SymFind( const char *name );
 #define SymSearch(x) SymFind(x)
 
+extern	struct asym	**SymAddress( struct asym * );
+
 extern	void		SymInit( void );
 extern	void		SymPassInit( int pass );
 extern	void		SymMakeAllSymbolsPublic( void );

@@ -12,8 +12,7 @@ foo proto :word, :byte, :real4
 foo macro  a, b, c ; cx, dl, xmm2
     mov ax,a
     mov al,b
-    movss xmm0,c
-    exitm<>
+    exitm<movss xmm0,c>
     endm
 
     .code

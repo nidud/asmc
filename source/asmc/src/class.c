@@ -181,6 +181,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
     case T_DOT_COMDEF:
     case T_DOT_CLASS:
+    case T_DOT_TEMPLATE:
         if ( ModuleInfo.g.ComStack != NULL )
             return ( asmerr( 1011 ) );
 
@@ -208,10 +209,11 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             args++;
         }
 
-        AddLineQueueX( "%sVtbl typedef ptr %sVtbl", LPClass, p );
+        if ( cmd != T_DOT_TEMPLATE ) {
 
-        if ( cmd == T_DOT_CLASS ) {
-            AddLineQueueX( "%s typedef ptr %s", LPClass, p );
+            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", LPClass, p );
+            if ( cmd == T_DOT_CLASS )
+                AddLineQueueX( "%s typedef ptr %s", LPClass, p );
         }
 
         sym = NULL;
@@ -270,7 +272,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
         if ( sym != NULL )
             AddLineQueueX( "%s <>", sym->name );
-        else
+        else if ( cmd != T_DOT_TEMPLATE )
             AddLineQueueX( "lpVtbl %sVtbl ?", LPClass );
         break;
     }

@@ -295,6 +295,17 @@ struct asym * FASTCALL SymFind( const char *name )
     return( NULL );
 }
 
+/* added v2.31.10 -- see macro.c */
+
+struct asym **SymAddress( struct asym *sym )
+{
+    if ( sym == *gsym )
+	return gsym;
+    if ( sym == *lsym )
+	return lsym;
+    return( NULL );
+}
+
 /* SymLookup() creates a global label if it isn't defined yet */
 
 struct asym *SymLookup( const char *name )

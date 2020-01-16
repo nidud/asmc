@@ -581,7 +581,9 @@ ret_code MacroDir( int i, struct asm_tok tokenarray[] )
 {
     char		*name;
     bool		store_data;
+    struct asym		*sym;
     struct dsym		*macro;
+    struct asym		**adr;
 
     name = tokenarray[0].string_ptr;
     macro = (struct dsym *)SymSearch( name );
@@ -589,18 +591,33 @@ ret_code MacroDir( int i, struct asm_tok tokenarray[] )
 	macro = CreateMacro( name );
     } else if( macro->sym.state != SYM_MACRO ) {
 	if ( macro->sym.state != SYM_UNDEFINED ) {
-	    return( asmerr( 2005, name ) );
+	    if ( macro->sym.state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat ) {
+		adr = SymAddress( (struct asym *)macro );
+		sym = SymAlloc( name );
+		macro->sym.target_type = sym;
+		macro = (struct dsym *)sym;
+		macro->sym.isfunc = 0;
+		macro->sym.mac_vararg = 0;
+		macro->sym.altname = (struct asym *)adr;
+		goto alloc_macroinfo;
+	    } else
+		return( asmerr( 2005, name ) );
+	} else {
+
+	    /* the macro was used before it's defined. That's
+	     * a severe error. Nevertheless define the macro now,
+	     * error msg 'invalid symbol type in expression' will
+	     * be displayed in second pass when the (unexpanded)
+	     * macro name is found by the expression evaluator.
+	     */
+	    sym_remove_table( &SymTables[TAB_UNDEF], macro );
+
+alloc_macroinfo:
+
+	    macro->sym.state = SYM_MACRO;
+	    macro->e.macroinfo = (struct macro_info *)LclAlloc( sizeof( struct macro_info ) );
+	    memset( macro->e.macroinfo, 0, sizeof( struct macro_info ) );
 	}
-	/* the macro was used before it's defined. That's
-	 * a severe error. Nevertheless define the macro now,
-	 * error msg 'invalid symbol type in expression' will
-	 * be displayed in second pass when the (unexpanded)
-	 * macro name is found by the expression evaluator.
-	 */
-	sym_remove_table( &SymTables[TAB_UNDEF], macro );
-	macro->sym.state = SYM_MACRO;
-	macro->e.macroinfo = (struct macro_info *)LclAlloc( sizeof( struct macro_info ) );
-	memset( macro->e.macroinfo, 0, sizeof( struct macro_info ) );
     }
     macro->e.macroinfo->srcfile = get_curr_srcfile();
 

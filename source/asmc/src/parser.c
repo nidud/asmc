@@ -2378,7 +2378,7 @@ int LabelMacro( struct asm_tok tokenarray[] )
  */
 int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
-int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[] );
+int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[], struct expr *opnd );
 int NewDirective( int, struct asm_tok[] );
 extern struct asym *CurrEnum;
 int EnumDirective( int, struct asm_tok[] );
@@ -3152,7 +3152,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    case T_AND:
 	    case T_OR:
 	    case T_XOR:
-		return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray );
+		return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray, &opndx[0] );
 	    }
 	}
     }

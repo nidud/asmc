@@ -12,6 +12,21 @@ include twindow.inc
 
     assume rcx:window_t
 
+GetItemRect proto hwnd:window_t
+ContextRect proto hwnd:window_t
+
+GetItemRect macro hwnd
+    mov     rax,[hwnd].Prev
+    movzx   eax,word ptr [rax].TWindow.rc
+    add     eax,[hwnd].rc
+    retm    <eax>
+    endm
+
+ContextRect macro hwnd
+    mov     [hwnd].Context.rc,GetItemRect(hwnd)
+    retm    <eax>
+    endm
+
 OnEnterIdle proc uses rcx hwnd:window_t
 
     Sleep(4)
@@ -22,11 +37,11 @@ OnEnterIdle endp
 
 Inside proc hwnd:window_t, pos:COORD
 
-  local rc:TRECT
+  local rc:TRect
 
     mov eax,[rcx].rc
     .if ( [rcx].Flags & W_CHILD )
-        mov r10,[rcx].PrevInst
+        mov r10,[rcx].Prev
         add ax,word ptr [r10].TWindow.rc
     .endif
     mov rc,eax
@@ -61,11 +76,8 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
         .return [rcx].PostQuit(0) .if !( [rcx].Flags & W_CHILD )
         .return TRUE
     .endif
-
     lea rsi,[rcx].Context
-
     .switch [rcx].Type
-
       .case T_NORMAL
         .if ( eax > 1 )
             mov rcx,[rcx].Child
@@ -81,40 +93,34 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
         mov [rsi].rc.y,r8b
         sub r8b,[rcx].rc.y
         mov [rsi].y,r8b
+        [rcx].CursorOff()
         .endc .if !( [rcx].Flags & W_SHADE )
         mov [rsi].Flags,1
         [rcx].ClrShade()
         and [rcx].Flags,not W_SHADE
         .endc
-
       .case T_PUSHBUTTON
         mov [rsi].State,1
-        mov rbx,rcx
-        mov rcx,[rcx].PrevInst
-        movzx eax,[rbx].rc.x
-        add al,[rcx].rc.x
-        mov esi,eax
-        mov al,[rbx].rc.y
-        add al,[rcx].rc.y
-        mov edi,eax
-        mov al,[rbx].rc.col
-        lea rcx,[rsi+rax]
-        _scputc(ecx, edi, 1, ' ')
-        lea rcx,[rsi+1]
-        movzx r8d,[rbx].rc.col
+        ContextRect(rcx)
+        movzx ebx,al
+        movzx edi,ah
+        [rcx].CPutChar( ebx, edi, 1, ' ' )
+        add bl,[rcx].rc.col
+        dec bl
+        [rcx].CPutChar( ebx, edi, 2, ' ' )
+        movzx edx,[rcx].Context.rc.x
+        inc edx
         inc edi
-        _scputc(ecx, edi, r8d, ' ')
-        [rbx].SetFocus([rbx].Index)
+        [rcx].CPutChar( edx, edi, [rsi].rc.col, ' ' )
+        [rcx].SetFocus( [rcx].Index )
         .endc
-
       .case T_RADIOBUTTON
       .case T_CHECKBOX
+        [rcx].SetFocus( [rcx].Index )
         .endc
-
       .case T_XCELL
         [rcx].SetFocus([rcx].Index)
         .endc
-
       .case T_EDIT
       .case T_MENU
       .case T_XHTML
@@ -133,7 +139,6 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t
 
     lea rsi,[rcx].Context
     .switch [rcx].Type
-
       .case T_NORMAL
         .if ( [rsi].State == 0 )
             mov rcx,[rcx].Child
@@ -145,38 +150,32 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t
             or [rcx].Flags,W_SHADE
             [rcx].SetShade()
         .endif
+        [rcx].SetFocus( [rcx].Index )
         .endc
-
       .case T_PUSHBUTTON
         .return 1 .if ( [rsi].State == 0 )
-        mov     [rsi].State,0
-        mov     rbx,rcx
-        mov     rcx,[rcx].PrevInst
-        movzx   eax,[rbx].rc.x
-        add     al,[rcx].rc.x
-        mov     esi,eax
-        mov     al,[rbx].rc.y
-        add     al,[rcx].rc.y
-        mov     edi,eax
-        mov     al,[rbx].rc.col
-        lea     rcx,[rsi+rax]
-        _scputc(ecx, edi, 1, 'Ü')
-        lea     rcx,[rsi+1]
-        movzx   r8d,[rbx].rc.col
-        inc     edi
-        _scputc(ecx, edi, r8d, 'ß')
-        xor     edx,edx
-        test    [rbx].Flags,O_DEXIT
-        cmovz   edx,[rbx].Index
-        .return [rbx].PostQuit(edx)
-
+        mov [rsi].State,0
+        ContextRect(rcx)
+        movzx edi,ah
+        movzx edx,al
+        inc edx
+        [rcx].CPutChar( edx, edi, 1, 'Ü' )
+        movzx edx,[rsi].rc.x
+        inc edx
+        inc edi
+        [rcx].CPutChar( edx, edi, [rsi].rc.col, 'ß' )
+        xor edx,edx
+        test [rcx].Flags,O_DEXIT
+        cmovz edx,[rcx].Index
+        .return [rcx].PostQuit(edx)
       .case T_RADIOBUTTON
         .return 1 .if ( [rsi].State == 0 )
         mov [rsi].State,0
         .endc
-
       .case T_CHECKBOX
       .case T_XCELL
+        ;[rcx].SetFocus( [rcx].Index )
+        ;.endc
       .case T_EDIT
       .case T_MENU
       .case T_XHTML
@@ -196,15 +195,12 @@ OnMouseMove proc uses rsi hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     lea rsi,[rcx].Context
     xor eax,eax
-
     .return .if [rsi].State == 0
     .return .if [rcx].Flags & W_CHILD
-
     movzx edx,[rsi].rc.y
     shl edx,16
     mov dl,[rsi].rc.x
     .return .if edx == eax
-
     movsx eax,[rsi].x
     movzx edx,r8b
     .if edx >= eax
@@ -234,45 +230,49 @@ OnSetFocus proc uses rsi rdi rbx rcx hwnd:window_t
     [rcx].CursorOn()
 
     .switch [rcx].Type
-
       .case T_PUSHBUTTON
         [rcx].CursorOff()
-        mov     rbx,rcx
-        mov     rcx,[rcx].PrevInst
-        movzx   eax,[rbx].rc.x
-        add     al,[rcx].rc.x
-        mov     esi,eax
-        mov     al,[rbx].rc.y
-        add     al,[rcx].rc.y
-        mov     edi,eax
-        movzx   ecx,[rbx].rc.col
-        lea     rcx,[rcx+rsi-1]
-        _scputc(ecx, edi, 1, 0x11)
-        _scputc(esi, edi, 1, 0x10)
+        ContextRect(rcx)
+        movzx edi,ah
+        movzx edx,al
+        mov ebx,' '
+        .if [rcx].Context.State == 0
+            mov ebx,0x10
+        .endif
+        [rcx].CPutChar(edx, edi, 1, ebx)
+        .if [rcx].Context.State == 0
+            mov ebx,0x11
+        .endif
+        movzx edx,[rcx].Context.rc.x
+        add dl,[rcx].Context.rc.col
+        dec dl
+        [rcx].CPutChar(edx, edi, 1, ebx)
         .endc
-
       .case T_RADIOBUTTON
       .case T_CHECKBOX
+        ContextRect(rcx)
+        movzx edx,al
+        movzx eax,ah
+        inc edx
+        [rcx].CursorMove(edx, eax)
         .endc
-
       .case T_XCELL
         mov edx,[rcx].rc
-        mov rax,[rcx].PrevInst
+        mov rax,[rcx].Prev
         add dx,word ptr [rax].TWindow.rc
         mov [rcx].Window,[rcx].Open(edx, 0)
         .endc .if !rax
         mov rcx,rax
-        [rcx].Read()
+        [rcx].Read(&[rcx].rc, [rcx].Window)
         or [rcx].Flags,W_VISIBLE
         mov rdx,[rcx].Color
-        mov r9b,[rdx+BG_INVERSE]
-        shr r9b,4
-        movzx eax,[rcx].rc.x
-        movzx edx,[rcx].rc.y
-        movzx r8d,[rcx].rc.col
-        _scputbg(eax, edx, r8d, r9b)
+        mov al,[rdx+BG_INVERSE]
+        shr al,4
+        movzx edx,[rcx].rc.x
+        movzx r8d,[rcx].rc.y
+        movzx r9d,[rcx].rc.col
+        [rcx].CPutBackground(edx, r8d, r9d, al)
         .endc
-
       .case T_EDIT
       .case T_MENU
       .case T_XHTML
@@ -294,31 +294,23 @@ OnKillFocus proc uses rsi rdi rbx rcx hwnd:window_t
     [rcx].CursorSet()
 
     .switch [rcx].Type
-
       .case T_PUSHBUTTON
-        mov     rbx,rcx
-        mov     rcx,[rcx].PrevInst
-        movzx   eax,[rbx].rc.x
-        add     al,[rcx].rc.x
-        mov     esi,eax
-        mov     al,[rbx].rc.y
-        add     al,[rcx].rc.y
-        mov     edi,eax
-        movzx   ecx,[rbx].rc.col
-        lea     rcx,[rcx+rsi-1]
-        _scputc(ecx, edi, 1, ' ')
-        _scputc(esi, edi, 1, ' ')
+        ContextRect(rcx)
+        movzx edi,ah
+        movzx esi,al
+        movzx edx,[rcx].rc.col
+        lea rdx,[rdx+rsi-1]
+        [rcx].CPutChar(edx, edi, 1, ' ')
+        [rcx].CPutChar(esi, edi, 1, ' ')
         .endc
-
       .case T_RADIOBUTTON
       .case T_CHECKBOX
         .endc
-
       .case T_XCELL
         mov rax,[rcx].Window
         .endc .if !rax
         mov edx,[rcx].rc
-        mov r10,[rcx].PrevInst
+        mov r10,[rcx].Prev
         add dx,word ptr [r10].TWindow.rc
         mov rbx,rcx
         mov rcx,rax
@@ -327,7 +319,6 @@ OnKillFocus proc uses rsi rdi rbx rcx hwnd:window_t
         xor eax,eax
         mov [rbx].Window,rax
         .endc
-
       .case T_EDIT
       .case T_MENU
       .case T_XHTML
@@ -347,15 +338,12 @@ OnKillFocus endp
 NextItem proc uses rcx hwnd:window_t
 
     .return .if ![rcx].GetFocus()
-
     mov rcx,[rax].TWindow.Child
     .if rcx == NULL
-
-        mov rcx,[rax].TWindow.PrevInst
+        mov rcx,[rax].TWindow.Prev
         mov rcx,[rcx].Child
         .return .if !rcx
     .endif
-
     [rcx].SetFocus([rcx].Index)
     ret
 
@@ -365,11 +353,9 @@ NextItem endp
 PrevItem proc uses rbx rcx hwnd:window_t
 
     test [rcx].Flags,W_CHILD
-    cmovnz rcx,[rcx].PrevInst
+    cmovnz rcx,[rcx].Prev
     mov eax,[rcx].Index
-
     .for ( rbx = [rcx].Child : rbx : rcx = rbx, rbx = [rbx].Child )
-
         .break .if ( eax == [rbx].Index )
     .endf
     .if rbx
@@ -387,21 +373,15 @@ PrevItem endp
 ItemRight proc uses rcx hwnd:window_t
 
     .if [rcx].GetFocus()
-
         mov rcx,rax
         mov edx,[rcx].rc
-
         .while 1
-
             .for ( rax = [rcx].Child : rax : rax = [rax].TWindow.Child )
-
                 .break .if !( [rax].TWindow.Flags & O_STATE )
             .endf
             .break .if !rax
-
             mov rcx,rax
             .if ( dl < [rcx].rc.x && dh == [rcx].rc.y )
-
                 [rcx].SetFocus([rcx].Index)
                 .return 0
             .endif
@@ -409,33 +389,27 @@ ItemRight proc uses rcx hwnd:window_t
     .endif
     mov eax,1
     ret
+
 ItemRight endp
 
 
 ItemLeft proc uses rcx hwnd:window_t
 
     .if [rcx].GetFocus()
-
         mov rcx,rax
         mov edx,[rcx].rc
-
         .while 1
-
             xor eax,eax
-            mov r11,[rcx].PrevInst
+            mov r11,[rcx].Prev
             mov r11,[r11].TWindow.Child
             .for ( : r11 && rcx != r11 : r11 = [r11].TWindow.Child )
-
                 .if !( [r11].TWindow.Flags & O_STATE )
-
                     mov rax,r11
                 .endif
             .endf
             .break .if !rax
-
             mov rcx,rax
             .if ( dl > [rcx].rc.x && dh == [rcx].rc.y )
-
                 [rcx].SetFocus([rcx].Index)
                 .return 0
             .endif
@@ -443,30 +417,76 @@ ItemLeft proc uses rcx hwnd:window_t
     .endif
     mov eax,1
     ret
+
 ItemLeft endp
 
 
-OnChar proc uses rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
+OnChar proc uses rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .if ( [rcx].Flags & W_CHILD )
-
-        .if ( r8d == VK_RETURN )
-
-            mov rax,[rcx].PrevInst
-            mov eax,[rax].TWindow.Index
-
-            .if ( eax == [rcx].Index )
-
-                xor edx,edx
-                test [rcx].Flags,O_DEXIT
-                cmovz edx,eax
+        mov rax,[rcx].Prev
+        mov eax,[rax].TWindow.Index
+        .if ( eax == [rcx].Index )
+            .switch [rcx].Type
+            .case T_EDIT
+                .return 1
+            .case T_RADIOBUTTON
+                .if r8d == VK_SPACE
+                    mov rcx,[rcx].Prev
+                    .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
+                        .if [rcx].Flags & O_RADIO
+                            GetItemRect(rcx)
+                            movzx edx,al
+                            movzx eax,ah
+                            inc edx
+                            and [rcx].Flags,not O_RADIO
+                            [rcx].CPutChar(edx, eax, 1, ' ')
+                            .break
+                        .endif
+                    .endf
+                    GetItemRect(hwnd)
+                    movzx edx,al
+                    movzx eax,ah
+                    inc edx
+                    or  [rcx].Flags,O_RADIO
+                    [rcx].CPutChar(edx, eax, 1, 7)
+                    .return 0
+                .endif
+                .endc
+            .case T_CHECKBOX
+                .if r8d == VK_SPACE
+                    GetItemRect(rcx)
+                    movzx edx,al
+                    movzx eax,ah
+                    inc edx
+                    xor [rcx].Flags,O_CHECK
+                    mov r8d,' '
+                    .if [rcx].Flags & O_CHECK
+                        mov r8d,'x'
+                    .endif
+                    [rcx].CPutChar(edx, eax, 1, r8d)
+                    .return 0
+                .endif
+                .endc
+            .case T_PUSHBUTTON
+            .case T_XCELL
+            .case T_MENU
+            .case T_XHTML
+            .case T_MOUSE
+            .case T_SCROLLUP
+            .case T_SCROLLDOWN
+            .case T_TEXTBUTTON
+                .endc
+            .endsw
+            .if r8d == VK_RETURN
+                xor     edx,edx
+                test    [rcx].Flags,O_DEXIT
+                cmovz   edx,eax
                 .return [rcx].PostQuit(edx)
             .endif
         .endif
         .return 1
-
     .endif
-
     .switch r8d
       .case VK_UP     : .return PrevItem(rcx)
       .case VK_DOWN
@@ -475,7 +495,6 @@ OnChar proc uses rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
       .case VK_RIGHT  : .return ItemRight(rcx)
       .case VK_ESCAPE : .return [rcx].PostQuit(0)
     .endsw
-
     mov rcx,[rcx].Child
     .return [rcx].Send(edx, r8, r9) .if rcx
     ret
@@ -486,18 +505,14 @@ OnChar endp
 OnSysChar proc uses rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .if ( [rcx].Flags & W_CHILD )
-
         .if ( r8d == [rcx].SysKey )
-
             [rcx].SetFocus([rcx].Index)
             .return 0
         .endif
     .else
-
         mov rcx,[rcx].Child
         .return [rcx].Send(edx, r8, r9) .if rcx
     .endif
-
     mov eax,1
     ret
 
@@ -510,11 +525,9 @@ OnSysChar endp
 TWindow::GetFocus proc uses rcx
 
     test [rcx].Flags,W_CHILD
-    cmovnz rcx,[rcx].PrevInst
+    cmovnz rcx,[rcx].Prev
     mov eax,[rcx].Index
-
     .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
-
         .return rcx .if ( eax == [rcx].Index )
     .endf
     xor eax,eax
@@ -527,18 +540,14 @@ TWindow::SetFocus proc uses rbx id:uint_t
 
     mov rbx,rcx
     .if [rcx].GetFocus()
-
         mov rcx,rax
         [rcx].Send(WM_KILLFOCUS, 0, 0)
         mov rcx,rbx
     .endif
-
     test [rcx].Flags,W_CHILD
-    cmovnz rcx,[rcx].PrevInst
+    cmovnz rcx,[rcx].Prev
     mov [rcx].Index,id
-
     .if [rcx].GetFocus()
-
         mov rcx,rax
         [rcx].Send(WM_SETFOCUS, 0, 0)
     .endif
@@ -552,7 +561,7 @@ TWindow::SetFocus endp
 TWindow::GetItem proc uses rcx id:uint_t
 
     test  [rcx].Flags,W_CHILD
-    cmovnz rcx,[rcx].PrevInst
+    cmovnz rcx,[rcx].Prev
     .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
         .return rcx .if ( edx == [rcx].Index )
     .endf

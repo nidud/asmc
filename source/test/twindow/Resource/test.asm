@@ -1,7 +1,7 @@
 
 include twindow.inc
 
-extern IDD_EditColor:idd_t
+extern IDD_EditColor:resource_t
 
     .code
 

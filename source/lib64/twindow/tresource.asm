@@ -10,11 +10,11 @@ include twindow.inc
 
     assume rcx:window_t
     assume rbx:window_t
-    assume rsi:robj_t
+    assume rsi:robject_t
 
-TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
+TWindow::Resource proc uses rsi rdi rbx r12 rcx p:resource_t
 
-    lea     rsi,[rdx].IDDOBJ.dialog
+    lea     rsi,[rdx].TResource.dialog
     movzx   r8d,[rsi].flags
     and     r8d,W_MOVEABLE or W_SHADE or W_COLOR
     mov     rbx,[rcx].Open([rsi].rc, r8d)
@@ -23,11 +23,11 @@ TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
     [rbx].Load(&[rsi-2])
     movzx   edi,[rsi].count
     movzx   eax,[rsi].index
-    lea     rsi,[rsi+ROBJECT]
+    lea     rsi,[rsi+TRObject]
     inc     eax
     mov     [rbx].Index,eax
 
-    .for ( r12d = 1 : edi : edi--, rsi += ROBJECT, r12d++ )
+    .for ( r12d = 1 : edi : edi--, rsi += TRObject, r12d++ )
 
         mov     r9w,[rsi].flags
         and     r9d,0x0F
@@ -43,11 +43,11 @@ TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
 
 TWindow::Resource endp
 
-TWindow::Load proc uses rsi rdi rbx p:idd_t
+TWindow::Load proc uses rsi rdi rbx p:resource_t
 
     xor eax,eax
     mov rbx,rcx
-    lea rsi,[rdx].IDDOBJ.dialog
+    lea rsi,[rdx].TResource.dialog
     mov al,[rsi].count
     lea rsi,[rsi+rax*8+8]
     mov r10,[rbx].Color

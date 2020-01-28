@@ -2991,7 +2991,7 @@ LabelMacro endp
 
 ProcType proto :int_t, :tok_t, :string_t
 PublicDirective proto :int_t, :tok_t
-mem2mem proto :uint_t, :uint_t, :tok_t
+mem2mem proto :uint_t, :uint_t, :tok_t, :ptr expr
 NewDirective proto :int_t, :tok_t
 
 externdef CurrEnum:asym_t
@@ -3945,7 +3945,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             .case T_AND
             .case T_OR
             .case T_XOR
-                .return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPNI2].type, tokenarray )
+                .return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPNI2].type, tokenarray, &opndx )
             .endsw
         .endif
     .endif

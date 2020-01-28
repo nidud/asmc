@@ -727,7 +727,7 @@ ConstError endp
 
 fix_struct_value proc fastcall opnd:expr_t
     mov eax,[ecx].mbr
-    .if [ecx].mbr && [eax].state == SYM_TYPE
+    .if eax && [eax].state == SYM_TYPE
         add [ecx].value,[eax].total_size
         mov [ecx].mbr,NULL
     .endif

@@ -5,6 +5,8 @@
 ;
 
 include stdio.inc
+include wincon.inc
+include winuser.inc
 include twindow.inc
 
     .code
@@ -33,7 +35,7 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:string_t, forma
   local width:int_t
   local line:int_t
   local size:COORD
-  local rc:TRECT
+  local rc:TRect
   local buffer[4096]:char_t
 
     mov rbx,rcx

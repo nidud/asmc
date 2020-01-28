@@ -5,26 +5,27 @@
 ;
 
 include malloc.inc
+include winuser.inc
 include twindow.inc
 
     .code
 
-    assume rdx:msg_t
+    assume rdx:message_t
 
-Dispatch proc private uses rcx hwnd:window_t, msg:msg_t
+Dispatch proc private uses rcx hwnd:window_t, msg:message_t
 
     mov rcx,[rcx].TWindow.Class
     mov r8,[rdx].Next
-    mov rax,[rcx].APPINFO.Message
+    mov rax,[rcx].TClass.Message
 
     .if ( rax == rdx )
-        mov [rcx].APPINFO.Message,r8
+        mov [rcx].TClass.Message,r8
     .elseif rax
-        .while ( rax && rdx != [rax].TMESSAGE.Next )
-            mov rax,[rax].TMESSAGE.Next
+        .while ( rax && rdx != [rax].TMessage.Next )
+            mov rax,[rax].TMessage.Next
         .endw
-        .if ( rax && rdx == [rax].TMESSAGE.Next )
-            mov [rax].TMESSAGE.Next,r8
+        .if ( rax && rdx == [rax].TMessage.Next )
+            mov [rax].TMessage.Next,r8
         .endif
     .endif
     free(rdx)
@@ -35,7 +36,7 @@ Dispatch endp
 
     assume rcx:window_t
 
-Translate proc private uses rdi rcx hwnd:window_t, msg:msg_t
+Translate proc private uses rdi rcx hwnd:window_t, msg:message_t
 
     mov edi,[rdx].Message
     mov [rdx].Message,WM_NULL
@@ -74,7 +75,7 @@ TWindow::Send proc uses rcx uiMsg:uint_t, wParam:size_t, lParam:ptr
         .if ( [rcx].Flags & W_CHILD )
             mov rcx,[rcx].Child
         .else
-            mov rcx,[rcx].PrevInst
+            mov rcx,[rcx].Prev
         .endif
         mov this,rcx
     .endf
@@ -87,7 +88,7 @@ TWindow::Send endp
 
 TWindow::Post proc uiMsg:uint_t, wParam:size_t, lParam:ptr
 
-    .return .if !malloc(TMESSAGE)
+    .return .if !malloc(TMessage)
 
     mov rdx,rax
     mov [rdx].Next,0
@@ -117,7 +118,7 @@ TWindow::Post endp
 TWindow::PostQuit proc uses rcx retval:int_t
 
     test [rcx].Flags,W_CHILD
-    cmovnz rcx,[rcx].PrevInst
+    cmovnz rcx,[rcx].Prev
     [rcx].Post(WM_QUIT, retval, 0)
     xor eax,eax
     ret
@@ -257,12 +258,12 @@ TWindow::Register proc uses rsi rdi rbx tproc:tproc_t
         .endif
         mov IdleCount,0
 
-        .break .if ( [rdi].TMESSAGE.Message == WM_QUIT )
+        .break .if ( [rdi].TMessage.Message == WM_QUIT )
 
         Translate(rcx, rdi)
         Dispatch(rcx, rdi)
     .endw
-    mov rbx,[rdi].TMESSAGE.wParam
+    mov rbx,[rdi].TMessage.wParam
     Dispatch(rcx, rdi)
     [rcx].Send(WM_CLOSE, 0, 0)
     mov rcx,hPrev

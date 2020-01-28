@@ -14,12 +14,32 @@ d dd ?
 q dq ?
 s ends
 
+s3 struct
+b db 3 dup(?)
+s3 ends
+
+s16 struct
+b db 16 dup(?)
+s16 ends
+
+s32 struct
+b db 32 dup(?)
+s32 ends
+
+s64 struct
+b db 64 dup(?)
+s64 ends
+
 foo proc p:ptr
   local q:ptr
   local b:byte
   local w:word
   local d:dword
   local c:s
+  local z3:s3
+  local z16:s16
+  local z32:s32
+  local z64:s64
 
     cmp b,c.b
     test [rdi+rdx],[rsi+rax*2]
@@ -61,6 +81,18 @@ foo proc p:ptr
     or  [rdx].s.b,c.b
     xor [rdx].s.b,c.b
     mov [rdx].s.b,c.b
+
+    ; v2.31.12 -- added extension
+
+    mov c,c
+    mov z3,z3
+    mov z16,z16
+    mov z32,z32 ; max
+    mov z64,z64 ; movsb
+    mov z64,z32 ; mov 32
+    mov z64,z16 ; mov 16
+    mov z64,z3  ; mov 3
+
     ret
 
 foo endp

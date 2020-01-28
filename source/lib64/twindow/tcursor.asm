@@ -7,90 +7,79 @@
 include malloc.inc
 include twindow.inc
 
+    .data
+    vtable TCursorVtbl { TCursor_Hide, TCursor_Show, TCursor_Move, TCursor_Release }
+
     .code
 
-    assume rcx:window_t
-    assume rbx:window_t
-    assume rdi:cursor_t
-    assume rsi:class_t
+    assume rcx:cursor_t
 
-TWindow::CursorGet proc uses rsi rdi rbx rcx
-
-  local ci:CONSOLE_SCREEN_BUFFER_INFO
-
-    mov rbx,rcx
-    mov rsi,[rcx].Class
-    mov rax,[rcx].Cursor
-
-    .return .if ( rax != NULL )
-    .return .if !malloc(TCURSOR)
-
-    mov [rbx].Cursor,rax
-    mov rdi,rax
-    mov [rdi].Position,0
-    .if GetConsoleScreenBufferInfo([rsi].StdOut, &ci)
-        mov [rdi].Position,ci.dwCursorPosition
-    .endif
-    GetConsoleCursorInfo([rsi].StdOut, rdi)
-    mov rax,rdi
-    ret
-
-TWindow::CursorGet endp
-
-TWindow::CursorSet proc uses rsi rdi rbx
-
-    mov rax,[rcx].Cursor
-    .return .if ( rax == NULL )
-
-    mov rdi,rax
-    mov rsi,[rcx].Class
-    mov rbx,rcx
-
-    SetConsoleCursorPosition([rsi].StdOut, [rdi].Position)
-    SetConsoleCursorInfo([rsi].StdOut, rdi)
-    free(rdi)
-
-    mov rcx,rbx
-    xor eax,eax
-    mov [rcx].Cursor,rax
-    ret
-
-TWindow::CursorSet endp
-
-    assume rcx:nothing
-
-TWindow::CursorOn proc uses rcx
+TCursor::Show proc
 
   local cu:CONSOLE_CURSOR_INFO
 
     mov cu.dwSize,CURSOR_NORMAL
     mov cu.bVisible,1
-    mov rcx,[rcx].TWindow.Class
-    SetConsoleCursorInfo([rcx].APPINFO.StdOut, &cu)
+    SetConsoleCursorInfo([rcx].Handle, &cu)
     ret
 
-TWindow::CursorOn endp
+TCursor::Show endp
 
-TWindow::CursorOff proc uses rcx
+TCursor::Hide proc
 
   local cu:CONSOLE_CURSOR_INFO
 
     mov cu.dwSize,CURSOR_NORMAL
     mov cu.bVisible,0
-    mov rcx,[rcx].TWindow.Class
-    SetConsoleCursorInfo([rcx].APPINFO.StdOut, &cu)
+    SetConsoleCursorInfo([rcx].Handle, &cu)
     ret
 
-TWindow::CursorOff endp
+TCursor::Hide endp
 
-TWindow::CursorMove proc uses rcx x:int_t, y:int_t
+TCursor::Move proc x:int_t, y:int_t
 
     shl r8d,16
     or  edx,r8d
-    mov rcx,[rcx].TWindow.Class
-    SetConsoleCursorPosition([rcx].APPINFO.StdOut, edx)
+    SetConsoleCursorPosition([rcx].Handle, edx)
     ret
 
-TWindow::CursorMove endp
+TCursor::Move endp
+
+    assume rbx:cursor_t
+
+TCursor::Release proc uses rbx
+
+    mov rbx,rcx
+    SetConsoleCursorPosition([rbx].Handle, [rbx].Position)
+    SetConsoleCursorInfo([rbx].Handle, &[rbx].CursorInfo)
+    free(rbx)
+    ret
+
+TCursor::Release endp
+
+TCursor::TCursor proc uses rsi rbx
+
+  local ci:CONSOLE_SCREEN_BUFFER_INFO
+
+    mov rax,rcx
+    .if rax == NULL
+        .return .if !malloc( TCursor )
+    .endif
+    mov rbx,rax
+    mov rsi,GetStdHandle(STD_OUTPUT_HANDLE)
+    lea rdx,vtable
+    mov [rbx].lpVtbl,rdx
+    mov [rbx].Position,0
+    mov [rbx].Handle,rsi
+
+    .if GetConsoleScreenBufferInfo(rsi, &ci)
+
+        mov [rbx].Position,ci.dwCursorPosition
+    .endif
+    GetConsoleCursorInfo(rsi, &[rbx].CursorInfo)
+    mov rax,rbx
+    ret
+
+TCursor::TCursor endp
 
     end

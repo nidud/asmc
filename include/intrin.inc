@@ -39,134 +39,149 @@ __debugbreak macro
     retm<>
     endm
 
+_BitScanForward proto :ptr, :long_t
+_BitScanReverse proto :ptr, :long_t
+
 _BitScanForward macro lpIndex, dwMask
-    bsf eax,_mm_loadreg(eax, dwMask)
-    _mm_storereg(lpIndex, eax)
-    retm<al>
+    bsf     eax,edx
+    mov     [rcx],eax
+    setne   al
+    retm    <al>
     endm
 
 _BitScanReverse macro lpIndex, dwMask
-    bsr eax,_mm_loadreg(eax, dwMask)
-    _mm_storereg(lpIndex, eax)
-    retm<al>
+    bsr     eax,edx
+    mov     [rcx],eax
+    setne   al
+    retm    <al>
     endm
 
 ifdef __MACHINEX64
 
+_BitScanForward64 proto :ptr, :qword
+_BitScanReverse64 proto :ptr, :qword
+
 _BitScanForward64 macro lpIndex, dwMask
-    bsf rax,_mm_loadreg(rax, dwMask)
-    _mm_storereg(lpIndex, eax)
-    retm<al>
+    bsf     rax,rdx
+    mov     [rcx],eax
+    setne   al
+    retm    <al>
     endm
 
 _BitScanReverse64 macro lpIndex, dwMask
-    bsr rax,_mm_loadreg(rax, dwMask)
-    _mm_storereg(lpIndex, eax)
-    retm<al>
+    bsr     rax,rdx
+    mov     [rcx],eax
+    setne   al
+    retm    <al>
     endm
 
 endif
 
+_InterlockedCompareExchange     proto :ptr, :long_t, :long_t
+_InterlockedCompareExchange8    proto :ptr, :byte, :byte
+_InterlockedCompareExchange16   proto :ptr, :word, :word
+_InterlockedCompareExchange64   proto :ptr, :qword, :qword
+_InterlockedDecrement16         proto :ptr
+_InterlockedDecrement           proto :ptr
+
 _InterlockedCompareExchange macro Destination, Exchange, Comparand
-    _mm_loadreg(rcx, Destination)
-    _mm_loadreg(edx, Exchange)
-    _mm_loadreg(eax, Comparand)
-    push [rcx]
-    lock cmpxchg dword ptr [rcx],edx
-    pop rax
-    retm<eax>
+    mov     eax,Comparand
+    push    [rcx]
+    lock    cmpxchg dword ptr [rcx],edx
+    pop     rax
+    retm    <eax>
     endm
 
 _InterlockedCompareExchange8 macro Destination, Exchange, Comparand
-    _mm_loadreg(rcx, Destination)
-    _mm_loadreg(dl, Exchange)
-    _mm_loadreg(al, Comparand)
-    push [rcx]
-    lock cmpxchg byte ptr [rcx],dl
-    pop rax
-    retm<al>
+    mov     al,Comparand
+    push    [rcx]
+    lock    cmpxchg byte ptr [rcx],dl
+    pop     rax
+    retm    <al>
     endm
 
 _InterlockedCompareExchange16 macro Destination, Exchange, Comparand
-    _mm_loadreg(rcx, Destination)
-    _mm_loadreg(dx, Exchange)
-    _mm_loadreg(ax, Comparand)
-    push [rcx]
-    lock cmpxchg word ptr [rcx],dl
-    pop rax
-    retm<ax>
+    mov     ax,Comparand
+    push    [rcx]
+    lock    cmpxchg word ptr [rcx],dl
+    pop     rax
+    retm    <ax>
     endm
 
 _InterlockedCompareExchange64 macro Destination, Exchange, Comparand
-    _mm_loadreg(rcx, Destination)
-    _mm_loadreg(rdx, Exchange)
-    _mm_loadreg(rax, Comparand)
-    push [rcx]
-    lock cmpxchg size_t ptr [rcx],rdx
-    pop rax
-    retm<rax>
+    mov     rax,Comparand
+    push    [rcx]
+    lock    cmpxchg size_t ptr [rcx],rdx
+    pop     rax
+    retm    <rax>
     endm
 
 _InterlockedCompareExchangePointer equ <_InterlockedCompareExchange64>
 
 _InterlockedDecrement16 macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
-    lock dec word ptr [rcx]
-    mov ax,[rcx]
-    retm<ax>
+    lock    dec word ptr [rcx]
+    mov     ax,[rcx]
+    retm    <ax>
     endm
 
 _InterlockedDecrement macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
-    lock dec dword ptr [rcx]
-    mov eax,[rcx]
-    retm<eax>
+    lock    dec dword ptr [rcx]
+    mov     eax,[rcx]
+    retm    <eax>
     endm
 
 ifdef __MACHINEX64
+
+_InterlockedDecrement64 proto :ptr
+
 _InterlockedDecrement64 macro lpAddend
     _mm_loadreg(rcx, lpAddend)
     lock dec qword ptr [rcx]
     mov rax,[rcx]
     retm<rax>
     endm
+
 endif
 
+_InterlockedIncrement16 proto :ptr
+_InterlockedIncrement   proto :ptr
+
 _InterlockedIncrement16 macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
-    lock inc word ptr [rcx]
-    mov ax,[rcx]
-    retm<ax>
+    lock    inc word ptr [rcx]
+    mov     ax,[rcx]
+    retm    <ax>
     endm
 
 _InterlockedIncrement macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
-    lock inc dword ptr [rcx]
-    mov eax,[rcx]
-    retm<eax>
+    lock    inc dword ptr [rcx]
+    mov     eax,[rcx]
+    retm    <eax>
     endm
 
 ifdef __MACHINEX64
+
+_InterlockedIncrement64 proto :ptr
+
 _InterlockedIncrement64 macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
-    lock inc qword ptr [rcx]
-    mov rax,[rcx]
-    retm<rax>
+    lock    inc qword ptr [rcx]
+    mov     rax,[rcx]
+    retm    <rax>
     endm
+
 endif
 
+_InterlockedExchangePointer proto :ptr, :ptr
+__fastfail proto :int_t
+
 _InterlockedExchangePointer macro Target, Value
-    _mm_loadreg(rcx, Target)
-    _mm_loadreg(rdx, Value)
-    mov rax,[rcx]
-    xchg [rcx],rdx
-    retm<rax>
+    xchg    [rcx],rdx
+    mov     rax,rdx
+    retm    <rax>
     endm
 
 __fastfail macro code
-    mov ecx,code
-    int 0x29
-    retm<>
+    int     0x29
+    exitm   <>
     endm
 
 _bittest macro lp, imm
@@ -292,6 +307,7 @@ _rotr8 macro val, cnt
     endm
 
 ifdef __MACHINEX86
+
 _InterlockedAddLargeStatistic macro lpAddend, dwValue
     _mm_loadreg(ecx, lpAddend)
     _mm_loadreg(eax, dwValue)
@@ -301,104 +317,94 @@ _InterlockedAddLargeStatistic macro lpAddend, dwValue
     .endif
     retm<eax>
     endm
+
 endif
 
 ifdef __MACHINEX64
 
+_InterlockedAnd     proto :ptr, :long_t
+_InterlockedAnd8    proto :ptr, :byte
+_InterlockedAnd16   proto :ptr, :word
+_InterlockedAnd64   proto :ptr, :qword
+_InterlockedOr      proto :ptr, :long_t
+_InterlockedOr8     proto :ptr, :byte
+_InterlockedOr16    proto :ptr, :word
+_InterlockedOr64    proto :ptr, :qword
+_InterlockedXor     proto :ptr, :long_t
+_InterlockedXor8    proto :ptr, :byte
+_InterlockedXor16   proto :ptr, :word
+_InterlockedXor64   proto :ptr, :qword
+
 _InterlockedAnd macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(edx, dwMask)
-    mov eax,[rcx]
-    lock and [rcx],edx
-    retm<eax>
+    mov     eax,[rcx]
+    lock    and [rcx],edx
+    retm    <eax>
     endm
 
 _InterlockedAnd8 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dl, dwMask)
-    movzx eax,byte ptr [rcx]
-    lock and [rcx],dl
-    retm<eax>
+    movzx   eax,byte ptr [rcx]
+    lock    and [rcx],dl
+    retm    <eax>
     endm
 
 _InterlockedAnd16 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dx, dwMask)
-    movzx eax,word ptr [rcx]
-    lock and [rcx],dx
-    retm<eax>
+    movzx   eax,word ptr [rcx]
+    lock    and [rcx],dx
+    retm    <eax>
     endm
 
 _InterlockedAnd64 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(rdx, dwMask)
-    mov rax,[rcx]
-    lock and [rcx],rdx
-    retm<rax>
+    mov     rax,[rcx]
+    lock    and [rcx],rdx
+    retm    <rax>
     endm
 
 _InterlockedOr macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(edx, dwMask)
-    mov eax,[rcx]
-    lock or [rcx],edx
-    retm<eax>
+    mov     eax,[rcx]
+    lock    or [rcx],edx
+    retm    <eax>
     endm
 
 _InterlockedOr8 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dl, dwMask)
-    movzx eax,byte ptr [rcx]
-    lock or [rcx],dl
-    retm<eax>
+    movzx   eax,byte ptr [rcx]
+    lock    or [rcx],dl
+    retm    <eax>
     endm
 
 _InterlockedOr16 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dx, dwMask)
-    movzx eax,word ptr [rcx]
-    lock or [rcx],dx
-    retm<eax>
+    movzx   eax,word ptr [rcx]
+    lock    or [rcx],dx
+    retm    <eax>
     endm
 
 _InterlockedOr64 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(rdx, dwMask)
-    mov rax,[rcx]
-    lock or [rcx],rdx
-    retm<rax>
+    mov     rax,[rcx]
+    lock    or [rcx],rdx
+    retm    <rax>
     endm
 
 _InterlockedXor macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(edx, dwMask)
-    mov eax,[rcx]
-    lock or [rcx],edx
-    retm<eax>
+    mov     eax,[rcx]
+    lock    or [rcx],edx
+    retm    <eax>
     endm
 
 _InterlockedXor8 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dl, dwMask)
-    movzx eax,byte ptr [rcx]
-    lock xor [rcx],dl
-    retm<eax>
+    movzx   eax,byte ptr [rcx]
+    lock    xor [rcx],dl
+    retm    <eax>
     endm
 
 _InterlockedXor16 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(dx, dwMask)
-    movzx eax,word ptr [rcx]
-    lock xor [rcx],dx
-    retm<eax>
+    movzx   eax,word ptr [rcx]
+    lock    xor [rcx],dx
+    retm    <eax>
     endm
 
 _InterlockedXor64 macro lpValue, dwMask
-    _mm_loadreg(rcx, lpValue)
-    _mm_loadreg(rdx, dwMask)
-    mov rax,[rcx]
-    lock xor [rcx],rdx
-    retm<rax>
+    mov     rax,[rcx]
+    lock    xor [rcx],rdx
+    retm    <rax>
     endm
 
 _InterlockedAnd_np      equ <_InterlockedAnd>
@@ -544,75 +550,79 @@ endif
 
 ifdef __MACHINEX86_X64
 
+__cpuid     proto :ptr_t, :int_t
+__cpuidex   proto :ptr_t, :int_t, :int_t
+__emul      proto :int_t, :int_t
+__emulu     proto :int_t, :int_t
+
 __clts macro
     exitm<clts>
     endm
 
 __cpuid macro cpuInfo, function_id
-    push rsi
-    push rbx
-    _mm_loadreg(rsi, cpuInfo)
-    _mm_loadreg(eax, function_id)
-    xor ecx,ecx
+    push    rsi
+    push    rbx
+    mov     rsi,cpuInfo
+    mov     eax,function_id
+    xor     ecx,ecx
     cpuid
-    mov [rsi],eax
-    mov [rsi+4],ebx
-    mov [rsi+8],ecx
-    mov [rsi+12],edx
-    pop rbx
-    pop rsi
-    retm<eax>
+    mov     [rsi],eax
+    mov     [rsi+4],ebx
+    mov     [rsi+8],ecx
+    mov     [rsi+12],edx
+    pop     rbx
+    pop     rsi
+    retm    <eax>
     endm
 
 __cpuidex macro cpuInfo, function_id, subfunction_id
-    push rsi
-    push rbx
-    _mm_loadreg(rsi, cpuInfo)
-    _mm_loadreg(eax, function_id)
-    _mm_loadreg(ecx, subfunction_id)
+    push    rsi
+    push    rbx
+    mov     rsi,cpuInfo
+    mov     eax,function_id
+    mov     ecx,subfunction_id
     cpuid
-    mov [rsi],eax
-    mov [rsi+4],ebx
-    mov [rsi+8],ecx
-    mov [rsi+12],edx
-    pop rbx
-    pop rsi
-    retm<eax>
+    mov     [rsi],eax
+    mov     [rsi+4],ebx
+    mov     [rsi+8],ecx
+    mov     [rsi+12],edx
+    pop     rbx
+    pop     rsi
+    retm    <eax>
     endm
 
 __emul macro a, b
-    _mm_loadreg(ecx, a)
-    _mm_loadreg(edx, b)
-    movsxd r8,ecx
-    movsxd rax,edx
-    imul r8
-    retm<rax>
+    movsxd  r8,ecx
+    movsxd  rax,edx
+    imul    r8
+    retm    <rax>
     endm
 
 __emulu macro a, b
-    _mm_loadreg(ecx, a)
-    _mm_loadreg(eax, b)
-    mul rcx
-    retm<rax>
+    mov     eax,b
+    mul     rcx
+    retm    <rax>
     endm
 
 endif
 
+_mul128 proto :qword, :qword, :ptr qword
+
 ifdef __MACHINEX64
 
+_mul256 proto :ptr, :ptr, :ptr
+umul256 proto syscall :oword, :oword, :ptr
+
 _mul128 macro Multiplier, Multiplicand, HighProduct
-    _mm_loadreg(rcx, Multiplier)
-    _mm_loadreg(rdx, Multiplicand)
     mov rax,rdx
     mul rcx
-    _mm_storereg(HighProduct, rdx)
-    retm<rax>
+    .if r8
+        mov [r8],rdx
+    .endif
+    retm <rax>
     endm
 
 _mul256 macro Multiplier, Multiplicand, HighProduct
-    _mm_loadreg(rcx, Multiplier)
-    _mm_loadreg(rdx, Multiplicand)
-    _mm_loadreg(r8,  HighProduct)
     mov rax,[rcx]
     mov r10,[rcx+8]
     mov r9, [rdx+8]
@@ -646,17 +656,11 @@ _mul256 macro Multiplier, Multiplicand, HighProduct
             mov     [r8],rax
             mov     [r8+8],rdx
         .endif
-        pop     rax
-        mov     rdx,r11
+        pop rax
+        mov rdx,r11
     .endif
     exitm<>
     endm
-
-umul256 proto syscall Multiplier:oword, Multiplicand:oword, HighProduct:ptr
-
-else
-
-_mul128 proto :qword, :qword, :ptr qword
 
 endif
 
@@ -693,6 +697,7 @@ __faststorefence macro
 endif
 
 ifdef __MACHINEX86_X64
+
 __getcallerseflags macro
     pushfq
     pop rax
@@ -722,117 +727,173 @@ __indword macro Port
     retm<eax>
     endm
 
+__inbytestring  proto :int_t, :ptr_t, :int_t
+__indwordstring proto :int_t, :ptr_t, :int_t
+__invlpg        proto :ptr_t
+__lidt          proto :ptr_t
+__lzcnt         proto :int_t
+__lzcnt16       proto :int_t
+
 __inbytestring macro Port, Buffer, Count
-    push rdi
-    _mm_loadreg(rdi, Buffer)
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ecx, Count)
-    rep insb
-    pop rdi
-    retm<>
+    push    rdi
+    mov     rdi,Buffer
+    mov     edx,Port
+    mov     ecx,Count
+    rep     insb
+    pop     rdi
+    exitm   <>
     endm
 
 __indwordstring macro Port, Buffer, Count
-    push rdi
-    _mm_loadreg(rdi, Buffer)
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ecx, Count)
-    rep insw
-    pop rdi
-    retm<>
+    push    rdi
+    mov     rdi,Buffer
+    mov     edx,Port
+    mov     ecx,Count
+    rep     insw
+    pop     rdi
+    exitm   <>
     endm
 
 __int2c macro
-    int 0x2c
-    retm<>
+    int     0x2c
+    exitm   <>
     endm
 
 __invlpg macro Address
-    _mm_loadreg(rcx, Address)
-    invlpg byte ptr [rcx]
-    retm<>
+    invlpg  byte ptr [rcx]
+    exitm   <>
     endm
 
 __lidt macro Address
-    _mm_loadreg(rcx, Address)
-    lidt byte ptr [rcx]
-    retm<>
+    lidt    byte ptr [rcx]
+    exitm   <>
     endm
-if 0
+
 __lzcnt macro value
-    lzcnt eax,value
-    retm<eax>
+    lzcnt   eax,value
+    retm    <eax>
     endm
 
 __lzcnt16 macro value
-    lzcnt eax,value
-    retm<eax>
+    lzcnt   eax,value
+    retm    <eax>
     endm
-endif
+
 endif
 
 ifdef __MACHINEX64
-if 0
+
+__lzcnt64       proto :int_t
+
 __lzcnt64 macro value
-    lzcnt eax,value
-    retm<eax>
+    lzcnt   eax,value
+    retm    <eax>
     endm
 
-endif
 endif
 
 ifdef __MACHINEX86_X64
 
-__movs macro x, Destination, Source, Count
-    push rsi
-    push rdi
-    _mm_loadreg(rdi, Destination)
-    _mm_loadreg(rsi, Source)
-    _mm_loadreg(ecx, Count)
-    rep movs&x&
-    pop rdi
-    pop rsi
-    retm<>
-    endm
-
-__stos macro reg, x, Destination, Val, Count
-    push rdi
-    _mm_loadreg(rdi, Destination)
-    _mm_loadreg(reg, Val)
-    _mm_loadreg(ecx, Count)
-    rep stos&x&
-    pop rdi
-    retm<>
-    endm
+__movsb proto :ptr, :ptr, :int_t
+__movsd proto :ptr, :ptr, :int_t
+__movsw proto :ptr, :ptr, :int_t
+__stosb proto :ptr, :byte, :int_t
+__stosw proto :ptr, :word, :int_t
+__stosd proto :ptr, :dword, :int_t
 
 __movsb macro Destination, Source, Count
-    exitm<__movs(b, Destination, Source, Count)>
+    push    rsi
+    push    rdi
+    mov     rdi,Destination
+    mov     rsi,Source
+    mov     ecx,Count
+    rep     movsb
+    pop     rdi
+    pop     rsi
+    exitm   <>
     endm
-__movsd macro Destination, Source, Count
-    exitm<__movs(d, Destination, Source, Count)>
-    endm
+
 __movsw macro Destination, Source, Count
-    exitm<__movs(w, Destination, Source, Count)>
+    push    rsi
+    push    rdi
+    mov     rdi,Destination
+    mov     rsi,Source
+    mov     ecx,Count
+    rep     movsw
+    pop     rdi
+    pop     rsi
+    exitm   <>
     endm
+
+__movsd macro Destination, Source, Count
+    push    rsi
+    push    rdi
+    mov     rdi,Destination
+    mov     rsi,Source
+    mov     ecx,Count
+    rep     movsd
+    pop     rdi
+    pop     rsi
+    exitm   <>
+    endm
+
 __stosb macro Destination, Val, Count
-    exitm<__stos(al, b, Destination, Val, Count)>
+    push    rdi
+    mov     rdi,Destination
+    mov     al,Val
+    mov     ecx,Count
+    rep     stosb
+    pop     rdi
+    exitm   <>
     endm
-__stosd macro Destination, Val, Count
-    exitm<__stos(eax, d, Destination, Val, Count)>
-    endm
+
 __stosw macro Destination, Val, Count
-    exitm<__stos(ax, w, Destination, Val, Count)>
+    push    rdi
+    mov     rdi,Destination
+    mov     ax,Val
+    mov     ecx,Count
+    rep     stosw
+    pop     rdi
+    exitm   <>
+    endm
+
+__stosd macro Destination, Val, Count
+    push    rdi
+    mov     rdi,Destination
+    mov     eax,Val
+    mov     ecx,Count
+    rep     stosd
+    pop     rdi
+    exitm   <>
     endm
 
 endif
 
 ifdef __MACHINEX64
 
+__stosq proto :ptr, :qword, :int_t
+__movsq proto :ptr, :ptr, :int_t
+
 __movsq macro Destination, Source, Count
-    exitm<__movs(q, Destination, Source, Count)>
+    push    rsi
+    push    rdi
+    mov     rdi,Destination
+    mov     rsi,Source
+    mov     ecx,Count
+    rep     movsq
+    pop     rdi
+    pop     rsi
+    exitm   <>
     endm
+
 __stosq macro Destination, Val, Count
-    exitm<__stos(rax, q, Destination, Val, Count)>
+    push    rdi
+    mov     rdi,Destination
+    mov     rax,Val
+    mov     ecx,Count
+    rep     stosd
+    pop     rdi
+    exitm   <>
     endm
 
 endif
@@ -864,33 +925,40 @@ __outdword macro Port, val
     retm<>
     endm
 
+__outbytestring     proto :int_t, :ptr, :int_t
+__outdwordstring    proto :int_t, :ptr, :int_t
+__outwordstring     proto :int_t, :ptr, :int_t
+
 __outbytestring macro Port, Buffer, Count
-    push rdi
-    _mm_loadreg(rdi, Buffer)
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ecx, Count)
-    rep outsb
-    pop rdi
-    retm<>
+    push    rdi
+    mov     rdi,Buffer
+    mov     edx,Port
+    mov     ecx,Count
+    rep     outsb
+    pop     rdi
+    exitm   <>
     endm
-__outdwordstring macro Port, Buffer, Count
-    push rdi
-    _mm_loadreg(rdi, Buffer)
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ecx, Count)
-    rep outsd
-    pop rdi
-    retm<>
-    endm
+
 __outwordstring macro Port, Buffer, Count
-    push rdi
-    _mm_loadreg(rdi, Buffer)
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ecx, Count)
-    rep outsw
-    pop rdi
-    retm<>
+    push    rdi
+    mov     rdi,Buffer
+    mov     edx,Port
+    mov     ecx,Count
+    rep     outsw
+    pop     rdi
+    exitm   <>
     endm
+
+__outdwordstring macro Port, Buffer, Count
+    push    rdi
+    mov     rdi,Buffer
+    mov     edx,Port
+    mov     ecx,Count
+    rep     outsd
+    pop     rdi
+    exitm   <>
+    endm
+
 endif
 
 ifdef __MACHINEX86_X64
@@ -1011,6 +1079,7 @@ endif
 endif
 
 ifdef __MACHINEX64
+
 __shiftleft128 macro LowPart, HighPart, Count
     _mm_loadreg(rax, LowPart)
     _mm_loadreg(rdx, HighPart)
@@ -1135,55 +1204,60 @@ endif
 
 ifdef __MACHINEX64
 
+__vmx_on        proto :ptr
+__vmx_vmclear   proto :ptr
+__vmx_vmptrld   proto :ptr
+__vmx_vmread    proto :ptr, :ptr
+__vmx_vmwrite   proto :ptr, :ptr
+
 __vmx_on macro VmsSupportPhysicalAddress
-    _mm_loadreg(rcx, VmsSupportPhysicalAddress)
-    vmxon qword ptr [rcx]
-    retm<>
+    vmxon   qword ptr [rcx]
+    exitm   <>
     endm
 
 __vmx_vmclear macro VmcsPhysicalAddress
-    _mm_loadreg(rcx, VmcsPhysicalAddress)
     vmclear qword ptr [rcx]
-    retm<>
+    exitm   <>
     endm
 
 __vmx_vmlaunch macro
     vmlaunch
-    retm<>
+    exitm   <>
     endm
 
 __vmx_vmptrld macro VmcsPhysicalAddress
     vmptrld qword ptr [rcx]
-    retm<>
+    exitm   <>
     endm
 
 __vmx_vmread macro Field, FieldValue
-    _mm_loadreg(rax, Field)
-    _mm_loadreg(rcx, FieldValue)
-    vwread [rcx],rax
-    retm<>
+    mov     rax,Field
+    mov     rcx,FieldValue
+    vmread  rax,rcx
+    exitm   <>
     endm
 
 __vmx_vmresume macro
     vmresume
-    retm<>
+    exitm   <>
     endm
 
 __vmx_vmwrite macro Field, FieldValue
-    _mm_loadreg(eax, Field)
-    _mm_loadreg(ecx, FieldValue)
+    mov     rax,Field
+    mov     rcx,FieldValue
     vmwrite rax,rcx
-    retm<>
+    exitm   <>
     endm
 
 endif
 
 ifdef __MACHINEX86_X64
 
+__vmx_vmptrst proto :ptr
+
 __vmx_vmptrst macro VmcsPhysicalAddress
-    _mm_loadreg(rcx, VmcsPhysicalAddress)
     vmptrst qword ptr [rcx]
-    retm<>
+    exitm   <>
     endm
 
 endif
@@ -1251,13 +1325,15 @@ endif
 
 ifdef __MACHINEX86_X64
 
+__writemsr  proto :ptr, :ptr
+_lgdt       proto :ptr
+_sgdt       proto :ptr
+
 __writemsr macro Register, Value
-    _mm_loadreg(ecx, Register)
-    _mm_loadreg(rdx, Value)
-    mov rax,rdx
-    shr rdx,32
+    mov     rax,rdx
+    shr     rdx,32
     wrmsr
-    retm<>
+    exitm   <>
     endm
 
 _rsm macro
@@ -1266,109 +1342,107 @@ _rsm macro
     endm
 
 _lgdt macro p
-    _mm_loadreg(rcx, p)
-    lgdt qword ptr [rcx]
-    retm<>
+    lgdt    qword ptr [rcx]
+    exitm   <>
     endm
 
 _sgdt macro p
-    _mm_loadreg(rcx, p)
-    sgdt qword ptr [rcx]
-    retm<>
+    sgdt    qword ptr [rcx]
+    exitm   <>
     endm
 
 _clac macro
     clac
-    retm<>
+    exitm   <>
     endm
 
 _stac macro
     stac
-    retm<>
+    exitm   <>
     endm
 
+_addcarry_u8    proto :byte, :byte, :byte, :ptr
+_subborrow_u8   proto :byte, :byte, :byte, :ptr
+_addcarry_u16   proto :byte, :word, :word, :ptr
+_subborrow_u16  proto :byte, :word, :word, :ptr
+_addcarry_u32   proto :byte, :dword, :dword, :ptr
+_subborrow_u32  proto :byte, :dword, :dword, :ptr
+
 _addcarry_u8 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov al,a
-    adc al,b
-    mov [rcx],al
-    retm<al>
+    add     cl,-1
+    adc     dl,r8b
+    mov     [r9],dl
+    setb    al
+    retm    <al>
     endm
 
 _subborrow_u8 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov al,a
-    sbb al,b
-    mov [rcx],al
-    retm<al>
+    add     cl,-1
+    sbb     dl,r8b
+    mov     [r9],dl
+    setb    al
+    retm    <al>
     endm
 
 _addcarry_u16 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov ax,a
-    adc ax,b
-    mov [rcx],ax
-    retm<ax>
+    add     cl,-1
+    adc     dx,r8w
+    mov     [r9],dx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 _subborrow_u16 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp ax,carry
-    mov ax,a
-    sbb ax,b
-    mov [rcx],ax
-    retm<ax>
+    add     cl,-1
+    sbb     dx,r8w
+    mov     [r9],dx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 _addcarry_u32 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov eax,a
-    adc eax,b
-    mov [rcx],eax
-    retm<eax>
+    add     cl,-1
+    adc     edx,r8d
+    mov     [r9],edx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 _subborrow_u32 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov eax,a
-    sbb eax,b
-    mov [rcx],eax
-    retm<eax>
+    add     cl,-1
+    sbb     edx,r8d
+    mov     [r9],edx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 endif
 
 ifdef __MACHINEX64
 
+_addcarry_u64   proto :byte, :qword, :qword, :ptr
+_subborrow_u64  proto :byte, :qword, :qword, :ptr
+
 _addcarry_u64 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov rax,a
-    adc rax,b
-    mov [rcx],rax
-    retm<rax>
+    add     cl,-1
+    adc     rdx,r8
+    mov     [r9],rdx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 _subborrow_u64 macro carry, a, b, p
-    _mm_loadreg(rcx, p)
-    xor eax,eax
-    cmp al,carry
-    mov rax,a
-    sbb rax,b
-    mov [rcx],rax
-    retm<rax>
+    add     cl,-1
+    sbb     rdx,r8
+    mov     [r9],rdx
+    setb    al
+    movzx   eax,al
+    retm    <eax>
     endm
 
 endif

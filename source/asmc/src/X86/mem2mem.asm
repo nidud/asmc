@@ -15,7 +15,34 @@ include expreval.inc
 
     .code
 
-    assume ebx:tok_t
+SizeFromExpression proc opnd:ptr expr
+
+    mov edx,opnd
+    mov ecx,[edx].expr.mbr
+    .if ecx && [ecx].asym.state == SYM_STRUCT_FIELD
+        mov eax,[ecx].asym.total_size
+        .if [ecx].asym.flag & S_ISARRAY
+            mov ecx,[ecx].asym.total_length
+            xor edx,edx
+            div ecx
+        .endif
+    .elseif [edx].expr.mem_type != MT_EMPTY
+        SizeFromMemtype([edx].expr.mem_type, [edx].expr.Ofssize, [edx].expr.type)
+    .else
+        mov eax,[edx].expr.type
+        .if eax
+            mov ecx,eax
+            mov eax,[eax].asym.total_size
+            .if [ecx].asym.flag & S_ISARRAY
+                mov ecx,[ecx].asym.total_length
+                xor edx,edx
+                div ecx
+            .endif
+        .endif
+    .endif
+    ret
+
+SizeFromExpression endp
 
 mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr expr
 
@@ -43,22 +70,10 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
         mov regz,8
     .endif
 
-    mov size,0
-    mov esi,opnd
-    mov ecx,[esi].expr.mbr
-    .if ecx && [ecx].asym.state == SYM_STRUCT_FIELD
-        mov size,[ecx].asym.total_size
-    .else
-        mov size,SizeFromMemtype([esi].expr.mem_type, [esi].expr.Ofssize, [esi].expr.type)
-    .endif
-
-    mov ecx,[esi+expr].expr.mbr
-    .if ecx && [ecx].asym.state == SYM_STRUCT_FIELD
-        mov eax,[ecx].asym.total_size
-    .else
-        SizeFromMemtype([esi+expr].expr.mem_type, [esi+expr].expr.Ofssize, [esi+expr].expr.type)
-    .endif
-    .if eax
+    mov size,SizeFromExpression(opnd)
+    mov eax,opnd
+    add eax,expr
+    .if SizeFromExpression(eax)
         .if eax < size
             mov size,eax
         .endif
@@ -68,13 +83,33 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     mov ecx,reg
     mov esi,ecx
     mov edi,ecx
-
+if 0
+    .switch ebx
+    .case OP_M08
+        mov size,1
+    .case OP_MS
+        mov edi,T_AL
+        .endc
+    .case OP_M16
+        mov size,2
+        mov edi,T_AX
+        .endc
+    .case OP_M32
+        mov size,4
+        mov edi,T_EAX
+        .endc
+    .case OP_M64
+        mov size,8
+        .endc
+    .endsw
+else
     .switch ebx
     .case OP_MS
     .case OP_M08: mov edi,T_AL  : .endc
     .case OP_M16: mov edi,T_AX  : .endc
     .case OP_M32: mov edi,T_EAX : .endc
     .endsw
+endif
 
     .switch edx
     .case OP_MS
@@ -91,9 +126,9 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     .endif
 
     mov ebx,tokenarray
-    mov op,[ebx].tokval
+    mov op,[ebx].asm_tok.tokval
     add ebx,16
-    mov dst,[ebx].tokpos
+    mov dst,[ebx].asm_tok.tokpos
 
     .for ( edx = ebx : [edx].asm_tok.token != T_FINAL : edx += 16 )
         .if ( [edx].asm_tok.tokval == ecx )
@@ -126,6 +161,11 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
         .if size <= ecx
             AddLineQueueX( " mov %r,%s", esi, eax )
         .else
+
+            .if ( op != T_MOV )
+                .return asmerr( 2070 )
+            .endif
+
             mov esi,eax
             mov edi,size
             .if regz == 8

@@ -2,6 +2,23 @@
 #include <globals.h>
 #include <hllext.h>
 
+int SizeFromExpression( struct expr *opnd )
+{
+    if ( opnd->mbr && opnd->mbr->state == SYM_STRUCT_FIELD ) {
+	if ( opnd->mbr->isarray )
+	    return ( opnd->mbr->total_size / opnd->mbr->total_length );
+	return ( opnd->mbr->total_size );
+    }
+    if ( opnd->mem_type != MT_EMPTY )
+	return SizeFromMemtype( opnd->mem_type, opnd->Ofssize, opnd->type );
+    if ( opnd->type ) {
+	if ( opnd->type->isarray )
+	    return ( opnd->type->total_size / opnd->type->total_length );
+	return ( opnd->type->total_size );
+    }
+    return 0;
+}
+
 int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct expr *opnd )
 {
     int o1 = op1 & OP_MS;
@@ -13,7 +30,6 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
     char *dst;
     char *src;
 
-
     if ( !o1 || !o2 || ModuleInfo.strict_masm_compat )
 	return asmerr( 2070 );
 
@@ -24,15 +40,8 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
 	regz = 8;
     }
 
-    size = 0;
-    if ( opnd->mbr && opnd->mbr->state == SYM_STRUCT_FIELD )
-	size = opnd->mbr->total_size;
-    else
-	size = SizeFromMemtype( opnd->mem_type, opnd->Ofssize, opnd->type );
-    if ( opnd[1].mbr && opnd[1].mbr->state == SYM_STRUCT_FIELD )
-	i = opnd[1].mbr->total_size;
-    else
-	i = SizeFromMemtype( opnd[1].mem_type, opnd[1].Ofssize, opnd[1].type );
+    size = SizeFromExpression( opnd );
+    i = SizeFromExpression( &opnd[1] );
     if ( i && i < size )
 	size = i;
 
@@ -88,6 +97,8 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
 	if ( size <= i ) {
 	    AddLineQueueX( " mov %r,%s", r2, src );
 	} else {
+	    if ( op != T_MOV )
+		return asmerr( 2070 );
 	    i = size;
 	    if ( regz == 8 ) {
 		if ( i > 32 ) {

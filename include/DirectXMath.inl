@@ -2776,10 +2776,10 @@ endif
     ;; Splat the component X,Y,Z then W
     ;;
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss(A[0x00]))
-    _mm_store_ps(vY, _mm_broadcast_ss(A[0x04]))
-    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x08]))
-    _mm_store_ps(vW, _mm_broadcast_ss(A[0x0C]))
+    _mm_broadcast_ss(A[0x00], vX)
+    _mm_broadcast_ss(A[0x04], vY)
+    _mm_broadcast_ss(A[0x08], vZ)
+    _mm_broadcast_ss(A[0x0C], vW)
 else
     ;;
     ;; Use vW to hold the original row
@@ -2808,10 +2808,10 @@ endif
     ;; Repeat for the other 3 rows
     ;;
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss(A[0x10]))
-    _mm_store_ps(vY, _mm_broadcast_ss(A[0x14]))
-    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x18]))
-    _mm_store_ps(vW, _mm_broadcast_ss(A[0x1C]))
+    _mm_broadcast_ss(A[0x10], vX)
+    _mm_broadcast_ss(A[0x14], vY)
+    _mm_broadcast_ss(A[0x18], vZ)
+    _mm_broadcast_ss(A[0x1C], vW)
 else
     _mm_store_ps(vW, A[0x10])
     XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
@@ -2828,10 +2828,10 @@ endif
     _mm_add_ps(vX, vY)
     _mm_store_ps(xmm1, vX)
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss(A[0x20]))
-    _mm_store_ps(vY, _mm_broadcast_ss(A[0x24]))
-    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x28]))
-    _mm_store_ps(vW, _mm_broadcast_ss(A[0x2C]))
+    _mm_broadcast_ss(A[0x20], vX)
+    _mm_broadcast_ss(A[0x24], vY)
+    _mm_broadcast_ss(A[0x28], vZ)
+    _mm_broadcast_ss(A[0x2C], vW)
 else
     _mm_store_ps(vW, A[0x20])
     XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
@@ -2848,10 +2848,10 @@ endif
     _mm_add_ps(vX, vY)
     _mm_store_ps(xmm2, vX)
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss(A[0x30]))
-    _mm_store_ps(vY, _mm_broadcast_ss(A[0x34]))
-    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x38]))
-    _mm_store_ps(vW, _mm_broadcast_ss(A[0x3C]))
+    _mm_broadcast_ss(A[0x30], vX)
+    _mm_broadcast_ss(A[0x34], vY)
+    _mm_broadcast_ss(A[0x38], vZ)
+    _mm_broadcast_ss(A[0x3C], vW)
 else
     _mm_store_ps(vW, A[0x30])
     XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
@@ -2866,7 +2866,7 @@ endif
     _mm_add_ps(vX, vZ)
     _mm_add_ps(vY, vW)
     _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm3, vX)
+    ;_mm_store_ps(xmm3, vX)
 ifnb <result>
     _mm_store_ps(xmmword ptr result[0x00], xmm0)
     _mm_store_ps(xmmword ptr result[0x10], xmm1)

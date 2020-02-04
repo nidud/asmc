@@ -185,26 +185,28 @@ cursor_t        typedef ptr TCursor
 
 .class TEdit
 
-    base        string_t ?  ; base pointer
-    size        dd ?        ; size of buffer-line
-    flags       dd ?        ; config
-    index       dd ?        ; base offset - start of screen-line
-    count       dd ?        ; byte count in line
-    winx        dd ?        ; text window x,y
-    winy        dd ?
-    cols        dd ?        ; size of screen-line
-    x           dd ?        ; x offset on screen
-    attrib      dd ?        ; clear attrib/char
-    clipstart   dd ?        ; Clipboard start offset
-    clipend     dd ?        ; Clipboard end offset
+    base            string_t ?      ; base pointer
+    flags           uint_t ?        ; config
+    xpos            uint_t ?        ; text window x,y
+    ypos            uint_t ?
+    scols           uint_t ?        ; size of screen-line
+    bcols           uint_t ?        ; size of buffer-line
+    xoffs           uint_t ?        ; x offset on screen
+    boffs           uint_t ?        ; base offset - start of screen-line
+    bcount          uint_t ?        ; byte count in line (expanded)
+    clrattrib       uint_t ?        ; clear attrib/char
+    clip_so         uint_t ?        ; Clipboard start offset
+    clip_eo         uint_t ?        ; Clipboard end offset
 
     Release         proc
-
+    IsSelected      proc
+    ClipSet         proc
+    ClipDel         proc
+    ClipCut         proc :uint_t
+    ClipPaste       proc
     GetLine         proc
     SetWinPos       proc :trect_t, :trect_t
     SetCursor       proc
-    ClipSet         proc
-    ClipIsSelected  proc
 
     .ends
     tedit_t     typedef ptr TEdit

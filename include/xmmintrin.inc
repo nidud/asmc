@@ -67,6 +67,10 @@ endif
 endif
 endif;; __ICL
 
+ifndef XMVECTOR
+XMVECTOR typedef REAL16
+endif
+
 ;;
 ;; MACRO for shuffle parameter for _mm_shuffle_ps().
 ;; Argument fp3 is a digit[0123] that represents the fp
@@ -91,23 +95,21 @@ _MM_SHUFFLE macro fp3, fp2, fp1, fp0
 ;; now holds column 0 of the original matrix, row1 now
 ;; holds column 1 of the original matrix, etc.
 ;;
+
+_MM_TRANSPOSE4_PS proto :XMVECTOR, :XMVECTOR, :XMVECTOR, :XMVECTOR
 _MM_TRANSPOSE4_PS macro row0, row1, row2, row3
-    _mm_store_ps(xmm0, row0)
-    _mm_store_ps(xmm1, row1)
-    _mm_store_ps(xmm2, row2)
-    _mm_store_ps(xmm3, row3)
     _mm_store_ps(xmm4, xmm0)
     _mm_store_ps(xmm5, xmm2)
-    _mm_shuffle_ps(xmm0, xmm1, 0x44)
-    _mm_shuffle_ps(xmm4, xmm1, 0xEE)
-    _mm_shuffle_ps(xmm2, xmm3, 0x44)
-    _mm_shuffle_ps(xmm5, xmm3, 0xEE)
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
     _mm_store_ps(xmm1, xmm0)
     _mm_store_ps(xmm3, xmm2)
-    _mm_shuffle_ps(xmm0, xmm4, 0x88)
-    _mm_shuffle_ps(xmm1, xmm4, 0xDD)
-    _mm_shuffle_ps(xmm2, xmm5, 0x88)
-    _mm_shuffle_ps(xmm3, xmm5, 0xDD)
+    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
+    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
     exitm<>
     endm
 
@@ -145,36 +147,60 @@ _MM_FLUSH_ZERO_MASK	equ 0x8000
 _MM_FLUSH_ZERO_ON	equ 0x8000
 _MM_FLUSH_ZERO_OFF	equ 0x0000
 
-_MM_SET_EXCEPTION_STATE macro m
-    exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_EXCEPT_MASK) OR (m))>
+_mm_getcsr macro
+    stmxcsr [rsp]
+    mov	    eax,[rsp]
+    retm    <eax>
+    endm
+
+_mm_setcsr macro reg
+    mov	    [rsp],reg
+    ldmxcsr [rsp]
+    retm    <eax>
+    endm
+
+_MM_SET_EXCEPTION_STATE macro mask
+    and	    _mm_getcsr(),NOT _MM_EXCEPT_MASK
+    or	    eax,mask
+    exitm   <_mm_setcsr(eax)>
     endm
 
 _MM_GET_EXCEPTION_STATE macro
-    exitm<(_mm_getcsr() & _MM_EXCEPT_MASK)>
+    and	    _mm_getcsr(),NOT _MM_EXCEPT_MASK
+    retm    <eax>
     endm
 
-_MM_SET_EXCEPTION_MASK macro m
-    exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_MASK_MASK) OR (m))>
+_MM_SET_EXCEPTION_MASK macro mask
+    and	    _mm_getcsr(),NOT _MM_MASK_MASK
+    or	    eax,mask
+    exitm   <_mm_setcsr(eax)>
     endm
 
 _MM_GET_EXCEPTION_MASK macro
-    exitm<(_mm_getcsr() & _MM_MASK_MASK)>
+    and	    _mm_getcsr(),_MM_MASK_MASK
+    retm    <eax>
     endm
 
 _MM_SET_ROUNDING_MODE macro mode
-    exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_ROUND_MASK) OR (mode))>
+    and	    _mm_getcsr(),NOT _MM_ROUND_MASK
+    or	    eax,mode
+    exitm   <_mm_setcsr(eax)>
     endm
 
 _MM_GET_ROUNDING_MODE macro
-    exitm<(_mm_getcsr() & _MM_ROUND_MASK)>
+    and	    _mm_getcsr(),_MM_ROUND_MASK
+    retm    <eax>
     endm
 
 _MM_SET_FLUSH_ZERO_MODE macro mode
-    exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_FLUSH_ZERO_MASK) OR (mode))>
+    and	    _mm_getcsr(),NOT _MM_FLUSH_ZERO_MASK
+    or	    eax,mode
+    exitm   <_mm_setcsr(eax)>
     endm
 
 _MM_GET_FLUSH_ZERO_MODE macro
-    exitm<(_mm_getcsr() AND _MM_FLUSH_ZERO_MASK)>
+    and	    _mm_getcsr(),_MM_FLUSH_ZERO_MASK
+    retm    <eax>
     endm
 
 _mm_add_ss macro a:=<xmm0>, b:=<xmm1>
@@ -706,16 +732,6 @@ _mm_move_ss macro a:=<xmm0>, b:=<xmm1>
 
 _mm_sfence macro
     exitm<sfence>
-    endm
-_mm_getcsr macro
-    stmxcsr [rsp]
-    mov eax,[rsp]
-    retm<eax>
-    endm
-_mm_setcsr macro reg
-    mov [rsp],reg
-    ldmxcsr [rsp]
-    exitm<>
     endm
 
 ifdef __ICL

@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added YWORD and ZWORD as args to INVOKE
 - added directive .template
 - fixed delayed expansion of macro error
 - fixed bug in mov dword ptr [reg], foo() / mov [reg].RECT.left, foo()

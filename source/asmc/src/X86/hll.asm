@@ -1071,12 +1071,14 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
   local sym:dsym_t, info:proc_t, curr:asym_t
   local proc_id:tok_t, parg_id:int_t, b[MAX_LINE_LEN]:char_t
   local opnd:expr, bracket:int_t
+  local reg2:int_t
 
     xor eax,eax
     mov b,al
     mov proc_id,eax ; foo( 1, bar(...), ...)
     mov parg_id,eax ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax|xmm0]]
     mov bracket,eax
+    mov reg2,eax
 
     .for ( eax = &b,
            ebx = tokenarray,
@@ -1165,35 +1167,42 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
             .if ecx
                 mov eax,[ecx].asym.total_size
                 .switch eax
-                  .case 1: lea esi,@CStr(" al"):  .endc
-                  .case 2: lea esi,@CStr(" ax"):  .endc
+                  .case 1: mov esi,T_AL : .endc
+                  .case 2: mov esi,T_AX : .endc
                   .case 4:
-                    .if ModuleInfo.Ofssize == USE64
-                        .if [ecx].asym.mem_type & MT_FLOAT
-                            lea esi,@CStr(" xmm0")
-                        .else
-                            lea esi,@CStr(" eax")
-                        .endif
-                    .else
-                        lea esi,@CStr(" eax")
+                    mov esi,T_EAX
+                    .if ModuleInfo.Ofssize == USE64 && [ecx].asym.mem_type & MT_FLOAT
+                        mov esi,T_XMM0
                     .endif
                     .endc
                   .case 8
                     .if ModuleInfo.Ofssize == USE64
                         .if [ecx].asym.mem_type & MT_FLOAT
-                            lea esi,@CStr(" xmm0")
+                            mov esi,T_XMM0
                         .else
-                            lea esi,@CStr(" rax")
+                            mov esi,T_RAX
                         .endif
                     .else
-                        lea esi,@CStr(" edx::eax")
+                        mov esi,T_EDX
+                        mov reg2,T_EAX
                     .endif
                     .endc
                   .case 16:
                     .if [ecx].asym.mem_type & MT_FLOAT
-                        lea esi,@CStr(" xmm0")
+                        mov esi,T_XMM0
                     .elseif ModuleInfo.Ofssize == USE64
-                        lea esi,@CStr(" rdx::rax")
+                        mov esi,T_RDX
+                        mov reg2,T_RAX
+                    .endif
+                    .endc
+                  .case 32:
+                    .if [ecx].asym.mem_type == MT_YWORD
+                        mov esi,T_YMM0
+                    .endif
+                    .endc
+                  .case 64:
+                    .if [ecx].asym.mem_type == MT_ZWORD
+                        mov esi,T_ZMM0
                     .endif
                     .endc
                 .endsw
@@ -1204,14 +1213,14 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
     .if !esi
 
 ifndef __ASMC64__
-        lea esi,@CStr( " eax" )
+        mov esi,T_EAX
         .if ModuleInfo.Ofssize == USE64
-            lea esi,@CStr( " rax" )
+            mov esi,T_RAX
         .elseif ModuleInfo.Ofssize == USE16
-            lea esi,@CStr( " ax" )
+            mov esi,T_AX
         .endif
 else
-        lea esi,@CStr( " rax" )
+        mov esi,T_RAX
 endif
         mov eax,i
         .if !proc_id && eax > 1
@@ -1284,6 +1293,8 @@ endif
                             .case MT_REAL8
                             .case MT_REAL10
                             .case MT_REAL16 : mov eax,16 : .endc
+                            .case MT_YWORD  : mov eax,32 : .endc
+                            .case MT_ZWORD  : mov eax,64 : .endc
                             .endsw
                         .endif
                     .else
@@ -1293,17 +1304,17 @@ endif
 
                 .if eax
                     .switch eax
-                      .case 1: lea esi,@CStr(" al"):  .endc
-                      .case 2: lea esi,@CStr(" ax"):  .endc
-                      .case 4: lea esi,@CStr(" eax"): .endc
+                      .case 1: mov esi,T_AL  : .endc
+                      .case 2: mov esi,T_AX  : .endc
+                      .case 4: mov esi,T_EAX : .endc
                       .case 8
                         .if ModuleInfo.Ofssize == USE64
-                            lea esi,@CStr(" rax")
+                            mov esi,T_RAX
                         .endif
                         .endc
-                      .case 16:
-                        lea esi,@CStr(" xmm0")
-                        .endc
+                      .case 16 : mov esi,T_XMM0 : .endc
+                      .case 32 : mov esi,T_YMM0 : .endc
+                      .case 64 : mov esi,T_ZMM0 : .endc
                     .endsw
                 .endif
 
@@ -1316,28 +1327,33 @@ endif
         .endif
     .endif
 
-    lea eax,b
-    strcat(eax, esi)
+    mov ebx,GetResWName(esi, 0)
+    lea esi,b
+    strcat(esi, " ")
+    strcat(esi, ebx)
+    .if reg2
+        strcat(esi, "::")
+        strcat(esi, GetResWName(reg2, 0))
+    .endif
 
     mov ebx,e
     shl ebx,4
     .if [ebx+edi].token != T_FINAL
 
-        strcat( eax, " " )
-        strcat( eax, [ebx+edi].tokpos )
+        strcat( esi, " " )
+        strcat( esi, [ebx+edi].tokpos )
     .endif
 
     .if ModuleInfo.list
-
-        push eax
         LstSetPosition()
-        pop eax
     .endif
-    strcpy(ModuleInfo.currsource, eax)
+
+    strcpy(ModuleInfo.currsource, esi)
     Tokenize(eax, 0, edi, TOK_DEFAULT)
     mov ModuleInfo.token_count,eax
     mov eax,STRING_EXPANDED
     ret
+
 StripSource endp
 
 LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:tok_t

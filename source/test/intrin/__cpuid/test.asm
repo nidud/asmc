@@ -193,12 +193,12 @@ InstructionSet_Internal::InstructionSet_Internal proc uses rsi rdi rbx
   local brand[0x40]:SBYTE
   local cpustring[512]:SBYTE
 
-    .if malloc( sizeof(InstructionSet_Internal) + sizeof(InstructionSet_InternalVtbl) )
+    .if malloc( InstructionSet_Internal + InstructionSet_InternalVtbl )
 
         mov rsi,rax
         mov rdi,rax
         xor eax,eax
-        mov ecx,sizeof(InstructionSet_Internal)
+        mov ecx,InstructionSet_Internal
         rep stosb
         mov [rsi],rdi
         lea rax,InstructionSet_Internal_Release
@@ -207,8 +207,7 @@ InstructionSet_Internal::InstructionSet_Internal proc uses rsi rdi rbx
         ;; Calling __cpuid with 0x0 as the function_id argument
         ;; gets the number of the highest valid function ID.
         ;;
-        __cpuid(&cpui, 0)
-        mov [rsi].nIds_,eax
+        mov [rsi].nIds_,__cpuid(&cpui, 0)
 
         .for (rdi = &cpustring, ebx = 0: ebx <= [rsi].nIds_: ++ebx)
 

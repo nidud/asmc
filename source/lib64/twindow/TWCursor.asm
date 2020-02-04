@@ -18,7 +18,7 @@ TWindow::CursorGet proc
 
         mov rax,[rcx].Class
 
-        .new TCursor([rax].TClass.StdOut)
+        .new TCursor()
 
         mov rcx,this
         mov [rcx].Cursor,rax

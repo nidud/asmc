@@ -48,10 +48,10 @@ MT_TBYTE		equ 10 - 1
 MT_REAL10		equ MT_TBYTE or MT_FLOAT
 MT_OWORD		equ 16 - 1
 MT_REAL16		equ MT_OWORD or MT_FLOAT
-MT_YWORD		equ 32 - 1
-MT_ZWORD		equ 64 - 1
 MT_YMMWORD		equ 32 - 1
 MT_ZMMWORD		equ 64 - 1
+MT_YWORD		equ MT_YMMWORD
+MT_ZWORD		equ MT_ZMMWORD
 MT_PROC			equ 0x80 ;; symbol is a TYPEDEF PROTO, state=SYM_TYPE,
 				 ;; typekind=TYPE_TYPEDEF, prototype is stored in target_type
 MT_NEAR			equ 0x81

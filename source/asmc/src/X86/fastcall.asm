@@ -796,11 +796,21 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
     ; v2.04: check if argument is the correct XMM register already
 
     .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
-        .if GetValueSp( reg ) & OP_XMM
+
+        mov ecx,GetValueSp(reg)
+
+        .if ecx & ( OP_XMM or OP_YMM or OP_ZMM )
+
             lea eax,[esi+T_XMM0]
+            .if ecx & OP_YMM
+                lea eax,[esi+T_YMM0]
+            .elseif ecx & OP_ZMM
+                lea eax,[esi+T_ZMM0]
+            .endif
+
             .if eax != reg
                 mov edx,param
-                .if reg < T_XMM16
+                .if reg < T_XMM16 && ecx & OP_XMM
                     .if [edx].asym.mem_type == MT_REAL4
                         AddLineQueueX(" movss %r, %r", eax, reg)
                     .elseif [edx].asym.mem_type == MT_REAL8
@@ -814,7 +824,7 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
                     .elseif [edx].asym.mem_type == MT_REAL8
                         AddLineQueueX(" vmovsd %r, %r, %r", eax, eax, reg)
                     .else
-                        AddLineQueueX(" vmovaps %r, %r, %r", eax, eax, reg)
+                        AddLineQueueX(" vmovaps %r, %r", eax, reg)
                     .endif
                 .endif
             .endif
@@ -1137,7 +1147,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .return 1
     .endif
 
-    .if [edx].asym.mem_type & MT_FLOAT || \
+    .if [edx].asym.mem_type & MT_FLOAT || [edx].asym.mem_type == MT_YWORD || \
         ( [edx].asym.mem_type == MT_OWORD && vector_call )
 
         .return CheckXMM(reg, paramvalue, regs_used, param)

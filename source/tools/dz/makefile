@@ -22,7 +22,7 @@ LIB = $(asmc)\bin\libw /q /b /n /c /fac
 !if $(debug)
 LINK = $(msvc)\bin\link /map /debug /subsystem:console /libpath:$(asmc)\lib
 !else
-LINK = $(asmc)\bin\linkw op map,q, stub=$(path)\res\dz.bin file
+LINK = $(asmc)\bin\linkw op stub=$(path)\res\dz.bin file
 ICON = $(watc)\binnt\wrc -q $(path)\res\dz.res $@
 !endif
 
@@ -116,26 +116,6 @@ libc_objecs = \
     lib32\string\strncpy.obj \
     lib32\string\strrchr.obj \
     lib32\string\strstr.obj \
-    strlib\x86\btohex.obj \
-    strlib\x86\cmpwarg.obj \
-    strlib\x86\dostounix.obj \
-    strlib\x86\hextob.obj \
-    strlib\x86\memquote.obj \
-    strlib\x86\memrchr.obj \
-    strlib\x86\memstri.obj \
-    strlib\x86\setfext.obj \
-    strlib\x86\strchri.obj \
-    strlib\x86\streol.obj \
-    strlib\x86\strins.obj \
-    strlib\x86\strmove.obj \
-    strlib\x86\strnzcpy.obj \
-    strlib\x86\strpath.obj \
-    strlib\x86\strshr.obj \
-    strlib\x86\strstart.obj \
-    strlib\x86\strstri.obj \
-    strlib\x86\strtrim.obj \
-    strlib\x86\strxchg.obj \
-    strlib\x86\unixtodos.obj \
     lib32\time\__TimeToFT.obj \
     lib32\time\__TimeToST.obj \
     lib32\time\_days.obj \

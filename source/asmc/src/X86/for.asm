@@ -360,190 +360,183 @@ local   rc:int_t,
     mov cmd,eax
     inc i
 
-    .repeat
-        .if eax == T_DOT_ENDF
+    .if eax == T_DOT_ENDF
 
-            mov esi,ModuleInfo.HllStack
-            .if !esi
+        mov esi,ModuleInfo.HllStack
+        .if !esi
+            .return asmerr(1011)
+        .endif
 
-                asmerr(1011)
-                .break
+        mov edx,[esi].next
+        mov ecx,ModuleInfo.HllFree
+        mov ModuleInfo.HllStack,edx
+        mov [esi].next,ecx
+        mov ModuleInfo.HllFree,esi
+
+        .if [esi].cmd != HLL_FOR
+            .return asmerr(1011)
+        .endif
+
+        mov eax,[esi].labels[LTEST*4]
+        .if eax
+
+            AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), LABELQUAL )
+        .endif
+
+        .if [esi].condlines
+
+            QueueTestLines( [esi].condlines )
+        .endif
+
+        AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
+
+        mov eax,[esi].labels[LEXIT*4]
+        .if eax
+
+            AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), LABELQUAL )
+        .endif
+        mov eax,i
+        shl eax,4
+        add ebx,eax
+        .if [ebx].token != T_FINAL && rc == NOT_ERROR
+
+            mov rc,asmerr( 2008, [ebx].tokpos )
+        .endif
+
+    .else
+
+        mov esi,ModuleInfo.HllFree
+        .if !esi
+
+            mov esi,LclAlloc(hll_item)
+        .endif
+        ExpandCStrings(tokenarray)
+
+        xor eax,eax
+        mov [esi].labels[LEXIT*4],eax
+        .if cmd == T_DOT_FORS
+
+            or eax,HLLF_IFS
+        .endif
+        mov [esi].flags,eax
+        mov [esi].cmd,HLL_FOR
+
+        ; create the loop labels
+
+        mov [esi].labels[LSTART*4],GetHllLabel()
+        mov [esi].labels[LTEST*4],GetHllLabel()
+        mov [esi].labels[LEXIT*4],GetHllLabel()
+
+        mov eax,i
+        shl eax,4
+        add ebx,eax
+        .if [ebx].token == T_OP_BRACKET
+
+            inc i
+            add ebx,16
+        .endif
+
+        .if !strchr(strcpy(edi, [ebx].tokpos), ':')
+
+            .return asmerr(2206)
+        .endif
+        .if BYTE PTR [eax+1] == "'"
+            .return asmerr(2206) .if !strchr(&[eax+1], ':')
+        .endif
+
+        mov BYTE PTR [eax],0
+        inc eax
+        SkipSpace(ecx, eax)
+        mov p,eax
+        .if !strchr(eax, ':')
+
+            .return asmerr( 2206 )
+        .endif
+
+        mov BYTE PTR [eax],0
+        inc eax
+        SkipSpace(ecx, eax)
+        mov q,eax
+        strtrim(eax)
+        SkipSpace(ecx, edi)
+        strtrim(edi)
+        strtrim(p)
+
+        .if [ebx-16].token == T_OP_BRACKET
+
+            .if strrchr(q, ')')
+
+                mov BYTE PTR [eax],0
+                strtrim(q)
             .endif
+        .endif
 
-            mov edx,[esi].next
-            mov ecx,ModuleInfo.HllFree
-            mov ModuleInfo.HllStack,edx
-            mov [esi].next,ecx
-            mov ModuleInfo.HllFree,esi
+        lea ebx,cmdstr
+        mov BYTE PTR [ebx],0
+        .if RenderAssignment(ebx, edi, tokenarray)
 
-            .if [esi].cmd != HLL_FOR
+            QueueTestLines( ebx )
+        .endif
+        AddLineQueueX( "%s%s",
+                GetLabelStr( [esi].labels[LSTART*4], &buff ), LABELQUAL )
 
-                asmerr( 1011 )
-                .break
-            .endif
+        mov BYTE PTR [ebx],0
+        mov [esi].condlines,0
 
-            mov eax,[esi].labels[LTEST*4]
-            .if eax
+        .if RenderAssignment(ebx, q, tokenarray)
 
-                AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), LABELQUAL )
-            .endif
-
-            .if [esi].condlines
-
-                QueueTestLines( [esi].condlines )
-            .endif
-
-            AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
-
-            mov eax,[esi].labels[LEXIT*4]
-            .if eax
-
-                AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), LABELQUAL )
-            .endif
-            mov eax,i
-            shl eax,4
-            add ebx,eax
-            .if [ebx].token != T_FINAL && rc == NOT_ERROR
-
-                mov rc,asmerr( 2008, [ebx].tokpos )
-            .endif
-        .else
-
-            mov esi,ModuleInfo.HllFree
-            .if !esi
-
-                mov esi,LclAlloc(hll_item)
-            .endif
-            ExpandCStrings(tokenarray)
-
-            xor eax,eax
-            mov [esi].labels[LEXIT*4],eax
-            .if cmd == T_DOT_FORS
-
-                or eax,HLLF_IFS
-            .endif
-            mov [esi].flags,eax
-            mov [esi].cmd,HLL_FOR
-
-            ; create the loop labels
-
-            mov [esi].labels[LSTART*4],GetHllLabel()
-            mov [esi].labels[LTEST*4],GetHllLabel()
-            mov [esi].labels[LEXIT*4],GetHllLabel()
-
-            mov eax,i
-            shl eax,4
-            add ebx,eax
-            .if [ebx].token == T_OP_BRACKET
-
-                inc i
-                add ebx,16
-            .endif
-
-            .if !strchr(strcpy(edi, [ebx].tokpos), ':')
-
-                asmerr( 2206 )
-                .break
-            .endif
-
-            mov BYTE PTR [eax],0
+            strlen( ebx )
             inc eax
-            SkipSpace(ecx, eax)
-            mov p,eax
-            .if !strchr(eax, ':')
+            push    eax
+            LclAlloc( eax )
+            pop ecx
+            mov [esi].condlines,eax
+            memcpy( eax, ebx, ecx )
+        .endif
 
-                asmerr( 2206 )
-                .break
-            .endif
+        mov edi,p
+        mov BYTE PTR [ebx],0
+        .while GetCondition(edi)
 
-            mov BYTE PTR [eax],0
-            inc eax
-            SkipSpace(ecx, eax)
-            mov q,eax
-            strtrim(eax)
-            SkipSpace(ecx, edi)
-            strtrim(edi)
-            strtrim(p)
+            push ecx
+            mov edi,edx
+            lea edx,tokbuf
+            Tokenize( strcat( strcpy( edx, ".if " ), edi ), 0, tokenarray, TOK_DEFAULT )
+            mov ModuleInfo.token_count,eax
 
-            .if [ebx-16].token == T_OP_BRACKET
+            mov i,1
+            EvaluateHllExpression( esi, &i, tokenarray, LEXIT, 0, ebx )
+            mov rc,eax
 
-                .if strrchr(q, ')')
-
-                    mov BYTE PTR [eax],0
-                    strtrim(q)
-                .endif
-            .endif
-
-            lea ebx,cmdstr
-            mov BYTE PTR [ebx],0
-            .if RenderAssignment(ebx, edi, tokenarray)
+            .if eax == NOT_ERROR
 
                 QueueTestLines( ebx )
             .endif
-            AddLineQueueX( "%s%s",
-                GetLabelStr( [esi].labels[LSTART*4], &buff ), LABELQUAL )
+            pop edi
+        .endw
 
-            mov BYTE PTR [ebx],0
-            mov [esi].condlines,0
+        .if esi == ModuleInfo.HllFree
 
-            .if RenderAssignment(ebx, q, tokenarray)
-
-                strlen( ebx )
-                inc eax
-                push    eax
-                LclAlloc( eax )
-                pop ecx
-                mov [esi].condlines,eax
-                memcpy( eax, ebx, ecx )
-            .endif
-
-            mov edi,p
-            mov BYTE PTR [ebx],0
-            .while GetCondition(edi)
-
-                push ecx
-                mov edi,edx
-
-                lea edx,tokbuf
-                Tokenize( strcat( strcpy( edx, ".if " ), edi ), 0, tokenarray, TOK_DEFAULT )
-                mov ModuleInfo.token_count,eax
-
-                mov i,1
-                EvaluateHllExpression( esi, &i, tokenarray, LEXIT, 0, ebx )
-                mov rc,eax
-
-                .if eax == NOT_ERROR
-
-                    QueueTestLines( ebx )
-                .endif
-                pop edi
-            .endw
-
-            .if esi == ModuleInfo.HllFree
-
-                mov eax,[esi].next
-                mov ModuleInfo.HllFree,eax
-            .endif
-
-            mov eax,ModuleInfo.HllStack
-            mov [esi].next,eax
-            mov ModuleInfo.HllStack,esi
-
+            mov eax,[esi].next
+            mov ModuleInfo.HllFree,eax
         .endif
 
-        .if ModuleInfo.list
+        mov eax,ModuleInfo.HllStack
+        mov [esi].next,eax
+        mov ModuleInfo.HllStack,esi
 
-            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-        .endif
+    .endif
 
-        .if ModuleInfo.line_queue.head
+    .if ModuleInfo.list
 
-            RunLineQueue()
-        .endif
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
 
-        mov eax,rc
+    .if ModuleInfo.line_queue.head
 
-    .until  1
+        RunLineQueue()
+    .endif
+    mov eax,rc
     ret
 
 ForDirective endp

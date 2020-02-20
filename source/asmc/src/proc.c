@@ -723,8 +723,12 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		ti.size = 0;
 		i++;
 	    } else {
-		if ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
+		if ( tokenarray[i].token == T_ID && ( 0 == _stricmp( tokenarray[i].string_ptr, "ABS" ) ) ) {
+		    ti.mem_type = MT_ABS;
+		    i++;
+		} else if ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR ) {
 		    return( ERROR );
+		}
 	    }
 	}
 

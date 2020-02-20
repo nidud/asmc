@@ -1,4 +1,3 @@
-include windows.inc
 include objbase.inc
 include intrin.inc
 include stdio.inc

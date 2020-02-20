@@ -17,6 +17,8 @@ Command-line options **/Zne**
 - [.endf](../directive/dot_endf.md)
 - [.class](../directive/dot_class.md)
 - [.comdef](../directive/dot_comdef.md)
+- [.operator](../directive/dot_operator.md)
+- [.template](../directive/dot_template.md)
 - [.ends](../directive/dot_ends.md)
 - [.new](../directive/dot_new.md)
 - [.switch](../directive/dot_switch.md)

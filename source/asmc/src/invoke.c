@@ -844,7 +844,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     struct dsym *	proc;
     struct dsym *	arg;
     char *		p;
-    uint_8 *		regs;
+    char *		q;
     int			numParam;
     int			value;
     int			size;
@@ -858,6 +858,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     char		buffer[MAX_LINE_LEN];
     int			fastcall_id;
     struct asym *	macro = NULL;
+    struct asym *	class = NULL;
 
     i++; /* skip INVOKE directive */
     namepos = i;
@@ -1074,14 +1075,20 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    macro = NULL;
     }
 
-    if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET && tokenarray[namepos+3].token == T_DOT &&
-	opnd.mbr && opnd.mbr->method ) ) {
+    if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET &&
+	tokenarray[namepos+3].token == T_DOT && opnd.mbr && opnd.mbr->method ) ) {
 
 	if ( !ModuleInfo.strict_masm_compat && !macro && ModuleInfo.Ofssize == USE64 ) {
 
 	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
-	    strcpy(buffer + strlen(buffer) - 4, "_");
-	    strcat(buffer, opnd.mbr->name);
+	    buffer[strlen(buffer)-4] = '\0';
+	    class = SymSearch( buffer );
+	    strcat(buffer, "_");
+	    if ( opnd.mbr->name[0] == '.' && ModuleInfo.dotname ) {
+		strcat(buffer, "__");
+		strcat(buffer, &opnd.mbr->name[1]);
+	    } else
+		strcat(buffer, opnd.mbr->name);
 	    macro = SymSearch( buffer );
 	    if ( macro && macro->state != SYM_MACRO )
 		macro = NULL;
@@ -1091,28 +1098,49 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	    int cnt = 0;
 	    for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ );
-
 	    p = &StringBufferEnd[1];
 	    strcpy( p, buffer );
 	    strcat( p, "( " );
 	    p += strlen(p);
-	    if ( Parse_Pass == PASS_1 ) {
-		regs = elf64regs;
-		curr = info->paralist;
-		if ( sym->langtype != LANG_SYSCALL )
-		    regs = win64regs;
-		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
 
-		    int reg = regs[parmpos];
+	    if ( Parse_Pass == PASS_1 ) {
+
+		curr = info->paralist;
+		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
+		    int reg = 0;
 		    int ind = cnt - parmpos - 1;
 
 		    for ( arg = info->paralist; ind; arg = arg->nextparam, ind-- );
-		    if ( regs[0] == T_RDI )
-			reg = arg->sym.regist[0];
-		    else if ( arg->sym.mem_type & MT_FLOAT )
-			reg = parmpos + T_XMM0;
 		    size = SizeFromMemtype( arg->sym.mem_type, arg->sym.Ofssize, arg->sym.type );
-		    curr->sym.string_ptr = get_regname(reg, size);
+
+		    if ( sym->langtype == LANG_SYSCALL )
+			reg = arg->sym.regist[0];
+		    else if ( parmpos < 4 ) {
+			if ( arg->sym.mem_type & MT_FLOAT && size <= 16 )
+			    reg = parmpos + T_XMM0;
+			else if ( arg->sym.mem_type == MT_YWORD )
+			    reg = parmpos + T_YMM0;
+			else if ( arg->sym.mem_type == MT_ZWORD )
+			    reg = parmpos + T_ZMM0;
+			else
+			    reg = win64regs[parmpos];
+		    } else if ( parmpos < 6 && sym->langtype == LANG_VECTORCALL ) {
+			if ( arg->sym.mem_type & MT_FLOAT && size <= 16 )
+			    reg = parmpos + T_XMM0;
+			else if ( arg->sym.mem_type == MT_YWORD )
+			    reg = parmpos + T_YMM0;
+			else if ( arg->sym.mem_type == MT_ZWORD )
+			    reg = parmpos + T_ZMM0;
+		    }
+
+		    if ( arg->sym.mem_type == MT_ABS )
+			;
+		    else if ( reg ) {
+			curr->sym.string_ptr = get_regname(reg, size);
+		    } else {
+			curr->sym.string_ptr = LclAlloc(16);
+			sprintf( curr->sym.string_ptr, "[rsp+%d*8]", parmpos );
+		    }
 		}
 	    }
 	    curr = info->paralist;

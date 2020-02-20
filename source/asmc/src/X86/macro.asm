@@ -20,6 +20,8 @@ include listing.inc
 include malloc.inc
 include ltype.inc
 
+CALLBACK(GETLINE, :string_t)
+
 ;; a placeholder consists of escape char (0x0a) + index (1 byte).
 ;; if this is to change, function fill_placeholders() must
 ;; be adjusted!
@@ -50,6 +52,9 @@ mname_list struct
     name    string_t ?  ;; name of param/local
     len     dw ?
 mname_list ends
+
+    .data
+    GetLine GETLINE GetTextLine
 
     .code
 
@@ -418,8 +423,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
                     add ebx,16
                 .elseif !_stricmp( [ebx].string_ptr, "VARARGML" )
                     ;; more parameters can follow, multi lines possible
-                    or [edx].asym.mac_flag,M_ISVARARG
-                    or [edx].asym.mac_flag,M_MULTILINE
+                    or [edx].asym.mac_flag,M_ISVARARG or M_MULTILINE
                     .if [ebx+16].token != T_FINAL
                         asmerr( 2129 )
                         .break
@@ -447,7 +451,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
     ;; now read in the lines of the macro, and store them if store_data is TRUE
     .for( :: )
 
-        mov src,GetTextLine( &buffer )
+        mov src,GetLine( &buffer )
         .if eax == NULL
             asmerr(1008) ;; unmatched macro nesting
         .endif
@@ -803,6 +807,51 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
 MacroDir endp
 
+    assume esi:nothing
+
+
+lq_line struct  ;; item of a line queue
+next    ptr_t ?
+line    char_t 1 dup(?)
+lq_line ends
+
+LineQueue equ <ModuleInfo.line_queue>
+
+PreprocessLine proto :ptr, :ptr
+GenerateCString proto :int_t, :tok_t
+
+GeLineQueue proc private uses esi buffer:string_t
+
+    mov eax,LineQueue.head
+    .return .if !eax
+    mov esi,eax
+    mov LineQueue.head,[esi].lq_line.next
+    strcpy(buffer, &[esi].lq_line.line)
+    MemFree(esi)
+    mov eax,buffer
+    ret
+
+GeLineQueue endp
+
+
+MacroLineQueue proc uses ebx
+
+  local oldstat:input_status
+  local oldline:GETLINE
+
+    mov ebx,PushInputStatus(&oldstat)
+    inc ModuleInfo.GeneratedCode
+    mov oldline,GetLine
+    mov GetLine,GeLineQueue
+    .if GetLine(CurrSource)
+        PreprocessLine(eax, ebx)
+    .endif
+    mov GetLine,oldline
+    dec ModuleInfo.GeneratedCode
+    PopInputStatus( &oldstat )
+    ret
+
+MacroLineQueue endp
 
 ;; PURGE directive.
 ;; syntax: PURGE macro [, macro, ... ]

@@ -6,6 +6,7 @@
 
 include math.inc
 include immintrin.inc
+include xmmmacros.inc
 
     .code
 
@@ -13,19 +14,21 @@ include immintrin.inc
 
 tanh proc x:double
 
-    .if _mm_comigt_sd(xmm0, FLT8(50.0))
+    mov rax,50.0
+    movq xmm1,rax
+    .if _mm_comigt_sd(xmm0, xmm1)
 
-        _mm_move_sd(xmm0, FLT8(1.0))
+        _mm_move_sd(xmm0, 1.0)
     .else
 
-        _mm_move_sd(xmm2, FLT8(-50.0))
+        _mm_move_sd(xmm2, -50.0)
         _mm_move_pd(xmm1, xmm0)
-        _mm_move_sd(xmm0, FLT8(-1.0))
+        _mm_move_sd(xmm0, -1.0)
 
         .if _mm_comile_sd(xmm2, xmm1)
 
             exp(xmm1)
-            _mm_move_sd(xmm2, FLT8(1.0))
+            _mm_move_sd(xmm2, 1.0)
             _mm_move_pd(xmm1, xmm0)
             _mm_div_sd(xmm2, xmm0)
             _mm_add_sd(xmm0, xmm2)

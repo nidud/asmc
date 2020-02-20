@@ -10,6 +10,7 @@ include reswords.inc
 include listing.inc
 include memalloc.inc
 include types.inc
+include macro.inc
 
 ; item for .CLASS, .ENDS, and .COMDEF
 
@@ -218,17 +219,38 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
 
 ProcType endp
 
+get_operator proc token:int_t
+
+    mov eax,token
+    .switch al
+    .case '=' : .return T_EQU
+    .case '&' : .return T_ANDN .if ah == '~' : .return T_AND
+    .case '|' : .return T_OR
+    .case '^' : .return T_XOR
+    .case '*' : .return T_MUL
+    .case '/' : .return T_DIV
+    .case '<' : .endc .if ah != '<' : .return T_SHL
+    .case '>' : .endc .if ah != '>' : .return T_SHR
+    .case '+' : .return T_INC .if ah == '+' : .return T_ADD
+    .case '-' : .return T_DEC .if ah == '-' : .return T_SUB
+    .case '~' : .return T_NOT
+    .case '%' : .return T_MOD
+    .endsw
+    .return 0
+
+get_operator endp
+
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local rc          : int_t,
         args        : int_t,
         cmd         : uint_t,
         public_pos  : string_t,
-        LPClass[64] : char_t
+        class[64]   : char_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
-    lea edi,LPClass
+    lea edi,class
 
     mov edx,i
     shl edx,4
@@ -256,6 +278,172 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .endif
         .endif
         .endc
+
+      .case T_DOT_OPERATOR
+
+        mov esi,ModuleInfo.ComStack
+        mov eax,CurrStruct
+        .if !eax || !esi
+            .return asmerr(1011)
+        .endif
+        ;
+        ; .operator + :type, :type
+        ;
+        ;mov ModuleInfo.dotname,TRUE
+        lea ebx,[ebx+edx+16]
+
+        .new is_id:int_t
+        .new is_equ:int_t
+        .new token[64]:char_t
+        .new inline:string_t
+        .new name[128]:string_t
+
+        mov is_id,0     ; name proc :qword, :qword
+        mov is_equ,0    ; [m|r]add88 proc :qword, :qword
+
+        mov edx,[ebx].tokpos
+        mov ecx,[edx]
+        push ecx
+        .switch get_operator(ecx)
+        .case 0
+            .if [ebx].token != T_ID
+                .return asmerr(1011)
+            .endif
+            inc is_id
+            strcpy(&token, [ebx].string_ptr)
+            xor eax,eax
+            .endc
+        .case T_EQU
+            inc is_equ
+            .endc
+        .case T_ANDN
+        .case T_INC
+        .case T_DEC
+            add ebx,16
+            .endc
+        .endsw
+        .if eax
+            mov token,'r'
+            lea edx,token[1]
+            GetResWName(eax, edx)
+        .endif
+        add ebx,16
+        .if [ebx].token == T_DIRECTIVE && [ebx].tokval == T_EQU
+            add ebx,16
+            inc is_equ
+        .endif
+        pop eax
+        shr eax,8
+        .if al == '=' || ah == '='
+            inc is_equ
+        .endif
+        .if is_equ
+            mov token,'m'
+        .endif
+
+        mov class,0
+        mov inline,0
+
+        push ebx
+        .for ( args = 1 : [ebx].token != T_FINAL : ebx += 16 )
+
+            .if ( [ebx].token == T_STRING && [ebx].bytval == '{' )
+
+                mov inline,[ebx].string_ptr
+                mov eax,[ebx].tokpos
+                mov byte ptr [eax],0
+                mov [ebx].token,T_FINAL
+                .break
+            .endif
+
+            .if ( [ebx].token == T_COLON )
+
+                xor eax,eax
+                .if ( [ebx+16].token == T_STYPE )
+
+                    mov ecx,[ebx+16].tokval
+                    mov al,GetMemtypeSp(ecx)
+
+                    SizeFromMemtype(al, USE_EMPTY, 0 )
+
+                .elseif ( [ebx+16].token == T_ID )
+
+                    .if SymFind( [ebx+16].string_ptr )
+
+                        SizeFromMemtype( [eax].asym.mem_type, USE_EMPTY, [eax].asym.type )
+                    .endif
+                .endif
+                .if eax == 0 || eax > 64
+                    mov eax,4
+                    .if ModuleInfo.Ofssize == USE64
+                        mov eax,8
+                    .endif
+                .endif
+                .if args < 4
+                    add edi,sprintf(edi, "%u", eax)
+                .endif
+                inc args
+            .endif
+        .endf
+        pop ebx
+
+        .if is_id
+            mov class,0
+        .endif
+
+        lea edi,name
+        sprintf(edi, "%s%s", &token, &class )
+
+        mov edx,ModuleInfo.ComStack
+        mov ecx,[edx].com_item.class
+        .if [edx].com_item.sym
+            mov ecx,[edx].com_item.sym
+            mov ecx,[ecx].asym.name
+        .endif
+
+        .if !SymFind( strcat( strcpy( &class, ecx ), "Vtbl" ) )
+            mov eax,CurrStruct
+        .endif
+        mov ecx,eax
+        .if !SearchNameInStruct( ecx, edi, &i, 0 )
+            AddLineQueueX( " %s proc %s", edi, [ebx].tokpos )
+        .endif
+
+        .endc .if inline == 0 || Parse_Pass > PASS_1
+
+        ;
+        ; .operator + :type, :type {
+        ;   add _1,_2
+        ;   ...
+        ;   exitm<...>
+        ; }
+        ;
+        .if ModuleInfo.list
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        .endif
+        RunLineQueue()
+
+        .new macroargs[256]:char_t
+        .for ( esi = 1, edi = &[strcpy(&macroargs, "this")+4] : esi < args : esi++ )
+            add edi,sprintf(edi, ", _%u", esi)
+        .endf
+        mov edi,ModuleInfo.ComStack
+        AddLineQueueX( "%s_%s macro %s", [edi].com_item.class, &name, &macroargs )
+        .for ( esi = inline : strchr(esi, 10) : )
+            mov ebx,eax
+            mov byte ptr [ebx],0
+            .if byte ptr [esi]
+                AddLineQueue(esi)
+            .endif
+            mov byte ptr [ebx],10
+            lea esi,[ebx+1]
+        .endf
+        .if byte ptr [esi]
+            AddLineQueue(esi)
+        .endif
+        AddLineQueue( "endm" )
+        MacroLineQueue()
+        .return rc
 
       .case T_DOT_COMDEF
       .case T_DOT_CLASS
@@ -382,7 +570,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if eax
             AddLineQueueX( "%s <>", [eax].asym.name )
         .elseif ( cmd != T_DOT_TEMPLATE )
-            AddLineQueueX( "lpVtbl %sVtbl ?", &LPClass )
+            AddLineQueueX( "lpVtbl %sVtbl ?", &class )
         .endif
     .endsw
 

@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added directive .operator
+- added ABS as args to INVOKE - immediate value
 - added YWORD and ZWORD as args to INVOKE
 - added directive .template
 - fixed delayed expansion of macro error

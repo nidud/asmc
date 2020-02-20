@@ -6,6 +6,7 @@
 
 include math.inc
 include immintrin.inc
+include xmmmacros.inc
 
     .data
     C00 oword 0x400E4FA47972904240038F4C070B63C1
@@ -19,7 +20,7 @@ include immintrin.inc
 
 atan2 proc y:double, x:double
 
-    _mm_move_sd(xmm4, FLT8(-0.0))
+    _mm_move_sd(xmm4, -0.0)
     _mm_xor_pd(xmm4, xmm1)
 
     .switch
@@ -32,26 +33,26 @@ atan2 proc y:double, x:double
                 .ifz
                     _mm_srai_epi16(xmm1, 12)
                     _mm_cmp_sd(xmm1, xmm1, _CMP_UNORD_Q)
-                    _mm_move_sd(xmm2, FLT8(3.1415924))
+                    _mm_move_sd(xmm2, 3.1415924)
                     _mm_and_pd(xmm2, xmm1)
                     _mm_or_pd(xmm0, xmm2)
                     ret
                 .endif
-                _mm_move_sd(xmm0, FLT8(0.7853981633974483096156608))
+                _mm_move_sd(xmm0, 0.7853981633974483096156608)
                 ret
             .endif
-            _mm_move_sd(xmm0, FLT8(-2.356194490192344928846982))
+            _mm_move_sd(xmm0, -2.356194490192344928846982)
             ret
         .endif
 
         .if _mm_ucomige_sd(xmm4, xmm0)
 
             .ifz
-                _mm_move_sd(xmm0, FLT8(2.356194490192344928846982))
+                _mm_move_sd(xmm0, 2.356194490192344928846982)
                 ret
             .endif
 
-            _mm_move_sd(xmm5, FLT8(-0.0))
+            _mm_move_sd(xmm5, -0.0)
             _mm_move_pd(xmm4, xmm5)
             _mm_and_pd(xmm5, xmm0)
             _mm_div_sd(xmm0, xmm1)
@@ -59,19 +60,19 @@ atan2 proc y:double, x:double
 
             .if _mm_comile_sd(xmm4, FLT8(2.384185791015625e-07))
 
-                _mm_move_sd(xmm0, FLT8(3.1415924))
+                _mm_move_sd(xmm0, 3.1415924)
                 _mm_xor_pd(xmm0, xmm5)
                 ret
             .endif
 
-            _mm_move_sd(xmm3, FLT8(3.141592653589793238462643))
+            _mm_move_sd(xmm3, 3.141592653589793238462643)
             _mm_or_pd(xmm5, xmm3)
             _mm_move_sd(xmm1, xmm0)
             .endc
         .endif
 
-        _mm_move_sd(xmm4, FLT8(-0.0))
-        _mm_move_sd(xmm5, FLT8(1.570796326794896619231322))
+        _mm_move_sd(xmm4, -0.0)
+        _mm_move_sd(xmm5, 1.570796326794896619231322)
         _mm_div_sd(xmm1, xmm0)
         _mm_xor_pd(xmm1, xmm4)
         .endc
@@ -84,20 +85,20 @@ atan2 proc y:double, x:double
 
         .ifz
 
-            _mm_move_sd(xmm0, FLT8(-0.7853981633974483096156608))
+            _mm_move_sd(xmm0, -0.7853981633974483096156608)
             ret
         .endif
 
-        _mm_move_sd(xmm4, FLT8(-0.0))
+        _mm_move_sd(xmm4, -0.0)
         _mm_div_sd(xmm1, xmm0)
         _mm_xor_pd(xmm1, xmm4)
-        _mm_move_sd(xmm5, FLT8(-1.570796326794896619231322))
+        _mm_move_sd(xmm5, -1.570796326794896619231322)
         .endc
 
       .default
         _mm_div_sd(xmm0, xmm1)
         _mm_move_sd(xmm1, xmm0)
-        _mm_move_sd(xmm5, FLT8(-0.0))
+        _mm_move_sd(xmm5, -0.0)
         .endc
     .endsw
 

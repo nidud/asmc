@@ -36,6 +36,7 @@ AddPredefinedText	proto :string_t, :string_t
 TextItemError		proto :tok_t
 
 StringInit		proto
+MacroLineQueue		proto
 
 endif
 .pragma list(pop)

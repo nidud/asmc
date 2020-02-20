@@ -87,6 +87,7 @@ enum memtype {
     MT_FAR   = 0x82,
     MT_EMPTY = 0xC0,
     MT_BITS  = 0xC1,   /* record field */
+    MT_ABS   = 0xC2,   /* v2.31: macro/proto imm param */
     MT_PTR   = 0xC3,   /* v2.05: changed, old value 0x83 */
     MT_TYPE  = 0xC4,   /* symbol has user-defined type (struct, union, record) */
     MT_SPECIAL = 0x80, /* bit 7 */

@@ -6,6 +6,7 @@
 
 include math.inc
 include immintrin.inc
+include xmmmacros.inc
 
 extern exp2_table:double
 

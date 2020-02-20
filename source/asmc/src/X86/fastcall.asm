@@ -859,13 +859,42 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
             .endif
             __cvta_q(edi, edx, 0)
             or byte ptr [edi+15],bl
+
             .if dword ptr [edi].expr.llvalue[4]
+
                 sprintf( &buffer, "0x%llX", [edi].expr.llvalue )
                 AddLineQueueX( " mov rax, %s", &buffer )
                 AddLineQueueX( " mov [rsp], rax" )
-            .else
+
+            .elseif dword ptr [edi].expr.llvalue
+
                 AddLineQueueX( " mov qword ptr [rsp], 0x%x", dword ptr [edi].expr.llvalue )
+
+            .elseif dword ptr [edi].expr.hlvalue[4] == 0
+
+                lea eax,[esi+T_XMM0]
+                AddLineQueueX( " xorps %r, %r", eax, eax )
+
+                .return 1
+
+            .elseif dword ptr [edi].expr.hlvalue == 0
+
+                AddLineQueueX( " mov eax, 0x%x", dword ptr [edi].expr.hlvalue[4] )
+                AddLineQueueX( " movd %r, eax", &[esi+T_XMM0] )
+                AddLineQueueX( " shufps %r, %r, 21", &[esi+T_XMM0], &[esi+T_XMM0] )
+
+                .return 1
+
+            .else
+
+                sprintf( &buffer, "0x%llX", [edi].expr.hlvalue )
+                AddLineQueueX( " mov rax, %s", &buffer )
+                AddLineQueueX( " movq %r, rax", &[esi+T_XMM0] )
+                AddLineQueueX( " shufps %r, %r, 75", &[esi+T_XMM0], &[esi+T_XMM0] )
+
+                .return 1
             .endif
+
             .if dword ptr [edi].expr.hlvalue[4]
                 sprintf( &buffer, "0x%llX", [edi].expr.hlvalue )
                 AddLineQueueX( " mov rax, %s", &buffer )
@@ -942,6 +971,19 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
             add eax,eax
             mov arg_offset,eax
         .endif
+    .endif
+
+    mov ebx,param
+    .if [ebx].asym.mem_type == MT_ABS
+        mov esi,[ecx].esym.procinfo
+        mov ebx,[esi].proc_info.paralist
+        .while index
+            mov ebx,[ebx].esym.nextparam
+            dec index
+        .endw
+        mov [ebx].asym.string_ptr,LclAlloc(&[strlen(paramvalue)+1])
+        strcpy(eax, paramvalue)
+        .return 1
     .endif
 
     mov psize,GetPSize(address, param, edi)

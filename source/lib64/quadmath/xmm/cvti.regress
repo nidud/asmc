@@ -59,12 +59,12 @@ main proc
   local eptr:LPSTR
 
     mov errno,0
-
     errval( 0, comp32(0.0, 0))
     errval( 0, comp32(0.10, 0))
     errval( 0, comp32(1.0, 1))
     errval( 0, comp32(2.0, 2))
     errval( 0, comp32(0.99999999, 0))
+
     errval( 0, comp32(7777777.0, 7777777))
     errval( 0, comp32(2147483647.0, 2147483647))
     errval( 0, comp32(2147483647.0, INT_MAX))

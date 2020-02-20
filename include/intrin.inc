@@ -43,6 +43,7 @@ _BitScanForward proto :ptr, :long_t
 _BitScanReverse proto :ptr, :long_t
 
 _BitScanForward macro lpIndex, dwMask
+    xor     eax,eax
     bsf     eax,edx
     mov     [rcx],eax
     setne   al
@@ -50,6 +51,7 @@ _BitScanForward macro lpIndex, dwMask
     endm
 
 _BitScanReverse macro lpIndex, dwMask
+    xor     eax,eax
     bsr     eax,edx
     mov     [rcx],eax
     setne   al
@@ -62,6 +64,7 @@ _BitScanForward64 proto :ptr, :qword
 _BitScanReverse64 proto :ptr, :qword
 
 _BitScanForward64 macro lpIndex, dwMask
+    xor     eax,eax
     bsf     rax,rdx
     mov     [rcx],eax
     setne   al
@@ -69,6 +72,7 @@ _BitScanForward64 macro lpIndex, dwMask
     endm
 
 _BitScanReverse64 macro lpIndex, dwMask
+    xor     eax,eax
     bsr     rax,rdx
     mov     [rcx],eax
     setne   al
@@ -135,7 +139,6 @@ ifdef __MACHINEX64
 _InterlockedDecrement64 proto :ptr
 
 _InterlockedDecrement64 macro lpAddend
-    _mm_loadreg(rcx, lpAddend)
     lock dec qword ptr [rcx]
     mov rax,[rcx]
     retm<rax>

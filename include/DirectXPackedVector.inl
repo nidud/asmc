@@ -1,7 +1,6 @@
 ifndef __DIRECTXPACKEDVECTOR_INL
 __DIRECTXPACKEDVECTOR_INL equ <>
 
-
 inl_XMConvertFloatToHalf macro Value
 
     _mm_store_ps(xmm0, Value)

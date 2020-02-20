@@ -204,7 +204,7 @@ _mm_cmp_pd macro a, b, imm
     retm<a>
     endm
 _mm256_cmp_pd macro a, b, imm
-    vcmppd a,b,imm
+    vcmppd a,a,b,imm
     retm<a>
     endm
 _mm_cmp_ps macro a, b, imm
@@ -212,7 +212,7 @@ _mm_cmp_ps macro a, b, imm
     retm<a>
     endm
 _mm256_cmp_ps macro a, b, imm
-    vcmpps a,b,imm
+    vcmpps a,a,b,imm
     retm<a>
     endm
 _mm_cmp_sd macro a, b, imm
@@ -380,39 +380,41 @@ _mm256_load_ps macro ptr_real4, yr:=<ymm0>
     retm<yr>
     endm
 _mm256_store_ps macro ptr_real4, yr:=<ymm0>
-    vmovups _mm_getptr(ptr_real4),yr
-    retm<>
+    ifdif <ptr_real4>,<yr>
+	vmovups ptr_real4,yr
+    endif
+    retm<ptr_real4>
     endm
 _mm256_loadu_pd macro ptr_real8, yr:=<ymm0>
-    vmovupd yr,_mm_getptr(ptr_real8)
+    vmovupd yr,ptr_real8
     retm<yr>
     endm
 _mm256_storeu_pd macro ptr_real8, yr:=<ymm0>
-    vmovupd _mm_getptr(ptr_real8),yr
+    vmovupd ptr_real8,yr
     retm<>
     endm
 _mm256_loadu_ps macro ptr_real4, yr:=<ymm0>
-    vmovups yr,_mm_getptr(ptr_real4)
+    vmovups yr,ptr_real4
     retm<yr>
     endm
 _mm256_storeu_ps macro ptr_real4, yr:=<ymm0>
-    vmovups _mm_getptr(ptr_real4),yr
+    vmovups ptr_real4,yr
     retm<>
     endm
 _mm256_load_si256 macro ptr_yword, yr:=<ymm0>
-    vmovupd yr,_mm_getptr(ptr_yword)
+    vmovupd yr,ptr_yword
     retm<yr>
     endm
 _mm256_store_si256 macro ptr_yword, yr:=<ymm0>
-    vmovdqu _mm_getptr(ptr_yword),yr
+    vmovdqu ptr_yword,yr
     retm<>
     endm
 _mm256_loadu_si256 macro ptr_yword, yr:=<ymm0>
-    vmovupd yr,_mm_getptr(ptr_yword)
+    vmovupd yr,ptr_yword
     retm<yr>
     endm
 _mm256_storeu_si256 macro ptr_yword, yr:=<ymm0>
-    vmovdqu _mm_getptr(ptr_yword),yr
+    vmovdqu ptr_yword,yr
     retm<>
     endm
 
@@ -463,13 +465,11 @@ _mm_maskstore_pd macro ptr_real8, x:=<xmm0>, xi:=<xmm1>
     endm
 
 _mm256_maskload_ps macro ptr_real4, y:=<ymm0>
-    _mm_loadreg(rcx, ptr_real4)
-    vmaskmovps y,y,[rcx]
+    vmaskmovps y,y,ptr_real4
     retm<y>
     endm
-_mm256_maskstore_ps macro ptr_real4, y:=<ymm0>, yi:=<ymm1>
-    _mm_loadreg(rcx, ptr_real4)
-    vmaskmovps [rcx],y,yi
+_mm256_maskstore_ps macro ptr_real4, mask:=<ymm0>, a:=<ymm1>
+    vmaskmovps ptr_real4,mask,a
     retm<>
     endm
 _mm_maskload_ps macro ptr_real4, x:=<xmm0>
@@ -482,7 +482,10 @@ _mm_maskstore_ps macro ptr_real4, x:=<xmm0>, xi:=<xmm1>
     vmaskmovps [rcx],x,xi
     retm<>
     endm
-
+_mm256_movehdup_ps macro y:=<ymm0>
+    vmovshdup y,y
+    retm<y>
+    endm
 _mm256_moveldup_ps macro y:=<ymm0>
     vmovsldup y,y
     retm<y>
@@ -492,19 +495,19 @@ _mm256_movedup_pd macro y:=<ymm0>
     retm<y>
     endm
 _mm256_lddqu_si256 macro ptr_real8, yr:=<ymm0>
-    vlddqu yr,_mm_getptr(ptr_real8)
+    vlddqu yr,ptr_real8
     retm<yr>
     endm
 _mm256_stream_si256 macro ptr_yword, y:=<ymm0>
-    vmovntdq _mm_getptr(ptr_yword),y
+    vmovntdq ptr_yword,y
     retm<>
     endm
 _mm256_stream_pd macro ptr_real8, y:=<ymm0>
-    vmovntpd _mm_getptr(ptr_real8),y
+    vmovntpd ptr_real8,y
     retm<>
     endm
 _mm256_stream_ps macro ptr_real4, y:=<ymm0>
-    vmovntps _mm_getptr(ptr_real4),y
+    vmovntps ptr_real4,y
     retm<>
     endm
 _mm256_rcp_ps macro y:=<ymm0>
@@ -660,27 +663,31 @@ _mm256_setzero_si256 macro
     endm
 
 _mm256_set_epix macro ymm, op, args:vararg
-    local vm
 .data
     align 16
-    vm label ymmword
+    @@ label ymmword
     op &args
 .code
-    vmovupd ymm,vm
+    vmovupd ymm,@B
     retm<ymm>
     endm
 
-_mm256_set_epi64x macro _1, _2, _3, _4
-    _mm256_set_epix(ymm0,dq,_4,_3,_2,_1)
-    retm<ymm0>
+_mm256_set_epi64x macro ymm, _1, _2, _3, _4
+ifnb <_4>
+    exitm<_mm256_set_epix(ymm,dq,_4,_3,_2,_1)>
+else
+    exitm<_mm256_set_epix(ymm0,dq,_4,_3,_2,_1)>
+endif
     endm
-_mm256_set_epi32 macro _1,_2,_3,_4,_5,_6,_7,_8
-    _mm256_set_epix(ymm0,dd,_8,_7,_6,_5,_4,_3,_2,_1)
-    retm<ymm0>
+_mm256_set_epi32 macro ymm, _1,_2,_3,_4,_5,_6,_7,_8
+ifnb <_8>
+    exitm<_mm256_set_epix(ymm,dd,_8,_7,_6,_5,_4,_3,_2,_1)>
+else
+    exitm<_mm256_set_epix(ymm0,dd,_7,_6,_5,_4,_3,_2,_1,ymm)>
+endif
     endm
 _mm256_set_epi16 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16
-    _mm256_set_epix(ymm0,dw,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
-    retm<ymm0>
+    exitm<_mm256_set_epix(ymm0,dw,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)>
     endm
 _mm256_set_epi8 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_17,_18,_19,_20,_21,_22,_23,_24,_25,_26,_27,_28,_29,_30,_31,_32
     _mm256_set_epix(ymm0,db,_32,_31,_30,_29,_28,_27,_26,_25,_24,_23,_22,_21,_20,_19,_18,_17,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
@@ -745,41 +752,41 @@ _mm256_set1_epi8 macro q
 _mm256_set1_ps equ <_mm256_set1_epi32>
 _mm256_set1_pd equ <_mm256_set1_epi64x>
 
-_mm256_castpd_ps macro
-    exitm<>
+_mm256_castpd_ps macro ymm
+    exitm<ymm>
     endm
-_mm256_castps_pd macro
-    exitm<>
+_mm256_castps_pd macro ymm
+    exitm<ymm>
     endm
-_mm256_castps_si256 macro
-    exitm<>
+_mm256_castps_si256 macro ymm
+    exitm<ymm>
     endm
-_mm256_castpd_si256 macro
-    exitm<>
+_mm256_castpd_si256 macro ymm
+    exitm<ymm>
     endm
-_mm256_castsi256_ps macro
-    exitm<>
+_mm256_castsi256_ps macro ymm
+    exitm<ymm>
     endm
-_mm256_castsi256_pd macro
-    exitm<>
+_mm256_castsi256_pd macro ymm
+    exitm<ymm>
     endm
-_mm256_castps256_ps128 macro
-    exitm<>
+_mm256_castps256_ps128 macro ymm
+    exitm<@CatStr(<xmm>,@SubStr(ymm,4))>
     endm
-_mm256_castpd256_pd128 macro
-    exitm<>
+_mm256_castpd256_pd128 macro ymm
+    exitm<@CatStr(<xmm>,@SubStr(ymm,4))>
     endm
-_mm256_castsi256_si128 macro
-    exitm<>
+_mm256_castsi256_si128 macro ymm
+    exitm<@CatStr(<xmm>,@SubStr(ymm,4))>
     endm
-_mm256_castps128_ps256 macro
-    exitm<>
+_mm256_castps128_ps256 macro xmm
+    exitm<@CatStr(<ymm>,@SubStr(xmm,4))>
     endm
-_mm256_castpd128_pd256 macro
-    exitm<>
+_mm256_castpd128_pd256 macro xmm
+    exitm<@CatStr(<ymm>,@SubStr(xmm,4))>
     endm
-_mm256_castsi128_si256 macro
-    exitm<>
+_mm256_castsi128_si256 macro xmm
+    exitm<@CatStr(<ymm>,@SubStr(xmm,4))>
     endm
 
 _mm_cvtph_ps		proto __cdecl :yword

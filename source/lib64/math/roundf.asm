@@ -6,6 +6,7 @@
 
 include math.inc
 include intrin.inc
+include xmmmacros.inc
 
     .code
 

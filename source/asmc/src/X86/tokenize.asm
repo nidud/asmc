@@ -378,9 +378,24 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                         add eax,[edx].output
                         mov edi,eax
 
-                        .if GetTextLine(eax)
+                        imul ecx,[edx].index,asm_tok
+                        neg  ecx
+                        .if ( [ebx+ecx].tokval == T_DOT_OPERATOR )
+
+                            .if GetTextLine(&[edi+1])
+                                inc edi
+                                SkipSpace(eax, edi)
+                                dec edi
+                                mov byte ptr [edi],10
+                            .endif
+
+                        .elseif GetTextLine(edi)
 
                             SkipSpace(eax, edi)
+                        .endif
+
+                        .if eax
+
                             strlen(edi)
                             add eax,tcount
                             .if eax >= MAX_LINE_LEN

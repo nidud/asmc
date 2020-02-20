@@ -58,6 +58,7 @@ MT_NEAR			equ 0x81
 MT_FAR			equ 0x82
 MT_EMPTY		equ 0xC0
 MT_BITS			equ 0xC1 ;; record field
+MT_ABS			equ 0xC2 ;; v2.31: macro/proto imm param
 MT_PTR			equ 0xC3 ;; v2.05: changed, old value 0x83
 MT_TYPE			equ 0xC4 ;; symbol has user-defined type (struct, union, record)
 MT_SPECIAL		equ 0x80 ;; bit 7

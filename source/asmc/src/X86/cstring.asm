@@ -484,9 +484,12 @@ local   rc:                     int_t,
                 .if NewString
 
                     mov eax,ModuleInfo.currseg
-                    mov ecx,[eax].asym.name
-
-                    strcat( strcpy( b_seg, ecx ), " segment" )
+                    .if eax
+                        mov ecx,[eax].asym.name
+                        strcat( strcpy( b_seg, ecx ), " segment" )
+                    .else
+                        strcpy( b_seg, ".code" )
+                    .endif
                     .break .if InsertLine( ".data" )
                     .break .if InsertLine( b_data )
                     .break .if InsertLine( "_DATA ends" )

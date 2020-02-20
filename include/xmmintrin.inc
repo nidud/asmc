@@ -31,9 +31,6 @@ endif
 ifndef _MMINTRIN_H_INCLUDED
 include mmintrin.inc
 endif
-ifndef __XMMMACROS_INC
-include xmmmacros.inc
-endif
 
 ifdef _MM2_FUNCTIONALITY
 ifndef _MM_FUNCTIONALITY
@@ -204,115 +201,115 @@ _MM_GET_FLUSH_ZERO_MODE macro
     endm
 
 _mm_add_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(add, ss, a, b)>
+    exitm<_mmopab(addss, a, b)>
     endm
 _mm_add_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(add, ps, a, b)>
+    exitm<_mmopab(addps, a, b)>
     endm
 _mm_sub_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(sub, ss, a, b)>
+    exitm<_mmopab(subss, a, b)>
     endm
 _mm_sub_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(sub, ps, a, b)>
+    exitm<_mmopab(subps, a, b)>
     endm
 _mm_mul_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(mul, ss, a, b)>
+    exitm<_mmopab(mulss, a, b)>
     endm
 _mm_mul_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(mul, ps, a, b)>
+    exitm<_mmopab(mulps, a, b)>
     endm
 _mm_div_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(div, ss, a, b)>
+    exitm<_mmopab(divss, a, b)>
     endm
 _mm_div_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(div, ps, a, b)>
+    exitm<_mmopab(divps, a, b)>
     endm
 
 _mm_sqrt_ss macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(sqrt, ss, a, b)>
+	exitm<_mmopab(sqrtss, a, b)>
     else
-	exitm<_MM_OPCSX2(sqrt, ss, a, a)>
+	exitm<_mmopab(sqrtss, a, a)>
     endif
     endm
 _mm_sqrt_ps macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(sqrt, ps, a, b)>
+	exitm<_mmopab(sqrtps, a, b)>
     else
-	exitm<_MM_OPCSX2(sqrt, ps, a, a)>
+	exitm<_mmopab(sqrtps, a, a)>
     endif
     endm
 _mm_rcp_ss macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(rcp, ss, a, b)>
+	exitm<_mmopab(rcpss, a, b)>
     else
-	exitm<_MM_OPCSX2(rcp, ss, a, a)>
+	exitm<_mmopab(rcpss, a, a)>
     endif
     endm
 _mm_rcp_ps macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(rcp, ps, a, b)>
+	exitm<_mmopab(rcpps, a, b)>
     else
-	exitm<_MM_OPCSX2(rcp, ps, a, a)>
+	exitm<_mmopab(rcpps, a, a)>
     endif
     endm
 _mm_rsqrt_ss macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(rsqrt, ss, a, b)>
+	exitm<_mmopab(rsqrtss, a, b)>
     else
-	exitm<_MM_OPCSX2(rsqrt, ss, a, a)>
+	exitm<_mmopab(rsqrtss, a, a)>
     endif
     endm
 _mm_rsqrt_ps macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(rsqrt, ps, a, b)>
+	exitm<_mmopab(rsqrtps, a, b)>
     else
-	exitm<_MM_OPCSX2(rsqrt, ps, a, a)>
+	exitm<_mmopab(rsqrtps, a, a)>
     endif
     endm
 _mm_min_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(min, ss, a, b)>
+    exitm<_mmopab(minss, a, b)>
     endm
 _mm_min_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(min, ps, a, b)>
+    exitm<_mmopab(minps, a, b)>
     endm
 _mm_max_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(max, ss, a, b)>
+    exitm<_mmopab(maxss, a, b)>
     endm
 _mm_max_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(max, ps, a, b)>
+    exitm<_mmopab(maxps, a, b)>
     endm
 
 _mm_and_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(and, ps, a, b)>
+    exitm<_mmopab(andps, a, b)>
     endm
 _mm_andnot_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(andn, ps, a, b)>
+    exitm<_mmopab(andnps, a, b)>
     endm
 _mm_or_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(or, ps, a, b)>
+    exitm<_mmopab(orps, a, b)>
     endm
 _mm_xor_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(xor, ps, a, b)>
+    exitm<_mmopab(xorps, a, b)>
     endm
 
 _mm_cmpeq_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpeq, ss, a, b)>
+    exitm<_mmopab(cmpeqss, a, b)>
     endm
 _mm_cmpeq_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpeq, ps, a, b)>
+    exitm<_mmopab(cmpeqps, a, b)>
     endm
 _mm_cmplt_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmplt, ss, a, b)>
+    exitm<_mmopab(cmpltss, a, b)>
     endm
 _mm_cmplt_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmplt, ps, a, b)>
+    exitm<_mmopab(cmpltps, a, b)>
     endm
 _mm_cmple_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmple, ss, a, b)>
+    exitm<_mmopab(cmpless, a, b)>
     endm
 _mm_cmple_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmple, ps, a, b)>
+    exitm<_mmopab(cmpleps, a, b)>
     endm
 
 ; --- reverse order: result returned in x
@@ -321,46 +318,46 @@ _mm_cmpgt_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movss x,b
     endif
-    exitm<_MM_OPCSX2(cmplt, ss, x, a)>
+    exitm<_mmopab(cmpltss, x, a)>
     endm
 _mm_cmpgt_ps macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmplt, ps, x, a)>
+    exitm<_mmopab(cmpltps, x, a)>
     endm
 _mm_cmpge_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movss x,b
     endif
-    exitm<_MM_OPCSX2(cmple, ss, x, a)>
+    exitm<_mmopab(cmpless, x, a)>
     endm
 _mm_cmpge_ps macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmple, ps, x, a)>
+    exitm<_mmopab(cmpleps, x, a)>
     endm
 
 ; ---
 
 _mm_cmpneq_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpneq, ss, a, b)>
+    exitm<_mmopab(cmpneqss, a, b)>
     endm
 _mm_cmpneq_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpneq, ps, a, b)>
+    exitm<_mmopab(cmpneqps, a, b)>
     endm
 _mm_cmpnlt_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpnlt, ss, a, b)>
+    exitm<_mmopab(cmpnltss, a, b)>
     endm
 _mm_cmpnlt_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpnlt, ps, a, b)>
+    exitm<_mmopab(cmpnltps, a, b)>
     endm
 _mm_cmpnle_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpnle, ss, a, b)>
+    exitm<_mmopab(cmpnless, a, b)>
     endm
 _mm_cmpnle_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpnle, ps, a, b)>
+    exitm<_mmopab(cmpnleps, a, b)>
     endm
 
 ; --- reverse order: result returned in B
@@ -369,39 +366,39 @@ _mm_cmpngt_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmpnlt, ss, x, a)>
+    exitm<_mmopab(cmpnltss, x, a)>
     endm
 _mm_cmpngt_ps macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmpnlt, ps, x, a)>
+    exitm<_mmopab(cmpnltps, x, a)>
     endm
 _mm_cmpnge_ss macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmpnle, ss, x, a)>
+    exitm<_mmopab(cmpnless, x, a)>
     endm
 _mm_cmpnge_ps macro x:req, a:req, b:req
     ifdif <x>,<b>
 	movaps x,b
     endif
-    exitm<_MM_OPCSX2(cmpnle, ps, x, a)>
+    exitm<_mmopab(cmpnleps, x, a)>
     endm
 ; ---
 
 _mm_cmpord_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpord, ss, a, b)>
+    exitm<_mmopab(cmpordss, a, b)>
     endm
 _mm_cmpord_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpord, ps, a, b)>
+    exitm<_mmopab(cmpordps, a, b)>
     endm
 _mm_cmpunord_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpunord, ss, a, b)>
+    exitm<_mmopab(cmpunordss, a, b)>
     endm
 _mm_cmpunord_ps macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(cmpunord, ps, a, b)>
+    exitm<_mmopab(cmpunordps, a, b)>
     endm
 
 _mm_comieq_ss macro a:=<xmm0>, b:=<xmm1>
@@ -470,11 +467,15 @@ _mm_cvt_si2ss macro x:=<xmm0>, d
     endif
     retm<x>
     endm
-_mm_cvtss_f32 macro a:=<xmm0>
-    exitm<>
+_mm_cvtss_f32 macro m32, xmm
+ifnb <xmm>
+    movss m32,xmm
+    retm<xmm>
+endif
+    retm<m32>
     endm
 
-;ifdef _M_IX86
+ifdef _M_IX86
 _mm_cvt_ps2pi macro x:=<xmm0>
     cvtps2pi mm0,x
     retm<mm0>
@@ -487,7 +488,7 @@ _mm_cvt_pi2ps macro x:=<xmm0>, m:=<mm0>
     cvtpi2ps x,m
     retm<xmm0>
     endm
-;endif
+endif
 
 ifdef _M_X64
 _mm_cvtss_si64 macro a:=<xmm0>
@@ -499,40 +500,41 @@ _mm_cvttss_si64 macro a:=<xmm0>
     retm<rax>
     endm
 _mm_cvtsi64_ss macro a:=<xmm0>, p
-    cvtsi2ss a,_MM_MREG(p)
+    cvtsi2ss a,p
     retm<a>
     endm
 endif
 
 _mm_shuffle_ps macro a:=<xmm0>, b:=<xmm1>, imm:=<0>
-    exitm<_MM_SHUFXX(ps, a, b, imm)>
+    shufps a,b,imm
+    retm<a>
     endm
 _mm_unpackhi_ps macro a, b
-    exitm<_MM_OPCSX2(unpckh, ps, a, b)>
+    exitm<_mmopab(unpckhps, a, b)>
     endm
 _mm_unpacklo_ps macro a, b
-    exitm<_MM_OPCSX2(unpckl, ps, a, b)>
+    exitm<_mmopab(unpcklps, a, b)>
     endm
 _mm_loadh_pi macro x:=<xmm0>, p
-    movhps x,_MM_MREG(p)
+    movhps x,p
     retm<x>
     endm
 _mm_movehl_ps macro a, b
-    exitm<_MM_OPCSX2(movhl, ps, a, b)>
+    exitm<_mmopab(movhlps, a, b)>
     endm
 _mm_movelh_ps macro a, b
-    exitm<_MM_OPCSX2(movlh, ps, a, b)>
+    exitm<_mmopab(movlhps, a, b)>
     endm
 _mm_storeh_pi macro p, x:=<xmm0>
-    movhps _MM_MREG(p),x
+    movhps p,x
     retm<p>
     endm
 _mm_loadl_pi macro x:=<xmm0>, p
-    movlps x,_MM_MREG(p)
+    movlps x,p
     retm<x>
     endm
 _mm_storel_pi macro p, x:=<xmm0>
-    movlps _MM_MREG(p),x
+    movlps p,x
     retm<p>
     endm
 _mm_movemask_ps macro x:=<xmm0>
@@ -540,7 +542,7 @@ _mm_movemask_ps macro x:=<xmm0>
     retm<eax>
     endm
 
-;ifdef _M_IX86
+ifdef _M_IX86
 _m_pextrw macro m, imm
    pextrw eax,m,imm
    retm<eax>
@@ -599,7 +601,7 @@ _m_psadbw macro a, b
    psadbw a,b
    retm<a>
    endm
-;endif
+endif
 
 _mm_set_ss macro x:=<xmm0>
     movd eax,x
@@ -628,84 +630,84 @@ _mm_setzero_ps macro x:=<xmm0>
     retm<x>
     endm
 _mm_movemm_ps macro a, b
-    movaps xmm0,oword ptr _MM_MREG(b)
-    movaps oword ptr _MM_MREG(a),xmm0
+    movaps xmm0,oword ptr b
+    movaps oword ptr a,xmm0
     retm<xmm0>
     endm
 
 _mm_load_ss macro x, p
     ifnb <p>
-	movss x,_MM_MREG(p)
+	movss x,p
 	retm<x>
     else
-	movss xmm0,_MM_MREG(x)
+	movss xmm0,x
 	retm<xmm0>
     endif
     endm
 _mm_load_ps1 macro x, p
     ifnb <p>
-	movss x,_MM_MREG(p)
+	movss x,p
 	shufps x,x,0
 	retm<x>
     else
-	movss xmm0,_MM_MREG(x)
+	movss xmm0,x
 	shufps xmm0,xmm0,0
 	retm<xmm0>
     endif
     endm
 _mm_load_ps macro x, p
     ifnb <p>
-	movaps x,_MM_MREG(p)
+	movaps x,p
 	retm<x>
     else
-	movaps xmm0,_MM_MREG(x)
+	movaps xmm0,x
 	retm<xmm0>
     endif
     endm
 _mm_loadr_ps macro x, p
     ifnb <p>
-	movaps x,_MM_MREG(p)
+	movaps x,p
 	shufps x,x,27
 	retm<x>
     else
-	movaps xmm0,_MM_MREG(x)
+	movaps xmm0,x
 	shufps xmm0,xmm0,27
 	retm<xmm0>
     endif
     endm
 _mm_loadu_ps macro x, p
     ifnb <p>
-	movups x,_MM_MREG(p)
+	movups x,p
 	retm<x>
     else
-	movups xmm0,_MM_MREG(x)
+	movups xmm0,x
 	retm<xmm0>
     endif
     endm
 _mm_store_ss macro p, x:=<xmm0>
     ifdif <p>,<x>
-	movss _MM_MREG(p),x
+	movss p,x
     endif
     retm<p>
     endm
 _mm_store_ps1 macro p, x:=<xmm0>
     shufps x,x,0
-    movups _MM_MREG(p),x
+    movups p,x
     retm<p>
     endm
 _mm_store_ps macro p, x:=<xmm0>
     ifdif <p>,<x>
-	movaps _MM_MREG(p),x
+	movaps p,x
     endif
     retm<p>
     endm
 _mm_storer_ps macro p, x:=<xmm0>
     shufps x,x,27
-    movaps _MM_MREG(p),x
+    movaps p,x
     retm<p>
     endm
 _mm_storeu_ps macro p, x:=<xmm0>
-    movups _MM_MREG(p),x
+    movups p,x
     retm<p>
     endm
 _mm_prefetch macro p, imm
@@ -715,19 +717,20 @@ _mm_prefetch macro p, imm
     @CatStr(prefetcht, %i) byte ptr [rax]
     retm<>
     endm
-;ifdef _M_IX86
+ifdef _M_IX86
 _mm_stream_pi macro p, m:=<mm0>
     _mm_loadreg(rax, p)
     movntq [rax],m
     retm<rax>
     endm
-;endif
+endif
 _mm_stream_ps macro p, x:=<xmm0>
-    movntps _MM_MREG(p),x
+    movntps p,x
     retm<p>
     endm
 _mm_move_ss macro a:=<xmm0>, b:=<xmm1>
-    exitm<_MM_OPCSX2(mov, ss, a, b)>
+    movss a, b
+    retm<a>
     endm
 
 _mm_sfence macro
@@ -739,7 +742,7 @@ _mm_malloc		equ <_aligned_malloc>
 _mm_free		equ <free>
 endif
 
-;ifdef _M_IX86
+ifdef _M_IX86
 _mm_cvtps_pi32		equ <_mm_cvt_ps2pi>
 _mm_cvttps_pi32		equ <_mm_cvtt_ps2pi>
 _mm_cvtpi32_ps		equ <_mm_cvt_pi2ps>
@@ -756,7 +759,7 @@ _mm_maskmove_si64	equ <_m_maskmovq>
 _mm_avg_pu8		equ <_m_pavgb>
 _mm_avg_pu16		equ <_m_pavgw>
 _mm_sad_pu8		equ <_m_psadbw>
-;endif
+endif
 _mm_cvtss_si32		equ <_mm_cvt_ss2si>
 _mm_cvttss_si32		equ <_mm_cvtt_ss2si>
 _mm_cvtsi32_ss		equ <_mm_cvt_si2ss>
@@ -764,7 +767,7 @@ _mm_set1_ps		equ <_mm_set_ps1>
 _mm_load1_ps		equ <_mm_load_ps1>
 _mm_store1_ps		equ <_mm_store_ps1>
 
-;ifdef _M_IX86
+ifdef _M_IX86
 _mm_cvtpi16_ps macro m:=<mm0>
     movq	mm3,m
     pxor	mm1,mm1
@@ -849,7 +852,7 @@ _mm_cvtpi32x2_ps macro a:=<xmm0>, b:=<xmm1>
     movlhps	xmm0,xmm2
     retm<xmm0>
     endm
-;endif
+endif
 
 .pragma list(pop)
 endif

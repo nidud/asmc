@@ -7,6 +7,3 @@ test.exe:
     install.exe
     $@
     pause
-
-
-

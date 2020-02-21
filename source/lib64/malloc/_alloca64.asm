@@ -4,32 +4,22 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
-
     .code
 
-    option win64:rsp nosave noauto
+_alloca64::
 
-_alloca64 proc byte_count:uint_t, res_stack:uint_t
-
-    mov rax,[rsp]   ; return addres
-    add rsp,8       ; start of call
-    add rcx,rdx     ; reserved stack
-
-    .while rcx > _PAGESIZE_
-
-        sub  rsp,_PAGESIZE_
+    pop rax ; return addres
+    add ecx,16-1
+    and cl,-16
+    .while rcx > 0x1000
+        sub  rsp,0x1000
         test [rsp],eax
-        sub  rcx,_PAGESIZE_
+        sub  rcx,0x1000
     .endw
-
     sub  rsp,rcx
-    and  rsp,-(_GRANULARITY)
     test [rsp],eax
     mov  rcx,rax
     lea  rax,[rsp+rdx]
     jmp  rcx
-
-_alloca64 endp
 
     end

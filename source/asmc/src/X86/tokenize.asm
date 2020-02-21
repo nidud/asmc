@@ -382,12 +382,14 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                         neg  ecx
                         .if ( [ebx+ecx].tokval == T_DOT_OPERATOR )
 
-                            .if GetTextLine(&[edi+1])
+                            .while GetTextLine(&[edi+1])
+                                .continue .if byte ptr [edi+1] == 0
                                 inc edi
                                 SkipSpace(eax, edi)
                                 dec edi
                                 mov byte ptr [edi],10
-                            .endif
+                                .break
+                            .endw
 
                         .elseif GetTextLine(edi)
 

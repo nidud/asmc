@@ -79,6 +79,32 @@ endif
 else
 alloca	proto __cdecl :dword
 endif
+
+ifdef _WIN64
+.template stack
+    base ptr_t ?
+    .operator alloc :int_t {
+	mov [this],rsp
+	mov eax,_1
+	add eax,_GRANULARITY-1
+	and al,-(_GRANULARITY)
+	sub rsp,rax
+	lea rax,[rsp+@ReservedStack]
+	retm<rax>
+	}
+    .operator aligned_alloc :abs, :abs {
+	stack_alloc(this, _1 + _2)
+	add rax,_2-1
+	and al,not (_2-1)
+	retm<rax>
+	}
+    .operator free {
+	mov rsp,[this]
+	exitm<>
+	}
+    .ends
+endif
+
 ;;;;;;;;;;;;;;; kernel32
 
 .pragma comment(lib, kernel32)

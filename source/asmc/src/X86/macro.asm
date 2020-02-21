@@ -818,12 +818,12 @@ lq_line ends
 LineQueue equ <ModuleInfo.line_queue>
 
 PreprocessLine proto :ptr, :ptr
-GenerateCString proto :int_t, :tok_t
 
 GeLineQueue proc private uses esi buffer:string_t
 
     mov eax,LineQueue.head
     .return .if !eax
+
     mov esi,eax
     mov LineQueue.head,[esi].lq_line.next
     strcpy(buffer, &[esi].lq_line.line)

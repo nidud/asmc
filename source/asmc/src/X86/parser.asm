@@ -2763,7 +2763,7 @@ check_size proc private uses esi edi ebx CodeInfo:ptr code_info, opndx:expr_t
             .elseif op1_size != 0 && op2_size != 0
 
                 mov eax,1
-                .if ( [esi].Ofssize > USE16 && ( op1 & OP_MS ) && ( op2 & OP_MS ) )
+                .if ( [esi].Ofssize > USE16 && ( op1 & OP_M_ANY ) && ( op2 & OP_M_ANY ) )
                     ;; v2.30 - Memory to memory operands.
                     movzx ecx,[esi].token
                     .switch ecx
@@ -3931,7 +3931,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             .endsw
         .endif
         .if ( CodeInfo.Ofssize > USE16 && \
-            ( CodeInfo.opnd[OPND1].type & OP_MS ) && ( CodeInfo.opnd[OPNI2].type & OP_MS ) )
+            ( CodeInfo.opnd[OPND1].type & OP_M_ANY ) && ( CodeInfo.opnd[OPNI2].type & OP_M_ANY ) )
             ;; v2.30 - Memory to memory operands.
             movzx eax,CodeInfo.token
             .switch eax

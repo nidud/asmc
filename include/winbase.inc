@@ -2160,6 +2160,20 @@ HeapWalk proto WINAPI \
 		 hHeap: HANDLE,
 	       lpEntry: PTR LPPROCESS_HEAP_ENTRY
 
+HeapSetInformation proto WINAPI \
+	    HeapHandle: HANDLE,
+  HeapInformationClass: HEAP_INFORMATION_CLASS,
+       HeapInformation: PVOID,
+ HeapInformationLength: SIZE_T
+
+
+HeapQueryInformation proto WINAPI \
+	    HeapHandle: HANDLE,
+  HeapInformationClass: HEAP_INFORMATION_CLASS,
+       HeapInformation: PVOID,
+ HeapInformationLength: SIZE_T,
+	  ReturnLength: PSIZE_T
+
 
 SCS_32BIT_BINARY    equ 0
 SCS_DOS_BINARY	    equ 1

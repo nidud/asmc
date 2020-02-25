@@ -8,14 +8,16 @@ endif
 
 include rtcapi.inc
 
-RTCCALLBACK macro a, b
+RTCCALLBACK macro a, b:vararg
+    exitm<>
     endm
 
 externdef _RTC_api_change_mutex:ptr
 
 else
 
-RTCCALLBACK macro a, b
+RTCCALLBACK macro a, b:vararg
+    exitm<>
     endm
 
 endif

@@ -209,7 +209,6 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
     mov ebx,tokenarray
     shl eax,4
     add ebx,eax
-
     mov al,[ebx].token
 
     .switch al
@@ -220,6 +219,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
             inc dword ptr [edx]
             add ebx,16
             mov al,[ebx].token
+            .return NOT_ERROR .if al == T_OP_SQ_BRACKET
             .gotosw
         .endif
         .return fnasmerr( 2008, [ebx].tokpos )

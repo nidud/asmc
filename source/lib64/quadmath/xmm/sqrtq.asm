@@ -33,10 +33,8 @@ sqrtq proc vectorcall Q:real16
     .endif
 
     movaps y,sqrtqf(xmm0)
-    movaps xmm1,divq(x, y)
-    subq(y, xmm1)
-    movaps xmm1,mulq(xmm0, 0.5)
-    subq(y, xmm1)
+    subq(y, divq(x, xmm0))
+    subq(y, mulq(xmm0, 0.5))
     ret
 
 sqrtq endp

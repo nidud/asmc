@@ -5,7 +5,7 @@ include immintrin.inc
 include fvec.inc
 include vcruntime.inc
 
-.pragma list(push, 1)
+.pragma list(push, 0)
 
 ifdef M128
 undef M128

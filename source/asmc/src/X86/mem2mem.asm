@@ -55,14 +55,13 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
 
     mov ebx,op1
     mov edi,op2
-    and ebx,OP_MS
-    and edi,OP_MS
 
-    .if ( !ebx || !edi || ModuleInfo.strict_masm_compat == 1 )
+    .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) || ModuleInfo.strict_masm_compat == 1 )
 
         .return asmerr( 2070 )
     .endif
-
+    and ebx,OP_MS
+    and edi,OP_MS
     mov reg,T_EAX
     mov regz,4
     .if ModuleInfo.Ofssize == USE64
@@ -83,33 +82,13 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     mov ecx,reg
     mov esi,ecx
     mov edi,ecx
-if 0
-    .switch ebx
-    .case OP_M08
-        mov size,1
-    .case OP_MS
-        mov edi,T_AL
-        .endc
-    .case OP_M16
-        mov size,2
-        mov edi,T_AX
-        .endc
-    .case OP_M32
-        mov size,4
-        mov edi,T_EAX
-        .endc
-    .case OP_M64
-        mov size,8
-        .endc
-    .endsw
-else
+
     .switch ebx
     .case OP_MS
     .case OP_M08: mov edi,T_AL  : .endc
     .case OP_M16: mov edi,T_AX  : .endc
     .case OP_M32: mov edi,T_EAX : .endc
     .endsw
-endif
 
     .switch edx
     .case OP_MS

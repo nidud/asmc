@@ -1084,6 +1084,11 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .elseif [edi].expr.kind == EXPR_FLOAT
 
             mov edx,param
+            .if esi < 6 && vector_call && ( [edx].asym.mem_type & MT_FLOAT || \
+                [edx].asym.mem_type == MT_YWORD || [edx].asym.mem_type == MT_OWORD )
+                .return CheckXMM(reg, paramvalue, regs_used, param)
+            .endif
+
             .if [edx].asym.mem_type == MT_REAL8
                 AddLineQueueX(" mov %r ptr [%r+%u+0], %r (%s)", T_DWORD, T_RSP,
                         arg_offset, T_LOW32, paramvalue)

@@ -137,7 +137,7 @@ st_popregs macro size
         }
     .ends
 
-stack_push macro regs:vararg
+st_push macro regs:vararg
   local level
     lea rsp,[rsp+@ReservedStack]
     level = 0
@@ -149,7 +149,7 @@ stack_push macro regs:vararg
     exitm<>
     endm
 
-stack_pop macro regs:vararg
+st_pop macro regs:vararg
   local level
     level = 0
     for reg,<regs>

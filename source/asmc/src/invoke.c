@@ -266,8 +266,10 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		opnd.base_reg = &tokenarray[j];
 	} else {
 	    /* v2.06: don't handle forward refs if -Zne is set */
-	    //if ( EvalOperand( &j, Token_Count, &opnd, 0 ) == ERROR ) {
-	    if ( EvalOperand( &j, tokenarray, Token_Count, &opnd, ModuleInfo.invoke_exprparm ) == ERROR ) {
+	    /* v2.31: :ABS to const */
+	    if ( curr->sym.mem_type == MT_ABS )
+		opnd.kind = EXPR_CONST;
+	    else if ( EvalOperand( &j, tokenarray, Token_Count, &opnd, ModuleInfo.invoke_exprparm ) == ERROR ) {
 		return( ERROR );
 	    }
 

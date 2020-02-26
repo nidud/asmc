@@ -1697,6 +1697,19 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
         movzx esi,[edx].regist[2]
     .endif
 
+    .if [edx].mem_type == MT_ABS
+        mov eax,pp
+        mov ecx,[eax].esym.procinfo
+        mov esi,[ecx].proc_info.paralist
+        .while index
+            mov esi,[esi].esym.nextparam
+            dec index
+        .endw
+        mov [esi].asym.string_ptr,LclAlloc(&[strlen(paramvalue)+1])
+        strcpy(eax, paramvalue)
+        .return 1
+    .endif
+
     movzx eax,[edx].mem_type
     .if  ( eax == MT_EMPTY && ( [edx].sint_flag & SINT_ISVARARG ) && \
            [edi].kind == EXPR_ADDR && [edi].mem_type & MT_FLOAT )

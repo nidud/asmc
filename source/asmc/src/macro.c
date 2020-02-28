@@ -24,6 +24,10 @@
 #include <macro.h>
 #include <fastpass.h>
 #include <listing.h>
+#include <preproc.h>
+
+char *GetLineQueue( char * );
+static char * (*GetLine)( char * ) = GetTextLine;
 
 /* a placeholder consists of escape char (0x0a) + index (1 byte).
  if this is to change, function fill_placeholders() must
@@ -364,7 +368,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
     for( ; ; ) {
 	char *ptr;
 
-	src = GetTextLine( buffer );
+	src = GetLine( buffer );
 	if( src == NULL ) {
 	    asmerr(1008); /* unmatched macro nesting */
 	}
@@ -637,6 +641,25 @@ alloc_macroinfo:
 	LstWriteSrcLine();
 
     return( StoreMacro( macro, ++i, tokenarray, store_data ) );
+}
+
+void MacroLineQueue(void)
+{
+    struct input_status oldstat;
+    struct asm_tok *tokenarray;
+    char *line;
+    char *(*oldline)( char * );
+
+    tokenarray = PushInputStatus( &oldstat );
+    ModuleInfo.GeneratedCode++;
+    oldline = GetLine;
+    GetLine = GetLineQueue;
+    line = GetLine( CurrSource );
+    if ( line )
+	PreprocessLine( line, tokenarray );
+    GetLine = oldline;
+    ModuleInfo.GeneratedCode--;
+    PopInputStatus( &oldstat );
 }
 
 /*

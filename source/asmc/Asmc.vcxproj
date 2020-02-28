@@ -194,7 +194,6 @@
     <ClCompile Include="src/cstring.c" />
     <ClCompile Include="src/data.c" />
     <ClCompile Include="src/dbgcv.c" />
-    <ClCompile Include="src/delayexp.c" />
     <ClCompile Include="src/directiv.c" />
     <ClCompile Include="src/elf.c" />
     <ClCompile Include="src/end.c" />
@@ -232,6 +231,7 @@
     <ClCompile Include="src/pragma.c" />
     <ClCompile Include="src/preproc.c" />
     <ClCompile Include="src/proc.c" />
+    <ClCompile Include="src/regno.c" />
     <ClCompile Include="src/reswords.c" />
     <ClCompile Include="src/return.c" />
     <ClCompile Include="src/safeseh.c" />

@@ -769,6 +769,8 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     int k, j,lang;
     int bracket = 0;
     struct expr opnd;
+    int reg = 0;
+    int reg2 = 0;
 
     b[0] = NULLC;
     for ( j = 0; j < i; j++ ) {
@@ -837,48 +839,60 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 	    if ( curr ) {
 		switch ( curr->sym.total_size ) {
 		case 1:
-		    p = " al";
+		    reg = T_AL;
 		    break;
 		case 2:
-		    p = " ax";
+		    reg = T_AX;
 		    break;
 		case 4:
-		    p = " eax";
+		    reg = T_EAX;
 		    if ( ModuleInfo.Ofssize == USE64 ) {
 			if ( curr->sym.mem_type & MT_FLOAT )
-			    p = " xmm0";
+			    reg = T_XMM0;
 		    }
 		    break;
 		case 8:
 		    if ( ModuleInfo.Ofssize == USE64 ) {
 			if ( curr->sym.mem_type & MT_FLOAT )
-			    p = " xmm0";
+			    reg = T_XMM0;
 			else
-			    p = " rax";
-		    } else
-			p = " edx::eax";
+			    reg = T_RAX;
+		    } else {
+			reg = T_EDX;
+			reg2 = T_EAX;
+		    }
 		    break;
 		case 16:
 		    if ( curr->sym.mem_type & MT_FLOAT )
-			p = " xmm0";
-		    else if ( ModuleInfo.Ofssize == USE64 )
-			p = " rdx::rax";
+			reg = T_XMM0;
+		    else if ( ModuleInfo.Ofssize == USE64 ) {
+			reg = T_RDX;
+			reg2 = T_RAX;
+		    }
+		    break;
+		case 32:
+		    if ( curr->sym.mem_type == MT_YWORD )
+			reg = T_YMM0;
+		    break;
+		case 64:
+		    if ( curr->sym.mem_type == MT_ZWORD )
+			reg = T_ZMM0;
 		    break;
 	       }
 	    }
 	}
     }
 
-    if ( p == NULL ) {
+    if ( reg == 0 ) {
 
 #ifndef __ASMC64__
-	p = " eax";
+	reg = T_EAX;
 	if ( ModuleInfo.Ofssize == USE64 )
-	    p = " rax";
+	    reg = T_RAX;
 	else if ( ModuleInfo.Ofssize == USE16 )
-	    p = " ax";
+	    reg = T_AX;
 #else
-	p = " rax";
+	reg = T_RAX;
 #endif
 
 	if ( !proc_id && i > 1 ) {
@@ -899,7 +913,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 			( a->mem_type == MT_REAL4 || a->mem_type == MT_REAL8 ) )
 			k = 16;
 		    else
-			k = a->total_size;
+			k = SizeFromMemtype( a->mem_type, USE_EMPTY, a->type );
 		} else if ( tokenarray[j-1].token == T_DOT ) {
 
 		    /* <op> <struct>.id, rax */
@@ -942,6 +956,8 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 			    case MT_REAL8:
 			    case MT_REAL10:
 			    case MT_REAL16: k = 16; break;
+			    case MT_YWORD:  k = 32; break;
+			    case MT_ZWORD:  k = 64; break;
 			    }
 			}
 		    } else
@@ -950,16 +966,16 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 
 		if ( k ) {
 		    switch ( k ) {
-		      case 1: p = " al";  break;
-		      case 2: p = " ax";  break;
-		      case 4: p = " eax"; break;
+		      case 1: reg = T_AL;  break;
+		      case 2: reg = T_AX;  break;
+		      case 4: reg = T_EAX; break;
 		      case 8:
 			if ( ModuleInfo.Ofssize == USE64 )
-			    p = " rax";
+			    reg = T_RAX;
 			break;
-		      case 16:
-			p = " xmm0";
-			break;
+		      case 16: reg = T_XMM0; break;
+		      case 32: reg = T_YMM0; break;
+		      case 64: reg = T_ZMM0; break;
 		    }
 		}
 	    } else if ( tokenarray[j+1].token == T_COMMA && tokenarray[j].token == T_CL_SQ_BRACKET ) {
@@ -971,7 +987,12 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 	}
     }
 
-    strcat( b, p );
+    strcat(b, " ");
+    strcat(b, GetResWName(reg, 0));
+    if ( reg2 ) {
+	strcat(b, "::");
+	strcat(b, GetResWName(reg2, 0));
+    }
     if ( tokenarray[e].token != T_FINAL ) {
 
 	strcat( b, " " );
@@ -2232,6 +2253,13 @@ int HllExitDir( int i, struct asm_tok tokenarray[] )
 
     switch ( cmd ) {
 
+    case T_DOT_ELSEIFSD:
+	hll->flags |= HLLF_IFD;
+    case T_DOT_ELSEIFS:
+	hll->flags |= HLLF_IFS;
+    case T_DOT_ELSEIFD:
+	if ( cmd == T_DOT_ELSEIFD )
+	    hll->flags |= HLLF_IFD;
     case T_DOT_ELSEIF:
 	hll->flags |= HLLF_ELSEIF;
     case T_DOT_ELSE:
@@ -2256,7 +2284,7 @@ int HllExitDir( int i, struct asm_tok tokenarray[] )
 	}
 
 	i++;
-	if ( cmd == T_DOT_ELSEIF ) {
+	if ( cmd != T_DOT_ELSE ) {
 	    /* create new labels[LTEST] label */
 	    hll->labels[LTEST] = GetHllLabel();
 	    rc = EvaluateHllExpression( hll, &i, tokenarray, LTEST, FALSE, buffer );

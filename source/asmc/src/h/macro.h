@@ -64,5 +64,5 @@ extern struct asym *AddPredefinedText( const char *, const char * );
 extern int	   TextItemError( struct asm_tok * );
 
 extern void	StringInit( void );
-
+extern void	MacroLineQueue( void );
 #endif

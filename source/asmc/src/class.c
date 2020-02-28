@@ -2,6 +2,7 @@
 #include <globals.h>
 #include <hllext.h>
 #include <types.h>
+#include <macro.h>
 //
 // item for .CLASS, .ENDS, and .COMDEF
 //
@@ -148,16 +149,64 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     return rc;
 }
 
+int get_operator(char *token)
+{
+    switch ( token[0] ) {
+    case '=':
+        return T_EQU;
+    case '&':
+        if ( token[1] == '~' )
+            return T_ANDN;
+        return T_AND;
+    case '|':
+        return T_OR;
+    case '^':
+        return T_XOR;
+    case '*':
+        return T_MUL;
+    case '/':
+        return T_DIV;
+    case '<':
+        if ( token[1] == '<' )
+            return T_SHL;
+        break;
+    case '>':
+        if ( token[1] == '>' )
+            return T_SHR;
+        break;
+    case '+':
+        if ( token[1] == '+' )
+            return T_INC;
+        return T_ADD;
+    case '-':
+        if ( token[1] == '-' )
+            return T_DEC;
+        return T_SUB;
+    case '~':
+        return T_NOT;
+    case '%':
+        return T_MOD;
+    }
+    return 0;
+}
+
+
 int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
     int rc = NOT_ERROR;
     int x,q,cmd,args;
-    char LPClass[64];
-    char LPClassVtbl[64];
+    char clname[64];
     char *p;
+    char *ptr;
     char *public_class;
     struct asym *sym;
     struct com_item *o = ModuleInfo.g.ComStack;
+    int is_id;
+    int is_equ;
+    char token[64];
+    char name[128];
+    char margs[256];
+    uint_32 u;
 
     cmd = tokenarray[i].tokval;
     i++;
@@ -179,6 +228,121 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         }
         break;
 
+    case T_DOT_OPERATOR:
+        if ( o == NULL ) {
+            if ( CurrStruct )
+                return ( asmerr( 1011 ) );
+            break;
+        }
+
+        /* .operator + :type, :type */
+        is_id = 0;  /* name proc :qword, :qword */
+        is_equ = 0; /* [m|r]add88 proc :qword, :qword */
+        p = tokenarray[i].tokpos;
+        x = get_operator( p );
+        switch ( x ) {
+        case 0:
+            if ( tokenarray[i].token != T_ID )
+                return asmerr( 1011 );
+            is_id++;
+            strcpy( token, tokenarray[i].string_ptr );
+            x = 0;
+            break;
+        case T_EQU:
+            is_equ++;
+            break;
+        case T_ANDN:
+        case T_INC:
+        case T_DEC:
+            i++;
+            break;
+        }
+        if ( x ) {
+            token[0] = 'r';
+            GetResWName( x, &token[1] );
+        }
+        i++;
+        if ( tokenarray[i].token == T_DIRECTIVE && tokenarray[i].tokval == T_EQU ) {
+            i++;
+            is_equ++;
+        }
+        if ( p[1] == '=' || p[2] == '=' )
+            is_equ++;
+        if ( is_equ )
+            token[0] = 'm';
+        clname[0] = 0;
+        p = NULL;
+        x = i;
+        ptr = clname;
+        for ( args = 1; tokenarray[x].token != T_FINAL; x++ ) {
+            if ( tokenarray[x].token == T_STRING && tokenarray[x].bytval == '{' ) {
+                p = tokenarray[x].string_ptr;
+                tokenarray[x].tokpos[0] = '\0';
+                tokenarray[x].token = T_FINAL;
+                break;
+            }
+            if ( tokenarray[x].token == T_COLON ) {
+                int size = 0;
+                if ( tokenarray[x+1].token == T_STYPE ) {
+                    size = SizeFromMemtype(GetMemtypeSp(tokenarray[x+1].tokval), USE_EMPTY, 0 );
+                } else if ( tokenarray[x+1].token == T_ID ) {
+                    sym = SymFind( tokenarray[x+1].string_ptr );
+                    if ( sym )
+                        size = SizeFromMemtype( sym->mem_type, USE_EMPTY, sym->type );
+                }
+                if ( size == 0 || size > 64 ) {
+                    size = 4;
+                    if ( ModuleInfo.Ofssize == USE64 )
+                        size = 8;
+                }
+                if ( args < 4 )
+                    ptr += sprintf(ptr, "%u", size);
+                args++;
+            }
+        }
+        if ( is_id )
+            clname[0] = '\0';
+
+        sprintf( name, "%s%s", token, clname );
+        ptr = o->class;
+        if ( o->sym )
+            ptr = o->sym->name;
+        sym = SymFind( strcat( strcpy( clname, ptr ), "Vtbl" ) );
+        if ( sym == NULL )
+            sym = (struct asym *)CurrStruct;
+        if ( !SearchNameInStruct( sym, name, &u, 0 ) )
+            AddLineQueueX( " %s proc %s", name, tokenarray[i].tokpos );
+        if ( p == NULL || Parse_Pass > PASS_1 )
+            break;
+        /*
+         * .operator + :type, :type {
+         *   add _1,_2
+         *   ...
+         *   exitm<...>
+         * }
+         */
+        if ( ModuleInfo.list )
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
+        RunLineQueue();
+        for ( x = 1, ptr = strcpy(margs, "this") + 4; x < args; x++ )
+            ptr += sprintf(ptr, ", _%u", x );
+        AddLineQueueX( "%s_%s macro %s", o->class, name, margs );
+        for ( ;; ) {
+            ptr = strchr(p, 10);
+            if ( ptr == NULL )
+                break;
+            *ptr = '\0';
+            if ( *p )
+                AddLineQueue(p);
+            *ptr++ = '\n';
+            p = ptr;
+        }
+        if ( p )
+            AddLineQueue(p);
+        AddLineQueue( "endm" );
+        MacroLineQueue();
+        return rc;
+
     case T_DOT_COMDEF:
     case T_DOT_CLASS:
     case T_DOT_TEMPLATE:
@@ -192,8 +356,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         p = tokenarray[i].string_ptr;
         o->class = LclAlloc( strlen(p) + 1 );
         strcpy(o->class, p);
-        strcat( strcpy( LPClass, "LP" ), p );
-        _strupr( LPClass );
+        strcat( strcpy( clname, "LP" ), p );
+        _strupr( clname );
 
         args = i + 1;
         if( tokenarray[args].token == T_ID && (tokenarray[args].string_ptr[0] | 0x20) == 'c'
@@ -211,9 +375,9 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
         if ( cmd != T_DOT_TEMPLATE ) {
 
-            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", LPClass, p );
+            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", clname, p );
             if ( cmd == T_DOT_CLASS )
-                AddLineQueueX( "%s typedef ptr %s", LPClass, p );
+                AddLineQueueX( "%s typedef ptr %s", clname, p );
         }
 
         sym = NULL;
@@ -273,7 +437,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         if ( sym != NULL )
             AddLineQueueX( "%s <>", sym->name );
         else if ( cmd != T_DOT_TEMPLATE )
-            AddLineQueueX( "lpVtbl %sVtbl ?", LPClass );
+            AddLineQueueX( "lpVtbl %sVtbl ?", clname );
         break;
     }
 

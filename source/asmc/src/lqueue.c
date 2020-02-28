@@ -169,3 +169,15 @@ void RunLineQueue( void )
     PopInputStatus( &oldstat );
     return;
 }
+
+char *GetLineQueue( char *buffer )
+{
+    struct lq_line *curr = line_queue.head;
+
+    if ( curr == NULL )
+	return NULL;
+    line_queue.head = curr->next;
+    strcpy( buffer, curr->line );
+    MemFree( curr );
+    return buffer;
+}

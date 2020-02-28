@@ -1247,7 +1247,7 @@ endif
                           [eax].asym.mem_type == MT_REAL8 ) )
                         mov eax,16
                     .else
-                        mov eax,[eax].asym.total_size
+                        SizeFromMemtype( [eax].asym.mem_type, USE_EMPTY, [eax].asym.type )
                     .endif
 
                 .elseif [ebx-16].token == T_DOT
@@ -3013,8 +3013,12 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
 
     .switch eax
 
+      .case T_DOT_ELSEIFSD
+        or  [esi].flags,HLLF_IFD
+      .case T_DOT_ELSEIFS
+        or  [esi].flags,HLLF_IFS
       .case T_DOT_ELSEIF
-        or [esi].flags,HLLF_ELSEIF
+        or  [esi].flags,HLLF_ELSEIF
       .case T_DOT_ELSE
 
         .return asmerr(1010, [ebx].string_ptr) .if ( [esi].cmd != HLL_IF )
@@ -3042,7 +3046,7 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
 
         inc i
         pop eax
-        .if eax == T_DOT_ELSEIF
+        .if eax != T_DOT_ELSE
             ;
             ; create new labels[LTEST] label
             ;
@@ -3066,6 +3070,10 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
         .endif
         .endc
 
+      .case T_DOT_ELSEIFD
+        or  [esi].flags,HLLF_IFD
+        .gotosw(T_DOT_ELSEIF)
+
       .case T_DOT_BREAK
       .case T_DOT_CONTINUE
 
@@ -3084,7 +3092,6 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
             add i,3
             add ebx,16*3
             mov eax,cmd
-
         .endif
 
         .for ( : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ) : esi = [esi].next )

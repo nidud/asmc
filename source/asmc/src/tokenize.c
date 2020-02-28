@@ -317,19 +317,29 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 			    nl++;
 		    }
 		    if ( nl ) {
-
 			tmp = GetAlignedPointer( p->output, strlen( p->output ) );
-			if( GetTextLine( tmp ) ) {
+			tmp[0] = '\0';
+			if ( buf[-p->index].tokval == T_DOT_OPERATOR ) {
+			    while ( GetTextLine( &tmp[1] ) ) {
+				if ( tmp[1] == '\0' )
+				    continue;
+				tmp++;
+				while ( islspace(*tmp) ) tmp++;
+				tmp--;
+				*tmp = '\n';
+				break;
+			    }
+			} else if ( GetTextLine( tmp ) ) {
 			    /* skip leading spaces */
 			    while ( islspace( *tmp ) ) tmp++;
-			    /* this size check isn't fool-proved yet */
-			    if ( strlen( tmp ) + count >= MAX_LINE_LEN ) {
-				asmerr( 2039 );
-				return( ERROR );
-			    }
-			    strcpy( src, tmp );
-			    continue;
 			}
+			/* this size check isn't fool-proved yet */
+			if ( strlen( tmp ) + count >= MAX_LINE_LEN ) {
+			    asmerr( 2039 );
+			    return( ERROR );
+			}
+			strcpy( src, tmp );
+			continue;
 		    }
 		}
 		src = p->input;

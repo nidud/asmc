@@ -413,27 +413,30 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
     int xmm; /* v2.31.04: xmm0..xmm31 */
 
     xmm = index + T_XMM0;
-    if ( index > 7 )
-	xmm = index + T_XMM8 - 8;
 
     /* v2.04: check if argument is the correct XMM register already */
     if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
-	if ( GetValueSp( reg ) & OP_XMM ) {
+	sign = GetValueSp( reg );
+	if ( sign & (OP_XMM | OP_YMM | OP_ZMM) ) {
+	    if ( sign & OP_YMM )
+		xmm = index + T_YMM0;
+	    else if ( sign & OP_ZMM )
+		xmm = index + T_ZMM0;
 	    if ( reg != xmm ) {
-		if ( reg > T_XMM15 ) {
-		    if ( param->sym.mem_type == MT_REAL4 )
-			AddLineQueueX( " vmovss %r, %r, %r", xmm, xmm, reg );
-		    else if ( param->sym.mem_type == MT_REAL8 )
-			AddLineQueueX( " vmovsd %r, %r, %r", xmm, xmm, reg );
-		    else
-			AddLineQueueX( " vmovaps %r, %r, %r", xmm, xmm, reg );
-		} else {
+		if ( reg < T_XMM16 && sign & OP_XMM ) {
 		    if ( param->sym.mem_type == MT_REAL4 )
 			AddLineQueueX( " movss %r, %r", xmm, reg );
 		    else if ( param->sym.mem_type == MT_REAL8 )
 			AddLineQueueX( " movsd %r, %r", xmm, reg );
 		    else
 			AddLineQueueX( " movaps %r, %r", xmm, reg );
+		} else {
+		    if ( param->sym.mem_type == MT_REAL4 )
+			AddLineQueueX( " vmovss %r, %r, %r", xmm, xmm, reg );
+		    else if ( param->sym.mem_type == MT_REAL8 )
+			AddLineQueueX( " vmovsd %r, %r, %r", xmm, xmm, reg );
+		    else
+			AddLineQueueX( " vmovaps %r, %r", xmm, reg );
 		}
 	    }
 	    return( 1 );
@@ -463,19 +466,33 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	    __cvta_q(opnd->chararray, p, NULL);
 	    if ( sign )
 		opnd->chararray[15] |= 0x80;
-	    if ( opnd->llvalue > 0xFFFFFFFF ) {
+	    if ( opnd->hvalue ) {
 		sprintf( buffer, "0x%" I64_SPEC "X", opnd->llvalue );
 		AddLineQueueX( " mov rax, %s", buffer );
 		AddLineQueue( " mov [rsp], rax" );
-	    } else {
+	    } else if ( opnd->value ) {
 		AddLineQueueX( " mov qword ptr [rsp], 0x%x", opnd->uvalue );
-	    }
-	    if ( opnd->hlvalue > 0xFFFFFFFF ) {
+	    } else if ( opnd->hlvalue < 0xFFFFFFFF ) {
+		AddLineQueueX( " xorps %r, %r", xmm, xmm );
+		return 1;
+	    } else if ( (unsigned int)opnd->hlvalue == 0 ) {
+		AddLineQueueX( " mov eax, 0x%x", (unsigned int)(opnd->hlvalue >> 32) );
+		AddLineQueueX( " movd %r, eax", xmm );
+		AddLineQueueX( " shufps %r, %r, 21", xmm, xmm );
+		return 1;
+	    } else {
 		sprintf( buffer, "0x%" I64_SPEC "X", opnd->hlvalue );
 		AddLineQueueX( " mov rax, %s", buffer );
-		AddLineQueue( " mov [rsp+8], rax" );
+		AddLineQueueX( " movq %r, rax", xmm );
+		AddLineQueueX( " shufps %r, %r, 75", xmm, xmm );
+		return 1;
+	    }
+	    if ( opnd->hlvalue > 0xFFFFFFFF ) {
+		sprintf( buffer, "0x%llX", opnd->hlvalue );
+		AddLineQueueX( " mov rax, %s", buffer );
+		AddLineQueueX( " mov [rsp+8], rax" );
 	    } else {
-		AddLineQueueX( " mov qword ptr [rsp+8], 0x%x", (uint_32)opnd->hlvalue );
+		AddLineQueueX( " mov qword ptr [rsp+8], 0x%x", (unsigned int)opnd->hlvalue );
 	    }
 	    AddLineQueueX( " movaps %r, [rsp]", xmm );
 	}
@@ -514,6 +531,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     int i32;
     int base;
     int offset;
+    struct dsym *d;
     bool destroyed = FALSE;
     bool vector_call = ( proc->sym.langtype == LANG_VECTORCALL );
 
@@ -559,6 +577,14 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     if ( vector_call && index < 6 )
 	offset += offset;
 
+    if ( param->sym.mem_type == MT_ABS ) {
+	for ( d = proc->e.procinfo->paralist; index; index-- )
+	    d = d->nextparam;
+	d->sym.string_ptr = LclAlloc( strlen(paramvalue) + 1);
+	strcpy(d->sym.string_ptr, paramvalue);
+	return 1;
+    }
+
     if ( index >= 4 && ( addr || psize > 8 ) ) {
 
 	if ( psize == 4 ) {
@@ -566,8 +592,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	} else {
 	    if ( psize < 8 ) {
 		asmerr( 2114, index+1 );
-	    } else if ( vector_call && index < 6 &&
-		    ( param->sym.mem_type == MT_REAL16 || param->sym.mem_type == MT_OWORD ) ) {
+	    } else if ( vector_call && index < 6 && ( param->sym.mem_type & MT_FLOAT ||
+		    param->sym.mem_type == MT_YWORD || param->sym.mem_type == MT_OWORD ) ) {
 		return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 	    }
 	    i = T_RAX;
@@ -608,6 +634,10 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
 	} else if ( opnd->kind == EXPR_FLOAT  ) {
 
+	    if ( vector_call && index < 6 && ( param->sym.mem_type & MT_FLOAT ||
+		 param->sym.mem_type == MT_YWORD || param->sym.mem_type == MT_OWORD ) )
+		return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
+
 	    if ( param->sym.mem_type == MT_REAL8 ) {
 		AddLineQueueX( " mov %r ptr [%r+%u+0], %r (%s)", T_DWORD, T_RSP, NUMQUAL offset, T_LOW32, paramvalue );
 		AddLineQueueX( " mov %r ptr [%r+%u+4], %r (%s)", T_DWORD, T_RSP, NUMQUAL offset, T_HIGH32, paramvalue );
@@ -618,7 +648,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
 	    if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
 
-		if ( vector_call && index < 6 && param->sym.mem_type & MT_FLOAT )
+		if ( vector_call && index < 6 && ( param->sym.mem_type & MT_FLOAT ||
+			param->sym.mem_type == MT_YWORD || param->sym.mem_type == MT_OWORD ) )
 		    return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
 		size = SizeFromRegister( reg );
@@ -666,7 +697,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    AddLineQueueX( " mov [%r+%u], %r", T_RSP, NUMQUAL offset, i );
 	}
 
-    } else if ( param->sym.mem_type & MT_FLOAT || ( param->sym.mem_type == MT_OWORD && vector_call ) ) {
+    } else if ( param->sym.mem_type & MT_FLOAT || param->sym.mem_type == MT_YWORD ||
+	    ( param->sym.mem_type == MT_OWORD && vector_call ) ) {
 
 	/* register argument? */
 
@@ -840,13 +872,13 @@ int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     int reg, x;
     int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
 
-    if ( size > 16 || paranode->sym.is_vararg ) {
+    if ( paranode->sym.is_vararg ) {
 	paranode->sym.string_ptr = NULL;
 	return(0);
     }
 
     x = *used & 0xFF;
-    if ( paranode->sym.mem_type & MT_FLOAT ) {
+    if ( paranode->sym.mem_type & MT_FLOAT || paranode->sym.mem_type == MT_YWORD ) {
 	 x = (*used) >> 8;
 	 *used += 0x100;
 	 if ( x > 7 ) {
@@ -855,12 +887,27 @@ int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
 	    paranode->sym.string_ptr = NULL;
 	    return(0);
 	 }
-	 reg = T_XMM0 + x;
-
+	 if ( size == 64 )
+	    reg = T_ZMM0 + x;
+	 else if ( size == 32 )
+	    reg = T_YMM0 + x;
+	 else
+	    reg = T_XMM0 + x;
+    } else if ( size > 16 ) {
+	paranode->sym.string_ptr = NULL;
+	return(0);
     } else if ( size == 16 || paranode->sym.mem_type == MT_OWORD ) {
-	 reg = elf64_regs[x+18];
-	 *used += 2;
-    } else if ( (char)(*used) > 5 ) {
+	 if ( x < 5 ) {
+	    reg = elf64_regs[x+18];
+	    *used += 2;
+	 } else {
+	    paranode->sym.regist[0] = T_RAX;
+	    paranode->sym.regist[1] = x;
+	    (*used)++;
+	    paranode->sym.string_ptr = NULL;
+	    return(0);
+	 }
+    } else if ( x > 5 ) {
 	paranode->sym.regist[0] = T_RAX;
 	paranode->sym.regist[1] = x;
 	(*used)++;
@@ -913,7 +960,7 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 	xmm_params = fcscratch;
     } else {
 	for ( p = proc->e.procinfo->paralist; p; p = p->prev ) {
-	    if ( p->sym.mem_type & MT_FLOAT )
+	    if ( p->sym.mem_type & MT_FLOAT || p->sym.mem_type == MT_YWORD )
 		xmm_params++;
 	    else
 		reg_params++;
@@ -971,7 +1018,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     int destroyed = FALSE;
     int regno;
     struct asym *sym;
-    struct dsym *dpar;
+    struct dsym *d;
 
     if ( *paramvalue == 0 )
 	return 1;
@@ -1014,13 +1061,21 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     }
 
     sym = (struct asym *)param;
+    if ( sym->mem_type == MT_ABS ) {
+	for ( d = proc->e.procinfo->paralist; index; index-- )
+	    d = d->nextparam;
+	d->sym.string_ptr = LclAlloc( strlen(paramvalue) + 1);
+	strcpy(d->sym.string_ptr, paramvalue);
+	return 1;
+    }
+
     if ( sym->mem_type == MT_EMPTY && sym->is_vararg &&
 	 opnd->kind == EXPR_ADDR && ( opnd->mem_type & MT_FLOAT ) ) {
 	 if ( !( sym = SymFind( paramvalue ) ) )
 	    sym = (struct asym *)param;
     }
 
-    if ( !( sym->mem_type & MT_FLOAT ) && index >= 6 ) {
+    if ( !( sym->mem_type & MT_FLOAT || sym->mem_type == MT_YWORD ) && index >= 6 ) {
 
 	if ( stack == FALSE )
 	    return 0;
@@ -1028,7 +1083,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	i = T_RAX;
     }
 
-    if ( sym->mem_type & MT_FLOAT ) {
+    if ( sym->mem_type & MT_FLOAT || sym->mem_type == MT_YWORD ) {
 
 	i = 0;
 	if ( opnd->base_reg )

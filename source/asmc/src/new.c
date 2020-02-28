@@ -21,6 +21,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
   struct expr opndx;
   int j, q;
   int creat;
+  int reg, r32;
 #if 0
     if ( Parse_Pass == PASS_1 ) {
         info = CurrProc->e.procinfo;
@@ -164,10 +165,11 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
                     return asmerr( 2045 );
 
                 p = strcat(strcat(strcpy(constructor, p), "_"), p);
+                syma = SymFind( p );
 
                 if ( Parse_Pass > PASS_1 ) {
 
-                    if ( ( syma = SymFind( p ) ) ) {
+                    if ( syma ) {
 
                         if ( syma->state == SYM_UNDEFINED )
                             /*
@@ -179,21 +181,62 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
                             syma->state = SYM_MACRO;
                     }
                 }
+
+                r32 = 0;
+                if ( syma && syma->state == SYM_MACRO ) {
+                    r32 = T_ECX;
+                    reg = T_ECX;
+                    if ( ModuleInfo.Ofssize == USE64 ) {
+                        r32 = T_EDI;
+                        reg = T_RDI;
+                        if ( syma->langtype != LANG_SYSCALL ) {
+                            r32 = T_ECX;
+                            reg = T_RCX;
+                        }
+                    }
+                }
+
                 if ( tokenarray[i-2].token == T_OP_BRACKET ) {
-                    if ( tokenarray[j-1].token == T_COLON )
-                        AddLineQueueX( "%s(&%s)", p, name );
-                    else if ( type )
-                        AddLineQueueX( "mov %s,%s(0)", name, p );
-                    else
-                        AddLineQueueX( "%s(0)", p );
+                    if ( tokenarray[j-1].token == T_COLON ) {
+                        if ( r32 ) {
+                            AddLineQueueX("lea %r,%s", reg, name);
+                            AddLineQueueX("%s(%r)", p, reg);
+                        } else
+                            AddLineQueueX( "%s(&%s)", p, name );
+                    } else if ( type ) {
+                        if ( r32 ) {
+                            AddLineQueueX("xor %r,%r", r32, r32);
+                            AddLineQueueX("mov %s,%s(%r)", name, p, reg);
+                        } else
+                            AddLineQueueX( "mov %s,%s(0)", name, p );
+                    } else {
+                        if ( r32 ) {
+                            AddLineQueueX("xor %r,%r", r32, r32);
+                            AddLineQueueX("%s(%r)", p, reg);
+                        } else
+                            AddLineQueueX( "%s(0)", p );
+                    }
                 } else {
                     tokenarray[i-1].tokpos[0] = 0;
-                    if ( tokenarray[j-1].token == T_COLON )
-                        AddLineQueueX( "%s(&%s, %s)", p, name, tokenarray[j+2].tokpos );
-                    else if ( type )
-                        AddLineQueueX( "mov %s,%s(0, %s)", name, p, tokenarray[j+2].tokpos );
-                    else
-                        AddLineQueueX( "%s(0, %s)", p, tokenarray[j+2].tokpos );
+                    if ( tokenarray[j-1].token == T_COLON ) {
+                        if ( r32 ) {
+                            AddLineQueueX( "lea %r,%s", reg, name );
+                            AddLineQueueX( "%s(%r, %s)", p, reg, tokenarray[j+2].tokpos );
+                        } else
+                            AddLineQueueX( "%s(&%s, %s)", p, name, tokenarray[j+2].tokpos );
+                    } else if ( type ) {
+                        if ( r32 ) {
+                            AddLineQueueX( "xor %r,%r", r32, r32 );
+                            AddLineQueueX( "mov %s,%s(%r, %s)", name, p, reg, tokenarray[j+2].tokpos );
+                        } else
+                            AddLineQueueX( "mov %s,%s(0, %s)", name, p, tokenarray[j+2].tokpos );
+                    } else {
+                        if ( r32 ) {
+                            AddLineQueueX( "xor %r,%r", r32, r32 );
+                            AddLineQueueX( "%s(%r, %s)", p, reg, tokenarray[j+2].tokpos );
+                        } else
+                            AddLineQueueX( "%s(0, %s)", p, tokenarray[j+2].tokpos );
+                    }
                     tokenarray[i-1].tokpos[0] = ')';
                 }
             } else

@@ -860,13 +860,13 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
             __cvta_q(edi, edx, 0)
             or byte ptr [edi+15],bl
 
-            .if dword ptr [edi].expr.llvalue[4]
+            .if [edi].expr.hvalue
 
                 sprintf( &buffer, "0x%llX", [edi].expr.llvalue )
                 AddLineQueueX( " mov rax, %s", &buffer )
                 AddLineQueueX( " mov [rsp], rax" )
 
-            .elseif dword ptr [edi].expr.llvalue
+            .elseif [edi].expr.value
 
                 AddLineQueueX( " mov qword ptr [rsp], 0x%x", dword ptr [edi].expr.llvalue )
 

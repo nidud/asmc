@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added directives .elseifs, .elseifd, and .elseifsd
 - added directive .operator
 - added ABS as args to INVOKE - immediate value
 - added YWORD and ZWORD as args to INVOKE

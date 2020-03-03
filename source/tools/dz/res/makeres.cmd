@@ -1,1 +1,0 @@
-\watcom\binnt\rc.exe -nologo -I\watcom\h\win dz.rc

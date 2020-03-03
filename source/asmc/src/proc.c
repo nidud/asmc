@@ -1953,75 +1953,77 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
 /* v2.27 - save up to 6 register parameters for WIN64 vectorcall */
 /* v2.30 - reverse direction of args + vectorcall stack 8/16 */
 
+
+static void win64_MoveRegParam( int i, int size, struct dsym *param )
+{
+    int mov = T_MOV;
+    int reg = T_XMM0 + i;
+
+    if ( param->sym.mem_type & MT_FLOAT || param->sym.mem_type == MT_YWORD
+	 || ( CurrProc->sym.langtype == LANG_VECTORCALL && param->sym.mem_type == MT_OWORD ) ) {
+	if ( param->sym.mem_type == MT_REAL4 ||
+	     param->sym.mem_type == MT_REAL2 )
+	    mov = T_MOVD;
+	else if ( param->sym.mem_type == MT_REAL8 )
+	    mov = T_MOVQ;
+	else if ( param->sym.total_size == 16 )
+	    mov = T_MOVAPS;
+	else if ( param->sym.total_size == 32 ) {
+	    mov = T_VMOVUPS;
+	    reg = T_YMM0 + i;
+	} else if ( param->sym.total_size == 64 ) {
+	    mov = T_VMOVUPS;
+	    reg = T_ZMM0 + i;
+	}
+    } else if ( i < 4 )
+	reg = ms64_regs[i];
+    AddLineQueueX( "%r [%r+%u], %r", mov, T_RSP, 8 + i * size, reg );
+}
+
+static int win64_GetRegParams( int *vararg, int *size, int maxregs, struct dsym *param )
+{
+    int params;
+
+    *size = 8;
+    if ( param && param->sym.is_vararg == TRUE ) {
+	*vararg = 1;
+	return 3;
+    }
+    *vararg = 0;
+    for ( params = 0; param; param = param->nextparam ) {
+	if ( /*maxregs == 6 &&*/ param->sym.total_size > *size )
+	    *size = param->sym.total_size;
+	if ( params < maxregs && param->nextparam )
+	    params++;
+    }
+    return params;
+}
+
 static void win64_SaveRegParams( struct proc_info *info )
 {
+    int i, size, vararg;
     struct dsym *param;
-    struct dsym *curr;
-    struct dsym *p;
-    int maxregs = 4;
-    int size = 8;
-    int params = 0;
-    int vararg = 0;
-    int i;
-
-    if ( CurrProc->sym.langtype == LANG_VECTORCALL )
-	maxregs = 6;
+    int maxregs = ( CurrProc->sym.langtype == LANG_VECTORCALL ) ? 6 : 4;
 
     param = info->paralist;
-    while ( param && param->nextparam ) {
-
-	if ( params < maxregs )
-	    params++;
-	if ( maxregs == 6 && param->sym.total_size == 16 )
-	    size = 16;
+    i = win64_GetRegParams( &vararg, &size, maxregs, param );
+    while ( i >= maxregs ) {
+	i--;
 	param = param->nextparam;
     }
-    if ( params && maxregs == 6 && param->sym.total_size == 16 )
-	size = 16;
 
-    if ( size == 16 ) { /* v2.30 - update param offset */
-
-	for ( curr = info->paralist;
-	    curr && curr->nextparam != param; curr = curr->nextparam );
-	p = curr;
-
-	for ( i = param->sym.offset + 16; p; i += 16 ) {
-
-	    p->sym.offset = i;
-	    for ( curr = info->paralist;
-		curr && curr->nextparam != p; curr = curr->nextparam );
-	    p = curr;
-	}
-    }
-
-    curr = info->paralist;
-    if ( curr && curr->sym.is_vararg == TRUE ) {
-	params = 3;
-	vararg++;
-    }
-
-    for ( i = 0; param && i <= params; i++ ) {
+    for ( ; param && i >= 0; i-- ) {
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {
-	    if ( param->sym.used || vararg || Parse_Pass == PASS_1 ) {
-		if ( param->sym.mem_type & MT_FLOAT ) {
-		    if ( param->sym.mem_type == MT_REAL4 )
-			AddLineQueueX( "movd [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-		    else if ( param->sym.mem_type == MT_REAL8 )
-			AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-		    else
-			AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-		} else if ( i < 4 )
-		    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
-	    }
-	    for ( curr = info->paralist;
-		curr && curr->nextparam != param; curr = curr->nextparam );
-	    param = curr;
+	    if ( param->sym.used || vararg || Parse_Pass == PASS_1 )
+		win64_MoveRegParam( i, size, param );
+	    if ( size >= 16 ) /* v2.30 - update param offset */
+		param->sym.offset = 16 + i * size;
+	    param = param->nextparam;
 	} else if ( i < 4 ) { /* v2.09: else branch added */
 	    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
 	}
     }
-    return;
 }
 
 /* write PROC prologue
@@ -2227,15 +2229,13 @@ static int write_default_prologue( void )
     if ( ModuleInfo.Ofssize == USE64 && ( CurrProc->sym.langtype == LANG_FASTCALL ||
 	  CurrProc->sym.langtype == LANG_VECTORCALL ) ) {
 
-	if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
+	if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS ) {
 	    win64_SaveRegParams( info );
-
-	if ( ModuleInfo.fctype == FCT_VEC64 && Parse_Pass == PASS_1 ) {
-
+	    //RunLineQueue();
+	} else if ( ModuleInfo.fctype == FCT_VEC64 && Parse_Pass == PASS_1 ) {
 	    /* set param offset to 16 */
 	    for ( cnt = 0, offset = 16, p = info->paralist; p; p = p->nextparam, offset += 16, cnt++ )
 		if ( !p->nextparam ) break;
-
 	    for ( p = info->paralist; p && cnt; offset -= 16, cnt--, p = p->nextparam )
 		p->sym.offset = offset;
 	}
@@ -2365,15 +2365,18 @@ runqueue:
     }
 
     /* special case: generated code runs BEFORE the line.*/
+
     if ( ModuleInfo.list && UseSavedState )
 	if ( Parse_Pass == PASS_1 )
 	    info->prolog_list_pos = list_pos;
 	else
 	    list_pos = info->prolog_list_pos;
+
     /* line number debug info also needs special treatment
      * because current line number is the first true src line
      * IN the proc.
      */
+
     oldlinenumbers = Options.line_numbers;
     Options.line_numbers = FALSE; /* temporarily disable line numbers */
     RunLineQueue();

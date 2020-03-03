@@ -582,7 +582,7 @@ endif
 ; FCT_WIN64
 ;-------------------------------------------------------------------------------
 
-ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
+ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:tok_t, value:ptr int_t
 
     ; v2.29: reg::reg id to fcscratch
@@ -592,16 +592,12 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     add edx,tokenarray
 
     .for ( eax = 0 : [edx].asm_tok.token != T_FINAL : edx += 16 )
-
         .if ( [edx].asm_tok.token == T_REG && [edx+16].asm_tok.token == T_DBL_COLON )
-
             add edx,32
             inc eax
         .endif
     .endf
-
     .if eax
-
         dec eax
         mov fcscratch,eax
     .endif
@@ -611,7 +607,6 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     mov esi,4
     mov edi,8
     .if [edx].esym.sym.langtype == LANG_VECTORCALL
-
         mov esi,6
         mov edi,16
     .endif
@@ -631,6 +626,18 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
                 inc eax
             .endif
         .endf
+
+    .else ; v2.31.22: extend call stack to 6 * [32|64]
+
+        .for ( edx = [edx].proc_info.paralist : edx : edx = [edx].esym.prev )
+            .if ( [edx].asym.mem_type & MT_FLOAT || \
+                  [edx].asym.mem_type == MT_YWORD || \
+                  ( esi == 6 && [edx].asym.mem_type == MT_OWORD ) )
+                .if edi < [edx].asym.total_size
+                    mov edi,[edx].asym.total_size
+                .endif
+            .endif
+        .endf
     .endif
 
     .if eax < esi
@@ -638,13 +645,13 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     .elseif eax & 1
         inc eax
     .endif
-    sub eax,esi
-    shl eax,3
+    sub  eax,esi
+    shl  eax,3
     xchg eax,edi
-    mul esi
-    add eax,edi
-    mov edx,value
-    mov [edx],eax
+    mul  esi
+    add  eax,edi
+    mov  edx,value
+    mov  [edx],eax
 
     .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 

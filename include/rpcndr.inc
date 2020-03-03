@@ -404,7 +404,7 @@ NdrMarshSCtxtHdl macro pc,p,rd
 	endm
 
 NdrFieldOffset macro s,f
-	exitm<(long)( AND (((s *)0)- GT f))>
+	exitm<s.f>
 	endm
 NdrFieldPad macro s,f,p,t
 	exitm<(NdrFieldOffset(s,f) - NdrFieldOffset(s,p) - sizeof(t))>

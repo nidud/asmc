@@ -341,6 +341,7 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
     int i;
     int size = 8;
     int args = 4;
+    struct dsym *sym;
 
     if ( proc->sym.langtype == LANG_VECTORCALL ) {
 	size = 16;
@@ -364,6 +365,14 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 	for ( numparams = 0; tokenarray[start].token != T_FINAL; start++ )
 	    if ( tokenarray[start].token == T_COMMA )
 		numparams++;
+    } else { /* v2.31.22: extend call stack to 6 * [32|64] */
+	for ( sym = proc->e.procinfo->paralist; sym; sym = sym->prev ) {
+	    if ( sym->sym.mem_type & MT_FLOAT || sym->sym.mem_type == MT_YWORD ||
+		  ( args == 6 && sym->sym.mem_type == MT_OWORD ) ) {
+		if ( size < sym->sym.total_size )
+		    size = sym->sym.total_size;
+	    }
+	}
     }
     if ( numparams < args )
 	numparams = args;

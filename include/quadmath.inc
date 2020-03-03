@@ -232,31 +232,33 @@ FLTQ macro value
     exitm<string>
     endm
 
-_mm_cvtq_ld macro d, x:=<xmm0>
-    movq    rax,x
-    shufps  x,x,01001110B
-    movq    rdx,x
-    shld    rcx,rdx,16
-    mov	    word ptr d[8],cx
+fldq macro this:=<rsp>, xmm:=<xmm0>
+    movaps  [this],xmm
+    mov	    rax,[this]
+    mov	    rdx,[this+8]
+    shld    r8,rdx,16
+    mov	    [this+8],r8w
     shld    rdx,rax,16
-    and	    ecx,Q_EXPMASK
-    neg	    cx
+    and	    r8d,Q_EXPMASK
+    neg	    r8w
     rcr	    rdx,1
-    mov	    qword ptr d,rdx
-    exitm<>
+    mov	    [this],rdx
+    fld	    real10 ptr [this]
+    retm    <this>
     endm
 
-_mm_cvtld_q macro d, x:=<xmm0>, tmp:=<xmm1>
+fstq macro this:=<rsp>, xmm:=<xmm0>
+    fstp    real10 ptr [this]
     xor	    eax,eax
-    mov	    rdx,qword ptr d
+    mov	    rdx,[this]
     shl	    rdx,1
-    mov	    cx,word ptr d[8]
+    mov	    r8w,[this+8]
     shrd    rax,rdx,16
-    shrd    rdx,rcx,16
-    movq    tmp,rdx
-    movq    x,rax
-    shufpd  x,tmp,0
-    exitm<>
+    shrd    rdx,r8,16
+    mov	    [this],rax
+    mov	    [this+8],rdx
+    movaps  xmm,[this]
+    retm    <xmm>
     endm
 
 endif

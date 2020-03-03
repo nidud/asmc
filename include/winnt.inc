@@ -29,6 +29,8 @@ MAX_NATURAL_ALIGNMENT		equ DWORD
 MEMORY_ALLOCATION_ALIGNMENT	equ 8
 endif
 
+.pragma pack(push, MAX_NATURAL_ALIGNMENT)
+
 TYPE_ALIGNMENT macro t
 	local S1
 	S1 STRUC
@@ -3296,18 +3298,17 @@ SID_REVISION		equ 1	; Current revision level
 SID_MAX_SUB_AUTHORITIES equ 15
 SID_RECOMMENDED_SUB_AUTHORITIES equ 1	; Will change to around 6
 
-SID_NAME_USE		typedef DWORD
-PSID_NAME_USE		typedef ptr SID_NAME_USE
-
-SidTypeUser		equ 1
-SidTypeGroup		equ 2
-SidTypeDomain		equ 3
-SidTypeAlias		equ 4
-SidTypeWellKnownGroup	equ 5
-SidTypeDeletedAccount	equ 6
-SidTypeInvalid		equ 7
-SidTypeUnknown		equ 8
-SidTypeComputer		equ 9
+.enum SID_NAME_USE {
+    SidTypeUser = 1,
+    SidTypeGroup,
+    SidTypeDomain,
+    SidTypeAlias,
+    SidTypeWellKnownGroup,
+    SidTypeDeletedAccount,
+    SidTypeInvalid,
+    SidTypeUnknown,
+    SidTypeComputer }
+    PSID_NAME_USE	typedef ptr SID_NAME_USE
 
 SID_AND_ATTRIBUTES	STRUC
 ifdef MIDL_PASS
@@ -3480,91 +3481,91 @@ MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
 	exitm<(IL * 0x1000)>
 	endm
 
-WELL_KNOWN_SID_TYPE typedef sdword ; enum {
-
-    WinNullSid					equ 0
-    WinWorldSid					equ 1
-    WinLocalSid					equ 2
-    WinCreatorOwnerSid				equ 3
-    WinCreatorGroupSid				equ 4
-    WinCreatorOwnerServerSid			equ 5
-    WinCreatorGroupServerSid			equ 6
-    WinNtAuthoritySid				equ 7
-    WinDialupSid				equ 8
-    WinNetworkSid				equ 9
-    WinBatchSid					equ 10
-    WinInteractiveSid				equ 11
-    WinServiceSid				equ 12
-    WinAnonymousSid				equ 13
-    WinProxySid					equ 14
-    WinEnterpriseControllersSid			equ 15
-    WinSelfSid					equ 16
-    WinAuthenticatedUserSid			equ 17
-    WinRestrictedCodeSid			equ 18
-    WinTerminalServerSid			equ 19
-    WinRemoteLogonIdSid				equ 20
-    WinLogonIdsSid				equ 21
-    WinLocalSystemSid				equ 22
-    WinLocalServiceSid				equ 23
-    WinNetworkServiceSid			equ 24
-    WinBuiltinDomainSid				equ 25
-    WinBuiltinAdministratorsSid			equ 26
-    WinBuiltinUsersSid				equ 27
-    WinBuiltinGuestsSid				equ 28
-    WinBuiltinPowerUsersSid			equ 29
-    WinBuiltinAccountOperatorsSid		equ 30
-    WinBuiltinSystemOperatorsSid		equ 31
-    WinBuiltinPrintOperatorsSid			equ 32
-    WinBuiltinBackupOperatorsSid		equ 33
-    WinBuiltinReplicatorSid			equ 34
-    WinBuiltinPreWindows2000CompatibleAccessSid equ 35
-    WinBuiltinRemoteDesktopUsersSid		equ 36
-    WinBuiltinNetworkConfigurationOperatorsSid	equ 37
-    WinAccountAdministratorSid			equ 38
-    WinAccountGuestSid				equ 39
-    WinAccountKrbtgtSid				equ 40
-    WinAccountDomainAdminsSid			equ 41
-    WinAccountDomainUsersSid			equ 42
-    WinAccountDomainGuestsSid			equ 43
-    WinAccountComputersSid			equ 44
-    WinAccountControllersSid			equ 45
-    WinAccountCertAdminsSid			equ 46
-    WinAccountSchemaAdminsSid			equ 47
-    WinAccountEnterpriseAdminsSid		equ 48
-    WinAccountPolicyAdminsSid			equ 49
-    WinAccountRasAndIasServersSid		equ 50
-    WinNTLMAuthenticationSid			equ 51
-    WinDigestAuthenticationSid			equ 52
-    WinSChannelAuthenticationSid		equ 53
-    WinThisOrganizationSid			equ 54
-    WinOtherOrganizationSid			equ 55
-    WinBuiltinIncomingForestTrustBuildersSid	equ 56
-    WinBuiltinPerfMonitoringUsersSid		equ 57
-    WinBuiltinPerfLoggingUsersSid		equ 58
-    WinBuiltinAuthorizationAccessSid		equ 59
-    WinBuiltinTerminalServerLicenseServersSid	equ 60
-    WinBuiltinDCOMUsersSid			equ 61
-    WinBuiltinIUsersSid				equ 62
-    WinIUserSid					equ 63
-    WinBuiltinCryptoOperatorsSid		equ 64
-    WinUntrustedLabelSid			equ 65
-    WinLowLabelSid				equ 66
-    WinMediumLabelSid				equ 67
-    WinHighLabelSid				equ 68
-    WinSystemLabelSid				equ 69
-    WinWriteRestrictedCodeSid			equ 70
-    WinCreatorOwnerRightsSid			equ 71
-    WinCacheablePrincipalsGroupSid		equ 72
-    WinNonCacheablePrincipalsGroupSid		equ 73
-    WinEnterpriseReadonlyControllersSid		equ 74
-    WinAccountReadonlyControllersSid		equ 75
-    WinBuiltinEventLogReadersGroup		equ 76
-    WinNewEnterpriseReadonlyControllersSid	equ 77
-    WinBuiltinCertSvcDComAccessGroup		equ 78
-    WinMediumPlusLabelSid			equ 79
-    WinLocalLogonSid				equ 80
-    WinConsoleLogonSid				equ 81
-    WinThisOrganizationCertificateSid		equ 82
+.enum WELL_KNOWN_SID_TYPE {
+    WinNullSid,
+    WinWorldSid,
+    WinLocalSid,
+    WinCreatorOwnerSid,
+    WinCreatorGroupSid,
+    WinCreatorOwnerServerSid,
+    WinCreatorGroupServerSid,
+    WinNtAuthoritySid,
+    WinDialupSid,
+    WinNetworkSid,
+    WinBatchSid,
+    WinInteractiveSid,
+    WinServiceSid,
+    WinAnonymousSid,
+    WinProxySid,
+    WinEnterpriseControllersSid,
+    WinSelfSid,
+    WinAuthenticatedUserSid,
+    WinRestrictedCodeSid,
+    WinTerminalServerSid,
+    WinRemoteLogonIdSid,
+    WinLogonIdsSid,
+    WinLocalSystemSid,
+    WinLocalServiceSid,
+    WinNetworkServiceSid,
+    WinBuiltinDomainSid,
+    WinBuiltinAdministratorsSid,
+    WinBuiltinUsersSid,
+    WinBuiltinGuestsSid,
+    WinBuiltinPowerUsersSid,
+    WinBuiltinAccountOperatorsSid,
+    WinBuiltinSystemOperatorsSid,
+    WinBuiltinPrintOperatorsSid,
+    WinBuiltinBackupOperatorsSid,
+    WinBuiltinReplicatorSid,
+    WinBuiltinPreWindows2000CompatibleAccessSid,
+    WinBuiltinRemoteDesktopUsersSid,
+    WinBuiltinNetworkConfigurationOperatorsSid,
+    WinAccountAdministratorSid,
+    WinAccountGuestSid,
+    WinAccountKrbtgtSid,
+    WinAccountDomainAdminsSid,
+    WinAccountDomainUsersSid,
+    WinAccountDomainGuestsSid,
+    WinAccountComputersSid,
+    WinAccountControllersSid,
+    WinAccountCertAdminsSid,
+    WinAccountSchemaAdminsSid,
+    WinAccountEnterpriseAdminsSid,
+    WinAccountPolicyAdminsSid,
+    WinAccountRasAndIasServersSid,
+    WinNTLMAuthenticationSid,
+    WinDigestAuthenticationSid,
+    WinSChannelAuthenticationSid,
+    WinThisOrganizationSid,
+    WinOtherOrganizationSid,
+    WinBuiltinIncomingForestTrustBuildersSid,
+    WinBuiltinPerfMonitoringUsersSid,
+    WinBuiltinPerfLoggingUsersSid,
+    WinBuiltinAuthorizationAccessSid,
+    WinBuiltinTerminalServerLicenseServersSid,
+    WinBuiltinDCOMUsersSid,
+    WinBuiltinIUsersSid,
+    WinIUserSid,
+    WinBuiltinCryptoOperatorsSid,
+    WinUntrustedLabelSid,
+    WinLowLabelSid,
+    WinMediumLabelSid,
+    WinHighLabelSid,
+    WinSystemLabelSid,
+    WinWriteRestrictedCodeSid,
+    WinCreatorOwnerRightsSid,
+    WinCacheablePrincipalsGroupSid,
+    WinNonCacheablePrincipalsGroupSid,
+    WinEnterpriseReadonlyControllersSid,
+    WinAccountReadonlyControllersSid,
+    WinBuiltinEventLogReadersGroup,
+    WinNewEnterpriseReadonlyControllersSid,
+    WinBuiltinCertSvcDComAccessGroup,
+    WinMediumPlusLabelSid,
+    WinLocalLogonSid,
+    WinConsoleLogonSid,
+    WinThisOrganizationCertificateSid
+    }
 
 
 SYSTEM_LUID			equ <{ 0x3E7, 0x0 }>
@@ -3925,21 +3926,21 @@ PPRIVILEGE_SET	typedef ptr PRIVILEGE_SET
 ACCESS_REASON_TYPE_MASK		equ 0xffff0000
 ACCESS_REASON_DATA_MASK		equ 0x0000ffff
 
-ACCESS_REASON_TYPE		typedef sdword ; enum {
-
-    AccessReasonNone		equ 0x00000000
-    AccessReasonAllowedAce	equ 0x00010000
-    AccessReasonDeniedAce	equ 0x00020000
-    AccessReasonAllowedParentAce equ 0x00030000
-    AccessReasonDeniedParentAce equ 0x00040000
-    AccessReasonMissingPrivilege equ 0x00100000
-    AccessReasonFromPrivilege	equ 0x00200000
-    AccessReasonIntegrityLevel	equ 0x00300000
-    AccessReasonOwnership	equ 0x00400000
-    AccessReasonNullDacl	equ 0x00500000
-    AccessReasonEmptyDacl	equ 0x00600000
-    AccessReasonNoSD		equ 0x00700000
-    AccessReasonNoGrant		equ 0x00800000
+.enum ACCESS_REASON_TYPE {
+    AccessReasonNone		 = 0x00000000,
+    AccessReasonAllowedAce	 = 0x00010000,
+    AccessReasonDeniedAce	 = 0x00020000,
+    AccessReasonAllowedParentAce = 0x00030000,
+    AccessReasonDeniedParentAce	 = 0x00040000,
+    AccessReasonMissingPrivilege = 0x00100000,
+    AccessReasonFromPrivilege	 = 0x00200000,
+    AccessReasonIntegrityLevel	 = 0x00300000,
+    AccessReasonOwnership	 = 0x00400000,
+    AccessReasonNullDacl	 = 0x00500000,
+    AccessReasonEmptyDacl	 = 0x00600000,
+    AccessReasonNoSD		 = 0x00700000,
+    AccessReasonNoGrant		 = 0x00800000
+    }
 
 ACCESS_REASON		typedef DWORD
 ACCESS_REASONS		STRUC
@@ -4065,51 +4066,48 @@ TOKEN_WRITE	equ STANDARD_RIGHTS_WRITE   or \
 
 TOKEN_EXECUTE	equ STANDARD_RIGHTS_EXECUTE
 
-TOKEN_TYPE	typedef DWORD
+.enum TOKEN_TYPE {
+    TokenPrimary		= 1,
+    TokenImpersonation		= 2
+    }
 
-
-    TokenPrimary		equ 1
-    TokenImpersonation		equ 2
-
-    TOKEN_ELEVATION_TYPE	typedef dword
+.enum TOKEN_ELEVATION_TYPE {
+    TokenElevationTypeDefault	= 1,
+    TokenElevationTypeFull	= 2,
+    TokenElevationTypeLimited	= 3 }
     PTOKEN_ELEVATION_TYPE	typedef ptr TOKEN_ELEVATION_TYPE
 
-    TokenElevationTypeDefault	equ 1
-    TokenElevationTypeFull	equ 2
-    TokenElevationTypeLimited	equ 3
-
-    TOKEN_INFORMATION_CLASS	typedef dword
+.enum TOKEN_INFORMATION_CLASS {
+    TokenUser			= 1,
+    TokenGroups			= 2,
+    TokenPrivileges		= 3,
+    TokenOwner			= 4,
+    TokenPrimaryGroup		= 5,
+    TokenDefaultDacl		= 6,
+    TokenSource			= 7,
+    TokenType			= 8,
+    TokenImpersonationLevel	= 9,
+    TokenStatistics		= 10,
+    TokenRestrictedSids		= 11,
+    TokenSessionId		= 12,
+    TokenGroupsAndPrivileges	= 13,
+    TokenSessionReference	= 14,
+    TokenSandBoxInert		= 15,
+    TokenAuditPolicy		= 16,
+    TokenOrigin			= 17,
+    TokenElevationType		= 18,
+    TokenLinkedToken		= 19,
+    TokenElevation		= 20,
+    TokenHasRestrictions	= 21,
+    TokenAccessInformation	= 22,
+    TokenVirtualizationAllowed	= 23,
+    TokenVirtualizationEnabled	= 24,
+    TokenIntegrityLevel		= 25,
+    TokenUIAccess		= 26,
+    TokenMandatoryPolicy	= 27,
+    TokenLogonSid		= 28,
+    MaxTokenInfoClass		= 29 }
     PTOKEN_INFORMATION_CLASS	typedef ptr TOKEN_INFORMATION_CLASS
-
-    TokenUser			equ 1
-    TokenGroups			equ 2
-    TokenPrivileges		equ 3
-    TokenOwner			equ 4
-    TokenPrimaryGroup		equ 5
-    TokenDefaultDacl		equ 6
-    TokenSource			equ 7
-    TokenType			equ 8
-    TokenImpersonationLevel	equ 9
-    TokenStatistics		equ 10
-    TokenRestrictedSids		equ 11
-    TokenSessionId		equ 12
-    TokenGroupsAndPrivileges	equ 13
-    TokenSessionReference	equ 14
-    TokenSandBoxInert		equ 15
-    TokenAuditPolicy		equ 16
-    TokenOrigin			equ 17
-    TokenElevationType		equ 18
-    TokenLinkedToken		equ 19
-    TokenElevation		equ 20
-    TokenHasRestrictions	equ 21
-    TokenAccessInformation	equ 22
-    TokenVirtualizationAllowed	equ 23
-    TokenVirtualizationEnabled	equ 24
-    TokenIntegrityLevel		equ 25
-    TokenUIAccess		equ 26
-    TokenMandatoryPolicy	equ 27
-    TokenLogonSid		equ 28
-    MaxTokenInfoClass		equ 29
 
 TOKEN_USER		STRUC
 User			SID_AND_ATTRIBUTES <>
@@ -4623,20 +4621,21 @@ JOB_OBJECT_SECURITY_FILTER_TOKENS	equ 0x00000008
 
 JOB_OBJECT_SECURITY_VALID_FLAGS		equ 0x0000000f
 
-    JobObjectBasicAccountingInformation equ 1
-    JobObjectBasicLimitInformation	equ 2
-    JobObjectBasicProcessIdList		equ 3
-    JobObjectBasicUIRestrictions	equ 4
-    JobObjectSecurityLimitInformation	equ 5
-    JobObjectEndOfJobTimeInformation	equ 6
-    JobObjectAssociateCompletionPortInformation equ 7
-    JobObjectBasicAndIoAccountingInformation equ 8
-    JobObjectExtendedLimitInformation	equ 9
-    JobObjectJobSetInformation		equ 10
-    JobObjectGroupInformation		equ 11
-    MaxJobObjectInfoClass		equ 12
+.enum JOBOBJECTINFOCLASS {
+    JobObjectBasicAccountingInformation = 1,
+    JobObjectBasicLimitInformation,
+    JobObjectBasicProcessIdList,
+    JobObjectBasicUIRestrictions,
+    JobObjectSecurityLimitInformation,
+    JobObjectEndOfJobTimeInformation,
+    JobObjectAssociateCompletionPortInformation,
+    JobObjectBasicAndIoAccountingInformation,
+    JobObjectExtendedLimitInformation,
+    JobObjectJobSetInformation,
+    JobObjectGroupInformation,
+    MaxJobObjectInfoClass
+    }
 
-JOBOBJECTINFOCLASS	typedef sdword ; enum
 
 EVENT_MODIFY_STATE	equ 0x0002
 EVENT_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
@@ -4656,23 +4655,23 @@ TIME_ZONE_ID_UNKNOWN	equ 0
 TIME_ZONE_ID_STANDARD	equ 1
 TIME_ZONE_ID_DAYLIGHT	equ 2
 
-    LOGICAL_PROCESSOR_RELATIONSHIP typedef sdword ; enum _
-
-    RelationProcessorCore	equ 0
-    RelationNumaNode		equ 1
-    RelationCache		equ 2
-    RelationProcessorPackage	equ 3
-    RelationGroup		equ 4
-    RelationAll			equ 0xffff
+.enum LOGICAL_PROCESSOR_RELATIONSHIP {
+    RelationProcessorCore,
+    RelationNumaNode,
+    RelationCache,
+    RelationProcessorPackage,
+    RelationGroup,
+    RelationAll = 0xffff
+    }
 
 LTP_PC_SMT		equ 0x1
 
-    PROCESSOR_CACHE_TYPE	typedef sdword ; enum _
-
-    CacheUnified	equ 0
-    CacheInstruction	equ 1
-    CacheData		equ 2
-    CacheTrace		equ 3
+.enum PROCESSOR_CACHE_TYPE {
+    CacheUnified,
+    CacheInstruction,
+    CacheData,
+    CacheTrace
+    }
 
 CACHE_FULLY_ASSOCIATIVE equ 0xFF
 
@@ -9076,6 +9075,7 @@ ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
 endif
 
+.pragma pack(pop)
 endif
 .pragma list(pop)
 

@@ -1278,7 +1278,7 @@ FORWARD_WM_MDIGETACTIVE macro hwnd, fn
 
 ;; HMENU Cls_MDISetMenu(HWND hwnd, BOOL fRefresh, HMENU hmenuFrame, HMENU hmenuWindow)
 HANDLE_WM_MDISETMENU macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), (HMENU)(wParam), (HMENU)(lParam))>
+	exitm<fn(hwnd, (wParam), (wParam), (lParam))>
 	endm
 
 FORWARD_WM_MDISETMENU macro hwnd, fRefresh, hmenuFrame, hmenuWindow, fn
@@ -1345,7 +1345,7 @@ HANDLE_WM_CTLCOLORMSGBOX macro hwnd, wParam, lParam, fn
 	endm
 
 FORWARD_WM_CTLCOLORMSGBOX macro hwnd, hdc, hwndChild, fn
-	exitm<fn(hwnd, WM_CTLCOLORMSGBOX, (HDC)(hdc), (hwndChild))>
+	exitm<fn(hwnd, WM_CTLCOLORMSGBOX, (hdc), (hwndChild))>
 	endm
 
 HANDLE_WM_CTLCOLOREDIT macro hwnd, wParam, lParam, fn
@@ -1353,7 +1353,7 @@ HANDLE_WM_CTLCOLOREDIT macro hwnd, wParam, lParam, fn
 	endm
 
 FORWARD_WM_CTLCOLOREDIT macro hwnd, hdc, hwndChild, fn
-	exitm<fn(hwnd, WM_CTLCOLOREDIT, (HDC)(hdc), (hwndChild))>
+	exitm<fn(hwnd, WM_CTLCOLOREDIT, (hdc), (hwndChild))>
 	endm
 
 HANDLE_WM_CTLCOLORLISTBOX macro hwnd, wParam, lParam, fn
@@ -1361,7 +1361,7 @@ HANDLE_WM_CTLCOLORLISTBOX macro hwnd, wParam, lParam, fn
 	endm
 
 FORWARD_WM_CTLCOLORLISTBOX macro hwnd, hdc, hwndChild, fn
-	exitm<fn(hwnd, WM_CTLCOLORLISTBOX, (HDC)(hdc), (hwndChild))>
+	exitm<fn(hwnd, WM_CTLCOLORLISTBOX, (hdc), (hwndChild))>
 	endm
 
 HANDLE_WM_CTLCOLORBTN macro hwnd, wParam, lParam, fn
@@ -1677,7 +1677,7 @@ Edit_GetHandle macro hwndCtl
 	exitm<((HLOCAL)SNDMSG((hwndCtl), EM_GETHANDLE, 0, 0))>
 	endm
 Edit_SetHandle macro hwndCtl, h
-	exitm<(SNDMSG((hwndCtl), EM_SETHANDLE, (HLOCAL)(h), 0))>
+	exitm<(SNDMSG((hwndCtl), EM_SETHANDLE, (h), 0))>
 	endm
 
 if (WINVER GE 0x030a)
@@ -2043,7 +2043,7 @@ GET_WM_COMMAND_MPS macro id, hwnd, cmd
 WM_CTLCOLOR		equ 0x0019
 
 GET_WM_CTLCOLOR_HDC macro wp, lp, msg
-	exitm<(HDC)(wp)>
+	exitm<(wp)>
 	endm
 GET_WM_CTLCOLOR_HWND macro wp, lp, msg
 	exitm<(lp)>
@@ -2067,7 +2067,7 @@ GET_WM_MENUSELECT_FLAGS macro wp, lp
 	exitm<HIWORD(wp)>
 	endm
 GET_WM_MENUSELECT_HMENU macro wp, lp
-	exitm<(HMENU)(lp)>
+	exitm<(lp)>
 	endm
 GET_WM_MENUSELECT_MPS macro cmd, f, hmenu
 	exitm<MAKELONG(cmd,f), (hmenu)>
@@ -2095,10 +2095,10 @@ GET_WM_MDISETMENU_MPS macro hmenuF, hmenuW
 	endm
 
 GET_WM_MENUCHAR_CHAR macro wp, lp
-	exitm<(TCHAR)LOWORD(wp)>
+	exitm<LOWORD(wp)>
 	endm
 GET_WM_MENUCHAR_HMENU macro wp, lp
-	exitm<(HMENU)(lp)>
+	exitm<(lp)>
 	endm
 GET_WM_MENUCHAR_FMENU macro wp, lp
 	exitm<HIWORD(wp)>

@@ -4,23 +4,24 @@ __LISTING_INC equ <>
 
 ;; listing interface.
 
-LSTTYPE_DATA		equ 0
-LSTTYPE_CODE		equ 1
-LSTTYPE_EQUATE		equ 2
-LSTTYPE_TMACRO		equ 3
-LSTTYPE_DIRECTIVE	equ 4
-LSTTYPE_MACRO		equ 5
-LSTTYPE_STRUCT		equ 6
-LSTTYPE_LABEL		equ 7
-LSTTYPE_MACROLINE	equ 8
+.enum {
+    LSTTYPE_DATA,
+    LSTTYPE_CODE,
+    LSTTYPE_EQUATE,
+    LSTTYPE_TMACRO,
+    LSTTYPE_DIRECTIVE,
+    LSTTYPE_MACRO,
+    LSTTYPE_STRUCT,
+    LSTTYPE_LABEL,
+    LSTTYPE_MACROLINE }
 
-LstInit			proto
-LstWriteSrcLine		proto
-LstWriteCRef		proto
-LstPrintf		proto _CDecl :string_t, :vararg
-LstSetPosition		proto
-LstNL			proto
-LstWrite		proto :int_t, :uint_t, :ptr
+LstInit		proto
+LstWriteSrcLine proto
+LstWriteCRef	proto
+LstPrintf	proto _CDecl :string_t, :vararg
+LstSetPosition	proto
+LstNL		proto
+LstWrite	proto :int_t, :uint_t, :ptr
 
 endif
 .pragma list(pop)

@@ -102,40 +102,35 @@ color_t         typedef ptr TColor
     col         db ?
     row         db ?
 
-    Size        proc
-    Coord       proc
-    SmallRect   proc
+    .operator Size {
+        movzx   eax,[this].TRect.row
+        mul     [this].TRect.col
+        imul    eax,eax,CHAR_INFO
+        retm    <eax>
+        }
+    .operator Coord {
+        movzx   eax,[this].TRect.row
+        shl     eax,16
+        mov     al,[this].TRect.col
+        retm    <eax>
+        }
+    .operator SmallRect {
+        movzx   eax,[this].TRect.row
+        movzx   edx,[this].TRect.y
+        lea     rax,[rax+rdx-1]
+        shl     edx,16
+        shl     eax,16
+        mov     dl,[this].TRect.x
+        mov     al,[this].TRect.col
+        add     al,dl
+        dec     al
+        shl     rax,32
+        or      rax,rdx
+        retm    <rax>
+        }
 .ends
 trect_t         typedef ptr TRect
 
-TRect_Size macro this
-    movzx       eax,[this].TRect.row
-    mul         [this].TRect.col
-    imul        eax,eax,CHAR_INFO
-    retm        <eax>
-    endm
-
-TRect_Coord macro this
-    movzx       eax,[this].TRect.row
-    shl         eax,16
-    mov         al,[this].TRect.col
-    retm        <eax>
-    endm
-
-TRect_SmallRect macro this
-    movzx       eax,[this].TRect.row
-    movzx       edx,[this].TRect.y
-    lea         rax,[rax+rdx-1]
-    shl         edx,16
-    shl         eax,16
-    mov         dl,[this].TRect.x
-    mov         al,[this].TRect.col
-    add         al,dl
-    dec         al
-    shl         rax,32
-    or          rax,rdx
-    retm        <rax>
-    endm
 
 MTRECT macro x, y, col, row
     exitm<(x or (y shl 8) or (col shl 16) or (row shl 24 ))>

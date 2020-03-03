@@ -1,95 +1,76 @@
+;
+; https://docs.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getlogicalprocessorinformation
+;
 include windows.inc
 include stdio.inc
 include malloc.inc
 include tchar.inc
 
-LPFN_GLPI_T typedef proto WINAPI :PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, :LPDWORD
-LPFN_GLPI   typedef ptr LPFN_GLPI_T
+CALLBACK(LPFN_GLPI, :PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, :LPDWORD)
 
 .code
 
 ;; Helper function to count set bits in the processor mask.
-CountSetBits proc bitMask:ULONG_PTR
 
-    LSHIFT = sizeof(ULONG_PTR)*8 - 1
+CountSetBits macro bitMask
+    mov rcx,bitMask
+    popcnt rax,rcx
+    retm<eax>
+    endm
 
-    mov r8,1 shl LSHIFT
-    xor eax,eax
-
-    .for (edx = 0: edx <= LSHIFT: ++edx)
-
-        .if (rcx & r8)
-            inc eax
-        .endif
-        shr r8,1
-    .endf
-    ret
-
-CountSetBits endp
+    option win64: align
 
 _tmain proc
 
-    local glpi:LPFN_GLPI
-    local done:BOOL
-    local buffer:PSYSTEM_LOGICAL_PROCESSOR_INFORMATION
-    local p:PSYSTEM_LOGICAL_PROCESSOR_INFORMATION
-    local returnLength:DWORD
-    local logicalProcessorCount:DWORD
-    local numaNodeCount:DWORD
-    local processorCoreCount:DWORD
-    local processorL1CacheCount:DWORD
-    local processorL2CacheCount:DWORD
-    local processorL3CacheCount:DWORD
-    local processorPackageCount:DWORD
-    local byteOffset:DWORD
-    local Cache:PCACHE_DESCRIPTOR
-    local rc:DWORD
-    local LineSize:DWORD
-    local CacheSize:DWORD
+  local glpi:LPFN_GLPI, done:BOOL,
+        buffer:PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
+        p:PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
+        returnLength:DWORD,
+        logicalProcessorCount:DWORD,
+        numaNodeCount:DWORD,
+        processorCoreCount:DWORD,
+        processorL1CacheCount:DWORD,
+        processorL2CacheCount:DWORD,
+        processorL3CacheCount:DWORD,
+        processorPackageCount:DWORD,
+        byteOffset:DWORD, Cache:PCACHE_DESCRIPTOR,
+        rc:DWORD, LineSize:DWORD, CacheSize:DWORD
 
-    lea rdi,byteOffset
+    lea rdi,CacheSize
+    lea rcx,glpi
+    sub rcx,rdi
     xor eax,eax
-    mov ecx,14
-    rep stosd
+    rep stosb
 
-    .if !GetProcAddress(
-            GetModuleHandle("kernel32"), "GetLogicalProcessorInformation")
+    .if !GetProcAddress(GetModuleHandle("kernel32"), "GetLogicalProcessorInformation")
+
         _tprintf("\nGetLogicalProcessorInformation is not supported.\n")
-        exit(1)
+        .return 1
     .endif
     mov glpi,rax
 
     .while (!done)
-
         .if !glpi(buffer, &returnLength)
-
             .if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-
                 .if (buffer)
                     free(buffer)
                 .endif
                 mov buffer,malloc(returnLength)
-
                 .if (buffer == NULL)
-
                     _tprintf("\nError: Allocation failure\n")
-                    exit(2)
+                    .return 2
                 .endif
-
             .else
-
                 _tprintf("\nError %d\n", GetLastError())
-                exit(3)
+                .return 3
             .endif
-
         .else
-
             mov done,TRUE
         .endif
     .endw
 
     mov rdi,buffer
-    mov ebx,sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)
+    mov ebx,SYSTEM_LOGICAL_PROCESSOR_INFORMATION
 
     assume rdi:ptr SYSTEM_LOGICAL_PROCESSOR_INFORMATION
 
@@ -135,28 +116,24 @@ _tmain proc
             _tprintf("\nError: Unsupported LOGICAL_PROCESSOR_RELATIONSHIP value.\n")
             .endc
         .endsw
-        add ebx,sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)
-        add rdi,sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)
+        add ebx,SYSTEM_LOGICAL_PROCESSOR_INFORMATION
+        add rdi,SYSTEM_LOGICAL_PROCESSOR_INFORMATION
     .endw
 
     _tprintf("\nGetLogicalProcessorInformation results:\n")
     _tprintf("Number of NUMA nodes: %d\n", numaNodeCount)
     _tprintf("Number of physical processor packages: %d\n",
              processorPackageCount)
-    _tprintf("Number of processor cores: %d\n",
-             processorCoreCount)
-    _tprintf("Number of logical processors: %d\n",
-             logicalProcessorCount)
+    _tprintf("Number of processor cores: %d\n", processorCoreCount)
+    _tprintf("Number of logical processors: %d\n", logicalProcessorCount)
     _tprintf("Number of processor L1/L2/L3 caches: %d/%d/%d\n",
-             processorL1CacheCount,
-             processorL2CacheCount,
-             processorL3CacheCount)
+             processorL1CacheCount, processorL2CacheCount, processorL3CacheCount)
     _tprintf("Cache LineSize: %d\n", LineSize)
     _tprintf("Cache Size: %X\n", CacheSize)
-
     free(buffer)
-    exit(0)
+    xor eax,eax
+    ret
 
 _tmain endp
 
-    end _tmain
+    end _tstart

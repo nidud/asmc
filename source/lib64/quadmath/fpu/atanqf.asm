@@ -10,16 +10,10 @@ include quadmath.inc
 
 atanqf proc vectorcall Q:real16
 
-  local x:REAL10
-
-    _mm_cvtq_ld(x)
-
-    fld     x
+    fldq()
     fld1
     fpatan
-    fstp    x
-
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 atanqf endp

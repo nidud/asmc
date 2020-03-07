@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 osread proc frame h:SINT, b:PVOID, z:SIZE_T
 
   local count:UINT

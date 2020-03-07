@@ -10,19 +10,13 @@ include quadmath.inc
 
 expqf proc vectorcall Q:real16
 
-  local x:REAL10
-
-    _mm_cvtq_ld(x)
-
-    fld x
+    fldq()
     fxam
     fstsw ax
     fwait
     sahf
     .if PARITY? && CARRY?
-
         .if ah & 2
-
             fstp st
             fldz
         .endif
@@ -39,8 +33,7 @@ expqf proc vectorcall Q:real16
         fscale
         fstp    st(1)
     .endif
-    fstp x
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 expqf endp

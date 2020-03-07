@@ -10,15 +10,9 @@ include quadmath.inc
 
 sinqf proc vectorcall Q:real16
 
-  local x:REAL10
-
-    _mm_cvtq_ld(x)
-
-    fld x
+    fldq()
     fsin
-    fstp x
-
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 sinqf endp

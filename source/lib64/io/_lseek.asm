@@ -9,8 +9,6 @@ include errno.inc
 
     .code
 
-    option win64:rsp nosave
-
 _lseek proc handle:SINT, offs:QWORD, pos:UINT
 
     .if r8d == SEEK_SET

@@ -10,17 +10,11 @@ include quadmath.inc
 
 logqf proc vectorcall Q:real16
 
-  local x:REAL10
-
-    _mm_cvtq_ld(x)
-
-    fld x
+    fldq()
     fldln2
     fxch st(1)
     fyl2x
-    fstp x
-
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 logqf endp

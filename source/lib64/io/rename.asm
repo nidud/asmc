@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 rename proc frame Oldname:LPSTR, Newname:LPSTR
 
     .if MoveFile(rcx, rdx)

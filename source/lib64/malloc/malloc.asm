@@ -7,8 +7,11 @@
 include malloc.inc
 include errno.inc
 
+public  _crtheap
+
     .data
 
+    _crtheap label HANDLE
     _heap_base heap_t 0     ; address of main memory block
     _heap_free heap_t 0     ; address of free memory block
 

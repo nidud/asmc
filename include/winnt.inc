@@ -3482,89 +3482,89 @@ MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
 	endm
 
 .enum WELL_KNOWN_SID_TYPE {
-    WinNullSid,
-    WinWorldSid,
-    WinLocalSid,
-    WinCreatorOwnerSid,
-    WinCreatorGroupSid,
-    WinCreatorOwnerServerSid,
-    WinCreatorGroupServerSid,
-    WinNtAuthoritySid,
-    WinDialupSid,
-    WinNetworkSid,
-    WinBatchSid,
-    WinInteractiveSid,
-    WinServiceSid,
-    WinAnonymousSid,
-    WinProxySid,
-    WinEnterpriseControllersSid,
-    WinSelfSid,
-    WinAuthenticatedUserSid,
-    WinRestrictedCodeSid,
-    WinTerminalServerSid,
-    WinRemoteLogonIdSid,
-    WinLogonIdsSid,
-    WinLocalSystemSid,
-    WinLocalServiceSid,
-    WinNetworkServiceSid,
-    WinBuiltinDomainSid,
-    WinBuiltinAdministratorsSid,
-    WinBuiltinUsersSid,
-    WinBuiltinGuestsSid,
-    WinBuiltinPowerUsersSid,
-    WinBuiltinAccountOperatorsSid,
-    WinBuiltinSystemOperatorsSid,
-    WinBuiltinPrintOperatorsSid,
-    WinBuiltinBackupOperatorsSid,
-    WinBuiltinReplicatorSid,
-    WinBuiltinPreWindows2000CompatibleAccessSid,
-    WinBuiltinRemoteDesktopUsersSid,
-    WinBuiltinNetworkConfigurationOperatorsSid,
-    WinAccountAdministratorSid,
-    WinAccountGuestSid,
-    WinAccountKrbtgtSid,
-    WinAccountDomainAdminsSid,
-    WinAccountDomainUsersSid,
-    WinAccountDomainGuestsSid,
-    WinAccountComputersSid,
-    WinAccountControllersSid,
-    WinAccountCertAdminsSid,
-    WinAccountSchemaAdminsSid,
-    WinAccountEnterpriseAdminsSid,
-    WinAccountPolicyAdminsSid,
-    WinAccountRasAndIasServersSid,
-    WinNTLMAuthenticationSid,
-    WinDigestAuthenticationSid,
-    WinSChannelAuthenticationSid,
-    WinThisOrganizationSid,
-    WinOtherOrganizationSid,
-    WinBuiltinIncomingForestTrustBuildersSid,
-    WinBuiltinPerfMonitoringUsersSid,
-    WinBuiltinPerfLoggingUsersSid,
-    WinBuiltinAuthorizationAccessSid,
-    WinBuiltinTerminalServerLicenseServersSid,
-    WinBuiltinDCOMUsersSid,
-    WinBuiltinIUsersSid,
-    WinIUserSid,
-    WinBuiltinCryptoOperatorsSid,
-    WinUntrustedLabelSid,
-    WinLowLabelSid,
-    WinMediumLabelSid,
-    WinHighLabelSid,
-    WinSystemLabelSid,
-    WinWriteRestrictedCodeSid,
-    WinCreatorOwnerRightsSid,
-    WinCacheablePrincipalsGroupSid,
-    WinNonCacheablePrincipalsGroupSid,
-    WinEnterpriseReadonlyControllersSid,
-    WinAccountReadonlyControllersSid,
-    WinBuiltinEventLogReadersGroup,
-    WinNewEnterpriseReadonlyControllersSid,
-    WinBuiltinCertSvcDComAccessGroup,
-    WinMediumPlusLabelSid,
-    WinLocalLogonSid,
-    WinConsoleLogonSid,
-    WinThisOrganizationCertificateSid
+    WinNullSid					= 0,
+    WinWorldSid					= 1,
+    WinLocalSid					= 2,
+    WinCreatorOwnerSid				= 3,
+    WinCreatorGroupSid				= 4,
+    WinCreatorOwnerServerSid			= 5,
+    WinCreatorGroupServerSid			= 6,
+    WinNtAuthoritySid				= 7,
+    WinDialupSid				= 8,
+    WinNetworkSid				= 9,
+    WinBatchSid					= 10,
+    WinInteractiveSid				= 11,
+    WinServiceSid				= 12,
+    WinAnonymousSid				= 13,
+    WinProxySid					= 14,
+    WinEnterpriseControllersSid			= 15,
+    WinSelfSid					= 16,
+    WinAuthenticatedUserSid			= 17,
+    WinRestrictedCodeSid			= 18,
+    WinTerminalServerSid			= 19,
+    WinRemoteLogonIdSid				= 20,
+    WinLogonIdsSid				= 21,
+    WinLocalSystemSid				= 22,
+    WinLocalServiceSid				= 23,
+    WinNetworkServiceSid			= 24,
+    WinBuiltinDomainSid				= 25,
+    WinBuiltinAdministratorsSid			= 26,
+    WinBuiltinUsersSid				= 27,
+    WinBuiltinGuestsSid				= 28,
+    WinBuiltinPowerUsersSid			= 29,
+    WinBuiltinAccountOperatorsSid		= 30,
+    WinBuiltinSystemOperatorsSid		= 31,
+    WinBuiltinPrintOperatorsSid			= 32,
+    WinBuiltinBackupOperatorsSid		= 33,
+    WinBuiltinReplicatorSid			= 34,
+    WinBuiltinPreWindows2000CompatibleAccessSid = 35,
+    WinBuiltinRemoteDesktopUsersSid		= 36,
+    WinBuiltinNetworkConfigurationOperatorsSid	= 37,
+    WinAccountAdministratorSid			= 38,
+    WinAccountGuestSid				= 39,
+    WinAccountKrbtgtSid				= 40,
+    WinAccountDomainAdminsSid			= 41,
+    WinAccountDomainUsersSid			= 42,
+    WinAccountDomainGuestsSid			= 43,
+    WinAccountComputersSid			= 44,
+    WinAccountControllersSid			= 45,
+    WinAccountCertAdminsSid			= 46,
+    WinAccountSchemaAdminsSid			= 47,
+    WinAccountEnterpriseAdminsSid		= 48,
+    WinAccountPolicyAdminsSid			= 49,
+    WinAccountRasAndIasServersSid		= 50,
+    WinNTLMAuthenticationSid			= 51,
+    WinDigestAuthenticationSid			= 52,
+    WinSChannelAuthenticationSid		= 53,
+    WinThisOrganizationSid			= 54,
+    WinOtherOrganizationSid			= 55,
+    WinBuiltinIncomingForestTrustBuildersSid	= 56,
+    WinBuiltinPerfMonitoringUsersSid		= 57,
+    WinBuiltinPerfLoggingUsersSid		= 58,
+    WinBuiltinAuthorizationAccessSid		= 59,
+    WinBuiltinTerminalServerLicenseServersSid	= 60,
+    WinBuiltinDCOMUsersSid			= 61,
+    WinBuiltinIUsersSid				= 62,
+    WinIUserSid					= 63,
+    WinBuiltinCryptoOperatorsSid		= 64,
+    WinUntrustedLabelSid			= 65,
+    WinLowLabelSid				= 66,
+    WinMediumLabelSid				= 67,
+    WinHighLabelSid				= 68,
+    WinSystemLabelSid				= 69,
+    WinWriteRestrictedCodeSid			= 70,
+    WinCreatorOwnerRightsSid			= 71,
+    WinCacheablePrincipalsGroupSid		= 72,
+    WinNonCacheablePrincipalsGroupSid		= 73,
+    WinEnterpriseReadonlyControllersSid		= 74,
+    WinAccountReadonlyControllersSid		= 75,
+    WinBuiltinEventLogReadersGroup		= 76,
+    WinNewEnterpriseReadonlyControllersSid	= 77,
+    WinBuiltinCertSvcDComAccessGroup		= 78,
+    WinMediumPlusLabelSid			= 79,
+    WinLocalLogonSid				= 80,
+    WinConsoleLogonSid				= 81,
+    WinThisOrganizationCertificateSid		= 82,
     }
 
 
@@ -8946,67 +8946,89 @@ TP_CALLBACK_ENVIRON	typedef TP_CALLBACK_ENVIRON_V1
 endif
 
 ifndef MIDL_PASS
-;FORCEINLINE
-;VOID
-TpInitializeCallbackEnviron macro CallbackEnviron
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-	mov CallbackEnviron.Version,3
-else
-	mov CallbackEnviron.Version,1
-endif
-	mov CallbackEnviron.Pool,NULL
-	mov CallbackEnviron.CleanupGroup,NULL
-	mov CallbackEnviron.CleanupGroupCancelCallback,NULL
-	mov CallbackEnviron.RaceDll,NULL
-	mov CallbackEnviron.ActivationContext,NULL
-	mov CallbackEnviron.FinalizationCallback,NULL
-	mov CallbackEnviron.u.Flags,0
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-	mov CallbackEnviron.CallbackPriority,TP_CALLBACK_PRIORITY_NORMAL
-	mov CallbackEnviron.Size,TP_CALLBACK_ENVIRON
-endif
-	endm
-;VOID
-TpSetCallbackThreadpool macro CallbackEnviron, Pool
-	mov CallbackEnviron.Pool,Pool
-	endm
-;VOID
-TpSetCallbackCleanupGroup macro CallbackEnviron, CleanupGroup, CleanupGroupCancelCallback
-	mov CallbackEnviron.CleanupGroup,CleanupGroup
-	mov CallbackEnviron.CleanupGroupCancelCallback,CleanupGroupCancelCallback
-	endm
-;VOID
-TpSetCallbackActivationContext macro CallbackEnviron, ActivationContext
-	mov CallbackEnviron.ActivationContext,ActivationContext
-	endm
-;VOID
-TpSetCallbackNoActivationContext macro CallbackEnviron
-	mov CallbackEnviron.ActivationContext,-1
-	endm
-;VOID
-TpSetCallbackLongFunction macro CallbackEnviron
-	mov CallbackEnviron.u.s.LongFunction,1
-	endm
-;VOID
-TpSetCallbackRaceWithDll macro CallbackEnviron, DllHandle
-	mov CallbackEnviron.RaceDll,DllHandle
-	endm
-;VOID
-TpSetCallbackFinalizationCallback macro CallbackEnviron, FinalizationCallback
-	mov CallbackEnviron.FinalizationCallback,FinalizationCallback
-	endm
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-;VOID
-TpSetCallbackPriority macro CallbackEnviron, Priority
-	mov CallbackEnviron.CallbackPriority,Priority
-	endm
-endif
-;VOID
-TpSetCallbackPersistent macro CallbackEnviron
-	mov CallbackEnviron.u.s.Persistent,1
-	endm
 
 ;VOID
+ifdef _WIN64
+TpInitializeCallbackEnviron proto :PTP_CALLBACK_ENVIRON
+TpSetCallbackThreadpool proto :PTP_CALLBACK_ENVIRON, :PTP_POOL
+TpSetCallbackCleanupGroup proto :PTP_CALLBACK_ENVIRON, :PTP_CLEANUP_GROUP,
+	:PTP_CLEANUP_GROUP_CANCEL_CALLBACK
+TpSetCallbackActivationContext proto :PTP_CALLBACK_ENVIRON, :ptr ACTIVATION_CONTEXT
+TpSetCallbackNoActivationContext proto :PTP_CALLBACK_ENVIRON
+TpSetCallbackLongFunction proto :PTP_CALLBACK_ENVIRON
+TpSetCallbackRaceWithDll proto :PTP_CALLBACK_ENVIRON, :ptr
+endif
+
+TpInitializeCallbackEnviron macro this
+	assume this:PTP_CALLBACK_ENVIRON
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+	mov [this].Version,3
+else
+	mov [this].Version,1
+endif
+	mov [this].Pool,NULL
+	mov [this].CleanupGroup,NULL
+	mov [this].CleanupGroupCancelCallback,NULL
+	mov [this].RaceDll,NULL
+	mov [this].ActivationContext,NULL
+	mov [this].FinalizationCallback,NULL
+	mov [this].u.Flags,0
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+	mov [this].CallbackPriority,TP_CALLBACK_PRIORITY_NORMAL
+	mov [this].Size,TP_CALLBACK_ENVIRON
+endif
+	assume this:nothing
+	exitm<>
+	endm
+
+TpSetCallbackThreadpool macro CallbackEnviron, Pool
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.Pool,Pool
+	exitm<>
+	endm
+
+TpSetCallbackCleanupGroup macro CallbackEnviron, CleanupGroup, CleanupGroupCancelCallback
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.CleanupGroup,CleanupGroup
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.CleanupGroupCancelCallback,CleanupGroupCancelCallback
+	exitm<>
+	endm
+
+TpSetCallbackActivationContext macro CallbackEnviron, ActivationContext
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.ActivationContext,ActivationContext
+	exitm<>
+	endm
+
+TpSetCallbackNoActivationContext macro CallbackEnviron
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.ActivationContext,-1
+	exitm<>
+	endm
+
+TpSetCallbackLongFunction macro CallbackEnviron
+	or [CallbackEnviron].TP_CALLBACK_ENVIRON.u.Flags,1 ; .LongFunction
+	exitm<>
+	endm
+
+TpSetCallbackRaceWithDll macro CallbackEnviron, DllHandle
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.RaceDll,DllHandle
+	exitm<>
+	endm
+
+TpSetCallbackFinalizationCallback macro CallbackEnviron, FinalizationCallback
+	mov CallbackEnviron.FinalizationCallback,FinalizationCallback
+	exitm<>
+	endm
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
+TpSetCallbackPriority macro CallbackEnviron, Priority
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.CallbackPriority,Priority
+	exitm<>
+	endm
+endif
+
+TpSetCallbackPersistent macro CallbackEnviron
+	mov [CallbackEnviron].TP_CALLBACK_ENVIRON.u.s.Persistent,1
+	exitm<>
+	endm
+
 TpDestroyCallbackEnviron macro CallbackEnviron
 	endm
 

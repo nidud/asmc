@@ -10,14 +10,8 @@ include quadmath.inc
 
 fmodqf proc vectorcall X:real16, Y:real16
 
-  local x:REAL10
-  local y:REAL10
-
-    _mm_cvtq_ld(x)
-    _mm_cvtq_ld(y, xmm1)
-
-    fld x
-    fld y
+    fldq()
+    fldq(, xmm1)
     fxch st(1)
     .repeat
         fprem
@@ -25,9 +19,7 @@ fmodqf proc vectorcall X:real16, Y:real16
         sahf
     .untilnp
     fstp st(1)
-    fstp x
-
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 fmodqf endp

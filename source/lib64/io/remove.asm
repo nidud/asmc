@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 remove proc frame file:LPSTR
 
     .if DeleteFileA(rcx)

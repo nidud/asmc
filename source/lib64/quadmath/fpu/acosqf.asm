@@ -10,20 +10,14 @@ include quadmath.inc
 
 acosqf proc vectorcall Q:real16
 
-  local x:real10
-
-    _mm_cvtq_ld(x)
-
-    fld     x
+    fldq()
     fmul    st(0),st(0)
     fld1
     fsubrp  st(1),st(0)
     fsqrt
-    fld     x
+    fld     tbyte ptr [rsp]
     fpatan
-    fstp    x
-
-    _mm_cvtld_q(x)
+    fstq()
     ret
 
 acosqf endp

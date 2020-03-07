@@ -8,15 +8,15 @@ include io.inc
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp noauto
 
-_isatty PROC handle:SINT
+_isatty proc handle:SINT
 
     lea rax,_osfile
     mov al,[rax+rcx]
     and eax,FH_DEVICE
     ret
 
-_isatty ENDP
+_isatty endp
 
-    END
+    end

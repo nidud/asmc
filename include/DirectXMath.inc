@@ -136,7 +136,8 @@ XM_PERMUTE_PS macro v, imm
 	endm
 else
 XM_PERMUTE_PS macro v:=<xmm0>, imm:=<0>
-	exitm<_MM_SHUFXX(ps, v, v, imm)>
+	shufps v,v,imm
+	retm<v>
 	endm
 endif
 

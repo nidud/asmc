@@ -1956,7 +1956,7 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
 
 static void win64_MoveRegParam( int i, int size, struct dsym *param )
 {
-    int mov = T_MOV;
+    int mov = 0;
     int reg = T_XMM0 + i;
 
     if ( param->sym.mem_type & MT_FLOAT || param->sym.mem_type == MT_YWORD
@@ -1975,9 +1975,12 @@ static void win64_MoveRegParam( int i, int size, struct dsym *param )
 	    mov = T_VMOVUPS;
 	    reg = T_ZMM0 + i;
 	}
-    } else if ( i < 4 )
+    } else if ( i < 4 ) {
 	reg = ms64_regs[i];
-    AddLineQueueX( "%r [%r+%u], %r", mov, T_RSP, 8 + i * size, reg );
+	mov = T_MOV;
+    }
+    if ( mov )
+	AddLineQueueX( "%r [%r+%u], %r", mov, T_RSP, 8 + i * size, reg );
 }
 
 static int win64_GetRegParams( int *vararg, int *size, int maxregs, struct dsym *param )

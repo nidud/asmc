@@ -11,7 +11,7 @@ include DirectXMath.inc
 
 XMVectorGetIntZPtr proc XM_CALLCONV x:ptr uint32_t, V:FXMVECTOR
 
-    inl_XMVectorGetIntZPtr(rcx, xmm1)
+    inl_XMVectorGetIntZPtr([rcx], xmm1)
     ret
 
 XMVectorGetIntZPtr endp

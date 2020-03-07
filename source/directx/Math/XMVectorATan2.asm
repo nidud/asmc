@@ -80,13 +80,14 @@ XMVectorATan2 proc XM_CALLCONV Y:FXMVECTOR, X:FXMVECTOR
     movaps Result, XMVectorSelect(R3, R5, YEqualsInfinity)
     movaps ATanResultValid, XMVectorEqualInt(Result, ATanResultValid)
 
-    _mm_store_ps(V, _mm_div_ps(Y, X))
-
-    _mm_store_ps(R0, XMVectorATan(V))
+    movaps xmm0,Y
+    divps  xmm0,X
+    _mm_store_ps(R0, XMVectorATan(xmm0))
 
     XMVectorSelect(Pi, g_XMNegativeZero, XIsPositive)
     _mm_store_ps(R1, xmm0)
-    _mm_store_ps(R2, _mm_add_ps(R0, R1))
+    movaps xmm0,R0
+    _mm_store_ps(R2, _mm_add_ps(xmm0, R1))
     XMVectorSelect(Result, R2, ATanResultValid)
     ret
 

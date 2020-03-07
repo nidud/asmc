@@ -11,7 +11,7 @@ include DirectXMath.inc
 
 XMVectorReplicatePtr proc XM_CALLCONV pValue:ptr float
 
-    inl_XMVectorReplicatePtr(rcx)
+    inl_XMVectorReplicatePtr([rcx])
     ret
 
 XMVectorReplicatePtr endp

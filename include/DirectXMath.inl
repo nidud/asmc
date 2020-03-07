@@ -1,6 +1,8 @@
 ifndef __DIRECTXMATH_INL
 __DIRECTXMATH_INL equ <>
 
+include xmmmacros.inc
+
 inl_XMConvertVectorIntToFloat macro VInt, DivExponent
     _mm_store_ps(xmm0, VInt)
     ;;

@@ -107,7 +107,7 @@ static const char idataattr[] = { "FLAT read public alias('.rdata') 'DATA'" };
 
 static const char mzcode[] = {
     "db 'MZ'\0"		  /* e_magic */
-    "dw 80h, 1, 0, 4\0"	  /* e_cblp, e_cp, e_crlc, e_cparhdr */
+    "dw 68h, 1, 0, 4\0"	  /* e_cblp, e_cp, e_crlc, e_cparhdr */
     "dw 0, -1, 0, 0B8h\0" /* e_minalloc, e_maxalloc, e_ss, e_sp */
     "dw 0, 0, 0, 40h\0"	  /* e_csum, e_ip, e_cs, e_sp, e_lfarlc */
     "org 40h\0"		  /* e_lfanew, will be set by program */

@@ -11,7 +11,7 @@ include DirectXMath.inc
 
 XMVectorReplicateIntPtr proc XM_CALLCONV pValue:ptr uint32_t
 
-    inl_XMVectorReplicateIntPtr(rcx)
+    inl_XMVectorReplicateIntPtr([rcx])
     ret
 
 XMVectorReplicateIntPtr endp

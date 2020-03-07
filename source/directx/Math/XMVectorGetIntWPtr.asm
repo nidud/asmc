@@ -11,7 +11,8 @@ include DirectXMath.inc
 
 XMVectorGetIntWPtr proc XM_CALLCONV x:ptr uint32_t, V:FXMVECTOR
 
-    inl_XMVectorGetIntWPtr(rcx, xmm1)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,3,3,3))
+    movaps [rcx],xmm1
     ret
 
 XMVectorGetIntWPtr endp

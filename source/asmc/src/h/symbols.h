@@ -169,11 +169,12 @@ struct asym {
 		unsigned char ptr_memtype;/* pointer target type */
 		unsigned char asmpass;	  /* SYM_INTERNAL (mem_type NEAR|FAR) */
 	    };
-	    unsigned char   seg_ofssize:2;    /* SYM_EXTERNAL only */
-	    unsigned char   iscomm:1;  /* is communal */
-	    unsigned char   weak:1;    /* 1 if an unused "externdef" */
-	    unsigned char   isfar:1;   /* SYM_EXTERNAL, SYM_TYPE, SYM_STACK */
-	    unsigned char   is_vararg:1;/* SYM_STACK, VARARG param */
+	    unsigned char   seg_ofssize:2;	/* SYM_EXTERNAL only */
+	    unsigned char   iscomm:1;		/* is communal */
+	    unsigned char   weak:1;		/* 1 if an unused "externdef" */
+	    unsigned char   isfar:1;		/* SYM_EXTERNAL, SYM_TYPE, SYM_STACK */
+	    unsigned char   is_vararg:1;	/* SYM_STACK, VARARG param */
+	    unsigned char   isinline:1;		/* SYM_EXTERNAL */
 	};
 	/* for SYM_MACRO */
 	struct {

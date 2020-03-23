@@ -10,34 +10,38 @@ include quadmath.inc
 
 __cvtq_ld proc uses ebx x:ptr, q:ptr
 
-    mov     eax,q
-    movzx   ecx,word ptr [eax+14]
-    mov     edx,[eax+10]
-    mov     ebx,ecx
-    and     ebx,LD_EXPMASK
-    neg     ebx
-    mov     eax,[eax+6]
-    rcr     edx,1
-    rcr     eax,1
+    xor ecx,ecx
+    mov eax,q
+    mov cx,[eax+14]
+    mov edx,[eax+10]
+    mov ebx,ecx
+    and ebx,LD_EXPMASK
+    neg ebx
+    mov ebx,[eax+6]
+    rcr edx,1
+    rcr ebx,1
 
     ; round result
 
     .ifc
-        .if eax == -1 && edx == -1
-            xor eax,eax
+        .if ebx == -1 && edx == -1
+            xor ebx,ebx
             mov edx,0x80000000
             inc cx
         .else
-            add eax,1
+            add ebx,1
             adc edx,0
         .endif
     .endif
-
-    mov     ebx,x
-    mov     [ebx],eax
-    mov     [ebx+4],edx
-    mov     [ebx+8],cx
-    mov     eax,ebx
+    mov eax,x
+    mov [eax],ebx
+    mov [eax+4],edx
+    .if eax == q
+        mov [eax+8],ecx
+        mov dword ptr [eax+12],0
+    .else
+        mov [eax+8],cx
+    .endif
     ret
 
 __cvtq_ld endp

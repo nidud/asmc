@@ -647,7 +647,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		 param->sym.mem_type == MT_YWORD || param->sym.mem_type == MT_OWORD ) )
 		return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
-	    if ( param->sym.mem_type == MT_REAL8 ) {
+	    if ( param->sym.mem_type != MT_REAL4 ) {
 		AddLineQueueX( " mov %r ptr [%r+%u+0], %r (%s)", T_DWORD, T_RSP, NUMQUAL offset, T_LOW32, paramvalue );
 		AddLineQueueX( " mov %r ptr [%r+%u+4], %r (%s)", T_DWORD, T_RSP, NUMQUAL offset, T_HIGH32, paramvalue );
 	    } else
@@ -733,9 +733,13 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	}
 
 	if ( addr || ( !reg_64 && psize > 8 ) ) { /* psize > 8 shouldn't happen! */
-	    if ( psize >= 4 )
-		AddLineQueueX( " lea %r, %s", ms64_regs[index+2*4+(psize > 4 ? 4 : 0)], paramvalue );
-	    else
+	    if ( psize >= 4 ) {
+		if ( psize == 16 && ( GetValueSp(reg) & OP_XMM ) )
+		    /* v2.31.24 xmm to r64 -- vararg */
+		    AddLineQueueX( " movq %r, %r", ms64_regs[index+3*4], reg );
+		else
+		    AddLineQueueX( " lea %r, %s", ms64_regs[index+2*4+(psize > 4 ? 4 : 0)], paramvalue );
+	    } else
 		asmerr( 2114, index+1 );
 	    *regs_used |= ( 1 << ( index + RPAR_START ) );
 	    return( 1 );
@@ -853,8 +857,11 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		    AddLineQueueX( " shl rax,32" );
 		    AddLineQueueX( " or  %r,rax", i32 );
 		}
-	    } else
+	    } else {
+		if ( opnd->kind == EXPR_FLOAT ) /* added v2.31 */
+		    i = ms64_regs[index+3*4];
 		AddLineQueueX( " mov %r, %s", i, paramvalue );
+	    }
 	}
 	*regs_used |= ( 1 << ( index + RPAR_START ) );
     }
@@ -1267,6 +1274,9 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 		AddLineQueueX( " mov %r, qword ptr %s[8]", reg, paramvalue );
 	    }
 	} else {
+
+	    if ( opnd->kind == EXPR_FLOAT ) /* added v2.31 */
+		i = elf64_regs[index + 3 * 4];
 
 	    AddLineQueueX( " mov %r, %s", i, paramvalue );
 	}

@@ -750,6 +750,7 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 .if SymAlloc(edi)
 
                     mov [esi].sym.target_type,eax
+                    or  [esi].sym.sint_flag,SINT_ISINLINE
                     mov esi,eax
                     mov [esi].sym.altname,ebx
                     and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )

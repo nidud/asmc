@@ -2,6 +2,14 @@
 #include <globals.h>
 #include <hllext.h>
 
+int RetLineQueue( void )
+{
+    if ( ModuleInfo.list )
+	LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
+    RunLineQueue();
+    return NOT_ERROR;
+}
+
 int SizeFromExpression( struct expr *opnd )
 {
     if ( opnd->mbr && opnd->mbr->state == SYM_STRUCT_FIELD ) {
@@ -157,8 +165,24 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
 
     src--;
     *src = c;
-    if ( ModuleInfo.list )
-	LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
-    RunLineQueue();
-    return NOT_ERROR;
+
+    return RetLineQueue();
+}
+
+int imm2xmm( struct asm_tok tokenarray[] )
+{
+    int reg = T_EAX;
+    int cmd = tokenarray[0].tokval;
+
+    if ( cmd == T_MOVSD )
+	cmd = T_MOVQ;
+    else if ( cmd == T_MOVSS )
+	cmd = T_MOVD;
+    if ( cmd == T_MOVQ )
+	reg = T_RAX;
+
+    AddLineQueueX( " mov %r, %s", reg, tokenarray[3].tokpos );
+    AddLineQueueX( " %r %r, %r", cmd, tokenarray[1].tokval, reg );
+
+    return RetLineQueue();
 }

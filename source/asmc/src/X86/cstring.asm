@@ -7,6 +7,7 @@ include tokenize.inc
 include memalloc.inc
 include fastpass.inc
 include expreval.inc
+include quadmath.inc
 
 MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
@@ -522,8 +523,7 @@ local   rc:                     int_t,
             StoreLine( b_line, list_pos, 0 )
             mov ModuleInfo.GeneratedCode,ebx
         .endif
-        mov al,lineflags
-        mov ModuleInfo.line_flags,al
+        mov ModuleInfo.line_flags,lineflags
     .endif
     mov eax,rc
     ret
@@ -702,5 +702,126 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 CString ENDP
 
 endif
+
+flt_item    struc
+string      string_t ?
+count       int_t ?
+next        ptr_t ?
+index       int_t ?
+flt_item    ends
+
+    assume ebx:ptr expr
+    assume esi:ptr flt_item
+
+CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
+
+  local segm[64]:char_t
+  local temp[128]:char_t
+  local opc:expr
+
+    mov ebx,opnd
+    mov opc.llvalue,[ebx].llvalue
+    mov opc.hlvalue,[ebx].hlvalue
+    .switch size
+    .case 4
+        mov opc.flags,0
+        .if ( [ebx].chararray[15] & 0x80 )
+            mov opc.flags,E_NEGATIVE
+            and opc.chararray[15],0x7F
+        .endif
+        __cvtq_ss(&opc, ebx)
+        .if ( opc.flags == E_NEGATIVE )
+            or opc.chararray[3],0x80
+        .endif
+        .endc
+    .case 8
+        mov opc.flags,0
+        .if ( [ebx].chararray[15] & 0x80 )
+            mov opc.flags,E_NEGATIVE
+            and opc.chararray[15],0x7F
+        .endif
+        __cvtq_sd(&opc, ebx)
+        .if ( opc.flags == E_NEGATIVE )
+            or opc.chararray[7],0x80
+        .endif
+        .endc
+    .case 10
+        __cvtq_ld(&opc, ebx)
+        mov dword ptr opc.hlvalue[4],0
+        mov word ptr opc.hlvalue[2],0
+    .case 16
+        .endc
+    .endsw
+
+    .for edi = 0, esi = ModuleInfo.FltStack : esi : edi++, esi = [esi].next
+        .if size == [esi].count
+            mov eax,[esi].string
+            mov edx,dword ptr opc.hlvalue[0]
+            mov ecx,dword ptr opc.hlvalue[4]
+            .if edx == [eax+0x08] && ecx == [eax+0x0C]
+                mov edx,opc.value
+                mov ecx,opc.hvalue
+                .if edx == [eax] && ecx == [eax+0x04]
+                    mov eax,[esi].index
+                    sprintf( buffer, "F%04X", eax )
+                    .return 1
+                .endif
+            .endif
+        .endif
+    .endf
+
+    sprintf( buffer, "F%04X", edi )
+    .if Parse_Pass == PASS_1
+
+        LclAlloc( flt_item+16 )
+        mov [eax].flt_item.index,edi
+        mov ecx,size
+        mov [eax].flt_item.count,ecx
+        mov ecx,ModuleInfo.FltStack
+        mov [eax].flt_item.next,ecx
+        mov ModuleInfo.FltStack,eax
+        lea ecx,[eax+flt_item]
+        mov [eax].flt_item.string,ecx
+        memcpy(ecx, &opc, 16)
+
+        lea esi,temp
+        mov eax,ModuleInfo.currseg
+        .if eax
+            mov ecx,[eax].asym.name
+            strcat( strcpy( &segm, ecx ), " segment" )
+        .else
+            strcpy( &segm, ".code" )
+        .endif
+
+        InsertLine( ".data" )
+        mov ecx,size
+        .if ecx == 10
+            mov ecx,16
+        .endif
+        sprintf( esi, "align %d", ecx )
+        InsertLine( esi )
+
+        .switch size
+        .case 4
+            sprintf( esi, "%s dd 0x%08X", buffer, opc.value )
+            .endc
+        .case 8
+            sprintf( esi, "%s dq 0x%016llX", buffer, opc.llvalue )
+            .endc
+        .case 10
+        .case 16
+            sprintf( esi, "%s label real%d", buffer, size )
+            InsertLine( esi )
+            sprintf( esi, "oword 0x%016llX%016llX", opc.hlvalue, opc.llvalue )
+            .endc
+        .endsw
+        InsertLine( esi )
+        InsertLine( "_DATA ends" )
+        InsertLine( &segm )
+    .endif
+    xor eax,eax
+    ret
+
+CreateFloat ENDP
 
     END

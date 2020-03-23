@@ -394,6 +394,7 @@ HllStack                ptr_t ?         ; for .WHILE, .IF, .REPEAT
 HllFree                 ptr_t ?         ; v2.06: stack of free <struct hll>-items
 ComStack                ptr_t ?         ; v2.27: .CLASSDEF, .COMDEF, .ENDS
 RetStack                ptr_t ?         ; v2.30: .return info
+FltStack                ptr_t ?         ; v2.31 float stack
 ContextStack            ptr_t ?
 ContextFree             ptr_t ?         ; v2.10: "free items" heap implemented.
 SavedContexts           ptr_t ?

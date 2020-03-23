@@ -77,100 +77,13 @@ else
 alloca proto __cdecl :dword
 endif
 
-ifdef _WIN64
-
-st_alloc macro size
-    lea  rax,[rsp + @ReservedStack - ( ( (size) + _GRANULARITY - 1 ) and -(_GRANULARITY) )]
-    lea  rsp,[rax - @ReservedStack]
-    retm <rax>
-    endm
-
-st_free macro size
-    lea  rsp,[rsp + ( ( (size) + _GRANULARITY - 1 ) and -(_GRANULARITY) )]
-    exitm<>
-    endm
-
-st_pushregs macro size
-    mov  [rsp+@ReservedStack-0x08],rsi
-    mov  [rsp+@ReservedStack-0x10],rdi
-    mov  [rsp+@ReservedStack-0x18],rbx
-    mov  [rsp+@ReservedStack-0x20],rcx
-    lea  rsp,[rsp-32]
-    ifnb <size>
-        exitm<st_alloc(size)>
-    endif
-    exitm<>
-    endm
-
-st_popregs macro size
-    ifnb <size>
-        st_free(size)
-    endif
-    lea  rsp,[rsp+32]
-    mov  rsi,[rsp+@ReservedStack-0x08]
-    mov  rdi,[rsp+@ReservedStack-0x10]
-    mov  rbx,[rsp+@ReservedStack-0x18]
-    mov  rcx,[rsp+@ReservedStack-0x20]
-    exitm<>
-    endm
-
-.template stack
-    base ptr_t ?
-    .operator alloc :abs {
-        mov [this],rsp
-        exitm<st_alloc(_1)>
-        }
-    .operator aligned_alloc :abs, :abs {
-        add stack_alloc(this, _1 + _2),_2-1
-        and al,not (_2-1)
-        retm<rax>
-        }
-    .operator free {
-        mov rsp,[this]
-        exitm<>
-        }
-    .operator pushregs {
-        exitm<st_pushregs()>
-        }
-    .operator popregs {
-        exitm<st_popregs()>
-        }
-    .ends
-
-st_push macro regs:vararg
-  local level
-    lea rsp,[rsp+@ReservedStack]
-    level = 0
-    for reg,<regs>
-        push reg
-        level = level xor 1
-        endm
-    lea rsp,[rsp-@ReservedStack-level*8]
-    exitm<>
-    endm
-
-st_pop macro regs:vararg
-  local level
-    level = 0
-    for reg,<regs>
-        level = level xor 1
-        endm
-    lea rsp,[rsp+@ReservedStack+level*8]
-    for reg,<regs>
-        pop reg
-        endm
-    lea rsp,[rsp-@ReservedStack]
-    exitm<>
-    endm
-
-endif
-
 ;;;;;;;;;;;;;;; kernel32
 
 .pragma comment(lib, kernel32)
 
 GMEM_MOVEABLE   equ 0x0002
 GMEM_DDESHARE   equ 0x2000
+HEAP_ZERO_MEMORY equ 0x00000008
 
 GlobalAlloc     proto WINAPI uFlags:UINT, dwBytes:SIZE_T
 GlobalFree      proto WINAPI :HANDLE

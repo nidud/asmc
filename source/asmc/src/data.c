@@ -373,20 +373,15 @@ static void output_float( struct expr *opnd, unsigned size )
     int i;
     char buffer[32];
 
-    if ( opnd->mem_type != MT_EMPTY && opnd->float_tok ) {
+    if ( opnd->mem_type != MT_REAL16 ) {
 
 	memset( buffer, 0, sizeof( buffer ) );
 	i = SizeFromMemtype( opnd->mem_type, USE_EMPTY, NULL );
 	if ( i > size )
 	    asmerr( 2156 );
 	else
-	    atofloat( buffer, opnd->float_tok->string_ptr, i , opnd->negative, opnd->float_tok->floattype );
-	OutputDataBytes( buffer, size );
-
-    } else if ( opnd->float_tok ) {
-
-	atofloat( buffer, opnd->float_tok->string_ptr, size, opnd->negative, opnd->float_tok->floattype );
-	OutputDataBytes( (uint_8 *)buffer, size );
+	    quad_resize( opnd, i );
+	OutputDataBytes( opnd->chararray, size );
 
     } else {
 

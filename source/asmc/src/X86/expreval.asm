@@ -459,7 +459,8 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
                 mov [edi].kind,EXPR_ERROR
                 .endc
             .endif
-            .for ( : [eax].asym.type: eax = [eax].asym.type )
+            .for ( : [eax].asym.type : eax = [eax].asym.type )
+                .break .if eax == [eax].asym.type
             .endf
             mov cl,[eax].asym.mem_type
             mov [edi].kind,EXPR_CONST
@@ -588,7 +589,9 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
         .endc
     .case T_FLOAT
         mov [edi].kind,EXPR_FLOAT
+        mov [edi].mem_type,MT_REAL16
         mov [edi].float_tok,ebx
+        atofloat( edi, [ebx].string_ptr, 16, 0, [ebx].floattype )
         .endc
     .default
         .if ( [edi].flags & E_IS_OPEATTR )
@@ -1251,26 +1254,18 @@ high_op endp
 
 tofloat proc opnd1:expr_t, opnd2:expr_t, size:int_t
 
-    mov ecx,opnd1
     mov edx,opnd2
     .if ModuleInfo.strict_masm_compat
-        ConstError(ecx, edx)
+        ConstError(opnd1, edx)
         mov ecx,eax
         .return 1
     .endif
     mov [edx].kind,EXPR_CONST
-    mov eax,[edx].float_tok
-    .if eax
-        xor ecx,ecx
-        .if [edx].flags & E_NEGATIVE
-            inc ecx
-        .endif
-        mov opnd1,ecx
-        mov ecx,[eax].asm_tok.string_ptr
-        mov [edx].float_tok,NULL
-        atofloat(edx, ecx, size, opnd1, [eax].asm_tok.floattype)
-        xor eax,eax
+    mov [edx].float_tok,NULL
+    .if size != 16
+        quad_resize(edx, size)
     .endif
+    xor eax,eax
     ret
 
 tofloat endp
@@ -1487,14 +1482,6 @@ plus_op proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t
         add [esi].value,[edi].value
         adc [esi].hvalue,[edi].hvalue
     .elseif [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT
-        .if [edi].float_tok
-            mov ecx,[edi].float_tok
-            xor edx,edx
-            .if [edi].flags & E_NEGATIVE
-                inc edx
-            .endif
-            atofloat(edi, [ecx].asm_tok.string_ptr, 16, edx, 0 )
-        .endif
         __addq( esi, edi )
     .elseif( ( [esi].kind == EXPR_ADDR && [edi].kind == EXPR_ADDR ) )
         fix_struct_value(esi)
@@ -1577,18 +1564,6 @@ minus_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         sub [ecx].value,[edx].value
         sbb [ecx].hvalue,[edx].hvalue
     .elseif [ecx].kind == EXPR_FLOAT && [edx].kind == EXPR_FLOAT
-        .if [edx].float_tok
-            push edx
-            push ecx
-            mov eax,[edx].float_tok
-            xor ecx,ecx
-            .if [edx].flags & E_NEGATIVE
-                inc ecx
-            .endif
-            atofloat( edx, [eax].asm_tok.string_ptr, 16, ecx, 0 )
-            pop ecx
-            pop edx
-        .endif
         __subq(ecx, edx)
     .elseif [ecx].kind == EXPR_ADDR && [edx].kind == EXPR_CONST
         sub [ecx].value,[edx].value
@@ -1898,15 +1873,14 @@ positive_op proc fastcall opnd1:expr_t, opnd2:expr_t
     xchg edx,ecx
     .if [edx].kind == EXPR_CONST
         mov [ecx].kind,EXPR_CONST
-        mov [ecx].value,[edx].value
-        mov [ecx].hvalue,[edx].hvalue
-        mov eax,dword ptr [edx].hlvalue
-        mov dword ptr [ecx].hlvalue,eax
-        mov eax,dword ptr [edx].hlvalue[4]
-        mov dword ptr [ecx].hlvalue[4],eax
+        mov [ecx].llvalue,[edx].llvalue
+        mov [ecx].hlvalue,[edx].hlvalue
     .elseif [edx].kind == EXPR_FLOAT
         mov [ecx].kind,EXPR_FLOAT
-        mov [ecx].float_tok,[edx].float_tok
+        mov [ecx].mem_type,[edx].mem_type
+        mov [ecx].llvalue,[edx].llvalue
+        mov [ecx].hlvalue,[edx].hlvalue
+        and [ecx].chararray[15],not 0x80
         and [ecx].flags,not E_NEGATIVE
         .if [edx].flags & E_NEGATIVE
             or [ecx].flags,E_NEGATIVE
@@ -1952,7 +1926,10 @@ negative_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         .endif
     .elseif [edx].kind == EXPR_FLOAT
         mov [ecx].kind,EXPR_FLOAT
-        mov [ecx].float_tok,[edx].float_tok
+        mov [ecx].mem_type,[edx].mem_type
+        mov [ecx].llvalue,[edx].llvalue
+        mov [ecx].hlvalue,[edx].hlvalue
+        or  [ecx].chararray[15],0x80
         .if [edx].flags & E_NEGATIVE
             and [ecx].flags,not E_NEGATIVE
         .else
@@ -2183,13 +2160,6 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             or  [esi].flags,E_INDIRECT
             mov [esi].kind,EXPR_ADDR
         .elseif [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT
-            .if [edi].float_tok
-                xor ecx,ecx
-                test [edi].flags,E_NEGATIVE
-                setnz cl
-                mov eax,[edi].float_tok
-                atofloat( edi, [eax].asm_tok.string_ptr, 16, ecx, 0)
-            .endif
             __mulq(esi, edi)
         .else
             .return( ConstError( esi, edi ) )
@@ -2197,13 +2167,6 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
         .endc
     .case '/'
         .if ( ( [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT ) )
-            .if [edi].float_tok
-                xor ecx,ecx
-                test [edi].flags,E_NEGATIVE
-                setnz cl
-                mov eax,[edi].float_tok
-                atofloat( edi, [eax].asm_tok.string_ptr, 16, ecx, 0)
-            .endif
             __divq(esi, edi)
             .endc
         .endif
@@ -2689,6 +2652,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:tok_t, _end
                     .break
                 .endif
             .endif
+if 0
             .if ( [edi].kind == EXPR_FLOAT && [edi].mem_type != MT_REAL16 )
                 .if ( eax == '*' || eax == '/' || [esi].specval == 1 )
                     mov [edi].mem_type,MT_REAL16
@@ -2699,6 +2663,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:tok_t, _end
                     atofloat( edi, [eax].asm_tok.string_ptr, 16, ecx, 0 )
                 .endif
             .endif
+endif
         .endif
         mov edx,i
         inc dword ptr [edx]

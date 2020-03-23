@@ -931,6 +931,8 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
+GenerateFloat proto :int_t, :tok_t
+
     assume ebx:tok_t
 
 ExpandCStrings proc uses ebx tokenarray:tok_t
@@ -942,12 +944,20 @@ ExpandCStrings proc uses ebx tokenarray:tok_t
 
         .if [ebx].hll_flags & T_HLL_PROC
 
-            .return GenerateCString(edx, tokenarray) .if ( Parse_Pass == PASS_1 )
+            .if Parse_Pass == PASS_1
+
+                mov ebx,edx
+                .if ModuleInfo.Ofssize == USE64
+                    ;GenerateFloat( ebx, tokenarray )
+                .endif
+                GenerateCString( ebx, tokenarray )
+                .return
+            .endif
 
             .if [ebx].token == T_OP_SQ_BRACKET
-                ;
+
                 ; invoke [...][.type].x(...)
-                ;
+
                 mov eax,1
                 .repeat
                     add ebx,16
@@ -1016,9 +1026,8 @@ GetProc proc private token:tok_t
         .return 0
     .endif
 
-    ;
     ; the most simple case: symbol is a PROC
-    ;
+
     .return .if [eax].asym.flag & S_ISPROC
 
     mov ecx,[eax].asym.target_type
@@ -1033,9 +1042,9 @@ GetProc proc private token:tok_t
 
     mov ecx,[eax].asym.type
     .if dl == MT_TYPE && ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.mem_type == MT_PROC )
-        ;
+
         ; second case: symbol is a (function?) pointer
-        ;
+
         mov eax,ecx
         .if [eax].asym.mem_type != MT_PROC
             jmp isfnptr
@@ -1043,9 +1052,9 @@ GetProc proc private token:tok_t
     .endif
 
 isfnproto:
-        ;
-        ; pointer target must be a PROTO typedef
-        ;
+
+    ; pointer target must be a PROTO typedef
+
     .if [eax].asym.mem_type != MT_PROC
 
         asmerr(2190)
@@ -1053,9 +1062,9 @@ isfnproto:
     .endif
 
 isfnptr:
-        ;
-        ; get the pointer target
-        ;
+
+    ; get the pointer target
+
     mov eax,[eax].asym.target_type
     .if !eax
 
@@ -1066,9 +1075,38 @@ isfnptr:
 
 GetProc endp
 
+GetParamId proc uses esi edi id:int_t, sym:asym_t
+
+    mov edi,sym
+    mov edx,[edi].esym.procinfo
+    mov eax,[edx].proc_info.paralist
+    movzx edi,[edi].asym.langtype
+    .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
+          edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+        .while eax && [eax].esym.nextparam
+            mov eax,[eax].esym.nextparam
+        .endw
+    .endif
+    mov esi,eax
+    .while eax && id
+        .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
+              edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+            .for ( eax = [edx].proc_info.paralist : eax && [eax].esym.nextparam != esi,
+                 : eax = [eax].esym.nextparam )
+            .endf
+            mov esi,eax
+        .else
+            mov eax,[eax].esym.nextparam
+        .endif
+        dec id
+    .endw
+    ret
+
+GetParamId endp
+
 StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
 
-  local sym:dsym_t, info:proc_t, curr:asym_t
+  local sym:dsym_t, curr:asym_t
   local proc_id:tok_t, parg_id:int_t, b[MAX_LINE_LEN]:char_t
   local opnd:expr, bracket:int_t
   local reg2:int_t
@@ -1080,10 +1118,7 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
     mov bracket,eax
     mov reg2,eax
 
-    .for ( eax = &b,
-           ebx = tokenarray,
-           edi = ebx,
-           esi = 0 : esi < i : esi++, ebx += 16 )
+    .for ( eax = &b, ebx = tokenarray, edi = ebx, esi = 0 : esi < i : esi++, ebx += 16 )
 
         .if esi
 
@@ -1133,37 +1168,7 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
         .if GetProc(eax)
 
             mov sym,eax
-            mov edx,[eax].esym.procinfo
-            mov info,edx
-            mov ecx,[edx].proc_info.paralist
-            movzx eax,[eax].asym.langtype
-
-            .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
-                  eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-                .while ecx && [ecx].esym.nextparam
-                    mov ecx,[ecx].esym.nextparam
-                .endw
-            .endif
-            mov curr,ecx
-
-            .while ecx && parg_id
-                ;
-                ; set paracurr to next parameter
-                ;
-                mov eax,sym
-                movzx eax,[eax].asym.langtype
-                .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
-                      eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-                    .for ( ecx = [edx].proc_info.paralist,
-                           eax = curr : ecx && [ecx].esym.nextparam != eax : ecx = [ecx].esym.nextparam )
-                    .endf
-                    mov curr,ecx
-                .else
-                    mov ecx,[ecx].esym.nextparam
-                .endif
-                dec parg_id
-            .endw
-
+            mov ecx,GetParamId( parg_id, eax )
             .if ecx
                 mov eax,[ecx].asym.total_size
                 .switch eax

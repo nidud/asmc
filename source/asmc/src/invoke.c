@@ -307,10 +307,13 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    }
 	}
 
+	pushsize = CurrWordSize;
+	if ( asize == 16 && opnd.mem_type == MT_REAL16 && pushsize == 4 )
+	    asize = psize;
+
 	if ( curr->sym.is_vararg == TRUE )
 	    psize = asize;
 
-	pushsize = CurrWordSize;
 
 	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 )
 	    if (fastcall_tab[fastcall_id - 1].handleparam(
@@ -761,7 +764,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			case 10:
 			    if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE || opnd.kind != EXPR_FLOAT )
 				break;
-			    atofloat( &opnd.fvalue, fullparam, 10, opnd.negative, opnd.float_tok->floattype );
+			    quad_resize( &opnd, 10);
 			    sprintf(fullparam, "0x%04X", (int_32)opnd.hlvalue & 0xFFFF);
 			    AddLineQueueX( " push %s", fullparam );
 			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.llvalue);
@@ -781,8 +784,6 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			case 16:
 			    if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE )
 				break;
-			    if ( opnd.kind == EXPR_FLOAT )
-				atofloat( &opnd.fvalue, fullparam, 16, opnd.negative, opnd.float_tok->floattype );
 			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.hlvalue);
 			    if ( Ofssize == USE32 ) {
 				AddLineQueueX( " pushd %r (%s)", T_HIGH32, fullparam );

@@ -186,18 +186,18 @@ atanq proc vectorcall Q:real16
     .if eax >= 0x40024800 ; 10.25
 
         mov k,83
-        movaps xmm5,divq(FLTQ(-1.0), x)
+        movaps xmm5,divq(-1.0, x)
     .else
 
         ; Index of nearest table element.
         ; Roundoff to integer is asymmetrical to avoid cancellation when t < 0
         ; (cf. fdlibm).
 
-        mov k,cvtq_i32(addq(mulq(FLTQ(8.0), x), FLTQ(0.25)))
-        movaps xmm3,mulq(cvti32_q(k), FLTQ(0.125))
+        mov k,cvtq_i32(addq(mulq(8.0, x), 0.25))
+        movaps xmm3,mulq(cvti32_q(k), 0.125)
 
         ; Small arctan argument.
-        movaps xmm2,addq(mulq(x, xmm3), FLTQ(1.0))
+        movaps xmm2,addq(mulq(x, xmm3), 1.0)
         movaps xmm5,divq(subq(x, xmm3), xmm2)
     .endif
 

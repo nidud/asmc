@@ -12,22 +12,37 @@ include asmc.inc
 include proc.inc
 include hllext.inc
 include parser.inc
+include atofloat.inc
 
     .code
 
     assume ebx:tok_t
 
-GetValue proc private uses esi edi ebx i:int_t, tokenarray:tok_t,
-    count:ptr int_t, directive:ptr int_t, retval:ptr int_t
+GetValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t,
+    type:ptr int_t, count:ptr int_t, directive:ptr int_t, retval:ptr int_t
 
-    mov ebx,i
+    mov edx,i
+    mov ebx,[edx]
     shl ebx,4
     add ebx,tokenarray
     xor esi,esi
     xor edi,edi
     xor ecx,ecx
+    mov edx,type
+    mov [edx],ecx
     mov al,[ebx].token
     .if ( al != T_FINAL )
+
+        ; .return real4(1.0)
+
+        .if ( al == T_STYPE && [ebx+16].token == T_OP_BRACKET )
+
+            mov al,T_OP_BRACKET
+            mov [edx],ebx
+            add ebx,16
+            mov edx,i
+            inc dword ptr [edx]
+        .endif
 
         .if ( al == T_DIRECTIVE )
 
@@ -77,15 +92,17 @@ GetValue proc private uses esi edi ebx i:int_t, tokenarray:tok_t,
 
 GetValue endp
 
-AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:int_t
+CreateFloat proto :int_t, :expr_t, :string_t
 
-  local opnd:expr
-  local reg:int_t
-  local op:int_t
-  local retval:int_t
-  local directive:int_t
-  local buffer[256]:char_t
-  local address:char_t ; v2.30.24 -- .return &address
+AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, type:tok_t, count:int_t
+
+  local opnd        : expr
+  local reg         : int_t
+  local op          : int_t
+  local retval      : int_t
+  local directive   : int_t
+  local buffer[256] : char_t
+  local address     : char_t ; v2.30.24 -- .return &address
 
     movzx ecx,ModuleInfo.Ofssize
     mov reg,regax[ecx*4]
@@ -97,12 +114,12 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
     add ebx,tokenarray
     lea edi,buffer
 
-    .if ExpandHllProc(edi, [esi], tokenarray) != ERROR
+    .if ExpandHllProc( edi, [esi], tokenarray ) != ERROR
 
         .if byte ptr [edi]
 
             QueueTestLines(edi)
-            GetValue([esi], tokenarray, &count, &directive, &retval)
+            GetValue( esi, tokenarray, &type, &count, &directive, &retval )
         .endif
     .endif
 
@@ -112,9 +129,9 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
         mov ecx,[ebx+eax].tokpos
         sub ecx,[ebx].tokpos
         mov byte ptr [edi+ecx],0
-        memcpy(edi, [ebx].tokpos, ecx)
+        memcpy( edi, [ebx].tokpos, ecx )
     .else
-        strcpy(edi, [ebx].string_ptr)
+        strcpy( edi, [ebx].string_ptr )
     .endif
 
     mov address,0
@@ -188,6 +205,63 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
                 .endsw
             .endif
 
+        .elseif ( opnd.kind == EXPR_FLOAT )
+
+            .if ( type == NULL && ( ( [ebx].token == T_FLOAT && [ebx].floattype ) || \
+                  ( [ebx].token == T_OP_BRACKET && \
+                    [ebx+16].token == T_FLOAT && \
+                    [ebx+16].floattype && \
+                    [ebx+32].token == T_CL_BRACKET ) ) )
+
+                ; .return [(] 3F800000r [)] [[ .if ]]
+
+                .if ( [ebx].token == T_OP_BRACKET )
+                    mov ebx,[ebx+16].string_ptr
+                .else
+                    mov ebx,[ebx].string_ptr
+                .endif
+                dec strlen( ebx )
+                shr eax,1
+                .switch eax
+                .case 3,5,9,11,17
+                    .if byte ptr [ebx] == '0'
+                        dec eax
+                        .endc
+                    .endif
+                .endsw
+            .else
+                mov edx,type
+                .if edx
+                    mov ecx,[edx].asm_tok.tokval
+                    mov al,GetMemtypeSp(ecx)
+                .else
+                    mov al,opnd.mem_type
+                .endif
+                SizeFromMemtype(al, USE_EMPTY, 0 )
+            .endif
+            .switch eax
+            .case 2
+                AddLineQueueX( " mov %r, %s", T_AX, edi )
+                AddLineQueueX( " movd %r, %r", T_XMM0, T_EAX )
+                .return
+            .case 4
+                AddLineQueueX( " mov %r, %s", T_EAX, edi )
+                AddLineQueueX( " movd %r, %r", T_XMM0, T_EAX )
+                .return
+            .case 8
+                AddLineQueueX( " mov %r, %s", T_RAX, edi )
+                AddLineQueueX( " movq %r, %r", T_XMM0, T_RAX )
+                .return
+            .case 10
+                CreateFloat( 10, &opnd, &buffer )
+                AddLineQueueX( " movaps %r, xmmword ptr %s", T_XMM0, &buffer )
+                .return
+            .case 16
+                CreateFloat( 16, &opnd, &buffer )
+                AddLineQueueX( " movaps %r, %s", T_XMM0, &buffer )
+                .return
+            .endsw
+
         .elseif ( opnd.kind == EXPR_ADDR )
 
             .switch opnd.mem_type
@@ -211,8 +285,8 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
                 .endc
               .case MT_OWORD
                 .endc .if reg != T_RAX
-                AddLineQueueX( "mov rax,qword ptr %s", edi )
-                AddLineQueueX( "mov rdx,qword ptr %s[8]", edi )
+                AddLineQueueX( " mov %r, %r %r %s",    T_RAX, T_QWORD, T_PTR, edi )
+                AddLineQueueX( " mov %r, %r %r %s[8]", T_RDX, T_QWORD, T_PTR, edi )
                 .return
               .case MT_REAL2
                 mov reg,T_AX
@@ -245,10 +319,11 @@ AssignValue endp
 
 ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local count:int_t
-  local retval:int_t
-  local directive:int_t
-  local buffer[128]:char_t
+  local count       : int_t
+  local retval      : int_t
+  local type        : tok_t
+  local directive   : int_t
+  local buffer[128] : char_t
 
     .return asmerr(2012) .if ( CurrProc == NULL )
 
@@ -265,14 +340,14 @@ ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov [esi].cmd,HLL_RETURN
         mov [esi].labels[LEXIT*4],GetHllLabel()
     .endif
-    ExpandCStrings(tokenarray)
+    ExpandCStrings( tokenarray )
 
     ; .return [[val]] [[.if ...]]
 
     inc i
     lea edi,buffer
-    GetValue(i, tokenarray, &count, &directive, &retval)
-    GetLabelStr([esi].labels[LEXIT*4], edi)
+    GetValue( &i, tokenarray, &type, &count, &directive, &retval )
+    GetLabelStr( [esi].labels[LEXIT*4], edi )
 
     .if ( directive )
 
@@ -283,20 +358,20 @@ ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov [esi].labels[LSTART*4],GetHllLabel()
             HllContinueIf(esi, &i, tokenarray, LSTART, esi, 0)
             mov i,ebx
-            AssignValue(&i, tokenarray, count)
+            AssignValue( &i, tokenarray, type, count )
             AddLineQueueX( "jmp %s", edi )
             AddLineQueueX( "%s:", GetLabelStr( [esi].labels[LSTART*4], edi ) )
         .else
             add i,count
-            HllContinueIf(esi, &i, tokenarray, LEXIT, esi, 1)
+            HllContinueIf( esi, &i, tokenarray, LEXIT, esi, 1 )
         .endif
 
     .elseif ( retval )
 
-        AssignValue(&i, tokenarray, count)
-        AddLineQueueX("jmp %s", edi)
+        AssignValue( &i, tokenarray, type, count )
+        AddLineQueueX( "jmp %s", edi )
     .else
-        AddLineQueueX("jmp %s", edi)
+        AddLineQueueX( "jmp %s", edi )
     .endif
 
     .if ModuleInfo.list

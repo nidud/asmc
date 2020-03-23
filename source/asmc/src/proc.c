@@ -630,6 +630,8 @@ int GetFastcallId( int langtype )
  * i=start parameters
  */
 
+extern void MacroInline( char *, int, char *, int );
+
 static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPROC )
 {
     char	    *name;
@@ -715,10 +717,12 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		    return( asmerr( 2131 ) );
 		}
 		/* v2.05: added check */
-		if ( tokenarray[i+1].token != T_FINAL )
-		    asmerr( 2129 );
-		else
+		if ( ( tokenarray[i+1].token == T_FINAL ) ||
+		     ( tokenarray[i+1].token == T_STRING && tokenarray[i+1].string_delim == '{' ) )
 		    is_vararg = TRUE;
+		else
+		    asmerr( 2129 );
+
 		ti.mem_type = MT_EMPTY;
 		ti.size = 0;
 		i++;
@@ -858,11 +862,40 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		break;
 	    }
 	}
+
 	if ( tokenarray[i].token != T_FINAL ) {
 	    if( tokenarray[i].token != T_COMMA ) {
-		return( asmerr( 2065, ",") );// tokenarray[i].tokpos ) );
+
+		if( tokenarray[i].token == T_STRING &&
+		    tokenarray[i].string_delim == '{' &&
+		    tokenarray[1].tokval == T_PROTO ) {
+
+		    if ( Parse_Pass == PASS_1 ) {
+
+			int q;
+			int args = 0;
+			int comma = 0;
+
+			for ( q = 2; q < i; q++ ) {
+
+			    if ( tokenarray[q].token == T_COLON )
+				args++;
+			    else if ( q > 2 && tokenarray[q].token == T_COMMA )
+				comma++;
+			}
+			if ( comma > args )
+			    args = comma + 1;
+
+			tokenarray[i].token = T_FINAL;
+			tokenarray[i].tokpos[0] = '\0';
+			MacroInline( tokenarray[0].string_ptr, args, tokenarray[i].string_ptr,
+			  ( tokenarray[q-1].token == T_RES_ID && tokenarray[q-1].tokval == T_VARARG ) );
+		    }
+		} else {
+		    return( asmerr( 2065, ",") );
+		}
 	    }
-	    i++;    /* go past comma */
+	    i++; /* go past comma */
 	}
     } /* end for */
 
@@ -1163,13 +1196,17 @@ int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPRO
     } else if( proc->sym.langtype == LANG_NONE ) {
 	asmerr( 2119 );
     } else {
+
 	/* v2.05: set PROC's vararg flag BEFORE params are scanned! */
-	if ( tokenarray[Token_Count - 1].token == T_RES_ID &&
-	    tokenarray[Token_Count - 1].tokval == T_VARARG )
+
+	int q = Token_Count - 1; /* v2.31: proto :vararg { */
+
+	if ( tokenarray[q].token == T_STRING && tokenarray[q].string_delim == '{' )
+	    q--;
+	if ( tokenarray[q].token == T_RES_ID && tokenarray[q].tokval == T_VARARG )
 	    proc->e.procinfo->has_vararg = TRUE;
 	if ( ERROR == ParseParams( proc, i, tokenarray, IsPROC ) )
-	    /* do proceed if the parameter scan returns an error */
-	    ;//return( ERROR );
+	    ; /* do proceed if the parameter scan returns an error */
     }
 
     /* v2.11: isdefined and isproc now set here */

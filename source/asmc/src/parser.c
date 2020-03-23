@@ -2378,7 +2378,9 @@ int LabelMacro( struct asm_tok tokenarray[] )
  */
 int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
-int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[], struct expr *opnd );
+int mem2mem( unsigned, unsigned, struct asm_tok[], struct expr * );
+int imm2xmm( struct asm_tok[] );
+
 int NewDirective( int, struct asm_tok[] );
 extern struct asym *CurrEnum;
 int EnumDirective( int, struct asm_tok[] );
@@ -2535,8 +2537,13 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 	    if ( tokenarray[i].token != T_FINAL ) {
 
-		if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO )
-		    strcat( buffer, ", " );
+		if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) {
+
+		    if ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '{' )
+			strcat( buffer, " " );
+		    else
+			strcat( buffer, ", " );
+		}
 		strcat( buffer, tokenarray[i].tokpos );
 	    }
 	    strcpy( CurrSource, buffer );
@@ -3075,6 +3082,13 @@ int ParseLine( struct asm_tok tokenarray[] )
 
     if ( CodeInfo.pinstr->allowed_prefix == AP_REP ||
 	 CodeInfo.pinstr->allowed_prefix == AP_REPxx ) {
+
+	/* v2.31.24: immediate operand to XMM */
+	if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD ) {
+	    if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
+	       ( CodeInfo.opnd[OPND2].type & OP_I_ANY ) )
+		return imm2xmm( tokenarray );
+	}
 	HandleStringInstructions( &CodeInfo, opndx );
     } else {
 	if( CurrOpnd > 1 ) {
@@ -3130,6 +3144,16 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 * distinguishable!
 		 */
 		CodeInfo.rex &= 0x7;
+		break;
+		/* v2.31.24: immediate operand to XMM */
+	    case T_MOVD:
+	    case T_MOVQ:
+	    case T_MOVSS:
+	    case T_MOVSD:
+		if ( ModuleInfo.strict_masm_compat == 0 &&
+		     CodeInfo.opnd[OPND1].type == OP_XMM &&
+		     CodeInfo.opnd[OPND2].type & OP_I_ANY )
+		    return imm2xmm( tokenarray );
 		break;
 	    case T_MOV:
 		/* don't use the Wide bit for moves to/from special regs */

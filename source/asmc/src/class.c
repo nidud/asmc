@@ -190,6 +190,37 @@ int get_operator(char *token)
     return 0;
 }
 
+void MacroInline( char *name, int args, char *data, int vargs )
+{
+    int i;
+    char *p, *q;
+    char macroargs[256];
+
+    if ( ModuleInfo.list )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
+    RunLineQueue();
+
+    if ( vargs )
+        AddLineQueueX( "%s macro this:vararg", name );
+    else {
+        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < args; i++ )
+            p += sprintf( p, ", _%u", i );
+        AddLineQueueX( "%s macro %s", name, macroargs );
+    }
+
+    for ( p = data; ( q = strchr( p, '\n' ) ) != NULL; ) {
+
+        *q = '\0';
+        if ( *p )
+            AddLineQueue( p );
+        *q++ = '\n';
+        p = q;
+    }
+    if ( *p )
+        AddLineQueue( p );
+    AddLineQueue( "endm" );
+    MacroLineQueue();
+}
 
 int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
@@ -203,9 +234,10 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
     struct com_item *o = ModuleInfo.g.ComStack;
     int is_id;
     int is_equ;
+    int is_vararg;
     char token[64];
     char name[128];
-    char margs[256];
+    char macro[128];
     uint_32 u;
 
     cmd = tokenarray[i].tokval;
@@ -238,6 +270,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         /* .operator + :type, :type */
         is_id = 0;  /* name proc :qword, :qword */
         is_equ = 0; /* [m|r]add88 proc :qword, :qword */
+        is_vararg = 0;
         p = tokenarray[i].tokpos;
         x = get_operator( p );
         switch ( x ) {
@@ -276,6 +309,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         ptr = clname;
         for ( args = 1; tokenarray[x].token != T_FINAL; x++ ) {
             if ( tokenarray[x].token == T_STRING && tokenarray[x].bytval == '{' ) {
+                if ( tokenarray[x-1].token == T_RES_ID && tokenarray[x-1].tokval == T_VARARG )
+                    is_vararg++;
                 p = tokenarray[x].string_ptr;
                 tokenarray[x].tokpos[0] = '\0';
                 tokenarray[x].token = T_FINAL;
@@ -321,26 +356,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
          *   exitm<...>
          * }
          */
-        if ( ModuleInfo.list )
-            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
-        RunLineQueue();
-        for ( x = 1, ptr = strcpy(margs, "this") + 4; x < args; x++ )
-            ptr += sprintf(ptr, ", _%u", x );
-        AddLineQueueX( "%s_%s macro %s", o->class, name, margs );
-        for ( ;; ) {
-            ptr = strchr(p, 10);
-            if ( ptr == NULL )
-                break;
-            *ptr = '\0';
-            if ( *p )
-                AddLineQueue(p);
-            *ptr++ = '\n';
-            p = ptr;
-        }
-        if ( p )
-            AddLineQueue(p);
-        AddLineQueue( "endm" );
-        MacroLineQueue();
+        sprintf( macro, "%s_%s", ptr, name );
+        MacroInline( macro, args, p, is_vararg );
         return rc;
 
     case T_DOT_COMDEF:

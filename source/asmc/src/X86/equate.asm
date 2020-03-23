@@ -203,17 +203,9 @@ check_number:
 
             .elseif !ecx && opnd.kind == EXPR_FLOAT && !ModuleInfo.strict_masm_compat
 
-                mov eax,opnd.float_tok
-                .if eax
-                    .if opnd.flags & E_NEGATIVE
-                        inc ecx
-                    .endif
-                    mov edx,[eax].asm_tok.string_ptr
-                    atofloat(&opnd, edx, 16, ecx, [eax].asm_tok.floattype)
-                    mov opnd.mem_type,MT_REAL16
-                    mov opnd.kind,EXPR_CONST
-                    mov opnd.float_tok,NULL
-                .endif
+                mov opnd.mem_type,MT_REAL16
+                mov opnd.kind,EXPR_CONST
+                mov opnd.float_tok,NULL
                 jmp check_float
             .else
                 asmerr(2026)

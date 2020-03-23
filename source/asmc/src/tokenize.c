@@ -317,9 +317,22 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 			    nl++;
 		    }
 		    if ( nl ) {
+
+			struct asm_tok *tokenarray = &buf[0 - p->index];
+
 			tmp = GetAlignedPointer( p->output, strlen( p->output ) );
 			tmp[0] = '\0';
-			if ( buf[-p->index].tokval == T_DOT_OPERATOR ) {
+			/*
+			 * .operator ... {
+			 *
+			 * <name> proto ... {
+			 * <type>::<name> proto ... {
+			 */
+			if ( p->index > 1 &&
+			     ( tokenarray[0].tokval == T_DOT_OPERATOR ||
+			       tokenarray[1].tokval == T_PROTO ||
+			       tokenarray[3].tokval == T_PROTO ) ) {
+
 			    while ( GetTextLine( &tmp[1] ) ) {
 				if ( tmp[1] == '\0' )
 				    continue;

@@ -15,25 +15,43 @@ include expreval.inc
 
     .code
 
+RetLineQueue proc
+
+    .if ModuleInfo.list
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    RunLineQueue()
+    mov eax,NOT_ERROR
+    ret
+
+RetLineQueue endp
+
 SizeFromExpression proc opnd:ptr expr
 
     mov edx,opnd
     mov ecx,[edx].expr.mbr
+
     .if ecx && [ecx].asym.state == SYM_STRUCT_FIELD
-        mov eax,[ecx].asym.total_size
-        .if [ecx].asym.flag & S_ISARRAY
-            mov ecx,[ecx].asym.total_length
-            xor edx,edx
-            div ecx
-        .endif
+
+        jmp symbol_size
+
     .elseif [edx].expr.mem_type != MT_EMPTY
-        SizeFromMemtype([edx].expr.mem_type, [edx].expr.Ofssize, [edx].expr.type)
+
+        SizeFromMemtype( [edx].expr.mem_type, [edx].expr.Ofssize, [edx].expr.type )
+
     .else
-        mov eax,[edx].expr.type
-        .if eax
-            mov ecx,eax
-            mov eax,[eax].asym.total_size
+
+        xor eax,eax
+        mov ecx,[edx].expr.type
+
+        .if ecx
+
+        symbol_size:
+
+            mov eax,[ecx].asym.total_size
+
             .if [ecx].asym.flag & S_ISARRAY
+
                 mov ecx,[ecx].asym.total_length
                 xor edx,edx
                 div ecx
@@ -206,13 +224,35 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
         mov eax,src
         mov [eax],bl
     .endif
-    .if ModuleInfo.list
-        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-    .endif
-    RunLineQueue()
-    mov eax,NOT_ERROR
+
+    RetLineQueue()
     ret
 
 mem2mem endp
+
+    assume ebx:ptr asm_tok
+
+imm2xmm proc uses esi edi ebx tokenarray:tok_t
+
+    mov ebx,tokenarray
+
+    mov esi,[ebx].tokval
+    mov edi,[ebx+asm_tok].tokval
+    mov edx,[ebx+asm_tok*3].tokpos
+    .if esi == T_MOVSD
+        mov esi,T_MOVQ
+    .elseif esi == T_MOVSS
+        mov esi,T_MOVD
+    .endif
+    mov ebx,T_EAX
+    .if esi == T_MOVQ
+        mov ebx,T_RAX
+    .endif
+    AddLineQueueX( " mov %r, %s", ebx, edx )
+    AddLineQueueX( " %r %r, %r", esi, edi, ebx )
+    RetLineQueue()
+    ret
+
+imm2xmm endp
 
     end

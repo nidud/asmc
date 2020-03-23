@@ -906,6 +906,7 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
         .endif
         quad_resize(edi, eax)
     .endif
+
     mov value,[edi].value
     mov [esi].opnd[ebx].data32l,eax
 
@@ -2023,6 +2024,9 @@ process_const proc private CodeInfo:ptr code_info, CurrOpnd:uint_t, opndx:expr_t
     ;; v2.11: don't accept an empty string
 
     mov edx,opndx
+    .if [edx].expr.mem_type & MT_FLOAT
+        mov [edx].expr.float_tok,NULL
+    .endif
     mov eax,[edx].expr.quoted_string
     .return asmerr(2047) .if eax && [eax].asm_tok.stringlen == 0
 
@@ -2289,8 +2293,9 @@ HandleStringInstructions proc private uses esi edi ebx CodeInfo:ptr code_info, o
             .endif
         .endif
         .endc
-    .case T_VMOVSD
+
     .case T_MOVSD
+    .case T_VMOVSD
         ;; filter SSE2 opcode MOVSD
         .if [esi].opnd[OPND1].type & (OP_XMM or OP_MMX) || \
             [esi].opnd[OPNI2].type & (OP_XMM or OP_MMX)
@@ -2989,14 +2994,16 @@ LabelMacro endp
 
 ;; callback PROC(...) [?]
 
-ProcType proto :int_t, :tok_t, :string_t
+ProcType        proto :int_t, :tok_t, :string_t
 PublicDirective proto :int_t, :tok_t
-mem2mem proto :uint_t, :uint_t, :tok_t, :ptr expr
-NewDirective proto :int_t, :tok_t
+mem2mem         proto :uint_t, :uint_t, :tok_t, :ptr expr
+imm2xmm         proto :tok_t
+NewDirective    proto :int_t, :tok_t
 
-externdef CurrEnum:asym_t
-EnumDirective proto :int_t, :tok_t
-
+externdef       CurrEnum:asym_t
+EnumDirective   proto :int_t, :tok_t
+ParseClass      proto :int_t, :tok_t, :string_t
+SizeFromExpression proto :ptr expr
 
     assume ebx:tok_t
     assume esi:tok_t
@@ -3007,15 +3014,11 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     local i:int_t
     local j:int_t
     local q:int_t
-    local p:string_t
-    local b:string_t
     local dirflags:uint_t
-    local temp:int_t
     local sym:asym_t
     local oldofs:uint_t
     local CodeInfo:code_info
     local opndx[MAX_OPND+1]:expr
-    local hllbuf[MAX_LINE_LEN]:char_t
     local buffer[MAX_LINE_LEN]:char_t
 
     mov ebx,tokenarray
@@ -3051,184 +3054,42 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
     .if j
 
-        mov eax,j
-        dec eax
-        shl eax,4
-
-        mov ecx,[ebx+eax].tokpos
-        sub ecx,[ebx].tokpos
-        mov q,ecx
-        mov buffer[ecx],0
-        .if ecx
-            mov esi,[ebx].tokpos
-            mov edx,edi
-            rep movsb
-            mov eax," "
-            stosw
-            mov edi,edx
-        .endif
-
-        mov esi,j
-        shl esi,4
-        add esi,ebx
-
-        .if [esi].token == T_DBL_COLON && ( [esi+32].tokval == T_ENDP || [esi+32].token == T_OP_BRACKET )
-
-            strcat( edi, [esi-16].string_ptr )
-            strcat( edi, "_" )
-            strcat( edi, [esi+16].string_ptr )
-            strcat( edi, " " )
-            strcat( edi, [esi+32].tokpos )
-            mov Token_Count,Tokenize( edi, 0, ebx, TOK_DEFAULT )
-            .return ParseLine( ebx )
-        .endif
-
-        .if [esi].token == T_DBL_COLON && \
-            ( [esi+32].tokval == T_PROC || [esi+32].tokval == T_PROTO )
-
-            strcpy( edi, [esi-16].string_ptr )
-            strcat( edi, "_" )
-            strcat( edi, [esi+16].string_ptr )
-            strcat( edi, " " )
-            strcat( edi, [esi+32].string_ptr )
-            strcat( edi, " " )
-
-            mov eax,j
-            add eax,3
-            mov i,eax
-
-            add esi,3*16
-            .if ( ( [esi].tokval >= T_SYSCALL && [esi].tokval <= T_VECTORCALL ) || \
-                 ( [esi].token == T_STYPE && \
-                 [esi].tokval >= T_NEAR && [esi].tokval <= T_FAR32 ) )
-
-                strcat( edi, [esi].string_ptr )
-                strcat( edi, " " )
-                inc i
-                add esi,16
-            .endif
-            .if [esi].token == T_ID || [esi].token == T_DIRECTIVE
-
-                .if _stricmp( [esi].string_ptr, "PRIVATE" )
-                    _stricmp( [esi].string_ptr, "EXPORT" )
-                .endif
-                .if ( !eax || [esi].tokval == T_PUBLIC || [esi].tokval == T_FRAME )
-
-                    strcat( edi, [esi].string_ptr )
-                    strcat( edi, " " )
-                    inc i
-                    add esi,16
-                .endif
-            .endif
-
-            .if [esi].token == T_STRING && [esi].string_delim == '<'
-
-                strcat( edi, "<" )
-                strcat( edi, [esi].string_ptr )
-                strcat( edi, "> " )
-                inc i
-                add esi,16
-            .endif
-
-            .if [esi].token == T_ID && !_stricmp( [esi].string_ptr, "USES" )
-
-                inc i
-                add esi,16
-                strcat( edi, "uses " )
-
-                mov q,i
-                .while [esi].token == T_ID
-
-                    mov sym,SymSearch( [esi].string_ptr )
-                    .if eax && [eax].asym.state == SYM_TMACRO
-
-                        strlen([eax].asym.string_ptr)
-                        mov ecx,sym
-                        mov [esi].tokval,FindResWord([ecx].asym.string_ptr, eax )
-                        mov ecx,sym
-                        mov [esi].string_ptr,[ecx].asym.string_ptr
-                        mov eax,[esi].tokval
-                        imul eax,eax,special_item
-                        .if SpecialTable[eax].type == RWT_REG
-                            mov [esi].token,T_REG
-                        .endif
-
-                    .else
-                        .break
-                    .endif
-                    inc q
-                    add esi,16
-                .endw
-
-                mov esi,i
-                shl esi,4
-                add esi,ebx
-                .while [esi].token == T_REG
-
-                    strcat( edi, [esi].string_ptr )
-                    strcat( edi, " " )
-                    inc i
-                    add esi,16
-                .endw
-            .endif
-
-            mov esi,j
-            shl esi,4
-            add esi,ebx
-
-            .if ( [esi+32].tokval == T_PROC || [esi+32].tokval == T_PROTO )
-
-                .if [esi+32].tokval == T_PROC
-                    strcat( edi, "this" )
-                .endif
-                strcat( edi, ":" )
-                .if [esi-16].token != T_STYPE
-
-                    mov sym,IsType( [esi-16].string_ptr )
-                    .if ( !eax || [eax].asym.typekind != TYPE_TYPEDEF || [eax].asym.total_size != 16 )
-                       strcat( edi, "ptr " )
-                    .endif
-                .endif
-                strcat( edi, [ebx].string_ptr )
-            .endif
-
-            mov eax,i
-            shl eax,4
-            add ebx,eax
-
-            .if ( [ebx].token != T_FINAL )
-
-                .if ( [esi+32].tokval == T_PROC || [esi+32].tokval == T_PROTO )
-                    strcat( edi, ", " )
-                .endif
-                strcat( edi, [ebx].tokpos )
-            .endif
-            strcpy( CurrSource, edi )
-            mov Token_Count,Tokenize( edi, 0, tokenarray, TOK_DEFAULT )
-            .return ParseLine( tokenarray )
-        .endif
+        .return ParseLine( ebx ) .if ParseClass( j, ebx, edi )
 
         ;; break label: macro/hll lines
+
         strcpy( edi, [ebx+32].tokpos )
         strcpy( CurrSource, [ebx].string_ptr )
         strcat( CurrSource, [ebx+16].string_ptr )
+
         mov Token_Count,Tokenize( CurrSource, 0, ebx, TOK_DEFAULT )
+
         .return .if ParseLine( ebx ) == ERROR
 
         .if ModuleInfo.list ;; v2.26 -- missing line from list file (wiesl)
             and ModuleInfo.line_flags,not LOF_LISTED
         .endif
+
         ;; parse macro or hll function
+
         strcpy(CurrSource, edi)
         mov Token_Count,Tokenize(CurrSource, 0, ebx, TOK_DEFAULT)
+
         ExpandLine(CurrSource, ebx)
+
         .return .if eax == EMPTY
         .return .if eax == ERROR
+
         mov i,0
-        ;; case label:
+
+        ;; label:
+
     .elseif ( [ebx].token == T_ID && ( [ebx+16].token == T_COLON || [ebx+16].token == T_DBL_COLON ) )
+
         mov i,2
+
         .if ProcStatus & PRST_PROLOGUE_NOT_DONE
+
             write_prologue(ebx)
         .endif
 
@@ -3273,11 +3134,19 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     shl esi,4
     add esi,ebx
 
-    .if [esi].token != T_INSTRUCTION
+    mov j,0
+    .if ModuleInfo.ComStack
+        .if ( [ebx].token == T_STYPE || [ebx].token == T_INSTRUCTION ) && \
+            [ebx+16].token == T_DIRECTIVE && [ebx+16].tokval == T_PROC
+            inc j
+        .endif
+    .endif
+
+    .if j || [esi].token != T_INSTRUCTION
         ;; a code label before a data item is only accepted in Masm5 compat mode
         mov Frame_Type,FRAME_NONE
         mov SegOverride,NULL
-        .if ( i == 0 && [ebx].token == T_ID )
+        .if ( i == 0 && ( j || [ebx].token == T_ID ) )
 
             ;; token at pos 0 may be a label.
             ;; it IS a label if:
@@ -3310,7 +3179,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                 .return( data_dir( i, tokenarray, NULL ) )
             .endif
             mov dirflags,GetValueSp( [esi].tokval )
-            .if( CurrStruct && ( dirflags & DF_NOSTRUC ) )
+            .if j || ( CurrStruct && ( dirflags & DF_NOSTRUC ) )
 
                 .if ( [esi].tokval != T_PROC )
                     .return( asmerr( 2037 ) )
@@ -3409,7 +3278,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             sub esi,16
         .endif
 
-        .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [ebx].hll_flags & T_HLL_PROC ) )
+       .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [ebx].hll_flags & T_HLL_PROC ) )
 
             ;; invoke handle import, call do not..
 
@@ -3499,13 +3368,13 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     .if ModuleInfo.strict_masm_compat == 0
 
         lea esi,[ebx+16]
-        .for ( q = 1 : [esi].token != T_FINAL : q++, esi += 16 )
+        .for ( j = 1 : [esi].token != T_FINAL : j++, esi += 16 )
 
             .if ( [esi].hll_flags & T_HLL_PROC )
 
                 ;; v2.21 - mov reg,proc(...)
                 ;; v2.27 - mov reg,class.proc(...)
-                .return .if ExpandHllProcEx( &buffer, q, ebx ) == ERROR
+                .return .if ExpandHllProcEx( &buffer, j, ebx ) == ERROR
                 .if eax == STRING_EXPANDED
                     FStoreLine(0)
                     .return NOT_ERROR
@@ -3580,32 +3449,40 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             ;; v2.06: accept float constants for PUSH
             .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
                 .if ( ModuleInfo.strict_masm_compat == FALSE )
-                    ;; v2.27: convert to REAL
-                    .if ( opndx[edi].float_tok )
 
-                        movzx eax,opndx[edi].mem_type
-                        .switch eax
-                        .case MT_REAL2:  mov ecx,2  : .endc
-                        .case MT_REAL4:  mov ecx,4  : .endc
-                        .case MT_REAL8:  mov ecx,8  : .endc
-                        .case MT_REAL10: mov ecx,10 : .endc
-                        .default
-                            mov ecx,16
-                            mov opndx[edi].mem_type,MT_REAL16
-                            .endc
-                        .endsw
-                        mov eax,opndx[edi].float_tok
-                        movzx edx,[eax].asm_tok.floattype
-                        mov eax,[eax].asm_tok.string_ptr
-                        xor ebx,ebx
-                        .if opndx[edi].flags & E_NEGATIVE
-                            inc ebx
+                    ;; v2.27: convert to REAL
+
+                    .if ( opndx[edi].mem_type != MT_EMPTY )
+
+                        .if opndx[edi-expr].expr.kind == EXPR_REG
+                            .if !( opndx[edi-expr].expr.flags & E_INDIRECT )
+                                mov eax,opndx[edi-expr].expr.base_reg
+                                SizeFromRegister( [eax].asm_tok.tokval )
+                            .endif
                         .endif
-                        atofloat( &opndx[edi].fvalue, eax, ecx, ebx, dl )
-                        mov opndx[edi].float_tok,NULL
+                        .if !eax
+                            mov eax,4
+                            .if ModuleInfo.Ofssize == USE64
+                                mov eax,8
+                            .endif
+                        .endif
+                        xor ecx,ecx
+                        .switch eax
+                        .case 2:  mov ecx,MT_REAL2  : .endc
+                        .case 4:  mov ecx,MT_REAL4  : .endc
+                        .case 8:  mov ecx,MT_REAL8  : .endc
+                        .case 16: mov ecx,MT_REAL16 : .endc
+                        .endsw
+                        .if ecx
+                            lea edx,opndx[edi]
+                            mov opndx[edi].kind,EXPR_CONST
+                            mov opndx[edi].expr.mem_type,cl
+                            .if eax != 16
+                                quad_resize(edx, eax)
+                            .endif
+                            .endc
+                        .endif
                     .endif
-                    mov opndx[edi].kind,EXPR_CONST
-                    .endc
                 .endif
                 ;; Masm message is: real or BCD number not allowed
                 .return asmerr( 2050 )
@@ -3844,7 +3721,16 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     and eax,II_ALLOWED_PREFIX
 
     .if eax == AP_REP || eax == AP_REPxx
+        ;; v2.31.24: immediate operand to XMM
+        .if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD )
+            .if ( CodeInfo.opnd[OPND1].type == OP_XMM && \
+                ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
+                .return imm2xmm( tokenarray )
+            .endif
+        .endif
+
         HandleStringInstructions( &CodeInfo, &opndx )
+
     .else
         .if ebx > 1
 
@@ -3922,6 +3808,15 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
                 and CodeInfo.rex,0x7
                 .endc
+                ;; v2.31.24: immediate operand to XMM
+            .case T_MOVD:
+            .case T_MOVQ:
+            .case T_MOVSS:
+            .case T_MOVSD:
+                .endc .if ( ModuleInfo.strict_masm_compat != 0 )
+                .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
+                .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
+                .return imm2xmm( tokenarray )
             .case T_MOV:
                 ;; don't use the Wide bit for moves to/from special regs
                 .if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )

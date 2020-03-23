@@ -15,6 +15,6 @@ XMConvertToRadians macro fDegrees
     mov rax,XMConvertToRadians(2.0) ; REAL8
     mov eax,XMConvertToRadians(2.0) ; REAL4
     add eax,XMConvertToRadians(2.0) ; REAL4
-    add rax,XMConvertToRadians(2.0) ; REAL4
+;    add rax,XMConvertToRadians(2.0) ; set to error..
 
     end

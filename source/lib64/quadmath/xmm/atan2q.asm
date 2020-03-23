@@ -65,8 +65,8 @@ atan2q proc vectorcall Y:real16, X:real16
         .switch r8
         .case 0
         .case 1: .return
-        .case 2: .return FLTQ(3.14159265358979323846264338327950280+1.0e-4900)
-        .case 3: .return FLTQ(-3.14159265358979323846264338327950280-1.0e-4900)
+        .case 2: .return 3.14159265358979323846264338327950280 + 1.0e-4900
+        .case 3: .return -3.14159265358979323846264338327950280 - 1.0e-4900
         .endsw
     .endif
 
@@ -76,8 +76,8 @@ atan2q proc vectorcall Y:real16, X:real16
     .ifz
         mov rax,y.m128i_u64[8]
         test rax,rax
-        .return FLTQ(-1.57079632679489661923132169163975140-1.0e-4900) .ifs
-        .return FLTQ(1.57079632679489661923132169163975140+1.0e-4900)
+        .return real16( -1.57079632679489661923132169163975140 - 1.0e-4900 ) .ifs
+        .return 1.57079632679489661923132169163975140 + 1.0e-4900
     .endif
 
     ; when x is INF
@@ -86,17 +86,17 @@ atan2q proc vectorcall Y:real16, X:real16
     .if rax == rcx
         .if rdx == rcx
             .switch r8
-            .case 0: .return FLTQ(7.85398163397448309615660845819875699e-1+1.0e-4900)
-            .case 1: .return FLTQ(-7.85398163397448309615660845819875699e-1-1.0e-4900)
-            .case 2: .return FLTQ(3.0*7.85398163397448309615660845819875699e-1+1.0e-4900)
-            .case 3: .return FLTQ(-3.0*7.85398163397448309615660845819875699e-1-1.0e-4900)
+            .case 0: .return 7.85398163397448309615660845819875699e-1 + 1.0e-4900
+            .case 1: .return -7.85398163397448309615660845819875699e-1 - 1.0e-4900
+            .case 2: .return 3.0 * 7.85398163397448309615660845819875699e-1 + 1.0e-4900
+            .case 3: .return -3.0 * 7.85398163397448309615660845819875699e-1 - 1.0e-4900
             .endsw
         .else
             .switch r8
-            .case 0: .return FLTQ(0.0)
-            .case 1: .return FLTQ(-0.0)
-            .case 2: .return FLTQ(3.14159265358979323846264338327950280+1.0e-4900)
-            .case 3: .return FLTQ(-3.14159265358979323846264338327950280-1.0e-4900)
+            .case 0: .return 0.0
+            .case 1: .return -0.0
+            .case 2: .return 3.14159265358979323846264338327950280 + 1.0e-4900
+            .case 3: .return -3.14159265358979323846264338327950280 - 1.0e-4900
             .endsw
         .endif
     .endif
@@ -107,9 +107,9 @@ atan2q proc vectorcall Y:real16, X:real16
         mov rax,y.m128i_u64[8]
         test rax,rax
         .ifs
-            .return FLTQ(-1.57079632679489661923132169163975140-1.0e-4900)
+            .return -1.57079632679489661923132169163975140 - 1.0e-4900
         .endif
-        .return FLTQ(1.57079632679489661923132169163975140+1.0e-4900)
+        .return 1.57079632679489661923132169163975140 + 1.0e-4900
     .endif
 
     ; compute y/x
@@ -119,7 +119,7 @@ atan2q proc vectorcall Y:real16, X:real16
     sar rcx,48
     .ifs rcx > 120
 
-        movaps xmm0,FLTQ(0.58800260354756755124561108062508520)
+        movaps xmm0,FLTQ( 0.58800260354756755124561108062508520 )
     .else
         mov rax,x.m128i_u64[8]
         .ifs rax < 0 && rdx < -120
@@ -136,10 +136,10 @@ atan2q proc vectorcall Y:real16, X:real16
         .if eax == 1
             pxor xmm0,FLTQ(-0.0)
         .elseif eax == 2
-            movaps xmm1,subq(xmm0, 8.67181013012378102479704402604335225e-35)
-            subq(_Q_PI, xmm1)
+            movaps xmm1,subq( xmm0, 8.67181013012378102479704402604335225e-35 )
+            subq( _Q_PI, xmm1 )
         .else
-            subq(subq(xmm0, FLTQ(8.67181013012378102479704402604335225e-35)), _Q_PI)
+            subq(subq( xmm0, 8.67181013012378102479704402604335225e-35 ), _Q_PI )
         .endif
     .endif
     ret

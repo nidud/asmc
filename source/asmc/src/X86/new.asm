@@ -24,35 +24,118 @@ qualified_type  ends
     .code
 
     assume ebx:tok_t
-    tokid macro operator
-      ifnb <operator>
-        inc i
-        add ebx,16
-      else
-        mov ebx,i
-        shl ebx,4
-        add ebx,tokenarray
-      endif
-        retm<ebx>
-        endm
+
+ConstructorCall proc private uses esi edi ebx id:string_t, endtok:tok_t,
+        argtok:tok_t, class:string_t, type:string_t
+
+  local reg:int_t, cc[128]:char_t ; class_class
+
+    mov esi,strcat( strcat( strcpy( &cc, class ), "_" ), class )
+
+    SymFind(esi)
+
+    .if Parse_Pass > PASS_1 && eax
+
+        .if [eax].asym.state == SYM_UNDEFINED
+
+            ; x::x proto
+            ;
+            ; undef x_x
+            ; x_x macro this
+
+            mov [eax].asym.state,SYM_MACRO
+        .endif
+    .endif
+
+    xor ecx,ecx
+    .if eax && [eax].asym.state == SYM_MACRO
+        mov ecx,T_ECX
+        mov reg,T_ECX
+        .if ModuleInfo.Ofssize == USE64
+            mov ecx,T_EDI
+            mov reg,T_RDI
+            .if [eax].asym.langtype != LANG_SYSCALL
+                mov ecx,T_ECX
+                mov reg,T_RCX
+            .endif
+        .endif
+    .endif
+
+    xor eax,eax
+    mov ebx,argtok
+    .if [ebx-16].token != T_COLON
+        inc eax
+        .if type == NULL
+            inc eax
+        .endif
+    .endif
+    mov edi,[ebx+32].tokpos
+    mov ebx,endtok
+    .if [ebx-32].token != T_OP_BRACKET
+        add eax,3
+        mov ebx,[ebx-16].tokpos
+        mov byte ptr [ebx],0
+    .else
+        xor ebx,ebx
+    .endif
+    mov edx,id
+
+    .if ecx
+        push eax
+        .switch eax
+        .case 0, 3
+            AddLineQueueX( "lea %r,%s", reg, edx )
+            .endc
+        .case 1, 2, 4, 5
+            AddLineQueueX( "xor %r,%r", ecx, ecx )
+        .endsw
+        pop eax
+        mov edx,id
+        mov ecx,reg
+        .switch pascal eax
+        .case 0 : AddLineQueueX( "%s(%r)",          esi, ecx )
+        .case 1 : AddLineQueueX( "mov %s,%s(%r)",   edx, esi, ecx )
+        .case 2 : AddLineQueueX( "%s(%r)",          esi, ecx )
+        .case 3 : AddLineQueueX( "%s(%r,%s)",       esi, ecx, edi )
+        .case 4 : AddLineQueueX( "mov %s,%s(%r,%s)",edx, esi, ecx, edi )
+        .case 5 : AddLineQueueX( "%s(%r,%s)",       esi, ecx, edi )
+        .endsw
+    .else
+        .switch pascal eax
+        .case 0 : AddLineQueueX( "%s(&%s)",         esi, edx )
+        .case 1 : AddLineQueueX( "mov %s,%s(0)",    edx, esi )
+        .case 2 : AddLineQueueX( "%s(0)",           esi )
+        .case 3 : AddLineQueueX( "%s(&%s,%s)",      esi, edx, edi )
+        .case 4 : AddLineQueueX( "mov %s,%s(0,%s)", edx, esi, edi )
+        .case 5 : AddLineQueueX( "%s(0,%s)",        esi, edi )
+        .endsw
+    .endif
+    .if ebx
+        mov byte ptr [ebx],')'
+    .endif
+    ret
+
+ConstructorCall endp
 
 AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local name                :string_t,
-        type                :string_t,
-        sym                 :dsym_t,
-        creat               :int_t,
-        reg                 :int_t,
-        ti                  :qualified_type,
-        opndx               :expr,
-        constructor[128]    :sbyte ; class_class
+  local name  : string_t,
+        type  : string_t,
+        sym   : dsym_t,
+        creat : int_t,
+        ti    : qualified_type,
+        opndx : expr
 
-    inc i  ; go past directive
-    tokid()
+    inc  i  ; go past directive
+    imul ebx,i,asm_tok
+    add  ebx,tokenarray
 
     .while 1
 
-        .return asmerr(2008, [ebx].string_ptr) .if ( [ebx].token != T_ID )
+        .if [ebx].token != T_ID
+
+            .return asmerr( 2008, [ebx].string_ptr )
+        .endif
 
         mov name,[ebx].string_ptr
         mov type,NULL
@@ -64,7 +147,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov cl,ModuleInfo._model
         mov eax,1
         shl eax,cl
-        .if ( eax & SIZE_DATAPTR )
+        .if eax & SIZE_DATAPTR
             mov ti.is_far,TRUE
         .else
             mov ti.is_far,FALSE
@@ -85,7 +168,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov [eax].asym.total_length,1
         .endif
 
-        .if ( ti.Ofssize == USE16 )
+        .if ti.Ofssize == USE16
             .if creat
                 mov [eax].esym.sym.mem_type,MT_WORD
             .endif
@@ -97,32 +180,38 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov ti.size,dword
         .endif
 
-        tokid(++) ; go past name
-        ;
+        add ebx,16 ; go past name
+
         ; .new name<[xx]>
-        ;
-        .if ( [ebx].token == T_OP_SQ_BRACKET )
 
-            .for ( i++,         ; go past '['
-                   ebx += 16,
-                   esi = ebx,
-                   edi = i : edi < Token_Count: edi++, ebx += 16 )
+        .if [ebx].token == T_OP_SQ_BRACKET
 
-                .break .if ( [ebx].token == T_COMMA || [ebx].token == T_COLON )
+            add ebx,16 ; go past '['
+            mov edi,ebx
+            sub edi,tokenarray
+            shr edi,4
+            mov i,edi
+            .for esi = ebx : edi < Token_Count: edi++, ebx += 16
+                .break .if [ebx].token == T_COMMA || [ebx].token == T_COLON
             .endf
             .return .if EvalOperand( &i, tokenarray, edi, &opndx, 0 ) == ERROR
 
-            .if ( opndx.kind != EXPR_CONST )
+            .if opndx.kind != EXPR_CONST
 
                 asmerr( 2026 )
                 mov opndx.value,1
             .endif
 
+            imul ebx,i,asm_tok
+            add  ebx,tokenarray
+
             mov ecx,sym
             mov [ecx].asym.total_length,opndx.value
             or  [ecx].asym.flag,S_ISARRAY
-            .if ( [tokid()].token == T_CL_SQ_BRACKET )
-                tokid(++) ; go past ']'
+
+            .if [ebx].token == T_CL_SQ_BRACKET
+
+                add ebx,16 ; go past ']'
             .else
                 asmerr( 2045 )
             .endif
@@ -133,12 +222,18 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         ; .new name[xx]:<type>
 
-        .if ( [ebx].token == T_COLON )
-
-            inc i
-            .return .if ( GetQualifiedType(&i, tokenarray, &ti) == ERROR )
+        .if [ebx].token == T_COLON
 
             mov type,[ebx+16].string_ptr
+            sub ebx,tokenarray
+            shr ebx,4
+            inc ebx
+            mov i,ebx
+            .return .if GetQualifiedType(&i, tokenarray, &ti) == ERROR
+
+            imul ebx,i,asm_tok
+            add ebx,tokenarray
+
             mov [esi].mem_type,ti.mem_type
             .if (ti.mem_type == MT_TYPE)
                 mov [esi].type,ti.symtype
@@ -161,144 +256,68 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         assume esi:nothing
 
-        .if ( creat && Parse_Pass == PASS_1 )
+        .if creat && Parse_Pass == PASS_1
 
             mov eax,CurrProc
             mov edx,[eax].esym.procinfo
-            .if ( [edx].proc_info.locallist == NULL )
+            .if [edx].proc_info.locallist == NULL
                 mov [edx].proc_info.locallist,esi
             .else
-                .for( ecx = [edx].proc_info.locallist : [ecx].esym.nextlocal :,
-                      ecx = [ecx].esym.nextlocal)
+                mov ecx,[edx].proc_info.locallist
+                .for : [ecx].esym.nextlocal : ecx = [ecx].esym.nextlocal
                 .endf
                 mov [ecx].esym.nextlocal,esi
             .endif
         .endif
 
-        .if ( [tokid()].token != T_FINAL )
+        .if [ebx].token != T_FINAL
 
-            .if ( [ebx].token == T_COMMA )
+            .if [ebx].token == T_COMMA
 
-                mov eax,i
+                mov eax,ebx
+                sub eax,tokenarray
+                shr eax,4
                 inc eax
-                .if ( eax < Token_Count )
-
-                    tokid(++)
+                .if eax < Token_Count
+                    add ebx,16
                 .endif
 
-            .elseif ( [ebx].token == T_OP_BRACKET )
+            .elseif [ebx].token == T_OP_BRACKET
 
                 lea edi,[ebx-16]
                 mov esi,[ebx-16].string_ptr
+                add ebx,16 ; go past '('
 
-                tokid(++) ; go past '('
-                .for ( eax = 1 : [ebx].token != T_FINAL : ebx += 16, i++ )
-                    .if ( [ebx].token == T_OP_BRACKET )
+                .for eax = 1 : [ebx].token != T_FINAL : ebx += 16
+                    .if [ebx].token == T_OP_BRACKET
                         inc eax
-                    .elseif ( [ebx].token == T_CL_BRACKET )
+                    .elseif [ebx].token == T_CL_BRACKET
                         dec eax
                         .break .ifz
                     .endif
                 .endf
-                .return asmerr(2045) .if ( [ebx].token != T_CL_BRACKET )
+                .return asmerr( 2045 ) .if [ebx].token != T_CL_BRACKET
 
-                tokid(++) ; go past ')'
-
-                mov esi,strcat(strcat(strcpy(&constructor, esi), "_"), esi)
-                SymFind(esi)
-
-                .if ( Parse_Pass > PASS_1 && eax )
-
-                    .if ( [eax].asym.state == SYM_UNDEFINED )
-
-                        ; x::x proto
-                        ;
-                        ; undef x_x
-                        ; x_x macro this
-
-                        mov [eax].asym.state,SYM_MACRO
-                    .endif
-                .endif
-
-                xor ecx,ecx
-                .if ( eax && [eax].asym.state == SYM_MACRO )
-                    mov ecx,T_ECX
-                    mov reg,T_ECX
-                    .if ModuleInfo.Ofssize == USE64
-                        mov ecx,T_EDI
-                        mov reg,T_RDI
-                        .if ( [eax].asym.langtype != LANG_SYSCALL )
-                            mov ecx,T_ECX
-                            mov reg,T_RCX
-                        .endif
-                    .endif
-                .endif
-
-                .if ( [ebx-32].token == T_OP_BRACKET )
-                    .if ( [edi-16].asm_tok.token == T_COLON )
-                        .if ecx
-                            AddLineQueueX("lea %r,%s", reg, name)
-                            AddLineQueueX("%s(%r)", esi, reg)
-                        .else
-                            AddLineQueueX("%s(&%s)", esi, name)
-                        .endif
-                    .elseif type
-                        .if ecx
-                            AddLineQueueX("xor %r,%r", ecx, ecx)
-                            AddLineQueueX("mov %s,%s(%r)", name, esi, reg)
-                        .else
-                            AddLineQueueX("mov %s,%s(0)", name, esi)
-                        .endif
-                    .else
-                        .if ecx
-                            AddLineQueueX("xor %r,%r", ecx, ecx)
-                            AddLineQueueX("%s(%r)", esi, reg)
-                        .else
-                            AddLineQueueX("%s(0)", esi)
-                        .endif
-                    .endif
-                .else
-                    mov eax,[ebx-16].tokpos
-                    mov byte ptr [eax],0
-                    .if ( [edi-16].asm_tok.token == T_COLON )
-                        .if ecx
-                            AddLineQueueX("lea %r,%s", reg, name)
-                            AddLineQueueX("%s(%r, %s)", esi, reg, [edi+32].asm_tok.tokpos)
-                        .else
-                            AddLineQueueX("%s(&%s, %s)", esi, name, [edi+32].asm_tok.tokpos)
-                        .endif
-                    .elseif type
-                        .if ecx
-                            AddLineQueueX("xor %r,%r", ecx, ecx)
-                            AddLineQueueX("mov %s,%s(%r, %s)", name, esi, reg, [edi+32].asm_tok.tokpos)
-                        .else
-                            AddLineQueueX("mov %s,%s(0, %s)", name, esi, [edi+32].asm_tok.tokpos)
-                        .endif
-                    .else
-                        .if ecx
-                            AddLineQueueX("xor %r,%r", ecx, ecx)
-                            AddLineQueueX("%s(%r, %s)", esi, reg, [edi+32].asm_tok.tokpos)
-                        .else
-                            AddLineQueueX("%s(0, %s)", esi, [edi+32].asm_tok.tokpos)
-                        .endif
-                    .endif
-                    mov eax,[ebx-16].tokpos
-                    mov byte ptr [eax],')'
-                .endif
+                add ebx,16 ; go past ')'
+                ConstructorCall( name, ebx, edi, esi, type )
             .else
                 .return asmerr( 2065, "," )
             .endif
         .endif
-        mov eax,i
-        .break .if ( eax >= Token_Count )
+        mov eax,ebx
+        sub eax,tokenarray
+        shr eax,4
+        .break .if eax >= Token_Count
     .endw
 
-    .if ( creat && Parse_Pass == PASS_1 )
+    .if creat && Parse_Pass == PASS_1
+
         mov eax,CurrProc
         mov ecx,[eax].esym.procinfo
         mov [ecx].proc_info.localsize,0
         SetLocalOffsets(ecx)
     .endif
+
     mov eax,NOT_ERROR
     ret
 
@@ -308,7 +327,7 @@ NewDirective proc i:int_t, tokenarray:tok_t
 
   local rc:int_t
 
-    .return asmerr(2012) .if (CurrProc == NULL)
+    .return asmerr(2012) .if CurrProc == NULL
 
     mov rc,AddLocalDir(i, tokenarray)
     .if ModuleInfo.list

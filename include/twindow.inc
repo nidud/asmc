@@ -5,40 +5,41 @@ include winuser.inc
 
 .enum ColorAttrib : byte {
 
-    FG_TITLE,
-    FG_FRAME,
-    FG_FILES,
-    FG_SYSTEM,
-    FG_HIDDEN,
-    FG_PBSHADE,
-    FG_KEYBAR,
-    FG_DESKTOP,
-    FG_INACTIVE,
-    FG_DIALOG,
-    FG_PANEL,
-    FG_SUBDIR,
-    FG_MENUS,
-    FG_TITLEKEY,
-    FG_DIALOGKEY,
-    FG_MENUSKEY,
+    FG_TITLE,     ; 0x00
+    FG_FRAME,     ; 0x01
+    FG_FILES,     ; 0x02
+    FG_SYSTEM,    ; 0x03
+    FG_HIDDEN,    ; 0x04
+    FG_PBSHADE,   ; 0x05
+    FG_KEYBAR,    ; 0x06
+    FG_DESKTOP,   ; 0x07
+    FG_INACTIVE,  ; 0x08
+    FG_DIALOG,    ; 0x09
+    FG_PANEL,     ; 0x0A
+    FG_SUBDIR,    ; 0x0B
+    FG_MENUS,     ; 0x0C
+    FG_TITLEKEY,  ; 0x0D
+    FG_DIALOGKEY, ; 0x0E
+    FG_MENUSKEY,  ; 0x0F
 
-    BG_DESKTOP,
-    BG_PANEL,
-    BG_DIALOG,
-    BG_MENUS,
-    BG_ERROR,
-    BG_TITLE,
-    BG_INVERSE,
-    BG_GRAY,
-    BG_PUSHBUTTON,
-    BG_INVPANEL,
-    BG_INVMENUS,
-    BG_UNUSED1,
-    BG_TEXTVIEW,
-    BG_TEXTEDIT,
-    FG_TEXTVIEW,
-    FG_TEXTEDIT,
-    COLOR_COUNT
+    BG_DESKTOP,   ; 0x10
+    BG_PANEL,     ; 0x11
+    BG_DIALOG,    ; 0x12
+    BG_MENUS,     ; 0x13
+    BG_ERROR,     ; 0x14
+    BG_TITLE,     ; 0x15
+    BG_INVERSE,   ; 0x16
+    BG_GRAY,      ; 0x17
+    BG_PUSHBUTTON,; 0x18
+    BG_INVPANEL,  ; 0x19
+    BG_INVMENUS,  ; 0x1A
+    BG_UNUSED1,   ; 0x1B
+    BG_TEXTVIEW,  ; 0x1C
+    BG_TEXTEDIT,  ; 0x1D
+    FG_TEXTVIEW,  ; 0x1E
+    FG_TEXTEDIT,  ; 0x1F
+
+    COLOR_COUNT   ; 0x20
 
 }
 

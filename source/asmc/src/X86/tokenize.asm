@@ -380,14 +380,25 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
                         imul ecx,[edx].index,asm_tok
                         neg  ecx
-                        .if ( [ebx+ecx].tokval == T_DOT_OPERATOR )
+
+                        ; .operator ... {
+
+                        ; name proto ... {
+                        ; type::name proto ... {
+
+                        .if ( [ebx+ecx].tokval == T_DOT_OPERATOR || \
+                              [ebx+ecx+asm_tok].tokval == T_PROTO || \
+                              [ebx+ecx+asm_tok*3].tokval == T_PROTO )
 
                             .while GetTextLine(&[edi+1])
+
                                 .continue .if byte ptr [edi+1] == 0
+
                                 inc edi
                                 SkipSpace(eax, edi)
                                 dec edi
                                 mov byte ptr [edi],10
+
                                 .break
                             .endw
 

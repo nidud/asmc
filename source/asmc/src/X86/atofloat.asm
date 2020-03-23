@@ -173,6 +173,8 @@ _atoow endp
 
 atofloat proc _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
 
+    mov errno,0
+
     ;; v2.04: accept and handle 'real number designator'
 
     .if ( ftype )
@@ -182,23 +184,57 @@ atofloat proc _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
         ;; v2.11: use _atoow() for conversion ( this function
         ;;    always initializes and reads a 16-byte number ).
         ;;    then check that the number fits in the variable.
-        ;;
-        _atoow( _out, inp, 16, &[strlen(inp)-1] )
 
-        .for ( ecx = _out,
-               edx = ecx,
-               ecx += size,
-               edx += 16: ecx < edx: ecx++ )
+        lea eax,[strlen(inp)-1]
+        mov negative,eax
 
+        ;; v2.31.24: the size is 2,4,8,10,16
+        ;; real4 3ff0000000000000r is allowed: real8 -> real16 -> real4
+
+        .switch eax
+        .case 4,8,16,20,32
+            .endc
+        .case 5,9,17,21,33
+            mov ecx,inp
+            .if byte ptr [ecx] == '0'
+                inc inp
+                dec negative
+                .endc
+            .endif
+        .default
+            asmerr( 2104, inp )
+        .endsw
+
+        _atoow( _out, inp, 16, negative )
+        .for ( ecx = _out, edx = ecx, ecx += size, edx += 16: ecx < edx: ecx++ )
             .if ( byte ptr [ecx] != 0 )
-
                 asmerr( 2104, inp )
                 .break
             .endif
         .endf
+
+        mov eax,negative
+        shr eax,1
+        .if eax != size
+            .switch eax
+            .case 2  : __cvth_q(_out, _out)  : .endc
+            .case 4  : __cvtss_q(_out, _out) : .endc
+            .case 8  : __cvtsd_q(_out, _out) : .endc
+            .case 10 : __cvtld_q(_out, _out) : .endc
+            .case 16 : .endc
+            .default
+                .if ( Parse_Pass == PASS_1 )
+                    asmerr( 7004 )
+                .endif
+                memset( _out, 0, size )
+            .endsw
+            .if errno
+                asmerr( 2071 )
+            .endif
+        .endif
+
     .else
 
-        mov errno,0
         __cvta_q(_out, inp, NULL)
         .if ( errno )
             asmerr( 2104, inp )
@@ -247,11 +283,13 @@ atofloat endp
 
     assume ebx:expr_t
 
-quad_resize proc uses ebx opnd:expr_t, size:uint_t
+quad_resize proc uses esi ebx opnd:expr_t, size:uint_t
 
     mov errno,0
     mov ebx,opnd
     mov eax,size
+    movzx esi,word ptr [ebx+14]
+    and esi,0x7FFF
 
     .switch eax
     .case 10
@@ -292,7 +330,7 @@ quad_resize proc uses ebx opnd:expr_t, size:uint_t
         .endc
     .endsw
 
-    .if ( errno )
+    .if ( errno && esi != 0x7FFF )
         asmerr( 2071 )
     .endif
     ret

@@ -10,7 +10,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ;GpStatus
 GdipCreatePath proto WINAPI \
-	     brushMode: ptr,
+	     brushMode: FillMode,
 		  path: ptr
 
 
@@ -19,7 +19,7 @@ GdipCreatePath2 proto WINAPI \
 		      : ptr,
 		      : ptr,
 		      : SINT,
-		      : ptr,
+		      : FillMode,
 		  path: ptr
 
 
@@ -28,7 +28,7 @@ GdipCreatePath2I proto WINAPI \
 		      : ptr,
 		      : ptr,
 		      : SINT,
-		      : ptr,
+		      : FillMode,
 		  path: ptr
 
 
@@ -1024,7 +1024,7 @@ GdipGetBrushType proto WINAPI \
 
 ;GpStatus
 GdipCreateHatchBrush proto WINAPI \
-	    hatchstyle: ptr,
+	    hatchstyle: HatchStyle,
 	       forecol: ARGB,
 	       backcol: ARGB,
 		 brush: ptr GpHatch
@@ -1055,14 +1055,14 @@ GdipGetHatchBackgroundColor proto WINAPI \
 ;GpStatus
 GdipCreateTexture proto WINAPI \
 		 image: ptr GpImage,
-	      wrapmode: ptr,
+	      wrapmode: GpWrapMode,
 	       texture: ptr GpTexture
 
 
 ;GpStatus
 GdipCreateTexture2 proto WINAPI \
 		 image: ptr GpImage,
-	      wrapmode: ptr,
+	      wrapmode: GpWrapMode,
 		     x: REAL,
 		     y: REAL,
 		 width: REAL,
@@ -1084,7 +1084,7 @@ GdipCreateTextureIA proto WINAPI \
 ;GpStatus
 GdipCreateTexture2I proto WINAPI \
 		 image: ptr GpImage,
-	      wrapmode: ptr,
+	      wrapmode: GpWrapMode,
 		     x: SINT,
 		     y: SINT,
 		 width: SINT,
@@ -1125,7 +1125,7 @@ GdipResetTextureTransform proto WINAPI \
 GdipMultiplyTextureTransform proto WINAPI \
 		 brush: ptr,
 		matrix: ptr GpMatrix,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1133,7 +1133,7 @@ GdipTranslateTextureTransform proto WINAPI \
 		 brush: ptr,
 		   _dx: REAL,
 		    dy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1141,20 +1141,20 @@ GdipScaleTextureTransform proto WINAPI \
 		 brush: ptr,
 		    sx: REAL,
 		    sy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipRotateTextureTransform proto WINAPI \
 		 brush: ptr,
 		 angle: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipSetTextureWrapMode proto WINAPI \
 		 brush: ptr GpTexture,
-	      wrapmode: ptr
+	      wrapmode: GpWrapMode
 
 
 ;GpStatus
@@ -1385,7 +1385,7 @@ GdipResetLineTransform proto WINAPI \
 GdipMultiplyLineTransform proto WINAPI \
 		 brush: ptr,
 		matrix: ptr GpMatrix,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1393,7 +1393,7 @@ GdipTranslateLineTransform proto WINAPI \
 		 brush: ptr,
 		   _dx: REAL,
 		    dy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1401,14 +1401,14 @@ GdipScaleLineTransform proto WINAPI \
 		 brush: ptr,
 		    sx: REAL,
 		    sy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipRotateLineTransform proto WINAPI \
 		 brush: ptr,
 		 angle: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;;----------------------------------------------------------------------------
@@ -1626,7 +1626,7 @@ GdipResetPathGradientTransform proto WINAPI \
 GdipMultiplyPathGradientTransform proto WINAPI \
 		 brush: ptr,
 		matrix: ptr GpMatrix,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1634,7 +1634,7 @@ GdipTranslatePathGradientTransform proto WINAPI \
 		 brush: ptr,
 		   _dx: REAL,
 		    dy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1642,14 +1642,14 @@ GdipScalePathGradientTransform proto WINAPI \
 		 brush: ptr,
 		    sx: REAL,
 		    sy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipRotatePathGradientTransform proto WINAPI \
 		 brush: ptr,
 		 angle: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1674,7 +1674,7 @@ GdipSetPathGradientFocusScales proto WINAPI \
 GdipCreatePen1 proto WINAPI \
 		 color: ARGB,
 		 width: REAL,
-		  unit: ptr,
+		  unit: GpUnit,
 		   pen: ptr GpPen
 
 
@@ -1682,7 +1682,7 @@ GdipCreatePen1 proto WINAPI \
 GdipCreatePen2 proto WINAPI \
 		 brush: ptr GpBrush,
 		 width: REAL,
-		  unit: ptr,
+		  unit: GpUnit,
 		   pen: ptr GpPen
 
 
@@ -1724,57 +1724,57 @@ GdipGetPenUnit proto WINAPI \
 ;GpStatus
 GdipSetPenLineCap197819 proto WINAPI \
 		   pen: ptr GpPen,
-	      startCap: ptr,
-		endCap: ptr,
-	       dashCap: ptr
+	      startCap: GpLineCap,
+		endCap: GpLineCap,
+	       dashCap: GpDashCap
 
 
 ;GpStatus
 GdipSetPenStartCap proto WINAPI \
 		   pen: ptr GpPen,
-	      startCap: ptr
+	      startCap: GpLineCap
 
 
 ;GpStatus
 GdipSetPenEndCap proto WINAPI \
 		   pen: ptr GpPen,
-		endCap: ptr
+		endCap: GpLineCap
 
 
 ;GpStatus
 GdipSetPenDashCap197819 proto WINAPI \
 		   pen: ptr GpPen,
-	       dashCap: ptr
+	       dashCap: GpDashCap
 
 
 ;GpStatus
 GdipGetPenStartCap proto WINAPI \
 		   pen: ptr GpPen,
-	      startCap: ptr GpLineCap
+	      startCap: GpLineCap
 
 
 ;GpStatus
 GdipGetPenEndCap proto WINAPI \
 		   pen: ptr GpPen,
-		endCap: ptr GpLineCap
+		endCap: GpLineCap
 
 
 ;GpStatus
 GdipGetPenDashCap197819 proto WINAPI \
 		   pen: ptr GpPen,
-	       dashCap: ptr GpDashCap
+	       dashCap: GpDashCap
 
 
 ;GpStatus
 GdipSetPenLineJoin proto WINAPI \
 		   pen: ptr GpPen,
-	      lineJoin: ptr
+	      lineJoin: GpLineJoin
 
 
 ;GpStatus
 GdipGetPenLineJoin proto WINAPI \
 		   pen: ptr GpPen,
-	      lineJoin: ptr GpLineJoin
+	      lineJoin: GpLineJoin
 
 
 ;GpStatus
@@ -1816,7 +1816,7 @@ GdipGetPenMiterLimit proto WINAPI \
 ;GpStatus
 GdipSetPenMode proto WINAPI \
 		   pen: ptr GpPen,
-	       penMode: ptr
+	       penMode: GpPenAlignment
 
 
 ;GpStatus
@@ -1846,7 +1846,7 @@ GdipResetPenTransform proto WINAPI \
 GdipMultiplyPenTransform proto WINAPI \
 		   pen: ptr GpPen,
 		matrix: ptr GpMatrix,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1854,7 +1854,7 @@ GdipTranslatePenTransform proto WINAPI \
 		   pen: ptr GpPen,
 		   _dx: REAL,
 		    dy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1862,14 +1862,14 @@ GdipScalePenTransform proto WINAPI \
 		   pen: ptr GpPen,
 		    sx: REAL,
 		    sy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipRotatePenTransform proto WINAPI \
 		   pen: ptr GpPen,
 		 angle: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -1905,7 +1905,7 @@ GdipGetPenFillType proto WINAPI \
 ;GpStatus
 GdipGetPenDashStyle proto WINAPI \
 		   pen: ptr GpPen,
-	     dashstyle: ptr GpDashStyle
+	     dashstyle: GpDashStyle
 
 
 ;GpStatus
@@ -2006,8 +2006,8 @@ GdipSetCustomLineCapStrokeCaps proto WINAPI \
 ;GpStatus
 GdipGetCustomLineCapStrokeCaps proto WINAPI \
 	     customCap: ptr,
-	      startCap: ptr,
-		endCap: ptr
+	      startCap: GpLineCap,
+		endCap: GpLineCap
 
 
 ;GpStatus
@@ -2918,7 +2918,7 @@ GdipResetWorldTransform proto WINAPI \
 GdipMultiplyWorldTransform proto WINAPI \
 	      graphics: ptr GpGraphics,
 		matrix: ptr GpMatrix,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -2926,7 +2926,7 @@ GdipTranslateWorldTransform proto WINAPI \
 	      graphics: ptr GpGraphics,
 		   _dx: REAL,
 		    dy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
@@ -2934,14 +2934,14 @@ GdipScaleWorldTransform proto WINAPI \
 	      graphics: ptr GpGraphics,
 		    sx: REAL,
 		    sy: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus
 GdipRotateWorldTransform proto WINAPI \
 	      graphics: ptr GpGraphics,
 		 angle: REAL,
-		 order: ptr
+		 order: GpMatrixOrder
 
 
 ;GpStatus

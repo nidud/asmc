@@ -1,295 +1,443 @@
 ifndef _GDIPLUSENUMS_H
 _GDIPLUSENUMS_H equ <>
 
+FlatnessDefault		equ (1.0/4.0)
+
 GraphicsState		typedef UINT
 GraphicsContainer	typedef UINT
 
-FillMode		typedef SDWORD
-FillModeAlternate	equ 0
-FillModeWinding		equ 1
+.enum FillMode {
+    FillModeAlternate,	      ;; 0
+    FillModeWinding	      ;; 1
+    }
 
-QualityMode		typedef SDWORD
-QualityModeInvalid	equ -1
-QualityModeDefault	equ 0
-QualityModeLow		equ 1
-QualityModeHigh		equ 2
+.enum QualityMode {
+    QualityModeInvalid	 = -1,
+    QualityModeDefault	 = 0,
+    QualityModeLow	 = 1, ;; Best performance
+    QualityModeHigh	 = 2  ;; Best rendering quality
+    }
 
-CompositingMode		typedef SDWORD
-CompositingModeSourceOver equ 0
-CompositingModeSourceCopy equ 1
+.enum CompositingMode {
+    CompositingModeSourceOver,;; 0
+    CompositingModeSourceCopy ;; 1
+    }
 
-CompositingQuality	typedef SDWORD
-CompositingQualityInvalid equ QualityModeInvalid
-CompositingQualityDefault equ QualityModeDefault
-CompositingQualityHighSpeed equ QualityModeLow
-CompositingQualityHighQuality equ QualityModeHigh
-CompositingQualityGammaCorrected equ 4
-CompositingQualityAssumeLinear equ 5
+.enum CompositingQuality {
+    CompositingQualityInvalid	       = QualityModeInvalid,
+    CompositingQualityDefault	       = QualityModeDefault,
+    CompositingQualityHighSpeed	       = QualityModeLow,
+    CompositingQualityHighQuality      = QualityModeHigh,
+    CompositingQualityGammaCorrected,
+    CompositingQualityAssumeLinear
+    }
 
-Unit			typedef SDWORD
-UnitWorld		equ 0
-UnitDisplay		equ 1
-UnitPixel		equ 2
-UnitPoint		equ 3
-UnitInch		equ 4
-UnitDocument		equ 5
-UnitMillimeter		equ 6
+.enum Unit {
+    UnitWorld,	    ;; 0 -- World coordinate (non-physical unit)
+    UnitDisplay,    ;; 1 -- Variable -- for PageTransform only
+    UnitPixel,	    ;; 2 -- Each unit is one device pixel.
+    UnitPoint,	    ;; 3 -- Each unit is a printer's point, or 1/72 inch.
+    UnitInch,	    ;; 4 -- Each unit is 1 inch.
+    UnitDocument,   ;; 5 -- Each unit is 1/300 inch.
+    UnitMillimeter  ;; 6 -- Each unit is 1 millimeter.
+    }
 
-MetafileFrameUnit	typedef SDWORD
-MetafileFrameUnitPixel	equ UnitPixel
-MetafileFrameUnitPoint	equ UnitPoint
-MetafileFrameUnitInch	equ UnitInch
-MetafileFrameUnitDocument equ UnitDocument
-MetafileFrameUnitMillimeter equ UnitMillimeter
-MetafileFrameUnitGdi	equ 5
+.enum MetafileFrameUnit {
+    MetafileFrameUnitPixel	= UnitPixel,
+    MetafileFrameUnitPoint	= UnitPoint,
+    MetafileFrameUnitInch	= UnitInch,
+    MetafileFrameUnitDocument	= UnitDocument,
+    MetafileFrameUnitMillimeter = UnitMillimeter,
+    MetafileFrameUnitGdi	;; GDI compatible .01 MM units
+    }
 
-CoordinateSpace		typedef SDWORD
-CoordinateSpaceWorld	equ 0
-CoordinateSpacePage	equ 1
-CoordinateSpaceDevice	equ 2
+;;--------------------------------------------------------------------------
+;; Coordinate space identifiers
+;;--------------------------------------------------------------------------
 
-WrapMode		typedef SDWORD
-WrapModeTile		equ 0
-WrapModeTileFlipX	equ 1
-WrapModeTileFlipY	equ 2
-WrapModeTileFlipXY	equ 3
-WrapModeClamp		equ 4
+.enum CoordinateSpace {
+    CoordinateSpaceWorld,     ;; 0
+    CoordinateSpacePage,      ;; 1
+    CoordinateSpaceDevice     ;; 2
+    }
 
-HatchStyle		typedef SDWORD
-HatchStyleHorizontal	equ 0
-HatchStyleVertical	equ 1
-HatchStyleForwardDiagonal equ 2
-HatchStyleBackwardDiagonal equ 3
-HatchStyleCross		equ 4
-HatchStyleDiagonalCross equ 5
-HatchStyle05Percent	equ 6
-HatchStyle10Percent	equ 7
-HatchStyle20Percent	equ 8
-HatchStyle25Percent	equ 9
-HatchStyle30Percent	equ 10
-HatchStyle40Percent	equ 11
-HatchStyle50Percent	equ 12
-HatchStyle60Percent	equ 13
-HatchStyle70Percent	equ 14
-HatchStyle75Percent	equ 15
-HatchStyle80Percent	equ 16
-HatchStyle90Percent	equ 17
-HatchStyleLightDownwardDiagonal equ 18
-HatchStyleLightUpwardDiagonal equ 19
-HatchStyleDarkDownwardDiagonal equ 20
-HatchStyleDarkUpwardDiagonal equ 21
-HatchStyleWideDownwardDiagonal equ 22
-HatchStyleWideUpwardDiagonal equ 23
-HatchStyleLightVertical equ 24
-HatchStyleLightHorizontal equ 25
-HatchStyleNarrowVertical equ 26
-HatchStyleNarrowHorizontal equ 27
-HatchStyleDarkVertical	equ 28
-HatchStyleDarkHorizontal equ 29
-HatchStyleDashedDownwardDiagonal equ 30
-HatchStyleDashedUpwardDiagonal equ 31
-HatchStyleDashedHorizontal equ 32
-HatchStyleDashedVertical equ 33
-HatchStyleSmallConfetti equ 34
-HatchStyleLargeConfetti equ 35
-HatchStyleZigZag	equ 36
-HatchStyleWave		equ 37
-HatchStyleDiagonalBrick equ 38
-HatchStyleHorizontalBrick equ 39
-HatchStyleWeave		equ 40
-HatchStylePlaid		equ 41
-HatchStyleDivot		equ 42
-HatchStyleDottedGrid	equ 43
-HatchStyleDottedDiamond equ 44
-HatchStyleShingle	equ 45
-HatchStyleTrellis	equ 46
-HatchStyleSphere	equ 47
-HatchStyleSmallGrid	equ 48
-HatchStyleSmallCheckerBoard equ 49
-HatchStyleLargeCheckerBoard equ 50
-HatchStyleOutlinedDiamond equ 51
-HatchStyleSolidDiamond	equ 52
-HatchStyleTotal		equ 53
-HatchStyleLargeGrid	equ HatchStyleCross
-HatchStyleMin		equ HatchStyleHorizontal
-HatchStyleMax		equ HatchStyleTotal - 1
+;;--------------------------------------------------------------------------
+;; Various wrap modes for brushes
+;;--------------------------------------------------------------------------
 
-DashStyle		typedef SDWORD
-DashStyleSolid		equ 0
-DashStyleDash		equ 1
-DashStyleDot		equ 2
-DashStyleDashDot	equ 3
-DashStyleDashDotDot	equ 4
-DashStyleCustom		equ 5
+.enum WrapMode {
+    WrapModeTile,	 ;; 0
+    WrapModeTileFlipX,	 ;; 1
+    WrapModeTileFlipY,	 ;; 2
+    WrapModeTileFlipXY,	 ;; 3
+    WrapModeClamp	 ;; 4
+    }
 
-DashCap			typedef SDWORD
-DashCapFlat		equ 0
-DashCapRound		equ 2
-DashCapTriangle		equ 3
+;;--------------------------------------------------------------------------
+;; Various hatch styles
+;;--------------------------------------------------------------------------
 
-LineCap			typedef SDWORD
-LineCapFlat		equ 0
-LineCapSquare		equ 1
-LineCapRound		equ 2
-LineCapTriangle		equ 3
-LineCapNoAnchor		equ 0x10
-LineCapSquareAnchor	equ 0x11
-LineCapRoundAnchor	equ 0x12
-LineCapDiamondAnchor	equ 0x13
-LineCapArrowAnchor	equ 0x14
-LineCapCustom		equ 0xff
-LineCapAnchorMask	equ 0xf0
+.enum HatchStyle {
+    HatchStyleHorizontal,		    ;; 0
+    HatchStyleVertical,			    ;; 1
+    HatchStyleForwardDiagonal,		    ;; 2
+    HatchStyleBackwardDiagonal,		    ;; 3
+    HatchStyleCross,			    ;; 4
+    HatchStyleDiagonalCross,		    ;; 5
+    HatchStyle05Percent,		    ;; 6
+    HatchStyle10Percent,		    ;; 7
+    HatchStyle20Percent,		    ;; 8
+    HatchStyle25Percent,		    ;; 9
+    HatchStyle30Percent,		    ;; 10
+    HatchStyle40Percent,		    ;; 11
+    HatchStyle50Percent,		    ;; 12
+    HatchStyle60Percent,		    ;; 13
+    HatchStyle70Percent,		    ;; 14
+    HatchStyle75Percent,		    ;; 15
+    HatchStyle80Percent,		    ;; 16
+    HatchStyle90Percent,		    ;; 17
+    HatchStyleLightDownwardDiagonal,	    ;; 18
+    HatchStyleLightUpwardDiagonal,	    ;; 19
+    HatchStyleDarkDownwardDiagonal,	    ;; 20
+    HatchStyleDarkUpwardDiagonal,	    ;; 21
+    HatchStyleWideDownwardDiagonal,	    ;; 22
+    HatchStyleWideUpwardDiagonal,	    ;; 23
+    HatchStyleLightVertical,		    ;; 24
+    HatchStyleLightHorizontal,		    ;; 25
+    HatchStyleNarrowVertical,		    ;; 26
+    HatchStyleNarrowHorizontal,		    ;; 27
+    HatchStyleDarkVertical,		    ;; 28
+    HatchStyleDarkHorizontal,		    ;; 29
+    HatchStyleDashedDownwardDiagonal,	    ;; 30
+    HatchStyleDashedUpwardDiagonal,	    ;; 31
+    HatchStyleDashedHorizontal,		    ;; 32
+    HatchStyleDashedVertical,		    ;; 33
+    HatchStyleSmallConfetti,		    ;; 34
+    HatchStyleLargeConfetti,		    ;; 35
+    HatchStyleZigZag,			    ;; 36
+    HatchStyleWave,			    ;; 37
+    HatchStyleDiagonalBrick,		    ;; 38
+    HatchStyleHorizontalBrick,		    ;; 39
+    HatchStyleWeave,			    ;; 40
+    HatchStylePlaid,			    ;; 41
+    HatchStyleDivot,			    ;; 42
+    HatchStyleDottedGrid,		    ;; 43
+    HatchStyleDottedDiamond,		    ;; 44
+    HatchStyleShingle,			    ;; 45
+    HatchStyleTrellis,			    ;; 46
+    HatchStyleSphere,			    ;; 47
+    HatchStyleSmallGrid,		    ;; 48
+    HatchStyleSmallCheckerBoard,	    ;; 49
+    HatchStyleLargeCheckerBoard,	    ;; 50
+    HatchStyleOutlinedDiamond,		    ;; 51
+    HatchStyleSolidDiamond,		    ;; 52
+    HatchStyleTotal,
+    HatchStyleLargeGrid = HatchStyleCross,  ;; 4
+    HatchStyleMin	= HatchStyleHorizontal,
+    HatchStyleMax	= HatchStyleTotal - 1,
+    }
 
-CustomLineCapType	typedef SDWORD
-CustomLineCapTypeDefault equ 0
-CustomLineCapTypeAdjustableArrow equ 1
+;;--------------------------------------------------------------------------
+;; Dash style constants
+;;--------------------------------------------------------------------------
 
-LineJoin		typedef SDWORD
-LineJoinMiter		equ 0
-LineJoinBevel		equ 1
-LineJoinRound		equ 2
-LineJoinMiterClipped	equ 3
+.enum DashStyle {
+    DashStyleSolid,	     ;; 0
+    DashStyleDash,	     ;; 1
+    DashStyleDot,	     ;; 2
+    DashStyleDashDot,	     ;; 3
+    DashStyleDashDotDot,     ;; 4
+    DashStyleCustom	     ;; 5
+    }
 
-PathPointType		typedef SDWORD
-PathPointTypeStart	equ 0
-PathPointTypeLine	equ 1
-PathPointTypeBezier	equ 3
-PathPointTypePathTypeMask equ 0x07
-PathPointTypeDashMode	equ 0x10
-PathPointTypePathMarker equ 0x20
-PathPointTypeCloseSubpath equ 0x80
-PathPointTypeBezier3	equ 3
+;;--------------------------------------------------------------------------
+;; Dash cap constants
+;;--------------------------------------------------------------------------
 
-WarpMode		typedef SDWORD
-WarpModePerspective	equ 0
-WarpModeBilinear	equ 1
+.enum DashCap {
+    DashCapFlat		    = 0,
+    DashCapRound	    = 2,
+    DashCapTriangle	    = 3
+    }
 
-LinearGradientMode	typedef SDWORD
-LinearGradientModeHorizontal equ 0
-LinearGradientModeVertical equ 1
-LinearGradientModeForwardDiagonal equ 2
-LinearGradientModeBackwardDiagonal equ 3
+;;--------------------------------------------------------------------------
+;; Line cap constants (only the lowest 8 bits are used).
+;;--------------------------------------------------------------------------
 
-CombineMode		typedef SDWORD
-CombineModeReplace	equ 0
-CombineModeIntersect	equ 1
-CombineModeUnion	equ 2
-CombineModeXor		equ 3
-CombineModeExclude	equ 4
-CombineModeComplement	equ 5
+.enum LineCap {
+    LineCapFlat		    = 0,
+    LineCapSquare	    = 1,
+    LineCapRound	    = 2,
+    LineCapTriangle	    = 3,
 
-ImageType		typedef SDWORD
-ImageTypeUnknown	equ 0
-ImageTypeBitmap		equ 1
-ImageTypeMetafile	equ 2
+    LineCapNoAnchor	    = 0x10, ;; corresponds to flat cap
+    LineCapSquareAnchor	    = 0x11, ;; corresponds to square cap
+    LineCapRoundAnchor	    = 0x12, ;; corresponds to round cap
+    LineCapDiamondAnchor    = 0x13, ;; corresponds to triangle cap
+    LineCapArrowAnchor	    = 0x14, ;; no correspondence
 
-InterpolationMode	typedef SDWORD
-InterpolationModeInvalid equ QualityModeInvalid
-InterpolationModeDefault equ QualityModeDefault
-InterpolationModeLowQuality equ QualityModeLow
-InterpolationModeHighQuality equ QualityModeHigh
-InterpolationModeBilinear equ 4
-InterpolationModeBicubic equ 5
-InterpolationModeNearestNeighbor equ 6
-InterpolationModeHighQualityBilinear equ 7
-InterpolationModeHighQualityBicubic equ 8
+    LineCapCustom	    = 0xff, ;; custom cap
 
-PenAlignment		typedef SDWORD
-PenAlignmentCenter	equ 0
-PenAlignmentInset	equ 1
+    LineCapAnchorMask	    = 0xf0  ;; mask to check for anchor or not.
+    }
 
-BrushType		typedef SDWORD
-BrushTypeSolidColor	equ 0
-BrushTypeHatchFill	equ 1
-BrushTypeTextureFill	equ 2
-BrushTypePathGradient	equ 3
-BrushTypeLinearGradient equ 4
+;;--------------------------------------------------------------------------
+;; Custom Line cap type constants
+;;--------------------------------------------------------------------------
 
-PenType			typedef SDWORD
-PenTypeSolidColor	equ BrushTypeSolidColor
-PenTypeHatchFill	equ BrushTypeHatchFill
-PenTypeTextureFill	equ BrushTypeTextureFill
-PenTypePathGradient	equ BrushTypePathGradient
-PenTypeLinearGradient	equ BrushTypeLinearGradient
-PenTypeUnknown		equ -1
+.enum CustomLineCapType {
+    CustomLineCapTypeDefault	     = 0,
+    CustomLineCapTypeAdjustableArrow = 1
+    }
 
-MatrixOrder		typedef SDWORD
-MatrixOrderPrepend	equ 0
-MatrixOrderAppend	equ 1
+;;--------------------------------------------------------------------------
+;; Line join constants
+;;--------------------------------------------------------------------------
 
-GenericFontFamily	typedef SDWORD
-GenericFontFamilySerif	equ 0
-GenericFontFamilySansSerif equ 1
-GenericFontFamilyMonospace equ 2
+.enum LineJoin {
+    LineJoinMiter	 = 0,
+    LineJoinBevel	 = 1,
+    LineJoinRound	 = 2,
+    LineJoinMiterClipped = 3
+    }
 
-FontStyle		typedef SDWORD
-FontStyleRegular	equ 0
-FontStyleBold		equ 1
-FontStyleItalic		equ 2
-FontStyleBoldItalic	equ 3
-FontStyleUnderline	equ 4
-FontStyleStrikeout	equ 8
+;;--------------------------------------------------------------------------
+;; Path point types (only the lowest 8 bits are used.)
+;;  The lowest 3 bits are interpreted as point type
+;;  The higher 5 bits are reserved for flags.
+;;--------------------------------------------------------------------------
 
-SmoothingMode		typedef SDWORD
-SmoothingModeInvalid	equ QualityModeInvalid
-SmoothingModeDefault	equ QualityModeDefault
-SmoothingModeHighSpeed	equ QualityModeLow
-SmoothingModeHighQuality equ QualityModeHigh
-SmoothingModeNone	equ 4
-SmoothingModeAntiAlias	equ 5
+.enum PathPointType {
+    PathPointTypeStart		 = 0,	 ;; move
+    PathPointTypeLine		 = 1,	 ;; line
+    PathPointTypeBezier		 = 3,	 ;; default Bezier (= cubic Bezier)
+    PathPointTypePathTypeMask	 = 0x07, ;; type mask (lowest 3 bits).
+    PathPointTypeDashMode	 = 0x10, ;; currently in dash mode.
+    PathPointTypePathMarker	 = 0x20, ;; a marker for the path.
+    PathPointTypeCloseSubpath	 = 0x80, ;; closed flag
+
+    ;; Path types used for advanced path.
+
+    PathPointTypeBezier3    = 3,	 ;; cubic Bezier
+    }
+
+
+;;--------------------------------------------------------------------------
+;; WarpMode constants
+;;--------------------------------------------------------------------------
+
+.enum WarpMode {
+    WarpModePerspective,    ;; 0
+    WarpModeBilinear	    ;; 1
+    }
+
+;;--------------------------------------------------------------------------
+;; LineGradient Mode
+;;--------------------------------------------------------------------------
+
+.enum LinearGradientMode {
+    LinearGradientModeHorizontal,	  ;; 0
+    LinearGradientModeVertical,		  ;; 1
+    LinearGradientModeForwardDiagonal,	  ;; 2
+    LinearGradientModeBackwardDiagonal	  ;; 3
+    }
+
+;;--------------------------------------------------------------------------
+;; Region Comine Modes
+;;--------------------------------------------------------------------------
+
+.enum CombineMode {
+    CombineModeReplace,	    ;; 0
+    CombineModeIntersect,   ;; 1
+    CombineModeUnion,	    ;; 2
+    CombineModeXor,	    ;; 3
+    CombineModeExclude,	    ;; 4
+    CombineModeComplement   ;; 5 (Exclude From)
+    }
+
+;;--------------------------------------------------------------------------
+ ;; Image types
+;;--------------------------------------------------------------------------
+
+.enum ImageType {
+    ImageTypeUnknown,	;; 0
+    ImageTypeBitmap,	;; 1
+    ImageTypeMetafile	;; 2
+    }
+
+;;--------------------------------------------------------------------------
+;; Interpolation modes
+;;--------------------------------------------------------------------------
+
+.enum InterpolationMode {
+    InterpolationModeInvalid	      = QualityModeInvalid,
+    InterpolationModeDefault	      = QualityModeDefault,
+    InterpolationModeLowQuality	      = QualityModeLow,
+    InterpolationModeHighQuality      = QualityModeHigh,
+    InterpolationModeBilinear,
+    InterpolationModeBicubic,
+    InterpolationModeNearestNeighbor,
+    InterpolationModeHighQualityBilinear,
+    InterpolationModeHighQualityBicubic
+    }
+
+;;--------------------------------------------------------------------------
+;; Pen types
+;;--------------------------------------------------------------------------
+
+.enum PenAlignment {
+    PenAlignmentCenter	     = 0,
+    PenAlignmentInset	     = 1
+    }
+
+;;--------------------------------------------------------------------------
+;; Brush types
+;;--------------------------------------------------------------------------
+
+.enum BrushType {
+   BrushTypeSolidColor	     = 0,
+   BrushTypeHatchFill	     = 1,
+   BrushTypeTextureFill	     = 2,
+   BrushTypePathGradient     = 3,
+   BrushTypeLinearGradient   = 4
+   }
+
+;;--------------------------------------------------------------------------
+;; Pen's Fill types
+;;--------------------------------------------------------------------------
+
+.enum PenType {
+   PenTypeSolidColor	   = BrushTypeSolidColor,
+   PenTypeHatchFill	   = BrushTypeHatchFill,
+   PenTypeTextureFill	   = BrushTypeTextureFill,
+   PenTypePathGradient	   = BrushTypePathGradient,
+   PenTypeLinearGradient   = BrushTypeLinearGradient,
+   PenTypeUnknown	   = -1
+   }
+
+;;--------------------------------------------------------------------------
+;; Matrix Order
+;;--------------------------------------------------------------------------
+
+.enum MatrixOrder {
+    MatrixOrderPrepend	  = 0,
+    MatrixOrderAppend	  = 1
+    }
+
+;;--------------------------------------------------------------------------
+;; Generic font families
+;;--------------------------------------------------------------------------
+
+.enum GenericFontFamily {
+    GenericFontFamilySerif,
+    GenericFontFamilySansSerif,
+    GenericFontFamilyMonospace
+    }
+
+;;--------------------------------------------------------------------------
+;; FontStyle: face types and common styles
+;;--------------------------------------------------------------------------
+
+.enum FontStyle {
+    FontStyleRegular	= 0,
+    FontStyleBold	= 1,
+    FontStyleItalic	= 2,
+    FontStyleBoldItalic = 3,
+    FontStyleUnderline	= 4,
+    FontStyleStrikeout	= 8
+    }
+
+;;---------------------------------------------------------------------------
+;; Smoothing Mode
+;;---------------------------------------------------------------------------
+
+.enum SmoothingMode {
+    SmoothingModeInvalid     = QualityModeInvalid,
+    SmoothingModeDefault     = QualityModeDefault,
+    SmoothingModeHighSpeed   = QualityModeLow,
+    SmoothingModeHighQuality = QualityModeHigh,
+    SmoothingModeNone,
+    SmoothingModeAntiAlias,
 if (GDIPVER GE 0x0110)
-SmoothingModeAntiAlias8x4 equ SmoothingModeAntiAlias
-SmoothingModeAntiAlias8x8 equ 7
-endif
+    SmoothingModeAntiAlias8x4 = SmoothingModeAntiAlias,
+    SmoothingModeAntiAlias8x8
+endif ;;(GDIPVER >= 0x0110)
+    }
 
-PixelOffsetMode		typedef SDWORD
-PixelOffsetModeInvalid	equ QualityModeInvalid
-PixelOffsetModeDefault	equ QualityModeDefault
-PixelOffsetModeHighSpeed equ QualityModeLow
-PixelOffsetModeHighQuality equ QualityModeHigh
-PixelOffsetModeNone	equ 4
-PixelOffsetModeHalf	equ 5
+;;---------------------------------------------------------------------------
+;; Pixel Format Mode
+;;---------------------------------------------------------------------------
 
-TextRenderingHint	typedef SDWORD
-TextRenderingHintSystemDefault equ 0
-TextRenderingHintSingleBitPerPixelGridFit equ 1
-TextRenderingHintSingleBitPerPixel equ 2
-TextRenderingHintAntiAliasGridFit equ 3
-TextRenderingHintAntiAlias equ 4
-TextRenderingHintClearTypeGridFit equ 5
+.enum PixelOffsetMode {
+    PixelOffsetModeInvalid     = QualityModeInvalid,
+    PixelOffsetModeDefault     = QualityModeDefault,
+    PixelOffsetModeHighSpeed   = QualityModeLow,
+    PixelOffsetModeHighQuality = QualityModeHigh,
+    PixelOffsetModeNone,    ;; No pixel offset
+    PixelOffsetModeHalf	    ;; Offset by -0.5, -0.5 for fast anti-alias perf
+    }
 
-MetafileType		typedef SDWORD
-MetafileTypeInvalid	equ 0
-MetafileTypeWmf		equ 1
-MetafileTypeWmfPlaceable equ 2
-MetafileTypeEmf		equ 3
-MetafileTypeEmfPlusOnly equ 4
-MetafileTypeEmfPlusDual equ 5
+;;---------------------------------------------------------------------------
+;; Text Rendering Hint
+;;---------------------------------------------------------------------------
 
-EmfType			typedef SDWORD
-EmfTypeEmfOnly		equ MetafileTypeEmf
-EmfTypeEmfPlusOnly	equ MetafileTypeEmfPlusOnly
-EmfTypeEmfPlusDual	equ MetafileTypeEmfPlusDual
+.enum TextRenderingHint {
+    TextRenderingHintSystemDefault = 0,		   ;; Glyph with system default rendering hint
+    TextRenderingHintSingleBitPerPixelGridFit,	   ;; Glyph bitmap with hinting
+    TextRenderingHintSingleBitPerPixel,		   ;; Glyph bitmap without hinting
+    TextRenderingHintAntiAliasGridFit,		   ;; Glyph anti-alias bitmap with hinting
+    TextRenderingHintAntiAlias,			   ;; Glyph anti-alias bitmap without hinting
+    TextRenderingHintClearTypeGridFit		   ;; Glyph CT bitmap with hinting
+    }
 
-ObjectType		typedef SDWORD
-ObjectTypeInvalid	equ 0
-ObjectTypeBrush		equ 1
-ObjectTypePen		equ 2
-ObjectTypePath		equ 3
-ObjectTypeRegion	equ 4
-ObjectTypeImage		equ 5
-ObjectTypeFont		equ 6
-ObjectTypeStringFormat	equ 7
-ObjectTypeImageAttributes equ 8
-ObjectTypeCustomLineCap equ 9
+;;---------------------------------------------------------------------------
+;; Metafile Types
+;;---------------------------------------------------------------------------
+
+.enum MetafileType {
+    MetafileTypeInvalid,	    ;; Invalid metafile
+    MetafileTypeWmf,		    ;; Standard WMF
+    MetafileTypeWmfPlaceable,	    ;; Placeable WMF
+    MetafileTypeEmf,		    ;; EMF (not EMF+)
+    MetafileTypeEmfPlusOnly,	    ;; EMF+ without dual, down-level records
+    MetafileTypeEmfPlusDual	    ;; EMF+ with dual, down-level records
+    }
+
+;;---------------------------------------------------------------------------
+;; Specifies the type of EMF to record
+;;---------------------------------------------------------------------------
+
+.enum EmfType {
+    EmfTypeEmfOnly     = MetafileTypeEmf,	   ;; no EMF+, only EMF
+    EmfTypeEmfPlusOnly = MetafileTypeEmfPlusOnly,  ;; no EMF, only EMF+
+    EmfTypeEmfPlusDual = MetafileTypeEmfPlusDual   ;; both EMF+ and EMF
+    }
+
+;;---------------------------------------------------------------------------
+;; EMF+ Persistent object types
+;;---------------------------------------------------------------------------
+
+.enum ObjectType {
+    ObjectTypeInvalid,
+    ObjectTypeBrush,
+    ObjectTypePen,
+    ObjectTypePath,
+    ObjectTypeRegion,
+    ObjectTypeImage,
+    ObjectTypeFont,
+    ObjectTypeStringFormat,
+    ObjectTypeImageAttributes,
+    ObjectTypeCustomLineCap,
 if (GDIPVER GE 0x0110)
-ObjectTypeGraphics	equ 10
-ObjectTypeMax		equ ObjectTypeGraphics
+    ObjectTypeGraphics,
+    ObjectTypeMax = ObjectTypeGraphics,
 else
-ObjectTypeMax		equ ObjectTypeCustomLineCap
-endif
-ObjectTypeMin		equ ObjectTypeBrush
+    ObjectTypeMax = ObjectTypeCustomLineCap,
+endif ;;(GDIPVER >= 0x0110)
+    ObjectTypeMin = ObjectTypeBrush
+    }
 
+; BOOL
 ObjectTypeIsValid macro x
 	xor eax,eax
 	.if ((x >= ObjectTypeMin) && (x <= ObjectTypeMax))
@@ -297,6 +445,13 @@ ObjectTypeIsValid macro x
 	.endif
 	exitm<eax>
 	endm
+
+;;---------------------------------------------------------------------------
+;; EMF+ Records
+;;---------------------------------------------------------------------------
+
+;; We have to change the WMF record numbers so that they don't conflict with
+;; the EMF and EMF+ record numbers.
 
 GDIP_EMFPLUS_RECORD_BASE equ 0x00004000
 GDIP_WMF_RECORD_BASE	equ 0x00010000
@@ -310,382 +465,557 @@ GDIP_IS_WMF_RECORDTYPE macro n
 	exitm<(((n) AND GDIP_WMF_RECORD_BASE))>
 	endm
 
-EmfPlusRecordType	typedef SDWORD
-WmfRecordTypeSetBkColor equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKCOLOR)
-WmfRecordTypeSetBkMode	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKMODE)
-WmfRecordTypeSetMapMode equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPMODE)
-WmfRecordTypeSetROP2	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETROP2)
-WmfRecordTypeSetRelAbs	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETRELABS)
-WmfRecordTypeSetPolyFillMode equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPOLYFILLMODE)
-WmfRecordTypeSetStretchBltMode equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETSTRETCHBLTMODE)
-WmfRecordTypeSetTextCharExtra equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTCHAREXTRA)
-WmfRecordTypeSetTextColor equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTCOLOR)
-WmfRecordTypeSetTextJustification equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTJUSTIFICATION)
-WmfRecordTypeSetWindowOrg equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETWINDOWORG)
-WmfRecordTypeSetWindowExt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETWINDOWEXT)
-WmfRecordTypeSetViewportOrg equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETVIEWPORTORG)
-WmfRecordTypeSetViewportExt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETVIEWPORTEXT)
-WmfRecordTypeOffsetWindowOrg equ GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETWINDOWORG)
-WmfRecordTypeScaleWindowExt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SCALEWINDOWEXT)
-WmfRecordTypeOffsetViewportOrg equ GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETVIEWPORTORG)
-WmfRecordTypeScaleViewportExt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SCALEVIEWPORTEXT)
-WmfRecordTypeLineTo	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_LINETO)
-WmfRecordTypeMoveTo	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_MOVETO)
-WmfRecordTypeExcludeClipRect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_EXCLUDECLIPRECT)
-WmfRecordTypeIntersectClipRect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_INTERSECTCLIPRECT)
-WmfRecordTypeArc	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_ARC)
-WmfRecordTypeEllipse	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_ELLIPSE)
-WmfRecordTypeFloodFill	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_FLOODFILL)
-WmfRecordTypePie	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_PIE)
-WmfRecordTypeRectangle	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_RECTANGLE)
-WmfRecordTypeRoundRect	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_ROUNDRECT)
-WmfRecordTypePatBlt	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_PATBLT)
-WmfRecordTypeSaveDC	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SAVEDC)
-WmfRecordTypeSetPixel	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPIXEL)
-WmfRecordTypeOffsetClipRgn equ GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETCLIPRGN)
-WmfRecordTypeTextOut	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_TEXTOUT)
-WmfRecordTypeBitBlt	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_BITBLT)
-WmfRecordTypeStretchBlt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_STRETCHBLT)
-WmfRecordTypePolygon	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYGON)
-WmfRecordTypePolyline	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYLINE)
-WmfRecordTypeEscape	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_ESCAPE)
-WmfRecordTypeRestoreDC	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_RESTOREDC)
-WmfRecordTypeFillRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_FILLREGION)
-WmfRecordTypeFrameRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_FRAMEREGION)
-WmfRecordTypeInvertRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_INVERTREGION)
-WmfRecordTypePaintRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_PAINTREGION)
-WmfRecordTypeSelectClipRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTCLIPREGION)
-WmfRecordTypeSelectObject equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTOBJECT)
-WmfRecordTypeSetTextAlign equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTALIGN)
-WmfRecordTypeDrawText	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x062F)
-WmfRecordTypeChord	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CHORD)
-WmfRecordTypeSetMapperFlags equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPPERFLAGS)
-WmfRecordTypeExtTextOut equ GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTTEXTOUT)
-WmfRecordTypeSetDIBToDev equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETDIBTODEV)
-WmfRecordTypeSelectPalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTPALETTE)
-WmfRecordTypeRealizePalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_REALIZEPALETTE)
-WmfRecordTypeAnimatePalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_ANIMATEPALETTE)
-WmfRecordTypeSetPalEntries equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPALENTRIES)
-WmfRecordTypePolyPolygon equ GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYPOLYGON)
-WmfRecordTypeResizePalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_RESIZEPALETTE)
-WmfRecordTypeDIBBitBlt	equ GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBBITBLT)
-WmfRecordTypeDIBStretchBlt equ GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBSTRETCHBLT)
-WmfRecordTypeDIBCreatePatternBrush equ GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBCREATEPATTERNBRUSH)
-WmfRecordTypeStretchDIB equ GDIP_WMF_RECORD_TO_EMFPLUS(META_STRETCHDIB)
-WmfRecordTypeExtFloodFill equ GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTFLOODFILL)
-WmfRecordTypeSetLayout	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x0149)
-WmfRecordTypeResetDC	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x014C)
-WmfRecordTypeStartDoc	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x014D)
-WmfRecordTypeStartPage	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x004F)
-WmfRecordTypeEndPage	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x0050)
-WmfRecordTypeAbortDoc	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x0052)
-WmfRecordTypeEndDoc	equ GDIP_WMF_RECORD_TO_EMFPLUS(0x005E)
-WmfRecordTypeDeleteObject equ GDIP_WMF_RECORD_TO_EMFPLUS(META_DELETEOBJECT)
-WmfRecordTypeCreatePalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPALETTE)
-WmfRecordTypeCreateBrush equ GDIP_WMF_RECORD_TO_EMFPLUS(0x00F8)
-WmfRecordTypeCreatePatternBrush equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPATTERNBRUSH)
-WmfRecordTypeCreatePenIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPENINDIRECT)
-WmfRecordTypeCreateFontIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEFONTINDIRECT)
-WmfRecordTypeCreateBrushIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEBRUSHINDIRECT)
-WmfRecordTypeCreateBitmapIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(0x02FD)
-WmfRecordTypeCreateBitmap equ GDIP_WMF_RECORD_TO_EMFPLUS(0x06FE)
-WmfRecordTypeCreateRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEREGION)
-EmfRecordTypeHeader	equ EMR_HEADER
-EmfRecordTypePolyBezier equ EMR_POLYBEZIER
-EmfRecordTypePolygon	equ EMR_POLYGON
-EmfRecordTypePolyline	equ EMR_POLYLINE
-EmfRecordTypePolyBezierTo equ EMR_POLYBEZIERTO
-EmfRecordTypePolyLineTo equ EMR_POLYLINETO
-EmfRecordTypePolyPolyline equ EMR_POLYPOLYLINE
-EmfRecordTypePolyPolygon equ EMR_POLYPOLYGON
-EmfRecordTypeSetWindowExtEx equ EMR_SETWINDOWEXTEX
-EmfRecordTypeSetWindowOrgEx equ EMR_SETWINDOWORGEX
-EmfRecordTypeSetViewportExtEx equ EMR_SETVIEWPORTEXTEX
-EmfRecordTypeSetViewportOrgEx equ EMR_SETVIEWPORTORGEX
-EmfRecordTypeSetBrushOrgEx equ EMR_SETBRUSHORGEX
-EmfRecordTypeEOF	equ EMR_EOF
-EmfRecordTypeSetPixelV	equ EMR_SETPIXELV
-EmfRecordTypeSetMapperFlags equ EMR_SETMAPPERFLAGS
-EmfRecordTypeSetMapMode equ EMR_SETMAPMODE
-EmfRecordTypeSetBkMode	equ EMR_SETBKMODE
-EmfRecordTypeSetPolyFillMode equ EMR_SETPOLYFILLMODE
-EmfRecordTypeSetROP2	equ EMR_SETROP2
-EmfRecordTypeSetStretchBltMode equ EMR_SETSTRETCHBLTMODE
-EmfRecordTypeSetTextAlign equ EMR_SETTEXTALIGN
-EmfRecordTypeSetColorAdjustment equ EMR_SETCOLORADJUSTMENT
-EmfRecordTypeSetTextColor equ EMR_SETTEXTCOLOR
-EmfRecordTypeSetBkColor equ EMR_SETBKCOLOR
-EmfRecordTypeOffsetClipRgn equ EMR_OFFSETCLIPRGN
-EmfRecordTypeMoveToEx	equ EMR_MOVETOEX
-EmfRecordTypeSetMetaRgn equ EMR_SETMETARGN
-EmfRecordTypeExcludeClipRect equ EMR_EXCLUDECLIPRECT
-EmfRecordTypeIntersectClipRect equ EMR_INTERSECTCLIPRECT
-EmfRecordTypeScaleViewportExtEx equ EMR_SCALEVIEWPORTEXTEX
-EmfRecordTypeScaleWindowExtEx equ EMR_SCALEWINDOWEXTEX
-EmfRecordTypeSaveDC	equ EMR_SAVEDC
-EmfRecordTypeRestoreDC	equ EMR_RESTOREDC
-EmfRecordTypeSetWorldTransform equ EMR_SETWORLDTRANSFORM
-EmfRecordTypeModifyWorldTransform equ EMR_MODIFYWORLDTRANSFORM
-EmfRecordTypeSelectObject equ EMR_SELECTOBJECT
-EmfRecordTypeCreatePen	equ EMR_CREATEPEN
-EmfRecordTypeCreateBrushIndirect equ EMR_CREATEBRUSHINDIRECT
-EmfRecordTypeDeleteObject equ EMR_DELETEOBJECT
-EmfRecordTypeAngleArc	equ EMR_ANGLEARC
-EmfRecordTypeEllipse	equ EMR_ELLIPSE
-EmfRecordTypeRectangle	equ EMR_RECTANGLE
-EmfRecordTypeRoundRect	equ EMR_ROUNDRECT
-EmfRecordTypeArc	equ EMR_ARC
-EmfRecordTypeChord	equ EMR_CHORD
-EmfRecordTypePie	equ EMR_PIE
-EmfRecordTypeSelectPalette equ EMR_SELECTPALETTE
-EmfRecordTypeCreatePalette equ EMR_CREATEPALETTE
-EmfRecordTypeSetPaletteEntries equ EMR_SETPALETTEENTRIES
-EmfRecordTypeResizePalette equ EMR_RESIZEPALETTE
-EmfRecordTypeRealizePalette equ EMR_REALIZEPALETTE
-EmfRecordTypeExtFloodFill equ EMR_EXTFLOODFILL
-EmfRecordTypeLineTo	equ EMR_LINETO
-EmfRecordTypeArcTo	equ EMR_ARCTO
-EmfRecordTypePolyDraw	equ EMR_POLYDRAW
-EmfRecordTypeSetArcDirection equ EMR_SETARCDIRECTION
-EmfRecordTypeSetMiterLimit equ EMR_SETMITERLIMIT
-EmfRecordTypeBeginPath	equ EMR_BEGINPATH
-EmfRecordTypeEndPath	equ EMR_ENDPATH
-EmfRecordTypeCloseFigure equ EMR_CLOSEFIGURE
-EmfRecordTypeFillPath	equ EMR_FILLPATH
-EmfRecordTypeStrokeAndFillPath equ EMR_STROKEANDFILLPATH
-EmfRecordTypeStrokePath equ EMR_STROKEPATH
-EmfRecordTypeFlattenPath equ EMR_FLATTENPATH
-EmfRecordTypeWidenPath	equ EMR_WIDENPATH
-EmfRecordTypeSelectClipPath equ EMR_SELECTCLIPPATH
-EmfRecordTypeAbortPath	equ EMR_ABORTPATH
-EmfRecordTypeReserved_069 equ 69
-EmfRecordTypeGdiComment equ EMR_GDICOMMENT
-EmfRecordTypeFillRgn	equ EMR_FILLRGN
-EmfRecordTypeFrameRgn	equ EMR_FRAMERGN
-EmfRecordTypeInvertRgn	equ EMR_INVERTRGN
-EmfRecordTypePaintRgn	equ EMR_PAINTRGN
-EmfRecordTypeExtSelectClipRgn equ EMR_EXTSELECTCLIPRGN
-EmfRecordTypeBitBlt	equ EMR_BITBLT
-EmfRecordTypeStretchBlt equ EMR_STRETCHBLT
-EmfRecordTypeMaskBlt	equ EMR_MASKBLT
-EmfRecordTypePlgBlt	equ EMR_PLGBLT
-EmfRecordTypeSetDIBitsToDevice equ EMR_SETDIBITSTODEVICE
-EmfRecordTypeStretchDIBits equ EMR_STRETCHDIBITS
-EmfRecordTypeExtCreateFontIndirect equ EMR_EXTCREATEFONTINDIRECTW
-EmfRecordTypeExtTextOutA equ EMR_EXTTEXTOUTA
-EmfRecordTypeExtTextOutW equ EMR_EXTTEXTOUTW
-EmfRecordTypePolyBezier16 equ EMR_POLYBEZIER16
-EmfRecordTypePolygon16	equ EMR_POLYGON16
-EmfRecordTypePolyline16 equ EMR_POLYLINE16
-EmfRecordTypePolyBezierTo16 equ EMR_POLYBEZIERTO16
-EmfRecordTypePolylineTo16 equ EMR_POLYLINETO16
-EmfRecordTypePolyPolyline16 equ EMR_POLYPOLYLINE16
-EmfRecordTypePolyPolygon16 equ EMR_POLYPOLYGON16
-EmfRecordTypePolyDraw16 equ EMR_POLYDRAW16
-EmfRecordTypeCreateMonoBrush equ EMR_CREATEMONOBRUSH
-EmfRecordTypeCreateDIBPatternBrushPt equ EMR_CREATEDIBPATTERNBRUSHPT
-EmfRecordTypeExtCreatePen equ EMR_EXTCREATEPEN
-EmfRecordTypePolyTextOutA equ EMR_POLYTEXTOUTA
-EmfRecordTypePolyTextOutW equ EMR_POLYTEXTOUTW
-EmfRecordTypeSetICMMode equ 98
-EmfRecordTypeCreateColorSpace equ 99
-EmfRecordTypeSetColorSpace equ 100
-EmfRecordTypeDeleteColorSpace equ 101
-EmfRecordTypeGLSRecord	equ 102
-EmfRecordTypeGLSBoundedRecord equ 103
-EmfRecordTypePixelFormat equ 104
-EmfRecordTypeDrawEscape equ 105
-EmfRecordTypeExtEscape	equ 106
-EmfRecordTypeStartDoc	equ 107
-EmfRecordTypeSmallTextOut equ 108
-EmfRecordTypeForceUFIMapping equ 109
-EmfRecordTypeNamedEscape equ 110
-EmfRecordTypeColorCorrectPalette equ 111
-EmfRecordTypeSetICMProfileA equ 112
-EmfRecordTypeSetICMProfileW equ 113
-EmfRecordTypeAlphaBlend equ 114
-EmfRecordTypeSetLayout	equ 115
-EmfRecordTypeTransparentBlt equ 116
-EmfRecordTypeReserved_117 equ 117
-EmfRecordTypeGradientFill equ 118
-EmfRecordTypeSetLinkedUFIs equ 119
-EmfRecordTypeSetTextJustification equ 120
-EmfRecordTypeColorMatchToTargetW equ 121
-EmfRecordTypeCreateColorSpaceW equ 122
-EmfRecordTypeMax	equ 122
-EmfRecordTypeMin	equ 1
-EmfPlusRecordTypeInvalid equ GDIP_EMFPLUS_RECORD_BASE
-EmfPlusRecordTypeHeader equ 204
-EmfPlusRecordTypeEndOfFile equ 205
-EmfPlusRecordTypeComment equ 206
-EmfPlusRecordTypeGetDC	equ 207
-EmfPlusRecordTypeMultiFormatStart equ 208
-EmfPlusRecordTypeMultiFormatSection equ 209
-EmfPlusRecordTypeMultiFormatEnd equ 210
-EmfPlusRecordTypeObject equ 211
-EmfPlusRecordTypeClear	equ 212
-EmfPlusRecordTypeFillRects equ 213
-EmfPlusRecordTypeDrawRects equ 214
-EmfPlusRecordTypeFillPolygon equ 215
-EmfPlusRecordTypeDrawLines equ 216
-EmfPlusRecordTypeFillEllipse equ 217
-EmfPlusRecordTypeDrawEllipse equ 218
-EmfPlusRecordTypeFillPie equ 219
-EmfPlusRecordTypeDrawPie equ 220
-EmfPlusRecordTypeDrawArc equ 221
-EmfPlusRecordTypeFillRegion equ 222
-EmfPlusRecordTypeFillPath equ 223
-EmfPlusRecordTypeDrawPath equ 224
-EmfPlusRecordTypeFillClosedCurve equ 225
-EmfPlusRecordTypeDrawClosedCurve equ 226
-EmfPlusRecordTypeDrawCurve equ 227
-EmfPlusRecordTypeDrawBeziers equ 228
-EmfPlusRecordTypeDrawImage equ 229
-EmfPlusRecordTypeDrawImagePoints equ 230
-EmfPlusRecordTypeDrawString equ 231
-EmfPlusRecordTypeSetRenderingOrigin equ 232
-EmfPlusRecordTypeSetAntiAliasMode equ 233
-EmfPlusRecordTypeSetTextRenderingHint equ 234
-EmfPlusRecordTypeSetTextContrast equ 235
-EmfPlusRecordTypeSetInterpolationMode equ 236
-EmfPlusRecordTypeSetPixelOffsetMode equ 237
-EmfPlusRecordTypeSetCompositingMode equ 238
-EmfPlusRecordTypeSetCompositingQuality equ 239
-EmfPlusRecordTypeSave	equ 240
-EmfPlusRecordTypeRestore equ 241
-EmfPlusRecordTypeBeginContainer equ 242
-EmfPlusRecordTypeBeginContainerNoParams equ 243
-EmfPlusRecordTypeEndContainer equ 244
-EmfPlusRecordTypeSetWorldTransform equ 245
-EmfPlusRecordTypeResetWorldTransform equ 246
-EmfPlusRecordTypeMultiplyWorldTransform equ 247
-EmfPlusRecordTypeTranslateWorldTransform equ 248
-EmfPlusRecordTypeScaleWorldTransform equ 249
-EmfPlusRecordTypeRotateWorldTransform equ 250
-EmfPlusRecordTypeSetPageTransform equ 251
-EmfPlusRecordTypeResetClip equ 252
-EmfPlusRecordTypeSetClipRect equ 253
-EmfPlusRecordTypeSetClipPath equ 254
-EmfPlusRecordTypeSetClipRegion equ 255
-EmfPlusRecordTypeOffsetClip equ 256
-EmfPlusRecordTypeDrawDriverString equ 257
+.enum EmfPlusRecordType {
+
+   ;; Since we have to enumerate GDI records right along with GDI+ records,
+   ;; We list all the GDI records here so that they can be part of the
+   ;; same enumeration type which is used in the enumeration callback.
+
+    WmfRecordTypeSetBkColor		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKCOLOR),
+    WmfRecordTypeSetBkMode		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKMODE),
+    WmfRecordTypeSetMapMode		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPMODE),
+    WmfRecordTypeSetROP2		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETROP2),
+    WmfRecordTypeSetRelAbs		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETRELABS),
+    WmfRecordTypeSetPolyFillMode	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPOLYFILLMODE),
+    WmfRecordTypeSetStretchBltMode	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETSTRETCHBLTMODE),
+    WmfRecordTypeSetTextCharExtra	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTCHAREXTRA),
+    WmfRecordTypeSetTextColor		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTCOLOR),
+    WmfRecordTypeSetTextJustification	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTJUSTIFICATION),
+    WmfRecordTypeSetWindowOrg		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETWINDOWORG),
+    WmfRecordTypeSetWindowExt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETWINDOWEXT),
+    WmfRecordTypeSetViewportOrg		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETVIEWPORTORG),
+    WmfRecordTypeSetViewportExt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETVIEWPORTEXT),
+    WmfRecordTypeOffsetWindowOrg	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETWINDOWORG),
+    WmfRecordTypeScaleWindowExt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SCALEWINDOWEXT),
+    WmfRecordTypeOffsetViewportOrg	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETVIEWPORTORG),
+    WmfRecordTypeScaleViewportExt	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SCALEVIEWPORTEXT),
+    WmfRecordTypeLineTo			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_LINETO),
+    WmfRecordTypeMoveTo			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_MOVETO),
+    WmfRecordTypeExcludeClipRect	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_EXCLUDECLIPRECT),
+    WmfRecordTypeIntersectClipRect	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_INTERSECTCLIPRECT),
+    WmfRecordTypeArc			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_ARC),
+    WmfRecordTypeEllipse		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_ELLIPSE),
+    WmfRecordTypeFloodFill		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_FLOODFILL),
+    WmfRecordTypePie			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_PIE),
+    WmfRecordTypeRectangle		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_RECTANGLE),
+    WmfRecordTypeRoundRect		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_ROUNDRECT),
+    WmfRecordTypePatBlt			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_PATBLT),
+    WmfRecordTypeSaveDC			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SAVEDC),
+    WmfRecordTypeSetPixel		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPIXEL),
+    WmfRecordTypeOffsetClipRgn		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_OFFSETCLIPRGN),
+    WmfRecordTypeTextOut		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_TEXTOUT),
+    WmfRecordTypeBitBlt			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_BITBLT),
+    WmfRecordTypeStretchBlt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_STRETCHBLT),
+    WmfRecordTypePolygon		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYGON),
+    WmfRecordTypePolyline		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYLINE),
+    WmfRecordTypeEscape			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_ESCAPE),
+    WmfRecordTypeRestoreDC		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_RESTOREDC),
+    WmfRecordTypeFillRegion		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_FILLREGION),
+    WmfRecordTypeFrameRegion		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_FRAMEREGION),
+    WmfRecordTypeInvertRegion		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_INVERTREGION),
+    WmfRecordTypePaintRegion		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_PAINTREGION),
+    WmfRecordTypeSelectClipRegion	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTCLIPREGION),
+    WmfRecordTypeSelectObject		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTOBJECT),
+    WmfRecordTypeSetTextAlign		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTALIGN),
+    WmfRecordTypeDrawText		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x062F),	;; META_DRAWTEXT
+    WmfRecordTypeChord			 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CHORD),
+    WmfRecordTypeSetMapperFlags		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPPERFLAGS),
+    WmfRecordTypeExtTextOut		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTTEXTOUT),
+    WmfRecordTypeSetDIBToDev		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETDIBTODEV),
+    WmfRecordTypeSelectPalette		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTPALETTE),
+    WmfRecordTypeRealizePalette		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_REALIZEPALETTE),
+    WmfRecordTypeAnimatePalette		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_ANIMATEPALETTE),
+    WmfRecordTypeSetPalEntries		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_SETPALENTRIES),
+    WmfRecordTypePolyPolygon		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_POLYPOLYGON),
+    WmfRecordTypeResizePalette		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_RESIZEPALETTE),
+    WmfRecordTypeDIBBitBlt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBBITBLT),
+    WmfRecordTypeDIBStretchBlt		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBSTRETCHBLT),
+    WmfRecordTypeDIBCreatePatternBrush	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_DIBCREATEPATTERNBRUSH),
+    WmfRecordTypeStretchDIB		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_STRETCHDIB),
+    WmfRecordTypeExtFloodFill		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTFLOODFILL),
+    WmfRecordTypeSetLayout		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x0149),	;; META_SETLAYOUT
+    WmfRecordTypeResetDC		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x014C),	;; META_RESETDC
+    WmfRecordTypeStartDoc		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x014D),	;; META_STARTDOC
+    WmfRecordTypeStartPage		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x004F),	;; META_STARTPAGE
+    WmfRecordTypeEndPage		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x0050),	;; META_ENDPAGE
+    WmfRecordTypeAbortDoc		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x0052),	;; META_ABORTDOC
+    WmfRecordTypeEndDoc			 = GDIP_WMF_RECORD_TO_EMFPLUS(0x005E),	;; META_ENDDOC
+    WmfRecordTypeDeleteObject		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_DELETEOBJECT),
+    WmfRecordTypeCreatePalette		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPALETTE),
+    WmfRecordTypeCreateBrush		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x00F8),	;; META_CREATEBRUSH
+    WmfRecordTypeCreatePatternBrush	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPATTERNBRUSH),
+    WmfRecordTypeCreatePenIndirect	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPENINDIRECT),
+    WmfRecordTypeCreateFontIndirect	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEFONTINDIRECT),
+    WmfRecordTypeCreateBrushIndirect	 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEBRUSHINDIRECT),
+    WmfRecordTypeCreateBitmapIndirect	 = GDIP_WMF_RECORD_TO_EMFPLUS(0x02FD),	;; META_CREATEBITMAPINDIRECT
+    WmfRecordTypeCreateBitmap		 = GDIP_WMF_RECORD_TO_EMFPLUS(0x06FE),	;; META_CREATEBITMAP
+    WmfRecordTypeCreateRegion		 = GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEREGION),
+
+    EmfRecordTypeHeader			 = EMR_HEADER,
+    EmfRecordTypePolyBezier		 = EMR_POLYBEZIER,
+    EmfRecordTypePolygon		 = EMR_POLYGON,
+    EmfRecordTypePolyline		 = EMR_POLYLINE,
+    EmfRecordTypePolyBezierTo		 = EMR_POLYBEZIERTO,
+    EmfRecordTypePolyLineTo		 = EMR_POLYLINETO,
+    EmfRecordTypePolyPolyline		 = EMR_POLYPOLYLINE,
+    EmfRecordTypePolyPolygon		 = EMR_POLYPOLYGON,
+    EmfRecordTypeSetWindowExtEx		 = EMR_SETWINDOWEXTEX,
+    EmfRecordTypeSetWindowOrgEx		 = EMR_SETWINDOWORGEX,
+    EmfRecordTypeSetViewportExtEx	 = EMR_SETVIEWPORTEXTEX,
+    EmfRecordTypeSetViewportOrgEx	 = EMR_SETVIEWPORTORGEX,
+    EmfRecordTypeSetBrushOrgEx		 = EMR_SETBRUSHORGEX,
+    EmfRecordTypeEOF			 = EMR_EOF,
+    EmfRecordTypeSetPixelV		 = EMR_SETPIXELV,
+    EmfRecordTypeSetMapperFlags		 = EMR_SETMAPPERFLAGS,
+    EmfRecordTypeSetMapMode		 = EMR_SETMAPMODE,
+    EmfRecordTypeSetBkMode		 = EMR_SETBKMODE,
+    EmfRecordTypeSetPolyFillMode	 = EMR_SETPOLYFILLMODE,
+    EmfRecordTypeSetROP2		 = EMR_SETROP2,
+    EmfRecordTypeSetStretchBltMode	 = EMR_SETSTRETCHBLTMODE,
+    EmfRecordTypeSetTextAlign		 = EMR_SETTEXTALIGN,
+    EmfRecordTypeSetColorAdjustment	 = EMR_SETCOLORADJUSTMENT,
+    EmfRecordTypeSetTextColor		 = EMR_SETTEXTCOLOR,
+    EmfRecordTypeSetBkColor		 = EMR_SETBKCOLOR,
+    EmfRecordTypeOffsetClipRgn		 = EMR_OFFSETCLIPRGN,
+    EmfRecordTypeMoveToEx		 = EMR_MOVETOEX,
+    EmfRecordTypeSetMetaRgn		 = EMR_SETMETARGN,
+    EmfRecordTypeExcludeClipRect	 = EMR_EXCLUDECLIPRECT,
+    EmfRecordTypeIntersectClipRect	 = EMR_INTERSECTCLIPRECT,
+    EmfRecordTypeScaleViewportExtEx	 = EMR_SCALEVIEWPORTEXTEX,
+    EmfRecordTypeScaleWindowExtEx	 = EMR_SCALEWINDOWEXTEX,
+    EmfRecordTypeSaveDC			 = EMR_SAVEDC,
+    EmfRecordTypeRestoreDC		 = EMR_RESTOREDC,
+    EmfRecordTypeSetWorldTransform	 = EMR_SETWORLDTRANSFORM,
+    EmfRecordTypeModifyWorldTransform	 = EMR_MODIFYWORLDTRANSFORM,
+    EmfRecordTypeSelectObject		 = EMR_SELECTOBJECT,
+    EmfRecordTypeCreatePen		 = EMR_CREATEPEN,
+    EmfRecordTypeCreateBrushIndirect	 = EMR_CREATEBRUSHINDIRECT,
+    EmfRecordTypeDeleteObject		 = EMR_DELETEOBJECT,
+    EmfRecordTypeAngleArc		 = EMR_ANGLEARC,
+    EmfRecordTypeEllipse		 = EMR_ELLIPSE,
+    EmfRecordTypeRectangle		 = EMR_RECTANGLE,
+    EmfRecordTypeRoundRect		 = EMR_ROUNDRECT,
+    EmfRecordTypeArc			 = EMR_ARC,
+    EmfRecordTypeChord			 = EMR_CHORD,
+    EmfRecordTypePie			 = EMR_PIE,
+    EmfRecordTypeSelectPalette		 = EMR_SELECTPALETTE,
+    EmfRecordTypeCreatePalette		 = EMR_CREATEPALETTE,
+    EmfRecordTypeSetPaletteEntries	 = EMR_SETPALETTEENTRIES,
+    EmfRecordTypeResizePalette		 = EMR_RESIZEPALETTE,
+    EmfRecordTypeRealizePalette		 = EMR_REALIZEPALETTE,
+    EmfRecordTypeExtFloodFill		 = EMR_EXTFLOODFILL,
+    EmfRecordTypeLineTo			 = EMR_LINETO,
+    EmfRecordTypeArcTo			 = EMR_ARCTO,
+    EmfRecordTypePolyDraw		 = EMR_POLYDRAW,
+    EmfRecordTypeSetArcDirection	 = EMR_SETARCDIRECTION,
+    EmfRecordTypeSetMiterLimit		 = EMR_SETMITERLIMIT,
+    EmfRecordTypeBeginPath		 = EMR_BEGINPATH,
+    EmfRecordTypeEndPath		 = EMR_ENDPATH,
+    EmfRecordTypeCloseFigure		 = EMR_CLOSEFIGURE,
+    EmfRecordTypeFillPath		 = EMR_FILLPATH,
+    EmfRecordTypeStrokeAndFillPath	 = EMR_STROKEANDFILLPATH,
+    EmfRecordTypeStrokePath		 = EMR_STROKEPATH,
+    EmfRecordTypeFlattenPath		 = EMR_FLATTENPATH,
+    EmfRecordTypeWidenPath		 = EMR_WIDENPATH,
+    EmfRecordTypeSelectClipPath		 = EMR_SELECTCLIPPATH,
+    EmfRecordTypeAbortPath		 = EMR_ABORTPATH,
+    EmfRecordTypeReserved_069		 = 69,	;; Not Used
+    EmfRecordTypeGdiComment		 = EMR_GDICOMMENT,
+    EmfRecordTypeFillRgn		 = EMR_FILLRGN,
+    EmfRecordTypeFrameRgn		 = EMR_FRAMERGN,
+    EmfRecordTypeInvertRgn		 = EMR_INVERTRGN,
+    EmfRecordTypePaintRgn		 = EMR_PAINTRGN,
+    EmfRecordTypeExtSelectClipRgn	 = EMR_EXTSELECTCLIPRGN,
+    EmfRecordTypeBitBlt			 = EMR_BITBLT,
+    EmfRecordTypeStretchBlt		 = EMR_STRETCHBLT,
+    EmfRecordTypeMaskBlt		 = EMR_MASKBLT,
+    EmfRecordTypePlgBlt			 = EMR_PLGBLT,
+    EmfRecordTypeSetDIBitsToDevice	 = EMR_SETDIBITSTODEVICE,
+    EmfRecordTypeStretchDIBits		 = EMR_STRETCHDIBITS,
+    EmfRecordTypeExtCreateFontIndirect	 = EMR_EXTCREATEFONTINDIRECTW,
+    EmfRecordTypeExtTextOutA		 = EMR_EXTTEXTOUTA,
+    EmfRecordTypeExtTextOutW		 = EMR_EXTTEXTOUTW,
+    EmfRecordTypePolyBezier16		 = EMR_POLYBEZIER16,
+    EmfRecordTypePolygon16		 = EMR_POLYGON16,
+    EmfRecordTypePolyline16		 = EMR_POLYLINE16,
+    EmfRecordTypePolyBezierTo16		 = EMR_POLYBEZIERTO16,
+    EmfRecordTypePolylineTo16		 = EMR_POLYLINETO16,
+    EmfRecordTypePolyPolyline16		 = EMR_POLYPOLYLINE16,
+    EmfRecordTypePolyPolygon16		 = EMR_POLYPOLYGON16,
+    EmfRecordTypePolyDraw16		 = EMR_POLYDRAW16,
+    EmfRecordTypeCreateMonoBrush	 = EMR_CREATEMONOBRUSH,
+    EmfRecordTypeCreateDIBPatternBrushPt = EMR_CREATEDIBPATTERNBRUSHPT,
+    EmfRecordTypeExtCreatePen		 = EMR_EXTCREATEPEN,
+    EmfRecordTypePolyTextOutA		 = EMR_POLYTEXTOUTA,
+    EmfRecordTypePolyTextOutW		 = EMR_POLYTEXTOUTW,
+    EmfRecordTypeSetICMMode		 = 98,	;; EMR_SETICMMODE,
+    EmfRecordTypeCreateColorSpace	 = 99,	;; EMR_CREATECOLORSPACE,
+    EmfRecordTypeSetColorSpace		 = 100, ;; EMR_SETCOLORSPACE,
+    EmfRecordTypeDeleteColorSpace	 = 101, ;; EMR_DELETECOLORSPACE,
+    EmfRecordTypeGLSRecord		 = 102, ;; EMR_GLSRECORD,
+    EmfRecordTypeGLSBoundedRecord	 = 103, ;; EMR_GLSBOUNDEDRECORD,
+    EmfRecordTypePixelFormat		 = 104, ;; EMR_PIXELFORMAT,
+    EmfRecordTypeDrawEscape		 = 105, ;; EMR_RESERVED_105,
+    EmfRecordTypeExtEscape		 = 106, ;; EMR_RESERVED_106,
+    EmfRecordTypeStartDoc		 = 107, ;; EMR_RESERVED_107,
+    EmfRecordTypeSmallTextOut		 = 108, ;; EMR_RESERVED_108,
+    EmfRecordTypeForceUFIMapping	 = 109, ;; EMR_RESERVED_109,
+    EmfRecordTypeNamedEscape		 = 110, ;; EMR_RESERVED_110,
+    EmfRecordTypeColorCorrectPalette	 = 111, ;; EMR_COLORCORRECTPALETTE,
+    EmfRecordTypeSetICMProfileA		 = 112, ;; EMR_SETICMPROFILEA,
+    EmfRecordTypeSetICMProfileW		 = 113, ;; EMR_SETICMPROFILEW,
+    EmfRecordTypeAlphaBlend		 = 114, ;; EMR_ALPHABLEND,
+    EmfRecordTypeSetLayout		 = 115, ;; EMR_SETLAYOUT,
+    EmfRecordTypeTransparentBlt		 = 116, ;; EMR_TRANSPARENTBLT,
+    EmfRecordTypeReserved_117		 = 117, ;; Not Used
+    EmfRecordTypeGradientFill		 = 118, ;; EMR_GRADIENTFILL,
+    EmfRecordTypeSetLinkedUFIs		 = 119, ;; EMR_RESERVED_119,
+    EmfRecordTypeSetTextJustification	 = 120, ;; EMR_RESERVED_120,
+    EmfRecordTypeColorMatchToTargetW	 = 121, ;; EMR_COLORMATCHTOTARGETW,
+    EmfRecordTypeCreateColorSpaceW	 = 122, ;; EMR_CREATECOLORSPACEW,
+    EmfRecordTypeMax			 = 122,
+    EmfRecordTypeMin			 = 1,
+
+    ;; That is the END of the GDI EMF records.
+
+    ;; Now we start the list of EMF+ records.  We leave quite
+    ;; a bit of room here for the addition of any new GDI
+    ;; records that may be added later.
+
+    EmfPlusRecordTypeInvalid = GDIP_EMFPLUS_RECORD_BASE,
+    EmfPlusRecordTypeHeader,
+    EmfPlusRecordTypeEndOfFile,
+
+    EmfPlusRecordTypeComment,
+
+    EmfPlusRecordTypeGetDC,
+
+    EmfPlusRecordTypeMultiFormatStart,
+    EmfPlusRecordTypeMultiFormatSection,
+    EmfPlusRecordTypeMultiFormatEnd,
+
+    ;; For all persistent objects
+
+    EmfPlusRecordTypeObject,
+
+    ;; Drawing Records
+
+    EmfPlusRecordTypeClear,
+    EmfPlusRecordTypeFillRects,
+    EmfPlusRecordTypeDrawRects,
+    EmfPlusRecordTypeFillPolygon,
+    EmfPlusRecordTypeDrawLines,
+    EmfPlusRecordTypeFillEllipse,
+    EmfPlusRecordTypeDrawEllipse,
+    EmfPlusRecordTypeFillPie,
+    EmfPlusRecordTypeDrawPie,
+    EmfPlusRecordTypeDrawArc,
+    EmfPlusRecordTypeFillRegion,
+    EmfPlusRecordTypeFillPath,
+    EmfPlusRecordTypeDrawPath,
+    EmfPlusRecordTypeFillClosedCurve,
+    EmfPlusRecordTypeDrawClosedCurve,
+    EmfPlusRecordTypeDrawCurve,
+    EmfPlusRecordTypeDrawBeziers,
+    EmfPlusRecordTypeDrawImage,
+    EmfPlusRecordTypeDrawImagePoints,
+    EmfPlusRecordTypeDrawString,
+
+    ;; Graphics State Records
+
+    EmfPlusRecordTypeSetRenderingOrigin,
+    EmfPlusRecordTypeSetAntiAliasMode,
+    EmfPlusRecordTypeSetTextRenderingHint,
+    EmfPlusRecordTypeSetTextContrast,
+    EmfPlusRecordTypeSetInterpolationMode,
+    EmfPlusRecordTypeSetPixelOffsetMode,
+    EmfPlusRecordTypeSetCompositingMode,
+    EmfPlusRecordTypeSetCompositingQuality,
+    EmfPlusRecordTypeSave,
+    EmfPlusRecordTypeRestore,
+    EmfPlusRecordTypeBeginContainer,
+    EmfPlusRecordTypeBeginContainerNoParams,
+    EmfPlusRecordTypeEndContainer,
+    EmfPlusRecordTypeSetWorldTransform,
+    EmfPlusRecordTypeResetWorldTransform,
+    EmfPlusRecordTypeMultiplyWorldTransform,
+    EmfPlusRecordTypeTranslateWorldTransform,
+    EmfPlusRecordTypeScaleWorldTransform,
+    EmfPlusRecordTypeRotateWorldTransform,
+    EmfPlusRecordTypeSetPageTransform,
+    EmfPlusRecordTypeResetClip,
+    EmfPlusRecordTypeSetClipRect,
+    EmfPlusRecordTypeSetClipPath,
+    EmfPlusRecordTypeSetClipRegion,
+    EmfPlusRecordTypeOffsetClip,
+
+    EmfPlusRecordTypeDrawDriverString,
 if (GDIPVER GE 0x0110)
-EmfPlusRecordTypeStrokeFillPath equ 258
-EmfPlusRecordTypeSerializableObject equ 259
-EmfPlusRecordTypeSetTSGraphics equ 260
-EmfPlusRecordTypeSetTSClip equ 261
+    EmfPlusRecordTypeStrokeFillPath,
+    EmfPlusRecordTypeSerializableObject,
+
+    EmfPlusRecordTypeSetTSGraphics,
+    EmfPlusRecordTypeSetTSClip,
 endif
-EmfPlusRecordTotal	equ 262
-EmfPlusRecordTypeMax	equ EmfPlusRecordTotal-1
-EmfPlusRecordTypeMin	equ EmfPlusRecordTypeHeader
+    ;; NOTE: New records *must* be added immediately before this line.
 
-StringFormatFlags	typedef SDWORD
-StringFormatFlagsDirectionRightToLeft equ 0x00000001
-StringFormatFlagsDirectionVertical equ 0x00000002
-StringFormatFlagsNoFitBlackBox equ 0x00000004
-StringFormatFlagsDisplayFormatControl equ 0x00000020
-StringFormatFlagsNoFontFallback equ 0x00000400
-StringFormatFlagsMeasureTrailingSpaces equ 0x00000800
-StringFormatFlagsNoWrap equ 0x00001000
-StringFormatFlagsLineLimit equ 0x00002000
-StringFormatFlagsNoClip equ 0x00004000
-StringFormatFlagsBypassGDI equ 0x80000000
+    EmfPlusRecordTotal,
 
-StringTrimming		typedef SDWORD
-StringTrimmingNone	equ 0
-StringTrimmingCharacter equ 1
-StringTrimmingWord	equ 2
-StringTrimmingEllipsisCharacter equ 3
-StringTrimmingEllipsisWord equ 4
-StringTrimmingEllipsisPath equ 5
+    EmfPlusRecordTypeMax = EmfPlusRecordTotal-1,
+    EmfPlusRecordTypeMin = EmfPlusRecordTypeHeader,
+    }
 
-StringDigitSubstitute	typedef SDWORD
-StringDigitSubstituteUser equ 0
-StringDigitSubstituteNone equ 1
-StringDigitSubstituteNational equ 2
-StringDigitSubstituteTraditional equ 3
+;;---------------------------------------------------------------------------
+;; StringFormatFlags
+;;---------------------------------------------------------------------------
 
-HotkeyPrefix		typedef SDWORD
-HotkeyPrefixNone	equ 0
-HotkeyPrefixShow	equ 1
-HotkeyPrefixHide	equ 2
+;;---------------------------------------------------------------------------
+;; String format flags
+;;
+;;  DirectionRightToLeft		 - For horizontal text, the reading order is
+;;				   right to left. This value is called
+;;				   the base embedding level by the Unicode
+;;				   bidirectional engine.
+;;				   For vertical text, columns are read from
+;;				   right to left.
+;;				   By default, horizontal or vertical text is
+;;				   read from left to right.
+;;
+;;  DirectionVertical		 - Individual lines of text are vertical. In
+;;				   each line, characters progress from top to
+;;				   bottom.
+;;				   By default, lines of text are horizontal,
+;;				   each new line below the previous line.
+;;
+;;  NoFitBlackBox		 - Allows parts of glyphs to overhang the
+;;				   bounding rectangle.
+;;				   By default glyphs are first aligned
+;;				   inside the margines, then any glyphs which
+;;				   still overhang the bounding box are
+;;				   repositioned to avoid any overhang.
+;;				   For example when an italic
+;;				   lower case letter f in a font such as
+;;				   Garamond is aligned at the far left of a
+;;				   rectangle, the lower part of the f will
+;;				   reach slightly further left than the left
+;;				   edge of the rectangle. Setting this flag
+;;				   will ensure the character aligns visually
+;;				   with the lines above and below, but may
+;;				   cause some pixels outside the formatting
+;;				   rectangle to be clipped or painted.
+;;
+;;  DisplayFormatControl		 - Causes control characters such as the
+;;				   left-to-right mark to be shown in the
+;;				   output with a representative glyph.
+;;
+;;  NoFontFallback		 - Disables fallback to alternate fonts for
+;;				   characters not supported in the requested
+;;				   font. Any missing characters will be
+;;				   be displayed with the fonts missing glyph,
+;;				   usually an open square.
+;;
+;;  NoWrap			 - Disables wrapping of text between lines
+;;				   when formatting within a rectangle.
+;;				   NoWrap is implied when a point is passed
+;;				   instead of a rectangle, or when the
+;;				   specified rectangle has a zero line length.
+;;
+;;  NoClip			 - By default text is clipped to the
+;;				   formatting rectangle. Setting NoClip
+;;				   allows overhanging pixels to affect the
+;;				   device outside the formatting rectangle.
+;;				   Pixels at the end of the line may be
+;;				   affected if the glyphs overhang their
+;;				   cells, and either the NoFitBlackBox flag
+;;				   has been set, or the glyph extends to far
+;;				   to be fitted.
+;;				   Pixels above/before the first line or
+;;				   below/after the last line may be affected
+;;				   if the glyphs extend beyond their cell
+;;				   ascent / descent. This can occur rarely
+;;				   with unusual diacritic mark combinations.
 
-StringAlignment		typedef SDWORD
-StringAlignmentNear	equ 0
-StringAlignmentCenter	equ 1
-StringAlignmentFar	equ 2
+;;---------------------------------------------------------------------------
 
-DriverStringOptions	typedef SDWORD
-DriverStringOptionsCmapLookup equ 1
-DriverStringOptionsVertical equ 2
-DriverStringOptionsRealizedAdvance equ 4
-DriverStringOptionsLimitSubpixel equ 8
+.enum StringFormatFlags {
+    StringFormatFlagsDirectionRightToLeft	 = 0x00000001,
+    StringFormatFlagsDirectionVertical		 = 0x00000002,
+    StringFormatFlagsNoFitBlackBox		 = 0x00000004,
+    StringFormatFlagsDisplayFormatControl	 = 0x00000020,
+    StringFormatFlagsNoFontFallback		 = 0x00000400,
+    StringFormatFlagsMeasureTrailingSpaces	 = 0x00000800,
+    StringFormatFlagsNoWrap			 = 0x00001000,
+    StringFormatFlagsLineLimit			 = 0x00002000,
+    StringFormatFlagsNoClip			 = 0x00004000,
+    StringFormatFlagsBypassGDI			 = 0x80000000
+    }
 
-FlushIntention		typedef SDWORD
-FlushIntentionFlush	equ 0
-FlushIntentionSync	equ 1
+;;---------------------------------------------------------------------------
+;; StringTrimming
+;;---------------------------------------------------------------------------
 
-EncoderParameterValueType typedef SDWORD
-EncoderParameterValueTypeByte equ 1
-EncoderParameterValueTypeASCII equ 2
-EncoderParameterValueTypeShort equ 3
-EncoderParameterValueTypeLong equ 4
-EncoderParameterValueTypeRational equ 5
-EncoderParameterValueTypeLongRange equ 6
-EncoderParameterValueTypeUndefined equ 7
-EncoderParameterValueTypeRationalRange equ 8
+.enum StringTrimming {
+    StringTrimmingNone		    = 0,
+    StringTrimmingCharacter	    = 1,
+    StringTrimmingWord		    = 2,
+    StringTrimmingEllipsisCharacter = 3,
+    StringTrimmingEllipsisWord	    = 4,
+    StringTrimmingEllipsisPath	    = 5
+    }
+
+;;---------------------------------------------------------------------------
+;; National language digit substitution
+;;---------------------------------------------------------------------------
+
+.enum StringDigitSubstitute {
+    StringDigitSubstituteUser	     = 0,  ;; As NLS setting
+    StringDigitSubstituteNone	     = 1,
+    StringDigitSubstituteNational    = 2,
+    StringDigitSubstituteTraditional = 3
+    }
+
+;;---------------------------------------------------------------------------
+;; Hotkey prefix interpretation
+;;---------------------------------------------------------------------------
+
+.enum HotkeyPrefix {
+    HotkeyPrefixNone	    = 0,
+    HotkeyPrefixShow	    = 1,
+    HotkeyPrefixHide	    = 2
+    }
+
+;;---------------------------------------------------------------------------
+;; String alignment flags
+;;---------------------------------------------------------------------------
+
+.enum StringAlignment {
+    ;; Left edge for left-to-right text,
+    ;; right for right-to-left text,
+    ;; and top for vertical
+    StringAlignmentNear	  = 0,
+    StringAlignmentCenter = 1,
+    StringAlignmentFar	  = 2
+    }
+
+;;---------------------------------------------------------------------------
+;; DriverStringOptions
+;;---------------------------------------------------------------------------
+
+.enum DriverStringOptions {
+    DriverStringOptionsCmapLookup	      = 1,
+    DriverStringOptionsVertical		      = 2,
+    DriverStringOptionsRealizedAdvance	      = 4,
+    DriverStringOptionsLimitSubpixel	      = 8
+    }
+
+;;---------------------------------------------------------------------------
+;; Flush Intention flags
+;;---------------------------------------------------------------------------
+
+.enum FlushIntention {
+    FlushIntentionFlush = 0,	    ;; Flush all batched rendering operations
+    FlushIntentionSync = 1	    ;; Flush all batched rendering operations
+				    ;; and wait for them to complete
+    }
+
+;;---------------------------------------------------------------------------
+;; Image encoder parameter related types
+;;---------------------------------------------------------------------------
+
+.enum EncoderParameterValueType {
+    EncoderParameterValueTypeByte	    = 1,    ;; 8-bit unsigned int
+    EncoderParameterValueTypeASCII	    = 2,    ;; 8-bit byte containing one 7-bit ASCII
+						    ;; code. NULL terminated.
+    EncoderParameterValueTypeShort	    = 3,    ;; 16-bit unsigned int
+    EncoderParameterValueTypeLong	    = 4,    ;; 32-bit unsigned int
+    EncoderParameterValueTypeRational	    = 5,    ;; Two Longs. The first Long is the
+						    ;; numerator, the second Long expresses the
+						    ;; denomintor.
+    EncoderParameterValueTypeLongRange	    = 6,    ;; Two longs which specify a range of
+						    ;; integer values. The first Long specifies
+						    ;; the lower end and the second one
+						    ;; specifies the higher end. All values
+						    ;; are inclusive at both ends
+    EncoderParameterValueTypeUndefined	    = 7,    ;; 8-bit byte that can take any value
+						    ;; depending on field definition
+    EncoderParameterValueTypeRationalRange  = 8,    ;; Two Rationals. The first Rational
+						    ;; specifies the lower end and the second
+						    ;; specifies the higher end. All values
+						    ;; are inclusive at both ends
 if (GDIPVER GE 0x0110)
-EncoderParameterValueTypePointer equ 9
-endif
+    EncoderParameterValueTypePointer	    = 9	    ;; a pointer to a parameter defined data.
+endif ;;(GDIPVER >= 0x0110)
+    }
 
-EncoderValue		typedef SDWORD
-EncoderValueColorTypeCMYK equ 0
-EncoderValueColorTypeYCCK equ 1
-EncoderValueCompressionLZW equ 2
-EncoderValueCompressionCCITT3 equ 3
-EncoderValueCompressionCCITT4 equ 4
-EncoderValueCompressionRle equ 5
-EncoderValueCompressionNone equ 6
-EncoderValueScanMethodInterlaced equ 7
-EncoderValueScanMethodNonInterlaced equ 8
-EncoderValueVersionGif87 equ 9
-EncoderValueVersionGif89 equ 10
-EncoderValueRenderProgressive equ 11
-EncoderValueRenderNonProgressive equ 12
-EncoderValueTransformRotate90 equ 13
-EncoderValueTransformRotate180 equ 14
-EncoderValueTransformRotate270 equ 15
-EncoderValueTransformFlipHorizontal equ 16
-EncoderValueTransformFlipVertical equ 17
-EncoderValueMultiFrame	equ 18
-EncoderValueLastFrame	equ 19
-EncoderValueFlush	equ 20
-EncoderValueFrameDimensionTime equ 21
-EncoderValueFrameDimensionResolution equ 22
-EncoderValueFrameDimensionPage equ 23
+;;---------------------------------------------------------------------------
+;; Image encoder value types
+;;---------------------------------------------------------------------------
+
+.enum EncoderValue {
+    EncoderValueColorTypeCMYK,
+    EncoderValueColorTypeYCCK,
+    EncoderValueCompressionLZW,
+    EncoderValueCompressionCCITT3,
+    EncoderValueCompressionCCITT4,
+    EncoderValueCompressionRle,
+    EncoderValueCompressionNone,
+    EncoderValueScanMethodInterlaced,
+    EncoderValueScanMethodNonInterlaced,
+    EncoderValueVersionGif87,
+    EncoderValueVersionGif89,
+    EncoderValueRenderProgressive,
+    EncoderValueRenderNonProgressive,
+    EncoderValueTransformRotate90,
+    EncoderValueTransformRotate180,
+    EncoderValueTransformRotate270,
+    EncoderValueTransformFlipHorizontal,
+    EncoderValueTransformFlipVertical,
+    EncoderValueMultiFrame,
+    EncoderValueLastFrame,
+    EncoderValueFlush,
+    EncoderValueFrameDimensionTime,
+    EncoderValueFrameDimensionResolution,
+    EncoderValueFrameDimensionPage,
 if (GDIPVER GE 0x0110)
-EncoderValueColorTypeGray equ 24
-EncoderValueColorTypeRGB equ 25
+    EncoderValueColorTypeGray,
+    EncoderValueColorTypeRGB,
 endif
+    }
 
-EmfToWmfBitsFlags	typedef SDWORD
-EmfToWmfBitsFlagsDefault equ 0x00000000
-EmfToWmfBitsFlagsEmbedEmf equ 0x00000001
-EmfToWmfBitsFlagsIncludePlaceable equ 0x00000002
-EmfToWmfBitsFlagsNoXORClip equ 0x00000004
+;;---------------------------------------------------------------------------
+;; Conversion of Emf To WMF Bits flags
+;;---------------------------------------------------------------------------
+
+.enum EmfToWmfBitsFlags {
+    EmfToWmfBitsFlagsDefault	      = 0x00000000,
+    EmfToWmfBitsFlagsEmbedEmf	      = 0x00000001,
+    EmfToWmfBitsFlagsIncludePlaceable = 0x00000002,
+    EmfToWmfBitsFlagsNoXORClip	      = 0x00000004
+    }
 
 if (GDIPVER GE 0x0110)
-ConvertToEmfPlusFlags	typedef SDWORD
-ConvertToEmfPlusFlagsDefault equ 0x00000000
-ConvertToEmfPlusFlagsRopUsed equ 0x00000001
-ConvertToEmfPlusFlagsText equ 0x00000002
-ConvertToEmfPlusFlagsInvalidRecord equ 0x00000004
+;;---------------------------------------------------------------------------
+;; Conversion of Emf To Emf+ Bits flags
+;;---------------------------------------------------------------------------
+
+.enum ConvertToEmfPlusFlags {
+    ConvertToEmfPlusFlagsDefault       = 0x00000000,
+    ConvertToEmfPlusFlagsRopUsed       = 0x00000001,
+    ConvertToEmfPlusFlagsText	       = 0x00000002,
+    ConvertToEmfPlusFlagsInvalidRecord = 0x00000004
+    }
 endif
 
-GpTestControlEnum	typedef SDWORD
-TestControlForceBilinear equ 0
-TestControlNoICM	equ 1
-TestControlGetBuildNumber equ 2
+
+;;---------------------------------------------------------------------------
+;; Test Control flags
+;;---------------------------------------------------------------------------
+
+.enum GpTestControlEnum {
+    TestControlForceBilinear = 0,
+    TestControlNoICM = 1,
+    TestControlGetBuildNumber = 2
+    }
+
 
 endif ;; NOT _GDIPLUSENUMS_H
-

@@ -1107,6 +1107,15 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
                 .else
                     mov edx,param
                     .if eax > ecx || (eax < ecx && [edx].asym.mem_type == MT_PTR)
+                        ; added in v2.31.25
+                        .if eax > ecx && eax == 16 && [edx].asym.mem_type & MT_FLOAT
+                            .if ecx == 4
+                                AddLineQueueX( " movss [%r+%u], %r", T_RSP, arg_offset, reg )
+                            .else
+                                AddLineQueueX( " movsd [%r+%u], %r", T_RSP, arg_offset, reg )
+                            .endif
+                            .return 1
+                        .endif
                         mov psize,eax
                         asmerr(2114, &[esi+1])
                     .endif
@@ -1118,7 +1127,9 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
 
                 .if [edi].expr.mem_type == MT_EMPTY
                     mov eax,4
-                    .if [edi].expr.inst == T_OFFSET
+                    ; added v2.31.25
+                    .if [edi].expr.inst == T_OFFSET || \
+                        ( psize == 8 && [edx].asym.mem_type == MT_PTR )
                         mov eax,8
                     .endif
                 .else

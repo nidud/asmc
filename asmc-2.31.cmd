@@ -13,23 +13,19 @@ echo.
 echo AsmcDir: %AsmcDir%
 
 if not exist %~dp0lib\user32.lib (
-    choice /N /M "32-bit Import Libraries Missing: Build them now ? "
+    choice /c YN /M "32-bit Import Libraries Missing: Build them now"
     if not errorlevel 2 call :ImportLibraries32
 )
 if not exist %~dp0lib\libc.lib (
-    choice /N /M "32-bit Runtime Library Missing: Build it now ? "
+    choice /c YN /M "32-bit Runtime Library Missing: Build it now"
     if not errorlevel 2 call :BuildCRT32
 )
-if not exist %~dp0lib\uuid.lib echo Missing: lib\uuid.lib
-if not exist %~dp0lib\quadmath.lib echo Missing: lib\quadmath.lib
-if not exist %~dp0lib\consxc.lib echo Missing: lib\consxc.lib
-
 if not exist %~dp0lib\amd64\user32.lib (
-    choice /N /M "64-bit Import Libraries Missing: Build them now ? "
+    choice /c YN /M "64-bit Import Libraries Missing: Build them now ? "
     if not errorlevel 2 call :ImportLibraries64
 )
 if not exist %~dp0lib\amd64\libc.lib (
-    choice /N /M "64-bit Runtime Library Missing: Build it now ? "
+    choice /c YN /M "64-bit Runtime Library Missing: Build it now ? "
     if not errorlevel 2 call :BuildCRT64
 )
 if not exist %~dp0lib\amd64\uuid.lib echo Missing: lib\amd64\uuid.lib

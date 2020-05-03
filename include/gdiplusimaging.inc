@@ -49,118 +49,139 @@ DEFINE_GUID(CodecIImageBytes,0x025d1823,0x6c7d,0x447b,0xbb, 0xdb, 0xa3, 0xcb, 0x
 
     .ends
 
-ImageCodecInfo		STRUC
-Clsid			CLSID <>
-FormatID		GUID <>
-CodecName		LPWSTR ?
-DllName			LPWSTR ?
-FormatDescription	LPWSTR ?
-FilenameExtension	LPWSTR ?
-MimeType		LPWSTR ?
-Flags			dd ?
-Version			dd ?
-SigCount		dd ?
-SigSize			dd ?
-SigPattern		db ?
-SigMask			db ?
-ImageCodecInfo		ENDS
+.template ImageCodecInfo
+    Clsid		CLSID <>
+    FormatID		GUID <>
+    CodecName		LPWSTR ?
+    DllName		LPWSTR ?
+    FormatDescription	LPWSTR ?
+    FilenameExtension	LPWSTR ?
+    MimeType		LPWSTR ?
+    Flags		dd ?
+    Version		dd ?
+    SigCount		dd ?
+    SigSize		dd ?
+    SigPattern		LPSTR ?
+    SigMask		LPSTR ?
+    .ends
 
-ImageCodecFlags		typedef SDWORD
-ImageCodecFlagsEncoder	equ 0x00000001
-ImageCodecFlagsDecoder	equ 0x00000002
-ImageCodecFlagsSupportBitmap equ 0x00000004
-ImageCodecFlagsSupportVector equ 0x00000008
-ImageCodecFlagsSeekableEncode equ 0x00000010
-ImageCodecFlagsBlockingDecode equ 0x00000020
-ImageCodecFlagsBuiltin	equ 0x00010000
-ImageCodecFlagsSystem	equ 0x00020000
-ImageCodecFlagsUser	equ 0x00040000
+.enum ImageCodecFlags {
+    ImageCodecFlagsEncoder	      = 0x00000001,
+    ImageCodecFlagsDecoder	      = 0x00000002,
+    ImageCodecFlagsSupportBitmap      = 0x00000004,
+    ImageCodecFlagsSupportVector      = 0x00000008,
+    ImageCodecFlagsSeekableEncode     = 0x00000010,
+    ImageCodecFlagsBlockingDecode     = 0x00000020,
+    ImageCodecFlagsBuiltin	      = 0x00010000,
+    ImageCodecFlagsSystem	      = 0x00020000,
+    ImageCodecFlagsUser		      = 0x00040000
+    }
 
-ImageLockMode		typedef SDWORD
-ImageLockModeRead	equ 0x0001
-ImageLockModeWrite	equ 0x0002
-ImageLockModeUserInputBuf equ 0x0004
+.enum ImageLockMode {
+    ImageLockModeRead	     = 0x0001,
+    ImageLockModeWrite	     = 0x0002,
+    ImageLockModeUserInputBuf= 0x0004
+    }
 
-BitmapData		STRUC
-Width			UINT ?
-Height			UINT ?
-Stride			SINT ?
-PixelFormat		PixelFormat ?
-Scan0			PVOID ?
-Reserved		UINT_PTR ?
-BitmapData		ENDS
+.template BitmapData
+    Width		UINT ?
+    Height		UINT ?
+    Stride		SINT ?
+    PixelFormat		PixelFormat ?
+    Scan0		PVOID ?
+    Reserved		UINT_PTR ?
+    .ends
 
-ImageFlags		typedef SDWORD
-ImageFlagsNone		equ 0
-ImageFlagsScalable	equ 0x0001
-ImageFlagsHasAlpha	equ 0x0002
-ImageFlagsHasTranslucent equ 0x0004
-ImageFlagsPartiallyScalable equ 0x0008
-ImageFlagsColorSpaceRGB equ 0x0010
-ImageFlagsColorSpaceCMYK equ 0x0020
-ImageFlagsColorSpaceGRAY equ 0x0040
-ImageFlagsColorSpaceYCBCR equ 0x0080
-ImageFlagsColorSpaceYCCK equ 0x0100
-ImageFlagsHasRealDPI	equ 0x1000
-ImageFlagsHasRealPixelSize equ 0x2000
-ImageFlagsReadOnly	equ 0x00010000
-ImageFlagsCaching	equ 0x00020000
+.enum ImageFlags {
+    ImageFlagsNone		  = 0,
 
-RotateFlipType		typedef SDWORD
-RotateNoneFlipNone	equ 0
-Rotate90FlipNone	equ 1
-Rotate180FlipNone	equ 2
-Rotate270FlipNone	equ 3
-RotateNoneFlipX		equ 4
-Rotate90FlipX		equ 5
-Rotate180FlipX		equ 6
-Rotate270FlipX		equ 7
-RotateNoneFlipY		equ Rotate180FlipX
-Rotate90FlipY		equ Rotate270FlipX
-Rotate180FlipY		equ RotateNoneFlipX
-Rotate270FlipY		equ Rotate90FlipX
-RotateNoneFlipXY	equ Rotate180FlipNone
-Rotate90FlipXY		equ Rotate270FlipNone
-Rotate180FlipXY		equ RotateNoneFlipNone
-Rotate270FlipXY		equ Rotate90FlipNone
+    ;; Low-word: shared with SINKFLAG_x
 
-EncoderParameter	STRUC
-Guid			GUID <>
-NumberOfValues		ULONG ?
-Type			ULONG ?
-Value			PVOID ?
-EncoderParameter	ENDS
+    ImageFlagsScalable		  = 0x0001,
+    ImageFlagsHasAlpha		  = 0x0002,
+    ImageFlagsHasTranslucent	  = 0x0004,
+    ImageFlagsPartiallyScalable	  = 0x0008,
 
-EncoderParameters	STRUC
-Count			UINT ?
-Parameter		EncoderParameter <>
-EncoderParameters	ENDS
+    ;; Low-word: color space definition
+
+    ImageFlagsColorSpaceRGB	  = 0x0010,
+    ImageFlagsColorSpaceCMYK	  = 0x0020,
+    ImageFlagsColorSpaceGRAY	  = 0x0040,
+    ImageFlagsColorSpaceYCBCR	  = 0x0080,
+    ImageFlagsColorSpaceYCCK	  = 0x0100,
+
+    ;; Low-word: image size info
+
+    ImageFlagsHasRealDPI	  = 0x1000,
+    ImageFlagsHasRealPixelSize	  = 0x2000,
+
+    ;; High-word
+
+    ImageFlagsReadOnly		  = 0x00010000,
+    ImageFlagsCaching		  = 0x00020000
+    }
+
+.enum RotateFlipType {
+    RotateNoneFlipNone = 0,
+    Rotate90FlipNone   = 1,
+    Rotate180FlipNone  = 2,
+    Rotate270FlipNone  = 3,
+
+    RotateNoneFlipX    = 4,
+    Rotate90FlipX      = 5,
+    Rotate180FlipX     = 6,
+    Rotate270FlipX     = 7,
+
+    RotateNoneFlipY    = Rotate180FlipX,
+    Rotate90FlipY      = Rotate270FlipX,
+    Rotate180FlipY     = RotateNoneFlipX,
+    Rotate270FlipY     = Rotate90FlipX,
+
+    RotateNoneFlipXY   = Rotate180FlipNone,
+    Rotate90FlipXY     = Rotate270FlipNone,
+    Rotate180FlipXY    = RotateNoneFlipNone,
+    Rotate270FlipXY    = Rotate90FlipNone
+    }
+
+
+.template EncoderParameter
+    Guid		GUID <>
+    NumberOfValues	ULONG ?
+    Type		ULONG ?
+    Value		PVOID ?
+    .ends
+
+.template EncoderParameters
+    Count		UINT ?
+    Parameter		EncoderParameter <>
+    .ends
 
 if (GDIPVER GE 0x0110)
-ItemDataPosition	typedef SDWORD
-ItemDataPositionAfterHeader equ 0x0
-ItemDataPositionAfterPalette equ 0x1
-ItemDataPositionAfterBits equ 0x2
+.enum ItemDataPosition {
+    ItemDataPositionAfterHeader	   = 0x0,
+    ItemDataPositionAfterPalette   = 0x1,
+    ItemDataPositionAfterBits	   = 0x2,
+    }
 
-ImageItemData		STRUC
-Size			UINT ?
-Position		UINT ?
-Desc			PVOID ?
-DescSize		UINT ?
-Data			PVOID ?
-DataSize		UINT ?
-Cookie			UINT ?
-ImageItemData		ENDS
+.template ImageItemData
+    Size		UINT ?
+    Position		UINT ?
+    Desc		PVOID ?
+    DescSize		UINT ?
+    Data		PVOID ?
+    DataSize		UINT ?
+    Cookie		UINT ?
+    .ends
 endif
 
-PROPID			typedef ULONG
+PROPID	typedef ULONG
 
-PropertyItem		STRUC
-id			PROPID ?
-length			ULONG ?
-type			dw ?
-value			PVOID ?
-PropertyItem		ENDS
+.template PropertyItem
+    id			PROPID ?
+    length		ULONG ?
+    type		dw ?
+    value		PVOID ?
+    .ends
 
 PropertyTagTypeByte	equ 1
 PropertyTagTypeASCII	equ 2

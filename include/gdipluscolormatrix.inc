@@ -3,36 +3,65 @@ _GDIPLUSCOLORMATRIX_H equ <>
 
 if (GDIPVER GE 0x0110)
 
-;ColorChannelLUT[256]	 typedef BYTE
+;;----------------------------------------------------------------------------
+;; Color channel look up table (LUT)
+;;----------------------------------------------------------------------------
 
-HistogramFormat		typedef SDWORD
-HistogramFormatARGB	equ 0
-HistogramFormatPARGB	equ 1
-HistogramFormatRGB	equ 2
-HistogramFormatGray	equ 3
-HistogramFormatB	equ 4
-HistogramFormatG	equ 5
-HistogramFormatR	equ 6
-HistogramFormatA	equ 7
-endif ;;(GDIPVER GE 0x0110)
+ColorChannelLUT STRUC
+Colors		db 256 dup(?)
+ColorChannelLUT ENDS
 
-ColorMatrix		STRUC
-m			REAL 5*5 dup(?)
-ColorMatrix		ENDS
+;;----------------------------------------------------------------------------
+;; Per-channel Histogram for 8bpp images.
+;;----------------------------------------------------------------------------
 
-ColorMatrixFlags	typedef SDWORD
-ColorMatrixFlagsDefault equ 0
-ColorMatrixFlagsSkipGrays equ 1
-ColorMatrixFlagsAltGray equ 2
+.enum HistogramFormat {
+    HistogramFormatARGB,
+    HistogramFormatPARGB,
+    HistogramFormatRGB,
+    HistogramFormatGray,
+    HistogramFormatB,
+    HistogramFormatG,
+    HistogramFormatR,
+    HistogramFormatA
+    }
+endif
 
-ColorAdjustType		typedef SDWORD
-ColorAdjustTypeDefault	equ 0
-ColorAdjustTypeBitmap	equ 1
-ColorAdjustTypeBrush	equ 2
-ColorAdjustTypePen	equ 3
-ColorAdjustTypeText	equ 4
-ColorAdjustTypeCount	equ 5
-ColorAdjustTypeAny	equ 6
+;;----------------------------------------------------------------------------
+;; Color matrix
+;;----------------------------------------------------------------------------
+
+ColorMatrix	STRUC
+m		REAL 5*5 dup(?)
+ColorMatrix	ENDS
+
+;;----------------------------------------------------------------------------
+;; Color Matrix flags
+;;----------------------------------------------------------------------------
+
+.enum ColorMatrixFlags {
+    ColorMatrixFlagsDefault,
+    ColorMatrixFlagsSkipGrays,
+    ColorMatrixFlagsAltGray
+    }
+
+;;----------------------------------------------------------------------------
+;; Color Adjust Type
+;;----------------------------------------------------------------------------
+
+.enum ColorAdjustType {
+    ColorAdjustTypeDefault,
+    ColorAdjustTypeBitmap,
+    ColorAdjustTypeBrush,
+    ColorAdjustTypePen,
+    ColorAdjustTypeText,
+    ColorAdjustTypeCount,
+    ColorAdjustTypeAny	    ;; Reserved
+    }
+
+;;----------------------------------------------------------------------------
+;; Color Map
+;;----------------------------------------------------------------------------
 
 ColorMap		STRUC
 oldColor		dd ?

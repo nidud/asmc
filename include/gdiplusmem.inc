@@ -10,7 +10,7 @@ endif
 ;void*
 GdipAlloc proto WINAPI size: size_t
 ;void
-GdipFree proto WINAPI
+GdipFree proto WINAPI : ptr
 
 endif
 

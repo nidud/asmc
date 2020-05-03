@@ -1,11 +1,12 @@
+.pragma list(push, 0)
 ifndef _GDIPLUS_H
 _GDIPLUS_H equ <>
 include windef.inc
 
-INT16                   typedef sword
-UINT16                  typedef word
+INT16           typedef sword
+UINT16          typedef word
 ifndef GDIPVER
-GDIPVER                 equ 0x0100
+GDIPVER         equ 0x0110;0x0100
 endif
 
 .pragma pack(push, 8)
@@ -44,5 +45,5 @@ include GdiplusBitmap.inc
 include GdiplusImageCodec.inc
 
 .pragma pack(pop)
-
 endif
+.pragma list(pop)

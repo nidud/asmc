@@ -1368,6 +1368,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local sqbrend:tok_t
   local sym:asym_t
   local method:asym_t
+  local type:string_t
   local comptr:string_t
   local opnd:expr
   local ClassVtbl[128]:char_t
@@ -1387,6 +1388,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov sqbrend,eax
     mov method,eax
     mov static_struct,eax
+    mov type,eax
 
     ; ClassVtbl struct
     ;   Method()
@@ -1471,6 +1473,13 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         .if [ebx+16].token == T_DOT && [ebx+3*16].token == T_OP_BRACKET
 
             mov edi,[ebx+32].string_ptr
+
+        .elseif eax && [eax].asym.state == SYM_TYPE && \
+                [ebx+16].token == T_OP_BRACKET
+
+            mov edi,[ebx].string_ptr
+            mov ecx,eax
+            mov type,edi
         .else
             xor edi,edi
             xor eax,eax
@@ -1558,20 +1567,24 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
 
                     .if [eax].asym.langtype == LANG_SYSCALL
 
-                        strcat(esi, "[r10]." ) ; v2.28: Added for :vararg
+                        strcat(esi, "[r10].") ; v2.28: Added for :vararg
 
                     .else
 
-                        strcat(esi, "[rax]." )
+                        strcat(esi, "[rax].")
                     .endif
                 .else
 
-                    strcat(esi, "[rax]." )
+                    strcat(esi, "[rax].")
                 .endif
             .else
-                strcat(esi, "[eax]." )
+                strcat(esi, "[eax].")
             .endif
-            strcat(esi, comptr )
+            strcat(esi, comptr)
+            .if type
+                strcat(esi, ".")
+                strcat(esi, type)
+            .endif
 
             .if [ebx].token == T_OP_SQ_BRACKET
 
@@ -1644,6 +1657,10 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov br_count,0
     .if [ebx].token == T_OP_BRACKET
 
+        .if type
+            strcat(esi, ", 0")
+        .endif
+
         add ebx,16
         add edi,1
 
@@ -1651,7 +1668,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
 
             strcat(esi, ", ")
 
-            .if comptr
+            .if comptr && !type
                 .if static_struct
                     strcat(esi, "addr ")
                 .endif
@@ -1699,7 +1716,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                 add edi,1
                 add ebx,16
             .endw
-        .elseif comptr
+
+        .elseif comptr && !type
+
             strcat( esi, ", " )
             .if static_struct
                 strcat( esi, "addr " )

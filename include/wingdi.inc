@@ -1394,13 +1394,18 @@ PC_EXPLICIT		equ 0x02
 PC_NOCOLLAPSE		equ 0x04
 
 GetRValue macro rgb
-	exitm<((rgb))>
+	mov	eax,rgb
+	retm	<al>
 	endm
 GetGValue macro rgb
-	exitm<((((rgb)) SHR 8))>
+	mov	eax,rgb
+	shr	eax,8
+	retm	<al>
 	endm
 GetBValue macro rgb
-	exitm<(((rgb) SHR 16))>
+	mov	eax,rgb
+	shr	eax,16
+	retm	<al>
 	endm
 
 TRANSPARENT		equ 1

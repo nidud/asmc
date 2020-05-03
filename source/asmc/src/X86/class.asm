@@ -870,11 +870,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         mov edx,ModuleInfo.ComStack
         mov ecx,[edx].com_item.class
+        mov class_ptr,ecx
+
         .if [edx].com_item.sym
             mov ecx,[edx].com_item.sym
             mov ecx,[ecx].asym.name
         .endif
-        mov class_ptr,ecx
 
         .if !SymFind( strcat( strcpy( &class, ecx ), "Vtbl" ) )
             mov eax,CurrStruct

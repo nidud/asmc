@@ -683,23 +683,29 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                     ; [...].type.x(...)
                     ;
                     mov eax,[esi].index
-                    .endc .if eax < 5
-                    .endc .if [edi-16].asm_tok.token != T_DOT
-                    .endc .if [edi-32].asm_tok.token != T_CL_SQ_BRACKET
-                    sub edi,48
-                    sub eax,3
-                    mov edx,1 ; v2.27 - added: [foo(&[..])+rcx].class.method()
-                    .repeat
-                        .if [edi].asm_tok.token == T_OP_SQ_BRACKET
-                            dec edx
-                            .break .ifz
-                        .elseif [edi].asm_tok.token == T_CL_SQ_BRACKET
-                            inc edx
-                        .endif
-                        sub edi,16
-                        dec eax
-                    .untilz
-                    .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
+                    .if eax == 1 || [edi-16].asm_tok.token != T_DOT
+                        ;
+                        ; type(...)
+                        ;
+                    .else
+                        .endc .if eax < 5
+                        .endc .if [edi-16].asm_tok.token != T_DOT
+                        .endc .if [edi-32].asm_tok.token != T_CL_SQ_BRACKET
+                        sub edi,48
+                        sub eax,3
+                        mov edx,1 ; v2.27 - added: [foo(&[..])+rcx].class.method()
+                        .repeat
+                            .if [edi].asm_tok.token == T_OP_SQ_BRACKET
+                                dec edx
+                                .break .ifz
+                            .elseif [edi].asm_tok.token == T_CL_SQ_BRACKET
+                                inc edx
+                            .endif
+                            sub edi,16
+                            dec eax
+                        .untilz
+                        .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
+                    .endif
 
                   .case edx == SYM_STACK
                   .case edx == SYM_INTERNAL

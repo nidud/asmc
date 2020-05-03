@@ -3263,6 +3263,8 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             .return data_dir( i, ebx, NULL )
         .case T_ID
             .if IsType( [esi].string_ptr )
+                ;; v2.31.25: Type() -- constructor
+                .endc .if [esi].hll_flags & T_HLL_PROC
                 .return data_dir( i, ebx, eax )
             .endif
             .endc

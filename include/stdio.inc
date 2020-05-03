@@ -86,6 +86,7 @@ fwrite		proto __cdecl :LPSTR, :SINT, :SINT, :LPFILE
 fseek		proto __cdecl :LPFILE,:SIZE_T, :SIZE_T
 fgets		proto __cdecl :LPSTR, :SINT, :LPFILE
 fputs		proto __cdecl :LPSTR, :LPFILE
+_fputchar	proto __cdecl :SINT
 fputc		proto __cdecl :SINT, :LPFILE
 feof		proto __cdecl :LPFILE
 ftell		proto __cdecl :LPFILE

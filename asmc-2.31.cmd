@@ -21,11 +21,11 @@ if not exist %~dp0lib\libc.lib (
     if not errorlevel 2 call :BuildCRT32
 )
 if not exist %~dp0lib\amd64\user32.lib (
-    choice /c YN /M "64-bit Import Libraries Missing: Build them now ? "
+    choice /c YN /M "64-bit Import Libraries Missing: Build them now"
     if not errorlevel 2 call :ImportLibraries64
 )
 if not exist %~dp0lib\amd64\libc.lib (
-    choice /c YN /M "64-bit Runtime Library Missing: Build it now ? "
+    choice /c YN /M "64-bit Runtime Library Missing: Build it now"
     if not errorlevel 2 call :BuildCRT64
 )
 if not exist %~dp0lib\amd64\uuid.lib echo Missing: lib\amd64\uuid.lib

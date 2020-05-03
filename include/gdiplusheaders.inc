@@ -266,71 +266,98 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;; Abstract base class for Image and Metafile
 ;;--------------------------------------------------------------------------
 
-.template Image ;: public GdiplusBase
+.template Image
 
     GpImage typedef Image
 
     nativeImage     ptr_t ?
     lastResult      Status ?
     loadStatus      Status ?
-
-    .operator new :ptr Image, :Status {
-
-        .new image:ptr Image
-        .new status:Status
-
-        mov image,_1
-        mov status,_2
-
-        .if GdipAlloc(Image)
-
-            mov _1,image
-            mov _2,status
-
-            mov [rax].Image.nativeImage,_1
-            mov [rax].Image.lastResult,_2
-        .endif
-        retm <rax>
-        }
-
-    .operator delete {
-        exitm<GdipFree(this)>
-        }
+    memState        Status ?
 
     .operator Image {
-        .if GdipAlloc(Image)
+
+        .new image:ptr Image
+
+        mov rax,this
+        .repeat
+            .if rax == NULL
+                .break .if !GdipAlloc(Image)
+                mov [rax].Image.memState,Ok
+            .else
+                mov [rax].Image.memState,NotImplemented
+            .endif
             mov [rax].Image.nativeImage,NULL
-            mov [rax].Image.lastResult,Ok
+            mov [rax].Image.lastResult,NotImplemented
+        .until 1
+        retm<rax>
+    }
+
+    .operator Release {
+
+        mov image,this
+
+        GdipDisposeImage([this].Image.nativeImage)
+
+        mov this,image
+        .if [this].Image.memState != NotImplemented
+
+            GdipFree(this)
         .endif
-        retm <rax>
-        }
-    .operator Release { exitm <GdipFree(this)> }
+        exitm<>
+    }
 
-    .operator = :ptr Image, :Status {
-        mov     [this].Image.nativeImage,_1
-        mov     [this].Image.lastResult,_2
-        retm    <this>
-        }
+    .operator FromFile :ptr WCHAR, :BOOL {
 
-    SetNativeImage  proc :ptr Image
+        mov image,this
+        mov [this].Image.nativeImage,NULL
 
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if eax != Ok
-            mov [this].Image.lastResult,eax
+        xchg this,_1
+        .if _2
+            GdipLoadImageFromFileICM(this, &[_1].Image.nativeImage)
+        .else
+            GdipLoadImageFromFile(this, &[_1].Image.nativeImage)
         .endif
-        retm <eax>
+        exitm<image.SetStatus(eax)>
         }
 
-    ImageFile       proc :ptr WCHAR,:BOOL       ; useEmbeddedColorManagement = FALSE
-    ImageStream     proc :ptr IStream, :BOOL    ; useEmbeddedColorManagement = FALSE
+    .operator FromStream :ptr IStream, :BOOL {   ; useEmbeddedColorManagement = FALSE
 
-    FromFile        proc :ptr WCHAR, :BOOL      ; useEmbeddedColorManagement = FALSE
-    FromStream      proc :ptr IStream, :BOOL    ; useEmbeddedColorManagement = FALSE
+        mov image,this
+        mov [this].Image.nativeImage,NULL
 
-    Clone           proc
+        xchg this,_1
+        .if _2
+            GdipLoadImageFromStreamICM(this, &[_1].Image.nativeImage)
+        .else
+            GdipLoadImageFromStream(this, &[_1].Image.nativeImage)
+        .endif
+        exitm<image.SetStatus(eax)>
+        }
 
-    Save            proc :ptr WCHAR, :ptr CLSID, :ptr EncoderParameters
+    .operator Clone {
+
+        .new clone:ptr Image
+
+        mov image,this
+        mov clone,Image()
+        .if rax
+            mov this,image
+            GdipCloneImage([this].Image.nativeImage, &[rax].Image.nativeImage)
+            image.SetStatus(eax)
+            mov edx,eax
+            mov rax,clone
+            mov [rax].Image.lastResult,edx
+        .endif
+        retm<rax>
+        }
+
+    .operator Save :ptr WCHAR, :ptr CLSID, :ptr EncoderParameters {
+        mov image,this
+        GdipSaveImageToFile([this].Image.nativeImage, _1, _2, _3)
+        exitm<image.SetStatus(eax)>
+        }
+
     Save2           proc :ptr IStream, :ptr CLSID, :ptr EncoderParameters
     SaveAdd         proc :ptr EncoderParameters
     SaveAdd2        proc :ptr Image, :ptr EncoderParameters
@@ -375,16 +402,32 @@ if (GDIPVER GE 0x0110)
     SetAbort        proc :ptr GdiplusAbort
 endif
 
+    SetNativeImage  proc :ptr Image
+
+    .operator SetStatus :Status {
+        mov eax,_1
+        .if eax != Ok
+            mov [this].Image.lastResult,eax
+        .endif
+        retm <eax>
+        }
+
     GetLastStatus   proc
 
     .ends
 
 .template Bitmap : public Image
 
-    GpBitmap typedef Bitmap
+    .operator Bitmap {
+        exitm<[this].Image.Image()>
+        }
+    .operator FromFile :ptr WCHAR, :BOOL {
+        exitm<[this].Image.FromFile(_1, _2)>
+        }
+    .operator Release {
+        exitm<[this].Image.Release()>
+        }
 
-    Bitmap          proc :ptr Bitmap
-    .operator       = :ptr Bitmap
     Bitmap2         proc :ptr GpBitmap
     Bitmap3         proc :ptr WCHAR, :BOOL ; useEmbeddedColorManagement = FALSE
     Bitmap4         proc :ptr IStream, :BOOL ; useEmbeddedColorManagement = FALSE
@@ -442,10 +485,24 @@ endif
     FromHICON       proc :HICON
     FromResource    proc :HINSTANCE, :ptr WCHAR
 
-    GetHBITMAP      proc :ptr Color, :ptr HBITMAP
-    GetHICON        proc :ptr HICON
+    .operator GetHBITMAP :ptr Color, :ptr HBITMAP {
+        mov image,this
+        xchg _1,_2
+        .if _2
+            mov r8d,[_2].Color.Argb
+        .endif
+        GdipCreateHBITMAPFromBitmap([this].Image.nativeImage, _1, r8d)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetHICON :ptr HICON {
+        mov image,this
+        GdipCreateHICONFromBitmap([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
 
     .ends
+    GpBitmap typedef Bitmap
 
 .template CustomLineCap ;: public GdiplusBase
 

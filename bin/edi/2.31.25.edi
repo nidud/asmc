@@ -1,0 +1,6 @@
+
+[.]
+0=298,17,0,1C,4,13E0,%AsmcDir%\source\asmc\src\X86\tokenize.asm
+1=4B0,15,0,5,8,17E0,%AsmcDir%\source\asmc\src\data.c
+2=CA6,1B,0,32,4,13E0,%AsmcDir%\source\asmc\src\X86\parser.asm
+3=671,12,0,11,4,13E0,%AsmcDir%\source\asmc\src\X86\hll.asm

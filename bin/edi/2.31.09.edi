@@ -1,0 +1,4 @@
+
+[.]
+0=411,1B,0,15,8,17E0,%AsmcDir%\source\asmc\src\invoke.c
+1=2DD,12,0,1D,4,13E0,%AsmcDir%\source\asmc\src\X86\macro.asm

@@ -1,0 +1,7 @@
+
+[.]
+0=C1,17,0,12,4,13E0,%AsmcDir%\source\asmc\src\X86\return.asm
+1=0,1,0,A,4,13E0,%AsmcDir%\source\asmc\regress\src\bin\return4.asm
+2=2E1,F,0,2A,4,13E0,%AsmcDir%\source\asmc\src\X86\macro.asm
+3=84,7,0,0,8,17E0,%AsmcDir%\source\asmc\src\h\symbols.inc
+4=275,19,0,0,4,13E0,%AsmcDir%\source\asmc\src\X86\fastcall.asm

@@ -305,7 +305,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
             GdipFree(this)
         .endif
         exitm<>
-    }
+        }
 
     .operator FromFile :ptr WCHAR, :BOOL {
 
@@ -321,7 +321,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         exitm<image.SetStatus(eax)>
         }
 
-    .operator FromStream :ptr IStream, :BOOL {   ; useEmbeddedColorManagement = FALSE
+    .operator FromStream :ptr IStream, :BOOL {
 
         mov image,this
         mov [this].Image.nativeImage,NULL
@@ -357,52 +357,331 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         GdipSaveImageToFile([this].Image.nativeImage, _1, _2, _3)
         exitm<image.SetStatus(eax)>
         }
+    .operator Save2 :ptr IStream, :ptr CLSID, :ptr EncoderParameters {
+        mov image,this
+        GdipSaveImageToStream([this].Image.nativeImage, _1, _2, _3)
+        exitm<image.SetStatus(eax)>
+        }
 
-    Save2           proc :ptr IStream, :ptr CLSID, :ptr EncoderParameters
-    SaveAdd         proc :ptr EncoderParameters
-    SaveAdd2        proc :ptr Image, :ptr EncoderParameters
+    .operator SaveAdd :ptr EncoderParameters {
+        mov image,this
+        GdipSaveAdd([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator SaveAdd2 :ptr Image, :ptr EncoderParameters {
+        mov image,this
+        mov eax,InvalidParameter
+        .if _1
+            mov _1,[_1].Image.nativeImage
+            GdipSaveAddImage([this].Image.nativeImage, _1, _2)
+        .endif
+        exitm<image.SetStatus(eax)>
+        }
 
-    GetType         proc
-    GetPhysicalDimension proc :ptr SizeF
-    GetBounds       proc :ptr RectF, :ptr Unit
+    .operator GetType {
 
-    GetWidth        proc
-    GetHeight       proc
-    GetHorizontalResolution proc
-    GetVerticalResolution proc
-    GetFlags        proc
-    GetRawFormat    proc :ptr GUID
-    GetPixelFormat  proc
+        .new type:ImageType
 
-    GetPaletteSize  proc
-    GetPalette      proc :ptr ColorPalette, :int_t
-    SetPalette      proc :ptr ColorPalette
+        mov type,ImageTypeUnknown
+        mov image,this
+        GdipGetImageType([this].Image.nativeImage, &type)
+        image.SetStatus(eax)
+        mov eax,type
+        retm <eax>
+        }
 
-    GetThumbnailImage proc :UINT, :UINT, :GetThumbnailImageAbort, :ptr
-    GetFrameDimensionsCount proc
-    GetFrameDimensionsList proc :ptr GUID, :UINT
-    GetFrameCount   proc :GUID
-    SelectActiveFrame proc :ptr GUID, :UINT
-    RotateFlip      proc :RotateFlipType
-    GetPropertyCount proc
-    GetPropertyIdList proc :UINT, :ptr
-    GetPropertyItemSize proc :PROPID
-    GetPropertyItem proc :PROPID, :UINT, :ptr PropertyItem
-    GetPropertySize proc :ptr UINT, :ptr UINT
-    GetAllPropertyItems proc :UINT, :UINT, :ptr PropertyItem
-    RemovePropertyItem proc :PROPID
-    SetPropertyItem proc :ptr PropertyItem
+    .operator GetPhysicalDimension :ptr SizeF {
 
-    GetEncoderParameterListSize proc :ptr CLSID
-    GetEncoderParameterList proc :ptr CLSID, :UINT, :ptr EncoderParameters
+        mov image,this
+        .repeat
+
+            .if (_1 == NULL)
+                image.SetStatus(InvalidParameter)
+                .break
+            .endif
+
+            .new sizef:ptr SizeF
+            .new width:REAL
+            .new height:REAL
+
+            mov sizef,_1
+            GdipGetImageDimension([this].Image.nativeImage, &width, &height)
+            image.SetStatus(eax)
+            mov _1,sizef
+            mov r8d,width
+            mov [_1].SizeF.Width,r8d
+            mov r8d,height
+            mov [_1].SizeF.Height,r8d
+        .until 1
+        retm <eax>
+        }
+
+    .operator GetBounds :ptr RectF, :ptr Unit {
+        mov image,this
+        GdipGetImageBounds([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetWidth {
+
+        .new width:UINT
+
+        mov image,this
+        mov width,0
+
+        GdipGetImageWidth([this].Image.nativeImage, &width)
+        image.SetStatus(eax)
+        mov eax,width
+        retm <eax>
+        }
+
+    .operator GetHeight {
+
+        .new height:UINT
+
+        mov image,this
+        mov height,0
+
+        GdipGetImageHeight([this].Image.nativeImage, &height)
+        image.SetStatus(eax)
+        mov eax,height
+        retm <eax>
+        }
+
+    .operator GetHorizontalResolution {
+
+        .new resolution:REAL
+
+        mov resolution,0.0
+        mov image,this
+        GdipGetImageHorizontalResolution([this].Image.nativeImage, &resolution)
+        image.SetStatus(eax)
+        movss xmm0,resolution
+        retm <xmm0>
+        }
+
+    .operator GetVerticalResolution {
+
+        .new resolution:REAL
+
+        mov resolution,0.0
+        mov image,this
+        GdipGetImageVerticalResolution([this].Image.nativeImage, &resolution)
+        image.SetStatus(eax)
+        movss xmm0,resolution
+        retm <xmm0>
+        }
+
+    .operator GetFlags {
+
+        .new flags:UINT
+
+        mov image,this
+        mov flags,0
+
+        GdipGetImageFlags([this].Image.nativeImage, &flags)
+        image.SetStatus(eax)
+        mov eax,flags
+        retm <eax>
+        }
+
+    .operator GetRawFormat :ptr GUID {
+        mov image,this
+        GdipGetImageRawFormat([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetPixelFormat {
+
+        .new format:PixelFormat
+
+        mov image,this
+        GdipGetImagePixelFormat([this].Image.nativeImage, &format)
+        image.SetStatus(eax)
+        mov eax,format
+        retm <eax>
+        }
+
+    .operator GetPaletteSize {
+
+        .new size:SINT
+
+        mov size,0
+        mov image,this
+        GdipGetImagePaletteSize([this].Image.nativeImage, &size)
+        image.SetStatus(eax)
+        mov eax,size
+        retm <eax>
+        }
+
+    .operator GetPalette :ptr ColorPalette, :int_t {
+        mov image,this
+        GdipGetImagePalette([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator SetPalette :ptr ColorPalette {
+        mov image,this
+        GdipSetImagePalette([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetThumbnailImage :UINT, :UINT, :GetThumbnailImageAbort, :ptr {
+
+        .new thumbimage:ptr Image
+
+        mov thumbimage,this
+        mov image,NULL
+        GdipGetImageThumbnail([this].Image.nativeImage, _1, _2, &image, _3, _4)
+        thumbimage.SetStatus(eax)
+        .if Image()
+            mov rdx,image
+            mov [rax].Image.nativeImage,rdx
+            mov rcx,thumbimage
+            mov edx,[rcx].Image.lastResult
+            mov [rax].Image.lastResult,edx
+        .else
+            GdipDisposeImage(thumbimage)
+            xor eax,eax
+        .endif
+        retm <rax>
+        }
+
+    .operator GetFrameDimensionsCount {
+
+        .new count:UINT
+
+        mov count,0
+        mov image,this
+        GdipImageGetFrameDimensionsCount([this].Image.nativeImage, &count)
+        image.SetStatus(eax)
+        mov eax,count
+        retm <rax>
+        }
+    .operator GetFrameDimensionsList :ptr GUID, :UINT {
+        mov image,this
+        GdipImageGetFrameDimensionsList([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetFrameCount :ptr GUID {
+
+        .new count:UINT
+
+        mov count,0
+        mov image,this
+        GdipImageGetFrameCount([this].Image.nativeImage, _1, &count)
+        image.SetStatus(eax)
+        mov eax,count
+        retm <rax>
+        }
+    .operator SelectActiveFrame :ptr GUID, :UINT {
+        mov image,this
+        GdipImageSelectActiveFrame([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator RotateFlip :RotateFlipType {
+        mov image,this
+        GdipImageRotateFlip([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetPropertyCount {
+
+        .new numProperty:UINT
+
+        mov numProperty,0
+        mov image,this
+        GdipGetPropertyCount([this].Image.nativeImage, &numProperty)
+        image.SetStatus(eax)
+        mov eax,numProperty
+        retm <rax>
+        }
+    .operator GetPropertyIdList :UINT, :ptr {
+        mov image,this
+        GdipGetPropertyIdList([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetPropertyItemSize :PROPID {
+
+        .new size:UINT
+
+        mov size,0
+        mov image,this
+        GdipGetPropertyItemSize([this].Image.nativeImage, _1, &size)
+        mov eax,size
+        retm <rax>
+        }
+    .operator GetPropertyItem :PROPID, :UINT, :ptr PropertyItem {
+        mov image,this
+        GdipGetPropertyItem([this].Image.nativeImage, _1, _2, _3)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetPropertySize :ptr UINT, :ptr UINT {
+        mov image,this
+        GdipGetPropertySize([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetAllPropertyItems :UINT, :UINT, :ptr PropertyItem {
+        mov image,this
+        .if _3 == NULL
+            image.SetStatus(InvalidParameter)
+        .else
+            GdipGetAllPropertyItems([this].Image.nativeImage, _1, _2, _3)
+            image.SetStatus(eax)
+        .endif
+        retm <rax>
+        }
+    .operator RemovePropertyItem :PROPID {
+        mov image,this
+        GdipRemovePropertyItem([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator SetPropertyItem :ptr PropertyItem {
+        mov image,this
+        GdipSetPropertyItem([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetEncoderParameterListSize :ptr CLSID {
+
+        .new size:UINT
+
+        mov size,0
+        mov image,this
+        GdipGetEncoderParameterListSize([this].Image.nativeImage, _1, &size)
+        mov eax,size
+        retm <rax>
+        }
+    .operator GetEncoderParameterList :ptr CLSID, :UINT, :ptr EncoderParameters {
+        mov image,this
+        GdipGetEncoderParameterList([this].Image.nativeImage, _1, _2, _3)
+        exitm<image.SetStatus(eax)>
+        }
 if (GDIPVER GE 0x0110)
-    FindFirstItem   proc :ptr ImageItemData
-    FindNextItem    proc :ptr ImageItemData
-    GetItemData     proc :ptr ImageItemData
-    SetAbort        proc :ptr GdiplusAbort
+    .operator FindFirstItem :ptr ImageItemData {
+        mov image,this
+        GdipFindFirstImageItem([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator FindNextItem :ptr ImageItemData {
+        mov image,this
+        GdipFindNextImageItem([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator GetItemData :ptr ImageItemData {
+        mov image,this
+        GdipGetImageItemData([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+    .operator SetAbort :ptr GdiplusAbort {
+        mov image,this
+        GdipImageSetAbort([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
 endif
 
-    SetNativeImage  proc :ptr Image
+    .operator SetNativeImage :ptr Image {
+        mov [this].Image.nativeImage,_1
+        exitm<>
+        }
 
     .operator SetStatus :Status {
         mov eax,_1
@@ -411,30 +690,256 @@ endif
         .endif
         retm <eax>
         }
-
-    GetLastStatus   proc
+    .operator GetLastStatus {
+        mov eax,[this].Image.lastResult
+        mov [this].Image.lastResult,Ok
+        retm <eax>
+        }
 
     .ends
 
-.template Bitmap : public Image
-
-    .operator Bitmap {
+IMAGE_INLINE macro class
+    .operator class {
         exitm<[this].Image.Image()>
-        }
-    .operator FromFile :ptr WCHAR, :BOOL {
-        exitm<[this].Image.FromFile(_1, _2)>
         }
     .operator Release {
         exitm<[this].Image.Release()>
         }
+if 0
+    .operator FromFile :ptr WCHAR, :BOOL {
+        exitm<[this].Image.FromFile(_1, _2)>
+        }
+    .operator FromStream :ptr IStream, :BOOL {
+        exitm<[this].Image.FromStream(_1, _2)>
+        }
+endif
+    .operator Clone {
+        exitm<[this].Image.Clone()>
+        }
+    .operator Save :ptr WCHAR, :ptr CLSID, :ptr EncoderParameters {
+        exitm<[this].Image.Save(_1, _2, _3)>
+        }
+    .operator Save2 :ptr IStream, :ptr CLSID, :ptr EncoderParameters {
+        exitm<[this].Image.Save2(_1, _2, _3)>
+        }
+    .operator SaveAdd :ptr EncoderParameters {
+        exitm<[this].Image.SaveAdd(_1)>
+        }
+    .operator SaveAdd2 :ptr Image, :ptr EncoderParameters {
+        exitm<[this].Image.SaveAdd2(_1, _2)>
+        }
 
-    Bitmap2         proc :ptr GpBitmap
-    Bitmap3         proc :ptr WCHAR, :BOOL ; useEmbeddedColorManagement = FALSE
-    Bitmap4         proc :ptr IStream, :BOOL ; useEmbeddedColorManagement = FALSE
+    .operator GetType {
+        exitm<[this].Image.GetType()>
+        }
+    .operator GetPhysicalDimension :ptr SizeF {
+        exitm<[this].Image.GetPhysicalDimension(_1)>
+        }
+    .operator GetBounds :ptr RectF, :ptr Unit {
+        exitm<[this].Image.GetBounds(_1, _2)>
+        }
+    .operator GetWidth {
+        exitm<[this].Image.GetWidth()>
+        }
+    .operator GetHeight {
+        exitm<[this].Image.GetHeight()>
+        }
+    .operator GetHorizontalResolution {
+        exitm<[this].Image.GetHorizontalResolution()>
+        }
+    .operator GetVerticalResolution {
+        exitm<[this].Image.GetVerticalResolution()>
+        }
+    .operator GetFlags {
+        exitm<[this].Image.GetFlags()>
+        }
+    .operator GetRawFormat :ptr GUID {
+        exitm<[this].Image.GetRawFormat(_1)>
+        }
+    .operator GetPixelFormat {
+        exitm<[this].Image.GetPixelFormat()>
+        }
+    .operator GetPaletteSize {
+        exitm<[this].Image.GetPaletteSize()>
+        }
+    .operator GetPalette :ptr ColorPalette, :int_t {
+        exitm<[this].Image.GetPalette(_1, _2)>
+        }
+    .operator SetPalette :ptr ColorPalette {
+        exitm<[this].Image.SetPalette(_1)>
+        }
+    .operator GetThumbnailImage :UINT, :UINT, :GetThumbnailImageAbort, :ptr {
+        exitm<[this].Image.GetThumbnailImage(_1, _2, _3, _4)>
+        }
+    .operator GetFrameDimensionsCount {
+        exitm<[this].Image.GetFrameDimensionsCount()>
+        }
+    .operator GetFrameDimensionsList :ptr GUID, :UINT {
+        exitm<[this].Image.GetFrameDimensionsList(_1, _2)>
+        }
+    .operator GetFrameCount :ptr GUID {
+        exitm<[this].Image.GetFrameCount(_1)>
+        }
+    .operator SelectActiveFrame :ptr GUID, :UINT {
+        exitm<[this].Image.SelectActiveFrame(_1, _2)>
+        }
+    .operator RotateFlip :RotateFlipType {
+        exitm<[this].Image.RotateFlip(_1)>
+        }
+    .operator GetPropertyCount {
+        exitm<[this].Image.GetPropertyCount()>
+        }
+    .operator GetPropertyIdList :UINT, :ptr {
+        exitm<[this].Image.GetPropertyIdList(_1, _2)>
+        }
+    .operator GetPropertyItemSize :PROPID {
+        exitm<[this].Image.GetPropertyItemSize(_1)>
+        }
+    .operator GetPropertyItem :PROPID, :UINT, :ptr PropertyItem {
+        exitm<[this].Image.GetPropertyItem(_1, _2, _3)>
+        }
+    .operator GetPropertySize :ptr UINT, :ptr UINT {
+        exitm<[this].Image.GetPropertySize(_1, _2)>
+        }
+    .operator GetAllPropertyItems :UINT, :UINT, :ptr PropertyItem {
+        exitm<[this].Image.GetAllPropertyItems(_1, _2, _3)>
+        }
+    .operator RemovePropertyItem :PROPID {
+        exitm<[this].Image.RemovePropertyItem(_1)>
+        }
+    .operator SetPropertyItem :ptr PropertyItem {
+        exitm<[this].Image.SetPropertyItem(_1)>
+        }
+    .operator GetEncoderParameterListSize :ptr CLSID {
+        exitm<[this].Image.GetEncoderParameterListSize(_1)>
+        }
+    .operator GetEncoderParameterList :ptr CLSID, :UINT, :ptr EncoderParameters {
+        exitm<[this].Image.GetEncoderParameterList(_1, _2, _3)>
+        }
+if (GDIPVER GE 0x0110)
+    .operator FindFirstItem :ptr ImageItemData {
+        exitm<[this].Image.FindFirstItem(_1)>
+        }
+    .operator FindNextItem :ptr ImageItemData {
+        exitm<[this].Image.FindNextItem(_1)>
+        }
+    .operator GetItemData :ptr ImageItemData {
+        exitm<[this].Image.GetItemData(_1)>
+        }
+    .operator SetAbort :ptr GdiplusAbort {
+        exitm<[this].Image.SetAbort(_1)>
+        }
+endif
+    .operator SetNativeImage :ptr Image {
+        exitm<[this].Image.SetNativeImage(_1)>
+        }
+    .operator SetStatus :Status {
+        exitm<[this].Image.SetStatus(_1)>
+        }
+    .operator GetLastStatus {
+        exitm<[this].Image.GetLastStatus()>
+        }
+    exitm<>
+    endm
 
-    Bitmap5         proc :int_t, :int_t, :int_t, :PixelFormat, :ptr BYTE
-    Bitmap6         proc :int_t, :int_t, :PixelFormat
-    Bitmap7         proc :int_t, :int_t, :ptr Graphics
+
+.template Bitmap : public Image
+
+    IMAGE_INLINE(Bitmap)
+
+    .operator FromFile :ptr WCHAR, :BOOL {
+
+        mov image,this
+        mov [this].Image.nativeImage,NULL
+
+        xchg this,_1
+        .if _2
+            GdipCreateBitmapFromFileICM(this, &[_1].Image.nativeImage)
+        .else
+            GdipCreateBitmapFromFile(this, &[_1].Image.nativeImage)
+        .endif
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromStream :ptr IStream, :BOOL {
+        mov image,this
+        xchg this,_1
+        .if _2
+            GdipCreateBitmapFromStreamICM(this, &[_1].Image.nativeImage)
+        .else
+            GdipCreateBitmapFromStream(this, &[_1].Image.nativeImage)
+        .endif
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromScan0 :int_t, :int_t, :int_t, :PixelFormat, :ptr BYTE {
+        mov image,this
+        mov rax,this
+        mov r10,_5
+        mov ecx,_1
+        mov edx,_2
+        mov r8d,_3
+        mov r9d,_4
+        GdipCreateBitmapFromScan0(ecx, edx, r8d, r9d, r10, rax)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromScan02 :int_t, :int_t, :PixelFormat {
+        mov image,this
+        mov rax,this
+        mov ecx,_1
+        mov edx,_2
+        GdipCreateBitmapFromScan0(ecx, edx, 0, _3, NULL, rax)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromGraphics :int_t, :int_t, :ptr Graphics {
+        mov image,this
+        mov rax,this
+        mov ecx,_1
+        mov edx,_2
+        mov r10,_3
+        GdipCreateBitmapFromGraphics(ecx, edx, [r10].Graphics.nativeGraphics, rax)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromDirectDrawSurface7 :ptr IDirectDrawSurface7 {
+        mov image,this
+        xchg this,_1
+        GdipCreateBitmapFromDirectDrawSurface(this, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromBITMAPINFO :ptr BITMAPINFO, :ptr {
+        mov image,this
+        xchg this,_2
+        xchg _1,this
+        GdipCreateBitmapFromGdiDib(this, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromHBITMAP :HBITMAP, :HPALETTE {
+        mov image,this
+        xchg this,_2
+        xchg _1,this
+        GdipCreateBitmapFromHBITMAP(this, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromHICON :HICON {
+        mov image,this
+        xchg this,_1
+        GdipCreateBitmapFromHICON(this, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator FromResource :HINSTANCE, :ptr WCHAR {
+        mov image,this
+        xchg this,_2
+        xchg _1,this
+        GdipCreateBitmapFromResource(this, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
 
     Clone1          proc :ptr Rect, :PixelFormat
     Clone2          proc :int_t, :int_t, :int_t, :int_t, :PixelFormat
@@ -473,17 +978,6 @@ if (GDIPVER GE 0x0110)
 endif
 
     SetResolution   proc :REAL, :REAL
-
-    Bitmap8         proc :ptr IDirectDrawSurface7
-    Bitmap9         proc :ptr BITMAPINFO, :ptr
-    Bitmap10        proc :HBITMAP, :HPALETTE
-    Bitmap11        proc :HICON
-    Bitmap12        proc :HINSTANCE, :ptr WCHAR
-    FromDirectDrawSurface7 proc :ptr IDirectDrawSurface7
-    FromBITMAPINFO  proc :ptr BITMAPINFO, :ptr
-    FromHBITMAP     proc :HBITMAP, :HPALETTE
-    FromHICON       proc :HICON
-    FromResource    proc :HINSTANCE, :ptr WCHAR
 
     .operator GetHBITMAP :ptr Color, :ptr HBITMAP {
         mov image,this

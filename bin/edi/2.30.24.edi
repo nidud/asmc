@@ -1,0 +1,6 @@
+
+[.]
+0=35,6,0,16,4,13E0,%AsmcDir%\source\asmc\src\X86\mem2mem.asm
+1=C0,16,0,28,4,13E0,%AsmcDir%\source\asmc\src\X86\expreval.asm
+2=20F,8,0,1E,4,13E0,%AsmcDir%\source\asmc\src\X86\hll.asm
+3=0,10,0,18,4,13E0,%AsmcDir%\doc\operator\amp.md

@@ -941,43 +941,254 @@ endif
         exitm<image.SetStatus(eax)>
         }
 
-    Clone1          proc :ptr Rect, :PixelFormat
-    Clone2          proc :int_t, :int_t, :int_t, :int_t, :PixelFormat
-    Clone3          proc :ptr RectF, :PixelFormat
-    Clone4          proc :REAL, :REAL, :REAL, :REAL, :PixelFormat
+    .operator CloneI :int_t, :int_t, :int_t, :int_t, :PixelFormat {
 
-    LockBits        proc :ptr Rect, :UINT, :PixelFormat, :ptr BitmapData
-    UnlockBits      proc :ptr BitmapData
-    GetPixel        proc :int_t, :int_t, :ptr Color
-    SetPixel        proc :int_t, :int_t, :ptr Color
+        .new gpdstBitmap:ptr Bitmap
+
+        mov r11,this
+        mov ecx,_1
+        mov edx,_2
+        mov r8d,_3
+        mov r9d,_4
+        mov r10d,_5
+        mov gpdstBitmap,NULL
+
+        .if GdipCloneBitmapAreaI(ecx, edx, r8d, r9d, r10d, [r11].Image.nativeImage, &gpdstBitmap) == Ok
+
+            .if Bitmap()
+
+                mov rdx,gpdstBitmap
+                mov [rax].Image.nativeImage,rdx
+                mov [rax].Image.lastResult,Ok
+
+            .else
+
+                GdipDisposeImage(gpdstBitmap)
+                xor eax,eax
+            .endif
+        .endif
+        retm <rax>
+        }
+
+    .operator Clone1 :ptr Rect, :PixelFormat {
+        exitm<[this].Bitmap.CloneI([_1].Rect.X, [_1].Rect.Y, [_1].Rect.Width, [_1].Rect.Height, _2)>
+        }
+
+    .operator CloneF :REAL, :REAL, :REAL, :REAL, :PixelFormat {
+
+        .new gpdstBitmap:ptr Bitmap
+
+        movaps xmm0,_1
+        movaps xmm1,_2
+        movaps xmm2,_3
+        movaps xmm3,_4
+        mov r10d,_5
+        mov gpdstBitmap,NULL
+
+        .if GdipCloneBitmapArea(xmm0, xmm1, xmm2, xmm3, r10d, [this].Image.nativeImage, &gpdstBitmap) == Ok
+
+            .if Bitmap()
+
+                mov rdx,gpdstBitmap
+                mov [rax].Image.nativeImage,rdx
+                mov [rax].Image.lastResult,Ok
+
+            .else
+
+                GdipDisposeImage(gpdstBitmap)
+                xor eax,eax
+            .endif
+        .endif
+        retm <rax>
+        }
+
+    .operator Clone2 :ptr RectF, :PixelFormat {
+        exitm<[this].Bitmap.CloneF([_1].RectF.X, [_1].RectF.Y, [_1].RectF.Width, [_1].RectF.Height, _2)>
+        }
+
+    .operator LockBits :ptr Rect, :UINT, :PixelFormat, :ptr BitmapData {
+        mov image,this
+        GdipBitmapLockBits([this].Image.nativeImage, _1, _2, _3, _4)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator UnlockBits :ptr BitmapData {
+        mov image,this
+        GdipBitmapUnlockBits([this].Image.nativeImage, _1)
+        exitm<image.SetStatus(eax)>
+        }
+
+    .operator GetPixel :int_t, :int_t, :ptr Color {
+
+        .new argb:ARGB
+        .new color:ptr Color
+
+        mov color,_3
+        mov image,this
+        GdipBitmapGetPixel([this].Image.nativeImage, _1, _2, &argb)
+        image.SetStatus(eax)
+        .if eax == Ok
+            color.SetValue(argb)
+            mov this,image
+        .endif
+        mov eax,[this].Image.lastResult
+        retm <eax>
+        }
+
+    .operator SetPixel :int_t, :int_t, :ptr Color {
+        mov image,this
+        GdipBitmapSetPixel([this].Image.nativeImage, _1, _2, [_3].Color.Argb)
+        exitm<image.SetStatus(eax)>
+        }
 
 if (GDIPVER GE 0x0110)
-    ConvertFormat   proc :PixelFormat, :DitherType, :PaletteType, :ptr ColorPalette, :REAL
+    .operator ConvertFormat :PixelFormat, :DitherType, :PaletteType, :ptr ColorPalette, :REAL {
+        mov image,this
+        GdipBitmapConvertFormat([this].Image.nativeImage, _1, _2, _3, _4, _5)
+        exitm<image.SetStatus(eax)>
+        }
 
     ;; The palette must be allocated and count must be set to the number of
     ;; entries in the palette. If there are not enough, the API will fail.
 
-    InitializePalette proc  :ptr ColorPalette,  ;; Palette to initialize.
-                            :PaletteType,       ;; palette enumeration type.
-                            :int_t,             ;; how many optimal colors
-                            :BOOL,              ;; add a transparent color to the palette.
-                            :ptr Bitmap         ;; optional bitmap for median cut.
+    .operator InitializePalette :ptr ColorPalette,  ;; Palette to initialize.
+                                :PaletteType,       ;; palette enumeration type.
+                                :int_t,             ;; how many optimal colors
+                                :BOOL,              ;; add a transparent color to the palette.
+                                :ptr Bitmap {       ;; optional bitmap for median cut.
+        mov image,this
+        mov this,_1
+        mov edx,r8d
+        mov r8d,r9d
+        mov r9d,_4
+        mov r10,_5
+        .if r10
+            mov r10,[r10].Image.nativeImage
+        .endif
+        GdipInitializePalette(this, edx, r8d, r9d, r10)
+        exitm<image.SetStatus(eax)>
+        }
 
-    ApplyEffect     proc :ptr Effect, :ptr RECT
+    .operator ApplyEffect :ptr Effect, :ptr RECT {
 
-    ApplyEffect2    proc    :ptr ptr Bitmap,
+        .new effect:ptr Effect
+        .new ROI:ptr RECT
+
+        mov image,this
+        mov effect,_1
+        mov ROI,_2
+
+        .if [_1].Effect.auxData
+
+            GdipFree([_1].Effect.auxData)
+            mov _1,effect
+            mov [_1].Effect.auxData,NULL
+            mov [_1].Effect.auxDataSize,0
+            mov this,image
+        .endif
+        GdipBitmapApplyEffect([this].Image.nativeImage, [_1].Effect.nativeEffect, ROI,\
+                [_1].Effect.useAuxData, &[_1].Effect.auxData,  &[_1].Effect.auxDataSize)
+        retm <eax>
+        }
+
+    .operator ApplyEffect2  :ptr ptr Bitmap,
                             :int_t,
                             :ptr Effect,
-                            :ptr RECT, ;; optional parameter.
-                            :ptr RECT, ;; optional parameter.
-                            :ptr ptr Bitmap
+                            :ptr RECT,      ;; optional parameter.
+                            :ptr RECT,      ;; optional parameter.
+                            :ptr ptr Bitmap {
 
-    GetHistogram    proc :HistogramFormat, :UINT, :ptr UINT, :ptr UINT, :ptr UINT, :ptr UINT
+        .repeat
 
-    GetHistogramSize proc :HistogramFormat, :ptr UINT
+            .ifs _2 < 0
+
+                mov eax,InvalidParameter
+                .break
+            .endif
+
+            .new inputs:ptr ptr Bitmap
+            .new numInputs:SINT
+            .new effect:ptr Effect
+            .new ROI:ptr RECT               ;; optional parameter.
+            .new outputRect:ptr RECT        ;; optional parameter.
+            .new output:ptr ptr Bitmap
+            .new status:Status
+
+            .new outputNative:ptr Bitmap
+            .new nativeInputs:ptr ptr Bitmap
+
+            mov inputs,_1
+            mov numInputs,_2
+            mov effect,_3
+            mov ROI,_4
+            mov outputRect,_5
+            mov output,_6
+
+            mov outputNative,NULL
+            mov nativeInputs,GdipAlloc(&[_2*size_t])
+
+            .if rax == NULL
+
+                mov eax,OutOfMemory
+                .break
+            .endif
+
+            .for (rdx = rax, r8 = inputs, ecx = 0: ecx < numInputs: ecx++)
+
+                mov [rdx+rcx*8],[r8+rcx*8].Bitmap.nativeImage
+            .endf
+
+            mov r8,effect
+            .if [r8].Effect.auxData
+
+                GdipFree([r8].Effect.auxData)
+                mov r8,effect
+                mov [r8].Effect.auxData,NULL
+                mov [r8].Effect.auxDataSize,0
+            .endif
+
+            GdipBitmapCreateApplyEffect( nativeInputs, numInputs, [r8].Effect.nativeEffect,\
+                ROI, outputRect, &outputNative, [r8].Effect.useAuxData,\
+                &[r8].Effect.auxData, &[r8].Effect.auxDataSize )
+
+            mov status,eax
+            .if ((eax == Ok) && outputNative)
+                .if Bitmap() == NULL
+
+                    GdipDisposeImage(outputNative)
+                    mov eax,OutOfMemory
+                    .break
+                .endif
+                mov rdx,output
+                mov [rdx],rax
+                mov rdx,outputNative
+                mov [rax].Bitmap.nativeImage,rdx
+            .else
+                mov rdx,output
+                xor eax,eax
+                mov [rdx],rax
+            .endif
+            GdipFree(nativeInputs)
+            mov eax,status
+        .until 1
+        retm <eax>
+        }
+
+    .operator GetHistogram :HistogramFormat, :UINT, :ptr UINT, :ptr UINT, :ptr UINT, :ptr UINT {
+        exitm<GdipBitmapGetHistogram([this].Image.nativeImage, _1, _2, _3, _4, _5, _6)>
+        }
+
+    .operator GetHistogramSize :HistogramFormat, :ptr UINT {
+        mov ecx,edx
+        exitm<GdipBitmapGetHistogramSize(ecx, _2)>
+        }
 endif
 
-    SetResolution   proc :REAL, :REAL
+    .operator SetResolution :REAL, :REAL {
+        mov image,this
+        GdipBitmapSetResolution([this].Image.nativeImage, _1, _2)
+        exitm<image.SetStatus(eax)>
+        }
 
     .operator GetHBITMAP :ptr Color, :ptr HBITMAP {
         mov image,this
@@ -1069,17 +1280,7 @@ endif
 
 .template Metafile : public Image
 
-    .operator Metafile {
-        exitm<Image_Image(0)>
-        }
-    .operator SetStatus :Status {
-        exitm<Image_SetStatus(this, _1)>
-        }
-    .operator SetNativeImage :ptr Image {
-        mov [this].Image.nativeImage,_1
-        retm <this>
-        }
-
+    IMAGE_INLINE(Metafile)
 
     Metafile2 proc :ptr Metafile
     .operator = :ptr Metafile

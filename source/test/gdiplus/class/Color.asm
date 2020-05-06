@@ -26,7 +26,6 @@ main proc
     p.GetB()
     p.GetValue()
     p.SetValue(0)
-    p.MakeARGB(0, 0, 0, 0)
     p.SetFromCOLORREF(0)
     p.ToCOLORREF()
     ret

@@ -14,13 +14,12 @@ main proc
   local a:Pen
 
     a.Pen()
-
-    a.Pen1(NULL, 1.0)
-
-    a.mequ84(&a, 0)
-    a.Pen1(NULL, 1.0)
-    a.Pen2(NULL, 1.0)
     a.Release()
+    a.Delete()
+
+    a.CreatePen(NULL, 1.0)
+    a.CreatePen2(NULL, 1.0)
+    a.mequ84(&a, 0)
     a.Clone()
     a.SetWidth(1.0)
     a.GetWidth()

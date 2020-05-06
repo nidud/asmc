@@ -2760,7 +2760,7 @@ GdipGetImageAttributesAdjustedPalette proto WINAPI \
 ;GpStatus
 GdipFlush proto WINAPI \
 	      graphics: ptr GpGraphics,
-	     intention: ptr
+	     intention: FlushIntention
 
 
 ;GpStatus
@@ -2994,8 +2994,8 @@ GdipGetDpiY proto WINAPI \
 ;GpStatus
 GdipTransformPoints proto WINAPI \
 	      graphics: ptr GpGraphics,
-	     destSpace: ptr,
-	      srcSpace: ptr,
+	     destSpace: CoordinateSpace,
+	      srcSpace: CoordinateSpace,
 		points: ptr GpPointF,
 		 count: SINT
 
@@ -3003,8 +3003,8 @@ GdipTransformPoints proto WINAPI \
 ;GpStatus
 GdipTransformPointsI proto WINAPI \
 	      graphics: ptr GpGraphics,
-	     destSpace: ptr,
-	      srcSpace: ptr,
+	     destSpace: CoordinateSpace,
+	      srcSpace: CoordinateSpace,
 		points: ptr GpPoint,
 		 count: SINT
 
@@ -3669,7 +3669,7 @@ GdipEnumerateMetafileDestPointI proto WINAPI \
 GdipEnumerateMetafileDestRect proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	      destRect: RectF,
+	      destRect: ptr RectF,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
        imageAttributes: ptr GpImageAttributes
@@ -3679,7 +3679,7 @@ GdipEnumerateMetafileDestRect proto WINAPI \
 GdipEnumerateMetafileDestRectI proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	      destRect: Rect,
+	      destRect: ptr Rect,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
        imageAttributes: ptr GpImageAttributes
@@ -3711,8 +3711,8 @@ GdipEnumerateMetafileDestPointsI proto WINAPI \
 GdipEnumerateMetafileSrcRectDestPoint proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	     destPoint: PointF,
-	       srcRect: RectF,
+	     destPoint: ptr PointF,
+	       srcRect: ptr RectF,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
@@ -3723,8 +3723,8 @@ GdipEnumerateMetafileSrcRectDestPoint proto WINAPI \
 GdipEnumerateMetafileSrcRectDestPointI proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	     destPoint: Point,
-	       srcRect: Rect,
+	     destPoint: ptr Point,
+	       srcRect: ptr Rect,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
@@ -3735,8 +3735,8 @@ GdipEnumerateMetafileSrcRectDestPointI proto WINAPI \
 GdipEnumerateMetafileSrcRectDestRect proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	      destRect: RectF,
-	       srcRect: RectF,
+	      destRect: ptr RectF,
+	       srcRect: ptr RectF,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
@@ -3747,8 +3747,8 @@ GdipEnumerateMetafileSrcRectDestRect proto WINAPI \
 GdipEnumerateMetafileSrcRectDestRectI proto WINAPI \
 	      graphics: ptr,
 	      metafile: ptr GpMetafile,
-	      destRect: Rect,
-	       srcRect: Rect,
+	      destRect: ptr Rect,
+	       srcRect: ptr Rect,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
@@ -3761,7 +3761,7 @@ GdipEnumerateMetafileSrcRectDestPoints proto WINAPI \
 	      metafile: ptr GpMetafile,
 	    destPoints: ptr PointF,
 		 count: SINT,
-	       srcRect: RectF,
+	       srcRect: ptr RectF,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,
@@ -3774,7 +3774,7 @@ GdipEnumerateMetafileSrcRectDestPointsI proto WINAPI \
 	      metafile: ptr GpMetafile,
 	    destPoints: ptr Point,
 		 count: SINT,
-	       srcRect: Rect,
+	       srcRect: ptr Rect,
 	       srcUnit: Unit,
 	      callback: EnumerateMetafileProc,
 	  callbackData: ptr,

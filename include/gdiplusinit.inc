@@ -32,7 +32,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
         mov rax,this
         .repeat
             .if rax == NULL
-                .break .if !GdipAlloc(GdiplusStartupInput)
+                .break .if !malloc(GdiplusStartupInput)
             .endif
             mov [rax].GdiplusStartupInput.GdiplusVersion,1
             mov [rax].GdiplusStartupInput.DebugEventCallback,NULL
@@ -41,7 +41,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
         .until 1
         retm <rax>
         }
-    .operator Release { exitm<GdipFree(this)> }
+    .operator Release { exitm<free(this)> }
     .ends
 
 
@@ -55,7 +55,7 @@ if (GDIPVER GE 0x0110)
         mov rax,this
         .repeat
             .if rax == NULL
-                .break .if !GdipAlloc(GdiplusStartupInputEx)
+                .break .if !malloc(GdiplusStartupInputEx)
             .endif
             mov [rax].GdiplusStartupInputEx.GdiplusVersion,2
             mov [rax].GdiplusStartupInputEx.DebugEventCallback,NULL
@@ -64,7 +64,7 @@ if (GDIPVER GE 0x0110)
         .until 1
         retm <rax>
         }
-    .operator Release { exitm<GdipFree(this)> }
+    .operator Release { exitm<free(this)> }
     .ends
 
 .enum GdiplusStartupParams {
@@ -88,5 +88,56 @@ GdiplusStartup proto WINAPI \
 
 GdiplusShutdown proto WINAPI \
                  token: ULONG_PTR
+
+
+.template GdiPlus
+
+    GdiplusVersion              UINT ?
+    DebugEventCallback          DebugEventProc ?
+    SuppressBackgroundThread    BOOL ?
+    SuppressExternalCodecs      BOOL ?
+    StartupParameters           SINT ?
+    MemoryState                 BOOL ?
+    Token                       ULONG_PTR ?
+
+    .operator GdiPlus {
+
+        .new gdiplus:ptr GdiPlus
+
+        mov rax,this
+        .repeat
+            .if rax == NULL
+                .break .if !malloc(GdiPlus)
+                mov [rax].GdiPlus.MemoryState,TRUE
+            .else
+                mov [rax].GdiPlus.MemoryState,FALSE
+            .endif
+            mov gdiplus,rax
+            mov [rax].GdiPlus.GdiplusVersion,2
+            mov [rax].GdiPlus.DebugEventCallback,NULL
+            mov [rax].GdiPlus.SuppressBackgroundThread,FALSE
+            mov [rax].GdiPlus.SuppressExternalCodecs,FALSE
+            mov [rax].GdiPlus.StartupParameters,0
+            .ifd GdiplusStartup(&[rax].GdiPlus.Token, rax, NULL)
+                mov gdiplus,NULL
+            .endif
+            mov rax,gdiplus
+        .until 1
+        retm <rax>
+        }
+
+    .operator Release {
+
+        mov gdiplus,this
+        GdiplusShutdown([this].GdiPlus.Token)
+
+        mov this,gdiplus
+        .if [this].GdiPlus.MemoryState == TRUE
+
+            free(this)
+        .endif
+        exitm<>
+        }
+    .ends
 
 endif

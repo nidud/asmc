@@ -71,6 +71,23 @@ endif
     p.FromHBITMAP(NULL, NULL)
     p.FromHICON(NULL)
     p.FromResource(NULL, NULL)
+    p.CloneI(0, 0, 0, 0, 0)
+    p.Clone1(NULL, 0)
+    p.CloneF(0.0, 0.0, 0.0, 0.0, 0)
+    p.Clone2(NULL, 0)
+    p.LockBits(NULL, 0, 0, NULL)
+    p.UnlockBits(NULL)
+    p.GetPixel(0, 0, NULL)
+    p.SetPixel(0, 0, NULL)
+    p.ConvertFormat(0, 0, 0, NULL, 0.0)
+    p.InitializePalette(NULL, 0, 0, 0, NULL)
+    p.ApplyEffect(NULL, NULL)
+    p.ApplyEffect2(NULL, 0, NULL, NULL, NULL, NULL)
+    p.GetHistogram(0, 0, NULL, NULL, NULL, NULL)
+    p.GetHistogramSize(0, NULL)
+    p.SetResolution(0.0, 0.0)
+    p.GetHBITMAP(NULL, NULL)
+    p.GetHICON(NULL)
 
     ret
 

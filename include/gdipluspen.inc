@@ -12,14 +12,59 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     nativePen   ptr_t ?
     lastResult  Status ?
+    memState    Status ?
 
     .operator Pen {
-        .if GdipAlloc(Pen)
+
+        .new pen:ptr Pen
+
+        mov rax,this
+        .repeat
+            .if rax == NULL
+                .break .if !GdipAlloc(Pen)
+                mov [rax].Pen.memState,Ok
+            .else
+                mov [rax].Pen.memState,NotImplemented
+            .endif
             mov [rax].Pen.nativePen,NULL
-            mov [rax].Pen.lastResult,Ok
-        .endif
+            mov [rax].Pen.lastResult,NotImplemented
+        .until 1
         retm <rax>
         }
+
+    .operator Release {
+        mov pen,this
+        GdipDeletePen([this].Pen.nativePen)
+        mov this,pen
+        .if [this].Pen.memState != NotImplemented
+            GdipFree(this)
+        .endif
+        exitm<>
+        }
+
+    .operator Delete {
+        exitm<GdipDeletePen([this].Pen.nativePen)>
+        }
+
+    .operator CreatePen :ARGB, :REAL {
+        mov pen,this
+        GdipCreatePen1(_1, _2, UnitWorld, &[this].Pen.nativePen)
+        exitm<pen.SetStatus(eax)>
+        }
+
+    .operator NewPen :abs, :abs {
+        mov pen,this
+        GdipDeletePen([this].Pen.nativePen)
+        GdipCreatePen1(_1, _2, UnitWorld, pen)
+        exitm<pen.SetStatus(eax)>
+        }
+
+    .operator CreatePen2 :ptr Brush, :REAL {
+        mov pen,this
+        GdipCreatePen2(_1, _2, UnitWorld, &[this].Pen.nativePen)
+        exitm<pen.SetStatus(eax)>
+        }
+
     .operator SetStatus :Status {
         mov eax,_1
         .if eax != Ok
@@ -33,52 +78,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         retm    <this>
         }
 
-    .operator Pen1 :ptr Color, :REAL {
-
-        .new stack:Stack
-
-        movss stack.float,_2
-        mov stack.r_edi,[_1].Color.Argb
-
-        .if GdipAlloc(Pen)
-
-            mov stack.r_rbx,rax
-            GdipCreatePen1(stack.r_edi, stack.float, UnitWorld, &[rax].Pen.nativePen)
-            mov this,stack.r_rbx
-            mov [this].Pen.lastResult,eax
-            mov rax,this
-        .endif
-        retm <rax>
-        }
-
-    .operator Pen2 :ptr Brush, :REAL {
-
-        .new stack:Stack
-
-        movss stack.float,_2
-        mov stack.r_rdi,[_1].Brush.nativeBrush
-
-        .if GdipAlloc(Pen)
-
-            mov stack.r_rbx,rax
-            GdipCreatePen2(stack.r_rdi, stack.float, UnitWorld, &[rax].Pen.nativePen)
-            mov this,stack.r_rbx
-            mov [this].Pen.lastResult,eax
-            mov rax,this
-        .endif
-        retm <rax>
-        }
-
-    .operator Release {
-
-        .new stack:Stack
-
-        mov stack.r_rcx,this
-
-        GdipDeletePen([this].Pen.nativePen)
-        GdipFree(stack.r_rcx)
-        exitm   <>
-        }
 
     .operator Clone {
 
@@ -104,11 +103,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator SetWidth :REAL {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         GdipSetPenWidth([this].Pen.nativePen, _1)
         pen.SetStatus(eax)
         retm<eax>
@@ -116,11 +111,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetWidth {
 
-        .new pen:ptr Pen
         .new width:int_t
 
         mov pen,this
-
         GdipGetPenWidth([this].Pen.nativePen, &width)
         pen.SetStatus(eax)
         mov eax,width
@@ -132,89 +125,63 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; Line cap and join APIs by using LineCap and LineJoin enums.
 
     .operator SetLineCap :LineCap, :LineCap, :DashCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         GdipSetPenLineCap197819([this].Pen.nativePen, _1, _2, _3)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator SetStartCap :LineCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         GdipSetPenStartCap([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator SetEndCap :LineCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         GdipSetPenEndCap([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator SetDashCap :DashCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         GdipSetPenDashCap197819([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator GetStartCap {
 
-        .new pen:ptr Pen
         .new PenCap:ptr
 
         mov pen,this
-
         GdipGetPenStartCap([this].Pen.nativePen, &PenCap)
         pen.SetStatus(eax)
-
         mov rax,PenCap
         retm<rax>
         }
 
     .operator GetEndCap {
 
-        .new pen:ptr Pen
         .new PenCap:ptr
 
         mov pen,this
         GdipGetPenEndCap([this].Pen.nativePen, &PenCap)
         pen.SetStatus(eax)
-
         mov rax,PenCap
         retm<rax>
         }
 
     .operator GetDashCap {
 
-        .new pen:ptr Pen
         .new PenCap:ptr
 
         mov pen,this
         GdipGetPenDashCap197819([this].Pen.nativePen, &PenCap)
         pen.SetStatus(eax)
-
         mov rax,PenCap
         retm<rax>
         }
 
     .operator SetLineJoin :LineJoin {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenLineJoin([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
@@ -228,15 +195,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
         GdipGetPenLineJoin([this].Pen.nativePen, &stack.r_rbx)
         Pen_SetStatus(stack.r_rcx, eax)
-
         mov rax,stack.r_rbx
         retm<rax>
         }
 
     .operator SetCustomStartCap :ptr CustomLineCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
         xor eax,eax
         .if _1
@@ -247,11 +210,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator GetCustomStartCap :ptr CustomLineCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
-
         .if !_1
             pen.SetStatus(InvalidParameter)
         .else
@@ -262,9 +221,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator SetCustomEndCap :ptr CustomLineCap {
-
-        .new pen:ptr Pen
-
         xor eax,eax
         mov pen,this
         .if _1
@@ -275,9 +231,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator GetCustomEndCap :ptr CustomLineCap {
-
-        .new pen:ptr Pen
-
         mov pen,this
         .if !_1
             pen.SetStatus(InvalidParameter)
@@ -289,9 +242,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator SetMiterLimit :REAL {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenMiterLimit([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
@@ -299,21 +249,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetMiterLimit {
 
-        .new pen:ptr Pen
         .new MiterLimit:REAL
 
         mov pen,this
         GdipGetPenLineJoin([this].Pen.nativePen, &MiterLimit)
         pen.SetStatus(eax)
-
         movss xmm0,MiterLimit
         retm <xmm0>
         }
 
     .operator SetAlignment :PenAlignment {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenMode([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
@@ -321,75 +266,52 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetAlignment {
 
-        .new pen:ptr Pen
         .new Alignment:int_t
 
         mov pen,this
         GdipGetPenMode([this].Pen.nativePen, &Alignment)
         pen.SetStatus(eax)
-
         mov eax,Alignment
         retm<eax>
         }
 
     .operator SetTransform :ptr Matrix {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenTransform([this].Pen.nativePen, [_1].Matrix.nativeMatrix)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator GetTransform :ptr Matrix {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipGetPenTransform([this].Pen.nativePen, [_1].Matrix.nativeMatrix)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator ResetTransform {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipResetPenTransform([this].Pen.nativePen)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator MultiplyTransform :ptr Matrix, :MatrixOrder {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipMultiplyPenTransform([this].Pen.nativePen, [_1].Matrix.nativeMatrix, _2)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator TranslateTransform :REAL, :REAL, :MatrixOrder {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipTranslatePenTransform([this].Pen.nativePen, _1, _2, _3)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator ScaleTransform :REAL, :REAL, :MatrixOrder {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipScalePenTransform([this].Pen.nativePen, _1, _2, _3)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator RotateTransform :REAL, :MatrixOrder {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipRotatePenTransform([this].Pen.nativePen, _1, _2)
         exitm<pen.SetStatus(eax)>
@@ -397,30 +319,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetPenType {
 
-        .new pen:ptr Pen
         .new penType:PenType
 
         mov pen,this
         GdipGetPenFillType([this].Pen.nativePen, &penType)
         pen.SetStatus(eax)
-
         mov eax,penType
         retm <eax>
         }
 
     .operator SetColor :ptr Color {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenColor([this].Pen.nativePen, [_1].Color.Argb)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator SetBrush :ptr Brush {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenBrushFill([this].Pen.nativePen, [_1].Brush.nativeBrush)
         exitm<pen.SetStatus(eax)>
@@ -428,11 +342,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetColor :ptr Color {
 
-        .new pen:ptr Pen
         .new color:ptr Color
 
         mov pen,this
-
         .if _1 == NULL
 
             pen.SetStatus(InvalidParameter)
@@ -464,7 +376,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetBrush {
 
-        .new pen:ptr Pen
         .new brush:ptr Brush
 
         mov pen,this
@@ -472,19 +383,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         xor eax,eax
        .switch pascal edx
        .case PenTypeSolidColor
-           SolidBrush_SolidBrush(0)
+           SolidBrush()
        .case PenTypeHatchFill
-           HatchBrush_HatchBrush(0)
+           HatchBrush()
        .case PenTypeTextureFill
-           TextureBrush_TextureBrush(0)
+           TextureBrush()
        .case PenTypePathGradient
-           Brush_Brush(0)
+           Brush()
        .case PenTypeLinearGradient
-           LinearGradientBrush_LinearGradientBrush(0)
+           LinearGradientBrush()
        .endsw
-
        .if rax
-
            mov brush,rax
            mov this,pen
            GdipGetPenBrushFill([this].Pen.nativePen, &[rax].Pen.nativePen)
@@ -496,21 +405,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetDashStyle {
 
-        .new pen:ptr Pen
         .new PenDashStyle:int_t
 
         mov pen,this
         GdipGetPenDashStyle([this].Pen.nativePen, &PenDashStyle)
         pen.SetStatus(eax)
-
         mov eax,PenDashStyle
         retm <eax>
         }
 
     .operator SetDashStyle :DashStyle {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenDashStyle([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
@@ -518,30 +422,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetDashOffset {
 
-        .new pen:ptr Pen
         .new DashOffset:int_t
 
         mov pen,this
         GdipGetPenDashOffset([this].Pen.nativePen, &DashOffset)
         pen.SetStatus(eax)
-
         mov eax,DashOffset
         retm <eax>
         }
 
     .operator SetDashOffset :REAL {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenDashOffset([this].Pen.nativePen, _1)
         exitm<pen.SetStatus(eax)>
         }
 
     .operator SetDashPattern :ptr REAL, :int_t {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenDashArray([this].Pen.nativePen, _1, _2)
         exitm<pen.SetStatus(eax)>
@@ -549,23 +445,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetDashPatternCount {
 
-        .new pen:ptr Pen
         .new DashPatternCount:int_t
 
         mov pen,this
         mov DashPatternCount,0
-
         GdipGetPenDashCount([this].Pen.nativePen, &DashPatternCount)
         pen.SetStatus(eax)
-
         mov eax,DashPatternCount
         retm <eax>
         }
 
     .operator GetDashPattern :ptr REAL, :SINT {
-
-        .new pen:ptr Pen
-
         mov pen,this
         .ifs _1 == NULL || _2 <= 0
             pen.SetStatus(InvalidParameter)
@@ -577,9 +467,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator SetCompoundArray :ptr REAL, :int_t {
-
-        .new pen:ptr Pen
-
         mov pen,this
         GdipSetPenCompoundArray([this].Pen.nativePen, _1, _2)
         exitm<pen.SetStatus(eax)>
@@ -587,23 +474,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator GetCompoundArrayCount {
 
-        .new pen:ptr Pen
         .new CompoundArrayCount:int_t
 
         mov pen,this
         mov CompoundArrayCount,0
-
         GdipGetPenCompoundCount([this].Pen.nativePen, &CompoundArrayCount)
         pen.SetStatus(eax)
-
         mov eax,CompoundArrayCount
         retm <eax>
         }
 
     .operator GetCompoundArray :ptr REAL, :int_t {
-
-        .new pen:ptr Pen
-
         mov pen,this
         .ifs _1 == NULL || _2 <= 0
             pen.SetStatus(InvalidParameter)

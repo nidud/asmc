@@ -30,7 +30,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             mov [rax].Brush.lastResult,NotImplemented
         .until 1
         retm<rax>
-    }
+        }
 
     .operator Release {
 
@@ -43,9 +43,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
             GdipFree(this)
         .endif
-
         exitm<>
-    }
+        }
 
     .operator SetNativeBrush :ptr Brush {
         mov [this].Brush.nativeBrush,_1
@@ -731,24 +730,12 @@ BRUSH_OPERATOR macro class
 
     BRUSH_OPERATOR(HatchBrush)
 
-    .operator HatchBrush :HatchStyle, :ptr Color, :ptr Color {
+    .operator HatchBrush :abs, :abs, :abs {
 
-        .new brush:ptr Brush
-        .new hatchstyle:HatchStyle
-        .new forecolor:ARGB
-        .new backcolor:ARGB
-
-        mov hatchstyle,_1
-        mov forecolor,[_2].Color.Argb
-        mov backcolor,[_3].Color.Argb
-
-        .if GdipAlloc(HatchBrush)
+        .if Brush()
 
             mov brush,rax
-
-            mov [rax].Brush.nativeBrush,NULL
-
-            GdipCreateHatchBrush(hatchstyle, forecolor, backcolor, &[rax].Brush.nativeBrush)
+            GdipCreateHatchBrush(_1, _2, _3, &[rax].Brush.nativeBrush)
             brush.SetStatus(eax)
             mov rax,this
         .endif

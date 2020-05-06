@@ -189,6 +189,12 @@ __GDIPLUS_COLOR_H equ <>
 	BlueMask    = 0x000000ff
 	}
 
+    ;; Assemble A, R, G, B values into a 32-bit integer
+
+    MakeARGB macro A, R, G, B
+	exitm<((A shl AlphaShift) or (R shl RedShift) or (G shl GreenShift) or B)>
+	endm
+
 .template Color
 
     Argb ARGB ?
@@ -217,7 +223,7 @@ __GDIPLUS_COLOR_H equ <>
 	}
 
     .operator = :BYTE, :BYTE, :BYTE {
-	mov	[this].Color.Argb,[this].Color.MakeARGB(this, 255, _1, _2, _3)
+	mov	[this].Color.Argb,MakeARGB(255, _1, _2, _3)
 	retm	<this>
 	}
     .operator = :ARGB {
@@ -265,18 +271,6 @@ __GDIPLUS_COLOR_H equ <>
 	retm	<this>
 	}
 
-    ;; Assemble A, R, G, B values into a 32-bit integer
-
-    .operator MakeARGB :BYTE, :BYTE, :BYTE, :BYTE {
-	shl	edx,AlphaShift
-	shl	r8d,RedShift
-	shl	r9d,GreenShift
-	movzx	eax,byte ptr _4
-	or	eax,edx
-	or	eax,r8d
-	or	eax,r9d
-	retm	<eax>
-	}
     .operator SetFromCOLORREF :COLORREF {
 	mov	eax,_1
 	and	eax,255 shl GreenShift

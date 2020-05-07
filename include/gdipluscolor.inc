@@ -195,6 +195,10 @@ __GDIPLUS_COLOR_H equ <>
 	exitm<((A shl AlphaShift) or (R shl RedShift) or (G shl GreenShift) or B)>
 	endm
 
+    ColorAlpha macro Color, Alpha
+	exitm<((Color and not AlphaMask) or (Alpha shl AlphaShift))>
+	endm
+
 .template Color
 
     Argb ARGB ?

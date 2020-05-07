@@ -6,6 +6,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .template GraphicsPath
 
+    GpPath typedef GraphicsPath
+
     nativePath ptr_t ?
     lastResult Status ?
     memState   Status ?
@@ -859,15 +861,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .template PathGradientBrush : public Brush
 
+    GpPathGradient typedef PathGradientBrush
+
     BRUSH_OPERATOR(PathGradientBrush)
 
     .operator PathGradientBrush {
         exitm<[this].Brush.Brush()>
         }
 
-    .operator CreatePathGradient :ptr PointF, :SINT, :WrapMode {
+    .operator Create :ptr PointF, :SINT, :WrapMode {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
         mov this,_1
         mov edx,_2
@@ -876,9 +879,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreatePathGradientI :ptr Point, :SINT, :WrapMode {
+    .operator CreateI :ptr Point, :SINT, :WrapMode {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
         mov this,_1
         mov edx,_2
@@ -887,12 +889,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreatePathGradientFromPath :ptr GraphicsPath {
+    .operator CreateFromPath :ptr GraphicsPath {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
-        mov rax,this
-        mov this,_1
-        GdipCreatePathGradientFromPath([this].GraphicsPath.nativePath, &[rax].Brush.nativeBrush)
+        xchg this,_1
+        GdipCreatePathGradientFromPath([this].GraphicsPath.nativePath, &[_1].Brush.nativeBrush)
         exitm<brush.SetStatus(eax)>
         }
 
@@ -907,9 +907,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         retm <eax>
         }
 
-    .operator SetCenterColor :ptr Color {
+    .operator SetCenterColor :ARGB {
         mov brush,this
-        GdipSetPathGradientCenterColor([this].Brush.nativeBrush, [_1].Color.Argb)
+        GdipSetPathGradientCenterColor([this].Brush.nativeBrush, _1)
         exitm<brush.SetStatus(eax)>
         }
 
@@ -932,156 +932,48 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov brush,this
         GdipGetPathGradientSurroundColorCount([this].Brush.nativeBrush, &count)
         brush.SetStatus(eax)
-
         mov eax,count
         retm <eax>
         }
 
-    .operator GetSurroundColors :ptr Color, :ptr SINT {
-
-        .repeat
-
-            mov brush,this
-            .if (_1 == NULL || _2 == NULL)
-
-                brush.SetStatus(InvalidParameter)
-                .break
-            .endif
-
-            .new count:SINT
-            .new count_ptr:ptr SINT
-            .new color:ptr Color
-
-            mov color,_1
-            mov count_ptr,_2
-
-            GdipGetPathGradientSurroundColorCount([this].Brush.nativeBrush, &count)
-            brush.SetStatus(eax)
-
-            .break .if (eax != Ok)
-
-            mov rdx,count_ptr
-            mov eax,[rdx]
-
-            .if ((eax < count) || (count <= 0))
-
-                brush.SetStatus(InsufficientBuffer)
-                .break
-            .endif
-
-            .new argbs:ptr ARGB
-
-            imul ecx,count,ARGB
-            mov argbs,GdipAlloc(rcx)
-            .if rax == NULL
-
-                brush.SetStatus(OutOfMemory)
-                .break
-            .endif
-
-            mov this,brush
-            GdipGetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, argbs, &count)
-            brush.SetStatus(eax)
-            .if eax == Ok
-                .for (r8 = argbs, r9 = color, ecx = 0 : ecx < count: ecx++)
-                    mov eax,[r8+rcx*ARGB]
-                    mov [r9+rcx*Color],eax
-                .endf
-                mov eax,count
-                mov rdx,count_ptr
-                mov [rdx],eax
-            .endif
-            GdipFree(argbs)
-            mov this,brush
-            mov eax,[this].Brush.lastResult
-        .until 1
-        retm <eax>
+    .operator GetSurroundColors :ptr ARGB, :ptr SINT {
+        mov brush,this
+        .if (_1 == NULL || _2 == NULL)
+            mov eax,InvalidParameter
+        .else
+            GdipGetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, _1, _2)
+        .endif
+        exitm<brush.SetStatus(eax)>
         }
 
-    .operator SetSurroundColors :ptr Color, :ptr SINT {
-
-        .repeat
-
-            mov brush,this
-            .if (_1 == NULL || _2 == NULL)
-
-                brush.SetStatus(InvalidParameter)
-                .break
-            .endif
-
-            .new count:SINT
-            .new count_ptr:ptr SINT
-            .new color:ptr Color
-
-            mov color,_1
-            mov count_ptr,_2
-
-            [this].PathGradientBrush.GetPointCount()
-
-            mov rdx,count_ptr
-            mov edx,[rdx]
-
-            .ifs ((edx < eax) || (eax <= 0))
-
-                brush.SetStatus(InvalidParameter)
-                .break
-            .endif
-
-            mov count,edx
-
-            .new argbs:ptr ARGB
-
-            imul ecx,edx,ARGB
-            mov argbs,GdipAlloc(rcx)
-            .if rax == NULL
-
-                brush.SetStatus(OutOfMemory)
-                .break
-            .endif
-
-            mov     rdx,rsi
-            xchg    rax,rdi
-            mov     rsi,color
-            mov     ecx,count
-            rep     movsd
-            mov     rdi,rax
-            mov     rsi,rdx
-            mov     this,brush
-
-            GdipSetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, argbs, &count)
-            brush.SetStatus(eax)
-            .if eax == Ok
-                mov eax,count
-                mov rdx,count_ptr
-                mov [rdx],eax
-            .endif
-            GdipFree(argbs)
-            mov this,brush
-            mov eax,[this].Brush.lastResult
-        .until 1
-        retm <eax>
+    .operator SetSurroundColors :ptr ARGB, :ptr SINT {
+        mov brush,this
+        .if (_1 == NULL || _2 == NULL)
+            mov eax,InvalidParameter
+        .else
+            GdipSetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, _1, _2)
+        .endif
+        exitm<brush.SetStatus(eax)>
         }
 
     .operator GetGraphicsPath :ptr GraphicsPath {
         mov brush,this
         .if _1 == NULL
-            brush.SetStatus(InvalidParameter)
+            mov eax,InvalidParameter
         .else
             GdipGetPathGradientPath([this].Brush.nativeBrush, [_1].GraphicsPath.nativePath)
-            brush.SetStatus(eax)
         .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
     .operator SetGraphicsPath :ptr GraphicsPath {
         mov brush,this
         .if _1 == NULL
-            brush.SetStatus(InvalidParameter)
+            mov eax,InvalidParameter
         .else
             GdipSetPathGradientPath([this].Brush.nativeBrush, [_1].GraphicsPath.nativePath)
-            brush.SetStatus(eax)
         .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
     .operator GetCenterPoint :ptr PointF {

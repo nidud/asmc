@@ -450,7 +450,7 @@ endif
         exitm<graphics.SetStatus(eax)>
         }
     .operator DrawLineI2 :ptr Pen, :ptr Point, :ptr Point {
-        exitm<[this].Graphics.DrawLine(_1, [_2].Point.X, [_2].Point.Y, [_3].Point.X, [_3].Point.Y)>
+        exitm<[this].Graphics.DrawLineI(_1, [_2].Point.X, [_2].Point.Y, [_3].Point.X, [_3].Point.Y)>
         }
     .operator DrawLinesI :ptr Pen, :ptr Point, :SINT {
         mov graphics,this

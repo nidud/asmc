@@ -1,4 +1,4 @@
-; PATHGRADIENTBRUSH.ASM--
+; LINEARGRADIENTBRUSH.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -11,49 +11,41 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr PathGradientBrush()
+  .new p:ptr LinearGradientBrush()
 
-    PathGradientBrush()
-    p.PathGradientBrush()
+    LinearGradientBrush()
+    p.LinearGradientBrush()
+
     p.Release()
-    p.Create(NULL, 0, 0)
-    p.CreateI(NULL, 0, 0)
-    p.CreateFromPath(NULL)
-    p.GetCenterColor(NULL)
-    p.SetCenterColor(NULL)
-    p.GetPointCount()
-    p.GetSurroundColorCount()
-    p.GetSurroundColors(NULL, NULL)
-    p.SetSurroundColors(NULL, NULL)
-    p.GetGraphicsPath(NULL)
-    p.SetGraphicsPath(NULL)
-    p.GetCenterPoint(NULL)
-    p.GetCenterPointI(NULL)
-    p.SetCenterPoint(NULL)
-    p.SetCenterPointI(NULL)
+    p.Create(NULL, NULL, 0, 0)
+    p.CreateI(NULL, NULL, 0, 0)
+    p.CreateFromRect(NULL, 0, 0, 0)
+    p.CreateFromRectI(NULL, 0, 0, 0)
+    p.CreateFromRectWithAngle(NULL, 0, 0, 0.0, 0)
+    p.CreateFromRectWithAngleI(NULL, 0, 0, 0.0, 0)
+    p.SetLinearColors(0, 0)
+    p.GetLinearColors(NULL)
     p.GetRectangle(NULL)
     p.GetRectangleI(NULL)
     p.SetGammaCorrection(0)
     p.GetGammaCorrection()
     p.GetBlendCount()
-    p.GetBlend(NULL, NULL, 0)
     p.SetBlend(NULL, NULL, 0)
+    p.GetBlend(NULL, NULL, 0)
     p.GetInterpolationColorCount()
     p.SetInterpolationColors(NULL, NULL, 0)
-    p.GetInterpolationColors(NULL, 0.0, 0)
+    p.GetInterpolationColors(NULL, NULL, 0)
     p.SetBlendBellShape(0.0, 0.0)
     p.SetBlendTriangularShape(0.0, 0.0)
-    p.GetTransform(NULL)
     p.SetTransform(NULL)
+    p.GetTransform(NULL)
     p.ResetTransform()
     p.MultiplyTransform(NULL, 0)
     p.TranslateTransform(0.0, 0.0, 0)
     p.ScaleTransform(0.0, 0.0, 0)
     p.RotateTransform(0.0, 0)
-    p.GetFocusScales(NULL, NULL)
-    p.SetFocusScales(0.0, 0.0)
-    p.GetWrapMode()
     p.SetWrapMode(0)
+    p.GetWrapMode()
     ret
 
 main endp

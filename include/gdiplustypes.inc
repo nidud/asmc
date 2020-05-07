@@ -208,8 +208,8 @@ endif
     Y   REAL ?
 
     .operator PointF :REAL, :REAL {
-        movss   [this].PointF.X,_1
-        movss   [this].PointF.Y,_2
+        mov     [this].PointF.X,_1
+        mov     [this].PointF.Y,_2
         retm    <this>
         }
     .operator SizeF :SizeF_t {

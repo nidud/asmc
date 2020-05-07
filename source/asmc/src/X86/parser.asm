@@ -3456,11 +3456,14 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
                     .if ( opndx[edi].mem_type != MT_EMPTY )
 
-                        .if opndx[edi-expr].expr.kind == EXPR_REG
-                            .if !( opndx[edi-expr].expr.flags & E_INDIRECT )
-                                mov eax,opndx[edi-expr].expr.base_reg
+                        .if opndx[edi-expr].kind == EXPR_REG
+                            .if !( opndx[edi-expr].flags & E_INDIRECT )
+                                mov eax,opndx[edi-expr].base_reg
                                 SizeFromRegister( [eax].asm_tok.tokval )
                             .endif
+                        .elseif opndx[edi-expr].kind == EXPR_ADDR
+                            ; added v2.31.27
+                            SizeFromMemtype(opndx[edi-expr].mem_type, opndx[edi-expr].Ofssize, opndx[edi-expr].type)
                         .endif
                         .if !eax
                             mov eax,4

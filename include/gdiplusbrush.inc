@@ -138,58 +138,34 @@ BRUSH_OPERATOR macro class
 
     BRUSH_OPERATOR(SolidBrush)
 
-    .operator SolidBrush :ptr Color {
+    .operator SolidBrush :ARGB {
 
         .new argb:ARGB
-        .new brush:ptr Brush
 
-        mov argb,[_1].Color.Argb
-
+        mov argb,_1
         .if [this].Brush.Brush()
 
             mov brush,rax
-            mov [rax].Brush.nativeBrush,NULL
-
-            GdipCreateSolidFill(argb, &[rax].Brush.nativeBrush)
+            GdipCreateSolidFill(argb, rax)
             brush.SetStatus(eax)
+            mov rax,this
         .endif
-        retm <eax>
+        retm <rax>
         }
 
-    .operator GetColor :ptr Color {
-
+    .operator GetColor :ptr ARGB {
         mov brush,this
-
         .if _1 == NULL
-
-            brush.SetStatus(InvalidParameter)
-
+            mov eax,InvalidParameter
         .else
-
-            .new argb:ARGB
-            .new color:ptr Color
-
-            mov color,_1
-
-            GdipGetSolidFillColor([this].Brush.nativeBrush, &argb)
-            brush.SetStatus(eax)
-
-            .if GdipAlloc(Color)
-
-                mov edx,argb
-                mov [rax].Color.Argb,edx
-                mov rdx,color
-                mov [rdx],rax
-            .endif
-
-            brush.GetStatus()
+            GdipGetSolidFillColor([this].Brush.nativeBrush, _1)
         .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
-    .operator SetColor :ptr Color {
+    .operator SetColor :ARGB {
         mov brush,this
-        GdipSetSolidFillColor([this].Brush.nativeBrush, [_1].Color.GetValue())
+        GdipSetSolidFillColor([this].Brush.nativeBrush, _1)
         exitm<brush.SetStatus(eax)>
         }
     .ends
@@ -206,7 +182,7 @@ BRUSH_OPERATOR macro class
         exitm<[this].Brush.Brush()>
         }
 
-    .operator CreateTexture :ptr Image, :WrapMode {
+    .operator Create :ptr Image, :WrapMode {
         mov brush,this
         mov [this].Brush.nativeBrush,NULL
         mov rax,_1
@@ -221,7 +197,7 @@ BRUSH_OPERATOR macro class
     ;; It is NOT used to crop the metafile image, so only the width
     ;; and height values matter for metafiles.
 
-    .operator CreateTextureIA :ptr Image, :ptr RectF, :ptr ImageAttributes {
+    .operator CreateIA :ptr Image, :ptr RectF, :ptr ImageAttributes {
         mov brush,this
         mov [this].Brush.nativeBrush,NULL
         mov r10,this
@@ -235,7 +211,7 @@ BRUSH_OPERATOR macro class
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateTextureIAI :ptr Image, :ptr Rect, :ptr ImageAttributes {
+    .operator CreateIAI :ptr Image, :ptr Rect, :ptr ImageAttributes {
         mov brush,this
         mov [this].Brush.nativeBrush,NULL
         mov r10,this
@@ -249,7 +225,7 @@ BRUSH_OPERATOR macro class
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateTexture2 :ptr Image, :WrapMode, :REAL, :REAL, :REAL, :REAL {
+    .operator Create2 :ptr Image, :WrapMode, :REAL, :REAL, :REAL, :REAL {
         mov brush,this
         mov [this].Brush.nativeBrush,NULL
         mov r10,this
@@ -259,7 +235,7 @@ BRUSH_OPERATOR macro class
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateTexture2I :ptr Image, :WrapMode, :int_t, :int_t, :int_t, :int_t {
+    .operator Create2I :ptr Image, :WrapMode, :int_t, :int_t, :int_t, :int_t {
         mov brush,this
         mov [this].Brush.nativeBrush,NULL
         mov r10,this
@@ -270,11 +246,11 @@ BRUSH_OPERATOR macro class
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateTexture2R :ptr Image, :WrapMode, :ptr RectF {
-        exitm<[this].TextureBrush.CreateTexture2(this, _1, [_2].RectF.X, [_2].RectF.Y, [_2].RectF.Width, [_2].RectF.Height)>
+    .operator Create2R :ptr Image, :WrapMode, :ptr RectF {
+        exitm<[this].TextureBrush.Create2(_1, _2, [_3].RectF.X, [_3].RectF.Y, [_3].RectF.Width, [_3].RectF.Height)>
         }
-    .operator CreateTexture2IR :ptr Image, :WrapMode, :ptr Rect {
-        exitm<[this].TextureBrush.CreateTexture2I(this, _1, [_2].Rect.X, [_2].Rect.Y, [_2].Rect.Width, [_2].Rect.Height)>
+    .operator Create2IR :ptr Image, :WrapMode, :ptr Rect {
+        exitm<[this].TextureBrush.Create2I(_1, _2, [_3].Rect.X, [_3].Rect.Y, [_3].Rect.Width, [_3].Rect.Height)>
         }
 
     .operator SetTransform :ptr Matrix {
@@ -332,25 +308,25 @@ BRUSH_OPERATOR macro class
         mov brush,this
         GdipGetTextureWrapMode([this].Brush.nativeBrush, &wrapMode)
         brush.SetStatus(eax)
-
         mov eax,wrapMode
         retm<eax>
         }
 
     .operator GetImage {
 
-        .new image:ptr GpImage
+        .new image:ptr Image
 
         mov brush,this
-        GdipGetTextureImage([this].Brush.nativeBrush, &image)
-        brush.SetStatus(eax)
-        .if [this].Image.new(image, eax) == NULL
-            GdipDisposeImage(image)
-            xor eax,eax
+        .if Image()
+
+            mov this,brush
+            mov image,rax
+            GdipGetTextureImage([this].Brush.nativeBrush, rax)
+            image.SetStatus(eax)
+            mov rax,this
         .endif
         retm <rax>
         }
-
     .ends
 
 ;;--------------------------------------------------------------------------
@@ -361,130 +337,99 @@ BRUSH_OPERATOR macro class
 
     BRUSH_OPERATOR(LinearGradientBrush)
 
-    .operator TextureBrush {
+    .operator LinearGradientBrush {
         exitm<[this].Brush.Brush()>
         }
 
-    .operator CreateLineBrush :ptr PointF, :ptr PointF, :ptr Color, :ptr Color {
+    .operator Create :ptr PointF, :ptr PointF, :ARGB, :ARGB {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
-        mov _3,_4
-        GdipCreateLineBrush(this, _1, [_2].Color.Argb, [_3].Color.Argb, WrapModeTile, &[rax].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
-        }
-
-    .operator CreateLineBrushI :ptr Point, :ptr Point, :ptr Color, :ptr Color {
-        mov brush,this
-        mov [this].Brush.nativeBrush,NULL
-        mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
-        mov _3,_4
-        GdipCreateLineBrushI(this, _1, [_2].Color.Argb, [_3].Color.Argb, WrapModeTile, &[rax].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
-        }
-
-    .operator CreateLineBrushFromRect :ptr RectF, :ptr Color, :ptr Color, :LinearGradientMode {
-        mov brush,this
-        mov [this].Brush.nativeBrush,NULL
-        mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
+        mov rcx,rdx
+        mov rdx,r8
+        mov r8d,r9d
         mov r9d,_4
-        GdipCreateLineBrushFromRect(this, [_1].Color.Argb, [_2].Color.Argb, _3, WrapModeTile, &[rax].Brush.nativeBrush)
+        GdipCreateLineBrush(rcx, rdx, r8d, r9d, WrapModeTile, &[rax].Brush.nativeBrush)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateLineBrushFromRectI :ptr Rect, :ptr Color, :ptr Color, :LinearGradientMode {
+    .operator CreateI :ptr Point, :ptr Point, :ARGB, :ARGB {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
+        mov rcx,rdx
+        mov rdx,r8
+        mov r8d,r9d
         mov r9d,_4
-        GdipCreateLineBrushFromRectI(this, [_1].Color.Argb, [_2].Color.Argb, _3, WrapModeTile, &[rax].Brush.nativeBrush)
+        GdipCreateLineBrushI(rcx, rdx, r8d, r9d, WrapModeTile, &[rax].Brush.nativeBrush)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateLineBrushFromRectWithAngle :ptr RectF, :ptr Color, :ptr Color, :REAL, :BOOL {
+    .operator CreateFromRect :ptr RectF, :ARGB, :ARGB, :LinearGradientMode {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
-        GdipCreateLineBrushFromRectWithAngle( \
-            this, [_1].Color.Argb, [_2].Color.Argb, _4, _5, WrapModeTile, &[rax].Brush.nativeBrush)
+        mov rcx,rdx
+        mov edx,r8d
+        mov r8d,r9d
+        mov r9d,_4
+        GdipCreateLineBrushFromRect(rcx, edx, r8d, r9d, WrapModeTile, &[rax].Brush.nativeBrush)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator CreateLineBrushFromRectWithAngleI :ptr Rect, :ptr Color, :ptr Color, :REAL, :BOOL {
+    .operator CreateFromRectI :ptr Rect, :ARGB, :ARGB, :LinearGradientMode {
         mov brush,this
-        mov [this].Brush.nativeBrush,NULL
         mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov _2,_3
-        GdipCreateLineBrushFromRectWithAngleI( \
-            this, [_1].Color.Argb, [_2].Color.Argb, _4, _5, WrapModeTile, &[rax].Brush.nativeBrush)
+        mov rcx,rdx
+        mov edx,r8d
+        mov r8d,r9d
+        mov r9d,_4
+        GdipCreateLineBrushFromRectI(rcx, edx, r8d, r9d, WrapModeTile, &[rax].Brush.nativeBrush)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator SetLinearColors :ptr Color, :ptr Color {
+    .operator CreateFromRectWithAngle :ptr RectF, :ARGB, :ARGB, :REAL, :BOOL {
         mov brush,this
-        GdipSetLineColors( [this].Brush.nativeBrush, [_1].Color.Argb, [_2].Color.Argb )
+        mov rax,this
+        mov rcx,rdx
+        mov edx,r8d
+        mov r8d,r9d
+        mov r9d,_5
+        GdipCreateLineBrushFromRectWithAngle(rcx, edx, r8d, _4, r9d, WrapModeTile, rax)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator GetLinearColors :ptr Color {
-
-        .new argb[2]:ARGB
-        .new color:ptr Color
-
+    .operator CreateFromRectWithAngleI :ptr Rect, :ARGB, :ARGB, :REAL, :BOOL {
         mov brush,this
+        mov rax,this
+        mov rcx,rdx
+        mov edx,r8d
+        mov r8d,r9d
+        mov r9d,_5
+        GdipCreateLineBrushFromRectWithAngleI(rcx, edx, r8d, _4, r9d, WrapModeTile, rax)
+        exitm<brush.SetStatus(eax)>
+        }
 
+    .operator SetLinearColors :ARGB, :ARGB {
+        mov brush,this
+        GdipSetLineColors([this].Brush.nativeBrush, _1, _2)
+        exitm<brush.SetStatus(eax)>
+        }
+
+    .operator GetLinearColors :ptr ARGB {
+        mov brush,this
         .if _1 == NULL
-
-            brush.SetStatus(InvalidParameter)
-
+            mov eax,InvalidParameter
         .else
-
-            mov color,_1
-            GdipGetLineColors([this].Brush.nativeBrush, &argb)
-            brush.SetStatus(eax)
-
+            GdipGetLineColors([this].Brush.nativeBrush, _1)
         .endif
-
-        .if eax == Ok
-
-            ;; use bitwise copy operator for Color copy
-
-            Color(0, argb)
-            mov rcx,color
-            mov [rcx],rax
-            Color(0, argb[4])
-            mov rcx,color
-            mov [rcx+8],rax
-            xor eax,eax
-
-        .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
-    .operator GetRectangleF :ptr RectF {
+    .operator GetRectangle :ptr RectF {
         mov brush,this
         GdipGetLineRect([this].Brush.nativeBrush, _1)
         exitm<brush.SetStatus(eax)>
         }
 
-    .operator GetRectangle :ptr Rect {
+    .operator GetRectangleI :ptr Rect {
         mov brush,this
         GdipGetLineRectI([this].Brush.nativeBrush, _1)
         exitm<brush.SetStatus(eax)>
@@ -544,104 +489,24 @@ BRUSH_OPERATOR macro class
         retm <eax>
         }
 
-    .operator SetInterpolationColors :ptr Color, :ptr REAL, :int_t {
-
+    .operator SetInterpolationColors :ptr ARGB, :ptr REAL, :int_t {
         mov brush,this
-
         .ifs _3 <= 0 || !_1
-
-            brush.SetStatus(InvalidParameter)
-
+            mov eax,InvalidParameter
         .else
-
-            .new argbs:ptr
-            .new count:int_t
-            .new positions:ptr
-            .new color:ptr Color
-
-            mov color,_1
-            mov positions,_2
-            mov count,_3
-
-            imul ecx,_3,ARGB
-
-            .if GdipAlloc(rcx)
-
-                mov argbs,rax
-
-                .for r8 = color, ecx = 0: ecx < count: ecx++, rax += ARGB, r8 += Color
-                    mov  edx,[r8].Color.Argb
-                    mov  [rax],edx
-                .endf
-
-                mov this,brush
-                GdipSetLinePresetBlend([this].Brush.nativeBrush, argbs, positions, count)
-                brush.SetStatus(eax)
-                GdipFree(argbs)
-
-                mov this,brush
-                mov eax,[this].Brush.lastResult
-
-            .else
-
-                brush.SetStatus(OutOfMemory)
-            .endif
+            GdipSetLinePresetBlend([this].Brush.nativeBrush, _1, _2, _3)
         .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
-    .operator GetInterpolationColors :ptr Color, :ptr REAL, :int_t {
-
+    .operator GetInterpolationColors :ptr ARGB, :ptr REAL, :int_t {
         mov brush,this
-
         .ifs _3 <= 0 || !_1
-
-            brush.SetStatus(InvalidParameter)
-
+            mov eax,InvalidParameter
         .else
-
-            .new argbs:ptr
-            .new count:int_t
-            .new positions:ptr
-            .new color:ptr Color
-
-            mov color,_1
-            mov positions,_2
-            mov count,_3
-
-            imul ecx,_3,ARGB
-
-            .if GdipAlloc(rcx)
-
-                mov argbs,rax
-
-                mov this,brush
-                GdipGetLinePresetBlend([this].Brush.nativeBrush, argbs, positions, count)
-                brush.SetStatus(eax)
-
-                .if eax == Ok
-                    .while count
-                        dec count
-                        imul ecx,count,ARGB
-                        add rcx,argbs
-                        mov edx,[rcx]
-                        Color_Color(NULL, edx)
-                        imul ecx,count,Color
-                        add rcx,color
-                        mov [rcx],rax
-                    .endw
-                .endif
-
-                GdipFree(argbs)
-                mov this,brush
-                mov eax,[this].Brush.lastResult
-
-            .else
-
-                brush.SetStatus(OutOfMemory)
-            .endif
+            GdipGetLinePresetBlend([this].Brush.nativeBrush, _1, _2, _3)
         .endif
-        retm <eax>
+        exitm<brush.SetStatus(eax)>
         }
 
     .operator SetBlendBellShape :REAL, :REAL {

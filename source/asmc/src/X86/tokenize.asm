@@ -687,6 +687,11 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                         ;
                         ; type(...)
                         ;
+                        .endc .if [edi-16].asm_tok.token == T_ID
+                        .endc .if ( CurrSeg == NULL )
+                        mov edx,CurrSeg
+                        mov edx,[edx].esym.seginfo
+                        .endc .if [edx].seg_info.segtype != SEGTYPE_CODE
                     .else
                         .endc .if eax < 5
                         .endc .if [edi-16].asm_tok.token != T_DOT

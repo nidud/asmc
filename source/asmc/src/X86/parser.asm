@@ -906,6 +906,7 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
         .case T_MOVSD
         .case T_MOVQ
         .case T_COMISD
+        .case T_UCOMISD
             mov eax,8
             mov size,8
             .endc

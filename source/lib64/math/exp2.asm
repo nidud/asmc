@@ -6,13 +6,14 @@
 
 include math.inc
 include immintrin.inc
-include xmmmacros.inc
 
 extern exp2_table:double
 
     .data
     X0 oword 0x4038B31B87EB89044034FFDE7CC02CF4
     X1 oword 0xBFE13B4D4879E55E401EF1584AF17ECD
+    D0 real8 7.73568837260218089745241122384476
+    D1 real8 20.9994886368921956041911010330331
 
     .code
 
@@ -43,22 +44,22 @@ exp2 proc x:double
                         .if _mm_comilt_sd(xmm0, _mm_xor_pd(xmm1, xmm1))
 
 
-                            _mm_move_sd(xmm1, FLT8(0xfff0000000000000))
+                            _mm_move_sd(xmm1, 0fff0000000000000r)
                             _mm_cmpneq_sd(xmm1, xmm0)
-                            _mm_move_sd(xmm0, FLT8(0x0010000000000001))
+                            _mm_move_sd(xmm0, 00010000000000001r)
                             _mm_and_pd(xmm1, xmm0)
                             _mm_mul_sd(xmm0, xmm1)
                             ret
                         .endif
                     .endif
-                    _mm_mul_sd(xmm0, FLT8(0x7fefffffffffffff))
+                    _mm_mul_sd(xmm0, 07fefffffffffffffr)
                     ret
                 .endif
 
                 .if _mm_comilt_sd(xmm0, _mm_xor_pd(xmm1, xmm1))
 
                     movapd  xmm1,xmm0
-                    mulsd   xmm0,FLT8(0x4060000000000000)
+                    mulsd   xmm0,04060000000000000r
                     cvttsd2si rax,xmm0
                     add     rax,rdx
                     mov     rdx,rax
@@ -76,14 +77,14 @@ exp2 proc x:double
                         ret
                     .endif
 
-                    movsd   xmm5,FLT8(0x0010000000000001)
+                    movsd   xmm5,00010000000000001r
                     mulsd   xmm5,xmm5
 
                     subsd   xmm1,xmm0
                     and     rdx,0x7f
                     sal     rdx,4
 
-                    movsd   xmm0,FLT8(0x3ff0000000000000)
+                    movsd   xmm0,03ff0000000000000r
 
                     lea     rcx,exp2_table
                     subsd   xmm1,[rdx+rcx]
@@ -91,10 +92,10 @@ exp2 proc x:double
 
                     movlhps xmm1,xmm1
                     movapd  xmm3,xmm1
-                    addpd   xmm1,FLT8(7.73568837260218089745241122384476)
+                    addpd   xmm1,D0
                     mulpd   xmm1,xmm3
-                    mulsd   xmm3,FLT8(0.133636821875765095445302638781823e-2)
-                    addpd   xmm1,FLT8(20.9994886368921956041911010330331)
+                    mulsd   xmm3,0.133636821875765095445302638781823e-2
+                    addpd   xmm1,D1
                     movhlps xmm4,xmm1
                     mulsd   xmm3,xmm4
 
@@ -127,23 +128,23 @@ exp2 proc x:double
             mov rcx,0xfd10000000000000
             .if rax <= rcx
 
-                _mm_add_sd(xmm0, FLT8(0x3ff0000000000000))
+                _mm_add_sd(xmm0, 03ff0000000000000r)
                 ret
             .endif
 
             _mm_move_pd(xmm1, xmm0)
-            _mm_mul_sd(xmm1, FLT8(0.133335622192926517572920729812647e-2))
-            _mm_add_sd(xmm1, FLT8(0.961813204561913206522420450734562e-2))
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), FLT8(0.555041086648186946112103135980407e-1))
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), FLT8(0.240226506959089504788316195798243))
-            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), FLT8(0.693147180559945309420618787399210))
-            _mm_add_sd(_mm_mul_sd(xmm0, xmm1), FLT8(0x3ff0000000000000))
+            _mm_mul_sd(xmm1, 0.133335622192926517572920729812647e-2)
+            _mm_add_sd(xmm1, 0.961813204561913206522420450734562e-2)
+            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0.555041086648186946112103135980407e-1)
+            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0.240226506959089504788316195798243)
+            _mm_add_sd(_mm_mul_sd(xmm1, xmm0), 0.693147180559945309420618787399210)
+            _mm_add_sd(_mm_mul_sd(xmm0, xmm1), 03ff0000000000000r)
             ret
         .endif
     .until 1
 
     _mm_move_pd(xmm1, xmm0)
-    _mm_mul_sd(xmm0, FLT8(0x4060000000000000))
+    _mm_mul_sd(xmm0, 04060000000000000r)
     _mm_cvttsd_si64()
     add rax,rdx
     mov rdx,rax
@@ -167,7 +168,7 @@ exp2 proc x:double
     _mm_move_pd(xmm3, xmm1)
     _mm_add_pd(xmm1, X1)
     _mm_mul_pd(xmm1, xmm3)
-    _mm_mul_sd(xmm3, FLT8(0.133636821875765095445302638781823e-2))
+    _mm_mul_sd(xmm3, 0.133636821875765095445302638781823e-2)
     _mm_add_pd(xmm1, X0)
     _mm_movehl_ps(xmm4, xmm1)
     _mm_mul_sd(xmm1, xmm2)

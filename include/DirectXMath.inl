@@ -1,8 +1,6 @@
 ifndef __DIRECTXMATH_INL
 __DIRECTXMATH_INL equ <>
 
-include xmmmacros.inc
-
 inl_XMConvertVectorIntToFloat macro VInt, DivExponent
     _mm_store_ps(xmm0, VInt)
     ;;
@@ -3074,30 +3072,30 @@ inl_XMScalarSinCos macro Value
     _mm_setzero_ps(xmm1)
     comiss xmm0,xmm1
     _mm_store_ss(xmm1, xmm0)
-    _mm_mul_ss(xmm1, FLT4(XM_1DIV2PI))
+    _mm_mul_ss(xmm1, XM_1DIV2PI)
     .ifnb
-	_mm_add_ss(xmm1, FLT4(0.5))
+	_mm_add_ss(xmm1, 0.5)
     .else
-	_mm_sub_ss(xmm1, FLT4(0.5))
+	_mm_sub_ss(xmm1, 0.5)
     .endif
     _mm_cvt_si2ss(xmm1, _mm_cvtt_ss2si(xmm1))
-    _mm_mul_ss(xmm1, FLT4(XM_2PI))
+    _mm_mul_ss(xmm1, XM_2PI)
     _mm_sub_ss(xmm0, xmm1)
-    _mm_move_ss(xmm1, FLT4(-1.0))
+    _mm_move_ss(xmm1, -1.0)
     _mm_move_ss(xmm2, xmm0)
     ;;
     ;; Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
     ;;
-    comiss xmm0,FLT4(XM_PIDIV2)
+    comiss xmm0,XM_PIDIV2
     .ifa
-	_mm_move_ss(xmm0, FLT4(XM_PI))
+	_mm_move_ss(xmm0, XM_PI)
 	_mm_sub_ss(xmm0, xmm2)
     .else
-	comiss xmm0,FLT4(-XM_PIDIV2)
+	comiss xmm0,-XM_PIDIV2
 	.ifa
-	    _mm_move_ss(xmm1, FLT4(1.0))
+	    _mm_move_ss(xmm1, 1.0)
 	.else
-	    _mm_move_ss(xmm0, FLT4(-XM_PI))
+	    _mm_move_ss(xmm0, -XM_PI)
 	    _mm_sub_ss(xmm0, xmm2)
 	.endif
     .endif
@@ -3106,34 +3104,34 @@ inl_XMScalarSinCos macro Value
     ;;
     ;; 11-degree minimax approximation
     ;;
-    _mm_move_ss(xmm2, FLT4(-2.3889859e-08))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(2.7525562e-06))
-    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.00019840874))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.0083333310))
-    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.16666667))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(1.0))
+    _mm_move_ss(xmm2, -2.3889859e-08)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 2.7525562e-06)
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), 0.00019840874)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 0.0083333310)
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), 0.16666667)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 1.0)
     _mm_mul_ss(xmm0, xmm2)
     ;;
     ;; 10-degree minimax approximation
     ;;
-    _mm_move_ss(xmm2, FLT4(-2.6051615e-07))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(2.4760495e-05))
-    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.0013888378))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.041666638))
-    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.5))
-    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(1.0))
+    _mm_move_ss(xmm2, -2.6051615e-07)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 2.4760495e-05)
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), 0.0013888378)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 0.041666638)
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), 0.5)
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 1.0)
     _mm_mul_ss(xmm1, xmm2)
     retm<>
     endm
 
 inl_XMMatrixPerspectiveFovLH macro FovAngleY, AspectRatio, NearZ, FarZ, M
 
-    _MM_STORE_SS(xmm0, FovAngleY)
-    _MM_STORE_SS(xmm5, AspectRatio)
-    _MM_STORE_SS(xmm4, NearZ)
-    _MM_STORE_SS(xmm6, FarZ)
+    _mm_store_ss(xmm0, FovAngleY)
+    _mm_store_ss(xmm5, AspectRatio)
+    _mm_store_ss(xmm4, NearZ)
+    _mm_store_ss(xmm6, FarZ)
 
-    inl_XMScalarSinCos(_mm_mul_ss(xmm0, FLT4(0.5)))
+    inl_XMScalarSinCos(_mm_mul_ss(xmm0, 0.5))
 
     _mm_move_ss(xmm3, xmm0)
     _mm_div_ss(xmm3, xmm1)

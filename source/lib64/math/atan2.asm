@@ -6,13 +6,13 @@
 
 include math.inc
 include immintrin.inc
-include xmmmacros.inc
 
     .data
     C00 oword 0x400E4FA47972904240038F4C070B63C1
     C01 oword 0x3F953DB49B9FCF6B4002609372076E2C
     C10 oword 0x401AE0FB08F2DC004015E43168D7C2B6
     C11 oword 0xC013E370146726B3C00792D5BF17C0BC
+    D00 real8 0.0029352921857004596570518
 
     .code
 
@@ -28,7 +28,7 @@ atan2 proc y:double, x:double
       .case _mm_ucomige_sd(xmm0, xmm1)
 
         .ifz
-            .if _mm_ucomige_sd(xmm0, FLT8(-0.0))
+            .if _mm_ucomige_sd(xmm0, -0.0)
 
                 .ifz
                     _mm_srai_epi16(xmm1, 12)
@@ -58,7 +58,7 @@ atan2 proc y:double, x:double
             _mm_div_sd(xmm0, xmm1)
             _mm_andnot_pd(xmm4, xmm0)
 
-            .if _mm_comile_sd(xmm4, FLT8(2.384185791015625e-07))
+            .if _mm_comile_sd(xmm4, 2.384185791015625e-07)
 
                 _mm_move_sd(xmm0, 3.1415924)
                 _mm_xor_pd(xmm0, xmm5)
@@ -112,7 +112,7 @@ atan2 proc y:double, x:double
     _mm_load_pd(C01)
     _mm_add_pd(xmm0, xmm1)
     _mm_mul_pd(xmm0, xmm1)
-    _mm_loadh_pd(xmm3, FLT8(0.0029352921857004596570518))
+    _mm_loadh_pd(xmm3, D00)
     _mm_add_pd(xmm0, C00)
     _mm_mul_pd(xmm0, xmm2)
     _mm_mul_pd(xmm0, xmm3)

@@ -1,33 +1,26 @@
 ifndef __glut_h__
 __glut_h__ equ <>
-ifndef __LIBC_INC
- include libc.inc
+ifndef _CRT_TERMINATE_DEFINED
+ include stdlib.inc
 endif
-
-ifdef _WIN32
- if NOT defined(GLUT_BUILDING_LIB) AND NOT defined(GLUT_NO_LIB_PRAGMA)
-  .pragma comment(lib, winmm)
-  ifdef GLUT_USE_SGI_OPENGL
-   .pragma comment(lib, opengl)
-   .pragma comment(lib, glu)
-   .pragma comment(lib, glut)
-  else
-   .pragma comment(lib, opengl32)
-   .pragma comment(lib, glu32)
-   .pragma comment(lib, glut32)
-  endif
- endif
-endif ;; _WIN32
 
 include gl/gl.inc
 include gl/glu.inc
 
-ifndef _CRT_TERMINATE_DEFINED
-_CRT_TERMINATE_DEFINED equ <>
-exit        proto __cdecl :int_t
-_exit       proto __cdecl :int_t
-abort       proto __cdecl
-endif
+ifdef _WIN32
+ if NOT defined(GLUT_BUILDING_LIB) AND NOT defined(GLUT_NO_LIB_PRAGMA)
+  ;.pragma comment(lib, winmm)
+  ifdef GLUT_USE_SGI_OPENGL
+   ;.pragma comment(lib, opengl)
+   ;.pragma comment(lib, glu)
+   .pragma comment(lib, glut)
+  else
+   ;.pragma comment(lib, opengl32)
+   ;.pragma comment(lib, glu32)
+   .pragma comment(lib, glut32)
+  endif
+ endif
+endif ;; _WIN32
 
 ifndef GLUT_API_VERSION
 GLUT_API_VERSION equ 3
@@ -265,7 +258,11 @@ if defined(_WIN32) AND NOT defined(GLUT_DISABLE_ATEXIT_HACK)
 __glutInitWithExit proto WINAPI :ptr int_t, :array_t, :ptr
 ifndef GLUT_BUILDING_LIB
 glutInit macro argcp, argv
+ifdef _MSVCRT
+    exitm<__glutInitWithExit(argcp, argv, __imp_exit)>
+else
     exitm<__glutInitWithExit(argcp, argv, &exit)>
+endif
     endm
 endif
 else
@@ -288,7 +285,12 @@ if defined(_WIN32) AND NOT defined(GLUT_DISABLE_ATEXIT_HACK)
 __glutCreateWindowWithExit proto WINAPI :string_t, :ptr
 ifndef GLUT_BUILDING_LIB
 glutCreateWindow macro title
+ifdef _MSVCRT
+;    externdef __imp_exit:proc
+    exitm<__glutCreateWindowWithExit(title, __imp_exit)>
+else
     exitm<__glutCreateWindowWithExit(title, &exit)>
+endif
     endm
 endif
 else
@@ -373,7 +375,11 @@ if defined(_WIN32) AND NOT defined(GLUT_DISABLE_ATEXIT_HACK)
 __glutCreateMenuWithExit proto WINAPI :ptr, :ptr
 ifndef GLUT_BUILDING_LIB
 glutCreateMenu macro func
+ifdef _MSVCRT
+    exitm<__glutCreateMenuWithExit(func, __imp_exit)>
+else
     exitm<__glutCreateMenuWithExit(func, &exit)>
+endif
     endm
 endif
 else

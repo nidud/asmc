@@ -230,26 +230,32 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
 
 mem2mem endp
 
-    assume ebx:ptr asm_tok
+CreateFloat proto :int_t, :expr_t, :string_t
 
-imm2xmm proc uses esi edi ebx tokenarray:tok_t
+    assume edi:ptr asm_tok
 
-    mov ebx,tokenarray
+imm2xmm proc uses esi edi tokenarray:tok_t, opnd:expr_t
 
-    mov esi,[ebx].tokval
-    mov edi,[ebx+asm_tok].tokval
-    mov edx,[ebx+asm_tok*3].tokpos
-    .if esi == T_MOVSD
-        mov esi,T_MOVQ
-    .elseif esi == T_MOVSS
-        mov esi,T_MOVD
-    .endif
-    mov ebx,T_EAX
-    .if esi == T_MOVQ
-        mov ebx,T_RAX
-    .endif
-    AddLineQueueX( " mov %r, %s", ebx, edx )
-    AddLineQueueX( " %r %r, %r", esi, edi, ebx )
+  local flabel[16]:char_t
+
+    mov edi,tokenarray
+    mov esi,[edi].tokval
+    mov edi,[edi+asm_tok].tokval
+    mov edx,4
+
+    .switch esi
+    .case T_MOVSD
+    .case T_MOVQ
+    .case T_ADDSD
+    .case T_SUBSD
+    .case T_MULSD
+    .case T_DIVSD
+    .case T_COMISD
+    .case T_UCOMISD
+        mov edx,8
+    .endsw
+    CreateFloat(edx, opnd, &flabel)
+    AddLineQueueX( " %r %r,%s", esi, edi, &flabel )
     RetLineQueue()
     ret
 

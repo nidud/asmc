@@ -12,10 +12,9 @@ include math.inc
 
 acos proc x:double
 
-    movq   xmm1,xmm0
-    movq   xmm2,xmm0
-    mov    rax,1.0
-    movq   xmm0,rax
+    movsd  xmm1,xmm0
+    movsd  xmm2,xmm0
+    movsd  xmm0,1.0
     mulsd  xmm2,xmm2
     subsd  xmm0,xmm2
     sqrtpd xmm0,xmm0

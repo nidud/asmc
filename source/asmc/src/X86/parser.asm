@@ -888,6 +888,7 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
     mov edi,opndx
     mov ebx,CurrOpnd
     shl ebx,4
+    mov size,0
 
     ;; jmp/call/jxx/loop/jcxz/jecxz?
     .if IS_ANY_BRANCH( [esi].token )
@@ -897,13 +898,26 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
     .if [edi].mem_type == MT_REAL16
 
         mov eax,4
-        .if [esi].token == T_MOV && CurrOpnd == OPND2
-            .if [esi].Ofssize == USE64 && ( [esi].opnd[OPND1].type & OP_R64 )
-                mov eax,8
-            .elseif [esi].opnd[OPND1].type & OP_R16
-                mov eax,2
+        .switch [esi].token
+        .case T_ADDSD
+        .case T_SUBSD
+        .case T_MULSD
+        .case T_DIVSD
+        .case T_MOVSD
+        .case T_MOVQ
+        .case T_COMISD
+            mov eax,8
+            mov size,8
+            .endc
+        .case T_MOV
+            .if CurrOpnd == OPND2
+                .if [esi].Ofssize == USE64 && ( [esi].opnd[OPND1].type & OP_R64 )
+                    mov eax,8
+                .elseif [esi].opnd[OPND1].type & OP_R16
+                    mov eax,2
+                .endif
             .endif
-        .endif
+        .endsw
         quad_resize(edi, eax)
     .endif
 
@@ -938,7 +952,7 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
         setb ch
     .endif
 
-    .if ( [esi].Ofssize == USE64 && [esi].token == T_MOV && CurrOpnd == OPND2 && \
+    .if ( size || [esi].Ofssize == USE64 && [esi].token == T_MOV && CurrOpnd == OPND2 && \
         ( [esi].opnd[OPND1].type & OP_R64 ) && ( ecx || \
         ( [edi].flags & E_EXPLICIT && ( [edi].mem_type == MT_QWORD || [edi].mem_type == MT_SQWORD ) ) ) )
 
@@ -2997,7 +3011,7 @@ LabelMacro endp
 ProcType        proto :int_t, :tok_t, :string_t
 PublicDirective proto :int_t, :tok_t
 mem2mem         proto :uint_t, :uint_t, :tok_t, :ptr expr
-imm2xmm         proto :tok_t
+imm2xmm         proto :tok_t, :expr_t
 NewDirective    proto :int_t, :tok_t
 
 externdef       CurrEnum:asym_t
@@ -3456,12 +3470,10 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
                     .if ( opndx[edi].mem_type != MT_EMPTY )
 
-                        .if opndx[edi-expr].kind == EXPR_REG
-                            .if !( opndx[edi-expr].flags & E_INDIRECT )
-                                mov eax,opndx[edi-expr].base_reg
-                                SizeFromRegister( [eax].asm_tok.tokval )
-                            .endif
-                        .elseif opndx[edi-expr].kind == EXPR_ADDR
+                        .if opndx[edi-expr].kind == EXPR_REG && !( opndx[edi-expr].flags & E_INDIRECT )
+                            mov eax,opndx[edi-expr].base_reg
+                            SizeFromRegister( [eax].asm_tok.tokval )
+                        .elseif opndx[edi-expr].kind == EXPR_ADDR || opndx[edi-expr].kind == EXPR_REG
                             ; added v2.31.27
                             SizeFromMemtype(opndx[edi-expr].mem_type, opndx[edi-expr].Ofssize, opndx[edi-expr].type)
                         .endif
@@ -3730,7 +3742,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
         .if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM && \
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
-                .return imm2xmm( tokenarray )
+                .return imm2xmm( tokenarray, &opndx[expr] )
             .endif
         .endif
 
@@ -3814,14 +3826,26 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                 and CodeInfo.rex,0x7
                 .endc
                 ;; v2.31.24: immediate operand to XMM
-            .case T_MOVD:
-            .case T_MOVQ:
-            .case T_MOVSS:
-            .case T_MOVSD:
+            .case T_MOVQ
+            .case T_MOVSD
+            .case T_ADDSD
+            .case T_SUBSD
+            .case T_MULSD
+            .case T_DIVSD
+            .case T_COMISD
+            .case T_UCOMISD
+            .case T_ADDSS
+            .case T_SUBSS
+            .case T_MULSS
+            .case T_DIVSS
+            .case T_COMISS
+            .case T_UCOMISS
+            .case T_MOVD
+            .case T_MOVSS
                 .endc .if ( ModuleInfo.strict_masm_compat != 0 )
                 .endc .if ( CodeInfo.opnd[OPND1].type != OP_XMM )
                 .endc .if !( CodeInfo.opnd[OPNI2].type & OP_I_ANY )
-                .return imm2xmm( tokenarray )
+                .return imm2xmm( tokenarray, &opndx[expr] )
             .case T_MOV:
                 ;; don't use the Wide bit for moves to/from special regs
                 .if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPNI2].type & OP_RSPEC )

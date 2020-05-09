@@ -759,7 +759,7 @@ Render proc
     .if g_driverType == D3D_DRIVER_TYPE_REFERENCE
 
         _mm_load_ss(xmm1, t_time)
-        _mm_add_ss(xmm1, FLT4(XM_PI * 0.0125))
+        _mm_add_ss(xmm1, XM_PI * 0.0125)
 
     .else
 
@@ -772,7 +772,7 @@ Render proc
         sub   rax,rcx
 
         _mm_cvtsi32_ss(xmm1, eax)
-        _mm_div_ss(xmm1, FLT4(1000.0))
+        _mm_div_ss(xmm1, 1000.0)
 
     .endif
 
@@ -794,7 +794,7 @@ Render proc
 
     _mm_setzero_ps()
     _mm_store_ss(xmm0, temp)
-    _mm_mul_ss(xmm0, FLT4(2.0))
+    _mm_mul_ss(xmm0, 2.0)
 
     inl_XMMatrixRotationY( xmm0, mOrbit )
     inl_XMMatrixTranslation( -4.0, 0.0, 0.0, mTranslate )

@@ -64,6 +64,27 @@ _CMP_GE_OQ	equ 0x1D
 _CMP_GT_OQ	equ 0x1E
 _CMP_TRUE_US	equ 0x1F
 
+_mm_loadreg macro reg, arg
+    ifidn @SubStr(arg,1,1),<&>
+	lea reg,@SubStr(arg,2)
+    elseifdif <arg>,<reg>
+	mov reg,arg
+    endif
+    retm<reg>
+    endm
+
+_mm_getptr macro arg, reg:=<rax>
+    ifidn @SubStr(arg,1,1),<&>
+	lea reg,@SubStr(arg,2)
+	exitm<[reg]>
+    elseifidn @SubStr(arg,1,1),<[>
+	exitm<arg>
+    elseif (opattr arg) eq 48
+	exitm<[arg]>
+    endif
+    exitm<arg>
+    endm
+
 _mm256_add_pd macro a, b
     vaddpd a,a,b
     retm<a>

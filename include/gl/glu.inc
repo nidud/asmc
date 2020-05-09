@@ -8,6 +8,8 @@ include GL/gl.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+.pragma comment(lib, glu32)
+
 ifdef _UNICODE
 gluErrorStringWIN macro errCode
 	exitm<(gluErrorUnicodeStringEXT(errCode))>

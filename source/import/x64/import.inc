@@ -55,6 +55,7 @@ gdi32
 gdiplus
 glmf32
 glu32
+glut32
 gpedit
 hid
 hlink

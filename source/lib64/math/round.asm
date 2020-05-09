@@ -6,7 +6,6 @@
 
 include math.inc
 include intrin.inc
-include xmmmacros.inc
 
     .code
 
@@ -23,7 +22,7 @@ round proc d:double
     cvtsi2sd xmm1,rax
     subsd   xmm0,xmm1
 
-    .if _mm_comige_sd(xmm0, FLT8(0.5))
+    .if _mm_comige_sd(xmm0, 0.5)
 
         inc rax
     .endif

@@ -4406,6 +4406,10 @@ EPS_SIGNATURE			equ 0x46535045
 
 endif
 
+SwapBuffers proto WINAPI :HDC
+
+.pragma comment(lib, opengl32)
+
 wglCopyContext proto WINAPI :HGLRC, :HGLRC, :UINT
 wglCreateContext proto WINAPI :HDC
 wglCreateLayerContext proto WINAPI :HDC, :SINT
@@ -4422,7 +4426,6 @@ wglUseFontBitmaps equ <wglUseFontBitmapsW>
 else
 wglUseFontBitmaps equ <wglUseFontBitmapsA>
 endif
-SwapBuffers proto WINAPI :HDC
 
 POINTFLOAT		STRUC
 x			FLOAT ?

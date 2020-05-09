@@ -9,6 +9,8 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+.pragma comment(lib, opengl32)
+
 GLenum                  typedef dword
 GLboolean               typedef byte
 GLbitfield              typedef dword

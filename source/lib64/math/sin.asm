@@ -4,7 +4,6 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 include libc.inc
-include xmmmacros.inc
 
 M_PI equ <3.141592653589793238462643>
 
@@ -17,7 +16,7 @@ M_PI equ <3.141592653589793238462643>
 sin::
 
     movaps  xmm1,xmm0
-    mulsd   xmm1,FLT8(0x3fe45f306dc9c883)
+    mulsd   xmm1,03fe45f306dc9c883r
     cvttsd2si eax,xmm1
     lea     rcx,[rax-1]
 
@@ -27,7 +26,7 @@ common:
     xorps   xmm1,xmm1
     and     ecx,3
     cvtsi2sd xmm1,eax
-    mulsd   xmm1,FLT8(0x3ff921fb54442d18)
+    mulsd   xmm1,03ff921fb54442d18r
     subsd   xmm2,xmm1
     lea     rax,cosoffs
     addsd   xmm2,[rax+rcx*8]
@@ -35,31 +34,31 @@ common:
     lea     rax,cossign
     xorps   xmm2,[rax+4*8]
     movaps  xmm0,xmm2
-    mulsd   xmm0,FLT8(0x3ca6827863b97d97)
-    addsd   xmm0,FLT8(0x3d2ae7f3e733b81f)
+    mulsd   xmm0,03ca6827863b97d97r
+    addsd   xmm0,03d2ae7f3e733b81fr
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3da93974a8c07c9d)
+    addsd   xmm0,03da93974a8c07c9dr
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3e21eed8eff8d898)
+    addsd   xmm0,03e21eed8eff8d898r
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3e927e4fb7789f5c)
+    addsd   xmm0,03e927e4fb7789f5cr
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3efa01a01a01a01a)
+    addsd   xmm0,03efa01a01a01a01ar
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3f56c16c16c16c17)
+    addsd   xmm0,03f56c16c16c16c17r
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3fa5555555555555)
+    addsd   xmm0,03fa5555555555555r
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3fe0000000000000)
+    addsd   xmm0,03fe0000000000000r
     mulsd   xmm0,xmm2
-    addsd   xmm0,FLT8(0x3ff0000000000000)
+    addsd   xmm0,03ff0000000000000r
     mulsd   xmm0,[rax+rcx*8]
     ret
 
 cos::
 
     movaps  xmm1,xmm0
-    mulsd   xmm1,FLT8(0x3fe45f306dc9c883)
+    mulsd   xmm1,03fe45f306dc9c883r
     cvttsd2si eax,xmm1
     mov     ecx,eax
     jmp     common

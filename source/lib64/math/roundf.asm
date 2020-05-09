@@ -6,7 +6,6 @@
 
 include math.inc
 include intrin.inc
-include xmmmacros.inc
 
     .code
 
@@ -23,7 +22,7 @@ roundf proc f:float
     cvtsi2ss xmm1,eax
     subss   xmm0,xmm1
 
-    .if _mm_comige_ss(xmm0, FLT4(0.5))
+    .if _mm_comige_ss(xmm0, 0.5)
 
         inc eax
     .endif

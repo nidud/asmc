@@ -724,6 +724,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
     mov opc.hlvalue,[ebx].hlvalue
     .switch size
     .case 4
+        .endc .if [ebx].mem_type == MT_REAL4
         mov opc.flags,0
         .if ( [ebx].chararray[15] & 0x80 )
             mov opc.flags,E_NEGATIVE
@@ -735,6 +736,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         .endif
         .endc
     .case 8
+        .endc .if [ebx].mem_type == MT_REAL8
         mov opc.flags,0
         .if ( [ebx].chararray[15] & 0x80 )
             mov opc.flags,E_NEGATIVE

@@ -14,8 +14,8 @@ XMStoreFloat3SE proc vectorcall pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
 
     _mm_setzero_ps()
     .if _mm_comige_ss(xmm1, xmm0)
-        .if _mm_comigt_ss(xmm1, FLT4(0x477F8000))
-            _mm_store_ss(xmm0, FLT4(0x477F8000))
+        .if _mm_comigt_ss(xmm1, 0477F8000r)
+            _mm_store_ss(xmm0, 0477F8000r)
         .else
             _mm_store_ss(xmm0, xmm1)
         .endif
@@ -23,8 +23,8 @@ XMStoreFloat3SE proc vectorcall pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
     XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0, 3, 2, 1))
     _mm_setzero_ps(xmm2)
     .if _mm_comige_ss(xmm1, xmm2)
-        .if _mm_comigt_ss(xmm1, FLT4(0x477F8000))
-            _mm_store_ss(xmm2, FLT4(0x477F8000))
+        .if _mm_comigt_ss(xmm1, 0477F8000r)
+            _mm_store_ss(xmm2, 0477F8000r)
         .else
             _mm_store_ss(xmm2, xmm1)
         .endif
@@ -32,8 +32,8 @@ XMStoreFloat3SE proc vectorcall pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
     XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0, 3, 2, 1))
     _mm_setzero_ps(xmm3)
     .if _mm_comige_ss(xmm1, xmm3)
-        .if _mm_comigt_ss(xmm1, FLT4(0x477F8000))
-            _mm_store_ss(xmm3, FLT4(0x477F8000))
+        .if _mm_comigt_ss(xmm1, 0477F8000r)
+            _mm_store_ss(xmm3, 0477F8000r)
         .else
             _mm_store_ss(xmm3, xmm1)
         .endif
@@ -47,7 +47,7 @@ XMStoreFloat3SE proc vectorcall pDestination:ptr XMFLOAT3SE, V:FXMVECTOR
     .endif
 
     mov eax,0x37800000
-    .if _mm_comigt_ss(xmm4, FLT4(0x37800000))
+    .if _mm_comigt_ss(xmm4, 037800000r)
 
         movd eax,xmm4
     .endif

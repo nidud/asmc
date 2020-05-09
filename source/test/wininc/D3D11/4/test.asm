@@ -666,7 +666,7 @@ Render proc
     .if g_driverType == D3D_DRIVER_TYPE_REFERENCE
 
         _mm_load_ss(xmm0, t_time)
-        _mm_add_ss(xmm0, FLT4(XM_PI * 0.0125))
+        _mm_add_ss(xmm0, XM_PI * 0.0125)
 
     .else
 
@@ -683,7 +683,7 @@ Render proc
         else
           _mm_cvtsi32_ss(xmm0, rax)
         endif
-        _mm_div_ss(xmm0, FLT4(1000.0))
+        _mm_div_ss(xmm0, 1000.0)
     .endif
 
     ;;

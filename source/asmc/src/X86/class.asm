@@ -1073,9 +1073,14 @@ endif
         .endif
 
         mov ecx,ModuleInfo.ComStack
-        mov eax,[ecx].com_item.sym
-        .if eax
-            AddLineQueueX( "%s <>", [eax].asym.name )
+        mov esi,[ecx].com_item.sym
+        .if esi
+            .if ( cmd != T_DOT_TEMPLATE )
+                .if !SearchNameInStruct( esi, "lpVtbl", &cmd, 0 )
+                    AddLineQueueX( "lpVtbl %sVtbl ?", &class )
+                .endif
+            .endif
+            AddLineQueueX( "%s <>", [esi].asym.name )
         .elseif ( cmd != T_DOT_TEMPLATE )
             AddLineQueueX( "lpVtbl %sVtbl ?", &class )
         .endif

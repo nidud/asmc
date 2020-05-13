@@ -14,7 +14,6 @@ main proc
   .new p:ptr LinearGradientBrush()
 
     LinearGradientBrush()
-    p.LinearGradientBrush()
 
     p.Release()
     p.Create(NULL, NULL, 0, 0)

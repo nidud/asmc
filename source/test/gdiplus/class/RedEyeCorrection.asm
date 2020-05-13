@@ -14,7 +14,6 @@ main proc
   .new p:ptr RedEyeCorrection()
 
     RedEyeCorrection()
-    p.RedEyeCorrection()
 
     p.Release()
     p.GetAuxDataSize()

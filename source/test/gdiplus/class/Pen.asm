@@ -11,9 +11,9 @@ include gdiplus.inc
 
 main proc
 
-  local a:Pen
+  .new a:Pen()
 
-    a.Pen()
+    Pen()
     a.Release()
     a.Delete()
 

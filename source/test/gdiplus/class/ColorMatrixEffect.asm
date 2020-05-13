@@ -14,7 +14,6 @@ main proc
   .new p:ptr ColorMatrixEffect()
 
     ColorMatrixEffect()
-    p.ColorMatrixEffect()
 
     p.Release()
     p.GetAuxDataSize()

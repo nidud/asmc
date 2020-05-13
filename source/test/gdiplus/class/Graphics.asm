@@ -14,7 +14,6 @@ main proc
   .new p:ptr Graphics()
 
     Graphics()
-    p.Graphics()
     p.Release()
     p.FromHDC(NULL)
     p.FromHDC2(NULL, NULL)

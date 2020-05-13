@@ -3196,11 +3196,10 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             mov dirflags,GetValueSp( [esi].tokval )
             .if j || ( CurrStruct && ( dirflags & DF_NOSTRUC ) )
 
-                .if ( [esi].tokval != T_PROC )
+                .if [esi].tokval != T_PROC
                     .return( asmerr( 2037 ) )
                 .endif
-
-                .if ( StoreState || ( dirflags & DF_STORE ) )
+                .if StoreState
                     .if ( ( dirflags & DF_CGEN ) && ModuleInfo.CurrComment && ModuleInfo.list_generated_code )
                         FStoreLine(1)
                     .else

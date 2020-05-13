@@ -20,7 +20,6 @@
     .ends
 
     .data
-
     c C { { 0, 'C' } }
 
     .code

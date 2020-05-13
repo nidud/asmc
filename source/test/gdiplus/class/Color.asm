@@ -14,7 +14,6 @@ main proc
   .new p:ptr Color(0)
 
     Color(0)
-    p.Color(0)
     p.Release()
     p.GetAlpha()
     p.GetA()

@@ -14,7 +14,6 @@ main proc
   .new p:ptr Sharpen()
 
     Sharpen()
-    p.Sharpen()
 
     p.Release()
     p.GetAuxDataSize()

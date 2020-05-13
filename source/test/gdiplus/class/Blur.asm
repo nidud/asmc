@@ -14,7 +14,6 @@ main proc
   .new p:ptr Blur()
 
     Blur()
-    p.Blur()
 
     p.Release()
     p.GetAuxDataSize()

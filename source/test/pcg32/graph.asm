@@ -323,7 +323,7 @@ Graphics::InitObjects proc uses rsi rdi rbx r12 r13 r14
 
         .for ( edi = 0: edi < MAXOBJECTS: edi++, rbx += size_t )
 
-            Object::Object( rbx )
+            Object_Object( rbx )
         .endf
         lea rbx,[rsi].object
     .endif

@@ -8,6 +8,41 @@ __CPU_INC equ <>
 
 include malloc.inc
 
+st_alloc macro size
+    lea  rax,[rsp + @ReservedStack - ( ( (size) + _GRANULARITY - 1 ) and -(_GRANULARITY) )]
+    lea  rsp,[rax - @ReservedStack]
+    retm <rax>
+    endm
+
+st_free macro size
+    lea  rsp,[rsp + ( ( (size) + _GRANULARITY - 1 ) and -(_GRANULARITY) )]
+    exitm<>
+    endm
+
+st_pushregs macro size
+    mov  [rsp+@ReservedStack-0x08],rsi
+    mov  [rsp+@ReservedStack-0x10],rdi
+    mov  [rsp+@ReservedStack-0x18],rbx
+    mov  [rsp+@ReservedStack-0x20],rcx
+    lea  rsp,[rsp-32]
+    ifnb <size>
+        exitm<st_alloc(size)>
+    endif
+    exitm<>
+    endm
+
+st_popregs macro size
+    ifnb <size>
+        st_free(size)
+    endif
+    lea  rsp,[rsp+32]
+    mov  rsi,[rsp+@ReservedStack-0x08]
+    mov  rdi,[rsp+@ReservedStack-0x10]
+    mov  rbx,[rsp+@ReservedStack-0x18]
+    mov  rcx,[rsp+@ReservedStack-0x20]
+    exitm<>
+    endm
+
 MAXCPUSTRING equ 512
 
 .template CPU

@@ -14,7 +14,6 @@ main proc
   .new p:ptr ColorLUT()
 
     ColorLUT()
-    p.ColorLUT()
 
     p.Release()
     p.GetAuxDataSize()

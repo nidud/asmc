@@ -1,3 +1,4 @@
+
 include stdio.inc
 include string.inc
 include asmc.inc
@@ -409,27 +410,29 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
     mov ebx,i
     shl ebx,4
     add ebx,tokenarray
-    mov edi,buffer
 
     mov name,[ebx-16].string_ptr
     mov retval,NOT_ERROR
-
-    inc ModuleInfo.class_label
-
-    sprintf( &T$, "T$%04X", ModuleInfo.class_label )
-    sprintf( &P$, "P$%04X", ModuleInfo.class_label )
+    mov esi,ModuleInfo.ComStack
+    .if esi
+        .if !strcmp(eax, [esi].com_item.class)
+            ClassProto2( name, name, esi, [ebx+16].tokpos )
+            jmp done
+        .endif
+    .endif
 
     mov IsCom,0
     mov IsType,0
 
     mov eax,CurrStruct
     .if eax
-        mov esi,[eax].asym.name
-        .if strlen(esi) > 4
-            mov eax,[esi+eax-4]
+        mov edi,[eax].asym.name
+        .if strlen(edi) > 4
+            mov eax,[edi+eax-4]
         .endif
     .endif
-    mov esi,ModuleInfo.ComStack
+
+    mov edi,buffer
 
     .if ( eax == "lbtV" )
 
@@ -452,6 +455,12 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
             inc IsCom
         .endif
     .endif
+
+    inc ModuleInfo.class_label
+
+    sprintf( &T$, "T$%04X", ModuleInfo.class_label )
+    sprintf( &P$, "P$%04X", ModuleInfo.class_label )
+
     strcat( strcpy( edi, &T$ ), " typedef proto" )
 
     .if ( esi && [esi].com_item.cmd == T_DOT_COMDEF )
@@ -547,7 +556,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
         AddLineQueueX( "%s typedef ptr %s", &P$, &T$ )
         AddLineQueueX( "%s %s ?", name, &P$ )
     .endif
-
+done:
     .if ( ModuleInfo.list )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
@@ -773,7 +782,7 @@ MacroInline endp
 
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local rc:int_t, args:int_t, cmd:uint_t, public_pos:string_t,
+  local rc:int_t, args:tok_t, cmd:uint_t, public_pos:string_t,
         class[64]:char_t
 
     mov rc,NOT_ERROR
@@ -883,7 +892,11 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if eax
             mov ecx,eax
             .if !SearchNameInStruct( ecx, edi, &i, 0 )
-                ClassProto( edi, [esi].com_item.langtype, [ebx].tokpos, T_PROC )
+                .if strcmp(edi, class_ptr)
+                    ClassProto( edi, [esi].com_item.langtype, [ebx].tokpos, T_PROC )
+                .else
+                    ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
+                .endif
             .endif
         .elseif [esi].com_item.type
             ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
@@ -981,7 +994,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endf
 
         .if ( cmd == T_DOT_CLASS )
-
+if 0
             mov ebx,args
             mov ecx,ModuleInfo.ComStack
             .if edi
@@ -989,7 +1002,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .else
                 ClassProto2( esi, esi, ecx, "" )
             .endif
-
+endif
             mov eax,public_pos
             .if eax
                 mov byte ptr [eax],':'

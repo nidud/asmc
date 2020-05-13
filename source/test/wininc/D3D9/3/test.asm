@@ -26,7 +26,7 @@ g_v3Position        D3DXVECTOR3 <0.0,0.0,-5.0>
 g_v3LookAt          D3DXVECTOR3 <0.0,0.0,0.0>
 Vectors             D3DXVECTOR3 <0.0,1.0,0.0>
 FL1000              FLOAT 1000.0
-FL2_0               FLOAT 2.0
+;FL2_0               FLOAT 2.0
 
 ;; Definition of the first Vertex Format
 ;; including position and diffuse color
@@ -59,16 +59,20 @@ MsgProc proc WINAPI hWnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
         .switch(wParam)
         ;; change lookAt with arrow keys
         .case VK_UP
-            _mm_store_ss([rcx].y, _mm_add_ss([rcx].y, FL2_0))
+            _mm_load_ss([rcx].y)
+            _mm_store_ss([rcx].y, _mm_add_ss(xmm0, 2.0))
             .endc
         .case VK_DOWN
-            _mm_store_ss([rcx].y,_mm_sub_ss([rcx].y, FL2_0))
+            _mm_load_ss([rcx].y)
+            _mm_store_ss([rcx].y,_mm_sub_ss(xmm0, 2.0))
             .endc
         .case VK_LEFT
-            _mm_store_ss([rcx].x,_mm_add_ss([rcx].x, FL2_0))
+            _mm_load_ss([rcx].x)
+            _mm_store_ss([rcx].x,_mm_add_ss(xmm0, 2.0))
             .endc
         .case VK_RIGHT
-            _mm_store_ss([rcx].x,_mm_sub_ss([rcx].x, FL2_0))
+            _mm_load_ss([rcx].x)
+            _mm_store_ss([rcx].x,_mm_sub_ss(xmm0, 2.0))
             .endc
         .endsw
         assume rcx:nothing

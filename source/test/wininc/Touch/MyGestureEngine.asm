@@ -31,7 +31,7 @@ CMyGestureEngine::CMyGestureEngine proc uses rsi rdi pcRect:ptr CDrawingObject
         mov [rsi],rcx
     .endif
     mov rsi,rcx
-    CDrawingObject::CDrawingObject(rdi)
+    CDrawingObject_CDrawingObject(rdi)
 
     mov rcx,rsi
     mov [rcx]._pcRect,rax

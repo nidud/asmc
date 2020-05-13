@@ -35,4 +35,8 @@ main proc
 
 main endp
 
+C::C proc val:dword
+    ret
+C::C endp
+
     end

@@ -14,7 +14,6 @@ main proc
   .new p:ptr SolidBrush(0)
 
     SolidBrush(0)
-    p.SolidBrush(0)
     p.Release()
     p.GetColor(NULL)
     p.SetColor(0)

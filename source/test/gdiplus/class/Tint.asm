@@ -14,7 +14,6 @@ main proc
   .new p:ptr Tint()
 
     Tint()
-    p.Tint()
 
     p.Release()
     p.GetAuxDataSize()

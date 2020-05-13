@@ -185,7 +185,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 EFFECT_OPERATOR macro class
     .operator class {
-        .if [this].Effect.Effect()
+        .if Effect_Effect(this)
           ifdif <class>,<ColorMatrixEffect>
             GdipCreateEffect(addr &class&EffectGuid, &[rax].class.nativeEffect)
           else

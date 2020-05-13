@@ -23,14 +23,17 @@ foo proc
 
   local p:LPC
 
-    p.C(0)
+    C(0)
     p.Class(1)
-    [rcx].C(2)
     [rcx].Class(3)
     mov rax,[rcx].Class
 
     ret
 
 foo endp
+
+C::C proc x:ptr
+    ret
+C::C endp
 
     end

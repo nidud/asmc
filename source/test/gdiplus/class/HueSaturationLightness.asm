@@ -14,7 +14,6 @@ main proc
   .new p:ptr HueSaturationLightness()
 
     HueSaturationLightness()
-    p.HueSaturationLightness()
 
     p.Release()
     p.GetAuxDataSize()

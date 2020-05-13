@@ -866,7 +866,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     BRUSH_OPERATOR(PathGradientBrush)
 
     .operator PathGradientBrush {
-        exitm<[this].Brush.Brush()>
+        exitm<Brush_Brush(this)>
         }
 
     .operator Create :ptr PointF, :SINT, :WrapMode {

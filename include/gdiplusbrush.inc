@@ -143,7 +143,7 @@ BRUSH_OPERATOR macro class
         .new argb:ARGB
 
         mov argb,_1
-        .if [this].Brush.Brush()
+        .if Brush_Brush(this)
 
             mov brush,rax
             GdipCreateSolidFill(argb, rax)
@@ -179,7 +179,7 @@ BRUSH_OPERATOR macro class
     BRUSH_OPERATOR(TextureBrush)
 
     .operator TextureBrush {
-        exitm<[this].Brush.Brush()>
+        exitm<Brush_Brush(this)>
         }
 
     .operator Create :ptr Image, :WrapMode {
@@ -338,7 +338,7 @@ BRUSH_OPERATOR macro class
     BRUSH_OPERATOR(LinearGradientBrush)
 
     .operator LinearGradientBrush {
-        exitm<[this].Brush.Brush()>
+        exitm<Brush_Brush(this)>
         }
 
     .operator Create :ptr PointF, :ptr PointF, :ARGB, :ARGB {
@@ -597,7 +597,7 @@ BRUSH_OPERATOR macro class
 
     .operator HatchBrush :abs, :abs, :abs {
 
-        .if Brush()
+        .if Brush_Brush(this)
 
             mov brush,rax
             GdipCreateHatchBrush(_1, _2, _3, &[rax].Brush.nativeBrush)

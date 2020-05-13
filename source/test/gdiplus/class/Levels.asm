@@ -14,7 +14,6 @@ main proc
   .new p:ptr Levels()
 
     Levels()
-    p.Levels()
 
     p.Release()
     p.GetAuxDataSize()

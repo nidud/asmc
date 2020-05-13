@@ -14,7 +14,6 @@ main proc
   .new p:ptr ColorCurve()
 
     ColorCurve()
-    p.ColorCurve()
 
     p.Release()
     p.GetAuxDataSize()

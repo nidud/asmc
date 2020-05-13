@@ -14,7 +14,6 @@ main proc
   .new p:ptr ColorBalance()
 
     ColorBalance()
-    p.ColorBalance()
 
     p.Release()
     p.GetAuxDataSize()

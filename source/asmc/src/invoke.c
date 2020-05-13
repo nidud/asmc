@@ -308,12 +308,12 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	}
 
 	pushsize = CurrWordSize;
-	if ( asize == 16 && opnd.mem_type == MT_REAL16 && pushsize == 4 )
-	    asize = psize;
 
 	if ( curr->sym.is_vararg == TRUE )
 	    psize = asize;
 
+	if ( asize == 16 && opnd.mem_type == MT_REAL16 && pushsize == 4 )
+	    asize = psize;
 
 	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 )
 	    if (fastcall_tab[fastcall_id - 1].handleparam(
@@ -1051,7 +1051,18 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     strcpy( p, " call " );
     p += 6;
 
-    if ( sym->state == SYM_EXTERNAL && sym->dll ) {
+    if ( !ModuleInfo.strict_masm_compat && sym->state == SYM_EXTERNAL &&
+	 sym->target_type && sym->target_type->state == SYM_MACRO ) {
+
+	macro = sym->target_type;
+	if ( macro->altname ) {
+	    *(struct asym **)macro->altname = macro;
+	    strcpy( buffer, macro->name );
+	} else
+	    macro = NULL;
+    }
+
+    if ( !macro && sym->state == SYM_EXTERNAL && sym->dll ) {
 	char *iatname = p;
 	strcpy( p, ModuleInfo.g.imp_prefix );
 	p += strlen( p );
@@ -1065,17 +1076,6 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    else
 		AddLineQueueX( " externdef %s: %r %r", iatname, T_PTR, T_PROC );
 	}
-    }
-
-    if ( !ModuleInfo.strict_masm_compat && sym->state == SYM_EXTERNAL &&
-	 sym->target_type && sym->target_type->state == SYM_MACRO ) {
-
-	macro = sym->target_type;
-	if ( macro->altname ) {
-	    *(struct asym **)macro->altname = macro;
-	    strcpy( buffer, macro->name );
-	} else
-	    macro = NULL;
     }
 
     if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET &&

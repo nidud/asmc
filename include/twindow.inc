@@ -171,6 +171,7 @@ message_t       typedef ptr TMessage
     Position    COORD <>
     Handle      HANDLE ?
 
+    TCursor     proc
     Hide        proc
     Show        proc
     Move        proc :int_t, :int_t
@@ -260,6 +261,7 @@ CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
     SysKey          uint_t ?
     Context         TContext <>
 
+    TWindow         proc
     Open            proc :TRect, :uint_t
     Load            proc :resource_t
     Resource        proc :resource_t

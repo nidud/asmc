@@ -14,7 +14,6 @@ main proc
   .new p:ptr Effect()
 
     Effect()
-    p.Effect()
 
     p.Release()
     p.GetAuxDataSize()

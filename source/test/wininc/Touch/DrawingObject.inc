@@ -15,14 +15,15 @@ MAX_COLORS equ 5
     _bDrawDiagonals BOOL ?
     _iColorIndex    int_t ?
 
-    Release     proc
-    ResetObject proc :int_t, :int_t
-    Paint       proc :HDC
-    Move        proc :long_t, :long_t
+    CDrawingObject  proc
+    Release         proc
+    ResetObject     proc :int_t, :int_t
+    Paint           proc :HDC
+    Move            proc :long_t, :long_t
     ToggleDrawDiagonals proc
-    Zoom        proc :double, :long_t, :long_t
-    Rotate      proc :double, :long_t, :long_t
-    ShiftColor  proc
+    Zoom            proc :double, :long_t, :long_t
+    Rotate          proc :double, :long_t, :long_t
+    ShiftColor      proc
 
     .ends
 

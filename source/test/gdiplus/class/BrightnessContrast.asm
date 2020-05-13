@@ -14,7 +14,6 @@ main proc
   .new p:ptr BrightnessContrast()
 
     BrightnessContrast()
-    p.BrightnessContrast()
 
     p.Release()
     p.GetAuxDataSize()

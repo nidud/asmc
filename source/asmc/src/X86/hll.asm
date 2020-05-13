@@ -1364,6 +1364,7 @@ StripSource endp
 LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:tok_t
 
   local br_count:int_t
+  local constructor:int_t       ; Class(..)
   local static_struct:int_t
   local sqbrend:tok_t
   local sym:asym_t
@@ -1389,6 +1390,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov method,eax
     mov static_struct,eax
     mov type,eax
+    mov constructor,eax
 
     ; ClassVtbl struct
     ;   Method()
@@ -1547,7 +1549,11 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                 .endif
             .endif
 
-            .if ( ModuleInfo.Ofssize == USE64 )
+            .if method == NULL && strcmp(comptr, edi) == 0
+
+                inc constructor
+
+            .elseif ( ModuleInfo.Ofssize == USE64 && !constructor )
 
                 mov eax,method
 
@@ -1582,7 +1588,11 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
             .endif
             strcat(esi, comptr)
             .if type
-                strcat(esi, ".")
+                .if constructor
+                    strcat(esi, "_")
+                .else
+                    strcat(esi, ".")
+                .endif
                 strcat(esi, type)
             .endif
 

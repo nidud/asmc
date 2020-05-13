@@ -14,7 +14,6 @@ main proc
   .new p:ptr PathGradientBrush()
 
     PathGradientBrush()
-    p.PathGradientBrush()
     p.Release()
     p.Create(NULL, 0, 0)
     p.CreateI(NULL, 0, 0)

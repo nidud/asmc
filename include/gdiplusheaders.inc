@@ -700,7 +700,7 @@ endif
 
 IMAGE_INLINE macro class
     .operator class {
-        exitm<[this].Image.Image()>
+        exitm<Image_Image(this)>
         }
     .operator Release {
         exitm<[this].Image.Release()>

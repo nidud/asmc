@@ -14,7 +14,6 @@ main proc
   .new p:ptr GraphicsPath()
 
     GraphicsPath()
-    p.GraphicsPath()
     p.Release()
     p.FromPath(NULL)
     p.SetNativePath(NULL)

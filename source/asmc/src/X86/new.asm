@@ -110,6 +110,7 @@ ConstructorCall proc private uses esi edi ebx id:string_t, endtok:tok_t,
         .case 5 : AddLineQueueX( "%s(0,%s)",        esi, edi )
         .endsw
     .endif
+
     .if ebx
         mov byte ptr [ebx],')'
     .endif

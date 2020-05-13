@@ -14,7 +14,6 @@ main proc
   .new p:ptr StringFormat(0, 0)
 
     StringFormat(0, 0)
-    p.StringFormat(0, 0)
     p.Release()
 
     p.CloneString(NULL)

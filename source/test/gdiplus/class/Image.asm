@@ -14,7 +14,6 @@ main proc
   .new p:ptr Image()
 
     Image()
-    p.Image()
 
     p.Release()
     p.FromFile(NULL, FALSE)

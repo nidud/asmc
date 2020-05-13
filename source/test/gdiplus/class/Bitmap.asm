@@ -14,7 +14,6 @@ main proc
   .new p:ptr Bitmap()
 
     Bitmap()
-    p.Bitmap()
     p.Release()
 
     p.FromFile(NULL, FALSE)

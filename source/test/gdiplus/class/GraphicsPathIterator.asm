@@ -11,10 +11,9 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr GraphicsPathIterator;(NULL)
+  .new p:ptr GraphicsPathIterator(NULL)
 
     GraphicsPathIterator(NULL)
-    p.GraphicsPathIterator(NULL)
     p.Release()
     p.SetNativeIterator(NULL)
     p.SetStatus(NULL)

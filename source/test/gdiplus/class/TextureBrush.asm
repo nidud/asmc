@@ -14,7 +14,6 @@ main proc
   .new p:ptr TextureBrush()
 
     TextureBrush()
-    p.TextureBrush()
     p.Release()
     p.Create(NULL, 0)
     p.CreateIA(NULL, NULL, NULL)

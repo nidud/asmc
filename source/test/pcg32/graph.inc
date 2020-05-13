@@ -10,6 +10,7 @@
     speed       SINT ?
     random      proc local :UINT
 
+    Object      proc
     Release     proc
     Hide        proc
     Show        proc
@@ -34,6 +35,7 @@ _G_SUSPENDED    equ 0x02
     palett      RGBQUAD 256 dup(<>)
     object      LPOBJECT MAXOBJECTS dup(?)
 
+    Graphics    proc
     Release     proc
     Setsize     proc :UINT, :UINT
     Update      proc

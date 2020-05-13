@@ -65,7 +65,7 @@ SimpleThread proc pParam:ptr
 
         _mm_cvtsi64_sd(xmm0, randomValue)
         _mm_cvtsi64_sd(xmm1, UINT_MAX * 500)
-        _mm_div_sd()
+        _mm_div_sd(xmm0, xmm1)
         _mm_cvtsd_si64()
 
         mov time,eax

@@ -84,23 +84,22 @@ ifndef __ADOMD_LIBRARY_DEFINED__
 __ADOMD_LIBRARY_DEFINED__ equ 1
 
 DECLSPEC_UUID("000002AE-0000-0010-8000-00AA006D2EA4")
+.enum MemberTypeEnum {
+	adMemberUnknown = 0,
+	adMemberRegular = 0x1,
+	adMemberAll	= 0x2,
+	adMemberMeasure = 0x3,
+	adMemberFormula = 0x4
+    }
 DECLSPEC_UUID("C23BBD43-E494-4d00-B4D1-6C9A2CE17CE3")
+.enum SchemaObjectTypeEnum {
+	adObjectTypeDimension	= 1,
+	adObjectTypeHierarchy	= 2,
+	adObjectTypeLevel	= 3,
+	adObjectTypeMember	= 4
+    }
 
-MemberTypeEnum		typedef SDWORD
-adMemberUnknown		equ 0
-adMemberRegular		equ 0x1
-adMemberAll		equ 0x2
-adMemberMeasure		equ 0x3
-adMemberFormula		equ 0x4
-
-SchemaObjectTypeEnum	typedef SDWORD
-adObjectTypeDimension	equ 1
-adObjectTypeHierarchy	equ 2
-adObjectTypeLevel	equ 3
-adObjectTypeMember	equ 4
-
-
-externdef		LIBID_ADOMD:IID
+externdef LIBID_ADOMD:IID
 
 ifndef __ICatalog_INTERFACE_DEFINED__
 __ICatalog_INTERFACE_DEFINED__ equ 1

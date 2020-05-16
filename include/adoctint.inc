@@ -119,105 +119,113 @@ endif
 include oaidl.inc
 include ocidl.inc
 
-RuleEnum		typedef SDWORD
-adRINone		equ 0
-adRICascade		equ 1
-adRISetNull		equ 2
-adRISetDefault		equ 3
-KeyTypeEnum		typedef SDWORD
-adKeyPrimary		equ 1
-adKeyForeign		equ 2
-adKeyUnique		equ 3
-ActionEnum		typedef SDWORD
-adAccessGrant		equ 1
-adAccessSet		equ 2
-adAccessDeny		equ 3
-adAccessRevoke		equ 4
-ColumnAttributesEnum	typedef SDWORD
-adColFixed		equ 1
-adColNullable		equ 2
-SortOrderEnum		typedef SDWORD
-adSortAscending		equ 1
-adSortDescending	equ 2
-RightsEnum		typedef SDWORD
-adRightNone		equ 0
-adRightDrop		equ 0x100
-adRightExclusive	equ 0x200
-adRightReadDesign	equ 0x400
-adRightWriteDesign	equ 0x800
-adRightWithGrant	equ 0x1000
-adRightReference	equ 0x2000
-adRightCreate		equ 0x4000
-adRightInsert		equ 0x8000
-adRightDelete		equ 0x10000
-adRightReadPermissions	equ 0x20000
-adRightWritePermissions equ 0x40000
-adRightWriteOwner	equ 0x80000
-adRightMaximumAllowed	equ 0x2000000
-adRightFull		equ 0x10000000
-adRightExecute		equ 0x20000000
-adRightUpdate		equ 0x40000000
-adRightRead		equ 0x80000000
-
-DataTypeEnum		typedef SDWORD
-adEmpty			equ 0
-adTinyInt		equ 16
-adSmallInt		equ 2
-adInteger		equ 3
-adBigInt		equ 20
-adUnsignedTinyInt	equ 17
-adUnsignedSmallInt	equ 18
-adUnsignedInt		equ 19
-adUnsignedBigInt	equ 21
-adSingle		equ 4
-adDouble		equ 5
-adCurrency		equ 6
-adDecimal		equ 14
-adNumeric		equ 131
-adBoolean		equ 11
-adError			equ 10
-adUserDefined		equ 132
-adVariant		equ 12
-adIDispatch		equ 9
-adIUnknown		equ 13
-adGUID			equ 72
-adDate			equ 7
-adDBDate		equ 133
-adDBTime		equ 134
-adDBTimeStamp		equ 135
-adBSTR			equ 8
-adChar			equ 129
-adVarChar		equ 200
-adLongVarChar		equ 201
-adWChar			equ 130
-adVarWChar		equ 202
-adLongVarWChar		equ 203
-adBinary		equ 128
-adVarBinary		equ 204
-adLongVarBinary		equ 205
-adChapter		equ 136
-adFileTime		equ 64
-adPropVariant		equ 138
-adVarNumeric		equ 139
-
-AllowNullsEnum		typedef SDWORD
-adIndexNullsAllow	equ 0
-adIndexNullsDisallow	equ 1
-adIndexNullsIgnore	equ 2
-adIndexNullsIgnoreAny	equ 4
-ObjectTypeEnum		typedef SDWORD
-adPermObjProviderSpecific equ -1
-adPermObjTable		equ 1
-adPermObjColumn		equ 2
-adPermObjDatabase	equ 3
-adPermObjProcedure	equ 4
-adPermObjView		equ 5
-InheritTypeEnum		typedef SDWORD
-adInheritNone		equ 0
-adInheritObjects	equ 1
-adInheritContainers	equ 2
-adInheritBoth		equ 3
-adInheritNoPropogate	equ 4
+.enum RuleEnum {
+	adRINone	= 0,
+	adRICascade	= 1,
+	adRISetNull	= 2,
+	adRISetDefault	= 3
+    }
+.enum KeyTypeEnum {
+	adKeyPrimary	= 1,
+	adKeyForeign	= 2,
+	adKeyUnique	= 3
+    }
+.enum ActionEnum {
+	adAccessGrant	= 1,
+	adAccessSet	= 2,
+	adAccessDeny	= 3,
+	adAccessRevoke	= 4
+    }
+.enum ColumnAttributesEnum {
+	adColFixed	= 1,
+	adColNullable	= 2
+    }
+.enum SortOrderEnum {
+	adSortAscending = 1,
+	adSortDescending = 2
+    }
+.enum RightsEnum {
+	adRightNone	= 0,
+	adRightDrop	= 0x100,
+	adRightExclusive = 0x200,
+	adRightReadDesign = 0x400,
+	adRightWriteDesign = 0x800,
+	adRightWithGrant = 0x1000,
+	adRightReference = 0x2000,
+	adRightCreate	= 0x4000,
+	adRightInsert	= 0x8000,
+	adRightDelete	= 0x10000,
+	adRightReadPermissions = 0x20000,
+	adRightWritePermissions = 0x40000,
+	adRightWriteOwner = 0x80000,
+	adRightMaximumAllowed = 0x2000000,
+	adRightFull	= 0x10000000,
+	adRightExecute	= 0x20000000,
+	adRightUpdate	= 0x40000000,
+	adRightRead	= 0x80000000
+    }
+.enum DataTypeEnum {
+	adEmpty		= 0,
+	adTinyInt	= 16,
+	adSmallInt	= 2,
+	adInteger	= 3,
+	adBigInt	= 20,
+	adUnsignedTinyInt = 17,
+	adUnsignedSmallInt = 18,
+	adUnsignedInt	= 19,
+	adUnsignedBigInt = 21,
+	adSingle	= 4,
+	adDouble	= 5,
+	adCurrency	= 6,
+	adDecimal	= 14,
+	adNumeric	= 131,
+	adBoolean	= 11,
+	adError		= 10,
+	adUserDefined	= 132,
+	adVariant	= 12,
+	adIDispatch	= 9,
+	adIUnknown	= 13,
+	adGUID		= 72,
+	adDate		= 7,
+	adDBDate	= 133,
+	adDBTime	= 134,
+	adDBTimeStamp	= 135,
+	adBSTR		= 8,
+	adChar		= 129,
+	adVarChar	= 200,
+	adLongVarChar	= 201,
+	adWChar		= 130,
+	adVarWChar	= 202,
+	adLongVarWChar	= 203,
+	adBinary	= 128,
+	adVarBinary	= 204,
+	adLongVarBinary = 205,
+	adChapter	= 136,
+	adFileTime	= 64,
+	adPropVariant	= 138,
+	adVarNumeric	= 139
+    }
+.enum AllowNullsEnum {
+	adIndexNullsAllow	= 0,
+	adIndexNullsDisallow	= 1,
+	adIndexNullsIgnore	= 2,
+	adIndexNullsIgnoreAny	= 4
+    }
+.enum ObjectTypeEnum {
+	adPermObjProviderSpecific = -1,
+	adPermObjTable	= 1,
+	adPermObjColumn = 2,
+	adPermObjDatabase = 3,
+	adPermObjProcedure = 4,
+	adPermObjView	= 5
+    }
+.enum InheritTypeEnum {
+	adInheritNone	= 0,
+	adInheritObjects = 1,
+	adInheritContainers = 2,
+	adInheritBoth	= 3,
+	adInheritNoPropogate = 4
+    }
 
 ifndef __ADOX_LIBRARY_DEFINED__
 __ADOX_LIBRARY_DEFINED__ equ 1

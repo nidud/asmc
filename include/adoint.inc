@@ -173,539 +173,594 @@ endif
 ifndef __ADODB_LIBRARY_DEFINED__
 __ADODB_LIBRARY_DEFINED__ equ 1
 DECLSPEC_UUID("0000051B-0000-0010-8000-00AA006D2EA4")
-CursorTypeEnum		typedef SDWORD
-adOpenUnspecified	equ -1
-adOpenForwardOnly	equ 0
-adOpenKeyset		equ 1
-adOpenDynamic		equ 2
-adOpenStatic		equ 3
+.enum CursorTypeEnum {
+	adOpenUnspecified = -1,
+	adOpenForwardOnly = 0,
+	adOpenKeyset	= 1,
+	adOpenDynamic	= 2,
+	adOpenStatic	= 3
+    }
 DECLSPEC_UUID("0000051C-0000-0010-8000-00AA006D2EA4")
-CursorOptionEnum	typedef SDWORD
-adHoldRecords		equ 0x100
-adMovePrevious		equ 0x200
-adAddNew		equ 0x1000400
-adDelete		equ 0x1000800
-adUpdate		equ 0x1008000
-adBookmark		equ 0x2000
-adApproxPosition	equ 0x4000
-adUpdateBatch		equ 0x10000
-adResync		equ 0x20000
-adNotify		equ 0x40000
-adFind			equ 0x80000
-adSeek			equ 0x400000
-adIndex			equ 0x800000
+.enum CursorOptionEnum {
+	adHoldRecords	= 0x100,
+	adMovePrevious	= 0x200,
+	adAddNew	= 0x1000400,
+	adDelete	= 0x1000800,
+	adUpdate	= 0x1008000,
+	adBookmark	= 0x2000,
+	adApproxPosition = 0x4000,
+	adUpdateBatch	= 0x10000,
+	adResync	= 0x20000,
+	adNotify	= 0x40000,
+	adFind		= 0x80000,
+	adSeek		= 0x400000,
+	adIndex		= 0x800000
+    }
 DECLSPEC_UUID("0000051D-0000-0010-8000-00AA006D2EA4")
-LockTypeEnum		typedef SDWORD
-adLockUnspecified	equ -1
-adLockReadOnly		equ 1
-adLockPessimistic	equ 2
-adLockOptimistic	equ 3
-adLockBatchOptimistic	equ 4
+.enum LockTypeEnum {
+	adLockUnspecified = -1,
+	adLockReadOnly	= 1,
+	adLockPessimistic = 2,
+	adLockOptimistic = 3,
+	adLockBatchOptimistic = 4
+    }
 DECLSPEC_UUID("0000051E-0000-0010-8000-00AA006D2EA4")
-ExecuteOptionEnum	typedef SDWORD
-adOptionUnspecified	equ -1
-adAsyncExecute		equ 0x10
-adAsyncFetch		equ 0x20
-adAsyncFetchNonBlocking equ 0x40
-adExecuteNoRecords	equ 0x80
-adExecuteStream		equ 0x400
-adExecuteRecord		equ 0x800
+.enum ExecuteOptionEnum {
+	adOptionUnspecified = -1,
+	adAsyncExecute	= 0x10,
+	adAsyncFetch	= 0x20,
+	adAsyncFetchNonBlocking = 0x40,
+	adExecuteNoRecords = 0x80,
+	adExecuteStream = 0x400,
+	adExecuteRecord = 0x800
+    }
 DECLSPEC_UUID("00000541-0000-0010-8000-00AA006D2EA4")
-ConnectOptionEnum	typedef SDWORD
-adConnectUnspecified	equ -1
-adAsyncConnect		equ 0x10
+.enum ConnectOptionEnum {
+	adConnectUnspecified = -1,
+	adAsyncConnect	= 0x10
+    }
 DECLSPEC_UUID("00000532-0000-0010-8000-00AA006D2EA4")
-ObjectStateEnum		typedef SDWORD
-adStateClosed		equ 0
-adStateOpen		equ 0x1
-adStateConnecting	equ 0x2
-adStateExecuting	equ 0x4
-adStateFetching		equ 0x8
+.enum ObjectStateEnum {
+	adStateClosed	= 0,
+	adStateOpen	= 0x1,
+	adStateConnecting = 0x2,
+	adStateExecuting = 0x4,
+	adStateFetching = 0x8
+    }
 DECLSPEC_UUID("0000052F-0000-0010-8000-00AA006D2EA4")
-CursorLocationEnum	typedef SDWORD
-adUseNone		equ 1
-adUseServer		equ 2
-adUseClient		equ 3
-adUseClientBatch	equ 3
+.enum CursorLocationEnum {
+	adUseNone	= 1,
+	adUseServer	= 2,
+	adUseClient	= 3,
+	adUseClientBatch = 3
+    }
 DECLSPEC_UUID("0000051F-0000-0010-8000-00AA006D2EA4")
-DataTypeEnum		typedef SDWORD
-adEmpty			equ 0
-adTinyInt		equ 16
-adSmallInt		equ 2
-adInteger		equ 3
-adBigInt		equ 20
-adUnsignedTinyInt	equ 17
-adUnsignedSmallInt	equ 18
-adUnsignedInt		equ 19
-adUnsignedBigInt	equ 21
-adSingle		equ 4
-adDouble		equ 5
-adCurrency		equ 6
-adDecimal		equ 14
-adNumeric		equ 131
-adBoolean		equ 11
-adError			equ 10
-adUserDefined		equ 132
-adVariant		equ 12
-adIDispatch		equ 9
-adIUnknown		equ 13
-adGUID			equ 72
-adDate			equ 7
-adDBDate		equ 133
-adDBTime		equ 134
-adDBTimeStamp		equ 135
-adBSTR			equ 8
-adChar			equ 129
-adVarChar		equ 200
-adLongVarChar		equ 201
-adWChar			equ 130
-adVarWChar		equ 202
-adLongVarWChar		equ 203
-adBinary		equ 128
-adVarBinary		equ 204
-adLongVarBinary		equ 205
-adChapter		equ 136
-adFileTime		equ 64
-adPropVariant		equ 138
-adVarNumeric		equ 139
-adArray			equ 0x2000
+.enum DataTypeEnum {
+	adEmpty		= 0,
+	adTinyInt	= 16,
+	adSmallInt	= 2,
+	adInteger	= 3,
+	adBigInt	= 20,
+	adUnsignedTinyInt = 17,
+	adUnsignedSmallInt = 18,
+	adUnsignedInt	= 19,
+	adUnsignedBigInt = 21,
+	adSingle	= 4,
+	adDouble	= 5,
+	adCurrency	= 6,
+	adDecimal	= 14,
+	adNumeric	= 131,
+	adBoolean	= 11,
+	adError		= 10,
+	adUserDefined	= 132,
+	adVariant	= 12,
+	adIDispatch	= 9,
+	adIUnknown	= 13,
+	adGUID		= 72,
+	adDate		= 7,
+	adDBDate	= 133,
+	adDBTime	= 134,
+	adDBTimeStamp	= 135,
+	adBSTR		= 8,
+	adChar		= 129,
+	adVarChar	= 200,
+	adLongVarChar	= 201,
+	adWChar		= 130,
+	adVarWChar	= 202,
+	adLongVarWChar	= 203,
+	adBinary	= 128,
+	adVarBinary	= 204,
+	adLongVarBinary = 205,
+	adChapter	= 136,
+	adFileTime	= 64,
+	adPropVariant	= 138,
+	adVarNumeric	= 139,
+	adArray		= 0x2000
+    }
 DECLSPEC_UUID("00000525-0000-0010-8000-00AA006D2EA4")
-FieldAttributeEnum	typedef SDWORD
-adFldUnspecified	equ -1
-adFldMayDefer		equ 0x2
-adFldUpdatable		equ 0x4
-adFldUnknownUpdatable	equ 0x8
-adFldFixed		equ 0x10
-adFldIsNullable		equ 0x20
-adFldMayBeNull		equ 0x40
-adFldLong		equ 0x80
-adFldRowID		equ 0x100
-adFldRowVersion		equ 0x200
-adFldCacheDeferred	equ 0x1000
-adFldIsChapter		equ 0x2000
-adFldNegativeScale	equ 0x4000
-adFldKeyColumn		equ 0x8000
-adFldIsRowURL		equ 0x10000
-adFldIsDefaultStream	equ 0x20000
-adFldIsCollection	equ 0x40000
+.enum FieldAttributeEnum {
+	adFldUnspecified = -1,
+	adFldMayDefer	= 0x2,
+	adFldUpdatable	= 0x4,
+	adFldUnknownUpdatable = 0x8,
+	adFldFixed	= 0x10,
+	adFldIsNullable = 0x20,
+	adFldMayBeNull	= 0x40,
+	adFldLong	= 0x80,
+	adFldRowID	= 0x100,
+	adFldRowVersion = 0x200,
+	adFldCacheDeferred = 0x1000,
+	adFldIsChapter	= 0x2000,
+	adFldNegativeScale = 0x4000,
+	adFldKeyColumn	= 0x8000,
+	adFldIsRowURL	= 0x10000,
+	adFldIsDefaultStream = 0x20000,
+	adFldIsCollection = 0x40000
+    }
 DECLSPEC_UUID("00000526-0000-0010-8000-00AA006D2EA4")
-EditModeEnum		typedef SDWORD
-adEditNone		equ 0
-adEditInProgress	equ 0x1
-adEditAdd		equ 0x2
-adEditDelete		equ 0x4
+.enum EditModeEnum {
+	adEditNone	= 0,
+	adEditInProgress = 0x1,
+	adEditAdd	= 0x2,
+	adEditDelete	= 0x4
+    }
 DECLSPEC_UUID("00000527-0000-0010-8000-00AA006D2EA4")
-RecordStatusEnum	typedef SDWORD
-adRecOK			equ 0
-adRecNew		equ 0x1
-adRecModified		equ 0x2
-adRecDeleted		equ 0x4
-adRecUnmodified		equ 0x8
-adRecInvalid		equ 0x10
-adRecMultipleChanges	equ 0x40
-adRecPendingChanges	equ 0x80
-adRecCanceled		equ 0x100
-adRecCantRelease	equ 0x400
-adRecConcurrencyViolation equ 0x800
-adRecIntegrityViolation equ 0x1000
-adRecMaxChangesExceeded equ 0x2000
-adRecObjectOpen		equ 0x4000
-adRecOutOfMemory	equ 0x8000
-adRecPermissionDenied	equ 0x10000
-adRecSchemaViolation	equ 0x20000
-adRecDBDeleted		equ 0x40000
+.enum RecordStatusEnum {
+	adRecOK		= 0,
+	adRecNew	= 0x1,
+	adRecModified	= 0x2,
+	adRecDeleted	= 0x4,
+	adRecUnmodified = 0x8,
+	adRecInvalid	= 0x10,
+	adRecMultipleChanges = 0x40,
+	adRecPendingChanges = 0x80,
+	adRecCanceled	= 0x100,
+	adRecCantRelease = 0x400,
+	adRecConcurrencyViolation = 0x800,
+	adRecIntegrityViolation = 0x1000,
+	adRecMaxChangesExceeded = 0x2000,
+	adRecObjectOpen = 0x4000,
+	adRecOutOfMemory = 0x8000,
+	adRecPermissionDenied = 0x10000,
+	adRecSchemaViolation = 0x20000,
+	adRecDBDeleted	= 0x40000
+    }
 DECLSPEC_UUID("00000542-0000-0010-8000-00AA006D2EA4")
-GetRowsOptionEnum	typedef SDWORD
-adGetRowsRest		equ -1
+.enum GetRowsOptionEnum {
+	adGetRowsRest	= -1
+    }
 DECLSPEC_UUID("00000528-0000-0010-8000-00AA006D2EA4")
-PositionEnum		typedef SDWORD
-adPosUnknown		equ -1
-adPosBOF		equ -2
-adPosEOF		equ -3
+.enum PositionEnum {
+	adPosUnknown	= -1,
+	adPosBOF	= -2,
+	adPosEOF	= -3
+    }
+
 ifdef _WIN64
 PositionEnum_Param	typedef LONGLONG
 else
 PositionEnum_Param	typedef PositionEnum
 endif
-BookmarkEnum		typedef SDWORD
-adBookmarkCurrent	equ 0
-adBookmarkFirst		equ 1
-adBookmarkLast		equ 2
+.enum BookmarkEnum {
+	adBookmarkCurrent = 0,
+	adBookmarkFirst = 1,
+	adBookmarkLast	= 2
+    }
 DECLSPEC_UUID("00000540-0000-0010-8000-00AA006D2EA4")
-MarshalOptionsEnum	typedef SDWORD
-adMarshalAll		equ 0
-adMarshalModifiedOnly	equ 1
+.enum MarshalOptionsEnum {
+	adMarshalAll	= 0,
+	adMarshalModifiedOnly	= 1
+    }
 DECLSPEC_UUID("00000543-0000-0010-8000-00AA006D2EA4")
-AffectEnum		typedef SDWORD
-adAffectCurrent		equ 1
-adAffectGroup		equ 2
-adAffectAll		equ 3
-adAffectAllChapters	equ 4
+.enum AffectEnum {
+	adAffectCurrent = 1,
+	adAffectGroup	= 2,
+	adAffectAll	= 3,
+	adAffectAllChapters	= 4
+    }
 DECLSPEC_UUID("00000544-0000-0010-8000-00AA006D2EA4")
-ResyncEnum		typedef SDWORD
-adResyncUnderlyingValues equ 1
-adResyncAllValues	equ 2
+.enum ResyncEnum {
+	adResyncUnderlyingValues	= 1,
+	adResyncAllValues	= 2
+    }
 DECLSPEC_UUID("00000545-0000-0010-8000-00AA006D2EA4")
-CompareEnum		typedef SDWORD
-adCompareLessThan	equ 0
-adCompareEqual		equ 1
-adCompareGreaterThan	equ 2
-adCompareNotEqual	equ 3
-adCompareNotComparable	equ 4
+.enum CompareEnum {
+	adCompareLessThan	= 0,
+	adCompareEqual	= 1,
+	adCompareGreaterThan	= 2,
+	adCompareNotEqual	= 3,
+	adCompareNotComparable	= 4
+    }
 DECLSPEC_UUID("00000546-0000-0010-8000-00AA006D2EA4")
-FilterGroupEnum		typedef SDWORD
-adFilterNone		equ 0
-adFilterPendingRecords	equ 1
-adFilterAffectedRecords equ 2
-adFilterFetchedRecords	equ 3
-adFilterPredicate	equ 4
-adFilterConflictingRecords equ 5
+.enum FilterGroupEnum {
+	adFilterNone	= 0,
+	adFilterPendingRecords	= 1,
+	adFilterAffectedRecords = 2,
+	adFilterFetchedRecords	= 3,
+	adFilterPredicate	= 4,
+	adFilterConflictingRecords	= 5
+    }
 DECLSPEC_UUID("00000547-0000-0010-8000-00AA006D2EA4")
-SearchDirectionEnum	typedef SDWORD
-adSearchForward		equ 1
-adSearchBackward	equ -1
-SearchDirection		typedef	 SearchDirectionEnum
+.enum SearchDirectionEnum {
+	adSearchForward = 1,
+	adSearchBackward	= -1
+    }
+SearchDirection typedef	 SearchDirectionEnum
 DECLSPEC_UUID("00000548-0000-0010-8000-00AA006D2EA4")
-PersistFormatEnum	typedef SDWORD
-adPersistADTG		equ 0
-adPersistXML		equ 1
+.enum PersistFormatEnum {
+	adPersistADTG	= 0,
+	adPersistXML	= 1
+    }
 DECLSPEC_UUID("00000549-0000-0010-8000-00AA006D2EA4")
-StringFormatEnum	typedef SDWORD
-adClipString		equ 2
+.enum StringFormatEnum {
+	adClipString	= 2
+    }
 DECLSPEC_UUID("00000520-0000-0010-8000-00AA006D2EA4")
-ConnectPromptEnum	typedef SDWORD
-adPromptAlways		equ 1
-adPromptComplete	equ 2
-adPromptCompleteRequired equ 3
-adPromptNever		equ 4
+.enum ConnectPromptEnum {
+	adPromptAlways	= 1,
+	adPromptComplete	= 2,
+	adPromptCompleteRequired	= 3,
+	adPromptNever	= 4
+    }
 DECLSPEC_UUID("00000521-0000-0010-8000-00AA006D2EA4")
-ConnectModeEnum		typedef SDWORD
-adModeUnknown		equ 0
-adModeRead		equ 1
-adModeWrite		equ 2
-adModeReadWrite		equ 3
-adModeShareDenyRead	equ 4
-adModeShareDenyWrite	equ 8
-adModeShareExclusive	equ 0xc
-adModeShareDenyNone	equ 0x10
-adModeRecursive		equ 0x400000
+.enum ConnectModeEnum {
+	adModeUnknown	= 0,
+	adModeRead	= 1,
+	adModeWrite	= 2,
+	adModeReadWrite = 3,
+	adModeShareDenyRead	= 4,
+	adModeShareDenyWrite	= 8,
+	adModeShareExclusive	= 0xc,
+	adModeShareDenyNone	= 0x10,
+	adModeRecursive = 0x400000
+    }
 DECLSPEC_UUID("00000570-0000-0010-8000-00AA006D2EA4")
-RecordCreateOptionsEnum typedef SDWORD
-adCreateCollection	equ 0x2000
-adCreateStructDoc	equ 0x80000000
-adCreateNonCollection	equ 0
-adOpenIfExists		equ 0x2000000
-adCreateOverwrite	equ 0x4000000
-adFailIfNotExists	equ -1
+.enum RecordCreateOptionsEnum {
+	adCreateCollection	= 0x2000,
+	adCreateStructDoc	= 0x80000000,
+	adCreateNonCollection	= 0,
+	adOpenIfExists	= 0x2000000,
+	adCreateOverwrite	= 0x4000000,
+	adFailIfNotExists	= -1
+    }
 DECLSPEC_UUID("00000571-0000-0010-8000-00AA006D2EA4")
-RecordOpenOptionsEnum	typedef SDWORD
-adOpenRecordUnspecified equ -1
-adOpenSource		equ 0x800000
-adOpenOutput		equ 0x800000
-adOpenAsync		equ 0x1000
-adDelayFetchStream	equ 0x4000
-adDelayFetchFields	equ 0x8000
-adOpenExecuteCommand	equ 0x10000
+.enum RecordOpenOptionsEnum {
+	adOpenRecordUnspecified = -1,
+	adOpenSource	= 0x800000,
+	adOpenOutput	= 0x800000,
+	adOpenAsync	= 0x1000,
+	adDelayFetchStream	= 0x4000,
+	adDelayFetchFields	= 0x8000,
+	adOpenExecuteCommand	= 0x10000
+    }
 DECLSPEC_UUID("00000523-0000-0010-8000-00AA006D2EA4")
-IsolationLevelEnum	typedef SDWORD
-adXactUnspecified	equ 0xffffffff
-adXactChaos		equ 0x10
-adXactReadUncommitted	equ 0x100
-adXactBrowse		equ 0x100
-adXactCursorStability	equ 0x1000
-adXactReadCommitted	equ 0x1000
-adXactRepeatableRead	equ 0x10000
-adXactSerializable	equ 0x100000
-adXactIsolated		equ 0x100000
+.enum IsolationLevelEnum {
+	adXactUnspecified	= 0xffffffff,
+	adXactChaos	= 0x10,
+	adXactReadUncommitted	= 0x100,
+	adXactBrowse	= 0x100,
+	adXactCursorStability	= 0x1000,
+	adXactReadCommitted	= 0x1000,
+	adXactRepeatableRead	= 0x10000,
+	adXactSerializable	= 0x100000,
+	adXactIsolated	= 0x100000
+    }
 DECLSPEC_UUID("00000524-0000-0010-8000-00AA006D2EA4")
-XactAttributeEnum	typedef SDWORD
-adXactCommitRetaining	equ 0x20000
-adXactAbortRetaining	equ 0x40000
-adXactAsyncPhaseOne	equ 0x80000
-adXactSyncPhaseOne	equ 0x100000
+.enum XactAttributeEnum {
+	adXactCommitRetaining	= 0x20000,
+	adXactAbortRetaining	= 0x40000,
+	adXactAsyncPhaseOne	= 0x80000,
+	adXactSyncPhaseOne	= 0x100000
+    }
 DECLSPEC_UUID("00000529-0000-0010-8000-00AA006D2EA4")
-PropertyAttributesEnum	typedef SDWORD
-adPropNotSupported	equ 0
-adPropRequired		equ 0x1
-adPropOptional		equ 0x2
-adPropRead		equ 0x200
-adPropWrite		equ 0x400
+.enum PropertyAttributesEnum {
+	adPropNotSupported	= 0,
+	adPropRequired	= 0x1,
+	adPropOptional	= 0x2,
+	adPropRead	= 0x200,
+	adPropWrite	= 0x400
+    }
 DECLSPEC_UUID("0000052A-0000-0010-8000-00AA006D2EA4")
-ErrorValueEnum		typedef SDWORD
-adErrProviderFailed	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbb8)
-adErrInvalidArgument	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbb9)
-adErrOpeningFile	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbba)
-adErrReadFile		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbbb)
-adErrWriteFile		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbbc)
-adErrNoCurrentRecord	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbcd)
-adErrIllegalOperation	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xc93)
-adErrCantChangeProvider equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xc94)
-adErrInTransaction	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcae)
-adErrFeatureNotAvailable equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcb3)
-adErrItemNotFound	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcc1)
-adErrObjectInCollection equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd27)
-adErrObjectNotSet	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd5c)
-adErrDataConversion	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd5d)
-adErrObjectClosed	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe78)
-adErrObjectOpen		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe79)
-adErrProviderNotFound	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7a)
-adErrBoundToCommand	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7b)
-adErrInvalidParamInfo	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7c)
-adErrInvalidConnection	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7d)
-adErrNotReentrant	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7e)
-adErrStillExecuting	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7f)
-adErrOperationCancelled equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe80)
-adErrStillConnecting	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe81)
-adErrInvalidTransaction equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe82)
-adErrNotExecuting	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe83)
-adErrUnsafeOperation	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe84)
-adwrnSecurityDialog	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe85)
-adwrnSecurityDialogHeader equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe86)
-adErrIntegrityViolation equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe87)
-adErrPermissionDenied	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe88)
-adErrDataOverflow	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe89)
-adErrSchemaViolation	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8a)
-adErrSignMismatch	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8b)
-adErrCantConvertvalue	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8c)
-adErrCantCreate		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8d)
-adErrColumnNotOnThisRow equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8e)
-adErrURLDoesNotExist	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8f)
-adErrTreePermissionDenied equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe90)
-adErrInvalidURL		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe91)
-adErrResourceLocked	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe92)
-adErrResourceExists	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe93)
-adErrCannotComplete	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe94)
-adErrVolumeNotFound	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe95)
-adErrOutOfSpace		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe96)
-adErrResourceOutOfScope equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe97)
-adErrUnavailable	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe98)
-adErrURLNamedRowDoesNotExist equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,	 0xe99)
-adErrDelResOutOfScope	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9a)
-adErrPropInvalidColumn	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9b)
-adErrPropInvalidOption	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9c)
-adErrPropInvalidValue	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9d)
-adErrPropConflicting	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9e)
-adErrPropNotAllSettable equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9f)
-adErrPropNotSet		equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea0)
-adErrPropNotSettable	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea1)
-adErrPropNotSupported	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea2)
-adErrCatalogNotSet	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea3)
-adErrCantChangeConnection equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea4)
-adErrFieldsUpdateFailed equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea5)
-adErrDenyNotSupported	equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea6)
-adErrDenyTypeNotSupported equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea7)
-adErrProviderNotSpecified equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea9)
-adErrConnectionStringTooLong equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL
+.enum ErrorValueEnum {
+	adErrProviderFailed	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbb8),
+	adErrInvalidArgument	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbb9),
+	adErrOpeningFile	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbba),
+	adErrReadFile		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbbb),
+	adErrWriteFile		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbbc),
+	adErrNoCurrentRecord	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xbcd),
+	adErrIllegalOperation	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xc93),
+	adErrCantChangeProvider = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xc94),
+	adErrInTransaction	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcae),
+	adErrFeatureNotAvailable= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcb3),
+	adErrItemNotFound	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xcc1),
+	adErrObjectInCollection = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd27),
+	adErrObjectNotSet	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd5c),
+	adErrDataConversion	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xd5d),
+	adErrObjectClosed	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe78),
+	adErrObjectOpen		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe79),
+	adErrProviderNotFound	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7a),
+	adErrBoundToCommand	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7b),
+	adErrInvalidParamInfo	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7c),
+	adErrInvalidConnection	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7d),
+	adErrNotReentrant	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7e),
+	adErrStillExecuting	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe7f),
+	adErrOperationCancelled = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe80),
+	adErrStillConnecting	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe81),
+	adErrInvalidTransaction = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe82),
+	adErrNotExecuting	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe83),
+	adErrUnsafeOperation	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe84),
+	adwrnSecurityDialog	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe85),
+	adwrnSecurityDialogHeader = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe86),
+	adErrIntegrityViolation = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe87),
+	adErrPermissionDenied	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe88),
+	adErrDataOverflow	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe89),
+	adErrSchemaViolation	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8a),
+	adErrSignMismatch	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8b),
+	adErrCantConvertvalue	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8c),
+	adErrCantCreate		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8d),
+	adErrColumnNotOnThisRow = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8e),
+	adErrURLDoesNotExist	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe8f),
+	adErrTreePermissionDenied = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe90),
+	adErrInvalidURL		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe91),
+	adErrResourceLocked	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe92),
+	adErrResourceExists	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe93),
+	adErrCannotComplete	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe94),
+	adErrVolumeNotFound	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe95),
+	adErrOutOfSpace		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe96),
+	adErrResourceOutOfScope = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe97),
+	adErrUnavailable	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe98),
+	adErrURLNamedRowDoesNotExist = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe99),
+	adErrDelResOutOfScope	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9a),
+	adErrPropInvalidColumn	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9b),
+	adErrPropInvalidOption	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9c),
+	adErrPropInvalidValue	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9d),
+	adErrPropConflicting	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9e),
+	adErrPropNotAllSettable = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xe9f),
+	adErrPropNotSet		= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea0),
+	adErrPropNotSettable	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea1),
+	adErrPropNotSupported	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea2),
+	adErrCatalogNotSet	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea3),
+	adErrCantChangeConnection = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea4),
+	adErrFieldsUpdateFailed = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea5),
+	adErrDenyNotSupported	= MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea6),
+	adErrDenyTypeNotSupported = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea7),
+	adErrProviderNotSpecified = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xea9),
+	adErrConnectionStringTooLong = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_CONTROL,  0xeaa)
+    }
 DECLSPEC_UUID("0000052B-0000-0010-8000-00AA006D2EA4")
-ParameterAttributesEnum typedef SDWORD
-adParamSigned		equ 0x10
-adParamNullable		equ 0x40
-adParamLong		equ 0x80
+.enum ParameterAttributesEnum {
+	adParamSigned	= 0x10,
+	adParamNullable = 0x40,
+	adParamLong	= 0x80
+    }
 DECLSPEC_UUID("0000052C-0000-0010-8000-00AA006D2EA4")
-ParameterDirectionEnum	typedef SDWORD
-adParamUnknown		equ 0
-adParamInput		equ 0x1
-adParamOutput		equ 0x2
-adParamInputOutput	equ 0x3
-adParamReturnValue	equ 0x4
+.enum ParameterDirectionEnum {
+	adParamUnknown	= 0,
+	adParamInput	= 0x1,
+	adParamOutput	= 0x2,
+	adParamInputOutput	= 0x3,
+	adParamReturnValue	= 0x4
+    }
 DECLSPEC_UUID("0000052E-0000-0010-8000-00AA006D2EA4")
-CommandTypeEnum		typedef SDWORD
-adCmdUnspecified	equ -1
-adCmdUnknown		equ 0x8
-adCmdText		equ 0x1
-adCmdTable		equ 0x2
-adCmdStoredProc		equ 0x4
-adCmdFile		equ 0x100
-adCmdTableDirect	equ 0x200
+.enum CommandTypeEnum {
+	adCmdUnspecified	= -1,
+	adCmdUnknown	= 0x8,
+	adCmdText	= 0x1,
+	adCmdTable	= 0x2,
+	adCmdStoredProc = 0x4,
+	adCmdFile	= 0x100,
+	adCmdTableDirect	= 0x200
+    }
 DECLSPEC_UUID("00000530-0000-0010-8000-00AA006D2EA4")
-EventStatusEnum		typedef SDWORD
-adStatusOK		equ 0x1
-adStatusErrorsOccurred	equ 0x2
-adStatusCantDeny	equ 0x3
-adStatusCancel		equ 0x4
-adStatusUnwantedEvent	equ 0x5
+.enum EventStatusEnum {
+	adStatusOK	= 0x1,
+	adStatusErrorsOccurred	= 0x2,
+	adStatusCantDeny	= 0x3,
+	adStatusCancel	= 0x4,
+	adStatusUnwantedEvent	= 0x5
+    }
 DECLSPEC_UUID("00000531-0000-0010-8000-00AA006D2EA4")
-EventReasonEnum		typedef SDWORD
-adRsnAddNew		equ 1
-adRsnDelete		equ 2
-adRsnUpdate		equ 3
-adRsnUndoUpdate		equ 4
-adRsnUndoAddNew		equ 5
-adRsnUndoDelete		equ 6
-adRsnRequery		equ 7
-adRsnResynch		equ 8
-adRsnClose		equ 9
-adRsnMove		equ 10
-adRsnFirstChange	equ 11
-adRsnMoveFirst		equ 12
-adRsnMoveNext		equ 13
-adRsnMovePrevious	equ 14
-adRsnMoveLast		equ 15
+.enum EventReasonEnum {
+	adRsnAddNew	= 1,
+	adRsnDelete	= 2,
+	adRsnUpdate	= 3,
+	adRsnUndoUpdate = 4,
+	adRsnUndoAddNew = 5,
+	adRsnUndoDelete = 6,
+	adRsnRequery	= 7,
+	adRsnResynch	= 8,
+	adRsnClose	= 9,
+	adRsnMove	= 10,
+	adRsnFirstChange = 11,
+	adRsnMoveFirst	= 12,
+	adRsnMoveNext	= 13,
+	adRsnMovePrevious = 14,
+	adRsnMoveLast	= 15
+    }
 DECLSPEC_UUID("00000533-0000-0010-8000-00AA006D2EA4")
-SchemaEnum		typedef SDWORD
-adSchemaProviderSpecific equ -1
-adSchemaAsserts		equ 0
-adSchemaCatalogs	equ 1
-adSchemaCharacterSets	equ 2
-adSchemaCollations	equ 3
-adSchemaColumns		equ 4
-adSchemaCheckConstraints equ 5
-adSchemaConstraintColumnUsage equ 6
-adSchemaConstraintTableUsage equ 7
-adSchemaKeyColumnUsage	equ 8
-adSchemaReferentialContraints equ 9
-adSchemaReferentialConstraints equ 9
-adSchemaTableConstraints equ 10
-adSchemaColumnsDomainUsage equ 11
-adSchemaIndexes		equ 12
-adSchemaColumnPrivileges equ 13
-adSchemaTablePrivileges equ 14
-adSchemaUsagePrivileges equ 15
-adSchemaProcedures	equ 16
-adSchemaSchemata	equ 17
-adSchemaSQLLanguages	equ 18
-adSchemaStatistics	equ 19
-adSchemaTables		equ 20
-adSchemaTranslations	equ 21
-adSchemaProviderTypes	equ 22
-adSchemaViews		equ 23
-adSchemaViewColumnUsage equ 24
-adSchemaViewTableUsage	equ 25
-adSchemaProcedureParameters equ 26
-adSchemaForeignKeys	equ 27
-adSchemaPrimaryKeys	equ 28
-adSchemaProcedureColumns equ 29
-adSchemaDBInfoKeywords	equ 30
-adSchemaDBInfoLiterals	equ 31
-adSchemaCubes		equ 32
-adSchemaDimensions	equ 33
-adSchemaHierarchies	equ 34
-adSchemaLevels		equ 35
-adSchemaMeasures	equ 36
-adSchemaProperties	equ 37
-adSchemaMembers		equ 38
-adSchemaTrustees	equ 39
-adSchemaFunctions	equ 40
-adSchemaActions		equ 41
-adSchemaCommands	equ 42
-adSchemaSets		equ 43
+.enum SchemaEnum {
+	adSchemaProviderSpecific = -1,
+	adSchemaAsserts = 0,
+	adSchemaCatalogs	= 1,
+	adSchemaCharacterSets	= 2,
+	adSchemaCollations	= 3,
+	adSchemaColumns = 4,
+	adSchemaCheckConstraints	= 5,
+	adSchemaConstraintColumnUsage	= 6,
+	adSchemaConstraintTableUsage	= 7,
+	adSchemaKeyColumnUsage	= 8,
+	adSchemaReferentialContraints	= 9,
+	adSchemaReferentialConstraints	= 9,
+	adSchemaTableConstraints	= 10,
+	adSchemaColumnsDomainUsage	= 11,
+	adSchemaIndexes = 12,
+	adSchemaColumnPrivileges	= 13,
+	adSchemaTablePrivileges = 14,
+	adSchemaUsagePrivileges = 15,
+	adSchemaProcedures	= 16,
+	adSchemaSchemata	= 17,
+	adSchemaSQLLanguages	= 18,
+	adSchemaStatistics	= 19,
+	adSchemaTables	= 20,
+	adSchemaTranslations	= 21,
+	adSchemaProviderTypes	= 22,
+	adSchemaViews	= 23,
+	adSchemaViewColumnUsage = 24,
+	adSchemaViewTableUsage	= 25,
+	adSchemaProcedureParameters	= 26,
+	adSchemaForeignKeys	= 27,
+	adSchemaPrimaryKeys	= 28,
+	adSchemaProcedureColumns	= 29,
+	adSchemaDBInfoKeywords	= 30,
+	adSchemaDBInfoLiterals	= 31,
+	adSchemaCubes	= 32,
+	adSchemaDimensions	= 33,
+	adSchemaHierarchies	= 34,
+	adSchemaLevels	= 35,
+	adSchemaMeasures	= 36,
+	adSchemaProperties	= 37,
+	adSchemaMembers = 38,
+	adSchemaTrustees	= 39,
+	adSchemaFunctions	= 40,
+	adSchemaActions = 41,
+	adSchemaCommands	= 42,
+	adSchemaSets	= 43
+    }
 DECLSPEC_UUID("0000057E-0000-0010-8000-00AA006D2EA4")
-FieldStatusEnum		typedef SDWORD
-adFieldOK		equ 0
-adFieldCantConvertValue equ 2
-adFieldIsNull		equ 3
-adFieldTruncated	equ 4
-adFieldSignMismatch	equ 5
-adFieldDataOverflow	equ 6
-adFieldCantCreate	equ 7
-adFieldUnavailable	equ 8
-adFieldPermissionDenied equ 9
-adFieldIntegrityViolation equ 10
-adFieldSchemaViolation	equ 11
-adFieldBadStatus	equ 12
-adFieldDefault		equ 13
-adFieldIgnore		equ 15
-adFieldDoesNotExist	equ 16
-adFieldInvalidURL	equ 17
-adFieldResourceLocked	equ 18
-adFieldResourceExists	equ 19
-adFieldCannotComplete	equ 20
-adFieldVolumeNotFound	equ 21
-adFieldOutOfSpace	equ 22
-adFieldCannotDeleteSource equ 23
-adFieldReadOnly		equ 24
-adFieldResourceOutOfScope equ 25
-adFieldAlreadyExists	equ 26
-adFieldPendingInsert	equ 0x10000
-adFieldPendingDelete	equ 0x20000
-adFieldPendingChange	equ 0x40000
-adFieldPendingUnknown	equ 0x80000
-adFieldPendingUnknownDelete equ 0x100000
+.enum FieldStatusEnum {
+	adFieldOK	= 0,
+	adFieldCantConvertValue = 2,
+	adFieldIsNull	= 3,
+	adFieldTruncated	= 4,
+	adFieldSignMismatch	= 5,
+	adFieldDataOverflow	= 6,
+	adFieldCantCreate	= 7,
+	adFieldUnavailable	= 8,
+	adFieldPermissionDenied = 9,
+	adFieldIntegrityViolation	= 10,
+	adFieldSchemaViolation	= 11,
+	adFieldBadStatus	= 12,
+	adFieldDefault	= 13,
+	adFieldIgnore	= 15,
+	adFieldDoesNotExist	= 16,
+	adFieldInvalidURL	= 17,
+	adFieldResourceLocked	= 18,
+	adFieldResourceExists	= 19,
+	adFieldCannotComplete	= 20,
+	adFieldVolumeNotFound	= 21,
+	adFieldOutOfSpace	= 22,
+	adFieldCannotDeleteSource	= 23,
+	adFieldReadOnly = 24,
+	adFieldResourceOutOfScope	= 25,
+	adFieldAlreadyExists	= 26,
+	adFieldPendingInsert	= 0x10000,
+	adFieldPendingDelete	= 0x20000,
+	adFieldPendingChange	= 0x40000,
+	adFieldPendingUnknown	= 0x80000,
+	adFieldPendingUnknownDelete	= 0x100000
+    }
 DECLSPEC_UUID("00000552-0000-0010-8000-00AA006D2EA4")
-SeekEnum		typedef SDWORD
-adSeekFirstEQ		equ 0x1
-adSeekLastEQ		equ 0x2
-adSeekAfterEQ		equ 0x4
-adSeekAfter		equ 0x8
-adSeekBeforeEQ		equ 0x10
-adSeekBefore		equ 0x20
+.enum SeekEnum {
+	adSeekFirstEQ	= 0x1,
+	adSeekLastEQ	= 0x2,
+	adSeekAfterEQ	= 0x4,
+	adSeekAfter	= 0x8,
+	adSeekBeforeEQ	= 0x10,
+	adSeekBefore	= 0x20
+    }
+
 ifndef _COMMON_ADC_AND_ADO_PROPS_
-_COMMON_ADC_AND_ADO_PROPS_ equ 1
+_COMMON_ADC_AND_ADO_PROPS_ equ <>
 DECLSPEC_UUID("0000054A-0000-0010-8000-00AA006D2EA4")
-ADCPROP_UPDATECRITERIA_ENUM typedef SDWORD
-adCriteriaKey		equ 0
-adCriteriaAllCols	equ 1
-adCriteriaUpdCols	equ 2
-adCriteriaTimeStamp	equ 3
+.enum ADCPROP_UPDATECRITERIA_ENUM {
+	adCriteriaKey	= 0,
+	adCriteriaAllCols	= 1,
+	adCriteriaUpdCols	= 2,
+	adCriteriaTimeStamp	= 3
+    }
 DECLSPEC_UUID("0000054B-0000-0010-8000-00AA006D2EA4")
-ADCPROP_ASYNCTHREADPRIORITY_ENUM typedef SDWORD
-adPriorityLowest	equ 1
-adPriorityBelowNormal	equ 2
-adPriorityNormal	equ 3
-adPriorityAboveNormal	equ 4
-adPriorityHighest	equ 5
+.enum ADCPROP_ASYNCTHREADPRIORITY_ENUM {
+	adPriorityLowest	= 1,
+	adPriorityBelowNormal	= 2,
+	adPriorityNormal	= 3,
+	adPriorityAboveNormal	= 4,
+	adPriorityHighest	= 5
+    }
 DECLSPEC_UUID("00000554-0000-0010-8000-00AA006D2EA4")
-ADCPROP_AUTORECALC_ENUM typedef SDWORD
-adRecalcUpFront		equ 0
-adRecalcAlways		equ 1
+.enum ADCPROP_AUTORECALC_ENUM {
+	adRecalcUpFront = 0,
+	adRecalcAlways	= 1
+    }
 DECLSPEC_UUID("00000553-0000-0010-8000-00AA006D2EA4")
-ADCPROP_UPDATERESYNC_ENUM typedef SDWORD
-adResyncNone		equ 0
-adResyncAutoIncrement	equ 1
-adResyncConflicts	equ 2
-adResyncUpdates		equ 4
-adResyncInserts		equ 8
-adResyncAll		equ 15
+.enum ADCPROP_UPDATERESYNC_ENUM {
+	adResyncNone	= 0,
+	adResyncAutoIncrement	= 1,
+	adResyncConflicts	= 2,
+	adResyncUpdates = 4,
+	adResyncInserts = 8,
+	adResyncAll	= 15
+    }
 endif
-CEResyncEnum		typedef ADCPROP_UPDATERESYNC_ENUM
+
+CEResyncEnum typedef ADCPROP_UPDATERESYNC_ENUM
+
 DECLSPEC_UUID("00000573-0000-0010-8000-00AA006D2EA4")
-MoveRecordOptionsEnum	typedef SDWORD
-adMoveUnspecified	equ -1
-adMoveOverWrite		equ 1
-adMoveDontUpdateLinks	equ 2
-adMoveAllowEmulation	equ 4
+.enum MoveRecordOptionsEnum {
+	adMoveUnspecified	= -1,
+	adMoveOverWrite = 1,
+	adMoveDontUpdateLinks	= 2,
+	adMoveAllowEmulation	= 4
+    }
 DECLSPEC_UUID("00000574-0000-0010-8000-00AA006D2EA4")
-CopyRecordOptionsEnum	typedef SDWORD
-adCopyUnspecified	equ -1
-adCopyOverWrite		equ 1
-adCopyAllowEmulation	equ 4
-adCopyNonRecursive	equ 2
+.enum CopyRecordOptionsEnum {
+	adCopyUnspecified	= -1,
+	adCopyOverWrite = 1,
+	adCopyAllowEmulation	= 4,
+	adCopyNonRecursive	= 2
+    }
 DECLSPEC_UUID("00000576-0000-0010-8000-00AA006D2EA4")
-StreamTypeEnum		typedef SDWORD
-adTypeBinary		equ 1
-adTypeText		equ 2
+.enum StreamTypeEnum {
+	adTypeBinary	= 1,
+	adTypeText	= 2
+    }
 DECLSPEC_UUID("00000577-0000-0010-8000-00AA006D2EA4")
-LineSeparatorEnum	typedef SDWORD
-adLF			equ 10
-adCR			equ 13
-adCRLF			equ -1
+.enum LineSeparatorEnum {
+	adLF	= 10,
+	adCR	= 13,
+	adCRLF	= -1
+    }
 DECLSPEC_UUID("0000057A-0000-0010-8000-00AA006D2EA4")
-StreamOpenOptionsEnum	typedef SDWORD
-adOpenStreamUnspecified equ -1
-adOpenStreamAsync	equ 1
-adOpenStreamFromRecord	equ 4
+.enum StreamOpenOptionsEnum {
+	adOpenStreamUnspecified = -1,
+	adOpenStreamAsync	= 1,
+	adOpenStreamFromRecord	= 4
+    }
 DECLSPEC_UUID("0000057B-0000-0010-8000-00AA006D2EA4")
-StreamWriteEnum		typedef SDWORD
-adWriteChar		equ 0
-adWriteLine		equ 1
-stWriteChar		equ 0
-stWriteLine		equ 1
+.enum StreamWriteEnum {
+	adWriteChar	= 0,
+	adWriteLine	= 1,
+	stWriteChar	= 0,
+	stWriteLine	= 1
+    }
 DECLSPEC_UUID("0000057C-0000-0010-8000-00AA006D2EA4")
-SaveOptionsEnum		typedef SDWORD
-adSaveCreateNotExist	equ 1
-adSaveCreateOverWrite	equ 2
-FieldEnum		typedef SDWORD
-adDefaultStream		equ -1
-adRecordURL		equ -2
-StreamReadEnum		typedef SDWORD
-adReadAll		equ -1
-adReadLine		equ -2
+.enum SaveOptionsEnum {
+	adSaveCreateNotExist	= 1,
+	adSaveCreateOverWrite	= 2
+    }
+.enum FieldEnum {
+	adDefaultStream = -1,
+	adRecordURL	= -2
+    }
+.enum StreamReadEnum {
+	adReadAll	= -1,
+	adReadLine	= -2
+    }
 DECLSPEC_UUID("0000057D-0000-0010-8000-00AA006D2EA4")
-RecordTypeEnum		typedef SDWORD
-adSimpleRecord		equ 0
-adCollectionRecord	equ 1
-adStructDoc		equ 2
-externdef		LIBID_ADODB:IID
+.enum RecordTypeEnum {
+	adSimpleRecord	= 0,
+	adCollectionRecord = 1,
+	adStructDoc	= 2
+    }
 
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1

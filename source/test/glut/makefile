@@ -1,4 +1,3 @@
 test.exe:
-    asmc -q $*.asm
-    linkw system con_32 file $*
+    asmc64 -pe -gui -D_GLPE $*.asm
     $@

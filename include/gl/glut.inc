@@ -22,6 +22,65 @@ ifdef _WIN32
  endif
 endif ;; _WIN32
 
+
+ifdef _GLPE
+ifndef _WIN64
+ifndef _REGS6432
+    rax equ <eax>
+    rbx equ <ebx>
+    rcx equ <ecx>
+    rdx equ <edx>
+    rdi equ <edi>
+    rsi equ <esi>
+    rbp equ <ebp>
+    rsp equ <esp>
+_REGS6432 equ 1
+endif
+endif
+
+    option win64:3
+
+    .data
+    __argc    int_t 0,0
+  ifdef _UNICODE
+    __argv    warray_t 0
+    __environ warray_t 0
+  else
+    __argv    array_t 0
+    __environ array_t 0
+  endif
+    _startup  db 128 dup(0)
+
+    .code
+
+glutStartup proc
+    .if !__getmainargs( addr __argc, addr __argv, addr __environ, 0, addr _startup )
+        mov ecx,__argc
+ifdef _WIN64
+        mov rdx,__argv
+        mov r8,__environ
+else
+        mov edx,__argv
+        mov ebx,__environ
+        push    ebx
+        push    edx
+        push    ecx
+endif
+        main()
+    .endif
+    ret
+
+glutStartup endp
+
+glutExit proc retval:int_t
+
+    exit(retval)
+
+glutExit endp
+
+_tstart equ <glutStartup>
+endif ; _GLPE
+
 ifndef GLUT_API_VERSION
 GLUT_API_VERSION equ 3
 endif
@@ -259,7 +318,7 @@ __glutInitWithExit proto WINAPI :ptr int_t, :array_t, :ptr
 ifndef GLUT_BUILDING_LIB
 glutInit macro argcp, argv
 ifdef _MSVCRT
-    exitm<__glutInitWithExit(argcp, argv, __imp_exit)>
+    exitm<__glutInitWithExit(argcp, argv, &glutExit)>
 else
     exitm<__glutInitWithExit(argcp, argv, &exit)>
 endif
@@ -286,8 +345,7 @@ __glutCreateWindowWithExit proto WINAPI :string_t, :ptr
 ifndef GLUT_BUILDING_LIB
 glutCreateWindow macro title
 ifdef _MSVCRT
-;    externdef __imp_exit:proc
-    exitm<__glutCreateWindowWithExit(title, __imp_exit)>
+    exitm<__glutCreateWindowWithExit(title, &glutExit)>
 else
     exitm<__glutCreateWindowWithExit(title, &exit)>
 endif
@@ -376,7 +434,7 @@ __glutCreateMenuWithExit proto WINAPI :ptr, :ptr
 ifndef GLUT_BUILDING_LIB
 glutCreateMenu macro func
 ifdef _MSVCRT
-    exitm<__glutCreateMenuWithExit(func, __imp_exit)>
+    exitm<__glutCreateMenuWithExit(func, &glutExit)>
 else
     exitm<__glutCreateMenuWithExit(func, &exit)>
 endif

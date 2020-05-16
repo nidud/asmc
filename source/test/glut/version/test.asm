@@ -4,21 +4,20 @@ include tchar.inc
 
     .code
 
-WndProc proc uses rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc uses rsi rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch edx
 
     .case WM_CREATE
 
-        .new dc:HDC
         .new pf:PIXELFORMATDESCRIPTOR
 
-        mov dc,GetDC(rcx)
-
+        mov rdx,GetDC(rcx)
         lea rdi,pf
-        mov ecx,PIXELFORMATDESCRIPTOR
+        mov ecx,PIXELFORMATDESCRIPTOR/8
         xor eax,eax
-        rep stosb
+        rep stosq
+        mov rdi,rdx
 
         mov pf.nSize,       PIXELFORMATDESCRIPTOR
         mov pf.nVersion,    1
@@ -29,11 +28,11 @@ WndProc proc uses rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov pf.cStencilBits,8
         mov pf.iLayerType,  PFD_MAIN_PLANE
 
-        SetPixelFormat(dc, ChoosePixelFormat(dc, &pf), &pf)
-        wglMakeCurrent(dc, wglCreateContext(dc))
+        SetPixelFormat(rdi, ChoosePixelFormat(rdi, &pf), &pf)
+        mov rsi,wglCreateContext(rdi)
+        wglMakeCurrent(rdi, rax)
         MessageBox(0, glGetString(GL_VERSION), "OPENGL VERSION",0)
-
-        wglDeleteContext(dc)
+        wglDeleteContext(rsi)
         PostQuitMessage(0)
         .endc
 
@@ -54,6 +53,8 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
 
     mov wc.cbSize,          WNDCLASSEX
     mov wc.style,           CS_OWNDC
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
     mov wc.hbrBackground,   COLOR_BACKGROUND
     mov wc.hInstance,       rcx
     mov wc.lpfnWndProc,     &WndProc

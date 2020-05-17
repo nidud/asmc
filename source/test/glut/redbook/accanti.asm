@@ -82,7 +82,6 @@ ACSIZE equ 8
 display proc uses rsi
 
    local viewport[4]:int_t
-   local jitter:int_t
 
     glGetIntegerv(GL_VIEWPORT, &viewport)
 
@@ -117,7 +116,7 @@ reshape proc w:int_t, h:int_t
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
 
-    .if (w <= h)
+    .if w <= h
 
         cvtsi2ss xmm2,h
         cvtsi2ss xmm0,w
@@ -125,7 +124,11 @@ reshape proc w:int_t, h:int_t
         movss xmm3,xmm2
         mulss xmm2,-2.25
         mulss xmm3,2.25
-        glOrtho(-2.25, 2.25, xmm2, xmm2, -10.0, 10.0)
+
+        cvtss2sd xmm2,xmm2
+        cvtss2sd xmm3,xmm3
+
+        glOrtho(-2.25, 2.25, xmm2, xmm3, -10.0, 10.0)
 
     .else
 
@@ -135,6 +138,9 @@ reshape proc w:int_t, h:int_t
         movss xmm1,xmm0
         mulss xmm0,-2.25
         mulss xmm1,2.25
+        cvtss2sd xmm0,xmm0
+        cvtss2sd xmm1,xmm1
+
         glOrtho(xmm0, xmm1, -2.25, 2.25, -10.0, 10.0)
     .endif
     glMatrixMode(GL_MODELVIEW)

@@ -83,12 +83,16 @@ reshape proc w:int_t, h:int_t
       mulss  xmm2,xmm3
       movss  xmm0,1.0
       mulss  xmm3,xmm0
+      cvtss2sd xmm2,xmm2
+      cvtss2sd xmm3,xmm3
       gluOrtho2D(-1.0, 1.0, xmm2, xmm3)
    .else
       movss  xmm0,-1.0
       mulss  xmm0,xmm3
       movss  xmm1,1.0
       mulss  xmm1,xmm3
+      cvtss2sd xmm0,xmm0
+      cvtss2sd xmm1,xmm1
       gluOrtho2D(xmm0, xmm1, -1.0, 1.0)
    .endif
    glMatrixMode(GL_MODELVIEW)
@@ -104,6 +108,7 @@ keyboard proc key:byte, x:int_t, y:int_t
       .case 'R'
          movss   xmm0,rotAngle
          addss   xmm0,20.0
+         movss   rotAngle,xmm0
          ucomiss xmm0,360.0
          .ifnb
              mov rotAngle,0.0

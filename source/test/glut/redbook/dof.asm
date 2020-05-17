@@ -35,6 +35,8 @@ accFrustum proc left:double, right:double, bottom:double,
    divsd xmm2,focus
    addsd xmm1,xmm2
    divsd xmm0,xmm1
+   movsd xmm3,8000000000000000r
+   xorps xmm0,xmm3
    movsd x,xmm0
 
    movsd xmm0,pixdy
@@ -42,10 +44,8 @@ accFrustum proc left:double, right:double, bottom:double,
    cvtsi2sd xmm1,viewport[3*4]
    addsd xmm1,xmm2
    divsd xmm0,xmm1
+   xorps xmm0,xmm3
    movsd y,xmm0
-   mov   rax,0x8000000000000000
-   or    x,rax
-   or    y,rax
 
    glMatrixMode(GL_PROJECTION)
    glLoadIdentity()
@@ -63,13 +63,11 @@ accFrustum proc left:double, right:double, bottom:double,
    glMatrixMode(GL_MODELVIEW)
    glLoadIdentity()
 
-   mov  rcx,eyedx
-   mov  rdx,eyedy
-   mov  rax,0x8000000000000000
-   or   rcx,rax
-   or   rdx,rax
-   movq xmm0,rcx
-   movq xmm1,rdx
+   movsd xmm0,eyedx
+   movsd xmm1,eyedy
+   movsd xmm2,8000000000000000r
+   xorps xmm0,xmm2
+   xorps xmm1,xmm2
 
    glTranslatef(xmm0, xmm1, 0.0)
    ret
@@ -87,22 +85,22 @@ accPerspective proc fovy:double, aspect:double,
    divsd xmm0,2.0
    movsd fov2,xmm0
 
-   movsd top,cos(xmm0)
-   movsd xmm1,sin(fov2)
-   movsd xmm0,_near
+   movsd top,sin(xmm0)
+   cos(fov2)
    divsd xmm0,top
-   divsd xmm0,xmm1
-   movsd top,xmm0
-   movsd bottom,xmm0
-   mov   rax,0x8000000000000000
-   or    bottom,rax
-   mulsd xmm0,aspect
-   movsd right,xmm0
-   movsd left,xmm0
-   or    left,rax
+   movsd xmm1,_near
+   divsd xmm1,xmm0
+   movsd xmm3,xmm1 ; top = near / (cos(fov2) / sin(fov2))
 
-   accFrustum(left, right, bottom, top, _near, _far,
-               pixdx, pixdy, eyedx, eyedy, focus)
+   movsd xmm4,8000000000000000r
+   movsd xmm2,xmm1
+   xorps xmm2,xmm4 ; bottom = -top
+
+   mulsd xmm1,aspect
+   movsd xmm0,xmm1 ; right = top * aspect
+   xorps xmm0,xmm4 ; left = -right
+
+   accFrustum(xmm0, xmm1, xmm2, xmm3, _near, _far, pixdx, pixdy, eyedx, eyedy, focus)
    ret
 
 accPerspective endp

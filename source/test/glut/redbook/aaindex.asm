@@ -104,10 +104,9 @@ keyboard proc key:byte, x:int_t, y:int_t
       .case 'R'
 
          movss   xmm0,rotAngle
-         movss   xmm1,20.0
-         addss   xmm0,xmm1
-         movss   xmm1,360.0
-         ucomiss xmm0,xmm1
+         addss   xmm0,20.0
+         movss   rotAngle,xmm0
+         ucomiss xmm0,360.0
          .ifnb
              mov rotAngle,0.0
          .endif

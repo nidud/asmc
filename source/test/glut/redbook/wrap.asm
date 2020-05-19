@@ -1,5 +1,5 @@
 ;
-; https://www.opengl.org/archives/resources/code/samples/redbook/checker.c
+; https://www.opengl.org/archives/resources/code/samples/redbook/wrap.c
 ;
 include GL/glut.inc
 include stdio.inc
@@ -47,16 +47,16 @@ makeCheckImage endp
 
 init proc
 
-   glClearColor (0.0, 0.0, 0.0, 0.0)
-   glShadeModel(GL_FLAT)
-   glEnable(GL_DEPTH_TEST)
+   glClearColor (0.0, 0.0, 0.0, 0.0);
+   glShadeModel(GL_FLAT);
+   glEnable(GL_DEPTH_TEST);
 
-   makeCheckImage()
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+   makeCheckImage();
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 ifdef GL_VERSION_1_1
    glGenTextures(1, &texName);
-   glBindTexture(GL_TEXTURE_2D, texName)
+   glBindTexture(GL_TEXTURE_2D, texName);
 endif
 
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -71,63 +71,82 @@ else
                 0, GL_RGBA, GL_UNSIGNED_BYTE, &checkImage);
 endif
    ret
+
 init endp
 
 display proc
 
-   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-   glEnable(GL_TEXTURE_2D)
-   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+   glEnable(GL_TEXTURE_2D);
+   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 ifdef GL_VERSION_1_1
-   glBindTexture(GL_TEXTURE_2D, texName)
+   glBindTexture(GL_TEXTURE_2D, texName);
 endif
 
-   glBegin(GL_QUADS)
+   glBegin(GL_QUADS);
    glTexCoord2f(0.0, 0.0)
-   glVertex3f(-2.0, -1.0, 0.0)
-   glTexCoord2f(0.0, 1.0)
-   glVertex3f(-2.0, 1.0, 0.0)
-   glTexCoord2f(1.0, 1.0)
-   glVertex3f(0.0, 1.0, 0.0)
-   glTexCoord2f(1.0, 0.0)
-   glVertex3f(0.0, -1.0, 0.0)
+   glVertex3f(-2.0, -1.0, 0.0);
+   glTexCoord2f(0.0, 3.0)
+   glVertex3f(-2.0, 1.0, 0.0);
+   glTexCoord2f(3.0, 3.0)
+   glVertex3f(0.0, 1.0, 0.0);
+   glTexCoord2f(3.0, 0.0)
+   glVertex3f(0.0, -1.0, 0.0);
 
    glTexCoord2f(0.0, 0.0)
-   glVertex3f(1.0, -1.0, 0.0)
-   glTexCoord2f(0.0, 1.0)
-   glVertex3f(1.0, 1.0, 0.0)
-   glTexCoord2f(1.0, 1.0)
-   glVertex3f(2.41421, 1.0, -1.41421)
-   glTexCoord2f(1.0, 0.0)
-   glVertex3f(2.41421, -1.0, -1.41421)
-   glEnd()
-   glFlush()
-   glDisable(GL_TEXTURE_2D)
+   glVertex3f(1.0, -1.0, 0.0);
+   glTexCoord2f(0.0, 3.0)
+   glVertex3f(1.0, 1.0, 0.0);
+   glTexCoord2f(3.0, 3.0)
+   glVertex3f(2.41421, 1.0, -1.41421);
+   glTexCoord2f(3.0, 0.0)
+   glVertex3f(2.41421, -1.0, -1.41421);
+   glEnd();
+   glFlush();
+   glDisable(GL_TEXTURE_2D);
    ret
 
 display endp
 
 reshape proc w:int_t, h:int_t
 
-   glViewport(0, 0, ecx, edx)
-   glMatrixMode(GL_PROJECTION)
-   glLoadIdentity()
+   glViewport(0, 0, w, h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
    cvtsi2sd xmm0,h
    cvtsi2sd xmm1,w
    divsd xmm1,xmm0
-   gluPerspective(60.0, xmm1, 1.0, 30.0)
-   glMatrixMode(GL_MODELVIEW)
-   glLoadIdentity()
-   glTranslatef(0.0, 0.0, -3.6)
+   gluPerspective(60.0, xmm1, 1.0, 30.0);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glTranslatef(0.0, 0.0, -3.6);
    ret
 
 reshape endp
 
 keyboard proc key:byte, x:int_t, y:int_t
 
-   .if key == 27
-        exit(0)
-   .endif
+    .switch cl
+      .case 's'
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+         glutPostRedisplay();
+         .endc
+      .case 'S'
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+         glutPostRedisplay();
+         .endc
+      .case 't'
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+         glutPostRedisplay();
+         .endc
+      .case 'T'
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+         glutPostRedisplay();
+         .endc
+      .case 27
+         exit(0);
+         .endc
+    .endsw
     ret
 
 keyboard endp

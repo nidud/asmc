@@ -53,7 +53,7 @@ display endp
 init proc
 
    glClearColor (0.0, 0.0, 0.0, 0.0);
-   glMap2f(GL_MAP2_VERTEX_3, 0, 1, 3, 4, 0, 1, 12, 4, &ctrlpoints);
+   glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 4, &ctrlpoints);
    glEnable(GL_MAP2_VERTEX_3);
    glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
    glEnable(GL_DEPTH_TEST);
@@ -67,29 +67,23 @@ reshape proc w:int_t, h:int_t
    glViewport(0, 0, w, h)
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
+   cvtsi2sd xmm0,w
+   cvtsi2sd xmm1,h
 
     .if w <= h
 
-        cvtsi2ss xmm2,h
-        cvtsi2ss xmm0,w
-        divss xmm2,xmm0
-        movss xmm3,xmm2
-        mulss xmm2,-4.0
-        mulss xmm3,4.0
-        cvtss2sd xmm2,xmm2
-        cvtss2sd xmm3,xmm3
-
+        divsd xmm1,xmm0
+        movsd xmm2,xmm1
+        movsd xmm3,xmm1
+        mulsd xmm2,-4.0
+        mulsd xmm3,4.0
         glOrtho(-4.0, 4.0, xmm2, xmm3, -4.0, 4.0);
     .else
 
-        cvtsi2ss xmm0,w
-        cvtsi2ss xmm1,h
-        divss xmm0,xmm1
-        movss xmm1,xmm0
-        mulss xmm0,-4.0
-        mulss xmm1,4.0
-        cvtss2sd xmm0,xmm0
-        cvtss2sd xmm1,xmm1
+        divsd xmm0,xmm1
+        movsd xmm1,xmm0
+        mulsd xmm0,-4.0
+        mulsd xmm1,4.0
         glOrtho(xmm0, xmm1, -4.0, 4.0, -4.0, 4.0);
     .endif
 

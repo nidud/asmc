@@ -457,7 +457,7 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 
     if ( opnd->kind == EXPR_FLOAT ) {
 
-	if ( opnd->hlvalue == 0 && opnd->llvalue ) {
+	if ( opnd->hlvalue == 0 && opnd->llvalue == 0 ) {
 
 	    AddLineQueueX( " xorps %r, %r", xmm, xmm );
 	    return 1;

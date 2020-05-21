@@ -38,7 +38,7 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
     char *dst;
     char *src;
 
-    if ( !o1 || !o2 || ModuleInfo.strict_masm_compat )
+    if ( !(op1 & OP_M_ANY ) || !(op2 & OP_M_ANY ) || ModuleInfo.strict_masm_compat )
 	return asmerr( 2070 );
 
     reg = T_EAX;
@@ -169,20 +169,29 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
     return RetLineQueue();
 }
 
-int imm2xmm( struct asm_tok tokenarray[] )
+int CreateFloat(int, struct expr *, char *);
+
+int imm2xmm( struct asm_tok tokenarray[], struct expr *opnd )
 {
-    int reg = T_EAX;
+    char flabel[16];
+    int reg = tokenarray[1].tokval;
     int cmd = tokenarray[0].tokval;
+    int size = 4;
 
-    if ( cmd == T_MOVSD )
-	cmd = T_MOVQ;
-    else if ( cmd == T_MOVSS )
-	cmd = T_MOVD;
-    if ( cmd == T_MOVQ )
-	reg = T_RAX;
-
-    AddLineQueueX( " mov %r, %s", reg, tokenarray[3].tokpos );
-    AddLineQueueX( " %r %r, %r", cmd, tokenarray[1].tokval, reg );
+    switch ( cmd ) {
+    case T_MOVSD:
+    case T_MOVQ:
+    case T_ADDSD:
+    case T_SUBSD:
+    case T_MULSD:
+    case T_DIVSD:
+    case T_COMISD:
+    case T_UCOMISD:
+	size = 8;
+	break;
+    }
+    CreateFloat(size, opnd, flabel);
+    AddLineQueueX( " %r %r,%s", cmd, reg, flabel );
 
     return RetLineQueue();
 }

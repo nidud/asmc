@@ -1018,9 +1018,12 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     struct asym *target = NULL;
     int		static_struct = 0;
     char	*comptr = NULL;
-    char	*method;
+    struct asym *method = NULL;
+    char	*string;
+    char	*type = NULL;
     struct	expr opnd;
     int		sqbrend = 0;
+    int		constructor = 0;
     uint_32	u;
 
     strcpy( b, "invoke " );
@@ -1043,6 +1046,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	    }
 	}
 	sqbrend = j;
+	string = NULL;
 
 	if ( tokenarray[j].token == T_DOT ) {
 
@@ -1050,13 +1054,13 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 
 		/* [reg].Class.Method() */
 
-		method = tokenarray[j+3].string_ptr;
+		string = tokenarray[j+3].string_ptr;
 		target = SymFind( tokenarray[j+1].string_ptr );
 	    } else if ( tokenarray[j+2].token == T_OP_BRACKET ) {
 
 		/* [reg].Method() -- assume reg:ptr Class */
 
-		method = tokenarray[j+1].string_ptr;
+		string = tokenarray[j+1].string_ptr;
 		br_count = i;
 		if ( EvalOperand( &br_count, tokenarray, i + 3, &opnd, 0 ) != ERROR )
 		    target = opnd.type;
@@ -1071,46 +1075,64 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		    goto type_struct;
 		else
 		    target = NULL;
-	    }
+	    } else
+		string = NULL;
 	}
 
     } else {
 
+	target = NULL;
 	sym = SymFind( tokenarray[i].string_ptr );
-	if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET )
-	    method = tokenarray[i+2].string_ptr;
-	else
-	    method = NULL;
+	tmp = sym;
 
-	if ( sym && method ) {
+	if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET )
+
+	    string = tokenarray[i+2].string_ptr;
+
+	else if ( sym && sym->state == SYM_TYPE && tokenarray[i+1].token == T_OP_BRACKET ) {
+
+	    type = tokenarray[i].string_ptr;
+	    string = tokenarray[i].string_ptr;
+	    target = sym;
+
+	} else {
+
+	    tmp = NULL;
+	    string = NULL;
+	}
+
+	if ( tmp ) {
 
 	    if ( sym->mem_type == MT_TYPE && sym->type ) {
+
 		target = sym->type;
+
 		if ( target->typekind == TYPE_TYPEDEF )
+
 		    target = target->target_type;
+
 		else if ( target->typekind == TYPE_STRUCT ) {
 
-		    if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET ) {
+		    static_struct++;
 
-			static_struct++;
+		    type_struct:
 
-			type_struct:
-
-			sym = target;
-			tmp = SymFind( strcat( strcpy( ClassVtbl, sym->name ), "Vtbl" ) );
-			if ( tmp )
-			    tmp = SearchNameInStruct( tmp, method, &u, 0 );
-			if ( tmp == NULL ) {
-			    tmp = SearchNameInStruct( sym, method, &u, 0 );
-			    if ( tmp ) {
-				sym = NULL;
-				method = (char *)tmp;
-			    }
+		    sym = target;
+		    tmp = SymFind( strcat( strcpy( ClassVtbl, sym->name ), "Vtbl" ) );
+		    if ( tmp )
+			tmp = SearchNameInStruct( tmp, string, &u, 0 );
+		    if ( tmp == NULL ) {
+			tmp = SearchNameInStruct( sym, string, &u, 0 );
+			if ( tmp ) {
+			    sym = NULL;
+			    method = tmp;
 			}
-			target = sym;
 		    }
+		    target = sym;
+
 		} else
 		    target = NULL;
+
 	    } else if ( sym->mem_type == MT_PTR && \
 		( sym->state == SYM_STACK || sym->state == SYM_EXTERNAL ) ) {
 
@@ -1133,31 +1155,51 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	     *	 lpVtbl PClassVtbl ?
 	     * Class ends
 	     */
-	    target = SearchNameInStruct( target, method, &u, 0 );
+	    method = SearchNameInStruct( target, string, &u, 0 );
+
 	    tmp = SymFind( strcat( strcpy( ClassVtbl, comptr ), "Vtbl" ) );
 	    if ( tmp ) {
-		tmp = SearchNameInStruct( tmp, method, &u, 0 );
+		tmp = SearchNameInStruct( tmp, string, &u, 0 );
 		if ( tmp ) {
-		    target = tmp;
+		    method = tmp;
 		    comptr = ClassVtbl;
 		}
 	    }
 
-	    if ( ModuleInfo.Ofssize == USE64 ) {
+	    if ( method == NULL && strcmp(comptr, string) == 0 )
+
+		constructor++;
+
+	    else if ( ModuleInfo.Ofssize == USE64 ) {
+
 		tmp = target;
-		if ( tmp->mem_type == MT_TYPE && tmp->type ) {
-		    tmp = tmp->type;
-		    if ( tmp->typekind == TYPE_TYPEDEF )
-			tmp = tmp->target_type;
-		}
-		if ( tmp->langtype == LANG_SYSCALL )
-		    strcat(b, "[r10]." ); /* v2.28: Added for :vararg */
-		else
+		if ( tmp ) {
+
+		    if ( tmp->mem_type == MT_TYPE && tmp->type ) {
+			tmp = tmp->type;
+			if ( tmp->typekind == TYPE_TYPEDEF )
+			    tmp = tmp->target_type;
+		    }
+
+		    if ( tmp->langtype == LANG_SYSCALL )
+
+			strcat(b, "[r10]." ); /* v2.28: Added for :vararg */
+		    else
+			strcat(b, "[rax]." );
+		} else
 		    strcat(b, "[rax]." );
 	    } else
 		strcat(b, "[eax]." );
 
-	    comptr = strcat(b, comptr );
+	    comptr = strcat(b, comptr);
+	    if ( type ) {
+		if ( constructor )
+		    strcat(b, "_");
+		else
+		    strcat(b, ".");
+		strcat(b, type);
+	    }
+
 	    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
 
 		if ( tokenarray[i+2].token == T_CL_SQ_BRACKET )
@@ -1170,8 +1212,8 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	    } else
 		comptr = tokenarray[i].string_ptr;
 
-	    if ( target )
-		target->method = 1;
+	    if ( method )
+		method->method = 1;
 	}
     }
 
@@ -1214,13 +1256,16 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     j = k;
     if ( tokenarray[k].token == T_OP_BRACKET ) {
 
+	if ( type )
+	    strcat(b, ", 0");
+
 	k++;
 	br_count = 0;
 
 	if ( tokenarray[k].token != T_CL_BRACKET ) {
 
 	    strcat( b, "," );
-	    if ( comptr ) {
+	    if ( comptr && !type ) {
 		if ( static_struct )
 		    strcat( b, "addr " );
 		strcat( b, comptr );
@@ -1259,7 +1304,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		strcat( b, tokenarray[k].string_ptr );
 		k++;
 	    }
-	} else if ( comptr ) {
+	} else if ( comptr && !type ) {
 	    strcat( b, ", " );
 	    if ( static_struct )
 		strcat( b, "addr " );

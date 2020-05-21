@@ -137,18 +137,11 @@ keyboard proc key:byte, x:int_t, y:int_t
    .switch cl
       .case 't'
       .case 'T'
-         .if polySmooth == GL_TRUE
-            mov polySmooth,GL_FALSE
-         .else
-            mov polySmooth,GL_TRUE
-         .endif
+         xor polySmooth,GL_TRUE
          glutPostRedisplay()
          .endc
       .case 27
          exit(0)
-         .endc
-      .default
-         .endc
    .endsw
    ret
 

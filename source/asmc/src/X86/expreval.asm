@@ -1881,10 +1881,7 @@ positive_op proc fastcall opnd1:expr_t, opnd2:expr_t
         mov [ecx].llvalue,[edx].llvalue
         mov [ecx].hlvalue,[edx].hlvalue
         and [ecx].chararray[15],not 0x80
-        and [ecx].flags,not E_NEGATIVE
-        .if [edx].flags & E_NEGATIVE
-            or [ecx].flags,E_NEGATIVE
-        .endif
+        mov [ecx].flags,[edx].flags
     .else
         .return( fnasmerr( 2026 ) )
     .endif
@@ -1919,22 +1916,16 @@ negative_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
             mov dword ptr [ecx].hlvalue,eax
             mov dword ptr [ecx].hlvalue[4],ebx
         .endif
-        .if [edx].flags & E_NEGATIVE
-            and [ecx].flags,not E_NEGATIVE
-        .else
-            or [ecx].flags,E_NEGATIVE
-        .endif
+        mov [ecx].flags,[edx].flags
+        xor [ecx].flags,E_NEGATIVE
     .elseif [edx].kind == EXPR_FLOAT
         mov [ecx].kind,EXPR_FLOAT
         mov [ecx].mem_type,[edx].mem_type
         mov [ecx].llvalue,[edx].llvalue
         mov [ecx].hlvalue,[edx].hlvalue
-        or  [ecx].chararray[15],0x80
-        .if [edx].flags & E_NEGATIVE
-            and [ecx].flags,not E_NEGATIVE
-        .else
-            or [ecx].flags,E_NEGATIVE
-        .endif
+        xor [ecx].chararray[15],0x80
+        mov [ecx].flags,[edx].flags
+        xor [ecx].flags,E_NEGATIVE
     .else
         .return fnasmerr( 2026 )
     .endif

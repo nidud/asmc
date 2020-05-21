@@ -476,7 +476,7 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		    (buf-1)->hll_flags |= T_HLL_PROC;
 	    }
 
-	} else if ( p->index && (buf-1)->token == T_ID ) {
+	} else if ( p->index && ( (buf-1)->token == T_ID || (buf-1)->token == T_REG ) ) {
 
 	    char flag = 0;
 	    int state = 0;
@@ -543,7 +543,10 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 			_brachets++;
 			_cstring = '"';
 
-		    } else if ( state == SYM_STACK || state == SYM_INTERNAL || state == SYM_EXTERNAL || sym->isproc ) {
+		    } else if ( state == SYM_STACK ||
+				state == SYM_INTERNAL ||
+				state == SYM_EXTERNAL ||
+				sym->isproc ) {
 
 			flag = T_HLL_PROC;
 			_brachets++;
@@ -552,8 +555,22 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		    } else if ( state == SYM_TYPE ) { /* structure, union, typedef, record */
 
 			case_type:
-			/* [...].type.x(...) */
-			if ( p->index >= 5 && (tok-1)->token == T_DOT && (tok-2)->token == T_CL_SQ_BRACKET ) {
+
+			if ( p->index == 1 || (tok-1)->token != T_DOT ) {
+
+			    /* type(...) */
+
+			    if ( (tok-1)->token != T_ID && CurrSeg &&
+				CurrSeg->e.seginfo->segtype == SEGTYPE_CODE ) {
+
+				flag = T_HLL_PROC;
+				_brachets++;
+				_cstring = '"';
+			    }
+
+			} else if ( p->index >= 5 && (tok-1)->token == T_DOT && (tok-2)->token == T_CL_SQ_BRACKET ) {
+
+			    /* [...].type.x(...) */
 
 			    int q = 1;
 

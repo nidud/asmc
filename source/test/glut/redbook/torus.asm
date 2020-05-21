@@ -70,16 +70,16 @@ torus proc uses rsi rdi rbx numc:int_t, numt:int_t
                 movsd z,xmm0
 
                 movsd xmm0,x
-                movsd xmm0,y
-                movsd xmm0,z
+                movsd xmm1,y
+                movsd xmm2,z
                 cvtsd2ss xmm0,xmm0
                 cvtsd2ss xmm1,xmm1
                 cvtsd2ss xmm2,xmm2
 
-                glVertex3f(xmm0, xmm1, xmm2);
+                glVertex3f(xmm0, xmm1, xmm2)
             .endf
         .endf
-        glEnd();
+        glEnd()
     .endf
     ret
 
@@ -87,22 +87,23 @@ torus endp
 
 init proc
 
-   mov theTorus,glGenLists (1);
-   glNewList(theTorus, GL_COMPILE);
-   torus(8, 25);
-   glEndList();
+   mov theTorus,glGenLists(1)
+   glNewList(theTorus, GL_COMPILE)
+   torus(8, 25)
+   glEndList()
 
-   glShadeModel(GL_FLAT);
-   glClearColor(0.0, 0.0, 0.0, 0.0);
+   glShadeModel(GL_FLAT)
+   glClearColor(0.0, 0.0, 0.0, 0.0)
    ret
+
 init endp
 
 display proc
 
-   glClear(GL_COLOR_BUFFER_BIT);
-   glColor3f (1.0, 1.0, 1.0);
-   glCallList(theTorus);
-   glFlush();
+   glClear(GL_COLOR_BUFFER_BIT)
+   glColor3f(1.0, 1.0, 1.0)
+   glCallList(theTorus)
+   glFlush()
    ret
 
 display endp
@@ -111,14 +112,14 @@ reshape proc w:int_t, h:int_t
 
    glViewport(0, 0, w, h)
    glMatrixMode(GL_PROJECTION)
-   glLoadIdentity();
+   glLoadIdentity()
    cvtsi2sd xmm1,w
    cvtsi2sd xmm0,h
    divsd xmm1,xmm0
-   gluPerspective(30.0, xmm1, 1.0, 100.0);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   gluPerspective(30.0, xmm1, 1.0, 100.0)
+   glMatrixMode(GL_MODELVIEW)
+   glLoadIdentity()
+   gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
    ret
 
 reshape endp
@@ -128,19 +129,19 @@ keyboard proc key:byte, x:int_t, y:int_t
    .switch cl
    .case 'x'
    .case 'X'
-      glRotatef(30.0, 1.0, 0.0, 0.0);
-      glutPostRedisplay();
+      glRotatef(30.0, 1.0, 0.0, 0.0)
+      glutPostRedisplay()
       .endc
    .case 'y'
    .case 'Y'
-      glRotatef(30.0, 0.0, 1.0, 0.0);
-      glutPostRedisplay();
+      glRotatef(30.0, 0.0, 1.0, 0.0)
+      glutPostRedisplay()
       .endc
    .case 'i'
    .case 'I'
-      glLoadIdentity();
-      gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-      glutPostRedisplay();
+      glLoadIdentity()
+      gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+      glutPostRedisplay()
       .endc
    .case 27
       exit(0);

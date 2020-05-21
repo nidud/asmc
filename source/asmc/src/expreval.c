@@ -222,6 +222,17 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
     int		j;
     char	labelbuff[16];
 
+    if ( tokenarray[i].token == '&' ) { /* v2.30.24 -- mov mem,&mem */
+	if ( Options.strict_masm_compat == FALSE && i > 2 &&
+	      tokenarray[i-1].token == T_COMMA && tokenarray[i-2].token != T_REG ) {
+	    i++;
+	    (*idx)++;
+	    if ( tokenarray[i].token == T_OP_SQ_BRACKET )
+		return NOT_ERROR;
+	} else
+	    return fnasmerr( 2008, tokenarray[i].tokpos );
+    }
+
     switch( tokenarray[i].token ) {
     case T_NUM:
 	opnd->kind = EXPR_CONST;
@@ -444,14 +455,12 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		opnd->value = sym->total_size;
 	    break;
 	case SYM_STRUCT_FIELD:
-	     ;
 	    opnd->value += sym->offset;
 	    opnd->kind = EXPR_CONST;
 	    opnd->mbr = sym;
 	    for ( ; sym->type; sym = sym->type );
 	    opnd->mem_type = sym->mem_type;
 	    opnd->type = ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF ) ? sym : NULL;
-	     ;
 	    break;
 	default:
 	    opnd->kind = EXPR_ADDR;
@@ -516,6 +525,8 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
     case T_FLOAT:
 	opnd->kind = EXPR_FLOAT;
 	opnd->float_tok = &tokenarray[i];
+	opnd->mem_type = MT_REAL16;
+	atofloat( opnd, tokenarray[i].string_ptr, 16, 0, tokenarray[i].floattype );
 	break;
     default:
 	if ( opnd->is_opattr ) {
@@ -1019,14 +1030,22 @@ static int high_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
     return( NOT_ERROR );
 }
 
+static int tofloat( struct expr *opnd2, int size )
+{
+    if ( ModuleInfo.strict_masm_compat )
+	return 1;
+    opnd2->kind = EXPR_CONST;
+    opnd2->float_tok = NULL;
+    if ( size != 16 )
+	quad_resize( opnd2, size );
+    return( NOT_ERROR );
+}
+
 static int low32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( ModuleInfo.strict_masm_compat )
+	if ( tofloat( opnd2, 8 ) )
 	    return( ConstError( opnd1, opnd2 ) );
-	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr, sizeof( opnd2->llvalue), opnd2->negative, opnd2->float_tok->floattype );
-	opnd2->kind = EXPR_CONST;
-	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
     if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
@@ -1040,11 +1059,8 @@ static int low32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( ModuleInfo.strict_masm_compat )
+	if ( tofloat( opnd2, 8 ) )
 	    return( ConstError( opnd1, opnd2 ) );
-	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr, sizeof( opnd2->llvalue), opnd2->negative, opnd2->float_tok->floattype );
-	opnd2->kind = EXPR_CONST;
-	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
     if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
@@ -1058,14 +1074,11 @@ static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( ModuleInfo.strict_masm_compat )
+	if ( tofloat( opnd2, 16 ) )
 	    return( ConstError( opnd1, opnd2 ) );
-	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
-		16, opnd2->negative, opnd2->float_tok->floattype );
-	opnd2->kind = EXPR_CONST;
-	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
+    opnd1->mem_type = MT_QWORD;
     if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
 	opnd1->inst = T_LOW64;
 	opnd1->mem_type = MT_EMPTY;
@@ -1077,16 +1090,13 @@ static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 static int high64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( ModuleInfo.strict_masm_compat )
+	if ( tofloat( opnd2, 16 ) )
 	    return( ConstError( opnd1, opnd2 ) );
-	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
-		16, opnd2->negative, opnd2->float_tok->floattype );
-	opnd2->kind = EXPR_CONST;
-	opnd2->float_tok = NULL;
     } else if ( opnd2->negative && opnd2->hlvalue == 0 )
 	opnd2->hlvalue = -1;
 
     TokenAssign( opnd1, opnd2 );
+    opnd1->mem_type = MT_QWORD;
     if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
 	opnd1->inst = T_HIGH64;
 	opnd1->mem_type = MT_EMPTY;
@@ -1513,7 +1523,10 @@ static int positive_op( struct expr *opnd1, struct expr *opnd2 )
 	opnd1->hlvalue = opnd2->hlvalue;
     } else if( opnd2->kind == EXPR_FLOAT ) {
 	opnd1->kind = EXPR_FLOAT;
-	opnd1->float_tok = opnd2->float_tok;
+	opnd1->mem_type = opnd2->mem_type;
+	opnd1->llvalue = opnd2->llvalue;
+	opnd1->hlvalue = opnd2->hlvalue;
+	opnd1->chararray[15] &= ~0x80;
 	opnd1->negative = opnd2->negative;
     } else {
 	return( fnasmerr( 2026 ) );
@@ -1535,7 +1548,10 @@ static int negative_op( struct expr *opnd1, struct expr *opnd2 )
 	opnd1->negative = 1 - opnd2->negative;
     } else if( opnd2->kind == EXPR_FLOAT ) {
 	opnd1->kind = EXPR_FLOAT;
-	opnd1->float_tok = opnd2->float_tok;
+	opnd1->mem_type = opnd2->mem_type;
+	opnd1->llvalue = opnd2->llvalue;
+	opnd1->hlvalue = opnd2->hlvalue;
+	opnd1->chararray[15] ^= 0x80;
 	opnd1->negative = 1 - opnd2->negative;
     } else {
 	return( fnasmerr( 2026 ) );
@@ -2010,6 +2026,7 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    break;
 		}
 	    }
+#if 0
 	    if ( opnd1->kind == EXPR_FLOAT && opnd1->mem_type != MT_REAL16 ) {
 		if ( tokenarray[curr_operator].token == '*' ||
 		     tokenarray[curr_operator].token == '/' ||
@@ -2018,6 +2035,7 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    atofloat( opnd1->chararray, opnd1->float_tok->string_ptr, 16, opnd1->negative, 0);
 		}
 	    }
+#endif
 	}
 	(*i)++;
 	init_expr( &opnd2 );

@@ -34,26 +34,73 @@ void _atoow( void *dst, const char *src, int radix, int size )
 void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 ftype )
 {
     uint_8 *p;
+    uint_8 *end;
+    int len;
+
+    errno = 0;
 
     /* v2.04: accept and handle 'real number designator' */
     if ( ftype ) {
 
-        uint_8 *end;
         /* convert hex string with float "designator" to float.
          * this is supposed to work with real4, real8 and real10.
          * v2.11: use _atoow() for conversion ( this function
          *    always initializes and reads a 16-byte number ).
          *    then check that the number fits in the variable.
          */
-        _atoow( (uint_64 *)out, inp, 16, strlen( inp ) - 1 );
+
+        /* v2.31.24: the size is 2,4,8,10,16
+         * real4 3ff0000000000000r is allowed: real8 -> real16 -> real4
+         */
+
+        len = strlen(inp) - 1;
+        switch ( len ) {
+        case 4:
+        case 8:
+        case 16:
+        case 20:
+        case 32:
+            break;
+        case 5:
+        case 9:
+        case 17:
+        case 21:
+        case 33:
+            if ( inp[0] == '0' ) {
+                inp++;
+                len--;
+                break;
+            }
+        default:
+            asmerr( 2104, inp );
+        }
+
+        _atoow( (uint_64 *)out, inp, 16, len );
+
         for ( p = (uint_8 *)out + size, end = (uint_8 *)out + 16; p < end; p++ )
             if ( *p != NULLC ) {
-            asmerr( 2104, inp );
-            break;
+                asmerr( 2104, inp );
+                break;
+            }
+
+        if ( ( len / 2 ) != size ) {
+            switch ( len / 2 ) {
+            case 2  : __cvth_q(out, out);  break;
+            case 4  : __cvtss_q(out, out); break;
+            case 8  : __cvtsd_q(out, out); break;
+            case 10 : __cvtld_q(out, out); break;
+            case 16 : break;
+            default:
+                if ( Parse_Pass == PASS_1 )
+                    asmerr( 7004 );
+                memset( out, 0, size );
+            }
+            if ( errno )
+                asmerr( 2071 );
         }
+
     } else {
 
-        errno = 0;
         __cvta_q(out, inp, NULL);
         if ( errno )
             asmerr( 2104, inp );
@@ -97,7 +144,10 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
 
 void quad_resize( struct expr *opnd, unsigned size )
 {
+    unsigned short exp = *(unsigned short *)&opnd->chararray[14];
+
     errno = 0;
+    exp &= 0x7FFF;
     if ( size == 10 )
         __cvtq_ld( opnd->chararray, opnd->chararray );
     else if ( size == 8 ) {
@@ -128,6 +178,6 @@ void quad_resize( struct expr *opnd, unsigned size )
             opnd->chararray[1] |= 0x80;
         opnd->mem_type = MT_REAL2;
     }
-    if ( errno )
+    if ( errno && exp != 0x7FFF )
         asmerr( 2071 );
 }

@@ -4,6 +4,7 @@
 #include <globals.h>
 #include <hllext.h>
 #include <fastpass.h>
+#include <quadmath.h>
 
 #define MACRO_CSTRING 1
 
@@ -545,6 +546,103 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 	    i++;
 	}
 	return rc;
+}
+
+int CreateFloat(int size, struct expr *opnd, char *buffer)
+{
+  char segm[64];
+  char temp[128];
+  struct expr opc;
+  struct flt_item *si;
+  struct flt_item *fp;
+  int q;
+
+    opc.llvalue = opnd->llvalue;
+    opc.hlvalue = opnd->hlvalue;
+
+    switch ( size ) {
+    case 4:
+	if ( opnd->mem_type == MT_REAL4 )
+	    break;
+	opc.flags1 = 0;
+	if ( opnd->chararray[15] & 0x80 ) {
+	    opc.negative = 1;
+	    opc.chararray[15] &= 0x7F;
+	}
+	__cvtq_ss(&opc.chararray[0], opnd);
+	if ( opc.negative )
+	    opc.chararray[3] |= 0x80;
+	break;
+    case 8:
+	if ( opnd->mem_type == MT_REAL8 )
+	    break;
+	opc.flags1 = 0;
+	if ( opnd->chararray[15] & 0x80 ) {
+	    opc.negative = 1;
+	    opc.chararray[15] &= 0x7F;
+	}
+	__cvtq_sd(&opc, opnd);
+	if ( opc.negative )
+	    opc.chararray[7] |= 0x80;
+	break;
+    case 10:
+	__cvtq_ld(&opc, opnd);
+	opc.hlvalue &= 0xFFFF;
+    case 16:
+	break;
+    }
+
+    for ( q = 0, si = ModuleInfo.g.FltStack; si; q++, si = si->next ) {
+	if ( size == si->count ) {
+	    if (memcmp(&opc, si->string, size) == 0 ) {
+		sprintf( buffer, "F%04X", si->index );
+		return 1;
+	    }
+	}
+    }
+
+    sprintf( buffer, "F%04X", q );
+    if ( Parse_Pass == PASS_1 ) {
+
+	fp = LclAlloc( sizeof(struct flt_item ) + 16 );
+	fp->index = q;
+	fp->count = size;
+	fp->next = ModuleInfo.g.FltStack;
+	ModuleInfo.g.FltStack = fp;
+	fp->string = (char*)&fp[1];
+	memcpy(fp->string, &opc, 16);
+
+	if ( ModuleInfo.currseg ) {
+	    strcat( strcpy( segm, ModuleInfo.currseg->sym.name ), " segment" );
+	} else {
+	    strcpy( segm, ".code" );
+	}
+
+	InsertLine( ".data" );
+	if ( size == 10 )
+	    size = 16;
+
+	sprintf( temp, "align %d", size );
+	InsertLine( temp );
+
+	switch ( size ) {
+	case 4:
+	    sprintf( temp, "%s dd 0x%08X", buffer, opc.value );
+	    break;
+	case 8:
+	    sprintf( temp, "%s dq 0x%08X%08X", buffer, opc.hvalue, opc.value );
+	    break;
+	case 16:
+	    sprintf( temp, "%s label real%d", buffer, size );
+	    InsertLine( temp );
+	    sprintf( temp, "oword 0x%016" I64_SPEC "X%016" I64_SPEC "X", opc.hlvalue, opc.llvalue );
+	    break;
+	}
+	InsertLine( temp );
+	InsertLine( "_DATA ends" );
+	InsertLine( segm );
+    }
+    return 0;
 }
 
 #endif

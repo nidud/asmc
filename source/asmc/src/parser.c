@@ -672,7 +672,7 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
 {
     enum operand_type op_type;
     int_32	value;
-    int		size;
+    int		size = 0;
 
     /* jmp/call/jxx/loop/jcxz/jecxz? */
     if( IS_ANY_BRANCH( CodeInfo->token ) ) {
@@ -681,15 +681,29 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
 
     if ( opndx->mem_type == MT_REAL16 ) {
 
-	size = 4;
-	if ( CodeInfo->token == T_MOV && CurrOpnd == OPND2 ) {
+	value = 4;
+	switch ( CodeInfo->token ) {
+	case T_ADDSD:
+	case T_SUBSD:
+	case T_MULSD:
+	case T_DIVSD:
+	case T_MOVSD:
+	case T_MOVQ:
+	case T_COMISD:
+	case T_UCOMISD:
+	    size = 8;
+	    value = 8;
+	    break;
+	case T_MOV:
+	    if ( CurrOpnd == OPND2 ) {
 
-	    if ( CodeInfo->Ofssize == USE64 && ( CodeInfo->opnd[OPND1].type & OP_R64 ) )
-		size = 8;
-	    else if ( CodeInfo->opnd[OPND1].type & OP_R16 )
-		size = 2;
+		if ( CodeInfo->Ofssize == USE64 && ( CodeInfo->opnd[OPND1].type & OP_R64 ) )
+		    value = 8;
+		else if ( CodeInfo->opnd[OPND1].type & OP_R16 )
+		    value = 2;
+	    }
 	}
-	quad_resize( opndx, size );
+	quad_resize( opndx, value );
     }
     value = opndx->value;
     CodeInfo->opnd[CurrOpnd].data32l = value;
@@ -707,7 +721,7 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
      * current workaround: query the 'explicit' flag.
      */
     /* use long format of MOV for 64-bit if value won't fit in a signed DWORD */
-    if ( CodeInfo->Ofssize == USE64 && CodeInfo->token == T_MOV && CurrOpnd == OPND2 &&
+    if ( size || CodeInfo->Ofssize == USE64 && CodeInfo->token == T_MOV && CurrOpnd == OPND2 &&
 	( CodeInfo->opnd[OPND1].type & OP_R64 ) &&
 	( opndx->value64 > LONG_MAX || opndx->value64 < LONG_MIN ||
 	 (opndx->explicit && ( opndx->mem_type == MT_QWORD || opndx->mem_type == MT_SQWORD ) ) ) ) {
@@ -1594,6 +1608,8 @@ static int process_address( struct code_info *CodeInfo, unsigned CurrOpnd, struc
  */
 static int process_const( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opndx )
 {
+    if ( opndx->mem_type & MT_FLOAT )
+	opndx->float_tok = NULL;
     /* v2.11: don't accept an empty string */
     if ( opndx->quoted_string && opndx->quoted_string->stringlen == 0 )
 	return( asmerr( 2047 ) );
@@ -2379,8 +2395,8 @@ int LabelMacro( struct asm_tok tokenarray[] )
 int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
 int mem2mem( unsigned, unsigned, struct asm_tok[], struct expr * );
-int imm2xmm( struct asm_tok[] );
-
+int imm2xmm( struct asm_tok[], struct expr * );
+int ParseClass( int, struct asm_tok[], char * );
 int NewDirective( int, struct asm_tok[] );
 extern struct asym *CurrEnum;
 int EnumDirective( int, struct asm_tok[] );
@@ -2432,124 +2448,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 
     if ( j ) {
 
-	q = tokenarray[j-1].tokpos - tokenarray[0].tokpos;
-	buffer[q] = 0;
-	if ( q ) {
-
-	    memcpy(buffer, tokenarray[0].tokpos, q);
-	    strcat( buffer, " " );
-	}
-
-	if ( tokenarray[j].token == T_DBL_COLON &&
-	   ( tokenarray[j+2].tokval == T_ENDP || tokenarray[j+2].token == T_OP_BRACKET ) ) {
-
-	    strcat( buffer, tokenarray[j-1].string_ptr );
-	    strcat( buffer, "_" );
-	    strcat( buffer, tokenarray[j+1].string_ptr );
-	    strcat( buffer, " " );
-	    strcat( buffer, tokenarray[j+2].tokpos );
-	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
+	if ( ParseClass( j, tokenarray, buffer ) )
 	    return ParseLine( tokenarray );
-	}
-
-	if ( tokenarray[j].token == T_DBL_COLON &&
-	   ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) ) {
-
-	    strcpy( buffer, tokenarray[j-1].string_ptr );
-	    strcat( buffer, "_" );
-	    strcat( buffer, tokenarray[j+1].string_ptr );
-	    strcat( buffer, " " );
-	    strcat( buffer, tokenarray[j+2].string_ptr );
-	    strcat( buffer, " " );
-
-	    i = j+3;
-	    if ( ( tokenarray[i].tokval >= T_SYSCALL && tokenarray[i].tokval <= T_VECTORCALL ) ||
-		 ( tokenarray[i].token == T_STYPE &&
-		 tokenarray[i].tokval >= T_NEAR && tokenarray[i].tokval <= T_FAR32 ) ) {
-
-		strcat( buffer, tokenarray[i].string_ptr );
-		strcat( buffer, " " );
-		i++;
-	    }
-	    if ( tokenarray[i].token == T_ID || tokenarray[i].token == T_DIRECTIVE ) {
-
-		if ( !_stricmp( tokenarray[i].string_ptr, "PRIVATE" ) ||
-		     tokenarray[i].tokval == T_PUBLIC ||
-		     !_stricmp( tokenarray[i].string_ptr, "EXPORT" ) ||
-		     tokenarray[i].tokval == T_FRAME ) {
-
-		    strcat( buffer, tokenarray[i].string_ptr );
-		    strcat( buffer, " " );
-		    i++;
-		}
-	    }
-
-	    if ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '<' ) {
-
-		strcat( buffer, "<" );
-		strcat( buffer, tokenarray[i].string_ptr );
-		strcat( buffer, "> " );
-		i++;
-	    }
-
-	    if ( tokenarray[i].token == T_ID && !_stricmp( tokenarray[i].string_ptr, "USES" ) ) {
-
-		i++;
-		strcat( buffer, "uses " );
-
-		q = i;
-		while ( tokenarray[q].token == T_ID ) {
-
-		    sym = SymSearch( tokenarray[q].string_ptr );
-		    if ( sym && sym->state == SYM_TMACRO ) {
-
-			tokenarray[q].tokval = FindResWord( sym->string_ptr, strlen(sym->string_ptr) );
-			tokenarray[q].string_ptr = sym->string_ptr;
-			if ( SpecialTable[tokenarray[q].tokval].type == RWT_REG )
-			    tokenarray[q].token = T_REG;
-
-		    } else
-			break;
-		    q++;
-		}
-
-		while ( tokenarray[i].token == T_REG ) {
-
-		    strcat( buffer, tokenarray[i].string_ptr );
-		    strcat( buffer, " " );
-		    i++;
-		}
-	    }
-
-	    if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) {
-
-		if ( tokenarray[j+2].tokval == T_PROC )
-		    strcat( buffer, "this" );
-		strcat( buffer, ":" );
-		if ( tokenarray[j-1].token != T_STYPE ) {
-
-		    sym = IsType( tokenarray[j-1].string_ptr );
-		    if ( !sym || sym->typekind != TYPE_TYPEDEF || sym->total_size != 16 )
-		       strcat( buffer, "ptr " );
-		}
-		strcat( buffer, tokenarray[0].string_ptr );
-	    }
-
-	    if ( tokenarray[i].token != T_FINAL ) {
-
-		if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) {
-
-		    if ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '{' )
-			strcat( buffer, " " );
-		    else
-			strcat( buffer, ", " );
-		}
-		strcat( buffer, tokenarray[i].tokpos );
-	    }
-	    strcpy( CurrSource, buffer );
-	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
-	    return ParseLine( tokenarray );
-	}
 
 	/* break label: macro/hll lines */
 	strcpy( buffer, tokenarray[2].tokpos );
@@ -2709,6 +2609,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    return( data_dir( i, tokenarray, NULL ) );
 	case T_ID:
 	    if( sym = IsType( tokenarray[i].string_ptr ) ) {
+		/* v2.31.25: Type() -- constructor */
+		if ( tokenarray[i].hll_flags & T_HLL_PROC )
+		    break;
 		return( data_dir( i, tokenarray, sym ) );
 	    }
 	    break;
@@ -2721,7 +2624,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( i && tokenarray[i-1].token == T_ID )
 	    i--;
 
-	if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( tokenarray[0].hll_flags & T_HLL_PROC ) ) {
+	if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) &&
+		( tokenarray[0].hll_flags & T_HLL_PROC ) ) {
 	    /*
 	     * invoke handle import, call do not..
 	     */
@@ -2877,24 +2781,30 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {
 		if ( ModuleInfo.strict_masm_compat == FALSE ) {
 		    /* v2.27: convert to REAL */
-		    if ( opndx[j].float_tok ) {
-			int m;
-			switch ( opndx[j].mem_type ) {
-			case MT_REAL2:	m = 2;	break;
-			case MT_REAL4:	m = 4;	break;
-			case MT_REAL8:	m = 8;	break;
-			case MT_REAL10: m = 10; break;
-			default:
-			    m = 16;
-			    opndx[j].mem_type = MT_REAL16;
+		    if ( opndx[j].mem_type != MT_EMPTY ) {
+			int m = CurrWordSize;
+			if ( j ) {
+			    if ( opndx[j-1].kind == EXPR_REG && !( opndx[j-1].indirect ) )
+				m = SizeFromRegister( opndx[j-1].base_reg->tokval );
+			    else if ( opndx[j-1].kind == EXPR_ADDR || opndx[j-1].kind == EXPR_REG )
+				/* added v2.31.27 */
+				m = SizeFromMemtype( opndx[j-1].mem_type, opndx[j-1].Ofssize, opndx[j-1].type );
+			}
+			q = 0;
+			switch ( m ) {
+			case 2: q = MT_REAL2;	break;
+			case 4: q = MT_REAL4;	break;
+			case 8: q = MT_REAL8;	break;
+			case 16: q = MT_REAL16; break;
+			}
+			if ( q ) {
+			    opndx[j].kind = EXPR_CONST;
+			    opndx[j].mem_type = q;
+			    if ( m != 16 )
+				quad_resize( &opndx[j], m );
 			    break;
 			}
-			atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr,
-				m, opndx[j].negative, opndx[j].float_tok->floattype );
-			opndx[j].float_tok = NULL;
 		    }
-		    opndx[j].kind = EXPR_CONST;
-		    break;
 		}
 		/* Masm message is: real or BCD number not allowed */
 		return( asmerr( 2050 ) );
@@ -3087,7 +2997,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD ) {
 	    if ( CodeInfo.opnd[OPND1].type == OP_XMM &&
 	       ( CodeInfo.opnd[OPND2].type & OP_I_ANY ) )
-		return imm2xmm( tokenarray );
+		return imm2xmm( tokenarray, &opndx[1] );
 	}
 	HandleStringInstructions( &CodeInfo, opndx );
     } else {
@@ -3150,10 +3060,22 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    case T_MOVQ:
 	    case T_MOVSS:
 	    case T_MOVSD:
+	    case T_ADDSD:
+	    case T_SUBSD:
+	    case T_MULSD:
+	    case T_DIVSD:
+	    case T_COMISD:
+	    case T_UCOMISD:
+	    case T_ADDSS:
+	    case T_SUBSS:
+	    case T_MULSS:
+	    case T_DIVSS:
+	    case T_COMISS:
+	    case T_UCOMISS:
 		if ( ModuleInfo.strict_masm_compat == 0 &&
 		     CodeInfo.opnd[OPND1].type == OP_XMM &&
 		     CodeInfo.opnd[OPND2].type & OP_I_ANY )
-		    return imm2xmm( tokenarray );
+		    return imm2xmm( tokenarray, &opndx[1] );
 		break;
 	    case T_MOV:
 		/* don't use the Wide bit for moves to/from special regs */

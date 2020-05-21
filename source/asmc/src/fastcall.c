@@ -323,6 +323,7 @@ static int GetPSize( int address, struct asym *param, struct expr *opnd )
 		psize = SizeFromRegister( opnd->base_reg->tokval );
 	    else
 		psize = 8;
+	} else if ( opnd->kind == EXPR_FLOAT && opnd->mem_type == MT_REAL16 ) {
 	} else if ( opnd->mem_type != MT_EMPTY )
 	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
 
@@ -412,6 +413,8 @@ static void ms64_fcend( struct dsym const *proc, int numparams, int value )
  */
 #define GetParmIndex( x)  ( ( (x) >= 8 ) ? (x) - 6 : (x) - 1 )
 
+int CreateFloat(int, struct expr *, char *);
+
 static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	char *paramvalue, uint_8 *regs_used )
 {
@@ -453,6 +456,26 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
     }
 
     if ( opnd->kind == EXPR_FLOAT ) {
+
+	if ( opnd->hlvalue == 0 && opnd->llvalue ) {
+
+	    AddLineQueueX( " xorps %r, %r", xmm, xmm );
+	    return 1;
+	}
+
+	if ( param->sym.mem_type == MT_REAL10 || param->sym.mem_type == MT_REAL16 ) {
+
+	    reg = 10;
+	    if ( param->sym.mem_type == MT_REAL16 )
+		reg = 16;
+	    CreateFloat( reg, opnd, buffer );
+	    if ( reg == 10 )
+		AddLineQueueX( " movaps %r, xmmword ptr %s", xmm, buffer );
+	    else
+		AddLineQueueX( " movaps %r, %s", xmm, buffer );
+	    return 1;
+	}
+
 	*regs_used |= R0_USED;
 	if ( param->sym.mem_type == MT_REAL2 ) {
 	    AddLineQueueX( " mov %r, %s", T_AX, paramvalue );
@@ -463,47 +486,6 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	} else if ( param->sym.mem_type == MT_REAL8 ) {
 	    AddLineQueueX( " mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue );
 	    AddLineQueueX( " movq %r, %r", xmm, T_RAX );
-	} else {
-	    p = paramvalue;
-	    sign = 0;
-	    if ( *p == '+' )
-		p++;
-	    else if ( *p == '-' ) {
-		p++;
-		sign++;
-	    }
-	    __cvta_q(opnd->chararray, p, NULL);
-	    if ( sign )
-		opnd->chararray[15] |= 0x80;
-	    if ( opnd->hvalue ) {
-		sprintf( buffer, "0x%" I64_SPEC "X", opnd->llvalue );
-		AddLineQueueX( " mov rax, %s", buffer );
-		AddLineQueue( " mov [rsp], rax" );
-	    } else if ( opnd->value ) {
-		AddLineQueueX( " mov qword ptr [rsp], 0x%x", opnd->uvalue );
-	    } else if ( opnd->hlvalue < 0xFFFFFFFF ) {
-		AddLineQueueX( " xorps %r, %r", xmm, xmm );
-		return 1;
-	    } else if ( (unsigned int)opnd->hlvalue == 0 ) {
-		AddLineQueueX( " mov eax, 0x%x", (unsigned int)(opnd->hlvalue >> 32) );
-		AddLineQueueX( " movd %r, eax", xmm );
-		AddLineQueueX( " shufps %r, %r, 21", xmm, xmm );
-		return 1;
-	    } else {
-		sprintf( buffer, "0x%" I64_SPEC "X", opnd->hlvalue );
-		AddLineQueueX( " mov rax, %s", buffer );
-		AddLineQueueX( " movq %r, rax", xmm );
-		AddLineQueueX( " shufps %r, %r, 75", xmm, xmm );
-		return 1;
-	    }
-	    if ( opnd->hlvalue > 0xFFFFFFFF ) {
-		sprintf( buffer, "0x%llX", opnd->hlvalue );
-		AddLineQueueX( " mov rax, %s", buffer );
-		AddLineQueueX( " mov [rsp+8], rax" );
-	    } else {
-		AddLineQueueX( " mov qword ptr [rsp+8], 0x%x", (unsigned int)opnd->hlvalue );
-	    }
-	    AddLineQueueX( " movaps %r, [rsp]", xmm );
 	}
     } else {
 	if ( param->sym.mem_type == MT_REAL2 ) {
@@ -608,7 +590,14 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    i = T_RAX;
 	}
 	*regs_used |= R0_USED;
-	AddLineQueueX( " lea %r, %s", i, paramvalue );
+
+	/* v2.31.24 xmm to r64 -- vararg */
+
+	if ( psize == 16 && ( GetValueSp(reg) & OP_XMM ) )
+	    AddLineQueueX( " movq %r, %r", i, reg );
+	else
+	    AddLineQueueX( " lea %r, %s", i, paramvalue );
+
 	AddLineQueueX( " mov [%r+%u], %r", T_RSP, NUMQUAL offset, i );
 	return( 1 );
     }
@@ -666,15 +655,26 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		    i = reg;
 		else {
 		    if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
+			/* added in v2.31.25 */
+			if ( size > psize && size == 16 && param->sym.mem_type & MT_FLOAT ) {
+			    if ( psize == 4 )
+				AddLineQueueX( " movss [%r+%u], %r", T_RSP, offset, reg );
+			    else
+				AddLineQueueX( " movsd [%r+%u], %r", T_RSP, offset, reg );
+			    return 1;
+			}
 			asmerr( 2114, index+1 );
 			psize = size;
 		    }
 		    i = GetAccumulator( psize, regs_used );
 		}
 	    } else {
-		if ( opnd->mem_type == MT_EMPTY )
-		    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
-		else
+		if ( opnd->mem_type == MT_EMPTY ) {
+		    /* added v2.31.25 */
+		    size = 4;
+		    if ( opnd->inst == T_OFFSET || ( psize == 8 && param->sym.mem_type == MT_PTR )  )
+			size = 8;
+		} else
 		    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
 		i = GetAccumulator( psize, regs_used );
 	    }
@@ -1054,7 +1054,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 
     if ( param->sym.is_vararg ) {
 
-	if ( psize == 16 || opnd->mem_type & MT_FLOAT ) {
+	if ( fcscratch && ( psize == 16 || opnd->mem_type & MT_FLOAT ) ) {
 	    fcscratch--;
 	    index = fcscratch;
 	    i = index + T_XMM0;
@@ -1114,7 +1114,9 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     i32 = get_x32_regno(i);
 
     if ( addr ) {
-	if ( psize >= 4 ) {
+	//if ( psize >= 4 ) {
+	if ( SizeFromRegister(i) == 8 ) {
+
 	    AddLineQueueX( " lea %r, %s", i, paramvalue );
 	    if ( stack == TRUE ) {
 		AddLineQueueX( " push %r", i );
@@ -1134,7 +1136,11 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	} else {
 	    size = 8;
 	}
-    } else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
+    } else if ( opnd->kind == EXPR_CONST ) {
+	if ( opnd->hvalue && opnd->hvalue != -1 )
+	    psize = 8;
+	size = psize;
+    } else if ( opnd->kind == EXPR_FLOAT ) {
 	size = psize;
     } else if ( opnd->mem_type != MT_EMPTY ) {
 	size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
@@ -1238,7 +1244,18 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 
 	if ( stack == TRUE ) {
 
-	    AddLineQueueX( " push %s", paramvalue );
+	    if ( opnd->kind == EXPR_FLOAT ) {
+
+		*regs_used |= R0_USED;
+		reg = T_RAX;
+		if ( param->sym.mem_type == MT_REAL2 )
+		    reg = T_AX;
+		else if ( param->sym.mem_type == MT_REAL4 )
+		    reg = T_EAX;
+		AddLineQueueX(" mov %r, %s", reg, paramvalue );
+		AddLineQueueX(" push %r", T_RAX );
+	    } else
+		AddLineQueueX( " push %s", paramvalue );
 	    return 1;
 	}
 
@@ -1275,8 +1292,8 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    }
 	} else {
 
-	    if ( opnd->kind == EXPR_FLOAT ) /* added v2.31 */
-		i = elf64_regs[index + 3 * 4];
+	    if ( opnd->kind == EXPR_FLOAT && param->sym.is_vararg ) /* added v2.31 */
+		i = elf64_regs[index + 3 * 6];
 
 	    AddLineQueueX( " mov %r, %s", i, paramvalue );
 	}

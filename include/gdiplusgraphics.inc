@@ -316,9 +316,13 @@ endif
         exitm<graphics.SetStatus(eax)>
         }
 
-    .operator ScaleTransform :REAL, :REAL, :MatrixOrder {
+    .operator ScaleTransform :REAL, :REAL, :abs {
         mov graphics,this
-        GdipScaleWorldTransform([this].Graphics.nativeGraphics, _1, _2, _3)
+        ifnb <_3>
+            GdipScaleWorldTransform([this].Graphics.nativeGraphics, _1, _2, _3)
+        else
+            GdipScaleWorldTransform([this].Graphics.nativeGraphics, _1, _2, MatrixOrderPrepend)
+        endif
         exitm<graphics.SetStatus(eax)>
         }
 

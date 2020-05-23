@@ -18,9 +18,7 @@ main proc
     p.FromPath(NULL)
     p.SetNativePath(NULL)
     p.SetStatus(0)
-    p.CreatePath(0)
-    p.CreatePath2(NULL, NULL, 0, 0)
-    p.CreatePath2I(NULL, NULL, 0, 0)
+
     p.Clone()
     p.Reset()
     p.GetFillMode()
@@ -33,12 +31,13 @@ main proc
     p.ClearMarkers()
     p.Reverse()
     p.GetLastPoint(NULL)
-    p.AddPathLine(0.0, 0.0, 0.0, 0.0)
-    p.AddLine(NULL, NULL)
+
+    p.AddLine(1, 2, 3, 4)
+    p.AddLine(0.0, 0.0, 0.0, 0.0)
+
     p.AddLines(NULL, 0)
-    p.AddPathLineI(0, 0, 0, 0)
-    p.AddLineI(NULL, NULL)
     p.AddLinesI(NULL, 0)
+
     p.AddPathArc(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     p.AddArc(NULL, 0.0, 0.0)
     p.AddPathArcI(0, 0, 0, 0, 0.0, 0.0)
@@ -63,10 +62,10 @@ main proc
     p.AddRectangles(NULL, 0)
     p.AddRectangleI(NULL)
     p.AddRectanglesI(NULL, 0)
-    p.AddPathEllipse(0.0, 0.0, 0.0, 0.0)
-    p.AddEllipse(NULL)
-    p.AddPathEllipseI(0, 0, 0, 0)
-    p.AddEllipseI(NULL)
+
+    p.AddEllipse(0, 0, 0, 0)
+    p.AddEllipse(0.0, 0.0, 0.0, 0.0)
+
     p.AddPie(NULL, 0.0, 0.0)
     p.AddPathPie(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     p.AddPieI(NULL, 0.0, 0.0)

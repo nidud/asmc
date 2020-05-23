@@ -27,13 +27,13 @@ main proc argc:int_t, argv:wstring_t
 
     ;; Get an image from the disk.
     .new image:ptr Image()
-    image.FromFile(L"..\\image.png", FALSE)
+    image.FromFile(L"image.bmp", FALSE)
 
     ;; Get the CLSID of the PNG encoder.
-    GetEncoderClsid(L"image/bmp", &encoderClsid)
+    GetEncoderClsid(L"image/png", &encoderClsid)
 
-    .if image.Save(L"..\\image.bmp", &encoderClsid, NULL) == Ok
-        printf("..\\image.bmp was saved successfully\n")
+    .if image.Save(L"image.png", &encoderClsid, NULL) == Ok
+        printf("image.png was saved successfully\n")
     .else
         printf("Failure: stat = %d\n", eax)
     .endif

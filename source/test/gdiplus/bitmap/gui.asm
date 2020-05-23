@@ -20,7 +20,7 @@ WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
         .new bitmap:ptr Bitmap()
 
-        bitmap.FromFile("..\\image.png", FALSE)
+        bitmap.FromFile("image.png", FALSE)
         bitmap.GetHBITMAP(NULL, &hBitmap)
         bitmap.Release()
 

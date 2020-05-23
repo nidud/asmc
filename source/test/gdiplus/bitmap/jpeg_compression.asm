@@ -30,7 +30,7 @@ wmain proc argc:int_t, argv:wstring_t
 
     ;; Get an image from the disk.
     .new image:ptr Image()
-    image.FromFile("..\\image.bmp", FALSE)
+    image.FromFile("image.bmp", FALSE)
 
     ;; Get the CLSID of the JPEG encoder.
     GetEncoderClsid("image/jpeg", &encoderClsid)

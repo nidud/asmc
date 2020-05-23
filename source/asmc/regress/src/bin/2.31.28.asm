@@ -8,9 +8,12 @@
     option win64:auto
 
 .template template
+
     atom        db ?
+
     template    proc :ptr
     Release     proc
+
     .ends
 
 .template template1

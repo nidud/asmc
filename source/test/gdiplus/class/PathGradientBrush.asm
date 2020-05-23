@@ -15,9 +15,7 @@ main proc
 
     PathGradientBrush()
     p.Release()
-    p.Create(NULL, 0, 0)
-    p.CreateI(NULL, 0, 0)
-    p.CreateFromPath(NULL)
+
     p.GetCenterColor(NULL)
     p.SetCenterColor(NULL)
     p.GetPointCount()

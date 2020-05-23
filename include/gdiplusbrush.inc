@@ -103,9 +103,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     GpBrush typedef Brush
 
 BRUSH_OPERATOR macro class
-    &class&_Brush macro this
-        exitm<Brush_Brush(this)>
-        endm
     &class&_Release macro this
         exitm<Brush_Release(this)>
         endm

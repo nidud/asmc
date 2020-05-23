@@ -12,7 +12,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     lastResult Status ?
     memState   Status ?
 
-    .operator GraphicsPath {
+    .operator CreatePath :FillMode {
+        mov graphicspath,this
+        mov [this].GraphicsPath.nativePath,NULL
+        xchg rcx,rdx
+        GdipCreatePath(ecx, &[rdx].GraphicsPath.nativePath)
+        exitm<graphicspath.SetStatus(eax)>
+    }
+
+    .operator GraphicsPath :abs, :abs, :abs, :abs, :abs {
 
         .new graphicspath:ptr GraphicsPath
 
@@ -26,6 +34,20 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             .endif
             mov [rax].GraphicsPath.nativePath,NULL
             mov [rax].GraphicsPath.lastResult,NotImplemented
+
+            mov graphicspath,rax
+            ifnb <_1>
+                ifnb <_2>
+                    GdipCreatePath2&_5&(_1, _2, _3, _4, rax)
+                else
+                    GdipCreatePath(_1, rax)
+                endif
+            else
+                GdipCreatePath(FillModeAlternate, &[rax].GraphicsPath.nativePath)
+            endif
+            graphicspath.SetStatus(eax)
+            mov rax,this
+
         .until 1
         retm<rax>
         }
@@ -62,38 +84,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             mov [this].GraphicsPath.lastResult,eax
         .endif
         retm<eax>
-    }
-
-    .operator CreatePath :FillMode {
-        mov graphicspath,this
-        mov [this].GraphicsPath.nativePath,NULL
-        xchg rcx,rdx
-        GdipCreatePath(ecx, &[rdx].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator CreatePath2 :ptr PointF, :ptr BYTE, :SINT, :FillMode {
-        mov graphicspath,this
-        mov [this].GraphicsPath.nativePath,NULL
-        mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov r8,r9
-        mov r9d,_4
-        GdipCreatePath2(this, _1, r8d, r9d, &[rax].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator CreatePath2I :ptr Point, :ptr BYTE, :SINT, :FillMode {
-        mov graphicspath,this
-        mov [this].GraphicsPath.nativePath,NULL
-        mov rax,this
-        mov this,_1
-        mov _1,_2
-        mov r8,r9
-        mov r9d,_4
-        GdipCreatePath2I(this, _1, r8d, r9d, &[rax].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
     }
 
     .operator Clone {
@@ -261,13 +251,20 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         exitm<graphicspath.SetStatus(eax)>
     }
 
+    .operator AddLine :abs, :abs, :abs, :abs {
+        mov graphicspath,this
+        if opattr(_1)
+            GdipAddPathLineI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
+        else
+            GdipAddPathLine([this].GraphicsPath.nativePath, _1, _2, _3, _4)
+        endif
+        exitm<graphicspath.SetStatus(eax)>
+        }
+
     .operator AddPathLine :REAL, :REAL, :REAL, :REAL {
         mov graphicspath,this
         GdipAddPathLine([this].GraphicsPath.nativePath, _1, _2, _3, _4)
         exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddLine :ptr PointF, :ptr PointF {
-        exitm<[this].GraphicsPath.AddPathLine([_1].PointF.X, [_1].PointF.Y, [_2].PointF.X, [_2].PointF.Y)>
         }
     .operator AddLines :ptr PointF, :SINT {
         mov graphicspath,this
@@ -412,12 +409,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         exitm<graphicspath.SetStatus(eax)>
         }
 
+    .operator AddEllipse :abs, :abs, :abs, :abs {
+        mov graphicspath,this
+        if opattr(_1) ;eq 36
+            GdipAddPathEllipseI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
+        else
+            GdipAddPathEllipse([this].GraphicsPath.nativePath, _1, _2, _3, _4)
+        endif
+        exitm<graphicspath.SetStatus(eax)>
+        }
+
     .operator AddPathEllipse :REAL, :REAL, :REAL, :REAL {
         mov graphicspath,this
         GdipAddPathEllipse([this].GraphicsPath.nativePath, _1, _2, _3, _4)
         exitm<graphicspath.SetStatus(eax)>
         }
-    .operator AddEllipse :ptr RectF {
+    .operator AddEllipseF :ptr RectF {
         exitm<[this].GraphicsPath.AddPathEllipse([_1].RectF.X, [_1].RectF.Y, [_1].RectF.Width, [_1].RectF.Height>
         }
     .operator AddPathEllipseI :SINT, :SINT, :SINT, :SINT {
@@ -865,35 +872,32 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     BRUSH_OPERATOR(PathGradientBrush)
 
-    .operator PathGradientBrush {
-        exitm<Brush_Brush(this)>
-        }
+    .operator PathGradientBrush :ptr, :abs, :abs, :abs {
 
-    .operator Create :ptr PointF, :SINT, :WrapMode {
-        mov brush,this
+        .new brush:ptr PathGradientBrush
+
         mov rax,this
-        mov this,_1
-        mov edx,_2
-        mov _2,_3
-        GdipCreatePathGradient(this, edx, _2, &[rax].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
-        }
-
-    .operator CreateI :ptr Point, :SINT, :WrapMode {
-        mov brush,this
-        mov rax,this
-        mov this,_1
-        mov edx,_2
-        mov _2,_3
-        GdipCreatePathGradientI(this, edx, _2, &[rax].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
-        }
-
-    .operator CreateFromPath :ptr GraphicsPath {
-        mov brush,this
-        xchg this,_1
-        GdipCreatePathGradientFromPath([this].GraphicsPath.nativePath, &[_1].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
+        .repeat
+            .if rax == NULL
+                mov brush,_1
+                .break .if !GdipAlloc(Brush)
+                mov [rax].Brush.memState,Ok
+                mov _1,brush
+            .else
+                mov [rax].Brush.memState,NotImplemented
+            .endif
+            mov [rax].Brush.nativeBrush,NULL
+            mov brush,rax
+            mov rcx,_1
+            ;ifnb <_2>
+            ;    GdipCreatePathGradient&_4&(_1, _2, _3, rax)
+            ;else
+                GdipCreatePathGradientFromPath([rcx].GraphicsPath.nativePath, &[rax].Brush.nativeBrush)
+            ;endif
+            brush.SetStatus(eax)
+            mov rax,this
+        .until 1
+        retm<rax>
         }
 
     .operator GetCenterColor :ptr Color {

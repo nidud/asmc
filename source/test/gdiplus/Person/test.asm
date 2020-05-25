@@ -11,22 +11,24 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .case WM_PAINT
 
         .new ps:PAINTSTRUCT
-        .new g:Graphics()
+
+        BeginPaint(rcx, &ps)
+
+        .new g:Graphics(rax)
+        .new rc:PointF
+
         .new Person:GraphicsPath()
         .new p:Pen(Blue)
 
-        BeginPaint(hWnd, &ps)
-        g.FromHDC(ps.hdc)
-
-        Person.AddEllipse(23, 1, 14, 14)
-        Person.AddLine(18, 16, 42, 16)
-        Person.AddLine(50, 40, 44, 42)
-        Person.AddLine(38, 25, 37, 42)
-        Person.AddLine(45, 75, 37, 75)
-        Person.AddLine(30, 50, 23, 75)
-        Person.AddLine(16, 75, 23, 42)
-        Person.AddLine(22, 25, 16, 42)
-        Person.AddLine(10, 40, 18, 16)
+        Person.AddEllipseI(23, 1, 14, 14)
+        Person.AddLineI(18, 16, 42, 16)
+        Person.AddLineI(50, 40, 44, 42)
+        Person.AddLineI(38, 25, 37, 42)
+        Person.AddLineI(45, 75, 37, 75)
+        Person.AddLineI(30, 50, 23, 75)
+        Person.AddLineI(16, 75, 23, 42)
+        Person.AddLineI(22, 25, 16, 42)
+        Person.AddLineI(10, 40, 18, 16)
 
         g.ScaleTransform(4.0, 4.0)
         g.DrawPath(&p, &Person)
@@ -78,11 +80,10 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
             mov hwnd,rax
 
             ;; Initialize GDI+.
-            .new gdiplus:ptr GdiPlus()
+            .new gdiplus:GdiPlus()
 
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)
-
             .while GetMessage(&msg,0,0,0)
                 TranslateMessage(&msg)
                 DispatchMessage(&msg)

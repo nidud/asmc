@@ -6,168 +6,94 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .template GraphicsPath
 
-    GpPath typedef GraphicsPath
-
     nativePath ptr_t ?
     lastResult Status ?
-    memState   Status ?
 
-    .operator CreatePath :FillMode {
-        mov graphicspath,this
-        mov [this].GraphicsPath.nativePath,NULL
-        xchg rcx,rdx
-        GdipCreatePath(ecx, &[rdx].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator GraphicsPath :abs, :abs, :abs, :abs, :abs {
-
-        .new graphicspath:ptr GraphicsPath
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                .break .if !GdipAlloc(GraphicsPath)
-                mov [rax].GraphicsPath.memState,Ok
-            .else
-                mov [rax].GraphicsPath.memState,NotImplemented
-            .endif
-            mov [rax].GraphicsPath.nativePath,NULL
-            mov [rax].GraphicsPath.lastResult,NotImplemented
-
-            mov graphicspath,rax
-            ifnb <_1>
-                ifnb <_2>
-                    GdipCreatePath2&_5&(_1, _2, _3, _4, rax)
-                else
-                    GdipCreatePath(_1, rax)
-                endif
+    GraphicsPath proc :vararg
+    GraphicsPath_GraphicsPath macro this, _1:=<FillModeAlternate>, _2, _3, _4:=<FillModeAlternate>
+        mov this.nativePath,NULL
+        if typeof(_1) eq 8
+            ifb <_2>
+                xchg rcx,rdx
+                GdipClonePath([rcx].GraphicsPath.nativePath, rdx)
+            elseif @InStr(1, <_1>, <addr >) and typeof(@SubStr(<_1>, 5)) eq sizeof(PointF)
+                GdipCreatePath2(_1, _2, _3, _4, rcx)
             else
-                GdipCreatePath(FillModeAlternate, &[rax].GraphicsPath.nativePath)
+                GdipCreatePath2I(_1, _2, _3, _4, rcx)
             endif
-            graphicspath.SetStatus(eax)
-            mov rax,this
-
-        .until 1
-        retm<rax>
-        }
+        else
+            GdipCreatePath(_1, rcx)
+        endif
+        mov this.lastResult,eax
+        lea rax,this
+        exitm<>
+        endm
 
     .operator Release {
-
-        mov graphicspath,this
-
-        GdipDeletePath([this].GraphicsPath.nativePath)
-
-        mov this,graphicspath
-        .if [this].GraphicsPath.memState != NotImplemented
-
-            GdipFree(this)
-        .endif
-
-        exitm<>
+        exitm<GdipDeletePath([this].GraphicsPath.nativePath)>
         }
-
-    .operator FromPath :ptr GraphicsPath {
-        mov graphicspath,this
-        xchg this,_1
-        GdipClonePath([this].GraphicsPath.nativePath, &[_1].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
 
     .operator SetNativePath :ptr GraphicsPath {
         mov     [this].GraphicsPath.nativePath,_1
         exitm   <>
-    }
+        }
     .operator SetStatus :Status {
         mov eax,_1
         .if eax != Ok
             mov [this].GraphicsPath.lastResult,eax
         .endif
         retm<eax>
-    }
-
-    .operator Clone {
-
-        .new clonepath:ptr GraphicsPath
-
-        mov graphicspath,this
-        mov clonepath,GraphicsPath()
-        .if rax
-            mov rcx,graphicspath
-            GdipClonePath([rcx].GraphicsPath.nativePath, &[rax].GraphicsPath.nativePath)
-            graphicspath.SetStatus(eax)
-            mov edx,eax
-            mov rax,clonepath
-            mov [rax].GraphicsPath.lastResult,edx
-        .endif
-        retm <rax>
-    }
+        }
 
     ;; Reset the path object to empty (and fill mode to FillModeAlternate)
 
-    .operator Reset {
-        mov graphicspath,this
-        GdipResetPath([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
+    .operator Reset :vararg {
+        .ifd GdipResetPath([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
 
-    .operator GetFillMode {
+    .operator GetFillMode :vararg {
+        .new @fillmode:FillMode
+        .ifd GdipGetPathFillMode([rcx].GraphicsPath.nativePath, &@fillmode)
+            mov this.lastResult,eax
+        .endif
+        exitm<mov eax,@fillmode>
+        }
 
-        .new fillmode:FillMode
+    .operator SetFillMode :vararg {
+        .ifd GdipSetPathFillMode([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
 
-        mov graphicspath,this
-        GdipGetPathFillMode([this].GraphicsPath.nativePath, &fillmode)
-        graphicspath.SetStatus(eax)
+    .operator GetPathData :ptr PathData, :vararg {
 
-        mov eax,fillmode
-        retm <eax>
-    }
+       .new count:SINT
+       .new pathdata:ptr PathData
 
-    .operator SetFillMode :FillMode {
-        mov graphicspath,this
-        GdipSetPathFillMode([this].GraphicsPath.nativePath, _1)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator GetPathData :ptr PathData {
-
-        mov graphicspath,this
+        mov pathdata,rdi
+        mov rdi,rdx
+        mov count,this.GetPointCount()
 
         .repeat
 
-            .if _1 == NULL
+            .if ((count <= 0) || ([rdi].PathData.Count > 0 && [rdi].PathData.Count < count))
 
-                graphicspath.SetStatus(InvalidParameter)
-                .break
-            .endif
+                mov [rdi].PathData.Count,0
+                .if ([rdi].PathData.Points)
 
-            .new count:SINT
-            .new pathdata:ptr PathData
-
-            mov pathdata,_1
-            mov count,graphicspath.GetPointCount()
-
-            mov _1,pathdata
-
-            .if ((count <= 0) || ([_1].PathData.Count > 0 && [_1].PathData.Count < count))
-
-                mov [_1].PathData.Count,0
-                .if ([_1].PathData.Points)
-
-                    GdipFree([_1].PathData.Points)
-                    mov _1,pathdata
-                    mov [_1].PathData.Points,NULL
+                    GdipFree([rdi].PathData.Points)
+                    mov [rdi].PathData.Points,NULL
                 .endif
 
-                .if [_1].PathData.Types
+                .if [rdi].PathData.Types
 
-                    GdipFree([_1].PathData.Types)
-
-                    mov _1,pathdata
-                    mov [_1].PathData.Types,NULL
-
+                    GdipFree([rdi].PathData.Types)
+                    mov [rdi].PathData.Types,NULL
                 .endif
-
                 .if (count <= 0)
 
                     mov eax,Ok
@@ -175,311 +101,290 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
                 .endif
             .endif
 
-            .if [_1].PathData.Count == 0
+            .if [rdi].PathData.Count == 0
 
                 imul ecx,count,PointF
-
                 .if !GdipAlloc(rcx)
 
-                    graphicspath.SetStatus(OutOfMemory)
+                    mov eax,OutOfMemory
                     .break
-
                 .endif
 
-                mov _1,pathdata
-                mov [_1].PathData.Points,rax
+                mov [rdi].PathData.Points,rax
 
                 .if !GdipAlloc(count)
 
-                    mov _1,pathdata
-                    mov rcx,[_1].PathData.Points
-                    mov [_1].PathData.Points,NULL
+                    mov rcx,[rdi].PathData.Points
+                    mov [rdi].PathData.Points,NULL
                     GdipFree(rcx)
-                    graphicspath.SetStatus(OutOfMemory)
+                    mov eax,OutOfMemory
                     .break
                 .endif
-                mov _1,pathdata
-                mov [_1].PathData.Types,rax
-                mov [_1].PathData.Count,count
+                mov [rdi].PathData.Types,rax
+                mov [rdi].PathData.Count,count
             .endif
-
-            GdipGetPathData([this].GraphicsPath.nativePath, pathdata)
-            graphicspath.SetStatus(eax)
+            GdipGetPathData(this.nativePath, rdi)
         .until 1
-        retm <eax>
-    }
-
-    .operator StartFigure {
-        mov graphicspath,this
-        GdipStartPathFigure([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator CloseFigure {
-        mov graphicspath,this
-        GdipClosePathFigure([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator CloseAllFigures {
-        mov graphicspath,this
-        GdipClosePathFigures([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator SetMarker {
-        mov graphicspath,this
-        GdipSetPathMarker([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator ClearMarkers {
-        mov graphicspath,this
-        GdipClearPathMarkers([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator Reverse {
-        mov graphicspath,this
-        GdipReversePath([this].GraphicsPath.nativePath)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator GetLastPoint :ptr PointF {
-        mov graphicspath,this
-        GdipGetPathLastPoint([this].GraphicsPath.nativePath, _1)
-        exitm<graphicspath.SetStatus(eax)>
-    }
-
-    .operator AddLine :abs, :abs, :abs, :abs {
-        mov graphicspath,this
-        if opattr(_1)
-            GdipAddPathLineI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        else
-            GdipAddPathLine([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        endif
-        exitm<graphicspath.SetStatus(eax)>
+        mov rdi,pathdata
+        mov this.lastResult,eax
+        exitm<>
         }
 
-    .operator AddPathLine :REAL, :REAL, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathLine([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddLines :ptr PointF, :SINT {
-        mov graphicspath,this
-        GdipAddPathLine2([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddPathLineI :SINT, :SINT, :SINT, :SINT {
-        mov graphicspath,this
-        GdipAddPathLineI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddLineI :ptr PointF, :ptr PointF {
-        exitm<[this].GraphicsPath.AddPathLineI([_1].Point.X, [_1].Point.Y, [_2].Point.X, [_2].Point.Y)>
-        }
-    .operator AddLinesI :ptr Point, :SINT {
-        mov graphicspath,this
-        GdipAddPathLine2I([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddPathArc :REAL, :REAL, :REAL, :REAL, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathArc([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddArc :ptr RectF, :REAL, :REAL {
-        mov r10,_1
-        exitm<[this].GraphicsPath.AddPathArc([r10].RectF.X, [r10].RectF.Y, [r10].RectF.Width, [r10].RectF.Height, _2, _3)>
-        }
-    .operator AddPathArcI :SINT, :SINT, :SINT, :SINT, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathArcI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddArcI :ptr Rect, :REAL, :REAL {
-        mov r10,_1
-        exitm<[this].GraphicsPath.AddPathArcI([r10].Rect.X, [r10].Rect.Y, [r10].Rect.Width, [r10].Rect.Height, _2, _3)>
-        }
-
-    .operator AddPathBezier :REAL, :REAL, :REAL, :REAL, :REAL, :REAL, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathBezier([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, _7, _8)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddBezier :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF {
-        mov r10,_4
-        exitm<[this].GraphicsPath.AddPathBezier([_1].PointF.X, [_1].PointF.Y,\
-            [_2].PointF.X, [_2].PointF.Y, [_3].PointF.X, [_3].PointF.Y, [r10].PointF.X, [r10].PointF.Y)>
-        }
-    .operator AddBeziers :ptr PointF, :SINT {
-        mov graphicspath,this
-        GdipAddPathBeziers([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddPathBezierI :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT {
-        mov graphicspath,this
-        GdipAddPathBezierI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, _7, _8)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddBezierI :ptr Point, :ptr Point, :ptr Point, :ptr Point {
-        mov r10,_4
-        exitm<[this].GraphicsPath.AddPathBezierI([_1].Point.X, [_1].Point.Y,\
-            [_2].Point.X, [_2].Point.Y, [_3].Point.X, [_3].Point.Y, [r10].Point.X, [r10].Point.Y)>
-        }
-    .operator AddBeziersI :ptr Point, :SINT {
-        mov graphicspath,this
-        GdipAddPathBeziersI([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddCurve :ptr PointF, :SINT {
-        mov graphicspath,this
-        GdipAddPathCurve([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddCurve2 :ptr PointF, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathCurve2([this].GraphicsPath.nativePath, _1, _2, _3)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddCurve3 :ptr PointF, :SINT, :SINT, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathCurve3([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddCurveI :ptr Point, :SINT {
-        mov graphicspath,this
-        GdipAddPathCurveI([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddCurve2I :ptr Point, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathCurve2I([this].GraphicsPath.nativePath, _1, _2, _3)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddCurve3I :ptr Point, :SINT, :SINT, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathCurve3I([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddClosedCurve :ptr PointF, :SINT {
-        mov graphicspath,this
-        GdipAddPathClosedCurve([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddClosedCurve2 :ptr PointF, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathClosedCurve2([this].GraphicsPath.nativePath, _1, _2, _3)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddClosedCurveI :ptr Point, :SINT {
-        mov graphicspath,this
-        GdipAddPathClosedCurveI([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddClosedCurve2I :ptr Point, :SINT, :REAL {
-        mov graphicspath,this
-        GdipAddPathClosedCurve2I([this].GraphicsPath.nativePath, _1, _2, _3)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddRectangle :ptr RectF {
-        mov graphicspath,this
-        GdipAddPathRectangle([this].GraphicsPath.nativePath, [_1].RectF.X, [_1].RectF.Y, [_1].RectF.Width, [_1].RectF.Height)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddRectangles :ptr RectF, :SINT {
-        mov graphicspath,this
-        GdipAddPathRectangles([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddRectangleI :ptr Rect {
-        mov graphicspath,this
-        GdipAddPathRectangleI([this].GraphicsPath.nativePath, [_1].Rect.X, [_1].Rect.Y, [_1].Rect.Width, [_1].Rect.Height)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddRectanglesI :ptr Rect, :SINT {
-        mov graphicspath,this
-        GdipAddPathRectanglesI([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddEllipse :abs, :abs, :abs, :abs {
-        mov graphicspath,this
-        if opattr(_1) ;eq 36
-            GdipAddPathEllipseI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        else
-            GdipAddPathEllipse([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        endif
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddPathEllipse :REAL, :REAL, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathEllipse([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddEllipseF :ptr RectF {
-        exitm<[this].GraphicsPath.AddPathEllipse([_1].RectF.X, [_1].RectF.Y, [_1].RectF.Width, [_1].RectF.Height>
-        }
-    .operator AddPathEllipseI :SINT, :SINT, :SINT, :SINT {
-        mov graphicspath,this
-        GdipAddPathEllipseI([this].GraphicsPath.nativePath, _1, _2, _3, _4)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddEllipseI :ptr Rect {
-        exitm<[this].GraphicsPath.AddPathEllipseI([_1].Rect.X, [_1].Rect.Y, [_1].Rect.Width, [_1].Rect.Height>
-        }
-
-    .operator AddPathPie :REAL, :REAL, :REAL, :REAL, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathPie([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddPie :ptr RectF, :REAL, :REAL {
-        exitm<[this].GraphicsPath.AddPathPie([_1].RectF.X, [_1].RectF.Y, [_1].RectF.Width, [_1].RectF.Height, _2, _3>
-        }
-    .operator AddPathPieI :SINT, :SINT, :SINT, :SINT, :REAL, :REAL {
-        mov graphicspath,this
-        GdipAddPathPieI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddPieI :ptr Rect, :REAL, :REAL {
-        exitm<[this].GraphicsPath.AddPathPie([_1].Rect.X, [_1].Rect.Y, [_1].Rect.Width, [_1].Rect.Height, _2, _3>
-        }
-
-    .operator AddPolygon :ptr PointF, :SINT {
-        mov graphicspath,this
-        GdipAddPathPolygon([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-    .operator AddPolygonI :ptr Point, :SINT {
-        mov graphicspath,this
-        GdipAddPathPolygonI([this].GraphicsPath.nativePath, _1, _2)
-        exitm<graphicspath.SetStatus(eax)>
-        }
-
-    .operator AddPath :ptr GraphicsPath, :BOOL {
-
-        .new nativePath2:ptr GpPath
-
-        mov nativePath2,NULL
-        .if _1
-            mov nativePath2,[_1].GraphicsPath.nativePath
+    .operator StartFigure :vararg {
+        .ifd GdipStartPathFigure([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
         .endif
-        mov graphicspath,this
-        GdipAddPathPath([this].GraphicsPath.nativePath, nativePath2, _2)
-        exitm<graphicspath.SetStatus(eax)>
-    }
+        exitm<>
+        }
+
+    .operator CloseFigure :vararg {
+        .ifd GdipClosePathFigure([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator CloseAllFigures :vararg {
+        .ifd GdipClosePathFigures([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator SetMarker :vararg {
+        .ifd GdipSetPathMarker([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator ClearMarkers :vararg {
+        .ifd GdipClearPathMarkers([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator Reverse :vararg {
+        .ifd GdipReversePath([rcx].GraphicsPath.nativePath)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator GetLastPoint :vararg {
+        .ifd GdipGetPathLastPoint([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddLine :vararg {
+        .ifd GdipAddPathLine([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddLines :vararg {
+        .ifd GdipAddPathLine2([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddLineI :vararg {
+        .ifd GdipAddPathLineI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddLinesI :vararg {
+        .ifd GdipAddPathLine2I([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddArc :vararg {
+        .ifd GdipAddPathArc([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddArcI :vararg {
+        .ifd GdipAddPathArcI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddBezier :vararg {
+        .ifd GdipAddPathBezier([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddBeziers :vararg {
+        .ifd GdipAddPathBeziers([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddBezierI :vararg {
+        .ifd GdipAddPathBezierI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddBeziersI :vararg {
+        .ifd GdipAddPathBeziersI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddCurve :vararg {
+        .ifd GdipAddPathCurve([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddCurve2 :vararg {
+        .ifd GdipAddPathCurve2([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddCurve3 :vararg {
+        .ifd GdipAddPathCurve3([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddCurveI :vararg {
+        .ifd GdipAddPathCurveI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddCurve2I :vararg {
+        .ifd GdipAddPathCurve2I([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddCurve3I :vararg {
+        .ifd GdipAddPathCurve3I([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddClosedCurve :vararg {
+        .ifd GdipAddPathClosedCurve([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddClosedCurve2 :vararg {
+        .ifd GdipAddPathClosedCurve2([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddClosedCurveI :vararg {
+        .ifd GdipAddPathClosedCurveI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddClosedCurve2I :vararg {
+        .ifd GdipAddPathClosedCurve2I([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddRectangle :ptr RectF, :vararg {
+        .ifd GdipAddPathRectangle([rcx].GraphicsPath.nativePath,\
+                [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddRectangles :vararg {
+        .ifd GdipAddPathRectangles([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddRectangleI :ptr Rect, :vararg {
+        .ifd GdipAddPathRectangleI([rcx].GraphicsPath.nativePath,\
+                [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddRectanglesI :vararg {
+        .ifd GdipAddPathRectanglesI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddEllipse :vararg {
+        .ifd GdipAddPathEllipse([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddEllipseI :vararg {
+        .ifd GdipAddPathEllipseI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddPie :vararg {
+        .ifd GdipAddPathPie([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddPieI :vararg {
+        .ifd GdipAddPathPieI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddPolygon :vararg {
+        .ifd GdipAddPathPolygon([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+    .operator AddPolygonI :vararg {
+        .ifd GdipAddPathPolygonI([rcx].GraphicsPath.nativePath, _1)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
+
+    .operator AddPath :ptr GraphicsPath, :vararg {
+        .if rdx
+            mov rdx,[rdx].GraphicsPath.nativePath
+        .endif
+        .ifd GdipAddPathPath([rcx].GraphicsPath.nativePath, rdx, _2)
+            mov this.lastResult,eax
+        .endif
+        exitm<>
+        }
 
     .operator AddString :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr PointF, :ptr StringFormat {
 
         .new rect:RectF
+        .new @graphicspath:ptr GraphicsPath
 
         mov r10,_6
         mov rect.X,[r10].PointF.X
@@ -493,13 +398,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .if r10
             mov r10,[r10].StringFormat.nativeFormat
         .endif
-        mov graphicspath,this
-        GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
-        exitm<graphicspath.SetStatus(eax)>
+        mov @graphicspath,this
+        .ifd GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
+            mov this,@graphicspath
+            mov [this].GraphicsPath.lastResult,eax
+        .endif
+        exitm<>
         }
 
     .operator AddString2 :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr RectF, :ptr StringFormat {
-        mov graphicspath,this
+       .new @graphicspath:ptr GraphicsPath
+        mov @graphicspath,this
         .if _3
             mov _3,[_3].Family.nativeFamily
         .endif
@@ -507,13 +416,18 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .if rax
             mov rax,[rax].Format.nativeFormat
         .endif
-        GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, rax)
-        exitm<graphicspath.SetStatus(eax)>
+        .ifd GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, rax)
+            mov this,@graphicspath
+            mov [this].GraphicsPath.lastResult,eax
+        .endif
+        exitm<>
         }
 
     .operator AddStringI :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr Point, :ptr StringFormat {
 
-        .new rect:Rect
+       .new rect:Rect
+       .new @graphicspath:ptr GraphicsPath
+        mov @graphicspath,this
 
         mov r10,_6
         mov rect.X,[r10].PointF.X
@@ -528,12 +442,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             mov r10,[r10].StringFormat.nativeFormat
         .endif
         mov graphicspath,this
-        GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
-        exitm<graphicspath.SetStatus(eax)>
+        .ifd GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
+            mov this,@graphicspath
+            mov [this].GraphicsPath.lastResult,eax
+        .endif
+        exitm<>
         }
 
     .operator AddString2I :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr Rect, :ptr StringFormat {
-        mov graphicspath,this
+       .new @graphicspath:ptr GraphicsPath
+        mov @graphicspath,this
         .if _3
             mov _3,[_3].Family.nativeFamily
         .endif
@@ -541,8 +459,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .if r10
             mov r10,[r10].Format.nativeFormat
         .endif
-        GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, r10)
-        exitm<graphicspath.SetStatus(eax)>
+        .ifd GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, r10)
+            mov this,@graphicspath
+            mov [this].GraphicsPath.lastResult,eax
+        .endif
+        exitm<>
         }
 
     .operator Transform :ptr Matrix {
@@ -651,6 +572,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     IsOutlineVisible3 proc :ptr PointF, :ptr Pen, :ptr Graphics
     IsOutlineVisible4 proc :ptr Point, :ptr Pen, :ptr Graphics
     .ends
+    GpPath typedef GraphicsPath
 
 ;;--------------------------------------------------------------------------
 ;; GraphisPathIterator class

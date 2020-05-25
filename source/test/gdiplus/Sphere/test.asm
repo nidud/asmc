@@ -13,17 +13,16 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
        .new ps:PAINTSTRUCT
        .new count:SINT
        .new FullTranslucent:ARGB
-       .new g:Graphics()
 
-        BeginPaint(hWnd, &ps)
+        BeginPaint(rcx, &ps)
 
-        g.FromHDC(ps.hdc)
+       .new g:Graphics(rax)
 
         ; Create a GraphicsPath object
        .new p:GraphicsPath()
 
         ; Add an ellipse to the path
-        p.AddEllipse(200, 0, 200, 200)
+        p.AddEllipseI(200, 0, 200, 200)
 
         ; Create a path gradient based on the ellipse
        .new b:PathGradientBrush(&p)
@@ -49,7 +48,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
        .new p:GraphicsPath()
 
-        p.AddEllipse(200, 100, 150, 150)
+        p.AddEllipseI(200, 100, 150, 150)
 
        .new b:PathGradientBrush(&p)
 
@@ -105,7 +104,7 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
             mov hwnd,rax
 
             ;; Initialize GDI+.
-            .new gdiplus:ptr GdiPlus()
+            .new gdiplus:GdiPlus()
 
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)

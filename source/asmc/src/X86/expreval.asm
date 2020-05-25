@@ -193,6 +193,30 @@ GetRecordMask endp
     assume edi:expr_t
     assume ecx:nothing
 
+; added v2.31.32
+
+SetEvexOpt proc tok:tok_t
+
+    mov ecx,tok
+    .if [ecx-1*16].asm_tok.token == T_COMMA && \
+        [ecx-2*16].asm_tok.token == T_REG && \
+        [ecx-3*16].asm_tok.token == T_INSTRUCTION
+
+        mov eax,GetValueSp([ecx-2*16].asm_tok.tokval)
+        .if eax & OP_XMM ;or OP_YMM or OP_ZMM )
+
+            .if [ecx-3*16].asm_tok.tokval < VEX_START && \
+                [ecx-3*16].asm_tok.tokval >= T_ADDPD
+                .return 0
+            .endif
+        .endif
+    .endif
+    or  [ecx].asm_tok.hll_flags,T_EVEX_OPT
+    mov eax,1
+    ret
+
+SetEvexOpt endp
+
 get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, flags:byte
 
     local tmp:string_t
@@ -236,8 +260,11 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
             .if ( [ebx].string_delim == 0 && ( al == '"' || al == "'" ) )
                 fnasmerr( 2046 )
             .elseif [ebx].string_delim == '{'
-                or  [ebx].hll_flags,T_EVEX_OPT
                 mov [edi].kind,EXPR_EMPTY
+                .if SetEvexOpt(ebx) == 0
+                    mov [edi].kind,EXPR_CONST
+                    mov [edi].quoted_string,ebx
+                .endif
                 .endc
             .else
                 fnasmerr( 2167, [ebx].tokpos )
@@ -583,6 +610,15 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
             .return(ERROR) .if !eax
             mov [edi].label_tok,ebx
             mov [edi].kind,EXPR_ADDR
+
+            ; added v2.31.32: typeof(addr ...)
+        .elseif ( [ebx].tokval == T_ADDR && i > 2 && \
+            ( [ebx-16].tokval == T_TYPEOF || [ebx-32].tokval == T_TYPEOF ) && \
+            ( [ebx+16].token == T_ID || [ebx+16].token == T_OP_SQ_BRACKET  ) )
+            inc dword ptr [edx]
+            mov [edi].kind,EXPR_ADDR
+            mov [edi].mem_type,MT_PTR
+            .endc
         .else
             .return fnasmerr( 2008, [ebx].string_ptr )
         .endif
@@ -2628,7 +2664,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:tok_t, _end
 
                 ;; v2.26 - added for {k1}{z}..
                 .if ( eax == T_STRING && [esi].string_delim == '{' )
-                    or  [esi].hll_flags,T_EVEX_OPT
+                    SetEvexOpt(esi)
                     mov edx,i
                     inc dword ptr [edx]
                     add ebx,16
@@ -2726,7 +2762,7 @@ endif
 
                 .if ( eax == T_STRING && [ebx].string_delim == '{' )
 
-                    or [ebx].hll_flags,T_EVEX_OPT
+                    SetEvexOpt(ebx)
                     mov edx,i
                     inc dword ptr [edx]
                     add ebx,16

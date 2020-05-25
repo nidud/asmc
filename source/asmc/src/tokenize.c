@@ -318,7 +318,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 		    }
 		    if ( nl ) {
 
-			struct asm_tok *tokenarray = &buf[0 - p->index];
+			struct asm_tok *tokenarray = buf - p->index;
 
 			tmp = GetAlignedPointer( p->output, strlen( p->output ) );
 			tmp[0] = '\0';

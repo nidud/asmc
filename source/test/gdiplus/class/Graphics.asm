@@ -11,15 +11,13 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr Graphics()
+    .new p:Graphics(NULL)
 
-    Graphics()
     p.Release()
-    p.FromHDC(NULL)
-    p.FromHDC2(NULL, NULL)
-    p.FromHWND(NULL, FALSE)
-    p.FromImage(NULL)
+
+;    p.FromImage(NULL)
     p.FromGraphics(NULL)
+
     p.SetNativeGraphics(NULL)
     p.SetStatus(0)
     p.GetNativeGraphics()
@@ -61,35 +59,34 @@ main proc
     p.TransformPointsI(0, 0, NULL, 0)
     p.GetNearestColor(NULL)
     p.DrawLine(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.DrawLine2(NULL, NULL, NULL)
     p.DrawLines(NULL, NULL, 0)
     p.DrawLineI(NULL, 0, 0, 0, 0)
-    p.DrawLineI2(NULL, NULL, NULL)
+
     p.DrawLinesI(NULL, NULL, 0)
     p.DrawArc(NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.DrawArc2(NULL, NULL, 0.0, 0.0)
+
     p.DrawArcI(NULL, 0, 0, 0, 0, 0.0, 0.0)
-    p.DrawArc2(NULL, NULL, 0.0, 0.0)
+
     p.DrawBezier(NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.DrawBezier2(NULL, NULL, NULL, NULL, NULL)
+
     p.DrawBeziers(NULL, NULL, 0)
     p.DrawBezierI(NULL, 0, 0, 0, 0, 0, 0, 0, 0)
-    p.DrawBezierI2(NULL, NULL, NULL, NULL, NULL)
+
     p.DrawBeziersI(NULL, NULL, 0)
     p.DrawRectangle(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.DrawRectangle2(NULL, NULL)
+
     p.DrawRectangles(NULL, NULL, 0)
     p.DrawRectangleI(NULL, 0, 0, 0, 0)
-    p.DrawRectangleI2(NULL, NULL)
+
     p.DrawRectanglesI(NULL, NULL, 0)
     p.DrawEllipse(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.DrawEllipse2(NULL, NULL)
+
     p.DrawEllipseI(NULL, 0, 0, 0, 0)
-    p.DrawEllipse2I(NULL, NULL)
+
     p.DrawPie(NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.DrawPie2(NULL, NULL, 0.0, 0.0)
+
     p.DrawPieI(NULL, 0, 0, 0, 0, 0.0, 0.0)
-    p.DrawPie2I(NULL, NULL, 0.0, 0.0)
+
     p.DrawPolygon(NULL, NULL, 0)
     p.DrawPolygonI(NULL, NULL, 0)
     p.DrawPath(NULL, NULL)
@@ -105,23 +102,23 @@ main proc
     p.DrawClosedCurve2I(NULL, NULL, 0, 0.0)
     p.Clear(NULL)
     p.FillRectangle(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.FillRectangle2(NULL, NULL)
+
     p.FillRectangles(NULL, NULL, 0)
     p.FillRectangleI(NULL, 0, 0, 0, 0)
-    p.FillRectangle2I(NULL, NULL)
+
     p.FillRectanglesI(NULL, NULL, 0)
     p.FillPolygon(NULL, NULL, 0, 0)
-    p.FillPolygon2(NULL, NULL, 0)
+
     p.FillPolygonI(NULL, NULL, 0, 0)
-    p.FillPolygon2I(NULL, NULL, 0)
+
     p.FillEllipse(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.FillEllipse2(NULL, NULL)
+
     p.FillEllipseI(NULL, 0, 0, 0, 0)
-    p.FillEllipse2I(NULL, NULL)
+
     p.FillPie(NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.FillPie2(NULL, NULL, 0.0, 0.0)
+
     p.FillPieI(NULL, 0, 0, 0, 0, 0.0, 0.0)
-    p.FillPie2I(NULL, NULL, 0.0, 0.0)
+
     p.FillPath(NULL, NULL)
     p.FillClosedCurve(NULL, NULL, 0)
     p.FillClosedCurve2(NULL, NULL, 0, 0, 0.0)
@@ -129,10 +126,10 @@ main proc
     p.FillClosedCurve2I(NULL, NULL, 0, 0, 0.0)
     p.FillRegion(NULL, NULL)
     p.DrawString(NULL, 0, NULL, NULL, NULL, NULL)
-    p.DrawString2(NULL, 0, NULL, NULL, NULL)
-    p.DrawString3(NULL, 0, NULL, NULL, NULL, NULL)
+
+
     p.MeasureString(NULL, 0, NULL, NULL, NULL, NULL, 0, NULL)
-    p.MeasureString2(NULL, 0, NULL, NULL, NULL, NULL, 0, 0)
+
     p.MeasureString3(NULL, 0, NULL, NULL, NULL, NULL)
     p.MeasureString4(NULL, 0, NULL, NULL, NULL)
     p.MeasureString5(NULL, 0, NULL, NULL, NULL)
@@ -143,9 +140,9 @@ main proc
     p.DrawImage(NULL, 0.0, 0.0)
     p.DrawImageI(NULL, 0, 0)
     p.DrawImageRect(NULL, 0.0, 0.0, 0.0, 0.0)
-    p.DrawImageRect2(NULL, NULL)
+
     p.DrawImageRectI(NULL, 0, 0, 0, 0)
-    p.DrawImageRect2I(NULL, NULL)
+
     p.DrawImagePoints(NULL, NULL, 0)
     p.DrawImagePointsI(NULL, NULL, 0)
     p.DrawImagePointRect(NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)

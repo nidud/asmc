@@ -11,7 +11,6 @@ struct com_item {
     int langtype;
     struct asym *sym;
     int type;
-    int dotname;
     int vector;
 };
 
@@ -689,7 +688,6 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         }
         ModuleInfo.g.ComStack = NULL;
         if ( o->type ) {
-            ModuleInfo.dotname = o->dotname;
             break;
         }
         AddLineQueueX( "%s ends", CurrStruct->sym.name );
@@ -887,8 +885,6 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
             if ( q ) {
                 o->type = q;
-                o->dotname = ModuleInfo.dotname;
-                ModuleInfo.dotname = TRUE;
                 if ( x < 16 ) {
                     q = T_RAX;
                     switch ( x ) {

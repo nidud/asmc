@@ -514,7 +514,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 {
     uint_32 size;
     uint_32 psize;
-    int reg;
+    int reg = 0;
     int reg_64;
     int reg2;
     int m3;

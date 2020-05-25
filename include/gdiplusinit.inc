@@ -97,45 +97,27 @@ GdiplusShutdown proto WINAPI \
     SuppressBackgroundThread    BOOL ?
     SuppressExternalCodecs      BOOL ?
     StartupParameters           SINT ?
-    MemoryState                 BOOL ?
     Token                       ULONG_PTR ?
 
-    .operator GdiPlus {
-
-        .new gdiplus:ptr GdiPlus
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                .break .if !malloc(GdiPlus)
-                mov [rax].GdiPlus.MemoryState,TRUE
-            .else
-                mov [rax].GdiPlus.MemoryState,FALSE
-            .endif
-            mov gdiplus,rax
-            mov [rax].GdiPlus.GdiplusVersion,2
-            mov [rax].GdiPlus.DebugEventCallback,NULL
-            mov [rax].GdiPlus.SuppressBackgroundThread,FALSE
-            mov [rax].GdiPlus.SuppressExternalCodecs,FALSE
-            mov [rax].GdiPlus.StartupParameters,0
-            .ifd GdiplusStartup(&[rax].GdiPlus.Token, rax, NULL)
-                mov gdiplus,NULL
-            .endif
-            mov rax,gdiplus
-        .until 1
-        retm <rax>
+    .operator GdiPlus :vararg {
+        ifidn <this>,<0>
+            .err <Only Static Initialization! Use .new name:...>
+        endif
+        ifnb <_1>
+            mov this.GdiplusVersion,_1
+        else
+            mov this.GdiplusVersion,2
+        endif
+        mov this.DebugEventCallback,NULL
+        mov this.SuppressBackgroundThread,FALSE
+        mov this.SuppressExternalCodecs,FALSE
+        mov this.StartupParameters,0
+        GdiplusStartup(addr this.Token, addr this, NULL)
+        lea rax,this
+        exitm<>
         }
-
     .operator Release {
-
-        mov gdiplus,this
         GdiplusShutdown([this].GdiPlus.Token)
-
-        mov this,gdiplus
-        .if [this].GdiPlus.MemoryState == TRUE
-
-            free(this)
-        .endif
         exitm<>
         }
     .ends

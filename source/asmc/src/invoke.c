@@ -126,13 +126,16 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
     /* ADDR: the argument's address is to be pushed? */
     if ( tokenarray[i].token == T_RES_ID && tokenarray[i].tokval == T_ADDR ) {
 	addr = TRUE;
-	i++;
+	if ( curr->sym.mem_type != MT_ABS )
+	    i++;
     }
 
     /* copy the parameter tokens to fullparam */
     for ( j = i; tokenarray[j].token != T_COMMA && tokenarray[j].token != T_FINAL; j++ );
     memcpy( fullparam, tokenarray[i].tokpos, tokenarray[j].tokpos - tokenarray[i].tokpos );
     fullparam[tokenarray[j].tokpos - tokenarray[i].tokpos] = NULLC;
+    if ( curr->sym.mem_type == MT_ABS && addr )
+	i++;
 
     j = i;
     /* v2.11: GetSymOfssize() doesn't work for state SYM_TYPE */
@@ -267,9 +270,12 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	} else {
 	    /* v2.06: don't handle forward refs if -Zne is set */
 	    /* v2.31: :ABS to const */
-	    if ( curr->sym.mem_type == MT_ABS )
+	    if (curr->sym.mem_type == MT_ABS) {
 		opnd.kind = EXPR_CONST;
-	    else if ( EvalOperand( &j, tokenarray, Token_Count, &opnd, ModuleInfo.invoke_exprparm ) == ERROR ) {
+		opnd.mem_type = MT_ABS;
+		opnd.mbr = NULL;
+		opnd.base_reg = NULL;
+	    } else if ( EvalOperand( &j, tokenarray, Token_Count, &opnd, ModuleInfo.invoke_exprparm ) == ERROR ) {
 		return( ERROR );
 	    }
 
@@ -861,7 +867,6 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     char		buffer[MAX_LINE_LEN];
     int			fastcall_id;
     struct asym *	macro = NULL;
-    struct asym *	class = NULL;
 
     i++; /* skip INVOKE directive */
     namepos = i;
@@ -941,6 +946,39 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     proc = (struct dsym *)sym;
     info = proc->e.procinfo;
 
+    if ( ModuleInfo.strict_masm_compat == 0 ) {
+
+	if ( sym->state == SYM_EXTERNAL &&
+		sym->target_type && sym->target_type->state == SYM_MACRO ) {
+
+	    macro = sym->target_type;
+	    if ( macro->altname == NULL )
+		macro = NULL;
+	    else {
+		*(struct asym **)macro->altname = macro;
+		strcpy( buffer, macro->name );
+	    }
+
+	} else if ( tokenarray[namepos].token == T_OP_SQ_BRACKET &&
+		tokenarray[namepos+3].token == T_DOT && opnd.mbr &&
+		opnd.mbr->method && ModuleInfo.Ofssize == USE64 ) {
+
+	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
+	    buffer[strlen(buffer)-4] = '\0';
+	    SymSearch( buffer );
+	    strcat(buffer, "_");
+	    if ( opnd.mbr->name[0] == '.' && ModuleInfo.dotname ) {
+		strcat(buffer, "__");
+		strcat(buffer, &opnd.mbr->name[1]);
+	    } else
+		strcat(buffer, opnd.mbr->name);
+	    macro = SymSearch( buffer );
+	    if ( macro && macro->state != SYM_MACRO )
+		macro = NULL;
+
+	}
+    }
+
     /* get the number of parameters */
 
     for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++)
@@ -993,7 +1031,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	for ( ; curr ; curr = curr->nextparam ) {
 	    numParam--;
 	    if ( PushInvokeParam( i, tokenarray, proc, curr, numParam, &r0flags ) == ERROR ) {
-		asmerr( 2033, numParam);
+		if ( !macro )
+		    asmerr( 2033, numParam);
 	    }
 
 	    if ( CurrProc && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_ESP ) {
@@ -1030,7 +1069,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     } else {
 	for ( numParam = 0 ; curr && curr->sym.is_vararg == FALSE; curr = curr->nextparam, numParam++ ) {
 	    if ( PushInvokeParam( i, tokenarray, proc, curr, numParam, &r0flags ) == ERROR ) {
-		asmerr( 2033, numParam);
+		if ( !macro )
+		    asmerr( 2033, numParam);
 	    }
 	}
     }
@@ -1051,18 +1091,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     strcpy( p, " call " );
     p += 6;
 
-    if ( !ModuleInfo.strict_masm_compat && sym->state == SYM_EXTERNAL &&
-	 sym->target_type && sym->target_type->state == SYM_MACRO ) {
-
-	macro = sym->target_type;
-	if ( macro->altname ) {
-	    *(struct asym **)macro->altname = macro;
-	    strcpy( buffer, macro->name );
-	} else
-	    macro = NULL;
-    }
-
     if ( !macro && sym->state == SYM_EXTERNAL && sym->dll ) {
+
 	char *iatname = p;
 	strcpy( p, ModuleInfo.g.imp_prefix );
 	p += strlen( p );
@@ -1080,22 +1110,6 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     if ( macro || ( tokenarray[namepos].token == T_OP_SQ_BRACKET &&
 	tokenarray[namepos+3].token == T_DOT && opnd.mbr && opnd.mbr->method ) ) {
-
-	if ( !ModuleInfo.strict_masm_compat && !macro && ModuleInfo.Ofssize == USE64 ) {
-
-	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
-	    buffer[strlen(buffer)-4] = '\0';
-	    class = SymSearch( buffer );
-	    strcat(buffer, "_");
-	    if ( opnd.mbr->name[0] == '.' && ModuleInfo.dotname ) {
-		strcat(buffer, "__");
-		strcat(buffer, &opnd.mbr->name[1]);
-	    } else
-		strcat(buffer, opnd.mbr->name);
-	    macro = SymSearch( buffer );
-	    if ( macro && macro->state != SYM_MACRO )
-		macro = NULL;
-	}
 
 	if ( macro ) {
 
@@ -1146,11 +1160,19 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		    }
 		}
 	    }
-	    curr = info->paralist;
-	    strcat( p, curr->sym.string_ptr );
-	    for ( curr = curr->nextparam; curr; curr = curr->nextparam ) {
-		strcat( p, ", " );
+	    if ( info->has_vararg ) {
+		if ( tokenarray[i+1].tokval == T_ADDR )
+		    strcat( p, tokenarray[i+2].tokpos );
+		else
+		    strcat( p, tokenarray[i+1].tokpos );
+	    } else {
+		curr = info->paralist;
 		strcat( p, curr->sym.string_ptr );
+		for ( curr = curr->nextparam; curr; curr = curr->nextparam ) {
+		    strcat( p, ", " );
+		    if ( curr->sym.string_ptr )
+			strcat( p, curr->sym.string_ptr );
+		}
 	    }
 	    strcat( p, ")" );
 

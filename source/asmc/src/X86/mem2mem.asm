@@ -12,6 +12,9 @@ include listing.inc
 include lqueue.inc
 include segment.inc
 include expreval.inc
+include hllext.inc
+include atofloat.inc
+
 
     .code
 
@@ -234,27 +237,68 @@ CreateFloat proto :int_t, :expr_t, :string_t
 
     assume edi:ptr asm_tok
 
+immarray16 proc uses esi edi tokenarray:tok_t, result:expr_t
+
+  local i:int_t
+  local count:int_t
+  local size:int_t
+  local opnd:expr
+  local oldtok[1024]:char_t
+
+    strcpy( &oldtok, [edi].tokpos )
+    strcpy( CurrSource, [edi+3*16].string_ptr )
+    xor ecx,ecx
+    .for : byte ptr [eax] : eax++
+        .if byte ptr [eax] == ','
+            add ecx,1
+        .endif
+    .endf
+    inc ecx
+    mov count,ecx
+    mov eax,16
+    cdq
+    idiv ecx
+    mov size,eax
+    mul ecx
+    .if eax != 16
+        asmerr( 2036, CurrSource )
+        mov count,1
+        mov size,4
+    .endif
+    Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
+    mov ModuleInfo.token_count,eax
+    .for i = 0, edi = result : count : count--, i++
+        .break .if EvalOperand( &i, tokenarray, ModuleInfo.token_count, &opnd, 0 ) == ERROR
+        .if opnd.mem_type & MT_FLOAT
+            quad_resize(&opnd, size)
+        .endif
+        lea esi,opnd
+        mov ecx,size
+        rep movsb
+    .endf
+    strcpy( CurrSource, &oldtok )
+    Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT )
+    mov ModuleInfo.token_count,eax
+    mov eax,16
+    ret
+
+immarray16 endp
+
 imm2xmm proc uses esi edi tokenarray:tok_t, opnd:expr_t
 
   local flabel[16]:char_t
 
     mov edi,tokenarray
     mov esi,[edi].tokval
-    mov edi,[edi+asm_tok].tokval
+    mov ecx,opnd
     mov edx,4
-
-    .switch esi
-    .case T_MOVSD
-    .case T_MOVQ
-    .case T_ADDSD
-    .case T_SUBSD
-    .case T_MULSD
-    .case T_DIVSD
-    .case T_COMISD
-    .case T_UCOMISD
+    .if [ecx].expr.mem_type == MT_REAL8
         mov edx,8
-    .endsw
-    CreateFloat(edx, opnd, &flabel)
+    .elseif [ecx].expr.mem_type == MT_EMPTY
+        mov edx,immarray16(edi, ecx)
+    .endif
+    mov edi,[edi+asm_tok].tokval
+    CreateFloat( edx, opnd, &flabel )
     AddLineQueueX( " %r %r,%s", esi, edi, &flabel )
     RetLineQueue()
     ret

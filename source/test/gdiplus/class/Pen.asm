@@ -9,15 +9,14 @@ include gdiplus.inc
 
     .code
 
+
 main proc
 
   .new a:Pen(Blue)
 
-    Pen(Blue, 2.0)
+    ;Pen(Blue, 2.0)
     a.Release()
-    a.Delete()
 
-    a.mequ84(&a, 0)
     a.Clone()
     a.SetWidth(1.0)
     a.GetWidth()

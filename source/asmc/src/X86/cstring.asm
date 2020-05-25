@@ -8,12 +8,14 @@ include memalloc.inc
 include fastpass.inc
 include expreval.inc
 include quadmath.inc
+include lqueue.inc
+include listing.inc
+include segment.inc
 
 MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
 
 externdef       list_pos:DWORD
-AddLineQueue    proto :string_t
 
 str_item    struc byte
 string      string_t ?
@@ -26,25 +28,6 @@ str_item    ends
 LPSSTR      typedef ptr str_item
 
     .code
-
-InsertLine PROC PRIVATE USES esi ebx line:string_t
-
-  local oldstat:input_status
-
-    PushInputStatus( &oldstat )
-    mov esi,ModuleInfo.GeneratedCode
-    mov ModuleInfo.GeneratedCode,0
-    strcpy( ModuleInfo.currsource, line )
-    Tokenize( ModuleInfo.currsource, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
-    mov ModuleInfo.token_count,eax
-    ParseLine( ModuleInfo.tokenarray )
-    mov ModuleInfo.GeneratedCode,esi
-    mov esi,eax
-    PopInputStatus( &oldstat )
-    mov eax,esi
-    ret
-
-InsertLine ENDP
 
 ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, string:string_t,
         pStringOffset:string_t, pUnicode:ptr byte
@@ -491,11 +474,15 @@ local   rc:                     int_t,
                     .else
                         strcpy( b_seg, ".code" )
                     .endif
-                    .break .if InsertLine( ".data" )
-                    .break .if InsertLine( b_data )
-                    .break .if InsertLine( "_DATA ends" )
-                    .break .if InsertLine( b_seg )
-                    mov rc,eax
+
+                    .if ModuleInfo.line_queue.head
+                        RunLineQueue()
+                    .endif
+                    AddLineQueue( ".data" )
+                    AddLineQueue( b_data )
+                    AddLineQueue( "_DATA ends" )
+                    AddLineQueue( b_seg )
+                    InsertLineQueue()
                 .endif
                 strcpy( ModuleInfo.currsource, buffer )
                 Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
@@ -527,6 +514,7 @@ local   rc:                     int_t,
     .endif
     mov eax,rc
     ret
+
 GenerateCString ENDP
 
 ifdef MACRO_CSTRING
@@ -537,6 +525,7 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
         cursrc:         string_t,
         dlabel:         string_t,
         StringOffset:   string_t,
+        retval:         int_t,
         Unicode:        byte
 
     mov cursrc,alloca(MAX_LINE_LEN*2+32)
@@ -671,27 +660,33 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
                 ; v2.24 skip .data/.code if already in .data segment
 
+                .if ModuleInfo.line_queue.head
+                    RunLineQueue()
+                .endif
+
                 assume ebx:ptr asym
 
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
                 .if _stricmp( [ebx].name, "_DATA" )
                     inc esi
-                    InsertLine(".data")
+                    AddLineQueue( ".data" )
                 .elseif edi
                     mov esi,2
-                    InsertLine(".const")
+                    AddLineQueue( ".const" )
                 .endif
-                InsertLine(cursrc)
+                AddLineQueue( cursrc )
+
                 .if esi
                     .if !_stricmp( [ebx].name, "CONST" )
-                        InsertLine(".const")
+                        AddLineQueue( ".const" )
                     .elseif esi == 2
-                        InsertLine(".data")
+                        AddLineQueue( ".data" )
                     .else
-                        InsertLine(".code")
+                        AddLineQueue( ".code" )
                     .endif
                 .endif
+                InsertLineQueue()
             .endif
             .return 1
         .endif
@@ -795,31 +790,31 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
             strcpy( &segm, ".code" )
         .endif
 
-        InsertLine( ".data" )
+        .if ModuleInfo.line_queue.head
+            RunLineQueue()
+        .endif
+        AddLineQueue( ".data" )
         mov ecx,size
         .if ecx == 10
             mov ecx,16
         .endif
-        sprintf( esi, "align %d", ecx )
-        InsertLine( esi )
-
+        AddLineQueueX( "align %d", ecx )
         .switch size
         .case 4
-            sprintf( esi, "%s dd 0x%08X", buffer, opc.value )
+            AddLineQueueX( "%s dd 0x%x", buffer, opc.value )
             .endc
         .case 8
-            sprintf( esi, "%s dq 0x%016llX", buffer, opc.llvalue )
+            AddLineQueueX( "%s dq 0x%q", buffer, opc.llvalue )
             .endc
         .case 10
         .case 16
-            sprintf( esi, "%s label real%d", buffer, size )
-            InsertLine( esi )
-            sprintf( esi, "oword 0x%016llX%016llX", opc.hlvalue, opc.llvalue )
+            AddLineQueueX( "%s label real%d", buffer, size )
+            AddLineQueueX( "oword 0x%q%q", opc.hlvalue, opc.llvalue )
             .endc
         .endsw
-        InsertLine( esi )
-        InsertLine( "_DATA ends" )
-        InsertLine( &segm )
+        AddLineQueue( "_DATA ends" )
+        AddLineQueue( &segm )
+        InsertLineQueue()
     .endif
     xor eax,eax
     ret

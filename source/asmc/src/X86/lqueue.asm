@@ -76,6 +76,58 @@ AddLineQueueX proc uses esi edi ebx fmt:string_t, argptr:vararg
         .if al == '%'
             lodsb
             .switch al
+            .case 'q' ; added v2.31.32: qword hex
+                push    esi
+                push    edi
+                push    ebx
+                lea     edi,buffer[MAX_LINE_LEN-16]
+                mov     ecx,16
+                mov     eax,'0'
+                rep     stosb
+                mov     eax,[ebx]
+                mov     edx,[ebx+4]
+                lea     ebx,[edi-1]
+                mov     edi,16
+                .fors ( : eax || edx || edi > 0 : edi-- )
+                    .if !edx
+                        mov ecx,16
+                        div ecx
+                        mov ecx,edx
+                        xor edx,edx
+                    .else
+                        push edi
+                        .for ecx = 64, esi = 0, edi = 0 : ecx : ecx--
+                            add eax,eax
+                            adc edx,edx
+                            adc esi,esi
+                            adc edi,edi
+                            .if edi || esi >= 16
+                                sub esi,16
+                                sbb edi,0
+                                inc eax
+                            .endif
+                        .endf
+                        mov ecx,esi
+                        pop edi
+                    .endif
+                    add ecx,'0'
+                    .ifs ecx > '9'
+                        add ecx,'A'-'9'-1
+                    .endif
+                    mov [ebx],cl
+                    dec ebx
+                .endf
+                pop     ebx
+                pop     edi
+                pop     esi
+                add     ebx,8
+                mov     ecx,16
+                lea     eax,buffer[MAX_LINE_LEN-16]
+                xchg    eax,esi
+                rep     movsb
+                mov     byte ptr [edi],0
+                mov     esi,eax
+                .endc
             .case 'r'
                 mov     eax,[ebx]
                 add     ebx,4
@@ -167,5 +219,34 @@ RunLineQueue proc uses esi edi ebx
     ret
 
 RunLineQueue endp
+
+InsertLineQueue proc uses esi edi ebx
+
+  local oldstat:input_status
+  local codestate:int_t
+
+    mov codestate,ModuleInfo.GeneratedCode
+    mov ebx,PushInputStatus(&oldstat)
+
+    mov ModuleInfo.GeneratedCode,0
+
+    .for ( esi = LineQueue.head, LineQueue.head = NULL : esi : esi = edi )
+
+        mov edi,[esi].lq_line.next
+
+        strcpy(CurrSource, &[esi].lq_line.line)
+        MemFree(esi)
+
+        .if PreprocessLine(CurrSource, ebx)
+
+            ParseLine(ebx)
+        .endif
+    .endf
+
+    mov ModuleInfo.GeneratedCode,codestate
+    PopInputStatus( &oldstat )
+    ret
+
+InsertLineQueue endp
 
     end

@@ -23,7 +23,6 @@ class       string_t ?
 langtype    dd ?
 sym         asym_t ?    ; .class name : public class
 type        dd ?
-dotname     dd ?
 vector      dd ?
 com_item    ENDS
 LPCLASS     typedef ptr com_item
@@ -381,12 +380,11 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:str
         rep movsb
         mov byte ptr [edi],0
         .if Parse_Pass == PASS_1
-            PushInputStatus( &oldstat )
-            strcpy( ModuleInfo.currsource, &curr )
-            Tokenize( ModuleInfo.currsource, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
-            mov ModuleInfo.token_count,eax
-            ParseLine( ModuleInfo.tokenarray )
-            PopInputStatus( &oldstat )
+            .if ModuleInfo.line_queue.head
+                RunLineQueue()
+            .endif
+            AddLineQueue( &curr )
+            InsertLineQueue()
         .endif
     .endw
     mov eax,ebx
@@ -806,10 +804,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .return rc
         .endif
         mov ModuleInfo.ComStack,0
-        .if [edi].com_item.type
-            mov ModuleInfo.dotname,[edi].com_item.dotname
-            .endc
-        .endif
+        .endc .if [edi].com_item.type
+
         AddLineQueueX( "%s ends", [esi].asym.name )
         mov edx,[edi].com_item.sym
         .if edx
@@ -906,8 +902,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         ; .operator + :type { ... }
 
         sprintf( &token, "%s_%s", class_ptr, &name )
-        MacroInline( &token, args, context, is_vararg )
 
+        MacroInline( &token, args, context, is_vararg )
         .return rc
 
       .case T_DOT_COMDEF
@@ -1053,11 +1049,11 @@ endif
                 .endif
             .endsw
 
+            mov ecx,ModuleInfo.ComStack
+
             .if eax
-                mov ecx,ModuleInfo.ComStack
+
                 mov [ecx].com_item.type,eax
-                mov [ecx].com_item.dotname,ModuleInfo.dotname
-                mov ModuleInfo.dotname,TRUE
                 .if edi < 16
                     mov eax,T_RAX
                     .switch edi

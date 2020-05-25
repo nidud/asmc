@@ -8,6 +8,7 @@ DeleteLineQueue proto
 AddLineQueue    proto :string_t
 AddLineQueueX   proto :string_t, :vararg
 RunLineQueue    proto
+InsertLineQueue proto
 
 is_linequeue_populated macro
     exitm<ModuleInfo.line_queue.head>

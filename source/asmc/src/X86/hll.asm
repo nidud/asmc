@@ -946,11 +946,7 @@ ExpandCStrings proc uses ebx tokenarray:tok_t
 
             .if Parse_Pass == PASS_1
 
-                mov ebx,edx
-                .if ModuleInfo.Ofssize == USE64
-                    ;GenerateFloat( ebx, tokenarray )
-                .endif
-                GenerateCString( ebx, tokenarray )
+                GenerateCString( edx, tokenarray )
                 .return
             .endif
 

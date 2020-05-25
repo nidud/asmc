@@ -304,6 +304,11 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, type:to
                 mov op,T_MOVAPS
                 .endc
             .endsw
+
+        .elseif ( opnd.kind == EXPR_EMPTY && byte ptr [edi] == '{' )
+
+            AddLineQueueX( "movaps xmm0,%s", edi )
+            xor esi,esi
         .endif
 
         .if esi

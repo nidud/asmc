@@ -11,19 +11,17 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .case WM_PAINT
 
        .new ps:PAINTSTRUCT
-       .new g:Graphics()
 
-        BeginPaint(hWnd, &ps)
-        .if g.FromHDC(ps.hdc) == Ok
+        BeginPaint(rcx, &ps)
 
-           .new P1:PointF(0.0, 0.0)
-           .new P2:PointF(300.0, 300.0)
-           .new B:LinearGradientBrush()
+       .new g:Graphics(rax)
+       .new P1:PointF(0.0, 0.0)
+       .new P2:PointF(300.0, 300.0)
+       .new b:LinearGradientBrush()
 
-            B.Create(&P1, &P2, Red, Blue)
-            g.FillRectangleI(&B, 0, 0, 300, 300)
-            B.Release()
-        .endif
+        b.Create(&P1, &P2, Red, Blue)
+        g.FillRectangleI(&b, 0, 0, 300, 300)
+        b.Release()
         g.Release()
         EndPaint(hWnd, &ps)
         .endc
@@ -68,7 +66,7 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
             mov hwnd,rax
 
             ;; Initialize GDI+.
-            .new gdiplus:ptr GdiPlus()
+            .new gdiplus:GdiPlus()
 
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)

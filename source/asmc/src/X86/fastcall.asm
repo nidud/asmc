@@ -480,7 +480,7 @@ watc_param proc uses esi edi ebx pp, index, param, adr, opnd, paramvalue, r0used
             mov ebx,strchr(ebx, ':')
             .break .if !ebx
             mov byte ptr [ebx],0
-            inc ebx
+            add ebx,2
         .endf
     .endif
 
@@ -950,18 +950,10 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     .endif
 
     mov ebx,param
-if 1
-    .if ( [ecx].asym.state == SYM_EXTERNAL && [ecx].asym.target_type )
-        mov eax,[ecx].asym.target_type
-        .if ( [eax].asym.state == SYM_MACRO && [eax].asym.altname )
-            mov edx,[ecx].esym.procinfo
-            ;.if ( [edx].proc_info.flags & PROC_HAS_VARARG )
-            .if ( [ebx].asym.sint_flag & SINT_ISVARARG )
-                .return 1
-            .endif
-        .endif
+    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
+          [ecx].asym.sint_flag & SINT_ISINLINE )
+        .return 1
     .endif
-endif
     .if [ebx].asym.mem_type == MT_ABS
         mov esi,[ecx].esym.procinfo
         mov ebx,[esi].proc_info.paralist

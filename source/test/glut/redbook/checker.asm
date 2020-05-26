@@ -77,7 +77,7 @@ display proc
 
    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
    glEnable(GL_TEXTURE_2D)
-   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 8449.0)
 ifdef GL_VERSION_1_1
    glBindTexture(GL_TEXTURE_2D, texName)
 endif

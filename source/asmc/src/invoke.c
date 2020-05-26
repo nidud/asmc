@@ -158,7 +158,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 ) {
+	if ( fastcall_id /*&& fastcall_id != FCT_WATCOMC + 1*/ ) {
 	    if ( fastcall_tab[fastcall_id - 1].handleparam( proc,
 		reqParam, curr, addr, &opnd, fullparam, r0flags ) )
 		return( NOT_ERROR );
@@ -321,7 +321,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	if ( asize == 16 && opnd.mem_type == MT_REAL16 && pushsize == 4 )
 	    asize = psize;
 
-	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 )
+	if ( fastcall_id /*&& fastcall_id != FCT_WATCOMC + 1*/ )
 	    if (fastcall_tab[fastcall_id - 1].handleparam(
 		 proc, reqParam, curr, addr, &opnd, fullparam, r0flags))
 		return(NOT_ERROR);
@@ -975,7 +975,10 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    macro = SymSearch( buffer );
 	    if ( macro && macro->state != SYM_MACRO )
 		macro = NULL;
-
+	    else {
+		proc->sym.method = 1;
+		proc->sym.isinline = 1;
+	    }
 	}
     }
 

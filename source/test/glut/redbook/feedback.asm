@@ -139,7 +139,7 @@ main proc argc:int_t, argv:array_t
 
    glutInit(&argc, argv)
    glutInitDisplayMode(GLUT_SINGLE or GLUT_RGB)
-   glutInitWindowSize(100, 100)
+   glutInitWindowSize(200, 200)
    glutInitWindowPosition(100, 100)
    mov rcx,argv
    glutCreateWindow([rcx])

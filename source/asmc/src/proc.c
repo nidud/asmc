@@ -613,6 +613,8 @@ int GetFastcallId( int langtype )
     if ( langtype == LANG_FASTCALL ) {
 	if ( ModuleInfo.Ofssize == USE64 )
 	    return FCT_WIN64 + 1;
+	else if ( Options.fctype == FCT_WATCOMC )
+	    return FCT_WATCOMC + 1;
 	return FCT_MSC + 1;
     } else if ( langtype == LANG_SYSCALL ) {
 	if ( ModuleInfo.Ofssize == USE64 )

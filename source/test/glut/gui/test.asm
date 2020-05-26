@@ -85,14 +85,12 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.hInstance,       rcx
     mov wc.lpfnWndProc,     &WndProc
     mov wc.lpszClassName,   &@CStr("GLUT")
-    xor eax,eax
-    mov wc.cbClsExtra,      eax
-    mov wc.cbWndExtra,      eax
-    mov wc.lpszMenuName,    rax
-    mov wc.hIcon,           rax
-    mov wc.hIconSm,         rax
-    mov wc.hCursor,         rax
-
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov wc.lpszMenuName,    NULL
+    mov wc.hIcon,           NULL
+    mov wc.hIconSm,         NULL
 
     .ifd RegisterClassEx(&wc)
 
@@ -100,7 +98,6 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
                 100, 100, 640, 480, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
-
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)
 

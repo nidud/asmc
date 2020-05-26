@@ -590,7 +590,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'fZ':		// -Zf
 	Options.all_symbols_public = 1;
 	return;
-#ifdef __ASMC64__
+#ifndef __ASMC64__
     case '0fz':		// -zf0
 	Options.fctype = FCT_MSC;
 	return;

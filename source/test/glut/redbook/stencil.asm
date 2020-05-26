@@ -11,6 +11,7 @@ BLUEMAT   equ 2
 init proc
 
    .data
+   align 4
    yellow_diffuse   GLfloat 0.7, 0.7, 0.0, 1.0
    yellow_specular  GLfloat 1.0, 1.0, 1.0, 1.0
    blue_diffuse     GLfloat 0.1, 0.1, 0.7, 1.0

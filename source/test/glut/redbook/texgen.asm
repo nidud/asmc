@@ -70,7 +70,7 @@ else
                 GL_RGBA, GL_UNSIGNED_BYTE, &stripeImage);
 endif
 
-   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 8448.0)
    mov currentCoeff,&xequalzero
    mov currentGenMode,GL_OBJECT_LINEAR
    mov currentPlane,GL_OBJECT_PLANE

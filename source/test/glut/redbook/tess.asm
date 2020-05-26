@@ -162,7 +162,7 @@ init proc
    add ecx,1
    glNewList(ecx, GL_COMPILE)
    glShadeModel(GL_SMOOTH)
-   gluTessProperty(tobj, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_POSITIVE)
+   gluTessProperty(tobj, GLU_TESS_WINDING_RULE, 100132.0);GLU_TESS_WINDING_POSITIVE)
    gluTessBeginPolygon(tobj, NULL)
       gluTessBeginContour(tobj)
          gluTessVertex(tobj, &star[0*8*6], &star[0*8*6])

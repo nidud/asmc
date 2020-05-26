@@ -164,7 +164,7 @@ int GetLangType( int *i, struct asm_tok tokenarray[], unsigned char *plang )
     }
     if( tokenarray[*i].token == T_RES_ID ) {
 	if ( tokenarray[(*i)].tokval >= T_CCALL &&
-	    tokenarray[(*i)].tokval <= T_VECTORCALL ) {
+	    tokenarray[(*i)].tokval <= T_WATCALL ) {
 	    *plang = tokenarray[(*i)].bytval;
 	    (*i)++;
 	    return( NOT_ERROR );

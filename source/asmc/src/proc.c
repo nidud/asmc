@@ -623,6 +623,8 @@ int GetFastcallId( int langtype )
 	if ( ModuleInfo.Ofssize == USE64 )
 	    return FCT_VEC64 + 1;
 	return FCT_VEC32 + 1;
+    } else if ( langtype == LANG_WATCALL ) {
+	return FCT_WATCOMC + 1;
     }
     return 0;
 }

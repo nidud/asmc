@@ -170,6 +170,9 @@ int Mangle( struct asym *sym, char *buffer )
     case LANG_BASIC:
 	mangler = UCaseMangler;
 	break;
+    case LANG_WATCALL:
+	mangler = ow_decorate;
+	break;
     case LANG_FASTCALL:		 /* registers passing parameters */
 	if ( ModuleInfo.Ofssize == USE64 )
 	    mangler = ms64_decorate;

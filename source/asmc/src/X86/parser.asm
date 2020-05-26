@@ -213,7 +213,7 @@ GetLangType proc i:ptr int_t, tokenarray:tok_t, plang:ptr byte
         .endif
     .endif
     .if( [edx].token == T_RES_ID )
-        .if ( [edx].tokval >= T_CCALL && [edx].tokval <= T_VECTORCALL )
+        .if ( [edx].tokval >= T_CCALL && [edx].tokval <= T_WATCALL )
             mov al,[edx].bytval
             mov edx,plang
             mov [edx],al

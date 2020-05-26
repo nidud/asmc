@@ -1023,7 +1023,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     if ( sym->langtype == LANG_STDCALL || sym->langtype == LANG_C ||
 	 sym->langtype == LANG_SYSCALL || sym->langtype == LANG_VECTORCALL ||
-	 ( sym->langtype == LANG_FASTCALL && porder ) || ( fastcall_id == FCT_WIN64 + 1 ) ) {
+	 ( ( sym->langtype == LANG_WATCALL || sym->langtype == LANG_FASTCALL ) && porder ) ||
+	 ( fastcall_id == FCT_WIN64 + 1 ) ) {
 
 	/* v2.23 if stack base is ESP */
 
@@ -1123,7 +1124,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    strcat( p, "( " );
 	    p += strlen(p);
 
-	    if ( Parse_Pass == PASS_1 ) {
+	    if ( Parse_Pass == PASS_1 && ModuleInfo.Ofssize == USE64 ) {
 
 		curr = info->paralist;
 		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
@@ -1163,7 +1164,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		    }
 		}
 	    }
-	    if ( info->has_vararg ) {
+	    if ( ModuleInfo.Ofssize != USE64 )
+		strcat( p, tokenarray[i+1].tokpos );
+	    else if ( info->has_vararg ) {
 		if ( tokenarray[i+1].tokval == T_ADDR )
 		    strcat( p, tokenarray[i+2].tokpos );
 		else

@@ -156,7 +156,8 @@ enum lang_type {
     LANG_FORTRAN  = 5,
     LANG_BASIC	  = 6,
     LANG_FASTCALL = 7,
-    LANG_VECTORCALL = 8
+    LANG_VECTORCALL = 8,
+    LANG_WATCALL  = 9
 };
 
 /* Memory model type.

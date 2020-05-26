@@ -68,24 +68,35 @@ SFORMAT_64BIT   equ 3   ; 64bit COFF or ELF
 FPO_NO_EMULATION equ 0  ; -FPi87 (default)
 FPO_EMULATION   equ 1   ; -FPi
 
-LANG_NONE       equ 0   ; language vaules.
-LANG_C          equ 1   ; the order cannot be changed, it's
-LANG_SYSCALL    equ 2   ; returned by OPATTR and used in user-defined
-LANG_STDCALL    equ 3   ; prologue/epilogue.
-LANG_PASCAL     equ 4
-LANG_FORTRAN    equ 5
-LANG_BASIC      equ 6
-LANG_FASTCALL   equ 7
-LANG_VECTORCALL equ 8
+;; language values.
+;; the order cannot be changed, it's
+;; returned by OPATTR and used in user-defined prologue/epilogue.
+.enum lang_type {
+    LANG_NONE     = 0,
+    LANG_C        = 1,
+    LANG_SYSCALL  = 2,
+    LANG_STDCALL  = 3,
+    LANG_PASCAL   = 4,
+    LANG_FORTRAN  = 5,
+    LANG_BASIC    = 6,
+    LANG_FASTCALL = 7,
+    LANG_VECTORCALL = 8,
+    LANG_WATCALL  = 9
+}
 
-MODEL_NONE      equ 0   ; Memory model type.
-MODEL_TINY      equ 1   ; the order cannot be changed, it's
-MODEL_SMALL     equ 2   ; the value of the predefined @Model symbol.
-MODEL_COMPACT   equ 3
-MODEL_MEDIUM    equ 4
-MODEL_LARGE     equ 5
-MODEL_HUGE      equ 6
-MODEL_FLAT      equ 7
+; Memory model type.
+; the order cannot be changed, it's
+; the value of the predefined @Model symbol.
+.enum model_type {
+    MODEL_NONE    = 0,
+    MODEL_TINY    = 1,
+    MODEL_SMALL   = 2,
+    MODEL_COMPACT = 3,
+    MODEL_MEDIUM  = 4,
+    MODEL_LARGE   = 5,
+    MODEL_HUGE    = 6,
+    MODEL_FLAT    = 7,
+}
 
 SIZE_DATAPTR    equ 0x68 ;; far for COMPACT, LARGE, HUGE
 SIZE_CODEPTR    equ 0x70 ;; far for MEDIUM, LARGE, HUGE

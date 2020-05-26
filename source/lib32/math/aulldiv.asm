@@ -15,6 +15,8 @@
 
 _U8D::
 
+aulldiv proc watcall dividend:qword, divisor:qword
+
     .repeat
 
         .break .if ecx
@@ -115,6 +117,8 @@ _U8D::
     pop esi
     pop ebp
     ret
+
+aulldiv endp
 
 _aulldiv::
 

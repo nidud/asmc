@@ -56,6 +56,32 @@ _aulldiv	proto __cdecl ;:qword, :qword | rdx::rcx / r9::r8
 __ullmod	proto __cdecl ;:qword, :qword
 _aullrem	proto __cdecl ;:qword, :qword | rdx::rcx % r9::r8
 
+ifndef _WIN64
+
+alldiv	proto watcall :qword, :qword
+aulldiv proto watcall :qword, :qword
+allmul	proto watcall :qword, :qword
+allrem	proto watcall :qword, :qword {
+    call    _I8D
+    mov	    eax,ebx
+    mov	    edx,ecx
+    }
+aullrem proto watcall :qword, :qword {
+    call    _U8D
+    mov	    eax,ebx
+    mov	    edx,ecx
+    }
+allshr	proto watcall :qword, :dword {
+    call    _I8RS
+    }
+aullshr proto watcall :qword, :dword {
+    call    _U8RS
+    }
+allshl	proto watcall :qword, :dword {
+    call    _U8LS
+    }
+endif
+
 ; Watcom
 
 _I8D		proto __cdecl ; edx:eax / ecx:ebx --> edx:eax.ecx

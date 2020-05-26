@@ -87,14 +87,14 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.style,           CS_HREDRAW or CS_VREDRAW
     mov wc.cbClsExtra,      eax
     mov wc.cbWndExtra,      eax
-    mov wc.hbrBackground,   COLOR_WINDOW+1
+    mov wc.hbrBackground,   COLOR_WINDOW
     mov wc.lpszMenuName,    rax
+    mov wc.hIcon,           rax
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
     mov wc.hInstance,       hInstance
     mov wc.lpfnWndProc,     &WndProc
     mov wc.lpszClassName,   &@CStr("Sphere")
-    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,         rax
-    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
 
     .ifd RegisterClassEx(&wc)
 

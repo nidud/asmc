@@ -11,15 +11,12 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr GraphicsPath()
+  .new p:GraphicsPath(rax)
 
-    GraphicsPath()
     p.Release()
-    p.FromPath(NULL)
     p.SetNativePath(NULL)
     p.SetStatus(0)
 
-    p.Clone()
     p.Reset()
     p.GetFillMode()
     p.SetFillMode(0)
@@ -32,28 +29,27 @@ main proc
     p.Reverse()
     p.GetLastPoint(NULL)
 
-    p.AddLine(1, 2, 3, 4)
+    p.AddLineI(1, 2, 3, 4)
     p.AddLine(0.0, 0.0, 0.0, 0.0)
 
     p.AddLines(NULL, 0)
     p.AddLinesI(NULL, 0)
 
-    p.AddPathArc(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddArc(NULL, 0.0, 0.0)
-    p.AddPathArcI(0, 0, 0, 0, 0.0, 0.0)
-    p.AddArcI(NULL, 0.0, 0.0)
-    p.AddPathBezier(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddBezier(NULL, NULL, NULL, NULL)
+    p.AddArc(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    p.AddArcI(0, 0, 0, 0, 0.0, 0.0)
+
+    p.AddBezier(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     p.AddBeziers(NULL, 0)
-    p.AddPathBezierI(0, 0, 0, 0, 0, 0, 0, 0)
-    p.AddBezierI(NULL, NULL, NULL, NULL)
+    p.AddBezierI(0, 0, 0, 0, 0, 0, 0, 0)
     p.AddBeziersI(NULL, 0)
+
     p.AddCurve(NULL, 0)
     p.AddCurve2(NULL, 0, 0.0)
     p.AddCurve3(NULL, 0, 0, 0, 0.0)
     p.AddCurveI(NULL, 0)
     p.AddCurve2I(NULL, 0, 0.0)
     p.AddCurve3I(NULL, 0, 0, 0, 0.0)
+
     p.AddClosedCurve(NULL, 0)
     p.AddClosedCurve2(NULL, 0, 0.0)
     p.AddClosedCurveI(NULL, 0)
@@ -63,15 +59,15 @@ main proc
     p.AddRectangleI(NULL)
     p.AddRectanglesI(NULL, 0)
 
-    p.AddEllipse(0, 0, 0, 0)
+    p.AddEllipseI(0, 0, 0, 0)
     p.AddEllipse(0.0, 0.0, 0.0, 0.0)
 
-    p.AddPie(NULL, 0.0, 0.0)
-    p.AddPathPie(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddPieI(NULL, 0.0, 0.0)
-    p.AddPathPieI(0, 0, 0, 0, 0.0, 0.0)
+    p.AddPie(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    p.AddPieI(0, 0, 0, 0, 0.0, 0.0)
+
     p.AddPolygon(NULL, 0)
     p.AddPolygonI(NULL, 0)
+
     p.AddPath(NULL, 0)
     p.AddString  (NULL, 0, NULL, 0, 0.0, NULL, NULL)
     p.AddString2 (NULL, 0, NULL, 0, 0.0, NULL, NULL)

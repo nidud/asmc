@@ -493,7 +493,7 @@ static const char *GetMemtypeString( const struct asym *sym, char *buffer )
 
 static const char *GetLanguage( const struct asym *sym )
 {
-    if ( sym->langtype <= 7 )
+    if ( sym->langtype <= LANG_WATCALL )
 	return( strings[sym->langtype + LS_VOID] );
     return( "?" );
 }

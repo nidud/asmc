@@ -191,6 +191,9 @@ Mangle proc uses esi edi sym:asym_t, buffer:string_t
     .case LANG_BASIC
         mov esi,UCaseMangler
         .endc
+    .case LANG_WATCALL
+        mov esi,ow_decorate
+        .endc
     .case LANG_FASTCALL ;; registers passing parameters
         .if ( ModuleInfo.Ofssize == USE64 )
             mov esi,ms64_decorate

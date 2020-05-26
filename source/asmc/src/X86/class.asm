@@ -476,7 +476,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
 
         .if ( IsCom || IsType )
 
-            .if ( [ebx].tokval >= T_CCALL && [ebx].tokval <= T_VECTORCALL )
+            .if ( [ebx].tokval >= T_CCALL && [ebx].tokval <= T_WATCALL )
 
                 inc esi
             .endif
@@ -758,20 +758,31 @@ MacroInline proc uses esi edi ebx name:string_t, args:int_t, inline:string_t, va
     .endif
     AddLineQueueX( "%s macro %s", name, &mac )
 
-    .for esi = inline : strchr(esi, 10) :
+    .for edi = 0, esi = inline : strchr(esi, 10) :
 
         mov ebx,eax
         mov byte ptr [ebx],0
         .if byte ptr [esi]
+            mov edi,esi
             AddLineQueue(esi)
         .endif
         mov byte ptr [ebx],10
         lea esi,[ebx+1]
     .endf
     .if byte ptr [esi]
+        mov edi,esi
         AddLineQueue(esi)
     .endif
-
+    .if edi == 0
+        AddLineQueue( "exitm<>" )
+    .else
+        .if _memicmp( edi, "exitm", 5 )
+            _memicmp( edi, "retm", 4 )
+        .endif
+        .if eax
+            AddLineQueue( "exitm<>" )
+        .endif
+    .endif
     AddLineQueue( "endm" )
     MacroLineQueue()
     ret
@@ -946,7 +957,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         lea eax,[ebx+16]
         mov edx,[ebx+16].tokval
-        .if ( [ebx+16].token != T_FINAL && edx >= T_CCALL && edx <= T_VECTORCALL )
+        .if ( [ebx+16].token != T_FINAL && edx >= T_CCALL && edx <= T_WATCALL )
 
             mov ecx,ModuleInfo.ComStack
             mov [ecx].com_item.langtype,edx

@@ -53,6 +53,8 @@ ltext(PASCAL,	"PASCAL" )
 ltext(FORTRAN,	"FORTRAN")
 ltext(BASIC,	"BASIC"	 )
 ltext(FASTCALL, "FASTCALL")
+ltext(VECTORCALL, "VECTORCALL")
+ltext(WATCALL,	"WATCALL")
 
 ltext( TXT_MACROS,	       "Macros:" )
 ltext( TXT_MACROCAP,	       "                N a m e                 Type" )

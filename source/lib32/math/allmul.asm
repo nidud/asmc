@@ -10,21 +10,30 @@
 
 _I8M::
 _U8M::
+
+allmul proc watcall a:qword, b:qword
+
     .if ( !edx && !ecx )
+
         mul ebx
-        ret
+
+    .else
+
+        push    eax
+        push    edx
+        mul     ecx
+        mov     ecx,eax
+        pop     eax
+        mul     ebx
+        add     ecx,eax
+        pop     eax
+        mul     ebx
+        add     edx,ecx
+
     .endif
-    push    eax
-    push    edx
-    mul     ecx
-    mov     ecx,eax
-    pop     eax
-    mul     ebx
-    add     ecx,eax
-    pop     eax
-    mul     ebx
-    add     edx,ecx
     ret
+
+allmul endp
 
 __llmul:: ; PellesC
 _allmul::

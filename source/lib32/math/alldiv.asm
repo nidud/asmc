@@ -11,6 +11,9 @@
 _U8D proto
 
 _I8D::
+
+alldiv proc watcall dividend:qword, divisor:qword
+
     or edx,edx          ; hi word of dividend signed ?
     .ifns
         or ecx,ecx      ; hi word of divisor signed ?
@@ -49,6 +52,8 @@ _I8D::
     neg eax
     sbb edx,0
     ret
+
+alldiv endp
 
 __lldiv::
 _alldiv::

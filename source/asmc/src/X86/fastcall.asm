@@ -86,12 +86,7 @@ ms64_regs label byte
     db T_ECX, T_EDX, T_R8D, T_R9D
     db T_RCX, T_RDX, T_R8,  T_R9
 
-; segment register names, order must match ASSUME_ enum
-
-;stackreg label byte
-;    db T_SP, T_ESP, T_RSP
-
-fcscratch dd 0  ; exclusively to be used by FASTCALL helper functions
+fcscratch int_t 0  ; exclusively to be used by FASTCALL helper functions
 
 .code
 
@@ -560,16 +555,17 @@ watc_param endp
 watc_fcend proc pp, numparams, value
 
     mov eax,pp
+    movzx edx,ModuleInfo.Ofssize
+    mov ecx,stackreg[edx*4]
     mov edx,[eax].esym.procinfo
     mov eax,[edx].proc_info.parasize
     .if [edx].proc_info.flags & PROC_HAS_VARARG
         add eax,size_vararg
+        AddLineQueueX(" add %r, %u", ecx, eax)
     .elseif fcscratch < eax
         sub eax,fcscratch
+        AddLineQueueX(" add %r, %u", ecx, eax)
     .endif
-    movzx edx,ModuleInfo.Ofssize
-    mov ecx,stackreg[edx*4]
-    AddLineQueueX(" add %r, %u", ecx, eax)
     ret
 
 watc_fcend endp

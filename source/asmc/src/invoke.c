@@ -34,7 +34,7 @@ int ExpandHllProc( char *, int, struct asm_tok[] );
 extern uint_32 list_pos;  /* current LST file position */
 extern int_64 maxintvalues[];
 extern int_64 minintvalues[];
-extern enum special_token stackreg[];
+extern int stackreg[];
 
 #define NUMQUAL
 

@@ -17,7 +17,7 @@
 #include <fastpass.h>
 #include <quadmath.h>
 
-extern enum special_token stackreg[];
+extern int stackreg[];
 extern int size_vararg; /* size of :VARARG arguments */
 
 #define NUMQUAL

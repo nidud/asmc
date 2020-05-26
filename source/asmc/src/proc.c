@@ -140,7 +140,7 @@ static const struct fastcall_conv fastcall_tab[] = {
     { ms64_pcheck, ms64_return }, /* FCT_VEC64 */
 };
 
-const enum special_token stackreg[] = { T_SP, T_ESP, T_RSP };
+const int stackreg[] = { T_SP, T_ESP, T_RSP };
 
 uint_32 StackAdj;  /* value of @StackBase variable */
 int_32 StackAdjHigh;

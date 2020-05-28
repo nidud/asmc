@@ -319,6 +319,7 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:str
   local curr[256] : char_t
   local oldstat   : input_status
   local vector[64]: char_t
+  local brachets  : int_t
 
     mov ebx,tokenarray
 
@@ -329,30 +330,40 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:str
         mov ebx,get_param_name( ebx, &name, &size, &arg_count, &id, &context )
         .return .if eax == ERROR
 
-        .if [ebx].token != T_OP_BRACKET
-            .return asmerr( 2008, [ebx].string_ptr )
-        .endif
         mov esi,ebx
+        .if [ebx].token == T_OP_BRACKET
 
-        .for edx = 0 : [ebx].token != T_FINAL : ebx += 16
-            .switch [ebx].token
-            .case T_OP_BRACKET
-                inc edx
-                .endc
-            .case T_CL_BRACKET
-                dec edx
-                .endc .ifnz
-                .if [ebx-16].token != T_OP_BRACKET
+            mov brachets,1
+            add esi,asm_tok
+
+            .for edx = 0 : [ebx].token != T_FINAL : ebx += 16
+                .switch [ebx].token
+                .case T_OP_BRACKET
+                    inc edx
+                    .endc
+                .case T_CL_BRACKET
+                    dec edx
+                    .endc .ifnz
+                    .if [ebx-16].token != T_OP_BRACKET
+                        inc arg_count
+                    .endif
+                    add ebx,16
+                    .break
+                .case T_COMMA
+                    .endc .if edx != 1
                     inc arg_count
-                .endif
-                add ebx,16
-                .break
-            .case T_COMMA
-                .endc .if edx != 1
-                inc arg_count
-                .endc
-            .endsw
-        .endf
+                    .endc
+                .endsw
+            .endf
+
+        .else
+            .if [ebx].token == T_FINAL
+                .return asmerr( 2008, [ebx-16].tokpos )
+            .endif
+            mov brachets,0
+            add ebx,16
+            inc arg_count
+        .endif
 
         mov edi,buffer
         .if [ebx].token != T_FINAL
@@ -369,23 +380,29 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:str
             .endif
         .endif
         .if [ebx].token == T_FINAL
-            strcat( edi, [esi+asm_tok].asm_tok.tokpos )
+            strcat( edi, [esi].asm_tok.tokpos )
+            .if !brachets
+                strcat( edi, ")" )
+            .endif
             .break
         .endif
 
         add edi,strlen(edi)
-        mov esi,[esi+asm_tok].asm_tok.tokpos
+        mov esi,[esi].asm_tok.tokpos
         mov ecx,[ebx].asm_tok.tokpos
         sub ecx,esi
         rep movsb
-        mov byte ptr [edi],0
-        .if Parse_Pass == PASS_1
-            .if ModuleInfo.line_queue.head
-                RunLineQueue()
-            .endif
-            AddLineQueue( &curr )
-            InsertLineQueue()
+        .if brachets == 0
+            mov byte ptr [edi],')'
+            inc edi
         .endif
+        mov byte ptr [edi],0
+
+        .if ModuleInfo.line_queue.head
+            RunLineQueue()
+        .endif
+        AddLineQueue( &curr )
+        InsertLineQueue()
     .endw
     mov eax,ebx
     ret
@@ -602,7 +619,7 @@ ParseClass proc uses esi edi ebx j:int_t, tokenarray:tok_t, buffer:string_t
         add edx,16
     .endif
 
-    .if [esi+edx].tokval == T_ENDP || [esi+edx].token == T_OP_BRACKET
+    .if eax || [esi+edx].tokval == T_ENDP || [esi+edx].token == T_OP_BRACKET
 
         mov tokval,eax
         strcat( edi, class )

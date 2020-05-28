@@ -9,6 +9,8 @@ AddLineQueue    proto :string_t
 AddLineQueueX   proto :string_t, :vararg
 RunLineQueue    proto
 InsertLineQueue proto
+LSPrintF        proto :string_t, :string_t, :vararg
+VLSPrintF       proto :string_t, :string_t, :ptr
 
 is_linequeue_populated macro
     exitm<ModuleInfo.line_queue.head>

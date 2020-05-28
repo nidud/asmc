@@ -3,6 +3,11 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2020
+- added more support for 32-bit watcall
+  - removed mov reg,reg if equal
+  - changed mov reg,0 to xor
+  - allow inline function calls
+- fixed bug in MS fastcall 32: wrong RET n value
 - added VARARG handling to inline functions
 - added ADDR prefix to typeof(ADDR p)
 - added imm vector(16) assignment and return

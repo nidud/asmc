@@ -437,19 +437,35 @@ watc_fcstart proc pp: dsym_t, numparams:int_t, start:int_t,
 watc_fcstart endp
 
 
-watc_param proc uses esi edi ebx pp, index, param, adr, opnd, paramvalue, r0used
+watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
+        opnd:ptr expr, paramvalue:string_t, r0used:ptr byte
+
 ;; get the register for parms 0 to 3,
 ;; using the watcom register parm passing conventions ( A D B C )
 
   local opc, qual, i, regs[64]:byte, reg[4]:string_t, p:string_t, psize
-  local buffer[128]:byte, sreg
+  local buffer[128]:byte, sreg:int_t
 
     mov ebx,param
     mov psize,SizeFromMemtype([ebx].asym.mem_type, USE_EMPTY, [ebx].asym.type)
 
+    .if [ebx].asym.mem_type == MT_ABS
+
+        mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
+        strcpy(eax, paramvalue)
+        movzx eax,ModuleInfo.wordsize
+        add fcscratch,eax
+        .return 1
+    .endif
+
+    mov ecx,pp
+    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
+          [ecx].asym.sint_flag & SINT_ISINLINE )
+        .return 1
+    .endif
+
     xor eax,eax
     .return .if [ebx].asym.state != SYM_TMACRO
-
 
     ;; the "name" might be a register pair
 
@@ -509,22 +525,49 @@ watc_param proc uses esi edi ebx pp, index, param, adr, opnd, paramvalue, r0used
 
         mov ecx,reg[ebx*4]
         .if ecx
-
+            mov edi,opnd
             .if [edi].expr.kind == EXPR_CONST
+
+                mov eax,paramvalue
+                .if ( word ptr [eax] == "0" )
+                    xor eax,eax
+                .endif
+
+                mov edx,[edi].expr.value
+                or  edx,[edi].expr.hvalue
+
                 .ifs ebx > 0
                     mov esi,T_LOWWORD
+                    mov edx,[edi].expr.value
                 .elseif !ebx && reg[4]
                     mov esi,T_HIGHWORD
+                    mov edx,[edi].expr.hvalue
                 .else
                     mov esi,T_NULL
                 .endif
-                .if esi != T_NULL
-                    AddLineQueueX("mov %s, %r (%s)", ecx, esi, paramvalue)
+
+                .if ( eax == 0 || edx == 0 )
+                    AddLineQueueX( "xor %s, %s", ecx, ecx )
+                .elseif esi != T_NULL
+                    AddLineQueueX( "mov %s, %r (%s)", ecx, esi, eax )
                 .else
-                    AddLineQueueX("mov %s, %s", ecx, paramvalue)
+                    AddLineQueueX( "mov %s, %s", ecx, eax )
                 .endif
+
             .elseif [edi].expr.kind == EXPR_REG
-                AddLineQueueX("mov %s, %s", ecx, paramvalue)
+
+                mov edx,[edi].expr.base_reg
+                mov edi,[edx].asm_tok.tokval
+                mov eax,param
+                movzx esi,[eax].asym.regist
+                .if reg[ebx*4+4]
+                    movzx esi,[eax].asym.regist[2]
+                    mov edi,[edx-32].asm_tok.tokval
+                .endif
+                .if esi != edi
+                    AddLineQueueX( "mov %r, %r", esi, edi )
+                .endif
+
             .else
                 .if ebx == 0 && reg[4] == NULL
                     AddLineQueueX("mov %s, %s", ecx, paramvalue)
@@ -951,13 +994,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .return 1
     .endif
     .if [ebx].asym.mem_type == MT_ABS
-        mov esi,[ecx].esym.procinfo
-        mov ebx,[esi].proc_info.paralist
-        .while index
-            mov ebx,[ebx].esym.nextparam
-            dec index
-        .endw
-        mov [ebx].asym.string_ptr,LclAlloc(&[strlen(paramvalue)+1])
+        mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
         strcpy(eax, paramvalue)
         .return 1
     .endif
@@ -1695,15 +1732,14 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
         movzx esi,[edx].regist[2]
     .endif
 
-    .if [edx].mem_type == MT_ABS
-        mov eax,pp
-        mov ecx,[eax].esym.procinfo
-        mov esi,[ecx].proc_info.paralist
-        .while index
-            mov esi,[esi].esym.nextparam
-            dec index
-        .endw
-        mov [esi].asym.string_ptr,LclAlloc(&[strlen(paramvalue)+1])
+    mov ecx,pp
+    .if ( [edx].asym.sint_flag & SINT_ISVARARG && \
+          [ecx].asym.sint_flag & SINT_ISINLINE )
+        .return 1
+    .endif
+    .if [edx].asym.mem_type == MT_ABS
+        mov esi,edx
+        mov [esi].asym.name,LclAlloc(&[strlen(paramvalue)+1])
         strcpy(eax, paramvalue)
         .return 1
     .endif

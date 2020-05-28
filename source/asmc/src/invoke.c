@@ -251,7 +251,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    } else
 		asize2 = SizeFromRegister( tokenarray[j].tokval );
 	    asize = SizeFromRegister( tokenarray[j+2].tokval );
-	    if ( asize2 != 8 )
+	    /* v2.31.35: Watcom handles the two first sets */
+	    if ( asize2 != 8 && !( fastcall_id == FCT_WATCOMC + 1 && currParm < 3 ) )
 		AddLineQueueX( " push %r", tokenarray[j].tokval );
 	    /* v2.04: changed */
 	    if (( curr->sym.is_vararg ) && (asize + asize2) != CurrWordSize )
@@ -1118,20 +1119,27 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	if ( macro ) {
 
 	    int cnt = 0;
-	    for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ );
+	    char *args[128];
+
 	    p = &StringBufferEnd[1];
 	    strcpy( p, buffer );
 	    strcat( p, "( " );
 	    p += strlen(p);
 
-	    if ( Parse_Pass == PASS_1 && ModuleInfo.Ofssize == USE64 ) {
+	    if ( ModuleInfo.Ofssize == USE64 || fastcall_id == FCT_WATCOMC + 1 ) {
+
+		for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ )
+		    args[cnt] = NULL;
 
 		curr = info->paralist;
 		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
+
 		    int reg = 0;
 		    int ind = cnt - parmpos - 1;
 
 		    for ( arg = info->paralist; ind; arg = arg->nextparam, ind-- );
+
+		    args[parmpos] = arg->sym.string_ptr;
 		    size = SizeFromMemtype( arg->sym.mem_type, arg->sym.Ofssize, arg->sym.type );
 
 		    if ( sym->langtype == LANG_SYSCALL )
@@ -1154,30 +1162,36 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			    reg = parmpos + T_ZMM0;
 		    }
 
-		    if ( arg->sym.mem_type == MT_ABS )
-			;
-		    else if ( reg ) {
-			curr->sym.string_ptr = get_regname(reg, size);
+		    if ( sym->langtype == LANG_WATCALL ) {
+			if ( arg->sym.mem_type == MT_ABS ) {
+			    args[parmpos] = arg->sym.name;
+			    arg->sym.name = "";
+			}
+		    } else if ( arg->sym.mem_type == MT_ABS ) {
+			args[parmpos] = arg->sym.name;
+			arg->sym.name = "";
+		    } else if ( reg ) {
+			args[parmpos] = get_regname(reg, size);
 		    } else {
-			curr->sym.string_ptr = LclAlloc(16);
-			sprintf( curr->sym.string_ptr, "[rsp+%d*8]", parmpos );
+			args[parmpos] = LclAlloc(16);
+			LSPrintF( args[parmpos], "[%r+%d*%d]",
+			    stackreg[ModuleInfo.Ofssize], parmpos, ModuleInfo.Ofssize * 4 );
 		    }
 		}
 	    }
-	    if ( ModuleInfo.Ofssize != USE64 )
+	    if ( !cnt ) {
 		strcat( p, tokenarray[i+1].tokpos );
-	    else if ( info->has_vararg ) {
+	    } else if ( info->has_vararg ) {
 		if ( tokenarray[i+1].tokval == T_ADDR )
 		    strcat( p, tokenarray[i+2].tokpos );
 		else
 		    strcat( p, tokenarray[i+1].tokpos );
 	    } else {
-		curr = info->paralist;
-		strcat( p, curr->sym.string_ptr );
-		for ( curr = curr->nextparam; curr; curr = curr->nextparam ) {
+		strcat( p, args[0] );
+		for ( parmpos = 1; parmpos < cnt; parmpos++ ) {
 		    strcat( p, ", " );
-		    if ( curr->sym.string_ptr )
-			strcat( p, curr->sym.string_ptr );
+		    if ( args[parmpos] )
+			strcat( p, args[parmpos] );
 		}
 	    }
 	    strcat( p, ")" );

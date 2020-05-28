@@ -107,7 +107,7 @@ struct fastcall_conv {
 
 #ifndef __ASMC64__
 static	int ms32_pcheck( struct dsym *, struct dsym *, int * );
-static void ms32_return( struct dsym *, char * );
+//static void ms32_return( struct dsym *, char * );
 static	int vc32_pcheck( struct dsym *, struct dsym *, int * );
 static void vc32_return( struct dsym *, char * );
 static	int watc_pcheck( struct dsym *, struct dsym *, int * );
@@ -124,7 +124,7 @@ int elf64_pcheck( struct dsym *, struct dsym *, int * );
 
 static const struct fastcall_conv fastcall_tab[] = {
 #ifndef __ASMC64__
-    { ms32_pcheck, ms32_return }, /* FCT_MSC */
+    { ms32_pcheck, vc32_return }, /* FCT_MSC */
     { watc_pcheck, watc_return }, /* FCT_WATCOMC */
 #else
     { 0, 0 },
@@ -184,6 +184,9 @@ static int watc_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     int firstreg;
     uint_8 Ofssize = GetSymOfssize( &proc->sym );
     int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
+
+    if ( size == 0 && paranode->sym.mem_type == MT_ABS )
+	size = 4;
 
     /* v2.05: VARARG procs don't have register params */
     if ( proc->e.procinfo->has_vararg )
@@ -291,14 +294,6 @@ static int ms32_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     return( 1 );
 }
 
-static void ms32_return( struct dsym *proc, char *buffer )
-/********************************************************/
-{
-    if( proc->e.procinfo->parasize > ( ms32_maxreg[ModuleInfo.Ofssize] * CurrWordSize ) )
-	sprintf( buffer + strlen( buffer ), "%d%c", proc->e.procinfo->parasize - ( ms32_maxreg[ModuleInfo.Ofssize] * CurrWordSize), ModuleInfo.radix != 10 ? 't' : NULLC );
-    return;
-}
-
 /* The vectorcall calling convention follows the fastcall convention for 32-bit
  * integer type arguments, and takes advantage of the SSE vector registers for
  * vector type and HVA arguments.
@@ -345,8 +340,8 @@ static void vc32_return( struct dsym *proc, char *buffer )
     int retval = 0;
 
     for ( p = proc->e.procinfo->paralist; p; p = p->nextparam )
-	if ( p->sym.state != SYM_TMACRO )
-	    retval += ROUND_UP( p->sym.total_size, 4 );
+	if ( p->sym.state != SYM_TMACRO ) /* v2.34.35: used by ms32.. */
+	    retval += ROUND_UP( p->sym.total_size, CurrWordSize );
 
     if( retval )
 	sprintf( buffer + strlen( buffer ), "%d%c", retval, ModuleInfo.radix != 10 ? 't' : NULLC );
@@ -657,7 +652,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
      */
     if ( proc->sym.langtype == LANG_STDCALL || proc->sym.langtype == LANG_C ||
 	 proc->sym.langtype == LANG_SYSCALL || proc->sym.langtype == LANG_VECTORCALL ||
-	 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+	 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) ||
+	 proc->sym.langtype == LANG_WATCALL )
 	ParamReverse = 1;
 
     if ( ParamReverse )

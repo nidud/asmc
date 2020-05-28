@@ -65,12 +65,12 @@ AddLineQueue endp
 
 ;; Add a line to the current line queue, "printf" format.
 
-AddLineQueueX proc uses esi edi ebx fmt:string_t, argptr:vararg
+VLSPrintF proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
-  local buffer[MAX_LINE_LEN]:char_t
+  local numbuf[16]:char_t
 
-    lea ebx,argptr
-    .for ( esi = fmt, edi = &buffer : byte ptr [esi] : )
+    mov ebx,argptr
+    .for ( esi = fmt, edi = buffer : byte ptr [esi] : )
 
         lodsb
         .if al == '%'
@@ -80,7 +80,7 @@ AddLineQueueX proc uses esi edi ebx fmt:string_t, argptr:vararg
                 push    esi
                 push    edi
                 push    ebx
-                lea     edi,buffer[MAX_LINE_LEN-16]
+                lea     edi,numbuf
                 mov     ecx,16
                 mov     eax,'0'
                 rep     stosb
@@ -122,7 +122,7 @@ AddLineQueueX proc uses esi edi ebx fmt:string_t, argptr:vararg
                 pop     esi
                 add     ebx,8
                 mov     ecx,16
-                lea     eax,buffer[MAX_LINE_LEN-16]
+                lea     eax,numbuf
                 xchg    eax,esi
                 rep     movsb
                 mov     byte ptr [edi],0
@@ -178,6 +178,24 @@ AddLineQueueX proc uses esi edi ebx fmt:string_t, argptr:vararg
        .endif
     .endf
     mov byte ptr [edi],0
+    mov eax,buffer
+    ret
+
+VLSPrintF endp
+
+LSPrintF proc buffer:string_t, fmt:string_t, argptr:vararg
+
+    VLSPrintF( buffer, fmt, &argptr )
+    mov eax,buffer
+    ret
+
+LSPrintF endp
+
+AddLineQueueX proc fmt:string_t, argptr:vararg
+
+  local buffer[MAX_LINE_LEN]:char_t
+
+    VLSPrintF( &buffer, fmt, &argptr )
     AddLineQueue(&buffer)
     ret
 

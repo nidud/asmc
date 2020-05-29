@@ -481,6 +481,15 @@ static ret_code CatStrFunc( struct macro_instance *mi, char *buffer, struct asm_
     return( NOT_ERROR );
 }
 
+
+int GetTypeId( char *, struct asm_tok[] );
+static ret_code TypeIdFunc( struct macro_instance *mi, char *buffer, struct asm_tok tokenarray[] )
+{
+    if ( GetTypeId( buffer, tokenarray ) == 0 )
+	strcpy( buffer, mi->parm_array[0] );
+    return( NOT_ERROR );
+}
+
 #ifdef MACRO_CSTRING
 /* internal @CStr macro function
  * syntax:  @CStr( "\tstring\n" )
@@ -634,7 +643,20 @@ void StringInit( void )
     int i;
     struct dsym *macro;
 
+    /* add @TypeId() macro func */
+
+    macro = CreateMacro( "@TypeId" );
+    macro->sym.isdefined = TRUE;
+    macro->sym.predefined = TRUE;
+    macro->sym.func_ptr = TypeIdFunc;
+    macro->sym.isfunc = TRUE;
+    macro->e.macroinfo->parmcnt = 1;
+    macro->e.macroinfo->parmlist = (struct mparm_list *)LclAlloc( sizeof( struct mparm_list )  * 1 );
+    macro->e.macroinfo->parmlist[0].deflt = NULL;
+    macro->e.macroinfo->parmlist[0].required = TRUE;
+
 #ifdef MACRO_CSTRING
+
     /* add @CStr() macro func */
 
     macro = CreateMacro( "@CStr" );
@@ -642,7 +664,6 @@ void StringInit( void )
     macro->sym.predefined = TRUE;
     macro->sym.func_ptr = CStringFunc;
     macro->sym.isfunc = TRUE;
-    //macro->sym.mac_multiline = TRUE;
     macro->e.macroinfo->parmcnt = 1;
     macro->e.macroinfo->parmlist = (struct mparm_list *)LclAlloc( sizeof( struct mparm_list )  * 1 );
     macro->e.macroinfo->parmlist[0].deflt = NULL;

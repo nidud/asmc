@@ -19,9 +19,8 @@ include regno.inc
 public  fastcall_tab
 
 GetGroup        proto :asym_t
-ifndef __ASMC64__
+
 GetSegmentPart  proto :ptr expr, :string_t, :string_t
-endif
 search_assume   proto :asym_t, :int_t, :int_t
 
 invoke_conv     struc
@@ -103,7 +102,6 @@ GetSegm macro x
     exitm<[x].asym._segment>
     endm
 
-ifndef __ASMC64__
 GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:string_t
 
     mov esi,T_NULL
@@ -154,7 +152,7 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:s
     ret
 
 GetSegmentPart endp
-endif
+
 
 option proc:private
 

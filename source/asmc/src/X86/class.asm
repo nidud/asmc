@@ -14,6 +14,7 @@ include types.inc
 include macro.inc
 include input.inc
 include tokenize.inc
+include expreval.inc
 
 ; item for .CLASS, .ENDS, and .COMDEF
 
@@ -412,6 +413,182 @@ ParseOperator endp
 
     option proc: public
 
+    assume ebx:ptr asm_tok
+
+GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
+
+  local i:int_t, j:int_t, opnd:expr
+
+    mov ebx,tokenarray
+
+    ; find first instance of macro in line
+    xor edi,edi
+    .while [ebx].token != T_FINAL
+        .if [ebx].token == T_ID
+            .break .if !_stricmp([ebx].string_ptr, "@TypeId")
+        .endif
+        add ebx,16
+        inc edi
+    .endw
+
+    .if [ebx].token == T_FINAL && [ebx+16].token == T_OP_BRACKET
+        add ebx,16
+        inc edi
+    .elseif [ebx].token != T_FINAL
+        add ebx,16
+        inc edi
+    .else
+        mov ebx,tokenarray
+        xor edi,edi
+    .endif
+
+    .if [ebx].token != T_OP_BRACKET
+        .return 0
+    .endif
+
+    add ebx,16
+    inc edi
+    xor esi,esi
+    .if [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR
+        add ebx,16
+        inc edi
+        inc esi
+    .endif
+    mov ecx,edi
+    .for edx = 1 : [ebx].token != T_FINAL : ebx += 16, ecx++
+        .switch [ebx].token
+        .case T_OP_BRACKET
+            inc edx
+            .endc
+        .case T_CL_BRACKET
+            dec edx
+            .endc .ifnz
+            .break
+        .endsw
+    .endf
+    mov i,edi
+    .return 0 .if EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR
+
+    mov eax,opnd.kind
+    .switch eax
+
+    .case EXPR_REG
+
+        .if !( opnd.flags & E_INDIRECT )
+
+            mov ecx,opnd.base_reg
+            SizeFromRegister( [ecx].asm_tok.tokval )
+            shl eax,3
+            LSPrintF( buffer, "reg_%d", eax)
+            .return 1
+        .endif
+
+    .case EXPR_ADDR
+        .if esi
+            strcpy( buffer, "ptr_" )
+        .else
+            strcpy( buffer, "mem_" )
+        .endif
+
+        mov edi,opnd.sym
+        mov esi,opnd.type
+
+        .if ( !edi || [edi].asym.state == SYM_UNDEFINED )
+
+            strcat( buffer, "void" )
+            .return 1
+        .endif
+
+        .if [edi].asym.target_type && \
+            ( [edi].asym.mem_type == MT_PTR || [edi].asym.ptr_memtype == MT_TYPE )
+
+            .if [edi].asym.mem_type == MT_PTR
+                strcpy( buffer, "ptr_" )
+            .endif
+            mov edi,[edi].asym.target_type
+        .endif
+
+        .if [edi].asym.state == SYM_TYPE && [edi].asym.typekind == TYPE_STRUCT
+
+            strcat( buffer, [edi].asym.name )
+            .return 1
+        .endif
+
+        .if esi
+
+            .if [esi].asym.state == SYM_TYPE && [esi].asym.typekind == TYPE_STRUCT
+                strcat( buffer, [esi].asym.name )
+                .return 1
+            .endif
+
+        .elseif [edi].asym.state == SYM_INTERNAL || [edi].asym.state == SYM_STACK
+
+            mov cl,[edi].asym.mem_type
+            .switch pascal cl
+            .case MT_BYTE    : mov eax,T_BYTE
+            .case MT_SBYTE   : mov eax,T_SBYTE
+            .case MT_WORD    : mov eax,T_WORD
+            .case MT_SWORD   : mov eax,T_SWORD
+            .case MT_REAL2   : mov eax,T_REAL2
+            .case MT_DWORD   : mov eax,T_DWORD
+            .case MT_SDWORD  : mov eax,T_SDWORD
+            .case MT_REAL4   : mov eax,T_REAL4
+            .case MT_FWORD   : mov eax,T_FWORD
+            .case MT_QWORD   : mov eax,T_QWORD
+            .case MT_SQWORD  : mov eax,T_SQWORD
+            .case MT_REAL8   : mov eax,T_REAL8
+            .case MT_TBYTE   : mov eax,T_TBYTE
+            .case MT_REAL10  : mov eax,T_REAL10
+            .case MT_OWORD   : mov eax,T_OWORD
+            .case MT_REAL16  : mov eax,T_REAL16
+            .case MT_YWORD   : mov eax,T_YWORD
+            .case MT_ZWORD   : mov eax,T_ZWORD
+            .case MT_PROC    : mov eax,T_PROC
+            .case MT_NEAR    : mov eax,T_NEAR
+            .case MT_FAR     : mov eax,T_FAR
+            .case MT_PTR
+                strcpy( buffer, "ptr_" )
+                mov eax,T_PTR
+                mov cl,[edi].asym.mem_type
+                .if [edi].asym.is_ptr == 1 && cl != [edi].asym.ptr_memtype
+                    .if [edi].asym.ptr_memtype == MT_EMPTY
+                        strcat( buffer, "void" )
+                        .return 1
+                    .endif
+                    mov cl,[edi].asym.ptr_memtype
+                    .gotosw
+                .endif
+            .default
+                strcat( buffer, "void" )
+                .return 1
+            .endsw
+            mov edx,buffer
+            add edx,4
+            GetResWName(eax, edx)
+            .return 1
+        .endif
+        strcat( buffer, "void" )
+        .return 1
+    .case EXPR_CONST
+        mov eax,dword ptr opnd.hlvalue
+        or  eax,dword ptr opnd.hlvalue[4]
+        .if eax
+            strcpy( buffer, "imm_16" )
+        .elseif opnd.hvalue
+            strcpy( buffer, "imm_8" )
+        .else
+            strcpy( buffer, "imm_4" )
+        .endif
+        .return 1
+    .case EXPR_FLOAT
+        strcpy( buffer, "imm_float" )
+        .return 1
+    .endsw
+    xor eax,eax
+    ret
+
+GetTypeId ENDP
+
 ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
 
   local retval:int_t
@@ -421,10 +598,12 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
   local language[32]:char_t
   local P$[16]:char_t
   local T$[16]:char_t
+  local constructor:int_t
 
     mov ebx,i
     shl ebx,4
     add ebx,tokenarray
+    mov constructor,0
 
     mov name,[ebx-16].string_ptr
     mov retval,NOT_ERROR
@@ -432,6 +611,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
     .if esi
         .if !strcmp(eax, [esi].com_item.class)
             ClassProto2( name, name, esi, [ebx+16].tokpos )
+            mov constructor,1
             jmp done
         .endif
     .endif
@@ -577,6 +757,14 @@ done:
     .endif
     .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
+    .endif
+    .if constructor
+        strcpy(buffer, name)
+        strcat(eax, "_")
+        strcat(eax, name)
+        .if SymFind( eax )
+            or [eax].asym.flag,S_METHOD
+        .endif
     .endif
     mov eax,retval
     ret
@@ -750,11 +938,6 @@ MacroInline proc uses esi edi ebx name:string_t, args:int_t, inline:string_t, va
 
     .return 0 .if ( Parse_Pass > PASS_1 )
 
-    .if ModuleInfo.list
-        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-    .endif
-    RunLineQueue()
-
     mov edx,ModuleInfo.ComStack
     .if edx && [edx].com_item.vector
         mov mac,0
@@ -809,11 +992,12 @@ MacroInline endp
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local rc:int_t, args:tok_t, cmd:uint_t, public_pos:string_t,
-        class[64]:char_t
+        class[128]:char_t, constructor:int_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
     lea edi,class
+    mov constructor,0
 
     mov edx,i
     shl edx,4
@@ -920,10 +1104,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     ClassProto( edi, [esi].com_item.langtype, [ebx].tokpos, T_PROC )
                 .else
                     ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
+                    inc constructor
                 .endif
             .endif
         .elseif [esi].com_item.type
             ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
+            inc constructor
         .endif
         .endc .if context == 0 || Parse_Pass > PASS_1
 
@@ -931,6 +1117,16 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         sprintf( &token, "%s_%s", class_ptr, &name )
 
+        .if ModuleInfo.list
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        .endif
+        RunLineQueue()
+
+        .if constructor
+            .if SymFind( &token )
+                or [eax].asym.flag,S_METHOD
+            .endif
+        .endif
         MacroInline( &token, args, context, is_vararg )
         .return rc
 
@@ -1018,15 +1214,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endf
 
         .if ( cmd == T_DOT_CLASS )
-if 0
-            mov ebx,args
-            mov ecx,ModuleInfo.ComStack
-            .if edi
-                ClassProto2( esi, esi, ecx, [ebx].tokpos )
-            .else
-                ClassProto2( esi, esi, ecx, "" )
-            .endif
-endif
+
             mov eax,public_pos
             .if eax
                 mov byte ptr [eax],':'

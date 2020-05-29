@@ -178,7 +178,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    *r0flags |= R0_USED;
 	    AddLineQueueX( " push %r", regax[ModuleInfo.Ofssize] );
 	}
-#ifndef __ASMC64__
+
 	else {
 	push_address:
 
@@ -221,15 +221,17 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			   ( curr->sym.isfar || Ofssize == USE16 ) ) { /* v2.11: added */
 		    AddLineQueueX( " pushw %r %s", T_OFFSET, fullparam );
 		} else {
-		    AddLineQueueX( " push %r %s", T_OFFSET, fullparam );
-		    /* v2.04: a 32bit offset pushed in 16-bit code */
-		    if ( curr->sym.is_vararg && CurrWordSize == 2 && opnd.Ofssize > USE16 ) {
-			size_vararg += CurrWordSize;
+		    if ( !( proc->sym.isinline && curr->sym.is_vararg ) ) {
+			AddLineQueueX( " push %r %s", T_OFFSET, fullparam );
+			/* v2.04: a 32bit offset pushed in 16-bit code */
+			if ( curr->sym.is_vararg && CurrWordSize == 2 && opnd.Ofssize > USE16 ) {
+			    size_vararg += CurrWordSize;
+			}
 		    }
 		}
 	    }
 	}
-#endif
+
 	if ( curr->sym.is_vararg ) {
 	    size_vararg += CurrWordSize + ( curr->sym.isfar ? CurrWordSize : 0 );
 	}
@@ -295,14 +297,14 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			asize = SizeFromMemtype( opnd.mbr->mem_type, opnd.Ofssize, opnd.mbr->type );
 		}
 	    } else if ( opnd.mem_type != MT_TYPE ) {
-#ifndef __ASMC64__
+
 		if ( opnd.kind == EXPR_ADDR &&
 		     opnd.indirect == FALSE &&
 		     opnd.sym &&
 		     opnd.inst == EMPTY &&
 		     ( opnd.mem_type == MT_NEAR || opnd.mem_type == MT_FAR ) )
 		    goto push_address;
-#endif
+
 		if ( opnd.Ofssize == USE_EMPTY )
 		    opnd.Ofssize = ModuleInfo.Ofssize;
 		asize = SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type );
@@ -1182,7 +1184,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    if ( !cnt ) {
 		strcat( p, tokenarray[i+1].tokpos );
 	    } else if ( info->has_vararg ) {
-		if ( tokenarray[i+1].tokval == T_ADDR )
+		if ( tokenarray[i+1].tokval == T_ADDR && proc->sym.method )
 		    strcat( p, tokenarray[i+2].tokpos );
 		else
 		    strcat( p, tokenarray[i+1].tokpos );

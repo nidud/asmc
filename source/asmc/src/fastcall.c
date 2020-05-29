@@ -1312,7 +1312,7 @@ static void elf64_fcend( struct dsym const *proc, int numparams, int value )
  * v2.05: extracted from PushInvokeParam(),
  * so it could be used by watc_param() as well.
  */
-#ifndef __ASMC64__
+
 short GetSegmentPart( struct expr *opnd, char *buffer, const char *fullparam )
 {
     short reg = T_NULL;
@@ -1353,7 +1353,7 @@ short GetSegmentPart( struct expr *opnd, char *buffer, const char *fullparam )
     }
     return( reg );
 }
-
+#ifndef __ASMC64__
 /* the watcomm fastcall variant is somewhat peculiar:
  * 16-bit:
  * - for BYTE/WORD arguments, there are 4 registers: AX,DX,BX,CX

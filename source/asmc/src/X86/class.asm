@@ -415,46 +415,58 @@ ParseOperator endp
 
     assume ebx:ptr asm_tok
 
+.enum { Immediat, Float, Register, Memory, Pointer }
+
+
 GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
-  local i:int_t, j:int_t, opnd:expr
+  local i:int_t
+  local opnd:expr
+  local tokval:int_t
+  local id[64]:char_t
+  local type:int_t
+  local size:int_t
+  local void:int_t
+  local name[64]:char_t
 
     mov ebx,tokenarray
 
     ; find first instance of macro in line
-    xor edi,edi
+
     .while [ebx].token != T_FINAL
         .if [ebx].token == T_ID
-            .break .if !_stricmp([ebx].string_ptr, "@TypeId")
+            .break .if !_stricmp([ebx].string_ptr, "typeid")
         .endif
         add ebx,16
-        inc edi
     .endw
-
     .if [ebx].token == T_FINAL && [ebx+16].token == T_OP_BRACKET
         add ebx,16
-        inc edi
     .elseif [ebx].token != T_FINAL
         add ebx,16
-        inc edi
     .else
         mov ebx,tokenarray
-        xor edi,edi
     .endif
-
-    .if [ebx].token != T_OP_BRACKET
-        .return 0
-    .endif
+    .return 0 .if [ebx].token != T_OP_BRACKET
 
     add ebx,16
-    inc edi
+    mov id,0
+    .if [ebx+16].token == T_COMMA
+        strcpy( &id, [ebx].string_ptr )
+        add ebx,32
+    .endif
+
     xor esi,esi
     .if [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR
         add ebx,16
-        inc edi
         inc esi
     .endif
-    mov ecx,edi
+
+    mov eax,ebx
+    sub eax,tokenarray
+    shr eax,4
+    mov ecx,eax
+    mov i,eax
+
     .for edx = 1 : [ebx].token != T_FINAL : ebx += 16, ecx++
         .switch [ebx].token
         .case T_OP_BRACKET
@@ -466,8 +478,12 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
             .break
         .endsw
     .endf
-    mov i,edi
     .return 0 .if EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR
+
+    mov type,0
+    mov size,0
+    mov name,0
+    mov void,0
 
     mov eax,opnd.kind
     .switch eax
@@ -479,49 +495,59 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
             mov ecx,opnd.base_reg
             SizeFromRegister( [ecx].asm_tok.tokval )
             shl eax,3
-            LSPrintF( buffer, "reg_%d", eax)
-            .return 1
+            mov size,eax
+            mov type,Register
+            .endc
         .endif
 
     .case EXPR_ADDR
+
+        mov type,Memory
         .if esi
-            strcpy( buffer, "ptr_" )
-        .else
-            strcpy( buffer, "mem_" )
+            mov type,Pointer
         .endif
 
         mov edi,opnd.sym
         mov esi,opnd.type
+        .if opnd.mbr
+            mov edi,opnd.mbr
+        .endif
 
         .if ( !edi || [edi].asym.state == SYM_UNDEFINED )
+            mov void,1
+            .endc
+        .endif
 
-            strcat( buffer, "void" )
-            .return 1
+        .if [edi].asym.mem_type == MT_TYPE && [edi].asym.type
+            mov edi,[edi].asym.type
         .endif
 
         .if [edi].asym.target_type && \
             ( [edi].asym.mem_type == MT_PTR || [edi].asym.ptr_memtype == MT_TYPE )
 
             .if [edi].asym.mem_type == MT_PTR
-                strcpy( buffer, "ptr_" )
+                mov type,Pointer
             .endif
             mov edi,[edi].asym.target_type
         .endif
 
         .if [edi].asym.state == SYM_TYPE && [edi].asym.typekind == TYPE_STRUCT
 
-            strcat( buffer, [edi].asym.name )
-            .return 1
+            strcpy( &name, [edi].asym.name )
+            .endc
         .endif
 
         .if esi
 
             .if [esi].asym.state == SYM_TYPE && [esi].asym.typekind == TYPE_STRUCT
-                strcat( buffer, [esi].asym.name )
-                .return 1
+
+                strcpy( &name, [esi].asym.name )
+                .endc
             .endif
 
-        .elseif [edi].asym.state == SYM_INTERNAL || [edi].asym.state == SYM_STACK
+        .elseif [edi].asym.state == SYM_INTERNAL || \
+                [edi].asym.state == SYM_STACK || \
+                [edi].asym.state == SYM_STRUCT_FIELD
 
             mov cl,[edi].asym.mem_type
             .switch pascal cl
@@ -547,41 +573,86 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
             .case MT_NEAR    : mov eax,T_NEAR
             .case MT_FAR     : mov eax,T_FAR
             .case MT_PTR
-                strcpy( buffer, "ptr_" )
+                mov type,Pointer
                 mov eax,T_PTR
                 mov cl,[edi].asym.mem_type
                 .if [edi].asym.is_ptr == 1 && cl != [edi].asym.ptr_memtype
                     .if [edi].asym.ptr_memtype == MT_EMPTY
-                        strcat( buffer, "void" )
-                        .return 1
+                        mov void,1
+                        .endc
                     .endif
                     mov cl,[edi].asym.ptr_memtype
                     .gotosw
                 .endif
             .default
-                strcat( buffer, "void" )
-                .return 1
+                mov void,1
+                .endc
             .endsw
-            mov edx,buffer
-            add edx,4
+            .endc .if void
+
+            lea edx,name
             GetResWName(eax, edx)
-            .return 1
+            .endc
         .endif
-        strcat( buffer, "void" )
-        .return 1
+        mov void,1
+        .endc
     .case EXPR_CONST
+        mov type,Immediat
+        mov size,32
         mov eax,dword ptr opnd.hlvalue
         or  eax,dword ptr opnd.hlvalue[4]
         .if eax
-            strcpy( buffer, "imm_16" )
+            mov size,128
         .elseif opnd.hvalue
-            strcpy( buffer, "imm_8" )
+            mov size,64
+        .endif
+        .endc
+    .case EXPR_FLOAT
+        mov type,Float
+        .endc
+    .endsw
+
+    .if void
+        strcpy( &name, "void" )
+    .endif
+
+    .switch type
+    .case Immediat
+        .if id
+            LSPrintF( buffer, "%s?i%d", &id, size)
         .else
-            strcpy( buffer, "imm_4" )
+            LSPrintF( buffer, "imm_%d", size)
         .endif
         .return 1
-    .case EXPR_FLOAT
-        strcpy( buffer, "imm_float" )
+    .case Float
+        .if id
+            LSPrintF( buffer, "%s?flt", &id)
+        .else
+            strcpy( buffer, "imm_float" )
+        .endif
+        .return 1
+    .case Register
+        .if id
+            LSPrintF( buffer, "%s?r%d", &id, size)
+        .else
+            LSPrintF( buffer, "reg_%d", size)
+        .endif
+        .return 1
+    .case Memory
+        .if id
+            LSPrintF( buffer, "%s?%s", &id, &name )
+        .else
+            strcpy( buffer, "mem_" )
+            strcat( buffer, &name )
+        .endif
+        .return 1
+    .case Pointer
+        .if id
+            LSPrintF( buffer, "%s?p%s", &id, &name )
+        .else
+            strcpy( buffer, "ptr_" )
+            strcat( buffer, &name )
+        .endif
         .return 1
     .endsw
     xor eax,eax

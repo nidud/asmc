@@ -1,5 +1,5 @@
 
-    ; typeid( expression )
+    ; typeid( [id,] expression )
 
     .x64
     .model flat, fastcall
@@ -70,6 +70,13 @@
     ptr_void
     }
 
+.template s1
+
+    m1  dq ?
+    m2  db ?
+
+    .ends
+
 types proto :vararg {
     for arg,<this>
         mov eax,typeid(arg)
@@ -81,14 +88,17 @@ types proto :vararg {
 
 .template ostream
 
-    .operator ptr_sbyte :ptr sbyte {
+    .operator ostream?ps1 :ptr s1 {
+        mov rax,[_1].s1.m1
+        }
+    .operator ostream?psbyte :ptr sbyte {
         mov rax,_1
         }
-    .operator ptr_word :ptr word {
+    .operator ostream?pword :ptr word {
         mov rax,_1
         }
     .operator << :abs {
-        cout typeid(_1)(_1)
+        cout typeid(ostream, _1)(_1)
         }
     .ends
 
@@ -96,57 +106,15 @@ types proto :vararg {
 
 main proc
 
-    local ma:byte
-    local mb:sbyte
-    local mc:word
-    local md:sword
-    local me:real2
-    local mf:dword
-    local mg:sdword
-    local mh:real4
-    local mi:fword
-    local mj:qword
-    local mk:sqword
-    local ml:real8
-    local mm:tbyte
-    local mn:real10
-    local mo:oword
-    local mp:real16
-    local mq:yword
-    local mr:zword
-    local ms:proc
-    local mt:near
-    local mu:far
-    local mv:ptr
-
-    local pa:ptr byte
     local pb:ptr sbyte
     local pc:ptr word
-    local pd:ptr sword
-    local pe:ptr real2
-    local pf:ptr dword
-    local pg:ptr sdword
-    local ph:ptr real4
-    local pi:ptr fword
-    local pj:ptr qword
-    local pk:ptr sqword
-    local pl:ptr real8
-    local pm:ptr tbyte
-    local pn:ptr real10
-    local po:ptr oword
-    local pp:ptr real16
-    local pq:ptr yword
-    local pr:ptr zword
-    local ps:ptr proc
-    local pt:ptr near
-    local pu:ptr far
-    local pv:ptr ptr
+    local s:s1
+    local ps:ptr s1
 
-    types( ma, mb, mc, md, me, mf, mg, mh, mi, mj, mk, ml, mm, mn, mo, mp, mq, mr, ms, mt, mu, mv )
-    types( pa, pb, pc, pd, pe, pf, pg, ph, pi, pj, pk, pl, pm, pn, po, pp, pq, pr, ps, pt, pu, pv )
-    types( main, addr main )
+    types( 1, 10000000, 2.0, s.m1, s.m2 )
+    types( al, ax, eax, rax, xmm0, ymm0, zmm0 )
 
-    cout << pb << pc
+    cout << pb << pc << ps
     cout << "Ascii string" << ( L"Unicode string" )
     ret
 

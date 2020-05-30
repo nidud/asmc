@@ -645,15 +645,17 @@ void StringInit( void )
 
     /* add @TypeId() macro func */
 
-    macro = CreateMacro( "@TypeId" );
+    macro = CreateMacro( "typeid" );
     macro->sym.isdefined = TRUE;
     macro->sym.predefined = TRUE;
     macro->sym.func_ptr = TypeIdFunc;
     macro->sym.isfunc = TRUE;
-    macro->e.macroinfo->parmcnt = 1;
-    macro->e.macroinfo->parmlist = (struct mparm_list *)LclAlloc( sizeof( struct mparm_list )  * 1 );
+    macro->e.macroinfo->parmcnt = 2;
+    macro->e.macroinfo->parmlist = (struct mparm_list *)LclAlloc( sizeof( struct mparm_list )  * 2 );
     macro->e.macroinfo->parmlist[0].deflt = NULL;
-    macro->e.macroinfo->parmlist[0].required = TRUE;
+    macro->e.macroinfo->parmlist[0].required = FALSE;
+    macro->e.macroinfo->parmlist[1].deflt = NULL;
+    macro->e.macroinfo->parmlist[1].required = FALSE;
 
 #ifdef MACRO_CSTRING
 

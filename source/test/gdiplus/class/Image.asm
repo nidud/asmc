@@ -11,18 +11,33 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr Image()
+    local pWCHAR:ptr word
+    local pImage:ptr Image
+    local pIStream:ptr IStream
+    local pRect:ptr Rect
+    local pRectF:ptr RectF
+    local pEncoderParameters:ptr EncoderParameters
 
-    Image()
+    ; Image(WCHAR*, BOOL = FALSE)
+    ; Image(IStream*, BOOL = FALSE)
+
+    .new p:Image(pWCHAR, TRUE)
+    .new p:Image(pIStream, TRUE)
 
     p.Release()
     p.FromFile(NULL, FALSE)
     p.FromStream(NULL, FALSE)
-    p.Clone()
-    p.Save(NULL, NULL, NULL)
-    p.Save2(NULL, NULL, NULL)
-    p.SaveAdd(NULL)
-    p.SaveAdd2(NULL, NULL)
+
+    p.Clone(1, 2, 3, 4, 0)
+    p.Clone(1.0, 2.0, 3.0, 4.0, 0)
+    p.Clone(pRect, 0)
+    p.Clone(pRectF, 0)
+
+    p.Save(pWCHAR, NULL, 0)
+    p.Save(pIStream, NULL, NULL)
+
+    p.SaveAdd(pImage, pEncoderParameters)
+    p.SaveAdd(pEncoderParameters)
 
     p.GetType()
     p.GetPhysicalDimension(NULL)

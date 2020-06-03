@@ -32,12 +32,30 @@ LPCLASS     typedef ptr com_item
 
     option proc: private
 
-ClassProto proc class:string_t, langtype:int_t, args:string_t, type:int_t
+ClassProto proc uses esi edi class:string_t, langtype:int_t, args:string_t, type:int_t
 
+  local pargs[1024]:char_t
+
+    lea edi,pargs ; default args :abs=<val>
+    mov esi,args
+    mov al,1
+    .while al
+        lodsb
+        .if al == '='
+            lodsb
+            .while al && al != '>'
+                lodsb
+            .endw
+            .if al
+                lodsb
+            .endif
+        .endif
+        stosb
+    .endw
     .if langtype
-        AddLineQueueX( "%s %r %r %s", class, type, langtype, args )
+        AddLineQueueX( "%s %r %r %s", class, type, langtype, &pargs )
     .else
-        AddLineQueueX( "%s %r %s", class, type, args )
+        AddLineQueueX( "%s %r %s", class, type, &pargs )
     .endif
     ret
 
@@ -416,7 +434,6 @@ ParseOperator endp
     assume ebx:ptr asm_tok
 
 .enum { Immediat, Float, Register, Memory, Pointer }
-
 
 GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
@@ -1003,26 +1020,73 @@ ParseClass endp
 
     assume esi:nothing
 
-MacroInline proc uses esi edi ebx name:string_t, args:int_t, inline:string_t, vargs:int_t
+ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
-  local mac[256]:char_t
+    .for ebx = args, edi = buffer, esi = 1 : esi < count : esi++
+
+        add edi,sprintf( edi, "_%u, ", esi )
+
+        .if strchr(ebx, ',')
+            inc eax
+        .else
+            strlen(ebx)
+            add eax,ebx
+        .endif
+        xchg ebx,eax
+
+        .if strchr(eax, '=')
+
+            .if eax < ebx
+
+                dec edi
+                mov byte ptr [edi-1],':'
+                mov ecx,ebx
+                sub ecx,eax
+                .if byte ptr [ebx-1] == ','
+                    dec ecx
+                .endif
+                mov edx,esi
+                mov esi,eax
+                rep movsb
+                mov esi,edx
+                mov dword ptr [edi],' ,'
+                add edi,2
+            .endif
+        .endif
+    .endf
+    mov eax,edi
+    ret
+
+ParseMacroArgs endp
+
+MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inline:string_t, vargs:int_t
+
+  local buf[512]:char_t
+  local mac[512]:char_t
+  local index:int_t
 
     .return 0 .if ( Parse_Pass > PASS_1 )
+
+    strcpy( &buf, args )
 
     mov edx,ModuleInfo.ComStack
     .if edx && [edx].com_item.vector
         mov mac,0
-        mov ebx,[edx].com_item.vector
-        .for esi = 1, edi = &mac : esi < args : esi++
-            add edi,sprintf( edi, "_%u, ", esi )
-        .endf
+
+        mov edi,ParseMacroArgs( &mac, count, &buf )
         strcat(edi, "this:=<")
+        mov edx,ModuleInfo.ComStack
+        mov ebx,[edx].com_item.vector
         strcat(edi, GetResWName( ebx, NULL ) )
         strcat(edi, ">")
     .else
-        .for esi = 1, edi = &[ strcpy( &mac, "this" ) + 4 ] : esi < args : esi++
-            add edi,sprintf( edi, ", _%u", esi )
-        .endf
+        lea edi,[strcpy( &mac, "this" ) + 4]
+        .if count > 1
+            lea edi,[strcpy(edi, ", ") + 2]
+            mov edi,ParseMacroArgs( edi, count, &buf )
+            sub edi,2
+            mov byte ptr [edi],0
+        .endif
     .endif
     .if vargs
         strcpy( edi, ":vararg" )
@@ -1117,7 +1181,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .new context    : string_t
         .new class_ptr  : string_t
         .new token[64]  : char_t
-        .new name[128]  : char_t
+        .new name[512]  : char_t
 
         mov is_vararg,0
 
@@ -1198,7 +1262,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 or [eax].asym.flag,S_METHOD
             .endif
         .endif
-        MacroInline( &token, args, context, is_vararg )
+        MacroInline( &token, args, [ebx].tokpos , context, is_vararg )
         .return rc
 
       .case T_DOT_COMDEF

@@ -608,8 +608,36 @@ int ParseClass( int j, struct asm_tok tokenarray[], char *buffer )
     return 1;
 }
 
+char *ParseMacroArgs(char *buffer, int count, char *args)
+{
+    int i,x;
+    char *p,*q,*s;
 
-void MacroInline( char *name, int args, char *data, int vargs )
+    for ( p = args, q = buffer, i = 1; i < count; i++ ) {
+
+        q += sprintf( q, "_%u, ", i );
+        s = p;
+        if ( (p = strchr(p, ',')) != NULL)
+            p++;
+        else
+            p += strlen(s);
+
+        if ((s = strchr(s, '=')) != NULL) {
+
+            if ( s < p ) {
+
+                x = p - s;
+                memcpy(q-1, s, x);
+                *(q-2) = ':';
+                *(q+x) = '\0';
+                q += x;
+            }
+        }
+    }
+    return q;
+}
+
+void MacroInline( char *name, int count, char *args, char *data, int vargs )
 {
     int i;
     char *p, *q;
@@ -627,20 +655,20 @@ void MacroInline( char *name, int args, char *data, int vargs )
     if ( o && o->vector ) {
         macroargs[0] = '\0';
         p = macroargs;
-        for ( i = 1; i < args; i++ )
+        for ( i = 1; i < count; i++ )
             p += sprintf( p, "_%u, ", i );
         strcat( p, "this:=<" );
         strcat( p, GetResWName( o->vector, NULL ) );
         strcat( p, ">" );
     } else {
-        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < args; i++ )
+        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < count; i++ )
             p += sprintf( p, ", _%u", i );
     }
 
     if ( vargs )
         AddLineQueueX( "%s macro this:vararg", name );
     else {
-        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < args; i++ )
+        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < count; i++ )
             p += sprintf( p, ", _%u", i );
         AddLineQueueX( "%s macro %s", name, macroargs );
     }
@@ -763,7 +791,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         /* .operator + :type { ... } */
 
         sprintf( token, "%s_%s", ptr, name );
-        MacroInline( token, args, p, is_vararg );
+        MacroInline( token, args, tokenarray[i].tokpos, p, is_vararg );
         return rc;
 
     case T_DOT_COMDEF:

@@ -11,43 +11,70 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr PathGradientBrush()
+    local pGraphicsPath:ptr GraphicsPath
+    local pINT:ptr int_t
+    local pBOOL:ptr BOOL
+    local pBYTE:ptr BYTE
+    local pPointF:ptr PointF
+    local pPoint:ptr Point
+    local pColor:ptr Color
+    local argb:ARGB
+    local pREAL:ptr REAL
+    local pRectF:ptr RectF
+    local pRect:ptr Rect
+    local pMatrix:ptr Matrix
 
-    PathGradientBrush()
+   .new p:PathGradientBrush(pGraphicsPath)
+   .new p:PathGradientBrush(pPointF, 0)
+   .new p:PathGradientBrush(pPointF, 0, 0)
+   .new p:PathGradientBrush(pPoint, 0)
+   .new p:PathGradientBrush(pPoint, 0, 0)
+
     p.Release()
 
-    p.GetCenterColor(NULL)
-    p.SetCenterColor(NULL)
+    p.GetCenterColor(pColor)
+    p.SetCenterColor(argb)
     p.GetPointCount()
     p.GetSurroundColorCount()
-    p.GetSurroundColors(NULL, NULL)
-    p.SetSurroundColors(NULL, NULL)
-    p.GetGraphicsPath(NULL)
-    p.SetGraphicsPath(NULL)
-    p.GetCenterPoint(NULL)
-    p.GetCenterPointI(NULL)
-    p.SetCenterPoint(NULL)
-    p.SetCenterPointI(NULL)
-    p.GetRectangle(NULL)
-    p.GetRectangleI(NULL)
+    p.GetSurroundColors(pColor, pINT)
+    p.SetSurroundColors(pColor, pINT)
+    p.GetGraphicsPath(pGraphicsPath)
+    p.SetGraphicsPath(pGraphicsPath)
+
+    p.GetCenterPoint(pPointF)
+    p.GetCenterPoint(pPoint)
+    p.SetCenterPoint(pPointF)
+    p.SetCenterPoint(pPoint)
+
+    p.GetRectangle(pRectF)
+    p.GetRectangle(pRect)
+
     p.SetGammaCorrection(0)
     p.GetGammaCorrection()
     p.GetBlendCount()
-    p.GetBlend(NULL, NULL, 0)
-    p.SetBlend(NULL, NULL, 0)
+    p.GetBlend(pREAL, pREAL, 0)
+    p.SetBlend(pREAL, pREAL, 0)
     p.GetInterpolationColorCount()
-    p.SetInterpolationColors(NULL, NULL, 0)
-    p.GetInterpolationColors(NULL, 0.0, 0)
-    p.SetBlendBellShape(0.0, 0.0)
-    p.SetBlendTriangularShape(0.0, 0.0)
-    p.GetTransform(NULL)
-    p.SetTransform(NULL)
+    p.SetInterpolationColors(pColor, pREAL, 0)
+    p.GetInterpolationColors(pColor, pREAL, 0)
+
+    p.SetBlendBellShape(0.0)
+    p.SetBlendBellShape(0.0, 2.0)
+    p.SetBlendTriangularShape(0.0)
+    p.SetBlendTriangularShape(0.0, 2.0)
+
+    p.GetTransform(pMatrix)
+    p.SetTransform(pMatrix)
     p.ResetTransform()
-    p.MultiplyTransform(NULL, 0)
+    p.MultiplyTransform(pMatrix)
+    p.MultiplyTransform(pMatrix, 0)
+    p.TranslateTransform(0.0, 0.0)
     p.TranslateTransform(0.0, 0.0, 0)
     p.ScaleTransform(0.0, 0.0, 0)
+    p.ScaleTransform(0.0, 0.0)
+    p.RotateTransform(0.0)
     p.RotateTransform(0.0, 0)
-    p.GetFocusScales(NULL, NULL)
+    p.GetFocusScales(pREAL, pREAL)
     p.SetFocusScales(0.0, 0.0)
     p.GetWrapMode()
     p.SetWrapMode(0)

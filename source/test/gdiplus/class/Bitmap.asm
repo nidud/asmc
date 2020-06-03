@@ -5,26 +5,71 @@
 ;
 
 include windows.inc
+include ddraw.inc
 include gdiplus.inc
 
     .code
 
 main proc
 
-  .new p:ptr Bitmap()
+; Bitmap(WCHAR*, BOOL = FALSE)
+; Bitmap(IStream*, BOOL = FALSE)
+; Bitmap(INT, INT, INT, PixelFormat, BYTE*)
+; Bitmap(INT, INT, PixelFormat = PixelFormat32bppARGB)
+; Bitmap(INT, INT, Graphics*)
+; Bitmap(IDirectDrawSurface7*)
+; Bitmap(BITMAPINFO*, VOID*)
+; Bitmap(HBITMAP, HPALETTE)
+; Bitmap(HICON)
+; Bitmap(HINSTANCE, WCHAR*)
 
-    Bitmap()
+    local wc:ptr word
+    local pi:ptr Image
+    local IS:ptr IStream
+    local i:int_t
+    local ID:ptr IDirectDrawSurface7
+    local bi:ptr BITMAPINFO
+    local hb:HBITMAP
+    local hi:HICON
+    local hI:HINSTANCE
+    local hp:HPALETTE
+    local b:Bitmap
+    local rc:ptr Rect
+    local rf:ptr RectF
+    local pE:ptr EncoderParameters
+    local sc:ptr Size
+    local sf:ptr SizeF
+    local pEffect:ptr Effect
+    local pBitmap:ptr Bitmap
+
+    .new p:Bitmap(wc)
+    .new p:Bitmap(IS)
+    .new p:Bitmap(ID)
+    .new p:Bitmap(0,0,0,0,0)
+    .new p:Bitmap(i,0,0,0,0)
+    .new p:Bitmap(edx,r8d,r9d,0,0)
+    .new p:Bitmap(hb, hp)
+    .new p:Bitmap(hi)
+    .new p:Bitmap(hI, wc)
+
     p.Release()
 
     p.FromFile(NULL, FALSE)
     p.FromStream(NULL, FALSE)
-    p.Clone()
-    p.Save(NULL, NULL, NULL)
-    p.Save2(NULL, NULL, NULL)
-    p.SaveAdd(NULL)
-    p.SaveAdd2(NULL, NULL)
+
+    p.Clone(1, 2, 3, 4, 0)
+    p.Clone(1.0, 2.0, 3.0, 4.0, 0)
+    p.Clone(rc, 0)
+    p.Clone(rf, 0)
+
+    p.Save(wc, NULL, 0)
+    p.Save(IS, NULL, NULL)
+
+    p.SaveAdd(pi, pE)
+    p.SaveAdd(pE)
+
     p.GetType()
-    p.GetPhysicalDimension(NULL)
+    p.GetPhysicalDimension(sf)
     p.GetBounds(NULL, NULL)
     p.GetWidth()
     p.GetHeight()
@@ -62,26 +107,17 @@ endif
     p.SetStatus(0)
     p.GetLastStatus()
 
-    p.FromScan0(0, 0, 0, 0, NULL)
-    p.FromScan02(0, 0, 0)
-    p.FromGraphics(0, 0, NULL)
-    p.FromDirectDrawSurface7(NULL)
-    p.FromBITMAPINFO(NULL, NULL)
-    p.FromHBITMAP(NULL, NULL)
-    p.FromHICON(NULL)
-    p.FromResource(NULL, NULL)
-    p.CloneI(0, 0, 0, 0, 0)
-    p.Clone1(NULL, 0)
-    p.CloneF(0.0, 0.0, 0.0, 0.0, 0)
-    p.Clone2(NULL, 0)
     p.LockBits(NULL, 0, 0, NULL)
     p.UnlockBits(NULL)
     p.GetPixel(0, 0, NULL)
     p.SetPixel(0, 0, NULL)
     p.ConvertFormat(0, 0, 0, NULL, 0.0)
     p.InitializePalette(NULL, 0, 0, 0, NULL)
-    p.ApplyEffect(NULL, NULL)
-    p.ApplyEffect2(NULL, 0, NULL, NULL, NULL, NULL)
+
+
+    p.ApplyEffect(pEffect, NULL)
+    p.ApplyEffect(pBitmap, 0, NULL, NULL, NULL, NULL)
+
     p.GetHistogram(0, 0, NULL, NULL, NULL, NULL)
     p.GetHistogramSize(0, NULL)
     p.SetResolution(0.0, 0.0)

@@ -17,7 +17,7 @@ main proc
     ;Pen(Blue, 2.0)
     a.Release()
 
-    a.Clone()
+;    a.Clone()
     a.SetWidth(1.0)
     a.GetWidth()
     a.SetLineCap(0, 1, 2)

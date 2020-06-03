@@ -11,23 +11,29 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr GraphicsPathIterator(NULL)
+    local pGraphicsPath:ptr GraphicsPath
+    local pINT:ptr int_t
+    local pBOOL:ptr BOOL
+    local pBYTE:ptr BYTE
+    local pPointF:ptr PointF
 
-    GraphicsPathIterator(NULL)
+    .new p:GraphicsPathIterator(pGraphicsPath)
+
     p.Release()
-    p.SetNativeIterator(NULL)
-    p.SetStatus(NULL)
-    p.NextSubpath(NULL, NULL, NULL)
-    p.NextSubpath2(NULL, NULL)
-    p.NextPathType(NULL, NULL, NULL)
-    p.NextMarker(NULL, NULL, NULL)
-    p.NextMarker2(NULL)
+    p.SetNativeIterator(pGraphicsPath)
+    p.SetStatus(1)
+
+    p.NextSubpath(pINT, pINT, pBOOL)
+    p.NextSubpath(pGraphicsPath, pBOOL)
+    p.NextPathType(pBYTE, pINT, pINT)
+    p.NextMarker(pINT, pINT)
+    p.NextMarker(pGraphicsPath)
     p.GetCount()
     p.GetSubpathCount()
     p.HasCurve()
     p.Rewind()
-    p.Enumerate(NULL, NULL, 0)
-    p.CopyData(NULL, NULL, 0, 0)
+    p.Enumerate(pPointF, pBYTE, 0)
+    p.CopyData(pPointF, pBYTE, 0, 0)
     p.GetLastStatus()
     ret
 

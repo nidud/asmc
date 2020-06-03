@@ -7,24 +7,18 @@ include tchar.inc
 
     .code
 
-WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch message
+    .switch edx
 
     .case WM_CREATE
 
-        .new token:ULONG_PTR
-        .new StartupInfo:GdiplusStartupInput()
+       .new gdiplus:GdiPlus()
+       .new bitmap:Bitmap(L"image.png", FALSE)
 
-        GdiplusStartup(&token, &StartupInfo, 0)
-
-        .new bitmap:ptr Bitmap()
-
-        bitmap.FromFile("image.png", FALSE)
-        bitmap.GetHBITMAP(NULL, &hBitmap)
+        bitmap.GetHBITMAP(0, &hBitmap)
         bitmap.Release()
-
-        GdiplusShutdown(token)
+        gdiplus.Release()
         .endc
 
     .case WM_PAINT
@@ -34,7 +28,7 @@ WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .new hMemDC:HANDLE
         .new bm:BITMAP
 
-        mov hdc,BeginPaint(hWnd, &ps)
+        mov hdc,BeginPaint(rcx, &ps)
         mov hMemDC,CreateCompatibleDC(rax)
 
         SelectObject(rax, hBitmap)
@@ -48,9 +42,11 @@ WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         DeleteObject(hBitmap)
         PostQuitMessage(0)
         .endc
-
+    .case WM_CHAR
+        .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
+        .endc
     .default
-        .return DefWindowProc(hWnd, message, wParam, lParam)
+        .return DefWindowProc(rcx, edx, r8, r9)
     .endsw
     xor eax,eax
     ret
@@ -81,9 +77,8 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
-            ShowWindow(rax, SW_SHOWNORMAL)
+            ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)
-
             .while GetMessage(&msg,0,0,0)
                 TranslateMessage(&msg)
                 DispatchMessage(&msg)

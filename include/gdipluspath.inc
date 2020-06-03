@@ -6,63 +6,64 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .template GraphicsPath
 
-    nativePath ptr_t ?
-    lastResult Status ?
+    nativePath  ptr_t ?
+    lastResult  Status ?
+    scratch     int_t ?
 
-    GraphicsPath proc :vararg
-    GraphicsPath_GraphicsPath macro this, _1:=<FillModeAlternate>, _2, _3, _4:=<FillModeAlternate>
-        mov this.nativePath,NULL
-        if typeof(_1) eq 8
-            ifb <_2>
-                xchg rcx,rdx
-                GdipClonePath([rcx].GraphicsPath.nativePath, rdx)
-            elseif @InStr(1, <_1>, <addr >) and typeof(@SubStr(<_1>, 5)) eq sizeof(PointF)
-                GdipCreatePath2(_1, _2, _3, _4, rcx)
-            else
-                GdipCreatePath2I(_1, _2, _3, _4, rcx)
-            endif
+    .operator GraphicsPath :abs, :vararg {
+        ifnb <_1>
+            this.typeid(GraphicsPath, _1)(_1, _2)
         else
-            GdipCreatePath(_1, rcx)
+            this.GraphicsPath?i32(FillModeAlternate)
         endif
         mov this.lastResult,eax
-        lea rax,this
-        exitm<>
-        endm
-
-    .operator Release {
-        exitm<GdipDeletePath([this].GraphicsPath.nativePath)>
+        }
+    .operator GraphicsPath?i32 :abs {
+        GdipCreatePath(_1, this)
+        }
+    .operator GraphicsPath?pPointF :abs, :abs, :abs, :abs=<FillModeAlternate> {
+        GdipCreatePath2(_1, _2, _3, _4, this)
+        }
+    .operator GraphicsPath?pPoint :abs, :abs, :abs, :abs=<FillModeAlternate> {
+        GdipCreatePath2I(_1, _2, _3, _4, this)
         }
 
-    .operator SetNativePath :ptr GraphicsPath {
-        mov     [this].GraphicsPath.nativePath,_1
+    .operator Release :vararg {
+        GdipDeletePath(this.nativePath)
         }
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if eax != Ok
-            mov [this].GraphicsPath.lastResult,eax
-        .endif
+
+    .operator SetNativePath :ptr GraphicsPath, :vararg {
+        mov this.nativePath,rdx
+        }
+
+    .operator SetStatus :vararg {
+        ifnb <_1>
+            ifdif <_1>,<eax>
+                mov eax,_1
+            endif
+        endif
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
     ;; Reset the path object to empty (and fill mode to FillModeAlternate)
 
     .operator Reset :vararg {
-        .ifd GdipResetPath([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipResetPath(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator GetFillMode :vararg {
-        .new @fillmode:FillMode
-        .ifd GdipGetPathFillMode([rcx].GraphicsPath.nativePath, &@fillmode)
-            mov this.lastResult,eax
-        .endif
-        mov eax,@fillmode
+        mov this.scratch,FillModeAlternate
+        GdipGetPathFillMode(this.nativePath, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
     .operator SetFillMode :vararg {
-        .ifd GdipSetPathFillMode([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+        GdipSetPathFillMode(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
     .operator GetPathData :ptr PathData, :vararg {
@@ -126,388 +127,450 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .operator StartFigure :vararg {
-        .ifd GdipStartPathFigure([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipStartPathFigure(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator CloseFigure :vararg {
-        .ifd GdipClosePathFigure([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipClosePathFigure(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator CloseAllFigures :vararg {
-        .ifd GdipClosePathFigures([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipClosePathFigures(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator SetMarker :vararg {
-        .ifd GdipSetPathMarker([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipSetPathMarker(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator ClearMarkers :vararg {
-        .ifd GdipClearPathMarkers([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipClearPathMarkers(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator Reverse :vararg {
-        .ifd GdipReversePath([rcx].GraphicsPath.nativePath)
-            mov this.lastResult,eax
-        .endif
+        GdipReversePath(this.nativePath)
+        GdipSetStatus(this)
         }
 
     .operator GetLastPoint :vararg {
-        .ifd GdipGetPathLastPoint([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+        GdipGetPathLastPoint(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
-    .operator AddLine :vararg {
-        .ifd GdipAddPathLine([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddLine :abs, :vararg {
+        this.typeid(AddLine, _1)(_1, _2)
+        GdipSetStatus(this)
         }
-    .operator AddLines :vararg {
-        .ifd GdipAddPathLine2([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddLine?flt :vararg {
+        GdipAddPathLine(this.nativePath, _1)
+        }
+    .operator AddLine?i32 :vararg {
+        GdipAddPathLineI(this.nativePath, _1)
+        }
+    .operator AddLine?r128   :vararg { this.AddLine?flt(_1) }
+    .operator AddLine?real4  :vararg { this.AddLine?flt(_1) }
+    .operator AddLine?r32    :vararg { this.AddLine?i32(_1) }
+    .operator AddLine?sdword :vararg { this.AddLine?i32(_1) }
+
+    .operator AddLine?pPointF :ptr PointF, :ptr PointF, :vararg {
+        this.AddLine?flt([rdx].PointF.X, [rdx].PointF.Y, [r8].PointF.X, [r8].PointF.Y)
+        }
+    .operator AddLine?pPoint :ptr Point, :ptr Point, :vararg {
+        this.AddLine?i32([rdx].Point.X, [rdx].Point.Y, [r8].Point.X, [r8].Point.Y)
         }
 
-    .operator AddLineI :vararg {
-        .ifd GdipAddPathLineI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddLines :abs, :vararg {
+        this.typeid(AddLines, _1)(_1, _2)
         }
-    .operator AddLinesI :vararg {
-        .ifd GdipAddPathLine2I([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddLines?pPointF :vararg {
+        GdipAddPathLine2(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-
-    .operator AddArc :vararg {
-        .ifd GdipAddPathArc([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddArcI :vararg {
-        .ifd GdipAddPathArcI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddLines?pPoint :vararg {
+        GdipAddPathLine2I(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
-    .operator AddBezier :vararg {
-        .ifd GdipAddPathBezier([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddArc :abs, :vararg {
+        this.typeid(AddArc, _1)(_1, _2)
         }
-    .operator AddBeziers :vararg {
-        .ifd GdipAddPathBeziers([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddArc?flt :vararg {
+        GdipAddPathArc(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-    .operator AddBezierI :vararg {
-        .ifd GdipAddPathBezierI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddArc?i32 :vararg {
+        GdipAddPathArcI(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-    .operator AddBeziersI :vararg {
-        .ifd GdipAddPathBeziersI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddArc?r128   :vararg { this.AddArc?flt(_1) }
+    .operator AddArc?real4  :vararg { this.AddArc?flt(_1) }
+    .operator AddArc?r32    :vararg { this.AddArc?i32(_1) }
+    .operator AddArc?sdword :vararg { this.AddArc?i32(_1) }
+
+    .operator AddArc?pRectF :ptr RectF, :vararg {
+        GdipAddPathArc(this.nativePath, \
+            [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
+        GdipSetStatus(this)
+        }
+    .operator AddArc?pRect :ptr Rect, :vararg {
+        GdipAddPathArcI(this.nativePath, \
+            [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
+        GdipSetStatus(this)
         }
 
-    .operator AddCurve :vararg {
-        .ifd GdipAddPathCurve([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBezier :abs, :vararg {
+        this.typeid(AddBezier, _1)(_1, _2)
         }
-    .operator AddCurve2 :vararg {
-        .ifd GdipAddPathCurve2([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBezier?r128   :vararg { this.AddBezier?flt(_1) }
+    .operator AddBezier?real4  :vararg { this.AddBezier?flt(_1) }
+    .operator AddBezier?r32    :vararg { this.AddBezier?i32(_1) }
+    .operator AddBezier?sdword :vararg { this.AddBezier?i32(_1) }
+
+    .operator AddBezier?flt :vararg {
+        GdipAddPathBezier(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-    .operator AddCurve3 :vararg {
-        .ifd GdipAddPathCurve3([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBezier?i32 :vararg {
+        GdipAddPathBezierI(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-    .operator AddCurveI :vararg {
-        .ifd GdipAddPathCurveI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBezier?pPointF :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
+        mov r10,_4
+        GdipAddPathBezier(this.nativePath, [rdx].PointF.X, [rdx].PointF.Y,\
+            [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y, [r10].PointF.X, [r10].PointF.Y)>
+        GdipSetStatus(this)
         }
-    .operator AddCurve2I :vararg {
-        .ifd GdipAddPathCurve2I([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddCurve3I :vararg {
-        .ifd GdipAddPathCurve3I([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBezier?pPoint :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
+        mov r10,_4
+        GdipAddPathBezierI(this.nativePath, [rdx].Point.X, [rdx].Point.Y,\
+            [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y, [r10].Point.X, [r10].Point.Y)>
+        GdipSetStatus(this)
         }
 
-    .operator AddClosedCurve :vararg {
-        .ifd GdipAddPathClosedCurve([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBeziers :abs, :vararg {
+        this.typeid(AddBeziers, _1)(_1, _2)
         }
-    .operator AddClosedCurve2 :vararg {
-        .ifd GdipAddPathClosedCurve2([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBeziers?pPointF :vararg {
+        GdipAddPathBeziers(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-    .operator AddClosedCurveI :vararg {
-        .ifd GdipAddPathClosedCurveI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddClosedCurve2I :vararg {
-        .ifd GdipAddPathClosedCurve2I([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddBeziers?pPoint :vararg {
+        GdipAddPathBeziersI(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
-    .operator AddRectangle :ptr RectF, :vararg {
-        .ifd GdipAddPathRectangle([rcx].GraphicsPath.nativePath,\
+    .operator AddCurve :abs, :vararg {
+        this.typeid(AddCurve, _1)(_1, _2)
+        }
+    .operator AddCurve?pPointF :abs, :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            GdipAddPathCurve(this.nativePath, _1, _2)
+        elseifb <_4>
+            GdipAddPathCurve2(this.nativePath, _1, _2, _3)
+        else
+            GdipAddPathCurve3(this.nativePath, _1, _2, _3, _4, _5)
+        endif
+        GdipSetStatus(this)
+        }
+    .operator AddCurve?pPoint :abs, :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            GdipAddPathCurveI(this.nativePath, _1, _2)
+        elseifb <_4>
+            GdipAddPathCurve2I(this.nativePath, _1, _2, _3)
+        else
+            GdipAddPathCurve3I(this.nativePath, _1, _2, _3, _4, _5)
+        endif
+        GdipSetStatus(this)
+        }
+
+    .operator AddClosedCurve :abs, :vararg {
+        this.typeid(AddClosedCurve, _1)(_1, _2)
+        }
+    .operator AddClosedCurve?pPointF :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            GdipAddPathClosedCurve(this.nativePath, _1, _2)
+        else
+            GdipAddPathClosedCurve2(this.nativePath, _1, _2, _3)
+        endif
+        GdipSetStatus(this)
+        }
+    .operator AddClosedCurve?pPoint :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            GdipAddPathClosedCurveI(this.nativePath, _1, _2)
+        else
+            GdipAddPathClosedCurve2I(this.nativePath, _1, _2, _3)
+        endif
+        GdipSetStatus(this)
+        }
+
+    .operator AddRectangle :abs, :vararg {
+        this.typeid(AddRectangle, _1)(_1, _2)
+        }
+    .operator AddRectangle?pRectF :ptr RectF, :vararg {
+        GdipAddPathRectangle(this.nativePath,\
                 [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height)
-            mov this.lastResult,eax
-        .endif
+        GdipSetStatus(this)
         }
-    .operator AddRectangles :vararg {
-        .ifd GdipAddPathRectangles([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddRectangleI :ptr Rect, :vararg {
-        .ifd GdipAddPathRectangleI([rcx].GraphicsPath.nativePath,\
+    .operator AddRectangle?pRect :ptr Rect, :vararg {
+        GdipAddPathRectangleI(this.nativePath,\
                 [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddRectanglesI :vararg {
-        .ifd GdipAddPathRectanglesI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+        GdipSetStatus(this)
         }
 
-    .operator AddEllipse :vararg {
-        .ifd GdipAddPathEllipse([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddRectangles :abs, :vararg {
+        this.typeid(AddRectangles, _1)(_1, _2)
         }
-    .operator AddEllipseI :vararg {
-        .ifd GdipAddPathEllipseI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddRectangles?pRectF :vararg {
+        GdipAddPathRectangles(this.nativePath, _1)
+        GdipSetStatus(this)
         }
-
-    .operator AddPie :vararg {
-        .ifd GdipAddPathPie([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
-        }
-    .operator AddPieI :vararg {
-        .ifd GdipAddPathPieI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddRectangles?pRect :vararg {
+        GdipAddPathRectanglesI(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
-    .operator AddPolygon :vararg {
-        .ifd GdipAddPathPolygon([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddEllipse :abs, :vararg {
+        this.typeid(AddEllipse, _1)(_1, _2)
         }
-    .operator AddPolygonI :vararg {
-        .ifd GdipAddPathPolygonI([rcx].GraphicsPath.nativePath, _1)
-            mov this.lastResult,eax
-        .endif
+    .operator AddEllipse?flt :vararg {
+        GdipAddPathEllipse(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .operator AddEllipse?i32 :vararg {
+        GdipAddPathEllipseI(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .operator AddEllipse?r128   :vararg { this.AddEllipse?flt(_1) }
+    .operator AddEllipse?real4  :vararg { this.AddEllipse?flt(_1) }
+    .operator AddEllipse?r32    :vararg { this.AddEllipse?i32(_1) }
+    .operator AddEllipse?sdword :vararg { this.AddEllipse?i32(_1) }
+
+    .operator AddPie :abs, :vararg {
+        this.typeid(AddPie, _1)(_1, _2)
+        }
+    .operator AddPie?flt :vararg {
+        GdipAddPathPie(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .operator AddPie?i32 :vararg {
+        GdipAddPathPieI(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .operator AddPie?r128   :vararg { this.AddPie?flt(_1) }
+    .operator AddPie?real4  :vararg { this.AddPie?flt(_1) }
+    .operator AddPie?r32    :vararg { this.AddPie?i32(_1) }
+    .operator AddPie?sdword :vararg { this.AddPie?i32(_1) }
+
+    .operator AddPolygon :abs, :vararg {
+        this.typeid(AddPolygon, _1)(_1, _2)
+        }
+    .operator AddPolygon?pPointF :vararg {
+        GdipAddPathPolygon(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .operator AddPolygon?pPoint :vararg {
+        GdipAddPathPolygonI(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
     .operator AddPath :ptr GraphicsPath, :vararg {
-        .if rdx
-            mov rdx,[rdx].GraphicsPath.nativePath
-        .endif
-        .ifd GdipAddPathPath([rcx].GraphicsPath.nativePath, rdx, _2)
-            mov this.lastResult,eax
-        .endif
+        test    rdx,rdx
+        cmovnz  rdx,[rdx].GraphicsPath.nativePath
+        GdipAddPathPath(this.nativePath, rdx, _2)
+        GdipSetStatus(this)
         }
 
-    .operator AddString :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr PointF, :ptr StringFormat {
-
-        .new rect:RectF
-        .new @graphicspath:ptr GraphicsPath
-
-        mov r10,_6
-        mov rect.X,[r10].PointF.X
-        mov rect.Y,[r10].PointF.Y
-        mov rect.X,0.0
-        mov rect.X,0.0
-        .if _3
-            mov _3,[_3].FontFamily.nativeFamily
-        .endif
-        mov r10,_7
-        .if r10
-            mov r10,[r10].StringFormat.nativeFormat
-        .endif
-        mov @graphicspath,this
-        .ifd GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
-            mov this,@graphicspath
-            mov [this].GraphicsPath.lastResult,eax
-        .endif
+    .operator AddString :abs, :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(AddString, _6)(_1, _2, _3, _4, _5, _6, _7, _8)
         }
 
-    .operator AddString2 :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr RectF, :ptr StringFormat {
-       .new @graphicspath:ptr GraphicsPath
-        mov @graphicspath,this
-        .if _3
-            mov _3,[_3].FontFamily.nativeFamily
-        .endif
-        mov rax,_7
-        .if rax
-            mov rax,[rax].StringFormat.nativeFormat
-        .endif
-        .ifd GdipAddPathString([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, rax)
-            mov this,@graphicspath
-            mov [this].GraphicsPath.lastResult,eax
-        .endif
+    .operator AddString?pPointF :abs, :abs,\
+            :ptr FontFamily, :abs, :abs, :ptr PointF, :ptr StringFormat, :vararg {
+
+        .new    rect:RectF
+
+        mov     r10,[rsp+6*8]
+        mov     rect.X,[r10].PointF.X
+        mov     rect.Y,[r10].PointF.Y
+        mov     rect.X,0.0
+        mov     rect.X,0.0
+        test    rdx,rdx
+        cmovnz  rdx,[rdx].FontFamily.nativeFamily
+        mov     r10,[rsp+7*8]
+        test    r10,r10
+        cmovnz  r10,[r10].StringFormat.nativeFormat
+
+        GdipAddPathString(this.nativePath, rdx, _2, _3, _4, _5, &rect, r10)
+        GdipSetStatus(this)
         }
 
-    .operator AddStringI :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr Point, :ptr StringFormat {
+    .operator AddString?pRectF :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
 
-       .new rect:Rect
-       .new @graphicspath:ptr GraphicsPath
-        mov @graphicspath,this
+        test    r9,r9
+        cmovnz  r9,[r9].FontFamily.nativeFamily
+        mov     rax,[rsp+7*8]
+        test    rax,rax
+        cmovnz  rax,[rax].StringFormat.nativeFormat
 
-        mov r10,_6
-        mov rect.X,[r10].PointF.X
-        mov rect.Y,[r10].PointF.Y
-        mov rect.X,0.0
-        mov rect.X,0.0
-        .if _3
-            mov _3,[_3].FontFamily.nativeFamily
-        .endif
-        mov r10,_7
-        .if r10
-            mov r10,[r10].StringFormat.nativeFormat
-        .endif
-        mov @graphicspath,this
-        .ifd GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, &rect, r10)
-            mov this,@graphicspath
-            mov [this].GraphicsPath.lastResult,eax
-        .endif
+        GdipAddPathString(this.nativePath, _1, _2, r9, _4, _5, _6, rax)
+        GdipSetStatus(this)
         }
 
-    .operator AddString2I :ptr WCHAR, :SINT, :ptr FontFamily, :SINT, :REAL, :ptr Rect, :ptr StringFormat {
-       .new @graphicspath:ptr GraphicsPath
-        mov @graphicspath,this
-        .if _3
-            mov _3,[_3].FontFamily.nativeFamily
-        .endif
-        mov r10,_7
-        .if r10
-            mov r10,[r10].StringFormat.nativeFormat
-        .endif
-        .ifd GdipAddPathStringI([this].GraphicsPath.nativePath, _1, _2, _3, _4, _5, _6, r10)
-            mov this,@graphicspath
-            mov [this].GraphicsPath.lastResult,eax
-        .endif
+    .operator AddString?pPoint :abs, :abs, :ptr FontFamily, :abs, :abs, :ptr Point, :ptr StringFormat, :vararg {
+
+       .new     rect:Rect
+
+        mov     r10,_6
+        mov     rect.X,[r10].PointF.X
+        mov     rect.Y,[r10].PointF.Y
+        mov     rect.X,0.0
+        mov     rect.X,0.0
+        test    r9,r9
+        cmovnz  r9,[r9].FontFamily.nativeFamily
+        mov     r10,[rsp+7*8]
+        test    r10,r10
+        cmovnz  r10,[r10].StringFormat.nativeFormat
+
+        GdipAddPathStringI(this.nativePath, _1, _2, r9, _4, _5, &rect, r10)
+        GdipSetStatus(this)
+        }
+
+    .operator AddString?pRect :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
+
+        test    r9,r9
+        cmovnz  r9,[r9].FontFamily.nativeFamily
+        mov     r10,[rsp+7*8]
+        test    r10,r10
+        cmovnz  r10,[r10].StringFormat.nativeFormat
+
+        GdipAddPathStringI(this.nativePath, _1, _2, r9, _4, _5, _6, r10)
+        GdipSetStatus(this)
         }
 
     .operator Transform :ptr Matrix, :vararg {
         mov eax,Ok
         .if rdx
-            .ifd GdipTransformPath([rcx].GraphicsPath.nativePath, [rdx].Matrix.nativeMatrix)
-                mov this.lastResult,eax
-            .endif
+            GdipTransformPath(this.nativePath, [rdx].Matrix.nativeMatrix)
+            GdipSetStatus(this)
         .endif
         }
 
     ;; This is not always the tightest bounds.
 
-    GetBounds2 proc :ptr RectF, :ptr Matrix, :ptr Pen
-    GetBounds1 proc :ptr Rect, :ptr Matrix, :ptr Pen
+    .operator GetBounds :abs, :vararg {
+        this.typeid(GetBounds, _1)(_1, _2)
+        }
+    .operator GetBounds?pRectF :ptr RectF, :ptr Matrix, :ptr Pen {
+        }
+    .operator GetBounds?pRect :ptr Rect, :ptr Matrix, :ptr Pen {
+        }
 
     ;; Once flattened, the resultant path is made of line segments and
     ;; the original path information is lost.  When matrix is NULL the
     ;; identity matrix is assumed.
 
     .operator Flatten :ptr Matrix, :vararg {
-        .if rdx
-            mov rdx,[rdx].Matrix.nativeMatrix
-        .endif
-        .if GdipFlattenPath([rcx].GraphicsPath.nativePath, rdx, _2)
-            mov this.lastResult,eax
-        .endif
+        test    rdx,rdx
+        cmovnz  rdx,[rdx].Matrix.nativeMatrix
+        GdipFlattenPath(this.nativePath, rdx, _2)
+        GdipSetStatus(this)
         }
 
     .operator Widen :ptr Pen, :ptr Matrix, :vararg {
-        .if r8
-            mov r8,[r8].Matrix.nativeMatrix
-        .endif
-        .ifd GdipWidenPath([rcx].GraphicsPath.nativePath, [rdx].Pen.nativePen, r8, _3)
-            mov this.lastResult,eax
-        .endif
+        test    r8,r8
+        cmovnz  r8,[r8].Matrix.nativeMatrix
+        GdipWidenPath(this.nativePath, [rdx].Pen.nativePen, r8, _3)
+        GdipSetStatus(this)
         }
 
-    .operator Outline :ptr Matrix, :REAL {
-        .if _1
-            mov _1,[_1].Matrix.nativeMatrix
-        .endif
-        GdipWindingModeOutline([this].GraphicsPath.nativePath, _1, _2)
+    .operator Outline :ptr Matrix, :vararg {
+        test    rdx,rdx
+        cmovnz  rdx,[rdx].Matrix.nativeMatrix
+        GdipWindingModeOutline(this.nativePath, rdx, _2)
+        GdipSetStatus(this)
         }
 
     ;; Once this is called, the resultant path is made of line segments and
     ;; the original path information is lost.  When matrix is NULL, the
     ;; identity matrix is assumed.
 
-    .operator Warp :ptr PointF, :SINT, :ptr RectF, :ptr Matrix, :WarpMode, :REAL {
-        mov r10,_4
-        .if r10
-            mov r10,[r10].Matrix.nativeMatrix
-        .endif
-        GdipWarpPath([this].GraphicsPath.nativePath, r10, _1, _2, [_3].RectF.X, [_3].RectF.Y, [_3].RectF.Width, [_3].RectF.Height, _5, _6)
+    .operator Warp :abs, :abs, :ptr RectF, :abs=<0>, :abs=<WarpModePerspective>, :vararg {
+
+        mov     rcx,_4
+        test    rcx,rcx
+        cmovnz  rcx,[rcx].Matrix.nativeMatrix
+        GdipWarpPath( this.nativePath, rcx, _1, _2,\
+                      [r9].RectF.X,\
+                      [r9].RectF.Y,\
+                      [r9].RectF.Width,\
+                      [r9].RectF.Height,\
+                      _5, _6 )
+        GdipSetStatus(this)
         }
 
-    .operator GetPointCount {
-
-        .new count:SINT
-
-        mov count,0
-        GdipGetPointCount([this].GraphicsPath.nativePath, &count)
-        mov eax,count
+    .operator GetPointCount :vararg {
+        mov this.scratch,0
+        GdipGetPointCount(this.nativePath, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator GetPathTypes :ptr BYTE, :SINT {
-        GdipGetPathTypes([this].GraphicsPath.nativePath, _1, _2)
+    .operator GetPathTypes :vararg {
+        GdipGetPathTypes(this.nativePath, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetPathPoints :ptr Point, :SINT {
-        GdipGetPathPoints([this].GraphicsPath.nativePath, _1, _2)
+    .operator GetPathPoints :abs, :vararg {
+        this.typeid(GetPathPoints, _1)(_1, _2)
+        GdipSetStatus(this)
         }
-    .operator GetPathPointsI :ptr Point, :SINT {
-        GdipGetPathPointsI([this].GraphicsPath.nativePath, _1, _2)
+    .operator GetPathPoints?pPointF :abs, :vararg {
+        GdipGetPathPoints(this.nativePath, _1, _2)
+        }
+    .operator GetPathPoints?pPoint :abs, :vararg {
+        GdipGetPathPointsI(this.nativePath, _1, _2)
         }
 
-    .operator GetLastStatus {
-        mov eax,[this].GraphicsPath.lastResult
-        mov [this].GraphicsPath.lastResult,Ok
+    .operator GetLastStatus :vararg {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
         }
 
-    IsVisible1 proc :SINT, :SINT, :ptr Graphics
-    IsVisible2 proc :REAL, :REAL, :ptr Graphics
-    IsVisible3 proc :ptr Point, :ptr Graphics
-    IsVisible4 proc :ptr PointF, :ptr Graphics
+    .operator IsVisible :abs, :vararg {
+        this.typeid(IsVisible, _1)(_1, _2)
+        }
+    .operator IsVisible?i32 :vararg {
+        mov eax,NotImplemented
+        }
+    .operator IsVisible?flt :vararg {
+        mov eax,NotImplemented
+        }
+    .operator IsVisible?pPoint :ptr Point, :vararg {
+        this.IsVisible([rdx].Point.X, [rdx].Point.Y, _2)
+        }
+    .operator IsVisible?pPointF :ptr PointF, :vararg {
+        this.IsVisible([rdx].PointF.X, [rdx].PointF.Y, _2)
+        }
 
-    IsOutlineVisible1 proc :SINT, :SINT, :ptr Pen, :ptr Graphics
-    IsOutlineVisible2 proc :REAL, :REAL, :ptr Pen, :ptr Graphics
-    IsOutlineVisible3 proc :ptr PointF, :ptr Pen, :ptr Graphics
-    IsOutlineVisible4 proc :ptr Point, :ptr Pen, :ptr Graphics
+    .operator IsOutlineVisible :abs, :vararg {
+        this.typeid(IsOutlineVisible, _1)(_1, _2)
+        }
+    .operator IsOutlineVisible?i32 :vararg {
+        mov eax,NotImplemented
+        }
+    .operator IsOutlineVisible?flt :vararg {
+        mov eax,NotImplemented
+        }
+    .operator IsOutlineVisible3 :ptr PointF, :vararg {
+        this.IsOutlineVisible4([rdx].Point.X, [rdx].Point.Y, _2)
+        }
+    .operator IsOutlineVisible4 :ptr Point, :vararg {
+        this.IsOutlineVisible4([rdx].Point.X, [rdx].Point.Y, _2)
+        }
     .ends
     GpPath typedef GraphicsPath
 
@@ -519,202 +582,113 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     nativeIterator  ptr_t ?
     lastResult      Status ?
-    memState        Status ?
+    scratch         int_t ?
 
-    .operator GraphicsPathIterator :ptr GraphicsPath {
-
-        .new graphicspathiterator:ptr GraphicsPathIterator
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                mov graphicspathiterator,_1
-                .break .if !GdipAlloc(GraphicsPathIterator)
-                mov _1,graphicspathiterator
-                mov [rax].GraphicsPathIterator.memState,Ok
-            .else
-                mov [rax].GraphicsPathIterator.memState,NotImplemented
-            .endif
-            mov graphicspathiterator,rax
-            .if _1
-                mov _1,[_1].GraphicsPath.nativePath
-            .endif
-            GdipCreatePathIter(&[rax].GraphicsPathIterator.nativeIterator, _1)
-            mov this,graphicspathiterator
-            mov [this].GraphicsPathIterator.lastResult,eax
-            mov rax,this
-        .until 1
-        retm<rax>
-        }
-
-    .operator Release {
-
-        mov graphicspathiterator,this
-
-        GdipDeletePathIter([this].GraphicsPathIterator.nativeIterator)
-
-        mov this,graphicspathiterator
-        .if [this].GraphicsPathIterator.memState != NotImplemented
-
-            GdipFree(this)
+    .operator GraphicsPathIterator :ptr GraphicsPath, :vararg {
+        .if rdx
+            mov rdx,[rdx].GraphicsPath.nativePath
         .endif
-        exitm<>
+        GdipCreatePathIter(addr this.nativeIterator, rdx)
+        this.SetStatus()
+        }
+
+    .operator Release :vararg {
+        GdipDeletePathIter(this.nativeIterator)
+        }
+
+    .operator SetNativeIterator :ptr GraphicsPath, :vararg {
+        mov     this.nativeIterator,_1
+        }
+    .operator SetStatus :abs, :vararg {
+        ifnb <_1>
+        ifdif <_1>,<eax>
+            mov eax,_1
+        endif
+        endif
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
 
-    .operator SetNativeIterator :ptr GraphicsPath {
-        mov     [this].GraphicsPathIterator.nativeIterator,_1
-        exitm   <>
+    .operator NextSubpath :abs, :vararg {
+        this.typeid(NextSubpath, _1)(_1, _2)
         }
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if eax != Ok
-            mov [this].GraphicsPathIterator.lastResult,eax
+    .operator NextSubpath?psdword :vararg {
+        GdipPathIterNextSubpath(this.nativeIterator, addr this.scratch, _1)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator NextSubpath?pGraphicsPath :ptr GraphicsPath, :vararg {
+        .if rdx
+            mov rdx,[rdx].GraphicsPath.nativePath
         .endif
-        retm<eax>
+        GdipPathIterNextSubpathPath(this.nativeIterator, addr this.scratch, rdx, _2)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-
-    .operator NextSubpath :ptr SINT, :ptr SINT, :ptr BOOL {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterNextSubpath([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2, _3)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator NextPathType :vararg {
+        GdipPathIterNextPathType(this.nativeIterator, addr this.scratch, _1)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-
-    .operator NextSubpath2 :ptr GraphicsPath, :ptr BOOL {
-
-        .new resultCount:SINT
-
-        .if _1
-            mov _1,[_1].GraphicsPath.nativePath
+    .operator NextMarker :abs, :vararg {
+        this.typeid(NextMarker, _1)(_1, _2)
+        }
+    .operator NextMarker?psdword :vararg {
+        GdipPathIterNextMarker(this.nativeIterator, addr this.scratch, _1)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator NextMarker?pGraphicsPath :ptr GraphicsPath, :vararg {
+        .if rdx
+            mov rdx,[rdx].GraphicsPath.nativePath
         .endif
-        mov graphicspathiterator,this
-        GdipPathIterNextSubpathPath([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+        GdipPathIterNextMarkerPath(this.nativeIterator, addr this.scratch, rdx, _2)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator NextPathType :ptr, :ptr SINT, :ptr SINT {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterNextPathType([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2, _3)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator GetCount :vararg {
+        GdipPathIterGetCount(this.nativeIterator, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator NextMarker :ptr SINT, :ptr SINT, :ptr SINT {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterNextMarker([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator GetSubpathCount :vararg {
+        GdipPathIterGetSubpathCount(this.nativeIterator, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-
-    .operator NextMarker2 :ptr GraphicsPath {
-
-        .new resultCount:SINT
-
-        .if _1
-            mov _1,[_1].GraphicsPath.nativePath
-        .endif
-        mov graphicspathiterator,this
-        GdipPathIterNextMarkerPath([this].GraphicsPathIterator.nativeIterator, &resultCount, _1)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator HasCurve :vararg {
+        GdipPathIterHasCurve(this.nativeIterator, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator GetCount {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterGetCount([this].GraphicsPathIterator.nativeIterator, &resultCount)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator Rewind :vararg {
+        GdipPathIterRewind(this.nativeIterator)
+        this.SetStatus()
         }
 
-    .operator GetSubpathCount {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterGetSubpathCount([this].GraphicsPathIterator.nativeIterator, &resultCount)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
+    .operator Enumerate :vararg {
+        GdipPathIterEnumerate(this.nativeIterator, addr this.scratch, _1)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator HasCurve {
-
-        .new hasCurve:BOOL
-
-        mov graphicspathiterator,this
-        GdipPathIterHasCurve([this].GraphicsPathIterator.nativeIterator, &hasCurve)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,hasCurve
-        retm <eax>
+    .operator CopyData :vararg {
+        GdipPathIterCopyData(this.nativeIterator, addr this.scratch, _1)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator Rewind {
-        mov graphicspathiterator,this
-        GdipPathIterRewind([this].GraphicsPathIterator.nativeIterator)
-        exitm<graphicspathiterator.SetStatus(eax)>
-        }
-
-    .operator Enumerate :ptr PointF, :ptr BYTE, :SINT {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterEnumerate([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2, _3)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
-        }
-
-    .operator CopyData :ptr PointF, :ptr BYTE, :SINT, :SINT {
-
-        .new resultCount:SINT
-
-        mov graphicspathiterator,this
-        GdipPathIterCopyData([this].GraphicsPathIterator.nativeIterator, &resultCount, _1, _2, _3, _4)
-        graphicspathiterator.SetStatus(eax)
-
-        mov eax,resultCount
-        retm <eax>
-        }
-
-    .operator GetLastStatus {
-
-        mov eax,[this].GraphicsPath.lastResult
-        mov [this].GraphicsPath.lastResult,Ok
-
-        retm <eax>
+    .operator GetLastStatus :vararg {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
         }
 
     .ends
@@ -723,219 +697,172 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ;;--------------------------------------------------------------------------
 ;; Path Gradient Brush
+;;
+;; PathGradientBrush(PointF*, INT, WrapMode = WrapModeClamp)
+;; PathGradientBrush(Point*, INT, WrapMode = WrapModeClamp)
+;; PathGradientBrush(GraphicsPath*)
+;;
 ;;--------------------------------------------------------------------------
 
-.template PathGradientBrush : public Brush
+.template PathGradientBrush
+
+    nativeBrush ptr_t ?
+    lastResult  Status ?
+    scratch     int_t ?
 
     GpPathGradient typedef PathGradientBrush
 
     BRUSH_OPERATOR(PathGradientBrush)
 
-    .operator PathGradientBrush :ptr, :abs, :abs, :abs {
-
-        .new brush:ptr PathGradientBrush
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                mov brush,_1
-                .break .if !GdipAlloc(Brush)
-                mov [rax].Brush.memState,Ok
-                mov _1,brush
-            .else
-                mov [rax].Brush.memState,NotImplemented
-            .endif
-            mov [rax].Brush.nativeBrush,NULL
-            mov brush,rax
-            mov rcx,_1
-            ;ifnb <_2>
-            ;    GdipCreatePathGradient&_4&(_1, _2, _3, rax)
-            ;else
-                GdipCreatePathGradientFromPath([rcx].GraphicsPath.nativePath, &[rax].Brush.nativeBrush)
-            ;endif
-            brush.SetStatus(eax)
-            mov rax,this
-        .until 1
-        retm<rax>
+    .operator PathGradientBrush :abs, :vararg {
+        this.typeid(PathGradientBrush, _1)(_1, _2)
+        mov this.lastResult,eax
         }
 
-    .operator GetCenterColor :ptr Color {
-        mov brush,this
-        .if _1 == NULL
-            brush.SetStatus(InvalidParameter)
-        .else
-            GdipGetPathGradientCenterColor([this].Brush.nativeBrush, &[_1].Color.Argb)
-            brush.SetStatus(eax)
+    .operator PathGradientBrush?pPointF :abs, :abs, :abs=<WrapModeClamp>, :vararg {
+        GdipCreatePathGradient(_1, _2, _3, addr this.nativeBrush)
+        }
+    .operator PathGradientBrush?pPoint :abs, :abs, :abs=<WrapModeClamp>, :vararg {
+        GdipCreatePathGradientI(_1, _2, _3, addr this.nativeBrush)
+        }
+    .operator PathGradientBrush?pGraphicsPath :ptr GraphicsPath, :vararg {
+        mov rcx,rdx
+        GdipCreatePathGradientFromPath([rcx].GraphicsPath.nativePath, addr this.nativeBrush)
+        }
+
+    .operator GetCenterColor :ptr Color, :vararg {
+        mov eax,InvalidParameter
+        .if rdx
+            GdipGetPathGradientCenterColor(this.nativeBrush, rdx)
         .endif
-        retm <eax>
+        GdipSetStatus(this)
         }
 
-    .operator SetCenterColor :ARGB {
-        mov brush,this
-        GdipSetPathGradientCenterColor([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator SetCenterColor :vararg {
+        GdipSetPathGradientCenterColor(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetPointCount {
-
-        .new count:SINT
-
-        mov brush,this
-        GdipGetPathGradientPointCount([this].Brush.nativeBrush, &count)
-        brush.SetStatus(eax)
-
-        mov eax,count
-        retm <eax>
+    .operator GetPointCount :vararg {
+        GdipGetPathGradientPointCount(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator GetSurroundColorCount {
-
-        .new count:SINT
-
-        mov brush,this
-        GdipGetPathGradientSurroundColorCount([this].Brush.nativeBrush, &count)
-        brush.SetStatus(eax)
-        mov eax,count
-        retm <eax>
+    .operator GetSurroundColorCount :vararg {
+        GdipGetPathGradientSurroundColorCount(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator GetSurroundColors :ptr ARGB, :ptr SINT {
-        mov brush,this
-        .if (_1 == NULL || _2 == NULL)
-            mov eax,InvalidParameter
-        .else
-            GdipGetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, _1, _2)
+    .operator GetSurroundColors :ptr ARGB, :ptr SINT, :vararg {
+        mov eax,InvalidParameter
+        .if rdx && r8
+            GdipGetPathGradientSurroundColorsWithCount(this.nativeBrush, rdx, r8)
         .endif
-        exitm<brush.SetStatus(eax)>
+        GdipSetStatus(this)
         }
 
-    .operator SetSurroundColors :ptr ARGB, :ptr SINT {
-        mov brush,this
-        .if (_1 == NULL || _2 == NULL)
-            mov eax,InvalidParameter
-        .else
-            GdipSetPathGradientSurroundColorsWithCount([this].Brush.nativeBrush, _1, _2)
+    .operator SetSurroundColors :ptr ARGB, :ptr SINT, :vararg {
+        mov eax,InvalidParameter
+        .if rdx && r8
+            GdipSetPathGradientSurroundColorsWithCount(this.nativeBrush, rdx, r8)
         .endif
-        exitm<brush.SetStatus(eax)>
+        GdipSetStatus(this)
         }
 
-    .operator GetGraphicsPath :ptr GraphicsPath {
-        mov brush,this
-        .if _1 == NULL
-            mov eax,InvalidParameter
-        .else
-            GdipGetPathGradientPath([this].Brush.nativeBrush, [_1].GraphicsPath.nativePath)
+    .operator GetGraphicsPath :ptr GraphicsPath, :vararg {
+        mov eax,InvalidParameter
+        .if rdx
+            GdipGetPathGradientPath(this.nativeBrush, [rdx].GraphicsPath.nativePath)
         .endif
-        exitm<brush.SetStatus(eax)>
+        GdipSetStatus(this)
         }
 
-    .operator SetGraphicsPath :ptr GraphicsPath {
-        mov brush,this
-        .if _1 == NULL
-            mov eax,InvalidParameter
-        .else
-            GdipSetPathGradientPath([this].Brush.nativeBrush, [_1].GraphicsPath.nativePath)
+    .operator SetGraphicsPath :ptr GraphicsPath, :vararg {
+        mov eax,InvalidParameter
+        .if rdx
+            GdipSetPathGradientPath(this.nativeBrush, [rdx].GraphicsPath.nativePath)
         .endif
-        exitm<brush.SetStatus(eax)>
+        GdipSetStatus(this)
         }
 
-    .operator GetCenterPoint :ptr PointF {
-        mov brush,this
-        GdipGetPathGradientCenterPoint([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator GetCenterPoint :abs, :vararg {
+        this.typeid(GetCenterPoint, _1)(_1, _2)
+        GdipSetStatus(this)
+        }
+    .operator GetCenterPoint?pPointF :vararg {
+        GdipGetPathGradientCenterPoint(this.nativeBrush, _1)
+        }
+    .operator GetCenterPoint?pPoint :vararg {
+        GdipGetPathGradientCenterPointI(this.nativeBrush, _1)
         }
 
-    .operator GetCenterPointI :ptr Point {
-        mov brush,this
-        GdipGetPathGradientCenterPointI([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator SetCenterPoint :abs, :vararg {
+        this.typeid(SetCenterPoint, _1)(_1, _2)
+        GdipSetStatus(this)
+        }
+    .operator SetCenterPoint?pPointF :vararg {
+        GdipSetPathGradientCenterPoint(this.nativeBrush, _1)
+        }
+    .operator SetCenterPoint?pPoint :vararg {
+        GdipSetPathGradientCenterPointI(this.nativeBrush, _1)
         }
 
-    .operator SetCenterPoint :ptr PointF {
-        mov brush,this
-        GdipSetPathGradientCenterPoint([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator GetRectangle :abs, :vararg {
+        this.typeid(GetRectangle, _1)(_1, _2)
+        GdipSetStatus(this)
+        }
+    .operator GetRectangle?pRectF :vararg {
+        GdipGetPathGradientRect(this.nativeBrush, _1)
+        }
+    .operator GetRectangle?pRect :vararg {
+        GdipGetPathGradientRectI(this.nativeBrush, _1)
         }
 
-    .operator SetCenterPointI :ptr Point {
-        mov brush,this
-        GdipSetPathGradientCenterPointI([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator SetGammaCorrection :vararg {
+        GdipSetPathGradientGammaCorrection(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetRectangle :ptr RectF {
-        mov brush,this
-        GdipGetPathGradientRect([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator GetGammaCorrection :vararg {
+        GdipGetPathGradientGammaCorrection(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator GetRectangleI :ptr Rect {
-        mov brush,this
-        GdipGetPathGradientRectI([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator GetBlendCount :vararg {
+        mov this.scratch,0
+        GdipGetPathGradientBlendCount(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator SetGammaCorrection :BOOL {
-        mov brush,this
-        GdipSetPathGradientGammaCorrection([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator GetBlend :vararg {
+        GdipGetPathGradientBlend(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetGammaCorrection {
-
-        .new useGammaCorrection:BOOL
-
-        mov brush,this
-        GdipGetPathGradientGammaCorrection([this].Brush.nativeBrush, &useGammaCorrection)
-        brush.SetStatus(eax)
-        mov eax,useGammaCorrection
-        retm <eax>
-    }
-
-    .operator GetBlendCount {
-
-        .new count:SINT
-
-        mov count,0
-        mov brush,this
-        GdipGetPathGradientBlendCount([this].Brush.nativeBrush, &count)
-        brush.SetStatus(eax)
-        mov eax,count
-        retm <eax>
+    .operator SetBlend :vararg {
+        GdipSetPathGradientBlend(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetBlend :ptr REAL, :ptr REAL, :SINT {
-        mov brush,this
-        GdipGetPathGradientBlend([this].Brush.nativeBrush, _1, _2, _3)
-        exitm<brush.SetStatus(eax)>
+    .operator GetInterpolationColorCount :vararg {
+        mov this.scratch,0
+        GdipGetPathGradientPresetBlendCount(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator SetBlend :ptr REAL, :ptr REAL, :SINT {
-        mov brush,this
-        GdipSetPathGradientBlend([this].Brush.nativeBrush, _1, _2, _3)
-        exitm<brush.SetStatus(eax)>
-        }
-
-    .operator GetInterpolationColorCount {
-
-        .new count:SINT
-
-        mov count,0
-        mov brush,this
-        GdipGetPathGradientPresetBlendCount([this].Brush.nativeBrush, &count)
-        brush.SetStatus(eax)
-        mov eax,count
-        retm <eax>
-        }
-
-    .operator SetInterpolationColors :ptr Color, :ptr REAL, :SINT {
+    .operator SetInterpolationColors :ptr Color, :ptr REAL, :SINT, :vararg {
 
         .repeat
 
-            mov brush,this
-            .ifs (_3 < 0 || _1 == NULL)
+            .ifs (r9d < 0 || rdx == NULL)
 
-                brush.SetStatus(InvalidParameter)
+                mov eax,InvalidParameter
+                mov this.lastResult,eax
                 .break
             .endif
 
@@ -944,15 +871,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             .new color:ptr Color
             .new argbs:ptr ARGB
 
-            mov color,_1
-            mov blendPositions,_2
-            mov count,_3
+            mov color,rdx
+            mov blendPositions,r8
+            mov count,r9d
 
-            imul ecx,_3,ARGB
+            imul ecx,r9d,ARGB
             mov argbs,GdipAlloc(rcx)
             .if rax == NULL
 
-                brush.SetStatus(OutOfMemory)
+                mov eax,OutOfMemory
+                mov this.lastResult,eax
                 .break
             .endif
 
@@ -963,23 +891,21 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             rep     movsd
             mov     rdi,rax
             mov     rsi,rdx
-            mov     this,brush
 
-            GdipSetPathGradientPresetBlend([this].Brush.nativeBrush, argbs, color, count)
+            GdipSetPathGradientPresetBlend(this.nativeBrush, argbs, color, count)
             GdipFree(argbs)
-            brush.GetStatus()
+            this.GetStatus()
         .until 1
-        retm <eax>
         }
 
-    .operator GetInterpolationColors :ptr Color, :ptr REAL, :SINT {
+    .operator GetInterpolationColors :ptr Color, :ptr REAL, :SINT, :vararg {
 
         .repeat
 
-            mov brush,this
-            .ifs (_3 < 0 || _1 == NULL)
+            .ifs (r9d < 0 || rdx == NULL)
 
-                brush.SetStatus(InvalidParameter)
+                mov eax,InvalidParameter
+                mov this.lastResult,eax
                 .break
             .endif
 
@@ -988,18 +914,19 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             .new color:ptr Color
             .new argbs:ptr ARGB
 
-            mov color,_1
-            mov blendPositions,_2
-            mov count,_3
+            mov color,rdx
+            mov blendPositions,r8
+            mov count,r9d
 
-            imul ecx,_3,ARGB
+            imul ecx,r9d,ARGB
             mov argbs,GdipAlloc(rcx)
             .if rax == NULL
 
-                brush.SetStatus(OutOfMemory)
+                mov eax,OutOfMemory
+                mov this.lastResult,eax
                 .break
             .endif
-            GdipGetPathGradientPresetBlend([this].Brush.nativeBrush, argbs, blendPositions, count)
+            GdipGetPathGradientPresetBlend(this.nativeBrush, argbs, blendPositions, count)
 
             mov rdx,rsi
             mov rax,rdi
@@ -1011,92 +938,74 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             mov rsi,rdx
 
             GdipFree(argbs)
-            brush.GetStatus()
+            this.GetStatus()
         .until 1
-        retm <eax>
         }
 
-    .operator SetBlendBellShape :REAL, :REAL {
-        mov brush,this
-        GdipSetPathGradientSigmaBlend([this].Brush.nativeBrush, _1, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator SetBlendBellShape :abs, :abs=<1.0>, :vararg {
+        GdipSetPathGradientSigmaBlend(this.nativeBrush, _1, _2)
+        GdipSetStatus(this)
         }
 
-    .operator SetBlendTriangularShape :REAL, :REAL {
-        mov brush,this
-        GdipSetPathGradientLinearBlend([this].Brush.nativeBrush, _1, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator SetBlendTriangularShape :abs, :abs=<1.0>, :vararg {
+        GdipSetPathGradientLinearBlend(this.nativeBrush, _1, _2)
+        GdipSetStatus(this)
         }
 
-    .operator GetTransform :ptr Matrix {
-        mov brush,this
-        GdipGetPathGradientTransform([this].Brush.nativeBrush, [_1].Matrix.nativeMatrix)
-        exitm<brush.SetStatus(eax)>
+    .operator GetTransform :ptr Matrix, :vararg {
+        GdipGetPathGradientTransform(this.nativeBrush, [rdx].Matrix.nativeMatrix)
+        GdipSetStatus(this)
         }
 
-    .operator SetTransform :ptr Matrix {
-        mov brush,this
-        GdipSetPathGradientTransform([this].Brush.nativeBrush, [_1].Matrix.nativeMatrix)
-        exitm<brush.SetStatus(eax)>
+    .operator SetTransform :ptr Matrix, :vararg {
+        GdipSetPathGradientTransform(this.nativeBrush, [rdx].Matrix.nativeMatrix)
+        GdipSetStatus(this)
         }
 
-    .operator ResetTransform {
-        mov brush,this
-        GdipResetPathGradientTransform([this].Brush.nativeBrush)
-        exitm<brush.SetStatus(eax)>
+    .operator ResetTransform :vararg {
+        GdipResetPathGradientTransform(this.nativeBrush)
+        GdipSetStatus(this)
         }
 
-    .operator MultiplyTransform :ptr Matrix, :MatrixOrder {
-        mov brush,this
-        GdipMultiplyPathGradientTransform([this].Brush.nativeBrush, [_1].Matrix.nativeMatrix, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator MultiplyTransform :ptr Matrix, :abs=<MatrixOrderPrepend>, :vararg {
+        GdipMultiplyPathGradientTransform(this.nativeBrush, [rdx].Matrix.nativeMatrix, _2)
+        GdipSetStatus(this)
         }
 
-    .operator TranslateTransform :REAL, :REAL, :MatrixOrder {
-        mov brush,this
-        GdipTranslatePathGradientTransform([this].Brush.nativeBrush, _1, _2, _3)
-        exitm<brush.SetStatus(eax)>
+    .operator TranslateTransform :abs, :abs, :abs=<MatrixOrderPrepend>, :vararg {
+        GdipTranslatePathGradientTransform(this.nativeBrush, _1, _2, _3)
+        GdipSetStatus(this)
         }
 
-    .operator ScaleTransform :REAL, :REAL, :MatrixOrder {
-        mov brush,this
-        GdipScalePathGradientTransform([this].Brush.nativeBrush, _1, _2, _3)
-        exitm<brush.SetStatus(eax)>
+    .operator ScaleTransform :abs, :abs, :abs=<MatrixOrderPrepend>, :vararg {
+        GdipScalePathGradientTransform(this.nativeBrush, _1, _2, _3)
+        GdipSetStatus(this)
         }
 
-    .operator RotateTransform :REAL, :MatrixOrder {
-        mov brush,this
-        GdipRotatePathGradientTransform([this].Brush.nativeBrush, _1, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator RotateTransform :abs, :abs=<MatrixOrderPrepend>, :vararg {
+        GdipRotatePathGradientTransform(this.nativeBrush, _1, _2)
+        GdipSetStatus(this)
         }
 
-    .operator GetFocusScales :ptr REAL, :ptr REAL {
-        mov brush,this
-        GdipGetPathGradientFocusScales([this].Brush.nativeBrush, _1, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator GetFocusScales :vararg {
+        GdipGetPathGradientFocusScales(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator SetFocusScales :REAL, :REAL {
-        mov brush,this
-        GdipSetPathGradientFocusScales([this].Brush.nativeBrush, _1, _2)
-        exitm<brush.SetStatus(eax)>
+    .operator SetFocusScales :vararg {
+        GdipSetPathGradientFocusScales(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
 
-    .operator GetWrapMode {
-
-        .new wrapMode:WrapMode
-
-        mov brush,this
-        GdipGetPathGradientWrapMode([this].Brush.nativeBrush, &wrapMode)
-        brush.SetStatus(eax)
-        mov eax,wrapMode
-        retm <eax>
+    .operator GetWrapMode :vararg {
+        GdipGetPathGradientWrapMode(this.nativeBrush, addr this.scratch)
+        GdipSetStatus(this)
+        mov eax,this.scratch
         }
 
-    .operator SetWrapMode :WrapMode {
-        mov brush,this
-        GdipSetPathGradientWrapMode([this].Brush.nativeBrush, _1)
-        exitm<brush.SetStatus(eax)>
+    .operator SetWrapMode :vararg {
+        GdipSetPathGradientWrapMode(this.nativeBrush, _1)
+        GdipSetStatus(this)
         }
     .ends
 

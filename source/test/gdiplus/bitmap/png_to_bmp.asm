@@ -18,16 +18,13 @@ GetEncoderClsid proto :wstring_t, :ptr CLSID ;; helper function
 
 main proc argc:int_t, argv:wstring_t
 
-    ;; Initialize GDI+.
     local encoderClsid:CLSID
-    local gdiplusToken:ULONG_PTR
 
-    .new gdiplusStartupInput:GdiplusStartupInput()
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL)
+    ;; Initialize GDI+.
+    .new gdiplus:GdiPlus()
 
     ;; Get an image from the disk.
-    .new image:ptr Image()
-    image.FromFile(L"image.png", FALSE)
+    .new image:Image(L"image.png", FALSE)
 
     ;; Get the CLSID of the PNG encoder.
     GetEncoderClsid(L"image/bmp", &encoderClsid)
@@ -38,8 +35,8 @@ main proc argc:int_t, argv:wstring_t
         printf("Failure: stat = %d\n", eax)
     .endif
     image.Release()
+    gdiplus.Release()
 
-    GdiplusShutdown(gdiplusToken)
     xor eax,eax
     ret
 

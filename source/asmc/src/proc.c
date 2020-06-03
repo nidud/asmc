@@ -629,7 +629,7 @@ int GetFastcallId( int langtype )
  * i=start parameters
  */
 
-extern void MacroInline( char *, int, char *, int );
+extern void MacroInline( char *, int, char *, char *, int );
 
 static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPROC )
 {
@@ -888,7 +888,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 			tokenarray[i].token = T_FINAL;
 			tokenarray[i].tokpos[0] = '\0';
-			MacroInline( tokenarray[0].string_ptr, args, tokenarray[i].string_ptr,
+			MacroInline( tokenarray[0].string_ptr, args,
+				tokenarray[2].tokpos, tokenarray[i].string_ptr,
 			  ( tokenarray[q-1].token == T_RES_ID && tokenarray[q-1].tokval == T_VARARG ) );
 		    }
 		} else {

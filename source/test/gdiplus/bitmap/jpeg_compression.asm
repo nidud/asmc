@@ -18,19 +18,15 @@ GetEncoderClsid proto :wstring_t, :ptr CLSID ;; helper function
 
 wmain proc argc:int_t, argv:wstring_t
 
-    ;; Initialize GDI+.
-
     local encoderClsid:CLSID
-    local gdiplusToken:ULONG_PTR
     local encoderParameters:EncoderParameters
     local quality:ULONG
 
-    .new gdiplusStartupInput:GdiplusStartupInput()
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL)
+    ;; Initialize GDI+.
+    .new gdiplus:GdiPlus()
 
     ;; Get an image from the disk.
-    .new image:ptr Image()
-    image.FromFile("image.bmp", FALSE)
+    .new image:Image("image.bmp", FALSE)
 
     ;; Get the CLSID of the JPEG encoder.
     GetEncoderClsid("image/jpeg", &encoderClsid)
@@ -74,7 +70,8 @@ wmain proc argc:int_t, argv:wstring_t
     .endif
 
     image.Release()
-    GdiplusShutdown(gdiplusToken)
+    gdiplus.Release()
+
     .return 0
 
 wmain endp

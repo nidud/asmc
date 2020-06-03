@@ -1,3 +1,4 @@
+
 include windows.inc
 include gdiplus.inc
 include tchar.inc
@@ -6,23 +7,14 @@ include tchar.inc
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
+  local ps:PAINTSTRUCT
+
     .switch edx
 
     .case WM_PAINT
 
-       .new ps:PAINTSTRUCT
-
         BeginPaint(rcx, &ps)
-
-       .new g:Graphics(rax)
-       .new P1:PointF(0.0, 0.0)
-       .new P2:PointF(300.0, 300.0)
-       .new b:LinearGradientBrush()
-
-        b.Create(&P1, &P2, Red, Blue)
-        g.FillRectangleI(&b, 0, 0, 300, 300)
-        b.Release()
-        g.Release()
+        OnPaint(rax)
         EndPaint(hWnd, &ps)
         .endc
 
@@ -49,29 +41,28 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.style,           CS_HREDRAW or CS_VREDRAW
     mov wc.cbClsExtra,      eax
     mov wc.cbWndExtra,      eax
-    mov wc.hbrBackground,   COLOR_WINDOW+1
+    mov wc.hbrBackground,   COLOR_ACTIVEBORDER
     mov wc.lpszMenuName,    rax
-    mov wc.hInstance,       hInstance
-    mov wc.lpfnWndProc,     &WndProc
-    mov wc.lpszClassName,   &@CStr("Gradient")
-    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIcon,           rax
     mov wc.hIconSm,         rax
+    mov wc.hInstance,       rcx
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.lpszClassName,   &@CStr(CLASSNAME)
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
 
     .ifd RegisterClassEx(&wc)
 
-        .if CreateWindowEx(0, "Gradient", "gdiplus.Graphics(Gradient)", WS_OVERLAPPEDWINDOW,
-                CW_USEDEFAULT, CW_USEDEFAULT, 320, 350, NULL, NULL, hInstance, 0)
+        .if CreateWindowEx(0, CLASSNAME, "gdiplus.Graphics(" CLASSNAME ")", WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT, 600,400, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
 
-            ;; Initialize GDI+.
-            .new gdiplus:GdiPlus()
+           ;; Initialize GDI+.
+           .new gdiplus:GdiPlus()
 
             ShowWindow(hwnd, SW_SHOWNORMAL)
             UpdateWindow(hwnd)
-
-            .while GetMessage(&msg,0,0,0)
+            .while GetMessage(&msg, 0, 0, 0)
                 TranslateMessage(&msg)
                 DispatchMessage(&msg)
             .endw

@@ -11,7 +11,34 @@ include gdiplus.inc
 
 main proc
 
-  .new p:GraphicsPath(rax)
+    local hdc:HDC
+    local h:HANDLE
+    local hwnd:HWND
+    local pImage:ptr Image
+    local pPoint:ptr Point
+    local pPointF:ptr PointF
+    local pRect:ptr Rect
+    local pRectF:ptr RectF
+    local pSize:ptr Size
+    local pSizeF:ptr SizeF
+    local pPen:ptr Pen
+    local pGraphicsPath:ptr GraphicsPath
+    local pBrush:ptr Brush
+    local pRegion:ptr Region
+    local pFont:ptr Font
+    local pWCHAR:ptr WCHAR
+    local pStringFormat:ptr StringFormat
+    local pMatrix:ptr Matrix
+    local pImageAttributes:ptr ImageAttributes
+    local pDrawImageAbort:ptr DrawImageAbort
+    local pMetafile:ptr Metafile
+    local MetafileProc:EnumerateMetafileProc
+    local pEffect:ptr Effect
+    local hRgn:HRGN
+    local pGraphics:ptr Graphics
+    local pFontFamily:ptr FontFamily
+
+  .new p:GraphicsPath()
 
     p.Release()
     p.SetNativePath(NULL)
@@ -29,70 +56,72 @@ main proc
     p.Reverse()
     p.GetLastPoint(NULL)
 
-    p.AddLineI(1, 2, 3, 4)
+    p.AddLine(1, 2, 3, 4)
     p.AddLine(0.0, 0.0, 0.0, 0.0)
 
-    p.AddLines(NULL, 0)
-    p.AddLinesI(NULL, 0)
+    p.AddLines(pPointF, 0)
+    p.AddLines(pPoint, 0)
 
     p.AddArc(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddArcI(0, 0, 0, 0, 0.0, 0.0)
+    p.AddArc(0, 0, 0, 0, 0.0, 0.0)
 
     p.AddBezier(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddBeziers(NULL, 0)
-    p.AddBezierI(0, 0, 0, 0, 0, 0, 0, 0)
-    p.AddBeziersI(NULL, 0)
+    p.AddBeziers(pPointF, 0)
+    p.AddBezier(0, 0, 0, 0, 0, 0, 0, 0)
+    p.AddBeziers(pPoint, 0)
 
-    p.AddCurve(NULL, 0)
-    p.AddCurve2(NULL, 0, 0.0)
-    p.AddCurve3(NULL, 0, 0, 0, 0.0)
-    p.AddCurveI(NULL, 0)
-    p.AddCurve2I(NULL, 0, 0.0)
-    p.AddCurve3I(NULL, 0, 0, 0, 0.0)
+    p.AddCurve(pPointF, 0)
+    p.AddCurve(pPointF, 0, 0.0)
+    p.AddCurve(pPointF, 0, 0, 0, 0.0)
+    p.AddCurve(pPoint, 0)
+    p.AddCurve(pPoint, 0, 0.0)
+    p.AddCurve(pPoint, 0, 0, 0, 0.0)
 
-    p.AddClosedCurve(NULL, 0)
-    p.AddClosedCurve2(NULL, 0, 0.0)
-    p.AddClosedCurveI(NULL, 0)
-    p.AddClosedCurve2I(NULL, 0, 0.0)
-    p.AddRectangle(NULL)
-    p.AddRectangles(NULL, 0)
-    p.AddRectangleI(NULL)
-    p.AddRectanglesI(NULL, 0)
+    p.AddClosedCurve(pPointF, 0)
+    p.AddClosedCurve(pPointF, 0, 0.0)
+    p.AddClosedCurve(pPoint, 0)
+    p.AddClosedCurve(pPoint, 0, 0.0)
 
-    p.AddEllipseI(0, 0, 0, 0)
+    p.AddRectangle(pRectF)
+    p.AddRectangles(pRectF, 0)
+    p.AddRectangle(pRect)
+    p.AddRectangles(pRect, 0)
+
+    p.AddEllipse(0, 0, 0, 0)
     p.AddEllipse(0.0, 0.0, 0.0, 0.0)
 
     p.AddPie(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    p.AddPieI(0, 0, 0, 0, 0.0, 0.0)
+    p.AddPie(0, 0, 0, 0, 0.0, 0.0)
 
-    p.AddPolygon(NULL, 0)
-    p.AddPolygonI(NULL, 0)
+    p.AddPolygon(pPointF, 0)
+    p.AddPolygon(pPoint, 0)
 
-    p.AddPath(NULL, 0)
-    p.AddString  (NULL, 0, NULL, 0, 0.0, NULL, NULL)
-    p.AddString2 (NULL, 0, NULL, 0, 0.0, NULL, NULL)
-    p.AddStringI (NULL, 0, NULL, 0, 0.0, NULL, NULL)
-    p.AddString2I(NULL, 0, NULL, 0, 0.0, NULL, NULL)
+    p.AddPath(pGraphicsPath, 0)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pPointF, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pPoint, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pRectF, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pRect, pStringFormat)
+
     p.Transform(NULL)
-    p.GetBounds2(NULL, NULL, NULL)
-    p.GetBounds1(NULL, NULL, NULL)
+    p.GetBounds(pRectF, NULL, NULL)
+    p.GetBounds(pRect, NULL, NULL)
     p.Flatten(NULL, 0.0)
     p.Widen(NULL, NULL, 0.0)
     p.Outline(NULL, 0.0)
     p.Warp(NULL, 0, NULL, NULL, 0, 0.0)
     p.GetPointCount()
     p.GetPathTypes(NULL, 0)
-    p.GetPathPoints(NULL, 0)
-    p.GetPathPointsI(NULL, 0)
+    p.GetPathPoints(pPointF, 0)
+    p.GetPathPoints(pPoint, 0)
     p.GetLastStatus()
-    p.IsVisible1(0, 0, NULL)
-    p.IsVisible2(0.0, 0.0, NULL)
-    p.IsVisible3(NULL, NULL)
-    p.IsVisible4(NULL, NULL)
-    p.IsOutlineVisible1(0, 0, NULL, NULL)
-    p.IsOutlineVisible2(0.0, 0.0, NULL, NULL)
-    p.IsOutlineVisible3(NULL, NULL, NULL)
-    p.IsOutlineVisible4(NULL, NULL, NULL)
+    p.IsVisible(0, 0, NULL)
+    p.IsVisible(0.0, 0.0, NULL)
+    p.IsVisible(NULL, NULL)
+    p.IsVisible(NULL, NULL)
+    p.IsOutlineVisible(0, 0, NULL, NULL)
+    p.IsOutlineVisible(0.0, 0.0, NULL, NULL)
+    p.IsOutlineVisible(NULL, NULL, NULL)
+    p.IsOutlineVisible(NULL, NULL, NULL)
     ret
 
 main endp

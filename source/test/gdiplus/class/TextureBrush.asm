@@ -7,21 +7,45 @@
 include windows.inc
 include gdiplus.inc
 
+;; TextureBrush(Image*, WrapMode = WrapModeTile)
+;; TextureBrush(Image*, WrapMode, RectF*)
+;; TextureBrush(Image*, RectF*, ImageAttributes * = NULL)
+;; TextureBrush(Image*, Rect*, ImageAttributes * = NULL)
+;; TextureBrush(Image*, WrapMode, Rect*)
+;; TextureBrush(Image*, WrapMode, REAL, REAL, REAL, REAL)
+;; TextureBrush(Image*, WrapMode, INT, INT, INT, INT)
+
     .code
 
 main proc
 
-  .new p:ptr TextureBrush()
+    local image:Image
+    local pImage:ptr Image
+    local pGraphicsPath:ptr GraphicsPath
+    local pINT:ptr int_t
+    local pBOOL:ptr BOOL
+    local pBYTE:ptr BYTE
+    local pPointF:ptr PointF
+    local pPoint:ptr Point
+    local pColor:ptr Color
+    local argb:ARGB
+    local pREAL:ptr REAL
+    local pRectF:ptr RectF
+    local pRect:ptr Rect
+    local pMatrix:ptr Matrix
+    local pImageAttributes:ptr ImageAttributes
 
-    TextureBrush()
+    .new p:TextureBrush(pImage)
+    .new p:TextureBrush(pImage, 0)
+    .new p:TextureBrush(pImage, 0, pRectF)
+    .new p:TextureBrush(pImage, pRectF, pImageAttributes)
+    .new p:TextureBrush(pImage, pRect, pImageAttributes)
+    .new p:TextureBrush(pImage, 0, pRect)
+    .new p:TextureBrush(pImage, 0, 0, 0, 0, 0)
+    .new p:TextureBrush(pImage, 0, 0.0, 0.0, 0.0, 0.0)
+
     p.Release()
-    p.Create(NULL, 0)
-    p.CreateIA(NULL, NULL, NULL)
-    p.CreateIAI(NULL, NULL, NULL)
-    p.Create2(NULL, 0, 0.0, 0.0, 0.0, 0.0)
-    p.Create2I(NULL, 0, 0, 0, 0, 0)
-    p.Create2R(NULL, 0, NULL)
-    p.Create2IR(NULL, 0, NULL)
+
     p.SetTransform(NULL)
     p.GetTransform(NULL)
     p.ResetTransform()
@@ -31,7 +55,7 @@ main proc
     p.RotateTransform(0.0, 0)
     p.SetWrapMode(0)
     p.GetWrapMode()
-    p.GetImage()
+    p.GetImage(image)
     ret
 
 main endp

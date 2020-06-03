@@ -1707,6 +1707,12 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                     .break .if !br_count
                     dec br_count
                   .case eax == T_COMMA
+                    .if eax == T_COMMA && \
+                        [ebx+16].token == T_CL_BRACKET && !br_count
+                        add edi,1
+                        add ebx,16
+                        .break
+                    .endif
                   .case eax == T_DOT
                   .case eax == T_OP_SQ_BRACKET
                   .case eax == T_CL_SQ_BRACKET

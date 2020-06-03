@@ -986,15 +986,30 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .endif
     .endif
 
+    ; skip arg if :vararg and inline
+
     mov ebx,param
     .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
           [ecx].asym.sint_flag & SINT_ISINLINE )
         .return 1
     .endif
+
+    ; skip arg if :abs
+
     .if [ebx].asym.mem_type == MT_ABS
         mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
         strcpy(eax, paramvalue)
         .return 1
+    .endif
+
+    ; skip loading class pointer if :vararg and inline
+
+    .if [ecx].asym.sint_flag & SINT_ISINLINE && \
+        [ecx].asym.flag & S_METHOD && !index
+        mov edx,[ecx].esym.procinfo
+        .if [edx].proc_info.flags & PROC_HAS_VARARG
+            .return 1
+        .endif
     .endif
 
     mov psize,GetPSize(address, param, edi)

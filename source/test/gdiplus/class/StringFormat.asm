@@ -11,13 +11,10 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr StringFormat(0, 0)
+  .new p:StringFormat(0, 0)
 
-    StringFormat(0, 0)
     p.Release()
 
-    p.CloneString(NULL)
-    p.Clone()
     p.SetFormatFlags(0)
     p.GetFormatFlags()
     p.SetAlignment(0)

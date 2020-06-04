@@ -6,5 +6,18 @@ Graphics.exe:
     asmc64 -ws -pe -gui Sphere.asm
     asmc64 -ws -pe -gui Sphere2.asm
     asmc64 -ws -pe -gui Person.asm
-    Person
-
+    asmc64 -ws -pe -gui DrawArc.asm
+    asmc64 -ws -pe -gui DrawBezier.asm
+    asmc64 -ws -pe -gui DrawBeziers.asm
+    asmc64 -ws -pe -gui DrawRectangle.asm
+    asmc64 -ws -pe -gui DrawEllipse.asm
+    asmc64 -ws -pe -gui DrawPie.asm
+    asmc64 -ws -pe -gui DrawPolygon.asm
+    asmc64 -ws -pe -gui DrawCurve.asm
+    asmc64 -ws -pe -gui DrawClosedCurve.asm
+    asmc64 -ws -pe -gui FillRectangle.asm
+    asmc64 -ws -pe -gui DrawImage.asm
+    asmc64 -ws -pe -gui SetClip.asm
+    asmc64 -ws -pe -gui TranslateClip.asm
+    asmc64 -ws -pe -gui MeasureString.asm
+    asmc64 -ws -pe -gui Save.asm

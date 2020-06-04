@@ -8,244 +8,129 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     nativeFormat    ptr_t ?
     lastError       Status ?
-    memState        Status ?
+    scratch         int_t ?
 
-
-    .operator StringFormat :abs, :abs {
-
-        .new stringformat:ptr StringFormat
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                .break .if !GdipAlloc(StringFormat)
-                mov [rax].StringFormat.memState,Ok
-            .else
-                mov [rax].StringFormat.memState,NotImplemented
-            .endif
-            mov stringformat,rax
-            mov [rax].StringFormat.nativeFormat,NULL
-            GdipCreateStringFormat(_1, _2, rax)
-            mov edx,eax
-            mov rax,stringformat
-            mov [rax].StringFormat.lastError,edx
-        .until 1
-        retm<rax>
+    .operator StringFormat :abs=<0>, :abs=<LANG_NEUTRAL>, :vararg {
+        mov this.nativeFormat,NULL
+        GdipCreateStringFormat(_1, _2, addr this.nativeFormat)
+        mov this.lastError,eax
         }
-
     .operator Release {
-
-        mov stringformat,this
-
         GdipDeleteStringFormat([this].StringFormat.nativeFormat)
-
-        mov this,stringformat
-        .if [this].StringFormat.memState != NotImplemented
-
-            GdipFree(this)
-        .endif
-        exitm<>
         }
 
-    .operator CloneString :ptr StringFormat {
-        mov stringformat,this
-        .if _1
-            mov _1,[_1]
-        .endif
-        xchg this,_1
-        GdipCloneStringFormat(this, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetFormatFlags :abs, :vararg {
+        GdipSetStringFormatFlags(this.nativeFormat, _1)
+        this.SetStatus()
         }
 
-    .operator Clone {
-
-        .new clonedStringFormat:ptr StringFormat
-
-        mov stringformat,this
-        mov clonedStringFormat,StringFormat(0, 0)
-        .if rax
-            mov this,stringformat
-            GdipCloneStringFormat([this].StringFormat.nativeFormat, &[rax].StringFormat.nativeFormat)
-            stringformat.SetStatus(eax)
-            clonedStringFormat.SetStatus(eax)
-            mov rax,clonedStringFormat
-        .endif
-        retm<rax>
+    .operator GetFormatFlags :vararg {
+        GdipGetStringFormatFlags(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetFormatFlags :SINT {
-        mov stringformat,this
-        GdipSetStringFormatFlags([this].StringFormat.nativeFormat, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetAlignment :abs, :vararg {
+        GdipSetStringFormatAlign(this.nativeFormat, _1)
+        this.SetStatus()
         }
 
-    .operator GetFormatFlags {
-
-        .new flags:SINT
-
-        mov stringformat,this
-        GdipGetStringFormatFlags([this].StringFormat.nativeFormat, &flags)
-        stringformat.SetStatus(eax)
-
-        mov eax,flags
-        retm <eax>
+    .operator GetAlignment :vararg {
+        GdipGetStringFormatAlign(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-
-    .operator SetAlignment :StringAlignment {
-        mov stringformat,this
-        GdipSetStringFormatAlign([this].StringFormat.nativeFormat, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetLineAlignment :abs, :vararg {
+        GdipSetStringFormatLineAlign(this.nativeFormat, _1)
+        this.SetStatus()
         }
 
-    .operator GetAlignment {
-
-        .new alignment:StringAlignment
-
-        mov stringformat,this
-        GdipGetStringFormatAlign([this].StringFormat.nativeFormat, &alignment)
-        stringformat.SetStatus(eax)
-
-        mov eax,alignment
-        retm <eax>
+    .operator GetLineAlignment :vararg {
+        GdipGetStringFormatLineAlign(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetLineAlignment :StringAlignment {
-        mov stringformat,this
-        GdipSetStringFormatLineAlign([this].StringFormat.nativeFormat, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetHotkeyPrefix :abs, :vararg {
+        GdipSetStringFormatHotkeyPrefix(this.nativeFormat, _1)
+        this.SetStatus()
         }
 
-    .operator GetLineAlignment {
-
-        .new alignment:StringAlignment
-
-        mov stringformat,this
-        GdipGetStringFormatLineAlign([this].StringFormat.nativeFormat, &alignment)
-        stringformat.SetStatus(eax)
-
-        mov eax,alignment
-        retm <eax>
+    .operator GetHotkeyPrefix :vararg {
+        GdipGetStringFormatHotkeyPrefix(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetHotkeyPrefix :HotkeyPrefix {
-        mov stringformat,this
-        GdipSetStringFormatHotkeyPrefix([this].StringFormat.nativeFormat, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetTabStops :abs, :abs, :abs, :vararg {
+        GdipSetStringFormatTabStops(this.nativeFormat, _1, _2, _3)
+        this.SetStatus()
         }
 
-    .operator GetHotkeyPrefix {
-
-        .new hotkeyPrefix:HotkeyPrefix
-
-        mov stringformat,this
-        GdipGetStringFormatHotkeyPrefix([this].StringFormat.nativeFormat, &hotkeyPrefix)
-        stringformat.SetStatus(eax)
-
-        mov eax,hotkeyPrefix
-        retm <eax>
+    .operator GetTabStopCount :abs, :vararg {
+        GdipGetStringFormatTabStopCount(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetTabStops :REAL, :SINT, :ptr REAL {
-        mov stringformat,this
-        GdipSetStringFormatTabStops([this].StringFormat.nativeFormat, _1, _2, _3)
-        exitm<stringformat.SetStatus(eax)>
+    .operator GetTabStops :abs, :abs, :abs, :vararg {
+        GdipGetStringFormatTabStops(this.nativeFormat, _1, _2, _3)
+        this.SetStatus()
         }
 
-    .operator GetTabStopCount {
-
-        .new count:SINT
-
-        mov stringformat,this
-        GdipGetStringFormatTabStopCount([this].StringFormat.nativeFormat, &count)
-        stringformat.SetStatus(eax)
-
-        mov eax,count
-        retm <eax>
+    .operator SetDigitSubstitution :abs, :abs, :vararg {
+        GdipSetStringFormatDigitSubstitution(this.nativeFormat, _1, _2)
+        this.SetStatus()
         }
 
-    .operator GetTabStops :SINT, :ptr REAL, :ptr REAL {
-        mov stringformat,this
-        GdipGetStringFormatTabStops([this].StringFormat.nativeFormat, _1, _2, _3)
-        exitm<stringformat.SetStatus(eax)>
+    .operator GetDigitSubstitutionLanguage :vararg {
+        GdipGetStringFormatDigitSubstitution(this.nativeFormat, addr this.scratch, NULL)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetDigitSubstitution :LANGID, :StringDigitSubstitute {
-        mov stringformat,this
-        GdipSetStringFormatDigitSubstitution([this].StringFormat.nativeFormat, _1, _2)
-        exitm<stringformat.SetStatus(eax)>
+    .operator GetDigitSubstitutionMethod :vararg {
+        GdipGetStringFormatDigitSubstitution(this.nativeFormat, NULL, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator GetDigitSubstitutionLanguage {
-
-        .new language:LANGID
-
-        mov stringformat,this
-        GdipGetStringFormatDigitSubstitution([this].StringFormat.nativeFormat, &language, NULL)
-        stringformat.SetStatus(eax)
-
-        movzx eax,language
-        retm <eax>
+    .operator SetTrimming :abs, :vararg {
+        GdipSetStringFormatTrimming(this.nativeFormat, _1)
+        this.SetStatus()
         }
 
-    .operator GetDigitSubstitutionMethod {
-
-        .new substitute:StringDigitSubstitute
-
-        mov stringformat,this
-        GdipGetStringFormatDigitSubstitution([this].StringFormat.nativeFormat, NULL, &substitute)
-        stringformat.SetStatus(eax)
-
-        mov eax,substitute
-        retm <eax>
+    .operator GetTrimming :vararg {
+        GdipGetStringFormatTrimming(this.nativeFormat, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
 
-    .operator SetTrimming :StringTrimming {
-        mov stringformat,this
-        GdipSetStringFormatTrimming([this].StringFormat.nativeFormat, _1)
-        exitm<stringformat.SetStatus(eax)>
+    .operator SetMeasurableCharacterRanges :abs, :abs, :vararg {
+        GdipSetStringFormatMeasurableCharacterRanges(this.nativeFormat, _1, _2)
+        this.SetStatus()
         }
 
-    .operator GetTrimming {
-
-        .new trimming:StringTrimming
-
-        mov stringformat,this
-        GdipGetStringFormatTrimming([this].StringFormat.nativeFormat, &trimming)
-        stringformat.SetStatus(eax)
-
-        mov eax,trimming
-        retm <eax>
-        }
-
-    .operator SetMeasurableCharacterRanges :SINT, :ptr CharacterRange {
-        mov stringformat,this
-        GdipSetStringFormatMeasurableCharacterRanges([this].StringFormat.nativeFormat, _1, _2)
-        exitm<stringformat.SetStatus(eax)>
-        }
-
-    .operator GetMeasurableCharacterRangeCount {
-
-        .new count:SINT
-
-        mov stringformat,this
-        GdipGetStringFormatMeasurableCharacterRangeCount([this].StringFormat.nativeFormat, &count)
-        mov eax,count
-        retm <eax>
+    .operator GetMeasurableCharacterRangeCount :vararg {
+        GdipGetStringFormatMeasurableCharacterRangeCount(this.nativeFormat, addr this.scratch)
+        mov eax,this.scratch
         }
 
     .operator GetLastStatus {
         mov eax,[this].StringFormat.lastError
         mov [this].StringFormat.lastError,Ok
-        retm <eax>
         }
 
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if eax != Ok
-            mov [this].StringFormat.lastError,eax
-        .endif
-        retm <eax>
+    .operator SetStatus :vararg {
+        ifnb <_1>
+            ifdif <_1>,<eax>
+                mov eax,_1
+            endif
+        endif
+        test    eax,eax
+        cmovz   eax,this.lastError
+        mov     this.lastError,eax
         }
     .ends
     GpStringFormat typedef StringFormat

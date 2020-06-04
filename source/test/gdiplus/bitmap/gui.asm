@@ -3,7 +3,7 @@ include gdiplus.inc
 include tchar.inc
 
     .data
-    hBitmap HANDLE 0
+    hBitmap HBITMAP 0
 
     .code
 
@@ -14,7 +14,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .case WM_CREATE
 
        .new gdiplus:GdiPlus()
-       .new bitmap:Bitmap(L"image.png", FALSE)
+       .new bitmap:Bitmap(L"image.png")
 
         bitmap.GetHBITMAP(0, &hBitmap)
         bitmap.Release()

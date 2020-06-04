@@ -185,26 +185,24 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator AddLines :abs, :vararg {
         this.typeid(AddLines, _1)(_1, _2)
+        this.SetStatus()
         }
     .operator AddLines?pPointF :vararg {
         GdipAddPathLine2(this.nativePath, _1)
-        GdipSetStatus(this)
         }
     .operator AddLines?pPoint :vararg {
         GdipAddPathLine2I(this.nativePath, _1)
-        GdipSetStatus(this)
         }
 
     .operator AddArc :abs, :vararg {
         this.typeid(AddArc, _1)(_1, _2)
+        this.SetStatus()
         }
     .operator AddArc?flt :vararg {
         GdipAddPathArc(this.nativePath, _1)
-        GdipSetStatus(this)
         }
     .operator AddArc?i32 :vararg {
         GdipAddPathArcI(this.nativePath, _1)
-        GdipSetStatus(this)
         }
     .operator AddArc?r128   :vararg { this.AddArc?flt(_1) }
     .operator AddArc?real4  :vararg { this.AddArc?flt(_1) }
@@ -214,16 +212,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     .operator AddArc?pRectF :ptr RectF, :vararg {
         GdipAddPathArc(this.nativePath, \
             [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
-        GdipSetStatus(this)
         }
     .operator AddArc?pRect :ptr Rect, :vararg {
         GdipAddPathArcI(this.nativePath, \
             [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
-        GdipSetStatus(this)
         }
 
     .operator AddBezier :abs, :vararg {
         this.typeid(AddBezier, _1)(_1, _2)
+        this.SetStatus()
         }
     .operator AddBezier?r128   :vararg { this.AddBezier?flt(_1) }
     .operator AddBezier?real4  :vararg { this.AddBezier?flt(_1) }
@@ -232,23 +229,19 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator AddBezier?flt :vararg {
         GdipAddPathBezier(this.nativePath, _1)
-        GdipSetStatus(this)
         }
     .operator AddBezier?i32 :vararg {
         GdipAddPathBezierI(this.nativePath, _1)
-        GdipSetStatus(this)
         }
     .operator AddBezier?pPointF :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
-        mov r10,_4
+        mov r10,[rsp+8*4]
         GdipAddPathBezier(this.nativePath, [rdx].PointF.X, [rdx].PointF.Y,\
-            [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y, [r10].PointF.X, [r10].PointF.Y)>
-        GdipSetStatus(this)
+            [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y, [r10].PointF.X, [r10].PointF.Y)
         }
     .operator AddBezier?pPoint :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
-        mov r10,_4
+        mov r10,[rsp+8*4]
         GdipAddPathBezierI(this.nativePath, [rdx].Point.X, [rdx].Point.Y,\
-            [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y, [r10].Point.X, [r10].Point.Y)>
-        GdipSetStatus(this)
+            [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y, [r10].Point.X, [r10].Point.Y)
         }
 
     .operator AddBeziers :abs, :vararg {
@@ -393,25 +386,26 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
         .new    rect:RectF
 
-        mov     r10,[rsp+6*8]
-        mov     rect.X,[r10].PointF.X
-        mov     rect.Y,[r10].PointF.Y
-        mov     rect.X,0.0
-        mov     rect.X,0.0
-        test    rdx,rdx
-        cmovnz  rdx,[rdx].FontFamily.nativeFamily
-        mov     r10,[rsp+7*8]
-        test    r10,r10
-        cmovnz  r10,[r10].StringFormat.nativeFormat
-
+        mov r10,[rsp+6*8]
+        mov rect.X,[r10].PointF.X
+        mov rect.Y,[r10].PointF.Y
+        mov rect.X,0.0
+        mov rect.X,0.0
+        .if rdx
+            mov rdx,[rdx].FontFamily.nativeFamily
+        .endif
+        mov r10,[rsp+7*8]
+        .if r10
+            mov r10,[r10].StringFormat.nativeFormat
+        .endif
         GdipAddPathString(this.nativePath, rdx, _2, _3, _4, _5, &rect, r10)
         GdipSetStatus(this)
         }
 
     .operator AddString?pRectF :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
-
-        test    r9,r9
-        cmovnz  r9,[r9].FontFamily.nativeFamily
+        .if r9
+            mov r9,[r9].FontFamily.nativeFamily
+        .endif
         mov     rax,[rsp+7*8]
         test    rax,rax
         cmovnz  rax,[rax].StringFormat.nativeFormat
@@ -429,24 +423,26 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov     rect.Y,[r10].PointF.Y
         mov     rect.X,0.0
         mov     rect.X,0.0
-        test    r9,r9
-        cmovnz  r9,[r9].FontFamily.nativeFamily
-        mov     r10,[rsp+7*8]
-        test    r10,r10
-        cmovnz  r10,[r10].StringFormat.nativeFormat
-
+        .if r9
+            mov r9,[r9].FontFamily.nativeFamily
+        .endif
+        mov r10,[rsp+7*8]
+        .if r10
+            mov r10,[r10].StringFormat.nativeFormat
+        .endif
         GdipAddPathStringI(this.nativePath, _1, _2, r9, _4, _5, &rect, r10)
         GdipSetStatus(this)
         }
 
     .operator AddString?pRect :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
 
-        test    r9,r9
-        cmovnz  r9,[r9].FontFamily.nativeFamily
+        .if r9
+            mov r9,[r9].FontFamily.nativeFamily
+        .endif
         mov     r10,[rsp+7*8]
-        test    r10,r10
-        cmovnz  r10,[r10].StringFormat.nativeFormat
-
+        .if r10
+            mov r10,[r10].StringFormat.nativeFormat
+        .endif
         GdipAddPathStringI(this.nativePath, _1, _2, r9, _4, _5, _6, r10)
         GdipSetStatus(this)
         }
@@ -474,22 +470,25 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; identity matrix is assumed.
 
     .operator Flatten :ptr Matrix, :vararg {
-        test    rdx,rdx
-        cmovnz  rdx,[rdx].Matrix.nativeMatrix
+        .if rdx
+            mov rdx,[rdx].Matrix.nativeMatrix
+        .endif
         GdipFlattenPath(this.nativePath, rdx, _2)
         GdipSetStatus(this)
         }
 
     .operator Widen :ptr Pen, :ptr Matrix, :vararg {
-        test    r8,r8
-        cmovnz  r8,[r8].Matrix.nativeMatrix
+        .if r8
+            mov r8,[r8].Matrix.nativeMatrix
+        .endif
         GdipWidenPath(this.nativePath, [rdx].Pen.nativePen, r8, _3)
         GdipSetStatus(this)
         }
 
     .operator Outline :ptr Matrix, :vararg {
-        test    rdx,rdx
-        cmovnz  rdx,[rdx].Matrix.nativeMatrix
+        .if rdx
+            mov rdx,[rdx].Matrix.nativeMatrix
+        .endif
         GdipWindingModeOutline(this.nativePath, rdx, _2)
         GdipSetStatus(this)
         }
@@ -500,9 +499,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .operator Warp :abs, :abs, :ptr RectF, :abs=<0>, :abs=<WarpModePerspective>, :vararg {
 
-        mov     rcx,_4
-        test    rcx,rcx
-        cmovnz  rcx,[rcx].Matrix.nativeMatrix
+        mov rcx,_4
+        .if rcx
+            mov rcx,[rcx].Matrix.nativeMatrix
+        .endif
         GdipWarpPath( this.nativePath, rcx, _1, _2,\
                       [r9].RectF.X,\
                       [r9].RectF.Y,\

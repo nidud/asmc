@@ -8,86 +8,287 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     nativeRegion    ptr_t ?
     lastResult      Status ?
+    scratch         int_t ?
 
-    Region          proc
-    Region1         proc :ptr Rect
-    Region2         proc :ptr RectF
-    Region3         proc :ptr GraphicsPath
-    Region4         proc :ptr BYTE, :int_t
-    Region5         proc :HRGN
-    FromHRGN        proc :HRGN
-    Release         proc
+    .operator Region :abs, :vararg {
+        ifb <_1>
+            GdipCreateRegion(addr this.nativeRegion)
+        else
+            this.typeid(Region, _1)(_1, _2)
+        endif
+        mov this.lastResult,eax
+        }
+    .operator Region?pRect :ptr Rect, :vararg {
+        mov rcx,rdx
+        GdipCreateRegionRectI(rcx, addr this.nativeRegion)
+        }
+    .operator Region?pRectF :ptr RectF, :vararg {
+        mov rcx,rdx
+        GdipCreateRegionRect(rcx, addr this.nativeRegion)
+        }
+    .operator Region?pGraphicsPath :ptr GraphicsPath, :vararg {
+        mov rcx,[rdx].GraphicsPath.nativePath
+        GdipCreateRegionPath(rcx, addr this.nativeRegion)
+        }
+    .operator Region?pbyte :ptr BYTE, :int_t, :vararg {
+        mov rcx,rdx
+        mov edx,r8d
+        GdipCreateRegionRgnData(rcx, edx, addr this.nativeRegion)
+        }
+    .operator Region?pvoid :HRGN, :vararg {
+        mov rcx,rdx
+        GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
+        }
+    .operator Region?pRegion :ptr Region, :vararg {
+        this.SetNativeRegion([rdx].Region.nativeRegion)
+        }
 
-    SetStatus       proc :Status
-    SetNativeRegion proc :ptr Region
+    .operator FromHRGN :HRGN, :vararg {
+        mov rcx,rdx
+        GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
+        this.SetStatus()
+        }
 
-    Clone           proc
+    .operator Release :vararg {
+        GdipDeleteRegion(this.nativeRegion)
+        }
 
-    MakeInfinite    proc
-    MakeEmpty       proc
+    .operator SetStatus :vararg {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,this.lastResult
+        mov this.lastResult,eax
+        }
 
-    GetDataSize     proc
+    .operator SetNativeRegion :ptr Region, :vararg {
+        mov this.nativeRegion,rdx
+        }
+
+    .operator Clone :vararg {
+
+        .new clone:Region
+
+        GdipCloneRegion(this.nativeRegion, addr clone.nativeRegion)
+        clone.SetStatus()
+        lea rax,clone
+        }
+
+    .operator MakeInfinite :vararg {
+        GdipSetInfinite(this.nativeRegion)
+        this.SetStatus()
+        }
+
+    .operator MakeEmpty :vararg {
+        GdipSetEmpty(this.nativeRegion)
+        this.SetStatus()
+        }
+
+    .operator GetDataSize :vararg {
+        mov this.scratch,eax
+        GdipGetRegionDataSize(this.nativeRegion, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
 
     ;; buffer     - where to put the data
     ;; bufferSize - how big the buffer is (should be at least as big as GetDataSize())
     ;; sizeFilled - if not NULL, this is an OUT param that says how many bytes
     ;;              of data were written to the buffer.
 
-    GetData         proc :ptr, :UINT, :ptr UINT
+    .operator GetData :abs, :abs, :abs, :vararg {
+        GdipGetRegionData(this.nativeRegion, _1, _2, _3)
+        this.SetStatus()
+        }
 
-    Intersect1      proc :ptr Rect
-    Intersect2      proc :ptr RectF
-    Intersect3      proc :ptr GraphicsPath
-    Intersect4      proc :ptr Region
-    Union1          proc :ptr Rect
-    Union2          proc :ptr RectF
-    Union3          proc :ptr GraphicsPath
-    Union4          proc :ptr Region
-    Xor1            proc :ptr Rect
-    Xor2            proc :ptr RectF
-    Xor3            proc :ptr GraphicsPath
-    Xor4            proc :ptr Region
-    Exclude1        proc :ptr Rect
-    Exclude2        proc :ptr RectF
-    Exclude3        proc :ptr GraphicsPath
-    Exclude4        proc :ptr Region
-    Complement1     proc :ptr Rect
-    Complement2     proc :ptr RectF
-    Complement3     proc :ptr GraphicsPath
-    Complement4     proc :ptr Region
-    Translate2      proc :REAL, :REAL
-    Translate1      proc :int_t, :int_t
-    Transform       proc :ptr Matrix
+region_combine macro token, name, mode
+    .operator token :abs, :vararg {
+        this.typeid(name, _1)(_1, _2)
+        this.SetStatus()
+        }
+    .operator &name&?pRect :abs, :vararg {
+        GdipCombineRegionRectI(this.nativeRegion, _1, mode)
+        }
+    .operator &name&?pRectF :abs, :vararg {
+        GdipCombineRegionRect(this.nativeRegion, _1, mode)
+        }
+    .operator &name&?pGraphicsPath :ptr GraphicsPath, :vararg {
+        GdipCombineRegionPath(this.nativeRegion, [rdx].GraphicsPath.nativePath, mode)
+        }
+    .operator &name&?pRegion :ptr Region, :vararg {
+        GdipCombineRegionRegion(this.nativeRegion, [rdx].Region.nativeRegion, mode)
+        }
+    exitm<>
+    endm
+    region_combine(Intersect,   Intersect,  CombineModeIntersect)
+    region_combine(_Union,      Union,      CombineModeUnion)
+    region_combine(_Xor,        Xor,        CombineModeXor)
+    region_combine(Exclude,     Exclude,    CombineModeExclude)
+    region_combine(Complement,  Complement, CombineModeComplement)
 
-    GetBounds1      proc :ptr Rect, :ptr Graphics
-    GetBounds2      proc :ptr RectF, :ptr Graphics
+    .operator Translate :abs, :vararg {
+        this.typeid(Translate, _1)(_1, _2)
+        this.SetStatus()
+        }
+    .operator Translate?flt :abs, :abs, :vararg {
+        GdipTranslateRegion(this.nativeRegion, _1, _2)
+        }
+    .operator Translate?i32 :abs, :abs, :vararg {
+        GdipTranslateRegionI(this.nativeRegion, _1, _2)
+        }
 
-    GetHRGN         proc :ptr Graphics
+    .operator Transform :ptr Matrix, :vararg {
+        GdipTransformRegion(this.nativeRegion, [rdx].Matrix.nativeMatrix)
+        this.SetStatus()
+        }
 
-    IsEmpty         proc :ptr Graphics
-    IsInfinite      proc :ptr Graphics
+    .operator GetBounds :abs, :vararg {
+        this.typeid(GetBounds, _1)(_1, _2)
+        this.SetStatus()
+        }
+    .operator GetBounds?pRect :ptr Rect, :ptr Graphics, :vararg {
+        xchg rdx,r8
+        GdipGetRegionBoundsI(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
+        }
+    .operator GetBounds?pRectF :ptr RectF, :ptr Graphics, :vararg {
+        xchg rdx,r8
+        GdipGetRegionBounds(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
+        }
 
-    IsVisible1      proc :ptr Rect, :ptr Graphics
-    IsVisible2      proc :ptr RectF, :ptr Graphics
+    .operator GetHRGN :ptr Graphics, :vararg {
+        GdipGetRegionHRgn(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
 
-    IsVisible3      proc :ptr Point, :ptr Graphics
-    IsVisible4      proc :ptr PointF, :ptr Graphics
+    .operator IsEmpty :ptr Graphics, :vararg {
+        GdipIsEmptyRegion(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator IsInfinite :ptr Graphics, :vararg {
+        GdipIsInfiniteRegion(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
 
-    IsVisible5      proc :int_t, :int_t, :ptr Graphics
-    IsVisible6      proc :REAL, :REAL, :ptr Graphics
-    IsVisible7      proc :int_t, :int_t, :int_t, :int_t, :ptr Graphics
+    .operator IsVisible :abs, :vararg {
+        this.typeid(IsVisible, _1)(_1, _2)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator IsVisible?pRect :ptr Rect, :ptr Graphics, :vararg {
+        .if r8
+            mov r8,[r8].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionRectI(this.nativeRegion, [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, r8, addr this.scratch)
+        }
+    .operator IsVisible?pRectF :ptr RectF, :ptr Graphics, :vararg {
+        .if r8
+            mov r8,[r8].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionRect(this.nativeRegion, [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, r8, addr this.scratch)
+        }
+    .operator IsVisible?pPoint :ptr Point, :ptr Graphics, :vararg {
+        .if r8
+            mov r8,[r8].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionPointI(this.nativeRegion, [rdx].Point.X, [rdx].Point.Y, r8, addr this.scratch)
+        }
+    .operator IsVisible?pPointF :ptr PointF, :ptr Graphics, :vararg {
+        .if r8
+            mov r8,[r8].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionPoint(this.nativeRegion, [rdx].PointF.X, [rdx].PointF.Y, r8, addr this.scratch)
+        }
 
-    IsVisible8      proc :REAL, :REAL, :REAL, :REAL, :ptr Graphics
+    ; IsVisible(INT, INT, ...)
+    .operator IsVisible?i32 :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            ; IsVisible(INT, INT)
+            GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, NULL, addr this.scratch)
+        else
+            this.typeid(IsVisible?i32, _3)(_1, _2, _3, _4)
+        endif
+        }
+    ; IsVisible(INT, INT, Graphics*)
+    .operator IsVisible?i32?pGraphics :abs, :abs, :ptr Graphics, :vararg {
+        .if r9
+            mov r9,[r9].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, r9, addr this.scratch)
+        }
+    ; IsVisible(INT, INT, INT, INT, Graphics*)
+    .operator IsVisible?i32?i32 :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
+        mov r10,[rsp+8*5]
+        .if r10
+            mov r10,[r10].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionRectI(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
+        }
+    .operator IsVisible?r32 :vararg { this.IsVisible?i32(_1) }
+    .operator IsVisible?sdword :vararg { this.IsVisible?i32(_1) }
 
-    Equals          proc :ptr Region, :ptr Graphics
+    ; IsVisible(REAL, REAL, ...)
+    .operator IsVisible?flt :abs, :abs, :abs, :vararg {
+        ifb <_3>
+            ; IsVisible(REAL, REAL)
+            GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, NULL, addr this.scratch)
+        else
+            this.typeid(IsVisible?flt, _3)(_1, _2, _3, _4)
+        endif
+        }
+    ; IsVisible(REAL, REAL, Graphics*)
+    .operator IsVisible?flt?pGraphics :abs, :abs, :ptr Graphics, :vararg {
+        .if r9
+            mov r9,[r9].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, r9, addr this.scratch)
+        }
+    ; IsVisible(REAL, REAL, REAL, REAL, Graphics*)
+    .operator IsVisible?flt?flt :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
+        mov r10,[rsp+8*5]
+        .if r10
+            mov r10,[r10].Graphics.nativeGraphics
+        .endif
+        GdipIsVisibleRegionRect(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
+        }
+    .operator IsVisible?r128 :vararg { this.IsVisible?flt(_1) }
+    .operator IsVisible?real4 :vararg { this.IsVisible?flt(_1) }
 
-    GetRegionScansCount proc :ptr Matrix
-    GetRegionScansRect2 proc :ptr Matrix, :ptr RectF, :ptr int_t
-    GetRegionScansRect1 proc :ptr Matrix, :ptr Rect, :ptr int_t
-    GetLastStatus       proc
+    .operator Equals :ptr Region, :ptr Graphics, :vararg {
+        GdipIsEqualRegion(this.nativeRegion, [rdx].Region.nativeRegion, [r8].Graphics.nativeGraphics, addr this.scratch)
+        this.SetStatus()
+        }
 
+    .operator GetRegionScansCount :ptr Matrix, :vararg {
+        GdipGetRegionScansCount(this.nativeRegion,  addr this.scratch, [rdx].Matrix.nativeMatrix)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+
+    .operator GetRegionScans :abs, :abs, :vararg {
+        this.typeid(GetRegionScans, _2)(_1, _2, _3)
+        this.SetStatus()
+        }
+    .operator GetRegionScans?pRectF :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
+        xchg r9,rdx
+        xchg r8,rdx
+        GdipGetRegionScans(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
+        }
+    .operator GetRegionScans?pRect :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
+        xchg r9,rdx
+        xchg r8,rdx
+        GdipGetRegionScansI(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
+        }
+    .operator GetLastStatus :vararg {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
+        }
     .ends
-
 
 ;;--------------------------------------------------------------------------
 ;; FontFamily
@@ -102,32 +303,47 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     nativeFamily    ptr_t ?
     lastResult      Status ?
+    scratch         int_t ?
 
     .operator FontFamily :abs, :vararg {
         ifb <_1>
+            mov eax,Ok
             mov this.nativeFamily,NULL
         else
-            this.typeid(Font, _1)(_1, _2)
+            this.typeid(FontFamily, _1)(_1, _2)
         endif
         mov this.lastResult,eax
         }
-    .operator Font?pword :ptr word, :abs=<NULL>, :vararg {
+    .operator FontFamily?pword :ptr word, :abs, :vararg {
         mov rcx,rdx
-        mov rdx,_2
+        ifb <_2>
+            xor edx,edx
+        else
+            mov rdx,_2
+        endif
         .if rdx
             mov rdx,[rdx].FontCollection.nativeFontCollection
         .endif
         GdipCreateFontFamilyFromName(rcx, rdx, addr this.nativeFamily)
         }
-    .operator Font?pFontFamily :ptr FontFamily, :vararg {
+    .operator FontFamily?pFontFamily :ptr FontFamily, :vararg {
         mov this.nativeFamily,_1
         mov this.lastResult,Ok
         }
 
-    SetStatus   proc :Status
+    .operator SetStatus :vararg {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,this.lastResult
+        mov this.lastResult,eax
+        }
 
-    .operator Release :vararg {
-        GdipDeleteFontFamily(this.nativeFamily)
+    .operator Release {
+        GdipDeleteFontFamily([this].FontFamily.nativeFamily)
         }
 
     .operator GenericSansSerif :vararg {
@@ -145,26 +361,57 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov this.lastResult,eax
         }
 
-    GetFamilyName       proc :LPWSTR, :LANGID
-
-    Clone               proc
-
-    .operator IsAvailable :vararg {
-        mov ecx,1
-        xor eax,eax
-        cmp rax,this.nativeFamily
-        cmovnz eax,ecx
+    .operator GetFamilyName :abs, :abs, :vararg {
+        GdipGetFamilyName(this.nativeFamily, _1, _2)
+        this.SetStatus()
         }
 
-    IsStyleAvailable    proc :int_t
+    .operator Clone :vararg {
 
-    GetEmHeight         proc :int_t
-    GetCellAscent       proc :int_t
-    GetCellDescent      proc :int_t
-    GetLineSpacing      proc :int_t
+        .new clone:FontFamily
 
-    GetLastStatus       proc
+        GdipCloneRegion(this.nativeFamily, addr clone.nativeFamily)
+        clone.SetStatus()
+        lea rax,clone
+        }
 
+    .operator IsAvailable :vararg {
+        mov     ecx,1
+        xor     eax,eax
+        cmp     rax,this.nativeFamily
+        cmovnz  eax,ecx
+        }
+
+    .operator IsStyleAvailable :abs, :vararg {
+        GdipIsStyleAvailable(this.nativeFamily, _1, addr this.scratch)
+        this.SetStatus()
+        .if eax
+            mov this.scratch,FALSE
+        .endif
+        mov eax,this.scratch
+        }
+
+    .operator GetEmHeight :abs, :vararg {
+        GdipGetEmHeight(this.nativeFamily, _1, addr this.scratch)
+        this.SetStatus()
+        }
+    .operator GetCellAscent :abs, :vararg {
+        GdipGetCellAscent(this.nativeFamily, _1, addr this.scratch)
+        this.SetStatus()
+        }
+    .operator GetCellDescent :abs, :vararg {
+        GdipGetCellDescent(this.nativeFamily, _1, addr this.scratch)
+        this.SetStatus()
+        }
+    .operator GetLineSpacing :abs, :vararg {
+        GdipGetLineSpacing(this.nativeFamily, _1, addr this.scratch)
+        this.SetStatus()
+        }
+
+    .operator GetLastStatus :vararg {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
+        }
     .ends
 
 externdef GenericSansSerifFontFamily        :ptr FontFamily
@@ -188,10 +435,11 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;;
 ;;--------------------------------------------------------------------------
 
-.template Font ;: public GdiplusBase
+.template Font
 
     nativeFont  ptr_t ?
     lastResult  Status ?
+    scratch     int_t ?
 
     .operator Font :abs, :abs, :vararg {
         ifb <_2>
@@ -239,12 +487,12 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
             GdipCreateFontFromDC(rcx, addr this.nativeFont)
         .endif
         }
-    .operator Font?pFontFamily :ptr FontFamily, :vararg {
+    .operator Font?pFontFamily :ptr FontFamily, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :vararg {
         mov rcx,rdx
         .if ecx
             mov rcx,[rcx].FontFamily.nativeFamily
         .endif
-        GdipCreateFont(rcx, _1, addr this.nativeFont)
+        GdipCreateFont(rcx, _2, _3, _4, addr this.nativeFont)
         }
 
     .operator Font?pword :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL>, :vararg {
@@ -281,29 +529,105 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 
 
     .operator Font?pFont :ptr Font, :Status {
-        mov     [this].Font.nativeFamily,_1
-        mov     [this].Font.lastResult,_2
+        mov [this].Font.nativeFamily,_1
+        mov [this].Font.lastResult,_2
         }
 
-    .operator Release  { }
+    .operator Release {
+        GdipDeleteFont([this].Font.nativeFont)
+        }
 
-    SetNativeFont       proc :ptr Font
-    SetStatus           proc :Status
+    .operator SetNativeFont :ptr Font {
+        mov [this].Font.nativeFont,_1
+        }
 
-    GetLogFontA         proc :ptr Graphics, :ptr LOGFONTA
-    GetLogFontW         proc :ptr Graphics, :ptr LOGFONTW
+    .operator SetStatus :vararg {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,this.lastResult
+        mov this.lastResult,eax
+        }
 
-    Clone               proc
+    .operator GetLogFontA :ptr Graphics, :abs, :vararg {
+        .if rdx
+            mov rdx,[rdx].Graphics.nativeGraphics
+        .endif
+        GdipGetLogFontA(this.nativeFont, rdx, _2)
+        this.SetStatus()
+        }
+    .operator GetLogFontW :ptr Graphics, :abs, :vararg {
+        .if rdx
+            mov rdx,[rdx].Graphics.nativeGraphics
+        .endif
+        GdipGetLogFontW(this.nativeFont, rdx, _2)
+        this.SetStatus()
+        }
 
-    IsAvailable         proc
-    GetStyle            proc
-    GetSize             proc
-    GetUnit             proc
-    GetLastStatus       proc
-    GetHeight           proc :ptr
-    GetHeightF          proc :REAL
+    .operator Clone :vararg {
 
-    GetFamily           proc :ptr FontFamily
+        .new clone:Font
+
+        GdipCloneFont(this.nativeFont, addr clone.nativeFont)
+        clone.SetStatus()
+        lea rax,clone
+        }
+
+    .operator IsAvailable {
+        xor eax,eax
+        .if rax != [this].Font.nativeFont
+            inc eax
+        .endif
+        }
+    .operator GetStyle :vararg {
+        GdipGetFontStyle(this.nativeFont, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator GetSize :vararg {
+        GdipGetFontSize(this.nativeFont, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator GetUnit :vararg {
+        GdipGetFontUnit(this.nativeFont, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator GetLastStatus :vararg {
+        this.SetStatus()
+        }
+
+    .operator GetHeight :abs, :vararg {
+        this.typeid(GetHeight, _1)(_1, _2)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator GetHeight?pGraphics :ptr Graphics, :vararg {
+        .if rdx
+            mov rdx,[rdx].Graphics.nativeGraphics
+        .endif
+        GdipGetFontHeight(this.nativeFont, rdx, addr this.scratch)
+        }
+    .operator GetHeight?flt :abs, :vararg {
+        GdipGetFontHeightGivenDPI(this.nativeFont, _1, addr this.scratch)
+        }
+
+    .operator GetFamily :ptr FontFamily, :vararg {
+        mov eax,InvalidParameter
+        .if rdx
+            .new fontfamily:ptr FontFamily
+            mov fontfamily,rdx
+            .ifd GdipGetFamily(this.nativeFont, addr [rdx].FontFamily.nativeFamily)
+                mov rdx,fontfamily
+                mov [rdx].FontFamily.lastResult,eax
+            .endif
+        .endif
+        this.SetStatus()
+        }
 
     .ends
 
@@ -311,39 +635,152 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;; Font Collection
 ;;--------------------------------------------------------------------------
 
-.template FontCollection ;: public GdiplusBase
+.template FontCollection
 
     nativeFontCollection    ptr_t ?
     lastResult              Status ?
 
-    .operator = :ptr FontCollection, :Status {
-        mov     [this].FontCollection.nativeFontCollection,_1
-        mov     [this].FontCollection.lastResult,_2
-        retm    <this>
+    .operator FontCollection {
+        mov [this].FontCollection.nativeFontCollection,NULL
+        }
+    .operator Release {}
+
+    .operator SetStatus :abs {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,[this].FontCollection.lastResult
+        mov [this].FontCollection.lastResult,eax
         }
 
-    SetStatus       proc :Status
-    FontCollection  proc
-    Release         proc
-    GetFamilyCount  proc
-    GetFamilies     proc :int_t, :ptr FontFamily, :ptr int_t
-    GetLastStatus   proc
+    .operator GetFamilyCount {
+
+        .new numFound:int_t
+
+        mov numFound,0
+        GdipGetFontCollectionFamilyCount([this].FontCollection.nativeFontCollection, &numFound)
+        mov eax,numFound
+        }
+
+    .operator GetFamilies :int_t, :ptr FontFamily, :ptr int_t {
+
+        .repeat
+
+            .ifs (edx <= 0 || r8 == NULL || r9 == NULL)
+
+                mov eax,InvalidParameter
+                mov [this].FontCollection.lastResult,eax
+                .break
+            .endif
+
+            mov dword ptr [r9],0
+
+            .new nativeFamilyList:ptr ptr FontFamily
+            .new numSought:int_t
+            .new gpfamilies:ptr FontFamily
+            .new numFound:ptr int_t
+            .new fontcollection:ptr FontCollection
+            .new count:int_t
+
+            mov fontcollection,rcx
+            mov nativeFamilyList,rsi
+            mov gpfamilies,rdi
+            mov numFound,rbx
+
+            mov rbx,r9
+            mov rdi,r8
+            mov numSought,edx
+            mov rsi,GdipAlloc( &[rdx*8] )
+            mov rcx,fontcollection
+
+            .if rax == NULL
+
+                mov eax,OutOfMemory
+                mov [rcx].FontCollection.lastResult,eax
+                mov rsi,nativeFamilyList
+                mov rdi,gpfamilies
+                mov rbx,numFound
+
+                .break
+            .endif
+
+            .ifd !GdipGetFontCollectionFamilyList([rcx].FontCollection.nativeFontCollection, numSought, rsi, rbx)
+
+                mov count,[rbx]
+                .for ebx = 0: ebx < count: ebx++
+
+                    imul ecx,ebx,8
+                    imul edx,ebx,FontFamily
+
+                    GdipCloneFontFamily([rsi+rcx], addr [rdi+rdx].FontFamily.nativeFamily)
+                .endf
+                xor eax,eax
+            .endif
+            mov fontcollection,rax
+            GdipFree(rsi)
+            mov rax,fontcollection
+            mov rsi,nativeFamilyList
+            mov rdi,gpfamilies
+            mov rbx,numFound
+        .until 1
+        }
+
+    .operator GetLastStatus {
+        mov eax,[this].FontCollection.lastResult
+        mov [this].FontCollection.lastResult,Ok
+        }
+    .ends
+
+FONTCOLLECTION_INLINE macro class
+    .operator class {
+        FontCollection_FontCollection(this)
+        }
+    .operator Release {}
+    .operator SetStatus :abs {
+        FontCollection_SetStatus(this, _1)
+        }
+    .operator GetFamilyCount {
+        FontCollection_GetFamilyCount(this)
+        }
+    .operator GetFamilies :abs, :abs, :abs {
+        FontCollection_GetFamilies(this, _1, _2, _3)
+        }
+    .operator GetLastStatus {
+        FontCollection_GetLastStatus(this)
+        }
+    exitm<>
+    endm
+
+.template InstalledFontCollection
+
+    FONTCOLLECTION_INLINE(InstalledFontCollection)
     .ends
 
 
+.template PrivateFontCollection
 
-.template InstalledFontCollection : public FontCollection
+    FONTCOLLECTION_INLINE(PrivateFontCollection)
 
-    InstalledFontCollection proc
-    .ends
+    .operator AddFontFile :ptr WCHAR {
+        .new fontcollection:ptr FontCollection
+        mov fontcollection,this
+        .ifd GdipPrivateAddFontFile([this].FontCollection.nativeFontCollection, rdx)
+            mov rcx,fontcollection
+            mov [rcx].FontCollection.lastResult,eax
+        .endif
+        }
 
-
-.template PrivateFontCollection : public FontCollection
-
-    PrivateFontCollection proc
-
-    AddFontFile     proc :ptr WCHAR
-    AddMemoryFont   proc :ptr, :int_t
+    .operator AddMemoryFont :ptr, :int_t {
+        .new fontcollection:ptr FontCollection
+        mov fontcollection,this
+        .ifd GdipPrivateAddMemoryFont([this].FontCollection.nativeFontCollection, rdx, r8d)
+            mov rcx,fontcollection
+            mov [rcx].FontCollection.lastResult,eax
+        .endif
+        }
     .ends
 
 
@@ -1092,74 +1529,136 @@ endif
     .ends
     GpBitmap typedef Bitmap
 
+
 .template CustomLineCap
 
     GpCustomLineCap typedef CustomLineCap
 
     nativeCap   ptr_t ?
     lastResult  Status ?
+    scratch     int_t ?
 
-    CustomLineCap proc
-
-    CustomLineCap2 proc :ptr CustomLineCap
-    .operator = :ptr CustomLineCap
-
-    .operator CustomLineCap3 :ptr GpCustomLineCap, :Status {
-        mov lastResult = _2
-        SetNativeCap(_1)
+    .operator CustomLineCap :ptr GraphicsPath, :ptr GraphicsPath, :abs, :abs, :vararg {
+        mov rcx,rdx
+        mov rdx,r8
+        .if rcx
+            mov rcx,[rcx]
+        .endif
+        .if rdx
+            mov rdx,[rdx]
+        .endif
+        GdipCreateCustomLineCap([rcx].GraphicsPath.nativePath, [rdx].GraphicsPath.nativePath, _3, _4, addr this.nativeCap)
+        mov this.lastResult,eax
         }
 
-    .operator SetNativeCap :ptr GpCustomLineCap {
+    .operator Release {
+        GdipDeleteCustomLineCap([this].CustomLineCap.nativeCap)
+        }
+
+    .operator SetNativeCap :ptr CustomLineCap {
         mov [this].CustomLineCap.nativeCap,_1
         }
 
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if eax != Ok
-            mov [this].CustomLineCap.lastResult,eax
-        .endif
-        retm <eax>
+    .operator SetStatus :vararg {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,this.lastResult
+        mov this.lastResult,eax
         }
 
-    CustomLineCap4 proc :ptr GraphicsPath, :ptr GraphicsPath, :LineCap, :REAL
+    .operator Clone :vararg {
 
-    Release         proc
-    Clone           proc
+       .new clone:CustomLineCap
+
+        GdipCloneCustomLineCap(this.nativeCap, addr clone.nativeCap)
+        mov clone.lastResult,eax
+        lea rax,clone
+        }
 
     ;; This changes both the start and end cap.
 
-    .operator SetStrokeCap :LineCap {
-        exitm<SetStrokeCaps(strokeCap, strokeCap)>
+    .operator SetStrokeCap :abs, :vararg {
+        this.SetStrokeCaps(_1, _1)
         }
 
-    SetStrokeCaps   proc :LineCap, :LineCap
-    GetStrokeCaps   proc :ptr LineCap, :ptr LineCap
-    SetStrokeJoin   proc :LineJoin
-    GetStrokeJoin   proc
-    SetBaseCap      proc :LineCap
-    GetBaseCap      proc
-    SetBaseInset    proc :REAL
-    GetBaseInset    proc
-    SetWidthScale   proc :REAL
-    GetWidthScale   proc
-    GetLastStatus   proc
+    .operator SetStrokeCaps  :abs, :abs, :vararg {
+        GdipSetCustomLineCapStrokeCaps(this.nativeCap, _1, _2)
+        this.SetStatus()
+        }
 
+    .operator GetStrokeCaps :abs, :abs, :vararg {
+        GdipGetCustomLineCapStrokeCaps(this.nativeCap, _1, _2)
+        this.SetStatus()
+        }
+    .operator SetStrokeJoin :abs, :vararg {
+        GdipSetCustomLineCapStrokeJoin(this.nativeCap, _1)
+        this.SetStatus()
+        }
+    .operator GetStrokeJoin :vararg {
+        GdipGetCustomLineCapStrokeJoin(this.nativeCap, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator SetBaseCap :abs, :vararg {
+        GdipSetCustomLineCapBaseCap(this.nativeCap, _1)
+        this.SetStatus()
+        }
+    .operator GetBaseCap :vararg {
+        GdipGetCustomLineCapBaseCap(this.nativeCap, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator SetBaseInset :abs, :vararg {
+        GdipSetCustomLineCapBaseInset(this.nativeCap, _1)
+        this.SetStatus()
+        }
+    .operator GetBaseInset :vararg {
+        GdipGetCustomLineCapBaseInset(this.nativeCap, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+    .operator SetWidthScale :abs, :vararg {
+        GdipSetCustomLineCapWidthScale(this.nativeCap, _1)
+        this.SetStatus()
+        }
+    .operator GetWidthScale :vararg {
+        GdipGetCustomLineCapWidthScale(this.nativeCap, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+
+    .operator GetLastStatus {
+        mov eax,[this].CustomLineCap.lastResult
+        mov [this].CustomLineCap.lastResult,Ok
+        }
     .ends
 
-.template CachedBitmap ;: public GdiplusBase
+
+.template CachedBitmap
 
     nativeCachedBitmap ptr_t ?
     lastResult      Status ?
 
-    CachedBitmap    proc :ptr Bitmap, :ptr Graphics
-    Release         proc
+    .operator CachedBitmap :ptr Bitmap, :ptr Graphics, :vararg {
+        mov rcx,rdx
+        mov rdx,r8
+        GdipCreateCachedBitmap([rcx].Bitmap.nativeImage, [rdx].Graphics.nativeGraphics, addr this.nativeCachedBitmap)
+        mov this.lastResult,eax
+        }
+    .operator Release {
+        GdipDeleteCachedBitmap([this].CachedBitmap.nativeCachedBitmap)
+        }
 
-    GetLastStatus   proc
-
-    CachedBitmap2   proc :ptr CachedBitmap
-    .operator       = :ptr CachedBitmap
-
+    .operator GetLastStatus {
+        mov eax,[this].CachedBitmap.lastResult
+        mov [this].CachedBitmap.lastResult,Ok
+        }
     .ends
+
 
 .template Metafile : public Image
 

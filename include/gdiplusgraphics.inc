@@ -355,11 +355,11 @@ typeid_Rect macro name
 
     typeid_flti32(DrawArc, _2)
 
-    .operator DrawArc?flt :vararg {
-        GdipDrawArc(this.nativeGraphics, _1)
+    .operator DrawArc?flt :ptr Pen, :vararg {
+        GdipDrawArc(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawArc?i32 :vararg {
-        GdipDrawArcI(this.nativeGraphics, _1)
+    .operator DrawArc?i32 :ptr Pen, :vararg {
+        GdipDrawArcI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
     typeid_Rect(DrawArc)
@@ -373,7 +373,19 @@ typeid_Rect macro name
         GdipDrawBezierI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
-    typeid_Point(DrawBezier)
+    .operator DrawBezier?pPointF :abs, :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
+        mov r10,[rsp+8*4]
+        mov r11,[rsp+8*5]
+        this.DrawBezier?flt(_1, [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y,\
+            [r10].PointF.X, [r10].PointF.Y, [r11].PointF.X, [r11].PointF.Y )
+        }
+    .operator DrawBezier?pPoint :abs, :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
+        mov r10,[rsp+8*4]
+        mov r11,[rsp+8*5]
+        this.DrawBezier?i32(_1, [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y,\
+            [r10].Point.X, [r10].Point.Y, [r11].Point.X, [r11].Point.Y )
+        }
+
 
     .operator DrawBeziers :abs, :abs, :vararg {
         this.typeid(DrawBeziers, _2)(_1, _2, _3)
@@ -395,6 +407,13 @@ typeid_Rect macro name
         GdipDrawRectangleI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
+    .operator DrawRectangle?pRectF :abs, :ptr RectF, :vararg {
+        this.DrawRectangle?flt(_1, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height, _3)
+        }
+    .operator DrawRectangle?pRect :abs, :ptr Rect, :vararg {
+        this.DrawRectangle?i32(_1, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height, _3)
+        }
+
     .operator DrawRectangles :abs, :abs, :vararg {
         this.typeid(DrawRectangles, _2)(_1, _2, _3)
         GdipSetStatus(this)
@@ -406,7 +425,6 @@ typeid_Rect macro name
         GdipDrawRectanglesI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
-    ;typeid_Rect(DrawRectangles)
 
     typeid_flti32(DrawEllipse, _2)
 
@@ -442,10 +460,12 @@ typeid_Rect macro name
         }
 
     .operator DrawPath :ptr Pen, :ptr GraphicsPath, :vararg {
-        test    rdx,rdx
-        cmovnz  rdx,[rdx]
-        test    r8,r8
-        cmovnz  r8,[r8]
+        .if rdx
+            mov rdx,[rdx]
+        .endif
+        .if r8
+            mov r8,[r8]
+        .endif
         GdipDrawPath(this.nativeGraphics, rdx, r8)
         GdipSetStatus(this)
         }
@@ -794,7 +814,7 @@ typeid_Rect macro name
             mov rdx,[rdx].Image.nativeImage
         .endif
         this.typeid(DrawImage, _2)(_1, _2, _3)
-        GdipSetStatus(this)
+        this.SetStatus()
         }
 
     ; DrawImage(Image*, PointF*)

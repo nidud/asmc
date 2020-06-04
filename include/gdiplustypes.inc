@@ -341,7 +341,7 @@ endif
     Height  REAL ?
 
     .operator RectF :abs, :vararg {
-        ifb <>
+        ifb <_1>
             xor eax,eax
             mov qword ptr this[0],rax
             mov qword ptr this[8],rax
@@ -572,7 +572,7 @@ endif
     Height  int_t ?
 
     .operator Rect :abs, :vararg {
-        ifb <>
+        ifb <_1>
             xor eax,eax
             mov qword ptr this[0],rax
             mov qword ptr this[8],rax

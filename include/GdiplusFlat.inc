@@ -2006,8 +2006,8 @@ GdipSetCustomLineCapStrokeCaps proto WINAPI \
 ;GpStatus
 GdipGetCustomLineCapStrokeCaps proto WINAPI \
 	     customCap: ptr,
-	      startCap: GpLineCap,
-		endCap: GpLineCap
+	      startCap: ptr GpLineCap,
+		endCap: ptr GpLineCap
 
 
 ;GpStatus

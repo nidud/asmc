@@ -9,12 +9,13 @@ Returns a string equivalent of a type from _expression_.
 
 ### Example
 
-    ```assembly
-    .operator type :abs, :vararg {
-        this.typeid(type, _1)(_1, _2)
-        }
+```assembly
+.operator type :abs, :vararg {
+    this.typeid(type, _1)(_1, _2)
+    }
+```
 
-| _input_ | _output |
+| _input_ | _output_ |
 | ------ |:------- |
 | 0x10000000 | type?i32 |
 | 0x100000000 | type?i64 |

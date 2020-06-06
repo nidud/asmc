@@ -555,16 +555,17 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
         .endif
 
         .if esi
-
             .if [esi].asym.state == SYM_TYPE && [esi].asym.typekind == TYPE_STRUCT
 
                 strcpy( &name, [esi].asym.name )
                 .endc
             .endif
+        .endif
 
-        .elseif [edi].asym.state == SYM_INTERNAL || \
-                [edi].asym.state == SYM_STACK || \
-                [edi].asym.state == SYM_STRUCT_FIELD
+        .if [edi].asym.state == SYM_INTERNAL || \
+            [edi].asym.state == SYM_STACK || \
+            [edi].asym.state == SYM_STRUCT_FIELD || \
+            [edi].asym.state == SYM_TYPE
 
             mov cl,[edi].asym.mem_type
             .switch pascal cl

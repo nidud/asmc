@@ -98,6 +98,7 @@ Asmc Macro Assembler Reference
 - [SIZEOF](sizeof.md)
 - [.THIS](dot_this.md)
 - [TYPEOF](typeof.md)
+- [TYPEID](typeid.md)
 
 #### See Also
 

@@ -63,34 +63,28 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     .operator GetType {
 	mov	eax,[this].MetafileHeader.Type
-	retm	<eax>
 	}
     .operator GetMetafileSize {
 	mov	eax,[this].MetafileHeader.Size
-	retm	<eax>
 	}
 
     ;; If IsEmfPlus, this is the EMF+ version; else it is the WMF or EMF ver
 
     .operator GetVersion {
 	mov	eax,[this].MetafileHeader.Version
-	retm	<eax>
 	}
 
     ;; Get the EMF+ flags associated with the metafile
 
     .operator GetEmfPlusFlags {
 	mov	eax,[this].MetafileHeader.EmfPlusFlags
-	retm	<eax>
 	}
 
     .operator GetDpiX {
 	movss	xmm0,[this].MetafileHeader.DpiX
-	retm	<xmm0>
 	}
     .operator GetDpiY {
 	movss	xmm0,[this].MetafileHeader.DpiY
-	retm	<xmm0>
 	}
 
     .operator GetBounds :ptr Rect {
@@ -98,7 +92,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	mov	[_1].Rect.Y,[this].MetafileHeader.Y
 	mov	[_1].Rect.Width,[this].MetafileHeader.Width
 	mov	[_1].Rect.Height,[this].MetafileHeader.Height
-	retm	<this>
 	}
 
     ;; Is it any type of WMF (standard or Placeable Metafile)?
@@ -109,7 +102,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if ( ( edx == MetafileTypeWmf ) || ( edx == MetafileTypeWmfPlaceable ) )
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an Placeable Metafile?
@@ -120,7 +112,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if edx == MetafileTypeWmfPlaceable
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an EMF (not an EMF+)?
@@ -131,7 +122,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if edx == MetafileTypeEmf
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an EMF or EMF+ file?
@@ -141,7 +131,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if [this].MetafileHeader.Type >= MetafileTypeEmf
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an EMF+ file?
@@ -151,7 +140,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if [this].MetafileHeader.Type >= MetafileTypeEmfPlusOnly
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an EMF+ dual (has dual, down-level records) file?
@@ -161,7 +149,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if [this].MetafileHeader.Type == MetafileTypeEmfPlusDual
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Is this an EMF+ only (no dual records) file?
@@ -171,7 +158,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if [this].MetafileHeader.Type == MetafileTypeEmfPlusOnly
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; If it's an EMF+ file, was it recorded against a display Hdc?
@@ -182,7 +168,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	    [this].MetafileHeader.EmfPlusFlags & GDIP_EMFPLUSFLAGS_DISPLAY
 	    inc eax
 	.endif
-	retm <eax>
 	}
 
     ;; Get the WMF header of the metafile (if it is a WMF)
@@ -193,7 +178,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if edx == MetafileTypeWmf || edx == MetafileTypeWmfPlaceable
 	    lea rax,[this].MetafileHeader.WmfHeader
 	.endif
-	retm <rax>
 	}
 
     ;; Get the EMF header of the metafile (if it is an EMF)
@@ -203,7 +187,6 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 	.if [this].MetafileHeader.Type >= MetafileTypeEmf
 	    lea rax,[this].MetafileHeader.EmfHeader
 	.endif
-	retm <eax>
 	}
     .ends
 

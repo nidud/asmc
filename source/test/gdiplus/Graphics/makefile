@@ -21,3 +21,4 @@ Graphics.exe:
     asmc64 -ws -pe -gui TranslateClip.asm
     asmc64 -ws -pe -gui MeasureString.asm
     asmc64 -ws -pe -gui Save.asm
+    asmc64 -ws -pe -gui DrawIcon.asm

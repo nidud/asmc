@@ -1,4 +1,6 @@
-
+;
+; https://docs.microsoft.com/en-us/dotnet/api/system.drawing.graphics.save?view=dotnet-plat-ext-3.1
+;
 CLASSNAME equ <"Save">
 
 OnPaint macro hdc

@@ -30,6 +30,7 @@ Asmc Macro Assembler Reference
 - [@InStr](instr.md)
 - [@SizeStr](sizestr.md)
 - [@SubStr](substr.md)
+- [typeid](typeid.md)
 
 #### Miscellaneous
 

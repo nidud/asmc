@@ -37,6 +37,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         xchg rcx,rdx
         GdipGetImageGraphicsContext([rcx].Image.nativeImage, &[rdx].Graphics.nativeGraphics)
         }
+    .operator Graphics?pMetafile :ptr Metafile {
+        xchg rcx,rdx
+        GdipGetImageGraphicsContext([rcx].Image.nativeImage, &[rdx].Graphics.nativeGraphics)
+        }
+
     .operator Graphics?pGraphics :ptr Graphics, :vararg {
         mov eax,Ok
         mov this.nativeGraphics,rdx
@@ -993,7 +998,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, PointF*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?pvoid :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pPointF?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1003,7 +1008,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, PointF*, INT, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?i32?pvoid :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pPointF?i32?pnear :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_6
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1028,7 +1033,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Point*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?pvoid :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pPoint?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1038,7 +1043,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Point*, INT, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?i32?pvoid :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pPoint?i32?pnear :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_6
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1063,7 +1068,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, RectF*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRectF?pvoid :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pRectF?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1083,7 +1088,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Rect*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRect?pvoid :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .operator EnumerateMetafile?pRect?pnear :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr

@@ -1,262 +1,217 @@
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-.template Matrix ;: public GdiplusBase
+.template Matrix
 
     nativeMatrix ptr_t ?
     lastResult   Status ?
+    scratch      int_t ?
 
     ;; Default constructor is set to identity matrix.
 
-    .operator Matrix {
-        mov rax,this
-        .if rax == NULL
-            GdipAlloc(Matrix)
-        .endif
-        .new    matrix:ptr
-        mov     matrix,rax
-        mov     [rax].Matrix.nativeMatrix,NULL
-        GdipCreateMatrix(&[rax].Matrix.nativeMatrix)
-        mov     this,matrix
-        mov     [this].Matrix.lastResult,eax
-        mov     rax,this
-        retm    <rax>
+    .operator Matrix :abs, :vararg {
+        mov this.nativeMatrix,NULL
+        ifb <_1>
+            GdipCreateMatrix(addr this.nativeMatrix)
+        else
+            this.typeid(Matrix, _1)(_1, _2)
+        endif
+        mov this.lastResult,eax
         }
 
-    .operator = :ptr Matrix {
-        mov     [this].Matrix.nativeMatrix,_1
-        mov     [this].Matrix.lastResult,Ok
-        retm    <this>
+    .operator Matrix?flt :vararg {
+        GdipCreateMatrix2(_1, addr this.nativeMatrix)
         }
-
-    .operator = :REAL, :REAL, :REAL, :REAL, :REAL, :REAL {
-        .new    matrix:ptr
-        mov     matrix,this
-        mov     [this].Matrix.nativeMatrix,NULL
-        GdipCreateMatrix2(_1, _2, _3, _4, _5, _6, &[this].Matrix.nativeMatrix)
-        mov     this,matrix
-        mov     [this].Matrix.lastResult,eax
-        mov     rax,this
-        retm    <rax>
+    .operator Matrix?pRectF :ptr RectF, :ptr PointF, :vararg {
+        mov rcx,rdx
+        mov rdx,r8
+        GdipCreateMatrix3(rcx, rdx, addr this.nativeMatrix)
         }
-
-    .operator = :ptr RectF, :ptr PointF {
-        .new    matrix:ptr
-        .new    rect:ptr
-        mov     rect,_1
-        mov     matrix,this
-        mov     [this].Matrix.nativeMatrix,NULL
-        GdipCreateMatrix3(&rect, _2, &[this].Matrix.nativeMatrix)
-        mov     this,matrix
-        mov     [this].Matrix.lastResult,eax
-        mov     rax,this
-        retm    <rax>
-        }
-
-    .operator = :ptr Rect, :ptr Point {
-        .new    matrix:ptr
-        .new    rect:ptr
-        mov     rect,_1
-        mov     matrix,this
-        mov     [this].Matrix.nativeMatrix,NULL
-        GdipCreateMatrix3I(&rect, _2, &[this].Matrix.nativeMatrix)
-        mov     this,matrix
-        mov     [this].Matrix.lastResult,eax
-        mov     rax,this
-        retm    <rax>
+    .operator Matrix?pRect :ptr Rect, :ptr Point, :vararg {
+        mov rcx,rdx
+        mov rdx,r8
+        GdipCreateMatrix3I(rcx, rdx, addr this.nativeMatrix)
         }
 
     .operator Release {
-        exitm<GdipDeleteMatrix([this].Matrix.nativeMatrix)>
+        GdipDeleteMatrix([this].Matrix.nativeMatrix)
         }
 
-    .operator Clone {
+    .operator Clone :vararg {
 
-        .new matrix:ptr
-        .new cloneMatrix:ptr
+        .new clone:Matrix
 
-        mov matrix,this
-        mov cloneMatrix,NULL
-        GdipCloneMatrix([this].Matrix.nativeMatrix, &cloneMatrix)
-        mov this,matrix
-        mov [this].Matrix.lastResult,eax
-        .if eax != Ok
-            xor eax,eax
-        .else
-            GdipAlloc(Matrix)
-            mov [rax].Matrix.lastResult,Ok
-            mov rdx,cloneMatrix
-            mov [rax].Matrix.nativeMatrix,rdx
-        .endif
-        retm <rax>
+        GdipCloneMatrix(this.nativeMatrix, addr clone.nativeMatrix)
+        mov this.lastResult,eax
+        lea rax,clone
         }
 
-    .operator GetElements :ptr REAL {
-        exitm<GdipGetMatrixElements([this].Matrix.nativeMatrix, _1)>
+    .operator GetElements :abs, :vararg {
+        GdipGetMatrixElements(this.nativeMatrix, _1)
+        this.SetStatus()
         }
-    .operator SetElements :REAL, :REAL, :REAL, :REAL, :REAL, :REAL {
-        exitm<GdipSetMatrixElements([this].Matrix.nativeMatrix, _1, _2, _3, _4, _5, _6)>
+    .operator SetElements :vararg {
+        GdipSetMatrixElements(this.nativeMatrix, _1)
+        this.SetStatus()
         }
 
-    .operator OffsetX {
+    .operator OffsetX :vararg {
 
         .new elements[6]:REAL
 
-        .if Matrix_GetElements(this, &elements) == Ok
+        .if this.GetElements(&elements) == Ok
             movss xmm0,elements[4*4]
         .else
             xorps xmm0,xmm0
         .endif
-        retm <xmm0>
         }
-    .operator OffsetY {
+
+    .operator OffsetY :vararg {
 
         .new elements[6]:REAL
 
-        .if Matrix_GetElements(this, &elements) == Ok
+        .if this.GetElements(&elements) == Ok
             movss xmm0,elements[5*4]
         .else
             xorps xmm0,xmm0
         .endif
-        retm <xmm0>
         }
 
-    .operator Reset {
+    .operator Reset :vararg {
         ;; set identity matrix elements
-        exitm<GdipSetMatrixElements([this].Matrix.nativeMatrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)>
+        GdipSetMatrixElements(this.nativeMatrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+        this.SetStatus()
         }
-    .operator Multiply :ptr Matrix, :MatrixOrder {
-        exitm<GdipMultiplyMatrix([this].Matrix.nativeMatrix, [_1].Matrix.nativeMatrix, _2)>
+    .operator Multiply :ptr Matrix, :abs, :vararg {
+        GdipMultiplyMatrix(this.nativeMatrix, [rdx].Matrix.nativeMatrix, _2)
+        this.SetStatus()
         }
-    .operator Translate :REAL, :REAL, :MatrixOrder {
-        exitm<GdipTranslateMatrix([this].Matrix.nativeMatrix, _1, _2, _3)>
+    .operator Translate :vararg {
+        GdipTranslateMatrix(this.nativeMatrix, _1)
+        this.SetStatus()
         }
-    .operator Scale :REAL, :REAL, :MatrixOrder {
-        exitm<GdipScaleMatrix([this].Matrix.nativeMatrix, _1, _2, _3)>
+    .operator Scale :vararg {
+        GdipScaleMatrix(this.nativeMatrix, _1)
+        this.SetStatus()
         }
-    .operator Rotate :REAL, :MatrixOrder {
-        exitm<GdipRotateMatrix([this].Matrix.nativeMatrix, _1, _2)
+    .operator Rotate :vararg {
+        GdipRotateMatrix(this.nativeMatrix, _1)
+        this.SetStatus()
         }
 
-    .operator RotateAt :REAL, :ptr PointF, :MatrixOrder {
+    .operator RotateAt :REAL, :ptr PointF, :MatrixOrder, :vararg {
 
-        .new matrix:ptr
         .new order:MatrixOrder
         .new angle:REAL
         .new center:ptr
 
-        movss   angle,_1
-        mov     center,_2
-        mov     order,_3
-        mov     matrix,[this].Matrix.nativeMatrix
+        movss   angle,xmm1
+        mov     center,r8
+        mov     order,r9d
 
-        .if _3 == MatrixOrderPrepend
-            GdipTranslateMatrix ( matrix, [_2].PointF.X, [_2].PointF.Y, order )
-            GdipRotateMatrix    ( matrix, angle, order )
-            mov _2,center
-            mov eax,[_2].PointF.X
+        .if r9d == MatrixOrderPrepend
+
+            mov r10,r8
+            GdipTranslateMatrix ( this.nativeMatrix, [r10].PointF.X, [r10].PointF.Y, r9d )
+            GdipRotateMatrix    ( this.nativeMatrix, angle, order )
+            mov r8,center
+            mov eax,[r8].PointF.X
             xor eax,0x80000000
             movd xmm1,eax
-            mov eax,[_2].PointF.Y
+            mov eax,[r8].PointF.Y
             xor eax,0x80000000
             movd xmm2,eax
-            GdipTranslateMatrix ( matrix, xmm1, xmm2, order )
+            GdipTranslateMatrix ( this.nativeMatrix, xmm1, xmm2, order )
+
         .else
-            mov eax,[_2].PointF.X
+
+            mov eax,[r8].PointF.X
             xor eax,0x80000000
             movd xmm1,eax
-            mov eax,[_2].PointF.Y
+            mov eax,[r8].PointF.Y
             xor eax,0x80000000
             movd xmm2,eax
-            GdipTranslateMatrix ( matrix, xmm1, xmm2, order )
-            GdipRotateMatrix    ( matrix, angle, order )
-            mov _2,center
-            GdipTranslateMatrix ( matrix, [_2].PointF.X, [_2].PointF.Y, order )
+            GdipTranslateMatrix ( this.nativeMatrix, xmm1, xmm2, order )
+            GdipRotateMatrix    ( this.nativeMatrix, angle, order )
+            mov r10,center
+            GdipTranslateMatrix ( this.nativeMatrix, [r10].PointF.X, [r10].PointF.Y, order )
+
         .endif
-        exitm<>
+        this.SetStatus()
         }
-    .operator Shear :REAL, :REAL, :MatrixOrder {
-        exitm<GdipShearMatrix([this].Matrix.nativeMatrix, _1, _2, _3)>
+
+    .operator Shear :vararg {
+        GdipShearMatrix(this.nativeMatrix, _1)
+        this.SetStatus()
         }
-    .operator Invert {
-        exitm<GdipInvertMatrix([this].Matrix.nativeMatrix)>
+    .operator Invert :vararg {
+        GdipInvertMatrix(this.nativeMatrix)
+        this.SetStatus()
         }
 
     ;; float version
-    .operator TransformPoints :ptr PointF, :int_t {
-        exitm<GdipTransformMatrixPoints([this].Matrix.nativeMatrix, _1, _2)>
+
+    .operator TransformPoints :abs, :vararg {
+        this.typeid(TransformPoints, _1)(_1, _2)
+        this.SetStatus()
         }
-    .operator TransformPoints :ptr Point, :int_t {
-        exitm<GdipTransformMatrixPointsI([this].Matrix.nativeMatrix, _1, _2)>
+    .operator TransformPoints?pPointF :vararg {
+        GdipTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .operator TransformVectors :ptr PointF, :int_t {
-        exitm<GdipVectorTransformMatrixPoints([this].Matrix.nativeMatrix, _1, _2)>
+    .operator TransformPoints?pPoint :vararg {
+        GdipTransformMatrixPointsI(this.nativeMatrix, _1)
         }
-    .operator TransformVectors :ptr Point, :int_t {
-       exitm<GdipVectorTransformMatrixPointsI([this].Matrix.nativeMatrix, _1, _2)>
+
+    .operator TransformVectors :abs, :vararg {
+        this.typeid(TransformVectors, _1)(_1, _2)
+        this.SetStatus()
         }
-    .operator IsInvertible {
-
-        .new result:BOOL
-        .new matrix:ptr
-
-        mov matrix,this
-        mov result,FALSE
-        GdipIsMatrixInvertible([this].Matrix.nativeMatrix, &result)
-        mov this,matrix
-        .if eax != Ok
-            mov [this].Matrix.lastResult,eax
-        .endif
-        mov eax,result
-        retm <eax>
+    .operator TransformVectors?pPointF :vararg {
+        GdipVectorTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .operator IsIdentity {
-
-        .new result:BOOL
-        .new matrix:ptr
-
-        mov matrix,this
-        mov result,FALSE
-        GdipIsMatrixIdentity([this].Matrix.nativeMatrix, &result)
-        mov this,matrix
-        .if eax != Ok
-            mov [this].Matrix.lastResult,eax
-        .endif
-        mov eax,result
-        retm <eax>
+    .operator TransformVectors?pPoint :vararg {
+        GdipVectorTransformMatrixPointsI(this.nativeMatrix, _1)
         }
-    .operator Equals :ptr Matrix {
 
-        .new result:BOOL
-        .new matrix:ptr
-
-        mov matrix,this
-        mov result,FALSE
-
-        GdipIsMatrixEqual([this].Matrix.nativeMatrix, [_1].Matrix.nativeMatrix, &result)
-
-        mov this,matrix
-        .if eax != Ok
-            mov [this].Matrix.lastResult,eax
-        .endif
-        mov eax,result
-        retm <eax>
+    .operator IsInvertible :vararg {
+        mov this.scratch,FALSE
+        GdipIsMatrixInvertible(this.nativeMatrix, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
         }
+
+    .operator IsIdentity :vararg {
+        mov this.scratch,FALSE
+        GdipIsMatrixIdentity(this.nativeMatrix, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+
+    .operator Equals :ptr Matrix, :vararg {
+        mov this.scratch,FALSE
+        GdipIsMatrixEqual(this.nativeMatrix, [rcx].Matrix.nativeMatrix, addr this.scratch)
+        this.SetStatus()
+        mov eax,this.scratch
+        }
+
     .operator GetLastStatus {
-        mov     eax,[this].Matrix.lastResult
-        mov     [this].Matrix.lastResult,Ok
-        retm    <eax>
+        mov eax,[this].Matrix.lastResult
+        mov [this].Matrix.lastResult,Ok
         }
+
     .operator SetNativeMatrix :ptr Matrix {
-        mov     [this].Pen.nativeMatrix,_1
-        exitm   <>
+        mov [this].Matrix.nativeMatrix,_1
         }
-    .operator SetStatus :Status {
-        mov eax,_1
-        .if (eax != Ok)
-            mov [this].Matrix.lastResult,eax
-        .endif
-        retm <eax>
+
+    .operator SetStatus :vararg {
+        ifnb <_1>
+         ifdif <_1>,<eax>
+            mov eax,_1
+         endif
+        endif
+        test eax,eax
+        cmovz eax,this.lastResult
+        mov this.lastResult,eax
         }
     .ends
     GpMatrix typedef Matrix

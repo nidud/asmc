@@ -15,6 +15,7 @@ Returns a string equivalent of a type from _expression_.
         }
 
 | _input_ | _output |
+| ------ |:------- |
 | 0x10000000 | type?i32 |
 | 0x100000000 | type?i64 |
 | 0x10000000000000000 | type?i128 |

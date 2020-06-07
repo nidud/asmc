@@ -93,7 +93,7 @@ OpenVtbl proc uses esi this:LPCLASS
     mov edx,[esi].com_item.sym
     .if !SymFind( strcat( strcpy( &public_class, [edx].asym.name ), "Vtbl" ) )
 
-        .return asmerr( 2006, &public_class )
+        .return 1;asmerr( 2006, &public_class )
     .endif
 
     mov ecx,eax

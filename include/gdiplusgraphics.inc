@@ -874,7 +874,7 @@ typeid_Rect macro name
         ifb <_3>
             this.DrawImage?flt(rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height)
         else
-            this.typeid(DrawImage?pRectF, _3)(_1, _2, _3, _4)
+            this.typeid(DrawImage?pRectF, _3)(rdx, r8, _3, _4)
         endif
         }
 
@@ -892,9 +892,8 @@ typeid_Rect macro name
 if (GDIPVER GE 0x0110)
 
     ; DrawImage(Image*, RectF*, RectF*, Unit, ImageAttributes* = NULL)
-    ; DrawImage(Image*, RectF*, Matrix*, Effect*, ImageAttributes*, Unit)
 
-    .operator DrawImage?pRectF?pRectF :abs, :abs, :ptr RectF, :abs, :abs=<0>, :vararg {
+    .operator DrawImage?pRectF?pRectF :abs, :ptr RectF, :ptr RectF, :abs, :abs=<0>, :vararg {
         mov r10,_5
         .if r10
             mov r10,[r10].ImageAttributes.nativeImageAttr
@@ -904,19 +903,21 @@ if (GDIPVER GE 0x0110)
             _4, r10, NULL, NULL)
         }
 
-    .operator DrawImage?pRectF?pMatrix :abs, :abs, :ptr RectF, :abs, :abs, :vararg {
+    ; DrawImage(Image*, RectF*, Matrix*, Effect*, ImageAttributes*, Unit)
+
+    .operator DrawImage?pRectF?pMatrix :abs, :abs, :ptr Matrix, :ptr Effect, :ptr ImageAttributes, :abs, :vararg {
         .if r9
             mov r9,[r9].Matrix.nativeMatrix
         .endif
-        mov r10,_4
+        mov r10,[rsp+8*4]
         .if r10
             mov r10,[r10].Effect.nativeEffect
         .endif
-        mov r11,_5
+        mov r11,[rsp+8*5]
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
         .endif
-        GdipDrawImageFX(this.nativeGraphics, [rdx].Image.nativeImage, r8, _3, r10, r11, _6)
+        GdipDrawImageFX(this.nativeGraphics, rdx, r8, r9, r10, r11, _6)
         }
 endif
 

@@ -111,107 +111,69 @@ GdipGetEffectParameters proto WINAPI \
 
 ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
+.pragma list(push, 1)
+
 .template Effect
 
-    nativeEffect        ptr_t ?
-    auxData             ptr_t ?
-    auxDataSize         int_t ?
-    useAuxData          BOOL ?
-    memState            Status ?
+    nativeEffect    ptr_t ?
+    auxData         ptr_t ?
+    auxDataSize     int_t ?
+    useAuxData      BOOL ?
 
-    .operator Effect {
-
-        .new effect:ptr Effect
-
-        mov rax,this
-        .repeat
-            .if rax == NULL
-                .break .if !GdipAlloc(Effect)
-                mov [rax].Effect.memState,Ok
-            .else
-                mov [rax].Effect.memState,NotImplemented
-            .endif
-            mov [rax].Effect.auxDataSize,0
-            mov [rax].Effect.auxData,NULL
-            mov [rax].Effect.nativeEffect,NULL
-            mov [rax].Effect.useAuxData,FALSE
-        .until 1
-        mov effect,rax
-        retm <rax>
-        }
-
-    .operator Release {
-
-        ;; pvData is allocated by ApplyEffect. Return the pointer so that
-        ;; it can be freed by the appropriate memory manager.
-
-        mov effect,rbx
-        mov rbx,this
-        GdipFree([rbx].Effect.auxData)
-        ;; Release the native Effect.
-        GdipDeleteEffect([rbx].Effect.nativeEffect)
-        .if [rbx].Effect.memState != NotImplemented
-            GdipFree(rbx)
-        .endif
-        mov rbx,effect
-        exitm<>
-        }
-
-    .operator GetAuxDataSize {
-        mov     eax,[this].Effect.auxDataSize
-        retm    <eax>
-        }
-    .operator GetAuxData {
-        mov     rax,[this].Effect.auxData
-        retm    <rax>
-        }
-    .operator UseAuxData :BOOL {
-        mov     [this].Effect.useAuxData,_1
-        retm    <this>
-        }
-    .operator GetParameterSize :ptr UINT {
-        GdipGetEffectParameterSize([this].Effect.nativeEffect, _1)
-        retm    <eax>
-        }
-    .operator SetParameters1 :ptr, :UINT {
-        GdipSetEffectParameters([this].Effect.nativeEffect, _1, _2)
-        retm    <eax>
-        }
-    .operator GetParameters :ptr UINT, :ptr {
-        GdipGetEffectParameters([this].Effect.nativeEffect, _1, _2)
-        retm    <eax>
+    .operator Effect :vararg {
+        xor eax,eax
+        mov this.nativeEffect,rax
+        mov this.auxData,rax
+        mov this.auxDataSize,eax
+        mov this.useAuxData,eax
         }
     .ends
 
 EFFECT_OPERATOR macro class
-    .operator class {
-        .if Effect_Effect(this)
-          ifdif <class>,<ColorMatrixEffect>
-            GdipCreateEffect(addr &class&EffectGuid, &[rax].class.nativeEffect)
-          else
-            GdipCreateEffect(&ColorMatrixEffectGuid, &[rax].class.nativeEffect)
-          endif
-            mov rax,effect
-        .endif
-        retm <rax>
+
+    .operator class :vararg {
+        Effect_Effect(this)
+        ifdif <class>,<ColorMatrixEffect>
+            ifdef __PE__
+            .data
+                &class&EffectGuid GUID _&class&EffectGuid
+            .code
+            endif
+            GdipCreateEffect(addr &class&EffectGuid, addr this.nativeEffect)
+        else
+            ifdef __PE__
+            .data
+                ColorMatrixEffectGuid GUID _ColorMatrixEffectGuid
+            .code
+            endif
+            GdipCreateEffect(addr ColorMatrixEffectGuid, addr this.nativeEffect)
+        endif
         }
-    .operator Release {
-        exitm<[this].Effect.Release()>
+
+    .operator Release :vararg {
+
+        ;; pvData is allocated by ApplyEffect. Return the pointer so that
+        ;; it can be freed by the appropriate memory manager.
+
+        GdipFree(this.auxData)
+        ;; Release the native Effect.
+        GdipDeleteEffect(this.nativeEffect)
         }
-    .operator GetAuxDataSize {
-        exitm<[this].Effect.GetAuxDataSize()>
+
+    .operator GetAuxDataSize :vararg {
+        mov eax,this.auxDataSize
         }
-    .operator GetAuxData {
-        exitm<[this].Effect.GetAuxData()>
+    .operator GetAuxData :vararg {
+        mov rax,this.auxData
         }
-    .operator UseAuxData :BOOL {
-        exitm<[this].Effect.UseAuxData(_1)>
+    .operator UseAuxData :abs, :vararg {
+        mov this.useAuxData,_1
         }
-    .operator GetParameterSize :ptr UINT {
-        exitm<[this].Effect.GetParameterSize(_1)>
+    .operator GetParameterSize :abs, :vararg {
+        GdipGetEffectParameterSize(this.nativeEffect, _1)
         }
-    .operator GetParameters :ptr UINT, :ptr {
-        exitm<[this].Effect.GetParameters(_1, _2)>
+    .operator GetParameters :abs, :abs, :vararg {
+        GdipGetEffectParameters(this.nativeEffect, _1, _2)
         }
     exitm<>
     endm
@@ -220,17 +182,21 @@ EFFECT_OPERATOR macro class
 .template Blur : public Effect
 
     EFFECT_OPERATOR(Blur)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(BlurParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(BlurParams))
         }
     .ends
+
+.pragma list(pop)
 
 
 .template Sharpen : public Effect
 
     EFFECT_OPERATOR(Sharpen)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(SharpenParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(SharpenParams))
         }
     .ends
 
@@ -238,14 +204,14 @@ EFFECT_OPERATOR macro class
 .template RedEyeCorrection : public Effect
 
     EFFECT_OPERATOR(RedEyeCorrection)
-    .operator SetParameters :ptr RedEyeCorrectionParams {
+
+    .operator SetParameters :ptr RedEyeCorrectionParams, :vararg {
         mov eax,InvalidParameter
-        .if _1
-            imul r8d,[_1].RedEyeCorrectionParams.numberOfAreas,sizeof(RECT)
+        .if rdx
+            imul r8d,[rdx].RedEyeCorrectionParams.numberOfAreas,sizeof(RECT)
             add  r8d,sizeof(RedEyeCorrectionParams)
-            [this].Effect.SetParameters1(_1, r8d)
+            GdipSetEffectParameters(this.nativeEffect, rdx, r8d)
         .endif
-        retm <eax>
         }
     .ends
 
@@ -253,8 +219,9 @@ EFFECT_OPERATOR macro class
 .template BrightnessContrast : public Effect
 
     EFFECT_OPERATOR(BrightnessContrast)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(BrightnessContrastParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(BrightnessContrastParams))
         }
     .ends
 
@@ -262,40 +229,45 @@ EFFECT_OPERATOR macro class
 .template HueSaturationLightness : public Effect
 
     EFFECT_OPERATOR(HueSaturationLightness)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(HueSaturationLightnessParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(HueSaturationLightnessParams))
         }
     .ends
 
 .template Levels : public Effect
 
     EFFECT_OPERATOR(Levels)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(LevelsParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(LevelsParams))
         }
     .ends
 
 .template Tint : public Effect
 
     EFFECT_OPERATOR(Tint)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(TintParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(TintParams))
         }
     .ends
 
 .template ColorBalance : public Effect
 
     EFFECT_OPERATOR(ColorBalance)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(ColorBalanceParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorBalanceParams))
         }
     .ends
 
 .template ColorMatrixEffect : public Effect
 
     EFFECT_OPERATOR(ColorMatrixEffect)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(ColorMatrix))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorMatrix))
         }
     .ends
 
@@ -303,8 +275,9 @@ EFFECT_OPERATOR macro class
 .template ColorLUT : public Effect
 
     EFFECT_OPERATOR(ColorLUT)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(ColorLUTParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorLUTParams))
         }
     .ends
 
@@ -312,8 +285,9 @@ EFFECT_OPERATOR macro class
 .template ColorCurve : public Effect
 
     EFFECT_OPERATOR(ColorCurve)
-    .operator SetParameters :ptr {
-        exitm<[this].Effect.SetParameters1(_1, sizeof(ColorCurveParams))>
+
+    .operator SetParameters :abs, :vararg {
+        GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorCurveParams))
         }
     .ends
 

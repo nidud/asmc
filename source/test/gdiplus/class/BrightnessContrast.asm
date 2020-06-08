@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr BrightnessContrast()
-
-    BrightnessContrast()
+  .new p:BrightnessContrast()
 
     p.Release()
     p.GetAuxDataSize()

@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr Levels()
-
-    Levels()
+  .new p:Levels()
 
     p.Release()
     p.GetAuxDataSize()

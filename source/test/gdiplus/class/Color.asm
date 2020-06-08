@@ -12,8 +12,9 @@ include gdiplus.inc
 main proc
 
   .new p:Color(0)
+  .new p:Color(0, 1, 2)
+  .new p:Color(0, 1, 2, 3)
 
-    p.Release()
     p.GetAlpha()
     p.GetA()
     p.GetRed()

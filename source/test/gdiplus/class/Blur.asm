@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr Blur()
-
-    Blur()
+  .new p:Blur()
 
     p.Release()
     p.GetAuxDataSize()

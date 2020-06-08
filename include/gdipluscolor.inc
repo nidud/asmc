@@ -208,18 +208,25 @@ __GDIPLUS_COLOR_H equ <>
     ;;
     ;; Color values are not premultiplied.
 
-    .operator Color :vararg {
-        mov     this.Argb,_1
+    .operator Color :abs, :vararg {
+        ifb <_1>
+            mov eax,Black
+        else
+            this.typeid(Color, _1)(_1, _2)
+        endif
+        mov this.Argb,eax
         }
-    .operator Release :vararg {
+
+    .operator Color?i32 :abs, :abs, :abs, :abs, :vararg {
+        ifb <_2>
+            mov eax,_1
+        elseifb <_4>
+            mov eax,MakeARGB(255, _1, _2, _3)
+        else
+            mov eax,MakeARGB(_1, _2, _3, _4)
+        endif
         }
-    .operator Make :abs, :abs, :abs, :vararg {
-        mov     eax,MakeARGB(255, _1, _2, _3)
-        mov     this.Argb,eax
-        }
-    .operator Set :vararg {
-        mov     this.Argb,_1
-        }
+
     .operator GetAlpha :vararg {
         mov     eax,this.Argb
         shr     eax,AlphaShift

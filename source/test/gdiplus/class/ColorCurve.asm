@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr ColorCurve()
-
-    ColorCurve()
+  .new p:ColorCurve()
 
     p.Release()
     p.GetAuxDataSize()

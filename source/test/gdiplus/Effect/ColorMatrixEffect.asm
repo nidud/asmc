@@ -3,9 +3,21 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+    .data
+
+    colorMatrix ColorMatrix { ;; Multiply red component by 1.5.
+        {
+            1.5,  0.0,  0.0,  0.0,  0.0,
+            0.0,  1.0,  0.0,  0.0,  0.0,
+            0.0,  0.0,  1.0,  0.0,  0.0,
+            0.0,  0.0,  0.0,  1.0,  0.0,
+            0.0,  0.0,  0.0,  0.0,  1.0
+        }
+    }
+
     .code
 
-WndProc proc uses rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local ps:PAINTSTRUCT
 
@@ -19,7 +31,6 @@ WndProc proc uses rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
        .new i:Image(L"Photograph.jpg")
        .new r:RectF
        .new m:Matrix(1.0, 0.0, 0.0, 1.0, 20.0, 280.0)
-       .new P:ColorMatrix
        .new E:ColorMatrixEffect()
 
         mov r.X,0.0
@@ -38,14 +49,8 @@ WndProc proc uses rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         ;; color vectors. The first four components of a color vector hold the
         ;; red, green, blue, and alpha components (in that order) of a color.
         ;; The fifth component of a color vector is always 1.
-        lea rdi,P
-        xor eax,eax
-        mov ecx,5*4
-        mov eax,1.0
-        mov ecx,5*1
-        rep stosd
 
-        E.SetParameters(&P)
+        E.SetParameters(&colorMatrix)
 
         ;; Draw the image with no change.
         g.DrawImage(&i, 20.0, 20.0, r.Width, r.Height)

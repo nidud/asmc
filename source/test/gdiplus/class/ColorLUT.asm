@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr ColorLUT()
-
-    ColorLUT()
+  .new p:ColorLUT()
 
     p.Release()
     p.GetAuxDataSize()

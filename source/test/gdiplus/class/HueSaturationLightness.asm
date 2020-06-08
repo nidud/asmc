@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr HueSaturationLightness()
-
-    HueSaturationLightness()
+  .new p:HueSaturationLightness()
 
     p.Release()
     p.GetAuxDataSize()

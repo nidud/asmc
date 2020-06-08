@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr ColorMatrixEffect()
-
-    ColorMatrixEffect()
+  .new p:ColorMatrixEffect()
 
     p.Release()
     p.GetAuxDataSize()

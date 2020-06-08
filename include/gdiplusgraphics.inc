@@ -881,12 +881,22 @@ typeid_Rect macro name
     ; DrawImage(Image*, RectF*, REAL, REAL, REAL, REAL, Unit, ImageAttributes* = NULL, DrawImageAbort = NULL, VOID* = NULL)
 
     .operator DrawImage?pRectF?flt :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
-        mov r10,_8
+        this.typeid(DrawImage?pRectF?flt, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
+        }
+    .operator DrawImage?pRectF?i32 :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+        GdipDrawImageRectRect(this.nativeGraphics, rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width,\
+            [r8].RectF.Height, _3, _4, _5, _6, _7, _8, _9, _10)
+        }
+    .operator DrawImage?pRectF?flt?pImageAttributes :abs, :abs, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
+        mov r10,[rsp+8*8]
         .if r10
             mov r10,[r10].ImageAttributes.nativeImageAttr
         .endif
         GdipDrawImageRectRect(this.nativeGraphics, rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width,\
             [r8].RectF.Height, _3, _4, _5, _6, _7, r10, _9, _10)
+        }
+    .operator DrawImage?pRectF?real4 :vararg {
+        this.DrawImage?pRectF?flt(_1)
         }
 
 if (GDIPVER GE 0x0110)
@@ -928,14 +938,23 @@ endif
         ifb <_3>
             this.DrawImage?i32(rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height)
         else
-            mov r10,_8
-            .if r10
-                mov r10,[r10].ImageAttributes.nativeImageAttr
-            .endif
-            GdipDrawImageRectRectI(this.nativeGraphics, rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width,\
-                [r8].Rect.Height, _3, _4, _5, _6, _7, r10, _9, _10)
+            this.typeid(DrawImage?pRect, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
         endif
         }
+    .operator DrawImage?pRect?i32 :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+        GdipDrawImageRectRectI(this.nativeGraphics, rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width,\
+            [r8].Rect.Height, _3, _4, _5, _6, _7, _8, _9, _10)
+        }
+    .operator DrawImage?pRect?pImageAttributes :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
+        mov r10,[rsp+8*8]
+        .if r10
+            mov r10,[r10].ImageAttributes.nativeImageAttr
+        .endif
+        GdipDrawImageRectRectI(this.nativeGraphics, rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width,\
+            [r8].Rect.Height, _3, _4, _5, _6, _7, r10, _9, _10)
+        }
+
+
 
     ; DrawImage(Image*, REAL, REAL)
     ; DrawImage(Image*, REAL, REAL, REAL, REAL)

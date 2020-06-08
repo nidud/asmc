@@ -5,9 +5,45 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+    .data
+    MetafileCreated BOOL FALSE
+
     .code
 
-WndProc proc uses rbx hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+CreateMetafile proc uses rbx hdc:HDC
+
+   .new m:Metafile(L"MyDiskFile.emf", hdc)
+   .new g:Graphics(&m)
+   .new p:GraphicsPath()
+   .new b:Pen(Red)
+
+    g.SetSmoothingMode(SmoothingModeAntiAlias)
+    g.RotateTransform(30.0)
+    p.AddEllipse(0, 0, 200, 100)
+
+   .new r:Region(&p)
+
+    g.SetClip(&r)
+    g.DrawPath(&b, &p)
+
+    .for ebx = 0: ebx <= 300: ebx += 10
+
+        mov eax,300
+        sub eax,ebx
+        g.DrawLine(&b, 0, 0, eax, ebx)
+    .endf
+    p.Release()
+    b.Release()
+    g.Release()
+    m.Release()
+    mov MetafileCreated,TRUE
+    ret
+
+CreateMetafile endp
+
+    .code
+
+WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local ps:PAINTSTRUCT
 
@@ -16,6 +52,12 @@ WndProc proc uses rbx hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .case WM_PAINT
 
         BeginPaint(rcx, &ps)
+
+        .if MetafileCreated == FALSE
+
+            CreateMetafile(rax)
+            mov rax,ps.hdc
+        .endif
 
        .new g:Graphics(rax)
        .new i:Image(L"MyDiskFile.emf")

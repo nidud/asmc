@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr RedEyeCorrection()
-
-    RedEyeCorrection()
+  .new p:RedEyeCorrection()
 
     p.Release()
     p.GetAuxDataSize()

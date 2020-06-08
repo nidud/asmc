@@ -64,8 +64,8 @@ ColorMatrix	ENDS
 ;;----------------------------------------------------------------------------
 
 ColorMap		STRUC
-oldColor		dd ?
-newColor		dd ?
+oldColor		Color <>
+newColor		Color <>
 ColorMap		ENDS
 
 endif

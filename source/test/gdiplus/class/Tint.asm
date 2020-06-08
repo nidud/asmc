@@ -11,9 +11,7 @@ include gdiplus.inc
 
 main proc
 
-  .new p:ptr Tint()
-
-    Tint()
+  .new p:Tint()
 
     p.Release()
     p.GetAuxDataSize()

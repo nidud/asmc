@@ -1,10 +1,19 @@
 ;
-; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusimageattributes/nf-gdiplusimageattributes-imageattributes-clearbrushremaptable
+; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusimageattributes/nf-gdiplusimageattributes-imageattributes-clearnoop
 ;
+
 include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+    .data
+     brushMatrix ColorMatrix {{    ;; red converted to green
+        0.0, 1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 1.0
+        }}
     .code
 
 WndProc proc uses rsi rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
@@ -20,47 +29,33 @@ WndProc proc uses rsi rdi hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
        .new g:Graphics(rax)
        .new i:Image(L"TestMetafile4.emf")
        .new imAtt:ImageAttributes()
-       .new defaultMap:ColorMap
-       .new brushMap:ColorMap
-
-        mov defaultMap.oldColor,MakeARGB(255, 255, 0, 0)   ;; red converted to blue
-        mov defaultMap.newColor,MakeARGB(255, 0, 0, 255)   ;;
-        mov brushMap.oldColor,MakeARGB(255, 255, 0, 0)     ;; red converted to green
-        mov brushMap.newColor,MakeARGB(255, 0, 255, 0)     ;;
-
-        ;; Set the default color-remap table.
-        imAtt.SetRemapTable(1, &defaultMap, ColorAdjustTypeDefault)
 
         mov esi,i.GetWidth()
         mov edi,i.GetHeight()
 
-        .new r1:Rect( 0,   0, esi, edi)
-        .new r2:Rect(10,  90, esi, edi)
-        .new r3:Rect(10, 170, esi, edi)
-        .new r4:Rect(10, 250, esi, edi)
+       .new r1:Rect(0,   0, esi, edi)
+       .new r2:Rect(0,  80, esi, edi)
+       .new r3:Rect(0, 160, esi, edi)
 
-        ;; Draw the image (metafile) using no color adjustment.
-        g.DrawImage(&i, &r1, 0, 0, esi, edi, UnitPixel)
+        imAtt.SetColorMatrix(&brushMatrix, ColorMatrixFlagsDefault, ColorAdjustTypeBrush)
 
-        ;; Draw the image (metafile) using default color adjustment.
-        ;; All red is converted to blue.
+        ;; Draw the image (metafile) using brush color adjustment.
+        ;; Items filled with a brush change from red to green.
+        g.DrawImage(&i, &r1, 0, 0, esi, edi, UnitPixel, &imAtt)
+
+        ;; Temporarily disable brush color adjustment.
+        imAtt.SetNoOp(ColorAdjustTypeBrush)
+
+        ;; Draw the image (metafile) without brush color adjustment.
+        ;; There is no change from red to green.
         g.DrawImage(&i, &r2, 0, 0, esi, edi, UnitPixel, &imAtt)
 
-        ;; Set the brush remap table.
-        imAtt.SetBrushRemapTable(1, &brushMap)
+        ;; Reinstate brush color adjustment.
+        imAtt.ClearNoOp(ColorAdjustTypeBrush)
 
-        ;; Draw the image (metafile) using default and brush adjustment.
-        ;; Red painted with a brush is converted to green.
-        ;; All other red is converted to blue (default).
-        g.DrawImage(&i,  &r3, 0, 0, esi, edi, UnitPixel, &imAtt)
-
-        ;; Clear the brush remap table.
-        imAtt.ClearBrushRemapTable()
-
-        ;; Draw the image (metafile) using only default color adjustment.
-        ;; Red painted with a brush gets no color adjustment.
-        ;; All other red is converted to blue (default).
-        g.DrawImage(&i, &r4, 0, 0, esi, edi, UnitPixel, &imAtt)
+        ;; Draw the image (metafile) using brush color adjustment.
+        ;; Items filled with a brush change from red to green.
+        g.DrawImage(&i, &r3, 0, 0, esi, edi, UnitPixel, &imAtt)
 
         i.Release()
         g.Release()
@@ -102,7 +97,7 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     .ifd RegisterClassEx(&wc)
 
         .if CreateWindowEx(0, "ClearBrushRemapTable", "ClearBrushRemapTable", WS_OVERLAPPEDWINDOW,
-                100, 80, 420, 460, NULL, NULL, hInstance, 0)
+                100, 80, 420, 380, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
 

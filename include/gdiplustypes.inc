@@ -587,6 +587,7 @@ endif
         mov     [this].Rect.Height,_4
         }
     .operator Rect?r32    :vararg { this.Rect?i32(_1) }
+    .operator Rect?dword  :vararg { this.Rect?i32(_1) }
     .operator Rect?sdword :vararg { this.Rect?i32(_1) }
     .operator Rect?pPoint :ptr Point, :ptr Size {
         mov     qword ptr [this],[_1]

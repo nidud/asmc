@@ -111,8 +111,6 @@ GdipGetEffectParameters proto WINAPI \
 
 ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
-.pragma list(push, 1)
-
 .template Effect
 
     nativeEffect    ptr_t ?
@@ -187,9 +185,6 @@ EFFECT_OPERATOR macro class
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(BlurParams))
         }
     .ends
-
-.pragma list(pop)
-
 
 .template Sharpen : public Effect
 

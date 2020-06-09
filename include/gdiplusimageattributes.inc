@@ -115,8 +115,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         this.SetStatus()
         }
 
-    .operator SetColorKey :ptr Color, :ptr Color, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorKeys(this.nativeImageAttr, _3, TRUE, [rdx].Color.Argb, [r8].Color.Argb)
+    .operator SetColorKey :abs, :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
+        GdipSetImageAttributesColorKeys(this.nativeImageAttr, _3, TRUE, _1, _2)
         this.SetStatus()
         }
 

@@ -43,54 +43,6 @@ include tchar.inc
             0.0,  0.0,  0.0,  0.0,  1.0
         }
     }
-    MetafileCreated BOOL FALSE
-
-    .code
-
-DrawEllipse proto :abs, :abs, :abs {
-
-   .new p:GraphicsPath()
-
-    p.AddEllipse(this, 40, 100, 30)
-
-    ifnb <_2>
-       .new a:Pen(_1, 4.0)
-        g.DrawPath(&a, &p)
-        a.Release()
-    else
-       .new b:PathGradientBrush(&p)
-        b.SetCenterColor(_1)
-        mov count,1
-        mov FullTranslucent,_1
-        b.SetSurroundColors(&FullTranslucent, &count)
-        g.FillEllipse(&b, this, 40, 100, 30)
-        b.Release()
-    endif
-    p.Release()
-    }
-
-CreateMetafile proc hdc:HDC
-
-  local count:SINT
-  local FullTranslucent:ARGB
-
-   .new m:Metafile(L"TestMetafile6.emf", hdc)
-   .new g:Graphics(&m)
-
-    g.SetSmoothingMode(SmoothingModeAntiAlias)
-
-    DrawEllipse( 20, Gray, p)
-    DrawEllipse(150, Gray)
-    DrawEllipse(280, Olive, p)
-    DrawEllipse(410, Olive)
-
-    g.Release()
-    m.Release()
-
-    mov MetafileCreated,TRUE
-    ret
-
-CreateMetafile endp
 
     .code
 
@@ -103,12 +55,6 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
     .case WM_PAINT
 
         BeginPaint(rcx, &ps)
-
-        .if MetafileCreated == FALSE
-
-            CreateMetafile(rax)
-            mov rax,ps.hdc
-        .endif
 
        .new g:Graphics(rax)
        .new i:Image(L"TestMetafile6.emf")

@@ -88,9 +88,9 @@ BRUSH_OPERATOR macro class
         GdipSetStatus(this)
         }
 
-    .operator SetColor :vararg {
+    .operator SetColor :abs, :vararg {
         GdipSetSolidFillColor(this.nativeBrush, _1)
-        GdipSetStatus(this)
+        this.SetStatus()
         }
     .ends
 

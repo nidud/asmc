@@ -30,6 +30,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov rcx,rdx
         GdipCreatePen1([rcx].Color.Argb, _2, UnitWorld, addr this.nativePen)
         }
+    .operator Pen?Color :abs, :abs=<1.0>, :vararg {
+        GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
+        }
     .operator Pen?i32 :abs, :abs=<1.0>, :vararg {
         GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
         }

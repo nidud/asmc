@@ -744,37 +744,47 @@ typeid_Rect macro name
         GdipSetStatus(this)
         }
 
-    .operator MeasureCharacterRanges :ptr WCHAR, :SINT, :ptr Font, :ptr RectF, :ptr StringFormat, :SINT, :ptr Region {
+    .operator MeasureCharacterRanges :ptr WCHAR, :SINT, :ptr Font, :ptr RectF, :ptr StringFormat, :SINT, :ptr Region, :vararg {
 
         .repeat
-
-            .if qword ptr _7 == 0 || sdword ptr _6 <= 0
-
+            .if qword ptr [rsp+7*8] == 0 || sdword ptr [rsp+6*8] <= 0
                 mov eax,InvalidParameter
                 .break
             .endif
 
-            .new status:Status
-            .new nativeRegions:ptr Region ;= new GpRegion* [regionCount];
+            .new string:ptr word
+            .new length:SINT
+            .new nativeRegions:ptr Region
 
-            .if (!nativeRegions)
+            mov string,rdx
+            mov length,r8d
+            mov nativeRegions,r9
 
+            mov ecx,[rsp+6*8]
+            GdipAlloc( &[rcx*8] )
+            .if rax == NULL
                 mov eax,OutOfMemory
                 .break
             .endif
-
-            .for (ecx = 0: ecx < _6: ecx++)
-
-               ; mov nativeRegions[rcx],regions[rcx].nativeRegion
+            .for (r8 = rax, rdx = [rsp+7*8], ecx = 0: ecx < [rsp+6*8]: ecx++, rdx += Region)
+                mov [r8+rcx*8],[rdx].Region.nativeRegion
             .endf
-
-            ;font ? font->nativeFont : NULL,
-            ;stringFormat ? stringFormat->nativeFormat : NULL,
-
-            mov status,GdipMeasureCharacterRanges([this].Graphics.nativeGraphics, _1, _2, _3, _4, _5, _6, _7)
+            mov r9,nativeRegions
+            mov nativeRegions,r8
+            .if r9
+                mov r9,[r9].Font.nativeFont
+            .endif
+            mov rcx,[rsp+5*8]
+            .if rcx
+                mov rcx,[rcx].StringFormat.nativeFormat
+            .endif
+            mov rdx,[rsp+4*8]
+            mov r8d,[rsp+6*8]
+            mov length,GdipMeasureCharacterRanges(this.nativeGraphics, string, length, r9, rdx, rcx, r8d, nativeRegions)
             GdipFree(nativeRegions)
-            mov eax,status
+            mov eax,length
         .until 1
+        this.SetStatus()
         }
 
     .operator DrawDriverString :abs, :abs, :ptr Font, :ptr Brush, :abs, :abs, :ptr Matrix, :vararg {
@@ -1339,6 +1349,7 @@ endif
 
     .operator GetHalftonePalette {
         GdipCreateHalftonePalette()
+        retm<rax>
         }
 
     .operator GetLastStatus {

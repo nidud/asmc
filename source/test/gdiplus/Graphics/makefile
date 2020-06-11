@@ -1,24 +1,41 @@
 Graphics.exe:
-    asmc64 -ws -pe -gui DrawString.asm
-    asmc64 -ws -pe -gui Zooming.asm
-    asmc64 -ws -pe -gui Rotating.asm
-    asmc64 -ws -pe -gui Gradient.asm
-    asmc64 -ws -pe -gui Sphere.asm
-    asmc64 -ws -pe -gui Sphere2.asm
-    asmc64 -ws -pe -gui Person.asm
+    asmc64 -ws -pe -gui BeginContainer.asm
+    asmc64 -ws -pe -gui BeginContainer2.asm
     asmc64 -ws -pe -gui DrawArc.asm
     asmc64 -ws -pe -gui DrawBezier.asm
     asmc64 -ws -pe -gui DrawBeziers.asm
-    asmc64 -ws -pe -gui DrawRectangle.asm
-    asmc64 -ws -pe -gui DrawEllipse.asm
-    asmc64 -ws -pe -gui DrawPie.asm
-    asmc64 -ws -pe -gui DrawPolygon.asm
     asmc64 -ws -pe -gui DrawCurve.asm
     asmc64 -ws -pe -gui DrawClosedCurve.asm
-    asmc64 -ws -pe -gui FillRectangle.asm
-    asmc64 -ws -pe -gui DrawImage.asm
-    asmc64 -ws -pe -gui SetClip.asm
-    asmc64 -ws -pe -gui TranslateClip.asm
-    asmc64 -ws -pe -gui MeasureString.asm
-    asmc64 -ws -pe -gui Save.asm
+    asmc64 -ws -pe -gui DrawEllipse.asm
     asmc64 -ws -pe -gui DrawIcon.asm
+    asmc64 -ws -pe -gui DrawImage.asm
+    asmc64 -ws -pe -gui DrawPie.asm
+    asmc64 -ws -pe -gui DrawPolygon.asm
+    asmc64 -ws -pe -gui DrawRectangle.asm
+    asmc64 -ws -pe -gui DrawString.asm
+    asmc64 -ws -pe -gui FillRectangle.asm
+    asmc64 -ws -pe -gui GetCompositingMode.asm
+    asmc64 -ws -pe -gui GetHalftonePalette.asm
+    asmc64 -ws -pe -gui GetSmoothingMode.asm
+    asmc64 -ws -pe -gui Gradient.asm
+    asmc64 -ws -pe -gui IsClipEmpty.asm
+    asmc64 -ws -pe -gui IsVisibleClipEmpty.asm
+    asmc64 -ws -pe -gui MeasureCharacterRanges.asm
+    asmc64 -ws -pe -gui MeasureString.asm
+    asmc64 -ws -pe -gui Person.asm
+    asmc64 -ws -pe -gui ResetClip.asm
+    asmc64 -ws -pe -gui ResetTransform.asm
+    asmc64 -ws -pe -gui Restore.asm
+    asmc64 -ws -pe -gui Rotating.asm
+    asmc64 -ws -pe -gui Save.asm
+    asmc64 -ws -pe -gui SetClip.asm
+    asmc64 -ws -pe -gui SetClip2.asm
+    asmc64 -ws -pe -gui SetCompositingMode.asm
+    asmc64 -ws -pe -gui SetSmoothingMode.asm
+    asmc64 -ws -pe -gui SetTextRenderingHint.asm
+    asmc64 -ws -pe -gui Sphere.asm
+    asmc64 -ws -pe -gui Sphere2.asm
+    asmc64 -ws -pe -gui TransformPoints.asm
+    asmc64 -ws -pe -gui TranslateClip.asm
+    asmc64 -ws -pe -gui TranslateTransform.asm
+    asmc64 -ws -pe -gui Zooming.asm

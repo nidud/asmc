@@ -64,8 +64,8 @@ main proc
     p.ClearNoOp()
     p.ClearNoOp(ColorAdjustTypeDefault)
 
-    p.SetColorKey(pColor, pColor)
-    p.SetColorKey(pColor, pColor, ColorAdjustTypeDefault)
+    p.SetColorKey(0, 0)
+    p.SetColorKey(0, 0, ColorAdjustTypeDefault)
 
     p.ClearColorKey()
     p.ClearColorKey(ColorAdjustTypeDefault)

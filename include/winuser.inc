@@ -1303,17 +1303,28 @@ endif
 
 ifndef NOWINOFFSETS
 
-;ifndef _WIN64
-GWL_WNDPROC		equ (-4)
-GWL_HINSTANCE		equ (-6)
-GWL_HWNDPARENT		equ (-8)
-;endif
-GWL_STYLE		equ (-16)
-GWL_EXSTYLE		equ (-20)
-ifndef _WIN64
-GWL_USERDATA		equ (-21)
+GWL_WNDPROC	    equ (-4)
+GWL_HINSTANCE	    equ (-6)
+GWL_HWNDPARENT	    equ (-8)
+GWL_STYLE	    equ (-16)
+GWL_EXSTYLE	    equ (-20)
+GWL_USERDATA	    equ (-21)
+GWL_ID		    equ (-12)
+
+ifdef _WIN64
+
+undef GWL_WNDPROC
+undef GWL_HINSTANCE
+undef GWL_HWNDPARENT
+undef GWL_USERDATA
+
 endif
-GWL_ID			equ (-12)
+
+GWLP_WNDPROC	    equ (-4)
+GWLP_HINSTANCE	    equ (-6)
+GWLP_HWNDPARENT	    equ (-8)
+GWLP_USERDATA	    equ (-21)
+GWLP_ID		    equ (-12)
 
 ifndef _WIN64
 GCL_MENUNAME		equ (-8)

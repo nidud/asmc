@@ -162,6 +162,13 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 .endif
                 .endc
 
+              .case '0'
+                mov eax,',0,"'
+                stosd
+                mov BYTE PTR [edi],'"'
+                mov BYTE PTR [edx],0
+                .endc
+
               .case '"'         ; <",'"',">
                 mov ah,','
                 mov ecx,buffer
@@ -185,12 +192,17 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 mov [edx],al
                 .endc
             .endsw
+
         .elseif al == '"'
 
             add esi,1
             .for ecx = esi,
                  al = [ecx]: al == ' ' || al == 9: ecx++, al = [ecx]
             .endf
+            .if al == 'L' && byte ptr [ecx+1] == '"'
+                inc ecx
+                mov al,'"'
+            .endif
             .if al == '"' ; "string1" "string2"
 
                 mov esi,ecx
@@ -226,8 +238,9 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov [eax],esi
 
     assume esi:ptr str_item
-
-    .for ebx = strlen(&sbuf), edi = 0,
+    lea eax,sbuf
+    sub edx,eax
+    .for ebx = edx, edi = 0,
          esi = ModuleInfo.StrStack : esi : edi++, esi = [esi].next
 
         mov cl,[esi].unicode
@@ -243,7 +256,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 sub edx,ebx
             .endif
 
-            .if !strcmp( &sbuf, edx )
+            .if !memcmp( &sbuf, edx, ebx )
 
                 movzx eax,[esi].index
                 sub edx,[esi].string
@@ -272,7 +285,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov ModuleInfo.StrStack,eax
     lea ecx,[eax+str_item]
     mov [eax].str_item.string,ecx
-    strcpy(ecx, &sbuf)
+    memcpy(ecx, &sbuf, &[ebx+1])
     ret
 
 ParseCString ENDP

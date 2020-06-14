@@ -133,7 +133,7 @@ LongToHandle macro h ; const long h
     endm
 ;unsigned long
 PtrToUlong macro p ; const void *p
-    exitm<ULONG ptr p>
+    exitm<p>
     endm
 ;unsigned int
 PtrToUint macro p ; const void *p

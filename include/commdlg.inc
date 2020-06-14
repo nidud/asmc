@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _INC_COMMDLG
 _INC_COMMDLG equ <>
 
@@ -1020,4 +1021,5 @@ endif
 
 endif ;; GUID_DEFS_ONLY
 endif ;; _INC_COMMDLG
+.pragma list(pop)
 

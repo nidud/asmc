@@ -1264,6 +1264,9 @@ endif
     .operator Bitmap?sdword :abs, :abs, :abs, :vararg {
         this.typeid(Bitmap?i32, _3)(_1, _2, _3, _4)
         }
+    .operator Bitmap?dword :abs, :abs, :abs, :vararg {
+        this.typeid(Bitmap?i32, _3)(_1, _2, _3, _4)
+        }
     .operator Bitmap?r32 :abs, :abs, :abs, :vararg {
         this.typeid(Bitmap?r32, _3)(_1, _2, _3, _4)
         }
@@ -1274,6 +1277,10 @@ endif
             GdipCreateBitmapFromScan0(_1, _2, _3, _4, _5, addr this.nativeImage)
         endif
         }
+    .operator Bitmap?i32?dword :abs, :abs, :abs, :abs, :vararg {
+        this.Bitmap?i32?i32(_1, _2, _3, _4, _5)
+        }
+
     .operator Bitmap?r32?r32 :abs, :abs, :abs, :abs, :vararg {
         mov ecx,_1
         mov edx,_2

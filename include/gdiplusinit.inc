@@ -100,9 +100,6 @@ GdiplusShutdown proto WINAPI \
     Token                       ULONG_PTR ?
 
     .operator GdiPlus :vararg {
-        ifidn <this>,<0>
-            .err <Only Static Initialization! Use .new name:...>
-        endif
         ifnb <_1>
             mov this.GdiplusVersion,_1
         else
@@ -113,12 +110,9 @@ GdiplusShutdown proto WINAPI \
         mov this.SuppressExternalCodecs,FALSE
         mov this.StartupParameters,0
         GdiplusStartup(addr this.Token, addr this, NULL)
-        lea rax,this
-        exitm<>
         }
     .operator Release {
         GdiplusShutdown([this].GdiPlus.Token)
-        exitm<>
         }
     .ends
 

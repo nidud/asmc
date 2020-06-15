@@ -683,7 +683,7 @@ DEFINE_IIDX(IWICPalette, "00000040-a8f2-4877-ba0a-fd2b6645fb94")
     InitializeFromPalette proc :ptr
     GetType		proc :ptr
     GetColorCount	proc :ptr
-    GetColors		proc :UINT
+    GetColors		proc :UINT, :ptr WICColor, :ptr UINT
     IsBlackWhite	proc :ptr
     IsGrayscale		proc :ptr
     HasAlpha		proc :ptr

@@ -72,6 +72,24 @@ _cwprintf	proto _CDecl :LPWSTR, :VARARG
 _cwscanf	proto _CDecl :LPWSTR, :VARARG
 _vcwprintf	proto __cdecl :LPWSTR, :PVOID
 
+ifdef _UNICODE
+_tcgets		equ <_cgetws>
+_tcprintf	equ <_cwprintf>
+_tcputs		equ <_cputws>
+_tcscanf	equ <_cwscanf>
+_tgetch		equ <_getwch>
+_tgetche	equ <_getwche>
+_tputch		equ <_putwch>
+else
+_tcgets		equ <_cgets>
+_tcprintf	equ <_cprintf>
+_tcputs		equ <_cputs>
+_tcscanf	equ <_cscanf>
+_tgetch		equ <_getch>
+_tgetche	equ <_getche>
+_tputch		equ <_putch>
+endif
+
 ;;;;;;;;;;;;;;; crtl
 
 ifndef _INTPTR_T_DEFINED

@@ -305,7 +305,7 @@ DemoApp::ConvertBitmapSource proc uses rsi hWnd:HWND, ppToRenderBitmapSource:ptr
 
     ;; Get the client Rect
     mov hr,E_FAIL
-    .if GetClientRect(hWnd, &rcClient)
+    .if rcClient.GetClient(rdx)
         mov hr,S_OK
     .endif
 
@@ -321,10 +321,8 @@ DemoApp::ConvertBitmapSource proc uses rsi hWnd:HWND, ppToRenderBitmapSource:ptr
         ;; Initialize the bitmap scaler from the original bitmap map bits
         .if (SUCCEEDED(hr))
 
-            mov r8d,rcClient.right
-            sub r8d,rcClient.left
-            mov r9d,rcClient.bottom
-            sub r9d,rcClient.top
+            rcClient.Width(r8d)
+            rcClient.Height(r9d)
             mov hr,pScaler.Initialize([rsi].m_pOriginalBitmapSource, r8d, r9d,
                 WICBitmapInterpolationModeFant)
         .endif

@@ -84,10 +84,10 @@ endif
 HRESULT                 typedef LONG
 
 SUCCEEDED macro hr
-        exitm<(HRESULT ptr hr !>= 0)>
+        exitm<(sdword ptr hr !>= 0)>
         endm
 FAILED macro hr
-        exitm<(HRESULT ptr hr !< 0)>
+        exitm<(sdword ptr hr !< 0)>
         endm
 
 S_OK equ 0

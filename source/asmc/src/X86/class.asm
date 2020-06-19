@@ -81,7 +81,7 @@ ClassProto2 endp
 
 OpenVtbl proc uses esi this:LPCLASS
 
-  local public_class[64]:char_t
+  local public_class[128]:char_t
 
     mov esi,this
     AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
@@ -337,7 +337,7 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:str
   local size[16]  : char_t
   local curr[256] : char_t
   local oldstat   : input_status
-  local vector[64]: char_t
+  local vector[128]: char_t
   local brachets  : int_t
 
     mov ebx,tokenarray
@@ -440,11 +440,11 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
   local i:int_t
   local opnd:expr
   local tokval:int_t
-  local id[64]:char_t
+  local id[128]:char_t
   local type:int_t
   local size:int_t
   local void:int_t
-  local name[64]:char_t
+  local name[128]:char_t
 
     mov ebx,tokenarray
 
@@ -1181,7 +1181,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .new is_vararg  : int_t
         .new context    : string_t
         .new class_ptr  : string_t
-        .new token[64]  : char_t
+        .new token[128] : char_t
         .new name[512]  : char_t
 
         mov is_vararg,0

@@ -163,8 +163,15 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 .endc
 
               .case '0'
-                mov eax,',0,"'
-                stosd
+                lea eax,[edi-1]
+                .if eax == buffer
+                    dec edi
+                    mov eax,',0'
+                    stosw
+                .else
+                    mov eax,',0,"'
+                    stosd
+                .endif
                 mov BYTE PTR [edi],'"'
                 mov BYTE PTR [edx],0
                 .endc
@@ -324,7 +331,7 @@ local   rc:                     int_t,
     xor eax,eax
     mov rc,eax
 
-    .if ModuleInfo.strict_masm_compat == 0 && Parse_Pass == PASS_1
+    .if ModuleInfo.strict_masm_compat == 0 ;&& Parse_Pass == PASS_1
         ;
         ; need "quote"
         ;
@@ -781,7 +788,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
     .endf
 
     sprintf( buffer, "F%04X", edi )
-    .if Parse_Pass == PASS_1
+;    .if Parse_Pass == PASS_1
 
         LclAlloc( flt_item+16 )
         mov [eax].flt_item.index,edi
@@ -828,7 +835,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         AddLineQueue( "_DATA ends" )
         AddLineQueue( &segm )
         InsertLineQueue()
-    .endif
+;    .endif
     xor eax,eax
     ret
 

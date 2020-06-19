@@ -3298,7 +3298,11 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
             ;; invoke handle import, call do not..
 
-            strcpy( edi, "invoke " )
+            .if IsType( [ebx].string_ptr ) ; added 2.31.44
+                strcpy( edi, ".new " )
+            .else
+                strcpy( edi, "invoke " )
+            .endif
             strcat( edi, [ebx].tokpos )
             strcpy( CurrSource, edi )
             mov Token_Count,Tokenize( edi, 0, ebx, TOK_DEFAULT )

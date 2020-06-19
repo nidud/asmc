@@ -935,20 +935,16 @@ GenerateFloat proto :int_t, :tok_t
 
     assume ebx:tok_t
 
-ExpandCStrings proc uses ebx tokenarray:tok_t
+ExpandCStrings proc uses edi ebx tokenarray:tok_t
 
     xor eax,eax
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
 
-    .for ( edx = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edx++ )
+    .for ( edi = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edi++ )
 
         .if [ebx].hll_flags & T_HLL_PROC
 
-            .if Parse_Pass == PASS_1
-
-                GenerateCString( edx, tokenarray )
-                .return
-            .endif
+            .return .if GenerateCString( edi, tokenarray )
 
             .if [ebx].token == T_OP_SQ_BRACKET
 

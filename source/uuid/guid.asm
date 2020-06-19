@@ -43,6 +43,8 @@ include gdiplus.inc
 include wdmguid.inc
 include pnrpns.inc
 include richole.inc
+include amsi.inc
+include wincodec.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

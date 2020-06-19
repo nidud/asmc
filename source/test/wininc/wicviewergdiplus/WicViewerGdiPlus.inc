@@ -39,6 +39,8 @@ SafeRelease proto :ptr, :abs {
     .endif
     }
 
+ifdef _MSVCRT
+
     .data
 
     IID_IWICImagingFactory      IID _IID_IWICImagingFactory
@@ -48,7 +50,7 @@ SafeRelease proto :ptr, :abs {
 
     @CurSeg ends
 
-
+endif
 
 
 

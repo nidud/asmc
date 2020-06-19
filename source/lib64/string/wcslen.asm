@@ -66,7 +66,7 @@ L3:
     xor     eax,eax
     mov     rdx,rdi
     mov     rdi,rcx
-    or      rcx,-1
+    mov     rcx,-1
     repne   scasw
     mov     rdi,rdx
     not     rcx

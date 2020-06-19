@@ -8,8 +8,6 @@ include malloc.inc
 
     .code
 
-    option win64:nosave
-
 calloc proc n:size_t, nsize:size_t
 
     mov rax,rcx

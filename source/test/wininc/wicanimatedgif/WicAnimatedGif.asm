@@ -38,18 +38,6 @@ SafeRelease proto :ptr, :abs {
     .endif
     }
 
-RectWidth proto :abs, :vararg {
-
-    mov eax,this.right
-    sub eax,this.left
-    }
-
-RectHeight proto :abs, :vararg {
-
-    mov eax,this.bottom
-    sub eax,this.top
-    }
-
     .data
 
      vtable DemoAppVtbl {
@@ -97,37 +85,6 @@ DemoApp::DemoApp proc
     ret
 
 DemoApp::DemoApp endp
-
-;; Gif Animation Overview
-;;
-;; In order to play a gif animation, raw frames (which are compressed frames
-;; directly retrieved from the image file) and image metadata are loaded
-;; and used to compose the frames that are actually displayed in the animation
-;; loop (which we call composed frames in this sample).  Composed frames have
-;; the same sizes as the global gif image size, while raw frames can have their own sizes.
-;;
-;; At the highest level, a gif animation contains a fixed or infinite number of animation
-;; loops, in which the animation will be displayed repeatedly frame by frame; once all
-;; loops are displayed, the animation will stop and the last frame will be displayed
-;; from that point.
-;;
-;; In each loop, first the entire composed frame will be initialized with the background
-;; color retrieved from the image metadata.  The very first raw frame then will be loaded
-;; and directly overlaid onto the previous composed frame (i.e. in this case, the frame
-;; cleared with background color) to produce the first  composed frame, and this frame
-;; will then be displayed for a period that equals its delay.  For any raw frame after
-;; the first raw frame (if there are any), the composed frame will first be disposed based
-;; on the disposal method associated with the previous raw frame. Then the next raw frame
-;; will be loaded and overlaid onto the result (i.e. the composed frame after disposal).
-;; These two steps (i.e. disposing the previous frame and overlaying the current frame) together
-;; 'compose' the next frame to be displayed.  The composed frame then gets displayed.
-;; This process continues until the last frame in a loop is reached.
-;;
-;; An exception is the zero delay intermediate frames, which are frames with 0 delay
-;; associated with them.  These frames will be used to compose the next frame, but the
-;; difference is that the composed frame will not be displayed unless it's the last frame
-;; in the loop (i.e. we move immediately to composing the next composed frame).
-
 
 ;;
 ;;  WinMain
@@ -312,12 +269,9 @@ DemoApp::CreateDeviceResources proc uses rsi
             mov renderTargetProperties.dpiX,DEFAULT_DPI
             mov renderTargetProperties.dpiY,DEFAULT_DPI
 
-            mov r8d,rcClient.right
-            sub r8d,rcClient.left
-            mov r9d,rcClient.bottom
-            sub r9d,rcClient.top
-
-           .new hwndRenderTragetproperties:HwndRenderTargetProperties([rsi].m_hWnd, r8d, r9d)
+            rcClient.Width(r8d)
+            rcClient.Height(r9d)
+           .new hwndRenderTragetproperties:D2D1_HWND_RENDER_TARGET_PROPERTIES([rsi].m_hWnd, r8d, r9d)
 
             mov rcx,[rsi].m_pD2DFactory
             mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTragetproperties,
@@ -327,8 +281,8 @@ DemoApp::CreateDeviceResources proc uses rsi
 
             ;; We already have a hwnd render target, resize it to the window size
 
-            mov size.width,RectWidth(rcClient)
-            mov size.height,RectHeight(rcClient)
+            mov size.width,rcClient.Width()
+            mov size.height,rcClient.Height()
             mov rcx,[rsi].m_pHwndRT
             mov hr,[rcx].ID2D1HwndRenderTarget.Resize(&size)
         .endif
@@ -1486,9 +1440,9 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
 
     mov hr,S_OK
     mov rsi,rcx
-    xor eax,eax
-    mov qword ptr rcClient,rax
-    mov qword ptr rcWindow,rax
+
+    rcClient.Clear()
+    rcWindow.Clear()
 
     ;; If the user cancels selection, then nothing happens
 
@@ -1543,8 +1497,8 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
 
             ;; Resize the window to fit the gif
 
-            mov r9d,RectWidth(rcClient)
-            mov r10d,RectHeight(rcClient)
+            rcClient.Width(r9d)
+            rcClient.Height(r10d)
 
             MoveWindow([rsi].m_hWnd, rcWindow.left, rcWindow.top, r9d, r10d, TRUE)
 

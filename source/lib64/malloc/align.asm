@@ -36,17 +36,14 @@ _aligned_offset_malloc_base proc size:size_t, alignment:size_t, _offset:size_t
 
     ; validation section
 
-    mov rax,rdx
-    dec rax
-    and rax,rdx
-    .ifnz
+    lea rax,[rdx-1]
+
+    .if ( rax & rdx || r8 == 0 || r8 < rcx )
+
         _set_errno(EINVAL)
         .return NULL
     .endif
-    .if (r8 == 0 || r8 < rcx)
-        _set_errno(EINVAL)
-        .return NULL
-    .endif
+
     .if rdx < PTR_SZ
         mov edx,PTR_SZ
     .endif
@@ -74,16 +71,13 @@ _aligned_offset_malloc_base proc size:size_t, alignment:size_t, _offset:size_t
 
     .return .if malloc(rax) == NULL
 
-    mov p,rax
+    mov rcx,rax
     add rax,nonuser_size
     add rax,_offset
     mov rdx,alignment
     not rdx
     and rax,rdx
     sub rax,_offset
-    mov retptr,rax
-
-    mov rcx,p
     lea rdx,[rcx-HEAP]
     mov [rax-HEAP].HEAP.prev,rdx
     mov [rax-HEAP].HEAP.type,_HEAP_ALIGNED
@@ -123,14 +117,9 @@ _aligned_offset_realloc_base proc memblock:ptr, size:size_t, alignment:size_t, _
 
     ; validation section
 
-    mov rax,r8
-    dec rax
-    and rax,r8
-    .ifnz
-        _set_errno(EINVAL)
-        .return NULL
-    .endif
-    .if (r9 == 0 || r9 < rdx)
+    lea rax,[r8-1]
+    .if ( rax & r8 || r9 == 0 || r9 < rdx )
+
         _set_errno(EINVAL)
         .return NULL
     .endif
@@ -139,7 +128,7 @@ _aligned_offset_realloc_base proc memblock:ptr, size:size_t, alignment:size_t, _
     and rax,not ( PTR_SZ - 1 )
     sub rax,PTR_SZ
     mov rcx,[rax]
-    mov stptr,rcx       ; ptr points to the start of the aligned memory block
+    mov stptr,rcx ; ptr points to the start of the aligned memory block
 
     mov rax,alignment
     .if rax < PTR_SZ
@@ -154,7 +143,6 @@ _aligned_offset_realloc_base proc memblock:ptr, size:size_t, alignment:size_t, _
     sub rax,_offset
     and rax,PTR_SZ - 1
     mov gap,rax
-
 
     mov diff,memblock
     sub diff,stptr

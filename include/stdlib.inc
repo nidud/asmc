@@ -548,6 +548,12 @@ gcvt		proto __cdecl :real8, :int_t, :string_t
 itoa		proto __cdecl :int_t, :string_t, :int_t
 ltoa		proto __cdecl :long_t, :string_t, :int_t
 
+_itoa		proto :int_t, :string_t, :int_t
+_ltoa		proto :long_t, :string_t, :int_t
+_ultoa		proto :ulong_t, :string_t, :int_t
+_i64toa		proto :int64_t, :string_t, :int_t
+_ui64toa	proto :uint64_t, :string_t, :int_t
+
 putenv		proto __cdecl :string_t
 
 swab		proto __cdecl :string_t, :string_t, :int_t

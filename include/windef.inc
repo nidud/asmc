@@ -252,12 +252,109 @@ LPCOLORREF	typedef PTR DWORD
 
 HFILE_ERROR	equ -1
 
+ifdef _WIN64
+
+.template RECT
+
+    left    SINT ?
+    top	    SINT ?
+    right   SINT ?
+    bottom  SINT ?
+
+    .operator RECT :vararg {
+	ifidn typeid(?, this),<??RECT>
+	    this.Init?RECT(_1)
+	else
+	   .new __rc:RECT
+	    __rc.Init?RECT(_1)
+	    lea rax,__rc
+	endif
+	}
+
+    .operator Init :vararg {
+	ifidn typeid(?, this),<??RECT>
+	    this.Init?RECT(_1)
+	else
+	    [rcx].RECT.typeid(Init, this)(_1)
+	endif
+	}
+
+    .operator Init?RECT :abs, :abs, :abs, :abs, :vararg {
+	ifnb <_1>
+	    mov this.left,    _1
+	endif
+	ifnb <_2>
+	    mov this.top,     _2
+	endif
+	ifnb <_3>
+	    mov this.right,   _3
+	endif
+	ifnb <_4>
+	    mov this.bottom,  _4
+	endif
+	}
+
+    .operator Init?r64 :abs, :abs, :abs, :abs {
+	ifnb <_1>
+	    mov [this].RECT.left,    _1
+	endif
+	ifnb <_2>
+	    mov [this].RECT.top,     _2
+	endif
+	ifnb <_3>
+	    mov [this].RECT.right,   _3
+	endif
+	ifnb <_4>
+	    mov [this].RECT.bottom,  _4
+	endif
+	}
+
+    .operator Init?pRECT :abs, :abs, :abs, :abs {
+	[rcx].RECT.Init?r64(_1, _2, _3, _4)
+	}
+
+    .operator Width :abs=<eax> {
+	ifidn typeid(?, this),<??RECT>
+	    mov _1,this.right
+	    sub _1,this.left
+	else
+	    mov _1,[this].RECT.right
+	    sub _1,[this].RECT.left
+	endif
+	}
+
+    .operator Height :abs=<eax> {
+	ifidn typeid(?, this),<??RECT>
+	    mov _1,this.bottom
+	    sub _1,this.top
+	else
+	    mov _1,[this].RECT.bottom
+	    sub _1,[this].RECT.top
+	endif
+	}
+
+    .operator GetClient :HWND {
+	xchg rcx,rdx
+	GetClientRect(rcx, rdx)
+	}
+
+    .operator Clear {
+	xor eax,eax
+	mov [this],rax
+	mov [this+8],rax
+	}
+    .ends
+
+else
+
 RECT		STRUC
 left		sdword ?
 top		sdword ?
 right		sdword ?
 bottom		sdword ?
 RECT		ENDS
+
+endif
 
 PRECT		typedef ptr RECT
 NPRECT		typedef ptr RECT

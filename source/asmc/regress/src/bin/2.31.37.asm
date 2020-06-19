@@ -4,17 +4,14 @@
     .x64
     .model flat, fastcall
 
-    option casemap:none
-    option win64:auto
+    option casemap:none, win64:auto
 
     ostream typedef ptr
+    cout    equ <ostream::>
 
 .template ostream
-
     .operator << :ptr {}
-
     .ends
-    cout equ <ostream::>
 
     .code
 

@@ -3,23 +3,45 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+; void *_alloca64(UINT dwSize, UINT ReservedStack)
+;
+; alloca macro dwSize:req, ReservedStack:=<@ReservedStack>
+;     exitm<_alloca64( dwSize, ReservedStack )>
+;     endm
+;
+; Allocates memory on the stack. This function is deprecated
+; because a more secure version is available; see _malloca.
+;
+
+_PAGESIZE_ equ 0x1000 ; one page
 
     .code
 
 _alloca64::
 
-    pop rax ; return addres
-    add ecx,16-1
+    lea rax,[rsp+8] ; return addres
+
+    add ecx,16-1    ; assume 16 aligned
     and cl,-16
-    .while rcx > 0x1000
-        sub  rsp,0x1000
-        test [rsp],eax
-        sub  rcx,0x1000
+
+    .while ecx > _PAGESIZE_
+
+        sub  rax,_PAGESIZE_
+
+        test edx,[rax] ; probe page
+        ;
+        ; RSP unchanged on stack overflow
+        ;
+        sub  ecx,_PAGESIZE_
     .endw
-    sub  rsp,rcx
-    test [rsp],eax
-    mov  rcx,rax
-    lea  rax,[rsp+rdx]
-    jmp  rcx
+
+    sub  rax,rcx
+    test edx,[rax]  ; probe page
+
+    mov rcx,[rsp]   ; return addres
+    mov rsp,rax     ; new stack
+    mov [rax],rcx
+    add rax,rdx     ; memory block
+    ret
 
     end

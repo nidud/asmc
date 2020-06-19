@@ -871,18 +871,10 @@ SEVERITY_ERROR	equ 1
 
 
 SUCCEEDED macro hr
-    if (typeof(hr))
-	exitm<(hr !>= 0)>
-    else
-	exitm<(hr GE 0)>
-    endif
+	exitm<(sdword ptr hr !>= 0)>
 	endm
 FAILED macro hr
-    if (typeof(hr))
-	exitm<((hr) !< 0)>
-    else
-	exitm<((hr) LT 0)>
-    endif
+	exitm<(sdword ptr hr !< 0)>
 	endm
 
 IS_ERROR macro Status
@@ -955,6 +947,9 @@ NOERROR equ 0
 
 
 E_UNEXPECTED equ 0x8000FFFF
+E_NOT_SET		 equ HRESULT_FROM_WIN32(ERROR_NOT_FOUND)
+E_NOT_VALID_STATE	 equ HRESULT_FROM_WIN32(ERROR_INVALID_STATE)
+E_NOT_SUFFICIENT_BUFFER	 equ HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER)
 
 ifdef _WIN32
 E_NOTIMPL equ 0x80004001

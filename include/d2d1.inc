@@ -380,26 +380,20 @@ DEFINE_ENUM_FLAG_OPERATORS(D2D1_PRESENT_OPTIONS);
 	}
     .ends
 
-.template HwndRenderTargetProperties
+.template D2D1_HWND_RENDER_TARGET_PROPERTIES
 
     hwnd	   HWND ?
     pixelSize	   D2D1_SIZE_U <>
     presentOptions D2D1_PRESENT_OPTIONS ?
 
-    .operator HwndRenderTargetProperties :abs,\
+    .operator D2D1_HWND_RENDER_TARGET_PROPERTIES :abs,\
 	:abs=<0>, :abs=<0>, :abs=<D2D1_PRESENT_OPTIONS_NONE>, :vararg {
 	mov this.hwnd,_1
 	mov this.pixelSize.width,_2
 	mov this.pixelSize.height,_3
 	mov this.presentOptions,_4
 	}
-    .ends
 
-.template D2D1_HWND_RENDER_TARGET_PROPERTIES
-
-    hwnd	   HWND ?
-    pixelSize	   D2D1_SIZE_U <>
-    presentOptions D2D1_PRESENT_OPTIONS ?
     .ends
 
 .enum D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS {

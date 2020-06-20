@@ -932,6 +932,7 @@ EnvironFunc endp
 MacroInit proc pass:int_t
 
     mov MacroLevel,0
+    mov MacroLocals,0 ; added 2.31.45
 
     .if pass == PASS_1
 

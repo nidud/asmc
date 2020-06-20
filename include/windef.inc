@@ -265,10 +265,14 @@ ifdef _WIN64
 	ifidn typeid(?, this),<??RECT>
 	    this.Init?RECT(_1)
 	else
-	   .new __rc:RECT
-	    __rc.Init?RECT(_1)
-	    lea rax,__rc
+	    [rcx].RECT.typeid(RECT, this)(_1)
 	endif
+	}
+    .operator RECT?i32 :vararg {
+      local rc
+       .new rc:RECT
+	rc.Init?RECT(_1)
+	lea rax,rc
 	}
 
     .operator Init :vararg {

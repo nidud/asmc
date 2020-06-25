@@ -1004,12 +1004,12 @@ type_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
                 .if ( [edx].kind == EXPR_FLOAT && [edx].mem_type == MT_REAL16 )
                     xor eax,eax
                 .else
+                    mov [ecx].mem_type,[edx].mem_type
                     SizeFromMemtype([edx].mem_type, [edx].Ofssize, [edx].type)
                     mov ecx,opnd1
                     mov edx,opnd2
                 .endif
                 mov [ecx].value,eax
-                mov [ecx].mem_type,[edx].mem_type
             .else
                 mov eax,[edx].type
                 .if eax

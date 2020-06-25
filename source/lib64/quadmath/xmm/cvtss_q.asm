@@ -28,7 +28,7 @@ cvtss_q proc vectorcall f:real4
                 ; Invalid exception
 
                 or edx,0x40000000 ; QNaN
-                _set_errno(EDOM)
+                mov errno,EDOM
             .endif
         .endif
         or edx,0x80000000

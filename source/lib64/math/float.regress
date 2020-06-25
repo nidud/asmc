@@ -9,7 +9,8 @@ comp32 macro r, p, args:vararg
     p(args)
     movd eax,xmm0
     mov  ebx,x
-    exitm<.assert(eax == ebx)>
+    .assert(eax == ebx)
+    exitm<>
     endm
 
 comp28 macro r, p, args:vararg
@@ -22,7 +23,8 @@ comp28 macro r, p, args:vararg
     mov ebx,x
     and eax,0xFFFFFFF0
     and ebx,0xFFFFFFF0
-    exitm<.assert(eax == ebx)>
+    .assert(eax == ebx)
+    exitm<>
     endm
 
     .code

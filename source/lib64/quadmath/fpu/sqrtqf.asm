@@ -8,7 +8,7 @@ include quadmath.inc
 
     .code
 
-sqrtqf proc vectorcall Q:real16
+sqrtqf proc __vectorcall Q:real16
 
     fldq()
     fsqrt

@@ -788,7 +788,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
     .endf
 
     sprintf( buffer, "F%04X", edi )
-;    .if Parse_Pass == PASS_1
+    .if Parse_Pass == PASS_1
 
         LclAlloc( flt_item+16 )
         mov [eax].flt_item.index,edi
@@ -810,8 +810,13 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
             strcpy( &segm, ".code" )
         .endif
 
+        .if ModuleInfo.list
+
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        .endif
         .if ModuleInfo.line_queue.head
             RunLineQueue()
+            and ModuleInfo.line_flags,NOT LOF_LISTED
         .endif
         AddLineQueue( ".data" )
         mov ecx,size
@@ -835,7 +840,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         AddLineQueue( "_DATA ends" )
         AddLineQueue( &segm )
         InsertLineQueue()
-;    .endif
+    .endif
     xor eax,eax
     ret
 

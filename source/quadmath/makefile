@@ -7,7 +7,6 @@ all: $(win32) $(win64) $(elf32)
 
 base32 = \
     ../lib32/quadmath/*.asm \
-    ../lib32/quadmath/const/*.asm \
     ../lib32/fltintrn/_strtoflt.asm \
     ../lib32/fltintrn/_fltsetflags.asm \
     ../lib32/fltintrn/_destoflt.asm \
@@ -15,7 +14,6 @@ base32 = \
 
 base64 = \
     ../lib64/quadmath/*.asm \
-    ../lib64/quadmath/const/*.asm \
     ../lib64/quadmath/fpu/*.asm \
     ../lib64/quadmath/xmm/*.asm \
     ../lib64/fltintrn/_strtoflt.asm \

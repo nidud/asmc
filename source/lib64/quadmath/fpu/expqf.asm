@@ -8,7 +8,7 @@ include quadmath.inc
 
     .code
 
-expqf proc vectorcall Q:real16
+expqf proc __vectorcall Q:real16
 
     fldq()
     fxam

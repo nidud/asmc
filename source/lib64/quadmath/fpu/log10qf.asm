@@ -8,7 +8,7 @@ include quadmath.inc
 
     .code
 
-log10qf proc vectorcall Q:real16
+log10qf proc __vectorcall Q:real16
 
     fldq()
     fldlg2

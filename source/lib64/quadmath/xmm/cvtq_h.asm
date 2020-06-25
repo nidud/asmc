@@ -102,6 +102,7 @@ cvtq_h proc vectorcall q:real16
         .endif
         and eax,r9d
     .until 1
+    shr  eax,16
     movd xmm0,eax
     ret
 

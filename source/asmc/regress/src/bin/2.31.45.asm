@@ -1,5 +1,10 @@
 
-    ; .new Class(...) : a(0), b(2)[, ...]
+    ; fixed bug in macro local counter
+    ;
+    ; x maxro
+    ;  local y
+    ;   .new y:x --> creates a new instance for each call
+    ;
 
     .x64
     .model flat, fastcall
@@ -53,12 +58,10 @@
         }
 
     .operator imm_32 :vararg {
-
-       .new rect:RECT
-
-        rect.mem_RECT(_1)
-
-        lea rax,rect
+      local rc
+       .new rc:RECT
+        rc.mem_RECT(_1)
+        lea rax,rc
         }
 
     .operator Init :abs, :abs, :abs, :abs {
@@ -92,7 +95,8 @@ main proc
 
     RECT()
     RECT(1, 2, 3)
-    foo(RECT(100, 200))
+
+    foo( RECT(100, 200) )
 
     RECT() : left(0), top(0), right(0), bottom(0)
 

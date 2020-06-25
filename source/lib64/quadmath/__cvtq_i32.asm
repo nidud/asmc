@@ -24,7 +24,7 @@ __cvtq_i32 proc q:ptr
 
     .ifs eax < Q_EXPBIAS
         xor eax,eax
-    .elseif eax > 32 + Q_EXPBIAS
+    .elseif eax >= Q_EXPBIAS + 32
         mov eax,INT_MAX
         .if cx & 0x8000
             mov eax,INT_MIN

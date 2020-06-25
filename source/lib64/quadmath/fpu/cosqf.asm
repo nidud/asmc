@@ -8,7 +8,7 @@ include quadmath.inc
 
     .code
 
-cosqf proc vectorcall Q:real16
+cosqf proc __vectorcall Q:real16
 
     fldq()
     fcos

@@ -820,15 +820,64 @@ LineQueue equ <ModuleInfo.line_queue>
 
 PreprocessLine proto :ptr, :ptr
 
-GeLineQueue proc private uses esi buffer:string_t
+GeLineQueue proc private uses esi edi ebx buffer:string_t
 
     mov eax,LineQueue.head
     .return .if !eax
 
     mov esi,eax
     mov LineQueue.head,[esi].lq_line.next
-    strcpy(buffer, &[esi].lq_line.line)
+    mov edi,strcpy(buffer, &[esi].lq_line.line)
     MemFree(esi)
+
+    xor ebx,ebx ; (
+    .while 1    ; test line concatenation, get last token
+
+        mov     ecx,-1
+        xor     eax,eax
+        repne   scasb
+        neg     ecx
+        dec     edi
+        dec     ecx
+        .break .ifz
+        .repeat
+            dec edi
+            .break .if byte ptr [edi] > ' '
+        .untilcxz
+
+        mov [edi+1],al
+        mov al,[edi]
+        .switch al
+        .case '('
+            inc bl
+        .case ','
+        .case ':'
+        .case '&'
+        .case '|'
+            mov al,' '
+            mov [edi+1],ax
+            add edi,2
+            mov esi,LineQueue.head
+            .break .if !esi
+            mov LineQueue.head,[esi].lq_line.next
+            strcpy(edi, &[esi].lq_line.line)
+            MemFree(esi)
+            .continue
+        .case '{'
+            inc bh
+            .gotosw(',')
+        .case ')'
+            .break .if bl <= 1
+            dec bl
+            .endc
+        .case '}'
+            .break .if bh <= 1
+            dec bh
+        .default
+            .gotosw(',') .if ebx
+            .break
+        .endsw
+    .endw
     mov eax,buffer
     ret
 

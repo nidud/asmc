@@ -233,7 +233,7 @@ atanq proc vectorcall Q:real16
     lea rdx,atan_table
     addq(xmm0, [rdx+rax])
     .if sign
-        pxor xmm0,FLTQ(-0.0)
+        pxor xmm0,{ -0.0 }
     .endif
     ret
 

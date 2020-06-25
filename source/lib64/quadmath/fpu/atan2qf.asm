@@ -8,10 +8,10 @@ include quadmath.inc
 
     .code
 
-atan2qf proc vectorcall Y:real16, X:real16
+atan2qf proc __vectorcall Y:real16, X:real16
 
     fldq()
-    fldq(, xmm1)
+    fldq(d, xmm1)
     fpatan
     fstq()
     ret

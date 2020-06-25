@@ -12,7 +12,7 @@ include quadmath.inc
 
 fabsq proc vectorcall Q:real16
 
-    andps xmm0,FLTQ(0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+    andps xmm0,{ 7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFr }
     ret
 
 fabsq endp

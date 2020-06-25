@@ -119,7 +119,7 @@ atan2q proc vectorcall Y:real16, X:real16
     sar rcx,48
     .ifs rcx > 120
 
-        movaps xmm0,FLTQ( 0.58800260354756755124561108062508520 )
+        movaps xmm0,{ 0.58800260354756755124561108062508520 }
     .else
         mov rax,x.m128i_u64[8]
         .ifs rax < 0 && rdx < -120
@@ -134,12 +134,12 @@ atan2q proc vectorcall Y:real16, X:real16
     mov eax,m
     .if eax
         .if eax == 1
-            pxor xmm0,FLTQ(-0.0)
+            pxor xmm0,{ -0.0 }
         .elseif eax == 2
             movaps xmm1,subq( xmm0, 8.67181013012378102479704402604335225e-35 )
-            subq( _Q_PI, xmm1 )
+            subq( M_PI, xmm1 )
         .else
-            subq(subq( xmm0, 8.67181013012378102479704402604335225e-35 ), _Q_PI )
+            subq(subq( xmm0, 8.67181013012378102479704402604335225e-35 ), M_PI )
         .endif
     .endif
     ret

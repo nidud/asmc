@@ -8,10 +8,10 @@ include quadmath.inc
 
     .code
 
-fmodqf proc vectorcall X:real16, Y:real16
+fmodqf proc __vectorcall X:real16, Y:real16
 
     fldq()
-    fldq(, xmm1)
+    fldq(d, xmm1)
     fxch st(1)
     .repeat
         fprem

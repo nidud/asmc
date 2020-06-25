@@ -8,16 +8,18 @@ include quadmath.inc
 
     .code
 
-ceilqf proc vectorcall Q:real16
+ceilqf proc __vectorcall Q:real16
+
+  local w1:word, w2:word
 
     fldq()
-    fstcw   [rsp]
+    fstcw   w1
     fclex
-    mov     word ptr [rsp+4],0x0B63
-    fldcw   [rsp+4]
+    mov     w2,0x0B63
+    fldcw   w2
     frndint
     fclex
-    fldcw   [rsp]
+    fldcw   w1
     fstq()
     ret
 

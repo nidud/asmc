@@ -8,7 +8,7 @@ include quadmath.inc
 
     .code
 
-atanqf proc vectorcall Q:real16
+atanqf proc __vectorcall Q:real16
 
     fldq()
     fld1

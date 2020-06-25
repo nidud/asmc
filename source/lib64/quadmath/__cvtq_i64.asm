@@ -34,14 +34,17 @@ __cvtq_i64 proc q:ptr
         .endif
 
     .else
+
         mov r8,[rcx+6]
         lea rcx,[rax-Q_EXPBIAS]
         mov eax,1
+
         .while ecx
             add r8,r8
             adc rax,rax
             dec ecx
         .endw
+
         .if edx & 0x8000
             neg rax
         .endif

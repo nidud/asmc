@@ -412,12 +412,7 @@ _mm_setzero_pd macro x:=<xmm0>
     endm
 
 _mm_move_sd macro a, b
-    if typeof(b) eq 0
-	mov  rax,b
-	movq a,rax
-    elseifdif <a>,<b>
-	movsd a,b
-    endif
+    movsd a,b
     retm<a>
     endm
 _mm_move_pd macro a, b

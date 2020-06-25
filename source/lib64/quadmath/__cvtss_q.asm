@@ -25,9 +25,9 @@ __cvtss_q proc x:ptr, f:ptr
         .else
             or ch,0x7F
             .if !( edx & 0x7FFFFFFF )
-                ;
+
                 ; Invalid exception
-                ;
+
                 or edx,0x40000000 ; QNaN
                 mov errno,EDOM
             .endif
@@ -36,9 +36,9 @@ __cvtss_q proc x:ptr, f:ptr
     .elseif edx
         or cx,0x3FFF-0x7F+1 ; set exponent
         .while 1
-            ;
+
             ; normalize number
-            ;
+
             test edx,edx
             .break .ifs
             shl edx,1

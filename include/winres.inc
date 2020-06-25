@@ -159,6 +159,14 @@ LTEXT macro name,idc,x,y,w,h,flags:=<0>
     DLGITEM x,y,w,h,idc,name,flags or WS_VISIBLE or WS_GROUP,0,RC_STATIC
     endm
 
+CTEXT macro name,idc,x,y,w,h,flags:=<0>,flags2:=<0>
+    DLGITEM x,y,w,h,idc,name,flags or WS_VISIBLE or WS_GROUP,0,RC_STATIC
+    endm
+
+RTEXT macro name,idc,x,y,w,h,flags:=<0>,flags2:=<0>
+    DLGITEM x,y,w,h,idc,name,flags or WS_VISIBLE or WS_GROUP,0,RC_STATIC
+    endm
+
 EDITTEXT macro idc,x,y,w,h,flags:=<0>,exflags:=<0>
     DLGITEM x,y,w,h,idc,0,flags or WS_VISIBLE or WS_BORDER or WS_TABSTOP or DS_MODALFRAME,exflags,RC_EDIT
     endm

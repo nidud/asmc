@@ -13,7 +13,8 @@ include errno.inc
 
     xor r9d,r9d
     .ifs (r8d == 10 && ecx < 0)
-        inc r9d
+        inc     r9d
+        movsxd  rcx,ecx
     .endif
     jmp xtox
 

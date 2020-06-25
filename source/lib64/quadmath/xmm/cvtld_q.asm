@@ -16,7 +16,7 @@ cvtld_q proc vectorcall ld:real10
     movhlps xmm0,xmm0
     movd    edx,xmm0
     and     edx,0xFFFF
-    add     edx,edx
+    add     dx,dx
     rcr     dx,1
     shl     rax,1
     shld    rdx,rax,64-16

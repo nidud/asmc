@@ -22,6 +22,9 @@ E16_EXP         equ 0x4034
 E16_HIGH        equ 0x8E1BC9BF
 E16_LOW         equ 0x04000000
 
+    .data
+    Q_1E8 real16 40197D78400000000000000000000000r
+
     .code
 
     assume ebx:ptr FLTINFO
@@ -231,7 +234,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                     mov [edi+12],eax
                 .endif
                 .if n
-                    __mulq(edi, &_Q_1E8)
+                    __mulq(edi, &Q_1E8)
                 .endif
             .endif
 

@@ -444,6 +444,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
   local type:int_t
   local size:int_t
   local void:int_t
+  local isid:int_t
   local name[128]:char_t
 
     mov ebx,tokenarray
@@ -452,7 +453,12 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
     .while [ebx].token != T_FINAL
         .if [ebx].token == T_ID
-            .break .if !_stricmp([ebx].string_ptr, "typeid")
+            .if !_stricmp([ebx].string_ptr, "typeid")
+
+                mov eax,[ebx].string_ptr
+                mov byte ptr [eax],'?'
+                .break
+            .endif
         .endif
         add ebx,16
     .endw
@@ -467,8 +473,13 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
     add ebx,16
     mov id,0
+    mov isid,0
     .if [ebx+16].token == T_COMMA
-        strcpy( &id, [ebx].string_ptr )
+        mov isid,1
+        mov edx,[ebx].string_ptr
+        .if word ptr [edx] != '?'
+            strcpy( &id, edx )
+        .endif
         add ebx,32
     .endif
 
@@ -636,28 +647,28 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
     .switch type
     .case Immediat
-        .if id
+        .if isid
             LSPrintF( buffer, "%s?i%d", &id, size)
         .else
             LSPrintF( buffer, "imm_%d", size)
         .endif
         .return 1
     .case Float
-        .if id
+        .if isid
             LSPrintF( buffer, "%s?flt", &id)
         .else
             strcpy( buffer, "imm_float" )
         .endif
         .return 1
     .case Register
-        .if id
+        .if isid
             LSPrintF( buffer, "%s?r%d", &id, size)
         .else
             LSPrintF( buffer, "reg_%d", size)
         .endif
         .return 1
     .case Memory
-        .if id
+        .if isid
             LSPrintF( buffer, "%s?%s", &id, &name )
         .else
             strcpy( buffer, "mem_" )
@@ -665,7 +676,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
         .endif
         .return 1
     .case Pointer
-        .if id
+        .if isid
             LSPrintF( buffer, "%s?p%s", &id, &name )
         .else
             strcpy( buffer, "ptr_" )

@@ -980,7 +980,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		macro = NULL;
 	    else {
 		proc->sym.method = 1;
-		proc->sym.isinline = 1;
+		if ( macro )
+		    proc->sym.isinline = 1;
 	    }
 	}
     }
@@ -1182,7 +1183,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		}
 	    }
 	    if ( !cnt ) {
-		strcat( p, tokenarray[i+1].tokpos );
+		if ( tokenarray[i].token != T_FINAL )
+		    strcat( p, tokenarray[i+1].tokpos );
 	    } else if ( info->has_vararg ) {
 		if ( tokenarray[i+1].tokval == T_ADDR && proc->sym.method )
 		    strcat( p, tokenarray[i+2].tokpos );

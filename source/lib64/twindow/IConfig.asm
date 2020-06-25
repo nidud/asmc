@@ -12,7 +12,7 @@ include iconfig.inc
 ICMAXLINE equ 256
 
     .data
-    vtable IConfigVtbl { \
+     vtable IConfigVtbl {
         IConfig_Release,
         IConfig_Read,
         IConfig_Write,
@@ -20,8 +20,8 @@ ICMAXLINE equ 256
         IConfig_GetEntry,
         IConfig_Create,
         IConfig_Delete,
-        IConfig_Unlink }
-
+        IConfig_Unlink
+        }
     .code
 
     option procalign:8

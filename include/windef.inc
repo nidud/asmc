@@ -262,7 +262,7 @@ ifdef _WIN64
     bottom  SINT ?
 
     .operator RECT :vararg {
-	ifidn typeid(?, this),<??RECT>
+	ifidn typeid(?, this),<?RECT>
 	    this.Init?RECT(_1)
 	else
 	    [rcx].RECT.typeid(RECT, this)(_1)
@@ -276,7 +276,7 @@ ifdef _WIN64
 	}
 
     .operator Init :vararg {
-	ifidn typeid(?, this),<??RECT>
+	ifidn typeid(?, this),<?RECT>
 	    this.Init?RECT(_1)
 	else
 	    [rcx].RECT.typeid(Init, this)(_1)
@@ -318,7 +318,7 @@ ifdef _WIN64
 	}
 
     .operator Width :abs=<eax> {
-	ifidn typeid(?, this),<??RECT>
+	ifidn typeid(?, this),<?RECT>
 	    mov _1,this.right
 	    sub _1,this.left
 	else
@@ -328,7 +328,7 @@ ifdef _WIN64
 	}
 
     .operator Height :abs=<eax> {
-	ifidn typeid(?, this),<??RECT>
+	ifidn typeid(?, this),<?RECT>
 	    mov _1,this.bottom
 	    sub _1,this.top
 	else

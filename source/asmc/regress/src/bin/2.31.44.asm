@@ -1,34 +1,111 @@
 
-    ; inline id > 32 byte
+    ; .new Class(...) : a(0), b(2)[, ...]
 
     .x64
     .model flat, fastcall
     .code
 
-    option casemap:none
-    option win64:auto
+    option casemap:none, win64:auto
 
-.template D2D1_HWND_RENDER_TARGET_PROPERTIES
+.template RECT
 
-    a dd ?
-    b dd ?
-    c dd ?
-    d dd ?
+    left    sdword ?
+    top     sdword ?
+    right   sdword ?
+    bottom  sdword ?
 
-    .operator D2D1_HWND_RENDER_TARGET_PROPERTIES :abs=<0>, :abs=<1>, :abs=<2>, :abs=<3>, :vararg {
-        mov this.a,_1
-        mov this.b,_2
-        mov this.c,_3
-        mov this.d,_4
+    .operator RECT :vararg {
+        ifidn typeid(this),<mem_RECT>
+            this.mem_RECT(_1)
+        else
+            [rcx].RECT.typeid(this)(_1)
+        endif
+        }
+
+    .operator mem_RECT :abs, :abs, :abs, :abs, :vararg {
+        ifnb <_1>
+            mov this.left,    _1
+        endif
+        ifnb <_2>
+            mov this.top,     _2
+        endif
+        ifnb <_3>
+            mov this.right,   _3
+        endif
+        ifnb <_4>
+            mov this.bottom,  _4
+        endif
+        }
+
+    .operator ptr_RECT :abs, :abs, :abs, :abs {
+        ifnb <_1>
+            mov [this].RECT.left,    _1
+        endif
+        ifnb <_2>
+            mov [this].RECT.top,     _2
+        endif
+        ifnb <_3>
+            mov [this].RECT.right,   _3
+        endif
+        ifnb <_4>
+            mov [this].RECT.bottom,  _4
+        endif
+        }
+
+    .operator imm_32 :vararg {
+
+       .new rect:RECT
+
+        rect.mem_RECT(_1)
+
+        lea rax,rect
+        }
+
+    .operator Init :abs, :abs, :abs, :abs {
+        ifnb <_1>
+            mov [this].RECT.left,    _1
+        endif
+        ifnb <_2>
+            mov [this].RECT.top,     _2
+        endif
+        ifnb <_3>
+            mov [this].RECT.right,   _3
+        endif
+        ifnb <_4>
+            mov [this].RECT.bottom,  _4
+        endif
+        }
+    .operator Clear {
+        xor eax,eax
+        mov [this],rax
+        mov [this+8],rax
         }
     .ends
+
     .code
+
+foo proc p:ptr RECT
+    ret
+foo endp
 
 main proc
 
-    .new b:D2D1_HWND_RENDER_TARGET_PROPERTIES(4)
+    RECT()
+    RECT(1, 2, 3)
+    foo(RECT(100, 200))
+
+    RECT() : left(0), top(0), right(0), bottom(0)
+
+   .new RECT()       : right(1)
+   .new S:RECT()     : right(2)
+   .new D:ptr RECT() : right(3)
+
+    D.Clear()
+    D.Init(1, 2)
+
     ret
 
 main endp
 
     end
+

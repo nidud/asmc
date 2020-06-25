@@ -8,6 +8,26 @@ include fltintrn.inc
 include quadmath.inc
 include intrin.inc
 
+    .data
+
+    ; Assembler version independent hard values
+
+    table real16 \
+        40024000000000000000000000000000r,
+        40059000000000000000000000000000r,
+        400C3880000000000000000000000000r,
+        40197D78400000000000000000000000r,
+        40341C37937E08000000000000000000r,
+        40693B8B5B5056E16B3BE04000000000r,
+        40D384F03E93FF9F4DAA797ED6E38ED6r,
+        41A827748F9301D319BF8CDE66D86D62r,
+        435154FDD7F73BF3BD1BBB77203731FDr,
+        46A3C633415D4C1D238D98CAB8A978A0r,
+        4D4892ECEB0D02EA182ECA1A7A51E316r,
+        5A923D1676BB8A7ABBC94E9A519C6535r,
+        752588C0A40514412F3592982A7F0095r,
+        7FFF0000000000000000000000000000r
+
     .code
 
     assume rbx:ptr STRFLT
@@ -21,12 +41,12 @@ _fltscale proc uses rsi rdi rbx fp:ptr STRFLT
     mov edi,[rbx].exponent
     .ifs ( edi > 4096 )
 
-        __mulq([rbx].mantissa, &_Q_1E4096)
+        __mulq([rbx].mantissa, &table[12*16])
         sub edi,4096
 
     .elseif ( sdword ptr edi < -4096 )
 
-        __divq([rbx].mantissa, &_Q_1E4096)
+        __divq([rbx].mantissa, &table[12*16])
         add edi,4096
     .endif
 
@@ -46,7 +66,7 @@ _fltscale proc uses rsi rdi rbx fp:ptr STRFLT
             mov edi,8192
         .endif
 
-        .for ( rsi = &_Q_1E1 : edi : edi >>= 1, rsi += 16 )
+        .for ( rsi = &table : edi : edi >>= 1, rsi += 16 )
 
             .if ( edi & 1 )
 

@@ -17,6 +17,7 @@ config_t        typedef ptr IConfig
     list        intptr_t ?
     type        uint_t ?
 
+    IConfig     proc
     Release     proc
     Read        proc :string_t
     Write       proc :string_t

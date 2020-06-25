@@ -5,12 +5,10 @@ include stdlib.inc
 
 compare proto :ptr, :ptr {
     cmp this,_1
-    exitm<>
     }
 
 sort proto :ptr, :ptr, :abs {
     _2(this, _1)
-    exitm<>
     }
 
 main proc

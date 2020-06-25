@@ -67,12 +67,9 @@ include stdlib.inc
     .operator ostream?r32 :abs { ostream::ostream?dword(_1) }
     .operator ostream?r64 :abs { ostream::ostream?qword(_1) }
 
-    .operator ostream?psbyte :ptr sbyte {
-        _cputs(_1)
-        }
-    .operator ostream?pword :ptr word {
-        _cputws(_1)
-        }
+    .operator ostream?psbyte :abs { _cputs(_1) }
+    .operator ostream?pword :abs { _cputws(_1) }
+
     .operator << :abs {
         cout typeid(ostream, _1)(_1)
         }

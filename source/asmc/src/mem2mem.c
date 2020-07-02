@@ -1,6 +1,9 @@
 #include <string.h>
 #include <globals.h>
 #include <hllext.h>
+#include <atofloat.h>
+
+int CreateFloat(int, struct expr *, char *);
 
 int RetLineQueue( void )
 {
@@ -169,7 +172,43 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
     return RetLineQueue();
 }
 
-int CreateFloat(int, struct expr *, char *);
+int immarray16( struct asm_tok tokenarray[], struct expr *result )
+{
+    int i;
+    int count;
+    int size;
+    struct expr opnd;
+    char oldtok[1024];
+    char *p;
+
+    strcpy( oldtok, tokenarray[0].tokpos );
+    p = strcpy( CurrSource, tokenarray[3].string_ptr );
+
+    for ( count = 1; *p; p++ ) {
+	if ( *p == ',' )
+	    count++;
+    }
+    size = 16 / count;
+
+
+    if ( count * size != 16 ) {
+	asmerr( 2036, CurrSource );
+	count = 1;
+	size = 4;
+    }
+    p = (char *)result;
+    Token_Count = Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT );
+    for ( i = 0; count; count--, i++, p += size ) {
+	if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+	    break;
+	if ( opnd.mem_type & MT_FLOAT )
+	    quad_resize(&opnd, size);
+	memcpy(p, &opnd, size);
+    }
+    strcpy( CurrSource, oldtok );
+    Token_Count = Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT );
+    return 16;
+}
 
 int imm2xmm( struct asm_tok tokenarray[], struct expr *opnd )
 {
@@ -178,20 +217,12 @@ int imm2xmm( struct asm_tok tokenarray[], struct expr *opnd )
     int cmd = tokenarray[0].tokval;
     int size = 4;
 
-    switch ( cmd ) {
-    case T_MOVSD:
-    case T_MOVQ:
-    case T_ADDSD:
-    case T_SUBSD:
-    case T_MULSD:
-    case T_DIVSD:
-    case T_COMISD:
-    case T_UCOMISD:
+    if ( opnd->mem_type == MT_REAL8 )
 	size = 8;
-	break;
-    }
+    else if ( opnd->mem_type == MT_EMPTY )
+	size = immarray16(tokenarray, opnd);
+
     CreateFloat(size, opnd, flabel);
     AddLineQueueX( " %r %r,%s", cmd, reg, flabel );
-
     return RetLineQueue();
 }

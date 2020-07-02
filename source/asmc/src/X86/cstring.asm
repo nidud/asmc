@@ -15,7 +15,7 @@ include segment.inc
 MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
 
-externdef       list_pos:DWORD
+externdef   list_pos:DWORD
 
 str_item    struc byte
 string      string_t ?
@@ -29,7 +29,27 @@ LPSSTR      typedef ptr str_item
 
     .code
 
-ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, string:string_t,
+GetCurrentSegment proc private buffer:string_t
+
+    mov eax,ModuleInfo.currseg
+    .if eax
+        mov ecx,[eax].asym.name
+        strcat( strcpy( buffer, ecx ), " segment" )
+    .else
+        strcpy( buffer, ".code" )
+    .endif
+    .if ModuleInfo.list
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    .if ModuleInfo.line_queue.head
+        RunLineQueue()
+        and ModuleInfo.line_flags,NOT LOF_LISTED
+    .endif
+    ret
+
+GetCurrentSegment endp
+
+ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, string:string_t,
         pStringOffset:string_t, pUnicode:ptr byte
 
   local sbuf[MAX_LINE_LEN]:char_t,   ; "binary" string
@@ -61,9 +81,9 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
 
         mov al,[esi]
         .if al == '\'
-            ;
+
             ; escape char \\
-            ;
+
             add esi,1
             mov al,[esi]
             sub al,'A'
@@ -180,9 +200,9 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 mov ah,','
                 mov ecx,buffer
                 add ecx,1
-                ;
+
                 ; db '"',xx",'"',0
-                ;
+
                 .if ( ecx == edi && al == [edi-1] ) \
                     || ( al == [edi-1] && ah == [edi-2] )
 
@@ -331,7 +351,7 @@ local   rc:                     int_t,
     xor eax,eax
     mov rc,eax
 
-    .if ModuleInfo.strict_masm_compat == 0 ;&& Parse_Pass == PASS_1
+    .if ModuleInfo.strict_masm_compat == 0
         ;
         ; need "quote"
         ;
@@ -487,17 +507,7 @@ local   rc:                     int_t,
 
                 .if NewString
 
-                    mov eax,ModuleInfo.currseg
-                    .if eax
-                        mov ecx,[eax].asym.name
-                        strcat( strcpy( b_seg, ecx ), " segment" )
-                    .else
-                        strcpy( b_seg, ".code" )
-                    .endif
-
-                    .if ModuleInfo.line_queue.head
-                        RunLineQueue()
-                    .endif
+                    GetCurrentSegment(b_seg)
                     AddLineQueue( ".data" )
                     AddLineQueue( b_data )
                     AddLineQueue( "_DATA ends" )
@@ -802,22 +812,9 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         memcpy(ecx, &opc, 16)
 
         lea esi,temp
-        mov eax,ModuleInfo.currseg
-        .if eax
-            mov ecx,[eax].asym.name
-            strcat( strcpy( &segm, ecx ), " segment" )
-        .else
-            strcpy( &segm, ".code" )
-        .endif
 
-        .if ModuleInfo.list
+        GetCurrentSegment( &segm )
 
-            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-        .endif
-        .if ModuleInfo.line_queue.head
-            RunLineQueue()
-            and ModuleInfo.line_flags,NOT LOF_LISTED
-        .endif
         AddLineQueue( ".data" )
         mov ecx,size
         .if ecx == 10

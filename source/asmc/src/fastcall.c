@@ -380,15 +380,22 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
     else if ( numparams & 1 )
 	numparams++;
     size = args * size + ((numparams - args) ? (numparams - args) * 8: 0);
+
+    /* v2.31.24: skip stack alloc if inline */
+    if ( numparams == args && proc->sym.isinline )
+	size = 0;
+
     *value = size;
 
     if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) {
 	if ( size > sym_ReservedStack->value )
 	    sym_ReservedStack->value = size;
-    } else
+    } else if ( size )
 	AddLineQueueX( " sub %r, %d", T_RSP, size );
     /* since Win64 fastcall doesn't push, it's a better/faster strategy to
      * handle the arguments from left to right.
+     *
+     * v2.29 -- right to left
      */
     return( 0 );
 }
@@ -476,16 +483,14 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	    return 1;
 	}
 
-	*regs_used |= R0_USED;
 	if ( param->sym.mem_type == MT_REAL2 ) {
+	    *regs_used |= R0_USED;
 	    AddLineQueueX( " mov %r, %s", T_AX, paramvalue );
 	    AddLineQueueX( " movd %r, %r", xmm, T_EAX );
 	} else if ( param->sym.mem_type == MT_REAL4 ) {
-	    AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
-	    AddLineQueueX( " movd %r, %r", xmm, T_EAX );
+	    AddLineQueueX( " movd %r, %s", xmm, paramvalue );
 	} else if ( param->sym.mem_type == MT_REAL8 ) {
-	    AddLineQueueX( " mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue );
-	    AddLineQueueX( " movq %r, %r", xmm, T_RAX );
+	    AddLineQueueX( " movq %r, %s", xmm, paramvalue );
 	}
     } else {
 	if ( param->sym.mem_type == MT_REAL2 ) {
@@ -568,12 +573,24 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     if ( vector_call && index < 6 )
 	offset += offset;
 
-    if ( param->sym.mem_type == MT_ABS ) {
-	for ( d = proc->e.procinfo->paralist; index; index-- )
-	    d = d->nextparam;
-	d->sym.string_ptr = LclAlloc( strlen(paramvalue) + 1);
-	strcpy(d->sym.string_ptr, paramvalue);
+    /* skip arg if :vararg and inline */
+
+    if ( param->sym.is_vararg && proc->sym.isinline )
 	return 1;
+
+    /* skip arg if :abs */
+
+    if ( param->sym.mem_type == MT_ABS ) {
+	param->sym.name = LclAlloc(strlen(paramvalue)+1);
+	strcpy(param->sym.name, paramvalue);
+	return 1;
+    }
+
+    /* skip loading class pointer if vararg and inline */
+
+    if ( proc->sym.isinline && proc->sym.method && !index ) {
+	if ( proc->e.procinfo->has_vararg )
+	    return 1;
     }
 
     if ( index >= 4 && ( addr || psize > 8 ) ) {
@@ -1077,11 +1094,17 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     }
 
     sym = (struct asym *)param;
+
+    /* skip arg if :vararg and inline */
+
+    if ( sym->is_vararg && proc->sym.isinline )
+	return 1;
+
+    /* skip arg if :abs */
+
     if ( sym->mem_type == MT_ABS ) {
-	for ( d = proc->e.procinfo->paralist; index; index-- )
-	    d = d->nextparam;
-	d->sym.string_ptr = LclAlloc( strlen(paramvalue) + 1);
-	strcpy(d->sym.string_ptr, paramvalue);
+	sym->name = LclAlloc(strlen(paramvalue)+1);
+	strcpy(sym->name, paramvalue);
 	return 1;
     }
 
@@ -1372,9 +1395,11 @@ static int watc_fcstart( struct dsym const *proc, int numparams, int start, stru
 static void watc_fcend( struct dsym const *proc, int numparams, int value )
 {
     if ( proc->e.procinfo->has_vararg ) {
-	AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL proc->e.procinfo->parasize + size_vararg );
+	AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize],
+		NUMQUAL proc->e.procinfo->parasize + size_vararg );
     } else if ( fcscratch < proc->e.procinfo->parasize ) {
-	AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL ( proc->e.procinfo->parasize - fcscratch ) );
+	AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize],
+		NUMQUAL ( proc->e.procinfo->parasize - fcscratch ) );
     }
     return;
 }
@@ -1387,11 +1412,20 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
 {
     int opc;
     int qual;
-    int i;
+    int i,a,b;
     char regs[64];
     char *reg[4];
     char *p;
     int psize = SizeFromMemtype( param->sym.mem_type, USE_EMPTY, param->sym.type );
+
+    if ( param->sym.mem_type == MT_ABS ) {
+	param->sym.name = LclAlloc( strlen(paramvalue) + 1 );
+	strcpy( param->sym.name, paramvalue );
+	fcscratch += CurrWordSize;
+	return 1;
+    }
+    if ( param->sym.is_vararg &&  proc->sym.isinline )
+	return 1;
 
     if ( param->sym.state != SYM_TMACRO )
 	return( 0 );
@@ -1442,18 +1476,34 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
     for ( i = 3; i >= 0; i-- ) {
 	if ( reg[i] ) {
 	    if ( opnd->kind == EXPR_CONST ) {
-		if ( i > 0 )
+
+		a = 1;
+		b = opnd->value | opnd->hvalue;
+		if ( i > 0 ) {
 		    qual = T_LOWWORD;
-		else if ( i == 0 && reg[1] != NULL )
+		    b = opnd->value;
+		} else if ( i == 0 && reg[1] != NULL ) {
 		    qual = T_HIGHWORD;
-		else
+		    b = opnd->hvalue;
+		} else
 		    qual = T_NULL;
-		if ( qual != T_NULL )
+		if ( paramvalue[0] == '0' && paramvalue[1] == 0 )
+		    a = 0;
+		if ( a == 0 || b == 0 )
+		    AddLineQueueX( "xor %s, %s", reg[i], reg[i] );
+		else if ( qual != T_NULL )
 		    AddLineQueueX( "mov %s, %r (%s)", reg[i], qual, paramvalue );
 		else
 		    AddLineQueueX( "mov %s, %s", reg[i], paramvalue );
 	    } else if ( opnd->kind == EXPR_REG ) {
-		AddLineQueueX( "mov %s, %s", reg[i], paramvalue );
+		b = opnd->base_reg->tokval;
+		a = param->sym.regist[0];
+		if ( reg[i+1] ) {
+		    b = opnd->base_reg[-2].tokval;
+		    a = param->sym.regist[1];
+		}
+		if ( a != b )
+		    AddLineQueueX( "mov %r, %r", a, b );
 	    } else {
 		if ( i == 0 && reg[1] == NULL )
 		    AddLineQueueX( "mov %s, %s", reg[i], paramvalue );
@@ -1462,7 +1512,8 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
 			qual = T_DWORD;
 		    else
 			qual = T_WORD;
-		    AddLineQueueX( "mov %s, %r %r %s[%u]", reg[i], qual, T_PTR, paramvalue, psize - ( (i+1) * ( 2 << ModuleInfo.Ofssize ) ) );
+		    AddLineQueueX( "mov %s, %r %r %s[%u]", reg[i], qual, T_PTR,
+			paramvalue, psize - ( (i+1) * ( 2 << ModuleInfo.Ofssize ) ) );
 		}
 	    }
 	}

@@ -2509,11 +2509,19 @@ int ParseLine( struct asm_tok tokenarray[] )
 
     /* handle directives and (anonymous) data items */
 
-    if ( tokenarray[i].token != T_INSTRUCTION ) {
+    j = 0;
+    if ( ModuleInfo.g.ComStack ) {
+	if ( ( tokenarray[0].token == T_STYPE || tokenarray[0].token == T_INSTRUCTION ) &&
+	    tokenarray[1].token == T_DIRECTIVE && tokenarray[1].tokval == T_PROC ) {
+	    j++;
+	}
+    }
+
+    if ( j || tokenarray[i].token != T_INSTRUCTION ) {
 	/* a code label before a data item is only accepted in Masm5 compat mode */
 	Frame_Type = FRAME_NONE;
 	SegOverride = NULL;
-	if ( i == 0 && tokenarray[0].token == T_ID ) {
+	if ( i == 0 && ( j || ( tokenarray[0].token == T_ID ) ) ) {
 	    /* token at pos 0 may be a label.
 	     * it IS a label if:
 	     * 1. token at pos 1 is a directive (lbl dd ...)
@@ -2540,7 +2548,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		return( data_dir( i, tokenarray, NULL ) );
 	    }
 	    dirflags = GetValueSp( tokenarray[i].tokval );
-	    if( CurrStruct && ( dirflags & DF_NOSTRUC ) ) {
+	    if ( j || ( CurrStruct && ( dirflags & DF_NOSTRUC ) ) ) {
 
 		if ( tokenarray[i].tokval != T_PROC )
 			return( asmerr( 2037 ) );
@@ -2629,7 +2637,10 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    /*
 	     * invoke handle import, call do not..
 	     */
-	    strcpy( buffer, "invoke " );
+	    if ( IsType( tokenarray[0].string_ptr ) ) /* added 2.31.44 */
+		strcpy( buffer, ".new " );
+	    else
+		strcpy( buffer, "invoke " );
 	    strcat( buffer, tokenarray[0].tokpos );
 	    strcpy( CurrSource, buffer );
 	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
@@ -2714,7 +2725,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( ( ModuleInfo.strict_masm_compat == 0 ) /*&& Parse_Pass == PASS_1*/ ) {
+    if ( ModuleInfo.strict_masm_compat == 0 ) {
 
 	for ( q = 1; tokenarray[q].token != T_FINAL; q++ ) {
 
@@ -3039,7 +3050,16 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    /* for some instructions, the "wide" flag has to be removed selectively.
 	     * this is to be improved - by a new flag in struct instr_item.
 	     */
-	    switch ( CodeInfo.token ) {
+	    j = CodeInfo.token;
+	    if ( j < VEX_START && j >= T_ADDPD && opndx[1].kind == EXPR_CONST ) {
+		if ( opndx[1].quoted_string ) {
+		    if ( opndx[1].quoted_string->token == T_STRING &&
+			opndx[1].quoted_string->dirtype == '{' )
+			j = T_MOVAPS;
+		}
+	    }
+
+	    switch ( j ) {
 	    case T_PUSH:
 	    case T_POP:
 		/* v2.06: REX.W prefix is always 0, because size is either 2 or 8 */
@@ -3055,6 +3075,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 */
 		CodeInfo.rex &= 0x7;
 		break;
+		/* v2.31.32: immediate operand to XMM { 1.0, 2.0 } */
+	    case T_MOVAPS:
 		/* v2.31.24: immediate operand to XMM */
 	    case T_MOVD:
 	    case T_MOVQ:

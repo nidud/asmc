@@ -214,6 +214,28 @@ static uint_64 GetRecordMask( struct dsym *record )
     return( mask );
 }
 
+/* added v2.31.32 */
+
+static int SetEvexOpt( struct asm_tok tokenarray[], int i )
+{
+    int o;
+
+    if ( tokenarray[i-1].token == T_COMMA &&
+	 tokenarray[i-2].token == T_REG &&
+	 tokenarray[i-3].token == T_INSTRUCTION ) {
+
+	o = GetValueSp( tokenarray[i-2].tokval );
+	if ( o & OP_XMM ) {
+	    if ( tokenarray[i-3].tokval < VEX_START &&
+		 tokenarray[i-3].tokval >= T_ADDPD )
+		return 0;
+	}
+    }
+    tokenarray[i].hll_flags |= T_EVEX_OPT;
+    return 1;
+}
+
+
 static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenarray[], const uint_8 flags )
 {
     char	*tmp;
@@ -246,8 +268,11 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		( *tokenarray[i].string_ptr == '"' || *tokenarray[i].string_ptr == '\'' ))
 		fnasmerr( 2046 );
 	    else if ( tokenarray[i].string_delim == '{' ) {
-		tokenarray[i].hll_flags |= T_EVEX_OPT;
 		opnd->kind = EXPR_EMPTY;
+		if ( SetEvexOpt( tokenarray, i ) == 0 ) {
+		    opnd->kind = EXPR_CONST;
+		    opnd->quoted_string = &tokenarray[i];
+		}
 		break;
 	    } else
 		fnasmerr( 2167, tokenarray[i].tokpos );
@@ -518,6 +543,15 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		return( ERROR );
 	    opnd->label_tok = &tokenarray[i];
 	    opnd->kind = EXPR_ADDR;
+
+	    /* added v2.31.32: typeof(addr ...) */
+	} else if ( tokenarray[i].tokval == T_ADDR && i > 2 &&
+	    ( tokenarray[i-1].tokval == T_TYPEOF || tokenarray[i-2].tokval == T_TYPEOF ) &&
+	    ( tokenarray[i+1].token == T_ID || tokenarray[i+1].token == T_OP_SQ_BRACKET	 ) ) {
+	    (*idx)++;
+	    opnd->kind = EXPR_ADDR;
+	    opnd->mem_type = MT_PTR;
+	    break;
 	} else {
 	    return( fnasmerr( 2008, tokenarray[i].string_ptr ) );
 	}
@@ -806,7 +840,7 @@ static int type_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
 		opnd1->mem_type == MT_EMPTY &&
 		( SpecialTable[opnd2->base_reg->tokval].value & OP_RGT8 ) &&
 		( sym = GetStdAssumeEx( opnd2->base_reg->bytval ) ) ) {
-		 ;
+
 		opnd1->type = sym;
 		opnd1->mem_type = sym->mem_type;
 		opnd1->value = sym->total_size;
@@ -818,8 +852,12 @@ static int type_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
 	    }
 	} else if ( opnd2->mem_type != MT_EMPTY || opnd2->explicit ) {
 	    if ( opnd2->mem_type != MT_EMPTY ) {
-		opnd1->value = SizeFromMemtype( opnd2->mem_type, opnd2->Ofssize, opnd2->type );
-		opnd1->mem_type = opnd2->mem_type;
+		if ( opnd2->kind == EXPR_FLOAT && opnd2->mem_type == MT_REAL16 ) {
+		    opnd1->value = 0;
+		} else {
+		    opnd1->value = SizeFromMemtype( opnd2->mem_type, opnd2->Ofssize, opnd2->type );
+		    opnd1->mem_type = opnd2->mem_type;
+		}
 	    } else {
 		if ( opnd2->type ) {
 		    opnd1->value = opnd2->type->total_size;

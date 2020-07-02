@@ -641,8 +641,9 @@ int ExpandCStrings( struct asm_tok tokenarray[] )
     for ( i = 0, k = 0; tokenarray[i].token != T_FINAL; i++, k++ ) {
 	if ( tokenarray[i].hll_flags & T_HLL_PROC ) {
 
-	    if ( Parse_Pass == PASS_1 )
-		return ( GenerateCString( k, tokenarray ) );
+	    j = GenerateCString( k, tokenarray );
+	    if ( j )
+		return ( j );
 
 	    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
 		j = 1;
@@ -1323,10 +1324,18 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 
     if ( !comptr && ( ( k == i + 1 && i ) || ( k == i + 3 && br_count == 0 ) ) ) {
 
-	if ( sym && !( sym->state == SYM_EXTERNAL && sym->dll ) )
-	    sym = NULL;
-
-	if ( !sym ) {
+	j = 0;
+	if ( sym ) {
+	    if ( sym->state == SYM_EXTERNAL ) {
+		if ( sym->dll )
+		    j++;
+		else if ( sym->method && sym->isinline ) {
+		    if ( sym->target_type && sym->target_type->state == SYM_MACRO )
+			j++;
+		}
+	    }
+	}
+	if ( j == 0 ) {
 	    strcpy( b, "call" );
 	    strcat( b, &b[6] );
 	}
@@ -1758,7 +1767,6 @@ static char *GetJumpString( int cmd, char *buffer )
 /* .IF, .WHILE, .SWITCH or .REPEAT directive */
 
 int HllStartDir( int i, struct asm_tok tokenarray[] )
-/********************************************************/
 {
     struct hll_item *hll;
     int	 rc = NOT_ERROR;
@@ -1781,6 +1789,8 @@ int HllStartDir( int i, struct asm_tok tokenarray[] )
     } else {
 	hll = (struct hll_item *)LclAlloc( sizeof( struct hll_item ) );
     }
+
+    ExpandCStrings( tokenarray );
 
     /* structure for .IF .ELSE .ENDIF
      *	  cond jump to LTEST-label

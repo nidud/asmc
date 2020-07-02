@@ -977,12 +977,9 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
 
     mov ecx,pp
     .if [ecx].esym.sym.langtype == LANG_VECTORCALL
-
         mov vector_call,TRUE
         .if index < 6
-
-            add eax,eax
-            mov arg_offset,eax
+            add arg_offset,eax
         .endif
     .endif
 

@@ -269,6 +269,9 @@ static void AssignValue( int *iptr, struct asm_tok tokenarray[], int type, int c
                 op = T_MOVAPS;
                 break;
             }
+        } else if ( opnd.kind == EXPR_EMPTY && *p == '{' ) {
+            AddLineQueueX( "movaps xmm0,%s", p );
+            Assign--;
         }
 
         if ( Assign )

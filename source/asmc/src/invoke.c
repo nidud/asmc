@@ -1177,8 +1177,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			args[parmpos] = get_regname(reg, size);
 		    } else {
 			args[parmpos] = LclAlloc(16);
-			LSPrintF( args[parmpos], "[%r+%d*%d]",
-			    stackreg[ModuleInfo.Ofssize], parmpos, ModuleInfo.Ofssize * 4 );
+			sprintf( args[parmpos], "[rsp+%d*%d]", parmpos, ModuleInfo.Ofssize * 4 );
 		    }
 		}
 	    }

@@ -8,6 +8,7 @@ extern void DeleteLineQueue( void );
 extern void AddLineQueue( const char *line );
 extern void AddLineQueueX( const char *fmt, ... );
 extern void RunLineQueue( void );
+extern void InsertLineQueue(void);
 extern char *LSPrintF( char *, char *, ... );
 extern int VLSPrintF( char *, char *, void * );
 

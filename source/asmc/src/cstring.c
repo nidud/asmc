@@ -19,22 +19,16 @@ char	flags;
 char	string[1];
 };
 
-static int InsertLine( char *line )
+static void GetCurrentSegment( char *buffer )
 {
-	struct input_status oldstat;
-	int rc, GeneratedCode;
-
-	PushInputStatus( &oldstat );
-	GeneratedCode = ModuleInfo.GeneratedCode;
-	ModuleInfo.GeneratedCode = 0;
-	strcpy( CurrSource, line );
-	ModuleInfo.token_count = Tokenize(
-	    ModuleInfo.currsource, 0, ModuleInfo.tokenarray, TOK_DEFAULT );
-	rc = ParseLine( ModuleInfo.tokenarray );
-	ModuleInfo.GeneratedCode = GeneratedCode;
-	PopInputStatus( &oldstat );
-	return rc;
+    if ( ModuleInfo.currseg )
+	strcat( strcpy( buffer, ModuleInfo.currseg->sym.name ), " segment" );
+    else
+	strcpy( buffer, ".code" );
+    if ( is_linequeue_populated() )
+	RunLineQueue();
 }
+
 
 static int ParseCString( char *lbuf, char *buffer, char *string,
 	char **pStringOffset, char *pUnicode )
@@ -72,9 +66,9 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 
 	    ch = *src;
 	    if ( ch == '\\' ) {
-		//
-		// escape char
-		//
+
+		/* escape char */
+
 		ch = *++src;
 		switch ( ch ) {
 		case 'a':
@@ -115,15 +109,15 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 		    break;
 		case 'r':
 		    *sbp = 13;
-		    dw = 0x33312C22; // <",13>
+		    dw = 0x33312C22; /* <",13>" */
 		    goto case_format;
 		case 'v':
 		    *sbp = 11;
-		    dw = 0x31312C22; // <",11>
+		    dw = 0x31312C22; /* <",11>" */
 		    goto case_format;
 		case 0x27:
 		    *sbp = 39;
-		    dw = 0x39332C22; // <",39>
+		    dw = 0x39332C22; /* <",39>" */
 		    goto case_format;
 		case 'x':
 		    ch = *(src+1);
@@ -150,11 +144,27 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 		    }
 		    break;
 
-		case '"': // <",'"',">
+		case '0':
+		    p = des-1;
+		    if ( p == buffer ) {
+			des--;
+			*des++ = '0';
+			*des++ = ',';
+		    } else {
+			*des++ = '"';
+			*des++ = ',';
+			*des++ = '0';
+			*des++ = ',';
+		    }
+		    *des = '"';
+		    *sbp = '\0';
+		    break;
+
+		case '"': /* <",'"',"> */
 		    p = &buffer[1];
-		    //
-		    // db '"',xx",'"',0
-		    //
+
+		    /* db '"',xx",'"',0 */
+
 		    if ((p == des && *(des-1) == '"') ||
 		       (*(des-1) == '"' && *(des-2) == ',')) {
 			des--;
@@ -173,14 +183,17 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 		    break;
 		}
 	    } else if ( ch == '"' ) {
-		p = src + 1;
+		src++;
+		p = src;
 		while ( *p == ' ' || *p == 9 ) p++;
-		if ( *p == '"' ) { // "string1" "string2"
+		if ( *p == 'L' )
+		    p++;
+		if ( *p == '"' ) { /* "string1" "string2" */
 		    src = p;
 		    des--;
 		    sbp--;
 		} else {
-		    *des++ = *src++;
+		    *des++ = '"';
 		    break;
 		}
 	    } else {
@@ -265,11 +278,11 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 	char a,b;
 	int lineflags;
 
-	if ( ModuleInfo.strict_masm_compat == 0 && Parse_Pass == PASS_1 ) {
-	    //
-	    // need "quote"
-	    // proc( "", ( ... ), "" )
-	    //
+	if ( ModuleInfo.strict_masm_compat == 0 ) {
+	    /*
+	     * need "quote"
+	     * proc( "", ( ... ), "" )
+	     */
 	    e = 0;
 	    c = 0;
 	    while ( tokenarray[i].token != T_FINAL ) {
@@ -286,7 +299,7 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 		    brackets--;
 		} else if ( a == '(' ) {
 		    brackets++;
-		    c++; // need one open bracket
+		    c++; /* need one open bracket */
 		}
 		i++;
 	    }
@@ -308,9 +321,9 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 		    NewString = ParseCString( b_label, buffer, p, &StringOffset, &Unicode );
 
 		    if ( equal ) {
-			//
-			// strip "string" from LineStoreCurr
-			//
+
+			/* strip "string" from LineStoreCurr */
+
 			x = StringOffset - p;
 			q = memcpy( b_data, p, x );
 			q[x] = NULLC;
@@ -365,15 +378,12 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 
 		    if ( NewString ) {
 
-			strcat( strcpy( b_seg, ModuleInfo.currseg->sym.name ), " segment" );
-			if ( (rc = InsertLine( ".data" )) )
-			    break;
-			if ( (rc = InsertLine( b_data )) )
-			    break;
-			if ( (rc = InsertLine( "_DATA ends" )) )
-			    break;
-			if ( (rc = InsertLine( b_seg )) )
-			    break;
+			GetCurrentSegment( b_seg );
+			AddLineQueue( ".data" );
+			AddLineQueue( b_data );
+			AddLineQueue( "_DATA ends" );
+			AddLineQueue( b_seg );
+			InsertLineQueue();
 		    }
 		    strcpy( CurrSource, buffer );
 		    Token_Count = Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT );
@@ -521,24 +531,29 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 		    }
 
 		    /* v2.24 skip .data/.code if already in .data segment */
+
+		    if ( is_linequeue_populated() )
+			RunLineQueue();
+
 		    x = 0;
 		    p = ModuleInfo.currseg->sym.name;
 		    if ( _stricmp( p, "_DATA" ) ) {
 			x++;
-			InsertLine( ".data" );
+			AddLineQueue( ".data" );
 		    } else if ( equal ) {
 			x = 2;
-			InsertLine(".const");
+			AddLineQueue(".const");
 		    }
-		    InsertLine( cursrc );
+		    AddLineQueue( cursrc );
 		    if ( x ) {
 			if ( !_stricmp( p, "CONST" ) )
-			    InsertLine(".const");
+			    AddLineQueue(".const");
 			else if ( x == 2 )
-			    InsertLine(".data");
+			    AddLineQueue(".data");
 			else
-			    InsertLine(".code");
+			    AddLineQueue(".code");
 		    }
+		    InsertLineQueue();
 		}
 		rc = 1;
 		break;
@@ -612,18 +627,12 @@ int CreateFloat(int size, struct expr *opnd, char *buffer)
 	fp->string = (char*)&fp[1];
 	memcpy(fp->string, &opc, 16);
 
-	if ( ModuleInfo.currseg ) {
-	    strcat( strcpy( segm, ModuleInfo.currseg->sym.name ), " segment" );
-	} else {
-	    strcpy( segm, ".code" );
-	}
+	GetCurrentSegment( segm );
 
-	InsertLine( ".data" );
+	AddLineQueue( ".data" );
 	if ( size == 10 )
 	    size = 16;
-
-	sprintf( temp, "align %d", size );
-	InsertLine( temp );
+	AddLineQueueX( "align %d", size );
 
 	switch ( size ) {
 	case 4:
@@ -633,14 +642,14 @@ int CreateFloat(int size, struct expr *opnd, char *buffer)
 	    sprintf( temp, "%s dq 0x%08X%08X", buffer, opc.hvalue, opc.value );
 	    break;
 	case 16:
-	    sprintf( temp, "%s label real%d", buffer, size );
-	    InsertLine( temp );
+	    AddLineQueueX( "%s label real%d", buffer, size );
 	    sprintf( temp, "oword 0x%016" I64_SPEC "X%016" I64_SPEC "X", opc.hlvalue, opc.llvalue );
 	    break;
 	}
-	InsertLine( temp );
-	InsertLine( "_DATA ends" );
-	InsertLine( segm );
+	AddLineQueue( temp );
+	AddLineQueue( "_DATA ends" );
+	AddLineQueue( segm );
+	InsertLineQueue();
     }
     return 0;
 }

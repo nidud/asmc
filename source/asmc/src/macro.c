@@ -599,6 +599,7 @@ ret_code MacroDir( int i, struct asm_tok tokenarray[] )
 		adr = SymAddress( (struct asym *)macro );
 		sym = SymAlloc( name );
 		macro->sym.target_type = sym;
+		macro->sym.isinline = 1;
 		macro = (struct dsym *)sym;
 		macro->sym.isfunc = 0;
 		macro->sym.mac_vararg = 0;
@@ -734,7 +735,7 @@ ret_code MacroInit( int pass )
     struct dsym *macro;
 
     MacroLevel = 0;
-    //MacroLocals = 0; //v2.20 -- moved to assemble.asm
+    MacroLocals = 0;
     if (pass == PASS_1) {
 
 	StringInit();

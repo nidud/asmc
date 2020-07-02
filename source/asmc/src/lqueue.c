@@ -170,6 +170,30 @@ void RunLineQueue( void )
     return;
 }
 
+void InsertLineQueue(void)
+{
+    struct input_status oldstat;
+    struct asm_tok *tokenarray;
+    struct lq_line *currline = line_queue.head;
+    int codestate = ModuleInfo.GeneratedCode;
+
+    tokenarray = PushInputStatus( &oldstat );
+    ModuleInfo.GeneratedCode = 0;
+
+    line_queue.head = NULL;
+
+    for ( ; currline; ) {
+	struct lq_line *nextline = currline->next;
+	strcpy( CurrSource, currline->line );
+	MemFree( currline );
+	if ( PreprocessLine( CurrSource, tokenarray ) )
+	    ParseLine( tokenarray );
+	currline = nextline;
+    }
+    ModuleInfo.GeneratedCode = codestate;
+    PopInputStatus( &oldstat );
+}
+
 char *GetLineQueue( char *buffer )
 {
     struct lq_line *curr = line_queue.head;

@@ -3808,6 +3808,8 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
             ;; for some instructions, the "wide" flag has to be removed selectively.
             ;; this is to be improved - by a new flag in struct instr_item.
+
+            ;; added v2.31.32
             movzx eax,CodeInfo.token
 
             .if eax < VEX_START && eax >= T_ADDPD && opndx[expr].kind == EXPR_CONST

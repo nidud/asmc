@@ -16,10 +16,26 @@ struct com_item {
 
 static void ClassProto(char *name, int langtype, char *args, int type)
 {
+    char pargs[1024];
+    char *p = pargs;
+    char *q = args;
+    char c = 1;
+
+    while ( c ) { /* default args :abs=<val> */
+        c = *q++;
+        if ( c == '=' ) {
+            c = *q++;
+            while ( c && c != '>' )
+                c = *q++;
+            if ( c )
+                c = *q++;
+        }
+        *p++ = c;
+    }
     if ( langtype )
-        AddLineQueueX( "%s %r %r %s", name, type, langtype, args );
+        AddLineQueueX( "%s %r %r %s", name, type, langtype, pargs );
     else
-        AddLineQueueX( "%s %r %s", name, type, args );
+        AddLineQueueX( "%s %r %s", name, type, pargs );
 }
 
 static void ClassProto2(char *name, char *method, struct com_item *item, char *args)
@@ -37,7 +53,7 @@ static void ClassProto2(char *name, char *method, struct com_item *item, char *a
 
 static int OpenVtbl(struct com_item* p)
 {
-    char pubclass[64];
+    char pubclass[128];
     struct asym *sym;
 
     AddLineQueueX( "%sVtbl struct", p->class );
@@ -50,7 +66,7 @@ static int OpenVtbl(struct com_item* p)
 
     sym = SymFind( strcat( strcpy( pubclass, sym->name ), "Vtbl" ) );
     if ( sym == NULL )
-        return asmerr( 2006, pubclass );
+        return 1;
 
     if ( sym->total_size ) {
         AddLineQueueX( "%s <>", pubclass );
@@ -261,10 +277,11 @@ int ParseOperator( char *cname, int i, struct asm_tok tokenarray[], char *buffer
   int id;
   int j,k;
   int context;
+  int brachets;
   char name[16];
   char size[16];
   char curr[256];
-  char vector[64];
+  char vector[128];
   struct input_status oldstat;
   char *p;
 
@@ -273,31 +290,40 @@ int ParseOperator( char *cname, int i, struct asm_tok tokenarray[], char *buffer
     while ( 1 ) {
 
         i = get_param_name( i, tokenarray, name, size, &arg_count, &id, &context );
-        if ( i = ERROR )
+        if ( i == ERROR )
             return ERROR;
 
-        if ( tokenarray[i].token != T_OP_BRACKET )
-            return asmerr( 2008, tokenarray[i].string_ptr );
-
         j = i;
-        for ( k = 0; tokenarray[i].token != T_FINAL; i++ ) {
-            switch ( tokenarray[i].token ) {
-            case T_OP_BRACKET:
-                k++;
-                break;
-            case T_CL_BRACKET:
-                k--;
-                if ( k != 0 )
+        if ( tokenarray[i].token == T_OP_BRACKET ) {
+            j++;
+            brachets = 1;
+            for ( k = 0; tokenarray[i].token != T_FINAL; i++ ) {
+                switch ( tokenarray[i].token ) {
+                case T_OP_BRACKET:
+                    k++;
                     break;
-                if ( tokenarray[i-1].token != T_OP_BRACKET )
-                    arg_count++;
-                i++;
-                goto done;
-            case T_COMMA:
-                if ( k == 1 )
-                    arg_count++;
-                break;
+                case T_CL_BRACKET:
+                    k--;
+                    if ( k != 0 )
+                        break;
+                    if ( tokenarray[i-1].token != T_OP_BRACKET )
+                        arg_count++;
+                    i++;
+                    goto done;
+                case T_COMMA:
+                    if ( k == 1 )
+                        arg_count++;
+                    break;
+                }
             }
+        } else {
+
+            if ( tokenarray[i].token == T_FINAL )
+                return asmerr( 2008, tokenarray[i-1].string_ptr );
+
+            brachets = 0;
+            i++;
+            arg_count++;
         }
 done:
         p = buffer;
@@ -316,26 +342,255 @@ done:
         }
 
         if ( tokenarray[i].token == T_FINAL ) {
-            strcat( p, tokenarray[j+1].tokpos );
+            strcat( p, tokenarray[j].tokpos );
+            if ( !brachets )
+                strcat( p, ")" );
             break;
         }
 
         p += strlen(p);
-        k = ( tokenarray[i].tokpos - tokenarray[j+1].tokpos );
-        memcpy( p, tokenarray[j+1].tokpos, k );
+        k = ( tokenarray[i].tokpos - tokenarray[j].tokpos );
+        memcpy( p, tokenarray[j].tokpos, k );
+        if ( brachets == 0 )
+            p[k++] = ')';
         p[k] = '\0';
-
-        if ( Parse_Pass == PASS_1 ) {
-
-            PushInputStatus( &oldstat );
-            strcpy( ModuleInfo.currsource, curr );
-            ModuleInfo.token_count =
-            Tokenize( ModuleInfo.currsource, 0, ModuleInfo.tokenarray, TOK_DEFAULT );
-            ParseLine( ModuleInfo.tokenarray );
-            PopInputStatus( &oldstat );
-        }
+        if ( is_linequeue_populated() )
+            RunLineQueue();
+        AddLineQueue( curr );
+        InsertLineQueue();
     }
     return i;
+}
+
+enum {
+    tiImmediat,
+    tiFloat,
+    tiRegister,
+    tiMemory,
+    tiPointer
+};
+
+int GetTypeId( char *buffer, struct asm_tok tokenarray[] )
+{
+  int addr,i,j,g,e;
+  struct expr opnd;
+  int tokval;
+  char id[128];
+  int type;
+  int size;
+  int is_void;
+  int is_id;
+  char name[128];
+  struct asym *sym;
+  struct asym *stp;
+
+    /* find first instance of macro in line */
+
+    i = 0;
+    while ( tokenarray[i].token != T_FINAL ) {
+        if ( tokenarray[i].token == T_ID ) {
+            if ( !_stricmp( tokenarray[i].string_ptr, "typeid" ) ) {
+
+                tokenarray[i].string_ptr[0] = '?';
+                break;
+            }
+        }
+        i++;
+    }
+
+    if ( tokenarray[i].token == T_FINAL && tokenarray[i+1].token == T_OP_BRACKET )
+        i++;
+    else if ( tokenarray[i].token != T_FINAL )
+        i++;
+    else
+        i = 0;
+
+    if ( tokenarray[i].token != T_OP_BRACKET )
+        return 0;
+
+    i++;
+    id[0] = '\0';
+    is_id = 0;
+    if ( tokenarray[i+1].token == T_COMMA ) {
+        is_id = 1;
+        if ( tokenarray[i].string_ptr[0] != '?' && tokenarray[i].string_ptr[1] != '\0' )
+            strcpy( id, tokenarray[i].string_ptr );
+        i += 2;
+    }
+
+    addr = 0;
+    if ( tokenarray[i].token == T_RES_ID && tokenarray[i].tokval == T_ADDR ) {
+        i++;
+        addr++;
+    }
+
+    for ( g = 1, j = i, e = i; tokenarray[j].token != T_FINAL; j++, e++ ) {
+        if ( tokenarray[j].token == T_OP_BRACKET )
+            g++;
+        else if ( tokenarray[j].token == T_CL_BRACKET ) {
+            g--;
+            if ( g == 0 )
+                break;
+        }
+    }
+    if ( EvalOperand( &i, tokenarray, e, &opnd, 0 ) == ERROR )
+        return 0;
+
+    type = 0;
+    size = 0;
+    name[0] = '\0';
+    is_void = 0;
+
+    switch ( opnd.kind ) {
+
+    case EXPR_REG:
+
+        if ( !opnd.indirect ) {
+            g = SizeFromRegister( opnd.base_reg->tokval );
+            size = ( g << 3 );
+            type = tiRegister;
+            break;
+        }
+
+    case EXPR_ADDR:
+
+        type = tiMemory;
+        if ( addr )
+            type = tiPointer;
+
+        sym = opnd.sym;
+        stp = opnd.type;
+        if ( opnd.mbr )
+            sym = opnd.mbr;
+
+        if ( !sym || sym->state == SYM_UNDEFINED ) {
+            is_void = 1;
+            break;
+        }
+        if ( sym->mem_type == MT_TYPE && sym->type )
+            sym = sym->type;
+
+        if ( sym->target_type &&
+            ( sym->mem_type == MT_PTR || sym->ptr_memtype == MT_TYPE ) ) {
+
+            if ( sym->mem_type == MT_PTR )
+                type = tiPointer;
+            sym = sym->target_type;
+        }
+
+        if ( sym->state == SYM_TYPE && sym->typekind == TYPE_STRUCT ) {
+
+            strcpy( name, sym->name );
+            break;
+        }
+
+        if ( opnd.type ) {
+            if ( opnd.type->state == SYM_TYPE && opnd.type->typekind == TYPE_STRUCT ) {
+
+                strcpy( name, opnd.type->name );
+                break;
+            }
+        }
+
+        if ( sym->state == SYM_INTERNAL ||
+             sym->state == SYM_STACK ||
+             sym->state == SYM_STRUCT_FIELD ||
+             sym->state == SYM_TYPE ) {
+
+            g = sym->mem_type;
+            if ( g == MT_PTR ) {
+                type = tiPointer;
+                if ( sym->is_ptr == 1 && g != sym->ptr_memtype )
+                    g = sym->ptr_memtype;
+            }
+
+            switch ( g ) {
+            case MT_BYTE:   e = T_BYTE;   break;
+            case MT_SBYTE:  e = T_SBYTE;  break;
+            case MT_WORD:   e = T_WORD;   break;
+            case MT_SWORD:  e = T_SWORD;  break;
+            case MT_REAL2:  e = T_REAL2;  break;
+            case MT_DWORD:  e = T_DWORD;  break;
+            case MT_SDWORD: e = T_SDWORD; break;
+            case MT_REAL4:  e = T_REAL4;  break;
+            case MT_FWORD:  e = T_FWORD;  break;
+            case MT_QWORD:  e = T_QWORD;  break;
+            case MT_SQWORD: e = T_SQWORD; break;
+            case MT_REAL8:  e = T_REAL8;  break;
+            case MT_TBYTE:  e = T_TBYTE;  break;
+            case MT_REAL10: e = T_REAL10; break;
+            case MT_OWORD:  e = T_OWORD;  break;
+            case MT_REAL16: e = T_REAL16; break;
+            case MT_YWORD:  e = T_YWORD;  break;
+            case MT_ZWORD:  e = T_ZWORD;  break;
+            case MT_PROC:   e = T_PROC;   break;
+            case MT_NEAR:   e = T_NEAR;   break;
+            case MT_FAR:    e = T_FAR;    break;
+            case MT_PTR:    e = T_PTR;    break;
+            default:
+                is_void = 1;
+                break;
+            }
+            if ( !is_void )
+                GetResWName(e, name);
+            break;
+        }
+        is_void = 1;
+        break;
+
+    case EXPR_CONST:
+        type = tiImmediat;
+        size = 32;
+        if ( opnd.hlvalue )
+            size = 128;
+        else if ( opnd.hvalue )
+            size = 64;
+        break;
+    case EXPR_FLOAT:
+        type = tiFloat;
+        break;
+    }
+
+    if ( is_void )
+        strcpy( name, "void" );
+
+    switch ( type ) {
+    case tiImmediat:
+        if ( is_id )
+            sprintf( buffer, "%s?i%d", id, size );
+        else
+            sprintf( buffer, "imm_%d", size );
+        return 1;
+    case tiFloat:
+        if ( is_id )
+            sprintf( buffer, "%s?flt", id );
+        else
+            strcpy( buffer, "imm_float" );
+        return 1;
+    case tiRegister:
+        if ( is_id )
+            sprintf( buffer, "%s?r%d", id, size );
+        else
+            sprintf( buffer, "reg_%d", size );
+        return 1;
+    case tiMemory:
+        if ( is_id )
+            sprintf( buffer, "%s?%s", id, name );
+        else {
+            strcpy( buffer, "mem_" );
+            strcat( buffer, name );
+        }
+        return 1;
+    case tiPointer:
+        if ( is_id )
+            sprintf( buffer, "%s?p%s", id, name );
+        else {
+            strcpy( buffer, "ptr_" );
+            strcat( buffer, name );
+        }
+        return 1;
+    }
+    return 0;
 }
 
 int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
@@ -344,18 +599,19 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     char    l_p[16];
     char    l_t[16];
     char    language[32];
-    char    pubclass[128];
     char    *p, *id = tokenarray[i-1].string_ptr;
     int     x, q, IsCom = 0;
     struct  com_item *o = ModuleInfo.g.ComStack;
     struct  asym *sym;
     int     IsType = 0;
+    int     constructor = 0;
 
     if ( o ) {
 
         if ( strcmp( id, o->class ) == 0 ) {
 
             ClassProto2( id, id, o, tokenarray[i+1].tokpos );
+            constructor = 1;
             goto done;
         }
     }
@@ -463,6 +719,13 @@ done:
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
     if ( is_linequeue_populated() )
         RunLineQueue();
+    if ( constructor ) {
+        strcpy(buffer, id);
+        strcat(buffer, "_");
+        strcat(buffer, id);
+        if ( ( sym = SymFind( buffer ) ) != NULL )
+            sym->method = 1;
+    }
     return rc;
 }
 
@@ -495,7 +758,7 @@ int ParseClass( int j, struct asm_tok tokenarray[], char *buffer )
     if ( q == T_ANDN || q == T_INC || q == T_DEC )
         k++;
 
-    if ( tokenarray[j+k].tokval == T_ENDP || tokenarray[j+k].token == T_OP_BRACKET ) {
+    if ( q || tokenarray[j+k].tokval == T_ENDP || tokenarray[j+k].token == T_OP_BRACKET ) {
 
         tokval = q;
         strcat( buffer, clas );
@@ -626,11 +889,16 @@ char *ParseMacroArgs(char *buffer, int count, char *args)
 
             if ( s < p ) {
 
+                q--;
+                *(q-1) = ':';
                 x = p - s;
-                memcpy(q-1, s, x);
-                *(q-2) = ':';
-                *(q+x) = '\0';
+                if ( *(p-1) == ',' )
+                    x--;
+                memcpy(q, s, x);
                 q += x;
+                *q++ = ',';
+                *q++ = ' ';
+                *q = '\0';
             }
         }
     }
@@ -640,70 +908,81 @@ char *ParseMacroArgs(char *buffer, int count, char *args)
 void MacroInline( char *name, int count, char *args, char *data, int vargs )
 {
     int i;
-    char *p, *q;
-    char macroargs[256];
+    char *p, *q, *e;
+    char mac[512];
+    char buf[512];
     struct com_item *o;
 
     if ( Parse_Pass > PASS_1 )
         return;
 
-    if ( ModuleInfo.list )
-        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
-    RunLineQueue();
-
+    strcpy( buf, args );
     o = ModuleInfo.g.ComStack;
     if ( o && o->vector ) {
-        macroargs[0] = '\0';
-        p = macroargs;
-        for ( i = 1; i < count; i++ )
-            p += sprintf( p, "_%u, ", i );
+        mac[0] = '\0';
+        p = ParseMacroArgs( mac, count, buf );
         strcat( p, "this:=<" );
         strcat( p, GetResWName( o->vector, NULL ) );
         strcat( p, ">" );
     } else {
-        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < count; i++ )
-            p += sprintf( p, ", _%u", i );
+        p = strcpy( mac, "this" ) + 4;
+        if ( count > 1 ) {
+            p = strcpy( p, ", " ) + 2;
+            p = ParseMacroArgs( p, count, buf );
+            p -= 2;
+            *p = 0;
+        }
     }
 
     if ( vargs )
-        AddLineQueueX( "%s macro this:vararg", name );
-    else {
-        for ( i = 1, p = strcpy( macroargs, "this" ) + 4; i < count; i++ )
-            p += sprintf( p, ", _%u", i );
-        AddLineQueueX( "%s macro %s", name, macroargs );
-    }
+        strcpy( p, ":vararg" );
+    AddLineQueueX( "%s macro %s", name, mac );
 
-    for ( p = data; ( q = strchr( p, '\n' ) ) != NULL; ) {
+    for ( e = NULL, p = data; ( q = strchr( p, '\n' ) ) != NULL; ) {
 
         *q = '\0';
-        if ( *p )
+        if ( *p ) {
+            e = p;
             AddLineQueue( p );
+        }
         *q++ = '\n';
         p = q;
     }
-    if ( *p )
+    if ( *p ) {
+        e = p;
         AddLineQueue( p );
+    }
+    if ( e == NULL )
+        AddLineQueue( "exitm<>" );
+    else {
+        i = _memicmp( e, "exitm", 5 );
+        if ( i )
+            i = _memicmp( e, "retm", 4 );
+        if ( i )
+            AddLineQueue( "exitm<>" );
+    }
     AddLineQueue( "endm" );
     MacroLineQueue();
 }
 
 int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
-    int rc = NOT_ERROR;
-    int cmd = tokenarray[i].tokval;
-    int x,q,args;
-    char clname[64];
-    char *p;
-    char *ptr;
-    char *public_class;
+    int         rc = NOT_ERROR;
+    int         cmd = tokenarray[i].tokval;
+    int         x,q,args;
+    char        clname[128];
+    char *      p;
+    char *      ptr;
+    char *      public_class;
+    int         is_id;
+    int         is_vararg;
+    char        token[128];
+    char        name[512];
+    uint_32     u;
+    int         context;
+    int         constructor = 0;
     struct asym *sym;
     struct com_item *o = ModuleInfo.g.ComStack;
-    int is_id;
-    int is_vararg;
-    char token[64];
-    char name[128];
-    uint_32 u;
-    int context;
 
     i++;
 
@@ -778,12 +1057,15 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             if ( SearchNameInStruct( sym, name, &u, 0 ) == NULL ) {
                 if ( strcmp( name, ptr ) != 0 )
                     ClassProto( name, o->langtype, tokenarray[i].tokpos, T_PROC );
-                else
+                else {
                     ClassProto2( ptr, name, o, tokenarray[i].tokpos );
+                    constructor++;
+                }
             }
-        } else if ( o->type )
+        } else if ( o->type ) {
             ClassProto2( ptr, name, o, tokenarray[i].tokpos );
-
+            constructor++;
+        }
 
         if ( p == NULL || Parse_Pass > PASS_1 )
             break;
@@ -791,6 +1073,14 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         /* .operator + :type { ... } */
 
         sprintf( token, "%s_%s", ptr, name );
+        if ( ModuleInfo.list )
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
+        RunLineQueue();
+        if ( constructor ) {
+            sym = SymFind( token );
+            if ( sym )
+                sym->method = 1;
+        }
         MacroInline( token, args, tokenarray[i].tokpos, p, is_vararg );
         return rc;
 
@@ -803,7 +1093,11 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         o = LclAlloc( sizeof( struct com_item ) );
         ModuleInfo.g.ComStack = o;
         o->cmd = cmd;
+        o->type = 0;
         o->langtype = 0;
+        o->sym = NULL;
+        o->vector = 0;
+
         p = tokenarray[i].string_ptr;
         o->class = LclAlloc( strlen(p) + 1 );
         strcpy(o->class, p);
@@ -860,19 +1154,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         }
 
         if ( cmd == T_DOT_CLASS ) {
-#if 0
-            if ( o->langtype ) {
-                if ( x )
-                    AddLineQueueX( "%s::%s proto %s %s", p, p, tokenarray[args-1].string_ptr, tokenarray[args].tokpos );
-                else
-                    AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[args-1].string_ptr );
-            } else {
-                if ( x )
-                    AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[args].tokpos );
-                else
-                    AddLineQueueX( "%s::%s proto", p, p );
-            }
-#endif
+
             if ( public_class != NULL )
                 public_class[0] = ':';
 

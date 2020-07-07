@@ -11,18 +11,18 @@ include gdiplus.inc
 
 main proc
 
-    local pWCHAR:ptr word
-    local pImage:ptr Image
-    local pIStream:ptr IStream
-    local pRect:ptr Rect
-    local pRectF:ptr RectF
-    local pEncoderParameters:ptr EncoderParameters
+  local pWCHAR:ptr word
+  local pImage:ptr Image
+  local pIStream:ptr IStream
+  local pRect:ptr Rect
+  local pRectF:ptr RectF
+  local pEncoderParameters:ptr EncoderParameters
 
     ; Image(WCHAR*, BOOL = FALSE)
     ; Image(IStream*, BOOL = FALSE)
 
-    .new p:Image(pWCHAR, TRUE)
-    .new p:Image(pIStream, TRUE)
+   .new p:Image(pWCHAR, TRUE)
+   .new p:Image(pIStream, TRUE)
 
     p.Release()
     p.FromFile(NULL, FALSE)

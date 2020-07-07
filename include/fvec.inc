@@ -15,61 +15,61 @@ include vcruntime.inc
     .operator = :real4, :real4, :real4, :real4 {
         movss xmm4,_4
         movss xmm0,_1
-        exitm<_mm_store_ps([this], _mm_set_ps(xmm0, _2, _3, xmm4))>
+        _mm_store_ps([this], _mm_set_ps(xmm0, _2, _3, xmm4))
         }
     .operator = :vec128_t {
-        exitm<_mm_store_ps([this], _1)>
+        _mm_store_ps([this], _1)
         }
     .operator = :real4 {
-        exitm<_mm_store_ps([this], _mm_set_ps1(_mm_store_ps(xmm0, _1)))>
+        _mm_store_ps([this], _mm_set_ps1(_mm_store_ps(xmm0, _1)))
         }
     .operator = :real8 {
-        exitm<_mm_store_ps([this], _mm_set_ps1(_mm_cvtsd_ss(xmm0, _1)))>
+        _mm_store_ps([this], _mm_set_ps1(_mm_cvtsd_ss(xmm0, _1)))
         }
     .operator __m128 {
-        exitm<_mm_store_ps(xmm0, [this])>
+        _mm_store_ps(xmm0, [this])
         }
     .operator & :vec128_t {
-        exitm<_mm_and_ps(xmm0, _1)>
+        _mm_and_ps(xmm0, _1)
         }
     .operator | :vec128_t {
-        exitm<_mm_or_ps(xmm0, _1)>
+        _mm_or_ps(xmm0, _1)
         }
     .operator ^ :vec128_t {
-        exitm<_mm_xor_ps(xmm0, _1)>
+        _mm_xor_ps(xmm0, _1)
         }
     .operator + :vec128_t {
-        exitm<_mm_add_ps(xmm0, _1)>
+        _mm_add_ps(xmm0, _1)
         }
     .operator - :vec128_t {
-        exitm<_mm_sub_ps(xmm0, _1)>
+        _mm_sub_ps(xmm0, _1)
         }
     .operator * :vec128_t {
-        exitm<_mm_mul_ps(xmm0, _1)>
+        _mm_mul_ps(xmm0, _1)
         }
     .operator / :vec128_t {
-        exitm<_mm_div_ps(xmm0, _1)>
+        _mm_div_ps(xmm0, _1)
         }
     .operator += :vec128_t {
-        exitm<_mm_store_ps([this], _mm_add_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_add_ps(xmm0, _1))
         }
     .operator -= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_sub_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_sub_ps(xmm0, _1))
         }
     .operator *= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_mul_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_mul_ps(xmm0, _1))
         }
     .operator /= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_div_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_div_ps(xmm0, _1))
         }
     .operator &= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_and_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_and_ps(xmm0, _1))
         }
     .operator |= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_or_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_or_ps(xmm0, _1))
         }
     .operator ^= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_xor_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_xor_ps(xmm0, _1))
         }
 
     .operator add_horizontal {
@@ -77,23 +77,23 @@ include vcruntime.inc
         _mm_add_ps(xmm0, _mm_movehl_ps(xmm1, xmm1))
         _mm_store_ps(xmm1, xmm0)
         _mm_add_ss(xmm0, _mm_shuffle_ps(xmm1, xmm1, 1))
-        exitm<_mm_cvtss_f32(xmm0)>
+        _mm_cvtss_f32(xmm0)
         }
     .operator sqrt {
-        exitm<_mm_sqrt_ps(xmm0)>
+        _mm_sqrt_ps(xmm0)
         }
     .operator rcp {
-        exitm<_mm_rcp_ps(xmm0)>
+        _mm_rcp_ps(xmm0)
         }
     .operator rsqrt {
-        exitm<_mm_rsqrt_ps(xmm0)>
+        _mm_rsqrt_ps(xmm0)
         }
     .operator rcp_nr {
         _mm_store_ps(xmm1, xmm0)
         _mm_rcp_ps(xmm0)
         _mm_store_ps(xmm2, xmm0)
         _mm_mul_ps(xmm1, xmm0)
-        exitm<_mm_sub_ps(_mm_add_ps(xmm0, xmm0), _mm_mul_ps(xmm1, xmm2))>
+        _mm_sub_ps(_mm_add_ps(xmm0, xmm0), _mm_mul_ps(xmm1, xmm2))
         }
 
     .operator rsqrt_nr {
@@ -103,39 +103,35 @@ include vcruntime.inc
         mulps   xmm2,xmm1
         mulps   _mm_set_epi32(5.0, 5.0, 5.0, 5.0),xmm1
         _mm_sub_ps(_mm_set_epi32(xmm1, 3.0, 3.0, 3.0, 3.0), xmm2)
-        exitm<_mm_mul_ps(xmm0, xmm1)>
+        _mm_mul_ps(xmm0, xmm1)
         }
 
-    .operator cmpeq     :vec128_t { exitm<_mm_cmpeq_ps(xmm0, _1)> }
-    .operator cmplt     :vec128_t { exitm<_mm_cmplt_ps(xmm0, _1)> }
-    .operator cmple     :vec128_t { exitm<_mm_cmple_ps(xmm0, _1)> }
-    .operator cmpneq    :vec128_t { exitm<_mm_cmpneq_ps(xmm0, _1)> }
-    .operator cmpnlt    :vec128_t { exitm<_mm_cmpnlt_ps(xmm0, _1)> }
-    .operator cmpnle    :vec128_t { exitm<_mm_cmpnle_ps(xmm0, _1)> }
+    .operator cmpeq     :vec128_t { _mm_cmpeq_ps(xmm0, _1) }
+    .operator cmplt     :vec128_t { _mm_cmplt_ps(xmm0, _1) }
+    .operator cmple     :vec128_t { _mm_cmple_ps(xmm0, _1) }
+    .operator cmpneq    :vec128_t { _mm_cmpneq_ps(xmm0, _1) }
+    .operator cmpnlt    :vec128_t { _mm_cmpnlt_ps(xmm0, _1) }
+    .operator cmpnle    :vec128_t { _mm_cmpnle_ps(xmm0, _1) }
 
     .operator cmpgt :vec128_t {
         cmpltps xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpge :vec128_t {
         cmpleps xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpngt :vec128_t {
         cmpnltps xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpnge :vec128_t {
         cmpnleps xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
 
-    .operator simd_max  :vec128_t { exitm<_mm_max_ps(xmm0, _1)> }
-    .operator simd_min  :vec128_t { exitm<_mm_min_ps(xmm0, _1)> }
+    .operator simd_max  :vec128_t { _mm_max_ps(xmm0, _1) }
+    .operator simd_min  :vec128_t { _mm_min_ps(xmm0, _1) }
 
     Fvec32s4_SELECT macro op
         .operator select_&op& :vec128_t, :vec128_t, :vec128_t {
@@ -143,7 +139,7 @@ include vcruntime.inc
             _mm_store_ps(_1, xmm0)
             _mm_and_ps(xmm0, _2)
             _mm_andnot_ps(_1, _3)
-            exitm<_mm_or_ps(xmm0, _1)>
+            _mm_or_ps(xmm0, _1)
             }
         exitm<>
         endm
@@ -161,7 +157,7 @@ include vcruntime.inc
             _mm_store_ps(xmm0, _1)
             _mm_and_ps(xmm0, _2)
             _mm_andnot_ps(_1, _3)
-            exitm<_mm_or_ps(xmm0, _1)>
+            _mm_or_ps(xmm0, _1)
             }
         exitm<>
         endm
@@ -174,22 +170,22 @@ include vcruntime.inc
     .operator abs {
         pcmpeqd xmm1,xmm1
         psrld xmm1,1
-        exitm<_mm_and_ps(xmm0, xmm1)>
+        _mm_and_ps(xmm0, xmm1)
         }
     .operator unpack_low :vec128_t {
-        exitm<_mm_unpacklo_ps(xmm0, _1)>
+        _mm_unpacklo_ps(xmm0, _1)
         }
     .operator unpack_high :vec128_t {
-        exitm<_mm_unpackhi_ps(xmm0, _1)>
+        _mm_unpackhi_ps(xmm0, _1)
         }
     .operator loadu {
-        exitm<_mm_loadu_ps([this])>
+        _mm_loadu_ps([this])
         }
     .operator storeu {
-        exitm<_mm_storeu_ps([this], xmm0)>
+        _mm_storeu_ps([this], xmm0)
         }
     .operator store_nta {
-        exitm<_mm_stream_ps([this], xmm0)>
+        _mm_stream_ps([this], xmm0)
         }
 if defined (_ENABLE_VEC_DEBUG)
     .operator cout :string_t {
@@ -201,7 +197,6 @@ if defined (_ENABLE_VEC_DEBUG)
         movq r11,_mm_cvtss_sd(_mm_move_ss(xmm0, [this+0x00]))
         printf( addr @CStr("%s\n [3]:%f\n [2]:%f\n [1]:%f\n [0]:%f\n"), rdx, r8, r9, r10, r11 )
         mov this,this_ptr
-        exitm<>
         }
 endif
     .ends
@@ -214,68 +209,68 @@ endif
     vec __m128 <>
 
     .operator = :vec128_t {
-        exitm<_mm_store_ps([this], _1)>
+        _mm_store_ps([this], _1)
         }
     .operator = :real4 {
-        exitm<_mm_store_ss([this], _mm_set_ss(_1))>
+        _mm_store_ss([this], _mm_set_ss(_1))
         }
     .operator = :real8 {
-        exitm<_mm_store_ps([this], _mm_set_ss(_mm_cvtsd_ss(xmm0, _1)))>
+        _mm_store_ps([this], _mm_set_ss(_mm_cvtsd_ss(xmm0, _1)))
         }
     .operator __m128 {
-        exitm<_mm_store_ps(xmm0, [this])>
+        _mm_store_ps(xmm0, [this])
         }
     .operator & :vec128_t {
-        exitm<_mm_and_ps(xmm0, _1)>
+        _mm_and_ps(xmm0, _1)
         }
     .operator | :vec128_t {
-        exitm<_mm_or_ps(xmm0, _1)>
+        _mm_or_ps(xmm0, _1)
         }
     .operator ^ :vec128_t {
-        exitm<_mm_xor_ps(xmm0, _1)>
+        _mm_xor_ps(xmm0, _1)
         }
     .operator + :vec128_t {
-        exitm<_mm_add_ss(xmm0, _1)>
+        _mm_add_ss(xmm0, _1)
         }
     .operator - :vec128_t {
-        exitm<_mm_sub_ss(xmm0, _1)>
+        _mm_sub_ss(xmm0, _1)
         }
     .operator * :vec128_t {
-        exitm<_mm_mul_ss(xmm0, _1)>
+        _mm_mul_ss(xmm0, _1)
         }
     .operator / :vec128_t {
-        exitm<_mm_div_ss(xmm0, _1)>
+        _mm_div_ss(xmm0, _1)
         }
     .operator += :vec128_t {
-        exitm<_mm_store_ps([this], _mm_add_ss(xmm0, _1))>
+        _mm_store_ps([this], _mm_add_ss(xmm0, _1))
         }
     .operator -= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_sub_ss(xmm0, _1))>
+        _mm_store_ps([this], _mm_sub_ss(xmm0, _1))
         }
     .operator *= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_mul_ss(xmm0, _1))>
+        _mm_store_ps([this], _mm_mul_ss(xmm0, _1))
         }
     .operator /= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_div_ss(xmm0, _1))>
+        _mm_store_ps([this], _mm_div_ss(xmm0, _1))
         }
     .operator &= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_and_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_and_ps(xmm0, _1))
         }
     .operator |= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_or_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_or_ps(xmm0, _1))
         }
     .operator ^= :vec128_t {
-        exitm<_mm_store_ps([this], _mm_xor_ps(xmm0, _1))>
+        _mm_store_ps([this], _mm_xor_ps(xmm0, _1))
         }
 
     .operator sqrt {
-        exitm<_mm_sqrt_ss(xmm0)>
+        _mm_sqrt_ss(xmm0)
         }
     .operator rcp {
-        exitm<_mm_rcp_ss(xmm0)>
+        _mm_rcp_ss(xmm0)
         }
     .operator rsqrt {
-        exitm<_mm_rsqrt_ss(xmm0)>
+        _mm_rsqrt_ss(xmm0)
         }
 
     .operator rcp_nr {
@@ -283,7 +278,7 @@ endif
         _mm_rcp_ss(xmm0)
         _mm_store_ps(xmm2, xmm0)
         _mm_mul_ss(xmm1, xmm0)
-        exitm<_mm_sub_ss(_mm_add_ss(xmm0, xmm0), _mm_mul_ss(xmm1, xmm2))>
+        _mm_sub_ss(_mm_add_ss(xmm0, xmm0), _mm_mul_ss(xmm1, xmm2))
         }
 
     .operator rsqrt_nr {
@@ -293,39 +288,35 @@ endif
         mulss   xmm2,xmm1
         mulss   _mm_set_epi32(5.0, 5.0, 5.0, 5.0),xmm1
         _mm_sub_ss(_mm_set_epi32(xmm1, 3.0, 3.0, 3.0, 3.0), xmm2)
-        exitm<_mm_mul_ss(xmm0, xmm1)>
+        _mm_mul_ss(xmm0, xmm1)
         }
 
-    .operator cmpeq     :vec128_t { exitm<_mm_cmpeq_ss(xmm0, _1)> }
-    .operator cmplt     :vec128_t { exitm<_mm_cmplt_ss(xmm0, _1)> }
-    .operator cmple     :vec128_t { exitm<_mm_cmple_ss(xmm0, _1)> }
-    .operator cmpneq    :vec128_t { exitm<_mm_cmpneq_ss(xmm0, _1)> }
-    .operator cmpnlt    :vec128_t { exitm<_mm_cmpnlt_ss(xmm0, _1)> }
-    .operator cmpnle    :vec128_t { exitm<_mm_cmpnle_ss(xmm0, _1)> }
+    .operator cmpeq     :vec128_t { _mm_cmpeq_ss(xmm0, _1) }
+    .operator cmplt     :vec128_t { _mm_cmplt_ss(xmm0, _1) }
+    .operator cmple     :vec128_t { _mm_cmple_ss(xmm0, _1) }
+    .operator cmpneq    :vec128_t { _mm_cmpneq_ss(xmm0, _1) }
+    .operator cmpnlt    :vec128_t { _mm_cmpnlt_ss(xmm0, _1) }
+    .operator cmpnle    :vec128_t { _mm_cmpnle_ss(xmm0, _1) }
 
     .operator cmpgt :vec128_t {
         cmpltss xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpge :vec128_t {
         cmpless xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpngt :vec128_t {
         cmpnltss xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
     .operator cmpnge :vec128_t {
         cmpnless xmm1,xmm0
         movaps xmm0,xmm1
-        retm<xmm0>
         }
 
-    .operator simd_max  :vec128_t { exitm<_mm_max_ss(xmm0, _1)> }
-    .operator simd_min  :vec128_t { exitm<_mm_min_ss(xmm0, _1)> }
+    .operator simd_max  :vec128_t { _mm_max_ss(xmm0, _1) }
+    .operator simd_min  :vec128_t { _mm_min_ss(xmm0, _1) }
 
     Fvec32s1_SELECT macro op
         .operator select_&op& :vec128_t, :vec128_t, :vec128_t {
@@ -333,7 +324,7 @@ endif
             _mm_store_ps(_1, xmm0)
             _mm_and_ps(xmm0, _2)
             _mm_andnot_ps(_1, _3)
-            exitm<_mm_or_ps(xmm0, _1)>
+            _mm_or_ps(xmm0, _1)
             }
         exitm<>
         endm
@@ -351,7 +342,7 @@ endif
             _mm_store_ps(xmm0, _1)
             _mm_and_ps(xmm0, _2)
             _mm_andnot_ps(_1, _3)
-            exitm<_mm_or_ps(xmm0, _1)>
+            _mm_or_ps(xmm0, _1)
             }
         exitm<>
         endm
@@ -368,7 +359,6 @@ if defined (_ENABLE_VEC_DEBUG)
         movq r8,xmm0
         printf( addr @CStr("%s\n [0]:%f\n"), rdx, r8 )
         mov rcx,this_ptr
-        exitm<>
         }
 endif
     .ends

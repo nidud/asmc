@@ -79,47 +79,70 @@ ClassProto2 proc class:string_t, method:string_t, item:ptr com_item, args:string
 
 ClassProto2 endp
 
-OpenVtbl proc uses esi this:LPCLASS
+    assume esi:ptr com_item
+    assume edi:ptr sfield
 
-  local public_class[128]:char_t
+AddPublic proc uses esi edi ebx this:LPCLASS, p:string_t, q:string_t, sym:ptr asym
 
     mov esi,this
-    AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
+    mov ebx,sym
+
+    .if ( [ebx].asym.total_size )
+
+        .for ( edx = [ebx].esym.structinfo,
+               edi = [edx].struct_info.head : edi : edi = [edi].next )
+
+            .if [edi].sym.type
+
+                mov edx,[edi].sym.type
+                .if [edx].asym.typekind == TYPE_STRUCT
+
+                    AddPublic(esi, p, q, edx)
+                .else
+                    mov ebx,[edi].sym.name
+                    .if SymFind( strcat( strcat( strcpy( q, p ), "_" ), ebx ) )
+
+                        mov edx,[eax].asym.name
+                        .if [eax].asym.state == SYM_TMACRO
+                            mov edx,[eax].asym.string_ptr
+                        .endif
+                        AddLineQueueX( "%s_%s equ <%s>", [esi].class, ebx, edx )
+                    .endif
+                .endif
+            .endif
+        .endf
+    .endif
+    ret
+
+AddPublic endp
+
+OpenVtbl proc uses esi edi ebx this:LPCLASS
+
+  local p[128]:char_t
+  local q[128]:char_t
+
+    mov esi,this
+    AddLineQueueX( "%sVtbl struct", [esi].class )
 
     ; v2.30.32 - : public class
 
-    .return 0 .if ![esi].com_item.sym
+    mov edx,[esi].sym
+    .return 0 .if !edx
+    .return 1 .if !SymFind( strcat( strcpy( &q, strcpy( &p, [edx].asym.name ) ), "Vtbl" ) )
 
-    mov edx,[esi].com_item.sym
-    .if !SymFind( strcat( strcpy( &public_class, [edx].asym.name ), "Vtbl" ) )
-
-        .return 1;asmerr( 2006, &public_class )
-    .endif
-
-    mov ecx,eax
+    mov ebx,eax
     xor eax,eax
-
-    .if ( [ecx].asym.total_size )
-if 1
-        AddLineQueueX( "%s <>", &public_class )
-else
-        .for ( edx = [ecx].esym.structinfo,
-               esi = [edx].struct_info.head : esi : esi = [esi].sfield.next )
-
-            mov ecx,[esi].sfield.sym.name
-            mov edx,[esi].sfield.sym.type
-            .if edx
-                AddLineQueueX( "%s %s ?", ecx, [edx].asym.name )
-            .else
-                .return asmerr( 2006, ecx )
-            .endif
-        .endf
-endif
+    .if ( [ebx].asym.total_size )
+        AddLineQueueX( "%s <>", &q )
+        AddPublic(esi, &p, &q, ebx)
         mov eax,1
     .endif
     ret
 
 OpenVtbl endp
+
+    assume esi:nothing
+    assume edi:nothing
 
 get_operator proc token:string_t
 

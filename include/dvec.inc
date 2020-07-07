@@ -112,43 +112,10 @@ get_mask128 macro x:=<xmm2>
     .ends
     PM128 typedef ptr M128
 
-M128_OPERATOR macro class
-    &class&___m128i macro this
-        exitm<M128___m128i(this)>
-        endm
-    &class&_mequ16 macro this, _1
-        exitm<M128_mequ16(this, _1)>
-        endm
-    &class&_mand16 macro this, _1
-        exitm<M128_mand16(this, _1)>
-        endm
-    &class&_mor16 macro this, _1
-        exitm<M128_mor16(this, _1)>
-        endm
-    &class&_mxor16 macro this, _1
-        exitm<M128_mxor16(this, _1)>
-        endm
-    &class&_rand16 macro this, _1
-        exitm<M128_rand16(this, _1)>
-        endm
-    &class&_ror16 macro this, _1
-        exitm<M128_ror16(this, _1)>
-        endm
-    &class&_rxor16 macro this, _1
-        exitm<M128_rxor16(this, _1)>
-        endm
-    &class&_andnot macro this, _1
-        exitm<M128_andnot(this, _1)>
-        endm
-    exitm<>
-    endm
-
 
 ;; 1 element, a __m128i data type
 
 .template I128vec1 : public M128
-
-    M128_OPERATOR(I128vec1)
 
     .ends
 
@@ -156,8 +123,6 @@ M128_OPERATOR macro class
 ;; 2 elements, each element signed or unsigned 64-bit integer
 
 .template I64vec2 : public M128
-
-    M128_OPERATOR(I64vec2)
 
     .operator = :int64_t, :int64_t {
         mov [this+0],_1
@@ -203,12 +168,11 @@ M128_OPERATOR macro class
         }
     .ends
 
+.pragma list(push, 1)
 
 ;; 4 elements, each element either a signed or unsigned int
 
 .template I32vec4 : public M128
-
-    M128_OPERATOR(I32vec4)
 
     .operator = :abs, :abs, :abs, :abs {
         mov dword ptr [this+0x00],_4
@@ -260,56 +224,10 @@ M128_OPERATOR macro class
         }
     .ends
 
-I32VEC4_OPERATOR macro class
-    M128_OPERATOR(class)
-    &class&_mequ888 macro this, _1, _2, _3, _4
-        exitm<I32vec4_mequ888(this, _1, _2, _3, _4)>
-        endm
-    &class&_madd16 macro this, _1
-        exitm<I32vec4_madd16(this, _1)>
-        endm
-    &class&_msub16 macro this, _1
-        exitm<I32vec4_msub16(this, _1)>
-        endm
-    &class&_mshl16 macro this, _1
-        exitm<I32vec4_mshl16(this, _1)>
-        endm
-    &class&_mshl8 macro this, _Count
-        exitm<I32vec4_mshl8(this, _Count)>
-        endm
-    &class&_rshl16 macro this, _1
-        exitm<I32vec4_rshl16(this, _1)>
-        endm
-    &class&_rshl8 macro this, _Count
-        exitm<I32vec4_rshl8(this, _Count)>
-        endm
-    &class&_mshr16 macro this, _1
-        exitm<I32vec4_mshr16(this, _1)>
-        endm
-    &class&_rshr16 macro this, _1
-        exitm<I32vec4_rshr16(this, _1)>
-        endm
-    &class&_cmpeq macro this, _1
-        exitm<I32vec4_cmpeq(this, _1)>
-        endm
-    &class&_cmpneq macro this, _1
-        exitm<I32vec4_cmpneq(this, _1)>
-        endm
-    &class&_unpack_low macro this, _1
-        exitm<I32vec4_unpack_low(this, _1)>
-        endm
-    &class&_unpack_high macro this, _1
-        exitm<I32vec4_unpack_high(this, _1)>
-        endm
-    exitm<>
-    endm
-
 
 ;; 4 elements, each element signed integer
 
 .template Is32vec4 : public I32vec4
-
-    I32VEC4_OPERATOR(Is32vec4)
 
     .operator cmpgt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
     .operator cmplt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
@@ -328,12 +246,11 @@ if defined (_ENABLE_VEC_DEBUG)
 endif
     .ends
 
+.pragma list(pop)
 
 ;; 4 elements, each element unsigned int
 
 .template Iu32vec4 : public I32vec4
-
-    I32VEC4_OPERATOR(Iu32vec4)
 
     .operator * :vec128_t { _mm_mul_epu32(xmm0, _1) }
 
@@ -355,8 +272,6 @@ endif
 ;; 8 elements, each element either unsigned or signed short
 
 .template I16vec8 : public M128
-
-    M128_OPERATOR(I16vec8)
 
     .operator = :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs {
         mov dword ptr [this+0x00],((_2 shl 16) or _1)
@@ -410,56 +325,10 @@ endif
         }
     .ends
 
-I16VEC8_OPERATOR macro class
-    M128_OPERATOR(class)
-    &class&_mequ888 macro this, _S7, _S6, _S5, _S4, _S3, _S2, _S1, _S0
-        exitm<I16vec8_mequ888(this, _S7, _S6, _S5, _S4, _S3, _S2, _S1, _S0)>
-        endm
-    &class&_madd16 macro this, _1
-        exitm<I16vec8_madd16(this, _1)>
-        endm
-    &class&_msub16 macro this, _1
-        exitm<I16vec8_msub16(this, _1)>
-        endm
-    &class&_mmul16 macro this, _1
-        exitm<I16vec8_mmul16(this, _1)>
-        endm
-    &class&_mshl16 macro this, _1
-        exitm<I16vec8_mshl16(this, _1)>
-        endm
-    &class&_mshl8 macro this, _Count
-        exitm<I16vec8_mshl8(this, _Count)>
-        endm
-    &class&_rshl16 macro this, _1
-        exitm<I16vec8_rshl16(this, _1)>
-        endm
-    &class&_rshl8 macro this, _Count
-        exitm<I16vec8_rshl8(this, _Count)>
-        endm
-    &class&_rmul16 macro this, _1
-        exitm<I16vec8_rmul16(this, _1)>
-        endm
-    &class&_cmpeq macro this, _1
-        exitm<I16vec8_cmpeq(this, _1)>
-        endm
-    &class&_cmpneq macro this, _1
-        exitm<I16vec8_cmpneq(this, _1)>
-        endm
-    &class&_unpack_low macro this, _1
-        exitm<I16vec8_unpack_low(this, _1)>
-        endm
-    &class&_unpack_high macro this, _1
-        exitm<I16vec8_unpack_high(this, _1)>
-        endm
-    exitm<>
-    endm
-
 
 ;; 8 elements, each element signed short
 
 .template Is16vec8 : public I16vec8
-
-    I16VEC8_OPERATOR(Is16vec8)
 
     .operator cmpgt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
     .operator cmplt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
@@ -491,8 +360,6 @@ endif
 ;; 8 elements, each element unsigned short
 
 .template Iu16vec8 : public I16vec8
-
-    I16VEC8_OPERATOR(Iu16vec8)
 
     .operator >>  :vec128_t { _mm_srl_epi16(xmm0, _1) }
     .operator >>= :vec128_t {
@@ -526,8 +393,6 @@ endif
 ;; 16 elements, each element either unsigned or signed char
 
 .template I8vec16 : public M128
-
-    M128_OPERATOR(I8vec16)
 
     .operator = :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs,\
                 :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs {
@@ -563,38 +428,10 @@ endif
         }
     .ends
 
-I8VEC16_OPERATOR macro class
-    M128_OPERATOR(class)
-    &class&_mequ888 macro this, S15, S14, S13, S12, S11, S10, S9, S8, S7, S6, S5, S4, S3, S2, S1, S0
-        exitm<I8vec16_mequ888(this, S15, S14, S13, S12, S11, S10, S9, S8, S7, S6, S5, S4, S3, S2, S1, S0)>
-        endm
-    &class&_madd16 macro this, _1
-        exitm<I8vec16_madd16(this, _1)>
-        endm
-    &class&_msub16 macro this, _1
-        exitm<I8vec16_msub16(this, _1)>
-        endm
-    &class&_cmpeq macro this, _1
-        exitm<I8vec16_cmpeq(this, _1)>
-        endm
-    &class&_cmpneq macro this, _1
-        exitm<I8vec16_cmpneq(this, _1)>
-        endm
-    &class&_unpack_low macro this, _1
-        exitm<I8vec16_unpack_low(this, _1)>
-        endm
-    &class&_unpack_high macro this, _1
-        exitm<I8vec16_unpack_high(this, _1)>
-        endm
-    exitm<>
-    endm
-
 
 ;; 16 elements, each element a signed char
 
 .template Is8vec16 : public I8vec16
-
-    I8VEC16_OPERATOR(Is8vec16)
 
     .operator cmpgt :vec128_t { _mm_cmpgt_epi8(xmm0, _1) }
     .operator cmplt :vec128_t {
@@ -635,8 +472,6 @@ endif
 ;; 16 elements, each element a unsigned char
 
 .template Iu8vec16 : public I8vec16
-
-    I8VEC16_OPERATOR(Iu8vec16)
 
     .operator sat_add   :vec128_t { _mm_adds_epu8(xmm0, _1) }
     .operator sat_sub   :vec128_t { _mm_subs_epu8(xmm0, _1) }

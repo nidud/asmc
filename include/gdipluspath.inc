@@ -704,15 +704,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ;;
 ;;--------------------------------------------------------------------------
 
-.template PathGradientBrush
-
-    nativeBrush ptr_t ?
-    lastResult  Status ?
-    scratch     int_t ?
+.template PathGradientBrush : public Brush
 
     GpPathGradient typedef PathGradientBrush
-
-    BRUSH_OPERATOR(PathGradientBrush)
 
     .operator PathGradientBrush :abs, :vararg {
         this.typeid(PathGradientBrush, _1)(_1, _2)

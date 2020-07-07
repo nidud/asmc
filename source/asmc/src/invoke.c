@@ -976,6 +976,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    } else
 		strcat(buffer, opnd.mbr->name);
 	    macro = SymSearch( buffer );
+	    if ( macro && macro->state == SYM_TMACRO )
+		macro = SymSearch( macro->string_ptr );
+
 	    if ( macro && macro->state != SYM_MACRO )
 		macro = NULL;
 	    else {

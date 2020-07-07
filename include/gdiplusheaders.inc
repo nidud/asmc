@@ -299,7 +299,7 @@ region_combine macro token, name, mode
 ;;
 ;;--------------------------------------------------------------------------
 
-.template FontFamily ;: public GdiplusBase
+.template FontFamily
 
     nativeFamily    ptr_t ?
     lastResult      Status ?
@@ -734,38 +734,25 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         }
     .ends
 
-FONTCOLLECTION_INLINE macro class
-    .operator class {
+
+.template InstalledFontCollection : public FontCollection
+
+    .operator InstalledFontCollection {
         FontCollection_FontCollection(this)
         }
-    .operator Release {}
-    .operator SetStatus :abs {
-        FontCollection_SetStatus(this, _1)
-        }
-    .operator GetFamilyCount {
-        FontCollection_GetFamilyCount(this)
-        }
-    .operator GetFamilies :abs, :abs, :abs {
-        FontCollection_GetFamilies(this, _1, _2, _3)
-        }
-    .operator GetLastStatus {
-        FontCollection_GetLastStatus(this)
-        }
-    exitm<>
-    endm
-
-.template InstalledFontCollection
-
-    FONTCOLLECTION_INLINE(InstalledFontCollection)
     .ends
 
 
-.template PrivateFontCollection
+.template PrivateFontCollection : public FontCollection
 
-    FONTCOLLECTION_INLINE(PrivateFontCollection)
+    .operator PrivateFontCollection {
+        FontCollection_FontCollection(this)
+        }
 
     .operator AddFontFile :ptr WCHAR {
-        .new fontcollection:ptr FontCollection
+
+       .new fontcollection:ptr FontCollection
+
         mov fontcollection,this
         .ifd GdipPrivateAddFontFile([this].FontCollection.nativeFontCollection, rdx)
             mov rcx,fontcollection
@@ -774,7 +761,9 @@ FONTCOLLECTION_INLINE macro class
         }
 
     .operator AddMemoryFont :ptr, :int_t {
-        .new fontcollection:ptr FontCollection
+
+       .new fontcollection:ptr FontCollection
+
         mov fontcollection,this
         .ifd GdipPrivateAddMemoryFont([this].FontCollection.nativeFontCollection, rdx, r8d)
             mov rcx,fontcollection
@@ -788,61 +777,14 @@ FONTCOLLECTION_INLINE macro class
 ;; Abstract base class for Image and Metafile
 ;;--------------------------------------------------------------------------
 
-.template Image
-
-    GpImage typedef Image
+.template ImageBase
 
     nativeImage     ptr_t ?
     lastResult      Status ?
     scratch         int_t ?
 
-    ; Image(WCHAR*, BOOL = FALSE)
-    ; Image(IStream*, BOOL = FALSE)
-
-    .operator Image :abs, :vararg {
-        mov this.nativeImage,NULL
-        this.typeid(Image, _1)(_1, _2)
-        mov this.lastResult,eax
-        }
-    .operator Image?pword :ptr WCHAR, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
-        if _2
-            GdipLoadImageFromFileICM(rcx, addr this.nativeImage)
-        else
-            GdipLoadImageFromFile(rcx, addr this.nativeImage)
-        endif
-        }
-    .operator Image?pIStream :ptr IStream, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
-        if _2
-            GdipLoadImageFromStreamICM(rcx, addr this.nativeImage)
-        else
-            GdipLoadImageFromStream(rcx, addr this.nativeImage)
-        endif
-        }
-
     .operator Release :vararg {
         GdipDisposeImage(this.nativeImage)
-        }
-
-    .operator FromFile :vararg {
-        this.Image?pword(_1)
-        mov this.lastResult,eax
-        }
-
-    .operator FromStream :vararg {
-        this.Image?pIStream(_1)
-        mov this.lastResult,eax
-        }
-
-    .operator Clone :vararg {
-
-        .new clone:Image
-
-        GdipCloneImage(this.nativeImage, addr clone.nativeImage)
-        mov clone.lastResult,eax
-        this.SetStatus()
-        lea rax,clone
         }
 
     .operator Save :abs, :vararg {
@@ -1076,149 +1018,54 @@ endif
 
     .ends
 
-IMAGE_INLINE macro class
-    .operator Release :vararg {
-        Image_Release(this)
-        }
-    .operator Save :vararg {
-        Image_Save(this, _1)
-        }
-    .operator Save?pword :vararg {
-        Image_Save?pword(this, _1)
-        }
-    .operator Save?pIStream :vararg {
-        Image_Save?pIStream(this, _1)
-        }
-    .operator SaveAdd :vararg {
-        Image_SaveAdd(this, _1)
-        }
-    .operator SaveAdd?pEncoderParameters :vararg {
-        Image_SaveAdd?pEncoderParameters(this, _1)
-        }
-    .operator SaveAdd?pImage :ptr Image, :vararg {
-        Image_SaveAdd?pImage(this, _1)
-        }
-    .operator GetType :vararg {
-        Image_GetType(this)
-        }
-    .operator GetPhysicalDimension :vararg {
-        Image_GetPhysicalDimension(this, _1)
-        }
-    .operator GetBounds :vararg {
-        Image_GetBounds(this, _1)
-        }
-    .operator GetWidth :vararg {
-        Image_GetWidth(this)
-        }
-    .operator GetHeight :vararg {
-        Image_GetHeight(this)
-        }
-    .operator GetHorizontalResolution :vararg {
-        Image_GetHorizontalResolution(this)
-        }
-    .operator GetVerticalResolution :vararg {
-        Image_GetVerticalResolution(this)
-        }
-    .operator GetFlags :vararg {
-        Image_GetFlags(this)
-        }
-    .operator GetRawFormat :vararg {
-        Image_GetRawFormat(this, _1)
-        }
-    .operator GetPixelFormat :vararg {
-        Image_GetPixelFormat(this)
-        }
-    .operator GetPaletteSize :vararg {
-        Image_GetPaletteSize(this)
-        }
-    .operator GetPalette :vararg {
-        Image_GetPalette(this, _1)
-        }
-    .operator SetPalette :vararg {
-        Image_SetPalette(this, _1)
-        }
-    .operator GetThumbnailImage :vararg {
-        Image_GetThumbnailImage(this, _1)
-        }
-    .operator GetFrameDimensionsCount :vararg {
-        Image_GetFrameDimensionsCount(this)
-        }
-    .operator GetFrameDimensionsList :vararg {
-        Image_GetFrameDimensionsList(this, _1)
-        }
-    .operator GetFrameCount :vararg {
-        Image_GetFrameCount(this, _1)
-        }
-    .operator SelectActiveFrame :vararg {
-        Image_SelectActiveFrame(this, _1)
-        }
-    .operator RotateFlip :vararg {
-        Image_RotateFlip(this, _1)
-        }
-    .operator GetPropertyCount :vararg {
-        Image_GetPropertyCount(this)
-        }
-    .operator GetPropertyIdList :vararg {
-        Image_GetPropertyIdList(this, _1)
-        }
-    .operator GetPropertyItemSize :vararg {
-        Image_GetPropertyItemSize(this, _1)
-        }
-    .operator GetPropertyItem :vararg {
-        Image_GetPropertyItem(this, _1)
-        }
-    .operator GetPropertySize :vararg {
-        Image_GetPropertySize(this, _1)
-        }
-    .operator GetAllPropertyItems :vararg {
-        Image_GetAllPropertyItems(this, _1)
-        }
-    .operator RemovePropertyItem :vararg {
-        Image_RemovePropertyItem(this, _1)
-        }
-    .operator SetPropertyItem :vararg {
-        Image_SetPropertyItem(this, _1)
-        }
-    .operator GetEncoderParameterListSize :vararg {
-        Image_GetEncoderParameterListSize(this, _1)
-        }
-    .operator GetEncoderParameterList :vararg {
-        Image_GetEncoderParameterList(this, _1)
-        }
-if (GDIPVER GE 0x0110)
-    .operator FindFirstItem :vararg {
-        Image_FindFirstItem(this, _1)
-        }
-    .operator FindNextItem :vararg {
-        Image_FindNextItem(this, _1)
-        }
-    .operator GetItemData :vararg {
-        Image_GetItemData(this, _1)
-        }
-    .operator SetAbort :vararg {
-        Image_SetAbort(this, _1)
-        }
-endif
-    .operator SetNativeImage :vararg {
-        Image_SetNativeImage(this, _1)
-        }
-    .operator SetStatus :vararg {
-        Image_SetStatus(this, _1)
-        }
-    .operator GetLastStatus :vararg {
-        Image_GetLastStatus(this)
-        }
-    exitm<>
-    endm
 
+; Image(WCHAR*, BOOL = FALSE)
+; Image(IStream*, BOOL = FALSE)
 
-.template Bitmap
+.template Image : public ImageBase
 
-    nativeImage     ptr_t ?
-    lastResult      Status ?
-    scratch         int_t ?
+    .operator Image :abs, :vararg {
+        mov this.nativeImage,NULL
+        this.typeid(Image, _1)(_1, _2)
+        mov this.lastResult,eax
+        }
+    .operator Image?pword :ptr WCHAR, :abs=<FALSE>, :vararg {
+        mov rcx,rdx
+        if _2
+            GdipLoadImageFromFileICM(rcx, addr this.nativeImage)
+        else
+            GdipLoadImageFromFile(rcx, addr this.nativeImage)
+        endif
+        }
+    .operator Image?pIStream :ptr IStream, :abs=<FALSE>, :vararg {
+        mov rcx,rdx
+        if _2
+            GdipLoadImageFromStreamICM(rcx, addr this.nativeImage)
+        else
+            GdipLoadImageFromStream(rcx, addr this.nativeImage)
+        endif
+        }
+    .operator FromFile :vararg {
+        this.Image?pword(_1)
+        mov this.lastResult,eax
+        }
+    .operator FromStream :vararg {
+        this.Image?pIStream(_1)
+        mov this.lastResult,eax
+        }
 
-    IMAGE_INLINE(Bitmap)
+    .operator Clone :vararg {
+
+       .new clone:Image
+
+        GdipCloneImage(this.nativeImage, addr clone.nativeImage)
+        mov clone.lastResult,eax
+        this.SetStatus()
+        lea rax,clone
+        }
+    .ends
+    GpImage typedef Image
+
 
 ; Bitmap(WCHAR*, BOOL = FALSE)
 ; Bitmap(IStream*, BOOL = FALSE)
@@ -1231,6 +1078,7 @@ endif
 ; Bitmap(HICON)
 ; Bitmap(HINSTANCE, WCHAR*)
 
+.template Bitmap : public ImageBase
 
     .operator Bitmap :abs, :vararg {
         ifb <_1>
@@ -1324,6 +1172,7 @@ endif
         GdipCreateBitmapFromResource(rcx, rdx, addr this.nativeImage)
         }
 
+    undef Bitmap_FromFile
     .operator FromFile :vararg {
         this.Bitmap?pword(_1)
         mov this.lastResult,eax
@@ -1666,6 +1515,7 @@ endif
         }
     .ends
 
+
 ; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
 ; Metafile(HENHMETAFILE, BOOL = FALSE)
 ; Metafile(WCHAR*)
@@ -1681,13 +1531,7 @@ endif
 ; Metafile(IStream*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(IStream*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-.template Metafile
-
-    nativeImage     ptr_t ?
-    lastResult      Status ?
-    scratch         int_t ?
-
-    IMAGE_INLINE(Metafile)
+.template Metafile : public ImageBase
 
     .operator Metafile :abs, :vararg {
         this.typeid(Metafile, _1)(_1, _2)
@@ -1937,4 +1781,3 @@ endif
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 endif
-

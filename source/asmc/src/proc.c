@@ -2408,10 +2408,15 @@ runqueue:
     /* special case: generated code runs BEFORE the line.*/
 
     if ( ModuleInfo.list && UseSavedState )
+#if 0
 	if ( Parse_Pass == PASS_1 )
 	    info->prolog_list_pos = list_pos;
 	else
 	    list_pos = info->prolog_list_pos;
+#else
+	if ( Parse_Pass > PASS_1 )
+	    list_pos = info->prolog_list_pos;
+#endif
 
     /* line number debug info also needs special treatment
      * because current line number is the first true src line

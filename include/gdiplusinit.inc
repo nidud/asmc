@@ -41,7 +41,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
         .until 1
         retm <rax>
         }
-    .operator Release { exitm<free(this)> }
+    .operator Release { free(this) }
     .ends
 
 
@@ -64,7 +64,6 @@ if (GDIPVER GE 0x0110)
         .until 1
         retm <rax>
         }
-    .operator Release { exitm<free(this)> }
     .ends
 
 .enum GdiplusStartupParams {

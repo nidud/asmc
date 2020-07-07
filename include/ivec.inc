@@ -11,33 +11,27 @@ if defined(_M_IX86)
     .operator = :mmword {
         movd mm0,_1
         movd [this],mm0
-        retm<mm0>
         }
     .operator = :int_t {
         movd [this],_m_from_int(_1)
-        retm<mm0>
         }
     .operator &= :mmword {
         movd mm1,_1
         _m_pand(mm0, mm1)
         movd [this],mm0
-        retm<mm0>
         }
     .operator |= :mmword {
         movd mm1,_1
         _m_por(mm0, mm1)
         movd [this],mm0
-        retm<mm0>
         }
     .operator ^= :mmword {
         movd mm1,_1
         _m_pxor(mm0, mm1)
         movd [this],mm0
-        retm<mm0>
         }
     .operator &~ :mmword {
         movd [this],mm0
-        retm<mm0>
         }
     .ends
 

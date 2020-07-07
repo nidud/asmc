@@ -367,9 +367,13 @@ DEFINE_ENUM_FLAG_OPERATORS(D2D1_PRESENT_OPTIONS);
     usage	D2D1_RENDER_TARGET_USAGE ?
     minLevel	D2D1_FEATURE_LEVEL ?
 
-    .operator D2D1_RENDER_TARGET_PROPERTIES :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,\
-	:abs=<0>, :abs=<0.0>, :abs=<0.0>, :abs=<D2D1_RENDER_TARGET_USAGE_NONE>,\
-	:abs=<D2D1_FEATURE_LEVEL_DEFAULT>, :vararg {
+    .operator D2D1_RENDER_TARGET_PROPERTIES :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
+					    :abs=<0>,
+					    :abs=<0.0>,
+					    :abs=<0.0>,
+					    :abs=<D2D1_RENDER_TARGET_USAGE_NONE>,
+					    :abs=<D2D1_FEATURE_LEVEL_DEFAULT>,
+					    :vararg {
 	mov this.type,_1
 	mov this.pixelFormat.format,DXGI_FORMAT_UNKNOWN
 	mov this.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
@@ -386,8 +390,11 @@ DEFINE_ENUM_FLAG_OPERATORS(D2D1_PRESENT_OPTIONS);
     pixelSize	   D2D1_SIZE_U <>
     presentOptions D2D1_PRESENT_OPTIONS ?
 
-    .operator D2D1_HWND_RENDER_TARGET_PROPERTIES :abs,\
-	:abs=<0>, :abs=<0>, :abs=<D2D1_PRESENT_OPTIONS_NONE>, :vararg {
+    .operator D2D1_HWND_RENDER_TARGET_PROPERTIES :abs,
+						 :abs=<0>,
+						 :abs=<0>,
+						 :abs=<D2D1_PRESENT_OPTIONS_NONE>,
+						 :vararg {
 	mov this.hwnd,_1
 	mov this.pixelSize.width,_2
 	mov this.pixelSize.height,_3

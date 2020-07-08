@@ -51,25 +51,66 @@ static void ClassProto2(char *name, char *method, struct com_item *item, char *a
     ClassProto( buffer, item->langtype, args, T_PROTO );
 }
 
-static int OpenVtbl(struct com_item* p)
+static void AddPublic( struct com_item *com, struct dsym *sp )
 {
-    char pubclass[128];
+    char q[128];
+    char *name;
+    char *method;
+    struct sfield *fl;
     struct asym *sym;
 
-    AddLineQueueX( "%sVtbl struct", p->class );
+    if ( sp->sym.total_size ) {
+
+        for ( fl = sp->e.structinfo->head; fl; fl = fl->next ) {
+
+            sym = &fl->sym;
+            if ( sym->type ) {
+
+                if ( sym->type->typekind == TYPE_STRUCT ) {
+
+                    AddPublic( com, (struct dsym *)sym->type );
+
+                } else {
+
+                    name = sym->name;
+                    strcpy( q, sp->sym.name );
+                    q[sp->sym.name_size-4] = '\0';
+                    sym = SymFind( strcat( strcat( q, "_" ), name ) );
+
+                    if ( sym ) {
+
+                        method = sym->name;
+                        if ( sym->state == SYM_TMACRO )
+                            method = sym->string_ptr;
+
+                        AddLineQueueX( "%s_%s equ <%s>", com->class, name, method );
+                    }
+                }
+            }
+        }
+    }
+}
+
+static int OpenVtbl( struct com_item *com )
+{
+    char q[128];
+    struct asym *sym;
+
+    AddLineQueueX( "%sVtbl struct", com->class );
 
     /* v2.30.32 - : public class */
 
-    sym = p->sym;
+    sym = com->sym;
     if ( sym == NULL )
         return 0;
 
-    sym = SymFind( strcat( strcpy( pubclass, sym->name ), "Vtbl" ) );
+    sym = SymFind( strcat( strcpy( q, sym->name ), "Vtbl" ) );
     if ( sym == NULL )
         return 1;
 
     if ( sym->total_size ) {
-        AddLineQueueX( "%s <>", pubclass );
+        AddLineQueueX( "%s <>", q );
+        AddPublic( com, (struct dsym *)sym );
         return 1;
     }
     return 0;
@@ -1072,7 +1113,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
         /* .operator + :type { ... } */
 
-        sprintf( token, "%s_%s", ptr, name );
+        sprintf( token, "%s_%s", o->class, name );
         if ( ModuleInfo.list )
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
         RunLineQueue();

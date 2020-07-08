@@ -82,7 +82,9 @@ ClassProto2 endp
     assume esi:ptr com_item
     assume edi:ptr sfield
 
-AddPublic proc uses esi edi ebx this:LPCLASS, p:string_t, q:string_t, sym:ptr asym
+AddPublic proc uses esi edi ebx this:LPCLASS, sym:ptr asym
+
+  local q[128]:char_t
 
     mov esi,this
     mov ebx,sym
@@ -97,16 +99,20 @@ AddPublic proc uses esi edi ebx this:LPCLASS, p:string_t, q:string_t, sym:ptr as
                 mov edx,[edi].sym.type
                 .if [edx].asym.typekind == TYPE_STRUCT
 
-                    AddPublic(esi, p, q, edx)
+                    AddPublic(esi, edx)
                 .else
-                    mov ebx,[edi].sym.name
-                    .if SymFind( strcat( strcat( strcpy( q, p ), "_" ), ebx ) )
+
+                    strcpy( &q, [ebx].asym.name )
+                    movzx ecx,[ebx].asym.name_size
+                    mov word ptr [eax+ecx-4],'_'
+
+                    .if SymFind( strcat( eax, [edi].sym.name ) )
 
                         mov edx,[eax].asym.name
                         .if [eax].asym.state == SYM_TMACRO
                             mov edx,[eax].asym.string_ptr
                         .endif
-                        AddLineQueueX( "%s_%s equ <%s>", [esi].class, ebx, edx )
+                        AddLineQueueX( "%s_%s equ <%s>", [esi].class, [edi].sym.name, edx )
                     .endif
                 .endif
             .endif
@@ -116,9 +122,8 @@ AddPublic proc uses esi edi ebx this:LPCLASS, p:string_t, q:string_t, sym:ptr as
 
 AddPublic endp
 
-OpenVtbl proc uses esi edi ebx this:LPCLASS
+OpenVtbl proc uses esi ebx this:LPCLASS
 
-  local p[128]:char_t
   local q[128]:char_t
 
     mov esi,this
@@ -128,13 +133,14 @@ OpenVtbl proc uses esi edi ebx this:LPCLASS
 
     mov edx,[esi].sym
     .return 0 .if !edx
-    .return 1 .if !SymFind( strcat( strcpy( &q, strcpy( &p, [edx].asym.name ) ), "Vtbl" ) )
+    .return 1 .if !SymFind( strcat( strcpy( &q, [edx].asym.name ), "Vtbl" ) )
 
     mov ebx,eax
     xor eax,eax
-    .if ( [ebx].asym.total_size )
+    .if [ebx].asym.total_size
+
         AddLineQueueX( "%s <>", &q )
-        AddPublic(esi, &p, &q, ebx)
+        AddPublic(esi, ebx)
         mov eax,1
     .endif
     ret

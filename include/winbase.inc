@@ -1,6 +1,6 @@
+.pragma list(push, 0)
 ifndef _WINBASE_
 _WINBASE_ equ <>
-.pragma list(push, 0)
 
 ifndef __LIBC_INC
  include libc.inc
@@ -5254,7 +5254,7 @@ else
 GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryA>
 endif
 
-if _WIN32_WINNT GE 0x0501 OR defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
+if (_WIN32_WINNT GE 0x0501) OR defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
 ;UINT
 GetSystemWow64DirectoryA proto WINAPI \
 	      lpBuffer: LPSTR,
@@ -5328,7 +5328,6 @@ GetCurrentDirectory equ <GetCurrentDirectoryA>
 endif
 
 if _WIN32_WINNT GE 0x0502
-
 ;BOOL
 SetDllDirectoryA proto WINAPI \
 	    lpPathName: LPCSTR
@@ -5336,10 +5335,26 @@ SetDllDirectoryW proto WINAPI \
 	    lpPathName: LPCWSTR
 
 ifdef _UNICODE
-SetDllDirectory		equ <SetDllDirectoryW>
+SetDllDirectory	 equ <SetDllDirectoryW>
 else
-SetDllDirectory		equ <SetDllDirectoryA>
+SetDllDirectory	 equ <SetDllDirectoryA>
 endif
+
+GetDllDirectoryA proto WINAPI :DWORD, :LPSTR
+GetDllDirectoryW proto WINAPI :DWORD, :LPWSTR
+ifdef _UNICODE
+GetDllDirectory	 equ <GetDllDirectoryW>
+else
+GetDllDirectory	 equ <GetDllDirectoryA>
+endif
+endif
+
+BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE equ 0x1
+BASE_SEARCH_PATH_DISABLE_SAFE_SEARCHMODE equ 0x10000
+BASE_SEARCH_PATH_PERMANENT equ 0x8000
+BASE_SEARCH_PATH_INVALID_FLAGS equ not 0x18001
+
+SetSearchPathMode proto WINAPI :DWORD
 
 ;BOOL
 GetDiskFreeSpaceA proto WINAPI \
@@ -9011,7 +9026,7 @@ else
 GetFinalPathNameByHandle equ <GetFinalPathNameByHandleA>
 endif
 
-endif
+endif ; _WIN32_WINNT >= 0x0600
 
 if (_WIN32_WINNT GE 0x0600)
 
@@ -9114,9 +9129,9 @@ ReadThreadProfilingData proto WINAPI \
 		 Flags: DWORD,
        PerformanceData: PPERFORMANCE_DATA
 
-endif
-endif ; (_WIN32_WINNT >= 0x0500)
 
-.pragma list(pop)
+endif ; (_WIN32_WINNT >= 0x0601)
+
 endif
+.pragma list(pop)
 

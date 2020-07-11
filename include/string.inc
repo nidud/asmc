@@ -34,7 +34,16 @@ _strset		proto __cdecl :LPSTR, :SINT
 _strnset	proto __cdecl :LPSTR, :SINT, :size_t
 strtok		proto __cdecl :LPSTR, :LPSTR
 
-strncpy_s	proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
+strcpy_s	proto __cdecl :string_t, :size_t, :string_t
+strncat_s	proto __cdecl :string_t, :size_t, :string_t, :size_t
+strncpy_s	proto __cdecl :string_t, :size_t, :string_t, :size_t
+strtok_s	proto __cdecl :string_t, :string_t, :ptr string_t
+_strnset_s	proto __cdecl :string_t, :size_t, :uint_t, :size_t
+_strset_s	proto __cdecl :string_t, :size_t, :uint_t
+_strlwr_s	proto __cdecl :string_t, :size_t
+_strupr_s	proto __cdecl :string_t, :size_t
+_mbccpy_s	proto __cdecl :string_t, :size_t, :ptr int_t, :string_t
+
 
 ifndef _WSTRING_DEFINED
 
@@ -68,8 +77,14 @@ _wcsncoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 _wcsnicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 
 wcscpy_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t
-wcsncpy_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :size_t
 wcscat_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t
+wcsncat_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :size_t
+wcsncpy_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :size_t
+wcstok_s	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr ptr wchar_t
+_wcsnset_s	proto __cdecl :ptr wchar_t, :size_t, :uint_t, :size_t
+_wcsset_s	proto __cdecl :ptr wchar_t, :size_t, :uint_t
+_wcslwr_s	proto __cdecl :ptr wchar_t, :size_t
+_wcsupr_s	proto __cdecl :ptr wchar_t, :size_t
 
 ;; Old names
 wcswcs		equ <wcsstr>

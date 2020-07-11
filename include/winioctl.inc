@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifdef DEFINE_GUID
 
 DEFINE_GUID(GUID_DEVINTERFACE_DISK,		      0x53f56307, 0xb6bf, 0x11d0, 0x94, 0xf2, 0x00, 0xa0, 0xc9, 0x1e, 0xfb, 0x8b)
@@ -1378,13 +1380,39 @@ VALID_NTFT		equ 0xC0
 PARTITION_NTFT		equ 0x80
 
 if (NTDDI_VERSION LT NTDDI_VISTA)
-IsRecognizedPartition macro PartitionType
-	exitm<..>
-	endm
+
+IsRecognizedPartition proto :UCHAR {
+    xor eax,eax
+    mov dl,this
+    and dl,not 0xC0
+    .if ((this & PARTITION_NTFT) && ( \
+	(dl == PARTITION_HUGE)		|| \
+	(dl == PARTITION_IFS)		|| \
+	(dl == PARTITION_FAT32) || \
+	(dl == PARTITION_FAT32_XINT13)) || \
+	(this == PARTITION_FAT_12)	|| \
+	(this == PARTITION_FAT_16)	|| \
+	(this == PARTITION_HUGE)	|| \
+	(this == PARTITION_IFS)		|| \
+	(this == PARTITION_FAT32)	|| \
+	(this == PARTITION_FAT32_XINT13) || \
+	(this == PARTITION_XINT13) )
+	inc eax
+    .endif
+    }
 else
-IsRecognizedPartition macro PartitionType
-	exitm<..>
-	endm
+IsRecognizedPartition proto :UCHAR {
+    xor eax,eax
+    .if ((this) == PARTITION_FAT_12)	   || \
+	((this) == PARTITION_FAT_16)	   || \
+	((this) == PARTITION_HUGE)	   || \
+	((this) == PARTITION_IFS)	   || \
+	((this) == PARTITION_FAT32)	   || \
+	((this) == PARTITION_FAT32_XINT13) || \
+	((this) == PARTITION_XINT13))
+	inc eax
+    .endif
+    }
 endif
 
 IsContainerPartition macro PartitionType
@@ -1670,6 +1698,8 @@ DiskGeometryGetPartition macro Geometry
 	exitm<1>
 	endm
 DiskGeometryGetDetect macro Geometry
+	exitm<1>
+	endm
 else
 DiskGeometryGetPartition macro Geometry
 	exitm<1>
@@ -4476,6 +4506,6 @@ PVOLUME_GET_GPT_ATTRIBUTES_INFORMATION typedef ptr VOLUME_GET_GPT_ATTRIBUTES_INF
 
 endif
 
-
 endif
+.pragma list(pop)
 

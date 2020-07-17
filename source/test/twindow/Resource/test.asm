@@ -42,33 +42,35 @@ OnPaint proc private uses rsi rdi rbx r12 hwnd:window_t
 
         movzx eax,byte ptr [rsi+rdi]
         [r12].PutString(x, y, 0, 3, "%X", eax)
+
         add x,5
         mov al,[rsi+rdi]
+
         .switch rdi
-          .case 0x0
-          .case 0xD
+        .case FG_TITLE
+        .case FG_TITLEKEY
             or al,[rsi+BG_TITLE]
             .endc
-          .case 0x1
-          .case 0x2
-          .case 0x3
-          .case 0x4
-          .case 0xA
-          .case 0xB
+        .case FG_FRAME
+        .case FG_FILES
+        .case FG_SYSTEM
+        .case FG_HIDDEN
+        .case FG_PANEL
+        .case FG_SUBDIR
             or al,[rsi+BG_PANEL]
             .endc
-          .case 0x5
-          .case 0x6
-          .case 0x8
-          .case 0x9
-          .case 0xE
+        .case FG_PBSHADE
+        .case FG_KEYBAR
+        .case FG_INACTIVE
+        .case FG_DIALOG
+        .case FG_DIALOGKEY
             or al,[rsi+BG_DIALOG]
             .endc
-          .case 0x7
+        .case FG_DESKTOP
             or al,[rsi+BG_DESKTOP]
             .endc
-          .case 0xC
-          .case 0xF
+        .case FG_MENUS
+        .case FG_MENUSKEY
             or al,[rsi+BG_MENUS]
             .endc
         .endsw
@@ -93,41 +95,43 @@ OnPaint proc private uses rsi rdi rbx r12 hwnd:window_t
 
     .for ( edi = 0 : edi < 14 : edi++ )
 
-        movzx eax,byte ptr [rsi+rdi+16]
-        shr   al,4
-        [r12].PutString(x, y, 0, 3, "%X", eax)
-        mov al,[rsi+rdi+16]
-        .switch rdi
-          .case 0x0
+        movzx   eax,byte ptr [rsi+rdi+16]
+        shr     al,4
+        [r12]   .PutString(x, y, 0, 3, "%X", eax)
+        mov     al,[rsi+rdi+16]
+        lea     rdx,[rdi+BG_DESKTOP]
+
+        .switch rdx
+          .case BG_DESKTOP
             or al,[rsi+FG_DESKTOP]
             .endc
-          .case 0x1
-          .case 0x6
+          .case BG_PANEL
+          .case BG_INVERSE
             or al,[rsi+FG_PANEL]
             .endc
-          .case 0x2
-          .case 0x4
-          .case 0x7
-          .case 0xA
-          .case 0xB
+          .case BG_DIALOG
+          .case BG_ERROR
+          .case BG_GRAY
+          .case BG_INVMENUS
+          .case BG_UNUSED1
             or al,[rsi+FG_DIALOG]
             .endc
-          .case 0x3
+          .case BG_MENUS
             or al,[rsi+FG_MENUS]
             .endc
-          .case 0x5
-          .case 0x8
+          .case BG_TITLE
+          .case BG_PUSHBUTTON
             or al,[rsi+FG_TITLE]
             .endc
-          .case 0x9
+          .case BG_INVPANEL
             or al,[rsi+FG_FILES]
             .endc
-          .case 0xC
-          .case 0xE
+          .case BG_TEXTVIEW
+          .case FG_TEXTVIEW
             or al,[rsi+FG_TEXTVIEW]
             .endc
-          .case 0xD
-          .case 0xF
+          .case BG_TEXTEDIT
+          .case FG_TEXTEDIT
             or al,[rsi+FG_TEXTEDIT]
             .endc
         .endsw
@@ -235,16 +239,20 @@ OnPageDn endp
 WndProc proc private hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .switch edx
-      .case WM_CHAR
-        .return OnPageUp(rcx) .if ( r8d == VK_PRIOR )
-        .return OnPageDn(rcx) .if ( r8d == VK_NEXT )
+    .case WM_CHAR
+        .switch r8d
+        .case VK_PRIOR
+            .return OnPageUp(rcx)
+        .case VK_NEXT
+            .return OnPageDn(rcx)
+        .endsw
         .endc
-      .case WM_CREATE
+    .case WM_CREATE
         [rcx].Show()
         OnPaint(rcx)
         [rcx].SetFocus(34)
         .return 0
-      .case WM_CLOSE
+    .case WM_CLOSE
         .if [rcx].GetFocus()
             mov rcx,rax
             [rcx].Send(WM_KILLFOCUS, 0, 0)

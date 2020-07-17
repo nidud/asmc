@@ -63,6 +63,7 @@ _aligned_offset_recalloc proto __cdecl :ptr, :size_t, :size_t, :size_t, :size_t
 _aligned_msize proto __cdecl :ptr, :size_t, :size_t
 endif
 _msize proto __cdecl :ptr
+_resetstkoflw proto __cdecl
 
 ifndef _MSVCRT
 _alloca64 proto __cdecl :dword, :dword

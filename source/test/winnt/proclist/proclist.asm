@@ -1,11 +1,7 @@
-ifdef _UNICODE
-tmain equ <wmain>
-else
-tmain equ <main>
-endif
 
 ;; this program only needs the "bare essential" windows header files
 WIN32_LEAN_AND_MEAN equ 1
+
 include windows.inc
 include winperf.inc
 include malloc.inc
@@ -16,7 +12,7 @@ include pdhmsg.inc
 
 .code
 
-tmain proc
+_tmain proc
 
   local pdhStatus:PDH_STATUS
   local szCounterListBuffer:LPTSTR
@@ -103,6 +99,6 @@ tmain proc
     xor eax,eax
     ret
 
-tmain endp
+_tmain endp
 
-    end
+    end _tstart

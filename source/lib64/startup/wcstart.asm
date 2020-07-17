@@ -13,7 +13,12 @@ externdef __xi_z:ptr
 wmain	proto __cdecl :dword, :ptr, :ptr
 _initterm proto __cdecl :ptr, :ptr
 
+public __ImageBase
+
 	.code
+	org -0x1050
+	__ImageBase label byte
+	org 0
 
 	dd 495A440Ah
 	dd 564A4A50h

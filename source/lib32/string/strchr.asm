@@ -10,7 +10,7 @@ include string.inc
 
 	option stackbase:esp
 
-strchr	proc uses esi edi ebx string:LPSTR, char:SIZE_T
+strchr	proc uses esi edi ebx string:LPSTR, char:int_t
 
 	movzx	eax,BYTE PTR char
 	imul	ebx,eax,01010101h

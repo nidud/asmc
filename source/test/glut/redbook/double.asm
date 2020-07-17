@@ -30,7 +30,7 @@ spinDisplay proc
         subss xmm0,360.0
     .endif
     movss spin,xmm0
-    glutPostRedisplay();
+    glutPostRedisplay()
     ret
 
 spinDisplay endp
@@ -60,7 +60,7 @@ mouse proc button:int_t, state:int_t, x:int_t, y:int_t
    .switch ecx
       .case GLUT_LEFT_BUTTON
          .if edx == GLUT_DOWN
-            glutIdleFunc(spinDisplay)
+            glutIdleFunc(&spinDisplay)
          .endif
          .endc
       .case GLUT_MIDDLE_BUTTON

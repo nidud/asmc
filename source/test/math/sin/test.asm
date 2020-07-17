@@ -8,8 +8,8 @@ main proc
 
   local x:real8
 
-    movsd x,sin(1.0)
-    printf("%f\n", x)
+    sin(1.0)
+    printf("%f\n", xmm0)
     ret
 
 main endp

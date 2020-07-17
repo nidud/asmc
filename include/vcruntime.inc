@@ -11,14 +11,12 @@ _CRT_END_C_HEADER macro
     .pragma(pack(pop))
     endm
 
-_CRT_BEGIN_C_HEADER
-
 ifndef _HAS_EXCEPTIONS
-    _HAS_EXCEPTIONS equ 1
+_HAS_EXCEPTIONS equ <>
 endif
 
 _CRT_STRINGIZE_ macro x
-    exitm<&x&>
+    exitm<x>
     endm
 _CRT_STRINGIZE macro x
     exitm<_CRT_STRINGIZE_(x)>
@@ -166,8 +164,6 @@ ifndef _VCRT_BUILD
         exitm<free(_Memory)>
         endm
 endif
-
-_CRT_END_C_HEADER
 
 .pragma list(pop)
 endif

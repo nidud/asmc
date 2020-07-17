@@ -18,7 +18,12 @@ externdef __xi_z:ptr
 externdef __xt_a:ptr
 externdef __xt_z:ptr
 
+public __ImageBase
+
 	.code
+	org -0x1050
+	__ImageBase label byte
+	org 0
 
 	dd 495A440Ah
 	dd 564A4A50h

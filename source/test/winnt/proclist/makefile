@@ -1,6 +1,5 @@
 proclist.exe:
-    asmc64 $*.asm
-    linkw system con_64 file $*
+    asmc64 -ws -pe $*.asm
     $@
     pause
 

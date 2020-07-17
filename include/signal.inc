@@ -52,20 +52,24 @@ signal	proto __cdecl :int_t, :ptr_t
 endif
 raise	proto __cdecl :int_t
 
-;
-; Exception disposition return values.
-;
-ExceptionContinueExecution	equ 0
-ExceptionContinueSearch		equ 1
-ExceptionNestedException	equ 2
-ExceptionCollidedUnwind		equ 3
+;; Exception disposition return values.
 
-externdef pCurrentException:PEXCEPTION_POINTERS
-externdef pExceptionReg:PEXCEPTION_REGISTRATION
+.enum EXCEPTION_DISPOSITION {
+    ExceptionContinueExecution,
+    ExceptionContinueSearch,
+    ExceptionNestedException,
+    ExceptionCollidedUnwind
+    }
 
-PrintContext proto __cdecl :PCONTEXT, :PEXCEPTION_RECORD
-IFDEF _WIN64
-ExceptionHandler proto __cdecl :PEXCEPTION_RECORD, :LPDWORD, :PCONTEXT, :LPDWORD
-ENDIF
+ifndef _MSVCRT
+
+ externdef pCurrentException:PEXCEPTION_POINTERS
+ externdef pExceptionReg:PEXCEPTION_REGISTRATION
+
+ PrintContext proto __cdecl :PCONTEXT, :PEXCEPTION_RECORD
+ ifdef _WIN64
+  ExceptionHandler proto __cdecl :PEXCEPTION_RECORD, :LPDWORD, :PCONTEXT, :LPDWORD
+ endif
+endif
 
 .pragma list(pop)

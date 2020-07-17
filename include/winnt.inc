@@ -1586,6 +1586,17 @@ endif
 XSTATE_CONTEXT		ENDS
 PXSTATE_CONTEXT		typedef ptr XSTATE_CONTEXT
 
+SCOPE_TABLE_AMD64	STRUC
+Count			dd ?
+STRUC ScopeRecord
+ BeginAddress		dd ?
+ EndAddress		dd ?
+ HandlerAddress		dd ?
+ JumpTarget		dd ?
+ENDS
+SCOPE_TABLE_AMD64	ENDS
+PSCOPE_TABLE_AMD64	typedef ptr SCOPE_TABLE_AMD64
+
 
 XSAVE_ALIGN		equ 64
 MINIMAL_XSTATE_AREA_LENGTH equ XSAVE_AREA
@@ -2088,6 +2099,9 @@ LastExceptionFromRip	dd ?
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
+SCOPE_TABLE		typedef SCOPE_TABLE_AMD64
+PSCOPE_TABLE		typedef ptr SCOPE_TABLE_AMD64
+
 RUNTIME_FUNCTION_INDIRECT equ 0x1
 
 RUNTIME_FUNCTION	STRUC
@@ -2123,6 +2137,24 @@ CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
 CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, Process:HANDLE, TableAddress:PVOID, Entries:PDWORD, :PRUNTIME_FUNCTION)
 
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
+
+DISPATCHER_CONTEXT	STRUC
+ControlPc		DWORD64 ?
+ImageBase		DWORD64 ?
+FunctionEntry		PRUNTIME_FUNCTION ?
+EstablisherFrame	DWORD64 ?
+TargetIp		DWORD64 ?
+ContextRecord		PCONTEXT ?
+LanguageHandler		PEXCEPTION_ROUTINE ?
+HandlerData		PVOID ?
+HistoryTable		PUNWIND_HISTORY_TABLE ?
+ScopeIndex		DWORD ?
+Fill0			DWORD ?
+DISPATCHER_CONTEXT	ENDS
+PDISPATCHER_CONTEXT	typedef ptr DISPATCHER_CONTEXT
+
+CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :PVOID)
+CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :PVOID)
 
 ;NTSYSAPI
 ;VOID
@@ -2657,8 +2689,8 @@ if NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND d
 
 ifdef _M_IA64
 
-NtCurrentTeb macro
-	exitm<_rdtebex()>
+_rdtebex macro
+	exitm<NtCurrentTeb()>
 	endm
 
 GetCurrentFiber macro
@@ -2876,6 +2908,9 @@ CONTEXT			STRUC
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
+SCOPE_TABLE		typedef SCOPE_TABLE_AMD64
+PSCOPE_TABLE		typedef ptr SCOPE_TABLE_AMD64
+
 PLABEL_DESCRIPTOR	STRUC
 EntryPoint		ULONGLONG ?
 GlobalPointer		ULONGLONG ?
@@ -2888,6 +2923,10 @@ EndAddress		dd ?
 UnwindInfoAddress	dd ?
 RUNTIME_FUNCTION	ENDS
 PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
+
+UNW_FLAG_NHANDLER	equ 0x0
+UNW_FLAG_EHANDLER	equ 0x1
+UNW_FLAG_UHANDLER	equ 0x2
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
@@ -2909,6 +2948,26 @@ HighAddress		dd ?
 Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
+
+DISPATCHER_CONTEXT	STRUC
+ControlPc		DWORD ?
+ImageBase		DWORD ?
+FunctionEntry		PRUNTIME_FUNCTION ?
+EstablisherFrame	DWORD ?
+TargetPc		DWORD ?
+ContextRecord		PCONTEXT ?
+LanguageHandler		PEXCEPTION_ROUTINE ?
+HandlerData		PVOID ?
+HistoryTable		PUNWIND_HISTORY_TABLE ?
+ScopeIndex		DWORD ?
+ControlPcIsUnwound	BOOLEAN ?
+NonVolatileRegisters	PBYTE ?
+Reserved		DWORD ?
+DISPATCHER_CONTEXT	ENDS
+PDISPATCHER_CONTEXT	typedef ptr DISPATCHER_CONTEXT
+
+CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :PVOID)
+CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :PVOID)
 
 ;PRUNTIME_FUNCTION
 CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
@@ -3031,9 +3090,158 @@ __jump_unwind proto WINAPI \
 	 TargetBsFrame: ULONGLONG,
 	      TargetPc: ULONGLONG
 
+endif ; _IA64_
+
+ifdef _WIN64
+
+ReadAcquire8 proto :ptr char_t {
+    movsx eax,char_t ptr [this]
+}
+
+ReadNoFence8 proto :ptr char_t {
+    movsx eax,char_t ptr [this]
+}
+
+WriteRelease8 proto :ptr char_t, :char_t {
+    mov [this],_1
+}
+
+WriteNoFence8 proto :ptr char_t, :char_t {
+    mov [this],_1
+}
+
+ReadAcquire16 proto :ptr short_t {
+    movsx eax,short_t ptr [this]
+}
+
+ReadNoFence16 proto :ptr short_t {
+    movsx eax,short_t ptr [this]
+}
+
+WriteRelease16 proto :ptr short_t, :short_t {
+    mov [this],_1
+}
+
+WriteNoFence16 proto :ptr short_t, :short_t {
+    mov [this],_1
+}
+
+ReadAcquire proto :ptr short_t {
+    movsx eax,short_t ptr [this]
+}
+
+ReadNoFence proto :ptr LONG {
+    mov eax,[this]
+}
+
+WriteRelease proto :ptr LONG, :LONG {
+    mov [this],_1
+}
+
+WriteNoFence proto :ptr LONG, :LONG {
+    mov [this],_1
+}
+
+ReadAcquire64 proto :ptr LONG64 {
+    mov rax,[this]
+}
+
+ReadNoFence64 proto :ptr LONG64 {
+    mov rax,[this]
+}
+
+WriteRelease64 proto :ptr LONG64, :LONG64 {
+    mov [this],_1
+}
+
+WriteNoFence64 proto :ptr LONG64, :LONG64 {
+    mov [this],_1
+}
+
+ReadRaw8 proto :ptr SBYTE {
+    movsx eax,sbyte ptr [this]
+}
+
+WriteRaw8 proto :ptr SBYTE, :SBYTE {
+    mov [this],_1
+}
+
+ReadRaw16 proto :ptr SWORD {
+    movsx eax,sword ptr [this]
+}
+
+WriteRaw16 proto :ptr SWORD, :SWORD {
+    mov [this],_1
+}
+
+;ReadRaw proto :ptr LONG { mov eax,[rcx] }
+;WriteRaw proto :ptr LONG, :LONG { mov [rcx],edx }
+
+ReadRaw64 proto :ptr LONG64 {
+    mov rax,[this]
+}
+
+WriteRaw64 proto :ptr LONG64, :LONG64 {
+    mov [this],_1
+}
+
+ReadUCharAcquire	proto :ptr BYTE { ReadAcquire8(rcx) }
+ReadUCharNoFence	proto :ptr BYTE { ReadNoFence8(rcx) }
+ReadUCharRaw		proto :ptr BYTE { ReadRaw8(rcx) }
+WriteUCharRelease	proto :ptr BYTE, :BYTE { WriteRelease8(rcx, dl) }
+WriteUCharNoFence	proto :ptr BYTE, :BYTE { WriteNoFence8(rcx, dl) }
+WriteUCharRaw		proto :ptr BYTE, :BYTE { WriteRaw8(rcx, dl) }
+ReadUShortAcquire	proto :ptr WORD { ReadAcquire16(rcx) }
+ReadUShortNoFence	proto :ptr WORD { ReadNoFence16(rcx) }
+ReadUShortRaw		proto :ptr WORD { ReadRaw16(rcx) }
+WriteUShortRelease	proto :ptr WORD, :WORD { WriteRelease16(rcx, dx) }
+WriteUShortNoFence	proto :ptr WORD, :WORD { WriteNoFence16(rcx, dx) }
+WriteUShortRaw		proto :ptr WORD, :WORD { WriteRaw16(rcx, dx) }
+ReadULongAcquire	proto :ptr DWORD { ReadAcquire(rcx) }
+ReadULongNoFence	proto :ptr DWORD { ReadNoFence(rcx) }
+ReadULongRaw		proto :ptr DWORD { mov eax,[rcx] }
+WriteULongRelease	proto :ptr DWORD, :DWORD { WriteRelease(rcx, edx) }
+WriteULongNoFence	proto :ptr DWORD, :DWORD { WriteNoFence(rcx, edx) }
+WriteULongRaw		proto :ptr DWORD, :DWORD { mov [rcx],edx }
+ReadULong64Acquire	proto :ptr DWORD64 { ReadAcquire64(rcx) }
+ReadULong64NoFence	proto :ptr DWORD64 { ReadNoFence64(rcx) }
+ReadULong64Raw		proto :ptr DWORD64 { ReadRaw64(rcx) }
+WriteULong64Release	proto :ptr DWORD64, :DWORD64 { WriteRelease64(rcx, rdx) }
+WriteULong64NoFence	proto :ptr DWORD64, :DWORD64 { WriteNoFence64(rcx, rdx) }
+WriteULong64Raw		proto :ptr DWORD64, :DWORD64 { WriteRaw64(rcx, rdx) }
+
+ReadSizeTAcquire	equ <ReadULongPtrAcquire>
+ReadSizeTNoFence	equ <ReadULongPtrNoFence>
+ReadSizeTRaw		equ <ReadULongPtrRaw>
+WriteSizeTRelease	equ <WriteULongPtrRelease>
+WriteSizeTNoFence	equ <WriteULongPtrNoFence>
+WriteSizeTRaw		equ <WriteULongPtrRaw>
+
 endif
 
-;ifndef RC_INVOKED
+ifdef _WIN64
+
+ReadPointerAcquire	proto :ptr { ReadAcquire64(rcx) }
+ReadPointerNoFence	proto :ptr { ReadNoFence64(rcx) }
+ReadPointerRaw		proto :ptr { ReadRaw64(rcx) }
+WritePointerRelease	proto :ptr, :ptr { WriteRelease64(rcx, rdx) }
+WritePointerNoFence	proto :ptr, :ptr { WriteNoFence64(rcx, rdx) }
+WritePointerRaw		proto :ptr, :ptr { WriteRaw64(rcx, rdx) }
+
+ReadLongPtrAcquire	equ <ReadAcquire64>
+ReadLongPtrNoFence	equ <ReadNoFence64>
+ReadLongPtrRaw		equ <ReadRaw64>
+WriteLongPtrRelease	equ <WriteRelease64>
+WriteLongPtrNoFence	equ <WriteNoFence64>
+WriteLongPtrRaw		equ <WriteRaw64>
+ReadULongPtrAcquire	equ <ReadULong64Acquire>
+ReadULongPtrNoFence	equ <ReadULong64NoFence>
+ReadULongPtrRaw		equ <ReadULong64Raw>
+WriteULongPtrRelease	equ <WriteULong64Release>
+WriteULongPtrNoFence	equ <WriteULong64NoFence>
+WriteULongPtrRaw	equ <WriteULong64Raw>
+
+endif ; _WIN64
 
 WOW64_CONTEXT_i386	equ 0x00010000
 WOW64_CONTEXT_i486	equ 0x00010000
@@ -3140,7 +3348,31 @@ Descriptor		WOW64_LDT_ENTRY <>
 WOW64_DESCRIPTOR_TABLE_ENTRY ENDS
 PWOW64_DESCRIPTOR_TABLE_ENTRY typedef ptr WOW64_DESCRIPTOR_TABLE_ENTRY
 
+
+EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
+
 EXCEPTION_NONCONTINUABLE	equ 0x1 ; Noncontinuable exception
+EXCEPTION_UNWINDING		equ 0x2 ; Unwind is in progress
+EXCEPTION_EXIT_UNWIND		equ 0x4 ; Exit unwind is in progress
+EXCEPTION_STACK_INVALID		equ 0x8 ; Stack out of limits or unaligned
+EXCEPTION_NESTED_CALL		equ 0x10 ; Nested exception handler call
+EXCEPTION_TARGET_UNWIND		equ 0x20 ; Target unwind in progress
+EXCEPTION_COLLIDED_UNWIND	equ 0x40 ; Collided exception handler call
+
+EXCEPTION_UNWIND		equ EXCEPTION_UNWINDING or \
+				    EXCEPTION_EXIT_UNWIND or \
+				    EXCEPTION_TARGET_UNWIND or \
+				    EXCEPTION_COLLIDED_UNWIND
+
+IS_UNWINDING macro Flag
+	exitm<(Flag & EXCEPTION_UNWIND)>
+	endm
+IS_DISPATCHING macro Flag
+	exitm<!!(Flag & EXCEPTION_UNWIND)>
+	endm
+IS_TARGET_UNWIND macro Flag
+	exitm<(Flag & EXCEPTION_TARGET_UNWIND)>
+	endm
 
 EXCEPTION_RECORD32	STRUC
 ExceptionCode		dd ?
@@ -4795,6 +5027,7 @@ PROCESSOR_ARCHITECTURE_ALPHA64		equ 7
 PROCESSOR_ARCHITECTURE_MSIL		equ 8
 PROCESSOR_ARCHITECTURE_AMD64		equ 9
 PROCESSOR_ARCHITECTURE_IA32_ON_WIN64	equ 10
+PROCESSOR_ARCHITECTURE_NEUTRAL		equ 11
 PROCESSOR_ARCHITECTURE_UNKNOWN		equ 0xFFFF
 
 PF_FLOATING_POINT_PRECISION_ERRATA	equ 0
@@ -4815,6 +5048,17 @@ PF_COMPARE_EXCHANGE128			equ 14
 PF_COMPARE64_EXCHANGE128		equ 15
 PF_CHANNELS_ENABLED			equ 16
 PF_XSAVE_ENABLED			equ 17
+PF_ARM_VFP_32_REGISTERS_AVAILABLE	equ 18
+PF_ARM_NEON_INSTRUCTIONS_AVAILABLE	equ 19
+PF_SECOND_LEVEL_ADDRESS_TRANSLATION	equ 20
+PF_VIRT_FIRMWARE_ENABLED		equ 21
+PF_RDWRFSGSBASE_AVAILABLE		equ 22
+PF_FASTFAIL_AVAILABLE			equ 23
+PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE	equ 24
+PF_ARM_64BIT_LOADSTORE_ATOMIC		equ 25
+PF_ARM_EXTERNAL_CACHE_AVAILABLE		equ 26
+PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE	equ 27
+PF_RDRAND_INSTRUCTION_AVAILABLE		equ 28
 
 XSTATE_LEGACY_FLOATING_POINT		equ 0
 XSTATE_LEGACY_SSE			equ 1
@@ -9049,7 +9293,7 @@ CALLBACK(PTP_WAIT_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, _Wait
 
 PTP_IO			typedef ptr TP_IO
 
-ifdef _M_AMD64
+if defined(_M_AMD64) or defined(_WIN64)
 ;TEB *
 NtCurrentTeb macro
 	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, Self))>

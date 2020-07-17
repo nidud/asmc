@@ -56,7 +56,7 @@ _HOOK_REALLOC		equ 2
 _HOOK_FREE		equ 3
 
 ifndef _M_CEE_PURE
-CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :LONG, :string_t, :int_t)
+CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :long_t, :string_t, :int_t)
 else
 CALLBACK(_CRT_ALLOC_HOOK, :int_t, :ptr, :size_t, :int_t, :LONG, :string_t, :int_t)
 endif

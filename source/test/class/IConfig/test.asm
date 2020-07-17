@@ -8,7 +8,7 @@ include iconfig.inc
 
 main proc
 
-    mov rbx,.new IConfig()
+    mov rbx,IConfig()
 
     [rbx].Create( "Version" )
     [rcx].Create( "Base=%d.%d", 1, 0 )
@@ -17,11 +17,12 @@ main proc
     [rbx].Create( "URL" )
     [rcx].Create( "UpdateURL=http://masm32.com/board/index.php?topic=7000.0" )
     [rbx].Find  ( "Version" )
+
     [rcx].Create( "Package=%d.%d", 1, 1 )
     [rbx].Write ( "test.ini" )
     [rbx].Release()
 
-    mov rbx,.new IConfig()
+    mov rbx,IConfig()
 
     [rbx].Read  ( "test.ini" )
     [rbx].Write ( "test.ini" )

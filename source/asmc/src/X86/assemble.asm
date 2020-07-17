@@ -44,7 +44,7 @@ conv_section	ENDS
 
 ModuleInfo	module_info <>
 LinnumQueue	qdesc <>
-jmpenv		JMPBUF <>
+jmpenv		_JUMP_BUFFER <>
 
 .data
 

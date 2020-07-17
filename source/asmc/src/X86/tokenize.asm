@@ -205,10 +205,10 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 add ecx,1 ; count the first quote
                 .break
 
-              .case ah == '"' && al == _cstring ; case \" ?
+              .case ax == '""' && _cstring ; case \" ?
 
-                .if BYTE PTR [esi-1] == '\' && \
-                    BYTE PTR [esi-2] != '\' ; case \\"
+                .if byte ptr [esi-1] == '\' && \
+                    byte ptr [esi-2] != '\' ; case \\"
 
                     stosb
                     inc esi
@@ -412,8 +412,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                             strlen(edi)
                             add eax,tcount
                             .if eax >= MAX_LINE_LEN
-                                asmerr(2039)
-                                jmp toend
+                                .return asmerr(2039)
                             .endif
                             strcpy(esi, edi)
                             mov edi,tdst
@@ -430,6 +429,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 movsb
                 mov ecx,1
                 jmp default
+
 
             .endif
             movsb
@@ -474,9 +474,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
                         or [edx].flags3,TF3_ISCONCAT
                         .continue .if ecx
-
-                        mov eax,EMPTY
-                        jmp toend
+                        .return EMPTY
                     .endif
                 .endif
             .elseif eax == '!' && BYTE PTR [esi+1] && ecx < MAX_STRING_LEN - 1
@@ -502,8 +500,6 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         mov [edx].input,esi
         mov [edx].output,edi
     .endif
-toend:
-    mov _cstring,0
     ret
 get_string endp
 
@@ -659,7 +655,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                             .if edx == "tSC@"
 
                                 inc _brachets
-                                mov _cstring,'"'
+                                inc _cstring
                                 .endc
                             .endif
                         .endif
@@ -675,7 +671,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                     .endc .if !( [eax].asym.flag & S_ISPROC )
                     mov ecx,T_HLL_PROC
                     inc _brachets
-                    mov _cstring,'"'
+                    inc _cstring
                     .endc
 
                   .case edx == SYM_TYPE ;  structure, union, typedef, record
@@ -718,7 +714,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                   .case [eax].asym.flag & S_ISPROC
                     mov ecx,T_HLL_PROC
                     inc _brachets
-                    mov _cstring,'"'
+                    inc _cstring
                     .endc
 
                   .case edx == SYM_UNDEFINED
@@ -753,7 +749,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         .if al == ')' && _brachets
 
             dec _brachets
-            mov _cstring,0
+            dec _cstring
         .endif
 
       .case '*'..'/'

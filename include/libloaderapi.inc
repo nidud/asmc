@@ -112,7 +112,7 @@ FindResourceExW proto WINAPI \
 	     wLanguage: DWORD;WORD
 
 ifdef _UNICODE
-FindResourceEx		equ <FindResourceExW>
+FindResourceEx equ <FindResourceExW>
 endif
 endif
 
@@ -151,9 +151,9 @@ GetModuleFileNameW proto WINAPI \
 		 nSize: DWORD
 
 ifdef _UNICODE
-GetModuleFileName	equ <GetModuleFileNameW>
+GetModuleFileName equ <GetModuleFileNameW>
 else
-GetModuleFileName	equ <GetModuleFileNameA>
+GetModuleFileName equ <GetModuleFileNameA>
 endif
 
 GetModuleHandleA proto WINAPI \
@@ -163,9 +163,9 @@ GetModuleHandleW proto WINAPI \
 	  lpModuleName: LPCWSTR
 
 ifdef _UNICODE
-GetModuleHandle		equ <GetModuleHandleW>
+GetModuleHandle equ <GetModuleHandleW>
 else
-GetModuleHandle		equ <GetModuleHandleA>
+GetModuleHandle equ <GetModuleHandleA>
 endif
 
 ifndef RC_INVOKED
@@ -193,9 +193,9 @@ GetModuleHandleExW proto WINAPI \
 	      phModule: ptr HMODULE
 
 ifdef _UNICODE
-GetModuleHandleEx	equ <GetModuleHandleExW>
+GetModuleHandleEx equ <GetModuleHandleExW>
 else
-GetModuleHandleEx	equ <GetModuleHandleExA>
+GetModuleHandleEx equ <GetModuleHandleExA>
 endif
 
 endif
@@ -224,9 +224,9 @@ LoadLibraryExW proto WINAPI \
 	       dwFlags: DWORD
 
 ifdef _UNICODE
-LoadLibraryEx		equ <LoadLibraryExW>
+LoadLibraryEx equ <LoadLibraryExW>
 else
-LoadLibraryEx		equ <LoadLibraryExA>
+LoadLibraryEx equ <LoadLibraryExA>
 endif
 
 DONT_RESOLVE_DLL_REFERENCES equ 0x00000001

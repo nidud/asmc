@@ -11,8 +11,6 @@ include winnls.inc
 
     .code
 
-    option win64:nosave
-
 __allocwpath PROC USES rsi rdi path:LPSTR
 
     mov rsi,rcx

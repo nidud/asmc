@@ -1,18 +1,23 @@
 ifndef _MINWINDEF_
 _MINWINDEF_ equ <>
+
 include specstrings.inc
 include winapifamily.inc
+
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
 ifndef NO_STRICT
 ifndef STRICT
 STRICT equ 1
 endif
 endif
+
 ifdef _MAC
 ifndef _WIN32
 _WIN32 equ 1
 endif
 endif
+
 ifndef WIN32
 WIN32  equ 1
 endif
@@ -59,7 +64,7 @@ LPCVOID typedef ptr
 UINT	typedef DWORD
 PUINT	typedef ptr DWORD
 
-ifndef NT_INCLUDED
+ifndef _WINNT_
 include winnt.inc
 endif
 
@@ -69,10 +74,10 @@ LRESULT typedef LONG_PTR
 
 ifndef NOMINMAX
 ifndef max
-max macro a,b
-    if (type (a)) or (type (b))
-	exitm<max>
-    endif
+max macro a, b
+%   exitm<typeid(max, a)typeid(?, b)(a, b)>
+    endm
+max?i32?i32 macro a,b
     if (a) GT (b)
 	exitm<a>
     endif
@@ -80,10 +85,10 @@ max macro a,b
     endm
 endif
 ifndef min
-min macro a,b
-    if (type (a)) or (type (b))
-	exitm<max>
-    endif
+min macro a, b
+%   exitm<typeid(min, a)typeid(?, b)(a, b)>
+    endm
+min?i32?i32 macro a, b
     if (a) LT (b)
 	exitm<a>
     endif
@@ -118,26 +123,26 @@ HLOCAL		typedef HANDLE
 GLOBALHANDLE	typedef HANDLE
 LOCALHANDLE	typedef HANDLE
 
-ifndef _MANAGED
-else
-DECLARE_HANDLE(HKEY);
-PHKEY		typedef ptr HKEY
-DECLARE_HANDLE(HMETAFILE);
-DECLARE_HANDLE(HINSTANCE);
-HMODULE		typedef HINSTANCE
-DECLARE_HANDLE(HRGN);
-DECLARE_HANDLE(HRSRC);
-DECLARE_HANDLE(HSPRITE);
-DECLARE_HANDLE(HLSURF);
-DECLARE_HANDLE(HSTR);
-DECLARE_HANDLE(HTASK);
-DECLARE_HANDLE(HWINSTA);
-DECLARE_HANDLE(HKL);
+ifdef _MANAGED
+DECLARE_HANDLE(HKEY)
+PHKEY typedef ptr HKEY
+DECLARE_HANDLE(HMETAFILE)
+DECLARE_HANDLE(HINSTANCE)
+HMODULE typedef HINSTANCE
+DECLARE_HANDLE(HRGN)
+DECLARE_HANDLE(HRSRC)
+DECLARE_HANDLE(HSPRITE)
+DECLARE_HANDLE(HLSURF)
+DECLARE_HANDLE(HSTR)
+DECLARE_HANDLE(HTASK)
+DECLARE_HANDLE(HWINSTA)
+DECLARE_HANDLE(HKL)
+endif
 
 ifndef _MAC
-HFILE		typedef SDWORD
+HFILE typedef SDWORD
 else
-HFILE		typedef SWORD
+HFILE typedef SWORD
 endif
 
 ifndef _FILETIME_

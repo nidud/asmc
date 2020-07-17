@@ -1,0 +1,305 @@
+ifndef _EVNTPROV_H_
+_EVNTPROV_H_ equ <>
+
+include winapifamily.inc
+
+EVENT_MIN_LEVEL equ (0)
+EVENT_MAX_LEVEL equ (0xff)
+
+EVENT_ACTIVITY_CTRL_GET_ID equ (1)
+EVENT_ACTIVITY_CTRL_SET_ID equ (2)
+EVENT_ACTIVITY_CTRL_CREATE_ID equ (3)
+EVENT_ACTIVITY_CTRL_GET_SET_ID equ (4)
+EVENT_ACTIVITY_CTRL_CREATE_SET_ID equ (5)
+
+REGHANDLE  typedef ptr ULONGLONG
+PREGHANDLE typedef ptr REGHANDLE
+
+MAX_EVENT_DATA_DESCRIPTORS equ (128)
+MAX_EVENT_FILTER_DATA_SIZE equ (1024)
+MAX_EVENT_FILTER_PAYLOAD_SIZE equ (4096)
+
+MAX_EVENT_FILTERS_COUNT equ (8)
+
+MAX_EVENT_FILTER_PID_COUNT equ (8)
+MAX_EVENT_FILTER_EVENT_ID_COUNT equ (64)
+
+EVENT_FILTER_TYPE_NONE	equ (0x00000000)
+EVENT_FILTER_TYPE_SCHEMATIZED equ (0x80000000)
+EVENT_FILTER_TYPE_SYSTEM_FLAGS equ (0x80000001)
+EVENT_FILTER_TYPE_TRACEHANDLE equ (0x80000002)
+EVENT_FILTER_TYPE_PID	equ (0x80000004)
+EVENT_FILTER_TYPE_EXECUTABLE_NAME equ (0x80000008)
+EVENT_FILTER_TYPE_PACKAGE_ID equ (0x80000010)
+EVENT_FILTER_TYPE_PACKAGE_APP_ID equ (0x80000020)
+EVENT_FILTER_TYPE_PAYLOAD equ (0x80000100)
+EVENT_FILTER_TYPE_EVENT_ID equ (0x80000200)
+EVENT_FILTER_TYPE_STACKWALK equ (0x80001000)
+
+EVENT_DATA_DESCRIPTOR_TYPE_NONE equ (0)
+EVENT_DATA_DESCRIPTOR_TYPE_EVENT_METADATA equ (1)
+EVENT_DATA_DESCRIPTOR_TYPE_PROVIDER_METADATA equ (2)
+
+EVENT_DATA_DESCRIPTOR	STRUC
+_Ptr			ULONGLONG ?
+Size			ULONG ?
+UNION
+ Reserved		ULONG ?
+ STRUC
+  Type			UCHAR ?
+  Reserved1		UCHAR ?
+  Reserved2		USHORT ?
+ ENDS
+ENDS
+EVENT_DATA_DESCRIPTOR	ENDS
+PEVENT_DATA_DESCRIPTOR	typedef ptr EVENT_DATA_DESCRIPTOR
+
+
+ifndef EVENT_DESCRIPTOR_DEF
+EVENT_DESCRIPTOR_DEF equ <>
+
+EVENT_DESCRIPTOR	STRUC
+Id			USHORT ?
+Version			UCHAR ?
+Channel			UCHAR ?
+Level			UCHAR ?
+Opcode			UCHAR ?
+Task			USHORT ?
+Keyword			ULONGLONG ?
+EVENT_DESCRIPTOR	ENDS
+PEVENT_DESCRIPTOR	typedef ptr EVENT_DESCRIPTOR
+
+PCEVENT_DESCRIPTOR	typedef ptr EVENT_DESCRIPTOR
+endif
+
+EVENT_FILTER_DESCRIPTOR	 STRUC
+_Ptr			ULONGLONG ?
+Size			ULONG ?
+Type			ULONG ?
+EVENT_FILTER_DESCRIPTOR ENDS
+PEVENT_FILTER_DESCRIPTOR typedef ptr EVENT_FILTER_DESCRIPTOR
+
+
+EVENT_FILTER_HEADER	STRUC
+Id			USHORT ?
+Version			UCHAR ?
+Reserved		UCHAR 5 dup(?)
+InstanceId		ULONGLONG ?
+Size			ULONG ?
+NextOffset		ULONG ?
+EVENT_FILTER_HEADER	ENDS
+PEVENT_FILTER_HEADER	typedef ptr EVENT_FILTER_HEADER
+
+EVENT_FILTER_EVENT_ID	STRUC
+FilterIn		BOOLEAN ?
+Reserved		UCHAR ?
+Count			USHORT ?
+Events			USHORT ANYSIZE_ARRAY dup(?)
+EVENT_FILTER_EVENT_ID	ENDS
+PEVENT_FILTER_EVENT_ID	typedef ptr EVENT_FILTER_EVENT_ID
+
+ifndef MIDL_PASS
+
+.enum EVENT_INFO_CLASS {
+    EventProviderBinaryTrackInfo,
+    EventProviderSetTraits = 2,
+    EventProviderUseDescriptorType,
+    MaxEventInfo
+    }
+
+ifndef _ETW_KM_
+
+CALLBACK(PENABLECALLBACK)
+
+ifndef _APISET_EVENTING
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+
+EventRegister proto __cdecl \
+	    ProviderId: LPCGUID,
+	EnableCallback: PENABLECALLBACK,
+       CallbackContext: PVOID,
+	     RegHandle: PREGHANDLE
+
+endif
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+;ULONG
+EventUnregister proto __cdecl \
+	     RegHandle: REGHANDLE
+
+endif
+
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+;ULONG
+EventSetInformation proto __cdecl \
+	     RegHandle: REGHANDLE,
+      InformationClass: EVENT_INFO_CLASS,
+      EventInformation: PVOID,
+     InformationLength: ULONG
+
+endif
+
+endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+EventEnabled proto __cdecl \
+	     RegHandle: REGHANDLE,
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+endif
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+EventProviderEnabled proto __cdecl \
+	     RegHandle: REGHANDLE,
+		 Level: UCHAR,
+	       Keyword: ULONGLONG
+
+endif
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+if (WINVER GE _WIN32_WINNT_VISTA)
+
+EventWrite proto __cdecl \
+	     RegHandle: REGHANDLE,
+       EventDescriptor: PCEVENT_DESCRIPTOR,
+	 UserDataCount: ULONG,
+	      UserData: PEVENT_DATA_DESCRIPTOR
+endif
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+
+EventWriteTransfer proto __cdecl \
+	     RegHandle: REGHANDLE,
+       EventDescriptor: PCEVENT_DESCRIPTOR,
+	    ActivityId: LPCGUID,
+     RelatedActivityId: LPCGUID,
+	 UserDataCount: ULONG,
+	      UserData: PEVENT_DATA_DESCRIPTOR
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+EventWriteEx proto __cdecl \
+	     RegHandle: REGHANDLE,
+       EventDescriptor: PCEVENT_DESCRIPTOR,
+		Filter: ULONG64,
+		 Flags: ULONG,
+	    ActivityId: LPCGUID,
+     RelatedActivityId: LPCGUID,
+	 UserDataCount: ULONG,
+	      UserData: PEVENT_DATA_DESCRIPTOR
+endif
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+
+EventWriteString proto __cdecl \
+	     RegHandle: REGHANDLE,
+		 Level: UCHAR,
+	       Keyword: ULONGLONG,
+		String: PCWSTR
+
+endif
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+
+EventActivityIdControl proto __cdecl \
+	   ControlCode: ULONG,
+	    ActivityId: LPGUID
+
+endif
+
+endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif ;; _APISET_EVENTING
+endif ;; _ETW_KM_
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+EventDataDescCreate proto __cdecl \
+   EventDataDescriptor: PEVENT_DATA_DESCRIPTOR,
+	       DataPtr: PVOID,
+	      DataSize: ULONG
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+EventDescCreate proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		    Id: USHORT,
+	       Version: UCHAR,
+	       Channel: UCHAR,
+		 Level: UCHAR,
+		  Task: USHORT,
+		Opcode: UCHAR,
+	       Keyword: ULONGLONG
+
+EventDescZero proto __cdecl
+
+
+EventDescGetId proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetVersion proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetTask proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetOpcode proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetChannel proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetLevel proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+EventDescGetKeyword proto __cdecl \
+       EventDescriptor: PCEVENT_DESCRIPTOR
+
+
+EventDescSetId proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		    Id: USHORT
+
+EventDescSetVersion proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+	       Version: UCHAR
+
+EventDescSetTask proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		  Task: USHORT
+
+EventDescSetOpcode proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		Opcode: UCHAR
+
+EventDescSetLevel proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		 Level: UCHAR
+
+EventDescSetChannel proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+	       Channel: UCHAR
+
+EventDescSetKeyword proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+	       Keyword: ULONGLONG
+
+EventDescOrKeyword proto __cdecl \
+       EventDescriptor: PEVENT_DESCRIPTOR,
+	       Keyword: ULONGLONG
+
+endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif ;; MIDL_PASS
+
+endif

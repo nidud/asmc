@@ -78,14 +78,6 @@ _CRT_APPEND macro _Value1, _Value2
 	endm
 endif
 
-ifndef _W64
-if NOT defined (__midl) AND (defined (_X86_) OR defined (_M_IX86))
-_W64 equ __w64
-else
-_W64 equ <>
-endif
-endif
-
 ifdef _CRTBLD
 ifndef _CRTIMP1
 ifdef CRTDLL1

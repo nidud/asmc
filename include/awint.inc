@@ -585,10 +585,11 @@ STOREENCODEDFUNCTIONPOINTER macro instance, libraryname, functionname
 
 ;; Use this macro for decoding a cached function pointer from a DLL
 IFDYNAMICGETCACHEDFUNCTION macro libraryname, functiontypedef, functionname, functionpointer
+   .new functionpointer:ptr functiontypedef
     mov rax,encoded&libraryname&Functions[e&functionname&*size_t]
     xor rax,__security_cookie
     mov functionpointer,rax
-    exitm<.if rax>
+    exitm<rax>
     endm
 
 

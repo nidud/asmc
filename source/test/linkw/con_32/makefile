@@ -1,6 +1,6 @@
 test.exe:
     asmc -q $*.asm
-    linkw system con_32 file $*
+    linkw op map system con_32 file $*
     $@
     pause
     del $*.obj

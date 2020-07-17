@@ -4,23 +4,45 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-if not defined(_CRTAPI1) and defined(_MSC_VER) and defined(_M_IX86)
- if (_MSC_VER GE 800) and (_M_IX86 GE 300)
-  _CRTAPI1 equ <C>
- else
-  _CRTAPI1 equ <>
- endif
-endif
+;; Exception disposition return values.
+
+.enum EXCEPTION_DISPOSITION {
+    ExceptionContinueExecution,
+    ExceptionContinueSearch,
+    ExceptionNestedException,
+    ExceptionCollidedUnwind
+    }
 
 ifdef _M_IX86
 
-_except_handler proto WINAPI \
-	ExceptionRecord:	PVOID,
-	EstablisherFrame:	PVOID,
-	ContextRecord:		PVOID,
-	DispatcherContext:	PVOID
+_except_handler proto __cdecl \
+       ExceptionRecord: ptr EXCEPTION_RECORD,
+      EstablisherFrame: ptr,
+	 ContextRecord: ptr CONTEXT,
+     DispatcherContext: ptr
+
+elseif defined (_M_X64) or defined (_M_ARM)
+
+ifndef _M_CEE_PURE
+
+__C_specific_handler proto __cdecl \
+       ExceptionRecord: ptr EXCEPTION_RECORD,
+      EstablisherFrame: ptr,
+	 ContextRecord: ptr CONTEXT,
+     DispatcherContext: ptr DISPATCHER_CONTEXT
 
 endif
+
+endif
+
+;; Keywords and intrinsics for SEH
+
+GetExceptionCode	    equ <_exception_code>
+exception_code		    equ <_exception_code>
+GetExceptionInformation	    equ <_exception_info>
+exception_info		    equ <_exception_info>
+AbnormalTermination	    equ <_abnormal_termination>
+abnormal_termination	    equ <_abnormal_termination>
 
 ifdef _MSC_VER
 

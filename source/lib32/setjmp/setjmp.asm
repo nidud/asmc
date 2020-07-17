@@ -12,22 +12,19 @@ include setjmp.inc
 
     assume eax:jmp_buf
 
-setjmp::
+;setjmp::
 _setjmp3::
 
 _setjmp proc c buf:jmp_buf
 
     mov eax,[esp+4]
-    mov [eax].J_EBP,ebp
-    mov [eax].J_EBX,ebx
-    mov [eax].J_EDI,edi
-    mov [eax].J_ESI,esi
-    mov [eax].J_ESP,esp
-    mov [eax].J_EDX,edx
-    mov [eax].J_ECX,ecx
+    mov [eax]._Ebp,ebp
+    mov [eax]._Ebx,ebx
+    mov [eax]._Edi,edi
+    mov [eax]._Esi,esi
+    mov [eax]._Esp,esp
     mov ecx,[esp]
-    mov [eax].J_EIP,ecx
-    mov ecx,[eax].J_ECX
+    mov [eax]._Eip,ecx
     xor eax,eax
     ret
 
@@ -39,15 +36,13 @@ longjmp proc c buf:jmp_buf, retval:int_t
 
     mov edx,[esp+4]
     mov eax,[esp+8]
-    mov ebp,[edx].J_EBP
-    mov ebx,[edx].J_EBX
-    mov edi,[edx].J_EDI
-    mov esi,[edx].J_ESI
-    mov esp,[edx].J_ESP
-    mov ecx,[edx].J_EIP
+    mov ebp,[edx]._Ebp
+    mov ebx,[edx]._Ebx
+    mov edi,[edx]._Edi
+    mov esi,[edx]._Esi
+    mov esp,[edx]._Esp
+    mov ecx,[edx]._Eip
     mov [esp],ecx
-    mov ecx,[edx].J_ECX
-    mov edx,[edx].J_EDX
     ret
 
 longjmp endp

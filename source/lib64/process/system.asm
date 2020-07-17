@@ -8,56 +8,105 @@ include stdlib.inc
 include process.inc
 include string.inc
 include malloc.inc
-include direct.inc
 include winbase.inc
+include wincon.inc
+include crtl.inc
+
+    public errorlevel  ; Exit Code from GetExitCodeProcess
+
+    .data
+    errorlevel dd 0
 
     .code
 
-    option win64:nosave
+system proc uses rdi rsi rbx string:string_t
 
-system proc uses rdi rsi rbx r12 r13 string:LPSTR
-
-    local arg0[_MAX_PATH]:BYTE
+  local ProcessInfo     : PROCESS_INFORMATION,
+        StartUpInfo     : STARTUPINFO,
+        lpCommand       : string_t,
+        ConsoleMode     : uint_t,
+        cmd[_MAX_PATH]  : char_t,
+        delim           : char_t
 
     mov rdi,rcx
-    mov r12,rcx
-    mov rbx,alloca(0x8000)
-    strcpy(rbx, "cmd.exe")
-    .if !GetEnvironmentVariable("Comspec", rbx, 0x8000)
-        SearchPath(rax, "cmd.exe", rax, 0x8000, rbx, rax)
-    .endif
-    strcat(rbx, " /C ")
+    mov rbx,strcpy( alloca( 0x8000 ), "cmd.exe" )
 
-    mov r13d,' '
-    .if BYTE PTR [rdi] == '"'
+    .if !GetEnvironmentVariable( "Comspec", rbx, 0x8000 )
+
+        SearchPath( rax, "cmd.exe", rax, 0x8000, rbx, rax )
+    .endif
+    strcat( rbx, " /C " )
+
+    mov edx,' '
+    .if byte ptr [rdi] == '"'
         inc rdi
-        mov r13d,'"'
+        mov dl,'"'
     .endif
-    xor rsi,rsi
-    .if strchr(rdi, r13d)
-        mov BYTE PTR [rax],0
-        mov rsi,rax
+    mov delim,dl
+
+    mov rsi,strchr( rdi, edx )
+    .if rax
+        mov byte ptr [rax],0
     .endif
-    strncpy(&arg0, rdi, _MAX_PATH-1)
+    strncpy( &cmd, rdi, _MAX_PATH - 1 )
+
     .if rsi
-        mov [rsi],r13b
-        .if r13b == '"'
+        mov [rsi],delim
+        .if al == '"'
             inc rsi
         .endif
     .else
-        strlen(r12)
-        add rax,r12
+        strlen(string)
+        add rax,string
         mov rsi,rax
     .endif
     mov rdi,rsi
-    lea rsi,arg0
-    lea r12,@CStr( "\"" )
-    .if strchr(rsi, ' ')
-        strcat(strcat(strcat(rbx, r12), rsi), r12)
+    lea rsi,cmd
+    .if strchr( rsi, ' ' )
+        strcat( strcat( strcat( rbx, "\"" ), rsi ), "\"" )
     .else
-        strcat(rbx, rsi)
+        strcat( rbx, rsi )
     .endif
-    process(0, strcat(rbx, rdi), 0)
+
+    mov lpCommand,strcat( rbx, rdi )
+
+    _set_errno(0)
+    xor eax,eax
+    mov errorlevel,eax
+
+    lea rdi,ProcessInfo
+    mov rsi,rdi
+    mov ecx,sizeof(ProcessInfo)
+    rep stosb
+
+    lea rdi,StartUpInfo
+    mov ecx,sizeof(StartUpInfo)
+    rep stosb
+
+    lea rdi,StartUpInfo
+    mov StartUpInfo.cb,STARTUPINFO
+
+    SetErrorMode(OldErrorMode)
+    mov rbx,GetStdHandle(STD_INPUT_HANDLE)
+    GetConsoleMode(rbx, &ConsoleMode)
+
+    xor ecx,ecx
+    mov rdi,CreateProcess( rcx, lpCommand, rcx, rcx, ecx, ecx, rcx, rcx, rdi, rsi )
+    mov rsi,ProcessInfo.hProcess
+
+    _dosmaperr(GetLastError())
+
+    .if rdi
+
+        WaitForSingleObject( rsi, INFINITE )
+        GetExitCodeProcess( rsi, &errorlevel )
+        CloseHandle( rsi )
+        CloseHandle( ProcessInfo.hThread )
+    .endif
+
+    SetConsoleMode( rbx, ConsoleMode )
+    SetErrorMode( SEM_FAILCRITICALERRORS )
+    mov eax,edi
     ret
 
 system endp

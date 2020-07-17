@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2020
+- added switch /arch:AVX[2|512]
 - added inline macro typeid( [id,] expression )
 - added more support for 32-bit watcall
   - removed mov reg,reg if equal

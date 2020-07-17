@@ -25,8 +25,6 @@ g_v3Position        D3DXVECTOR3 <0.0,0.0,-5.0>
 ;; Camera LookAt point
 g_v3LookAt          D3DXVECTOR3 <0.0,0.0,0.0>
 Vectors             D3DXVECTOR3 <0.0,1.0,0.0>
-FL1000              FLOAT 1000.0
-;FL2_0               FLOAT 2.0
 
 ;; Definition of the first Vertex Format
 ;; including position and diffuse color

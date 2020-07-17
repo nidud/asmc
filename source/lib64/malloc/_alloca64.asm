@@ -20,28 +20,23 @@ _PAGESIZE_ equ 0x1000 ; one page
 _alloca64::
 
     lea rax,[rsp+8] ; return addres
-
     add ecx,16-1    ; assume 16 aligned
-    and cl,-16
+    and ecx,-16
 
     .while ecx > _PAGESIZE_
 
         sub  rax,_PAGESIZE_
-
         test edx,[rax] ; probe page
-        ;
+
         ; RSP unchanged on stack overflow
-        ;
+
         sub  ecx,_PAGESIZE_
     .endw
 
-    sub  rax,rcx
-    test edx,[rax]  ; probe page
-
+    sub rax,rcx
     mov rcx,[rsp]   ; return addres
-    mov rsp,rax     ; new stack
-    mov [rax],rcx
+    mov rsp,rax
     add rax,rdx     ; memory block
-    ret
+    jmp rcx
 
     end

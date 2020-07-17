@@ -12,7 +12,7 @@ include listing.inc
 
 warning_disable proto id:int_t
 
-extern jmpenv:JMPBUF
+extern jmpenv:_JUMP_BUFFER
 
 print_source_nesting_structure proto
 GetCurrOffset proto

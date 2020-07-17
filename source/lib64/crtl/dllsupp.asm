@@ -6,34 +6,36 @@
 
 include crtl.inc
 
-PUBLIC	_except_list
-PUBLIC	_fltused
-PUBLIC	_ldused
-PUBLIC	_8087
-PUBLIC	_real87
-PUBLIC	fltused_
-PUBLIC	_init_387_emulator
+public  _except_list
+public  _fltused
+public  _ldused
+public  _8087
+public  _real87
+public  fltused_
+public  _init_387_emulator
 
-_except_list	equ 0		; FS:[offset]
-_fltused	equ 0x9876
-_ldused		equ 0x9876
+    .data
 
-	.data
+     _8087     label byte
+     _real87   label byte
+     fltused_  label dword
+     _init_387_emulator dd 1
+     _8087cw            dw 0x127F
 
-_init_387_emulator label DWORD
-_real87		label BYTE
-_8087		label BYTE
-fltused_	dd 1
-_8087cw		dw 0x127F
+     _except_list       equ 0
+     _fltused           equ 0x9876
+     _ldused            equ 0x9876
 
-	.code
+    .code
 
 _fltinit:
-	fninit
-	fwait
-	fldcw	_8087cw
-	ret
 
-.pragma(init(_fltinit, 20))
+    fninit
+    fwait
 
-	END
+    fldcw _8087cw
+    ret
+
+.pragma init(_fltinit, 20)
+
+    end

@@ -352,6 +352,33 @@ static void ProcessOption( char **cmdline, char *buffer )
 	j &= 0xFFFF;
 
     switch ( j ) {
+    case 'hcra':	// -arch:xx
+	if ( buffer[4] != ':' || buffer[5] == 0 )
+	    asmerr( 1006, p );
+	p += 5;
+	if ( strcmp( p, "AVX512" ) == 0 )
+	    j = 3;
+	else if ( strcmp( p, "AVX2" ) == 0 )
+	    j = 2;
+	else if ( strcmp( p, "AVX" ) == 0 )
+	    j = 1;
+	switch ( j ) {
+	case 3:
+	    define_name( "__AVX512BW__", "1" );
+	    define_name( "__AVX512CD__", "1" );
+	    define_name( "__AVX512DQ__", "1" );
+	    define_name( "__AVX512F__", "1" );
+	    define_name( "__AVX512VL__", "1" );
+	case 2:
+	    define_name( "__AVX2__", "1" );
+	case 1:
+	    define_name( "__AVX__", "1" );
+	    break;
+	default:
+	    asmerr( 1006, p-5 );
+	}
+	Options.arch = j;
+	return;
     case 'essa':	// -assert
 	Options.xflag |= OPT_ASSERT;
 	return;

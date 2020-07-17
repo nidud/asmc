@@ -73,7 +73,7 @@ init proc
    mov theNurb,gluNewNurbsRenderer()
    gluNurbsProperty(theNurb, GLU_SAMPLING_TOLERANCE, 25.0);
    gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, 100012.0);GLU_FILL)
-   gluNurbsCallback(theNurb, GLU_ERROR, nurbsError);
+   gluNurbsCallback(theNurb, GLU_ERROR, &nurbsError)
    ret
 
 init endp

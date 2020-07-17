@@ -5,7 +5,6 @@ include stdio.inc
 include string.inc
 include winbase.inc
 include stdlib.inc
-include strlib.inc
 include tchar.inc
 
 BUFSIZE     equ 4096    ; Size of read buffer
@@ -75,10 +74,9 @@ print_usage proc
 
 print_usage endp
 
-ifdef __PE__
-;
+
 ; get filename part of path
-;
+
 strfn proc path:string_t
 
     mov rax,rcx
@@ -112,17 +110,15 @@ strfn proc path:string_t
     ret
 
 strfn endp
-;
+
 ; add file to path
-;
+
 strfcat proc b:string_t, path:string_t, file:string_t
 
     strcat(strcat(strcpy(rcx, rdx), "\\"), file)
     ret
 
 strfcat endp
-
-endif
 
 compare proc a:ptr, b:ptr
 
@@ -155,7 +151,7 @@ tally proc uses rsi rdi rbx string:string_t
                    rsi = &table,
                    ebx = 0 : ebx < TOKENCOUNT : ebx++, rsi += sizeof(token) )
 
-                .if !strcmp([rsi].tname, rdi)
+                .if !_stricmp([rsi].tname, rdi)
 
                     inc [rsi].count
                     .break
@@ -343,13 +339,13 @@ main proc argc:SINT, argv:ptr
         .endif
 
         GetFullPathName(rsi, _MAX_PATH, rsi, 0)
-        printf( "\nFile(s):   %s\nDirectory: %s\n\n", rdi, rsi)
+        printf("\nFile(s):   %s\nDirectory: %s\n\n", rdi, rsi)
 
         scanfiles(rsi, rdi)
         printf("Total %d file(s), %d line(s)\n\n", file_count, line_count)
 
         lea rsi,table
-        qsort(rsi, TOKENCOUNT, sizeof(token), compare)
+        qsort(rsi, TOKENCOUNT, sizeof(token), &compare)
         .for ( ebx = 0 : ebx < TOKENCOUNT && [rsi].count : ebx++, rsi += sizeof(token) )
 
             printf("%6d %s\n", [rsi].count, [rsi].tname)

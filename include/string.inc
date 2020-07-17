@@ -15,7 +15,7 @@ _memicmp	proto __cdecl :ptr, :ptr, :size_t
 memcpy_s	proto __cdecl :ptr, :size_t, :ptr, :size_t
 
 strlen		proto __cdecl :LPSTR
-strchr		proto __cdecl :LPSTR, :size_t
+strchr		proto __cdecl :LPSTR, :int_t
 strcmp		proto __cdecl :LPSTR, :LPSTR
 strncmp		proto __cdecl :LPSTR, :LPSTR, :size_t
 strcpy		proto __cdecl :LPSTR, :LPSTR
@@ -27,7 +27,7 @@ _strupr		proto __cdecl :LPSTR
 _strdup		proto __cdecl :LPSTR
 _strrev		proto __cdecl :LPSTR
 _strlwr		proto __cdecl :LPSTR
-strrchr		proto __cdecl :LPSTR, :size_t
+strrchr		proto __cdecl :LPSTR, :int_t
 strstr		proto __cdecl :LPSTR, :LPSTR
 _mbspbrk	proto __cdecl :LPSTR, :LPSTR
 _strset		proto __cdecl :LPSTR, :SINT

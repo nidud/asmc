@@ -376,6 +376,7 @@ win64_flags             db ?    ; -homeparams, -autostack, -stackalign
 chkstack                db ?    ; _chkstk()
 nolib                   db ?    ; skip includelib directives
 masm_keywords           db ?    ; -Znk
+arch                    db ?    ; -arch:AVX[2|512]
 global_options          ENDS
 
 M_MODULEVARS            MACRO

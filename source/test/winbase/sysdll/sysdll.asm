@@ -55,7 +55,10 @@ BuildInc proc uses rsi rdi rbx r12 dll:LPSTR
                     lodsd
                     lea r8,[rax+rbx]
                     .if byte ptr [r8] != '?'
-                        fprintf(r12, "%s proto :vararg\n", r8)
+                        mov eax,[r8]
+                        .if eax != "vid" && eax != "sbaf"
+                            fprintf(r12, "%s proto :vararg\n", r8)
+                        .endif
                     .endif
                     dec edi
                 .endw
@@ -155,7 +158,10 @@ BuildLib proc uses rsi rdi rbx r12 r13 dll:LPSTR
                 add rsi,rbx
                 .while r13d
                     lodsd
-                    fprintf(r12, "++%s.\'%s.dll\'\n", addr [rax+rbx], rdi)
+                    lea rcx,[rax+rbx]
+                    ;.if byte ptr [rax+rbx] != '?'
+                    fprintf(r12, "++%s.\'%s.dll\'\n", rcx, rdi)
+                    ;.endif
                     dec r13d
                 .endw
                 fclose(r12)

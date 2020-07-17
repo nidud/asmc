@@ -1,0 +1,591 @@
+ifndef __TDH_H__
+__TDH_H__ equ <>
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+include wmistr.inc
+include evntrace.inc
+include evntcons.inc
+
+TDHSTATUS		typedef ULONG
+TDH_HANDLE		typedef HANDLE
+PTDH_HANDLE		typedef ptr HANDLE
+
+EVENT_MAP_ENTRY		STRUC
+OutputOffset		ULONG ?
+UNION
+ Value			ULONG ?
+ InputOffset		ULONG ?
+ENDS
+EVENT_MAP_ENTRY		ENDS
+PEVENT_MAP_ENTRY	typedef ptr EVENT_MAP_ENTRY
+
+.enum MAP_FLAGS {
+    EVENTMAP_INFO_FLAG_MANIFEST_VALUEMAP = 0x1,
+    EVENTMAP_INFO_FLAG_MANIFEST_BITMAP = 0x2,
+    EVENTMAP_INFO_FLAG_MANIFEST_PATTERNMAP = 0x4,
+    EVENTMAP_INFO_FLAG_WBEM_VALUEMAP = 0x8,
+    EVENTMAP_INFO_FLAG_WBEM_BITMAP = 0x10,
+    EVENTMAP_INFO_FLAG_WBEM_FLAG = 0x20,
+    EVENTMAP_INFO_FLAG_WBEM_NO_MAP = 0x40
+    }
+
+.enum MAP_VALUETYPE {
+    EVENTMAP_ENTRY_VALUETYPE_ULONG,
+    EVENTMAP_ENTRY_VALUETYPE_STRING
+    }
+
+EVENT_MAP_INFO		STRUC
+NameOffset		ULONG ?
+Flag			MAP_FLAGS ?
+EntryCount		ULONG ?
+UNION
+ MapEntryValueType	MAP_VALUETYPE ?
+ FormatStringOffset	ULONG ?
+ENDS
+MapEntryArray		EVENT_MAP_ENTRY ANYSIZE_ARRAY dup(<>)
+EVENT_MAP_INFO		ENDS
+PEVENT_MAP_INFO		typedef ptr EVENT_MAP_INFO
+
+.enum TDH_IN_TYPE {
+    TDH_INTYPE_NULL,
+    TDH_INTYPE_UNICODESTRING,
+    TDH_INTYPE_ANSISTRING,
+    TDH_INTYPE_INT8,
+    TDH_INTYPE_UINT8,
+    TDH_INTYPE_INT16,
+    TDH_INTYPE_UINT16,
+    TDH_INTYPE_INT32,
+    TDH_INTYPE_UINT32,
+    TDH_INTYPE_INT64,
+    TDH_INTYPE_UINT64,
+    TDH_INTYPE_FLOAT,
+    TDH_INTYPE_DOUBLE,
+    TDH_INTYPE_BOOLEAN,
+    TDH_INTYPE_BINARY,
+    TDH_INTYPE_GUID,
+    TDH_INTYPE_POINTER,
+    TDH_INTYPE_FILETIME,
+    TDH_INTYPE_SYSTEMTIME,
+    TDH_INTYPE_SID,
+    TDH_INTYPE_HEXINT32,
+    TDH_INTYPE_HEXINT64,
+    TDH_INTYPE_COUNTEDSTRING = 300,
+    TDH_INTYPE_COUNTEDANSISTRING,
+    TDH_INTYPE_REVERSEDCOUNTEDSTRING,
+    TDH_INTYPE_REVERSEDCOUNTEDANSISTRING,
+    TDH_INTYPE_NONNULLTERMINATEDSTRING,
+    TDH_INTYPE_NONNULLTERMINATEDANSISTRING,
+    TDH_INTYPE_UNICODECHAR,
+    TDH_INTYPE_ANSICHAR,
+    TDH_INTYPE_SIZET,
+    TDH_INTYPE_HEXDUMP,
+    TDH_INTYPE_WBEMSID
+    }
+
+.enum TDH_OUT_TYPE {
+    TDH_OUTTYPE_NULL,
+    TDH_OUTTYPE_STRING,
+    TDH_OUTTYPE_DATETIME,
+    TDH_OUTTYPE_BYTE,
+    TDH_OUTTYPE_UNSIGNEDBYTE,
+    TDH_OUTTYPE_SHORT,
+    TDH_OUTTYPE_UNSIGNEDSHORT,
+    TDH_OUTTYPE_INT,
+    TDH_OUTTYPE_UNSIGNEDINT,
+    TDH_OUTTYPE_LONG,
+    TDH_OUTTYPE_UNSIGNEDLONG,
+    TDH_OUTTYPE_FLOAT,
+    TDH_OUTTYPE_DOUBLE,
+    TDH_OUTTYPE_BOOLEAN,
+    TDH_OUTTYPE_GUID,
+    TDH_OUTTYPE_HEXBINARY,
+    TDH_OUTTYPE_HEXINT8,
+    TDH_OUTTYPE_HEXINT16,
+    TDH_OUTTYPE_HEXINT32,
+    TDH_OUTTYPE_HEXINT64,
+    TDH_OUTTYPE_PID,
+    TDH_OUTTYPE_TID,
+    TDH_OUTTYPE_PORT,
+    TDH_OUTTYPE_IPV4,
+    TDH_OUTTYPE_IPV6,
+    TDH_OUTTYPE_SOCKETADDRESS,
+    TDH_OUTTYPE_CIMDATETIME,
+    TDH_OUTTYPE_ETWTIME,
+    TDH_OUTTYPE_XML,
+    TDH_OUTTYPE_ERRORCODE,
+    TDH_OUTTYPE_WIN32ERROR,
+    TDH_OUTTYPE_NTSTATUS,
+    TDH_OUTTYPE_HRESULT,
+    TDH_OUTTYPE_CULTURE_INSENSITIVE_DATETIME,
+    TDH_OUTTYPE_JSON,
+    TDH_OUTTYPE_REDUCEDSTRING = 300,
+    TDH_OUTTYPE_NOPRINT
+    }
+
+TDH_OUTYTPE_ERRORCODE	equ TDH_OUTTYPE_ERRORCODE
+
+.enum PROPERTY_FLAGS {
+    PropertyStruct	  = 0x1,
+    PropertyParamLength	  = 0x2,
+    PropertyParamCount	  = 0x4,
+    PropertyWBEMXmlFragment = 0x8,
+    PropertyParamFixedLength = 0x10,
+    PropertyParamFixedCount = 0x20,
+    PropertyHasTags	  = 0x40
+    }
+
+EVENT_PROPERTY_INFO	STRUC
+Flags			PROPERTY_FLAGS ?
+NameOffset		ULONG ?
+UNION
+ STRUC nonStructType
+  InType		USHORT ?
+  OutType		USHORT ?
+  MapNameOffset		ULONG ?
+ ENDS
+ STRUC structType
+  StructStartIndex	USHORT ?
+  NumOfStructMembers	USHORT ?
+  padding		ULONG ?
+ ENDS
+ENDS
+UNION
+ count			USHORT ?
+ countPropertyIndex	USHORT ?
+ENDS
+UNION
+ length			USHORT ?
+ lengthPropertyIndex	USHORT ?
+ENDS
+UNION
+ Reserved		ULONG ?
+ STRUC
+  Tags			ULONG ? ; : 28
+ ENDS
+ENDS
+EVENT_PROPERTY_INFO	ENDS
+PEVENT_PROPERTY_INFO	typedef ptr EVENT_PROPERTY_INFO
+
+.enum DECODING_SOURCE {
+    DecodingSourceXMLFile,
+    DecodingSourceWbem,
+    DecodingSourceWPP,
+    DecodingSourceTlg,
+    DecodingSourceMax
+    }
+
+.enum TEMPLATE_FLAGS {
+    TEMPLATE_EVENT_DATA = 1,
+    TEMPLATE_USER_DATA = 2
+    }
+
+TRACE_EVENT_INFO	STRUC
+ProviderGuid		GUID <>
+EventGuid		GUID <>
+EventDescriptor		EVENT_DESCRIPTOR <>
+DecodingSource		DECODING_SOURCE ?
+ProviderNameOffset	ULONG ?
+LevelNameOffset		ULONG ?
+ChannelNameOffset	ULONG ?
+KeywordsNameOffset	ULONG ?
+TaskNameOffset		ULONG ?
+OpcodeNameOffset	ULONG ?
+EventMessageOffset	ULONG ?
+ProviderMessageOffset	ULONG ?
+BinaryXMLOffset		ULONG ?
+BinaryXMLSize		ULONG ?
+ActivityIDNameOffset	ULONG ?
+RelatedActivityIDNameOffset ULONG ?
+PropertyCount		ULONG ?
+TopLevelPropertyCount	ULONG ?
+UNION
+ Flags			TEMPLATE_FLAGS ?
+ STRUC
+  ;Reserved : 4		ULONG ?
+  Tags			ULONG ? ; : 28
+ ENDS ;
+ENDS
+EventPropertyInfoArray	EVENT_PROPERTY_INFO ANYSIZE_ARRAY dup(<>)
+TRACE_EVENT_INFO	ENDS
+PTRACE_EVENT_INFO	typedef ptr TRACE_EVENT_INFO
+
+PROPERTY_DATA_DESCRIPTOR STRUC
+PropertyName		ULONGLONG ?
+ArrayIndex		ULONG ?
+Reserved		ULONG ?
+PROPERTY_DATA_DESCRIPTOR ENDS
+PPROPERTY_DATA_DESCRIPTOR typedef ptr PROPERTY_DATA_DESCRIPTOR
+
+.enum PAYLOAD_OPERATOR {
+    PAYLOADFIELD_EQ = 0,
+    PAYLOADFIELD_NE = 1,
+    PAYLOADFIELD_LE = 2,
+    PAYLOADFIELD_GT = 3,
+    PAYLOADFIELD_LT = 4,
+    PAYLOADFIELD_GE = 5,
+    PAYLOADFIELD_BETWEEN = 6,
+    PAYLOADFIELD_NOTBETWEEN = 7,
+    PAYLOADFIELD_MODULO = 8,
+    PAYLOADFIELD_CONTAINS      = 20,
+    PAYLOADFIELD_DOESNTCONTAIN = 21,
+    PAYLOADFIELD_IS    = 30,
+    PAYLOADFIELD_ISNOT = 31,
+    PAYLOADFIELD_INVALID = 32
+    }
+
+
+PAYLOAD_FILTER_PREDICATE STRUC
+FieldName		LPWSTR ?
+CompareOp		USHORT ?
+Value			LPWSTR ?
+PAYLOAD_FILTER_PREDICATE ENDS
+PPAYLOAD_FILTER_PREDICATE typedef ptr PAYLOAD_FILTER_PREDICATE
+
+MAX_PAYLOAD_PREDICATES	equ 8
+
+if (WINVER GE _WIN32_WINNT_WINBLUE)
+
+TdhCreatePayloadFilter proto __cdecl \
+	  ProviderGuid: LPCGUID,
+       EventDescriptor: PCEVENT_DESCRIPTOR,
+	 EventMatchANY: BOOLEAN,
+ PayloadPredicateCount: ULONG,
+     PayloadPredicates: PPAYLOAD_FILTER_PREDICATE,
+	 PayloadFilter: ptr PVOID
+
+
+TdhDeletePayloadFilter proto __cdecl \
+	 PayloadFilter: ptr PVOID
+
+
+TdhAggregatePayloadFilters proto __cdecl \
+    PayloadFilterCount: ULONG,
+     PayloadFilterPtrs: ptr PVOID,
+    EventMatchALLFlags: PBOOLEAN,
+ EventFilterDescriptor: PEVENT_FILTER_DESCRIPTOR
+
+
+TdhCleanupPayloadEventFilterDescriptor proto __cdecl \
+ EventFilterDescriptor: PEVENT_FILTER_DESCRIPTOR
+
+
+endif ;; WINVER
+
+PROVIDER_FILTER_INFO	STRUC
+Id			UCHAR ?
+Version			UCHAR ?
+MessageOffset		ULONG ?
+Reserved		ULONG ?
+PropertyCount		ULONG ?
+EventPropertyInfoArray	EVENT_PROPERTY_INFO ANYSIZE_ARRAY dup(<>)
+PROVIDER_FILTER_INFO	ENDS
+PPROVIDER_FILTER_INFO	typedef ptr PROVIDER_FILTER_INFO
+
+.enum EVENT_FIELD_TYPE {
+    EventKeywordInformation = 0,
+    EventLevelInformation,
+    EventChannelInformation,
+    EventTaskInformation,
+    EventOpcodeInformation,
+    EventInformationMax
+    }
+
+PROVIDER_FIELD_INFO	STRUC
+NameOffset		ULONG ?
+DescriptionOffset	ULONG ?
+Value			ULONGLONG ?
+PROVIDER_FIELD_INFO	ENDS
+PPROVIDER_FIELD_INFO	typedef ptr PROVIDER_FIELD_INFO
+
+PROVIDER_FIELD_INFOARRAY STRUC
+NumberOfElements	ULONG ?
+FieldType		EVENT_FIELD_TYPE ?
+FieldInfoArray		PROVIDER_FIELD_INFO ANYSIZE_ARRAY dup(<>)
+PROVIDER_FIELD_INFOARRAY ENDS
+PPROVIDER_FIELD_INFOARRAY typedef ptr PROVIDER_FIELD_INFOARRAY
+
+TRACE_PROVIDER_INFO	STRUC
+ProviderGuid		GUID <>
+SchemaSource		ULONG ?
+ProviderNameOffset	ULONG ?
+TRACE_PROVIDER_INFO	ENDS
+PTRACE_PROVIDER_INFO	typedef ptr TRACE_PROVIDER_INFO
+
+PROVIDER_ENUMERATION_INFO STRUC
+NumberOfProviders	ULONG ?
+Reserved		ULONG ?
+TraceProviderInfoArray	TRACE_PROVIDER_INFO ANYSIZE_ARRAY dup(<>)
+PROVIDER_ENUMERATION_INFO ENDS
+PPROVIDER_ENUMERATION_INFO typedef ptr PROVIDER_ENUMERATION_INFO
+
+PROVIDER_EVENT_INFO	STRUC
+NumberOfEvents		ULONG ?
+Reserved		ULONG ?
+EventDescriptorsArray	EVENT_DESCRIPTOR ANYSIZE_ARRAY dup(<>)
+PROVIDER_EVENT_INFO	ENDS
+PPROVIDER_EVENT_INFO	typedef ptr PROVIDER_EVENT_INFO
+
+.enum TDH_CONTEXT_TYPE {
+    TDH_CONTEXT_WPP_TMFFILE = 0,
+    TDH_CONTEXT_WPP_TMFSEARCHPATH,
+    TDH_CONTEXT_WPP_GMT,
+    TDH_CONTEXT_POINTERSIZE,
+    TDH_CONTEXT_PDB_PATH,
+    TDH_CONTEXT_MAXIMUM
+    }
+
+TDH_CONTEXT		STRUC
+ParameterValue		ULONGLONG ?
+ParameterType		TDH_CONTEXT_TYPE ?
+ParameterSize		ULONG ?
+TDH_CONTEXT		ENDS
+PTDH_CONTEXT		typedef ptr TDH_CONTEXT
+
+TdhGetEventInformation proto __cdecl \
+		 Event: PEVENT_RECORD,
+       TdhContextCount: ULONG,
+	    TdhContext: PTDH_CONTEXT,
+		Buffer: PTRACE_EVENT_INFO,
+	    BufferSize: PULONG
+
+TdhGetEventMapInformation proto __cdecl \
+		pEvent: PEVENT_RECORD,
+	      pMapName: PWSTR,
+	       pBuffer: PEVENT_MAP_INFO,
+	   pBufferSize: ptr ULONG
+
+TdhGetPropertySize proto __cdecl \
+		pEvent: PEVENT_RECORD,
+       TdhContextCount: ULONG,
+	   pTdhContext: PTDH_CONTEXT,
+     PropertyDataCount: ULONG,
+	 pPropertyData: PPROPERTY_DATA_DESCRIPTOR,
+	 pPropertySize: ptr ULONG
+
+TdhGetProperty proto __cdecl \
+		pEvent: PEVENT_RECORD,
+       TdhContextCount: ULONG,
+	   pTdhContext: PTDH_CONTEXT,
+     PropertyDataCount: ULONG,
+	 pPropertyData: PPROPERTY_DATA_DESCRIPTOR,
+	    BufferSize: ULONG,
+	       pBuffer: PBYTE
+
+TdhEnumerateProviders proto __cdecl \
+	       pBuffer: PPROVIDER_ENUMERATION_INFO,
+	   pBufferSize: ptr ULONG
+
+TdhQueryProviderFieldInformation proto __cdecl \
+		 pGuid: LPGUID,
+       EventFieldValue: ULONGLONG,
+	EventFieldType: EVENT_FIELD_TYPE,
+	       pBuffer: PPROVIDER_FIELD_INFOARRAY,
+	   pBufferSize: ptr ULONG
+
+TdhEnumerateProviderFieldInformation proto __cdecl \
+		 pGuid: LPGUID,
+	EventFieldType: EVENT_FIELD_TYPE,
+	       pBuffer: PPROVIDER_FIELD_INFOARRAY,
+	   pBufferSize: ptr ULONG
+
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+TdhEnumerateProviderFilters proto __cdecl \
+		  Guid: LPGUID,
+       TdhContextCount: ULONG,
+	    TdhContext: PTDH_CONTEXT,
+	   FilterCount: ptr ULONG,
+		Buffer: ptr PPROVIDER_FILTER_INFO,
+	    BufferSize: ptr ULONG
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+TdhLoadManifest proto __cdecl \
+	      Manifest: PWSTR
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+TdhUnloadManifest proto __cdecl \
+	      Manifest: PWSTR
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+TdhFormatProperty proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO,
+	       MapInfo: PEVENT_MAP_INFO,
+	   PointerSize: ULONG,
+	PropertyInType: USHORT,
+       PropertyOutType: USHORT,
+	PropertyLength: USHORT,
+	UserDataLength: USHORT,
+	      UserData: PBYTE,
+	    BufferSize: PULONG,
+		Buffer: PWCHAR,
+      UserDataConsumed: PUSHORT
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhOpenDecodingHandle proto __cdecl \
+		Handle: PTDH_HANDLE
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhSetDecodingParameter proto __cdecl \
+		Handle: TDH_HANDLE,
+	    TdhContext: PTDH_CONTEXT
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhGetDecodingParameter proto __cdecl \
+		Handle: TDH_HANDLE,
+	    TdhContext: PTDH_CONTEXT
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhGetWppProperty proto __cdecl \
+		Handle: TDH_HANDLE,
+	   EventRecord: PEVENT_RECORD,
+	  PropertyName: PWSTR,
+	    BufferSize: PULONG,
+		Buffer: PBYTE
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhGetWppMessage proto __cdecl \
+		Handle: TDH_HANDLE,
+	   EventRecord: PEVENT_RECORD,
+	    BufferSize: PULONG,
+		Buffer: PBYTE
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhCloseDecodingHandle proto __cdecl \
+		Handle: TDH_HANDLE
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+TdhLoadManifestFromBinary proto __cdecl \
+	    BinaryPath: PWSTR
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WINBLUE)
+
+TdhEnumerateManifestProviderEvents proto __cdecl \
+	  ProviderGuid: LPGUID,
+		Buffer: PPROVIDER_EVENT_INFO,
+	    BufferSize: ptr ULONG
+
+endif
+
+if (WINVER GE _WIN32_WINNT_WINBLUE)
+
+TdhGetManifestEventInformation proto __cdecl \
+	  ProviderGuid: LPGUID,
+       EventDescriptor: PEVENT_DESCRIPTOR,
+		Buffer: PTRACE_EVENT_INFO,
+	    BufferSize: ptr ULONG
+
+endif
+
+EMI_MAP_NAME proto __cdecl \
+	       MapInfo: PEVENT_MAP_INFO
+
+
+EMI_MAP_FORMAT proto __cdecl \
+	       MapInfo: PEVENT_MAP_INFO
+
+EMI_MAP_OUTPUT proto __cdecl \
+	       MapInfo: PEVENT_MAP_INFO,
+		   Map: PEVENT_MAP_ENTRY
+
+EMI_MAP_INPUT proto __cdecl \
+	       MapInfo: PEVENT_MAP_INFO,
+		   Map: PEVENT_MAP_ENTRY
+
+TEI_MAP_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO,
+	      Property: PEVENT_PROPERTY_INFO
+
+TEI_PROPERTY_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO,
+	      Property: PEVENT_PROPERTY_INFO
+
+TEI_PROVIDER_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_LEVEL_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_CHANNEL_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_KEYWORDS_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_TASK_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_OPCODE_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_EVENT_MESSAGE proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_PROVIDER_MESSAGE proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_ACTIVITYID_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+TEI_RELATEDACTIVITYID_NAME proto __cdecl \
+	     EventInfo: PTRACE_EVENT_INFO
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+PFI_FILTER_MESSAGE proto __cdecl \
+	    FilterInfo: PPROVIDER_FILTER_INFO
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+
+PFI_PROPERTY_NAME proto __cdecl \
+	    FilterInfo: PPROVIDER_FILTER_INFO,
+	      Property: PEVENT_PROPERTY_INFO
+endif
+
+PFI_FIELD_NAME proto __cdecl \
+	FieldInfoArray: PPROVIDER_FIELD_INFOARRAY,
+	     FieldInfo: PPROVIDER_FIELD_INFO
+
+PFI_FIELD_MESSAGE proto __cdecl \
+	FieldInfoArray: PPROVIDER_FIELD_INFOARRAY,
+	     FieldInfo: PPROVIDER_FIELD_INFO
+
+PEI_PROVIDER_NAME proto __cdecl \
+	  ProviderEnum: PPROVIDER_ENUMERATION_INFO,
+	  ProviderInfo: PTRACE_PROVIDER_INFO
+
+endif
+endif

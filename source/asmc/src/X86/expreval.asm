@@ -2264,7 +2264,8 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
         .endif
         MakeConst( esi )
         MakeConst( edi )
-        .if ( ( [esi].kind == EXPR_CONST && [edi].kind == EXPR_CONST ) )
+        .if ( ( [esi].kind == EXPR_CONST && [edi].kind == EXPR_CONST ) || \
+              ( [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT ) )
         .elseif ( [ebx].precedence == 10 && [esi].kind != EXPR_CONST )
             .if ( [esi].kind == EXPR_ADDR && !( [esi].flags & E_INDIRECT ) && [esi].sym )
                 .if ( [edi].kind == EXPR_ADDR && !( [edi].flags & E_INDIRECT ) && [edi].sym )
@@ -2283,73 +2284,151 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             .if ( [esi].flags & E_IS_TYPE && [edi].flags & E_IS_TYPE )
                 cmp_types( esi, edi, -1 )
             .else
+                xor eax,eax
                 xor edx,edx
-                .if [esi].value == [edi].value && [esi].hvalue == [edi].hvalue
-                    dec edx
+                .if [esi].kind == EXPR_FLOAT
+                    add edx,dword ptr [esi].hlvalue[0]
+                    sub edx,dword ptr [edi].hlvalue[0]
+                    add edx,dword ptr [esi].hlvalue[4]
+                    sub edx,dword ptr [edi].hlvalue[4]
+                    mov dword ptr [esi].hlvalue[0],eax
+                    mov dword ptr [esi].hlvalue[4],eax
+                    mov [esi].kind,EXPR_CONST
+                    mov [esi].mem_type,MT_EMPTY
                 .endif
-                mov [esi].value,edx
-                mov [esi].hvalue,edx
+                add edx,[esi].value
+                sub edx,[edi].value
+                add edx,[esi].hvalue
+                sub edx,[edi].hvalue
+                .ifz
+                    dec eax
+                .endif
+                mov [esi].value,eax
+                mov [esi].hvalue,eax
             .endif
             .endc
         .case T_NE
             .if ( [esi].flags & E_IS_TYPE && [edi].flags & E_IS_TYPE )
                 cmp_types( esi, edi, 0 )
             .else
+                xor eax,eax
                 xor edx,edx
-                .if [esi].value != [edi].value || [esi].hvalue != [edi].hvalue
-                    dec edx
+                .if [esi].kind == EXPR_FLOAT
+                    add edx,dword ptr [esi].hlvalue[0]
+                    sub edx,dword ptr [edi].hlvalue[0]
+                    add edx,dword ptr [esi].hlvalue[4]
+                    sub edx,dword ptr [edi].hlvalue[4]
+                    mov dword ptr [esi].hlvalue[0],eax
+                    mov dword ptr [esi].hlvalue[4],eax
+                    mov [esi].kind,EXPR_CONST
+                    mov [esi].mem_type,MT_EMPTY
                 .endif
-                mov [esi].value,edx
-                mov [esi].hvalue,edx
+                add edx,[esi].value
+                sub edx,[edi].value
+                add edx,[esi].hvalue
+                sub edx,[edi].hvalue
+                .ifnz
+                    dec eax
+                .endif
+                mov [esi].value,eax
+                mov [esi].hvalue,eax
             .endif
             .endc
         .case T_LT
-            xor edx,edx
-            .if [esi].hvalue < [edi].hvalue
-                dec edx
-            .elseif ZERO?
-                cmp [esi].value,[edi].value
-                .ifb
+            .if [esi].kind == EXPR_FLOAT
+                __cmpq( esi, edi )
+                xor edx,edx
+                mov dword ptr [esi].hlvalue[0],edx
+                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].kind,EXPR_CONST
+                mov [esi].mem_type,MT_EMPTY
+                .if eax == -1
                     dec edx
+                .endif
+            .else
+                xor edx,edx
+                .if [esi].hvalue < [edi].hvalue
+                    dec edx
+                .elseif ZERO?
+                    cmp [esi].value,[edi].value
+                    .ifb
+                        dec edx
+                    .endif
                 .endif
             .endif
             mov [esi].value,edx
             mov [esi].hvalue,edx
             .endc
         .case T_LE
-            xor edx,edx
-            .if [esi].hvalue < [edi].hvalue
-                dec edx
-            .elseif ZERO?
-                cmp [esi].value,[edi].value
-                .ifna
+            .if [esi].kind == EXPR_FLOAT
+                __cmpq( esi, edi )
+                xor edx,edx
+                mov dword ptr [esi].hlvalue[0],edx
+                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].kind,EXPR_CONST
+                mov [esi].mem_type,MT_EMPTY
+                .if eax != 1
                     dec edx
+                .endif
+            .else
+                xor edx,edx
+                .if [esi].hvalue < [edi].hvalue
+                    dec edx
+                .elseif ZERO?
+                    cmp [esi].value,[edi].value
+                    .ifna
+                        dec edx
+                    .endif
                 .endif
             .endif
             mov [esi].value,edx
             mov [esi].hvalue,edx
             .endc
         .case T_GT
-            xor edx,edx
-            .if [esi].hvalue > [edi].hvalue
-                dec edx
-            .elseif ZERO?
-                cmp [esi].value,[edi].value
-                .ifa
+            .if [esi].kind == EXPR_FLOAT
+                __cmpq( esi, edi )
+                xor edx,edx
+                mov dword ptr [esi].hlvalue[0],edx
+                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].kind,EXPR_CONST
+                mov [esi].mem_type,MT_EMPTY
+                .if eax == 1
                     dec edx
+                .endif
+            .else
+                xor edx,edx
+                .if [esi].hvalue > [edi].hvalue
+                    dec edx
+                .elseif ZERO?
+                    cmp [esi].value,[edi].value
+                    .ifa
+                        dec edx
+                    .endif
                 .endif
             .endif
             mov [esi].value,edx
             mov [esi].hvalue,edx
             .endc
         .case T_GE
-            xor edx,edx
-            .if [esi].hvalue > [edi].hvalue
-                dec edx
-            .elseif ZERO?
-                cmp [esi].value,[edi].value
-                .ifnb
+            .if [esi].kind == EXPR_FLOAT
+                __cmpq( esi, edi )
+                xor edx,edx
+                mov dword ptr [esi].hlvalue[0],edx
+                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].kind,EXPR_CONST
+                mov [esi].mem_type,MT_EMPTY
+                .if eax != -1
                     dec edx
+                .endif
+            .else
+                xor edx,edx
+                .if [esi].hvalue > [edi].hvalue
+                    dec edx
+                .elseif ZERO?
+                    cmp [esi].value,[edi].value
+                    .ifnb
+                        dec edx
+                    .endif
                 .endif
             .endif
             mov [esi].value,edx
@@ -2368,6 +2447,37 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
                 mov [esi].hvalue,edx
             .endif
             .endc
+        .case T_SAR
+            .if [edi].value < 0
+                fnasmerr( 2092 )
+            .elseif [edi].value >= 8*8
+                mov [esi].value,0
+                mov [esi].hvalue,0
+            .else
+                mov ecx,[edi].value
+                mov eax,[esi].value
+                mov edx,[esi].hvalue
+                .if eax == -1 && ModuleInfo.Ofssize == USE32
+                    xor edx,edx
+                .endif
+                .if ecx > 63
+                    sar edx,31
+                    mov eax,edx
+                .elseif ecx < 32
+                    shrd eax,edx,cl
+                    sar edx,cl
+                .else
+                    mov eax,edx
+                    sar edx,31
+                    and cl,32-1
+                    sar eax,cl
+                .endif
+                mov [esi].value,eax
+                mov [esi].hvalue,edx
+            .endif
+            .endc
+
+        .case T_SAL
         .case T_SHL
             .if [edi].value < 0
                 fnasmerr( 2092 )
@@ -2843,6 +2953,8 @@ EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:tok_t, end_tok:int
         .case T_INSTRUCTION
             mov eax,[ebx].tokval
             .switch eax
+            .case T_SAL
+            .case T_SAR
             .case T_SHL
             .case T_SHR
                 mov [ebx].token,T_BINARY_OPERATOR

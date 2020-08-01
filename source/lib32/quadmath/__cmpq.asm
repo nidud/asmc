@@ -5,11 +5,7 @@
 ;
 ; cmpq() - Compare Quadruple float
 ;
-if 0
-include quadmath.inl
 
-_CMPQ __cmpq
-else
 include quadmath.inc
 include intrin.inc
 
@@ -70,5 +66,5 @@ __cmpq proc A:ptr, B:ptr
     .until 1
     ret
 __cmpq endp
-endif
+
     end

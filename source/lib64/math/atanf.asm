@@ -1,4 +1,4 @@
-; ATAN2.ASM--
+; ATANF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,20 +8,20 @@ include math.inc
 
     .code
 
-atan2 proc y:double, x:double
+    option win64:rsp nosave noauto
 
-  local a:real8
-  local b:real8
+atanf proc x:float
 
-    movsd   a,xmm0
-    movsd   b,xmm1
+  local a:float
+
+    movss   a,xmm0
     fld     a
-    fld     b
+    fld1
     fpatan
-    fstp    b
-    movsd   xmm0,b
+    fstp    a
+    movss   xmm0,a
     ret
 
-atan2 endp
+atanf endp
 
     end

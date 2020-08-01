@@ -12,16 +12,16 @@ _fpclass proc __cdecl x:REAL8
     mov eax,dword ptr x
     mov edx,dword ptr x[4]
     mov ecx,edx
-    shl edx,D_EXPBITS
+    shl edx,DBL_EXPBITS
     or  edx,eax
-    shr ecx,32 - D_EXPBITS - 1
+    shr ecx,32 - DBL_EXPBITS - 1
     mov eax,ecx
-    and ecx,D_EXPMASK
-    and eax,D_EXPMASK + 1
+    and ecx,DBL_EXPMASK
+    and eax,DBL_EXPMASK + 1
     ;;
     ;; With 0x7ff, it can only be infinity or NaN
     ;;
-    .if ecx == D_EXPMASK
+    .if ecx == DBL_EXPMASK
 
         .if !edx
 

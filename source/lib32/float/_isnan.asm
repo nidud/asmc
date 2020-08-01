@@ -12,12 +12,12 @@ _isnan proc d:REAL8
     mov eax,dword ptr d
     mov edx,dword ptr d[4]
     mov ecx,edx
-    shl edx,D_EXPBITS
+    shl edx,DBL_EXPBITS
     or  edx,eax
-    shr ecx,32 - D_EXPBITS - 1
-    and ecx,D_EXPMASK
+    shr ecx,32 - DBL_EXPBITS - 1
+    and ecx,DBL_EXPMASK
     xor eax,eax
-    .if ecx == D_EXPMASK && edx
+    .if ecx == DBL_EXPMASK && edx
         inc eax
     .endif
     ret

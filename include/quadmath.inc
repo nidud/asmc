@@ -59,6 +59,7 @@ __divq		proto __cdecl A:ptr, B:ptr
 __addq		proto __cdecl A:ptr, B:ptr
 __subq		proto __cdecl A:ptr, B:ptr
 __cmpq		proto __cdecl A:ptr, B:ptr
+__sqrtq		proto __cdecl A:ptr
 
 ; Convert HALF, float, double, long double, int, __int64, string
 

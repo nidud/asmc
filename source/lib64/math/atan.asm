@@ -1,4 +1,4 @@
-; ATAN2.ASM--
+; ATAN.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,20 +8,18 @@ include math.inc
 
     .code
 
-atan2 proc y:double, x:double
+atan proc x:double
 
   local a:real8
-  local b:real8
 
     movsd   a,xmm0
-    movsd   b,xmm1
     fld     a
-    fld     b
+    fld1
     fpatan
-    fstp    b
-    movsd   xmm0,b
+    fstp    a
+    movsd   xmm0,a
     ret
 
-atan2 endp
+atan endp
 
     end

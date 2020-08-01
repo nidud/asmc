@@ -10,10 +10,10 @@ include float.inc
 _finite proc __cdecl d:REAL8
 
     mov edx,dword ptr d[4]
-    shr edx,32 - D_EXPBITS - 1
-    and edx,D_EXPMASK
+    shr edx,32 - DBL_EXPBITS - 1
+    and edx,DBL_EXPMASK
     xor eax,eax
-    .if edx != D_EXPMASK
+    .if edx != DBL_EXPMASK
 	inc eax
     .endif
     ret

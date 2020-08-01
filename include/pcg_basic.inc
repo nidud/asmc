@@ -42,7 +42,10 @@ pcg_state_setseq_64 ends
 
 pcg32_random_t typedef pcg_state_setseq_64
 
-PCG32_INITIALIZER   equ <{ 0x853c49e6748fea9b, 0xda3e39cb94b95bdb }>
+PCG32_INITSTATE     equ 0x853c49e6748fea9b
+PCG32_INITSEQ       equ 0xda3e39cb94b95bdb
+
+PCG32_INITIALIZER   equ <{ PCG32_INITSTATE, PCG32_INITSEQ }>
 
 pcg32_srandom       proto initstate:uint64_t, initseq:uint64_t
 pcg32_srandom_r     proto rng:ptr pcg32_random_t, initstate:uint64_t, initseq:uint64_t
@@ -53,15 +56,22 @@ pcg32_boundedrand_r proto rng:ptr pcg32_random_t, _bound:uint32_t
 
 ifdef _WIN64
 
-PCG32_STATE = 0x853c49e6748fea9b
+RAND_STATE  = PCG32_INITSTATE
+RAND_SEQ    = PCG32_INITSEQ
+
+__pcg32_srandom macro initstate, initseq
+    RAND_STATE = initstate
+    RAND_SEQ   = initseq
+    exitm<>
+    endm
 
 __pcg32_random64 macro
 
   local r, t, x
 
-    PCG32_STATE = PCG32_STATE * 6364136223846793005 + 0xda3e39cb94b95bdb
+    RAND_STATE = RAND_STATE * 6364136223846793005 + RAND_SEQ
 
-    t = PCG32_STATE
+    t = RAND_STATE
     r = ( ( ( t sar 18 ) xor t ) sar 27 )
     x = t shr 59
     t = r shr x
@@ -88,6 +98,7 @@ __pcg32_boundedrand macro n
     while retval lt n
         retval = __pcg32_random64()
         endm
+
     exitm<(retval mod n)>
     endm
 

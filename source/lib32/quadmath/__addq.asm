@@ -241,15 +241,24 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
                     mov edx,edi
                     xor ebx,ebx
                     xor edi,edi
+                .elseif cl >= 32    ; if shift count >= 32
+                    .if eax         ; check low order qword for 1 bits
+                        inc reg     ; edi=1 if EDX:EAX non zero
+                    .endif
+                    mov eax,edx     ; shift right 32
+                    mov edx,ebx
+                    mov ebx,edi
+                    xor edi,edi
+                .else
+                    push eax            ; get the extra sticky bits
+                    push ebx
+                    xor  ebx,ebx
+                    shr  eax,15
+                    shrd ebx,eax,cl
+                    or   reg,ebx        ; save them
+                    pop  ebx
+                    pop  eax
                 .endif
-                push eax            ; get the extra sticky bits
-                push ebx
-                xor  ebx,ebx
-                shr  eax,15
-                shrd ebx,eax,cl
-                or   reg,ebx        ; save them
-                pop  ebx
-                pop  eax
                 shrd eax,edx,cl     ; align the fractions
                 shrd edx,ebx,cl
                 shrd ebx,edi,cl

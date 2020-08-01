@@ -91,10 +91,12 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     .endif
 
     mov size,SizeFromExpression(opnd)
-    mov eax,opnd
-    add eax,expr
-    .if SizeFromExpression(eax)
+    mov esi,opnd
+    .if SizeFromExpression( &[esi+expr] )
         .if eax < size
+            mov size,eax
+            ;; added v2.31.50
+        .elseif size == 0 && [esi].expr.mem_type == MT_EMPTY
             mov size,eax
         .endif
     .endif

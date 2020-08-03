@@ -2085,13 +2085,243 @@ cmp_types proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, trueval:int_t
 
 cmp_types endp
 
-    assume ebx:tok_t
     assume esi:expr_t
     assume edi:expr_t
+
+    ; MUL128
+
+    ; ecx:ebx:edx:eax = edx:eax * ecx:ebx
+
+_mulqw proc watcall a64_l:uint_t, a64_h:uint_t, b64_l:uint_t, b64_h:uint_t
+
+    .if !edx && !ecx
+
+        mul ebx
+        xor ebx,ebx
+
+        .return
+    .endif
+
+    push    ebp
+    push    esi
+    push    edi
+    push    eax
+    push    edx
+    push    edx
+    mul     ebx
+    mov     esi,edx
+    mov     edi,eax
+    pop     eax
+    mul     ecx
+    mov     ebp,edx
+    xchg    ebx,eax
+    pop     edx
+    mul     edx
+    add     esi,eax
+    adc     ebx,edx
+    adc     ebp,0
+    pop     eax
+    mul     ecx
+    add     esi,eax
+    adc     ebx,edx
+    adc     ebp,0
+    mov     ecx,ebp
+    mov     edx,esi
+    mov     eax,edi
+    pop     edi
+    pop     esi
+    pop     ebp
+    ret
+
+_mulqw endp
+
+_mulow proc uses esi edi ebx multiplier:expr_t, multiplicand:expr_t, highproduct:expr_t
+
+  local n[8]:dword ; 256-bit result
+
+    mov edi,multiplier
+    mov esi,multiplicand
+
+    _mulqw( [edi].l64_l, [edi].l64_h, [esi].l64_l, [esi].l64_h )
+
+    mov n[0x00],eax
+    mov n[0x04],edx
+    mov n[0x08],ebx
+    mov n[0x0C],ecx
+
+    _mulqw( [edi].h64_l, [edi].h64_h, [esi].h64_l, [esi].h64_h )
+
+    mov n[0x10],eax
+    mov n[0x14],edx
+    mov n[0x18],ebx
+    mov n[0x1C],ecx
+
+    _mulqw( [edi].l64_l, [edi].l64_h, [esi].h64_l, [esi].h64_h )
+
+    add n[0x08],eax
+    adc n[0x0C],edx
+    adc n[0x10],ebx
+    adc n[0x14],ecx
+    adc n[0x18],0
+    adc n[0x1C],0
+
+    _mulqw( [edi].h64_l, [edi].h64_h, [esi].l64_l, [esi].l64_h )
+
+    add n[0x08],eax
+    adc n[0x0C],edx
+    adc n[0x10],ebx
+    adc n[0x14],ecx
+    adc n[0x18],0
+    adc n[0x1C],0
+
+    mov [edi].l64_l,n[0x00]
+    mov [edi].l64_h,n[0x04]
+    mov [edi].h64_l,n[0x08]
+    mov [edi].h64_h,n[0x0C]
+    mov edi,highproduct
+    .if edi
+        mov [edi].l64_l,n[0x10]
+        mov [edi].l64_h,n[0x14]
+        mov [edi].h64_l,n[0x18]
+        mov [edi].h64_h,n[0x1C]
+    .endif
+    ret
+
+_mulow endp
+
+_divow proc uses esi edi ebx dividend:expr_t, divisor:expr_t, reminder:expr_t
+
+    mov     esi,dividend
+    mov     edi,reminder
+    mov     ecx,4
+    rep     movsd
+    xor     eax,eax
+    mov     edi,dividend
+    mov     ecx,4
+    rep     stosd
+    mov     esi,divisor
+    mov     edi,reminder
+    or      eax,[esi].l64_l
+    or      eax,[esi].l64_h
+    or      eax,[esi].h64_l
+    or      eax,[esi].h64_h
+    .ifz
+        mov ecx,4
+        rep stosd
+        .return
+    .endif
+
+    .if [esi].h64_h == [edi].h64_h
+        .if [esi].h64_l == [edi].h64_l
+            .if [esi].l64_h == [edi].l64_h
+                mov eax,[esi].l64_l
+                cmp eax,[edi].l64_l
+            .endif
+        .endif
+    .endif
+    .return .ifa ; if divisor > dividend : reminder = dividend, quotient = 0
+    .ifz         ; if divisor == dividend :
+        mov ecx,4
+        xor eax,eax         ; reminder = 0
+        rep stosd
+        mov edi,dividend    ; quotient = 1
+        inc byte ptr [edi]
+        .return
+    .endif
+
+    mov ecx,[esi].h64_h ; esi = divisor
+    mov ebx,[esi].h64_l ; - divisor used as bit-count
+    mov edx,[esi].l64_h
+    mov esi,[esi].l64_l
+    mov divisor,-1
+
+    .while 1
+
+        inc divisor
+
+        add esi,esi
+        adc edx,edx
+        adc ebx,ebx
+        adc ecx,ecx
+        .break .ifc
+
+        .break .if ecx > [edi].h64_h
+        .continue .ifb
+        .break .if ebx > [edi].h64_l
+        .continue .ifb
+        .break .if edx > [edi].l64_h
+        .continue .ifb
+        .break .if esi > [edi].l64_l
+    .endw
+
+    .while 1
+
+        rcr ecx,1
+        rcr ebx,1
+        rcr edx,1
+        rcr esi,1
+
+        mov edi,reminder
+        sub [edi].l64_l,esi
+        sbb [edi].l64_h,edx
+        sbb [edi].h64_l,ebx
+        sbb [edi].h64_h,ecx
+        cmc
+
+        .ifnc
+
+            .repeat
+
+                mov edi,dividend
+                add [edi].l64_l,[edi].l64_l
+                adc [edi].l64_h,[edi].l64_h
+                adc [edi].h64_l,[edi].h64_l
+                adc [edi].h64_h,[edi].h64_h
+
+                dec divisor
+                mov edi,reminder
+
+                .ifs
+
+                    add [edi].l64_l,esi
+                    adc [edi].l64_h,edx
+                    adc [edi].h64_l,ebx
+                    adc [edi].h64_h,ecx
+
+                    .break(1)
+                .endif
+
+                shr ecx,1
+                rcr ebx,1
+                rcr edx,1
+                rcr esi,1
+
+                add [edi].l64_l,esi
+                adc [edi].l64_h,edx
+                adc [edi].h64_l,ebx
+                adc [edi].h64_h,ecx
+            .untilb
+        .endif
+
+        mov edi,dividend
+        adc [edi].l64_l,[edi].l64_l
+        adc [edi].l64_h,[edi].l64_h
+        adc [edi].h64_l,[edi].h64_l
+        adc [edi].h64_h,[edi].h64_h
+
+        dec divisor
+        .break .ifs
+    .endw
+    ret
+
+_divow endp
+
+    assume ebx:tok_t
 
 calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
 
   local sym:asym_t
+  local opnd:expr
 
     mov esi,opnd1
     mov edi,opnd2
@@ -2265,7 +2495,13 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
         MakeConst( esi )
         MakeConst( edi )
         .if ( ( [esi].kind == EXPR_CONST && [edi].kind == EXPR_CONST ) || \
-              ( [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT ) )
+              ( [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT ) || \
+              ( [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_CONST ) )
+
+            ; const XX const
+            ; float XX const -- shr/shl/...
+            ; float XX float
+
         .elseif ( [ebx].precedence == 10 && [esi].kind != EXPR_CONST )
             .if ( [esi].kind == EXPR_ADDR && !( [esi].flags & E_INDIRECT ) && [esi].sym )
                 .if ( [edi].kind == EXPR_ADDR && !( [edi].flags & E_INDIRECT ) && [edi].sym )
@@ -2287,24 +2523,24 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
                 xor eax,eax
                 xor edx,edx
                 .if [esi].kind == EXPR_FLOAT
-                    add edx,dword ptr [esi].hlvalue[0]
-                    sub edx,dword ptr [edi].hlvalue[0]
-                    add edx,dword ptr [esi].hlvalue[4]
-                    sub edx,dword ptr [edi].hlvalue[4]
-                    mov dword ptr [esi].hlvalue[0],eax
-                    mov dword ptr [esi].hlvalue[4],eax
+                    add edx,[esi].h64_l
+                    sub edx,[edi].h64_l
+                    add edx,[esi].h64_h
+                    sub edx,[edi].h64_h
+                    mov [esi].h64_l,eax
+                    mov [esi].h64_h,eax
                     mov [esi].kind,EXPR_CONST
                     mov [esi].mem_type,MT_EMPTY
                 .endif
-                add edx,[esi].value
-                sub edx,[edi].value
-                add edx,[esi].hvalue
-                sub edx,[edi].hvalue
+                add edx,[esi].l64_l
+                sub edx,[edi].l64_l
+                add edx,[esi].l64_h
+                sub edx,[edi].l64_h
                 .ifz
                     dec eax
                 .endif
-                mov [esi].value,eax
-                mov [esi].hvalue,eax
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,eax
             .endif
             .endc
         .case T_NE
@@ -2314,32 +2550,32 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
                 xor eax,eax
                 xor edx,edx
                 .if [esi].kind == EXPR_FLOAT
-                    add edx,dword ptr [esi].hlvalue[0]
-                    sub edx,dword ptr [edi].hlvalue[0]
-                    add edx,dword ptr [esi].hlvalue[4]
-                    sub edx,dword ptr [edi].hlvalue[4]
-                    mov dword ptr [esi].hlvalue[0],eax
-                    mov dword ptr [esi].hlvalue[4],eax
+                    add edx,[esi].h64_l
+                    sub edx,[edi].h64_l
+                    add edx,[esi].h64_h
+                    sub edx,[edi].h64_h
+                    mov [esi].h64_l,eax
+                    mov [esi].h64_h,eax
                     mov [esi].kind,EXPR_CONST
                     mov [esi].mem_type,MT_EMPTY
                 .endif
-                add edx,[esi].value
-                sub edx,[edi].value
-                add edx,[esi].hvalue
-                sub edx,[edi].hvalue
+                add edx,[esi].l64_l
+                sub edx,[edi].l64_l
+                add edx,[esi].l64_h
+                sub edx,[edi].l64_h
                 .ifnz
                     dec eax
                 .endif
-                mov [esi].value,eax
-                mov [esi].hvalue,eax
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,eax
             .endif
             .endc
         .case T_LT
             .if [esi].kind == EXPR_FLOAT
                 __cmpq( esi, edi )
                 xor edx,edx
-                mov dword ptr [esi].hlvalue[0],edx
-                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].h64_l,edx
+                mov [esi].h64_h,edx
                 mov [esi].kind,EXPR_CONST
                 mov [esi].mem_type,MT_EMPTY
                 .if eax == -1
@@ -2363,8 +2599,8 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             .if [esi].kind == EXPR_FLOAT
                 __cmpq( esi, edi )
                 xor edx,edx
-                mov dword ptr [esi].hlvalue[0],edx
-                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].h64_l,edx
+                mov [esi].h64_h,edx
                 mov [esi].kind,EXPR_CONST
                 mov [esi].mem_type,MT_EMPTY
                 .if eax != 1
@@ -2388,11 +2624,12 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             .if [esi].kind == EXPR_FLOAT
                 __cmpq( esi, edi )
                 xor edx,edx
-                mov dword ptr [esi].hlvalue[0],edx
-                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].h64_l,edx
+                mov [esi].h64_h,edx
                 mov [esi].kind,EXPR_CONST
                 mov [esi].mem_type,MT_EMPTY
                 .if eax == 1
+
                     dec edx
                 .endif
             .else
@@ -2413,8 +2650,8 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             .if [esi].kind == EXPR_FLOAT
                 __cmpq( esi, edi )
                 xor edx,edx
-                mov dword ptr [esi].hlvalue[0],edx
-                mov dword ptr [esi].hlvalue[4],edx
+                mov [esi].h64_l,edx
+                mov [esi].h64_h,edx
                 mov [esi].kind,EXPR_CONST
                 mov [esi].mem_type,MT_EMPTY
                 .if eax != -1
@@ -2434,29 +2671,212 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             mov [esi].value,edx
             mov [esi].hvalue,edx
             .endc
+
         .case T_MOD
-            .if [edi].value == 0 && [edi].hvalue == 0
+            .if [edi].l64_l == 0 && [edi].l64_h == 0
                 .return( fnasmerr( 2169 ) )
+            .endif
+            .if [esi].kind == EXPR_FLOAT
+                _divow( esi, edi, &opnd )
+                mov eax,opnd.l64_l
+                mov edx,opnd.l64_h
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,edx
+                mov eax,opnd.h64_l
+                mov edx,opnd.h64_h
+                mov [esi].h64_l,eax
+                mov [esi].h64_h,edx
+                .endc
+            .endif
+            push [edi].l64_h
+            push [edi].l64_l
+            push [esi].l64_h
+            push [esi].l64_l
+            call _allrem
+            mov  [esi].l64_l,eax
+            mov  [esi].l64_h,edx
+            .endc
+
+        .case T_SAL
+        .case T_SHL
+            xor eax,eax
+            mov ecx,[edi].value
+            .repeat
+                .ifs ecx < 0
+                    fnasmerr( 2092 )
+                    .break
+                .endif
+                .if [esi].kind == EXPR_FLOAT
+                    .if ecx >= 128
+                        mov [esi].l64_l,eax
+                        mov [esi].l64_h,eax
+                        mov [esi].h64_l,eax
+                        mov [esi].h64_h,eax
+                        .break
+                    .endif
+                    push edi
+                    push ebx
+                    mov eax,[esi].l64_l
+                    mov edx,[esi].l64_h
+                    mov ebx,[esi].h64_l
+                    mov edi,[esi].h64_h
+                    .while ecx >= 32
+                        mov edi,ebx
+                        mov ebx,edx
+                        mov edx,eax
+                        xor eax,eax
+                        sub ecx,32
+                    .endw
+                    shld edi,ebx,cl
+                    shld ebx,edx,cl
+                    shld edx,eax,cl
+                    shl eax,cl
+                    mov [esi].l64_l,eax
+                    mov [esi].l64_h,edx
+                    mov [esi].h64_l,ebx
+                    mov [esi].h64_h,edi
+                    pop ebx
+                    pop edi
+                .else
+                    .if ecx >= 64
+                        mov [esi].value,eax
+                        mov [esi].hvalue,eax
+                        .break
+                    .endif
+                    mov eax,[esi].value
+                    mov edx,[esi].hvalue
+                    .if cl < 32
+                        shld edx,eax,cl
+                        shl eax,cl
+                    .else
+                        and ecx,31
+                        mov edx,eax
+                        xor eax,eax
+                        shl edx,cl
+                    .endif
+                    mov [esi].value,eax
+                    mov [esi].hvalue,edx
+                .endif
+            .until 1
+            .if ModuleInfo.m510
+                xor eax,eax
+                mov [esi].hvalue,eax
+                mov [esi].h64_l,eax
+                mov [esi].h64_h,eax
+            .endif
+            .endc
+
+        .case T_SHR
+            .if [edi].value < 0
+                fnasmerr( 2092 )
+                .endc
+            .endif
+            .if [esi].kind == EXPR_FLOAT
+                push edi
+                push ebx
+                mov ecx,[edi].l64_l
+                mov eax,[esi].l64_l
+                mov edx,[esi].l64_h
+                mov ebx,[esi].h64_l
+                mov edi,[esi].h64_h
+                .if ecx >= 128
+                    xor edi,edi
+                    xor ebx,ebx
+                    xor edx,edx
+                    xor eax,eax
+                .else
+                    .while ecx > 32
+                        mov eax,edx
+                        mov edx,ebx
+                        mov ebx,edi
+                        xor edi,edi
+                        sub ecx,32
+                    .endw
+                    shrd eax,edx,cl
+                    shrd edx,ebx,cl
+                    shrd ebx,edi,cl
+                    shr edi,cl
+                .endif
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,edx
+                mov [esi].h64_l,ebx
+                mov [esi].h64_h,edi
+                pop ebx
+                pop edi
             .else
-                push [edi].hvalue
-                push [edi].value
-                push [esi].hvalue
-                push [esi].value
-                call _allrem
-                mov [esi].value,eax
-                mov [esi].hvalue,edx
+                .if [edi].value >= 8*8
+                    mov [esi].value,0
+                    mov [esi].hvalue,0
+                .else
+                    mov ecx,[edi].value
+                    mov eax,[esi].value
+                    mov edx,[esi].hvalue
+                    .if eax == -1 && ModuleInfo.Ofssize == USE32
+                        xor edx,edx
+                    .endif
+                    .if ecx > 63
+                        xor eax,eax
+                        xor edx,edx
+                    .elseif ecx < 32
+                        shrd eax,edx,cl
+                        shr edx,cl
+                    .else
+                        mov eax,edx
+                        xor edx,edx
+                        and cl,32-1
+                        shr eax,cl
+                    .endif
+                    mov [esi].value,eax
+                    mov [esi].hvalue,edx
+                .endif
             .endif
             .endc
         .case T_SAR
             .if [edi].value < 0
                 fnasmerr( 2092 )
-            .elseif [edi].value >= 8*8
-                mov [esi].value,0
-                mov [esi].hvalue,0
+                .endc
+            .endif
+            .if [esi].kind == EXPR_FLOAT
+                push edi
+                push ebx
+                mov ecx,[edi].l64_l
+                mov eax,[esi].l64_l
+                mov edx,[esi].l64_h
+                mov ebx,[esi].h64_l
+                mov edi,[esi].h64_h
+                .if ecx >= 128
+                    sar edi,31
+                    mov ebx,edi
+                    mov edx,edi
+                    mov eax,edi
+                .else
+                    .while ecx > 32
+                        mov eax,edx
+                        mov edx,ebx
+                        mov ebx,edi
+                        sar edi,31
+                        sub ecx,32
+                    .endw
+                    shrd eax,edx,cl
+                    shrd edx,ebx,cl
+                    shrd ebx,edi,cl
+                    sar edi,cl
+                .endif
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,edx
+                mov [esi].h64_l,ebx
+                mov [esi].h64_h,edi
+                pop ebx
+                pop edi
             .else
-                mov ecx,[edi].value
-                mov eax,[esi].value
-                mov edx,[esi].hvalue
+                .if [edi].value >= 64
+                    mov [esi].l64_l,0
+                    mov [esi].l64_h,0
+                    .endc
+                .endif
+                mov ecx,[edi].l64_l
+                mov eax,[esi].l64_l
+                mov edx,[esi].l64_h
                 .if eax == -1 && ModuleInfo.Ofssize == USE32
                     xor edx,edx
                 .endif
@@ -2472,92 +2892,80 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
                     and cl,32-1
                     sar eax,cl
                 .endif
-                mov [esi].value,eax
-                mov [esi].hvalue,edx
+                mov [esi].l64_l,eax
+                mov [esi].l64_h,edx
             .endif
             .endc
 
-        .case T_SAL
-        .case T_SHL
-            .if [edi].value < 0
-                fnasmerr( 2092 )
-            .elseif [edi].value >= 8*8
-                mov [esi].value,0
-                mov [esi].hvalue,0
-            .else
-                mov ecx,[edi].value
-                mov eax,[esi].value
-                mov edx,[esi].hvalue
-                .if cl < 32
-                    shld edx,eax,cl
-                    shl eax,cl
-                .else
-                    and ecx,31
-                    mov edx,eax
-                    xor eax,eax
-                    shl edx,cl
-                .endif
-                mov [esi].value,eax
-                mov [esi].hvalue,edx
+        .case T_ADD
+            .if [esi].kind != EXPR_FLOAT
+                fnasmerr( 2187 )
             .endif
-            .if ModuleInfo.m510
-                mov [esi].hvalue,0
-                mov dword ptr [esi].hlvalue,0
-                mov dword ptr [esi].hlvalue[4],0
-            .endif
+            add [esi].l64_l,[edi].l64_l
+            adc [esi].l64_h,[edi].l64_h
+            adc [esi].h64_l,[edi].h64_l
+            adc [esi].h64_h,[edi].h64_h
             .endc
-        .case T_SHR
-            .if [edi].value < 0
-                fnasmerr( 2092 )
-            .elseif [edi].value >= 8*8
-                mov [esi].value,0
-                mov [esi].hvalue,0
-            .else
-                mov ecx,[edi].value
-                mov eax,[esi].value
-                mov edx,[esi].hvalue
-                .if eax == -1 && ModuleInfo.Ofssize == USE32
-                    xor edx,edx
-                .endif
-                .if ecx > 63
-                    xor eax,eax
-                    xor edx,edx
-                .elseif ecx < 32
-                    shrd eax,edx,cl
-                    shr edx,cl
-                .else
-                    mov eax,edx
-                    xor edx,edx
-                    and cl,32-1
-                    shr eax,cl
-                .endif
-                mov [esi].value,eax
-                mov [esi].hvalue,edx
+        .case T_SUB
+            .if [esi].kind != EXPR_FLOAT
+                fnasmerr( 2187 )
             .endif
+            sub [esi].h64_h,[edi].h64_h
+            sbb [esi].h64_l,[edi].h64_l
+            sbb [esi].l64_h,[edi].l64_h
+            sbb [esi].l64_l,[edi].l64_l
+            .endc
+        .case T_MUL
+            .if [esi].kind != EXPR_FLOAT
+                fnasmerr( 2187 )
+            .endif
+            _mulow( esi, edi, NULL )
+            .endc
+        .case T_DIV
+            .if [esi].kind != EXPR_FLOAT
+                fnasmerr( 2187 )
+            .endif
+            _divow( esi, edi, &opnd )
             .endc
         .case T_AND
-            and [esi].value,[edi].value
-            and [esi].hvalue,[edi].hvalue
+            .if [esi].kind == EXPR_FLOAT
+                and [esi].h64_l,[edi].h64_l
+                and [esi].h64_h,[edi].h64_h
+            .endif
+            and [esi].l64_l,[edi].l64_l
+            and [esi].l64_h,[edi].l64_h
             .endc
         .case T_OR
-            or [esi].value,[edi].value
-            or [esi].hvalue,[edi].hvalue
+            .if [esi].kind == EXPR_FLOAT
+                or [esi].h64_l,[edi].h64_l
+                or [esi].h64_h,[edi].h64_h
+            .endif
+            or [esi].l64_l,[edi].l64_l
+            or [esi].l64_h,[edi].l64_h
             .endc
         .case T_XOR
-            xor [esi].value,[edi].value
-            xor [esi].hvalue,[edi].hvalue
+            .if [esi].kind == EXPR_FLOAT
+                xor [esi].h64_l,[edi].h64_l
+                xor [esi].h64_h,[edi].h64_h
+            .endif
+            xor [esi].l64_l,[edi].l64_l
+            xor [esi].l64_h,[edi].l64_h
             .endc
         .endsw
         .endc
     .case T_UNARY_OPERATOR
         .if [ebx].tokval == T_NOT
             MakeConst(edi)
-            .if [edi].kind != EXPR_CONST
+            .if [edi].kind != EXPR_CONST && [edi].kind != EXPR_FLOAT
                 .return fnasmerr(2026)
             .endif
             TokenAssign(esi, edi)
-            not [esi].value
-            not [esi].hvalue
+            not [esi].l64_l
+            not [esi].l64_h
+            .if [esi].kind == EXPR_FLOAT
+                not [esi].h64_l
+                not [esi].h64_h
+            .endif
             .endc
         .endif
         imul eax,[ebx].tokval,special_item
@@ -2835,7 +3243,7 @@ endif
             add ebx,tokenarray
             mov eax,exp_token
 
-            .if ( !( [ebx].token == al ) )
+            .if ( al != [ebx].token )
 
                 .if ( rc != ERROR )
                     fnasmerr( 2157 )
@@ -2953,6 +3361,16 @@ EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:tok_t, end_tok:int
         .case T_INSTRUCTION
             mov eax,[ebx].tokval
             .switch eax
+            .case T_MUL
+            .case T_DIV
+                mov [ebx].token,T_BINARY_OPERATOR
+                mov [ebx].precedence,8
+                .continue
+            .case T_SUB
+            .case T_ADD
+                mov [ebx].token,T_BINARY_OPERATOR
+                mov [ebx].precedence,7
+                .continue
             .case T_SAL
             .case T_SAR
             .case T_SHL

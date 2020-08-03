@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2020
+- added binary operators ADD, SUB, MUL, DIV for 128-bit
+- added 128-bit for MOD, NOT, SAL, SHL, SAR, SHR, AND, OR, XOR
 - added floats as binary operators for GT,LT,EQ,NE,LE,GE
 - added SAL and SAR as binary operators
 - added switch /arch:AVX[2|512]

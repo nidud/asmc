@@ -58,8 +58,20 @@ union		; value of expression
   hvalue	int_t ?
  ends
  struct
-  llvalue	uint64_t ?
-  hlvalue	uint64_t ?
+  union
+   llvalue	uint64_t ?
+   struct
+    l64_l	uint_t ?
+    l64_h	uint_t ?
+   ends
+  ends
+  union
+   hlvalue	uint64_t ?
+   struct
+    h64_l	uint_t ?
+    h64_h	uint_t ?
+   ends
+  ends
  ends
  uvalue		uint_t ?
  value64	int64_t ?

@@ -498,7 +498,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         mov edx,[edi].expr.sym
         mov esi,T_MOV
         mov ebx,T_OFFSET
-        .if [edi].expr.kind == T_REG || [edx].asym.state == SYM_STACK
+        .if [edi].expr.kind == EXPR_REG || [edx].asym.state == SYM_STACK
             mov esi,T_LEA
             mov ebx,T_NULL
         .endif
@@ -552,7 +552,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     AddLineQueueX( "mov %s, %s", ecx, eax )
                 .endif
 
-            .elseif [edi].expr.kind == EXPR_REG
+            .elseif [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
 
                 mov edx,[edi].expr.base_reg
                 mov edi,[edx].asm_tok.tokval

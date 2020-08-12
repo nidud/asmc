@@ -67,7 +67,7 @@ end
 # Win64 console application
 system begin con_64
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32
     symt    cstart
     format  windows pe ^
@@ -77,7 +77,7 @@ end
 # using msvcrt
 system begin dcon_64
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library msvcrt,kernel32,user32
     format  windows pe ^
     runtime console=4.0
@@ -85,7 +85,7 @@ end
 
 system begin tcon_64
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32
     symt    TWinStart
     format  windows pe ^
@@ -95,7 +95,7 @@ end
 # Win64 console Unicode application
 system begin con_64W
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32
     symt    wcstart
     format  windows pe ^
@@ -125,7 +125,7 @@ end
 # Win64 gui application
 system begin gui_64
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32,gdi32
     symt    WinStart
     format  windows pe ru win ^
@@ -135,7 +135,7 @@ end
 # Win64 gui Unicode application
 system begin gui_64W
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32,gdi32
     symt    wWinStart
     format  windows pe ru win ^
@@ -150,7 +150,7 @@ system begin dll_32
 end
 
 system begin dll_64
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     format windows pe dll ^
     runtime windows=4.0
 end

@@ -1,6 +1,6 @@
 
 UUID32 = ..\..\lib\uuid.lib
-UUID64 = ..\..\lib\amd64\uuid.lib
+UUID64 = ..\..\lib\x64\uuid.lib
 
 all: list.exe $(UUID32) $(UUID64) clean
 

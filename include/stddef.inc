@@ -20,8 +20,8 @@ externdef	errno:errno_t
 endif
 endif
 
-offsetof macro s,m
-    exitm<s.m>
+offsetof macro s, m
+    exitm<s.&m&>
     endm
 
 __threadid	proto __cdecl

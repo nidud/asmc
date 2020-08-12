@@ -1241,7 +1241,7 @@ UIntPtrToLongPtr proto __fastcall :UINT_PTR, :ptr LONG_PTR {
 ifdef _WIN64
 UIntPtrToULong equ <ULongLongToULong>
 else
-UIntPtrToULong proto __fastcall :UINT_PTR, :ptr ULONG
+UIntPtrToULong proto __fastcall :UINT_PTR, :ptr ULONG {
     mov [_1],this
     mov eax,S_OK
     }

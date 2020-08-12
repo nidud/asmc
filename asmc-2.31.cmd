@@ -20,22 +20,23 @@ if not exist %~dp0lib\libc.lib (
     choice /c YN /M "32-bit Runtime Library Missing: Build it now"
     if not errorlevel 2 call :BuildCRT32
 )
-if not exist %~dp0lib\amd64\user32.lib (
+if not exist %~dp0lib\x64\user32.lib (
     choice /c YN /M "64-bit Import Libraries Missing: Build them now"
     if not errorlevel 2 call :ImportLibraries64
 )
-if not exist %~dp0lib\amd64\libc.lib (
+if not exist %~dp0lib\x64\libc.lib (
     choice /c YN /M "64-bit Runtime Library Missing: Build it now"
     if not errorlevel 2 call :BuildCRT64
 )
-if not exist %~dp0lib\amd64\uuid.lib echo Missing: lib\amd64\uuid.lib
-if not exist %~dp0lib\amd64\quadmath.lib echo Missing: lib\amd64\quadmath.lib
-if not exist %~dp0lib\amd64\directxmath.lib echo Missing: lib\amd64\directxmath.lib
 
 echo.
+if exist %AsmcDir%\bin\dz.ini (
+dz -nologo
+) else (
 echo Esc toggles panels
 echo.
 dz -cmd -nologo
+)
 goto end
 
 :BuildCRT32

@@ -22,7 +22,7 @@ include process.inc
 include ltype.inc
 include winbase.inc
 
-__MAKE__        equ 107
+__MAKE__        equ 108
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -1485,7 +1485,6 @@ print_copyright endp
 
 install proc uses esi edi ebx
 
-  local fp:LPFILE
   local base[_MAX_PATH]:char_t
   local path[_MAX_PATH]:char_t
 
@@ -1499,9 +1498,8 @@ install proc uses esi edi ebx
         "@echo off\n"
         "set AsmcDir=%s\n"
         "set PATH=%s\\bin;%%PATH%%\n"
-        "set LIB=%s\\lib;%%LIB%%\n"
-        "set INCLUDE=%s\\include;%%INCLUDE%%\n",
-        esi, esi, esi, esi)
+        "set INCLUDE=%s\\include;%%INCLUDE%%\n", esi, esi, esi)
+    fprintf(ebx, "set LIB=%s\\lib;%%LIB%%\n", esi)
     fclose(ebx)
     .return .if !fopen(strfcat(edi, esi, "bin\\envars64.bat"), "wt")
     mov ebx,eax
@@ -1509,9 +1507,8 @@ install proc uses esi edi ebx
         "@echo off\n"
         "set AsmcDir=%s\n"
         "set PATH=%s\\bin;%%PATH%%\n"
-        "set LIB=%s\\lib\\amd64;%%LIB%%\n"
-        "set INCLUDE=%s\\include;%%INCLUDE%%\n",
-        esi, esi, esi, esi)
+        "set INCLUDE=%s\\include;%%INCLUDE%%\n", esi, esi, esi)
+    fprintf(ebx, "set LIB=%s\\lib\\x64;%%LIB%%\n", esi)
     fclose(ebx)
     ret
 

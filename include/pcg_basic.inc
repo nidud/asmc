@@ -69,14 +69,14 @@ __pcg32_random64 macro
 
   local r, t, x
 
-    RAND_STATE = RAND_STATE * 6364136223846793005 + RAND_SEQ
-
     t = RAND_STATE
     r = ( ( ( t sar 18 ) xor t ) sar 27 )
     x = t shr 59
     t = r shr x
-    r = r shl ( -x and 31 )
+    r = r shl ( ( 0 - x ) and 63 )
     r = r or t
+
+    RAND_STATE = RAND_STATE * 6364136223846793005 + RAND_SEQ
 
     exitm<r>
     endm
@@ -87,6 +87,36 @@ __pcg32_random macro
 
     retval = __pcg32_random64() and 0xFFFFFFFF
 
+    exitm<retval>
+    endm
+
+__pcg32_randomf macro
+
+  local retval, rand
+
+%   rand textequ <@CatStr(%(__pcg32_random()), <.0>)>
+    ifidn <rand>,<.0>
+        retval = 0.0
+    elseifidn <rand>,<-.0>
+        retval = -0.0
+    else
+        retval = rand
+    endif
+    exitm<retval>
+    endm
+
+__pcg32_randomf64 macro
+
+  local retval, rand
+
+%   rand textequ <@CatStr(%(__pcg32_random64()), <.0>)>
+%   ifidn <rand>,<.0>
+        retval = 0.0
+%   elseifidn <rand>,<-.0>
+        retval = -0.0
+    else
+        retval = rand
+    endif
     exitm<retval>
     endm
 

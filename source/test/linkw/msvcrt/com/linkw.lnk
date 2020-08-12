@@ -1,7 +1,7 @@
 # Win64 gui application using msvcrt
 system begin dgui_64
     option  quiet
-    libpath %ASMCDIR%\lib\amd64
+    libpath %ASMCDIR%\lib\x64
     library msvcrt,kernel32,user32,gdi32,uuid,ole32,oleaut32
     format  windows pe ru win ^
     runtime windows=4.0

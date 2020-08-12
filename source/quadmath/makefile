@@ -1,6 +1,6 @@
 flags = -nologo -nolib
 win32 = ../../lib/quadmath.lib
-win64 = ../../lib/amd64/quadmath.lib
+win64 = ../../lib/x64/quadmath.lib
 elf32 = ../../lib/elf/quadmath.lib
 
 all: $(win32) $(win64) $(elf32)

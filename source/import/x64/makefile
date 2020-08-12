@@ -1,5 +1,5 @@
 
-target_path = ..\..\..\lib\amd64
+target_path = ..\..\..\lib\x64
 
 import.exe: $(target_path)
     asmc -q -win64 -pe $*.asm

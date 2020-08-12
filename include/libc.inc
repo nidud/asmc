@@ -172,8 +172,22 @@ uint64_t	typedef qword
 string_t	typedef ptr sbyte
 ustring_t	typedef ptr byte
 wstring_t	typedef ptr word
+
+ifdef DEBUG
+.template array_type
+    base string_t ?
+    argv string_t 7 dup(?)
+.ends
+.template warray_type
+    base	wstring_t ?
+    argv	wstring_t 7 dup(?)
+.ends
+array_t		typedef ptr array_type
+warray_t	typedef ptr warray_type
+else
 array_t		typedef ptr ptr sbyte
 warray_t	typedef ptr ptr word
+endif
 
 SINT		typedef sdword
 UINT		typedef dword

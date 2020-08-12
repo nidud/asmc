@@ -2,7 +2,7 @@
 
 AFLAGS = -Zi -Zp8 -D_CRTBLD -Cs -I$(inc_dir)
 
-target_path = $(lib_dir)\amd64
+target_path = $(lib_dir)\x64
 
 $(target_path)\libc.lib: $(target_path)
     asmc64 $(AFLAGS) /r $(src_dir)\lib64\*.asm

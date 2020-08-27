@@ -1,6 +1,7 @@
 
-; set the local path and guidgen.exe to create the two GUIDs below.
+; set the local path and use guidgen.exe to create the two GUIDs below.
 ; then remove this..
+
 ;.err <GUIDs not created -- see locals.inc>
 
 dll_path    equ <"D:\\Asmc\\source\\test\\comdll\\IConfig.dll">

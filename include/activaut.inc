@@ -168,52 +168,15 @@ endif
 
 endif  ;; __ActivAut_h
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR	; DWORD
+BSTR_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
+BSTR_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
+BSTR_UserFree		proto WINAPI :ptr DWORD, :ptr BSTR		; void
 
-;LPSTR
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
+BSTR_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR	; DWORD
+BSTR_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
+BSTR_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR	; LPSTR
+BSTR_UserFree64		proto WINAPI :ptr DWORD, :ptr BSTR		; void
 
 .pragma list(pop)
 endif

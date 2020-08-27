@@ -227,7 +227,7 @@ get_token_size endp
     assume ebx:tok_t
 
 get_param_name proc uses esi edi ebx tokenarray:tok_t, token:string_t,
-        size:string_t, count:ptr, isid:ptr, context:ptr
+        size:string_t, count:array_t, isid:ptr int_t, context:array_t
 
     mov edi,token
     mov ebx,tokenarray
@@ -1149,6 +1149,7 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
         mov edi,esi
         AddLineQueue(esi)
     .endif
+
     .if edi == 0
         AddLineQueue( "exitm<>" )
     .else

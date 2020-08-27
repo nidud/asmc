@@ -1,36 +1,46 @@
-
-include iconfig.inc
+include twindow.inc
 
     .code
 
-    assume rcx:ptr IConfig
-    assume rbx:ptr IConfig
+    assume rcx:window_t
 
-main proc
+cmain proc hwnd:window_t
 
-    mov rbx,IConfig()
+ local x, y
 
-    [rbx].Create( "Version" )
-    [rcx].Create( "Base=%d.%d", 1, 0 )
-    [rbx].Create( "Product" )
-    [rcx].Create( "Source=AsmcOOP" )
-    [rbx].Create( "URL" )
-    [rcx].Create( "UpdateURL=http://masm32.com/board/index.php?topic=7000.0" )
-    [rbx].Find  ( "Version" )
+    movzx eax,[rcx].rc.col
+    mov x,eax
+    movzx eax,[rcx].rc.row
+    mov y,eax
 
-    [rcx].Create( "Package=%d.%d", 1, 1 )
-    [rbx].Write ( "test.ini" )
-    [rbx].Release()
+    [rcx].CursorGet()
+    [rcx].SetMaxConsole()
+    [rcx].MessageBox(MB_OK, "1", "SetMaxConsole()" )
 
-    mov rbx,IConfig()
+    [rcx].MoveConsole(100, 100)
 
-    [rbx].Read  ( "test.ini" )
-    [rbx].Write ( "test.ini" )
-    [rbx].Release()
+    mov edx,x
+    mov r8d,y
+    sub edx,20
+    sub r8d,10
+    [rcx].SetConsole(edx, r8d)
 
-    xor eax,eax
+    [rcx].Hide()
+    [rcx].Clear(0x00F00020)
+    [rcx].PutString(10, 2, 0, 0, "tconsole::putxyf()\ntconsole::putxya()")
+    [rcx].PutChar(10, 2, 18, 0xF000)
+    [rcx].Show()
+    [rcx].CursorOff()
+    [rcx].MessageBox(MB_OK, "2", "MoveConsole(100, 100)" )
+
+    [rcx].Hide()
+    [rcx].Clear(0x00070020)
+    [rcx].Show()
+    [rcx].CursorSet()
+    [rcx].SetConsole(x, y)
+    [rcx].Release()
     ret
 
-main endp
+cmain endp
 
     end

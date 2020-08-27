@@ -30,23 +30,18 @@ __DWebBrowserEvents2_FWD_DEFINED__ equ 1
 endif
 ifndef __WebBrowser_V1_FWD_DEFINED__
 __WebBrowser_V1_FWD_DEFINED__ equ 1
-WebBrowser_V1		typedef WebBrowser_V1
 endif
 ifndef __WebBrowser_FWD_DEFINED__
 __WebBrowser_FWD_DEFINED__ equ 1
-WebBrowser		typedef WebBrowser
 endif
 ifndef __InternetExplorer_FWD_DEFINED__
 __InternetExplorer_FWD_DEFINED__ equ 1
-InternetExplorer	typedef InternetExplorer
 endif
 ifndef __InternetExplorerMedium_FWD_DEFINED__
 __InternetExplorerMedium_FWD_DEFINED__ equ 1
-InternetExplorerMedium	typedef InternetExplorerMedium
 endif
 ifndef __ShellBrowserWindow_FWD_DEFINED__
 __ShellBrowserWindow_FWD_DEFINED__ equ 1
-ShellBrowserWindow	typedef ShellBrowserWindow
 endif
 ifndef __DShellWindowsEvents_FWD_DEFINED__
 __DShellWindowsEvents_FWD_DEFINED__ equ 1
@@ -56,7 +51,6 @@ __IShellWindows_FWD_DEFINED__ equ 1
 endif
 ifndef __ShellWindows_FWD_DEFINED__
 __ShellWindows_FWD_DEFINED__ equ 1
-ShellWindows		typedef ShellWindows
 endif
 ifndef __IShellUIHelper_FWD_DEFINED__
 __IShellUIHelper_FWD_DEFINED__ equ 1
@@ -69,7 +63,6 @@ __IShellUIHelper3_FWD_DEFINED__ equ 1
 endif
 ifndef __ShellUIHelper_FWD_DEFINED__
 __ShellUIHelper_FWD_DEFINED__ equ 1
-ShellUIHelper		typedef ShellUIHelper
 endif
 ifndef __DShellNameSpaceEvents_FWD_DEFINED__
 __DShellNameSpaceEvents_FWD_DEFINED__ equ 1
@@ -82,14 +75,12 @@ __IShellNameSpace_FWD_DEFINED__ equ 1
 endif
 ifndef __ShellNameSpace_FWD_DEFINED__
 __ShellNameSpace_FWD_DEFINED__ equ 1
-ShellNameSpace		typedef ShellNameSpace
 endif
 ifndef __IScriptErrorList_FWD_DEFINED__
 __IScriptErrorList_FWD_DEFINED__ equ 1
 endif
 ifndef __CScriptErrorList_FWD_DEFINED__
 __CScriptErrorList_FWD_DEFINED__ equ 1
-CScriptErrorList	typedef CScriptErrorList
 endif
 
 include ocidl.inc

@@ -1,0 +1,71 @@
+ifndef __BTHSDPDEF_H__
+__BTHSDPDEF_H__ equ <>
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if (NTDDI_VERSION GE NTDDI_WINXPSP2)
+
+SDP_LARGE_INTEGER_16 STRUC
+LowPart             ULONGLONG ?
+HighPart            LONGLONG ?
+SDP_LARGE_INTEGER_16 ENDS
+PSDP_LARGE_INTEGER_16   typedef ptr SDP_LARGE_INTEGER_16
+LPSDP_LARGE_INTEGER_16  typedef ptr SDP_LARGE_INTEGER_16
+
+SDP_ULARGE_INTEGER_16 STRUC
+LowPart             ULONGLONG ?
+HighPart            ULONGLONG ?
+SDP_ULARGE_INTEGER_16 ENDS
+PSDP_ULARGE_INTEGER_16  typedef ptr SDP_ULARGE_INTEGER_16
+LPSDP_ULARGE_INTEGER_16 typedef ptr SDP_ULARGE_INTEGER_16
+
+.enum NodeContainerType {
+    NodeContainerTypeSequence,
+    NodeContainerTypeAlternative
+    }
+
+SDP_ERROR   typedef USHORT
+PSDP_ERROR  typedef ptr USHORT
+
+.enum SDP_TYPE {
+    SDP_TYPE_NIL =  0x00,
+    SDP_TYPE_UINT = 0x01,
+    SDP_TYPE_INT = 0x02,
+    SDP_TYPE_UUID = 0x03,
+    SDP_TYPE_STRING = 0x04,
+    SDP_TYPE_BOOLEAN = 0x05,
+    SDP_TYPE_SEQUENCE = 0x06,
+    SDP_TYPE_ALTERNATIVE = 0x07,
+    SDP_TYPE_URL = 0x08,
+    SDP_TYPE_CONTAINER = 0x20
+    }
+
+.enum SDP_SPECIFICTYPE {
+    SDP_ST_NONE = 0x0000,
+
+    SDP_ST_UINT8 = 0x0010,
+    SDP_ST_UINT16 = 0x0110,
+    SDP_ST_UINT32 = 0x0210,
+    SDP_ST_UINT64 = 0x0310,
+    SDP_ST_UINT128 = 0x0410,
+
+    SDP_ST_INT8 = 0x0020,
+    SDP_ST_INT16 = 0x0120,
+    SDP_ST_INT32 = 0x0220,
+    SDP_ST_INT64 = 0x0320,
+    SDP_ST_INT128 = 0x0420,
+
+    SDP_ST_UUID16 = 0x0130,
+    SDP_ST_UUID32 = 0x0220,
+    SDP_ST_UUID128 = 0x0430
+    }
+
+SdpAttributeRange   STRUC
+minAttribute        USHORT ?
+maxAttribute        USHORT ?
+SdpAttributeRange   ENDS
+
+endif
+endif
+endif

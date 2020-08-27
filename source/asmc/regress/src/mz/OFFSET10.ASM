@@ -15,7 +15,7 @@ _start:
 ;--- because the byte is sign-extended, and the assembler can't know if the least-
 ;--- significant byte of the offset will be < 80h or not.
 
-	push low _start			;should push a dword with 8-bit fixup
+	push .low _start		;should push a dword with 8-bit fixup
 	push lowword _start		;should push a dword with 16-bit fixup
 	push low32 _start		;should push a dword with 32-bit fixup
 

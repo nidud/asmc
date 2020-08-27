@@ -30,8 +30,8 @@ GDK_ATOM_TO_POINTER macro atom
 	exitm<(atom)>
 	endm
 
-GDK_POINTER_TO_ATOM macro ptr
-	exitm<((GdkAtom)(ptr))>
+GDK_POINTER_TO_ATOM macro p
+	exitm<p>
 	endm
 
 _GDK_MAKE_ATOM macro val

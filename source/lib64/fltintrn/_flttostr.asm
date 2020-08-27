@@ -172,7 +172,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                     mov flt.exponent,eax
 
                     _fltscale(&flt)
-
                 .endif
             .endif
         .endif
@@ -342,7 +341,9 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
     mov i,0
     mov eax,[rbx].flags
-    .ifs eax & _ST_F || ( eax & _ST_G && ( ( ecx >= -4 && ecx < [rbx].ndigits ) || eax & _ST_CVT ) )
+
+    .ifs ( ecx < maxsize && ( eax & _ST_F || \
+         ( eax & _ST_G && ( ( ecx >= -4 && ecx < [rbx].ndigits ) || eax & _ST_CVT ) ) ) )
 
         mov rdi,r9
         inc ecx

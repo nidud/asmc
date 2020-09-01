@@ -44,18 +44,18 @@ _c_exit proto __cdecl
 ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 _getpid     proto __cdecl
 _cwait      proto __cdecl :ptr int_t, :intptr_t, :int_t
-_execl      proto __cdecl :string_t, :string_t, :vararg
-_execle     proto __cdecl :string_t, :string_t, :vararg
-_execlp     proto __cdecl :string_t, :string_t, :vararg
-_execlpe    proto __cdecl :string_t, :string_t, :vararg
+_execl      proto _CDecl :string_t, :string_t, :vararg
+_execle     proto _CDecl :string_t, :string_t, :vararg
+_execlp     proto _CDecl :string_t, :string_t, :vararg
+_execlpe    proto _CDecl :string_t, :string_t, :vararg
 _execv      proto __cdecl :string_t, :ptr string_t
 _execve     proto __cdecl :string_t, :ptr string_t, :ptr string_t
 _execvp     proto __cdecl :string_t, :ptr string_t
 _execvpe    proto __cdecl :string_t, :ptr string_t, :ptr string_t
-_spawnl     proto __cdecl :int_t, :string_t, :string_t, :vararg
-_spawnle    proto __cdecl :int_t, :string_t, :string_t, :vararg
-_spawnlp    proto __cdecl :int_t, :string_t, :string_t, :vararg
-_spawnlpe   proto __cdecl :int_t, :string_t, :string_t, :vararg
+_spawnl     proto _CDecl :int_t, :string_t, :string_t, :vararg
+_spawnle    proto _CDecl :int_t, :string_t, :string_t, :vararg
+_spawnlp    proto _CDecl :int_t, :string_t, :string_t, :vararg
+_spawnlpe   proto _CDecl :int_t, :string_t, :string_t, :vararg
 _spawnv     proto __cdecl :int_t, :string_t, :ptr string_t
 _spawnve    proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
 _spawnvp    proto __cdecl :int_t, :string_t, :string_t
@@ -68,18 +68,18 @@ endif
 
 ifndef _WPROCESS_DEFINED
 ;; wide function prototypes, also declared in wchar.inc
-_wexecl     proto __cdecl :wstring_t, :wstring_t, :vararg
-_wexecle    proto __cdecl :wstring_t, :wstring_t, :vararg
-_wexeclp    proto __cdecl :wstring_t, :wstring_t, :vararg
-_wexeclpe   proto __cdecl :wstring_t, :wstring_t, :vararg
+_wexecl     proto _CDecl :wstring_t, :wstring_t, :vararg
+_wexecle    proto _CDecl :wstring_t, :wstring_t, :vararg
+_wexeclp    proto _CDecl :wstring_t, :wstring_t, :vararg
+_wexeclpe   proto _CDecl :wstring_t, :wstring_t, :vararg
 _wexecv     proto __cdecl :wstring_t, :ptr wstring_t
 _wexecve    proto __cdecl :wstring_t, :ptr wstring_t, :ptr wstring_t
 _wexecvp    proto __cdecl :wstring_t, :ptr wstring_t
 _wexecvpe   proto __cdecl :wstring_t, :ptr wstring_t, :ptr wstring_t
-_wspawnl    proto __cdecl :int_t, :wstring_t, :wstring_t, :vararg
-_wspawnle   proto __cdecl :int_t, :wstring_t, :wstring_t, :vararg
-_wspawnlp   proto __cdecl :int_t, :wstring_t, :wstring_t, :vararg
-_wspawnlpe  proto __cdecl :int_t, :wstring_t, :wstring_t, :vararg
+_wspawnl    proto _CDecl :int_t, :wstring_t, :wstring_t, :vararg
+_wspawnle   proto _CDecl :int_t, :wstring_t, :wstring_t, :vararg
+_wspawnlp   proto _CDecl :int_t, :wstring_t, :wstring_t, :vararg
+_wspawnlpe  proto _CDecl :int_t, :wstring_t, :wstring_t, :vararg
 _wspawnv    proto __cdecl :int_t, :wstring_t, :ptr wstring_t
 _wspawnve   proto __cdecl :int_t, :wstring_t, :wstring_t, :ptr wstring_t
 _wspawnvp   proto __cdecl :int_t, :wstring_t, :wstring_t
@@ -175,18 +175,18 @@ ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 
 getpid      proto __cdecl
 cwait       proto __cdecl :ptr int_t, :intptr_t, :int_t
-execl       proto __cdecl :string_t, :string_t, :vararg
-execle      proto __cdecl :string_t, :string_t, :vararg
-execlp      proto __cdecl :string_t, :string_t, :vararg
-execlpe     proto __cdecl :string_t, :string_t, :vararg
+execl       proto _CDecl :string_t, :string_t, :vararg
+execle      proto _CDecl :string_t, :string_t, :vararg
+execlp      proto _CDecl :string_t, :string_t, :vararg
+execlpe     proto _CDecl :string_t, :string_t, :vararg
 execv       proto __cdecl :string_t, :ptr string_t
 execve      proto __cdecl :string_t, :ptr string_t, :ptr string_t
 execvp      proto __cdecl :string_t, :ptr string_t
 execvpe     proto __cdecl :string_t, :ptr string_t, :ptr string_t
-spawnl      proto __cdecl :int_t, :string_t, :string_t, :vararg
-spawnle     proto __cdecl :int_t, :string_t, :string_t, :vararg
-spawnlp     proto __cdecl :int_t, :string_t, :string_t, :vararg
-spawnlpe    proto __cdecl :int_t, :string_t, :string_t, :vararg
+spawnl      proto _CDecl :int_t, :string_t, :string_t, :vararg
+spawnle     proto _CDecl :int_t, :string_t, :string_t, :vararg
+spawnlp     proto _CDecl :int_t, :string_t, :string_t, :vararg
+spawnlpe    proto _CDecl :int_t, :string_t, :string_t, :vararg
 spawnv      proto __cdecl :int_t, :string_t, :ptr string_t
 spawnve     proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
 spawnvp     proto __cdecl :int_t, :string_t, :string_t

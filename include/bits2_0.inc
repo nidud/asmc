@@ -24,7 +24,6 @@ __IBackgroundCopyFile2_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager2_0_FWD_DEFINED__
 __BackgroundCopyManager2_0_FWD_DEFINED__ equ 1
-BackgroundCopyManager2_0 typedef BackgroundCopyManager2_0
 endif
 ifndef __IBackgroundCopyJob3_FWD_DEFINED__
 __IBackgroundCopyJob3_FWD_DEFINED__ equ 1

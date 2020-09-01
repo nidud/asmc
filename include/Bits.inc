@@ -43,7 +43,6 @@ __IBackgroundCopyManager_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager_FWD_DEFINED__
 __BackgroundCopyManager_FWD_DEFINED__ equ 1
-BackgroundCopyManager	typedef BackgroundCopyManager
 endif
 ifndef __IBackgroundCopyCallback_FWD_DEFINED__
 __IBackgroundCopyCallback_FWD_DEFINED__ equ 1

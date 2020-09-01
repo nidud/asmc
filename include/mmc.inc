@@ -137,11 +137,9 @@ __IMMCVersionInfo_FWD_DEFINED__ equ 1
 endif
 ifndef __MMCVersionInfo_FWD_DEFINED__
 __MMCVersionInfo_FWD_DEFINED__ equ 1
-MMCVersionInfo typedef MMCVersionInfo
 endif
 ifndef __ConsolePower_FWD_DEFINED__
 __ConsolePower_FWD_DEFINED__ equ 1
-;ConsolePower typedef ConsolePower
 endif
 ifndef __IExtendView_FWD_DEFINED__
 __IExtendView_FWD_DEFINED__ equ 1

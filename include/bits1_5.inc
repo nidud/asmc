@@ -21,7 +21,6 @@ __IBackgroundCopyJob2_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager1_5_FWD_DEFINED__
 __BackgroundCopyManager1_5_FWD_DEFINED__ equ 1
-BackgroundCopyManager1_5 typedef BackgroundCopyManager1_5
 endif
 ifndef __IBackgroundCopyJob2_FWD_DEFINED__
 __IBackgroundCopyJob2_FWD_DEFINED__ equ 1
@@ -117,10 +116,9 @@ ifndef __BackgroundCopyManager1_5_LIBRARY_DEFINED__
 __BackgroundCopyManager1_5_LIBRARY_DEFINED__ equ 1
 
 externdef		LIBID_BackgroundCopyManager1_5:IID
-externdef		CLSID_BackgroundCopyManager1_5:CLSID
-ifdef __cplusplus
-class DECLSPEC_UUID("f087771f-d74f-4c1a-bb8a-e16aca9124ea")
-endif
+
+DEFINE_GUIDS(CLSID_BackgroundCopyManager1_5, "f087771f-d74f-4c1a-bb8a-e16aca9124ea")
+
 endif
 
 include bits2_0.inc

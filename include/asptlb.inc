@@ -24,7 +24,6 @@ __IRequest_FWD_DEFINED__ equ 1
 endif
 ifndef __Request_FWD_DEFINED__
 __Request_FWD_DEFINED__ equ 1
-Request typedef Request
 endif
 ifndef __IReadCookie_FWD_DEFINED__
 __IReadCookie_FWD_DEFINED__ equ 1
@@ -37,7 +36,6 @@ __IResponse_FWD_DEFINED__ equ 1
 endif
 ifndef __Response_FWD_DEFINED__
 __Response_FWD_DEFINED__ equ 1
-Response typedef Response
 endif
 ifndef __IVariantDictionary_FWD_DEFINED__
 __IVariantDictionary_FWD_DEFINED__ equ 1
@@ -47,14 +45,12 @@ __ISessionObject_FWD_DEFINED__ equ 1
 endif
 ifndef __Session_FWD_DEFINED__
 __Session_FWD_DEFINED__ equ 1
-Session typedef Session
 endif
 ifndef __IApplicationObject_FWD_DEFINED__
 __IApplicationObject_FWD_DEFINED__ equ 1
 endif
 ifndef __Application_FWD_DEFINED__
 __Application_FWD_DEFINED__ equ 1
-Application typedef Application
 endif
 ifndef __IASPError_FWD_DEFINED__
 __IASPError_FWD_DEFINED__ equ 1
@@ -64,14 +60,12 @@ __IServer_FWD_DEFINED__ equ 1
 endif
 ifndef __Server_FWD_DEFINED__
 __Server_FWD_DEFINED__ equ 1
-Server	typedef Server
 endif
 ifndef __IScriptingContext_FWD_DEFINED__
 __IScriptingContext_FWD_DEFINED__ equ 1
 endif
 ifndef __ScriptingContext_FWD_DEFINED__
 __ScriptingContext_FWD_DEFINED__ equ 1
-ScriptingContext	typedef ScriptingContext
 endif
 ifndef __ASPTypeLibrary_LIBRARY_DEFINED__
 __ASPTypeLibrary_LIBRARY_DEFINED__ equ 1

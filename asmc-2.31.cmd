@@ -40,37 +40,37 @@ dz -cmd -nologo
 goto end
 
 :BuildCRT32
-cd %~dp0source\lib32
+cd %AsmcDir%\source\libs\lib32
 make
-cd ..\..
+cd %AsmcDir%
 echo.
 goto end
 
 :BuildCRT64
-cd %~dp0source\lib64
+cd %AsmcDir%\source\libs\lib64
 make
-cd ..\..
+cd %AsmcDir%
 echo.
 goto end
 
 :BuildUUID
-cd %~dp0source\uuid
+cd %AsmcDir%\source\libs\uuid
 make
-cd ..\..
+cd %AsmcDir%
 echo.
 goto end
 
 :ImportLibraries32
-cd %~dp0source\import
+cd %AsmcDir%\source\libs\import
 make
-cd ..\..
+cd %AsmcDir%
 echo.
 goto end
 
 :ImportLibraries64
-cd %~dp0source\import\x64
+cd %AsmcDir%\source\libs\import\x64
 make
-cd ..\..\..
+cd %AsmcDir%
 echo.
 
 :end

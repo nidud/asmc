@@ -1,3 +1,4 @@
+!include srcpath
 
 all: import build clean
 
@@ -5,7 +6,7 @@ all: import build clean
 .EXTENSIONS: .def .lbc .lib
 
 source_path = def
-target_path = ..\..\lib
+target_path = $(lib_dir)
 
 targets = \
 	aclui.lib	\

@@ -1,5 +1,6 @@
+!include srcpath
 
-target_path = ..\..\..\lib\x64
+target_path = $(lib_dir)\x64
 
 import.exe: $(target_path)
     asmc -q -win64 -pe $*.asm

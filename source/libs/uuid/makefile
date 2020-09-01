@@ -1,6 +1,7 @@
+!include srcpath
 
-UUID32 = ..\..\lib\uuid.lib
-UUID64 = ..\..\lib\x64\uuid.lib
+UUID32 = $(lib_dir)\uuid.lib
+UUID64 = $(lib_dir)\x64\uuid.lib
 
 all: list.exe $(UUID32) $(UUID64) clean
 

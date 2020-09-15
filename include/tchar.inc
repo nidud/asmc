@@ -1719,6 +1719,8 @@ ifdef _WIN64
 option	win64:3
 endif
 
+ifndef _M_CEE_PURE
+
 ifdef __GUI__
 
 	.code
@@ -1735,6 +1737,7 @@ include stdlib.inc
 endif
 
 	.data
+	_startup  db 128 dup(0)
 	__argc	  int_t 0,0
   ifdef _UNICODE
 	__targv	  warray_t 0
@@ -1743,14 +1746,11 @@ endif
 	__targv	  array_t 0
 	_tenviron array_t 0
   endif
-	_startup  db 128 dup(0)
-
 	.code
 
 mainCRTStartup proc
 
 	.if !_tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
-
 		mov	ecx,__argc
 ifdef	_WIN64
 		mov	rdx,__targv
@@ -1777,6 +1777,7 @@ else
 
 _tstart equ <>
 
+endif ; _M_CEE_PURE
 endif ; __PE__
 
 .pragma list(pop)

@@ -11,8 +11,6 @@
 ;
 include stdio.inc
 include stdlib.inc
-include crtl.inc
-include strlib.inc
 include malloc.inc
 include string.inc
 include time.inc
@@ -109,6 +107,299 @@ ctemp           db '.',0
 envtemp         dd ctemp
 
     .code
+
+ifndef __STRLIB_INC
+
+strstart proc string:string_t
+
+    mov eax,string
+    .repeat
+
+        add eax,1
+        .continue(0) .if byte ptr [eax-1] == ' '
+        .continue(0) .if byte ptr [eax-1] == 9
+    .until 1
+    sub eax,1
+    ret
+
+strstart endp
+
+strspace proc string:string_t
+
+    mov ecx,string
+
+    .repeat
+        .repeat
+            mov al,[ecx]
+            inc ecx
+            .if al == ' ' || al == 9
+                mov eax,ecx
+                dec eax
+                movzx ecx,byte ptr [eax]
+                .break(1)
+            .endif
+        .until !al
+        dec ecx
+        xor eax,eax
+    .until 1
+    ret
+
+strspace endp
+
+strtrim proc string:string_t
+
+    .if strlen(string)
+
+        mov ecx,eax
+        add ecx,string
+
+        .repeat
+
+            dec ecx
+            .break .if byte ptr [ecx] > ' '
+
+            mov byte ptr [ecx],0
+            dec eax
+
+        .untilz
+    .endif
+    ret
+
+strtrim endp
+
+strmove proc dst:string_t, src:string_t
+
+    inc strlen(src)
+    memmove(dst, src, eax)
+    ret
+
+strmove endp
+
+memstri proc uses esi edi ebx s1:string_t, l1:int_t, s2:string_t, l2:int_t
+
+    mov edi,s1
+    mov ecx,l1
+    mov esi,s2
+
+    mov al,[esi]
+    sub al,'A'
+    cmp al,'Z'-'A'+1
+    sbb bl,bl
+    and bl,'a'-'A'
+    add bl,al
+    add bl,'A'
+
+    .while 1
+
+        .return ecx .if !ecx
+
+        dec ecx
+        mov al,[edi]
+        add edi,1
+        sub al,'A'
+        cmp al,'Z'-'A'+1
+        sbb bh,bh
+        and bh,'a'-'A'
+        add al,bh
+        add al,'A'
+        cmp al,bl
+
+        .continue .if al != bl
+
+        mov edx,l2
+        dec edx
+
+        .break .ifz
+        .return 0 .ifs ecx < edx
+
+        .repeat
+
+            dec edx
+            .break(1) .ifl
+
+            mov al,[esi+edx+1]
+            .continue(0) .if al == [edi+edx]
+
+            mov ah,[edi+edx]
+            sub ax,'AA'
+            cmp al,'Z'-'A' + 1
+            sbb bh,bh
+            and bh,'a'-'A'
+            add al,bh
+            cmp ah,'Z'-'A' + 1
+            sbb bh,bh
+            and bh,'a'-'A'
+            add ah,bh
+            add ax,'AA'
+            cmp al,ah
+        .until al != ah
+    .endw
+
+    mov eax,edi
+    dec eax
+    ret
+
+memstri endp
+
+strstri proc uses ebx dst:string_t, src:string_t
+
+    mov ebx,strlen(dst)
+    memstri(dst, ebx, src, strlen(src))
+    ret
+
+strstri endp
+
+strxchg proc uses esi edi ebx dst:string_t, old:string_t, new:string_t
+
+    mov edi,dst
+    mov esi,strlen(new)
+    mov ebx,strlen(old)
+
+    .while strstri(edi, old)    ; find token
+
+        mov edi,eax             ; EDI to start of token
+        lea ecx,[eax+esi]
+        add eax,ebx
+        strmove(ecx, eax)       ; move($ + len(new), $ + len(old))
+        memmove(edi, new, esi)  ; copy($, new, len(new))
+        inc edi                 ; $++
+    .endw
+    mov eax,dst
+    ret
+
+strxchg endp
+
+strfcat proc uses esi edi buffer:string_t, path:string_t, file:string_t
+
+    mov edx,buffer
+    mov esi,path
+    xor eax,eax
+    lea ecx,[eax-1]
+
+    .if esi
+        mov edi,esi
+        repne scasb
+        mov edi,edx
+        not ecx
+        rep movsb
+    .else
+        mov edi,edx
+        repne scasb
+    .endif
+
+    dec edi
+    .if edi != edx
+        mov al,[edi-1]
+        .if !( al == '\' || al == '/' )
+            mov al,'\'
+            stosb
+        .endif
+    .endif
+    mov esi,file
+
+    .repeat
+        lodsb
+        stosb
+    .until !eax
+    mov eax,edx
+    ret
+
+strfcat endp
+
+strfn proc path:string_t
+
+    mov ecx,path
+    .for ( eax=ecx, dl=[ecx] : dl : ecx++, dl=[ecx] )
+        .if ( dl == '\' || dl == '/' )
+            .if ( byte ptr [ecx+1] )
+                lea eax,[ecx+1]
+            .endif
+        .endif
+    .endf
+    ret
+
+strfn endp
+
+strtoken proc string:string_t
+
+    .data
+     curr_token string_t ?
+    .code
+
+    mov eax,string
+    mov ecx,curr_token
+    .if eax
+
+        mov ecx,eax
+        xor eax,eax
+    .endif
+    .repeat
+
+        mov al,[ecx]
+        inc ecx
+    .until !(_ltype[eax+1] & _SPACE)
+
+    .repeat
+
+        dec ecx
+        mov curr_token,ecx
+        .break .if !al
+
+        .repeat
+            .repeat
+                mov al,[ecx]
+                inc ecx
+                .break(1) .if !al
+            .until _ltype[eax+1] & _SPACE
+            mov [ecx-1],ah
+            inc ecx
+        .until 1
+        dec ecx
+        mov eax,curr_token
+        mov curr_token,ecx
+    .until 1
+    ret
+
+strtoken endp
+
+strext proc string:string_t
+
+    mov string,strfn(string)
+
+    .if strrchr(eax, '.')
+
+        .if eax == string
+
+            xor eax,eax
+        .endif
+    .endif
+    ret
+
+strext endp
+
+setfext proc path:string_t, ext:string_t
+
+    .if strext(path)
+
+        mov byte ptr [eax],0
+    .endif
+    strcat(path, ext)
+    ret
+
+setfext endp
+
+strpath proc string:string_t
+
+    .if strfn(string) != string
+
+        mov byte ptr [eax-1],0
+        mov eax,string
+    .endif
+    ret
+
+strpath endp
+
+endif
 
 filexist proc file:string_t
 

@@ -45,6 +45,22 @@ Install proc private uses edi
 
 Install endp
 
+__p___argv proc
+
+    lea eax,__argv
+    ret
+
+__p___argv endp
+
+_get_pgmptr proc array:array_t
+
+    mov ecx,array
+    mov eax,_pgmptr
+    mov [ecx],eax
+    ret
+
+_get_pgmptr endp
+
 .pragma init(Install, 4)
 
     end

@@ -9,7 +9,7 @@ include crtl.inc
 include winbase.inc
 
 .data
-__argv	array_t 0
+__argv  array_t 0
 _pgmptr string_t 0
 
 .code
@@ -22,32 +22,49 @@ Install proc private
 
     mov rax,[rax]
     .if byte ptr [rax+1] != ':'
-	free(rax)
+        free(rax)
 
-	; Get the program name pointer from Win32 Base
+        ; Get the program name pointer from Win32 Base
 
-	strcpy(malloc(&[GetModuleFileNameA(0, &pgname, 260)+1]), &pgname)
+        strcpy(malloc(&[GetModuleFileNameA(0, &pgname, 260)+1]), &pgname)
 
-	mov rcx,__argv
-	mov [rcx],rax
+        mov rcx,__argv
+        mov [rcx],rax
 
-	.if byte ptr [rax] == '"'
+        .if byte ptr [rax] == '"'
 
-	    .for ( rdx = rax : byte ptr [rdx] : rdx++ )
+            .for ( rdx = rax : byte ptr [rdx] : rdx++ )
 
-		mov al,[rdx+1]
-		mov [rdx],al
-	    .endf
-	    .if byte ptr [rdx-2] == '"'
-		mov byte ptr [rdx-2],0
-	    .endif
-	    mov rax,[rcx]
-	.endif
+                mov al,[rdx+1]
+                mov [rdx],al
+            .endf
+            .if byte ptr [rdx-2] == '"'
+                mov byte ptr [rdx-2],0
+            .endif
+            mov rax,[rcx]
+        .endif
     .endif
     mov _pgmptr,rax
     ret
 
 Install endp
+
+    option win64:noauto
+
+__p___argv proc
+
+    lea rax,__argv
+    ret
+
+__p___argv endp
+
+_get_pgmptr proc array:array_t
+
+    mov rax,_pgmptr
+    mov [rcx],rax
+    ret
+
+_get_pgmptr endp
 
 .pragma(init(Install, 4))
 

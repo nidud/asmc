@@ -11,16 +11,12 @@
 ;
 include stdio.inc
 include stdlib.inc
-include malloc.inc
-include string.inc
-include time.inc
-include direct.inc
 include io.inc
-include process.inc
-include ltype.inc
 include winbase.inc
+include ltype.inc
+include tchar.inc
 
-__MAKE__        equ 108
+__MAKE__        equ 109
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -52,9 +48,7 @@ next            ptr_t ?
 ARGS            ENDS
 args_t          typedef ptr ARGS
 
-externdef       errorlevel:dword
-
-.data
+    .data
 
 option_a        db 1 ; build all targets (always set)
 option_d        db 0 ; debug - echo progress of work
@@ -105,10 +99,32 @@ token_equal     db '=',0
 ctemp           db '.',0
                 align 4
 envtemp         dd ctemp
+errorlevel      dd 0
+_ltype          db 0
+                db 9 dup(_CONTROL)
+                db 5 dup(_SPACE+_CONTROL)
+                db 18 dup(_CONTROL)
+                db _SPACE
+                db 3 dup(_PUNCT)
+                db _PUNCT+_LABEL
+                db 11 dup(_PUNCT)
+                db 10 dup(_DIGIT+_HEX)
+                db 5 dup(_PUNCT)
+                db 2 dup(_PUNCT+_LABEL)
+                db 6 dup(_UPPER+_LABEL+_HEX)
+                db 20 dup(_UPPER+_LABEL)
+                db 4 dup(_PUNCT)
+                db _PUNCT+_LABEL
+                db _PUNCT
+                db 6 dup(_LOWER+_LABEL+_HEX)
+                db 20 dup(_LOWER+_LABEL)
+                db 4 dup(_PUNCT)
+                db _CONTROL     ; 7F (DEL)
+                db 257 - ($ - offset _ltype) dup(0)
+
+curr_token      string_t 0
 
     .code
-
-ifndef __STRLIB_INC
 
 strstart proc string:string_t
 
@@ -322,10 +338,6 @@ strfn endp
 
 strtoken proc string:string_t
 
-    .data
-     curr_token string_t ?
-    .code
-
     mov eax,string
     mov ecx,curr_token
     .if eax
@@ -399,11 +411,9 @@ strpath proc string:string_t
 
 strpath endp
 
-endif
-
 filexist proc file:string_t
 
-    inc getfattr(file)
+    inc GetFileAttributesA(file)
     .ifnz
         dec eax             ; 1 = file
         and eax,_A_SUBDIR   ; 2 = subdir
@@ -414,12 +424,81 @@ filexist proc file:string_t
 
 filexist endp
 
+MAXCMDL equ 0x8000
+
+system proc uses edi esi ebx string:LPSTR
+
+  local cmd[_MAX_PATH] : sbyte,
+        ProcessInfo    : PROCESS_INFORMATION,
+        StartUpInfo    : STARTUPINFO
+
+    mov ebx,strcpy(malloc(MAXCMDL), "cmd.exe")
+    .if !GetEnvironmentVariable("Comspec", ebx, MAXCMDL)
+        SearchPath(eax, "cmd.exe", eax, MAXCMDL, ebx, eax)
+    .endif
+
+    strcat(ebx, " /C ")
+    mov edi,string
+    mov edx,' '
+    .if byte ptr [edi] == '"'
+        inc edi
+        mov edx,'"'
+    .endif
+    push edx
+    xor esi,esi
+    .if strchr( edi, edx )
+        mov byte ptr [eax],0
+        mov esi,eax
+    .endif
+    strncpy(&cmd, edi, _MAX_PATH-1)
+    pop edx
+    .if esi
+        mov [esi],dl
+        .if dl == '"'
+        inc esi
+        .endif
+    .else
+        strlen(string)
+        add eax,string
+        mov esi,eax
+    .endif
+    mov edi,esi
+    lea esi,cmd
+    .if strchr(esi, ' ')
+        strcat(strcat(strcat(ebx, "\""), esi), "\"")
+    .else
+        strcat(ebx, esi)
+    .endif
+    strcat(ebx, edi)
+
+    xor eax,eax
+    mov errorlevel,eax
+    lea edi,ProcessInfo
+    mov esi,edi
+    mov ecx,sizeof(ProcessInfo)
+    rep stosb
+    lea edi,StartUpInfo
+    mov ecx,sizeof(StartUpInfo)
+    rep stosb
+    lea edi,StartUpInfo
+    mov StartUpInfo.cb,STARTUPINFO
+    mov edi,CreateProcess(eax, ebx, eax, eax, eax, eax, eax, eax, edi, esi)
+    mov esi,ProcessInfo.hProcess
+    .if edi
+        WaitForSingleObject(esi, INFINITE)
+        GetExitCodeProcess(esi, &errorlevel)
+        CloseHandle(esi)
+        CloseHandle(ProcessInfo.hThread)
+    .endif
+    free(ebx)
+    mov eax,edi
+    ret
+
+system endp
 
 expenviron proc uses esi edi string:string_t
 
-  local buffer
-
-    mov esi,alloca(0x8000)
+    mov esi,malloc(0x8000)
     ExpandEnvironmentStrings(string, esi, 0x8000-1)
 
     mov edi,esi
@@ -429,14 +508,13 @@ expenviron proc uses esi edi string:string_t
         .break .if !strchr(&[eax+1], '%')
 
         strcpy(edi, &[eax+1])
-
     .endw
-
-    strcpy(string, esi)
+    mov edi,strcpy(string, esi)
+    free(esi)
+    mov eax,edi
     ret
 
 expenviron endp
-
 
 ltoken proc uses esi edi string:string_t
 
@@ -482,7 +560,7 @@ ltoken proc uses esi edi string:string_t
             mov token,esi
             .break
 
-        .case isspace(eax)
+        .case _ltype[eax+1] & _SPACE
             mov eax,token
             mov token,esi
             .break
@@ -516,7 +594,7 @@ istarget proc uses edi ebx line:string_t
     movzx eax,byte ptr [eax+1]
     .return( &[eax+1] ) .if !eax
 
-    mov al,byte ptr _ctype[eax*2+2]
+    mov al,_ltype[eax+1]
     and al,_SPACE
     ret
 
@@ -528,8 +606,6 @@ findsymbol proc uses esi edi ebx symbol:string_t
     mov edi,symbol
     mov esi,symbol_table
     mov ebx,symbol_count
-    mov cx,[edi]
-    or  cx,0x2020
 
     .repeat
 
@@ -539,7 +615,9 @@ findsymbol proc uses esi edi ebx symbol:string_t
         mov eax,[esi]
         add esi,4
         mov dx,[eax]
+        mov cx,[edi]
         or  dx,0x2020
+        or  cx,0x2020
         .continue(0) .if dx != cx
 
     .until !_stricmp(eax, edi)
@@ -552,18 +630,16 @@ findsymbol proc uses esi edi ebx symbol:string_t
 
 findsymbol endp
 
+alloc_string proc uses esi edi value:int_t
 
-alloc_string proc uses edi value:int_t
-
-  local base
-
-    mov edi,alloca(MAXTARGET)
+    mov edi,malloc(MAXTARGET)
     ExpandEnvironmentStrings(value, edi, MAXTARGET-1)
-    _strdup(edi)
+    mov esi,_strdup(edi)
+    free(edi)
+    mov eax,esi
     ret
 
 alloc_string endp
-
 
 addsymbol proc uses edi symbol:string_t, value:int_t
 
@@ -606,11 +682,11 @@ addsymbol endp
 
 expandsymbol proc uses esi edi ebx string:string_t
 
-  local base
-  local symbol_name
-  local symbol_macro
+  local base:string_t
+  local symbol_name:string_t
+  local symbol_macro:string_t
 
-    mov base,alloca(MAXTARGET)
+    mov base,malloc(MAXTARGET)
     mov esi,eax
     add eax,MAXTARGET-256
     mov symbol_name,eax
@@ -667,7 +743,9 @@ expandsymbol proc uses esi edi ebx string:string_t
         perror(string)
         exit(1)
     .until 1
-    _strdup(esi)
+    mov ebx,_strdup(esi)
+    free(esi)
+    mov eax,ebx
     ret
 
 expandsymbol endp
@@ -677,8 +755,9 @@ expandsymbol endp
 ; Read makefile
 ;-------------------------------------------------------------------------------
 
-skipiftag proc
+skipiftag proc uses esi edi
 
+    lea esi,line_buf
     .repeat
 
         .if !fgets(esi, MAXLINE, line_fp)
@@ -699,7 +778,7 @@ skipiftag proc
         strstart(edi)
 
         mov eax,[eax]
-        or  eax,20202020h
+        or  eax,0x20202020
 
         .if eax == 'esle'
 
@@ -748,10 +827,10 @@ find_and_compare endp
 
 readline proc uses esi edi ebx
 
-  local base
-  local symbol
+  local base:string_t
+  local symbol:string_t
 
-    mov base,alloca(MAXTARGET)
+    mov base,malloc(MAXTARGET)
     add eax,MAXTARGET-256
     mov symbol,eax
 
@@ -786,12 +865,9 @@ readline proc uses esi edi ebx
             .break
         .endif
 
-        push expandsymbol(&[edi+1])
-        strcpy(base, eax)
-        pop eax
-        free(eax)
-
-        mov edi,strstart(eax)
+        mov edi,expandsymbol(&[edi+1])
+        strcpy(base, edi)
+        mov edi,strstart(edi)
 
         .switch
 
@@ -809,9 +885,9 @@ readline proc uses esi edi ebx
                 perror(edi)
                 exit(1)
             .endif
-            lea edx,line_fp
-            memmove(addr [edx+4], edx, MAXMAKEFILES*4-4)
-            mov [edx],ebx
+            lea edi,line_fp
+            memmove(addr [edi+4], edi, MAXMAKEFILES*4-4)
+            mov [edi],ebx
             .continue
 
         .case !_strnicmp(edi, "endif", 5)
@@ -883,8 +959,12 @@ readline proc uses esi edi ebx
         .endif
 
         mov al,[edi+2]
-        .return syntax_error(edi) .if al != ' ' && al != 9
-        .return syntax_error(edi) .if !strtoken(&[edi+3])
+        .if al != ' ' && al != 9
+            syntax_error(edi)
+        .endif
+        .if !strtoken(&[edi+3])
+            syntax_error(edi)
+        .endif
 
         mov edi,expenviron(eax)
 
@@ -904,13 +984,15 @@ readline proc uses esi edi ebx
             .endif
 
             mov esi,eax
-
-            .return syntax_error(edi) .if !strtoken(0)
+            .if !strtoken(0)
+                syntax_error(edi)
+            .endif
 
             xchg esi,eax
             mov eax,[eax]
-
-            .return syntax_error(edi) .if al < 2
+            .if al < 2
+                syntax_error(edi)
+            .endif
 
             .switch al
 
@@ -980,6 +1062,9 @@ readline proc uses esi edi ebx
             .endsw
         .endw
     .endw
+    mov edi,eax
+    free(base)
+    mov eax,edi
     ret
 
 readline endp
@@ -993,14 +1078,10 @@ issymbol proc uses esi line:string_t
         mov byte ptr [eax],0
         strspace(line)
         mov byte ptr [esi],'='
-
         .if eax
-
             .if strstart(eax) != esi
-
                 mov ax,[eax]
                 .if ax != '=+'
-
                     xor esi,esi
                 .endif
             .endif
@@ -1014,16 +1095,16 @@ issymbol endp
 
 getline proc uses esi edi ebx
 
-  local base
-  local symbol
+  local base:string_t
+  local symbol:string_t
 
-    mov base,alloca(MAXTARGET)
+    mov base,malloc(MAXTARGET)
     add eax,MAXTARGET-256
     mov symbol,eax
 
     .while 1
 
-        .return .if !readline()
+        .break .if !readline()
 
         mov edi,eax ; EDI to start of line
         mov eax,[edi]
@@ -1078,7 +1159,8 @@ getline proc uses esi edi ebx
                 .endw
                 .continue
             .endsw
-            .return edi
+            mov eax,edi
+            .break
         .endif
 
         .if issymbol(edi)
@@ -1105,7 +1187,6 @@ getline proc uses esi edi ebx
             strtoken(esi)
 
             mov esi,base
-
             .while eax
 
                 .while 1
@@ -1133,10 +1214,12 @@ getline proc uses esi edi ebx
 
         .endif
 
-        .return edi
-
+        mov eax,edi
+        .break
     .endw
-
+    mov edi,eax
+    free(base)
+    mov eax,edi
     ret
 
 getline endp
@@ -1144,14 +1227,14 @@ getline endp
 
 addtarget proc uses esi edi ebx target:string_t
 
-  local base
-  local target_name
-  local target_string
-  local target_command
-  local target_srcpath
+  local base:string_t
+  local target_name:string_t
+  local target_string:string_t
+  local target_command:string_t
+  local target_srcpath:string_t
 
-    mov base,alloca(MAXTARGET)
-    mov edi,base
+    mov base,malloc(MAXTARGET)
+    mov edi,eax
     mov esi,target
     strtrim(esi)
     mov byte ptr [edi],0
@@ -1186,6 +1269,7 @@ addtarget proc uses esi edi ebx target:string_t
 
         mov byte ptr [eax],0
         strtrim(edi)
+
         mov target_name,expandsymbol(edi)
         mov esi,line_ptr
         xor eax,eax
@@ -1288,10 +1372,9 @@ addtarget proc uses esi edi ebx target:string_t
     assume ebx:nothing
 
     .if istarget(esi)
-
-        mov esp,ebp
         addtarget(esi)
     .endif
+    free(base)
     ret
 
 addtarget endp
@@ -1301,13 +1384,10 @@ addtarget endp
 ; Build target
 ;-------------------------------------------------------------------------------
 
-findtarget proc uses esi edi ebx edx target:string_t
+findtarget proc uses esi edi ebx target:string_t
 
     mov edi,expandsymbol(target)
     mov esi,target_table
-    mov cx,[edi]
-    or  cx,0x2020
-
     xor ebx,ebx
     .repeat
         mov ebx,esi
@@ -1316,6 +1396,8 @@ findtarget proc uses esi edi ebx edx target:string_t
         mov esi,[esi].TARGET.next
         mov dx,[eax]
         or  dx,0x2020
+        mov cx,[edi]
+        or  cx,0x2020
         .continue(0) .if dx != cx
         .break .if !_stricmp(eax, edi)
         xor ebx,ebx
@@ -1333,7 +1415,7 @@ build_object proc uses esi edi ebx object:string_t
   local srcname[_MAX_PATH]:byte
   local srcfile[_MAX_PATH]:byte
   local command[_MAX_PATH]:byte
-  local p,q,r
+  local p:string_t,q:string_t,r:string_t
 
     lea ebx,srcname
     lea edi,srcfile
@@ -1457,14 +1539,14 @@ opentemp endp
 
 build_target proc uses esi edi ebx target:target_t
 
-  local base,
-        target_path,
-        target_name,
-        target_file,
-        target_command,
-        target_string
+  local base:string_t,
+        target_path:string_t,
+        target_name:string_t,
+        target_file:string_t,
+        target_command:string_t,
+        target_string:string_t
 
-    mov base,alloca(MAXTARGET)
+    mov base,malloc(MAXTARGET)
     mov edi,eax
     mov esi,target
     mov esi,expandsymbol([esi].TARGET.string)
@@ -1513,11 +1595,7 @@ build_target proc uses esi edi ebx target:target_t
 
         mov edi,base
         .if findtarget(edi)
-
-            add esp,MAXTARGET
-            build_target(eax)
-            sub esp,MAXTARGET
-            .return .if eax
+            .return .if build_target(eax)
         .else
             build_object(edi)
         .endif
@@ -1609,6 +1687,7 @@ build_target proc uses esi edi ebx target:target_t
             exit(1)
         .endif
     .endif
+    free(base)
     ret
 
 build_target endp
@@ -1651,6 +1730,7 @@ addtargetarg endp
 
 make proc uses esi edi ebx file:string_t, target:string_t
 
+
     .if !fopen(file, "rt")
 
         perror(file)
@@ -1662,11 +1742,9 @@ make proc uses esi edi ebx file:string_t, target:string_t
     .while getline()
 
         mov esi,eax
-
         .break .if !istarget(esi)
 
         addtarget(esi)
-
     .endw
 
     mov esi,target_args
@@ -1693,12 +1771,9 @@ make proc uses esi edi ebx file:string_t, target:string_t
             .break .if eax == _T_ALL
 
             .if eax == _T_METHOD
-
                 mov ebx,ecx
                 xor eax,eax
-
             .else
-
                 mov eax,[ecx].TARGET.command
             .endif
         .endf
@@ -1778,11 +1853,13 @@ install proc uses esi edi ebx
 
   local base[_MAX_PATH]:char_t
   local path[_MAX_PATH]:char_t
+  local pgmptr:string_t
 
     lea esi,base
     lea edi,path
+    _get_pgmptr(&pgmptr)
 
-    strpath(strpath(strcpy(esi, _pgmptr)))
+    strpath(strpath(strcpy(esi, pgmptr)))
     .return .if !fopen(strfcat(edi, esi, "bin\\envars32.bat"), "wt")
     mov ebx,eax
     fprintf(eax,
@@ -1833,8 +1910,8 @@ main proc argc:int_t, argv:array_t
 
         dec edi
         add esi,4
-        mov edx,[esi]
-        mov eax,[edx]
+        mov ebx,[esi]
+        mov eax,[ebx]
 
         .switch al
 
@@ -1850,13 +1927,13 @@ main proc argc:int_t, argv:array_t
             .case 'h': inc option_h: .endc
             .case 's': inc option_s: .endc
             .case 'I'
-                strcpy(&includepath, &[edx+2])
+                strcpy(&includepath, &[ebx+2])
                 .endc
 
             .case 'f'
-                add edx,2
+                add ebx,2
                 .if eax & 0xFF00
-                    AddMakefile(edx)
+                    AddMakefile(ebx)
                     .endc
                 .endif
                 add esi,4
@@ -1890,12 +1967,12 @@ main proc argc:int_t, argv:array_t
             .endc
 
           .default
-            .if strchr(edx, '=')
+            .if strchr(ebx, '=')
                 mov byte ptr [eax],0
                 inc eax
-                addsymbol(edx, eax)
+                addsymbol(ebx, eax)
             .else
-                addtargetarg(edx)
+                addtargetarg(ebx)
             .endif
         .endsw
     .endf
@@ -1916,11 +1993,10 @@ main proc argc:int_t, argv:array_t
     .while esi
 
         .break .if make([esi].ARGS.name, target_args)
-
         mov esi,[esi].ARGS.next
     .endw
     ret
 
 main endp
 
-    END
+    end _tstart

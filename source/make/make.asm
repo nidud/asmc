@@ -9,11 +9,10 @@
 ; 2017-02-25 - added .EXTENSIONS and .SUFFIXES
 ; 2017-02-25 - added include path : %ASMCDIR%\lib | %DZ%\lib
 ;
+include winbase.inc
 include stdio.inc
 include stdlib.inc
 include io.inc
-include winbase.inc
-include ltype.inc
 include tchar.inc
 
 __MAKE__        equ 109
@@ -100,6 +99,8 @@ ctemp           db '.',0
                 align 4
 envtemp         dd ctemp
 errorlevel      dd 0
+
+_LABEL          equ 0x40 ; _UPPER + _LOWER + '@' + '_' + '$' + '?'
 _ltype          db 0
                 db 9 dup(_CONTROL)
                 db 5 dup(_SPACE+_CONTROL)
@@ -455,7 +456,7 @@ system proc uses edi esi ebx string:LPSTR
     .if esi
         mov [esi],dl
         .if dl == '"'
-        inc esi
+            inc esi
         .endif
     .else
         strlen(string)
@@ -1553,8 +1554,10 @@ build_target proc uses esi edi ebx target:target_t
     mov target_string,eax
 
     .while 1
+
         lodsb
         stosb
+
         .break .if !al
         .break .if al == ':' && byte ptr [esi] != '\'
     .endw
@@ -1687,7 +1690,9 @@ build_target proc uses esi edi ebx target:target_t
             exit(1)
         .endif
     .endif
+    mov edi,eax
     free(base)
+    mov eax,edi
     ret
 
 build_target endp
@@ -1789,14 +1794,13 @@ make proc uses esi edi ebx file:string_t, target:string_t
         mov esi,target_args
     .endif
 
+
     .for : esi: esi = [esi].ARGS.next
 
         .break .if !findtarget([esi].ARGS.name)
 
         build_target(eax)
-
     .endf
-
     ret
 
 make endp

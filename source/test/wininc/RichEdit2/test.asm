@@ -84,7 +84,7 @@ RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
       .case WM_CLOSE
-        SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc)
+        SetWindowLongPtr(hWnd, GWLP_WNDPROC, OldWndProc)
         .endc
 
       .default
@@ -492,7 +492,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         SendMessage(hEdit, EM_SETTYPOGRAPHYOPTIONS, TO_SIMPLELINEBREAK, TO_SIMPLELINEBREAK)
         SendMessage(hEdit, EM_GETTYPOGRAPHYOPTIONS, 1, 1)
         SendMessage(hEdit, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, SES_EMULATESYSEDIT)
-        mov OldWndProc,SetWindowLongPtr(hEdit, GWL_WNDPROC, &RichEditProc)
+        mov OldWndProc,SetWindowLongPtr(hEdit, GWLP_WNDPROC, &RichEditProc)
         SendMessage(hEdit, EM_LIMITTEXT, -1, 0)
         SetColor()
         SendMessage(hEdit, EM_SETMODIFY, FALSE, 0)

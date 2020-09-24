@@ -125,11 +125,9 @@ _tWinMain proc WINAPI hInstance: HINSTANCE,
 
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "WndClass", "Window", WS_OVERLAPPEDWINDOW,
-        eax, eax, eax, eax, 0, 0, hInstance, 0)
-
-    mov hEdit,CreateRichEdit(rax, 10, 10, 500, 100, hInstance)
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInstance, 0)
+    mov hEdit,CreateRichEdit(hwnd, 10, 10, 500, 100, hInstance)
 
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)

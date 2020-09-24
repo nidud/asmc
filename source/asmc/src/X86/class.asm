@@ -89,7 +89,7 @@ AddPublic proc uses esi edi ebx this:LPCLASS, sym:ptr asym
     mov esi,this
     mov ebx,sym
 
-    .if ( [ebx].asym.total_size )
+    .if ( [ebx].asym.total_size && Parse_Pass == 0 )
 
         .for ( edx = [ebx].esym.structinfo,
                edi = [edx].struct_info.head : edi : edi = [edi].next )

@@ -183,7 +183,7 @@ RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         mov eax,result
         .endc
     .case WM_CLOSE
-        SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc)
+        SetWindowLongPtr(hWnd, GWLP_WNDPROC, OldWndProc)
         .endc
     .default
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
@@ -206,7 +206,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 ES_MULTILINE or WS_VISIBLE or WS_CHILD or WS_BORDER or WS_VSCROLL or WS_HSCROLL or ES_NOHIDESEL,
                 CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
                 hWnd, 0, hInstance, NULL)
-        mov OldWndProc,SetWindowLongPtr(hEdit, GWL_WNDPROC, &RichEditProc)
+        mov OldWndProc,SetWindowLongPtr(hEdit, GWLP_WNDPROC, &RichEditProc)
         SendMessage(hEdit, EM_LIMITTEXT, -1, 0)
         SetColor()
         SetFocus(hEdit)

@@ -1,4 +1,4 @@
-Direct2DHelloWorld.exe:
+GdiInteropSample.exe:
     asmc64 -pe -ws -gui $*.asm
     $@
 

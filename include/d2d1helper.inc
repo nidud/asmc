@@ -5,6 +5,461 @@ ifndef _D2D1_H_
 include d2d1.inc
 endif
 
+ifdef _WIN64
+
+
+    D2D1        typedef ptr
+    Matrix3x2F  typedef ptr
+
+.template Matrix3x2F
+
+    .operator Identity {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        mov T._11,1.0
+        mov T._12,0.0
+        mov T._21,0.0
+        mov T._22,1.0
+        mov T._31,0.0
+        mov T._32,0.0
+        lea rax,T
+        }
+
+    .operator Translation :D2D1_SIZE_F {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        mov T._11,1.0
+        mov T._12,0.0
+        mov T._21,0.0
+        mov T._22,1.0
+        lea rax,T
+        mov [rax+16],rcx
+        }
+
+    .operator Scale :D2D1_SIZE_F, :abs=<0> {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        mov   T._11,ecx
+        mov   T._12,0.0
+        mov   T._21,0.0
+        shr   rcx,32
+        mov   T._22,ecx
+        mov   rax,_2
+        movd  xmm0,eax
+        movss xmm1,xmm0
+        mulss xmm1,T._11
+        subss xmm0,xmm1
+        movss T._31,xmm0
+        shr   rax,32
+        movd  xmm0,eax
+        movss xmm1,xmm0
+        mulss xmm1,T._22
+        subss xmm0,xmm1
+        movss T._32,xmm0
+        lea   rax,T
+        }
+
+    .operator Rotation :abs, :abs=<0> {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        D2D1MakeRotateMatrix(_1, _2, addr T)
+        lea rax,T
+        }
+
+    .operator Skew :abs, :abs, :abs=<0> {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        D2D1MakeSkewMatrix(_1, _2, _3, addr T)
+        lea rax,T
+        }
+
+    .ends
+
+.template D2D1
+
+
+    .operator FloatMax {
+        ifdef FLT_MAX
+            movss xmm0,FLT_MAX
+        else
+            movss xmm0,3.402823466e+38
+        endif
+        }
+
+
+    .operator Point2 :dword, :dword {
+
+       local T
+        .new T:Point
+
+        mov T.x,_1
+        mov T.y,_2
+        lea _3,T
+        }
+
+    .operator Point2F :abs=<0.0>, :abs=<0.0> {
+
+       local T
+        .new T:D2D1_POINT_2F
+
+        mov T.x,_1
+        mov T.y,_2
+        lea rax,T
+        }
+
+    .operator Point2U :abs=<0>, :abs=<0> {
+
+       local T
+        .new T:D2D1_POINT_2U
+
+        mov T.x,_1
+        mov T.y,_2
+        lea rax,T
+        }
+
+    .operator Size :uint_t, :uint_t {
+
+       local T
+        .new T:Size
+
+        mov T.width,ecx
+        mov T.height,edx
+        lea rax,T
+        }
+
+    .operator SizeF :abs=<0.0>, :abs=<0.0> {
+
+       local T
+        .new T:D2D1_SIZE_F
+
+        mov T.width, _1
+        mov T.height,_2
+        lea rax,T
+        }
+
+    .operator SizeU :abs=<0>, :abs=<0> {
+
+       local T
+        .new T:D2D1_SIZE_U
+
+        mov T.width, _1
+        mov T.height,_2
+        lea rax,T
+        }
+
+    .operator Rect :uint_t, :uint_t, :uint_t, :uint_t {
+
+       local T
+        .new T:Rect
+
+        mov T.left,   ecx
+        mov T.top,    edx
+        mov T.right,  r8d
+        mov T.bottom, r9d
+        lea rax,T
+        }
+
+    .operator RectF :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+
+       local T
+        .new T:D2D1_RECT_F
+
+        mov T.left,   _1
+        mov T.top,    _2
+        mov T.right,  _3
+        mov T.bottom, _4
+        lea rax,T
+        }
+
+    .operator RectU :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0> {
+
+       local T
+        .new T:D2D1_RECT_U
+
+        mov T.left,   _1
+        mov T.top,    _2
+        mov T.right,  _3
+        mov T.bottom, _4
+        lea rax,T
+        }
+
+    .operator InfiniteRect {
+
+       local T
+        .new T:D2D1_RECT_F
+
+        ifdef FLT_MAX
+            mov T.left,   -FLT_MAX
+            mov T.top,    -FLT_MAX
+            mov T.right,  FLT_MAX
+            mov T.bottom, FLT_MAX
+        else
+            mov T.left,   -3.402823466e+38
+            mov T.top,    -3.402823466e+38
+            mov T.right,  3.402823466e+38
+            mov T.bottom, 3.402823466e+38
+        endif
+        lea rax,T
+        }
+
+
+    .operator ArcSegment :ptr D2D1_POINT_2F, :ptr D2D1_SIZE_F, :abs, :abs, :abs {
+
+       local T
+        .new T:D2D1_ARC_SEGMENT
+
+        mov T.point,[rcx]
+        mov T.size, [rdx]
+        mov T.rotationAngle,_3
+        mov T.sweepDirection,_4
+        mov T.arcSize,_5
+        lea rax,T
+        }
+
+    .operator BezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+
+       local T
+        .new T:D2D1_BEZIER_SEGMENT
+
+        mov T.point1,[rcx]
+        mov T.point2,[rdx]
+        mov T.point3,[r8]
+        lea rax,T
+        }
+
+
+    .operator Ellipse :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+
+       local T
+        .new T:D2D1_ELLIPSE
+
+        mov   T.point,[rcx]
+        movss T.radiusX,xmm1
+        movss T.radiusY,xmm2
+        lea   rax,T
+        }
+
+    .operator RoundedRect :ptr D2D1_RECT_F, :FLOAT, :FLOAT {
+
+       local T
+        .new T:D2D1_ROUNDED_RECT
+
+        mov   T.rect,[rcx]
+        movss T.radiusX,xmm1
+        movss T.radiusY,xmm2
+        lea   rax,T
+        }
+
+    .operator BrushProperties :FLOAT=<1.0>, :ptr D2D1_MATRIX_3X2_F=<D2D1::IdentityMatrix()> {
+
+       local T
+        .new T:D2D1_BRUSH_PROPERTIES
+
+        movss T.opacity,xmm0
+        mov   T.transform,[rdx]
+        lea   rax,T
+        }
+
+    .operator GradientStop :FLOAT, :ptr D2D1_COLOR_F {
+
+       local T
+        .new T:D2D1_GRADIENT_STOP
+
+        movss T.position,xmm0
+        mov   T.color,[rdx]
+        lea   rax,T
+        }
+
+    .operator QuadraticBezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+
+       local T
+        .new T:D2D1_QUADRATIC_BEZIER_SEGMENT
+
+        mov T.point1,[rcx]
+        mov T.point2,[rdx]
+        lea rax,T
+        }
+
+    .operator StrokeStyleProperties :abs=<D2D1_CAP_STYLE_FLAT>,
+                                    :abs=<D2D1_CAP_STYLE_FLAT>,
+                                    :abs=<D2D1_CAP_STYLE_FLAT>,
+                                    :abs=<D2D1_LINE_JOIN_MITER>,
+                                    :abs=<10.0>,
+                                    :abs=<D2D1_DASH_STYLE_SOLID>,
+                                    :abs=<0.0> {
+
+       local T
+        .new T:D2D1_STROKE_STYLE_PROPERTIES
+
+        mov T.startCap,   _1
+        mov T.endCap,     _2
+        mov T.dashCap,    _3
+        mov T.lineJoin,   _4
+        mov T.miterLimit, _5
+        mov T.dashStyle,  _6
+        mov T.dashOffset, _7
+        lea rax,T
+        }
+
+    .operator BitmapBrushProperties :abs=<D2D1_EXTEND_MODE_CLAMP>, :abs=<D2D1_EXTEND_MODE_CLAMP>,
+        :abs=<D2D1_BITMAP_INTERPOLATION_MODE_LINEAR> {
+
+       local T
+        .new T:D2D1_BITMAP_BRUSH_PROPERTIES
+
+        mov T.extendModeX,_1
+        mov T.extendModeY,_2
+        mov T.interpolationMode,_3
+        lea rax,T
+        }
+
+    .operator LinearGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+
+       local T
+        .new T:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
+
+        mov T.startPoint, [rcx]
+        mov T.endPoint,   [rdx]
+        lea rax,T
+        }
+
+    .operator RadialGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+
+       local T
+        .new T:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES
+
+        mov   T.center,[rcx]
+        mov   T.gradientOriginOffset,[rdx]
+        movss T.radiusX,xmm2
+        movss T.radiusY,xmm3
+        lea   rax,T
+        }
+
+    ;;
+    ;; PixelFormat
+    ;;
+    .operator PixelFormat :abs=<DXGI_FORMAT_UNKNOWN>, :abs=<D2D1_ALPHA_MODE_UNKNOWN> {
+
+       local T
+        .new T:D2D1_PIXEL_FORMAT
+
+        mov T.format,_1
+        mov T.alphaMode,_2
+        lea rax,T
+        }
+
+    ;;
+    ;; Bitmaps
+    ;;
+    .operator BitmapProperties :ptr D2D1_PIXEL_FORMAT, :abs=<96.0>, :abs=<96.0> {
+
+       local T
+        .new T:D2D1_BITMAP_PROPERTIES
+
+        mov T.pixelFormat,[rcx]
+        mov T.dpiX,_2
+        mov T.dpiY,_3
+        lea rax,T
+        }
+
+    ;;
+    ;; Render Targets
+    ;;
+    .operator RenderTargetProperties :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
+            :abs,
+            :abs=<0.0>,
+            :abs=<0.0>,
+            :abs=<D2D1_RENDER_TARGET_USAGE_NONE>,
+            :abs=<D2D1_FEATURE_LEVEL_DEFAULT> {
+
+       local T
+        .new T:D2D1_RENDER_TARGET_PROPERTIES
+
+        mov T.type,     _1
+        mov T.dpiX,     _3
+        mov T.dpiY,     _4
+        mov T.usage,    _5
+        mov T.minLevel, _6
+        ifb <_2>
+            mov T.pixelFormat.format,DXGI_FORMAT_UNKNOWN
+            mov T.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
+        else
+            ifdif <_2>,<rdx>
+                mov rdx,_2
+            endif
+            mov T.pixelFormat,[rdx]
+        endif
+        lea rax,T
+        }
+
+    .operator HwndRenderTargetProperties :HWND, :D2D1_SIZE_U, :abs=<D2D1_PRESENT_OPTIONS_NONE> {
+
+       local T
+        .new T:D2D1_HWND_RENDER_TARGET_PROPERTIES
+
+        mov T.hwnd,rcx
+        mov T.pixelSize,rdx
+        mov T.presentOptions,_3
+        lea rax,T
+        }
+
+    .operator LayerParameters :ptr D2D1_RECT_F,
+        :ptr,
+        :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
+        :D2D1_MATRIX_3X2_F,
+        :abs=<1.0>,
+        :ptr ID2D1Brush,
+        :abs=<D2D1_LAYER_OPTIONS_NONE> {
+
+       local T
+        .new T:D2D1_LAYER_PARAMETERS ;layerParameters = { 0 };
+
+        mov T.contentBounds,     [rcx]
+        mov T.geometricMask,     [rdx]
+        mov T.maskAntialiasMode, _3
+        mov T.maskTransform,     _4
+        mov T.opacity,           _5
+        mov T.opacityBrush,      _6
+        mov T.layerOptions,      _7
+        lea rax,T
+        }
+
+    .operator DrawingStateDescription :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
+        :abs=<D2D1_TEXT_ANTIALIAS_MODE_DEFAULT>,
+        :abs=<0>,
+        :abs=<0>,
+        :ptr D2D1_MATRIX_3X2_F {
+
+       local T
+        .new T:D2D1_DRAWING_STATE_DESCRIPTION
+
+        mov T.antialiasMode,     _1
+        mov T.textAntialiasMode, _2
+        mov T.tag1,              _3
+        mov T.tag2,              _4
+        mov T.transform,         _5
+        lea rax,T
+        }
+
+
+    .operator IdentityMatrix {
+        Matrix3x2F::Identity()
+        }
+
+    .ends
+
+endif
+
 ;; Common color constants
 
 .enum {

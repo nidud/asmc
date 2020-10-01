@@ -10,10 +10,8 @@ GeneralFailure PROC signo:int_t
 
         printf("EXCEPTION ")
 
-        option switch:pascal
-
         mov eax,signo
-        .switch eax
+        .switch pascal eax
           .case SIGINT:  printf("SIGINT: interrupt\n")
           .case SIGILL:  printf("SIGILL: illegal instruction - invalid function ime\n")
           .case SIGFPE:  printf("SIGFPE: floating point exception\n")
@@ -47,7 +45,6 @@ main proc frame:ExceptionHandler
     mov edx,2
     xor rax,rax
     mov [rax],al
-
     ret
 
 main endp

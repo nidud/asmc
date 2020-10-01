@@ -163,15 +163,24 @@ char_t		typedef sbyte
 short_t		typedef sword
 int_t		typedef sdword
 long_t		typedef sdword
-int64_t		typedef sqword
 uchar_t		typedef byte
 ushort_t	typedef word
 uint_t		typedef dword
 ulong_t		typedef dword
-uint64_t	typedef qword
+
 string_t	typedef ptr sbyte
 ustring_t	typedef ptr byte
 wstring_t	typedef ptr word
+
+int8_t		typedef sbyte
+int16_t		typedef sword
+int32_t		typedef sdword
+int64_t		typedef sqword
+
+uint8_t		typedef byte
+uint16_t	typedef word
+uint32_t	typedef dword
+uint64_t	typedef qword
 
 ifdef DEBUG
 .template array_type

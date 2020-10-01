@@ -2,38 +2,39 @@ include stdio.inc
 include stdlib.inc
 include signal.inc
 
-	.code
+    .code
 
-GeneralFailure PROC signo
-	mov	eax,signo
-	.if	eax != SIGTERM
-		mov	eax,pCurrentException
-		PrintContext(
-			[eax].EXCEPTION_POINTERS.ContextRecord,
-			[eax].EXCEPTION_POINTERS.ExceptionRecord )
-	.endif
-	exit( 1 )
-	ret
-GeneralFailure ENDP
+GeneralFailure proc signo:int_t
 
-main	proc c
+    mov eax,signo
+    .if eax != SIGTERM
+        mov eax,pCurrentException
+        PrintContext(
+            [eax].EXCEPTION_POINTERS.ContextRecord,
+            [eax].EXCEPTION_POINTERS.ExceptionRecord )
+    .endif
+    exit( 1 )
+    ret
 
-	lea	ebx,GeneralFailure
+GeneralFailure endp
 
-	signal( SIGINT,	  ebx ) ; interrupt
-	signal( SIGILL,	  ebx ) ; illegal instruction - invalid function image
-	signal( SIGFPE,	  ebx ) ; floating point exception
-	signal( SIGSEGV,  ebx ) ; segment violation
-	signal( SIGTERM,  ebx ) ; Software termination signal from kill
-	signal( SIGABRT,  ebx ) ; abnormal termination triggered by abort call
+main proc
 
-	mov	ecx,1
-	mov	edx,2
-	xor	eax,eax
-	mov	[eax],eax
+    lea ebx,GeneralFailure
 
-toend:
-	ret
-main	endp
+    signal( SIGINT,   ebx ) ; interrupt
+    signal( SIGILL,   ebx ) ; illegal instruction - invalid function image
+    signal( SIGFPE,   ebx ) ; floating point exception
+    signal( SIGSEGV,  ebx ) ; segment violation
+    signal( SIGTERM,  ebx ) ; Software termination signal from kill
+    signal( SIGABRT,  ebx ) ; abnormal termination triggered by abort call
 
-	END
+    mov ecx,1
+    mov edx,2
+    xor eax,eax
+    mov [eax],eax
+    ret
+
+main endp
+
+    END

@@ -319,12 +319,13 @@ PNZCH			typedef ptr CHAR
 PCNZCH			typedef ptr CHAR
 
 ifdef _UNICODE
+
 ifndef _TCHAR_DEFINED
+_TCHAR_DEFINED equ <>
 TBYTE			typedef WCHAR
 TCHAR			typedef WCHAR
 PTCHAR			typedef ptr WCHAR
 PTBYTE			typedef ptr WCHAR
-_TCHAR_DEFINED		equ <>
 endif
 
 PTCH			typedef LPWCH
@@ -354,13 +355,14 @@ __TEXT macro quote
 	exitm<L&quote&>
 	endm
 
-else
+else ; _UNICODE
+
 ifndef _TCHAR_DEFINED
+_TCHAR_DEFINED equ <>
 TBYTE			typedef CHAR
 TCHAR			typedef CHAR
 PTCHAR			typedef ptr CHAR
 PTBYTE			typedef ptr CHAR
-_TCHAR_DEFINED		equ <>
 endif
 
 PTCH			typedef LPCH
@@ -389,7 +391,7 @@ __TEXT	macro quote
 	exitm<quote>
 	endm
 
-endif
+endif ; _UNICODE
 
 TEXT	macro quote
 	exitm<__TEXT(quote)>

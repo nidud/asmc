@@ -742,7 +742,7 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     GetPixelFormat	proc
     SetDpi		proc :FLOAT, :FLOAT
     GetDpi		proc :ptr, :ptr
-    GetSize		proc
+    GetSize		proc :ptr D2D1_SIZE_F
     GetPixelSize	proc
     GetMaximumBitmapSize proc
     IsSupported		proc :ptr

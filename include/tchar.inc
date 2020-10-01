@@ -1716,14 +1716,16 @@ endif
 ifdef __PE__
 
 ifdef _WIN64
-option	win64:3
+option win64:3
 endif
-
-ifndef _M_CEE_PURE
 
 ifdef __GUI__
 
 	.code
+
+    org -0x1000
+    __ImageBase label IMAGE_DOS_HEADER
+    org 0
 
 mainCRTStartup proc
 
@@ -1777,7 +1779,6 @@ else
 
 _tstart equ <>
 
-endif ; _M_CEE_PURE
 endif ; __PE__
 
 .pragma list(pop)

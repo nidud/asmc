@@ -8,20 +8,20 @@ elf32 = $(lib_dir)\elf\quadmath.lib
 all: $(win32) $(win64) $(elf32)
 
 base32 = \
-    ..\lib32\quadmath\*.asm \
-    ..\lib32\fltintrn\_strtoflt.asm \
-    ..\lib32\fltintrn\_fltsetflags.asm \
-    ..\lib32\fltintrn\_destoflt.asm \
-    ..\lib32\fltintrn\_fltscale.asm
+    $(src_dir)\libs\lib32\quadmath\*.asm \
+    $(src_dir)\libs\lib32\fltintrn\_strtoflt.asm \
+    $(src_dir)\libs\lib32\fltintrn\_fltsetflags.asm \
+    $(src_dir)\libs\lib32\fltintrn\_destoflt.asm \
+    $(src_dir)\libs\lib32\fltintrn\_fltscale.asm
 
 base64 = \
-    ..\lib64\quadmath\*.asm \
-    ..\lib64\quadmath\fpu\*.asm \
-    ..\lib64\quadmath\xmm\*.asm \
-    ..\lib64\fltintrn\_strtoflt.asm \
-    ..\lib64\fltintrn\_fltsetflags.asm \
-    ..\lib64\fltintrn\_destoflt.asm \
-    ..\lib64\fltintrn\_fltscale.asm
+    $(src_dir)\libs\lib64\quadmath\*.asm \
+    $(src_dir)\libs\lib64\quadmath\fpu/*.asm \
+    $(src_dir)\libs\lib64\quadmath\xmm/*.asm \
+    $(src_dir)\libs\lib64\fltintrn\_strtoflt.asm \
+    $(src_dir)\libs\lib64\fltintrn\_fltsetflags.asm \
+    $(src_dir)\libs\lib64\fltintrn\_destoflt.asm \
+    $(src_dir)\libs\lib64\fltintrn\_fltscale.asm
 
 $(win32):
     asmc $(flags) -Cs -coff -safeseh -Zi $(base32)

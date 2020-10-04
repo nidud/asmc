@@ -9,7 +9,6 @@ ifndef _WIN32_WINNT         ;; Allow use of features specific to Windows 7 or la
 _WIN32_WINNT equ 0x0700     ;; Change this to the appropriate value to target other versions of Windows.
 endif
 
-;WIN32_LEAN_AND_MEAN equ 1   ;; Exclude rarely-used stuff from Windows headers
 ;; Windows Header Files:
 include windows.inc
 

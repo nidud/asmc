@@ -13,24 +13,27 @@ ifdef _WIN64
 
 .template Matrix3x2F
 
+
     .operator Identity {
 
-       local T
-        .new T:D2D1_MATRIX_3X2_F
+      local T
+       .new T:D2D1_MATRIX_3X2_F
 
+        xor eax,eax
         mov T._11,1.0
-        mov T._12,0.0
-        mov T._21,0.0
+        mov T._12,eax
+        mov T._21,eax
         mov T._22,1.0
-        mov T._31,0.0
-        mov T._32,0.0
+        mov T._31,eax
+        mov T._32,eax
         lea rax,T
         }
 
+
     .operator Translation :D2D1_SIZE_F {
 
-       local T
-        .new T:D2D1_MATRIX_3X2_F
+      local T
+       .new T:D2D1_MATRIX_3X2_F
 
         mov T._11,1.0
         mov T._12,0.0
@@ -40,30 +43,37 @@ ifdef _WIN64
         mov [rax+16],rcx
         }
 
-    .operator Scale :D2D1_SIZE_F, :abs=<0> {
 
-       local T
-        .new T:D2D1_MATRIX_3X2_F
+    .operator Scale :D2D1_SIZE_F, :abs {
 
-        mov   T._11,ecx
-        mov   T._12,0.0
-        mov   T._21,0.0
-        shr   rcx,32
-        mov   T._22,ecx
-        mov   rax,_2
-        movd  xmm0,eax
-        movss xmm1,xmm0
-        mulss xmm1,T._11
-        subss xmm0,xmm1
-        movss T._31,xmm0
-        shr   rax,32
-        movd  xmm0,eax
-        movss xmm1,xmm0
-        mulss xmm1,T._22
-        subss xmm0,xmm1
-        movss T._32,xmm0
-        lea   rax,T
+      local T
+       .new T:D2D1_MATRIX_3X2_F
+
+        mov T._11,ecx
+        mov T._12,0.0
+        mov T._21,0.0
+        shr rcx,32
+        mov T._22,ecx
+        ifb <_2>
+           mov T._31,0.0
+           mov T._32,0.0
+        else
+           mov   rax,_2
+           movd  xmm0,eax
+           movss xmm1,xmm0
+           mulss xmm1,T._11
+           subss xmm0,xmm1
+           movss T._31,xmm0
+           shr   rax,32
+           movd  xmm0,eax
+           movss xmm1,xmm0
+           mulss xmm1,T._22
+           subss xmm0,xmm1
+           movss T._32,xmm0
+        endif
+        lea rax,T
         }
+
 
     .operator Rotation :abs, :abs=<0> {
 
@@ -74,6 +84,7 @@ ifdef _WIN64
         lea rax,T
         }
 
+
     .operator Skew :abs, :abs, :abs=<0> {
 
        local T
@@ -83,7 +94,67 @@ ifdef _WIN64
         lea rax,T
         }
 
+
+    .operator SetProduct :ptr, :ptr {
+
+       local T
+        .new T:D2D1_MATRIX_3X2_F
+
+        assume rcx:ptr D2D1_MATRIX_3X2_F
+        assume rdx:ptr D2D1_MATRIX_3X2_F
+
+        movss xmm0,[rcx]._11 ; a._11 * b._11 + a._12 * b._21
+        mulss xmm0,[rdx]._11
+        movss xmm1,[rcx]._12
+        mulss xmm1,[rdx]._21
+        addss xmm0,xmm1
+        movss T._11,xmm0
+
+        movss xmm0,[rcx]._11 ; a._11 * b._12 + a._12 * b._22
+        mulss xmm0,[rdx]._12
+        movss xmm1,[rcx]._12
+        mulss xmm1,[rdx]._22
+        addss xmm0,xmm1
+        movss T._12,xmm0
+
+        movss xmm0,[rcx]._21 ; a._21 * b._11 + a._22 * b._21
+        mulss xmm0,[rdx]._11
+        movss xmm1,[rcx]._22
+        mulss xmm1,[rdx]._21
+        addss xmm0,xmm1
+        movss T._21,xmm0
+
+        movss xmm0,[rcx]._21 ; a._21 * b._12 + a._22 * b._22
+        mulss xmm0,[rdx]._12
+        movss xmm1,[rcx]._22
+        mulss xmm1,[rdx]._22
+        addss xmm0,xmm1
+        movss T._22,xmm0
+
+        movss xmm0,[rcx]._31 ; a._31 * b._11 + a._32 * b._21 + b._31
+        mulss xmm0,[rdx]._11
+        movss xmm1,[rcx]._32
+        mulss xmm1,[rdx]._21
+        addss xmm0,xmm1
+        addss xmm0,[rdx]._31
+        movss T._31,xmm0
+
+        movss xmm0,[rcx]._31 ; a._31 * b._12 + a._32 * b._22 + b._32
+        mulss xmm0,[rdx]._12
+        movss xmm1,[rcx]._32
+        mulss xmm1,[rdx]._22
+        addss xmm0,xmm1
+        addss xmm0,[rdx]._32
+        movss T._32,xmm0
+
+        assume rcx:nothing
+        assume rdx:nothing
+
+        lea rax,T
+        }
+
     .ends
+
 
 .template D2D1
 
@@ -141,9 +212,16 @@ ifdef _WIN64
 
        local T
         .new T:D2D1_SIZE_F
-
-        mov T.width, _1
-        mov T.height,_2
+        ifidn typeid(?, _1),<?r128>
+            movss T.width, _1
+        else
+            mov T.width, _1
+        endif
+        ifidn typeid(?, _2),<?r128>
+            movss T.height,_2
+        else
+            mov T.height,_2
+        endif
         lea rax,T
         }
 
@@ -345,6 +423,7 @@ ifdef _WIN64
         lea   rax,T
         }
 
+
     ;;
     ;; PixelFormat
     ;;
@@ -357,6 +436,7 @@ ifdef _WIN64
         mov T.alphaMode,_2
         lea rax,T
         }
+
 
     ;;
     ;; Bitmaps
@@ -372,10 +452,12 @@ ifdef _WIN64
         lea rax,T
         }
 
+
     ;;
     ;; Render Targets
     ;;
-    .operator RenderTargetProperties :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
+    .operator RenderTargetProperties \
+            :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
             :abs,
             :abs=<0.0>,
             :abs=<0.0>,
@@ -402,6 +484,7 @@ ifdef _WIN64
         lea rax,T
         }
 
+
     .operator HwndRenderTargetProperties :HWND, :D2D1_SIZE_U, :abs=<D2D1_PRESENT_OPTIONS_NONE> {
 
        local T
@@ -413,6 +496,7 @@ ifdef _WIN64
         lea rax,T
         }
 
+
     .operator LayerParameters :ptr D2D1_RECT_F,
         :ptr,
         :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
@@ -422,7 +506,7 @@ ifdef _WIN64
         :abs=<D2D1_LAYER_OPTIONS_NONE> {
 
        local T
-        .new T:D2D1_LAYER_PARAMETERS ;layerParameters = { 0 };
+        .new T:D2D1_LAYER_PARAMETERS ; { 0 }
 
         mov T.contentBounds,     [rcx]
         mov T.geometricMask,     [rdx]
@@ -434,11 +518,13 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator DrawingStateDescription :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
+
+    .operator DrawingStateDescription \
+        :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
         :abs=<D2D1_TEXT_ANTIALIAS_MODE_DEFAULT>,
         :abs=<0>,
         :abs=<0>,
-        :ptr D2D1_MATRIX_3X2_F {
+        :abs=<0> {
 
        local T
         .new T:D2D1_DRAWING_STATE_DESCRIPTION

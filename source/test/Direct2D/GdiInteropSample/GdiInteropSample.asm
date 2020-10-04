@@ -495,6 +495,11 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 mov result,1
                 mov wasHandled,TRUE
                 .endc
+
+            .case WM_CHAR
+                .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
+                .endc
+
             .endsw
         .endif
 

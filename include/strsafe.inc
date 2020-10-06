@@ -1128,6 +1128,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 ifdef DEPRECATE_SUPPORTED
 else
+if 0
 StringLengthWorkerA	equ <StringLengthWorkerA_instead_use_StringCchLengthA_or_StringCbLengthA>
 StringLengthWorkerW	equ <StringLengthWorkerW_instead_use_StringCchLengthW_or_StringCbLengthW>
 UnalignedStringLengthWorkerW equ <UnalignedStringLengthWorkerW_instead_use_UnalignedStringCchLengthW>
@@ -1151,6 +1152,7 @@ StringExHandleFillBehindNullA equ <StringExHandleFillBehindNullA_do_not_call_thi
 StringExHandleFillBehindNullW equ <StringExHandleFillBehindNullW_do_not_call_this_function>
 StringExHandleOtherFlagsA equ <StringExHandleOtherFlagsA_do_not_call_this_function>
 StringExHandleOtherFlagsW equ <StringExHandleOtherFlagsW_do_not_call_this_function>
+endif
 endif
 
 endif

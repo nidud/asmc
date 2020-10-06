@@ -183,8 +183,16 @@ ifdef _WIN64
        local T
         .new T:D2D1_POINT_2F
 
-        mov T.x,_1
-        mov T.y,_2
+        ifidn typeid(?, _1),<?r128>
+            movss T.x,_1
+        else
+            mov T.x,_1
+        endif
+        ifidn typeid(?, _2),<?r128>
+            movss T.y,_2
+        else
+            mov T.y,_2
+        endif
         lea rax,T
         }
 
@@ -252,10 +260,26 @@ ifdef _WIN64
        local T
         .new T:D2D1_RECT_F
 
-        mov T.left,   _1
-        mov T.top,    _2
-        mov T.right,  _3
-        mov T.bottom, _4
+        ifidn typeid(?, _1),<?r128>
+            movss T.left,_1
+        else
+            mov T.left,_1
+        endif
+        ifidn typeid(?, _2),<?r128>
+            movss T.top,_2
+        else
+            mov T.top,_2
+        endif
+        ifidn typeid(?, _3),<?r128>
+            movss T.right,_3
+        else
+            mov T.right,_3
+        endif
+        ifidn typeid(?, _4),<?r128>
+            movss T.bottom,_4
+        else
+            mov T.bottom,_4
+        endif
         lea rax,T
         }
 
@@ -338,14 +362,24 @@ ifdef _WIN64
         lea   rax,T
         }
 
-    .operator BrushProperties :FLOAT=<1.0>, :ptr D2D1_MATRIX_3X2_F=<D2D1::IdentityMatrix()> {
+    .operator BrushProperties :abs=<1.0>, :abs {
 
        local T
         .new T:D2D1_BRUSH_PROPERTIES
 
-        movss T.opacity,xmm0
-        mov   T.transform,[rdx]
-        lea   rax,T
+        mov T.opacity,_1
+        ifb <_2>
+            xor eax,eax
+            mov T.transform._11,1.0
+            mov T.transform._12,eax
+            mov T.transform._21,eax
+            mov T.transform._22,1.0
+            mov T.transform._31,eax
+            mov T.transform._32,eax
+        else
+            mov T.transform,[rdx]
+        endif
+        lea rax,T
         }
 
     .operator GradientStop :FLOAT, :ptr D2D1_COLOR_F {

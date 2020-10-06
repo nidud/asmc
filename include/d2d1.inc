@@ -104,14 +104,12 @@ D2D1_BITMAP_PROPERTIES	ENDS
 D2D1_GRADIENT_STOP	STRUC
 position		FLOAT ?
 color			D2D1_COLOR_F <>
-
 D2D1_GRADIENT_STOP	ENDS
 
 
 D2D1_BRUSH_PROPERTIES	STRUC
 opacity			FLOAT ?
 transform		D2D1_MATRIX_3X2_F <>
-
 D2D1_BRUSH_PROPERTIES	ENDS
 
 
@@ -457,9 +455,9 @@ DEFINE_IIDX(ID2D1Bitmap, "a2296057-ea42-4099-983b-539fb6505426")
 
 .comdef ID2D1Bitmap : public ID2D1Resource
 
-    GetSize		proc
-    GetPixelSize	proc
-    GetPixelFormat	proc
+    GetSize		proc :ptr D2D1_SIZE_F
+    GetPixelSize	proc :ptr D2D1_SIZE_U
+    GetPixelFormat	proc :ptr D2D1_PIXEL_FORMAT
     GetDpi		proc :ptr, :ptr
     CopyFromBitmap	proc :ptr, :ptr, :ptr
     CopyFromRenderTarget proc :ptr, :ptr, :ptr

@@ -8,15 +8,17 @@ include math.inc
 
     .code
 
-    option win64:rsp nosave noauto
+    option win64:rsp noauto
 
 floorf proc x:float
 
-    movd      r10d,xmm0
-    shr       r10d,63
-    cvttss2si eax,xmm0
-    sub       eax,r10d
-    cvtsi2ss  xmm0,eax
+    movss       xmm1,1.0
+    movss       xmm2,xmm0
+    cvttps2dq   xmm0,xmm0
+    cvtdq2ps    xmm0,xmm0
+    cmpltps     xmm2,xmm0
+    andps       xmm2,xmm1
+    subss       xmm0,xmm2
     ret
 
 floorf endp

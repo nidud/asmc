@@ -2021,21 +2021,20 @@ static void win64_MoveRegParam( int i, int size, struct dsym *param )
 	AddLineQueueX( "%r [%r+%u], %r", mov, T_RSP, 8 + i * size, reg );
 }
 
-static int win64_GetRegParams( int *vararg, int *size, int maxregs, struct dsym *param )
+static int win64_GetRegParams( int *vararg, int *size, struct dsym *param )
 {
     int params;
 
     *size = 8;
     if ( param && param->sym.is_vararg == TRUE ) {
 	*vararg = 1;
-	return 3;
+	return 4;
     }
     *vararg = 0;
     for ( params = 0; param; param = param->nextparam ) {
-	if ( /*maxregs == 6 &&*/ param->sym.total_size > *size )
+	if ( param->sym.total_size > *size )
 	    *size = param->sym.total_size;
-	if ( params < maxregs && param->nextparam )
-	    params++;
+	params++;
     }
     return params;
 }
@@ -2047,13 +2046,13 @@ static void win64_SaveRegParams( struct proc_info *info )
     int maxregs = ( CurrProc->sym.langtype == LANG_VECTORCALL ) ? 6 : 4;
 
     param = info->paralist;
-    i = win64_GetRegParams( &vararg, &size, maxregs, param );
-    while ( i >= maxregs ) {
+    i = win64_GetRegParams( &vararg, &size, param );
+    while ( i > maxregs ) {
 	i--;
 	param = param->nextparam;
     }
 
-    for ( ; param && i >= 0; i-- ) {
+    for ( --i; param && i >= 0; i-- ) {
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {
 	    if ( param->sym.used || vararg || Parse_Pass == PASS_1 )

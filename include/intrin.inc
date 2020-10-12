@@ -39,226 +39,159 @@ __debugbreak macro
     retm<>
     endm
 
-_BitScanForward proto :ptr, :long_t
-_BitScanReverse proto :ptr, :long_t
-
-_BitScanForward macro lpIndex, dwMask
+_BitScanForward proto :ptr, :long_t {
     xor     eax,eax
     bsf     eax,edx
     mov     [rcx],eax
     setne   al
-    retm    <al>
-    endm
+    }
 
-_BitScanReverse macro lpIndex, dwMask
+_BitScanReverse proto :ptr, :long_t {
     xor     eax,eax
     bsr     eax,edx
     mov     [rcx],eax
     setne   al
-    retm    <al>
-    endm
+    }
 
 ifdef __MACHINEX64
 
-_BitScanForward64 proto :ptr, :qword
-_BitScanReverse64 proto :ptr, :qword
-
-_BitScanForward64 macro lpIndex, dwMask
+_BitScanForward64 proto :ptr, :qword {
     xor     eax,eax
     bsf     rax,rdx
     mov     [rcx],eax
     setne   al
-    retm    <al>
-    endm
+    }
 
-_BitScanReverse64 macro lpIndex, dwMask
+_BitScanReverse64 proto :ptr, :qword {
     xor     eax,eax
     bsr     rax,rdx
     mov     [rcx],eax
     setne   al
-    retm    <al>
-    endm
+    }
 
 endif
 
-_InterlockedCompareExchange     proto :ptr, :long_t, :long_t
-_InterlockedCompareExchange8    proto :ptr, :byte, :byte
-_InterlockedCompareExchange16   proto :ptr, :word, :word
-_InterlockedCompareExchange64   proto :ptr, :qword, :qword
-_InterlockedDecrement16         proto :ptr
-_InterlockedDecrement           proto :ptr
-
-_InterlockedCompareExchange macro Destination, Exchange, Comparand
-    mov     eax,Comparand
+_InterlockedCompareExchange proto :ptr, :long_t, :long_t {
+    mov     eax,r8d
     push    [rcx]
     lock    cmpxchg dword ptr [rcx],edx
     pop     rax
-    retm    <eax>
-    endm
+    }
 
-_InterlockedCompareExchange8 macro Destination, Exchange, Comparand
-    mov     al,Comparand
+_InterlockedCompareExchange8 proto :ptr, :byte, :byte {
+    mov     al,r8b
     push    [rcx]
     lock    cmpxchg byte ptr [rcx],dl
     pop     rax
-    retm    <al>
-    endm
+    }
 
-_InterlockedCompareExchange16 macro Destination, Exchange, Comparand
-    mov     ax,Comparand
+_InterlockedCompareExchange16 proto :ptr, :word, :word {
+    mov     ax,r8w
     push    [rcx]
     lock    cmpxchg word ptr [rcx],dl
     pop     rax
-    retm    <ax>
-    endm
+    }
 
-_InterlockedCompareExchange64 macro Destination, Exchange, Comparand
-    mov     rax,Comparand
+_InterlockedCompareExchange64 proto :ptr, :qword, :qword {
+    mov     rax,r8
     push    [rcx]
     lock    cmpxchg size_t ptr [rcx],rdx
     pop     rax
-    retm    <rax>
-    endm
+    }
 
 _InterlockedCompareExchangePointer equ <_InterlockedCompareExchange64>
 
-_InterlockedDecrement16 macro lpAddend
+_InterlockedDecrement16 proto :ptr {
     lock    dec word ptr [rcx]
     mov     ax,[rcx]
-    retm    <ax>
-    endm
+    }
 
-_InterlockedDecrement macro lpAddend
+_InterlockedDecrement proto :ptr {
     lock    dec dword ptr [rcx]
     mov     eax,[rcx]
-    retm    <eax>
-    endm
+    }
 
 ifdef __MACHINEX64
 
-_InterlockedDecrement64 proto :ptr
-
-_InterlockedDecrement64 macro lpAddend
+_InterlockedDecrement64 proto :ptr {
     lock dec qword ptr [rcx]
     mov rax,[rcx]
-    retm<rax>
-    endm
+    }
 
 endif
 
-_InterlockedIncrement16 proto :ptr
-_InterlockedIncrement   proto :ptr
-
-_InterlockedIncrement16 macro lpAddend
+_InterlockedIncrement16 proto :ptr {
     lock    inc word ptr [rcx]
     mov     ax,[rcx]
-    retm    <ax>
-    endm
+    }
 
-_InterlockedIncrement macro lpAddend
+_InterlockedIncrement proto :ptr {
     lock    inc dword ptr [rcx]
     mov     eax,[rcx]
-    retm    <eax>
-    endm
+    }
 
 ifdef __MACHINEX64
 
-_InterlockedIncrement64 proto :ptr
-
-_InterlockedIncrement64 macro lpAddend
+_InterlockedIncrement64 proto :ptr {
     lock    inc qword ptr [rcx]
     mov     rax,[rcx]
-    retm    <rax>
-    endm
+    }
 
 endif
 
-_InterlockedExchangePointer proto :ptr, :ptr
-__fastfail proto :int_t
-
-_InterlockedExchangePointer macro Target, Value
+_InterlockedExchangePointer proto :ptr, :ptr {
     xchg    [rcx],rdx
     mov     rax,rdx
-    retm    <rax>
-    endm
+    }
 
-__fastfail macro code
+__fastfail proto :int_t {
     int     0x29
-    exitm   <>
-    endm
+    }
 
-_bittest macro lp, imm
-    if (opattr lp) eq 48
-        bt dword ptr [lp],imm
-    else
-        mov rcx,lp
-        bt dword ptr [rcx],imm
-    endif
-    setb al
-    retm<al>
-    endm
+_bittest proto :ptr, :abs {
+    xor     eax,eax
+    bt      dword ptr [rcx],_1
+    setb    al
+    }
 
-_bittestandcomplement macro lp, imm
-    if (opattr lp) eq 48
-        btc dword ptr [lp],imm
-    else
-        mov rcx,lp
-        btc dword ptr [rcx],imm
-    endif
-    setb al
-    retm<al>
-    endm
+_bittestandcomplement proto :ptr, :abs {
+    xor     eax,eax
+    btc     dword ptr [rcx],_1
+    setb    al
+    }
 
-_bittestandreset macro lp, imm
-    if (opattr lp) eq 48
-        btr dword ptr [lp],imm
-    else
-        mov rcx,lp
-        btr dword ptr [rcx],imm
-    endif
-    setb al
-    retm<al>
-    endm
+_bittestandreset proto :ptr, :abs {
+    xor     eax,eax
+    btr     dword ptr [rcx],_1
+    setb    al
+    }
 
-_bittestandset macro lp, imm
-    if (opattr lp) eq 48
-        bts dword ptr [lp],imm
-    else
-        mov rcx,lp
-        bts dword ptr [rcx],imm
-    endif
-    setb al
-    retm<al>
-    endm
+_bittestandset proto :ptr, :abs {
+    xor     eax,eax
+    bts     dword ptr [rcx],_1
+    setb    al
+    }
 
-_interlockedbittestandreset macro lp, imm
-    if (opattr lp) eq 48
-        lock btr dword ptr [lp],imm
-    else
-        mov rcx,lp
-        lock btr dword ptr [rcx],imm
-    endif
-    setb al
-    retm<al>
-    endm
+_interlockedbittestandreset proto :ptr, :abs {
+    xor     eax,eax
+    lock    btr dword ptr [rcx],_1
+    setb    al
+    }
 
-_byteswap_ulong macro val
-    _mm_loadreg(eax, val)
-    bswap eax
-    retm<eax>
-    endm
+_byteswap_ulong proto :dword {
+    mov     eax,ecx
+    bswap   eax
+    }
 
-_byteswap_uint64 macro val
-    _mm_loadreg(rax, val)
-    bswap rax
-    retm<rax>
-    endm
+_byteswap_uint64 proto :qword {
+    mov     rax,rcx
+    bswap   rax
+    }
 
-_byteswap_ushort macro val
-    _mm_loadreg(ax, val)
-    ror ax,8
-    retm<ax>
-    endm
+_byteswap_ushort proto :word {
+    mov     ax,cx
+    ror     ax,8
+    }
 
 _disable macro
     cli
@@ -325,90 +258,65 @@ endif
 
 ifdef __MACHINEX64
 
-_InterlockedAnd     proto :ptr, :long_t
-_InterlockedAnd8    proto :ptr, :byte
-_InterlockedAnd16   proto :ptr, :word
-_InterlockedAnd64   proto :ptr, :qword
-_InterlockedOr      proto :ptr, :long_t
-_InterlockedOr8     proto :ptr, :byte
-_InterlockedOr16    proto :ptr, :word
-_InterlockedOr64    proto :ptr, :qword
-_InterlockedXor     proto :ptr, :long_t
-_InterlockedXor8    proto :ptr, :byte
-_InterlockedXor16   proto :ptr, :word
-_InterlockedXor64   proto :ptr, :qword
-
-_InterlockedAnd macro lpValue, dwMask
+_InterlockedAnd proto :ptr, :long_t {
     mov     eax,[rcx]
     lock    and [rcx],edx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedAnd8 macro lpValue, dwMask
+_InterlockedAnd8 proto :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    and [rcx],dl
-    retm    <eax>
-    endm
+    }
 
-_InterlockedAnd16 macro lpValue, dwMask
+_InterlockedAnd16 proto :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    and [rcx],dx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedAnd64 macro lpValue, dwMask
+_InterlockedAnd64 proto :ptr, :qword {
     mov     rax,[rcx]
     lock    and [rcx],rdx
-    retm    <rax>
-    endm
+    }
 
-_InterlockedOr macro lpValue, dwMask
+_InterlockedOr proto :ptr, :long_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedOr8 macro lpValue, dwMask
+_InterlockedOr8 proto :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    or [rcx],dl
-    retm    <eax>
-    endm
+    }
 
-_InterlockedOr16 macro lpValue, dwMask
+_InterlockedOr16 proto :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    or [rcx],dx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedOr64 macro lpValue, dwMask
+_InterlockedOr64 proto :ptr, :qword {
     mov     rax,[rcx]
     lock    or [rcx],rdx
-    retm    <rax>
-    endm
+    }
 
-_InterlockedXor macro lpValue, dwMask
+_InterlockedXor proto :ptr, :long_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedXor8 macro lpValue, dwMask
+_InterlockedXor8 proto :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    xor [rcx],dl
-    retm    <eax>
-    endm
+    }
 
-_InterlockedXor16 macro lpValue, dwMask
+_InterlockedXor16 proto :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    xor [rcx],dx
-    retm    <eax>
-    endm
+    }
 
-_InterlockedXor64 macro lpValue, dwMask
+_InterlockedXor64 proto :ptr, :qword {
     mov     rax,[rcx]
     lock    xor [rcx],rdx
-    retm    <rax>
-    endm
+    }
 
 _InterlockedAnd_np      equ <_InterlockedAnd>
 _InterlockedAnd8_np     equ <_InterlockedAnd8>
@@ -480,54 +388,42 @@ __readfsword macro offs
 endif
 
 ifdef __MACHINEX64
-__addgsbyte macro offs, v
-    add byte ptr gs:[offs],v
-    retm<>
-    endm
-__addgsword macro offs, v
-    add word ptr gs:[offs],v
-    retm<>
-    endm
-__addgsdword macro offs, v
-    add dword ptr gs:[offs],v
-    retm<>
-    endm
-__addgsqword macro offs, v
-    add qword ptr gs:[offs],v
-    retm<>
-    endm
-__incgsbyte macro offs
-    inc byte ptr gs:[offs]
-    retm<>
-    endm
-__incgsdword macro offs
-    inc dword ptr gs:[offs]
-    retm<>
-    endm
-__incgsqword macro offs
-    inc qword ptr gs:[offs]
-    retm<>
-    endm
-__incgsword macro offs
-    inc word ptr gs:[offs]
-    retm<>
-    endm
-__readgsbyte macro offs
-    mov al,gs:[offs]
-    retm<al>
-    endm
-__readgsdword macro offs
-    mov eax,gs:[offs]
-    retm<eax>
-    endm
-__readgsqword macro offs
-    mov rax,gs:[offs]
-    retm<rax>
-    endm
-__readgsword macro offs
-    mov ax,gs:[offs]
-    retm<ax>
-    endm
+__addgsbyte proto :ptr, :byte {
+    add     gs:[rcx],dl
+    }
+__addgsword proto :ptr, :word {
+    add     gs:[rcx],dx
+    }
+__addgsdword proto :ptr, :dword {
+    add     gs:[rcx],edx
+    }
+__addgsqword proto :ptr, :qword {
+    add     gs:[rcx],rdx
+    }
+__incgsbyte proto :ptr {
+    inc     byte ptr gs:[rcx]
+    }
+__incgsdword proto :ptr {
+    inc     dword ptr gs:[rcx]
+    }
+__incgsqword proto :ptr {
+    inc     qword ptr gs:[rcx]
+    }
+__incgsword proto :ptr {
+    inc     word ptr gs:[rcx]
+    }
+__readgsbyte proto :ptr {
+    movzx   eax,byte ptr gs:[rcx]
+    }
+__readgsdword proto :ptr {
+    mov     eax,gs:[rcx]
+    }
+__readgsqword proto :ptr {
+    mov     rax,gs:[rcx]
+    }
+__readgsword proto :ptr {
+    movzx   eax,word ptr gs:[rcx]
+    }
 endif
 
 ifdef __MACHINEX86
@@ -553,20 +449,15 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__cpuid     proto :ptr_t, :int_t
-__cpuidex   proto :ptr_t, :int_t, :int_t
-__emul      proto :int_t, :int_t
-__emulu     proto :int_t, :int_t
-
 __clts macro
     exitm<clts>
     endm
 
-__cpuid macro cpuInfo, function_id
+__cpuid proto __fascall :ptr, :int_t {
     push    rsi
     push    rbx
-    mov     rsi,cpuInfo
-    mov     eax,function_id
+    mov     rsi,this
+    mov     eax,_1
     xor     ecx,ecx
     cpuid
     mov     [rsi],eax
@@ -575,15 +466,14 @@ __cpuid macro cpuInfo, function_id
     mov     [rsi+12],edx
     pop     rbx
     pop     rsi
-    retm    <eax>
-    endm
+    }
 
-__cpuidex macro cpuInfo, function_id, subfunction_id
+__cpuidex proto __fascall :ptr_t, :int_t, :int_t {
     push    rsi
     push    rbx
-    mov     rsi,cpuInfo
-    mov     eax,function_id
-    mov     ecx,subfunction_id
+    mov     rsi,this
+    mov     eax,_1
+    mov     ecx,_2
     cpuid
     mov     [rsi],eax
     mov     [rsi+4],ebx
@@ -591,21 +481,18 @@ __cpuidex macro cpuInfo, function_id, subfunction_id
     mov     [rsi+12],edx
     pop     rbx
     pop     rsi
-    retm    <eax>
-    endm
+    }
 
-__emul macro a, b
+__emul proto :int_t, :int_t {
     movsxd  r8,ecx
     movsxd  rax,edx
     imul    r8
-    retm    <rax>
-    endm
+    }
 
-__emulu macro a, b
+__emulu proto :int_t, :int_t {
     mov     eax,b
     mul     rcx
-    retm    <rax>
-    endm
+    }
 
 endif
 
@@ -670,234 +557,194 @@ endif
 _umul128 equ <_mul128>
 
 ifdef __MACHINEX86_X64
-__ll_lshift macro __mask, nBit
-    _mm_loadreg(rax, __mask)
-    _mm_loadreg(ecx, nBit)
-    shl rax,cl
-    retm<rax>
-    endm
 
-__ll_rshift macro __mask, nBit
-    _mm_loadreg(rax, __mask)
-    _mm_loadreg(ecx, nBit)
-    sar rax,cl
-    retm<rax>
-    endm
+__ll_lshift proto :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,edx
+    shl     rax,cl
+    }
 
-__ull_rshift macro __mask, nBit
-    _mm_loadreg(rax, __mask)
-    _mm_loadreg(ecx, nBit)
-    shr rax,cl
-    retm<rax>
-    endm
+__ll_rshift proto :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,edx
+    sar     rax,cl
+    }
+
+__ull_rshift proto :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,edx
+    shr     rax,cl
+    }
 endif
 
 ifdef __MACHINEX64
-__faststorefence macro
+
+__faststorefence proto :abs {
     lock or dword ptr [rsp],0
-    retm<>
-    endm
+    }
+
 endif
 
 ifdef __MACHINEX86_X64
 
 __getcallerseflags macro
     pushfq
-    pop rax
-    retm<eax>
+    pop     rax
+    retm    <eax>
     endm
 
-__halt macro
+__halt proto :abs {
     hlt
-    retm<>
-    endm
+    }
 
-__inbyte macro Port
-    _mm_loadreg(edx, Port)
-    in al,dx
-    retm<al>
-    endm
+__inbyte proto :int_t {
+    mov     edx,ecx
+    in      al,dx
+    }
 
-__inword macro Port
-    _mm_loadreg(edx, Port)
-    in ax,dx
-    retm<ax>
-    endm
+__inword proto :int_t {
+    mov     edx,ecx
+    in      ax,dx
+    }
 
-__indword macro Port
-    _mm_loadreg(edx, Port)
-    in eax,dx
-    retm<eax>
-    endm
+__indword proto :int_t {
+    mov     edx,ecx
+    in      eax,dx
+    }
 
-__inbytestring  proto :int_t, :ptr_t, :int_t
-__indwordstring proto :int_t, :ptr_t, :int_t
-__invlpg        proto :ptr_t
-__lidt          proto :ptr_t
-__lzcnt         proto :int_t
-__lzcnt16       proto :int_t
-
-__inbytestring macro Port, Buffer, Count
+__inbytestring proto :int_t, :ptr_t, :int_t {
     push    rdi
-    mov     rdi,Buffer
-    mov     edx,Port
-    mov     ecx,Count
+    mov     rdi,rdx
+    mov     edx,ecx
+    mov     ecx,r8d
     rep     insb
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__indwordstring macro Port, Buffer, Count
+__indwordstring proto :int_t, :ptr_t, :int_t {
     push    rdi
-    mov     rdi,Buffer
-    mov     edx,Port
-    mov     ecx,Count
+    mov     rdi,rdx
+    mov     edx,ecx
+    mov     ecx,r8d
     rep     insw
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__int2c macro
+__int2c proto :abs {
     int     0x2c
-    exitm   <>
-    endm
+    }
 
-__invlpg macro Address
+__invlpg proto :ptr {
     invlpg  byte ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-__lidt macro Address
+__lidt proto :ptr {
     lidt    byte ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-__lzcnt macro value
-    lzcnt   eax,value
-    retm    <eax>
-    endm
+__lzcnt proto :int_t {
+    lzcnt   eax,ecx
+    }
 
-__lzcnt16 macro value
-    lzcnt   eax,value
-    retm    <eax>
-    endm
+__lzcnt16 proto :int_t {
+    lzcnt   eax,ecx
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-__lzcnt64       proto :int_t
-
-__lzcnt64 macro value
-    lzcnt   eax,value
-    retm    <eax>
-    endm
+__lzcnt64 proto :int_t {
+    lzcnt   eax,ecx
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__movsb proto :ptr, :ptr, :int_t
-__movsd proto :ptr, :ptr, :int_t
-__movsw proto :ptr, :ptr, :int_t
-__stosb proto :ptr, :byte, :int_t
-__stosw proto :ptr, :word, :int_t
-__stosd proto :ptr, :dword, :int_t
-
-__movsb macro Destination, Source, Count
+__movsb proto :ptr, :ptr, :int_t {
     push    rsi
     push    rdi
-    mov     rdi,Destination
-    mov     rsi,Source
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     rsi,rdx
+    mov     ecx,r8d
     rep     movsb
     pop     rdi
     pop     rsi
-    exitm   <>
-    endm
+    }
 
-__movsw macro Destination, Source, Count
+__movsw proto :ptr, :ptr, :int_t {
     push    rsi
     push    rdi
-    mov     rdi,Destination
-    mov     rsi,Source
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     rsi,rdx
+    mov     ecx,r8d
     rep     movsw
     pop     rdi
     pop     rsi
-    exitm   <>
-    endm
+    }
 
-__movsd macro Destination, Source, Count
+__movsd proto :ptr, :ptr, :int_t {
     push    rsi
     push    rdi
-    mov     rdi,Destination
-    mov     rsi,Source
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     rsi,rdx
+    mov     ecx,r8d
     rep     movsd
     pop     rdi
     pop     rsi
-    exitm   <>
-    endm
+    }
 
-__stosb macro Destination, Val, Count
+__stosb proto :ptr, :byte, :int_t {
     push    rdi
-    mov     rdi,Destination
-    mov     al,Val
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     al,dl
+    mov     ecx,r8d
     rep     stosb
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__stosw macro Destination, Val, Count
+__stosw proto :ptr, :word, :int_t {
     push    rdi
-    mov     rdi,Destination
-    mov     ax,Val
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     ax,dx
+    mov     ecx,r8d
     rep     stosw
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__stosd macro Destination, Val, Count
+__stosd proto :ptr, :dword, :int_t {
     push    rdi
-    mov     rdi,Destination
-    mov     eax,Val
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     eax,edx
+    mov     ecx,r8d
     rep     stosd
     pop     rdi
-    exitm   <>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-__stosq proto :ptr, :qword, :int_t
-__movsq proto :ptr, :ptr, :int_t
-
-__movsq macro Destination, Source, Count
+__movsq proto :ptr, :qword, :int_t {
     push    rsi
     push    rdi
-    mov     rdi,Destination
-    mov     rsi,Source
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     rsi,rdx
+    mov     ecx,r8d
     rep     movsq
     pop     rdi
     pop     rsi
-    exitm   <>
-    endm
+    }
 
-__stosq macro Destination, Val, Count
+__stosq proto :ptr, :ptr, :int_t {
     push    rdi
-    mov     rdi,Destination
-    mov     rax,Val
-    mov     ecx,Count
+    mov     rdi,rcx
+    mov     rax,rdx
+    mov     ecx,r8d
     rep     stosd
     pop     rdi
-    exitm   <>
-    endm
+    }
 
 endif
 
@@ -909,155 +756,132 @@ __nvreg_save_fence macro
 endif
 
 ifdef __MACHINEX86_X64
-__outbyte macro Port, val
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(al, val)
-    out dx,al
-    retm<>
-    endm
-__outword macro Port, val
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(ax, val)
-    out dx,ax
-    retm<>
-    endm
-__outdword macro Port, val
-    _mm_loadreg(edx, Port)
-    _mm_loadreg(eax, val)
-    out dx,eax
-    retm<>
-    endm
 
-__outbytestring     proto :int_t, :ptr, :int_t
-__outdwordstring    proto :int_t, :ptr, :int_t
-__outwordstring     proto :int_t, :ptr, :int_t
+__outbyte proto :dword, :byte {
+    mov     al,dl
+    mov     edx,ecx
+    out     dx,al
+    }
 
-__outbytestring macro Port, Buffer, Count
+__outword proto :dword, :word {
+    mov     eax,edx
+    mov     edx,ecx
+    out     dx,ax
+    }
+
+__outdword proto :dword, :dword {
+    mov     eax,edx
+    mov     edx,ecx
+    out     dx,eax
+    }
+
+__outbytestring proto :int_t, :ptr, :int_t {
     push    rdi
-    mov     rdi,Buffer
-    mov     edx,Port
-    mov     ecx,Count
+    mov     rdi,rdx
+    mov     edx,ecx
+    mov     ecx,r8d
     rep     outsb
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__outwordstring macro Port, Buffer, Count
+__outwordstring proto :int_t, :ptr, :int_t {
     push    rdi
-    mov     rdi,Buffer
-    mov     edx,Port
-    mov     ecx,Count
+    mov     rdi,rdx
+    mov     edx,ecx
+    mov     ecx,r8d
     rep     outsw
     pop     rdi
-    exitm   <>
-    endm
+    }
 
-__outdwordstring macro Port, Buffer, Count
+__outdwordstring proto :int_t, :ptr, :int_t {
     push    rdi
-    mov     rdi,Buffer
-    mov     edx,Port
-    mov     ecx,Count
+    mov     rdi,rdx
+    mov     edx,ecx
+    mov     ecx,r8d
     rep     outsd
     pop     rdi
-    exitm   <>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
-__popcnt macro value
-    popcnt eax,value
-    retm<eax>
-    endm
 
-__popcnt16 macro value
-    popcnt ax,value
-    retm<ax>
-    endm
+__popcnt proto :dword {
+    popcnt  eax,ecx
+    }
+
+__popcnt16 proto :word {
+    popcnt  ax,cx
+    }
+
 endif
 
 ifdef __MACHINEX64
-__popcnt64 macro value
-    popcnt rax,value
-    retm<rax>
-    endm
+
+__popcnt64 proto :qword {
+    popcnt  rax,rcx
+    }
+
 endif
 
 ifdef __MACHINEX86_X64
 
 __rdtsc macro
     rdtsc
-ifdef _WIN64
-    shl rdx,32
-    or rax,rdx
-endif
-    retm<rax>
+    shl     rdx,32
+    or      rax,rdx
+    retm   <rax>
     endm
 
-__rdtscp macro Aux
-    push rdi
-    _mm_loadreg(rdi, Aux)
+__rdtscp proto :ptr {
+    push    rdi
+    mov     rdi,rcx
     rdtscp
-ifdef _WIN64
-    shl rdx,32
-    or rax,rdx
-endif
-    mov [rdi],ecx
-    pop rdi
-    retm<rax>
-    endm
+    shl     rdx,32
+    or      rax,rdx
+    mov     [rdi],ecx
+    pop     rdi
+    }
 
-__readcr0 macro
-    mov rax,cr0
-    retm<rax>
-    endm
-__readcr2 macro
-    mov rax,cr2
-    retm<rax>
-    endm
-__readcr3 macro
-    mov rax,cr3
-    retm<rax>
-    endm
-__readcr4 macro
-    mov rax,cr4
-    retm<rax>
-    endm
-__readcr8 macro
-    mov rax,cr8
-    retm<rax>
-    endm
+__readcr0 proto :abs {
+    mov     rax,cr0
+    }
+__readcr2 proto :abs {
+    mov     rax,cr2
+    }
+__readcr3 proto :abs {
+    mov     rax,cr3
+    }
+__readcr4 proto :abs {
+    mov     rax,cr4
+    }
+__readcr8 proto :abs {
+    mov     rax,cr8
+    }
 
-__writecr0 macro val
-    mov cr0,val
-    retm<>
-    endm
-__writecr2 macro val
-    mov cr2,val
-    retm<>
-    endm
-__writecr3 macro val
-    mov cr3,val
-    retm<>
-    endm
-__writecr4 macro val
-    mov cr4,val
-    retm<>
-    endm
-__writecr8 macro val
-    mov cr8,val
-    retm<>
-    endm
+__writecr0 proto :ptr {
+    mov     cr0,rcx
+    }
+__writecr2 proto :ptr {
+    mov     cr2,rcx
+    }
+__writecr3 proto :ptr {
+    mov     cr3,rcx
+    }
+__writecr4 proto :ptr {
+    mov     cr4,rcx
+    }
+__writecr8 proto :ptr {
+    mov     cr8,rcx
+    }
 
-__readdr macro imm
-    mov rax,dr&imm&
-    retm<rax>
-    endm
+__readdr proto :abs {
+    mov     rax,dr&this&
+    }
 
-__writedr macro imm, val
-    mov dr&imm&,val
-    retm<>
-    endm
+__writedr proto :abs, :ptr {
+    mov     dr&this&,rdx
+    }
 
 __readeflags macro
 ifdef _WIN64
@@ -1065,46 +889,40 @@ ifdef _WIN64
 else
     pushfd
 endif
-    pop rax
-    retm<rax>
+    pop     rax
+    retm   <rax>
     endm
 
-__writeeflags macro val
-    push val
-ifdef _WIN64
+__writeeflags proto :ptr {
+    push    rcx
     popfq
-else
-    popfd
-endif
-    retm<>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-__shiftleft128 macro LowPart, HighPart, Count
-    _mm_loadreg(rax, LowPart)
-    _mm_loadreg(rdx, HighPart)
-    shld rdx,rax,Count
-    sal rax,Count
+__shiftleft128 proto :qword, :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,r8d
+    shld    rdx,rax,cl
+    sal     rax,cl
     .if cl & 0xC0
         .if cl & 0x80
             xor eax,eax
             xor edx,edx
         .else
             mov rdx,rax
-            xor rax,rax
+            xor eax,eax
         .endif
     .endif
-    retm<rax>
-    endm
+    }
 
-__shiftright128 macro LowPart, HighPart, Count
-    _mm_loadreg(rax, LowPart)
-    _mm_loadreg(rdx, HighPart)
-    shrd rax,rdx,Count
-    sar rdx,Count
+__shiftright128 proto :qword, :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,r8d
+    shrd    rdx,rax,cl
+    sar     rax,cl
     .if cl & 0xC0
         .if cl & 0x80
             xor eax,eax
@@ -1114,339 +932,267 @@ __shiftright128 macro LowPart, HighPart, Count
             xor rdx,rdx
         .endif
     .endif
-    retm<rax>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__readmsr macro register
-    _mm_loadreg(ecx, register)
+__readmsr proto :dword {
     rdmsr
-ifdef _WIN64
-    shl rdx,32
-    or rax,rdx
-endif
-    retm<rax>
-    endm
+    shl     rdx,32
+    or      rax,rdx
+    }
 
-__readpmc macro counter
-    _mm_loadreg(ecx, counter)
+__readpmc proto :dword {
     rdpmc
-ifdef _WIN64
-    shl rdx,32
-    or rax,rdx
-endif
-    retm<rax>
-    endm
+    shl     rdx,32
+    or      rax,rdx
+    }
 
-__segmentlimit macro a
-    _mm_loadreg(eax, a)
-    lsl eax,eax
-    retm<eax>
-    endm
+__segmentlimit proto :dword {
+    mov     eax,ecx
+    lsl     eax,eax
+    }
 
-__sidt macro Destination
-    _mm_loadreg(rcx, Destination)
-    sidt qword ptr [rcx]
-    retm<>
-    endm
+__sidt proto :ptr {
+    sidt    qword ptr [rcx]
+    }
 
-__svm_clgi macro
+__svm_clgi proto :abs {
     clgi
-    endm
+    }
 
-__svm_invlpga macro Va, ASID
-    _mm_loadreg(rax, Va)
-    _mm_loadreg(ecx, ASID)
+__svm_invlpga proto :qword, :dword {
+    mov     rax,rcx
+    mov     ecx,edx
     invlpga rax,ecx
-    retm<>
-    endm
+    }
 
-__svm_skinit macro SLB
-    _mm_loadreg(eax, SLB)
-    skinit eax
-    retm<>
-    endm
+__svm_skinit proto :dword {
+    mov     eax,ecx
+    skinit  eax
+    }
 
-__svm_stgi macro
+__svm_stgi proto :abs {
     stgi
-    retm<>
-    endm
+    }
 
-__svm_vmload macro VmcbPhysicalAddress
-    _mm_loadreg(eax, VmcbPhysicalAddress)
-    vmload rax
-    retm<>
-    endm
+__svm_vmload proto :dword {
+    mov     eax,ecx
+    vmload  rax
+    }
 
-__svm_vmrun macro VmcbPhysicalAddress
-    _mm_loadreg(eax, VmcbPhysicalAddress)
-    vmrun rax
-    retm<>
-    endm
+__svm_vmrun proto :dword {
+    mov     eax,ecx
+    vmrun   rax
+    }
 
-__svm_vmsave macro VmcbPhysicalAddress
-    _mm_loadreg(eax, VmcbPhysicalAddress)
-    vmsave rax
-    retm<>
-    endm
+__svm_vmsave proto :dword {
+    mov     eax,ecx
+    vmsave  rax
+    }
 
-__ud2 macro
+__ud2 proto :abs {
     ud2
-    retm<>
-    endm
+    }
 
-__vmx_off macro
+__vmx_off proto :abs {
     vmxoff
-    retm<>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-__vmx_on        proto :ptr
-__vmx_vmclear   proto :ptr
-__vmx_vmptrld   proto :ptr
-__vmx_vmread    proto :ptr, :ptr
-__vmx_vmwrite   proto :ptr, :ptr
-
-__vmx_on macro VmsSupportPhysicalAddress
+__vmx_on proto :ptr {
     vmxon   qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-__vmx_vmclear macro VmcsPhysicalAddress
+__vmx_vmclear proto :ptr {
     vmclear qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-__vmx_vmlaunch macro
+__vmx_vmlaunch proto :abs {
     vmlaunch
-    exitm   <>
-    endm
+    }
 
-__vmx_vmptrld macro VmcsPhysicalAddress
+__vmx_vmptrld proto :ptr {
     vmptrld qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-__vmx_vmread macro Field, FieldValue
-    mov     rax,Field
-    mov     rcx,FieldValue
+__vmx_vmread proto :ptr, :ptr {
+    mov     rax,rcx
+    mov     rcx,rdx
     vmread  rax,rcx
-    exitm   <>
-    endm
+    }
 
-__vmx_vmresume macro
+__vmx_vmresume proto :abs {
     vmresume
-    exitm   <>
-    endm
+    }
 
-__vmx_vmwrite macro Field, FieldValue
-    mov     rax,Field
-    mov     rcx,FieldValue
+__vmx_vmwrite proto :ptr, :ptr {
+    mov     rax,rcx
+    mov     rcx,rdx
     vmwrite rax,rcx
-    exitm   <>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__vmx_vmptrst proto :ptr
-
-__vmx_vmptrst macro VmcsPhysicalAddress
+__vmx_vmptrst proto :ptr {
     vmptrst qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__wbinvd macro
+__wbinvd proto :abs {
     wbinvd
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX86
 
-__writefsbyte macro offs, val
-    assume fs:nothing
-    mov byte ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
-__writefsdword macro offs, val
-    assume fs:nothing
-    mov dword ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
-__writefsqword macro offs, val
-    assume fs:nothing
-    mov eax,dword ptr val
-    mov edx,dword ptr val[4]
-    mov fs:[offs],eax
-    mov fs:[offs+4],edx
-    assume fs:error
-    retm<>
-    endm
-__writefsword macro offs, val
-    assume fs:nothing
-    mov word ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
+__writefsbyte proto :ptr, :byte {
+    assume  fs:nothing
+    mov     fs:[rcx],dl
+    assume  fs:error
+    }
+
+__writefsdword proto :ptr, :dword {
+    assume  fs:nothing
+    mov     fs:[rcx],edx
+    assume  fs:error
+    }
+
+__writefsqword proto :ptr, :qword {
+    assume  fs:nothing
+    mov     fs:[rcx],rdx
+    assume  fs:error
+    }
+
+__writefsword proto :ptr, :word {
+    assume  fs:nothing
+    mov     fs:[rcx],dx
+    assume  fs:error
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-__writegsbyte macro offs, val
-    mov byte ptr gs:[offs],val
-    retm<>
-    endm
-__writegsdword macro offs, val
-    mov dword ptr gs:[offs],val
-    retm<>
-    endm
-__writegsqword macro offs, val
-    mov qword ptr gs:[offs],val
-    retm<>
-    endm
-__writegsword macro offs, val
-    mov word ptr gs:[offs],val
-    retm<>
-    endm
+__writegsbyte proto :ptr, :byte {
+    mov     gs:[rcx],dl
+    }
+__writegsdword proto :ptr, :dword {
+    mov     gs:[rcx],edx
+    }
+__writegsqword proto :ptr, :qword {
+    mov     gs:[rcx],rdx
+    }
+__writegsword proto :ptr, :word {
+    mov     gs:[rcx],dx
+    }
 
 endif
 
 ifdef __MACHINEX86_X64
 
-__writemsr  proto :ptr, :ptr
-_lgdt       proto :ptr
-_sgdt       proto :ptr
-
-__writemsr macro Register, Value
+__writemsr proto :ptr, :ptr {
     mov     rax,rdx
     shr     rdx,32
     wrmsr
-    exitm   <>
-    endm
+    }
 
-_rsm macro
+_rsm proto :abs {
     rsm
-    retm<>
-    endm
+    }
 
-_lgdt macro p
+_lgdt proto :ptr {
     lgdt    qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-_sgdt macro p
+_sgdt proto :ptr {
     sgdt    qword ptr [rcx]
-    exitm   <>
-    endm
+    }
 
-_clac macro
+_clac proto :abs {
     clac
-    exitm   <>
-    endm
+    }
 
-_stac macro
+_stac proto :abs {
     stac
-    exitm   <>
-    endm
+    }
 
-_addcarry_u8    proto :byte, :byte, :byte, :ptr
-_subborrow_u8   proto :byte, :byte, :byte, :ptr
-_addcarry_u16   proto :byte, :word, :word, :ptr
-_subborrow_u16  proto :byte, :word, :word, :ptr
-_addcarry_u32   proto :byte, :dword, :dword, :ptr
-_subborrow_u32  proto :byte, :dword, :dword, :ptr
-
-_addcarry_u8 macro carry, a, b, p
+_addcarry_u8 proto :byte, :byte, :byte, :ptr {
     add     cl,-1
     adc     dl,r8b
     mov     [r9],dl
     setb    al
-    retm    <al>
-    endm
+    }
 
-_subborrow_u8 macro carry, a, b, p
+_subborrow_u8 proto :byte, :byte, :byte, :ptr {
     add     cl,-1
     sbb     dl,r8b
     mov     [r9],dl
     setb    al
-    retm    <al>
-    endm
+    }
 
-_addcarry_u16 macro carry, a, b, p
+_addcarry_u16 proto :byte, :word, :word, :ptr {
     add     cl,-1
     adc     dx,r8w
     mov     [r9],dx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
-_subborrow_u16 macro carry, a, b, p
+_subborrow_u16 proto :byte, :word, :word, :ptr {
     add     cl,-1
     sbb     dx,r8w
     mov     [r9],dx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
-_addcarry_u32 macro carry, a, b, p
+_addcarry_u32 proto :byte, :dword, :dword, :ptr {
     add     cl,-1
     adc     edx,r8d
     mov     [r9],edx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
-_subborrow_u32 macro carry, a, b, p
+_subborrow_u32 proto :byte, :dword, :dword, :ptr {
     add     cl,-1
     sbb     edx,r8d
     mov     [r9],edx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
 endif
 
 ifdef __MACHINEX64
 
-_addcarry_u64   proto :byte, :qword, :qword, :ptr
-_subborrow_u64  proto :byte, :qword, :qword, :ptr
-
-_addcarry_u64 macro carry, a, b, p
+_addcarry_u64 proto :byte, :qword, :qword, :ptr {
     add     cl,-1
     adc     rdx,r8
     mov     [r9],rdx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
-_subborrow_u64 macro carry, a, b, p
+_subborrow_u64 proto :byte, :qword, :qword, :ptr {
     add     cl,-1
     sbb     rdx,r8
     mov     [r9],rdx
     setb    al
     movzx   eax,al
-    retm    <eax>
-    endm
+    }
 
 endif
 

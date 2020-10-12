@@ -365,16 +365,21 @@ DEFINE_ENUM_FLAG_OPERATORS(D2D1_PRESENT_OPTIONS);
     usage	D2D1_RENDER_TARGET_USAGE ?
     minLevel	D2D1_FEATURE_LEVEL ?
 
-    .operator D2D1_RENDER_TARGET_PROPERTIES :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
-					    :abs=<0>,
-					    :abs=<0.0>,
-					    :abs=<0.0>,
-					    :abs=<D2D1_RENDER_TARGET_USAGE_NONE>,
-					    :abs=<D2D1_FEATURE_LEVEL_DEFAULT>,
-					    :vararg {
+    .operator D2D1_RENDER_TARGET_PROPERTIES \
+		:abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
+		:abs,
+		:abs=<0.0>,
+		:abs=<0.0>,
+		:abs=<D2D1_RENDER_TARGET_USAGE_NONE>,
+		:abs=<D2D1_FEATURE_LEVEL_DEFAULT>,
+		:vararg {
 	mov this.type,_1
-	mov this.pixelFormat.format,DXGI_FORMAT_UNKNOWN
-	mov this.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
+	ifb <_2>
+	    mov this.pixelFormat.format,DXGI_FORMAT_UNKNOWN
+	    mov this.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
+	else
+	    mov this.pixelFormat,[_2]
+	endif
 	mov this.dpiX,_3
 	mov this.dpiY,_4
 	mov this.usage,_5
@@ -741,7 +746,7 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     SetDpi		proc :FLOAT, :FLOAT
     GetDpi		proc :ptr, :ptr
     GetSize		proc :ptr D2D1_SIZE_F
-    GetPixelSize	proc
+    GetPixelSize	proc :ptr D2D1_SIZE_U
     GetMaximumBitmapSize proc
     IsSupported		proc :ptr
     .ends

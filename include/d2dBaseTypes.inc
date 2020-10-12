@@ -35,7 +35,6 @@ sc_blueMask     equ (0xff shl sc_blueShift)
       local n
        .new n:D3DCOLORVALUE
         n.Init(_1)
-        lea rax,n
         }
 
     .operator Init :abs, :abs, :vararg {
@@ -75,6 +74,7 @@ sc_blueMask     equ (0xff shl sc_blueShift)
                 movss    [rcx].D3DCOLORVALUE.b,xmm0
             endif
         endif
+        mov rax,rcx
         }
     .ends
 endif

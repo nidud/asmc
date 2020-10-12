@@ -59,7 +59,7 @@ static void AddPublic( struct com_item *com, struct dsym *sp )
     struct sfield *fl;
     struct asym *sym;
 
-    if ( sp->sym.total_size ) {
+    if ( sp->sym.total_size && Parse_Pass == 0 ) {
 
         for ( fl = sp->e.structinfo->head; fl; fl = fl->next ) {
 

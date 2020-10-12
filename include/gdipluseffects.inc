@@ -249,7 +249,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         }
     .ends
 
-
+ifndef __Levels_INTERFACE_DEFINED__
 .template Levels : public Effect
 
     .operator Levels :vararg {
@@ -266,7 +266,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(LevelsParams))
         }
     .ends
-
+endif
 
 .template Tint : public Effect
 

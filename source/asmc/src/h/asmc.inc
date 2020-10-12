@@ -4,10 +4,10 @@ ifndef __ASMC_INC
 __ASMC_INC equ <>
 
 include version.inc
-
 include stdio.inc
 include stdlib.inc
 include string.inc
+include inttype.inc
 
 .pragma list(push, 0)
 
@@ -255,17 +255,19 @@ CVEX_MAX        equ 3   ; globals, locals, types and constants
 
 CVO_STATICTLS   equ 1   ; option flags: handle static tls
 
-SEGTYPE_UNDEF   equ 0
-SEGTYPE_CODE    equ 1
-SEGTYPE_DATA    equ 2
-SEGTYPE_BSS     equ 3
-SEGTYPE_STACK   equ 4
-SEGTYPE_ABS     equ 5
-SEGTYPE_HDR     equ 6   ; only used in bin.c for better sorting
-SEGTYPE_CDATA   equ 7   ; "
-SEGTYPE_RELOC   equ 8   ; "
-SEGTYPE_RSRC    equ 9   ; "
-SEGTYPE_ERROR   equ 10  ; must be last - an "impossible" segment type
+.enum seg_type {
+    SEGTYPE_UNDEF,
+    SEGTYPE_CODE,
+    SEGTYPE_DATA,
+    SEGTYPE_BSS,
+    SEGTYPE_STACK,
+    SEGTYPE_ABS,
+    SEGTYPE_HDR,   ;; only used in bin.c for better sorting
+    SEGTYPE_CDATA, ;; only used in bin.c for better sorting
+    SEGTYPE_RELOC, ;; only used in bin.c for better sorting
+    SEGTYPE_RSRC,  ;; only used in bin.c for better sorting
+    SEGTYPE_ERROR, ;; must be last - an "impossible" segment type
+    }
 
 CSF_GRPCHK      equ 1
 

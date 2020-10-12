@@ -16,6 +16,8 @@ include amstream.inc
 include asptlb.inc
 include d3d11_1.inc
 include d3dx9.inc
+include d2d1.inc
+include dwrite.inc
 include dinput.inc
 include dsound.inc
 include shlguid.inc

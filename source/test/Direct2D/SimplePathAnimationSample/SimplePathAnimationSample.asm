@@ -330,7 +330,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
         mov m_Triangle[2*D2D1_POINT_2F].x,0.0
         mov m_Triangle[2*D2D1_POINT_2F].y,0.0
 
-        pSink.BeginFigure(&m_Triangle[2*D2D1_POINT_2F], D2D1_FIGURE_BEGIN_FILLED)
+        pSink.BeginFigure(0, D2D1_FIGURE_BEGIN_FILLED)
         pSink.AddLines(&m_Triangle, 3)
         pSink.EndFigure(D2D1_FIGURE_END_OPEN)
         mov hr,pSink.Close()
@@ -469,7 +469,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
     mov hr,[rsi].CreateDeviceResources()
     mov rdi,[rsi].m_pRT
 
-    assume rdi:ID2D1HwndRenderTarget
+    assume rdi:ptr ID2D1HwndRenderTarget
 
     .if (SUCCEEDED(hr) && !([rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
 
@@ -487,9 +487,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         divss xmm0,512.0
         movss minWidthHeightScale,xmm0
 
-        movss point.x,xmm0
-        movss point.y,xmm0
-        mov scale,Matrix3x2F::Scale(point)
+        mov scale,Matrix3x2F::Scale(xmm0, xmm0)
 
         movss xmm0,rtSize.width
         movss xmm1,rtSize.height
@@ -497,7 +495,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         divss xmm1,2.0
         movss point.x,xmm0
         movss point.y,xmm1
-        mov translation,Matrix3x2F::Translation(point)
+        mov translation,Matrix3x2F::Translation(xmm0, xmm1)
 
         ;; Prepare to draw.
         [rdi].BeginDraw()

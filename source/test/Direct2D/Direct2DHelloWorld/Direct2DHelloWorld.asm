@@ -320,6 +320,7 @@ DemoApp::OnRender proc uses rsi rdi
         [rdi].Clear(D3DCOLORVALUE(White, 1.0))
 
         mov r10,D2D1::RectF(0.0, 0.0, renderTargetSize.width, renderTargetSize.height)
+
         [rdi].DrawText("Hello, World!", 13, [rsi].m_pTextFormat,
             r10, [rsi].m_pBlackBrush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL )
 
@@ -414,6 +415,11 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 mov wasHandled,TRUE
                 mov result,1
                 .endc
+
+            .case WM_CHAR
+                .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
+                .endc
+
             .endsw
         .endif
 

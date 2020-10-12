@@ -11,6 +11,134 @@ ifdef _WIN64
     D2D1        typedef ptr
     Matrix3x2F  typedef ptr
 
+.template MATRIX3X2F
+
+    _11 real4 ?
+    _12 real4 ?
+    _21 real4 ?
+    _22 real4 ?
+    _31 real4 ?
+    _32 real4 ?
+
+    .operator Identity {
+        xor eax,eax
+        mov [rcx].MATRIX3X2F._11,1.0
+        mov [rcx].MATRIX3X2F._12,eax
+        mov [rcx].MATRIX3X2F._21,eax
+        mov [rcx].MATRIX3X2F._22,1.0
+        mov [rcx].MATRIX3X2F._31,eax
+        mov [rcx].MATRIX3X2F._32,eax
+        mov rax,rcx
+        }
+
+    .operator Rotation :abs, :abs=<0> {
+        D2D1MakeRotateMatrix(_1, _2, rcx)
+        }
+
+    .operator Translation :real4, :real4 {
+        mov   [rcx].MATRIX3X2F._11,1.0
+        mov   [rcx].MATRIX3X2F._12,0.0
+        mov   [rcx].MATRIX3X2F._21,0.0
+        mov   [rcx].MATRIX3X2F._22,1.0
+        movss [rcx].MATRIX3X2F._31,xmm1
+        movss [rcx].MATRIX3X2F._32,xmm2
+        mov   rax,rcx
+        }
+
+    .operator Scale :real4, :real4, :abs, :abs {
+        movss [rcx].MATRIX3X2F._11,xmm1
+        mov   [rcx].MATRIX3X2F._12,0.0
+        mov   [rcx].MATRIX3X2F._21,0.0
+        movss [rcx].MATRIX3X2F._22,xmm2
+        ifb <_3>
+           mov [rcx].MATRIX3X2F._31,0.0
+           mov [rcx].MATRIX3X2F._32,0.0
+        else
+           movss xmm0,_3
+           mulss xmm1,xmm0
+           subss xmm0,xmm1
+           movss [rcx].MATRIX3X2F._31,xmm0
+           movss xmm0,_4
+           mulss xmm2,xmm0
+           subss xmm0,xmm2
+           movss [rcx].MATRIX3X2F._32,xmm0
+        endif
+        mov rax,rcx
+        }
+
+    .operator Invert {
+        xor D2D1InvertMatrix(rcx),1
+        }
+
+    .operator IsIdentity {
+        xor eax,eax
+        mov edx,1.0
+        .if [rcx].MATRIX3X2F._11 == edx && \
+            [rcx].MATRIX3X2F._12 == eax && \
+            [rcx].MATRIX3X2F._21 == eax && \
+            [rcx].MATRIX3X2F._22 == edx && \
+            [rcx].MATRIX3X2F._31 == eax && \
+            [rcx].MATRIX3X2F._32 == eax
+            inc eax
+        .endif
+        }
+
+    .operator SetProduct :ptr, :ptr {
+
+        assume rdx:ptr MATRIX3X2F
+        assume r8:ptr MATRIX3X2F
+
+        movss xmm2,[rdx]._11 ; a._11 * b._11 + a._12 * b._21
+        mulss xmm2,[r8]._11
+        movss xmm1,[rdx]._12
+        mulss xmm1,[r8]._21
+        addss xmm2,xmm1
+
+        movss xmm3,[rdx]._11 ; a._11 * b._12 + a._12 * b._22
+        mulss xmm3,[r8]._12
+        movss xmm1,[rdx]._12
+        mulss xmm1,[r8]._22
+        addss xmm3,xmm1
+
+        movss xmm4,[rdx]._21 ; a._21 * b._11 + a._22 * b._21
+        mulss xmm4,[r8]._11
+        movss xmm1,[rdx]._22
+        mulss xmm1,[r8]._21
+        addss xmm4,xmm1
+
+        movss xmm5,[rdx]._21 ; a._21 * b._12 + a._22 * b._22
+        mulss xmm5,[r8]._12
+        movss xmm1,[rdx]._22
+        mulss xmm1,[r8]._22
+        addss xmm5,xmm1
+
+        movss xmm6,[rdx]._31 ; a._31 * b._11 + a._32 * b._21 + b._31
+        mulss xmm6,[r8]._11
+        movss xmm1,[rdx]._32
+        mulss xmm1,[r8]._21
+        addss xmm6,xmm1
+        addss xmm6,[r8]._31
+
+        movss xmm0,[rdx]._31 ; a._31 * b._12 + a._32 * b._22 + b._32
+        mulss xmm0,[r8]._12
+        movss xmm1,[rdx]._32
+        mulss xmm1,[r8]._22
+        addss xmm0,xmm1
+        addss xmm0,[r8]._32
+
+        movss [rcx+0x00],xmm2
+        movss [rcx+0x04],xmm3
+        movss [rcx+0x08],xmm4
+        movss [rcx+0x0C],xmm5
+        movss [rcx+0x10],xmm6
+        movss [rcx+0x14],xmm0
+
+        assume rdx:nothing
+        assume r8:nothing
+        }
+
+    .ends
+
 .template Matrix3x2F
 
 
@@ -30,43 +158,39 @@ ifdef _WIN64
         }
 
 
-    .operator Translation :D2D1_SIZE_F {
+    .operator Translation :real4, :real4 {
 
       local T
        .new T:D2D1_MATRIX_3X2_F
 
-        mov T._11,1.0
-        mov T._12,0.0
-        mov T._21,0.0
-        mov T._22,1.0
-        lea rax,T
-        mov [rax+16],rcx
+        mov   T._11,1.0
+        mov   T._12,0.0
+        mov   T._21,0.0
+        mov   T._22,1.0
+        movss T._31,xmm0
+        movss T._32,xmm1
+        lea   rax,T
         }
 
 
-    .operator Scale :D2D1_SIZE_F, :abs {
+    .operator Scale :real4, :real4, :abs, :abs {
 
       local T
        .new T:D2D1_MATRIX_3X2_F
 
-        mov T._11,ecx
-        mov T._12,0.0
-        mov T._21,0.0
-        shr rcx,32
-        mov T._22,ecx
-        ifb <_2>
+        movss T._11,xmm0
+        mov   T._12,0.0
+        mov   T._21,0.0
+        movss T._22,xmm1
+        ifb <_3>
            mov T._31,0.0
            mov T._32,0.0
         else
-           mov   rax,_2
-           movd  xmm0,eax
-           movss xmm1,xmm0
+           movss xmm1,_3
            mulss xmm1,T._11
            subss xmm0,xmm1
            movss T._31,xmm0
-           shr   rax,32
-           movd  xmm0,eax
-           movss xmm1,xmm0
+           movss xmm1,_4
            mulss xmm1,T._22
            subss xmm0,xmm1
            movss T._32,xmm0
@@ -92,6 +216,42 @@ ifdef _WIN64
 
         D2D1MakeSkewMatrix(_1, _2, _3, addr T)
         lea rax,T
+        }
+
+
+    .operator ReinterpretBaseType :ptr D2D1_MATRIX_3X2_F {
+        mov rax,rcx
+        }
+
+
+    .operator Determinant :ptr D2D1_MATRIX_3X2_F {
+        movss xmm0,[rcx]
+        mulss xmm0,[rcx+12]
+        movss xmm1,[rcx+4]
+        mulss xmm1,[rcx+8]
+        subss xmm0,xmm1
+        }
+
+
+    .operator Invert :ptr D2D1_MATRIX_3X2_F {
+        xor D2D1InvertMatrix(rcx),1
+        }
+
+
+    .operator IsIdentity :ptr D2D1_MATRIX_3X2_F {
+
+        xor eax,eax
+        mov edx,1.0
+        assume rcx:ptr D2D1_MATRIX_3X2_F
+        .if [rcx]._11 == edx && \
+            [rcx]._12 == eax && \
+            [rcx]._21 == eax && \
+            [rcx]._22 == edx && \
+            [rcx]._31 == eax && \
+            [rcx]._32 == eax
+            inc eax
+        .endif
+        assume rcx:nothing
         }
 
 

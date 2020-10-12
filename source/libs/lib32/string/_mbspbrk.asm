@@ -17,21 +17,17 @@ _mbspbrk proc uses esi edi s1:LPSTR, s2:LPSTR
     not ecx
     dec ecx
 
-    .repeat
-        .break .ifz
-        .for esi = s1, al = [esi] : eax : esi++
-            mov   edi,s2
-            mov   edx,ecx
-            repnz scasb
-            mov   ecx,edx
-            .ifz
-                mov eax,esi
-                .break(1)
-            .endif
-            mov al,[esi+1]
-        .endf
-        xor eax,eax
-    .until  1
+    .return .ifz
+
+    .for esi = s1, al = [esi] : eax : esi++
+        mov   edi,s2
+        mov   edx,ecx
+        repnz scasb
+        mov   ecx,edx
+        .return esi .ifz
+        mov al,[esi+1]
+    .endf
+    xor eax,eax
     ret
 
 _mbspbrk endp

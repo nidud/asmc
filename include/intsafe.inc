@@ -4,7 +4,6 @@ _INTSAFE_H_INCLUDED_ equ <>
 include specstrings.inc
 
 ifdef _WIN64
-    __fastcall equ <>
     ifdef _LINUX
         __bytereg  equ <dil>
         __wordreg  equ <di>
@@ -17,7 +16,6 @@ ifdef _WIN64
         __qwordreg equ <rcx>
     endif
 else
-    __fastcall equ <watcall>
     __bytereg  equ <al>
     __wordreg  equ <ax>
     __dwordreg equ <eax>
@@ -253,7 +251,7 @@ C_ASSERT(sizeof(UINT_PTR) eq sizeof(ULONG_PTR))
 Int8ToUChar proto __fastcall :INT8, :ptr UCHAR {
 
     .ifs (this >= 0)
-        mov UCHAR ptr [_1],this
+        mov [_1],this
         mov eax,S_OK
     .else
         mov UCHAR ptr [_1],0

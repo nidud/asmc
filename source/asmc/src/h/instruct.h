@@ -2051,6 +2051,9 @@ insv(VPMINSQ, vpminsq,           OpCls( XMM,  XMM_M128_M64, NONE ), F_660F38, 1,
 insv(VPMINUQ, vpminuq,           OpCls( XMM,  XMM_M128_M64, NONE ), F_660F38, 1, no_WDS, 0x3B, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
 insv(VPORD, vpord,               OpCls( XMM,  XMM_M128_M32, NONE ), F_660F,   1, no_WDS, 0xEB, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPORQ, vporq,               OpCls( XMM,  XMM_M128_M64, NONE ), F_660F,   1, no_WDS, 0xEB, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
+
+insv(VPTESTMB, vptestmb,         OpCls( K,    XMM_M128_M64, NONE ), F_660F38, 1, no_WDS, 0x26, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
+insv(VPTESTMW, vptestmw,         OpCls( K,    XMM_M128_M64, NONE ), F_660F38, 1, no_WDS, 0x26, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
 insv(VPTESTMD, vptestmd,         OpCls( K,    XMM_M128_M32, NONE ), F_660F38, 1, no_WDS, 0x27, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPTESTMQ, vptestmq,         OpCls( K,    XMM_M128_M64, NONE ), F_660F38, 1, no_WDS, 0x27, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
 insv(VPTERNLOGD, vpternlogd,     OpCls( XMM,  XMM_M128_M32, I8_U ), F_660F3A, 1, no_WDS, 0x25, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )

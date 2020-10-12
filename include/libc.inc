@@ -158,6 +158,12 @@ PTBYTE		typedef ptr byte
 endif
 endif
 
+ifdef _WIN64
+__fastcall	equ <fastcall>
+else
+__fastcall	equ <watcall>
+endif
+
 ptr_t		typedef ptr
 char_t		typedef sbyte
 short_t		typedef sword

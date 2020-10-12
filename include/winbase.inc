@@ -1061,10 +1061,11 @@ ifndef NOWINBASEINTERLOCK
 ifndef _NTOS_
 ifdef _M_IA64
 
-;LONG
-InterlockedOr proto WINAPI \
-	   Destination: LPLONG,
-		 Value: LONG
+InterlockedOr proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    or [rcx],edx
+    }
+
 ;LONG
 InterlockedOrAcquire proto WINAPI \
 	   Destination: LPLONG,
@@ -1075,10 +1076,10 @@ InterlockedOrRelease proto WINAPI \
 	   Destination: LPLONG,
 		 Value: LONG
 
-;char
-InterlockedOr8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
+InterlockedOr8 proto :ptr, :byte {
+    movzx   eax,byte ptr [rcx]
+    lock    or [rcx],dl
+    }
 
 ;char
 InterlockedOr8Acquire proto WINAPI \
@@ -1088,10 +1089,11 @@ InterlockedOr8Acquire proto WINAPI \
 InterlockedOr8Release proto WINAPI \
 	   Destination: LPSTR,
 		 Value: SBYTE
-;SHORT
-InterlockedOr16 proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
+
+InterlockedOr16 proto :ptr, :word {
+    movzx   eax,word ptr [rcx]
+    lock    or [rcx],dx
+    }
 
 ;SHORT
 InterlockedOr16Acquire proto WINAPI \
@@ -1103,10 +1105,10 @@ InterlockedOr16Release proto WINAPI \
 	   Destination: ptr SWORD,
 		 Value: SWORD
 
-;LONGLONG
-InterlockedOr64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedOr64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    or [rcx],rdx
+    }
 
 ;LONGLONG
 InterlockedOr64Acquire proto WINAPI \
@@ -1118,10 +1120,10 @@ InterlockedOr64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 
-;LONG
-InterlockedXor proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
+_InterlockedXor proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    or [rcx],edx
+    }
 
 ;LONG
 InterlockedXorAcquire proto WINAPI \
@@ -1133,10 +1135,10 @@ InterlockedXorRelease proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 
-;char
-InterlockedXor8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
+InterlockedXor8 proto :ptr, :byte {
+    movzx   eax,byte ptr [rcx]
+    lock    xor [rcx],dl
+    }
 
 ;char
 InterlockedXor8Acquire proto WINAPI \
@@ -1148,10 +1150,10 @@ InterlockedXor8Release proto WINAPI \
 	   Destination: LPSTR,
 		 Value: SBYTE
 
-;SHORT
-InterlockedXor16 proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
+InterlockedXor16 proto :ptr, :word {
+    movzx   eax,word ptr [rcx]
+    lock    xor [rcx],dx
+    }
 
 ;SHORT
 InterlockedXor16Acquire proto WINAPI \
@@ -1163,10 +1165,10 @@ InterlockedXor16Release proto WINAPI \
 	   Destination: ptr SWORD,
 		 Value: SWORD
 
-;LONGLONG
-InterlockedXor64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedXor64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    xor [rcx],rdx
+    }
 
 ;LONGLONG
 InterlockedXor64Acquire proto WINAPI \
@@ -1178,10 +1180,10 @@ InterlockedXor64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 
-;LONG
-InterlockedAnd proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
+InterlockedAnd proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    and [rcx],edx
+    }
 
 ;LONG
 InterlockedAndAcquire proto WINAPI \
@@ -1193,10 +1195,10 @@ InterlockedAndRelease proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 
-;char
-InterlockedAnd8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
+InterlockedAnd8 proto :ptr, :byte {
+    movzx   eax,byte ptr [rcx]
+    lock    and [rcx],dl
+    }
 
 ;char
 InterlockedAnd8Acquire proto WINAPI \
@@ -1208,10 +1210,10 @@ InterlockedAnd8Release proto WINAPI \
 	   Destination: LPSTR,
 		 Value: SBYTE
 
-;SHORT
-InterlockedAnd16 proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
+InterlockedAnd16 proto :ptr, :word {
+    movzx   eax,word ptr [rcx]
+    lock    and [rcx],dx
+    }
 
 ;SHORT
 InterlockedAnd16Acquire proto WINAPI \
@@ -1223,10 +1225,10 @@ InterlockedAnd16Release proto WINAPI \
 	   Destination: ptr SWORD,
 		 Value: SWORD
 
-;LONGLONG
-InterlockedAnd64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedAnd64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    and [rcx],rdx
+    }
 
 ;LONGLONG
 InterlockedAnd64Acquire proto WINAPI \
@@ -1238,13 +1240,15 @@ InterlockedAnd64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 
-;LONGLONG
-InterlockedIncrement64 proto WINAPI \
-		Addend: ptr LONGLONG
+InterlockedIncrement64 proto :ptr {
+    lock    inc qword ptr [rcx]
+    mov	    rax,[rcx]
+    }
 
-;LONGLONG
-InterlockedDecrement64 proto WINAPI \
-		Addend: ptr LONGLONG
+InterlockedDecrement64 proto :ptr {
+    lock dec qword ptr [rcx]
+    mov rax,[rcx]
+    }
 
 ;LONG
 InterlockedIncrementAcquire proto WINAPI \
@@ -1277,11 +1281,12 @@ InterlockedExchangeAdd64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 
-;LONGLONG
-InterlockedCompareExchange64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      ExChange: LONGLONG,
-	     Comperand: LONGLONG
+InterlockedCompareExchange64 proto :ptr, :qword, :qword {
+    mov	    rax,r8
+    push    [rcx]
+    lock    cmpxchg size_t ptr [rcx],rdx
+    pop	    rax
+    }
 
 ;LONGLONG
 InterlockedCompareExchangeAcquire64 proto WINAPI \
@@ -1316,13 +1321,15 @@ InterlockedCompare64ExchangeRelease128 proto WINAPI \
 	   ExChangeLow: LONG64,
 	     Comperand: LONG64
 
-;LONG
-InterlockedIncrement proto WINAPI \
-	      lpAddend: ptr LONG
+InterlockedIncrement proto :ptr {
+    lock    inc dword ptr [rcx]
+    mov	    eax,[rcx]
+    }
 
-;LONG
-InterlockedDecrement proto WINAPI \
-	      lpAddend: ptr LONG
+InterlockedDecrement proto :ptr {
+    lock    dec dword ptr [rcx]
+    mov	    eax,[rcx]
+    }
 
 ;LONG
 InterlockedExchange proto WINAPI \
@@ -1334,11 +1341,12 @@ InterlockedExchangeAdd proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 
-;LONG
-InterlockedCompareExchange proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
+InterlockedCompareExchange proto :ptr, :long_t, :long_t {
+    mov	    eax,r8d
+    push    [rcx]
+    lock    cmpxchg dword ptr [rcx],edx
+    pop	    rax
+    }
 
 ;LONG
 InterlockedCompareExchangeRelease proto WINAPI \
@@ -1352,10 +1360,10 @@ InterlockedCompareExchangeAcquire proto WINAPI \
 	      ExChange: LONG,
 	     Comperand: LONG
 
-;PVOID
-InterlockedExchangePointer proto WINAPI \
-		Target: PVOID,
-		 Value: PVOID
+InterlockedExchangePointer proto :ptr, :ptr {
+    xchg    [rcx],rdx
+    mov	    rax,rdx
+    }
 
 ;PVOID
 InterlockedCompareExchangePointer proto WINAPI \
@@ -1380,194 +1388,70 @@ ifndef MIDL_PASS
 
 ifndef InterlockedAnd
 
-InterlockedAnd equ <InterlockedAnd_Inline>
-;FORCEINLINE
-;LONG
-InterlockedAnd_Inline macro Target, _Set
-	mov	rax,Target
-	mov	rdx,_Set
-	push	r12
-	push	r13
-	push	r14
-	push	r15
-	sub	rsp,0x20
-	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
-		mov r15d,r14d
-		mov edx,r15d
-		and edx,r13d
-		mov r14,InterlockedCompareExchange(r12,edx,r15d)
-	.endf
-	mov	rax,r14
-	add	rsp,0x20
-	pop	r15
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <eax>
-	endm
+InterlockedAnd proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    and [rcx],edx
+    }
+
 endif
 
 ifndef InterlockedOr
-if 0
-InterlockedOr equ <InterlockedOr_Inline>
-;FORCEINLINE
-;LONG
-InterlockedOr_Inline macro Target, _Set
-	mov	rax,Target
-	mov	rdx,_Set
-	push	r12
-	push	r13
-	push	r14
-	push	r15
-	sub	rsp,0x20
-	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
-		mov r15d,r14d
-		mov edx,r15d
-		or  edx,r13d
-		mov r14,InterlockedCompareExchange(r12,edx,r15d)
-	.endf
-	mov	rax,r14
-	add	rsp,0x20
-	pop	r15
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <eax>
-	endm
-endif
+
+InterlockedOr proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    or [rcx],edx
+    }
+
 endif
 
 ifndef InterlockedXor
 
-InterlockedXor equ <InterlockedXor_Inline>
-;FORCEINLINE
-;LONG
-InterlockedXor_Inline macro Target, _Set
-	mov	rax,Target
-	mov	rdx,_Set
-	push	r12
-	push	r13
-	push	r14
-	push	r15
-	sub	rsp,0x20
-	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
-		mov r15d,r14d
-		mov edx,r15d
-		xor edx,r13d
-		mov r14,InterlockedCompareExchange(r12,edx,r15d)
-	.endf
-	mov	rax,r14
-	add	rsp,0x20
-	pop	r15
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <eax>
-	endm
+InterlockedXor proto :ptr, :long_t {
+    mov	    eax,[rcx]
+    lock    or [rcx],edx
+    }
+
 endif
 
 ifndef InterlockedAnd64
 
-InterlockedAnd64 equ <InterlockedAnd64_Inline>
-;FORCEINLINE
-;LONGLONG
-InterlockedAnd64_Inline macro Destination, Value
-	mov	rax,Destination
-	mov	rdx,Value
-	push	r12
-	push	r13
-	push	r14
-	sub	rsp,0x28
-	.for	r12=rax, r13=rdx ::
-		mov r14,[r12]
-		mov rdx,r14
-		and rdx,r13
-		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
-	.endf
-	mov	rax,r14
-	add	rsp,0x28
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <eax>
-	endm
+InterlockedAnd64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    and [rcx],rdx
+    }
+
 endif
 
 ifndef InterlockedOr64
 
-InterlockedOr64 equ <InterlockedOr64_Inline>
-;FORCEINLINE
-;LONGLONG
-InterlockedOr64_Inline macro Destination, Value
-	mov	rax,Destination
-	mov	rdx,Value
-	push	r12
-	push	r13
-	push	r14
-	sub	rsp,0x28
-	.for	r12=rax, r13=rdx ::
-		mov r14,[r12]
-		mov rdx,r14
-		or  rdx,r13
-		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
-	.endf
-	mov	rax,r14
-	add	rsp,0x28
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <rax>
-	endm
+InterlockedOr64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    or [rcx],rdx
+    }
+
 endif
 
 ifndef InterlockedXor64
 
-InterlockedXor64 equ <InterlockedXor64_Inline>
-;FORCEINLINE
-;LONGLONG
-InterlockedXor64_Inline macro Destination, Value
-	mov	rax,Destination
-	mov	rdx,Value
-	push	r12
-	push	r13
-	push	r14
-	sub	rsp,0x28
-	.for	r12=rax, r13=rdx ::
-		mov r14,[r12]
-		mov rdx,r14
-		xor rdx,r13
-		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
-	.endf
-	mov	rax,r14
-	add	rsp,0x28
-	pop	r14
-	pop	r13
-	pop	r12
-	exitm  <rax>
-	endm
+InterlockedXor64 proto :ptr, :qword {
+    mov	    rax,[rcx]
+    lock    xor [rcx],rdx
+    }
+
 endif
 
 ifndef InterlockedBitTestAndSet
-InterlockedBitTestAndSet equ <InterlockedBitTestAndSet_Inline>
-;FORCEINLINE
-;BOOLEAN
-InterlockedBitTestAndSet_Inline macro Base, Bit
+InterlockedBitTestAndSet macro Base, Bit
 	endm
 endif
 
 ifndef InterlockedBitTestAndReset
-InterlockedBitTestAndReset equ <InterlockedBitTestAndReset_Inline>
-;FORCEINLINE
-;BOOLEAN
-InterlockedBitTestAndReset_Inline macro Base, Bit
+InterlockedBitTestAndReset macro Base, Bit
 	endm
 endif
 
 ifndef InterlockedBitTestAndComplement
-InterlockedBitTestAndComplement equ <InterlockedBitTestAndComplement_Inline>
-;FORCEINLINE
-;BOOLEAN
-InterlockedBitTestAndComplement_Inline macro Base, Bit
+InterlockedBitTestAndComplement macro Base, Bit
 	endm
 endif
 

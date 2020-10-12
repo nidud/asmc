@@ -9,8 +9,11 @@ include string.inc
     .code
 
 _strlwr proc uses esi string:LPSTR
+
     mov esi,string
-    .repeat
+
+    .while 1
+
         mov al,[esi]
         .break .if !al
         sub al,'A'
@@ -19,9 +22,10 @@ _strlwr proc uses esi string:LPSTR
         and al,'a' - 'A'
         xor [esi],al
         inc esi
-    .until  0
+    .endw
     mov eax,string
     ret
+
 _strlwr endp
 
     END

@@ -1607,6 +1607,10 @@ endif
 
 if(_WIN32_WINNT GE 0x0400)
 WHEEL_DELTA		equ 120
+GET_WHEEL_DELTA_WPARAM macro wParam
+    movzx eax,word ptr wParam[2]
+    retm<eax>
+    endm
 endif
 if(_WIN32_WINNT GE 0x0400)
 WHEEL_PAGESCROLL	equ (UINT_MAX)

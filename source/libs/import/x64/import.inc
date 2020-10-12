@@ -23,6 +23,7 @@ cryptnet
 cryptui
 cryptxml
 cscdll
+d2d1
 d3d11
 d3d9
 d3dcompiler_43
@@ -43,6 +44,7 @@ dsprop
 dssec
 dsuiext
 dwmapi
+dwrite
 dxtmsft
 dxtrans
 els

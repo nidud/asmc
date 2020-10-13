@@ -473,13 +473,14 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
 
     .if (SUCCEEDED(hr) && !([rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
 
-        .new point:D2D1_POINT_2F
-        .new tangent:D2D1_POINT_2F
-        .new triangleMatrix:D2D1_MATRIX_3X2_F
-        .new rtSize:D2D1_SIZE_F
-        .new minWidthHeightScale:float
-        .new scale:ptr D2D1_MATRIX_3X2_F
-        .new translation:ptr D2D1_MATRIX_3X2_F
+       .new point:D2D1_POINT_2F
+       .new tangent:D2D1_POINT_2F
+       .new triangleMatrix:Matrix3x2F
+       .new rtSize:D2D1_SIZE_F
+       .new minWidthHeightScale:float
+       .new scale:Matrix3x2F
+       .new translation:Matrix3x2F
+       .new m:Matrix3x2F
 
         [rdi].GetSize(&rtSize)
         movss xmm0,rtSize.width
@@ -487,7 +488,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         divss xmm0,512.0
         movss minWidthHeightScale,xmm0
 
-        mov scale,Matrix3x2F::Scale(xmm0, xmm0)
+        scale.Scale(xmm0, xmm0)
 
         movss xmm0,rtSize.width
         movss xmm1,rtSize.height
@@ -495,20 +496,20 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         divss xmm1,2.0
         movss point.x,xmm0
         movss point.y,xmm1
-        mov translation,Matrix3x2F::Translation(xmm0, xmm1)
+        translation.Translation(xmm0, xmm1)
 
         ;; Prepare to draw.
         [rdi].BeginDraw()
 
         ;; Reset to identity transform
-        [rdi].SetTransform(Matrix3x2F::Identity())
+        [rdi].SetTransform(m.Identity())
 
         ;;clear the render target contents
         [rdi].Clear(D3DCOLORVALUE(Black, 1.0))
 
         ;;center the path
-        mov rbx,Matrix3x2F::SetProduct(scale, translation)
-        [rdi].SetTransform(rbx)
+        m.SetProduct(&scale, &translation)
+        [rdi].SetTransform(&m)
 
         ;;draw the path in red
         [rdi].DrawGeometry([rsi].m_pPathGeometry, [rsi].m_pRedBrush, 0.6, NULL)
@@ -533,8 +534,9 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         mov triangleMatrix._22,tangent.x
         mov triangleMatrix._31,point.x
         mov triangleMatrix._32,point.y
+        m.SetProduct(&triangleMatrix, &m)
 
-        [rdi].SetTransform(Matrix3x2F::SetProduct(&triangleMatrix, rbx))
+        [rdi].SetTransform(&m)
 
         ;; Draw the yellow triangle.
         [rdi].FillGeometry([rsi].m_pObjectGeometry, [rsi].m_pYellowBrush, NULL)

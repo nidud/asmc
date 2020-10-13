@@ -87,8 +87,7 @@ endif
             :float,
             :ptr ID2D1StrokeStyle
 
-    ;static
-    GenerateOpacityMask proc \
+    GenerateOpacityMask proto \
             :BOOL,
             :ptr ID2D1RenderTarget,
             :UINT,
@@ -302,7 +301,7 @@ GeometryRealizationFactory::CreateGeometryRealization endp
 
     assume rcx:ptr GeometryRealization
 
-GeometryRealization::GeometryRealization proc uses rsi
+GeometryRealization::GeometryRealization proc uses rdi
 
    .return .if !malloc(GeometryRealization + GeometryRealizationVtbl)
 
@@ -314,15 +313,7 @@ GeometryRealization::GeometryRealization proc uses rsi
     mov ecx,(GeometryRealization - 8) / 8
     rep stosq
     inc [rdx].GeometryRealization.m_cRef
-
-    for q,<Release,
-           AddRef,
-           Initialize,
-           Fill,
-           Draw,
-           Update,
-           RenderToTarget,
-           GenerateOpacityMask>
+    for q,<Release,AddRef,Initialize,Fill,Draw,Update,RenderToTarget>
         lea rax,GeometryRealization_&q
         mov [rdi].GeometryRealizationVtbl.&q,rax
         endm
@@ -338,8 +329,10 @@ GeometryRealization::GeometryRealization endp
 ;;
 ;;------------------------------------------------------------------------------
 
-GeometryRealization::Fill proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush,
-    mode:REALIZATION_RENDER_MODE
+GeometryRealization::Fill proc \
+    pRT     : ptr ID2D1RenderTarget,
+    pBrush  : ptr ID2D1Brush,
+    mode    : REALIZATION_RENDER_MODE
 
     [rcx].RenderToTarget(TRUE, rdx, r8, r9d)
     ret
@@ -354,8 +347,10 @@ GeometryRealization::Fill endp
 ;;
 ;;------------------------------------------------------------------------------
 
-GeometryRealization::Draw proc pRT:ptr ID2D1RenderTarget, pBrush:ptr ID2D1Brush,
-    mode:REALIZATION_RENDER_MODE
+GeometryRealization::Draw proc \
+    pRT     : ptr ID2D1RenderTarget,
+    pBrush  : ptr ID2D1Brush,
+    mode    : REALIZATION_RENDER_MODE
 
     [rcx].RenderToTarget(FALSE, rdx, r8, r9d)
     ret
@@ -390,11 +385,11 @@ GeometryRealization::Draw endp
     assume rsi:ptr GeometryRealization
 
 GeometryRealization::Update proc uses rsi rdi rbx \
-    pGeometry:ptr ID2D1Geometry,
-    options:REALIZATION_CREATION_OPTIONS,
-    pWorldTransform:ptr D2D1_MATRIX_3X2_F,
-    strokeWidth:real4,
-    pIStrokeStyle:ptr ID2D1StrokeStyle
+    pGeometry       : ptr ID2D1Geometry,
+    options         : REALIZATION_CREATION_OPTIONS,
+    pWorldTransform : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth     : real4,
+    pIStrokeStyle   : ptr ID2D1StrokeStyle
 
 
   local hr:HRESULT
@@ -440,7 +435,7 @@ GeometryRealization::Update proc uses rsi rdi rbx \
 
         .if (options & REALIZATION_CREATION_OPTIONS_FILLED)
 
-            mov hr,[rsi].GenerateOpacityMask(
+            mov hr,GenerateOpacityMask(
                     TRUE, ;; => filled
                     [rsi].m_pRT,
                     [rsi].m_maxRealizationDimension,
@@ -456,7 +451,7 @@ GeometryRealization::Update proc uses rsi rdi rbx \
 
         .if (SUCCEEDED(hr) && options & REALIZATION_CREATION_OPTIONS_STROKED)
 
-            mov hr,[rsi].GenerateOpacityMask(
+            mov hr,GenerateOpacityMask(
                     FALSE, ;; => stroked
                     [rsi].m_pRT,
                     [rsi].m_maxRealizationDimension,
@@ -595,8 +590,11 @@ GeometryRealization::Update endp
 ;;
 ;;------------------------------------------------------------------------------
 
-GeometryRealization::RenderToTarget proc uses rsi fill:BOOL, pRT:ptr ID2D1RenderTarget,
-    pBrush:ptr ID2D1Brush, mode:REALIZATION_RENDER_MODE
+GeometryRealization::RenderToTarget proc uses rsi \
+    fill        : BOOL,
+    pRT         : ptr ID2D1RenderTarget,
+    pBrush      : ptr ID2D1Brush,
+    mode        : REALIZATION_RENDER_MODE
 
   local hr:HRESULT
   local originalAAMode:D2D1_ANTIALIAS_MODE
@@ -756,13 +754,13 @@ GeometryRealization::RenderToTarget endp
 ;;------------------------------------------------------------------------------
 
 GeometryRealization::Initialize proc uses rsi \
-    pRT:ptr ID2D1RenderTarget,
-    maxRealizationDimension:UINT,
-    pGeometry:ptr ID2D1Geometry,
-    options:REALIZATION_CREATION_OPTIONS,
-    pWorldTransform:ptr D2D1_MATRIX_3X2_F,
-    strokeWidth:float,
-    pIStrokeStyle:ptr ID2D1StrokeStyle
+    pRT                     : ptr ID2D1RenderTarget,
+    maxRealizationDimension : UINT,
+    pGeometry               : ptr ID2D1Geometry,
+    options                 : REALIZATION_CREATION_OPTIONS,
+    pWorldTransform         : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth             : float,
+    pIStrokeStyle           : ptr ID2D1StrokeStyle
 
   local hr:HRESULT
 
@@ -804,17 +802,17 @@ GeometryRealization::Initialize endp
 ;;
 ;;------------------------------------------------------------------------------
 
-GeometryRealization::GenerateOpacityMask proc uses rsi rdi \
-    fill:BOOL,
-    pBaseRT:ptr ID2D1RenderTarget,
-    maxRealizationDimension:UINT,
-    ppBitmapRT:ptr ptr ID2D1BitmapRenderTarget,
-    pIGeometry:ptr ID2D1Geometry,
-    pWorldTransform:ptr D2D1_MATRIX_3X2_F,
-    strokeWidth:float,
-    pStrokeStyle:ptr ID2D1StrokeStyle,
-    pMaskDestBounds:ptr D2D1_RECT_F,
-    pMaskSourceBounds:ptr D2D1_RECT_F
+GenerateOpacityMask proc \
+    fill                    : BOOL,
+    pBaseRT                 : ptr ID2D1RenderTarget,
+    maxRealizationDimension : UINT,
+    ppBitmapRT              : ptr ptr ID2D1BitmapRenderTarget,
+    pIGeometry              : ptr ID2D1Geometry,
+    pWorldTransform         : ptr D2D1_MATRIX_3X2_F,
+    strokeWidth             : float,
+    pStrokeStyle            : ptr ID2D1StrokeStyle,
+    pMaskDestBounds         : ptr D2D1_RECT_F,
+    pMaskSourceBounds       : ptr D2D1_RECT_F
 
   local hr:HRESULT
   local bounds:D2D1_RECT_F
@@ -828,9 +826,7 @@ GeometryRealization::GenerateOpacityMask proc uses rsi rdi \
   local pBrush:ptr ID2D1SolidColorBrush
   local color:D3DCOLORVALUE
 
-    mov rsi,rcx
     mov hr,S_OK
-
     mov scaleX,1.0
     mov scaleY,1.0
 
@@ -1208,7 +1204,7 @@ GeometryRealization::GenerateOpacityMask proc uses rsi rdi \
 
     .return hr
 
-GeometryRealization::GenerateOpacityMask endp
+GenerateOpacityMask endp
 
 ;;+-----------------------------------------------------------------------------
 ;;

@@ -31,6 +31,21 @@ endif
 ifndef __ICodeInstall_FWD_DEFINED__
 __ICodeInstall_FWD_DEFINED__ equ 1
 endif
+ifndef __IUri_FWD_DEFINED__
+__IUri_FWD_DEFINED__ equ 1
+endif
+ifndef __IUriContainer_FWD_DEFINED__
+__IUriContainer_FWD_DEFINED__ equ 1
+endif
+ifndef __IUriBuilder_FWD_DEFINED__
+__IUriBuilder_FWD_DEFINED__ equ 1
+endif
+
+
+ifndef __IUriBuilderFactory_FWD_DEFINED__
+__IUriBuilderFactory_FWD_DEFINED__ equ 1
+endif
+
 ifndef __IWinInetInfo_FWD_DEFINED__
 __IWinInetInfo_FWD_DEFINED__ equ 1
 endif
@@ -616,6 +631,7 @@ LPWINDOWFORBINDINGUI	typedef ptr IWindowForBindingUI
 
 endif
 endif
+
 ifndef _LPCODEINSTALL_DEFINED
 _LPCODEINSTALL_DEFINED equ 1
 
@@ -646,6 +662,223 @@ LPCODEINSTALL		typedef ptr ICodeInstall
 
 endif
 endif
+
+ifndef __IUri_INTERFACE_DEFINED__
+__IUri_INTERFACE_DEFINED__ equ 1
+
+.enum Uri_PROPERTY {
+    Uri_PROPERTY_ABSOLUTE_URI	= 0,
+    Uri_PROPERTY_STRING_START	= Uri_PROPERTY_ABSOLUTE_URI,
+    Uri_PROPERTY_AUTHORITY	= 1,
+    Uri_PROPERTY_DISPLAY_URI	= 2,
+    Uri_PROPERTY_DOMAIN		= 3,
+    Uri_PROPERTY_EXTENSION	= 4,
+    Uri_PROPERTY_FRAGMENT	= 5,
+    Uri_PROPERTY_HOST		= 6,
+    Uri_PROPERTY_PASSWORD	= 7,
+    Uri_PROPERTY_PATH		= 8,
+    Uri_PROPERTY_PATH_AND_QUERY = 9,
+    Uri_PROPERTY_QUERY		= 10,
+    Uri_PROPERTY_RAW_URI	= 11,
+    Uri_PROPERTY_SCHEME_NAME	= 12,
+    Uri_PROPERTY_USER_INFO	= 13,
+    Uri_PROPERTY_USER_NAME	= 14,
+    Uri_PROPERTY_STRING_LAST	= Uri_PROPERTY_USER_NAME,
+    Uri_PROPERTY_HOST_TYPE	= 15,
+    Uri_PROPERTY_DWORD_START	= Uri_PROPERTY_HOST_TYPE,
+    Uri_PROPERTY_PORT		= 16,
+    Uri_PROPERTY_SCHEME		= 17,
+    Uri_PROPERTY_ZONE		= 18,
+    Uri_PROPERTY_DWORD_LAST	= Uri_PROPERTY_ZONE
+    }
+
+.enum Uri_HOST_TYPE {
+    Uri_HOST_UNKNOWN	= 0,
+    Uri_HOST_DNS	= ( Uri_HOST_UNKNOWN + 1 ),
+    Uri_HOST_IPV4	= ( Uri_HOST_DNS + 1 ),
+    Uri_HOST_IPV6	= ( Uri_HOST_IPV4 + 1 ),
+    Uri_HOST_IDN	= ( Uri_HOST_IPV6 + 1 )
+    }
+
+
+DEFINE_IIDX(IUri, "A39EE748-6A27-4817-A6F2-13914BEF5890")
+
+.comdef IUri : public IUnknown
+    GetPropertyBSTR	proc :Uri_PROPERTY, :ptr BSTR, :DWORD
+    GetPropertyLength	proc :Uri_PROPERTY, :ptr DWORD, :DWORD
+    GetPropertyDWORD	proc :Uri_PROPERTY, :ptr DWORD, :DWORD
+    HasProperty		proc :Uri_PROPERTY, :ptr BOOL
+    GetAbsoluteUri	proc :ptr BSTR
+    GetAuthority	proc :ptr BSTR
+    GetDisplayUri	proc :ptr BSTR
+    GetDomain		proc :ptr BSTR
+    GetExtension	proc :ptr BSTR
+    GetFragment		proc :ptr BSTR
+    GetHost		proc :ptr BSTR
+    GetPassword		proc :ptr BSTR
+    GetPath		proc :ptr BSTR
+    GetPathAndQuery	proc :ptr BSTR
+    GetQuery		proc :ptr BSTR
+    GetRawUri		proc :ptr BSTR
+    GetSchemeName	proc :ptr BSTR
+    GetUserInfo		proc :ptr BSTR
+    GetUserName		proc :ptr BSTR
+    GetHostType		proc :ptr DWORD
+    GetPort		proc :ptr DWORD
+    GetScheme		proc :ptr DWORD
+    GetZone		proc :ptr DWORD
+    GetProperties	proc :ptr LPWORD
+    IsEqual		proc :ptr IUri, :ptr BOOL
+    .ends
+
+endif
+
+CreateUri proto WINAPI \
+		pwzURI: LPCWSTR,
+	       dwFlags: DWORD,
+	    dwReserved: DWORD_PTR,
+		 ppURI: ptr ptr IUri
+
+CreateUriWithFragment proto WINAPI \
+		pwzURI: LPCWSTR,
+	   pwzFragment: LPCWSTR,
+	       dwFlags: DWORD,
+	    dwReserved: DWORD_PTR,
+		 ppURI: ptr ptr IUri
+
+CreateUriFromMultiByteString proto WINAPI \
+       pszANSIInputUri: LPCSTR,
+       dwEncodingFlags: DWORD,
+	    dwCodePage: DWORD,
+	 dwCreateFlags: DWORD,
+	    dwReserved: DWORD_PTR,
+		 ppUri: ptr ptr IUri
+
+
+Uri_HAS_ABSOLUTE_URI	equ (1 shl Uri_PROPERTY_ABSOLUTE_URI)
+Uri_HAS_AUTHORITY	equ (1 shl Uri_PROPERTY_AUTHORITY)
+Uri_HAS_DISPLAY_URI	equ (1 shl Uri_PROPERTY_DISPLAY_URI)
+Uri_HAS_DOMAIN		equ (1 shl Uri_PROPERTY_DOMAIN)
+Uri_HAS_EXTENSION	equ (1 shl Uri_PROPERTY_EXTENSION)
+Uri_HAS_FRAGMENT	equ (1 shl Uri_PROPERTY_FRAGMENT)
+Uri_HAS_HOST		equ (1 shl Uri_PROPERTY_HOST)
+Uri_HAS_PASSWORD	equ (1 shl Uri_PROPERTY_PASSWORD)
+Uri_HAS_PATH		equ (1 shl Uri_PROPERTY_PATH)
+Uri_HAS_QUERY		equ (1 shl Uri_PROPERTY_QUERY)
+Uri_HAS_RAW_URI		equ (1 shl Uri_PROPERTY_RAW_URI)
+Uri_HAS_SCHEME_NAME	equ (1 shl Uri_PROPERTY_SCHEME_NAME)
+Uri_HAS_USER_NAME	equ (1 shl Uri_PROPERTY_USER_NAME)
+Uri_HAS_PATH_AND_QUERY	equ (1 shl Uri_PROPERTY_PATH_AND_QUERY)
+Uri_HAS_USER_INFO	equ (1 shl Uri_PROPERTY_USER_INFO)
+Uri_HAS_HOST_TYPE	equ (1 shl Uri_PROPERTY_HOST_TYPE)
+Uri_HAS_PORT		equ (1 shl Uri_PROPERTY_PORT)
+Uri_HAS_SCHEME		equ (1 shl Uri_PROPERTY_SCHEME)
+Uri_HAS_ZONE		equ (1 shl Uri_PROPERTY_ZONE)
+
+Uri_CREATE_ALLOW_RELATIVE		  equ 0x00000001
+Uri_CREATE_ALLOW_IMPLICIT_WILDCARD_SCHEME equ 0x00000002
+Uri_CREATE_ALLOW_IMPLICIT_FILE_SCHEME	  equ 0x00000004
+Uri_CREATE_NOFRAG			  equ 0x00000008
+Uri_CREATE_NO_CANONICALIZE		  equ 0x00000010
+Uri_CREATE_CANONICALIZE			  equ 0x00000100
+Uri_CREATE_FILE_USE_DOS_PATH		  equ 0x00000020
+Uri_CREATE_DECODE_EXTRA_INFO		  equ 0x00000040
+Uri_CREATE_NO_DECODE_EXTRA_INFO		  equ 0x00000080
+Uri_CREATE_CRACK_UNKNOWN_SCHEMES	  equ 0x00000200
+Uri_CREATE_NO_CRACK_UNKNOWN_SCHEMES	  equ 0x00000400
+Uri_CREATE_PRE_PROCESS_HTML_URI		  equ 0x00000800
+Uri_CREATE_NO_PRE_PROCESS_HTML_URI	  equ 0x00001000
+Uri_CREATE_IE_SETTINGS			  equ 0x00002000
+Uri_CREATE_NO_IE_SETTINGS		  equ 0x00004000
+Uri_CREATE_NO_ENCODE_FORBIDDEN_CHARACTERS equ 0x00008000
+Uri_CREATE_NORMALIZE_INTL_CHARACTERS	  equ 0x00010000
+Uri_CREATE_CANONICALIZE_ABSOLUTE	  equ 0x00020000
+
+Uri_DISPLAY_NO_FRAGMENT		      equ 0x00000001
+Uri_PUNYCODE_IDN_HOST		      equ 0x00000002
+Uri_DISPLAY_IDN_HOST		      equ 0x00000004
+Uri_DISPLAY_NO_PUNYCODE		      equ 0x00000008
+
+Uri_ENCODING_USER_INFO_AND_PATH_IS_PERCENT_ENCODED_UTF8	 equ 0x00000001
+Uri_ENCODING_USER_INFO_AND_PATH_IS_CP			 equ 0x00000002
+Uri_ENCODING_HOST_IS_IDN				 equ 0x00000004
+Uri_ENCODING_HOST_IS_PERCENT_ENCODED_UTF8		 equ 0x00000008
+Uri_ENCODING_HOST_IS_PERCENT_ENCODED_CP			 equ 0x00000010
+Uri_ENCODING_QUERY_AND_FRAGMENT_IS_PERCENT_ENCODED_UTF8	 equ 0x00000020
+Uri_ENCODING_QUERY_AND_FRAGMENT_IS_CP			 equ 0x00000040
+Uri_ENCODING_RFC equ (Uri_ENCODING_USER_INFO_AND_PATH_IS_PERCENT_ENCODED_UTF8 or \
+		      Uri_ENCODING_HOST_IS_PERCENT_ENCODED_UTF8 or \
+		      Uri_ENCODING_QUERY_AND_FRAGMENT_IS_PERCENT_ENCODED_UTF8)
+
+UriBuilder_USE_ORIGINAL_FLAGS equ 0x00000001
+
+ifndef __IUriContainer_INTERFACE_DEFINED__
+__IUriContainer_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IUriContainer, "a158a630-ed6f-45fb-b987-f68676f57752")
+
+.comdef IUriContainer : public IUnknown
+
+    GetIUri		proc :ptr ptr
+    .ends
+
+endif
+
+ifndef __IUriBuilder_INTERFACE_DEFINED__
+__IUriBuilder_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IUriBuilder, "4221B2E1-8955-46c0-BD5B-DE9897565DE7")
+
+.comdef IUriBuilder : public IUnknown
+
+    CreateUriSimple	proc :DWORD, :DWORD_PTR, :ptr ptr IUri
+    CreateUri		proc :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
+    CreateUriWithFlags	proc :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
+    GetIUri		proc :ptr ptr IUri
+    SetIUri		proc :ptr IUri
+    GetFragment		proc :ptr DWORD, :ptr LPCWSTR
+    GetHost		proc :ptr DWORD, :ptr LPCWSTR
+    GetPassword		proc :ptr DWORD, :ptr LPCWSTR
+    GetPath		proc :ptr DWORD, :ptr LPCWSTR
+    GetPort		proc :ptr BOOL, :ptr DWORD
+    GetQuery		proc :ptr DWORD, :ptr LPCWSTR
+    GetSchemeName	proc :ptr DWORD, :ptr LPCWSTR
+    GetUserName		proc :ptr DWORD, :ptr LPCWSTR
+    SetFragment		proc :LPCWSTR
+    SetHost		proc :LPCWSTR
+    SetPassword		proc :LPCWSTR
+    SetPath		proc :LPCWSTR
+    SetPort		proc :BOOL, :DWORD
+    SetQuery		proc :LPCWSTR
+    SetSchemeName	proc :LPCWSTR
+    SetUserName		proc :LPCWSTR
+    RemoveProperties	proc :DWORD
+    HasBeenModified	proc :ptr BOOL
+    .ends
+
+endif
+
+ifndef __IUriBuilderFactory_INTERFACE_DEFINED__
+__IUriBuilderFactory_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IUriBuilderFactory, "E982CE48-0B96-440c-BC37-0C869B27A29E")
+
+.comdef IUriBuilderFactory : public IUnknown
+
+    CreateIUriBuilder	proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+    CreateInitializedIUriBuilder proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+
+    .ends
+
+endif
+
+CreateIUriBuilder proto WINAPI \
+		 pIUri: ptr IUri,
+	       dwFlags: DWORD,
+	    dwReserved: DWORD_PTR,
+	 ppIUriBuilder: ptr ptr IUriBuilder
+
+
 ifndef _LPWININETINFO_DEFINED
 _LPWININETINFO_DEFINED equ 1
 

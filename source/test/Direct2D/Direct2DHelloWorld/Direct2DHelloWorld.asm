@@ -297,34 +297,43 @@ DemoApp::RunMessageLoop endp
 ;;  invoked.
 ;;
 
-DemoApp::OnRender proc uses rsi rdi
+DemoApp::OnRender proc uses rsi
 
-  local renderTargetSize:D2D1_SIZE_F
-  local hr:HRESULT
+  local hr  : HRESULT,
+        m   : Matrix3x2F,
+        p   : ptr ID2D1HwndRenderTarget,
+        c   : D3DCOLORVALUE
 
     mov rsi,rcx
     mov hr,[rsi].CreateDeviceResources()
-    mov rdi,[rsi].m_pRenderTarget
+    mov p,[rsi].m_pRenderTarget
 
-    assume rdi:ptr ID2D1HwndRenderTarget
-
-    [rdi].CheckWindowState()
+    p.CheckWindowState()
 
     .if (SUCCEEDED(hr) && !(eax & D2D1_WINDOW_STATE_OCCLUDED))
 
         ;; Retrieve the size of the render target.
 
-        [rdi].GetSize(&renderTargetSize)
-        [rdi].BeginDraw()
-        [rdi].SetTransform(Matrix3x2F::Identity())
-        [rdi].Clear(D3DCOLORVALUE(White, 1.0))
+       .new rc:RECT(0.0, 0.0)
 
-        mov r10,D2D1::RectF(0.0, 0.0, renderTargetSize.width, renderTargetSize.height)
+        m.Identity()
+        c.Init(White, 1.0)
 
-        [rdi].DrawText("Hello, World!", 13, [rsi].m_pTextFormat,
-            r10, [rsi].m_pBlackBrush, D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL )
+        p.GetSize(&rc[8])
+        p.BeginDraw()
+        p.SetTransform(&m)
+        p.Clear(&c)
+        p.DrawText(
+            "Hello, World!",
+            13,
+            [rsi].m_pTextFormat,
+            &rc,
+            [rsi].m_pBlackBrush,
+            D2D1_DRAW_TEXT_OPTIONS_NONE,
+            DWRITE_MEASURING_MODE_NATURAL
+            )
 
-        mov hr,[rdi].EndDraw(NULL, NULL)
+        mov hr,p.EndDraw(NULL, NULL)
 
         .if (hr == D2DERR_RECREATE_TARGET)
 
@@ -354,7 +363,7 @@ DemoApp::OnResize proc width:UINT, height:UINT
         ;; error here -- it will be repeated on the next call to
         ;; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(size)
+        [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
     ret
 

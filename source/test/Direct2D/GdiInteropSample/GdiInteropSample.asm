@@ -114,6 +114,7 @@ DemoApp::Initialize proc uses rsi
     .if (SUCCEEDED(hr))
 
         ;; Register the window class.
+
         mov wcex.cbSize,        WNDCLASSEX
         mov wcex.style,         CS_HREDRAW or CS_VREDRAW
         mov wcex.lpfnWndProc,   &WndProc
@@ -194,8 +195,12 @@ DemoApp::Initialize endp
 DemoApp::CreateDeviceIndependentResources proc
 
     ;; Create D2D factory
-    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory, NULL, &[rcx].DemoApp.m_pD2DFactory)
+    D2D1CreateFactory(
+        D2D1_FACTORY_TYPE_SINGLE_THREADED,
+        &IID_ID2D1Factory,
+        NULL,
+        &[rcx].DemoApp.m_pD2DFactory
+        )
     ret
 
 DemoApp::CreateDeviceIndependentResources endp
@@ -306,6 +311,9 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
   local pntArray2[2]:POINT
   local pntArray3[2]:POINT
   local hdc:HDC
+  local m:Matrix3x2F
+  local p:ptr ID2D1DCRenderTarget
+  local c:D3DCOLORVALUE
 
     mov rsi,rcx
     mov hdc,[rdx].PAINTSTRUCT.hdc
@@ -321,64 +329,44 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
     ;; Create the DC render target.
 
     mov hr,[rsi].CreateDeviceResources()
-    mov rdi,[rsi].m_pDCRT
-
-    assume rdi:LPID2D1DCRenderTarget
+    mov p,[rsi].m_pDCRT
 
     .if (SUCCEEDED(hr))
 
         ;; Bind the DC to the DC render target.
 
-        mov hr,[rdi].BindDC(hdc, &rc)
+        mov hr,p.BindDC(hdc, &rc)
 
-        [rdi].BeginDraw()
-        [rdi].SetTransform(Matrix3x2F::Identity())
-        [rdi].Clear(D3DCOLORVALUE(White, 1.0))
+        m.Identity()
+        c.Init(White, 1.0)
+        p.BeginDraw()
+        p.SetTransform(&m)
+        p.Clear(&c)
 
-        mov rbx,D2D1::Point2F(150.0, 150.0)
+       .new e:D2D1_ELLIPSE
 
-        [rdi].DrawEllipse(
-            D2D1::Ellipse(
-                rbx,
-                100.0,
-                100.0),
-            [rsi].m_pBlackBrush,
-            3.0,
-            NULL
-            )
+        mov e.point.x,150.0
+        mov e.point.y,150.0
+        mov e.radiusX,100.0
+        mov e.radiusY,100.0
+        mov rdi,[rsi].m_pBlackBrush
 
+        p.DrawEllipse(&e, rdi, 3.0, NULL)
 
-        [rdi].DrawLine(
-            rbx,
-            D2D1::Point2F(
-                (150.0 + 100.0 * 0.15425),
-                (150.0 - 100.0 * 0.988)),
-            [rsi].m_pBlackBrush,
-            3.0,
-            NULL
-            )
+        mov rbx,e.point
+        mov e.point.x,150.0 + 100.0 * 0.15425
+        mov e.point.y,150.0 - 100.0 * 0.988
+        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
 
-        [rdi].DrawLine(
-            rbx,
-            D2D1::Point2F(
-                (150.0 + 100.0 * 0.525),
-                (150.0 + 100.0 * 0.8509)),
-            [rsi].m_pBlackBrush,
-            3.0,
-            NULL
-            )
+        mov e.point.x,150.0 + 100.0 * 0.525
+        mov e.point.y,150.0 + 100.0 * 0.8509
+        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
 
-        [rdi].DrawLine(
-            rbx,
-            D2D1::Point2F(
-                (150.0 - 100.0 * 0.988),
-                (150.0 - 100.0 * 0.15425)),
-            [rsi].m_pBlackBrush,
-            3.0,
-            NULL
-            )
+        mov e.point.x,150.0 - 100.0 * 0.988
+        mov e.point.y,150.0 - 100.0 * 0.15425
+        p.DrawLine(rbx, e.point, rdi, 3.0, NULL)
 
-        mov hr,[rdi].EndDraw(NULL, NULL)
+        mov hr,p.EndDraw(NULL, NULL)
 
         .if (SUCCEEDED(hr))
 
@@ -411,7 +399,6 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
             mov pntArray1[0*POINT].y,150
             mov pntArray1[1*POINT].x,static_cast(400.0 + 100.0 * 0.15425)
             mov pntArray1[1*POINT].y,static_cast(150.0 - 100.0 * 0.9885)
-
 
             mov pntArray2[0*POINT].x,400
             mov pntArray2[0*POINT].y,150

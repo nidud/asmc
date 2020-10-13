@@ -589,14 +589,16 @@ DemoApp::OnResize proc width:UINT, height:UINT
     mov rcx,[rcx].DemoApp.m_pRT
     .if rcx
 
-        cvtsi2ss xmm0,edx
-        cvtsi2ss xmm1,r8d
+       .new size:D2D1_SIZE_U
+
+        mov size.width,edx
+        mov size.height,r8d
 
         ;; Note: This method can fail, but it's okay to ignore the
         ;; error here -- it will be repeated on the next call to
         ;; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(D2D1::SizeF(xmm0, xmm1))
+        [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
     ret
 

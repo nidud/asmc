@@ -588,11 +588,14 @@ DemoApp::RunMessageLoop endp
 ;;  invoked.
 ;;
 
+sc_helloWorld equ <L"Hello, World!">
+
 DemoApp::OnRender proc uses rsi rdi rbx
 
   local hr:HRESULT
-  local m:D2D1_MATRIX_3X2_F
+  local m:Matrix3x2F
   local r:D2D1_RECT_F
+  local rotation:Matrix3x2F
 
     mov rsi,rcx
     mov hr,[rsi].CreateDeviceResources()
@@ -603,32 +606,25 @@ DemoApp::OnRender proc uses rsi rdi rbx
 
     .if ( !( [rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
 
-        sc_helloWorld equ <L"Hello, World!">
+
 
         ;; Retrieve the size of the render target.
 
        .new renderTargetSize:D2D1_SIZE_F
        .new size:D2D1_SIZE_F
 
-        xor eax,eax
-        mov m._11,1.0
-        mov m._12,eax
-        mov m._21,eax
-        mov m._22,1.0
-        mov m._31,eax
-        mov m._32,eax
-        mov r.left,eax
-        mov r.top,eax
-
         [rdi].GetSize(&renderTargetSize)
         [rdi].BeginDraw()
-        [rdi].SetTransform(&m)
+        [rdi].SetTransform(m.Identity())
         [rdi].Clear(D3DCOLORVALUE(White, 1.0))
 
         ;; Paint a grid background.
 
+        mov r.left,   0.0
+        mov r.top,    0.0
         mov r.right,  renderTargetSize.width
         mov r.bottom, renderTargetSize.height
+
         [rdi].FillRectangle(&r, [rsi].m_pGridPatternBitmapBrush)
 
         mov rcx,[rsi].m_pBitmap
@@ -649,11 +645,11 @@ DemoApp::OnRender proc uses rsi rdi rbx
         subss xmm0,size.width
         movss xmm1,renderTargetSize.height
         subss xmm1,size.height
+        movss r.left,xmm0
+        movss r.top,xmm1
+        mov   r.right,renderTargetSize.width
+        mov   r.bottom,renderTargetSize.height
 
-        movss r.left, xmm0
-        movss r.top,  xmm1
-        mov r.right,  renderTargetSize.width
-        mov r.bottom, renderTargetSize.height
         [rdi].DrawBitmap([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
         ;; Set the world transform to a 45 degree rotation at the center of the render target
@@ -665,14 +661,22 @@ DemoApp::OnRender proc uses rsi rdi rbx
         divss xmm1,2.0
         movss size.width,xmm0
         movss size.height,xmm1
+        rotation.Rotation(45.0, size)
 
-        [rdi].SetTransform(Matrix3x2F::Rotation(45.0, size))
+        [rdi].SetTransform(&rotation)
 
         mov r.left, 0.0
         mov r.top,  0.0
 
-        [rdi].DrawText(sc_helloWorld, 13, [rsi].m_pTextFormat, &r, [rsi].m_pBlackBrush,
-                D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL )
+        [rdi].DrawText(
+            sc_helloWorld,
+            13,
+            [rsi].m_pTextFormat,
+            &r,
+            [rsi].m_pBlackBrush,
+            D2D1_DRAW_TEXT_OPTIONS_NONE,
+            DWRITE_MEASURING_MODE_NATURAL
+            )
 
         ;;
         ;; Reset back to the identity transform
@@ -685,7 +689,11 @@ DemoApp::OnRender proc uses rsi rdi rbx
 
         ;; Fill the hour glass geometry with a gradient.
 
-        [rdi].FillGeometry([rsi].m_pPathGeometry, [rsi].m_pLinearGradientBrush, NULL)
+        [rdi].FillGeometry(
+            [rsi].m_pPathGeometry,
+            [rsi].m_pLinearGradientBrush,
+            NULL
+            )
 
         mov   m._32,0.0
         movss xmm0,renderTargetSize.width
@@ -695,7 +703,11 @@ DemoApp::OnRender proc uses rsi rdi rbx
 
         ;; Fill the hour glass geometry with a gradient.
 
-        [rdi].FillGeometry([rsi].m_pPathGeometry, [rsi].m_pLinearGradientBrush, NULL)
+        [rdi].FillGeometry(
+            [rsi].m_pPathGeometry,
+            [rsi].m_pLinearGradientBrush,
+            NULL
+            )
 
         mov hr,[rdi].EndDraw(NULL, NULL)
         .if (hr == D2DERR_RECREATE_TARGET)
@@ -719,14 +731,16 @@ DemoApp::OnResize proc width:UINT, height:UINT
     mov rcx,[rcx].DemoApp.m_pRenderTarget
     .if rcx
 
-        cvtsi2ss xmm0,edx
-        cvtsi2ss xmm1,r8d
+       .new size:D2D1_SIZE_U
+
+        mov size.width,edx
+        mov size.height,r8d
 
         ;; Note: This method can fail, but it's okay to ignore the
         ;; error here -- it will be repeated on the next call to
         ;; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(D2D1::SizeF(xmm0, xmm1))
+        [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
     ret
 

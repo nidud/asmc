@@ -399,9 +399,9 @@ GeometryRealization::Update proc uses rsi rdi rbx \
     lea rcx,[rsi].m_realizationTransform
     .if r9
         mov [rsi].m_realizationTransform,[r9]
-        mov [rsi].m_realizationTransformIsIdentity,[rcx].MATRIX3X2F.IsIdentity()
+        mov [rsi].m_realizationTransformIsIdentity,[rcx].Matrix3x2F.IsIdentity()
     .else
-        [rcx].MATRIX3X2F.Identity()
+        [rcx].Matrix3x2F.Identity()
         mov [rsi].m_realizationTransformIsIdentity,TRUE
     .endif
 
@@ -418,7 +418,7 @@ GeometryRealization::Update proc uses rsi rdi rbx \
 
     mov [rsi].m_realizationTransformInv,[rcx]
     lea rcx,[rsi].m_realizationTransformInv
-    [rcx].MATRIX3X2F.Invert()
+    [rcx].Matrix3x2F.Invert()
 
     .if ((options & REALIZATION_CREATION_OPTIONS_UNREALIZED) || [rsi].m_swRT)
 
@@ -642,7 +642,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
 
             pRT.GetTransform(&originalTransform)
             lea rcx,[rsi].m_realizationTransformInv
-            [rcx].MATRIX3X2F.SetProduct(rcx, &originalTransform)
+            [rcx].Matrix3x2F.SetProduct(rcx, &originalTransform)
             pRT.SetTransform(rax)
         .endif
 
@@ -1124,8 +1124,8 @@ GenerateOpacityMask proc \
                 movss xmm2,inflatedDipBounds.top
                 xorps xmm2,xmm0
 
-               .new scale:MATRIX3X2F
-               .new translateMatrix:MATRIX3X2F
+               .new scale:Matrix3x2F
+               .new translateMatrix:Matrix3x2F
 
                 translateMatrix.Translation(xmm1, xmm2)
                 scale.Scale(scaleX, scaleY)

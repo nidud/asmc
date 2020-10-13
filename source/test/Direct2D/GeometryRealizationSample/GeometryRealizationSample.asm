@@ -533,8 +533,8 @@ DemoApp::CreateGeometries proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-           .new scale:MATRIX3X2F
-           .new translation:MATRIX3X2F
+           .new scale:Matrix3x2F
+           .new translation:Matrix3x2F
 
             scale.Scale(squareWidth, squareWidth)
 
@@ -575,9 +575,9 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
   local hr                  : HRESULT
   local rtSize              : D2D1_SIZE_F
   local squareWidth         : float
-  local currentTransform    : MATRIX3X2F
-  local worldTransform      : MATRIX3X2F
-  local m                   : MATRIX3X2F
+  local currentTransform    : Matrix3x2F
+  local worldTransform      : Matrix3x2F
+  local m                   : Matrix3x2F
   local point               : D2D1_POINT_2F
   local color               : D3DCOLORVALUE
   local pRT                 : ptr ID2D1HwndRenderTarget
@@ -664,7 +664,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
             mulss       xmm0,0.5
             movss       intensity,xmm0
 
-           .new rotateTransform:MATRIX3X2F
+           .new rotateTransform:Matrix3x2F
 
             mulss       xmm0,sc_rotationSpeed
             mulss       xmm0,time
@@ -673,7 +673,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
 
             rotateTransform.Rotation(xmm0)
 
-           .new newWorldTransform:MATRIX3X2F
+           .new newWorldTransform:Matrix3x2F
 
             cvtsi2ss    xmm1,ebx
             addss       xmm1,0.5
@@ -851,7 +851,7 @@ DemoApp::OnRender proc uses rsi rdi
         .endif
 
         assume rdi:ptr ID2D1HwndRenderTarget
-       .new m:MATRIX3X2F
+       .new m:Matrix3x2F
 
         mov rdi,[rsi].m_pRT
         [rdi].SetTransform(
@@ -991,19 +991,14 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
 
         mov rdi,[rsi].m_pRT
 
-       .new m:MATRIX3X2F
+       .new m:Matrix3x2F
         [rdi].SetTransform(
             m.Identity()
             )
 
-       .new c:D3DCOLORVALUE
+       .new c:D3DCOLORVALUE(Black, 0.5)
         mov rbx,[rsi].m_pSolidColorBrush
-        [rbx].ID2D1SolidColorBrush.SetColor(
-            c.Init(
-                Black,
-                0.5
-                )
-            )
+        [rbx].ID2D1SolidColorBrush.SetColor(&c)
 
        .new rr:D2D1_ROUNDED_RECT
         mov rr.rect.left,10.0
@@ -1076,7 +1071,7 @@ DemoApp::OnResize proc width:UINT, height:UINT
         ;; error here -- it will be repeated on the next call to
         ;; EndDraw.
 
-        [rcx].ID2D1HwndRenderTarget.Resize(size)
+        [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
     ret
 

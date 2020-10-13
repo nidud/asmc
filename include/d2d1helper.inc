@@ -7,11 +7,7 @@ endif
 
 ifdef _WIN64
 
-
-    D2D1        typedef ptr
-    Matrix3x2F  typedef ptr
-
-.template MATRIX3X2F
+.template Matrix3x2F
 
     _11 real4 ?
     _12 real4 ?
@@ -22,299 +18,131 @@ ifdef _WIN64
 
     .operator Identity {
         xor eax,eax
-        mov [rcx].MATRIX3X2F._11,1.0
-        mov [rcx].MATRIX3X2F._12,eax
-        mov [rcx].MATRIX3X2F._21,eax
-        mov [rcx].MATRIX3X2F._22,1.0
-        mov [rcx].MATRIX3X2F._31,eax
-        mov [rcx].MATRIX3X2F._32,eax
-        mov rax,rcx
+        mov [this+0x04],rax
+        mov [this+0x10],rax
+        mov eax,1.0
+        mov [this+0x00],eax
+        mov [this+0x0C],eax
+        mov rax,this
         }
 
     .operator Rotation :abs, :abs=<0> {
-        D2D1MakeRotateMatrix(_1, _2, rcx)
+        D2D1MakeRotateMatrix(_1, _2, this)
         }
 
     .operator Translation :real4, :real4 {
-        mov   [rcx].MATRIX3X2F._11,1.0
-        mov   [rcx].MATRIX3X2F._12,0.0
-        mov   [rcx].MATRIX3X2F._21,0.0
-        mov   [rcx].MATRIX3X2F._22,1.0
-        movss [rcx].MATRIX3X2F._31,xmm1
-        movss [rcx].MATRIX3X2F._32,xmm2
-        mov   rax,rcx
+        xor     eax,eax
+        mov     [this+0x04],rax
+        mov     eax,1.0
+        mov     [this+0x00],eax
+        mov     [this+0x0C],eax
+        movss   [this+0x10],xmm1
+        movss   [this+0x14],xmm2
+        mov     rax,this
         }
 
     .operator Scale :real4, :real4, :abs, :abs {
-        movss [rcx].MATRIX3X2F._11,xmm1
-        mov   [rcx].MATRIX3X2F._12,0.0
-        mov   [rcx].MATRIX3X2F._21,0.0
-        movss [rcx].MATRIX3X2F._22,xmm2
+        xor     eax,eax
+        mov     [this+0x04],rax
+        movss   [this+0x00],xmm1
+        movss   [this+0x0C],xmm2
         ifb <_3>
-           mov [rcx].MATRIX3X2F._31,0.0
-           mov [rcx].MATRIX3X2F._32,0.0
+           mov  [this+0x10],rax
         else
            movss xmm0,_3
            mulss xmm1,xmm0
            subss xmm0,xmm1
-           movss [rcx].MATRIX3X2F._31,xmm0
+           movss [this+0x10],xmm0
            movss xmm0,_4
            mulss xmm2,xmm0
            subss xmm0,xmm2
-           movss [rcx].MATRIX3X2F._32,xmm0
+           movss [this+0x14],xmm0
         endif
         mov rax,rcx
         }
 
     .operator Invert {
-        xor D2D1InvertMatrix(rcx),1
+        xor D2D1InvertMatrix(this),1
         }
 
     .operator IsIdentity {
         xor eax,eax
         mov edx,1.0
-        .if [rcx].MATRIX3X2F._11 == edx && \
-            [rcx].MATRIX3X2F._12 == eax && \
-            [rcx].MATRIX3X2F._21 == eax && \
-            [rcx].MATRIX3X2F._22 == edx && \
-            [rcx].MATRIX3X2F._31 == eax && \
-            [rcx].MATRIX3X2F._32 == eax
+        .if [this+0x00] == edx && \
+            [this+0x04] == rax && \
+            [this+0x0C] == edx && \
+            [this+0x10] == rax
             inc eax
         .endif
         }
 
     .operator SetProduct :ptr, :ptr {
 
-        assume rdx:ptr MATRIX3X2F
-        assume r8:ptr MATRIX3X2F
-
-        movss xmm2,[rdx]._11 ; a._11 * b._11 + a._12 * b._21
-        mulss xmm2,[r8]._11
-        movss xmm1,[rdx]._12
-        mulss xmm1,[r8]._21
+        movss xmm2,[_1+0x00] ; a._11 * b._11 + a._12 * b._21
+        mulss xmm2,[_2+0x00]
+        movss xmm1,[_1+0x04]
+        mulss xmm1,[_2+0x08]
         addss xmm2,xmm1
 
-        movss xmm3,[rdx]._11 ; a._11 * b._12 + a._12 * b._22
-        mulss xmm3,[r8]._12
-        movss xmm1,[rdx]._12
-        mulss xmm1,[r8]._22
+        movss xmm3,[_1+0x00] ; a._11 * b._12 + a._12 * b._22
+        mulss xmm3,[_2+0x04]
+        movss xmm1,[_1+0x04]
+        mulss xmm1,[_2+0x0C]
         addss xmm3,xmm1
 
-        movss xmm4,[rdx]._21 ; a._21 * b._11 + a._22 * b._21
-        mulss xmm4,[r8]._11
-        movss xmm1,[rdx]._22
-        mulss xmm1,[r8]._21
+        movss xmm4,[_1+0x08] ; a._21 * b._11 + a._22 * b._21
+        mulss xmm4,[_2+0x00]
+        movss xmm1,[_1+0x0C]
+        mulss xmm1,[_2+0x08]
         addss xmm4,xmm1
 
-        movss xmm5,[rdx]._21 ; a._21 * b._12 + a._22 * b._22
-        mulss xmm5,[r8]._12
-        movss xmm1,[rdx]._22
-        mulss xmm1,[r8]._22
+        movss xmm5,[_1+0x08] ; a._21 * b._12 + a._22 * b._22
+        mulss xmm5,[_2+0x04]
+        movss xmm1,[_1+0x0C]
+        mulss xmm1,[_2+0x0C]
         addss xmm5,xmm1
 
-        movss xmm6,[rdx]._31 ; a._31 * b._11 + a._32 * b._21 + b._31
-        mulss xmm6,[r8]._11
-        movss xmm1,[rdx]._32
-        mulss xmm1,[r8]._21
+        movss xmm6,[_1+0x10] ; a._31 * b._11 + a._32 * b._21 + b._31
+        mulss xmm6,[_2+0x00]
+        movss xmm1,[_1+0x14]
+        mulss xmm1,[_2+0x08]
         addss xmm6,xmm1
-        addss xmm6,[r8]._31
+        addss xmm6,[_2+0x10]
 
-        movss xmm0,[rdx]._31 ; a._31 * b._12 + a._32 * b._22 + b._32
-        mulss xmm0,[r8]._12
-        movss xmm1,[rdx]._32
-        mulss xmm1,[r8]._22
+        movss xmm0,[_1+0x10] ; a._31 * b._12 + a._32 * b._22 + b._32
+        mulss xmm0,[_2+0x04]
+        movss xmm1,[_1+0x14]
+        mulss xmm1,[_2+0x0C]
         addss xmm0,xmm1
-        addss xmm0,[r8]._32
+        addss xmm0,[_2+0x14]
 
-        movss [rcx+0x00],xmm2
-        movss [rcx+0x04],xmm3
-        movss [rcx+0x08],xmm4
-        movss [rcx+0x0C],xmm5
-        movss [rcx+0x10],xmm6
-        movss [rcx+0x14],xmm0
-
-        assume rdx:nothing
-        assume r8:nothing
+        movss [this+0x00],xmm2
+        movss [this+0x04],xmm3
+        movss [this+0x08],xmm4
+        movss [this+0x0C],xmm5
+        movss [this+0x10],xmm6
+        movss [this+0x14],xmm0
         }
-
-    .ends
-
-.template Matrix3x2F
-
-
-    .operator Identity {
-
-      local T
-       .new T:D2D1_MATRIX_3X2_F
-
-        xor eax,eax
-        mov T._11,1.0
-        mov T._12,eax
-        mov T._21,eax
-        mov T._22,1.0
-        mov T._31,eax
-        mov T._32,eax
-        lea rax,T
-        }
-
-
-    .operator Translation :real4, :real4 {
-
-      local T
-       .new T:D2D1_MATRIX_3X2_F
-
-        mov   T._11,1.0
-        mov   T._12,0.0
-        mov   T._21,0.0
-        mov   T._22,1.0
-        movss T._31,xmm0
-        movss T._32,xmm1
-        lea   rax,T
-        }
-
-
-    .operator Scale :real4, :real4, :abs, :abs {
-
-      local T
-       .new T:D2D1_MATRIX_3X2_F
-
-        movss T._11,xmm0
-        mov   T._12,0.0
-        mov   T._21,0.0
-        movss T._22,xmm1
-        ifb <_3>
-           mov T._31,0.0
-           mov T._32,0.0
-        else
-           movss xmm1,_3
-           mulss xmm1,T._11
-           subss xmm0,xmm1
-           movss T._31,xmm0
-           movss xmm1,_4
-           mulss xmm1,T._22
-           subss xmm0,xmm1
-           movss T._32,xmm0
-        endif
-        lea rax,T
-        }
-
-
-    .operator Rotation :abs, :abs=<0> {
-
-       local T
-        .new T:D2D1_MATRIX_3X2_F
-
-        D2D1MakeRotateMatrix(_1, _2, addr T)
-        lea rax,T
-        }
-
 
     .operator Skew :abs, :abs, :abs=<0> {
-
-       local T
-        .new T:D2D1_MATRIX_3X2_F
-
-        D2D1MakeSkewMatrix(_1, _2, _3, addr T)
-        lea rax,T
+        D2D1MakeSkewMatrix(_1, _2, _3, this)
         }
 
-
-    .operator ReinterpretBaseType :ptr D2D1_MATRIX_3X2_F {
-        mov rax,rcx
+    .operator ReinterpretBaseType {
+        mov rax,this
         }
 
-
-    .operator Determinant :ptr D2D1_MATRIX_3X2_F {
-        movss xmm0,[rcx]
-        mulss xmm0,[rcx+12]
-        movss xmm1,[rcx+4]
-        mulss xmm1,[rcx+8]
+    .operator Determinant {
+        movss xmm0,[this+0x00]
+        mulss xmm0,[this+0x0C]
+        movss xmm1,[this+0x04]
+        mulss xmm1,[this+0x08]
         subss xmm0,xmm1
         }
-
-
-    .operator Invert :ptr D2D1_MATRIX_3X2_F {
-        xor D2D1InvertMatrix(rcx),1
-        }
-
-
-    .operator IsIdentity :ptr D2D1_MATRIX_3X2_F {
-
-        xor eax,eax
-        mov edx,1.0
-        assume rcx:ptr D2D1_MATRIX_3X2_F
-        .if [rcx]._11 == edx && \
-            [rcx]._12 == eax && \
-            [rcx]._21 == eax && \
-            [rcx]._22 == edx && \
-            [rcx]._31 == eax && \
-            [rcx]._32 == eax
-            inc eax
-        .endif
-        assume rcx:nothing
-        }
-
-
-    .operator SetProduct :ptr, :ptr {
-
-       local T
-        .new T:D2D1_MATRIX_3X2_F
-
-        assume rcx:ptr D2D1_MATRIX_3X2_F
-        assume rdx:ptr D2D1_MATRIX_3X2_F
-
-        movss xmm0,[rcx]._11 ; a._11 * b._11 + a._12 * b._21
-        mulss xmm0,[rdx]._11
-        movss xmm1,[rcx]._12
-        mulss xmm1,[rdx]._21
-        addss xmm0,xmm1
-        movss T._11,xmm0
-
-        movss xmm0,[rcx]._11 ; a._11 * b._12 + a._12 * b._22
-        mulss xmm0,[rdx]._12
-        movss xmm1,[rcx]._12
-        mulss xmm1,[rdx]._22
-        addss xmm0,xmm1
-        movss T._12,xmm0
-
-        movss xmm0,[rcx]._21 ; a._21 * b._11 + a._22 * b._21
-        mulss xmm0,[rdx]._11
-        movss xmm1,[rcx]._22
-        mulss xmm1,[rdx]._21
-        addss xmm0,xmm1
-        movss T._21,xmm0
-
-        movss xmm0,[rcx]._21 ; a._21 * b._12 + a._22 * b._22
-        mulss xmm0,[rdx]._12
-        movss xmm1,[rcx]._22
-        mulss xmm1,[rdx]._22
-        addss xmm0,xmm1
-        movss T._22,xmm0
-
-        movss xmm0,[rcx]._31 ; a._31 * b._11 + a._32 * b._21 + b._31
-        mulss xmm0,[rdx]._11
-        movss xmm1,[rcx]._32
-        mulss xmm1,[rdx]._21
-        addss xmm0,xmm1
-        addss xmm0,[rdx]._31
-        movss T._31,xmm0
-
-        movss xmm0,[rcx]._31 ; a._31 * b._12 + a._32 * b._22 + b._32
-        mulss xmm0,[rdx]._12
-        movss xmm1,[rcx]._32
-        mulss xmm1,[rdx]._22
-        addss xmm0,xmm1
-        addss xmm0,[rdx]._32
-        movss T._32,xmm0
-
-        assume rcx:nothing
-        assume rdx:nothing
-
-        lea rax,T
-        }
-
     .ends
 
+
+    D2D1 typedef ptr
 
 .template D2D1
 
@@ -461,13 +289,13 @@ ifdef _WIN64
         .new T:D2D1_RECT_F
 
         ifdef FLT_MAX
-            mov T.left,   -FLT_MAX
-            mov T.top,    -FLT_MAX
+            mov T.left,  -FLT_MAX
+            mov T.top,   -FLT_MAX
             mov T.right,  FLT_MAX
             mov T.bottom, FLT_MAX
         else
-            mov T.left,   -3.402823466e+38
-            mov T.top,    -3.402823466e+38
+            mov T.left,  -3.402823466e+38
+            mov T.top,   -3.402823466e+38
             mov T.right,  3.402823466e+38
             mov T.bottom, 3.402823466e+38
         endif
@@ -562,13 +390,14 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator StrokeStyleProperties :abs=<D2D1_CAP_STYLE_FLAT>,
-                                    :abs=<D2D1_CAP_STYLE_FLAT>,
-                                    :abs=<D2D1_CAP_STYLE_FLAT>,
-                                    :abs=<D2D1_LINE_JOIN_MITER>,
-                                    :abs=<10.0>,
-                                    :abs=<D2D1_DASH_STYLE_SOLID>,
-                                    :abs=<0.0> {
+    .operator StrokeStyleProperties \
+            :abs=<D2D1_CAP_STYLE_FLAT>,
+            :abs=<D2D1_CAP_STYLE_FLAT>,
+            :abs=<D2D1_CAP_STYLE_FLAT>,
+            :abs=<D2D1_LINE_JOIN_MITER>,
+            :abs=<10.0>,
+            :abs=<D2D1_DASH_STYLE_SOLID>,
+            :abs=<0.0> {
 
        local T
         .new T:D2D1_STROKE_STYLE_PROPERTIES

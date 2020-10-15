@@ -965,9 +965,9 @@ ExpandCStrings proc uses edi ebx tokenarray:tok_t
                     add ebx,16
                 .endif
             .endif
-            .if [ebx+16].token == T_DOT
+            .while [ebx+16].token == T_DOT
                 add ebx,32
-            .endif
+            .endw
             mov ecx,1
             add ebx,32
 
@@ -1003,24 +1003,45 @@ ExpandCStrings proc uses edi ebx tokenarray:tok_t
 
 ExpandCStrings endp
 
-GetProc proc private token:tok_t
+GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
 
-    mov edx,token
-    .if [edx].asm_tok.token == T_REG
-        GetStdAssume(GetRegNo([edx].asm_tok.tokval))
+  local poffset:ptr
+  local vname[64]:sbyte
+
+    mov ecx,sym
+    .if [ecx].asym.mem_type == MT_TYPE && [ecx].asym.type
+        mov ecx,[ecx].asym.type
+    .endif
+    .if [ecx].asym.target_type && \
+        ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.ptr_memtype == MT_TYPE )
+        mov ecx,[ecx].asym.target_type
+    .endif
+    strcpy(&vname, [ecx].asym.name)
+    .if SymFind(strcat(eax, "Vtbl"))
+
+        mov ecx,eax
+        SearchNameInStruct(ecx, name, &poffset, 0)
+    .endif
+    ret
+
+GetProcVtbl endp
+
+GetProc proc private uses ebx token:tok_t
+
+    mov ebx,token
+    .if [ebx].token == T_REG
+        GetStdAssume(GetRegNo([ebx].tokval))
     .else
-        SymFind([edx].asm_tok.string_ptr)
+        SymFind([ebx].string_ptr)
     .endif
-
-    .if !eax
-
-        asmerr(2190)
-        .return 0
-    .endif
-
-    ; the most simple case: symbol is a PROC
-
+    .return .if !eax
     .return .if [eax].asym.flag & S_ISPROC
+
+    .if [ebx].token == T_ID && \
+        [ebx+16].token == T_DOT && \
+        [ebx+32].token == T_ID
+        .return GetProcVtbl(eax, [ebx+32].string_ptr)
+    .endif
 
     mov ecx,[eax].asym.target_type
     mov dl,[eax].asym.mem_type
@@ -1047,22 +1068,13 @@ isfnproto:
 
     ; pointer target must be a PROTO typedef
 
-    .if [eax].asym.mem_type != MT_PROC
-
-        asmerr(2190)
-        .return 0
-    .endif
+    .return 0 .if [eax].asym.mem_type != MT_PROC
 
 isfnptr:
 
     ; get the pointer target
 
     mov eax,[eax].asym.target_type
-    .if !eax
-
-        asmerr(2190)
-        xor eax,eax
-    .endif
     ret
 
 GetProc endp
@@ -1356,6 +1368,8 @@ StripSource endp
 LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:tok_t
 
   local br_count:int_t
+  local level:int_t
+  local levtok:tok_t
   local constructor:int_t       ; Class(..)
   local static_struct:int_t
   local sqbrend:tok_t
@@ -1383,6 +1397,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov static_struct,eax
     mov type,eax
     mov constructor,eax
+    mov level,eax
 
     ; ClassVtbl struct
     ;   Method()
@@ -1461,7 +1476,28 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
 
     .else
 
-        mov sym,SymFind([ebx].string_ptr)
+        SymFind([ebx].string_ptr)
+if 1
+        ; a.b.m(...)
+        .if eax && [ebx+16].token == T_DOT && [ebx+3*16].token == T_DOT
+
+            mov levtok,ebx
+
+            .while eax && [ebx+16].token == T_DOT && [ebx+3*16].token == T_DOT
+
+                .if [eax].asym.is_ptr && [eax].asym.target_type
+                    mov ecx,[eax].asym.target_type
+                .else
+                    mov ecx,[eax].asym.type
+                .endif
+                .break .if !ecx
+                add level,2
+                add ebx,32
+                SearchNameInStruct( ecx, [ebx].string_ptr, &br_count, 0 )
+            .endw
+        .endif
+endif
+        mov sym,eax
         xor ecx,ecx
 
         .if [ebx+16].token == T_DOT && [ebx+3*16].token == T_OP_BRACKET
@@ -1674,6 +1710,19 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                 .if static_struct
                     strcat(esi, "addr ")
                 .endif
+                .if level
+                    push ebx
+                    push edi
+                    mov ebx,levtok
+                    mov edi,level
+                    .while edi
+                        strcat(esi, [ebx].string_ptr)
+                        add ebx,16
+                        dec edi
+                    .endw
+                    pop edi
+                    pop ebx
+                .endif
                 strcat(esi, comptr)
                 strcat(esi, ",")
             .endif
@@ -1782,6 +1831,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         strcat(eax, &EOLSTR)
     .endif
     strcat(eax, esi)
+    add edi,level
     StripSource(i, edi, tokenarray)
     ret
 

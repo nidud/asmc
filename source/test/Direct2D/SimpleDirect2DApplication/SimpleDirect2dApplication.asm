@@ -6,6 +6,7 @@ include SimpleDirect2dApplication.inc
 ;;
 ;; Provides the entry point to the application.
 ;;
+
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
   local vtable:DemoAppVtbl
@@ -36,6 +37,7 @@ wWinMain endp
 ;;
 ;; Initialize members.
 ;;
+
 DemoApp::DemoApp proc uses rdi vtable:ptr
 
     mov [rcx].DemoApp.lpVtbl,rdx
@@ -62,11 +64,13 @@ DemoApp::DemoApp proc uses rdi vtable:ptr
 
 DemoApp::DemoApp endp
 
+
     assume rsi:ptr DemoApp
 
 ;;
 ;; Release resources.
 ;;
+
 DemoApp::Release proc uses rsi
 
     mov rsi,rcx
@@ -85,13 +89,13 @@ DemoApp::Release proc uses rsi
 
 DemoApp::Release endp
 
+
 ;;
 ;; Creates the application window and initializes
 ;; device-independent resources.
 ;;
 DemoApp::Initialize proc uses rsi
 
-  local hr:HRESULT
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
@@ -100,8 +104,7 @@ DemoApp::Initialize proc uses rsi
     ;; Initialize device-indpendent resources, such
     ;; as the Direct2D factory.
 
-    mov hr,[rsi].CreateDeviceIndependentResources()
-    .if (SUCCEEDED(hr))
+    .ifd !this.CreateDeviceIndependentResources()
 
         ;; Register the window class.
 
@@ -125,49 +128,51 @@ DemoApp::Initialize proc uses rsi
         ;; Because the CreateWindow function takes its size in pixels, we
         ;; obtain the system DPI and use it to scale the window size.
 
-        mov rcx,[rsi].m_pD2DFactory
-        [rcx].ID2D1Factory.GetDesktopDpi(&dpiX, &dpiY)
+        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
-        movss xmm0,dpiX
-        mulss xmm0,640.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiX,eax
+        movss       xmm0,dpiX
+        mulss       xmm0,640.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   ecx,xmm0
+        sub         ecx,eax
+        neg         ecx
 
-        movss xmm0,dpiY
-        mulss xmm0,480.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiY,eax
+        movss       xmm0,dpiY
+        mulss       xmm0,480.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   edx,xmm0
+        sub         edx,eax
+        neg         edx
 
-        mov [rsi].m_hwnd,CreateWindowEx(0,
+        .if CreateWindowEx(
+            0,
             L"D2DDemoApp",
             L"Direct2D Demo Application",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            dpiX,
-            dpiY,
+            ecx,
+            edx,
             NULL,
             NULL,
             HINST_THISCOMPONENT,
-            rsi
+            this
             )
-        mov eax,S_OK
-        .if rax == [rsi].m_hwnd
-            mov eax,E_FAIL
-        .endif
-        mov hr,eax
-        .if (SUCCEEDED(eax))
-
+            mov [rsi].m_hwnd,rax
             ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
             UpdateWindow([rsi].m_hwnd)
+            mov eax,S_OK
         .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::Initialize endp
 
@@ -181,7 +186,7 @@ DemoApp::Initialize endp
 ;; a Direct2D geometry.
 ;;
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
+DemoApp::CreateDeviceIndependentResources proc uses rsi
 
   local hr:HRESULT
   local pSink:ptr ID2D1GeometrySink
@@ -222,8 +227,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
 
         ;; Create a DirectWrite text format object.
 
-        mov rcx,[rsi].m_pDWriteFactory
-        mov hr,[rcx].IDWriteFactory.CreateTextFormat(
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(
             L"Verdana",
             NULL,
             DWRITE_FONT_WEIGHT_NORMAL,
@@ -239,22 +243,19 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
 
         ;; Center the text horizontally and vertically.
 
-        mov rbx,[rsi].m_pTextFormat
-        [rbx].IDWriteTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
-        [rbx].IDWriteTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
+        this.m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
+        this.m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
 
         ;; Create a path geometry.
 
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreatePathGeometry(&[rsi].m_pPathGeometry)
+        mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pPathGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ;; Use the geometry sink to write to the path geometry.
 
-        mov rcx,[rsi].m_pPathGeometry
-        mov hr,[rcx].ID2D1PathGeometry.Open(&pSink)
+        mov hr,this.m_pPathGeometry.Open(&pSink)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -374,8 +375,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
         mov rdi,D2D1::RenderTargetProperties()
         mov r8,D2D1::HwndRenderTargetProperties([rsi].m_hwnd, size)
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(rdi, r8, &[rsi].m_pRenderTarget)
+        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(rdi, r8, &[rsi].m_pRenderTarget)
 
         .if (SUCCEEDED(hr))
 
@@ -435,8 +435,14 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            mov hr,[rsi].LoadBitmapFromFile( [rsi].m_pRenderTarget, [rsi].m_pWICFactory,
-                L".\\sampleImage.jpg", 100, 0, &[rsi].m_pBitmap )
+            mov hr,this.LoadBitmapFromFile(
+                [rsi].m_pRenderTarget,
+                [rsi].m_pWICFactory,
+                L".\\sampleImage.jpg",
+                100,
+                0,
+                &[rsi].m_pBitmap
+                )
         .endif
 
         .if (SUCCEEDED(hr))
@@ -459,14 +465,13 @@ DemoApp::CreateDeviceResources endp
 ;;
 ;; Creates a pattern brush.
 ;;
-DemoApp::CreateGridPatternBrush proc uses rsi pRenderTarget:ptr ID2D1RenderTarget,
+DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
         ppBitmapBrush:ptr ptr ID2D1BitmapBrush
 
   local hr:HRESULT
   local pCompatibleRenderTarget:ptr ID2D1BitmapRenderTarget
 
     mov hr,S_OK
-    mov rsi,rcx
 
     ;; Create a compatible render target.
 
@@ -501,12 +506,9 @@ DemoApp::CreateGridPatternBrush proc uses rsi pRenderTarget:ptr ID2D1RenderTarge
 
         .if (SUCCEEDED(hr))
 
-
             pCompatibleRenderTarget.BeginDraw()
-            mov rdx,D2D1::RectF(0.0, 0.0, 10.0, 1.0)
-            pCompatibleRenderTarget.FillRectangle(rdx, pGridBrush)
-            mov rdx,D2D1::RectF(0.0, 0.1, 1.0, 10.0)
-            pCompatibleRenderTarget.FillRectangle(rdx, pGridBrush)
+            pCompatibleRenderTarget.FillRectangle(D2D1::RectF(0.0, 0.0, 10.0, 1.0), pGridBrush)
+            pCompatibleRenderTarget.FillRectangle(D2D1::RectF(0.0, 0.1, 1.0, 10.0), pGridBrush)
             pCompatibleRenderTarget.EndDraw(NULL, NULL)
 
             ;; Retrieve the bitmap from the render target.
@@ -524,8 +526,12 @@ DemoApp::CreateGridPatternBrush proc uses rsi pRenderTarget:ptr ID2D1RenderTarge
 
                 ;; Create the bitmap brush.
 
-                mov rcx,[rsi].m_pRenderTarget
-                mov hr,[rcx].ID2D1HwndRenderTarget.CreateBitmapBrush(pGridBitmap, r8, NULL, ppBitmapBrush)
+                mov hr,this.m_pRenderTarget.CreateBitmapBrush(
+                        pGridBitmap,
+                        r8,
+                        NULL,
+                        ppBitmapBrush
+                        )
 
                 pGridBitmap.Release()
             .endif
@@ -590,22 +596,22 @@ DemoApp::RunMessageLoop endp
 
 sc_helloWorld equ <L"Hello, World!">
 
-DemoApp::OnRender proc uses rsi rdi rbx
+DemoApp::OnRender proc uses rsi
 
   local hr:HRESULT
   local m:Matrix3x2F
   local r:D2D1_RECT_F
   local rotation:Matrix3x2F
+  local pRT:ptr ID2D1HwndRenderTarget
 
     mov rsi,rcx
-    mov hr,[rsi].CreateDeviceResources()
-    mov rdi,[rsi].m_pRenderTarget
+
+    mov hr,this.CreateDeviceResources()
     .return .if eax
 
-    assume rdi:ptr ID2D1HwndRenderTarget
+    mov pRT,[rsi].m_pRenderTarget
 
-    .if ( !( [rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
-
+    .if ( !( pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
 
 
         ;; Retrieve the size of the render target.
@@ -613,10 +619,10 @@ DemoApp::OnRender proc uses rsi rdi rbx
        .new renderTargetSize:D2D1_SIZE_F
        .new size:D2D1_SIZE_F
 
-        [rdi].GetSize(&renderTargetSize)
-        [rdi].BeginDraw()
-        [rdi].SetTransform(m.Identity())
-        [rdi].Clear(D3DCOLORVALUE(White, 1.0))
+        pRT.GetSize(&renderTargetSize)
+        pRT.BeginDraw()
+        pRT.SetTransform(m.Identity())
+        pRT.Clear(D3DCOLORVALUE(White, 1.0))
 
         ;; Paint a grid background.
 
@@ -625,21 +631,19 @@ DemoApp::OnRender proc uses rsi rdi rbx
         mov r.right,  renderTargetSize.width
         mov r.bottom, renderTargetSize.height
 
-        [rdi].FillRectangle(&r, [rsi].m_pGridPatternBitmapBrush)
+        pRT.FillRectangle(&r, [rsi].m_pGridPatternBitmapBrush)
 
-        mov rcx,[rsi].m_pBitmap
-        [rcx].ID2D1Bitmap.GetSize(&size)
+        this.m_pBitmap.GetSize(&size)
 
         ;; Draw a bitmap in the upper-left corner of the window.
 
         mov r.right,  size.width
         mov r.bottom, size.height
-        [rdi].DrawBitmap([rsi].m_pBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
+        pRT.DrawBitmap([rsi].m_pBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
         ;; Draw a bitmap at the lower-right corner of the window.
 
-        mov rcx,[rsi].m_pAnotherBitmap
-        [rcx].ID2D1Bitmap.GetSize(&size)
+        this.m_pAnotherBitmap.GetSize(&size)
 
         movss xmm0,renderTargetSize.width
         subss xmm0,size.width
@@ -650,7 +654,7 @@ DemoApp::OnRender proc uses rsi rdi rbx
         mov   r.right,renderTargetSize.width
         mov   r.bottom,renderTargetSize.height
 
-        [rdi].DrawBitmap([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
+        pRT.DrawBitmap([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
         ;; Set the world transform to a 45 degree rotation at the center of the render target
         ;; and write "Hello, World".
@@ -663,12 +667,12 @@ DemoApp::OnRender proc uses rsi rdi rbx
         movss size.height,xmm1
         rotation.Rotation(45.0, size)
 
-        [rdi].SetTransform(&rotation)
+        pRT.SetTransform(&rotation)
 
         mov r.left, 0.0
         mov r.top,  0.0
 
-        [rdi].DrawText(
+        pRT.DrawText(
             sc_helloWorld,
             13,
             [rsi].m_pTextFormat,
@@ -685,11 +689,11 @@ DemoApp::OnRender proc uses rsi rdi rbx
         movss xmm0,renderTargetSize.height
         subss xmm0,200.0
         movss m._32,xmm0
-        [rdi].SetTransform(&m)
+        pRT.SetTransform(&m)
 
         ;; Fill the hour glass geometry with a gradient.
 
-        [rdi].FillGeometry(
+        pRT.FillGeometry(
             [rsi].m_pPathGeometry,
             [rsi].m_pLinearGradientBrush,
             NULL
@@ -699,21 +703,21 @@ DemoApp::OnRender proc uses rsi rdi rbx
         movss xmm0,renderTargetSize.width
         subss xmm0,200.0
         movss m._31,xmm0
-        [rdi].SetTransform(&m)
+        pRT.SetTransform(&m)
 
         ;; Fill the hour glass geometry with a gradient.
 
-        [rdi].FillGeometry(
+        pRT.FillGeometry(
             [rsi].m_pPathGeometry,
             [rsi].m_pLinearGradientBrush,
             NULL
             )
 
-        mov hr,[rdi].EndDraw(NULL, NULL)
+        mov hr,pRT.EndDraw(NULL, NULL)
         .if (hr == D2DERR_RECREATE_TARGET)
 
             mov hr,S_OK
-            [rsi].DiscardDeviceResources()
+            this.DiscardDeviceResources()
         .endif
     .endif
 
@@ -825,7 +829,7 @@ WndProc endp
 ;; application resource file.
 ;;
 
-DemoApp::LoadResourceBitmap proc uses rsi rdi rbx \
+DemoApp::LoadResourceBitmap proc \
     pRenderTarget:      ptr ID2D1RenderTarget,
     pIWICFactory:       ptr IWICImagingFactory,
     resourceName:       PCWSTR,
@@ -848,7 +852,6 @@ DemoApp::LoadResourceBitmap proc uses rsi rdi rbx \
   local imageFileSize:  DWORD
 
     xor eax,eax
-    mov rsi,rcx
     mov hr,eax
     mov pDecoder,rax
     mov pSource,rax
@@ -988,7 +991,7 @@ DemoApp::LoadResourceBitmap proc uses rsi rdi rbx \
                 mov hr,pIWICFactory.CreateBitmapScaler(&pScaler)
                 .if (SUCCEEDED(hr))
 
-                    mov hr, pScaler.Initialize(
+                    mov hr,pScaler.Initialize(
                             pSource,
                             destinationWidth,
                             destinationHeight,
@@ -1047,7 +1050,7 @@ DemoApp::LoadResourceBitmap endp
 ;; file name.
 ;;
 
-DemoApp::LoadBitmapFromFile proc uses rsi rdi rbx \
+DemoApp::LoadBitmapFromFile proc \
     pRenderTarget:      ptr ID2D1RenderTarget,
     pIWICFactory:       ptr IWICImagingFactory,
     uri:                PCWSTR,

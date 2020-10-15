@@ -20,10 +20,9 @@ DaysInMonth proc year, month
         DaysInFebruary(eax)
         .endc
 
-      .case 4,6,9,11:
+      .case 4,6,9,11
         sub eax,1
         .endc
-
     .endsw
     ret
 

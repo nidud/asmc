@@ -9,40 +9,38 @@ include winbase.inc
 
 if (WINVER LT 0x0502)
 
-	.data
-	externdef kernel32_dll:BYTE
-	GetFileSizeEx GetFileSizeEx_T dummy
+    .data
+    externdef kernel32_dll:BYTE
+    GetFileSizeEx GetFileSizeEx_T dummy
 
-	.code
+    .code
 
-dummy	proc WINAPI private \
-		 hFile: HANDLE,
-	    lpFileSize: PLARGE_INTEGER
+dummy proc WINAPI private hFile:HANDLE, lpFileSize:PLARGE_INTEGER
 
-	.if GetFileSize( hFile, lpFileSize )
+    .if GetFileSize( hFile, lpFileSize )
 
-		mov	edx,lpFileSize
-		mov	[edx],eax
-		xor	eax,eax
-		mov	[edx+4],eax
-		inc	eax
-	.endif
-	ret
+        mov edx,lpFileSize
+        mov [edx],eax
+        xor eax,eax
+        mov [edx+4],eax
+        inc eax
+    .endif
+    ret
 
-dummy	endp
+dummy endp
 
 
 Install:
-	.if GetModuleHandle( addr kernel32_dll )
+    .if GetModuleHandle( addr kernel32_dll )
 
-		.if GetProcAddress( eax, "GetFileSizeEx" )
+        .if GetProcAddress( eax, "GetFileSizeEx" )
 
-			mov GetFileSizeEx,eax
-		.endif
-	.endif
-	ret
+            mov GetFileSizeEx,eax
+        .endif
+    .endif
+    ret
 
 .pragma init(Install, 7)
 
 endif
-	END
+    END

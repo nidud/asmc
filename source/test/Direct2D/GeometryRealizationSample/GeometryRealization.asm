@@ -477,8 +477,7 @@ GeometryRealization::Update proc uses rsi rdi rbx \
            .new pMesh:ptr ID2D1Mesh
             mov pMesh,NULL
 
-            mov rcx,[rsi].m_pRT
-            mov hr,[rcx].ID2D1RenderTarget.CreateMesh(&pMesh)
+            mov hr,this.m_pRT.CreateMesh(&pMesh)
             .if (SUCCEEDED(hr))
 
                .new pSink:ptr ID2D1TessellationSink
@@ -514,8 +513,8 @@ GeometryRealization::Update proc uses rsi rdi rbx \
             ;;
            .new pFactory:ptr ID2D1Factory
             mov pFactory,NULL
-            mov rcx,[rsi].m_pRT
-            [rcx].ID2D1RenderTarget.GetFactory(&pFactory)
+
+            this.m_pRT.GetFactory(&pFactory)
 
            .new pPathGeometry:ptr ID2D1PathGeometry
             mov pPathGeometry,NULL
@@ -543,8 +542,8 @@ GeometryRealization::Update proc uses rsi rdi rbx \
 
                            .new pMesh:ptr ID2D1Mesh
                             mov pMesh,NULL
-                            mov rcx,[rsi].m_pRT
-                            mov hr,[rcx].ID2D1RenderTarget.CreateMesh(&pMesh)
+
+                            mov hr,this.m_pRT.CreateMesh(&pMesh)
                             .if (SUCCEEDED(hr))
 
                                .new pSink:ptr ID2D1TessellationSink
@@ -658,8 +657,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
 
                    .new pBitmap:ptr ID2D1Bitmap
                     mov pBitmap,NULL
-                    mov rcx,[rsi].m_pFillRT
-                    [rcx].ID2D1BitmapRenderTarget.GetBitmap(&pBitmap)
+                    this.m_pFillRT.GetBitmap(&pBitmap)
 
                     ;;
                     ;; Note: The antialias mode must be set to aliased prior to calling
@@ -686,8 +684,8 @@ GeometryRealization::RenderToTarget proc uses rsi \
 
                    .new pBitmap:ptr ID2D1Bitmap
                     mov pBitmap,NULL
-                    mov rcx,[rsi].m_pStrokeRT
-                    [rcx].ID2D1BitmapRenderTarget.GetBitmap(&pBitmap)
+
+                    this.m_pStrokeRT.GetBitmap(&pBitmap)
 
                     ;;
                     ;; Note: The antialias mode must be set to aliased prior to calling

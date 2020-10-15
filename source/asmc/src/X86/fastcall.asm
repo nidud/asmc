@@ -1315,7 +1315,6 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     mov ecx,paramvalue
     .if ( eax > psize && byte ptr [ecx] != '[' ) || \
         ( eax < psize && [edx].asym.mem_type == MT_PTR )
-
         asmerr( 2114, &[esi+1] )
     .endif
 
@@ -1438,11 +1437,30 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
                 AddLineQueueX(" or  %r,rax", ebx)
             .endif
         .else
-            mov edx,param
-            .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sint_flag & SINT_ISVARARG
-                mov ebx,get_register(ebx, 8) ; added v2.31
+
+            mov edx,pp
+            mov ecx,[edi].expr.sym
+            .if ecx && \
+                index == 0 && \
+                [edi].expr.mbr && \
+                [edi].expr.kind == EXPR_ADDR && \
+                [edi].expr.flags == E_INDIRECT && \
+                [ecx].asym.is_ptr && \
+                [edx].asym.flag & S_METHOD
+
+                mov ebx,ecx
+                AddLineQueueX( " mov rax, %s", [ecx].asym.name )
+                mov edx,[edi].expr.mbr
+                mov ecx,[ebx].asym.target_type
+                AddLineQueueX( " mov rcx, [rax].%s.%s", [ecx].asym.name, [edx].asym.name )
+
+            .else
+                mov edx,param
+                .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sint_flag & SINT_ISVARARG
+                    mov ebx,get_register(ebx, 8) ; added v2.31
+                .endif
+                AddLineQueueX( " mov %r, %s", ebx, paramvalue )
             .endif
-            AddLineQueueX( " mov %r, %s", ebx, paramvalue )
         .endif
     .endif
 

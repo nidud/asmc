@@ -334,10 +334,12 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
     .case T_ID
         mov esi,[ebx].string_ptr
         .if ( [edi].flags & E_IS_DOT )
+            mov ecx,[edi].type
+method_ptr:
             xor eax,eax
             mov [edi].value,eax
-            .if [edi].type
-                SearchNameInStruct( [edi].type, esi, edi, 0 )
+            .if ecx
+                SearchNameInStruct( ecx, esi, edi, 0 )
             .endif
             .if eax == NULL
                 .if SymFind(esi)
@@ -364,6 +366,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
             .endif
             SymFind(esi)
         .endif
+
         .if ( eax == NULL || [eax].asym.state == SYM_UNDEFINED || \
             ( [eax].asym.state == SYM_TYPE && [eax].asym.typekind == TYPE_NONE ) || \
               [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO )
@@ -375,6 +378,20 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
             .if ( eax && ( [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO ) )
                 .return fnasmerr( 2148, [eax].asym.name )
             .endif
+if 1
+            .if ( !eax && [ebx-16].token == T_DOT && [ebx-32].token == T_ID )
+                mov edx,tokenarray
+                .if [edx].asm_tok.tokval == T_INVOKE ;&& ModuleInfo.Ofssize == USE64
+                    .if SymFind( [ebx-32].string_ptr )
+                        .if ( [eax].asym.is_ptr && [eax].asym.target_type )
+                            mov ecx,[eax].asym.target_type
+                            ;mov [edi].type,ecx
+                            jmp method_ptr
+                        .endif
+                    .endif
+                .endif
+            .endif
+endif
             .if ( Parse_Pass == PASS_1 && !( flags & EXPF_NOUNDEF ) )
                 .if eax == NULL
                     mov ecx,[edi].type

@@ -10,28 +10,28 @@ include winuser.inc
 
 if (_WIN32_WINNT LT 0x0500)
 
-	extrn	user32_dll:BYTE
+    extrn user32_dll:BYTE
 
-	.data
-	GetForegroundWindow GetForegroundWindow_T dummy
+    .data
+    GetForegroundWindow GetForegroundWindow_T dummy
 
-	.code
+    .code
 
 Install:
-	.if	GetModuleHandle( addr user32_dll )
+    .if GetModuleHandle( addr user32_dll )
 
-		.if	GetProcAddress( eax, "GetForegroundWindow" )
+        .if GetProcAddress( eax, "GetForegroundWindow" )
 
-			mov GetForegroundWindow,eax
-		.endif
-	.endif
+            mov GetForegroundWindow,eax
+        .endif
+    .endif
 
-dummy	proc WINAPI private
-	xor	eax,eax
-	ret
-dummy	endp
+dummy proc WINAPI private
+    xor eax,eax
+    ret
+dummy endp
 
 .pragma init(Install, 6)
 
 endif
-	END
+    END

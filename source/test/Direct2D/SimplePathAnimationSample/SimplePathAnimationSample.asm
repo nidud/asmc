@@ -102,7 +102,6 @@ DemoApp::Release endp
 
 DemoApp::Initialize proc uses rsi
 
-  local hr:HRESULT
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
@@ -125,65 +124,60 @@ DemoApp::Initialize proc uses rsi
 
     RegisterClassEx(&wcex)
 
-    mov hr,[rsi].CreateDeviceIndependentResources()
-
-    .if (SUCCEEDED(hr))
+    .ifd !this.CreateDeviceIndependentResources()
 
         ;; Create the application window.
         ;;
         ;; Because the CreateWindow function takes its size in pixels, we
         ;; obtain the system DPI and use it to scale the window size.
 
-        mov rcx,[rsi].m_pD2DFactory
-        [rcx].ID2D1Factory.GetDesktopDpi(&dpiX, &dpiY)
+        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
-        movss xmm0,dpiX
-        mulss xmm0,512.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiX,eax
+        movss       xmm0,dpiX
+        mulss       xmm0,512.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   ecx,xmm0
+        sub         ecx,eax
+        neg         ecx
 
-        movss xmm0,dpiY
-        mulss xmm0,512.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiY,eax
+        movss       xmm0,dpiY
+        mulss       xmm0,512.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   edx,xmm0
+        sub         edx,eax
+        neg         edx
 
-        mov [rsi].m_hwnd,CreateWindowEx(0,
+        .if CreateWindowEx(
+            0,
             L"D2DDemoApp",
             L"D2D Simple Path Animation Sample",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            dpiX,
-            dpiY,
+            ecx,
+            edx,
             NULL,
             NULL,
             HINST_THISCOMPONENT,
-            rsi
+            this
             )
-        mov eax,S_OK
-        .if rax == [rsi].m_hwnd
-            mov eax,E_FAIL
-        .endif
-        mov hr,eax
-        .if (SUCCEEDED(eax))
+            mov [rsi].m_hwnd,rax
 
-            .new length:float
+           .new length:float
 
-            mov rcx,[rsi].m_pPathGeometry
-            mov hr, [rcx].ID2D1PathGeometry.ComputeLength(
-                NULL, ;;no transform
-                0.25,
-                &length
-                )
-            .if (SUCCEEDED(hr))
+            .ifd !this.m_pPathGeometry.ComputeLength(NULL, 0.25, &length)
 
                 mov [rsi].m_Animation.m_Start,0.0       ;;start at beginning of path
                 mov [rsi].m_Animation.m_End,length      ;;length at end of path
-                mov [rsi].m_Animation.m_Duration,15.0    ;;seconds
+                mov [rsi].m_Animation.m_Duration,15.0   ;;seconds
 
                 ZeroMemory(&[rsi].m_DwmTimingInfo, DWM_TIMING_INFO)
                 mov [rsi].m_DwmTimingInfo.cbSize,DWM_TIMING_INFO
@@ -195,7 +189,7 @@ DemoApp::Initialize proc uses rsi
 
                 .if (FAILED(eax))
 
-                    .new hdc:HDC
+                   .new hdc:HDC
 
                     mov hdc,GetDC([rsi].m_hwnd)
                     mov [rsi].m_DwmTimingInfo.rateCompose.uiDenominator,1
@@ -205,13 +199,14 @@ DemoApp::Initialize proc uses rsi
                 .endif
 
                 ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
-
                 UpdateWindow([rsi].m_hwnd)
+                mov eax,S_OK
             .endif
+        .else
+            mov eax,E_FAIL
         .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::Initialize endp
 
@@ -225,31 +220,37 @@ DemoApp::Initialize endp
 ;*                                                                 *
 ;******************************************************************/
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
+DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
   local hr:HRESULT
   local pSink:ptr ID2D1GeometrySink
 
+    mov rsi,rcx
     mov pSink,NULL
-    mov rdi,rcx
 
     ;; Create a Direct2D factory.
-    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
+    mov hr,D2D1CreateFactory(
+            D2D1_FACTORY_TYPE_SINGLE_THREADED,
+            &IID_ID2D1Factory,
+            NULL,
+            &[rsi].m_pD2DFactory
+            )
 
     .if (SUCCEEDED(hr))
 
         ;; Create the path geometry.
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreatePathGeometry(&[rsi].m_pPathGeometry)
+
+        mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pPathGeometry)
     .endif
+
     .if (SUCCEEDED(hr))
 
         ;; Write to the path geometry using the geometry sink. We are going to create a
         ;; spiral
-        mov rcx,[rsi].m_pPathGeometry
-        mov hr,[rcx].ID2D1PathGeometry.Open(&pSink)
+
+        mov hr,this.m_pPathGeometry.Open(&pSink)
     .endif
+
     .if (SUCCEEDED(hr))
 
         .new radius:float
@@ -286,7 +287,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
                 0.0, ;; rotation angle
                 D2D1_SWEEP_DIRECTION_CLOCKWISE,
                 D2D1_ARC_SIZE_SMALL
-            )
+                )
             pSink.AddArc(rax)
 
             movss xmm0,locDelta.x
@@ -301,23 +302,24 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi rbx
         .endf
 
         pSink.EndFigure(D2D1_FIGURE_END_OPEN)
-
         mov hr,pSink.Close()
     .endif
+
     .if (SUCCEEDED(hr))
 
         ;; Create the path geometry.
 
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreatePathGeometry(&[rsi].m_pObjectGeometry)
+        mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pObjectGeometry)
     .endif
+
     .if (SUCCEEDED(hr))
 
         ;; Write to the object geometry using the geometry sink.
         ;; We are going to create a simple triangle
-        mov rcx,[rsi].m_pObjectGeometry
-        mov hr,[rcx].ID2D1PathGeometry.Open(&pSink)
+
+        mov hr,this.m_pObjectGeometry.Open(&pSink)
     .endif
+
     .if (SUCCEEDED(hr))
 
         .new m_Triangle[3]:D2D1_POINT_2F
@@ -353,20 +355,18 @@ DemoApp::CreateDeviceIndependentResources endp
 ;*                                                                 *
 ;******************************************************************/
 
-DemoApp::CreateDeviceResources proc uses rsi rdi
-
-  local hr:HRESULT
+DemoApp::CreateDeviceResources proc uses rsi
 
     mov rsi,rcx
-    mov hr,S_OK
+    xor eax,eax
 
-    .if ![rsi].m_pRT
+    .if rax == [rsi].m_pRT
 
-        .new rc:RECT
+       .new rc:RECT
 
         GetClientRect([rsi].m_hwnd, &rc)
 
-        .new size:D2D1_SIZE_U
+       .new size:D2D1_SIZE_U
 
         mov eax,rc.right
         sub eax,rc.left
@@ -377,28 +377,24 @@ DemoApp::CreateDeviceResources proc uses rsi rdi
 
         ;; Create a Direct2D render target
 
-        mov rdi,D2D1_RenderTargetProperties()
         mov r8, D2D1_HwndRenderTargetProperties([rsi].m_hwnd, size)
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(rdi, r8, &[rsi].m_pRT)
+        mov rdx,D2D1_RenderTargetProperties()
 
-        .if (SUCCEEDED(hr))
+        .ifd !this.m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &[rsi].m_pRT)
 
             ;; Create a red brush.
-            mov rdx,D3DCOLORVALUE(Red, 1.0)
-            mov rcx,[rsi].m_pRT
-            mov hr,[rcx].ID2D1HwndRenderTarget.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pRedBrush)
-        .endif
-        .if (SUCCEEDED(hr))
 
-            ;; Create a yellow brush.
-            mov rdx,D3DCOLORVALUE(Yellow, 1.0)
-            mov rcx,[rsi].m_pRT
-            mov hr,[rcx].ID2D1HwndRenderTarget.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pYellowBrush)
+            mov rdx,D3DCOLORVALUE(Red, 1.0)
+            .ifd !this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pRedBrush)
+
+                ;; Create a yellow brush.
+
+                mov rdx,D3DCOLORVALUE(Yellow, 1.0)
+                this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pYellowBrush)
+            .endif
         .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::CreateDeviceResources endp
 
@@ -458,20 +454,19 @@ DemoApp::RunMessageLoop endp
 ;*                                                                 *
 ;******************************************************************/
 
-DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
+DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
 
   local hr:HRESULT
   local hdc:HDC
+  local pRT:ptr ID2D1HwndRenderTarget
 
     mov rsi,rcx
+
     mov hdc,[rdx].PAINTSTRUCT.hdc
+    mov hr, this.CreateDeviceResources()
+    mov pRT,[rsi].m_pRT
 
-    mov hr,[rsi].CreateDeviceResources()
-    mov rdi,[rsi].m_pRT
-
-    assume rdi:ptr ID2D1HwndRenderTarget
-
-    .if (SUCCEEDED(hr) && !([rdi].CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED))
+    .if ( SUCCEEDED(hr) && !( pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
 
        .new point:D2D1_POINT_2F
        .new tangent:D2D1_POINT_2F
@@ -482,7 +477,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
        .new translation:Matrix3x2F
        .new m:Matrix3x2F
 
-        [rdi].GetSize(&rtSize)
+        pRT.GetSize(&rtSize)
         movss xmm0,rtSize.width
         minss xmm0,rtSize.height
         divss xmm0,512.0
@@ -499,28 +494,28 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         translation.Translation(xmm0, xmm1)
 
         ;; Prepare to draw.
-        [rdi].BeginDraw()
+        pRT.BeginDraw()
 
         ;; Reset to identity transform
-        [rdi].SetTransform(m.Identity())
+        pRT.SetTransform(m.Identity())
 
         ;;clear the render target contents
-        [rdi].Clear(D3DCOLORVALUE(Black, 1.0))
+        pRT.Clear(D3DCOLORVALUE(Black, 1.0))
 
         ;;center the path
         m.SetProduct(&scale, &translation)
-        [rdi].SetTransform(&m)
+        pRT.SetTransform(&m)
 
         ;;draw the path in red
-        [rdi].DrawGeometry([rsi].m_pPathGeometry, [rsi].m_pRedBrush, 0.6, NULL)
+        pRT.DrawGeometry([rsi].m_pPathGeometry, [rsi].m_pRedBrush, 0.6, NULL)
 
         lea rcx,[rsi].m_Animation
         [rcx].Animation.GetValue([rsi].m_Time, EaseInOutExponentialAnimation)
 
         ;; Ask the geometry to give us the point that corresponds with the
         ;; length at the current time.
-        mov rcx,[rsi].m_pPathGeometry
-        mov hr,[rcx].ID2D1PathGeometry.ComputePointAtLength(xmm0, NULL, 1.0, &point, &tangent)
+
+        mov hr,this.m_pPathGeometry.ComputePointAtLength(xmm0, NULL, 1.0, &point, &tangent)
 
         .assert(SUCCEEDED(hr))
 
@@ -536,18 +531,18 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         mov triangleMatrix._32,point.y
         m.SetProduct(&triangleMatrix, &m)
 
-        [rdi].SetTransform(&m)
+        pRT.SetTransform(&m)
 
         ;; Draw the yellow triangle.
-        [rdi].FillGeometry([rsi].m_pObjectGeometry, [rsi].m_pYellowBrush, NULL)
+        pRT.FillGeometry([rsi].m_pObjectGeometry, [rsi].m_pYellowBrush, NULL)
 
         ;; Commit the drawing operations.
-        mov hr,[rdi].EndDraw(NULL, NULL)
+        mov hr,pRT.EndDraw(NULL, NULL)
 
         .if (hr == D2DERR_RECREATE_TARGET)
 
             mov hr,S_OK
-            [rsi].DiscardDeviceResources()
+            this.DiscardDeviceResources()
         .endif
 
         ;; When we reach the end of the animation, loop back to the beginning.

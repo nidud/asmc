@@ -155,7 +155,6 @@ DemoApp::Release endp
 
 DemoApp::Initialize proc uses rsi
 
-  local hr:HRESULT
   local wcex:WNDCLASSEX
   local dpiX:float, dpiY:float
 
@@ -164,9 +163,7 @@ DemoApp::Initialize proc uses rsi
     ;; Initialize device-indpendent resources, such
     ;; as the Direct2D factory.
 
-    mov hr,[rsi].CreateDeviceIndependentResources()
-
-    .if (SUCCEEDED(hr))
+    .ifd !this.CreateDeviceIndependentResources()
 
         ;; Register the window class.
 
@@ -190,51 +187,54 @@ DemoApp::Initialize proc uses rsi
         ;; Because the CreateWindow function takes its size in pixels, we
         ;; obtain the system DPI and use it to scale the window size.
 
-        mov rcx,[rsi].m_pD2DFactory
-        [rcx].ID2D1Factory.GetDesktopDpi(&dpiX, &dpiY)
+        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
-        movss xmm0,dpiX
-        mulss xmm0,640.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiX,eax
+        movss       xmm0,dpiX
+        mulss       xmm0,640.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   ecx,xmm0
+        sub         ecx,eax
+        neg         ecx
 
-        movss xmm0,dpiY
-        mulss xmm0,480.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiY,eax
+        movss       xmm0,dpiY
+        mulss       xmm0,480.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   edx,xmm0
+        sub         edx,eax
+        neg         edx
 
-        mov [rsi].m_hwnd,CreateWindowEx(
+        .if CreateWindowEx(
             0,
             "D2DDemoApp",
             "D2D Demo App",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            dpiX,
-            dpiY,
+            ecx,
+            edx,
             NULL,
             NULL,
             HINST_THISCOMPONENT,
-            rsi
+            this
             )
-
-        mov eax,S_OK
-        .if rax == [rsi].m_hwnd
-            mov eax,E_FAIL
-        .endif
-        mov hr,eax
-        .if (SUCCEEDED(eax))
+            mov [rsi].m_hwnd,rax
 
             ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
             UpdateWindow([rsi].m_hwnd)
+            mov eax,S_OK
+        .else
+            mov eax,E_FAIL
         .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::Initialize endp
 
@@ -292,8 +292,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
         ;; Create a DirectWrite text format object.
 
-        mov rcx,[rsi].m_pDWriteFactory
-        mov hr,[rcx].IDWriteFactory.CreateTextFormat(
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(
             sc_fontName,
             NULL,
             DWRITE_FONT_WEIGHT_NORMAL,
@@ -320,7 +319,7 @@ DemoApp::CreateDeviceIndependentResources endp
 ;*                                                                 *
 ;******************************************************************/
 
-DemoApp::CreateDeviceResources proc uses rsi rdi rbx
+DemoApp::CreateDeviceResources proc uses rsi
 
   local hr:HRESULT
   local rc:RECT
@@ -355,21 +354,16 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
         mov h.pixelSize.width,eax
         mov h.presentOptions,D2D1_PRESENT_OPTIONS_NONE
 
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(
-            &p,
-            &h,
-            &[rsi].m_pRT
-            )
+        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(&p, &h, &[rsi].m_pRT)
 
         .if (SUCCEEDED(hr))
 
             ;; Create brushes.
 
-           .new color:D3DCOLORVALUE
-            mov rdi,[rsi].m_pRT
-            mov hr,[rdi].ID2D1HwndRenderTarget.CreateSolidColorBrush(
-                color.Init(White, 1.0),
+           .new color:D3DCOLORVALUE(White, 1.0)
+
+            mov hr,this.m_pRT.CreateSolidColorBrush(
+                &color,
                 NULL,
                 &[rsi].m_pSolidColorBrush
                 )
@@ -378,7 +372,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
         .if (SUCCEEDED(hr))
 
             mov hr,CreateGeometryRealizationFactory(
-                rdi,
+                [rsi].m_pRT,
                 sc_maxRealizationDimension,
                 &pRealizationFactory
                 )
@@ -456,7 +450,7 @@ DemoApp::RunMessageLoop proc
 DemoApp::RunMessageLoop endp
 
 
-DemoApp::CreateGeometries proc uses rsi rdi rbx
+DemoApp::CreateGeometries proc uses rsi
 
   local hr:HRESULT
 
@@ -559,10 +553,10 @@ DemoApp::CreateGeometries proc uses rsi rdi rbx
             mov pGeometry,NULL
         .endif
 
-        SafeRelease(&pRealization,        IGeometryRealization)
-        SafeRelease(&pGeometry,           ID2D1TransformedGeometry)
-        SafeRelease(&pPathGeometry,       ID2D1PathGeometry)
-        SafeRelease(&pSink,               ID2D1GeometrySink)
+        SafeRelease(&pRealization,  IGeometryRealization)
+        SafeRelease(&pGeometry,     ID2D1TransformedGeometry)
+        SafeRelease(&pPathGeometry, ID2D1PathGeometry)
+        SafeRelease(&pSink,         ID2D1GeometrySink)
     .endif
 
     .return hr
@@ -808,11 +802,8 @@ DemoApp::OnRender proc uses rsi rdi
         divsd       xmm0,xmm1
         cvtsd2ss    xmm0,xmm0
         movss       floatTime,xmm0
-        mov         rcx,[rsi].m_times
 
-        [rcx].RingBuffer.AddT(
-            time.QuadPart
-            )
+        this.m_times.AddT(time.QuadPart)
 
         movss   xmm0,[rsi].m_currentZoomFactor
         comiss  xmm0,[rsi].m_targetZoomFactor
@@ -824,11 +815,8 @@ DemoApp::OnRender proc uses rsi rdi
             comiss  xmm0,[rsi].m_targetZoomFactor
 
             .ifa
-
                 mov [rsi].m_currentZoomFactor,[rsi].m_targetZoomFactor
-
                 .if ([rsi].m_autoGeometryRegen)
-
                     mov [rsi].m_updateRealization,TRUE
                 .endif
             .endif
@@ -840,18 +828,16 @@ DemoApp::OnRender proc uses rsi rdi
             comiss  xmm0,[rsi].m_targetZoomFactor
 
             .ifb
-
                 mov [rsi].m_currentZoomFactor,[rsi].m_targetZoomFactor
-
                 .if ([rsi].m_autoGeometryRegen)
-
                     mov [rsi].m_updateRealization,TRUE
                 .endif
             .endif
         .endif
 
-        assume rdi:ptr ID2D1HwndRenderTarget
        .new m:Matrix3x2F
+
+        assume rdi:ptr ID2D1HwndRenderTarget
 
         mov rdi,[rsi].m_pRT
         [rdi].SetTransform(
@@ -1170,11 +1156,7 @@ DemoApp::OnMouseMove proc lParam:LPARAM
 
     .if [rcx].m_pRT
 
-        mov rcx,[rcx].m_pRT
-        [rcx].ID2D1HwndRenderTarget.GetDpi(
-            &dpiX,
-            &dpiY
-            )
+        this.m_pRT.GetDpi(&dpiX, &dpiY)
         mov rcx,this
     .endif
 

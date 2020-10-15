@@ -1087,7 +1087,7 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
 	if ( tokenarray[i].token == T_STYPE ) {
 	    idx = tokenarray[i].tokval;
 	} else if ( tokenarray[i].token == T_DIRECTIVE &&
-		   ( tokenarray[i].dirtype == DRT_DATADIR )) {
+	       ( tokenarray[i].dirtype == DRT_DATADIR )) {
 	    idx = GetSflagsSp( tokenarray[i].tokval );
 	} else {
 	    return( asmerr( 2004, tokenarray[i].string_ptr ) );
@@ -1216,7 +1216,6 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
 	}
 
     }
-
     i++;
     if ( data_item( &i, tokenarray, sym, no_of_bytes, type_sym, 1, CurrStruct != NULL, is_float, TRUE, Token_Count ) == ERROR ) {
 	return( ERROR );

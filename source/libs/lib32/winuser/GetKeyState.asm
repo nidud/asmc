@@ -10,28 +10,28 @@ include winuser.inc
 
 if (WINVER LT 0x0500)
 
-	.data
-	externdef	user32_dll:BYTE
-	GetKeyState	GetKeyState_T dummy
+    .data
+    externdef   user32_dll:BYTE
+    GetKeyState GetKeyState_T dummy
 
-	.code
+    .code
 
-dummy	proc WINAPI private
-	xor eax,eax
-	ret 4
-dummy	endp
+dummy proc WINAPI private
+    xor eax,eax
+    ret 4
+dummy endp
 
 Install:
-	.if GetModuleHandle( addr user32_dll )
+    .if GetModuleHandle( addr user32_dll )
 
-		.if GetProcAddress( eax, "GetKeyState" )
+        .if GetProcAddress( eax, "GetKeyState" )
 
-			mov GetKeyState,eax
-		.endif
-	.endif
-	ret
+            mov GetKeyState,eax
+        .endif
+    .endif
+    ret
 
 .pragma init(Install, 6)
 
 endif
-	END
+    END

@@ -3180,8 +3180,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                     inc i
                     add esi,16
                 .elseif ( CurrStruct && ( [ebx+16].token == T_STYPE || \
-                        ( [ebx+16].token == T_ID && IsType([ebx+16].string_ptr) ) ) )
-
+                        ( [ebx+16].token == T_ID && IsType([ebx+16].string_ptr ) ) ) )
                     inc i
                     add esi,16
                 .endif

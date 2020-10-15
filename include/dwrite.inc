@@ -251,6 +251,7 @@ DEFINE_IIDX(IDWriteFontFace, "5f49804d-7024-4d43-bfa9-d25984f53849")
     GetGdiCompatibleMetrics proc :FLOAT, :FLOAT, :ptr, :ptr
     GetGdiCompatibleGlyphMetrics proc :FLOAT, :FLOAT, :ptr, :BOOL, :UINT32, :ptr, :BOOL
     .ends
+    LPIDWriteFontFace	typedef ptr IDWriteFontFace
 
 
 DEFINE_IIDX(IDWriteFontCollectionLoader, "cca920e4-52f0-492b-bfa8-29c72ee0a468")
@@ -602,34 +603,91 @@ DEFINE_IIDX(IDWriteTextAnalyzer, "b7e6163e-7f46-43b4-84b3-e4e6249c365d")
 
 .comdef IDWriteTextAnalyzer : public IUnknown
 
-    AnalyzeScript	proc :ptr IDWriteTextAnalysisSource, :UINT32, :UINT32, :ptr IDWriteTextAnalysisSink
-    AnalyzeBidi		proc :ptr IDWriteTextAnalysisSource, :UINT32, :UINT32, :ptr IDWriteTextAnalysisSink
-    AnalyzeNumberSubstitution proc :ptr IDWriteTextAnalysisSource, :UINT32, :UINT32, :ptr IDWriteTextAnalysisSink
-    AnalyzeLineBreakpoints proc :ptr IDWriteTextAnalysisSource, :UINT32, :UINT32, :ptr IDWriteTextAnalysisSink
-    GetGlyphs		proc :UINT32, :ptr IDWriteFontFace, :BOOL, :BOOL, :ptr, :ptr WCHAR,
-			:ptr IDWriteNumberSubstitution, :ptr DWRITE_TYPOGRAPHIC_FEATURES, :ptr UINT32,
-			:UINT32, :UINT32, :ptr UINT16, :ptr DWRITE_SHAPING_TEXT_PROPERTIES, :ptr UINT16,
-			:ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :ptr UINT32
-    GetGlyphPlacements	proc :ptr UINT16, :ptr DWRITE_SHAPING_TEXT_PROPERTIES, :UINT32, :ptr UINT16,
-			:ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :UINT32, :ptr IDWriteFontFace,
-			:FLOAT, :BOOL, :BOOL, :ptr DWRITE_SCRIPT_ANALYSIS, :ptr WCHAR,
-			:ptr ptr DWRITE_TYPOGRAPHIC_FEATURES,
-			:ptr UINT32, :UINT32, :ptr FLOAT, :ptr DWRITE_GLYPH_OFFSET
-    GetGdiCompatibleGlyphPlacements proc :ptr UINT16, :ptr DWRITE_SHAPING_TEXT_PROPERTIES, :UINT32,
-			:ptr UINT16, :ptr DWRITE_SHAPING_GLYPH_PROPERTIES, :UINT32, :ptr IDWriteFontFace,
-			:FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :BOOL, :BOOL, :ptr DWRITE_SCRIPT_ANALYSIS,
-			:ptr WCHAR, :ptr ptr DWRITE_TYPOGRAPHIC_FEATURES, :ptr UINT32, :UINT32, :ptr FLOAT,
-			:ptr DWRITE_GLYPH_OFFSET
+    AnalyzeScript proc \
+	:ptr IDWriteTextAnalysisSource,
+	:UINT32,
+	:UINT32,
+	:ptr IDWriteTextAnalysisSink
+    AnalyzeBidi proc \
+	:ptr IDWriteTextAnalysisSource,
+	:UINT32,
+	:UINT32,
+	:ptr IDWriteTextAnalysisSink
+    AnalyzeNumberSubstitution proc \
+	:ptr IDWriteTextAnalysisSource,
+	:UINT32,
+	:UINT32,
+	:ptr IDWriteTextAnalysisSink
+    AnalyzeLineBreakpoints proc \
+	:ptr IDWriteTextAnalysisSource,
+	:UINT32,
+	:UINT32,
+	:ptr IDWriteTextAnalysisSink
+    GetGlyphs proc \
+	:UINT32,
+	:ptr IDWriteFontFace,
+	:BOOL,
+	:BOOL,
+	:ptr, :ptr WCHAR,
+	:ptr IDWriteNumberSubstitution,
+	:ptr DWRITE_TYPOGRAPHIC_FEATURES,
+	:ptr UINT32,
+	:UINT32,
+	:UINT32,
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_TEXT_PROPERTIES,
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_GLYPH_PROPERTIES,
+	:ptr UINT32
+    GetGlyphPlacements proc \
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_TEXT_PROPERTIES,
+	:UINT32,
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_GLYPH_PROPERTIES,
+	:UINT32,
+	:ptr IDWriteFontFace,
+	:FLOAT,
+	:BOOL,
+	:BOOL,
+	:ptr DWRITE_SCRIPT_ANALYSIS,
+	:ptr WCHAR,
+	:ptr ptr DWRITE_TYPOGRAPHIC_FEATURES,
+	:ptr UINT32,
+	:UINT32,
+	:ptr FLOAT,
+	:ptr DWRITE_GLYPH_OFFSET
+    GetGdiCompatibleGlyphPlacements proc \
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_TEXT_PROPERTIES,
+	:UINT32,
+	:ptr UINT16,
+	:ptr DWRITE_SHAPING_GLYPH_PROPERTIES,
+	:UINT32,
+	:ptr IDWriteFontFace,
+	:FLOAT,
+	:FLOAT,
+	:ptr DWRITE_MATRIX,
+	:BOOL,
+	:BOOL,
+	:BOOL,
+	:ptr DWRITE_SCRIPT_ANALYSIS,
+	:ptr WCHAR,
+	:ptr ptr DWRITE_TYPOGRAPHIC_FEATURES,
+	:ptr UINT32,
+	:UINT32,
+	:ptr FLOAT,
+	:ptr DWRITE_GLYPH_OFFSET
     .ends
 
 
 DWRITE_GLYPH_RUN	STRUC
-fontFace		PVOID ?
+fontFace		LPIDWriteFontFace ?
 fontEmSize		FLOAT ?
 glyphCount		UINT32 ?
-glyphIndices		PVOID ?
-glyphAdvances		PVOID ?
-glyphOffsets		PVOID ?
+glyphIndices		PVOID ? ; WORD
+glyphAdvances		PVOID ? ; FLOAT
+glyphOffsets		PVOID ? ; DWRITE_GLYPH_OFFSET
 isSideways		BOOL ?
 bidiLevel		UINT32 ?
 DWRITE_GLYPH_RUN	ENDS
@@ -761,24 +819,7 @@ DEFINE_IIDX(IDWriteTextRenderer, "ef8a8135-5cc6-45fe-8825-c5a0724eb819")
 
 DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
 
-.comdef IDWriteTextLayout : public IUnknown
-
-    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
-    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
-    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
-    SetReadingDirection proc :DWRITE_READING_DIRECTION
-    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
-    SetIncrementalTabStop proc :FLOAT
-    SetTrimming		proc :ptr DWRITE_TRIMMING, :ptr IDWriteInlineObject
-    SetLineSpacing	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
-    GetTextAlignment	proc
-    GetParagraphAlignment proc
-    GetWordWrapping	proc
-    GetReadingDirection proc
-    GetFlowDirection	proc
-    GetIncrementalTabStop proc
-    GetTrimming		proc :ptr DWRITE_TRIMMING, :ptr ptr
-    GetLineSpacing	proc :ptr DWRITE_LINE_SPACING_METHOD, :ptr FOAT, :ptr LOAT
+.comdef IDWriteTextLayout : public IDWriteTextFormat
 
     SetMaxWidth		proc :FLOAT
     SetMaxHeight	proc :FLOAT
@@ -796,20 +837,23 @@ DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
     SetLocaleName	proc :ptr WCHAR, :DWRITE_TEXT_RANGE
     GetMaxWidth		proc
     GetMaxHeight	proc
-    GetFontCollection	proc :UINT32, :ptr ptr IDWriteFontCollection, :ptr DWRITE_TEXT_RANGE
-    GetFontFamilyNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
-    GetFontFamilyName	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
-    GetFontWeight	proc :UINT32, :ptr DWRITE_FONT_WEIGHT, :ptr DWRITE_TEXT_RANGE
-    GetFontStyle	proc :UINT32, :ptr DWRITE_FONT_STYLE, :ptr DWRITE_TEXT_RANGE
-    GetFontStretch	proc :UINT32, :ptr DWRITE_FONT_STRETCH, :ptr DWRITE_TEXT_RANGE
-    GetFontSize		proc :UINT32, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+
+    GetFontCollection2	proc :UINT32, :ptr ptr IDWriteFontCollection, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyNameLength2 proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyName2	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontWeight2	proc :UINT32, :ptr DWRITE_FONT_WEIGHT, :ptr DWRITE_TEXT_RANGE
+    GetFontStyle2	proc :UINT32, :ptr DWRITE_FONT_STYLE, :ptr DWRITE_TEXT_RANGE
+    GetFontStretch2	proc :UINT32, :ptr DWRITE_FONT_STRETCH, :ptr DWRITE_TEXT_RANGE
+    GetFontSize2	proc :UINT32, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+
     GetUnderline	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
     GetStrikethrough	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
     GetDrawingEffect	proc :UINT32, :ptr IUnknown, :ptr DWRITE_TEXT_RANGE
     GetInlineObject	proc :UINT32, :ptr IDWriteInlineObject, :ptr DWRITE_TEXT_RANGE
     GetTypography	proc :UINT32, :ptr IDWriteTypography, :ptr DWRITE_TEXT_RANGE
-    GetLocaleNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
-    GetLocaleName	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
+
+    GetLocaleNameLength2 proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetLocaleName2	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
     Draw		proc :ptr, :ptr IDWriteTextRenderer, :FLOAT, :FLOAT
     GetLineMetrics	proc :UINT32, :ptr UINT32
     GetMetrics		proc :ptr DWRITE_TEXT_METRICS
@@ -883,7 +927,7 @@ DEFINE_IIDX(IDWriteFactory, "b859ee5a-d838-4b5b-a2e8-1adc7d93db48")
     CreateTextFormat		proc :ptr ptr WCHAR, :ptr IDWriteFontCollection, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr WCHAR, :ptr ptr IDWriteTextFormat
     CreateTypography		proc :ptr ptr IDWriteTypography
     GetGdiInterop		proc :ptr ptr IDWriteGdiInterop
-    CreateTextLayout		proc :UINT32, :ptr IDWriteTextFormat, :FLOAT, :FLOAT, :ptr ptr IDWriteTextLayout
+    CreateTextLayout		proc :ptr WCHAR, :UINT32, :ptr IDWriteTextFormat,  :FLOAT, :FLOAT, :ptr ptr IDWriteTextLayout
     CreateGdiCompatibleTextLayout proc :UINT32, :ptr IDWriteTextFormat, :FLOAT, :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :ptr ptr IDWriteTextLayout
     CreateEllipsisTrimmingSign	proc :ptr IDWriteTextFormat, :ptr ptr IDWriteInlineObject
     CreateTextAnalyzer		proc :ptr ptr IDWriteTextAnalyzer

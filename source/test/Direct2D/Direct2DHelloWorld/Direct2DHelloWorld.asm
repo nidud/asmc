@@ -4,11 +4,12 @@
 ;
 include Direct2DHelloWorld.inc
 
-    .code
+.code
 
 ;;
 ;; Provides the entry point to the application.
 ;;
+
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, inCmdShow:int_t
 
   local vtable:DemoAppVtbl
@@ -91,16 +92,13 @@ DemoApp::Initialize proc uses rsi
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
-    mov rsi,rcx
-
     ;; Initialize device-indpendent resources, such
     ;; as the Direct2D factory.
 
-    mov hr,[rsi].CreateDeviceIndependentResources()
-
-    .if (SUCCEEDED(hr))
+    .ifd !this.CreateDeviceIndependentResources()
 
         ;; Register the window class.
+
         mov wcex.cbSize,        WNDCLASSEX
         mov wcex.style,         CS_HREDRAW or CS_VREDRAW
         mov wcex.lpfnWndProc,   &WndProc
@@ -113,6 +111,7 @@ DemoApp::Initialize proc uses rsi
         mov wcex.lpszMenuName,  NULL
         mov wcex.hCursor,       LoadCursor(NULL, IDC_ARROW)
         mov wcex.lpszClassName, &@CStr(L"D2DDemoApp")
+
         RegisterClassEx(&wcex)
 
         ;; Create the application window.
@@ -120,40 +119,54 @@ DemoApp::Initialize proc uses rsi
         ;; Because the CreateWindow function takes its size in pixels, we
         ;; obtain the system DPI and use it to scale the window size.
 
-        mov rcx,[rsi].m_pD2DFactory
-        [rcx].ID2D1Factory.GetDesktopDpi(&dpiX, &dpiY)
+        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
-        movss xmm0,dpiX
-        mulss xmm0,640.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiX,eax
+        movss       xmm0,dpiX
+        mulss       xmm0,640.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   ecx,xmm0
+        sub         ecx,eax
+        neg         ecx
 
-        movss xmm0,dpiY
-        mulss xmm0,480.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiY,eax
+        movss       xmm0,dpiY
+        mulss       xmm0,480.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   edx,xmm0
+        sub         edx,eax
+        neg         edx
 
-        mov [rsi].m_hwnd,CreateWindowEx(0, L"D2DDemoApp", L"Direct2D Demo Application",
-            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, dpiX, dpiY, NULL, NULL,
-            HINST_THISCOMPONENT, rsi)
-
-        mov eax,S_OK
-        .if rax == [rsi].m_hwnd
+        .if CreateWindowEx(
+            0,
+            L"D2DDemoApp",
+            L"Direct2D Demo Application",
+            WS_OVERLAPPEDWINDOW,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            ecx,
+            edx,
+            NULL,
+            NULL,
+            HINST_THISCOMPONENT,
+            this
+            )
+            mov rsi,this
+            mov [rsi].m_hwnd,rax
+            ShowWindow(rax, SW_SHOWNORMAL)
+            UpdateWindow([rsi].m_hwnd)
+            mov eax,S_OK
+        .else
             mov eax,E_FAIL
         .endif
-        mov hr,eax
-        .if (SUCCEEDED(eax))
-
-            ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
-            UpdateWindow([rsi].m_hwnd)
-        .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::Initialize endp
 
@@ -166,10 +179,10 @@ DemoApp::Initialize endp
 ;; (used for identifying particular font characteristics).
 ;;
 
-DemoApp::CreateDeviceIndependentResources proc uses rsi rdi
+DemoApp::CreateDeviceIndependentResources proc uses rsi
 
-    local hr:HRESULT
-    local pSink:ptr ID2D1GeometrySink
+  local hr:HRESULT
+  local pSink:ptr ID2D1GeometrySink
 
     mov rsi,rcx
     mov pSink,NULL
@@ -189,16 +202,23 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rdi
 
         ;; Create a DirectWrite text format object.
 
-        mov rcx,[rsi].m_pDWriteFactory
-        mov hr,[rcx].IDWriteFactory.CreateTextFormat("Verdana", NULL, DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 50.0, "", &[rsi].m_pTextFormat)
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(
+            "Verdana",
+            NULL,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            50.0,
+            "",
+            &[rsi].m_pTextFormat
+            )
     .endif
     .if (SUCCEEDED(hr))
 
         ;; Center the text horizontally and vertically.
-        mov rdi,[rsi].m_pTextFormat
-        [rdi].IDWriteTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
-        [rdi].IDWriteTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
+
+        this.m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
+        this.m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
 
     .endif
 
@@ -236,18 +256,17 @@ DemoApp::CreateDeviceResources proc uses rsi
 
         ;; Create a Direct2D render target.
 
-        mov rdi,D2D1::RenderTargetProperties()
-        mov r8,D2D1::HwndRenderTargetProperties([rsi].m_hwnd, size)
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(rdi, r8, &[rsi].m_pRenderTarget)
+        mov r8, D2D1_HwndRenderTargetProperties([rsi].m_hwnd, size)
+        mov rdx,D2D1_RenderTargetProperties()
+        mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &[rsi].m_pRenderTarget)
 
         .if (SUCCEEDED(hr))
 
             ;; Create a black brush.
 
             mov rdx,D3DCOLORVALUE(Black, 1.0)
-            mov rcx,[rsi].m_pRenderTarget
-            mov hr,[rcx].ID2D1HwndRenderTarget.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pBlackBrush)
+            mov hr,this.m_pRenderTarget.CreateSolidColorBrush(
+                rdx, NULL, &[rsi].m_pBlackBrush)
         .endif
     .endif
 
@@ -316,13 +335,10 @@ DemoApp::OnRender proc uses rsi
 
        .new rc:RECT(0.0, 0.0)
 
-        m.Identity()
-        c.Init(White, 1.0)
-
         p.GetSize(&rc[8])
         p.BeginDraw()
-        p.SetTransform(&m)
-        p.Clear(&c)
+        p.SetTransform(m.Identity())
+        p.Clear(c.Init(White, 1.0))
         p.DrawText(
             "Hello, World!",
             13,

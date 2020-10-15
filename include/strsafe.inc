@@ -534,6 +534,30 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 endif
 endif
 
+StringCchCopyNA proto WINAPI \
+	       pszDest: STRSAFE_LPSTR,
+	       cchDest: size_t,
+		pszSrc: STRSAFE_PCNZCH,
+	     cchToCopy: size_t
+
+StringCchCopyNW proto WINAPI \
+	       pszDest: STRSAFE_LPWSTR,
+	       cchDest: size_t,
+		pszSrc: STRSAFE_PCNZWCH,
+	     cchToCopy: size_t
+
+StringCchCatNA proto WINAPI \
+	       pszDest: STRSAFE_LPSTR,
+	       cchDest: size_t,
+		pszSrc: STRSAFE_PCNZCH,
+	   cchToAppend: size_t
+
+StringCchCatNW proto WINAPI \
+	       pszDest: STRSAFE_LPWSTR,
+	       cchDest: size_t,
+		pszSrc: STRSAFE_PCNZWCH,
+	   cchToAppend: size_t
+
 ifndef STRSAFE_NO_CCH_FUNCTIONS
 
 StringCchCatA proto  pszDest:STRSAFE_LPSTR, cchDest:size_t, pszSrc:STRSAFE_LPCSTR

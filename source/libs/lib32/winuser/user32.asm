@@ -6,9 +6,9 @@
 
 include stdlib.inc
 
-PUBLIC	user32_dll
+PUBLIC user32_dll
 
-	.data
-	user32_dll db "user32.dll",0
+    .data
+    user32_dll db "user32.dll",0
 
-	END
+    END

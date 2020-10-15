@@ -135,22 +135,29 @@ DemoApp::Initialize proc uses rsi
         ;; Because the CreateWindow function takes its size in pixels, we
         ;; obtain the system DPI and use it to scale the window size.
 
-        mov rcx,[rsi].m_pD2DFactory
-        [rcx].ID2D1Factory.GetDesktopDpi(&dpiX, &dpiY)
+        this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
-        movss xmm0,dpiX
-        mulss xmm0,640.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiX,eax
+        movss       xmm0,dpiX
+        mulss       xmm0,640.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   ecx,xmm0
+        sub         ecx,eax
+        neg         ecx
 
-        movss xmm0,dpiY
-        mulss xmm0,480.0
-        divss xmm0,96.0
-        ceilf(xmm0)
-        cvtss2si eax,xmm0
-        mov dpiY,eax
+        movss       xmm0,dpiY
+        mulss       xmm0,480.0
+        divss       xmm0,96.0
+        movd        eax,xmm0
+        xor         eax,-0.0
+        movd        xmm0,eax
+        shr         eax,31
+        cvttss2si   edx,xmm0
+        sub         edx,eax
+        neg         edx
 
         mov [rsi].m_hwnd,CreateWindowEx(0,
             L"D2DDemoApp",
@@ -158,8 +165,8 @@ DemoApp::Initialize proc uses rsi
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            dpiX,
-            dpiY,
+            ecx,
+            edx,
             NULL,
             NULL,
             HINST_THISCOMPONENT,

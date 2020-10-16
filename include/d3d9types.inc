@@ -45,13 +45,77 @@ D3DVECTOR_DEFINED equ 1
 endif
 
 ifndef D3DCOLORVALUE_DEFINED
-D3DCOLORVALUE		STRUC
-r			REAL4 ?
-g			REAL4 ?
-b			REAL4 ?
-a			REAL4 ?
-D3DCOLORVALUE		ENDS
-D3DCOLORVALUE_DEFINED equ 1
+D3DCOLORVALUE_DEFINED equ <>
+
+sc_redShift	equ 16
+sc_greenShift	equ 8
+sc_blueShift	equ 0
+
+sc_redMask	equ (0xff shl sc_redShift)
+sc_greenMask	equ (0xff shl sc_greenShift)
+sc_blueMask	equ (0xff shl sc_blueShift)
+
+.template D3DCOLORVALUE
+
+    r real4 ?
+    g real4 ?
+    b real4 ?
+    a real4 ?
+
+    .operator D3DCOLORVALUE :vararg {
+	ifidn typeid(?, this),<?D3DCOLORVALUE>
+	    this.Init(_1)
+	else
+	    [rcx].D3DCOLORVALUE.typeid(D3DCOLORVALUE, this)(_1)
+	endif
+	}
+
+    .operator D3DCOLORVALUE?i32 :vararg {
+      local n
+       .new n:D3DCOLORVALUE
+	n.Init(_1)
+	}
+
+    .operator Init :abs, :abs, :vararg {
+	ifidn typeid(?, this),<?D3DCOLORVALUE>
+	    lea rcx,this
+	endif
+	ifnb <_2>
+	    ifidn typeid(?, _2),<?r128>
+		movss [rcx].D3DCOLORVALUE.a,_2
+	    else
+		mov [rcx].D3DCOLORVALUE.a,_2
+	    endif
+	endif
+	ifnb <_1>
+	    ifidn typeid(?, _1),<?i32>
+	       %mov [rcx].D3DCOLORVALUE.r, @CatStr(%((_1 and sc_redMask) shr sc_redShift),     <.0>) / 255.0
+	       %mov [rcx].D3DCOLORVALUE.g, @CatStr(%((_1 and sc_greenMask) shr sc_greenShift), <.0>) / 255.0
+	       %mov [rcx].D3DCOLORVALUE.b, @CatStr(%((_1 and sc_blueMask) shr sc_blueShift),   <.0>) / 255.0
+	    else
+		mov	 eax,_1
+		and	 eax,sc_redMask
+		shr	 eax,sc_redShift
+		cvtsi2ss xmm0,eax
+		divss	 xmm0,255.0
+		movss	 [rcx].D3DCOLORVALUE.r,xmm0
+		mov	 eax,_1
+		and	 eax,sc_greenMask
+		shr	 eax,sc_greenShift
+		cvtsi2ss xmm0,eax
+		divss	 xmm0,255.0
+		movss	 [rcx].D3DCOLORVALUE.g,xmm0
+		mov	 eax,_1
+		and	 eax,sc_blueMask
+		shr	 eax,sc_blueShift
+		cvtsi2ss xmm0,eax
+		divss	 xmm0,255.0
+		movss	 [rcx].D3DCOLORVALUE.b,xmm0
+	    endif
+	endif
+	mov rax,rcx
+	}
+    .ends
 endif
 
 ifndef D3DRECT_DEFINED

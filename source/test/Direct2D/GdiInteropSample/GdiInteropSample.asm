@@ -100,7 +100,6 @@ DemoApp::Release endp
 
 DemoApp::Initialize proc uses rsi
 
-  local hr:HRESULT
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
@@ -109,9 +108,7 @@ DemoApp::Initialize proc uses rsi
     ;; Initialize device-indpendent resources, such
     ;; as the Direct2D factory.
 
-    mov hr,[rsi].CreateDeviceIndependentResources()
-
-    .if (SUCCEEDED(hr))
+    .ifd !this.CreateDeviceIndependentResources()
 
         ;; Register the window class.
 
@@ -159,7 +156,8 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        mov [rsi].m_hwnd,CreateWindowEx(0,
+        .if CreateWindowEx(
+            0,
             L"D2DDemoApp",
             L"Direct2D Demo App",
             WS_OVERLAPPEDWINDOW,
@@ -170,22 +168,17 @@ DemoApp::Initialize proc uses rsi
             NULL,
             NULL,
             HINST_THISCOMPONENT,
-            rsi
+            this
             )
-
-        mov eax,S_OK
-        .if rax == [rsi].m_hwnd
-            mov eax,E_FAIL
-        .endif
-        mov hr,eax
-        .if (SUCCEEDED(eax))
-
+            mov [rsi].m_hwnd,rax
             ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
             UpdateWindow([rsi].m_hwnd)
+            mov eax,S_OK
+        .else
+            mov eax,E_FAIL
         .endif
     .endif
-
-    .return hr
+    ret
 
 DemoApp::Initialize endp
 

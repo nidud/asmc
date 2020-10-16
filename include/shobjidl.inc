@@ -2150,6 +2150,8 @@ DEFINE_IIDX(IShellItem, "43826d1e-e718-42ee-bc55-a1e261c37bfe")
 LPIShellItem		typedef ptr IShellItem
 endif
 
+.pragma comment(lib, shell32)
+
 ;SHSTDAPI_(PIDLIST_ABSOLUTE)
 SHSimpleIDListFromPath proto WINAPI \
 	       pszPath: LPCWSTR

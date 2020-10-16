@@ -86,9 +86,9 @@ DemoApp::Release endp
 ;; Creates the application window and initializes
 ;; device-independent resources.
 ;;
+
 DemoApp::Initialize proc uses rsi
 
-  local hr:HRESULT
   local wcex:WNDCLASSEX
   local dpiX:FLOAT, dpiY:FLOAT
 
@@ -188,14 +188,23 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
     mov pSink,NULL
 
     ;; Create a Direct2D factory.
-    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-            &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
+
+    mov hr,D2D1CreateFactory(
+            D2D1_FACTORY_TYPE_SINGLE_THREADED,
+            &IID_ID2D1Factory,
+            NULL,
+            &[rsi].m_pD2DFactory
+            )
 
     .if (SUCCEEDED(hr))
 
         ;; Create a DirectWrite factory.
-        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-                &IID_IDWriteFactory, &[rsi].m_pDWriteFactory)
+
+        mov hr,DWriteCreateFactory(
+                DWRITE_FACTORY_TYPE_SHARED,
+                &IID_IDWriteFactory,
+                &[rsi].m_pDWriteFactory
+                )
 
     .endif
     .if (SUCCEEDED(hr))

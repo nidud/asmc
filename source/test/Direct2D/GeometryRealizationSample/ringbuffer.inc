@@ -22,24 +22,17 @@ maxElements equ TIME_RING_BUFFER_SIZE
 
     .operator AddT :qword {
 
-        mov r8,rdx
         mov eax,[rcx].RingBuffer.m_start
         add eax,[rcx].RingBuffer.m_count
-        mov r9d,maxElements
-        xor edx,edx
-        div r9d
-        mov [rcx].RingBuffer.m_elements[rdx*8],r8
-
+        and eax,maxElements-1
+        mov [rcx].RingBuffer.m_elements[rax*8],rdx
         .if ([rcx].RingBuffer.m_count < maxElements)
-
             inc [rcx].RingBuffer.m_count
-
         .else
             mov eax,[rcx].RingBuffer.m_start
             inc eax
-            xor edx,edx
-            div r9d
-            mov [rcx].RingBuffer.m_start,edx
+            and eax,maxElements-1
+            mov [rcx].RingBuffer.m_start,eax
         .endif
         }
 
@@ -58,10 +51,8 @@ maxElements equ TIME_RING_BUFFER_SIZE
         mov eax,[rcx].RingBuffer.m_start
         add eax,[rcx].RingBuffer.m_count
         dec eax
-        mov r8d,maxElements
-        xor edx,edx
-        div r8d
-        mov rax,[rcx].RingBuffer.m_elements[rdx*8]
+        and eax,maxElements-1
+        mov rax,[rcx].RingBuffer.m_elements[rax*8]
         }
 
     .operator GetCount {

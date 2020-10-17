@@ -46,7 +46,7 @@ DEFAULT_DPI equ 96.0    ;; Default DPI that maps image resolution directly to sc
     m_cyGifImagePixel   UINT ? ;; Height of the displayed image in pixel calculated using pixel aspect ratio
     m_framePosition     D2D1_RECT_F <>
 
-    DemoApp proc
+    DemoApp proc :ptr
     Release proc
 
     Initialize proc :HINSTANCE

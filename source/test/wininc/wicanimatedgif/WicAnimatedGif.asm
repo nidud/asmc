@@ -38,30 +38,6 @@ SafeRelease proto :ptr, :abs {
     .endif
     }
 
-    .data
-
-     vtable DemoAppVtbl {
-        DemoApp_Release,
-        DemoApp_Initialize,
-        DemoApp_CreateDeviceResources,
-        DemoApp_RecoverDeviceResources,
-        DemoApp_OnResize,
-        DemoApp_OnRender,
-        DemoApp_GetFileOpen,
-        DemoApp_SelectAndDisplayGif,
-        DemoApp_GetRawFrame,
-        DemoApp_GetGlobalMetadata,
-        DemoApp_GetBackgroundColor,
-        DemoApp_ComposeNextFrame,
-        DemoApp_DisposeCurrentFrame,
-        DemoApp_OverlayNextFrame,
-        DemoApp_SaveComposedFrame,
-        DemoApp_RestoreSavedFrame,
-        DemoApp_ClearCurrentFrameArea,
-        DemoApp_CalculateDrawRectangle,
-        DemoApp_WndProc
-        }
-
     .code
 
 ;;
@@ -70,18 +46,37 @@ SafeRelease proto :ptr, :abs {
 ;;  Initializes member data
 ;;
 
-DemoApp::DemoApp proc
+DemoApp::DemoApp proc uses rdi vtable:ptr
 
-    mov [rcx].DemoApp.lpVtbl,&vtable
+    mov [rcx].DemoApp.lpVtbl,rdx
     xor eax,eax
-    mov [rcx].DemoApp.m_hWnd,rax
-    mov [rcx].DemoApp.m_pD2DFactory,rax
-    mov [rcx].DemoApp.m_pHwndRT,rax
-    mov [rcx].DemoApp.m_pFrameComposeRT,rax
-    mov [rcx].DemoApp.m_pRawFrame,rax
-    mov [rcx].DemoApp.m_pSavedFrame,rax
-    mov [rcx].DemoApp.m_pIWICFactory,rax
-    mov [rcx].DemoApp.m_pDecoder,rax
+    lea rdi,[rcx+8]
+    mov ecx,(DemoApp / 8) - 8
+    rep stosq
+    mov rdi,rdx
+    for q,
+        <Release,
+        Initialize,
+        CreateDeviceResources,
+        RecoverDeviceResources,
+        OnResize,
+        OnRender,
+        GetFileOpen,
+        SelectAndDisplayGif,
+        GetRawFrame,
+        GetGlobalMetadata,
+        GetBackgroundColor,
+        ComposeNextFrame,
+        DisposeCurrentFrame,
+        OverlayNextFrame,
+        SaveComposedFrame,
+        RestoreSavedFrame,
+        ClearCurrentFrameArea,
+        CalculateDrawRectangle,
+        WndProc>
+    lea rax,DemoApp_&q
+    stosq
+    endm
     ret
 
 DemoApp::DemoApp endp
@@ -94,17 +89,15 @@ DemoApp::DemoApp endp
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, nCmdShow:SINT
 
-    local hr:HRESULT
+  local vtable:DemoAppVtbl
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
-    mov hr,CoInitializeEx(NULL, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE)
 
-    .if (SUCCEEDED(hr))
+    .ifd CoInitializeEx(NULL,
+            COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE) == S_OK
 
-       .new app:DemoApp()
-        app.Initialize(hInstance)
-
-        .if (SUCCEEDED(eax))
+        .new app:DemoApp(&vtable)
+        .ifd app.Initialize(hInstance) == S_OK
 
             .new msg:MSG
 
@@ -118,10 +111,10 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, n
                 DispatchMessage(&msg)
             .endw
         .endif
+        app.Release()
+        CoUninitialize()
     .endif
-    CoUninitialize()
-    xor eax,eax
-    ret
+    .return 0
 
 wWinMain endp
 
@@ -165,7 +158,7 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
 
     ;; Register window class
 
-    mov wcex.cbSize,        sizeof(WNDCLASSEX)
+    mov wcex.cbSize,        WNDCLASSEX
     mov wcex.style,         CS_HREDRAW or CS_VREDRAW
     mov wcex.lpfnWndProc,   &s_WndProc
     mov wcex.cbClsExtra,    0
@@ -177,8 +170,8 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
     mov wcex.lpszMenuName,  MAKEINTRESOURCE(IDR_WICANIMATEDGIF)
     mov wcex.lpszClassName, &@CStr(L"WICANIMATEDGIF")
     mov wcex.hIconSm,       NULL
-    mov hr,E_FAIL
 
+    mov hr,E_FAIL
     .ifd RegisterClassEx(&wcex)
         mov hr,S_OK
     .endif
@@ -186,7 +179,11 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
     .if (SUCCEEDED(hr))
 
         ;; Create D2D factory
-        mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
+        mov hr,D2D1CreateFactory(
+            D2D1_FACTORY_TYPE_SINGLE_THREADED,
+            &IID_ID2D1Factory,
+            NULL,
+            &[rsi].m_pD2DFactory)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -196,13 +193,15 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
             &CLSID_WICImagingFactory,
             NULL,
             CLSCTX_INPROC_SERVER,
-            &IID_IWICImagingFactory, &[rsi].m_pIWICFactory)
+            &IID_IWICImagingFactory,
+            &[rsi].m_pIWICFactory)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ;; Create window
-        mov [rsi].m_hWnd,CreateWindowEx(0,
+        mov [rsi].m_hWnd,CreateWindowEx(
+            0,
             L"WICANIMATEDGIF",
             L"WIC Animated Gif Sample",
             WS_OVERLAPPEDWINDOW or WS_VISIBLE,
@@ -273,8 +272,9 @@ DemoApp::CreateDeviceResources proc uses rsi
             rcClient.Height(r9d)
            .new hwndRenderTragetproperties:D2D1_HWND_RENDER_TARGET_PROPERTIES([rsi].m_hWnd, r8d, r9d)
 
-            mov rcx,[rsi].m_pD2DFactory
-            mov hr,[rcx].ID2D1Factory.CreateHwndRenderTarget(&renderTargetProperties, &hwndRenderTragetproperties,
+            mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(
+                &renderTargetProperties,
+                &hwndRenderTragetproperties,
                 &[rsi].m_pHwndRT)
 
         .else
@@ -283,8 +283,8 @@ DemoApp::CreateDeviceResources proc uses rsi
 
             mov size.width,rcClient.Width()
             mov size.height,rcClient.Height()
-            mov rcx,[rsi].m_pHwndRT
-            mov hr,[rcx].ID2D1HwndRenderTarget.Resize(&size)
+
+            mov hr,this.m_pHwndRT.Resize(&size)
         .endif
     .endif
 
@@ -299,9 +299,7 @@ DemoApp::CreateDeviceResources proc uses rsi
         cvtsi2ss xmm1,[rsi].m_cyGifImage
         movss size.width,xmm0
         movss size.height,xmm1
-
-        mov rcx,[rsi].m_pHwndRT
-        mov hr,[rcx].ID2D1HwndRenderTarget.CreateCompatibleRenderTarget(
+        mov hr,this.m_pHwndRT.CreateCompatibleRenderTarget(
             &size,
             NULL,
             NULL,
@@ -324,49 +322,52 @@ DemoApp::CreateDeviceResources endp
 ;; render target.
 ;;
 
-DemoApp::OnRender proc uses rsi rdi
+DemoApp::OnRender proc
 
-    local hr:HRESULT
-    local pFrameToRender:ptr ID2D1Bitmap
+  local hr:HRESULT
+  local pFrameToRender:ptr ID2D1Bitmap
+  local pRT:ptr ID2D1HwndRenderTarget
 
     mov hr,S_OK
     mov pFrameToRender,NULL
-    mov rsi,rcx
-
+    mov pRT,[rcx].DemoApp.m_pHwndRT
 
     ;; Check to see if the render targets are initialized
 
-    .if ([rsi].m_pHwndRT && [rsi].m_pFrameComposeRT)
+    .if (pRT && [rcx].DemoApp.m_pFrameComposeRT)
 
         .if (SUCCEEDED(hr))
 
             ;; Only render when the window is not occluded
 
-            mov rdi,[rsi].m_pHwndRT
-            [rdi].ID2D1HwndRenderTarget.CheckWindowState()
+            pRT.CheckWindowState()
 
             .if !( eax & D2D1_WINDOW_STATE_OCCLUDED )
 
                .new drawRect:D2D1_RECT_F
-                mov hr,[rsi].CalculateDrawRectangle(&drawRect)
+                mov hr,this.CalculateDrawRectangle(&drawRect)
 
                 .if (SUCCEEDED(hr))
 
                     ;; Get the bitmap to draw on the hwnd render target
-                    mov rcx,[rsi].m_pFrameComposeRT
-                    mov hr,[rcx].ID2D1BitmapRenderTarget.GetBitmap(&pFrameToRender)
+
+                    mov hr,this.m_pFrameComposeRT.GetBitmap(&pFrameToRender)
                 .endif
 
                 .if (SUCCEEDED(hr))
 
                     ;; Draw the bitmap onto the calculated rectangle
 
-                    [rdi].ID2D1HwndRenderTarget.BeginDraw()
                    .new color:D3DCOLORVALUE(Black, 0.0)
-                    [rdi].ID2D1HwndRenderTarget.Clear(&color)
-                    [rdi].ID2D1HwndRenderTarget.DrawBitmap(pFrameToRender, &drawRect,
-                        1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
-                    mov hr,[rdi].ID2D1HwndRenderTarget.EndDraw(NULL, NULL)
+                    pRT.BeginDraw()
+                    pRT.Clear(&color)
+                    pRT.DrawBitmap(
+                        pFrameToRender, &drawRect,
+                        1.0,
+                        D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+                        NULL)
+                    pRT.EndDraw(NULL, NULL)
+                    mov hr,eax
                 .endif
             .endif
         .endif
@@ -402,7 +403,7 @@ DemoApp::GetFileOpen proc pszFileName:ptr WCHAR, cchFileName:DWORD
     mov ofn.Flags,           OFN_FILEMUSTEXIST or OFN_PATHMUSTEXIST
 
     ;; Display the Open dialog box.
-    GetOpenFileName(&ofn);
+    GetOpenFileName(&ofn)
     ret
 
 DemoApp::GetFileOpen endp
@@ -421,12 +422,10 @@ DemoApp::OnResize proc uWidth:UINT, uHeight:UINT
     .if [rcx].DemoApp.m_pHwndRT
 
        .new size:D2D1_SIZE_U
-
         mov size.width,edx
         mov size.height,r8d
-        mov rcx,[rcx].DemoApp.m_pHwndRT
 
-        [rcx].ID2D1HwndRenderTarget.Resize(&size)
+        this.m_pHwndRT.Resize(&size)
     .endif
     ret
 
@@ -564,11 +563,11 @@ DemoApp::WndProc endp
 ;; Retrieves global metadata which pertains to the entire image.
 ;;
 
-DemoApp::GetGlobalMetadata proc uses rsi rdi
+DemoApp::GetGlobalMetadata proc uses rsi
 
-    local hr:HRESULT
-    local propValue:PROPVARIANT
-    local pMetadataQueryReader:ptr IWICMetadataQueryReader
+  local hr:HRESULT
+  local propValue:PROPVARIANT
+  local pMetadataQueryReader:ptr IWICMetadataQueryReader
 
     mov rsi,rcx
     mov pMetadataQueryReader,NULL
@@ -576,14 +575,13 @@ DemoApp::GetGlobalMetadata proc uses rsi rdi
 
     ;; Get the frame count
 
-    mov rdi,[rsi].m_pDecoder
-    mov hr,[rdi].IWICBitmapDecoder.GetFrameCount(&[rsi].m_cFrames)
+    mov hr,this.m_pDecoder.GetFrameCount(&[rsi].m_cFrames)
 
     .if (SUCCEEDED(hr))
 
         ;; Create a MetadataQueryReader from the decoder
 
-        mov hr,[rdi].IWICBitmapDecoder.GetMetadataQueryReader(
+        mov hr,this.m_pDecoder.GetMetadataQueryReader(
             &pMetadataQueryReader)
     .endif
 
@@ -775,7 +773,7 @@ DemoApp::GetGlobalMetadata endp
 ;; file without composing.
 ;;
 
-DemoApp::GetRawFrame proc uses rsi rdi uFrameIndex:UINT
+DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
   local hr:HRESULT
   local pConverter:ptr IWICFormatConverter
@@ -792,15 +790,13 @@ DemoApp::GetRawFrame proc uses rsi rdi uFrameIndex:UINT
 
     ;; Retrieve the current frame
 
-    mov rcx,[rsi].m_pDecoder
-    mov hr,[rcx].IWICBitmapDecoder.GetFrame(uFrameIndex, &pWicFrame)
+    mov hr,this.m_pDecoder.GetFrame(uFrameIndex, &pWicFrame)
 
     .if (SUCCEEDED(hr))
 
         ;; Format convert to 32bppPBGRA which D2D expects
 
-        mov rcx,[rsi].m_pIWICFactory
-        mov hr,[rcx].IWICImagingFactory.CreateFormatConverter(&pConverter)
+        mov hr,this.m_pIWICFactory.CreateFormatConverter(&pConverter)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -820,8 +816,7 @@ DemoApp::GetRawFrame proc uses rsi rdi uFrameIndex:UINT
 
         SafeRelease(&[rsi].m_pRawFrame, ID2D1Bitmap)
 
-        mov rcx,[rsi].m_pHwndRT
-        mov hr,[rcx].ID2D1HwndRenderTarget.CreateBitmapFromWicBitmap(
+        mov hr,this.m_pHwndRT.CreateBitmapFromWicBitmap(
             pConverter,
             NULL,
             &[rsi].m_pRawFrame)
@@ -1055,16 +1050,14 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .if (SUCCEEDED(hr))
 
-        mov rcx,[rsi].m_pIWICFactory
-        mov hr,[rcx].IWICImagingFactory.CreatePalette(&pWicPalette)
+        mov hr,this.m_pIWICFactory.CreatePalette(&pWicPalette)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ;; Get the global palette
 
-        mov rcx,[rsi].m_pDecoder
-        mov hr,[rcx].IWICBitmapDecoder.CopyPalette(pWicPalette)
+        mov hr,this.m_pDecoder.CopyPalette(pWicPalette)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -1117,7 +1110,9 @@ DemoApp::GetBackgroundColor endp
 ;; composed frame.
 ;;
 
-DemoApp::CalculateDrawRectangle proc uses rsi rdi rbx drawRect:ptr D2D1_RECT_F
+    assume rbx:ptr D2D1_RECT_F
+
+DemoApp::CalculateDrawRectangle proc uses rsi rbx drawRect:ptr D2D1_RECT_F
 
     local hr:HRESULT
     local rcClient:RECT
@@ -1125,7 +1120,6 @@ DemoApp::CalculateDrawRectangle proc uses rsi rdi rbx drawRect:ptr D2D1_RECT_F
     mov hr,S_OK
     mov rsi,rcx
     mov rbx,rdx
-    assume rbx:ptr D2D1_RECT_F
 
     ;; Top and left of the client rectangle are both 0
     .if !GetClientRect([rsi].m_hWnd, &rcClient)
@@ -1175,8 +1169,8 @@ DemoApp::CalculateDrawRectangle proc uses rsi rdi rbx drawRect:ptr D2D1_RECT_F
             movss [rbx].bottom,xmm2
         .endif
 
-        movss    xmm0,[rbx].top
-        comiss   xmm0,0.0
+        movss xmm0,[rbx].top
+        comiss xmm0,0.0
         .ifb
             cvtsi2ss xmm0,rcClient.bottom
             mov [rbx].top,0.0
@@ -1195,6 +1189,8 @@ DemoApp::CalculateDrawRectangle proc uses rsi rdi rbx drawRect:ptr D2D1_RECT_F
 
 DemoApp::CalculateDrawRectangle endp
 
+    assume rbx:nothing
+
 ;;
 ;; DemoApp::RestoreSavedFrame()
 ;;
@@ -1202,33 +1198,28 @@ DemoApp::CalculateDrawRectangle endp
 ;; target.
 ;;
 
-DemoApp::RestoreSavedFrame proc uses rsi
+    assume rcx:ptr DemoApp
+
+DemoApp::RestoreSavedFrame proc
 
   local hr:HRESULT
   local pFrameToCopyTo:ptr ID2D1Bitmap
 
-    mov rsi,rcx
     mov pFrameToCopyTo,NULL
-    mov hr,E_FAIL
-
-    .if [rsi].m_pSavedFrame
-        mov hr,S_OK
+    mov eax,E_FAIL
+    .if [rcx].m_pSavedFrame
+        this.m_pFrameComposeRT.GetBitmap(&pFrameToCopyTo)
     .endif
-
-    .if(SUCCEEDED(hr))
-
-        mov rcx,[rsi].m_pFrameComposeRT
-        mov hr,[rcx].ID2D1BitmapRenderTarget.GetBitmap(&pFrameToCopyTo)
-    .endif
-
-    .if (SUCCEEDED(hr))
+    .if eax == S_OK
 
         ;; Copy the whole bitmap
-
-        mov hr,pFrameToCopyTo.CopyFromBitmap(NULL, [rsi].m_pSavedFrame, NULL)
+        mov rcx,this
+        pFrameToCopyTo.CopyFromBitmap(NULL, [rcx].m_pSavedFrame, NULL)
     .endif
+    mov hr,eax
     SafeRelease(&pFrameToCopyTo, ID2D1Bitmap)
-    .return hr
+    mov eax,hr
+    ret
 
 DemoApp::RestoreSavedFrame endp
 
@@ -1240,23 +1231,23 @@ DemoApp::RestoreSavedFrame endp
 ;; color.
 ;;
 
-DemoApp::ClearCurrentFrameArea proc uses rsi rbx
+DemoApp::ClearCurrentFrameArea proc uses rsi
+
+  local pRT:ptr ID2D1BitmapRenderTarget
 
     mov rsi,rcx
-    mov rbx,[rsi].m_pFrameComposeRT
+    mov pRT,[rcx].m_pFrameComposeRT
 
-    assume rbx:ptr ID2D1BitmapRenderTarget
-
-    [rbx].BeginDraw()
+    pRT.BeginDraw()
 
     ;; Clip the render target to the size of the raw frame
-    [rbx].PushAxisAlignedClip(&[rsi].m_framePosition, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE)
-    [rbx].Clear(&[rsi].m_backgroundColor)
+    pRT.PushAxisAlignedClip(&[rsi].m_framePosition, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE)
+    pRT.Clear(&[rsi].m_backgroundColor)
 
     ;; Remove the clipping
-    [rbx].PopAxisAlignedClip()
-
-    .return [rbx].EndDraw(NULL, NULL)
+    pRT.PopAxisAlignedClip()
+    pRT.EndDraw(NULL, NULL)
+    ret
 
 DemoApp::ClearCurrentFrameArea endp
 
@@ -1267,15 +1258,12 @@ DemoApp::ClearCurrentFrameArea endp
 ;; based on the disposal method specified.
 ;;
 
-DemoApp::DisposeCurrentFrame proc uses rsi
+DemoApp::DisposeCurrentFrame proc
 
     local hr:HRESULT
 
-    mov rsi,rcx
     mov hr,S_OK
-
-    .switch [rsi].m_uFrameDisposal
-
+    .switch [rcx].m_uFrameDisposal
     .case DM_UNDEFINED
     .case DM_NONE
         ;; We simply draw on the previous frames. Do nothing here.
@@ -1294,7 +1282,6 @@ DemoApp::DisposeCurrentFrame proc uses rsi
         ;; Invalid disposal method
         mov hr,E_FAIL
     .endsw
-
     .return hr
 
 DemoApp::DisposeCurrentFrame endp
@@ -1310,16 +1297,14 @@ DemoApp::DisposeCurrentFrame endp
 DemoApp::OverlayNextFrame proc uses rsi rbx
 
   local hr:HRESULT
-
+  local pRT:ptr ID2D1BitmapRenderTarget
 
     mov rsi,rcx
-    mov rbx,[rsi].m_pFrameComposeRT
-
-    assume rbx:ptr ID2D1BitmapRenderTarget
+    mov pRT,[rcx].m_pFrameComposeRT
 
     ;; Get Frame information
 
-    mov hr,[rsi].GetRawFrame([rsi].m_uNextFrameIndex)
+    mov hr,this.GetRawFrame([rsi].m_uNextFrameIndex)
 
     .if (SUCCEEDED(hr))
 
@@ -1328,7 +1313,7 @@ DemoApp::OverlayNextFrame proc uses rsi rbx
 
         .if [rsi].m_uFrameDisposal == DM_PREVIOUS
 
-            mov hr,[rsi].SaveComposedFrame()
+            mov hr,this.SaveComposedFrame()
         .endif
     .endif
 
@@ -1336,23 +1321,27 @@ DemoApp::OverlayNextFrame proc uses rsi rbx
 
         ;; Start producing the next bitmap
 
-        [rbx].BeginDraw()
+        pRT.BeginDraw()
 
         ;; If starting a new animation loop
         .if [rsi].m_uNextFrameIndex == 0
 
             ;; Draw background and increase loop count
 
-            [rbx].Clear(&[rsi].m_backgroundColor)
+            pRT.Clear(&[rsi].m_backgroundColor)
             inc [rsi].m_uLoopNumber
         .endif
 
         ;; Produce the next frame
 
-        [rbx].DrawBitmap([rsi].m_pRawFrame, &[rsi].m_framePosition,
-                1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
+        pRT.DrawBitmap(
+            [rsi].m_pRawFrame,
+            &[rsi].m_framePosition,
+            1.0,
+            D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+            NULL)
 
-        mov hr,[rbx].EndDraw(NULL, NULL)
+        mov hr,pRT.EndDraw(NULL, NULL)
     .endif
 
     ;; To improve performance and avoid decoding/composing this frame in the
@@ -1374,6 +1363,7 @@ DemoApp::OverlayNextFrame proc uses rsi rbx
 
 DemoApp::OverlayNextFrame endp
 
+    assume rcx:nothing
 ;;
 ;; DemoApp::SaveComposedFrame()
 ;;
@@ -1382,32 +1372,35 @@ DemoApp::OverlayNextFrame endp
 ;; needed.
 ;;
 
-DemoApp::SaveComposedFrame proc uses rsi rbx
+DemoApp::SaveComposedFrame proc uses rsi
 
   local hr:HRESULT
   local pFrameToBeSaved:ptr ID2D1Bitmap
 
     mov rsi,rcx
+
     mov pFrameToBeSaved,NULL
-    mov rbx,[rsi].m_pFrameComposeRT
-    mov hr,[rbx].GetBitmap(&pFrameToBeSaved)
+    mov hr,this.m_pFrameComposeRT.GetBitmap(&pFrameToBeSaved)
 
     .if (SUCCEEDED(hr))
 
         ;; Create the temporary bitmap if it hasn't been created yet
+
         .if [rsi].m_pSavedFrame == NULL
 
-            .new bitmapSize:D2D1_SIZE_U
-            .new bitmapProp:D2D1_BITMAP_PROPERTIES
+           .new bitmapSize:D2D1_SIZE_U
+           .new bitmapProp:D2D1_BITMAP_PROPERTIES
 
-            pFrameToBeSaved.GetPixelSize()
-            mov bitmapSize,rax
-
+            pFrameToBeSaved.GetPixelSize(&bitmapSize)
             pFrameToBeSaved.GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY)
-            pFrameToBeSaved.GetPixelFormat()
-            mov bitmapProp.pixelFormat,rax
-
-            mov hr,[rbx].CreateBitmap(bitmapSize, NULL, 0, &bitmapProp, &[rsi].m_pSavedFrame)
+            pFrameToBeSaved.GetPixelFormat(&bitmapProp.pixelFormat)
+            mov hr,this.m_pFrameComposeRT.CreateBitmap(
+                bitmapSize,
+                NULL,
+                0,
+                &bitmapProp,
+                &[rsi].m_pSavedFrame
+                )
         .endif
     .endif
 
@@ -1415,13 +1408,11 @@ DemoApp::SaveComposedFrame proc uses rsi rbx
 
         ;; Copy the whole bitmap
 
-        mov rcx,[rsi].m_pSavedFrame
-        mov hr,[rcx].ID2D1Bitmap.CopyFromBitmap(NULL, pFrameToBeSaved, NULL)
+        mov hr,this.m_pSavedFrame.CopyFromBitmap(NULL, pFrameToBeSaved, NULL)
     .endif
 
     SafeRelease(&pFrameToBeSaved, ID2D1Bitmap)
-
-    .return hr;
+    .return hr
 
 DemoApp::SaveComposedFrame endp
 
@@ -1431,7 +1422,7 @@ DemoApp::SaveComposedFrame endp
 ;; Opens a dialog and displays a selected image.
 ;;
 
-DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
+DemoApp::SelectAndDisplayGif proc uses rsi
 
   local hr:HRESULT
   local szFileName[MAX_PATH]:WCHAR
@@ -1446,7 +1437,7 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
 
     ;; If the user cancels selection, then nothing happens
 
-    .if [rsi].GetFileOpen(&szFileName, ARRAYSIZE(szFileName))
+    .if this.GetFileOpen(&szFileName, ARRAYSIZE(szFileName))
 
         ;; Reset the states
 
@@ -1456,18 +1447,21 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
         mov [rsi].m_fHasLoop,FALSE
 
         SafeRelease(&[rsi].m_pSavedFrame, ID2D1Bitmap)
+        SafeRelease(&[rsi].m_pDecoder, IWICBitmapDecoder)
 
         ;; Create a decoder for the gif file
 
-        SafeRelease(&[rsi].m_pDecoder, IWICBitmapDecoder)
-
-        mov rcx,[rsi].m_pIWICFactory
-        mov hr,[rcx].IWICImagingFactory.CreateDecoderFromFilename(&szFileName,
-            NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &[rsi].m_pDecoder)
+        mov hr,this.m_pIWICFactory.CreateDecoderFromFilename(
+            &szFileName,
+            NULL,
+            GENERIC_READ,
+            WICDecodeMetadataCacheOnLoad,
+            &[rsi].m_pDecoder
+            )
 
         .if (SUCCEEDED(hr))
 
-            mov hr,[rsi].GetGlobalMetadata()
+            mov hr,this.GetGlobalMetadata()
         .endif
 
         .if (SUCCEEDED(hr))
@@ -1497,12 +1491,11 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
 
             ;; Resize the window to fit the gif
 
-            rcClient.Width(r9d)
-            rcClient.Height(r10d)
+            mov r9d,rcClient.right
+            sub r9d,rcClient.left
+            MoveWindow([rsi].m_hWnd, rcWindow.left, rcWindow.top, r9d, rcClient.Height(), TRUE)
 
-            MoveWindow([rsi].m_hWnd, rcWindow.left, rcWindow.top, r9d, r10d, TRUE)
-
-            mov hr,[rsi].CreateDeviceResources()
+            mov hr,this.CreateDeviceResources()
         .endif
 
         .if (SUCCEEDED(hr))
@@ -1512,13 +1505,13 @@ DemoApp::SelectAndDisplayGif proc uses rsi rdi rbx
 
             .if [rsi].m_cFrames > 0
 
-                mov hr,[rsi].ComposeNextFrame()
+                mov hr,this.ComposeNextFrame()
                 InvalidateRect([rsi].m_hWnd, NULL, FALSE)
             .endif
         .endif
     .endif
 
-    .return hr;
+    .return hr
 
 DemoApp::SelectAndDisplayGif endp
 
@@ -1548,22 +1541,22 @@ DemoApp::ComposeNextFrame proc uses rsi
 
         ;; Compose one frame
 
-        mov hr,[rsi].DisposeCurrentFrame()
+        mov hr,this.DisposeCurrentFrame()
         .if (SUCCEEDED(hr))
 
-            mov hr,[rsi].OverlayNextFrame()
+            mov hr,this.OverlayNextFrame()
         .endif
 
         ;; Keep composing frames until we see a frame with delay greater than
         ;; 0 (0 delay frames are the invisible intermediate frames), or until
         ;; we have reached the very last frame.
 
-        .while SUCCEEDED(hr) && [rsi].m_uFrameDelay == 0 && ![rsi].IsLastFrame()
+        .while SUCCEEDED(hr) && [rsi].m_uFrameDelay == 0 && !this.IsLastFrame()
 
-            mov hr,[rsi].DisposeCurrentFrame()
+            mov hr,this.DisposeCurrentFrame()
             .if (SUCCEEDED(hr))
 
-                mov hr,[rsi].OverlayNextFrame()
+                mov hr,this.OverlayNextFrame()
             .endif
         .endw
 
@@ -1571,7 +1564,7 @@ DemoApp::ComposeNextFrame proc uses rsi
         ;; Set the timer regardless of whether we succeeded in composing a frame
         ;; to try our best to continue displaying the animation.
 
-        .if (![rsi].EndOfAnimation() && [rsi].m_cFrames > 1)
+        .if (!this.EndOfAnimation() && [rsi].m_cFrames > 1)
 
             ;; Set the timer according to the delay
             SetTimer([rsi].m_hWnd, DELAY_TIMER_ID, [rsi].m_uFrameDelay, NULL)
@@ -1593,7 +1586,7 @@ DemoApp::RecoverDeviceResources proc uses rsi
 
   local hr:HRESULT
 
-
+    mov rsi,rcx
     SafeRelease(&[rsi].m_pHwndRT, ID2D1HwndRenderTarget)
     SafeRelease(&[rsi].m_pFrameComposeRT, ID2D1BitmapRenderTarget)
     SafeRelease(&[rsi].m_pSavedFrame, ID2D1Bitmap)
@@ -1602,17 +1595,16 @@ DemoApp::RecoverDeviceResources proc uses rsi
     mov [rsi].m_uFrameDisposal,DM_NONE ;; No previous frames. Use disposal none.
     mov [rsi].m_uLoopNumber,0
 
-    mov hr,[rsi].CreateDeviceResources()
+    mov hr,this.CreateDeviceResources()
     .if (SUCCEEDED(hr))
 
         .if [rsi].m_cFrames > 0
 
             ;; Load the first frame
-            mov hr, [rsi].ComposeNextFrame()
+            mov hr,this.ComposeNextFrame()
             InvalidateRect([rsi].m_hWnd, NULL, FALSE)
         .endif
     .endif
-
     .return hr
 
 DemoApp::RecoverDeviceResources endp

@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringValidateDestAndLengthW proc WINAPI pszDest:STRSAFE_LPCWSTR, cchDest:size_t,
+StringValidateDestAndLengthW proc pszDest:STRSAFE_LPCWSTR, cchDest:size_t,
     pcchDestLength:ptr size_t, cchMax:size_t
 
     StringValidateDestW(pszDest, cchDest, cchMax)

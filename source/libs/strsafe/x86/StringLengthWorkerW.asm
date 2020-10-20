@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringLengthWorkerW proc WINAPI psz:STRSAFE_PCNZWCH, cchMax:size_t, pcchLength:ptr size_t
+StringLengthWorkerW proc psz:STRSAFE_PCNZWCH, cchMax:size_t, pcchLength:ptr size_t
 
     mov ecx,psz
     mov edx,cchMax

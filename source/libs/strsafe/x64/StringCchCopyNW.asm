@@ -24,7 +24,7 @@ StringCchCopyNW proc frame pszDest:STRSAFE_LPWSTR,
             mov word ptr [rcx],0
         .else
 
-            StringCopyWorkerW(rcx, rdx, NULL, pszSrc, STRSAFE_MAX_LENGTH)
+            StringCopyWorkerW(rcx, rdx, NULL, pszSrc, cchToCopy)
         .endif
     .elseif rdx
 

@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringValidateDestW proc WINAPI pszDest:STRSAFE_PCNZWCH, cchDest:size_t, cchMax:size_t
+StringValidateDestW proc pszDest:STRSAFE_PCNZWCH, cchDest:size_t, cchMax:size_t
 
     mov eax,S_OK
     mov edx,cchDest

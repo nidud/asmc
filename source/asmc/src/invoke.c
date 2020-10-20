@@ -1095,7 +1095,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     /* v2.05 added. A warning only, because Masm accepts this. */
     if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 &&
-	(r0flags & R0_USED ) && opnd.base_reg->bytval == 0 )
+	(r0flags & R0_USED ) && opnd.base_reg->bytval == 0 && proc->sym.method != 1 )
 	asmerr( 7002 );
 
     p = StringBufferEnd;

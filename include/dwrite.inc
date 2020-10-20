@@ -11,6 +11,7 @@ endif
 include dcommon.inc
 
 .pragma comment(lib, dwrite)
+.pragma pack(push, size_t)
 
 ifndef DWRITE_DECLARE_INTERFACE
 DWRITE_DECLARE_INTERFACE macro iid
@@ -946,5 +947,7 @@ MAKE_DWRITE_HR macro severity, code
 MAKE_DWRITE_HR_ERR macro code
 	exitm<MAKE_DWRITE_HR(SEVERITY_ERROR, code)>
 	endm
+
+.pragma pack(pop)
 
 endif

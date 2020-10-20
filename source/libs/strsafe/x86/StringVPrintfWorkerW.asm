@@ -9,7 +9,7 @@ include strsafe.inc
 
 .code
 
-StringVPrintfWorkerW proc WINAPI pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
+StringVPrintfWorkerW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
          pszFormat:STRSAFE_LPCWSTR, argList:va_list
 
   local hr:HRESULT

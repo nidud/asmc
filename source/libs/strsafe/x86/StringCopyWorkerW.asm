@@ -7,7 +7,7 @@ include strsafe.inc
 
     .code
 
-StringCopyWorkerW proc WINAPI uses esi edi ebx pszDest:STRSAFE_LPWSTR, cchDest:size_t,
+StringCopyWorkerW proc uses esi edi ebx pszDest:STRSAFE_LPWSTR, cchDest:size_t,
         pcchNewDestLength:ptr size_t, pszSrc:STRSAFE_PCNZWCH, cchToCopy:size_t
 
     xor ebx,ebx

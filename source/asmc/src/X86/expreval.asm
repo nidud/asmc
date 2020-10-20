@@ -378,20 +378,26 @@ method_ptr:
             .if ( eax && ( [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO ) )
                 .return fnasmerr( 2148, [eax].asym.name )
             .endif
-if 1
-            .if ( !eax && [ebx-16].token == T_DOT && [ebx-32].token == T_ID )
+
+
+            .if ( ( eax == NULL ) && \ ; || [eax].asym.state == SYM_UNDEFINED ) && \
+                    ( [ebx-16].token == T_DOT && [ebx-32].token == T_ID ) )
+
                 mov edx,tokenarray
                 .if [edx].asm_tok.tokval == T_INVOKE ;&& ModuleInfo.Ofssize == USE64
+
                     .if SymFind( [ebx-32].string_ptr )
+
                         .if ( [eax].asym.is_ptr && [eax].asym.target_type )
+
                             mov ecx,[eax].asym.target_type
-                            ;mov [edi].type,ecx
                             jmp method_ptr
                         .endif
                     .endif
                 .endif
             .endif
-endif
+
+
             .if ( Parse_Pass == PASS_1 && !( flags & EXPF_NOUNDEF ) )
                 .if eax == NULL
                     mov ecx,[edi].type

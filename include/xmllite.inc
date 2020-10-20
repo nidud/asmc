@@ -32,6 +32,8 @@ include oaidl.inc
 IXmlReaderInput		typedef IUnknown
 IXmlWriterOutput	typedef IUnknown
 
+.pragma comment(lib, xmllite)
+
 CreateXmlReader proto WINAPI \
 		  riid: REFIID,
 	     ppvObject: ptr,
@@ -73,152 +75,160 @@ CreateXmlWriterOutputWithEncodingName proto WINAPI \
 ifndef __XmlLite_LIBRARY_DEFINED__
 __XmlLite_LIBRARY_DEFINED__ equ <>
 
-XmlNodeType		typedef SDWORD
-XmlNodeType_None	equ 0
-XmlNodeType_Element	equ 1
-XmlNodeType_Attribute	equ 2
-XmlNodeType_Text	equ 3
-XmlNodeType_CDATA	equ 4
-XmlNodeType_ProcessingInstruction equ 7
-XmlNodeType_Comment	equ 8
-XmlNodeType_DocumentType equ 10
-XmlNodeType_Whitespace	equ 13
-XmlNodeType_EndElement	equ 15
-XmlNodeType_XmlDeclaration equ 17
-_XmlNodeType_Last	equ 17
+.enum XmlNodeType {
+    XmlNodeType_None		= 0,
+    XmlNodeType_Element		= 1,
+    XmlNodeType_Attribute	= 2,
+    XmlNodeType_Text		= 3,
+    XmlNodeType_CDATA		= 4,
+    XmlNodeType_ProcessingInstruction	= 7,
+    XmlNodeType_Comment		= 8,
+    XmlNodeType_DocumentType	= 10,
+    XmlNodeType_Whitespace	= 13,
+    XmlNodeType_EndElement	= 15,
+    XmlNodeType_XmlDeclaration	= 17,
+    _XmlNodeType_Last		= 17
+    }
 
-XmlConformanceLevel	typedef SDWORD
-XmlConformanceLevel_Auto equ 0
-XmlConformanceLevel_Fragment equ 1
-XmlConformanceLevel_Document equ 2
-_XmlConformanceLevel_Last equ 2
+.enum XmlConformanceLevel {
+    XmlConformanceLevel_Auto	= 0,
+    XmlConformanceLevel_Fragment = 1,
+    XmlConformanceLevel_Document = 2,
+    _XmlConformanceLevel_Last	= 2
+    }
 
-DtdProcessing		typedef SDWORD
-DtdProcessing_Prohibit	equ 0
-DtdProcessing_Parse	equ ( DtdProcessing_Prohibit + 1 )
-_DtdProcessing_Last	equ DtdProcessing_Parse
+.enum DtdProcessing {
+    DtdProcessing_Prohibit	= 0,
+    DtdProcessing_Parse		= ( DtdProcessing_Prohibit + 1 ) ,
+    _DtdProcessing_Last		= DtdProcessing_Parse
+    }
 
-XmlReadState		typedef SDWORD
-XmlReadState_Initial	equ 0
-XmlReadState_Interactive equ 1
-XmlReadState_Error	equ 2
-XmlReadState_EndOfFile	equ 3
-XmlReadState_Closed	equ 4
+.enum XmlReadState {
+    XmlReadState_Initial	= 0,
+    XmlReadState_Interactive	= 1,
+    XmlReadState_Error		= 2,
+    XmlReadState_EndOfFile	= 3,
+    XmlReadState_Closed		= 4
+    }
 
-XmlReaderProperty	typedef SDWORD
-XmlReaderProperty_MultiLanguage equ 0
-XmlReaderProperty_ConformanceLevel equ ( XmlReaderProperty_MultiLanguage + 1 )
-XmlReaderProperty_RandomAccess equ ( XmlReaderProperty_ConformanceLevel + 1 )
-XmlReaderProperty_XmlResolver equ ( XmlReaderProperty_RandomAccess + 1 )
-XmlReaderProperty_DtdProcessing equ ( XmlReaderProperty_XmlResolver + 1 )
-XmlReaderProperty_ReadState equ ( XmlReaderProperty_DtdProcessing + 1 )
-XmlReaderProperty_MaxElementDepth equ ( XmlReaderProperty_ReadState + 1 )
-XmlReaderProperty_MaxEntityExpansion equ ( XmlReaderProperty_MaxElementDepth + 1 )
-_XmlReaderProperty_Last equ XmlReaderProperty_MaxEntityExpansion
+.enum XmlReaderProperty {
+    XmlReaderProperty_MultiLanguage	= 0,
+    XmlReaderProperty_ConformanceLevel	= ( XmlReaderProperty_MultiLanguage + 1 ) ,
+    XmlReaderProperty_RandomAccess	= ( XmlReaderProperty_ConformanceLevel + 1 ) ,
+    XmlReaderProperty_XmlResolver	= ( XmlReaderProperty_RandomAccess + 1 ) ,
+    XmlReaderProperty_DtdProcessing	= ( XmlReaderProperty_XmlResolver + 1 ) ,
+    XmlReaderProperty_ReadState		= ( XmlReaderProperty_DtdProcessing + 1 ) ,
+    XmlReaderProperty_MaxElementDepth	= ( XmlReaderProperty_ReadState + 1 ) ,
+    XmlReaderProperty_MaxEntityExpansion = ( XmlReaderProperty_MaxElementDepth + 1 ) ,
+    _XmlReaderProperty_Last		= XmlReaderProperty_MaxEntityExpansion
+    }
 
-XmlError		typedef SDWORD
-MX_E_MX			equ 0xc00cee00
-MX_E_INPUTEND		equ ( MX_E_MX + 1 )
-MX_E_ENCODING		equ ( MX_E_INPUTEND + 1 )
-MX_E_ENCODINGSWITCH	equ ( MX_E_ENCODING + 1 )
-MX_E_ENCODINGSIGNATURE	equ ( MX_E_ENCODINGSWITCH + 1 )
-WC_E_WC			equ 0xc00cee20
-WC_E_WHITESPACE		equ ( WC_E_WC + 1 )
-WC_E_SEMICOLON		equ ( WC_E_WHITESPACE + 1 )
-WC_E_GREATERTHAN	equ ( WC_E_SEMICOLON + 1 )
-WC_E_QUOTE		equ ( WC_E_GREATERTHAN + 1 )
-WC_E_EQUAL		equ ( WC_E_QUOTE + 1 )
-WC_E_LESSTHAN		equ ( WC_E_EQUAL + 1 )
-WC_E_HEXDIGIT		equ ( WC_E_LESSTHAN + 1 )
-WC_E_DIGIT		equ ( WC_E_HEXDIGIT + 1 )
-WC_E_LEFTBRACKET	equ ( WC_E_DIGIT + 1 )
-WC_E_LEFTPAREN		equ ( WC_E_LEFTBRACKET + 1 )
-WC_E_XMLCHARACTER	equ ( WC_E_LEFTPAREN + 1 )
-WC_E_NAMECHARACTER	equ ( WC_E_XMLCHARACTER + 1 )
-WC_E_SYNTAX		equ ( WC_E_NAMECHARACTER + 1 )
-WC_E_CDSECT		equ ( WC_E_SYNTAX + 1 )
-WC_E_COMMENT		equ ( WC_E_CDSECT + 1 )
-WC_E_CONDSECT		equ ( WC_E_COMMENT + 1 )
-WC_E_DECLATTLIST	equ ( WC_E_CONDSECT + 1 )
-WC_E_DECLDOCTYPE	equ ( WC_E_DECLATTLIST + 1 )
-WC_E_DECLELEMENT	equ ( WC_E_DECLDOCTYPE + 1 )
-WC_E_DECLENTITY		equ ( WC_E_DECLELEMENT + 1 )
-WC_E_DECLNOTATION	equ ( WC_E_DECLENTITY + 1 )
-WC_E_NDATA		equ ( WC_E_DECLNOTATION + 1 )
-WC_E_PUBLIC		equ ( WC_E_NDATA + 1 )
-WC_E_SYSTEM		equ ( WC_E_PUBLIC + 1 )
-WC_E_NAME		equ ( WC_E_SYSTEM + 1 )
-WC_E_ROOTELEMENT	equ ( WC_E_NAME + 1 )
-WC_E_ELEMENTMATCH	equ ( WC_E_ROOTELEMENT + 1 )
-WC_E_UNIQUEATTRIBUTE	equ ( WC_E_ELEMENTMATCH + 1 )
-WC_E_TEXTXMLDECL	equ ( WC_E_UNIQUEATTRIBUTE + 1 )
-WC_E_LEADINGXML		equ ( WC_E_TEXTXMLDECL + 1 )
-WC_E_TEXTDECL		equ ( WC_E_LEADINGXML + 1 )
-WC_E_XMLDECL		equ ( WC_E_TEXTDECL + 1 )
-WC_E_ENCNAME		equ ( WC_E_XMLDECL + 1 )
-WC_E_PUBLICID		equ ( WC_E_ENCNAME + 1 )
-WC_E_PESINTERNALSUBSET	equ ( WC_E_PUBLICID + 1 )
-WC_E_PESBETWEENDECLS	equ ( WC_E_PESINTERNALSUBSET + 1 )
-WC_E_NORECURSION	equ ( WC_E_PESBETWEENDECLS + 1 )
-WC_E_ENTITYCONTENT	equ ( WC_E_NORECURSION + 1 )
-WC_E_UNDECLAREDENTITY	equ ( WC_E_ENTITYCONTENT + 1 )
-WC_E_PARSEDENTITY	equ ( WC_E_UNDECLAREDENTITY + 1 )
-WC_E_NOEXTERNALENTITYREF equ ( WC_E_PARSEDENTITY + 1 )
-WC_E_PI			equ ( WC_E_NOEXTERNALENTITYREF + 1 )
-WC_E_SYSTEMID		equ ( WC_E_PI + 1 )
-WC_E_QUESTIONMARK	equ ( WC_E_SYSTEMID + 1 )
-WC_E_CDSECTEND		equ ( WC_E_QUESTIONMARK + 1 )
-WC_E_MOREDATA		equ ( WC_E_CDSECTEND + 1 )
-WC_E_DTDPROHIBITED	equ ( WC_E_MOREDATA + 1 )
-WC_E_INVALIDXMLSPACE	equ ( WC_E_DTDPROHIBITED + 1 )
-NC_E_NC			equ 0xc00cee60
-NC_E_QNAMECHARACTER	equ ( NC_E_NC + 1 )
-NC_E_QNAMECOLON		equ ( NC_E_QNAMECHARACTER + 1 )
-NC_E_NAMECOLON		equ ( NC_E_QNAMECOLON + 1 )
-NC_E_DECLAREDPREFIX	equ ( NC_E_NAMECOLON + 1 )
-NC_E_UNDECLAREDPREFIX	equ ( NC_E_DECLAREDPREFIX + 1 )
-NC_E_EMPTYURI		equ ( NC_E_UNDECLAREDPREFIX + 1 )
-NC_E_XMLPREFIXRESERVED	equ ( NC_E_EMPTYURI + 1 )
-NC_E_XMLNSPREFIXRESERVED equ ( NC_E_XMLPREFIXRESERVED + 1 )
-NC_E_XMLURIRESERVED	equ ( NC_E_XMLNSPREFIXRESERVED + 1 )
-NC_E_XMLNSURIRESERVED	equ ( NC_E_XMLURIRESERVED + 1 )
-SC_E_SC			equ 0xc00cee80
-SC_E_MAXELEMENTDEPTH	equ ( SC_E_SC + 1 )
-SC_E_MAXENTITYEXPANSION equ ( SC_E_MAXELEMENTDEPTH + 1 )
-WR_E_WR			equ 0xc00cef00
-WR_E_NONWHITESPACE	equ ( WR_E_WR + 1 )
-WR_E_NSPREFIXDECLARED	equ ( WR_E_NONWHITESPACE + 1 )
-WR_E_NSPREFIXWITHEMPTYNSURI equ ( WR_E_NSPREFIXDECLARED + 1 )
-WR_E_DUPLICATEATTRIBUTE equ ( WR_E_NSPREFIXWITHEMPTYNSURI + 1 )
-WR_E_XMLNSPREFIXDECLARATION equ ( WR_E_DUPLICATEATTRIBUTE + 1 )
-WR_E_XMLPREFIXDECLARATION equ ( WR_E_XMLNSPREFIXDECLARATION + 1 )
-WR_E_XMLURIDECLARATION	equ ( WR_E_XMLPREFIXDECLARATION + 1 )
-WR_E_XMLNSURIDECLARATION equ ( WR_E_XMLURIDECLARATION + 1 )
-WR_E_NAMESPACEUNDECLARED equ ( WR_E_XMLNSURIDECLARATION + 1 )
-WR_E_INVALIDXMLSPACE	equ ( WR_E_NAMESPACEUNDECLARED + 1 )
-WR_E_INVALIDACTION	equ ( WR_E_INVALIDXMLSPACE + 1 )
-WR_E_INVALIDSURROGATEPAIR equ ( WR_E_INVALIDACTION + 1 )
-XML_E_INVALID_DECIMAL	equ 0xc00ce01d
-XML_E_INVALID_HEXIDECIMAL equ 0xc00ce01e
-XML_E_INVALID_UNICODE	equ 0xc00ce01f
-XML_E_INVALIDENCODING	equ 0xc00ce06e
+.enum XmlError {
+    MX_E_MX		= 0xc00cee00,
+    MX_E_INPUTEND	= ( MX_E_MX + 1 ) ,
+    MX_E_ENCODING	= ( MX_E_INPUTEND + 1 ) ,
+    MX_E_ENCODINGSWITCH = ( MX_E_ENCODING + 1 ) ,
+    MX_E_ENCODINGSIGNATURE = ( MX_E_ENCODINGSWITCH + 1 ) ,
+    WC_E_WC		= 0xc00cee20,
+    WC_E_WHITESPACE	= ( WC_E_WC + 1 ) ,
+    WC_E_SEMICOLON	= ( WC_E_WHITESPACE + 1 ) ,
+    WC_E_GREATERTHAN	= ( WC_E_SEMICOLON + 1 ) ,
+    WC_E_QUOTE		= ( WC_E_GREATERTHAN + 1 ) ,
+    WC_E_EQUAL		= ( WC_E_QUOTE + 1 ) ,
+    WC_E_LESSTHAN	= ( WC_E_EQUAL + 1 ) ,
+    WC_E_HEXDIGIT	= ( WC_E_LESSTHAN + 1 ) ,
+    WC_E_DIGIT		= ( WC_E_HEXDIGIT + 1 ) ,
+    WC_E_LEFTBRACKET	= ( WC_E_DIGIT + 1 ) ,
+    WC_E_LEFTPAREN	= ( WC_E_LEFTBRACKET + 1 ) ,
+    WC_E_XMLCHARACTER	= ( WC_E_LEFTPAREN + 1 ) ,
+    WC_E_NAMECHARACTER	= ( WC_E_XMLCHARACTER + 1 ) ,
+    WC_E_SYNTAX		= ( WC_E_NAMECHARACTER + 1 ) ,
+    WC_E_CDSECT		= ( WC_E_SYNTAX + 1 ) ,
+    WC_E_COMMENT	= ( WC_E_CDSECT + 1 ) ,
+    WC_E_CONDSECT	= ( WC_E_COMMENT + 1 ) ,
+    WC_E_DECLATTLIST	= ( WC_E_CONDSECT + 1 ) ,
+    WC_E_DECLDOCTYPE	= ( WC_E_DECLATTLIST + 1 ) ,
+    WC_E_DECLELEMENT	= ( WC_E_DECLDOCTYPE + 1 ) ,
+    WC_E_DECLENTITY	= ( WC_E_DECLELEMENT + 1 ) ,
+    WC_E_DECLNOTATION	= ( WC_E_DECLENTITY + 1 ) ,
+    WC_E_NDATA		= ( WC_E_DECLNOTATION + 1 ) ,
+    WC_E_PUBLIC		= ( WC_E_NDATA + 1 ) ,
+    WC_E_SYSTEM		= ( WC_E_PUBLIC + 1 ) ,
+    WC_E_NAME		= ( WC_E_SYSTEM + 1 ) ,
+    WC_E_ROOTELEMENT	= ( WC_E_NAME + 1 ) ,
+    WC_E_ELEMENTMATCH	= ( WC_E_ROOTELEMENT + 1 ) ,
+    WC_E_UNIQUEATTRIBUTE = ( WC_E_ELEMENTMATCH + 1 ) ,
+    WC_E_TEXTXMLDECL	= ( WC_E_UNIQUEATTRIBUTE + 1 ) ,
+    WC_E_LEADINGXML	= ( WC_E_TEXTXMLDECL + 1 ) ,
+    WC_E_TEXTDECL	= ( WC_E_LEADINGXML + 1 ) ,
+    WC_E_XMLDECL	= ( WC_E_TEXTDECL + 1 ) ,
+    WC_E_ENCNAME	= ( WC_E_XMLDECL + 1 ) ,
+    WC_E_PUBLICID	= ( WC_E_ENCNAME + 1 ) ,
+    WC_E_PESINTERNALSUBSET = ( WC_E_PUBLICID + 1 ) ,
+    WC_E_PESBETWEENDECLS = ( WC_E_PESINTERNALSUBSET + 1 ) ,
+    WC_E_NORECURSION	= ( WC_E_PESBETWEENDECLS + 1 ) ,
+    WC_E_ENTITYCONTENT	= ( WC_E_NORECURSION + 1 ) ,
+    WC_E_UNDECLAREDENTITY = ( WC_E_ENTITYCONTENT + 1 ) ,
+    WC_E_PARSEDENTITY	= ( WC_E_UNDECLAREDENTITY + 1 ) ,
+    WC_E_NOEXTERNALENTITYREF = ( WC_E_PARSEDENTITY + 1 ) ,
+    WC_E_PI		= ( WC_E_NOEXTERNALENTITYREF + 1 ) ,
+    WC_E_SYSTEMID	= ( WC_E_PI + 1 ) ,
+    WC_E_QUESTIONMARK	= ( WC_E_SYSTEMID + 1 ) ,
+    WC_E_CDSECTEND	= ( WC_E_QUESTIONMARK + 1 ) ,
+    WC_E_MOREDATA	= ( WC_E_CDSECTEND + 1 ) ,
+    WC_E_DTDPROHIBITED	= ( WC_E_MOREDATA + 1 ) ,
+    WC_E_INVALIDXMLSPACE = ( WC_E_DTDPROHIBITED + 1 ) ,
+    NC_E_NC		= 0xc00cee60,
+    NC_E_QNAMECHARACTER = ( NC_E_NC + 1 ) ,
+    NC_E_QNAMECOLON	= ( NC_E_QNAMECHARACTER + 1 ) ,
+    NC_E_NAMECOLON	= ( NC_E_QNAMECOLON + 1 ) ,
+    NC_E_DECLAREDPREFIX = ( NC_E_NAMECOLON + 1 ) ,
+    NC_E_UNDECLAREDPREFIX = ( NC_E_DECLAREDPREFIX + 1 ) ,
+    NC_E_EMPTYURI	= ( NC_E_UNDECLAREDPREFIX + 1 ) ,
+    NC_E_XMLPREFIXRESERVED = ( NC_E_EMPTYURI + 1 ) ,
+    NC_E_XMLNSPREFIXRESERVED = ( NC_E_XMLPREFIXRESERVED + 1 ) ,
+    NC_E_XMLURIRESERVED = ( NC_E_XMLNSPREFIXRESERVED + 1 ) ,
+    NC_E_XMLNSURIRESERVED = ( NC_E_XMLURIRESERVED + 1 ) ,
+    SC_E_SC		= 0xc00cee80,
+    SC_E_MAXELEMENTDEPTH = ( SC_E_SC + 1 ) ,
+    SC_E_MAXENTITYEXPANSION = ( SC_E_MAXELEMENTDEPTH + 1 ) ,
+    WR_E_WR		= 0xc00cef00,
+    WR_E_NONWHITESPACE	= ( WR_E_WR + 1 ) ,
+    WR_E_NSPREFIXDECLARED = ( WR_E_NONWHITESPACE + 1 ) ,
+    WR_E_NSPREFIXWITHEMPTYNSURI = ( WR_E_NSPREFIXDECLARED + 1 ) ,
+    WR_E_DUPLICATEATTRIBUTE	= ( WR_E_NSPREFIXWITHEMPTYNSURI + 1 ) ,
+    WR_E_XMLNSPREFIXDECLARATION = ( WR_E_DUPLICATEATTRIBUTE + 1 ) ,
+    WR_E_XMLPREFIXDECLARATION	= ( WR_E_XMLNSPREFIXDECLARATION + 1 ) ,
+    WR_E_XMLURIDECLARATION	= ( WR_E_XMLPREFIXDECLARATION + 1 ) ,
+    WR_E_XMLNSURIDECLARATION	= ( WR_E_XMLURIDECLARATION + 1 ) ,
+    WR_E_NAMESPACEUNDECLARED	= ( WR_E_XMLNSURIDECLARATION + 1 ) ,
+    WR_E_INVALIDXMLSPACE	= ( WR_E_NAMESPACEUNDECLARED + 1 ) ,
+    WR_E_INVALIDACTION		= ( WR_E_INVALIDXMLSPACE + 1 ) ,
+    WR_E_INVALIDSURROGATEPAIR	= ( WR_E_INVALIDACTION + 1 ) ,
+    XML_E_INVALID_DECIMAL	= 0xc00ce01d,
+    XML_E_INVALID_HEXIDECIMAL	= 0xc00ce01e,
+    XML_E_INVALID_UNICODE	= 0xc00ce01f,
+    XML_E_INVALIDENCODING	= 0xc00ce06e
+    }
 
-XmlStandalone		typedef SDWORD
-XmlStandalone_Omit	equ 0
-XmlStandalone_Yes	equ 1
-XmlStandalone_No	equ 2
-_XmlStandalone_Last	equ 2
+.enum XmlStandalone {
+    XmlStandalone_Omit	= 0,
+    XmlStandalone_Yes	= 1,
+    XmlStandalone_No	= 2,
+    _XmlStandalone_Last = 2
+    }
 
-XmlWriterProperty	typedef SDWORD
-XmlWriterProperty_MultiLanguage equ 0
-XmlWriterProperty_Indent equ ( XmlWriterProperty_MultiLanguage + 1 )
-XmlWriterProperty_ByteOrderMark equ ( XmlWriterProperty_Indent + 1 )
-XmlWriterProperty_OmitXmlDeclaration equ ( XmlWriterProperty_ByteOrderMark + 1 )
-XmlWriterProperty_ConformanceLevel equ ( XmlWriterProperty_OmitXmlDeclaration + 1 )
-_XmlWriterProperty_Last equ XmlWriterProperty_OmitXmlDeclaration
+.enum XmlWriterProperty {
+    XmlWriterProperty_MultiLanguage	= 0,
+    XmlWriterProperty_Indent		= ( XmlWriterProperty_MultiLanguage + 1 ) ,
+    XmlWriterProperty_ByteOrderMark	= ( XmlWriterProperty_Indent + 1 ) ,
+    XmlWriterProperty_OmitXmlDeclaration = ( XmlWriterProperty_ByteOrderMark + 1 ) ,
+    XmlWriterProperty_ConformanceLevel	= ( XmlWriterProperty_OmitXmlDeclaration + 1 ) ,
+    _XmlWriterProperty_Last		= XmlWriterProperty_OmitXmlDeclaration
+    }
 
 
-externdef		LIBID_XmlLite:IID
+externdef LIBID_XmlLite:IID
 
 ifndef __IXmlReader_INTERFACE_DEFINED__
 __IXmlReader_INTERFACE_DEFINED__ equ <>
@@ -282,7 +292,7 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteAttributeString proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteCData		proc :LPCWSTR
     WriteCharEntity	proc :WCHAR
-    WriteChars		proc
+    WriteChars		proc :ptr WCHAR, :UINT
     WriteComment	proc :LPCWSTR
     WriteDocType	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteElementString	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR
@@ -297,7 +307,7 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteProcessingInstruction proc :LPCWSTR, :LPCWSTR
     WriteQualifiedName	proc :LPCWSTR, :LPCWSTR
     WriteRaw		proc :LPCWSTR
-    WriteRawChars	proc
+    WriteRawChars	proc :ptr WCHAR, :UINT
     WriteStartDocument	proc :XmlStandalone
     WriteStartElement	proc :LPCWSTR, :LPCWSTR, :LPCWSTR
     WriteString		proc :LPCWSTR

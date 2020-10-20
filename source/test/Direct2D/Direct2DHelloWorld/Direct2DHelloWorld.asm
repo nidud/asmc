@@ -329,14 +329,14 @@ DemoApp::OnRender proc uses rsi
 
   local hr  : HRESULT,
         m   : Matrix3x2F,
-        p   : ptr ID2D1HwndRenderTarget,
+        pRT : ptr ID2D1HwndRenderTarget,
         c   : D3DCOLORVALUE
 
     mov rsi,rcx
-    mov hr,[rsi].CreateDeviceResources()
-    mov p,[rsi].m_pRenderTarget
+    mov hr,this.CreateDeviceResources()
+    mov pRT,[rsi].m_pRenderTarget
 
-    p.CheckWindowState()
+    pRT.CheckWindowState()
 
     .if (SUCCEEDED(hr) && !(eax & D2D1_WINDOW_STATE_OCCLUDED))
 
@@ -344,11 +344,11 @@ DemoApp::OnRender proc uses rsi
 
        .new rc:RECT(0.0, 0.0)
 
-        p.GetSize(&rc[8])
-        p.BeginDraw()
-        p.SetTransform(m.Identity())
-        p.Clear(c.Init(White, 1.0))
-        p.DrawText(
+        pRT.GetSize(&rc[8])
+        pRT.BeginDraw()
+        pRT.SetTransform(m.Identity())
+        pRT.Clear(c.Init(White, 1.0))
+        pRT.DrawText(
             "Hello, World!",
             13,
             [rsi].m_pTextFormat,
@@ -358,12 +358,12 @@ DemoApp::OnRender proc uses rsi
             DWRITE_MEASURING_MODE_NATURAL
             )
 
-        mov hr,p.EndDraw(NULL, NULL)
+        mov hr,pRT.EndDraw(NULL, NULL)
 
         .if (hr == D2DERR_RECREATE_TARGET)
 
             mov hr,S_OK
-            [rsi].DiscardDeviceResources()
+            this.DiscardDeviceResources()
         .endif
     .endif
     .return hr

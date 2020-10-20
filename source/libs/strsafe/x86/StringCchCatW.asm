@@ -19,10 +19,12 @@ StringCchCatW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszSrc:STRSAFE_LPCWST
 
     .ifs (SUCCEEDED(eax))
 
+        mov eax,cchDestLength
+        add eax,eax
         mov ecx,pszDest
-        add ecx,cchDestLength
+        add ecx,eax
         mov edx,cchDest
-        sub edx,cchDestLength
+        sub edx,eax
 
         StringCopyWorkerW(ecx, edx, NULL, pszSrc, STRSAFE_MAX_LENGTH)
     .endif

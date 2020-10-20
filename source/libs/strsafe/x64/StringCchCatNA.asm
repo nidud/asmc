@@ -1,4 +1,4 @@
-; STRINGCCHCATNW.ASM--
+; STRINGCCHCATNA.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,12 +8,12 @@ include strsafe.inc
 
     .code
 
-StringCchCatNW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszSrc:STRSAFE_LPCWSTR, cchToAppend:size_t
+StringCchCatNA proc pszDest:STRSAFE_LPSTR, cchDest:size_t, pszSrc:STRSAFE_LPCSTR, cchToAppend:size_t
 
   local hr:HRESULT
   local cchDestLength:size_t
 
-    StringValidateDestAndLengthW(pszDest,
+    StringValidateDestAndLengthA(pszDest,
             cchDest,
             &cchDestLength,
             STRSAFE_MAX_CCH)
@@ -26,18 +26,16 @@ StringCchCatNW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszSrc:STRSAFE_LPCWS
 
         .else
 
-            mov rax,cchDestLength
-            add rax,rax
             mov rcx,pszDest
-            add rcx,rax
+            add rcx,cchDestLength
             mov rdx,cchDest
-            sub rdx,rax
+            sub rdx,cchDestLength
 
             StringCopyWorkerW(rcx, rdx, NULL, pszSrc, cchToAppend)
         .endif
     .endif
     ret
 
-StringCchCatNW endp
+StringCchCatNA endp
 
     end

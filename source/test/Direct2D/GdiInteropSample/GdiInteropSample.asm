@@ -231,15 +231,13 @@ DemoApp::CreateDeviceResources proc uses rsi
         mov rdx,D2D1_RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, rdx, 0, 0,
                 D2D1_RENDER_TARGET_USAGE_NONE, D2D1_FEATURE_LEVEL_DEFAULT)
 
-        mov rcx,[rsi].m_pD2DFactory
-        mov hr,[rcx].ID2D1Factory.CreateDCRenderTarget(rdx, &[rsi].m_pDCRT)
+        mov hr,this.m_pD2DFactory.CreateDCRenderTarget(rdx, &[rsi].m_pDCRT)
         .if (SUCCEEDED(hr))
 
             ;; Create a black brush.
 
             mov rdx,D3DCOLORVALUE(Black, 1.0)
-            mov rcx,[rsi].m_pDCRT
-            mov hr,[rcx].ID2D1DCRenderTarget.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pBlackBrush)
+            mov hr,this.m_pDCRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pBlackBrush)
         .endif
     .endif
 
@@ -424,7 +422,7 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
     .if (hr == D2DERR_RECREATE_TARGET)
 
         mov hr,S_OK
-        [rsi].DiscardDeviceResources()
+        this.DiscardDeviceResources()
     .endif
 
     .return hr

@@ -24,6 +24,7 @@ include shlguid.inc
 include shobjidl.inc
 include lmaccess.inc
 include AppxPackaging.inc
+include XpsObjectModel.inc
 include mmc.inc
 include activprof.inc
 include adhoc.inc

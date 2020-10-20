@@ -1477,7 +1477,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     .else
 
         SymFind([ebx].string_ptr)
-if 1
+
         ; a.b.m(...)
         .if eax && [ebx+16].token == T_DOT && [ebx+3*16].token == T_DOT
 
@@ -1496,7 +1496,7 @@ if 1
                 SearchNameInStruct( ecx, [ebx].string_ptr, &br_count, 0 )
             .endw
         .endif
-endif
+
         mov sym,eax
         xor ecx,ecx
 
@@ -1779,6 +1779,19 @@ endif
             strcat( esi, ", " )
             .if static_struct
                 strcat( esi, "addr " )
+            .endif
+            .if level
+                push ebx
+                push edi
+                mov  ebx,levtok
+                mov  edi,level
+                .while edi
+                    strcat(esi, [ebx].string_ptr)
+                    add ebx,16
+                    dec edi
+                .endw
+                pop edi
+                pop ebx
             .endif
             strcat( esi, comptr )
         .endif

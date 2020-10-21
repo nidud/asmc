@@ -128,6 +128,14 @@ RCBITMAP macro name, CodePage:=<0>
     MENUEND
     endm
 
+RCBINARY macro name, CodePage:=<0>
+    align 4
+    @CatStr(<$>, %RCENUM2) IMAGE_RESOURCE_DATA_ENTRY <IMAGEREL @CatStr(<$$>, %RCENUM2), @CatStr(<size_$>, %RCENUM2), CodePage, 0>
+    @CatStr(<$$>, %RCENUM2) label byte
+    incbin <name>
+    MENUEND
+    endm
+
 DLGITEM macro x,y,w,h,idc,name,flags,exflags:=<0>,class:=<RC_BUTTON>
     align 4
     if RCENUM3

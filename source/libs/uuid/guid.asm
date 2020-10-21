@@ -48,6 +48,9 @@ include pnrpns.inc
 include richole.inc
 include amsi.inc
 include wincodec.inc
+include mfapi.inc
+include mfidl.inc
+include mfreadwrite.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

@@ -1,0 +1,6 @@
+
+#define IDR_RC_PACKAGE_DATA1 101
+#define RC_PACKAGE_DATA      257
+
+IDR_RC_PACKAGE_DATA1 RC_PACKAGE_DATA "sample1.xps"
+

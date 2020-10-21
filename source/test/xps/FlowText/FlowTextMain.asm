@@ -249,7 +249,9 @@ SaveCanvasToXpsViaPackage proc uses rdi \
 
         mov hr,pageVisuals.Append( canvas )
     .endif
-
+if 1 ; Create in local directory
+    wcscpy(&szDesktopPath, "SDKSample_FlowText_Output.xps")
+else
     ;; Save XPS OM to file
     .if (SUCCEEDED(hr))
 
@@ -259,7 +261,7 @@ SaveCanvasToXpsViaPackage proc uses rdi \
 
         mov hr,StringCchCat(&szDesktopPath, ARRAYSIZE(szDesktopPath), L"\\SDKSample_FlowText_Output.xps")
     .endif
-
+endif
     .if (SUCCEEDED(hr))
 
         mov hr,xpsPackage.WriteToFile(

@@ -3,7 +3,7 @@ include winapifamily.inc
 ifndef __MFAPI_H__
 __MFAPI_H__ equ <>
 
-.pragma pack(push, 1)
+.pragma pack(push, size_t)
 include mfobjects.inc
 .pragma pack(pop)
 

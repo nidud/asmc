@@ -2218,6 +2218,7 @@ DEFINE_IIDX(IMFNetCredential, "5b87ef6a-7ed8-434f-ba0e-184fac1628d1")
     GetPassword		proc :ptr, :ptr, :BOOL
     LoggedOnUser	proc :ptr
     .ends
+    LPIMFNetCredential	typedef ptr IMFNetCredential
 
 endif
 

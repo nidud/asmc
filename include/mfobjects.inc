@@ -823,6 +823,7 @@ DEFINE_IIDX(IMFMediaEvent, "DF598932-F10C-4E39-BBA2-C308F101DAA3")
     GetStatus		proc :ptr
     GetValue		proc :ptr
     .ends
+    LPIMFMediaEvent	typedef ptr IMFMediaEvent
 
 endif
 

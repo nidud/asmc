@@ -547,7 +547,7 @@ FORWARD_WM_SIZE macro hwnd, state, x, y, fn
 
 ;; void Cls_OnClose(HWND hwnd)
 HANDLE_WM_CLOSE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, 0)>
+	exitm<fn(hwnd)>
 	endm
 
 FORWARD_WM_CLOSE macro hwnd, fn
@@ -699,7 +699,11 @@ FORWARD_WM_KILLFOCUS macro hwnd, hwndNewFocus, fn
 
 ;; void Cls_OnKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 HANDLE_WM_KEYDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, wParam, TRUE, LOWORD(lParam), HIWORD(lParam), 0)>
+	mov edx,dword ptr wParam
+	mov r9,lParam
+	mov rax,r9
+	shr rax,32
+	exitm<fn(hwnd, edx, TRUE, r9d, eax)>
 	endm
 
 FORWARD_WM_KEYDOWN macro hwnd, vk, cRepeat, flags, fn
@@ -994,7 +998,9 @@ FORWARD_WM_MENUCHAR macro hwnd, h, flags, hmenu, fn
 
 ;; void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 HANDLE_WM_COMMAND macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(wParam), (lParam), HIWORD(wParam), 0)>
+	movzx edx,word ptr wParam
+	movzx eax,word ptr wParam[2]
+	exitm<fn(hwnd, edx, lParam, eax)>
 	endm
 
 FORWARD_WM_COMMAND macro hwnd, id, hwndCtl, codeNotify, fn

@@ -17,6 +17,7 @@
 #include <globals.h>
 #include <hllext.h>
 #include <types.h>
+#include <assume.h>
 
 static int GetExpression( struct hll_item *hll, int *i, struct asm_tok[], int ilabel, int is_true, char *buffer, struct hll_opnd * );
 
@@ -659,7 +660,7 @@ int ExpandCStrings( struct asm_tok tokenarray[] )
 		if ( tokenarray[i].token == T_DOT )
 		    i++;
 	    }
-	    if ( tokenarray[i+1].token == T_DOT )
+	    while ( tokenarray[i+1].token == T_DOT )
 		i += 2;
 
 	    i += 2;
@@ -700,18 +701,42 @@ int ExpandCStrings( struct asm_tok tokenarray[] )
  *   .CONT .IF: TRUE
  */
 
-static struct asym *GetProc( char *token )
+static struct asym *GetProcVtbl( struct asym *sym, char *token )
+{
+    uint_32 poffset;
+    char name[64];
+    struct asym *target;
+
+    if ( sym->mem_type == MT_TYPE && sym->type )
+	sym = sym->type;
+
+    if ( sym->target_type &&
+	( sym->mem_type == MT_PTR || sym->ptr_memtype == MT_TYPE ) )
+	sym = sym->target_type;
+
+    strcpy(name, sym->name);
+    target = SymFind(strcat(name, "Vtbl"));
+    if ( target )
+	sym = SearchNameInStruct(target, name, &poffset, 0);
+
+    return ( sym );
+}
+
+static struct asym *GetProc( struct asm_tok *tok )
 {
     struct asym *sym,*target;
 
-    if ( !(sym = SymFind( token )) ) {
-	asmerr( 2190 );
-	return NULL;
-    }
+    if ( tok->token == T_REG )
+	sym = GetStdAssume(GetRegNo(tok->tokval));
+    else
+	sym = SymFind(tok->string_ptr);
 
-    /* the most simple case: symbol is a PROC */
-    if ( sym->isproc )
-	return sym;
+    if ( sym == NULL || sym->isproc )
+	return ( sym );
+
+    if ( tok->token == T_ID && (tok+1)->token == T_DOT &&
+	(tok+2)->token == T_ID )
+	return GetProcVtbl(sym, tok->string_ptr);
 
     target = sym->target_type;
     if ( sym->mem_type == MT_PTR && target && target->isproc )
@@ -737,23 +762,14 @@ isfnproto:
 
     /* pointer target must be a PROTO typedef */
 
-    if ( sym->mem_type != MT_PROC ) {
-
-	asmerr( 2190 );
+    if ( sym->mem_type != MT_PROC )
 	return NULL;
-    }
 
 isfnptr:
 
     /* get the pointer target */
 
-    sym = sym->target_type;
-    if ( !sym ) {
-
-	asmerr( 2190 );
-	return NULL;
-    }
-    return ( sym );
+    return ( sym->target_type );
 }
 
 static int StripSource( int i, int e, struct asm_tok tokenarray[] )
@@ -809,7 +825,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 
     if ( proc_id && tokenarray[proc_id].token != T_OP_SQ_BRACKET ) {
 
-	if ( (sym = (struct dsym *)GetProc( tokenarray[proc_id].string_ptr )) ) {
+	if ( (sym = (struct dsym *)GetProc( &tokenarray[proc_id] )) ) {
 
 	    info = sym->e.procinfo;
 	    curr = info->paralist;
@@ -1026,6 +1042,8 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     int		sqbrend = 0;
     int		constructor = 0;
     uint_32	u;
+    int		level = 0;
+    int		toklev;
 
     strcpy( b, "invoke " );
 
@@ -1084,8 +1102,27 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 
 	target = NULL;
 	sym = SymFind( tokenarray[i].string_ptr );
-	tmp = sym;
 
+	/* ptr.ptr.proc(...) */
+	if ( sym && tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_DOT ) {
+
+	    toklev = i;
+	    while ( sym && tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_DOT ) {
+
+		if ( sym->is_ptr && sym->target_type )
+		    tmp = sym->target_type;
+		else
+		    tmp = sym->type;
+		if ( tmp == NULL )
+		    break;
+
+		level += 2;
+		i += 2;
+		sym = SearchNameInStruct( tmp, tokenarray[i].string_ptr, &u, 0 );
+	    }
+	}
+
+	tmp = sym;
 	if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET )
 
 	    string = tokenarray[i+2].string_ptr;
@@ -1269,6 +1306,11 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	    if ( comptr && !type ) {
 		if ( static_struct )
 		    strcat( b, "addr " );
+		if ( level ) {
+		    u = level;
+		    while ( u-- )
+			strcat( b, tokenarray[toklev++].string_ptr );
+		}
 		strcat( b, comptr );
 		strcat( b, "," );
 	    }
@@ -1309,6 +1351,11 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	    strcat( b, ", " );
 	    if ( static_struct )
 		strcat( b, "addr " );
+	    if ( level ) {
+		u = level;
+		while ( u-- )
+		    strcat( b, tokenarray[toklev++].string_ptr );
+	    }
 	    strcat( b, comptr );
 	}
 
@@ -1344,7 +1391,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     if ( *dst )
 	strcat( dst, EOLSTR );
     strcat( dst, b );
-    return StripSource( i, k, tokenarray );
+    return StripSource( i, k + level, tokenarray );
 }
 
 static int RenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )

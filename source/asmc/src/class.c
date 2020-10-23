@@ -1031,8 +1031,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
     case T_DOT_ENDS:
         if ( o == NULL ) {
             if ( CurrStruct )
-                return ( asmerr( 1011 ) );
-            break;
+                rc = asmerr( 1011 );
+            return rc;
         }
         ModuleInfo.g.ComStack = NULL;
         if ( o->type ) {

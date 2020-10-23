@@ -149,7 +149,14 @@ static struct asym *CreateAssemblyTimeVariable( struct asm_tok tokenarray[] )
 	     * error if referenced symbol is still undefined in pass 2.
 	     */
 	    if( opnd.sym && opnd.sym->state == SYM_UNDEFINED && opnd.indirect == FALSE ) {
-		if ( StoreState == FALSE ) FStoreLine(0); /* make sure this line is evaluated in pass two */
+		if ( StoreState == FALSE )
+		    FStoreLine(0); /* make sure this line is evaluated in pass two */
+	    } else if ( opnd.sym == NULL &&
+			opnd.kind == EXPR_FLOAT && !ModuleInfo.strict_masm_compat ) {
+		opnd.mem_type = MT_REAL16;
+		opnd.kind = EXPR_CONST;
+		opnd.float_tok = NULL;
+		goto check_float;
 	    } else
 		asmerr( 2026 );
 	    return( NULL );
@@ -164,7 +171,7 @@ static struct asym *CreateAssemblyTimeVariable( struct asm_tok tokenarray[] )
 	if ( opnd.quoted_string )
 	    goto check_number;
     }
-
+check_float:
     sym = SymSearch( name );
     if( sym == NULL || sym->state == SYM_UNDEFINED ) {
 	if( sym == NULL ) {

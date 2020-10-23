@@ -77,6 +77,15 @@ __cvti32_q	proto __cdecl :ptr, :long_t
 __cvti64_q	proto __cdecl :ptr, :int64_t
 __cvta_q	proto __cdecl :ptr, :string_t, :ptr string_t
 
+
+__addo		proto __cdecl :ptr, :ptr
+__subo		proto __cdecl :ptr, :ptr
+__mulo		proto __cdecl :ptr, :ptr, :ptr
+__divo		proto __cdecl :ptr, :ptr, :ptr
+__shlo		proto __cdecl :ptr, :int_t, :int_t
+__shro		proto __cdecl :ptr, :int_t, :int_t
+__saro		proto __cdecl :ptr, :int_t, :int_t
+
 ifdef _WIN64
 ifdef _LINUX
 __vectorcall	equ <syscall>

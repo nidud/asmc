@@ -113,14 +113,14 @@ gluBuild2DMipmaps proto WINAPI \
 		  type: GLenum,
 		 _data: ptr
 
-GLUnurbs		typedef GLUnurbs
-GLUquadric		typedef GLUquadric
-GLUtesselator		typedef GLUtesselator
+;GLUnurbs		typedef GLUnurbs
+;GLUquadric		typedef GLUquadric
+;GLUtesselator		typedef GLUtesselator
 
-GLUnurbsObj		typedef GLUnurbs
-GLUquadricObj		typedef GLUquadric
-GLUtesselatorObj	typedef GLUtesselator
-GLUtriangulatorObj	typedef GLUtesselator
+;GLUnurbsObj		typedef GLUnurbs
+;GLUquadricObj		typedef GLUquadric
+;GLUtesselatorObj	typedef GLUtesselator
+;GLUtriangulatorObj	typedef GLUtesselator
 
 
 gluNewQuadric proto WINAPI

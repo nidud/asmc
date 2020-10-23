@@ -3,25 +3,20 @@ include gl/glut.inc
 include tchar.inc
 
     .data
-    hdc     HDC 0
-    hglrc   HGLRC 0
+     hdc     HDC 0
+     hglrc   HGLRC 0
 
     .code
 
-WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch edx
+    .switch message
     .case WM_CREATE
 
        .new pf:PIXELFORMATDESCRIPTOR
+        ZeroMemory(&pf, PIXELFORMATDESCRIPTOR)
 
-        mov hdc,GetDC(rcx)
-        lea rdx,pf
-        mov ecx,PIXELFORMATDESCRIPTOR
-        xor eax,eax
-        xchg rdi,rdx
-        rep stosb
-        mov rdi,rdx
+        mov hdc,GetDC(hWnd)
         mov pf.nSize,       PIXELFORMATDESCRIPTOR
         mov pf.nVersion,    1
         mov pf.dwFlags,     PFD_DRAW_TO_WINDOW or PFD_SUPPORT_OPENGL or PFD_DOUBLEBUFFER
@@ -31,9 +26,11 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov pf.cStencilBits,8
         mov pf.iLayerType,  PFD_MAIN_PLANE
 
-        SetPixelFormat(hdc, ChoosePixelFormat(hdc, &pf), &pf)
+       .new pixelformat:SINT
+        mov pixelformat,ChoosePixelFormat(hdc, &pf)
+        SetPixelFormat(hdc, pixelformat, &pf)
         mov hglrc,wglCreateContext(hdc)
-        wglMakeCurrent(hdc, rax)
+        wglMakeCurrent(hdc, hglrc)
         .endc
 
     .case WM_DESTROY
@@ -44,14 +41,14 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
     .case WM_SIZE
-        movzx r8d,r9w
-        shr r9d,16
-        glViewport(0, 0, r8d, r9d)
+        movzx eax,word ptr lParam
+        movzx ecx,word ptr lParam[2]
+        glViewport(0, 0, eax, ecx)
         .endc
 
     .case WM_PAINT
        .new ps:PAINTSTRUCT
-        BeginPaint(rcx, &ps)
+        BeginPaint(hWnd, &ps)
         glClear(GL_COLOR_BUFFER_BIT)
         glLoadIdentity()
         glBegin(GL_TRIANGLES)
@@ -65,32 +62,29 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
     .case WM_CHAR
-        .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
+        .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
         .endc
     .default
-        .return DefWindowProc(rcx, edx, r8, r9)
+        .return DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
     xor eax,eax
     ret
 
 WndProc endp
 
-_tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
+_tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
   local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
+
+    ZeroMemory(&wc, WNDCLASSEX)
 
     mov wc.cbSize,          WNDCLASSEX
     mov wc.style,           CS_OWNDC
     mov wc.hbrBackground,   COLOR_BACKGROUND
-    mov wc.hInstance,       rcx
+    mov wc.hInstance,       hInstance
     mov wc.lpfnWndProc,     &WndProc
     mov wc.lpszClassName,   &@CStr("GLUT")
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
-    mov wc.cbClsExtra,      0
-    mov wc.cbWndExtra,      0
-    mov wc.lpszMenuName,    NULL
-    mov wc.hIcon,           NULL
-    mov wc.hIconSm,         NULL
 
     .ifd RegisterClassEx(&wc)
 

@@ -119,6 +119,18 @@ static int is_expr_item( struct asm_tok *item )
     switch( item->token ) {
     case T_INSTRUCTION:
 	switch( item->tokval ) {
+	case T_MUL:
+	case T_DIV:
+	    item->token = T_BINARY_OPERATOR;
+	    item->precedence = 8;
+	    return( TRUE );
+	case T_SUB:
+	case T_ADD:
+	    item->token = T_BINARY_OPERATOR;
+	    item->precedence = 7;
+	    return( TRUE );
+	case T_SAL:
+	case T_SAR:
 	case T_SHL:
 	case T_SHR:
 	    item->token = T_BINARY_OPERATOR;
@@ -147,15 +159,11 @@ static int is_expr_item( struct asm_tok *item )
 	/* PROC is converted to a type */
 	if ( item->tokval == T_PROC ) {
 	    item->token = T_STYPE;
-	    /* v2.06: avoid to use ST_PROC */
-	    //item->bytval = ST_PROC;
 	    item->tokval = ( ( SIZE_CODEPTR & ( 1 << ModuleInfo.model ) ) ? T_FAR : T_NEAR );
 	    return( TRUE );
 	}
 	/* fall through. Other directives will end the expression */
     case T_COMMA:
-    //case T_FLOAT: /* v2.05: floats are now handled */
-    //case T_QUESTION_MARK: /* v2.08: no need to be handled here */
 	return( FALSE );
     }
     return( TRUE );
@@ -325,8 +333,10 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
     case T_ID:
 	tmp = tokenarray[i].string_ptr;
 	if ( opnd->is_dot ) {
+	    sym = opnd->type;
+method_ptr:
 	    opnd->value = 0;
-	    sym = ( opnd->type ? SearchNameInStruct( opnd->type, tmp, &opnd->uvalue, 0 ) : NULL );
+	    sym = ( sym ? SearchNameInStruct( sym, tmp, &opnd->uvalue, 0 ) : NULL );
 	    if ( sym == NULL ) {
 		sym = SymFind(tmp);
 		if ( sym ) {
@@ -366,6 +376,18 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 	    if ( sym && ( sym->state == SYM_MACRO || sym->state == SYM_TMACRO ) ) {
 		return fnasmerr( 2148, sym->name );
 	    }
+	    /* added v2.31.55 */
+	    if ( sym == NULL && tokenarray[i-1].token == T_DOT &&
+		 tokenarray[i-2].token == T_ID ) {
+		if ( tokenarray[0].tokval == T_INVOKE ) {
+		    sym = SymFind( tokenarray[i-2].string_ptr );
+		    if ( sym && sym->is_ptr && sym->target_type ) {
+			sym = sym->target_type;
+			goto method_ptr;
+		    }
+		}
+	    }
+
 	    if( Parse_Pass == PASS_1 && !( flags & EXPF_NOUNDEF ) ) {
 		if ( sym == NULL ) {
 		    if ( opnd->type == NULL ) {
@@ -496,6 +518,11 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		opnd->uvalue = sym->uvalue;
 		opnd->hvalue = sym->value3264;
 		opnd->mem_type = sym->mem_type;
+		if ( sym->mem_type == MT_REAL16 && !ModuleInfo.strict_masm_compat ) {
+		    opnd->kind = EXPR_FLOAT;
+		    opnd->float_tok = NULL;
+		    opnd->hlvalue = sym->total_length | (int_64)sym->ext_idx << 32;
+		}
 	    } else if( sym->state == SYM_EXTERNAL &&
 		      sym->mem_type == MT_EMPTY &&
 		      sym->iscomm == 0 ) {
@@ -1665,8 +1692,10 @@ static void cmp_types( struct expr *opnd1, struct expr *opnd2, int trueval )
 static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_tok *oper )
 {
     int_32	temp;
+    int_64	q;
     struct asym *sym;
     char	*name;
+    struct expr opnd;
 
     opnd1->quoted_string = NULL;
     if ( opnd2->hlvalue && opnd2->mem_type != MT_REAL16 ) {
@@ -1811,7 +1840,13 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	}
 	MakeConst( opnd1 );
 	MakeConst( opnd2 );
-	if ( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) )
+	if ( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ||
+	     ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ||
+	     ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_CONST ) )
+	    /* const XX const
+	     * float XX const -- shr/shl/...
+	     * float XX float
+	     */
 	    ;
 	else if ( oper->precedence == 10 &&
 		 opnd1->kind != EXPR_CONST ) {
@@ -1833,65 +1868,155 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	case T_EQ:
 	    if ( opnd1->is_type && opnd2->is_type ) {
 		cmp_types( opnd1, opnd2, -1 );
-	    } else
-	    opnd1->value64 = ( opnd1->value64 == opnd2->value64 ? -1:0 );
+	    } else {
+		q = 0;
+		if ( opnd1->kind == EXPR_FLOAT ) {
+		    q = opnd1->hlvalue - opnd2->hlvalue;
+		    opnd1->hlvalue = 0;
+		    opnd1->kind = EXPR_CONST;
+		    opnd1->mem_type = MT_EMPTY;
+		}
+		q += opnd1->value64;
+		q -= opnd2->value64;
+		opnd1->value64 = ( q == 0 ? -1 : 0 );
+	    }
 	    break;
 	case T_NE:
 	    if ( opnd1->is_type && opnd2->is_type ) {
 		cmp_types( opnd1, opnd2, 0 );
-	    } else
-	    opnd1->value64 = ( opnd1->value64 != opnd2->value64 ? -1:0 );
+	    } else {
+		q = 0;
+		if ( opnd1->kind == EXPR_FLOAT ) {
+		    q = opnd1->hlvalue - opnd2->hlvalue;
+		    opnd1->hlvalue = 0;
+		    opnd1->kind = EXPR_CONST;
+		    opnd1->mem_type = MT_EMPTY;
+		}
+		q += opnd1->value64;
+		q -= opnd2->value64;
+		opnd1->value64 = ( q != 0 ? -1 : 0 );
+	    }
 	    break;
 	case T_LT:
-	    opnd1->value64 = ( opnd1->value64 <	 opnd2->value64 ? -1:0 );
+	    if ( opnd1->kind == EXPR_FLOAT ) {
+		opnd1->llvalue = ( ( __cmpq(opnd1, opnd2) == -1 ) ? -1 : 0 );
+		opnd1->hlvalue = 0;
+		opnd1->kind = EXPR_CONST;
+		opnd1->mem_type = MT_EMPTY;
+	    } else {
+		opnd1->value64 = ( opnd1->value64 < opnd2->value64 ? -1 : 0 );
+	    }
 	    break;
 	case T_LE:
-	    opnd1->value64 = ( opnd1->value64 <= opnd2->value64 ? -1:0 );
+	    if ( opnd1->kind == EXPR_FLOAT ) {
+		opnd1->llvalue = ( ( __cmpq(opnd1, opnd2) != 1 ) ? -1 : 0 );
+		opnd1->hlvalue = 0;
+		opnd1->kind = EXPR_CONST;
+		opnd1->mem_type = MT_EMPTY;
+	    } else {
+		opnd1->value64 = ( opnd1->value64 <= opnd2->value64 ? -1 : 0 );
+	    }
 	    break;
 	case T_GT:
-	    opnd1->value64 = ( opnd1->value64 >	 opnd2->value64 ? -1:0 );
+	    if ( opnd1->kind == EXPR_FLOAT ) {
+		opnd1->llvalue = ( ( __cmpq(opnd1, opnd2) == 1 ) ? -1 : 0 );
+		opnd1->hlvalue = 0;
+		opnd1->kind = EXPR_CONST;
+		opnd1->mem_type = MT_EMPTY;
+	    } else {
+		opnd1->value64 = ( opnd1->value64 > opnd2->value64 ? -1 : 0 );
+	    }
 	    break;
 	case T_GE:
-	    opnd1->value64 = ( opnd1->value64 >= opnd2->value64 ? -1:0 );
+	    if ( opnd1->kind == EXPR_FLOAT ) {
+		opnd1->llvalue = ( ( __cmpq(opnd1, opnd2) != -1 ) ? -1 : 0 );
+		opnd1->hlvalue = 0;
+		opnd1->kind = EXPR_CONST;
+		opnd1->mem_type = MT_EMPTY;
+	    } else {
+		opnd1->value64 = ( opnd1->value64 >= opnd2->value64 ? -1 : 0 );
+	    }
 	    break;
 	case T_MOD:
 	    if ( opnd2->llvalue == 0 ) {
 		return( fnasmerr( 2169 ) );
+	    } else if ( opnd1->kind == EXPR_FLOAT ) {
+		__divo(opnd1, opnd2, &opnd);
+		opnd1->llvalue = opnd.llvalue;
+		opnd1->hlvalue = opnd.hlvalue;
 	    } else
 		opnd1->llvalue %= opnd2->llvalue;
 	    break;
+	case T_SAL:
 	case T_SHL:
-	     ;
-	    if ( opnd2->value < 0 )
+	    if ( opnd2->value < 0 ) {
 		fnasmerr( 2092 );
-	    else if ( opnd2->value >= ( 8 * sizeof( opnd1->llvalue ) ) )
-		opnd1->llvalue = 0;
-	    else
-		opnd1->llvalue = opnd1->llvalue << opnd2->value;
-	    if ( ModuleInfo.m510 ) {
-		opnd1->hvalue = 0;
-		opnd1->hlvalue = 0;
+		break;
 	    }
+	    temp = 64;
+	    if ( opnd1->kind == EXPR_FLOAT )
+		temp = 128;
+	    else if ( ModuleInfo.Ofssize == USE32 )
+		temp = 32;
+	    __shlo(opnd1, opnd2->value, temp);
 	    break;
 	case T_SHR:
-	    if ( opnd2->value < 0 )
+	    if ( opnd2->value < 0 ) {
 		fnasmerr( 2092 );
-	    else if ( opnd2->value >= ( 8 * sizeof( opnd1->llvalue ) ) )
-		opnd1->llvalue = 0;
-	    else {
-		if ( opnd1->value == -1 && ModuleInfo.Ofssize == USE32 )
-		    opnd1->llvalue = (unsigned long)opnd1->llvalue >> opnd2->value;
-		else
-		    opnd1->llvalue = opnd1->llvalue >> opnd2->value;
+		break;
 	    }
+	    temp = 64;
+	    if ( opnd1->kind == EXPR_FLOAT )
+		temp = 128;
+	    else if ( ModuleInfo.Ofssize == USE32 )
+		temp = 32;
+	    __shro(opnd1, opnd2->value, temp);
+	    break;
+	case T_SAR:
+	    if ( opnd2->value < 0 ) {
+		fnasmerr( 2092 );
+		break;
+	    }
+	    temp = 64;
+	    if ( opnd1->kind == EXPR_FLOAT )
+		temp = 128;
+	    else if ( ModuleInfo.Ofssize == USE32 )
+		temp = 32;
+	    __saro(opnd1, opnd2->value, temp);
+	    break;
+	case T_ADD:
+	    if ( opnd1->kind != EXPR_FLOAT )
+		fnasmerr( 2187 );
+	    __addo(opnd1, opnd2);
+	    break;
+	case T_SUB:
+	    if ( opnd1->kind != EXPR_FLOAT )
+		fnasmerr( 2187 );
+	    __subo(opnd1, opnd2);
+	    break;
+	case T_MUL:
+	    if ( opnd1->kind != EXPR_FLOAT )
+		fnasmerr( 2187 );
+	    __mulo(opnd1, opnd2, NULL);
+	    break;
+	case T_DIV:
+	    if ( opnd1->kind != EXPR_FLOAT )
+		fnasmerr( 2187 );
+	    __divo(opnd1, opnd2, &opnd);
 	    break;
 	case T_AND:
+	    if ( opnd1->kind == EXPR_FLOAT )
+		opnd1->hlvalue &= opnd2->hlvalue;
 	    opnd1->llvalue &= opnd2->llvalue;
 	    break;
 	case T_OR:
+	    if ( opnd1->kind == EXPR_FLOAT )
+		opnd1->hlvalue |= opnd2->hlvalue;
 	    opnd1->llvalue |= opnd2->llvalue;
 	    break;
 	case T_XOR:
+	    if ( opnd1->kind == EXPR_FLOAT )
+		opnd1->hlvalue ^= opnd2->hlvalue;
 	    opnd1->llvalue ^= opnd2->llvalue;
 	    break;
 	}
@@ -1899,11 +2024,13 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
     case T_UNARY_OPERATOR:
 	if( oper->tokval == T_NOT ) {
 	    MakeConst( opnd2 );
-	    if( opnd2->kind != EXPR_CONST ) {
+	    if( opnd2->kind != EXPR_CONST && opnd2->kind != EXPR_FLOAT ) {
 		return( fnasmerr( 2026 ) );
 	    }
 	    TokenAssign( opnd1, opnd2 );
 	    opnd1->llvalue = ~(opnd2->llvalue);
+	    if ( opnd1->kind == EXPR_FLOAT )
+		opnd1->hlvalue = ~(opnd2->hlvalue);
 	    break;
 	}
 	temp = SpecialTable[oper->tokval].value;
@@ -2038,7 +2165,9 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
     if ( opnd1->kind == EXPR_EMPTY &&  !( tokenarray[*i].token == T_OP_BRACKET || tokenarray[*i].token == T_OP_SQ_BRACKET || tokenarray[*i].token == '+' || tokenarray[*i].token == '-' || tokenarray[*i].token == T_UNARY_OPERATOR ) ) {
 	rc = get_operand( opnd1, i, tokenarray, flags );
     }
-    while ( rc == NOT_ERROR && *i < end && !( tokenarray[*i].token == T_CL_BRACKET ) && !( tokenarray[*i].token == T_CL_SQ_BRACKET ) ) {
+    while ( rc == NOT_ERROR && *i < end && tokenarray[*i].token != T_CL_BRACKET
+	    && tokenarray[*i].token != T_CL_SQ_BRACKET ) {
+
 	int curr_operator;
 	struct expr opnd2;
 	curr_operator = *i;
@@ -2064,16 +2193,6 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    break;
 		}
 	    }
-#if 0
-	    if ( opnd1->kind == EXPR_FLOAT && opnd1->mem_type != MT_REAL16 ) {
-		if ( tokenarray[curr_operator].token == '*' ||
-		     tokenarray[curr_operator].token == '/' ||
-		     tokenarray[curr_operator].specval == 1 ) {
-		    opnd1->mem_type = MT_REAL16;
-		    atofloat( opnd1->chararray, opnd1->float_tok->string_ptr, 16, opnd1->negative, 0);
-		}
-	    }
-#endif
 	}
 	(*i)++;
 	init_expr( &opnd2 );

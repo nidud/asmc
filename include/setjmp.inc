@@ -59,10 +59,9 @@ elseifdef _M_X64
 
 endif
 
-setjmp equ <_setjmp>
-
 jmp_buf typedef ptr _JUMP_BUFFER
 
+setjmp proto __cdecl :jmp_buf
 _setjmp proto __cdecl :jmp_buf
 longjmp proto __cdecl :jmp_buf, :int_t
 

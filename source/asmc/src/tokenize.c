@@ -493,8 +493,14 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		    tok += 2;
 		    goto case_type;
 
-		} else
+		} else {
+
+		    while ( (tok-1)->token == T_DOT &&
+			    (tok-2)->token == T_ID ) {
+			tok -= 2;
+		    }
 		    sym = SymFind( tok->string_ptr );
+		}
 
 	    } else
 		sym = SymFind( tok->string_ptr );

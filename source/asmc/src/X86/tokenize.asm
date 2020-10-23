@@ -616,12 +616,12 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                     mov edx,SYM_TYPE
 
                 .else
-if 1
+
                     .while [edi-16].asm_tok.token == T_DOT && \
-                        [edi-32].asm_tok.token == T_ID
+                           [edi-32].asm_tok.token == T_ID
                         lea edi,[edi-32]
                     .endw
-endif
+
                     SymFind([edi].asm_tok.string_ptr)
                     xor edx,edx
 

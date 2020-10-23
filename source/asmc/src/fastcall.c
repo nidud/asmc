@@ -875,9 +875,19 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		    AddLineQueueX( " or  %r,rax", i32 );
 		}
 	    } else {
-		if ( opnd->kind == EXPR_FLOAT ) /* added v2.31 */
-		    i = ms64_regs[index+3*4];
-		AddLineQueueX( " mov %r, %s", i, paramvalue );
+
+		if ( opnd->sym && index == 0 && opnd->mbr && opnd->kind == EXPR_ADDR &&
+		     opnd->indirect && opnd->sym->is_ptr && proc->sym.method ) {
+
+		    AddLineQueueX( " mov rax, %s", opnd->sym->name );
+		    AddLineQueueX( " mov rcx, [rax].%s.%s",
+			opnd->sym->target_type->name, opnd->mbr->name );
+		} else {
+
+		    if ( opnd->kind == EXPR_FLOAT ) /* added v2.31 */
+			i = ms64_regs[index+3*4];
+		    AddLineQueueX( " mov %r, %s", i, paramvalue );
+		}
 	    }
 	}
 	*regs_used |= ( 1 << ( index + RPAR_START ) );
@@ -1452,7 +1462,7 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
     }
 
     if ( addr ) {
-	if ( opnd->kind == T_REG || opnd->sym->state == SYM_STACK ) {
+	if ( opnd->kind == EXPR_REG || opnd->sym->state == SYM_STACK ) {
 	    opc = T_LEA;
 	    qual = T_NULL;
 	} else {
@@ -1495,7 +1505,7 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
 		    AddLineQueueX( "mov %s, %r (%s)", reg[i], qual, paramvalue );
 		else
 		    AddLineQueueX( "mov %s, %s", reg[i], paramvalue );
-	    } else if ( opnd->kind == EXPR_REG ) {
+	    } else if ( opnd->kind == EXPR_REG && !opnd->indirect ) {
 		b = opnd->base_reg->tokval;
 		a = param->sym.regist[0];
 		if ( reg[i+1] ) {

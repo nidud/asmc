@@ -12,10 +12,12 @@ include setjmp.inc
 
     assume eax:jmp_buf
 
-;setjmp::
 _setjmp3::
 
-_setjmp proc c buf:jmp_buf
+setjmp proc buf:jmp_buf
+setjmp endp
+
+_setjmp proc buf:jmp_buf
 
     mov eax,[esp+4]
     mov [eax]._Ebp,ebp

@@ -1391,7 +1391,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     if ( *dst )
 	strcat( dst, EOLSTR );
     strcat( dst, b );
-    return StripSource( i, k + level, tokenarray );
+    return StripSource( i - level, k, tokenarray );
 }
 
 static int RenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )

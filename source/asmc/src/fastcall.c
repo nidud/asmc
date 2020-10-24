@@ -16,6 +16,7 @@
 #include <tokenize.h>
 #include <fastpass.h>
 #include <quadmath.h>
+#include <atofloat.h>
 
 extern int stackreg[];
 extern int size_vararg; /* size of :VARARG arguments */
@@ -250,6 +251,21 @@ static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
 		    AddLineQueueX( " pushd %r (%s)", T_LOW32, paramvalue );
 		    AddLineQueueX( " movq %r, [esp]", reg );
 		    AddLineQueue ( " add esp, 8" );
+		} else if ( param->sym.mem_type == MT_REAL16 ) {
+		    char h[64];
+		    char l[64];
+		    char *p = paramvalue;
+		    if ( opnd->float_tok )
+			p = opnd->float_tok->string_ptr;
+		    sprintf( h, "0x%016" I64_SPEC "X", opnd->hlvalue );
+		    sprintf( l, "0x%016" I64_SPEC "X", opnd->llvalue );
+		    atofloat( opnd, p, 16, opnd->negative, 0 );
+		    AddLineQueueX( " pushd %r (%s)", T_HIGH32, h );
+		    AddLineQueueX( " pushd %r (%s)", T_LOW32,  h );
+		    AddLineQueueX( " pushd %r (%s)", T_HIGH32, l );
+		    AddLineQueueX( " pushd %r (%s)", T_LOW32,  l );
+		    AddLineQueueX( " movups %r, [esp]", reg );
+		    AddLineQueueX( " add esp, 16" );
 		} else
 		    AddLineQueueX( " movaps %r, %s", reg, paramvalue );
 	    } else {

@@ -43,57 +43,66 @@ const int_64 minintvalues[] = { 0xffffffff00000000i64, 0xffffffff00000000i64,
 static void SetValue( struct asym *sym, struct expr *opndx )
 /**********************************************************/
 {
-
     sym->isequate = TRUE;
     sym->state = SYM_INTERNAL;
     sym->isdefined = TRUE;
-    if ( opndx->kind == EXPR_CONST ) {
-	sym->mem_type = opndx->mem_type;
+    sym->isproc = FALSE;
+
+    if ( opndx->kind == EXPR_CONST ||
+	( opndx->kind == EXPR_FLOAT && opndx->float_tok == NULL ) ) {
+
 	sym->uvalue = opndx->uvalue;
 	sym->value3264 = opndx->hvalue;
-	sym->segment = NULL;
-	sym->isproc = FALSE;
-    } else {
-	sym->isproc = opndx->sym->isproc;
-	/* for a PROC alias, copy the procinfo extension! */
-	if ( sym->isproc ) {
-	    struct dsym *dir = (struct dsym *)sym;
-	    dir->e.procinfo = ((struct dsym *)opndx->sym)->e.procinfo;
-	    /* v2.12: must be copied as well, or INVOKE won't work correctly */
-	    sym->langtype = opndx->sym->langtype;
-	}
 	sym->mem_type = opndx->mem_type;
-	/* v2.01: allow equates of variables with arbitrary type.
-	 * Currently the expression evaluator sets opndx.mem_type
-	 * to the mem_type of the type (i.e. QWORD for a struct with size 8),
-	 * which is a bad idea in this case. So the original mem_type of the
-	 * label is used instead.
-	 */
-	if ( opndx->sym->mem_type == MT_TYPE && opndx->explicit == FALSE ) {
-	    sym->mem_type = opndx->sym->mem_type;
-	    sym->type = opndx->sym->type;
+	if ( sym->mem_type == MT_REAL16 && !ModuleInfo.strict_masm_compat ) {
+	    sym->total_length = (uint_32)opndx->hlvalue;
+	    sym->ext_idx = opndx->hlvalue >> 32;
 	}
-	sym->value3264 = 0; /* v2.09: added */
-	sym->segment = opndx->sym->segment;
+	sym->segment = NULL;
+	return;
+    }
 
-	/* labels are supposed to be added to the current segment's label_list chain.
-	 * this isn't done for alias equates, for various reasons.
-	 * consequently, if the alias was forward referenced, ensure that a third pass
-	 * will be done! regression test forward5.asm.
-	 */
-	if ( sym->variable ) {
-	    sym->offset = opndx->sym->offset + opndx->value;
-	    if ( Parse_Pass == PASS_2 && sym->fwdref ) {
-		ModuleInfo.PhaseError = TRUE;
-	    }
-	} else {
-	    if( Parse_Pass != PASS_1 && sym->offset != ( opndx->sym->offset + opndx->value ) ) {
-		ModuleInfo.PhaseError = TRUE;
-	    }
-	    sym->offset = opndx->sym->offset + opndx->value;
-	    BackPatch( sym );
+    if ( opndx->sym->isproc ) {
+
+	/* for a PROC alias, copy the procinfo extension! */
+	struct dsym *dir = (struct dsym *)sym;
+	dir->e.procinfo = ((struct dsym *)opndx->sym)->e.procinfo;
+	sym->isproc = TRUE;
+	/* v2.12: must be copied as well, or INVOKE won't work correctly */
+	sym->langtype = opndx->sym->langtype;
+    }
+    sym->mem_type = opndx->mem_type;
+
+
+    /* v2.01: allow equates of variables with arbitrary type.
+     * Currently the expression evaluator sets opndx.mem_type
+     * to the mem_type of the type (i.e. QWORD for a struct with size 8),
+     * which is a bad idea in this case. So the original mem_type of the
+     * label is used instead.
+     */
+    if ( opndx->sym->mem_type == MT_TYPE && opndx->explicit == FALSE ) {
+	sym->mem_type = opndx->sym->mem_type;
+	sym->type = opndx->sym->type;
+    }
+    sym->value3264 = 0; /* v2.09: added */
+    sym->segment = opndx->sym->segment;
+
+    /* labels are supposed to be added to the current segment's label_list chain.
+     * this isn't done for alias equates, for various reasons.
+     * consequently, if the alias was forward referenced, ensure that a third pass
+     * will be done! regression test forward5.asm.
+     */
+    if ( sym->variable ) {
+	sym->offset = opndx->sym->offset + opndx->value;
+	if ( Parse_Pass == PASS_2 && sym->fwdref ) {
+	    ModuleInfo.PhaseError = TRUE;
 	}
-
+    } else {
+	if( Parse_Pass != PASS_1 && sym->offset != ( opndx->sym->offset + opndx->value ) ) {
+	    ModuleInfo.PhaseError = TRUE;
+	}
+	sym->offset = opndx->sym->offset + opndx->value;
+	BackPatch( sym );
     }
     return;
 }

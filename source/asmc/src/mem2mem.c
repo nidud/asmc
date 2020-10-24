@@ -55,6 +55,8 @@ int mem2mem( unsigned op1, unsigned op2, struct asm_tok tokenarray[], struct exp
     i = SizeFromExpression( &opnd[1] );
     if ( i && i < size )
 	size = i;
+    else if ( size == 0 && opnd->mem_type == MT_EMPTY )
+	size = i;
 
     r1 = reg;
     switch ( o1 ) {

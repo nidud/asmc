@@ -7,4 +7,4 @@ sysdll.exe:
     asmc64 $*.asm
     linkw sys con_64 file $*
 !endif
-    $@ /def msvcrt
+    $@ /lib msvcrt

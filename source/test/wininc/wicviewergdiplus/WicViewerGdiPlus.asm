@@ -60,7 +60,7 @@ DemoApp::DemoApp proc
 DemoApp::DemoApp endp
 
 
-wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, nCmdShow:SINT
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, nCmdShow:SINT
 
     local hr:HRESULT
 

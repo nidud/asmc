@@ -4,6 +4,9 @@
 ;
 include Direct2DHelloWorld.inc
 
+.pragma warning(disable: 6004) ; procedure argument or local not referenced
+.pragma warning(disable: 7007) ; .CASE without .ENDC: assumed fall through
+
 .code
 
 ;;
@@ -30,6 +33,7 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, in
 
             app.RunMessageLoop()
         .endif
+        app.Release()
         CoUninitialize()
     .endif
     xor eax,eax
@@ -212,13 +216,13 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
         ;; Create a DirectWrite text format object.
 
         mov hr,this.m_pDWriteFactory.CreateTextFormat(
-            "Verdana",
+            L"Verdana",
             NULL,
             DWRITE_FONT_WEIGHT_NORMAL,
             DWRITE_FONT_STYLE_NORMAL,
             DWRITE_FONT_STRETCH_NORMAL,
             50.0,
-            "",
+            L"",
             &[rsi].m_pTextFormat
             )
     .endif
@@ -349,7 +353,7 @@ DemoApp::OnRender proc uses rsi
         pRT.SetTransform(m.Identity())
         pRT.Clear(c.Init(White, 1.0))
         pRT.DrawText(
-            "Hello, World!",
+            L"Hello, World!",
             13,
             [rsi].m_pTextFormat,
             &rc,

@@ -1,8 +1,7 @@
-SaveIcon.exe:
-    asmc64 $*.asm
-    linkw sys gui_64 file $*
-    $@
-    del $*.obj
-    dir | find ".ico"
-    pause
-
+IPicture.exe:
+    asmc64 -pe -gui $*.asm
+    if exist $@ (
+      $@
+      dir *.ico | find "result"
+      pause
+    )

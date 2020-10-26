@@ -258,62 +258,62 @@ endif
 
 ifdef __MACHINEX64
 
-_InterlockedAnd proto :ptr, :long_t {
+_InterlockedAnd proto fastcall :ptr, :long_t {
     mov     eax,[rcx]
     lock    and [rcx],edx
     }
 
-_InterlockedAnd8 proto :ptr, :byte {
+_InterlockedAnd8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    and [rcx],dl
     }
 
-_InterlockedAnd16 proto :ptr, :word {
+_InterlockedAnd16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    and [rcx],dx
     }
 
-_InterlockedAnd64 proto :ptr, :qword {
+_InterlockedAnd64 proto fastcall :ptr, :qword {
     mov     rax,[rcx]
     lock    and [rcx],rdx
     }
 
-_InterlockedOr proto :ptr, :long_t {
+_InterlockedOr proto fastcall :ptr, :long_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
     }
 
-_InterlockedOr8 proto :ptr, :byte {
+_InterlockedOr8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    or [rcx],dl
     }
 
-_InterlockedOr16 proto :ptr, :word {
+_InterlockedOr16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    or [rcx],dx
     }
 
-_InterlockedOr64 proto :ptr, :qword {
+_InterlockedOr64 proto fastcall :ptr, :qword {
     mov     rax,[rcx]
     lock    or [rcx],rdx
     }
 
-_InterlockedXor proto :ptr, :long_t {
+_InterlockedXor proto fastcall :ptr, :long_t {
     mov     eax,[rcx]
     lock    or [rcx],edx
     }
 
-_InterlockedXor8 proto :ptr, :byte {
+_InterlockedXor8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    xor [rcx],dl
     }
 
-_InterlockedXor16 proto :ptr, :word {
+_InterlockedXor16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    xor [rcx],dx
     }
 
-_InterlockedXor64 proto :ptr, :qword {
+_InterlockedXor64 proto fastcall :ptr, :qword {
     mov     rax,[rcx]
     lock    xor [rcx],rdx
     }
@@ -342,109 +342,113 @@ _InterlockedCompareExchange_np          equ <_InterlockedCompareExchange>
 endif ;; __MACHINEX64
 
 ifdef __MACHINEX86
-__addfsbyte macro offs, b
-    assume fs:nothing
-    add byte ptr fs:[offs],b
-    assume fs:error
-    retm<>
-    endm
-__addfsdword macro offs, w
-    assume fs:nothing
-    add word ptr fs:[offs],w
-    assume fs:error
-    retm<>
-    endm
-__addfsword macro offs, l
-    assume fs:nothing
-    add dword ptr fs:[offs],l
-    assume fs:error
-    retm<>
-    endm
-__readfsbyte macro offs
-    assume fs:nothing
-    mov al,fs:[offs]
-    assume fs:error
-    retm<al>
-    endm
-__readfsdword macro offs
-    assume fs:nothing
-    mov eax,fs:[offs]
-    assume fs:error
-    retm<eax>
-    endm
-__readfsqword macro offs
-    assume fs:nothing
-    mov eax,fs:[offs]
-    mov edx,fs:[offs+4]
-    assume fs:error
-    retm<eax>
-    endm
-__readfsword macro offs
-    assume fs:nothing
-    mov ax,fs:[offs]
-    assume fs:error
-    retm<ax>
-    endm
+
+__addfsbyte proto fastcall :ptr, :byte {
+    assume  fs:nothing
+    add     fs:[rcx],dl
+    assume  fs:error
+    }
+
+__addfsword proto fastcall :ptr, :word {
+    assume  fs:nothing
+    add     fs:[rcx],dx
+    assume  fs:error
+    }
+
+__addfsdword proto fastcall :ptr, :dword {
+    assume  fs:nothing
+    add     fs:[rcx],edx
+    assume  fs:error
+    }
+
+__readfsbyte proto fastcall :ptr {
+    assume  fs:nothing
+    mov al, fs:[rcx]
+    assume  fs:error
+    }
+
+__readfsdword proto fastcall :ptr {
+    assume  fs:nothing
+    mov     eax,fs:[rcx]
+    assume  fs:error
+    }
+
+__readfsqword proto fastcall :ptr {
+    assume  fs:nothing
+ifdef _WIN64
+    mov     rax,fs:[rcx]
+else
+    mov     eax,fs:[rcx]
+    mov     edx,fs:[rcx+4]
+endif
+    assume  fs:error
+    }
+
+__readfsword proto fastcall :ptr {
+    assume  fs:nothing
+    mov     ax,fs:[rcx]
+    assume  fs:error
+    }
+
 endif
 
 ifdef __MACHINEX64
-__addgsbyte proto :ptr, :byte {
+
+__addgsbyte proto fastcall :ptr, :byte {
     add     gs:[rcx],dl
     }
-__addgsword proto :ptr, :word {
+__addgsword proto fastcall :ptr, :word {
     add     gs:[rcx],dx
     }
-__addgsdword proto :ptr, :dword {
+__addgsdword proto fastcall :ptr, :dword {
     add     gs:[rcx],edx
     }
-__addgsqword proto :ptr, :qword {
+__addgsqword proto fastcall :ptr, :qword {
     add     gs:[rcx],rdx
     }
-__incgsbyte proto :ptr {
+__incgsbyte proto fastcall :ptr {
     inc     byte ptr gs:[rcx]
     }
-__incgsdword proto :ptr {
+__incgsdword proto fastcall :ptr {
     inc     dword ptr gs:[rcx]
     }
-__incgsqword proto :ptr {
+__incgsqword proto fastcall :ptr {
     inc     qword ptr gs:[rcx]
     }
-__incgsword proto :ptr {
+__incgsword proto fastcall :ptr {
     inc     word ptr gs:[rcx]
     }
-__readgsbyte proto :ptr {
+__readgsbyte proto fastcall :ptr {
     movzx   eax,byte ptr gs:[rcx]
     }
-__readgsdword proto :ptr {
+__readgsdword proto fastcall :ptr {
     mov     eax,gs:[rcx]
     }
-__readgsqword proto :ptr {
+__readgsqword proto fastcall :ptr {
     mov     rax,gs:[rcx]
     }
-__readgsword proto :ptr {
+__readgsword proto fastcall :ptr {
     movzx   eax,word ptr gs:[rcx]
     }
 endif
 
 ifdef __MACHINEX86
-__incfsbyte macro offs
-    assume fs:nothing
-    inc byte ptr fs:[offs]
-    assume fs:error
-    retm<>
-    endm
-__incfsdword macro offs
-    assume fs:nothing
-    inc dword ptr fs:[offs]
-    assume fs:error
-    retm<>
-    endm
-__incfsword macro offs
-    assume fs:nothing
-    inc word ptr fs:[offs]
-    assume fs:error
-    retm<>
-    endm
+
+__incfsbyte proto fastcall :ptr {
+    assume  fs:nothing
+    inc     byte ptr fs:[rcx]
+    assume  fs:error
+    }
+__incfsdword proto fastcall :ptr {
+    assume  fs:nothing
+    inc     dword ptr fs:[rcx]
+    assume  fs:error
+    }
+__incfsword proto fastcall :ptr {
+    assume  fs:nothing
+    inc     word ptr fs:[rcx]
+    assume  fs:error
+    }
 endif
 
 ifdef __MACHINEX86_X64
@@ -453,11 +457,11 @@ __clts macro
     exitm<clts>
     endm
 
-__cpuid proto __fascall :ptr, :int_t {
+__cpuid proto fastcall :ptr, :int_t {
     push    rsi
     push    rbx
-    mov     rsi,this
-    mov     eax,_1
+    mov     rsi,rcx
+    mov     eax,edx
     xor     ecx,ecx
     cpuid
     mov     [rsi],eax
@@ -468,7 +472,7 @@ __cpuid proto __fascall :ptr, :int_t {
     pop     rsi
     }
 
-__cpuidex proto __fascall :ptr_t, :int_t, :int_t {
+__cpuidex proto fastcall :ptr_t, :int_t, :int_t {
     push    rsi
     push    rbx
     mov     rsi,this
@@ -483,13 +487,13 @@ __cpuidex proto __fascall :ptr_t, :int_t, :int_t {
     pop     rsi
     }
 
-__emul proto :int_t, :int_t {
-    movsxd  r8,ecx
+__emul proto fastcall :int_t, :int_t {
+    movsxd  rcx,ecx
     movsxd  rax,edx
-    imul    r8
+    imul    rcx
     }
 
-__emulu proto :int_t, :int_t {
+__emulu proto fastcall :int_t, :int_t {
     mov     eax,b
     mul     rcx
     }
@@ -558,19 +562,19 @@ _umul128 equ <_mul128>
 
 ifdef __MACHINEX86_X64
 
-__ll_lshift proto :qword, :dword {
+__ll_lshift proto fastcall :qword, :dword {
     mov     rax,rcx
     mov     ecx,edx
     shl     rax,cl
     }
 
-__ll_rshift proto :qword, :dword {
+__ll_rshift proto fastcall :qword, :dword {
     mov     rax,rcx
     mov     ecx,edx
     sar     rax,cl
     }
 
-__ull_rshift proto :qword, :dword {
+__ull_rshift proto fastcall :qword, :dword {
     mov     rax,rcx
     mov     ecx,edx
     shr     rax,cl
@@ -1057,25 +1061,25 @@ endif
 
 ifdef __MACHINEX86
 
-__writefsbyte proto :ptr, :byte {
+__writefsbyte proto fastcall :ptr, :byte {
     assume  fs:nothing
     mov     fs:[rcx],dl
     assume  fs:error
     }
 
-__writefsdword proto :ptr, :dword {
+__writefsdword proto fastcall :ptr, :dword {
     assume  fs:nothing
     mov     fs:[rcx],edx
     assume  fs:error
     }
 
-__writefsqword proto :ptr, :qword {
+__writefsqword proto fastcall :ptr, :qword {
     assume  fs:nothing
     mov     fs:[rcx],rdx
     assume  fs:error
     }
 
-__writefsword proto :ptr, :word {
+__writefsword proto fastcall :ptr, :word {
     assume  fs:nothing
     mov     fs:[rcx],dx
     assume  fs:error

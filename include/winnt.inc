@@ -2271,22 +2271,17 @@ BitScanReverse		equ <_BitScanReverse>
 
 else
 
-;FORCEINLINE
-;BOOLEAN
-InterlockedBitTestAndSet macro Base, Bit
-	mov	eax,Bit
-	mov	ecx,Base
-	lock	bts [ecx],eax
+InterlockedBitTestAndSet proto fastcall :ptr, :dword {
+	mov	eax,edx
+	lock	bts [rcx],eax
 	setc	al
-	endm
+	}
 
-;BOOLEAN
-InterlockedBitTestAndReset macro Base, Bit
-	mov	eax,Bit
-	mov	ecx,Base
-	lock	btr [ecx],eax
+InterlockedBitTestAndReset proto fastcall :ptr, :dword {
+	mov	eax,edx
+	lock	btr [rcx],eax
 	setc	al
-	endm
+	}
 
 endif
 
@@ -2300,37 +2295,33 @@ endif
 
 ifndef _M_CEE_PURE
 
-;FORCEINLINE
-;BOOLEAN
-InterlockedBitTestAndComplement macro Base, Bit
-	mov	eax,Bit
-	mov	ecx,Base
-	lock	btc [ecx], eax
+InterlockedBitTestAndComplement proto fastcall :ptr, :dword {
+	mov	eax,edx
+	lock	btc [rcx],eax
 	setc	al
-	endm
+	}
 endif
 
 if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 
-__writefsbyte macro offs, val
-    assume fs:nothing
-    mov byte ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
-__writefsdword macro offs, val
-    assume fs:nothing
-    mov dword ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
-__writefsword macro offs, val
-    assume fs:nothing
-    mov word ptr fs:[offs],val
-    assume fs:error
-    retm<>
-    endm
+__writefsbyte proto fastcall :ptr, :byte {
+    assume  fs:nothing
+    mov	    fs:[rcx],dl
+    assume  fs:error
+    }
+
+__writefsword proto fastcall :ptr, :word {
+    assume  fs:nothing
+    mov	    fs:[rcx],dx
+    assume  fs:error
+    }
+
+__writefsdword proto fastcall :ptr, :dword {
+    assume  fs:nothing
+    mov	    fs:[rcx],edx
+    assume  fs:error
+    }
 
 endif
 
@@ -2338,43 +2329,37 @@ if (_MSC_FULL_VER GE 140050727) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ifndef _MANAGED
 
-__addfsbyte macro offs, b
-    assume fs:nothing
-    add byte ptr fs:[offs],b
-    assume fs:error
-    retm<>
-    endm
-__addfsdword macro offs, w
-    assume fs:nothing
-    add word ptr fs:[offs],w
-    assume fs:error
-    retm<>
-    endm
-__addfsword macro offs, l
-    assume fs:nothing
-    add dword ptr fs:[offs],l
-    assume fs:error
-    retm<>
-    endm
+__addfsbyte proto fastcall :ptr, :byte {
+    assume  fs:nothing
+    add	    fs:[rcx],dl
+    assume  fs:error
+    }
+__addfsword proto fastcall :ptr, :word {
+    assume  fs:nothing
+    add	    fs:[rcx],dx
+    assume  fs:error
+    }
+__addfsdword proto fastcall :ptr, :dword {
+    assume  fs:nothing
+    add	    fs:[rcx],edx
+    assume  fs:error
+    }
 
-__incfsbyte macro offs, b
-    assume fs:nothing
-    inc byte ptr fs:[offs],b
-    assume fs:error
-    retm<>
-    endm
-__incfsdword macro offs, w
-    assume fs:nothing
-    inc word ptr fs:[offs],w
-    assume fs:error
-    retm<>
-    endm
-__incfsword macro offs, l
-    assume fs:nothing
-    inc dword ptr fs:[offs],l
-    assume fs:error
-    retm<>
-    endm
+__incfsbyte proto fastcall :ptr {
+    assume  fs:nothing
+    inc	    byte ptr fs:[rcx]
+    assume  fs:error
+    }
+__incfsword proto fastcall :ptr {
+    assume  fs:nothing
+    inc	    word ptr fs:[rcx]
+    assume  fs:error
+    }
+__incfsdword proto fastcall :ptr {
+    assume  fs:nothing
+    inc	    dword ptr fs:[rcx]
+    assume  fs:error
+    }
 
 endif
 endif

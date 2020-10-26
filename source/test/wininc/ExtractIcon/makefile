@@ -1,7 +1,6 @@
-test.exe:
-    asmc64 -pe -gui $*.asm
+
+ExtractIcon.exe:
+    asmc -win64 -pe -gui $*.asm
     if exist $@ (
       $@
-      dir *.ico | find "result"
-      pause
     )

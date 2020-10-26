@@ -103,6 +103,7 @@ CAmsiStreamBase::BaseGetAttribute proc uses rsi attribute:AMSI_ATTRIBUTE,
 
 CAmsiStreamBase::BaseGetAttribute endp
 
+
 CAmsiStreamBase::CAmsiStreamBase proc uses rsi rdi
 
     mov rsi,malloc(CAmsiStreamBase + CAmsiStreamBaseVtbl)
@@ -120,6 +121,7 @@ CAmsiStreamBase::CAmsiStreamBase endp
 
 ;; CAmsiMemoryStream
 
+    assume rsi:ptr CAmsiMemoryStream
 
 CAmsiMemoryStream::BaseGetAttribute proc uses rsi attribute:AMSI_ATTRIBUTE,
         bufferSize:ULONG, buffer:PBYTE, actualSize:ptr ULONG
@@ -368,7 +370,6 @@ ScanArguments proc uses rsi rdi rbx argc:SINT, argv:ptr ptr wchar_t
     .return S_OK
 
 ScanArguments endp
-
 
 wmain proc argc:SINT, argv:ptr ptr WCHAR
 

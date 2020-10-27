@@ -7,9 +7,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <RootNamespace>glu</RootNamespace>
+    <RootNamespace>ListViewSample</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{B0120D4F-7A16-4E11-9321-1734F5B0AE79}</ProjectGuid>
+    <ProjectGuid>{ADDD1004-1B07-4BB7-AB2C-6112E0CCEEB9}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -41,18 +41,26 @@
       <EnableAssemblyGeneratedCodeListing>true</EnableAssemblyGeneratedCodeListing>
       <AssembledCodeListingFile>$(IntDir)\%(filename).lst</AssembledCodeListingFile>
     </ASMC>
+    <PreLinkEvent>
+      <Command>echo IDR_PIXEL_SHADER RCDATA $(OutDir)ListViewSample.fxo &gt; $(OutDir)ListViewSample.resinclude</Command>
+    </PreLinkEvent>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <EntryPointSymbol>WinStart</EntryPointSymbol>
+      <EntryPointSymbol>wWinStart</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="glu.asm">
+    <ASMC Include="ListViewSample.asm">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">3</WarningLevel>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-ws</AdditionalOptions>
     </ASMC>
+    <ClInclude Include="ListViewSample.inc">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

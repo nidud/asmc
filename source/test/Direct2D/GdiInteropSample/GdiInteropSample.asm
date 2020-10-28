@@ -4,6 +4,9 @@
 ;
 include GdiInteropSample.inc
 
+.pragma warning(disable: 6004) ; procedure argument or local not referenced
+.pragma warning(disable: 7007) ; .CASE without .ENDC: assumed fall through
+
 .code
 ;******************************************************************
 ;*                                                                *

@@ -8,6 +8,8 @@ include ListViewSample.inc
 ;*  Application entrypoint                                         *
 ;*                                                                 *
 ;******************************************************************/
+.pragma warning(disable: 6004) ; procedure argument or local not referenced
+.pragma warning(disable: 7007) ; .CASE without .ENDC: assumed fall through
 
 .code
 
@@ -293,6 +295,8 @@ ListViewApp::CreateDeviceIndependentResources proc uses rsi
     msc_fontSize equ 20.0
 
     local hr:HRESULT
+
+    mov rsi,rcx
 
     ;;create D2D factory
     mov hr,D2D1CreateFactory(
@@ -1844,18 +1848,19 @@ ListViewApp::OnVScroll proc uses rsi rdi rbx wParam:WPARAM, lParam:LPARAM
     mov [rsi].m_previousScrollPos,eax
     mov [rsi].m_currentScrollPos,ebx
 
-   .new s:SCROLLINFO
-    mov s.fMask,SIF_PAGE or SIF_POS or SIF_RANGE or SIF_TRACKPOS
-    .if !GetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s)
+   .new ScrollInfo:SCROLLINFO
+    mov ScrollInfo.fMask,SIF_PAGE or SIF_POS or SIF_RANGE or SIF_TRACKPOS
+
+    .if !GetScrollInfo([rsi].m_parentHwnd, SB_VERT, &ScrollInfo)
 
         .Assert(eax)
         .return
     .endif
 
-    .if ([rsi].m_currentScrollPos != s.nPos)
+    .if ([rsi].m_currentScrollPos != ScrollInfo.nPos)
 
-        mov s.nPos,[rsi].m_currentScrollPos
-        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s, TRUE)
+        mov ScrollInfo.nPos,[rsi].m_currentScrollPos
+        SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &ScrollInfo, TRUE)
 
         mov [rsi].m_animatingScroll,msc_totalAnimatingScrollFrames
         InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)

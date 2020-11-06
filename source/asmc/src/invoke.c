@@ -963,8 +963,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    }
 
 	} else if ( tokenarray[namepos].token == T_OP_SQ_BRACKET &&
-		tokenarray[namepos+3].token == T_DOT && opnd.mbr &&
-		opnd.mbr->method && ModuleInfo.Ofssize == USE64 ) {
+		tokenarray[namepos+3].token == T_DOT && opnd.mbr /*&&
+		opnd.mbr->method && ModuleInfo.Ofssize == USE64*/ ) {
 
 	    strcpy(buffer, tokenarray[namepos+4].string_ptr);
 	    buffer[strlen(buffer)-4] = '\0';
@@ -981,11 +981,11 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	    if ( macro && macro->state != SYM_MACRO )
 		macro = NULL;
-	    else {
+	    //else {
 		proc->sym.method = 1;
 		if ( macro )
 		    proc->sym.isinline = 1;
-	    }
+	    //}
 	}
     }
 
@@ -1221,6 +1221,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			 tokenarray[parmpos+1].tokval > T_EAX &&
 			 tokenarray[parmpos+1].tokval <= T_EDI )
 			reg = tokenarray[parmpos+1].tokval;
+		    else if ( tokenarray[parmpos+1].token == T_RES_ID &&
+			      tokenarray[parmpos+1].tokval == T_ADDR )
+			AddLineQueueX( " lea %r, %s", T_EAX, tokenarray[parmpos+2].string_ptr );
 		    else
 			AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
 		}

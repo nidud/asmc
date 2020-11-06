@@ -196,8 +196,11 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     ;; Create a Direct2D factory.
 
-    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
+    mov hr,D2D1CreateFactory(
+        D2D1_FACTORY_TYPE_SINGLE_THREADED,
+        &IID_ID2D1Factory,
+        NULL,
+        &[rsi].m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 

@@ -1,13 +1,16 @@
 .pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 475
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __dxgi1_2_h__
 __dxgi1_2_h__ equ <>
 
@@ -23,6 +26,7 @@ endif
 ifndef __IDXGIAdapter2_FWD_DEFINED__
 __IDXGIAdapter2_FWD_DEFINED__ equ 1
 endif
+
 include dxgi.inc
 
 .enum DXGI_OFFER_RESOURCE_PRIORITY {
@@ -173,5 +177,23 @@ DEFINE_GUID(IID_IDXGIAdapter2, 0x0aa1ae0a, 0xfa0e, 0x4b84, 0x86,0x44, 0xe0,0x5f,
     .ends
 
 endif
+
+ifndef __IDXGIOutput1_INTERFACE_DEFINED__
+__IDXGIOutput1_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IDXGIOutput1, "00cddea8-939b-4b83-a340-a685226666cc")
+
+.comdef IDXGIOutput1 : public IDXGIOutput
+
+    GetDisplayModeList1 proc :DXGI_FORMAT, :UINT, :ptr UINT, :ptr DXGI_MODE_DESC1
+    FindClosestMatchingMode1 proc :ptr DXGI_MODE_DESC1, :ptr DXGI_MODE_DESC1, :ptr IUnknown
+    GetDisplaySurfaceData1 proc :ptr IDXGIResource
+    DuplicateOutput	proc :ptr IUnknown, :ptr ptr IDXGIOutputDuplication
+
+    .ends
+
 endif
+
+endif
+
 .pragma list(pop)

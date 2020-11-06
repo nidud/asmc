@@ -51,6 +51,11 @@ include wincodec.inc
 include mfapi.inc
 include mfidl.inc
 include mfreadwrite.inc
+include SearchAPI.inc
+include msdasc.inc
+include oledb.inc
+include propidl.inc
+include propkey.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

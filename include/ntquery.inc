@@ -1,0 +1,328 @@
+ifndef __NTQUERY_H__
+__NTQUERY_H__ equ <>
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+include stgprop.inc
+
+CI_VERSION_WDS30 equ 0x102
+CI_VERSION_WDS40 equ 0x109
+CI_VERSION_WIN70 equ 0x700
+
+CINULLCATALOG equ <L"::_noindex_::">
+CIADMIN equ <L"::_nodocstore_::">
+
+LoadIFilter proto WINAPI \
+	      pwcsPath: PCWSTR,
+	     pUnkOuter: ptr IUnknown,
+		ppIUnk: ptr ptr
+
+LIFF_LOAD_DEFINED_FILTER		   equ 1
+LIFF_IMPLEMENT_TEXT_FILTER_FALLBACK_POLICY equ 2
+LIFF_FORCE_TEXT_FILTER_FALLBACK		   equ 3
+
+LoadIFilterEx proto WINAPI \
+	      pwcsPath: PCWSTR,
+	       dwFlags: DWORD,
+		  riid: REFIID,
+		ppIUnk: ptr ptr
+
+BindIFilterFromStorage proto WINAPI \
+		  pStg: ptr IStorage,
+	     pUnkOuter: ptr IUnknown,
+		ppIUnk: ptr ptr
+
+BindIFilterFromStream proto WINAPI \
+		  pStm: ptr IStream,
+	     pUnkOuter: ptr IUnknown,
+		ppIUnk: ptr ptr
+
+LocateCatalogsW proto WINAPI \
+	     pwszScope: PCWSTR,
+		  iBmk: ULONG,
+	   pwszMachine: PWSTR,
+	    pccMachine: ptr ULONG,
+	       pwszCat: PWSTR,
+		pccCat: ptr ULONG
+
+LocateCatalogsA proto WINAPI \
+	     pwszScope: PCSTR,
+		  iBmk: ULONG,
+	   pwszMachine: PSTR,
+	    pccMachine: ptr ULONG,
+	       pwszCat: PSTR,
+		pccCat: ptr ULONG
+
+ifdef _UNICODE
+LocateCatalogs	equ <LocateCatalogsW>
+else
+LocateCatalogs	equ <LocateCatalogsA>
+endif
+
+CLSID_INDEX_SERVER_DSO equ <{ 0xF9AE8980, 0x7E52, 0x11d0, { 0x89, 0x64, 0x00, 0xC0, 0x4F, 0xD6, 0x11, 0xD7 } }>
+PSGUID_FILENAME equ <{ 0x41CF5AE0, 0xF75A, 0x4806, { 0xBD, 0x87, 0x59, 0xC7, 0xD9, 0x24, 0x8E, 0xB9} }>
+
+PID_FILENAME equ 100
+
+DBPROPSET_FSCIFRMWRK_EXT equ <{ 0xA9BD1526, 0x6A80, 0x11D0, { 0x8C, 0x9D, 0x00, 0x20, 0xAF, 0x1D, 0x74, 0x0E } }>
+
+DBPROP_CI_CATALOG_NAME	 equ 2
+DBPROP_CI_INCLUDE_SCOPES equ 3
+DBPROP_CI_DEPTHS	 equ 4
+DBPROP_CI_SCOPE_FLAGS	 equ 4
+DBPROP_CI_EXCLUDE_SCOPES equ 5
+DBPROP_CI_SECURITY_ID	 equ 6
+DBPROP_CI_QUERY_TYPE	 equ 7
+DBPROP_CI_PROVIDER	 equ 8
+
+
+CI_PROVIDER_MSSEARCH	equ 1
+CI_PROVIDER_INDEXING_SERVICE equ 2
+CI_PROVIDER_ALL		equ 0xffffffff
+
+
+DBPROPSET_SESS_QUERYEXT equ <{ 0x63623309, 0x2d8b, 0x4d17, { 0xb1, 0x52, 0x6e, 0x29, 0x56, 0xc2, 0x6a, 0x70 } }>
+
+DBPROP_DEFAULT_EQUALS_BEHAVIOR equ 2
+
+DBPROPSET_QUERYEXT equ <{ 0xA7AC77ED, 0xF8D7, 0x11CE, { 0xA7, 0x98, 0x00, 0x20, 0xF8, 0x00, 0x80, 0x25 } }>
+
+DBPROP_USECONTENTINDEX	equ 2
+DBPROP_DEFERNONINDEXEDTRIMMING equ 3
+DBPROP_USEEXTENDEDDBTYPES equ 4
+DBPROP_IGNORENOISEONLYCLAUSES equ 5
+DBPROP_GENERICOPTIONS_STRING equ 6
+DBPROP_FIRSTROWS	equ 7
+DBPROP_DEFERCATALOGVERIFICATION equ 8
+DBPROP_CATALOGLISTID	equ 9
+DBPROP_GENERATEPARSETREE equ 10
+DBPROP_APPLICATION_NAME equ 11
+DBPROP_FREETEXTANYTERM	equ 12
+DBPROP_FREETEXTUSESTEMMING equ 13
+DBPROP_IGNORESBRI	equ 14
+DBPROP_DONOTCOMPUTEEXPENSIVEPROPS equ 15
+DBPROP_ENABLEROWSETEVENTS equ 16
+
+DBPROPSET_CIFRMWRKCORE_EXT equ <{ 0xafafaca5, 0xb5d1, 0x11d0, { 0x8c, 0x62, 0x00, 0xc0, 0x4f, 0xc2, 0xdb, 0x8d } }>
+
+DBPROP_MACHINE		equ 2
+DBPROP_CLIENT_CLSID	equ 3
+
+DBPROPSET_MSIDXS_ROWSETEXT equ <{ 0xaa6ee6b0, 0xe828, 0x11d0, { 0xb2, 0x3e, 0x00, 0xaa, 0x00, 0x47, 0xfc, 0x01 } }>
+
+MSIDXSPROP_ROWSETQUERYSTATUS equ 2
+MSIDXSPROP_COMMAND_LOCALE_STRING equ 3
+MSIDXSPROP_QUERY_RESTRICTION equ 4
+MSIDXSPROP_PARSE_TREE	equ 5
+MSIDXSPROP_MAX_RANK	equ 6
+MSIDXSPROP_RESULTS_FOUND equ 7
+MSIDXSPROP_WHEREID	equ 8
+MSIDXSPROP_SERVER_VERSION equ 9
+MSIDXSPROP_SERVER_WINVER_MAJOR equ 10
+MSIDXSPROP_SERVER_WINVER_MINOR equ 11
+MSIDXSPROP_SERVER_NLSVERSION equ 12
+MSIDXSPROP_SERVER_NLSVER_DEFINED equ 13
+MSIDXSPROP_SAME_SORTORDER_USED equ 14
+
+STAT_BUSY		equ ( 0 )
+STAT_ERROR		equ ( 0x1 )
+STAT_DONE		equ ( 0x2 )
+STAT_REFRESH		equ ( 0x3 )
+QUERY_FILL_STATUS macro x
+	exitm<( ( x ) AND 0x7 )>
+	endm
+
+STAT_PARTIAL_SCOPE	equ ( 0x8 )
+STAT_NOISE_WORDS	equ ( 0x10 )
+STAT_CONTENT_OUT_OF_DATE equ ( 0x20 )
+STAT_REFRESH_INCOMPLETE equ ( 0x40 )
+STAT_CONTENT_QUERY_INCOMPLETE equ ( 0x80 )
+STAT_TIME_LIMIT_EXCEEDED equ ( 0x100 )
+STAT_SHARING_VIOLATION	equ ( 0x200 )
+STAT_MISSING_RELDOC	equ ( 0x400 )
+STAT_MISSING_PROP_IN_RELDOC equ ( 0x800 )
+STAT_RELDOC_ACCESS_DENIED equ ( 0x1000 )
+STAT_COALESCE_COMP_ALL_NOISE equ ( 0x2000 )
+QUERY_RELIABILITY_STATUS macro x
+	exitm<( ( x ) AND 0xFFF8 )>
+	endm
+
+QUERY_SHALLOW		equ 0
+QUERY_DEEP		equ 1
+QUERY_PHYSICAL_PATH	equ 0
+QUERY_VIRTUAL_PATH	equ 2
+
+PROPID_QUERY_WORKID	equ 5
+PROPID_QUERY_UNFILTERED equ 7
+PROPID_QUERY_VIRTUALPATH equ 9
+PROPID_QUERY_LASTSEENTIME equ 10
+
+CICAT_STOPPED		equ 0x1
+CICAT_READONLY		equ 0x2
+CICAT_WRITABLE		equ 0x4
+CICAT_NO_QUERY		equ 0x8
+CICAT_GET_STATE		equ 0x10
+CICAT_ALL_OPENED	equ 0x20
+
+SetCatalogState proto WINAPI \
+	       pwcsCat: ptr,
+	   pwcsMachine: ptr,
+	    dwNewState: DWORD,
+	   pdwOldState: ptr
+
+
+CI_STATE_SHADOW_MERGE	equ 0x0001
+CI_STATE_MASTER_MERGE	equ 0x0002
+CI_STATE_CONTENT_SCAN_REQUIRED equ 0x0004
+CI_STATE_ANNEALING_MERGE equ 0x0008
+CI_STATE_SCANNING	equ 0x0010
+CI_STATE_RECOVERING	equ 0x0020
+CI_STATE_INDEX_MIGRATION_MERGE equ 0x0040
+CI_STATE_LOW_MEMORY	equ 0x0080
+CI_STATE_HIGH_IO	equ 0x0100
+CI_STATE_MASTER_MERGE_PAUSED equ 0x0200
+CI_STATE_READ_ONLY	equ 0x0400
+CI_STATE_BATTERY_POWER	equ 0x0800
+CI_STATE_USER_ACTIVE	equ 0x1000
+CI_STATE_STARTING	equ 0x2000
+CI_STATE_READING_USNS	equ 0x4000
+CI_STATE_DELETION_MERGE equ 0x8000
+CI_STATE_LOW_DISK	equ 0x10000
+CI_STATE_HIGH_CPU	equ 0x20000
+CI_STATE_BATTERY_POLICY equ 0x40000
+
+ifndef CI_STATE_DEFINED
+CI_STATE_DEFINED equ 1
+.pragma pack(push, 4)
+CI_STATE		STRUC
+cbStruct		dd ?
+cWordList		dd ?
+cPersistentIndex	dd ?
+cQueries		dd ?
+cDocuments		dd ?
+cFreshTest		dd ?
+dwMergeProgress		dd ?
+eState			dd ?
+cFilteredDocuments	dd ?
+cTotalDocuments		dd ?
+cPendingScans		dd ?
+dwIndexSize		dd ?
+cUniqueKeys		dd ?
+cSecQDocuments		dd ?
+dwPropCacheSize		dd ?
+CI_STATE		ENDS
+.pragma pack(pop)
+endif
+
+CIState proto WINAPI \
+	       pwcsCat: ptr,
+	   pwcsMachine: ptr,
+	      pCiState: ptr
+
+
+ifdef __ICommand_INTERFACE_DEFINED__
+
+CIMakeICommand proto WINAPI \
+	     ppCommand: ptr ptr,
+		cScope: ULONG,
+	       aDepths: ptr,
+	     awcsScope: ptr,
+	  awcsCatalogs: ptr,
+	   awcsMachine: ptr
+
+
+CICreateCommand proto WINAPI \
+	     ppCommand: ptr ptr,
+	     pUnkOuter: ptr IUnknown,
+		  riid: REFIID,
+	   pwcsCatalog: LPWSTR,
+	   pwcsMachine: LPWSTR
+
+
+ifdef __ICommandTree_INTERFACE_DEFINED__
+
+ifndef __propertydef_h__
+
+CIPROPERTYDEF		STRUC
+wcsFriendlyName		LPWSTR ?
+dbType			dd ?
+dbCol			DBID ?
+CIPROPERTYDEF		ENDS
+
+endif
+
+ISQLANG_V1		equ 1
+ISQLANG_V2		equ 2
+
+CITextToSelectTree proto WINAPI \
+       pwszRestriction: ptr,
+		ppTree: ptr ptr,
+	   cProperties: ULONG,
+	   pProperties: ptr,
+	      LocaleID: LCID
+
+CITextToSelectTreeEx proto WINAPI \
+       pwszRestriction: ptr,
+	     ulDialect: ULONG,
+		ppTree: ptr ptr,
+	   cProperties: ULONG,
+	   pProperties: ptr,
+	      LocaleID: LCID
+
+CITextToFullTree proto WINAPI \
+       pwszRestriction: ptr,
+	   pwszColumns: ptr,
+       pwszSortColumns: ptr,
+	 pwszGroupings: ptr,
+		ppTree: ptr ptr,
+	   cProperties: ULONG,
+	   pProperties: ptr,
+	      LocaleID: LCID
+
+CITextToFullTreeEx proto WINAPI \
+       pwszRestriction: ptr,
+	     ulDialect: ULONG,
+	   pwszColumns: ptr,
+       pwszSortColumns: ptr,
+	 pwszGroupings: ptr,
+		ppTree: ptr ptr,
+	   cProperties: ULONG,
+	   pProperties: ptr,
+	      LocaleID: LCID
+
+CIBuildQueryNode proto WINAPI \
+	   wcsProperty: ptr WCHAR,
+	    dbOperator: DBCOMMANDOP,
+     pvarPropertyValue: LPPROPVARIANT,
+		ppTree: LPDBCOMMANDTREE,
+	   cProperties: ULONG,
+	     pProperty: LPCIPROPERTYDEF,
+	      LocaleID: LCID
+
+CIBuildQueryTree proto WINAPI \
+	 pExistingTree: ptr DBCOMMANDTREE,
+	      dbBoolOp: DBCOMMANDOP,
+	     cSiblings: ULONG,
+       ppSibsToCombine: ptr LPDBCOMMANDTREE,
+		ppTree: LPDBCOMMANDTREE
+
+CIRestrictionToFullTree proto WINAPI \
+		 pTree: ptr DBCOMMANDTREE,
+	   pwszColumns: ptr,
+       pwszSortColumns: ptr,
+	 pwszGroupings: ptr,
+		ppTree: ptr ptr,
+	   cProperties: ULONG,
+	     pReserved: ptr,
+	      LocaleID: LCID
+
+
+endif
+endif
+
+CIShutdown proto WINAPI
+
+endif
+endif

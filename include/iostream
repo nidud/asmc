@@ -1,0 +1,138 @@
+
+include conio.inc
+include stdlib.inc
+
+    ostream typedef ptr
+    cout    equ <ostream::>
+    endl    equ <"\n">
+
+.template ostream
+
+    .operator ostream?dword :dword {
+
+        .new convbuf[64]:char_t
+
+        _ultoa( ecx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+
+    .operator ostream?qword :qword {
+
+        .new convbuf[64]:char_t
+
+        _ui64toa( rcx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+
+    .operator ostream?sdword :sdword {
+
+        .new convbuf[64]:char_t
+
+        _itoa( ecx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+
+    .operator ostream?sqword :sqword {
+
+        .new convbuf[64]:char_t
+
+        _i64toa( rcx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+
+    .operator ostream?sbyte :sbyte {
+        movsx   ecx,_1
+        ostream::ostream?sdword(ecx)
+        }
+    .operator ostream?sword :sword {
+        movsx   ecx,_1
+        ostream::ostream?sdword(ecx)
+        }
+    .operator ostream?byte :byte {
+        movzx   ecx,_1
+        ostream::ostream?dword(ecx)
+        }
+    .operator ostream?word :word {
+        movzx   ecx,_1
+        ostream::ostream?dword(ecx)
+        }
+
+    .operator ostream?r8  :abs { ostream::ostream?byte(_1) }
+    .operator ostream?r16 :abs { ostream::ostream?word(_1) }
+    .operator ostream?r32 :abs { ostream::ostream?dword(_1) }
+    .operator ostream?r64 :abs { ostream::ostream?qword(_1) }
+
+    .operator ostream?psbyte :abs { _cputs(_1) }
+    .operator ostream?pword :abs { _cputws(_1) }
+
+    .operator << :abs {
+        cout typeid(ostream, _1)(_1)
+        }
+    .ends
+
+    wostream typedef ptr
+    wcout    equ <wostream::>
+
+.template wostream
+
+    .operator wostream?dword :dword {
+
+        .new convbuf[64]:wchar_t
+
+        _ultoa( ecx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+
+    .operator wostream?qword :qword {
+
+        .new convbuf[64]:wchar_t
+
+        _ui64toa( rcx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+
+    .operator wostream?sdword :sdword {
+
+        .new convbuf[64]:wchar_t
+
+        _itoa( ecx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+
+    .operator wostream?sqword :sqword {
+
+        .new convbuf[64]:wchar_t
+
+        _i64toa( rcx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+
+    .operator wostream?sbyte :sbyte {
+        movsx   ecx,_1
+        wostream::wostream?sdword(ecx)
+        }
+    .operator wostream?sword :sword {
+        movsx   ecx,_1
+        wostream::wostream?sdword(ecx)
+        }
+    .operator wostream?byte :byte {
+        movzx   ecx,_1
+        wostream::wostream?dword(ecx)
+        }
+    .operator wostream?word :word {
+        movzx   ecx,_1
+        wostream::wostream?dword(ecx)
+        }
+
+    .operator wostream?r8  :abs { wostream::wostream?byte(_1) }
+    .operator wostream?r16 :abs { wostream::wostream?word(_1) }
+    .operator wostream?r32 :abs { wostream::wostream?dword(_1) }
+    .operator wostream?r64 :abs { wostream::wostream?qword(_1) }
+
+    .operator wostream?psbyte :abs { _cputs(_1) }
+    .operator wostream?pword :abs { _cputws(_1) }
+
+    .operator << :abs {
+        wcout typeid(wostream, _1)(_1)
+        }
+    .ends

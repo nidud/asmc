@@ -7,15 +7,16 @@ ifndef REFPROPERTYKEY
 REFPROPERTYKEY typedef ptr PROPERTYKEY
 endif
 
-ifdef INITGUID
 DEFINE_PROPERTYKEY macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid
-	exitm<name PROPERTYKEY <<l, w1, w2,<b1, b2, b3, b4, b5, b6, b7, b8 >>, pid >>
-	endm
+if defined(__PE__) or defined(__GUID__)
+_&name& equ <{{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}>
+elseifdef INITGUID
+echo name PROPERTYKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
 else
-DEFINE_PROPERTYKEY macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid
-	exitm<externdef name:PROPERTYKEY>
-	endm
+externdef name:PROPERTYKEY
 endif
+    exitm<>
+    endm
 
 ifndef IsEqualPropertyKey
 IsEqualPropertyKey macro a, b

@@ -2,19 +2,16 @@ ifndef FONTSUB_DOT_H_DEFINED
 FONTSUB_DOT_H_DEFINED equ <>
 .pragma list(push, 0)
 
-?CFP_ALLOCPROC		typedef proto __cdecl :SIZE_T
-?CFP_REALLOCPROC	typedef proto __cdecl :PVOID, :SIZE_T
-?CFP_FREEPROC		typedef proto __cdecl :PVOID
-CFP_ALLOCPROC		typedef ptr ?CFP_ALLOCPROC
-CFP_REALLOCPROC		typedef ptr ?CFP_REALLOCPROC
-CFP_FREEPROC		typedef ptr ?CFP_FREEPROC
+CFP_ALLOCPROC		typedef proto __cdecl :size_t
+CFP_REALLOCPROC		typedef proto __cdecl :ptr, :size_t
+CFP_FREEPROC		typedef proto __cdecl :ptr
 
 ;DWORD
 CreateFontPackage proto __cdecl \
 	 puchSrcBuffer: ptr BYTE,
        ulSrcBufferSize: DWORD,
 ppuchFontPackageBuffer: LPSTR,
-pulFontPackageBufferSize: ptr LONG,
+pFontPackageBufferSize: ptr LONG,
        pulBytesWritten: ptr LONG,
 		usFlag: WORD,
 	    usTTCIndex: WORD,
@@ -24,10 +21,10 @@ pulFontPackageBufferSize: ptr LONG,
       usSubsetEncoding: WORD,
      pusSubsetKeepList: ptr WORD,
      usSubsetListCount: WORD,
-	  lpfnAllocate: CFP_ALLOCPROC,
-	lpfnReAllocate: CFP_REALLOCPROC,
-	      lpfnFree: CFP_FREEPROC,
-	   lpvReserved: PVOID
+	  lpfnAllocate: ptr CFP_ALLOCPROC,
+	lpfnReAllocate: ptr CFP_REALLOCPROC,
+	      lpfnFree: ptr CFP_FREEPROC,
+	   lpvReserved: ptr
 
 TTFCFP_SUBSET		equ 0
 TTFCFP_SUBSET1		equ 1
@@ -55,15 +52,15 @@ MergeFontPackage proto __cdecl \
    puchMergeFontBuffer: LPSTR,
  ulMergeFontBufferSize: DWORD,
  puchFontPackageBuffer: ptr byte,
-ulFontPackageBufferSize: DWORD,
+uFontPackageBufferSize: DWORD,
        ppuchDestBuffer: LPSTR,
      pulDestBufferSize: ptr LONG,
        pulBytesWritten: ptr LONG,
 		usMode: WORD,
-	  lpfnAllocate: CFP_ALLOCPROC,
-	lpfnReAllocate: CFP_REALLOCPROC,
-	      lpfnFree: CFP_FREEPROC,
-	   lpvReserved: PVOID
+	  lpfnAllocate: ptr CFP_ALLOCPROC,
+	lpfnReAllocate: ptr CFP_REALLOCPROC,
+	      lpfnFree: ptr CFP_FREEPROC,
+	   lpvReserved: ptr
 
 
 TTFMFP_SUBSET		equ 0

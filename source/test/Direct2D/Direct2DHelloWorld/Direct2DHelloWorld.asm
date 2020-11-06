@@ -7,13 +7,19 @@ include Direct2DHelloWorld.inc
 .pragma warning(disable: 6004) ; procedure argument or local not referenced
 .pragma warning(disable: 7007) ; .CASE without .ENDC: assumed fall through
 
+if defined(__PE__) or not defined(_WIN64)
+API equ <WINAPI>
+else
+API equ <WINAPI frame>
+endif
+
 .code
 
 ;;
 ;; Provides the entry point to the application.
 ;;
 
-wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, inCmdShow:int_t
+wWinMain proc API hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, inCmdShow:int_t
 
   local vtable:DemoAppVtbl
 
@@ -62,7 +68,8 @@ DemoApp::DemoApp proc uses rdi vtable:ptr
            OnRender,
            OnResize>
         lea rax,DemoApp_&q
-        stosq
+        mov [rdx].DemoAppVtbl.&q,rax
+        ;stosq
         endm
     ret
 
@@ -402,7 +409,7 @@ DemoApp::OnResize endp
 ;;
 ;; The window message handler.
 ;;
-WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc API hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local result:LRESULT
   local pDemoApp:ptr DemoApp

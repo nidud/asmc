@@ -136,6 +136,7 @@ samsrv
 scecli
 scesrv
 schannel
+SearchSDK
 secur32
 security
 sens

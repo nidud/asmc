@@ -19,9 +19,13 @@ main proc
 
     .while fgets(esi, 512, fp)
 
-        .continue .if !strstr(esi, " GUID")
+        .if !strstr(esi, " GUID")
+            strstr(esi, " PROPERTYKEY")
+        .endif
+        .continue .if !eax
 
         ; name GUID {0x0000010b,0,0,{0xC0,0,0,0,0,0,0,0x46}}
+        ; name PROPERTYKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
 
         mov ebx,eax
         mov byte ptr [ebx],0
@@ -34,6 +38,10 @@ main proc
 
             fprintf(edi,
                 "include guiddef.inc\n"
+                "PROPERTYKEY STRUC\n"
+                "fmtid   GUID <>\n"
+                "pid     dd ?\n"
+                "PROPERTYKEY ENDS\n"
                 "\n"
                 "public %s\n"
                 "\n", esi)

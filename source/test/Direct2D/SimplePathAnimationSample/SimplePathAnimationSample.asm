@@ -19,20 +19,15 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
-    CoInitialize(NULL)
-    .if (SUCCEEDED(eax))
+    .ifd CoInitialize(NULL) == S_OK
 
        .new app:DemoApp(&vtable)
 
-        app.Initialize()
-
-        .if (SUCCEEDED(eax))
-
+        .ifd app.Initialize() == S_OK
             app.RunMessageLoop()
         .endif
         CoUninitialize()
     .endif
-
     .return 0
 
 wWinMain endp

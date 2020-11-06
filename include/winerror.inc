@@ -882,16 +882,43 @@ IS_ERROR macro Status
 	endm
 
 HRESULT_CODE macro hr
-	exitm <( ( hr ) and 0xFFFF ) >
-	endm
+    ifidn typeid(?, hr),<?i32>
+	exitm <( ( hr ) and 0xFFFF )>
+    else
+	ifdif <hr>,<eax>
+	    mov eax,hr
+	endif
+	and eax,0xFFFF
+	retm<eax>
+    endif
+    endm
 
 SCODE_CODE macro sc
-	exitm <( ( sc ) and 0xFFFF ) >
-	endm
+    ifidn typeid(?, sc),<?i32>
+	exitm <( ( sc ) and 0xFFFF )>
+    else
+	ifdif <sc>,<eax>
+	    mov eax,sc
+	endif
+	and eax,0xFFFF
+	retm<eax>
+    endif
+    endm
 
 HRESULT_FACILITY macro hr
-	exitm <( ( ( hr ) shr 16 ) and 0x1fff ) >
-	endm
+    ifidn typeid(?, hr),<?i32>
+	exitm<(((hr) shr 16) and 0x1fff)>
+    else
+	ifdif <hr>,<eax>
+	    mov eax,hr
+	endif
+	shr eax,16
+	and eax,0x1FFF
+	retm<eax>
+    endif
+    endm
+
+
 SCODE_FACILITY macro sc
 	exitm <( ( ( sc ) shr 16 ) and 0x1fff ) >
 	endm

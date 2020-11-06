@@ -294,29 +294,29 @@ _tempnam_dbg macro s1, s2, t, f, l
 _wtempnam_dbg macro s1, s2, t, f, l
 	exitm<_wtempnam(s1, s2)>
 	endm
-_fullpath_dbg macro s1, s2, le, t, f, l
-	exitm<_fullpath(s1, s2, le)>
+_fullpath_dbg macro s1, s2, e, t, f, l
+	exitm<_fullpath(s1, s2, e)>
 	endm
-_wfullpath_dbg macro s1, s2, le, t, f, l
-	exitm<_wfullpath(s1, s2, le)>
+_wfullpath_dbg macro s1, s2, e, t, f, l
+	exitm<_wfullpath(s1, s2, e)>
 	endm
-_getcwd_dbg macro s, le, t, f, l
-	exitm<_getcwd(s, le)>
+_getcwd_dbg macro s, e, t, f, l
+	exitm<_getcwd(s, e)>
 	endm
-_wgetcwd_dbg macro s, le, t, f, l
-	exitm<_wgetcwd(s, le)>
+_wgetcwd_dbg macro s, e, t, f, l
+	exitm<_wgetcwd(s, e)>
 	endm
-_getdcwd_dbg macro d, s, le, t, f, l
-	exitm<_getdcwd(d, s, le)>
+_getdcwd_dbg macro d, s, e, t, f, l
+	exitm<_getdcwd(d, s, e)>
 	endm
-_wgetdcwd_dbg macro d, s, le, t, f, l
-	exitm<_wgetdcwd(d, s, le)>
+_wgetdcwd_dbg macro d, s, e, t, f, l
+	exitm<_wgetdcwd(d, s, e)>
 	endm
-_getdcwd_lk_dbg macro d, s, le, t, f, l
-	exitm<_getdcwd(d, s, le)>
+_getdcwd_lk_dbg macro d, s, e, t, f, l
+	exitm<_getdcwd(d, s, e)>
 	endm
-_wgetdcwd_lk_dbg macro d, s, le, t, f, l
-	exitm<_wgetdcwd(d, s, le)>
+_wgetdcwd_lk_dbg macro d, s, e, t, f, l
+	exitm<_wgetdcwd(d, s, e)>
 	endm
 _dupenv_s_dbg macro ps1, size, s2, t, f, l
 	exitm<_dupenv_s(ps1, size, s2)>

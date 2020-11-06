@@ -234,6 +234,9 @@ externdef	at_background:BYTE
 externdef	at_foreground:BYTE
 externdef	tclrascii:BYTE
 
+;externdef	AsciiSymbols:BYTE
+;externdef	UnicodeSymbols:WORD
+
 TIMAXSCRLINE	equ 256		; max screen size
 
 rcpush		PROTO __cdecl :UINT

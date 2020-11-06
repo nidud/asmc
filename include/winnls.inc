@@ -1,4 +1,7 @@
 .pragma list(push, 0)
+ifndef __WINNLS_INC
+__WINNLS_INC equ <>
+
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -545,21 +548,21 @@ CAL_SMONTHDAY		equ 0x00000038
 CAL_SABBREVERASTRING	equ 0x00000039
 endif
 
-ENUM_ALL_CALENDARS	equ 0xffffffff ; enumerate all calendars
+ENUM_ALL_CALENDARS	equ 0xffffffff
 
 
-CAL_GREGORIAN		       equ 1	; Gregorian (localized) calendar
-CAL_GREGORIAN_US	       equ 2	; Gregorian (U.S.) calendar
-CAL_JAPAN		       equ 3	; Japanese Emperor Era calendar
-CAL_TAIWAN		       equ 4	; Taiwan Region Era calendar
-CAL_KOREA		       equ 5	; Korean Tangun Era calendar
-CAL_HIJRI		       equ 6	; Hijri (Arabic Lunar) calendar
-CAL_THAI		       equ 7	; Thai calendar
-CAL_HEBREW		       equ 8	; Hebrew (Lunar) calendar
-CAL_GREGORIAN_ME_FRENCH	       equ 9	; Gregorian Middle East French calendar
-CAL_GREGORIAN_ARABIC	       equ 10	; Gregorian Arabic calendar
-CAL_GREGORIAN_XLIT_ENGLISH     equ 11	; Gregorian Transliterated English calendar
-CAL_GREGORIAN_XLIT_FRENCH      equ 12	; Gregorian Transliterated French calendar
+CAL_GREGORIAN		       equ 1
+CAL_GREGORIAN_US	       equ 2
+CAL_JAPAN		       equ 3
+CAL_TAIWAN		       equ 4
+CAL_KOREA		       equ 5
+CAL_HIJRI		       equ 6
+CAL_THAI		       equ 7
+CAL_HEBREW		       equ 8
+CAL_GREGORIAN_ME_FRENCH	       equ 9
+CAL_GREGORIAN_ARABIC	       equ 10
+CAL_GREGORIAN_XLIT_ENGLISH     equ 11
+CAL_GREGORIAN_XLIT_FRENCH      equ 12
 
 
 LGRPID			typedef DWORD
@@ -569,29 +572,29 @@ CALID			typedef DWORD
 WCHAR			typedef WORD
 
 CPINFO			STRUC
-MaxCharSize		UINT ?				; max length (in bytes) of a char
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)	; default character
-LeadByte		SBYTE MAX_LEADBYTES dup(?)	; lead byte ranges
+MaxCharSize		UINT ?
+DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
+LeadByte		SBYTE MAX_LEADBYTES dup(?)
 CPINFO			ENDS
 LPCPINFO		TYPEDEF PTR CPINFO
 
 CPINFOEXA		STRUC
-MaxCharSize		UINT ?				; max length (in bytes) of a char
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)	; default character (MB)
-LeadByte		SBYTE MAX_LEADBYTES dup(?)	; lead byte ranges
-UnicodeDefaultChar	WCHAR ?				; default character (Unicode)
-CodePage		UINT ?				; code page id
-CodePageName		SBYTE MAX_PATH dup(?)		; code page name (Unicode)
+MaxCharSize		UINT ?
+DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
+LeadByte		SBYTE MAX_LEADBYTES dup(?)
+UnicodeDefaultChar	WCHAR ?
+CodePage		UINT ?
+CodePageName		SBYTE MAX_PATH dup(?)
 CPINFOEXA		ENDS
 LPCPINFOEXA		TYPEDEF PTR CPINFOEXA
 
 CPINFOEXW		STRUC
-MaxCharSize		UINT ?				; max length (in bytes) of a char
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)	; default character (MB)
-LeadByte		SBYTE MAX_LEADBYTES dup(?)	; lead byte ranges
-UnicodeDefaultChar	WCHAR ?				; default character (Unicode)
-CodePage		UINT ?				; code page id
-CodePageName		WCHAR MAX_PATH dup(?)		; code page name (Unicode)
+MaxCharSize		UINT ?
+DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
+LeadByte		SBYTE MAX_LEADBYTES dup(?)
+UnicodeDefaultChar	WCHAR ?
+CodePage		UINT ?
+CodePageName		WCHAR MAX_PATH dup(?)
 CPINFOEXW		ENDS
 LPCPINFOEXW		TYPEDEF PTR CPINFOEXW
 
@@ -601,27 +604,25 @@ LPCPINFOEX	TYPEDEF LPCPINFOEXW
 else
 CPINFOEX	TYPEDEF CPINFOEXA
 LPCPINFOEX	TYPEDEF LPCPINFOEXA
-endif ; _UNICODE
-
-
+endif
 
 NUMBERFMTA	STRUC
-NumDigits	UINT ?	       ; number of decimal digits
-LeadingZero	UINT ?	       ; if leading zero in decimal fields
-Grouping	UINT ?	       ; group size left of decimal
-lpDecimalSep	LPSTR ?	       ; ptr to decimal separator string
-lpThousandSep	LPSTR ?	       ; ptr to thousand separator string
-NegativeOrder	UINT ?	       ; negative number ordering
+NumDigits	UINT ?
+LeadingZero	UINT ?
+Grouping	UINT ?
+lpDecimalSep	LPSTR ?
+lpThousandSep	LPSTR ?
+NegativeOrder	UINT ?
 NUMBERFMTA	ENDS
 LPNUMBERFMTA	TYPEDEF PTR NUMBERFMTA
 
 NUMBERFMTW	STRUC
-NumDigits	UINT ?	       ; number of decimal digits
-LeadingZero	UINT ?	       ; if leading zero in decimal fields
-Grouping	UINT ?	       ; group size left of decimal
-lpDecimalSep	LPWSTR ?       ; ptr to decimal separator string
-lpThousandSep	LPWSTR ?       ; ptr to thousand separator string
-NegativeOrder	UINT ?	       ; negative number ordering
+NumDigits	UINT ?
+LeadingZero	UINT ?
+Grouping	UINT ?
+lpDecimalSep	LPWSTR ?
+lpThousandSep	LPWSTR ?
+NegativeOrder	UINT ?
 NUMBERFMTW	ENDS
 LPNUMBERFMTW	TYPEDEF PTR NUMBERFMTW
 
@@ -634,16 +635,15 @@ LPNUMBERFMT	TYPEDEF LPNUMBERFMTA
 endif
 
 
-
 CURRENCYFMTA		STRUC
-NumDigits		UINT ?	; number of decimal digits
-LeadingZero		UINT ?	; if leading zero in decimal fields
-Grouping		UINT ?	; group size left of decimal
-lpDecimalSep		LPSTR ? ; ptr to decimal separator string
-lpThousandSep		LPSTR ? ; ptr to thousand separator string
-NegativeOrder		UINT ?	; negative currency ordering
-PositiveOrder		UINT ?	; positive currency ordering
-lpCurrencySymbol	LPSTR ? ; ptr to currency symbol string
+NumDigits		UINT ?
+LeadingZero		UINT ?
+Grouping		UINT ?
+lpDecimalSep		LPSTR ?
+lpThousandSep		LPSTR ?
+NegativeOrder		UINT ?
+PositiveOrder		UINT ?
+lpCurrencySymbol	LPSTR ?
 CURRENCYFMTA		ENDS
 LPCURRENCYFMTA		TYPEDEF PTR CURRENCYFMTA
 
@@ -712,27 +712,22 @@ CALINFO_ENUMPROC    equ CALINFO_ENUMPROCA
 CALINFO_ENUMPROCEX  equ CALINFO_ENUMPROCEXA
 endif
 
-
-
-
-
-;BOOL
 IsValidCodePage proto WINAPI \
 	CodePage:	UINT
-;UINT
+
 GetACP proto WINAPI
-;UINT
+
 GetOEMCP proto WINAPI
-;BOOL
+
 GetCPInfo proto WINAPI \
 	CodePage:	UINT,
 	lpCPInfo:	LPCPINFO
-;BOOL
+
 GetCPInfoExA proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpCPInfoEx:	LPCPINFOEXA
-;BOOL
+
 GetCPInfoExW proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
@@ -742,14 +737,14 @@ GetCPInfoEx  equ <GetCPInfoExW>
 else
 GetCPInfoEx  equ <GetCPInfoExA>
 endif
-;BOOL
+
 IsDBCSLeadByte proto WINAPI \
 	TestChar:	UINT ; BYTE
-;BOOL
+
 IsDBCSLeadByteEx proto WINAPI \
 	CodePage:	UINT,
 	TestChar:	UINT ; BYTE
-;int
+
 MultiByteToWideChar proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
@@ -757,7 +752,7 @@ MultiByteToWideChar proto WINAPI \
 	cchMultiByte:	SINT,
 	lpWideCharStr:	LPWSTR,
 	cchWideChar:	SINT
-;int
+
 WideCharToMultiByte proto WINAPI \
 	CodePage:		UINT,
 	dwFlags:		DWORD,
@@ -769,7 +764,6 @@ WideCharToMultiByte proto WINAPI \
 	lpUsedDefaultChar:	LPBOOL
 
 
-;int
 CompareStringA proto WINAPI \
 	Locale:		LCID,
 	dwCmpFlags:	DWORD,
@@ -777,7 +771,7 @@ CompareStringA proto WINAPI \
 	cchCount1:	SINT,
 	lpString2:	LPSTR,
 	cchCount2:	SINT
-;int
+
 CompareStringW proto WINAPI \
 	Locale:		LCID,
 	dwCmpFlags:	DWORD,
@@ -829,12 +823,12 @@ GetLocaleInfo  equ <GetLocaleInfoW>
 else
 GetLocaleInfo  equ <GetLocaleInfoA>
 endif
-;BOOL
+
 SetLocaleInfoA proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
 	lpLCData:	LPSTR
-;BOOL
+
 SetLocaleInfoW proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
@@ -868,12 +862,12 @@ endif
 
 ;int
 GetDateFormatA proto WINAPI \
-	Locale:		LCID,		; (LCID) locale for which date is to be formatted
-	dwFlags:	DWORD,		; flags specifying function options
-	lpDate:		LPSYSTEMTIME,	; date to be formatted
-	lpFormat:	LPSTR,		; date format string
-	lpDateStr:	LPSTR,		; buffer for storing formatted string
-	cchDate:	SINT		; size of buffer
+	Locale:		LCID,
+	dwFlags:	DWORD,
+	lpDate:		LPSYSTEMTIME,
+	lpFormat:	LPSTR,
+	lpDateStr:	LPSTR,
+	cchDate:	SINT
 GetDateFormatW proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
@@ -1056,17 +1050,17 @@ endif
 
 ;BOOL
 GetStringTypeA proto WINAPI \
-	Locale:		LCID,	; LCID - locale identifer
-	dwInfoType:	DWORD,	; information-type options
-	lpSrcStr:	LPCSTR, ; pointer to the source string
-	cchSrc:		SINT,	; size, in bytes, of the source string
-	lpCharType:	LPWORD	; pointer to the buffer for output
+	Locale:		LCID,
+	dwInfoType:	DWORD,
+	lpSrcStr:	LPCSTR,
+	cchSrc:		SINT,
+	lpCharType:	LPWORD
 
 GetStringTypeW proto WINAPI \
-	dwInfoType:	DWORD,	; information-type options
-	lpSrcStr:	LPCWSTR,; pointer to the source string
-	cchSrc:		SINT,	; size, in bytes, of the source string
-	lpCharType:	LPWORD	; pointer to the buffer for output
+	dwInfoType:	DWORD,
+	lpSrcStr:	LPCWSTR,
+	cchSrc:		SINT,
+	lpCharType:	LPWORD
 ;int
 FoldStringA proto WINAPI \
 	dwMapFlags:	DWORD,
@@ -1254,11 +1248,11 @@ EnumTimeFormatsEx proto WINAPI :TIMEFMT_ENUMPROCEX, :LPCWSTR, :DWORD, :LPARAM
 EnumSystemLocalesEx proto WINAPI :LOCALE_ENUMPROCEX, :DWORD, :LPARAM, :LPVOID
 endif
 if WINVER GE 0x0601
-ResolveLocaleName proto WINAPI lpNameToResolve:LPCWSTR, lpLocaleName:LPWSTR, cchLocaleName:int_t
+ResolveLocaleName proto WINAPI :LPCWSTR, :LPWSTR, :int_t
 endif
 if WINVER GE 0x0602
-IsValidNLSVersion proto WINAPI function:NLS_FUNCTION, lpLocaleName:LPCWSTR, lpVersionInformation:LPNLSVERSIONINFOEX
+IsValidNLSVersion proto WINAPI :NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
 endif
-
+endif
 .pragma list(pop)
 

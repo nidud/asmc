@@ -179,9 +179,18 @@ endif
 
 
 ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
+
 ifdef _M_IA64
+elseif defined( _M_IX86 ) or defined ( _M_AMD64 ) or defined ( _M_ARM ) or defined (_M_ARM64)
+CComStdCallThunkHelper proto {
+    mov rax, rcx
+    mov rcx, 8[rcx]
+    jmp qword ptr 16[rax]
+    }
 else
+.err <X86, AMD64, IA64 and ARM>
 endif
+
 endif
 
 ifndef _ATL_MAX_VARTYPES
@@ -203,7 +212,7 @@ endif
 
 ifndef _ATL_NO_CONNECTION_POINTS
 ifndef _DEFAULT_VECTORLENGTH
-_DEFAULT_VECTORLENGTH	equ 4
+_DEFAULT_VECTORLENGTH equ 4
 endif
 ifndef _ATL_OLEDB_CONFORMANCE_TESTS
 endif

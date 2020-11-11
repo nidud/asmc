@@ -31,10 +31,10 @@ DELAY_TIMER_ID equ 1    ;; Global ID for the timer, only one timer is used
 
 SafeRelease proto :ptr, :abs {
 
-    mov rax,[this]
+    mov rax,[_1]
     .if rax
-        mov qword ptr [this],NULL
-        [rax]._1.Release()
+        mov qword ptr [_1],NULL
+        [rax]._2.Release()
     .endif
     }
 

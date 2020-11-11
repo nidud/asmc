@@ -10,7 +10,7 @@ include malloc.inc
     .data
     .code
 
-    assume rcx:ptr TEdit
+    assume rcx:tedit_t
 
 TEdit::IsSelected proc
     mov eax,[rcx].clip_eo
@@ -38,7 +38,7 @@ TEdit::ClipPaste proc
     ret
 TEdit::ClipPaste endp
 
-TEdit::SetWinPos proc dialog:ptr TRect, item:ptr TRect
+TEdit::SetWinPos proc dialog:trect_t, item:trect_t
     mov     eax,[rdx]
     add     eax,[r8]
     movzx   edx,ah
@@ -63,7 +63,7 @@ TEdit::SetCursor proc
     ret
 TEdit::SetCursor endp
 
-    assume rbx:ptr TEdit
+    assume rbx:tedit_t
 
 TEdit::GetLine proc uses rdi rbx
     mov rax,[rcx].base

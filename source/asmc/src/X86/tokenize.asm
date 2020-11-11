@@ -386,7 +386,8 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                         ; name proto ... {
                         ; type::name proto ... {
 
-                        .if ( [ebx+ecx].tokval == T_DOT_OPERATOR || \
+                        .if ( [ebx+ecx].tokval == T_DOT_STATIC || \
+                              [ebx+ecx].tokval == T_DOT_OPERATOR || \
                               [ebx+ecx+asm_tok].tokval == T_PROTO || \
                               [ebx+ecx+asm_tok*3].tokval == T_PROTO )
 

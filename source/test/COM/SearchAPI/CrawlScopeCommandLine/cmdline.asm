@@ -150,6 +150,7 @@ ParseParams proc uses rsi rdi rbx pParams:ptr ptr CParamBase, dwParamCnt:DWORD, 
   local i:int_t
   local iRes:int_t
   local cp:ptr CParamBase
+  local p:PCWSTR
 
     mov rsi,r9
     mov iRes,ERROR_SUCCESS
@@ -180,9 +181,9 @@ ParseParams proc uses rsi rdi rbx pParams:ptr ptr CParamBase, dwParamCnt:DWORD, 
 
             mov iRes,ERROR_INVALID_PARAMETER
             mov eax,i
-            mov rbx,[rsi+rax*8]
+            mov p,[rsi+rax*8]
 
-            wcout << "Unknown parameter: " << rbx << endl
+            wcout << "Unknown parameter: " << p << endl
         .endif
     .endw
 

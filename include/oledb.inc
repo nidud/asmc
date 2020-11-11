@@ -479,9 +479,9 @@ cObjects		dd ?
 SEC_OBJECT		ENDS
 
 DBIMPLICITSESSION	STRUC
-pUnkOuter		LPIUnknown ?
+pUnkOuter		LPUNKNOWN ?
 piid			LPIID ?
-pSession		LPIUnknown ?
+pSession		LPUNKNOWN ?
 DBIMPLICITSESSION	ENDS
 
 endif
@@ -835,7 +835,7 @@ DBCOLUMNINFO		ENDS
 STD_BOOKMARKLENGTH	equ 1
 
 IsEqualGUIDBase proto fastcall :ptr GUID, :ptr GUID {
-    .ifd memcmp(this, _1)
+    .ifd memcmp(_1, _2)
 	xor eax,eax
     .else
 	inc eax
@@ -2267,7 +2267,7 @@ ConstraintType		DBCONSTRAINTTYPE ?
 cColumns		DBORDINAL ?
 pReferencedTableID	LPDBID ?
 cForeignKeyColumns	DBORDINAL ?
-pwszConstraintText	LPOLECHAR ?
+pwszConstraintText	LPOLESTR ?
 UpdateRule		DBUPDELRULE ?
 DeleteRule		DBUPDELRULE ?
 MatchType		DBMATCHTYPE ?

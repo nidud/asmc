@@ -53,7 +53,7 @@ bFixedSizeSamples	BOOL ?
 bTemporalCompression	BOOL ?
 lSampleSize		ULONG ?
 formattype		GUID <>
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 cbFormat		ULONG ?
 pbFormat		LPBYTE ?
 DMO_MEDIA_TYPE		ENDS

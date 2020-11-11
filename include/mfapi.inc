@@ -1528,8 +1528,7 @@ UnpackRatio proto fastcall unPacked:UINT64,
     Unpack2UINT32AsUINT64(rcx, rdx, r8)
     }
 
-MFGetAttributeUINT32 proto fastcall pAttributes:ptr IMFAttributes,
-	guidKey:REFGUID, unDefault:UINT32 {
+MFGetAttributeUINT32 proto fastcall :ptr IMFAttributes, :REFGUID, :UINT32 {
 
    .new unRet:UINT32
    .new unDefault:UINT32
@@ -1544,10 +1543,7 @@ MFGetAttributeUINT32 proto fastcall pAttributes:ptr IMFAttributes,
     }
 
 
-MFGetAttributeUINT64 proto fastcall \
-	   pAttributes: ptr IMFAttributes,
-	       guidKey: REFGUID,
-	     unDefault: UINT64 {
+MFGetAttributeUINT64 proto fastcall :ptr IMFAttributes, :REFGUID, :UINT64 {
 
    .new unRet:UINT64
    .new unDefault:UINT64
@@ -1561,10 +1557,7 @@ MFGetAttributeUINT64 proto fastcall \
     .endif
     }
 
-MFGetAttributeDouble proto fastcall \
-	   pAttributes: ptr IMFAttributes,
-	       guidKey: REFGUID,
-	      fDefault: real8 {
+MFGetAttributeDouble proto fastcall :ptr IMFAttributes, :REFGUID, :real8 {
 
    .new fRet:real8
    .new fDefault:real8
@@ -1578,11 +1571,7 @@ MFGetAttributeDouble proto fastcall \
     }
 
 
-MFGetAttribute2UINT32asUINT64 proto fastcall \
-	   pAttributes: ptr IMFAttributes,
-	       guidKey: REFGUID,
-	     punHigh32: ptr UINT32,
-	      punLow32: ptr UINT32 {
+MFGetAttribute2UINT32asUINT64 proto fastcall :ptr IMFAttributes, :REFGUID, :ptr UINT32, :ptr UINT32 {
 
    .new unPacked:UINT64
    .new punLow32:ptr UINT32
@@ -1644,10 +1633,7 @@ MFSetAttributeSize proto fastcall \
 
 ifdef _INTSAFE_H_INCLUDED_
 
-MFGetAttributeString proto fastcall \
-	   pAttributes: ptr IMFAttributes,
-	       guidKey: REFGUID,
-		  ppsz: ptr PWSTR {
+MFGetAttributeString proto fastcall :ptr IMFAttributes, :REFGUID, :ptr PWSTR {
 
    .new length:UINT32
    .new psz:PWSTR

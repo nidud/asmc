@@ -405,25 +405,25 @@ union
   volumeId		VDS_OBJECT_ID <>
  ends
  struct _cv
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _bvp
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _sv
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _cl
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _ct
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _cpg
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
  struct _cvd
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ends
 ends
 VDS_ASYNC_OUTPUT	ENDS

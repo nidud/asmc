@@ -166,7 +166,7 @@ __IEnumConnections_INTERFACE_DEFINED__ equ 1
 PENUMCONNECTIONS	typedef ptr IEnumConnections
 LPENUMCONNECTIONS	typedef ptr IEnumConnections
 CONNECTDATA		STRUC
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 dwCookie		dd ?
 CONNECTDATA		ENDS
 PCONNECTDATA		typedef ptr CONNECTDATA
@@ -1095,7 +1095,7 @@ cbSize			ULONG ?
 pClientSite		LPOLECLIENTSITE ?
 pAdviseSink		LPADVISESINKEX ?
 pPropertyNotifySink	LPPROPERTYNOTIFYSINK ?
-pUnkEventSink		LPIUnknown ?
+pUnkEventSink		LPUNKNOWN ?
 dwAmbientFlags		dd ?
 colorFore		OLE_COLOR ?
 colorBack		OLE_COLOR ?

@@ -1642,10 +1642,10 @@ RTL_CONTEXT_CHUNK macro Context, Chunk
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 
 
-C_ASSERT((XSAVE_FORMAT & (XSAVE_ALIGN - 1)) == 0)
-C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) & (XSAVE_ALIGN - 1)) == 0)
+;C_ASSERT((XSAVE_FORMAT & (XSAVE_ALIGN - 1)) == 0)
+;C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) & (XSAVE_ALIGN - 1)) == 0)
 
-C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH == 512 + 64)
+;C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH == 512 + 64)
 
 endif
 
@@ -3082,94 +3082,94 @@ endif ; _IA64_
 ifdef _WIN64
 
 ReadAcquire8 proto :ptr char_t {
-    movsx eax,char_t ptr [this]
+    movsx eax,char_t ptr [_1]
 }
 
 ReadNoFence8 proto :ptr char_t {
-    movsx eax,char_t ptr [this]
+    movsx eax,char_t ptr [_1]
 }
 
 WriteRelease8 proto :ptr char_t, :char_t {
-    mov [this],_1
+    mov [_1],_2
 }
 
 WriteNoFence8 proto :ptr char_t, :char_t {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadAcquire16 proto :ptr short_t {
-    movsx eax,short_t ptr [this]
+    movsx eax,short_t ptr [_1]
 }
 
 ReadNoFence16 proto :ptr short_t {
-    movsx eax,short_t ptr [this]
+    movsx eax,short_t ptr [_1]
 }
 
 WriteRelease16 proto :ptr short_t, :short_t {
-    mov [this],_1
+    mov [_1],_2
 }
 
 WriteNoFence16 proto :ptr short_t, :short_t {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadAcquire proto :ptr short_t {
-    movsx eax,short_t ptr [this]
+    movsx eax,short_t ptr [_1]
 }
 
 ReadNoFence proto :ptr LONG {
-    mov eax,[this]
+    mov eax,[_1]
 }
 
 WriteRelease proto :ptr LONG, :LONG {
-    mov [this],_1
+    mov [_1],_2
 }
 
 WriteNoFence proto :ptr LONG, :LONG {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadAcquire64 proto :ptr LONG64 {
-    mov rax,[this]
+    mov rax,[_1]
 }
 
 ReadNoFence64 proto :ptr LONG64 {
-    mov rax,[this]
+    mov rax,[_1]
 }
 
 WriteRelease64 proto :ptr LONG64, :LONG64 {
-    mov [this],_1
+    mov [_1],_2
 }
 
 WriteNoFence64 proto :ptr LONG64, :LONG64 {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadRaw8 proto :ptr SBYTE {
-    movsx eax,sbyte ptr [this]
+    movsx eax,sbyte ptr [_1]
 }
 
 WriteRaw8 proto :ptr SBYTE, :SBYTE {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadRaw16 proto :ptr SWORD {
-    movsx eax,sword ptr [this]
+    movsx eax,sword ptr [_1]
 }
 
 WriteRaw16 proto :ptr SWORD, :SWORD {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ;ReadRaw proto :ptr LONG { mov eax,[rcx] }
 ;WriteRaw proto :ptr LONG, :LONG { mov [rcx],edx }
 
 ReadRaw64 proto :ptr LONG64 {
-    mov rax,[this]
+    mov rax,[_1]
 }
 
 WriteRaw64 proto :ptr LONG64, :LONG64 {
-    mov [this],_1
+    mov [_1],_2
 }
 
 ReadUCharAcquire	proto :ptr BYTE { ReadAcquire8(rcx) }

@@ -875,12 +875,18 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 			int q;
 			int args = 0;
 			int comma = 0;
+			int tokpos = 2;
 
-			for ( q = 2; q < i; q++ ) {
+			if ( tokenarray[tokpos].token == T_RES_ID &&
+			     tokenarray[tokpos].tokval >= T_CCALL &&
+			     tokenarray[tokpos].tokval <= T_WATCALL )
+			     tokpos++;
+
+			for ( q = tokpos; q < i; q++ ) {
 
 			    if ( tokenarray[q].token == T_COLON )
 				args++;
-			    else if ( q > 2 && tokenarray[q].token == T_COMMA )
+			    else if ( q > tokpos && tokenarray[q].token == T_COMMA )
 				comma++;
 			}
 			if ( comma > args )
@@ -889,7 +895,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 			tokenarray[i].token = T_FINAL;
 			tokenarray[i].tokpos[0] = '\0';
 			MacroInline( tokenarray[0].string_ptr, args,
-				tokenarray[2].tokpos, tokenarray[i].string_ptr,
+				tokenarray[tokpos].tokpos, tokenarray[i].string_ptr,
 			  ( tokenarray[q-1].token == T_RES_ID && tokenarray[q-1].tokval == T_VARARG ) );
 		    }
 		} else {
@@ -2351,10 +2357,7 @@ static int write_default_prologue( void )
 #if STACKPROBE
 	if ( Options.chkstack && info->localsize > 0x1000 ) {
 	    AddLineQueue(  "externdef _chkstk:PROC" );
-	    if ( ModuleInfo.Ofssize == USE64 )
-		AddLineQueueX( "mov %r, %d", T_RAX, info->localsize );
-	    else
-		AddLineQueueX( "mov %r, %d", T_EAX, info->localsize );
+	    AddLineQueueX( "mov %r, %d", T_EAX, info->localsize );
 	    AddLineQueue( "call _chkstk" );
 	    if ( ModuleInfo.Ofssize == USE64 )
 		AddLineQueueX( "sub %r, %r", stackreg[ModuleInfo.Ofssize], T_RAX);

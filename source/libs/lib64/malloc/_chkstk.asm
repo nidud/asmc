@@ -17,20 +17,22 @@ _chkstk::
 ___chkstk_ms::
 _alloca_probe::
 
-    mov rcx,rsp
-    lea rsp,[rsp+8]
-
-    .while rax >= _PAGESIZE_
-
-        sub rax,_PAGESIZE_
-        sub rsp,_PAGESIZE_
-        cmp al,[rsp]
-    .endw
-
-    sub rsp,rax
-    cmp al,[rsp] ; probe page
-    mov rax,rsp
-    mov rsp,rcx
+    push    rcx
+    push    rax
+    lea     rcx,[rsp+24]
+    cmp     eax,_PAGESIZE_
+    jb      done
+next:
+    sub     rax,_PAGESIZE_
+    sub     rcx,_PAGESIZE_
+    test    [rcx],rcx
+    cmp     eax,_PAGESIZE_
+    ja      next
+done:
+    sub     rcx,rax
+    test    [rcx],rcx
+    pop     rax
+    pop     rcx
     ret
 
     end

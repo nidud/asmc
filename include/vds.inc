@@ -513,25 +513,25 @@ UNION
   volumeId		VDS_OBJECT_ID <>
  ENDS
  STRUCT _cv
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ENDS
  STRUCT _bvp
-  pVolumeUnk		LPIUnknown ?
+  pVolumeUnk		LPUNKNOWN ?
  ENDS
  STRUCT _sv
   ullReclaimedBytes	ULONGLONG ?
  ENDS
  STRUCT _cl
-  pLunUnk		LPIUnknown ?
+  pLunUnk		LPUNKNOWN ?
  ENDS
  STRUCT _ct
-  pTargetUnk		LPIUnknown ?
+  pTargetUnk		LPUNKNOWN ?
  ENDS
  STRUCT _cpg
-  pPortalGroupUnk	LPIUnknown ?
+  pPortalGroupUnk	LPUNKNOWN ?
  ENDS
  STRUCT _cvd
-  pVDiskUnk		LPIUnknown ?
+  pVDiskUnk		LPUNKNOWN ?
  ENDS
 ENDS
 VDS_ASYNC_OUTPUT	ENDS

@@ -70,8 +70,8 @@
     ptr_void
     }
 
-types proto :vararg {
-    for arg,<this>
+types proto args:vararg {
+    for arg,<args>
         mov eax,typeid(arg)
         endm
         }

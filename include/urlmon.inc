@@ -484,7 +484,7 @@ dwOptionsFlags		dd ?
 dwCodePage		dd ?
 securityAttributes	SECURITY_ATTRIBUTES <>
 iid			IID <>
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 dwReserved		dd ?
 BINDINFO		ENDS
 
@@ -508,7 +508,7 @@ dwOptionsFlags		dd ?
 dwCodePage		dd ?
 securityAttributes	REMSECURITY_ATTRIBUTES <>
 iid			IID <>
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 dwReserved		dd ?
 RemBINDINFO		ENDS
 
@@ -1839,7 +1839,7 @@ PROTOCOLFILTERDATA	STRUC
 cbSize			dd ?
 pProtocolSink		PVOID ?;LPIInternetProtocolSink ?
 pProtocol		PVOID ?;LPIInternetProtocol ?
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 dwFilterFlags		dd ?
 PROTOCOLFILTERDATA	ENDS
 

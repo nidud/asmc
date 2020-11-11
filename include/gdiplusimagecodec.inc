@@ -10,22 +10,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 GetImageDecodersSize proto :ptr UINT, :ptr UINT {
 
-    GdipGetImageDecodersSize(this, _1)
+    GdipGetImageDecodersSize(_1, _2)
 }
 
 GetImageDecoders proto :UINT, :UINT, :ptr ImageCodecInfo {
 
-    GdipGetImageDecoders(this, _1, _2)
+    GdipGetImageDecoders(_1, _2, _3)
 }
 
 GetImageEncodersSize proto :ptr UINT, :ptr UINT {
 
-    GdipGetImageEncodersSize(this, _1)
+    GdipGetImageEncodersSize(_1, _2)
 }
 
 GetImageEncoders proto :UINT, :UINT, :ptr ImageCodecInfo {
 
-    GdipGetImageEncoders(this, _1, _2)
+    GdipGetImageEncoders(_1, _2, _3)
 }
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

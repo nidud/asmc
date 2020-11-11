@@ -1822,13 +1822,13 @@ CreateTypeLib2 proto WINAPI \
 LPDISPATCH		typedef ptr IDispatch
 
 PARAMDATA		STRUC
-szName			LPOLECHAR ?
+szName			LPOLESTR ?
 vt			VARTYPE ?
 PARAMDATA		ENDS
 LPPARAMDATA		typedef ptr PARAMDATA
 
 METHODDATA		STRUC
-szName			LPOLECHAR ?
+szName			LPOLESTR ?
 ppdata			LPPARAMDATA ?
 dispid			DISPID ?
 iMeth			UINT ?

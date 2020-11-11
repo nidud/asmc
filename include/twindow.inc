@@ -1,19 +1,7 @@
 ifndef __TWINDOW_INC
 __TWINDOW_INC equ <>
-
 include wincon.inc
 include winuser.inc
-
-LPTWINDOW       typedef ptr TWindow
-LPTCLASS        typedef ptr TClass
-LPTCOLOR        typedef ptr TColor
-LPTRECT         typedef ptr TRect
-LPTROBJECT      typedef ptr TRObject
-LPTRESOURCE     typedef ptr TResource
-LPTMESSAGE      typedef ptr TMessage
-LPTCURSOR       typedef ptr TCursor
-LPTEDIT         typedef ptr TEdit
-LPTCONTEXT      typedef ptr TContext
 
 .pragma comment(lib, twindow)
 
@@ -54,7 +42,8 @@ LPTCONTEXT      typedef ptr TContext
     FG_TEXTEDIT,  ; 0x1F
 
     COLOR_COUNT   ; 0x20
-    }
+
+}
 
 .enum WindowType {
 
@@ -70,7 +59,7 @@ LPTCONTEXT      typedef ptr TContext
     T_SCROLLUP,
     T_SCROLLDOWN,
     T_TEXTBUTTON
-    }
+}
 
 .enum WindowFlags {
 
@@ -95,7 +84,7 @@ LPTCONTEXT      typedef ptr TContext
     O_EVENT         = 0x20000, ; Item have local event handler
     O_CHILD         = 0x40000, ; Item have a child
     O_STATE         = 0x80000  ; State
-    }
+}
 
 CURSOR_NORMAL   equ 16
 
@@ -106,12 +95,11 @@ MAXSCRLINE      equ 256 ; max screen size
 .pragma pack(push, 1)
 
 .template TColor
-
     at          db COLOR_COUNT dup(?)
-   .ends
+.ends
+color_t         typedef ptr TColor
 
 .template TRect
-
     x           db ?
     y           db ?
     col         db ?
@@ -121,14 +109,14 @@ MAXSCRLINE      equ 256 ; max screen size
         movzx   eax,[this].TRect.row
         mul     [this].TRect.col
         imul    eax,eax,CHAR_INFO
+        retm    <eax>
         }
-
     .operator Coord {
         movzx   eax,[this].TRect.row
         shl     eax,16
         mov     al,[this].TRect.col
+        retm    <eax>
         }
-
     .operator SmallRect {
         movzx   eax,[this].TRect.row
         movzx   edx,[this].TRect.y
@@ -141,8 +129,11 @@ MAXSCRLINE      equ 256 ; max screen size
         dec     al
         shl     rax,32
         or      rax,rdx
+        retm    <rax>
         }
-    .ends
+.ends
+trect_t         typedef ptr TRect
+
 
 MTRECT macro x, y, col, row
     exitm<(x or (y shl 8) or (col shl 16) or (row shl 24 ))>
@@ -155,28 +146,26 @@ TRect::Exchange proto :HANDLE, :PCHAR_INFO
 
 
 .template TRObject
-
     flags       dw ?
     count       db ?
     index       db ?
     rc          TRect <>
-   .ends
-
+.ends
+robject_t       typedef ptr TRObject
 
 .template TResource
-
     MemSize     dw ?
     dialog      TRObject <>
-   .ends
+.ends
+resource_t      typedef ptr TResource
 
 .template TMessage
-
     Next        ptr_t ?
     Message     uint_t ?
     wParam      size_t ?
     lParam      ptr_t ?
-   .ends
-
+.ends
+message_t       typedef ptr TMessage
 
 .class TCursor
 
@@ -185,12 +174,12 @@ TRect::Exchange proto :HANDLE, :PCHAR_INFO
     Handle      HANDLE ?
 
     TCursor     proc
-    Release     proc
-
     Hide        proc
     Show        proc
     Move        proc :int_t, :int_t
-   .ends
+    Release     proc
+.ends
+cursor_t        typedef ptr TCursor
 
 
 .class TEdit
@@ -215,74 +204,78 @@ TRect::Exchange proto :HANDLE, :PCHAR_INFO
     ClipCut         proc :uint_t
     ClipPaste       proc
     GetLine         proc
-    SetWinPos       proc :ptr TRect, :ptr TRect
+    SetWinPos       proc :trect_t, :trect_t
     SetCursor       proc
-   .ends
+
+    .ends
+    tedit_t     typedef ptr TEdit
 
 
 .template TContext
-
-    union
-        struct
-            State   db ?
-            Flags   db ?
-            x       db ?
-            y       db ?
-            rc      TRect <>
-        ends
-        object      ptr_t ?
-    ends
-   .ends
+union
+  struct
+    State       db ?
+    Flags       db ?
+    x           db ?
+    y           db ?
+    rc          TRect <>
+  ends
+    object      ptr_t ?
+ends
+.ends
+context_t       typedef ptr TContext
 
 .pragma pack(pop)
 
-.template TClass
+window_t        typedef ptr TWindow
 
-    Instance    LPTWINDOW ?
+.template TClass
+    Instance    window_t ?
     StdIn       HANDLE ?
     StdOut      HANDLE ?
-    Message     LPTMESSAGE ?
+    Message     message_t ?
     Buttons     uint_t ?
     Focus       uint_t ?
-    Console     LPTWINDOW ?
+    Console     window_t ?
     ConMode     uint_t ?
     ErrMode     uint_t ?
     Clipbord    string_t ?
     ClipSize    uint_t ?
     State       uint_t ?
-   .ends
+.ends
+class_t         typedef ptr TClass
 
-CALLBACK(TWINPROC, :ptr TWindow, :uint_t, :size_t, :ptr_t)
+CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
 
 .class TWindow
 
     rc              TRect <>
     Flags           uint_t ?
     Window          PCHAR_INFO ?
-    Color           LPTCOLOR ?
-    Class           LPTCLASS ?
+    Color           color_t ?
+    Class           class_t ?
     Type            uint_t ?
     Index           uint_t ?
-    WndProc         TWINPROC ?
-    Child           LPTWINDOW ?
-    Prev            LPTWINDOW ?
-    Cursor          LPTCURSOR ?
+    WndProc         tproc_t ?
+    Child           window_t ?
+    Prev            window_t ?
+    Cursor          cursor_t ?
     SysKey          uint_t ?
     Context         TContext <>
 
     TWindow         proc
     Open            proc :TRect, :uint_t
-    Load            proc :LPTRESOURCE
-    Resource        proc :LPTRESOURCE
+    Load            proc :resource_t
+    Resource        proc :resource_t
     Release         proc
 
     Show            proc
     Hide            proc
     Move            proc :int_t, :int_t
 
-    Read            proc :LPTRECT, :PCHAR_INFO
-    Write           proc :LPTRECT, :PCHAR_INFO
-    Exchange        proc :LPTRECT, :PCHAR_INFO
+    Read            proc :trect_t, :PCHAR_INFO
+    Write           proc :trect_t, :PCHAR_INFO
+    Exchange        proc :trect_t, :PCHAR_INFO
 
     SetShade        proc
     ClrShade        proc
@@ -302,7 +295,7 @@ CALLBACK(TWINPROC, :ptr TWindow, :uint_t, :size_t, :ptr_t)
     CursorOff       proc
     CursorMove      proc :int_t, :int_t
 
-    Register        proc :TWINPROC
+    Register        proc :tproc_t
     Send            proc :uint_t, :size_t, :ptr
     Post            proc :uint_t, :size_t, :ptr
     PostQuit        proc :int_t

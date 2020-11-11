@@ -919,7 +919,19 @@ char *ParseMacroArgs(char *buffer, int count, char *args)
 
     for ( p = args, q = buffer, i = 1; i < count; i++ ) {
 
-        q += sprintf( q, "_%u, ", i );
+        while ( *p == '\t' || *p == ' ' )
+            p++;
+
+        if ( *p == ':' ) {
+            q += sprintf( q, "_%u, ", i );
+        } else {
+            while ( is_valid_id_char( *p ) )
+                *q++ = *p++;
+            *q++ = ',';
+            *q++ = ' ';
+            *q = '\0';
+        }
+
         s = p;
         if ( (p = strchr(p, ',')) != NULL)
             p++;
@@ -953,14 +965,31 @@ void MacroInline( char *name, int count, char *args, char *data, int vargs )
     char mac[512];
     char buf[512];
     struct com_item *o;
+    struct asm_tok *tokenarray;
 
     if ( Parse_Pass > PASS_1 )
         return;
 
+    mac[0] = '\0';
     strcpy( buf, args );
     o = ModuleInfo.g.ComStack;
-    if ( o && o->vector ) {
-        mac[0] = '\0';
+    tokenarray = ModuleInfo.tokenarray;
+
+    if ( tokenarray[1].tokval == T_PROTO ) {
+
+        /* name proto [name1]:type, ... { ... } */
+        /* args: _1, _2, ... */
+
+        p = mac;
+        if ( count ) {
+
+            p = ParseMacroArgs( p, count + 1, buf );
+            p -= 2;
+        }
+        *p = 0;
+
+    } else if ( o && o->vector ) {
+
         p = ParseMacroArgs( mac, count, buf );
         strcat( p, "this:=<" );
         strcat( p, GetResWName( o->vector, NULL ) );
@@ -1047,6 +1076,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         }
         break;
 
+    case T_DOT_STATIC:
     case T_DOT_OPERATOR:
         if ( o && o->type )
             ;

@@ -107,41 +107,41 @@ __vcrt_FlsAlloc proto :PFLS_CALLBACK_FUNCTION {
         TlsAlloc()
         }
 __vcrt_FlsFree proto :DWORD {
-        TlsFree(this)
+        TlsFree(_1)
         }
 __vcrt_FlsGetValue proto :DWORD {
-        return TlsGetValue(this)
+        return TlsGetValue(_1)
         }
 __vcrt_FlsSetValue proto :DWORD, :ptr {
-        TlsSetValue(this, _1)
+        TlsSetValue(_1, _2)
         }
 __vcrt_InitializeCriticalSectionEx proto :LPCRITICAL_SECTION, :DWORD, :DWORD {
-        InitializeCriticalSectionEx(this, _1, _2)
+        InitializeCriticalSectionEx(_1, _2, _3)
         }
 __vcrt_EncodePointer proto :ptr {
-        mov rax,this
+        mov rax,_1
         }
 
 elseif not defined(_VCRT_WINDOWS_BUILD) and (defined(_ONECORE) or _VCRT_WIN32_WINNT GE _WIN32_WINNT_VISTA)
 
 
 __vcrt_FlsAlloc proto :PFLS_CALLBACK_FUNCTION {
-        FlsAlloc(this)
+        FlsAlloc(_1)
         }
 __vcrt_FlsFree proto :DWORD {
-        FlsFree(this)
+        FlsFree(_1)
         }
 __vcrt_FlsGetValue proto :DWORD {
-        FlsGetValue(this)
+        FlsGetValue(_1)
         }
 __vcrt_FlsSetValue proto :DWORD, :ptr {
-        FlsSetValue(this, _1)
+        FlsSetValue(_1, _2)
         }
 __vcrt_InitializeCriticalSectionEx proto :LPCRITICAL_SECTION, :DWORD, :DWORD {
-        InitializeCriticalSectionEx(this, _1, _2)
+        InitializeCriticalSectionEx(_1, _2, _3)
         }
 __vcrt_EncodePointer proto :ptr {
-        EncodePointer(this)
+        EncodePointer(_1)
         }
 
 else
@@ -154,7 +154,7 @@ __vcrt_InitializeCriticalSectionEx proto :LPCRITICAL_SECTION, :DWORD, :DWORD
 __vcrt_EncodePointer    proto :ptr
 
 __vcrt_EncodePointer proto :ptr {
-        EncodePointer(this)
+        EncodePointer(_1)
         }
 
 endif

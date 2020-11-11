@@ -981,24 +981,24 @@ endif
 ifndef MIDL_PASS
 ListEntry32To64 proto __inline :PLIST_ENTRY32, :PLIST_ENTRY64 {
 ifdef _WIN64
-	mov [_1].LIST_ENTRY64.Flink,[this].LIST_ENTRY32.Flink
-	mov [_1].LIST_ENTRY64.Blink,[this].LIST_ENTRY32.Blink
+	mov [_2].LIST_ENTRY64.Flink,[_1].LIST_ENTRY32.Flink
+	mov [_2].LIST_ENTRY64.Blink,[_1].LIST_ENTRY32.Blink
 else
 	mov ecx,eax
-	mov dword ptr [_1].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
-	mov dword ptr [_1].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
+	mov dword ptr [_2].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
+	mov dword ptr [_2].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
 endif
 	}
 ListEntry64To32 proto __inline :PLIST_ENTRY64, :PLIST_ENTRY32 {
 ifdef _WIN64
-	mov [_1].LIST_ENTRY32.Flink,[this].LIST_ENTRY64.Flink
-	mov [_1].LIST_ENTRY32.Blink,[this].LIST_ENTRY64.Blink
+	mov [_2].LIST_ENTRY32.Flink,[_1].LIST_ENTRY64.Flink
+	mov [_2].LIST_ENTRY32.Blink,[_1].LIST_ENTRY64.Blink
 else
 	mov ecx,eax
-	mov dword ptr [_1].LIST_ENTRY64.Flink[4],0
-	mov dword ptr [_1].LIST_ENTRY64.Blink[4],0
-	mov dword ptr [_1].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
-	mov dword ptr [_1].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
+	mov dword ptr [_2].LIST_ENTRY64.Flink[4],0
+	mov dword ptr [_2].LIST_ENTRY64.Blink[4],0
+	mov dword ptr [_2].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
+	mov dword ptr [_2].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
 endif
 	}
 endif
@@ -1075,12 +1075,12 @@ POBJECT_ATTRIBUTES	typedef ptr OBJECT_ATTRIBUTES
 PCOBJECT_ATTRIBUTES	typedef ptr CONST OBJECT_ATTRIBUTES
 
 InitializeObjectAttributes proto __inline :ptr, :abs, :abs, :abs, :abs {
-    mov [this].OBJECT_ATTRIBUTES.Length,sizeof( OBJECT_ATTRIBUTES )
-    mov [this].OBJECT_ATTRIBUTES.RootDirectory,_3
-    mov [this].OBJECT_ATTRIBUTES.Attributes,_2
-    mov [this].OBJECT_ATTRIBUTES.ObjectName,_1
-    mov [this].OBJECT_ATTRIBUTES.SecurityDescriptor,_4
-    mov [this].OBJECT_ATTRIBUTES.SecurityQualityOfService,NULL
+    mov [_1].OBJECT_ATTRIBUTES.Length,sizeof( OBJECT_ATTRIBUTES )
+    mov [_1].OBJECT_ATTRIBUTES.RootDirectory,_4
+    mov [_1].OBJECT_ATTRIBUTES.Attributes,_3
+    mov [_1].OBJECT_ATTRIBUTES.ObjectName,_2
+    mov [_1].OBJECT_ATTRIBUTES.SecurityDescriptor,_5
+    mov [_1].OBJECT_ATTRIBUTES.SecurityQualityOfService,NULL
     }
 
 RTL_CONSTANT_OBJECT_ATTRIBUTES macro n, a

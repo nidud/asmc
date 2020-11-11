@@ -9,7 +9,7 @@ include twindow.inc
 
     .code
 
-    assume rcx:ptr TRect
+    assume rcx:trect_t
 
 TRect::Read proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 
@@ -39,7 +39,6 @@ TRect::Read proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 
 TRect::Read endp
 
-
 TRect::Write proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 
   local co:COORD, rc:SMALL_RECT
@@ -67,7 +66,6 @@ TRect::Write proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
     ret
 
 TRect::Write endp
-
 
 TRect::Exchange proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 

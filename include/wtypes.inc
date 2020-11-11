@@ -183,6 +183,7 @@ dwCapabilities		dd ?
 COAUTHINFO		ENDS
 
 SCODE			typedef LONG
+LPSCODE			typedef ptr LONG
 
 ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED equ <>
@@ -336,7 +337,6 @@ BYTE_BLOB	STRUC
 clSize		dd ?
 abData		db ?
 BYTE_BLOB	ENDS
-
 UP_BYTE_BLOB	typedef ptr BYTE_BLOB
 
 WORD_BLOB	STRUC
@@ -540,6 +540,7 @@ externdef IWinTypes_v0_1_s_ifspec:RPC_IF_HANDLE
 endif
 
 DATE		typedef REAL8
+LPDATE		typedef ptr REAL8
 
 ifndef _tagCY_DEFINED
 _tagCY_DEFINED	equ 1
@@ -640,6 +641,7 @@ cbSize		ULONG ?
 ulClipFmt	LONG ?
 pClipData	LPBYTE ?
 CLIPDATA	ENDS
+LPCLIPDATA	typedef ptr CLIPDATA
 
 CBPCLIPDATA macro clipdata
 	exitm<( (clipdata).cbSize - sizeof((clipdata).ulClipFmt) )>

@@ -104,12 +104,13 @@ SAFEARR_BSTR		ENDS
 
 SAFEARR_UNKNOWN		STRUC
 Size			ULONG ?
-apUnknown		LPIUnknown ?
+apUnknown		LPUNKNOWN ?
 SAFEARR_UNKNOWN		ENDS
 
+LPDISPATCH		typedef ptr IDispatch
 SAFEARR_DISPATCH	STRUC
 Size			ULONG ?
-apDispatch		PVOID ?;LPIDispatch ?
+apDispatch		LPDISPATCH ?
 SAFEARR_DISPATCH	ENDS
 
 SAFEARR_VARIANT		STRUC
@@ -124,7 +125,7 @@ SAFEARR_BRECORD		ENDS
 
 SAFEARR_HAVEIID		STRUC
 Size			ULONG ?
-apUnknown		LPIUnknown ?
+apUnknown		LPUNKNOWN ?
 iid			IID <>
 SAFEARR_HAVEIID		ENDS
 
@@ -207,16 +208,19 @@ __VARIANT_NAME_3	equ 1
 __tagBRECORD		equ 1
 __VARIANT_NAME_4	equ 1
 endif
-;VARIANT		 typedef VARIANT
+
+LPFLOAT			typedef ptr real4
+LPDOUBLE		typedef ptr real8
+LPVARIANT_BOOL		typedef ptr VARIANT_BOOL
 
 VARIANT			STRUC
-UNION ;__VARIANT_NAME_1
- STRUC ;__VARIANT_NAME_2
+UNION
+ STRUC
   vt			VARTYPE ?
   wReserved1		dw ?
   wReserved2		dw ?
   wReserved3		dw ?
-  UNION ;__VARIANT_NAME_3
+  UNION
    lVal			LONG ?
    bVal			db ?
    iVal			SWORD ?
@@ -228,8 +232,8 @@ UNION ;__VARIANT_NAME_1
    cyVal		CY <>
    date			DATE ?
    bstrVal		BSTR ?
-   punkVal		LPIUnknown ?
-   pdispVal		PVOID ?;LPIDispatch ?
+   punkVal		LPUNKNOWN ?
+   pdispVal		LPDISPATCH ?
    parray		LPSAFEARRAY ?
    pbVal		LPBYTE ?
    piVal		PVOID ?;LPSHORT ?
@@ -237,13 +241,13 @@ UNION ;__VARIANT_NAME_1
    pfltVal		LPFLOAT ?
    pdblVal		LPDOUBLE ?
    pboolVal		LPVARIANT_BOOL ?
-   pbool		PVOID ?;LP_VARIANT_BOOL ?
+   pbool		LPVARIANT_BOOL ?
    pscode		LPSCODE ?
    pcyVal		LPCY ?
    pdate		LPDATE ?
    pbstrVal		LPBSTR ?
-   ppunkVal		LPIUnknown ?
-   ppdispVal		PVOID ?;LPIDispatch ?
+   ppunkVal		LPUNKNOWN ?
+   ppdispVal		LPDISPATCH ?
    pparray		LPSAFEARRAY ?
    pvarVal		PVOID ?;LPVARIANT ?
    byref		PVOID ?
@@ -258,19 +262,18 @@ UNION ;__VARIANT_NAME_1
    pulVal		PVOID ?;LPULONG ?
    pintVal		PVOID ?;LPSINT ?
    puintVal		LPUINT ?
-   STRUC ;__VARIANT_NAME_4
+   STRUC
     pvRecord		PVOID ?
     pRecInfo		PVOID ?;LPIRecordInfo ?
-   ENDS ; __VARIANT_NAME_4
-  ENDS ; __VARIANT_NAME_3
- ENDS ; __VARIANT_NAME_2
+   ENDS
+  ENDS
+ ENDS
  decVal			DECIMAL <>
-ENDS ; __VARIANT_NAME_1
+ENDS
 VARIANT			ENDS
 LPVARIANT		typedef ptr VARIANT
 
 VARIANTARG		typedef VARIANT
-
 LPVARIANTARG		typedef ptr VARIANT
 
 wireBRECORD		STRUC
@@ -298,8 +301,8 @@ UNION
  cyVal			CY <>
  date			DATE ?
  bstrVal		wireBSTR ?
- punkVal		LPIUnknown ?
- pdispVal		PVOID ?;LPIDispatch ?
+ punkVal		LPUNKNOWN ?
+ pdispVal		LPDISPATCH ?
  parray			wireSAFEARRAY ?
  brecVal		wireBRECORD <>
  pbVal			LPBYTE ?
@@ -312,8 +315,8 @@ UNION
  pcyVal			LPCY ?
  pdate			LPDATE ?
  pbstrVal		PVOID ?;LPwireBSTR ?
- ppunkVal		LPIUnknown ?
- ppdispVal		PVOID ?;LPIDispatch ?
+ ppunkVal		LPUNKNOWN ?
+ ppdispVal		LPDISPATCH ?
  pparray		PVOID ?;LPwireSAFEARRAY ?
  pvarVal		PVOID ?;LPwireVARIANT ?
  cVal			SBYTE ?
@@ -524,7 +527,7 @@ VARDESC			ENDS
 
 LPVARDESC		typedef ptr VARDESC
 
-.enum tagTYPEFLAGS {
+.enum TYPEFLAGS {
     TYPEFLAG_FAPPOBJECT		= 0x1,
     TYPEFLAG_FCANCREATE		= 0x2,
     TYPEFLAG_FLICENSED		= 0x4,
@@ -542,7 +545,7 @@ LPVARDESC		typedef ptr VARDESC
     TYPEFLAG_FPROXY		= 0x4000
 }
 
-.enum tagFUNCFLAGS {
+.enum FUNCFLAGS {
     FUNCFLAG_FRESTRICTED	= 0x1,
     FUNCFLAG_FSOURCE		= 0x2,
     FUNCFLAG_FBINDABLE		= 0x4,
@@ -558,7 +561,7 @@ LPVARDESC		typedef ptr VARDESC
     FUNCFLAG_FIMMEDIATEBIND	= 0x1000
 }
 
-.enum tagVARFLAGS {
+.enum VARFLAGS {
     VARFLAG_FREADONLY		= 0x1,
     VARFLAG_FSOURCE		= 0x2,
     VARFLAG_FBINDABLE		= 0x4,
@@ -575,7 +578,7 @@ LPVARDESC		typedef ptr VARDESC
 }
 
 CLEANLOCALSTORAGE	STRUC
-pInterface		LPIUnknown ?
+pInterface		LPUNKNOWN ?
 pStorage		PVOID ?
 flags			dd ?
 CLEANLOCALSTORAGE	ENDS
@@ -701,7 +704,6 @@ endif
 ifndef __IDispatch_INTERFACE_DEFINED__
 __IDispatch_INTERFACE_DEFINED__ equ 1
 
-LPDISPATCH		typedef ptr IDispatch
 DISPID_UNKNOWN		equ ( -1 )
 DISPID_VALUE		equ ( 0 )
 DISPID_PROPERTYPUT	equ ( -3 )
@@ -719,8 +721,9 @@ DEFINE_IIDX(IDispatch, "00020400-0000-0000-C000-000000000046")
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-
     .ends
+
+LPDISPATCH		typedef ptr IDispatch
 
 endif
 

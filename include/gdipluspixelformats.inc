@@ -39,26 +39,22 @@ PixelFormat64bppPARGB   equ (14 OR (64 SHL 8) OR PixelFormatAlpha OR PixelFormat
 PixelFormat32bppCMYK    equ (15 OR (32 SHL 8))
 PixelFormatMax          equ 16
 
-GetPixelFormatSize proto :PixelFormat {
-    mov     eax,this
+GetPixelFormatSize proto format:PixelFormat {
+    mov     eax,format
     shr     eax,8
     and     eax,0xff
-    retm    <eax>
     }
-IsIndexedPixelFormat proto :PixelFormat {
-    mov     eax,this
+IsIndexedPixelFormat proto format:PixelFormat {
+    mov     eax,format
     and     eax,PixelFormatIndexed
-    retm    <eax>
     }
 IsAlphaPixelFormat proto :PixelFormat {
-    mov     eax,this
+    mov     eax,format
     and     eax,PixelFormatAlpha
-    retm    <eax>
     }
-IsExtendedPixelFormat proto :PixelFormat {
-    mov     eax,this
+IsExtendedPixelFormat proto format:PixelFormat {
+    mov     eax,format
     and     eax,PixelFormatExtended
-    retm    <eax>
     }
 
 if (GDIPVER GE 0x0110)

@@ -4,11 +4,11 @@ include stdlib.inc
     .code
 
 compare proto :ptr, :ptr {
-    cmp this,_1
+    cmp _1,_2
     }
 
 sort proto :ptr, :ptr, :abs {
-    _2(this, _1)
+    _3(_1, _2)
     }
 
 main proc

@@ -1,5 +1,6 @@
 
 include conio.inc
+include stdio.inc
 include stdlib.inc
 
     ostream typedef ptr
@@ -104,6 +105,14 @@ include stdlib.inc
         .new convbuf[64]:wchar_t
 
         _i64toa( rcx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+
+    .operator wostream?real8 :real8 {
+
+        .new convbuf[64]:wchar_t
+
+        swprintf( "%f", &convbuf, _1 )
         _cputws( &convbuf )
         }
 

@@ -231,13 +231,13 @@ endif
 
 _freea_crt proto :ptr {
 
-    .if this
+    .if _1
 
-        sub this,_ALLOCA_S_MARKER_SIZE
-        mov eax,[this]
+        sub _1,_ALLOCA_S_MARKER_SIZE
+        mov eax,[_1]
         .if eax == _ALLOCA_S_HEAP_MARKER
 
-            _free_crt(this)
+            _free_crt(_1)
 
         .elseif eax != _ALLOCA_S_STACK_MARKER
 
@@ -379,11 +379,11 @@ ifdef __cplusplus
         }
 
     __crt_rotate_pointer_value proto :uint_t, :int_t {
-        RotateRight32(this, _1)
+        RotateRight32(_1, _2)
         }
 
     __crt_rotate_pointer_value proto :uint_t, :int_t {
-        RotateRight64(this, _1)
+        RotateRight64(_1, _2)
         }
 
     __crt_fast_decode_pointer proto :ptr {
@@ -417,20 +417,20 @@ ifdef __cplusplus
 
 
     __crt_get_proc_address proto :HMODULE, :ptr {
-        GetProcAddress(this, _1)
+        GetProcAddress(_1, _2)
         }
 
     __crt_interlocked_exchange_pointer proto :ptr, :abs {
-        _InterlockedExchangePointer(this, _1)
+        _InterlockedExchangePointer(_1, _2)
         }
 
     __crt_interlocked_compare_exchange proto :ptr, :abs, :abs {
-        static_assert(sizeof(this) == sizeof(LONG), "Type being compared must be same size as a LONG.")
-        _InterlockedCompareExchange(this, _1, _2)
+        static_assert(sizeof(_1) == sizeof(LONG), "Type being compared must be same size as a LONG.")
+        _InterlockedCompareExchange(_1, _2, _3)
         }
 
     __crt_interlocked_compare_exchange_pointer proto :ptr, :abs, :abs {
-        _InterlockedCompareExchangePointer(this, _1, _2)
+        _InterlockedCompareExchangePointer(_1, _2, _3)
         }
 
     ifndef _M_CEE_PURE

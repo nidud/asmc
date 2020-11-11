@@ -1063,9 +1063,39 @@ ParseClass endp
 
 ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
+    ; :abs, name:ptr, x:abs=<val>, ...
+
     .for ebx = args, edi = buffer, esi = 1 : esi < count : esi++
 
-        add edi,sprintf( edi, "_%u, ", esi )
+        xor eax,eax
+        .repeat
+
+            mov al,[ebx]
+            inc ebx
+
+            .continue(0) .if _ltype[eax+1] & _SPACE
+        .until 1
+        dec ebx
+
+        .if al == ':'
+
+            add edi,sprintf( edi, "_%u, ", esi )
+
+        .else
+
+            .while 1
+
+                mov al,[ebx]
+
+                .break .if !( _ltype[eax+1] & _LABEL )
+
+                stosb
+                inc ebx
+            .endw
+            mov eax,' ,'
+            stosw
+            mov byte ptr [edi],0
+        .endif
 
         .if strchr(ebx, ',')
             inc eax
@@ -1110,18 +1140,42 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
 
     strcpy( &buf, args )
 
+    mov mac,0
+    lea edi,mac
+    mov ebx,ModuleInfo.tokenarray
     mov edx,ModuleInfo.ComStack
-    .if edx && [edx].com_item.vector
-        mov mac,0
 
-        mov edi,ParseMacroArgs( &mac, count, &buf )
+    .if [ebx+16].tokval == T_PROTO
+
+        ; name proto [name1]:type, ... { ... }
+        ; args: _1, _2, ...
+
+        mov edx,count
+        .if edx
+            inc edx
+            mov edi,ParseMacroArgs( edi, edx, &buf )
+            sub edi,2
+        .endif
+        mov byte ptr [edi],0
+
+    .elseif edx && [edx].com_item.vector
+
+        ; .operator name [name1]:type, ..., this:=<vector> { ... }
+        ; args: _1, _2, ..., this
+
+        mov edi,ParseMacroArgs( edi, count, &buf )
         strcat(edi, "this:=<")
         mov edx,ModuleInfo.ComStack
         mov ebx,[edx].com_item.vector
         strcat(edi, GetResWName( ebx, NULL ) )
         strcat(edi, ">")
+
     .else
-        lea edi,[strcpy( &mac, "this" ) + 4]
+
+        ; .operator|.static name this, [name1]:type, ... { ... }
+        ; args: this, _1, _2, ...
+
+        lea edi,[strcpy( edi, "this" ) + 4]
         .if count > 1
             lea edi,[strcpy(edi, ", ") + 2]
             mov edi,ParseMacroArgs( edi, count, &buf )
@@ -1129,9 +1183,12 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
             mov byte ptr [edi],0
         .endif
     .endif
+
     .if vargs
+
         strcpy( edi, ":vararg" )
     .endif
+
     AddLineQueueX( "%s macro %s", name, &mac )
 
     .for edi = 0, esi = inline : strchr(esi, 10) :
@@ -1205,6 +1262,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endif
         .endc
 
+      .case T_DOT_STATIC
       .case T_DOT_OPERATOR
 
         mov esi,ModuleInfo.ComStack
@@ -1226,7 +1284,6 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .new name[512]  : char_t
 
         mov is_vararg,0
-
         mov ebx,get_param_name( ebx, &token, edi, &args, &is_id, &context )
         .return .if eax == ERROR
 
@@ -1246,6 +1303,36 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     sub eax,1
                 .endw
                 mov byte ptr [eax],0
+
+                .if cmd == T_DOT_STATIC && is_vararg == 0
+
+                    .if args > 1
+
+                        mov dword ptr [eax],'av:,'
+                        mov dword ptr [eax+4],'grar'
+                        mov byte ptr [eax+8],0
+
+                        mov [ecx].token,T_COMMA
+                        mov [ecx].tokpos,eax
+                        mov [ecx].string_ptr,@CStr(",")
+                        add ecx,16
+                        inc eax
+                    .else
+                        mov dword ptr [eax],'rav:'
+                        mov dword ptr [eax+4],'gra'
+                    .endif
+
+                    mov [ecx].token,T_COLON
+                    mov [ecx].tokpos,eax
+                    mov [ecx].string_ptr,@CStr(":")
+                    add ecx,16
+                    inc eax
+                    mov [ecx].token,T_RES_ID
+                    mov [ecx].tokval,T_VARARG
+                    mov [ecx].tokpos,eax
+                    mov [ecx].string_ptr,eax
+                    add ecx,16
+                .endif
                 mov [ecx].token,T_FINAL
             .endif
             assume ecx:nothing

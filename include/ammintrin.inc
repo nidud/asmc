@@ -225,21 +225,17 @@ _mm_comtrue_epi64 macro v1, v2
 ;; SSE5 intrinsics
 ;; Float/double multiply-accumulate
 
-_mm_macc_ps proto :real16, :real16, :real16 {
-	vfmadd213ps this, _1, _2
-	retm	<this>
+_mm_macc_ps proto :real4, :real4, :real4 {
+	vfmadd213ps xmm0, xmm1, xmm2
 	}
-_mm_macc_pd proto :real16, :real16, :real16 {
-	vfmadd213pd this, _1, _2
-	retm	<this>
+_mm_macc_pd proto :real8, :real8, :real8 {
+	vfmadd213pd xmm0, xmm1, xmm2
 	}
 _mm_macc_ss proto :real4, :real4, :real4 {
-	vfmadd213ss this, _1, _2
-	retm	<this>
+	vfmadd213ss xmm0, xmm1, xmm2
 	}
 _mm_macc_sd proto :real8, :real8, :real8 {
-	vfmadd213sd this, _1, _2
-	retm	<this>
+	vfmadd213sd xmm0, xmm1, xmm2
 	}
 
 _mm_maddsub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>

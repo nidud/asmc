@@ -26,10 +26,10 @@ option dllimport:none
 
 SafeRelease proto :ptr, :abs {
 
-    mov rax,[this]
+    mov rax,[_1]
     .if rax
-        mov qword ptr [this],NULL
-        [rax]._1.Release()
+        mov qword ptr [_1],NULL
+        [rax]._2.Release()
     .endif
     }
 
@@ -145,11 +145,9 @@ wmain proc argc:int_t, argv:ptr ptr wchar_t
     SafeRelease(&pReader, IMFSourceReader)
     MFShutdown()
     CoUninitialize()
-
+    mov eax,1
     .if SUCCEEDED(hr)
         xor eax,eax
-    .else
-        mov eax,1
     .endif
     ret
 

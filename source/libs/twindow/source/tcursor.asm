@@ -12,7 +12,7 @@ include twindow.inc
 
     .code
 
-    assume rcx:ptr TCursor
+    assume rcx:cursor_t
 
 TCursor::Show proc
 
@@ -45,7 +45,7 @@ TCursor::Move proc x:int_t, y:int_t
 
 TCursor::Move endp
 
-    assume rbx:ptr TCursor
+    assume rbx:cursor_t
 
 TCursor::Release proc uses rbx
 

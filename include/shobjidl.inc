@@ -4710,7 +4710,7 @@ hwnd			HWND ?
 uId			UINT ?
 uIdParent		UINT ?
 uIdAncestor		UINT ?
-punk			LPIUnknown ?
+punk			LPUNKNOWN ?
 pidlFolder		PIDLIST_ABSOLUTE ?
 pidlItem		PUITEMID_CHILD ?
 psf			LPIShellFolder ?

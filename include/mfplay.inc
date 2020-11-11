@@ -270,7 +270,7 @@ MFP_PKEY_StreamRenderingResults equ <{ { 0xa7cf9740, 0xe8d9, 0x4a87, { 0xbd, 0x8
 
 __MFP_CAST_EVENT proto fastcall :ptr, :abs {
 	xor eax,eax
-	cmp [rcx].MFP_EVENT_HEADER.eEventType,MFP_EVENT_TYPE_&_1
+	cmp [rcx].MFP_EVENT_HEADER.eEventType,MFP_EVENT_TYPE_&_2
 	cmove rax,rcx
 	}
 MFP_GET_PLAY_EVENT macro pHdr

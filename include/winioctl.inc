@@ -1381,35 +1381,34 @@ PARTITION_NTFT		equ 0x80
 
 if (NTDDI_VERSION LT NTDDI_VISTA)
 
-IsRecognizedPartition proto :UCHAR {
+IsRecognizedPartition proto fastcall :UCHAR {
     xor eax,eax
-    mov dl,this
     and dl,not 0xC0
-    .if ((this & PARTITION_NTFT) && ( \
+    .if ((cl & PARTITION_NTFT) && ( \
 	(dl == PARTITION_HUGE)		|| \
 	(dl == PARTITION_IFS)		|| \
-	(dl == PARTITION_FAT32) || \
+	(dl == PARTITION_FAT32)		|| \
 	(dl == PARTITION_FAT32_XINT13)) || \
-	(this == PARTITION_FAT_12)	|| \
-	(this == PARTITION_FAT_16)	|| \
-	(this == PARTITION_HUGE)	|| \
-	(this == PARTITION_IFS)		|| \
-	(this == PARTITION_FAT32)	|| \
-	(this == PARTITION_FAT32_XINT13) || \
-	(this == PARTITION_XINT13) )
+	(cl == PARTITION_FAT_12)	|| \
+	(cl == PARTITION_FAT_16)	|| \
+	(cl == PARTITION_HUGE)		|| \
+	(cl == PARTITION_IFS)		|| \
+	(cl == PARTITION_FAT32)		|| \
+	(cl == PARTITION_FAT32_XINT13)	|| \
+	(cl == PARTITION_XINT13) )
 	inc eax
     .endif
     }
 else
-IsRecognizedPartition proto :UCHAR {
+IsRecognizedPartition proto fastcall :UCHAR {
     xor eax,eax
-    .if ((this) == PARTITION_FAT_12)	   || \
-	((this) == PARTITION_FAT_16)	   || \
-	((this) == PARTITION_HUGE)	   || \
-	((this) == PARTITION_IFS)	   || \
-	((this) == PARTITION_FAT32)	   || \
-	((this) == PARTITION_FAT32_XINT13) || \
-	((this) == PARTITION_XINT13))
+    .if (cl == PARTITION_FAT_12)	|| \
+	(cl == PARTITION_FAT_16)	|| \
+	(cl == PARTITION_HUGE)		|| \
+	(cl == PARTITION_IFS)		|| \
+	(cl == PARTITION_FAT32)		|| \
+	(cl == PARTITION_FAT32_XINT13)	|| \
+	(cl == PARTITION_XINT13))
 	inc eax
     .endif
     }

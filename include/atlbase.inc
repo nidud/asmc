@@ -87,7 +87,7 @@ CALLBACK(_ATL_DESCRIPTIONFUNC)
     pfnUpdateRegistry proc WINAPI local :BOOL
     pfnGetClassObject _ATL_CREATORFUNC ?
     pfnCreateInstance _ATL_CREATORFUNC ?
-    pCF LPIUnknown ?
+    pCF LPUNKNOWN ?
     dwRegister DWORD ?
     pfnGetObjectDescription _ATL_DESCRIPTIONFUNC ?
 

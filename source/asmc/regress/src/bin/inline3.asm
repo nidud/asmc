@@ -9,23 +9,20 @@
 
 foo proto :ptr, :abs, :real4 {
 
-    mov     rax,this    ; cx
-    mov     al,_1+2     ; 2
-    movss   xmm0,_2     ; xmm2
-    exitm   <>
+    mov     rax,_1      ; cx
+    mov     al,_2+2     ; 2
+    movss   xmm0,_3     ; xmm2
     }
 
 real4::add proto :real4 {
 
-    addss   this,_1
-    retm    <this>
+    addss   _1,_2
     }
 
 real4::real8 proto {
 
-    cvtss2sd this,this
-    movq    rax,this
-    retm    <this>
+    cvtss2sd _1,_1
+    movq    rax,_1
     }
 
     .code

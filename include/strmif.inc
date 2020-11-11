@@ -475,7 +475,7 @@ bFixedSizeSamples	BOOL ?
 bTemporalCompression	BOOL ?
 lSampleSize		ULONG ?
 formattype		GUID <>
-pUnk			LPIUnknown ?
+pUnk			LPUNKNOWN ?
 cbFormat		ULONG ?
 pbFormat		LPBYTE ?
 AM_MEDIA_TYPE		ENDS

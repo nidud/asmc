@@ -38,7 +38,7 @@ include oaidl.inc
 
 VERSIONEDSTREAM		STRUC
 guidVersion		GUID <>
-pStream			LPIStream ?
+pStream			LPSTREAM ?
 VERSIONEDSTREAM		ENDS
 
 LPVERSIONEDSTREAM	typedef ptr VersionedStream
@@ -52,7 +52,7 @@ PROPSETFLAG_CASE_SENSITIVE equ 8
 PROPSET_BEHAVIOR_CASE_SENSITIVE equ 1
 
 ifdef MIDL_PASS
-PROPVARIANT		typedef _inner_PROPVARIANT
+;PROPVARIANT		typedef _inner_PROPVARIANT
 else
 ;PROPVARIANT		typedef PROPVARIANT
 endif
@@ -137,17 +137,17 @@ CASCODE			ENDS
 
 CAPROPVARIANT		STRUC
 cElems			ULONG ?
-pElems			LPPROPVARIANT ?
+pElems			PVOID ? ; LPPROPVARIANT
 CAPROPVARIANT		ENDS
 
 CAH			STRUC
 cElems			ULONG ?
-pElems			LPLARGE_INTEGER ?
+pElems			PLARGE_INTEGER ?
 CAH			ENDS
 
 CAUH			STRUC
 cElems			ULONG ?
-pElems			LPULARGE_INTEGER ?
+pElems			PULARGE_INTEGER ?
 CAUH			ENDS
 
 CALPSTR			STRUC
@@ -186,72 +186,71 @@ PROPVAR_PAD3		typedef WORD
 tag_inner_PROPVARIANT equ 1
 endif
 
-ifndef _MSC_EXTENSIONS
-;struct tagPROPVARIANT;
+ifdef _MSC_EXTENSIONS
 else
-ifndef MIDL_PASS
 PROPVARIANT		STRUC
-UNION ; {
+ifndef MIDL_PASS
+UNION
+STRUC
 endif
-_inner_PROPVARIANT	STRUC
 vt			VARTYPE ?
 wReserved1		PROPVAR_PAD1 ?
 wReserved2		PROPVAR_PAD2 ?
 wReserved3		PROPVAR_PAD3 ?
-UNION ; {
+UNION
 cVal			CHAR ?
 bVal			UCHAR ?
-iVal			SHORT ?
+iVal			SWORD ?
 uiVal			USHORT ?
 lVal			LONG ?
 ulVal			ULONG ?
 intVal			SINT ?
 uintVal			UINT ?
-hVal			LARGE_INTEGER ?
-uhVal			ULARGE_INTEGER ?
+hVal			LARGE_INTEGER <>
+uhVal			ULARGE_INTEGER <>
 fltVal			FLOAT ?
 dblVal			DOUBLE ?
 boolVal			VARIANT_BOOL ?
-bool			_VARIANT_BOOL ?
+bool			VARIANT_BOOL ?
 scode			SCODE ?
-cyVal			CY ?
+cyVal			CY <>
 date			DATE ?
-filetime		FILETIME ?
+filetime		FILETIME <>
 puuid			LPCLSID ?
 pclipdata		LPCLIPDATA ?
 bstrVal			BSTR ?
-bstrblobVal		BSTRBLOB ?
-blob			BLOB ?
+bstrblobVal		BSTRBLOB <>
+blob			BLOB <>
 pszVal			LPSTR ?
 pwszVal			LPWSTR ?
-punkVal			LPIUnknown ?
-pdispVal		LPIDispatch ?
-pStream			LPIStream ?
-pStorage		LPIStorage ?
+punkVal			LPUNKNOWN ?
+pdispVal		LPDISPATCH ?
+pStream			LPSTREAM ?
+pStorage		LPSTORAGE ?
 pVersionedStream	LPVERSIONEDSTREAM ?
 parray			LPSAFEARRAY ?
-cac			CAC ?
-caub			CAUB ?
-cai			CAI ?
-caui			CAUI ?
-cal			CAL ?
-caul			CAUL ?
-cah			CAH ?
-cauh			CAUH ?
-caflt			CAFLT ?
-cadbl			CADBL ?
-cabool			CABOOL ?
-cascode			CASCODE ?
-cacy			CACY ?
-cadate			CADATE ?
-cafiletime		CAFILETIME ?
-cauuid			CACLSID ?
-caclipdata		CACLIPDATA ?
-cabstr			CABSTR ?
-cabstrblob		CABSTRBLOB ?
-calpstr			CALPSTR ?
-calpwstr		CALPWSTR ?
-capropvar		CAPROPVARIANT ?
+cac			CAC <>
+caub			CAUB <>
+cai			CAI <>
+caui			CAUI <>
+cal			CAL <>
+caul			CAUL <>
+cah			CAH <>
+cauh			CAUH <>
+caflt			CAFLT <>
+cadbl			CADBL <>
+cabool			CABOOL <>
+cascode			CASCODE <>
+cacy			CACY <>
+cadate			CADATE <>
+cafiletime		CAFILETIME <>
+cauuid			CACLSID <>
+caclipdata		CACLIPDATA <>
+cabstr			CABSTR <>
+cabstrblob		CABSTRBLOB <>
+calpstr			CALPSTR <>
+calpwstr		CALPWSTR <>
+capropvar		CAPROPVARIANT <>
 pcVal			LPSTR ?
 pbVal			LPUCHAR ?
 piVal			LPSHORT ?
@@ -268,21 +267,21 @@ pscode			LPSCODE ?
 pcyVal			LPCY ?
 pdate			LPDATE ?
 pbstrVal		LPBSTR ?
-ppunkVal		LPIUnknown ?
-ppdispVal		LPIDispatch ?
-pparray			LPLPSAFEARRAY ?
-pvarVal			LPPROPVARIANT ?
-ENDS ;
-_inner_PROPVARIANT	ENDS
+ppunkVal		LPUNKNOWN ?
+ppdispVal		LPDISPATCH ?
+pparray			LPSAFEARRAY ?
+pvarVal			PVOID ?
+ENDS
 ifndef MIDL_PASS
-decVal			DECIMAL ?
+ENDS
+decVal			DECIMAL <>
 ENDS
 PROPVARIANT		ENDS
 endif
 endif
 
 ifdef MIDL_PASS
-LPPROPVARIANT		typedef ptr _inner_PROPVARIANT
+LPPROPVARIANT		typedef ptr PROPVARIANT
 REFPROPVARIANT		typedef ptr PROPVARIANT
 else
 LPPROPVARIANT		typedef ptr PROPVARIANT
@@ -501,16 +500,13 @@ FreePropVariantArray proto WINAPI \
 	  cVariants: ULONG,
 	     rgvars: ptr PROPVARIANT
 
-ifdef _MSC_EXTENSIONS
 
-
+;ifdef _MSC_EXTENSIONS
 _PROPVARIANTINIT_DEFINED_ equ 1
-
-PropVariantInit macro pvar
-	exitm<memset ( (pvar), 0, PROPVARIANT )>
-	endm
-
-endif
+PropVariantInit proto fastcall pvar:ptr {
+	exitm<memset(pvar, 0, PROPVARIANT)>
+	}
+;endif
 
 
 ifndef _STGCREATEPROPSTG_DEFINED_

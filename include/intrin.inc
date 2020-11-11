@@ -150,31 +150,31 @@ __fastfail proto :int_t {
 
 _bittest proto :ptr, :abs {
     xor     eax,eax
-    bt      dword ptr [rcx],_1
+    bt      dword ptr [rcx],_2
     setb    al
     }
 
 _bittestandcomplement proto :ptr, :abs {
     xor     eax,eax
-    btc     dword ptr [rcx],_1
+    btc     dword ptr [rcx],_2
     setb    al
     }
 
 _bittestandreset proto :ptr, :abs {
     xor     eax,eax
-    btr     dword ptr [rcx],_1
+    btr     dword ptr [rcx],_2
     setb    al
     }
 
 _bittestandset proto :ptr, :abs {
     xor     eax,eax
-    bts     dword ptr [rcx],_1
+    bts     dword ptr [rcx],_2
     setb    al
     }
 
 _interlockedbittestandreset proto :ptr, :abs {
     xor     eax,eax
-    lock    btr dword ptr [rcx],_1
+    lock    btr dword ptr [rcx],_2
     setb    al
     }
 
@@ -472,12 +472,12 @@ __cpuid proto fastcall :ptr, :int_t {
     pop     rsi
     }
 
-__cpuidex proto fastcall :ptr_t, :int_t, :int_t {
+__cpuidex proto fastcall :ptr, :int_t, :int_t {
     push    rsi
     push    rbx
-    mov     rsi,this
-    mov     eax,_1
-    mov     ecx,_2
+    mov     rsi,_1
+    mov     eax,_2
+    mov     ecx,_3
     cpuid
     mov     [rsi],eax
     mov     [rsi+4],ebx
@@ -494,7 +494,7 @@ __emul proto fastcall :int_t, :int_t {
     }
 
 __emulu proto fastcall :int_t, :int_t {
-    mov     eax,b
+    mov     eax,_2
     mul     rcx
     }
 
@@ -880,11 +880,11 @@ __writecr8 proto :ptr {
     }
 
 __readdr proto :abs {
-    mov     rax,dr&this&
+    mov     rax,dr&_1&
     }
 
 __writedr proto :abs, :ptr {
-    mov     dr&this&,rdx
+    mov     dr&_1&,rdx
     }
 
 __readeflags macro

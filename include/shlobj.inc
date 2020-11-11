@@ -372,7 +372,7 @@ iShow			SINT ?
 
 dwFlags			dd ?
 rect			RECT ?
-punkRel			LPIUnknown ?
+punkRel			LPUNKNOWN ?
 
 strNewFile		OLECHAR MAX_PATH dup(?)
 
@@ -3119,7 +3119,7 @@ pidlFolder		PCIDLIST_ABSOLUTE ?
 psf			LPIShellFolder ?
 cidl			UINT ?
 apidl			PCUITEMID_CHILD_ARRAY ?
-punkAssociationInfo	LPIUnknown ?
+punkAssociationInfo	LPUNKNOWN ?
 cKeys			UINT ?
 aKeys			LPHKEY ?
 DEFCONTEXTMENU		ENDS
@@ -3168,7 +3168,7 @@ idCmdFirst		UINT ?
 idDefMax		UINT ?
 pici			LPCMINVOKECOMMANDINFO ?
 if (NTDDI_VERSION GE NTDDI_VISTA)
-punkSite		LPIUnknown ?
+punkSite		LPUNKNOWN ?
 endif
 DFMICS			ENDS
 PDFMICS			typedef ptr DFMICS

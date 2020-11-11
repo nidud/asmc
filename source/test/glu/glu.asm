@@ -180,9 +180,15 @@ initializeGL proc GLUAPI width:GLsizei, height:GLsizei
 
 initializeGL endp
 
-polarView proc GLUAPI _radius:GLdouble, _twist:GLdouble, _latitude:GLdouble,
-           _longitude:GLdouble
-
+polarView proc GLUAPI _radius    : GLdouble,
+                      _twist     : GLdouble,
+                      _latitude  : GLdouble,
+                      _longitude : GLdouble
+ifndef _WIN64
+    movsd xmm0,_radius
+    movsd xmm1,_twist
+    movsd xmm2,_latitude
+endif
     movsd xmm4,-0.0
     xorpd xmm0,xmm4
     xorpd xmm1,xmm4
@@ -380,6 +386,7 @@ _tWinMain proc GLUAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
                 .return TRUE
             .endif
         .endw
+        Sleep(10)
         drawScene()
     .endw
     ret

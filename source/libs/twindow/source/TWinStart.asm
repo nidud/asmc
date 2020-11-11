@@ -27,7 +27,7 @@ externdef __xt_z:ptr
 
 TWinStart proc frame
 
-  local hwnd:window_t
+  local hwnd:ptr TWindow
   local retval:int_t
 
     _initterm(&__xi_a, &__xi_z)

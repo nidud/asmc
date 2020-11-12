@@ -48,6 +48,7 @@ Asmc Macro Assembler Reference
 - [.OPERATOR](dot_operator.md)
 - [.REPEAT](dot_repeat.md)
 - [.RETURN](dot_return.md)
+- [.STATIC](dot_static.md)
 - [.SWITCH](dot_switch.md)
 - [.TEMPLATE](dot_template.md)
 - [.UNTIL](dot_until.md)

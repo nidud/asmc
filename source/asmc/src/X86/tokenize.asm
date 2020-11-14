@@ -184,13 +184,6 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
     mov edi,[edx].output
     movzx eax,BYTE PTR [esi]
     mov symbol_o,al
-    mov cl,_cstring
-    .if [edx].index == 5 ; .pragma comment(linker,"
-        .if [ebx-5*16].tokval == T_DOT_PRAGMA
-            inc cl
-        .endif
-    .endif
-    mov cstring,cl
     xor ecx,ecx
 
     .switch eax
@@ -213,7 +206,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 add ecx,1 ; count the first quote
                 .break
 
-              .case ax == '""' && cstring ; case \" ?
+              .case ax == '""' && _cstring ; case \" ?
 
                 .if byte ptr [esi-1] == '\' && \
                     byte ptr [esi-2] != '\' ; case \\"
@@ -590,8 +583,14 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; v2.20: removed auto off switch for asmc_syntax in macros
         ; v2.20: added more test code for label() calls
         ; v2.30: added invocation for reg(...) if typedef
-        ;
-        .if ah == ')' && [ebx-16].token == T_REG
+        ; v2.32: .pragma comment(linker,"
+
+        .if [esi].index == 2 && [ebx-2*16].tokval == T_DOT_PRAGMA
+
+            inc _brachets
+            inc _cstring
+
+        .elseif ah == ')' && [ebx-16].token == T_REG
             ;
             ; REG() expans as CALL REG
             ;

@@ -18,7 +18,23 @@ include stdafx.inc
 include Control.inc
 include ole2.inc
 
-.pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+.pragma comment(linker,
+    "/manifestdependency:\""
+    "type='win32' "
+    "name='Microsoft.Windows.Common-Controls' "
+    "version='6.0.0.0' "
+    "processorArchitecture='*' "
+    "publicKeyToken='6595b64144ccf1df' "
+    "language='*'"
+    "\""
+    )
+
+ifdef __MSLINK__
+
+.pragma comment(linker, "/merge:.CRT=.rdata")
+
+endif
 
 ;; Forward declarations of functions included in this code module.
 

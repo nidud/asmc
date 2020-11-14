@@ -386,29 +386,42 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             ;
             ; .pragma comment(linker, "/..")
             ;
-            add i,2
             add ebx,32
+            mov esi,[ebx].tokpos
+            .endc .if byte ptr [esi] != '"'
+
+            inc esi     ; skip first '"'
+            lea edi,dynlib
+            mov ecx,edi
+
             .if ( Parse_Pass == PASS_1 ) ;; do all work in pass 1
-                mov esi,[ebx].string_ptr
-                lea edi,dynlib
-                mov ecx,edi
-                inc esi ; skip '"'
+
                 .repeat
                     lodsb
-                    .if al == '\'
-                        .if byte ptr [esi] == '"'
-                            lodsb
-                        .endif
+                    .if al == '"' && byte ptr [esi] == '"'
+                        lodsb
+                        add ebx,16
+                        .continue(0)
+                    .endif
+                    .if al == '\' && byte ptr [esi] == '"'
+                        movsb
+                        .continue(0)
+                    .endif
+                    .if al == '"'
+                        xor eax,eax
                     .endif
                     stosb
                 .until !al
-                sub edi,2
-                stosb
+
                 sub edi,ecx
                 add edi,qitem
                 mov edi,LclAlloc( edi )
                 strcpy( &[edi].qitem.value, &dynlib )
                 QEnqueue( &ModuleInfo.LinkQueue, edi )
+            .else
+                .while [ebx].token == T_STRING
+                    add ebx,16
+                .endw
             .endif
         .endif
 

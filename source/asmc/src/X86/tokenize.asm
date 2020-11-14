@@ -175,15 +175,23 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
             level:      uint_t,
             tdst:       string_t,
             tsrc:       string_t,
-            tcount:     uint_t
+            tcount:     uint_t,
+            cstring:    byte
 
     mov edx,p
     mov ebx,buf
     mov esi,[edx].input
     mov edi,[edx].output
     movzx eax,BYTE PTR [esi]
-    xor ecx,ecx
     mov symbol_o,al
+    mov cl,_cstring
+    .if [edx].index == 5 ; .pragma comment(linker,"
+        .if [ebx-5*16].tokval == T_DOT_PRAGMA
+            inc cl
+        .endif
+    .endif
+    mov cstring,cl
+    xor ecx,ecx
 
     .switch eax
 
@@ -205,7 +213,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 add ecx,1 ; count the first quote
                 .break
 
-              .case ax == '""' && _cstring ; case \" ?
+              .case ax == '""' && cstring ; case \" ?
 
                 .if byte ptr [esi-1] == '\' && \
                     byte ptr [esi-2] != '\' ; case \\"

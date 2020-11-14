@@ -154,6 +154,7 @@ sti
 t2embed
 tapi32
 traffic
+UIAutomationCore
 urlmon
 user32
 userenv

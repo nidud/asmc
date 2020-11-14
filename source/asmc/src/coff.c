@@ -1076,7 +1076,7 @@ static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm
      - impdefs are to be written (-Zd)
      */
     if ( modinfo->g.start_label != NULL || modinfo->g.LibQueue.head != NULL ||
-	 imp != NULL || exp != NULL ) {
+	 imp != NULL || exp != NULL || modinfo->g.LinkQueue.head != NULL ) {
 	if ( cm->directives = (struct dsym *)CreateIntSegment( szdrectve, "", MAX_SEGALIGNMENT, modinfo->Ofssize, FALSE ) ) {
 	    struct dsym *tmp;
 	    int size = 0;
@@ -1118,6 +1118,11 @@ static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm
 		    size += 1 + tmp->sym.name_size;
 		}
 	    }
+	    /* 5. pragma comment(linker,"/..") */
+	    for( q = modinfo->g.LinkQueue.head; q ; q = q->next ) {
+		size += strlen( q->value ) + 1;
+	    }
+
 	    cm->directives->sym.max_offset = size;
 	    cm->directives->e.seginfo->CodeBuffer = (unsigned char *)LclAlloc( size + 1 );
 	    p = cm->directives->e.seginfo->CodeBuffer;
@@ -1162,6 +1167,11 @@ static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm
 		    *p++ = ' ';
 		}
 	    }
+	    /* 5. pragma comment(linker,"/..") */
+	    for( q = modinfo->g.LinkQueue.head; q ; q = q->next ) {
+		p += sprintf( (char *)p,"%s ", (char *)q->value );
+	    }
+
 	}
     }
 }

@@ -98,6 +98,8 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
   local opndx:expr
   local stdlib[256]:char_t
   local dynlib[256]:char_t
+  local q:ptr qitem
+
 
     mov rc,NOT_ERROR
     mov list_directive,0
@@ -286,91 +288,128 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov eax,[esi+4]
         or  eax,0x202020
         .endc .if eax != 'tne'
+        .endc .if [ebx+16].token != T_COMMA
 
         mov esi,[ebx].string_ptr
         mov eax,[esi]
         or  eax,0x202020
         and eax,0xFFFFFF
-        .endc .if eax != 'bil'
-        .endc .if [ebx+16].token != T_COMMA
 
-        add i,2
-        add ebx,32
-        mov stdlib,0
-        mov dynlib,0
-
-        ;
-        ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
-        ;
-        ;  if (/pe)
-        ;   option dllimport:<msvcrt>
-        ;  else
-        ;   ifdef _MSVCRT
-        ;    includelib msvcrt.lib
-        ;   else
-        ;    includelib libc.lib
-        ;   endif
-        ;  endif
-        ;
-
-        mov esi,[ebx].string_ptr
-        strcpy(&stdlib, esi)
-
-        .if ( byte ptr [esi] == '"' )
-
-            inc esi
-            .if strchr(strcpy(&stdlib, esi), '"')
-
-                mov byte ptr [eax],0
-            .endif
-        .endif
-
-        .if ( [ebx+16].token == T_COMMA )
+        .if eax == 'bil'
 
             add i,2
             add ebx,32
+            mov stdlib,0
+            mov dynlib,0
+
+            ;
+            ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
+            ;
+            ;  if (/pe)
+            ;   option dllimport:<msvcrt>
+            ;  else
+            ;   ifdef _MSVCRT
+            ;    includelib msvcrt.lib
+            ;   else
+            ;    includelib libc.lib
+            ;   endif
+            ;  endif
+            ;
 
             mov esi,[ebx].string_ptr
-            strcpy(&dynlib, esi)
+            strcpy(&stdlib, esi)
 
             .if ( byte ptr [esi] == '"' )
 
                 inc esi
-                .if strchr(strcpy(&dynlib, esi), '"')
+                .if strchr(strcpy(&stdlib, esi), '"')
 
                     mov byte ptr [eax],0
                 .endif
             .endif
-        .endif
 
-        lea esi,dynlib
-        lea edi,stdlib
-        .if ( strchr(esi, '.') )
-            mov byte ptr [eax],0
-        .endif
-        .if ( strchr(edi, '.') )
-            mov byte ptr [eax],0
-        .endif
+            .if ( [ebx+16].token == T_COMMA )
 
-        .if ( Options.output_format == OFORMAT_BIN )
+                add i,2
+                add ebx,32
 
-            .if !( dynlib )
-                mov esi,edi
+                mov esi,[ebx].string_ptr
+                strcpy(&dynlib, esi)
+
+                .if ( byte ptr [esi] == '"' )
+
+                    inc esi
+                    .if strchr(strcpy(&dynlib, esi), '"')
+
+                        mov byte ptr [eax],0
+                    .endif
+                .endif
             .endif
 
-            AddLineQueueX(" option dllimport:<%s>", esi)
+            lea esi,dynlib
+            lea edi,stdlib
+            .if ( strchr(esi, '.') )
+                mov byte ptr [eax],0
+            .endif
+            .if ( strchr(edi, '.') )
+                mov byte ptr [eax],0
+            .endif
 
-        .elseif !( byte ptr [esi] )
+            .if ( Options.output_format == OFORMAT_BIN )
 
-            AddLineQueueX("includelib %s.lib", edi)
+                .if !( dynlib )
+                    mov esi,edi
+                .endif
 
-        .else
+                AddLineQueueX(" option dllimport:<%s>", esi)
 
-            AddLineQueueX("ifdef _%s", _strupr(esi))
-            AddLineQueueX("includelib %s.lib", _strlwr(esi))
-            AddLineQueue( "else" )
-            AddLineQueueX("includelib %s.lib", edi)
-            AddLineQueue( "endif" )
+            .elseif !( byte ptr [esi] )
+
+                AddLineQueueX("includelib %s.lib", edi)
+
+            .else
+
+                AddLineQueueX("ifdef _%s", _strupr(esi))
+                AddLineQueueX("includelib %s.lib", _strlwr(esi))
+                AddLineQueue( "else" )
+                AddLineQueueX("includelib %s.lib", edi)
+                AddLineQueue( "endif" )
+            .endif
+
+        .elseif eax == 'nil'
+
+            mov eax,[esi+3]
+            or  eax,0x202020
+            and eax,0xFFFFFF
+            .endc .if eax != 'rek'
+
+            ;
+            ; .pragma comment(linker, "/..")
+            ;
+            add i,2
+            add ebx,32
+            .if ( Parse_Pass == PASS_1 ) ;; do all work in pass 1
+                mov esi,[ebx].string_ptr
+                lea edi,dynlib
+                mov ecx,edi
+                inc esi ; skip '"'
+                .repeat
+                    lodsb
+                    .if al == '\'
+                        .if byte ptr [esi] == '"'
+                            lodsb
+                        .endif
+                    .endif
+                    stosb
+                .until !al
+                sub edi,2
+                stosb
+                sub edi,ecx
+                add edi,qitem
+                mov edi,LclAlloc( edi )
+                strcpy( &[edi].qitem.value, &dynlib )
+                QEnqueue( &ModuleInfo.LinkQueue, edi )
+            .endif
         .endif
 
         add ebx,16

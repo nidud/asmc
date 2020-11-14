@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.32.01 - 14 Nov 2020
+- added .pragma comment(linker, "/<link_option>")
+
 Changes in 2.32 - 11 Nov 2020
 - added directive .static
 - changed inline proto anonymous arguments

@@ -56,6 +56,8 @@ include msdasc.inc
 include oledb.inc
 include propidl.inc
 include propkey.inc
+include UIAutomationCore.inc
+include UIAutomationCoreAPI.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

@@ -265,7 +265,7 @@ PriorityLevelToString endp
 
 CRowsetEventListener::Release proc
 
-    HeapAlloc(GetProcessHeap(), 0, this)
+    HeapFree(GetProcessHeap(), 0, this)
     ret
 
 CRowsetEventListener::Release endp

@@ -389,6 +389,7 @@ PubQueue                qdesc <>        ; PUBLIC items
 Lnam                    qdesc <>        ; LNAME items (segments, groups and classes)
 SafeSEHQueue            qdesc <>        ; list of safeseh handlers
 LibQueue                qdesc <>        ; includelibs
+LinkQueue               qdesc <>        ; .pragma comment(linker,"/..")
 DllQueue                dlldesc_t ?     ; dlls of OPTION DLLIMPORT
 imp_prefix              string_t ?              ;
 curr_file               LPFILE NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST

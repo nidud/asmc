@@ -129,7 +129,7 @@ apUnknown		LPUNKNOWN ?
 iid			IID <>
 SAFEARR_HAVEIID		ENDS
 
-.enum tagSF_TYPE {
+.enum SF_TYPE {
     SF_ERROR		= VT_ERROR,
     SF_I1		= VT_I1,
     SF_I2		= VT_I2,
@@ -159,16 +159,16 @@ HyperStr		HYPER_SIZEDARR <>
 ENDS ;u
 SAFEARRAYUNION		ENDS
 
-S_wireSAFEARRAY		STRUC
+_wireSAFEARRAY		STRUC
 cDims			USHORT ?
 fFeatures		USHORT ?
 cbElements		ULONG ?
 cLocks			ULONG ?
 uArrayStructs		SAFEARRAYUNION <>
 rgsabound		SAFEARRAYBOUND <>
-S_wireSAFEARRAY		ENDS
+_wireSAFEARRAY		ENDS
 
-wireSAFEARRAY		typedef ptr S_wireSAFEARRAY
+wireSAFEARRAY		typedef ptr _wireSAFEARRAY
 wirePSAFEARRAY		typedef ptr wireSAFEARRAY
 
 SAFEARRAY		STRUC
@@ -195,23 +195,13 @@ FADF_DISPATCH		equ 0x400
 FADF_VARIANT		equ 0x800
 FADF_RESERVED		equ 0xf008
 
-if (__STDC__ AND NOT defined(_FORCENAMELESSUNION)) OR defined(NONAMELESSUNION)
-__VARIANT_NAME_1	equ <n1>
-__VARIANT_NAME_2	equ <n2>
-__VARIANT_NAME_3	equ <n3>
-__VARIANT_NAME_4	equ <brecVal>
-else
-__tagVARIANT		equ 1
-__VARIANT_NAME_1	equ 1
-__VARIANT_NAME_2	equ 1
-__VARIANT_NAME_3	equ 1
-__tagBRECORD		equ 1
-__VARIANT_NAME_4	equ 1
-endif
-
 LPFLOAT			typedef ptr real4
 LPDOUBLE		typedef ptr real8
 LPVARIANT_BOOL		typedef ptr VARIANT_BOOL
+LPUSHORT		typedef ptr USHORT
+LPULONG			typedef ptr ULONG
+LPLONGLONG		typedef ptr LONGLONG
+LPULONGLONG		typedef ptr ULONGLONG
 
 VARIANT			STRUC
 UNION
@@ -221,8 +211,9 @@ UNION
   wReserved2		dw ?
   wReserved3		dw ?
   UNION
+   llVal		LONGLONG ?
    lVal			LONG ?
-   bVal			db ?
+   bVal			BYTE ?
    iVal			SWORD ?
    fltVal		FLOAT ?
    dblVal		DOUBLE ?
@@ -238,6 +229,7 @@ UNION
    pbVal		LPBYTE ?
    piVal		PVOID ?;LPSHORT ?
    plVal		LPLONG ?
+   pllVal		LPLONGLONG ?
    pfltVal		LPFLOAT ?
    pdblVal		LPDOUBLE ?
    pboolVal		LPVARIANT_BOOL ?
@@ -252,15 +244,17 @@ UNION
    pvarVal		PVOID ?;LPVARIANT ?
    byref		PVOID ?
    cVal			SBYTE ?
-   uiVal		dw ?
+   uiVal		USHORT ?
    ulVal		ULONG ?
+   ullVal		ULONGLONG ?
    intVal		SINT ?
    uintVal		UINT ?
    pdecVal		LPDECIMAL ?
-   pcVal		PVOID ?;LPSBYTE ?
-   puiVal		PVOID ?;LPUSHORT ?
-   pulVal		PVOID ?;LPULONG ?
-   pintVal		PVOID ?;LPSINT ?
+   pcVal		LPSTR ?
+   puiVal		LPUSHORT ?
+   pulVal		LPULONG ?
+   pullVal		LPULONGLONG ?
+   pintVal		LPINT ?
    puintVal		LPUINT ?
    STRUC
     pvRecord		PVOID ?

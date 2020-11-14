@@ -502,6 +502,7 @@ struct qdesc	PubQueue;	 /* PUBLIC items */
 struct qdesc	LnameQueue;	 /* LNAME items (segments, groups and classes) */
 struct qdesc	SafeSEHQueue;	 /* list of safeseh handlers */
 struct qdesc	LibQueue;	 /* includelibs */
+struct qdesc	LinkQueue;	 /* .pragma comment(linker,"/..") */
 struct dll_desc *DllQueue;	 /* dlls of OPTION DLLIMPORT */
 char *		imp_prefix;
 FILE *		curr_file[NUM_FILE_TYPES];  /* ASM, ERR, OBJ and LST */

@@ -50,14 +50,15 @@ Message proc szPrefix:LPTSTR, hr:HRESULT
 
   local szMessage:LPTSTR
 
-    .if (hr == S_OK)
+    .if (edx == S_OK)
 
-        wprintf(szPrefix)
+        wprintf(rcx)
         .return
     .endif
 
-    .if (HRESULT_FACILITY(hr) == FACILITY_WINDOWS)
-        mov hr,HRESULT_CODE(hr)
+    .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
+
+        mov hr,HRESULT_CODE(edx)
     .endif
 
     FormatMessage(
@@ -123,10 +124,8 @@ main proc argc:SINT, argv:array_t
 
         MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, [rdx+8], -1, &wsz, lengthof(wsz))
 
-        memset(&csi, 0, COSERVERINFO)
-
+        mov pcsi,memset(&csi, 0, COSERVERINFO)
         mov csi.pwszName,&wsz
-        mov pcsi,&csi
     .endif
 
     ;; allow a byte-size to be passed on the command-line
@@ -155,6 +154,7 @@ main proc argc:SINT, argv:array_t
     mov mq.pItf,NULL
     mov mq.hr,S_OK
     QueryPerformanceCounter(&liStart)
+
     mov hr,CoCreateInstanceEx(&CLSID_SimpleObject, NULL, CLSCTX_SERVER, pcsi, 1, &mq)
     QueryPerformanceCounter(&liFinish)
     OutputTime(&liStart, &liFinish)

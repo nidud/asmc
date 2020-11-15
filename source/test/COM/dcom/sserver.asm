@@ -64,9 +64,10 @@ include tchar.inc
     .ENDS
 
 .data
- CLSID_SimpleObject GUID { 0x5e9ddec7, 0x5767, 0x11cf, { 0xbe, 0xab, 0x0, 0xaa, 0x0, 0x6c, 0x36, 0x6 } }
+ CLSID_SimpleObject GUID {0x5e9ddec7,0x5767,0x11cf,{0xbe,0xab,0x0,0xaa,0x0,0x6c,0x36,0x6}}
 ifdef __PE__
  IID_IClassFactory  GUID _IID_IClassFactory
+ IID_IStream        GUID _IID_IStream
  IID_IUnknown       GUID _IID_IUnknown
 endif
  hevtDone HANDLE 0
@@ -90,9 +91,9 @@ Message proc szPrefix:LPTSTR, hr:HRESULT
         .return
     .endif
 
-    .if (HRESULT_FACILITY(hr) == FACILITY_WINDOWS)
+    .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
 
-        mov hr,HRESULT_CODE(hr)
+        mov hr,HRESULT_CODE(edx)
     .endif
 
     FormatMessage(
@@ -104,7 +105,7 @@ Message proc szPrefix:LPTSTR, hr:HRESULT
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), ;;The user default language
         &szMessage,
         0,
-        NULL )
+        NULL)
 
     wprintf(L"%s: %s(%lx)\n", szPrefix, szMessage, hr)
 
@@ -128,7 +129,7 @@ CSimpleObject::QueryInterface proc riid:REFIID, ppv:ptr ptr
 
     mov rax,[rdx] ; lower part..
 
-    .if (rax == qword ptr IID_IClassFactory || rax == qword ptr IID_IUnknown)
+    .if (rax == qword ptr IID_IUnknown || rax == qword ptr IID_IStream)
 
         mov [r8],rcx
         [rcx].AddRef()
@@ -251,7 +252,7 @@ CSimpleObject::Clone endp
 CSimpleObject::delete proc
 
     SetEvent(hevtDone)
-    HeapFree(GetProcessHeap(), 0, this)
+    CoTaskMemFree(this)
     ret
 
 CSimpleObject::delete endp
@@ -261,7 +262,7 @@ CSimpleObject::delete endp
 
 CSimpleObject::CSimpleObject proc
 
-    .if HeapAlloc(GetProcessHeap(), 0, CSimpleObject + CSimpleObjectVtbl)
+    .if CoTaskMemAlloc(CSimpleObject + CSimpleObjectVtbl)
 
         mov [rax].CSimpleObject.m_cRef,1
         lea rdx,[rax+CSimpleObject]
@@ -285,9 +286,8 @@ CSimpleObject::CSimpleObject endp
 
 CClassFactory::QueryInterface proc riid:REFIID, ppv:ptr ptr
 
-    .if (r8 == NULL)
-        .return E_INVALIDARG
-    .endif
+    .return E_INVALIDARG .if (r8 == NULL)
+
     mov rax,[rdx]
     .if (rax == qword ptr IID_IClassFactory || rax == qword ptr IID_IUnknown)
 
@@ -298,6 +298,7 @@ CClassFactory::QueryInterface proc riid:REFIID, ppv:ptr ptr
     .endif
 
     mov qword ptr [r8],NULL
+
     .return E_NOINTERFACE
 
 CClassFactory::QueryInterface endp
@@ -354,7 +355,7 @@ CClassFactory::LockServer endp
 
 CClassFactory::CClassFactory proc
 
-    .if HeapAlloc(GetProcessHeap(), 0, CClassFactory + CClassFactoryVtbl)
+    .if CoTaskMemAlloc(CClassFactory + CClassFactoryVtbl)
 
         lea rcx,[rax+CClassFactory]
         mov [rax],rcx
@@ -374,13 +375,13 @@ CClassFactory::CClassFactory endp
 
 main proc
 
-  local hr:HRESULT
-  local dwRegister:DWORD
+  local hr:HRESULT, dwRegister:DWORD, pFactory:ptr CClassFactory
 
     ;; create the thread which is signaled when the instance is deleted
 
     mov hevtDone,CreateEvent(NULL, FALSE, FALSE, NULL)
-    .if (hevtDone == NULL)
+
+    .if rax == NULL
 
         GetLastError()
         mov hr,HRESULT_FROM_WIN32(eax)
@@ -399,8 +400,8 @@ main proc
 
     ;; register the class-object with OLE
 
-    mov rdx,CClassFactory()
-    mov hr,CoRegisterClassObject(&CLSID_SimpleObject, rdx,
+    mov pFactory,CClassFactory()
+    mov hr,CoRegisterClassObject(&CLSID_SimpleObject, pFactory,
         CLSCTX_SERVER, REGCLS_SINGLEUSE, &dwRegister)
 
     .if (FAILED(hr))
@@ -416,10 +417,11 @@ main proc
     WaitForSingleObject(hevtDone, INFINITE)
 
     CloseHandle(hevtDone)
-
+    CoTaskMemFree(pFactory)
     CoUninitialize()
+
     Message(L"Server: Done", S_OK)
-    ret
+   .return S_OK
 
 main endp
 

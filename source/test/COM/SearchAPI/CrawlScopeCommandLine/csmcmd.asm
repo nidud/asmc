@@ -208,7 +208,7 @@ wmain proc uses rsi argc:int_t, argv:ptr ptr wchar_t
 
                     mov esi,g_DefaultParam.Exists()
                     and esi,g_DefaultParam.Get()
-                    mov iRes,RemoveRule(ecx, g_RemoveRuleParam.Get())
+                    mov iRes,RemoveRule(esi, g_RemoveRuleParam.Get())
 
                 .elseif (g_RevertParam.Exists())
 

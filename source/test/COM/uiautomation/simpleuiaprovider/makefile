@@ -14,4 +14,4 @@ UIASimpleProvider.exe:
     linkw system gui_64W option RESource=$*.res file $*, Control, Provider
 !endif
     del $*.res
-#    del *.obj
+    del *.obj

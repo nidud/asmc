@@ -1,7 +1,6 @@
+
 ;; Implementation of the Provider class, which implements IRawElementProviderSimple
 ;; and IInvokeProvider for a simple custom control.
-
-;INITGUID equ 1
 
 include windows.inc
 include stdio.inc

@@ -732,6 +732,7 @@ GetCPInfoExW proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpCPInfoEx:	LPCPINFOEXW
+
 ifdef _UNICODE
 GetCPInfoEx  equ <GetCPInfoExW>
 else
@@ -779,11 +780,13 @@ CompareStringW proto WINAPI \
 	cchCount1:	SINT,
 	lpString2:	LPWSTR,
 	cchCount2:	SINT
+
 ifdef _UNICODE
 CompareString  equ <CompareStringW>
 else
 CompareString  equ <CompareStringA>
 endif
+
 ;int
 LCMapStringA proto WINAPI \
 	Locale:		LCID,

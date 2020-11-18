@@ -1,5 +1,6 @@
 ifndef _d3d9TYPES_H_
 _d3d9TYPES_H_ equ <>
+.pragma pack(push, 8)
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION equ 0x0900
@@ -1897,5 +1898,5 @@ D3DAES_CTR_IV		ENDS
 
 endif
 endif
-
+.pragma pack(pop)
 endif

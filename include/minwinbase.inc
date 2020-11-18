@@ -109,51 +109,58 @@ endif
 
 
 if(_WIN32_WINNT GE 0x0400)
-FINDEX_INFO_LEVELS	typedef SDWORD
-FindExInfoStandard	equ 0
-FindExInfoBasic		equ 1
-FindExInfoMaxInfoLevel	equ 2
+
+.enum FINDEX_INFO_LEVELS {
+    FindExInfoStandard,
+    FindExInfoBasic,
+    FindExInfoMaxInfoLevel
+    }
 
 FIND_FIRST_EX_CASE_SENSITIVE equ 0x00000001
-FIND_FIRST_EX_LARGE_FETCH equ 0x00000002
+FIND_FIRST_EX_LARGE_FETCH    equ 0x00000002
 
-FINDEX_SEARCH_OPS	typedef SDWORD
-FindExSearchNameMatch	equ 0
-FindExSearchLimitToDirectories equ 1
-FindExSearchLimitToDevices equ 2
-FindExSearchMaxSearchOp equ 3
+.enum FINDEX_SEARCH_OPS {
+    FindExSearchNameMatch,
+    FindExSearchLimitToDirectories,
+    FindExSearchLimitToDevices,
+    FindExSearchMaxSearchOp
+    }
+
 endif
 
-GET_FILEEX_INFO_LEVELS	typedef SDWORD
-GetFileExInfoStandard	equ 0
-GetFileExMaxInfoLevel	equ 1
+.enum GET_FILEEX_INFO_LEVELS {
+    GetFileExInfoStandard,
+    GetFileExMaxInfoLevel
+    }
 
 if (_WIN32_WINNT GE _WIN32_WINNT_LONGHORN)
-FILE_INFO_BY_HANDLE_CLASS typedef SDWORD
-FileBasicInfo		equ 0
-FileStandardInfo	equ 1
-FileNameInfo		equ 2
-FileRenameInfo		equ 3
-FileDispositionInfo	equ 4
-FileAllocationInfo	equ 5
-FileEndOfFileInfo	equ 6
-FileStreamInfo		equ 7
-FileCompressionInfo	equ 8
-FileAttributeTagInfo	equ 9
-FileIdBothDirectoryInfo equ 10
-FileIdBothDirectoryRestartInfo equ 11
-FileIoPriorityHintInfo	equ 12
-FileRemoteProtocolInfo	equ 13
-FileFullDirectoryInfo	equ 14
-FileFullDirectoryRestartInfo equ 15
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN8)
-FileStorageInfo		equ 16
-FileAlignmentInfo	equ 17
-FileIdInfo		equ 18
-FileIdExtdDirectoryInfo equ 19
-FileIdExtdDirectoryRestartInfo equ 20
+.enum FILE_INFO_BY_HANDLE_CLASS {
+    FileBasicInfo,
+    FileStandardInfo,
+    FileNameInfo,
+    FileRenameInfo,
+    FileDispositionInfo,
+    FileAllocationInfo,
+    FileEndOfFileInfo,
+    FileStreamInfo,
+    FileCompressionInfo,
+    FileAttributeTagInfo,
+    FileIdBothDirectoryInfo,
+    FileIdBothDirectoryRestartInfo,
+    FileIoPriorityHintInfo,
+    FileRemoteProtocolInfo,
+    FileFullDirectoryInfo,
+    FileFullDirectoryRestartInfo,
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+    FileStorageInfo,
+    FileAlignmentInfo,
+    FileIdInfo,
+    FileIdExtdDirectoryInfo,
+    FileIdExtdDirectoryRestartInfo,
 endif
-MaximumFileInfoByHandleClass equ 21
+    MaximumFileInfoByHandleClass
+    }
+PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
 endif
 
 CRITICAL_SECTION	typedef RTL_CRITICAL_SECTION

@@ -608,8 +608,12 @@ __FUNCTIONW__	equ <_STR2WSTR(__FUNCTION__)>
 ifdef _DEBUG
 _invalid_parameter proto _CRTIMP :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :dword, :uintptr_t
 else
-_invalid_parameter_noinfo proto _CRTIMP
-_invalid_parameter_noinfo_noreturn proto _CRTIMP
+_invalid_parameter_noinfo macro
+	exitm<>
+	endm
+_invalid_parameter_noinfo_noreturn macro
+	exitm<>
+	endm
 endif
 
 ;_CRTIMP __declspec(noreturn)

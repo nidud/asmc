@@ -8659,32 +8659,33 @@ ApplicationRecoveryFinished proto WINAPI \
 if (_WIN32_WINNT GE 0x0600)
 
 if (_WIN32_WINNT GE _WIN32_WINNT_LONGHORN)
-FILE_INFO_BY_HANDLE_CLASS typedef SDWORD
-PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
-FileBasicInfo		equ 0
-FileStandardInfo	equ 1
-FileNameInfo		equ 2
-FileRenameInfo		equ 3
-FileDispositionInfo	equ 4
-FileAllocationInfo	equ 5
-FileEndOfFileInfo	equ 6
-FileStreamInfo		equ 7
-FileCompressionInfo	equ 8
-FileAttributeTagInfo	equ 9
-FileIdBothDirectoryInfo equ 10
-FileIdBothDirectoryRestartInfo equ 11
-FileIoPriorityHintInfo	equ 12
-FileRemoteProtocolInfo	equ 13
-FileFullDirectoryInfo	equ 14
-FileFullDirectoryRestartInfo equ 15
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN8)
-FileStorageInfo		equ 16
-FileAlignmentInfo	equ 17
-FileIdInfo		equ 18
-FileIdExtdDirectoryInfo equ 19
-FileIdExtdDirectoryRestartInfo equ 20
+.enum FILE_INFO_BY_HANDLE_CLASS {
+    FileBasicInfo,
+    FileStandardInfo,
+    FileNameInfo,
+    FileRenameInfo,
+    FileDispositionInfo,
+    FileAllocationInfo,
+    FileEndOfFileInfo,
+    FileStreamInfo,
+    FileCompressionInfo,
+    FileAttributeTagInfo,
+    FileIdBothDirectoryInfo,
+    FileIdBothDirectoryRestartInfo,
+    FileIoPriorityHintInfo,
+    FileRemoteProtocolInfo,
+    FileFullDirectoryInfo,
+    FileFullDirectoryRestartInfo,
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
+    FileStorageInfo,
+    FileAlignmentInfo,
+    FileIdInfo,
+    FileIdExtdDirectoryInfo,
+    FileIdExtdDirectoryRestartInfo,
 endif
-MaximumFileInfoByHandleClass equ 21
+    MaximumFileInfoByHandleClass
+    }
+PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
 endif
 
 

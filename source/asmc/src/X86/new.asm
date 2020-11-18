@@ -198,6 +198,44 @@ ConstructorCall proc private uses esi edi ebx \
 
 ConstructorCall endp
 
+AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
+
+  local cc[128]:char_t
+
+    mov ebx,tokenarray
+    add ebx,16 ; skip '='
+    mov edi,strcat( strcat( strcpy( &cc, " mov " ), name ), ", " )
+    xor esi,esi
+
+    .while 1
+        .switch [ebx].token
+        .case T_FINAL
+            .break
+        .case T_COMMA
+            .break .if !esi
+            .endc
+        .case T_OP_BRACKET
+            inc esi
+            .endc
+        .case T_CL_BRACKET
+            dec esi
+            .endc
+        .endsw
+        strcat(edi, [ebx].string_ptr)
+        .if [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR
+            strcat(edi, " ")
+        .endif
+        add ebx,16
+    .endw
+    .if esi
+        asmerr( 2157 )
+    .endif
+    AddLineQueueX( edi )
+    mov eax,ebx
+    ret
+
+AssignValue endp
+
 AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local name  : string_t,
@@ -384,6 +422,8 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 mov endtok,ebx
                 ConstructorCall( name, &endtok, edi, esi, type )
                 mov ebx,endtok
+            .elseif [ebx].token == T_DIRECTIVE && [ebx].dirtype == DRT_EQUALSGN
+                mov ebx,AssignValue(name, ebx)
             .else
                 .return asmerr( 2065, "," )
             .endif

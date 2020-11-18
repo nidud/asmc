@@ -1,126 +1,123 @@
 include DirectXMath.inc
 
-ContainmentType         typedef SDWORD
-DISJOINT                equ 0
-INTERSECTS              equ 1
-CONTAINS                equ 2
+.enum ContainmentType {
+    DISJOINT = 0,
+    INTERSECTS = 1,
+    CONTAINS = 2,
+    }
 
-PlaneIntersectionType   typedef SDWORD
-FRONT                   equ 0
-INTERSECTING            equ 1
-BACK                    equ 2
+.enum PlaneIntersectionType {
+    FRONT = 0,
+    INTERSECTING = 1,
+    BACK = 2,
+    }
 
-.class BoundingSphere XM_CALLCONV :ptr XMFLOAT3, :float
 
-    Center      XMFLOAT3 <> ;; Center of the sphere.
-    Radius      float ?     ;; Radius of the sphere.
+.template BoundingSphere XM_CALLCONV
 
-    operator    proc :ptr BoundingSphere
+    Center  XMFLOAT3 <> ;; Center of the sphere.
+    Radius  float ?     ;; Radius of the sphere.
 
-    TransformM  proc :ptr BoundingSphere, :FXMMATRIX
-    TransformV  proc :ptr BoundingSphere, :float, :FXMVECTOR, :FXMVECTOR
-
-    ContainsP   proc :FXMVECTOR
-    ContainsV   proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    ContainsS   proc :ptr BoundingSphere
-    ContainsB   proc :ptr BoundingBox
-    ContainsO   proc :ptr BoundingOrientedBox
-    ContainsF   proc :ptr BoundingFrustum
-
-    IntersectsS proc :ptr BoundingSphere
-    IntersectsB proc :ptr BoundingBox
-    IntersectsO proc :ptr BoundingOrientedBox
-    IntersectsF proc :ptr BoundingFrustum
-
-    IntersectsV proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    Intersects1 proc :FXMVECTOR
-    Intersects2 proc :FXMVECTOR, :FXMVECTOR, :float
-
-    ContainedBy proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
-    CreateMerged proc :ptr BoundingSphere, :ptr BoundingSphere, :ptr BoundingSphere
-
-    CreateFromBoundingBox proc :ptr BoundingSphere, :ptr BoundingBox
-    CreateFromBoundingBoxO proc :ptr BoundingSphere, :ptr BoundingOrientedBox
-
-    CreateFromPoints proc :ptr BoundingSphere, :size_t, :ptr XMFLOAT3, :size_t
-    CreateFromFrustum proc :ptr BoundingSphere, :ptr BoundingFrustum
+    .static BoundingSphere center:ptr XMFLOAT3, radius:float {
+        mov     this.Center,[center]
+        movss   this.Radius,radius
+        }
+    .static Transform :abs, :abs {
+        typeid(BoundingSphere_Transform, _2)(&this, _1, _2, _3)
+        }
+    .static Contains :abs {
+        typeid(BoundingSphere_Contains, _1)(&this, _1, _2)
+        }
+    .static Intersects :abs {
+        typeid(BoundingSphere_Intersects, _1)(&this, _1, _2)
+        }
+    .static ContainedBy {
+        BoundingSphere_ContainedBy(&this, _1)
+        }
+    .static CreateMerged {
+        BoundingSphere_CreateMerged(&this, _1)
+        }
+    .static CreateFromBoundingBox :abs, :abs {
+        typeid(BoundingSphere_CreateFromBoundingBox, _2)(&this, _1, _2)
+        }
+    .static CreateFromPoints {
+        BoundingSphere_CreateFromPoints(&this, _1)
+        }
+    .static CreateFromFrustum {
+        BoundingSphere_CreateFromFrustum(&this, _1)
+        }
     .ends
 
 
 CORNER_COUNT equ 8
 
-.class BoundingBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3
+.template BoundingBox XM_CALLCONV
 
-    Center      XMFLOAT3 <> ;; Center of the box.
-    Extents     XMFLOAT3 <> ;; Distance from the center to each side.
+    Center  XMFLOAT3 <> ;; Center of the box.
+    Extents XMFLOAT3 <> ;; Distance from the center to each side.
 
-    operator    proc :ptr BoundingBox
-
-    Transform1  proc :ptr BoundingBox, :FXMMATRIX
-    Transform2  proc :ptr BoundingBox, :float, :FXMVECTOR, :FXMVECTOR
-
-    GetCorners  proc :ptr XMFLOAT3
-
-    ContainsP   proc :FXMVECTOR
-    ContainsV   proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    ContainsS   proc :ptr BoundingSphere
-    ContainsB   proc :ptr BoundingBox
-    ContainsO   proc :ptr BoundingOrientedBox
-    ContainsF   proc :ptr BoundingFrustum
-
-    IntersectsS proc :ptr BoundingSphere
-    IntersectsB proc :ptr BoundingBox
-    IntersectsO proc :ptr BoundingOrientedBox
-    IntersectsF proc :ptr BoundingFrustum
-    IntersectsV proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    Intersects1 proc :FXMVECTOR
-    Intersects2 proc :FXMVECTOR, :FXMVECTOR, :ptr float
-
-    ContainedBy proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
-
-    CreateMerged proc :ptr BoundingBox, :ptr BoundingBox, :ptr BoundingBox
-    CreateFromSphere proc :ptr BoundingBox, :ptr BoundingSphere
-    CreateFromPoints proc :ptr BoundingBox, :FXMVECTOR, :FXMVECTOR
-    CreateFromPoints2 proc :ptr BoundingBox, :size_t, :ptr XMFLOAT3, :size_t
+    .static BoundingBox {
+        }
+    .static Transform :abs, :abs {
+        typeid(BoundingBox_Transform, _2)(&this, _1, _2, _3)
+        }
+    .static GetCorners {
+        BoundingBox_GetCorners(&this, _1)
+        }
+    .static Contains :abs {
+        typeid(BoundingBox_Contains, _1)(&this, _1, _2)
+        }
+    .static Intersects :abs {
+        typeid(BoundingBox_Intersects, _1)(&this, _1, _2)
+        }
+    .static ContainedBy {
+        BoundingBox_ContainedBy(&this, _1)
+        }
+    .static CreateMerged {
+        BoundingBox_CreateMerged(&this, _1)
+        }
+    .static CreateFromSphere {
+        BoundingBox_CreateFromSphere(&this, _1)
+        }
+    .static CreateFromPoints :abs, :abs {
+        typeid(BoundingBox_CreateFromPoints, _2)(&this, _1, _2)
+        }
     .ends
 
 
-.class BoundingOrientedBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3, :XMFLOAT4
+.template BoundingOrientedBox XM_CALLCONV
 
     Center      XMFLOAT3 <>  ;; Center of the box.
     Extents     XMFLOAT3 <>  ;; Distance from the center to each side.
     Orientation XMFLOAT4 <>  ;; Unit quaternion representing rotation (box -> world).
 
-    operator    proc :ptr BoundingOrientedBox
-
-    Transform1  proc :ptr BoundingOrientedBox, :FXMMATRIX
-    Transform2  proc :ptr BoundingOrientedBox, :float, :FXMVECTOR, :FXMVECTOR
-
-    GetCorners  proc :ptr XMFLOAT3
-
-    ContainsP   proc :FXMVECTOR
-    ContainsV   proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    ContainsS   proc :ptr BoundingSphere
-    ContainsB   proc :ptr BoundingBox
-    ContainsO   proc :ptr BoundingOrientedBox
-    ContainsF   proc :ptr BoundingFrustum
-
-    IntersectsS proc :ptr BoundingSphere
-    IntersectsB proc :ptr BoundingBox
-    IntersectsO proc :ptr BoundingOrientedBox
-    IntersectsF proc :ptr BoundingFrustum
-    IntersectsV proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    Intersects1 proc :FXMVECTOR
-    Intersects2 proc :FXMVECTOR, :FXMVECTOR, :ptr float
-
-    ContainedBy proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
-    CreateFromBoundingBox proc :ptr BoundingOrientedBox, :ptr BoundingBox
-
-    CreateFromPoints proc :ptr BoundingOrientedBox, :size_t, :ptr XMFLOAT3, :size_t
+    .static BoundingOrientedBox {
+        }
+    .static Transform :abs, :abs {
+        typeid(BoundingOrientedBox_Transform, _2)(&this, _1, _2, _3)
+        }
+    .static GetCorners {
+        BoundingOrientedBox_GetCorners(&this, _1)
+        }
+    .static Contains :abs {
+        typeid(BoundingOrientedBox_Contains, _1)(&this, _1, _2)
+        }
+    .static Intersects :abs {
+        typeid(BoundingOrientedBox_Intersects, _1)(&this, _1, _2)
+        }
+    .static ContainedBy {
+        BoundingOrientedBox_ContainedBy(&this, _1)
+        }
+    .static CreateFromBoundingBox {
+        BoundingOrientedBox_CreateFromBoundingBox(&this, _1)
+        }
+    .static CreateFromPoints {
+        BoundingOrientedBox_CreateFromPoints(&this, _1)
+        }
     .ends
 
 
-.class BoundingFrustum XM_CALLCONV :XMFLOAT3, :XMFLOAT4, :float, :float
+.template BoundingFrustum XM_CALLCONV
 
     Origin          XMFLOAT3 <> ;; Origin of the frustum (and projection).
     Orientation     XMFLOAT4 <> ;; Quaternion representing rotation.
@@ -132,32 +129,29 @@ CORNER_COUNT equ 8
     _Near           float ? ;; Z of the near plane and far plane.
     _Far            float ?
 
-    operator        proc :ptr BoundingFrustum
-
-    Transform1      proc :ptr BoundingFrustum, :FXMMATRIX
-    Transform2      proc :ptr BoundingFrustum, :float, :FXMVECTOR, :FXMVECTOR
-
-    GetCorners      proc :ptr XMFLOAT3
-
-    ContainsP       proc :FXMVECTOR
-    ContainsV       proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    ContainsS       proc :ptr BoundingSphere
-    ContainsB       proc :ptr BoundingBox
-    ContainsO       proc :ptr BoundingOrientedBox
-    ContainsF       proc :ptr BoundingFrustum
-
-    IntersectsS     proc :ptr BoundingSphere
-    IntersectsB     proc :ptr BoundingBox
-    IntersectsO     proc :ptr BoundingOrientedBox
-    IntersectsF     proc :ptr BoundingFrustum
-
-    IntersectsV     proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-    Intersects1     proc :FXMVECTOR
-    Intersects2     proc :FXMVECTOR, :FXMVECTOR, :ptr float
-
-    ContainedBy     proc :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
-    GetPlanes       proc :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR
-    CreateFromMatrix proc :ptr BoundingFrustum, :FXMMATRIX
+    .static BoundingFrustum {
+        }
+    .static Transform :abs, :abs {
+        typeid(BoundingFrustum_Transform, _2)(&this, _1, _2, _3)
+        }
+    .static GetCorners {
+        BoundingFrustum_GetCorners(&this, _1)
+        }
+    .static Contains :abs {
+        typeid(BoundingFrustum_Contains, _1)(&this, _1, _2)
+        }
+    .static Intersects :abs {
+        typeid(BoundingFrustum_Intersects, _1)(&this, _1, _2)
+        }
+    .static ContainedBy {
+        BoundingFrustum_ContainedBy(&this, _1)
+        }
+    .static GetPlanes {
+        BoundingFrustum_GetPlanes(&this, _1)
+        }
+    .static CreateFromMatrix {
+        BoundingFrustum_CreateFromMatrix(&this, _1)
+        }
     .ends
 
 

@@ -10,7 +10,7 @@ if(DIRECT3D_VERSION GE 0x0800)
 include float.inc
 
 if defined(_X86_) OR defined(_IA64_)
-.pragma pack(push, 4)
+.pragma pack(push, 8)
 endif
 
 ifndef D3DCOLOR_DEFINED

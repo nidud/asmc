@@ -86,8 +86,12 @@ ifdef _DEBUG
 _invalid_parameter proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :uint_t, :uintptr_t
 endif
 
-_invalid_parameter_noinfo proto __cdecl
-_invalid_parameter_noinfo_noreturn proto __cdecl
+_invalid_parameter_noinfo macro
+    exitm<>
+    endm
+_invalid_parameter_noinfo_noreturn macro
+    exitm<>
+    endm
 
 _invoke_watson proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :uint_t, :uintptr_t
 

@@ -1,0 +1,962 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+__REQUIRED_RPCNDR_H_VERSION__ equ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+__REQUIRED_RPCSAL_H_VERSION__ equ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __wbemcli_h__
+__wbemcli_h__ equ <>
+
+ifndef __IWbemClassObject_FWD_DEFINED__
+__IWbemClassObject_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectAccess_FWD_DEFINED__
+__IWbemObjectAccess_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemQualifierSet_FWD_DEFINED__
+__IWbemQualifierSet_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemServices_FWD_DEFINED__
+__IWbemServices_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemLocator_FWD_DEFINED__
+__IWbemLocator_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectSink_FWD_DEFINED__
+__IWbemObjectSink_FWD_DEFINED__ equ 1
+endif
+ifndef __IEnumWbemClassObject_FWD_DEFINED__
+__IEnumWbemClassObject_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemCallResult_FWD_DEFINED__
+__IWbemCallResult_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemContext_FWD_DEFINED__
+__IWbemContext_FWD_DEFINED__ equ 1
+endif
+ifndef __IUnsecuredApartment_FWD_DEFINED__
+__IUnsecuredApartment_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemUnsecuredApartment_FWD_DEFINED__
+__IWbemUnsecuredApartment_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemStatusCodeText_FWD_DEFINED__
+__IWbemStatusCodeText_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemBackupRestore_FWD_DEFINED__
+__IWbemBackupRestore_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemBackupRestoreEx_FWD_DEFINED__
+__IWbemBackupRestoreEx_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemRefresher_FWD_DEFINED__
+__IWbemRefresher_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemHiPerfEnum_FWD_DEFINED__
+__IWbemHiPerfEnum_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemConfigureRefresher_FWD_DEFINED__
+__IWbemConfigureRefresher_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemLocator_FWD_DEFINED__
+__WbemLocator_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemContext_FWD_DEFINED__
+__WbemContext_FWD_DEFINED__ equ 1
+endif
+ifndef __UnsecuredApartment_FWD_DEFINED__
+__UnsecuredApartment_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemClassObject_FWD_DEFINED__
+__WbemClassObject_FWD_DEFINED__ equ 1
+endif
+ifndef __MofCompiler_FWD_DEFINED__
+__MofCompiler_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemStatusCodeText_FWD_DEFINED__
+__WbemStatusCodeText_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemBackupRestore_FWD_DEFINED__
+__WbemBackupRestore_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemRefresher_FWD_DEFINED__
+__WbemRefresher_FWD_DEFINED__ equ 1
+endif
+ifndef __WbemObjectTextSrc_FWD_DEFINED__
+__WbemObjectTextSrc_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemClassObject_FWD_DEFINED__
+__IWbemClassObject_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemQualifierSet_FWD_DEFINED__
+__IWbemQualifierSet_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemLocator_FWD_DEFINED__
+__IWbemLocator_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectSink_FWD_DEFINED__
+__IWbemObjectSink_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectSinkEx_FWD_DEFINED__
+__IWbemObjectSinkEx_FWD_DEFINED__ equ 1
+endif
+ifndef __IEnumWbemClassObject_FWD_DEFINED__
+__IEnumWbemClassObject_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemContext_FWD_DEFINED__
+__IWbemContext_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemCallResult_FWD_DEFINED__
+__IWbemCallResult_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemServices_FWD_DEFINED__
+__IWbemServices_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemShutdown_FWD_DEFINED__
+__IWbemShutdown_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectTextSrc_FWD_DEFINED__
+__IWbemObjectTextSrc_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemObjectAccess_FWD_DEFINED__
+__IWbemObjectAccess_FWD_DEFINED__ equ 1
+endif
+ifndef __IMofCompiler_FWD_DEFINED__
+__IMofCompiler_FWD_DEFINED__ equ 1
+endif
+ifndef __IUnsecuredApartment_FWD_DEFINED__
+__IUnsecuredApartment_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemUnsecuredApartment_FWD_DEFINED__
+__IWbemUnsecuredApartment_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemStatusCodeText_FWD_DEFINED__
+__IWbemStatusCodeText_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemBackupRestore_FWD_DEFINED__
+__IWbemBackupRestore_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemBackupRestoreEx_FWD_DEFINED__
+__IWbemBackupRestoreEx_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemRefresher_FWD_DEFINED__
+__IWbemRefresher_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemHiPerfEnum_FWD_DEFINED__
+__IWbemHiPerfEnum_FWD_DEFINED__ equ 1
+endif
+ifndef __IWbemConfigureRefresher_FWD_DEFINED__
+__IWbemConfigureRefresher_FWD_DEFINED__ equ 1
+endif
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+ifndef __WbemClient_v1_LIBRARY_DEFINED__
+__WbemClient_v1_LIBRARY_DEFINED__ equ 1
+
+.enum WBEM_GENUS_TYPE {
+    WBEM_GENUS_CLASS	= 1,
+    WBEM_GENUS_INSTANCE = 2
+    }
+
+.enum WBEM_CHANGE_FLAG_TYPE {
+    WBEM_FLAG_CREATE_OR_UPDATE	= 0,
+    WBEM_FLAG_UPDATE_ONLY	= 0x1,
+    WBEM_FLAG_CREATE_ONLY	= 0x2,
+    WBEM_FLAG_UPDATE_COMPATIBLE = 0,
+    WBEM_FLAG_UPDATE_SAFE_MODE	= 0x20,
+    WBEM_FLAG_UPDATE_FORCE_MODE = 0x40,
+    WBEM_MASK_UPDATE_MODE	= 0x60,
+    WBEM_FLAG_ADVISORY	= 0x10000
+    }
+
+.enum WBEM_GENERIC_FLAG_TYPE {
+    WBEM_FLAG_RETURN_IMMEDIATELY	= 0x10,
+    WBEM_FLAG_RETURN_WBEM_COMPLETE	= 0,
+    WBEM_FLAG_BIDIRECTIONAL	= 0,
+    WBEM_FLAG_FORWARD_ONLY	= 0x20,
+    WBEM_FLAG_NO_ERROR_OBJECT	= 0x40,
+    WBEM_FLAG_RETURN_ERROR_OBJECT	= 0,
+    WBEM_FLAG_SEND_STATUS	= 0x80,
+    WBEM_FLAG_DONT_SEND_STATUS	= 0,
+    WBEM_FLAG_ENSURE_LOCATABLE	= 0x100,
+    WBEM_FLAG_DIRECT_READ	= 0x200,
+    WBEM_FLAG_SEND_ONLY_SELECTED	= 0,
+    WBEM_RETURN_WHEN_COMPLETE	= 0,
+    WBEM_RETURN_IMMEDIATELY	= 0x10,
+    WBEM_MASK_RESERVED_FLAGS	= 0x1f000,
+    WBEM_FLAG_USE_AMENDED_QUALIFIERS	= 0x20000,
+    WBEM_FLAG_STRONG_VALIDATION = 0x100000
+    }
+
+.enum WBEM_STATUS_TYPE {
+    WBEM_STATUS_COMPLETE	= 0,
+    WBEM_STATUS_REQUIREMENTS	= 1,
+    WBEM_STATUS_PROGRESS	= 2,
+    WBEM_STATUS_LOGGING_INFORMATION	= 0x100,
+    WBEM_STATUS_LOGGING_INFORMATION_PROVIDER	= 0x200,
+    WBEM_STATUS_LOGGING_INFORMATION_HOST	= 0x400,
+    WBEM_STATUS_LOGGING_INFORMATION_REPOSITORY	= 0x800,
+    WBEM_STATUS_LOGGING_INFORMATION_ESS = 0x1000
+    }
+
+.enum WBEM_TIMEOUT_TYPE {
+    WBEM_NO_WAIT	= 0,
+    WBEM_INFINITE	= 0xffffffff
+    }
+
+.enum WBEM_CONDITION_FLAG_TYPE {
+    WBEM_FLAG_ALWAYS	= 0,
+    WBEM_FLAG_ONLY_IF_TRUE	= 0x1,
+    WBEM_FLAG_ONLY_IF_FALSE	= 0x2,
+    WBEM_FLAG_ONLY_IF_IDENTICAL = 0x3,
+    WBEM_MASK_PRIMARY_CONDITION = 0x3,
+    WBEM_FLAG_KEYS_ONLY = 0x4,
+    WBEM_FLAG_REFS_ONLY = 0x8,
+    WBEM_FLAG_LOCAL_ONLY	= 0x10,
+    WBEM_FLAG_PROPAGATED_ONLY	= 0x20,
+    WBEM_FLAG_SYSTEM_ONLY	= 0x30,
+    WBEM_FLAG_NONSYSTEM_ONLY	= 0x40,
+    WBEM_MASK_CONDITION_ORIGIN	= 0x70,
+    WBEM_FLAG_CLASS_OVERRIDES_ONLY	= 0x100,
+    WBEM_FLAG_CLASS_LOCAL_AND_OVERRIDES = 0x200,
+    WBEM_MASK_CLASS_CONDITION	= 0x300
+    }
+
+.enum WBEM_FLAVOR_TYPE {
+    WBEM_FLAVOR_DONT_PROPAGATE	= 0,
+    WBEM_FLAVOR_FLAG_PROPAGATE_TO_INSTANCE	= 0x1,
+    WBEM_FLAVOR_FLAG_PROPAGATE_TO_DERIVED_CLASS = 0x2,
+    WBEM_FLAVOR_MASK_PROPAGATION	= 0xf,
+    WBEM_FLAVOR_OVERRIDABLE	= 0,
+    WBEM_FLAVOR_NOT_OVERRIDABLE = 0x10,
+    WBEM_FLAVOR_MASK_PERMISSIONS	= 0x10,
+    WBEM_FLAVOR_ORIGIN_LOCAL	= 0,
+    WBEM_FLAVOR_ORIGIN_PROPAGATED	= 0x20,
+    WBEM_FLAVOR_ORIGIN_SYSTEM	= 0x40,
+    WBEM_FLAVOR_MASK_ORIGIN	= 0x60,
+    WBEM_FLAVOR_NOT_AMENDED	= 0,
+    WBEM_FLAVOR_AMENDED = 0x80,
+    WBEM_FLAVOR_MASK_AMENDED	= 0x80
+    }
+
+.enum WBEM_QUERY_FLAG_TYPE {
+    WBEM_FLAG_DEEP	= 0,
+    WBEM_FLAG_SHALLOW	= 1,
+    WBEM_FLAG_PROTOTYPE = 2
+    }
+
+.enum WBEM_SECURITY_FLAGS {
+    WBEM_ENABLE = 1,
+    WBEM_METHOD_EXECUTE = 2,
+    WBEM_FULL_WRITE_REP = 4,
+    WBEM_PARTIAL_WRITE_REP	= 8,
+    WBEM_WRITE_PROVIDER = 0x10,
+    WBEM_REMOTE_ACCESS	= 0x20,
+    WBEM_RIGHT_SUBSCRIBE	= 0x40,
+    WBEM_RIGHT_PUBLISH	= 0x80
+    }
+
+.enum WBEM_LIMITATION_FLAG_TYPE {
+    WBEM_FLAG_EXCLUDE_OBJECT_QUALIFIERS = 0x10,
+    WBEM_FLAG_EXCLUDE_PROPERTY_QUALIFIERS	= 0x20
+    }
+
+.enum WBEM_TEXT_FLAG_TYPE {
+    WBEM_FLAG_NO_FLAVORS	= 0x1
+    }
+
+.enum WBEM_COMPARISON_FLAG {
+    WBEM_COMPARISON_INCLUDE_ALL = 0,
+    WBEM_FLAG_IGNORE_QUALIFIERS = 0x1,
+    WBEM_FLAG_IGNORE_OBJECT_SOURCE	= 0x2,
+    WBEM_FLAG_IGNORE_DEFAULT_VALUES	= 0x4,
+    WBEM_FLAG_IGNORE_CLASS	= 0x8,
+    WBEM_FLAG_IGNORE_CASE	= 0x10,
+    WBEM_FLAG_IGNORE_FLAVOR	= 0x20
+    }
+
+.enum WBEM_LOCKING {
+    WBEM_FLAG_ALLOW_READ	= 0x1
+    }
+
+.enum CIMTYPE_ENUMERATION {
+    CIM_ILLEGAL = 0xfff,
+    CIM_EMPTY	= 0,
+    CIM_SINT8	= 16,
+    CIM_UINT8	= 17,
+    CIM_SINT16	= 2,
+    CIM_UINT16	= 18,
+    CIM_SINT32	= 3,
+    CIM_UINT32	= 19,
+    CIM_SINT64	= 20,
+    CIM_UINT64	= 21,
+    CIM_REAL32	= 4,
+    CIM_REAL64	= 5,
+    CIM_BOOLEAN = 11,
+    CIM_STRING	= 8,
+    CIM_DATETIME	= 101,
+    CIM_REFERENCE	= 102,
+    CIM_CHAR16	= 103,
+    CIM_OBJECT	= 13,
+    CIM_FLAG_ARRAY	= 0x2000
+    }
+
+.enum WBEM_BACKUP_RESTORE_FLAGS {
+    WBEM_FLAG_BACKUP_RESTORE_DEFAULT	= 0,
+    WBEM_FLAG_BACKUP_RESTORE_FORCE_SHUTDOWN	= 1
+    }
+
+.enum WBEM_REFRESHER_FLAGS {
+    WBEM_FLAG_REFRESH_AUTO_RECONNECT	= 0,
+    WBEM_FLAG_REFRESH_NO_AUTO_RECONNECT = 1
+    }
+
+.enum WBEM_SHUTDOWN_FLAGS {
+    WBEM_SHUTDOWN_UNLOAD_COMPONENT	= 1,
+    WBEM_SHUTDOWN_WMI	= 2,
+    WBEM_SHUTDOWN_OS	= 3
+    }
+
+CIMTYPE typedef LONG
+
+.enum WBEMSTATUS_FORMAT {
+    WBEMSTATUS_FORMAT_NEWLINE	= 0,
+    WBEMSTATUS_FORMAT_NO_NEWLINE	= 1
+    }
+
+.enum WBEM_LIMITS {
+    WBEM_MAX_IDENTIFIER = 0x1000,
+    WBEM_MAX_QUERY	= 0x4000,
+    WBEM_MAX_PATH	= 0x2000,
+    WBEM_MAX_OBJECT_NESTING	= 64,
+    WBEM_MAX_USER_PROPERTIES	= 1024
+    }
+
+.enum WBEMSTATUS {
+    WBEM_NO_ERROR	= 0,
+    WBEM_S_NO_ERROR	= 0,
+    WBEM_S_SAME = 0,
+    WBEM_S_FALSE	= 1,
+    WBEM_S_ALREADY_EXISTS	= 0x40001,
+    WBEM_S_RESET_TO_DEFAULT	= 0x40002,
+    WBEM_S_DIFFERENT	= 0x40003,
+    WBEM_S_TIMEDOUT	= 0x40004,
+    WBEM_S_NO_MORE_DATA = 0x40005,
+    WBEM_S_OPERATION_CANCELLED	= 0x40006,
+    WBEM_S_PENDING	= 0x40007,
+    WBEM_S_DUPLICATE_OBJECTS	= 0x40008,
+    WBEM_S_ACCESS_DENIED	= 0x40009,
+    WBEM_S_PARTIAL_RESULTS	= 0x40010,
+    WBEM_S_SOURCE_NOT_AVAILABLE = 0x40017,
+    WBEM_E_FAILED	= 0x80041001,
+    WBEM_E_NOT_FOUND	= 0x80041002,
+    WBEM_E_ACCESS_DENIED	= 0x80041003,
+    WBEM_E_PROVIDER_FAILURE	= 0x80041004,
+    WBEM_E_TYPE_MISMATCH	= 0x80041005,
+    WBEM_E_OUT_OF_MEMORY	= 0x80041006,
+    WBEM_E_INVALID_CONTEXT	= 0x80041007,
+    WBEM_E_INVALID_PARAMETER	= 0x80041008,
+    WBEM_E_NOT_AVAILABLE	= 0x80041009,
+    WBEM_E_CRITICAL_ERROR	= 0x8004100a,
+    WBEM_E_INVALID_STREAM	= 0x8004100b,
+    WBEM_E_NOT_SUPPORTED	= 0x8004100c,
+    WBEM_E_INVALID_SUPERCLASS	= 0x8004100d,
+    WBEM_E_INVALID_NAMESPACE	= 0x8004100e,
+    WBEM_E_INVALID_OBJECT	= 0x8004100f,
+    WBEM_E_INVALID_CLASS	= 0x80041010,
+    WBEM_E_PROVIDER_NOT_FOUND	= 0x80041011,
+    WBEM_E_INVALID_PROVIDER_REGISTRATION	= 0x80041012,
+    WBEM_E_PROVIDER_LOAD_FAILURE	= 0x80041013,
+    WBEM_E_INITIALIZATION_FAILURE	= 0x80041014,
+    WBEM_E_TRANSPORT_FAILURE	= 0x80041015,
+    WBEM_E_INVALID_OPERATION	= 0x80041016,
+    WBEM_E_INVALID_QUERY	= 0x80041017,
+    WBEM_E_INVALID_QUERY_TYPE	= 0x80041018,
+    WBEM_E_ALREADY_EXISTS	= 0x80041019,
+    WBEM_E_OVERRIDE_NOT_ALLOWED = 0x8004101a,
+    WBEM_E_PROPAGATED_QUALIFIER = 0x8004101b,
+    WBEM_E_PROPAGATED_PROPERTY	= 0x8004101c,
+    WBEM_E_UNEXPECTED	= 0x8004101d,
+    WBEM_E_ILLEGAL_OPERATION	= 0x8004101e,
+    WBEM_E_CANNOT_BE_KEY	= 0x8004101f,
+    WBEM_E_INCOMPLETE_CLASS	= 0x80041020,
+    WBEM_E_INVALID_SYNTAX	= 0x80041021,
+    WBEM_E_NONDECORATED_OBJECT	= 0x80041022,
+    WBEM_E_READ_ONLY	= 0x80041023,
+    WBEM_E_PROVIDER_NOT_CAPABLE = 0x80041024,
+    WBEM_E_CLASS_HAS_CHILDREN	= 0x80041025,
+    WBEM_E_CLASS_HAS_INSTANCES	= 0x80041026,
+    WBEM_E_QUERY_NOT_IMPLEMENTED	= 0x80041027,
+    WBEM_E_ILLEGAL_NULL = 0x80041028,
+    WBEM_E_INVALID_QUALIFIER_TYPE	= 0x80041029,
+    WBEM_E_INVALID_PROPERTY_TYPE	= 0x8004102a,
+    WBEM_E_VALUE_OUT_OF_RANGE	= 0x8004102b,
+    WBEM_E_CANNOT_BE_SINGLETON	= 0x8004102c,
+    WBEM_E_INVALID_CIM_TYPE	= 0x8004102d,
+    WBEM_E_INVALID_METHOD	= 0x8004102e,
+    WBEM_E_INVALID_METHOD_PARAMETERS	= 0x8004102f,
+    WBEM_E_SYSTEM_PROPERTY	= 0x80041030,
+    WBEM_E_INVALID_PROPERTY	= 0x80041031,
+    WBEM_E_CALL_CANCELLED	= 0x80041032,
+    WBEM_E_SHUTTING_DOWN	= 0x80041033,
+    WBEM_E_PROPAGATED_METHOD	= 0x80041034,
+    WBEM_E_UNSUPPORTED_PARAMETER	= 0x80041035,
+    WBEM_E_MISSING_PARAMETER_ID = 0x80041036,
+    WBEM_E_INVALID_PARAMETER_ID = 0x80041037,
+    WBEM_E_NONCONSECUTIVE_PARAMETER_IDS = 0x80041038,
+    WBEM_E_PARAMETER_ID_ON_RETVAL	= 0x80041039,
+    WBEM_E_INVALID_OBJECT_PATH	= 0x8004103a,
+    WBEM_E_OUT_OF_DISK_SPACE	= 0x8004103b,
+    WBEM_E_BUFFER_TOO_SMALL	= 0x8004103c,
+    WBEM_E_UNSUPPORTED_PUT_EXTENSION	= 0x8004103d,
+    WBEM_E_UNKNOWN_OBJECT_TYPE	= 0x8004103e,
+    WBEM_E_UNKNOWN_PACKET_TYPE	= 0x8004103f,
+    WBEM_E_MARSHAL_VERSION_MISMATCH	= 0x80041040,
+    WBEM_E_MARSHAL_INVALID_SIGNATURE	= 0x80041041,
+    WBEM_E_INVALID_QUALIFIER	= 0x80041042,
+    WBEM_E_INVALID_DUPLICATE_PARAMETER	= 0x80041043,
+    WBEM_E_TOO_MUCH_DATA	= 0x80041044,
+    WBEM_E_SERVER_TOO_BUSY	= 0x80041045,
+    WBEM_E_INVALID_FLAVOR	= 0x80041046,
+    WBEM_E_CIRCULAR_REFERENCE	= 0x80041047,
+    WBEM_E_UNSUPPORTED_CLASS_UPDATE	= 0x80041048,
+    WBEM_E_CANNOT_CHANGE_KEY_INHERITANCE	= 0x80041049,
+    WBEM_E_CANNOT_CHANGE_INDEX_INHERITANCE	= 0x80041050,
+    WBEM_E_TOO_MANY_PROPERTIES	= 0x80041051,
+    WBEM_E_UPDATE_TYPE_MISMATCH = 0x80041052,
+    WBEM_E_UPDATE_OVERRIDE_NOT_ALLOWED	= 0x80041053,
+    WBEM_E_UPDATE_PROPAGATED_METHOD	= 0x80041054,
+    WBEM_E_METHOD_NOT_IMPLEMENTED	= 0x80041055,
+    WBEM_E_METHOD_DISABLED	= 0x80041056,
+    WBEM_E_REFRESHER_BUSY	= 0x80041057,
+    WBEM_E_UNPARSABLE_QUERY	= 0x80041058,
+    WBEM_E_NOT_EVENT_CLASS	= 0x80041059,
+    WBEM_E_MISSING_GROUP_WITHIN = 0x8004105a,
+    WBEM_E_MISSING_AGGREGATION_LIST	= 0x8004105b,
+    WBEM_E_PROPERTY_NOT_AN_OBJECT	= 0x8004105c,
+    WBEM_E_AGGREGATING_BY_OBJECT	= 0x8004105d,
+    WBEM_E_UNINTERPRETABLE_PROVIDER_QUERY	= 0x8004105f,
+    WBEM_E_BACKUP_RESTORE_WINMGMT_RUNNING	= 0x80041060,
+    WBEM_E_QUEUE_OVERFLOW	= 0x80041061,
+    WBEM_E_PRIVILEGE_NOT_HELD	= 0x80041062,
+    WBEM_E_INVALID_OPERATOR	= 0x80041063,
+    WBEM_E_LOCAL_CREDENTIALS	= 0x80041064,
+    WBEM_E_CANNOT_BE_ABSTRACT	= 0x80041065,
+    WBEM_E_AMENDED_OBJECT	= 0x80041066,
+    WBEM_E_CLIENT_TOO_SLOW	= 0x80041067,
+    WBEM_E_NULL_SECURITY_DESCRIPTOR	= 0x80041068,
+    WBEM_E_TIMED_OUT	= 0x80041069,
+    WBEM_E_INVALID_ASSOCIATION	= 0x8004106a,
+    WBEM_E_AMBIGUOUS_OPERATION	= 0x8004106b,
+    WBEM_E_QUOTA_VIOLATION	= 0x8004106c,
+    WBEM_E_RESERVED_001 = 0x8004106d,
+    WBEM_E_RESERVED_002 = 0x8004106e,
+    WBEM_E_UNSUPPORTED_LOCALE	= 0x8004106f,
+    WBEM_E_HANDLE_OUT_OF_DATE	= 0x80041070,
+    WBEM_E_CONNECTION_FAILED	= 0x80041071,
+    WBEM_E_INVALID_HANDLE_REQUEST	= 0x80041072,
+    WBEM_E_PROPERTY_NAME_TOO_WIDE	= 0x80041073,
+    WBEM_E_CLASS_NAME_TOO_WIDE	= 0x80041074,
+    WBEM_E_METHOD_NAME_TOO_WIDE = 0x80041075,
+    WBEM_E_QUALIFIER_NAME_TOO_WIDE	= 0x80041076,
+    WBEM_E_RERUN_COMMAND	= 0x80041077,
+    WBEM_E_DATABASE_VER_MISMATCH	= 0x80041078,
+    WBEM_E_VETO_DELETE	= 0x80041079,
+    WBEM_E_VETO_PUT	= 0x8004107a,
+    WBEM_E_INVALID_LOCALE	= 0x80041080,
+    WBEM_E_PROVIDER_SUSPENDED	= 0x80041081,
+    WBEM_E_SYNCHRONIZATION_REQUIRED	= 0x80041082,
+    WBEM_E_NO_SCHEMA	= 0x80041083,
+    WBEM_E_PROVIDER_ALREADY_REGISTERED	= 0x80041084,
+    WBEM_E_PROVIDER_NOT_REGISTERED	= 0x80041085,
+    WBEM_E_FATAL_TRANSPORT_ERROR	= 0x80041086,
+    WBEM_E_ENCRYPTED_CONNECTION_REQUIRED	= 0x80041087,
+    WBEM_E_PROVIDER_TIMED_OUT	= 0x80041088,
+    WBEM_E_NO_KEY	= 0x80041089,
+    WBEM_E_PROVIDER_DISABLED	= 0x8004108a,
+    WBEMESS_E_REGISTRATION_TOO_BROAD	= 0x80042001,
+    WBEMESS_E_REGISTRATION_TOO_PRECISE	= 0x80042002,
+    WBEMESS_E_AUTHZ_NOT_PRIVILEGED	= 0x80042003,
+    WBEMMOF_E_EXPECTED_QUALIFIER_NAME	= 0x80044001,
+    WBEMMOF_E_EXPECTED_SEMI	= 0x80044002,
+    WBEMMOF_E_EXPECTED_OPEN_BRACE	= 0x80044003,
+    WBEMMOF_E_EXPECTED_CLOSE_BRACE	= 0x80044004,
+    WBEMMOF_E_EXPECTED_CLOSE_BRACKET	= 0x80044005,
+    WBEMMOF_E_EXPECTED_CLOSE_PAREN	= 0x80044006,
+    WBEMMOF_E_ILLEGAL_CONSTANT_VALUE	= 0x80044007,
+    WBEMMOF_E_EXPECTED_TYPE_IDENTIFIER	= 0x80044008,
+    WBEMMOF_E_EXPECTED_OPEN_PAREN	= 0x80044009,
+    WBEMMOF_E_UNRECOGNIZED_TOKEN	= 0x8004400a,
+    WBEMMOF_E_UNRECOGNIZED_TYPE = 0x8004400b,
+    WBEMMOF_E_EXPECTED_PROPERTY_NAME	= 0x8004400c,
+    WBEMMOF_E_TYPEDEF_NOT_SUPPORTED	= 0x8004400d,
+    WBEMMOF_E_UNEXPECTED_ALIAS	= 0x8004400e,
+    WBEMMOF_E_UNEXPECTED_ARRAY_INIT	= 0x8004400f,
+    WBEMMOF_E_INVALID_AMENDMENT_SYNTAX	= 0x80044010,
+    WBEMMOF_E_INVALID_DUPLICATE_AMENDMENT	= 0x80044011,
+    WBEMMOF_E_INVALID_PRAGMA	= 0x80044012,
+    WBEMMOF_E_INVALID_NAMESPACE_SYNTAX	= 0x80044013,
+    WBEMMOF_E_EXPECTED_CLASS_NAME	= 0x80044014,
+    WBEMMOF_E_TYPE_MISMATCH	= 0x80044015,
+    WBEMMOF_E_EXPECTED_ALIAS_NAME	= 0x80044016,
+    WBEMMOF_E_INVALID_CLASS_DECLARATION = 0x80044017,
+    WBEMMOF_E_INVALID_INSTANCE_DECLARATION	= 0x80044018,
+    WBEMMOF_E_EXPECTED_DOLLAR	= 0x80044019,
+    WBEMMOF_E_CIMTYPE_QUALIFIER = 0x8004401a,
+    WBEMMOF_E_DUPLICATE_PROPERTY	= 0x8004401b,
+    WBEMMOF_E_INVALID_NAMESPACE_SPECIFICATION	= 0x8004401c,
+    WBEMMOF_E_OUT_OF_RANGE	= 0x8004401d,
+    WBEMMOF_E_INVALID_FILE	= 0x8004401e,
+    WBEMMOF_E_ALIASES_IN_EMBEDDED	= 0x8004401f,
+    WBEMMOF_E_NULL_ARRAY_ELEM	= 0x80044020,
+    WBEMMOF_E_DUPLICATE_QUALIFIER	= 0x80044021,
+    WBEMMOF_E_EXPECTED_FLAVOR_TYPE	= 0x80044022,
+    WBEMMOF_E_INCOMPATIBLE_FLAVOR_TYPES = 0x80044023,
+    WBEMMOF_E_MULTIPLE_ALIASES	= 0x80044024,
+    WBEMMOF_E_INCOMPATIBLE_FLAVOR_TYPES2	= 0x80044025,
+    WBEMMOF_E_NO_ARRAYS_RETURNED	= 0x80044026,
+    WBEMMOF_E_MUST_BE_IN_OR_OUT = 0x80044027,
+    WBEMMOF_E_INVALID_FLAGS_SYNTAX	= 0x80044028,
+    WBEMMOF_E_EXPECTED_BRACE_OR_BAD_TYPE	= 0x80044029,
+    WBEMMOF_E_UNSUPPORTED_CIMV22_QUAL_VALUE	= 0x8004402a,
+    WBEMMOF_E_UNSUPPORTED_CIMV22_DATA_TYPE	= 0x8004402b,
+    WBEMMOF_E_INVALID_DELETEINSTANCE_SYNTAX	= 0x8004402c,
+    WBEMMOF_E_INVALID_QUALIFIER_SYNTAX	= 0x8004402d,
+    WBEMMOF_E_QUALIFIER_USED_OUTSIDE_SCOPE	= 0x8004402e,
+    WBEMMOF_E_ERROR_CREATING_TEMP_FILE	= 0x8004402f,
+    WBEMMOF_E_ERROR_INVALID_INCLUDE_FILE	= 0x80044030,
+    WBEMMOF_E_INVALID_DELETECLASS_SYNTAX	= 0x80044031
+    }
+
+
+externdef LIBID_WbemClient_v1:IID
+
+ifndef __IWbemClassObject_INTERFACE_DEFINED__
+__IWbemClassObject_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemClassObject, "dc12a681-737f-11cf-884d-00aa004b2e24")
+
+.comdef IWbemClassObject : public IUnknown
+
+    GetQualifierSet	proc :ptr
+    Get			proc :LPCWSTR, :LONG, :ptr, :ptr, :ptr
+    Put			proc :LPCWSTR, :LONG, :ptr, :CIMTYPE
+    Delete		proc :LPCWSTR
+    GetNames		proc :LPCWSTR, :LONG, :ptr, :ptr
+    BeginEnumeration	proc :LONG
+    Next		proc :LONG, :ptr, :ptr, :ptr, :ptr
+    EndEnumeration	proc
+    GetPropertyQualifierSet proc :LPCWSTR, :ptr
+    Clone		proc :ptr
+    GetObjectText	proc :LONG, :ptr
+    SpawnDerivedClass	proc :LONG, :ptr
+    SpawnInstance	proc :LONG, :ptr
+    CompareTo		proc :LONG, :ptr
+    GetPropertyOrigin	proc :LPCWSTR, :ptr
+    InheritsFrom	proc :LPCWSTR
+    GetMethod		proc :LPCWSTR, :LONG, :ptr, :ptr
+    PutMethod		proc :LPCWSTR, :LONG, :ptr, :ptr
+    DeleteMethod	proc :LPCWSTR
+    BeginMethodEnumeration proc :LONG
+    NextMethod		proc :LONG, :ptr, :ptr, :ptr
+    EndMethodEnumeration proc
+    GetMethodQualifierSet proc :LPCWSTR, :ptr
+    GetMethodOrigin	proc :LPCWSTR, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemObjectAccess_INTERFACE_DEFINED__
+__IWbemObjectAccess_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemObjectAccess, "49353c9a-516b-11d1-aea6-00c04fb68820")
+
+.comdef IWbemObjectAccess : public IWbemClassObject
+
+    GetPropertyHandle	proc :LPCWSTR, :ptr, :ptr
+    WritePropertyValue	proc :LONG, :LONG, :ptr
+    ReadPropertyValue	proc :LONG, :LONG, :ptr, :ptr
+    ReadDWORD		proc :LONG, :ptr
+    WriteDWORD		proc :LONG, :DWORD
+    ReadQWORD		proc :LONG, :ptr
+    WriteQWORD		proc :LONG, :sqword
+    GetPropertyInfoByHandle proc :LONG, :ptr, :ptr
+    _Lock		proc :LONG
+    Unlock		proc :LONG
+    .ends
+
+endif
+
+ifndef __IWbemQualifierSet_INTERFACE_DEFINED__
+__IWbemQualifierSet_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemQualifierSet, "dc12a680-737f-11cf-884d-00aa004b2e24")
+
+.comdef IWbemQualifierSet : public IUnknown
+
+    Get			proc :LPCWSTR, :LONG, :ptr, :ptr
+    Put			proc :LPCWSTR, :ptr, :LONG
+    Delete		proc :LPCWSTR
+    GetNames		proc :LONG, :ptr
+    BeginEnumeration	proc :LONG
+    Next		proc :LONG, :ptr, :ptr, :ptr
+    EndEnumeration	proc
+    .ends
+
+endif
+
+ifndef __IWbemServices_INTERFACE_DEFINED__
+__IWbemServices_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemServices, "9556dc99-828c-11cf-a37e-00aa003240c7")
+
+.comdef IWbemServices : public IUnknown
+
+    OpenNamespace	proc :BSTR, :LONG, :ptr, :ptr, :ptr
+    CancelAsyncCall	proc :ptr
+    QueryObjectSink	proc :LONG, :ptr
+    GetObject		proc :BSTR, :LONG, :ptr, :ptr, :ptr
+    GetObjectAsync	proc :BSTR, :LONG, :ptr, :ptr
+    PutClass		proc :ptr, :LONG, :ptr, :ptr
+    PutClassAsync	proc :ptr, :LONG, :ptr, :ptr
+    DeleteClass		proc :BSTR, :LONG, :ptr, :ptr
+    DeleteClassAsync	proc :BSTR, :LONG, :ptr, :ptr
+    CreateClassEnum	proc :BSTR, :LONG, :ptr, :ptr
+    CreateClassEnumAsync proc :BSTR, :LONG, :ptr, :ptr
+    PutInstance		proc :ptr, :LONG, :ptr, :ptr
+    PutInstanceAsync	proc :ptr, :LONG, :ptr, :ptr
+    DeleteInstance	proc :BSTR, :LONG, :ptr, :ptr
+    DeleteInstanceAsync proc :BSTR, :LONG, :ptr, :ptr
+    CreateInstanceEnum	proc :BSTR, :LONG, :ptr, :ptr
+    CreateInstanceEnumAsync proc :BSTR, :LONG, :ptr, :ptr
+    ExecQuery		proc :BSTR, :BSTR, :LONG, :ptr, :ptr
+    ExecQueryAsync	proc :BSTR, :BSTR, :LONG, :ptr, :ptr
+    ExecNotificationQuery proc :BSTR, :BSTR, :LONG, :ptr, :ptr
+    ExecNotificationQueryAsync proc :BSTR, :BSTR, :LONG, :ptr, :ptr
+    ExecMethod		proc :BSTR, :BSTR, :LONG, :ptr, :ptr, :ptr, :ptr
+    ExecMethodAsync	proc :BSTR, :BSTR, :LONG, :ptr, :ptr, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemLocator_INTERFACE_DEFINED__
+__IWbemLocator_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemLocator, "dc12a687-737f-11cf-884d-00aa004b2e24")
+
+.comdef IWbemLocator : public IUnknown
+
+    ConnectServer	proc :BSTR, :BSTR, :BSTR, :BSTR, :LONG, :BSTR, :ptr, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemObjectSink_INTERFACE_DEFINED__
+__IWbemObjectSink_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemObjectSink, "7c857801-7381-11cf-884d-00aa004b2e24")
+
+.comdef IWbemObjectSink : public IUnknown
+
+    Indicate		proc :LONG, :ptr
+    SetStatus		proc :LONG, :HRESULT, :BSTR, :ptr
+    .ends
+
+endif
+
+ifndef __IEnumWbemClassObject_INTERFACE_DEFINED__
+__IEnumWbemClassObject_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumWbemClassObject, "027947e1-d731-11ce-a357-000000000001")
+
+.comdef IEnumWbemClassObject : public IUnknown
+
+    Reset		proc
+    Next		proc :LONG, :ULONG, :ptr, :ptr
+    NextAsync		proc :ULONG, :ptr
+    Clone		proc :ptr
+    Skip		proc :LONG, :ULONG
+    .ends
+
+endif
+
+ifndef __IWbemCallResult_INTERFACE_DEFINED__
+__IWbemCallResult_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemCallResult, "44aca675-e8fc-11d0-a07c-00c04fb68820")
+
+.comdef IWbemCallResult : public IUnknown
+
+    GetResultObject	proc :LONG, :ptr
+    GetResultString	proc :LONG, :ptr
+    GetResultServices	proc :LONG, :ptr
+    GetCallStatus	proc :LONG, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemContext_INTERFACE_DEFINED__
+__IWbemContext_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemContext, "44aca674-e8fc-11d0-a07c-00c04fb68820")
+
+.comdef IWbemContext : public IUnknown
+
+    Clone		proc :ptr
+    GetNames		proc :LONG, :ptr
+    BeginEnumeration	proc :LONG
+    Next		proc :LONG, :ptr, :ptr
+    EndEnumeration	proc
+    SetValue		proc :LPCWSTR, :LONG, :ptr
+    GetValue		proc :LPCWSTR, :LONG, :ptr
+    DeleteValue		proc :LPCWSTR, :LONG
+    DeleteAll		proc
+    .ends
+
+endif
+
+ifndef __IUnsecuredApartment_INTERFACE_DEFINED__
+__IUnsecuredApartment_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IUnsecuredApartment, "1cfaba8c-1523-11d1-ad79-00c04fd8fdff")
+
+.comdef IUnsecuredApartment : public IUnknown
+
+    CreateObjectStub	proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemUnsecuredApartment_INTERFACE_DEFINED__
+__IWbemUnsecuredApartment_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemUnsecuredApartment, "31739d04-3471-4cf4-9a7c-57a44ae71956")
+
+.comdef IWbemUnsecuredApartment : public IUnsecuredApartment
+
+    CreateSinkStub	proc :ptr, :DWORD, :LPCWSTR, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemStatusCodeText_INTERFACE_DEFINED__
+__IWbemStatusCodeText_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemStatusCodeText, "eb87e1bc-3233-11d2-aec9-00c04fb68820")
+
+.comdef IWbemStatusCodeText : public IUnknown
+
+    GetErrorCodeText	proc :HRESULT, :LCID, :LONG, :ptr
+    GetFacilityCodeText proc :HRESULT, :LCID, :LONG, :ptr
+    .ends
+
+endif
+
+ifndef __IWbemBackupRestore_INTERFACE_DEFINED__
+__IWbemBackupRestore_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemBackupRestore, "C49E32C7-BC8B-11d2-85D4-00105A1F8304")
+
+.comdef IWbemBackupRestore : public IUnknown
+
+    Backup		proc :LPCWSTR, :LONG
+    Restore		proc :LPCWSTR, :LONG
+    .ends
+
+endif
+
+ifndef __IWbemBackupRestoreEx_INTERFACE_DEFINED__
+__IWbemBackupRestoreEx_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemBackupRestoreEx, "A359DEC5-E813-4834-8A2A-BA7F1D777D76")
+
+.comdef IWbemBackupRestoreEx : public IWbemBackupRestore
+
+    _Pause		proc
+    Resume		proc
+    .ends
+
+endif
+
+ifndef __IWbemRefresher_INTERFACE_DEFINED__
+__IWbemRefresher_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemRefresher, "49353c99-516b-11d1-aea6-00c04fb68820")
+
+.comdef IWbemRefresher : public IUnknown
+
+    Refresh		proc :LONG
+    .ends
+
+endif
+
+ifndef __IWbemHiPerfEnum_INTERFACE_DEFINED__
+__IWbemHiPerfEnum_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemHiPerfEnum, "2705C288-79AE-11d2-B348-00105A1F8177")
+
+.comdef IWbemHiPerfEnum : public IUnknown
+
+    AddObjects		proc :LONG, :ULONG, :ptr, :ptr
+    RemoveObjects	proc :LONG, :ULONG, :ptr
+    GetObjects		proc :LONG, :ULONG, :ptr, :ptr
+    RemoveAll		proc :LONG
+    .ends
+
+endif
+
+ifndef __IWbemConfigureRefresher_INTERFACE_DEFINED__
+__IWbemConfigureRefresher_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemConfigureRefresher, "49353c92-516b-11d1-aea6-00c04fb68820")
+
+.comdef IWbemConfigureRefresher : public IUnknown
+
+    AddObjectByPath	proc :ptr, :LPCWSTR, :LONG, :ptr, :ptr, :ptr
+    AddObjectByTemplate proc :ptr, :ptr, :LONG, :ptr, :ptr, :ptr
+    AddRefresher	proc :ptr, :LONG, :ptr
+    Remove		proc :LONG, :LONG
+    AddEnum		proc :ptr, :LPCWSTR, :LONG, :ptr, :ptr, :ptr
+    .ends
+
+endif
+
+DEFINE_GUIDS(CLSID_WbemLocator, "4590f811-1d3a-11d0-891f-00aa004b2e24")
+DEFINE_GUIDS(CLSID_WbemContext, "674B6698-EE92-11d0-AD71-00C04FD8FDFF")
+DEFINE_GUIDS(CLSID_UnsecuredApartment, "49bd2028-1523-11d1-ad79-00c04fd8fdff")
+DEFINE_GUIDS(CLSID_WbemClassObject, "9A653086-174F-11d2-B5F9-00104B703EFD")
+DEFINE_GUIDS(CLSID_MofCompiler, "6daf9757-2e37-11d2-aec9-00c04fb68820")
+DEFINE_GUIDS(CLSID_WbemStatusCodeText, "eb87e1bd-3233-11d2-aec9-00c04fb68820")
+DEFINE_GUIDS(CLSID_WbemBackupRestore, "C49E32C6-BC8B-11d2-85D4-00105A1F8304")
+DEFINE_GUIDS(CLSID_WbemRefresher, "c71566f2-561e-11d1-ad87-00c04fd8fdff")
+DEFINE_GUIDS(CLSID_WbemObjectTextSrc, "8D1C559D-84F0-4bb3-A7D5-56A7435A9BA6")
+
+endif
+
+ifndef __IWbemObjectSinkEx_INTERFACE_DEFINED__
+__IWbemObjectSinkEx_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemObjectSinkEx, "e7d35cfa-348b-485e-b524-252725d697ca")
+
+.comdef IWbemObjectSinkEx : public IWbemObjectSink
+
+    WriteMessage	proc :ULONG, :BSTR
+    WriteError		proc :ptr, :dword
+    PromptUser		proc :BSTR, :sbyte, :dword
+    WriteProgress	proc :BSTR, :BSTR, :BSTR, :ULONG, :ULONG
+    WriteStreamParameter proc :BSTR, :ptr, :ULONG, :ULONG
+    .ends
+
+endif
+
+ifndef __IWbemShutdown_INTERFACE_DEFINED__
+__IWbemShutdown_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemShutdown, "b7b31df9-d515-11d3-a11c-00105a1f515a")
+
+.comdef IWbemShutdown : public IUnknown
+
+    Shutdown		proc :LONG, :ULONG, :ptr
+    .ends
+
+endif
+
+.enum WMI_OBJ_TEXT {
+    WMI_OBJ_TEXT_CIM_DTD_2_0	= 1,
+    WMI_OBJ_TEXT_WMI_DTD_2_0	= 2,
+    WMI_OBJ_TEXT_WMI_EXT1	= 3,
+    WMI_OBJ_TEXT_WMI_EXT2	= 4,
+    WMI_OBJ_TEXT_WMI_EXT3	= 5,
+    WMI_OBJ_TEXT_WMI_EXT4	= 6,
+    WMI_OBJ_TEXT_WMI_EXT5	= 7,
+    WMI_OBJ_TEXT_WMI_EXT6	= 8,
+    WMI_OBJ_TEXT_WMI_EXT7	= 9,
+    WMI_OBJ_TEXT_WMI_EXT8	= 10,
+    WMI_OBJ_TEXT_WMI_EXT9	= 11,
+    WMI_OBJ_TEXT_WMI_EXT10	= 12,
+    WMI_OBJ_TEXT_LAST	= 13
+    }
+
+ifndef __IWbemObjectTextSrc_INTERFACE_DEFINED__
+__IWbemObjectTextSrc_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWbemObjectTextSrc, "bfbf883a-cad7-11d3-a11b-00105a1f515a")
+
+.comdef IWbemObjectTextSrc : public IUnknown
+
+    GetText		proc :LONG, :ptr, :ULONG, :ptr, :ptr
+    CreateFromText	proc :LONG, :BSTR, :ULONG, :ptr, :ptr
+    .ends
+
+endif
+
+
+WBEM_COMPILE_STATUS_INFO STRUC
+lPhaseError		LONG ?
+hRes			HRESULT ?
+ObjectNum		LONG ?
+FirstLine		LONG ?
+LastLine		LONG ?
+dwOutFlags		dd ?
+WBEM_COMPILE_STATUS_INFO ENDS
+
+.enum WBEM_COMPILER_OPTIONS {
+    WBEM_FLAG_CHECK_ONLY	= 0x1,
+    WBEM_FLAG_AUTORECOVER	= 0x2,
+    WBEM_FLAG_WMI_CHECK		= 0x4,
+    WBEM_FLAG_CONSOLE_PRINT	= 0x8,
+    WBEM_FLAG_DONT_ADD_TO_LIST	= 0x10,
+    WBEM_FLAG_SPLIT_FILES	= 0x20,
+    WBEM_FLAG_STORE_FILE	= 0x100
+    }
+
+.enum WBEM_CONNECT_OPTIONS {
+    WBEM_FLAG_CONNECT_REPOSITORY_ONLY	= 0x40,
+    WBEM_FLAG_CONNECT_USE_MAX_WAIT	= 0x80,
+    WBEM_FLAG_CONNECT_PROVIDERS = 0x100
+    }
+
+ifndef __IMofCompiler_INTERFACE_DEFINED__
+__IMofCompiler_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IMofCompiler, "6daf974e-2e37-11d2-aec9-00c04fb68820")
+
+.comdef IMofCompiler : public IUnknown
+
+    CompileFile		proc :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
+    CompileBuffer	proc :LONG, :ptr, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
+    CreateBMOF		proc :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
+    .ends
+
+endif
+
+.enum WBEM_UNSECAPP_FLAG_TYPE {
+    WBEM_FLAG_UNSECAPP_DEFAULT_CHECK_ACCESS	= 0,
+    WBEM_FLAG_UNSECAPP_CHECK_ACCESS		= 1,
+    WBEM_FLAG_UNSECAPP_DONT_CHECK_ACCESS	= 2
+    }
+
+.enum WBEM_INFORMATION_FLAG_TYPE {
+    WBEM_FLAG_SHORT_NAME	= 0x1,
+    WBEM_FLAG_LONG_NAME		= 0x2
+    }
+
+endif
+
+endif

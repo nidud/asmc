@@ -6,12 +6,17 @@ __D3DX9MATH_H__ equ <>
 include math.inc
 
 ifndef D3DVECTOR_DEFINED
-D3DVECTOR		STRUC
-x			float ?
-y			float ?
-z			float ?
-D3DVECTOR		ENDS
-D3DVECTOR_DEFINED equ 1
+D3DVECTOR_DEFINED equ <>
+.template D3DVECTOR
+    x	float ?
+    y	float ?
+    z	float ?
+    .static D3DVECTOR :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+	mov this.x,_1
+	mov this.y,_2
+	mov this.z,_3
+	}
+    .ENDS
 endif
 
 ifndef D3DMATRIX_DEFINED

@@ -37,12 +37,17 @@ D3DCOLOR_COLORVALUE macro r,g,b,a
 	endm
 
 ifndef D3DVECTOR_DEFINED
-D3DVECTOR		STRUC
-x			REAL4 ?
-y			REAL4 ?
-z			REAL4 ?
-D3DVECTOR		ENDS
-D3DVECTOR_DEFINED equ 1
+D3DVECTOR_DEFINED equ <>
+.template D3DVECTOR
+    x	real4 ?
+    y	real4 ?
+    z	real4 ?
+    .static D3DVECTOR :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+	mov this.x,_1
+	mov this.y,_2
+	mov this.z,_3
+	}
+    .ENDS
 endif
 
 ifndef D3DCOLORVALUE_DEFINED

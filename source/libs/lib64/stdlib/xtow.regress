@@ -5,13 +5,13 @@ include errno.inc
     .code
 
 m  proto :abs, :abs, :abs, :abs, :abs {
-    this(_1, _2, _3)
-    .assert( _wcsicmp(rdi, _4) == 0 )
+    _1(_2, _3, _4)
+    .assert( _wcsicmp(rdi, _5) == 0 )
     }
 m_s proto :abs, :abs, :abs, :abs, :abs, :abs {
-    this(_1, _2, _3, _4)
+    _1(_2, _3, _4, _5)
     _get_errno(&e)
-    .assert( e == _5 )
+    .assert( e == _6 )
     }
 
 main proc uses rsi rdi rbx

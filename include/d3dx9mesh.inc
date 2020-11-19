@@ -624,7 +624,12 @@ D3DXLoadMeshFromXW proto WINAPI \
 	material_count: ptr DWORD,
 		  mesh: ptr ID3DXMesh
 
-D3DXLoadMeshFromX	equ __MINGW_NAME_AW(D3DXLoadMeshFromX)
+ifdef _UNICODE
+D3DXLoadMeshFromX	equ <D3DXLoadMeshFromXW>
+else
+D3DXLoadMeshFromX	equ <D3DXLoadMeshFromXA>
+endif
+
 ;HRESULT
 D3DXLoadMeshFromXInMemory proto WINAPI \
 		 _data: PVOID,

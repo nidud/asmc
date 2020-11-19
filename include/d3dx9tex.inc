@@ -384,6 +384,11 @@ D3DXCreateTextureFromFileW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcfile: LPWSTR,
 	       texture: ptr IDirect3DTexture9
+ifdef _UNICODE
+D3DXCreateTextureFromFile equ <D3DXCreateTextureFromFileW>
+else
+D3DXCreateTextureFromFile equ <D3DXCreateTextureFromFileA>
+endif
 
 ;HRESULT
 D3DXCreateCubeTextureFromFileA proto WINAPI \

@@ -35,6 +35,7 @@ _strnset	proto __cdecl :LPSTR, :SINT, :size_t
 strtok		proto __cdecl :LPSTR, :LPSTR
 
 strcpy_s	proto __cdecl :string_t, :size_t, :string_t
+strcat_s	proto __cdecl :string_t, :size_t, :string_t
 strncat_s	proto __cdecl :string_t, :size_t, :string_t, :size_t
 strncpy_s	proto __cdecl :string_t, :size_t, :string_t, :size_t
 strtok_s	proto __cdecl :string_t, :string_t, :ptr string_t

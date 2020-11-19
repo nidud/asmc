@@ -840,11 +840,7 @@ D3DXCreateMatrixStack proto WINAPI \
 		 flags: DWORD,
 		_stack: ptr ID3DXMatrixStack
 
-D3DXMatrixIdentity macro pout
-ifdef _WIN64
-    ifdif <pout>,<rcx>
-	lea rcx,pout
-    endif
+D3DXMatrixIdentity proto :ptr D3DMATRIX {
     mov [rcx].D3DMATRIX._12,0.0
     mov [rcx].D3DMATRIX._13,0.0
     mov [rcx].D3DMATRIX._14,0.0
@@ -861,8 +857,6 @@ ifdef _WIN64
     mov [rcx].D3DMATRIX._22,1.0
     mov [rcx].D3DMATRIX._33,1.0
     mov [rcx].D3DMATRIX._44,1.0
-    retm<rcx>
-endif
-    endm
+    }
 
 endif

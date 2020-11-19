@@ -9,6 +9,8 @@ D3DX_DEFAULT_FLOAT	equ FT_MAX
 D3DX_FROM_FILE		equ (-3)
 D3DFMT_FROM_FILE	equ (-3)
 
+.pragma pack(push,8)
+
 include d3d9.inc
 .pragma comment(lib, d3dx9_40)
 
@@ -22,7 +24,9 @@ include d3dx9shape.inc
 include d3dx9anim.inc
 include d3dx9tex.inc
 
-_FACDD			equ 0x876
+.pragma pack(pop)
+
+_FACDD	equ 0x876
 MAKE_DDHRESULT macro code
 	exitm<MAKE_HRESULT(1, _FACDD, code)>
 	endm

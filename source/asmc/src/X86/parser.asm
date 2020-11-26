@@ -3811,7 +3811,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             ;; added v2.31.32
             movzx eax,CodeInfo.token
 
-            .if eax < VEX_START && eax >= T_ADDPD && opndx[expr].kind == EXPR_CONST
+            .if eax < VEX_START && eax >= T_ADDPD && j > 1 && opndx[expr].kind == EXPR_CONST
                 mov edx,opndx[expr].quoted_string
                 .if edx
                     .if [edx].asm_tok.token == T_STRING && \

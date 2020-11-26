@@ -83,8 +83,9 @@ struct global_options Options = {
 	0,			// .win64_flags
 	0,			// .chkstack
 	0,			// .nolib
-	0			// .masm_keywords
-
+	0,			// .masm_keywords
+	0,			// .arch
+	4			// .codeview
 };
 
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
@@ -701,6 +702,14 @@ static void ProcessOption( char **cmdline, char *buffer )
     j &= 0xFFFF;
     *cmdline = GetNumber( p + 2 );
     switch ( j ) {
+#ifdef CODEVIEW8
+    case 'vc':		// -cv<number>
+	if ( OptValue == 4 || OptValue == 8 )
+	    Options.codeview = OptValue;
+	else
+	    asmerr( 1006, p );
+	return;
+#endif
     case 'sw':		// -ws<number>
 	Options.codepage = OptValue;
 	Options.xflag |= OPT_WSTRING;

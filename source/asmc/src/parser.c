@@ -3050,16 +3050,16 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    /* for some instructions, the "wide" flag has to be removed selectively.
 	     * this is to be improved - by a new flag in struct instr_item.
 	     */
-	    j = CodeInfo.token;
-	    if ( j < VEX_START && j >= T_ADDPD && opndx[1].kind == EXPR_CONST ) {
+	    i = CodeInfo.token;
+	    if ( i < VEX_START && i >= T_ADDPD && j > 1 && opndx[1].kind == EXPR_CONST ) {
 		if ( opndx[1].quoted_string ) {
 		    if ( opndx[1].quoted_string->token == T_STRING &&
 			opndx[1].quoted_string->dirtype == '{' )
-			j = T_MOVAPS;
+			i = T_MOVAPS;
 		}
 	    }
 
-	    switch ( j ) {
+	    switch ( i ) {
 	    case T_PUSH:
 	    case T_POP:
 		/* v2.06: REX.W prefix is always 0, because size is either 2 or 8 */

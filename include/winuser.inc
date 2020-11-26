@@ -22,6 +22,12 @@ ifndef _WIN32_WINNT
 _WIN32_WINNT equ _WIN32_WINDOWS
 endif
 
+include stdarg.inc
+
+ifndef NOAPISET
+;include libloaderapi.inc
+endif
+
 ifndef NOUSER
 
 HDWP			typedef HANDLE
@@ -190,6 +196,8 @@ else
 wsprintf		equ <wsprintfA>
 endif
 
+SETWALLPAPER_DEFAULT	equ (-1)
+
 ifndef NOSCROLL
 
 SB_HORZ			equ 0
@@ -216,7 +224,6 @@ SB_ENDSCROLL		equ 8
 endif
 
 ifndef NOSHOWWINDOW
-
 
 SW_HIDE			equ 0
 SW_SHOWNORMAL		equ 1
@@ -269,7 +276,6 @@ KF_REPEAT		equ 0x4000
 KF_UP			equ 0x8000
 
 ifndef NOVIRTUALKEYCODES
-
 
 VK_LBUTTON		equ 0x01
 VK_RBUTTON		equ 0x02
@@ -419,16 +425,11 @@ VK_OEM_MINUS		equ 0xBD
 VK_OEM_PERIOD		equ 0xBE
 VK_OEM_2		equ 0xBF
 VK_OEM_3		equ 0xC0
-
-
-
 VK_OEM_4		equ 0xDB
 VK_OEM_5		equ 0xDC
 VK_OEM_6		equ 0xDD
 VK_OEM_7		equ 0xDE
 VK_OEM_8		equ 0xDF
-
-
 VK_OEM_AX		equ 0xE1
 VK_OEM_102		equ 0xE2
 VK_ICO_HELP		equ 0xE3
@@ -466,8 +467,6 @@ VK_ZOOM			equ 0xFB
 VK_NONAME		equ 0xFC
 VK_PA1			equ 0xFD
 VK_OEM_CLEAR		equ 0xFE
-
-
 
 endif
 
@@ -561,7 +560,6 @@ dwSessionId		dd ?
 WTSSESSION_NOTIFICATION ENDS
 PWTSSESSION_NOTIFICATION typedef ptr WTSSESSION_NOTIFICATION
 
-
 WTS_CONSOLE_CONNECT	equ 0x1
 WTS_CONSOLE_DISCONNECT	equ 0x2
 WTS_REMOTE_CONNECT	equ 0x3
@@ -571,8 +569,11 @@ WTS_SESSION_LOGOFF	equ 0x6
 WTS_SESSION_LOCK	equ 0x7
 WTS_SESSION_UNLOCK	equ 0x8
 WTS_SESSION_REMOTE_CONTROL equ 0x9
+WTS_SESSION_CREATE	equ 0xa
+WTS_SESSION_TERMINATE	equ 0xb
 
 endif
+
 MSGF_DIALOGBOX		equ 0
 MSGF_MESSAGEBOX		equ 1
 MSGF_MENU		equ 2
@@ -601,6 +602,9 @@ endif
 if(_WIN32_WINNT GE 0x0501)
 HSHELL_WINDOWREPLACED	equ 13
 HSHELL_WINDOWREPLACING	equ 14
+endif
+if(_WIN32_WINNT GE 0x0602)
+HSHELL_MONITORCHANGED	equ 16
 endif
 
 HSHELL_HIGHBIT		equ 0x8000
@@ -738,6 +742,7 @@ LLKHF_ALTDOWN		equ 0x00000020
 LLKHF_UP		equ 0x00000080
 
 LLMHF_INJECTED		equ 0x00000001
+LLMHF_LOWER_IL_INJECTED equ 0x00000002
 
 KBDLLHOOKSTRUCT		STRUC
 vkCode			dd ?
@@ -816,7 +821,6 @@ INPUTLANGCHANGE_SYSCHARSET equ 0x0001
 INPUTLANGCHANGE_FORWARD	   equ 0x0002
 INPUTLANGCHANGE_BACKWARD   equ 0x0004
 endif
-
 
 KL_NAMELENGTH		equ 9
 
@@ -953,6 +957,31 @@ else
 CreateDesktop		equ <CreateDesktopA>
 endif
 
+CreateDesktopExA proto WINAPI \
+	   lpszDesktop: LPCSTR,
+	    lpszDevice: LPCSTR,
+	      pDevmode: ptr DEVMODEA,
+	       dwFlags: DWORD,
+       dwDesiredAccess: ACCESS_MASK,
+		  lpsa: LPSECURITY_ATTRIBUTES,
+	    ulHeapSize: ULONG,
+		 pvoid: PVOID
+
+CreateDesktopExW proto WINAPI \
+	   lpszDesktop: LPCWSTR,
+	    lpszDevice: LPCWSTR,
+	      pDevmode: ptr DEVMODEW,
+	       dwFlags: DWORD,
+       dwDesiredAccess: ACCESS_MASK,
+		  lpsa: LPSECURITY_ATTRIBUTES,
+	    ulHeapSize: ULONG,
+		 pvoid: PVOID
+
+ifdef _UNICODE
+CreateDesktopEx		equ <CreateDesktopExW>
+else
+CreateDesktopEx		equ <CreateDesktopExA>
+endif
 endif
 endif
 
@@ -1030,6 +1059,12 @@ WINSTA_ACCESSGLOBALATOMS equ 0x0020
 WINSTA_EXITWINDOWS	equ 0x0040
 WINSTA_ENUMERATE	equ 0x0100
 WINSTA_READSCREEN	equ 0x0200
+
+WINSTA_ALL_ACCESS	equ (WINSTA_ENUMDESKTOPS  or WINSTA_READATTRIBUTES  or WINSTA_ACCESSCLIPBOARD or \
+			     WINSTA_CREATEDESKTOP or WINSTA_WRITEATTRIBUTES or WINSTA_ACCESSGLOBALATOMS or \
+			     WINSTA_EXITWINDOWS	  or WINSTA_ENUMERATE	    or WINSTA_READSCREEN)
+
+CWF_CREATE_ONLY		equ 0x00000001
 
 WSF_VISIBLE		equ 0x0001
 
@@ -1256,13 +1291,12 @@ NPWNDCLASS		typedef NPWNDCLASSA
 LPWNDCLASS		typedef LPWNDCLASSA
 endif
 
-;WINUSERAPI
 ;BOOL
 IsHungAppWindow proto WINAPI \
 		hwnd: HWND
 
 if (WINVER GE 0x0501)
-;WINUSERAPI
+
 ;VOID
 DisableProcessWindowsGhosting proto WINAPI
 endif
@@ -1281,13 +1315,19 @@ PMSG			typedef ptr MSG
 NPMSG			typedef ptr MSG
 LPMSG			typedef ptr MSG
 
-POINTSTOPOINT macro pt, pts
-	movsx pt.POINT.x, LOWORD(pts)
-	movsx pt.POINT.y, HIWORD(pts)
-	endm
-POINTTOPOINTS macro pt
-	exitm<(MAKELONG((pt.POINT.x), (pt.POINT.y)))>
-	endm
+POINTSTOPOINT proto fastcall pt:ptr POINT, pts:ptr {
+	movsx eax,dx
+	mov   [pt].POINT.x,eax
+	shr   edx,16
+	movsx eax,dx
+	mov   [pt].POINT.y,eax
+	}
+POINTTOPOINTS proto fastcall pt:ptr POINT {
+	mov   eax,[pt].POINT.y
+	shl   eax,16
+	or    eax,[pt].POINT.x
+	}
+
 MAKEWPARAM macro l,h
 	exitm<MAKELONG(l, h)>
 	endm
@@ -1345,11 +1385,18 @@ ifndef _WIN64
 GCL_HICONSM		equ (-34)
 endif
 endif
+
+GCLP_MENUNAME		equ (-8)
+GCLP_HBRBACKGROUND	equ (-10)
+GCLP_HCURSOR		equ (-12)
+GCLP_HICON		equ (-14)
+GCLP_HMODULE		equ (-16)
+GCLP_WNDPROC		equ (-24)
+GCLP_HICONSM		equ (-34)
+
 endif
 
 ifndef NOWINMESSAGES
-
-
 
 WM_NULL			equ 0x0000
 WM_CREATE		equ 0x0001
@@ -1429,8 +1476,8 @@ WM_COMPACTING		equ 0x0041
 WM_COMMNOTIFY		equ 0x0044
 WM_WINDOWPOSCHANGING	equ 0x0046
 WM_WINDOWPOSCHANGED	equ 0x0047
-
 WM_POWER		equ 0x0048
+
 PWR_OK			equ 1
 PWR_FAIL		equ (-1)
 PWR_SUSPENDREQUEST	equ 1
@@ -1439,7 +1486,6 @@ PWR_CRITICALRESUME	equ 3
 
 WM_COPYDATA		equ 0x004A
 WM_CANCELJOURNAL	equ 0x004B
-
 
 COPYDATASTRUCT		STRUC
 dwData			dd ?
@@ -1898,7 +1944,7 @@ WVR_ALIGNBOTTOM		equ 0x0040
 WVR_ALIGNRIGHT		equ 0x0080
 WVR_HREDRAW		equ 0x0100
 WVR_VREDRAW		equ 0x0200
-WVR_REDRAW		equ (WVR_HREDRAW OR \
+WVR_REDRAW		equ (WVR_HREDRAW OR WVR_VREDRAW)
 WVR_VALIDRECTS		equ 0x0400
 
 
@@ -2045,9 +2091,8 @@ if(_WIN32_WINNT GE 0x0501)
 CS_DROPSHADOW		equ 0x00020000
 endif
 
-
-
 endif
+
 if(WINVER GE 0x0400)
 PRF_CHECKVISIBLE	equ 0x00000001
 PRF_NONCLIENT		equ 0x00000002
@@ -2061,8 +2106,10 @@ BDR_SUNKENOUTER		equ 0x0002
 BDR_RAISEDINNER		equ 0x0004
 BDR_SUNKENINNER		equ 0x0008
 
-BDR_OUTER		equ 0x0003
-BDR_INNER		equ 0x000c
+BDR_OUTER		equ (BDR_RAISEDOUTER or BDR_SUNKENOUTER)
+BDR_INNER		equ (BDR_RAISEDINNER or BDR_SUNKENINNER)
+BDR_RAISED		equ (BDR_RAISEDOUTER or BDR_RAISEDINNER)
+BDR_SUNKEN		equ (BDR_SUNKENOUTER or BDR_SUNKENINNER)
 
 EDGE_RAISED		equ BDR_RAISEDOUTER OR BDR_RAISEDINNER
 EDGE_SUNKEN		equ BDR_SUNKENOUTER OR BDR_SUNKENINNER
@@ -2233,7 +2280,6 @@ CF_PRIVATELAST		equ 0x02FF
 
 CF_GDIOBJFIRST		equ 0x0300
 CF_GDIOBJLAST		equ 0x03FF
-
 
 endif
 
@@ -2523,8 +2569,13 @@ NOLFILEIO equ 1
 endif
 endif
 
-if(WINVER GE 0x0400)
-
+if(_WIN32_WINNT GE 0x0400)
+ENDSESSION_CLOSEAPP	equ 0x00000001
+endif
+if(_WIN32_WINNT GE 0x0400)
+ENDSESSION_CRITICAL	equ 0x40000000
+endif
+if(_WIN32_WINNT GE 0x0400)
 ENDSESSION_LOGOFF	equ 0x80000000
 endif
 
@@ -2540,6 +2591,8 @@ EWX_QUICKRESOLVE	equ 0x00000020
 if(_WIN32_WINNT GE 0x0600)
 EWX_RESTARTAPPS		equ 0x00000040
 endif
+EWX_HYBRID_SHUTDOWN	equ 0x00400000
+EWX_BOOTOPTIONS		equ 0x01000000
 
 
 ExitWindows macro dwReserved, Code
@@ -2564,24 +2617,25 @@ GetMessageTime proto WINAPI
 ;LONG
 GetMessageExtraInfo proto WINAPI
 
+if(_WIN32_WINNT GE 0x0602)
+GetUnpredictedMessagePos proto WINAPI
+endif
+
 if(_WIN32_WINNT GE 0x0501)
-;BOOL
 IsWow64Message proto WINAPI
 endif
 
 if(WINVER GE 0x0400)
-;LPARAM
 SetMessageExtraInfo proto WINAPI \
 		lParam: LPARAM
 endif
 
-;LRESULT
 SendMessageA proto WINAPI \
 		  hWnd: HWND,
 		   Msg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM
-;LRESULT
+
 SendMessageW proto WINAPI \
 		  hWnd: HWND,
 		   Msg: UINT,
@@ -2747,7 +2801,7 @@ endif
 
 
 if(WINVER GE 0x0500)
-HDEVNOTIFY	typedef PVOID
+HDEVNOTIFY	typedef ptr
 PHDEVNOTIFY	typedef ptr HDEVNOTIFY
 
 DEVICE_NOTIFY_WINDOW_HANDLE  equ 0x00000000
@@ -2782,16 +2836,22 @@ PHPOWERNOTIFY	typedef ptr HPOWERNOTIFY
 endif
 
 LPCGUID			typedef ptr GUID
-;WINUSERAPI
-;HPOWERNOTIFY
+
 RegisterPowerSettingNotification proto WINAPI \
 	    hRecipient: HANDLE,
       PowerSettingGuid: LPCGUID,
 		 Flags: DWORD
 
-;BOOL
 UnregisterPowerSettingNotification proto WINAPI \
 		Handle: HPOWERNOTIFY
+
+RegisterSuspendResumeNotification proto WINAPI \
+	    hRecipient: HANDLE,
+		 Flags: DWORD
+
+UnregisterSuspendResumeNotification proto WINAPI \
+		Handle: HPOWERNOTIFY
+
 endif
 
 endif
@@ -3145,9 +3205,8 @@ PUPDATELAYEREDWINDOWINFO typedef ptr UPDATELAYEREDWINDOWINFO
 
 
 if (_WIN32_WINNT LT 0x0502)
-;WINUSERAPI
+
 ;BOOL
-;WINAPI
 CALLBACK(UpdateLayeredWindowIndirect, :HWND, :ptr UPDATELAYEREDWINDOWINFO)
 else
 UpdateLayeredWindowIndirect proto WINAPI \
@@ -3158,7 +3217,7 @@ endif
 endif
 
 if(_WIN32_WINNT GE 0x0501)
-;WINUSERAPI
+
 ;BOOL
 GetLayeredWindowAttributes proto WINAPI \
 		  hwnd: HWND,
@@ -3174,6 +3233,21 @@ PrintWindow proto WINAPI \
 		hdcBlt: HDC,
 		nFlags: UINT
 endif
+
+SetLayeredWindowAttributes proto WINAPI \
+		  hwnd: HWND,
+		 crKey: COLORREF,
+		bAlpha: BYTE,
+	       dwFlags: DWORD
+
+LWA_COLORKEY		equ 0x00000001
+LWA_ALPHA		equ 0x00000002
+
+ULW_COLORKEY		equ 0x00000001
+ULW_ALPHA		equ 0x00000002
+ULW_OPAQUE		equ 0x00000004
+
+ULW_EX_NORESIZE		equ 0x00000008
 
 if(WINVER GE 0x0400)
 ;BOOL
@@ -3194,6 +3268,19 @@ FlashWindow proto WINAPI \
 endif
 
 if(WINVER GE 0x0500)
+
+FLASHWINFO		STRUC
+cbSize			UINT ?
+hwnd			HWND ?
+dwFlags			DWORD ?
+uCount			UINT ?
+dwTimeout		DWORD ?
+FLASHWINFO		ENDS
+PFLASHWINFO		typedef ptr FLASHWINFO
+
+FlashWindowEx proto WINAPI \
+		  pfwi: PFLASHWINFO
+
 FLASHW_STOP		equ 0
 FLASHW_CAPTION		equ 0x00000001
 FLASHW_TRAY		equ 0x00000002
@@ -4131,6 +4218,8 @@ MOUSEEVENTF_RIGHTDOWN	equ 0x0008
 MOUSEEVENTF_RIGHTUP	equ 0x0010
 MOUSEEVENTF_MIDDLEDOWN	equ 0x0020
 MOUSEEVENTF_MIDDLEUP	equ 0x0040
+MOUSEEVENTF_XDOWN	equ 0x0080
+MOUSEEVENTF_XUP		equ 0x0100
 MOUSEEVENTF_WHEEL	equ 0x0800
 if (_WIN32_WINNT GE 0x0600)
 MOUSEEVENTF_HWHEEL	equ 0x01000
@@ -4138,6 +4227,7 @@ endif
 if(WINVER GE 0x0600)
 MOUSEEVENTF_MOVE_NOCOALESCE equ 0x2000
 endif
+MOUSEEVENTF_VIRTUALDESK equ 0x4000
 MOUSEEVENTF_ABSOLUTE	equ 0x8000
 
 ;VOID
@@ -4240,7 +4330,6 @@ TOUCHINPUTMASKF_TIMEFROMSYSTEM equ 0x0001
 TOUCHINPUTMASKF_EXTRAINFO      equ 0x0002
 TOUCHINPUTMASKF_CONTACTAREA    equ 0x0004
 
-;WINUSERAPI
 ;BOOL
 GetTouchInputInfo proto WINAPI \
 	   hTouchInput: HTOUCHINPUT,
@@ -4270,6 +4359,345 @@ UnregisterTouchWindow proto WINAPI \
 IsTouchWindow proto WINAPI \
 		  hwnd: HWND,
 	      pulFlags: PULONG
+
+endif
+
+if(WINVER GE 0x0602)
+
+.enum tagPOINTER_INPUT_TYPE {
+    PT_POINTER	= 0x00000001,
+    PT_TOUCH	= 0x00000002,
+    PT_PEN	= 0x00000003,
+    PT_MOUSE	= 0x00000004,
+if(WINVER GE 0x0603)
+    PT_TOUCHPAD = 0x00000005,
+endif
+    }
+
+POINTER_INPUT_TYPE	typedef DWORD
+POINTER_FLAGS		typedef UINT32
+
+POINTER_FLAG_NONE		equ 0x00000000
+POINTER_FLAG_NEW		equ 0x00000001
+POINTER_FLAG_INRANGE		equ 0x00000002
+POINTER_FLAG_INCONTACT		equ 0x00000004
+POINTER_FLAG_FIRSTBUTTON	equ 0x00000010
+POINTER_FLAG_SECONDBUTTON	equ 0x00000020
+POINTER_FLAG_THIRDBUTTON	equ 0x00000040
+POINTER_FLAG_FOURTHBUTTON	equ 0x00000080
+POINTER_FLAG_FIFTHBUTTON	equ 0x00000100
+POINTER_FLAG_PRIMARY		equ 0x00002000
+POINTER_FLAG_CONFIDENCE		equ 0x00004000
+POINTER_FLAG_CANCELED		equ 0x00008000
+POINTER_FLAG_DOWN		equ 0x00010000
+POINTER_FLAG_UPDATE		equ 0x00020000
+POINTER_FLAG_UP			equ 0x00040000
+POINTER_FLAG_WHEEL		equ 0x00080000
+POINTER_FLAG_HWHEEL		equ 0x00100000
+POINTER_FLAG_CAPTURECHANGED	equ 0x00200000
+POINTER_FLAG_HASTRANSFORM	equ 0x00400000
+
+POINTER_MOD_SHIFT	equ (0x0004)
+POINTER_MOD_CTRL	equ (0x0008)
+
+.enum POINTER_BUTTON_CHANGE_TYPE {
+    POINTER_CHANGE_NONE,
+    POINTER_CHANGE_FIRSTBUTTON_DOWN,
+    POINTER_CHANGE_FIRSTBUTTON_UP,
+    POINTER_CHANGE_SECONDBUTTON_DOWN,
+    POINTER_CHANGE_SECONDBUTTON_UP,
+    POINTER_CHANGE_THIRDBUTTON_DOWN,
+    POINTER_CHANGE_THIRDBUTTON_UP,
+    POINTER_CHANGE_FOURTHBUTTON_DOWN,
+    POINTER_CHANGE_FOURTHBUTTON_UP,
+    POINTER_CHANGE_FIFTHBUTTON_DOWN,
+    POINTER_CHANGE_FIFTHBUTTON_UP,
+    }
+
+POINTER_INFO		STRUC
+pointerType		POINTER_INPUT_TYPE ?
+pointerId		UINT32 ?
+frameId			UINT32 ?
+pointerFlags		POINTER_FLAGS ?
+sourceDevice		HANDLE ?
+hwndTarget		HWND ?
+ptPixelLocation		POINT <>
+ptHimetricLocation	POINT <>
+ptPixelLocationRaw	POINT <>
+ptHimetricLocationRaw	POINT <>
+dwTime			DWORD ?
+historyCount		UINT32 ?
+InputData		INT32 ?
+dwKeyStates		DWORD ?
+PerformanceCount	UINT64 ?
+ButtonChangeType	POINTER_BUTTON_CHANGE_TYPE ?
+POINTER_INFO		ENDS
+
+
+TOUCH_FLAGS		typedef UINT32
+TOUCH_FLAG_NONE		equ 0x00000000
+TOUCH_MASK		typedef UINT32
+
+TOUCH_MASK_NONE		equ 0x00000000
+TOUCH_MASK_CONTACTAREA	equ 0x00000001
+TOUCH_MASK_ORIENTATION	equ 0x00000002
+TOUCH_MASK_PRESSURE	equ 0x00000004
+
+POINTER_TOUCH_INFO	STRUC
+pointerInfo		POINTER_INFO <>
+touchFlags		TOUCH_FLAGS ?
+touchMask		TOUCH_MASK ?
+rcContact		RECT <>
+rcContactRaw		RECT <>
+orientation		UINT32 ?
+pressure		UINT32 ?
+POINTER_TOUCH_INFO	ENDS
+
+PEN_FLAGS		typedef UINT32
+PEN_FLAG_NONE		equ 0x00000000
+PEN_FLAG_BARREL		equ 0x00000001
+PEN_FLAG_INVERTED	equ 0x00000002
+PEN_FLAG_ERASER		equ 0x00000004
+
+PEN_MASK		typedef UINT32
+PEN_MASK_NONE		equ 0x00000000
+PEN_MASK_PRESSURE	equ 0x00000001
+PEN_MASK_ROTATION	equ 0x00000002
+PEN_MASK_TILT_X		equ 0x00000004
+PEN_MASK_TILT_Y		equ 0x00000008
+
+POINTER_PEN_INFO	STRUC
+pointerInfo		POINTER_INFO <>
+penFlags		PEN_FLAGS ?
+penMask			PEN_MASK ?
+pressure		UINT32 ?
+rotation		UINT32 ?
+tiltX			INT32 ?
+tiltY			INT32 ?
+POINTER_PEN_INFO	ENDS
+
+POINTER_MESSAGE_FLAG_NEW		equ 0x00000001
+POINTER_MESSAGE_FLAG_INRANGE		equ 0x00000002
+POINTER_MESSAGE_FLAG_INCONTACT		equ 0x00000004
+POINTER_MESSAGE_FLAG_FIRSTBUTTON	equ 0x00000010
+POINTER_MESSAGE_FLAG_SECONDBUTTON	equ 0x00000020
+POINTER_MESSAGE_FLAG_THIRDBUTTON	equ 0x00000040
+POINTER_MESSAGE_FLAG_FOURTHBUTTON	equ 0x00000080
+POINTER_MESSAGE_FLAG_FIFTHBUTTON	equ 0x00000100
+POINTER_MESSAGE_FLAG_PRIMARY		equ 0x00002000
+POINTER_MESSAGE_FLAG_CONFIDENCE		equ 0x00004000
+POINTER_MESSAGE_FLAG_CANCELED		equ 0x00008000
+
+PA_ACTIVATE		equ MA_ACTIVATE
+PA_NOACTIVATE		equ MA_NOACTIVATE
+
+MAX_TOUCH_COUNT		equ 256
+
+TOUCH_FEEDBACK_DEFAULT	equ 0x1
+TOUCH_FEEDBACK_INDIRECT equ 0x2
+TOUCH_FEEDBACK_NONE	equ 0x3
+
+InitializeTouchInjection proto WINAPI \
+	      maxCount: UINT32,
+		dwMode: DWORD
+
+InjectTouchInput proto WINAPI \
+		 count: UINT32,
+	      contacts: ptr POINTER_TOUCH_INFO
+
+GetPointerType proto WINAPI \
+	     pointerId: UINT32,
+	   pointerType: ptr POINTER_INPUT_TYPE
+
+GetPointerCursorId proto WINAPI \
+	     pointerId: UINT32,
+	      cursorId: ptr UINT32
+
+GetPointerInfo proto WINAPI \
+	     pointerId: UINT32,
+	   pointerInfo: ptr POINTER_INFO
+
+GetPointerInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	   pointerInfo: ptr POINTER_INFO
+
+GetPointerFrameInfo proto WINAPI \
+	     pointerId: UINT32,
+	  pointerCount: ptr UINT32,
+	   pointerInfo: ptr POINTER_INFO
+
+GetPointerFrameInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	  pointerCount: ptr UINT32,
+	   pointerInfo: ptr POINTER_INFO
+
+GetPointerTouchInfo proto WINAPI \
+	     pointerId: UINT32,
+	     touchInfo: ptr POINTER_TOUCH_INFO
+
+GetPointerTouchInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	     touchInfo: ptr POINTER_TOUCH_INFO
+
+GetPointerFrameTouchInfo proto WINAPI \
+	     pointerId: UINT32,
+	  pointerCount: ptr UINT32,
+	     touchInfo: ptr POINTER_TOUCH_INFO
+
+GetPointerFrameTouchInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	  pointerCount: ptr UINT32,
+	     touchInfo: ptr POINTER_TOUCH_INFO
+
+GetPointerPenInfo proto WINAPI \
+	     pointerId: UINT32,
+	       penInfo: ptr POINTER_PEN_INFO
+
+GetPointerPenInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	       penInfo: ptr POINTER_PEN_INFO
+
+GetPointerFramePenInfo proto WINAPI \
+	     pointerId: UINT32,
+	  pointerCount: ptr UINT32,
+	       penInfo: ptr POINTER_PEN_INFO
+
+GetPointerFramePenInfoHistory proto WINAPI \
+	     pointerId: UINT32,
+	  entriesCount: ptr UINT32,
+	  pointerCount: ptr UINT32,
+	       penInfo: ptr POINTER_PEN_INFO
+
+SkipPointerFrameMessages proto WINAPI \
+	     pointerId: UINT32
+
+RegisterPointerInputTarget proto WINAPI \
+		  hwnd: HWND,
+	   pointerType: POINTER_INPUT_TYPE
+
+UnregisterPointerInputTarget proto WINAPI \
+		  hwnd: HWND,
+	   pointerType: POINTER_INPUT_TYPE
+
+
+EnableMouseInPointer proto WINAPI \
+	       fEnable: BOOL
+
+IsMouseInPointerEnabled proto WINAPI
+
+
+TOUCH_HIT_TESTING_DEFAULT equ 0x0
+TOUCH_HIT_TESTING_CLIENT  equ 0x1
+TOUCH_HIT_TESTING_NONE	  equ 0x2
+
+RegisterTouchHitTestingWindow proto WINAPI \
+		  hwnd: HWND,
+		 value: ULONG
+
+TOUCH_HIT_TESTING_PROXIMITY_EVALUATION STRUC
+score			UINT16 ?
+adjustedPoint		POINT <>
+TOUCH_HIT_TESTING_PROXIMITY_EVALUATION ENDS
+PTOUCH_HIT_TESTING_PROXIMITY_EVALUATION typedef ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
+
+TOUCH_HIT_TESTING_INPUT STRUC
+pointerId		UINT32 ?
+point			POINT <>
+boundingBox		RECT <>
+nonOccludedBoundingBox	RECT <>
+orientation		UINT32 ?
+TOUCH_HIT_TESTING_INPUT ENDS
+PTOUCH_HIT_TESTING_INPUT typedef ptr TOUCH_HIT_TESTING_INPUT
+
+TOUCH_HIT_TESTING_PROXIMITY_CLOSEST  equ 0x0
+TOUCH_HIT_TESTING_PROXIMITY_FARTHEST equ 0xFFF
+
+EvaluateProximityToRect proto WINAPI \
+    controlBoundingBox: ptr RECT,
+      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
+	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
+
+EvaluateProximityToPolygon proto WINAPI \
+	   numVertices: UINT32,
+	controlPolygon: ptr POINT,
+      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
+	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
+
+PackTouchHitTestingProximityEvaluation proto WINAPI \
+      pHitTestingInput: ptr TOUCH_HIT_TESTING_INPUT,
+	pProximityEval: ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
+
+.enum FEEDBACK_TYPE {
+    FEEDBACK_TOUCH_CONTACTVISUALIZATION = 1,
+    FEEDBACK_PEN_BARRELVISUALIZATION	= 2,
+    FEEDBACK_PEN_TAP			= 3,
+    FEEDBACK_PEN_DOUBLETAP		= 4,
+    FEEDBACK_PEN_PRESSANDHOLD		= 5,
+    FEEDBACK_PEN_RIGHTTAP		= 6,
+    FEEDBACK_TOUCH_TAP			= 7,
+    FEEDBACK_TOUCH_DOUBLETAP		= 8,
+    FEEDBACK_TOUCH_PRESSANDHOLD		= 9,
+    FEEDBACK_TOUCH_RIGHTTAP		= 10,
+    FEEDBACK_GESTURE_PRESSANDTAP	= 11,
+    FEEDBACK_MAX			= 0xFFFFFFFF
+    }
+
+
+GWFS_INCLUDE_ANCESTORS equ 0x00000001
+
+GetWindowFeedbackSetting proto WINAPI \
+		  hwnd: HWND,
+	      feedback: FEEDBACK_TYPE,
+	       dwFlags: DWORD,
+		 pSize: ptr UINT32,
+		config: ptr
+
+SetWindowFeedbackSetting proto WINAPI \
+		  hwnd: HWND,
+	      feedback: FEEDBACK_TYPE,
+	       dwFlags: DWORD,
+		  size: UINT32,
+	 configuration: ptr
+
+
+endif
+
+if(WINVER GE 0x0603)
+
+INPUT_TRANSFORM		STRUC
+UNION
+ STRUC
+  _11			real4 ?
+  _12			real4 ?
+  _13			real4 ?
+  _14			real4 ?
+  _21			real4 ?
+  _22			real4 ?
+  _23			real4 ?
+  _24			real4 ?
+  _31			real4 ?
+  _32			real4 ?
+  _33			real4 ?
+  _34			real4 ?
+  _41			real4 ?
+  _42			real4 ?
+  _43			real4 ?
+  _44			real4 ?
+ ENDS
+ m			real4 4*4 dup(?)
+ENDS
+INPUT_TRANSFORM		ENDS
+
+
+GetPointerInputTransform proto WINAPI \
+	     pointerId: UINT32,
+	  historyCount: UINT32,
+	inputTransform: ptr INPUT_TRANSFORM
 
 endif
 
@@ -4374,9 +4802,14 @@ QS_ALLPOSTMESSAGE	equ 0x0100
 if(_WIN32_WINNT GE 0x0501)
 QS_RAWINPUT		equ 0x0400
 endif
-
+if(_WIN32_WINNT GE 0x0602)
+QS_TOUCH		equ 0x0800
+QS_POINTER		equ 0x1000
+endif
 QS_MOUSE		equ QS_MOUSEMOVE OR QS_MOUSEBUTTON
-if (_WIN32_WINNT GE 0x0501)
+if (_WIN32_WINNT GE 0x602)
+QS_INPUT		equ (QS_MOUSE OR QS_KEY OR QS_RAWINPUT OR QS_TOUCH OR QS_POINTER)
+elseif (_WIN32_WINNT GE 0x0501)
 QS_INPUT		equ QS_MOUSE or QS_KEY or QS_RAWINPUT
 else
 QS_INPUT		equ QS_MOUSE or QS_KEY
@@ -4388,12 +4821,32 @@ QS_ALLINPUT		equ QS_INPUT OR QS_POSTMESSAGE OR \
 			QS_SENDMESSAGE
 
 
+USER_TIMER_MAXIMUM	equ 0x7FFFFFFF
+USER_TIMER_MINIMUM	equ 0x0000000A
+
 ;UINT
 SetTimer proto WINAPI \
 		 hWnd : HWND,
 	      nIDEvent: UINT,
 	       uElapse: UINT,
 	   lpTimerFunc: TIMERPROC
+
+if(WINVER GE 0x0601)
+
+TIMERV_DEFAULT_COALESCING   equ (0)
+TIMERV_NO_COALESCING	    equ (0xFFFFFFFF)
+
+TIMERV_COALESCING_MIN	    equ (1)
+TIMERV_COALESCING_MAX	    equ (0x7FFFFFF5)
+
+SetCoalescableTimer proto WINAPI \
+		  hWnd: HWND,
+	      nIDEvent: UINT_PTR,
+	       uElapse: UINT,
+	   lpTimerFunc: TIMERPROC,
+       uToleranceDelay: ULONG
+
+endif
 
 ;BOOL
 KillTimer proto WINAPI \
@@ -4626,6 +5079,11 @@ endif
 if(WINVER GE 0x0501)
 SM_CARETBLINKINGENABLED equ 0x2002
 endif
+if(WINVER GE 0x0602)
+SM_CONVERTIBLESLATEMODE equ 0x2003
+SM_SYSTEMDOCKED		equ 0x2004
+endif
+
 endif
 
 ;int
@@ -5842,22 +6300,21 @@ HELPINFO		ENDS
 LPHELPINFO		typedef ptr HELPINFO
 
 ;BOOL
-  SetWindowContextHelpId proto WINAPI \
+SetWindowContextHelpId proto WINAPI \
 		      : HWND,
 		      : DWORD
 ;DWORD
- GetWindowContextHelpId proto WINAPI \
+GetWindowContextHelpId proto WINAPI \
 		      : HWND
 ;BOOL
-  SetMenuContextHelpId proto WINAPI \
+SetMenuContextHelpId proto WINAPI \
 		      : HMENU,
 		      : DWORD
 ;DWORD
- GetMenuContextHelpId proto WINAPI \
+GetMenuContextHelpId proto WINAPI \
 		      : HMENU
 
 endif
-
 
 ifndef NOMB
 
@@ -6120,6 +6577,17 @@ LogicalToPhysicalPoint proto WINAPI \
 PhysicalToLogicalPoint proto WINAPI \
 		  hWnd: HWND,
 	       lpPoint: LPPOINT
+endif
+
+if(WINVER GE 0x0603)
+LogicalToPhysicalPointForPerMonitorDPI proto WINAPI \
+		  hWnd: HWND,
+	       lpPoint: LPPOINT
+
+PhysicalToLogicalPointForPerMonitorDPI proto WINAPI \
+		  hWnd: HWND,
+	       lpPoint: LPPOINT
+
 endif
 
 ;int
@@ -6507,7 +6975,14 @@ else
 FindWindowEx		equ <FindWindowExA>
 endif
 
+GetShellWindow proto WINAPI
 endif
+
+RegisterShellHookWindow proto WINAPI \
+		  hwnd: HWND
+
+DeregisterShellHookWindow proto WINAPI \
+		  hwnd: HWND
 
 
 ;BOOL
@@ -7763,14 +8238,11 @@ LBS_NOSEL		equ 0x4000
 endif
 LBS_STANDARD		equ (LBS_NOTIFY OR LBS_SORT OR WS_VSCROLL OR WS_BORDER)
 
-
 endif
-
 
 CB_OKAY			equ 0
 CB_ERR			equ (-1)
 CB_ERRSPACE		equ (-2)
-
 
 CBN_ERRSPACE		equ (-1)
 CBN_SELCHANGE		equ 1
@@ -7859,9 +8331,7 @@ endif
 
 endif
 
-
 ifndef NOWINSTYLES
-
 
 SBS_HORZ		equ 0x0000
 SBS_VERT		equ 0x0001
@@ -7875,7 +8345,6 @@ SBS_SIZEBOX		equ 0x0008
 if(WINVER GE 0x0400)
 SBS_SIZEGRIP		equ 0x0010
 endif
-
 
 endif
 
@@ -10127,6 +10596,90 @@ ShutdownBlockReasonQuery proto WINAPI \
 ;BOOL
 ShutdownBlockReasonDestroy proto WINAPI \
 		  hWnd: HWND
+
+if(WINVER GE 0x0601)
+
+.enum INPUT_MESSAGE_DEVICE_TYPE {
+    IMDT_UNAVAILABLE = 0x00000000,
+    IMDT_KEYBOARD    = 0x00000001,
+    IMDT_MOUSE	     = 0x00000002,
+    IMDT_TOUCH	     = 0x00000004,
+    IMDT_PEN	     = 0x00000008,
+if(WINVER GE 0x0603)
+     IMDT_TOUCHPAD    = 0x00000010,
+endif
+    }
+
+.enum INPUT_MESSAGE_ORIGIN_ID {
+    IMO_UNAVAILABLE = 0x00000000,
+    IMO_HARDWARE    = 0x00000001,
+    IMO_INJECTED    = 0x00000002,
+    IMO_SYSTEM	    = 0x00000004
+    }
+
+INPUT_MESSAGE_SOURCE	STRUC
+deviceType		INPUT_MESSAGE_DEVICE_TYPE ?
+originId		INPUT_MESSAGE_ORIGIN_ID ?
+INPUT_MESSAGE_SOURCE	ENDS
+
+
+GetCurrentInputMessageSource proto WINAPI \
+    inputMessageSource: ptr INPUT_MESSAGE_SOURCE
+
+GetCIMSSM proto WINAPI \
+    inputMessageSource: ptr INPUT_MESSAGE_SOURCE
+
+endif
+
+if(WINVER GE 0x0601)
+
+.enum AR_STATE {
+    AR_ENABLED	      = 0x0,
+    AR_DISABLED	      = 0x1,
+    AR_SUPPRESSED     = 0x2,
+    AR_REMOTESESSION  = 0x4,
+    AR_MULTIMON	      = 0x8,
+    AR_NOSENSOR	      = 0x10,
+    AR_NOT_SUPPORTED  = 0x20,
+    AR_DOCKED	      = 0x40,
+    AR_LAPTOP	      = 0x80
+    }
+PAR_STATE typedef ptr AR_STATE
+
+
+.enum ORIENTATION_PREFERENCE {
+    ORIENTATION_PREFERENCE_NONE		     = 0x0,
+    ORIENTATION_PREFERENCE_LANDSCAPE	     = 0x1,
+    ORIENTATION_PREFERENCE_PORTRAIT	     = 0x2,
+    ORIENTATION_PREFERENCE_LANDSCAPE_FLIPPED = 0x4,
+    ORIENTATION_PREFERENCE_PORTRAIT_FLIPPED  = 0x8
+    }
+
+GetAutoRotationState proto WINAPI \
+		pState: PAR_STATE
+
+GetDisplayAutoRotationPreferences proto WINAPI \
+	  pOrientation: ptr ORIENTATION_PREFERENCE
+
+GetDisplayAutoRotationPreferencesByProcessId proto WINAPI \
+	   dwProcessId: DWORD,
+	  pOrientation: ORIENTATION_PREFERENCE,
+	 fRotateScreen: BOOL
+
+SetDisplayAutoRotationPreferences proto WINAPI \
+	   orientation: ORIENTATION_PREFERENCE
+
+endif
+
+if(WINVER GE 0x0601)
+
+IsImmersiveProcess proto WINAPI \
+	      hProcess: HANDLE
+
+SetProcessRestrictionExemption proto WINAPI \
+      fEnableExemption: BOOL
+
+endif
 
 ifdef ISOLATION_AWARE_ENABLED
 if ISOLATION_AWARE_ENABLED

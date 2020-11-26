@@ -6,13 +6,16 @@ CopyMemory		equ <RtlCopyMemory>
 FillMemory		equ <RtlFillMemory>
 ZeroMemory		equ <RtlZeroMemory>
 
+ifndef _SECURITY_ATTRIBUTES_
+_SECURITY_ATTRIBUTES_ equ <>
 SECURITY_ATTRIBUTES	STRUC
 nLength			dd ?
-lpSecurityDescriptor	LPVOID ?
+lpSecurityDescriptor	PVOID ?
 bInheritHandle		BOOL ?
 SECURITY_ATTRIBUTES	ENDS
 PSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
 LPSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
+endif
 
 OVERLAPPED		STRUC
 Internal		ULONG_PTR ?
@@ -297,24 +300,25 @@ dwType			dd ?
 RIP_INFO		ENDS
 LPRIP_INFO		typedef ptr RIP_INFO
 
-
+ifndef DEBUG_EVENT
 DEBUG_EVENT		STRUC
 dwDebugEventCode	dd ?
 dwProcessId		dd ?
 dwThreadId		dd ?
 UNION
-Exception		EXCEPTION_DEBUG_INFO <>
-CreateThread		CREATE_THREAD_DEBUG_INFO <>
-CreateProcessInfo	CREATE_PROCESS_DEBUG_INFO <>
-ExitThread		EXIT_THREAD_DEBUG_INFO <>
-ExitProcess		EXIT_PROCESS_DEBUG_INFO <>
-LoadDll			LOAD_DLL_DEBUG_INFO <>
-UnloadDll		UNLOAD_DLL_DEBUG_INFO <>
-DebugString		OUTPUT_DEBUG_STRING_INFO <>
-RipInfo			RIP_INFO <>
+ Exception		EXCEPTION_DEBUG_INFO <>
+ CreateThread		CREATE_THREAD_DEBUG_INFO <>
+ CreateProcessInfo	CREATE_PROCESS_DEBUG_INFO <>
+ ExitThread		EXIT_THREAD_DEBUG_INFO <>
+ ExitProcess		EXIT_PROCESS_DEBUG_INFO <>
+ LoadDll		LOAD_DLL_DEBUG_INFO <>
+ UnloadDll		UNLOAD_DLL_DEBUG_INFO <>
+ DebugString		OUTPUT_DEBUG_STRING_INFO <>
+ RipInfo		RIP_INFO <>
 ENDS
 DEBUG_EVENT		ENDS
 LPDEBUG_EVENT		typedef ptr DEBUG_EVENT
+endif
 
 ifndef MIDL_PASS
 LPCONTEXT		typedef PCONTEXT

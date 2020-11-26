@@ -240,6 +240,22 @@ StringExHandleFillBehindNullW proto \
            cbRemaining: size_t,
                dwFlags: DWORD
 
+StringExHandleOtherFlagsA proto \
+    pszDest:STRSAFE_LPSTR,
+    cbDest:size_t,
+    cchOriginalDestLength:size_t,
+    ppszDestEnd:ptr STRSAFE_LPSTR,
+    pcchRemaining:ptr size_t,
+    dwFlags:DWORD
+
+StringExHandleOtherFlagsW proto \
+    pszDest:STRSAFE_LPWSTR,
+    cbDest:size_t,
+    cchOriginalDestLength:size_t,
+    ppszDestEnd:ptr STRSAFE_LPWSTR,
+    pcchRemaining:ptr size_t,
+    dwFlags:DWORD
+
 
 __WARNING_CYCLOMATIC_COMPLEXITY equ 28734
 __WARNING_USING_UNINIT_VAR equ 6001
@@ -515,6 +531,12 @@ else
 StringCbPrintf_l equ <StringCbPrintf_lA>
 endif
 endif
+
+StringCchPrintfExA proto _Cdecl :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR,
+    :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :vararg
+
+StringCchPrintfExW proto _Cdecl :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR,
+    :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :vararg
 
 ifndef STRSAFE_NO_CCH_FUNCTIONS
 ifdef _UNICODE

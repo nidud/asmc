@@ -168,11 +168,19 @@ ENABLE_LINE_INPUT	equ 0x0002
 ENABLE_ECHO_INPUT	equ 0x0004
 ENABLE_WINDOW_INPUT	equ 0x0008
 ENABLE_MOUSE_INPUT	equ 0x0010
+ENABLE_INSERT_MODE	equ 0x0020
+ENABLE_QUICK_EDIT_MODE	equ 0x0040
+ENABLE_VIRTUAL_TERMINAL_INPUT equ 0x0200
 
+; If the hConsoleHandle parameter is a screen buffer handle, the mode can be
+; one or more of the following values. When a screen buffer is created, both
+; output modes are enabled by default.
 
 ENABLE_PROCESSED_OUTPUT equ 0x0001
 ENABLE_WRAP_AT_EOL_OUTPUT equ 0x0002
-
+ENABLE_VIRTUAL_TERMINAL_PROCESSING equ 0x0004
+DISABLE_NEWLINE_AUTO_RETURN equ 0x0008
+ENABLE_LVB_GRID_WORLDWIDE equ 0x0010
 
 ;BOOL
 PeekConsoleInputA proto WINAPI \

@@ -10,7 +10,7 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".03";
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".04";
 char cp_copyright[] =
  "Copyright (C) The Asmc Contributors. All Rights Reserved.\n"
  "Portions Copyright (C) 1984-2002 Sybase, Inc. All Rights Reserved.\n";
@@ -24,12 +24,13 @@ static char cp_options[] =
  "        " ASMC64 " [ /options ] filelist\n"
  "\n"
 #ifdef __ASMC64__
- "/assert Generate .assert() code            /Sa Maximize source listing\n"
- "/autostack Auto stack space for arguments  /safeseh Assert exception handlers\n"
- "/bin Generate plain binary file            /Sf Generate first pass listing\n"
- "/Cs Push USER registers before prolouge    /Sg Display generated code in listing\n"
- "/coff Generate COFF format object file     /Sn Suppress symbol-table listing\n"
- "/C<p|u|x> Set OPTION CASEMAP               /Sp[n] Set segment alignment\n"
+ "/assert Generate .assert() code            /r Recurse subdirectories\n"
+ "/autostack Auto stack space for arguments  /Sa Maximize source listing\n"
+ "/bin Generate plain binary file            /safeseh Assert exception handlers\n"
+ "/Cs Push USER registers before prolouge    /Sf Generate first pass listing\n"
+ "/coff Generate COFF format object file     /Sg Display generated code in listing\n"
+ "/C<p|u|x> Set OPTION CASEMAP               /Sn Suppress symbol-table listing\n"
+ "/cv<4|8> Set CodeView debug format         /Sp[n] Set segment alignment\n"
  "/D<name>[=text] Define text macro          /stackalign Align locals to 16-byte\n"
  "/e<number> Set error limit number          /swc C .SWITCH (default)\n"
  "/elf64 Generate 64-bit ELF object file     /swn No table in .SWITCH\n"
@@ -53,17 +54,17 @@ static char cp_options[] =
  " /cui - subsystem:console (default)        /Zp[n] Set structure alignment\n"
  " /gui - subsystem:windows                  /Zs Perform syntax check only\n"
  "/pf Preserve Flags (Epilogue/Invoke)       /zze No export symbol decoration\n"
- "/q, /nologo Suppress copyright message     /zzs Store name of start address\n"
- "/r Recurse subdirectories\n";
+ "/q, /nologo Suppress copyright message     /zzs Store name of start address\n";
 #else
  "/<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,\n"
  " 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64; <p> allows privileged instructions\n"
- "/assert Generate .assert() code            /safeseh Assert exception handlers\n"
- "/autostack Auto stack space for arguments  /Sf Generate first pass listing\n"
- "/bin Generate plain binary file            /Sg Display generated code in listing\n"
- "/Cs Push USER registers before prolouge    /Sn Suppress symbol-table listing\n"
- "/coff Generate COFF format object file     /Sp[n] Set segment alignment\n"
- "/C<p|u|x> Set OPTION CASEMAP               /stackalign Align locals to 16-byte\n"
+ "/assert Generate .assert() code            /r Recurse subdirectories\n"
+ "/autostack Auto stack space for arguments  /safeseh Assert exception handlers\n"
+ "/bin Generate plain binary file            /Sf Generate first pass listing\n"
+ "/Cs Push USER registers before prolouge    /Sg Display generated code in listing\n"
+ "/coff Generate COFF format object file     /Sn Suppress symbol-table listing\n"
+ "/C<p|u|x> Set OPTION CASEMAP               /Sp[n] Set segment alignment\n"
+ "/cv<4|8> Set CodeView debug format         /stackalign Align locals to 16-byte\n"
  "/D<name>[=text] Define text macro          /swc C .SWITCH (default)\n"
  "/e<number> Set error limit number          /swn No table in .SWITCH\n"
  "/elf Generate 32-bit ELF object file       /swp Pascal .SWITCH (auto.break)\n"
@@ -94,8 +95,7 @@ static char cp_options[] =
  " /cui - subsystem:console (default)        /Zv8 Enable Masm v8+ PROC visibility\n"
  " /gui - subsystem:windows                  /zze No export symbol decoration\n"
  "/pf Preserve Flags (Epilogue/Invoke)       /zzs Store name of start address\n"
- "/q, /nologo Suppress copyright message     /Sa Maximize source listing\n"
- "/r Recurse subdirectories\n";
+ "/q, /nologo Suppress copyright message     /Sa Maximize source listing\n";
 #endif
 
 int banner_printed = 0;

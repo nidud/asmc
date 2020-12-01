@@ -1106,7 +1106,8 @@ GetExt endp
 ;;  CurrFName[] for .obj, .lst and .err ( may be NULL )
 ;; v2.12: _splitpath()/_makepath() removed.
 
-SetFilenames proc private uses esi edi ebx fn
+SetFilenames proc stdcall private uses esi edi ebx fn:string_t
+
   local path[260]:byte
 
     strlen(fn)

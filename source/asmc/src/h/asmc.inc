@@ -379,7 +379,6 @@ chkstack                db ?    ; _chkstk()
 nolib                   db ?    ; skip includelib directives
 masm_keywords           db ?    ; -Znk
 arch                    db ?    ; -arch:AVX[2|512]
-codeview                db ?    ; -cv[4|5|8]
 global_options          ENDS
 
 M_MODULEVARS            MACRO

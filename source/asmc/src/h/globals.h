@@ -49,8 +49,6 @@ char *strupr( char * ); /* defined in apiemu.c */
 #define FASTCALL
 #endif
 
-//#define CODEVIEW8
-
 #define OLDKEYWORDS 1
 #define CHEXPREFIX 1
 
@@ -463,7 +461,6 @@ unsigned char	chkstack;		/* _chkstk() */
 unsigned char	nolib;			/* skip includelib directives */
 unsigned char	masm_keywords;		/* -Znk */
 unsigned char	arch;			/* -arch:AVX[2|512] */
-unsigned char	codeview;		/* -cv[4|8] */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

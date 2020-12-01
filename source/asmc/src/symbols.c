@@ -139,9 +139,9 @@ struct eqitem {
 
 /* table of predefined numeric equates */
 static const struct eqitem eqtab[] = {
-    { "__ASMC__",  231, NULL, NULL },
+    { "__ASMC__",  232, NULL, NULL },
 #ifdef __ASMC64__
-    { "__ASMC64__",231, NULL, NULL },
+    { "__ASMC64__",232, NULL, NULL },
 #endif
     { "__JWASM__", 212, NULL, NULL },
     { "$",	   0, UpdateCurPC, &symPC },

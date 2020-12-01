@@ -85,7 +85,6 @@ struct global_options Options = {
 	0,			// .nolib
 	0,			// .masm_keywords
 	0,			// .arch
-	4			// .codeview
 };
 
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
@@ -702,14 +701,6 @@ static void ProcessOption( char **cmdline, char *buffer )
     j &= 0xFFFF;
     *cmdline = GetNumber( p + 2 );
     switch ( j ) {
-#ifdef CODEVIEW8
-    case 'vc':		// -cv<number>
-	if ( OptValue == 4 || OptValue == 8 )
-	    Options.codeview = OptValue;
-	else
-	    asmerr( 1006, p );
-	return;
-#endif
     case 'sw':		// -ws<number>
 	Options.codepage = OptValue;
 	Options.xflag |= OPT_WSTRING;
@@ -733,9 +724,24 @@ static void ProcessOption( char **cmdline, char *buffer )
 	} while ( i != OptValue );
 	Options.fieldalign = j - 1;
 	return;
-    case 'iZ':		// -Zi[0|1|2|3]
+    case 'vc':		// -cv<number>
+	if ( OptValue < 4 || OptValue > 8 ) {
+	    asmerr( 1006, p );
+	    return;
+	}
 	Options.line_numbers = 1;
 	Options.debug_symbols = 1;
+	if ( Options.debug_ext == 0 )
+	    Options.debug_ext = CVEX_NORMAL;
+	if ( OptValue > 5 )
+	    Options.debug_symbols = 4; /* C13 (vc7.x) zero terminated names */
+	else if ( OptValue > 4 )
+	    Options.debug_symbols = 2; /* C11 (vc5.x) 32-bit types */
+	return;
+    case 'iZ':		// -Zi[0|1|2|3]
+	Options.line_numbers = 1;
+	if ( Options.debug_symbols == 0 )
+	    Options.debug_symbols = 1;
 	Options.debug_ext = CVEX_NORMAL;
 	if ( OptValue ) {
 	    if ( OptValue > CVEX_MAX )

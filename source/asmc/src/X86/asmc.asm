@@ -154,6 +154,7 @@ endif
 	    .endif
 	    FindClose(eax)
 	.endif
+
 	.if !strchr(strcpy(edi, esi), '*')
 	    strchr(edi, '?')
 	.endif

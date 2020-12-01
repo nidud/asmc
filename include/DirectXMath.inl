@@ -1,8 +1,7 @@
 ifndef __DIRECTXMATH_INL
 __DIRECTXMATH_INL equ <>
 
-inl_XMConvertVectorIntToFloat macro VInt, DivExponent
-    _mm_store_ps(xmm0, VInt)
+inl_XMConvertVectorIntToFloat proto vectorcall VInt:real16, DivExponent:abs {
     ;;
     ;; Convert DivExponent into 1.0f/(1<<DivExponent)
     ;;
@@ -13,17 +12,14 @@ inl_XMConvertVectorIntToFloat macro VInt, DivExponent
     mov eax,0x3F800000 - (DivExponent shl 23)
     movd xmm1,eax
     _mm_mul_ps(_mm_cvtepi32_ps(), XM_PERMUTE_PS(xmm1))
-    retm<xmm0>
-    endm
+    }
 
-inl_XMConvertVectorFloatToInt macro VFloat, MulExponent
+inl_XMConvertVectorFloatToInt proto vectorcall VFloat:real16, MulExponent:abs {
 
     .assert( MulExponent < 32 )
 
 ifdef _XM_NO_INTRINSICS_
 else
-    _mm_store_ps(xmm0, VFloat)
-
     mov eax,(1 shl MulExponent)
     _mm_cvt_si2ss(xmm1, eax)
     _mm_mul_ps(xmm0, XM_PERMUTE_PS(xmm1))
@@ -43,9 +39,8 @@ else
     _mm_and_ps(_mm_store_ps(xmm0, g_XMAbsMask), xmm2)
     _mm_andnot_ps(xmm2, xmm1)
     _mm_or_ps(xmm0, xmm2)
-    retm<xmm0>
 endif
-    endm
+    }
 
 inl_XMConvertVectorUIntToFloat macro VUInt, DivExponent
 
@@ -3021,10 +3016,8 @@ endif
     retm<>
     endm
 
-inl_XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, EyeDirection)
-    _mm_store_ps(xmm4, UpDirection)
+inl_XMMatrixLookToLH proto vectorcall EyePosition:real16, EyeDirection:real16, UpDirection:real16 {
+    _mm_store_ps(xmm4, xmm2)
     _mm_sub_ps(_mm_setzero_ps(xmm6), xmm0)
     inl_XMVector3Normalize(xmm1)
     _mm_store_ps(xmm5, xmm0)
@@ -3042,30 +3035,21 @@ inl_XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
     _mm_store_ps(xmm1, xmm3)
     _mm_store_ps(xmm0, xmm4)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
-    exitm<inl_XMMatrixTranspose()>
-    endm
+    inl_XMMatrixTranspose()
+    }
 
-inl_XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, FocusPosition)
-    _mm_store_ps(xmm2, UpDirection)
+inl_XMMatrixLookAtRH proto vectorcall EyePosition:real16, FocusPosition:real16, UpDirection:real16 {
     _mm_store_ps(xmm3 xmm0)
     inl_XMVectorSubtract(xmm3, xmm1)
     inl_XMMatrixLookToLH(xmm0, xmm3, xmm2)
-    retm<xmm0>
-    endm
+    }
 
-inl_XMMatrixLookAtLH macro EyePosition, FocusPosition, UpDirection
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, FocusPosition)
-    _mm_store_ps(xmm2, UpDirection)
+inl_XMMatrixLookAtLH proto vectorcall EyePosition:real16, FocusPosition:real16, UpDirection:real16 {
     _mm_sub_ps(xmm1, xmm0)
     inl_XMMatrixLookToLH(xmm0, xmm1, xmm2)
-    retm<xmm0>
-    endm
+    }
 
-inl_XMScalarSinCos macro Value
-    _mm_store_ss(xmm0, Value)
+inl_XMScalarSinCos proto vectorcall Value:real4 {
     ;;
     ;; Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
     ;;
@@ -3121,8 +3105,7 @@ inl_XMScalarSinCos macro Value
     _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), 0.5)
     _mm_add_ss(_mm_mul_ss(xmm2, xmm3), 1.0)
     _mm_mul_ss(xmm1, xmm2)
-    retm<>
-    endm
+    }
 
 inl_XMMatrixPerspectiveFovLH macro FovAngleY, AspectRatio, NearZ, FarZ, M
 

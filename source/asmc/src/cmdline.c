@@ -426,6 +426,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '6fle':	// -elf64
 	Options.output_format = OFORMAT_ELF;
 	define_name( "_LINUX", "2" );
+	define_name( "__UNIX__", "1" );
 #ifndef __ASMC64__
 	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", "1" );
@@ -439,6 +440,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_NONE;
 	define_name( "_LINUX", "1" );
+	define_name( "__UNIX__", "1" );
 	return;
     case '8iPF':	// -FPi87
 	Options.floating_point = FPO_NO_EMULATION;
@@ -724,29 +726,26 @@ static void ProcessOption( char **cmdline, char *buffer )
 	} while ( i != OptValue );
 	Options.fieldalign = j - 1;
 	return;
-    case 'vc':		// -cv<number>
-	if ( OptValue < 4 || OptValue > 8 ) {
-	    asmerr( 1006, p );
-	    return;
-	}
+    case 'iZ':		// -Zi[0|1|2|3[5|8]]
 	Options.line_numbers = 1;
 	Options.debug_symbols = 1;
-	if ( Options.debug_ext == 0 )
-	    Options.debug_ext = CVEX_NORMAL;
-	if ( OptValue > 5 )
-	    Options.debug_symbols = 4; /* C13 (vc7.x) zero terminated names */
-	else if ( OptValue > 4 )
-	    Options.debug_symbols = 2; /* C11 (vc5.x) 32-bit types */
-	return;
-    case 'iZ':		// -Zi[0|1|2|3]
-	Options.line_numbers = 1;
-	if ( Options.debug_symbols == 0 )
-	    Options.debug_symbols = 1;
 	Options.debug_ext = CVEX_NORMAL;
 	if ( OptValue ) {
-	    if ( OptValue > CVEX_MAX )
-		asmerr( 1006, p );
-	    Options.debug_ext = OptValue;
+	    if ( OptValue > CVEX_MAX ) {
+		if ( p[3] != '\0' ) {
+		    if ( p[4] != '\0' )
+			asmerr( 1006, p );
+		    OptValue = p[3] - '0';
+		    Options.debug_ext = p[2] - '0';
+		}
+		if ( OptValue == 5 )
+		    Options.debug_symbols = 2; /* C11 (vc5.x) 32-bit types */
+		else if ( OptValue == 8 )
+		    Options.debug_symbols = 4; /* C13 (vc7.x) zero terminated names */
+		else
+		    asmerr( 1006, p );
+	    } else
+		Options.debug_ext = OptValue;
 	}
 	return;
     }

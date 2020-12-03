@@ -78,7 +78,7 @@ struct coffmod {
 
 static const char szdrectve[] = { ".drectve" };
 
-static const IMAGE_SYMBOL isFeat00 = {
+static IMAGE_SYMBOL isFeat00 = {
     {"@feat.00"},
      1,
      IMAGE_SYM_ABSOLUTE,
@@ -89,7 +89,8 @@ static const IMAGE_SYMBOL isFeat00 = {
 #if COMPID
 static const IMAGE_SYMBOL isCompId = {
     {"@comp.id"},
-    50727 + ( 0x7d << 16 ), /* value of Masm v8.00.50727.104 */
+    //50727 + ( 0x7d << 16 ), /* value of Masm v8.00.50727.104 */
+    0x01035E92, /* value of Masm v14.00.24210.0 */
     IMAGE_SYM_ABSOLUTE,
     IMAGE_SYM_TYPE_NULL,
     IMAGE_SYM_CLASS_STATIC,
@@ -377,12 +378,17 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 
 #if COMPID
     /* write "@comp.id" entry */
-    if ( fwrite( &isCompId, 1, sizeof(IMAGE_SYMBOL), CurrFile[OBJ] ) != sizeof(IMAGE_SYMBOL) )
-	WriteError();
-    cntSymbols++;
+    if ( Options.debug_symbols == 4 ) {
+	if ( fwrite( &isCompId, 1, sizeof(IMAGE_SYMBOL), CurrFile[OBJ] ) != sizeof(IMAGE_SYMBOL) )
+	    WriteError();
+	cntSymbols++;
+    }
 #endif
     /* "@feat.00" entry (for SafeSEH) */
     if ( Options.safeseh ) {
+	isFeat00.Value = 1;
+	if ( Options.debug_symbols == 4 )
+	    isFeat00.Value = 16;
 	if ( fwrite( &isFeat00, 1, sizeof(IMAGE_SYMBOL), CurrFile[OBJ] ) != sizeof(IMAGE_SYMBOL) )
 	    WriteError();
 	cntSymbols++;
@@ -729,7 +735,8 @@ static uint_32 SetSymbolIndices( struct module_info *ModuleInfo, struct coffmod 
     cm->start_files = 0;  /* v2.11: added */
 
 #if COMPID
-    index++;
+    if ( Options.debug_symbols == 4 )
+	index++;
 #endif
     /* add absolute symbol @@feat.00 if -SAFESEH is set */
     if ( Options.safeseh )

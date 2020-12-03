@@ -166,7 +166,7 @@ uint_32 GetTyperef( struct asym *sym, uint_8 Ofssize )
 	    case 4:  value.s.size = CV_RC_REAL32; break;
 	    case 8:  value.s.size = CV_RC_REAL64; break;
 	    case 10: value.s.size = CV_RC_REAL80; break;
-	    case 16: value.s.size = CV_RC_REAL16; break;
+	    case 16: value.s.size = CV_RC_REAL128; break;
 	    }
 	} else if ( size <= 16 ) {
 	    if ( sym->mem_type & MT_SIGNED )
@@ -937,7 +937,7 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	    } else {
 		cv->s_p32->off = 0;
 		cv->s_p32->seg = 0;
-		cv->s_p32->typind = GetTyperef( sym, Ofssize );//cv->currtype;
+		cv->s_p32->typind = cv->currtype;
 		cv->s_p32->flags.bAll = 0;
 		if ( sym->mem_type == MT_FAR )
 		    cv->s_p32->flags.CV_PFLAG_FAR = 1;
@@ -1184,7 +1184,7 @@ static void cv_write_F3( dbgcv *cv )
     cv->ps = p;
 }
 
-//#define USEMD5
+#define USEMD5
 
 #ifdef USEMD5
 

@@ -437,3 +437,6 @@ ZwWriteFile@36
 ZwYieldExecution@0
 vDbgPrintEx@16
 vDbgPrintExWithPrefix@20
+MD5Init@4
+MD5Update@12
+MD5Final@4

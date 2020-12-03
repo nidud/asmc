@@ -30,11 +30,7 @@
 #ifndef CVDBG_H
 #define CVDBG_H 1
 
-#define CV_SIGNATURE_C6		0L  /* Actual signature is >64K */
-#define CV_SIGNATURE_C7		1L  /* First explicit signature */
-#define CV_SIGNATURE_C11	2L  /* C11 (vc5.x) 32-bit types */
-#define CV_SIGNATURE_C13	4L  /* C13 (vc7.x) zero terminated names */
-#define CV_SIGNATURE_RESERVED	5L  /* All signatures from 5 to 64K are reserved */
+#pragma pack(push, 1)
 
 typedef unsigned long	CV_uoff32_t;
 typedef		 long	CV_off32_t;
@@ -50,431 +46,646 @@ typedef unsigned long	CV_tkn_t;
 #define CV_ZEROLEN
 #endif
 
-#pragma pack(push, 1)
+#if !defined (FLOAT10)
+#if defined(_M_I86)		/* 16 bit x86 supporting long double */
+typedef long double FLOAT10;
+#else				/* 32 bit w/o long double support */
+typedef struct FLOAT10 {
+    char b[10];
+  } FLOAT10;
+#endif
+#endif
+
+#define CV_SIGNATURE_C6		0L  /* Actual signature is >64K */
+#define CV_SIGNATURE_C7		1L  /* First explicit signature */
+#define CV_SIGNATURE_C11	2L  /* C11 (vc5.x) 32-bit types */
+#define CV_SIGNATURE_C13	4L  /* C13 (vc7.x) zero terminated names */
+#define CV_SIGNATURE_RESERVED	5L  /* All signatures from 5 to 64K are reserved */
+
+#define CV_MAXOFFSET   0xffffffff
+
+#ifndef GUID_DEFINED
+#define GUID_DEFINED
+
+typedef struct _GUID {		/* size is 16 */
+    unsigned long   Data1;
+    unsigned short  Data2;
+    unsigned short  Data3;
+    unsigned char   Data4[8];
+  } GUID;
+
+#endif
+
+typedef GUID		SIG70;	    /* new to 7.0 are 16-byte guid-like signatures */
+typedef SIG70 *		PSIG70;
+typedef const SIG70 *	PCSIG70;
+
+
+/** CodeView Symbol and Type OMF type information is broken up into two
+ *  ranges.  Type indices less than 0x1000 describe type information
+ *  that is frequently used.  Type indices above 0x1000 are used to
+ *  describe more complex features such as functions, arrays and
+ *  structures.
+ */
+
+
+/** Primitive types have predefined meaning that is encoded in the
+ *  values of the various bit fields in the value.
+ *
+ * A CodeView primitive type is defined as:
+ *
+ *	1 1
+ *	1 089  7654  3	210
+ *	r mode type  r	sub
+ *
+ *	Where
+ *	    mode is the pointer mode
+ *	    type is a type indicator
+ *	    sub	 is a subtype enumeration
+ *	    r	 is a reserved field
+ *
+ * See Microsoft Symbol and Type OMF (Version 4.0) for more
+ * information.
+ */
+
+#define CV_MMASK	0x700 /* mode mask */
+#define CV_TMASK	0x0f0 /* type mask */
+
+/* can we use the reserved bit ?? */
+#define CV_SMASK	0x00f /* subtype mask */
+
+#define CV_MSHIFT	8     /* primitive mode right shift count */
+#define CV_TSHIFT	4     /* primitive type right shift count */
+#define CV_SSHIFT	0     /* primitive subtype right shift count */
+
+/* macros to extract primitive mode, type and size */
+
+#define CV_MODE(typ)	(((typ) & CV_MMASK) >> CV_MSHIFT)
+#define CV_TYPE(typ)	(((typ) & CV_TMASK) >> CV_TSHIFT)
+#define CV_SUBT(typ)	(((typ) & CV_SMASK) >> CV_SSHIFT)
+
+/* macros to insert new primitive mode, type and size */
+
+#define CV_NEWMODE(typ, nm) ((CV_typ_t)(((typ) & ~CV_MMASK) | ((nm) << CV_MSHIFT)))
+#define CV_NEWTYPE(typ, nt) (((typ) & ~CV_TMASK) | ((nt) << CV_TSHIFT))
+#define CV_NEWSUBT(typ, ns) (((typ) & ~CV_SMASK) | ((ns) << CV_SSHIFT))
+
+
+/* pointer mode enumeration values */
+
+typedef enum CV_prmode_e {
+    CV_TM_DIRECT = 0,	    /* mode is not a pointer */
+    CV_TM_NPTR	 = 1,	    /* mode is a near pointer */
+    CV_TM_FPTR	 = 2,	    /* mode is a far pointer */
+    CV_TM_HPTR	 = 3,	    /* mode is a huge pointer */
+    CV_TM_NPTR32 = 4,	    /* mode is a 32 bit near pointer */
+    CV_TM_FPTR32 = 5,	    /* mode is a 32 bit far pointer */
+    CV_TM_NPTR64 = 6,	    /* mode is a 64 bit near pointer */
+    CV_TM_NPTR128 = 7,	    /* mode is a 128 bit near pointer */
+  } CV_prmode_e;
+
+
+/* subtype enumeration values for CV_SPECIAL */
+
+typedef enum CV_type_e {
+    CV_SPECIAL	    = 0x00,    /* special type size values */
+    CV_SIGNED	    = 0x01,    /* signed integral size values */
+    CV_UNSIGNED	    = 0x02,    /* unsigned integral size values */
+    CV_BOOLEAN	    = 0x03,    /* Boolean size values */
+    CV_REAL	    = 0x04,    /* real number size values */
+    CV_COMPLEX	    = 0x05,    /* complex number size values */
+    CV_SPECIAL2	    = 0x06,    /* second set of special types */
+    CV_INT	    = 0x07,    /* integral (int) values */
+    CV_CVRESERVED   = 0x0f,
+  } CV_type_e;
+
+
+/* subtype enumeration values for CV_SPECIAL */
+
+typedef enum CV_special_e {
+    CV_SP_NOTYPE    = 0x00,
+    CV_SP_ABS	    = 0x01,
+    CV_SP_SEGMENT   = 0x02,
+    CV_SP_VOID	    = 0x03,
+    CV_SP_CURRENCY  = 0x04,
+    CV_SP_NBASICSTR = 0x05,
+    CV_SP_FBASICSTR = 0x06,
+    CV_SP_NOTTRANS  = 0x07,
+    CV_SP_HRESULT   = 0x08,
+  } CV_special_e;
+
+
+/* subtype enumeration values for CV_SPECIAL2 */
+
+typedef enum CV_special2_e {
+    CV_S2_BIT	    = 0x00,
+    CV_S2_PASCHAR   = 0x01,    /* Pascal CHAR */
+    CV_S2_BOOL32FF  = 0x02,    /* 32-bit BOOL where true is 0xffffffff */
+  } CV_special2_e;
+
+
+/* subtype enumeration values for CV_SIGNED, CV_UNSIGNED and CV_BOOLEAN */
+
+typedef enum CV_integral_e {
+    CV_IN_1BYTE	    = 0x00,
+    CV_IN_2BYTE	    = 0x01,
+    CV_IN_4BYTE	    = 0x02,
+    CV_IN_8BYTE	    = 0x03,
+    CV_IN_16BYTE    = 0x04
+  } CV_integral_e;
+
+
+/* subtype enumeration values for CV_REAL and CV_COMPLEX */
+
+typedef enum CV_real_e {
+    CV_RC_REAL32    = 0x00,
+    CV_RC_REAL64    = 0x01,
+    CV_RC_REAL80    = 0x02,
+    CV_RC_REAL128   = 0x03,
+    CV_RC_REAL48    = 0x04,
+    CV_RC_REAL32PP  = 0x05,   /* 32-bit partial precision real */
+    CV_RC_REAL16    = 0x06,
+  } CV_real_e;
+
+
+/* subtype enumeration values for CV_INT (really int) */
+
+typedef enum CV_int_e {
+    CV_RI_CHAR	    = 0x00,
+    CV_RI_INT1	    = 0x00,
+    CV_RI_WCHAR	    = 0x01,
+    CV_RI_UINT1	    = 0x01,
+    CV_RI_INT2	    = 0x02,
+    CV_RI_UINT2	    = 0x03,
+    CV_RI_INT4	    = 0x04,
+    CV_RI_UINT4	    = 0x05,
+    CV_RI_INT8	    = 0x06,
+    CV_RI_UINT8	    = 0x07,
+    CV_RI_INT16	    = 0x08,
+    CV_RI_UINT16    = 0x09,
+    CV_RI_CHAR16    = 0x0a,  /* char16_t */
+    CV_RI_CHAR32    = 0x0b,  /* char32_t */
+  } CV_int_e;
+
+
+/* macros to check the type of a primitive */
+
+#define CV_TYP_IS_DIRECT(typ)	(CV_MODE(typ) == CV_TM_DIRECT)
+#define CV_TYP_IS_PTR(typ)	(CV_MODE(typ) != CV_TM_DIRECT)
+#define CV_TYP_IS_NPTR(typ)	(CV_MODE(typ) == CV_TM_NPTR)
+#define CV_TYP_IS_FPTR(typ)	(CV_MODE(typ) == CV_TM_FPTR)
+#define CV_TYP_IS_HPTR(typ)	(CV_MODE(typ) == CV_TM_HPTR)
+#define CV_TYP_IS_NPTR32(typ)	(CV_MODE(typ) == CV_TM_NPTR32)
+#define CV_TYP_IS_FPTR32(typ)	(CV_MODE(typ) == CV_TM_FPTR32)
+
+#define CV_TYP_IS_SIGNED(typ)	(((CV_TYPE(typ) == CV_SIGNED) && CV_TYP_IS_DIRECT(typ)) || \
+				 (typ == T_INT1)  || \
+				 (typ == T_INT2)  || \
+				 (typ == T_INT4)  || \
+				 (typ == T_INT8)  || \
+				 (typ == T_INT16) || \
+				 (typ == T_RCHAR))
+
+#define CV_TYP_IS_UNSIGNED(typ) (((CV_TYPE(typ) == CV_UNSIGNED) && CV_TYP_IS_DIRECT(typ)) || \
+				 (typ == T_UINT1) || \
+				 (typ == T_UINT2) || \
+				 (typ == T_UINT4) || \
+				 (typ == T_UINT8) || \
+				 (typ == T_UINT16))
+
+#define CV_TYP_IS_REAL(typ)	((CV_TYPE(typ) == CV_REAL)  && CV_TYP_IS_DIRECT(typ))
+
+#define CV_FIRST_NONPRIM 0x1000
+#define CV_IS_PRIMITIVE(typ)	((typ) < CV_FIRST_NONPRIM)
+#define CV_TYP_IS_COMPLEX(typ)	((CV_TYPE(typ) == CV_COMPLEX)	&& CV_TYP_IS_DIRECT(typ))
+#define CV_IS_INTERNAL_PTR(typ) (CV_IS_PRIMITIVE(typ) && \
+				 CV_TYPE(typ) == CV_CVRESERVED && \
+				 CV_TYP_IS_PTR(typ))
+
+
+/* Special Types */
 
 typedef enum TYPE_ENUM_e {
 
-    /* Special Types */
+    ST_NOTYPE		= 0x0000, /* uncharacterized type (no type) */
+    ST_ABS		= 0x0001, /* absolute symbol */
+    ST_SEGMENT		= 0x0002, /* segment type */
+    ST_VOID		= 0x0003, /* void */
+    ST_HRESULT		= 0x0008, /* OLE/COM HRESULT */
+    ST_32PHRESULT	= 0x0408, /* OLE/COM HRESULT __ptr32 * */
+    ST_64PHRESULT	= 0x0608, /* OLE/COM HRESULT __ptr64 * */
 
-    ST_NOTYPE		= 0x0000,	/* uncharacterized type (no type) */
-    ST_ABS		= 0x0001,	/* absolute symbol */
-    ST_SEGMENT		= 0x0002,	/* segment type */
-    ST_VOID		= 0x0003,	/* void */
-    ST_HRESULT		= 0x0008,	/* OLE/COM HRESULT */
-    ST_32PHRESULT	= 0x0408,	/* OLE/COM HRESULT __ptr32 * */
-    ST_64PHRESULT	= 0x0608,	/* OLE/COM HRESULT __ptr64 * */
-
-    ST_PVOID		= 0x0103,	/* near pointer to void */
-    ST_PFVOID		= 0x0203,	/* far pointer to void */
-    ST_PHVOID		= 0x0303,	/* huge pointer to void */
-    ST_32PVOID		= 0x0403,	/* 32 bit pointer to void */
-    ST_32PFVOID		= 0x0503,	/* 16:32 pointer to void */
-    ST_64PVOID		= 0x0603,	/* 64 bit pointer to void */
-    ST_CURRENCY		= 0x0004,	/* BASIC 8 byte currency value */
-    ST_NBASICSTR	= 0x0005,	/* Near BASIC string */
-    ST_FBASICSTR	= 0x0006,	/* Far BASIC string */
-    ST_NOTTRANS		= 0x0007,	/* type not translated by cvpack */
-    ST_BIT		= 0x0060,	/* bit */
-    ST_PASCHAR		= 0x0061,	/* Pascal CHAR */
-    ST_BOOL32FF		= 0x0062,	/* 32-bit BOOL where true is 0xffffffff */
+    ST_PVOID		= 0x0103, /* near pointer to void */
+    ST_PFVOID		= 0x0203, /* far pointer to void */
+    ST_PHVOID		= 0x0303, /* huge pointer to void */
+    ST_32PVOID		= 0x0403, /* 32 bit pointer to void */
+    ST_32PFVOID		= 0x0503, /* 16:32 pointer to void */
+    ST_64PVOID		= 0x0603, /* 64 bit pointer to void */
+    ST_CURRENCY		= 0x0004, /* BASIC 8 byte currency value */
+    ST_NBASICSTR	= 0x0005, /* Near BASIC string */
+    ST_FBASICSTR	= 0x0006, /* Far BASIC string */
+    ST_NOTTRANS		= 0x0007, /* type not translated by cvpack */
+    ST_BIT		= 0x0060, /* bit */
+    ST_PASCHAR		= 0x0061, /* Pascal CHAR */
+    ST_BOOL32FF		= 0x0062, /* 32-bit BOOL where true is 0xffffffff */
 
 
     /* Character types */
 
-    ST_CHAR		= 0x0010,	/* 8 bit signed */
-    ST_PCHAR		= 0x0110,	/* 16 bit pointer to 8 bit signed */
-    ST_PFCHAR		= 0x0210,	/* 16:16 far pointer to 8 bit signed */
-    ST_PHCHAR		= 0x0310,	/* 16:16 huge pointer to 8 bit signed */
-    ST_32PCHAR		= 0x0410,	/* 32 bit pointer to 8 bit signed */
-    ST_32PFCHAR		= 0x0510,	/* 16:32 pointer to 8 bit signed */
-    ST_64PCHAR		= 0x0610,	/* 64 bit pointer to 8 bit signed */
+    ST_CHAR		= 0x0010, /* 8 bit signed */
+    ST_PCHAR		= 0x0110, /* 16 bit pointer to 8 bit signed */
+    ST_PFCHAR		= 0x0210, /* 16:16 far pointer to 8 bit signed */
+    ST_PHCHAR		= 0x0310, /* 16:16 huge pointer to 8 bit signed */
+    ST_32PCHAR		= 0x0410, /* 32 bit pointer to 8 bit signed */
+    ST_32PFCHAR		= 0x0510, /* 16:32 pointer to 8 bit signed */
+    ST_64PCHAR		= 0x0610, /* 64 bit pointer to 8 bit signed */
 
-    ST_UCHAR		= 0x0020,	/* 8 bit unsigned */
-    ST_PUCHAR		= 0x0120,	/* 16 bit pointer to 8 bit unsigned */
-    ST_PFUCHAR		= 0x0220,	/* 16:16 far pointer to 8 bit unsigned */
-    ST_PHUCHAR		= 0x0320,	/* 16:16 huge pointer to 8 bit unsigned */
-    ST_32PUCHAR		= 0x0420,	/* 32 bit pointer to 8 bit unsigned */
-    ST_32PFUCHAR	= 0x0520,	/* 16:32 pointer to 8 bit unsigned */
-    ST_64PUCHAR		= 0x0620,	/* 64 bit pointer to 8 bit unsigned */
+    ST_UCHAR		= 0x0020, /* 8 bit unsigned */
+    ST_PUCHAR		= 0x0120, /* 16 bit pointer to 8 bit unsigned */
+    ST_PFUCHAR		= 0x0220, /* 16:16 far pointer to 8 bit unsigned */
+    ST_PHUCHAR		= 0x0320, /* 16:16 huge pointer to 8 bit unsigned */
+    ST_32PUCHAR		= 0x0420, /* 32 bit pointer to 8 bit unsigned */
+    ST_32PFUCHAR	= 0x0520, /* 16:32 pointer to 8 bit unsigned */
+    ST_64PUCHAR		= 0x0620, /* 64 bit pointer to 8 bit unsigned */
 
 
     /* really a character types */
 
-    ST_RCHAR		= 0x0070,	/* really a char */
-    ST_PRCHAR		= 0x0170,	/* 16 bit pointer to a real char */
-    ST_PFRCHAR		= 0x0270,	/* 16:16 far pointer to a real char */
-    ST_PHRCHAR		= 0x0370,	/* 16:16 huge pointer to a real char */
-    ST_32PRCHAR		= 0x0470,	/* 32 bit pointer to a real char */
-    ST_32PFRCHAR	= 0x0570,	/* 16:32 pointer to a real char */
-    ST_64PRCHAR		= 0x0670,	/* 64 bit pointer to a real char */
+    ST_RCHAR		= 0x0070, /* really a char */
+    ST_PRCHAR		= 0x0170, /* 16 bit pointer to a real char */
+    ST_PFRCHAR		= 0x0270, /* 16:16 far pointer to a real char */
+    ST_PHRCHAR		= 0x0370, /* 16:16 huge pointer to a real char */
+    ST_32PRCHAR		= 0x0470, /* 32 bit pointer to a real char */
+    ST_32PFRCHAR	= 0x0570, /* 16:32 pointer to a real char */
+    ST_64PRCHAR		= 0x0670, /* 64 bit pointer to a real char */
 
 
     /* really a wide character types */
 
-    ST_WCHAR		= 0x0071,	/* wide char */
-    ST_PWCHAR		= 0x0171,	/* 16 bit pointer to a wide char */
-    ST_PFWCHAR		= 0x0271,	/* 16:16 far pointer to a wide char */
-    ST_PHWCHAR		= 0x0371,	/* 16:16 huge pointer to a wide char */
-    ST_32PWCHAR		= 0x0471,	/* 32 bit pointer to a wide char */
-    ST_32PFWCHAR	= 0x0571,	/* 16:32 pointer to a wide char */
-    ST_64PWCHAR		= 0x0671,	/* 64 bit pointer to a wide char */
+    ST_WCHAR		= 0x0071, /* wide char */
+    ST_PWCHAR		= 0x0171, /* 16 bit pointer to a wide char */
+    ST_PFWCHAR		= 0x0271, /* 16:16 far pointer to a wide char */
+    ST_PHWCHAR		= 0x0371, /* 16:16 huge pointer to a wide char */
+    ST_32PWCHAR		= 0x0471, /* 32 bit pointer to a wide char */
+    ST_32PFWCHAR	= 0x0571, /* 16:32 pointer to a wide char */
+    ST_64PWCHAR		= 0x0671, /* 64 bit pointer to a wide char */
 
     /* really a 16-bit unicode char */
 
-    ST_CHAR16		= 0x007a,	 /* 16-bit unicode char */
-    ST_PCHAR16		= 0x017a,	 /* 16 bit pointer to a 16-bit unicode char */
-    ST_PFCHAR16		= 0x027a,	 /* 16:16 far pointer to a 16-bit unicode char */
-    ST_PHCHAR16		= 0x037a,	 /* 16:16 huge pointer to a 16-bit unicode char */
-    ST_32PCHAR16	= 0x047a,	 /* 32 bit pointer to a 16-bit unicode char */
-    ST_32PFCHAR16	= 0x057a,	 /* 16:32 pointer to a 16-bit unicode char */
-    ST_64PCHAR16	= 0x067a,	 /* 64 bit pointer to a 16-bit unicode char */
+    ST_CHAR16		= 0x007a, /* 16-bit unicode char */
+    ST_PCHAR16		= 0x017a, /* 16 bit pointer to a 16-bit unicode char */
+    ST_PFCHAR16		= 0x027a, /* 16:16 far pointer to a 16-bit unicode char */
+    ST_PHCHAR16		= 0x037a, /* 16:16 huge pointer to a 16-bit unicode char */
+    ST_32PCHAR16	= 0x047a, /* 32 bit pointer to a 16-bit unicode char */
+    ST_32PFCHAR16	= 0x057a, /* 16:32 pointer to a 16-bit unicode char */
+    ST_64PCHAR16	= 0x067a, /* 64 bit pointer to a 16-bit unicode char */
 
     /* really a 32-bit unicode char */
 
-    ST_CHAR32		= 0x007b,	 /* 32-bit unicode char */
-    ST_PCHAR32		= 0x017b,	 /* 16 bit pointer to a 32-bit unicode char */
-    ST_PFCHAR32		= 0x027b,	 /* 16:16 far pointer to a 32-bit unicode char */
-    ST_PHCHAR32		= 0x037b,	 /* 16:16 huge pointer to a 32-bit unicode char */
-    ST_32PCHAR32	= 0x047b,	 /* 32 bit pointer to a 32-bit unicode char */
-    ST_32PFCHAR32	= 0x057b,	 /* 16:32 pointer to a 32-bit unicode char */
-    ST_64PCHAR32	= 0x067b,	 /* 64 bit pointer to a 32-bit unicode char */
+    ST_CHAR32		= 0x007b, /* 32-bit unicode char */
+    ST_PCHAR32		= 0x017b, /* 16 bit pointer to a 32-bit unicode char */
+    ST_PFCHAR32		= 0x027b, /* 16:16 far pointer to a 32-bit unicode char */
+    ST_PHCHAR32		= 0x037b, /* 16:16 huge pointer to a 32-bit unicode char */
+    ST_32PCHAR32	= 0x047b, /* 32 bit pointer to a 32-bit unicode char */
+    ST_32PFCHAR32	= 0x057b, /* 16:32 pointer to a 32-bit unicode char */
+    ST_64PCHAR32	= 0x067b, /* 64 bit pointer to a 32-bit unicode char */
 
     /* 8 bit int types */
 
-    ST_INT1		= 0x0068,	/* 8 bit signed int */
-    ST_PINT1		= 0x0168,	/* 16 bit pointer to 8 bit signed int */
-    ST_PFINT1		= 0x0268,	/* 16:16 far pointer to 8 bit signed int */
-    ST_PHINT1		= 0x0368,	/* 16:16 huge pointer to 8 bit signed int */
-    ST_32PINT1		= 0x0468,	/* 32 bit pointer to 8 bit signed int */
-    ST_32PFINT1		= 0x0568,	/* 16:32 pointer to 8 bit signed int */
-    ST_64PINT1		= 0x0668,	/* 64 bit pointer to 8 bit signed int */
+    ST_INT1		= 0x0068, /* 8 bit signed int */
+    ST_PINT1		= 0x0168, /* 16 bit pointer to 8 bit signed int */
+    ST_PFINT1		= 0x0268, /* 16:16 far pointer to 8 bit signed int */
+    ST_PHINT1		= 0x0368, /* 16:16 huge pointer to 8 bit signed int */
+    ST_32PINT1		= 0x0468, /* 32 bit pointer to 8 bit signed int */
+    ST_32PFINT1		= 0x0568, /* 16:32 pointer to 8 bit signed int */
+    ST_64PINT1		= 0x0668, /* 64 bit pointer to 8 bit signed int */
 
-    ST_UINT1		= 0x0069,	/* 8 bit unsigned int */
-    ST_PUINT1		= 0x0169,	/* 16 bit pointer to 8 bit unsigned int */
-    ST_PFUINT1		= 0x0269,	/* 16:16 far pointer to 8 bit unsigned int */
-    ST_PHUINT1		= 0x0369,	/* 16:16 huge pointer to 8 bit unsigned int */
-    ST_32PUINT1		= 0x0469,	/* 32 bit pointer to 8 bit unsigned int */
-    ST_32PFUINT1	= 0x0569,	/* 16:32 pointer to 8 bit unsigned int */
-    ST_64PUINT1		= 0x0669,	/* 64 bit pointer to 8 bit unsigned int */
+    ST_UINT1		= 0x0069, /* 8 bit unsigned int */
+    ST_PUINT1		= 0x0169, /* 16 bit pointer to 8 bit unsigned int */
+    ST_PFUINT1		= 0x0269, /* 16:16 far pointer to 8 bit unsigned int */
+    ST_PHUINT1		= 0x0369, /* 16:16 huge pointer to 8 bit unsigned int */
+    ST_32PUINT1		= 0x0469, /* 32 bit pointer to 8 bit unsigned int */
+    ST_32PFUINT1	= 0x0569, /* 16:32 pointer to 8 bit unsigned int */
+    ST_64PUINT1		= 0x0669, /* 64 bit pointer to 8 bit unsigned int */
 
 
     /* 16 bit short types */
 
-    ST_SHORT		= 0x0011,	/* 16 bit signed */
-    ST_PSHORT		= 0x0111,	/* 16 bit pointer to 16 bit signed */
-    ST_PFSHORT		= 0x0211,	/* 16:16 far pointer to 16 bit signed */
-    ST_PHSHORT		= 0x0311,	/* 16:16 huge pointer to 16 bit signed */
-    ST_32PSHORT		= 0x0411,	/* 32 bit pointer to 16 bit signed */
-    ST_32PFSHORT	= 0x0511,	/* 16:32 pointer to 16 bit signed */
-    ST_64PSHORT		= 0x0611,	/* 64 bit pointer to 16 bit signed */
+    ST_SHORT		= 0x0011, /* 16 bit signed */
+    ST_PSHORT		= 0x0111, /* 16 bit pointer to 16 bit signed */
+    ST_PFSHORT		= 0x0211, /* 16:16 far pointer to 16 bit signed */
+    ST_PHSHORT		= 0x0311, /* 16:16 huge pointer to 16 bit signed */
+    ST_32PSHORT		= 0x0411, /* 32 bit pointer to 16 bit signed */
+    ST_32PFSHORT	= 0x0511, /* 16:32 pointer to 16 bit signed */
+    ST_64PSHORT		= 0x0611, /* 64 bit pointer to 16 bit signed */
 
-    ST_USHORT		= 0x0021,	/* 16 bit unsigned */
-    ST_PUSHORT		= 0x0121,	/* 16 bit pointer to 16 bit unsigned */
-    ST_PFUSHORT		= 0x0221,	/* 16:16 far pointer to 16 bit unsigned */
-    ST_PHUSHORT		= 0x0321,	/* 16:16 huge pointer to 16 bit unsigned */
-    ST_32PUSHORT	= 0x0421,	/* 32 bit pointer to 16 bit unsigned */
-    ST_32PFUSHORT	= 0x0521,	/* 16:32 pointer to 16 bit unsigned */
-    ST_64PUSHORT	= 0x0621,	/* 64 bit pointer to 16 bit unsigned */
+    ST_USHORT		= 0x0021, /* 16 bit unsigned */
+    ST_PUSHORT		= 0x0121, /* 16 bit pointer to 16 bit unsigned */
+    ST_PFUSHORT		= 0x0221, /* 16:16 far pointer to 16 bit unsigned */
+    ST_PHUSHORT		= 0x0321, /* 16:16 huge pointer to 16 bit unsigned */
+    ST_32PUSHORT	= 0x0421, /* 32 bit pointer to 16 bit unsigned */
+    ST_32PFUSHORT	= 0x0521, /* 16:32 pointer to 16 bit unsigned */
+    ST_64PUSHORT	= 0x0621, /* 64 bit pointer to 16 bit unsigned */
 
 
     /* 16 bit int types */
 
-    ST_INT2		= 0x0072,	/* 16 bit signed int */
-    ST_PINT2		= 0x0172,	/* 16 bit pointer to 16 bit signed int */
-    ST_PFINT2		= 0x0272,	/* 16:16 far pointer to 16 bit signed int */
-    ST_PHINT2		= 0x0372,	/* 16:16 huge pointer to 16 bit signed int */
-    ST_32PINT2		= 0x0472,	/* 32 bit pointer to 16 bit signed int */
-    ST_32PFINT2		= 0x0572,	/* 16:32 pointer to 16 bit signed int */
-    ST_64PINT2		= 0x0672,	/* 64 bit pointer to 16 bit signed int */
+    ST_INT2		= 0x0072, /* 16 bit signed int */
+    ST_PINT2		= 0x0172, /* 16 bit pointer to 16 bit signed int */
+    ST_PFINT2		= 0x0272, /* 16:16 far pointer to 16 bit signed int */
+    ST_PHINT2		= 0x0372, /* 16:16 huge pointer to 16 bit signed int */
+    ST_32PINT2		= 0x0472, /* 32 bit pointer to 16 bit signed int */
+    ST_32PFINT2		= 0x0572, /* 16:32 pointer to 16 bit signed int */
+    ST_64PINT2		= 0x0672, /* 64 bit pointer to 16 bit signed int */
 
-    ST_UINT2		= 0x0073,	/* 16 bit unsigned int */
-    ST_PUINT2		= 0x0173,	/* 16 bit pointer to 16 bit unsigned int */
-    ST_PFUINT2		= 0x0273,	/* 16:16 far pointer to 16 bit unsigned int */
-    ST_PHUINT2		= 0x0373,	/* 16:16 huge pointer to 16 bit unsigned int */
-    ST_32PUINT2		= 0x0473,	/* 32 bit pointer to 16 bit unsigned int */
-    ST_32PFUINT2	= 0x0573,	/* 16:32 pointer to 16 bit unsigned int */
-    ST_64PUINT2		= 0x0673,	/* 64 bit pointer to 16 bit unsigned int */
+    ST_UINT2		= 0x0073, /* 16 bit unsigned int */
+    ST_PUINT2		= 0x0173, /* 16 bit pointer to 16 bit unsigned int */
+    ST_PFUINT2		= 0x0273, /* 16:16 far pointer to 16 bit unsigned int */
+    ST_PHUINT2		= 0x0373, /* 16:16 huge pointer to 16 bit unsigned int */
+    ST_32PUINT2		= 0x0473, /* 32 bit pointer to 16 bit unsigned int */
+    ST_32PFUINT2	= 0x0573, /* 16:32 pointer to 16 bit unsigned int */
+    ST_64PUINT2		= 0x0673, /* 64 bit pointer to 16 bit unsigned int */
 
 
     /* 32 bit long types */
 
-    ST_LONG		= 0x0012,	/* 32 bit signed */
-    ST_ULONG		= 0x0022,	/* 32 bit unsigned */
-    ST_PLONG		= 0x0112,	/* 16 bit pointer to 32 bit signed */
-    ST_PULONG		= 0x0122,	/* 16 bit pointer to 32 bit unsigned */
-    ST_PFLONG		= 0x0212,	/* 16:16 far pointer to 32 bit signed */
-    ST_PFULONG		= 0x0222,	/* 16:16 far pointer to 32 bit unsigned */
-    ST_PHLONG		= 0x0312,	/* 16:16 huge pointer to 32 bit signed */
-    ST_PHULONG		= 0x0322,	/* 16:16 huge pointer to 32 bit unsigned */
+    ST_LONG		= 0x0012, /* 32 bit signed */
+    ST_ULONG		= 0x0022, /* 32 bit unsigned */
+    ST_PLONG		= 0x0112, /* 16 bit pointer to 32 bit signed */
+    ST_PULONG		= 0x0122, /* 16 bit pointer to 32 bit unsigned */
+    ST_PFLONG		= 0x0212, /* 16:16 far pointer to 32 bit signed */
+    ST_PFULONG		= 0x0222, /* 16:16 far pointer to 32 bit unsigned */
+    ST_PHLONG		= 0x0312, /* 16:16 huge pointer to 32 bit signed */
+    ST_PHULONG		= 0x0322, /* 16:16 huge pointer to 32 bit unsigned */
 
-    ST_32PLONG		= 0x0412,	/* 32 bit pointer to 32 bit signed */
-    ST_32PULONG		= 0x0422,	/* 32 bit pointer to 32 bit unsigned */
-    ST_32PFLONG		= 0x0512,	/* 16:32 pointer to 32 bit signed */
-    ST_32PFULONG	= 0x0522,	/* 16:32 pointer to 32 bit unsigned */
-    ST_64PLONG		= 0x0612,	/* 64 bit pointer to 32 bit signed */
-    ST_64PULONG		= 0x0622,	/* 64 bit pointer to 32 bit unsigned */
+    ST_32PLONG		= 0x0412, /* 32 bit pointer to 32 bit signed */
+    ST_32PULONG		= 0x0422, /* 32 bit pointer to 32 bit unsigned */
+    ST_32PFLONG		= 0x0512, /* 16:32 pointer to 32 bit signed */
+    ST_32PFULONG	= 0x0522, /* 16:32 pointer to 32 bit unsigned */
+    ST_64PLONG		= 0x0612, /* 64 bit pointer to 32 bit signed */
+    ST_64PULONG		= 0x0622, /* 64 bit pointer to 32 bit unsigned */
 
 
     /* 32 bit int types */
 
-    ST_INT4		= 0x0074,	/* 32 bit signed int */
-    ST_PINT4		= 0x0174,	/* 16 bit pointer to 32 bit signed int */
-    ST_PFINT4		= 0x0274,	/* 16:16 far pointer to 32 bit signed int */
-    ST_PHINT4		= 0x0374,	/* 16:16 huge pointer to 32 bit signed int */
-    ST_32PINT4		= 0x0474,	/* 32 bit pointer to 32 bit signed int */
-    ST_32PFINT4		= 0x0574,	/* 16:32 pointer to 32 bit signed int */
-    ST_64PINT4		= 0x0674,	/* 64 bit pointer to 32 bit signed int */
+    ST_INT4		= 0x0074, /* 32 bit signed int */
+    ST_PINT4		= 0x0174, /* 16 bit pointer to 32 bit signed int */
+    ST_PFINT4		= 0x0274, /* 16:16 far pointer to 32 bit signed int */
+    ST_PHINT4		= 0x0374, /* 16:16 huge pointer to 32 bit signed int */
+    ST_32PINT4		= 0x0474, /* 32 bit pointer to 32 bit signed int */
+    ST_32PFINT4		= 0x0574, /* 16:32 pointer to 32 bit signed int */
+    ST_64PINT4		= 0x0674, /* 64 bit pointer to 32 bit signed int */
 
-    ST_UINT4		= 0x0075,	/* 32 bit unsigned int */
-    ST_PUINT4		= 0x0175,	/* 16 bit pointer to 32 bit unsigned int */
-    ST_PFUINT4		= 0x0275,	/* 16:16 far pointer to 32 bit unsigned int */
-    ST_PHUINT4		= 0x0375,	/* 16:16 huge pointer to 32 bit unsigned int */
-    ST_32PUINT4		= 0x0475,	/* 32 bit pointer to 32 bit unsigned int */
-    ST_32PFUINT4	= 0x0575,	/* 16:32 pointer to 32 bit unsigned int */
-    ST_64PUINT4		= 0x0675,	/* 64 bit pointer to 32 bit unsigned int */
+    ST_UINT4		= 0x0075, /* 32 bit unsigned int */
+    ST_PUINT4		= 0x0175, /* 16 bit pointer to 32 bit unsigned int */
+    ST_PFUINT4		= 0x0275, /* 16:16 far pointer to 32 bit unsigned int */
+    ST_PHUINT4		= 0x0375, /* 16:16 huge pointer to 32 bit unsigned int */
+    ST_32PUINT4		= 0x0475, /* 32 bit pointer to 32 bit unsigned int */
+    ST_32PFUINT4	= 0x0575, /* 16:32 pointer to 32 bit unsigned int */
+    ST_64PUINT4		= 0x0675, /* 64 bit pointer to 32 bit unsigned int */
 
 
     /* 64 bit quad types */
 
-    ST_QUAD		= 0x0013,	/* 64 bit signed */
-    ST_PQUAD		= 0x0113,	/* 16 bit pointer to 64 bit signed */
-    ST_PFQUAD		= 0x0213,	/* 16:16 far pointer to 64 bit signed */
-    ST_PHQUAD		= 0x0313,	/* 16:16 huge pointer to 64 bit signed */
-    ST_32PQUAD		= 0x0413,	/* 32 bit pointer to 64 bit signed */
-    ST_32PFQUAD		= 0x0513,	/* 16:32 pointer to 64 bit signed */
-    ST_64PQUAD		= 0x0613,	/* 64 bit pointer to 64 bit signed */
+    ST_QUAD		= 0x0013, /* 64 bit signed */
+    ST_PQUAD		= 0x0113, /* 16 bit pointer to 64 bit signed */
+    ST_PFQUAD		= 0x0213, /* 16:16 far pointer to 64 bit signed */
+    ST_PHQUAD		= 0x0313, /* 16:16 huge pointer to 64 bit signed */
+    ST_32PQUAD		= 0x0413, /* 32 bit pointer to 64 bit signed */
+    ST_32PFQUAD		= 0x0513, /* 16:32 pointer to 64 bit signed */
+    ST_64PQUAD		= 0x0613, /* 64 bit pointer to 64 bit signed */
 
-    ST_UQUAD		= 0x0023,	/* 64 bit unsigned */
-    ST_PUQUAD		= 0x0123,	/* 16 bit pointer to 64 bit unsigned */
-    ST_PFUQUAD		= 0x0223,	/* 16:16 far pointer to 64 bit unsigned */
-    ST_PHUQUAD		= 0x0323,	/* 16:16 huge pointer to 64 bit unsigned */
-    ST_32PUQUAD		= 0x0423,	/* 32 bit pointer to 64 bit unsigned */
-    ST_32PFUQUAD	= 0x0523,	/* 16:32 pointer to 64 bit unsigned */
-    ST_64PUQUAD		= 0x0623,	/* 64 bit pointer to 64 bit unsigned */
+    ST_UQUAD		= 0x0023, /* 64 bit unsigned */
+    ST_PUQUAD		= 0x0123, /* 16 bit pointer to 64 bit unsigned */
+    ST_PFUQUAD		= 0x0223, /* 16:16 far pointer to 64 bit unsigned */
+    ST_PHUQUAD		= 0x0323, /* 16:16 huge pointer to 64 bit unsigned */
+    ST_32PUQUAD		= 0x0423, /* 32 bit pointer to 64 bit unsigned */
+    ST_32PFUQUAD	= 0x0523, /* 16:32 pointer to 64 bit unsigned */
+    ST_64PUQUAD		= 0x0623, /* 64 bit pointer to 64 bit unsigned */
 
 
     /* 64 bit int types */
 
-    ST_INT8		= 0x0076,	/* 64 bit signed int */
-    ST_PINT8		= 0x0176,	/* 16 bit pointer to 64 bit signed int */
-    ST_PFINT8		= 0x0276,	/* 16:16 far pointer to 64 bit signed int */
-    ST_PHINT8		= 0x0376,	/* 16:16 huge pointer to 64 bit signed int */
-    ST_32PINT8		= 0x0476,	/* 32 bit pointer to 64 bit signed int */
-    ST_32PFINT8		= 0x0576,	/* 16:32 pointer to 64 bit signed int */
-    ST_64PINT8		= 0x0676,	/* 64 bit pointer to 64 bit signed int */
+    ST_INT8		= 0x0076, /* 64 bit signed int */
+    ST_PINT8		= 0x0176, /* 16 bit pointer to 64 bit signed int */
+    ST_PFINT8		= 0x0276, /* 16:16 far pointer to 64 bit signed int */
+    ST_PHINT8		= 0x0376, /* 16:16 huge pointer to 64 bit signed int */
+    ST_32PINT8		= 0x0476, /* 32 bit pointer to 64 bit signed int */
+    ST_32PFINT8		= 0x0576, /* 16:32 pointer to 64 bit signed int */
+    ST_64PINT8		= 0x0676, /* 64 bit pointer to 64 bit signed int */
 
-    ST_UINT8		= 0x0077,	/* 64 bit unsigned int */
-    ST_PUINT8		= 0x0177,	/* 16 bit pointer to 64 bit unsigned int */
-    ST_PFUINT8		= 0x0277,	/* 16:16 far pointer to 64 bit unsigned int */
-    ST_PHUINT8		= 0x0377,	/* 16:16 huge pointer to 64 bit unsigned int */
-    ST_32PUINT8		= 0x0477,	/* 32 bit pointer to 64 bit unsigned int */
-    ST_32PFUINT8	= 0x0577,	/* 16:32 pointer to 64 bit unsigned int */
-    ST_64PUINT8		= 0x0677,	/* 64 bit pointer to 64 bit unsigned int */
+    ST_UINT8		= 0x0077, /* 64 bit unsigned int */
+    ST_PUINT8		= 0x0177, /* 16 bit pointer to 64 bit unsigned int */
+    ST_PFUINT8		= 0x0277, /* 16:16 far pointer to 64 bit unsigned int */
+    ST_PHUINT8		= 0x0377, /* 16:16 huge pointer to 64 bit unsigned int */
+    ST_32PUINT8		= 0x0477, /* 32 bit pointer to 64 bit unsigned int */
+    ST_32PFUINT8	= 0x0577, /* 16:32 pointer to 64 bit unsigned int */
+    ST_64PUINT8		= 0x0677, /* 64 bit pointer to 64 bit unsigned int */
 
 
     /* 128 bit octet types */
 
-    ST_OCT		= 0x0014,	/* 128 bit signed */
-    ST_POCT		= 0x0114,	/* 16 bit pointer to 128 bit signed */
-    ST_PFOCT		= 0x0214,	/* 16:16 far pointer to 128 bit signed */
-    ST_PHOCT		= 0x0314,	/* 16:16 huge pointer to 128 bit signed */
-    ST_32POCT		= 0x0414,	/* 32 bit pointer to 128 bit signed */
-    ST_32PFOCT		= 0x0514,	/* 16:32 pointer to 128 bit signed */
-    ST_64POCT		= 0x0614,	/* 64 bit pointer to 128 bit signed */
+    ST_OCT		= 0x0014, /* 128 bit signed */
+    ST_POCT		= 0x0114, /* 16 bit pointer to 128 bit signed */
+    ST_PFOCT		= 0x0214, /* 16:16 far pointer to 128 bit signed */
+    ST_PHOCT		= 0x0314, /* 16:16 huge pointer to 128 bit signed */
+    ST_32POCT		= 0x0414, /* 32 bit pointer to 128 bit signed */
+    ST_32PFOCT		= 0x0514, /* 16:32 pointer to 128 bit signed */
+    ST_64POCT		= 0x0614, /* 64 bit pointer to 128 bit signed */
 
-    ST_UOCT		= 0x0024,	/* 128 bit unsigned */
-    ST_PUOCT		= 0x0124,	/* 16 bit pointer to 128 bit unsigned */
-    ST_PFUOCT		= 0x0224,	/* 16:16 far pointer to 128 bit unsigned */
-    ST_PHUOCT		= 0x0324,	/* 16:16 huge pointer to 128 bit unsigned */
-    ST_32PUOCT		= 0x0424,	/* 32 bit pointer to 128 bit unsigned */
-    ST_32PFUOCT		= 0x0524,	/* 16:32 pointer to 128 bit unsigned */
-    ST_64PUOCT		= 0x0624,	/* 64 bit pointer to 128 bit unsigned */
+    ST_UOCT		= 0x0024, /* 128 bit unsigned */
+    ST_PUOCT		= 0x0124, /* 16 bit pointer to 128 bit unsigned */
+    ST_PFUOCT		= 0x0224, /* 16:16 far pointer to 128 bit unsigned */
+    ST_PHUOCT		= 0x0324, /* 16:16 huge pointer to 128 bit unsigned */
+    ST_32PUOCT		= 0x0424, /* 32 bit pointer to 128 bit unsigned */
+    ST_32PFUOCT		= 0x0524, /* 16:32 pointer to 128 bit unsigned */
+    ST_64PUOCT		= 0x0624, /* 64 bit pointer to 128 bit unsigned */
 
 
     /* 128 bit int types */
 
-    ST_INT16		= 0x0078,	/* 128 bit signed int */
-    ST_PINT16		= 0x0178,	/* 16 bit pointer to 128 bit signed int */
-    ST_PFINT16		= 0x0278,	/* 16:16 far pointer to 128 bit signed int */
-    ST_PHINT16		= 0x0378,	/* 16:16 huge pointer to 128 bit signed int */
-    ST_32PINT16		= 0x0478,	/* 32 bit pointer to 128 bit signed int */
-    ST_32PFINT16	= 0x0578,	/* 16:32 pointer to 128 bit signed int */
-    ST_64PINT16		= 0x0678,	/* 64 bit pointer to 128 bit signed int */
+    ST_INT16		= 0x0078, /* 128 bit signed int */
+    ST_PINT16		= 0x0178, /* 16 bit pointer to 128 bit signed int */
+    ST_PFINT16		= 0x0278, /* 16:16 far pointer to 128 bit signed int */
+    ST_PHINT16		= 0x0378, /* 16:16 huge pointer to 128 bit signed int */
+    ST_32PINT16		= 0x0478, /* 32 bit pointer to 128 bit signed int */
+    ST_32PFINT16	= 0x0578, /* 16:32 pointer to 128 bit signed int */
+    ST_64PINT16		= 0x0678, /* 64 bit pointer to 128 bit signed int */
 
-    ST_UINT16		= 0x0079,	/* 128 bit unsigned int */
-    ST_PUINT16		= 0x0179,	/* 16 bit pointer to 128 bit unsigned int */
-    ST_PFUINT16		= 0x0279,	/* 16:16 far pointer to 128 bit unsigned int */
-    ST_PHUINT16		= 0x0379,	/* 16:16 huge pointer to 128 bit unsigned int */
-    ST_32PUINT16	= 0x0479,	/* 32 bit pointer to 128 bit unsigned int */
-    ST_32PFUINT16	= 0x0579,	/* 16:32 pointer to 128 bit unsigned int */
-    ST_64PUINT16	= 0x0679,	/* 64 bit pointer to 128 bit unsigned int */
+    ST_UINT16		= 0x0079, /* 128 bit unsigned int */
+    ST_PUINT16		= 0x0179, /* 16 bit pointer to 128 bit unsigned int */
+    ST_PFUINT16		= 0x0279, /* 16:16 far pointer to 128 bit unsigned int */
+    ST_PHUINT16		= 0x0379, /* 16:16 huge pointer to 128 bit unsigned int */
+    ST_32PUINT16	= 0x0479, /* 32 bit pointer to 128 bit unsigned int */
+    ST_32PFUINT16	= 0x0579, /* 16:32 pointer to 128 bit unsigned int */
+    ST_64PUINT16	= 0x0679, /* 64 bit pointer to 128 bit unsigned int */
 
 
     /* 16 bit real types */
 
-    ST_REAL16		= 0x0046,	/* 16 bit real */
-    ST_PREAL16		= 0x0146,	/* 16 bit pointer to 16 bit real */
-    ST_PFREAL16		= 0x0246,	/* 16:16 far pointer to 16 bit real */
-    ST_PHREAL16		= 0x0346,	/* 16:16 huge pointer to 16 bit real */
-    ST_32PREAL16	= 0x0446,	/* 32 bit pointer to 16 bit real */
-    ST_32PFREAL16	= 0x0546,	/* 16:32 pointer to 16 bit real */
-    ST_64PREAL16	= 0x0646,	/* 64 bit pointer to 16 bit real */
+    ST_REAL16		= 0x0046, /* 16 bit real */
+    ST_PREAL16		= 0x0146, /* 16 bit pointer to 16 bit real */
+    ST_PFREAL16		= 0x0246, /* 16:16 far pointer to 16 bit real */
+    ST_PHREAL16		= 0x0346, /* 16:16 huge pointer to 16 bit real */
+    ST_32PREAL16	= 0x0446, /* 32 bit pointer to 16 bit real */
+    ST_32PFREAL16	= 0x0546, /* 16:32 pointer to 16 bit real */
+    ST_64PREAL16	= 0x0646, /* 64 bit pointer to 16 bit real */
 
 
     /* 32 bit real types */
 
-    ST_REAL32		= 0x0040,	/* 32 bit real */
-    ST_PREAL32		= 0x0140,	/* 16 bit pointer to 32 bit real */
-    ST_PFREAL32		= 0x0240,	/* 16:16 far pointer to 32 bit real */
-    ST_PHREAL32		= 0x0340,	/* 16:16 huge pointer to 32 bit real */
-    ST_32PREAL32	= 0x0440,	/* 32 bit pointer to 32 bit real */
-    ST_32PFREAL32	= 0x0540,	/* 16:32 pointer to 32 bit real */
-    ST_64PREAL32	= 0x0640,	/* 64 bit pointer to 32 bit real */
+    ST_REAL32		= 0x0040, /* 32 bit real */
+    ST_PREAL32		= 0x0140, /* 16 bit pointer to 32 bit real */
+    ST_PFREAL32		= 0x0240, /* 16:16 far pointer to 32 bit real */
+    ST_PHREAL32		= 0x0340, /* 16:16 huge pointer to 32 bit real */
+    ST_32PREAL32	= 0x0440, /* 32 bit pointer to 32 bit real */
+    ST_32PFREAL32	= 0x0540, /* 16:32 pointer to 32 bit real */
+    ST_64PREAL32	= 0x0640, /* 64 bit pointer to 32 bit real */
 
 
     /* 32 bit partial-precision real types */
 
-    ST_REAL32PP		= 0x0045,	/* 32 bit PP real */
-    ST_PREAL32PP	= 0x0145,	/* 16 bit pointer to 32 bit PP real */
-    ST_PFREAL32PP	= 0x0245,	/* 16:16 far pointer to 32 bit PP real */
-    ST_PHREAL32PP	= 0x0345,	/* 16:16 huge pointer to 32 bit PP real */
-    ST_32PREAL32PP	= 0x0445,	/* 32 bit pointer to 32 bit PP real */
-    ST_32PFREAL32PP	= 0x0545,	/* 16:32 pointer to 32 bit PP real */
-    ST_64PREAL32PP	= 0x0645,	/* 64 bit pointer to 32 bit PP real */
+    ST_REAL32PP		= 0x0045, /* 32 bit PP real */
+    ST_PREAL32PP	= 0x0145, /* 16 bit pointer to 32 bit PP real */
+    ST_PFREAL32PP	= 0x0245, /* 16:16 far pointer to 32 bit PP real */
+    ST_PHREAL32PP	= 0x0345, /* 16:16 huge pointer to 32 bit PP real */
+    ST_32PREAL32PP	= 0x0445, /* 32 bit pointer to 32 bit PP real */
+    ST_32PFREAL32PP	= 0x0545, /* 16:32 pointer to 32 bit PP real */
+    ST_64PREAL32PP	= 0x0645, /* 64 bit pointer to 32 bit PP real */
 
 
     /* 48 bit real types  */
 
-    ST_REAL48		= 0x0044,	/* 48 bit real */
-    ST_PREAL48		= 0x0144,	/* 16 bit pointer to 48 bit real */
-    ST_PFREAL48		= 0x0244,	/* 16:16 far pointer to 48 bit real */
-    ST_PHREAL48		= 0x0344,	/* 16:16 huge pointer to 48 bit real */
-    ST_32PREAL48	= 0x0444,	/* 32 bit pointer to 48 bit real */
-    ST_32PFREAL48	= 0x0544,	/* 16:32 pointer to 48 bit real */
-    ST_64PREAL48	= 0x0644,	/* 64 bit pointer to 48 bit real */
+    ST_REAL48		= 0x0044, /* 48 bit real */
+    ST_PREAL48		= 0x0144, /* 16 bit pointer to 48 bit real */
+    ST_PFREAL48		= 0x0244, /* 16:16 far pointer to 48 bit real */
+    ST_PHREAL48		= 0x0344, /* 16:16 huge pointer to 48 bit real */
+    ST_32PREAL48	= 0x0444, /* 32 bit pointer to 48 bit real */
+    ST_32PFREAL48	= 0x0544, /* 16:32 pointer to 48 bit real */
+    ST_64PREAL48	= 0x0644, /* 64 bit pointer to 48 bit real */
 
 
     /* 64 bit real types */
 
-    ST_REAL64		= 0x0041,	/* 64 bit real */
-    ST_PREAL64		= 0x0141,	/* 16 bit pointer to 64 bit real */
-    ST_PFREAL64		= 0x0241,	/* 16:16 far pointer to 64 bit real */
-    ST_PHREAL64		= 0x0341,	/* 16:16 huge pointer to 64 bit real */
-    ST_32PREAL64	= 0x0441,	/* 32 bit pointer to 64 bit real */
-    ST_32PFREAL64	= 0x0541,	/* 16:32 pointer to 64 bit real */
-    ST_64PREAL64	= 0x0641,	/* 64 bit pointer to 64 bit real */
+    ST_REAL64		= 0x0041, /* 64 bit real */
+    ST_PREAL64		= 0x0141, /* 16 bit pointer to 64 bit real */
+    ST_PFREAL64		= 0x0241, /* 16:16 far pointer to 64 bit real */
+    ST_PHREAL64		= 0x0341, /* 16:16 huge pointer to 64 bit real */
+    ST_32PREAL64	= 0x0441, /* 32 bit pointer to 64 bit real */
+    ST_32PFREAL64	= 0x0541, /* 16:32 pointer to 64 bit real */
+    ST_64PREAL64	= 0x0641, /* 64 bit pointer to 64 bit real */
 
 
     /* 80 bit real types */
 
-    ST_REAL80		= 0x0042,	/* 80 bit real */
-    ST_PREAL80		= 0x0142,	/* 16 bit pointer to 80 bit real */
-    ST_PFREAL80		= 0x0242,	/* 16:16 far pointer to 80 bit real */
-    ST_PHREAL80		= 0x0342,	/* 16:16 huge pointer to 80 bit real */
-    ST_32PREAL80	= 0x0442,	/* 32 bit pointer to 80 bit real */
-    ST_32PFREAL80	= 0x0542,	/* 16:32 pointer to 80 bit real */
-    ST_64PREAL80	= 0x0642,	/* 64 bit pointer to 80 bit real */
+    ST_REAL80		= 0x0042, /* 80 bit real */
+    ST_PREAL80		= 0x0142, /* 16 bit pointer to 80 bit real */
+    ST_PFREAL80		= 0x0242, /* 16:16 far pointer to 80 bit real */
+    ST_PHREAL80		= 0x0342, /* 16:16 huge pointer to 80 bit real */
+    ST_32PREAL80	= 0x0442, /* 32 bit pointer to 80 bit real */
+    ST_32PFREAL80	= 0x0542, /* 16:32 pointer to 80 bit real */
+    ST_64PREAL80	= 0x0642, /* 64 bit pointer to 80 bit real */
 
 
     /* 128 bit real types  */
 
-    ST_REAL128		= 0x0043,	/* 128 bit real */
-    ST_PREAL128		= 0x0143,	/* 16 bit pointer to 128 bit real */
-    ST_PFREAL128	= 0x0243,	/* 16:16 far pointer to 128 bit real */
-    ST_PHREAL128	= 0x0343,	/* 16:16 huge pointer to 128 bit real */
-    ST_32PREAL128	= 0x0443,	/* 32 bit pointer to 128 bit real */
-    ST_32PFREAL128	= 0x0543,	/* 16:32 pointer to 128 bit real */
-    ST_64PREAL128	= 0x0643,	/* 64 bit pointer to 128 bit real */
+    ST_REAL128		= 0x0043, /* 128 bit real */
+    ST_PREAL128		= 0x0143, /* 16 bit pointer to 128 bit real */
+    ST_PFREAL128	= 0x0243, /* 16:16 far pointer to 128 bit real */
+    ST_PHREAL128	= 0x0343, /* 16:16 huge pointer to 128 bit real */
+    ST_32PREAL128	= 0x0443, /* 32 bit pointer to 128 bit real */
+    ST_32PFREAL128	= 0x0543, /* 16:32 pointer to 128 bit real */
+    ST_64PREAL128	= 0x0643, /* 64 bit pointer to 128 bit real */
 
 
     /* 32 bit complex types  */
 
-    ST_CPLX32		= 0x0050,	/* 32 bit complex */
-    ST_PCPLX32		= 0x0150,	/* 16 bit pointer to 32 bit complex */
-    ST_PFCPLX32		= 0x0250,	/* 16:16 far pointer to 32 bit complex */
-    ST_PHCPLX32		= 0x0350,	/* 16:16 huge pointer to 32 bit complex */
-    ST_32PCPLX32	= 0x0450,	/* 32 bit pointer to 32 bit complex */
-    ST_32PFCPLX32	= 0x0550,	/* 16:32 pointer to 32 bit complex */
-    ST_64PCPLX32	= 0x0650,	/* 64 bit pointer to 32 bit complex */
+    ST_CPLX32		= 0x0050, /* 32 bit complex */
+    ST_PCPLX32		= 0x0150, /* 16 bit pointer to 32 bit complex */
+    ST_PFCPLX32		= 0x0250, /* 16:16 far pointer to 32 bit complex */
+    ST_PHCPLX32		= 0x0350, /* 16:16 huge pointer to 32 bit complex */
+    ST_32PCPLX32	= 0x0450, /* 32 bit pointer to 32 bit complex */
+    ST_32PFCPLX32	= 0x0550, /* 16:32 pointer to 32 bit complex */
+    ST_64PCPLX32	= 0x0650, /* 64 bit pointer to 32 bit complex */
 
 
     /* 64 bit complex types  */
 
-    ST_CPLX64		= 0x0051,	/* 64 bit complex */
-    ST_PCPLX64		= 0x0151,	/* 16 bit pointer to 64 bit complex */
-    ST_PFCPLX64		= 0x0251,	/* 16:16 far pointer to 64 bit complex */
-    ST_PHCPLX64		= 0x0351,	/* 16:16 huge pointer to 64 bit complex */
-    ST_32PCPLX64	= 0x0451,	/* 32 bit pointer to 64 bit complex */
-    ST_32PFCPLX64	= 0x0551,	/* 16:32 pointer to 64 bit complex */
-    ST_64PCPLX64	= 0x0651,	/* 64 bit pointer to 64 bit complex */
+    ST_CPLX64		= 0x0051, /* 64 bit complex */
+    ST_PCPLX64		= 0x0151, /* 16 bit pointer to 64 bit complex */
+    ST_PFCPLX64		= 0x0251, /* 16:16 far pointer to 64 bit complex */
+    ST_PHCPLX64		= 0x0351, /* 16:16 huge pointer to 64 bit complex */
+    ST_32PCPLX64	= 0x0451, /* 32 bit pointer to 64 bit complex */
+    ST_32PFCPLX64	= 0x0551, /* 16:32 pointer to 64 bit complex */
+    ST_64PCPLX64	= 0x0651, /* 64 bit pointer to 64 bit complex */
 
 
     /* 80 bit complex types  */
 
-    ST_CPLX80		= 0x0052,	/* 80 bit complex */
-    ST_PCPLX80		= 0x0152,	/* 16 bit pointer to 80 bit complex */
-    ST_PFCPLX80		= 0x0252,	/* 16:16 far pointer to 80 bit complex */
-    ST_PHCPLX80		= 0x0352,	/* 16:16 huge pointer to 80 bit complex */
-    ST_32PCPLX80	= 0x0452,	/* 32 bit pointer to 80 bit complex */
-    ST_32PFCPLX80	= 0x0552,	/* 16:32 pointer to 80 bit complex */
-    ST_64PCPLX80	= 0x0652,	/* 64 bit pointer to 80 bit complex */
+    ST_CPLX80		= 0x0052, /* 80 bit complex */
+    ST_PCPLX80		= 0x0152, /* 16 bit pointer to 80 bit complex */
+    ST_PFCPLX80		= 0x0252, /* 16:16 far pointer to 80 bit complex */
+    ST_PHCPLX80		= 0x0352, /* 16:16 huge pointer to 80 bit complex */
+    ST_32PCPLX80	= 0x0452, /* 32 bit pointer to 80 bit complex */
+    ST_32PFCPLX80	= 0x0552, /* 16:32 pointer to 80 bit complex */
+    ST_64PCPLX80	= 0x0652, /* 64 bit pointer to 80 bit complex */
 
 
     /* 128 bit complex types  */
 
-    ST_CPLX128		= 0x0053,	/* 128 bit complex */
-    ST_PCPLX128		= 0x0153,	/* 16 bit pointer to 128 bit complex */
-    ST_PFCPLX128	= 0x0253,	/* 16:16 far pointer to 128 bit complex */
-    ST_PHCPLX128	= 0x0353,	/* 16:16 huge pointer to 128 bit real */
-    ST_32PCPLX128	= 0x0453,	/* 32 bit pointer to 128 bit complex */
-    ST_32PFCPLX128	= 0x0553,	/* 16:32 pointer to 128 bit complex */
-    ST_64PCPLX128	= 0x0653,	/* 64 bit pointer to 128 bit complex */
+    ST_CPLX128		= 0x0053, /* 128 bit complex */
+    ST_PCPLX128		= 0x0153, /* 16 bit pointer to 128 bit complex */
+    ST_PFCPLX128	= 0x0253, /* 16:16 far pointer to 128 bit complex */
+    ST_PHCPLX128	= 0x0353, /* 16:16 huge pointer to 128 bit real */
+    ST_32PCPLX128	= 0x0453, /* 32 bit pointer to 128 bit complex */
+    ST_32PFCPLX128	= 0x0553, /* 16:32 pointer to 128 bit complex */
+    ST_64PCPLX128	= 0x0653, /* 64 bit pointer to 128 bit complex */
 
 
     /* boolean types  */
 
-    ST_BOOL08		= 0x0030,	/* 8 bit boolean */
-    ST_PBOOL08		= 0x0130,	/* 16 bit pointer to  8 bit boolean */
-    ST_PFBOOL08		= 0x0230,	/* 16:16 far pointer to 8 bit boolean */
-    ST_PHBOOL08		= 0x0330,	/* 16:16 huge pointer to	 8 bit boolean */
-    ST_32PBOOL08	= 0x0430,	/* 32 bit pointer to 8 bit boolean */
-    ST_32PFBOOL08	= 0x0530,	/* 16:32 pointer to 8 bit boolean */
-    ST_64PBOOL08	= 0x0630,	/* 64 bit pointer to 8 bit boolean */
+    ST_BOOL08		= 0x0030, /* 8 bit boolean */
+    ST_PBOOL08		= 0x0130, /* 16 bit pointer to	8 bit boolean */
+    ST_PFBOOL08		= 0x0230, /* 16:16 far pointer to 8 bit boolean */
+    ST_PHBOOL08		= 0x0330, /* 16:16 huge pointer to	 8 bit boolean */
+    ST_32PBOOL08	= 0x0430, /* 32 bit pointer to 8 bit boolean */
+    ST_32PFBOOL08	= 0x0530, /* 16:32 pointer to 8 bit boolean */
+    ST_64PBOOL08	= 0x0630, /* 64 bit pointer to 8 bit boolean */
 
-    ST_BOOL16		= 0x0031,	/* 16 bit boolean */
-    ST_PBOOL16		= 0x0131,	/* 16 bit pointer to 16 bit boolean */
-    ST_PFBOOL16		= 0x0231,	/* 16:16 far pointer to 16 bit boolean */
-    ST_PHBOOL16		= 0x0331,	/* 16:16 huge pointer to 16 bit boolean */
-    ST_32PBOOL16	= 0x0431,	/* 32 bit pointer to 18 bit boolean */
-    ST_32PFBOOL16	= 0x0531,	/* 16:32 pointer to 16 bit boolean */
-    ST_64PBOOL16	= 0x0631,	/* 64 bit pointer to 18 bit boolean */
+    ST_BOOL16		= 0x0031, /* 16 bit boolean */
+    ST_PBOOL16		= 0x0131, /* 16 bit pointer to 16 bit boolean */
+    ST_PFBOOL16		= 0x0231, /* 16:16 far pointer to 16 bit boolean */
+    ST_PHBOOL16		= 0x0331, /* 16:16 huge pointer to 16 bit boolean */
+    ST_32PBOOL16	= 0x0431, /* 32 bit pointer to 18 bit boolean */
+    ST_32PFBOOL16	= 0x0531, /* 16:32 pointer to 16 bit boolean */
+    ST_64PBOOL16	= 0x0631, /* 64 bit pointer to 18 bit boolean */
 
-    ST_BOOL32		= 0x0032,	/* 32 bit boolean */
-    ST_PBOOL32		= 0x0132,	/* 16 bit pointer to 32 bit boolean */
-    ST_PFBOOL32		= 0x0232,	/* 16:16 far pointer to 32 bit boolean */
-    ST_PHBOOL32		= 0x0332,	/* 16:16 huge pointer to 32 bit boolean */
-    ST_32PBOOL32	= 0x0432,	/* 32 bit pointer to 32 bit boolean */
-    ST_32PFBOOL32	= 0x0532,	/* 16:32 pointer to 32 bit boolean */
-    ST_64PBOOL32	= 0x0632,	/* 64 bit pointer to 32 bit boolean */
+    ST_BOOL32		= 0x0032, /* 32 bit boolean */
+    ST_PBOOL32		= 0x0132, /* 16 bit pointer to 32 bit boolean */
+    ST_PFBOOL32		= 0x0232, /* 16:16 far pointer to 32 bit boolean */
+    ST_PHBOOL32		= 0x0332, /* 16:16 huge pointer to 32 bit boolean */
+    ST_32PBOOL32	= 0x0432, /* 32 bit pointer to 32 bit boolean */
+    ST_32PFBOOL32	= 0x0532, /* 16:32 pointer to 32 bit boolean */
+    ST_64PBOOL32	= 0x0632, /* 64 bit pointer to 32 bit boolean */
 
-    ST_BOOL64		= 0x0033,	/* 64 bit boolean */
-    ST_PBOOL64		= 0x0133,	/* 16 bit pointer to 64 bit boolean */
-    ST_PFBOOL64		= 0x0233,	/* 16:16 far pointer to 64 bit boolean */
-    ST_PHBOOL64		= 0x0333,	/* 16:16 huge pointer to 64 bit boolean */
-    ST_32PBOOL64	= 0x0433,	/* 32 bit pointer to 64 bit boolean */
-    ST_32PFBOOL64	= 0x0533,	/* 16:32 pointer to 64 bit boolean */
-    ST_64PBOOL64	= 0x0633,	/* 64 bit pointer to 64 bit boolean */
-
+    ST_BOOL64		= 0x0033, /* 64 bit boolean */
+    ST_PBOOL64		= 0x0133, /* 16 bit pointer to 64 bit boolean */
+    ST_PFBOOL64		= 0x0233, /* 16:16 far pointer to 64 bit boolean */
+    ST_PHBOOL64		= 0x0333, /* 16:16 huge pointer to 64 bit boolean */
+    ST_32PBOOL64	= 0x0433, /* 32 bit pointer to 64 bit boolean */
+    ST_32PFBOOL64	= 0x0533, /* 16:32 pointer to 64 bit boolean */
+    ST_64PBOOL64	= 0x0633, /* 64 bit pointer to 64 bit boolean */
 
     /* ??? */
 
-    ST_NCVPTR		= 0x01f0,	/* CV Internal type for created near pointers */
-    ST_FCVPTR		= 0x02f0,	/* CV Internal type for created far pointers */
-    ST_HCVPTR		= 0x03f0,	/* CV Internal type for created huge pointers */
-    ST_32NCVPTR		= 0x04f0,	/* CV Internal type for created near 32-bit pointers */
-    ST_32FCVPTR		= 0x05f0,	/* CV Internal type for created far 32-bit pointers */
-    ST_64NCVPTR		= 0x06f0,	/* CV Internal type for created near 64-bit pointers */
-} TYPE_ENUM_e;
+    ST_NCVPTR		= 0x01f0, /* CV Internal type for created near pointers */
+    ST_FCVPTR		= 0x02f0, /* CV Internal type for created far pointers */
+    ST_HCVPTR		= 0x03f0, /* CV Internal type for created huge pointers */
+    ST_32NCVPTR		= 0x04f0, /* CV Internal type for created near 32-bit pointers */
+    ST_32FCVPTR		= 0x05f0, /* CV Internal type for created far 32-bit pointers */
+    ST_64NCVPTR		= 0x06f0, /* CV Internal type for created near 64-bit pointers */
+  } TYPE_ENUM_e;
+
 
 typedef enum LEAF_ENUM_e {
 
@@ -537,7 +748,6 @@ typedef enum LEAF_ENUM_e {
 /* 32-bit type index versions of leaves, all have the 0x1000 bit set */
 
     LF_TI16_MAX		= 0x1000,
-
     LF_MODIFIER		= 0x1001,
     LF_POINTER		= 0x1002,
     LF_ARRAY_ST		= 0x1003,
@@ -686,9 +896,750 @@ typedef enum LEAF_ENUM_e {
     LF_PAD13		= 0xfd,
     LF_PAD14		= 0xfe,
     LF_PAD15		= 0xff,
-} LEAF_ENUM_e;
+  } LEAF_ENUM_e;
 
-/*  Symbol definitions */
+
+/* Type enum for pointer records */
+/* Pointers can be one of the following types */
+
+typedef enum CV_ptrtype_e {
+    CV_PTR_NEAR		= 0x00, /* 16 bit pointer */
+    CV_PTR_FAR		= 0x01, /* 16:16 far pointer */
+    CV_PTR_HUGE		= 0x02, /* 16:16 huge pointer */
+    CV_PTR_BASE_SEG	= 0x03, /* based on segment */
+    CV_PTR_BASE_VAL	= 0x04, /* based on value of base */
+    CV_PTR_BASE_SEGVAL	= 0x05, /* based on segment value of base */
+    CV_PTR_BASE_ADDR	= 0x06, /* based on address of base */
+    CV_PTR_BASE_SEGADDR = 0x07, /* based on segment address of base */
+    CV_PTR_BASE_TYPE	= 0x08, /* based on type */
+    CV_PTR_BASE_SELF	= 0x09, /* based on self */
+    CV_PTR_NEAR32	= 0x0a, /* 32 bit pointer */
+    CV_PTR_FAR32	= 0x0b, /* 16:32 pointer */
+    CV_PTR_64		= 0x0c, /* 64 bit pointer */
+    CV_PTR_UNUSEDPTR	= 0x0d	/* first unused pointer type */
+  } CV_ptrtype_e;
+
+
+/* Mode enum for pointers
+ * Pointers can have one of the following modes
+ *
+ *  To support for l-value and r-value reference, we added CV_PTR_MODE_LVREF
+ *  and CV_PTR_MODE_RVREF.  CV_PTR_MODE_REF should be removed at some point.
+ *  We keep it now so that old code that uses it won't be broken.
+ */
+
+typedef enum CV_ptrmode_e {
+    CV_PTR_MODE_PTR	= 0x00, /* "normal" pointer */
+    CV_PTR_MODE_REF	= 0x01, /* "old" reference */
+    CV_PTR_MODE_LVREF	= 0x01, /* l-value reference */
+    CV_PTR_MODE_PMEM	= 0x02, /* pointer to data member */
+    CV_PTR_MODE_PMFUNC	= 0x03, /* pointer to member function */
+    CV_PTR_MODE_RVREF	= 0x04, /* r-value reference */
+    CV_PTR_MODE_RESERVED= 0x05	/* first unused pointer mode */
+  } CV_ptrmode_e;
+
+
+/* enumeration for pointer-to-member types */
+
+typedef enum CV_pmtype_e {
+    CV_PMTYPE_Undef	= 0x00, /* not specified (pre VC8) */
+    CV_PMTYPE_D_Single	= 0x01, /* member data, single inheritance */
+    CV_PMTYPE_D_Multiple= 0x02, /* member data, multiple inheritance */
+    CV_PMTYPE_D_Virtual = 0x03, /* member data, virtual inheritance */
+    CV_PMTYPE_D_General = 0x04, /* member data, most general */
+    CV_PMTYPE_F_Single	= 0x05, /* member function, single inheritance */
+    CV_PMTYPE_F_Multiple= 0x06, /* member function, multiple inheritance */
+    CV_PMTYPE_F_Virtual = 0x07, /* member function, virtual inheritance */
+    CV_PMTYPE_F_General = 0x08, /* member function, most general */
+  } CV_pmtype_e;
+
+
+/* enumeration for method properties */
+
+typedef enum CV_methodprop_e {
+    CV_MTvanilla	= 0x00,
+    CV_MTvirtual	= 0x01,
+    CV_MTstatic		= 0x02,
+    CV_MTfriend		= 0x03,
+    CV_MTintro		= 0x04,
+    CV_MTpurevirt	= 0x05,
+    CV_MTpureintro	= 0x06
+  } CV_methodprop_e;
+
+
+/* enumeration for virtual shape table entries */
+
+typedef enum CV_VTS_desc_e {
+    CV_VTS_near		= 0x00,
+    CV_VTS_far		= 0x01,
+    CV_VTS_thin		= 0x02,
+    CV_VTS_outer	= 0x03,
+    CV_VTS_meta		= 0x04,
+    CV_VTS_near32	= 0x05,
+    CV_VTS_far32	= 0x06,
+    CV_VTS_unused	= 0x07
+  } CV_VTS_desc_e;
+
+
+/* enumeration for LF_LABEL address modes */
+
+typedef enum CV_LABEL_TYPE_e {
+    CV_LABEL_NEAR = 0,	     /* near return */
+    CV_LABEL_FAR  = 4	     /* far return */
+  } CV_LABEL_TYPE_e;
+
+
+/* enumeration for LF_MODIFIER values */
+
+typedef struct CV_modifier_t {
+    unsigned short MOD_const	   :1;
+    unsigned short MOD_volatile	   :1;
+    unsigned short MOD_unaligned   :1;
+    unsigned short MOD_unused	   :13;
+  } CV_modifier_t;
+
+
+/* enumeration for HFA kinds */
+
+typedef enum CV_HFA_e {
+   CV_HFA_none	 = 0,
+   CV_HFA_float	 = 1,
+   CV_HFA_double = 2,
+   CV_HFA_other	 = 3
+ } CV_HFA_e;
+
+
+/*  enumeration for MoCOM UDT kinds */
+
+typedef enum CV_MOCOM_UDT_e {
+    CV_MOCOM_UDT_none	   = 0,
+    CV_MOCOM_UDT_ref	   = 1,
+    CV_MOCOM_UDT_value	   = 2,
+    CV_MOCOM_UDT_interface = 3
+  } CV_MOCOM_UDT_e;
+
+
+/* bit field structure describing class/struct/union/enum properties */
+
+typedef union CV_prop_t {
+    unsigned short flags;
+    struct {
+	unsigned short packed	:1; /* true if structure is packed */
+	unsigned short ctor	:1; /* true if constructors or destructors present */
+	unsigned short ovlops	:1; /* true if overloaded operators present */
+	unsigned short isnested :1; /* true if this is a nested class */
+	unsigned short cnested	:1; /* true if this class contains nested types */
+	unsigned short opassign :1; /* true if overloaded assignment (=) */
+	unsigned short opcast	:1; /* true if casting methods */
+	unsigned short fwdref	:1; /* true if forward reference (incomplete defn) */
+	unsigned short scoped	:1; /* scoped definition */
+	unsigned short hasuniquename :1; /* true if there is a decorated name following the regular name */
+	unsigned short sealed	:1; /* true if class cannot be used as a base class */
+	unsigned short hfa	:2; /* CV_HFA_e */
+	unsigned short intrinsic:1; /* true if class is an intrinsic type (e.g. __m128d) */
+	unsigned short mocom	:2; /* CV_MOCOM_UDT_e */
+    };
+  } CV_prop_t;
+
+
+/* class field attribute */
+
+typedef union CV_fldattr_t {
+    unsigned short flags;
+    struct {
+	unsigned short access	:2; /* access protection CV_access_t */
+	unsigned short mprop	:3; /* method properties CV_methodprop_t */
+	unsigned short pseudo	:1; /* compiler generated fcn and does not exist */
+	unsigned short noinherit:1; /* true if class cannot be inherited */
+	unsigned short noconstruct:1; /* true if class cannot be constructed */
+	unsigned short compgenx :1; /* compiler generated fcn and does exist */
+	unsigned short sealed	:1; /* true if method cannot be overridden */
+	unsigned short unused	:6; /* unused */
+    };
+  } CV_fldattr_t;
+
+
+/* function flags */
+
+typedef union CV_funcattr_t {
+    unsigned char all;
+    struct {
+	unsigned char cxxreturnudt :1;	/* true if C++ style ReturnUDT */
+	unsigned char ctor	   :1;	/* true if func is an instance constructor */
+	unsigned char ctorvbase	   :1;	/* true if func is an instance constructor of a class with virtual bases */
+	unsigned char unused	   :5;	/* unused */
+    };
+  } CV_funcattr_t;
+
+
+/* matrix flags */
+
+typedef struct CV_matrixattr_t {
+    unsigned char  row_major   :1; /* true if matrix has row-major layout (column-major is default) */
+    unsigned char  unused      :7;
+  } CV_matrixattr_t;
+
+
+/*  Structures to access to the type records */
+
+typedef struct TYPTYPE {
+    unsigned short  len;
+    unsigned short  leaf;
+    unsigned char   data[CV_ZEROLEN];
+  } TYPTYPE; /* general types record */
+
+#define NextType(pType) (pType + ((TYPTYPE *)pType)->len + sizeof(unsigned short))
+
+
+typedef enum CV_PMEMBER {
+    CV_PDM16_NONVIRT	= 0x00, /* 16:16 data no virtual fcn or base */
+    CV_PDM16_VFCN	= 0x01, /* 16:16 data with virtual functions */
+    CV_PDM16_VBASE	= 0x02, /* 16:16 data with virtual bases */
+    CV_PDM32_NVVFCN	= 0x03, /* 16:32 data w/wo virtual functions */
+    CV_PDM32_VBASE	= 0x04, /* 16:32 data with virtual bases */
+
+    CV_PMF16_NEARNVSA	= 0x05, /* 16:16 near method nonvirtual single address point */
+    CV_PMF16_NEARNVMA	= 0x06, /* 16:16 near method nonvirtual multiple address points */
+    CV_PMF16_NEARVBASE	= 0x07, /* 16:16 near method virtual bases */
+    CV_PMF16_FARNVSA	= 0x08, /* 16:16 far method nonvirtual single address point */
+    CV_PMF16_FARNVMA	= 0x09, /* 16:16 far method nonvirtual multiple address points */
+    CV_PMF16_FARVBASE	= 0x0a, /* 16:16 far method virtual bases */
+
+    CV_PMF32_NVSA	= 0x0b, /* 16:32 method nonvirtual single address point */
+    CV_PMF32_NVMA	= 0x0c, /* 16:32 method nonvirtual multiple address point */
+    CV_PMF32_VBASE	= 0x0d	/* 16:32 method virtual bases */
+  } CV_PMEMBER;
+
+
+/*  memory representation of pointer to member. These representations are
+    indexed by the enumeration above in the LF_POINTER record
+
+    representation of a 16:16 pointer to data for a class with no
+    virtual functions or virtual bases */
+
+struct CV_PDMR16_NONVIRT {
+    CV_off16_t	    mdisp;	/* displacement to data (NULL = -1) */
+};
+
+/*  representation of a 16:16 pointer to data for a class with virtual
+    functions */
+
+struct CV_PMDR16_VFCN {
+    CV_off16_t	    mdisp;	/* displacement to data ( NULL = 0) */
+};
+
+/*  representation of a 16:16 pointer to data for a class with
+    virtual bases */
+
+struct CV_PDMR16_VBASE {
+    CV_off16_t	    mdisp;	/* displacement to data */
+    CV_off16_t	    pdisp;	/* this pointer displacement to vbptr */
+    CV_off16_t	    vdisp;	/* displacement within vbase table */
+};				/* NULL = (,,0xffff) */
+
+/*  representation of a 32 bit pointer to data for a class with
+    or without virtual functions and no virtual bases */
+
+struct CV_PDMR32_NVVFCN {
+    CV_off32_t	    mdisp;	/* displacement to data (NULL = 0x80000000) */
+};
+
+/*  representation of a 32 bit pointer to data for a class
+    with virtual bases */
+
+struct CV_PDMR32_VBASE {
+    CV_off32_t	    mdisp;	/* displacement to data */
+    CV_off32_t	    pdisp;	/* this pointer displacement */
+    CV_off32_t	    vdisp;	/* vbase table displacement */
+};				/* NULL = (,,0xffffffff) */
+
+/* representation of a 16:16 pointer to near member function for a
+   class with no virtual functions or bases and a single address point */
+
+struct CV_PMFR16_NEARNVSA {
+    CV_uoff16_t	    off;	/* near address of function (NULL = 0) */
+};
+
+/*  representation of a 16 bit pointer to member functions of a
+    class with no virtual bases and multiple address points */
+
+struct CV_PMFR16_NEARNVMA {
+    CV_uoff16_t	    off;	/* offset of function (NULL = 0,x) */
+    signed short    disp;
+};
+
+/*  representation of a 16 bit pointer to member function of a
+    class with virtual bases */
+
+struct CV_PMFR16_NEARVBASE {
+    CV_uoff16_t	    off;	/* offset of function (NULL = 0,x,x,x) */
+    CV_off16_t	    mdisp;	/* displacement to data */
+    CV_off16_t	    pdisp;	/* this pointer displacement */
+    CV_off16_t	    vdisp;	/* vbase table displacement */
+};
+
+/*  representation of a 16:16 pointer to far member function for a
+    class with no virtual bases and a single address point */
+
+struct CV_PMFR16_FARNVSA {
+    CV_uoff16_t	    off;	/* offset of function (NULL = 0:0) */
+    unsigned short  seg;	/* segment of function */
+};
+
+/*  representation of a 16:16 far pointer to member functions of a
+    class with no virtual bases and multiple address points */
+
+struct CV_PMFR16_FARNVMA {
+    CV_uoff16_t	    off;	/* offset of function (NULL = 0:0,x) */
+    unsigned short  seg;
+    signed short    disp;
+};
+
+/*  representation of a 16:16 far pointer to member function of a
+    class with virtual bases */
+
+struct CV_PMFR16_FARVBASE {
+    CV_uoff16_t	    off;	/* offset of function (NULL = 0:0,x,x,x) */
+    unsigned short  seg;
+    CV_off16_t	    mdisp;	/* displacement to data */
+    CV_off16_t	    pdisp;	/* this pointer displacement */
+    CV_off16_t	    vdisp;	/* vbase table displacement */
+
+};
+
+/*  representation of a 32 bit pointer to member function for a
+    class with no virtual bases and a single address point */
+
+struct CV_PMFR32_NVSA {
+    CV_uoff32_t	     off;	 /* near address of function (NULL = 0L) */
+};
+
+/*  representation of a 32 bit pointer to member function for a
+    class with no virtual bases and multiple address points */
+
+struct CV_PMFR32_NVMA {
+    CV_uoff32_t	    off;	/* near address of function (NULL = 0L,x) */
+    CV_off32_t	    disp;
+};
+
+/*  representation of a 32 bit pointer to member function for a
+    class with virtual bases */
+
+struct CV_PMFR32_VBASE {
+    CV_uoff32_t	    off;	/* near address of function (NULL = 0L,x,x,x) */
+    CV_off32_t	    mdisp;	/* displacement to data */
+    CV_off32_t	    pdisp;	/* this pointer displacement */
+    CV_off32_t	    vdisp;	/* vbase table displacement */
+};
+
+/*  Easy leaf - used for generic casting to reference leaf field
+    of a subfield of a complex list */
+
+typedef struct lfEasy {
+    unsigned short  leaf;	    /* LF_... */
+  } lfEasy;
+
+
+/* Type record for LF_MODIFIER */
+
+typedef struct CV_MODIFIER_16t {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_MODIFIER_16t */
+    CV_modifier_t   attr;	    /* modifier attribute modifier_t */
+    CV_typ16_t	    type;	    /* modified type */
+  } CV_MODIFIER_16t;
+
+typedef struct CV_MODIFIER {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_MODIFIER */
+    CV_typ_t	    type;	    /* modified type */
+    CV_modifier_t   attr;	    /* modifier attribute modifier_t */
+  } CV_MODIFIER;
+
+
+/* type record for LF_POINTER */
+
+typedef struct CV_POINTER_16t {
+    unsigned short size;
+    unsigned short leaf;	    /* LF_POINTER_16t */
+    union {
+	unsigned short attr;
+	struct {
+	    unsigned char ptrtype     :5; /* ordinal specifying pointer type (CV_ptrtype_e) */
+	    unsigned char ptrmode     :3; /* ordinal specifying pointer mode (CV_ptrmode_e) */
+	    unsigned char isflat32    :1; /* true if 0:32 pointer */
+	    unsigned char isvolatile  :1; /* TRUE if volatile pointer */
+	    unsigned char isconst     :1; /* TRUE if const pointer */
+	    unsigned char isunaligned :1; /* TRUE if unaligned pointer */
+	    unsigned char unused      :4;
+	};
+    };
+    CV_typ16_t utype;	/* type index of the underlying type */
+    union {
+	struct {
+	    CV_typ16_t	    pmclass;	/* index of containing class for pointer to member */
+	    unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
+	};
+	unsigned short	    bseg;	/* base segment if PTR_BASE_SEG */
+	unsigned char	    Sym[1];	/* copy of base symbol record (including length) */
+	struct	{
+	    CV_typ16_t	    index;	/* type index if CV_PTR_BASE_TYPE */
+	    unsigned char   name[1];	/* name of base type */
+	};
+    };
+  } CV_POINTER_16t;
+
+typedef struct CV_POINTER {
+    unsigned short len;
+    unsigned short leaf; /* LF_POINTER */
+    CV_typ_t utype;	 /* type index of the underlying type */
+    union {
+	unsigned long attr;
+	struct {
+	    unsigned long ptrtype     :5; /* ordinal specifying pointer type (CV_ptrtype_e) */
+	    unsigned long ptrmode     :3; /* ordinal specifying pointer mode (CV_ptrmode_e) */
+	    unsigned long isflat32    :1; /* true if 0:32 pointer */
+	    unsigned long isvolatile  :1; /* TRUE if volatile pointer */
+	    unsigned long isconst     :1; /* TRUE if const pointer */
+	    unsigned long isunaligned :1; /* TRUE if unaligned pointer */
+	    unsigned long isrestrict  :1; /* TRUE if restricted pointer (allow agressive opts) */
+	    unsigned long size	      :6; /* size of pointer (in bytes) */
+	    unsigned long ismocom     :1; /* TRUE if it is a MoCOM pointer (^ or %) */
+	    unsigned long islref      :1; /* TRUE if it is this pointer of member function with & ref-qualifier */
+	    unsigned long isrref      :1; /* TRUE if it is this pointer of member function with && ref-qualifier */
+	    unsigned long unused      :10;/* pad out to 32-bits for following cv_typ_t's */
+	};
+    };
+    union {
+	struct {
+	    CV_typ_t	    pmclass;	/* index of containing class for pointer to member */
+	    unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
+	};
+	unsigned short	    bseg;	/* base segment if PTR_BASE_SEG */
+	unsigned char	    Sym[1];	/* copy of base symbol record (including length) */
+	struct	{
+	    CV_typ_t	    index;	/* type index if CV_PTR_BASE_TYPE */
+	    unsigned char   name[1];	/* name of base type */
+	};
+    };
+  } CV_POINTER;
+
+
+/* type record for LF_ARRAY */
+
+typedef struct CV_ARRAY_16t {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_ARRAY_16t */
+    CV_typ16_t	    elemtype;		/* type index of element type */
+    CV_typ16_t	    idxtype;		/* type index of indexing type */
+    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
+  } CV_ARRAY_16t;
+
+typedef struct CV_ARRAY {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_ARRAY */
+    CV_typ_t	    elemtype;
+    CV_typ_t	    idxtype;
+    unsigned char   data[CV_ZEROLEN];
+  } CV_ARRAY;
+
+typedef struct CV_STRIDED_ARRAY {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_STRIDED_ARRAY */
+    CV_typ_t	    elemtype;
+    CV_typ_t	    idxtype;
+    unsigned long   stride;
+    unsigned char   data[CV_ZEROLEN];
+  } CV_STRIDED_ARRAY;
+
+
+/* type record for LF_VECTOR */
+
+typedef struct CV_VECTOR {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_VECTOR */
+    CV_typ_t	    elemtype;		/* type index of element type */
+    unsigned long   count;		/* number of elements in the vector */
+    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
+  } CV_VECTOR;
+
+/* type record for LF_MATRIX */
+
+typedef struct CV_MATRIX {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_MATRIX */
+    CV_typ_t	    elemtype;		/* type index of element type */
+    unsigned long   rows;		/* number of rows */
+    unsigned long   cols;		/* number of columns */
+    unsigned long   majorStride;
+    CV_matrixattr_t matattr;		/* attributes */
+    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
+  } CV_MATRIX;
+
+
+/* type record for LF_CLASS, LF_STRUCTURE */
+
+typedef struct CV_CLASS_16t {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_CLASS_16t, LF_STRUCT_16t */
+    unsigned short  count;		/* count of number of elements in class */
+    CV_typ16_t	    field;		/* type index of LF_FIELD descriptor list */
+    CV_prop_t	    property;		/* property attribute field (prop_t) */
+    CV_typ16_t	    derived;		/* type index of derived from list if not zero */
+    CV_typ16_t	    vshape;		/* type index of vshape table for this class */
+    unsigned char   data[CV_ZEROLEN];	/* data describing length of structure in bytes and name */
+  } CV_CLASS_16t;
+typedef CV_CLASS_16t CV_STRUCT_16t;
+
+typedef struct CV_CLASS {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_CLASS, LF_STRUCT, LF_INTERFACE */
+    unsigned short  count;
+    CV_prop_t	    property;
+    CV_typ_t	    field;
+    CV_typ_t	    derived;
+    CV_typ_t	    vshape;
+    unsigned char   data[CV_ZEROLEN];
+  } CV_CLASS;
+typedef CV_CLASS CV_STRUCT;
+typedef CV_CLASS CV_INTERFACE;
+
+/* type record for LF_UNION */
+
+typedef struct CV_UNION_16t {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_UNION_16t */
+    unsigned short  count;		/* count of number of elements in class */
+    CV_typ16_t	    field;		/* type index of LF_FIELD descriptor list */
+    CV_prop_t	    property;		/* property attribute field */
+    unsigned char   data[CV_ZEROLEN];	/* variable length data describing length of structure and name */
+  } CV_UNION_16t;
+
+typedef struct CV_UNION {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_UNION */
+    unsigned short  count;
+    CV_prop_t	    property;
+    CV_typ_t	    field;
+    unsigned char   data[CV_ZEROLEN];
+  } CV_UNION;
+
+
+/* type record for LF_ALIAS */
+
+typedef struct CV_ALIAS {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_ALIAS */
+    CV_typ_t	    utype;	/* underlying type */
+    unsigned char   Name[1];	/* alias name */
+  } CV_ALIAS;
+
+
+typedef CV_typ_t CV_ItemId;
+
+typedef struct CV_FUNC_ID {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_FUNC_ID */
+    CV_ItemId	    scopeId;	/* parent scope of the ID, 0 if global */
+    CV_typ_t	    type;	/* function type */
+    unsigned char   name[CV_ZEROLEN];
+  } CV_FUNC_ID;
+
+typedef struct CV_MFUNC_ID {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_MFUNC_ID */
+    CV_typ_t	    parentType; /* type index of parent */
+    CV_typ_t	    type;	/* function type */
+    unsigned char   name[CV_ZEROLEN];
+  } CV_MFUNC_ID;
+
+typedef struct CV_STRING_ID {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_STRING_ID */
+    CV_ItemId	    id;		/* ID to list of sub string IDs */
+    unsigned char   name[CV_ZEROLEN];
+  } CV_STRINGID;
+
+typedef struct CV_UDT_SRC_LINE {
+    unsigned short  size;
+    unsigned short leaf;	/* LF_UDT_SRC_LINE */
+    CV_typ_t	   type;	/* UDT's type index */
+    CV_ItemId	   src;		/* index to LF_STRING_ID record where source file name is saved */
+    unsigned long  line;	/* line number */
+  } CV_UDT_SRC_LINE;
+
+typedef struct CV_UDT_MOD_SRC_LINE {
+    unsigned short  size;
+    unsigned short leaf;	/* LF_UDT_MOD_SRC_LINE */
+    CV_typ_t	   type;	/* UDT's type index */
+    CV_ItemId	   src;		/* index into string table where source file name is saved */
+    unsigned long  line;	/* line number */
+    unsigned short imod;	/* module that contributes this UDT definition */
+  } CV_UDT_MOD_SRC_LINE;
+
+typedef enum CV_BuildInfo_e {
+    CV_BuildInfo_CurrentDirectory = 0,
+    CV_BuildInfo_BuildTool	  = 1,	  /* Cl.exe */
+    CV_BuildInfo_SourceFile	  = 2,	  /* foo.cpp */
+    CV_BuildInfo_ProgramDatabaseFile = 3, /* foo.pdb */
+    CV_BuildInfo_CommandArguments = 4,	  /* -I etc */
+    CV_BUILDINFO_KNOWN
+  } CV_BuildInfo_e;
+
+/* type record for build information */
+
+typedef struct CV_BUILDINFO {
+    unsigned short  size;
+    unsigned short  leaf;		     /* LF_BUILDINFO */
+    unsigned short  count;		     /* number of arguments */
+    CV_ItemId	    arg[CV_BUILDINFO_KNOWN]; /* arguments as CodeItemId */
+  } CV_BUILDINFO;
+
+
+/* type record for LF_MANAGED */
+
+typedef struct CV_MANAGED {
+    unsigned short  leaf;	/* LF_MANAGED */
+    unsigned char   Name[1];	/* utf8, zero terminated managed type name */
+  } CV_MANAGED;
+
+/* type record for LF_ENUM */
+
+typedef struct CV_ENUM_16t {
+    unsigned short  leaf;	    /* LF_ENUM_16t */
+    unsigned short  count;	    /* count of number of elements in class */
+    CV_typ16_t	    utype;	    /* underlying type of the enum */
+    CV_typ16_t	    field;	    /* type index of LF_FIELD descriptor list */
+    CV_prop_t	    property;	    /* property attribute field */
+    unsigned char   Name[1];	    /* length prefixed name of enum */
+  } CV_ENUM_16t;
+
+typedef struct CV_ENUM {
+    unsigned short  leaf;	    /* LF_ENUM */
+    unsigned short  count;	    /* count of number of elements in class */
+    CV_prop_t	    property;	    /* property attribute field */
+    CV_typ_t	    utype;	    /* underlying type of the enum */
+    CV_typ_t	    field;	    /* type index of LF_FIELD descriptor list */
+    unsigned char   Name[1];	    /* length prefixed name of enum */
+  } CV_ENUM;
+
+
+/* Type record for LF_PROCEDURE */
+
+typedef struct CV_PROCEDURE_16t {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_PROCEDURE_16t */
+    CV_typ16_t	    rvtype;	    /* type index of return value */
+    unsigned char   calltype;	    /* calling convention (CV_call_t) */
+    CV_funcattr_t   funcattr;	    /* attributes */
+    unsigned short  parmcount;	    /* number of parameters */
+    CV_typ16_t	    arglist;	    /* type index of argument list */
+  } CV_PROCEDURE_16t;
+
+typedef struct CV_PROCEDURE {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_PROCEDURE */
+    CV_typ_t	    rvtype;	    /* type index of return value */
+    unsigned char   calltype;	    /* calling convention (CV_call_t) */
+    CV_funcattr_t   funcattr;	    /* attributes */
+    unsigned short  parmcount;	    /* number of parameters */
+    CV_typ_t	    arglist;	    /* type index of argument list */
+  } CV_PROCEDURE;
+
+
+/* Type record for member function */
+
+typedef struct CV_MFUNCTION_16t {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_MFUNCTION_16t */
+    CV_typ16_t	    rvtype;	    /* type index of return value */
+    CV_typ16_t	    classtype;	    /* type index of containing class */
+    CV_typ16_t	    thistype;	    /* type index of this pointer (model specific) */
+    unsigned char   calltype;	    /* calling convention (call_t) */
+    CV_funcattr_t   funcattr;	    /* attributes */
+    unsigned short  parmcount;	    /* number of parameters */
+    CV_typ16_t	    arglist;	    /* type index of argument list */
+    long	    thisadjust;	    /* this adjuster (long because pad required anyway) */
+  } CV_MFUNCTION_16t;
+
+typedef struct CV_MFUNCTION {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_MFUNCTION */
+    CV_typ_t	    rvtype;	    /* type index of return value */
+    CV_typ_t	    classtype;	    /* type index of containing class */
+    CV_typ_t	    thistype;	    /* type index of this pointer (model specific) */
+    unsigned char   calltype;	    /* calling convention (call_t) */
+    CV_funcattr_t   funcattr;	    /* attributes */
+    unsigned short  parmcount;	    /* number of parameters */
+    CV_typ_t	    arglist;	    /* type index of argument list */
+    long	    thisadjust;	    /* this adjuster (long because pad required anyway) */
+  } CV_MFUNCTION;
+
+
+/* type record for basic array */
+
+typedef struct CV_BARRAY_16t {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_BARRAY_16t */
+    CV_typ16_t	    utype;	/* type index of underlying type */
+  } CV_BARRAY_16t;
+
+typedef struct CV_BARRAY {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_BARRAY */
+    CV_typ_t	    utype;	/* type index of underlying type */
+  } CV_BARRAY;
+
+
+/* type record for assembler labels */
+
+typedef struct CV_LABEL {
+    unsigned short  size;
+    unsigned short  leaf;	/* LF_LABEL */
+    unsigned short  mode;	/* addressing mode of label */
+  } CV_LABEL;
+
+/* argument list leaf */
+
+typedef struct CV_ARGLIST_16t {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_ARGLIST_16t */
+    unsigned short  count;		/* number of arguments */
+    CV_typ16_t	    arg[CV_ZEROLEN];	/* number of arguments */
+  } CV_ARGLIST_16t;
+
+typedef struct CV_ARGLIST {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_ARGLIST, LF_SUBSTR_LIST */
+    unsigned long   count;		/* number of arguments */
+    CV_typ_t	    arg[CV_ZEROLEN];	/* number of arguments */
+  } CV_ARGLIST;
+
+typedef struct CV_FIELDLIST {
+    unsigned short  size;
+    unsigned short  leaf;		/* LF_FIELDLIST, LF_FIELDLIST_16t */
+    char	    data[CV_ZEROLEN];	/* field list sub lists */
+  } CV_FIELDLIST;
+
+/* type record for LF_BITFIELD */
+
+typedef struct CV_BITFIELD_16t {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_BITFIELD_16t */
+    unsigned char   length;
+    unsigned char   position;
+    CV_typ16_t	    type;	    /* type of bitfield */
+  } CV_BITFIELD_16t;
+
+typedef struct CV_BITFIELD {
+    unsigned short  size;
+    unsigned short  leaf;	    /* LF_BITFIELD */
+    CV_typ_t	    type;	    /* type of bitfield */
+    unsigned char   length;
+    unsigned char   position;
+  } CV_BITFIELD;
+
+/* Symbol definitions */
 
 typedef enum SYM_ENUM_e {
     S_COMPILE	    =  0x0001,	/* Compile flags symbol */
@@ -2026,340 +2977,12 @@ typedef enum CV_HREG_e {
     CV_AMD64_BNDSTATUS	= 693
   } CV_HREG_e;
 
-/* subtype enumeration values for CV_SPECIAL */
-
-typedef enum CV_type_e {
-    CV_SPECIAL	    = 0x00,	    /* special type size values */
-    CV_SIGNED	    = 0x01,	    /* signed integral size values */
-    CV_UNSIGNED	    = 0x02,	    /* unsigned integral size values */
-    CV_BOOLEAN	    = 0x03,	    /* Boolean size values */
-    CV_REAL	    = 0x04,	    /* real number size values */
-    CV_COMPLEX	    = 0x05,	    /* complex number size values */
-    CV_SPECIAL2	    = 0x06,	    /* second set of special types */
-    CV_INT	    = 0x07,	    /* integral (int) values */
-    CV_CVRESERVED   = 0x0f,
-} CV_type_e;
-
-/* subtype enumeration values for CV_SPECIAL */
-
-typedef enum CV_special_e {
-    CV_SP_NOTYPE    = 0x00,
-    CV_SP_ABS	    = 0x01,
-    CV_SP_SEGMENT   = 0x02,
-    CV_SP_VOID	    = 0x03,
-    CV_SP_CURRENCY  = 0x04,
-    CV_SP_NBASICSTR = 0x05,
-    CV_SP_FBASICSTR = 0x06,
-    CV_SP_NOTTRANS  = 0x07,
-    CV_SP_HRESULT   = 0x08,
-} CV_special_e;
-
-/* subtype enumeration values for CV_SIGNED, CV_UNSIGNED and CV_BOOLEAN */
-
-typedef enum CV_integral_e {
-    CV_IN_1BYTE	    = 0x00,
-    CV_IN_2BYTE	    = 0x01,
-    CV_IN_4BYTE	    = 0x02,
-    CV_IN_8BYTE	    = 0x03,
-    CV_IN_16BYTE    = 0x04
-} CV_integral_e;
-
-/* subtype enumeration values for CV_REAL and CV_COMPLEX */
-
-typedef enum CV_real_e {
-    CV_RC_REAL32    = 0x00,
-    CV_RC_REAL64    = 0x01,
-    CV_RC_REAL80    = 0x02,
-    CV_RC_REAL128   = 0x03,
-    CV_RC_REAL48    = 0x04,
-    CV_RC_REAL32PP  = 0x05,   /* 32-bit partial precision real */
-    CV_RC_REAL16    = 0x06,
-} CV_real_e;
-
-/* subtype enumeration values for CV_SPECIAL2 */
-
-typedef enum CV_special2_e {
-    CV_S2_BIT	    = 0x00,
-    CV_S2_PASCHAR   = 0x01,	    /* Pascal CHAR */
-    CV_S2_BOOL32FF  = 0x02,	    /* 32-bit BOOL where true is 0xffffffff */
-} CV_special2_e;
-
-/* subtype enumeration values for CV_INT (really int) */
-
-typedef enum CV_int_e {
-    CV_RI_CHAR	    = 0x00,
-    CV_RI_INT1	    = 0x00,
-    CV_RI_WCHAR	    = 0x01,
-    CV_RI_UINT1	    = 0x01,
-    CV_RI_INT2	    = 0x02,
-    CV_RI_UINT2	    = 0x03,
-    CV_RI_INT4	    = 0x04,
-    CV_RI_UINT4	    = 0x05,
-    CV_RI_INT8	    = 0x06,
-    CV_RI_UINT8	    = 0x07,
-    CV_RI_INT16	    = 0x08,
-    CV_RI_UINT16    = 0x09,
-    CV_RI_CHAR16    = 0x0a,  /* char16_t */
-    CV_RI_CHAR32    = 0x0b,  /* char32_t */
-} CV_int_e;
-
-/* pointer mode enumeration values */
-
-typedef enum CV_prmode_e {
-    CV_TM_DIRECT = 0,	    /* mode is not a pointer */
-    CV_TM_NPTR	 = 1,	    /* mode is a near pointer */
-    CV_TM_FPTR	 = 2,	    /* mode is a far pointer */
-    CV_TM_HPTR	 = 3,	    /* mode is a huge pointer */
-    CV_TM_NPTR32 = 4,	    /* mode is a 32 bit near pointer */
-    CV_TM_FPTR32 = 5,	    /* mode is a 32 bit far pointer */
-    CV_TM_NPTR64 = 6,	    /* mode is a 64 bit near pointer */
-    CV_TM_NPTR128 = 7,	    /* mode is a 128 bit near pointer */
-} CV_prmode_e;
-
-/* enumeration for method properties */
-
-typedef enum CV_methodprop_e {
-    CV_MTvanilla	= 0x00,
-    CV_MTvirtual	= 0x01,
-    CV_MTstatic		= 0x02,
-    CV_MTfriend		= 0x03,
-    CV_MTintro		= 0x04,
-    CV_MTpurevirt	= 0x05,
-    CV_MTpureintro	= 0x06
-} CV_methodprop_e;
 
 typedef enum CV_access_e {
     CV_private	 = 1,
     CV_protected = 2,
     CV_public	 = 3
     } CV_access_e;
-
-/* class field attribute */
-
-typedef union CV_fldattr_t {
-    unsigned short flags;
-    struct {
-	unsigned short access	:2;	/* access protection CV_access_t */
-	unsigned short mprop	:3;	/* method properties CV_methodprop_t */
-	unsigned short pseudo	:1;	/* compiler generated fcn and does not exist */
-	unsigned short noinherit:1;	/* true if class cannot be inherited */
-	unsigned short noconstruct:1;	/* true if class cannot be constructed */
-	unsigned short compgenx :1;	/* compiler generated fcn and does exist */
-	unsigned short sealed	:1;	/* true if method cannot be overridden */
-	unsigned short unused	:6;	/* unused */
-    };
-} CV_fldattr_t;
-
-/* Type enum for pointer records */
-/* Pointers can be one of the following types */
-
-typedef enum CV_ptrtype_e {
-    CV_PTR_NEAR		= 0x00, /* 16 bit pointer */
-    CV_PTR_FAR		= 0x01, /* 16:16 far pointer */
-    CV_PTR_HUGE		= 0x02, /* 16:16 huge pointer */
-    CV_PTR_BASE_SEG	= 0x03, /* based on segment */
-    CV_PTR_BASE_VAL	= 0x04, /* based on value of base */
-    CV_PTR_BASE_SEGVAL	= 0x05, /* based on segment value of base */
-    CV_PTR_BASE_ADDR	= 0x06, /* based on address of base */
-    CV_PTR_BASE_SEGADDR = 0x07, /* based on segment address of base */
-    CV_PTR_BASE_TYPE	= 0x08, /* based on type */
-    CV_PTR_BASE_SELF	= 0x09, /* based on self */
-    CV_PTR_NEAR32	= 0x0a, /* 32 bit pointer */
-    CV_PTR_FAR32	= 0x0b, /* 16:32 pointer */
-    CV_PTR_64		= 0x0c, /* 64 bit pointer */
-    CV_PTR_UNUSEDPTR	= 0x0d	/* first unused pointer type */
-} CV_ptrtype_e;
-
-
-typedef struct TYPTYPE {
-    unsigned short  len;
-    unsigned short  leaf;
-    unsigned char   data[CV_ZEROLEN];
-  } TYPTYPE; /* general types record */
-
-#define NextType(pType) (pType + ((TYPTYPE *)pType)->len + sizeof(unsigned short))
-
-/* enumeration for HFA kinds */
-
-typedef enum CV_HFA_e {
-   CV_HFA_none	 = 0,
-   CV_HFA_float	 = 1,
-   CV_HFA_double = 2,
-   CV_HFA_other	 = 3
- } CV_HFA_e;
-
-/*  enumeration for MoCOM UDT kinds */
-
-typedef enum CV_MOCOM_UDT_e {
-    CV_MOCOM_UDT_none	   = 0,
-    CV_MOCOM_UDT_ref	   = 1,
-    CV_MOCOM_UDT_value	   = 2,
-    CV_MOCOM_UDT_interface = 3
-  } CV_MOCOM_UDT_e;
-
-/* bit field structure describing class/struct/union/enum properties */
-
-typedef struct CV_prop_t {
-    union {
-	unsigned short flags;
-	struct {
-	    unsigned short packed	:1;	/* true if structure is packed */
-	    unsigned short ctor		:1;	/* true if constructors or destructors present */
-	    unsigned short ovlops	:1;	/* true if overloaded operators present */
-	    unsigned short isnested	:1;	/* true if this is a nested class */
-	    unsigned short cnested	:1;	/* true if this class contains nested types */
-	    unsigned short opassign	:1;	/* true if overloaded assignment (=) */
-	    unsigned short opcast	:1;	/* true if casting methods */
-	    unsigned short fwdref	:1;	/* true if forward reference (incomplete defn) */
-	    unsigned short scoped	:1;	/* scoped definition */
-	    unsigned short hasuniquename :1;	/* true if there is a decorated name following the regular name */
-	    unsigned short sealed	:1;	/* true if class cannot be used as a base class */
-	    unsigned short hfa		:2;	/* CV_HFA_e */
-	    unsigned short intrinsic	:1;	/* true if class is an intrinsic type (e.g. __m128d) */
-	    unsigned short mocom	:2;	/* CV_MOCOM_UDT_e */
-	};
-    };
-  } CV_prop_t;
-
-
-/* enumeration for LF_MODIFIER values */
-
-typedef struct CV_modifier_t {
-    unsigned short MOD_const	   :1;
-    unsigned short MOD_volatile	   :1;
-    unsigned short MOD_unaligned   :1;
-    unsigned short MOD_unused	   :13;
-  } CV_modifier_t;
-
-/* Type record for LF_MODIFIER */
-
-typedef struct CV_MODIFIER_16t {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_MODIFIER_16t */
-    CV_modifier_t   attr;	    /* modifier attribute modifier_t */
-    CV_typ16_t	    type;	    /* modified type */
-  } CV_MODIFIER_16t;
-
-typedef struct CV_MODIFIER {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_MODIFIER */
-    CV_typ_t	    type;	    /* modified type */
-    CV_modifier_t   attr;	    /* modifier attribute modifier_t */
-  } CV_MODIFIER;
-
-
-/* type record for LF_BITFIELD */
-
-typedef struct CV_BITFIELD_16t {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_BITFIELD_16t */
-    unsigned char   length;
-    unsigned char   position;
-    CV_typ16_t	    type;	    /* type of bitfield */
-  } CV_BITFIELD_16t;
-
-typedef struct CV_BITFIELD {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_BITFIELD */
-    CV_typ_t	    type;	    /* type of bitfield */
-    unsigned char   length;
-    unsigned char   position;
-  } CV_BITFIELD;
-
-/* type record for LF_POINTER */
-
-typedef struct CV_POINTER_16t {
-    unsigned short size;
-    unsigned short leaf;	    /* LF_POINTER_16t */
-    union {
-	unsigned short attr;
-	struct {
-	    unsigned char ptrtype     :5; /* ordinal specifying pointer type (CV_ptrtype_e) */
-	    unsigned char ptrmode     :3; /* ordinal specifying pointer mode (CV_ptrmode_e) */
-	    unsigned char isflat32    :1; /* true if 0:32 pointer */
-	    unsigned char isvolatile  :1; /* TRUE if volatile pointer */
-	    unsigned char isconst     :1; /* TRUE if const pointer */
-	    unsigned char isunaligned :1; /* TRUE if unaligned pointer */
-	    unsigned char unused      :4;
-	};
-    };
-    CV_typ16_t utype;	/* type index of the underlying type */
-    union {
-	struct {
-	    CV_typ16_t	    pmclass;	/* index of containing class for pointer to member */
-	    unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
-	};
-	unsigned short	    bseg;	/* base segment if PTR_BASE_SEG */
-	unsigned char	    Sym[1];	/* copy of base symbol record (including length) */
-	struct	{
-	    CV_typ16_t	    index;	/* type index if CV_PTR_BASE_TYPE */
-	    unsigned char   name[1];	/* name of base type */
-	};
-    };
-  } CV_POINTER_16t;
-
-typedef struct CV_POINTER {
-    unsigned short len;
-    unsigned short leaf; /* LF_POINTER */
-    CV_typ_t utype;	 /* type index of the underlying type */
-    union {
-	unsigned long attr;
-	struct {
-	    unsigned long ptrtype     :5; /* ordinal specifying pointer type (CV_ptrtype_e) */
-	    unsigned long ptrmode     :3; /* ordinal specifying pointer mode (CV_ptrmode_e) */
-	    unsigned long isflat32    :1; /* true if 0:32 pointer */
-	    unsigned long isvolatile  :1; /* TRUE if volatile pointer */
-	    unsigned long isconst     :1; /* TRUE if const pointer */
-	    unsigned long isunaligned :1; /* TRUE if unaligned pointer */
-	    unsigned long isrestrict  :1; /* TRUE if restricted pointer (allow agressive opts) */
-	    unsigned long size	      :6; /* size of pointer (in bytes) */
-	    unsigned long ismocom     :1; /* TRUE if it is a MoCOM pointer (^ or %) */
-	    unsigned long islref      :1; /* TRUE if it is this pointer of member function with & ref-qualifier */
-	    unsigned long isrref      :1; /* TRUE if it is this pointer of member function with && ref-qualifier */
-	    unsigned long unused      :10;/* pad out to 32-bits for following cv_typ_t's */
-	};
-    };
-    union {
-	struct {
-	    CV_typ_t	    pmclass;	/* index of containing class for pointer to member */
-	    unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
-	};
-	unsigned short	    bseg;	/* base segment if PTR_BASE_SEG */
-	unsigned char	    Sym[1];	/* copy of base symbol record (including length) */
-	struct	{
-	    CV_typ_t	    index;	/* type index if CV_PTR_BASE_TYPE */
-	    unsigned char   name[1];	/* name of base type */
-	};
-    };
-  } CV_POINTER;
-
-
-/* type record for LF_ARRAY */
-
-typedef struct CV_ARRAY_16t {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_ARRAY_16t */
-    CV_typ16_t	    elemtype;		/* type index of element type */
-    CV_typ16_t	    idxtype;		/* type index of indexing type */
-    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
-  } CV_ARRAY_16t;
-
-typedef struct CV_ARRAY {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_ARRAY */
-    CV_typ_t	    elemtype;		/* type index of element type */
-    CV_typ_t	    idxtype;		/* type index of indexing type */
-    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
-  } CV_ARRAY;
-
-typedef struct CV_STRIDED_ARRAY {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_STRIDED_ARRAY */
-    CV_typ_t	    elemtype;		/* type index of element type */
-    CV_typ_t	    idxtype;		/* type index of indexing type */
-    unsigned long   stride;
-    unsigned char   data[CV_ZEROLEN];	/* variable length data specifying size in bytes and name */
-  } CV_STRIDED_ARRAY;
 
 
 /* subfield record for non-static data members */
@@ -2377,30 +3000,6 @@ typedef struct CV_MEMBER {
     CV_typ_t	    index;
     unsigned char   offset[CV_ZEROLEN];
   } CV_MEMBER;
-
-
-typedef struct CV_FIELDLIST {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_FIELDLIST */
-    char	    data[CV_ZEROLEN];	/* field list sub lists */
-  } CV_FIELDLIST;
-
-
-/* argument list leaf */
-
-typedef struct CV_ARGLIST_16t {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_ARGLIST_16t */
-    unsigned short  count;		/* number of arguments */
-    CV_typ16_t	    arg[CV_ZEROLEN];	/* number of arguments */
-  } CV_ARGLIST_16t;
-
-typedef struct CV_ARGLIST {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_ARGLIST, LF_SUBSTR_LIST */
-    unsigned long   count;		/* number of arguments */
-    CV_typ_t	    arg[CV_ZEROLEN];	/* number of arguments */
-  } CV_ARGLIST;
 
 
 typedef struct DATASYM32_16t {
@@ -2421,55 +3020,6 @@ typedef struct DATASYM32 {
     unsigned short  seg;
     unsigned char   name[1];	/* Length-prefixed name */
   } DATASYM32;
-
-
-/* type record for LF_CLASS, LF_STRUCTURE */
-
-typedef struct CV_CLASS_16t {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_CLASS_16t, LF_STRUCT_16t */
-    unsigned short  count;		/* count of number of elements in class */
-    CV_typ16_t	    field;		/* type index of LF_FIELD descriptor list */
-    CV_prop_t	    property;		/* property attribute field (prop_t) */
-    CV_typ16_t	    derived;		/* type index of derived from list if not zero */
-    CV_typ16_t	    vshape;		/* type index of vshape table for this class */
-    unsigned char   data[CV_ZEROLEN];	/* data describing length of structure in bytes and name */
-  } CV_CLASS_16t;
-typedef CV_CLASS_16t CV_STRUCT_16t;
-
-typedef struct CV_CLASS {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_CLASS, LF_STRUCT, LF_INTERFACE */
-    unsigned short  count;
-    CV_prop_t	    property;
-    CV_typ_t	    field;
-    CV_typ_t	    derived;
-    CV_typ_t	    vshape;
-    unsigned char   data[CV_ZEROLEN];
-  } CV_CLASS;
-typedef CV_CLASS CV_STRUCT;
-typedef CV_CLASS CV_INTERFACE;
-
-/* type record for LF_UNION */
-
-typedef struct CV_UNION_16t {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_UNION_16t */
-    unsigned short  count;		/* count of number of elements in class */
-    CV_typ16_t	    field;		/* type index of LF_FIELD descriptor list */
-    CV_prop_t	    property;		/* property attribute field */
-    unsigned char   data[CV_ZEROLEN];	/* variable length data describing length of structure and name */
-  } CV_UNION_16t;
-
-typedef struct CV_UNION {
-    unsigned short  size;
-    unsigned short  leaf;		/* LF_UNION */
-    unsigned short  count;
-    CV_prop_t	    property;
-    CV_typ_t	    field;
-    unsigned char   data[CV_ZEROLEN];
-  } CV_UNION;
-
 
 typedef struct REGREL32_16t {
     unsigned short  reclen;	/* Record length */
@@ -2626,40 +3176,6 @@ typedef struct PROCSYM32 {
     unsigned char   name[1];	/* Length-prefixed name */
   } PROCSYM32;
 
-
-/* function flags */
-
-typedef union CV_funcattr_t {
-    unsigned char all;
-    struct {
-	unsigned char cxxreturnudt :1;	/* true if C++ style ReturnUDT */
-	unsigned char ctor	   :1;	/* true if func is an instance constructor */
-	unsigned char ctorvbase	   :1;	/* true if func is an instance constructor of a class with virtual bases */
-	unsigned char unused	   :5;	/* unused */
-    };
-  } CV_funcattr_t;
-
-/* Type record for LF_PROCEDURE */
-
-typedef struct CV_PROCEDURE_16t {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_PROCEDURE_16t */
-    CV_typ16_t	    rvtype;	    /* type index of return value */
-    unsigned char   calltype;	    /* calling convention (CV_call_t) */
-    CV_funcattr_t   funcattr;	    /* attributes */
-    unsigned short  parmcount;	    /* number of parameters */
-    CV_typ16_t	    arglist;	    /* type index of argument list */
-  } CV_PROCEDURE_16t;
-
-typedef struct CV_PROCEDURE {
-    unsigned short  size;
-    unsigned short  leaf;	    /* LF_PROCEDURE */
-    CV_typ_t	    rvtype;	    /* type index of return value */
-    unsigned char   calltype;	    /* calling convention (CV_call_t) */
-    CV_funcattr_t   funcattr;	    /* attributes */
-    unsigned short  parmcount;	    /* number of parameters */
-    CV_typ_t	    arglist;	    /* type index of argument list */
-  } CV_PROCEDURE;
 
 typedef struct LABELSYM32 {
     unsigned short  reclen;	/* Record length */

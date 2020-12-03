@@ -84,7 +84,7 @@ The options listed in the following table.
 | **/Zf** | Make all symbols public. |
 | **/zf**[01] | Set FASTCALL type: MS/OW. |
 | **/Zg** | Generate code to match Masm. |
-| **/Zi**[0123] | Add symbolic debug info. |
+| **/Zi**[012358] | Add symbolic debug info. |
 | **/zlc** | No OMF records of data in code. |
 | **/zld** | No OMF records of far call. |
 | **/zlf** | Suppress items in COFF: No file entry. |

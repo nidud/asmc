@@ -39,14 +39,14 @@ __debugbreak macro
     retm<>
     endm
 
-_BitScanForward proto :ptr, :long_t {
+_BitScanForward proto fastcall :ptr, :long_t {
     xor     eax,eax
     bsf     eax,edx
     mov     [rcx],eax
     setne   al
     }
 
-_BitScanReverse proto :ptr, :long_t {
+_BitScanReverse proto fastcall :ptr, :long_t {
     xor     eax,eax
     bsr     eax,edx
     mov     [rcx],eax
@@ -55,14 +55,14 @@ _BitScanReverse proto :ptr, :long_t {
 
 ifdef __MACHINEX64
 
-_BitScanForward64 proto :ptr, :qword {
+_BitScanForward64 proto fastcall :ptr, :qword {
     xor     eax,eax
     bsf     rax,rdx
     mov     [rcx],eax
     setne   al
     }
 
-_BitScanReverse64 proto :ptr, :qword {
+_BitScanReverse64 proto fastcall :ptr, :qword {
     xor     eax,eax
     bsr     rax,rdx
     mov     [rcx],eax
@@ -101,94 +101,94 @@ _InterlockedCompareExchange64 proto :ptr, :qword, :qword {
 
 _InterlockedCompareExchangePointer equ <_InterlockedCompareExchange64>
 
-_InterlockedDecrement16 proto :ptr {
+_InterlockedDecrement16 proto fastcall :ptr {
     lock    dec word ptr [rcx]
     mov     ax,[rcx]
     }
 
-_InterlockedDecrement proto :ptr {
+_InterlockedDecrement proto fastcall :ptr {
     lock    dec dword ptr [rcx]
     mov     eax,[rcx]
     }
 
 ifdef __MACHINEX64
 
-_InterlockedDecrement64 proto :ptr {
+_InterlockedDecrement64 proto fastcall :ptr {
     lock dec qword ptr [rcx]
     mov rax,[rcx]
     }
 
 endif
 
-_InterlockedIncrement16 proto :ptr {
+_InterlockedIncrement16 proto fastcall :ptr {
     lock    inc word ptr [rcx]
     mov     ax,[rcx]
     }
 
-_InterlockedIncrement proto :ptr {
+_InterlockedIncrement proto fastcall :ptr {
     lock    inc dword ptr [rcx]
     mov     eax,[rcx]
     }
 
 ifdef __MACHINEX64
 
-_InterlockedIncrement64 proto :ptr {
+_InterlockedIncrement64 proto fastcall :ptr {
     lock    inc qword ptr [rcx]
     mov     rax,[rcx]
     }
 
 endif
 
-_InterlockedExchangePointer proto :ptr, :ptr {
+_InterlockedExchangePointer proto fastcall :ptr, :ptr {
     xchg    [rcx],rdx
     mov     rax,rdx
     }
 
-__fastfail proto :int_t {
+__fastfail proto fastcall :int_t {
     int     0x29
     }
 
-_bittest proto :ptr, :abs {
+_bittest proto fastcall :ptr, :abs {
     xor     eax,eax
     bt      dword ptr [rcx],_2
     setb    al
     }
 
-_bittestandcomplement proto :ptr, :abs {
+_bittestandcomplement proto fastcall :ptr, :abs {
     xor     eax,eax
     btc     dword ptr [rcx],_2
     setb    al
     }
 
-_bittestandreset proto :ptr, :abs {
+_bittestandreset proto fastcall :ptr, :abs {
     xor     eax,eax
     btr     dword ptr [rcx],_2
     setb    al
     }
 
-_bittestandset proto :ptr, :abs {
+_bittestandset proto fastcall :ptr, :abs {
     xor     eax,eax
     bts     dword ptr [rcx],_2
     setb    al
     }
 
-_interlockedbittestandreset proto :ptr, :abs {
+_interlockedbittestandreset proto fastcall :ptr, :abs {
     xor     eax,eax
     lock    btr dword ptr [rcx],_2
     setb    al
     }
 
-_byteswap_ulong proto :dword {
+_byteswap_ulong proto fastcall :dword {
     mov     eax,ecx
     bswap   eax
     }
 
-_byteswap_uint64 proto :qword {
+_byteswap_uint64 proto fastcall :qword {
     mov     rax,rcx
     bswap   rax
     }
 
-_byteswap_ushort proto :word {
+_byteswap_ushort proto fastcall :word {
     mov     ax,cx
     ror     ax,8
     }
@@ -601,17 +601,17 @@ __halt proto :abs {
     hlt
     }
 
-__inbyte proto :int_t {
+__inbyte proto fastcall :int_t {
     mov     edx,ecx
     in      al,dx
     }
 
-__inword proto :int_t {
+__inword proto fastcall :int_t {
     mov     edx,ecx
     in      ax,dx
     }
 
-__indword proto :int_t {
+__indword proto fastcall :int_t {
     mov     edx,ecx
     in      eax,dx
     }
@@ -634,23 +634,23 @@ __indwordstring proto :int_t, :ptr_t, :int_t {
     pop     rdi
     }
 
-__int2c proto :abs {
+__int2c proto fastcall :abs {
     int     0x2c
     }
 
-__invlpg proto :ptr {
+__invlpg proto fastcall :ptr {
     invlpg  byte ptr [rcx]
     }
 
-__lidt proto :ptr {
+__lidt proto fastcall :ptr {
     lidt    byte ptr [rcx]
     }
 
-__lzcnt proto :int_t {
+__lzcnt proto fastcall :int_t {
     lzcnt   eax,ecx
     }
 
-__lzcnt16 proto :int_t {
+__lzcnt16 proto fastcall :int_t {
     lzcnt   eax,ecx
     }
 
@@ -658,7 +658,7 @@ endif
 
 ifdef __MACHINEX64
 
-__lzcnt64 proto :int_t {
+__lzcnt64 proto fastcall :int_t {
     lzcnt   eax,ecx
     }
 
@@ -761,19 +761,19 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__outbyte proto :dword, :byte {
+__outbyte proto fastcall :dword, :byte {
     mov     al,dl
     mov     edx,ecx
     out     dx,al
     }
 
-__outword proto :dword, :word {
+__outword proto fastcall :dword, :word {
     mov     eax,edx
     mov     edx,ecx
     out     dx,ax
     }
 
-__outdword proto :dword, :dword {
+__outdword proto fastcall :dword, :dword {
     mov     eax,edx
     mov     edx,ecx
     out     dx,eax
@@ -810,11 +810,11 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__popcnt proto :dword {
+__popcnt proto fastcall :dword {
     popcnt  eax,ecx
     }
 
-__popcnt16 proto :word {
+__popcnt16 proto fastcall :word {
     popcnt  ax,cx
     }
 
@@ -822,7 +822,7 @@ endif
 
 ifdef __MACHINEX64
 
-__popcnt64 proto :qword {
+__popcnt64 proto fastcall :qword {
     popcnt  rax,rcx
     }
 
@@ -837,7 +837,7 @@ __rdtsc macro
     retm   <rax>
     endm
 
-__rdtscp proto :ptr {
+__rdtscp proto fastcall :ptr {
     push    rdi
     mov     rdi,rcx
     rdtscp
@@ -863,19 +863,19 @@ __readcr8 proto :abs {
     mov     rax,cr8
     }
 
-__writecr0 proto :ptr {
+__writecr0 proto fastcall :ptr {
     mov     cr0,rcx
     }
-__writecr2 proto :ptr {
+__writecr2 proto fastcall :ptr {
     mov     cr2,rcx
     }
-__writecr3 proto :ptr {
+__writecr3 proto fastcall :ptr {
     mov     cr3,rcx
     }
-__writecr4 proto :ptr {
+__writecr4 proto fastcall :ptr {
     mov     cr4,rcx
     }
-__writecr8 proto :ptr {
+__writecr8 proto fastcall :ptr {
     mov     cr8,rcx
     }
 
@@ -897,7 +897,7 @@ endif
     retm   <rax>
     endm
 
-__writeeflags proto :ptr {
+__writeeflags proto fastcall :ptr {
     push    rcx
     popfq
     }
@@ -942,24 +942,24 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__readmsr proto :dword {
+__readmsr proto fastcall :dword {
     rdmsr
     shl     rdx,32
     or      rax,rdx
     }
 
-__readpmc proto :dword {
+__readpmc proto fastcall :dword {
     rdpmc
     shl     rdx,32
     or      rax,rdx
     }
 
-__segmentlimit proto :dword {
+__segmentlimit proto fastcall :dword {
     mov     eax,ecx
     lsl     eax,eax
     }
 
-__sidt proto :ptr {
+__sidt proto fastcall :ptr {
     sidt    qword ptr [rcx]
     }
 
@@ -973,7 +973,7 @@ __svm_invlpga proto :qword, :dword {
     invlpga rax,ecx
     }
 
-__svm_skinit proto :dword {
+__svm_skinit proto fastcall :dword {
     mov     eax,ecx
     skinit  eax
     }
@@ -982,17 +982,17 @@ __svm_stgi proto :abs {
     stgi
     }
 
-__svm_vmload proto :dword {
+__svm_vmload proto fastcall :dword {
     mov     eax,ecx
     vmload  rax
     }
 
-__svm_vmrun proto :dword {
+__svm_vmrun proto fastcall :dword {
     mov     eax,ecx
     vmrun   rax
     }
 
-__svm_vmsave proto :dword {
+__svm_vmsave proto fastcall :dword {
     mov     eax,ecx
     vmsave  rax
     }
@@ -1009,11 +1009,11 @@ endif
 
 ifdef __MACHINEX64
 
-__vmx_on proto :ptr {
+__vmx_on proto fastcall :ptr {
     vmxon   qword ptr [rcx]
     }
 
-__vmx_vmclear proto :ptr {
+__vmx_vmclear proto fastcall :ptr {
     vmclear qword ptr [rcx]
     }
 
@@ -1021,11 +1021,11 @@ __vmx_vmlaunch proto :abs {
     vmlaunch
     }
 
-__vmx_vmptrld proto :ptr {
+__vmx_vmptrld proto fastcall :ptr {
     vmptrld qword ptr [rcx]
     }
 
-__vmx_vmread proto :ptr, :ptr {
+__vmx_vmread proto fastcall :ptr, :ptr {
     mov     rax,rcx
     mov     rcx,rdx
     vmread  rax,rcx
@@ -1035,7 +1035,7 @@ __vmx_vmresume proto :abs {
     vmresume
     }
 
-__vmx_vmwrite proto :ptr, :ptr {
+__vmx_vmwrite proto fastcall :ptr, :ptr {
     mov     rax,rcx
     mov     rcx,rdx
     vmwrite rax,rcx
@@ -1045,7 +1045,7 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__vmx_vmptrst proto :ptr {
+__vmx_vmptrst proto fastcall :ptr {
     vmptrst qword ptr [rcx]
     }
 
@@ -1089,16 +1089,16 @@ endif
 
 ifdef __MACHINEX64
 
-__writegsbyte proto :ptr, :byte {
+__writegsbyte proto fastcall :ptr, :byte {
     mov     gs:[rcx],dl
     }
-__writegsdword proto :ptr, :dword {
+__writegsdword proto fastcall :ptr, :dword {
     mov     gs:[rcx],edx
     }
-__writegsqword proto :ptr, :qword {
+__writegsqword proto fastcall :ptr, :qword {
     mov     gs:[rcx],rdx
     }
-__writegsword proto :ptr, :word {
+__writegsword proto fastcall :ptr, :word {
     mov     gs:[rcx],dx
     }
 
@@ -1106,7 +1106,7 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__writemsr proto :ptr, :ptr {
+__writemsr proto fastcall :ptr, :ptr {
     mov     rax,rdx
     shr     rdx,32
     wrmsr
@@ -1116,11 +1116,11 @@ _rsm proto :abs {
     rsm
     }
 
-_lgdt proto :ptr {
+_lgdt proto fastcall :ptr {
     lgdt    qword ptr [rcx]
     }
 
-_sgdt proto :ptr {
+_sgdt proto fastcall :ptr {
     sgdt    qword ptr [rcx]
     }
 

@@ -2,13 +2,11 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.32.03 - 18 Nov 2020
+Changes in 2.33 - xx xxx 2020
+- added __UNIX__ define for /elf[64]
+- added CodeView 5 and 8 -- /Zi5 /zi8 (experimental)
 - added assignment to .new name:type = value
-
-Changes in 2.32.02 - 14 Nov 2020
 - added multiple lines to .pragma comment(linker, ...)
-
-Changes in 2.32.01 - 14 Nov 2020
 - added .pragma comment(linker, "/<link_option>")
 
 Changes in 2.32 - 11 Nov 2020

@@ -1471,7 +1471,10 @@ ret_code ProcDir( int i, struct asm_tok tokenarray[] )
 	LstWrite( LSTTYPE_LABEL, 0, NULL );
 
     if( Options.line_numbers ) {
-	AddLinnumDataRef( get_curr_srcfile(), Options.output_format == OFORMAT_COFF ? 0 : GetLineNumber() );
+	if ( Options.debug_symbols == 4 )
+	    AddLinnumDataRef( get_curr_srcfile(), GetLineNumber() );
+	else
+	    AddLinnumDataRef( get_curr_srcfile(), Options.output_format == OFORMAT_COFF ? 0 : GetLineNumber() );
     }
 
     BackPatch( sym );

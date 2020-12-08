@@ -1264,8 +1264,8 @@ static void cv_write_F2( dbgcv *cv )
     CV_DebugSLinesHeader_t *pLinesHeader;
     CV_DebugSLinesFileBlockHeader_t *s;
     CV_Line_t *pLineCur;
+    CV_Line_t *pLinePrev;
     int offset;
-    int offsetPrev;
 
     for( seg = SymTables[TAB_SEG].head; seg; seg = seg->next ) {
 	if ( seg->e.seginfo->LinnumQueue ) {
@@ -1298,7 +1298,7 @@ static void cv_write_F2( dbgcv *cv )
 		s->offFile = cv->files[fileStart].offset;
 		s->nLines  = 0;
 		s->cbBlock = 12;
-		offsetPrev = -1;
+		pLinePrev  = NULL;
 
 		for ( ; o; o = o->next ) {
 
@@ -1315,13 +1315,18 @@ static void cv_write_F2( dbgcv *cv )
 		    }
 		    if ( fileStart != fileCur )
 			break;
-		    if ( offset < offsetPrev )
-			continue;
+
+		    if ( pLinePrev )  {
+			if ( offset < pLinePrev->offset )
+			    continue;
+			if ( offset == pLinePrev->offset &&
+			    linenum == pLinePrev->linenumStart )
+			    continue;
+		    }
 
 		    pLineCur = (CV_Line_t *)cv->ps;
 		    cv->ps += sizeof( CV_Line_t );
 		    h->length += sizeof( CV_Line_t );
-
 		    s->nLines++;
 		    s->cbBlock += 8;
 
@@ -1329,7 +1334,7 @@ static void cv_write_F2( dbgcv *cv )
 		    pLineCur->linenumStart = linenum;
 		    pLineCur->deltaLineEnd = 0;
 		    pLineCur->fStatement = 1;
-		    offsetPrev = offset;
+		    pLinePrev = pLineCur;
 		}
 	    }
 	}
@@ -1425,14 +1430,27 @@ static void cv_write_F1( dbgcv *cv )
  * which is to be generated (CV4_, CV5_ or CV8_SIGNATURE)
  */
 
+extern struct asym *CV8Label;
+
+static int compare_syms( const void *p1, const void *p2 )
+{
+    if ( strcmp( "mainCRTStartup", (*(struct asym * *)p2)->name ) == 0 )
+	return 1;
+    return( strcmp( (*(struct asym * *)p2)->name, (*(struct asym * *)p1)->name ) );
+}
+
 void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 {
     struct asym *sym;
+    struct asym **syms;
+    int SymCount;
     int i;
     int len;
     char *objname;
     struct dbgcv cv;
     CV_SECTION *h;
+    struct fixup *fixup;
+    int_32 lineTable;
 
     cv.ps = symbols->e.seginfo->CodeBuffer;
     cv.pt = types->e.seginfo->CodeBuffer;
@@ -1464,8 +1482,19 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	    cv.files[i].name = ModuleInfo.g.FNames[i];
 	    cv.files[i].offset = 0;
 	}
+	h = cv.sec;
 	cv_write_F3( &cv );
 	cv_write_F4( &cv );
+	lineTable = (uint_32)(cv.ps - (uint_8 *)h + sizeof(CV_SECTION) + 4);
+	if ( CV8Label ) {
+	    int_32 data = 0;
+	    fixup = CreateFixup( CV8Label, FIX_OFF32_SECREL, OPTJ_NONE );
+	    fixup->locofs = lineTable;
+	    store_fixup( fixup, cv.symbols, &data );
+	    fixup = CreateFixup( CV8Label, FIX_SEG, OPTJ_NONE );
+	    fixup->locofs = lineTable + 4;
+	    store_fixup( fixup, cv.symbols, &data );
+	}
 	cv_write_F2( &cv );
 
 	h = cv.sec;
@@ -1520,41 +1549,112 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 
     /* scan symbol table for types */
 
-    sym = NULL;
-    while ( sym = SymEnum( sym, &i ) ) {
-	if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 ) {
-	    cv_write_type( &cv, sym );
+    if ( Options.debug_symbols == CV_SIGNATURE_C13 ) {
+
+	sym = NULL;
+	SymCount = 0;
+	while ( sym = SymEnum( sym, &i ) ) {
+	    if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 )
+		SymCount++;
 	}
-    }
+	if ( SymCount ) {
+	    if ( ( syms = (struct asym **)MemAlloc( SymCount * sizeof( struct asym * ) ) ) != NULL ) {
+		SymCount = 0;
+		while ( sym = SymEnum( sym, &i ) ) {
+		    if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 )
+			syms[SymCount++] = sym;
+		}
+		qsort( syms, SymCount, sizeof( struct asym * ), compare_syms );
+		for ( i = 0; i < SymCount; i++ )
+		    cv_write_type( &cv, syms[i] );
+		MemFree(syms);
+	    }
+	}
+	SymCount = 0;
+	while ( sym = SymEnum( sym, &i ) ) {
+	    switch ( sym->state ) {
+	    case SYM_TYPE:
+		if ( Options.debug_ext < CVEX_NORMAL )
+		    break;
+	    case SYM_INTERNAL:
+		if (
+#if EQUATESYMS
+		    ( Options.debug_ext < CVEX_MAX ? sym->isequate : sym->variable )
+#else
+		    sym->isequate
+#endif
+		    || sym->predefined ) {
+		    break;
+		}
+		if ( sym != CV8Label )
+		    SymCount++;
+		break;
+	    }
+	}
+	if ( SymCount ) {
+	    if ( ( syms = (struct asym **)MemAlloc( SymCount * sizeof( struct asym * ) ) ) != NULL ) {
+		SymCount = 0;
+		while ( sym = SymEnum( sym, &i ) ) {
+		    switch ( sym->state ) {
+		    case SYM_TYPE:
+			if ( Options.debug_ext < CVEX_NORMAL )
+			    break;
+		    case SYM_INTERNAL:
+			if (
+#if EQUATESYMS
+			    ( Options.debug_ext < CVEX_MAX ? sym->isequate : sym->variable )
+#else
+			    sym->isequate
+#endif
+			    || sym->predefined ) {
+			    break;
+			}
+			if ( sym != CV8Label )
+			    syms[SymCount++] = sym;
+			break;
+		    }
+		}
+		qsort( syms, SymCount, sizeof( struct asym * ), compare_syms );
+		for ( i = 0; i < SymCount; i++ )
+		    cv_write_symbol( &cv, syms[i] );
+		MemFree(syms);
+	    }
+	}
+	h->length = (uint_32)(cv.ps - (uint_8 *)h - sizeof(CV_SECTION));
+	cv_align(cv.ps, cv.symbols->e.seginfo->CodeBuffer);
+
+    } else {
+
+	sym = NULL;
+	while ( sym = SymEnum( sym, &i ) ) {
+	    if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 ) {
+		cv_write_type( &cv, sym );
+	    }
+	}
 
     /* scan symbol table for SYM_TYPE, SYM_INTERNAL */
 
-    sym = NULL;
-    while ( sym = SymEnum( sym, &i ) ) {
-	switch ( sym->state ) {
-	case SYM_TYPE: /* may create an S_UDT entry in the symbols table */
-	    if ( Options.debug_ext < CVEX_NORMAL ) /* v2.10: no UDTs for -Zi0 and -Zi1 */
-		break;
-	case SYM_INTERNAL:
-	    if (
+	sym = NULL;
+	while ( sym = SymEnum( sym, &i ) ) {
+	    switch ( sym->state ) {
+	    case SYM_TYPE: /* may create an S_UDT entry in the symbols table */
+		if ( Options.debug_ext < CVEX_NORMAL ) /* v2.10: no UDTs for -Zi0 and -Zi1 */
+		    break;
+	    case SYM_INTERNAL:
+		if (
 #if EQUATESYMS
-		/* emit constants if -Zi3 */
-		( Options.debug_ext < CVEX_MAX ? sym->isequate : sym->variable )
+		    /* emit constants if -Zi3 */
+		    ( Options.debug_ext < CVEX_MAX ? sym->isequate : sym->variable )
 #else
-		sym->isequate
+		    sym->isequate
 #endif
-		|| sym->predefined ) { /* EQUates? */
+		    || sym->predefined ) { /* EQUates? */
+		    break;
+		}
+		cv_write_symbol( &cv, sym );
 		break;
 	    }
-	    cv_write_symbol( &cv, sym );
-	    break;
 	}
-    }
-
-    if ( Options.debug_symbols == CV_SIGNATURE_C13 ) {
-
-	h->length = (uint_32)(cv.ps - (uint_8 *)h - sizeof(CV_SECTION));
-	cv_align(cv.ps, cv.symbols->e.seginfo->CodeBuffer);
     }
 
     /* final flush for both types and symbols.

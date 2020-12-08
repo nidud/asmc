@@ -52,7 +52,11 @@ Parse_Pass	dd 0
 write_to_file	dd 0
 
 cp_text1	db "_TEXT",0
+ifdef __ASMC64__
+cp_text2	db ".text$mn",0
+else
 cp_text2	db ".text",0
+endif
 cp_data1	db "_DATA",0
 cp_data2	db ".data",0
 cp_const	db "CONST",0
@@ -86,7 +90,7 @@ remove_obj	dd 0
 ; CONST -> .rdata
 ; _BSS	 -> .bss
 
-ConvertSectionName proc uses esi edi ebx sym, pst, buffer
+ConvertSectionName proc uses esi edi ebx sym:ptr asym, pst:ptr dword, buffer:string_t
 
     .repeat
 
@@ -119,7 +123,7 @@ ConvertSectionName proc uses esi edi ebx sym, pst, buffer
 		mov eax,cst[ebx].dst
 		.if byte ptr [edx]
 
-			strcat(strcpy(buffer, eax), edx)
+		    strcat(strcpy(buffer, eax), edx)
 		.endif
 		.break(1)
 	    .endif

@@ -435,6 +435,11 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.fctype = FCT_ELF64;
 #endif
 	return;
+    case 'orre': // -errorReport:
+	p = *cmdline;
+	while ( *p ) p++;
+	*cmdline = p;
+	return;
 #ifndef __ASMC64__
     case 'fle':		// -elf
 	Options.output_format = OFORMAT_ELF;
@@ -442,6 +447,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	define_name( "_LINUX", "1" );
 	define_name( "__UNIX__", "1" );
 	return;
+
     case '8iPF':	// -FPi87
 	Options.floating_point = FPO_NO_EMULATION;
 	return;
@@ -740,9 +746,10 @@ static void ProcessOption( char **cmdline, char *buffer )
 		}
 		if ( OptValue == 5 )
 		    Options.debug_symbols = 2; /* C11 (vc5.x) 32-bit types */
-		else if ( OptValue == 8 )
+		else if ( OptValue == 8 ) {
 		    Options.debug_symbols = 4; /* C13 (vc7.x) zero terminated names */
-		else
+		    Options.no_file_entry = 1;
+		} else
 		    asmerr( 1006, p );
 	    } else
 		Options.debug_ext = OptValue;
@@ -822,6 +829,11 @@ char *ParseCmdline( char **cmdline, int *numargs )
 	case '/':
 #endif
 	    str++;
+	    /* added v2.32 -- /Ta<file> Assemble non-.ASM file */
+	    if ( str[0] == 'T' && str[1] == 'a' ) {
+		str += 2;
+		break;
+	    }
 	    *cmdline = str;
 	    ProcessOption( cmdline, paramfile );
 	    (*numargs)++;

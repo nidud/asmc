@@ -60,9 +60,8 @@ static void AddLinnumData( struct line_num_info *data )
  */
 
 void AddLinnumDataRef( unsigned srcfile, uint_32 line_num )
-/*********************************************************/
 {
-    struct line_num_info    *curr;
+    struct line_num_info *curr;
 
     /* COFF line number info is related to functions/procedures. Since
      * assembly allows code lines outside of procs, "dummy" procs must
@@ -71,7 +70,7 @@ void AddLinnumDataRef( unsigned srcfile, uint_32 line_num )
      * - the source file changes or
      * - the segment/section changes ( added in v2.11 )
      */
-    if ( Options.output_format == OFORMAT_COFF &&
+    if ( Options.output_format == OFORMAT_COFF && Options.debug_symbols != 4 &&
 	CurrProc == NULL &&
 	( dmyproc == NULL ||
 	dmyproc->debuginfo->file != srcfile ||

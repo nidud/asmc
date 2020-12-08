@@ -42,10 +42,10 @@
 #include <listing.h>
 #include <types.h>
 #include <fixup.h>
+#include <label.h>
 
-extern ret_code	   EndstructDirective( int, struct asm_tok tokenarray[] );
+extern ret_code EndstructDirective( int, struct asm_tok tokenarray[] );
 
-//struct asym  symPC = { NULL,"$", 0 };	 /* the '$' symbol */
 struct asym  *symCurSeg;     /* @CurSeg symbol */
 
 #define INIT_ATTR	  0x01 /* READONLY attribute */
@@ -722,6 +722,9 @@ static void UnlinkSeg( struct dsym *dir )
 
 /* SEGMENT directive */
 
+/* Start label for Code View 8 */
+struct asym *CV8Label = NULL;
+
 ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
 /*******************************************************/
 {
@@ -729,6 +732,7 @@ ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
     char		*token;
     int			typeidx;
     const struct typeinfo *type;	  /* type of option */
+    int			newseg = 0;
     int			temp;
     int			temp2;
     unsigned		initstate = 0;	/* flags for attribute initialization */
@@ -754,6 +758,7 @@ ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
     sym = SymSearch( name );
     if( sym == NULL || sym->state == SYM_UNDEFINED ) {
 
+	newseg = 1;
 	/* segment is not defined (yet) */
 	sym = (struct asym *)CreateSegment( (struct dsym *)sym, name, TRUE );
 	sym->list = TRUE; /* always list segments */
@@ -1063,7 +1068,13 @@ ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
     if ( ModuleInfo.list )
 	LstWrite( LSTTYPE_LABEL, 0, NULL );
 
-    return( SetOfssize() );
+    temp = SetOfssize();
+    if ( Options.debug_symbols == 4 && newseg ) {
+	if ( dir->e.seginfo->segtype == SEGTYPE_CODE && CV8Label == NULL ) {
+	    CV8Label = CreateLabel( "$$000000", 0, 0, 0 );
+	}
+    }
+    return( temp );
 }
 
 /* sort segments ( a simple bubble sort )

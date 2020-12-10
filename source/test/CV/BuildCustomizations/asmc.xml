@@ -149,6 +149,18 @@
       DisplayName="Perform Syntax Check Only"
       Description="Performs a syntax check only.     (/Zs)"
       Switch="/Zs" />
+    <BoolProperty
+      Name="IgnoreINCLUDELIB"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Ignore INCLUDELIB directive"
+      Description="Ignores INCLUDELIB directives.     (/nolib)"
+      Switch="/nolib" />
+    <BoolProperty
+      Name="UnicodeStrings"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/directive/opt_wstring.md"
+      DisplayName="Store quoted strings as Unicode"
+      Description="Store quoted strings as Unicode.      (/ws[codepage])"
+      Switch="/ws" />
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"

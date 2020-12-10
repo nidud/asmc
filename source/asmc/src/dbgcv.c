@@ -20,8 +20,6 @@
 #include <MD5.h>
 
 #define EQUATESYMS 1 /* 1=generate info for EQUates ( -Zi3 ) */
-
-#define SIZE_CV_SEGBUF ( MAX_LINE_LEN * 2 ) /* assumed size of codeview sections temp buffer */
 #define GENPTRTYPE 0 /* generate a generic pointer type */
 
 static char szCVCompiler[] = "Asmc Macro Assembler";
@@ -109,27 +107,12 @@ struct leaf32 {
     uint_32 value32;
 };
 
-/* reserved primitive types (0x0000-0x0FFF) */
-
-struct cv_primitive_type {
-    uint_16 size:3, /* see CV_PDS_ below */
-    reserved:1,	    /* added to size in CV8? */
-    type:4,	    /* see CV_PDT_ below */
-    mode:3,	    /* see CV_PDM_ below */
-    reserved2:1;
-};
-
-union cv_typeref_u {
-    struct cv_primitive_type s;
-    uint_32 uvalue;
-};
-
 #pragma pack(pop)
 
-const union cv_typeref_u cv_idx_type = { CV_IN_4BYTE, 0, CV_SIGNED, CV_TM_DIRECT, 0 };
-const union cv_typeref_u cv_void     = { CV_SP_VOID, 0, CV_SPECIAL, CV_TM_DIRECT, 0 };
+const CV_PRIMITIVE cv_idx_type = { CV_IN_4BYTE, CV_SIGNED,  CV_TM_DIRECT, 0 };
+const CV_PRIMITIVE cv_void     = { CV_SP_VOID,	CV_SPECIAL, CV_TM_DIRECT, 0 };
 #if EQUATESYMS
-const union cv_typeref_u cv_abs_type = { CV_SP_ABS, 0, CV_SPECIAL, CV_TM_DIRECT, 0 };
+const CV_PRIMITIVE cv_abs_type = { CV_SP_ABS,	CV_SPECIAL, CV_TM_DIRECT, 0 };
 #endif
 
 uint_8 *SetPrefixName( uint_8 *p, uint_8 *name, int len )
@@ -156,33 +139,33 @@ uint_8 *SetPrefixName( uint_8 *p, uint_8 *name, int len )
 
 uint_32 GetTyperef( struct asym *sym, uint_8 Ofssize )
 {
-    union cv_typeref_u value = { CV_SP_NOTYPE, 0, CV_SPECIAL, CV_TM_DIRECT, 0 };
+    CV_PRIMITIVE value = { CV_SP_NOTYPE, CV_SPECIAL, CV_TM_DIRECT, 0 };
 
     if ( ( sym->mem_type & MT_SPECIAL ) == 0 ) {
 	int size = SizeFromMemtype( sym->mem_type, Ofssize, sym->type );
 	if ( sym->mem_type & MT_FLOAT ) {
-	    value.s.type = CV_REAL;
+	    value.type = CV_REAL;
 	    switch ( size ) {
-	    case 4:  value.s.size = CV_RC_REAL32; break;
-	    case 8:  value.s.size = CV_RC_REAL64; break;
-	    case 10: value.s.size = CV_RC_REAL80; break;
-	    case 16: value.s.size = CV_RC_REAL128; break;
+	    case 4:  value.subt = CV_RC_REAL32; break;
+	    case 8:  value.subt = CV_RC_REAL64; break;
+	    case 10: value.subt = CV_RC_REAL80; break;
+	    case 16: value.subt = CV_RC_REAL128; break;
 	    }
 	} else if ( size <= 16 ) {
 	    if ( sym->mem_type & MT_SIGNED )
-		value.s.type = CV_SIGNED;
+		value.type = CV_SIGNED;
 	    else
-		value.s.type = CV_UNSIGNED;
+		value.type = CV_UNSIGNED;
 	    switch ( size ) {
-	    case 1:  value.s.size = CV_IN_1BYTE; break;
-	    case 2:  value.s.size = CV_IN_2BYTE; break;
-	    case 4:  value.s.size = CV_IN_4BYTE; break;
-	    case 8:  value.s.size = CV_IN_8BYTE; break;
-	    case 16: value.s.size = CV_IN_16BYTE; break;
+	    case 1:  value.subt = CV_IN_1BYTE; break;
+	    case 2:  value.subt = CV_IN_2BYTE; break;
+	    case 4:  value.subt = CV_IN_4BYTE; break;
+	    case 8:  value.subt = CV_IN_8BYTE; break;
+	    case 16: value.subt = CV_IN_16BYTE; break;
 	    case 6: /* v2.11: added ( FWORD ) */
-		value.s.type = CV_SPECIAL;
-		value.s.size = CV_SP_VOID;
-		value.s.mode = CV_TM_FPTR32;
+		value.type = CV_SPECIAL;
+		value.subt = CV_SP_VOID;
+		value.mode = CV_TM_FPTR32;
 		break;
 	    }
 	} else { /* v2.11: branch added */
@@ -191,24 +174,43 @@ uint_32 GetTyperef( struct asym *sym, uint_8 Ofssize )
 	     * jwasm sets uint64, which allows to view at least
 	     * the lower 8 bytes.
 	     */
-	    value.s.type = CV_INT;
-	    value.s.size = CV_RI_UINT8;
+	    value.type = CV_INT;
+	    value.subt = CV_RI_UINT8;
 	}
     } else {
 	switch ( sym->mem_type ) {
 	case MT_PTR:
 	    /* v2.10 */
-	    value.s.size = CV_SP_VOID;
-	    value.s.type = CV_SPECIAL;
+	    value.subt = CV_SP_VOID;
+	    value.type = CV_SPECIAL;
 	    switch ( sym->Ofssize ) {
 	    case USE16:
-		value.s.mode = ( sym->isfar ? CV_TM_FPTR : CV_TM_NPTR );
+		value.mode = ( sym->isfar ? CV_TM_FPTR : CV_TM_NPTR );
 		break;
 	    case USE32:
-		value.s.mode = ( sym->isfar ? CV_TM_FPTR32 : CV_TM_NPTR32 );
+		value.mode = ( sym->isfar ? CV_TM_FPTR32 : CV_TM_NPTR32 );
 		break;
 	    case USE64:
-		value.s.mode = CV_TM_NPTR64;
+		value.mode = CV_TM_NPTR64;
+		if ( Options.debug_symbols == CV_SIGNATURE_C13 && (
+		     sym->state == SYM_INTERNAL || sym->state == SYM_STACK ||
+		     sym->state == SYM_STRUCT_FIELD || sym->state == SYM_TYPE ) ) {
+		    switch ( sym->ptr_memtype ) {
+		    case MT_BYTE:   value.uvalue = ST_64PUCHAR;	  break;
+		    case MT_SBYTE:  value.uvalue = ST_64PCHAR;	  break;
+		    case MT_WORD:   value.uvalue = ST_64PCHAR16;  break;
+		    case MT_SWORD:  value.uvalue = ST_64PSHORT;	  break;
+		    case MT_REAL2:  value.uvalue = ST_64PREAL16;  break;
+		    case MT_DWORD:  value.uvalue = ST_64PUINT4;	  break;
+		    case MT_SDWORD: value.uvalue = ST_64PINT4;	  break;
+		    case MT_REAL4:  value.uvalue = ST_64PREAL32;  break;
+		    case MT_QWORD:  value.uvalue = ST_64PUINT8;	  break;
+		    case MT_SQWORD: value.uvalue = ST_64PINT8;	  break;
+		    case MT_REAL8:  value.uvalue = ST_64PREAL64;  break;
+		    case MT_OWORD:  value.uvalue = ST_64PUINT16;  break;
+		    case MT_REAL16: value.uvalue = ST_64PREAL128; break;
+		    }
+		}
 		break;
 	    }
 	    break;
@@ -216,8 +218,8 @@ uint_32 GetTyperef( struct asym *sym, uint_8 Ofssize )
 	    if ( sym->cvtyperef )
 		return( sym->cvtyperef );
 	    break;
-	case MT_NEAR: value.s.mode = CV_TM_NPTR; break;
-	case MT_FAR:  value.s.mode = CV_TM_FPTR; break;
+	case MT_NEAR: value.mode = CV_TM_NPTR; break;
+	case MT_FAR:  value.mode = CV_TM_FPTR; break;
 	case MT_TYPE:
 	    for ( sym = sym->type; sym->type; sym = sym->type );
 	    if ( sym->cvtyperef )
@@ -332,7 +334,7 @@ static void cv_write_array_type( struct dbgcv *cv, struct asym *sym,
     } else {
 	cv->t_ar->leaf = LF_ARRAY;
 	cv->t_ar->elemtype = elemtype;
-	cv->t_ar->idxtype = cv_idx_type.uvalue;
+	cv->t_ar->idxtype = GetTyperef( sym, Ofssize );
 	tmp = cv->t_ar->data;
     }
 
@@ -377,11 +379,13 @@ static uint_32 cv_write_ptr_type( struct dbgcv *cv, struct asym *sym )
     cv->pt_ptr->size = size - sizeof(uint_16);
     cv->pt_ptr->leaf = leaf;
 
-    if ( sym->Ofssize == USE16 ) {
+    if ( sym->Ofssize == USE16 )
 	attr = ( sym->isfar ? CV_PTR_FAR : CV_PTR_NEAR );
-    } else {
+    else if ( sym->Ofssize == USE32 )
 	attr = ( sym->isfar ? CV_PTR_FAR32 : CV_PTR_NEAR32 );
-    }
+    else
+	attr = CV_PTR_64;
+
     /* if indirection is > 1, define an untyped pointer - to be improved */
     if ( sym->is_ptr > 1 ) {
 	type = GetTyperef( sym, sym->Ofssize );
@@ -562,12 +566,15 @@ static void cv_write_type_procedure( struct dbgcv *cv, struct asym *sym, int cnt
 {
     int size = sizeof( CV_PROCEDURE );
     int leaf = LF_PROCEDURE;
-    uint_16 *ptr;
+    int type = sizeof( CV_typ_t );
+    CV_typ_t   *p_32;
+    CV_typ16_t *p_16;
     struct dsym *param;
 
     if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
 	size = sizeof( CV_PROCEDURE_16t );
 	leaf = LF_PROCEDURE_16t;
+	type = sizeof( CV_typ16_t );
     }
 
     cv->pt = checkflush( cv->types, cv->pt, size, cv->param );
@@ -595,22 +602,25 @@ static void cv_write_type_procedure( struct dbgcv *cv, struct asym *sym, int cnt
 	leaf = LF_ARGLIST_16t;
     }
 
-    size = size + cnt * sizeof( uint_16 );
+    size = size + cnt * type;
     cv->pt = checkflush( cv->types, cv->pt, size, cv->param );
     cv->pt_al->size = size - sizeof(uint_16);
     cv->pt_al->leaf = leaf;
 
     if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
 	cv->pt_al->count = cnt;
-	ptr = (uint_16 *)(cv->pt + sizeof( CV_ARGLIST_16t ) );
+	p_16 = (CV_typ16_t *)(cv->pt + sizeof( CV_ARGLIST_16t ) );
     } else {
 	cv->t_al->count = cnt;
-	ptr = (uint_16 *)(cv->pt + sizeof( CV_ARGLIST ) );
+	p_32 = (CV_typ_t *)(cv->pt + sizeof( CV_ARGLIST ) );
     }
 
     /* fixme: order might be wrong ( is "push" order ) */
     for ( param = ((struct dsym *)sym)->e.procinfo->paralist; param; param = param->nextparam ) {
-	*ptr++ = param->sym.ext_idx1;
+	if ( ModuleInfo.defOfssize == USE64 )
+	    p_32[--cnt] = param->sym.ext_idx1;
+	else
+	    *p_16++ = param->sym.ext_idx1;
     }
     cv->pt += size;
     cv->currtype++;
@@ -812,11 +822,13 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
     struct fixup *fixup;
     struct dsym *proc;
     struct dsym *lcl;
-    int		i;
+    int		i,j,k;
     int		cnt[2];
     struct	dsym *locals[2];
+    struct	dsym *q;
     int		size;
     int		leaf;
+    uint_16	typeref;
 
     Ofssize = GetSymOfssize( sym );
     len = GetCVStructLen( sym, Ofssize );
@@ -876,19 +888,28 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	/* for PROCs, scan parameters and locals and create their types. */
 
 	/* scan local symbols */
+
 	locals[0] = proc->e.procinfo->paralist;
 	locals[1] = proc->e.procinfo->locallist;
 	for ( i = 0; i < 2; i++ ) {
+	    if ( ModuleInfo.defOfssize == USE64 && i == 0 ) {
+		for ( j = 0, lcl = locals[0]; lcl; q = lcl, lcl = lcl->nextparam )
+		    j++;
+	    }
 	    cnt[i] = 0;
 	    for ( lcl = locals[i]; lcl; lcl = lcl->nextparam ) {
-		uint_16 typeref;
+		if ( !( ModuleInfo.defOfssize == USE64 && i == 0 ) )
+		    q = lcl;
 		cnt[i]++;
-		typeref = ( lcl->sym.mem_type == MT_PTR ? cv_write_ptr_type( cv, &lcl->sym ) : GetTyperef( &lcl->sym, Ofssize ) );
-		if ( lcl->sym.isarray ) {
-		    cv_write_array_type( cv, &lcl->sym, typeref, Ofssize );
+		typeref = ( q->sym.mem_type == MT_PTR ? cv_write_ptr_type( cv, &q->sym ) : GetTyperef( &q->sym, Ofssize ) );
+		if ( q->sym.isarray ) {
+		    cv_write_array_type( cv, &q->sym, typeref, Ofssize );
 		    typeref = cv->currtype - 1;
 		}
-		lcl->sym.ext_idx1 = typeref;
+		q->sym.ext_idx1 = typeref;
+		if ( ModuleInfo.defOfssize == USE64 && i == 0 ) {
+		    for ( k = 1, j--, q = locals[0]; j > k; k++, q = q->nextparam );
+		}
 	    }
 	}
 
@@ -1064,8 +1085,13 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 
 	/* scan local symbols again */
 	for ( i = 0; i < 2 ; i++ ) {
-	    for ( lcl = locals[i]; lcl; lcl = lcl->nextparam ) {
-
+	    if ( ModuleInfo.defOfssize == USE64 && i == 0 ) {
+		for ( j = 0, q = locals[0]; q; lcl = q, q = q->nextparam )
+		    j++;
+	    }
+	    for ( q = locals[i]; q; q = q->nextparam ) {
+		if ( !( ModuleInfo.defOfssize == USE64 && i == 0 ) )
+		    lcl = q;
 		/* FASTCALL register argument? */
 		if ( lcl->sym.state == SYM_TMACRO ) {
 		    len = sizeof( REGSYM ) - 1;
@@ -1139,6 +1165,8 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 		lcl->sym.ext_idx1 = 0; /* to be safe, clear the temp. used field */
 		cv->ps += len;
 		cv->ps = SetPrefixName( cv->ps, lcl->sym.name, lcl->sym.name_size );
+		if ( ModuleInfo.defOfssize == USE64 && i == 0 )
+		    for ( k = 1, j--, lcl = locals[0]; j > k; k++, lcl = lcl->nextparam );
 	    }
 	}
 
@@ -1168,7 +1196,7 @@ static void cv_write_F3( dbgcv *cv )
 
 	cv->files[i].offset = o;
 	name = cv->files[i].name;
-	if ( name[0] != '\\' && name[1] != ':' ) {
+	if ( name[0] != '\\' && name[0] != '.' && name[1] != ':' ) {
 
 	    strcpy( buffer, cv->currdir );
 	    strcat( buffer, "\\" );
@@ -1658,7 +1686,7 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
     }
 
     /* final flush for both types and symbols.
-     * use 'fictional' size of MAX_LINE_LEN * 2!
+     * use 'fictional' size of SIZE_CV_SEGBUF!
      */
     checkflush( cv.types, cv.pt, SIZE_CV_SEGBUF, cv.param );
     checkflush( cv.symbols, cv.ps, SIZE_CV_SEGBUF, cv.param );

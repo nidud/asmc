@@ -22,6 +22,7 @@
 #include <input.h>
 #include <omfspec.h>
 #include <linnum.h>
+#include <dbgcv.h>
 
 #define HELPSYMS     0 /* use helper symbols for assembly time symbol refs */
 #define MANGLE_BYTES 8 /* extra size required for name decoration */
@@ -34,7 +35,6 @@
 /* size of codeview temp segment buffer; prior to v2.12 it was 1024 - but this may be
  * insufficient if MAX_ID_LEN has been enlarged.
  */
-#define SIZE_CV_SEGBUF ( MAX_LINE_LEN * 2 )
 
 struct stringitem {
     struct stringitem *next;
@@ -1179,7 +1179,8 @@ static int coff_write_module( struct module_info *modinfo )
                 break;
             cm.SymDeb[i].seg->e.seginfo->characteristics = (IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_DISCARDABLE) >> 24;
             /* use the source line buffer as code buffer. It isn't needed anymore */
-            cm.SymDeb[i].seg->e.seginfo->CodeBuffer = (uint_8 *)CurrSource + i * SIZE_CV_SEGBUF;
+            /* v2.32 - CV8 needs to set the size of the symbol section... */
+            cm.SymDeb[i].seg->e.seginfo->CodeBuffer = (uint_8 *)LclAlloc( SIZE_CV_SEGBUF );
             cm.SymDeb[i].seg->e.seginfo->flushfunc = coff_flushfunc;
             cm.SymDeb[i].q.head = NULL;
         }
@@ -1192,7 +1193,8 @@ static int coff_write_module( struct module_info *modinfo )
                 uint_8 *src;
                 uint_8 *dst;
                 if ( cm.SymDeb[i].seg->sym.max_offset ) {
-                    cm.SymDeb[i].seg->e.seginfo->CodeBuffer = (unsigned char *)LclAlloc( cm.SymDeb[i].seg->sym.max_offset );
+                    if ( cm.SymDeb[i].seg->sym.max_offset > SIZE_CV_SEGBUF )
+                        cm.SymDeb[i].seg->e.seginfo->CodeBuffer = (uint_8 *)LclAlloc( cm.SymDeb[i].seg->sym.max_offset );
                     dst = cm.SymDeb[i].seg->e.seginfo->CodeBuffer;
                     for ( src = cm.SymDeb[i].q.head; src; src = ((struct qditem *)src)->next ) {
                         memcpy( dst, src + sizeof( struct qditem ), ((struct qditem *)src)->size );

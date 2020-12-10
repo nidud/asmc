@@ -5,7 +5,7 @@ symbol3 db 4
 .code
 
 mainCRTStartup proc
-  
+
   mov eax,1
   sub eax,1
   ret

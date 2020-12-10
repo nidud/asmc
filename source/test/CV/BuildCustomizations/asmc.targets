@@ -83,6 +83,8 @@
       GenerateDebugInformation="%(ASMC.GenerateDebugInformation)"
       EnableMASM51Compatibility="%(ASMC.EnableMASM51Compatibility)"
       PerformSyntaxCheckOnly="%(ASMC.PerformSyntaxCheckOnly)"
+      IgnoreINCLUDELIB="%(ASMC.IgnoreINCLUDELIB)"
+      UnicodeStrings="%(ASMC.UnicodeStrings)"
       ObjectFileName="%(ASMC.ObjectFileName)"
       PreprocessorDefinitions="%(ASMC.PreprocessorDefinitions)"
       AssembledCodeListingFile="%(ASMC.AssembledCodeListingFile)"

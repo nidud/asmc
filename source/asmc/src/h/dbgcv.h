@@ -30,6 +30,8 @@
 #ifndef CVDBG_H
 #define CVDBG_H 1
 
+#define SIZE_CV_SEGBUF 0x8000
+
 #pragma pack(push, 1)
 
 typedef unsigned long	CV_uoff32_t;
@@ -130,6 +132,15 @@ typedef const SIG70 *	PCSIG70;
 #define CV_NEWTYPE(typ, nt) (((typ) & ~CV_TMASK) | ((nt) << CV_TSHIFT))
 #define CV_NEWSUBT(typ, ns) (((typ) & ~CV_SMASK) | ((ns) << CV_SSHIFT))
 
+typedef union CV_primitive_type {
+    struct {
+	unsigned short subt	:4; /* primitive subtype */
+	unsigned short type	:4; /* primitive type */
+	unsigned short mode	:3; /* primitive mode */
+	unsigned short reserved :1;
+    };
+    unsigned short uvalue;
+  } CV_PRIMITIVE;
 
 /* pointer mode enumeration values */
 

@@ -45,7 +45,7 @@
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <GenerateDebugInformation>6</GenerateDebugInformation>
+      <GenerateDebugInformation>8</GenerateDebugInformation>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>

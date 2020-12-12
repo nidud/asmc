@@ -108,24 +108,25 @@
       Name="GenerateDebugInformation"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
       DisplayName="Generate Debug Information"
-      Description="Generates Debug Information.  (/Zi[0|1|2|3|5|8])">
+      Description="Generates Debug Information.  (/Zi[0|1|2|3][5|8])">
+      <EnumValue
+        Name="true"
+        DisplayName="Default  (/Zi)"
+        Switch="/Zi" />
       <EnumValue
         Name="0"
-        DisplayName="Default" />
-      <EnumValue
-        Name="1"
         DisplayName="Globals"
         Switch="/Zi0" />
       <EnumValue
-        Name="2"
+        Name="1"
         DisplayName="Globals and locals"
         Switch="/Zi1" />
       <EnumValue
-        Name="3"
+        Name="2"
         DisplayName="Globals, locals and types"
         Switch="/Zi2" />
       <EnumValue
-        Name="4"
+        Name="3"
         DisplayName="Globals, locals, types and constants"
         Switch="/Zi3" />
       <EnumValue
@@ -133,7 +134,7 @@
         DisplayName="CV5 - C11 (vc5.x) 32-bit types"
         Switch="/Zi5" />
       <EnumValue
-        Name="6"
+        Name="8"
         DisplayName="CV8 - C13 (vc7.x) zero terminated names"
         Switch="/Zi8" />
     </EnumProperty>
@@ -155,12 +156,19 @@
       DisplayName="Ignore INCLUDELIB directive"
       Description="Ignores INCLUDELIB directives.     (/nolib)"
       Switch="/nolib" />
-    <BoolProperty
-      Name="UnicodeStrings"
+    <EnumProperty
+      Name="WCharacterSet"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/directive/opt_wstring.md"
-      DisplayName="Store quoted strings as Unicode"
-      Description="Store quoted strings as Unicode.      (/ws[codepage])"
-      Switch="/ws" />
+      DisplayName="Character Set"
+      Description="Tells the assembler to use the specified character set.">
+      <EnumValue
+        Name="NotSet"
+        DisplayName="Not Set" />
+      <EnumValue
+        Name="Unicode"
+        DisplayName="Use Unicode Character Set"
+        Switch="/ws" />
+    </EnumProperty>
     <StringProperty
       Name="ObjectFileName"
       Category="Object File"

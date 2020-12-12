@@ -1,12 +1,11 @@
 #ifndef _GLOBALS_H_INCLUDED
 #define _GLOBALS_H_INCLUDED
 
-#define ASMC_VERSSTR "2.32"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h> /* needed for errno declaration ( "sometimes" it's defined in stdlib.h ) */
+#include <version.h>
 
 #if defined(__UNIX__) || defined(__CYGWIN__) || defined(__DJGPP__) /* avoid for MinGW! */
 #define _stricmp strcasecmp

@@ -9,9 +9,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>console</RootNamespace>
+    <RootNamespace>struct</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectGuid>{C4323779-950E-45A5-BDCF-094036924719}</ProjectGuid>
+    <ProjectGuid>{66C5C4A6-40EC-465B-90C6-1901B23966CC}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -52,8 +52,7 @@
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="main.asm" />
-    <ASMC Include="console.asm" />
+    <ASMC Include="struct.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

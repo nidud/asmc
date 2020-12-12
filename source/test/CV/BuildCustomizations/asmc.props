@@ -11,7 +11,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
       <PreserveIdentifierCase>0</PreserveIdentifierCase>
-      <WarningLevel>3</WarningLevel>
+      <WarningLevel>2</WarningLevel>
       <PackAlignmentBoundary>0</PackAlignmentBoundary>
       <CallingConvention>0</CallingConvention>
       <ErrorReporting>0</ErrorReporting>

@@ -1,17 +1,17 @@
 
 include stdio.inc
 
-; Add startup module: adjust the path
+; Add startup module
 
-.pragma comment(linker,"/DEFAULTLIB:\VS19\VC\Tools\MSVC\14.28.29333\lib\x64\libcmtd.lib")
+.pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
 
 console proto :string_t
 
     .code
 
 main proc argc:int_t, argv:array_t, environment:ptr string_t
-  local string:string_t,
-        array[2]:string_t
+
+  local string:string_t, array[2]:string_t
 
   ; register arguments is not saved to the stack unless used
 

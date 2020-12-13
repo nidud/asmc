@@ -14,7 +14,7 @@ The options listed in the following table.
 | ------ |:------- |
 | **/[0..10]**[p] | Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486, 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64\. [p] allows privileged instructions. |
 | **/arch**:AVX[[2][512]] | Specifies the architecture for code generation on x64.  |
-| **/assert** | Generate .assert(code). Same as .assert:on. |
+| [**/assert**](../directive/dot_assert.md) | Generate .assert(code). |
 | **/autostack** | Calculate required stack space for arguments. |
 | **/bin** | Generate plain binary file. |
 | **/Cs** | Push user registers before [stack-frame](../directive/opt_cstack.md) is created in a proc. |
@@ -67,16 +67,16 @@ The options listed in the following table.
 | **/Sn** | Turns off symbol table when producing a listing. |
 | **/Sp**[n] | Set segment alignment. |
 | **/stackalign** | Align stack variables to 16-byte. |
-| **/swc** | Specifies use of [C-style](../directive/dot_switch.md) .SWITCH convention (default). |
-| **/swn** | No jump-table creation in [.SWITCH](../directive/dot_switch.md). |
-| **/swp** | Specifies use of Pascal-style .SWITCH convention (auto break). |
-| **/swr** | Allows use of register [E]AX or r11 in .SWITCH code. |
-| **/swt** | Allows use of jump-table creation in .SWITCH code (default). |
+| [**/swc**](../directive/dot_switch.md) | Specifies use of C-style .SWITCH convention (default). |
+| [**/swn**](../directive/dot_switch.md) | No jump-table creation in .SWITCH. |
+| [**/swp**](../directive/dot_switch.md) | Specifies use of Pascal-style .SWITCH convention (auto break). |
+| [**/swr**](../directive/dot_switch.md) | Allows use of register [E]AX or r11 in .SWITCH code. |
+| [**/swt**](../directive/dot_switch.md) | Allows use of jump-table creation in .SWITCH code (default). |
 | **/Sx** | Turns on false conditionals in listing. |
 | **/w** | Same as /W0. |
 | **/W**_level_ | Sets the warning level, where _level_ = 0, 1, 2, or 3.|
 | **/win64** | Generate 64-bit COFF object. Defines _WIN64. |
-| **/ws**[_CodePage_] | Store quoted strings as Unicode. Defines _UNICODE. See [OPTION WSTRING](../directive/opt_wstring.md). |
+| [**/ws**](../directive/opt_wstring.md)[_CodePage_] | Store quoted strings as Unicode. Defines _UNICODE. |
 | **/WX** | Returns an error code if warnings are generated. |
 | **/X** | Ignore INCLUDE environment path. |
 | **/zcw** | No decoration for C symbols. |
@@ -84,7 +84,7 @@ The options listed in the following table.
 | **/Zf** | Make all symbols public. |
 | **/zf**[01] | Set FASTCALL type: MS/OW. |
 | **/Zg** | Generate code to match Masm. |
-| **/Zi**[012358] | Add symbolic debug info. |
+| [**/Zi**](Zi.md) | Add symbolic debug info. |
 | **/zlc** | No OMF records of data in code. |
 | **/zld** | No OMF records of far call. |
 | **/zlf** | Suppress items in COFF: No file entry. |

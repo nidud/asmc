@@ -13,11 +13,14 @@
 #include <memalloc.h>
 #include <parser.h>
 #include <segment.h>
+#include <coff.h>
 #include <fixup.h>
 #include <dbgcv.h>
 #include <linnum.h>
 #include <direct.h>
 #include <MD5.h>
+
+#define SIZE_CV_SEGBUF ( MAX_LINE_LEN * 2 )
 
 #define EQUATESYMS 1 /* 1=generate info for EQUates ( -Zi3 ) */
 #define GENPTRTYPE 0 /* generate a generic pointer type */
@@ -37,11 +40,11 @@ typedef struct CV_SECTION {
   } CV_SECTION;
 
 typedef struct dbgcv {
+
     union {
 	uint_8		*ps;
 	uint_16		*dw;
 	uint_32		*dd;
-	CV_SECTION	*sec;
 	CFLAGSYM	*ps_cp;		/* S_COMPILE		*/
 	REGSYM_16t	*ps_reg;	/* S_REGISTER_16t	*/
 	CONSTSYM_16t	*ps_con;	/* S_CONSTANT_16t	*/
@@ -68,6 +71,7 @@ typedef struct dbgcv {
 	PROCSYM32	*s_p32;		/* S_xPROC32		*/
 	REGREL32	*s_rr32;	/* S_REGREL32		*/
 	LABELSYM32	*s_l32;		/* S_LABEL32		*/
+	GUID		*s_iid;
     };
     union {
 	uint_8		*pt;
@@ -90,6 +94,7 @@ typedef struct dbgcv {
 	CV_FIELDLIST	*t_fl;
 	CV_MEMBER	*t_mbr;
     };
+    CV_SECTION *	section;
     struct dsym *	symbols;
     struct dsym *	types;
     void *		param;
@@ -251,17 +256,13 @@ static void PadBytes( uint_8 *curr, uint_8 *base )
 {
     static const char padtab[] = { LF_PAD1, LF_PAD2, LF_PAD3 };
 
-    for( ;( curr - base ) & 3; curr++ ) {
-	/*if ( Options.debug_symbols == CV_SIGNATURE_C13 )
-	    *curr = '\0';
-	else*/
-	    *curr = padtab[3-((curr - base) & 3)];
-    }
+    for( ;( curr - base ) & 3; curr++ )
+	*curr = padtab[3-((curr - base) & 3)];
 }
 
 /* write a bitfield to $$TYPES */
 
-static void cv_write_bitfield( struct dbgcv *cv, struct dsym *type, struct asym *sym )
+static void cv_write_bitfield( dbgcv *cv, struct dsym *type, struct asym *sym )
 {
     uint_32 size = sizeof( CV_BITFIELD );
     uint_32 tref = GetTyperef( (struct asym *)type, USE16 );
@@ -844,6 +845,8 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	if ( leaf ) {
 	    cv->ps += len;
 	    cv->ps = SetPrefixName( cv->ps, sym->name, sym->name_size );
+	    if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+		cv->section->length += len + sym->name_size + 1;
 	}
 	return;
     }
@@ -992,6 +995,8 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	}
 	cv->ps += len;
 	cv->ps = SetPrefixName( cv->ps, sym->name, sym->name_size );
+	if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+	    cv->section->length += len + sym->name_size + 1;
 	return;
 #endif
     } else {
@@ -1034,6 +1039,9 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	cv->ps_d32->rectyp = leaf;
     }
     cv->ps += ofs;
+    if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+	cv->section->length += ofs;
+
     cv->symbols->e.seginfo->current_loc = cv->symbols->e.seginfo->start_loc + ( cv->ps - cv->symbols->e.seginfo->CodeBuffer );
     if ( Options.output_format == OFORMAT_COFF ) {
 	/* COFF has no "far" fixups. Instead Masm creates a
@@ -1053,6 +1061,8 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
     }
     cv->ps += len - ofs;
     cv->ps = SetPrefixName( cv->ps, sym->name, sym->name_size );
+    if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+	cv->section->length += len - ofs + sym->name_size + 1;
 
     /* for PROCs, scan parameters and locals.
      * to mark the block's end, write an ENDBLK item.
@@ -1141,6 +1151,9 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 		lcl->sym.ext_idx1 = 0; /* to be safe, clear the temp. used field */
 		cv->ps += len;
 		cv->ps = SetPrefixName( cv->ps, lcl->sym.name, lcl->sym.name_size );
+		if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+		    cv->section->length += len + lcl->sym.name_size + 1;
+
 		if ( ModuleInfo.defOfssize == USE64 && i == 0 )
 		    for ( k = 1, j--, lcl = locals[0]; j > k; k++, lcl = lcl->nextparam );
 	    }
@@ -1150,282 +1163,93 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 	cv->ps_eb->reclen = sizeof( ENDARGSYM ) - sizeof(uint_16);
 	cv->ps_eb->rectyp = S_END;
 	cv->ps += sizeof( ENDARGSYM );
+	if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+	    cv->section->length += sizeof( ENDARGSYM );
     }
     return;
 }
 
 #define cv_align(p, base) for( ; ( p - base ) & 3; ) *p++ = NULLC
 
-static void cv_write_F3( dbgcv *cv )
+
+/* flush section header and return memory address */
+
+static CV_SECTION *cv_FlushSection( dbgcv *cv, uint_32 signature )
 {
-    char buffer[_MAX_PATH];
-    char *name;
-    int i,o,len;
-    uint_8 *p;
-    CV_SECTION *h = cv->sec;
+    int i;
+    uint_8 *p, *curr;
+    unsigned size, currsize;
+    struct dsym *seg;
+    struct coffmod *cm;
 
-    h->signature = 0x000000F3;
-    p = cv->ps + sizeof(CV_SECTION);
-    *p++ = '\0';
+    seg = cv->symbols;
+    curr = cv->ps;
+    cv->ps = seg->e.seginfo->CodeBuffer;
+    currsize = curr - cv->ps;
+    size = currsize + sizeof( struct qditem ) + sizeof( CV_SECTION );
 
-    for( o = 1, i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
+    p = (unsigned char *)LclAlloc( size );
+    ((struct qditem *)p)->next = NULL;
+    ((struct qditem *)p)->size = currsize + sizeof( CV_SECTION );
 
-	cv->files[i].offset = o;
-	name = cv->files[i].name;
-	if ( name[0] != '\\' && name[0] != '.' && name[1] != ':' ) {
+    cv->section = (CV_SECTION *)&p[size - sizeof( CV_SECTION )];
+    cv->section->signature = signature;
+    cv->section->length = 0;
 
-	    strcpy( buffer, cv->currdir );
-	    strcat( buffer, "\\" );
-	    name = strcat( buffer, name );
-	}
-	len = strlen( name ) + 1;
-	memcpy( p, name, len );
-	p += len;
-	o += len;
+    if ( currsize )
+	memcpy( p + sizeof( struct qditem ), seg->e.seginfo->CodeBuffer, currsize );
+
+    cm = cv->param;
+    i = ( seg == cm->SymDeb[DBGS_TYPES].seg ? DBGS_TYPES : DBGS_SYMBOLS );
+    if ( cm->SymDeb[i].q.head == NULL )
+	cm->SymDeb[i].q.head = cm->SymDeb[i].q.tail = p;
+    else {
+	((struct qditem *)(cm->SymDeb[i].q.tail))->next = p;
+	cm->SymDeb[i].q.tail = p;
     }
-    h->length = o;
-    cv_align(p, cv->symbols->e.seginfo->CodeBuffer);
-    cv->ps = p;
+    seg->e.seginfo->current_loc = seg->e.seginfo->start_loc + currsize + sizeof( CV_SECTION );
+    seg->e.seginfo->start_loc = seg->e.seginfo->current_loc;
+
+    return( cv->section );
 }
+
 
 #define USEMD5
 
 #ifdef USEMD5
-
 #define BUFSIZ 1024*4
+#define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
 
-static int calc_md5(const char *const filename, unsigned char *sum)
+static int calc_md5( const char *filename, unsigned char *sum )
 {
     FILE *fp;
     uint_8 *file_buf;
     MD5_CTX ctx;
     size_t i;
 
-    fp = fopen(filename, "rb");
-    if (!fp)
-      return 0;
-
-    file_buf = MemAlloc(BUFSIZ);
-    MD5Init(&ctx);
-    while (!feof(fp)) {
-	i = fread(file_buf, 1, BUFSIZ, fp);
-	if (ferror(fp)) {
-	    fclose(fp);
+    if ( ( fp = fopen( filename, "rb" ) ) == NULL )
+	return 0;
+    file_buf = MemAlloc( BUFSIZ );
+    MD5Init( &ctx );
+    while ( !feof( fp ) ) {
+	i = fread( file_buf, 1, BUFSIZ, fp );
+	if ( ferror( fp ) ) {
+	    fclose( fp );
+	    MemFree( file_buf );
 	    return 0;
-	} else if (i == 0)
+	} else if ( i == 0 )
 	    break;
-	MD5Update(&ctx, file_buf, i);
+	MD5Update( &ctx, file_buf, i );
     }
-    MD5Final(&ctx);
-    memcpy(sum, ctx.digest, 16);
-    MemFree(file_buf);
-    fclose(fp);
+    MD5Final( &ctx );
+    memcpy( sum, ctx.digest, 16 );
+    fclose( fp );
+    MemFree( file_buf );
     return 1;
 }
-
-#endif
-
-static void cv_write_F4( dbgcv *cv )
-{
-
-    int i,o,len;
-    uint_8 *p;
-
-    CV_SECTION *h = cv->sec;
-
-    h->signature = 0x000000F4;
-    p = cv->ps + sizeof(CV_SECTION);
-
-    for( o = 0, i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
-
-	*(uint_32 *)p = cv->files[i].offset;
-	cv->files[i].offset = o;
-	p += sizeof(uint_32);
-#ifdef USEMD5
-	*(uint_16*)p = 0x0110;
-	p += sizeof(uint_16);
-	calc_md5(cv->files[i].name, p);
-	p += 16;
-	*(uint_16*)p = 0x0000;
-	p += sizeof(uint_16);
-	o += 2 + 16 + 2 + sizeof(uint_32);
 #else
-	*(uint_32 *)p = 0x00000000;
-	p += sizeof(uint_32);
-	o += sizeof(uint_32)*2;
+#define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + sizeof( uint_16 ) )
 #endif
-    }
-    h->length = o;
-    cv->ps = p;
-}
-
-
-static void cv_write_F2( dbgcv *cv )
-{
-    struct dsym *seg;
-    struct line_num_info *o, *q;
-    CV_SECTION *h = NULL;
-    CV_DebugSLinesHeader_t *pLinesHeader;
-    CV_DebugSLinesFileBlockHeader_t *s;
-    CV_Line_t *pLineCur;
-    CV_Line_t *pLinePrev;
-    int offset;
-
-    for( seg = SymTables[TAB_SEG].head; seg; seg = seg->next ) {
-	if ( seg->e.seginfo->LinnumQueue ) {
-
-	    h = cv->sec;
-	    cv->ps += sizeof( CV_SECTION );
-	    pLinesHeader = (CV_DebugSLinesHeader_t *)cv->ps;
-	    cv->ps += sizeof( CV_DebugSLinesHeader_t );
-
-	    h->signature = 0x000000F2;
-	    h->length = sizeof( CV_DebugSLinesHeader_t );
-
-	    pLinesHeader->offCon = 0;
-	    pLinesHeader->segCon = 0;
-	    pLinesHeader->flags	 = 0;
-	    pLinesHeader->cbCon	 = seg->sym.max_offset;
-
-	    o = (struct line_num_info *)((struct qdesc *)seg->e.seginfo->LinnumQueue)->head;
-	    while ( o ) {
-
-		int fileStart = o->srcfile;
-		if ( o->number == 0 )
-		    fileStart = o->file;
-
-		s = (CV_DebugSLinesFileBlockHeader_t *)cv->ps;
-
-		cv->ps += sizeof( CV_DebugSLinesFileBlockHeader_t );
-		h->length += sizeof( CV_DebugSLinesFileBlockHeader_t );
-
-		s->offFile = cv->files[fileStart].offset;
-		s->nLines  = 0;
-		s->cbBlock = 12;
-		pLinePrev  = NULL;
-
-		for ( ; o; o = o->next ) {
-
-		    int fileCur, linenum;
-
-		    if ( o->number == 0 ) {
-			fileCur = o->file;
-			linenum = o->line_number;
-			offset	= o->sym->offset;
-		    } else {
-			fileCur = o->srcfile;
-			linenum = o->number;
-			offset	= o->line_number;
-		    }
-		    if ( fileStart != fileCur )
-			break;
-
-		    if ( pLinePrev )  {
-			if ( offset < pLinePrev->offset )
-			    continue;
-			if ( offset == pLinePrev->offset &&
-			    linenum == pLinePrev->linenumStart )
-			    continue;
-		    }
-
-		    pLineCur = (CV_Line_t *)cv->ps;
-		    cv->ps += sizeof( CV_Line_t );
-		    h->length += sizeof( CV_Line_t );
-		    s->nLines++;
-		    s->cbBlock += 8;
-
-		    pLineCur->offset = offset;
-		    pLineCur->linenumStart = linenum;
-		    pLineCur->deltaLineEnd = 0;
-		    pLineCur->fStatement = 1;
-		    pLinePrev = pLineCur;
-		}
-	    }
-	}
-    }
-    if ( h != NULL ) {
-	cv_align(cv->ps, cv->symbols->e.seginfo->CodeBuffer);
-    }
-}
-
-static void cv_write_F1( dbgcv *cv )
-{
-    char buffer[_MAX_PATH];
-    char *name = CurrFName[OBJ];
-    char *p,*s;
-    int q, len;
-    COMPILESYM3 *cp;
-    ENVBLOCKSYM *e;
-
-    if ( name[0] != '\\' && name[1] != ':' ) {
-	strcpy( buffer, cv->currdir );
-	strcat( buffer, "\\" );
-	name = strcat( buffer, name );
-    }
-    len = strlen( name );
-    cv->s_on->reclen = sizeof( OBJNAMESYM ) - sizeof(unsigned short) + len;
-    cv->s_on->rectyp = S_OBJNAME;
-    cv->s_on->signature = 0;
-    cv->ps += sizeof( OBJNAMESYM ) - 1;
-    cv->ps = SetPrefixName( cv->ps, name, len );
-
-    cp = cv->s_cp;
-    cp->rectyp = S_COMPILE3;
-
-    len = strlen( strcpy( cp->verSz, szCVCompiler ) );
-    cp->reclen = sizeof( COMPILESYM3 ) - sizeof( unsigned short ) + len + 1;
-    cv->ps += cp->reclen + sizeof( unsigned short ) - 1;
-    *cv->ps++ = '\0';
-
-    cp->flags = 0;
-    cp->iLanguage = CV_CFL_MASM;
-    if ( ModuleInfo.Ofssize == USE64 )
-	cp->machine = CV_CFL_X64;
-    else
-	cp->machine = ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) >> 4 );
-
-    cp->verFEMajor  = 0;    /* front end */
-    cp->verFEMinor  = 0;
-    cp->verFEBuild  = 0;
-    cp->verFEQFE    = 0;
-    cp->verMajor    = ASMC_MAJOR_VER;	 /* back end */
-    cp->verMinor    = ASMC_MINOR_VER;
-    cp->verBuild    = ASMC_SUBMINOR_VER*100;
-    cp->verQFE	    = 0;
-
-    e = cv->s_env;
-    e->flags = 0;
-    e->rectyp = S_ENVBLOCK;
-    s = e->rgsz;
-
-    /* pairs of 0-terminated strings - keys/values */
-
-    /* cwd - current working directory */
-
-    q = strlen( cv->currdir );
-    s = strcpy( s, "cwd" ) + 4;
-    s = strcpy( s, cv->currdir ) + q + 1;
-
-    /* exe - full path of executable */
-
-    s = strcpy( s, "exe" ) + 4;
-    len = strlen( _pgmptr ) + 1;
-    s = strcpy( s, _pgmptr ) + len;
-
-    /* src - relative path to source (from cwd) */
-
-    s = strcpy( s, "src" ) + 4;
-
-    p = cv->files[0].name;
-    if ( _memicmp( p, cv->currdir, q ) == 0 )
-	p += q + 1;
-
-    len = strlen( p ) + 1;
-    s = strcpy( s, p ) + len;
-    *s++ = '\0';
-    e->reclen = (unsigned short)( s - cv->ps - 2 );
-    cv->ps = s;
-}
 
 /* option -Zi: write debug symbols and types
  * - symbols: segment $$SYMBOLS (OMF) or .debug$S (COFF)
@@ -1439,14 +1263,12 @@ extern struct asym *CV8Label;
 void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 {
     struct asym *sym;
-    struct asym **syms;
-    int SymCount;
+    struct dsym *seg;
     int i;
     int len;
     char *objname;
     struct dbgcv cv;
-    CV_SECTION *h;
-    struct fixup *fixup;
+    struct fixup *fixup; /* the $$000000 symbol */
     int_32 lineTable;
 
     cv.ps = symbols->e.seginfo->CodeBuffer;
@@ -1471,19 +1293,86 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 
     if ( Options.debug_symbols == CV_SIGNATURE_C13 ) {
 
-	cv.files = MemAlloc( ModuleInfo.g.cnt_fnames * sizeof( cv_file ) );
-	cv.currdir = MemAlloc( _MAX_PATH );
-	_getcwd( cv.currdir, _MAX_PATH );
+	char *s;
+	char *name;
+	uint_8 *p;
+	uint_8 *start;
+	COMPILESYM3 *Asmc;
+	ENVBLOCKSYM *EnvBlock;
+	int q;
 
+	cv.files = MemAlloc( ModuleInfo.g.cnt_fnames * sizeof( cv_file ) );
 	for( i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
 	    cv.files[i].name = ModuleInfo.g.FNames[i];
 	    cv.files[i].offset = 0;
 	}
-	h = cv.sec;
-	cv_write_F3( &cv );
-	cv_write_F4( &cv );
-	lineTable = (uint_32)(cv.ps - (uint_8 *)h + sizeof(CV_SECTION) + 4);
+
+	cv.currdir = MemAlloc( _MAX_PATH * 4 );
+	_getcwd( cv.currdir, _MAX_PATH * 4 );
+	objname = cv.currdir + strlen( cv.currdir );
+
+	/* source filename string table */
+
+	cv_FlushSection( &cv, 0x000000F3 );
+	cv.section->length++;
+	*cv.ps++ = '\0';
+
+	/* for each source file */
+
+	for ( i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
+
+	    cv.files[i].offset = cv.section->length;
+	    name = cv.files[i].name;
+	    if ( name[0] != '\\' && name[0] != '.' && name[1] != ':' ) {
+
+		strcpy( objname, "\\" );
+		strcat( objname, name );
+		name = cv.currdir;
+	    }
+	    len = strlen( name ) + 1;
+	    memcpy( cv.ps, name, len );
+	    p = cv.ps;
+	    cv.ps = checkflush( cv.symbols, cv.ps, len, cv.param );
+	    if ( p == cv.ps )
+		cv.ps += len;
+	    cv.section->length += len;
+	}
+	*objname = '\0';
+	cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
+
+	/* $$000000 to line table */
+
+	lineTable = ( ( cv.section->length + 3 ) & ~3 ) + sizeof( CV_SECTION );
+
+	/* source file info */
+
+	cv_FlushSection( &cv, 0x000000F4 );
+
+	for ( i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
+
+	    cv.ps = checkflush( cv.symbols, cv.ps, MD5_LENGTH, cv.param );
+
+	    *cv.dd = cv.files[i].offset;
+	    cv.files[i].offset = cv.section->length;
+	    cv.ps += sizeof( uint_32 );
+#ifdef USEMD5
+	    *cv.dw = 0x0110;
+	    cv.ps += sizeof( uint_16 );
+	    calc_md5( cv.files[i].name, cv.ps );
+	    cv.ps += 16;
+	    *cv.dw = 0x0000;
+	    cv.ps += sizeof( uint_16 );
+#else
+	    *cv.dd = 0x00000000;
+	    cv.ps += sizeof( uint_32 );
+#endif
+	    cv.section->length += MD5_LENGTH;
+	}
+
+	lineTable += ( ( ( cv.section->length + 3 ) & ~3 ) + sizeof(CV_SECTION) + 12 );
+
 	if ( CV8Label ) {
+
 	    int_32 data = 0;
 	    fixup = CreateFixup( CV8Label, FIX_OFF32_SECREL, OPTJ_NONE );
 	    fixup->locofs = lineTable;
@@ -1492,12 +1381,178 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	    fixup->locofs = lineTable + 4;
 	    store_fixup( fixup, cv.symbols, &data );
 	}
-	cv_write_F2( &cv );
 
-	h = cv.sec;
-	h->signature = 0x000000F1;
-	cv.ps += sizeof(CV_SECTION);
-	cv_write_F1( &cv );
+	/* line numbers for section */
+
+	for ( seg = SymTables[TAB_SEG].head; seg; seg = seg->next ) {
+
+	    cv.section = NULL;
+
+	    if ( seg->e.seginfo->LinnumQueue ) {
+
+		CV_DebugSLinesHeader_t *Header;
+		CV_DebugSLinesFileBlockHeader_t *File;
+		struct line_num_info *Queue;
+
+		cv_FlushSection( &cv, 0x000000F2 );
+		Header = ( CV_DebugSLinesHeader_t * )cv.ps;
+		cv.ps += sizeof( CV_DebugSLinesHeader_t );
+		cv.section->length = sizeof( CV_DebugSLinesHeader_t );
+
+		Header->offCon = 0;
+		Header->segCon = 0;
+		Header->flags  = 0;
+		Header->cbCon  = seg->sym.max_offset;
+
+		Queue = (struct line_num_info *)((struct qdesc *)seg->e.seginfo->LinnumQueue)->head;
+
+		while ( Queue ) {
+
+		    CV_Line_t *Line;
+		    CV_Line_t *Prev;
+		    int fileStart = Queue->srcfile;
+
+		    if ( Queue->number == 0 )
+			fileStart = Queue->file;
+
+		    cv.ps = checkflush( cv.symbols, cv.ps, sizeof( CV_DebugSLinesFileBlockHeader_t ), cv.param );
+		    File  = (CV_DebugSLinesFileBlockHeader_t *)cv.ps;
+		    cv.ps += sizeof( CV_DebugSLinesFileBlockHeader_t );
+
+		    cv.section->length += sizeof( CV_DebugSLinesFileBlockHeader_t );
+
+		    File->offFile = cv.files[fileStart].offset;
+		    File->nLines  = 0;
+		    File->cbBlock = 12;
+		    Prev = NULL;
+
+		    for ( ; Queue; Queue = Queue->next ) {
+
+			int fileCur, linenum, offset;
+
+			if ( Queue->number == 0 ) {
+			    fileCur = Queue->file;
+			    linenum = Queue->line_number;
+			    offset = Queue->sym->offset;
+			} else {
+			    fileCur = Queue->srcfile;
+			    linenum = Queue->number;
+			    offset = Queue->line_number;
+			}
+			if ( fileStart != fileCur )
+			    break;
+
+			if ( Prev )  {
+			    if ( offset < Prev->offset )
+				continue;
+			    if ( offset == Prev->offset &&
+				linenum == Prev->linenumStart )
+				continue;
+			}
+
+			Line = (CV_Line_t *)cv.ps;
+			cv.ps = checkflush( cv.symbols, cv.ps, sizeof( CV_Line_t ), cv.param );
+			if ( Line == (CV_Line_t *)cv.ps )
+			    cv.ps += sizeof( CV_Line_t );
+			else
+			    Line = (CV_Line_t *)cv.ps;
+
+			cv.section->length += sizeof( CV_Line_t );
+			File->nLines++;
+			File->cbBlock += 8;
+
+			Line->offset = offset;
+			Line->linenumStart = linenum;
+			Line->deltaLineEnd = 0;
+			Line->fStatement = 1;
+			Prev = Line;
+		    }
+		}
+	    }
+	}
+	if ( cv.section != NULL )
+	    cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
+
+	/* symbol information */
+
+	cv_FlushSection( &cv, 0x000000F1 );
+	start = cv.ps;
+
+	/* Name of object file */
+
+	name = CurrFName[OBJ];
+	if ( name[0] != '\\' && name[0] != '.' && name[1] != ':' ) {
+	    strcpy( objname, "\\" );
+	    strcat( objname, name );
+	    name = cv.currdir;
+	}
+	len = strlen( name );
+	cv.s_on->reclen = sizeof( OBJNAMESYM ) - sizeof(unsigned short) + len;
+	cv.s_on->rectyp = S_OBJNAME;
+	cv.s_on->signature = 0;
+	cv.ps += sizeof( OBJNAMESYM ) - 1;
+	cv.ps = SetPrefixName( cv.ps, name, len );
+	*objname = '\0';
+
+	/* compile flags */
+
+	Asmc = cv.s_cp;
+	Asmc->rectyp = S_COMPILE3;
+	len = strlen( strcpy( Asmc->verSz, szCVCompiler ) );
+
+	Asmc->reclen = sizeof( COMPILESYM3 ) - sizeof( unsigned short ) + len + 1;
+	cv.ps += Asmc->reclen + sizeof( unsigned short ) - 1;
+	*cv.ps++ = '\0';
+
+	Asmc->flags = 0;
+	Asmc->iLanguage = CV_CFL_MASM;
+	Asmc->machine = ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) >> 4 );
+	if ( ModuleInfo.Ofssize == USE64 )
+	    Asmc->machine = CV_CFL_X64;
+	Asmc->verFEMajor  = 0;
+	Asmc->verFEMinor  = 0;
+	Asmc->verFEBuild  = 0;
+	Asmc->verFEQFE	  = 0;
+	Asmc->verMajor	  = ASMC_MAJOR_VER;
+	Asmc->verMinor	  = ASMC_MINOR_VER;
+	Asmc->verBuild	  = ASMC_SUBMINOR_VER*100;
+	Asmc->verQFE	  = 0;
+
+	EnvBlock = cv.s_env;
+	EnvBlock->flags = 0;
+	EnvBlock->rectyp = S_ENVBLOCK;
+	s = EnvBlock->rgsz;
+
+	/* pairs of 0-terminated strings - keys/values
+	 *
+	 * cwd - current working directory
+	 * exe - full path of executable
+	 * src - relative path to source (from cwd)
+	 */
+
+	q = strlen( cv.currdir );
+	s = strcpy( s, "cwd" ) + 4;
+	s = strcpy( s, cv.currdir ) + q + 1;
+	s = strcpy( s, "exe" ) + 4;
+	len = strlen( _pgmptr ) + 1;
+	s = strcpy( s, _pgmptr ) + len;
+	s = strcpy( s, "src" ) + 4;
+	p = cv.files[0].name;
+	if ( _memicmp( p, cv.currdir, q ) == 0 )
+	    p += q + 1;
+
+	len = strlen( p ) + 1;
+	s = strcpy( s, p ) + len;
+	*s++ = '\0';
+	EnvBlock->reclen = (unsigned short)( s - cv.ps - 2 );
+	cv.ps = s;
+
+	/* length needs to be added for each symbol */
+
+	cv.section->length += ( s - start );
+
+	MemFree( cv.currdir );
+	MemFree( cv.files );
 
     } else {
 
@@ -1577,18 +1632,13 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	}
     }
 
-    if ( Options.debug_symbols == CV_SIGNATURE_C13 ) {
-
-	h->length = (uint_32)(cv.ps - (uint_8 *)h - sizeof(CV_SECTION));
-	cv_align(cv.ps, cv.symbols->e.seginfo->CodeBuffer);
-    }
-
     /* final flush for both types and symbols.
      * use 'fictional' size of SIZE_CV_SEGBUF!
      */
     checkflush( cv.types, cv.pt, SIZE_CV_SEGBUF, cv.param );
+    if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+	cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
     checkflush( cv.symbols, cv.ps, SIZE_CV_SEGBUF, cv.param );
-
     types->sym.max_offset = types->e.seginfo->current_loc;
     types->e.seginfo->start_loc = 0; /* required for COFF */
     symbols->sym.max_offset = symbols->e.seginfo->current_loc;

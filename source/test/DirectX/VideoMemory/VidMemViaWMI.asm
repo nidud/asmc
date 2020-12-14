@@ -57,7 +57,7 @@ GetVideoMemoryViaWMI proc hMonitor:HMONITOR, pdwAdapterRam:ptr DWORD
                            &pIWbemLocator )
 ifdef PRINTF_DEBUGGING
     .if( FAILED( hr ) )
-        wprintf( L"WMI: CoCreateInstance failed: 0x%0.8x\n", hr )
+        printf( L"WMI: CoCreateInstance failed: 0x%0.8x\n", hr )
     .endif
 endif
 
@@ -70,7 +70,7 @@ endif
                                            0, NULL, NULL, &pIWbemServices )
 ifdef PRINTF_DEBUGGING
         .if( FAILED( hr ) )
-            wprintf( L"WMI: pIWbemLocator->ConnectServer failed: 0x%0.8x\n", hr )
+            printf( L"WMI: pIWbemLocator->ConnectServer failed: 0x%0.8x\n", hr )
         .endif
 endif
         .if( SUCCEEDED( hr ) && pIWbemServices != NULL )
@@ -102,7 +102,7 @@ endif
                                                      NULL, &pEnumVideoControllers )
 ifdef PRINTF_DEBUGGING
             .if( FAILED( hr ) )
-                wprintf( L"WMI: pIWbemServices->CreateInstanceEnum failed: 0x%0.8x\n", hr )
+                printf( L"WMI: pIWbemServices->CreateInstanceEnum failed: 0x%0.8x\n", hr )
             .endif
 endif
 
@@ -121,10 +121,10 @@ endif
                                                   &uReturned );
 ifdef PRINTF_DEBUGGING
                 .if( FAILED( hr ) )
-                    wprintf( L"WMI: pEnumVideoControllers->Next failed: 0x%0.8x\n", hr )
+                    printf( L"WMI: pEnumVideoControllers->Next failed: 0x%0.8x\n", hr )
                 .endif
                 .if( uReturned == 0 )
-                    wprintf( L"WMI: pEnumVideoControllers uReturned == 0\n" )
+                    printf( L"WMI: pEnumVideoControllers uReturned == 0\n" )
                 .endif
 endif
 
@@ -144,7 +144,7 @@ endif
                         mov hr,pVC.Get( pPropName, 0, &var, NULL, NULL )
 ifdef PRINTF_DEBUGGING
                         .if( FAILED( hr ) )
-                            wprintf( L"WMI: pVideoControllers[iController]->Get PNPDeviceID failed: 0x%0.8x\n", hr )
+                            printf( L"WMI: pVideoControllers[iController]->Get PNPDeviceID failed: 0x%0.8x\n", hr )
                         .endif
 endif
                         .if( SUCCEEDED( hr ) )
@@ -164,7 +164,7 @@ endif
                             mov hr,pVC.Get( pPropName, 0, &var, NULL, NULL )
 ifdef PRINTF_DEBUGGING
                             .if( FAILED( hr ) )
-                                wprintf( L"WMI: pVideoControllers[iController]->Get AdapterRAM failed: 0x%0.8x\n",
+                                printf( L"WMI: pVideoControllers[iController]->Get AdapterRAM failed: 0x%0.8x\n",
                                          hr )
                             .endif
 endif

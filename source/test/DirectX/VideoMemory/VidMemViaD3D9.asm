@@ -80,12 +80,12 @@ GetVideoMemoryViaD3D9 proc hMonitor:HMONITOR, pdwAvailableTextureMem:ptr UINT
 GetVideoMemoryViaD3D9 endp
 
 
-GetHMonitorFromD3D9Device proc pd3dDevice:ptr IDirect3DDevice9, hMonitor:HMONITOR
+GetHMonitorFromD3D9Device proc pd3dDevice:ptr IDirect3DDevice9, hMonitor:ptr HMONITOR
 
    .new cp:D3DDEVICE_CREATION_PARAMETERS
    .new bFound:BOOL = FALSE
 
-    mov hMonitor,NULL
+    mov qword ptr [rdx],NULL
     pd3dDevice.GetCreationParameters( &cp )
     .if (SUCCEEDED(eax))
 
@@ -93,7 +93,9 @@ GetHMonitorFromD3D9Device proc pd3dDevice:ptr IDirect3DDevice9, hMonitor:HMONITO
         pd3dDevice.GetDirect3D( &pD3D )
         .if (SUCCEEDED(eax))
 
-            mov hMonitor,pD3D.GetAdapterMonitor( cp.AdapterOrdinal )
+            pD3D.GetAdapterMonitor( cp.AdapterOrdinal )
+            mov rcx,hMonitor
+            mov [rcx],rax
             mov bFound,TRUE
         .endif
         pD3D.Release()

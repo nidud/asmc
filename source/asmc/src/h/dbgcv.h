@@ -30,8 +30,6 @@
 #ifndef CVDBG_H
 #define CVDBG_H 1
 
-#define SIZE_CV_SEGBUF 0x8000
-
 #pragma pack(push, 1)
 
 typedef unsigned long	CV_uoff32_t;

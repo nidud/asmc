@@ -1301,13 +1301,13 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	ENVBLOCKSYM *EnvBlock;
 	int q;
 
-	cv.files = MemAlloc( ModuleInfo.g.cnt_fnames * sizeof( cv_file ) );
+	cv.files = LclAlloc( ModuleInfo.g.cnt_fnames * sizeof( cv_file ) );
 	for( i = 0; i < ModuleInfo.g.cnt_fnames; i++ ) {
 	    cv.files[i].name = ModuleInfo.g.FNames[i];
 	    cv.files[i].offset = 0;
 	}
 
-	cv.currdir = MemAlloc( _MAX_PATH * 4 );
+	cv.currdir = LclAlloc( _MAX_PATH * 4 );
 	_getcwd( cv.currdir, _MAX_PATH * 4 );
 	objname = cv.currdir + strlen( cv.currdir );
 
@@ -1550,9 +1550,6 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	/* length needs to be added for each symbol */
 
 	cv.section->length += ( s - start );
-
-	MemFree( cv.currdir );
-	MemFree( cv.files );
 
     } else {
 

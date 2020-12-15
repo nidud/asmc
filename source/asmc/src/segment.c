@@ -1166,6 +1166,7 @@ void SegmentInit( int pass )
     if ( pass == PASS_1 ) {
 	grpdefidx   = 0;
 	buffer_size = 0;
+	CV8Label    = NULL;
     }
 
     /*

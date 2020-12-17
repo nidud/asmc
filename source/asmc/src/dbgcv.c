@@ -594,10 +594,14 @@ static void cv_write_type_procedure( struct dbgcv *cv, struct asym *sym, int cnt
 
     /* fixme: order might be wrong ( is "push" order ) */
     for ( param = ((struct dsym *)sym)->e.procinfo->paralist; param; param = param->nextparam ) {
-	if ( ModuleInfo.defOfssize == USE64 )
-	    p_32[--cnt] = param->sym.ext_idx1;
-	else
+	if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
 	    *p_16++ = param->sym.ext_idx1;
+	} else {
+	    if ( ModuleInfo.defOfssize == USE64 ) /*...*/
+		p_32[--cnt] = param->sym.ext_idx1;
+	    else
+		*p_32++ = param->sym.ext_idx1;
+	}
     }
     cv->pt += size;
     cv->currtype++;

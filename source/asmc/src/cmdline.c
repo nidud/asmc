@@ -500,7 +500,8 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.win64_flags |= W64F_SAVEREGPARAMS;
 	return;
     case 'ogol':	// -logo
-	printf( "%s\n", cp_logo );
+	printf( cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
+	printf( "\n" );
 	exit(0);
 
 #ifndef __ASMC64__

@@ -8,11 +8,10 @@
 ;;
 ;;-----------------------------------------------------------------------------
 
+WIN32_LEAN_AND_MEAN equ 1
+
 include windows.inc
-include string.inc
 include stdio.inc
-include assert.inc
-include oleauto.inc
 include wbemidl.inc
 
 PRINTF_DEBUGGING equ 1
@@ -32,6 +31,11 @@ endif
 GetDeviceIDFromHMonitor proto :HMONITOR, :ptr WCHAR, :int_t ;; from vidmemviaddraw.cpp
 CALLBACK(PfnCoSetProxyBlanket, :ptr IUnknown, :DWORD, :DWORD, :ptr OLECHAR, :DWORD, :DWORD, :RPC_AUTH_IDENTITY_HANDLE, :DWORD)
 
+ifdef __CV8__
+.data
+IID_IWbemLocator  GUID {0xdc12a687,0x737f,0x11cf,{0x88,0x4d,0x00,0xaa,0x00,0x4b,0x2e,0x24}}
+CLSID_WbemLocator GUID {0x4590f811,0x1d3a,0x11d0,{0x89,0x1f,0x00,0xaa,0x00,0x4b,0x2e,0x24}}
+endif
 .code
 
 GetVideoMemoryViaWMI proc hMonitor:HMONITOR, pdwAdapterRam:ptr DWORD

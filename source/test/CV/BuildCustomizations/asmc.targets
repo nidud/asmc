@@ -87,6 +87,7 @@
       WCharacterSet="%(ASMC.WCharacterSet)"
       ObjectFileName="%(ASMC.ObjectFileName)"
       PreprocessorDefinitions="%(ASMC.PreprocessorDefinitions)"
+      ForseIncludeFile="%(ASMC.ForseIncludeFile)"
       AssembledCodeListingFile="%(ASMC.AssembledCodeListingFile)"
       IncludePaths="%(ASMC.IncludePaths)"
       BrowseFile="%(ASMC.BrowseFile)"

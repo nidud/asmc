@@ -1,8 +1,5 @@
 #ifndef __INC_LTYPE
 #define __INC_LTYPE
-#if !defined(__INC_DEFS)
- #include <defs.h>
-#endif
 
 #define _LUPPER		0x01	/* upper case letter */
 #define _LLOWER		0x02	/* lower case letter */

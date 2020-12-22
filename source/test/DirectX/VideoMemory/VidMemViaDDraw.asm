@@ -7,7 +7,7 @@
 ;; of shared system memory.
 ;;
 ;;-----------------------------------------------------------------------------
-
+WIN32_LEAN_AND_MEAN equ 1
 include windows.inc
 include winnls.inc
 include string.inc
@@ -37,6 +37,10 @@ strDriverName   SBYTE 512 dup(?)
 bFound          BOOL ?
 DDRAW_MATCH     ENDS
 
+ifdef __CV8__
+.data
+IID_IDirectDraw7 GUID {0x15e65ec0,0x3b9c,0x11d2,{0xb9,0x2f,0x00,0x60,0x97,0x97,0xea,0x5b}}
+endif
 .code
 
 DDEnumCallbackEx proc lpGUID:ptr GUID, lpDriverDescription:LPSTR,

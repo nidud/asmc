@@ -101,7 +101,7 @@ intptr_t typedef sdword
 endif
 endif
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE

@@ -71,7 +71,7 @@ endif
 
 
 ifndef _STDIO_DEFINED
-ifdef _MSVCRT
+if defined(_MSVCRT) and not defined(_CRTBLD)
 _iob		equ <[__iob_func()]>
 else
 externdef	_iob:_iobuf

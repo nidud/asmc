@@ -5,6 +5,8 @@
 ;; and render targets.
 ;;
 
+WIN32_LEAN_AND_MEAN equ 1
+
 include windows.inc
 include string.inc
 include stdio.inc

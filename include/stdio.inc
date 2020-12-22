@@ -50,7 +50,7 @@ FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 ifndef _LINUX
 externdef	_bufin:BYTE
 externdef	_iob:_iobuf

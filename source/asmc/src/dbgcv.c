@@ -217,39 +217,28 @@ uint_32 GetTyperef( struct asym *sym, uint_8 Ofssize )
 
 static uint_16 GetCVStructLen( struct asym *sym, uint_8 Ofssize )
 {
-    uint_16 len;
-    switch ( sym->state ) {
-    case SYM_TYPE:
-	len = sizeof( UDTSYM ) - 1;
-	if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-	    len = sizeof( UDTSYM_16t ) - 1;
-	break;
-    default:
-	if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
-	    if ( sym->isproc && Options.debug_ext >= CVEX_REDUCED ) {
-		len = ( Ofssize == USE16 ? sizeof( PROCSYM16 ) - 1 : sizeof( PROCSYM32_16t ) - 1 );
-	    } else if ( sym->mem_type == MT_NEAR || sym->mem_type == MT_FAR ) {
-		len = ( Ofssize == USE16 ? sizeof( LABELSYM16 ) - 1 : sizeof( LABELSYM32 ) - 1 );
+    if ( sym->state == SYM_TYPE )
+	return( Options.debug_symbols == CV_SIGNATURE_C7 ? sizeof( UDTSYM_16t ) - 1 : sizeof( UDTSYM ) - 1 );
+    if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
+	if ( sym->isproc && Options.debug_ext >= CVEX_REDUCED )
+	    return ( Ofssize == USE16 ? sizeof( PROCSYM16 ) - 1 : sizeof( PROCSYM32_16t ) - 1 );
+	if ( sym->mem_type == MT_NEAR || sym->mem_type == MT_FAR )
+	    return ( Ofssize == USE16 ? sizeof( LABELSYM16 ) - 1 : sizeof( LABELSYM32 ) - 1 );
 #if EQUATESYMS
-	    } else if ( sym->isequate ) {
-		len = sizeof( CONSTSYM_16t ) + ( sym->value >= LF_NUMERIC ? 2 : 0 );
+	if ( sym->isequate )
+	    return sizeof( CONSTSYM_16t ) + ( sym->value >= LF_NUMERIC ? 2 : 0 );
 #endif
-	    } else
-		len = sizeof( DATASYM32_16t ) - 1;
-	} else {
-	    if ( sym->isproc && Options.debug_ext >= CVEX_REDUCED ) {
-		len = sizeof( PROCSYM32 ) - 1;
-	    } else if ( sym->mem_type == MT_NEAR || sym->mem_type == MT_FAR ) {
-		len = sizeof( LABELSYM32 ) - 1;
-#if EQUATESYMS
-	    } else if ( sym->isequate ) {
-		len = sizeof( CONSTSYM ) + ( sym->value >= LF_NUMERIC ? 2 : 0 );
-#endif
-	    } else
-		len = sizeof( DATASYM32 ) - 1;
-	}
+	return sizeof( DATASYM32_16t ) - 1;
     }
-    return( len );
+    if ( sym->isproc && Options.debug_ext >= CVEX_REDUCED )
+	return sizeof( PROCSYM32 ) - 1;
+    if ( sym->mem_type == MT_NEAR || sym->mem_type == MT_FAR )
+	return sizeof( LABELSYM32 ) - 1;
+#if EQUATESYMS
+    if ( sym->isequate )
+	return sizeof( CONSTSYM ) + ( sym->value >= LF_NUMERIC ? 2 : 0 );
+#endif
+    return sizeof( DATASYM32 ) - 1;
 }
 
 static void PadBytes( uint_8 *curr, uint_8 *base )
@@ -264,11 +253,10 @@ static void PadBytes( uint_8 *curr, uint_8 *base )
 
 static void cv_write_bitfield( dbgcv *cv, struct dsym *type, struct asym *sym )
 {
-    uint_32 size = sizeof( CV_BITFIELD );
     uint_32 tref = GetTyperef( (struct asym *)type, USE16 );
+    uint_32 size = ( Options.debug_symbols == CV_SIGNATURE_C7 ?
+	sizeof( CV_BITFIELD_16t ) : sizeof( CV_BITFIELD ) );
 
-    if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-	size = sizeof( CV_BITFIELD_16t );
     cv->pt = checkflush( cv->types, cv->pt, size, cv->param );
     sym->cvtyperef = cv->currtype++;
     cv->pt_bf->size = size - sizeof(uint_16);
@@ -282,6 +270,7 @@ static void cv_write_bitfield( dbgcv *cv, struct dsym *type, struct asym *sym )
 	cv->t_bf->length = sym->total_size;
 	cv->t_bf->position = sym->offset;
 	cv->t_bf->type = tref;
+	cv->t_bf->reserved = 0xF1F2; /* added for alignment */
     }
     cv->pt += size;
 }
@@ -290,19 +279,15 @@ static void cv_write_array_type( struct dbgcv *cv, struct asym *sym,
 	uint_32 elemtype, uint_8 Ofssize )
 {
     uint_8 *tmp;
-    int typelen;
-    int size = sizeof( CV_ARRAY );
+    int typelen = ( sym->total_size >= LF_NUMERIC ? sizeof( uint_32 ) : 0 );
+    int size = ( ( Options.debug_symbols == CV_SIGNATURE_C7 ? sizeof( CV_ARRAY_16t )
+	: sizeof( CV_ARRAY ) ) + typelen + sizeof(uint_16) + 1 + 3 ) & ~3;
 
-    if ( elemtype == 0 )
-	elemtype = GetTyperef( sym, Ofssize );
-
-    if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-	size = sizeof( CV_ARRAY_16t );
-    typelen = ( sym->total_size >= LF_NUMERIC ? sizeof( uint_32 ) : 0 );
-    size = ( size + 2 + typelen + 3 ) & ~3;
     cv->pt = checkflush( cv->types, cv->pt, size, cv->param );
     cv->pt_ar->size = size - sizeof(uint_16);
 
+    if ( elemtype == 0 )
+	elemtype = GetTyperef( sym, Ofssize );
     if ( Options.debug_symbols == CV_SIGNATURE_C7 ) {
 	cv->pt_ar->leaf = LF_ARRAY_16t;
 	cv->pt_ar->elemtype = elemtype;
@@ -314,7 +299,6 @@ static void cv_write_array_type( struct dbgcv *cv, struct asym *sym,
 	cv->t_ar->idxtype = GetTyperef( sym, Ofssize );
 	tmp = cv->t_ar->data;
     }
-
     if ( typelen ) {
 	*(uint_16 *)tmp = LF_ULONG;
 	tmp += sizeof( uint_16 );
@@ -1604,9 +1588,8 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 
     sym = NULL;
     while ( sym = SymEnum( sym, &i ) ) {
-	if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 ) {
+	if ( sym->state == SYM_TYPE && sym->typekind != TYPE_TYPEDEF && sym->cvtyperef == 0 )
 	    cv_write_type( &cv, sym );
-	}
     }
 
     /* scan symbol table for SYM_TYPE, SYM_INTERNAL */
@@ -1640,10 +1623,10 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
     if ( Options.debug_symbols == CV_SIGNATURE_C13 )
 	cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
     checkflush( cv.symbols, cv.ps, SIZE_CV_SEGBUF, cv.param );
+
     types->sym.max_offset = types->e.seginfo->current_loc;
     types->e.seginfo->start_loc = 0; /* required for COFF */
     symbols->sym.max_offset = symbols->e.seginfo->current_loc;
     symbols->e.seginfo->start_loc = 0; /* required for COFF */
-    return;
 }
 

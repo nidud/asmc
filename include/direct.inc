@@ -23,7 +23,7 @@ _wrmdir		proto __cdecl :LPWSTR
 _wgetcwd	proto __cdecl :LPWSTR, :SINT
 _wgetdcwd	proto __cdecl :SINT, :LPWSTR, :SINT
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 __allocwpath	proto __cdecl :LPSTR
 endif
 .pragma list(pop)

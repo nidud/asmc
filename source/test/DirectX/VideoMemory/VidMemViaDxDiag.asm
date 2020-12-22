@@ -5,7 +5,7 @@
 ;; value if WMI is available. Otherwise, it returns a rounded DirectDraw 7 value.
 ;;
 ;;-----------------------------------------------------------------------------
-
+WIN32_LEAN_AND_MEAN equ 1
 include windows.inc
 include string.inc
 include stdio.inc
@@ -26,6 +26,11 @@ endif
 
 GetDeviceIDFromHMonitor proto :HMONITOR, :ptr WCHAR, cchDeviceID:int_t
 
+ifdef __CV8__
+.data
+IID_IDxDiagProvider  GUID {0x9C6B4CB0,0x23F8,0x49CC,{0xA3,0xED,0x45,0xA5,0x50,0x00,0xA6,0xD2}}
+CLSID_DxDiagProvider GUID {0xA65B8071,0x3BFE,0x4213,{0x9A,0x5B,0x49,0x1D,0xA4,0x46,0x1C,0xA7}}
+endif
 .code
 
 GetVideoMemoryViaDxDiag proc hMonitor:HMONITOR, pdwDisplayMemory:ptr DWORD

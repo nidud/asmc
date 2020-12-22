@@ -15,23 +15,23 @@ UpdateLineNumber    proto :asym_t, :ptr
 UpdateWordSize      proto :asym_t, :ptr
 UpdateCurPC         proto :asym_t, :ptr
 
+ifdef __ASMC64__
+HASH_MAGNITUDE      equ 18
+GHASH_TABLE_SIZE    equ 0x4000
+else
 HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
-HASH_MASK           equ 0x7FFF
-;
+
 ; size of global hash table for symbol table searches. This affects
 ; assembly speed.
-;
-GHASH_TABLE_SIZE    equ 8192
-;
+
+GHASH_TABLE_SIZE    equ 0x2000
+endif
+HASH_MASK           equ ( 1 shl HASH_MAGNITUDE ) - 1
+
 ; size of local hash table
-;
-LHASH_TABLE_SIZE    equ 128
-;
-; use memcpy()/memcmpi() directly?
-; this may speed-up things, but not with OW.
-; MSVC is a bit faster then.
-;
-USEFIXSYMCMP        equ 0   ; 1=don't use a function pointer for string compare
+
+LHASH_TABLE_SIZE    equ 0x80
+
 USESTRFTIME         equ 0   ; 1=use strftime()
 
 symptr_t            typedef ptr asym_t
@@ -177,7 +177,7 @@ SymSetLocal proc uses edi psym:asym_t
         .while edx
             add ecx,1
             or  edx,0x20
-            shl eax,5
+            shl eax,HASH_MAGNITUDE / 3
             add eax,edx
             mov edx,eax
             and edx,not HASH_MASK
@@ -231,7 +231,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     .repeat
         add ecx,1
         or  edx,0x20
-        shl eax,5
+        shl eax,HASH_MAGNITUDE / 3
         add eax,edx
         mov edx,eax
         and edx,not HASH_MASK

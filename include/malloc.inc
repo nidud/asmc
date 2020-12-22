@@ -65,7 +65,7 @@ endif
 _msize proto __cdecl :ptr
 _resetstkoflw proto __cdecl
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 _alloca64 proto __cdecl :dword, :dword
 ifdef _WIN64
 alloca macro dwSize:req, ReservedStack:=<@ReservedStack>

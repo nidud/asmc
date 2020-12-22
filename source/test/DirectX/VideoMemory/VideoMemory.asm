@@ -1,4 +1,6 @@
 
+WIN32_LEAN_AND_MEAN equ 1
+
 include windows.inc
 include string.inc
 include stdio.inc
@@ -27,26 +29,14 @@ GetHMonitorFromD3D9Device       proto :ptr IDirect3DDevice9, :ptr HMONITOR
 ifdef __CV8__
 .pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
 .pragma comment(linker,"/DEFAULTLIB:\DirectX\Lib\x64\d3d9.lib")
-.data
-    IID_IDirectDraw7     GUID {0x15e65ec0,0x3b9c,0x11d2,{0xb9,0x2f,0x00,0x60,0x97,0x97,0xea,0x5b}}
-    IID_IDxDiagProvider  GUID {0x9C6B4CB0,0x23F8,0x49CC,{0xA3,0xED,0x45,0xA5,0x50,0x00,0xA6,0xD2}}
-    IID_IDXGIFactory     GUID {0x7b7166ec,0x21c7,0x44ae,{0xb2,0x1a,0xc9,0xae,0x32,0x1a,0xe3,0x69}}
-    CLSID_DxDiagProvider GUID {0xA65B8071,0x3BFE,0x4213,{0x9A,0x5B,0x49,0x1D,0xA4,0x46,0x1C,0xA7}}
-    IID_IWbemLocator     GUID {0xdc12a687,0x737f,0x11cf,{0x88,0x4d,0x00,0xaa,0x00,0x4b,0x2e,0x24}}
-    CLSID_WbemLocator    GUID {0x4590f811,0x1d3a,0x11d0,{0x89,0x1f,0x00,0xaa,0x00,0x4b,0x2e,0x24}}
-    public IID_IDirectDraw7
-    public IID_IDxDiagProvider
-    public IID_IDXGIFactory
-    public CLSID_DxDiagProvider
-    public IID_IWbemLocator
-    public CLSID_WbemLocator
 endif
+
 .code
 ;;-----------------------------------------------------------------------------
 
 main proc
 
-    ;; This sample loops over all d3d9 adapters and outputs info about them
+  ;; This sample loops over all d3d9 adapters and outputs info about them
 
     .new pD3D9:ptr IDirect3D9 = Direct3DCreate9( D3D_SDK_VERSION )
 

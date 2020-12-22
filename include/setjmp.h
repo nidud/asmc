@@ -18,6 +18,7 @@
 typedef _JBTYPE jmp_buf[_JBLEN];
 
 int  __cdecl setjmp(jmp_buf);
+int  __cdecl _setjmp(jmp_buf);
 void __cdecl longjmp(jmp_buf, int);
 
 #ifdef __cplusplus

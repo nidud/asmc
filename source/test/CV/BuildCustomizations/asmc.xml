@@ -106,12 +106,12 @@
       Switch="/Zf" />
     <EnumProperty
       Name="GenerateDebugInformation"
-      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/Zi.md"
       DisplayName="Generate Debug Information"
-      Description="Generates Debug Information.  (/Zi[0|1|2|3][5|8])">
+      Description="Generates Debug Information.  (/Zi)">
       <EnumValue
         Name="true"
-        DisplayName="Default  (/Zi)"
+        DisplayName="Default"
         Switch="/Zi" />
       <EnumValue
         Name="0"
@@ -182,6 +182,13 @@
       DisplayName="Preprocessor Definitions"
       Description="Defines a text macro with the given name.     (/D[symbol])"
       Switch="/D&quot;[value]&quot;" />
+    <StringProperty
+      Name="ForseIncludeFile"
+      Category="Included File"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Included File"
+      Description="Force file to be included.     (/Fi[file])"
+      Switch="/Fi&quot;[value]&quot;" />
     <StringProperty
       Name="AssembledCodeListingFile"
       Category="Listing File"

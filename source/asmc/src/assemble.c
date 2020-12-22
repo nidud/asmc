@@ -1016,7 +1016,7 @@ int EXPQUAL AssembleModule( char *source )
     /* fatal errors during assembly won't terminate the program,
      * just the assembly step.!
      */
-    if ( ( q = setjmp( jmpenv ) ) ) {
+    if ( ( q = _setjmp( jmpenv ) ) ) {
 
 	if ( q == 1 ) {
 

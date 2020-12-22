@@ -8,7 +8,6 @@ include direct.inc
 include malloc.inc
 include string.inc
 include errno.inc
-include ltype.inc
 include winbase.inc
 
 .code
@@ -91,20 +90,17 @@ _fullpath proc uses esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
 
         .else
 
-            mov   drive,0
-            push  eax
-            movzx eax,al
-            test  byte ptr _ltype[eax+1],_UPPER or _LOWER
-            pop   eax
-
-            .if !ZERO? && ah == ':'
+            mov drive,0
+            mov cl,al
+            or  cl,0x20
+            .if ( cl >= 'a' && cl <= 'z' && ah == ':' )
 
                 mov [edi],ax
                 add edi,2
                 add esi,2
-                sub al,'A' + 1
-                and al,1Fh
-                mov drive,al
+                sub cl,'a' + 1
+                and cl,1Fh
+                mov drive,cl
                 GetLogicalDrives()
                 movzx ecx,drive
                 dec ecx

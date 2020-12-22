@@ -26,8 +26,6 @@ void CmdlineFini( void );
 char *ParseCmdline( char **, int * );
 void define_name( char *, char * );
 
-#ifndef _LIBC
-
 char *strfcat( char *buffer, const char *path, const char *file )
 {
     char *p = buffer;
@@ -50,8 +48,6 @@ char *strfcat( char *buffer, const char *path, const char *file )
     } while ( *file++ );
     return buffer;
 }
-
-#endif
 
 static int AssembleSubdir( char *directory, char *wild )
 {
@@ -125,7 +121,7 @@ int main( int argc, char **argv )
     * since this type isn't necessarily defined, type long is used as substitute.
     */
     struct _finddata_t ff;
-    long h;
+    size_t h;
     char name[_MAX_PATH];
 #endif
     p = getenv( "ASMC" );

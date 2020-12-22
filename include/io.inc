@@ -180,7 +180,7 @@ endif ;; _CRTBLD
 _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 _osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 _osopenW	proto __cdecl :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 ifdef _UNICODE

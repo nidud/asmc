@@ -1,7 +1,5 @@
 #include <globals.h>
 
-#ifndef _LIBC
-
 unsigned char _ltype[257] = {
 	0,			/* -1 EOF   */
 	_LCONTROL,		/* 00 (NUL) */
@@ -135,4 +133,3 @@ unsigned char _ltype[257] = {
 	/* and the rest are 0... */
 };
 
-#endif

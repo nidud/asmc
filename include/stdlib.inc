@@ -566,7 +566,7 @@ __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 
 setargv		proto __cdecl :ptr, :string_t
 setwargv	proto __cdecl :ptr, :ptr wchar_t

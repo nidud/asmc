@@ -1322,7 +1322,8 @@ typedef struct CV_POINTER {
     union {
 	struct {
 	    CV_typ_t	    pmclass;	/* index of containing class for pointer to member */
-	    unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
+	    //unsigned short  pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
+	    CV_typ_t	    pmenum;	/* enumeration specifying pm format (CV_pmtype_e) */
 	};
 	unsigned short	    bseg;	/* base segment if PTR_BASE_SEG */
 	unsigned char	    Sym[1];	/* copy of base symbol record (including length) */
@@ -1646,6 +1647,7 @@ typedef struct CV_BITFIELD {
     CV_typ_t	    type;	    /* type of bitfield */
     unsigned char   length;
     unsigned char   position;
+    unsigned short  reserved;	    /* align 4... */
   } CV_BITFIELD;
 
 /* Symbol definitions */

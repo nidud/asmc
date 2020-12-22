@@ -147,7 +147,7 @@ _wstrtime	proto __cdecl :ptr wchar_t
 _WTIME_DEFINED	equ 1
 endif
 
-ifndef _MSVCRT
+if not defined(_MSVCRT) or defined(_CRTBLD)
 
 externdef	_days:DWORD
 externdef	_lpdays:DWORD

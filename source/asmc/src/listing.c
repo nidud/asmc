@@ -160,7 +160,7 @@ void LstWrite( enum lsttype type, uint_32 oldofs, void *value )
     if ( ( Parse_Pass > PASS_1 ) && UseSavedState ) {
 	if ( ModuleInfo.GeneratedCode == 0 ) {
 	    if ( !( ModuleInfo.line_flags & LOF_SKIPPOS ) )
-		list_pos = LineStoreCurr->list_pos;
+	       list_pos = LineStoreCurr->list_pos;
 #if USELSLINE /* either use CurrSource + CurrComment or LineStoreCurr->line (see assemble.c, OnePass() */
 	    pSrcline = LineStoreCurr->line;
 	    if ( ModuleInfo.CurrComment ) { /* if comment was removed, readd it! */
@@ -170,6 +170,7 @@ void LstWrite( enum lsttype type, uint_32 oldofs, void *value )
 #endif
 	}
 	fseek( CurrFile[LST], list_pos, SEEK_SET );
+
     }
 
     ll.next = NULL;
@@ -1099,12 +1100,12 @@ int ListMacroDirective( int i, struct asm_tok tokenarray[] )
 void LstInit( void )
 {
     const char *fn;
-    const char *buffer;
+    char buffer[128];
 
     list_pos = 0;
     if( Options.write_listing ) {
 	int namelen;
-	buffer = cp_logo;
+	sprintf( buffer, cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
 	list_pos = strlen( buffer );
 	fwrite( buffer, 1, list_pos, CurrFile[LST] );
 	LstNL();
@@ -1114,5 +1115,4 @@ void LstInit( void )
 	list_pos += namelen;
 	LstNL();
     }
-
 }

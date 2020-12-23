@@ -1157,8 +1157,14 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
     return;
 }
 
-#define cv_align(p, base) for( ; ( p - base ) & 3; ) *p++ = NULLC
-
+static void cv_align( dbgcv *cv )
+{
+    int count = cv->section->length & 3;
+    if ( count )
+	count = 4 - count;
+    while ( count-- )
+	*cv->ps++ = NULLC;
+}
 
 /* flush section header and return memory address */
 
@@ -1326,7 +1332,7 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	    cv.section->length += len;
 	}
 	*objname = '\0';
-	cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
+	cv_align( &cv );
 
 	/* $$000000 to line table */
 
@@ -1459,7 +1465,7 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 	    }
 	}
 	if ( cv.section != NULL )
-	    cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
+	    cv_align( &cv );
 
 	/* symbol information */
 
@@ -1621,7 +1627,7 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
      */
     checkflush( cv.types, cv.pt, SIZE_CV_SEGBUF, cv.param );
     if ( Options.debug_symbols == CV_SIGNATURE_C13 )
-	cv_align( cv.ps, cv.symbols->e.seginfo->CodeBuffer );
+	cv_align( &cv );
     checkflush( cv.symbols, cv.ps, SIZE_CV_SEGBUF, cv.param );
 
     types->sym.max_offset = types->e.seginfo->current_loc;

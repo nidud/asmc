@@ -50,9 +50,6 @@ static const char * const SymDebName[DBGS_MAX] = { ".debug$S", ".debug$T" };
 
 static const char szdrectve[] = { ".drectve" };
 
-static uint_32 CV8SymIndex;
-extern uint_32 CV8LineTable;
-
 /* alloc a string which will be stored in the COFF string table */
 
 static uint_32 Coff_AllocString( struct coffmod *cm, const char *string, int len )
@@ -435,8 +432,8 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
         p = ( curr->e.seginfo->aliasname ? curr->e.seginfo->aliasname : ConvertSectionName( &curr->sym, NULL, buffer ) );
         len = strlen( p );
         if ( len > IMAGE_SIZEOF_SHORT_NAME ) {
-            p = NULL;
             strpos = Coff_AllocString( cm, p, len );
+            p = NULL;
         }
         coff_write_symbol(p, strpos, 0, i, IMAGE_SYM_TYPE_NULL, IMAGE_SYM_CLASS_STATIC,
                 Options.no_section_aux_entry == FALSE ? 1 : 0 );

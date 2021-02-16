@@ -941,7 +941,7 @@ endif
                         .if ( eax < ( UINT_MAX / 8 ) )
                             AddLineQueueX( "mov eax,[r11+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
                         .else
-                            AddLineQueueX( "sub r11,%d", eax )
+                            AddLineQueueX( "sub rax,%d", eax )
                             AddLineQueueX( "mov eax,[r11+rax*4+(%s-%s)]", &l_jtab, l_exit )
                         .endif
                     .endif

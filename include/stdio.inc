@@ -61,6 +61,10 @@ externdef	hStdInput:HANDLE
 externdef	hStdOutput:HANDLE
 externdef	hStdError:HANDLE
 endif
+elseifdef _LIBCMT
+_iob		equ <[__acrt_iob_func(0)]>
+stdout		equ <[__acrt_iob_func(1)]>
+stderr		equ <[__acrt_iob_func(2)]>
 else
 _iob		equ <[__iob_func()]>
 stdout		equ <[__iob_func()+sizeof(_iobuf)]>
@@ -109,6 +113,7 @@ ifdef _MSVCRT
 __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
+__acrt_iob_func proto __cdecl :dword
 endif
 
 ifndef _WSTDIO_DEFINED

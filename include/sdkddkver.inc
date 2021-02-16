@@ -176,7 +176,7 @@ endif
 
 if NOT defined(_WIN32_WINNT) AND NOT defined(NTDDI_VERSION)
 ifndef PSAPI_VERSION
-PSAPI_VERSION	equ <>
+PSAPI_VERSION	equ 1
 endif
 endif
 

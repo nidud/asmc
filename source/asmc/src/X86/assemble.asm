@@ -52,11 +52,11 @@ Parse_Pass	dd 0
 write_to_file	dd 0
 
 cp_text1	db "_TEXT",0
-ifdef __ASMC64__
-cp_text2	db ".text$mn",0
-else
+;ifdef __ASMC64__
+;cp_text2	db ".text$mn",0
+;else
 cp_text2	db ".text",0
-endif
+;endif
 cp_data1	db "_DATA",0
 cp_data2	db ".data",0
 cp_const	db "CONST",0

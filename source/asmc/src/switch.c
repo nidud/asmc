@@ -735,7 +735,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 			if ( (unsigned int)min < ( UINT_MAX / 8 ) )
 			    AddLineQueueX( "mov eax,[r11+rax*4-(%d*4)+(%s-%s)]", min, l_jtab, l_exit );
 			else {
-			    AddLineQueueX( "sub r11,%d", min );
+			    AddLineQueueX( "sub rax,%d", min );
 			    AddLineQueueX( "mov eax,[r10+rax*4+(%s-%s)]", l_jtab, l_exit );
 			}
 		    }

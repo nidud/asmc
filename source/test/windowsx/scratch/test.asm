@@ -155,7 +155,8 @@ WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
     mov g_hinst,rcx ; hinst
 
     .return .if !InitApp()
-    .return .ifsd !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
+    CoInitialize(NULL)
+    .return .ifsd !SUCCEEDED(eax) ;; In case we use COM
 
     CreateWindowEx(
             0,

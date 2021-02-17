@@ -736,7 +736,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 			    AddLineQueueX( "mov eax,[r11+rax*4-(%d*4)+(%s-%s)]", min, l_jtab, l_exit );
 			else {
 			    AddLineQueueX( "sub rax,%d", min );
-			    AddLineQueueX( "mov eax,[r10+rax*4+(%s-%s)]", l_jtab, l_exit );
+			    AddLineQueueX( "mov eax,[r11+rax*4+(%s-%s)]", l_jtab, l_exit );
 			}
 		    }
 		    AddLineQueue( "sub r11,rax" );

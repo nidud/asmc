@@ -35,8 +35,10 @@
 ;;
 
 ifndef __PE__
+
 .pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
 _LIBCMT equ 1
+
 endif
 
 include windows.inc
@@ -102,8 +104,8 @@ ferr LPFILE 0
 ;; Local function prototypes
 
 
-WriteLoop proto WINAPI FileSize:ULARGE_INTEGER
-ReadLoop proto FileSize:ULARGE_INTEGER
+WriteLoop proto FileSize:ULARGE_INTEGER
+ReadLoop  proto FileSize:ULARGE_INTEGER
 
 main proc argc:SINT, argv:ptr ptr sbyte
 
@@ -128,27 +130,27 @@ main proc argc:SINT, argv:ptr ptr sbyte
     .endif
 
 
-    ;;confirm we are running on Windows NT 3.5 or greater, if not, display notice and
-    ;;terminate.  Completion ports are only supported on Win32 & Win32s.  Creating a
-    ;;Completion port with no handle specified is only supported on NT 3.51, so we need
-    ;;to know what we're running on.  Note, Win32s does not support console apps, thats
-    ;;why we exit here if we are not on Windows NT.
+    ;; confirm we are running on Windows NT 3.5 or greater, if not, display notice and
+    ;; terminate.  Completion ports are only supported on Win32 & Win32s.  Creating a
+    ;; Completion port with no handle specified is only supported on NT 3.51, so we need
+    ;; to know what we're running on.  Note, Win32s does not support console apps, thats
+    ;; why we exit here if we are not on Windows NT.
     ;;
     ;;
-    ;;ver.dwOSVersionInfoSize needs to be set before calling GetVersionInfoEx()
+    ;; ver.dwOSVersionInfoSize needs to be set before calling GetVersionInfoEx()
 
     mov ver.dwOSVersionInfoSize,sizeof(OSVERSIONINFO)
 
 
-    ;;Failure here could mean several things 1. On an NT system,
-    ;;it indicates NT version 3.1 because GetVersionEx() is only
-    ;;implemented on NT 3.5.  2. On Windows 3.1 system, it means
-    ;;either Win32s version 1.1 or 1.0 is installed.
+    ;; Failure here could mean several things 1. On an NT system,
+    ;; it indicates NT version 3.1 because GetVersionEx() is only
+    ;; implemented on NT 3.5.  2. On Windows 3.1 system, it means
+    ;; either Win32s version 1.1 or 1.0 is installed.
 
     mov Success,GetVersionEx(&ver)
 
-    ;;GetVersionEx() failed - see above.
-    ;;GetVersionEx() succeeded but we are not on NT.
+    ;; GetVersionEx() failed - see above.
+    ;; GetVersionEx() succeeded but we are not on NT.
 
     .if ( (!Success) || (ver.dwPlatformId != VER_PLATFORM_WIN32_NT) )
 
@@ -163,8 +165,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
     ;; Get the system's page size.
 
     GetSystemInfo(&SystemInfo)
-    mov eax,SystemInfo.dwPageSize
-    mov PageSize,eax
+    mov PageSize,SystemInfo.dwPageSize
 
 
     ;; Open the source file and create the destination file.
@@ -228,6 +229,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
             InitialFileSize.LowPart,
             &InitialFileSize.HighPart,
             FILE_BEGIN) == INVALID_SET_FILE_POINTER
+
         .if (GetLastError() != NO_ERROR)
             fprintf(ferr, "SetFilePointer failed, error %d\n", GetLastError())
             exit(1)
@@ -235,27 +237,28 @@ main proc argc:SINT, argv:ptr ptr sbyte
     .endif
 
     .if !SetEndOfFile(DestFile)
+
         fprintf(ferr, "SetEndOfFile failed, error %d\n", GetLastError())
         exit(1)
     .endif
 
-    ;;In NT 3.51 it is not necessary to specify the FileHandle parameter
-    ;;of CreateIoCompletionPort()--It is legal to specify the FileHandle
-    ;;as INVALID_HANDLE_VALUE.  However, for NT 3.5 an overlapped file
-    ;;handle is needed.
+    ;; In NT 3.51 it is not necessary to specify the FileHandle parameter
+    ;; of CreateIoCompletionPort()--It is legal to specify the FileHandle
+    ;; as INVALID_HANDLE_VALUE.  However, for NT 3.5 an overlapped file
+    ;; handle is needed.
     ;;
-    ;;We know already that we are running on NT, or else we wouldn't have
-    ;;gotten this far, so lets see what version we are running on.
+    ;; We know already that we are running on NT, or else we wouldn't have
+    ;; gotten this far, so lets see what version we are running on.
 
     .if (ver.dwMajorVersion == 3 && ver.dwMinorVersion == 50)
 
-        ;;we're running on NT 3.5 - Completion Ports exists
+        ;; we're running on NT 3.5 - Completion Ports exists
 
         .if !CreateIoCompletionPort(
-                SourceFile,             ;;file handle to associate with I/O completion port
-                NULL,                   ;;optional handle to existing I/O completion port
-                dword ptr SourceFile,   ;;completion key
-                1)                      ;;# of threads allowed to execute concurrently
+                SourceFile,             ;; file handle to associate with I/O completion port
+                NULL,                   ;; optional handle to existing I/O completion port
+                dword ptr SourceFile,   ;; completion key
+                1)                      ;; # of threads allowed to execute concurrently
 
 
             fprintf(ferr, "failed to create ReadPort, error %d\n", GetLastError())
@@ -265,33 +268,31 @@ main proc argc:SINT, argv:ptr ptr sbyte
 
     .else
 
-        ;;We are running on NT 3.51 or greater.
-        ;;
-        ;;Create the I/O Completion Port.
+        ;; We are running on NT 3.51 or greater.
 
-        CreateIoCompletionPort(INVALID_HANDLE_VALUE,    ;;file handle to associate with I/O completion port
-                               NULL,                    ;;optional handle to existing I/O completion port
-                               dword ptr SourceFile,    ;;completion key
-                               1)                       ;;# of threads allowed to execute concurrently
+        ;; Create the I/O Completion Port.
 
-
+        CreateIoCompletionPort(INVALID_HANDLE_VALUE,    ;; file handle to associate with I/O completion port
+                               NULL,                    ;; optional handle to existing I/O completion port
+                               dword ptr SourceFile,    ;; completion key
+                               1)                       ;; # of threads allowed to execute concurrently
 
 
 
-         ;;If we need to, aka we're running on NT 3.51, let's associate a file handle with the
-         ;;completion port.
+
+
+         ;; If we need to, aka we're running on NT 3.51, let's associate a file handle with the
+         ;; completion port.
 
          mov ReadPort,rax
          CreateIoCompletionPort(SourceFile,
                                 ReadPort,
-                                dword ptr SourceFile,  ;;should be the previously specified key.
+                                dword ptr SourceFile,  ;; should be the previously specified key.
                                 1)
 
          .if (ReadPort == NULL)
 
-            fprintf(ferr,
-                    "failed to create ReadPort, error %d\n",
-                    GetLastError())
+            fprintf(ferr, "failed to create ReadPort, error %d\n", GetLastError())
 
             exit(1)
 
@@ -299,6 +300,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
     .endif
 
     .if !CreateIoCompletionPort(DestFile, NULL, dword ptr DestFile, 1)
+
         fprintf(ferr, "failed to create WritePort, error %d\n", GetLastError())
         exit(1)
     .endif
@@ -308,6 +310,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
     ;; Start the writing thread
 
     .if !CreateThread(NULL, 0, &WriteLoop, &FileSize, 0, &ThreadId)
+
         fprintf(ferr, "failed to create write thread, error %d\n", GetLastError())
         exit(1)
     .endif
@@ -358,6 +361,7 @@ main proc argc:SINT, argv:ptr ptr sbyte
         fprintf(ferr, "SetEndOfFile failed, error %d\n", GetLastError())
         exit(1)
     .endif
+
     CloseHandle(BufferedHandle)
     CloseHandle(SourceFile)
     CloseHandle(DestFile)
@@ -372,14 +376,12 @@ main proc argc:SINT, argv:ptr ptr sbyte
 
     printf("\n\n%d bytes copied in %.3f seconds\n", FileSize.LowPart, rbx)
 
-    mov     rax,FileSize.QuadPart
+    mov      rax,FileSize.QuadPart
     cvtsi2sd xmm0,rax
-    mov     rax,1024.0*1024.0
-    movq    xmm1,rax
-    divsd   xmm0,xmm1
-    movq    xmm1,rbx
-    divsd   xmm0,xmm1
-    movq    rdx,xmm0
+    divsd    xmm0,1024.0*1024.0
+    movq     xmm1,rbx
+    divsd    xmm0,xmm1
+    movq     rdx,xmm0
 
     printf("%.2f MB/sec\n", rdx)
 
@@ -446,7 +448,7 @@ ReadLoop proc uses rsi rdi rbx FileSize:ULARGE_INTEGER
     ;; We have started the initial async. reads, enter the main loop.
     ;; This simply waits until a write completes, then issues the next
     ;; read.
-    int 3
+
     .while (PendingIO)
 
         .if !GetQueuedCompletionStatus(WritePort, &NumberBytes, &Key, &CompletedOverlapped, INFINITE)
@@ -507,7 +509,7 @@ WriteLoop proc uses rbx WINAPI FileSize:ULARGE_INTEGER
         TotalBytesWritten   : ULARGE_INTEGER
 
     mov TotalBytesWritten.QuadPart,0
-    int 3
+
     .for (::)
 
         .if !GetQueuedCompletionStatus(ReadPort, &NumberBytes, &Key, &CompletedOverlapped, INFINITE)

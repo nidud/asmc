@@ -6106,6 +6106,7 @@ endif
 CancelIo proto WINAPI \
 		 hFile: HANDLE
 
+.pragma comment(lib, advapi32)
 
 ClearEventLogA proto WINAPI \
 	     hEventLog: HANDLE,

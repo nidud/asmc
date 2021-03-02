@@ -3,6 +3,7 @@ __ACCESS_CONTROL_API__ equ <>
 include windows.inc
 include accctrl.inc
 .pragma list(push, 0)
+.pragma comment(lib, advapi32)
 
 ;VOID
 CALLBACK(FN_PROGRESS, :LPWSTR, :DWORD, :PPROG_INVOKE_SETTING, :PVOID, :BOOL)

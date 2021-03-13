@@ -6006,7 +6006,7 @@ DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
     SetBackgroundColor	proc :COLORREF
     GetBackgroundColor	proc :ptr COLORREF
     SetPosition		proc :DESKTOP_WALLPAPER_POSITION
-    GetPosition		proc :proc DESKTOP_WALLPAPER_POSITION
+    GetPosition		proc :DESKTOP_WALLPAPER_POSITION
     SetSlideshow	proc :ptr IShellItemArray
     GetSlideshow	proc :ptr ptr IShellItemArray
     SetSlideshowOptions proc :DESKTOP_SLIDESHOW_OPTIONS, :UINT

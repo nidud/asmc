@@ -48,11 +48,11 @@ if (_WIN32_WINNT GE _WIN32_WINNT_WINTHRESHOLD)
 endif
 
 DCOMPOSITION_FRAME_STATISTICS STRUC
-lastFrameTime		LARGE_INTEGER ?
-currentCompositionRate	DXGI_RATIONAL ?
-currentTime		LARGE_INTEGER ?
-timeFrequency		LARGE_INTEGER ?
-nextEstimatedFrameTime	LARGE_INTEGER ?
+lastFrameTime		LARGE_INTEGER <>
+currentCompositionRate	DXGI_RATIONAL <>
+currentTime		LARGE_INTEGER <>
+timeFrequency		LARGE_INTEGER <>
+nextEstimatedFrameTime	LARGE_INTEGER <>
 DCOMPOSITION_FRAME_STATISTICS ENDS
 
 COMPOSITIONOBJECT_READ	equ 0x0001

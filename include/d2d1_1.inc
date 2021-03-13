@@ -486,16 +486,16 @@ DEFINE_IIDX(ID2D1DeviceContext, "e8f7fe7a-191c-466d-ad95-975678bda998")
 
 .comdef ID2D1DeviceContext : public ID2D1RenderTarget
 
-    ;CreateBitmap	proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr D2D1_BITMAP_PROPERTIES1, :ptr ptr ID2D1Bitmap1
-    ;CreateBitmapFromWicBitmap proc :ptr IWICBitmapSource, :ptr D2D1_BITMAP_PROPERTIES1, :ptr ptr ID2D1Bitmap1
+    CreateBitmap	proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr, :ptr ptr
+    CreateBitmapFromWicBitmap proc :ptr, :ptr, :ptr ptr
     CreateColorContext	proc :D2D1_COLOR_SPACE
     CreateColorContextFromFilename proc :PCWSTR, :ptr ptr ID2D1ColorContext
     CreateColorContextFromWicColorContext proc :ptr IWICColorContext, :ptr ptr ID2D1ColorContext
-    ;CreateBitmapFromDxgiSurface :ptr IDXGISurface, :ptr D2D1_BITMAP_PROPERTIES1, :ptr ptr ID2D1Bitmap1
+    CreateBitmapFromDxgiSurface proc :ptr IDXGISurface, :ptr D2D1_BITMAP_PROPERTIES1, :ptr ptr ID2D1Bitmap1
     CreateEffect	proc :REFCLSID, :ptr ptr ID2D1Effect
-    ;CreateGradientStopCollection proc :UINT32, :D2D1_COLOR_SPACE, :D2D1_COLOR_SPACE, :D2D1_BUFFER_PRECISION, :D2D1_EXTEND_MODE, :D2D1_COLOR_INTERPOLATION_MODE, :ptr ptr ID2D1GradientStopCollection1
+    CreateGradientStopCollection proc :UINT32, :D2D1_COLOR_SPACE, :D2D1_COLOR_SPACE, :D2D1_BUFFER_PRECISION, :D2D1_EXTEND_MODE, :D2D1_COLOR_INTERPOLATION_MODE, :ptr ptr ID2D1GradientStopCollection1
     CreateImageBrush	proc :ptr ID2D1Image, :ptr D2D1_IMAGE_BRUSH_PROPERTIES, :ptr D2D1_BRUSH_PROPERTIES, :ptr ptr ID2D1ImageBrush
-    ;CreateBitmapBrush	proc :ptr ID2D1Bitmap, :ptr D2D1_BITMAP_BRUSH_PROPERTIES1, :ptr D2D1_BRUSH_PROPERTIES, :ptr ptr ID2D1BitmapBrush1
+    CreateBitmapBrush	proc :ptr ID2D1Bitmap, :ptr D2D1_BITMAP_BRUSH_PROPERTIES1, :ptr D2D1_BRUSH_PROPERTIES, :ptr ptr ID2D1BitmapBrush1
     CreateCommandList	proc :ptr ptr ID2D1CommandList
     IsDxgiFormatSupported proc :DXGI_FORMAT
     IsBufferPrecisionSupported proc :D2D1_BUFFER_PRECISION
@@ -511,16 +511,16 @@ DEFINE_IIDX(ID2D1DeviceContext, "e8f7fe7a-191c-466d-ad95-975678bda998")
     GetPrimitiveBlend	proc
     SetUnitMode		proc :D2D1_UNIT_MODE
     GetUnitMode		proc
-    ;DrawGlyphRun	proc :D2D1_POINT_2F, :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_GLYPH_RUN_DESCRIPTION, :ptr ID2D1Brush, :DWRITE_MEASURING_MODE
+    DrawGlyphRun	proc :D2D1_POINT_2F, :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_GLYPH_RUN_DESCRIPTION, :ptr ID2D1Brush, :DWRITE_MEASURING_MODE
     DrawImage		proc :ptr ID2D1Image, :ptr D2D1_POINT_2F, :ptr D2D1_RECT_F, :D2D1_INTERPOLATION_MODE, :D2D1_COMPOSITE_MODE
     DrawGdiMetafile	proc :ptr ID2D1GdiMetafile, :ptr D2D1_POINT_2F
-    ;DrawBitmap		proc :ptr ID2D1Bitmap, :ptr D2D1_RECT_F, :FLOAT, :D2D1_INTERPOLATION_MODE, :ptr D2D1_RECT_F, :ptr D2D1_MATRIX_4X4_F
-    ;PushLayer		proc :D2D1_LAYER_PARAMETERS1 *layerParameters,,_In_opt_ ID2D1Layer *layer,
+    DrawBitmap		proc :ptr ID2D1Bitmap, :ptr D2D1_RECT_F, :FLOAT, :D2D1_INTERPOLATION_MODE, :ptr D2D1_RECT_F, :ptr D2D1_MATRIX_4X4_F
+    PushLayer		proc :ptr D2D1_LAYER_PARAMETERS1, :ptr ID2D1Layer
     InvalidateEffectInputRectangle proc :ptr ID2D1Effect, :UINT32, :ptr D2D1_RECT_F
     GetEffectInvalidRectangleCount proc :ptr ID2D1Effect, :ptr UINT32
     GetEffectInvalidRectangles proc :ptr ID2D1Effect, :UINT32
     GetEffectRequiredInputRectangles proc :ptr ID2D1Effect, :ptr D2D1_RECT_F, :ptr D2D1_RECT_F, :UINT32
-    ;FillOpacityMask	proc :ptr ID2D1Bitmap, :ptr ID2D1Brush, :ptr D2D1_RECT_F, :ptr D2D1_RECT_F
+    FillOpacityMask	proc :ptr ID2D1Bitmap, :ptr ID2D1Brush, :ptr D2D1_RECT_F, :ptr D2D1_RECT_F
     .ends
 
 
@@ -554,7 +554,7 @@ DEFINE_IIDX(ID2D1Factory1, "bb12d362-daee-4b9a-aa1d-14ba401cfa1f")
 
     .ends
 
-DEFINE_IIDX(,ID2D1Multithread "31e6e7bc-e0ff-4d46-8c64-a0a8c41c15d3")
+DEFINE_IIDX(ID2D1Multithread, "31e6e7bc-e0ff-4d46-8c64-a0a8c41c15d3")
 
 .comdef ID2D1Multithread : public IUnknown
 

@@ -32,6 +32,7 @@ davclnt
 dbgeng
 dbghelp
 dciman32
+dcomp
 ddraw
 devenum
 devmgr

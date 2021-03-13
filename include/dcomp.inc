@@ -4,6 +4,8 @@ include d3d9types.inc
 endif
 include d2d1_1.inc
 
+.pragma comment(lib, dcomp)
+
 include dcomptypes.inc
 include dcompanimation.inc
 
@@ -40,12 +42,12 @@ DCompositionCreateSurfaceHandle proto WINAPI \
 	 surfaceHandle: ptr HANDLE
 
 DCompositionAttachMouseWheelToHwnd proto WINAPI \
-		visual: IDCompositionVisual*,
+		visual: ptr IDCompositionVisual,
 		  hwnd: HWND,
 		enable: BOOL
 
 DCompositionAttachMouseDragToHwnd proto WINAPI \
-		visual: IDCompositionVisual*,
+		visual: ptr IDCompositionVisual,
 		  hwnd: HWND,
 		enable: BOOL
 
@@ -57,7 +59,7 @@ DEFINE_IIDX(IDCompositionDevice, "C37EA93A-E7AA-450D-B16F-9746CB0407F3")
     Commit		proc
     WaitForCommitCompletion proc
     GetFrameStatistics	proc :ptr DCOMPOSITION_FRAME_STATISTICS
-    CreateTargetForHwnd proc :HWND hwnd, :BOOL, :ptr ptr IDCompositionTarget
+    CreateTargetForHwnd proc :HWND, :BOOL, :ptr ptr IDCompositionTarget
     CreateVisual	proc :ptr ptr IDCompositionVisual
     CreateSurface	proc :UINT, :UINT, :DXGI_FORMAT, :DXGI_ALPHA_MODE, :ptr ptr IDCompositionSurface
     CreateVirtualSurface proc :UINT, :UINT, :DXGI_FORMAT, :DXGI_ALPHA_MODE, :ptr ptr IDCompositionVirtualSurface
@@ -73,7 +75,7 @@ DEFINE_IIDX(IDCompositionDevice, "C37EA93A-E7AA-450D-B16F-9746CB0407F3")
     CreateScaleTransform3D proc :ptr ptr IDCompositionScaleTransform3D
     CreateRotateTransform3D proc :ptr ptr IDCompositionRotateTransform3D
     CreateMatrixTransform3D proc :ptr ptr IDCompositionMatrixTransform3D
-    CreateTransform3DGroup proc :UINT, :ptr ptr IDCompositionTransform3D
+    CreateTransform3DGroup proc :ptr ptr IDCompositionTransform3D, :UINT, :ptr ptr IDCompositionTransform3D
     CreateEffectGroup	proc :ptr ptr IDCompositionEffectGroup
     CreateRectangleClip proc :ptr ptr IDCompositionRectangleClip
     CreateAnimation	proc :ptr ptr IDCompositionAnimation
@@ -91,19 +93,19 @@ DEFINE_IIDX(IDCompositionVisual, "4d93059d-097b-4651-9a60-f0f25116e2f3")
 
 .comdef IDCompositionVisual : public IUnknown
 
-    SetOffsetX		proc :float
-    SetOffsetX		proc :ptr IDCompositionAnimation
-    SetOffsetY		proc :float
-    SetOffsetY		proc :ptr IDCompositionAnimation
+    SetOffsetX?p	proc :ptr IDCompositionAnimation
+    SetOffsetX?r	proc :real4
+    SetOffsetY?p	proc :ptr IDCompositionAnimation
+    SetOffsetY?r	proc :real4
     SetTransform	proc :ptr D2D_MATRIX_3X2_F
-    SetTransform	proc :ptr IDCompositionTransform
+    SetTransform2	proc :ptr IDCompositionTransform
     SetTransformParent	proc :ptr IDCompositionVisual
     SetEffect		proc :ptr IDCompositionEffect
     SetBitmapInterpolationMode proc :DCOMPOSITION_BITMAP_INTERPOLATION_MODE
     SetBorderMode	proc :DCOMPOSITION_BORDER_MODE
     SetClip		proc :ptr D2D_RECT_F
-    SetClip		proc :ptr IDCompositionClip
-    SetContent		proc :ptr IUnknown *content
+    SetClip2		proc :ptr IDCompositionClip
+    SetContent		proc :ptr IUnknown
     AddVisual		proc :ptr IDCompositionVisual, :BOOL, :ptr IDCompositionVisual
     RemoveVisual	proc :ptr IDCompositionVisual
     RemoveAllVisuals	proc
@@ -132,50 +134,50 @@ DEFINE_IIDX(IDCompositionTranslateTransform, "06791122-C6F0-417d-8323-269E987F59
 
 .comdef IDCompositionTranslateTransform : public IDCompositionTransform
 
-    SetOffsetX		proc :float
-    SetOffsetX2		proc :ptr IDCompositionAnimation
-    SetOffsetY		proc :float
-    SetOffsetY2		proc :ptr IDCompositionAnimation
+    SetOffsetX?p	proc :ptr IDCompositionAnimation
+    SetOffsetX?r	proc :real4
+    SetOffsetY?p	proc :ptr IDCompositionAnimation
+    SetOffsetY?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionScaleTransform, "71FDE914-40EF-45ef-BD51-68B037C339F9")
 
 .comdef IDCompositionScaleTransform : public IDCompositionTransform
 
-    SetScaleX		proc :float
-    SetScaleX		proc :ptr IDCompositionAnimation
-    SetScaleY		proc :float
-    SetScaleY		proc :ptr IDCompositionAnimation
-    SetCenterX		proc :float
-    SetCenterX		proc :ptr IDCompositionAnimation
-    SetCenterY		proc :float
-    SetCenterY		proc :ptr IDCompositionAnimation
+    SetScaleX?p		proc :ptr IDCompositionAnimation
+    SetScaleX?r		proc :real4
+    SetScaleY?p		proc :ptr IDCompositionAnimation
+    SetScaleY?r		proc :real4
+    SetCenterX?p	proc :ptr IDCompositionAnimation
+    SetCenterX?r	proc :real4
+    SetCenterY?p	proc :ptr IDCompositionAnimation
+    SetCenterY?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionRotateTransform, "641ED83C-AE96-46c5-90DC-32774CC5C6D5")
 
 .comdef IDCompositionRotateTransform : public IDCompositionTransform
 
-    SetAngle		proc :float
-    SetAngle2		proc :ptr IDCompositionAnimation
-    SetCenterX		proc :float
-    SetCenterX2		proc :ptr IDCompositionAnimation
-    SetCenterY		proc :float
-    SetCenterY2		proc :ptr IDCompositionAnimation
+    SetAngle?p		proc :ptr IDCompositionAnimation
+    SetAngle?r		proc :real4
+    SetCenterX?p	proc :ptr IDCompositionAnimation
+    SetCenterX?r	proc :real4
+    SetCenterY?p	proc :ptr IDCompositionAnimation
+    SetCenterY?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionSkewTransform, "E57AA735-DCDB-4c72-9C61-0591F58889EE")
 
 .comdef IDCompositionSkewTransform : public IDCompositionTransform
 
-    SetAngleX		proc :float
-    SetAngleX2		proc :ptr IDCompositionAnimation
-    SetAngleY		proc :float
-    SetAngleY2		proc :ptr IDCompositionAnimation
-    SetCenterX		proc :float
-    SetCenterX2		proc :ptr IDCompositionAnimation
-    SetCenterY		proc :float
-    SetCenterY2		proc :ptr IDCompositionAnimation
+    SetAngleX?p		proc :ptr IDCompositionAnimation
+    SetAngleX?r		proc :real4
+    SetAngleY?p		proc :ptr IDCompositionAnimation
+    SetAngleY?r		proc :real4
+    SetCenterX?p	proc :ptr IDCompositionAnimation
+    SetCenterX?r	proc :real4
+    SetCenterY?p	proc :ptr IDCompositionAnimation
+    SetCenterY?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionMatrixTransform, "16CDFF07-C503-419c-83F2-0965C7AF1FA6")
@@ -183,16 +185,16 @@ DEFINE_IIDX(IDCompositionMatrixTransform, "16CDFF07-C503-419c-83F2-0965C7AF1FA6"
 .comdef IDCompositionMatrixTransform : public IDCompositionTransform
 
     SetMatrix		proc :ptr D2D_MATRIX_3X2_F
-    SetMatrixElement	proc :SINT, :SINT, :float
-    SetMatrixElement2	proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?p	proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?r	proc :SINT, :SINT, :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionEffectGroup, "A7929A74-E6B2-4bd6-8B95-4040119CA34D")
 
 .comdef IDCompositionEffectGroup : public IDCompositionEffect
 
-    SetOpacity		proc :float
-    SetOpacity2		proc :ptr IDCompositionAnimation
+    SetOpacity?p	proc :ptr IDCompositionAnimation
+    SetOpacity?r	proc :real4
     SetTransform3D	proc :ptr IDCompositionTransform3D
     .ENDS
 
@@ -200,50 +202,50 @@ DEFINE_IIDX(IDCompositionTranslateTransform3D, "91636D4B-9BA1-4532-AAF7-E3344994
 
 .comdef IDCompositionTranslateTransform3D : public IDCompositionTransform3D
 
-    SetOffsetX		proc :float
-    SetOffsetX2		proc :ptr IDCompositionAnimation
-    SetOffsetY		proc :float
-    SetOffsetY2		proc :ptr IDCompositionAnimation
-    SetOffsetZ		proc :float
-    SetOffsetZ2		proc :ptr IDCompositionAnimation
+    SetOffsetX?p	proc :ptr IDCompositionAnimation
+    SetOffsetX?r	proc :real4
+    SetOffsetY?p	proc :ptr IDCompositionAnimation
+    SetOffsetY?r	proc :real4
+    SetOffsetZ?p	proc :ptr IDCompositionAnimation
+    SetOffsetZ?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionScaleTransform3D, "2A9E9EAD-364B-4b15-A7C4-A1997F78B389")
 
 .comdef IDCompositionScaleTransform3D : public IDCompositionTransform3D
 
-    SetScaleX		proc :float
-    SetScaleX2		proc :ptr IDCompositionAnimation
-    SetScaleY		proc :float
-    SetScaleY2		proc :ptr IDCompositionAnimation
-    SetScaleZ		proc :float
-    SetScaleZ2		proc :ptr IDCompositionAnimation
-    SetCenterX		proc :float
-    SetCenterX2		proc :ptr IDCompositionAnimation
-    SetCenterY		proc :float
-    SetCenterY2		proc :ptr IDCompositionAnimation
-    SetCenterZ		proc :float
-    SetCenterZ2		proc :ptr IDCompositionAnimation
+    SetScaleX?p		proc :ptr IDCompositionAnimation
+    SetScaleX?r		proc :real4
+    SetScaleY?p		proc :ptr IDCompositionAnimation
+    SetScaleY?r		proc :real4
+    SetScaleZ?p		proc :ptr IDCompositionAnimation
+    SetScaleZ?r		proc :real4
+    SetCenterX?p	proc :ptr IDCompositionAnimation
+    SetCenterX?r	proc :real4
+    SetCenterY?p	proc :ptr IDCompositionAnimation
+    SetCenterY?r	proc :real4
+    SetCenterZ?p	proc :ptr IDCompositionAnimation
+    SetCenterZ?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionRotateTransform3D, "D8F5B23F-D429-4a91-B55A-D2F45FD75B18")
 
 .comdef IDCompositionRotateTransform3D : public IDCompositionTransform3D
 
-    SetAngle		proc :float
-    SetAngle2		proc :ptr IDCompositionAnimation
-    SetAxisX		proc :float
-    SetAxisX2		proc :ptr IDCompositionAnimation
-    SetAxisY		proc :float
-    SetAxisY2		proc :ptr IDCompositionAnimation
-    SetAxisZ		proc :float
-    SetAxisZ2		proc :ptr IDCompositionAnimation
-    SetCenterX		proc :float
-    SetCenterX2		proc :ptr IDCompositionAnimation
-    SetCenterY		proc :float
-    SetCenterY2		proc :ptr IDCompositionAnimation
-    SetCenterZ		proc :float
-    SetCenterZ2		proc :ptr IDCompositionAnimation
+    SetAngle?p		proc :ptr IDCompositionAnimation
+    SetAngle?r		proc :real4
+    SetAxisX?p		proc :ptr IDCompositionAnimation
+    SetAxisX?r		proc :real4
+    SetAxisY?p		proc :ptr IDCompositionAnimation
+    SetAxisY?r		proc :real4
+    SetAxisZ?p		proc :ptr IDCompositionAnimation
+    SetAxisZ?r		proc :real4
+    SetCenterX?p	proc :ptr IDCompositionAnimation
+    SetCenterX?r	proc :real4
+    SetCenterY?p	proc :ptr IDCompositionAnimation
+    SetCenterY?r	proc :real4
+    SetCenterZ?p	proc :ptr IDCompositionAnimation
+    SetCenterZ?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionMatrixTransform3D, "4B3363F0-643B-41b7-B6E0-CCF22D34467C")
@@ -251,8 +253,8 @@ DEFINE_IIDX(IDCompositionMatrixTransform3D, "4B3363F0-643B-41b7-B6E0-CCF22D34467
 .comdef IDCompositionMatrixTransform3D : public IDCompositionTransform3D
 
     SetMatrix		proc :ptr D3DMATRIX
-    SetMatrixElement	proc :SINT, :SINT, :float
-    SetMatrixElement2	proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?p	proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?r	proc :SINT, :SINT, :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionClip, "64AC3703-9D3F-45ec-A109-7CAC0E7A13A7")
@@ -265,30 +267,30 @@ DEFINE_IIDX(IDCompositionRectangleClip, "9842AD7D-D9CF-4908-AED7-48B51DA5E7C2")
 
 .comdef IDCompositionRectangleClip : public IDCompositionClip
 
-    SetLeft		proc :float
-    SetLeft2		proc :ptr IDCompositionAnimation
-    SetTop		proc :float
-    SetTop2		proc :ptr IDCompositionAnimation
-    SetRight		proc :float
-    SetRight2		proc :ptr IDCompositionAnimation
-    SetBottom		proc :float
-    SetBottom2		proc :ptr IDCompositionAnimation
-    SetTopLeftRadiusX	proc :float
-    SetTopLeftRadiusX2	proc :ptr IDCompositionAnimation
-    SetTopLeftRadiusY	proc :float
-    SetTopLeftRadiusY2	proc :ptr IDCompositionAnimation
-    SetTopRightRadiusX	proc :float
-    SetTopRightRadiusX2 proc :ptr IDCompositionAnimation
-    SetTopRightRadiusY	proc :float
-    SetTopRightRadiusY2 proc :ptr IDCompositionAnimation
-    SetBottomLeftRadiusX proc :float
-    SetBottomLeftRadiusX2 proc :ptr IDCompositionAnimation
-    SetBottomLeftRadiusY proc :float
-    SetBottomLeftRadiusY2 proc :ptr IDCompositionAnimation
-    SetBottomRightRadiusX proc :float
-    SetBottomRightRadiusX2 proc :ptr IDCompositionAnimation
-    SetBottomRightRadiusY proc :float
-    SetBottomRightRadiusY2 proc :ptr IDCompositionAnimation
+    SetLeft?p		proc :ptr IDCompositionAnimation
+    SetLeft?r		proc :real4
+    SetTop?p		proc :ptr IDCompositionAnimation
+    SetTop?r		proc :real4
+    SetRight?p		proc :ptr IDCompositionAnimation
+    SetRight?r		proc :real4
+    SetBottom?p		proc :ptr IDCompositionAnimation
+    SetBottom?r		proc :real4
+    SetTopLeftRadiusX?p proc :ptr IDCompositionAnimation
+    SetTopLeftRadiusX?r proc :real4
+    SetTopLeftRadiusY?p proc :ptr IDCompositionAnimation
+    SetTopLeftRadiusY?r proc :real4
+    SetTopRightRadiusX?p proc :ptr IDCompositionAnimation
+    SetTopRightRadiusX?r proc :real4
+    SetTopRightRadiusY?p proc :ptr IDCompositionAnimation
+    SetTopRightRadiusY?r proc :real4
+    SetBottomLeftRadiusX?p proc :ptr IDCompositionAnimation
+    SetBottomLeftRadiusX?r proc :real4
+    SetBottomLeftRadiusY?p proc :ptr IDCompositionAnimation
+    SetBottomLeftRadiusY?r proc :real4
+    SetBottomRightRadiusX?p proc :ptr IDCompositionAnimation
+    SetBottomRightRadiusX?r proc :real4
+    SetBottomRightRadiusY?p proc :ptr IDCompositionAnimation
+    SetBottomRightRadiusY?r proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionSurface, "BB8A4953-2C99-4F5A-96F5-4819027FA3AC")
@@ -333,7 +335,7 @@ DEFINE_IIDX(IDCompositionDevice2, "75F6468D-1B8E-447C-9BC6-75FEA80B5B25")
     CreateScaleTransform3D proc :ptr ptr IDCompositionScaleTransform3D
     CreateRotateTransform3D proc :ptr ptr IDCompositionRotateTransform3D
     CreateMatrixTransform3D proc :ptr ptr IDCompositionMatrixTransform3D
-    CreateTransform3DGroup proc :UINT, :ptr ptr IDCompositionTransform3D
+    CreateTransform3DGroup proc :ptr ptr IDCompositionTransform3D, :UINT, :ptr ptr IDCompositionTransform3D
     CreateEffectGroup	proc :ptr ptr IDCompositionEffectGroup
     CreateRectangleClip proc :ptr ptr IDCompositionRectangleClip
     CreateAnimation	proc :ptr ptr IDCompositionAnimation
@@ -390,12 +392,12 @@ DEFINE_IIDX(IDCompositionVisual3, "2775F462-B6C1-4015-B0BE-B3E7D6A4976D")
 .comdef IDCompositionVisual3 : public IDCompositionVisualDebug
 
     SetDepthMode	proc :DCOMPOSITION_DEPTH_MODE
-    SetOffsetZ		proc :float
-    SetOffsetZ		proc :ptr IDCompositionAnimation
-    SetOpacity		proc :float
-    SetOpacity		proc :ptr IDCompositionAnimation
-    SetTransform	proc :ptr D2D_MATRIX_4X4_F
-    SetTransform	proc :ptr IDCompositionTransform3D
+    SetOffsetZ?p	proc :ptr IDCompositionAnimation
+    SetOffsetZ?r	proc :real4
+    SetOpacity?p	proc :ptr IDCompositionAnimation
+    SetOpacity?r	proc :real4
+    SetTransform?m	proc :ptr D2D_MATRIX_4X4_F
+    SetTransform?p	proc :ptr IDCompositionTransform3D
     SetVisible		proc :BOOL
     .ENDS
 
@@ -429,8 +431,8 @@ DEFINE_IIDX(IDCompositionGaussianBlurEffect, "45D4D0B7-1BD4-454E-8894-2BFA684430
 
 .comdef IDCompositionGaussianBlurEffect : public IDCompositionFilterEffect
 
-    SetStandardDeviation proc :float
-    SetStandardDeviation proc :ptr IDCompositionAnimation
+    SetStandardDeviation?p proc :ptr IDCompositionAnimation
+    SetStandardDeviation?r proc :real4
     SetBorderMode	proc :D2D1_BORDER_MODE
     .ENDS
 
@@ -440,14 +442,14 @@ DEFINE_IIDX(IDCompositionBrightnessEffect, "6027496E-CB3A-49AB-934F-D798DA4F7DA6
 
     SetWhitePoint	proc :ptr D2D1_VECTOR_2F
     SetBlackPoint	proc :ptr D2D1_VECTOR_2F
-    SetWhitePointX	proc :float
-    SetWhitePointX	proc :ptr IDCompositionAnimation
-    SetWhitePointY	proc :float
-    SetWhitePointY	proc :ptr IDCompositionAnimation
-    SetBlackPointX	proc :float
-    SetBlackPointX	proc :ptr IDCompositionAnimation
-    SetBlackPointY	proc :float
-    SetBlackPointY	proc :ptr IDCompositionAnimation
+    SetWhitePointX?p	proc :ptr IDCompositionAnimation
+    SetWhitePointX?r	proc :real4
+    SetWhitePointY?p	proc :ptr IDCompositionAnimation
+    SetWhitePointY?r	proc :real4
+    SetBlackPointX?p	proc :ptr IDCompositionAnimation
+    SetBlackPointX?r	proc :real4
+    SetBlackPointY?p	proc :ptr IDCompositionAnimation
+    SetBlackPointY?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionColorMatrixEffect, "C1170A22-3CE2-4966-90D4-55408BFC84C4")
@@ -455,8 +457,8 @@ DEFINE_IIDX(IDCompositionColorMatrixEffect, "C1170A22-3CE2-4966-90D4-55408BFC84C
 .comdef IDCompositionColorMatrixEffect : public IDCompositionFilterEffect
 
     SetMatrix		proc :ptr D2D1_MATRIX_5X4_F
-    SetMatrixElement	proc :SINT, :SINT, :float
-    SetMatrixElement	proc :SINT, SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?p	proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetMatrixElement?r	proc :SINT, :SINT, :real4
     SetAlphaMode	proc :D2D1_COLORMATRIX_ALPHA_MODE
     SetClampOutput	proc :BOOL
     .ENDS
@@ -465,33 +467,33 @@ DEFINE_IIDX(IDCompositionShadowEffect, "4AD18AC0-CFD2-4C2F-BB62-96E54FDB6879")
 
 .comdef IDCompositionShadowEffect : public IDCompositionFilterEffect
 
-    SetStandardDeviation proc :float
-    SetStandardDeviation proc :ptr IDCompositionAnimation
+    SetStandardDeviation?p proc :ptr IDCompositionAnimation
+    SetStandardDeviation?r proc :real4
     SetColor		proc :ptr D2D1_VECTOR_4F
-    SetRed		proc :float
-    SetRed		proc :ptr IDCompositionAnimation
-    SetGreen		proc :float
-    SetGreen		proc :ptr IDCompositionAnimation
-    SetBlue		proc :float
-    SetBlue		proc :ptr IDCompositionAnimation
-    SetAlpha		proc :float
-    SetAlpha		proc :ptr IDCompositionAnimation
+    SetRed?p		proc :ptr IDCompositionAnimation
+    SetRed?r		proc :real4
+    SetGreen?p		proc :ptr IDCompositionAnimation
+    SetGreen?r		proc :real4
+    SetBlue?p		proc :ptr IDCompositionAnimation
+    SetBlue?r		proc :real4
+    SetAlpha?p		proc :ptr IDCompositionAnimation
+    SetAlpha?r		proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionHueRotationEffect, "6DB9F920-0770-4781-B0C6-381912F9D167")
 
 .comdef IDCompositionHueRotationEffect : public IDCompositionFilterEffect
 
-    SetAngle		proc :float
-    SetAngle		proc :ptr IDCompositionAnimation
+    SetAngle?p		proc :ptr IDCompositionAnimation
+    SetAngle?r		proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionSaturationEffect, "A08DEBDA-3258-4FA4-9F16-9174D3FE93B1")
 
 .comdef IDCompositionSaturationEffect : public IDCompositionFilterEffect
 
-    SetSaturation	proc :float
-    SetSaturation	proc :ptr IDCompositionAnimation
+    SetSaturation?p	proc :ptr IDCompositionAnimation
+    SetSaturation?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionTurbulenceEffect, "A6A55BDA-C09C-49F3-9193-A41922C89715")
@@ -511,25 +513,25 @@ DEFINE_IIDX(IDCompositionLinearTransferEffect, "4305EE5B-C4A0-4C88-9385-67124E01
 
 .comdef IDCompositionLinearTransferEffect : public IDCompositionFilterEffect
 
-    SetRedYIntercept	proc :float
-    SetRedYIntercept	proc :ptr IDCompositionAnimation
-    SetRedSlope		proc :float
-    SetRedSlope		proc :ptr IDCompositionAnimation
+    SetRedYIntercept?p	proc :ptr IDCompositionAnimation
+    SetRedYIntercept?r	proc :real4
+    SetRedSlope?p	proc :ptr IDCompositionAnimation
+    SetRedSlope?r	proc :real4
     SetRedDisable	proc :BOOL
-    SetGreenYIntercept	proc :float
-    SetGreenYIntercept	proc :ptr IDCompositionAnimation
-    SetGreenSlope	proc :float
-    SetGreenSlope	proc :ptr IDCompositionAnimation
+    SetGreenYIntercept?p proc :ptr IDCompositionAnimation
+    SetGreenYIntercept?r proc :real4
+    SetGreenSlope?p	proc :ptr IDCompositionAnimation
+    SetGreenSlope?r	proc :real4
     SetGreenDisable	proc :BOOL
-    SetBlueYIntercept	proc :float
-    SetBlueYIntercept	proc :ptr IDCompositionAnimation
-    SetBlueSlope	proc :float
-    SetBlueSlope	proc :ptr IDCompositionAnimation
+    SetBlueYIntercept?p proc :ptr IDCompositionAnimation
+    SetBlueYIntercept?r proc :real4
+    SetBlueSlope?p	proc :ptr IDCompositionAnimation
+    SetBlueSlope?r	proc :real4
     SetBlueDisable	proc :BOOL
-    SetAlphaYIntercept	proc :float
-    SetAlphaYIntercept	proc :ptr IDCompositionAnimation
-    SetAlphaSlope	proc :float
-    SetAlphaSlope	proc :ptr IDCompositionAnimation
+    SetAlphaYIntercept?p proc :ptr IDCompositionAnimation
+    SetAlphaYIntercept?r proc :real4
+    SetAlphaSlope?p	proc :ptr IDCompositionAnimation
+    SetAlphaSlope?r	proc :real4
     SetAlphaDisable	proc :BOOL
     SetClampOutput	proc :BOOL
     .ENDS
@@ -547,14 +549,14 @@ DEFINE_IIDX(IDCompositionTableTransferEffect, "9B7E82E2-69C5-4EB4-A5F5-A7033F513
     SetBlueDisable	proc :BOOL
     SetAlphaDisable	proc :BOOL
     SetClampOutput	proc :BOOL
-    SetRedTableValue	proc :UINT, :float
-    SetRedTableValue	proc :UINT, :ptr IDCompositionAnimation
-    SetGreenTableValue	proc :UINT, :float
-    SetGreenTableValue	proc :UINT, :ptr IDCompositionAnimation
-    SetBlueTableValue	proc :UINT, :float
-    SetBlueTableValue	proc :UINT, :ptr IDCompositionAnimation
-    SetAlphaTableValue	proc :UINT, :float
-    SetAlphaTableValue	proc :UINT, :ptr IDCompositionAnimation
+    SetRedTableValue?p	proc :UINT, :ptr IDCompositionAnimation
+    SetRedTableValue?r	proc :UINT, :real4
+    SetGreenTableValue?p proc :UINT, :ptr IDCompositionAnimation
+    SetGreenTableValue?r proc :UINT, :real4
+    SetBlueTableValue?p proc :UINT, :ptr IDCompositionAnimation
+    SetBlueTableValue?r proc :UINT, :real4
+    SetAlphaTableValue?p proc :UINT, :ptr IDCompositionAnimation
+    SetAlphaTableValue?r proc :UINT, :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionCompositeEffect, "576616C0-A231-494D-A38D-00FD5EC4DB46")
@@ -568,7 +570,7 @@ DEFINE_IIDX(IDCompositionBlendEffect, "33ECDC0A-578A-4A11-9C14-0CB90517F9C5")
 
 .comdef IDCompositionBlendEffect : public IDCompositionFilterEffect
 
-    SetMode		proc :_In_ D2D1_BLEND_MODE mode,
+    SetMode		proc :D2D1_BLEND_MODE
     .ENDS
 
 DEFINE_IIDX(IDCompositionArithmeticCompositeEffect, "3B67DFA8-E3DD-4E61-B640-46C2F3D739DC")
@@ -577,14 +579,14 @@ DEFINE_IIDX(IDCompositionArithmeticCompositeEffect, "3B67DFA8-E3DD-4E61-B640-46C
 
     SetCoefficients	proc :ptr D2D1_VECTOR_4F
     SetClampOutput	proc :BOOL
-    SetCoefficient1	proc :float
-    SetCoefficient1	proc :ptr IDCompositionAnimation
-    SetCoefficient2	proc :float
-    SetCoefficient2	proc :ptr IDCompositionAnimation
-    SetCoefficient3	proc :float
-    SetCoefficient3	proc :ptr IDCompositionAnimation
-    SetCoefficient4	proc :float
-    SetCoefficient4	proc :ptr IDCompositionAnimation
+    SetCoefficient1?p	proc :ptr IDCompositionAnimation
+    SetCoefficient1?r	proc :real4
+    SetCoefficient2?p	proc :ptr IDCompositionAnimation
+    SetCoefficient2?r	proc :real4
+    SetCoefficient3?p	proc :ptr IDCompositionAnimation
+    SetCoefficient3?r	proc :real4
+    SetCoefficient4?p	proc :ptr IDCompositionAnimation
+    SetCoefficient4?r	proc :real4
     .ENDS
 
 DEFINE_IIDX(IDCompositionAffineTransform2DEffect, "0B74B9E8-CDD6-492F-BBBC-5ED32157026D")
@@ -594,10 +596,10 @@ DEFINE_IIDX(IDCompositionAffineTransform2DEffect, "0B74B9E8-CDD6-492F-BBBC-5ED32
     SetInterpolationMode proc :D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE
     SetBorderMode	proc :D2D1_BORDER_MODE
     SetTransformMatrix	proc :ptr D2D1_MATRIX_3X2_F
-    SetTransformMatrixElement proc :SINT, :SINT, :float
-    SetTransformMatrixElement proc :SINT, :SINT, :ptr IDCompositionAnimation
-    SetSharpness	proc :float
-    SetSharpness	proc :ptr IDCompositionAnimation
+    SetTransformMatrixElement?p proc :SINT, :SINT, :ptr IDCompositionAnimation
+    SetTransformMatrixElement?r proc :SINT, :SINT, :real4
+    SetSharpness?p	proc :ptr IDCompositionAnimation
+    SetSharpness?r	proc :real4
     .ENDS
 
 endif

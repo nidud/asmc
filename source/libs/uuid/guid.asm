@@ -4,7 +4,9 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-INITGUID equ 1
+INITGUID        equ 1
+WINVER          equ 0x0700
+_WIN32_WINNT    equ 0x0700
 
 include aclui.inc
 include activaut.inc
@@ -60,6 +62,7 @@ include UIAutomationCore.inc
 include UIAutomationCoreAPI.inc
 include dxdiag.inc
 include WbemIdl.inc
+include dcomp.inc
 
 include inc/ahadmin_i.inc
 include inc/CDOSys_I.inc

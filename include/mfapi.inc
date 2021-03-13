@@ -707,8 +707,8 @@ MFRegisterLocalByteStreamHandler proto WINAPI \
 
 
 MFCreateMFByteStreamWrapper proto WINAPI \
-	       pStream: IMFByteStream*,
-       ppStreamWrapper: IMFByteStream**
+	       pStream: ptr IMFByteStream,
+       ppStreamWrapper: ptr ptr IMFByteStream
 
 
 endif

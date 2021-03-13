@@ -709,12 +709,12 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
 
 .comdef ID2D1RenderTarget  : public ID2D1Resource
 
-    CreateBitmap	proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr, :ptr
-    CreateBitmapFromWicBitmap proc :ptr, :ptr, :ptr
+    CreateBitmap?	proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr, :ptr
+    CreateBitmapFromWicBitmap? proc :ptr, :ptr, :ptr
     CreateSharedBitmap	proc :REFIID, :ptr, :ptr, :ptr
-    CreateBitmapBrush	proc :ptr, :ptr, :ptr, :ptr
+    CreateBitmapBrush?	proc :ptr, :ptr, :ptr, :ptr
     CreateSolidColorBrush proc :ptr, :ptr, :ptr
-    CreateGradientStopCollection proc :ptr, :UINT, :D2D1_GAMMA, :D2D1_EXTEND_MODE, :ptr
+    CreateGradientStopCollection? proc :ptr, :UINT, :D2D1_GAMMA, :D2D1_EXTEND_MODE, :ptr
     CreateLinearGradientBrush proc :ptr, :ptr, :ptr, :ptr
     CreateRadialGradientBrush proc :ptr, :ptr, :ptr, :ptr
     CreateCompatibleRenderTarget proc :ptr, :ptr, :ptr, :D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS, :ptr
@@ -730,11 +730,11 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     DrawGeometry	proc :ptr, :ptr, :FLOAT, :ptr
     FillGeometry	proc :ptr, :ptr, :ptr
     FillMesh		proc :ptr, :ptr
-    FillOpacityMask	proc :ptr, :ptr, :D2D1_OPACITY_MASK_CONTENT, :ptr, :ptr
-    DrawBitmap		proc :ptr, :ptr, :FLOAT, :D2D1_BITMAP_INTERPOLATION_MODE, :ptr
+    FillOpacityMask?	proc :ptr, :ptr, :D2D1_OPACITY_MASK_CONTENT, :ptr, :ptr
+    DrawBitmap?		proc :ptr, :ptr, :FLOAT, :D2D1_BITMAP_INTERPOLATION_MODE, :ptr
     DrawText		proc :ptr, :UINT, :ptr, :ptr, :ptr, :D2D1_DRAW_TEXT_OPTIONS, :DWRITE_MEASURING_MODE
     DrawTextLayout	proc :D2D1_POINT_2F, :ptr, :ptr, :D2D1_DRAW_TEXT_OPTIONS
-    DrawGlyphRun	proc :D2D1_POINT_2F, :ptr, :ptr, :DWRITE_MEASURING_MODE
+    DrawGlyphRun?	proc :D2D1_POINT_2F, :ptr, :ptr, :DWRITE_MEASURING_MODE
     SetTransform	proc :ptr
     GetTransform	proc :ptr
     SetAntialiasMode	proc :D2D1_ANTIALIAS_MODE
@@ -745,7 +745,7 @@ DEFINE_IIDX(ID2D1RenderTarget, "2cd90694-12e2-11dc-9fed-001143a055f9")
     GetTextRenderingParams proc :ptr
     SetTags		proc :D2D1_TAG, :D2D1_TAG
     GetTags		proc :ptr, :ptr
-    PushLayer		proc :ptr, :ptr
+    PushLayer?		proc :ptr, :ptr
     PopLayer		proc
     Flush		proc :ptr, :ptr
     SaveDrawingState	proc :ptr

@@ -1,5 +1,6 @@
 ifndef __ATLBASE_H__
 __ATLBASE_H__ equ <>
+.pragma list(push, 0)
 
 ifdef _UNICODE
 ifndef UNICODE
@@ -310,5 +311,5 @@ UpdateRegistryFromResource equ <UpdateRegistryFromResourceD>
 endif
 
 .pragma pack(pop)
-
+.pragma list(pop)
 endif

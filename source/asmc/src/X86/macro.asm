@@ -318,8 +318,10 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
     local ls:line_status
     local tok[2]:asm_tok
     local mnames[MAX_PLACEHOLDERS]:mname_list ;; there are max 255 placeholders
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
     local final:tok_t
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
     mov nesting_depth,0
     mov esi,mac
@@ -451,7 +453,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
     ;; now read in the lines of the macro, and store them if store_data is TRUE
     .for( :: )
 
-        mov src,GetLine( &buffer )
+        mov src,GetLine( buffer )
         .if eax == NULL
             asmerr(1008) ;; unmatched macro nesting
         .endif
@@ -459,7 +461,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
         ;; add the macro line to the listing file
         .if ModuleInfo.list
             and ModuleInfo.line_flags,not LOF_LISTED
-            LstWrite( LSTTYPE_MACROLINE, 0, &buffer )
+            LstWrite( LSTTYPE_MACROLINE, 0, buffer )
         .endif
         mov ls.input,src
         mov ls.start,eax
@@ -965,7 +967,7 @@ EnvironFunc proc private uses esi edi ebx mi:ptr macro_instance, buffer:string_t
     .if esi
         mov ecx,strlen(esi)
         .if eax >= MAX_LINE_LEN
-            mov ecx,MAX_LINE_LEN - 1
+            mov ecx,MAX_LINE_LEN-1
         .endif
         rep movsb
         mov byte ptr [edi],0

@@ -866,7 +866,19 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	if ( tokenarray[i].token != T_FINAL ) {
 	    if( tokenarray[i].token != T_COMMA ) {
 
-		if( tokenarray[i].token == T_STRING &&
+		if ( tokenarray[i].token == T_DIRECTIVE &&
+		    tokenarray[i].tokval == T_EQU &&
+		    tokenarray[i+1].token == T_STRING &&
+		    tokenarray[i+1].bytval == '<' ) {
+
+		    if ( tokenarray[i-1].token != T_ID ||
+			 _stricmp(tokenarray[i-1].string_ptr, "ABS") != 0)
+			return( asmerr( 2008, tokenarray[i-1].tokpos ) );
+
+		    i += 2; /* v2.32.16 - name:abs=<val> */
+		}
+
+		if ( tokenarray[i].token == T_STRING &&
 		    tokenarray[i].string_delim == '{' &&
 		    tokenarray[1].tokval == T_PROTO ) {
 
@@ -898,7 +910,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 				tokenarray[tokpos].tokpos, tokenarray[i].string_ptr,
 			  ( tokenarray[q-1].token == T_RES_ID && tokenarray[q-1].tokval == T_VARARG ) );
 		    }
-		} else {
+		} else if ( tokenarray[i].token != T_COMMA ) {
 		    return( asmerr( 2065, ",") );
 		}
 	    }

@@ -302,10 +302,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ;_WINSOCK_DEPRECATED_BY("FreeAddrInfoExW()")
 
+ifndef _UNICODE
 
 FreeAddrInfoEx proto WINAPI \
 	   pAddrInfoEx: PADDRINFOEXA
-
+endif
 endif
 
 FreeAddrInfoExW proto WINAPI \

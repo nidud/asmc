@@ -1376,7 +1376,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	    if ( sym->state == SYM_EXTERNAL ) {
 		if ( sym->dll )
 		    j++;
-		else if ( sym->method && sym->isinline ) {
+		else if ( /*sym->method &&*/ sym->isinline ) {
 		    if ( sym->target_type && sym->target_type->state == SYM_MACRO )
 			j++;
 		}

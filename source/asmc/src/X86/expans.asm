@@ -82,20 +82,20 @@ myltoa endp
 
 SkipMacro proc private tokenarray:tok_t
 
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
     ;; The queue isn't just thrown away, because any
     ;; coditional assembly directives found in the source
     ;; must be executed.
 
-    .while GetTextLine( &buffer )
-        Tokenize( &buffer, 0, tokenarray, TOK_DEFAULT )
+    .while GetTextLine( buffer )
+        Tokenize( buffer, 0, tokenarray, TOK_DEFAULT )
     .endw
     ret
 
 SkipMacro endp
-
-PARMSTRINGSIZE equ ( MAX_LINE_LEN * 2 )
 
 ExpandTMacro proto :string_t, :tok_t, :int_t, :int_t
 
@@ -189,7 +189,9 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
     .if [edi].parmcnt
 
         movzx   ecx,[edi].parmcnt
-        lea     eax,[ecx*4+PARMSTRINGSIZE]
+        mov     eax,ModuleInfo.max_line_len
+        add     eax,eax
+        lea     eax,[eax+ecx*4]
         mov     mi.parm_array,alloca(eax)
         movzx   ecx,[edi].parmcnt
         lea     eax,[eax+ecx*4]
@@ -985,7 +987,8 @@ ExpandText proc uses esi edi ebx line:string_t, tokenarray:tok_t, substitute:uin
 
     mov _sp[0],line
     mov edi,StringBufferEnd
-    add StringBufferEnd,MAX_LINE_LEN
+    add StringBufferEnd,ModuleInfo.max_line_len
+
     mov rc,NOT_ERROR
 
     .for ( lvl = 0 : lvl >= 0 : lvl-- )
@@ -1163,9 +1166,10 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
     local len:int_t
     local is_exitm:int_t
     local sym:asym_t
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
     local expanded:char_t
 
+    mov buffer,alloca(ModuleInfo.max_line_len)
     mov old_tokencount,Token_Count
     mov expanded,TRUE
 
@@ -1193,7 +1197,7 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
 
                     mov ecx,[ebx].tokpos
                     sub ecx,outbuf
-                    lea edi,buffer
+                    mov edi,buffer
                     mov esi,outbuf
                     rep movsb
                     mov ecx,i
@@ -1206,14 +1210,14 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
                     imul ebx,i,asm_tok
                     add  ebx,tokenarray
                     strcat( edi, [ebx].tokpos )
-                    strcpy( outbuf, &buffer )
+                    strcpy( outbuf, buffer )
                     mov expanded,TRUE
                     ;; is i to be decremented here?
                     .break
                 .elseif ( eax && [eax].asym.state == SYM_TMACRO && [eax].asym.flag & S_ISDEFINED )
 
                     mov esi,outbuf
-                    lea edi,buffer
+                    mov edi,buffer
                     mov ecx,[ebx].tokpos
                     sub ecx,esi
                     rep movsb
@@ -1228,7 +1232,7 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
                     movzx ecx,[eax].asym.name_size
                     add ecx,[ebx].tokpos
                     strcat( edi, ecx )
-                    strcpy( outbuf, &buffer )
+                    strcpy( outbuf, buffer )
                     mov expanded,TRUE
                     .break
                 .endif
@@ -1256,8 +1260,9 @@ RebuildLine proc private uses esi edi ebx newstring:string_t, i:int_t,
     local src:string_t
     local newlen:uint_t
     local rest:uint_t
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
 
+    mov buffer,alloca(ModuleInfo.max_line_len)
     imul ebx,i,asm_tok
     add  ebx,tokenarray
 
@@ -1265,7 +1270,7 @@ RebuildLine proc private uses esi edi ebx newstring:string_t, i:int_t,
     add esi,oldlen
     inc strlen(esi)
     mov rest,eax
-    lea edi,buffer
+    mov edi,buffer
     mov ecx,eax
     rep movsb       ;; save content of line behind item
 
@@ -1285,7 +1290,7 @@ RebuildLine proc private uses esi edi ebx newstring:string_t, i:int_t,
         add eax,newlen
         sub eax,oldlen
         add eax,rest
-        .return asmerr( 2039 ) .if ( eax >= MAX_LINE_LEN )
+        .return asmerr( 2039 ) .if ( eax >= ModuleInfo.max_line_len )
     .endif
     .if addbrackets
         mov byte ptr [edi],'<'
@@ -1307,7 +1312,7 @@ RebuildLine proc private uses esi edi ebx newstring:string_t, i:int_t,
         rep movsb
     .endif
     mov ecx,rest
-    lea esi,buffer
+    mov esi,buffer
     rep movsb   ;; add rest of line
 
     ;; v2.05: changed '<' to '<='
@@ -1343,9 +1348,10 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
     local opndx:expr
     local sym:asym_t
     local rc:int_t
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
     local old_tokencount:int_t
 
+    mov buffer,alloca(ModuleInfo.max_line_len)
     mov eax,pi
     mov i,[eax]
     mov addbrackets,bracket_flags
@@ -1418,7 +1424,7 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
                         .if tmp == 1
                             mov edx,MF_LABEL
                         .endif
-                        mov i,RunMacro( sym, i, tokenarray, &buffer, edx, &is_exitm )
+                        mov i,RunMacro( sym, i, tokenarray, buffer, edx, &is_exitm )
                         .return .if eax == -1
 
                         imul ebx,i,asm_tok
@@ -1427,7 +1433,7 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
                         ;; expand text, but don't if macro was at position 0 (might be a text macro definition directive
                         ;; v2.09: don't expand further if addbrackets is set
                         .if tmp && !addbrackets
-                            .return .if ExpandTMacro( &buffer, tokenarray, equmode, 0 ) == ERROR
+                            .return .if ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
                         .endif
                         ;; get size of string to replace ( must be done before AddTokens()
                         imul ecx,tmp,asm_tok
@@ -1452,7 +1458,7 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
                         add ecx,tokenarray
                         mov edx,[ecx].asm_tok.tokpos
                         sub edx,line
-                        .return .if RebuildLine( &buffer, tmp, tokenarray, size, edx, addbrackets ) == ERROR
+                        .return .if RebuildLine( buffer, tmp, tokenarray, size, edx, addbrackets ) == ERROR
                         mov rc,STRING_EXPANDED
                         mov i,tmp
 
@@ -1489,12 +1495,12 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
 
                 .elseif [eax].asym.state == SYM_TMACRO
 
-                    strcpy( &buffer, [eax].asym.string_ptr )
-                    .return .if ExpandTMacro( &buffer, tokenarray, equmode, 0 ) == ERROR
+                    strcpy( buffer, [eax].asym.string_ptr )
+                    .return .if ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
                     strlen( [ebx].string_ptr )
                     mov ecx,[ebx].tokpos
                     sub ecx,line
-                    .return .if RebuildLine( &buffer, i, tokenarray, eax, ecx, addbrackets ) == ERROR
+                    .return .if RebuildLine( buffer, i, tokenarray, eax, ecx, addbrackets ) == ERROR
                     mov rc,STRING_EXPANDED
                 .endif
             .endif
@@ -1521,13 +1527,13 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
             shl edx,4
             mov ecx,[ebx+ecx].tokpos
             mov esi,[ebx+edx].tokpos
-            lea edi,buffer
+            mov edi,buffer
             sub ecx,esi
             rep movsb
             mov byte ptr [edi],0
             mov edi,old_tokencount
             inc edi
-            mov Token_Count,Tokenize( &buffer, edi, tokenarray, TOK_RESCAN )
+            mov Token_Count,Tokenize( buffer, edi, tokenarray, TOK_RESCAN )
             mov tmp,edi
             .if EvalOperand( &tmp, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR
                 mov opndx.value,0 ;; v2.09: assume value 0, don't return with ERROR

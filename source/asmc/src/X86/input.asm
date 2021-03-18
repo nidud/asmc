@@ -7,6 +7,7 @@ include parser.inc
 include macro.inc
 include input.inc
 include lqueue.inc
+include tokenize.inc
 
 public FileCur
 public LineCur
@@ -661,7 +662,7 @@ GetTextLine proc uses esi edi ebx buffer:string_t
 
     .if [ebx].type == SIT_FILE
 
-        .if my_fgets(buffer, MAX_LINE_LEN, [ebx].file)
+        .if my_fgets(buffer, ModuleInfo.max_line_len, [ebx].file)
 
             inc [ebx].line_num
             .return buffer
@@ -835,31 +836,45 @@ PopInputStatus proc uses esi newstat:ptr input_status
 
 PopInputStatus endp
 
+AllocInput proc private uses esi edi
+
+    mov  eax,ModuleInfo.max_line_len
+    imul esi,eax,MAX_MACRO_NESTING + 1  ; SIZE_SRCLINES
+    imul edx,eax,MAX_MACRO_NESTING      ; SIZE_STRINGBUFFER
+    shr  eax,2                          ; SIZE_TOKENARRAY
+    imul edi,eax,asm_tok * MAX_MACRO_NESTING
+    lea  eax,[edi+edx]
+    add  eax,esi
+    mov  srclinebuffer,LclAlloc( eax )
+
+    ;; the comment buffer is at the end of the source line buffer
+
+    lea ecx,[eax+esi]
+    sub ecx,ModuleInfo.max_line_len
+    mov commentbuffer,ecx
+
+    ;; behind the comment buffer is the token buffer
+    lea ecx,[eax+esi]
+    mov ModuleInfo.tokenarray,ecx
+    lea eax,[ecx+edi]
+    mov token_stringbuf,eax
+    ret
+
+AllocInput endp
+
 ;; Initializer, called once for each module.
 
     assume esi:ptr src_item
 
 InputInit proc uses esi
 
-    ;struct src_item *fl;
-
     mov SrcFree,NULL ;; v2.11
 if FILESEQ
     mov FileSeq.head,NULL
 endif
+    mov ModuleInfo.max_line_len,MAX_LINE_LEN
 
-    mov srclinebuffer,LclAlloc( SIZE_SRCLINES + SIZE_TOKENARRAY + SIZE_STRINGBUFFER )
-
-    ;; the comment buffer is at the end of the source line buffer
-
-    lea ecx,[eax+SIZE_SRCLINES-MAX_LINE_LEN]
-    mov commentbuffer,ecx
-
-    ;; behind the comment buffer is the token buffer
-    lea ecx,[eax+SIZE_SRCLINES]
-    mov ModuleInfo.tokenarray,ecx
-    lea eax,[eax+SIZE_SRCLINES+SIZE_TOKENARRAY]
-    mov token_stringbuf,eax
+    AllocInput()
 
     mov esi,PushSrcItem(SIT_FILE, CurrFile[ASM*4])
     AddFile(CurrFName[ASM*4])
@@ -884,6 +899,67 @@ InputPassInit proc
     ret
 
 InputPassInit endp
+
+    assume esi:ptr line_status
+
+InputExtend proc uses esi edi ebx p:ptr line_status, tokenarray:ptr ptr asm_tok
+
+    mov eax,tokenarray
+    mov eax,[eax]
+    .return 0 .if eax != ModuleInfo.tokenarray
+
+    mov ecx,p
+    mov esi,[ecx].line_status.start
+    .return 0 .if esi != srclinebuffer
+
+    mov ebx,ModuleInfo.max_line_len
+    add ModuleInfo.max_line_len,ebx
+    mov edi,token_stringbuf
+
+    AllocInput()
+
+    ; copy source line buffer, token buffer, and string buffer
+    mov  edx,edi
+    mov  edi,srclinebuffer
+    mov  CurrSource,edi
+
+    imul ecx,ebx,MAX_MACRO_NESTING + 1
+    rep  movsb
+    mov  edi,ModuleInfo.tokenarray
+    mov  ecx,tokenarray
+    mov  [ecx],edi
+    mov  eax,ebx
+    shr  eax,2
+    imul ecx,eax,asm_tok * MAX_MACRO_NESTING
+    rep  movsb
+    mov  edi,token_stringbuf
+    imul ecx,ebx,MAX_MACRO_NESTING
+    rep  movsb
+
+    mov esi,p
+    mov eax,[esi].output
+    sub eax,edx
+    add eax,token_stringbuf
+    mov [esi].output,eax
+    mov eax,[esi].input
+    mov ebx,[esi].start
+    sub eax,ebx
+    mov edi,srclinebuffer
+    mov [esi].start,edi
+    add eax,edi
+    mov [esi].input,eax
+
+    mov edx,ModuleInfo.tokenarray
+    .for ( ecx = 0: ecx <= [esi].index: ecx++, edx += asm_tok)
+        mov eax,[edx].asm_tok.tokpos
+        sub eax,ebx
+        add eax,edi
+        mov [edx].asm_tok.tokpos,eax
+    .endf
+    mov eax,1
+    ret
+
+InputExtend endp
 
 ;; release input buffers for a module
 

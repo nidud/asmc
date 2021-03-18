@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef _DWMAPI_H_
 _DWMAPI_H_ equ <>
 
@@ -369,4 +371,6 @@ endif ;; NTDDI_WIN8
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif ;; _DWMAPI_H_
+
+.pragma list(pop)
 

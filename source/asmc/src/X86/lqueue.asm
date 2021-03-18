@@ -2,6 +2,8 @@
 ;; handle the line queue.
 ;; this queue is used for "generated code".
 
+include malloc.inc
+
 include asmc.inc
 include memalloc.inc
 include reswords.inc
@@ -193,10 +195,12 @@ LSPrintF endp
 
 AddLineQueueX proc fmt:string_t, argptr:vararg
 
-  local buffer[MAX_LINE_LEN]:char_t
+  local buffer:ptr char_t
 
-    VLSPrintF( &buffer, fmt, &argptr )
-    AddLineQueue(&buffer)
+    mov buffer,alloca(ModuleInfo.max_line_len)
+
+    VLSPrintF( buffer, fmt, &argptr )
+    AddLineQueue(buffer)
     ret
 
 AddLineQueueX endp

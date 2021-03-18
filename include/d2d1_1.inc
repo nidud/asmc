@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef _D2D1_1_H_
 _D2D1_1_H_ equ <>
 
@@ -569,3 +571,5 @@ endif
 include d2d1_1helper.inc
 
 endif
+.pragma list(pop)
+

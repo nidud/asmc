@@ -52,12 +52,13 @@ GetCurrentSegment endp
 ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, string:string_t,
         pStringOffset:string_t, pUnicode:ptr byte
 
-  local sbuf[MAX_LINE_LEN]:char_t,   ; "binary" string
+  local sbuf:ptr char_t,   ; "binary" string
         Unicode:char_t
 
+    mov sbuf,alloca(ModuleInfo.max_line_len)
     mov esi,string
     mov edi,buffer
-    lea edx,sbuf
+    mov edx,sbuf
     xor ebx,ebx
     mov [edx],ebx
 
@@ -265,7 +266,7 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov [eax],esi
 
     assume esi:ptr str_item
-    lea eax,sbuf
+    mov eax,sbuf
     sub edx,eax
     .for ebx = edx, edi = 0,
          esi = ModuleInfo.StrStack : esi : edi++, esi = [esi].next
@@ -283,7 +284,7 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
                 sub edx,ebx
             .endif
 
-            .if !memcmp( &sbuf, edx, ebx )
+            .if !memcmp( sbuf, edx, ebx )
 
                 movzx eax,[esi].index
                 sub edx,[esi].string
@@ -312,7 +313,7 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov ModuleInfo.StrStack,eax
     lea ecx,[eax+str_item]
     mov [eax].str_item.string,ecx
-    memcpy(ecx, &sbuf, &[ebx+1])
+    memcpy(ecx, sbuf, &[ebx+1])
     ret
 
 ParseCString ENDP
@@ -338,12 +339,14 @@ local   rc:                     int_t,
         brackets:               BYTE,
         Unicode:                BYTE
 
-    mov buffer,alloca(MAX_LINE_LEN*3+64*2)
-    add eax,MAX_LINE_LEN
+    mov ebx,ModuleInfo.max_line_len
+    lea eax,[ebx+ebx*2+64*2]
+    mov buffer,alloca(eax)
+    add eax,ebx
     mov b_data,eax
-    add eax,MAX_LINE_LEN
+    add eax,ebx
     mov b_line,eax
-    add eax,MAX_LINE_LEN
+    add eax,ebx
     mov b_seg,eax
     add eax,64
     mov b_label,eax
@@ -558,10 +561,12 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
         retval:         int_t,
         Unicode:        byte
 
-    mov cursrc,alloca(MAX_LINE_LEN*2+32)
-    add eax,MAX_LINE_LEN
+    mov ebx,ModuleInfo.max_line_len
+    lea eax,[ebx*2+32]
+    mov cursrc,alloca(eax)
+    add eax,ebx
     mov string,eax
-    add eax,MAX_LINE_LEN
+    add eax,ebx
     mov dlabel,eax
 
     assume ebx:ptr asm_tok

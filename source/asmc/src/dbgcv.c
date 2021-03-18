@@ -1436,11 +1436,10 @@ void cv_write_debug_tables( struct dsym *symbols, struct dsym *types, void *pv )
 			if ( fileStart != fileCur )
 			    break;
 
-			if ( Prev )  {
-			    if ( offset < Prev->offset )
-				continue;
-			    if ( offset == Prev->offset &&
-				linenum == Prev->linenumStart )
+			if ( Prev ) {
+			    if ( offset < Prev->offset ||
+				 offset == Prev->offset &&
+				 linenum == Prev->linenumStart )
 				continue;
 			}
 

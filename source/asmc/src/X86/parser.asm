@@ -2,6 +2,7 @@
 ;; Parser
 
 include limits.inc
+include malloc.inc
 
 include asmc.inc
 include memalloc.inc
@@ -3034,8 +3035,9 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     local oldofs:uint_t
     local CodeInfo:code_info
     local opndx[MAX_OPND+1]:expr
-    local buffer[MAX_LINE_LEN]:char_t
+    local buffer:ptr char_t
 
+    mov buffer,alloca(ModuleInfo.max_line_len)
     mov ebx,tokenarray
     .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_ID )
 
@@ -3065,7 +3067,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
         .endf
     .endif
 
-    lea edi,buffer
+    mov edi,buffer
 
     .if j
 
@@ -3393,7 +3395,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
                 ;; v2.21 - mov reg,proc(...)
                 ;; v2.27 - mov reg,class.proc(...)
-                .return .if ExpandHllProcEx( &buffer, j, ebx ) == ERROR
+                .return .if ExpandHllProcEx( buffer, j, ebx ) == ERROR
                 .if eax == STRING_EXPANDED
                     FStoreLine(0)
                     .return NOT_ERROR
@@ -3515,7 +3517,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                 mov  ecx,[esi].tokpos
                 sub  ecx,eax
                 mov  edx,edi
-                lea  edi,buffer
+                mov  edi,buffer
                 xchg esi,eax
                 rep  movsb
                 mov  esi,eax
@@ -3528,7 +3530,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                 mov edi,edx
                 NewDirective(i, tokenarray)
                 .if Parse_Pass > PASS_1
-                    mov Token_Count,Tokenize(strcpy(CurrSource, &buffer), 0, tokenarray, TOK_DEFAULT)
+                    mov Token_Count,Tokenize(strcpy(CurrSource, buffer), 0, tokenarray, TOK_DEFAULT)
                     .return ParseLine(tokenarray)
                 .endif
                 .return NOT_ERROR;
@@ -3910,17 +3912,15 @@ ProcessFile proc tokenarray:ptr asm_tok
             lea eax,[edx+3]
             strcpy(edx, eax)
         .endif
-
-        .repeat
-            .if PreprocessLine( CurrSource, tokenarray )
-                ParseLine( tokenarray )
+        .repeat ;; v2.32.16 - arg tokenarray not used..
+            .if PreprocessLine( CurrSource, ModuleInfo.tokenarray )
+                ParseLine( ModuleInfo.tokenarray )
                 .if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
                     WritePreprocessedLine( CurrSource )
                 .endif
             .endif
         .until !( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) )
     .endif
-
     ret
 
 ProcessFile endp

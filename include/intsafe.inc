@@ -3001,13 +3001,13 @@ IntPtrAdd equ <LongLongAdd>
 else
 IntPtrAdd proto __fastcall :INT_PTR, :INT_PTR, :ptr INT_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(INT_PTR))
-    LongLongToIntPtr(((LONGLONG)iAugend) + ((LONGLONG)iAddend), piResult)
+    LongLongToIntPtr((iAugend) + (iAddend), piResult)
     }
 endif
 
 LongAdd proto __fastcall :LONG, :LONG, :ptr LONG {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG))
-    LongLongToLong(((LONGLONG)lAugend) + ((LONGLONG)lAddend), plResult)
+    LongLongToLong((lAugend) + (lAddend), plResult)
     }
 
 Long32Add  equ <IntAdd>
@@ -3016,7 +3016,7 @@ LongPtrAdd equ <LongLongAdd>
 else
 LongPtrAdd proto __fastcall :LONG_PTR, :LONG_PTR, :ptr LONG_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG_PTR))
-    LongLongToLongPtr(((LONGLONG)lAugend) + ((LONGLONG)lAddend), plResult)
+    LongLongToLongPtr((lAugend) + (lAddend), plResult)
     }
 endif
 
@@ -3030,7 +3030,7 @@ PtrdiffTAdd equ <LongLongAdd>
 else
 PtrdiffTAdd proto __fastcall :ptrdiff_t, :ptrdiff_t, :ptr ptrdiff_t {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(ptrdiff_t))
-    LongLongToPtrdiffT(((LONGLONG)Augend) + ((LONGLONG)Addend), pResult)
+    LongLongToPtrdiffT((Augend) + (Addend), pResult)
     }
 endif
 
@@ -3039,7 +3039,7 @@ SSIZETAdd equ <LongLongAdd>
 else
 SSIZETAdd proto __fastcall :SSIZE_T, :SSIZE_T, :ptr SSIZE_T {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(SSIZE_T))
-    LongLongToSSIZET(((LONGLONG)Augend) + ((LONGLONG)Addend), pResult)
+    LongLongToSSIZET((Augend) + (Addend), pResult)
     }
 endif
 
@@ -3050,19 +3050,19 @@ endif
 
 Int8Sub proto __fastcall :INT8, :INT8, :ptr INT8 {
     C_ASSERT(sizeof(LONG) gt sizeof(INT8))
-    LongToInt8(((LONG)i8Minuend) - ((LONG)i8Subtrahend), pi8Result)
+    LongToInt8((i8Minuend) - (i8Subtrahend), pi8Result)
     }
 
 ShortSub proto __fastcall :SSHORT, :SSHORT, :ptr SSHORT {
     C_ASSERT(sizeof(LONG) gt sizeof(SSHORT))
-    LongToShort(((LONG)sMinuend) - ((LONG)sSubtrahend), psResult)
+    LongToShort((sMinuend) - (sSubtrahend), psResult)
     }
 
 Int16Sub equ <ShortSub>
 
 IntSub proto __fastcall :int_t, :int_t, :ptr SINT {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(SINT))
-    LongLongToInt(((LONGLONG)iMinuend) - ((LONGLONG)iSubtrahend), piResult)
+    LongLongToInt((iMinuend) - (iSubtrahend), piResult)
     }
 
 Int32Sub  equ <IntSub>
@@ -3072,13 +3072,13 @@ IntPtrSub equ <LongLongSub>
 else
 IntPtrSub proto __fastcall :INT_PTR, :INT_PTR, :ptr INT_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(INT_PTR))
-    LongLongToIntPtr(((LONGLONG)iMinuend) - ((LONGLONG)iSubtrahend), piResult)
+    LongLongToIntPtr((iMinuend) - (iSubtrahend), piResult)
     }
 endif
 
 LongSub proto __fastcall :LONG, :LONG, :ptr LONG {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG))
-    LongLongToLong(((LONGLONG)lMinuend) - ((LONGLONG)lSubtrahend), plResult)
+    LongLongToLong((lMinuend) - (lSubtrahend), plResult)
     }
 
 Long32Sub  equ <IntSub>
@@ -3087,7 +3087,7 @@ LongPtrSub equ <LongLongSub>
 else
 LongPtrSub proto __fastcall :LONG_PTR, :LONG_PTR, :ptr LONG_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG_PTR))
-    LongLongToLongPtr(((LONGLONG)lMinuend) - ((LONGLONG)lSubtrahend), plResult)
+    LongLongToLongPtr((lMinuend) - (lSubtrahend), plResult)
     }
 endif
 
@@ -3101,7 +3101,7 @@ PtrdiffTSub equ <LongLongSub>
 else
 PtrdiffTSub proto __fastcall :ptrdiff_t, :ptrdiff_t, :ptr ptrdiff_t {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(ptrdiff_t))
-    LongLongToPtrdiffT(((LONGLONG)Minuend) - ((LONGLONG)Subtrahend), pResult)
+    LongLongToPtrdiffT((Minuend) - (Subtrahend), pResult)
     }
 endif
 
@@ -3110,7 +3110,7 @@ SSIZETSub equ <LongLongSub>
 else
 SSIZETSub proto __fastcall :SSIZE_T, :SSIZE_T, :ptr SSIZE_T {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(SSIZE_T))
-    LongLongToSSIZET(((LONGLONG)Minuend) - ((LONGLONG)Subtrahend), pResult)
+    LongLongToSSIZET((Minuend) - (Subtrahend), pResult)
     }
 endif
 
@@ -3121,19 +3121,19 @@ endif
 
 Int8Mult proto __fastcall :INT8, :INT8, :ptr INT8 {
     C_ASSERT(sizeof(LONG) gt sizeof(INT8))
-    LongToInt8(((LONG)i8Multiplier) * ((LONG)i8Multiplicand), pi8Result)
+    LongToInt8((i8Multiplier) * (i8Multiplicand), pi8Result)
     }
 
 ShortMult proto __fastcall :SSHORT, :SSHORT, :ptr SSHORT {
     C_ASSERT(sizeof(LONG) gt sizeof(SSHORT))
-    LongToShort(((LONG)sMultiplicand) * ((LONG)sMultiplier), psResult)
+    LongToShort((sMultiplicand) * (sMultiplier), psResult)
     }
 
 Int16Mult equ <ShortMult>
 
 IntMult proto __fastcall :int_t, :int_t, :ptr SINT {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(SINT))
-    LongLongToInt(((LONGLONG)iMultiplicand) * ((LONGLONG)iMultiplier), piResult)
+    LongLongToInt((iMultiplicand) * (iMultiplier), piResult)
     }
 
 Int32Mult  equ <IntMult>
@@ -3143,13 +3143,13 @@ IntPtrMult equ <LongLongMult>
 else
 IntPtrMult proto __fastcall :INT_PTR, :INT_PTR, :ptr INT_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(INT_PTR))
-    LongLongToIntPtr(((LONGLONG)iMultiplicand) * ((LONGLONG)iMultiplier), piResult)
+    LongLongToIntPtr((iMultiplicand) * (iMultiplier), piResult)
     }
 endif
 
 LongMult proto __fastcall :LONG, :LONG, :ptr LONG {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG))
-    LongLongToLong(((LONGLONG)lMultiplicand) * ((LONGLONG)lMultiplier), plResult)
+    LongLongToLong((lMultiplicand) * (lMultiplier), plResult)
     }
 
 Long32Mult  equ <IntMult>
@@ -3158,7 +3158,7 @@ LongPtrMult equ <LongLongMult>
 else
 LongPtrMult proto __fastcall  :LONG_PTR, :LONG_PTR, :ptr LONG_PTR {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(LONG_PTR))
-    LongLongToLongPtr(((LONGLONG)lMultiplicand) * ((LONGLONG)lMultiplier), plResult)
+    LongLongToLongPtr((lMultiplicand) * (lMultiplier), plResult)
     }
 endif
 
@@ -3175,7 +3175,7 @@ PtrdiffTMult equ <LongLongMult>
 else
 PtrdiffTMult proto __fastcall :ptrdiff_t, :ptrdiff_t, :ptr ptrdiff_t {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(ptrdiff_t))
-    LongLongToPtrdiffT(((LONGLONG)Multiplicand) * ((LONGLONG)Multiplier), pResult)
+    LongLongToPtrdiffT((Multiplicand) * (Multiplier), pResult)
     }
 endif
 
@@ -3184,7 +3184,7 @@ SSIZETMult equ <LongLongMult>
 else
 SSIZETMult proto __fastcall :SSIZE_T, :SSIZE_T, :ptr SSIZE_T {
     C_ASSERT(sizeof(LONGLONG) gt sizeof(SSIZE_T))
-    LongLongToSSIZET(((LONGLONG)Multiplicand) * ((LONGLONG)Multiplier), pResult)
+    LongLongToSSIZET((Multiplicand) * (Multiplier), pResult)
     }
 endif
 

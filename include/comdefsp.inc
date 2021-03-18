@@ -1,0 +1,1311 @@
+
+ifndef _INC_COMDEFSP
+_INC_COMDEFSP equ <>
+
+ifndef __cplusplus
+ifndef __ASMC__
+.err <Native Compiler support only available in C++ compiler>
+endif
+endif
+
+ifdef _M_CEE_PURE
+.err <comdefsp.inc header cannot be included under /clr:safe or clr:pure>
+endif
+
+ifndef _COM_SMARTPTR_TYPEDEF
+.err <comdefsp.inc requires comdef.inc to be included first>
+endif
+
+ifdef __AsyncIAdviseSink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIAdviseSink, AsyncIAdviseSink)
+endif
+ifdef __AsyncIAdviseSink2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIAdviseSink2, AsyncIAdviseSink2)
+endif
+ifdef __AsyncIMultiQI_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIMultiQI, AsyncIMultiQI)
+endif
+ifdef __AsyncIPipeByte_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIPipeByte, AsyncIPipeByte)
+endif
+ifdef __AsyncIPipeDouble_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIPipeDouble, AsyncIPipeDouble)
+endif
+ifdef __AsyncIPipeLong_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIPipeLong, AsyncIPipeLong)
+endif
+ifdef __AsyncIUnknown_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(AsyncIUnknown, AsyncIUnknown)
+endif
+ifdef __FolderItem_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(FolderItem, FolderItem)
+endif
+ifdef __FolderItemVerb_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(FolderItemVerb, FolderItemVerb)
+endif
+ifdef __FolderItemVerbs_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(FolderItemVerbs, FolderItemVerbs)
+endif
+ifdef __FolderItems_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(FolderItems, FolderItems)
+endif
+ifdef __IAccessible_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAccessible, IAccessible)
+endif
+ifdef __IActiveScript_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScript, IActiveScript)
+endif
+ifdef __IActiveScriptError_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptError, IActiveScriptError)
+endif
+ifdef __IActiveScriptParse_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IActiveScriptParse)
+endif
+ifdef __IActiveScriptParseProcedure_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptParseProcedure, IActiveScriptParseProcedure)
+endif
+ifdef __IActiveScriptParseProcedureOld_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptParseProcedureOld, IActiveScriptParseProcedureOld)
+endif
+ifdef __IActiveScriptSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptSite, IActiveScriptSite)
+endif
+ifdef __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptSiteInterruptPoll, IActiveScriptSiteInterruptPoll)
+endif
+ifdef __IActiveScriptSiteWindow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptSiteWindow, IActiveScriptSiteWindow)
+endif
+ifdef __IActiveScriptStats_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IActiveScriptStats, IActiveScriptStats)
+endif
+ifdef __IAddrExclusionControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAddrExclusionControl, IAddrExclusionControl)
+endif
+ifdef __IAddrTrackingControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAddrTrackingControl, IAddrTrackingControl)
+endif
+ifdef __IAdviseSink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAdviseSink, IAdviseSink)
+endif
+ifdef __IAdviseSink2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAdviseSink2, IAdviseSink2)
+endif
+ifdef __IAdviseSinkEx_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAdviseSinkEx, IAdviseSinkEx)
+endif
+ifdef __IAsyncManager_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAsyncManager, IAsyncManager)
+endif
+ifdef __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAsyncRpcChannelBuffer, IAsyncRpcChannelBuffer)
+endif
+ifdef __IAuthenticate_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IAuthenticate, IAuthenticate)
+endif
+ifdef __IBindCtx_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBindCtx, IBindCtx)
+endif
+ifdef __IBindEventHandler_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBindEventHandler, IBindEventHandler)
+endif
+ifdef __IBindHost_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBindHost, IBindHost)
+endif
+ifdef __IBindProtocol_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBindProtocol, IBindProtocol)
+endif
+ifdef __IBindStatusCallback_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBindStatusCallback, IBindStatusCallback)
+endif
+ifdef __IBinding_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBinding, IBinding)
+endif
+ifdef __IBlockingLock_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IBlockingLock, IBlockingLock)
+endif
+ifdef __ICSSFilter_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICSSFilter, ICSSFilter)
+endif
+ifdef __ICSSFilterSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICSSFilterSite, ICSSFilterSite)
+endif
+ifdef __ICallFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICallFactory, ICallFactory)
+endif
+ifdef __ICancelMethodCalls_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICancelMethodCalls, ICancelMethodCalls)
+endif
+ifdef __ICatInformation_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICatInformation, ICatInformation)
+endif
+ifdef __ICatRegister_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICatRegister, ICatRegister)
+endif
+ifdef __ICatalogFileInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICatalogFileInfo, ICatalogFileInfo)
+endif
+ifdef __IChannelHook_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IChannelHook, IChannelHook)
+endif
+ifdef __IChannelMgr_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IChannelMgr, IChannelMgr)
+endif
+ifdef __IClassActivator_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IClassActivator, IClassActivator)
+endif
+ifdef __IClassFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IClassFactory, IClassFactory)
+endif
+ifdef __IClassFactory2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IClassFactory2, IClassFactory2)
+endif
+ifdef __IClientSecurity_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IClientSecurity, IClientSecurity)
+endif
+ifdef __ICodeInstall_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICodeInstall, ICodeInstall)
+endif
+ifdef __IConnectionPoint_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IConnectionPoint, IConnectionPoint)
+endif
+ifdef __IConnectionPointContainer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IConnectionPointContainer, IConnectionPointContainer)
+endif
+ifdef __IContinue_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IContinue, IContinue)
+endif
+ifdef __IContinueCallback_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IContinueCallback, IContinueCallback)
+endif
+ifdef __ICreateErrorInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICreateErrorInfo, ICreateErrorInfo)
+endif
+ifdef __ICreateTypeInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICreateTypeInfo, ICreateTypeInfo)
+endif
+ifdef __ICreateTypeInfo2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICreateTypeInfo2, ICreateTypeInfo2)
+endif
+ifdef __ICreateTypeLib_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICreateTypeLib, ICreateTypeLib)
+endif
+ifdef __ICreateTypeLib2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICreateTypeLib2, ICreateTypeLib2)
+endif
+ifdef __ICustomDoc_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ICustomDoc, ICustomDoc)
+endif
+ifdef __IDataAdviseHolder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDataAdviseHolder, IDataAdviseHolder)
+endif
+ifdef __IDataFilter_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDataFilter, IDataFilter)
+endif
+ifdef __IDataObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDataObject, IDataObject)
+endif
+ifdef __IDeskBand_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDeskBand, IDeskBand)
+endif
+ifdef __IDirectWriterLock_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDirectWriterLock, IDirectWriterLock)
+endif
+ifdef __IDispError_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDispError, IDispError)
+endif
+ifdef __IDispatch_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDispatch, IDispatch)
+endif
+ifdef __IDispatchEx_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDispatchEx, IDispatchEx)
+endif
+ifdef __IDocHostShowUI_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDocHostShowUI, IDocHostShowUI)
+endif
+ifdef __IDocHostUIHandler_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDocHostUIHandler, IDocHostUIHandler)
+endif
+ifdef __IDockingWindow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDockingWindow, IDockingWindow)
+endif
+ifdef __IDropSource_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDropSource, IDropSource)
+endif
+ifdef __IDropTarget_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDropTarget, IDropTarget)
+endif
+ifdef __IDummyHICONIncluder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IDummyHICONIncluder, IDummyHICONIncluder)
+endif
+ifdef __IEncodingFilterFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEncodingFilterFactory, IEncodingFilterFactory)
+endif
+ifdef __IEnumCATEGORYINFO_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumCATEGORYINFO, IEnumCATEGORYINFO)
+endif
+ifdef __IEnumChannels_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumChannels, IEnumChannels)
+endif
+ifdef __IEnumCodePage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumCodePage, IEnumCodePage)
+endif
+ifdef __IEnumConnectionPoints_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumConnectionPoints, IEnumConnectionPoints)
+endif
+ifdef __IEnumConnections_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumConnections, IEnumConnections)
+endif
+ifdef __IEnumFORMATETC_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumFORMATETC, IEnumFORMATETC)
+endif
+ifdef __IEnumGUID_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumGUID, IEnumGUID)
+endif
+ifdef __IEnumHLITEM_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumHLITEM, IEnumHLITEM)
+endif
+ifdef __IEnumIDList_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumIDList, IEnumIDList)
+endif
+ifdef __IEnumMoniker_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumMoniker, IEnumMoniker)
+endif
+ifdef __IEnumOLEVERB_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumOLEVERB, IEnumOLEVERB)
+endif
+ifdef __IEnumOleDocumentViews_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumOleDocumentViews, IEnumOleDocumentViews)
+endif
+ifdef __IEnumOleUndoUnits_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumOleUndoUnits, IEnumOleUndoUnits)
+endif
+ifdef __IEnumRfc1766_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumRfc1766, IEnumRfc1766)
+endif
+ifdef __IEnumSTATDATA_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumSTATDATA, IEnumSTATDATA)
+endif
+ifdef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumSTATPROPSETSTG, IEnumSTATPROPSETSTG)
+endif
+ifdef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumSTATPROPSTG, IEnumSTATPROPSTG)
+endif
+ifdef __IEnumSTATSTG_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumSTATSTG, IEnumSTATSTG)
+endif
+ifdef __IEnumSTATURL_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumSTATURL, IEnumSTATURL)
+endif
+ifdef __IEnumString_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumString, IEnumString)
+endif
+ifdef __IEnumUnknown_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumUnknown, IEnumUnknown)
+endif
+ifdef __IEnumVARIANT_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IEnumVARIANT, IEnumVARIANT)
+endif
+ifdef __IErrorInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IErrorInfo, IErrorInfo)
+endif
+ifdef __IErrorLog_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IErrorLog, IErrorLog)
+endif
+ifdef __IExtensionServices_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IExtensionServices, IExtensionServices)
+endif
+ifdef __IExternalConnection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IExternalConnection, IExternalConnection)
+endif
+ifdef __IFillLockBytes_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFillLockBytes, IFillLockBytes)
+endif
+ifdef __IFilter_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFilter, IFilter)
+endif
+ifdef __IFolderViewOC_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFolderViewOC, IFolderViewOC)
+endif
+ifdef __IFont_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFont, IFont)
+endif
+ifdef __IFontDisp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFontDisp, IFontDisp)
+endif
+ifdef __IFontEventsDisp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IFontEventsDisp, IFontEventsDisp)
+endif
+ifdef __IForegroundTransfer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IForegroundTransfer, IForegroundTransfer)
+endif
+ifdef __IGlobalInterfaceTable_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IGlobalInterfaceTable, IGlobalInterfaceTable)
+endif
+ifdef __IHTMLAnchorElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLAnchorElement, IHTMLAnchorElement)
+endif
+ifdef __IHTMLAreaElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLAreaElement, IHTMLAreaElement)
+endif
+ifdef __IHTMLAreasCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLAreasCollection, IHTMLAreasCollection)
+endif
+ifdef __IHTMLBGsound_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBGsound, IHTMLBGsound)
+endif
+ifdef __IHTMLBRElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBRElement, IHTMLBRElement)
+endif
+ifdef __IHTMLBaseElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBaseElement, IHTMLBaseElement)
+endif
+ifdef __IHTMLBaseFontElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBaseFontElement, IHTMLBaseFontElement)
+endif
+ifdef __IHTMLBlockElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBlockElement, IHTMLBlockElement)
+endif
+ifdef __IHTMLBodyElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLBodyElement, IHTMLBodyElement)
+endif
+ifdef __IHTMLButtonElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLButtonElement, IHTMLButtonElement)
+endif
+ifdef __IHTMLCommentElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLCommentElement, IHTMLCommentElement)
+endif
+ifdef __IHTMLControlElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLControlElement, IHTMLControlElement)
+endif
+ifdef __IHTMLControlRange_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLControlRange, IHTMLControlRange)
+endif
+ifdef __IHTMLDDElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDDElement, IHTMLDDElement)
+endif
+ifdef __IHTMLDListElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDListElement, IHTMLDListElement)
+endif
+ifdef __IHTMLDTElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDTElement, IHTMLDTElement)
+endif
+ifdef __IHTMLDatabinding_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDatabinding, IHTMLDatabinding)
+endif
+ifdef __IHTMLDialog_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDialog, IHTMLDialog)
+endif
+ifdef __IHTMLDivElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDivElement, IHTMLDivElement)
+endif
+ifdef __IHTMLDivPosition_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDivPosition, IHTMLDivPosition)
+endif
+ifdef __IHTMLDocument_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDocument, IHTMLDocument)
+endif
+ifdef __IHTMLDocument2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLDocument2, IHTMLDocument2)
+endif
+ifdef __IHTMLElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLElement, IHTMLElement)
+endif
+ifdef __IHTMLElementCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLElementCollection, IHTMLElementCollection)
+endif
+ifdef __IHTMLEmbedElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLEmbedElement, IHTMLEmbedElement)
+endif
+ifdef __IHTMLEventObj_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLEventObj, IHTMLEventObj)
+endif
+ifdef __IHTMLFieldSetElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFieldSetElement, IHTMLFieldSetElement)
+endif
+ifdef __IHTMLFiltersCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFiltersCollection, IHTMLFiltersCollection)
+endif
+ifdef __IHTMLFontElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFontElement, IHTMLFontElement)
+endif
+ifdef __IHTMLFontNamesCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFontNamesCollection, IHTMLFontNamesCollection)
+endif
+ifdef __IHTMLFontSizesCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFontSizesCollection, IHTMLFontSizesCollection)
+endif
+ifdef __IHTMLFormElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFormElement, IHTMLFormElement)
+endif
+ifdef __IHTMLFrameBase_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFrameBase, IHTMLFrameBase)
+endif
+ifdef __IHTMLFrameElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFrameElement, IHTMLFrameElement)
+endif
+ifdef __IHTMLFrameSetElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFrameSetElement, IHTMLFrameSetElement)
+endif
+ifdef __IHTMLFramesCollection2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLFramesCollection2, IHTMLFramesCollection2)
+endif
+ifdef __IHTMLHRElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLHRElement, IHTMLHRElement)
+endif
+ifdef __IHTMLHeaderElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLHeaderElement, IHTMLHeaderElement)
+endif
+ifdef __IHTMLIFrameElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLIFrameElement, IHTMLIFrameElement)
+endif
+ifdef __IHTMLImageElementFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLImageElementFactory, IHTMLImageElementFactory)
+endif
+ifdef __IHTMLImgElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLImgElement, IHTMLImgElement)
+endif
+ifdef __IHTMLInputButtonElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLInputButtonElement, IHTMLInputButtonElement)
+endif
+ifdef __IHTMLInputFileElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLInputFileElement, IHTMLInputFileElement)
+endif
+ifdef __IHTMLInputHiddenElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLInputHiddenElement, IHTMLInputHiddenElement)
+endif
+ifdef __IHTMLInputImage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLInputImage, IHTMLInputImage)
+endif
+ifdef __IHTMLInputTextElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLInputTextElement, IHTMLInputTextElement)
+endif
+ifdef __IHTMLIsIndexElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLIsIndexElement, IHTMLIsIndexElement)
+endif
+ifdef __IHTMLLIElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLLIElement, IHTMLLIElement)
+endif
+ifdef __IHTMLLabelElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLLabelElement, IHTMLLabelElement)
+endif
+ifdef __IHTMLLegendElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLLegendElement, IHTMLLegendElement)
+endif
+ifdef __IHTMLLinkElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLLinkElement, IHTMLLinkElement)
+endif
+ifdef __IHTMLListElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLListElement, IHTMLListElement)
+endif
+ifdef __IHTMLLocation_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLLocation, IHTMLLocation)
+endif
+ifdef __IHTMLMapElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLMapElement, IHTMLMapElement)
+endif
+ifdef __IHTMLMarqueeElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLMarqueeElement, IHTMLMarqueeElement)
+endif
+ifdef __IHTMLMetaElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLMetaElement, IHTMLMetaElement)
+endif
+ifdef __IHTMLMimeTypesCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLMimeTypesCollection, IHTMLMimeTypesCollection)
+endif
+ifdef __IHTMLNextIdElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLNextIdElement, IHTMLNextIdElement)
+endif
+ifdef __IHTMLNoShowElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLNoShowElement, IHTMLNoShowElement)
+endif
+ifdef __IHTMLOListElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOListElement, IHTMLOListElement)
+endif
+ifdef __IHTMLObjectElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLObjectElement, IHTMLObjectElement)
+endif
+ifdef __IHTMLOpsProfile_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOpsProfile, IHTMLOpsProfile)
+endif
+ifdef __IHTMLOptionButtonElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOptionButtonElement, IHTMLOptionButtonElement)
+endif
+ifdef __IHTMLOptionElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOptionElement, IHTMLOptionElement)
+endif
+ifdef __IHTMLOptionElementFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOptionElementFactory, IHTMLOptionElementFactory)
+endif
+ifdef __IHTMLOptionsHolder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLOptionsHolder, IHTMLOptionsHolder)
+endif
+ifdef __IHTMLParaElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLParaElement, IHTMLParaElement)
+endif
+ifdef __IHTMLPhraseElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLPhraseElement, IHTMLPhraseElement)
+endif
+ifdef __IHTMLPluginsCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLPluginsCollection, IHTMLPluginsCollection)
+endif
+ifdef __IHTMLRuleStyle_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLRuleStyle, IHTMLRuleStyle)
+endif
+ifdef __IHTMLScreen_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLScreen, IHTMLScreen)
+endif
+ifdef __IHTMLScriptElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLScriptElement, IHTMLScriptElement)
+endif
+ifdef __IHTMLSelectElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLSelectElement, IHTMLSelectElement)
+endif
+ifdef __IHTMLSelectionObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLSelectionObject, IHTMLSelectionObject)
+endif
+ifdef __IHTMLSpanElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLSpanElement, IHTMLSpanElement)
+endif
+ifdef __IHTMLSpanFlow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLSpanFlow, IHTMLSpanFlow)
+endif
+ifdef __IHTMLStyle_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyle, IHTMLStyle)
+endif
+ifdef __IHTMLStyleElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleElement, IHTMLStyleElement)
+endif
+ifdef __IHTMLStyleFontFace_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleFontFace, IHTMLStyleFontFace)
+endif
+ifdef __IHTMLStyleSheet_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleSheet, IHTMLStyleSheet)
+endif
+ifdef __IHTMLStyleSheetRule_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleSheetRule, IHTMLStyleSheetRule)
+endif
+ifdef __IHTMLStyleSheetRulesCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleSheetRulesCollection, IHTMLStyleSheetRulesCollection)
+endif
+ifdef __IHTMLStyleSheetsCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLStyleSheetsCollection, IHTMLStyleSheetsCollection)
+endif
+ifdef __IHTMLTable_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTable, IHTMLTable)
+endif
+ifdef __IHTMLTableCaption_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTableCaption, IHTMLTableCaption)
+endif
+ifdef __IHTMLTableCell_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTableCell, IHTMLTableCell)
+endif
+ifdef __IHTMLTableCol_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTableCol, IHTMLTableCol)
+endif
+ifdef __IHTMLTableRow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTableRow, IHTMLTableRow)
+endif
+ifdef __IHTMLTableSection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTableSection, IHTMLTableSection)
+endif
+ifdef __IHTMLTextAreaElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTextAreaElement, IHTMLTextAreaElement)
+endif
+ifdef __IHTMLTextContainer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTextContainer, IHTMLTextContainer)
+endif
+ifdef __IHTMLTextElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTextElement, IHTMLTextElement)
+endif
+ifdef __IHTMLTitleElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTitleElement, IHTMLTitleElement)
+endif
+ifdef __IHTMLTxtRange_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLTxtRange, IHTMLTxtRange)
+endif
+ifdef __IHTMLUListElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLUListElement, IHTMLUListElement)
+endif
+ifdef __IHTMLUnknownElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLUnknownElement, IHTMLUnknownElement)
+endif
+ifdef __IHTMLWindow2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHTMLWindow2, IHTMLWindow2)
+endif
+ifdef __IHlink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHlink, IHlink)
+endif
+ifdef __IHlinkBrowseContext_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHlinkBrowseContext, IHlinkBrowseContext)
+endif
+ifdef __IHlinkFrame_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHlinkFrame, IHlinkFrame)
+endif
+ifdef __IHlinkSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHlinkSite, IHlinkSite)
+endif
+ifdef __IHlinkTarget_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHlinkTarget, IHlinkTarget)
+endif
+ifdef __IHttpNegotiate_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHttpNegotiate, IHttpNegotiate)
+endif
+ifdef __IHttpNegotiate2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHttpNegotiate2, IHttpNegotiate2)
+endif
+ifdef __IHttpSecurity_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IHttpSecurity, IHttpSecurity)
+endif
+ifdef __IImageDecodeEventSink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IImageDecodeEventSink, IImageDecodeEventSink)
+endif
+ifdef __IImageDecodeFilter_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IImageDecodeFilter, IImageDecodeFilter)
+endif
+ifdef __IInternalUnknown_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternalUnknown, IInternalUnknown)
+endif
+ifdef __IInternet_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternet, IInternet)
+endif
+ifdef __IInternetBindInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetBindInfo, IInternetBindInfo)
+endif
+ifdef __IInternetHostSecurityManager_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetHostSecurityManager, IInternetHostSecurityManager)
+endif
+ifdef __IInternetPriority_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetPriority, IInternetPriority)
+endif
+ifdef __IInternetProtocol_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetProtocol, IInternetProtocol)
+endif
+ifdef __IInternetProtocolInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetProtocolInfo, IInternetProtocolInfo)
+endif
+ifdef __IInternetProtocolRoot_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetProtocolRoot, IInternetProtocolRoot)
+endif
+ifdef __IInternetProtocolSink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetProtocolSink, IInternetProtocolSink)
+endif
+ifdef __IInternetProtocolSinkStackable_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetProtocolSinkStackable, IInternetProtocolSinkStackable)
+endif
+ifdef __IInternetSecurityManager_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetSecurityManager, IInternetSecurityManager)
+endif
+ifdef __IInternetSecurityMgrSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetSecurityMgrSite, IInternetSecurityMgrSite)
+endif
+ifdef __IInternetSession_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetSession, IInternetSession)
+endif
+ifdef __IInternetThreadSwitch_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetThreadSwitch, IInternetThreadSwitch)
+endif
+ifdef __IInternetZoneManager_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IInternetZoneManager, IInternetZoneManager)
+endif
+ifdef __ILayoutStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ILayoutStorage, ILayoutStorage)
+endif
+ifdef __ILockBytes_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ILockBytes, ILockBytes)
+endif
+ifdef __IMLangCodePages_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangCodePages, IMLangCodePages)
+endif
+ifdef __IMLangConvertCharset_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangConvertCharset, IMLangConvertCharset)
+endif
+ifdef __IMLangFontLink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangFontLink, IMLangFontLink)
+endif
+ifdef __IMLangLineBreakConsole_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangLineBreakConsole, IMLangLineBreakConsole)
+endif
+ifdef __IMLangString_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangString, IMLangString)
+endif
+ifdef __IMLangStringAStr_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangStringAStr, IMLangStringAStr)
+endif
+ifdef __IMLangStringBufA_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangStringBufA, IMLangStringBufA)
+endif
+ifdef __IMLangStringBufW_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangStringBufW, IMLangStringBufW)
+endif
+ifdef __IMLangStringWStr_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMLangStringWStr, IMLangStringWStr)
+endif
+ifdef __IMalloc_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMalloc, IMalloc)
+endif
+ifdef __IMallocSpy_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMallocSpy, IMallocSpy)
+endif
+ifdef __IMapMIMEToCLSID_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMapMIMEToCLSID, IMapMIMEToCLSID)
+endif
+ifdef __IMarshal_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMarshal, IMarshal)
+endif
+ifdef __IMarshal2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMarshal2, IMarshal2)
+endif
+ifdef __IMessageFilter_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMessageFilter, IMessageFilter)
+endif
+ifdef __IMimeInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMimeInfo, IMimeInfo)
+endif
+ifdef __IMoniker_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMoniker, IMoniker)
+endif
+ifdef __IMonikerProp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMonikerProp, IMonikerProp)
+endif
+ifdef __IMultiLanguage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMultiLanguage, IMultiLanguage)
+endif
+ifdef __IMultiQI_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IMultiQI, IMultiQI)
+endif
+ifdef __IObjectIdentity_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IObjectIdentity, IObjectIdentity)
+endif
+ifdef __IObjectSafety_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IObjectSafety, IObjectSafety)
+endif
+ifdef __IObjectWithSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IObjectWithSite, IObjectWithSite)
+endif
+ifdef __IOleAdviseHolder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleAdviseHolder, IOleAdviseHolder)
+endif
+ifdef __IOleCache_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleCache, IOleCache)
+endif
+ifdef __IOleCache2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleCache2, IOleCache2)
+endif
+ifdef __IOleCacheControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleCacheControl, IOleCacheControl)
+endif
+ifdef __IOleClientSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleClientSite, IOleClientSite)
+endif
+ifdef __IOleCommandTarget_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleCommandTarget, IOleCommandTarget)
+endif
+ifdef __IOleContainer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleContainer, IOleContainer)
+endif
+ifdef __IOleControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleControl, IOleControl)
+endif
+ifdef __IOleControlSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleControlSite, IOleControlSite)
+endif
+ifdef __IOleDocument_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleDocument, IOleDocument)
+endif
+ifdef __IOleDocumentSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleDocumentSite, IOleDocumentSite)
+endif
+ifdef __IOleDocumentView_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleDocumentView, IOleDocumentView)
+endif
+ifdef __IOleInPlaceActiveObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceActiveObject, IOleInPlaceActiveObject)
+endif
+ifdef __IOleInPlaceFrame_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceFrame, IOleInPlaceFrame)
+endif
+ifdef __IOleInPlaceObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceObject, IOleInPlaceObject)
+endif
+ifdef __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceObjectWindowless, IOleInPlaceObjectWindowless)
+endif
+ifdef __IOleInPlaceSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceSite, IOleInPlaceSite)
+endif
+ifdef __IOleInPlaceSiteEx_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceSiteEx, IOleInPlaceSiteEx)
+endif
+ifdef __IOleInPlaceSiteWindowless_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceSiteWindowless, IOleInPlaceSiteWindowless)
+endif
+ifdef __IOleInPlaceUIWindow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleInPlaceUIWindow, IOleInPlaceUIWindow)
+endif
+ifdef __IOleItemContainer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleItemContainer, IOleItemContainer)
+endif
+ifdef __IOleLink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleLink, IOleLink)
+endif
+ifdef __IOleObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleObject, IOleObject)
+endif
+ifdef __IOleParentUndoUnit_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleParentUndoUnit, IOleParentUndoUnit)
+endif
+ifdef __IOleUndoManager_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleUndoManager, IOleUndoManager)
+endif
+ifdef __IOleUndoUnit_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleUndoUnit, IOleUndoUnit)
+endif
+ifdef __IOleWindow_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOleWindow, IOleWindow)
+endif
+ifdef __IOmHistory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOmHistory, IOmHistory)
+endif
+ifdef __IOmNavigator_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOmNavigator, IOmNavigator)
+endif
+ifdef __IOplockStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IOplockStorage, IOplockStorage)
+endif
+ifdef __IPSFactoryBuffer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPSFactoryBuffer, IPSFactoryBuffer)
+endif
+ifdef __IParseDisplayName_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IParseDisplayName, IParseDisplayName)
+endif
+ifdef __IPerPropertyBrowsing_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPerPropertyBrowsing, IPerPropertyBrowsing)
+endif
+ifdef __IPersist_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersist, IPersist)
+endif
+ifdef __IPersistFile_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistFile, IPersistFile)
+endif
+ifdef __IPersistFolder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistFolder, IPersistFolder)
+endif
+ifdef __IPersistFolder2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistFolder2, IPersistFolder2)
+endif
+ifdef __IPersistHistory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistHistory, IPersistHistory)
+endif
+ifdef __IPersistMemory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistMemory, IPersistMemory)
+endif
+ifdef __IPersistMoniker_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistMoniker, IPersistMoniker)
+endif
+ifdef __IPersistPropertyBag_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistPropertyBag, IPersistPropertyBag)
+endif
+ifdef __IPersistPropertyBag2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistPropertyBag2, IPersistPropertyBag2)
+endif
+ifdef __IPersistStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistStorage, IPersistStorage)
+endif
+ifdef __IPersistStream_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistStream, IPersistStream)
+endif
+ifdef __IPersistStreamInit_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPersistStreamInit, IPersistStreamInit)
+endif
+ifdef __IPicture_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPicture, IPicture)
+endif
+ifdef __IPictureDisp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPictureDisp, IPictureDisp)
+endif
+ifdef __IPipeByte_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPipeByte, IPipeByte)
+endif
+ifdef __IPipeDouble_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPipeDouble, IPipeDouble)
+endif
+ifdef __IPipeLong_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPipeLong, IPipeLong)
+endif
+ifdef __IPointerInactive_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPointerInactive, IPointerInactive)
+endif
+ifdef __IPrint_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPrint, IPrint)
+endif
+ifdef __IProgressNotify_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IProgressNotify, IProgressNotify)
+endif
+ifdef __IPropertyBag_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyBag, IPropertyBag)
+endif
+ifdef __IPropertyBag2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyBag2, IPropertyBag2)
+endif
+ifdef __IPropertyNotifySink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyNotifySink, IPropertyNotifySink)
+endif
+ifdef __IPropertyPage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyPage, IPropertyPage)
+endif
+ifdef __IPropertyPage2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyPage2, IPropertyPage2)
+endif
+ifdef __IPropertyPageSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyPageSite, IPropertyPageSite)
+endif
+ifdef __IPropertySetStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertySetStorage, IPropertySetStorage)
+endif
+ifdef __IPropertyStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IPropertyStorage, IPropertyStorage)
+endif
+ifdef __IProvideClassInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IProvideClassInfo, IProvideClassInfo)
+endif
+ifdef __IProvideClassInfo2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IProvideClassInfo2, IProvideClassInfo2)
+endif
+ifdef __IProvideMultipleClassInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IProvideMultipleClassInfo, IProvideMultipleClassInfo)
+endif
+ifdef __IQuickActivate_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IQuickActivate, IQuickActivate)
+endif
+ifdef __IROTData_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IROTData, IROTData)
+endif
+ifdef __IRecordInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRecordInfo, IRecordInfo)
+endif
+ifdef __IReleaseMarshalBuffers_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IReleaseMarshalBuffers, IReleaseMarshalBuffers)
+endif
+ifdef __IRootStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRootStorage, IRootStorage)
+endif
+ifdef __IRpcChannelBuffer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcChannelBuffer, IRpcChannelBuffer)
+endif
+ifdef __IRpcChannelBuffer2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcChannelBuffer2, IRpcChannelBuffer2)
+endif
+ifdef __IRpcChannelBuffer3_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcChannelBuffer3, IRpcChannelBuffer3)
+endif
+ifdef __IRpcHelper_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcHelper, IRpcHelper)
+endif
+ifdef __IRpcOptions_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcOptions, IRpcOptions)
+endif
+ifdef __IRpcProxyBuffer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcProxyBuffer, IRpcProxyBuffer)
+endif
+ifdef __IRpcStubBuffer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcStubBuffer, IRpcStubBuffer)
+endif
+ifdef __IRpcSyntaxNegotiate_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRpcSyntaxNegotiate, IRpcSyntaxNegotiate)
+endif
+ifdef __IRunnableObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRunnableObject, IRunnableObject)
+endif
+ifdef __IRunningObjectTable_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IRunningObjectTable, IRunningObjectTable)
+endif
+ifdef __ISequentialStream_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISequentialStream, ISequentialStream)
+endif
+ifdef __IServerSecurity_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IServerSecurity, IServerSecurity)
+endif
+ifdef __IServiceProvider_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IServiceProvider, IServiceProvider)
+endif
+ifdef __IShellBrowser_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellBrowser, IShellBrowser)
+endif
+ifdef __IShellDispatch_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellDispatch, IShellDispatch)
+endif
+ifdef __IShellExtInit_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellExtInit, IShellExtInit)
+endif
+ifdef __IShellFolder_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellFolder, IShellFolder)
+endif
+ifdef __IShellFolderViewDual_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellFolderViewDual, IShellFolderViewDual)
+endif
+ifdef __IShellLinkA_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellLinkA, IShellLinkA)
+endif
+ifdef __IShellLinkDual_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellLinkDual, IShellLinkDual)
+endif
+ifdef __IShellLinkW_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellLinkW, IShellLinkW)
+endif
+ifdef __IShellPropSheetExt_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellPropSheetExt, IShellPropSheetExt)
+endif
+ifdef __IShellUIHelper_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellUIHelper, IShellUIHelper)
+endif
+ifdef __IShellView_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellView, IShellView)
+endif
+ifdef __IShellView2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellView2, IShellView2)
+endif
+ifdef __IShellWindows_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IShellWindows, IShellWindows)
+endif
+ifdef __ISimpleFrameSite_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISimpleFrameSite, ISimpleFrameSite)
+endif
+ifdef __ISoftDistExt_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISoftDistExt, ISoftDistExt)
+endif
+ifdef __ISpecifyPropertyPages_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISpecifyPropertyPages, ISpecifyPropertyPages)
+endif
+ifdef __IStdMarshalInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IStdMarshalInfo, IStdMarshalInfo)
+endif
+ifdef __IStorage_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IStorage, IStorage)
+endif
+ifdef __IStream_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IStream, IStream)
+endif
+ifdef __ISubscriptionMgr_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISubscriptionMgr, ISubscriptionMgr)
+endif
+ifdef __ISupportErrorInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISupportErrorInfo, ISupportErrorInfo)
+endif
+ifdef __ISurrogate_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISurrogate, ISurrogate)
+endif
+ifdef __ISynchronize_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISynchronize, ISynchronize)
+endif
+ifdef __ISynchronizeContainer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISynchronizeContainer, ISynchronizeContainer)
+endif
+ifdef __ISynchronizeEvent_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISynchronizeEvent, ISynchronizeEvent)
+endif
+ifdef __ISynchronizeHandle_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISynchronizeHandle, ISynchronizeHandle)
+endif
+ifdef __ISynchronizeMutex_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ISynchronizeMutex, ISynchronizeMutex)
+endif
+ifdef __IThumbnailExtractor_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IThumbnailExtractor, IThumbnailExtractor)
+endif
+ifdef __ITimeAndNoticeControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITimeAndNoticeControl, ITimeAndNoticeControl)
+endif
+ifdef __ITimer_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITimer, ITimer)
+endif
+ifdef __ITimerService_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITimerService, ITimerService)
+endif
+ifdef __ITimerSink_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITimerSink, ITimerSink)
+endif
+ifdef __ITypeChangeEvents_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeChangeEvents, ITypeChangeEvents)
+endif
+ifdef __ITypeComp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeComp, ITypeComp)
+endif
+ifdef __ITypeFactory_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeFactory, ITypeFactory)
+endif
+ifdef __ITypeInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeInfo, ITypeInfo)
+endif
+ifdef __ITypeInfo2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeInfo2, ITypeInfo2)
+endif
+ifdef __ITypeLib_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeLib, ITypeLib)
+endif
+ifdef __ITypeLib2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeLib2, ITypeLib2)
+endif
+ifdef __ITypeMarshal_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(ITypeMarshal, ITypeMarshal)
+endif
+ifdef __IUnknown_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IUnknown, IUnknown)
+endif
+ifdef __IUrlHistoryNotify_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IUrlHistoryNotify, IUrlHistoryNotify)
+endif
+ifdef __IUrlHistoryStg_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IUrlHistoryStg, IUrlHistoryStg)
+endif
+ifdef __IUrlHistoryStg2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IUrlHistoryStg2, IUrlHistoryStg2)
+endif
+ifdef __IUrlMon_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IUrlMon, IUrlMon)
+endif
+ifdef __IVariantChangeType_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IVariantChangeType, IVariantChangeType)
+endif
+ifdef __IViewObject_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IViewObject, IViewObject)
+endif
+ifdef __IViewObject2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IViewObject2, IViewObject2)
+endif
+ifdef __IViewObjectEx_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IViewObjectEx, IViewObjectEx)
+endif
+ifdef __IWaitMultiple_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWaitMultiple, IWaitMultiple)
+endif
+ifdef __IWebBrowser_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWebBrowser, IWebBrowser)
+endif
+ifdef __IWebBrowser2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWebBrowser2, IWebBrowser2)
+endif
+ifdef __IWebBrowserApp_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWebBrowserApp, IWebBrowserApp)
+endif
+ifdef __IWinInetHttpInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWinInetHttpInfo, IWinInetHttpInfo)
+endif
+ifdef __IWinInetInfo_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWinInetInfo, IWinInetInfo)
+endif
+ifdef __IWindowForBindingUI_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWindowForBindingUI, IWindowForBindingUI)
+endif
+ifdef __IWrappedProtocol_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IWrappedProtocol, IWrappedProtocol)
+endif
+ifdef __IXMLAttribute_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLAttribute, IXMLAttribute)
+endif
+ifdef __IXMLDOMAttribute_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMAttribute, IXMLDOMAttribute)
+endif
+ifdef __IXMLDOMCDATASection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMCDATASection, IXMLDOMCDATASection)
+endif
+ifdef __IXMLDOMCharacterData_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMCharacterData, IXMLDOMCharacterData)
+endif
+ifdef __IXMLDOMComment_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMComment, IXMLDOMComment)
+endif
+ifdef __IXMLDOMDocument_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMDocument, IXMLDOMDocument)
+endif
+ifdef __IXMLDOMDocumentFragment_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMDocumentFragment, IXMLDOMDocumentFragment)
+endif
+ifdef __IXMLDOMDocumentType_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMDocumentType, IXMLDOMDocumentType)
+endif
+ifdef __IXMLDOMElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMElement, IXMLDOMElement)
+endif
+ifdef __IXMLDOMEntity_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMEntity, IXMLDOMEntity)
+endif
+ifdef __IXMLDOMEntityReference_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMEntityReference, IXMLDOMEntityReference)
+endif
+ifdef __IXMLDOMImplementation_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMImplementation, IXMLDOMImplementation)
+endif
+ifdef __IXMLDOMNamedNodeMap_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMNamedNodeMap, IXMLDOMNamedNodeMap)
+endif
+ifdef __IXMLDOMNode_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMNode, IXMLDOMNode)
+endif
+ifdef __IXMLDOMNodeList_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMNodeList, IXMLDOMNodeList)
+endif
+ifdef __IXMLDOMNotation_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMNotation, IXMLDOMNotation)
+endif
+ifdef __IXMLDOMParseError_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMParseError, IXMLDOMParseError)
+endif
+ifdef __IXMLDOMProcessingInstruction_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMProcessingInstruction, IXMLDOMProcessingInstruction)
+endif
+ifdef __IXMLDOMText_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDOMText, IXMLDOMText)
+endif
+ifdef __IXMLDSOControl_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDSOControl, IXMLDSOControl)
+endif
+ifdef __IXMLDocument_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDocument, IXMLDocument)
+endif
+ifdef __IXMLDocument2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLDocument2, IXMLDocument2)
+endif
+ifdef __IXMLElement_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLElement, IXMLElement)
+endif
+ifdef __IXMLElement2_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLElement2, IXMLElement2)
+endif
+ifdef __IXMLElementCollection_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLElementCollection, IXMLElementCollection)
+endif
+ifdef __IXMLError_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLError, IXMLError)
+endif
+ifdef __IXMLHttpRequest_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXMLHttpRequest, IXMLHttpRequest)
+endif
+ifdef __IXTLRuntime_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(IXTLRuntime, IXTLRuntime)
+endif
+ifdef __OLEDBSimpleProvider_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(OLEDBSimpleProvider, OLEDBSimpleProvider)
+endif
+ifdef __OLEDBSimpleProviderListener_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(OLEDBSimpleProviderListener, OLEDBSimpleProviderListener)
+endif
+ifdef __XMLDOMDocumentEvents_INTERFACE_DEFINED__
+_COM_SMARTPTR_TYPEDEF(XMLDOMDocumentEvents, XMLDOMDocumentEvents)
+endif
+
+ifdef __DOMFreeThreadedDocument_FWD_DEFINED__
+_COM_SMARTPTR_TYPEDEF(DOMFreeThreadedDocument, DOMFreeThreadedDocument)
+endif
+ifdef __XMLDSOControl_FWD_DEFINED__
+_COM_SMARTPTR_TYPEDEF(XMLDSOControl, XMLDSOControl)
+endif
+ifdef __XMLDocument_FWD_DEFINED__
+_COM_SMARTPTR_TYPEDEF(XMLDocument, XMLDocument)
+endif
+ifdef __XMLHTTPRequest_FWD_DEFINED__
+_COM_SMARTPTR_TYPEDEF(XMLHTTPRequest, XMLHTTPRequest)
+endif
+
+endif

@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 include d2dbasetypes.inc
 ifndef D3DMATRIX_DEFINED
 include d3d9types.inc
@@ -605,3 +607,5 @@ DEFINE_IIDX(IDCompositionAffineTransform2DEffect, "0B74B9E8-CDD6-492F-BBBC-5ED32
 endif
 
 endif
+.pragma list(pop)
+

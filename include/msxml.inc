@@ -455,8 +455,8 @@ DEFINE_IIDX(IXMLHttpRequest, "ED8C108D-4349-11D2-91A4-00C04F7969E8")
     get_responseStream	proc :ptr VARIANT
     get_readyState	proc :ptr
     put_onreadystatechange proc :ptr IDispatch
-
     .ends
+
 endif
 
 ifndef __IXMLDSOControl_INTERFACE_DEFINED__

@@ -116,7 +116,7 @@ IsMultiLine endp
 
     assume edx:ptr line_status
 
-ConcatLine proc uses esi edi edx ecx src, cnt, o, ls
+ConcatLine proc uses esi edi edx ecx src:string_t, cnt:int_t, o:string_t, ls:ptr line_status
 
     mov eax,src
     mov esi,eax
@@ -145,13 +145,13 @@ ConcatLine proc uses esi edi edx ecx src, cnt, o, ls
     sub ecx,[edx].start
     add ecx,eax
 
-    .if ecx >= MAX_LINE_LEN
+    .if ecx >= ModuleInfo.max_line_len
 
         asmerr(2039)
         mov ecx,esi
         sub ecx,[edx].start
         inc ecx
-        mov eax,MAX_LINE_LEN
+        mov eax,ModuleInfo.max_line_len
         sub eax,ecx
         mov byte ptr [edi+eax],0
     .endif
@@ -176,8 +176,15 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
             tdst:       string_t,
             tsrc:       string_t,
             tcount:     uint_t,
+            maxlen:     uint_t,
+            maxl_1:     uint_t,
             cstring:    byte
 
+    mov eax,ModuleInfo.max_line_len
+    sub eax,32
+    mov maxlen,eax
+    dec eax
+    mov maxl_1,eax
     mov edx,p
     mov ebx,buf
     mov esi,[edx].input
@@ -250,7 +257,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 add ecx,1
                 .endc
             .endsw
-        .until ecx >= MAX_STRING_LEN
+        .until ecx >= maxlen
         ;
         ; end of string marker is the same
         ;
@@ -274,7 +281,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         .endif
         add esi,1
 
-        .while ecx < MAX_STRING_LEN
+        .while ecx < maxlen
 
             mov ax,[esi]
             .if al == symbol_o      ; < or { ?
@@ -309,7 +316,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 mov tcount,ecx
                 mov ax,[esi]
 
-                .while al != delim && al && ecx < MAX_STRING_LEN - 1
+                .while al != delim && al && ecx < maxl_1
 
                     .if symbol_o == '<' && al == '!' && ah
 
@@ -413,7 +420,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
                             strlen(edi)
                             add eax,tcount
-                            .if eax >= MAX_LINE_LEN
+                            .if eax >= ModuleInfo.max_line_len
                                 .return asmerr(2039)
                             .endif
                             strcpy(esi, edi)
@@ -451,7 +458,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         ;
         ; v2.05: also stop if a ')' is found - see literal2.asm regression test
         ;
-        .while ecx < MAX_STRING_LEN
+        .while ecx < maxlen
 
             movzx eax,BYTE PTR [esi]
 
@@ -479,7 +486,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                         .return EMPTY
                     .endif
                 .endif
-            .elseif eax == '!' && BYTE PTR [esi+1] && ecx < MAX_STRING_LEN - 1
+            .elseif eax == '!' && BYTE PTR [esi+1] && ecx < maxl_1
                 ;
                 ; v2.08: handle '!' operator
                 ;
@@ -490,7 +497,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         .endw
     .endsw
 
-    .if ecx == MAX_STRING_LEN
+    .if ecx == maxlen
 
         asmerr(2041)
     .else
@@ -1416,6 +1423,8 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
 
 GetToken ENDP
 
+InputExtend proto :ptr line_status, :ptr ptr asm_tok
+
 Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, flags:uint_t
 
   local rc, p:line_status
@@ -1466,7 +1475,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
             .if ( al == ';' && flags == TOK_DEFAULT )
 
-                .while ( edx > line )
+                .while ( edx > p.start )
 
                     mov al,[edx-1]
 
@@ -1511,11 +1520,14 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
                                 strcpy(p.input, edi)
 
-                                .if strlen(p.start) >= MAX_LINE_LEN
+                                .if strlen(p.start) >= ModuleInfo.max_line_len
 
-                                    asmerr(2039)
-                                    mov p.index,start
-                                    .break
+                                    .if !InputExtend(&p, &tokenarray)
+
+                                        asmerr(2039)
+                                        mov p.index,start
+                                        .break
+                                    .endif
                                 .endif
                                 .continue
                             .endif
@@ -1637,12 +1649,18 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             .endif
 
             inc p.index
-            .if p.index >= MAX_TOKEN
+            mov eax,ModuleInfo.max_line_len
+            shr eax,2
+            .if p.index >= eax ; MAX_TOKEN
+                dec p.index
+                .if !InputExtend(&p, &tokenarray)
 
-                asmerr(2141)
-                mov eax,start
-                mov p.index,eax
-                .break(1)
+                    asmerr(2141)
+                    mov eax,start
+                    mov p.index,eax
+                    .break(1)
+                .endif
+                inc p.index
             .endif
 
             mov eax,p.output

@@ -1820,8 +1820,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
 
                     mov eax,ecx
 
-                .elseif ( [ecx].asym.flag & S_METHOD && \
-                          [ecx].asym.sint_flag & SINT_ISINLINE )
+                .elseif ( [ecx].asym.sint_flag & SINT_ISINLINE )
 
                     mov ecx,[ecx].asym.target_type
                     .if ( ecx && [ecx].asym.state == SYM_MACRO )

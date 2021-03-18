@@ -136,9 +136,11 @@ DelayExpand endp
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine proc uses esi ebx line:string_t, tokenarray:tok_t
+PreprocessLine proc uses esi edi ebx line:string_t, tokenarray:tok_t
 
+    mov edi,CurrSource
     mov ebx,tokenarray
+    mov esi,ModuleInfo.tokenarray
     xor eax,eax
     ;
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()
@@ -153,6 +155,14 @@ PreprocessLine proc uses esi ebx line:string_t, tokenarray:tok_t
     ; Token_Count is the number of tokens scanned
     ;
     mov Token_Count,Tokenize(line, eax, ebx, eax)
+    .if ( esi != ModuleInfo.tokenarray )
+        .if ( edi == line )
+            mov line,CurrSource
+        .endif
+        .if ( esi == ebx )
+            mov ebx,ModuleInfo.tokenarray
+        .endif
+    .endif
 
 if REMOVECOMENT eq 0
     .if ( ( Token_Count == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )

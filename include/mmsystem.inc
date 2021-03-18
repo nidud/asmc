@@ -3065,7 +3065,8 @@ mciGetYieldProcg proto WINAPI \
 endif
 
 if (WINVER LT 0x030a)
-;WINMMAPI BOOL WINAPI mciExecute(LPCSTR pszCommand);
+mciExecute proto WINAPI \
+	    pszCommand: LPCSTR
 endif
 
 MCIERR_INVALID_DEVICE_ID equ (MCIERR_BASE + 1)

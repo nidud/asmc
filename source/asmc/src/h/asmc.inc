@@ -381,7 +381,7 @@ masm_keywords           db ?    ; -Znk
 arch                    db ?    ; -arch:AVX[2|512]
 global_options          ENDS
 
-M_MODULEVARS            MACRO
+module_vars             STRUC
 error_count             uint_t ?        ; total of errors so far
 warning_count           uint_t ?        ; total of warnings so far
 num_segs                uint_t ?        ; number of segments in module
@@ -421,14 +421,11 @@ WriteModule             ptr_t ?         ; (*WriteModule)( struct module_info * )
 EndDirHook              ptr_t ?         ; (*EndDirHook) ( struct module_info * );
 Pass1Checks             ptr_t ?         ; (*Pass1Checks)( struct module_info * );
 pe_flags                dd ?            ; for PE
-                        ENDM
-
-module_vars             STRUC
-M_MODULEVARS
+max_line_len            dd ?    ;
 module_vars             ENDS
 
 module_info             STRUC SIZE_T
-M_MODULEVARS
+module_vars             <>
 proc_prologue           string_t ? ; prologue macro if PEM_MACRO
 proc_epilogue           string_t ? ; epilogue macro if PEM_MACRO
 CurrDll                 ptr_t ? ; OPTION DLLIMPORT dll

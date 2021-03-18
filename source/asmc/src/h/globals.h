@@ -510,6 +510,7 @@ int		(*WriteModule)( struct module_info * );
 int		(*EndDirHook)( struct module_info * );
 int		(*Pass1Checks)( struct module_info * );
 unsigned	pe_flags;	 /* for PE */
+unsigned	max_line_len;
 };
 
 struct format_options;

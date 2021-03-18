@@ -160,7 +160,7 @@ void RunLineQueue( void )
 	struct lq_line *nextline = currline->next;
 	strcpy( CurrSource, currline->line );
 	MemFree( currline );
-	if ( PreprocessLine( CurrSource, tokenarray ) )
+	if ( PreprocessLine( &tokenarray ) )
 	    ParseLine( tokenarray );
 	currline = nextline;
     }
@@ -186,7 +186,7 @@ void InsertLineQueue(void)
 	struct lq_line *nextline = currline->next;
 	strcpy( CurrSource, currline->line );
 	MemFree( currline );
-	if ( PreprocessLine( CurrSource, tokenarray ) )
+	if ( PreprocessLine( &tokenarray ) )
 	    ParseLine( tokenarray );
 	currline = nextline;
     }

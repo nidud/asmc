@@ -12,8 +12,8 @@ include condasm.inc
 include assume.inc
 include fastpass.inc
 
-externdef token_stringbuf:DWORD
-externdef commentbuffer:DWORD
+externdef token_stringbuf:ptr
+externdef commentbuffer:ptr
 externdef CurrEnum:asym_t
 
 .data
@@ -1423,11 +1423,6 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
 
 GetToken ENDP
 
-InputExtend proto :ptr line_status, :ptr ptr asm_tok
-
-Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, flags:uint_t
-
-  local rc, p:line_status
 ;
 ; create tokens from a source line.
 ; line:  the line which is to be tokenized
@@ -1435,6 +1430,11 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 ;    then some variables are additionally initialized.
 ; flags: 1=if the line has been tokenized already.
 ;
+
+Tokenize proc uses esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, flags:uint_t
+
+  local rc, p:line_status
+
     mov p.input,line
     mov p.start,eax
     mov eax,flags
@@ -1522,12 +1522,9 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
                                 .if strlen(p.start) >= ModuleInfo.max_line_len
 
-                                    .if !InputExtend(&p, &tokenarray)
-
-                                        asmerr(2039)
-                                        mov p.index,start
-                                        .break
-                                    .endif
+                                    asmerr(2039)
+                                    mov p.index,start
+                                    .break
                                 .endif
                                 .continue
                             .endif
@@ -1652,15 +1649,11 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             mov eax,ModuleInfo.max_line_len
             shr eax,2
             .if p.index >= eax ; MAX_TOKEN
-                dec p.index
-                .if !InputExtend(&p, &tokenarray)
 
-                    asmerr(2141)
-                    mov eax,start
-                    mov p.index,eax
-                    .break(1)
-                .endif
-                inc p.index
+                asmerr(2141)
+                mov eax,start
+                mov p.index,eax
+                .break(1)
             .endif
 
             mov eax,p.output
@@ -1693,6 +1686,267 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
     mov eax,p.index
     ret
 
-Tokenize ENDP
+Tokenize endp
 
-    END
+;
+; Extend the size dynamically for large arrays
+;
+
+TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uint_t
+
+  local rc, p:line_status
+
+    mov p.input,ModuleInfo.currsource
+    mov p.start,eax
+    mov eax,flags
+    mov p.flags,al
+    mov p.index,start
+    mov p.flags2,0
+    mov p.flags3,0
+    mov _cstring,0
+    mov _brachets,0
+
+    .repeat
+
+        .if !eax
+
+            mov p.output,token_stringbuf
+            .if ModuleInfo.inside_comment
+
+                .if strchr(p.start, ModuleInfo.inside_comment)
+
+                    mov ModuleInfo.inside_comment,0
+                .endif
+                .break
+            .endif
+        .else
+
+            mov p.output,ModuleInfo.stringbufferend
+        .endif
+
+        .while 1
+
+            mov edx,p.input
+            movzx eax,byte ptr [edx]
+            .while ( _ltype[eax+1] & _SPACE )
+                inc edx
+                mov al,[edx]
+            .endw
+            mov p.input,edx
+
+            .if ( al == ';' && flags == TOK_DEFAULT )
+
+                .while ( edx > p.start )
+
+                    mov al,[edx-1]
+
+                    .break .if !( _ltype[eax+1] & _SPACE )
+                    sub edx,1
+                .endw
+
+                mov p.input,edx
+                mov ebx,edx
+                strcpy(commentbuffer, edx)
+                mov ModuleInfo.CurrComment,eax
+                mov BYTE PTR [ebx],0
+                mov edx,ebx
+            .endif
+
+            mov ebx,p.index
+            shl ebx,4
+            mov eax,tokptr
+            mov eax,[eax]
+            add ebx,eax
+            mov [ebx].tokpos,edx
+
+            .if BYTE PTR [edx] == 0
+
+                .if p.index > 1 && \
+                    ([ebx-16].token == T_COMMA || _brachets) && \
+                    ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
+
+                    mov ecx,tokptr
+                    .if IsMultiLine([ecx]) || _brachets
+
+                        strlen(p.output)
+                        add eax,4
+                        and eax,-4
+                        add eax,p.output
+                        mov edi,eax
+
+                        .if GetTextLine(eax)
+
+                            .if SkipSpace(eax, edi)
+
+                                strcpy(p.input, edi)
+
+                                .if strlen(p.start) >= ModuleInfo.max_line_len
+
+                                    .if !InputExtend(&p, tokptr)
+
+                                        asmerr(2039)
+                                        mov p.index,start
+                                        .break
+                                    .endif
+                                .endif
+                                .continue
+                            .endif
+                        .endif
+                    .endif
+                .endif
+                .break
+            .endif
+
+            mov [ebx].string_ptr,p.output
+            mov rc,GetToken(ebx, &p)
+
+            .switch
+              .case eax == EMPTY
+                .continue
+
+              .case eax == ERROR
+                ;
+                ; skip this line
+                ;
+                mov p.index,start
+                .break
+
+              .case [ebx].token == T_DBL_COLON
+                mov eax,tokptr
+                mov eax,[eax]
+                or [eax].asm_tok.hll_flags,T_HLL_DBLCOLON
+                .endc
+            .endsw
+
+            .if !( flags & TOK_RESCAN )
+
+                mov eax,tokptr
+                mov eax,[eax]
+                movzx ecx,[eax+16].asm_tok.token
+                mov eax,p.index
+
+                .if !eax || ( eax == 2 && ( ecx == T_COLON || ecx == T_DBL_COLON ) )
+
+                    mov ecx,[ebx].tokval
+                    .if [ebx].token == T_DIRECTIVE && \
+                        ( [ebx].bytval == DRT_CONDDIR || ecx == T_DOT_ASSERT )
+
+                        .if ecx == T_COMMENT
+                            ;
+                            ; p.index is 0 or 2
+                            ;
+                            StartComment(p.input)
+                            .break
+                        .endif
+
+                        mov edx,1
+                        .if ecx == T_DOT_ASSERT
+
+                            dec edx
+                            .if !( ModuleInfo.xflag & OPT_ASSERT )
+
+                                mov eax,p.input
+                                mov cl,[eax]
+
+                                .while ( cl == ' ' || cl == 9 )
+
+                                    inc eax
+                                    mov cl,[eax]
+                                .endw
+
+                                .if ( cl == ':' )
+
+                                    inc eax
+                                    mov cl,[eax]
+
+                                    .while ( cl == ' ' || cl == 9 )
+
+                                        inc eax
+                                        mov cl,[eax]
+                                    .endw
+                                    mov eax,[eax]
+                                    or  eax,0x20202020
+                                    .if eax == 'sdne'
+
+                                        mov ecx,T_ENDIF
+                                        inc edx
+                                    .endif
+                                .endif
+                            .endif
+                        .endif
+
+                        .if edx
+
+                            CondPrepare(ecx)
+                            .if CurrIfState != BLOCK_ACTIVE
+                                ;
+                                ; p.index is 1 or 3
+                                ;
+                                inc p.index
+                                .break
+                            .endif
+                        .else
+                            .break .if CurrIfState != BLOCK_ACTIVE
+                            ;
+                            ; further processing skipped. p.index is 0
+                            ;
+                        .endif
+
+                    .elseif CurrIfState != BLOCK_ACTIVE
+                        ;
+                        ; further processing skipped. p.index is 0
+                        ;
+                        .break
+                    .endif
+                .endif
+            .endif
+
+            inc p.index
+            mov eax,ModuleInfo.max_line_len
+            shr eax,2
+            .if p.index >= eax ; MAX_TOKEN
+                dec p.index
+                .if !InputExtend(&p, tokptr)
+
+                    asmerr(2141)
+                    mov eax,start
+                    mov p.index,eax
+                    .break(1)
+                .endif
+                inc p.index
+            .endif
+
+            mov eax,p.output
+            sub eax,token_stringbuf
+            add eax,4
+            and eax,-4
+            add eax,token_stringbuf
+            mov p.output,eax
+
+        .endw
+
+        mov eax,p.output
+        sub eax,token_stringbuf
+        add eax,4
+        and eax,-4
+        add eax,token_stringbuf
+        mov p.output,eax
+        mov ModuleInfo.stringbufferend,eax
+
+    .until 1
+
+    mov eax,tokptr
+    mov ebx,[eax]
+    mov eax,p.index
+    shl eax,4
+    add ebx,eax
+    mov [ebx].token,T_FINAL
+    mov al,p.flags3
+    mov [ebx].bytval,al
+    mov [ebx].string_ptr,offset __null
+    mov eax,p.index
+    ret
+
+TokenizeEx endp
+
+    end

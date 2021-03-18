@@ -3912,9 +3912,9 @@ ProcessFile proc tokenarray:ptr asm_tok
             lea eax,[edx+3]
             strcpy(edx, eax)
         .endif
-        .repeat ;; v2.32.16 - arg tokenarray not used..
-            .if PreprocessLine( CurrSource, ModuleInfo.tokenarray )
-                ParseLine( ModuleInfo.tokenarray )
+        .repeat
+            .if PreprocessLine( &tokenarray )
+                ParseLine( tokenarray )
                 .if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
                     WritePreprocessedLine( CurrSource )
                 .endif

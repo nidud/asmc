@@ -24,6 +24,7 @@ TF3_EXPANSION	    equ 0x02	; expansion operator % at pos 0
 
 GetToken proto fastcall :tok_t, :ptr line_status
 Tokenize proto :string_t, :uint_t, :tok_t, :uint_t
+TokenizeEx proto :uint_t, :ptr tok_t, :uint_t
 
 endif
 .pragma list(pop)

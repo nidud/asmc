@@ -92,7 +92,7 @@ else
  pResource		PVOID ?
 endif
 ENDS
-UNION ;DUMMYUNIONNAME2
+UNION
   hIcon			HICON ?
   pszIcon		LPCSTR ?
 ENDS

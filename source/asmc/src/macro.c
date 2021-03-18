@@ -657,7 +657,7 @@ void MacroLineQueue(void)
     GetLine = GetLineQueue;
     line = GetLine( CurrSource );
     if ( line )
-	PreprocessLine( line, tokenarray );
+	PreprocessLine( &tokenarray );
     GetLine = oldline;
     ModuleInfo.GeneratedCode--;
     PopInputStatus( &oldstat );

@@ -741,7 +741,6 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
         .if ( !( mflags & MF_NOSAVE ) )
             mov tokenarray,PushInputStatus( &oldstat )
         .endif
-        mov ebx,tokenarray
 
         ;; move the macro instance onto the file stack!
         ;; Also reset the current linenumber!
@@ -760,8 +759,9 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
 
 
         .while ( GetTextLine( CurrSource ) )
-            .continue .if ( PreprocessLine( CurrSource, tokenarray ) == 0 )
+            .continue .if ( PreprocessLine( &tokenarray ) == 0 )
 
+            mov ebx,tokenarray
 
             ;; skip macro label lines
             .if ( [ebx].token == T_COLON )

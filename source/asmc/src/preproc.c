@@ -109,9 +109,10 @@ int FASTCALL DelayExpand( struct asm_tok tokenarray[] )
  * 2. (text) macros are expanded by ExpandLine()
  * 3. "preprocessor" directives are executed
  */
-int PreprocessLine( char *line, struct asm_tok tokenarray[] )
+int PreprocessLine( struct asm_tok **tokptr )
 {
     int i;
+    struct asm_tok *tokenarray;
 
     /* v2.11: GetTextLine() removed - this is now done in ProcessFile() */
 
@@ -120,7 +121,8 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
     /* v2.06: moved here from Tokenize() */
     ModuleInfo.line_flags = 0;
     /* Token_Count is the number of tokens scanned */
-    Token_Count = Tokenize( line, 0, tokenarray, TOK_DEFAULT );
+    Token_Count = TokenizeEx( 0, tokptr, TOK_DEFAULT );
+    tokenarray = *tokptr;
 
 #if REMOVECOMENT == 0
     if ( Token_Count == 0 && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
@@ -137,14 +139,14 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
     if ( CurrIfState == BLOCK_ACTIVE ) {
 
 	if ( ( tokenarray[Token_Count].bytval & TF3_EXPANSION ) ) {
-	    i = ExpandText( line, tokenarray, TRUE );
+	    i = ExpandText( CurrSource, tokenarray, TRUE );
 	} else {
 	    i = 0;
 	    if ( !LabelMacro( tokenarray ) ) {
 		if ( !DelayExpand( tokenarray ) )
-		    i = ExpandLine( line, tokenarray );
+		    i = ExpandLine( CurrSource, tokenarray );
 		else if ( Parse_Pass == PASS_1 )
-		    ExpandLineItems( line, 0, tokenarray, 0, 1 );
+		    ExpandLineItems( CurrSource, 0, tokenarray, 0, 1 );
 	    }
 	}
 	if ( i < NOT_ERROR )
@@ -167,7 +169,7 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
 
 	/* if i != 0, then a code label is located before the directive */
 	if ( i > 1 ) {
-	    if ( ERROR == WriteCodeLabel( line, tokenarray ) )
+	    if ( ERROR == WriteCodeLabel( CurrSource, tokenarray ) )
 		return( 0 );
 	}
 	directive_tab[tokenarray[i].dirtype]( i, tokenarray );
@@ -196,7 +198,7 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
 		    if ( StoreState && Parse_Pass == PASS_1 )
 			FStoreLine( 0 );
 		    if ( Options.preprocessor_stdout == TRUE )
-			WritePreprocessedLine( line );
+			WritePreprocessedLine( CurrSource );
 		}
 		/* v2.03: LstWrite() must be called AFTER StoreLine()! */
 		if ( ModuleInfo.list == TRUE ) {

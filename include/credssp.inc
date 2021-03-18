@@ -1,0 +1,56 @@
+ifndef __CREDSSP_H__
+__CREDSSP_H__ equ <>
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CREDSSP_NAME		equ <L"CREDSSP">
+TS_SSP_NAME_A		equ <"TSSSP">
+TS_SSP_NAME		equ <L"TSSSP">
+
+szOID_TS_KP_TS_SERVER_AUTH equ <"1.3.6.1.4.1.311.54.1.2">
+
+SecPkgContext_ClientCreds STRUC
+AuthBufferLen		ULONG ?
+AuthBuffer		PUCHAR ?
+SecPkgContext_ClientCreds ENDS
+PSecPkgContext_ClientCreds typedef ptr SecPkgContext_ClientCreds
+
+CREDSSP_SERVER_AUTH_NEGOTIATE equ 0x1
+CREDSSP_SERVER_AUTH_CERTIFICATE equ 0x2
+CREDSSP_SERVER_AUTH_LOOPBACK equ 0x4
+
+SECPKG_ALT_ATTR		equ 0x80000000
+SECPKG_ATTR_CREDS	equ 0x80000080
+SECPKG_ATTR_NEGOTIATION_PACKAGE equ 0x80000081
+SECPKG_ATTR_C_ACCESS_TOKEN equ (SECPKG_ATTR_ACCESS_TOKEN OR SECPKG_ALT_ATTR)
+SECPKG_ATTR_C_FULL_ACCESS_TOKEN equ 0x80000082
+SECPKG_ATTR_SERVER_AUTH_FLAGS equ 0x80000083
+SECPKG_ATTR_CERT_TRUST_STATUS equ 0x80000084
+SECPKG_ATTR_C_FULL_IDENT_TOKEN equ 0x80000085
+SECPKG_ATTR_CREDS_2	equ 0x80000086
+
+
+.enum CREDSPP_SUBMIT_TYPE {
+    CredsspPasswordCreds = 2,
+    CredsspSchannelCreds = 4,
+    CredsspCertificateCreds = 13,
+    CredsspSubmitBufferBoth = 50,
+    CredsspSubmitBufferBothOld = 51
+    }
+
+CREDSSP_CRED		STRUC
+Type			CREDSPP_SUBMIT_TYPE ?
+pSchannelCred		PVOID ?
+pSpnegoCred		PVOID ?
+CREDSSP_CRED		ENDS
+PCREDSSP_CRED		typedef ptr CREDSSP_CRED
+
+ifdef SECURITY_KERNEL
+SpInitSecurityInterfaceW proto WINAPI
+endif
+
+endif
+
+endif

@@ -136,33 +136,23 @@ DelayExpand endp
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine proc uses esi edi ebx line:string_t, tokenarray:tok_t
+PreprocessLine proc uses esi ebx tokenarray:ptr tok_t
 
-    mov edi,CurrSource
-    mov ebx,tokenarray
-    mov esi,ModuleInfo.tokenarray
-    xor eax,eax
     ;
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()
     ; v2.08: moved here from GetTextLine()
     ;
-    mov ModuleInfo.CurrComment,eax
+    mov ModuleInfo.CurrComment,NULL
     ;
     ; v2.06: moved here from Tokenize()
     ;
-    mov ModuleInfo.line_flags,al
+    mov ModuleInfo.line_flags,0
     ;
     ; Token_Count is the number of tokens scanned
     ;
-    mov Token_Count,Tokenize(line, eax, ebx, eax)
-    .if ( esi != ModuleInfo.tokenarray )
-        .if ( edi == line )
-            mov line,CurrSource
-        .endif
-        .if ( esi == ebx )
-            mov ebx,ModuleInfo.tokenarray
-        .endif
-    .endif
+    mov Token_Count,TokenizeEx(0, tokenarray, 0)
+    mov eax,tokenarray
+    mov ebx,[eax]
 
 if REMOVECOMENT eq 0
     .if ( ( Token_Count == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
@@ -183,7 +173,7 @@ endif
         shl eax,4
         .if [ebx+eax].bytval & TF3_EXPANSION
 
-            mov esi,ExpandText(line, ebx, 1)
+            mov esi,ExpandText(CurrSource, ebx, 1)
 
         .else
 
@@ -193,11 +183,11 @@ endif
 
                 .if ( DelayExpand(ebx) == 0 )
 
-                    mov esi,ExpandLine(line, ebx)
+                    mov esi,ExpandLine(CurrSource, ebx)
 
                 .elseif ( Parse_Pass == PASS_1 )
 
-                    ExpandLineItems(line, 0, ebx, 0, 1)
+                    ExpandLineItems(CurrSource, 0, ebx, 0, 1)
                 .endif
             .endif
         .endif
@@ -226,7 +216,7 @@ endif
         ;
         .if esi > 16
 
-            .return 0 .if WriteCodeLabel(line, ebx) == ERROR
+            .return 0 .if WriteCodeLabel(CurrSource, ebx) == ERROR
         .endif
         movzx eax,[ebx+esi].dirtype
         shr  esi,4
@@ -263,7 +253,7 @@ endif
                         StoreLine( ModuleInfo.currsource, 0, 0 )
                     .endif
                     .if Options.preprocessor_stdout
-                        WritePreprocessedLine( line )
+                        WritePreprocessedLine( CurrSource )
                     .endif
                 .endif
                 ;

@@ -212,12 +212,13 @@ AddLineQueueX endp
 ;; - restores input status
 
 
-RunLineQueue proc uses esi edi ebx
+RunLineQueue proc uses esi edi
 
   local oldstat:input_status
+  local tokenarray:tok_t
 
     ;; v2.03: ensure the current source buffer is still aligned
-    mov ebx,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus(&oldstat)
     inc ModuleInfo.GeneratedCode
 
     ;; v2.11: line queues are no longer pushed onto the file stack.
@@ -230,9 +231,9 @@ RunLineQueue proc uses esi edi ebx
         strcpy(CurrSource, &[esi].lq_line.line)
         MemFree(esi)
 
-        .if PreprocessLine(CurrSource, ebx)
+        .if PreprocessLine(&tokenarray)
 
-            ParseLine(ebx)
+            ParseLine(tokenarray)
         .endif
     .endf
 
@@ -246,9 +247,10 @@ InsertLineQueue proc uses esi edi ebx
 
   local oldstat:input_status
   local codestate:int_t
+  local tokenarray:tok_t
 
     mov codestate,ModuleInfo.GeneratedCode
-    mov ebx,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus(&oldstat)
 
     mov ModuleInfo.GeneratedCode,0
 
@@ -259,9 +261,9 @@ InsertLineQueue proc uses esi edi ebx
         strcpy(CurrSource, &[esi].lq_line.line)
         MemFree(esi)
 
-        .if PreprocessLine(CurrSource, ebx)
+        .if PreprocessLine(&tokenarray)
 
-            ParseLine(ebx)
+            ParseLine(tokenarray)
         .endif
     .endf
 

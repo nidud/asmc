@@ -56,5 +56,6 @@ enum tok_flags3 {
 
 int FASTCALL GetToken( struct asm_tok[], struct line_status * );
 int Tokenize( char *, unsigned int, struct asm_tok[], unsigned int );
+int TokenizeEx( unsigned int, struct asm_tok **, unsigned int );
 
 #endif

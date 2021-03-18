@@ -518,7 +518,7 @@ local   rc:                     int_t,
                     InsertLineQueue()
                 .endif
                 strcpy( ModuleInfo.currsource, buffer )
-                Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+                TokenizeEx( 0, &tokenarray, TOK_DEFAULT )
                 mov ModuleInfo.token_count,eax
                 mov eax,i
                 shl eax,4

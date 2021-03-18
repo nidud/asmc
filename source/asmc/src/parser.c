@@ -3133,7 +3133,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 /* process a file. introduced in v2.11 */
 
 void ProcessFile( struct asm_tok tokenarray[] )
-/*********************************************/
 {
     if ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) ) {
 
@@ -3141,7 +3140,7 @@ void ProcessFile( struct asm_tok tokenarray[] )
 	if ( CurrSource[0] == 0xEF && CurrSource[1] == 0xBB && CurrSource[2] == 0xBF )
 	    strcpy( CurrSource, &CurrSource[3] );
 	do {
-	    if ( PreprocessLine( CurrSource, tokenarray ) ) {
+	    if ( PreprocessLine( &tokenarray ) ) {
 		ParseLine( tokenarray );
 		if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
 		    WritePreprocessedLine( CurrSource );

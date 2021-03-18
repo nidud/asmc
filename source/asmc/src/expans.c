@@ -564,7 +564,7 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 	 */
 
 	while ( GetTextLine( CurrSource ) ) {
-	    if ( PreprocessLine( CurrSource, tokenarray ) == 0 )
+	    if ( PreprocessLine( &tokenarray ) == 0 )
 		continue;
 	    /* skip macro label lines */
 	    if ( tokenarray[0].token == T_COLON ) {

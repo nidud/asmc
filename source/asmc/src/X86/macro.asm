@@ -820,7 +820,7 @@ lq_line ends
 
 LineQueue equ <ModuleInfo.line_queue>
 
-PreprocessLine proto :ptr, :ptr
+PreprocessLine proto :ptr ptr
 
 GeLineQueue proc private uses esi edi ebx buffer:string_t
 
@@ -886,17 +886,18 @@ GeLineQueue proc private uses esi edi ebx buffer:string_t
 GeLineQueue endp
 
 
-MacroLineQueue proc uses ebx
+MacroLineQueue proc
 
   local oldstat:input_status
   local oldline:GETLINE
+  local tokenarray:tok_t
 
-    mov ebx,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus(&oldstat)
     inc ModuleInfo.GeneratedCode
     mov oldline,GetLine
     mov GetLine,GeLineQueue
     .if GetLine(CurrSource)
-        PreprocessLine(eax, ebx)
+        PreprocessLine(&tokenarray)
     .endif
     mov GetLine,oldline
     dec ModuleInfo.GeneratedCode

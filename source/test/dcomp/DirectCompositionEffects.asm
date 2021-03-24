@@ -9,7 +9,7 @@ ifdef __CV__
 endif
 
 .data
-_application LPCAPPLICATION NULL
+_application ptr CApplication NULL
 _gridSize int_t 100
 
 IID_ID2D1Factory        GUID {0x06152247,0x6f50,0x465a,{0x92,0x45,0x11,0x8b,0xfd,0x3b,0x60,0x07}}

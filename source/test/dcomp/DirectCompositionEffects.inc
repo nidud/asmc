@@ -21,15 +21,6 @@ IDS_FONT_HEIGHT_DESCRIPTION equ 22
 .enum VIEW_STATE { ZOOMEDOUT, ZOOMEDIN, }
 .enum ACTION_TYPE { ZOOMOUT, ZOOMIN, }
 
-LPID2D1Factory1 typedef ptr ID2D1Factory1
-LPID2D1Device typedef ptr ID2D1Device
-LPID2D1DeviceContext typedef ptr ID2D1DeviceContext
-LPIDCompositionDevice typedef ptr IDCompositionDevice
-LPIDCompositionTarget typedef ptr IDCompositionTarget
-LPIDCompositionVisual typedef ptr IDCompositionVisual
-LPIDCompositionSurface typedef ptr IDCompositionSurface
-LPIDCompositionEffectGroup typedef ptr IDCompositionEffectGroup
-
 .class CApplication
 
     _hinstance HINSTANCE ?
@@ -46,26 +37,26 @@ LPIDCompositionEffectGroup typedef ptr IDCompositionEffectGroup
     _windowWidth int_t ?
     _windowHeight int_t ?
 
-    _d3d11Device LPID3D11Device ?
-    _d3d11DeviceContext LPID3D11DeviceContext ?
+    _d3d11Device ptr ID3D11Device ?
+    _d3d11DeviceContext ptr ID3D11DeviceContext ?
 
-    _d2d1Factory LPID2D1Factory1 ?
+    _d2d1Factory ptr ID2D1Factory1 ?
 
-    _d2d1Device LPID2D1Device ?
-    _d2d1DeviceContext LPID2D1DeviceContext ?
+    _d2d1Device ptr ID2D1Device ?
+    _d2d1DeviceContext ptr ID2D1DeviceContext ?
 
-    _device LPIDCompositionDevice ?
-    _target LPIDCompositionTarget ?
-    _visual LPIDCompositionVisual ?
-    _visualLeft LPIDCompositionVisual ?
-    _visualLeftChild LPIDCompositionVisual 4 dup(?)
-    _visualRight LPIDCompositionVisual ?
+    _device ptr IDCompositionDevice ?
+    _target ptr IDCompositionTarget ?
+    _visual ptr IDCompositionVisual ?
+    _visualLeft ptr IDCompositionVisual ?
+    _visualLeftChild ptr IDCompositionVisual 4 dup(?)
+    _visualRight ptr IDCompositionVisual ?
 
-    _surfaceLeftChild LPIDCompositionSurface 4 dup(?)
+    _surfaceLeftChild ptr IDCompositionSurface 4 dup(?)
 
-    _effectGroupLeft LPIDCompositionEffectGroup ?
-    _effectGroupLeftChild LPIDCompositionEffectGroup 4 dup(?)
-    _effectGroupRight LPIDCompositionEffectGroup ?
+    _effectGroupLeft ptr IDCompositionEffectGroup ?
+    _effectGroupLeftChild ptr IDCompositionEffectGroup 4 dup(?)
+    _effectGroupRight ptr IDCompositionEffectGroup ?
 
     _currentVisual int_t ?
     _state VIEW_STATE ?

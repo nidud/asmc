@@ -10,14 +10,14 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DirectCompositionEffects</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectGuid>{493AFC35-76FC-40AE-8E74-1C1F64A70189}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -49,7 +49,7 @@
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>8</GenerateDebugInformation>
       <IncludePaths>..\..\..\include</IncludePaths>
       <AdditionalOptions>-ws -D__CV__ -Zp8 %(AdditionalOptions)</AdditionalOptions>
     </ASMC>

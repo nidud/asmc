@@ -19,6 +19,7 @@ qualified_type		ends
 
 externdef CurrStruct:dsym_t	;; start of current STRUCT list
 
+CreateType		proto :int_t, :tok_t, :string_t, :ptr ptr asym
 CreateTypeSymbol	proto :asym_t, :string_t, :int_t
 SearchNameInStruct	proto :asym_t, :string_t, :ptr uint_t, :int_t
 GetQualifiedType	proto :ptr int_t, :tok_t, :ptr qualified_type

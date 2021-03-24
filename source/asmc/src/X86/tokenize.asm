@@ -17,6 +17,8 @@ externdef commentbuffer:ptr
 externdef CurrEnum:asym_t
 
 .data
+
+;tokarray  tok_t 0
 ;
 ; strings for token 0x28 - 0x2F
 ;
@@ -281,13 +283,18 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         .endif
         add esi,1
 
+continue:
+
         .while ecx < maxlen
 
             mov ax,[esi]
-            .if al == symbol_o      ; < or { ?
+
+            .switch
+            .case al == symbol_o      ; < or { ?
 
                 inc level
-            .elseif al == symbol_c  ; > or } ?
+                .endc
+            .case al == symbol_c  ; > or } ?
 
                 .if level
 
@@ -300,8 +307,9 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                     add esi,1
                     .break      ; exit loop
                 .endif
+                .endc
 
-            .elseif ( al == '"' || al == 27h ) && !( [edx].flags2 & DF_STRPARM )
+            .case ( al == '"' || al == 27h ) && !( [edx].flags2 & DF_STRPARM )
                 ;
                 ; a " or ' inside a <>/{} string? Since it's not a must that
                 ; [double-]quotes are paired in a literal it must be done
@@ -334,8 +342,9 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                     mov ecx,tcount
                     .continue
                 .endif
+                .endc
 
-            .elseif al == '!' && symbol_o == '<' && ah
+            .case al == '!' && symbol_o == '<' && ah
                 ;
                 ; handle literal-character operator '!'.
                 ; it makes the next char to enter the literal uninterpreted.
@@ -343,16 +352,18 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 ; v2.09: don't store the '!'
                 ;
                 add esi,1
+                .endc
 
-            .elseif al == '\'
+            .case al == '\'
 
                 .if ConcatLine(esi, ecx, edi, edx) != EMPTY
 
                     or [edx].flags3,TF3_ISCONCAT
                     .continue
                 .endif
+                .endc
 
-            .elseif !al || ( al == ';' && symbol_o == '{' )
+            .case !al || ( al == ';' && symbol_o == '{' )
 
                 .if [edx].flags == TOK_DEFAULT && !( [edx].flags2 & DF_NOCONCAT )
 
@@ -439,11 +450,41 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 mov ecx,1
                 jmp default
 
+            .endsw
 
-            .endif
             movsb
             add ecx,1
         .endw
+if 0
+        .if ecx == maxlen && tokarray
+
+            mov tsrc,[edx].input
+            mov tdst,[edx].output
+
+            InputExtend(edx, tokarray)
+
+            mov ecx,maxlen
+            mov edx,p
+
+            .if eax
+
+                mov ebx,ModuleInfo.max_line_len
+                sub ebx,32+1
+                mov maxl_1,ebx
+                inc ebx
+                mov maxlen,ebx
+                mov ebx,[edx].index
+                shl ebx,4
+                mov eax,tokarray
+                add ebx,[eax]
+                sub esi,tsrc
+                sub edi,tdst
+                add esi,[edx].input
+                add edi,[edx].output
+                jmp continue
+            .endif
+        .endif
+endif
         .endc
 
       .default
@@ -473,7 +514,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
             .endif
 
             .break .if eax == '%'
-            .break .if eax == ';' && [edx].line_status.flags == TOK_DEFAULT
+            .break .if eax == ';' && [edx].flags == TOK_DEFAULT
 
             .if eax == '\'
 
@@ -1696,6 +1737,7 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
 
   local rc, p:line_status
 
+    ;mov tokarray,tokptr
     mov p.input,ModuleInfo.currsource
     mov p.start,eax
     mov eax,flags
@@ -1755,8 +1797,7 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
             mov ebx,p.index
             shl ebx,4
             mov eax,tokptr
-            mov eax,[eax]
-            add ebx,eax
+            add ebx,[eax]
             mov [ebx].tokpos,edx
 
             .if BYTE PTR [edx] == 0
@@ -1935,6 +1976,7 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
 
     .until 1
 
+    ;mov tokarray,NULL
     mov eax,tokptr
     mov ebx,[eax]
     mov eax,p.index

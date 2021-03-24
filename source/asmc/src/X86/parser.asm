@@ -3274,6 +3274,8 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
                 LstWriteSrcLine()
             .endif
             .return( edi )
+        .case T_BINARY_OPERATOR
+            .endc .if [esi].tokval != T_PTR
         .case T_STYPE
             .return data_dir( i, ebx, NULL )
         .case T_ID

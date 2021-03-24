@@ -826,19 +826,11 @@ ret_code GetQualifiedType( int *pi, struct asm_tok tokenarray[], struct qualifie
 /* TYPEDEF directive. Syntax is:
  * <type name> TYPEDEF [proto|[far|near [ptr]]<qualified type>]
  */
-ret_code TypedefDirective( int i, struct asm_tok tokenarray[] )
-/*************************************************************/
+
+int CreateType( int i, struct asm_tok tokenarray[], char *name, struct asym **pp )
 {
-    struct asym		*sym;
-    char		*name;
+    struct asym *sym;
     struct qualified_type ti;
-
-    if( i != 1 ) {
-	return( asmerr(2008, tokenarray[i].string_ptr ) );
-    }
-    name = tokenarray[0].string_ptr;
-
-    i++; /* go past TYPEDEF */
 
     sym = SymSearch( name );
     if ( sym == NULL || sym->state == SYM_UNDEFINED ) {
@@ -858,6 +850,8 @@ ret_code TypedefDirective( int i, struct asm_tok tokenarray[] )
 	    return( asmerr( 2005, sym->name ) );
 	}
     }
+    if ( pp )
+	*pp = sym;
 
     sym->isdefined = TRUE;
     if ( Parse_Pass > PASS_1 )
@@ -877,7 +871,7 @@ ret_code TypedefDirective( int i, struct asm_tok tokenarray[] )
 	}
 	i++;
 	if( ParseProc( proto, i, tokenarray, FALSE, ModuleInfo.langtype ) == ERROR )
-	    return ( ERROR );
+	    return( ERROR );
 	sym->mem_type = MT_PROC;
 	sym->Ofssize = proto->sym.seg_ofssize;
 	/* v2.03: set value of field total_size (previously was 0) */
@@ -889,6 +883,7 @@ ret_code TypedefDirective( int i, struct asm_tok tokenarray[] )
 	sym->target_type = (struct asym *)proto;
 	return( NOT_ERROR );
     }
+
     ti.size = 0;
     ti.is_ptr = 0;
     ti.is_far = FALSE;
@@ -937,11 +932,19 @@ ret_code TypedefDirective( int i, struct asm_tok tokenarray[] )
 	sym->target_type = ti.symtype;
     sym->ptr_memtype = ti.ptr_memtype;
 
-    if ( tokenarray[i].token != T_FINAL ) {
+    if ( pp == NULL && tokenarray[i].token != T_FINAL ) {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
-
     return( NOT_ERROR );
+}
+
+int TypedefDirective( int i, struct asm_tok tokenarray[] )
+{
+    if( i != 1 ) {
+	return( asmerr(2008, tokenarray[i].string_ptr ) );
+    }
+    i++;
+    return( CreateType( i, tokenarray, tokenarray[0].string_ptr, NULL ) );
 }
 
 /* RECORD directive

@@ -2613,6 +2613,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    if ( ModuleInfo.list && ( Parse_Pass == PASS_1 || ModuleInfo.GeneratedCode || UseSavedState == FALSE ) )
 		LstWriteSrcLine();
 	    return( temp );
+	case T_BINARY_OPERATOR:
+	    if ( tokenarray[i].tokval != T_PTR )
+		break;
 	case T_STYPE:
 	    return( data_dir( i, tokenarray, NULL ) );
 	case T_ID:

@@ -149,6 +149,7 @@ hypotq		proto __vectorcall :real16, :real16
 isinfq		proto __vectorcall :real16
 ilogbq		proto __vectorcall :real16
 isnanq		proto __vectorcall :real16
+isinf_nsq	proto __vectorcall :real16
 j0q		proto __vectorcall :real16
 j1q		proto __vectorcall :real16
 jnq		proto __vectorcall :SINT, :real16

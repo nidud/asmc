@@ -810,10 +810,18 @@ _mm256_castsi128_si256 macro xmm
     exitm<@CatStr(<ymm>,@SubStr(xmm,4))>
     endm
 
-_mm_cvtph_ps		proto __cdecl :yword
-_mm256_cvtph_ps		proto __cdecl :yword
-_mm_cvtps_ph		proto __cdecl :yword, :sdword
-_mm256_cvtps_ph		proto __cdecl :yword, :sdword
+_mm_cvtph_ps proto :oword {
+    vcvtph2ps xmm0, xmm0
+    }
+_mm256_cvtph_ps proto :oword {
+    vcvtph2ps ymm0, xmm0
+    }
+_mm_cvtps_ph proto x:oword, i:abs {
+    vcvtps2ph xmm0, xmm0, i
+    }
+_mm256_cvtps_ph proto y:yword, i:abs {
+    vcvtps2ph xmm0, ymm0, i
+    }
 
 _mm_undefined_ps	equ <_mm_setzero_ps>
 _mm_undefined_pd	equ <_mm_setzero_pd>
@@ -824,251 +832,654 @@ _mm256_undefined_si256	equ <_mm256_setzero_si256>
 
 _XCR_XFEATURE_ENABLED_MASK equ 0
 
-_xgetbv			proto __cdecl :sdword
-_xsetbv			proto __cdecl :dword, :qword
-_xsave			proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xsave64		proto __cdecl :ptr, :qword
-endif
-_xsaveopt		proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xsaveopt64		proto __cdecl :ptr, :qword
-endif
-_xsavec			proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xsavec64		proto __cdecl :ptr, :qword
-endif
-_xrstor			proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xrstor64		proto __cdecl :ptr, :qword
-endif
-_xsaves			proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xsaves64		proto __cdecl :ptr, :qword
-endif
-_xrstors		proto __cdecl :ptr, :qword
-ifdef _M_X64
-_xrstors64		proto __cdecl :ptr, :qword
-endif
-_fxsave			proto __cdecl :ptr
-ifdef _M_X64
-_fxsave64		proto __cdecl :ptr
-endif
-_fxrstor		proto __cdecl :ptr
-ifdef _M_X64
-_fxrstor64		proto __cdecl :ptr
-endif
-
-_rdrand16_step		proto __cdecl :ptr
-_rdrand32_step		proto __cdecl :ptr
-ifdef _M_X64
-_rdrand64_step		proto __cdecl :ptr
-endif
+_xgetbv proto :sdword {
+    xgetbv
+    shl rdx,32
+    or	rax,rdx
+    }
+_xsetbv proto :dword, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsetbv
+    }
+_xsave proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsave qword ptr [rcx]
+    }
 
 ifdef _M_X64
-_readfsbase_u32		proto __cdecl
-_readgsbase_u32		proto __cdecl
-_readfsbase_u64		proto __cdecl
-_readgsbase_u64		proto __cdecl
-_writefsbase_u32	proto __cdecl :dword
-_writegsbase_u32	proto __cdecl :dword
-_writefsbase_u64	proto __cdecl :qword
-_writegsbase_u64	proto __cdecl :qword
+_xsave64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsave64 qword ptr [rcx]
+    }
+endif
+_xsaveopt proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsaveopt qword ptr [rcx]
+    }
+ifdef _M_X64
+_xsaveopt64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsaveopt64 qword ptr [rcx]
+    }
+endif
+_xsavec proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsavec qword ptr [rcx]
+    }
+ifdef _M_X64
+_xsavec64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsavec64 qword ptr [rcx]
+    }
+endif
+_xrstor proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xrstor qword ptr [rcx]
+    }
+ifdef _M_X64
+_xrstor64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xrstor64 qword ptr [rcx]
+    }
+endif
+_xsaves proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsaves qword ptr [rcx]
+    }
+ifdef _M_X64
+_xsaves64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xsaves64 qword ptr [rcx]
+    }
+endif
+_xrstors proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xrstors qword ptr [rcx]
+    }
+ifdef _M_X64
+_xrstors64 proto :ptr, :qword {
+    mov rax,rdx
+    shr rdx,32
+    xrstors64 qword ptr [rcx]
+    }
+endif
+_fxsave proto :ptr {
+    fxsave qword ptr [rcx]
+    }
+ifdef _M_X64
+_fxsave64 proto :ptr {
+    fxsave64 qword ptr [rcx]
+    }
+endif
+_fxrstor proto :ptr {
+    fxrstor qword ptr [rcx]
+    }
+ifdef _M_X64
+_fxrstor64 proto :ptr {
+    fxrstor64 qword ptr [rcx]
+    }
 endif
 
-_mm_fmadd_ps		proto __cdecl :oword, :oword, :oword
-_mm_fmadd_pd		proto __cdecl :oword, :oword, :oword
-_mm_fmadd_ss		proto __cdecl :oword, :oword, :oword
-_mm_fmadd_sd		proto __cdecl :oword, :oword, :oword
-_mm_fmsub_ps		proto __cdecl :oword, :oword, :oword
-_mm_fmsub_pd		proto __cdecl :oword, :oword, :oword
-_mm_fmsub_ss		proto __cdecl :oword, :oword, :oword
-_mm_fmsub_sd		proto __cdecl :oword, :oword, :oword
-_mm_fnmadd_ps		proto __cdecl :oword, :oword, :oword
-_mm_fnmadd_pd		proto __cdecl :oword, :oword, :oword
-_mm_fnmadd_ss		proto __cdecl :oword, :oword, :oword
-_mm_fnmadd_sd		proto __cdecl :oword, :oword, :oword
-_mm_fnmsub_ps		proto __cdecl :oword, :oword, :oword
-_mm_fnmsub_pd		proto __cdecl :oword, :oword, :oword
-_mm_fnmsub_ss		proto __cdecl :oword, :oword, :oword
-_mm_fnmsub_sd		proto __cdecl :oword, :oword, :oword
+_rdrand16_step proto :ptr word {
+	rdrand	ax
+	mov	[rcx],ax
+	mov	ecx,1
+	mov	eax,0
+	cmovb	eax,ecx
+	}
+_rdrand32_step proto :ptr dword {
+	rdrand	eax
+	mov	[rcx],eax
+	mov	ecx,1
+	mov	eax,0
+	cmovb	eax,ecx
+	}
+ifdef _M_X64
+_rdrand64_step proto :ptr qword {
+	rdrand	rax
+	mov	[rcx],rax
+	mov	ecx,1
+	mov	eax,0
+	cmovb	eax,ecx
+	}
+endif
 
-_mm256_fmadd_ps		proto __cdecl :yword, :yword, :yword
-_mm256_fmadd_pd		proto __cdecl :yword, :yword, :yword
-_mm256_fmsub_ps		proto __cdecl :yword, :yword, :yword
-_mm256_fmsub_pd		proto __cdecl :yword, :yword, :yword
-_mm256_fnmadd_ps	proto __cdecl :yword, :yword, :yword
-_mm256_fnmadd_pd	proto __cdecl :yword, :yword, :yword
-_mm256_fnmsub_ps	proto __cdecl :yword, :yword, :yword
-_mm256_fnmsub_pd	proto __cdecl :yword, :yword, :yword
+ifdef _M_X64
+_readfsbase_u32 proto reg:abs=<eax> {
+	rdfsbase reg
+	}
+_readgsbase_u32 proto reg:abs=<eax> {
+	rdgsbase reg
+	}
+_readfsbase_u64 proto reg:abs=<rax> {
+	rdfsbase reg
+	}
+_readgsbase_u64 proto reg:abs=<rax> {
+	rdgsbase reg
+	}
+_writefsbase_u32 proto :dword {
+	wrfsbase ecx
+	}
+_writegsbase_u32 proto :dword {
+	wrgsbase ecx
+	}
+_writefsbase_u64 proto :qword {
+	wrfsbase rcx
+	}
+_writegsbase_u64 proto :qword {
+	wrgsbase rcx
+	}
+endif
 
-_mm_fmaddsub_ps		proto __cdecl :oword, :oword, :oword
-_mm_fmaddsub_pd		proto __cdecl :oword, :oword, :oword
-_mm_fmsubadd_ps		proto __cdecl :oword, :oword, :oword
-_mm_fmsubadd_pd		proto __cdecl :oword, :oword, :oword
+_mm_fmadd_ps proto :oword, :oword, :oword {
+	vfmadd132ps xmm0, xmm2, xmm1
+	}
+_mm_fmadd_pd proto :oword, :oword, :oword {
+	vfmadd231pd xmm2, xmm0, xmm1
+	movaps xmm0,xmm2
+	}
+_mm_fmadd_ss proto :oword, :oword, :oword {
+	vfmadd213ss xmm0, xmm1, xmm2
+	}
+_mm_fmadd_sd proto :oword, :oword, :oword {
+	vfmadd213sd xmm0, xmm1, xmm2
+	}
+_mm_fmsub_ps proto :oword, :oword, :oword {
+	vfmsub132ps xmm0, xmm2, xmm1
+	}
+_mm_fmsub_pd proto :oword, :oword, :oword {
+	vfmsub231pd xmm2, xmm0, xmm1
+	movaps xmm0,xmm2
+	}
+_mm_fmsub_ss proto :oword, :oword, :oword {
+	vfmsub213ss xmm0, xmm1, xmm2
+	}
+_mm_fmsub_sd proto :oword, :oword, :oword {
+	vfmsub213sd xmm0, xmm1, xmm2
+	}
+_mm_fnmadd_ps proto :oword, :oword, :oword {
+	vfnmadd132ps xmm0, xmm2, xmm1
+	}
+_mm_fnmadd_pd proto :oword, :oword, :oword {
+	vfnmadd231pd xmm2, xmm0, xmm1
+	movaps xmm0,xmm2
+	}
+_mm_fnmadd_ss proto :oword, :oword, :oword {
+	vfnmadd213ss xmm0, xmm1, xmm2
+	}
+_mm_fnmadd_sd proto :oword, :oword, :oword {
+	vfnmadd213sd xmm0, xmm1, xmm2
+	}
+_mm_fnmsub_ps proto :oword, :oword, :oword {
+	vfnmsub132ps xmm0, xmm2, xmm1
+	}
+_mm_fnmsub_pd proto :oword, :oword, :oword {
+	vfnmsub231pd xmm2, xmm0, xmm1
+	movaps xmm0, xmm2
+	}
+_mm_fnmsub_ss proto :oword, :oword, :oword {
+	vfnmsub213ss xmm0, xmm1, xmm2
+	}
+_mm_fnmsub_sd proto :oword, :oword, :oword {
+	vfnmsub213sd xmm0, xmm1, xmm2
+	}
 
-_mm256_fmaddsub_ps	proto __cdecl :yword, :yword, :yword
-_mm256_fmaddsub_pd	proto __cdecl :yword, :yword, :yword
-_mm256_fmsubadd_ps	proto __cdecl :yword, :yword, :yword
-_mm256_fmsubadd_pd	proto __cdecl :yword, :yword, :yword
+_mm256_fmadd_ps proto :yword, :yword, :yword {
+	vfmadd132ps ymm0, ymm2, ymm1
+	}
+_mm256_fmadd_pd proto :yword, :yword, :yword {
+	vfmadd132pd ymm0, ymm2, ymm1
+	}
+_mm256_fmsub_ps proto :yword, :yword, :yword {
+	vfmsub132ps ymm0, ymm2, ymm1
+	}
+_mm256_fmsub_pd proto :yword, :yword, :yword {
+	vfmsub132pd ymm0, ymm2, ymm1
+	}
+_mm256_fnmadd_ps proto :yword, :yword, :yword {
+	vfnmadd132ps ymm0, ymm2, ymm1
+	}
+_mm256_fnmadd_pd proto :yword, :yword, :yword {
+	vfnmadd132pd ymm0, ymm2, ymm1
+	}
+_mm256_fnmsub_ps proto :yword, :yword, :yword {
+	vfnmsub132ps ymm0, ymm2, ymm1
+	}
+_mm256_fnmsub_pd proto :yword, :yword, :yword {
+	vfnmsub132pd ymm0, ymm2, ymm1
+	}
 
-_mm256_cmpeq_epi8	proto __cdecl :yword, :yword
-_mm256_cmpeq_epi16	proto __cdecl :yword, :yword
-_mm256_cmpeq_epi32	proto __cdecl :yword, :yword
-_mm256_cmpeq_epi64	proto __cdecl :yword, :yword
+_mm_fmaddsub_ps proto :oword, :oword, :oword {
+	vfmaddsub132ps xmm0, xmm2, xmm1
+	}
+_mm_fmaddsub_pd proto :oword, :oword, :oword {
+	vfmaddsub231pd xmm2, xmm0, xmm1
+	movaps xmm0,xmm2
+	}
+_mm_fmsubadd_ps proto :oword, :oword, :oword {
+	vfmsubadd132ps xmm0, xmm2, xmm1
+	}
+_mm_fmsubadd_pd proto :oword, :oword, :oword {
+	vfmsubadd231pd xmm2, xmm0, xmm1
+	movaps xmm0,xmm2
+	}
 
-_mm256_cmpgt_epi8	proto __cdecl :yword, :yword
-_mm256_cmpgt_epi16	proto __cdecl :yword, :yword
-_mm256_cmpgt_epi32	proto __cdecl :yword, :yword
-_mm256_cmpgt_epi64	proto __cdecl :yword, :yword
+_mm256_fmaddsub_ps proto :yword, :yword, :yword {
+	vfmaddsub132ps ymm0, ymm2, ymm1
+	}
+_mm256_fmaddsub_pd proto :yword, :yword, :yword {
+	vfmaddsub132pd ymm0, ymm2, ymm1
+	}
+_mm256_fmsubadd_ps proto :yword, :yword, :yword {
+	vfmsubadd132ps ymm0, ymm2, ymm1
+	}
+_mm256_fmsubadd_pd proto :yword, :yword, :yword {
+	vfmsubadd132pd ymm0, ymm2, ymm1
+	}
 
-_mm256_max_epi8		proto __cdecl :yword, :yword
-_mm256_max_epi16	proto __cdecl :yword, :yword
-_mm256_max_epi32	proto __cdecl :yword, :yword
-_mm256_max_epu8		proto __cdecl :yword, :yword
-_mm256_max_epu16	proto __cdecl :yword, :yword
-_mm256_max_epu32	proto __cdecl :yword, :yword
+_mm256_cmpeq_epi8 proto :yword, :yword {
+	vpcmpeqb ymm0, ymm0, ymm1
+	}
+_mm256_cmpeq_epi16 proto :yword, :yword {
+	vpcmpeqw ymm0, ymm0, ymm1
+	}
+_mm256_cmpeq_epi32 proto :yword, :yword {
+	vpcmpeqd ymm0, ymm0, ymm1
+	}
+_mm256_cmpeq_epi64 proto :yword, :yword {
+	vpcmpeqq ymm0, ymm0, ymm1
+	}
 
-_mm256_min_epi8		proto __cdecl :yword, :yword
-_mm256_min_epi16	proto __cdecl :yword, :yword
-_mm256_min_epi32	proto __cdecl :yword, :yword
-_mm256_min_epu8		proto __cdecl :yword, :yword
-_mm256_min_epu16	proto __cdecl :yword, :yword
-_mm256_min_epu32	proto __cdecl :yword, :yword
+_mm256_cmpgt_epi8 proto :yword, :yword {
+	vpcmpgtb ymm0, ymm0, ymm1
+	}
+_mm256_cmpgt_epi16 proto :yword, :yword {
+	vpcmpgtw ymm0, ymm0, ymm1
+	}
+_mm256_cmpgt_epi32 proto :yword, :yword {
+	vpcmpgtd ymm0, ymm0, ymm1
+	}
+_mm256_cmpgt_epi64 proto :yword, :yword {
+	vpcmpgtq ymm0, ymm0, ymm1
+	}
 
-_mm256_and_si256	proto __cdecl :yword, :yword
-_mm256_andnot_si256	proto __cdecl :yword, :yword
-_mm256_or_si256		proto __cdecl :yword, :yword
-_mm256_xor_si256	proto __cdecl :yword, :yword
+_mm256_max_epi8 proto :yword, :yword {
+	vpmaxsb ymm0, ymm0, ymm1
+	}
+_mm256_max_epi16 proto :yword, :yword {
+	vpmaxsw ymm0, ymm0, ymm1
+	}
+_mm256_max_epi32 proto :yword, :yword {
+	vpmaxsd ymm0, ymm0, ymm1
+	}
+_mm256_max_epu8 proto :yword, :yword {
+	vpmaxub ymm0, ymm0, ymm1
+	}
+_mm256_max_epu16 proto :yword, :yword {
+	vpmaxuw ymm0, ymm0, ymm1
+	}
+_mm256_max_epu32 proto :yword, :yword {
+	vpmaxud ymm0, ymm0, ymm1
+	}
 
-_mm256_abs_epi8		proto __cdecl :yword
-_mm256_abs_epi16	proto __cdecl :yword
-_mm256_abs_epi32	proto __cdecl :yword
+_mm256_min_epi8 proto :yword, :yword {
+	vpminsb ymm0, ymm0, ymm1
+	}
+_mm256_min_epi16 proto :yword, :yword {
+	vpminsw ymm0, ymm0, ymm1
+	}
+_mm256_min_epi32 proto :yword, :yword {
+	vpminsd ymm0, ymm0, ymm1
+	}
+_mm256_min_epu8 proto :yword, :yword {
+	vpminub ymm0, ymm0, ymm1
+	}
+_mm256_min_epu16 proto :yword, :yword {
+	vpminuw ymm0, ymm0, ymm1
+	}
+_mm256_min_epu32 proto :yword, :yword {
+	vpminud ymm0, ymm0, ymm1
+	}
 
-_mm256_add_epi8		proto __cdecl :yword, :yword
-_mm256_add_epi16	proto __cdecl :yword, :yword
-_mm256_add_epi32	proto __cdecl :yword, :yword
-_mm256_add_epi64	proto __cdecl :yword, :yword
+_mm256_and_si256 proto :yword, :yword {
+	vpand	ymm0, ymm0, ymm1
+	}
+_mm256_andnot_si256 proto :yword, :yword {
+	vpandn	ymm0, ymm0, ymm1
+	}
+_mm256_or_si256 proto :yword, :yword {
+	vpor	ymm0, ymm0, ymm1
+	}
+_mm256_xor_si256 proto :yword, :yword {
+	vpxor	ymm0, ymm0, ymm1
+	}
 
-_mm256_adds_epi8	proto __cdecl :yword, :yword
-_mm256_adds_epi16	proto __cdecl :yword, :yword
-_mm256_adds_epu8	proto __cdecl :yword, :yword
-_mm256_adds_epu16	proto __cdecl :yword, :yword
+_mm256_abs_epi8 proto :yword {
+	vpabsb	ymm0, ymm0
+	}
+_mm256_abs_epi16 proto :yword {
+	vpabsw	ymm0, ymm0
+	}
+_mm256_abs_epi32 proto :yword {
+	vpabsd	ymm0, ymm0
+	}
 
-_mm256_sub_epi8		proto __cdecl :yword, :yword
-_mm256_sub_epi16	proto __cdecl :yword, :yword
-_mm256_sub_epi32	proto __cdecl :yword, :yword
-_mm256_sub_epi64	proto __cdecl :yword, :yword
+_mm256_add_epi8 proto :yword, :yword {
+	vpaddb	ymm0, ymm0, ymm1
+	}
+_mm256_add_epi16 proto :yword, :yword {
+	vpaddw	ymm0, ymm0, ymm1
+	}
+_mm256_add_epi32 proto :yword, :yword {
+	vpaddd	ymm0, ymm0, ymm1
+	}
+_mm256_add_epi64 proto :yword, :yword {
+	vpaddq	ymm0, ymm0, ymm1
+	}
 
-_mm256_subs_epi8	proto __cdecl :yword, :yword
-_mm256_subs_epi16	proto __cdecl :yword, :yword
-_mm256_subs_epu8	proto __cdecl :yword, :yword
-_mm256_subs_epu16	proto __cdecl :yword, :yword
+_mm256_adds_epi8 proto :yword, :yword {
+	vpaddsb ymm0, ymm0, ymm1
+	}
+_mm256_adds_epi16 proto :yword, :yword {
+	vpaddsw ymm0, ymm0, ymm1
+	}
+_mm256_adds_epu8 proto :yword, :yword {
+	vpaddusb ymm0, ymm0, ymm1
+	}
+_mm256_adds_epu16 proto :yword, :yword {
+	vpaddusw ymm0, ymm0, ymm1
+	}
 
-_mm256_avg_epu8		proto __cdecl :yword, :yword
-_mm256_avg_epu16	proto __cdecl :yword, :yword
-_mm256_hadd_epi16	proto __cdecl :yword, :yword
-_mm256_hadd_epi32	proto __cdecl :yword, :yword
-_mm256_hadds_epi16	proto __cdecl :yword, :yword
-_mm256_hsub_epi16	proto __cdecl :yword, :yword
+_mm256_sub_epi8 proto :yword, :yword {
+	vpsubb	ymm0, ymm0, ymm1
+	}
+_mm256_sub_epi16 proto :yword, :yword {
+	vpsubw	ymm0, ymm0, ymm1
+	}
+_mm256_sub_epi32 proto :yword, :yword {
+	vpsubd	ymm0, ymm0, ymm1
+	}
+_mm256_sub_epi64 proto :yword, :yword {
+	vpsubq	ymm0, ymm0, ymm1
+	}
 
-_mm256_hsub_epi32	proto __cdecl :yword, :yword
-_mm256_hsubs_epi16	proto __cdecl :yword, :yword
+_mm256_subs_epi8 proto :yword, :yword {
+	vpsubsb ymm0, ymm0, ymm1
+	}
+_mm256_subs_epi16 proto :yword, :yword {
+	vpsubsw ymm0, ymm0, ymm1
+	}
+_mm256_subs_epu8 proto :yword, :yword {
+	vpsubusb ymm0, ymm0, ymm1
+	}
+_mm256_subs_epu16 proto :yword, :yword {
+	vpsubusw ymm0, ymm0, ymm1
+	}
 
-_mm256_madd_epi16	proto __cdecl :yword, :yword
-_mm256_maddubs_epi16	proto __cdecl :yword, :yword
+_mm256_avg_epu8 proto :yword, :yword {
+	vpavgb	ymm0, ymm0, ymm1
+	}
+_mm256_avg_epu16 proto :yword, :yword {
+	vpavgw	ymm0, ymm0, ymm1
+	}
+_mm256_hadd_epi16 proto :yword, :yword {
+	vphaddw ymm0, ymm0, ymm1
+	}
+_mm256_hadd_epi32 proto :yword, :yword {
+	vphaddd ymm0, ymm0, ymm1
+	}
+_mm256_hadds_epi16 proto :yword, :yword {
+	vphaddsw ymm0, ymm0, ymm1
+	}
+_mm256_hsub_epi16 proto :yword, :yword {
+	vphsubw ymm0, ymm0, ymm1
+	}
 
-_mm256_mulhi_epi16	proto __cdecl :yword, :yword
-_mm256_mulhi_epu16	proto __cdecl :yword, :yword
+_mm256_hsub_epi32 proto :yword, :yword {
+	vphsubd ymm0, ymm0, ymm1
+	}
+_mm256_hsubs_epi16 proto :yword, :yword {
+	vphsubsw ymm0, ymm0, ymm1
+	}
 
-_mm256_mullo_epi16	proto __cdecl :yword, :yword
-_mm256_mullo_epi32	proto __cdecl :yword, :yword
+_mm256_madd_epi16 proto :yword, :yword {
+	vpmaddwd ymm0, ymm0, ymm1
+	}
+_mm256_maddubs_epi16 proto :yword, :yword {
+	vpmaddubsw ymm0, ymm0, ymm1
+	}
 
-_mm256_mul_epu32	proto __cdecl :yword, :yword
-_mm256_mul_epi32	proto __cdecl :yword, :yword
+_mm256_mulhi_epi16 proto :yword, :yword {
+	vpmulhw ymm0, ymm0, ymm1
+	}
+_mm256_mulhi_epu16 proto :yword, :yword {
+	vpmulhuw ymm0, ymm0, ymm1
+	}
 
-_mm256_sign_epi8	proto __cdecl :yword, :yword
-_mm256_sign_epi16	proto __cdecl :yword, :yword
-_mm256_sign_epi32	proto __cdecl :yword, :yword
+_mm256_mullo_epi16 proto :yword, :yword {
+	vpmullw ymm0, ymm0, ymm1
+	}
+_mm256_mullo_epi32 proto :yword, :yword {
+	vpmulld ymm0, ymm0, ymm1
+	}
 
-_mm256_mulhrs_epi16	proto __cdecl :yword, :yword
+_mm256_mul_epu32 proto :yword, :yword {
+	vpmuludq ymm0, ymm0, ymm1
+	}
+_mm256_mul_epi32 proto :yword, :yword {
+	vpmuldq ymm0, ymm0, ymm1
+	}
 
-_mm256_sad_epu8		proto __cdecl :yword, :yword
-_mm256_mpsadbw_epu8	proto __cdecl :yword, :yword, :sdword
+_mm256_sign_epi8 proto :yword, :yword {
+	vpsignb ymm0, ymm0, ymm1
+	}
+_mm256_sign_epi16 proto :yword, :yword {
+	vpsignw ymm0, ymm0, ymm1
+	}
+_mm256_sign_epi32 proto :yword, :yword {
+	vpsignd ymm0, ymm0, ymm1
+	}
 
-_mm256_slli_si256	proto __cdecl :yword, :sdword
+_mm256_mulhrs_epi16 proto :yword, :yword {
+	vpmulhrsw ymm0, ymm0, ymm1
+	}
+
+_mm256_sad_epu8 proto :yword, :yword {
+	vpsadbw ymm0, ymm0, ymm1
+	}
+_mm256_mpsadbw_epu8 proto :yword, :yword, i:abs {
+	vmpsadbw ymm0, ymm0, ymm1, i
+	}
+
+_mm256_slli_si256 proto :yword, i:abs {
+	vpslldq ymm0, ymm0, i
+	}
 _mm256_bslli_epi128	equ <_mm256_slli_si256>
-_mm256_srli_si256	proto __cdecl :yword, :sdword
+_mm256_srli_si256 proto :yword, i:abs {
+	vpsrldq ymm0, ymm0, i
+	}
 _mm256_bsrli_epi128	equ <_mm256_srli_si256>
 
-_mm256_sll_epi16	proto __cdecl :yword, :yword
-_mm256_sll_epi32	proto __cdecl :yword, :yword
-_mm256_sll_epi64	proto __cdecl :yword, :yword
+_mm256_sll_epi16 proto :yword, :oword {
+	vpsllw	ymm0, ymm0, xmm1
+	}
+_mm256_sll_epi32 proto :yword, :yword {
+	vpslld	ymm0, ymm0, xmm1
+	}
+_mm256_sll_epi64 proto :yword, :yword {
+	vpsllq	ymm0, ymm0, xmm1
+	}
 
-_mm256_slli_epi16	proto __cdecl :yword, :sdword
-_mm256_slli_epi32	proto __cdecl :yword, :sdword
-_mm256_slli_epi64	proto __cdecl :yword, :sdword
+_mm256_slli_epi16 proto :yword, i:abs {
+	vpsllw	ymm0, ymm0, i
+	}
+_mm256_slli_epi32 proto :yword, i:abs {
+	vpslld	ymm0, ymm0, i
+	}
+_mm256_slli_epi64 proto :yword, i:abs {
+	vpsllq	ymm0, ymm0, i
+	}
 
-_mm256_sllv_epi32	proto __cdecl :yword, :yword
-_mm256_sllv_epi64	proto __cdecl :yword, :yword
+_mm256_sllv_epi32 proto :yword, :yword {
+	vpsllvd ymm0, ymm0, ymm1
+	}
+_mm256_sllv_epi64 proto :yword, :yword {
+	vpsllvq ymm0, ymm0, ymm1
+	}
 
-_mm_sllv_epi32		proto __cdecl :oword, :oword
-_mm_sllv_epi64		proto __cdecl :oword, :oword
+_mm_sllv_epi32 proto :oword, :oword {
+	vpsllvd xmm0, xmm0, xmm1
+	}
+_mm_sllv_epi64 proto :oword, :oword {
+	vpsllvq xmm0, xmm0, xmm1
+	}
 
-_mm256_sra_epi16	proto __cdecl :yword, :oword
-_mm256_sra_epi32	proto __cdecl :yword, :oword
+_mm256_sra_epi16 proto :yword, :oword {
+	vpsraw	ymm0, ymm0, xmm1
+	}
+_mm256_sra_epi32 proto :yword, :oword {
+	vpsrad	ymm0, ymm0, xmm1
+	}
 
-_mm256_srai_epi16	proto __cdecl :yword, :sdword
-_mm256_srai_epi32	proto __cdecl :yword, :sdword
+_mm256_srai_epi16 proto :yword, i:abs {
+	vpsraw	ymm0, ymm0, i
+	}
+_mm256_srai_epi32 proto :yword, i:abs {
+	vpsrad	ymm0, ymm0, i
+	}
 
-_mm256_srav_epi32	proto __cdecl :yword, :yword
+_mm256_srav_epi32 proto :yword, :yword {
+	vpsravd ymm0, ymm0, ymm1
+	}
 
-_mm_srav_epi32		proto __cdecl :oword, :oword
+_mm_srav_epi32 proto :oword, :oword {
+	vpsravd xmm0, xmm0, xmm1
+	}
 
-_mm256_srl_epi16	proto __cdecl :yword, :oword
-_mm256_srl_epi32	proto __cdecl :yword, :oword
-_mm256_srl_epi64	proto __cdecl :yword, :oword
+_mm256_srl_epi16 proto :yword, :oword {
+	vpsrlw	ymm0, ymm0, xmm1
+	}
+_mm256_srl_epi32 proto :yword, :oword {
+	vpsrld	ymm0, ymm0, xmm1
+	}
+_mm256_srl_epi64 proto :yword, :oword {
+	vpsrlq	ymm0, ymm0, xmm1
+	}
 
-_mm256_srli_epi16	proto __cdecl :yword, :sdword
-_mm256_srli_epi32	proto __cdecl :yword, :sdword
-_mm256_srli_epi64	proto __cdecl :yword, :sdword
+_mm256_srli_epi16 proto :yword, i:abs {
+	vpsrlw	ymm0, ymm0, i
+	}
+_mm256_srli_epi32 proto :yword, i:abs {
+	vpsrld	ymm0, ymm0, i
+	}
+_mm256_srli_epi64 proto :yword, i:abs {
+	vpsrlq	ymm0, ymm0, i
+	}
 
-_mm256_srlv_epi32	proto __cdecl :yword, :yword
-_mm256_srlv_epi64	proto __cdecl :yword, :yword
+_mm256_srlv_epi32 proto :yword, :yword {
+	vpsrlvd ymm0, ymm0, ymm1
+	}
+_mm256_srlv_epi64 proto :yword, :yword {
+	vpsrlvq ymm0, ymm0, ymm1
+	}
 
-_mm_srlv_epi32		proto __cdecl :oword, :oword
-_mm_srlv_epi64		proto __cdecl :oword, :oword
+_mm_srlv_epi32 proto :oword, :oword {
+	vpsrlvd xmm0, xmm0, xmm1
+	}
+_mm_srlv_epi64 proto :oword, :oword {
+	vpsrlvq xmm0, xmm0, xmm1
+	}
 
-_mm_blend_epi32		proto __cdecl :oword, :oword, :sdword
-_mm256_blend_epi32	proto __cdecl :yword, :yword, :sdword
-_mm256_alignr_epi8	proto __cdecl :yword, :yword, :sdword
+_mm_blend_epi32 proto :oword, :oword, i:abs {
+	vpblendd xmm0, xmm0, xmm1, i
+	}
 
-_mm256_blendv_epi8	proto __cdecl :yword, :yword, :yword
-_mm256_blend_epi16	proto __cdecl :yword, :yword, :sdword
+_mm256_blend_epi32 proto :yword, :yword, i:abs {
+	vpblendd ymm0, ymm0, ymm1, i
+	}
+_mm256_alignr_epi8 proto :yword, :yword, i:abs {
+	vpalignr ymm0, ymm0, ymm1, i
+	}
 
-_mm256_packs_epi16	proto __cdecl :yword, :yword
-_mm256_packs_epi32	proto __cdecl :yword, :yword
-_mm256_packus_epi16	proto __cdecl :yword, :yword
-_mm256_packus_epi32	proto __cdecl :yword, :yword
+_mm256_blendv_epi8 proto :yword, :yword, :yword {
+	vpblendvb ymm0, ymm0, ymm1, ymm2
+	}
+_mm256_blend_epi16 proto :yword, :yword, i:abs {
+	vpblendw ymm0, ymm0, ymm1, i
+	}
 
-_mm256_unpackhi_epi8	proto __cdecl :yword, :yword
-_mm256_unpackhi_epi16	proto __cdecl :yword, :yword
-_mm256_unpackhi_epi32	proto __cdecl :yword, :yword
-_mm256_unpackhi_epi64	proto __cdecl :yword, :yword
+_mm256_packs_epi16 proto :yword, :yword {
+	vpacksswb ymm0, ymm0, ymm1
+	}
+_mm256_packs_epi32 proto :yword, :yword {
+	vpackssdw ymm0, ymm0, ymm1
+	}
+_mm256_packus_epi16 proto :yword, :yword {
+	vpackuswb ymm0, ymm0, ymm1
+	}
+_mm256_packus_epi32 proto :yword, :yword {
+	vpackusdw ymm0, ymm0, ymm1
+	}
 
-_mm256_unpacklo_epi8	proto __cdecl :yword, :yword
-_mm256_unpacklo_epi16	proto __cdecl :yword, :yword
-_mm256_unpacklo_epi32	proto __cdecl :yword, :yword
-_mm256_unpacklo_epi64	proto __cdecl :yword, :yword
+_mm256_unpackhi_epi8 proto :yword, :yword {
+	vpunpckhbw ymm0, ymm0, ymm1
+	}
+_mm256_unpackhi_epi16 proto :yword, :yword {
+	vpunpckhwd ymm0, ymm0, ymm1
+	}
+_mm256_unpackhi_epi32 proto :yword, :yword {
+	vpunpckhdq ymm0, ymm0, ymm1
+	}
+_mm256_unpackhi_epi64 proto :yword, :yword {
+	vpunpckhqdq ymm0, ymm0, ymm1
+	}
 
-_mm256_shuffle_epi8	proto __cdecl :yword, :yword
-_mm256_shuffle_epi32	proto __cdecl :yword, :sdword
+_mm256_unpacklo_epi8 proto :yword, :yword {
+	vpunpcklbw ymm0, ymm0, ymm1
+	}
+_mm256_unpacklo_epi16 proto :yword, :yword {
+	vpunpcklwd ymm0, ymm0, ymm1
+	}
+_mm256_unpacklo_epi32 proto :yword, :yword {
+	vpunpckldq ymm0, ymm0, ymm1
+	}
+_mm256_unpacklo_epi64 proto :yword, :yword {
+	vpunpcklqdq ymm0, ymm0, ymm1
+	}
 
-_mm256_shufflehi_epi16	proto __cdecl :yword, :sdword
-_mm256_shufflelo_epi16	proto __cdecl :yword, :sdword
+_mm256_shuffle_epi8 proto :yword, :yword {
+	vpshufb ymm0, ymm0, ymm1
+	}
+_mm256_shuffle_epi32 proto :yword, i:abs {
+	vpshufd ymm0, ymm0, i
+	}
 
-_mm256_extracti128_si256 proto __cdecl :yword, :sdword
-_mm256_inserti128_si256 proto __cdecl :yword, :oword, :sdword
+_mm256_shufflehi_epi16 proto :yword, i:abs {
+	vpshufhw ymm0, ymm0, i
+	}
+_mm256_shufflelo_epi16 proto :yword, i:abs {
+	vpshuflw ymm0, ymm0, i
+	}
+
+_mm256_extracti128_si256 proto :yword, i:abs {
+	vextracti128 xmm0, ymm0, i
+	vzeroupper
+	}
+_mm256_inserti128_si256 proto :yword, :oword, i:abs {
+	vinserti128 ymm0, ymm0, xmm1, i
+	}
 
 _mm_broadcastss_ps	proto __cdecl :oword
 _mm_broadcastsd_pd	proto __cdecl :oword

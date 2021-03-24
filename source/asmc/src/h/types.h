@@ -17,6 +17,7 @@ struct qualified_type {
 
 extern struct dsym *CurrStruct; /* start of current STRUCT list */
 
+extern int	   CreateType( int, struct asm_tok[], char *, struct asym ** );
 extern struct asym *CreateTypeSymbol( struct asym *, const char *, bool );
 extern struct asym *SearchNameInStruct( const struct asym *, const char *, uint_32 *, int level );
 extern int	   GetQualifiedType( int *, struct asm_tok[], struct qualified_type * );
@@ -25,7 +26,6 @@ extern void	   UpdateStructSize( struct asym * );
 extern int	   SetStructCurrentOffset( int_32 );
 extern int	   AlignInStruct( int );
 extern void	   TypesInit( void );
-//extern void	    DeleteType( struct dsym * );
 
 #define DeleteType( t )
 #endif

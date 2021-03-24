@@ -238,38 +238,54 @@ _mm_macc_sd proto :real8, :real8, :real8 {
 	vfmadd213sd xmm0, xmm1, xmm2
 	}
 
-_mm_maddsub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_maddsub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msubadd_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msubadd_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msub_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_msub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmacc_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmacc_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmacc_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmacc_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmsub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmsub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmsub_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
-_mm_nmsub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
-	endm
+_mm_maddsub_ps proto :oword, :oword, :oword {
+	vfmaddsubps xmm0, xmm0, xmm1, xmm2
+	}
+_mm_maddsub_pd proto :oword, :oword, :oword {
+	vfmaddsubpd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msubadd_ps proto :oword, :oword, :oword {
+	vfmsubaddps xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msubadd_pd proto :oword, :oword, :oword {
+	vfmsubaddpd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msub_ps proto :oword, :oword, :oword {
+	vfmsubps xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msub_pd proto :oword, :oword, :oword {
+	vfmsubpd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msub_ss proto :oword, :oword, :oword {
+	vfmsubss xmm0, xmm0, xmm1, xmm2
+	}
+_mm_msub_sd proto :oword, :oword, :oword {
+	vfmsubsd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmacc_ps proto :oword, :oword, :oword {
+	vfnmaddps xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmacc_pd proto :oword, :oword, :oword {
+	vfnmaddpd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmacc_ss proto :oword, :oword, :oword {
+	vfnmaddss xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmacc_sd proto :oword, :oword, :oword {
+	vfnmaddsd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmsub_ps proto :oword, :oword, :oword {
+	vfnmsubps xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmsub_pd proto :oword, :oword, :oword {
+	vfnmsubpd xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmsub_ss proto :oword, :oword, :oword {
+	vfnmsubss xmm0, xmm0, xmm1, xmm2
+	}
+_mm_nmsub_sd proto :oword, :oword, :oword {
+	vfnmsubsd xmm0, xmm0, xmm1, xmm2
+	}
 
 ;; Integer multiply-accumulate
 

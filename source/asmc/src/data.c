@@ -1036,7 +1036,6 @@ static int checktypes( const struct asym *sym, unsigned char mem_type, const str
  */
 
 int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
-/****************************************************************************/
 {
     uint_32		no_of_bytes;
     struct asym		*sym = NULL;
@@ -1044,7 +1043,7 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
     uint_32		currofs; /* for LST output */
     unsigned char	mem_type;
     bool		is_float = FALSE;
-    int			idx;
+    int			o,idx;
     char		*name;
 
     /* v2.05: the previous test in parser.c wasn't fool-proved */
@@ -1053,6 +1052,36 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
     }
     if( tokenarray[i+1].token == T_FINAL ) {
 	return( asmerr(2008, tokenarray[i].tokpos ) );
+    }
+
+    o = 1;
+    if ( tokenarray[i].token == T_BINARY_OPERATOR ) {
+
+	char type[128];
+
+	idx = i;
+	strcpy( type, "ptr?" );
+
+	if ( tokenarray[i+1].token != T_QUESTION_MARK &&
+	     tokenarray[i+1].token != T_NUM ) {
+
+	    o++;
+	    i++;
+	    if ( tokenarray[i].token == T_BINARY_OPERATOR ) {
+		strcat( type, "ptr?" );
+		if ( tokenarray[i+1].token != T_QUESTION_MARK &&
+		     tokenarray[i+1].token != T_NUM ) {
+		    i++;
+		    o++;
+		}
+	    }
+	    if ( tokenarray[i].token != T_QUESTION_MARK &&
+		 tokenarray[i].token != T_NUM ) {
+		strcat( type, tokenarray[i].string_ptr );
+	    }
+	}
+	if ( CreateType( idx, tokenarray, type, &type_sym ) == ERROR )
+	    return ERROR;
     }
 
     /* set values for mem_type and no_of_bytes */
@@ -1106,7 +1135,7 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
      * (note: if -Zm is set, a code label may be at pos 0, and
      * i is 2 then.)
      */
-    name = ( ( i == 1 ) ? tokenarray[0].string_ptr : NULL );
+    name = ( ( i == o ) ? tokenarray[0].string_ptr : NULL );
 
     /* in a struct declaration? */
     if( CurrStruct ) {

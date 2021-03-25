@@ -9,11 +9,18 @@ Declares a structure type for a [COM interface](https://en.wikipedia.org/wiki/Co
 A class can have the following kinds of members
 
   - data members
+  - member functions
+
+The first entry is added by the assembler
 ```assembly
 lpVtbl ptr nameVtbl ?
-...
+; additional data members
 ```
-  - member functions
+Member functions are added to a second struct: _name_**Vtbl**
+```assembly
+name proc    ; constructor - not added
+Release proc ; first member function
+```
 
 #### See Also
 

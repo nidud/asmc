@@ -1208,10 +1208,14 @@ int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPRO
     if ( tokenarray[i].token == T_COMMA )
 	i++;
 
-    if( i >= Token_Count ) {
+    if ( i >= Token_Count ||
+       ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '{' ) ) {
 	/* procedure has no parameters at all */
 	if ( proc->e.procinfo->paralist != NULL )
 	    asmerr( 2111, "" );
+	if ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '{' )
+	    proc->sym.isinline = 1;
+
     } else if( proc->sym.langtype == LANG_NONE ) {
 	asmerr( 2119 );
     } else {

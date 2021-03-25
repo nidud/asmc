@@ -17,11 +17,11 @@
 
     option win64:2
 
-    assume rcx:LPC
+    assume rcx:ptr C
 
 foo proc
 
-  local p:LPC
+  local p:ptr C
 
     C(0)
     p.Class(1)

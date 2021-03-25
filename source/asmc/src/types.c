@@ -854,7 +854,7 @@ int CreateType( int i, struct asm_tok tokenarray[], char *name, struct asym **pp
 	*pp = sym;
 
     sym->isdefined = TRUE;
-    if ( Parse_Pass > PASS_1 )
+    if ( pp == NULL && Parse_Pass > PASS_1 )
 	return( NOT_ERROR );
     sym->typekind = TYPE_TYPEDEF;
 

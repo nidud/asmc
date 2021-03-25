@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.33 - xx xxx 2020
+- removed typedefs for CLASS/COMDEF
+- added PTR to STRUCT and data types
 - added __UNIX__ define for /elf[64]
 - added CodeView 5 and 8 -- /Zi5 /zi8 (experimental)
 - added assignment to .new name:type = value

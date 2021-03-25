@@ -1045,6 +1045,7 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
     bool		is_float = FALSE;
     int			o,idx;
     char		*name;
+    char		type[128];
 
     /* v2.05: the previous test in parser.c wasn't fool-proved */
     if ( i > 1 && ModuleInfo.m510 == FALSE ) {
@@ -1056,8 +1057,6 @@ int data_dir( int i, struct asm_tok tokenarray[], struct asym *type_sym )
 
     o = 1;
     if ( tokenarray[i].token == T_BINARY_OPERATOR ) {
-
-	char type[128];
 
 	idx = i;
 	strcpy( type, "ptr?" );

@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 .COMDEF _name_ [[ : public _class_ ]]
 
-Declares a structure type for a COM interface based on the Component Object Model introduced by Microsoft in 1993.
+Declares a structure type for a [COM interface](https://en.wikipedia.org/wiki/Component_Object_Model).
 
 A typical C declaration for a COM interface:
 

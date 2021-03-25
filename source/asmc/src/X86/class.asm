@@ -1416,7 +1416,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov [ecx].com_item.class,eax
             strcpy(eax, esi)
         .endif
-        _strupr( strcat( strcpy( edi, "LP" ), esi ) )
+        ; v2.32.20 - removed typedefs
+        strcpy( edi, esi )
 
         .if ( [ebx+16].token == T_ID )
 
@@ -1441,17 +1442,6 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             add eax,16
         .endif
         mov args,eax
-
-        .if ( cmd != T_DOT_TEMPLATE )
-
-            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
-
-            .if ( cmd == T_DOT_CLASS )
-
-                AddLineQueueX( "%s typedef ptr %s", edi, esi )
-            .endif
-        .endif
-
         mov public_pos,NULL
 
         .for ( edi = 0, ebx = args : [ebx].token != T_FINAL : ebx += 16 )
@@ -1553,12 +1543,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if esi
             .if ( cmd != T_DOT_TEMPLATE )
                 .if !SearchNameInStruct( esi, "lpVtbl", &cmd, 0 )
-                    AddLineQueueX( "lpVtbl %sVtbl ?", &class )
+                    AddLineQueueX( "lpVtbl ptr %sVtbl ?", &class )
                 .endif
             .endif
             AddLineQueueX( "%s <>", [esi].asym.name )
         .elseif ( cmd != T_DOT_TEMPLATE )
-            AddLineQueueX( "lpVtbl %sVtbl ?", &class )
+            AddLineQueueX( "lpVtbl ptr %sVtbl ?", &class )
         .endif
     .endsw
 

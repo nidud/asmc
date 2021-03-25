@@ -9,7 +9,7 @@
 
 .class Class :byte, :ptr
 
-; 00 lpVtbl LPCLASSVtbl ?
+; 00 lpVtbl ptr ClassVtbl ?
 
     base    db ?
     Method1 proc local
@@ -21,11 +21,11 @@
 
     .ends
 
-    assume rcx:LPCLASS
+    assume rcx:ptr Class
 
 foo proc
 
-  local p:LPCLASS
+  local p:ptr Class
 
     [rcx].Method1()
     [rcx].Method2(rdx)

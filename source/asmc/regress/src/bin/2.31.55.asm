@@ -13,7 +13,7 @@
     .ends
 
 .class c2
-    d LPc1 ?
+    d ptr c1 ?
     a proc :ptr
     .ends
 

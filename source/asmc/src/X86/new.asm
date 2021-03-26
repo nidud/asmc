@@ -198,12 +198,196 @@ ConstructorCall proc private uses esi edi ebx \
 
 ConstructorCall endp
 
+; case = {0,2,..}
+
+    assume ebx:nothing
+
+AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:string_t
+
+  local val[128]:char_t, array:int_t
+
+    mov array,0
+    mov esi,string
+    inc esi
+    mov eax,sym
+    .if eax
+        mov ecx,[eax].esym.structinfo
+        mov ebx,[ecx].struct_info.head
+    .else
+        inc array
+    .endif
+
+    .while 1
+
+        lodsb
+        .continue(0) .if al == ' '
+        .continue(0) .if al == 9
+        .break .if al == '}'
+
+        dec esi
+        .break .if !al
+
+        lea edi,val
+        .if byte ptr [esi] == '{'
+
+            strcpy( edi, name )
+            strcat( edi, "." )
+            strcat( edi, [ebx].sfield.sym.name )
+            mov esi,AssignStruct( edi, [ebx].sfield.sym.type, esi )
+
+            .break .if !eax
+            .while byte ptr [esi] == ' ' || byte ptr [esi] == 9
+
+                add esi,1
+            .endw
+
+        .else
+
+            mov byte ptr [edi],0
+            .while 1
+                mov al,[esi]
+                .break .if !al || al == ',' || al == '}'
+                movsb
+            .endw
+            mov byte ptr [edi],0
+            .for ( ecx=&val : ecx < edi && \
+                 ( byte ptr [edi-1] == ' ' || byte ptr [edi-1] == 9 ) : )
+                dec edi
+                mov byte ptr [edi],0
+            .endf
+            .if val
+                .if val == '"'
+                    AddLineQueueX( " mov %s.%s,&@CStr(%s)", name, [ebx].sfield.sym.name, &val )
+                .elseif array
+                    mov eax,[ebx].sfield.sym.total_size
+                    xor edx,edx
+                    div [ebx].sfield.sym.total_length
+                    mov ecx,array
+                    dec ecx
+                    mul ecx
+                    mov ecx,eax
+                    AddLineQueueX( " mov %s[%d],%s", name, ecx, &val )
+                .else
+                    AddLineQueueX( " mov %s.%s,%s", name, [ebx].sfield.sym.name, &val )
+                .endif
+            .endif
+        .endif
+
+        .break .if byte ptr [esi] == 0
+        lodsb
+        .break .if al != ',' ; == '}'
+        .if array
+            inc array
+        .else
+            mov ebx,[ebx].sfield.next
+        .endif
+        .break .if !ebx
+    .endw
+    mov eax,esi
+    ret
+
+AssignStruct endp
+
+    assume ebx:tok_t
+
+; case = {0}
+
+ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
+
+    AddLineQueueX( " xor eax,eax" )
+    mov esi,sym
+    mov edi,[esi].asym.total_size
+    .if ModuleInfo.Ofssize == USE64
+        .if edi > 32
+            AddLineQueue ( " push rdi" )
+            AddLineQueue ( " push rcx" )
+            AddLineQueueX( " lea rdi,%s", name )
+            AddLineQueueX( " mov ecx,%d", edi )
+            AddLineQueue ( " rep stosb" )
+            AddLineQueue ( " pop rcx" )
+            AddLineQueue ( " pop rdi" )
+        .else
+            .for ( ebx = 0 : edi >= 8 : edi -= 8, ebx += 8 )
+                AddLineQueueX( " mov qword ptr %s[%d],rax", name, ebx )
+            .endf
+            .for ( : edi : edi--, ebx++ )
+                AddLineQueueX( " mov byte ptr %s[%d],al", name, ebx )
+            .endf
+        .endif
+    .else
+        .if edi > 16
+            AddLineQueue ( " push edi" )
+            AddLineQueue ( " push ecx" )
+            AddLineQueueX( " lea edi,%s", name )
+            AddLineQueueX( " mov ecx,%d", edi )
+            AddLineQueue ( " rep stosb" )
+            AddLineQueue ( " pop ecx" )
+            AddLineQueue ( " pop edi" )
+        .else
+            .for ( ebx = 0 : edi >= 4 : edi -= 4, ebx += 4 )
+                AddLineQueueX( " mov dword ptr %s[%d],eax", name, ebx )
+            .endf
+            .for ( : edi : edi--, ebx++ )
+                AddLineQueueX( " mov byte ptr %s[%d],al", name, ebx )
+            .endf
+        .endif
+    .endif
+    ret
+
+ClearStruct endp
+
 AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
 
-  local cc[128]:char_t
+  local cc[128]:char_t, f:sfield
 
     mov ebx,tokenarray
     add ebx,16 ; skip '='
+
+    .if [ebx].token == T_STRING && [ebx].bytval == '{'
+
+        SymSearch( name )
+        .return asmerr( 2008, [ebx].tokpos ) .if !eax
+
+        xor edx,edx
+        mov ecx,[ebx].string_ptr
+        .while byte ptr [ecx] == ' ' || byte ptr [ecx] == 9
+            add ecx,1
+        .endw
+        .if ( byte ptr [ecx] == '0' )
+
+            add ecx,1
+            .while byte ptr [ecx] == ' ' || byte ptr [ecx] == 9
+                add ecx,1
+            .endw
+            .if byte ptr [ecx] == 0
+                inc edx
+            .endif
+        .endif
+
+        .if edx
+
+            ClearStruct( name, eax )
+
+        .elseif ![eax].asym.type
+
+            push ebx
+            mov esi,eax
+            lea edi,f.sym
+            mov ecx,asym
+            rep movsb
+            mov f.next,NULL
+            mov ecx,[ebx].tokpos
+            lea ebx,f
+            AssignStruct( name, NULL, ecx )
+            pop ebx
+        .else
+
+            AssignStruct( name, [eax].asym.type, [ebx].tokpos )
+        .endif
+        lea eax,[ebx+16]
+        .return
+    .endif
+
     mov edi,strcat( strcat( strcpy( &cc, " mov " ), name ), ", " )
     xor esi,esi
 
@@ -236,7 +420,7 @@ AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
 
 AssignValue endp
 
-AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
+AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local name  : string_t,
         type  : string_t,
@@ -449,14 +633,17 @@ AddLocalDir endp
 
 NewDirective proc i:int_t, tokenarray:tok_t
 
-  local rc:int_t
+  local rc:int_t, list:int_t
 
     .return asmerr(2012) .if CurrProc == NULL
 
     mov rc,AddLocalDir(i, tokenarray)
+
+    if 0
     .if ModuleInfo.list
         LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
     .endif
+    endif
     .if ModuleInfo.line_queue.head
         RunLineQueue()
     .endif

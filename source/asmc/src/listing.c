@@ -1105,8 +1105,7 @@ void LstInit( void )
     list_pos = 0;
     if( Options.write_listing ) {
 	int namelen;
-	sprintf( buffer, cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
-	list_pos = strlen( buffer );
+	list_pos = sprintf( buffer, cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
 	fwrite( buffer, 1, list_pos, CurrFile[LST] );
 	LstNL();
 	fn = GetFName( ModuleInfo.srcfile );

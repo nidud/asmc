@@ -231,8 +231,11 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
         .if byte ptr [esi] == '{'
 
             strcpy( edi, name )
-            strcat( edi, "." )
-            strcat( edi, [ebx].sfield.sym.name )
+            mov ecx,[ebx].sfield.sym.name
+            .if byte ptr [ecx]
+                strcat( edi, "." )
+                strcat( edi, [ebx].sfield.sym.name )
+            .endif
             mov esi,AssignStruct( edi, [ebx].sfield.sym.type, esi )
 
             .break .if !eax

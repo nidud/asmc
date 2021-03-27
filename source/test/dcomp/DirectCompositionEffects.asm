@@ -176,11 +176,8 @@ CApplication::CreateD2D1Device endp
 CApplication::CreateD3D11Device proc uses rbx
 
     .new hr:HRESULT = S_OK
-    .new driverTypes[2]:D3D_DRIVER_TYPE
+    .new driverTypes[2]:D3D_DRIVER_TYPE = { D3D_DRIVER_TYPE_HARDWARE, D3D_DRIVER_TYPE_WARP }
     .new featureLevelSupported:D3D_FEATURE_LEVEL
-
-    mov driverTypes[0],D3D_DRIVER_TYPE_HARDWARE
-    mov driverTypes[4],D3D_DRIVER_TYPE_WARP
 
     .for (ebx = 0: ebx < sizeof(driverTypes) / sizeof(D3D_DRIVER_TYPE): ++ebx)
 
@@ -392,7 +389,7 @@ CApplication::CreateSurface proc size:int_t, red:float, green:float, blue:float,
 
     .if (SUCCEEDED(hr))
 
-        .new rect:RECT(0,0,size,size)
+        .new rect:RECT = { 0, 0, size, size }
 
         mov hr,surfaceTile.BeginDraw(&rect, &IID_IDXGISurface, &dxgiSurface, &offs)
     .endif
@@ -406,14 +403,13 @@ CApplication::CreateSurface proc size:int_t, red:float, green:float, blue:float,
 
         this._d2d1Factory.GetDesktopDpi(&dpiX, &dpiY)
 
-        .new bitmapProperties:D2D1_BITMAP_PROPERTIES1
-
-        mov bitmapProperties.pixelFormat.format,DXGI_FORMAT_R8G8B8A8_UNORM
-        mov bitmapProperties.pixelFormat.alphaMode,D2D1_ALPHA_MODE_IGNORE
-        mov bitmapProperties.dpiX,dpiX
-        mov bitmapProperties.dpiY,dpiY
-        mov bitmapProperties.bitmapOptions,D2D1_BITMAP_OPTIONS_TARGET or D2D1_BITMAP_OPTIONS_CANNOT_DRAW
-        mov bitmapProperties.colorContext,NULL
+        .new bitmapProperties:D2D1_BITMAP_PROPERTIES1 = {
+                { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE },
+                dpiX,
+                dpiY,
+                D2D1_BITMAP_OPTIONS_TARGET or D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                NULL
+            }
 
         mov hr,this._d2d1DeviceContext.CreateBitmapFromDxgiSurface(dxgiSurface, &bitmapProperties, &d2d1Bitmap)
 
@@ -426,12 +422,7 @@ CApplication::CreateSurface proc size:int_t, red:float, green:float, blue:float,
 
         .if (SUCCEEDED(hr))
 
-            .new Color:D3DCOLORVALUE
-
-            mov Color.r, red
-            mov Color.g, green
-            mov Color.b, blue
-            mov Color.a, 1.0
+            .new Color:D3DCOLORVALUE = { red, green, blue, 1.0 }
 
             mov hr,this._d2d1DeviceContext.CreateSolidColorBrush(&Color, NULL, &d2d1Brush)
         .endif
@@ -556,12 +547,9 @@ CApplication::SetEffectOnVisualLeft proc uses rdi
         mov hr,this.CreatePerspectiveTransform(0.0, 0.0, xmm3, &perspectiveTransform)
     .endif
 
-    .new transforms[3]:ptr IDCompositionTransform3D
-
-    mov transforms[0*8],translateTransform
-    mov transforms[1*8],rotateTransform
-    mov transforms[2*8],perspectiveTransform
-
+    .new transforms[3]:ptr IDCompositionTransform3D = {
+        translateTransform, rotateTransform, perspectiveTransform
+        }
     .new transformGroup:ptr IDCompositionTransform3D
 
     .if (SUCCEEDED(hr))
@@ -631,11 +619,7 @@ CApplication::SetEffectOnVisualLeftChildren proc uses rsi rdi rbx
             mov hr,this.CreateTranslateTransform(xmm1, xmm2, 0.0, &translate)
         .endif
 
-        .new transforms[2]:ptr IDCompositionTransform3D
-
-        mov transforms[0*8],scale
-        mov transforms[1*8],translate
-
+        .new transforms[2]:ptr IDCompositionTransform3D = { scale, translate }
         .new transformGroup:ptr IDCompositionTransform3D
 
         .if (SUCCEEDED(hr))
@@ -693,7 +677,6 @@ CApplication::SetEffectOnVisualLeftChildren endp
 CApplication::SetEffectOnVisualRight proc uses rdi
 
     .new hr:HRESULT = S_OK
-
     .new beginOffsetX:float = 3.75
     .new endOffsetX:float = 6.5
     .new offsetY:float = 1.5
@@ -1316,27 +1299,12 @@ CApplication::CreatePerspectiveTransform proc x:float, y:float, z:float,
         mov [rdx],rax
     .endif
 
-    .new matrix:D3DMATRIX
-
-    mov matrix._11,1.0
-    mov matrix._12,0.0
-    mov matrix._13,0.0
-    mov matrix._14,x
-
-    mov matrix._21,0.0
-    mov matrix._22,1.0
-    mov matrix._23,0.0
-    mov matrix._24,y
-
-    mov matrix._31,0.0
-    mov matrix._32,0.0
-    mov matrix._33,1.0
-    mov matrix._34,z
-
-    mov matrix._41,0.0
-    mov matrix._42,0.0
-    mov matrix._43,0.0
-    mov matrix._44,1.0
+    .new matrix:D3DMATRIX = {{{
+        1.0, 0.0, 0.0, x,
+        0.0, 1.0, 0.0, y,
+        0.0, 0.0, 1.0, z,
+        0.0, 0.0, 0.0, 1.0
+        }}}
 
     .new transform:ptr IDCompositionMatrixTransform3D
 

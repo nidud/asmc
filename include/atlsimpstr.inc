@@ -28,35 +28,35 @@ include intrin.inc
 	nRefs		LONG ?
 	_data		TCHAR ?
 
-	.operator _data {
+	.inline _data {
 		lea rax,[this+CStringData]
 		}
-	.operator AddRef {
+	.inline AddRef {
 		.assert(nRefs > 0)
 		_InterlockedIncrement(&[this].CStringData.nRefs)
 		}
-	.operator IsLocked {
+	.inline IsLocked {
 		xor	eax,eax
 		cmp	[this].CStringData.nRefs,0
 		setl	al
 		}
-	.operator IsShared {
+	.inline IsShared {
 		xor	eax,eax
 		cmp	[this].CStringData.nRefs,1
 		setg	al
 		}
-	.operator _Lock {
+	.inline _Lock {
 		dec [this].CStringData.nRefs
 		.if( [this].CStringData.nRefs == 0 )
 			mov [this].CStringData.nRefs,-1
 		.endif
 		}
-	.operator Release {
+	.inline Release {
 		.ifs ( _InterlockedDecrement( &[this].CStringData.nRefs ) <= 0 )
 			[this].CStringData.pStringMgr.Free( this )
 		.endif
 		}
-	.operator Unlock {
+	.inline Unlock {
 		.if([this].CStringData.IsLocked())
 			inc [this].CStringData.nRefs
 			.if( [this].CStringData.nRefs == 0 )
@@ -71,7 +71,7 @@ include intrin.inc
 
 	achNil wchar_t 2 dup(?)
 
-	.operator CNilStringData {
+	.inline CNilStringData {
 		mov [this].CNilStringData.pStringMgr,NULL
 		mov [this].CNilStringData.nRefs,2
 		mov [this].CNilStringData.nDataLength,0
@@ -79,7 +79,7 @@ include intrin.inc
 		mov [this].CNilStringData.achNil[0],0
 		mov [this].CNilStringData.achNil[1],0
 		}
-	.operator SetManager :ptr IAtlStringMgr {
+	.inline SetManager :ptr IAtlStringMgr {
 		mov [this].CNilStringData.pStringMgr,_1
 		}
 	.ENDS
@@ -89,10 +89,10 @@ include intrin.inc
 
 	m_psz PTCHAR ?
 
-	.operator CStaticString :ptr TCHAR {
+	.inline CStaticString :ptr TCHAR {
 		mov [this].CStaticString.m_psz,_1
 		}
-	.operator BaseType {
+	.inline BaseType {
 		mov rax,this
 		}
 	.ENDS

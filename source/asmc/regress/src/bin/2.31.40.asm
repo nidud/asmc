@@ -10,7 +10,7 @@ foo proc string:ptr sbyte
 foo endp
 
 .template bar
-    .operator pass2 { foo("error") }
+    .inline pass2 { foo("error") }
     .ends
 
     .code

@@ -10,119 +10,119 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     lastError       Status ?
     scratch         int_t ?
 
-    .operator StringFormat :abs=<0>, :abs=<LANG_NEUTRAL>, :vararg {
+    .inline StringFormat :abs=<0>, :abs=<LANG_NEUTRAL>, :vararg {
         mov this.nativeFormat,NULL
         GdipCreateStringFormat(_1, _2, addr this.nativeFormat)
         mov this.lastError,eax
         }
-    .operator Release {
+    .inline Release {
         GdipDeleteStringFormat([this].StringFormat.nativeFormat)
         }
 
-    .operator SetFormatFlags :abs, :vararg {
+    .inline SetFormatFlags :abs, :vararg {
         GdipSetStringFormatFlags(this.nativeFormat, _1)
         this.SetStatus()
         }
 
-    .operator GetFormatFlags :vararg {
+    .inline GetFormatFlags :vararg {
         GdipGetStringFormatFlags(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetAlignment :abs, :vararg {
+    .inline SetAlignment :abs, :vararg {
         GdipSetStringFormatAlign(this.nativeFormat, _1)
         this.SetStatus()
         }
 
-    .operator GetAlignment :vararg {
+    .inline GetAlignment :vararg {
         GdipGetStringFormatAlign(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetLineAlignment :abs, :vararg {
+    .inline SetLineAlignment :abs, :vararg {
         GdipSetStringFormatLineAlign(this.nativeFormat, _1)
         this.SetStatus()
         }
 
-    .operator GetLineAlignment :vararg {
+    .inline GetLineAlignment :vararg {
         GdipGetStringFormatLineAlign(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetHotkeyPrefix :abs, :vararg {
+    .inline SetHotkeyPrefix :abs, :vararg {
         GdipSetStringFormatHotkeyPrefix(this.nativeFormat, _1)
         this.SetStatus()
         }
 
-    .operator GetHotkeyPrefix :vararg {
+    .inline GetHotkeyPrefix :vararg {
         GdipGetStringFormatHotkeyPrefix(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetTabStops :abs, :abs, :abs, :vararg {
+    .inline SetTabStops :abs, :abs, :abs, :vararg {
         GdipSetStringFormatTabStops(this.nativeFormat, _1, _2, _3)
         this.SetStatus()
         }
 
-    .operator GetTabStopCount :abs, :vararg {
+    .inline GetTabStopCount :abs, :vararg {
         GdipGetStringFormatTabStopCount(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator GetTabStops :abs, :abs, :abs, :vararg {
+    .inline GetTabStops :abs, :abs, :abs, :vararg {
         GdipGetStringFormatTabStops(this.nativeFormat, _1, _2, _3)
         this.SetStatus()
         }
 
-    .operator SetDigitSubstitution :abs, :abs, :vararg {
+    .inline SetDigitSubstitution :abs, :abs, :vararg {
         GdipSetStringFormatDigitSubstitution(this.nativeFormat, _1, _2)
         this.SetStatus()
         }
 
-    .operator GetDigitSubstitutionLanguage :vararg {
+    .inline GetDigitSubstitutionLanguage :vararg {
         GdipGetStringFormatDigitSubstitution(this.nativeFormat, addr this.scratch, NULL)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator GetDigitSubstitutionMethod :vararg {
+    .inline GetDigitSubstitutionMethod :vararg {
         GdipGetStringFormatDigitSubstitution(this.nativeFormat, NULL, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetTrimming :abs, :vararg {
+    .inline SetTrimming :abs, :vararg {
         GdipSetStringFormatTrimming(this.nativeFormat, _1)
         this.SetStatus()
         }
 
-    .operator GetTrimming :vararg {
+    .inline GetTrimming :vararg {
         GdipGetStringFormatTrimming(this.nativeFormat, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator SetMeasurableCharacterRanges :abs, :abs, :vararg {
+    .inline SetMeasurableCharacterRanges :abs, :abs, :vararg {
         GdipSetStringFormatMeasurableCharacterRanges(this.nativeFormat, _1, _2)
         this.SetStatus()
         }
 
-    .operator GetMeasurableCharacterRangeCount :vararg {
+    .inline GetMeasurableCharacterRangeCount :vararg {
         GdipGetStringFormatMeasurableCharacterRangeCount(this.nativeFormat, addr this.scratch)
         mov eax,this.scratch
         }
 
-    .operator GetLastStatus {
+    .inline GetLastStatus {
         mov eax,[this].StringFormat.lastError
         mov [this].StringFormat.lastError,Ok
         }
 
-    .operator SetStatus :vararg {
+    .inline SetStatus :vararg {
         ifnb <_1>
             ifdif <_1>,<eax>
                 mov eax,_1

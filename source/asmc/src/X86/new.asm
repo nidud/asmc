@@ -211,6 +211,9 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
     inc esi
     mov eax,sym
     .if eax
+        .while [eax].asym.state == SYM_TYPE && [eax].asym.type
+            mov eax,[eax].asym.type
+        .endw
         mov ecx,[eax].esym.structinfo
         mov ebx,[ecx].struct_info.head
     .else
@@ -291,6 +294,59 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
 AssignStruct endp
 
+; case = {...},{...},
+
+AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, string:string_t
+
+  local Id[128]:char_t, size:int_t, f:sfield
+
+    .if !type
+        mov esi,sym
+        lea edi,f.sym
+        mov ecx,asym
+        rep movsb
+        mov f.next,NULL
+        lea ebx,f
+        .return AssignStruct( name, NULL, string )
+    .endif
+
+    mov edi,sym
+    .if !( [edi].asym.flag & S_ISARRAY )
+
+        .return AssignStruct( name, type, string )
+    .endif
+
+    mov esi,string
+    inc esi
+    .while byte ptr [esi] == ' ' || byte ptr [esi] == 9
+        add esi,1
+    .endw
+
+    mov eax,[edi].asym.total_size
+    mov ebx,[edi].asym.total_length
+    xor edx,edx
+    div ebx
+    mov size,eax
+    xor edi,edi
+
+    .for ( : ebx : ebx--, edi += size )
+
+        LSPrintF( &Id, "%s[%d]", name, edi )
+        mov esi,AssignStruct( &Id, type, esi )
+        lodsb
+        .break .if !al
+        .repeat
+            lodsb
+            .continue(0) .if al == ' '
+            .continue(0) .if al == 9
+        .until 1
+        .break .if al != '{'
+    .endf
+    mov eax,esi
+    ret
+
+AssignId endp
+
     assume ebx:tok_t
 
 ; case = {0}
@@ -341,7 +397,7 @@ ClearStruct endp
 
 AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
 
-  local cc[128]:char_t, f:sfield
+  local cc[128]:char_t
 
     mov ebx,tokenarray
     add ebx,16 ; skip '='
@@ -366,26 +422,10 @@ AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
                 inc edx
             .endif
         .endif
-
         .if edx
-
             ClearStruct( name, eax )
-
-        .elseif ![eax].asym.type
-
-            push ebx
-            mov esi,eax
-            lea edi,f.sym
-            mov ecx,asym
-            rep movsb
-            mov f.next,NULL
-            mov ecx,[ebx].tokpos
-            lea ebx,f
-            AssignStruct( name, NULL, ecx )
-            pop ebx
         .else
-
-            AssignStruct( name, [eax].asym.type, [ebx].tokpos )
+            AssignId( name, eax, [eax].asym.type, [ebx].tokpos )
         .endif
         lea eax,[ebx+16]
         .return
@@ -408,8 +448,12 @@ AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
             dec esi
             .endc
         .endsw
+        .if ( [ebx].token == T_INSTRUCTION )
+            strcat(edi, " ")
+        .endif
         strcat(edi, [ebx].string_ptr)
-        .if [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR
+        .if ( [ebx].token == T_INSTRUCTION ) || \
+            ( [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR )
             strcat(edi, " ")
         .endif
         add ebx,16

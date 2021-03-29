@@ -27,18 +27,12 @@ DoDrawing proc hwnd:HWND
     mov hPen1,ExtCreatePen(pen_style, 8, &brush, 0, NULL)
     mov holdPen,SelectObject(hdc, hPen1)
 
-    .new points[5]:POINT
-
-    mov points[0x00].x,30
-    mov points[0x00].y,30
-    mov points[0x08].x,130
-    mov points[0x08].y,30
-    mov points[0x10].x,130
-    mov points[0x10].y,100
-    mov points[0x18].x,30
-    mov points[0x18].y,100
-    mov points[0x20].x,30
-    mov points[0x20].y,30
+    .new points[5]:POINT = {
+        {  30,  30 },
+        { 130,  30 },
+        { 130, 100 },
+        {  30, 100 },
+        {  30,  30 }}
 
     Polygon(hdc, &points, 5)
 
@@ -50,18 +44,12 @@ DoDrawing proc hwnd:HWND
     SelectObject(hdc, hPen2)
     DeleteObject(hPen1)
 
-    .new points2[5]:POINT
-
-    mov points2[0x00].x,160
-    mov points2[0x00].y,30
-    mov points2[0x08].x,260
-    mov points2[0x08].y,30
-    mov points2[0x10].x,260
-    mov points2[0x10].y,100
-    mov points2[0x18].x,160
-    mov points2[0x18].y,100
-    mov points2[0x20].x,160
-    mov points2[0x20].y,30
+    .new points2[5]:POINT = {
+        { 160,  30 },
+        { 260,  30 },
+        { 260, 100 },
+        { 160, 100 },
+        { 160,  30 }}
 
     MoveToEx(hdc, 130, 30, NULL)
     Polygon(hdc, &points2, 5)
@@ -73,18 +61,12 @@ DoDrawing proc hwnd:HWND
     SelectObject(hdc, hPen3)
     DeleteObject(hPen2)
 
-    .new points3[5]:POINT
-
-    mov points3[0x00].x,290
-    mov points3[0x00].y,30
-    mov points3[0x08].x,390
-    mov points3[0x08].y,30
-    mov points3[0x10].x,390
-    mov points3[0x10].y,100
-    mov points3[0x18].x,290
-    mov points3[0x18].y,100
-    mov points3[0x20].x,290
-    mov points3[0x20].y,30
+    .new points3[5]:POINT = {
+        { 290,  30 },
+        { 390,  30 },
+        { 390, 100 },
+        { 290, 100 },
+        { 290,  30 }}
 
     MoveToEx(hdc, 260, 30, NULL)
     Polygon(hdc, &points3, 5)

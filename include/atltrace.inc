@@ -42,15 +42,15 @@ include tchar.inc
     traceCategory int_t ?
     traceLevel int_t ?
 
-    .operator CTraceCategoryEx :abs=<NULL>, :abs=<0x80000>, :abs=<0> {
+    .inline CTraceCategoryEx :abs=<NULL>, :abs=<0x80000>, :abs=<0> {
         mov [this].CTraceCategoryEx.traceCategory,_2
         mov [this].CTraceCategoryEx.traceLevel,_3
         }
 ifdef _DEBUG
-    .operator GetLevel {
+    .inline GetLevel {
         mov eax,traceLevel
         }
-    .operator GetCategory {
+    .inline GetCategory {
         mov eax,traceCategory
         }
 endif
@@ -58,7 +58,7 @@ endif
 
 .template CTraceCategory : public CTraceCategoryEx
 
-    .operator CTraceCategory :abs=<NULL> {
+    .inline CTraceCategory :abs=<NULL> {
         CTraceCategoryEx::CTraceCategoryEx(this, _1)
         }
     .ENDS

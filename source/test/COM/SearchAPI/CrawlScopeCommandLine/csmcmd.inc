@@ -14,17 +14,18 @@ include SearchAPI.inc
 
     m_fExists BOOL ?
 
-    .operator CParamBase {
+    .inline CParamBase {
         mov [this].CParamBase.m_fExists,FALSE
         }
 
     Init proc argc:int_t, argv:ptr ptr wchar_t, :ptr int_t
 
-    .operator Exists {
+    .inline Exists {
         mov eax,[this].CParamBase.m_fExists
         }
 
     .ENDS
+    LPCPARAMBASE typedef ptr CParamBase
 
 ;; Simple flag-type parameter, no value, just
 ;; checking if it's present in command line or not.
@@ -33,7 +34,7 @@ include SearchAPI.inc
 
     m_szParamName PCWSTR ?
 
-    .operator CFlagParam :PCWSTR {
+    .inline CFlagParam :PCWSTR {
         mov [this].CFlagParam.m_szParamName,_1
         }
     .ENDS
@@ -47,13 +48,13 @@ include SearchAPI.inc
     m_szTrueParamName PCWSTR ?
     m_szFalseParamName PCWSTR ?
 
-    .operator CExclFlagParam :PCWSTR, :PCWSTR {
+    .inline CExclFlagParam :PCWSTR, :PCWSTR {
         mov [this].CExclFlagParam.m_fFlag,FALSE
         mov [this].CExclFlagParam.m_szTrueParamName,_1
         mov [this].CExclFlagParam.m_szFalseParamName,_2
         }
 
-    .operator Get {
+    .inline Get {
         mov eax,[this].CExclFlagParam.m_fFlag
         }
     .ENDS
@@ -65,12 +66,12 @@ include SearchAPI.inc
     m_szParamName PCWSTR ?
     m_szValue PCWSTR ?
 
-    .operator CSetValueParam :PCWSTR {
+    .inline CSetValueParam :PCWSTR {
         mov [this].CSetValueParam.m_szParamName,_1
         mov [this].CSetValueParam.m_szValue,NULL
         }
 
-    .operator Get {
+    .inline Get {
         mov rax,[this].CSetValueParam.m_szValue
         }
     .ENDS

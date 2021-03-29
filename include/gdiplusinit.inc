@@ -28,7 +28,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
     SuppressExternalCodecs      BOOL ?              ;; FALSE unless you want GDI+ only to use
                                                     ;; its internal image codecs.
 
-    .operator GdiplusStartupInput {
+    .inline GdiplusStartupInput {
         mov rax,this
         .repeat
             .if rax == NULL
@@ -41,7 +41,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
         .until 1
         retm <rax>
         }
-    .operator Release { free(this) }
+    .inline Release { free(this) }
     .ends
 
 
@@ -51,7 +51,7 @@ if (GDIPVER GE 0x0110)
 
     StartupParameters SINT ?
 
-    .operator GdiplusStartupInputEx {
+    .inline GdiplusStartupInputEx {
         mov rax,this
         .repeat
             .if rax == NULL
@@ -98,7 +98,7 @@ GdiplusShutdown proto WINAPI \
     StartupParameters           SINT ?
     Token                       ULONG_PTR ?
 
-    .operator GdiPlus :vararg {
+    .inline GdiPlus :vararg {
         ifnb <_1>
             mov this.GdiplusVersion,_1
         else
@@ -110,7 +110,7 @@ GdiplusShutdown proto WINAPI \
         mov this.StartupParameters,0
         GdiplusStartup(addr this.Token, addr this, NULL)
         }
-    .operator Release {
+    .inline Release {
         GdiplusShutdown([this].GdiPlus.Token)
         }
     .ends

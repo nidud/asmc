@@ -1,13 +1,10 @@
+; TYPEID.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
-    ; typeid( expression )
-
-    .x64
-    .model flat, fastcall
-
-    option casemap:none
-    option win64:auto
-
-.enum type_identifier {
+.enum typeid_types {
 
     T_IMM32,
     T_IMM64,
@@ -40,11 +37,10 @@
     T_REAL16,
     T_YWORD,
     T_ZWORD,
-    T_PROC,
     T_NEAR,
     T_FAR,
-    T_PTR,
 
+    T_PVOID,
     T_PBYTE,
     T_PSBYTE,
     T_PWORD,
@@ -63,38 +59,23 @@
     T_PREAL16,
     T_PYWORD,
     T_PZWORD,
-    T_PPROC,
-    T_PNEAR,
-    T_PFAR,
     T_PPTR,
-    T_PVOID
+    T_PNEAR
     }
+
+RECT STRUC
+left dd ?
+RECT ENDS
 
 types proto args:vararg {
     for arg,<args>
-        mov eax,typeid(T_, arg)
+        %echo typeid(arg)
         endm
         }
 
-    ostream typedef ptr
-    cout    equ <ostream::>
-
-.template ostream
-
-    .inline PSBYTE :ptr sbyte {
-        mov rax,_1
-        }
-    .inline PWORD :ptr word {
-        mov rax,_1
-        }
-    .operator << :abs {
-        cout typeid(_1)(_1)
-        }
-    .ends
-
     .code
 
-main proc
+main proc a:ptr
 
     local ma:byte
     local mb:sbyte
@@ -118,6 +99,7 @@ main proc
     local mt:near
     local mu:far
     local mv:ptr
+    local rc:RECT
 
     local pa:ptr byte
     local pb:ptr sbyte
@@ -141,13 +123,14 @@ main proc
     local pt:ptr near
     local pu:ptr far
     local pv:ptr ptr
+    local prc:ptr RECT
 
-    types( ma, mb, mc, md, me, mf, mg, mh, mi, mj, mk, ml, mm, mn, mo, mp, mq, mr, ms, mt, mu, mv )
-    types( pa, pb, pc, pd, pe, pf, pg, ph, pi, pj, pk, pl, pm, pn, po, pp, pq, pr, ps, pt, pu, pv )
+    types( 1, 1000000000000, 10000000000000000000000000, 1.0 )
+    types( al, ax, eax, rax, xmm0, ymm0, zmm0, es )
+    types( ma, mb, mc, md, me, mf, mg, mh, mi, mj, mk, ml, mm, mn, mo, mp, mq, mr, ms, mt, mu, mv, rc )
+    types( pa, pb, pc, pd, pe, pf, pg, ph, pi, pj, pk, pl, pm, pn, po, pp, pq, pr, ps, pt, pu, pv, prc )
     types( main, addr main )
 
-    cout << pb << pc
-    cout << "Ascii string" << ( L"Unicode string" )
     ret
 
 main endp

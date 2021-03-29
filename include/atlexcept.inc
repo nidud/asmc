@@ -14,7 +14,7 @@ endif
 
     m_hr HRESULT ?
 
-    .operator CAtlException :abs=<E_FAIL> {
+    .inline CAtlException :abs=<E_FAIL> {
         mov [this].CAtlException.m_hr,_1
         }
     .ENDS

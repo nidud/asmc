@@ -54,8 +54,8 @@ OpCls macro op1, op2, op3
 
 
 table label token
-include ../../asmc/src/h/directve.inc
-include ../../asmc/src/h/instruct.h
+include ../../../asmc/src/h/directve.inc
+include ../../../asmc/src/h/instruct.h
 
 TOKENCOUNT equ ($ - table) / sizeof(token)
 

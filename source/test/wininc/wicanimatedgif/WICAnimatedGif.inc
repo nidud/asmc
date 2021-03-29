@@ -74,7 +74,7 @@ DEFAULT_DPI equ 96.0    ;; Default DPI that maps image resolution directly to sc
     CalculateDrawRectangle proc :ptr D2D1_RECT_F
     WndProc proc :HWND, :UINT, :WPARAM, :LPARAM
 
-    .operator IsLastFrame {
+    .inline IsLastFrame {
 
         mov edx,1
         xor eax,eax
@@ -82,7 +82,7 @@ DEFAULT_DPI equ 96.0    ;; Default DPI that maps image resolution directly to sc
         cmovnz eax,edx
         }
 
-    .operator EndOfAnimation {
+    .inline EndOfAnimation {
 
         .if [this].DemoApp.IsLastFrame()
 

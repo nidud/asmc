@@ -85,18 +85,18 @@ CALLBACK(_ATL_DESCRIPTIONFUNC)
 .template _ATL_OBJMAP_ENTRY
 
     pclsid LPCLSID ?
-    pfnUpdateRegistry proc WINAPI local :BOOL
+    pfnUpdateRegistry proc local WINAPI :BOOL
     pfnGetClassObject _ATL_CREATORFUNC ?
     pfnCreateInstance _ATL_CREATORFUNC ?
     pCF LPUNKNOWN ?
     dwRegister DWORD ?
     pfnGetObjectDescription _ATL_DESCRIPTIONFUNC ?
 
-    .operator RevokeClassObject {
+    .inline RevokeClassObject {
 
 	CoRevokeClassObject([this]._ATL_OBJMAP_ENTRY.dwRegister)
 	}
-    .operator RegisterClassObject :DWORD, :DWORD {
+    .inline RegisterClassObject :DWORD, :DWORD {
 
        .new p:ptr IUnknown
 	mov p,NULL

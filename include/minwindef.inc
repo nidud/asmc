@@ -75,9 +75,9 @@ LRESULT typedef LONG_PTR
 ifndef NOMINMAX
 ifndef max
 max macro a, b
-%   exitm<typeid(max, a)typeid(?, b)(a, b)>
+%   exitm<typeid(max, a)typeid(b)(a, b)>
     endm
-max?i32?i32 macro a,b
+maxIMM32IMM32 macro a,b
     if (a) GT (b)
 	exitm<a>
     endif
@@ -86,9 +86,9 @@ max?i32?i32 macro a,b
 endif
 ifndef min
 min macro a, b
-%   exitm<typeid(min, a)typeid(?, b)(a, b)>
+%   exitm<typeid(min, a)typeid(b)(a, b)>
     endm
-min?i32?i32 macro a, b
+minIMM32IMMi32 macro a, b
     if (a) LT (b)
 	exitm<a>
     endif

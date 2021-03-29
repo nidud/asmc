@@ -506,9 +506,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
     .if [ebx+16].token == T_COMMA
         mov isid,1
         mov edx,[ebx].string_ptr
-        .if word ptr [edx] != '?'
-            strcpy( &id, edx )
-        .endif
+        strcpy( &id, edx )
         add ebx,32
     .endif
 
@@ -649,7 +647,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
             .endc .if void
 
             lea edx,name
-            GetResWName(eax, edx)
+            _strupr(GetResWName(eax, edx))
             .endc
         .endif
         mov void,1
@@ -671,46 +669,30 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
     .endsw
 
     .if void
-        strcpy( &name, "void" )
+        strcpy( &name, "VOID" )
+    .endif
+
+    mov edi,buffer
+    .if isid
+        add edi,strlen( strcpy( edi, &id ) )
     .endif
 
     .switch type
     .case Immediat
-        .if isid
-            LSPrintF( buffer, "%s?i%d", &id, size)
-        .else
-            LSPrintF( buffer, "imm_%d", size)
-        .endif
+        LSPrintF( edi, "IMM%d", size )
         .return 1
     .case Float
-        .if isid
-            LSPrintF( buffer, "%s?flt", &id)
-        .else
-            strcpy( buffer, "imm_float" )
-        .endif
+        strcpy( edi, "IMMFLT" )
         .return 1
     .case Register
-        .if isid
-            LSPrintF( buffer, "%s?r%d", &id, size)
-        .else
-            LSPrintF( buffer, "reg_%d", size)
-        .endif
+        LSPrintF( edi, "REG%d", size )
         .return 1
     .case Memory
-        .if isid
-            LSPrintF( buffer, "%s?%s", &id, &name )
-        .else
-            strcpy( buffer, "mem_" )
-            strcat( buffer, &name )
-        .endif
+         strcpy( edi, &name )
         .return 1
     .case Pointer
-        .if isid
-            LSPrintF( buffer, "%s?p%s", &id, &name )
-        .else
-            strcpy( buffer, "ptr_" )
-            strcat( buffer, &name )
-        .endif
+        strcpy( edi, "P" )
+        strcat( edi, &name )
         .return 1
     .endsw
     xor eax,eax

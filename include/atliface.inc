@@ -53,8 +53,8 @@ include oaidl.inc
 include ocidl.inc
 include oleacc.inc
 
-MIDL_user_allocate proto :size_t
-MIDL_user_free proto :ptr
+MIDL_user_allocate proto WINAPI :size_t
+MIDL_user_free proto WINAPI :ptr
 
 externdef CLSID_Registrar:CLSID
 

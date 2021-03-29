@@ -9,16 +9,16 @@
 
 .template X
     atom byte ?
-    .operator A :vararg { nop }
+    .inline A :vararg { nop }
     .ends
 
 .template Y : public X
-    .operator B :vararg { nop }
+    .inline B :vararg { nop }
     .ends
 
 .template T : public Y
-    .operator T :vararg {}
-    .operator C :vararg { nop }
+    .inline T :vararg {}
+    .inline C :vararg { nop }
     .ends
 
     .code

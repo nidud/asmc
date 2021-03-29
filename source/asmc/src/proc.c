@@ -1176,12 +1176,30 @@ int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPRO
     if ( tokenarray[i].token == T_ID && _stricmp( tokenarray[i].string_ptr, "USES" ) == 0 ) {
 	int cnt;
 	int j;
+	int index;
+	struct asym *sym;
 	if ( !IsPROC ) {/* not for PROTO! */
 	    asmerr(2008, tokenarray[i].string_ptr );
 	}
 	i++;
 	/* count register names which follow */
-	for ( cnt = 0, j = i; tokenarray[j].token == T_REG; j++, cnt++ );
+	for ( cnt = 0, j = i; ; j++, cnt++ ) {
+	    if ( tokenarray[j].token != T_REG ) {
+		/* the register may be a text macro here */
+		if ( tokenarray[j].token != T_ID )
+		    break;
+		if ( ( sym = SymSearch( tokenarray[j].string_ptr ) ) == NULL )
+		    break;
+		if ( sym->state != SYM_TMACRO )
+		    break;
+		index = FindResWord( sym->string_ptr, sym->name_size );
+		if ( SpecialTable[index].type != RWT_REG )
+		    break;
+		tokenarray[j].token = T_REG;
+		tokenarray[j].tokval = index;
+		tokenarray[j].string_ptr = sym->string_ptr;
+	    }
+	}
 
 	if ( cnt == 0 ) {
 	    asmerr(2008, tokenarray[i-1].tokpos );

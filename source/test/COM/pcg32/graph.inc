@@ -33,7 +33,7 @@ _G_SUSPENDED    equ 0x02
     bmi         BITMAPINFO <>
     winptr      PVOID ?
     palett      RGBQUAD 256 dup(<>)
-    object      LPOBJECT MAXOBJECTS dup(?)
+    object      ptr Object MAXOBJECTS dup(?)
 
     Graphics    proc
     Release     proc
@@ -52,5 +52,5 @@ _G_SUSPENDED    equ 0x02
 
     .ends
 
-externdef g:LPGRAPHICS
+externdef g:ptr Graphics
 

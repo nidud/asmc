@@ -15,12 +15,12 @@ maxElements equ TIME_RING_BUFFER_SIZE
     m_count     UINT ?
     m_elements  dq maxElements dup(?)
 
-    .operator RingBuffer {
+    .inline RingBuffer {
         mov [rcx].RingBuffer.m_start,0
         mov [rcx].RingBuffer.m_count,0
         }
 
-    .operator AddT :qword {
+    .inline AddT :qword {
 
         mov eax,[rcx].RingBuffer.m_start
         add eax,[rcx].RingBuffer.m_count
@@ -36,7 +36,7 @@ maxElements equ TIME_RING_BUFFER_SIZE
         .endif
         }
 
-    .operator GetFirst {
+    .inline GetFirst {
 
         .Assert(m_count > 0)
 
@@ -44,7 +44,7 @@ maxElements equ TIME_RING_BUFFER_SIZE
         mov rax,[rcx].RingBuffer.m_elements[rax*8]
         }
 
-    .operator GetLast {
+    .inline GetLast {
 
         .Assert(m_count > 0)
 
@@ -55,11 +55,11 @@ maxElements equ TIME_RING_BUFFER_SIZE
         mov rax,[rcx].RingBuffer.m_elements[rax*8]
         }
 
-    .operator GetCount {
+    .inline GetCount {
         mov eax,[rcx].RingBuffer.m_count
         }
 
-    .operator Reset {
+    .inline Reset {
         mov [rcx].RingBuffer.m_start,0
         mov [rcx].RingBuffer.m_count,0
         }

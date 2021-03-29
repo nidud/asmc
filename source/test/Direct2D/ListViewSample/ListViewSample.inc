@@ -104,7 +104,7 @@ msc_maxItemInfos equ msc_atlasHeight * msc_atlasWidth / (msc_iconSize * msc_icon
     previousPosition    FLOAT ?
     isDirectory         BOOL ?
 
-    .operator ItemInfo {
+    .inline ItemInfo {
         mov rdx,rdi
         xor eax,eax
         mov rdi,rcx

@@ -9,65 +9,65 @@
 
 .enum type_identifier {
 
-    imm_32,
-    imm_64,
-    imm_128,
-    imm_float,
+    T_IMM32,
+    T_IMM64,
+    T_IMM128,
+    T_IMMFLT,
 
-    reg_8,
-    reg_16,
-    reg_32,
-    reg_64,
-    reg_128,
-    reg_256,
-    reg_512,
+    T_REG8,
+    T_REG16,
+    T_REG32,
+    T_REG64,
+    T_REG128,
+    T_REG256,
+    T_REG512,
 
-    mem_byte,
-    mem_sbyte,
-    mem_word,
-    mem_sword,
-    mem_real2,
-    mem_dword,
-    mem_sdword,
-    mem_real4,
-    mem_fword,
-    mem_qword,
-    mem_sqword,
-    mem_real8,
-    mem_tbyte,
-    mem_real10,
-    mem_oword,
-    mem_real16,
-    mem_yword,
-    mem_zword,
-    mem_proc,
-    mem_near,
-    mem_far,
-    mem_ptr,
+    T_BYTE,
+    T_SBYTE,
+    T_WORD,
+    T_SWORD,
+    T_REAL2,
+    T_DWORD,
+    T_SDWORD,
+    T_REAL4,
+    T_FWORD,
+    T_QWORD,
+    T_SQWORD,
+    T_REAL8,
+    T_TBYTE,
+    T_REAL10,
+    T_OWORD,
+    T_REAL16,
+    T_YWORD,
+    T_ZWORD,
+    T_PROC,
+    T_NEAR,
+    T_FAR,
+    T_PTR,
 
-    ptr_byte,
-    ptr_sbyte,
-    ptr_word,
-    ptr_sword,
-    ptr_real2,
-    ptr_dword,
-    ptr_sdword,
-    ptr_real4,
-    ptr_fword,
-    ptr_qword,
-    ptr_sqword,
-    ptr_real8,
-    ptr_tbyte,
-    ptr_real10,
-    ptr_oword,
-    ptr_real16,
-    ptr_yword,
-    ptr_zword,
-    ptr_proc,
-    ptr_near,
-    ptr_far,
-    ptr_ptr,
-    ptr_void
+    T_PBYTE,
+    T_PSBYTE,
+    T_PWORD,
+    T_PSWORD,
+    T_PREAL2,
+    T_PDWORD,
+    T_PSDWORD,
+    T_PREAL4,
+    T_PFWORD,
+    T_PQWORD,
+    T_PSQWORD,
+    T_PREAL8,
+    T_PTBYTE,
+    T_PREAL10,
+    T_POWORD,
+    T_PREAL16,
+    T_PYWORD,
+    T_PZWORD,
+    T_PPROC,
+    T_PNEAR,
+    T_PFAR,
+    T_PPTR,
+    T_PVOID
     }
 
 .template s1
@@ -79,7 +79,7 @@
 
 types proto args:vararg {
     for arg,<args>
-        mov eax,typeid(arg)
+        mov eax,typeid(T_, arg)
         endm
         }
 
@@ -88,13 +88,13 @@ types proto args:vararg {
 
 .template ostream
 
-    .operator ostream?ps1 :ptr s1 {
+    .inline ostreamPs1 :ptr s1 {
         mov rax,[_1].s1.m1
         }
-    .operator ostream?psbyte :ptr sbyte {
+    .inline ostreamPSBYTE :ptr sbyte {
         mov rax,_1
         }
-    .operator ostream?pword :ptr word {
+    .inline ostreamPWORD :ptr word {
         mov rax,_1
         }
     .operator << :abs {

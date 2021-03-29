@@ -7,16 +7,8 @@ WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     local hdc:HDC
     local ps:PAINTSTRUCT
-    local points[4]:POINT
 
-    mov points[0x00].x,20
-    mov points[0x00].y,40
-    mov points[0x08].x,320
-    mov points[0x08].y,200
-    mov points[0x10].x,330
-    mov points[0x10].y,110
-    mov points[0x18].x,450
-    mov points[0x18].y,40
+    .new points[4]:POINT = { { 20, 40 }, { 320, 200 }, { 330, 110 }, { 450, 40 } }
 
     .switch message
     .case WM_PAINT

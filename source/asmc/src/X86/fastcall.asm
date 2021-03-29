@@ -306,8 +306,12 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
     .endif
 
     .if adr
-
-        AddLineQueueX( " lea %r, %s", ebx, paramvalue )
+        .if edx < 2
+            AddLineQueueX( " lea %r, %s", ebx, paramvalue )
+        .else
+            AddLineQueueX( " lea eax, %s", paramvalue )
+            AddLineQueueX( " push eax" )
+        .endif
     .else
 
         SizeFromMemtype([esi].asym.mem_type, USE_EMPTY, [esi].asym.type)

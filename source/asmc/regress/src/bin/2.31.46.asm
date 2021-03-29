@@ -8,7 +8,7 @@
     stack typedef ptr qword
 
 .template stack
-    .operator leave { mov rcx,this }
+    .inline leave { mov rcx,this }
     .ends
     .code
 
@@ -28,7 +28,7 @@ main proc
     ;
     ; skippes <?> as part of <name>
     ;
-%   ifidn <typeid(?, rax)typeid(?, rax)>,<?r64?r64>
+%   ifidn <typeid(rax)typeid(rax)>,<REG64REG64>
         mov eax,0
     else
         mov eax,-1

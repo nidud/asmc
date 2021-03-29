@@ -10,7 +10,7 @@ include graph.inc
 
     .code
 
-    assume rsi:LPGRAPHICS
+    assume rsi:ptr Graphics
 
 ThrdProc proc uses rsi rdi rbx
 

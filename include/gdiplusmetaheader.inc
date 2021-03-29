@@ -61,33 +61,33 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
     LogicalDpiX		SINT ?		; Logical Dpi of reference Hdc
     LogicalDpiY		SINT ?		; usually valid only for EMF+
 
-    .operator GetType {
+    .inline GetType {
 	mov	eax,[this].MetafileHeader.Type
 	}
-    .operator GetMetafileSize {
+    .inline GetMetafileSize {
 	mov	eax,[this].MetafileHeader.Size
 	}
 
     ;; If IsEmfPlus, this is the EMF+ version; else it is the WMF or EMF ver
 
-    .operator GetVersion {
+    .inline GetVersion {
 	mov	eax,[this].MetafileHeader.Version
 	}
 
     ;; Get the EMF+ flags associated with the metafile
 
-    .operator GetEmfPlusFlags {
+    .inline GetEmfPlusFlags {
 	mov	eax,[this].MetafileHeader.EmfPlusFlags
 	}
 
-    .operator GetDpiX {
+    .inline GetDpiX {
 	movss	xmm0,[this].MetafileHeader.DpiX
 	}
-    .operator GetDpiY {
+    .inline GetDpiY {
 	movss	xmm0,[this].MetafileHeader.DpiY
 	}
 
-    .operator GetBounds :ptr Rect {
+    .inline GetBounds :ptr Rect {
 	mov	[_1].Rect.X,[this].MetafileHeader.X
 	mov	[_1].Rect.Y,[this].MetafileHeader.Y
 	mov	[_1].Rect.Width,[this].MetafileHeader.Width
@@ -96,7 +96,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is it any type of WMF (standard or Placeable Metafile)?
 
-    .operator IsWmf {
+    .inline IsWmf {
 	xor eax,eax
 	mov edx,[this].MetafileHeader.Type
 	.if ( ( edx == MetafileTypeWmf ) || ( edx == MetafileTypeWmfPlaceable ) )
@@ -106,7 +106,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an Placeable Metafile?
 
-    .operator IsWmfPlaceable {
+    .inline IsWmfPlaceable {
 	xor eax,eax
 	mov edx,[this].MetafileHeader.Type
 	.if edx == MetafileTypeWmfPlaceable
@@ -116,7 +116,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an EMF (not an EMF+)?
 
-    .operator IsEmf {
+    .inline IsEmf {
 	xor eax,eax
 	mov edx,[this].MetafileHeader.Type
 	.if edx == MetafileTypeEmf
@@ -126,7 +126,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an EMF or EMF+ file?
 
-    .operator IsEmfOrEmfPlus {
+    .inline IsEmfOrEmfPlus {
 	xor eax,eax
 	.if [this].MetafileHeader.Type >= MetafileTypeEmf
 	    inc eax
@@ -135,7 +135,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an EMF+ file?
 
-    .operator IsEmfPlus {
+    .inline IsEmfPlus {
 	xor eax,eax
 	.if [this].MetafileHeader.Type >= MetafileTypeEmfPlusOnly
 	    inc eax
@@ -144,7 +144,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an EMF+ dual (has dual, down-level records) file?
 
-    .operator IsEmfPlusDual {
+    .inline IsEmfPlusDual {
 	xor eax,eax
 	.if [this].MetafileHeader.Type == MetafileTypeEmfPlusDual
 	    inc eax
@@ -153,7 +153,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Is this an EMF+ only (no dual records) file?
 
-    .operator IsEmfPlusOnly {
+    .inline IsEmfPlusOnly {
 	xor eax,eax
 	.if [this].MetafileHeader.Type == MetafileTypeEmfPlusOnly
 	    inc eax
@@ -162,7 +162,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; If it's an EMF+ file, was it recorded against a display Hdc?
 
-    .operator IsDisplay {
+    .inline IsDisplay {
 	xor eax,eax
 	.if [this].MetafileHeader.Type >= MetafileTypeEmfPlusOnly && \
 	    [this].MetafileHeader.EmfPlusFlags & GDIP_EMFPLUSFLAGS_DISPLAY
@@ -172,7 +172,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Get the WMF header of the metafile (if it is a WMF)
 
-    .operator GetWmfHeader {
+    .inline GetWmfHeader {
 	xor eax,eax
 	mov edx,[this].MetafileHeader.Type
 	.if edx == MetafileTypeWmf || edx == MetafileTypeWmfPlaceable
@@ -182,7 +182,7 @@ GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 
     ;; Get the EMF header of the metafile (if it is an EMF)
 
-    .operator GetEmfHeader {
+    .inline GetEmfHeader {
 	xor eax,eax
 	.if [this].MetafileHeader.Type >= MetafileTypeEmf
 	    lea rax,[this].MetafileHeader.EmfHeader

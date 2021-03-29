@@ -13,7 +13,7 @@ include stdlib.inc
 
 .template ostream
 
-    .operator ostream?dword :dword {
+    .inline ostreamDWORD :dword {
 
         .new convbuf[64]:char_t
 
@@ -21,7 +21,7 @@ include stdlib.inc
         _cputs( &convbuf )
         }
 
-    .operator ostream?qword :qword {
+    .inline ostreamQWORD :qword {
 
         .new convbuf[64]:char_t
 
@@ -29,7 +29,7 @@ include stdlib.inc
         _cputs( &convbuf )
         }
 
-    .operator ostream?sdword :sdword {
+    .inline ostreamSDWORD :sdword {
 
         .new convbuf[64]:char_t
 
@@ -37,7 +37,7 @@ include stdlib.inc
         _cputs( &convbuf )
         }
 
-    .operator ostream?sqword :sqword {
+    .inline ostreamSQWORD :sqword {
 
         .new convbuf[64]:char_t
 
@@ -45,30 +45,30 @@ include stdlib.inc
         _cputs( &convbuf )
         }
 
-    .operator ostream?sbyte :sbyte {
+    .inline ostreamSBYTE :sbyte {
         movsx   ecx,_1
-        ostream::ostream?sdword(ecx)
+        ostream::ostreamSDWORD(ecx)
         }
-    .operator ostream?sword :sword {
+    .inline ostreamSWORD :sword {
         movsx   ecx,_1
-        ostream::ostream?sdword(ecx)
+        ostream::ostreamSDWORD(ecx)
         }
-    .operator ostream?byte :byte {
+    .inline ostreamBYTE :byte {
         movzx   ecx,_1
-        ostream::ostream?dword(ecx)
+        ostream::ostreamDWORD(ecx)
         }
-    .operator ostream?word :word {
+    .inline ostreamWORD :word {
         movzx   ecx,_1
-        ostream::ostream?dword(ecx)
+        ostream::ostreamDWORD(ecx)
         }
 
-    .operator ostream?r8  :abs { ostream::ostream?byte(_1) }
-    .operator ostream?r16 :abs { ostream::ostream?word(_1) }
-    .operator ostream?r32 :abs { ostream::ostream?dword(_1) }
-    .operator ostream?r64 :abs { ostream::ostream?qword(_1) }
+    .inline ostreamREG8  :abs { ostream::ostreamBYTE(_1) }
+    .inline ostreamREG16 :abs { ostream::ostreamWORD(_1) }
+    .inline ostreamREG32 :abs { ostream::ostreamDWORD(_1) }
+    .inline ostreamREG64 :abs { ostream::ostreamQWORD(_1) }
 
-    .operator ostream?psbyte :abs { _cputs(_1) }
-    .operator ostream?pword :abs { _cputws(_1) }
+    .inline ostreamPSBYTE :abs { _cputs(_1) }
+    .inline ostreamPWORD :abs { _cputws(_1) }
 
     .operator << :abs {
         cout typeid(ostream, _1)(_1)

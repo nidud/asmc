@@ -252,14 +252,14 @@ ifdef __cplusplus
 
     .template __crt_internal_free_policy
 
-        .operator throw :ptr {
+        .inline throw :ptr {
             _free_crt(_1)
             }
         .ends
 
     .template __crt_public_free_policy
 
-        .operator throw :ptr {
+        .inline throw :ptr {
             free(_1)
             }
         .ends
@@ -268,58 +268,58 @@ ifdef __cplusplus
 
         _p ptr_t ?
 
-        .operator __crt_unique_heap_ptr :abs=<NULL>, :vararg {
+        .inline __crt_unique_heap_ptr :abs=<NULL>, :vararg {
             this.typeid(__crt_unique_heap_ptr, _1)(_1)
             }
-        .operator __crt_unique_heap_ptr?i32 :abs, :vararg {
+        .inline __crt_unique_heap_ptrIMM32 :abs, :vararg {
             mov this._p,_1
             }
-        .operator __crt_unique_heap_ptr?p__crt_unique_heap_ptr :ptr __crt_unique_heap_ptr, :vararg {
+        .inline __crt_unique_heap_ptrP__crt_unique_heap_ptr :ptr __crt_unique_heap_ptr, :vararg {
             mov this._p,[_1].__crt_unique_heap_ptr._p
             mov [_1].__crt_unique_heap_ptr._p,NULL
             }
 
-        .operator Free :ptr, :vararg {
+        .inline Free :ptr, :vararg {
             this.throw(_1)
             }
 
-        .operator detach :vararg {
+        .inline detach :vararg {
             mov rax,this._p
             mov this._p,NULL
             }
 
-        .operator attach :ptr, :vararg {
+        .inline attach :ptr, :vararg {
             mov rax,this._p
             mov this._p,rdx
             this.Free(rax)
             }
 
-        .operator release :vararg {
+        .inline release :vararg {
             mov rax,this._p
             mov this._p,NULL
             this.Free(rax)
             }
 
-        .operator is_valid :vararg {
+        .inline is_valid :vararg {
             xor eax,eax
             mov edx,1
             cmp rax,this._p
             cmovne eax,edx
             }
 
-        .operator bool :vararg {
+        .inline bool :vararg {
             this.is_valid()
             }
 
-        .operator get :vararg {
+        .inline get :vararg {
             mov rax,this._p
             }
 
-        .operator get_address_of :vararg {
+        .inline get_address_of :vararg {
             lea rax,this._p
             }
 
-        .operator release_and_get_address_of :vararg {
+        .inline release_and_get_address_of :vararg {
 
             this.release()
             lea rax,this._p
@@ -332,7 +332,7 @@ ifdef __cplusplus
 
         _p ptr_t ?
 
-        .operator __crt_scoped_stack_ptr_tag :ptr {
+        .inline __crt_scoped_stack_ptr_tag :ptr {
             mov this._p,_1
             }
         .ends
@@ -342,19 +342,19 @@ ifdef __cplusplus
 
         _p ptr_t ?
 
-        .operator __crt_scoped_stack_ptr :ptr, :vararg {
+        .inline __crt_scoped_stack_ptr :ptr, :vararg {
             mov this._p,_1
             }
 
-        .operator Release :vararg {
+        .inline Release :vararg {
             _freea_crt([this].__crt_scoped_stack_ptr._p)
             }
 
-        .operator get {
+        .inline get {
             mov rax,[this].__crt_scoped_stack_ptr._p
             }
 
-        .operator bool {
+        .inline bool {
             xor eax,eax
             mov edx,1
             cmp rax,this._p
@@ -406,7 +406,7 @@ ifdef __cplusplus
         }
 
     .template __crt_fast_encoded_nullptr_t
-        .operator throw {
+        .inline throw {
             __crt_fast_encode_pointer(0)
             }
         .ends

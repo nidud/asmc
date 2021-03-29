@@ -344,12 +344,8 @@ DemoApp::OnRender proc uses rsi rdi rbx ps:PAINTSTRUCT
         p.SetTransform(&m)
         p.Clear(&c)
 
-       .new e:D2D1_ELLIPSE
+       .new e:D2D1_ELLIPSE = { { 150.0, 150.0 }, 100.0, 100.0 }
 
-        mov e.point.x,150.0
-        mov e.point.y,150.0
-        mov e.radiusX,100.0
-        mov e.radiusY,100.0
         mov rdi,[rsi].m_pBlackBrush
 
         p.DrawEllipse(&e, rdi, 3.0, NULL)

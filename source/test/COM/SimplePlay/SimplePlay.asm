@@ -55,7 +55,7 @@ include Shlwapi.inc
 
     m_cRef LONG ? ;; Reference count
 
-    .operator MediaPlayerCallback {
+    .inline MediaPlayerCallback {
 
         .if HeapAlloc(GetProcessHeap(), 0, MediaPlayerCallback + MediaPlayerCallbackVtbl)
 

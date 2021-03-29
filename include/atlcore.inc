@@ -78,19 +78,19 @@ endif
 
     m_sec CRITICAL_SECTION <>
 
-    .operator CComCriticalSection {
+    .inline CComCriticalSection {
         memset(this, 0, sizeof(CRITICAL_SECTION))
         }
 
-    .operator _Acquires_lock_ {
+    .inline _Acquires_lock_ {
         EnterCriticalSection(this)
         mov eax,S_OK
         }
-    .operator _Releases_lock_ {
+    .inline _Releases_lock_ {
         LeaveCriticalSection(&m_sec)
         mov eax,S_OK
         }
-    .operator Init {
+    .inline Init {
        .new This:HRESULT
        .new hr:HRESULT
         mov hr,S_OK
@@ -102,7 +102,7 @@ endif
         mov eax,hr
         mov this,This
         }
-    .operator Term {
+    .inline Term {
         DeleteCriticalSection(this)
         mov eax,S_OK
         }
@@ -111,13 +111,13 @@ endif
 
 .template CComAutoCriticalSection : public CComCriticalSection
 
-    .operator CComAutoCriticalSection {
+    .inline CComAutoCriticalSection {
         CComCriticalSection::Init(this)
         .if (FAILED(eax))
             AtlThrow(eax)
         .endif
         }
-    .operator Release {
+    .inline Release {
         CComCriticalSection::Term(this)
         }
     .ENDS
@@ -126,32 +126,32 @@ endif
 
     m_bInitialized BOOL ?
 
-    .operator CComSafeDeleteCriticalSection {
+    .inline CComSafeDeleteCriticalSection {
         mov [rcx].CComSafeDeleteCriticalSection.m_bInitialized,FALSE
         }
 
-    .operator Release {
+    .inline Release {
         .if ([rcx].CComSafeDeleteCriticalSection.m_bInitialized)
             mov [rcx].CComSafeDeleteCriticalSection.m_bInitialized,FALSE
             CComCriticalSection::Term(rcx)
         .endif
         }
 
-    .operator Init {
+    .inline Init {
         CComCriticalSection::Init(this)
         .if (SUCCEEDED(eax))
             mov [this].CComSafeDeleteCriticalSection.m_bInitialized,TRUE
         .endif
         }
 
-    .operator Term {
+    .inline Term {
         .if [this].CComSafeDeleteCriticalSection.m_bInitialized
             mov [this].CComSafeDeleteCriticalSection.m_bInitialized,FALSE
             CComCriticalSection::Term(this)
         .endif
         }
 
-    .operator _Acquires_lock_ {
+    .inline _Acquires_lock_ {
         CComCriticalSection::_Lock(this)
         }
     .ENDS
@@ -162,16 +162,16 @@ endif
     .ENDS
 
 .class CComFakeCriticalSection
-    .operator _Lock {
+    .inline _Lock {
         mov eax,S_OK
         }
-    .operator Unlock {
+    .inline Unlock {
         mov eax,S_OK
         }
-    .operator Init {
+    .inline Init {
         mov eax,S_OK
         }
-    .operator Term {
+    .inline Term {
         mov eax,S_OK
         }
     .ENDS
@@ -194,13 +194,13 @@ _ATL_BASE_MODULE        typedef _ATL_BASE_MODULE70
     CAtlBaseModule proc
     Release proc
 
-    .operator GetModuleInstance {
+    .inline GetModuleInstance {
         mov rax,m_hInst
         }
-    .operator GetResourceInstance {
+    .inline GetResourceInstance {
         mov rax,m_hInstResource
         }
-    .operator SetResourceInstance :HINSTANCE {
+    .inline SetResourceInstance :HINSTANCE {
         InterlockedExchangePointer(&m_hInstResource, _1)
         }
 

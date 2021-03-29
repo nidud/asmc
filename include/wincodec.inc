@@ -221,7 +221,7 @@ WICColor		typedef UINT32
     Y	   int_t ?
     Width  int_t ?
     Height int_t ?
-    .operator WICRect :abs, :abs, :abs, :abs, :vararg {
+    .inline WICRect :abs, :abs, :abs, :abs, :vararg {
 	mov this.X,_1
 	mov this.Y,_2
 	mov this.Width,_3

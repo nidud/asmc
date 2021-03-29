@@ -9,7 +9,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     ;; Default constructor is set to identity matrix.
 
-    .operator Matrix :abs, :vararg {
+    .inline Matrix :abs, :vararg {
         mov this.nativeMatrix,NULL
         ifb <_1>
             GdipCreateMatrix(addr this.nativeMatrix)
@@ -19,25 +19,25 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov this.lastResult,eax
         }
 
-    .operator Matrix?flt :vararg {
+    .inline MatrixIMMFLT :vararg {
         GdipCreateMatrix2(_1, addr this.nativeMatrix)
         }
-    .operator Matrix?pRectF :ptr RectF, :ptr PointF, :vararg {
+    .inline MatrixPRectF :ptr RectF, :ptr PointF, :vararg {
         mov rcx,rdx
         mov rdx,r8
         GdipCreateMatrix3(rcx, rdx, addr this.nativeMatrix)
         }
-    .operator Matrix?pRect :ptr Rect, :ptr Point, :vararg {
+    .inline MatrixPRect :ptr Rect, :ptr Point, :vararg {
         mov rcx,rdx
         mov rdx,r8
         GdipCreateMatrix3I(rcx, rdx, addr this.nativeMatrix)
         }
 
-    .operator Release {
+    .inline Release {
         GdipDeleteMatrix([this].Matrix.nativeMatrix)
         }
 
-    .operator Clone :vararg {
+    .inline Clone :vararg {
 
         .new clone:Matrix
 
@@ -46,16 +46,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         lea rax,clone
         }
 
-    .operator GetElements :abs, :vararg {
+    .inline GetElements :abs, :vararg {
         GdipGetMatrixElements(this.nativeMatrix, _1)
         this.SetStatus()
         }
-    .operator SetElements :vararg {
+    .inline SetElements :vararg {
         GdipSetMatrixElements(this.nativeMatrix, _1)
         this.SetStatus()
         }
 
-    .operator OffsetX :vararg {
+    .inline OffsetX :vararg {
 
         .new elements[6]:REAL
 
@@ -66,7 +66,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .endif
         }
 
-    .operator OffsetY :vararg {
+    .inline OffsetY :vararg {
 
         .new elements[6]:REAL
 
@@ -77,29 +77,29 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .endif
         }
 
-    .operator Reset :vararg {
+    .inline Reset :vararg {
         ;; set identity matrix elements
         GdipSetMatrixElements(this.nativeMatrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
         this.SetStatus()
         }
-    .operator Multiply :ptr Matrix, :abs, :vararg {
+    .inline Multiply :ptr Matrix, :abs, :vararg {
         GdipMultiplyMatrix(this.nativeMatrix, [rdx].Matrix.nativeMatrix, _2)
         this.SetStatus()
         }
-    .operator Translate :vararg {
+    .inline Translate :vararg {
         GdipTranslateMatrix(this.nativeMatrix, _1)
         this.SetStatus()
         }
-    .operator Scale :vararg {
+    .inline Scale :vararg {
         GdipScaleMatrix(this.nativeMatrix, _1)
         this.SetStatus()
         }
-    .operator Rotate :vararg {
+    .inline Rotate :vararg {
         GdipRotateMatrix(this.nativeMatrix, _1)
         this.SetStatus()
         }
 
-    .operator RotateAt :REAL, :ptr PointF, :MatrixOrder, :vararg {
+    .inline RotateAt :REAL, :ptr PointF, :MatrixOrder, :vararg {
 
         .new order:MatrixOrder
         .new angle:REAL
@@ -140,70 +140,70 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         this.SetStatus()
         }
 
-    .operator Shear :vararg {
+    .inline Shear :vararg {
         GdipShearMatrix(this.nativeMatrix, _1)
         this.SetStatus()
         }
-    .operator Invert :vararg {
+    .inline Invert :vararg {
         GdipInvertMatrix(this.nativeMatrix)
         this.SetStatus()
         }
 
     ;; float version
 
-    .operator TransformPoints :abs, :vararg {
+    .inline TransformPoints :abs, :vararg {
         this.typeid(TransformPoints, _1)(_1, _2)
         this.SetStatus()
         }
-    .operator TransformPoints?pPointF :vararg {
+    .inline TransformPointsPPointF :vararg {
         GdipTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .operator TransformPoints?pPoint :vararg {
+    .inline TransformPointsPPoint :vararg {
         GdipTransformMatrixPointsI(this.nativeMatrix, _1)
         }
 
-    .operator TransformVectors :abs, :vararg {
+    .inline TransformVectors :abs, :vararg {
         this.typeid(TransformVectors, _1)(_1, _2)
         this.SetStatus()
         }
-    .operator TransformVectors?pPointF :vararg {
+    .inline TransformVectorsPPointF :vararg {
         GdipVectorTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .operator TransformVectors?pPoint :vararg {
+    .inline TransformVectorsPPoint :vararg {
         GdipVectorTransformMatrixPointsI(this.nativeMatrix, _1)
         }
 
-    .operator IsInvertible :vararg {
+    .inline IsInvertible :vararg {
         mov this.scratch,FALSE
         GdipIsMatrixInvertible(this.nativeMatrix, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator IsIdentity :vararg {
+    .inline IsIdentity :vararg {
         mov this.scratch,FALSE
         GdipIsMatrixIdentity(this.nativeMatrix, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator Equals :ptr Matrix, :vararg {
+    .inline Equals :ptr Matrix, :vararg {
         mov this.scratch,FALSE
         GdipIsMatrixEqual(this.nativeMatrix, [rcx].Matrix.nativeMatrix, addr this.scratch)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .operator GetLastStatus {
+    .inline GetLastStatus {
         mov eax,[this].Matrix.lastResult
         mov [this].Matrix.lastResult,Ok
         }
 
-    .operator SetNativeMatrix :ptr Matrix {
+    .inline SetNativeMatrix :ptr Matrix {
         mov [this].Matrix.nativeMatrix,_1
         }
 
-    .operator SetStatus :vararg {
+    .inline SetStatus :vararg {
         ifnb <_1>
          ifdif <_1>,<eax>
             mov eax,_1

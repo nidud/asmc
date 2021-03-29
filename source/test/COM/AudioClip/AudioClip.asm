@@ -24,12 +24,10 @@ include tchar.inc
 option dllimport:none
 
 
-SafeRelease proto :ptr, :abs {
-
-    mov rax,[_1]
-    .if rax
-        mov qword ptr [_1],NULL
-        [rax]._2.Release()
+SafeRelease proto T:abs {
+    .if T
+        T.Release()
+        mov T,NULL
     .endif
     }
 
@@ -42,14 +40,14 @@ FixUpChunkSizes             proto :HANDLE, :DWORD, :DWORD
 WriteToFile                 proto :HANDLE, :ptr, :DWORD
 
 .data
-
+ifdef __PE__
 MF_MT_AUDIO_BLOCK_ALIGNMENT IID _MF_MT_AUDIO_BLOCK_ALIGNMENT
 MF_MT_AUDIO_AVG_BYTES_PER_SECOND IID _MF_MT_AUDIO_AVG_BYTES_PER_SECOND
 MFMediaType_Audio           IID _MFMediaType_Audio
 MF_MT_MAJOR_TYPE            IID _MF_MT_MAJOR_TYPE
 MFAudioFormat_PCM           IID _MFAudioFormat_PCM
 MF_MT_SUBTYPE               IID _MF_MT_SUBTYPE
-
+endif
 .code
 
 wmain proc argc:int_t, argv:ptr ptr wchar_t
@@ -72,13 +70,8 @@ wmain proc argc:int_t, argv:ptr ptr wchar_t
 
     MAX_AUDIO_DURATION_MSEC equ 5000 ;; 5 seconds
 
-    mov hr,S_OK
-
-   .new pReader:ptr IMFSourceReader
-   .new hFile:HANDLE
-
-    mov pReader,NULL
-    mov hFile,INVALID_HANDLE_VALUE
+   .new pReader:ptr IMFSourceReader = NULL
+   .new hFile:HANDLE = INVALID_HANDLE_VALUE
 
     ;; Initialize the COM library.
     mov hr,CoInitializeEx(NULL, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE)
@@ -142,7 +135,7 @@ wmain proc argc:int_t, argv:ptr ptr wchar_t
         CloseHandle(hFile)
     .endif
 
-    SafeRelease(&pReader, IMFSourceReader)
+    SafeRelease(pReader)
     MFShutdown()
     CoUninitialize()
     mov eax,1
@@ -162,24 +155,15 @@ wmain endp
 ;;-------------------------------------------------------------------
 
 WriteWaveFile proc \
-    pReader:ptr IMFSourceReader,   ;; Pointer to the source reader.
-    hFile:HANDLE,               ;; Handle to the output file.
-    msecAudioData:LONG          ;; Maximum amount of audio data to write, in msec.
+    pReader:ptr IMFSourceReader,    ;; Pointer to the source reader.
+    hFile:HANDLE,                   ;; Handle to the output file.
+    msecAudioData:LONG              ;; Maximum amount of audio data to write, in msec.
 
-  local hr:HRESULT
-  local cbHeader:DWORD
-  local cbAudioData:DWORD
-  local cbMaxAudioData:DWORD
-  local pAudioType:ptr IMFMediaType
-
-    xor eax,eax
-    mov hr,eax
-
-    mov cbHeader,eax        ;; Size of the WAVE file header, in bytes.
-    mov cbAudioData,eax     ;; Total bytes of PCM audio data written to the file.
-    mov cbMaxAudioData,eax
-
-    mov pAudioType,rax      ;; Represents the PCM audio format.
+  .new hr:HRESULT = S_OK
+  .new cbHeader:DWORD = 0           ;; Size of the WAVE file header, in bytes.
+  .new cbAudioData:DWORD = 0        ;; Total bytes of PCM audio data written to the file.
+  .new cbMaxAudioData:DWORD = 0
+  .new pAudioType:ptr IMFMediaType = NULL   ;; Represents the PCM audio format.
 
     ;; Configure the source reader to get uncompressed PCM audio from the source file.
 
@@ -206,7 +190,7 @@ WriteWaveFile proc \
         mov hr,FixUpChunkSizes(hFile, cbHeader, cbAudioData)
     .endif
 
-    SafeRelease(&pAudioType, IMFMediaType)
+    SafeRelease(pAudioType)
     .return hr
 
 WriteWaveFile endp
@@ -221,16 +205,13 @@ WriteWaveFile endp
 
 CalculateMaxAudioDataSize proc \
     pAudioType:ptr IMFMediaType,    ;; The PCM audio format.
-    cbHeader:DWORD,              ;; The size of the WAVE file header.
-    msecAudioData:DWORD          ;; Maximum duration, in milliseconds.
+    cbHeader:DWORD,                 ;; The size of the WAVE file header.
+    msecAudioData:DWORD             ;; Maximum duration, in milliseconds.
 
-  local cbBlockSize:UINT32
-  local cbBytesPerSecond:UINT32
-  local cbAudioClipSize:DWORD
-  local cbMaxSize:DWORD
-
-    mov cbBlockSize,0         ;; Audio frame size, in bytes.
-    mov cbBytesPerSecond,0    ;; Bytes per second.
+  .new cbBlockSize:UINT32 = 0       ;; Audio frame size, in bytes.
+  .new cbBytesPerSecond:UINT32 = 0  ;; Bytes per second.
+  .new cbAudioClipSize:DWORD
+  .new cbMaxSize:DWORD
 
     ;; Get the audio block size and number of bytes/second from the audio format.
 
@@ -241,7 +222,7 @@ CalculateMaxAudioDataSize proc \
     ;; This value equals (duration in seconds x bytes/second), but cannot
     ;; exceed the maximum size of the data chunk in the WAVE file.
 
-        ;; Size of the desired audio clip in bytes:
+    ;; Size of the desired audio clip in bytes:
     mov cbAudioClipSize,MulDiv(cbBytesPerSecond, msecAudioData, 1000)
 
     ;; Largest possible size of the data chunk:
@@ -258,9 +239,7 @@ CalculateMaxAudioDataSize proc \
     xor edx,edx
     div cbBlockSize
     mul cbBlockSize
-    mov cbAudioClipSize,eax
-
-    .return cbAudioClipSize
+    ret
 
 CalculateMaxAudioDataSize endp
 
@@ -279,11 +258,8 @@ ConfigureAudioStream proc \
 
   local hr:HRESULT
 
-  local pUncompressedAudioType:ptr IMFMediaType
-  local pPartialType:ptr IMFMediaType
-
-    mov pUncompressedAudioType,NULL
-    mov pPartialType,NULL
+  .new pUncompressedAudioType:ptr IMFMediaType = NULL
+  .new pPartialType:ptr IMFMediaType = NULL
 
     ;; Create a partial media type that specifies uncompressed PCM audio.
 
@@ -337,8 +313,8 @@ ConfigureAudioStream proc \
         [rcx].IMFMediaType.AddRef()
     .endif
 
-    SafeRelease(&pUncompressedAudioType, IMFMediaType)
-    SafeRelease(&pPartialType, IMFMediaType)
+    SafeRelease(pUncompressedAudioType)
+    SafeRelease(pPartialType)
     .return hr
 
 ConfigureAudioStream endp
@@ -380,18 +356,18 @@ WriteWaveHeader proc \
 
     .if (SUCCEEDED(hr))
 
-       .new header[5]:DWORD
-            ;; RIFF header
-        mov header[0],FCC('RIFF')
-        mov header[4],0
-        mov header[8],FCC('WAVE')
-            ;; Start of 'fmt ' chunk
-        mov header[12],FCC('fmt ')
-        mov header[16],cbFormat
+       .new header[5]:DWORD = {
+            FCC('RIFF'), ;; RIFF header
+            0,
+            FCC('WAVE'),
+            FCC('fmt '), ;; Start of 'fmt ' chunk
+            cbFormat
+            }
 
-       .new dataHeader[2]:DWORD
-        mov dataHeader[0],FCC('data')
-        mov dataHeader[4],0
+       .new dataHeader[2]:DWORD = {
+            FCC('data'),
+            0
+            }
 
         mov hr,WriteToFile(hFile, &header, sizeof(header))
 
@@ -525,8 +501,8 @@ WriteWaveData proc \
             .break
         .endif
 
-        SafeRelease(&pSample, IMFSample)
-        SafeRelease(&pBuffer, IMFMediaBuffer)
+        SafeRelease(pSample)
+        SafeRelease(pBuffer)
     .endw
 
     .if (SUCCEEDED(hr))
@@ -543,8 +519,8 @@ WriteWaveData proc \
         pBuffer.Unlock()
     .endif
 
-    SafeRelease(&pBuffer, IMFMediaBuffer)
-    SafeRelease(&pSample, IMFSample)
+    SafeRelease(pBuffer)
+    SafeRelease(pSample)
     .return hr
 
 WriteWaveData endp
@@ -628,11 +604,8 @@ FixUpChunkSizes endp
 
 WriteToFile proc hFile:HANDLE , p:ptr, cb:DWORD
 
-  local cbWritten:DWORD
-  local hr:HRESULT
-
-    mov hr,S_OK
-    mov cbWritten,0
+  .new cbWritten:DWORD = 0
+  .new hr:HRESULT = S_OK
 
     .ifd !WriteFile(hFile, p, cb, &cbWritten, NULL)
 

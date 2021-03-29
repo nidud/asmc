@@ -1,7 +1,8 @@
 include stdlib.inc
 
-option dllimport:<extern>
-DllProc proto
+.pragma comment(lib, extern)
+
+DllProc proto WINAPI
 
     .code
 

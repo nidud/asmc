@@ -18,9 +18,8 @@
 
 .template template1
     atom        db ?
-    .operator template1 :ptr {
+    .inline template1 :ptr {
         nop
-        exitm<>
         }
     .ends
 
@@ -31,9 +30,8 @@
 
 .comdef comdef1
     atom        db ?
-    .operator comdef1 :ptr {
+    .inline comdef1 :ptr {
         nop
-        exitm<>
         }
     .ends
 
@@ -44,9 +42,8 @@
 
 .class class1
     atom        db ?
-    .operator class1 :ptr {
+    .inline class1 :ptr {
         nop
-        exitm<>
         }
     .ends
 

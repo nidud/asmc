@@ -111,21 +111,9 @@ MakeTextLayout proc ppTextLayout:ptr ptr IDWriteTextLayout
     .endif
 
     ;; cleanup resources
-    .if (pResultLayout)
-
-        pResultLayout.Release()
-        mov pResultLayout,NULL
-    .endif
-    .if (pTextFormat)
-
-        pTextFormat.Release()
-        mov pTextFormat,NULL
-    .endif
-    .if (pDWriteFactory)
-
-        pDWriteFactory.Release()
-        mov pDWriteFactory,NULL
-    .endif
+    SafeRelease(pResultLayout)
+    SafeRelease(pTextFormat)
+    SafeRelease(pDWriteFactory)
 
     .return hr
 
@@ -135,31 +123,24 @@ MakeTextLayout endp
 ;; This method saves XPS OM canvas to one page XPS file on Desktop.
 ;;
 
-SaveCanvasToXpsViaPackage proc uses rdi \
+SaveCanvasToXpsViaPackage proc \
     xpsFactory:ptr IXpsOMObjectFactory,
     canvas:ptr IXpsOMCanvas
 
-
-    local hr                : HRESULT
-
-    local xpsPackage        : ptr IXpsOMPackage
-    local xpsFDS            : ptr IXpsOMDocumentSequence
-    local fixedDocuments    : ptr IXpsOMDocumentCollection
-    local xpsFD             : ptr IXpsOMDocument
-    local pageRefs          : ptr IXpsOMPageReferenceCollection
-    local xpsPageRef        : ptr IXpsOMPageReference
-    local xpsPage           : ptr IXpsOMPage
-    local opcPartUri        : ptr IOpcPartUri
-    local pageVisuals       : ptr IXpsOMVisualCollection
-    local pageSize          : XPS_SIZE
-    local szDesktopPath[MAX_PATH]:WCHAR
-
-    lea rdi,szDesktopPath
     xor eax,eax
-    mov ecx,@ReservedStack
-    rep stosb
-    mov pageSize.width,400.0
-    mov pageSize.height,600.0
+    .new hr                : HRESULT = eax
+    .new xpsPackage        : ptr IXpsOMPackage = rax
+    .new xpsFDS            : ptr IXpsOMDocumentSequence = rax
+    .new fixedDocuments    : ptr IXpsOMDocumentCollection = rax
+    .new xpsFD             : ptr IXpsOMDocument = rax
+    .new pageRefs          : ptr IXpsOMPageReferenceCollection = rax
+    .new xpsPageRef        : ptr IXpsOMPageReference = rax
+    .new xpsPage           : ptr IXpsOMPage = rax
+    .new opcPartUri        : ptr IOpcPartUri = rax
+    .new pageVisuals       : ptr IXpsOMVisualCollection = rax
+    .new pageSize          : XPS_SIZE = { 400.0, 600.0 }
+    .new szDesktopPath[MAX_PATH]:WCHAR = 0
+
 
     ;; Create trunk elements of XPS object model
     mov hr,xpsFactory.CreatePackage( &xpsPackage )
@@ -273,51 +254,15 @@ endif
     .endif
 
     ;; release resources
-    .if (xpsPackage)
-
-        xpsPackage.Release()
-        mov xpsPackage,NULL
-    .endif
-    .if (xpsFDS)
-
-        xpsFDS.Release()
-        mov xpsFDS,NULL
-    .endif
-    .if (fixedDocuments)
-
-        fixedDocuments.Release()
-        mov fixedDocuments,NULL
-    .endif
-    .if (xpsFD)
-
-        xpsFD.Release()
-        mov xpsFD,NULL
-    .endif
-    .if (pageRefs)
-
-        pageRefs.Release()
-        mov pageRefs,NULL
-    .endif
-    .if (xpsPageRef)
-
-        xpsPageRef.Release()
-        mov xpsPageRef,NULL
-    .endif
-    .if (xpsPage)
-
-        xpsPage.Release()
-        mov xpsPage,NULL
-    .endif
-    .if (opcPartUri)
-
-        opcPartUri.Release()
-        mov opcPartUri,NULL
-    .endif
-    .if (pageVisuals)
-
-        pageVisuals.Release()
-        mov pageVisuals,NULL
-    .endif
+    SafeRelease(xpsPackage)
+    SafeRelease(xpsFDS)
+    SafeRelease(fixedDocuments)
+    SafeRelease(xpsFD)
+    SafeRelease(pageRefs)
+    SafeRelease(xpsPageRef)
+    SafeRelease(xpsPage)
+    SafeRelease(opcPartUri)
+    SafeRelease(pageVisuals)
 
     .return hr
 
@@ -326,17 +271,11 @@ SaveCanvasToXpsViaPackage endp
 
 wmain proc
 
-  local hr              : HRESULT
-  local bCOMInitialized : BOOL
-  local xpsFactory      : ptr IXpsOMObjectFactory
-  local textLayout      : ptr IDWriteTextLayout
-  local pCanvasBuilder  : ptr LayoutToCanvasBuilder
-
-    mov hr,S_OK
-    mov bCOMInitialized,0
-    mov xpsFactory,NULL
-    mov textLayout,NULL
-    mov pCanvasBuilder,NULL
+  .new hr              : HRESULT = S_OK
+  .new bCOMInitialized : BOOL = FALSE
+  .new xpsFactory      : ptr IXpsOMObjectFactory = NULL
+  .new textLayout      : ptr IDWriteTextLayout = NULL
+  .new pCanvasBuilder  : ptr LayoutToCanvasBuilder = NULL
 
     mov hr,CoInitialize(0)
 
@@ -381,27 +320,14 @@ wmain proc
     .endif
 
     ;; release resources
-    .if (pCanvasBuilder)
+    SafeRelease(pCanvasBuilder)
+    SafeRelease(textLayout)
+    SafeRelease(xpsFactory)
 
-        pCanvasBuilder.Release()
-        mov pCanvasBuilder,NULL
-    .endif
-    .if (textLayout)
-
-        textLayout.Release()
-        mov textLayout,NULL
-    .endif
-    .if (xpsFactory)
-
-        xpsFactory.Release()
-        mov xpsFactory,NULL
-    .endif
     .if (bCOMInitialized)
-
         CoUninitialize()
         mov bCOMInitialized,FALSE
     .endif
-
     mov eax,hr
     xor eax,1
     ret

@@ -208,7 +208,7 @@ __GDIPLUS_COLOR_H equ <>
     ;;
     ;; Color values are not premultiplied.
 
-    .operator Color :abs, :vararg {
+    .inline Color :abs, :vararg {
         ifb <_1>
             mov eax,Black
         else
@@ -217,7 +217,7 @@ __GDIPLUS_COLOR_H equ <>
         mov this.Argb,eax
         }
 
-    .operator Color?i32 :abs, :abs, :abs, :abs, :vararg {
+    .inline ColorIMM32 :abs, :abs, :abs, :abs, :vararg {
         ifb <_2>
             mov eax,_1
         elseifb <_4>
@@ -227,42 +227,42 @@ __GDIPLUS_COLOR_H equ <>
         endif
         }
 
-    .operator GetAlpha :vararg {
+    .inline GetAlpha :vararg {
         mov     eax,this.Argb
         shr     eax,AlphaShift
         and     eax,0xFF
         }
-    .operator GetA :vararg { this.GetAlpha() }
+    .inline GetA :vararg { this.GetAlpha() }
 
-    .operator GetRed :vararg {
+    .inline GetRed :vararg {
         mov     eax,this.Argb
         shr     eax,RedShift
         and     eax,0xFF
         }
-    .operator GetR :vararg { this.GetRed() }
+    .inline GetR :vararg { this.GetRed() }
 
-    .operator GetGreen :vararg {
+    .inline GetGreen :vararg {
         mov     eax,this.Argb
         shr     eax,GreenShift
         and     eax,0xFF
         }
-    .operator GetG :vararg { this.GetGreen() }
+    .inline GetG :vararg { this.GetGreen() }
 
-    .operator GetBlue :vararg {
+    .inline GetBlue :vararg {
         mov     eax,this.Argb
         shr     eax,BlueShift
         and     eax,0xFF
         }
-    .operator GetB :vararg { this.GetBlue() }
+    .inline GetB :vararg { this.GetBlue() }
 
-    .operator GetValue :vararg {
+    .inline GetValue :vararg {
         mov     eax,this.Argb
         }
-    .operator SetValue :vararg {
+    .inline SetValue :vararg {
         mov     this.Argb,_1
         }
 
-    .operator SetFromCOLORREF :abs, :vararg {
+    .inline SetFromCOLORREF :abs, :vararg {
         mov     edx,_1
         mov     eax,_1
         and     eax,255 shl GreenShift
@@ -275,7 +275,7 @@ __GDIPLUS_COLOR_H equ <>
         mov     al,r8b
         mov     this.Argb,eax
         }
-    .operator ToCOLORREF :vararg {
+    .inline ToCOLORREF :vararg {
         mov     eax,this.Argb
         shr     eax,RedShift
         and     eax,255

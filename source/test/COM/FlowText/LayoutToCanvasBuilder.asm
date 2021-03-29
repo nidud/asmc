@@ -180,12 +180,8 @@ LayoutToCanvasBuilder::CreateRootCanvasAndResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-       .new rgbBlue:XPS_COLOR
-        mov rgbBlue.colorType,XPS_COLOR_TYPE_SRGB
-        mov rgbBlue.value.sRGB.alpha,0xFF
-        mov rgbBlue.value.sRGB.red,0
-        mov rgbBlue.value.sRGB.green,0
-        mov rgbBlue.value.sRGB.blue,0xFF
+       .new rgbBlue:XPS_COLOR = { XPS_COLOR_TYPE_SRGB, { { 0xFF, 0, 0, 0xFF } } }
+
         mov hr,this._xpsFactory.CreateSolidColorBrush(
                 &rgbBlue,
                 NULL, ;; no color profile for this color type
@@ -202,16 +198,8 @@ LayoutToCanvasBuilder::CreateRootCanvasAndResources proc uses rsi
     .endif
 
     ;; cleanup
-    .if (blueSolidBrush)
-
-        blueSolidBrush.Release()
-        mov blueSolidBrush,NULL
-    .endif
-    .if (canvasDictionary)
-
-        canvasDictionary.Release()
-        mov canvasDictionary,NULL
-    .endif
+    SafeRelease(blueSolidBrush)
+    SafeRelease(canvasDictionary)
 
     .return hr
 
@@ -427,19 +415,12 @@ LayoutToCanvasBuilder::DrawGlyphRun proc uses rsi rdi rbx \
     .else
 
        .new positionScale    : FLOAT
-       .new fontResource     : ptr IXpsOMFontResource
-       .new xpsGlyphs        : ptr IXpsOMGlyphs
-       .new canvasVisuals    : ptr IXpsOMVisualCollection
-       .new xpsGlyphsEditor  : ptr IXpsOMGlyphsEditor
-       .new glyphIndexVector : ptr XPS_GLYPH_INDEX
-       .new pszUnicodeString : PWSTR
-
-        mov fontResource,NULL
-        mov xpsGlyphs,NULL
-        mov canvasVisuals,NULL
-        mov xpsGlyphsEditor,NULL
-        mov glyphIndexVector,NULL
-        mov pszUnicodeString,NULL
+       .new fontResource     : ptr IXpsOMFontResource       = NULL
+       .new xpsGlyphs        : ptr IXpsOMGlyphs             = NULL
+       .new canvasVisuals    : ptr IXpsOMVisualCollection   = NULL
+       .new xpsGlyphsEditor  : ptr IXpsOMGlyphsEditor       = NULL
+       .new glyphIndexVector : ptr XPS_GLYPH_INDEX          = NULL
+       .new pszUnicodeString : PWSTR                        = NULL
 
         mov rbx,glyphRun
         movss xmm0,100.0
@@ -471,10 +452,8 @@ LayoutToCanvasBuilder::DrawGlyphRun proc uses rsi rdi rbx \
         ;; Now set Glyphs properties
         .if (SUCCEEDED(hr))
 
-           .new glyphsBaselineOrigin:XPS_POINT
+           .new glyphsBaselineOrigin:XPS_POINT = { baselineOriginX, baselineOriginY }
 
-            mov glyphsBaselineOrigin.x,baselineOriginX
-            mov glyphsBaselineOrigin.y,baselineOriginY
             mov hr,xpsGlyphs.SetOrigin( &glyphsBaselineOrigin )
         .endif
 
@@ -640,9 +619,8 @@ LayoutToCanvasBuilder::DrawGlyphRun proc uses rsi rdi rbx \
                 ;;
 
                .new glyphMapVector[GLYPH_MAPPING_MAX_COUNT]:XPS_GLYPH_MAPPING
-               .new glyphMappingCount:UINT32
+               .new glyphMappingCount:UINT32 = 0
 
-                mov glyphMappingCount,0
                 mov hr,ClusterMapToMappingArray(
                         [rcx].DWRITE_GLYPH_RUN_DESCRIPTION.clusterMap,
                         [rcx].DWRITE_GLYPH_RUN_DESCRIPTION.stringLength,
@@ -679,26 +657,10 @@ LayoutToCanvasBuilder::DrawGlyphRun proc uses rsi rdi rbx \
             CoTaskMemFree(glyphIndexVector)
             mov glyphIndexVector,NULL
         .endif
-        .if (fontResource)
-
-            fontResource.Release()
-            mov fontResource,NULL
-        .endif
-        .if (xpsGlyphs)
-
-            xpsGlyphs.Release()
-            mov xpsGlyphs,NULL
-        .endif
-        .if (canvasVisuals)
-
-            canvasVisuals.Release()
-            mov canvasVisuals,NULL
-        .endif
-        .if (xpsGlyphsEditor)
-
-            xpsGlyphsEditor.Release()
-            mov xpsGlyphsEditor,NULL
-        .endif
+        SafeRelease(fontResource)
+        SafeRelease(xpsGlyphs)
+        SafeRelease(canvasVisuals)
+        SafeRelease(xpsGlyphsEditor)
     .endif
 
     .return hr
@@ -860,30 +822,18 @@ LayoutToCanvasBuilder::FindOrCreateFontResource proc uses rsi rdi rbx \
         ;; NOTE: Font data may be large - temp file is recommended for complete
         ;; implementation.
 
-       .new fontResourceStream  : ptr IStream
-       .new fontFileLoader      : ptr IDWriteFontFileLoader
-       .new fontFileStream      : ptr IDWriteFontFileStream
-       .new fontPartUri         : ptr IOpcPartUri
-       .new pNewFontResource    : ptr IXpsOMFontResource
-       .new fontResources       : ptr IXpsOMFontResourceCollection
-
-       .new fontFileRef         : ptr
-       .new fontFileRefSize     : UINT32
-       .new bytesLeft           : UINT64
-       .new readOffset          : UINT64
-
         xor eax,eax
-        mov fontResourceStream, rax
-        mov fontFileLoader,     rax
-        mov fontFileStream,     rax
-        mov fontPartUri,        rax
-        mov pNewFontResource,   rax
-        mov fontResources,      rax
+       .new fontResourceStream  : ptr IStream = rax
+       .new fontFileLoader      : ptr IDWriteFontFileLoader = rax
+       .new fontFileStream      : ptr IDWriteFontFileStream = rax
+       .new fontPartUri         : ptr IOpcPartUri = rax
+       .new pNewFontResource    : ptr IXpsOMFontResource = rax
+       .new fontResources       : ptr IXpsOMFontResourceCollection = rax
 
-        mov fontFileRef,        rax
-        mov fontFileRefSize,    eax
-        mov bytesLeft,          rax
-        mov readOffset,         rax
+       .new fontFileRef         : ptr = rax
+       .new fontFileRefSize     : UINT32 = eax
+       .new bytesLeft           : UINT64 = rax
+       .new readOffset          : UINT64 = rax
 
         .if (SUCCEEDED(hr))
 
@@ -925,15 +875,13 @@ LayoutToCanvasBuilder::FindOrCreateFontResource proc uses rsi rdi rbx \
 
             .while (bytesLeft && SUCCEEDED(hr))
 
-               .new fragment:ptr
-               .new fragmentContext:ptr
-               .new bFragmentContextAcquired:BOOL
+               xor eax,eax
+               .new fragment:ptr = rax
+               .new fragmentContext:ptr = rax
+               .new bFragmentContextAcquired:BOOL = eax
                .new readSize:UINT64
 
-                xor     eax,eax
-                mov     fragment,rax
-                mov     fragmentContext,rax
-                mov     bFragmentContextAcquired,eax
+
                 mov     rax,bytesLeft
                 mov     ecx,16384
                 cmp     rax,rcx
@@ -1054,48 +1002,16 @@ LayoutToCanvasBuilder::FindOrCreateFontResource proc uses rsi rdi rbx \
         ;; release objects used for converting DWrite font file to XPS font
         ;; resource
 
-        .if (fontResourceStream)
-
-            fontResourceStream.Release()
-            mov fontResourceStream,NULL
-        .endif
-        .if (fontFileLoader)
-
-            fontFileLoader.Release()
-            mov fontFileLoader,NULL
-        .endif
-        .if (fontFileStream)
-
-            fontFileStream.Release()
-            mov fontFileStream,NULL
-        .endif
-        .if (fontPartUri)
-
-            fontPartUri.Release()
-            mov fontPartUri,NULL
-        .endif
-        .if (pNewFontResource)
-
-            pNewFontResource.Release()
-            mov pNewFontResource,NULL
-        .endif
-        .if (fontResources)
-
-            fontResources.Release()
-            mov fontResources,NULL
-        .endif
+        SafeRelease(fontResourceStream)
+        SafeRelease(fontFileLoader)
+        SafeRelease(fontFileStream)
+        SafeRelease(fontPartUri)
+        SafeRelease(pNewFontResource)
+        SafeRelease(fontResources)
     .endif
 
-    .if (fontFile)
-
-        fontFile.Release()
-        mov fontFile,NULL
-    .endif
-    .if (pUnk)
-
-        pUnk.Release()
-        mov pUnk,NULL
-    .endif
+    SafeRelease(fontFile)
+    SafeRelease(pUnk)
 
     .return hr
 
@@ -1224,15 +1140,13 @@ LayoutToCanvasBuilder::AddLinePath proc \
 
     .if (SUCCEEDED(hr))
 
-       .new segmType:XPS_SEGMENT_TYPE
+       .new segmType:XPS_SEGMENT_TYPE = XPS_SEGMENT_TYPE_LINE
        .new segmentData[2]:FLOAT
-       .new segmStroke:BOOL
+       .new segmStroke:BOOL = TRUE
 
-        mov segmType,XPS_SEGMENT_TYPE_LINE
         mov rcx,endPoint
         mov segmentData[0],[rcx].XPS_POINT.x
         mov segmentData[4],[rcx].XPS_POINT.y
-        mov segmStroke,TRUE
 
         mov hr,lineFigure.SetSegments(
                 1, ;; segment count
@@ -1253,31 +1167,11 @@ LayoutToCanvasBuilder::AddLinePath proc \
         mov hr,lineFigure.SetIsFilled( FALSE )
     .endif
 
-    .if (canvasVisuals)
-
-        canvasVisuals.Release()
-        mov canvasVisuals,NULL
-    .endif
-    .if (linePath)
-
-        linePath.Release()
-        mov linePath,NULL
-    .endif
-    .if (lineGeom)
-
-        lineGeom.Release()
-        mov lineGeom,NULL
-    .endif
-    .if (geomFigures)
-
-        geomFigures.Release()
-        mov geomFigures,NULL
-    .endif
-    .if (lineFigure)
-
-        lineFigure.Release()
-        mov lineFigure,NULL
-    .endif
+    SafeRelease(canvasVisuals)
+    SafeRelease(linePath)
+    SafeRelease(lineGeom)
+    SafeRelease(geomFigures)
+    SafeRelease(lineFigure)
 
     .return hr
 

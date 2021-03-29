@@ -11,12 +11,11 @@
 
     atom byte ?
 
-    .operator constructor :abs, :abs, :abs {
+    .inline constructor :abs, :abs, :abs {
         nop
         ifnb <_3>
             nop
         endif
-        exitm<>
         }
 
     Release proc

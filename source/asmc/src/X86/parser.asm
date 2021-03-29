@@ -3041,6 +3041,8 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     mov ebx,tokenarray
     .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_ID )
 
+continue:
+
     mov i,0
     mov j,0
 
@@ -3297,19 +3299,16 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
             sub esi,16
         .endif
 
-       .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [ebx].hll_flags & T_HLL_PROC ) )
+        .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [ebx].hll_flags & T_HLL_PROC ) )
 
             ;; invoke handle import, call do not..
-
-            .if IsType( [ebx].string_ptr ) ; added 2.31.44
-                strcpy( edi, ".new " )
-            .else
-                strcpy( edi, "invoke " )
+            lea esi,@CStr( ".new " )
+            .if !IsType( [ebx].string_ptr ) ; added 2.31.44
+                lea esi,@CStr( "invoke " )
             .endif
-            strcat( edi, [ebx].tokpos )
-            strcpy( CurrSource, edi )
-            mov Token_Count,Tokenize( edi, 0, ebx, TOK_DEFAULT )
-            .return ParseLine( ebx )
+            strcat( strcpy( edi, esi ), [ebx].tokpos )
+            mov Token_Count,Tokenize( strcpy( CurrSource, edi ), 0, ebx, TOK_DEFAULT )
+            jmp continue
 
         .elseif ( i != 0 || [ebx].dirtype != '{' )
 

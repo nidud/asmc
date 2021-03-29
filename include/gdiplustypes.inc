@@ -114,43 +114,43 @@ endif
     Width   REAL ?
     Height  REAL ?
 
-    .operator SizeF :vararg {
-        ifidn typeid(?, this),<?SizeF>
-            this.T?T(_1)
+    .inline SizeF :vararg {
+        ifidn typeid(this),<SizeF>
+            this.TT(_1)
         else
             [rcx].SizeF.typeid(T, this)(_1)
         endif
         }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?i0     :vararg { this.T?T?flt() }
-            .operator T?T?dword  :vararg { this.T?T?flt(_1) }
-            .operator T?T?sdword :vararg { this.T?T?flt(_1) }
-            .operator T?T?r32    :vararg { this.T?T?flt(_1) }
-            .operator T?T?r128   :vararg { this.T?T?real4(_1) }
-            .operator T?T?flt :abs=<0.0>, :abs=<0.0>, :vararg {
+            .inline TTIMM0   :vararg { this.TTIMMFLT() }
+            .inline TTDWORD  :vararg { this.TTIMMFLT(_1) }
+            .inline TTSDWORD :vararg { this.TTIMMFLT(_1) }
+            .inline TTREG32  :vararg { this.TTIMMFLT(_1) }
+            .inline TTREG128 :vararg { this.TTREAL4(_1) }
+            .inline TTIMMFLT :abs=<0.0>, :abs=<0.0>, :vararg {
                 mov this.Width,_1
                 mov this.Height,_2
                 }
-            .operator T?T?real4 :real4, :real4, :vararg {
+            .inline TTREAL4 :real4, :real4, :vararg {
                 movss this.Width,xmm1
                 movss this.Height,xmm2
                 }
-            .operator T?T?pPointF :ptr PointF {
+            .inline TTPPointF :ptr PointF {
                 mov qword ptr [this],[_1]
                 }
-            .operator T?T?pSizeF :ptr SizeF {
+            .inline TTPSizeF :ptr SizeF {
                 mov qword ptr [this],[_1]
                 }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:SizeF
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
 
-    .operator + :ptr SizeF {
+    .inline + :ptr SizeF {
         movss   xmm0,[_1].SizeF.Width
         movss   xmm1,[_1].SizeF.Height
         addss   xmm0,[this].SizeF.Width
@@ -158,7 +158,7 @@ endif
         movss   [this].SizeF.Width,xmm0
         movss   [this].SizeF.Height,xmm1
         }
-    .operator - :ptr SizeF {
+    .inline - :ptr SizeF {
         movss   xmm0,[this].SizeF.Width
         movss   xmm1,[this].SizeF.Height
         subss   xmm0,[_1].SizeF.Width
@@ -166,13 +166,13 @@ endif
         movss   [this].SizeF.Width,xmm0
         movss   [this].SizeF.Height,xmm1
         }
-    .operator Equals :ptr SizeF {
+    .inline Equals :ptr SizeF {
         mov   rax,[this]
         sub   rax,[_1]
         mov   eax,0
         setz  al
         }
-    .operator Empty {
+    .inline Empty {
         mov   rax,[this]
         test  rax,rax
         mov   eax,0
@@ -189,52 +189,52 @@ endif
     Width   int_t ?
     Height  int_t ?
 
-    .operator Size :vararg {
-        ifidn typeid(?, this),<?Size>
-            this.T?T(_1)
+    .inline Size :vararg {
+        ifidn typeid(this),<Size>
+            this.TT(_1)
         else
             [rcx].Size.typeid(T, this)(_1)
         endif
         }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?i0     :vararg { this.T?T?i32() }
-            .operator T?T?r32    :vararg { this.T?T?i32(_1) }
-            .operator T?T?dword  :vararg { this.T?T?i32(_1) }
-            .operator T?T?sdword :vararg { this.T?T?i32(_1) }
-            .operator T?T?i32 :abs=<0>, :abs=<0>, :vararg {
+            .inline TTIMM0   :vararg { this.TTIMM32() }
+            .inline TTREG32  :vararg { this.TTIMM32(_1) }
+            .inline TTDWORD  :vararg { this.TTIMM32(_1) }
+            .inline TTSDWORD :vararg { this.TTIMM32(_1) }
+            .inline TTIMM32  :abs=<0>, :abs=<0>, :vararg {
                 mov this.Width,_1
                 mov this.Height,_2
                 }
-            .operator T?T?pPoint :ptr Point {
+            .inline TTPPoint :ptr Point {
                 mov qword ptr [this],[_1]
                 }
-            .operator T?T?pSize :ptr Size {
+            .inline TTPSize :ptr Size {
                 mov qword ptr [this],[_1]
                 }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:Size
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
 
-    .operator + :ptr Size {
+    .inline + :ptr Size {
         add [this].Size.Width,  [_1].Size.Width
         add [this].Size.Height, [_1].Size.Height
         }
-    .operator - :ptr Size {
+    .inline - :ptr Size {
         sub [this].Size.Width,  [_1].Size.Width
         sub [this].Size.Height, [_1].Size.Height
         }
-    .operator Equals :ptr Size {
+    .inline Equals :ptr Size {
         mov   rax,[this]
         sub   rax,[_1]
         mov   eax,0
         setz  al
         }
-    .operator Empty {
+    .inline Empty {
         mov   rax,[this]
         test  rax,rax
         mov   eax,0
@@ -251,43 +251,43 @@ endif
     X   REAL ?
     Y   REAL ?
 
-    .operator PointF :vararg {
-        ifidn typeid(?, this),<?PointF>
-            this.T?T(_1)
+    .inline PointF :vararg {
+        ifidn typeid(this),<PointF>
+            this.TT(_1)
         else
             [rcx].PointF.typeid(T, this)(_1)
         endif
         }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?i0     :vararg { this.T?T?flt() }
-            .operator T?T?dword  :vararg { this.T?T?flt(_1) }
-            .operator T?T?sdword :vararg { this.T?T?flt(_1) }
-            .operator T?T?r32    :vararg { this.T?T?flt(_1) }
-            .operator T?T?r128   :vararg { this.T?T?real4(_1) }
-            .operator T?T?flt :abs=<0.0>, :abs=<0.0>, :vararg {
+            .inline TTIMM0   :vararg { this.TTIMMFLT() }
+            .inline TTDWORD  :vararg { this.TTIMMFLT(_1) }
+            .inline TTSDWORD :vararg { this.TTIMMFLT(_1) }
+            .inline TTREG32  :vararg { this.TTIMMFLT(_1) }
+            .inline TTREG128 :vararg { this.TTREAL4(_1) }
+            .inline TTIMMFLT :abs=<0.0>, :abs=<0.0>, :vararg {
                 mov this.X,_1
                 mov this.Y,_2
                 }
-            .operator T?T?real4 :real4, :real4, :vararg {
+            .inline TTREAL4 :real4, :real4, :vararg {
                 movss this.X,xmm1
                 movss this.Y,xmm2
                 }
-            .operator T?T?pPointF :ptr PointF {
+            .inline TTPPointF :ptr PointF {
                 mov qword ptr [this],[_1]
                 }
-            .operator T?T?pSizeF :ptr SizeF {
+            .inline TTPSizeF :ptr SizeF {
                 mov qword ptr [this],[_1]
                 }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:PointF
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
 
-    .operator + :ptr PointF {
+    .inline + :ptr PointF {
         movss   xmm0,[_1].PointF.X
         movss   xmm1,[_1].PointF.Y
         addss   xmm0,[this].PointF.X
@@ -295,7 +295,7 @@ endif
         movss   [this].PointF.X,xmm0
         movss   [this].PointF.Y,xmm1
         }
-    .operator - :ptr PointF {
+    .inline - :ptr PointF {
         movss   xmm0,[this].PointF.X
         movss   xmm1,[this].PointF.Y
         subss   xmm0,[_1].PointF.X
@@ -303,7 +303,7 @@ endif
         movss   [this].PointF.X,xmm0
         movss   [this].PointF.Y,xmm1
         }
-    .operator Equals :ptr PointF {
+    .inline Equals :ptr PointF {
         mov   rax,[this]
         sub   rax,[_1]
         mov   eax,0
@@ -320,46 +320,46 @@ endif
     X   int_t ?
     Y   int_t ?
 
-    .operator Point :vararg {
-        ifidn typeid(?, this),<?Point>
-            this.T?T(_1)
+    .inline Point :vararg {
+        ifidn typeid(this),<Point>
+            this.TT(_1)
         else
             [rcx].Point.typeid(T, this)(_1)
         endif
         }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?i0     :vararg { this.T?T?i32() }
-            .operator T?T?r32    :vararg { this.T?T?i32(_1) }
-            .operator T?T?dword  :vararg { this.T?T?i32(_1) }
-            .operator T?T?sdword :vararg { this.T?T?i32(_1) }
-            .operator T?T?i32 :abs=<0>, :abs=<0>, :vararg {
+            .inline TTIMM0   :vararg { this.TTIMM32() }
+            .inline TTREG32  :vararg { this.TTIMM32(_1) }
+            .inline TTDWORD  :vararg { this.TTIMM32(_1) }
+            .inline TTSDWORD :vararg { this.TTIMM32(_1) }
+            .inline TTIMM32 :abs=<0>, :abs=<0>, :vararg {
                 mov this.X,_1
                 mov this.Y,_2
                 }
-            .operator T?T?pPoint :ptr Point {
+            .inline TTPPoint :ptr Point {
                 mov qword ptr [this],[_1]
                 }
-            .operator T?T?pSize :ptr Size {
+            .inline TTPSize :ptr Size {
                 mov qword ptr [this],[_1]
                 }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:Point
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
 
-    .operator + :ptr Point {
+    .inline + :ptr Point {
         add [this].Point.X,[_1].Point.X
         add [this].Point.Y,[_1].Point.Y
         }
-    .operator - :ptr Point {
+    .inline - :ptr Point {
         sub [this].Point.X,[_1].Point.X
         sub [this].Point.Y,[_1].Point.Y
         }
-    .operator Equals :ptr Point {
+    .inline Equals :ptr Point {
         mov   rax,[this]
         sub   rax,[_1]
         mov   eax,0
@@ -378,44 +378,44 @@ endif
     Width   REAL ?
     Height  REAL ?
 
-    .operator RectF :vararg {
-        ifidn typeid(?, this),<?RectF>
-            this.T?T(_1)
+    .inline RectF :vararg {
+        ifidn typeid(this),<RectF>
+            this.TT(_1)
         else
             [rcx].RectF.typeid(T, this)(_1)
         endif
         }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:RectF
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?flt :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :vararg {
+            .inline TTIMMFLT :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :vararg {
                 mov this.X,_1
                 mov this.Y,_2
                 mov this.Width,_3
                 mov this.Height,_4
                 }
-            .operator T?T?i0     :vararg { this.T?T?flt() }
-            .operator T?T?dword  :vararg { this.T?T?flt(_1) }
-            .operator T?T?sdword :vararg { this.T?T?flt(_1) }
-            .operator T?T?real4  :vararg { this.T?T?flt(_1) }
-            .operator T?T?r128 :REAL, :REAL, :REAL, :REAL, :vararg {
+            .inline TTIMM0   :vararg { this.TTIMMFLT() }
+            .inline TTDWORD  :vararg { this.TTIMMFLT(_1) }
+            .inline TTSDWORD :vararg { this.TTIMMFLT(_1) }
+            .inline TTREAL4  :vararg { this.TTIMMFLT(_1) }
+            .inline TTREG128 :REAL, :REAL, :REAL, :REAL, :vararg {
                 movss this.X,xmm1
                 movss this.Y,xmm2
                 movss this.Width,xmm3
                 mov   this.Height,[rsp+32]
                 }
-            .operator T?T?pPointF :ptr PointF, :ptr SizeF {
+            .inline TTPPointF :ptr PointF, :ptr SizeF {
                 mov qword ptr [this+0],[_1]
                 mov qword ptr [this+8],[_2]
                 }
 
-    .operator Clone :ptr RectF {
+    .inline Clone :ptr RectF {
       local t
        .new t:RectF
         mov qword ptr [t+0],[_1+0]
@@ -423,31 +423,31 @@ endif
         lea rax,t
         }
 
-    .operator GetLocation :ptr PointF {
+    .inline GetLocation :ptr PointF {
         mov qword ptr [_1],[this]
         }
-    .operator GetSize :ptr SizeF {
+    .inline GetSize :ptr SizeF {
         mov qword ptr [_1],[this+8]
         }
-    .operator GetBounds :ptr RectF {
+    .inline GetBounds :ptr RectF {
         mov qword ptr [_1],[this]
         mov qword ptr [_1+8],[this+8]
         }
-    .operator GetLeft {
+    .inline GetLeft {
         movss xmm0,[this].RectF.X
         }
-    .operator GetTop {
+    .inline GetTop {
         movss xmm0,[this].RectF.Y
         }
-    .operator GetRight {
+    .inline GetRight {
         movss xmm0,[this].RectF.X
         addss xmm0,[this].RectF.Width
         }
-    .operator GetBottom {
+    .inline GetBottom {
         movss xmm0,[this].RectF.Y
         addss xmm0,[this].RectF.Height
         }
-    .operator IsEmptyArea {
+    .inline IsEmptyArea {
         xor    eax,eax
         movss  xmm0,[this].RectF.Width
         comiss xmm0,REAL_EPSILON
@@ -458,7 +458,7 @@ endif
             setna  al
         .endif
         }
-    .operator Equals :ptr RectF {
+    .inline Equals :ptr RectF {
         xor    eax,eax
         mov    r10,[this]
         sub    r10,[_1]
@@ -470,29 +470,29 @@ endif
         setz   al
         }
 
-    .operator Contains :vararg {
-        ifidn typeid(?, this),<?RectF>
-            this.Contains?T(_1)
+    .inline Contains :vararg {
+        ifidn typeid(this),<RectF>
+            this.ContainsT(_1)
         else
             [rcx].RectF.typeid(Contains, this)(_1)
         endif
         }
-        .operator Contains?T :abs, :vararg {
-            this.typeid(Contains?T, _1)(_1, _2)
+        .inline ContainsT :abs, :vararg {
+            this.typeid(ContainsT, _1)(_1, _2)
             }
-            .operator Contains?T?real4 :abs, :abs, :vararg {
-                this.Contains?pRectF?real4(_1, _2)
+            .inline ContainsTREAL4 :abs, :abs, :vararg {
+                this.ContainsPRectFREAL4(_1, _2)
                 }
-            .operator Contains?T?pPointF :ptr PointF, :vararg {
-                this.Contains?pRectF?real4([rdx].PointF.X, [rdx].PointF.Y)
+            .inline ContainsTPPointF :ptr PointF, :vararg {
+                this.ContainsPRectFREAL4([rdx].PointF.X, [rdx].PointF.Y)
                 }
-            .operator Contains?T?pRectF :abs, :vararg {
-                this.Contains?pRectF?pRectF(_1)
+            .inline ContainsTPRectF :abs, :vararg {
+                this.ContainsPRectFPRectF(_1)
                 }
-        .operator Contains?pRectF :abs, :abs {
-            [rcx].RectF.typeid(Contains?pRectF, _1)(_1, _2)
+        .inline ContainsPRectF :abs, :abs {
+            [rcx].RectF.typeid(ContainsPRectF, _1)(_1, _2)
             }
-            .operator Contains?pRectF?real4 :real4, :real4 {
+            .inline ContainsPRectFREAL4 :real4, :real4 {
                 xor    eax,eax
                 comiss xmm1,[this].RectF.X
                 .ifnb
@@ -510,10 +510,10 @@ endif
                     .endif
                 .endif
                 }
-            .operator Contains?pRectF?pPointF :ptr PointF {
-                [this].RectF.Contains?pRectF?real4([_1].PointF.X, [_1].PointF.Y)
+            .inline ContainsPRectFPPointF :ptr PointF {
+                [this].RectF.ContainsPRectFREAL4([_1].PointF.X, [_1].PointF.Y)
                 }
-            .operator Contains?pRectF?pRectF :ptr RectF {
+            .inline ContainsPRectFPRectF :ptr RectF {
                 xor     eax,eax
                 movss   xmm0,[this].RectF.X
                 comiss  xmm0,[_1].RectF.X
@@ -538,26 +538,26 @@ endif
                 .endif
                 }
 
-    .operator Inflate :vararg {
-        ifidn typeid(?, this),<?RectF>
-            this.Inflate?T(_1)
+    .inline Inflate :vararg {
+        ifidn typeid(this),<RectF>
+            this.InflateT(_1)
         else
             [rcx].RectF.typeid(Inflate, this)(_1)
         endif
         }
-        .operator Inflate?T :abs, :vararg {
-            this.typeid(Inflate?T, _1)(_1, _2)
+        .inline InflateT :abs, :vararg {
+            this.typeid(InflateT, _1)(_1, _2)
             }
-            .operator Inflate?T?real4 :abs, :abs, :vararg {
-                this.Inflate?pRectF?real4(_1, _2)
+            .inline InflateTREAL4 :abs, :abs, :vararg {
+                this.InflatePRectFREAL4(_1, _2)
                 }
-            .operator Inflate?T?pPointF :ptr PointF, :vararg {
-                this.Inflate?pRectF?real4([rdx].PointF.X, [rdx].PointF.Y)
+            .inline InflateTPPointF :ptr PointF, :vararg {
+                this.InflatePRectFREAL4([rdx].PointF.X, [rdx].PointF.Y)
                 }
-        .operator Inflate?pRectF :abs, :vararg {
-            [rcx].RectF.typeid(Inflate?pRectF, _1)(_1, _2)
+        .inline InflatePRectF :abs, :vararg {
+            [rcx].RectF.typeid(InflatePRectF, _1)(_1, _2)
             }
-            .operator Inflate?pRectF?real4 :real4, :real4 {
+            .inline InflatePRectFREAL4 :real4, :real4 {
                 movss   xmm0,[this].RectF.X
                 subss   xmm0,_1
                 movss   [this].RectF.X,xmm0
@@ -571,37 +571,37 @@ endif
                 movss   [this].RectF.Width,_1
                 movss   [this].RectF.Height,_2
                 }
-            .operator Inflate?pRectF?pPointF :ptr PointF {
+            .inline InflatePRectFPPointF :ptr PointF {
                 cvtsi2ss xmm1,[_1].Point.X
                 cvtsi2ss xmm2,[_1].Point.Y
-                [this].RectF.Inflate?pRectF?real4(xmm1, xmm2)
+                [this].RectF.InflatePRectFREAL4(xmm1, xmm2)
                 }
 
-    .operator Intersect :vararg {
-        ifidn typeid(?, this),<?RectF>
-            this.Intersect?T(_1)
+    .inline Intersect :vararg {
+        ifidn typeid(this),<RectF>
+            this.IntersectT(_1)
         else
             [rcx].RectF.typeid(Intersect, this)(_1)
         endif
         }
-        .operator Intersect?T :abs, :abs, :vararg {
-            this.typeid(Intersect?T, _1)typeid(?, _2)(_1, _2, _3)
+        .inline IntersectT :abs, :abs, :vararg {
+            this.typeid(IntersectT, _1)typeid(_2)(_1, _2, _3)
             }
-            .operator Intersect?T?pRectF?i0 :abs, :vararg {
+            .inline IntersectTPRectFIMM0 :abs, :vararg {
                 lea rcx,this
-                [rcx].RectF.Intersect?pRectF?pRectF?pRectF(rcx, _1)
+                [rcx].RectF.IntersectPRectFPRectFPRectF(rcx, _1)
                 }
-            .operator Intersect?T?pRectF?pRectF :abs, :abs, :vararg {
+            .inline IntersectTPRectFPRectF :abs, :abs, :vararg {
                 lea rcx,this
-                [rcx].RectF.Intersect?pRectF?pRectF?pRectF(_1, _2)
+                [rcx].RectF.IntersectPRectFPRectFPRectF(_1, _2)
                 }
-        .operator Intersect?pRectF :abs, :abs {
-            [rcx].RectF.typeid(Intersect?pRectF, _1)typeid(?, _2)(_1, _2)
+        .inline IntersectPRectF :abs, :abs {
+            [rcx].RectF.typeid(IntersectPRectF, _1)typeid(_2)(_1, _2)
             }
-            .operator Intersect?pRectF?pRectF?i0 :abs {
-                [rcx].RectF.Intersect?pRectF?pRectF?pRectF(rcx, _1)
+            .inline IntersectPRectFPRectFIMM0 :abs {
+                [rcx].RectF.IntersectPRectFPRectFPRectF(rcx, _1)
                 }
-            .operator Intersect?pRectF?pRectF?pRectF :ptr RectF, :ptr RectF {
+            .inline IntersectPRectFPRectFPRectF :ptr RectF, :ptr RectF {
                 movss   xmm0,[_1].RectF.X
                 addss   xmm0,[_1].RectF.Width
                 movss   xmm1,[_2].RectF.X
@@ -626,7 +626,7 @@ endif
                 }
 
 
-    .operator IntersectsWith :ptr RectF {
+    .inline IntersectsWith :ptr RectF {
         xor     eax,eax
         movss   xmm0,[this].RectF.X
         movss   xmm1,xmm0
@@ -647,7 +647,7 @@ endif
         .endif
         }
 
-    .operator _Union :ptr RectF, :ptr RectF {
+    .inline _Union :ptr RectF, :ptr RectF {
         movss   xmm0,[_1].RectF.X
         addss   xmm0,[_1].RectF.Width
         movss   xmm1,[_2].RectF.X
@@ -671,38 +671,38 @@ endif
         xor     [this].RectF.IsEmptyArea(),1
         }
 
-    .operator _Offset :vararg {
-        ifidn typeid(?, this),<?RectF>
-            this._Offset?T(_1)
+    .inline _Offset :vararg {
+        ifidn typeid(this),<RectF>
+            this._OffsetT(_1)
         else
             [rcx].RectF.typeid(_Offset, this)(_1)
         endif
         }
-        .operator _Offset?T :abs, :vararg {
-            this.typeid(_Offset?T, _1)(_1, _2)
+        .inline _OffsetT :abs, :vararg {
+            this.typeid(_OffsetT, _1)(_1, _2)
             }
-            .operator _Offset?T?pPointF :ptr PointF, :vararg {
-                this._Offset?T?real4([rdx].RectF.X, [rdx].RectF.Y)
+            .inline _OffsetTPPointF :ptr PointF, :vararg {
+                this._OffsetTREAL4([rdx].RectF.X, [rdx].RectF.Y)
                 }
-            .operator _Offset?T?flt :abs, :abs, :vararg {
-                this._Offset?T?real4(_1, _2)
+            .inline _OffsetTIMMFLT :abs, :abs, :vararg {
+                this._OffsetTREAL4(_1, _2)
                 }
-            .operator _Offset?T?real4 :real4, :real4, :vararg {
+            .inline _OffsetTREAL4 :real4, :real4, :vararg {
                 addss xmm1,this.X
                 addss xmm2,this.Y
                 movss this.X,xmm1
                 movss this.Y,xmm2
                 }
-        .operator _Offset?pRectF :abs, :abs {
-            [this].RectF.typeid(_Offset?pRectF, _1)(_1, _2)
+        .inline _OffsetPRectF :abs, :abs {
+            [this].RectF.typeid(_OffsetPRectF, _1)(_1, _2)
             }
-            .operator _Offset?pRectF?pPointF :ptr PointF {
-                [this].RectF._Offset?pRectF?real4([_1].RectF.X, [_1].RectF.Y)
+            .inline _OffsetPRectFPPointF :ptr PointF {
+                [this].RectF._OffsetPRectFREAL4([_1].RectF.X, [_1].RectF.Y)
                 }
-            .operator _Offset?pRectF?flt :abs, :abs {
-                [this].RectF._Offset?pRectF?real4(_1, _2)
+            .inline _OffsetPRectFIMMFLT :abs, :abs {
+                [this].RectF._OffsetPRectFREAL4(_1, _2)
                 }
-            .operator _Offset?pRectF?real4 :real4, :real4 {
+            .inline _OffsetPRectFREAL4 :real4, :real4 {
                 addss _1,[this].RectF.X
                 addss _2,[this].RectF.Y
                 movss [this].RectF.X,_1
@@ -721,75 +721,75 @@ endif
     Width   int_t ?
     Height  int_t ?
 
-    .operator Rect :vararg {
-        ifidn typeid(?, this),<?Rect>
-            this.T?T(_1)
+    .inline Rect :vararg {
+        ifidn typeid(this),<Rect>
+            this.TT(_1)
         else
             [rcx].Rect.typeid(T, this)(_1)
         endif
         }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:Rect
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
-        .operator T?T?i32 :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+        .inline TTIMM32 :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
             mov this.X,_1
             mov this.Y,_2
             mov this.Width,_3
             mov this.Height,_4
             }
-        .operator T?T?i0     :vararg { this.T?T?i32() }
-        .operator T?T?r32    :vararg { this.T?T?i32(_1) }
-        .operator T?T?dword  :vararg { this.T?T?i32(_1) }
-        .operator T?T?sdword :vararg { this.T?T?i32(_1) }
-        .operator T?T?pPoint :ptr Point, :ptr Size {
+        .inline TTIMM0   :vararg { this.TTIMM32() }
+        .inline TTREG32  :vararg { this.TTIMM32(_1) }
+        .inline TTDWORD  :vararg { this.TTIMM32(_1) }
+        .inline TTSDWORD :vararg { this.TTIMM32(_1) }
+        .inline TTPPoint :ptr Point, :ptr Size {
             mov qword ptr [this+0],[_1]
             mov qword ptr [this+8],[_2]
             }
 
-    .operator Clone :ptr Rect {
+    .inline Clone :ptr Rect {
       local t
        .new t:Rect
         mov qword ptr [t+0],[_1+0]
         mov qword ptr [t+8],[_1+8]
         lea rax,t
         }
-    .operator GetLocation :ptr Point {
+    .inline GetLocation :ptr Point {
         mov qword ptr [_1],[this+0]
         }
-    .operator GetSize :ptr Size {
+    .inline GetSize :ptr Size {
         mov qword ptr [_1],[this+8]
         }
-    .operator GetBounds :ptr Rect {
+    .inline GetBounds :ptr Rect {
         mov qword ptr [_1+0],[this+0]
         mov qword ptr [_1+8],[this+8]
         }
-    .operator GetLeft {
+    .inline GetLeft {
         mov eax,[this].Rect.X
         }
-    .operator GetTop {
+    .inline GetTop {
         mov eax,[this].Rect.Y
         }
-    .operator GetRight {
+    .inline GetRight {
         mov eax,[this].Rect.X
         add eax,[this].Rect.Width
         }
-    .operator GetBottom {
+    .inline GetBottom {
         mov eax,[this].Rect.Y
         add eax,[this].Rect.Height
         }
-    .operator IsEmptyArea {
+    .inline IsEmptyArea {
         xor eax,eax
         .ifs [this].Rect.Width <= eax || [this].Rect.Height <= eax
             inc eax
         .endif
         }
-    .operator Equals :ptr Rect {
+    .inline Equals :ptr Rect {
         xor    eax,eax
         mov    r10,[this]
         sub    r10,[_1]
@@ -801,21 +801,21 @@ endif
         setz   al
         }
 
-    .operator Contains :vararg {
-        ifidn typeid(?, this),<?Rect>
-            this.Contains?T(_1)
+    .inline Contains :vararg {
+        ifidn typeid(this),<Rect>
+            this.ContainsT(_1)
         else
             [rcx].Rect.typeid(Contains, this)(_1)
         endif
         }
-        .operator Contains?T :abs, :vararg {
-            this.typeid(Contains?T, _1)(_1, _2)
+        .inline ContainsT :abs, :vararg {
+            this.typeid(ContainsT, _1)(_1, _2)
             }
-        .operator Contains?pRect :abs, :vararg {
-            [rcx].Rect.typeid(Contains?pRect, _1)(_1, _2)
+        .inline ContainsPRect :abs, :vararg {
+            [rcx].Rect.typeid(ContainsPRect, _1)(_1, _2)
             }
 
-        .operator Contains?T?sdword :int_t, :int_t, :vararg {
+        .inline ContainsTSDWORD :int_t, :int_t, :vararg {
             xor eax,eax
             .ifs ( edx >= this.X && r8d >= this.Y )
                 sub edx,this.Width
@@ -825,10 +825,10 @@ endif
                 .endif
             .endif
             }
-        .operator Contains?T?pPoint :ptr Point, :vararg {
-            this.Contains?T?sdword([rdx].Point.X, [rdx].Point.Y)
+        .inline ContainsTPPoint :ptr Point, :vararg {
+            this.ContainsTSDWORD([rdx].Point.X, [rdx].Point.Y)
             }
-        .operator Contains?T?pRect :ptr Rect, :vararg {
+        .inline ContainsTPRect :ptr Rect, :vararg {
             mov r8d,[rdx].Rect.X
             add r8d,[rdx].Rect.Width
             mov r9d,this.X
@@ -846,7 +846,7 @@ endif
                 xor eax,eax
             .endif
             }
-        .operator Contains?pRect?sdword :int_t, :int_t {
+        .inline ContainsPRectSDWORD :int_t, :int_t {
             xor eax,eax
             .ifs ( _1 >= [this].Rect.X && _2 >= [this].Rect.Y )
                 sub _1,[this].Rect.Width
@@ -856,10 +856,10 @@ endif
                 .endif
             .endif
             }
-        .operator Contains?pRect?pPoint :ptr Point {
-            [this].Rect.Contains?pRect?sdword([_1].Point.X, [_1].Point.Y)
+        .inline ContainsPRectPPoint :ptr Point {
+            [this].Rect.ContainsPRectSDWORD([_1].Point.X, [_1].Point.Y)
             }
-        .operator Contains?pRect?pRect :ptr Rect {
+        .inline ContainsPRectPRect :ptr Rect {
             mov r8d,[_1].Rect.X
             add r8d,[_1].Rect.Width
             mov r9d,[this].Rect.X
@@ -878,20 +878,20 @@ endif
             .endif
             }
 
-    .operator Inflate :vararg {
-        ifidn typeid(?, this),<?Rect>
-            this.Inflate?T(_1)
+    .inline Inflate :vararg {
+        ifidn typeid(this),<Rect>
+            this.InflateT(_1)
         else
             [rcx].Rect.typeid(Inflate, this)(_1)
         endif
         }
-        .operator Inflate?T :abs, :vararg {
-            this.typeid(Inflate?T, _1)(_1, _2)
+        .inline InflateT :abs, :vararg {
+            this.typeid(InflateT, _1)(_1, _2)
             }
-        .operator Inflate?pRect :abs, :vararg {
-            [rcx].Rect.typeid(Inflate?pRect, _1)(_1, _2)
+        .inline InflatePRect :abs, :vararg {
+            [rcx].Rect.typeid(InflatePRect, _1)(_1, _2)
             }
-        .operator Inflate?T?sdword :int_t, :int_t, :vararg {
+        .inline InflateTSDWORD :int_t, :int_t, :vararg {
             sub this.X,edx
             sub this.Y,r8d
             add edx,edx
@@ -899,7 +899,7 @@ endif
             add this.Width,edx
             add this.Height,r8d
             }
-        .operator Inflate?pRect?sdword :int_t, :int_t {
+        .inline InflatePRectSDWORD :int_t, :int_t {
             sub [this].Rect.X,edx
             sub [this].Rect.Y,r8d
             add edx,edx
@@ -907,38 +907,38 @@ endif
             add [this].Rect.Width,edx
             add [this].Rect.Height,r8d
             }
-        .operator Inflate?T?pPoint :ptr Point, :vararg {
-            this.Inflate?T?sdword([rdx].Point.X, [rdx].Point.Y)
+        .inline InflateTPPoint :ptr Point, :vararg {
+            this.InflateTSDWORD([rdx].Point.X, [rdx].Point.Y)
             }
-        .operator Inflate?pRect?pPoint :ptr Point {
-            [this].Rect.Inflate?pRect?sdword([_1].Point.X, [_1].Point.Y)
+        .inline InflatePRectPPoint :ptr Point {
+            [this].Rect.InflatePRectSDWORD([_1].Point.X, [_1].Point.Y)
             }
 
-    .operator Intersect :vararg {
-        ifidn typeid(?, this),<?Rect>
-            this.Intersect?T(_1)
+    .inline Intersect :vararg {
+        ifidn typeid(this),<Rect>
+            this.IntersectT(_1)
         else
             [rcx].Rect.typeid(Intersect, this)(_1)
         endif
         }
-        .operator Intersect?T :abs, :abs, :vararg {
-            this.typeid(Intersect?T, _1)typeid(?, _2)(_1, _2, _3)
+        .inline IntersectT :abs, :abs, :vararg {
+            this.typeid(IntersectT, _1)typeid(_2)(_1, _2, _3)
             }
-        .operator Intersect?pRect :abs, :abs {
-            [rcx].Rect.typeid(Intersect?pRect, _1)typeid(?, _2)(_1, _2)
+        .inline IntersectPRect :abs, :abs {
+            [rcx].Rect.typeid(IntersectPRect, _1)typeid(_2)(_1, _2)
             }
-        .operator Intersect?T?pRect?i0 :abs, :vararg {
+        .inline IntersectTPRectIMM0 :abs, :vararg {
             lea rcx,this
-            [rcx].Rect.Intersect?pRect?pRect?pRect(rcx, _1)
+            [rcx].Rect.IntersectPRectPRectPRect(rcx, _1)
             }
-        .operator Intersect?T?pRect?pRect :abs, :abs, :vararg {
+        .inline IntersectTPRectPRect :abs, :abs, :vararg {
             lea rcx,this
-            [rcx].Rect.Intersect?pRect?pRect?pRect(_1, _2)
+            [rcx].Rect.IntersectPRectPRectPRect(_1, _2)
             }
-        .operator Intersect?pRect?pRect?i0 :abs {
-            [rcx].Rect.Intersect?pRect?pRect?pRect(rcx, _1)
+        .inline IntersectPRectPRectIMM0 :abs {
+            [rcx].Rect.IntersectPRectPRectPRect(rcx, _1)
             }
-        .operator Intersect?pRect?pRect?pRect :ptr Rect, :ptr Rect {
+        .inline IntersectPRectPRectPRect :ptr Rect, :ptr Rect {
             mov     eax,[_1].Rect.X
             add     eax,[_1].Rect.Width
             cvtsi2ss xmm0,eax
@@ -972,7 +972,7 @@ endif
             xor     [this].Rect.IsEmptyArea(),1
             }
 
-    .operator IntersectsWith :ptr Rect {
+    .inline IntersectsWith :ptr Rect {
         xor eax,eax
         mov r8d,[_1].Rect.X
         add r8d,[_1].Rect.Width
@@ -990,7 +990,7 @@ endif
             .endif
         .endif
         }
-    .operator _Union :ptr Rect, :ptr Rect {
+    .inline _Union :ptr Rect, :ptr Rect {
         mov     eax,[_1].Rect.X
         add     eax,[_1].Rect.Width
         cvtsi2ss xmm0,eax
@@ -1024,38 +1024,38 @@ endif
         xor     [this].Rect.IsEmptyArea(),1
         }
 
-    .operator _Offset :vararg {
-        ifidn typeid(?, this),<?Rect>
-            this._Offset?T(_1)
+    .inline _Offset :vararg {
+        ifidn typeid(this),<Rect>
+            this._OffsetT(_1)
         else
             [rcx].Rect.typeid(_Offset, this)(_1)
         endif
         }
-        .operator _Offset?T :abs, :vararg {
-            this.typeid(_Offset?T, _1)(_1, _2)
+        .inline _OffsetT :abs, :vararg {
+            this.typeid(_OffsetT, _1)(_1, _2)
             }
-        .operator _Offset?T?pPoint :ptr Point, :vararg {
-            this._Offset?T?i32([rdx].Rect.X, [rdx].Rect.Y)
+        .inline _OffsetTPPoint :ptr Point, :vararg {
+            this._OffsetTIMM32([rdx].Rect.X, [rdx].Rect.Y)
             }
-        .operator _Offset?T?sdword :int_t, :int_t, :vararg {
+        .inline _OffsetTSDWORD :int_t, :int_t, :vararg {
             add this.X,edx
             add this.Y,r8d
             }
-        .operator _Offset?T?i32 :abs, :abs, :vararg {
+        .inline _OffsetTIMM32 :abs, :abs, :vararg {
             add this.X,_1
             add this.Y,_2
             }
-        .operator _Offset?pRect :abs, :abs {
-            [this].Rect.typeid(_Offset?pRect, _1)(_1, _2)
+        .inline _OffsetPRect :abs, :abs {
+            [this].Rect.typeid(_OffsetPRect, _1)(_1, _2)
             }
-        .operator _Offset?pRect?pPoint :ptr Point {
-            [this].Rect._Offset?pRect?i32([_1].Rect.X, [_1].Rect.Y)
+        .inline _OffsetPRectPPoint :ptr Point {
+            [this].Rect._OffsetPRectIMM32([_1].Rect.X, [_1].Rect.Y)
             }
-        .operator _Offset?pRect?sdword :int_t, :int_t {
+        .inline _OffsetPRectSDWORD :int_t, :int_t {
             add [this].Rect.X,_1
             add [this].Rect.Y,_2
             }
-        .operator _Offset?pRect?i32 :abs, :abs {
+        .inline _OffsetPRectIMM32 :abs, :abs {
             add [this].Rect.X,_1
             add [this].Rect.Y,_2
             }
@@ -1069,13 +1069,13 @@ endif
     Points  ptr_t ?
     Types   ptr_t ?
 
-    .operator PathData :vararg {
+    .inline PathData :vararg {
         xor eax,eax
         mov this.Count,  eax
         mov this.Points, rax
         mov this.Types,  rax
         }
-    .operator Release :vararg {
+    .inline Release :vararg {
         mov rcx,this.Points
         .if rcx != NULL
             GdipFree(rcx)
@@ -1093,30 +1093,30 @@ endif
     First   int_t ?
     Length  int_t ?
 
-    .operator CharacterRange :vararg {
-        ifidn typeid(?, this),<?CharacterRange>
-            this.T?T(_1)
+    .inline CharacterRange :vararg {
+        ifidn typeid(this),<CharacterRange>
+            this.TT(_1)
         else
             [rcx].CharacterRange.typeid(T, this)(_1)
         endif
         }
-        .operator T?i32 :vararg {
+        .inline TIMM32 :vararg {
           local t
            .new t:CharacterRange
-            t.T?T(_1)
+            t.TT(_1)
             lea rax,t
             }
-        .operator T?T :abs, :vararg {
-            this.typeid(T?T, _1)(_1, _2)
+        .inline TT :abs, :vararg {
+            this.typeid(TT, _1)(_1, _2)
             }
-            .operator T?T?i32 :abs, :abs=<0>, :vararg {
+            .inline TTIMM32 :abs, :abs=<0>, :vararg {
                 mov this.First, _1
                 mov this.Length,_2
                 }
-            .operator T?T?i0 :vararg {
-                this.T?T?i32(0, 0)
+            .inline TTIMM0 :vararg {
+                this.TTIMM32(0, 0)
                 }
-            .operator T?T?pCharacterRange :ptr CharacterRange, :vararg {
+            .inline TTPCharacterRange :ptr CharacterRange, :vararg {
                 mov this.First, [rdx].CharacterRange.First
                 mov this.Length,[rdx].CharacterRange.Length
                 }

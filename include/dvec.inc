@@ -53,36 +53,36 @@ get_mask128 macro x:=<xmm2>
 
     vec __m128i <>
 
-    .operator M128 :vararg {
-        ifidn typeid(?, this),<?M128>
+    .inline M128 :vararg {
+        ifidn typeid(this),<M128>
             this.Init(_1)
         else
             [rcx].M128.typeid(M128, this)(_1)
         endif
         }
-        .operator M128?i32 :vararg {
+        .inline M128IMM32 :vararg {
           local n
            .new n:M128
             n.Init(_1)
             lea rax,n
             }
 
-    .operator Init :abs, :vararg {
+    .inline Init :abs, :vararg {
         ifnb <_1>
-            ifidn typeid(?, this),<?M128>
+            ifidn typeid(this),<M128>
                 lea rcx,this
             endif
             [rcx].M128.typeid(Init, _1)(_1)
         endif
         }
-        .operator Init?flt :abs {
+        .inline InitIMMFLT :abs {
             movaps xmm0,{ _1, _1, _1, _1 }
             }
 
     .operator = :vec128_t {
         _mm_store_ps([this], _1)
         }
-    .operator __m128i {
+    .inline __m128i {
         _mm_store_ps(xmm0, [this])
         }
     .operator &= :vec128_t {
@@ -106,7 +106,7 @@ get_mask128 macro x:=<xmm2>
     .operator ^ :vec128_t {
         _mm_xor_si128(xmm0, _1)
         }
-    .operator andnot :vec128_t {
+    .inline andnot :vec128_t {
         _mm_andnot_si128(xmm0, _1)
         }
     .ends
@@ -151,13 +151,13 @@ get_mask128 macro x:=<xmm2>
     .operator >> :vec128_t {
         _mm_srl_epi64(xmm0, _1)
         }
-    .operator unpack_low :vec128_t {
+    .inline unpack_low :vec128_t {
         _mm_unpacklo_epi64(xmm0, _1)
         }
-    .operator unpack_high :vec128_t {
+    .inline unpack_high :vec128_t {
         _mm_unpackhi_epi64(xmm0, _1)
         }
-    .operator sum_abs :vec128_t {
+    .inline sum_abs :vec128_t {
         _mm_sad_epu8(xmm0, _1)
         }
     .operator << :abs {
@@ -203,16 +203,16 @@ get_mask128 macro x:=<xmm2>
     .operator >> :vec128_t {
         _mm_srl_epi32(xmm0, _1)
         }
-    .operator cmpeq :vec128_t {
+    .inline cmpeq :vec128_t {
         _mm_cmpeq_epi32(xmm0, _1)
         }
-    .operator cmpneq :vec128_t {
+    .inline cmpneq :vec128_t {
         _mm_andnot_si128(_mm_cmpeq_epi32(xmm0, _1), get_mask128())
         }
-    .operator unpack_low :vec128_t {
+    .inline unpack_low :vec128_t {
         _mm_unpacklo_epi32(xmm0, _1)
         }
-    .operator unpack_high :vec128_t {
+    .inline unpack_high :vec128_t {
         _mm_unpackhi_epi32(xmm0, _1)
         }
     .operator <<= :abs {
@@ -229,11 +229,11 @@ get_mask128 macro x:=<xmm2>
 
 .template Is32vec4 : public I32vec4
 
-    .operator cmpgt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
-    .operator cmplt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
+    .inline cmpgt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
+    .inline cmplt :vec128_t { _mm_cmpgt_epi32(xmm0, _1) }
 
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         mov r8d,[this+0x0C]
@@ -255,7 +255,7 @@ endif
     .operator * :vec128_t { _mm_mul_epu32(xmm0, _1) }
 
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         mov r8d,[this+0x0C]
@@ -305,22 +305,22 @@ endif
     .operator <<= :abs {
         _mm_store_ps([this],_mm_slli_epi16(xmm0, _1))
         }
-    .operator rmul16 :vec128_t {
+    .inline rmul16 :vec128_t {
         _mm_mullo_epi16(xmm0, _1)
         }
-    .operator cmpeq :vec128_t {
+    .inline cmpeq :vec128_t {
         _mm_cmpeq_epi16(xmm0, _1)
         }
-    .operator cmpneq :vec128_t {
+    .inline cmpneq :vec128_t {
         _mm_andnot_si128(_mm_cmpeq_epi16(xmm0, _1), get_mask128())
         }
-    .operator unpack_low :vec128_t {
+    .inline unpack_low :vec128_t {
         _mm_unpacklo_epi16(xmm0, _1)
         }
-    .operator unpack_high :vec128_t {
+    .inline unpack_high :vec128_t {
         _mm_unpackhi_epi16(xmm0, _1)
         }
-    .operator pack_sat :vec128_t {
+    .inline pack_sat :vec128_t {
         _mm_packs_epi32(xmm0, _1)
         }
     .ends
@@ -330,16 +330,16 @@ endif
 
 .template Is16vec8 : public I16vec8
 
-    .operator cmpgt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
-    .operator cmplt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
-    .operator mul_high  :vec128_t { _mm_mulhi_epi16(xmm0, _1) }
-    .operator mul_add   :vec128_t { _mm_madd_epi16 (xmm0, _1) }
-    .operator sat_add   :vec128_t { _mm_adds_epi16 (xmm0, _1) }
-    .operator sat_sub   :vec128_t { _mm_subs_epi16 (xmm0, _1) }
-    .operator simd_max  :vec128_t { _mm_max_epi16  (xmm0, _1) }
-    .operator simd_min  :vec128_t { _mm_min_epi16  (xmm0, _1) }
+    .inline cmpgt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
+    .inline cmplt     :vec128_t { _mm_cmpgt_epi16(xmm0, _1) }
+    .inline mul_high  :vec128_t { _mm_mulhi_epi16(xmm0, _1) }
+    .inline mul_add   :vec128_t { _mm_madd_epi16 (xmm0, _1) }
+    .inline sat_add   :vec128_t { _mm_adds_epi16 (xmm0, _1) }
+    .inline sat_sub   :vec128_t { _mm_subs_epi16 (xmm0, _1) }
+    .inline simd_max  :vec128_t { _mm_max_epi16  (xmm0, _1) }
+    .inline simd_min  :vec128_t { _mm_min_epi16  (xmm0, _1) }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [7]:%d\n [6]:%d\n [5]:%d\n [4]:%d\n [3]:%d\n [2]:%d\n [1]:%d\n [0]:%d\n"),\
@@ -366,12 +366,12 @@ endif
         _mm_srl_epi16(xmm0, _1)
         _mm_store_ps([this], xmm0)
         }
-    .operator sat_add   :vec128_t { _mm_adds_epu16 (xmm0, _1) }
-    .operator sat_sub   :vec128_t { _mm_subs_epu16 (xmm0, _1) }
-    .operator simd_avg  :vec128_t { _mm_avg_epu16  (xmm0, _1) }
-    .operator mul_high  :vec128_t { _mm_mulhi_epu16(xmm0, _1) }
+    .inline sat_add   :vec128_t { _mm_adds_epu16 (xmm0, _1) }
+    .inline sat_sub   :vec128_t { _mm_subs_epu16 (xmm0, _1) }
+    .inline simd_avg  :vec128_t { _mm_avg_epu16  (xmm0, _1) }
+    .inline mul_high  :vec128_t { _mm_mulhi_epu16(xmm0, _1) }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [7]:%u\n [6]:%u\n [5]:%u\n [4]:%u\n [3]:%u\n [2]:%u\n [1]:%u\n [0]:%u\n"),\
@@ -414,16 +414,16 @@ endif
         _mm_sub_epi8(xmm0, _1)
         _mm_store_ps([this], xmm0)
         }
-    .operator cmpeq :vec128_t {
+    .inline cmpeq :vec128_t {
         _mm_cmpeq_epi8(xmm0, _1)
         }
-    .operator cmpneq :vec128_t {
+    .inline cmpneq :vec128_t {
         _mm_andnot_si128(_mm_cmpeq_epi8(xmm0, _1), get_mask128())
         }
-    .operator unpack_low :vec128_t {
+    .inline unpack_low :vec128_t {
         _mm_unpacklo_epi8(xmm0, _1)
         }
-    .operator unpack_high :vec128_t {
+    .inline unpack_high :vec128_t {
         _mm_unpackhi_epi8(xmm0, _1)
         }
     .ends
@@ -433,16 +433,16 @@ endif
 
 .template Is8vec16 : public I8vec16
 
-    .operator cmpgt :vec128_t { _mm_cmpgt_epi8(xmm0, _1) }
-    .operator cmplt :vec128_t {
+    .inline cmpgt :vec128_t { _mm_cmpgt_epi8(xmm0, _1) }
+    .inline cmplt :vec128_t {
         _mm_cmplt_epi8(xmm2, xmm0, _1)
         _mm_store_ps(xmm0, xmm2)
         }
-    .operator sat_add  :vec128_t { _mm_adds_epi8  (xmm0, _1) }
-    .operator sat_sub  :vec128_t { _mm_subs_epi8  (xmm0, _1) }
-    .operator pack_sat :vec128_t { _mm_packs_epi16(xmm0, _1) }
+    .inline sat_add  :vec128_t { _mm_adds_epi8  (xmm0, _1) }
+    .inline sat_sub  :vec128_t { _mm_subs_epi8  (xmm0, _1) }
+    .inline pack_sat :vec128_t { _mm_packs_epi16(xmm0, _1) }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [15]:%u\n [14]:%u\n [13]:%u\n [12]:%u\n [11]:%u\n [10]:%u\n [9]:%u\n [8]:%u\n [7]:%u\n [6]:%u\n [5]:%u\n [4]:%u\n [3]:%u\n [2]:%u\n [1]:%u\n [0]:%u\n"),\
@@ -473,14 +473,14 @@ endif
 
 .template Iu8vec16 : public I8vec16
 
-    .operator sat_add   :vec128_t { _mm_adds_epu8(xmm0, _1) }
-    .operator sat_sub   :vec128_t { _mm_subs_epu8(xmm0, _1) }
-    .operator simd_avg  :vec128_t { _mm_avg_epu8(xmm0, _1) }
-    .operator simd_max  :vec128_t { _mm_max_epu8(xmm0, _1) }
-    .operator simd_min  :vec128_t { _mm_min_epu8(xmm0, _1) }
-    .operator packu_sat :vec128_t { _mm_packus_epi16(xmm0, _1) }
+    .inline sat_add   :vec128_t { _mm_adds_epu8(xmm0, _1) }
+    .inline sat_sub   :vec128_t { _mm_subs_epu8(xmm0, _1) }
+    .inline simd_avg  :vec128_t { _mm_avg_epu8(xmm0, _1) }
+    .inline simd_max  :vec128_t { _mm_max_epu8(xmm0, _1) }
+    .inline simd_min  :vec128_t { _mm_min_epu8(xmm0, _1) }
+    .inline packu_sat :vec128_t { _mm_packus_epi16(xmm0, _1) }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [15]:%u\n [14]:%u\n [13]:%u\n [12]:%u\n [11]:%u\n [10]:%u\n [9]:%u\n [8]:%u\n [7]:%u\n [6]:%u\n [5]:%u\n [4]:%u\n [3]:%u\n [2]:%u\n [1]:%u\n [0]:%u\n"),\
@@ -599,61 +599,61 @@ endif
         _mm_xor_pd(xmm0, _1)
         _mm_store_ps([this], xmm0) }
 
-    .operator add_horizontal {
+    .inline add_horizontal {
         _mm_move_pd(xmm1, xmm0)
         _mm_shuffle_pd(xmm1, xmm1, 1)
         _mm_add_sd(xmm0, xmm1)
         _mm_cvtsd_f64(xmm0) }
 
-    .operator andnot :vec128_t { _mm_andnot_pd(xmm0, _1) }
-    .operator sqrt { _mm_sqrt_pd(xmm0, xmm0) }
+    .inline andnot :vec128_t { _mm_andnot_pd(xmm0, _1) }
+    .inline sqrt { _mm_sqrt_pd(xmm0, xmm0) }
 
-    .operator cmpeq  :vec128_t      { _mm_cmpeq_pd (xmm0, _1) }
-    .operator cmplt  :vec128_t      { _mm_cmplt_pd (xmm0, _1) }
-    .operator cmple  :vec128_t      { _mm_cmple_pd (xmm0, _1) }
-    .operator cmpgt  :vec128_t {
+    .inline cmpeq  :vec128_t      { _mm_cmpeq_pd (xmm0, _1) }
+    .inline cmplt  :vec128_t      { _mm_cmplt_pd (xmm0, _1) }
+    .inline cmple  :vec128_t      { _mm_cmple_pd (xmm0, _1) }
+    .inline cmpgt  :vec128_t {
         _mm_cmpgt_pd (_1, xmm0, _1)
         _mm_move_pd(xmm0, _1)
         }
-    .operator cmpge  :vec128_t {
+    .inline cmpge  :vec128_t {
         _mm_cmpge_pd (_1, xmm0, _1)
         _mm_move_pd(xmm0, _1)
         }
-    .operator cmpngt :vec128_t {
+    .inline cmpngt :vec128_t {
         _mm_cmpngt_pd(_1, xmm0, _1)
         _mm_move_pd(xmm0, _1)
         }
-    .operator cmpnge :vec128_t      { _mm_cmpnge_pd(xmm0, _1) }
-    .operator cmpnlt :vec128_t      { _mm_cmpnlt_pd(xmm0, _1) }
-    .operator cmpnle :vec128_t      { _mm_cmpnle_pd(xmm0, _1) }
+    .inline cmpnge :vec128_t      { _mm_cmpnge_pd(xmm0, _1) }
+    .inline cmpnlt :vec128_t      { _mm_cmpnlt_pd(xmm0, _1) }
+    .inline cmpnle :vec128_t      { _mm_cmpnle_pd(xmm0, _1) }
 
-    .operator simd_min :vec128_t    { _mm_min_pd(xmm0, _1) }
-    .operator simd_max :vec128_t    { _mm_max_pd(xmm0, _1) }
-    .operator abs                   { _mm_and_pd(xmm0, _f64vec2_abs_mask(xmm1)) }
+    .inline simd_min :vec128_t    { _mm_min_pd(xmm0, _1) }
+    .inline simd_max :vec128_t    { _mm_max_pd(xmm0, _1) }
+    .inline abs                   { _mm_and_pd(xmm0, _f64vec2_abs_mask(xmm1)) }
 
-    .operator comieq   :vec128_t    { _mm_comieq_sd(xmm0, _1) }
-    .operator comilt   :vec128_t    { _mm_comilt_sd(xmm0, _1) }
-    .operator comile   :vec128_t    { _mm_comile_sd(xmm0, _1) }
-    .operator comigt   :vec128_t    { _mm_comigt_sd(xmm0, _1) }
-    .operator comige   :vec128_t    { _mm_comige_sd(xmm0, _1) }
-    .operator comineq  :vec128_t    { _mm_comineq_sd(xmm0, _1) }
+    .inline comieq   :vec128_t    { _mm_comieq_sd(xmm0, _1) }
+    .inline comilt   :vec128_t    { _mm_comilt_sd(xmm0, _1) }
+    .inline comile   :vec128_t    { _mm_comile_sd(xmm0, _1) }
+    .inline comigt   :vec128_t    { _mm_comigt_sd(xmm0, _1) }
+    .inline comige   :vec128_t    { _mm_comige_sd(xmm0, _1) }
+    .inline comineq  :vec128_t    { _mm_comineq_sd(xmm0, _1) }
 
-    .operator ucomieq  :vec128_t    { _mm_ucomieq_sd(xmm0, _1) }
-    .operator ucomilt  :vec128_t    { _mm_ucomilt_sd(xmm0, _1) }
-    .operator ucomile  :vec128_t    { _mm_ucomile_sd(xmm0, _1) }
-    .operator ucomigt  :vec128_t    { _mm_ucomigt_sd(xmm0, _1) }
-    .operator ucomige  :vec128_t    { _mm_ucomige_sd(xmm0, _1) }
-    .operator ucomineq :vec128_t    { _mm_ucomineq_sd(xmm0, _1) }
+    .inline ucomieq  :vec128_t    { _mm_ucomieq_sd(xmm0, _1) }
+    .inline ucomilt  :vec128_t    { _mm_ucomilt_sd(xmm0, _1) }
+    .inline ucomile  :vec128_t    { _mm_ucomile_sd(xmm0, _1) }
+    .inline ucomigt  :vec128_t    { _mm_ucomigt_sd(xmm0, _1) }
+    .inline ucomige  :vec128_t    { _mm_ucomige_sd(xmm0, _1) }
+    .inline ucomineq :vec128_t    { _mm_ucomineq_sd(xmm0, _1) }
 
-    .operator unpack_low  :vec128_t { _mm_unpacklo_pd(xmm0, _1) }
-    .operator unpack_high :vec128_t { _mm_unpackhi_pd(xmm0, _1) }
-    .operator move_mask             { _mm_movemask_pd(xmm0) }
-    .operator loadu                 { _mm_loadu_pd([this]) }
-    .operator storeu                { _mm_storeu_pd([this], xmm0) }
-    .operator store_nta             { _mm_stream_pd([this], xmm0) }
+    .inline unpack_low  :vec128_t { _mm_unpacklo_pd(xmm0, _1) }
+    .inline unpack_high :vec128_t { _mm_unpackhi_pd(xmm0, _1) }
+    .inline move_mask             { _mm_movemask_pd(xmm0) }
+    .inline loadu                 { _mm_loadu_pd([this]) }
+    .inline storeu                { _mm_storeu_pd([this], xmm0) }
+    .inline store_nta             { _mm_stream_pd([this], xmm0) }
 
     F64vec2_SELECT macro op
-        .operator select_&op& :vec128_t, :vec128_t, :vec128_t {
+        .inline select_&op& :vec128_t, :vec128_t, :vec128_t {
             _mm_cmp&op&_pd(xmm0, _1)
             _mm_store_ps(_1, xmm0)
             _mm_and_pd(xmm0, _2)
@@ -672,14 +672,14 @@ endif
         F64vec2_SELECT(nge)
         undef F64vec2_SELECT
 
-    .operator select_gt :vec128_t, :vec128_t, :vec128_t {
+    .inline select_gt :vec128_t, :vec128_t, :vec128_t {
         _mm_cmpgt_pd(_1, xmm0, _1)
         _mm_store_ps(xmm0, _1)
         _mm_and_pd(xmm0, _2)
         _mm_andnot_pd(_1, _3)
         _mm_or_pd(xmm0, _1)
         }
-    .operator select_ge :vec128_t, :vec128_t, :vec128_t {
+    .inline select_ge :vec128_t, :vec128_t, :vec128_t {
         _mm_cmpge_pd(_1, xmm0, _1)
         _mm_store_ps(xmm0, _1)
         _mm_and_pd(xmm0, _2)
@@ -687,14 +687,14 @@ endif
         _mm_or_pd(xmm0, _1)
         }
 
-    .operator ToInt {
+    .inline ToInt {
         _mm_cvttsd_si32(xmm0)
         }
-    .operator ToF32vec4 {
+    .inline ToF32vec4 {
         _mm_cvtpd_ps(xmm0)
         }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [1]:%f\n [0]:%f\n"),\
@@ -753,35 +753,35 @@ IntToF64vec2 macro _A, _B
         F32vec8_mequ4(this, _1) }
     .operator = :vec256_t {
         _mm256_store_ps([this], _mm256_store_ps(ymm0, _1)) }
-    .operator __m256 {
+    .inline __m256 {
         _mm256_store_ps(ymm0, [this]) }
 
-    .operator add_horizontal {
+    .inline add_horizontal {
         _mm256_store_ps(ymm1, ymm0)
         _mm256_add_ps(ymm0, _mm256_permute_ps(ymm1, 0xee))
         _mm256_add_ps(ymm0, _mm256_movehdup_ps(_mm256_store_ps(ymm1, ymm0)))
         _mm_cvtss_f32(_mm_add_ss(_mm256_castps256_ps128(ymm0), _mm256_extractf128_ps(ymm0, 1)))
         }
-    .operator andnot :vec256_t {
+    .inline andnot :vec256_t {
         _mm256_andnot_ps(ymm0, _1)
         }
-    .operator sqrt {
+    .inline sqrt {
         _mm256_sqrt_ps(ymm0)
         }
-    .operator rcp {
+    .inline rcp {
         _mm256_rcp_ps(ymm0)
         }
-    .operator rsqrt {
+    .inline rsqrt {
         _mm256_rsqrt_ps(ymm0)
         }
-    .operator rcp_nr {
+    .inline rcp_nr {
         vrcpps ymm1,ymm0
         vmulps ymm0,ymm1,ymm0
         vmulps ymm0,ymm0,ymm1
         vaddps ymm1,ymm1,ymm1
         vsubps ymm0,ymm1,ymm0
         }
-    .operator rsqrt_nr {
+    .inline rsqrt_nr {
         vrsqrtps ymm1,ymm0
         vmulps ymm0,ymm0,ymm1
         vmulps ymm2,ymm0,ymm1
@@ -790,68 +790,68 @@ IntToF64vec2 macro _A, _B
         _mm256_mul_ps(ymm0, ymm1)
         }
 
-    .operator cmp_eq    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_EQ_OQ) }
-    .operator cmp_lt    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_LT_OS) }
-    .operator cmp_le    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_LE_OS) }
-    .operator cmp_gt    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_GT_OS) }
-    .operator cmp_ge    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_GE_OS) }
-    .operator cmp_neq   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NEQ_UQ) }
-    .operator cmp_nlt   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NLT_US) }
-    .operator cmp_nle   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NLE_US) }
-    .operator cmp_ngt   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NGT_US) }
-    .operator cmp_nge   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NGE_US) }
+    .inline cmp_eq    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_EQ_OQ) }
+    .inline cmp_lt    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_LT_OS) }
+    .inline cmp_le    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_LE_OS) }
+    .inline cmp_gt    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_GT_OS) }
+    .inline cmp_ge    :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_GE_OS) }
+    .inline cmp_neq   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NEQ_UQ) }
+    .inline cmp_nlt   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NLT_US) }
+    .inline cmp_nle   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NLE_US) }
+    .inline cmp_ngt   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NGT_US) }
+    .inline cmp_nge   :vec256_t { _mm256_cmp_ps(ymm0, _1, _CMP_NGE_US) }
 
-    .operator simd_min  :vec256_t { _mm256_min_ps(ymm0, _1) }
-    .operator simd_max  :vec256_t { _mm256_max_ps(ymm0, _1) }
-    .operator abs {
+    .inline simd_min  :vec256_t { _mm256_min_ps(ymm0, _1) }
+    .inline simd_max  :vec256_t { _mm256_max_ps(ymm0, _1) }
+    .inline abs {
         vpcmpeqw ymm1,ymm1,ymm1
         vpsrld ymm1,ymm1,1
         _mm256_and_ps(ymm0, ymm1)
         }
 
-    .operator unpack_low    :vec256_t { _mm256_unpacklo_ps(ymm0, _1) }
-    .operator unpack_high   :vec256_t { _mm256_unpackhi_ps(ymm0, _1) }
-    .operator move_mask     { _mm256_movemask_ps(ymm0) }
-    .operator loadu         { _mm256_loadu_ps([this], ymm0) }
-    .operator storeu        { _mm256_storeu_ps([this], ymm0) }
-    .operator store_nta     { _mm256_stream_ps([this], ymm0) }
-    .operator maskload      { _mm256_maskload_ps([this], ymm0) }
-    .operator maskstore :vec256_t {
+    .inline unpack_low    :vec256_t { _mm256_unpacklo_ps(ymm0, _1) }
+    .inline unpack_high   :vec256_t { _mm256_unpackhi_ps(ymm0, _1) }
+    .inline move_mask     { _mm256_movemask_ps(ymm0) }
+    .inline loadu         { _mm256_loadu_ps([this], ymm0) }
+    .inline storeu        { _mm256_storeu_ps([this], ymm0) }
+    .inline store_nta     { _mm256_stream_ps([this], ymm0) }
+    .inline maskload      { _mm256_maskload_ps([this], ymm0) }
+    .inline maskstore :vec256_t {
         _mm256_maskstore_ps([this], _1, ymm0)
         }
 
-    .operator select_eq :vec256_t, :vec256_t, :vec256_t {
+    .inline select_eq :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_EQ_OQ))
         }
-    .operator select_lt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_lt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_LT_OS))
         }
-    .operator select_le :vec256_t, :vec256_t, :vec256_t {
+    .inline select_le :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_LE_OS))
         }
-    .operator select_gt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_gt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_GT_OS))
         }
-    .operator select_ge :vec256_t, :vec256_t, :vec256_t {
+    .inline select_ge :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_GE_OS))
         }
-    .operator select_neq :vec256_t, :vec256_t, :vec256_t {
+    .inline select_neq :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_NEQ_UQ))
         }
-    .operator select_nlt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nlt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_NLT_US))
         }
-    .operator select_nle :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nle :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_NLE_US))
         }
-    .operator select_ngt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_ngt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_NGT_US))
         }
-    .operator select_nge :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nge :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_ps(_3, _2, _mm256_cmp_ps(ymm0, _1, _CMP_NGE_US))
         }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         movq r8, _mm_cvtss_sd(_mm_move_ss(xmm0, [this+0x1C]))
@@ -892,7 +892,7 @@ endif
     .operator = :vec256_t {
         _mm256_store_ps([this], _mm256_store_ps(ymm0, _1))
         }
-    .operator __m256 {
+    .inline __m256 {
         _mm256_store_ps(ymm0, [this])
         }
 
@@ -934,78 +934,78 @@ endif
         }
 
 
-    .operator add_horizontal {
+    .inline add_horizontal {
         _mm256_store_pd(ymm1, ymm0)
         _mm256_add_pd(ymm0, _mm256_permute_pd(ymm1, 0x05))
         _mm256_add_pd(ymm0, _mm256_movehdup_ps(_mm256_store_ps(ymm1, ymm0)))
         _mm_cvtsd_f64(_mm_add_sd(_mm256_castps256_ps128(ymm0), _mm256_extractf128_pd(ymm0, 1)))
         }
-    .operator andnot    :vec256_t { _mm256_andnot_pd(ymm0, _1) }
-    .operator sqrt                { _mm256_sqrt_pd(ymm0) }
+    .inline andnot    :vec256_t { _mm256_andnot_pd(ymm0, _1) }
+    .inline sqrt                { _mm256_sqrt_pd(ymm0) }
 
-    .operator cmp_eq    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_EQ_OQ) }
-    .operator cmp_lt    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_LT_OS) }
-    .operator cmp_le    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_LE_OS) }
-    .operator cmp_gt    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_GT_OS) }
-    .operator cmp_ge    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_GE_OS) }
-    .operator cmp_neq   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NEQ_UQ) }
-    .operator cmp_nlt   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NLT_US) }
-    .operator cmp_nle   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NLE_US) }
-    .operator cmp_ngt   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NGT_US) }
-    .operator cmp_nge   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NGE_US) }
+    .inline cmp_eq    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_EQ_OQ) }
+    .inline cmp_lt    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_LT_OS) }
+    .inline cmp_le    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_LE_OS) }
+    .inline cmp_gt    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_GT_OS) }
+    .inline cmp_ge    :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_GE_OS) }
+    .inline cmp_neq   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NEQ_UQ) }
+    .inline cmp_nlt   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NLT_US) }
+    .inline cmp_nle   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NLE_US) }
+    .inline cmp_ngt   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NGT_US) }
+    .inline cmp_nge   :vec256_t { _mm256_cmp_pd(ymm0, _1, _CMP_NGE_US) }
 
-    .operator simd_min  :vec256_t { _mm256_min_pd(ymm0, _1) }
-    .operator simd_max  :vec256_t { _mm256_max_pd(ymm0, _1) }
-    .operator abs {
+    .inline simd_min  :vec256_t { _mm256_min_pd(ymm0, _1) }
+    .inline simd_max  :vec256_t { _mm256_max_pd(ymm0, _1) }
+    .inline abs {
         vpcmpeqd ymm1,ymm1,ymm1
         vpsrlq ymm1,ymm1,1
         _mm256_and_pd(ymm0, ymm1)
         }
 
-    .operator unpack_low    :vec256_t { _mm256_unpacklo_pd(ymm0, _1) }
-    .operator unpack_high   :vec256_t { _mm256_unpackhi_pd(ymm0, _1) }
-    .operator move_mask     { _mm256_movemask_pd() }
-    .operator loadu         { _mm256_loadu_pd   ([this], ymm0) }
-    .operator storeu        { _mm256_storeu_pd  ([this], ymm0) }
-    .operator store_nta     { _mm256_stream_pd  ([this], ymm0) }
-    .operator maskload      { _mm256_maskload_pd([this], ymm0) }
-    .operator maskstore :vec256_t {
+    .inline unpack_low    :vec256_t { _mm256_unpacklo_pd(ymm0, _1) }
+    .inline unpack_high   :vec256_t { _mm256_unpackhi_pd(ymm0, _1) }
+    .inline move_mask     { _mm256_movemask_pd() }
+    .inline loadu         { _mm256_loadu_pd   ([this], ymm0) }
+    .inline storeu        { _mm256_storeu_pd  ([this], ymm0) }
+    .inline store_nta     { _mm256_stream_pd  ([this], ymm0) }
+    .inline maskload      { _mm256_maskload_pd([this], ymm0) }
+    .inline maskstore :vec256_t {
         _mm256_maskstore_pd([this], _1, ymm0)
         }
 
-    .operator select_eq :vec256_t, :vec256_t, :vec256_t {
+    .inline select_eq :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_EQ_OQ))
         }
-    .operator select_lt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_lt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_LT_OS))
         }
-    .operator select_le :vec256_t, :vec256_t, :vec256_t {
+    .inline select_le :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_LE_OS))
         }
-    .operator select_gt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_gt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_GT_OS))
         }
-    .operator select_ge :vec256_t, :vec256_t, :vec256_t {
+    .inline select_ge :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_GE_OS))
         }
-    .operator select_neq :vec256_t, :vec256_t, :vec256_t {
+    .inline select_neq :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_NEQ_UQ))
         }
-    .operator select_nlt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nlt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_NLT_US))
         }
-    .operator select_nle :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nle :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_NLE_US))
         }
-    .operator select_ngt :vec256_t, :vec256_t, :vec256_t {
+    .inline select_ngt :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_NGT_US))
         }
-    .operator select_nge :vec256_t, :vec256_t, :vec256_t {
+    .inline select_nge :vec256_t, :vec256_t, :vec256_t {
         _mm256_blendv_pd(_3, _2, _mm256_cmp_pd(ymm0, _1, _CMP_NGE_US))
         }
-    .operator ToF32vec8 { _mm256_cvtpd_ps(ymm0)> }
+    .inline ToF32vec8 { _mm256_cvtpd_ps(ymm0)> }
 if defined (_ENABLE_VEC_DEBUG)
-    .operator cout :string_t {
+    .inline cout :string_t {
         .new this_ptr:ptr
         mov this_ptr,this
         printf( addr @CStr("%s\n [3]:%f\n [2]:%f\n [1]:%f\n [0]:%f\n"),\

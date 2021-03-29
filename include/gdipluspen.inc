@@ -18,42 +18,42 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     lastResult  Status ?
     scratch     int_t ?
 
-    .operator Pen :abs, :vararg {
+    .inline Pen :abs, :vararg {
         this.typeid(Pen, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .operator Pen?pBrush :ptr Brush, :abs=<1.0>, :vararg {
+    .inline PenPBrush :ptr Brush, :abs=<1.0>, :vararg {
         mov rcx,rdx
         GdipCreatePen2([rcx].Brush.nativeBrush, _2, UnitWorld, addr this.nativePen)
         }
-    .operator Pen?pColor :ptr Color, :abs=<1.0>, :vararg {
+    .inline PenPColor :ptr Color, :abs=<1.0>, :vararg {
         mov rcx,rdx
         GdipCreatePen1([rcx].Color.Argb, _2, UnitWorld, addr this.nativePen)
         }
-    .operator Pen?Color :abs, :abs=<1.0>, :vararg {
+    .inline PenColor :abs, :abs=<1.0>, :vararg {
         GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
         }
-    .operator Pen?i32 :abs, :abs=<1.0>, :vararg {
+    .inline PenIMM32 :abs, :abs=<1.0>, :vararg {
         GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
         }
-    .operator Pen?r32   :vararg { this.Pen?i32(_1) }
-    .operator Pen?dword :vararg { this.Pen?i32(_1) }
+    .inline PenREG32 :vararg { this.PenIMM32(_1) }
+    .inline PenDWORD :vararg { this.PenIMM32(_1) }
 
-    .operator Pen?pPen :ptr Pen, :Status, :vararg {
+    .inline PenPPen :ptr Pen, :Status, :vararg {
         mov this.lastResult,r8d
         this.SetNativePen(rdx)
         }
 
-    .operator Release :vararg {
+    .inline Release :vararg {
         GdipDeletePen(this.nativePen)
         }
 
-    .operator New :vararg {
+    .inline New :vararg {
         GdipDeletePen(this.nativePen)
         Pen_Pen(this, _1)
         }
 
-    .operator SetStatus :abs, :vararg {
+    .inline SetStatus :abs, :vararg {
         ifnb <_1>
             ifdif <_1>,<eax>
                 mov eax,_1
@@ -64,7 +64,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov     this.lastResult,eax
         }
 
-    .operator Clone :vararg {
+    .inline Clone :vararg {
         mov _1.lastResult,0
         GdipClonePen(this.nativePen, addr _1.nativePen)
         mov _1.lastResult,eax
@@ -72,12 +72,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         lea rax,_1
         }
 
-    .operator SetWidth :vararg {
+    .inline SetWidth :vararg {
         GdipSetPenWidth(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetWidth :vararg {
+    .inline GetWidth :vararg {
         GdipGetPenWidth(this.nativePen, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
@@ -87,53 +87,53 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     ;; Line cap and join APIs by using LineCap and LineJoin enums.
 
-    .operator SetLineCap :vararg { ; :LineCap, :LineCap, :DashCap {
+    .inline SetLineCap :vararg { ; :LineCap, :LineCap, :DashCap {
         GdipSetPenLineCap197819(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetStartCap :vararg { ; :LineCap {
+    .inline SetStartCap :vararg { ; :LineCap {
         GdipSetPenStartCap(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetEndCap :vararg { ; :LineCap {
+    .inline SetEndCap :vararg { ; :LineCap {
         GdipSetPenEndCap(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetDashCap :vararg { ; :DashCap {
+    .inline SetDashCap :vararg { ; :DashCap {
         GdipSetPenDashCap197819(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetStartCap :vararg {
+    .inline GetStartCap :vararg {
         .new PenCap:ptr
         GdipGetPenStartCap(this.nativePen, addr PenCap)
         GdipSetStatus(this)
         mov rax,PenCap
         }
 
-    .operator GetEndCap :vararg { ; {
+    .inline GetEndCap :vararg { ; {
         .new PenCap:ptr
         GdipGetPenEndCap(this.nativePen, &PenCap)
         GdipSetStatus(this)
         mov rax,PenCap
         }
 
-    .operator GetDashCap :vararg { ; {
+    .inline GetDashCap :vararg { ; {
         .new PenCap:ptr
         GdipGetPenDashCap197819(this.nativePen, &PenCap)
         GdipSetStatus(this)
         mov rax,PenCap
         }
 
-    .operator SetLineJoin :vararg { ; :LineJoin {
+    .inline SetLineJoin :vararg { ; :LineJoin {
         GdipSetPenLineJoin(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetLineJoin :vararg { ; {
+    .inline GetLineJoin :vararg { ; {
         .new @LineJoin:ptr
         GdipGetPenLineJoin(this.nativePen, &@LineJoin)
         GdipSetStatus(this)
@@ -141,14 +141,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         exitm<>
         }
 
-    .operator SetCustomStartCap :ptr CustomLineCap, :vararg {
+    .inline SetCustomStartCap :ptr CustomLineCap, :vararg {
         test    rdx,rdx
         cmovnz  rdx,[rdx].CustomLineCap.nativeCap
         GdipSetPenCustomStartCap(this.nativePen, rdx)
         GdipSetStatus(this)
         }
 
-    .operator GetCustomStartCap :ptr CustomLineCap, :vararg {
+    .inline GetCustomStartCap :ptr CustomLineCap, :vararg {
         mov eax,InvalidParameter
         .if rdx
             GdipGetPenCustomStartCap(this.nativePen, rdx)
@@ -156,14 +156,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .operator SetCustomEndCap :ptr CustomLineCap, :vararg {
+    .inline SetCustomEndCap :ptr CustomLineCap, :vararg {
         test    rdx,rdx
         cmovnz  rdx,[rdx].CustomLineCap.nativeCap
         GdipSetPenCustomEndCap(this.nativePen, rdx)
         GdipSetStatus(this)
         }
 
-    .operator GetCustomEndCap :ptr CustomLineCap, :vararg {
+    .inline GetCustomEndCap :ptr CustomLineCap, :vararg {
         mov eax,InvalidParameter
         .if rdx
             GdipGetPenCustomEndCap(this.nativePen, rdx)
@@ -171,80 +171,80 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .operator SetMiterLimit :vararg { ; :REAL {
+    .inline SetMiterLimit :vararg { ; :REAL {
         GdipSetPenMiterLimit(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetMiterLimit :vararg {
+    .inline GetMiterLimit :vararg {
         GdipGetPenLineJoin(this.nativePen, addr this.scratch)
         GdipSetStatus(this)
         movss xmm0,this.scratch
         }
 
-    .operator SetAlignment :vararg { ; :PenAlignment {
+    .inline SetAlignment :vararg { ; :PenAlignment {
         GdipSetPenMode(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetAlignment :vararg {
+    .inline GetAlignment :vararg {
         GdipGetPenMode(this.nativePen, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetTransform :ptr Matrix, :vararg {
+    .inline SetTransform :ptr Matrix, :vararg {
         GdipSetPenTransform(this.nativePen, [rdx].Matrix.nativeMatrix)
         GdipSetStatus(this)
         }
 
-    .operator GetTransform :ptr Matrix, :vararg {
+    .inline GetTransform :ptr Matrix, :vararg {
         GdipGetPenTransform(this.nativePen, [rdx].Matrix.nativeMatrix)
         GdipSetStatus(this)
         }
 
-    .operator ResetTransform :vararg {
+    .inline ResetTransform :vararg {
         GdipResetPenTransform(this.nativePen)
         GdipSetStatus(this)
         }
 
-    .operator MultiplyTransform :ptr Matrix, :vararg {
+    .inline MultiplyTransform :ptr Matrix, :vararg {
         GdipMultiplyPenTransform(this.nativePen, [rdx].Matrix.nativeMatrix, _2)
         GdipSetStatus(this)
         }
 
-    .operator TranslateTransform :vararg { ; :REAL, :REAL, :MatrixOrder {
+    .inline TranslateTransform :vararg { ; :REAL, :REAL, :MatrixOrder {
         GdipTranslatePenTransform(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator ScaleTransform :vararg { ; :REAL, :REAL, :MatrixOrder {
+    .inline ScaleTransform :vararg { ; :REAL, :REAL, :MatrixOrder {
         GdipScalePenTransform(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator RotateTransform :vararg { ; :REAL, :MatrixOrder {
+    .inline RotateTransform :vararg { ; :REAL, :MatrixOrder {
         GdipRotatePenTransform(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetPenType :vararg {
+    .inline GetPenType :vararg {
         GdipGetPenFillType(this.nativePen, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetColor :vararg { ; :ptr Color {
+    .inline SetColor :vararg { ; :ptr Color {
         GdipSetPenColor(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetBrush :vararg { ; :ptr Brush {
+    .inline SetBrush :vararg { ; :ptr Brush {
         GdipSetPenBrushFill(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetColor :vararg { ; {
+    .inline GetColor :vararg { ; {
 
         .if this.GetPenType() != PenTypeSolidColor
 
@@ -261,7 +261,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         .endif
         }
 
-    .operator GetBrush :abs, :vararg {
+    .inline GetBrush :abs, :vararg {
 
         .new brush:Brush
 
@@ -289,7 +289,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
        retm<rax>
        }
 
-    .operator GetDashStyle :vararg { ; {
+    .inline GetDashStyle :vararg { ; {
 
         .new PenDashStyle:int_t
 
@@ -298,12 +298,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov eax,PenDashStyle
         }
 
-    .operator SetDashStyle :vararg { ; :DashStyle {
+    .inline SetDashStyle :vararg { ; :DashStyle {
         GdipSetPenDashStyle(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetDashOffset :vararg { ; {
+    .inline GetDashOffset :vararg { ; {
 
         .new DashOffset:int_t
 
@@ -312,17 +312,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov eax,DashOffset
         }
 
-    .operator SetDashOffset :vararg { ; :REAL {
+    .inline SetDashOffset :vararg { ; :REAL {
         GdipSetPenDashOffset([this].Pen.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetDashPattern :vararg { ; :ptr REAL, :int_t {
+    .inline SetDashPattern :vararg { ; :ptr REAL, :int_t {
         GdipSetPenDashArray(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetDashPatternCount :vararg { ; {
+    .inline GetDashPatternCount :vararg { ; {
 
        .new DashPatternCount:int_t
 
@@ -332,7 +332,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov eax,DashPatternCount
         }
 
-    .operator GetDashPattern :ptr REAL, :int_t, :vararg { ; {
+    .inline GetDashPattern :ptr REAL, :int_t, :vararg { ; {
         .ifs rdx == NULL || r8d <= 0
             mov eax,InvalidParameter
         .else
@@ -341,12 +341,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .operator SetCompoundArray :vararg { ; :ptr REAL, :int_t {
+    .inline SetCompoundArray :vararg { ; :ptr REAL, :int_t {
         GdipSetPenCompoundArray(this.nativePen, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetCompoundArrayCount :vararg { ; {
+    .inline GetCompoundArrayCount :vararg { ; {
         .new CompoundArrayCount:int_t
         mov CompoundArrayCount,0
         GdipGetPenCompoundCount(this.nativePen, &CompoundArrayCount)
@@ -354,7 +354,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov eax,CompoundArrayCount
         }
 
-    .operator GetCompoundArray :ptr REAL, :int_t, :vararg { ;
+    .inline GetCompoundArray :ptr REAL, :int_t, :vararg { ;
         .ifs rdx == NULL || r8d <= 0
             mov eax,InvalidParameter
         .else
@@ -363,11 +363,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .operator GetLastStatus :vararg { ; {
+    .inline GetLastStatus :vararg { ; {
         mov     eax,this.lastResult
         mov     this.lastResult,Ok
         }
-    .operator SetNativePen :ptr Pen, :vararg {
+    .inline SetNativePen :ptr Pen, :vararg {
         mov     this.nativePen,rdx
         }
     .ends

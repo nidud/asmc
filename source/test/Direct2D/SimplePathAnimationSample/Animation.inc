@@ -13,40 +13,40 @@ include math.inc
     m_Start     float ?
     m_End       float ?
 
-    .operator Animation :float, :float, :float {
+    .inline Animation :float, :float, :float {
         movss [rcx].Animation.m_Start,xmm1
         movss [rcx].Animation.m_End,xmm2
         movss [rcx].Animation.m_Duration,xmm3
         mov rax,rcx
         }
 
-    .operator SetStart :float {
+    .inline SetStart :float {
         movss [rcx].Animation.m_Start,xmm1
         }
 
-    .operator GetStart {
+    .inline GetStart {
         movss xmm0,[rcx].Animation.m_Start
         }
 
-    .operator SetEnd :float {
+    .inline SetEnd :float {
         movss [rcx].Animation.m_End,xmm1
         }
 
-    .operator GetEnd {
+    .inline GetEnd {
         movss xmm0,[rcx].Animation.m_End
         }
 
-    .operator SetDuration :float {
+    .inline SetDuration :float {
         xorps xmm0,xmm0
         maxss xmm0,xmm1
         movss [rcx].Animation.m_Duration,xmm0
         }
 
-    .operator GetDuration {
+    .inline GetDuration {
         movss xmm0,[rcx].Animation.m_Duration
         }
 
-    .operator GetValue :float, :abs=<LinearAnimation> {
+    .inline GetValue :float, :abs=<LinearAnimation> {
         xorps xmm0,xmm0
         maxss xmm1,xmm0
         minss xmm1,[rcx].Animation.m_Duration
@@ -62,11 +62,11 @@ include math.inc
 
 .template LinearAnimation : public Animation
 
-    .operator LinearAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+    .inline LinearAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
         [rcx].Animation.Animation(_1, _2, _3)
         }
 
-    .operator ComputeValue :float {
+    .inline ComputeValue :float {
         divss xmm1,[rcx].LinearAnimation.m_Duration
         movss xmm0,[rcx].LinearAnimation.m_End
         subss xmm0,[rcx].LinearAnimation.m_Start
@@ -83,11 +83,11 @@ include math.inc
 
 .template EaseInExponentialAnimation : public Animation
 
-    .operator EaseInExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+    .inline EaseInExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
         [rcx].Animation.Animation(_1, _2, _3)
         }
 
-    .operator ComputeValue :float {
+    .inline ComputeValue :float {
       local T
        .new T:ptr
         mov      T,rcx
@@ -113,11 +113,11 @@ include math.inc
 
 .template EaseOutExponentialAnimation : public Animation
 
-    .operator EaseOutExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+    .inline EaseOutExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
         [rcx].Animation.Animation(_1, _2, _3)
         }
 
-    .operator ComputeValue :float {
+    .inline ComputeValue :float {
       local T
        .new T:ptr
         mov      T,rcx
@@ -145,11 +145,11 @@ include math.inc
 
 .template EaseInOutExponentialAnimation : public Animation
 
-    .operator EaseInOutExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+    .inline EaseInOutExponentialAnimation :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
         [rcx].Animation.Animation(_1, _2, _3)
         }
 
-    .operator ComputeValue :float {
+    .inline ComputeValue :float {
 
       local T
        .new T:ptr

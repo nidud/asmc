@@ -492,20 +492,17 @@ DemoApp::CreateGeometries proc uses rsi
 
         .if (SUCCEEDED(hr))
 
-           .new b:D2D1_BEZIER_SEGMENT
-
             pSink.SetFillMode(D2D1_FILL_MODE_ALTERNATE)
             pSink.BeginFigure(0, D2D1_FIGURE_BEGIN_FILLED)
 
             mov edx,1.0
             pSink.AddLine(rdx)
 
-            mov b.point1.x,0.75
-            mov b.point1.y,0.25
-            mov b.point2.x,0.75
-            mov b.point2.y,0.75
-            mov b.point3.x,1.0
-            mov b.point3.y,1.0
+           .new b:D2D1_BEZIER_SEGMENT = {
+                { 0.75, 0.25 },
+                { 0.75, 0.75 },
+                { 1.0, 1.0 } }
+
             pSink.AddBezier(&b)
 
             mov edx,1.0
@@ -986,13 +983,11 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
         mov rbx,[rsi].m_pSolidColorBrush
         [rbx].ID2D1SolidColorBrush.SetColor(&c)
 
-       .new rr:D2D1_ROUNDED_RECT
-        mov rr.rect.left,10.0
-        mov rr.rect.top,10.0
-        mov rr.rect.right,350.0
-        mov rr.rect.bottom,200.0
-        mov rr.radiusX,sc_textInfoBoxInset
-        mov rr.radiusY,sc_textInfoBoxInset
+       .new rr:D2D1_ROUNDED_RECT = {
+            { 10.0, 10.0, 350.0, 200.0 },
+            sc_textInfoBoxInset,
+            sc_textInfoBoxInset
+            }
 
         [rdi].FillRoundedRectangle(
             &rr,

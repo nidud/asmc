@@ -31,7 +31,7 @@ include tchar.inc
 
 .class InstructionSet
 
-    CPU_Rep LPINSTRUCTIONSET_INTERNAL ?
+    CPU_Rep ptr InstructionSet_Internal ?
 
     Release        proc
     ;;
@@ -162,7 +162,7 @@ include tchar.inc
 ;;
 ;; Initialize static member data
 ;:
-cpu LPINSTRUCTIONSET 0
+cpu ptr InstructionSet 0
 
 .code
 

@@ -3,15 +3,10 @@
 ;; multiple Glyphs
 ;;
 
-    LPIXpsOMObjectFactory   typedef ptr IXpsOMObjectFactory
-    LPIXpsOMCanvas          typedef ptr IXpsOMCanvas
-    LPIXpsOMPartResources   typedef ptr IXpsOMPartResources
-    LPIXpsOMFontResource    typedef ptr IXpsOMFontResource
-
 .template FontMapEntry
 
     key          UINT_PTR ?
-    fontResource LPIXpsOMFontResource ?
+    fontResource ptr IXpsOMFontResource ?
     .ends
 
 .class LayoutToCanvasBuilder : public IDWriteTextRenderer
@@ -24,13 +19,13 @@
     ;; xpsFactory is stored for optimization only. Each callback method can
     ;; create an instance if so preferred.
 
-    _xpsFactory LPIXpsOMObjectFactory ?
+    _xpsFactory ptr IXpsOMObjectFactory ?
 
     ;; Result canvas and resources, empty before IDWriteTextLayout::Draw is
     ;; called with this callback object.
 
-    _xpsCanvas LPIXpsOMCanvas ?
-    _xpsResources LPIXpsOMPartResources ?
+    _xpsCanvas ptr IXpsOMCanvas ?
+    _xpsResources ptr IXpsOMPartResources ?
 
     ;; This maps COM identity of IDWriteFontFace object to IXpsOMFontResource
     ;; object

@@ -3,14 +3,14 @@ include winbase.inc
 
     .code
 
-DllProc proc export
+DllProc proc WINAPI export
 
-    printf("DllProc() called\n")
+    printf( "DllProc() called\n" )
     ret
 
 DllProc endp
 
-DllMain proc hinstDLL:HINSTANCE, fdwReason:DWORD, lpvReserved:LPVOID
+DllMain proc WINAPI hinstDLL:HINSTANCE, fdwReason:DWORD, lpvReserved:LPVOID
 
     mov eax,TRUE
     ret

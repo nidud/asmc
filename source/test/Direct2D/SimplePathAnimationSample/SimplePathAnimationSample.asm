@@ -248,18 +248,12 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
     .if (SUCCEEDED(hr))
 
-        .new radius:float
-        .new locDelta:D2D1_POINT_2F
-        .new currentLocation:D2D1_POINT_2F
-
-        mov currentLocation.x,0.0
-        mov currentLocation.y,0.0
+        .new currentLocation:D2D1_POINT_2F = { 0.0, 0.0 }
 
         pSink.BeginFigure(currentLocation, D2D1_FIGURE_BEGIN_FILLED)
 
-        mov locDelta.x,2.0
-        mov locDelta.y,2.0
-        mov radius,3.0
+        .new radius:float = 3.0
+        .new locDelta:D2D1_POINT_2F = { 2.0, 2.0 }
 
         .for (ebx = 0: ebx < 30: ++ebx)
 

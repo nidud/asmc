@@ -337,13 +337,13 @@
     .operator -- {
         subss   xmm0,1.0
         }
-    .operator load :ptr {
+    .inline load :ptr {
         movss   xmm0,[rcx]
         }
-    .operator store :ptr {
+    .inline store :ptr {
         movss   [rcx],xmm0
         }
-    .operator real8 {
+    .inline real8 {
         cvtss2sd xmm0,xmm0
         }
     .ends
@@ -371,13 +371,13 @@
     .operator -- {
         subsd   xmm0,1.0
         }
-    .operator load :ptr {
+    .inline load :ptr {
         movsd   xmm0,[rcx]
         }
-    .operator store :ptr {
+    .inline store :ptr {
         movsd   [rcx],xmm0
         }
-    .operator real4 {
+    .inline real4 {
         cvtsd2ss xmm0,xmm0
         }
     .ends

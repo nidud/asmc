@@ -26,17 +26,14 @@
         exitm<>
         endm
 
-    .operator Pen0 {
+    .inline Pen0 {
         mov dl,0
-        exitm<>
         }
-    .operator Pen1 :word, :real4, :word, :ptr {
+    .inline Pen1 :word, :real4, :word, :ptr {
         mov dl,1
-        exitm<>
         }
-    .operator Pen2 :ptr, :real8 {
+    .inline Pen2 :ptr, :real8 {
         mov dl,2
-        exitm<>
         }
 
     .ends

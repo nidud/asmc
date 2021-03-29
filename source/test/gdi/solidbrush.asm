@@ -16,18 +16,11 @@ DrawRectangles proc hwnd:HWND
     mov hPen,CreatePen(PS_NULL, 1, RGB(0, 0, 0))
     mov holdPen,SelectObject(hdc, hPen)
 
-    .new hBrush1:HBRUSH
-    .new hBrush2:HBRUSH
-    .new hBrush3:HBRUSH
-    .new hBrush4:HBRUSH
-    .new holdBrush:HBRUSH
-
-    mov hBrush1,CreateSolidBrush(RGB(121, 90, 0))
-    mov hBrush2,CreateSolidBrush(RGB(240, 63, 19))
-    mov hBrush3,CreateSolidBrush(RGB(240, 210, 18))
-    mov hBrush4,CreateSolidBrush(RGB(9, 189, 21))
-
-    mov holdBrush,SelectObject(hdc, hBrush1)
+    .new hBrush1:HBRUSH = CreateSolidBrush(RGB(121, 90, 0))
+    .new hBrush2:HBRUSH = CreateSolidBrush(RGB(240, 63, 19))
+    .new hBrush3:HBRUSH = CreateSolidBrush(RGB(240, 210, 18))
+    .new hBrush4:HBRUSH = CreateSolidBrush(RGB(9, 189, 21))
+    .new holdBrush:HBRUSH = SelectObject(hdc, hBrush1)
 
     Rectangle(hdc, 30, 30, 100, 100)
     SelectObject(hdc, hBrush2)

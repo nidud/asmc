@@ -44,6 +44,7 @@ Asmc Macro Assembler Reference
 - [.FOR](dot_for.md)
 - [.GOTOSW](dot_gotosw.md)
 - [.IF](dot_if.md)
+- [.INLINE](dot_inline.md)
 - [.NEW](dot_new.md)
 - [.OPERATOR](dot_operator.md)
 - [.REPEAT](dot_repeat.md)

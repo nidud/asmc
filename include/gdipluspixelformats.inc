@@ -141,19 +141,19 @@ endif ;;(GDIPVER >= 0x0110)
     Count       UINT ?
     Entries     ARGB ?
 
-    .operator ColorPalette :abs {
+    .inline ColorPalette :abs {
         .if GdipAlloc(ColorPalette + ( ( _1 - 1 ) * ARGB ) )
             mov [rax].ColorPalette.Flags,0
             mov [rax].ColorPalette.Count,_1
         .endif
         }
-    .operator Release {
+    .inline Release {
         GdipFree(this)
         }
-    .operator GetPalette :abs {
+    .inline GetPalette :abs {
         mov eax,[this].ColorPalette.Entries[_1*ARGB]
         }
-    .operator SetPalette :abs, :abs {
+    .inline SetPalette :abs, :abs {
         mov [this].ColorPalette.Entries[_1*ARGB],_2
         }
 

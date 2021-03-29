@@ -256,7 +256,7 @@ SaveToImageFile proc
         ;; Create a linear-gradient brush
         ;;
 
-        mov hr,pRT.CreateGradientStopCollection(
+        mov hr,pRT.CreateGradientStopCollection?(
             &stops,
             2,
             D2D1_GAMMA_2_2,

@@ -153,14 +153,14 @@ __pcg32_randq macro
     state   uint64_t ?
     rngseq  uint64_t ?
 
-    .operator pcg32 :vararg {
+    .inline pcg32 :vararg {
         mov rax,0x853c49e6748fea9b + @SubStr(%@Time,7,2)
         mov this.state,rax
         mov rax,0xda3e39cb94b95bdb
         mov this.rngseq,rax
         }
 
-    .operator random :vararg {
+    .inline random :vararg {
 
         mov r8,this.state
         mov rax,6364136223846793005
@@ -183,7 +183,7 @@ __pcg32_randq macro
         or  eax,edx
         }
 
-    .operator boundedrand :uint32_t, :vararg {
+    .inline boundedrand :uint32_t, :vararg {
 
         mov eax,edx
         neg eax

@@ -118,7 +118,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
     auxDataSize     int_t ?
     useAuxData      BOOL ?
 
-    .operator Effect :vararg {
+    .inline Effect :vararg {
         xor eax,eax
         mov this.nativeEffect,rax
         mov this.auxData,rax
@@ -126,7 +126,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         mov this.useAuxData,eax
         }
 
-    .operator Release :vararg {
+    .inline Release :vararg {
 
         ;; pvData is allocated by ApplyEffect. Return the pointer so that
         ;; it can be freed by the appropriate memory manager.
@@ -136,19 +136,19 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipDeleteEffect(this.nativeEffect)
         }
 
-    .operator GetAuxDataSize :vararg {
+    .inline GetAuxDataSize :vararg {
         mov eax,this.auxDataSize
         }
-    .operator GetAuxData :vararg {
+    .inline GetAuxData :vararg {
         mov rax,this.auxData
         }
-    .operator UseAuxData :abs, :vararg {
+    .inline UseAuxData :abs, :vararg {
         mov this.useAuxData,_1
         }
-    .operator GetParameterSize :abs, :vararg {
+    .inline GetParameterSize :abs, :vararg {
         GdipGetEffectParameterSize(this.nativeEffect, _1)
         }
-    .operator GetParameters :abs, :abs, :vararg {
+    .inline GetParameters :abs, :abs, :vararg {
         GdipGetEffectParameters(this.nativeEffect, _1, _2)
         }
 
@@ -157,7 +157,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 .template Blur : public Effect
 
-    .operator Blur :vararg {
+    .inline Blur :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -167,7 +167,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipCreateEffect(addr BlurEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(BlurParams))
         }
     .ends
@@ -175,7 +175,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 .template Sharpen : public Effect
 
-    .operator Sharpen :vararg {
+    .inline Sharpen :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -185,7 +185,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipCreateEffect(addr SharpenEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(SharpenParams))
         }
     .ends
@@ -193,7 +193,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 .template RedEyeCorrection : public Effect
 
-    .operator RedEyeCorrection :vararg {
+    .inline RedEyeCorrection :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -203,7 +203,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipCreateEffect(addr RedEyeCorrectionEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :ptr RedEyeCorrectionParams, :vararg {
+    .inline SetParameters :ptr RedEyeCorrectionParams, :vararg {
         mov eax,InvalidParameter
         .if rdx
             imul r8d,[rdx].RedEyeCorrectionParams.numberOfAreas,sizeof(RECT)
@@ -216,7 +216,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 .template BrightnessContrast : public Effect
 
-    .operator BrightnessContrast :vararg {
+    .inline BrightnessContrast :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -226,7 +226,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipCreateEffect(addr BrightnessContrastEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(BrightnessContrastParams))
         }
     .ends
@@ -234,7 +234,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 
 .template HueSaturationLightness : public Effect
 
-    .operator HueSaturationLightness :vararg {
+    .inline HueSaturationLightness :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -244,7 +244,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
         GdipCreateEffect(addr HueSaturationLightnessEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(HueSaturationLightnessParams))
         }
     .ends
@@ -252,7 +252,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
 ifndef __Levels_INTERFACE_DEFINED__
 .template Levels : public Effect
 
-    .operator Levels :vararg {
+    .inline Levels :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -262,7 +262,7 @@ ifndef __Levels_INTERFACE_DEFINED__
         GdipCreateEffect(addr LevelsEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(LevelsParams))
         }
     .ends
@@ -270,7 +270,7 @@ endif
 
 .template Tint : public Effect
 
-    .operator Tint :vararg {
+    .inline Tint :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -280,7 +280,7 @@ endif
         GdipCreateEffect(addr TintEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(TintParams))
         }
     .ends
@@ -288,7 +288,7 @@ endif
 
 .template ColorBalance : public Effect
 
-    .operator ColorBalance :vararg {
+    .inline ColorBalance :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -298,7 +298,7 @@ endif
         GdipCreateEffect(addr ColorBalanceEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorBalanceParams))
         }
     .ends
@@ -306,7 +306,7 @@ endif
 
 .template ColorMatrixEffect : public Effect
 
-    .operator ColorMatrixEffect :vararg {
+    .inline ColorMatrixEffect :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -316,7 +316,7 @@ endif
         GdipCreateEffect(addr ColorMatrixEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorMatrix))
         }
     .ends
@@ -324,7 +324,7 @@ endif
 
 .template ColorLUT : public Effect
 
-    .operator ColorLUT :vararg {
+    .inline ColorLUT :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -334,7 +334,7 @@ endif
         GdipCreateEffect(addr ColorLUTEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorLUTParams))
         }
     .ends
@@ -342,7 +342,7 @@ endif
 
 .template ColorCurve : public Effect
 
-    .operator ColorCurve :vararg {
+    .inline ColorCurve :vararg {
         Effect_Effect(this)
         ifdef __PE__
             .data
@@ -352,7 +352,7 @@ endif
         GdipCreateEffect(addr ColorCurveEffectGuid, addr this.nativeEffect)
         }
 
-    .operator SetParameters :abs, :vararg {
+    .inline SetParameters :abs, :vararg {
         GdipSetEffectParameters(this.nativeEffect, _1, sizeof(ColorCurveParams))
         }
     .ends

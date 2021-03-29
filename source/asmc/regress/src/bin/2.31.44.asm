@@ -14,15 +14,15 @@
     right   sdword ?
     bottom  sdword ?
 
-    .operator RECT :vararg {
-        ifidn typeid(this),<mem_RECT>
+    .inline RECT :vararg {
+        ifidn typeid(this),<RECT>
             this.mem_RECT(_1)
         else
             [rcx].RECT.typeid(this)(_1)
         endif
         }
 
-    .operator mem_RECT :abs, :abs, :abs, :abs, :vararg {
+    .inline mem_RECT :abs, :abs, :abs, :abs, :vararg {
         ifnb <_1>
             mov this.left,    _1
         endif
@@ -37,7 +37,7 @@
         endif
         }
 
-    .operator ptr_RECT :abs, :abs, :abs, :abs {
+    .inline PRECT :abs, :abs, :abs, :abs {
         ifnb <_1>
             mov [this].RECT.left,    _1
         endif
@@ -52,7 +52,7 @@
         endif
         }
 
-    .operator imm_32 :vararg {
+    .inline IMM32 :vararg {
 
        .new rect:RECT
 
@@ -61,7 +61,7 @@
         lea rax,rect
         }
 
-    .operator Init :abs, :abs, :abs, :abs {
+    .inline Init :abs, :abs, :abs, :abs {
         ifnb <_1>
             mov [this].RECT.left,    _1
         endif
@@ -75,7 +75,7 @@
             mov [this].RECT.bottom,  _4
         endif
         }
-    .operator Clear {
+    .inline Clear {
         xor eax,eax
         mov [this],rax
         mov [this+8],rax

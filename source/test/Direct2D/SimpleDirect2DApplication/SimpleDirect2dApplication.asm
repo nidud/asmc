@@ -410,7 +410,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
             mov stops[D2D1_GRADIENT_STOP].color.b,1.0
             mov stops[D2D1_GRADIENT_STOP].color.a,1.0
 
-            mov hr,[rdi].ID2D1HwndRenderTarget.CreateGradientStopCollection(
+            mov hr,[rdi].ID2D1HwndRenderTarget.CreateGradientStopCollection?(
                 &stops, ARRAYSIZE(stops), D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &pGradientStops )
 
             .if (SUCCEEDED(hr))
@@ -493,12 +493,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
         ;; Draw a pattern.
 
         .new pGridBrush:ptr ID2D1SolidColorBrush
-        .new color:D3DCOLORVALUE
-
-        mov color.r,0.93
-        mov color.g,0.94
-        mov color.b,0.96
-        mov color.a,1.0
+        .new color:D3DCOLORVALUE = { 0.93, 0.94, 0.96, 1.0 }
         mov pGridBrush,NULL
 
         mov hr,pCompatibleRenderTarget.CreateSolidColorBrush(
@@ -529,7 +524,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
                 ;; Create the bitmap brush.
 
-                mov hr,this.m_pRenderTarget.CreateBitmapBrush(
+                mov hr,this.m_pRenderTarget.CreateBitmapBrush?(
                         pGridBitmap,
                         r8,
                         NULL,
@@ -642,7 +637,7 @@ DemoApp::OnRender proc uses rsi
 
         mov r.right,  size.width
         mov r.bottom, size.height
-        pRT.DrawBitmap([rsi].m_pBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
+        pRT.DrawBitmap?([rsi].m_pBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
         ;; Draw a bitmap at the lower-right corner of the window.
 
@@ -657,7 +652,7 @@ DemoApp::OnRender proc uses rsi
         mov   r.right,renderTargetSize.width
         mov   r.bottom,renderTargetSize.height
 
-        pRT.DrawBitmap([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
+        pRT.DrawBitmap?([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
         ;; Set the world transform to a 45 degree rotation at the center of the render target
         ;; and write "Hello, World".
@@ -1031,7 +1026,7 @@ DemoApp::LoadResourceBitmap proc \
 
         ;;create a Direct2D bitmap from the WIC bitmap.
 
-        mov hr,pRenderTarget.CreateBitmapFromWicBitmap(
+        mov hr,pRenderTarget.CreateBitmapFromWicBitmap?(
             pConverter,
             NULL,
             ppBitmap
@@ -1174,7 +1169,7 @@ DemoApp::LoadBitmapFromFile proc \
 
         ;; Create a Direct2D bitmap from the WIC bitmap.
 
-        mov hr,pRenderTarget.CreateBitmapFromWicBitmap(
+        mov hr,pRenderTarget.CreateBitmapFromWicBitmap?(
             pConverter,
             NULL,
             ppBitmap

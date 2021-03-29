@@ -444,16 +444,15 @@ ListViewApp::CreateDeviceResources proc uses rsi
 
         .if (SUCCEEDED(hr))
 
-           .new size:D2D1_SIZE_U
-            mov size.width, msc_atlasWidth
-            mov size.height,msc_atlasHeight
+           .new size:D2D1_SIZE_U = { msc_atlasWidth, msc_atlasHeight }
 
-           .new bitmapProperties:D2D1_BITMAP_PROPERTIES
-            mov bitmapProperties.pixelFormat.format,DXGI_FORMAT_B8G8R8A8_UNORM
-            mov bitmapProperties.pixelFormat.alphaMode,D2D1_ALPHA_MODE_PREMULTIPLIED
-            mov bitmapProperties.dpiX,96.0
-            mov bitmapProperties.dpiY,96.0
-            mov hr,this.m_pRT.CreateBitmap(
+           .new bitmapProperties:D2D1_BITMAP_PROPERTIES = {
+                { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED },
+                96.0,
+                96.0
+                }
+
+            mov hr,this.m_pRT.CreateBitmap?(
                 size,
                 NULL,
                 0,
@@ -1025,7 +1024,7 @@ ListViewApp::OnRender proc uses rsi rdi rbx
             ;; The icon is stored in the image atlas. We reference it's position
             ;; in the atlas and it's destination on the screen.
 
-            pRT.DrawBitmap(
+            pRT.DrawBitmap?(
                 [rsi].m_pBitmapAtlas,
                 &r1,
                 opacity,
@@ -1136,8 +1135,7 @@ GetFancyAccelerationInterpolatedValue proc linearFactor:FLOAT, p1:FLOAT, p2:FLOA
     ;; Stretch so that the initial overshoot (occurring 33% of the way along) is
     ;; 70% of the animation.
 
-   .new rearrangedDomain:FLOAT
-    mov rearrangedDomain,0.0
+   .new rearrangedDomain:FLOAT = 0.0
 
     movss xmm0,linearFactor
     comiss xmm0,0.7
@@ -1362,12 +1360,13 @@ ListViewApp::OnResize proc uses rsi
         sub  eax,msc_lineSpacing
         mov  [rsi].m_scrollRange,eax
 
-       .new s:SCROLLINFO
-        mov s.cbSize,SCROLLINFO
-        mov s.fMask,SIF_DISABLENOSCROLL or SIF_PAGE or SIF_RANGE
-        mov s.nMin,0
-        mov s.nMax,[rsi].m_scrollRange
-        mov s.nPage,size.height
+       .new s:SCROLLINFO = {
+            SCROLLINFO,
+            SIF_DISABLENOSCROLL or SIF_PAGE or SIF_RANGE,
+            0,
+            [rsi].m_scrollRange,
+            size.height
+            }
 
         SetScrollInfo([rsi].m_parentHwnd, SB_VERT, &s, TRUE)
         InvalidateRect([rsi].m_d2dHwnd, NULL, FALSE)

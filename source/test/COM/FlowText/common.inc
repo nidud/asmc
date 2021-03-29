@@ -19,3 +19,9 @@ include XpsObjectModel.inc
 include dwrite.inc
 include strsafe.inc
 
+SafeRelease proto T:abs {
+    .if T
+        T.Release()
+        mov T,NULL
+    .endif
+    }

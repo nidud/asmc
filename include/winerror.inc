@@ -882,7 +882,7 @@ IS_ERROR macro Status
 	endm
 
 HRESULT_CODE macro hr
-    ifidn typeid(?, hr),<?i32>
+    ifidn typeid(hr),<IMM32>
 	exitm <( ( hr ) and 0xFFFF )>
     else
 	ifdif <hr>,<eax>
@@ -894,7 +894,7 @@ HRESULT_CODE macro hr
     endm
 
 SCODE_CODE macro sc
-    ifidn typeid(?, sc),<?i32>
+    ifidn typeid(sc),<IMM32>
 	exitm <( ( sc ) and 0xFFFF )>
     else
 	ifdif <sc>,<eax>
@@ -906,7 +906,7 @@ SCODE_CODE macro sc
     endm
 
 HRESULT_FACILITY macro hr
-    ifidn typeid(?, hr),<?i32>
+    ifidn typeid(hr),<IMM32>
 	exitm<(((hr) shr 16) and 0x1fff)>
     else
 	ifdif <hr>,<eax>

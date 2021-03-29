@@ -15,47 +15,47 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ; Graphics(HWND, BOOL = FALSE)
     ; Graphics(Image*)
 
-    .operator Graphics :abs, :vararg {
+    .inline Graphics :abs, :vararg {
         mov this.nativeGraphics,NULL
         this.typeid(Graphics, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .operator Graphics?pvoid :abs, :vararg {
+    .inline GraphicsPVOID :abs, :vararg {
         GdipCreateFromHDC(_1, addr this.nativeGraphics)
         }
-    .operator Graphics?r64 :abs, :vararg {
+    .inline GraphicsREG64 :abs, :vararg {
         GdipCreateFromHDC(_1, addr this.nativeGraphics)
         }
-    .operator Graphics?pHWND__ :abs, :abs=<FALSE> {
+    .inline GraphicsPHWND__ :abs, :abs=<FALSE> {
         if _2
             GdipCreateFromHWNDICM(_1, this)
         else
             GdipCreateFromHDC(_1, this)
         endif
         }
-    .operator Graphics?pImage :ptr Image {
+    .inline GraphicsPImage :ptr Image {
         xchg rcx,rdx
         GdipGetImageGraphicsContext([rcx].Image.nativeImage, &[rdx].Graphics.nativeGraphics)
         }
-    .operator Graphics?pMetafile :ptr Metafile {
+    .inline GraphicsPMetafile :ptr Metafile {
         xchg rcx,rdx
         GdipGetImageGraphicsContext([rcx].Image.nativeImage, &[rdx].Graphics.nativeGraphics)
         }
 
-    .operator Graphics?pGraphics :ptr Graphics, :vararg {
+    .inline GraphicsPGraphics :ptr Graphics, :vararg {
         mov eax,Ok
         mov this.nativeGraphics,rdx
         }
 
-    .operator Release {
+    .inline Release {
         GdipDeleteGraphics([rcx].Graphics.nativeGraphics)
         }
 
-    .operator SetNativeGraphics :ptr GpGraphics {
+    .inline SetNativeGraphics :ptr GpGraphics {
         mov [this].Graphics.nativeGraphics,_1
         }
 
-    .operator SetStatus :vararg {
+    .inline SetStatus :vararg {
         ifnb <_1>
             ifdif <_1>,<eax>
                 mov eax,_1
@@ -66,15 +66,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov     this.lastResult,eax
         }
 
-    .operator GetNativeGraphics {
+    .inline GetNativeGraphics {
         mov rax,[this].Graphics.nativeGraphics
         }
 
-    .operator GetNativePen :ptr Pen {
+    .inline GetNativePen :ptr Pen {
         mov rax,[this].Pen.nativePen
         }
 
-    .operator Flush :FlushIntention {
+    .inline Flush :FlushIntention {
         GdipFlush([this].Graphics.nativeGraphics, _1)
         }
 
@@ -84,7 +84,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     ;; Locks the graphics until ReleaseDC is called
 
-    .operator GetHDC :vararg {
+    .inline GetHDC :vararg {
 
         .new hdc:HDC
 
@@ -94,7 +94,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov rax,hdc
         }
 
-    .operator ReleaseHDC :vararg {
+    .inline ReleaseHDC :vararg {
         GdipReleaseDC(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
@@ -103,101 +103,101 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; Rendering modes
     ;;------------------------------------------------------------------------
 
-    .operator SetRenderingOrigin :vararg {
+    .inline SetRenderingOrigin :vararg {
         GdipSetRenderingOrigin(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetRenderingOrigin :vararg {
+    .inline GetRenderingOrigin :vararg {
         GdipGetRenderingOrigin(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetCompositingMode :vararg {
+    .inline SetCompositingMode :vararg {
         GdipSetCompositingMode(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetCompositingMode :vararg {
+    .inline GetCompositingMode :vararg {
         GdipGetCompositingMode(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetCompositingQuality :vararg {
+    .inline SetCompositingQuality :vararg {
         GdipSetCompositingQuality(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetCompositingQuality :vararg {
+    .inline GetCompositingQuality :vararg {
         GdipGetCompositingQuality(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetTextRenderingHint :vararg {
+    .inline SetTextRenderingHint :vararg {
         GdipSetTextRenderingHint(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetTextRenderingHint :vararg {
+    .inline GetTextRenderingHint :vararg {
         GdipGetTextRenderingHint(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetTextContrast :vararg {
+    .inline SetTextContrast :vararg {
         GdipSetTextContrast(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetTextContrast :vararg {
+    .inline GetTextContrast :vararg {
         GdipGetTextContrast(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator GetInterpolationMode :vararg {
+    .inline GetInterpolationMode :vararg {
         mov this.scratch,InterpolationModeInvalid
         GdipGetInterpolationMode(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetInterpolationMode :vararg {
+    .inline SetInterpolationMode :vararg {
         GdipSetInterpolationMode(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
 if (GDIPVER GE 0x0110)
 
-    .operator SetAbort :vararg {
+    .inline SetAbort :vararg {
         GdipGraphicsSetAbort(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
 endif
 
-    .operator GetSmoothingMode :vararg {
+    .inline GetSmoothingMode :vararg {
         mov this.scratch,SmoothingModeInvalid
         GdipGetSmoothingMode(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetSmoothingMode :vararg {
+    .inline SetSmoothingMode :vararg {
         GdipSetSmoothingMode(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetPixelOffsetMode :vararg {
+    .inline GetPixelOffsetMode :vararg {
         mov this.scratch,PixelOffsetModeInvalid
         GdipGetPixelOffsetMode(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator SetPixelOffsetMode :vararg {
+    .inline SetPixelOffsetMode :vararg {
         GdipSetPixelOffsetMode(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
@@ -206,26 +206,26 @@ endif
     ;; Manipulate current world transform
     ;;------------------------------------------------------------------------
 
-    .operator SetTransform :ptr Matrix, :vararg {
+    .inline SetTransform :ptr Matrix, :vararg {
         GdipSetWorldTransform(this.nativeGraphics, [rdx].Matrix.nativeMatrix)
         GdipSetStatus(this)
         }
-    .operator ResetTransform :vararg {
+    .inline ResetTransform :vararg {
         GdipResetWorldTransform(this.nativeGraphics)
         GdipSetStatus(this)
         }
 
-    .operator MultiplyTransform :ptr Matrix, :vararg {
+    .inline MultiplyTransform :ptr Matrix, :vararg {
         GdipMultiplyWorldTransform(this.nativeGraphics, [rdx].Matrix.nativeMatrix, _2)
         GdipSetStatus(this)
         }
 
-    .operator TranslateTransform :abs, :abs, :abs=<MatrixOrderPrepend>, :vararg {
+    .inline TranslateTransform :abs, :abs, :abs=<MatrixOrderPrepend>, :vararg {
         GdipTranslateWorldTransform(this.nativeGraphics, _1, _2, _3)
         GdipSetStatus(this)
         }
 
-    .operator ScaleTransform :abs, :abs, :vararg {
+    .inline ScaleTransform :abs, :abs, :vararg {
         ifb<_3>
             GdipScaleWorldTransform(this.nativeGraphics, _1, _2, MatrixOrderPrepend)
         else
@@ -234,58 +234,58 @@ endif
         GdipSetStatus(this)
         }
 
-    .operator RotateTransform :abs, :abs=<MatrixOrderPrepend>, :vararg {
+    .inline RotateTransform :abs, :abs=<MatrixOrderPrepend>, :vararg {
         GdipRotateWorldTransform(this.nativeGraphics, _1, _2)
         GdipSetStatus(this)
         }
 
-    .operator GetTransform :ptr Matrix, :vararg {
+    .inline GetTransform :ptr Matrix, :vararg {
         GdipGetWorldTransform(this.nativeGraphics, [rdx].Matrix.nativeMatrix)
         GdipSetStatus(this)
         }
 
-    .operator SetPageUnit :vararg {
+    .inline SetPageUnit :vararg {
         GdipSetPageUnit(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator SetPageScale :vararg {
+    .inline SetPageScale :vararg {
         GdipSetPageScale(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator GetPageUnit :vararg {
+    .inline GetPageUnit :vararg {
         GdipGetPageUnit(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator GetPageScale :vararg {
+    .inline GetPageScale :vararg {
         GdipGetPageScale(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         movss xmm0,this.scratch
         }
 
-    .operator GetDpiX :vararg {
+    .inline GetDpiX :vararg {
         GdipGetDpiX(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         movss xmm0,this.scratch
         }
 
-    .operator GetDpiY :vararg {
+    .inline GetDpiY :vararg {
         GdipGetDpiY(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         movss xmm0,this.scratch
         }
 
-    .operator TransformPoints :abs, :abs, :abs, :vararg {
+    .inline TransformPoints :abs, :abs, :abs, :vararg {
         this.typeid(TransformPoints, _3)(_1, _2, _3, _4)
         GdipSetStatus(this)
         }
-    .operator TransformPoints?pPointF :vararg {
+    .inline TransformPointsPPointF :vararg {
         GdipTransformPoints(this.nativeGraphics, _1)
         }
-    .operator TransformPoints?pPoint :vararg {
+    .inline TransformPointsPPoint :vararg {
         GdipTransformPointsI(this.nativeGraphics, _1)
         }
 
@@ -293,44 +293,44 @@ endif
     ;; GetNearestColor (for <= 8bpp surfaces).  Note: Alpha is ignored.
     ;;------------------------------------------------------------------------
 
-    .operator GetStatus {
+    .inline GetStatus {
         mov eax,[this].Graphics.lastResult
         }
 
-    .operator GetNearestColor :vararg {
+    .inline GetNearestColor :vararg {
         GdipGetNearestColor(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
 typeid_flti32 macro name, arg_id
-    .operator name :abs, :abs, :vararg {
+    .inline name :abs, :abs, :vararg {
         this.typeid(name, arg_id)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator &name&?r128   :vararg { this.&name&?flt(_1) }
-    .operator &name&?real4  :vararg { this.&name&?flt(_1) }
-    .operator &name&?r32    :vararg { this.&name&?i32(_1) }
-    .operator &name&?sdword :vararg { this.&name&?i32(_1) }
+    .inline &name&REG128 :vararg { this.&name&IMMFLT(_1) }
+    .inline &name&REAL4  :vararg { this.&name&IMMFLT(_1) }
+    .inline &name&REG32  :vararg { this.&name&IMM32(_1) }
+    .inline &name&SDWORD :vararg { this.&name&IMM32(_1) }
     exitm<>
     endm
 
 typeid_Point macro name
-    .operator &name&?pPointF :abs, :ptr PointF, :ptr PointF, :vararg {
-        this.&name&?flt(_1, [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y)
+    .inline &name&PPointF :abs, :ptr PointF, :ptr PointF, :vararg {
+        this.&name&IMMFLT(_1, [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y)
         }
-    .operator &name&?pPoint :abs, :ptr Point, :ptr Point, :vararg {
-        this.&name&?i32(_1, [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y)
+    .inline &name&PPoint :abs, :ptr Point, :ptr Point, :vararg {
+        this.&name&IMM32(_1, [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y)
         }
     exitm<>
     endm
 
 typeid_Rect macro name
-    .operator &name&?pRectF :abs, :ptr RectF, :vararg {
-        this.&name&?flt(_1, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height, _3)
+    .inline &name&PRectF :abs, :ptr RectF, :vararg {
+        this.&name&IMMFLT(_1, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height, _3)
         }
-    .operator &name&?pRect :abs, :ptr Rect, :vararg {
-        this.&name&?i32(_1, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height, _3)
+    .inline &name&PRect :abs, :ptr Rect, :vararg {
+        this.&name&IMM32(_1, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height, _3)
         }
     exitm<>
     endm
@@ -338,32 +338,32 @@ typeid_Rect macro name
 
     typeid_flti32(DrawLine, _2)
 
-    .operator DrawLine?flt :ptr Pen, :vararg {
+    .inline DrawLineIMMFLT :ptr Pen, :vararg {
         GdipDrawLine(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawLine?i32 :ptr Pen, :vararg {
+    .inline DrawLineIMM32 :ptr Pen, :vararg {
         GdipDrawLineI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
     typeid_Point(DrawLine)
 
-    .operator DrawLines :abs, :abs, :vararg {
+    .inline DrawLines :abs, :abs, :vararg {
         this.typeid(DrawLines, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawLines?pPointF :ptr Pen, :vararg {
+    .inline DrawLinesPPointF :ptr Pen, :vararg {
         GdipDrawLines(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawLines?pPoint :ptr Pen, :vararg {
+    .inline DrawLinesPPoint :ptr Pen, :vararg {
         GdipDrawLinesI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
     typeid_flti32(DrawArc, _2)
 
-    .operator DrawArc?flt :ptr Pen, :vararg {
+    .inline DrawArcIMMFLT :ptr Pen, :vararg {
         GdipDrawArc(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawArc?i32 :ptr Pen, :vararg {
+    .inline DrawArcIMM32 :ptr Pen, :vararg {
         GdipDrawArcI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
@@ -371,72 +371,72 @@ typeid_Rect macro name
 
     typeid_flti32(DrawBezier, _2)
 
-    .operator DrawBezier?flt :ptr Pen, :vararg {
+    .inline DrawBezierIMMFLT :ptr Pen, :vararg {
         GdipDrawBezier(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawBezier?i32 :ptr Pen, :vararg {
+    .inline DrawBezierIMM32 :ptr Pen, :vararg {
         GdipDrawBezierI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
-    .operator DrawBezier?pPointF :abs, :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
+    .inline DrawBezierPPointF :abs, :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
         mov r10,[rsp+8*4]
         mov r11,[rsp+8*5]
-        this.DrawBezier?flt(_1, [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y,\
+        this.DrawBezierIMMFLT(_1, [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y,\
             [r10].PointF.X, [r10].PointF.Y, [r11].PointF.X, [r11].PointF.Y )
         }
-    .operator DrawBezier?pPoint :abs, :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
+    .inline DrawBezierPPoint :abs, :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
         mov r10,[rsp+8*4]
         mov r11,[rsp+8*5]
-        this.DrawBezier?i32(_1, [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y,\
+        this.DrawBezierIMM32(_1, [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y,\
             [r10].Point.X, [r10].Point.Y, [r11].Point.X, [r11].Point.Y )
         }
 
 
-    .operator DrawBeziers :abs, :abs, :vararg {
+    .inline DrawBeziers :abs, :abs, :vararg {
         this.typeid(DrawBeziers, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawBeziers?pPointF :ptr Pen, :vararg {
+    .inline DrawBeziersPPointF :ptr Pen, :vararg {
         GdipDrawBeziers(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawBeziers?pPoint :ptr Pen, :vararg {
+    .inline DrawBeziersPPoint :ptr Pen, :vararg {
         GdipDrawBeziersI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
     typeid_flti32(DrawRectangle, _2)
 
-    .operator DrawRectangle?flt :ptr Pen, :vararg {
+    .inline DrawRectangleIMMFLT :ptr Pen, :vararg {
         GdipDrawRectangle(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawRectangle?i32 :ptr Pen, :vararg {
+    .inline DrawRectangleIMM32 :ptr Pen, :vararg {
         GdipDrawRectangleI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
-    .operator DrawRectangle?pRectF :abs, :ptr RectF, :vararg {
-        this.DrawRectangle?flt(_1, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height, _3)
+    .inline DrawRectanglePRectF :abs, :ptr RectF, :vararg {
+        this.DrawRectangleIMMFLT(_1, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height, _3)
         }
-    .operator DrawRectangle?pRect :abs, :ptr Rect, :vararg {
-        this.DrawRectangle?i32(_1, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height, _3)
+    .inline DrawRectanglePRect :abs, :ptr Rect, :vararg {
+        this.DrawRectangleIMM32(_1, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height, _3)
         }
 
-    .operator DrawRectangles :abs, :abs, :vararg {
+    .inline DrawRectangles :abs, :abs, :vararg {
         this.typeid(DrawRectangles, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawRectangles?pRectF :ptr Pen, :vararg {
+    .inline DrawRectanglesPRectF :ptr Pen, :vararg {
         GdipDrawRectangles(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawRectangles?pRect :ptr Pen, :vararg {
+    .inline DrawRectanglesPRect :ptr Pen, :vararg {
         GdipDrawRectanglesI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
 
     typeid_flti32(DrawEllipse, _2)
 
-    .operator DrawEllipse?flt :ptr Pen, :vararg {
+    .inline DrawEllipseIMMFLT :ptr Pen, :vararg {
         GdipDrawEllipse(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawEllipse?i32 :ptr Pen, :vararg {
+    .inline DrawEllipseIMM32 :ptr Pen, :vararg {
         GdipDrawEllipseI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
@@ -444,27 +444,27 @@ typeid_Rect macro name
 
     typeid_flti32(DrawPie, _2)
 
-    .operator DrawPie?flt :ptr Pen, :vararg {
+    .inline DrawPieIMMFLT :ptr Pen, :vararg {
         GdipDrawPie(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawPie?i32 :ptr Pen, :vararg {
+    .inline DrawPieIMM32 :ptr Pen, :vararg {
         GdipDrawPieI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
     typeid_Rect(DrawPie)
 
-    .operator DrawPolygon :abs, :abs, :vararg {
+    .inline DrawPolygon :abs, :abs, :vararg {
         this.typeid(DrawPolygon, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawPolygon?pPointF :ptr Pen, :vararg {
+    .inline DrawPolygonPPointF :ptr Pen, :vararg {
         GdipDrawPolygon(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
-    .operator DrawPolygon?pPoint :ptr Pen, :vararg {
+    .inline DrawPolygonPPoint :ptr Pen, :vararg {
         GdipDrawPolygonI(this.nativeGraphics, [rdx].Pen.nativePen, _2)
         }
 
-    .operator DrawPath :ptr Pen, :ptr GraphicsPath, :vararg {
+    .inline DrawPath :ptr Pen, :ptr GraphicsPath, :vararg {
         .if rdx
             mov rdx,[rdx]
         .endif
@@ -475,11 +475,11 @@ typeid_Rect macro name
         GdipSetStatus(this)
         }
 
-    .operator DrawCurve :abs, :abs, :vararg {
+    .inline DrawCurve :abs, :abs, :vararg {
         this.typeid(DrawCurve, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawCurve?pPointF :ptr Pen, :abs, :abs, :abs, :abs, :abs=<0.5>, :vararg {
+    .inline DrawCurvePPointF :ptr Pen, :abs, :abs, :abs, :abs, :abs=<0.5>, :vararg {
         ifb <_4>
             GdipDrawCurve(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3)
         elseifb <_5>
@@ -488,7 +488,7 @@ typeid_Rect macro name
             GdipDrawCurve3(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3, _4, _5, _6)
         endif
         }
-    .operator DrawCurve?pPoint :ptr Pen, :abs, :abs, :abs, :abs, :abs=<0.5>, :vararg {
+    .inline DrawCurvePPoint :ptr Pen, :abs, :abs, :abs, :abs, :abs=<0.5>, :vararg {
         ifb <_4>
             GdipDrawCurveI(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3)
         elseifb <_5>
@@ -499,18 +499,18 @@ typeid_Rect macro name
         }
 
 
-    .operator DrawClosedCurve :abs, :abs, :vararg {
+    .inline DrawClosedCurve :abs, :abs, :vararg {
         this.typeid(DrawClosedCurve, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator DrawClosedCurve?pPointF :ptr Pen, :abs, :abs, :abs, :vararg {
+    .inline DrawClosedCurvePPointF :ptr Pen, :abs, :abs, :abs, :vararg {
         ifb <_4>
             GdipDrawClosedCurve(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3)
         else
             GdipDrawClosedCurve2(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3, _4)
         endif
         }
-    .operator DrawClosedCurve?pPoint :ptr Pen, :abs, :abs, :abs, :vararg {
+    .inline DrawClosedCurvePPoint :ptr Pen, :abs, :abs, :abs, :vararg {
         ifb <_4>
             GdipDrawClosedCurveI(this.nativeGraphics, [rdx].Pen.nativePen, _2, _3)
         else
@@ -518,52 +518,52 @@ typeid_Rect macro name
         endif
         }
 
-    .operator Clear :vararg {
+    .inline Clear :vararg {
         GdipGraphicsClear(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
     typeid_flti32(FillRectangle, _2)
 
-    .operator FillRectangle?flt :ptr Brush, :vararg {
+    .inline FillRectangleIMMFLT :ptr Brush, :vararg {
         GdipFillRectangle(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
-    .operator FillRectangle?i32 :ptr Brush, :vararg {
+    .inline FillRectangleIMM32 :ptr Brush, :vararg {
         GdipFillRectangleI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
 
     typeid_Rect(FillRectangle)
 
-    .operator FillRectangles :abs, :abs, :vararg {
+    .inline FillRectangles :abs, :abs, :vararg {
         this.typeid(FillRectangles, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator FillRectangles?pRectF :ptr Brush, :vararg {
+    .inline FillRectanglesPRectF :ptr Brush, :vararg {
         GdipFillRectangles(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
-    .operator FillRectangles?pRect :ptr Brush, :vararg {
+    .inline FillRectanglesPRect :ptr Brush, :vararg {
         GdipFillRectanglesI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
 
 
-    .operator FillPolygon :abs, :abs, :vararg {
+    .inline FillPolygon :abs, :abs, :vararg {
         this.typeid(FillPolygon, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator FillPolygon?pPointF :ptr Brush, :abs, :abs, :abs=<FillModeAlternate>, :vararg {
+    .inline FillPolygonPPointF :ptr Brush, :abs, :abs, :abs=<FillModeAlternate>, :vararg {
         GdipFillPolygon(this.nativeGraphics, [rdx].Brush.nativeBrush, _2, _3, _4)
         }
-    .operator FillPolygon?pPoint :ptr Brush, :abs, :abs, :abs=<FillModeAlternate>, :vararg {
+    .inline FillPolygonPPoint :ptr Brush, :abs, :abs, :abs=<FillModeAlternate>, :vararg {
         GdipFillPolygonI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2, _3, _4)
         }
 
 
     typeid_flti32(FillEllipse, _2)
 
-    .operator FillEllipse?flt :ptr Brush, :vararg {
+    .inline FillEllipseIMMFLT :ptr Brush, :vararg {
         GdipFillEllipse(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
-    .operator FillEllipse?i32 :ptr Brush, :vararg {
+    .inline FillEllipseIMM32 :ptr Brush, :vararg {
         GdipFillEllipseI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
 
@@ -572,32 +572,32 @@ typeid_Rect macro name
 
     typeid_flti32(FillPie, _2)
 
-    .operator FillPie?flt :ptr Brush, :vararg {
+    .inline FillPieIMMFLT :ptr Brush, :vararg {
         GdipFillPie(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
-    .operator FillPie?i32 :ptr Brush, :vararg {
+    .inline FillPieIMM32 :ptr Brush, :vararg {
         GdipFillPieI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2)
         }
 
     typeid_Rect(FillPie)
 
-    .operator FillPath :ptr Brush, :ptr GraphicsPath, :vararg {
+    .inline FillPath :ptr Brush, :ptr GraphicsPath, :vararg {
         GdipFillPath(this.nativeGraphics, [rdx].Brush.nativeBrush, [r8].GraphicsPath.nativePath)
         GdipSetStatus(this)
         }
 
-    .operator FillClosedCurve :abs, :abs, :vararg {
+    .inline FillClosedCurve :abs, :abs, :vararg {
         this.typeid(FillClosedCurve, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator FillClosedCurve?pPointF :ptr Brush, :abs, :abs, :abs, :abs=<0.5>, :vararg {
+    .inline FillClosedCurvePPointF :ptr Brush, :abs, :abs, :abs, :abs=<0.5>, :vararg {
         ifb <_4>
             GdipFillClosedCurve(this.nativeGraphics, [rdx].Brush.nativeBrush, _2, _3)
         else
             GdipFillClosedCurve2(this.nativeGraphics, [rdx].Brush.nativeBrush, _2, _3, _5, _4)
         endif
         }
-    .operator FillClosedCurve?pPoint :ptr Brush, :abs, :abs, :abs, :abs=<0.5>, :vararg {
+    .inline FillClosedCurvePPoint :ptr Brush, :abs, :abs, :abs, :abs=<0.5>, :vararg {
         ifb <_4>
             GdipFillClosedCurveI(this.nativeGraphics, [rdx].Brush.nativeBrush, _2, _3)
         else
@@ -606,14 +606,14 @@ typeid_Rect macro name
         }
 
 
-    .operator FillRegion :ptr Brush, :ptr Region, :vararg {
+    .inline FillRegion :ptr Brush, :ptr Region, :vararg {
         GdipFillRegion(this.nativeGraphics, [rdx].Brush.nativeBrush, [r8].Region.nativeRegion)
         GdipSetStatus(this)
         }
 
     ; DrawString(WCHAR*, INT, Font*, RectF*, StringFormat *, Brush*)
 
-    .operator DrawString :abs, :abs, :ptr Font, :ptr RectF, :ptr StringFormat, :ptr Brush, :vararg {
+    .inline DrawString :abs, :abs, :ptr Font, :ptr RectF, :ptr StringFormat, :ptr Brush, :vararg {
 
         .if r9
             mov r9,[r9].Font.nativeFont
@@ -631,16 +631,16 @@ typeid_Rect macro name
         GdipSetStatus(this)
         }
 
-    .operator MeasureString :abs, :abs, :abs, :abs, :vararg {
+    .inline MeasureString :abs, :abs, :abs, :abs, :vararg {
         this.typeid(MeasureString, _4)(_1, _2, _3, _4, _5)
         }
-    .operator MeasureString?pRectF :abs, :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(MeasureString?pRectF, _5)(_1, _2, _3, _4, _5, _6)
+    .inline MeasureStringPRectF :abs, :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(MeasureStringPRectF, _5)(_1, _2, _3, _4, _5, _6)
         }
 
     ; MeasureString(WCHAR*, INT, Font*, RectF*, StringFormat*, RectF*, INT* = 0, INT* = 0)
 
-    .operator MeasureString?pRectF?pStringFormat :abs, :abs, :ptr Font, :ptr RectF, :ptr StringFormat, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline MeasureStringPRectFPStringFormat :abs, :abs, :ptr Font, :ptr RectF, :ptr StringFormat, :abs, :abs=<0>, :abs=<0>, :vararg {
         .if r9
             mov r9,[r9].Font.nativeFont
         .endif
@@ -655,7 +655,7 @@ typeid_Rect macro name
 
     ; MeasureString(WCHAR*, INT, Font*, SizeF*, StringFormat*, SizeF*, INT* = 0, INT* = 0)
 
-    .operator MeasureString?pSizeF :abs, :abs, :ptr Font, :ptr SizeF, :ptr StringFormat, :ptr SizeF, :abs=<0>, :abs=<0>, :vararg {
+    .inline MeasureStringPSizeF :abs, :abs, :ptr Font, :ptr SizeF, :ptr StringFormat, :ptr SizeF, :abs=<0>, :abs=<0>, :vararg {
 
         .new layoutRect:RectF
         .new boundingBox:RectF
@@ -692,11 +692,11 @@ typeid_Rect macro name
 
     ; MeasureString(WCHAR*, INT, Font*, PointF*, StringFormat*, RectF*)
 
-    .operator MeasureString?pPointF :abs, :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(MeasureString?pPointF, _5)(_1, _2, _3, _4, _5, _6)
+    .inline MeasureStringPPointF :abs, :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(MeasureStringPPointF, _5)(_1, _2, _3, _4, _5, _6)
         }
 
-    .operator MeasureString?pPointF?pStringFormat :abs, :abs, :ptr Font, :ptr PointF, :ptr StringFormat, :abs, :vararg {
+    .inline MeasureStringPPointFPStringFormat :abs, :abs, :ptr Font, :ptr PointF, :ptr StringFormat, :abs, :vararg {
 
        .new rect:RectF
 
@@ -718,7 +718,7 @@ typeid_Rect macro name
 
     ; MeasureString(WCHAR*, INT, Font*, RectF*, RectF*)
 
-    .operator MeasureString?pRectF?pRectF :abs, :abs, :ptr Font, :abs, :abs, :vararg {
+    .inline MeasureStringPRectFPRectF :abs, :abs, :ptr Font, :abs, :abs, :vararg {
         .if r9
             mov r9,[r9].Font.nativeFont
         .endif
@@ -729,7 +729,7 @@ typeid_Rect macro name
 
     ; MeasureString(WCHAR*, INT, Font*, PointF*, RectF*)
 
-    .operator MeasureString?pPointF?pRectF :abs, :abs, :ptr Font, :ptr PointF, :ptr RectF, :vararg {
+    .inline MeasureStringPPointFPRectF :abs, :abs, :ptr Font, :ptr PointF, :ptr RectF, :vararg {
 
        .new rect:RectF
         mov r10,[rsp+8*4]
@@ -744,7 +744,7 @@ typeid_Rect macro name
         GdipSetStatus(this)
         }
 
-    .operator MeasureCharacterRanges :ptr WCHAR, :SINT, :ptr Font, :ptr RectF, :ptr StringFormat, :SINT, :ptr Region, :vararg {
+    .inline MeasureCharacterRanges :ptr WCHAR, :SINT, :ptr Font, :ptr RectF, :ptr StringFormat, :SINT, :ptr Region, :vararg {
 
         .repeat
             .if qword ptr [rsp+7*8] == 0 || sdword ptr [rsp+6*8] <= 0
@@ -787,7 +787,7 @@ typeid_Rect macro name
         this.SetStatus()
         }
 
-    .operator DrawDriverString :abs, :abs, :ptr Font, :ptr Brush, :abs, :abs, :ptr Matrix, :vararg {
+    .inline DrawDriverString :abs, :abs, :ptr Font, :ptr Brush, :abs, :abs, :ptr Matrix, :vararg {
         .if r9
             mov r9,[r9].Font.nativeFont
         .endif
@@ -803,7 +803,7 @@ typeid_Rect macro name
         GdipSetStatus(this)
         }
 
-    .operator MeasureDriverString :abs, :abs, :ptr Font, :abs, :abs, :ptr Matrix, :vararg {
+    .inline MeasureDriverString :abs, :abs, :ptr Font, :abs, :abs, :ptr Matrix, :vararg {
         .if r9
             mov r9,[r9].Font.nativeFont
         .endif
@@ -819,12 +819,12 @@ typeid_Rect macro name
     ;; x, y. Note this will fail with WrongState if the CachedBitmap
     ;; native format differs from this Graphics.
 
-    .operator DrawCachedBitmap :ptr CachedBitmap, :vararg {
+    .inline DrawCachedBitmap :ptr CachedBitmap, :vararg {
         GdipDrawCachedBitmap(this.nativeGraphics, [rdx].CachedBitmap.nativeCachedBitmap, _2)
         GdipSetStatus(this)
         }
 
-    .operator DrawImage :ptr Image, :abs, :vararg {
+    .inline DrawImage :ptr Image, :abs, :vararg {
         .if rdx
             mov rdx,[rdx].Image.nativeImage
         .endif
@@ -836,9 +836,9 @@ typeid_Rect macro name
     ; DrawImage(Image*, PointF*, INT)
     ; DrawImage(Image*, PointF*, INT, REAL, REAL, REAL, REAL, Unit, ImageAttributes* = NULL, DrawImageAbort = NULL, VOID* = NULL)
 
-    .operator DrawImage?pPointF :abs, :ptr PointF, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+    .inline DrawImagePPointF :abs, :ptr PointF, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
         ifb <_3>
-            this.DrawImage?flt(rdx, [r8].PointF.X, [r8].PointF.Y)
+            this.DrawImageIMMFLT(rdx, [r8].PointF.X, [r8].PointF.Y)
         elseifb <_4>
             mov r9d,_3
             .if r9d != 3 && r9d != 4
@@ -859,9 +859,9 @@ typeid_Rect macro name
     ; DrawImage(Image*, Point*, INT)
     ; DrawImage(Image*, Point*, INT, INT, INT, INT, INT, Unit, ImageAttributes* = NULL, DrawImageAbort = NULL, VOID* = NULL)
 
-    .operator DrawImage?pPoint :abs, :ptr Point, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+    .inline DrawImagePPoint :abs, :ptr Point, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
         ifb <_3>
-            this.DrawImage?i32(rdx, [r8].Point.X, [r8].Point.Y)
+            this.DrawImageIMM32(rdx, [r8].Point.X, [r8].Point.Y)
         elseifb <_4>
             mov r9d,_3
             .if r9d != 3 && r9d != 4
@@ -880,24 +880,24 @@ typeid_Rect macro name
 
     ; DrawImage(Image*, RectF*)
 
-    .operator DrawImage?pRectF :abs, :ptr RectF, :abs, :vararg {
+    .inline DrawImagePRectF :abs, :ptr RectF, :abs, :vararg {
         ifb <_3>
-            this.DrawImage?flt(rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height)
+            this.DrawImageIMMFLT(rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width, [r8].RectF.Height)
         else
-            this.typeid(DrawImage?pRectF, _3)(rdx, r8, _3, _4)
+            this.typeid(DrawImagePRectF, _3)(rdx, r8, _3, _4)
         endif
         }
 
     ; DrawImage(Image*, RectF*, REAL, REAL, REAL, REAL, Unit, ImageAttributes* = NULL, DrawImageAbort = NULL, VOID* = NULL)
 
-    .operator DrawImage?pRectF?flt :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
-        this.typeid(DrawImage?pRectF?flt, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
+    .inline DrawImagePRectFIMMFLT :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+        this.typeid(DrawImagePRectFIMMFLT, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
         }
-    .operator DrawImage?pRectF?i32 :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline DrawImagePRectFIMM32 :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
         GdipDrawImageRectRect(this.nativeGraphics, rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width,\
             [r8].RectF.Height, _3, _4, _5, _6, _7, _8, _9, _10)
         }
-    .operator DrawImage?pRectF?flt?pImageAttributes :abs, :abs, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
+    .inline DrawImagePRectFIMMFLTPImageAttributes :abs, :abs, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
         mov r10,[rsp+8*8]
         .if r10
             mov r10,[r10].ImageAttributes.nativeImageAttr
@@ -905,15 +905,15 @@ typeid_Rect macro name
         GdipDrawImageRectRect(this.nativeGraphics, rdx, [r8].RectF.X, [r8].RectF.Y, [r8].RectF.Width,\
             [r8].RectF.Height, _3, _4, _5, _6, _7, r10, _9, _10)
         }
-    .operator DrawImage?pRectF?real4 :vararg {
-        this.DrawImage?pRectF?flt(_1)
+    .inline DrawImagePRectFREAL4 :vararg {
+        this.DrawImagePRectFIMMFLT(_1)
         }
 
 if (GDIPVER GE 0x0110)
 
     ; DrawImage(Image*, RectF*, RectF*, Unit, ImageAttributes* = NULL)
 
-    .operator DrawImage?pRectF?pRectF :abs, :ptr RectF, :ptr RectF, :abs, :abs=<0>, :vararg {
+    .inline DrawImagePRectFPRectF :abs, :ptr RectF, :ptr RectF, :abs, :abs=<0>, :vararg {
         mov r10,_5
         .if r10
             mov r10,[r10].ImageAttributes.nativeImageAttr
@@ -925,7 +925,7 @@ if (GDIPVER GE 0x0110)
 
     ; DrawImage(Image*, RectF*, Matrix*, Effect*, ImageAttributes*, Unit)
 
-    .operator DrawImage?pRectF?pMatrix :abs, :abs, :ptr Matrix, :ptr Effect, :ptr ImageAttributes, :abs, :vararg {
+    .inline DrawImagePRectFPMatrix :abs, :abs, :ptr Matrix, :ptr Effect, :ptr ImageAttributes, :abs, :vararg {
         .if r9
             mov r9,[r9].Matrix.nativeMatrix
         .endif
@@ -944,18 +944,18 @@ endif
     ; DrawImage(Image*, Rect*)
     ; DrawImage(Image*, Rect*, INT, INT, INT, INT, Unit, ImageAttributes* = NULL, DrawImageAbort = NULL, VOID* = NULL)
 
-    .operator DrawImage?pRect :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+    .inline DrawImagePRect :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
         ifb <_3>
-            this.DrawImage?i32(rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height)
+            this.DrawImageIMM32(rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width, [r8].Rect.Height)
         else
-            this.typeid(DrawImage?pRect, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
+            this.typeid(DrawImagePRect, _8)(rdx, r8, _3, _4, _5, _6, _7, _8, _9, _10)
         endif
         }
-    .operator DrawImage?pRect?i32 :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+    .inline DrawImagePRectIMM32 :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
         GdipDrawImageRectRectI(this.nativeGraphics, rdx, [r8].Rect.X, [r8].Rect.Y, [r8].Rect.Width,\
             [r8].Rect.Height, _3, _4, _5, _6, _7, _8, _9, _10)
         }
-    .operator DrawImage?pRect?pImageAttributes :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
+    .inline DrawImagePRectPImageAttributes :abs, :ptr Rect, :abs, :abs, :abs, :abs, :abs, :ptr ImageAttributes, :abs, :abs, :vararg {
         mov r10,[rsp+8*8]
         .if r10
             mov r10,[r10].ImageAttributes.nativeImageAttr
@@ -970,7 +970,7 @@ endif
     ; DrawImage(Image*, REAL, REAL, REAL, REAL)
     ; DrawImage(Image*, REAL, REAL, REAL, REAL, REAL, REAL, Unit)
 
-    .operator DrawImage?flt :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline DrawImageIMMFLT :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
         ifb <_4>
             GdipDrawImage(this.nativeGraphics, rdx, _2, _3)
         elseifb <_6>
@@ -984,7 +984,7 @@ endif
     ; DrawImage(Image*, INT, INT, INT, INT)
     ; DrawImage(Image*, INT, INT, INT, INT, INT, INT, Unit)
 
-    .operator DrawImage?i32 :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline DrawImageIMM32 :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
         ifb <_4>
             GdipDrawImageI(this.nativeGraphics, rdx, _2, _3)
         elseifb <_6>
@@ -1000,35 +1000,35 @@ endif
     ;; the callback can invoke the Metafile::PlayRecord method
     ;; to play the particular record.
 
-    .operator EnumerateMetafile :ptr Image, :abs, :vararg {
+    .inline EnumerateMetafile :ptr Image, :abs, :vararg {
         .if rdx
             mov rdx,[rdx].Image.nativeImage
         .endif
         this.typeid(EnumerateMetafile, _2)(_1, _2, _3)
         GdipSetStatus(this)
         }
-    .operator EnumerateMetafile?pPointF :abs, :ptr PointF, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pPointF, _3)(_1, _2, _3, _4)
+    .inline EnumerateMetafilePPointF :abs, :ptr PointF, :abs, :vararg {
+        this.typeid(EnumerateMetafilePPointF, _3)(_1, _2, _3, _4)
         }
-    .operator EnumerateMetafile?pPoint :abs, :abs, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pPoint, _3)(_1, _2, _3, _4)
+    .inline EnumerateMetafilePPoint :abs, :abs, :abs, :vararg {
+        this.typeid(EnumerateMetafilePPoint, _3)(_1, _2, _3, _4)
         }
-    .operator EnumerateMetafile?pRectF :abs, :abs, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pRectF, _3)(_1, _2, _3, _4)
+    .inline EnumerateMetafilePRectF :abs, :abs, :abs, :vararg {
+        this.typeid(EnumerateMetafilePRectF, _3)(_1, _2, _3, _4)
         }
-    .operator EnumerateMetafile?pRect :abs, :abs, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pRect, _3)(_1, _2, _3, _4)
+    .inline EnumerateMetafilePRect :abs, :abs, :abs, :vararg {
+        this.typeid(EnumerateMetafilePRect, _3)(_1, _2, _3, _4)
         }
-    .operator EnumerateMetafile?pPointF?i32 :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pPointF?i32, _4)(_1, _2, _3, _4, _5)
+    .inline EnumerateMetafilePPointFIMM32 :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(EnumerateMetafilePPointFIMM32, _4)(_1, _2, _3, _4, _5)
         }
-    .operator EnumerateMetafile?pPoint?i32 :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(EnumerateMetafile?pPoint?i32, _4)(_1, _2, _3, _4, _5)
+    .inline EnumerateMetafilePPointIMM32 :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(EnumerateMetafilePPointIMM32, _4)(_1, _2, _3, _4, _5)
         }
 
     ; EnumerateMetafile(Metafile*, PointF*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointFPNEAR :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1038,7 +1038,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, PointF*, INT, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?i32?pnear :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointFIMM32PNEAR :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_6
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1048,12 +1048,12 @@ endif
 
     ; EnumerateMetafile(Metafile*, PointF*, INT, RectF*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?i32?pRectF :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointFIMM32PRectF :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         }
 
     ; EnumerateMetafile(Metafile*, PointF*, RectF*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPointF?pRectF :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointFPRectF :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_7
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1063,7 +1063,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Point*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointPNEAR :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1073,7 +1073,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Point*, INT, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?i32?pnear :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointIMM32PNEAR :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_6
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1083,12 +1083,12 @@ endif
 
     ; EnumerateMetafile(Metafile*, Point*, INT, Rect*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?i32?pRect :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointIMM32PRect :abs, :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         }
 
     ; EnumerateMetafile(Metafile*, Point*, Rect*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pPoint?pRect :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePPointPRect :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_7
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1098,7 +1098,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, RectF*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRectF?pnear :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePRectFPNEAR :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1108,7 +1108,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, RectF*, RectF*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRectF?pRectF :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePRectFPRectF :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_7
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1118,7 +1118,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Rect*, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRect?pnear :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePRectPNEAR :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_5
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1128,7 +1128,7 @@ endif
 
     ; EnumerateMetafile(Metafile*, Rect*, Rect*, Unit, EnumerateMetafileProc, VOID* = NULL, ImageAttributes* = NULL)
 
-    .operator EnumerateMetafile?pRect?pRect :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .inline EnumerateMetafilePRectPRect :abs, :abs, :abs, :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
         mov r11,_7
         .if r11
             mov r11,[r11].ImageAttributes.nativeImageAttr
@@ -1137,25 +1137,25 @@ endif
         }
 
 
-    .operator SetClip :abs, :vararg {
+    .inline SetClip :abs, :vararg {
         this.typeid(SetClip , _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator SetClip?pGraphics :ptr Graphics, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPGraphics :ptr Graphics, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipGraphics(this.nativeGraphics, [rdx].Graphics.nativeGraphics, _2)
         }
-    .operator SetClip?pRectF :ptr RectF, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPRectF :ptr RectF, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipRect(this.nativeGraphics,\
             [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
         }
-    .operator SetClip?pRect :ptr Rect, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPRect :ptr Rect, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipRectI(this.nativeGraphics,\
             [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
         }
-    .operator SetClip?pGraphicsPath :ptr GraphicsPath, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPGraphicsPath :ptr GraphicsPath, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipPath(this.nativeGraphics, [rdx].GraphicsPath.nativePath, _2)
         }
-    .operator SetClip?pRegion :ptr Region, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPRegion :ptr Region, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipRegion(this.nativeGraphics, [rdx].Region.nativeRegion, _2)
         }
 
@@ -1163,131 +1163,131 @@ endif
     ;; that the HRGN is already in device units, so it doesn't transform
     ;; the coordinates in the HRGN.
 
-    .operator SetClip?pvoid :abs, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClipPVOID :abs, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipHrgn(this.nativeGraphics, _1, _2)
         }
 
-    .operator IntersectClip :abs, :vararg {
+    .inline IntersectClip :abs, :vararg {
         this.typeid(IntersectClip , _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator IntersectClip?pRectF :ptr RectF, :vararg {
+    .inline IntersectClipPRectF :ptr RectF, :vararg {
         GdipSetClipRect(this.nativeGraphics,\
                 [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width,\
                 [rdx].RectF.Height, CombineModeIntersect)
         }
-    .operator IntersectClip?pRect :ptr Rect, :vararg {
+    .inline IntersectClipPRect :ptr Rect, :vararg {
         GdipSetClipRectI(this.nativeGraphics,\
                 [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, CombineModeIntersect)
         }
-    .operator IntersectClip?pRegion :ptr Region, :vararg {
+    .inline IntersectClipPRegion :ptr Region, :vararg {
         GdipSetClipRegion(this.nativeGraphics,\
                 [rdx].Region.nativeRegion, CombineModeIntersect)
         }
 
-    .operator ExcludeClip :abs, :vararg {
+    .inline ExcludeClip :abs, :vararg {
         this.typeid(ExcludeClip , _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator ExcludeClip?pRectF :ptr RectF, :vararg {
+    .inline ExcludeClipPRectF :ptr RectF, :vararg {
         GdipSetClipRect(this.nativeGraphics,\
                 [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, CombineModeExclude)
         }
-    .operator ExcludeClip?pRect :ptr Rect, :vararg {
+    .inline ExcludeClipPRect :ptr Rect, :vararg {
         GdipSetClipRectI(this.nativeGraphics,\
                 [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, CombineModeExclude)
         }
-    .operator ExcludeClip?pRegion :ptr Region, :vararg {
+    .inline ExcludeClipPRegion :ptr Region, :vararg {
         GdipSetClipRegion(this.nativeGraphics, [rdx].Region.nativeRegion, CombineModeExclude)
         }
 
-    .operator ResetClip :vararg {
+    .inline ResetClip :vararg {
         GdipResetClip(this.nativeGraphics)
         GdipSetStatus(this)
         }
 
-    .operator TranslateClip :abs, :vararg {
+    .inline TranslateClip :abs, :vararg {
         this.typeid(TranslateClip , _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator TranslateClip?flt :vararg {
+    .inline TranslateClipIMMFLT :vararg {
         GdipTranslateClip(this.nativeGraphics, _1)
         }
-    .operator TranslateClip?i32 :vararg {
+    .inline TranslateClipIMM32 :vararg {
         GdipTranslateClipI(this.nativeGraphics, _1)
         }
 
-    .operator GetClip :ptr, :vararg {
+    .inline GetClip :ptr, :vararg {
         GdipGetClip(this.nativeGraphics, [rdx].Region.nativeRegion)
         GdipSetStatus(this)
         }
 
-    .operator GetClipBounds :abs, :vararg {
+    .inline GetClipBounds :abs, :vararg {
         this.typeid(GetClipBounds , _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator GetClipBounds?pRectF :vararg  {
+    .inline GetClipBoundsPRectF :vararg  {
         GdipGetClipBounds(this.nativeGraphics, _1)
         }
-    .operator GetClipBounds?pRect :vararg {
+    .inline GetClipBoundsPRect :vararg {
         GdipGetClipBoundsI(this.nativeGraphics, _1)
         }
 
-    .operator IsClipEmpty :vararg {
+    .inline IsClipEmpty :vararg {
         mov this.scratch,FALSE
         GdipIsClipEmpty(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator GetVisibleClipBounds :abs, :vararg {
+    .inline GetVisibleClipBounds :abs, :vararg {
         this.typeid(GetVisibleClipBounds, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .operator GetVisibleClipBounds?pRectF :abs, :vararg {
+    .inline GetVisibleClipBoundsPRectF :abs, :vararg {
         GdipGetVisibleClipBounds(this.nativeGraphics, _1)
         }
-    .operator GetVisibleClipBounds?pRect :abs, :vararg {
+    .inline GetVisibleClipBoundsPRect :abs, :vararg {
         GdipGetVisibleClipBoundsI(this.nativeGraphics, _1)
         }
 
-    .operator IsVisibleClipEmpty :vararg {
+    .inline IsVisibleClipEmpty :vararg {
         mov this.scratch,FALSE
         GdipIsVisibleClipEmpty(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator IsVisible :abs, :vararg {
+    .inline IsVisible :abs, :vararg {
         this.typeid(IsVisible, _1)(_1, _2)
         }
-    .operator IsVisible?pPoint :ptr Point, :vararg {
+    .inline IsVisiblePPoint :ptr Point, :vararg {
         mov this.scratch,FALSE
         GdipIsVisiblePointI(this.nativeGraphics, [rdx].Point.X, [rdx].Point.Y, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
-    .operator IsVisible?pRect :ptr Rect, :vararg {
+    .inline IsVisiblePRect :ptr Rect, :vararg {
         mov this.scratch,TRUE
         GdipIsVisibleRectI(this.nativeGraphics,\
             [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
-    .operator IsVisible?pPointF :ptr PointF, :vararg {
+    .inline IsVisiblePPointF :ptr PointF, :vararg {
         mov this.scratch,FALSE
         GdipIsVisiblePoint(this.nativeGraphics, [rdx].Point.X, [rdx].Point.Y, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
-    .operator IsVisible?pRectF :ptr RectF, :vararg {
+    .inline IsVisiblePRectF :ptr RectF, :vararg {
         mov this.scratch,TRUE
         GdipIsVisibleRect(this.nativeGraphics,\
             [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
-    .operator IsVisible?flt :abs, :abs, :abs, :abs, :vararg {
+    .inline IsVisibleIMMFLT :abs, :abs, :abs, :abs, :vararg {
 
         .new rectf:RectF
 
@@ -1295,9 +1295,9 @@ endif
         mov rectf.Y,_2
         mov rectf.Width,_3
         mov rectf.Height,_4
-        this.IsVisible?pRectF(&rectf)
+        this.IsVisiblePRectF(&rectf)
         }
-    .operator IsVisible?i32 :abs, :abs, :abs, :abs, :vararg {
+    .inline IsVisibleIMM32 :abs, :abs, :abs, :abs, :vararg {
 
         .new rect:Rect
 
@@ -1305,21 +1305,21 @@ endif
         mov rect.Y,_2
         mov rect.Width,_3
         mov rect.Height,_4
-        this.IsVisible?pRect(&rect)
+        this.IsVisiblePRect(&rect)
         }
 
-    .operator Save :vararg {
+    .inline Save :vararg {
         GdipSaveGraphics(this.nativeGraphics, addr this.scratch)
         GdipSetStatus(this)
         mov eax,this.scratch
         }
 
-    .operator Restore :vararg {
+    .inline Restore :vararg {
         GdipRestoreGraphics(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
-    .operator BeginContainer :abs, :vararg {
+    .inline BeginContainer :abs, :vararg {
         ifb <_1>
             GdipBeginContainer2(this.nativeGraphics, addr this.scratch)
         else
@@ -1328,31 +1328,31 @@ endif
         GdipSetStatus(this)
         mov eax,this.scratch
         }
-    .operator BeginContainer?pRectF :abs, :abs, :abs, :vararg {
+    .inline BeginContainerPRectF :abs, :abs, :abs, :vararg {
         GdipBeginContainer(this.nativeGraphics, _1, _2, _3, addr this.scratch)
         }
-    .operator BeginContainer?pRect :abs, :abs, :abs, :vararg {
+    .inline BeginContainerPRect :abs, :abs, :abs, :vararg {
         GdipBeginContainerI(this.nativeGraphics, _1, _2, _3, addr this.scratch)
         }
 
-    .operator EndContainer :vararg {
+    .inline EndContainer :vararg {
         GdipEndContainer(this.nativeGraphics, _1)
         GdipSetStatus(this)
         }
 
     ;; Only valid when recording metafiles.
 
-    .operator AddMetafileComment :ptr BYTE, :UINT {
+    .inline AddMetafileComment :ptr BYTE, :UINT {
         xchg _1,r8
         GdipComment([this].Graphics.nativeGraphics, edx, r8)
         }
 
-    .operator GetHalftonePalette {
+    .inline GetHalftonePalette {
         GdipCreateHalftonePalette()
         retm<rax>
         }
 
-    .operator GetLastStatus {
+    .inline GetLastStatus {
         mov eax,[this].Graphics.lastResult
         mov [this].Graphics.lastResult,Ok
         }

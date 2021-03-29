@@ -5,7 +5,7 @@ include graph.inc
 include stdlib.inc
 
     .data
-    g LPGRAPHICS 0
+    g ptr Graphics 0
 
     virtual_table GraphicsVtbl { \
         Graphics_Release,
@@ -26,7 +26,7 @@ include stdlib.inc
 
     option win64:rsp nosave noauto
 
-    assume rcx:LPGRAPHICS
+    assume rcx:ptr Graphics
 
 Graphics::Update proc
 
@@ -148,7 +148,7 @@ Graphics::Initpal proc
 Graphics::Initpal endp
 
 
-    assume rsi:LPGRAPHICS
+    assume rsi:ptr Graphics
     option win64:rbp
 
 Graphics::Line proc uses rsi rdi rbx x:UINT, y:UINT, x2:UINT, y2:UINT, rgb:UINT

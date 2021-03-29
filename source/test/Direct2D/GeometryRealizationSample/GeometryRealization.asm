@@ -655,15 +655,15 @@ GeometryRealization::RenderToTarget proc uses rsi \
                 .endif
                 .if (SUCCEEDED(hr))
 
-                   .new pBitmap:ptr ID2D1Bitmap
-                    mov pBitmap,NULL
+                   .new pBitmap:ptr ID2D1Bitmap = NULL
+
                     this.m_pFillRT.GetBitmap(&pBitmap)
 
                     ;;
                     ;; Note: The antialias mode must be set to aliased prior to calling
                     ;; FillOpacityMask.
                     ;;
-                    pRT.FillOpacityMask(
+                    pRT.FillOpacityMask?(
                         pBitmap,
                         pBrush,
                         D2D1_OPACITY_MASK_CONTENT_GRAPHICS,
@@ -682,8 +682,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
                 .endif
                 .if (SUCCEEDED(hr))
 
-                   .new pBitmap:ptr ID2D1Bitmap
-                    mov pBitmap,NULL
+                   .new pBitmap:ptr ID2D1Bitmap = NULL
 
                     this.m_pStrokeRT.GetBitmap(&pBitmap)
 
@@ -691,7 +690,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
                     ;; Note: The antialias mode must be set to aliased prior to calling
                     ;; FillOpacityMask.
                     ;;
-                    pRT.FillOpacityMask(
+                    pRT.FillOpacityMask?(
                         pBitmap,
                         pBrush,
                         D2D1_OPACITY_MASK_CONTENT_GRAPHICS,
@@ -812,33 +811,21 @@ GenerateOpacityMask proc \
     pMaskDestBounds         : ptr D2D1_RECT_F,
     pMaskSourceBounds       : ptr D2D1_RECT_F
 
-  local hr:HRESULT
-  local bounds:D2D1_RECT_F
-  local inflatedPixelBounds:D2D1_RECT_F
-  local inflatedIntegerPixelSize:D2D1_SIZE_U
-  local currentRTSize:D2D1_SIZE_U
-  local dpiX:float, dpiY:float
-  local scaleX:float
-  local scaleY:float
-  local pCompatRT:ptr ID2D1BitmapRenderTarget
-  local pBrush:ptr ID2D1SolidColorBrush
-  local color:D3DCOLORVALUE
-
-    mov hr,S_OK
-    mov scaleX,1.0
-    mov scaleY,1.0
-
-    mov pCompatRT,NULL
-    mov pBrush,NULL
+  .new hr:HRESULT = S_OK
+  .new bounds:D2D1_RECT_F
+  .new inflatedPixelBounds:D2D1_RECT_F
+  .new inflatedIntegerPixelSize:D2D1_SIZE_U
+  .new currentRTSize:D2D1_SIZE_U
+  .new dpiX:float, dpiY:float
+  .new scaleX:float = 1.0
+  .new scaleY:float = 1.0
+  .new pCompatRT:ptr ID2D1BitmapRenderTarget = NULL
+  .new pBrush:ptr ID2D1SolidColorBrush = NULL
+  .new color:D3DCOLORVALUE = { 1.0, 1.0, 1.0, 1.0 }
 
     mov rax,ppBitmapRT
     mov rdx,[rax]
     SafeReplace(&pCompatRT, rdx)
-
-    mov color.r,1.0
-    mov color.g,1.0
-    mov color.b,1.0
-    mov color.a,1.0
 
     mov hr,pBaseRT.CreateSolidColorBrush(&color, NULL, &pBrush)
 
@@ -1098,9 +1085,11 @@ GenerateOpacityMask proc \
                     mov currentRTSize.height,eax
                 .endif
 
-               .new alphaOnlyFormat:D2D1_PIXEL_FORMAT
-                mov alphaOnlyFormat.format,DXGI_FORMAT_A8_UNORM
-                mov alphaOnlyFormat.alphaMode,D2D1_ALPHA_MODE_PREMULTIPLIED
+               .new alphaOnlyFormat:D2D1_PIXEL_FORMAT = {
+                    DXGI_FORMAT_A8_UNORM,
+                    D2D1_ALPHA_MODE_PREMULTIPLIED
+                    }
+
                 mov hr,pBaseRT.CreateCompatibleRenderTarget(
                     NULL, ;; desiredSize
                     &currentRTSize,

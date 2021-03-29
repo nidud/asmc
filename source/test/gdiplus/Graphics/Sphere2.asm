@@ -28,7 +28,7 @@ OnPaint macro hdc
 
        .new z:PointF(20.0, 20.0)
        .new r:SolidBrush(Green)
-       .new f:Font("Arial", 16.0)
+       .new f:Font(L"Arial", 16.0)
 
         g.DrawString("Resize", 6, &f, &z, NULL, &r)
         f.Release()

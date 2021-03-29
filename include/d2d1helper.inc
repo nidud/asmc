@@ -16,7 +16,7 @@ ifdef _WIN64
     _31 real4 ?
     _32 real4 ?
 
-    .operator Identity {
+    .inline Identity {
         xor eax,eax
         mov [this+0x04],rax
         mov [this+0x10],rax
@@ -26,11 +26,11 @@ ifdef _WIN64
         mov rax,this
         }
 
-    .operator Rotation :abs, :abs=<0> {
+    .inline Rotation :abs, :abs=<0> {
         D2D1MakeRotateMatrix(_1, _2, this)
         }
 
-    .operator Translation :real4, :real4 {
+    .inline Translation :real4, :real4 {
         xor     eax,eax
         mov     [this+0x04],rax
         mov     eax,1.0
@@ -41,7 +41,7 @@ ifdef _WIN64
         mov     rax,this
         }
 
-    .operator Scale :real4, :real4, :abs, :abs {
+    .inline Scale :real4, :real4, :abs, :abs {
         xor     eax,eax
         mov     [this+0x04],rax
         movss   [this+0x00],xmm1
@@ -61,11 +61,11 @@ ifdef _WIN64
         mov rax,rcx
         }
 
-    .operator Invert {
+    .inline Invert {
         xor D2D1InvertMatrix(this),1
         }
 
-    .operator IsIdentity {
+    .inline IsIdentity {
         xor eax,eax
         mov edx,1.0
         .if [this+0x00] == edx && \
@@ -76,7 +76,7 @@ ifdef _WIN64
         .endif
         }
 
-    .operator SetProduct :ptr, :ptr {
+    .inline SetProduct :ptr, :ptr {
 
         movss xmm2,[_1+0x00] ; a._11 * b._11 + a._12 * b._21
         mulss xmm2,[_2+0x00]
@@ -124,15 +124,15 @@ ifdef _WIN64
         movss [this+0x14],xmm0
         }
 
-    .operator Skew :abs, :abs, :abs=<0> {
+    .inline Skew :abs, :abs, :abs=<0> {
         D2D1MakeSkewMatrix(_1, _2, _3, this)
         }
 
-    .operator ReinterpretBaseType {
+    .inline ReinterpretBaseType {
         mov rax,this
         }
 
-    .operator Determinant {
+    .inline Determinant {
         movss xmm0,[this+0x00]
         mulss xmm0,[this+0x0C]
         movss xmm1,[this+0x04]
@@ -147,7 +147,7 @@ ifdef _WIN64
 .template D2D1
 
 
-    .operator FloatMax {
+    .inline FloatMax {
         ifdef FLT_MAX
             movss xmm0,FLT_MAX
         else
@@ -156,7 +156,7 @@ ifdef _WIN64
         }
 
 
-    .operator Point2 :dword, :dword {
+    .inline Point2 :dword, :dword {
 
        local T
         .new T:Point
@@ -166,17 +166,17 @@ ifdef _WIN64
         lea _3,T
         }
 
-    .operator Point2F :abs=<0.0>, :abs=<0.0> {
+    .inline Point2F :abs=<0.0>, :abs=<0.0> {
 
        local T
         .new T:D2D1_POINT_2F
 
-        ifidn typeid(?, _1),<?r128>
+        ifidn typeid(_1),<REG128>
             movss T.x,_1
         else
             mov T.x,_1
         endif
-        ifidn typeid(?, _2),<?r128>
+        ifidn typeid(_2),<REG128>
             movss T.y,_2
         else
             mov T.y,_2
@@ -184,7 +184,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator Point2U :abs=<0>, :abs=<0> {
+    .inline Point2U :abs=<0>, :abs=<0> {
 
        local T
         .new T:D2D1_POINT_2U
@@ -194,7 +194,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator Size :uint_t, :uint_t {
+    .inline Size :uint_t, :uint_t {
 
        local T
         .new T:Size
@@ -204,16 +204,16 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator SizeF :abs=<0.0>, :abs=<0.0> {
+    .inline SizeF :abs=<0.0>, :abs=<0.0> {
 
        local T
         .new T:D2D1_SIZE_F
-        ifidn typeid(?, _1),<?r128>
+        ifidn typeid(_1),<REG128>
             movss T.width, _1
         else
             mov T.width, _1
         endif
-        ifidn typeid(?, _2),<?r128>
+        ifidn typeid(_2),<REG128>
             movss T.height,_2
         else
             mov T.height,_2
@@ -221,7 +221,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator SizeU :abs=<0>, :abs=<0> {
+    .inline SizeU :abs=<0>, :abs=<0> {
 
        local T
         .new T:D2D1_SIZE_U
@@ -231,7 +231,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator Rect :uint_t, :uint_t, :uint_t, :uint_t {
+    .inline Rect :uint_t, :uint_t, :uint_t, :uint_t {
 
        local T
         .new T:Rect
@@ -243,27 +243,27 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator RectF :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+    .inline RectF :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
 
        local T
         .new T:D2D1_RECT_F
 
-        ifidn typeid(?, _1),<?r128>
+        ifidn typeid(_1),<REG128>
             movss T.left,_1
         else
             mov T.left,_1
         endif
-        ifidn typeid(?, _2),<?r128>
+        ifidn typeid(_2),<REG128>
             movss T.top,_2
         else
             mov T.top,_2
         endif
-        ifidn typeid(?, _3),<?r128>
+        ifidn typeid(_3),<REG128>
             movss T.right,_3
         else
             mov T.right,_3
         endif
-        ifidn typeid(?, _4),<?r128>
+        ifidn typeid(_4),<REG128>
             movss T.bottom,_4
         else
             mov T.bottom,_4
@@ -271,7 +271,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator RectU :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0> {
+    .inline RectU :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0> {
 
        local T
         .new T:D2D1_RECT_U
@@ -283,7 +283,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator InfiniteRect {
+    .inline InfiniteRect {
 
        local T
         .new T:D2D1_RECT_F
@@ -303,7 +303,7 @@ ifdef _WIN64
         }
 
 
-    .operator ArcSegment :ptr D2D1_POINT_2F, :ptr D2D1_SIZE_F, :abs, :abs, :abs {
+    .inline ArcSegment :ptr D2D1_POINT_2F, :ptr D2D1_SIZE_F, :abs, :abs, :abs {
 
        local T
         .new T:D2D1_ARC_SEGMENT
@@ -316,7 +316,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator BezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+    .inline BezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
 
        local T
         .new T:D2D1_BEZIER_SEGMENT
@@ -328,7 +328,7 @@ ifdef _WIN64
         }
 
 
-    .operator Ellipse :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+    .inline Ellipse :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
 
        local T
         .new T:D2D1_ELLIPSE
@@ -339,7 +339,7 @@ ifdef _WIN64
         lea   rax,T
         }
 
-    .operator RoundedRect :ptr D2D1_RECT_F, :FLOAT, :FLOAT {
+    .inline RoundedRect :ptr D2D1_RECT_F, :FLOAT, :FLOAT {
 
        local T
         .new T:D2D1_ROUNDED_RECT
@@ -350,7 +350,7 @@ ifdef _WIN64
         lea   rax,T
         }
 
-    .operator BrushProperties :abs=<1.0>, :abs {
+    .inline BrushProperties :abs=<1.0>, :abs {
 
        local T
         .new T:D2D1_BRUSH_PROPERTIES
@@ -370,7 +370,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator GradientStop :FLOAT, :ptr D2D1_COLOR_F {
+    .inline GradientStop :FLOAT, :ptr D2D1_COLOR_F {
 
        local T
         .new T:D2D1_GRADIENT_STOP
@@ -380,7 +380,7 @@ ifdef _WIN64
         lea   rax,T
         }
 
-    .operator QuadraticBezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+    .inline QuadraticBezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
 
        local T
         .new T:D2D1_QUADRATIC_BEZIER_SEGMENT
@@ -390,7 +390,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator StrokeStyleProperties \
+    .inline StrokeStyleProperties \
             :abs=<D2D1_CAP_STYLE_FLAT>,
             :abs=<D2D1_CAP_STYLE_FLAT>,
             :abs=<D2D1_CAP_STYLE_FLAT>,
@@ -412,7 +412,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator BitmapBrushProperties :abs=<D2D1_EXTEND_MODE_CLAMP>, :abs=<D2D1_EXTEND_MODE_CLAMP>,
+    .inline BitmapBrushProperties :abs=<D2D1_EXTEND_MODE_CLAMP>, :abs=<D2D1_EXTEND_MODE_CLAMP>,
         :abs=<D2D1_BITMAP_INTERPOLATION_MODE_LINEAR> {
 
        local T
@@ -424,7 +424,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator LinearGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+    .inline LinearGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
 
        local T
         .new T:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
@@ -434,7 +434,7 @@ ifdef _WIN64
         lea rax,T
         }
 
-    .operator RadialGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+    .inline RadialGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
 
        local T
         .new T:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES
@@ -450,7 +450,7 @@ ifdef _WIN64
     ;;
     ;; PixelFormat
     ;;
-    .operator PixelFormat :abs=<DXGI_FORMAT_UNKNOWN>, :abs=<D2D1_ALPHA_MODE_UNKNOWN> {
+    .inline PixelFormat :abs=<DXGI_FORMAT_UNKNOWN>, :abs=<D2D1_ALPHA_MODE_UNKNOWN> {
 
        local T
         .new T:D2D1_PIXEL_FORMAT
@@ -464,7 +464,7 @@ ifdef _WIN64
     ;;
     ;; Bitmaps
     ;;
-    .operator BitmapProperties :ptr D2D1_PIXEL_FORMAT, :abs=<96.0>, :abs=<96.0> {
+    .inline BitmapProperties :ptr D2D1_PIXEL_FORMAT, :abs=<96.0>, :abs=<96.0> {
 
        local T
         .new T:D2D1_BITMAP_PROPERTIES
@@ -479,7 +479,7 @@ ifdef _WIN64
     ;;
     ;; Render Targets
     ;;
-    .operator RenderTargetProperties \
+    .inline RenderTargetProperties \
             :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
             :abs,
             :abs=<0.0>,
@@ -508,7 +508,7 @@ ifdef _WIN64
         }
 
 
-    .operator HwndRenderTargetProperties :HWND, :D2D1_SIZE_U, :abs=<D2D1_PRESENT_OPTIONS_NONE> {
+    .inline HwndRenderTargetProperties :HWND, :D2D1_SIZE_U, :abs=<D2D1_PRESENT_OPTIONS_NONE> {
 
        local T
         .new T:D2D1_HWND_RENDER_TARGET_PROPERTIES
@@ -520,7 +520,7 @@ ifdef _WIN64
         }
 
 
-    .operator LayerParameters :ptr D2D1_RECT_F,
+    .inline LayerParameters :ptr D2D1_RECT_F,
         :ptr,
         :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
         :D2D1_MATRIX_3X2_F,
@@ -542,7 +542,7 @@ ifdef _WIN64
         }
 
 
-    .operator DrawingStateDescription \
+    .inline DrawingStateDescription \
         :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
         :abs=<D2D1_TEXT_ANTIALIAS_MODE_DEFAULT>,
         :abs=<0>,
@@ -561,7 +561,7 @@ ifdef _WIN64
         }
 
 
-    .operator IdentityMatrix {
+    .inline IdentityMatrix {
         Matrix3x2F::Identity()
         }
 

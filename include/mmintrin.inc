@@ -15,11 +15,8 @@ ifdef _M_CEE_PURE
 endif
 
 ifndef _WIN64
-ifdef __SSE__
-    .686
-    .xmm
-endif
 ifndef _REGS6432
+_REGS6432 equ 1
     rax equ <eax>
     rbx equ <ebx>
     rcx equ <ecx>
@@ -28,7 +25,6 @@ ifndef _REGS6432
     rsi equ <esi>
     rbp equ <ebp>
     rsp equ <esp>
-_REGS6432 equ 1
 endif
 endif
 

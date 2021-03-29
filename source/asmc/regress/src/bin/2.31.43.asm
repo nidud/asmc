@@ -15,7 +15,7 @@
     c dd ?
     d dd ?
 
-    .operator D2D1_HWND_RENDER_TARGET_PROPERTIES :abs=<0>, :abs=<1>, :abs=<2>, :abs=<3>, :vararg {
+    .inline D2D1_HWND_RENDER_TARGET_PROPERTIES :abs=<0>, :abs=<1>, :abs=<2>, :abs=<3>, :vararg {
         mov this.a,_1
         mov this.b,_2
         mov this.c,_3

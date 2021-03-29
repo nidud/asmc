@@ -9,7 +9,7 @@ include pcg_basic.inc
     .code
 
     option win64:nosave
-    assume rcx:LPOBJECT
+    assume rcx:ptr Object
 
 Object::Object proc uses rdi rbx
 

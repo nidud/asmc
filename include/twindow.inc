@@ -105,19 +105,19 @@ color_t         typedef ptr TColor
     col         db ?
     row         db ?
 
-    .operator Size {
+    .inline Size {
         movzx   eax,[this].TRect.row
         mul     [this].TRect.col
         imul    eax,eax,CHAR_INFO
         retm    <eax>
         }
-    .operator Coord {
+    .inline Coord {
         movzx   eax,[this].TRect.row
         shl     eax,16
         mov     al,[this].TRect.col
         retm    <eax>
         }
-    .operator SmallRect {
+    .inline SmallRect {
         movzx   eax,[this].TRect.row
         movzx   edx,[this].TRect.y
         lea     rax,[rax+rdx-1]

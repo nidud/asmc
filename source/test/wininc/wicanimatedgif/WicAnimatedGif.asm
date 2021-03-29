@@ -361,7 +361,7 @@ DemoApp::OnRender proc
                    .new color:D3DCOLORVALUE(Black, 0.0)
                     pRT.BeginDraw()
                     pRT.Clear(&color)
-                    pRT.DrawBitmap(
+                    pRT.DrawBitmap?(
                         pFrameToRender, &drawRect,
                         1.0,
                         D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
@@ -816,7 +816,7 @@ DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
         SafeRelease(&[rsi].m_pRawFrame, ID2D1Bitmap)
 
-        mov hr,this.m_pHwndRT.CreateBitmapFromWicBitmap(
+        mov hr,this.m_pHwndRT.CreateBitmapFromWicBitmap?(
             pConverter,
             NULL,
             &[rsi].m_pRawFrame)
@@ -1334,7 +1334,7 @@ DemoApp::OverlayNextFrame proc uses rsi rbx
 
         ;; Produce the next frame
 
-        pRT.DrawBitmap(
+        pRT.DrawBitmap?(
             [rsi].m_pRawFrame,
             &[rsi].m_framePosition,
             1.0,
@@ -1394,7 +1394,7 @@ DemoApp::SaveComposedFrame proc uses rsi
             pFrameToBeSaved.GetPixelSize(&bitmapSize)
             pFrameToBeSaved.GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY)
             pFrameToBeSaved.GetPixelFormat(&bitmapProp.pixelFormat)
-            mov hr,this.m_pFrameComposeRT.CreateBitmap(
+            mov hr,this.m_pFrameComposeRT.CreateBitmap?(
                 bitmapSize,
                 NULL,
                 0,

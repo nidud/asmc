@@ -68,33 +68,33 @@ sc_blueMask	equ (0xff shl sc_blueShift)
     b real4 ?
     a real4 ?
 
-    .operator D3DCOLORVALUE :vararg {
-	ifidn typeid(?, this),<?D3DCOLORVALUE>
+    .inline D3DCOLORVALUE :vararg {
+	ifidn typeid(this),<D3DCOLORVALUE>
 	    this.Init(_1)
 	else
 	    [rcx].D3DCOLORVALUE.typeid(D3DCOLORVALUE, this)(_1)
 	endif
 	}
 
-    .operator D3DCOLORVALUE?i32 :vararg {
+    .inline D3DCOLORVALUEIMM32 :vararg {
       local n
        .new n:D3DCOLORVALUE
 	n.Init(_1)
 	}
 
-    .operator Init :abs, :abs, :vararg {
-	ifidn typeid(?, this),<?D3DCOLORVALUE>
+    .inline Init :abs, :abs, :vararg {
+	ifidn typeid(this),<D3DCOLORVALUE>
 	    lea rcx,this
 	endif
 	ifnb <_2>
-	    ifidn typeid(?, _2),<?r128>
+	    ifidn typeid(_2),<REG128>
 		movss [rcx].D3DCOLORVALUE.a,_2
 	    else
 		mov [rcx].D3DCOLORVALUE.a,_2
 	    endif
 	endif
 	ifnb <_1>
-	    ifidn typeid(?, _1),<?i32>
+	    ifidn typeid(_1),<IMM32>
 	       %mov [rcx].D3DCOLORVALUE.r, @CatStr(%((_1 and sc_redMask) shr sc_redShift),     <.0>) / 255.0
 	       %mov [rcx].D3DCOLORVALUE.g, @CatStr(%((_1 and sc_greenMask) shr sc_greenShift), <.0>) / 255.0
 	       %mov [rcx].D3DCOLORVALUE.b, @CatStr(%((_1 and sc_blueMask) shr sc_blueShift),   <.0>) / 255.0

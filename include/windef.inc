@@ -261,29 +261,29 @@ ifdef _WIN64
     right   SINT ?
     bottom  SINT ?
 
-    .operator RECT :vararg {
-	ifidn typeid(?, this),<?RECT>
-	    this.Init?RECT(_1)
+    .inline RECT :vararg {
+	ifidn typeid(this),<RECT>
+	    this.InitRECT(_1)
 	else
 	    [rcx].RECT.typeid(RECT, this)(_1)
 	endif
 	}
-    .operator RECT?i32 :vararg {
+    .inline RECTIMM32 :vararg {
       local rc
        .new rc:RECT
-	rc.Init?RECT(_1)
+	rc.InitRECT(_1)
 	lea rax,rc
 	}
 
-    .operator Init :vararg {
-	ifidn typeid(?, this),<?RECT>
-	    this.Init?RECT(_1)
+    .inline Init :vararg {
+	ifidn typeid(this),<RECT>
+	    this.InitRECT(_1)
 	else
 	    [rcx].RECT.typeid(Init, this)(_1)
 	endif
 	}
 
-    .operator Init?RECT :abs, :abs, :abs, :abs, :vararg {
+    .inline InitRECT :abs, :abs, :abs, :abs, :vararg {
 	ifnb <_1>
 	    mov this.left,    _1
 	endif
@@ -298,7 +298,7 @@ ifdef _WIN64
 	endif
 	}
 
-    .operator Init?r64 :abs, :abs, :abs, :abs {
+    .inline InitREG64 :abs, :abs, :abs, :abs {
 	ifnb <_1>
 	    mov [this].RECT.left,    _1
 	endif
@@ -313,12 +313,12 @@ ifdef _WIN64
 	endif
 	}
 
-    .operator Init?pRECT :abs, :abs, :abs, :abs {
-	[rcx].RECT.Init?r64(_1, _2, _3, _4)
+    .inline InitPRECT :abs, :abs, :abs, :abs {
+	[rcx].RECT.InitREG64(_1, _2, _3, _4)
 	}
 
-    .operator Width :abs=<eax> {
-	ifidn typeid(?, this),<?RECT>
+    .inline Width :abs=<eax> {
+	ifidn typeid(this),<RECT>
 	    mov _1,this.right
 	    sub _1,this.left
 	else
@@ -327,8 +327,8 @@ ifdef _WIN64
 	endif
 	}
 
-    .operator Height :abs=<eax> {
-	ifidn typeid(?, this),<?RECT>
+    .inline Height :abs=<eax> {
+	ifidn typeid(this),<RECT>
 	    mov _1,this.bottom
 	    sub _1,this.top
 	else
@@ -337,12 +337,12 @@ ifdef _WIN64
 	endif
 	}
 
-    .operator GetClient :HWND {
+    .inline GetClient :HWND {
 	xchg rcx,rdx
 	GetClientRect(rcx, rdx)
 	}
 
-    .operator Clear {
+    .inline Clear {
 	xor eax,eax
 	mov [this],rax
 	mov [this+8],rax

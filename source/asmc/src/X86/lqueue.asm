@@ -246,14 +246,12 @@ RunLineQueue endp
 InsertLineQueue proc uses esi edi ebx
 
   local oldstat:input_status
-  local codestate:int_t
   local tokenarray:tok_t
 
-    mov codestate,ModuleInfo.GeneratedCode
+    mov ebx,ModuleInfo.GeneratedCode
     mov tokenarray,PushInputStatus(&oldstat)
 
     mov ModuleInfo.GeneratedCode,0
-
     .for ( esi = LineQueue.head, LineQueue.head = NULL : esi : esi = edi )
 
         mov edi,[esi].lq_line.next
@@ -267,7 +265,7 @@ InsertLineQueue proc uses esi edi ebx
         .endif
     .endf
 
-    mov ModuleInfo.GeneratedCode,codestate
+    mov ModuleInfo.GeneratedCode,ebx
     PopInputStatus( &oldstat )
     ret
 

@@ -22,7 +22,7 @@ __FreeStdCallThunk  proto stdcall :ptr
     m_jmp	db ?
     m_relproc	dd ?
 
-    .operator Init :ptr, :ptr {
+    .inline Init :ptr, :ptr {
 
 	push ebx
 	mov ebx,this
@@ -37,13 +37,13 @@ __FreeStdCallThunk  proto stdcall :ptr
 	mov eax,TRUE
 	}
 
-    .operator GetCodeAddress {
+    .inline GetCodeAddress {
 	mov eax,this
 	}
-    .operator new :size_t {
+    .inline new :size_t {
 	__AllocStdCallThunk()
 	}
-    .operator delete :ptr {
+    .inline delete :ptr {
 	__FreeStdCallThunk(_1)
 	}
     .ENDS
@@ -67,7 +67,7 @@ _FuncDesc	ends
     m_pFunc	PVOID ?
     m_pThis	PVOID ?
 
-    .operator Init :ptr, :ptr {
+    .inline Init :ptr, :ptr {
        .new This:ptr
 	mov This,this
 	lea rax,_StdCallThunkProcProc
@@ -80,7 +80,7 @@ _FuncDesc	ends
 	FlushInstructionCache( GetCurrentProcess(), This, sizeof( _stdcallthunk ) )
 	mov eax,TRUE
 	}
-    .operator GetCodeAddress {
+    .inline GetCodeAddress {
 	mov rax,this
 	}
     .ENDS
@@ -102,11 +102,11 @@ LPSTDCALLTHUNK typedef ptr _stdcallthunk
 
     pThunk LPSTDCALLTHUNK ?
 
-    .operator CDynamicStdCallThunk {
+    .inline CDynamicStdCallThunk {
 	mov [this].CDynamicStdCallThunk.pThunk,NULL
 	}
 
-    .operator Init :ptr, :ptr {
+    .inline Init :ptr, :ptr {
 
 	mov eax,[this].CDynamicStdCallThunk.pThunk
 	.if eax
@@ -114,7 +114,7 @@ LPSTDCALLTHUNK typedef ptr _stdcallthunk
 	.endif
 	}
 
-    .operator GetCodeAddress {
+    .inline GetCodeAddress {
 	mov rax,[this].CDynamicStdCallThunk.pThunk
 	[eax]._stdcallthunk.GetCodeAddress()
 	}

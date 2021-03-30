@@ -407,6 +407,7 @@ continue:
 
                         .if ( [ebx+ecx].tokval == T_DOT_STATIC || \
                               [ebx+ecx].tokval == T_DOT_OPERATOR || \
+                              [ebx+ecx].tokval == T_DOT_INLINE || \
                               [ebx+ecx+asm_tok].tokval == T_PROTO || \
                               [ebx+ecx+asm_tok*3].tokval == T_PROTO )
 

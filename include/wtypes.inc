@@ -331,8 +331,8 @@ HCONTEXT	typedef PVOID
 ifndef _LCID_DEFINED
 _LCID_DEFINED equ <>
 LCID		typedef DWORD
-
 endif
+
 BYTE_BLOB	STRUC
 clSize		dd ?
 abData		db ?
@@ -341,14 +341,14 @@ UP_BYTE_BLOB	typedef ptr BYTE_BLOB
 
 WORD_BLOB	STRUC
 clSize		dd ?
-asData		db ?
+asData		dw 1 dup(?)
 WORD_BLOB	ENDS
 
 UP_WORD_BLOB	typedef ptr WORD_BLOB
 
 DWORD_BLOB	STRUC
 clSize		dd ?
-alData		db ?
+alData		dd 1 dup(?)
 DWORD_BLOB	ENDS
 
 UP_DWORD_BLOB	typedef ptr DWORD_BLOB

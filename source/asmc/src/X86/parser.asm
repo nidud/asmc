@@ -3159,6 +3159,14 @@ continue:
             [ebx+16].token == T_DIRECTIVE && [ebx+16].tokval == T_PROC
             inc j
         .endif
+    .elseif ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_DOT_INLINE )
+
+        mov [ebx].token,T_ID
+        mov [ebx].string_ptr,[ebx+16].string_ptr
+        mov [ebx+16].token,T_DIRECTIVE
+        mov [ebx+16].tokval,T_PROTO
+        mov [ebx+16].dirtype,DRT_PROTO
+        ;mov [ebx+16].string_ptr,&@CStr( "proto" )
     .endif
 
     .if j || [esi].token != T_INSTRUCTION

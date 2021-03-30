@@ -331,6 +331,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 			if ( p->index > 1 &&
 			     ( tokenarray[0].tokval == T_DOT_STATIC ||
 			       tokenarray[0].tokval == T_DOT_OPERATOR ||
+			       tokenarray[0].tokval == T_DOT_INLINE ||
 			       tokenarray[1].tokval == T_PROTO ||
 			       tokenarray[3].tokval == T_PROTO ) ) {
 

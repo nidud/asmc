@@ -451,6 +451,17 @@ AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
         .if ( [ebx].token == T_INSTRUCTION )
             strcat(edi, " ")
         .endif
+        .if ( [ebx].token == T_STRING && [ebx].bytval == '"' )
+            .if SymSearch( name )
+                .if ( [eax].asym.mem_type & MT_PTR )
+                    strcat(edi, "&@CStr(")
+                    strcat(edi, [ebx].string_ptr)
+                    strcat(edi, ")")
+                    add ebx,16
+                    .break
+                .endif
+            .endif
+        .endif
         strcat(edi, [ebx].string_ptr)
         .if ( [ebx].token == T_INSTRUCTION ) || \
             ( [ebx].token == T_RES_ID && [ebx].tokval == T_ADDR )

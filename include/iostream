@@ -42,9 +42,14 @@ include stdlib.inc
         }
 
     .operator ostreamSBYTE :sbyte {
-        movsx   ecx,_1
-        ostream::ostreamSDWORD(ecx)
+
+        .new convbuf[64]:char_t
+
+        mov convbuf[0],cl
+        mov convbuf[1],0
+        _cputs( &convbuf )
         }
+
     .operator ostreamSWORD :sword {
         movsx   ecx,_1
         ostream::ostreamSDWORD(ecx)

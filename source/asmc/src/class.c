@@ -1078,6 +1078,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
 
     case T_DOT_STATIC:
     case T_DOT_OPERATOR:
+    case T_DOT_INLINE:
+
         if ( o && o->type )
             ;
         else if ( o == NULL || CurrStruct == NULL )

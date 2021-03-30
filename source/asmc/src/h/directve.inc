@@ -163,6 +163,7 @@ res(DOT_CLASS,	    .class,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_
 res(DOT_COMDEF,	    .comdef,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_CLASS, 0, P_86, 0)
 res(DOT_TEMPLATE,   .template,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_CLASS, 0, P_86, 0)
 res(DOT_OPERATOR,   .operator,	 DF_LABEL,						   DRT_CLASS, 0, P_86, 0)
+res(DOT_INLINE,	    .inline,	 DF_LABEL,						   DRT_CLASS, 0, P_86, 0)
 res(DOT_STATIC,	    .static,	 DF_LABEL,						   DRT_CLASS, 0, P_86, 0)
 res(DOT_ENDS,	    .ends,	 DF_CGEN, DRT_CLASS,  0, P_86, 0)
 res(RETM,	    retm,	 DF_STRPARM, DRT_MACINT, 0, P_86, 0)

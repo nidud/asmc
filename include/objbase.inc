@@ -265,7 +265,7 @@ CoReleaseServerProcess proto WINAPI
 
 CoGetPSClsid proto WINAPI \
 		  riid: REFIID,
-		      : ptr CLSIDpClsid
+		      : ptr CLSID
 
 CoRegisterPSClsid proto WINAPI \
 		  riid: REFIID,
@@ -469,7 +469,7 @@ CoGetInstanceFromIStorage proto WINAPI \
 
 CoCreateInstanceEx proto WINAPI \
 		 Clsid: REFCLSID,
-	     punkOuter: PVOID,
+	     punkOuter: ptr IUnknown,
 	      dwClsCtx: DWORD,
 	   pServerInfo: ptr COSERVERINFO,
 	       dwCount: DWORD,
@@ -488,7 +488,8 @@ CoSetCancelObject proto WINAPI \
 		  pUnk: ptr IUnknown
 
 CoCancelCall proto WINAPI \
-	    dwThreadId: DWORD
+	    dwThreadId: DWORD,
+	     ulTimeout: ULONG
 
 CoTestCancel proto WINAPI
 endif
@@ -590,11 +591,11 @@ DllCanUnloadNow proto WINAPI
 
 ;LPVOID
 CoTaskMemAlloc proto WINAPI \
-		    cb: ULONG
+		    cb: SIZE_T
 ;LPVOID
 CoTaskMemRealloc proto WINAPI \
 		    pv: LPVOID,
-		    cb: ULONG
+		    cb: SIZE_T
 ;void
 CoTaskMemFree proto WINAPI \
 		    pv: LPVOID

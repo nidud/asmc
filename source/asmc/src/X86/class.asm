@@ -1244,6 +1244,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endif
         .endc
 
+      .case T_DOT_INLINE
       .case T_DOT_STATIC
       .case T_DOT_OPERATOR
 

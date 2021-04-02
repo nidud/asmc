@@ -36,8 +36,8 @@ LPIDBInitialize typedef ptr IDBInitialize
        .new szInitializationString:LPCOLESTR
        .new fPromptForInfo:BOOL
 
-        mov szInitializationString,rdx
-        mov fPromptForInfo,r8d
+        mov szInitializationString,rcx
+        mov fPromptForInfo,edx
         mov hr,CoCreateInstance(&CLSID_MSDAINITIALIZE, NULL, CLSCTX_INPROC_SERVER, &IID_IDataInitialize, &spDataInit)
 
         .if (SUCCESS(hr))

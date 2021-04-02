@@ -158,7 +158,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( fastcall_id /*&& fastcall_id != FCT_WATCOMC + 1*/ ) {
+	if ( fastcall_id  ) {
 	    if ( fastcall_tab[fastcall_id - 1].handleparam( proc,
 		reqParam, curr, addr, &opnd, fullparam, r0flags ) )
 		return( NOT_ERROR );
@@ -324,7 +324,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	if ( asize == 16 && opnd.mem_type == MT_REAL16 && pushsize == 4 )
 	    asize = psize;
 
-	if ( fastcall_id /*&& fastcall_id != FCT_WATCOMC + 1*/ )
+	if ( fastcall_id )
 	    if (fastcall_tab[fastcall_id - 1].handleparam(
 		 proc, reqParam, curr, addr, &opnd, fullparam, r0flags))
 		return(NOT_ERROR);
@@ -863,6 +863,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     int			parmpos;
     int			namepos;
     int			porder;
+    int			j;
     uint_8		r0flags = 0;
     struct proc_info *	info;
     struct dsym *	curr;
@@ -981,11 +982,13 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
 	    if ( macro && macro->state != SYM_MACRO )
 		macro = NULL;
-	    //else {
-		proc->sym.method = 1;
-		if ( macro )
-		    proc->sym.isinline = 1;
-	    //}
+
+	    proc->sym.method = 1;
+	    if ( macro ) {
+		proc->sym.isinline = 1;
+		if ( macro->isstatic )
+		    proc->sym.isstatic = 1;
+	    }
 	}
     }
 
@@ -993,6 +996,12 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++)
 	;
+
+    j = i;
+    if ( proc->sym.isstatic ) {
+	i++;
+	for ( ; tokenarray[i].token != T_FINAL && tokenarray[i].token != T_COMMA ; i++ );
+    }
 
     fastcall_id = GetFastcallId( proc->sym.langtype );
 
@@ -1085,6 +1094,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    }
 	}
     }
+    i = j;
 
     if ( proc->sym.langtype == LANG_SYSCALL && info->has_vararg && ModuleInfo.Ofssize == USE64 ) {
 	 if ( porder )
@@ -1125,6 +1135,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	if ( macro ) {
 
 	    int cnt = 0;
+	    int stk = 0;
 	    char *args[128];
 
 	    p = &StringBufferEnd[1];
@@ -1132,10 +1143,15 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    strcat( p, "( " );
 	    p += strlen(p);
 
-	    if ( ModuleInfo.Ofssize == USE64 || fastcall_id == FCT_WATCOMC + 1 ) {
+	    if ( fastcall_id ) {
 
 		for ( curr = info->paralist; curr; curr = curr->nextparam, cnt++ )
 		    args[cnt] = NULL;
+
+		if ( sym->langtype == LANG_WATCALL )
+		    stk = 4;
+		else if ( sym->langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 )
+		    stk = 2;
 
 		curr = info->paralist;
 		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
@@ -1157,7 +1173,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			    reg = parmpos + T_YMM0;
 			else if ( arg->sym.mem_type == MT_ZWORD )
 			    reg = parmpos + T_ZMM0;
-			else
+			else if ( ModuleInfo.Ofssize == USE64 || parmpos < stk )
 			    reg = win64regs[parmpos];
 		    } else if ( parmpos < 6 && sym->langtype == LANG_VECTORCALL ) {
 			if ( arg->sym.mem_type & MT_FLOAT && size <= 16 )
@@ -1168,7 +1184,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			    reg = parmpos + T_ZMM0;
 		    }
 
-		    if ( sym->langtype == LANG_WATCALL ) {
+		    if ( sym->langtype == LANG_WATCALL && parmpos < stk ) {
 			if ( arg->sym.mem_type == MT_ABS ) {
 			    args[parmpos] = arg->sym.name;
 			    arg->sym.name = "";
@@ -1180,21 +1196,29 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			args[parmpos] = get_regname(reg, size);
 		    } else {
 			args[parmpos] = LclAlloc(16);
-			sprintf( args[parmpos], "[rsp+%d*%d]", parmpos, ModuleInfo.Ofssize * 4 );
+			if ( ModuleInfo.Ofssize == USE64 )
+			    sprintf( args[parmpos], "[rsp+%d*%d]", parmpos, ModuleInfo.Ofssize * 4 );
+			else
+			    sprintf( args[parmpos], "[esp+%d*%d]", parmpos - stk, ModuleInfo.Ofssize * 4 );
 		    }
 		}
 	    }
 	    if ( !cnt ) {
 		if ( tokenarray[i].token != T_FINAL )
 		    strcat( p, tokenarray[i+1].tokpos );
-	    } else if ( info->has_vararg ) {
+	    } else if ( info->has_vararg /*|| ( proc->sym.isstatic && ModuleInfo.Ofssize == USE64 )*/ ) {
 		if ( tokenarray[i+1].tokval == T_ADDR && proc->sym.method )
 		    strcat( p, tokenarray[i+2].tokpos );
 		else
 		    strcat( p, tokenarray[i+1].tokpos );
 	    } else {
-		strcat( p, args[0] );
-		for ( parmpos = 1; parmpos < cnt; parmpos++ ) {
+		parmpos = 1;
+		if ( proc->sym.isstatic /*&& tokenarray[i+1].tokval == T_ADDR && proc->sym.method*/ ) {
+		    strcat( p, tokenarray[i+2].string_ptr );
+		    parmpos = 0;
+		} else
+		    strcat( p, args[0] );
+		for ( ; parmpos < cnt; parmpos++ ) {
 		    strcat( p, ", " );
 		    if ( args[parmpos] )
 			strcat( p, args[parmpos] );

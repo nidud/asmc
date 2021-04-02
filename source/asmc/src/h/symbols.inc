@@ -138,6 +138,7 @@ SINT_WEAK	equ 0x08
 SINT_ISFAR	equ 0x10
 SINT_ISVARARG	equ 0x20
 SINT_ISINLINE	equ 0x40	; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
+SINT_ISSTATIC	equ 0x80	; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
 
 M_ISVARARG	equ 0x01
 M_ISFUNC	equ 0x02
@@ -155,7 +156,7 @@ union
  string_ptr	string_t ?	; used by SYM_TMACRO
  substitute	asym_t ?	; v2.04b: used by SYM_ALIAS
  func_ptr	macro_func ?	; used by SYM_MACRO if predefined==1
- classlnameidx	int_t ? ; used by SYM_CLASS_LNAME
+ classlnameidx	int_t ?		; used by SYM_CLASS_LNAME
 ends
 _segment	asym_t ?	; used by SYM_INTERNAL, SYM_EXTERNAL
 state		uchar_t ?

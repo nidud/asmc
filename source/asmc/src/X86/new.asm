@@ -37,7 +37,7 @@ ConstructorCall proc private uses esi edi ebx \
   local acc     : int_t,
         reg     : int_t,
         cltype  : ClType,
-        cc[128] : char_t            ; class_class
+        cc[256] : char_t            ; class_class
 
     mov esi,strcat( strcat( strcpy( &cc, class ), "_" ), class )
 
@@ -249,10 +249,17 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
         .else
 
-            mov byte ptr [edi],0
+            xor eax,eax
+            mov [edi],al
+
             .while 1
                 mov al,[esi]
-                .break .if !al || al == ',' || al == '}'
+                .if al == '('
+                    inc ah
+                .elseif al == ')'
+                    dec ah
+                .endif
+                .break .if !al || ax == ',' || ax == '}'
                 movsb
             .endw
             mov byte ptr [edi],0
@@ -262,7 +269,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                 mov byte ptr [edi],0
             .endf
             .if val
-                .if val == '"'
+                .if val == '"' || ( val == 'L' &&  val[1] == '"')
                     AddLineQueueX( " mov %s.%s,&@CStr(%s)", name, [ebx].sfield.sym.name, &val )
                 .elseif array
                     mov eax,[ebx].sfield.sym.total_size
@@ -451,7 +458,7 @@ AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
         .if ( [ebx].token == T_INSTRUCTION )
             strcat(edi, " ")
         .endif
-        .if ( [ebx].token == T_STRING && [ebx].bytval == '"' )
+        .if ( !esi && [ebx].token == T_STRING && [ebx].bytval == '"' )
             .if SymSearch( name )
                 .if ( [eax].asym.mem_type & MT_PTR )
                     strcat(edi, "&@CStr(")

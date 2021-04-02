@@ -23,8 +23,9 @@ cmd         dd ?
 class       string_t ?
 langtype    dd ?
 sym         asym_t ?    ; .class name : public class
-type        dd ?
-vector      dd ?
+type        asym_t ?
+vector      dd ?        ; T_AL..T_ZMM0
+method      dd ?        ; .INLINE/.OPERATOR/.STATIC
 com_item    ENDS
 LPCLASS     typedef ptr com_item
 
@@ -63,7 +64,7 @@ ClassProto endp
 
 ClassProto2 proc class:string_t, method:string_t, item:ptr com_item, args:string_t
 
-  local buffer[128]:char_t
+  local buffer[256]:char_t
   local langtype:int_t
 
     strcpy( &buffer, class )
@@ -84,7 +85,7 @@ ClassProto2 endp
 
 AddPublic proc uses esi edi ebx this:LPCLASS, sym:ptr asym
 
-  local q[128]:char_t
+  local q[256]:char_t
 
     mov esi,this
     mov ebx,sym
@@ -124,7 +125,7 @@ AddPublic endp
 
 OpenVtbl proc uses esi ebx this:LPCLASS
 
-  local q[128]:char_t
+  local q[256]:char_t
 
     mov esi,this
     AddLineQueueX( "%sVtbl struct", [esi].class )
@@ -469,12 +470,12 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
   local i:int_t
   local opnd:expr
   local tokval:int_t
-  local id[128]:char_t
+  local id[256]:char_t
   local type:int_t
   local size:int_t
   local void:int_t
   local isid:int_t
-  local name[128]:char_t
+  local name[256]:char_t
 
     mov ebx,tokenarray
 
@@ -831,7 +832,16 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
         .endif
     .endif
 
-    .if IsCom
+
+    mov eax,ModuleInfo.ComStack
+    .if eax
+        .if [eax].com_item.method != T_DOT_STATIC
+
+            xor eax,eax
+        .endif
+    .endif
+
+    .if IsCom && !eax
 
         strcat(edi, " :ptr")
         mov eax,ModuleInfo.ComStack
@@ -1059,7 +1069,7 @@ ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
         .until 1
         dec ebx
 
-        .if al == ':'
+        .if al == ':' || !( _ltype[eax+1] & _LABEL )
 
             add edi,sprintf( edi, "_%u, ", esi )
 
@@ -1069,7 +1079,7 @@ ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
                 mov al,[ebx]
 
-                .break .if !( _ltype[eax+1] & _LABEL )
+                .break .if !( _ltype[eax+1] & _LABEL or _DIGIT )
 
                 stosb
                 inc ebx
@@ -1208,7 +1218,7 @@ MacroInline endp
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local rc:int_t, args:tok_t, cmd:uint_t, public_pos:string_t,
-        class[128]:char_t, constructor:int_t
+        class[256]:char_t, constructor:int_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -1231,8 +1241,10 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .endif
             .return rc
         .endif
+
         mov ModuleInfo.ComStack,0
         .endc .if [edi].com_item.type
+        .return asmerr( 1011 ) .if !esi
 
         AddLineQueueX( "%s ends", [esi].asym.name )
         mov edx,[edi].com_item.sym
@@ -1249,11 +1261,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
       .case T_DOT_OPERATOR
 
         mov esi,ModuleInfo.ComStack
-        mov eax,CurrStruct
+        mov ecx,CurrStruct
         .if esi && [esi].com_item.type
-        .elseif !eax || !esi
+        .elseif !ecx || !esi
             .return asmerr( 1011 )
         .endif
+        mov [esi].com_item.method,eax
 
         ; .operator + [:type] [{..}]
 
@@ -1263,7 +1276,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .new is_vararg  : int_t
         .new context    : string_t
         .new class_ptr  : string_t
-        .new token[128] : char_t
+        .new token[256] : char_t
         .new name[512]  : char_t
 
         mov is_vararg,0
@@ -1286,36 +1299,6 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     sub eax,1
                 .endw
                 mov byte ptr [eax],0
-
-                .if cmd == T_DOT_STATIC && is_vararg == 0
-
-                    .if args > 1
-
-                        mov dword ptr [eax],'av:,'
-                        mov dword ptr [eax+4],'grar'
-                        mov byte ptr [eax+8],0
-
-                        mov [ecx].token,T_COMMA
-                        mov [ecx].tokpos,eax
-                        mov [ecx].string_ptr,@CStr(",")
-                        add ecx,16
-                        inc eax
-                    .else
-                        mov dword ptr [eax],'rav:'
-                        mov dword ptr [eax+4],'gra'
-                    .endif
-
-                    mov [ecx].token,T_COLON
-                    mov [ecx].tokpos,eax
-                    mov [ecx].string_ptr,@CStr(":")
-                    add ecx,16
-                    inc eax
-                    mov [ecx].token,T_RES_ID
-                    mov [ecx].tokval,T_VARARG
-                    mov [ecx].tokpos,eax
-                    mov [ecx].string_ptr,eax
-                    add ecx,16
-                .endif
                 mov [ecx].token,T_FINAL
             .endif
             assume ecx:nothing
@@ -1372,9 +1355,17 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if constructor
             .if SymFind( &token )
                 or [eax].asym.flag,S_METHOD
+                .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
+                    or [eax].asym.sint_flag,SINT_ISSTATIC
+                .endif
             .endif
         .endif
         MacroInline( &token, args, [ebx].tokpos , context, is_vararg )
+        .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
+            .if SymFind( &token )
+                or [eax].asym.sint_flag,SINT_ISSTATIC
+            .endif
+        .endif
         .return rc
 
       .case T_DOT_COMDEF
@@ -1392,6 +1383,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov [eax].com_item.langtype,edx
         mov [eax].com_item.sym,edx
         mov [eax].com_item.vector,edx
+        mov [eax].com_item.method,edx
 
         mov esi,[ebx].string_ptr
         .if LclAlloc( &[strlen(esi) + 1] )

@@ -15,13 +15,24 @@ a   string_t 2 dup(?)
 s   s1 <>
 s2  ends
 
+.template template
+    val string_t ?
+
+    .static SetVal string:string_t {
+        mov this.val,string
+        }
+    .ends
+
     .code
 
 main proc
 
   local s:s2, x:s1
+  local t:template
 
     memset( &s, 0, sizeof(s) )
+
+    t.SetVal("string")
 
     mov x.i32,32
     mov x.i64,64

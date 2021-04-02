@@ -221,8 +221,8 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
 
     local tmp:string_t
     local sym:asym_t
-    local i:int_t
     local j:int_t
+    local i:int_t
     local labelbuff[16]:char_t
 
     mov edx,idx
@@ -332,10 +332,12 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
         .endif
         .endc
     .case T_ID
+        mov j,0
         mov esi,[ebx].string_ptr
         .if ( [edi].flags & E_IS_DOT )
             mov ecx,[edi].type
 method_ptr:
+            inc j
             xor eax,eax
             mov [edi].value,eax
             .if ecx
@@ -355,6 +357,7 @@ method_ptr:
                 .endif
             .endif
         .else
+
             mov edx,[esi]
             or  dh,0x20
             .if ( dl == '@' && !( edx & 0x00FF0000 ) )
@@ -379,7 +382,6 @@ method_ptr:
                 .return fnasmerr( 2148, [eax].asym.name )
             .endif
 
-
             .if ( ( eax == NULL ) && \
                     ( [ebx-16].token == T_DOT && [ebx-32].token == T_ID ) )
 
@@ -390,13 +392,15 @@ method_ptr:
 
                         .if ( [eax].asym.is_ptr && [eax].asym.target_type )
 
-                            mov ecx,[eax].asym.target_type
-                            jmp method_ptr
+                            .if j < 4
+                                mov ecx,[eax].asym.target_type
+                                jmp method_ptr
+                            .endif
+                            xor eax,eax
                         .endif
                     .endif
                 .endif
             .endif
-
 
             .if ( Parse_Pass == PASS_1 && !( flags & EXPF_NOUNDEF ) )
                 .if eax == NULL

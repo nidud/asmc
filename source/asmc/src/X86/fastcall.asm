@@ -172,6 +172,47 @@ GetParmIndex macro x
     exitm<eax>
     endm
 
+abs_param proc uses ebx pp:dsym_t, index:int_t, param:dsym_t, paramvalue:string_t
+
+    mov eax,1
+    mov ecx,pp
+
+    ; skip arg if :vararg and inline
+
+    mov ebx,param
+    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
+          [ecx].asym.sint_flag & SINT_ISINLINE )
+
+        .return
+    .endif
+
+    ; skip loading class pointer if :vararg and inline
+
+    .if ( [ecx].asym.sint_flag & SINT_ISINLINE && \
+          [ecx].asym.flag & S_METHOD && !index )
+
+        mov edx,[ecx].esym.procinfo
+        .if ( [edx].proc_info.flags & PROC_HAS_VARARG );|| \
+              ;[ecx].asym.sint_flag & SINT_ISSTATIC )
+
+            .return
+        .endif
+    .endif
+
+    ; skip arg if :abs
+
+    .if ( [ebx].asym.mem_type == MT_ABS )
+
+        mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
+        strcpy(eax, paramvalue)
+
+        .return 1
+    .endif
+    xor eax,eax
+    ret
+
+abs_param endp
+
 ;-------------------------------------------------------------------------------
 ; FCT_MSC
 ;-------------------------------------------------------------------------------
@@ -182,14 +223,18 @@ ms32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
 
     .return 0 .if GetSymOfssize(pp) == USE16
 
-    .for eax=pp, eax=[eax].esym.procinfo,
+    .for ecx=0, eax=pp, eax=[eax].esym.procinfo,
          eax=[eax].proc_info.paralist: eax: eax=[eax].esym.nextparam
 
         .if [eax].asym.state == SYM_TMACRO
 
             inc fcscratch
+        .elseif [eax].asym.mem_type != MT_ABS
+            add ecx,4
         .endif
     .endf
+    mov eax,value
+    mov [eax],ecx
     mov eax,1
     ret
 
@@ -211,9 +256,10 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         dec fcscratch
         lea edi,ms32_regs
         add edi,fcscratch
+        .return .if abs_param(pp, index, esi, paramvalue)
     .endif
-    movzx ebx,byte ptr [edi]
 
+    movzx ebx,byte ptr [edi]
     .if adr
 
         AddLineQueueX(" lea %r, %s", ebx, paramvalue)
@@ -244,7 +290,15 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
                 .return 1 .if [eax].asm_tok.tokval == ebx
             .endif
-            AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+            mov eax,paramvalue
+            .if ( word ptr [eax] == "0" )
+                xor eax,eax
+            .endif
+            .if eax
+                AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+            .else
+                AddLineQueueX(" xor %r, %r", ebx, ebx)
+            .endif
         .endif
 
         .if ebx == T_AX
@@ -258,7 +312,13 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 ms32_param endp
 
 ms32_fcend proc pp, numparams, value
+
+    mov eax,pp
+    .if value && [eax].asym.sint_flag & SINT_ISINLINE
+        AddLineQueueX( " add esp, %u", value )
+    .endif
     ret
+
 ms32_fcend endp
 
 ;-------------------------------------------------------------------------------
@@ -268,15 +328,19 @@ ms32_fcend endp
 vc32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:tok_t, value:ptr int_t
 
-    .for eax=pp, eax=[eax].esym.procinfo,
+    .for ecx=0, eax=pp, eax=[eax].esym.procinfo,
          eax=[eax].proc_info.paralist: eax: eax=[eax].esym.nextparam
 
         .if [eax].asym.state == SYM_TMACRO || \
             ( [eax].asym.state == SYM_STACK && [eax].asym.total_size <= 16 )
 
             inc fcscratch
+        .else
+            add ecx,4
         .endif
     .endf
+    mov eax,value
+    mov [eax],ecx
     mov eax,1
     ret
 
@@ -449,24 +513,17 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
   local buffer[128]:byte, sreg:int_t
 
     mov ebx,param
-    mov psize,SizeFromMemtype([ebx].asym.mem_type, USE_EMPTY, [ebx].asym.type)
 
-    .if [ebx].asym.mem_type == MT_ABS
+    .if abs_param(pp, index, ebx, paramvalue)
 
-        mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
-        strcpy(eax, paramvalue)
-        movzx eax,ModuleInfo.wordsize
-        add fcscratch,eax
-        .return 1
+        .if [ebx].asym.mem_type == MT_ABS
+
+            movzx ecx,ModuleInfo.wordsize
+            add fcscratch,ecx
+        .endif
+        .return
     .endif
 
-    mov ecx,pp
-    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
-          [ecx].asym.sint_flag & SINT_ISINLINE )
-        .return 1
-    .endif
-
-    xor eax,eax
     .return .if [ebx].asym.state != SYM_TMACRO
 
     ;; the "name" might be a register pair
@@ -480,6 +537,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
     movzx eax,ModuleInfo.wordsize
     add fcscratch,eax
+    mov psize,SizeFromMemtype([ebx].asym.mem_type, USE_EMPTY, [ebx].asym.type)
 
     .if strchr(edi, ':')
 
@@ -987,31 +1045,8 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .endif
     .endif
 
-    ; skip arg if :vararg and inline
-
     mov ebx,param
-    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
-          [ecx].asym.sint_flag & SINT_ISINLINE )
-        .return 1
-    .endif
-
-    ; skip arg if :abs
-
-    .if [ebx].asym.mem_type == MT_ABS
-        mov [ebx].asym.name,LclAlloc(&[strlen(paramvalue)+1])
-        strcpy(eax, paramvalue)
-        .return 1
-    .endif
-
-    ; skip loading class pointer if :vararg and inline
-
-    .if [ecx].asym.sint_flag & SINT_ISINLINE && \
-        [ecx].asym.flag & S_METHOD && !index
-        mov edx,[ecx].esym.procinfo
-        .if [edx].proc_info.flags & PROC_HAS_VARARG
-            .return 1
-        .endif
-    .endif
+    .return .if abs_param(ecx, index, ebx, paramvalue)
 
     mov psize,GetPSize(address, param, edi)
     check_register_overwrite( edi, regs_used, &reg, &destroyed, REGPAR_WIN64 )

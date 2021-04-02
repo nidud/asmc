@@ -107,8 +107,8 @@ _com_dispatch_raw_method proto :ptr IDispatch, :DISPID, :WORD, :VARTYPE, :ptr, :
         }
 
     .static copy that:ptr _com_error {
-        mov this.m_hresult,[rdx]._com_error.m_hresult
-        mov this.m_perrinfo,[rdx]._com_error.m_perrinfo
+        mov this.m_hresult,[rcx]._com_error.m_hresult
+        mov this.m_perrinfo,[rcx]._com_error.m_perrinfo
         mov this.m_pszMsg,NULL
         .if (this.m_perrinfo != NULL)
             this.m_perrinfo.AddRef()

@@ -246,7 +246,16 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
   local z
 
     mov esi,param
-    .return 0 .if [esi].asym.state != SYM_TMACRO
+
+    .if abs_param(pp, index, esi, paramvalue)
+
+        .if [esi].asym.state == SYM_TMACRO
+
+            dec fcscratch
+        .endif
+        .return
+    .endif
+    .return .if [esi].asym.state != SYM_TMACRO
 
     .if GetSymOfssize(pp) == USE16
         lea edi,ms16_regs
@@ -256,7 +265,6 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         dec fcscratch
         lea edi,ms32_regs
         add edi,fcscratch
-        .return .if abs_param(pp, index, esi, paramvalue)
     .endif
 
     movzx ebx,byte ptr [edi]

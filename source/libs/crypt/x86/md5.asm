@@ -32,24 +32,24 @@ MD5Transform proto private :ptr dword, :ptr byte
 
 ; inline basic MD5 functions
 
-F proto watcall x:dword, y:dword, z:abs { ; (((x) & (y)) | ((~x) & (z)))
+.inline F watcall x:dword, y:dword, z:abs { ; (((x) & (y)) | ((~x) & (z)))
     xor y,z
     and x,y
     xor x,z
     }
 
-G proto watcall x:dword, y:dword, z:abs { ; (((x) & (z)) | ((y) & (~z)))
+.inline G watcall x:dword, y:dword, z:abs { ; (((x) & (z)) | ((y) & (~z)))
     xor x,y
     and x,z
     xor x,y
     }
 
-H proto watcall x:dword, y:dword, z:abs { ; ((x) ^ (y) ^ (z))
+.inline H watcall x:dword, y:dword, z:abs { ; ((x) ^ (y) ^ (z))
     xor x,y
     xor x,z
     }
 
-I proto watcall x:dword, y:dword, z:abs { ; ((y) ^ ((x) | (~z)))
+.inline I watcall x:dword, y:dword, z:abs { ; ((y) ^ ((x) | (~z)))
     not z
     or  x,z
     not z
@@ -58,7 +58,7 @@ I proto watcall x:dword, y:dword, z:abs { ; ((y) ^ ((x) | (~z)))
 
 ; rotates x left n bits
 
-ROTATE_LEFT proto watcall x:abs, n:abs { ; (((x) << (n)) | ((x) >> (32-(n))))
+.inline ROTATE_LEFT watcall x:abs, n:abs { ; (((x) << (n)) | ((x) >> (32-(n))))
     if n le 16
      rol x,n
     else
@@ -68,7 +68,7 @@ ROTATE_LEFT proto watcall x:abs, n:abs { ; (((x) << (n)) | ((x) >> (32-(n))))
 
 ; transformations for rounds 1, 2, 3, and 4
 
-FF proto watcall f:abs, w:abs, x:abs, y:abs, z:abs, i:abs, ac:abs, s:abs {
+.inline FF watcall f:abs, w:abs, x:abs, y:abs, z:abs, i:abs, ac:abs, s:abs {
     add w,[esi+i*4]
     lea w,[w+f(x, y, z)+ac]
     ROTATE_LEFT(w, s)

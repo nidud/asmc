@@ -9,14 +9,13 @@
     atom byte ?
 
     .static a a:byte {
-        mov this.atom,a ; dl
+        mov this.atom,a ; al
         }
     .static b a:byte, b:byte, c:byte, d:byte {
-        mov this.atom,a ; dl
-        mov this.atom,b ; bl
-        mov this.atom,c ; cl
-        mov this.atom,d ; [esp+0*4]
-        ;   add esp, 4
+        mov this.atom,a ; al
+        mov this.atom,b ; dl
+        mov this.atom,c ; bl
+        mov this.atom,d ; cl
         }
     .ends
 
@@ -25,14 +24,14 @@
     atom byte ?
 
     .static a a:byte {
-        mov this.atom,a ; dl
+        mov this.atom,a ; cl
         }
     .static b a:byte, b:byte, c:byte, d:byte {
-        mov this.atom,a ; dl
-        mov this.atom,b ; [esp+0*4]
-        mov this.atom,c ; [esp+1*4]
-        mov this.atom,d ; [esp+2*4]
-        ;   add esp, 12
+        mov this.atom,a ; cl
+        mov this.atom,b ; dl
+        mov this.atom,c ; [esp+0*4]
+        mov this.atom,d ; [esp+1*4]
+        ;   add esp, 8
         }
     .ends
 
@@ -58,6 +57,15 @@
     }
 
 .inline wa watcall a1:abs, a2:abs, a3:abs, a4:abs, a5:abs, a6:abs {
+    mov edi,a1 ; 0
+    mov edi,a2 ; 1
+    mov edi,a3 ; 2
+    mov edi,a4 ; 3
+    mov edi,a5 ; 4
+    mov edi,a6 ; 5
+    }
+
+.inline fa watcall a1:abs, a2:abs, a3:abs, a4:abs, a5:abs, a6:abs {
     mov edi,a1 ; 0
     mov edi,a2 ; 1
     mov edi,a3 ; 2
@@ -92,6 +100,7 @@ main proc
 
     f1(0)
     f4(0,1,2,3)
+    fa(0,1,2,3,4,5)
 
     w.a(0)
     w.b(0,1,2,3)

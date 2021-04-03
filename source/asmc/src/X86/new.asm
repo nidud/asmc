@@ -263,11 +263,51 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                 movsb
             .endw
             mov byte ptr [edi],0
+
             .for ( ecx=&val : ecx < edi && \
                  ( byte ptr [edi-1] == ' ' || byte ptr [edi-1] == 9 ) : )
+
                 dec edi
                 mov byte ptr [edi],0
             .endf
+
+            .if !array && val && val != '{' && [ebx].sfield.sym.flag & S_ISARRAY
+
+                .if SymSearch( &val )
+
+                    .if [eax].asym.state == SYM_TMACRO
+
+                        mov ecx,[eax].asym.string_ptr
+                        .if byte ptr [ecx] == '{'
+
+                            mov     edx,eax
+                            xor     eax,eax
+                            mov     edi,esi
+                            mov     ecx,-1
+                            repne   scasb
+                            not     ecx
+
+                            mov     edi,[edx].asym.total_size
+                            lea     eax,[edi+ecx+3]
+                            and     eax,-4
+                            sub     esp,eax
+                            mov     eax,ecx
+                            lea     ecx,[edi-1]
+                            mov     edi,esp
+                            mov     edx,[edx].asym.string_ptr
+                            xchg    edx,esi
+                            rep     movsb
+                            mov     esi,edx
+                            mov     ecx,eax
+                            rep     movsb
+                            mov     esi,esp
+
+                           .continue(0)
+                        .endif
+                    .endif
+                .endif
+            .endif
+
             .if val
                 .if val == '"' || ( val == 'L' &&  val[1] == '"')
                     AddLineQueueX( " mov %s.%s,&@CStr(%s)", name, [ebx].sfield.sym.name, &val )
@@ -346,6 +386,7 @@ AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, s
             lodsb
             .continue(0) .if al == ' '
             .continue(0) .if al == 9
+            dec esi
         .until 1
         .break .if al != '{'
     .endf
@@ -402,12 +443,14 @@ ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
 
 ClearStruct endp
 
-AssignValue proc private uses esi edi ebx name:string_t, tokenarray:tok_t
+AssignValue proc private uses esi edi ebx name:string_t, i:int_t, tokenarray:tok_t
 
   local cc[128]:char_t
+  local opndx:expr
 
-    mov ebx,tokenarray
-    add ebx,16 ; skip '='
+    inc i
+    imul ebx,i,asm_tok
+    add  ebx,tokenarray
 
     .if [ebx].token == T_STRING && [ebx].bytval == '{'
 
@@ -672,7 +715,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
                 ConstructorCall( name, &endtok, edi, esi, type )
                 mov ebx,endtok
             .elseif [ebx].token == T_DIRECTIVE && [ebx].dirtype == DRT_EQUALSGN
-                mov ebx,AssignValue(name, ebx)
+                mov ebx,AssignValue(name, i, tokenarray)
             .else
                 .return asmerr( 2065, "," )
             .endif

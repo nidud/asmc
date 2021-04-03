@@ -22,28 +22,28 @@ include DirectXMath.inc
         mov     this.Center,[center]
         movss   this.Radius,radius
         }
-    .static Transform :abs, :abs {
+    .static Transform :abs, :abs, :vararg {
         typeid(BoundingSphere_Transform, _2)(&this, _1, _2, _3)
         }
-    .static Contains :abs {
+    .static Contains :abs, :vararg {
         typeid(BoundingSphere_Contains, _1)(&this, _1, _2)
         }
-    .static Intersects :abs {
+    .static Intersects :abs, :vararg {
         typeid(BoundingSphere_Intersects, _1)(&this, _1, _2)
         }
-    .static ContainedBy {
+    .static ContainedBy, :abs {
         BoundingSphere_ContainedBy(&this, _1)
         }
-    .static CreateMerged {
+    .static CreateMerged, :abs {
         BoundingSphere_CreateMerged(&this, _1)
         }
     .static CreateFromBoundingBox :abs, :abs {
         typeid(BoundingSphere_CreateFromBoundingBox, _2)(&this, _1, _2)
         }
-    .static CreateFromPoints {
+    .static CreateFromPoints, :abs {
         BoundingSphere_CreateFromPoints(&this, _1)
         }
-    .static CreateFromFrustum {
+    .static CreateFromFrustum, :abs {
         BoundingSphere_CreateFromFrustum(&this, _1)
         }
     .ends
@@ -58,25 +58,25 @@ CORNER_COUNT equ 8
 
     .static BoundingBox {
         }
-    .static Transform :abs, :abs {
+    .static Transform :abs, :abs, :vararg {
         typeid(BoundingBox_Transform, _2)(&this, _1, _2, _3)
         }
-    .static GetCorners {
+    .static GetCorners, :vararg {
         BoundingBox_GetCorners(&this, _1)
         }
-    .static Contains :abs {
+    .static Contains :abs, :vararg {
         typeid(BoundingBox_Contains, _1)(&this, _1, _2)
         }
-    .static Intersects :abs {
+    .static Intersects :abs, :vararg {
         typeid(BoundingBox_Intersects, _1)(&this, _1, _2)
         }
-    .static ContainedBy {
+    .static ContainedBy, :vararg {
         BoundingBox_ContainedBy(&this, _1)
         }
-    .static CreateMerged {
+    .static CreateMerged, :vararg {
         BoundingBox_CreateMerged(&this, _1)
         }
-    .static CreateFromSphere {
+    .static CreateFromSphere, :vararg {
         BoundingBox_CreateFromSphere(&this, _1)
         }
     .static CreateFromPoints :abs, :abs {
@@ -93,25 +93,25 @@ CORNER_COUNT equ 8
 
     .static BoundingOrientedBox {
         }
-    .static Transform :abs, :abs {
+    .static Transform :abs, :abs, :vararg {
         typeid(BoundingOrientedBox_Transform, _2)(&this, _1, _2, _3)
         }
-    .static GetCorners {
+    .static GetCorners, :vararg {
         BoundingOrientedBox_GetCorners(&this, _1)
         }
-    .static Contains :abs {
+    .static Contains :abs, :vararg {
         typeid(BoundingOrientedBox_Contains, _1)(&this, _1, _2)
         }
-    .static Intersects :abs {
+    .static Intersects :abs, :vararg {
         typeid(BoundingOrientedBox_Intersects, _1)(&this, _1, _2)
         }
-    .static ContainedBy {
+    .static ContainedBy, :vararg {
         BoundingOrientedBox_ContainedBy(&this, _1)
         }
-    .static CreateFromBoundingBox {
+    .static CreateFromBoundingBox, :vararg {
         BoundingOrientedBox_CreateFromBoundingBox(&this, _1)
         }
-    .static CreateFromPoints {
+    .static CreateFromPoints, :vararg {
         BoundingOrientedBox_CreateFromPoints(&this, _1)
         }
     .ends
@@ -131,25 +131,25 @@ CORNER_COUNT equ 8
 
     .static BoundingFrustum {
         }
-    .static Transform :abs, :abs {
+    .static Transform :abs, :abs, :vararg {
         typeid(BoundingFrustum_Transform, _2)(&this, _1, _2, _3)
         }
-    .static GetCorners {
+    .static GetCorners, :vararg {
         BoundingFrustum_GetCorners(&this, _1)
         }
-    .static Contains :abs {
+    .static Contains :abs, :vararg {
         typeid(BoundingFrustum_Contains, _1)(&this, _1, _2)
         }
-    .static Intersects :abs {
+    .static Intersects :abs, :vararg {
         typeid(BoundingFrustum_Intersects, _1)(&this, _1, _2)
         }
-    .static ContainedBy {
+    .static ContainedBy, :vararg {
         BoundingFrustum_ContainedBy(&this, _1)
         }
-    .static GetPlanes {
+    .static GetPlanes, :vararg {
         BoundingFrustum_GetPlanes(&this, _1)
         }
-    .static CreateFromMatrix {
+    .static CreateFromMatrix, :vararg {
         BoundingFrustum_CreateFromMatrix(&this, _1)
         }
     .ends

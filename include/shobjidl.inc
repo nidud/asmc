@@ -6606,7 +6606,7 @@ DEFINE_IIDX(IExecuteCommandHost, "4b6832a2-5f04-4c9d-b89d-727a15d103e7")
 
 endif
 
-SID_ExecuteCommandHost	equ IID_IExecuteCommandHost
+SID_ExecuteCommandHost	equ <IID_IExecuteCommandHost>
 APPLICATION_VIEW_STATE	typedef SDWORD
 AVS_FULLSCREEN_LANDSCAPE equ 0
 AVS_FILLED		equ ( AVS_FULLSCREEN_LANDSCAPE + 1 )
@@ -6625,11 +6625,11 @@ DEFINE_IIDX(IApplicationDesignModeSettings, "2A3DEE9A-E31D-46D6-8508-BCC597DB355
 
 .comdef IApplicationDesignModeSettings : public IUnknown
 
-    SetNativeDisplaySize proc :SIZE
+    SetNativeDisplaySize proc :SIZEL
     SetScaleFactor	proc :DEVICE_SCALE_FACTOR
     SetApplicationViewState proc :APPLICATION_VIEW_STATE
     ComputeApplicationSize proc :ptr
-    IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZE, :DEVICE_SCALE_FACTOR, :ptr
+    IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZEL, :DEVICE_SCALE_FACTOR, :ptr
     TriggerEdgeGesture	proc :EDGE_GESTURE_KIND
 
     .ends
@@ -6671,7 +6671,7 @@ DEFINE_IIDX(IApplicationDesignModeSettings2, "490514E1-675A-4D6E-A58D-E54901B4CA
     SetIsOnLockScreen	proc :BOOL
     SetApplicationViewMinWidth proc :APPLICATION_VIEW_MIN_WIDTH
     GetApplicationSizeBounds proc :ptr, :ptr
-    GetApplicationViewOrientation proc :SIZE, :ptr
+    GetApplicationViewOrientation proc :SIZEL, :ptr
 
     .ends
 

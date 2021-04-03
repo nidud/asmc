@@ -847,10 +847,9 @@ RTL_BITS_OF_FIELD macro x, field
 	endm
 
 
-CONTAINING_RECORD macro address, x, field
-	exitm<address-x.field>
-	endm
-
+.inline CONTAINING_RECORD fastcall address:ptr, type:abs, field:abs {
+	lea rax,[rcx+type.field]
+	}
 
 ifndef __EXCPT_INC
  include excpt.inc

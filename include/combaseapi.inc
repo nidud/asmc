@@ -1,0 +1,464 @@
+include apiset.inc
+include apisetcconv.inc
+
+ifndef _APISET_MINCORE_VERSION
+_APISET_MINCORE_VERSION equ 0x0101
+endif
+
+ifndef _APISET_COM_VER
+ifdef _APISET_MINCORE_VERSION
+if _APISET_MINCORE_VERSION GE 0x0101
+_APISET_COM_VER equ 0x0101
+elseif _APISET_MINCORE_VERSION EQ 0x0100
+_APISET_COM_VER equ 0x0100
+endif
+endif
+endif
+
+include rpc.inc
+include rpcndr.inc
+
+if (NTDDI_VERSION GE NTDDI_VISTA AND NOT defined(_WIN32_WINNT))
+_WIN32_WINNT equ 0x0600
+endif
+if (NTDDI_VERSION GE NTDDI_WS03 AND NOT defined(_WIN32_WINNT))
+_WIN32_WINNT equ 0x0502
+endif
+if (NTDDI_VERSION GE NTDDI_WINXP AND NOT defined(_WIN32_WINNT))
+_WIN32_WINNT equ 0x0501
+endif
+if (NTDDI_VERSION GE NTDDI_WIN2K AND NOT defined(_WIN32_WINNT))
+_WIN32_WINNT equ 0x0500
+endif
+
+ifndef _COMBASEAPI_H_
+_COMBASEAPI_H_ equ <>
+
+.pragma pack(push, 8)
+
+CLSCTX_INPROC equ (CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER)
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+CLSCTX_ALL equ (CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR  CLSCTX_LOCAL_SERVER OR CLSCTX_REMOTE_SERVER)
+CLSCTX_SERVER equ (CLSCTX_INPROC_SERVER OR CLSCTX_LOCAL_SERVER OR CLSCTX_REMOTE_SERVER)
+else
+CLSCTX_ALL equ (CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR CLSCTX_LOCAL_SERVER)
+CLSCTX_SERVER equ (CLSCTX_INPROC_SERVER OR CLSCTX_LOCAL_SERVER)
+endif
+
+.enum REGCLS {
+    REGCLS_SINGLEUSE = 0,
+    REGCLS_MULTIPLEUSE = 1,
+    REGCLS_MULTI_SEPARATE = 2,
+    REGCLS_SUSPENDED = 4,
+    REGCLS_SURROGATE = 8
+    }
+
+.enum COINITBASE {
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+    COINITBASE_MULTITHREADED = 0x0
+endif
+    }
+
+include wtypesbase.inc
+include unknwnbase.inc
+include objidlbase.inc
+include guiddef.inc
+
+ifndef INITGUID
+include cguid.inc
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetMalloc proto WINAPI :DWORD, :ptr LPMALLOC
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CreateStreamOnHGlobal proto WINAPI :HGLOBAL, :BOOL, :ptr LPSTREAM
+GetHGlobalFromStream proto WINAPI :LPSTREAM, :ptr HGLOBAL
+CoUninitialize proto WINAPI
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetCurrentProcess proto WINAPI
+endif
+
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoInitializeEx proto WINAPI :LPVOID, :DWORD
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetCallerTID proto WINAPI
+endif
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoGetCurrentLogicalThreadId proto WINAPI
+endif
+
+endif
+
+if (_WIN32_WINNT GE 0x0501)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoGetContextToken proto WINAPI :ptr ULONG_PTR
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetDefaultContext proto WINAPI :APTTYPE, :REFIID, :ptr ptr
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+if (NTDDI_VERSION GE NTDDI_WIN7)
+CoGetApartmentType proto WINAPI :ptr APTTYPE, :ptr APTTYPEQUALIFIER
+endif
+
+endif
+
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+ServerInformation	STRUC
+dwServerPid		dd ?
+dwServerTid		dd ?
+ui64ServerAddress	UINT64 ?
+ServerInformation	ENDS
+PServerInformation	typedef ptr ServerInformation
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoDecodeProxy proto WINAPI :DWORD, :UINT64, :PServerInformation
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+DECLARE_HANDLE(CO_MTA_USAGE_COOKIE)
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoIncrementMTAUsage proto WINAPI :ptr CO_MTA_USAGE_COOKIE
+CoDecrementMTAUsage proto WINAPI :CO_MTA_USAGE_COOKIE
+CoAllowUnmarshalerCLSID proto WINAPI
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoGetObjectContext proto WINAPI :REFIID, :ptr LPVOID
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetClassObject proto WINAPI :REFCLSID, :DWORD, :LPVOID, :REFIID, :ptr LPVOID
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoRegisterClassObject proto WINAPI :REFCLSID, :LPUNKNOWN, :DWORD, :DWORD, :LPDWORD
+CoRevokeClassObject proto WINAPI :DWORD
+CoResumeClassObjects proto WINAPI
+CoSuspendClassObjects proto WINAPI
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoAddRefServerProcess proto WINAPI
+CoReleaseServerProcess proto WINAPI
+CoGetPSClsid proto WINAPI :REFIID, :ptr CLSID
+CoRegisterPSClsid proto WINAPI :REFIID, :REFCLSID
+CoRegisterSurrogate proto WINAPI :LPSURROGATE
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoGetMarshalSizeMax proto WINAPI :ptr ULONG, :REFIID, :LPUNKNOWN, :DWORD, :LPVOID, :DWORD
+CoMarshalInterface proto WINAPI :LPSTREAM, :REFIID, :LPUNKNOWN, :DWORD, :LPVOID, :DWORD
+CoUnmarshalInterface proto WINAPI :LPSTREAM, :REFIID, :ptr LPVOID
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoMarshalHresult proto WINAPI :LPSTREAM, :HRESULT
+CoUnmarshalHresult proto WINAPI :LPSTREAM, :ptr HRESULT
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoReleaseMarshalData proto WINAPI :LPSTREAM
+CoDisconnectObject proto WINAPI :LPUNKNOWN, :DWORD
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoLockObjectExternal proto WINAPI :LPUNKNOWN, :BOOL, :BOOL
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoGetStandardMarshal proto WINAPI :REFIID, :LPUNKNOWN, :DWORD, :LPVOID, :DWORD, :ptr LPMARSHAL
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoGetStdMarshalEx proto WINAPI :LPUNKNOWN, :DWORD, :ptr LPUNKNOWN
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+.enum STDMSHLFLAGS {
+    SMEXF_SERVER     = 0x01,
+    SMEXF_HANDLER    = 0x02
+    }
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoIsHandlerConnected proto WINAPI :LPUNKNOWN
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+CoMarshalInterThreadInterfaceInStream proto WINAPI :REFIID, :LPUNKNOWN, :ptr LPSTREAM
+CoGetInterfaceAndReleaseStream proto WINAPI :LPSTREAM, :REFIID, :ptr LPVOID
+CoCreateFreeThreadedMarshaler proto WINAPI :LPUNKNOWN, :ptr LPUNKNOWN
+CoFreeUnusedLibraries proto WINAPI
+
+if (_WIN32_WINNT GE 0x0501)
+CoFreeUnusedLibrariesEx proto WINAPI
+endif
+
+endif
+
+if (_WIN32_WINNT GE 0x0600)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+CoDisconnectContext proto WINAPI :dword
+endif
+
+endif
+
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+CoInitializeSecurity proto WINAPI :PSECURITY_DESCRIPTOR, :LONG, :ptr SOLE_AUTHENTICATION_SERVICE, :ptr, :DWORD, :DWORD, :ptr, :DWORD, :ptr
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoGetCallContext proto WINAPI :REFIID, :ptr ptr
+
+CoQueryProxyBlanket proto WINAPI \
+		      : ptr IUnknown,
+		      : ptr DWORD,
+		      : ptr DWORD,
+		      : ptr LPOLESTR,
+		      : ptr DWORD,
+		      : ptr DWORD,
+		      : ptr RPC_AUTH_IDENTITY_HANDLE,
+		      : ptr DWORD
+
+CoSetProxyBlanket proto WINAPI \
+		      : ptr IUnknown,
+		      : DWORD,
+		      : DWORD,
+		      : ptr OLECHAR,
+		      : DWORD,
+		      : DWORD,
+		      : RPC_AUTH_IDENTITY_HANDLE,
+		      : DWORD
+
+CoCopyProxy proto WINAPI :ptr IUnknown, :ptr ptr IUnknown
+
+CoQueryClientBlanket proto WINAPI \
+		      : ptr DWORD,
+		      : ptr DWORD,
+		      : ptr LPOLESTR,
+		      : ptr DWORD,
+		      : ptr DWORD,
+		      : ptr RPC_AUTHZ_HANDLE,
+		      : ptr DWORD
+
+CoImpersonateClient proto WINAPI
+CoRevertToSelf proto WINAPI
+CoQueryAuthenticationServices proto WINAPI :ptr DWORD, :ptr ptr SOLE_AUTHENTICATION_SERVICE
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+CoSwitchCallContext proto WINAPI :ptr IUnknown, :ptr ptr IUnknown
+
+COM_RIGHTS_EXECUTE	equ 1
+COM_RIGHTS_EXECUTE_LOCAL equ 2
+COM_RIGHTS_EXECUTE_REMOTE equ 4
+COM_RIGHTS_ACTIVATE_LOCAL equ 8
+COM_RIGHTS_ACTIVATE_REMOTE equ 16
+
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoCreateInstance proto WINAPI :REFCLSID, :LPUNKNOWN, :DWORD, :REFIID, :ptr LPVOID
+
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+
+CoCreateInstanceEx proto WINAPI \
+		      : REFCLSID,
+		      : ptr IUnknown,
+		      : DWORD,
+		      : ptr COSERVERINFO,
+		      : DWORD,
+		      : ptr MULTI_QI
+
+endif
+
+if NOT defined(_CONTRACT_GEN) OR (_APISET_COM_VER GE 0x0101)
+
+CoRegisterActivationFilter proto WINAPI
+
+endif
+
+endif
+
+if (_WIN32_WINNT GE 0x0602)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+CoCreateInstanceFromApp proto WINAPI \
+		      : REFCLSID,
+		      : ptr IUnknown,
+	      dwClsCtx: DWORD,
+	      reserved: PVOID,
+	       dwCount: DWORD,
+		      : ptr MULTI_QI
+
+endif
+
+endif
+
+if (_WIN32_WINNT GE 0x0500) OR defined(_WIN32_DCOM)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoGetCancelObject proto WINAPI :DWORD, :REFIID, :ptr ptr
+CoSetCancelObject proto WINAPI :ptr IUnknown
+CoCancelCall proto WINAPI :DWORD, :ULONG
+CoTestCancel proto WINAPI
+CoEnableCallCancellation proto WINAPI :LPVOID
+CoDisableCallCancellation proto WINAPI :LPVOID
+
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+StringFromCLSID proto WINAPI :REFCLSID, :ptr LPOLESTR
+CLSIDFromString proto WINAPI :LPCOLESTR, :LPCLSID
+StringFromIID proto WINAPI :REFIID, :ptr LPOLESTR
+IIDFromString proto WINAPI :LPCOLESTR, :LPIID
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+ProgIDFromCLSID proto WINAPI :REFCLSID, :ptr LPOLESTR
+CLSIDFromProgID proto WINAPI :LPCOLESTR, :LPCLSID
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+StringFromGUID2 proto WINAPI :REFGUID, :LPOLESTR, :SINT
+CoCreateGuid proto WINAPI :ptr GUID
+PropVariantCopy proto WINAPI :ptr PROPVARIANT, :ptr PROPVARIANT
+PropVariantClear proto WINAPI :ptr PROPVARIANT
+FreePropVariantArray proto WINAPI :ULONG, :ptr PROPVARIANT
+
+endif
+
+if (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoWaitForMultipleHandles proto WINAPI :DWORD, :DWORD, :ULONG, :LPHANDLE, :LPDWORD
+
+.enum COWAIT_FLAGS {
+    COWAIT_DEFAULT = 0,
+    COWAIT_WAITALL = 1,
+    COWAIT_ALERTABLE = 2,
+    COWAIT_INPUTAVAILABLE = 4,
+    COWAIT_DISPATCH_CALLS = 8,
+    COWAIT_DISPATCH_WINDOW_MESSAGES = 0x10,
+    }
+
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+.enum CWMO_FLAGS {
+    CWMO_DEFAULT = 0,
+    CWMO_DISPATCH_CALLS = 1,
+    CWMO_DISPATCH_WINDOW_MESSAGES = 2,
+    }
+
+CoWaitForMultipleObjects proto WINAPI :ptr HANDLE, :LPDWORD
+
+endif ;; (NTDDI_VERSION GE NTDDI_WIN8)
+
+CWMO_MAX_HANDLES	equ 56
+
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoGetTreatAsClass proto WINAPI :REFCLSID, :LPCLSID
+
+endif
+
+if (_WIN32_WINNT GE 0x0501)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+CoInvalidateRemoteMachineBindings proto WINAPI :LPOLESTR
+
+endif
+
+endif
+
+if (NTDDI_VERSION GE NTDDI_WINBLUE)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+.enum AgileReferenceOptions {
+    AGILEREFERENCE_DEFAULT	  = 0,
+    AGILEREFERENCE_DELAYEDMARSHAL = 1,
+    }
+
+if NOT defined(_CONTRACT_GEN) OR (_APISET_COM_VER GE 0x0101)
+
+RoGetAgileReference proto WINAPI :LONG, :REFIID, :ptr IUnknown, :ptr ptr IAgileReference
+
+endif
+
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+CALLBACK(LPFNGETCLASSOBJECT, :REFCLSID, :REFIID, :ptr LPVOID)
+CALLBACK(LPFNCANUNLOADNOW)
+
+DllGetClassObject proto WINAPI \
+		rclsid: REFCLSID,
+		  riid: REFIID,
+		   ppv: ptr LPVOID
+
+DllCanUnloadNow proto WINAPI
+CoTaskMemAlloc proto WINAPI :SIZE_T
+CoTaskMemRealloc proto WINAPI :LPVOID, :SIZE_T
+CoTaskMemFree proto WINAPI :LPVOID
+
+ifndef RC_INVOKED
+.pragma pack(pop)
+endif
+
+endif
+
+endif

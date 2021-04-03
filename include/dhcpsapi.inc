@@ -2,6 +2,8 @@
 ifndef _DHCPSAPI_
 _DHCPSAPI_ equ <>
 
+.pragma comment(lib, dhcpsapi)
+
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

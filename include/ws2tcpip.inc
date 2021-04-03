@@ -18,6 +18,8 @@ include winsock2.inc
 include ws2ipdef.inc
 include limits.inc
 
+.pragma comment(lib, ws2_32)
+
 UDP_NOCHECKSUM		equ 1
 UDP_CHECKSUM_COVERAGE	equ 20
 
@@ -42,21 +44,24 @@ EAI_IPSECPOLICY		equ WSA_IPSEC_NAME_POLICY_ERROR
 EAI_NODATA		equ EAI_NONAME
 
 ifdef _UNICODE
-PADDRINFOT		typedef ptr ADDRINFOW	    ;ADDRINFOT,
+ADDRINFOT		typedef ADDRINFOW
+PADDRINFOT		typedef ptr ADDRINFOW
 else
-PADDRINFOT		typedef ptr ADDRINFOA	    ;ADDRINFOT,
+ADDRINFOT		typedef ADDRINFOA
+PADDRINFOT		typedef ptr ADDRINFOA
 endif
 
-;;  RFC standard definition for getaddrinfo()
-
-LPADDRINFO		typedef ptr ADDRINFOA	    ;ADDRINFO, FAR
+ADDRINFO		typedef ADDRINFOA
+LPADDRINFO		typedef ptr ADDRINFOA
 
 if (_WIN32_WINNT GE 0x0600)
 ifdef _UNICODE
-PADDRINFOEX		typedef ptr ADDRINFOEXW	    ;ADDRINFOEX,
+ADDRINFOEX		typedef ADDRINFOEXW
+PADDRINFOEX		typedef ptr ADDRINFOEXW
 else
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-PADDRINFOEX		typedef ptr ADDRINFOEXA	    ;ADDRINFOEX,
+ADDRINFOEX		typedef ADDRINFOEXA
+PADDRINFOEX		typedef ptr ADDRINFOEXA
 endif
 endif
 endif
@@ -560,15 +565,14 @@ WSARevertImpersonation proto WINAPI
 
 endif
 
-endif ;;_SECURE_SOCKET_TYPES_DEFINED_
-endif ;;(_WIN32_WINNT GE 0x0600)
+endif
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 if NOT defined(_WIN32_WINNT) OR (_WIN32_WINNT LE 0x0500)
 include wspiapi.inc
 endif
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+endif
 
-
-endif  ;; _WS2TCPIP_H_
+endif

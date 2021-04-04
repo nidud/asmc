@@ -390,6 +390,9 @@ W5  dd E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A8007),E
        E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019),
        E(A8020)
 
+MS  dd E("name"),E("page"),E("subtitle"),E("subttl"),E("title"),E("low"),E("high"),E("size"),
+       E("length"),E("this"),E("mask"),E("width"),E("type"),0
+
 MAX_E0 equ lengthof(E0)
 MAX_E2 equ lengthof(E2)
 MAX_W1 equ lengthof(W1)
@@ -481,7 +484,7 @@ errexit endp
 
 asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
 
-  local format[512]:byte, erbuf[512]:byte
+  local format[512]:byte, erbuf[512]:byte, masm[64]:byte
 
     lea edi,format
     mov ebx,value
@@ -555,6 +558,26 @@ asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
 
             lea edi,format
             strcat(edi, esi)
+
+            .if ebx == 2006
+
+                mov ebx,args
+                lea esi,MS
+
+                .while 1
+
+                    lodsd
+                    .break .if !eax
+
+                    .if _stricmp(eax, ebx) == 0
+
+                        strcpy(&masm, ebx)
+                        mov args,strcat(eax, " -- use option /Znk for Masm keywords" )
+                        .break
+                    .endif
+                .endw
+            .endif
+
             print_err(&erbuf, edi, &args)
 
             lea esi,erbuf

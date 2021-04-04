@@ -39,20 +39,31 @@ ClassProto proc uses esi edi class:string_t, langtype:int_t, args:string_t, type
 
     lea edi,pargs ; default args :abs=<val>
     mov esi,args
+    lea ecx,[edi+1023]
     mov al,1
-    .while al
+
+    .while al && edi < ecx
+
         lodsb
+
         .if al == '='
+
             lodsb
+
             .while al && al != '>'
+
                 lodsb
             .endw
+
             .if al
+
                 lodsb
             .endif
         .endif
+
         stosb
     .endw
+
     .if langtype
         AddLineQueueX( "%s %r %r %s", class, type, langtype, &pargs )
     .else

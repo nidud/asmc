@@ -746,7 +746,6 @@ flt_item    ends
 CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
 
   local segm[64]:char_t
-  local temp[128]:char_t
   local opc:expr
 
     mov ebx,opnd
@@ -786,14 +785,20 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
     .endsw
 
     .for edi = 0, esi = ModuleInfo.FltStack : esi : edi++, esi = [esi].next
+
         .if size == [esi].count
+
             mov eax,[esi].string
             mov edx,dword ptr opc.hlvalue[0]
             mov ecx,dword ptr opc.hlvalue[4]
+
             .if edx == [eax+0x08] && ecx == [eax+0x0C]
+
                 mov edx,opc.value
                 mov ecx,opc.hvalue
+
                 .if edx == [eax] && ecx == [eax+0x04]
+
                     mov eax,[esi].index
                     sprintf( buffer, "F%04X", eax )
                     .return 1
@@ -815,8 +820,6 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         lea ecx,[eax+flt_item]
         mov [eax].flt_item.string,ecx
         memcpy(ecx, &opc, 16)
-
-        lea esi,temp
 
         GetCurrentSegment( &segm )
 

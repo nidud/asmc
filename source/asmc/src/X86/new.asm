@@ -204,7 +204,7 @@ ConstructorCall endp
 
 AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:string_t
 
-  local val[128]:char_t, array:int_t
+  local val[256]:char_t, array:int_t
 
     mov array,0
     mov esi,string
@@ -251,8 +251,9 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
             xor eax,eax
             mov [edi],al
+            lea ecx,[edi+255]
 
-            .while 1
+            .while edi < ecx
                 mov al,[esi]
                 .if al == '('
                     inc ah

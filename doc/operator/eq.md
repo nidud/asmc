@@ -7,6 +7,15 @@ Asmc Macro Assembler Reference
 
 Returns true (-1) if _expression1_ equals _expression2_, or returns false (0) if it does not.
 
+_* Non ML compatible usage_
+
+```assembly
+    a = 1.0
+    while a eq 1.0
+        a = a - 1.0
+        endm
+```
+
 #### See Also
 
 [Operators Reference](readme.md)

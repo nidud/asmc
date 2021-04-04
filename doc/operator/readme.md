@@ -27,11 +27,17 @@ Asmc Macro Assembler Reference
 
 #### Logical and Shift
 
+- [ADD](add128.md)
 - [AND](and.md)
+- [DIV](div128.md)
+- [MUL](mul128.md)
 - [NOT](not.md)
 - [OR](or.md)
+- [SAR](sar.md)
+- [SAL](sal.md)
 - [SHL](shl.md)
 - [SHR](shr.md)
+- [SUB](sub128.md)
 - [XOR](xor.md)
 
 #### Macro

@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.33 - xx xxx 2020
+- added warning on use of Masm spesific keywords
 - added directive .inline
 - changed typeid() format
 - added struct assignment to .new name:type = {1,2,...}

@@ -1,0 +1,46 @@
+;
+; https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+;
+include stdio.inc
+include malloc.inc
+
+    .code
+
+alloc proc uses rsi rdi rbx a:ptr, b:ptr
+
+  .new l[1000]:dword = {0}
+
+    lea rdi,l
+    mov eax,1
+    mov ecx,lengthof(l)
+    rep movsd
+    mov rdi,alloca(sizeof(l))
+    mov eax,2
+    mov ecx,lengthof(l)
+    rep movsd
+
+    .for ( rsi = &l,
+           eax = lengthof(l),
+           ebx = 0 : ebx < lengthof(l) : ebx++, rsi += 4 )
+
+        sub eax,[rsi]
+    .endf
+    ret
+
+alloc endp
+
+main proc
+
+    mov esi,9
+    mov edi,9
+    mov ebx,9
+    alloc(rsi, rdi)
+    .assert( eax == 0 )
+    .assert( edi == 9 )
+    .assert( edi == 9 )
+    .assert( ebx == 9 )
+    ret
+
+main endp
+
+    end

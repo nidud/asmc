@@ -1204,8 +1204,12 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		}
 	    }
 	    if ( !cnt ) {
-		if ( tokenarray[i].token != T_FINAL )
-		    strcat( p, tokenarray[i+1].tokpos );
+		if ( tokenarray[i].token != T_FINAL ) {
+		    if ( proc->sym.isstatic )
+			strcat( p, tokenarray[i+2].tokpos );
+		    else
+			strcat( p, tokenarray[i+1].tokpos );
+		}
 	    } else if ( info->has_vararg /*|| ( proc->sym.isstatic && ModuleInfo.Ofssize == USE64 )*/ ) {
 		if ( tokenarray[i+1].tokval == T_ADDR && proc->sym.method )
 		    strcat( p, tokenarray[i+2].tokpos );
@@ -1213,9 +1217,12 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		    strcat( p, tokenarray[i+1].tokpos );
 	    } else {
 		parmpos = 1;
-		if ( proc->sym.isstatic /*&& tokenarray[i+1].tokval == T_ADDR && proc->sym.method*/ ) {
+		if ( proc->sym.isstatic ) {
 		    strcat( p, tokenarray[i+2].string_ptr );
 		    parmpos = 0;
+		    if ( !proc->sym.method )
+			cnt--;
+
 		} else
 		    strcat( p, args[0] );
 		for ( ; parmpos < cnt; parmpos++ ) {

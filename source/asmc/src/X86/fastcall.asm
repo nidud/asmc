@@ -264,7 +264,7 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
     .else
         dec fcscratch
         lea edi,ms32_regs
-        add edi,fcscratch
+        add edi,index;fcscratch
     .endif
 
     movzx ebx,byte ptr [edi]

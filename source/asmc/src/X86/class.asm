@@ -1365,7 +1365,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         .if constructor
             .if SymFind( &token )
-                or [eax].asym.flag,S_METHOD
+                .if ( cmd != T_DOT_STATIC )
+                    or [eax].asym.flag,S_METHOD
+                .endif
                 .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
                     or [eax].asym.sint_flag,SINT_ISSTATIC
                 .endif

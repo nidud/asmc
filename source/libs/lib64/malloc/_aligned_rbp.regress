@@ -18,11 +18,10 @@ main proc
   local a4: dword
   local a1: byte
 
-    lea rdi,a16
+    lea rdx,a16
     mov eax,1
-    .if !(rdi & 16-1)
-	dec eax
-    .endif
+    .assert( !(rdx & 16-1) )
+    dec eax
     ret
 
 main endp

@@ -18,25 +18,18 @@ _PAGESIZE_ equ 0x1000 ; one page
     .code
 
 _alloca64::
-
-    lea rax,[rsp+8] ; return addres
+    mov rax,rsp
+    lea rsp,[rsp+8]
     add ecx,16-1    ; assume 16 aligned
     and ecx,-16
-
     .while ecx > _PAGESIZE_
-
-        sub  rax,_PAGESIZE_
-        test edx,[rax] ; probe page
-
-        ; RSP unchanged on stack overflow
-
+        sub  rsp,_PAGESIZE_
+        test edx,[rsp]
         sub  ecx,_PAGESIZE_
     .endw
-
-    sub rax,rcx
-    mov rcx,[rsp]   ; return addres
-    mov rsp,rax
-    add rax,rdx     ; memory block
+    sub rsp,rcx
+    mov rcx,[rax]       ; return addres
+    lea rax,[rsp+rdx]   ; memory block
     jmp rcx
 
     end

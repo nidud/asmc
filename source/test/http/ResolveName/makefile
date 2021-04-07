@@ -1,4 +1,4 @@
 ResolveName.exe:
-    asmc -pe -ws $*.asm
+    asmc64 -pe -Cs -ws $*.asm
     $@ go.microsoft.com
     pause

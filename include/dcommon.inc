@@ -1,12 +1,6 @@
 ifndef DCOMMON_H_INCLUDED
 DCOMMON_H_INCLUDED equ <>
 
-ifndef DEFINE_ENUM_FLAG_OPERATORS
-DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
-	exitm<.err>
-	endm
-endif
-
 ifndef __field_ecount_opt
 __field_ecount_opt macro x
 	exitm<.err>

@@ -823,8 +823,8 @@ endif
 PHTTP_RESPONSE		typedef ptr HTTP_RESPONSE
 
 HTTPAPI_VERSION		STRUC
-HttpApiMajorVersion	USHORT ?
-HttpApiMinorVersion	USHORT ?
+HttpApiMajorVersion	dw ?
+HttpApiMinorVersion	dw ?
 HTTPAPI_VERSION		ENDS
 PHTTPAPI_VERSION	typedef ptr HTTPAPI_VERSION
 

@@ -9,14 +9,14 @@ include quadmath.inc
 
     lastResult errno_t ?
 
-    .operator assert :vararg {
+    .static assert {
 
         mov this.lastResult,0
         _set_errno(0)
         }
 ;;;;;;;;
 
-    .operator mulq :vararg {
+    .static mulq {
         this.__v(mulq, 0.0, 0.0, 0.0)
         this.__v(mulq, 0.0, 1.0, 0.0)
         this.__v(mulq, 0.0, -1.0, 0.0)
@@ -34,14 +34,14 @@ include quadmath.inc
         this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
         }
 
-        .operator __m :abs, :abs, :abs, :abs, :vararg {
+        .static __m :abs, :abs, :abs, :abs {
             local a, b, r
             .data
             align 16
             a oword _2
             ifnb <_4>
                 b oword _3
-                ifidn typeid(?, _4),<?flt>
+                ifidn typeid(_4),<IMMFLT>
                     r oword _4
                 else
                     r errno_t _4
@@ -65,14 +65,14 @@ include quadmath.inc
             endif
             }
 
-        .operator __v :abs, :abs, :abs, :abs, :vararg {
+        .static __v :abs, :abs, :abs, :abs {
           local a, b, r
            .data
             align 16
             a oword _2
             ifnb <_4>
                 b oword _3
-                ifidn typeid(?, _4),<?flt>
+                ifidn typeid(_4),<IMMFLT>
                     r oword _4
                 else
                     r errno_t _4
@@ -97,7 +97,7 @@ include quadmath.inc
             endif
             }
 
-    .operator divq :vararg {
+    .static divq {
 
         this.__v(divq, 0.0, 0.0, 7FFF8000000000000000000000000000r)
         this.__v(divq, 0.0, 1.0, 0.0)
@@ -118,7 +118,7 @@ include quadmath.inc
         this.__m(divq, 1.0001, 1000000.0002, 3FEB0C7659426EB346F3B91986814E5Er)
         }
 
-    .operator addq :vararg {
+    .static addq {
 
         this.__v(addq, 0.0, 0.0, 0.0)
         this.__v(addq, 1.0, 0.0, 1.0)
@@ -137,7 +137,7 @@ include quadmath.inc
         this.__m(addq, 0.09, 0.01, 0.1)
         }
 
-    .operator subq :vararg {
+    .static subq {
 
         this.__v(subq, 0.0, 0.0, 0.0)
         this.__v(subq, 1.0, 0.0, 1.0)
@@ -154,7 +154,7 @@ include quadmath.inc
         this.__m(subq, 10000000.0002, 999999.0001, 9000001.0001 )
         }
 
-    .operator cmpq :vararg {
+    .static cmpq {
 
         this.__v(cmpq, 0.0, 1.0, -1 )
         this.__v(cmpq, 0.0, 0.0, 0 )
@@ -189,15 +189,15 @@ include quadmath.inc
         this.__m(cmpq, -9223372036854775808.0, -9223372036854775807.0, -1 )
         }
 
-    .operator fltscale :vararg {}
-        .operator __vscale :abs, :abs, :abs, :vararg {}
-        .operator __mscale :abs, :abs, :abs, :vararg {}
+    .static fltscale {}
+        .static __vscale :abs, :abs, :abs, :vararg {}
+        .static __mscale :abs, :abs, :abs, :vararg {}
 
 
     ; Convert HALF, float, double, long double, int, __int64, string
 
 
-    .operator cvtq_h :vararg {
+    .static cvtq_h {
 
         this.__vqh( 0, 0.0, 0 )
         this.__vqh( 0, 1.0, 0x3C00 )
@@ -223,7 +223,7 @@ include quadmath.inc
         this.__mqh( 0, -1.0/0.0, 0xFC00 )
         this.__mqh( ERANGE, 5.960464478e-08, 0x0001 )
         }
-        .operator __vqh :abs, :abs, :abs, :vararg {
+        .static __vqh :abs, :abs, :abs {
             local q, h
             .data
                 align 16
@@ -237,7 +237,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mqh :abs, :abs, :abs, :vararg {
+        .static __mqh :abs, :abs, :abs {
             local q, h
             .data
                 align 16
@@ -252,11 +252,11 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvtq_ss :vararg {
+    .static cvtq_ss {
         this.__vqss( 3.14159265358979323846264338327, 40490FDBr )
         this.__mqss( 3.14159265358979323846264338327, 40490FDBr )
         }
-        .operator __vqss :abs, :abs, :vararg {
+        .static __vqss :abs, :abs {
             local a, b
             .data
                 align 16
@@ -268,7 +268,7 @@ include quadmath.inc
             mov edx,b
             .assert( eax == edx )
             }
-        .operator __mqss :abs, :abs, :vararg {
+        .static __mqss :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -282,11 +282,11 @@ include quadmath.inc
             .assert( eax == edx )
             }
 
-    .operator cvtq_sd :vararg {
+    .static cvtq_sd {
         this.__vqsd( 3.14159265358979323846264338327, 400921FB54442D18r )
         this.__mqsd( 3.14159265358979323846264338327, 400921FB54442D18r )
         }
-        .operator __vqsd :abs, :abs, :vararg {
+        .static __vqsd :abs, :abs {
             local a, b
             .data
                 align 16
@@ -298,7 +298,7 @@ include quadmath.inc
             mov rdx,b
             .assert( rax == rdx )
             }
-        .operator __mqsd :abs, :abs, :vararg {
+        .static __mqsd :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -312,7 +312,7 @@ include quadmath.inc
             .assert( rax == rdx )
             }
 
-    .operator cvtq_ld :vararg {
+    .static cvtq_ld {
 
         this.__vqld( 0.0 )
         this.__vqld( 1.0 )
@@ -324,7 +324,7 @@ include quadmath.inc
         this.__mqld( 9.0 / 7.0 )
         this.__mqld( 3.14159265358979323846264338327 )
         }
-        .operator __vqld :abs, :vararg {
+        .static __vqld :abs {
             local a, b
             .data
                 align 16
@@ -339,7 +339,7 @@ include quadmath.inc
             movzx   edx,word ptr a[8]
             .assert( rax == rbx && edx == ecx )
             }
-        .operator __mqld :abs, :vararg {
+        .static __mqld :abs {
             local a, b, r
             .data
                 align 16
@@ -355,7 +355,7 @@ include quadmath.inc
             .assert( rax == rbx && edx == ecx )
             }
 
-    .operator cvtq_i32 :vararg {
+    .static cvtq_i32 {
 
         this.__vqi32( 0, 0.0, 0)
         this.__vqi32( 0, 0.10, 0, 0.0)
@@ -383,7 +383,7 @@ include quadmath.inc
         this.__mqi32( 0, -100000000000000000000.0, INT_MIN, -2147483648.0) ; ERANGE
         this.__mqi32( 0, 100000000000000000000.0, INT_MAX, 2147483647.0) ; ERANGE
         }
-        .operator __vqi32 :abs, :abs, :abs, :abs, :vararg {
+        .static __vqi32 :abs, :abs, :abs, :abs {
             local a, b
             .data
                 align 16
@@ -400,7 +400,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mqi32 :abs, :abs, :abs, :abs, :vararg {
+        .static __mqi32 :abs, :abs, :abs, :abs {
             local a, b
             .data
                 align 16
@@ -418,7 +418,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvtq_i64 :vararg {
+    .static cvtq_i64 {
 
         this.__vqi64( 0, 0.0, 0)
         this.__vqi64( 0, 0.10, 0, 0.0)
@@ -446,7 +446,7 @@ include quadmath.inc
         this.__mqi64( ERANGE, -9223372036854775808.0, _I64_MIN, -9223372036854775808.0)
         this.__mqi64( 0, -1.0, _UI64_MAX)
         }
-        .operator __vqi64 :abs, :abs, :abs, :abs, :vararg {
+        .static __vqi64 :abs, :abs, :abs, :abs {
             local a, b
             .data
                 align 16
@@ -464,7 +464,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mqi64 :abs, :abs, :abs, :abs, :vararg {
+        .static __mqi64 :abs, :abs, :abs, :abs {
             local a, b
             .data
                 align 16
@@ -483,7 +483,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvth_q :vararg {
+    .static cvth_q {
 
         this.__vhq( 0, 0.0, 0)
         this.__vhq( 0, 1.0, 0x3C00)
@@ -513,7 +513,7 @@ include quadmath.inc
         this.__mhq( 0, -1.0/0.0, 0xFC00)
         this.__mhq( EDOM, 0.0/0.0, 0xFFFF)
         }
-        .operator __vhq :abs, :abs, :abs, :vararg {
+        .static __vhq :abs, :abs, :abs {
             local b, q, w
             .data
                 align 16
@@ -532,7 +532,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mhq :abs, :abs, :abs, :vararg {
+        .static __mhq :abs, :abs, :abs {
             local b, q, w
             .data
                 align 16
@@ -551,7 +551,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvtss_q :vararg {
+    .static cvtss_q {
 
         this.__vssq( 0,             0.0, 0.0 )
         this.__vssq( 0,             1.0, 0x3F800000 )
@@ -569,7 +569,7 @@ include quadmath.inc
         this.__mssq( 0,            -0.0, 0x80000000 )
         this.__mssq( EDOM,    0.0 / 0.0, 0x7F800000 )
         }
-        .operator __vssq :abs, :abs, :abs, :vararg {
+        .static __vssq :abs, :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -586,7 +586,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mssq :abs, :abs, :abs, :vararg {
+        .static __mssq :abs, :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -602,7 +602,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvtsd_q :vararg {
+    .static cvtsd_q {
 
         this.__vsdq( 0,             0.0, 0.0 )
         this.__vsdq( 0,             1.0, 1.0 )
@@ -620,7 +620,7 @@ include quadmath.inc
         this.__msdq( 0,            -0.0, -0.0 )
         this.__msdq( 0,       0.0 / 0.0, 0.0 / 0.0 )
         }
-        .operator __vsdq :abs, :abs, :abs, :vararg {
+        .static __vsdq :abs, :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -636,7 +636,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __msdq :abs, :abs, :abs, :vararg {
+        .static __msdq :abs, :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -652,7 +652,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvtld_q :vararg {
+    .static cvtld_q {
 
         this.__vldq(             0.0, 0.0 )
         this.__vldq(             1.0, 1.0 )
@@ -670,7 +670,7 @@ include quadmath.inc
         this.__mldq(            -0.0, -0.0 )
         this.__mldq(       0.0 / 0.0, 7FFF8000000000000000000000000000r )
         }
-        .operator __vldq :abs, :abs, :vararg {
+        .static __vldq :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -686,7 +686,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == 0 )
             }
-        .operator __mldq :abs, :abs, :vararg {
+        .static __mldq :abs, :abs {
             local a, b, r
             .data
                 align 16
@@ -702,7 +702,7 @@ include quadmath.inc
             .assert( eax == 0 )
             }
 
-    .operator cvti32_q :vararg {
+    .static cvti32_q {
 
         this.__vi32q( 0, 0,                   0.0 )
         this.__vi32q( 0, 1,                   1.0 )
@@ -726,7 +726,7 @@ include quadmath.inc
         this.__mi32q( 0, INT_MIN,   -2147483648.0 )
         this.__mi32q( 0, INT_MAX,    2147483647.0 )
         }
-        .operator __vi32q :abs, :abs, :abs, :vararg {
+        .static __vi32q :abs, :abs, :abs {
             local a, i
             .data
                 align 16
@@ -743,7 +743,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mi32q :abs, :abs, :abs, :vararg {
+        .static __mi32q :abs, :abs, :abs {
             local a, b, i
             .data
                 align 16
@@ -761,7 +761,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvti64_q :vararg {
+    .static cvti64_q {
 
         this.__vi64q( 0, 0,                                       0.0 )
         this.__vi64q( 0, 1,                                       1.0 )
@@ -785,7 +785,7 @@ include quadmath.inc
         this.__mi64q( 0, _I64_MIN,             -9223372036854775808.0 )
         this.__mi64q( 0, _UI64_MAX,                              -1.0 )
         }
-        .operator __vi64q :abs, :abs, :abs, :vararg {
+        .static __vi64q :abs, :abs, :abs {
             local a, i
             .data
                 align 16
@@ -802,7 +802,7 @@ include quadmath.inc
             this.SetStatus()
             .assert( eax == _1 )
             }
-        .operator __mi64q :abs, :abs, :abs, :vararg {
+        .static __mi64q :abs, :abs, :abs {
             local a, b, i
             .data
                 align 16
@@ -820,7 +820,7 @@ include quadmath.inc
             .assert( eax == _1 )
             }
 
-    .operator cvta_q :vararg {
+    .static cvta_q {
 
         this.__vaq( addr @CStr( "." ), 0.0, '.' )
         this.__vaq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
@@ -836,7 +836,7 @@ include quadmath.inc
         this.__maq( addr @CStr( "1.e8192"), 7FFF0000000000000000000000000000r, 0 )
         this.__maq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
         }
-        .operator __vaq :abs, :abs, :abs, :vararg {
+        .static __vaq :abs, :abs, :abs {
             local a, eptr
             .data
                 align 16
@@ -853,7 +853,7 @@ include quadmath.inc
             mov     rcx,qword ptr a[8]
             .assert( rax == rbx && rdx == rcx )
             }
-        .operator __maq :abs, :abs, :abs, :vararg {
+        .static __maq :abs, :abs, :abs {
             local a, b, eptr
             .data
                 align 16
@@ -872,7 +872,7 @@ include quadmath.inc
             }
 
 
-    .operator cfltcvt :vararg {
+    .static cfltcvt {
 
         this.__vflt( 0.0, @CStr( "0" ) )
         this.__vflt( 1.0, @CStr( "1" ) )
@@ -882,7 +882,7 @@ include quadmath.inc
         this.__vflt( 1.0, @CStr( "1" ), 'g', 6 )
         this.__vflt( 1.0, @CStr( "1.000000" ), 0, 6 )
         }
-        .operator __vflt :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0>, :vararg {
+        .static __vflt :abs, :abs, :abs=<0>, :abs=<0>, :abs=<0> {
             local a, b, c, p, f
             .data
                 align 16
@@ -897,155 +897,155 @@ include quadmath.inc
             .assert( eax == 0 )
             }
 
-    .operator cldcvt :vararg {}
-    .operator cqfcvt :vararg {}
-    .operator strtoflt128 :vararg {}
+    .static cldcvt {}
+    .static cqfcvt {}
+    .static strtoflt128 {}
 
-    .operator acosq :vararg {}
-    .operator acoshq :vararg {}
-    .operator asinq :vararg {}
-    .operator asinhq :vararg {}
+    .static acosq {}
+    .static acoshq {}
+    .static asinq {}
+    .static asinhq {}
 
-    .operator atanq :vararg {
+    .static atanq {
         this.__v(atanq, 0.0, 0.0)
         this.__v(atanq, 1.5, 0.9827937232473290679857106110146660710)
         }
 
-    .operator atanhq :vararg {}
+    .static atanhq {}
 
-    .operator atan2q :vararg {
+    .static atan2q {
         this.__v(atan2q, 0.0, 0.0, 0.0)
         this.__v(atan2q, 1.0, 2.0, 3FFDDAC670561BB4F68ADFC88BD97874r)
         this.__v(atan2q, 0.5, 1.5, 0.3217505543966421934014046143586613)
         }
 
-    .operator cbrtq :vararg {}
-    .operator ceilq :vararg {}
-    .operator copysignq :vararg {}
-    .operator coshq :vararg {}
-    .operator cosq :vararg {}
-    .operator erfq :vararg {}
-    .operator erfcq :vararg {}
-    .operator expq :vararg {}
-    .operator expm1q :vararg {}
-    .operator fabsq :vararg {}
-    .operator fdimq :vararg {}
-    .operator finiteq :vararg {}
-    .operator floorq :vararg {}
-    .operator fmaq :vararg {}
-    .operator fmaxq :vararg {}
-    .operator fminq :vararg {}
-    .operator fmodq :vararg {}
-    .operator frexpq :vararg {}
-    .operator hypotq :vararg {}
-    .operator isinfq :vararg {}
-    .operator ilogbq :vararg {}
-    .operator isnanq :vararg {}
-    .operator j0q :vararg {}
-    .operator j1q :vararg {}
-    .operator jnq :vararg {}
-    .operator ldexpq :vararg {}
-    .operator lgammaq :vararg {}
-    .operator llrintq :vararg {}
-    .operator llroundq :vararg {}
-    .operator logbq :vararg {}
-    .operator logq :vararg {}
-    .operator log10q :vararg {}
-    .operator log2q :vararg {}
-    .operator log1pq :vararg {}
-    .operator lrintq :vararg {}
-    .operator lroundq :vararg {}
-    .operator modfq :vararg {}
-    .operator nanq :vararg {}
-    .operator nearbyintq :vararg {}
-    .operator nextafterq :vararg {}
-    .operator powq :vararg {}
-    .operator remainderq :vararg {}
-    .operator remquoq :vararg {}
-    .operator rintq :vararg {}
-    .operator roundq :vararg {}
-    .operator scalblnq :vararg {}
-    .operator scalbnq :vararg {}
-    .operator signbitq :vararg {}
-    .operator sincosq :vararg {}
-    .operator sinhq :vararg {}
-    .operator sinq :vararg {}
+    .static cbrtq {}
+    .static ceilq {}
+    .static copysignq {}
+    .static coshq {}
+    .static cosq {}
+    .static erfq {}
+    .static erfcq {}
+    .static expq {}
+    .static expm1q {}
+    .static fabsq {}
+    .static fdimq {}
+    .static finiteq {}
+    .static floorq {}
+    .static fmaq {}
+    .static fmaxq {}
+    .static fminq {}
+    .static fmodq {}
+    .static frexpq {}
+    .static hypotq {}
+    .static isinfq {}
+    .static ilogbq {}
+    .static isnanq {}
+    .static j0q {}
+    .static j1q {}
+    .static jnq {}
+    .static ldexpq {}
+    .static lgammaq {}
+    .static llrintq {}
+    .static llroundq {}
+    .static logbq {}
+    .static logq {}
+    .static log10q {}
+    .static log2q {}
+    .static log1pq {}
+    .static lrintq {}
+    .static lroundq {}
+    .static modfq {}
+    .static nanq {}
+    .static nearbyintq {}
+    .static nextafterq {}
+    .static powq {}
+    .static remainderq {}
+    .static remquoq {}
+    .static rintq {}
+    .static roundq {}
+    .static scalblnq {}
+    .static scalbnq {}
+    .static signbitq {}
+    .static sincosq {}
+    .static sinhq {}
+    .static sinq {}
 
-    .operator sqrtq :vararg {
+    .static sqrtq {
 
         this.__v(sqrtq, 0.0, 0.0)
         this.__v(sqrtq, 1.0, 1.0)
         this.__v(sqrtq, 2.0, 1.4142135623730950488016887242097015)
         }
 
-    .operator tanq :vararg {}
-    .operator tanhq :vararg {}
-    .operator tgammaq :vararg {}
-    .operator truncq :vararg {}
-    .operator y0q :vararg {}
-    .operator y1q :vararg {}
-    .operator ynq :vararg {}
-    .operator quadmath_snprintf :vararg {}
+    .static tanq {}
+    .static tanhq {}
+    .static tgammaq {}
+    .static truncq {}
+    .static y0q {}
+    .static y1q {}
+    .static ynq {}
+    .static quadmath_snprintf {}
 
 ;;;;;;;;
 
-    .operator acosqf  :vararg {
+    .static acosqf  {
         this.__v(acosqf, 0.0, 3FFF921FB54442D1846A000000000000r) ; 1.570796326794896619
         this.__v(acosqf, 0.5, 3FFF0C152382D7365678000000000000r) ; 1.047197551196597721
         }
-    .operator atanqf  :vararg {
+    .static atanqf  {
         this.__v(atanqf, 0.0, 0.0)
         this.__v(atanqf, 1.5, 3FFEF730BD281F69B200000000000000r) ; 0.982793723247329068
         }
-    .operator atan2qf :vararg {
+    .static atan2qf {
         this.__v(atan2qf, 0.0, 0.0, 0.0)
         this.__v(atan2qf, 0.5, 1.5, 3FFD4978FA3269EE1248000000000000r) ; 0.3217505543966421934
         }
-    .operator cbrtqf :vararg {
+    .static cbrtqf {
         }
-    .operator ceilqf :vararg {
+    .static ceilqf {
         this.__v(ceilqf, 0.0, 0.0)
         this.__v(ceilqf, 2.5, 3.0)
         }
-    .operator cosqf :vararg {
+    .static cosqf {
         this.__v(cosqf, 0.0, 1.0)
         this.__v(cosqf, 10.0, 0BFFEAD9AC890C6B1F20A000000000000r) ; -0.8390715290764524523
         }
-    .operator expqf :vararg {
+    .static expqf {
         this.__v(expqf, 0.0, 1.0)
         this.__v(expqf, 1.5, 40011ED3FE64FC542000000000000000r) ; 4.481689070338065406
         }
-    .operator floorqf :vararg {
+    .static floorqf {
         this.__v(floorqf, 0.0, 0.0)
         this.__v(floorqf, 2.57, 2.0)
         }
-    .operator fmodqf :vararg {
+    .static fmodqf {
         this.__v(fmodqf, 1.0, 1.0, 0.0)
         this.__v(fmodqf, 1.5, 1.2, 3FFD3333333333333338000000000000r) ; 0.3
         }
-    .operator logqf :vararg {
+    .static logqf {
         this.__v(logqf, 1.5, 3FFD9F323ECBF984BF2C000000000000r) ; 0.4054651081081643820
         }
-    .operator log10qf :vararg {
+    .static log10qf {
         this.__v(log10qf, 1.5, 3FFC68A288B60B7FC2B8000000000000r) ; 0.1760912590556812421
         }
-    .operator sinqf :vararg {
+    .static sinqf {
         this.__v(sinqf, 0.0, 0.0)
         this.__v(sinqf, 0.5, 3FFDEAEE8744B05EFE88000000000000r) ; 0.4794255386042030003
         }
-    .operator sqrtqf :vararg {
+    .static sqrtqf {
         this.__v(sqrtqf, 0.0, 0.0)
         this.__v(sqrtqf, 1.0, 1.0)
         this.__v(sqrtqf, 2.0, 3FFF6A09E667F3BCD000000000000000r) ; 1.414213562373095148
         }
-    .operator tanqf :vararg {
+    .static tanqf {
         this.__v(tanqf, 0.0, 0.0)
         this.__v(tanqf, 1.5, 4002C33ED50B887775A6000000000000r) ; 14.10141994717171939
         }
 
 ;;;;;;;;
 
-    .operator SetStatus :abs, :vararg {
+    .static SetStatus :abs {
 
         .new status:errno_t
         ifnb <_1>

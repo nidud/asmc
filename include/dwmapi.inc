@@ -358,7 +358,6 @@ DwmTetherContact proto WINAPI \
     DWMSC_NONE	    = 0x00000000,
     DWMSC_ALL	    = 0xFFFFFFFF
     }
-DEFINE_ENUM_FLAG_OPERATORS(DWM_SHOWCONTACT)
 
 DwmShowContact proto WINAPI \
 	   dwPointerID: DWORD,

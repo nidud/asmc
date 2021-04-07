@@ -1875,16 +1875,6 @@ else
 DEFAULT_UNREACHABLE equ 1
 endif
 
-ifdef __cplusplus
-DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
-	exitm<>
-	endm
-else
-DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
-	exitm<>
-	endm
-endif
-
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>
 	endm

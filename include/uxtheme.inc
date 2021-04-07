@@ -62,7 +62,6 @@ if (NTDDI_VERSION GE NTDDI_WIN8)
     TAPF_HASPERSPECTIVE	    = 0x10,
     }
 
-DEFINE_ENUM_FLAG_OPERATORS(TA_PROPERTY_FLAG);
 
 GetThemeAnimationProperty proto WINAPI \
 		hTheme: HTHEME,
@@ -87,8 +86,6 @@ GetThemeAnimationProperty proto WINAPI \
     TATF_HASINITIALVALUES    = 0x2,
     TATF_HASORIGINVALUES     = 0x4,
     }
-
-DEFINE_ENUM_FLAG_OPERATORS(TA_TRANSFORM_FLAG);
 
 .pragma pack(push, 8)
 

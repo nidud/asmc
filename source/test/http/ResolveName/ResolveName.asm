@@ -17,7 +17,7 @@ include tchar.inc
 
 option dllimport:none
 
-MAX_ADDRESS_STRING_LENGTH   equ 64
+MAX_ADDRESS_STRING_LENGTH equ 64
 
 ;;
 ;;  Asynchronous query context structure.
@@ -171,6 +171,7 @@ _tmain endp
 ;;
 ;; Callback function called by Winsock as part of asynchronous query complete
 ;;
+
     assume rsi:ptr QUERY_CONTEXT
     assume rdi:ptr ADDRINFOEX
 

@@ -848,7 +848,7 @@ RTL_BITS_OF_FIELD macro x, field
 
 
 .inline CONTAINING_RECORD fastcall address:ptr, type:abs, field:abs {
-	lea rax,[rcx+type.field]
+	lea rax,[rcx-type.field]
 	}
 
 ifndef __EXCPT_INC
@@ -1436,9 +1436,6 @@ DEFAULT_UNREACHABLE	equ <default: __assume(0)>
 else
 DEFAULT_UNREACHABLE	equ <>
 endif
-
-DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
-	endm
 
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>

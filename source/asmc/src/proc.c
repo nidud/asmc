@@ -2040,7 +2040,8 @@ static void win64_MoveRegParam( int i, int size, struct dsym *param )
     int mov = 0;
     int reg = T_XMM0 + i;
 
-    if ( param->sym.mem_type & MT_FLOAT || param->sym.mem_type == MT_YWORD
+    if ( ( param->sym.mem_type & MT_FLOAT && param->sym.mem_type != MT_REAL10 )
+	 || param->sym.mem_type == MT_YWORD
 	 || ( CurrProc->sym.langtype == LANG_VECTORCALL && param->sym.mem_type == MT_OWORD ) ) {
 	if ( param->sym.mem_type == MT_REAL4 ||
 	     param->sym.mem_type == MT_REAL2 )

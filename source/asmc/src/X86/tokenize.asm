@@ -508,9 +508,13 @@ endif
             .break .if BYTE PTR _ltype[eax+1] & _SPACE
             .break .if eax == ','
 
-            .if eax == ')'
+            .if eax == '('
 
-                mov _brachets,0
+                inc _brachets
+
+            .elseif eax == ')'
+
+                dec _brachets
                 .break
             .endif
 
@@ -634,9 +638,10 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; v2.30: added invocation for reg(...) if typedef
         ; v2.32: .pragma comment(linker,"
 
+        inc _brachets
+
         .if [esi].index == 2 && [ebx-2*16].tokval == T_DOT_PRAGMA
 
-            inc _brachets
             inc _cstring
 
         .elseif ah == ')' && [ebx-16].token == T_REG
@@ -716,7 +721,6 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                             mov edx,[edx]
                             .if edx == "tSC@"
 
-                                inc _brachets
                                 inc _cstring
                                 .endc
                             .endif
@@ -732,7 +736,6 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
                     .endc .if !( [eax].asym.flag & S_ISPROC )
                     mov ecx,T_HLL_PROC
-                    inc _brachets
                     inc _cstring
                     .endc
 
@@ -775,7 +778,6 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                   .case edx == SYM_EXTERNAL
                   .case [eax].asym.flag & S_ISPROC
                     mov ecx,T_HLL_PROC
-                    inc _brachets
                     inc _cstring
                     .endc
 

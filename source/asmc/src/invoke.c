@@ -1048,7 +1048,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	int	offset;
 	struct	dsym *p;
 
-	for ( ; curr ; curr = curr->nextparam ) {
+	for ( ; curr && numParam ; curr = curr->nextparam ) {
 	    numParam--;
 	    if ( PushInvokeParam( i, tokenarray, proc, curr, numParam, &r0flags ) == ERROR ) {
 		if ( !macro )
@@ -1153,8 +1153,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		else if ( sym->langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 )
 		    stk = 2;
 
-		curr = info->paralist;
-		for ( parmpos = 0; curr; curr = curr->nextparam, parmpos++ ) {
+		for ( parmpos = 0; parmpos < cnt; parmpos++ ) {
 
 		    int reg = 0;
 		    int ind = cnt - parmpos - 1;
@@ -1184,7 +1183,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 			    reg = parmpos + T_ZMM0;
 		    }
 
-		    if ( sym->langtype == LANG_WATCALL && parmpos < stk ) {
+		    if ( sym->langtype == LANG_WATCALL && parmpos < 4 ) {
 			if ( arg->sym.mem_type == MT_ABS ) {
 			    args[parmpos] = arg->sym.name;
 			    arg->sym.name = "";
@@ -1210,7 +1209,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		    else
 			strcat( p, tokenarray[i+1].tokpos );
 		}
-	    } else if ( info->has_vararg /*|| ( proc->sym.isstatic && ModuleInfo.Ofssize == USE64 )*/ ) {
+	    } else if ( info->has_vararg ) {
 		if ( tokenarray[i+1].tokval == T_ADDR && proc->sym.method )
 		    strcat( p, tokenarray[i+2].tokpos );
 		else
@@ -1220,9 +1219,6 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		if ( proc->sym.isstatic ) {
 		    strcat( p, tokenarray[i+2].string_ptr );
 		    parmpos = 0;
-		    if ( !proc->sym.method )
-			cnt--;
-
 		} else
 		    strcat( p, args[0] );
 		for ( ; parmpos < cnt; parmpos++ ) {

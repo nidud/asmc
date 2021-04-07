@@ -79,13 +79,17 @@ ClassProto2 proc class:string_t, method:string_t, item:ptr com_item, args:string
   local langtype:int_t
 
     strcpy( &buffer, class )
+
     mov ecx,item
     mov edx,[ecx].com_item.langtype
     mov langtype,edx
+
     lea edx,@CStr( "::" )
-    .if [ecx].com_item.vector
+    .if [ecx].com_item.vector || [ecx].com_item.method == T_DOT_STATIC
+
         lea edx,@CStr( "_" )
     .endif
+
     ClassProto( strcat( strcat( eax, edx ), method ), langtype, args, T_PROTO )
     ret
 
@@ -733,6 +737,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
     mov esi,ModuleInfo.ComStack
     .if esi
         .if !strcmp(eax, [esi].com_item.class)
+
             ClassProto2( name, name, esi, [ebx+16].tokpos )
             mov constructor,1
             jmp done
@@ -1294,31 +1299,45 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov ebx,get_param_name( ebx, &token, edi, &args, &is_id, &context )
         .return .if eax == ERROR
 
-        .if context
+        .if context ; { inline code }
+
             mov ecx,context
             mov context,NULL
+
             assume ecx:tok_t
+
             .if [ecx].token == T_STRING && [ecx].bytval == '{'
+
                 .if [ecx-16].token == T_RES_ID && [ecx-16].tokval == T_VARARG
+
                     inc is_vararg
                 .endif
+
                 mov context,[ecx].string_ptr
                 mov eax,[ecx].tokpos
                 mov byte ptr [eax],0
+
                 .while byte ptr [eax-1] <= ' '
+
                     .break .if eax <= [ecx-asm_tok].tokpos
                     sub eax,1
                 .endw
+
                 mov byte ptr [eax],0
                 mov [ecx].token,T_FINAL
             .endif
+
             assume ecx:nothing
+
         .endif
 
         lea edx,token
         .if is_id || [esi].com_item.type
+
             mov class,0
+
             .if [esi].com_item.type && is_id == 0
+
                 inc edx
             .endif
         .endif
@@ -1331,27 +1350,37 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov class_ptr,ecx
 
         .if [edx].com_item.sym
+
             mov ecx,[edx].com_item.sym
             mov ecx,[ecx].asym.name
         .endif
 
         .if !SymFind( strcat( strcpy( &class, ecx ), "Vtbl" ) )
+
             mov eax,CurrStruct
         .endif
+
         .if eax
+
             mov ecx,eax
             .if !SearchNameInStruct( ecx, edi, &i, 0 )
-                .if strcmp(edi, class_ptr)
+
+                .if strcmp(edi, class_ptr) ; constructor ?
+
                     ClassProto( edi, [esi].com_item.langtype, [ebx].tokpos, T_PROC )
                 .else
+
                     ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
                     inc constructor
                 .endif
             .endif
+
         .elseif [esi].com_item.type
+
             ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
             inc constructor
         .endif
+
         .endc .if context == 0 || Parse_Pass > PASS_1
 
         ; .operator + :type { ... }

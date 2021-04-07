@@ -3321,6 +3321,26 @@ continue:
         .elseif ( i != 0 || [ebx].dirtype != '{' )
 
             .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_STRING )
+            .if ( i == 0 && Token_Count > 1 )
+                .if ( _stricmp( [ebx].string_ptr, "define" ) == 0 )
+
+                    .if ( Parse_Pass == PASS_1 )
+
+                        strcat( strcpy( CurrSource, [ebx+16].string_ptr ), " equ " )
+                        .if ( [ebx+32].token == T_FINAL )
+
+                            strcat( eax, "1" )
+                        .else
+                            strcat( eax, [ebx+32].tokpos )
+                        .endif
+                        .if PreprocessLine( &tokenarray )
+
+                            .return asmerr(2008, [ebx].string_ptr )
+                        .endif
+                    .endif
+                    .return NOT_ERROR
+                .endif
+            .endif
             .return asmerr(2008, [esi].string_ptr )
         .endif
     .endif

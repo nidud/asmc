@@ -192,8 +192,7 @@ abs_param proc uses ebx pp:dsym_t, index:int_t, param:dsym_t, paramvalue:string_
           [ecx].asym.flag & S_METHOD && !index )
 
         mov edx,[ecx].esym.procinfo
-        .if ( [edx].proc_info.flags & PROC_HAS_VARARG );|| \
-              ;[ecx].asym.sint_flag & SINT_ISSTATIC )
+        .if ( [edx].proc_info.flags & PROC_HAS_VARARG )
 
             .return
         .endif
@@ -218,13 +217,16 @@ abs_param endp
 ;-------------------------------------------------------------------------------
 ifndef __ASMC64__
 
-ms32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
+ms32_fcstart proc uses ebx pp:dsym_t, numparams:int_t, start:int_t,
     tokenarray:tok_t, value:ptr int_t
 
-    .return 0 .if GetSymOfssize(pp) == USE16
+    mov ebx,pp
 
-    .for ecx=0, eax=pp, eax=[eax].esym.procinfo,
-         eax=[eax].proc_info.paralist: eax: eax=[eax].esym.nextparam
+    .return 0 .if GetSymOfssize(ebx) == USE16
+
+    .for ecx=0,
+         eax=[ebx].esym.procinfo,
+         eax=[eax].proc_info.paralist : eax : eax=[eax].esym.nextparam, numparams--
 
         .if [eax].asym.state == SYM_TMACRO
 
@@ -993,8 +995,8 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
             AddLineQueueX( " movd %r, %s", ebx, paramvalue )
         .elseif [edx].asym.mem_type == MT_REAL8
             AddLineQueueX( " movq %r, %s", ebx, paramvalue )
-        .elseif [edx].asym.mem_type == MT_REAL10
-            AddLineQueueX( " movaps %r, xmmword ptr %s", ebx, paramvalue )
+        ;.elseif [edx].asym.mem_type == MT_REAL10
+        ;    AddLineQueueX( " movaps %r, xmmword ptr %s", ebx, paramvalue )
         .else
             AddLineQueueX( " movaps %r, %s", ebx, paramvalue )
         .endif
@@ -1270,7 +1272,8 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .return 1
     .endif
 
-    .if [edx].asym.mem_type & MT_FLOAT || [edx].asym.mem_type == MT_YWORD || \
+    .if ( [edx].asym.mem_type & MT_FLOAT && [edx].asym.mem_type != MT_REAL10 ) || \
+        ( [edx].asym.mem_type == MT_YWORD ) || \
         ( [edx].asym.mem_type == MT_OWORD && vector_call )
 
         .return CheckXMM(reg, paramvalue, regs_used, param)

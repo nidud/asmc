@@ -427,7 +427,11 @@ method_ptr:
 
                 .if ( Options.strict_masm_compat == FALSE && eax == NULL )
 
-                    .if !_stricmp(esi, "defined")
+                    mov eax,[esi]
+                    or  eax,0x20202020
+                    mov edx,[esi+4]
+                    or  edx,0x202020
+                    .if eax == 'ifed' && edx == 'den'
 
                         .if ( i && [ebx+16].token == T_OP_BRACKET )
 

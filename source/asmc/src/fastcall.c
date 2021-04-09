@@ -388,6 +388,8 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 		  ( args == 6 && sym->sym.mem_type == MT_OWORD ) ) {
 		if ( size < sym->sym.total_size )
 		    size = sym->sym.total_size;
+		if ( size == 10 ) /* REAL10 */
+		    size = 16;
 	    }
 	}
     }

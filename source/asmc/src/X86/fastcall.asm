@@ -741,6 +741,9 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
                   ( esi == 6 && [edx].asym.mem_type == MT_OWORD ) )
                 .if edi < [edx].asym.total_size
                     mov edi,[edx].asym.total_size
+                    .if edi == 10 ; real10
+                        mov edi,16
+                    .endif
                 .endif
             .endif
         .endf

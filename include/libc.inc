@@ -25,14 +25,14 @@ endif
 ;;
 ifdef _WIN64
 _IA64_		equ <>
-_M_X64		equ <>
+_M_X64		equ 100
 _M_IA64		equ <>
 elseifdef _AMD64
 _AMD64_		equ <>
-_M_AMD64	equ <>
+_M_AMD64	equ 100
 else
 _X86_		equ <>
-_M_IX86		equ 300
+_M_IX86		equ 600
 endif
 
 ifdef _LINUX

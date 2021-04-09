@@ -357,21 +357,25 @@ static void ProcessOption( char **cmdline, char *buffer )
 	    asmerr( 1006, p );
 	p += 5;
 	if ( strcmp( p, "AVX512" ) == 0 )
-	    j = 3;
+	    j = 5;
 	else if ( strcmp( p, "AVX2" ) == 0 )
-	    j = 2;
+	    j = 4;
 	else if ( strcmp( p, "AVX" ) == 0 )
+	    j = 3;
+	else if ( strcmp( p, "SSE2" ) == 0 )
+	    j = 2;
+	else if ( strcmp( p, "SSE" ) == 0 )
 	    j = 1;
 	switch ( j ) {
-	case 3:
+	case 5:
 	    define_name( "__AVX512BW__", "1" );
 	    define_name( "__AVX512CD__", "1" );
 	    define_name( "__AVX512DQ__", "1" );
 	    define_name( "__AVX512F__", "1" );
 	    define_name( "__AVX512VL__", "1" );
-	case 2:
+	case 4:
 	    define_name( "__AVX2__", "1" );
-	case 1:
+	case 3:
 	    define_name( "__AVX__", "1" );
 	    break;
 	default:
@@ -734,6 +738,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.fieldalign = j - 1;
 	return;
     case 'iZ':		// -Zi[0|1|2|3[5|8]]
+	//define_name( "_DEBUG", "1" );
 	Options.line_numbers = 1;
 	Options.debug_symbols = 1;
 	Options.debug_ext = CVEX_NORMAL;

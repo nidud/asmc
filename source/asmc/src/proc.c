@@ -2040,7 +2040,7 @@ static void win64_MoveRegParam( int i, int size, struct dsym *param )
     int mov = 0;
     int reg = T_XMM0 + i;
 
-    if ( ( param->sym.mem_type & MT_FLOAT && param->sym.mem_type != MT_REAL10 )
+    if ( param->sym.mem_type & MT_FLOAT
 	 || param->sym.mem_type == MT_YWORD
 	 || ( CurrProc->sym.langtype == LANG_VECTORCALL && param->sym.mem_type == MT_OWORD ) ) {
 	if ( param->sym.mem_type == MT_REAL4 ||
@@ -2048,7 +2048,7 @@ static void win64_MoveRegParam( int i, int size, struct dsym *param )
 	    mov = T_MOVD;
 	else if ( param->sym.mem_type == MT_REAL8 )
 	    mov = T_MOVQ;
-	else if ( param->sym.total_size == 16 )
+	else if ( param->sym.total_size <= 16 )
 	    mov = T_MOVAPS;
 	else if ( param->sym.total_size == 32 ) {
 	    mov = T_VMOVUPS;
@@ -2076,8 +2076,13 @@ static int win64_GetRegParams( int *vararg, int *size, struct dsym *param )
     }
     *vararg = 0;
     for ( params = 0; param; param = param->nextparam ) {
-	if ( param->sym.total_size > *size )
-	    *size = param->sym.total_size;
+	if ( param->sym.total_size > *size ) {
+	    /* v2.32.32 - REAL10 */
+	    if ( param->sym.mem_type == MT_REAL10 )
+		*size = 16;
+	    else
+		*size = param->sym.total_size;
+	}
 	params++;
     }
     return params;
@@ -2095,7 +2100,6 @@ static void win64_SaveRegParams( struct proc_info *info )
 	i--;
 	param = param->nextparam;
     }
-
     for ( --i; param && i >= 0; i-- ) {
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {

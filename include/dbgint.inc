@@ -143,7 +143,7 @@ _wdupenv_s_crt macro ps1, size, s2
 _malloc_base		proto __cdecl :size_t
 _nh_malloc_base		proto __cdecl :size_t, :int_t
 _nh_malloc_dbg		proto __cdecl :size_t, :int_t, :int_t, :string_t, :int_t
-_heap_alloc_dbg		proto __cdecl :size_t, :int_t, string_t, :int_t
+_heap_alloc_dbg		proto __cdecl :size_t, :int_t, :string_t, :int_t
 _calloc_base		proto __cdecl :size_t, :size_t
 _realloc_base		proto __cdecl :ptr, :size_t
 _recalloc_base		proto __cdecl :ptr, :size_t, :size_t

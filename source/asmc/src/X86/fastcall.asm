@@ -995,8 +995,8 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
             AddLineQueueX( " movd %r, %s", ebx, paramvalue )
         .elseif [edx].asym.mem_type == MT_REAL8
             AddLineQueueX( " movq %r, %s", ebx, paramvalue )
-        ;.elseif [edx].asym.mem_type == MT_REAL10
-        ;    AddLineQueueX( " movaps %r, xmmword ptr %s", ebx, paramvalue )
+        .elseif [edx].asym.mem_type == MT_REAL10
+            AddLineQueueX( " movaps %r, xmmword ptr %s", ebx, paramvalue )
         .else
             AddLineQueueX( " movaps %r, %s", ebx, paramvalue )
         .endif
@@ -1272,7 +1272,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
         .return 1
     .endif
 
-    .if ( [edx].asym.mem_type & MT_FLOAT && [edx].asym.mem_type != MT_REAL10 ) || \
+    .if ( [edx].asym.mem_type & MT_FLOAT )  || \
         ( [edx].asym.mem_type == MT_YWORD ) || \
         ( [edx].asym.mem_type == MT_OWORD && vector_call )
 

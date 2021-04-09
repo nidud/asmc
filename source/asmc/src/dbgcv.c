@@ -868,7 +868,10 @@ static void cv_write_symbol( struct dbgcv *cv, struct asym *sym )
 		if ( !( ModuleInfo.defOfssize == USE64 && i == 0 ) )
 		    q = lcl;
 		cnt[i]++;
-		typeref = ( q->sym.mem_type == MT_PTR ? cv_write_ptr_type( cv, &q->sym ) : GetTyperef( &q->sym, Ofssize ) );
+		if ( q->sym.mem_type == MT_EMPTY && q->sym.is_vararg )
+		    typeref = ST_PVOID;
+		else
+		    typeref = ( q->sym.mem_type == MT_PTR ? cv_write_ptr_type( cv, &q->sym ) : GetTyperef( &q->sym, Ofssize ) );
 		if ( q->sym.isarray ) {
 		    cv_write_array_type( cv, &q->sym, typeref, Ofssize );
 		    typeref = cv->currtype - 1;

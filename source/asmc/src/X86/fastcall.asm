@@ -86,11 +86,12 @@ ms64_regs label byte
     db T_RCX, T_RDX, T_R8,  T_R9
 
 fcscratch int_t 0  ; exclusively to be used by FASTCALL helper functions
-
+WordSize  int_t 0
 .code
 
 fastcall_init proc
     mov fcscratch,0
+    mov WordSize,ModuleInfo.wordsize
     ret
 fastcall_init endp
 
@@ -736,18 +737,26 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     .else ; v2.31.22: extend call stack to 6 * [32|64]
 
         .for ( edx = [edx].proc_info.paralist : edx : edx = [edx].esym.prev )
-            .if ( [edx].asym.mem_type & MT_FLOAT || \
-                  [edx].asym.mem_type == MT_YWORD || \
-                  ( esi == 6 && [edx].asym.mem_type == MT_OWORD ) )
-                .if edi < [edx].asym.total_size
-                    mov edi,[edx].asym.total_size
-                    .if edi == 10 ; real10
-                        mov edi,16
-                    .endif
-                .endif
+
+            .if [edx].asym.total_size > edi
+
+                .switch ( [edx].asym.mem_type )
+                .case MT_REAL10
+                .case MT_OWORD
+                .case MT_REAL16
+                    mov edi,16
+                    .endc
+                .case MT_YWORD
+                    mov edi,32
+                    .endc
+                .case MT_ZWORD
+                    mov edi,64
+                    .endc
+                .endsw
             .endif
         .endf
     .endif
+    mov WordSize,edi
 
     .if eax < esi
         mov eax,esi
@@ -1047,15 +1056,12 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     mov edi,opnd
 
     mov eax,index
-    shl eax,3
+    mul WordSize
     mov arg_offset,eax
 
     mov ecx,pp
     .if [ecx].esym.sym.langtype == LANG_VECTORCALL
         mov vector_call,TRUE
-        .if index < 6
-            add arg_offset,eax
-        .endif
     .endif
 
     mov ebx,param

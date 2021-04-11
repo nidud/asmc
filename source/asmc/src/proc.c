@@ -950,7 +950,10 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    else {
 		paranode->sym.offset = offset;
 		proc->e.procinfo->stackparam = TRUE;
-		offset += ROUND_UP( paranode->sym.total_size, CurrWordSize );
+		curr = ROUND_UP( paranode->sym.total_size, CurrWordSize );
+		if ( curr > CurrWordSize && paranode->sym.mem_type == MT_TYPE )
+		    curr = CurrWordSize; /* large types to pointer.. */
+		offset += curr;
 	    }
 	}
     }
@@ -2069,7 +2072,10 @@ static int win64_GetRegParams( int *vararg, int *size, struct dsym *param )
 {
     int params;
 
-    *size = 8;
+    if ( CurrProc->sym.langtype == LANG_VECTORCALL )
+	*size = 16;
+    else
+	*size = 8;
     if ( param && param->sym.is_vararg == TRUE ) {
 	*vararg = 1;
 	return 4;
@@ -2077,11 +2083,19 @@ static int win64_GetRegParams( int *vararg, int *size, struct dsym *param )
     *vararg = 0;
     for ( params = 0; param; param = param->nextparam ) {
 	if ( param->sym.total_size > *size ) {
-	    /* v2.32.32 - REAL10 */
-	    if ( param->sym.mem_type == MT_REAL10 )
+	    switch ( param->sym.mem_type ) { /* limit to float/vector.. */
+	    case MT_REAL10: /* v2.32.32 - REAL10 */
+	    case MT_OWORD:
+	    case MT_REAL16:
 		*size = 16;
-	    else
-		*size = param->sym.total_size;
+		break;
+	    case MT_YWORD:
+		*size = 32;
+		break;
+	    case MT_ZWORD:
+		*size = 64;
+		break;
+	    }
 	}
 	params++;
     }
@@ -2098,6 +2112,8 @@ static void win64_SaveRegParams( struct proc_info *info )
     i = win64_GetRegParams( &vararg, &size, param );
     while ( i > maxregs ) {
 	i--;
+	if ( Parse_Pass == PASS_1 && param->sym.is_vararg == FALSE && size >= 16 )
+	    param->sym.offset = 16 + i * size;
 	param = param->nextparam;
     }
     for ( --i; param && i >= 0; i-- ) {
@@ -2105,7 +2121,7 @@ static void win64_SaveRegParams( struct proc_info *info )
 	if ( param->sym.is_vararg == FALSE ) {
 	    if ( param->sym.used || vararg || Parse_Pass == PASS_1 )
 		win64_MoveRegParam( i, size, param );
-	    if ( size >= 16 ) /* v2.30 - update param offset */
+	    if ( Parse_Pass == PASS_1 && size >= 16 ) /* v2.30 - update param offset */
 		param->sym.offset = 16 + i * size;
 	    param = param->nextparam;
 	} else if ( i < 4 ) { /* v2.09: else branch added */
@@ -2203,12 +2219,13 @@ static int write_default_prologue( void )
 
 		    if ( p ) {
 			/* v2.23 - skip adding if stackbase is not EBP */
-			if ( ( ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ||
-			   ( Parse_Pass == PASS_1 && info->pe_type ) )
-
-			    for ( p = info->paralist; p; p = p->nextparam )
-				if ( p->sym.state != SYM_TMACRO ) /* register param? */
+			if ( ( p->sym.offset == 8 && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ||
+			    ( p->sym.offset == 16 && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_RBP ) ) {
+			    for ( p = info->paralist; p; p = p->nextparam ) {
+				if ( p->sym.state != SYM_TMACRO )
 				    p->sym.offset += offset;
+			    }
+			}
 		    }
 		}
 	    }
@@ -2319,7 +2336,6 @@ static int write_default_prologue( void )
 
 	if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS ) {
 	    win64_SaveRegParams( info );
-	    //RunLineQueue();
 	} else if ( ModuleInfo.fctype == FCT_VEC64 && Parse_Pass == PASS_1 ) {
 	    /* set param offset to 16 */
 	    for ( cnt = 0, offset = 16, p = info->paralist; p; p = p->nextparam, offset += 16, cnt++ )
@@ -2348,13 +2364,13 @@ static int write_default_prologue( void )
 	if ( p ) {
 	    /* v2.23 - skip adding if stackbase is not EBP */
 	    if ( ( p->sym.offset == 8 && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ||
-	    ( Parse_Pass == PASS_1 && info->pe_type && ModuleInfo.Ofssize == USE64 ) )
-
-	    for ( p = info->paralist; p; p = p->nextparam )
-		if ( p->sym.state != SYM_TMACRO ) /* register param? */
-		    p->sym.offset += offset;
+		( p->sym.offset == 16 && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_RBP ) ) {
+		for ( p = info->paralist; p; p = p->nextparam ) {
+		    if ( p->sym.state != SYM_TMACRO )
+			p->sym.offset += offset;
+		}
+	    }
 	}
-
     }
 
     if( sysstack || info->locallist || info->stackparam || info->has_vararg || info->forceframe ) {
@@ -2489,7 +2505,7 @@ runqueue:
  * will also work only in those cases!
  */
 
-/*static*/ void SetLocalOffsets( struct proc_info *info )
+void SetLocalOffsets( struct proc_info *info )
 {
     struct dsym *curr;
     int cntxmm = 0;
@@ -2798,7 +2814,7 @@ static void write_default_epilogue( void )
 		    if ( ModuleInfo.epilogueflags )
 			AddLineQueueX( "lea %r, [%r+%d]", stackreg[ModuleInfo.Ofssize],
 				stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
-		    else
+		    else if ( info->localsize )
 			AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
 		}
 		pop_register( CurrProc->e.procinfo->regslist );

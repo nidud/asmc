@@ -262,7 +262,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
     struct line_status	ls;
     struct asm_tok	tok[2];
     struct mname_list	mnames[MAX_PLACEHOLDERS]; /* there are max 255 placeholders */
-    char		buffer[MAX_LINE_LEN];
+    char *		buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     info = macro->e.macroinfo;
 

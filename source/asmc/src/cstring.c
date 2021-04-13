@@ -33,7 +33,7 @@ static void GetCurrentSegment( char *buffer )
 static int ParseCString( char *lbuf, char *buffer, char *string,
 	char **pStringOffset, char *pUnicode )
 {
-	char sbuf[MAX_LINE_LEN]; /* "binary" string */
+	char *sbuf; /* "binary" string */
 	char Unicode;
 	char *src,*des,*sbp;
 	char *p;
@@ -42,6 +42,7 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 	long dw;
 	struct str_item *sp;
 
+	sbuf = MemAlloc( ModuleInfo.g.max_line_len );
 	sbuf[0] = NULLC;
 
 	src = string;
@@ -239,6 +240,7 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 		    } else {
 			sprintf( lbuf, "DS%04X", sp->index );
 		    }
+		    MemFree(sbuf);
 		    return 0;
 		}
 	    }
@@ -257,6 +259,7 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 	sp->next = ModuleInfo.g.StrStack;
 	ModuleInfo.g.StrStack = sp;
 	strcpy( sp->string, sbuf );
+	MemFree(sbuf);
 	return 1;
 }
 
@@ -269,14 +272,18 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 	char *p,*q;
 	char b_label[64];
 	char b_seg[64];
-	char b_line[MAX_LINE_LEN];
-	char b_data[MAX_LINE_LEN];
-	char buffer[MAX_LINE_LEN];
+	char *b_line;
+	char *b_data;
+	char *buffer;
 	char *StringOffset;
 	int brackets = 0;
 	char Unicode;
 	char a,b;
 	int lineflags;
+
+	buffer = MemAlloc( ModuleInfo.g.max_line_len * 3 );
+	b_data = buffer + ModuleInfo.g.max_line_len;
+	b_line = b_data + ModuleInfo.g.max_line_len;
 
 	if ( ModuleInfo.strict_masm_compat == 0 ) {
 	    /*
@@ -303,8 +310,10 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 		}
 		i++;
 	    }
-	    if ( e == 0 || c == 0 )
+	    if ( e == 0 || c == 0 ) {
+		MemFree( buffer );
 		return 0;
+	    }
 
 	    rc++;
 	    p = LineStoreCurr->line;
@@ -410,6 +419,7 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 	   }
 	   ModuleInfo.line_flags = lineflags;
 	}
+	MemFree( buffer );
 	return rc;
 }
 
@@ -417,8 +427,8 @@ int GenerateCString( int i, struct asm_tok tokenarray[] )
 
 int CString( char *buffer, struct asm_tok tokenarray[] )
 {
-	char string[MAX_LINE_LEN];
-	char cursrc[MAX_LINE_LEN];
+	char *string;
+	char *cursrc;
 	char dlabel[32];
 	char *StringOffset;
 	char Unicode;
@@ -477,6 +487,9 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 	    sprintf(buffer, "DS%04X", sp->index);
 	    return 1;
 	}
+
+	string = MemAlloc( ModuleInfo.g.max_line_len * 3 );
+	cursrc = string + ModuleInfo.g.max_line_len;
 
 	while ( tokenarray[i].token != T_FINAL ) {
 
@@ -560,6 +573,7 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 	    }
 	    i++;
 	}
+	MemFree( string );
 	return rc;
 }
 

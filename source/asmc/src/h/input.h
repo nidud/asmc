@@ -77,6 +77,7 @@ extern void ClearSrcStack( void );
 extern unsigned get_curr_srcfile( void );
 extern void set_curr_srcfile( unsigned, uint_32 );
 extern char *GetFName( unsigned );
+extern int  InputExtend( struct line_status *, struct asm_tok ** );
 
 #define GetAlignedPointer( x, size ) ( x + ( ( size + 1 + sizeof(void *) - 1 ) & ~( sizeof(void *) - 1 ) ) )
 

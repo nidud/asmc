@@ -521,8 +521,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
     mov isid,0
     .if [ebx+16].token == T_COMMA
         mov isid,1
-        mov edx,[ebx].string_ptr
-        strcpy( &id, edx )
+        strcpy( &id, [ebx].string_ptr )
         add ebx,32
     .endif
 

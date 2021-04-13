@@ -12,6 +12,7 @@ struct com_item {
     struct asym *sym;
     int type;
     int vector;
+    int method; /* INLINE/OPERATOR/STATIC */
 };
 
 static void ClassProto(char *name, int langtype, char *args, int type)
@@ -38,12 +39,12 @@ static void ClassProto(char *name, int langtype, char *args, int type)
         AddLineQueueX( "%s %r %s", name, type, pargs );
 }
 
-static void ClassProto2(char *name, char *method, struct com_item *item, char *args)
+static void ClassProto2( char *name, char *method, struct com_item *item, char *args )
 {
-    char buffer[128];
+    char buffer[256];
 
     strcpy( buffer, name );
-    if ( item->vector )
+    if ( item->vector || item->method == T_DOT_STATIC )
         strcat( buffer, "_" );
     else
         strcat( buffer, "::" );
@@ -53,7 +54,7 @@ static void ClassProto2(char *name, char *method, struct com_item *item, char *a
 
 static void AddPublic( struct com_item *com, struct dsym *sp )
 {
-    char q[128];
+    char q[256];
     char *name;
     char *method;
     struct sfield *fl;
@@ -93,7 +94,7 @@ static void AddPublic( struct com_item *com, struct dsym *sp )
 
 static int OpenVtbl( struct com_item *com )
 {
-    char q[128];
+    char q[256];
     struct asym *sym;
 
     AddLineQueueX( "%sVtbl struct", com->class );
@@ -416,12 +417,12 @@ int GetTypeId( char *buffer, struct asm_tok tokenarray[] )
   int addr,i,j,g,e;
   struct expr opnd;
   int tokval;
-  char id[128];
+  char id[256];
   int type;
   int size;
   int is_void;
   int is_id;
-  char name[128];
+  char name[256];
   struct asym *sym;
   struct asym *stp;
 
@@ -454,8 +455,7 @@ int GetTypeId( char *buffer, struct asm_tok tokenarray[] )
     is_id = 0;
     if ( tokenarray[i+1].token == T_COMMA ) {
         is_id = 1;
-        if ( tokenarray[i].string_ptr[0] != '?' && tokenarray[i].string_ptr[1] != '\0' )
-            strcpy( id, tokenarray[i].string_ptr );
+        strcpy( id, tokenarray[i].string_ptr );
         i += 2;
     }
 
@@ -573,7 +573,7 @@ int GetTypeId( char *buffer, struct asm_tok tokenarray[] )
                 break;
             }
             if ( !is_void )
-                GetResWName(e, name);
+                _strupr( GetResWName( e, name ) );
             break;
         }
         is_void = 1;
@@ -593,42 +593,29 @@ int GetTypeId( char *buffer, struct asm_tok tokenarray[] )
     }
 
     if ( is_void )
-        strcpy( name, "void" );
+        strcpy( name, "VOID" );
+
+    if ( is_id ) {
+        strcpy( buffer, id );
+        buffer += strlen( buffer );
+    }
 
     switch ( type ) {
     case tiImmediat:
-        if ( is_id )
-            sprintf( buffer, "%s?i%d", id, size );
-        else
-            sprintf( buffer, "imm_%d", size );
+        sprintf( buffer, "IMM%d", size );
         return 1;
     case tiFloat:
-        if ( is_id )
-            sprintf( buffer, "%s?flt", id );
-        else
-            strcpy( buffer, "imm_float" );
+        strcpy( buffer, "IMMFLT" );
         return 1;
     case tiRegister:
-        if ( is_id )
-            sprintf( buffer, "%s?r%d", id, size );
-        else
-            sprintf( buffer, "reg_%d", size );
+        sprintf( buffer, "REG%d", size );
         return 1;
     case tiMemory:
-        if ( is_id )
-            sprintf( buffer, "%s?%s", id, name );
-        else {
-            strcpy( buffer, "mem_" );
-            strcat( buffer, name );
-        }
+        strcpy( buffer, name );
         return 1;
     case tiPointer:
-        if ( is_id )
-            sprintf( buffer, "%s?p%s", id, name );
-        else {
-            strcpy( buffer, "ptr_" );
-            strcat( buffer, name );
-        }
+        strcpy( buffer, "P" );
+        strcat( buffer, name );
         return 1;
     }
     return 0;
@@ -727,7 +714,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
         strcat( buffer, language );
     }
 
-    if ( IsCom ) {
+    if ( IsCom && ( !ModuleInfo.g.ComStack || ModuleInfo.g.ComStack->method != T_DOT_STATIC ) ) {
 
         strcat(buffer, " :ptr");
 
@@ -922,21 +909,25 @@ char *ParseMacroArgs(char *buffer, int count, char *args)
         while ( *p == '\t' || *p == ' ' )
             p++;
 
-        if ( *p == ':' ) {
+        if ( *p == ':' || !is_valid_id_first_char( *p ) ) {
+
             q += sprintf( q, "_%u, ", i );
+
         } else {
+
             while ( is_valid_id_char( *p ) )
                 *q++ = *p++;
+
             *q++ = ',';
             *q++ = ' ';
             *q = '\0';
         }
 
         s = p;
-        if ( (p = strchr(p, ',')) != NULL)
+        if ( ( p = strchr( p, ',' ) ) != NULL)
             p++;
         else
-            p += strlen(s);
+            p = s + strlen(s);
 
         if ((s = strchr(s, '=')) != NULL) {
 
@@ -1040,13 +1031,13 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
     int         rc = NOT_ERROR;
     int         cmd = tokenarray[i].tokval;
     int         x,q,args;
-    char        clname[128];
+    char        clname[256];
     char *      p;
     char *      ptr;
     char *      public_class;
     int         is_id;
     int         is_vararg;
-    char        token[128];
+    char        token[256];
     char        name[512];
     uint_32     u;
     int         context;
@@ -1084,6 +1075,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             ;
         else if ( o == NULL || CurrStruct == NULL )
             return ( asmerr( 1011 ) );
+        o->method = cmd;
 
         /* .operator + :type, :type */
         is_vararg = 0;
@@ -1151,10 +1143,19 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         RunLineQueue();
         if ( constructor ) {
             sym = SymFind( token );
-            if ( sym )
-                sym->method = 1;
+            if ( sym ) {
+                if ( cmd != T_DOT_STATIC )
+                    sym->method = 1;
+                if ( cmd == T_DOT_STATIC && is_vararg == 0 )
+                    sym->isstatic = 1;
+            }
         }
         MacroInline( token, args, tokenarray[i].tokpos, p, is_vararg );
+        if ( !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 ) ) {
+            sym = SymFind( token );
+            if ( sym )
+                sym->isstatic = 1;
+        }
         return rc;
 
     case T_DOT_COMDEF:

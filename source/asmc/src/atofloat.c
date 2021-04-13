@@ -168,7 +168,7 @@ void quad_resize( struct expr *opnd, unsigned size )
         if ( opnd->negative )
             opnd->fvalue *= -1;
         opnd->mem_type = MT_REAL4;
-    } else {
+    } else if ( size == 2 )  {
         if ( opnd->chararray[15] & 0x80 ) {
             opnd->negative = 1;
             opnd->chararray[15] &= 0x7F;

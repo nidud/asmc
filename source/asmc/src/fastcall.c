@@ -41,6 +41,7 @@ enum reg_used_flags {
 };
 
 static int fcscratch;  /* exclusively to be used by FASTCALL helper functions */
+static int WordSize;
 
 #ifndef __ASMC64__
 static	int ms32_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
@@ -118,23 +119,54 @@ unsigned char elf64_param_index[] = {
 
 /* segment register names, order must match ASSUME_ enum */
 
+int abs_param( struct dsym const *proc, int index, struct dsym *param, char *paramvalue )
+{
+    /* skip arg if :vararg and inline */
+
+    if ( param->sym.is_vararg && proc->sym.isinline )
+	return 1;
+
+    /* skip loading class pointer if :vararg and inline */
+
+    if ( proc->sym.isinline && proc->sym.method && !index ) {
+	if ( proc->e.procinfo->has_vararg )
+	    return 1;
+    }
+
+    /* skip arg if :abs */
+
+    if ( param->sym.mem_type == MT_ABS ) {
+
+	param->sym.name = LclAlloc( strlen( paramvalue ) + 1 );
+	strcpy( param->sym.name, paramvalue );
+	return 1;
+    }
+    return 0;
+}
+
 #ifndef __ASMC64__
 static int ms32_fcstart( struct dsym const *proc, int numparams, int start,
 	struct asm_tok tokenarray[], int *value )
 {
+    int i = 0;
     struct dsym *param;
     if ( GetSymOfssize( &proc->sym ) == USE16 )
 	return( 0 );
     /* v2.07: count number of register params */
-    for ( param = proc->e.procinfo->paralist ; param ; param = param->nextparam )
+    for ( param = proc->e.procinfo->paralist ; param ; param = param->nextparam ) {
 	if ( param->sym.state == SYM_TMACRO )
 	    fcscratch++;
+	else if ( param->sym.mem_type != MT_ABS )
+	    i += 4;
+    }
+    *value = i;
     return( 1 );
 }
 
 static void ms32_fcend( struct dsym const *proc, int numparams, int value )
 {
-    /* nothing to do */
+    if ( value && proc->sym.isinline )
+	AddLineQueueX( " add esp, %u", value );
     return;
 }
 
@@ -142,14 +174,22 @@ static int ms32_param( struct dsym const *proc, int index, struct dsym *param, b
 {
     enum special_token const *pst;
 
+    if ( abs_param( proc, index, param, paramvalue ) ) {
+
+	if ( param->sym.state == SYM_TMACRO )
+	    fcscratch--;
+
+	return 1;
+    }
     if ( param->sym.state != SYM_TMACRO )
 	return( 0 );
+
     if ( GetSymOfssize( &proc->sym ) == USE16 ) {
 	pst = ms16_regs + fcscratch;
 	fcscratch++;
     } else {
 	fcscratch--;
-	pst = ms32_regs + fcscratch;
+	pst = ms32_regs + index;
     }
     if ( addr )
 	AddLineQueueX( " lea %r, %s", *pst, paramvalue );
@@ -172,7 +212,10 @@ static int ms32_param( struct dsym const *proc, int index, struct dsym *param, b
 		if ( opnd->base_reg->tokval == reg )
 		    return( 1 );
 	    }
-	    AddLineQueueX( " mov %r, %s", reg, paramvalue );
+	    if ( paramvalue[0] == '0' && paramvalue[1] == '\0' )
+		AddLineQueueX( " xor %r, %r", reg, reg );
+	    else
+		AddLineQueueX( " mov %r, %s", reg, paramvalue );
 	}
     }
     if ( *pst == T_AX )
@@ -369,7 +412,6 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 
     for ( i = start; tokenarray[i].token != T_FINAL; i++ ) {
 	if ( tokenarray[i].token == T_REG && tokenarray[i+1].token == T_DBL_COLON ) {
-
 	    i += 2;
 	    fcscratch++;
 	}
@@ -384,15 +426,25 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 		numparams++;
     } else { /* v2.31.22: extend call stack to 6 * [32|64] */
 	for ( sym = proc->e.procinfo->paralist; sym; sym = sym->prev ) {
-	    if ( sym->sym.mem_type & MT_FLOAT || sym->sym.mem_type == MT_YWORD ||
-		  ( args == 6 && sym->sym.mem_type == MT_OWORD ) ) {
-		if ( size < sym->sym.total_size )
-		    size = sym->sym.total_size;
-		if ( size == 10 ) /* REAL10 */
+	    if ( size < sym->sym.total_size ) {
+		switch ( sym->sym.mem_type ) {
+		case MT_REAL10:
+		case MT_OWORD:
+		case MT_REAL16:
 		    size = 16;
+		    break;
+		case MT_YWORD:
+		    size = 32;
+		    break;
+		case MT_ZWORD:
+		    size = 64;
+		    break;
+		}
 	    }
 	}
     }
+    WordSize = size;
+
     if ( numparams < args )
 	numparams = args;
     else if ( numparams & 1 )
@@ -410,6 +462,7 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 	    sym_ReservedStack->value = size;
     } else if ( size )
 	AddLineQueueX( " sub %r, %d", T_RSP, size );
+
     /* since Win64 fastcall doesn't push, it's a better/faster strategy to
      * handle the arguments from left to right.
      *
@@ -421,7 +474,7 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 static void ms64_fcend( struct dsym const *proc, int numparams, int value )
 {
     /* use <value>, which has been set by ms64_fcstart() */
-    if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
+    if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) && value ) {
 	if ( ModuleInfo.epilogueflags )
 	    AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, value );
 	else
@@ -519,6 +572,8 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	    AddLineQueueX( " movd %r, %s", xmm, paramvalue );
 	else if ( param->sym.mem_type == MT_REAL8 )
 	    AddLineQueueX( " movq %r, %s", xmm, paramvalue );
+	else if ( param->sym.mem_type == MT_REAL10 )
+	    AddLineQueueX( " movaps %r, xmmword ptr %s", xmm, paramvalue );
 	else
 	    AddLineQueueX( " movaps %r, %s", xmm, paramvalue );
     }
@@ -551,6 +606,9 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
     /* v2.11: default size is 32-bit, not 64-bit */
     /* v2.24: 64-bit if [reg].. */
+
+    if ( abs_param( proc, index, param, paramvalue ) )
+	return( 1 );
 
     psize = GetPSize( addr, (struct asym *)param, opnd );
 
@@ -587,9 +645,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     }
 
     index += fcscratch;
-    offset = index*8;
-    if ( vector_call && index < 6 )
-	offset += offset;
+    offset = index * WordSize;
 
     /* skip arg if :vararg and inline */
 
@@ -1441,24 +1497,19 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
     int opc;
     int qual;
     int i,a,b;
+    int psize;
     char regs[64];
     char *reg[4];
     char *p;
-    int psize = SizeFromMemtype( param->sym.mem_type, USE_EMPTY, param->sym.type );
 
-    if ( param->sym.mem_type == MT_ABS ) {
-	param->sym.name = LclAlloc( strlen(paramvalue) + 1 );
-	strcpy( param->sym.name, paramvalue );
-	fcscratch += CurrWordSize;
-	return 1;
+    if ( abs_param( proc, index, param, paramvalue ) ) {
+
+	if ( param->sym.mem_type == MT_ABS )
+	    fcscratch += CurrWordSize;
+	return( 1 );
     }
-    if ( param->sym.is_vararg &&  proc->sym.isinline )
-	return 1;
-
     if ( param->sym.state != SYM_TMACRO )
 	return( 0 );
-
-    fcscratch += CurrWordSize;
 
     /* the "name" might be a register pair */
 
@@ -1466,6 +1517,10 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
     reg[1] = NULL;
     reg[2] = NULL;
     reg[3] = NULL;
+
+    fcscratch += CurrWordSize;
+    psize = SizeFromMemtype( param->sym.mem_type, USE_EMPTY, param->sym.type );
+
     if ( strchr( reg[0], ':' ) ) {
 	strcpy( regs, reg[0] );
 	fcscratch += CurrWordSize;
@@ -1553,5 +1608,6 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
 
 void fastcall_init(void)
 {
+    WordSize = ModuleInfo.wordsize;
     fcscratch = 0;
 }

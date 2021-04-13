@@ -1335,6 +1335,10 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		    if ( br_count == 0 )
 			break;
 		    br_count--;
+		} else if ( tokenarray[k].token == T_COMMA &&
+			 tokenarray[k+1].token == T_CL_BRACKET && !br_count ) {
+		    k++;
+		    break;
 		} else if ( tokenarray[k].token != T_COMMA &&
 			 tokenarray[k].token != T_DOT &&
 			 tokenarray[k].token != T_OP_SQ_BRACKET &&

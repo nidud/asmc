@@ -1096,9 +1096,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     }
     i = j;
 
-    if ( proc->sym.langtype == LANG_SYSCALL && info->has_vararg && ModuleInfo.Ofssize == USE64 ) {
+    if ( !macro && proc->sym.langtype == LANG_SYSCALL && info->has_vararg && ModuleInfo.Ofssize == USE64 ) {
 	 if ( porder )
-	    AddLineQueueX( " mov %r, 1", T_EAX );
+	    AddLineQueueX( " mov %r, %d", T_EAX, porder );
 	 else
 	    AddLineQueueX( " xor %r, %r", T_EAX, T_EAX );
     }

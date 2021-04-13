@@ -171,6 +171,272 @@ int ConstructorCall(
     return 0;
 }
 
+/* case = {0,2,..} */
+
+static char *AssignStruct( char *name, struct asym *sym, char *string, struct sfield *s )
+{
+  char val[256];
+  int array = 0;
+  int c;
+  char *p = string;
+  char *q;
+  struct dsym *d;
+
+    p++;
+    if ( sym ) {
+
+        while ( sym->state == SYM_TYPE && sym->type )
+            sym = sym->type;
+
+        d = (struct dsym *)sym;
+        s = d->e.structinfo->head;
+    } else
+        array++;
+
+    while ( 1 ) {
+
+        while ( *p == ' ' || *p == '\t' )
+            p++;
+
+        if ( *p == '}' || *p == '\0' )
+            break;
+
+        q = val;
+        if ( *p == '{' ) {
+
+            strcpy( q, name );
+            if ( s->sym.name[0] ) {
+                strcat( q, "." );
+                strcat( q, s->sym.name );
+            }
+            p = AssignStruct( q, s->sym.type, p, s );
+            if ( p == NULL )
+                break;
+            while ( *p == ' ' || *p == '\t' )
+                p++;
+
+        } else {
+
+            int br = 0;
+            char *e = q + 255;
+
+            *q = '\0';
+
+            while ( q < e ) {
+
+                if ( *p == '(' )
+                    br++;
+                else if ( *p == ')' )
+                    br--;
+                if ( p[0] == '\0' || ( !br && ( p[0] == ',' || p[0] == '}' ) ) )
+                    break;
+                *q++ = *p++;
+            }
+            *q = '\0';
+
+            for ( e = val; e < q && ( q[-1] == ' ' || q[-1] == '\t' ); ) {
+
+                q--;
+                *q = '\0';
+            }
+
+            if ( !array && val[0] && val[0] != '{' && s->sym.isarray ) {
+                struct asym *a = SymSearch( val );
+                if ( a && a->state == SYM_TMACRO ) {
+                    if ( a->string_ptr[0] == '{' ) {
+                        e = (char *)myalloca( strlen(p) + a->total_size + 2 );
+                        strcpy( e, a->string_ptr );
+                        p = strcat( e, p );
+                        continue;
+                    }
+                }
+            }
+
+            if ( val[0] ) {
+                if ( val[0] == '"' || ( val[0] == 'L' &&  val[1] == '"') )
+                    AddLineQueueX( " mov %s.%s,&@CStr(%s)", name, s->sym.name, val );
+                else if ( array )
+                    AddLineQueueX( " mov %s[%d],%s", name,
+                        s->sym.total_size / s->sym.total_length * ( array - 1 ), val );
+                else
+                    AddLineQueueX( " mov %s.%s,%s", name, s->sym.name, val );
+            }
+        }
+
+        if ( *p == '\0' )
+            break;
+        c = *p++;
+        if ( c != ',' )
+            break;
+        if ( array )
+            array++;
+        else
+            s = s->next;
+        if ( s == NULL )
+            break;
+    }
+    return p;
+}
+
+/* case = {...},{...}, */
+
+static char *AssignId( char *name, struct asym *sym, struct asym *type, char *string )
+{
+  char Id[128];
+  int size;
+  struct sfield f;
+  char *p;
+  int c,i;
+  int length;
+
+    if ( type == NULL ) {
+        memcpy( &f.sym, sym, sizeof( struct asym ) );
+        f.next = NULL;
+        return AssignStruct( name, NULL, string, &f );
+    }
+    if ( !sym->isarray )
+        return AssignStruct( name, type, string, NULL );
+
+    p = string + 1;
+    while ( *p == ' ' || *p == '\t' )
+        p++;
+
+    length = sym->total_length;
+    size   = sym->total_size / length;
+
+    for ( i = 0; length ; length--, i += size ) {
+
+        sprintf( Id, "%s[%d]", name, i );
+        p = AssignStruct( Id, type, p, NULL );
+        c = *p++;
+        if ( !c )
+            break;
+
+        while ( *p == ' ' || *p == '\t' )
+            p++;
+        if ( *p != '{' )
+            break;
+    }
+    return p;
+}
+
+/* case = {0} */
+
+static void ClearStruct( char *name, struct asym *sym )
+{
+  int i;
+  int size = sym->total_size;
+
+    AddLineQueueX( " xor eax,eax" );
+    if ( ModuleInfo.Ofssize == USE64 ) {
+        if ( size > 32 ) {
+            AddLineQueue ( " push rdi" );
+            AddLineQueue ( " push rcx" );
+            AddLineQueueX( " lea rdi,%s", name );
+            AddLineQueueX( " mov ecx,%d", size );
+            AddLineQueue ( " rep stosb" );
+            AddLineQueue ( " pop rcx" );
+            AddLineQueue ( " pop rdi" );
+        } else {
+            for ( i = 0; size >= 8; size -= 8, i += 8 )
+                AddLineQueueX( " mov qword ptr %s[%d],rax", name, i );
+            for ( ; size; size--, i++ )
+                AddLineQueueX( " mov byte ptr %s[%d],al", name, i );
+        }
+    } else {
+        if ( size > 16 ) {
+            AddLineQueue ( " push edi" );
+            AddLineQueue ( " push ecx" );
+            AddLineQueueX( " lea edi,%s", name );
+            AddLineQueueX( " mov ecx,%d", size );
+            AddLineQueue ( " rep stosb" );
+            AddLineQueue ( " pop ecx" );
+            AddLineQueue ( " pop edi" );
+        } else {
+            for ( i = 0; size >= 4; size -= 4, i += 4 )
+                AddLineQueueX( " mov dword ptr %s[%d],eax", name, i );
+            for ( ; size; size--, i++ )
+                AddLineQueueX( " mov byte ptr %s[%d],al", name, i );
+        }
+    }
+}
+
+static int AssignValue( char *name, int i, struct asm_tok tokenarray[] )
+{
+  char cc[128];
+  char *p;
+  struct expr opndx;
+  struct asym *sym;
+  int q,x;
+
+    i++;
+    if ( tokenarray[i].token == T_STRING && tokenarray[i].bytval == '{' ) {
+
+        sym = SymSearch( name );
+        if ( sym == NULL )
+            return asmerr( 2008, tokenarray[i].tokpos );
+
+        q = 0;
+        p = tokenarray[i].string_ptr;
+        while ( *p == ' ' || *p == '\t' )
+            p++;
+
+        if ( *p == '0' ) {
+
+            p++;
+            while ( *p == ' ' || *p == '\t' )
+                p++;
+
+            if ( *p == 0 )
+                q++;
+        }
+        if ( q )
+            ClearStruct( name, sym );
+        else
+            AssignId( name, sym, sym->type, tokenarray[i].tokpos );
+
+        return i + 1;
+    }
+
+    p = strcat( strcat( strcpy( cc, " mov " ), name ), ", " );
+    q = 0;
+
+    while ( 1 ) {
+        if ( tokenarray[i].token == T_FINAL )
+            break;
+        else if ( tokenarray[i].token == T_COMMA ) {
+            if ( q == 0  )
+                break;
+        } else if ( tokenarray[i].token == T_OP_BRACKET )
+            q++;
+        else if ( tokenarray[i].token == T_CL_BRACKET )
+            q--;
+
+        if ( tokenarray[i].token == T_INSTRUCTION )
+            strcat( p, " " );
+
+        if ( !q && tokenarray[i].token == T_STRING && tokenarray[i].bytval == '"' ) {
+            sym = SymSearch( name );
+            if ( sym && sym->mem_type & MT_PTR ) {
+                strcat( p, "&@CStr(" );
+                strcat( p, tokenarray[i].string_ptr );
+                strcat( p, ")" );
+                i++;
+                break;
+            }
+        }
+        strcat( p, tokenarray[i].string_ptr );
+        if ( ( tokenarray[i].token == T_INSTRUCTION ) ||
+            ( tokenarray[i].token == T_RES_ID && tokenarray[i].tokval == T_ADDR ) )
+            strcat( p, " " );
+        i++;
+    }
+    if ( q )
+        asmerr( 2157 );
+    AddLineQueueX( p );
+    return i;
+}
+
 int AddLocalDir( int i, struct asm_tok tokenarray[] )
 {
   char *p;
@@ -313,7 +579,9 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
 
                 i++; /* go past ')' */
                 ConstructorCall( tokenarray, name, &i, j, p, type );
-            } else
+            } else if ( tokenarray[i].token == T_DIRECTIVE && tokenarray[i].dirtype == DRT_EQUALSGN )
+                i = AssignValue( name, i, tokenarray );
+            else
                 return asmerr( 2065, "," );
         }
     } while ( i < Token_Count );

@@ -80,7 +80,7 @@ void AddLineQueueX( const char *fmt, ... )
     int_32 l;
     const char *s;
     const char *p;
-    char buffer[MAX_LINE_LEN];
+    char *buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     va_start( args, fmt );
     for ( s = fmt, d = buffer; *s; s++ ) {

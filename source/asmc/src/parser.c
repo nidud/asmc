@@ -2415,11 +2415,12 @@ int ParseLine( struct asm_tok tokenarray[] )
     uint_32		oldofs;
     struct code_info	CodeInfo;
     struct expr		opndx[MAX_OPND+1];
-    char		hllbuf[MAX_LINE_LEN];
-    char		buffer[MAX_LINE_LEN];
+    char *		buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     if ( CurrEnum != NULL && tokenarray[0].token == T_ID )
 	return EnumDirective(0, tokenarray);
+
+lcontinue:
 
     i = 0;
     j = 0;
@@ -2515,6 +2516,12 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    tokenarray[1].token == T_DIRECTIVE && tokenarray[1].tokval == T_PROC ) {
 	    j++;
 	}
+    } else if ( tokenarray[0].token == T_DIRECTIVE && tokenarray[0].tokval == T_DOT_INLINE ) {
+	tokenarray[0].token = T_ID;
+	tokenarray[0].string_ptr = tokenarray[1].string_ptr;
+	tokenarray[1].token = T_DIRECTIVE;
+	tokenarray[1].tokval = T_PROTO;
+	tokenarray[1].dirtype = DRT_PROTO;
     }
 
     if ( j || tokenarray[i].token != T_INSTRUCTION ) {
@@ -2647,12 +2654,26 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    strcat( buffer, tokenarray[0].tokpos );
 	    strcpy( CurrSource, buffer );
 	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
-	    return ParseLine( tokenarray );
+	    goto lcontinue;
 
 	} else if ( i != 0 || tokenarray[0].dirtype != '{' ) {
 
 	    if ( CurrEnum && tokenarray[0].token == T_STRING )
 		return EnumDirective(0, tokenarray);
+	    if ( i == 0 && Token_Count > 1 ) {
+		if ( _stricmp( tokenarray[0].string_ptr, "define" ) == 0 ) {
+		    if ( Parse_Pass == PASS_1 ) {
+			strcat( strcpy( CurrSource, tokenarray[1].string_ptr ), " equ " );
+			if ( tokenarray[2].token == T_FINAL )
+			    strcat( CurrSource, "1" );
+			else
+			    strcat( CurrSource, tokenarray[2].tokpos );
+			if ( PreprocessLine( &tokenarray ) )
+			    return asmerr(2008, tokenarray[0].string_ptr );
+		    }
+		    return NOT_ERROR;
+		}
+	    }
 	    return( asmerr(2008, tokenarray[i].string_ptr ) );
 	}
     }

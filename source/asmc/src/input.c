@@ -34,6 +34,7 @@
 #include <macro.h>
 #include <input.h>
 #include <lqueue.h>
+#include <tokenize.h>
 
 #define DETECTCTRLZ 1 /* 1=Ctrl-Z in input stream will skip rest of the file */
 
@@ -533,7 +534,7 @@ char *GetTextLine( char *buffer )
 
     if ( curr->type == SIT_FILE ) {
 
-	if( my_fgets( buffer, MAX_LINE_LEN, curr->file ) ) {
+	if( my_fgets( buffer, ModuleInfo.g.max_line_len, curr->file ) ) {
 	    curr->line_num++;
 	    return( buffer );
 	}
@@ -605,16 +606,6 @@ void AddStringToIncludePath( char *string )
     }
 }
 
-/* input buffers
- * 1. src line stack ( default I86: 2*600  = 1200 )
- * 2. tokenarray     ( default I86: 150*12 = 1800 )
- * 3. string buffer  ( default I86: 2*600  = 1200 )
- */
-
-#define SIZE_SRCLINES	  ( MAX_LINE_LEN * ( MAX_MACRO_NESTING + 1 ) )
-#define SIZE_TOKENARRAY	  ( sizeof( struct asm_tok ) * MAX_TOKEN * MAX_MACRO_NESTING )
-#define SIZE_STRINGBUFFER ( MAX_LINE_LEN * MAX_MACRO_NESTING )
-
 /* PushInputStatus() is used whenever a macro or generated code is to be "executed".
  * after the macro/code has been assembled, PopInputStatus() is required to restore
  * the saved status.
@@ -664,6 +655,28 @@ void PopInputStatus( struct input_status *newstat )
 
 /* Initializer, called once for each module. */
 
+/* input buffers
+ * 1. src line stack ( default I86: 2*600  = 1200 )
+ * 2. tokenarray     ( default I86: 150*12 = 1800 )
+ * 3. string buffer  ( default I86: 2*600  = 1200 )
+ */
+
+#define MAX_TOKENEX	  ( ModuleInfo.g.max_line_len / 4 )
+#define SIZE_SRCLINES	  ( ModuleInfo.g.max_line_len * ( MAX_MACRO_NESTING + 1 ) )
+#define SIZE_TOKENARRAY	  ( sizeof( struct asm_tok ) * MAX_TOKENEX * MAX_MACRO_NESTING )
+#define SIZE_STRINGBUFFER ( ModuleInfo.g.max_line_len * MAX_MACRO_NESTING )
+
+void AllocInput( void )
+{
+    srclinebuffer = (char *)LclAlloc( SIZE_SRCLINES + SIZE_TOKENARRAY + SIZE_STRINGBUFFER );
+    /* the comment buffer is at the end of the source line buffer */
+    commentbuffer = srclinebuffer + SIZE_SRCLINES - MAX_LINE_LEN;
+    /* behind the comment buffer is the token buffer */
+    ModuleInfo.tokenarray = (struct asm_tok *)( srclinebuffer + SIZE_SRCLINES );
+    token_stringbuf = srclinebuffer + SIZE_SRCLINES + SIZE_TOKENARRAY;
+}
+
+
 void InputInit( void )
 {
     struct src_item *fl;
@@ -672,14 +685,9 @@ void InputInit( void )
 #if FILESEQ
     FileSeq.head = NULL;
 #endif
+    ModuleInfo.g.max_line_len = MAX_LINE_LEN;
 
-    srclinebuffer = (char *)LclAlloc( SIZE_SRCLINES + SIZE_TOKENARRAY + SIZE_STRINGBUFFER );
-    /* the comment buffer is at the end of the source line buffer */
-    commentbuffer = srclinebuffer + SIZE_SRCLINES - MAX_LINE_LEN;
-    /* behind the comment buffer is the token buffer */
-    ModuleInfo.tokenarray = (struct asm_tok *)( srclinebuffer + SIZE_SRCLINES );
-    token_stringbuf = srclinebuffer + SIZE_SRCLINES + SIZE_TOKENARRAY;
-
+    AllocInput();
     fl = PushSrcItem( SIT_FILE, CurrFile[ASM] );
     fl->srcfile = ModuleInfo.srcfile = AddFile( CurrFName[ASM] );
     FileCur->string_ptr = GetFName( fl->srcfile );
@@ -706,4 +714,41 @@ void InputFini( void )
     /* free items in ModuleInfo.g.FNames ( and FreeFile, if FASTMEM==0 ) */
     FreeFiles();
     ModuleInfo.tokenarray = NULL;
+}
+
+int InputExtend( struct line_status *p, struct asm_tok *tokptr[] )
+{
+    int i;
+    int len = ModuleInfo.g.max_line_len;
+    char *stringbuf = token_stringbuf;
+    char *linebuffer = srclinebuffer;
+    struct asm_tok *tokenarray = *tokptr;
+
+
+    if ( ModuleInfo.tokenarray != tokenarray )
+	return 0;
+    if ( p->start != srclinebuffer )
+	return 0;
+
+    ModuleInfo.g.max_line_len += len;
+    AllocInput();
+
+    *tokptr = ModuleInfo.tokenarray;
+    CurrSource = srclinebuffer;
+
+    /* copy source line buffer, token buffer, and string buffer */
+
+    memcpy( srclinebuffer, linebuffer, len * ( MAX_MACRO_NESTING + 1 ) );
+    memcpy( ModuleInfo.tokenarray, tokenarray,
+	sizeof( struct asm_tok ) * ( len / 4 ) * MAX_MACRO_NESTING );
+    memcpy( token_stringbuf, stringbuf, len * MAX_MACRO_NESTING );
+
+    p->output = p->output - stringbuf + token_stringbuf;
+    p->input  = p->input - p->start + srclinebuffer;
+
+    for ( i = 0; i <= p->index; i++ )
+	ModuleInfo.tokenarray[i].tokpos = tokenarray[i].tokpos - p->start + srclinebuffer;
+    p->start  = srclinebuffer;
+
+    return 1;
 }

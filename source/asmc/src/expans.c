@@ -78,7 +78,7 @@ char * myltoa( uint_32 value, char *buffer, unsigned radix, bool sign, bool addz
 static void FASTCALL SkipMacro( struct asm_tok tokenarray[] )
 /**************************************************/
 {
-    char buffer[MAX_LINE_LEN];
+    char *buffer = MemAlloc( ModuleInfo.g.max_line_len );
 
     /* The queue isn't just thrown away, because any
      * coditional assembly directives found in the source
@@ -87,10 +87,10 @@ static void FASTCALL SkipMacro( struct asm_tok tokenarray[] )
      while ( GetTextLine( buffer ) ) {
 	Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
     }
-
+    MemFree( buffer );
 }
 
-#define PARMSTRINGSIZE ( MAX_LINE_LEN * 2 )
+#define PARMSTRINGSIZE ( ModuleInfo.g.max_line_len * 2 )
 
 /* run a macro.
  * - macro:  macro item
@@ -152,14 +152,14 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 
     if ( info->parmcnt ) {
 	mi.parm_array = (char **)myalloca( info->parmcnt * sizeof( char * ) + PARMSTRINGSIZE );
-	parmstrings = (char *)(mi.parm_array + info->parmcnt);
+	parmstrings = (char *)( mi.parm_array + info->parmcnt * sizeof( char * ) );
 	/* init the macro arguments pointer */
 	currparm = parmstrings;
     }
 
     /* now get all the parameters from the original src line.
      * macro parameters are expanded if
-     * - it is a macro function call		or
+     * - it is a macro function call or
      * - the expansion operator (%) is found
      */
 
@@ -730,7 +730,7 @@ int ExpandText( char *line, struct asm_tok tokenarray[], unsigned int substitute
 
     sp[0] = line;
     pDst = StringBufferEnd;
-    StringBufferEnd += MAX_LINE_LEN;
+    StringBufferEnd += ModuleInfo.g.max_line_len;
     rc = NOT_ERROR;
     for ( lvl = 0; lvl >= 0; lvl-- ) {
 	pSrc = sp[lvl];
@@ -861,7 +861,7 @@ static ret_code ExpandTMacro( char * const outbuf, struct asm_tok tokenarray[], 
     int len;
     bool is_exitm;
     struct asym *sym;
-    char buffer[MAX_LINE_LEN];
+    char *buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     if ( level >= MAX_TEXTMACRO_NESTING ) {
 	return( asmerr( 2123 ) );
@@ -925,9 +925,9 @@ static int RebuildLine( const char *newstring, int i, struct asm_tok tokenarray[
 {
     char *dest;
     const char *src;
-    unsigned  newlen;
-    unsigned  rest = strlen( tokenarray[i].tokpos + oldlen ) + 1;
-    char buffer[MAX_LINE_LEN];
+    unsigned newlen;
+    unsigned rest = strlen( tokenarray[i].tokpos + oldlen ) + 1;
+    char *buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     dest = tokenarray[i].tokpos;
     memcpy( buffer, dest + oldlen, rest ); /* save content of line behind item */
@@ -939,8 +939,8 @@ static int RebuildLine( const char *newstring, int i, struct asm_tok tokenarray[
 		newlen++;
     }
     if ( newlen > oldlen )
-	if ( ( pos_line + newlen - oldlen + rest ) >= MAX_LINE_LEN ) {
-	    return( asmerr( 2039 ) );//, tokenarray[0].tokpos ) );
+	if ( ( pos_line + newlen - oldlen + rest ) >= ModuleInfo.g.max_line_len ) {
+	    return( asmerr( 2039 ) );
 	}
 
     if ( addbrackets ) {
@@ -984,7 +984,7 @@ ret_code ExpandToken( char *line, int *pi, struct asm_tok tokenarray[], int max,
     struct expr opndx;
     struct asym *sym;
     ret_code rc = NOT_ERROR;
-    char buffer[MAX_LINE_LEN];
+    char *buffer = (char *)myalloca( ModuleInfo.g.max_line_len );
 
     for ( ; i < max && tokenarray[i].token != T_COMMA; i++ ) {
 	/* v2.05: the '%' should only be handled as an operator if addbrackets==TRUE,

@@ -1210,11 +1210,12 @@ static uint_8 *cv_FlushSection( dbgcv *cv, uint_32 signature, uint_32 ex )
     return( (uint_8 *)cv->section );
 }
 
-
+#ifndef __UNIX__
 #define USEMD5
+#endif
 
 #ifdef USEMD5
-#define BUFSIZ 1024*4
+#define MD5BUFSIZ 1024*4
 #define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
 
 static int calc_md5( const char *filename, unsigned char *sum )
@@ -1226,10 +1227,10 @@ static int calc_md5( const char *filename, unsigned char *sum )
 
     if ( ( fp = fopen( filename, "rb" ) ) == NULL )
 	return 0;
-    file_buf = MemAlloc( BUFSIZ );
+    file_buf = MemAlloc( MD5BUFSIZ );
     MD5Init( &ctx );
     while ( !feof( fp ) ) {
-	i = fread( file_buf, 1, BUFSIZ, fp );
+	i = fread( file_buf, 1, MD5BUFSIZ, fp );
 	if ( ferror( fp ) ) {
 	    fclose( fp );
 	    MemFree( file_buf );

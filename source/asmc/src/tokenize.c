@@ -164,9 +164,9 @@ static int ConcatLine( char *src, int cnt, char *out, struct line_status *ls )
 	    max = strlen( p );
 	    if ( cnt == 0 )
 		*src++ = ' ';
-	    if ( ( src - ls->start ) + max >= MAX_LINE_LEN ) {
+	    if ( ( src - ls->start ) + max >= ModuleInfo.g.max_line_len ) {
 		asmerr( 2039 );
-		max = MAX_LINE_LEN - ( src - ls->start + 1 );
+		max = ModuleInfo.g.max_line_len - ( src - ls->start + 1 );
 		*(p+max) = NULLC;
 	    }
 	    memcpy( src, p, max+1 );
@@ -186,6 +186,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
     char    *dst = p->output;
     int	    count = 0;
     int	    level;
+    int	    maxlen = ModuleInfo.g.max_line_len - 32;
 
     symbol_o = *src;
 
@@ -195,7 +196,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 	buf->string_delim = symbol_o;
 	*dst++ = symbol_o;
 	src++;
-	for ( ; count < MAX_STRING_LEN; src++, count++ ) {
+	for ( ; count < maxlen; src++, count++ ) {
 	    c = *src;
 
 	    if( c == NULLC ) {
@@ -244,7 +245,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 	buf->string_delim = symbol_o;
 	symbol_c = ( symbol_o == '<' ? '>' : '}' );
 	src++;
-	for( level = 0; count < MAX_STRING_LEN; ) {
+	for( level = 0; count < maxlen; ) {
 	    c = *src;
 	    if( c == symbol_o ) { /* < or { ? */
 		level++;
@@ -277,7 +278,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 		tdst = dst;
 		tsrc = src;
 		tcount = count;
-		while (*src != delim && *src != NULLC && count < MAX_STRING_LEN-1 ) {
+		while (*src != delim && *src != NULLC && count < maxlen-1 ) {
 		    if ( symbol_o == '<' && *src == '!' && *(src+1) != NULLC )
 			src++;
 		    *dst++ = *src++;
@@ -349,7 +350,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 			    while ( islspace( *tmp ) ) tmp++;
 			}
 			/* this size check isn't fool-proved yet */
-			if ( strlen( tmp ) + count >= MAX_LINE_LEN ) {
+			if ( strlen( tmp ) + count >= ModuleInfo.g.max_line_len ) {
 			    asmerr( 2039 );
 			    return( ERROR );
 			}
@@ -378,10 +379,12 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 	 */
 	/* v2.05: also stop if a ')' is found - see literal2.asm regression test */
 
-	for( ; count < MAX_STRING_LEN && *src && !islspace( *src ) && *src != ','; ) {
+	for( ; count < maxlen && *src && !islspace( *src ) && *src != ','; ) {
 
-	    if ( *src == ')' ) {
-		_brachets = 0;
+	    if ( *src == '(' )
+		_brachets++;
+	    else if ( *src == ')' ) {
+		_brachets--;
 		break;
 	    }
 	    /* v2.08: stop also at < and % */
@@ -401,7 +404,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 		}
 	    }
 	    /* v2.08: handle '!' operator */
-	    if ( *src == '!' && *(src+1) && count < MAX_STRING_LEN - 1 )
+	    if ( *src == '!' && *(src+1) && count < maxlen - 1 )
 		*dst++ = *src++;
 	    *dst++ = *src++;
 	    count++;
@@ -409,7 +412,7 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 	break;
     }
 
-    if ( count == MAX_STRING_LEN ) {
+    if ( count == maxlen ) {
 	return( asmerr( 2041 ) );
     }
     *dst++ = NULLC;
@@ -464,6 +467,8 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 	/* v2.20: set _cstring to allow escape chars (\") in @CStr( string ) */
 	/* v2.20: removed auto off switch for asmc_syntax in macros */
 	/* v2.20: added more test code for label() calls */
+
+	_brachets++;
 
 	if ( *(p->input+1) == ')' && (buf-1)->token == T_REG ) {
 
@@ -529,7 +534,7 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 			    if ( sym->predefined ) {
 
 				if ( !strcmp( sym->name, "@CStr" ) ) {
-				    _brachets++;
+
 				    _cstring = '"';
 				    break;
 				}
@@ -548,7 +553,6 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 			    break;
 
 			flag = T_HLL_PROC;
-			_brachets++;
 			_cstring = '"';
 
 		    } else if ( state == SYM_STACK ||
@@ -557,7 +561,6 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 				sym->isproc ) {
 
 			flag = T_HLL_PROC;
-			_brachets++;
 			_cstring = '"';
 
 		    } else if ( state == SYM_TYPE ) { /* structure, union, typedef, record */
@@ -572,7 +575,6 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 				CurrSeg->e.seginfo->segtype == SEGTYPE_CODE ) {
 
 				flag = T_HLL_PROC;
-				_brachets++;
 				_cstring = '"';
 			    }
 
@@ -598,7 +600,6 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 			    if ( tok->token == T_OP_SQ_BRACKET ) {
 
 				flag = T_HLL_PROC;
-				_brachets++;
 				_cstring = '"';
 			    }
 			}
@@ -1221,7 +1222,7 @@ int Tokenize( char *line, unsigned int start, struct asm_tok tokenarray[],
 			while ( islspace( *ptr ) ) ptr++;
 			if ( *ptr ) {
 			    strcpy( p.input, ptr );
-			    if ( strlen( p.start ) >= MAX_LINE_LEN ) {
+			    if ( strlen( p.start ) >= ModuleInfo.g.max_line_len ) {
 				asmerr( 2039 );
 				p.index = start;
 				break;
@@ -1294,10 +1295,184 @@ int Tokenize( char *line, unsigned int start, struct asm_tok tokenarray[],
 	    }
 	}
 	p.index++;
-	if( p.index >= MAX_TOKEN ) {
+	if( p.index >= ModuleInfo.g.max_line_len / 4 ) {
 	    asmerr( 2141 );
 	    p.index = start;
 	    goto skipline;
+	}
+
+#if TOKSTRALIGN
+	p.output = GetAlignedPointer( token_stringbuf, p.output - token_stringbuf );
+#endif
+
+    }
+
+#if TOKSTRALIGN
+    p.output = GetAlignedPointer( token_stringbuf, p.output - token_stringbuf );
+#endif
+    StringBufferEnd = p.output;
+skipline:
+    tokenarray[p.index].token  = T_FINAL;
+    tokenarray[p.index].bytval = p.flags3;
+    tokenarray[p.index].string_ptr = "";
+    return( p.index );
+}
+
+int TokenizeEx( unsigned int start, struct asm_tok *tokptr[], unsigned int flags )
+/*
+ * create tokens from a source line.
+ * line:  the line which is to be tokenized
+ * start: where to start in the token buffer. If start == 0,
+ *	  then some variables are additionally initialized.
+ * flags: 1=if the line has been tokenized already.
+ */
+{
+    int rc;
+    struct line_status p;
+    struct asm_tok *tokenarray = *tokptr;
+
+    _cstring = 0;
+    _brachets = 0;
+
+    p.input = ModuleInfo.currsource;
+    p.start = ModuleInfo.currsource;
+    p.index = start;
+    p.flags = flags;
+    p.flags2 = 0;
+    p.flags3 = 0;
+    if ( p.index == 0 ) {
+	/* v2.06: these flags are now initialized on a higher level */
+	p.output = token_stringbuf;
+	if( ModuleInfo.inside_comment ) {
+
+	    if( strchr( ModuleInfo.currsource, ModuleInfo.inside_comment ) != NULL ) {
+
+		ModuleInfo.inside_comment = NULLC;
+	    }
+	    goto skipline;
+	}
+
+    } else {
+
+	p.output = StringBufferEnd;
+    }
+
+
+    for( ;; ) {
+
+	while( islspace( *p.input ) ) p.input++;
+
+	if ( *p.input == ';' && flags == TOK_DEFAULT ) {
+	    while ( p.input > ModuleInfo.currsource && islspace( *(p.input-1) ) ) p.input--; /* skip */
+	    strcpy( commentbuffer, p.input );
+	    ModuleInfo.CurrComment = commentbuffer;
+	    *p.input = NULLC;
+	}
+
+	tokenarray[p.index].tokpos = p.input;
+
+	if( *p.input == NULLC ) {
+	    /* if a comma is last token, concat lines ... with some exceptions
+	     * v2.05: moved from PreprocessLine(). Moved because the
+	     * concatenation may be triggered by a comma AFTER expansion.
+	     */
+	    if ( p.index > 1 &&
+		( tokenarray[p.index-1].token == T_COMMA || _brachets )
+		&& ( Parse_Pass == PASS_1 || UseSavedState == FALSE ) /* is it an already preprocessed line? */
+		&& start == 0 ) {
+
+		if ( IsMultiLine( tokenarray ) || _brachets ) {
+		    char *ptr = GetAlignedPointer( p.output, strlen( p.output ) );
+		    if ( GetTextLine( ptr ) ) {
+			while ( islspace( *ptr ) ) ptr++;
+			if ( *ptr ) {
+			    strcpy( p.input, ptr );
+			    if ( strlen( p.start ) >= ModuleInfo.g.max_line_len ) {
+
+				if ( !InputExtend(&p, tokptr) ) {
+				    asmerr( 2039 );
+				    p.index = start;
+				    break;
+				}
+				tokenarray = *tokptr;
+			    }
+			    continue;
+			}
+		    }
+		}
+	    }
+	    break;
+	}
+	tokenarray[p.index].string_ptr = p.output;
+	rc = GetToken( &tokenarray[p.index], &p );
+	if ( rc == EMPTY )
+	    continue;
+	if ( rc == ERROR ) {
+	    p.index = start; /* skip this line */
+	    break;
+	}
+	if ( tokenarray[p.index].token == T_DBL_COLON )
+	    tokenarray[0].hll_flags |= T_HLL_DBLCOLON;
+
+	/* v2.04: this has been moved here from condasm.c to
+	 * avoid problems with (conditional) listings. It also
+	 * avoids having to search for the first token twice.
+	 * Note: a conditional assembly directive within an
+	 *    inactive block and preceded by a label isn't detected!
+	 *    This is an exact copy of the Masm behavior, although
+	 *    it probably is just a bug!
+	 */
+	if ( !(flags & TOK_RESCAN) ) {
+
+	    if ( p.index == 0 || ( p.index == 2 &&
+		( tokenarray[1].token == T_COLON || tokenarray[1].token == T_DBL_COLON) ) ) {
+
+		rc = tokenarray[p.index].tokval;
+		if ( tokenarray[p.index].token == T_DIRECTIVE &&
+		    ( tokenarray[p.index].bytval == DRT_CONDDIR || rc == T_DOT_ASSERT ) ) {
+
+		    if ( rc == T_COMMENT ) {
+			StartComment( p.input );
+			break; /* p.index is 0 or 2 */
+		    }
+		    if ( rc == T_DOT_ASSERT ) {
+
+			char *cp;
+			if ( ModuleInfo.xflag & OPT_ASSERT )
+			    goto dot_assert;
+			cp = p.input;
+			while ( *cp == ' ' || *cp == 9 ) cp++;
+			if ( *cp != ':' )
+			    goto dot_assert;
+			cp++;
+			while ( *cp == ' ' || *cp == 9 ) cp++;
+			if ( _memicmp( cp, "ends", 4 ) )
+			    goto dot_assert;
+			rc = T_ENDIF;
+		    }
+		    CondPrepare( rc );
+		    if ( CurrIfState != BLOCK_ACTIVE ) {
+			p.index++;
+			break; /* p.index is 1 or 3 */
+		    }
+		} else {
+		    dot_assert:
+		    if( CurrIfState != BLOCK_ACTIVE )
+			/* further processing skipped. p.index is 0 */
+			break;
+		}
+	    }
+	}
+	p.index++;
+	if( p.index >= ModuleInfo.g.max_line_len / 4 ) {
+	    p.index--;
+	    if ( !InputExtend(&p, tokptr) ) {
+		asmerr( 2141 );
+		p.index = start;
+		goto skipline;
+	    }
+	    p.index++;
+	    tokenarray = *tokptr;
 	}
 
 #if TOKSTRALIGN

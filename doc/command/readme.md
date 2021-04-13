@@ -38,6 +38,7 @@ The options listed in the following table.
 | **/FPi87** | 80x87 instructions (default). |
 | **/fpc** | Disallow floating-point instructions. |
 | **/fp**_n_ | Set FPU: 0=8087, 2=80287, 3=80387. |
+| **/frame** | Auto generate unwind information. |
 | **/Gc** | Specifies use of FORTRAN- or Pascal-style function calling and naming conventions. Same as **OPTION LANGUAGE:PASCAL**. |
 | **/Gd** | Specifies use of C-style function calling and naming conventions. Same as **OPTION LANGUAGE:C**. |
 | **/Ge** | Emit a conditional _chkstk() inside the prologue. |

@@ -575,6 +575,7 @@ endif
     mov ModuleInfo.epilogueflags,Options.epilogueflags
     mov ModuleInfo.win64_flags,Options.win64_flags
     mov ModuleInfo.strict_masm_compat,Options.strict_masm_compat
+    mov ModuleInfo.frame_auto,Options.frame_auto
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;

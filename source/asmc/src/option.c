@@ -636,6 +636,9 @@ OPTFUNC( SetFrame )
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "AUTO" ) ) {
 	ModuleInfo.frame_auto = 1;
 	i++;
+    } else if ( tokenarray[i].tokval == T_ADD ) {
+	ModuleInfo.frame_auto = 3;
+	i++;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOAUTO" ) ) {
 	ModuleInfo.frame_auto = 0;
 	i++;
@@ -835,7 +838,7 @@ int SetWin64( int *pi, struct asm_tok tokenarray[] )
 		} else if ( !_stricmp( tokenarray[i].string_ptr, "NOAUTO" ) ) {
 		    ModuleInfo.win64_flags &= ~W64F_AUTOSTACKSP;
 		} else if ( tokenarray[i].tokval == T_FRAME ) {
-		    ModuleInfo.frame_auto = 1;
+		    ModuleInfo.frame_auto = 3;
 		} else if ( !_stricmp( tokenarray[i].string_ptr, "NOFRAME" ) ) {
 		    ModuleInfo.frame_auto = 0;
 		} else {

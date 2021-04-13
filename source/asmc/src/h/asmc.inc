@@ -379,6 +379,7 @@ chkstack                db ?    ; _chkstk()
 nolib                   db ?    ; skip includelib directives
 masm_keywords           db ?    ; -Znk
 arch                    db ?    ; -arch:AVX[2|512]
+frame_auto              db ?    ; -frame
 global_options          ENDS
 
 module_vars             STRUC

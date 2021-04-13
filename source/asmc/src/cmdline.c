@@ -85,6 +85,7 @@ struct global_options Options = {
 	0,			// .nolib
 	0,			// .masm_keywords
 	0,			// .arch
+	0,			// .frame_auto
 };
 
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
@@ -470,6 +471,12 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'cpf':		// -fpc
 	Options.cpu = P_NO87;
 	return;
+#else
+    case 'marf':	// -frame
+	Options.frame_auto = 3;
+	return;
+#endif
+#ifndef __ASMC64__
     case 'cG':		// -Gc
 	Options.langtype = LANG_PASCAL;
 	return;

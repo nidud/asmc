@@ -436,6 +436,7 @@ unsigned char	chkstack;		/* _chkstk() */
 unsigned char	nolib;			/* skip includelib directives */
 unsigned char	masm_keywords;		/* -Znk */
 unsigned char	arch;			/* -arch:AVX[2|512] */
+unsigned char	frame_auto;		/* -frame */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

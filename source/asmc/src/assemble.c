@@ -500,6 +500,7 @@ static void ModulePassInit( void )
     ModuleInfo.epilogueflags = Options.epilogueflags;
     ModuleInfo.win64_flags = Options.win64_flags;
     ModuleInfo.strict_masm_compat = Options.strict_masm_compat;
+    ModuleInfo.frame_auto = Options.frame_auto;
 
     /* if OPTION DLLIMPORT was used, reset all iat_used flags */
     if ( ModuleInfo.g.DllQueue )

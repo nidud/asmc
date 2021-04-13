@@ -1141,39 +1141,42 @@ int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPRO
     }
 
     /* check for optional FRAME[:exc_proc] */
-    if ( ModuleInfo.Ofssize == USE64 &&
-	IsPROC &&
-	tokenarray[i].token == T_RES_ID &&
-	tokenarray[i].tokval == T_FRAME ) {
-	/* v2.05: don't accept FRAME for ELF */
-	if ( Options.output_format != OFORMAT_COFF
-	    && ModuleInfo.sub_format != SFORMAT_PE
-	   ) {
-	    return( asmerr( 3006, GetResWName( T_FRAME, NULL ) ) );
-	}
-	i++;
-	if( tokenarray[i].token == T_COLON ) {
-	    struct asym *sym;
-	    i++;
-	    if ( tokenarray[i].token != T_ID ) {
-		return( asmerr(2008, tokenarray[i].string_ptr ) );
+    if ( ModuleInfo.Ofssize == USE64 && IsPROC ) {
+
+	proc->e.procinfo->exc_handler = NULL;
+	if ( tokenarray[i].token == T_RES_ID && tokenarray[i].tokval == T_FRAME ) {
+
+	    /* v2.05: don't accept FRAME for ELF */
+	    if ( Options.output_format != OFORMAT_COFF
+		&& ModuleInfo.sub_format != SFORMAT_PE ) {
+		return( asmerr( 3006, GetResWName( T_FRAME, NULL ) ) );
 	    }
-	    sym = SymSearch( tokenarray[i].string_ptr );
-	    if ( sym == NULL ) {
-		sym = SymCreate( tokenarray[i].string_ptr );
-		sym->state = SYM_UNDEFINED;
-		sym->used = TRUE;
-		sym_add_table( &SymTables[TAB_UNDEF], (struct dsym *)sym ); /* add UNDEFINED */
-	    } else if ( sym->state != SYM_UNDEFINED &&
+	    i++;
+	    if( tokenarray[i].token == T_COLON ) {
+		struct asym *sym;
+		i++;
+		if ( tokenarray[i].token != T_ID ) {
+		    return( asmerr(2008, tokenarray[i].string_ptr ) );
+		}
+		sym = SymSearch( tokenarray[i].string_ptr );
+		if ( sym == NULL ) {
+		    sym = SymCreate( tokenarray[i].string_ptr );
+		    sym->state = SYM_UNDEFINED;
+		    sym->used = TRUE;
+		    sym_add_table( &SymTables[TAB_UNDEF], (struct dsym *)sym ); /* add UNDEFINED */
+		} else if ( sym->state != SYM_UNDEFINED &&
 		       sym->state != SYM_INTERNAL &&
 		       sym->state != SYM_EXTERNAL ) {
-		return( asmerr( 2005, sym->name ) );
+		    return( asmerr( 2005, sym->name ) );
+		}
+		proc->e.procinfo->exc_handler = sym;
+		i++;
 	    }
-	    proc->e.procinfo->exc_handler = sym;
-	    i++;
-	} else
-	    proc->e.procinfo->exc_handler = NULL;
-	proc->e.procinfo->isframe = TRUE;
+	    //ModuleInfo.frame_auto |= 1;
+	    proc->e.procinfo->isframe = TRUE;
+	} else if ( ModuleInfo.frame_auto == 3 ) {
+	    proc->e.procinfo->isframe = TRUE;
+	}
     }
     /* check for USES */
     if ( tokenarray[i].token == T_ID && _stricmp( tokenarray[i].string_ptr, "USES" ) == 0 ) {

@@ -18,6 +18,69 @@ include atofloat.inc
 
     .code
 
+InlineCopy proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
+
+    mov esi,T_ESI
+    mov edi,T_EDI
+    mov ebx,T_ECX
+    .if ModuleInfo.Ofssize == USE64
+        mov esi,T_RSI
+        mov edi,T_RDI
+        mov ebx,T_RCX
+    .endif
+    AddLineQueueX( " %r %r", T_PUSH, esi )
+    AddLineQueueX( " %r %r", T_PUSH, edi )
+    AddLineQueueX( " %r %r", T_PUSH, ebx )
+    AddLineQueueX( " %r %r, %s", T_LEA, esi, src )
+    AddLineQueueX( " %r %r, %s", T_LEA, edi, dst )
+    AddLineQueueX( " %r %r, %d", T_MOV, T_ECX, count )
+    AddLineQueueX( " %r %r", T_REP, T_MOVSB )
+    AddLineQueueX( " %r %r", T_POP, ebx )
+    AddLineQueueX( " %r %r", T_POP, edi )
+    AddLineQueueX( " %r %r", T_POP, esi )
+    ret
+
+InlineCopy endp
+
+
+InlineMove proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
+
+  local type:uint_t
+
+    mov type,T_DWORD
+    mov esi,T_EAX
+    mov edi,4
+    .if ModuleInfo.Ofssize == USE64
+        mov type,T_QWORD
+        mov esi,T_RAX
+        mov edi,8
+    .endif
+
+    .for ( ebx = 0 : count >= edi : count -= edi, ebx += edi )
+
+        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, esi, type, T_PTR, src, ebx )
+        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, type, T_PTR, dst, ebx, esi )
+    .endf
+
+    mov esi,count
+
+    .if ( edi == 8 && esi >= 4 )
+
+        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, T_EAX, T_DWORD, T_PTR, src, ebx )
+        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_DWORD, T_PTR, dst, ebx, T_EAX )
+        sub esi,4
+        add ebx,4
+    .endif
+
+    .for ( : esi : esi--, ebx++ )
+
+        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, T_AL, T_BYTE, T_PTR, src, ebx )
+        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_BYTE, T_PTR, dst, ebx, T_AL )
+    .endf
+    ret
+
+InlineMove endp
+
 RetLineQueue proc
 
     .if ModuleInfo.list
@@ -73,6 +136,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
   local regz:int_t
   local dst:string_t
   local src:string_t
+  local buffer[16]:char_t
 
     mov ebx,op1
     mov edi,op2
@@ -148,84 +212,82 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     inc eax
 
     .if [edx+16].asm_tok.token == '&'
+
         mov edi,ecx
-        AddLineQueueX( " lea %r,%s", ecx, [edx+32].asm_tok.tokpos )
+        AddLineQueueX( " %r %r, %s", T_LEA, ecx, [edx+32].asm_tok.tokpos )
+
     .elseif edi > esi && esi < T_EAX
-        AddLineQueueX( " movzx eax,%s", eax )
+
+        AddLineQueueX( " %r %r, %s", T_MOVZX, T_EAX, eax )
+
     .else
+
         mov ecx,8
-        .switch edi
-        .case T_AL:  mov ecx,1 : .endc
-        .case T_AX:  mov ecx,2 : .endc
-        .case T_EAX: mov ecx,4 : .endc
+        .switch pascal edi
+        .case T_AL:  mov ecx,1
+        .case T_AX:  mov ecx,2
+        .case T_EAX: mov ecx,4
         .endsw
 
         .if size <= ecx
-            AddLineQueueX( " mov %r,%s", esi, eax )
-        .else
 
-            .if ( op != T_MOV )
-                .return asmerr( 2070 )
-            .endif
+            AddLineQueueX( " %r %r, %s", T_MOV, esi, eax )
+
+        .elseif op == T_MOV
 
             mov esi,eax
             mov edi,size
             .if regz == 8
                 .if edi > 32
-                    AddLineQueue ( " push rsi" )
-                    AddLineQueue ( " push rdi" )
-                    AddLineQueue ( " push rcx" )
-                    AddLineQueueX( " lea rsi,%s", esi )
-                    AddLineQueueX( " lea rdi,%s", dst )
-                    AddLineQueueX( " mov ecx,%d", edi )
-                    AddLineQueue ( " rep movsb" )
-                    AddLineQueue ( " pop rcx" )
-                    AddLineQueue ( " pop rdi" )
-                    AddLineQueue ( " pop rsi" )
+                    InlineCopy( dst, esi, edi )
                 .else
-                    .for ( ebx = 0 : edi >= 8 : edi -= 8, ebx += 8 )
-                        AddLineQueueX( " mov rax,qword ptr %s[%d]", esi, ebx )
-                        AddLineQueueX( " mov qword ptr %s[%d],rax", dst, ebx )
-                    .endf
-                    .for ( : edi >= 4 : edi -= 4, ebx += 4 )
-                        AddLineQueueX( " mov eax,dword ptr %s[%d]", esi, ebx )
-                        AddLineQueueX( " mov dword ptr %s[%d],eax", dst, ebx )
-                    .endf
-                    .for ( : edi : edi--, ebx++ )
-                        AddLineQueueX( " mov al,byte ptr %s[%d]", esi, ebx )
-                        AddLineQueueX( " mov byte ptr %s[%d],al", dst, ebx )
-                    .endf
+                    InlineMove( dst, esi, edi )
                 .endif
+            .elseif edi > 16
+                InlineCopy( dst, esi, edi )
             .else
-                .if edi > 16
-                    AddLineQueue ( " push esi" )
-                    AddLineQueue ( " push edi" )
-                    AddLineQueue ( " push ecx" )
-                    AddLineQueueX( " lea esi,%s", esi )
-                    AddLineQueueX( " lea edi,%s", dst )
-                    AddLineQueueX( " mov ecx,%d", edi )
-                    AddLineQueue ( " rep movsb" )
-                    AddLineQueue ( " pop ecx" )
-                    AddLineQueue ( " pop edi" )
-                    AddLineQueue ( " pop esi" )
-                .else
-                    .for ( ebx = 0 : edi >= 4 : edi -= 4, ebx += 4 )
-                        AddLineQueueX( " mov eax,dword ptr %s[%d]", esi, ebx )
-                        AddLineQueueX( " mov dword ptr %s[%d],eax", dst, ebx )
-                    .endf
-                    .for ( : edi : edi--, ebx++ )
-                        AddLineQueueX( " mov al,byte ptr %s[%d]", esi, ebx )
-                        AddLineQueueX( " mov byte ptr %s[%d],al", dst, ebx )
-                    .endf
-                .endif
+                InlineMove( dst, esi, edi )
             .endif
+
             xor ebx,ebx
             mov eax,src
             mov byte ptr [eax],','
+
+        .elseif size == 8 && ecx == 4
+
+            mov ebx,eax
+            .switch op
+            .case T_CMP
+                lea ecx,buffer
+                GetLabelStr( GetHllLabel(), ecx )
+                AddLineQueueX( " %r %r, %r %r %s[4]", T_MOV, T_EAX, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " %r %r %r %s[4], %r", T_CMP, T_DWORD, T_PTR, dst, T_EAX )
+                AddLineQueueX( " %r %s", T_JNE, &buffer )
+                AddLineQueueX( " %r %r, %r %r %s", T_MOV, T_EAX, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " %r %r %r %s, %r", T_CMP, T_DWORD, T_PTR, dst, T_EAX )
+                AddLineQueueX( "%s:", &buffer )
+                .endc
+            .case T_ADD
+                AddLineQueueX( " %r %r %r %s, %r %r %s", T_ADD, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " %r %r %r %s[4], %r %r %s[4]", T_ADC, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                .endc
+            .case T_SUB
+                AddLineQueueX( " %r %r %r %s, %r %r %s", T_SUB, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " %r %r %r %s[4], %r %r %s[4]", T_SBB, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                .endc
+            .endsw
+
+            mov eax,','
+            mov [ebx-1],al
+            xor ebx,ebx
+
+        .else
+
+            .return asmerr( 2070 )
         .endif
     .endif
     .if ebx
-        AddLineQueueX( " %r %s,%r", op, dst, edi )
+        AddLineQueueX( " %r %s, %r", op, dst, edi )
         mov eax,src
         mov [eax],bl
     .endif

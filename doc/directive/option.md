@@ -37,7 +37,7 @@ Enables and disables features of the assembler. Available options include:
 - FIELDALIGN
 - PROCALIGN
 - MZ
-- FRAME
+- [FRAME](opt_frame.md)
 - ELF
 - RENAMEKEYWORD
 - [WIN64](opt_win64.md)

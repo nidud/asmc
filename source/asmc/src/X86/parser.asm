@@ -3900,23 +3900,59 @@ continue:
                 .endc
             .endsw
         .endif
-        .if ( CodeInfo.Ofssize > USE16 && \
-            ( CodeInfo.opnd[OPND1].type & OP_M_ANY ) && ( CodeInfo.opnd[OPNI2].type & OP_M_ANY ) )
-            ;; v2.30 - Memory to memory operands.
+
+        .if ( CodeInfo.Ofssize > USE16 && !ModuleInfo.strict_masm_compat )
+
             movzx eax,CodeInfo.token
-            .switch eax
-            .case T_MOV
-            .case T_CMP
-            .case T_TEST
-            .case T_ADC
-            .case T_ADD
-            .case T_SBB
-            .case T_SUB
-            .case T_AND
-            .case T_OR
-            .case T_XOR
-                .return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPNI2].type, tokenarray, &opndx )
-            .endsw
+
+            .if ( ( CodeInfo.opnd[OPND1].type & OP_M_ANY ) && ( CodeInfo.opnd[OPNI2].type & OP_M_ANY ) )
+
+                ;; v2.30 - Memory to memory operands.
+
+                .switch eax
+                .case T_MOV
+                .case T_CMP
+                .case T_TEST
+                .case T_ADC
+                .case T_ADD
+                .case T_SBB
+                .case T_SUB
+                .case T_AND
+                .case T_OR
+                .case T_XOR
+                    .return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPNI2].type, tokenarray, &opndx )
+                .endsw
+            .endif
+
+            .if ( ( CodeInfo.opnd[OPND1].type == OP_XMM ) && ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
+
+                .switch eax
+
+                    ;; v2.31.32: immediate operand to XMM { 1.0, 2.0 }
+
+                .case T_MOVAPS
+
+                    ;; v2.31.24: immediate operand to XMM
+
+                .case T_MOVQ
+                .case T_MOVSD
+                .case T_ADDSD
+                .case T_SUBSD
+                .case T_MULSD
+                .case T_DIVSD
+                .case T_COMISD
+                .case T_UCOMISD
+                .case T_ADDSS
+                .case T_SUBSS
+                .case T_MULSS
+                .case T_DIVSS
+                .case T_COMISS
+                .case T_UCOMISS
+                .case T_MOVD
+                .case T_MOVSS
+                    .return imm2xmm( tokenarray, &opndx[expr] )
+                .endsw
+            .endif
         .endif
     .endif
 

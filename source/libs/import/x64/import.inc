@@ -76,6 +76,7 @@ ksuser
 ktmw32
 loadperf
 lz32
+Magnification
 mapi32
 mf
 mfplat

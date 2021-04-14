@@ -8,6 +8,8 @@ The first three flag-bits may be set directly and correspond to SAVE (bit 0), AU
 
 SAVE forces parameters passed in registers to be written to their locations on the stack upon function entry. AUTO will calculate the maximum stack needed for function calls and ALIGN will use 16-byte alignment for local variables.
 
+FRAME is the same as option FRAME:ADD.
+
 #### See Also
 
-[Directives Reference](readme.md)
+[Directives Reference](readme.md) | [FRAME](opt_frame.md)

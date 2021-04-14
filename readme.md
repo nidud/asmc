@@ -5,6 +5,7 @@
 
 ### Reference
 - [Asmc Command-Line Reference](doc/command/readme.md)
+- [Predefined macros](doc/command/predefined_macros.md)
 - [Asmc Error Messages](doc/error/readme.md)
 - [Directives Reference](doc/directive/readme.md)
 - [Symbols Reference](doc/symbol/readme.md)

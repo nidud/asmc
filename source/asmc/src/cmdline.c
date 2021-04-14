@@ -378,6 +378,10 @@ static void ProcessOption( char **cmdline, char *buffer )
 	    define_name( "__AVX2__", "1" );
 	case 3:
 	    define_name( "__AVX__", "1" );
+	case 2:
+	    define_name( "__SSE2__", "1" );
+	case 1:
+	    define_name( "__SSE__", "1" );
 	    break;
 	default:
 	    asmerr( 1006, p-5 );

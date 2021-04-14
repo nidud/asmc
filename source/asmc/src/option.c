@@ -625,7 +625,7 @@ OPTFUNC( SetMZ )
     return( NOT_ERROR );
 }
 
-/* OPTION FRAME: AUTO | NOAUTO
+/* OPTION FRAME: AUTO | NOAUTO | ADD
  * default is NOAUTO
  */
 OPTFUNC( SetFrame )

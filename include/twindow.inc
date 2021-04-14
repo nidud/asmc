@@ -2,6 +2,9 @@ ifndef __TWINDOW_INC
 __TWINDOW_INC equ <>
 include wincon.inc
 include winuser.inc
+ifndef WM_MOUSEWHEEL
+define WM_MOUSEWHEEL 0x020A
+endif
 
 .pragma comment(lib, twindow)
 

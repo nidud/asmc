@@ -120,7 +120,7 @@ option	win64:3
 option	frame:auto
 SIZE_T	typedef QWORD
 else
-ifdef __AVX__
+ifdef __SSE__
 	.686
 	.xmm
 else

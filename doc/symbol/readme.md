@@ -45,7 +45,7 @@ The macros listed in the following table.
 | | |
 | -------- |:------- |
 | **@Cpu** | A bit mask specifying the processor mode (numeric equate). |
-| **@Environ(_envvar_)** | Value of environment variable _envvar_ (macro function). |
+| **@Environ( _envvar_ )** | Value of environment variable _envvar_ (macro function). |
 | **@Interface** | Information about the language parameters (numeric equate). |
 | **@Version** | Defined as an integer literal value that represents the compatible version of Masm. Currently 800 for Asmc and 1000 for Asmc64. |
 
@@ -61,11 +61,11 @@ The macros listed in the following table.
 
 | | |
 | -------- |:------- |
-| **@CatStr(_string1_[[,_string2_...]])** | Macro function that concatenates one or more strings. Returns a string. |
-| **@CStr(_string_\|_index_)** | Macro function that creates a string in the .DATA or .CONST segment. The macro accepts C-escape characters in the string. Strings are added to a stack and reused if duplicated strings are found. The macro returns _string label_. |
-| **@InStr([[_position_]],_string1_,_string2_)** | Macro function that finds the first occurrence of _string2_ in _string1_, beginning at position within string1\. If position does not appear, search begins at start of _string1_. Returns a position integer or 0 if string2 is not found. |
-| **@SizeStr(_string_)** | A macro function that returns the length of the given string. Returns an integer. |
-| **@SubStr(_string_,_position_[[,_length_]])** | A macro function that returns a substring starting at position. |
+| **@CatStr( _string1_ [[,_string2_...]] )** | Macro function that concatenates one or more strings. Returns a string. |
+| **@CStr( _string_ \| _index_ )** | Macro function that creates a string in the .DATA or .CONST segment. The macro accepts C-escape characters in the string. Strings are added to a stack and reused if duplicated strings are found. The macro returns _string label_. |
+| **@InStr( [[_position_]], _string1_, _string2_ )** | Macro function that finds the first occurrence of _string2_ in _string1_, beginning at position within string1\. If position does not appear, search begins at start of _string1_. Returns a position integer or 0 if string2 is not found. |
+| **@SizeStr( _string_ )** | A macro function that returns the length of the given string. Returns an integer. |
+| **@SubStr( _string_, _position_ [[,_length_]] )** | A macro function that returns a substring starting at position. |
 
 ### Miscellaneous
 

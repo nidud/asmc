@@ -112,4 +112,4 @@ The options listed in the following table.
 
 #### See Also
 
-[ASMC Error Messages](../error/readme.md) | [Predefined macros](predefined_macros.md)
+[ASMC Error Messages](../error/readme.md) | [Predefined macros](../symbol/readme.md)

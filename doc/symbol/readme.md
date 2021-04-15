@@ -2,59 +2,101 @@ Asmc Macro Assembler Reference
 
 ## Symbols Reference
 
-#### Date and Time Information
+### Predefined macros
 
-- [@Date](date.md)
-- [@Time](time.md)
+The Asmc assembler predefines certain preprocessor macros depending on the target and the chosen assembler options.
 
-#### Environment Information
+_macros_
 
-- [@Cpu](cpu.md)
-- [@Environ](environ.md)
-- [@Interface](interface.md)
-- [@Version](version.md)
-- [**\_\_ASMC\_\_**](__asmc__.md)
-- [**\_\_ASMC64\_\_**](__asmc64__.md)
-- [**\_\_JWASM\_\_**](__jwasm__.md)
+The macros listed in the following table.
 
-#### File Information
+| Macros | Meaning |
+|:------ |:------- |
+| **\_\_ASMC\_\_** | Defined as an integer literal that represents the version of Asmc. This macro is always defined. |
+| **\_\_ASMC64\_\_** | Defined as an integer literal that represents the version of Asmc64. This macro is defined by ASMC64.EXE. |
+| **\_\_AVX\_\_** | Defined as 1 when the /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
+| **\_\_AVX2\_\_** | Defined as 1 when the /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
+| **\_\_AVX512BW\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_AVX512CD\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_AVX512DQ\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_AVX512F\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_AVX512VL\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_GUI\_\_** | Defined as 1 when the /gui option is set. Otherwise, undefined. |
+| **\_\_JWASM\_\_** | Defined as an integer literal value 212 that represents the compatible version of JWasm. This macro is always defined. |
+| **\_LINUX** | Defined as 1 when the /elf option is set and 2 when the /elf64 option is set. Otherwise, undefined. |
+| **\_MSVCRT** | Defined as 1 when the /nolib option is set. Otherwise, undefined. |
+| **\_\_PE\_\_** | Defined as 1 when the /pe option is set. Otherwise, undefined. |
+| **\_\_SSE\_\_** | Defined as 1 when the /arch:SSE, /arch:SSE2, /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
+| **\_\_SSE2\_\_** | Defined as 1 when the /arch:SSE2, /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
+| **\_STDCALL\_SUPPORTED** | Defined as 1 when the /Gz option is set. Otherwise, undefined. |
+| **\_UNICODE** | Defined as 1 when the /ws option is set. Otherwise, undefined. |
+| **\_\_UNIX\_\_** | Defined as 1 when the /elf or /elf64 options are set. Otherwise, undefined. |
+| **\_WIN64** | Defined as 1 when the compilation target is 64-bit. Otherwise, undefined. |
 
-- [@FileCur](filecur.md)
-- [@FileName](filename.md)
-- [@Line](line.md)
+### Date and Time Information
 
-#### Macro Functions
+| | |
+| -------- |:------- |
+| **@Date** | The compilation date of the current source file. The date is a constant length string literal of the form yyyy-mm-dd. |
+| **@Time** | The system time in 24-hour hh:mm:ss format (text macro). |
 
-- [@CatStr](catstr.md)
-- [@CStr](cstr.md)
-- [@InStr](instr.md)
-- [@SizeStr](sizestr.md)
-- [@SubStr](substr.md)
+### Environment Information
 
-#### Miscellaneous
+| | |
+| -------- |:------- |
+| **@Cpu** | A bit mask specifying the processor mode (numeric equate). |
+| **@Environ**( _envvar_ ) | Value of environment variable _envvar_ (macro function). |
+| **@Interface** | Information about the language parameters (numeric equate). |
+| **@Version** | Defined as an integer literal value that represents the compatible version of Masm. Currently 800 for Asmc and 1000 for Asmc64. |
 
-- [$](D.md)
-- [?](Q.md)
-- [@@:](aa.md)
-- [@B](ab.md)
-- [@F](af.md)
-- [{evex}](evex.md)
-- [**\_\_PE\_\_**](__pe__.md)
-- [\_LINUX](_linux.md)
-- [\_WIN64](_win64.md)
+### File Information
 
-#### Segment Information
+| | |
+| -------- |:------- |
+| **@FileName** | The base name of the main file being assembled (text macro). |
+| **@FileCur** | The name of the current source file (text macro). |
+| **@Line** | Defined as the integer line number in the current source file. |
 
-- [@code](code.md)
-- [@CodeSize](codesize.md)
-- [@CurSeg](curseg.md)
-- [@data](data.md)
-- [@DataSize](datasize.md)
-- [@fardata](fardata.md)
-- [@fardata?](fardata.md)
-- [@Model](model.md)
-- [@stack](stack.md)
-- [@WordSize](wordsize.md)
+### Macro Functions
+
+| | |
+| -------- |:------- |
+| **@CatStr**( _string1_ [[, _string2_...]] ) | Macro function that concatenates one or more strings. Returns a string. |
+| **@CStr**( _string_ | _index_ ) | Macro function that creates a string in the .DATA or .CONST segment. The macro accepts C-escape characters in the string. Strings are added to a stack and reused if duplicated strings are found. The macro returns _string label_. |
+| **@InStr**( [[_position_]], _string1_, _string2_ ) | Macro function that finds the first occurrence of _string2_ in _string1_, beginning at position within string1\. If position does not appear, search begins at start of _string1_. Returns a position integer or 0 if string2 is not found. |
+| **@SizeStr**( _string_ ) | A macro function that returns the length of the given string. Returns an integer. |
+| **@SubStr**( _string_, _position_ [[, _length_]] ) | A macro function that returns a substring starting at position. |
+
+### Miscellaneous
+
+| | |
+| -------- |:------- |
+| **$** | The current value of the location counter. |
+| **?** | In data declarations, a value that the assembler allocates but does not initialize. |
+| **@@:** | Defines a code label recognizable only between _label1_ and _label2_, where _label1_ is either start of code or the previous @@: label, and _label2_ is either end of code or the next @@: label. |
+| **@B** | The location of the previous @@: label. |
+| **@F** | The location of the next @@: label. |
+| **{evex}** | The Enhanced Vector Extension (EVEX) encoding prefix will be omitted by using an EVEX exclusive instruction or any of the extended SIMD registers. A preceding prefix (**{evex}**) may be used for EVEX encoding of other instructions. |
+
+```assembly
+vcomisd xmm0,xmm1        ; normal
+vcomisd xmm0,xmm16       ; prefix (auto)
+{evex} vcomisd xmm0,xmm1 ; prefix
+```
+### Segment Information
+
+| | |
+| -------- |:------- |
+| **@code** | The name of the code segment (text macro). |
+| **@CodeSize** | 0 for TINY, SMALL, COMPACT, and FLAT models, and 1 for MEDIUM, LARGE, and HUGE models (numeric equate). |
+| **@CurSeg** | The name of the current segment (text macro). |
+| **@data** | The name of the default data group. Evaluates to DGROUP for all models except FLAT. Evaluates to FLAT under the FLAT memory model (text macro). |
+| **@DataSize** | 0 for TINY, SMALL, MEDIUM, and FLAT models, 1 for COMPACT and LARGE models, and 2 for HUGE model (numeric equate). |
+| **@fardata** | The name of the segment defined by the .FARDATA directive (text macro). |
+| **@fardata?** | The name of the segment defined by the .FARDATA? directive (text macro). |
+| **@Model** | 1 for TINY model, 2 for SMALL model, 3 for COMPACT model, 4 for MEDIUM model, 5 for LARGE model, 6 for HUGE model, and 7 for FLAT model (numeric equate). |
+| **@stack** | DGROUP for near stacks or STACK for far stacks (text macro). |
+| **@WordSize** | Two for a 16-bit segment or four for a 32-bit segment (numeric equate). |
 
 #### See Also
 

@@ -113,7 +113,8 @@ CAPTION macro name
 FONT macro size, name, b1:=<0>, b2:=<1>, b3:=<0>
     dw size
     if b3 ne 0
-     db 0,0,0,1
+     dw b1
+     db b2,b3
     elseif b2 eq 0
      dd 0
     endif

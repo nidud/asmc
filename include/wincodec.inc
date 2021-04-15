@@ -645,7 +645,7 @@ WICBitmapPattern	ENDS
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN8) OR defined(_WIN7_PLATFORM_UPDATE)
 WICImageParameters	STRUC
-PixelFormat		D2D1_PIXEL_FORMAT <>
+pixelFormat		PVOID ?;D2D1_PIXEL_FORMAT <>
 DpiX			FLOAT ?
 DpiY			FLOAT ?
 Top			FLOAT ?

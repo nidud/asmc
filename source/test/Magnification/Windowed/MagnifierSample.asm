@@ -12,14 +12,14 @@
 ;; taskbar and press ESC.
 ;;
 ;; In full-screen mode, all keystrokes and mouse clicks are passed through to the
-;; underlying focused application. In partial-screen mode, the window can receive the
-;; focus.
+;; underlying focused application. In partial-screen mode, the window can receive
+;; the focus.
 ;;
 ;; Multiple monitors are not supported.
 ;;
 ;;
-;; Requirements: To compile, link to Magnification.lib. The sample must be run with
-;; elevated privileges.
+;; Requirements: To compile, link to Magnification.lib. The sample must be run
+;; with elevated privileges.
 ;;
 ;; The sample is not designed for multimonitor setups.
 ;;

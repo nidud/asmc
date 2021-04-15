@@ -183,10 +183,12 @@ HandleCommand proc hwndDlg:HWND, wCtrlId:WORD
         ;; The user clicked one of the radio button to apply some fullscreen
         ;; magnification. (We know the control ids are sequential here.)
 
+       .new fZoomFactor:real4
         movzx eax,wCtrlId
         sub eax,IDC_RADIO_100 - 1
         cvtsi2ss xmm1,eax
-        SetZoom(hwndDlg, xmm1)
+        movss fZoomFactor,xmm1
+        SetZoom(hwndDlg, fZoomFactor)
         .endc
 
     .case IDC_CHECK_SETGRAYSCALE

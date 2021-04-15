@@ -1,6 +1,6 @@
 Asmc Macro Assembler Reference
 
-    __JWASM__
+## \_\_JWASM\_\_
 
 
 Contains the JWasm compatible version

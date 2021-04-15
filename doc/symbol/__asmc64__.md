@@ -1,6 +1,6 @@
 Asmc Macro Assembler Reference
 
-    __ASMC64__
+## \_\_ASMC64\_\_
 
 
 Contains the current Asmc64 version

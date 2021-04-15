@@ -13,9 +13,9 @@ Asmc Macro Assembler Reference
 - [@Environ](environ.md)
 - [@Interface](interface.md)
 - [@Version](version.md)
-- [**`__ASMC__`**](__asmc__.md)
-- [**`__ASMC64__`**](__asmc64__.md)
-- [**`__JWASM__`**](__jwasm__.md)
+- [**\_\_ASMC\_\_**](__asmc__.md)
+- [**\_\_ASMC64\_\_**](__asmc64__.md)
+- [**\_\_JWASM\_\_**](__jwasm__.md)
 
 #### File Information
 
@@ -39,9 +39,9 @@ Asmc Macro Assembler Reference
 - [@B](ab.md)
 - [@F](af.md)
 - [{evex}](evex.md)
-- [**`__PE__`**](__pe__.md)
-- [_LINUX](_linux.md)
-- [_WIN64](_win64.md)
+- [**\_\_PE\_\_**](__pe__.md)
+- [\_LINUX](_linux.md)
+- [\_WIN64](_win64.md)
 
 #### Segment Information
 

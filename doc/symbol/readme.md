@@ -43,7 +43,7 @@ The macros listed in the following table.
 ### Environment Information
 
 | | |
-| -------- |:------- |
+| ------------------------ | --- |
 | **@Cpu** | A bit mask specifying the processor mode (numeric equate). |
 | **@Environ( _envvar_ )** | Value of environment variable _envvar_ (macro function). |
 | **@Interface** | Information about the language parameters (numeric equate). |
@@ -91,7 +91,7 @@ The macros listed in the following table.
 | **@fardata?** | The name of the segment defined by the .FARDATA? directive (text macro). |
 | **@Model** | 1 for TINY model, 2 for SMALL model, 3 for COMPACT model, 4 for MEDIUM model, 5 for LARGE model, 6 for HUGE model, and 7 for FLAT model (numeric equate). |
 | **@stack** | DGROUP for near stacks or STACK for far stacks (text macro). |
-| **@WordSize** | Two for a 16-bit segment or four for a 32-bit segment (numeric equate). |
+| **@WordSize** | Two for a 16-bit, four for a 32-bit, and eight for a 64-bit segment (numeric equate). |
 
 #### See Also
 

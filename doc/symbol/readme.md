@@ -42,10 +42,10 @@ The macros listed in the following table.
 
 ### Environment Information
 
-| \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ | |
+| | |
 | -------- |:------- |
 | **@Cpu** | A bit mask specifying the processor mode (numeric equate). |
-| **@Environ( _envvar_ )** | Value of environment variable _envvar_ (macro function). |
+| **@Environ(&#x2000;_envvar_&#x2000;)** | Value of environment variable _envvar_ (macro function). |
 | **@Interface** | Information about the language parameters (numeric equate). |
 | **@Version** | Defined as an integer literal value that represents the compatible version of Masm. Currently 800 for Asmc and 1000 for Asmc64. |
 

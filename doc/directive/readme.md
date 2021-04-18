@@ -2,13 +2,19 @@ Asmc Macro Assembler Reference
 
 ## Directives Reference
 
-|### Code Labels | |
+### Code Labels
+
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 |:---|:---|
 | **ALIGN** [[_number_]] | Aligns the next variable or instruction on a byte that is a multiple of _number_.
 | **EVEN**  | Aligns the next variable or instruction on an even byte. |
 | _name_ **LABEL** _type_<br>_name_ **LABEL** [[NEAR\|FAR\|PROC]] PTR [[_type_]] | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
 | **ORG** _expression_ | Sets the location counter to _expression_. |
-|### Conditional Assembly | |
+
+### Conditional Assembly
+
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+|:---|:---|
 | **DEFINE** _name_ _expression_ | Assigns value of _expression_ to _name_. |
 | [[ELSE]IF] [...] **DEFINED**(_name_) [...] | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
 | **ELSE** | Marks the beginning of an alternate block within a conditional block. |
@@ -104,7 +110,7 @@ Can also be used as a type specifier anywhere a type is legal.
 
 ### Listing Control
 
-| | |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 | --- |:--- |
 | **.CREF** | Enables listing of symbols in the symbol portion of the symbol table and browser file. |
 | **.LIST** | Starts listing of statements. This is the default. |

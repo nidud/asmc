@@ -6,26 +6,30 @@ Asmc Macro Assembler Reference
 
 | | | |
 |:---|:--- |:--- |
-| **ALIGN** | `ALIGN [[number]]` | Aligns the next variable or instruction on a byte that is a multiple of _number_.
-| **EVEN**  | `EVEN | Aligns the next variable or instruction on an even byte. |
-| **LABEL** | `name LABEL type`<br>`name LABEL [[NEAR\|FAR\|PROC]] PTR [[type]]` | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
-| **ORG** | `ORG expression` | Sets the location counter to _expression_. |
+| **ALIGN** | ALIGN [[_number_]] | Aligns the next variable or instruction on a byte that is a multiple of _number_.
+| **EVEN**  | EVEN | Aligns the next variable or instruction on an even byte. |
+| **LABEL** | _name_ LABEL _type_<br>_name_ LABEL [[NEAR\|FAR\|PROC]] PTR [[_type_]] | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
+| **ORG**   | ORG _expression_ | Sets the location counter to _expression_. |
+
 
 ### Conditional Assembly
 
-- [DEFINE](define.md)
-- [DEFINED](defined.md)
-- [ELSE](else.md)
-- [ELSEIF](elseif.md)
-- [ELSEIF2](elseif2.md)
-- [IF](if.md)
-- [IF2](if2.md)
-- [IF[N]B](ifb.md)
-- [IF[N]DEF](ifndef.md)
-- [IFDIF[[I]]](ifdif.md)
-- [IFE](ife.md)
-- [IFIDN[[I]]](ifidn.md)
-- [UNDEF](undef.md)
+| | | |
+|:---|:--- |:--- |
+| **DEFINE**     | DEFINE _name_ _expression_ | Assigns value of _expression_ to _name_. |
+| **DEFINED**    | [[ELSE]IF] [...] **DEFINED**(_name_) [...] | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
+| **ELSE**       | ELSE | Marks the beginning of an alternate block within a conditional block. |
+| **ELSEIF**     | ELSEIF | Combines ELSE and IF into one statement. |
+| **ELSEIF2**    | ELSEIF2 | ELSEIF block evaluated on every assembly pass if OPTION:SETIF2 is TRUE. |
+| **IF**         | IF _expression1_<br>_if\_statements_<br>[[ELSEIF _expression2_<br>_elseif\_statements_]]<br>[[ELSE<br>_else_statements_]]<br>ENDIF | Grants assembly of _if\_statements_ if _expression1_ is true (nonzero) or _elseif\_statements_ if _expression1_ is false (0) and _expression2_ is true. The following directives may be substituted for ELSEIF: ELSEIFB, ELSEIFDEF, ELSEIFDIF, ELSEIFDIFI, ELSEIFE, ELSEIFIDN, ELSEIFIDNI, ELSEIFNB, and ELSEIFNDEF. Optionally, assembles elsestatements if the previous expression is false. Note that the expressions are evaluated at assembly time. |
+| **IF2**        | IF2 _expression_ | IF block is evaluated on every assembly pass if OPTION:SETIF2 is TRUE. See [IF](if.md) for complete syntax. |
+| **IF[N]B**     | IFB _textitem_ | Grants assembly if _textitem_ is blank. |
+| **IFDIF[[I]]** | IFDIF[[I]] _textitem1_, _textitem2_ | Grants assembly if the text items are different. If I is given, the comparison is case insensitive. See [IF](if.md) for complete syntax. |
+| **IFE**        | IFE _expression_ | Grants assembly if _expression_ is false (0). |
+| **IFIDN[[I]]** | IFIDN[[I]] _textitem1_, _textitem2_ | Grants assembly if the text items are identical. If I is given, the comparison is case insensitive. |
+| **IF[N]DEF**   | IFDEF _name_ | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
+| **UNDEF**      | UNDEF _identifier_ | Removes (undefines) a previously defined label, variable, or symbol. |
+
 
 ### Conditional Control Flow
 

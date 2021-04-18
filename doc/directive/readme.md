@@ -6,10 +6,10 @@ Asmc Macro Assembler Reference
 
 | | | |
 |:---|:--- |:--- |
-| **ALIGN** | ALIGN [[_number_]] | Aligns the next variable or instruction on a byte that is a multiple of _number_.
-| **EVEN**  | EVEN | Aligns the next variable or instruction on an even byte. |
-| **LABEL** | _name_ LABEL _type_<br>_name_ LABEL [[NEAR\|FAR\|PROC]] PTR [[_type_]] | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
-| **ORG** | ORG _expression_ | Sets the location counter to _expression_. |
+| **ALIGN** | `ALIGN [[number]]` | Aligns the next variable or instruction on a byte that is a multiple of _number_.
+| **EVEN**  | `EVEN | Aligns the next variable or instruction on an even byte. |
+| **LABEL** | `name LABEL type`<br>`name LABEL [[NEAR\|FAR\|PROC]] PTR [[type]]` | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
+| **ORG** | `ORG expression` | Sets the location counter to _expression_. |
 
 ### Conditional Assembly
 

@@ -17,7 +17,7 @@ Asmc Macro Assembler Reference
 | | | |
 |:---|:--- |:--- |
 | **DEFINE**     | DEFINE _name_ _expression_ | Assigns value of _expression_ to _name_. |
-| **DEFINED**    | [[ELSE]IF] [...] **DEFINED**(_name_) [...] | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
+| **DEFINED**    | [[ELSE]IF][...]DEFINED(_name_)[...] | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
 | **ELSE**       | ELSE | Marks the beginning of an alternate block within a conditional block. |
 | **ELSEIF**     | ELSEIF | Combines ELSE and IF into one statement. |
 | **ELSEIF2**    | ELSEIF2 | ELSEIF block evaluated on every assembly pass if OPTION:SETIF2 is TRUE. |

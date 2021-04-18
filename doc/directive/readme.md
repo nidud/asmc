@@ -4,10 +4,12 @@ Asmc Macro Assembler Reference
 
 ### Code Labels
 
-- [ALIGN](align.md)
-- [EVEN](even.md)
-- [LABEL](label.md)
-- [ORG](org.md)
+| | | |
+|:---|:--- |:--- |
+| **ALIGN** | `**ALIGN** [[_number_]]` | Aligns the next variable or instruction on a byte that is a multiple of _number_.
+| **EVEN**  | `**EVEN**` | Aligns the next variable or instruction on an even byte. |
+| **LABEL** | `_name_ **LABEL** _type_`<br>`_name_ **LABEL** [[NEAR \| FAR \| PROC]] PTR [[_type_]]` | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
+| **ORG** | `**ORG** _expression_` | Sets the location counter to _expression_. |
 
 ### Conditional Assembly
 
@@ -77,7 +79,7 @@ Asmc Macro Assembler Reference
 Can also be used as a type specifier anywhere a type is legal.
 
 | | |
-| -------- |:------- |
+| --- |:--- |
 | **BYTE** | Allocates and optionally initializes 1 byte of storage. |
 | **DWORD** | Allocates and optionally initializes 4 bytes of storage. |
 | **FWORD** | Allocates and optionally initializes 6 bytes of storage. |

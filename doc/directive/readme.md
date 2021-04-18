@@ -11,6 +11,7 @@ Asmc Macro Assembler Reference
 
 ### Conditional Assembly
 
+- [DEFINE](define.md)
 - [DEFINED](defined.md)
 - [ELSE](else.md)
 - [ELSEIF](elseif.md)
@@ -77,23 +78,23 @@ Can also be used as a type specifier anywhere a type is legal.
 
 | | |
 | -------- |:------- |
-| **BYTE** | Allocates and optionally initializes 1 byte of storage for each _initializer_. |
-| **DWORD** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
-| **FWORD** | Allocates and optionally initializes 6 bytes of storage for each _initializer_. |
-| **OWORD** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
-| **QWORD** | Allocates and optionally initializes 8 bytes of storage for each _initializer_. |
-| **REAL2** | Allocates and optionally initializes 2 bytes of storage for each _initializer_. |
-| **REAL4** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
-| **REAL8** | Allocates and optionally initializes 8 bytes of storage for each _initializer_. |
-| **REAL10** | Allocates and optionally initializes 10 bytes of storage for each _initializer_. |
-| **REAL16** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
-| **SBYTE** | Allocates and optionally initializes 1 byte of storage for each _initializer_. |
-| **SDWORD** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
-| **SWORD** | Allocates and optionally initializes 2 bytes of storage for each _initializer_. |
-| **TBYTE** | Allocates and optionally initializes 10 bytes of storage for each _initializer_. |
-| **XMMWORD** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
-| **YWORD** | Allocates and optionally initializes 32 bytes of storage for each _initializer_. |
-| **ZWORD** | Allocates and optionally initializes 64 bytes of storage for each _initializer_. |
+| **BYTE** | Allocates and optionally initializes 1 byte of storage. |
+| **DWORD** | Allocates and optionally initializes 4 bytes of storage. |
+| **FWORD** | Allocates and optionally initializes 6 bytes of storage. |
+| **OWORD** | Allocates and optionally initializes 16 bytes of storage. |
+| **QWORD** | Allocates and optionally initializes 8 bytes of storage. |
+| **REAL2** | Allocates and optionally initializes 2 bytes of storage. |
+| **REAL4** | Allocates and optionally initializes 4 bytes of storage. |
+| **REAL8** | Allocates and optionally initializes 8 bytes of storage. |
+| **REAL10** | Allocates and optionally initializes 10 bytes of storage. |
+| **REAL16** | Allocates and optionally initializes 16 bytes of storage. |
+| **SBYTE** | Allocates and optionally initializes 1 byte of storage. |
+| **SDWORD** | Allocates and optionally initializes 4 bytes of storage. |
+| **SWORD** | Allocates and optionally initializes 2 bytes of storage. |
+| **TBYTE** | Allocates and optionally initializes 10 bytes of storage. |
+| **XMMWORD** | Allocates and optionally initializes 16 bytes of storage. |
+| **YWORD** | Allocates and optionally initializes 32 bytes of storage. |
+| **ZWORD** | Allocates and optionally initializes 64 bytes of storage. |
 
 
 ### Equates
@@ -104,20 +105,23 @@ Can also be used as a type specifier anywhere a type is legal.
 
 ### Listing Control
 
-- [.CREF](dot_cref.md)
-- [.LIST](dot_list.md)
-- [.LISTALL](dot_listall.md)
-- [.LISTIF](dot_listif.md)
-- [.LISTMACRO](dot_listmacro.md)
-- [.LISTMACROALL](dot_listmacroall.md)
-- [.NOCREF](dot_nocref.md)
-- [.NOLIST](dot_nolist.md)
-- [.NOLISTIF](dot_nolistif.md)
-- [.NOLISTMACRO](dot_nolistmacro.md)
-- [.PAGE](dot_page.md)
-- [.SUBTITLE](dot_subtitle.md)
-- [.TFCOND](dot_tfcond.md)
-- [.TITLE](dot_title.md)
+| | |
+| --- |:--- |
+| **.CREF** | Enables listing of symbols in the symbol portion of the symbol table and browser file. |
+| **.LIST** | Starts listing of statements. This is the default. |
+| **.LISTALL** | Starts listing of all statements. Equivalent to the combination of .LIST, .LISTIF, and .LISTMACROALL. |
+| **.LISTIF** | Starts listing of statements in false conditional blocks. Same as .LFCOND. |
+| **.LISTMACRO** | Starts listing of macro expansion statements that generate code or data. This is the default. Same as .XALL. |
+| **.LISTMACROALL** | Starts listing of all statements in macros. Same as .LALL. |
+| **.NOCREF** [[_name_ [[, _name_]]...]] | Suppresses listing of symbols in the symbol table and browser file. If names are specified, then only the given names are suppressed. Same as .XCREF. |
+| **.NOLIST** | Suppresses program listing. Same as .XLIST. |
+| **.NOLISTIF** | Suppresses listing of conditional blocks whose condition evaluates to false (0). This is the default. Same as .SFCOND. |
+| **.NOLISTMACRO** | Suppresses listing of macro expansions. Same as .SALL. |
+| **.PAGE** [[[[length]], width]] | Sets line length and character width of the program listing. If no arguments are given, generates a page break. |
+| **.PAGE** + | Increments the section number and resets the page number to 1. |
+| **.SUBTITLE** | Defines the listing subtitle. Same as .SUBTTL. |
+| **.TFCOND** | Toggles listing of false conditional blocks. |
+| **.TITLE** _text_ | Defines the program listing title. |
 
 ### Macros
 

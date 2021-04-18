@@ -4,16 +4,18 @@ Asmc Macro Assembler Reference
 
 ### Code Labels
 
-|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+|||
 |:---|:---|
 | **ALIGN** [[_number_]] | Aligns the next variable or instruction on a byte that is a multiple of _number_.
 | **EVEN**  | Aligns the next variable or instruction on an even byte. |
 | _name_ **LABEL** _type_<br>_name_ **LABEL** [[NEAR\|FAR\|PROC]] PTR [[_type_]] | Creates a new label by assigning the current location-counter value and the given _type_ to _name_. |
 | **ORG** _expression_ | Sets the location counter to _expression_. |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+
 
 ### Conditional Assembly
 
-|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+|||
 |:---|:---|
 | **DEFINE** _name_ _expression_ | Assigns value of _expression_ to _name_. |
 | [[ELSE]IF] [...] **DEFINED**(_name_) [...] | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
@@ -28,6 +30,7 @@ Asmc Macro Assembler Reference
 | **IFIDN[[I]]** _textitem1_, _textitem2_ | Grants assembly if the text items are identical. If I is given, the comparison is case insensitive. |
 | **IF[N]DEF** _name_ | Grants assembly if _name_ is a previously defined label, variable, or symbol. |
 | **UNDEF** _identifier_ | Removes (undefines) a previously defined label, variable, or symbol. |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 
 
 ### Conditional Control Flow
@@ -62,55 +65,68 @@ Asmc Macro Assembler Reference
 - [.UNTILCXZ](dot_untilcxz.md)
 - [.WHILE](dot_while.md)
 
+
 ### Conditional Error
 
-- [.ERR](dot_err.md)
-- [.ERR2](dot_err2.md)
-- [.ERRB](dot_errb.md)
-- [.ERRDEF](dot_errdef.md)
-- [.ERRDIF[[I]]](dot_errdif.md)
-- [.ERRE](dot_erre.md)
-- [.ERRIDN[[I]]](dot_erridn.md)
-- [.ERRNB](dot_errnb.md)
-- [.ERRNDEF](dot_errndef.md)
-- [.ERRNZ](dot_errnz.md)
+|||
+|:---|:---|
+| **.ERR** [[_message_]] | Generates an error. |
+| **.ERR2** [[_message_]] | .ERR block evaluated on every assembly pass if OPTION:SETIF2 is TRUE. |
+| **.ERRB** _textitem_ [[,_message_]] | Generates an error if textitem is blank. |
+| **.ERRDEF** _name_ [[,_message_]] | Generates an error if _name_ is a previously defined label, variable, or symbol. |
+| **.ERRDIF[[I]]** _textitem1_, _textitem2_ [[,_message_]] | Generates an error if the text items are different. If I is given, the comparison is case insensitive. |
+| **.ERRE** _expression_ [[, _message_]] | Generates an error if expression is false (0). |
+| **.ERRIDN[[I]]** _textitem1_, _textitem2_ [[,_message_]] | Generates an error if the text items are identical. If I is given, the comparison is case insensitive. |
+| **.ERRNB** _textitem_ [[,_message_]] | Generates an error if textitem is not blank. |
+| **.ERRNDEF** _name_ [[,_message_]] | Generates an error if _name_ has not been defined. |
+| **.ERRNZ** _expression_ [[, _message_]] | Generates an error if expression is true (nonzero). |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+
 
 ### Data Allocation
 
 [[_name_]] _type_ _initializer_ [[, _initializer_]] ...
 
+Allocates and optionally initializes _count_ byte(s) of storage.
 Can also be used as a type specifier anywhere a type is legal.
 
-| | |
-| --- |:--- |
-| **BYTE** | Allocates and optionally initializes 1 byte of storage. |
-| **DWORD** | Allocates and optionally initializes 4 bytes of storage. |
-| **FWORD** | Allocates and optionally initializes 6 bytes of storage. |
-| **OWORD** | Allocates and optionally initializes 16 bytes of storage. |
-| **QWORD** | Allocates and optionally initializes 8 bytes of storage. |
-| **REAL2** | Allocates and optionally initializes 2 bytes of storage. |
-| **REAL4** | Allocates and optionally initializes 4 bytes of storage. |
-| **REAL8** | Allocates and optionally initializes 8 bytes of storage. |
-| **REAL10** | Allocates and optionally initializes 10 bytes of storage. |
-| **REAL16** | Allocates and optionally initializes 16 bytes of storage. |
-| **SBYTE** | Allocates and optionally initializes 1 byte of storage. |
-| **SDWORD** | Allocates and optionally initializes 4 bytes of storage. |
-| **SWORD** | Allocates and optionally initializes 2 bytes of storage. |
-| **TBYTE** | Allocates and optionally initializes 10 bytes of storage. |
-| **XMMWORD** | Allocates and optionally initializes 16 bytes of storage. |
-| **YWORD** | Allocates and optionally initializes 32 bytes of storage. |
-| **ZWORD** | Allocates and optionally initializes 64 bytes of storage. |
+| _type_ | _size_ | |
+|:---         |:---:|:---|
+| **BYTE**    | 1  | unsigned |
+| **SBYTE**   | 1  | signed |
+| **WORD**    | 2  | unsigned |
+| **SWORD**   | 2  | signed |
+| **DWORD**   | 4  | unsigned |
+| **SDWORD**  | 4  | signed |
+| **FWORD**   | 6  | unsigned |
+| **QWORD**   | 8  | unsigned |
+| **SQWORD**  | 8  | signed |
+| **TBYTE**   | 10 | unsigned |
+| **OWORD**   | 16 | unsigned |
+| **XMMWORD** | 16 | vector |
+| **YWORD**   | 32 | vector |
+| **ZWORD**   | 64 | vector |
+| **REAL2**   | 2  | float |
+| **REAL4**   | 4  | float |
+| **REAL8**   | 8  | float |
+| **REAL10**  | 10 | float |
+| **REAL16**  | 16 | float |
 
 
 ### Equates
 
-- [=](e.md)
-- [EQU](equ.md)
-- [TEXTEQU](textequ.md)
+|||
+| --- |:--- |
+| _name_ **=** _expression_ | Assigns the numeric value of expression to name. The symbol can be redefined later. |
+| _name_ **EQU** _expression_ | Assigns numeric value of _expression_ to _name_. The _name_ cannot be redefined later. |
+| _name_ **EQU** _<text>_ | Assigns specified _text_ to _name_. The _name_ can be assigned a different text later. |
+| _name_ **TEXTEQU** [[_textitem_]] | Assigns _textitem_ to _name_. The textitem can be a literal string, a constant preceded by a , or the string returned by a macro function. |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+
 
 ### Listing Control
 
-|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
+|||
 | --- |:--- |
 | **.CREF** | Enables listing of symbols in the symbol portion of the symbol table and browser file. |
 | **.LIST** | Starts listing of statements. This is the default. |
@@ -122,11 +138,12 @@ Can also be used as a type specifier anywhere a type is legal.
 | **.NOLIST** | Suppresses program listing. Same as .XLIST. |
 | **.NOLISTIF** | Suppresses listing of conditional blocks whose condition evaluates to false (0). This is the default. Same as .SFCOND. |
 | **.NOLISTMACRO** | Suppresses listing of macro expansions. Same as .SALL. |
-| **.PAGE** [[[[length]], width]] | Sets line length and character width of the program listing. If no arguments are given, generates a page break. |
+| **.PAGE** [[[[_length_]], _width_]] | Sets line length and character width of the program listing. If no arguments are given, generates a page break. |
 | **.PAGE** + | Increments the section number and resets the page number to 1. |
 | **.SUBTITLE** | Defines the listing subtitle. Same as .SUBTTL. |
 | **.TFCOND** | Toggles listing of false conditional blocks. |
 | **.TITLE** _text_ | Defines the program listing title. |
+|xxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 
 ### Macros
 

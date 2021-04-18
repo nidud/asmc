@@ -6,7 +6,7 @@ OPTION WSTRING:[ ON | OFF ]
 
 This toggles ascii/unicode string creation of "quoted strings".
 
-Unicode strings may be used in the [@CStr()](../symbol/cstr.md) macro, in function calls, or decleared using:
+Unicode strings may be used in the [@CStr()](../symbol/readme.md) macro, in function calls, or decleared using:
 
     DW "string",0
 

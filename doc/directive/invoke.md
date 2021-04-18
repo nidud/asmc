@@ -61,7 +61,7 @@ This simple solution avoids breaking any existing code with a few exceptions: Ma
 
 So square brackets should be used for accessing memory and round brackets to execute. However, an error must then be issued if Asmc extensions are turned off and labels are accessed using round brackets to ensure compatibility.
 
-The inside of brackets may be recursive used at any length including [C-strings](../symbol/cstr.md). However, the return code for a procedure is [R|E]AX so there is a limit with regards to OR/AND testing of nested functions.
+The inside of brackets may be recursive used at any length including [C-strings](../symbol/readme.md). However, the return code for a procedure is [R|E]AX so there is a limit with regards to OR/AND testing of nested functions.
 
     .if foo( bar( 1 ), 2 ) == TRUE
 

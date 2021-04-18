@@ -1,0 +1,63 @@
+
+include winapifamily.inc
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if(_WIN32_WINNT GE 0x0600)
+
+.enum WSC_SECURITY_PROVIDER {
+    WSC_SECURITY_PROVIDER_FIREWALL =                   0x1,
+    WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS  =       0x2,
+    WSC_SECURITY_PROVIDER_ANTIVIRUS =                  0x4,
+    WSC_SECURITY_PROVIDER_ANTISPYWARE =                0x8,
+    WSC_SECURITY_PROVIDER_INTERNET_SETTINGS =          0x10,
+    WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL =       0x20,
+    WSC_SECURITY_PROVIDER_SERVICE =                    0x40,
+    WSC_SECURITY_PROVIDER_NONE =                       0,
+    WSC_SECURITY_PROVIDER_ALL = \
+        WSC_SECURITY_PROVIDER_FIREWALL or \
+        WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS or \
+        WSC_SECURITY_PROVIDER_ANTIVIRUS or \
+        WSC_SECURITY_PROVIDER_ANTISPYWARE or \
+        WSC_SECURITY_PROVIDER_INTERNET_SETTINGS or \
+        WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL or \
+        WSC_SECURITY_PROVIDER_SERVICE
+    }
+
+.enum WSC_SECURITY_PROVIDER_HEALTH {
+    WSC_SECURITY_PROVIDER_HEALTH_GOOD,
+    WSC_SECURITY_PROVIDER_HEALTH_NOTMONITORED,
+    WSC_SECURITY_PROVIDER_HEALTH_POOR,
+    WSC_SECURITY_PROVIDER_HEALTH_SNOOZE,
+    }
+
+
+WscRegisterForChanges proto WINAPI \
+              Reserved: LPVOID,
+phCallbackRegistration: PHANDLE,
+     lpCallbackAddress: LPTHREAD_START_ROUTINE,
+              pContext: PVOID
+
+WscUnRegisterChanges proto WINAPI \
+   hRegistrationHandle: HANDLE
+
+WscRegisterForUserNotifications proto WINAPI
+
+WscGetSecurityProviderHealth proto WINAPI \
+             Providers: DWORD,
+               pHealth: ptr WSC_SECURITY_PROVIDER_HEALTH
+
+wscShowAMSCN proto WINAPI \
+            InputFlags: DWORD,
+        pdwResultFlags: PDWORD
+
+
+WscQueryAntiMalwareUri proto WINAPI
+
+WscGetAntiMalwareUri proto WINAPI \
+               ppszUri: ptr LPWSTR
+
+
+endif
+
+endif

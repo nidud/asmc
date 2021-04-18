@@ -83,4 +83,6 @@ DEFINE_GUIDS(LIBID_BackgroundCopyManager4_0, "bb6df56b-cace-11dc-9992-0019b93a3a
 DEFINE_GUIDS(CLSID_BackgroundCopyManager4_0, "bb6df56b-cace-11dc-9992-0019b93a3a84")
 endif
 
+include bits5_0.inc
+
 endif ;; __bits4_0_h__

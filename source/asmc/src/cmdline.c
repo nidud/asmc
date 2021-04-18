@@ -477,7 +477,8 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
 #else
     case 'marf':	// -frame
-	Options.frame_auto = 3;
+	if ( Options.output_format != OFORMAT_BIN )
+	    Options.frame_auto = 3;
 	return;
 #endif
 #ifndef __ASMC64__
@@ -563,6 +564,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	if ( Options.sub_format != SFORMAT_64BIT )
 	    Options.sub_format = SFORMAT_PE;
 	Options.output_format = OFORMAT_BIN;
+	Options.frame_auto = 0;
 	define_name( "__PE__", "1" );
 	return;
     case 'r':		// -r

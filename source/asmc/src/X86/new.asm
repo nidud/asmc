@@ -4,6 +4,7 @@ include asmc.inc
 include proc.inc
 include hllext.inc
 include expreval.inc
+include atofloat.inc
 
 SIZE_DATAPTR    equ 0x68
 
@@ -202,6 +203,58 @@ ConstructorCall endp
 
     assume ebx:nothing
 
+AssignString proc private uses esi edi ebx name:string_t, fp:ptr sfield, string:string_t
+
+  local i:int_t
+  local opndx:expr
+
+    mov edx,fp
+    mov ebx,[edx].sfield.sym.total_size
+    mov edi,[edx].sfield.sym.name
+
+    .repeat
+
+        .break .if ebx <= 4
+
+        imul esi,Token_Count,asm_tok
+        add  esi,16
+        add  esi,ModuleInfo.tokenarray
+        mov  edx,Tokenize( string, 0, esi, TOK_DEFAULT )
+        mov  i,0
+        .break .if EvalOperand( &i, esi, edx, &opndx, 0 ) == ERROR
+
+       .if opndx.kind == EXPR_FLOAT
+            mov opndx.kind,EXPR_CONST
+            .if ebx != 16
+                quad_resize(&opndx, ebx)
+            .endif
+        .endif
+        .break .if opndx.kind != EXPR_CONST
+        .break .if ebx == 8 && opndx.l64_h == 0 && ModuleInfo.Ofssize == USE64
+        .switch ebx
+        .case 16
+            AddLineQueueX( " %r %r %r %s.%s[12], 0x%x", T_MOV, T_DWORD, T_PTR,
+                name, edi, opndx.h64_h )
+            AddLineQueueX( " %r %r %r %s.%s[8], 0x%x", T_MOV, T_DWORD, T_PTR,
+                name, edi, opndx.h64_l )
+        .case 10
+            .if ebx == 10
+                AddLineQueueX( " %r %r %r %s.%s[8], 0x%x", T_MOV, T_WORD, T_PTR,
+                    name, edi, opndx.h64_l )
+            .endif
+        .case 8
+            AddLineQueueX( " %r %r %r %s.%s[4], 0x%x", T_MOV, T_DWORD, T_PTR,
+                name, edi, opndx.l64_h )
+            AddLineQueueX( " %r %r %r %s.%s[0], 0x%x", T_MOV, T_DWORD, T_PTR,
+                name, edi, opndx.l64_l )
+            .return
+        .endsw
+    .until 1
+    AddLineQueueX( " %r %s.%s, %s", T_MOV, name, edi, string )
+    ret
+
+AssignString endp
+
 AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:string_t
 
   local val[256]:char_t, array:int_t
@@ -211,9 +264,13 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
     inc esi
     mov eax,sym
     .if eax
+
         .while [eax].asym.state == SYM_TYPE && [eax].asym.type
+
+            .break .if eax == [eax].asym.type
             mov eax,[eax].asym.type
         .endw
+
         mov ecx,[eax].esym.structinfo
         mov ebx,[ecx].struct_info.head
     .else
@@ -254,13 +311,22 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
             lea ecx,[edi+255]
 
             .while edi < ecx
+
                 mov al,[esi]
-                .if al == '('
+                .switch al
+                .case 0
+                    .break
+                .case ','
+                .case '}'
+                    .break .if !ah
+                    .endc
+                .case '('
                     inc ah
-                .elseif al == ')'
+                    .endc
+                .case ')'
                     dec ah
-                .endif
-                .break .if !al || ax == ',' || ax == '}'
+                    .endc
+                .endsw
                 movsb
             .endw
             mov byte ptr [edi],0
@@ -322,7 +388,8 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                     mov ecx,eax
                     AddLineQueueX( " %r %s[%d], %s", T_MOV, name, ecx, &val )
                 .else
-                    AddLineQueueX( " %r %s.%s, %s", T_MOV, name, [ebx].sfield.sym.name, &val )
+                    AssignString( name, ebx, &val )
+                    ;AddLineQueueX( " %r %s.%s, %s", T_MOV, name, [ebx].sfield.sym.name, &val )
                 .endif
             .endif
         .endif

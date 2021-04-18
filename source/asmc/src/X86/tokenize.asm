@@ -1740,7 +1740,6 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
 
   local rc, p:line_status
 
-    ;mov tokarray,tokptr
     mov p.input,ModuleInfo.currsource
     mov p.start,eax
     mov eax,flags

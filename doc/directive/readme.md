@@ -2,14 +2,14 @@ Asmc Macro Assembler Reference
 
 ## Directives Reference
 
-#### Code Labels
+### Code Labels
 
 - [ALIGN](align.md)
 - [EVEN](even.md)
 - [LABEL](label.md)
 - [ORG](org.md)
 
-#### Conditional Assembly
+### Conditional Assembly
 
 - [DEFINED](defined.md)
 - [ELSE](else.md)
@@ -24,7 +24,7 @@ Asmc Macro Assembler Reference
 - [IFIDN[[I]]](ifidn.md)
 - [UNDEF](undef.md)
 
-#### Conditional Control Flow
+### Conditional Control Flow
 
 - [.ASSERT](dot_assert.md)
 - [.BREAK](dot_break.md)
@@ -56,7 +56,7 @@ Asmc Macro Assembler Reference
 - [.UNTILCXZ](dot_untilcxz.md)
 - [.WHILE](dot_while.md)
 
-#### Conditional Error
+### Conditional Error
 
 - [.ERR](dot_err.md)
 - [.ERR2](dot_err2.md)
@@ -69,39 +69,40 @@ Asmc Macro Assembler Reference
 - [.ERRNDEF](dot_errndef.md)
 - [.ERRNZ](dot_errnz.md)
 
-#### Data Allocation
+### Data Allocation
 
-- [ALIGN](align.md)
-- [BYTE](byte.md)
-- [DWORD](dword.md)
-- [EVEN](even.md)
-- [FWORD](fword.md)
-- [LABEL](label.md)
-- [ORG](org.md)
-- [OWORD](oword.md)
-- [QWORD](qword.md)
-- [REAL2](real2.md)
-- [REAL4](real4.md)
-- [REAL8](real8.md)
-- [REAL10](real10.md)
-- [REAL16](real16.md)
-- [SBYTE](byte.md)
-- [SDWORD](dword.md)
-- [SWORD](word.md)
-- [TBYTE](tbyte.md)
-- [WORD](word.md)
-- [XMMWORD](xmmword.md)
-- [YMMWORD](yword.md)
-- [YWORD](yword.md)
-- [ZWORD](zword.md)
+[[_name_]] _type_ _initializer_ [[, _initializer_]] ...
 
-#### Equates
+Can also be used as a type specifier anywhere a type is legal.
+
+| | |
+| -------- |:------- |
+| **BYTE** | Allocates and optionally initializes 1 byte of storage for each _initializer_. |
+| **DWORD** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
+| **FWORD** | Allocates and optionally initializes 6 bytes of storage for each _initializer_. |
+| **OWORD** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
+| **QWORD** | Allocates and optionally initializes 8 bytes of storage for each _initializer_. |
+| **REAL2** | Allocates and optionally initializes 2 bytes of storage for each _initializer_. |
+| **REAL4** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
+| **REAL8** | Allocates and optionally initializes 8 bytes of storage for each _initializer_. |
+| **REAL10** | Allocates and optionally initializes 10 bytes of storage for each _initializer_. |
+| **REAL16** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
+| **SBYTE** | Allocates and optionally initializes 1 byte of storage for each _initializer_. |
+| **SDWORD** | Allocates and optionally initializes 4 bytes of storage for each _initializer_. |
+| **SWORD** | Allocates and optionally initializes 2 bytes of storage for each _initializer_. |
+| **TBYTE** | Allocates and optionally initializes 10 bytes of storage for each _initializer_. |
+| **XMMWORD** | Allocates and optionally initializes 16 bytes of storage for each _initializer_. |
+| **YWORD** | Allocates and optionally initializes 32 bytes of storage for each _initializer_. |
+| **ZWORD** | Allocates and optionally initializes 64 bytes of storage for each _initializer_. |
+
+
+### Equates
 
 - [=](e.md)
 - [EQU](equ.md)
 - [TEXTEQU](textequ.md)
 
-#### Listing Control
+### Listing Control
 
 - [.CREF](dot_cref.md)
 - [.LIST](dot_list.md)
@@ -118,7 +119,7 @@ Asmc Macro Assembler Reference
 - [.TFCOND](dot_tfcond.md)
 - [.TITLE](dot_title.md)
 
-#### Macros
+### Macros
 
 - [ENDM](endm.md)
 - [EXITM](exitm.md)
@@ -128,7 +129,7 @@ Asmc Macro Assembler Reference
 - [PURGE](purge.md)
 - [RETM](retm.md)
 
-#### Miscellaneous
+### Miscellaneous
 
 - [ASSUME](assume.md)
 - [COMMENT](comment.md)
@@ -150,38 +151,40 @@ Asmc Macro Assembler Reference
 - [.SETFRAME](dot_setframe.md)
 - [.PRAGMA](dot_pragma.md)
 
-#### Procedures
+### Procedures
 
 - [ENDP](endp.md)
 - [INVOKE](invoke.md)
 - [PROC](proc.md)
 - [PROTO](proto.md)
 
-#### Processor
+### Processor
 
-- [.186](dot_186.md)
-- [.286](dot_286.md)
-- [.286P](dot_286p.md)
-- [.287](dot_287.md)
-- [.386](dot_386.md)
-- [.386P](dot_386p.md)
-- [.387](dot_387.md)
-- [.486](dot_486.md)
-- [.486P](dot_486p.md)
-- [.586](dot_586.md)
-- [.586P](dot_586p.md)
-- [.686](dot_686.md)
-- [.686P](dot_686p.md)
-- [.K3D](dot_k3d.md)
-- [.MMX](dot_mmx.md)
-- [.XMM](dot_xmm.md)
-- [.X64](dot_x64.md)
-- [.X64P](dot_x64p.md)
-- [.8086](dot_8086.md)
-- [.8087](dot_8087.md)
-- [.NO87](dot_no87.md)
+| | |
+| -------- |:------- |
+| **.186** | Enables assembly of instructions for the 80186 processor; disables assembly of instructions introduced with later processors. Also enables 8087 instructions. |
+| **.286** | Enables assembly of nonprivileged instructions for the 80286 processor; disables assembly of instructions introduced with later processors. Also enables 80287 instructions. |
+| **.286P** | Enables assembly of all instructions (including privileged) for the 80286 processor; disables assembly of instructions introduced with later processors. Also enables 80287 instructions. |
+| **.287** | Enables assembly of instructions for the 80287 coprocessor; disables assembly of instructions introduced with later coprocessors. |
+| **.386** | Enables assembly of nonprivileged instructions for the 80386 processor; disables assembly of instructions introduced with later processors. Also enables 80387 instructions. |
+| **.386P** | Enables assembly of all instructions (including privileged) for the 80386 processor; disables assembly of instructions introduced with later processors. Also enables 80387 instructions. |
+| **.387** | Enables assembly of instructions for the 80387 coprocessor. |
+| **.486** | Enables assembly of nonprivileged instructions for the 80486 processor. |
+| **.486P** | Enables assembly of all instructions (including privileged) for the 80486 processor. |
+| **.586** | Enables assembly of nonprivileged instructions for the Pentium processor. |
+| **.586P** | Enables assembly of all instructions (including privileged) for the Pentium processor. |
+| **.686** | Enables assembly of nonprivileged instructions for the Pentium Pro processor. |
+| **.686P** | Enables assembly of all instructions (including privileged) for the Pentium Pro processor. |
+| **.K3D** | Enables assembly of K3D instructions. |
+| **.MMX** | Enables assembly of MMX or single-instruction, multiple data (SIMD) instructions. |
+| **.XMM** | Enables assembly of Internet Streaming SIMD Extension instructions. |
+| **.X64** | Enables assembly of nonprivileged instructions for the x86-64 processor. |
+| **.X64P** | Enables assembly of privileged instructions for the x86-64 processor. |
+| **.8086** | Enables assembly of 8086 instructions (and the identical 8088 instructions); disables assembly of instructions introduced with later processors. Also enables 8087 instructions. This is the default mode for processors. |
+| **.8087** | Enables assembly of 8087 instructions; disables assembly of instructions introduced with later coprocessors. This is the default mode for coprocessors. |
+| **.NO87** | Disallows assembly of all floating-point instructions. |
 
-#### Repeat Blocks
+### Repeat Blocks
 
 - [ENDM](endm.md)
 - [FOR](for.md)
@@ -190,7 +193,7 @@ Asmc Macro Assembler Reference
 - [REPEAT](repeat.md)
 - [WHILE](while.md)
 
-#### Scope
+### Scope
 
 - [COMM](comm.md)
 - [EXTERN](extern.md)
@@ -198,7 +201,7 @@ Asmc Macro Assembler Reference
 - [INCLUDELIB](includelib.md)
 - [PUBLIC](public.md)
 
-#### Segment
+### Segment
 
 - [.ALPHA](dot_alpha.md)
 - [ASSUME](assume.md)
@@ -209,7 +212,7 @@ Asmc Macro Assembler Reference
 - [SEGMENT](segment.md)
 - [.SEQ](dot_seq.md)
 
-#### Simplified Segment
+### Simplified Segment
 
 - [.CODE](dot_code.md)
 - [.CONST](dot_const.md)
@@ -223,14 +226,14 @@ Asmc Macro Assembler Reference
 - [.STACK](dot_stack.md)
 - [.STARTUP](dot_startup.md)
 
-#### String
+### String
 
 - [CATSTR](catstr.md)
 - [INSTR](instr.md)
 - [SIZESTR](sizestr.md)
 - [SUBSTR](substr.md)
 
-#### Structure and Record
+### Structure and Record
 
 - [ENDS](ends.md)
 - [RECORD](record.md)
@@ -238,6 +241,6 @@ Asmc Macro Assembler Reference
 - [TYPEDEF](typedef.md)
 - [UNION](union.md)
 
-#### See Also
+### See Also
 
 [Symbols Reference](../symbol/readme.md)

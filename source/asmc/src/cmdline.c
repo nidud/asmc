@@ -24,8 +24,8 @@ struct global_options Options = {
 	2,			// .warning_level
 	0,			// .warning_error
 	0,			// .process_subdir
-	{0,0,0,0,0,0,0,0,0},	// .names OPTN_LAST dup(0)
-	{0,0,0},		// .queues OPTQ_LAST dup(0)
+	{0,0,0,0,0,0,0,0,0},	// .names
+	{0,0,0},		// .queues
 	0,			// .no_comment_in_code_rec
 	0,			// .no_opt_farcall
 	0,			// .no_file_entry
@@ -294,6 +294,8 @@ is_quote:
 
 /* array for options -0..10 */
 
+#ifndef __ASMC64__
+
 static int cpu_option[] = {
     P_86,
     P_186,
@@ -307,6 +309,8 @@ static int cpu_option[] = {
     P_686 | P_MMX | P_SSE1 | P_SSE2,
     P_64
 };
+
+#endif
 
 static void ProcessOption( char **cmdline, char *buffer )
 {
@@ -864,12 +868,8 @@ char *ParseCmdline( char **cmdline, int *numargs )
 	    str = NULL;
 	    if ( paramfile[0] )
 		str = getenv( paramfile );
-	    if( str == NULL ) {
+	    if( str == NULL )
 		str = ReadParamFile( paramfile );
-		if ( str == NULL ) {
-		    break;
-		}
-	    }
 	    break;
 	default: /* collect  file name */
 	    str = GetNameToken( paramfile, str, sizeof( paramfile ) - 1, '@' );

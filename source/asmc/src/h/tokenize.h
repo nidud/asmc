@@ -40,6 +40,8 @@ struct line_status {
     char flags;	    /* v2.08: added */
     char flags2;    /* v2.08: was global var g_flags */
     char flags3;    /* v2.08: added */
+    char brachets;  /* v2.32: added */
+    char cstring;   /* v2.32: added */
 };
 
 enum tokenize_flags {

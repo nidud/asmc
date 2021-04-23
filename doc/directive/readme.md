@@ -119,7 +119,7 @@ Can also be used as a type specifier anywhere a type is legal.
 | --- |:--- |
 | _name_ **=** _expression_ | Assigns the numeric value of expression to name. The symbol can be redefined later. |
 | _name_ **EQU** _expression_ | Assigns numeric value of _expression_ to _name_. The _name_ cannot be redefined later. |
-| _name_ **EQU** _<text>_ | Assigns specified _text_ to _name_. The _name_ can be assigned a different text later. |
+| _name_ **EQU** _\<text\>_ | Assigns specified _text_ to _name_. The _name_ can be assigned a different text later. |
 | _name_ **TEXTEQU** [[_textitem_]] | Assigns _textitem_ to _name_. The textitem can be a literal string, a constant preceded by a , or the string returned by a macro function. |
 |xxxxxxxxxxxxxxxxxxxxxxxxxxxx| |
 

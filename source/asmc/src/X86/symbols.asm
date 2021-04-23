@@ -100,7 +100,7 @@ endif
     eqitem  < @CStr("@WordSize"),  0, UpdateWordSize, 0 > ; must be last (see SymInit())
     string_t NULL
 
-_MAX_DYNEQ equ 10
+_MAX_DYNEQ equ 20
 dyneqcount int_t 0
 dyneqtable string_t _MAX_DYNEQ dup(0)
 dyneqvalue string_t _MAX_DYNEQ dup(0)
@@ -140,7 +140,7 @@ SymClearLocal endp
 SymGetLocal proc psym:asym_t
 
     mov ecx,psym
-    mov edx,[ecx].esym.procinfo
+    mov edx,[ecx].dsym.procinfo
     lea edx,[edx].proc_info.labellist
     xor ecx,ecx
     .while ecx < LHASH_TABLE_SIZE
@@ -150,7 +150,7 @@ SymGetLocal proc psym:asym_t
         .continue .if !eax
 
         mov [edx],eax
-        lea edx,[eax].esym.nextll
+        lea edx,[eax].dsym.nextll
     .endw
     xor eax,eax
     mov [edx],eax
@@ -168,7 +168,7 @@ SymSetLocal proc uses edi psym:asym_t
     mov ecx,sizeof(lsym_table) / 4
     rep stosd
     mov ecx,psym
-    mov edi,[ecx].esym.procinfo
+    mov edi,[ecx].dsym.procinfo
     mov edi,[edi].proc_info.labellist
     .while edi
         mov ecx,[edi].asym.name
@@ -188,7 +188,7 @@ SymSetLocal proc uses edi psym:asym_t
         .endw
         and eax,LHASH_TABLE_SIZE - 1
         mov lsym_table[eax*4],edi
-        mov edi,[edi].esym.nextll
+        mov edi,[edi].dsym.nextll
     .endw
     ret
 SymSetLocal endp
@@ -196,10 +196,10 @@ SymSetLocal endp
 SymAlloc proc uses esi edi name:string_t
     mov esi,name
     mov edi,strlen(esi)
-    LclAlloc(&[edi+esym+1])
+    LclAlloc(&[edi+dsym+1])
     mov [eax].asym.name_size,di
     mov [eax].asym.mem_type,MT_EMPTY
-    lea edx,[eax+esym]
+    lea edx,[eax+dsym]
     mov [eax].asym.name,edx
     .if ModuleInfo.cref
         or [eax].asym.flag,S_LIST

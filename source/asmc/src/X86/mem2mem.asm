@@ -28,16 +28,16 @@ InlineCopy proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
         mov edi,T_RDI
         mov ebx,T_RCX
     .endif
-    AddLineQueueX( " %r %r", T_PUSH, esi )
-    AddLineQueueX( " %r %r", T_PUSH, edi )
-    AddLineQueueX( " %r %r", T_PUSH, ebx )
-    AddLineQueueX( " %r %r, %s", T_LEA, esi, src )
-    AddLineQueueX( " %r %r, %s", T_LEA, edi, dst )
-    AddLineQueueX( " %r %r, %d", T_MOV, T_ECX, count )
-    AddLineQueueX( " %r %r", T_REP, T_MOVSB )
-    AddLineQueueX( " %r %r", T_POP, ebx )
-    AddLineQueueX( " %r %r", T_POP, edi )
-    AddLineQueueX( " %r %r", T_POP, esi )
+    AddLineQueueX( " push %r", esi )
+    AddLineQueueX( " push %r", edi )
+    AddLineQueueX( " push %r", ebx )
+    AddLineQueueX( " lea %r, %s", esi, src )
+    AddLineQueueX( " lea %r, %s", edi, dst )
+    AddLineQueueX( " mov ecx, %d", count )
+    AddLineQueue ( " rep movsb" )
+    AddLineQueueX( " pop %r", ebx )
+    AddLineQueueX( " pop %r", edi )
+    AddLineQueueX( " pop %r", esi )
     ret
 
 InlineCopy endp
@@ -58,24 +58,24 @@ InlineMove proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 
     .for ( ebx = 0 : count >= edi : count -= edi, ebx += edi )
 
-        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, esi, type, T_PTR, src, ebx )
-        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, type, T_PTR, dst, ebx, esi )
+        AddLineQueueX( " mov %r, %r ptr %s[%d]", esi, type, src, ebx )
+        AddLineQueueX( " mov %r ptr %s[%d], %r", type, dst, ebx, esi )
     .endf
 
     mov esi,count
 
     .if ( edi == 8 && esi >= 4 )
 
-        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, T_EAX, T_DWORD, T_PTR, src, ebx )
-        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_DWORD, T_PTR, dst, ebx, T_EAX )
+        AddLineQueueX( " mov eax, dword ptr %s[%d]", src, ebx )
+        AddLineQueueX( " mov dword ptr %s[%d], eax", dst, ebx )
         sub esi,4
         add ebx,4
     .endif
 
     .for ( : esi : esi--, ebx++ )
 
-        AddLineQueueX( " %r %r, %r %r %s[%d]", T_MOV, T_AL, T_BYTE, T_PTR, src, ebx )
-        AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_BYTE, T_PTR, dst, ebx, T_AL )
+        AddLineQueueX( " mov al, byte ptr %s[%d]", src, ebx )
+        AddLineQueueX( " mov byte ptr %s[%d], al", dst, ebx )
     .endf
     ret
 
@@ -214,11 +214,11 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
     .if [edx+16].asm_tok.token == '&'
 
         mov edi,ecx
-        AddLineQueueX( " %r %r, %s", T_LEA, ecx, [edx+32].asm_tok.tokpos )
+        AddLineQueueX( " lea %r, %s", ecx, [edx+32].asm_tok.tokpos )
 
     .elseif edi > esi && esi < T_EAX
 
-        AddLineQueueX( " %r %r, %s", T_MOVZX, T_EAX, eax )
+        AddLineQueueX( " movzx eax, %s", eax )
 
     .else
 
@@ -231,7 +231,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
 
         .if size <= ecx
 
-            AddLineQueueX( " %r %r, %s", T_MOV, esi, eax )
+            AddLineQueueX( " mov %r, %s", esi, eax )
 
         .elseif op == T_MOV
 
@@ -260,20 +260,20 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr e
             .case T_CMP
                 lea ecx,buffer
                 GetLabelStr( GetHllLabel(), ecx )
-                AddLineQueueX( " %r %r, %r %r %s[4]", T_MOV, T_EAX, T_DWORD, T_PTR, ebx )
-                AddLineQueueX( " %r %r %r %s[4], %r", T_CMP, T_DWORD, T_PTR, dst, T_EAX )
-                AddLineQueueX( " %r %s", T_JNE, &buffer )
-                AddLineQueueX( " %r %r, %r %r %s", T_MOV, T_EAX, T_DWORD, T_PTR, ebx )
-                AddLineQueueX( " %r %r %r %s, %r", T_CMP, T_DWORD, T_PTR, dst, T_EAX )
+                AddLineQueueX( " mov eax, dword ptr %s[4]", ebx )
+                AddLineQueueX( " cmp dword ptr %s[4], eax", dst )
+                AddLineQueueX( " jne %s", &buffer )
+                AddLineQueueX( " mov eax, dword ptr %s", ebx )
+                AddLineQueueX( " cmp dword ptr %s, eax", dst )
                 AddLineQueueX( "%s:", &buffer )
                 .endc
             .case T_ADD
-                AddLineQueueX( " %r %r %r %s, %r %r %s", T_ADD, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
-                AddLineQueueX( " %r %r %r %s[4], %r %r %s[4]", T_ADC, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " add dword ptr %s, dword ptr %s", dst, ebx )
+                AddLineQueueX( " adc dword ptr %s[4], dword ptr %s[4]", dst, ebx )
                 .endc
             .case T_SUB
-                AddLineQueueX( " %r %r %r %s, %r %r %s", T_SUB, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
-                AddLineQueueX( " %r %r %r %s[4], %r %r %s[4]", T_SBB, T_DWORD, T_PTR, dst, T_DWORD, T_PTR, ebx )
+                AddLineQueueX( " sub dword ptr %s, dword ptr %s", dst, ebx )
+                AddLineQueueX( " sbb dword ptr %s[4], dword ptr %s[4]", dst, ebx )
                 .endc
             .endsw
 

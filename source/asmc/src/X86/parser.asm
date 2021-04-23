@@ -121,7 +121,7 @@ sym_add_table proc queue:ptr symbol_queue, item:dsym_t
         mov [edx].prev,eax
     .else
         mov [edx].prev,[ecx].tail
-        mov [eax].esym.next,edx
+        mov [eax].dsym.next,edx
         mov [ecx].tail,edx
         mov [edx].next,NULL
     .endif
@@ -3453,7 +3453,7 @@ continue:
     mov eax,CurrSeg
     .return asmerr(2034) .if eax == NULL
 
-    mov eax,[eax].esym.seginfo
+    mov eax,[eax].dsym.seginfo
 
     .if [eax].seg_info.segtype == SEGTYPE_UNDEF
         mov [eax].seg_info.segtype,SEGTYPE_CODE

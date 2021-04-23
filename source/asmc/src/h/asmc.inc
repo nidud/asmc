@@ -548,6 +548,7 @@ OutputByte              proto :int_t
 OutputBytes             proto :ptr byte, :int_t, :ptr fixup
 AddLinnumDataRef        proto :uint_t, :uint_t
 _atoow                  proto :string_t, :string_t, :int_t, :int_t
+write_options           proto
 
 .pragma list(pop)
 endif

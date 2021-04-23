@@ -63,7 +63,7 @@ StdcallMangler proc fastcall sym:asym_t, buffer:string_t
     .if ( Options.stdcall_decoration == STDCALL_FULL && [ecx].flag & S_ISPROC )
 
         mov eax,ecx
-        mov eax,[eax].esym.procinfo
+        mov eax,[eax].dsym.procinfo
         sprintf( edx, "_%s@%d", [ecx].name, [eax].proc_info.parasize )
     .else
         jmp UScoreMangler
@@ -77,7 +77,7 @@ StdcallMangler endp
 ms32_decorate proc fastcall sym:asym_t, buffer:string_t
 
     mov eax,ecx
-    mov eax,[eax].esym.procinfo
+    mov eax,[eax].dsym.procinfo
     sprintf( edx, "@%s@%u", [ecx].name, [eax].proc_info.parasize )
     ret
 
@@ -157,7 +157,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
         strcpy( edi, [ecx].name )
         movzx eax,[esi].asym.name_size
     .else
-        mov eax,[esi].esym.procinfo
+        mov eax,[esi].dsym.procinfo
         sprintf( edi, "%s@@%u", [ecx].name, [eax].proc_info.parasize )
     .endif
     ret

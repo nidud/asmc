@@ -36,9 +36,6 @@ __percent   db '%',0
 __quest     db '?',0
 __null      db 0
 
-_cstring    db 0    ; allow \" in string
-_brachets   db 0    ; proc ( ... )
-
     .code
 
     option  proc:private
@@ -215,7 +212,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                 add ecx,1 ; count the first quote
                 .break
 
-              .case ax == '""' && _cstring ; case \" ?
+              .case ax == '""' && [edx].cstring ; case \" ?
 
                 .if byte ptr [esi-1] == '\' && \
                     byte ptr [esi-2] != '\' ; case \\"
@@ -510,11 +507,11 @@ endif
 
             .if eax == '('
 
-                inc _brachets
+                inc [edx].brachets
 
             .elseif eax == ')'
 
-                dec _brachets
+                dec [edx].brachets
                 .break
             .endif
 
@@ -638,11 +635,11 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; v2.30: added invocation for reg(...) if typedef
         ; v2.32: .pragma comment(linker,"
 
-        inc _brachets
+        inc [esi].brachets
 
         .if [esi].index == 2 && [ebx-2*16].tokval == T_DOT_PRAGMA
 
-            inc _cstring
+            inc [esi].cstring
 
         .elseif ah == ')' && [ebx-16].token == T_REG
             ;
@@ -721,7 +718,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                             mov edx,[edx]
                             .if edx == "tSC@"
 
-                                inc _cstring
+                                inc [esi].cstring
                                 .endc
                             .endif
                         .endif
@@ -736,7 +733,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
                     .endc .if !( [eax].asym.flag & S_ISPROC )
                     mov ecx,T_HLL_PROC
-                    inc _cstring
+                    inc [esi].cstring
                     .endc
 
                   .case edx == SYM_TYPE ;  structure, union, typedef, record
@@ -751,7 +748,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                         .endc .if [edi-16].asm_tok.token == T_ID
                         .endc .if ( CurrSeg == NULL )
                         mov edx,CurrSeg
-                        mov edx,[edx].esym.seginfo
+                        mov edx,[edx].dsym.seginfo
                         .endc .if [edx].seg_info.segtype != SEGTYPE_CODE
                     .else
                         .endc .if eax < 5
@@ -771,6 +768,9 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                             dec eax
                         .untilz
                         .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
+                        .if eax > 1 && [edi-16].asm_tok.token == T_ID
+                            sub edi,16
+                        .endif
                     .endif
 
                   .case edx == SYM_STACK
@@ -778,7 +778,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                   .case edx == SYM_EXTERNAL
                   .case [eax].asym.flag & S_ISPROC
                     mov ecx,T_HLL_PROC
-                    inc _cstring
+                    inc [esi].cstring
                     .endc
 
                   .case edx == SYM_UNDEFINED
@@ -810,10 +810,10 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; no break
         ;
       .case ')'
-        .if al == ')' && _brachets
+        .if al == ')' && [esi].brachets
 
-            dec _brachets
-            dec _cstring
+            dec [esi].brachets
+            dec [esi].cstring
         .endif
 
       .case '*'..'/'
@@ -1196,7 +1196,7 @@ get_id proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
 
     mov eax,[esi]
 
-    .if ax == '"L' && _brachets
+    .if ax == '"L' && [edx].brachets
 
         stosb
         inc [edx].input
@@ -1486,8 +1486,8 @@ Tokenize proc uses esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
     mov p.index,start
     mov p.flags2,0
     mov p.flags3,0
-    mov _cstring,0
-    mov _brachets,0
+    mov p.cstring,0
+    mov p.brachets,0
 
     .repeat
 
@@ -1547,10 +1547,10 @@ Tokenize proc uses esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
                 ; concatenation may be triggered by a comma AFTER expansion.
 
                 .if p.index > 1 && \
-                    ([ebx-16].token == T_COMMA || _brachets) && \
+                    ([ebx-16].token == T_COMMA || p.brachets) && \
                     ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
 
-                    .if IsMultiLine(tokenarray) || _brachets
+                    .if IsMultiLine(tokenarray) || p.brachets
 
                         strlen(p.output)
                         add eax,4
@@ -1747,8 +1747,8 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
     mov p.index,start
     mov p.flags2,0
     mov p.flags3,0
-    mov _cstring,0
-    mov _brachets,0
+    mov p.cstring,0
+    mov p.brachets,0
 
     .repeat
 
@@ -1805,11 +1805,11 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
             .if BYTE PTR [edx] == 0
 
                 .if p.index > 1 && \
-                    ([ebx-16].token == T_COMMA || _brachets) && \
+                    ([ebx-16].token == T_COMMA || p.brachets) && \
                     ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
 
                     mov ecx,tokptr
-                    .if IsMultiLine([ecx]) || _brachets
+                    .if IsMultiLine([ecx]) || p.brachets
 
                         strlen(p.output)
                         add eax,4
@@ -1976,9 +1976,13 @@ TokenizeEx proc uses esi edi ebx start:uint_t, tokptr:ptr ptr asm_tok, flags:uin
         mov p.output,eax
         mov ModuleInfo.stringbufferend,eax
 
+        .break .if ( !p.brachets )
+        .break .if CurrIfState != BLOCK_ACTIVE
+
+        asmerr( 2157 )
+
     .until 1
 
-    ;mov tokarray,NULL
     mov eax,tokptr
     mov ebx,[eax]
     mov eax,p.index

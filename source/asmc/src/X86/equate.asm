@@ -455,7 +455,25 @@ CreateConstant proc uses esi edi ebx tokenarray:tok_t
             ;; the original (unexpanded!) line - that's why it has to be
             ;; saved here to argbuffer[].
 
-            strcpy( &argbuffer, p )
+            ; v2.32.39 - added error 'missing right parenthesis'
+            ; -- '(' triggers multiple lines..
+
+            mov edx,edi
+            mov edi,eax
+            xor eax,eax
+            mov ecx,-1
+            repnz scasb
+            not ecx
+            .if ecx >= MAX_LINE_LEN
+                asmerr( 2008, [ebx].string_ptr )
+                .return( NULL )
+            .endif
+            mov eax,esi
+            lea edi,argbuffer
+            mov esi,p
+            rep movsb
+            mov esi,eax
+            mov edi,edx
 
             ;; expand EQU argument (macro functions won't be expanded!)
 

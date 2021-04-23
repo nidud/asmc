@@ -9,19 +9,19 @@
     includelib <kernel32.lib>
 
     option stackbase:esp
-    option renamekeyword: <push>=@@push
-    option renamekeyword: <pushd>=@@pushd
-    option renamekeyword: <pushw>=@@pushw
-    option renamekeyword: <pop>=@@pop
-    option renamekeyword: <invoke>=@@invoke
-    option renamekeyword: <sub>=@@sub
-    option renamekeyword: <add>=@@add
-    option renamekeyword: <endp>=@@endp
+    option renamekeyword: <push>=??push
+    option renamekeyword: <pushd>=??pushd
+    option renamekeyword: <pushw>=??pushw
+    option renamekeyword: <pop>=??pop
+    option renamekeyword: <invoke>=??invoke
+    option renamekeyword: <sub>=??sub
+    option renamekeyword: <add>=??add
+    option renamekeyword: <endp>=??endp
 
 ;--- start FPO redefinitions
 
 push macro x:vararg
-    @@push x
+    ??push x
   if (@ProcStatus and 7) eq 4  ;outside prologue/epilogue and fpo?
     if typeof(x)
         @StackBase = @StackBase + typeof(x)
@@ -32,14 +32,14 @@ push macro x:vararg
 endm
 
 pushd macro x:vararg
-    @@pushd x
+    ??pushd x
   if ( @ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     @StackBase = @StackBase + 4
   endif
 endm
 
 pushw macro x:vararg
-    @@pushw x
+    ??pushw x
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     @StackBase = @StackBase + 2
   endif
@@ -54,22 +54,22 @@ pop macro x:vararg
     endif
     .errnz @StackBase lt 0, <@StackBase below 0!!>
   endif
-    @@pop x
+    ??pop x
 endm
 
 invoke macro args:varargml
   if @ProcStatus and 4
     SavedBase = @StackBase
-    @@invoke args
+    ??invoke args
     @StackBase = SavedBase
   else
-    @@invoke args
+    ??invoke args
   endif
 endm
 
 
 sub macro dst:req, opnd:req
-    @@sub dst, opnd
+    ??sub dst, opnd
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     ifidni <dst>,<esp>
       if ( opattr opnd ) and 4
@@ -80,7 +80,7 @@ sub macro dst:req, opnd:req
 endm
 
 add macro dst:req, opnd:req
-    @@add dst, opnd
+    ??add dst, opnd
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     ifidni <dst>,<esp>
       if ( opattr opnd ) and 4
@@ -94,7 +94,7 @@ endp macro name_:label
   if (@ProcStatus and 4) ;fpo on?
     .errnz @StackBase, <@StackBase not zero!!>
   endif
-    name_ @@endp
+    name_ ??endp
 endm
 
 ;--- end FPO redefinitions

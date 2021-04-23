@@ -3,9 +3,9 @@ ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
-__LIBC_INC	equ 1
-__STDC__	equ 1
-__LIBC__	equ 232
+define __LIBC_INC
+define __STDC__
+define __LIBC__ 232
 ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
   .err <incorrect version. Use the header that matches with the Asmc Assembler.>
@@ -24,15 +24,15 @@ endif
 ;;     _M_IA64
 ;;
 ifdef _WIN64
-_IA64_		equ <>
-_M_X64		equ 100
-_M_IA64		equ <>
+define _IA64_
+define _M_X64	100
+define _M_IA64
 elseifdef _AMD64
-_AMD64_		equ <>
-_M_AMD64	equ 100
+define _AMD64_
+define _M_AMD64 100
 else
-_X86_		equ <>
-_M_IX86		equ 600
+define _X86_
+define _M_IX86	600
 endif
 
 ifdef _LINUX
@@ -48,7 +48,7 @@ endif
 
 ifdef __PE__	; asmc /pe
 ifndef _MSVCRT	; msvcrt.lib
-_MSVCRT equ <>
+define _MSVCRT
 endif
 endif
 
@@ -89,7 +89,7 @@ ifndef _MSC_VER
 ;; is 17.00.51106.1, the _MSC_VER macro evaluates to 1700. Enter cl /? at the
 ;; command line to view the compiler's version number. This macro is always defined.
 ;;
-_MSC_VER	equ 1200 ;; Visual C++ version 12.0
+define _MSC_VER 1200 ;; Visual C++ version 12.0
 endif
 
 ifndef _MSC_FULL_VER
@@ -102,16 +102,16 @@ ifndef _MSC_FULL_VER
 ;; _MSC_FULL_VER macro evaluates to 150020706. Enter cl /? at the command line
 ;; to view the compiler's version number. This macro is always defined.
 ;;
-_MSC_FULL_VER	equ 120000000 ;; Visual C++ version 12.0
+define _MSC_FULL_VER 120000000 ;; Visual C++ version 12.0
 endif
 
 ifndef _WIN32
-_WIN32		equ <>	; default
+define _WIN32 ; default
 endif
 
 ifdef _WIN64
 ifdef __PE__
-if not (@cpu eq 0x0D5F) ; case -pe -win64
+ifndef __ASMC64__ ; case -pe -win64
 	.x64
 	.model	flat, _CType
 endif
@@ -217,9 +217,9 @@ LPWORD		typedef ptr word
 LPDWORD		typedef ptr dword
 LPQWORD		typedef ptr qword
 
-TRUE		equ 1
-FALSE		equ 0
-NULL		equ 0
+define TRUE	1
+define FALSE	0
+define NULL	0
 
 option		casemap:none
 size_t		typedef SIZE_T

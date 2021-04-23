@@ -146,10 +146,10 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueueX("%r", T_PUSHFQ)
-                AddLineQueueX("%r %r,28h", T_SUB, T_RSP)
+                AddLineQueue( " pushfq" )
+                AddLineQueue( " sub rsp,28h" )
             .else
-                AddLineQueueX("%r", T_PUSHFD)
+                AddLineQueue( " pushfd" )
             .endif
         .endif
 
@@ -167,10 +167,10 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueueX("%r %r,28h", T_ADD, T_RSP)
-                AddLineQueueX("%r", T_POPFQ)
+                AddLineQueue( " add rsp,28h" )
+                AddLineQueue( " popfq" )
             .else
-                AddLineQueueX("%r", T_POPFD)
+                AddLineQueue( " popfd" )
             .endif
         .endif
 
@@ -181,10 +181,10 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueueX("%r %r,28h", T_ADD, T_RSP)
-                AddLineQueueX("%r", T_POPFQ)
+                AddLineQueue( " add rsp,28h" )
+                AddLineQueue( " popfq" )
             .else
-                AddLineQueueX("%r", T_POPFD)
+                AddLineQueue( " popfd" )
             .endif
         .endif
 

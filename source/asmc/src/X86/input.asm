@@ -459,7 +459,7 @@ print_source_nesting_structure proc uses esi edi ebx
                     "MacroLoop", [ebx].line_num, edx )
             .else
                 push eax
-                mov edx,[ecx].esym.macroinfo
+                mov edx,[ecx].dsym.macroinfo
                 mov eax,[edx].macro_info.srcfile
                 GetFNamePart(GetFName(eax))
                 pop ecx
@@ -845,7 +845,10 @@ AllocInput proc private uses esi edi
     imul edi,eax,asm_tok * MAX_MACRO_NESTING
     lea  eax,[edi+edx]
     add  eax,esi
-    mov  srclinebuffer,LclAlloc( eax )
+
+    .return .if !LclAlloc( eax )
+
+    mov  srclinebuffer,eax
 
     ;; the comment buffer is at the end of the source line buffer
 
@@ -916,7 +919,7 @@ InputExtend proc uses esi edi ebx p:ptr line_status, tokenarray:ptr ptr asm_tok
     add ModuleInfo.max_line_len,ebx
     mov edi,token_stringbuf
 
-    AllocInput()
+    .return .if !AllocInput()
 
     ; copy source line buffer, token buffer, and string buffer
     mov  edx,edi

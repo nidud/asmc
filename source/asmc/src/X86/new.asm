@@ -114,29 +114,29 @@ ConstructorCall proc private uses esi edi ebx \
         push eax
         .switch eax
         .case 0, 3
-            AddLineQueueX( " %r %r, %s", T_LEA, reg, edx )
+            AddLineQueueX( " lea %r, %s", reg, edx )
             .endc
         .case 1, 2, 4, 5
-            AddLineQueueX( " %r %r, %r", T_XOR, ecx, ecx )
+            AddLineQueueX( " xor %r, %r", ecx, ecx )
         .endsw
         pop eax
         mov edx,name
         mov ecx,reg
         .switch pascal eax
         .case 0 : AddLineQueueX( " %s(%r)",          esi, ecx )
-        .case 1 : AddLineQueueX( " %r %s,%s(%r)",    T_MOV, edx, esi, ecx )
+        .case 1 : AddLineQueueX( " mov %s,%s(%r)",   edx, esi, ecx )
         .case 2 : AddLineQueueX( " %s(%r)",          esi, ecx )
         .case 3 : AddLineQueueX( " %s(%r,%s)",       esi, ecx, edi )
-        .case 4 : AddLineQueueX( " %r %s,%s(%r,%s)", T_MOV, edx, esi, ecx, edi )
+        .case 4 : AddLineQueueX( " mov %s,%s(%r,%s)",edx, esi, ecx, edi )
         .case 5 : AddLineQueueX( " %s(%r,%s)",       esi, ecx, edi )
         .endsw
     .else
         .switch pascal eax
         .case 0 : AddLineQueueX( " %s(&%s)",         esi, edx )
-        .case 1 : AddLineQueueX( " %r %s,%s(0)",     T_MOV, edx, esi )
+        .case 1 : AddLineQueueX( " mov %s,%s(0)",    edx, esi )
         .case 2 : AddLineQueueX( " %s(0)",           esi )
         .case 3 : AddLineQueueX( " %s(&%s,%s)",      esi, edx, edi )
-        .case 4 : AddLineQueueX( " %r %s,%s(0,%s)",  T_MOV, edx, esi, edi )
+        .case 4 : AddLineQueueX( " mov %s,%s(0,%s)", edx, esi, edi )
         .case 5 : AddLineQueueX( " %s(0,%s)",        esi, edi )
         .endsw
     .endif
@@ -182,9 +182,9 @@ ConstructorCall proc private uses esi edi ebx \
             mov byte ptr [esi],0
 
             .if cltype == ClMem
-                AddLineQueueX( " %r %s.%s, %s", T_MOV, name, edx, edi )
+                AddLineQueueX( " mov %s.%s, %s", name, edx, edi )
             .else
-                AddLineQueueX( " %r [%r].%s.%s, %s", T_MOV, acc, class, edx, edi )
+                AddLineQueueX( " mov [%r].%s.%s, %s", acc, class, edx, edi )
             .endif
             mov byte ptr [esi],')'
             add ebx,16
@@ -216,12 +216,15 @@ AssignString proc private uses esi edi ebx name:string_t, fp:ptr sfield, string:
 
         .break .if ebx <= 4
 
-        imul esi,Token_Count,asm_tok
-        add  esi,16
-        add  esi,ModuleInfo.tokenarray
-        mov  edx,Tokenize( string, 0, esi, TOK_DEFAULT )
-        mov  i,0
-        .break .if EvalOperand( &i, esi, edx, &opndx, 0 ) == ERROR
+        mov esi,Token_Count
+        add esi,1
+        mov i,esi
+        mov edx,Tokenize( string, esi, ModuleInfo.tokenarray, TOK_DEFAULT )
+        mov eax,esi
+        shl eax,4
+        add eax,ModuleInfo.tokenarray
+        .break .if [eax].asm_tok.token != T_NUM && [eax].asm_tok.token != T_FLOAT
+        .break .if EvalOperand( &i, ModuleInfo.tokenarray, edx, &opndx, 0 ) == ERROR
 
        .if opndx.kind == EXPR_FLOAT
             mov opndx.kind,EXPR_CONST
@@ -233,31 +236,26 @@ AssignString proc private uses esi edi ebx name:string_t, fp:ptr sfield, string:
         .break .if ebx == 8 && opndx.l64_h == 0 && ModuleInfo.Ofssize == USE64
         .switch ebx
         .case 16
-            AddLineQueueX( " %r %r %r %s.%s[12], 0x%x", T_MOV, T_DWORD, T_PTR,
-                name, edi, opndx.h64_h )
-            AddLineQueueX( " %r %r %r %s.%s[8], 0x%x", T_MOV, T_DWORD, T_PTR,
-                name, edi, opndx.h64_l )
+            AddLineQueueX( " mov dword ptr %s.%s[12], 0x%x", name, edi, opndx.h64_h )
+            AddLineQueueX( " mov dword ptr %s.%s[8], 0x%x", name, edi, opndx.h64_l )
         .case 10
             .if ebx == 10
-                AddLineQueueX( " %r %r %r %s.%s[8], 0x%x", T_MOV, T_WORD, T_PTR,
-                    name, edi, opndx.h64_l )
+                AddLineQueueX( " mov word ptr %s.%s[8], 0x%x", name, edi, opndx.h64_l )
             .endif
         .case 8
-            AddLineQueueX( " %r %r %r %s.%s[4], 0x%x", T_MOV, T_DWORD, T_PTR,
-                name, edi, opndx.l64_h )
-            AddLineQueueX( " %r %r %r %s.%s[0], 0x%x", T_MOV, T_DWORD, T_PTR,
-                name, edi, opndx.l64_l )
+            AddLineQueueX( " mov dword ptr %s.%s[4], 0x%x", name, edi, opndx.l64_h )
+            AddLineQueueX( " mov dword ptr %s.%s[0], 0x%x", name, edi, opndx.l64_l )
             .return
         .endsw
     .until 1
-    AddLineQueueX( " %r %s.%s, %s", T_MOV, name, edi, string )
+    AddLineQueueX( " mov %s.%s, %s", name, edi, string )
     ret
 
 AssignString endp
 
 AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:string_t
 
-  local val[256]:char_t, array:int_t
+  local val[256]:char_t, array:int_t, brackets:byte
 
     mov array,0
     mov esi,string
@@ -271,7 +269,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
             mov eax,[eax].asym.type
         .endw
 
-        mov ecx,[eax].esym.structinfo
+        mov ecx,[eax].dsym.structinfo
         mov ebx,[ecx].struct_info.head
     .else
         inc array
@@ -307,45 +305,56 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
         .else
 
             xor eax,eax
+            xor edx,edx
+            mov brackets,al
             mov [edi],al
             lea ecx,[edi+255]
 
             .while edi < ecx
 
                 mov al,[esi]
+
                 .switch al
                 .case 0
                     .break
                 .case ','
                 .case '}'
-                    .break .if !ah
+                    .break .if !brackets
                     .endc
                 .case '('
-                    inc ah
+                    inc brackets
                     .endc
                 .case ')'
-                    dec ah
+                    dec brackets
                     .endc
                 .endsw
+                .if !( _ltype[eax+1] & _LABEL or _DIGIT )
+                    inc edx
+                .endif
                 movsb
             .endw
-            mov byte ptr [edi],0
+            xor eax,eax
+            mov [edi],al
 
             .for ( ecx=&val : ecx < edi && \
                  ( byte ptr [edi-1] == ' ' || byte ptr [edi-1] == 9 ) : )
 
+                dec edx
                 dec edi
                 mov byte ptr [edi],0
             .endf
 
-            .if !array && val && val != '{' && [ebx].sfield.sym.flag & S_ISARRAY
+            .if edx == 0
 
-                .if SymSearch( &val )
+                mov edi,ecx
+
+                .if SymSearch( edi )
 
                     .if [eax].asym.state == SYM_TMACRO
 
                         mov ecx,[eax].asym.string_ptr
-                        .if byte ptr [ecx] == '{'
+
+                        .if byte ptr [ecx] == '{' && !array && [ebx].sfield.sym.flag & S_ISARRAY
 
                             mov     edx,eax
                             xor     eax,eax
@@ -369,7 +378,17 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                             rep     movsb
                             mov     esi,esp
 
-                           .continue(0)
+                            .continue(0)
+
+                        .else
+
+                            mov edx,esi
+                            mov esi,ecx
+                            mov ecx,[eax].asym.total_size
+                            inc ecx
+                            and ecx,256-1
+                            rep movsb
+                            mov esi,edx
                         .endif
                     .endif
                 .endif
@@ -377,7 +396,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
             .if val
                 .if val == '"' || ( val == 'L' &&  val[1] == '"')
-                    AddLineQueueX( " %r %s.%s, &@CStr(%s)", T_MOV, name, [ebx].sfield.sym.name, &val )
+                    AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [ebx].sfield.sym.name, &val )
                 .elseif array
                     mov eax,[ebx].sfield.sym.total_size
                     xor edx,edx
@@ -386,10 +405,9 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                     dec ecx
                     mul ecx
                     mov ecx,eax
-                    AddLineQueueX( " %r %s[%d], %s", T_MOV, name, ecx, &val )
+                    AddLineQueueX( " mov %s[%d], %s", name, ecx, &val )
                 .else
                     AssignString( name, ebx, &val )
-                    ;AddLineQueueX( " %r %s.%s, %s", T_MOV, name, [ebx].sfield.sym.name, &val )
                 .endif
             .endif
         .endif
@@ -476,47 +494,47 @@ ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
 
         .if edi > 32
 
-            AddLineQueueX( " %r %r", T_PUSH, T_RDI )
-            AddLineQueueX( " %r %r", T_PUSH, T_RCX )
-            AddLineQueueX( " %r %r, %s", T_LEA, T_RDI, name )
-            AddLineQueueX( " %r %r, %d", T_MOV, T_ECX, edi )
-            AddLineQueueX( " %r %r", T_REP, T_STOSB )
-            AddLineQueueX( " %r %r", T_POP, T_RCX )
-            AddLineQueueX( " %r %r", T_POP, T_RDI )
+            AddLineQueue ( " push rdi" )
+            AddLineQueue ( " push rcx" )
+            AddLineQueueX( " lea rdi, %s", name )
+            AddLineQueueX( " mov ecx, %d", edi )
+            AddLineQueue ( " rep stosb" )
+            AddLineQueue ( " pop rcx" )
+            AddLineQueue ( " pop rdi" )
 
         .else
 
             .for ( ebx = 0 : edi >= 8 : edi -= 8, ebx += 8 )
 
-                AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_QWORD, T_PTR, name, ebx, T_RAX )
+                AddLineQueueX( " mov qword ptr %s[%d], rax", name, ebx )
             .endf
 
             .for ( : edi : edi--, ebx++ )
 
-                AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_BYTE, T_PTR, name, ebx, T_AL )
+                AddLineQueueX( " mov byte ptr %s[%d], al", name, ebx )
             .endf
         .endif
 
     .elseif edi > 16
 
-        AddLineQueueX( " %r %r", T_PUSH, T_EDI )
-        AddLineQueueX( " %r %r", T_PUSH, T_ECX )
-        AddLineQueueX( " %r %r, %s", T_LEA, T_EDI, name )
-        AddLineQueueX( " %r %r, %d", T_MOV, T_ECX, edi )
-        AddLineQueueX( " %r %r", T_REP, T_STOSB )
-        AddLineQueueX( " %r %r", T_POP, T_ECX )
-        AddLineQueueX( " %r %r", T_POP, T_EDI )
+        AddLineQueue ( " push edi" )
+        AddLineQueue ( " push ecx" )
+        AddLineQueueX( " lea edi, %s", name )
+        AddLineQueueX( " mov ecx, %d", edi )
+        AddLineQueueX( " rep stosb" )
+        AddLineQueue ( " pop ecx" )
+        AddLineQueue ( " pop edi" )
 
     .else
 
         .for ( ebx = 0 : edi >= 4 : edi -= 4, ebx += 4 )
 
-            AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_DWORD, T_PTR, name, ebx, T_EAX )
+            AddLineQueueX( " mov dword ptr %s[%d], eax", name, ebx )
         .endf
 
         .for ( : edi : edi--, ebx++ )
 
-            AddLineQueueX( " %r %r %r %s[%d], %r", T_MOV, T_BYTE, T_PTR, name, ebx, T_AL )
+            AddLineQueueX( " mov byte ptr %s[%d], al", name, ebx )
         .endf
     .endif
     ret
@@ -587,8 +605,8 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
             .if opndx.kind == EXPR_CONST
 
-                AddLineQueueX( " %r %r %r %s[0], %u", T_MOV, T_DWORD, T_PTR, name, opndx.l64_l )
-                AddLineQueueX( " %r %r %r %s[4], %u", T_MOV, T_DWORD, T_PTR, name, opndx.l64_h )
+                AddLineQueueX( " mov dword ptr %s[0], %u", name, opndx.l64_l )
+                AddLineQueueX( " mov dword ptr %s[4], %u", name, opndx.l64_h )
                 imul eax,i,asm_tok
                 add  eax,tokenarray
                 .return
@@ -700,12 +718,12 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
 
         .if ti.Ofssize == USE16
             .if creat
-                mov [eax].esym.sym.mem_type,MT_WORD
+                mov [eax].dsym.sym.mem_type,MT_WORD
             .endif
             mov ti.size,word
         .else
             .if creat
-                mov [eax].esym.sym.mem_type,MT_DWORD
+                mov [eax].dsym.sym.mem_type,MT_DWORD
             .endif
             mov ti.size,dword
         .endif
@@ -789,14 +807,14 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
         .if creat && Parse_Pass == PASS_1
 
             mov eax,CurrProc
-            mov edx,[eax].esym.procinfo
+            mov edx,[eax].dsym.procinfo
             .if [edx].proc_info.locallist == NULL
                 mov [edx].proc_info.locallist,esi
             .else
                 mov ecx,[edx].proc_info.locallist
-                .for : [ecx].esym.nextlocal : ecx = [ecx].esym.nextlocal
+                .for : [ecx].dsym.nextlocal : ecx = [ecx].dsym.nextlocal
                 .endf
-                mov [ecx].esym.nextlocal,esi
+                mov [ecx].dsym.nextlocal,esi
             .endif
         .endif
 
@@ -847,7 +865,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
     .if creat && Parse_Pass == PASS_1
 
         mov eax,CurrProc
-        mov ecx,[eax].esym.procinfo
+        mov ecx,[eax].dsym.procinfo
         mov [ecx].proc_info.localsize,0
         SetLocalOffsets(ecx)
     .endif

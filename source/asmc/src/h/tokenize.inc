@@ -12,6 +12,8 @@ index		    uint_t ?	; index token array
 flags		    char_t ?	; v2.08: added
 flags2		    char_t ?	; v2.08: was global var g_flags
 flags3		    char_t ?	; v2.08: added
+brachets	    char_t ?	; v2.32: added
+cstring		    char_t ?	; v2.32: added
 line_status	    ends
 
 TOK_DEFAULT	    equ 0x00	; default mode - handle conditional assembly

@@ -178,13 +178,13 @@ RegisterHostWindowClass proc hInstance:HINSTANCE
             CS_HREDRAW or CS_VREDRAW,
             &HostWndProc,
             0,
+            0,
             hInstance,
-            NULL,
             NULL,
             LoadCursor(NULL, IDC_ARROW),
             (1 + COLOR_BTNFACE),
             0,
-            &@CStr(WindowClassName),
+            WindowClassName,
             NULL }
     .return RegisterClassEx(&wcex)
 RegisterHostWindowClass endp

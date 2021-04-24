@@ -1,4 +1,4 @@
-all: test32.exe test64.exe
+all: catch.exe test32.exe test64.exe
 
 test32.exe:
     asmc $*.asm
@@ -14,4 +14,10 @@ test64.exe:
     $@
     pause
     del $@
+    del $*.obj
+
+catch.exe:
+    asmc64 $*.asm
+    linkw sys con_64 file $*
+    $@ 1
     del $*.obj

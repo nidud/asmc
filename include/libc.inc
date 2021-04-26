@@ -110,12 +110,6 @@ define _WIN32 ; default
 endif
 
 ifdef _WIN64
-ifdef __PE__
-ifndef __ASMC64__ ; case -pe -win64
-	.x64
-	.model	flat, _CType
-endif
-endif
 option	win64:3
 option	frame:auto
 SIZE_T	typedef QWORD

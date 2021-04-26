@@ -1,4 +1,4 @@
 test.exe:
-    asmc -pe -win64 $*.asm
+    asmc64 -pe $*.asm
     $@ find %windir%
     pause

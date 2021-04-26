@@ -191,7 +191,6 @@
     <ClCompile Include="src/condasm.c" />
     <ClCompile Include="src/context.c" />
     <ClCompile Include="src/cpumodel.c" />
-    <ClCompile Include="src/cstring.c" />
     <ClCompile Include="src/data.c" />
     <ClCompile Include="src/dbgcv.c" />
     <ClCompile Include="src/directiv.c" />

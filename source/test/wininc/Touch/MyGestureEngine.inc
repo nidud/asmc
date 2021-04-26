@@ -4,7 +4,7 @@ include DrawingObject.inc
 
 .class CMyGestureEngine
 
-    _pcRect             LPCDRAWINGOBJECT ?
+    _pcRect             ptr CDrawingObject ?
     _ptFirst            POINT <>
     _ptSecond           POINT <>
     _dwArguments        DWORD ?

@@ -39,7 +39,7 @@ objects = \
     src\X86\atofloat.obj \
     src\X86\backptch.obj \
     src\bin.obj \
-    src\branch.obj \
+    src\X86\branch.obj \
     src\X86\class.obj \
     src\X86\cmdline.obj \
     src\X86\codegen.obj \
@@ -47,7 +47,6 @@ objects = \
     src\condasm.obj \
     src\context.obj \
     src\cpumodel.obj \
-    src\X86\cstring.obj \
     src\data.obj \
     src\dbgcv.obj \
     src\X86\directiv.obj \
@@ -93,12 +92,12 @@ objects = \
     src\safeseh.obj \
     src\segment.obj \
     src\simsegm.obj \
-    src\string.obj \
+    src\X86\string.obj \
     src\X86\switch.obj \
     src\X86\symbols.obj \
     src\X86\tokenize.obj \
     src\types.obj \
-    src\undef.obj
+    src\X86\undef.obj
 
 all: targets
 

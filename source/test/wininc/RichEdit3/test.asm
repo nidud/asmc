@@ -6,7 +6,6 @@ include lang/en.txt
 include windows.inc
 include richedit.inc
 include winres.inc
-include ltype.inc
 
 IDR_MAINMENU        equ 100
 IDM_OPEN            equ 40001
@@ -111,6 +110,15 @@ AppName         TCHAR "Testpad",0
 ASMFilter       TCHAR "ASM Source code (*.asm)",0,"*.asm",0
                 TCHAR "All Files (*.*)",0,"*.*",0,0
 typech          db "aqdcswn",0
+
+_UPPER          equ 01h     ; upper case letter
+_LOWER          equ 02h     ; lower case letter
+_DIGIT          equ 04h     ; digit[0-9]
+_SPACE          equ 08h     ; tab, carriage return, newline, vertical tab or form feed
+_PUNCT          equ 10h     ; punctuation character
+_CONTROL        equ 20h     ; control character
+_LABEL          equ 40h     ; _UPPER + _LOWER + '@' + '_' + '$' + '?'
+_HEX            equ 80h     ; hexadecimal digit
 
 _ltype label byte
         db 0

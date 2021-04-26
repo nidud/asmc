@@ -329,19 +329,19 @@ IS_JMPCALL macro inst
     exitm<(inst == T_CALL || inst ==  T_JMP)>
     endm
 IS_JMP macro inst
-    exitm<(inst >= T_JMP && inst < T_LOOP)>
+    exitm<(inst !>= T_JMP && inst !< T_LOOP)>
     endm
 IS_JCC macro inst
-    exitm<(inst > T_JMP && inst < T_JCXZ)>
+    exitm<(inst !> T_JMP && inst !< T_JCXZ)>
     endm
 IS_BRANCH macro inst
-    exitm<(inst >= T_CALL && inst < T_LOOP)>
+    exitm<(inst !>= T_CALL && inst !< T_LOOP)>
     endm
 IS_ANY_BRANCH macro inst
     exitm<(inst !>= T_CALL && inst !<= T_LOOPNZW)>
     endm
 IS_XCX_BRANCH macro inst
-    exitm<(inst >= T_JCXZ && inst < T_LOOPNZW)>
+    exitm<(inst !>= T_JCXZ && inst !< T_LOOPNZW)>
     endm
 IS_OPER_32 macro s
     xor eax,eax

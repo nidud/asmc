@@ -9,8 +9,8 @@ IDS_APP_TITLE           equ <"MTGestures">
 MAX_LOADSTRING          equ 100
 
     .data
-    g_cRect             LPCDRAWINGOBJECT 0
-    g_cGestureEngine    LPCMYGESTUREENGINE 0
+    g_cRect             ptr CDrawingObject 0
+    g_cGestureEngine    ptr CMyGestureEngine 0
     g_hInst             HINSTANCE 0
 
     .code

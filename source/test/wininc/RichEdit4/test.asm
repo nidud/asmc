@@ -108,7 +108,7 @@ InsertBitmap proc hRichEdit:HWND, hBitmap:HBITMAP, nPosition:DWORD
   local reobject        :REOBJECT
 
     mov stgm.tymed,TYMED_GDI
-    mov stgm.hBitmap,rdx
+    mov stgm.u.hBitmap,rdx
     mov stgm.pUnkForRelease,NULL
 
     mov fm.cfFormat,CF_BITMAP
@@ -288,11 +288,11 @@ _tWinMain endp
 
 CDataObject::GetData proc pformatetcIn:ptr FORMATETC, pmedium:ptr STGMEDIUM
 
-    .return E_HANDLE .if !OleDuplicateData([rcx].m_StgMedium.hBitmap, CF_BITMAP, 0)
+    .return E_HANDLE .if !OleDuplicateData([rcx].m_StgMedium.u.hBitmap, CF_BITMAP, 0)
 
     mov rdx,pmedium
     mov [rdx].STGMEDIUM.tymed,TYMED_GDI
-    mov [rdx].STGMEDIUM.hBitmap,rax
+    mov [rdx].STGMEDIUM.u.hBitmap,rax
     xor eax,eax
     mov [rdx].STGMEDIUM.pUnkForRelease,rax
     ret

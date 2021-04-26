@@ -188,10 +188,12 @@ getfilearg proc fastcall uses esi edi ebx args:array_t, p:string_t ;; -Fo<file> 
 
     mov esi,edx
     mov edi,ecx
-    mov ebx,getnextcmdstring(edi)
 
-    .if ( B[esi] == 0 && ebx != NULL )
-        mov esi,ebx
+    .if ( B[esi] == 0 )
+        mov ebx,getnextcmdstring(edi)
+        .if ( ebx != NULL )
+            mov esi,ebx
+        .endif
     .elseif ( B[esi] == '=' )
         inc esi
     .endif

@@ -429,8 +429,8 @@ module_info             STRUC SIZE_T
 module_vars             <>
 proc_prologue           string_t ? ; prologue macro if PEM_MACRO
 proc_epilogue           string_t ? ; epilogue macro if PEM_MACRO
-CurrDll                 ptr_t ? ; OPTION DLLIMPORT dll
-fmtopt                  ptr_t ? ; v2.07: added
+CurrDll                 ptr dll_desc ? ; OPTION DLLIMPORT dll
+fmtopt                  ptr format_options ? ; v2.07: added
 hll_label               dd ?    ; hll directive label counter
 distance                db ?    ; stack distance
 _model                  db ?    ; memory model

@@ -131,6 +131,7 @@ IMAGE_SIZEOF_SYMBOL     equ 18
 IMAGE_SIZEOF_AUX_SYMBOL equ 18
 
 .pragma pack(push,2)
+
 IMAGE_SYMBOL        struct
 union N
  ;; v2.08

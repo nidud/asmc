@@ -1,7 +1,12 @@
-;;
-;; UNDEF directive.
-;; syntax: UNDEF symbol [, symbol, ... ]
-;;
+; UNDEF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; UNDEF directive.
+;
+; syntax: UNDEF symbol [, symbol, ... ]
+;
 
 include asmc.inc
 include parser.inc

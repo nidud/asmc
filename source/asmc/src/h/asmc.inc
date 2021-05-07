@@ -34,13 +34,13 @@ include queue.inc
 include ltype.inc
 include token.inc
 
-EMPTY           equ -2  ;; function return values
-ERROR           equ -1
-NOT_ERROR       equ 0
-STRING_EXPANDED equ 1
+define EMPTY           (-2)  ;; function return values
+define ERROR           (-1)
+define NOT_ERROR       0
+define STRING_EXPANDED 1
 
-PASS_1          equ 0
-PASS_2          equ 1
+define PASS_1   0
+define PASS_2   1
 
 OPT_CSTACK      equ 0x01
 OPT_WSTRING     equ 0x02 ; convert "string" to unicode
@@ -55,22 +55,29 @@ OPT_PUSHF       equ 0x80 ; Push/Pop flags
 
 ; output formats. Order must match formatoptions[] in assemble.asm
 
-OFORMAT_BIN     equ 0   ; used by -bin, -mz and -pe
-OFORMAT_OMF     equ 1
-OFORMAT_COFF    equ 2   ; used by -coff, -djgpp and -win64
-OFORMAT_ELF     equ 3   ; used by -elf and elf64
+.enum oformat {
+    OFORMAT_BIN, ;; used by -bin, -mz and -pe
+    OFORMAT_OMF,
+    OFORMAT_COFF,;; used by -coff, -djgpp and -win64
+    OFORMAT_ELF, ;; used by -elf and elf64
+    }
 
-SFORMAT_NONE    equ 0
-SFORMAT_MZ      equ 1   ; MZ binary
-SFORMAT_PE      equ 2   ; PE (32- or 64-bit) binary
-SFORMAT_64BIT   equ 3   ; 64bit COFF or ELF
+.enum sformat {
+    SFORMAT_NONE,
+    SFORMAT_MZ,    ;; MZ binary
+    SFORMAT_PE,    ;; PE (32- or 64-bit) binary
+    SFORMAT_64BIT, ;; 64bit COFF or ELF
+    }
 
-FPO_NO_EMULATION equ 0  ; -FPi87 (default)
-FPO_EMULATION   equ 1   ; -FPi
+.enum fpo {
+    FPO_NO_EMULATION,  ;; -FPi87 (default)
+    FPO_EMULATION      ;; -FPi
+    }
 
 ;; language values.
 ;; the order cannot be changed, it's
 ;; returned by OPATTR and used in user-defined prologue/epilogue.
+
 .enum lang_type {
     LANG_NONE     = 0,
     LANG_C        = 1,
@@ -82,11 +89,12 @@ FPO_EMULATION   equ 1   ; -FPi
     LANG_FASTCALL = 7,
     LANG_VECTORCALL = 8,
     LANG_WATCALL  = 9
-}
+    }
 
 ; Memory model type.
 ; the order cannot be changed, it's
 ; the value of the predefined @Model symbol.
+
 .enum model_type {
     MODEL_NONE    = 0,
     MODEL_TINY    = 1,
@@ -96,164 +104,221 @@ FPO_EMULATION   equ 1   ; -FPi
     MODEL_LARGE   = 5,
     MODEL_HUGE    = 6,
     MODEL_FLAT    = 7,
-}
+    }
 
-SIZE_DATAPTR    equ 0x68 ;; far for COMPACT, LARGE, HUGE
-SIZE_CODEPTR    equ 0x70 ;; far for MEDIUM, LARGE, HUGE
+define SIZE_DATAPTR 0x68 ;; far for COMPACT, LARGE, HUGE
+define SIZE_CODEPTR 0x70 ;; far for MEDIUM, LARGE, HUGE
 
-SEGORDER_SEQ    equ 0   ; .SEQ (default)
-SEGORDER_DOSSEG equ 1   ; .DOSSEG
-SEGORDER_ALPHA  equ 2   ; .ALPHA
+.enum seg_order {
+    SEGORDER_SEQ = 0,  ; .SEQ (default)
+    SEGORDER_DOSSEG,   ; .DOSSEG
+    SEGORDER_ALPHA     ; .ALPHA
+    }
 
-LM_NOLISTMACRO  equ 0   ; .NOLISTMACRO, .LISTMACRO and .LISTMACROALL
-LM_LISTMACRO    equ 1   ; directives setting
-LM_LISTMACROALL equ 2
+;; .NOLISTMACRO, .LISTMACRO and .LISTMACROALL directives setting
+
+.enum listmacro {
+    LM_NOLISTMACRO,
+    LM_LISTMACRO,
+    LM_LISTMACROALL
+    }
 
 ; assume values are used as index in codegen.c / invoke.c.
 ; Order must match the one in special.h. Don't change!
 
-ASSUME_NOTHING  equ EMPTY
-ASSUME_ES       equ 0
-ASSUME_CS       equ 1
-ASSUME_SS       equ 2
-ASSUME_DS       equ 3
-ASSUME_FS       equ 4
-ASSUME_GS       equ 5
+.enum assume_segreg {
+    ASSUME_NOTHING = EMPTY,
+    ASSUME_ES = 0,
+    ASSUME_CS,
+    ASSUME_SS,
+    ASSUME_DS,
+    ASSUME_FS,
+    ASSUME_GS
+    }
 
-; bit count from left:
-; bit 0-2:        Math coprocessor
-; bit 3:          privileged?
-; bit 4-7:        cpu type
-; bit 8-15;  extension set
-;
-P_NO87          equ 0x01 ; no FPU
-P_87            equ 0x02 ; 8087
-P_287           equ 0x03 ; 80287
-P_387           equ 0x04 ; 80387
-P_PM            equ 0x08 ; privileged opcode
-P_86            equ 0x00 ; 8086, default
-P_186           equ 0x10 ; 80186
-P_286           equ 0x20 ; 80286
-P_386           equ 0x30 ; 80386
-P_486           equ 0x40 ; 80486
-P_586           equ 0x50 ; pentium
-P_686           equ 0x60 ; ppro
-P_64            equ 0x70 ; x64 cpu
+.enum cpu_info {
 
-P_286p          equ P_286 or P_PM   ; 286, priv mode
-P_386p          equ P_386 or P_PM   ; 386, priv mode
-P_486p          equ P_486 or P_PM   ; 486, priv mode
-P_586p          equ P_586 or P_PM   ; 586, priv mode
-P_686p          equ P_686 or P_PM   ; 686, priv mode
-P_64p           equ P_64 or P_PM    ; x64, priv mode
-P_MMX           equ 0x0100          ; MMX extension instructions
-P_K3D           equ 0x0200          ; 3DNow extension instructions
-P_SSE1          equ 0x0400          ; SSE1 extension instructions
-P_SSE2          equ 0x0800          ; SSE2 extension instructions
-P_SSE3          equ 0x1000          ; SSE3 extension instructions
-P_SSSE3         equ 0x2000          ; SSSE3 extension instructions
-P_SSE4          equ 0x4000          ; SSE4 extension instructions
-P_AVX           equ 0x8000          ; AVX extension instructions
+    ;; bit count from left:
+    ;; bit 0-2:     Math coprocessor
+    ;; bit 3:       privileged?
+    ;; bit 4-7:     cpu type
+    ;; bit 8-15;    extension set
 
-P_SSEALL        equ P_SSE1 or P_SSE2 or P_SSE3 or P_SSSE3 or P_SSE4 or P_AVX
-NO_OPPRFX       equ P_MMX or P_SSEALL
-P_FPU_MASK      equ 0x07
-P_CPU_MASK      equ 0xF0
-P_EXT_MASK      equ P_MMX or P_K3D or P_SSEALL
-P_EXT_ALL       equ P_MMX or P_K3D or P_SSEALL
+    P_NO87  = 0x0001,         ;; no FPU
+    P_87    = 0x0002,         ;; 8087
+    P_287   = 0x0003,         ;; 80287
+    P_387   = 0x0004,         ;; 80387
+
+    P_PM    = 0x0008,         ;; privileged opcode
+
+    P_86    = 0x0000,         ;; 8086, default
+    P_186   = 0x0010,         ;; 80186
+    P_286   = 0x0020,         ;; 80286
+    P_386   = 0x0030,         ;; 80386
+    P_486   = 0x0040,         ;; 80486
+    P_586   = 0x0050,         ;; pentium
+    P_686   = 0x0060,         ;; ppro
+    P_64    = 0x0070,         ;; x64 cpu
+
+    P_286p  = P_286 or P_PM,  ;; 286, priv mode
+    P_386p  = P_386 or P_PM,  ;; 386, priv mode
+    P_486p  = P_486 or P_PM,  ;; 486, priv mode
+    P_586p  = P_586 or P_PM,  ;; 586, priv mode
+    P_686p  = P_686 or P_PM,  ;; 686, priv mode
+    P_64p   = P_64 or P_PM,   ;; x64, priv mode
+
+    P_MMX   = 0x0100,         ;; MMX extension instructions
+    P_K3D   = 0x0200,         ;; 3DNow extension instructions
+    P_SSE1  = 0x0400,         ;; SSE1 extension instructions
+    P_SSE2  = 0x0800,         ;; SSE2 extension instructions
+    P_SSE3  = 0x1000,         ;; SSE3 extension instructions
+    P_SSSE3 = 0x2000,         ;; SSSE3 extension instructions
+    P_SSE4  = 0x4000,         ;; SSE4 extension instructions
+    P_AVX   = 0x8000,         ;; AVX extension instructions
+
+    ;; all SSE extension instructions
+
+    P_SSEALL = P_SSE1 or P_SSE2 or P_SSE3 or P_SSSE3 or P_SSE4 or P_AVX,
+    NO_OPPRFX = P_MMX or P_SSEALL,
+
+    P_FPU_MASK = 0x0007,
+    P_CPU_MASK = 0x00F0,
+
+    P_EXT_MASK = P_MMX or P_K3D or P_SSEALL,
+    P_EXT_ALL  = P_MMX or P_K3D or P_SSEALL
+    }
+
 
 ; the MASM compatible @CPU value flags:
 
-M_8086          equ 0x01    ; 8086
-M_186           equ 0x02    ; 186
-M_286           equ 0x04    ; 286
-M_386           equ 0x08    ; 386
-M_486           equ 0x10    ; 486
-M_586           equ 0x20    ; Pentium
-M_686           equ 0x40    ; PPro
-M_CPUMSK        equ 0x7F    ;
-M_PROT          equ 0x80    ; protected instructions ok
-M_8087          equ 0x0100  ; 8087
-M_287           equ 0x0400  ; 287
-M_387           equ 0x0800  ; 387
+.enum masm_cpu {
+    M_8086 = 0x0001, ;; 8086
+    M_186  = 0x0002, ;; 186
+    M_286  = 0x0004, ;; 286
+    M_386  = 0x0008, ;; 386
+    M_486  = 0x0010, ;; 486
+    M_586  = 0x0020, ;; Pentium
+    M_686  = 0x0040, ;; PPro
+    M_CPUMSK = 0x007F,
+    M_PROT = 0x0080, ;; protected instructions ok
+    M_8087 = 0x0100, ;; 8087
+    M_287  = 0x0400, ;; 287
+    M_387  = 0x0800  ;; 387
+    }
 
-USE_EMPTY       equ 0xFE    ; don't change values of USE16,USE32,USE64!
-USE16           equ 0
-USE32           equ 1
-USE64           equ 2
+.enum segofssize {
+    USE_EMPTY = 0xFE,
+    USE16 = 0, ;; don't change values of USE16,USE32,USE64!
+    USE32 = 1,
+    USE64 = 2
+    }
+
 
 ; fastcall types. if order is to be changed or entries
 ; added, also adjust tables in proc.c, mangle.c and probably invoke.c!
 
-FCT_MSC         equ 0       ; MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx)
-FCT_WATCOMC     equ 1       ; OW register calling convention (eax, ebx, ecx, edx)
-FCT_WIN64       equ 2       ; Win64 fastcall convention (rcx, rdx, r8, r9)
-FCT_ELF64       equ 3       ; Linux 64 syscall
-FCT_VEC32       equ 4
-FCT_VEC64       equ 5
+define FCT_MSC      0 ; MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx)
+define FCT_WATCOMC  1 ; OW register calling convention (eax, ebx, ecx, edx)
+define FCT_WIN64    2 ; Win64 fastcall convention (rcx, rdx, r8, r9)
+define FCT_ELF64    3 ; Linux 64 syscall
+define FCT_VEC32    4
+define FCT_VEC64    5
 
-STDCALL_FULL    equ 0
-STDCALL_NONE    equ 1
-STDCALL_HALF    equ 2
+.enum stdcall_decoration {
+    STDCALL_FULL,
+    STDCALL_NONE,
+    STDCALL_HALF
+    }
 
 ; file extensions. Order must match first entries in enum opt_names!
 
-ASM             equ 0   ; must be first; see SetFilenames() in assembly.asm
-OBJ             equ 1
-LST             equ 2
-ERR             equ 3
-NUM_FILE_TYPES  equ 4
+.enum file_extensions {
+    ASM, ;; must be first; see SetFilenames() in assembly.asm
+    OBJ,
+    LST,
+    ERR,
+    NUM_FILE_TYPES
+    }
 
-OPTN_ASM_FN     equ 0   ; first 4 entries must match enum file_extensions!
-OPTN_OBJ_FN     equ 1   ; -Fo option
-OPTN_LST_FN     equ 2   ; -Fl option
-OPTN_ERR_FN     equ 3   ; -Fr option
-OPTN_LNKDEF_FN  equ 4   ; -Fd option
-OPTN_MODULE_NAME equ 5  ; -nm option
-OPTN_TEXT_SEG   equ 6   ; -nt option
-OPTN_DATA_SEG   equ 7   ; -nd option
-OPTN_CODE_CLASS equ 8   ; -nc option
-OPTN_LAST       equ 9
+;; first 4 entries must match enum file_extensions!
 
-; queues to store multiple cmdline switch values
+.enum opt_names {
+    OPTN_ASM_FN,
+    OPTN_OBJ_FN,          ;; -Fo option
+    OPTN_LST_FN,          ;; -Fl option
+    OPTN_ERR_FN,          ;; -Fr option
+    OPTN_LNKDEF_FN,       ;; -Fd option
+    OPTN_MODULE_NAME,     ;; -nm option
+    OPTN_TEXT_SEG,        ;; -nt option
+    OPTN_DATA_SEG,        ;; -nd option
+    OPTN_CODE_CLASS,      ;; -nc option
+    OPTN_LAST
+    }
 
-OPTQ_FINCLUDE   equ 0   ; -Fi option values
-OPTQ_MACRO      equ 1   ; -D option values
-OPTQ_INCPATH    equ 2   ; -I option values
-OPTQ_LAST       equ 3
+;; queues to store multiple cmdline switch values
 
-PEM_DEFAULT     equ 0   ; must be value 0
-PEM_MACRO       equ 1
-PEM_NONE        equ 2
+.enum opt_queues {
+    OPTQ_FINCLUDE, ;; -Fi option values
+    OPTQ_MACRO,    ;; -D option values
+    OPTQ_INCPATH,  ;; -I option values
+    OPTQ_LAST
+    }
 
-STACK_NEAR      equ 0   ; Stack distance
-STACK_FAR       equ 1
+.enum prologue_epilogue_mode {
+    PEM_DEFAULT, ;; must be value 0
+    PEM_MACRO,
+    PEM_NONE
+    }
 
-OPSYS_DOS       equ 0   ; Type of operating system
-OPSYS_OS2       equ 1
+;; Stack distance
 
-OT_GROUP        equ 0   ; OFFSET:GROUP (default, must be 0)
-OT_FLAT         equ 1   ; OFFSET:FLAT
-OT_SEGMENT      equ 2   ; OFFSET:SEGMENT
+.enum dist_type {
+    STACK_NEAR,
+    STACK_FAR,
+    }
 
-LOF_LISTED      equ 1   ; line written to .LST file
-LOF_SKIPPOS     equ 2   ; suppress setting list_pos
+;; Type of operating system
+
+.enum os_type {
+    OPSYS_DOS,
+    OPSYS_OS2,
+    }
+
+.enum offset_type {
+    OT_GROUP = 0,  ;; OFFSET:GROUP (default, must be 0)
+    OT_FLAT,       ;; OFFSET:FLAT
+    OT_SEGMENT     ;; OFFSET:SEGMENT
+    }
+
+.enum line_output_flags {
+    LOF_LISTED = 1,  ;; line written to .LST file
+    LOF_SKIPPOS = 2, ;; suppress setting list_pos
+    }
+
 
 ; flags for win64_flags
 
-W64F_SAVEREGPARAMS      equ 1   ; 1=save register params in shadow space on proc entry
-W64F_AUTOSTACKSP        equ 2   ; 1=calculate required stack space for arguments of INVOKE
-W64F_STACKALIGN16       equ 4   ; 1=stack variables are 16-byte aligned; added in v2.12
-W64F_ALL                equ W64F_SAVEREGPARAMS or W64F_AUTOSTACKSP or W64F_STACKALIGN16
+.enum win64_flag_values {
+    W64F_SAVEREGPARAMS = 0x01, ;; 1=save register params in shadow space on proc entry */
+    W64F_AUTOSTACKSP   = 0x02, ;; 1=calculate required stack space for arguments of INVOKE */
+    W64F_STACKALIGN16  = 0x04, ;; 1=stack variables are 16-byte aligned; added in v2.12 */
+    W64F_ALL = W64F_SAVEREGPARAMS or W64F_AUTOSTACKSP or W64F_STACKALIGN16, ;; all valid flags
+    }
 
-; codeview debug info extend
+;; codeview debug info extend
 
-CVEX_MIN        equ 0   ; globals
-CVEX_REDUCED    equ 1   ; globals and locals
-CVEX_NORMAL     equ 2   ; globals, locals and types
-CVEX_MAX        equ 3   ; globals, locals, types and constants
+.enum cvex_values {
+    CVEX_MIN     = 0, ;; globals
+    CVEX_REDUCED = 1, ;; globals and locals
+    CVEX_NORMAL  = 2, ;; globals, locals and types
+    CVEX_MAX     = 3, ;; globals, locals, types and constants
+    }
 
-CVO_STATICTLS   equ 1   ; option flags: handle static tls
+;; codeview debug info option flags
+
+.enum cvoption_flags {
+    CVO_STATICTLS = 1, ;; handle static tls
+    }
 
 .enum seg_type {
     SEGTYPE_UNDEF,
@@ -292,7 +357,7 @@ dlldesc_t       typedef ptr dll_desc
 dll_desc        struct
 next            dlldesc_t ?
 cnt             int_t ?
-dname           char_t ?
+name            char_t ?
 dll_desc        ends
 
 qitem           struct
@@ -529,8 +594,7 @@ externdef               DefaultDir      : string_t      ; * NUM_FILE_TYPES
 externdef               MacroLevel      : uint_t
 externdef               LinnumQueue     : qdesc
 externdef               ModelToken      : string_t
-externdef               LastCodeBufSize : uint_t
-externdef               banner_printed  : uint_t
+externdef               LastCodeBufSize : int_t
 externdef               stackreg        : uint_t
 externdef               regax           : uint_t
 
@@ -538,17 +602,19 @@ externdef               szError         : char_t        ; ERROR
 externdef               szNothing       : char_t        ; NOTHING
 externdef               szDgroup        : char_t        ; DGROUP
 
-asmerr                  proto :int_t, :vararg
+asmerr                  proto __cdecl :int_t, :vararg
 DelayExpand             proto fastcall :tok_t
 AsmcKeywords            proto :int_t
 
 write_logo              proto
 SetCPU                  proto :int_t
 OutputByte              proto :int_t
+FillDataBytes           proto :byte, :int_t
 OutputBytes             proto :ptr byte, :int_t, :ptr fixup
 AddLinnumDataRef        proto :uint_t, :uint_t
 _atoow                  proto :string_t, :string_t, :int_t, :int_t
 write_options           proto
+ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
 
 .pragma list(pop)
 endif

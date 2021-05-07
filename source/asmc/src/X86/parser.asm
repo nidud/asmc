@@ -899,7 +899,8 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
     .if [edi].mem_type == MT_REAL16
 
         mov eax,4
-        .switch [esi].token
+        movzx ecx,[esi].token
+        .switch ecx
         .case T_ADDSD
         .case T_SUBSD
         .case T_MULSD
@@ -3037,9 +3038,10 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     local opndx[MAX_OPND+1]:expr
     local buffer:ptr char_t
 
-    mov buffer,alloca(ModuleInfo.max_line_len)
     mov ebx,tokenarray
     .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_ID )
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
 continue:
 
@@ -3329,7 +3331,7 @@ continue:
                         strcat( strcpy( CurrSource, [ebx+16].string_ptr ), " equ " )
                         .if ( [ebx+32].token == T_FINAL )
 
-                            strcat( eax, "1" )
+                            strcat( eax, "0" )
                         .else
                             strcat( eax, [ebx+32].tokpos )
                         .endif

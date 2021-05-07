@@ -1,10 +1,10 @@
 .pragma list(push, 0)
 ifndef __LISTING_INC
-__LISTING_INC equ <>
+define __LISTING_INC
 
 ;; listing interface.
 
-.enum {
+.enum lsttype {
     LSTTYPE_DATA,
     LSTTYPE_CODE,
     LSTTYPE_EQUATE,
@@ -13,7 +13,8 @@ __LISTING_INC equ <>
     LSTTYPE_MACRO,
     LSTTYPE_STRUCT,
     LSTTYPE_LABEL,
-    LSTTYPE_MACROLINE }
+    LSTTYPE_MACROLINE
+    }
 
 LstInit		proto
 LstWriteSrcLine proto

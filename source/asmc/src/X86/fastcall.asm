@@ -306,7 +306,22 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 xor eax,eax
             .endif
             .if eax
-                AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+                mov eax,z
+                .if [edi].expr.kind == EXPR_ADDR && [edi].expr.mem_type != MT_EMPTY
+                    SizeFromMemtype( [edi].expr.mem_type, [edi].expr.Ofssize, [edi].expr.type )
+                .endif
+                mov ecx,T_MOV
+                .if eax < z
+                    mov eax,ModuleInfo.curr_cpu
+                    and eax,P_CPU_MASK
+                    .if eax >= P_386
+                        mov ecx,T_MOVSX
+                        .if !( [edi].expr.mem_type & MT_SIGNED )
+                            mov ecx,T_MOVZX
+                        .endif
+                    .endif
+                .endif
+                AddLineQueueX(" %r %r, %s", ecx, ebx, paramvalue)
             .else
                 AddLineQueueX(" xor %r, %r", ebx, ebx)
             .endif

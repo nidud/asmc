@@ -235,9 +235,6 @@ lname_idx	int_t ?		;; LNAME index (OMF only)
 numseg		uint_t ?	;; OMF: number of segments in the group
 grp_info	ends		;;
 
-
-CALLBACK(FlushSegFunc, :dsym_t, :uchar_t, :uint_t, :ptr )
-
 seg_info	struct		;;
 sgroup		asym_t ?	;; segment's group or NULL
 start_loc	uint_t ?	;; starting offset of current ledata or lidata
@@ -250,7 +247,7 @@ CodeBuffer	string_t ?	;;
 bytes_written	uint_t ?	;; initialized bytes in segment
 union				;;
  label_list	asym_t ?	;; linked list of labels in this seg
- flushfunc	FlushSegFunc ?	;; to flush the segment buffer
+ flushfunc	proc :ptr dsym, :ptr byte, :dword, :ptr ;; to flush the segment buffer
 ends				;;
 head		fixup_t ?	;; fixup queue head
 tail		fixup_t ?	;; fixup queue tail

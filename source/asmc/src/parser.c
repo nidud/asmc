@@ -2665,7 +2665,7 @@ lcontinue:
 		    if ( Parse_Pass == PASS_1 ) {
 			strcat( strcpy( CurrSource, tokenarray[1].string_ptr ), " equ " );
 			if ( tokenarray[2].token == T_FINAL )
-			    strcat( CurrSource, "1" );
+			    strcat( CurrSource, "0" );
 			else
 			    strcat( CurrSource, tokenarray[2].tokpos );
 			if ( PreprocessLine( &tokenarray ) )

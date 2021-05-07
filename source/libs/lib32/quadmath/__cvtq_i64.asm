@@ -40,24 +40,29 @@ __cvtq_i64 proc q:ptr
         .endif
 
     .else
-
         mov ecx,eax
-        sub ecx,Q_EXPBIAS
-        push esi
-        push edi
-        mov edi,[edx+10]
-        mov esi,[edx+6]
         mov eax,1
-        xor edx,edx
-        .while ecx
-            add esi,esi
-            adc edi,edi
-            adc eax,eax
-            adc edx,edx
-            dec ecx
-        .endw
-        pop edi
-        pop esi
+        sub ecx,Q_EXPBIAS
+        .if ecx < 32
+            mov edx,[edx+10]
+            shld eax,edx,cl
+            xor edx,edx
+        .else
+            push esi
+            push edi
+            mov edi,[edx+10]
+            mov esi,[edx+6]
+            xor edx,edx
+            .while ecx
+                add esi,esi
+                adc edi,edi
+                adc eax,eax
+                adc edx,edx
+                dec ecx
+            .endw
+            pop edi
+            pop esi
+        .endif
         mov ecx,q
         .if byte ptr [ecx+15] & 0x80
             neg edx

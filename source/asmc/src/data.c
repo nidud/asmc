@@ -654,33 +654,33 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		     string_len > 1 &&
 		     no_of_bytes == 2 ) {
 
-			unsigned short *w;
-			uint_8 *p = NULL;
-			int q = string_len;
+		    unsigned short *w;
+		    uint_8 *p = NULL;
+		    int q = string_len;
 #if !defined(__UNIX__)
-			if ((w = malloc(string_len*2)) != NULL) {
+		    if ((w = malloc(string_len*2)) != NULL) {
 
 			    /* v2.24 - Unicode CodePage */
-			    if ( (q = MultiByteToWideChar(ModuleInfo.codepage, 0,
-				  pchar, string_len, w, string_len)) != 0 ) {
+			if ( (q = MultiByteToWideChar(ModuleInfo.codepage, 0,
+			      pchar, string_len, w, string_len)) != 0 ) {
 
-				p = (uint_8 *)w;
-				while ( q-- ) {
-				    OutputBytes( p++, 1, NULL );
-				    OutputBytes( p++, 1, NULL );
-				}
-			    }
-			    free(w);
-			}
-#endif
-			if (p == NULL) {
-			    p = pchar;
+			    p = (uint_8 *)w;
 			    while ( q-- ) {
-
 				OutputBytes( p++, 1, NULL );
-				FillDataBytes( 0, 1 );
+				OutputBytes( p++, 1, NULL );
 			    }
 			}
+			free(w);
+		    }
+#endif
+		    if (p == NULL) {
+			p = pchar;
+			while ( q-- ) {
+
+			    OutputBytes( p++, 1, NULL );
+			    FillDataBytes( 0, 1 );
+			}
+		    }
 		} else {
 		    if ( string_len > 1 && no_of_bytes > 1 )
 			pchar = (uint_8 *)little_endian( (const char *)pchar, string_len );

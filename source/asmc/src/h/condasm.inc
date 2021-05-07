@@ -1,24 +1,32 @@
+; CONDASM.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Description:  prototypes for conditional assembly and errors
+;
 .pragma list(push, 0)
+
 ifndef __CONDASM_INC
-__CONDASM_INC equ <>
+define __CONDASM_INC
 
-;; prototypes for conditional assembly and errors
+.enum if_state {
+    BLOCK_ACTIVE,    ;; current cond is true
+    BLOCK_INACTIVE,  ;; current IF cond is false, looking for elseif
+    BLOCK_DONE       ;; done TRUE section of current if, just nuke
+    }                ;; everything until we see an endif
 
-BLOCK_ACTIVE    equ 0 ;; current cond is true
-BLOCK_INACTIVE  equ 1 ;; current IF cond is false, looking for elseif
-BLOCK_DONE      equ 2 ;; done TRUE section of current if, just nuke
-                      ;; everything until we see an endif
+.enum cond_class {
+    CC_NULL,
+    CC_NUMARG,
+    CC_LITARG,
+    CC_BLKARG,
+    CC_SYMARG,
+    CC_PASS1,
+    CC_PASS2,
+    }
 
-CC_NULL         equ 0
-CC_NUMARG       equ 1
-CC_LITARG       equ 2
-CC_BLKARG       equ 3
-CC_SYMARG       equ 4
-CC_PASS1        equ 5
-CC_PASS2        equ 6
-
-
-externdef       CurrIfState:int_t
+externdef       CurrIfState:if_state
 
 CondPrepare     proto :int_t
 GetIfNestLevel  proto

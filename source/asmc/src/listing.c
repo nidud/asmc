@@ -1100,13 +1100,12 @@ int ListMacroDirective( int i, struct asm_tok tokenarray[] )
 void LstInit( void )
 {
     const char *fn;
-    char buffer[128];
 
     list_pos = 0;
     if( Options.write_listing ) {
 	int namelen;
-	list_pos = sprintf( buffer, cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
-	fwrite( buffer, 1, list_pos, CurrFile[LST] );
+	list_pos = strlen( cp_logo );
+	fwrite( cp_logo, 1, list_pos, CurrFile[LST] );
 	LstNL();
 	fn = GetFName( ModuleInfo.srcfile );
 	namelen = strlen( fn );

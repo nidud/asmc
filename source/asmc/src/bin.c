@@ -1352,7 +1352,8 @@ static ret_code bin_write_module( struct module_info *modinfo )
     switch( modinfo->sub_format ) {
     case SFORMAT_MZ:
 	reloccnt = GetSegRelocs( NULL );
-	cp.sizehdr = (reloccnt * 4 + modinfo->mz_data.ofs_fixups + (modinfo->mz_data.alignment - 1)) & ~(modinfo->mz_data.alignment-1);
+	cp.sizehdr = (reloccnt * 4 + modinfo->mz_data.ofs_fixups +
+		(modinfo->mz_data.alignment - 1)) & ~(modinfo->mz_data.alignment-1);
 	break;
     default:
 	cp.sizehdr = 0;

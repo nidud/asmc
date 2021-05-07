@@ -418,7 +418,7 @@ NOTE    dd N0000,N0001,N0002,N0003
 
 .code
 
-print_err proc private uses esi edi ebx erbuf, format, args
+print_err proc private uses esi edi ebx erbuf:string_t, format:string_t, args:ptr string_t
 
     write_logo()
     mov esi,erbuf
@@ -482,7 +482,7 @@ errexit proc private
 errexit endp
 
 
-asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
+asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
 
   local format[512]:byte, erbuf[512]:byte, masm[64]:byte
 
@@ -634,7 +634,7 @@ WriteError proc
 WriteError endp
 
 
-PrintNote proc value:int_t, args:vararg
+PrintNote proc __cdecl value:int_t, args:vararg
 
   local erbuf[512]:byte
 

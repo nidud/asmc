@@ -43,6 +43,7 @@ Asmc Macro Assembler Reference
 - [.COMDEF](dot_comdef.md)
 - [.DEFAULT](dot_default.md)
 - [.ENUM](dot_enum.md)
+- [.ENUMT](dot_enumt.md)
 - [.ELSE](dot_else.md)
 - [.ELSEIF](dot_if.md)
 - [.ENDIF](dot_endif.md)

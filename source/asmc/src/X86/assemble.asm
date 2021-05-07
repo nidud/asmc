@@ -184,7 +184,7 @@ OutputByte proc uses esi edi ebx char:int_t
     ret
 OutputByte endp
 
-FillDataBytes proc uses esi char, len
+FillDataBytes proc uses esi char:byte, len:int_t
     .if ModuleInfo.CommentDataInCode
 	omf_OutSelect(1)
     .endif
@@ -322,13 +322,13 @@ WriteModule proc uses esi edi ebx modinfo
 	    mov esi,SymTables[TAB_EXT*symbol_queue].head
 	    .while  esi
 		mov ebx,[esi].asym.dll
-		.if [esi].asym.flag & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.dname \
+		.if [esi].asym.flag & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.name \
 		    && ( !( [esi].asym.sint_flag & SINT_WEAK) || [esi].asym.flag & S_IAT_USED )
 
 		    Mangle(esi, ModuleInfo.stringbufferend)
 		    sprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
 			ModuleInfo.stringbufferend,
-			&[ebx].dll_desc.dname, [esi].asym.name)
+			&[ebx].dll_desc.name, [esi].asym.name)
 		    mov ebx,eax
 		    .if fwrite(ModuleInfo.currsource, 1, ebx, edi) != ebx
 			WriteError()
@@ -502,7 +502,7 @@ endif
 	    ;
 	    .if eax < P_64  ; enforce cpu to be 64-bit
 
-		mov ecx,P_64
+		mov ecx,P_64 or P_PM ; added v2.32.41 for asmc -win64
 	    .endif
 	    ;
 	    ; ignore -m switch for 64-bit formats.

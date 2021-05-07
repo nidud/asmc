@@ -2,6 +2,9 @@ include asmc.inc
 include memalloc.inc
 include input.inc
 
+externdef cp_logo:sbyte
+externdef banner_printed:byte
+
 if defined(__UNIX__) or defined(__CYGWIN__)
 HANDLECTRLZ     equ 0
 SWITCHCHAR      equ 0
@@ -9,9 +12,6 @@ else
 HANDLECTRLZ     equ 1
 SWITCHCHAR      equ 1
 endif
-
-extern banner_printed:uint_t
-extern cp_logo:char_t
 
 define_name proto :string_t, :string_t
 
@@ -656,7 +656,7 @@ endif
         or Options.win64_flags,W64F_SAVEREGPARAMS
         .return
     .case 'ogol'            ;; -logo
-        printf("%s\n", cp_logo)
+        printf("%s\n", &cp_logo)
         exit(0)
 ifndef __ASMC64__
     .case 'zm'              ;; -mz

@@ -4,6 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ; .enum [name][:type] [{]
+; .enumt [name][:type] [{]
 ;
 
 include stdio.inc
@@ -16,17 +17,18 @@ include parser.inc
 public CurrEnum
 
     .data
-    CurrEnum asym_t 0
+    CurrEnum ptr asym 0
     .code
 
-    assume ebx:tok_t
-    assume esi:asym_t
+    assume ebx:ptr asm_tok
+    assume esi:ptr asym
 
-EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+EnumDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local name:string_t
   local opndx:expr
   local rc:int_t
+  local cmd:int_t
   local type:int_t
   local buffer[64]:char_t
 
@@ -35,15 +37,25 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
     mov rc,NOT_ERROR
     mov ebx,tokenarray
     mov esi,CurrEnum
+    mov eax,[ebx].tokval
 
-    .if !esi
+    .switch eax
+    .case T_DOT_ENUM
+    .case T_DOT_ENUMT
 
+        mov edi,esi
         mov esi,LclAlloc(asym)
         mov CurrEnum,eax
+        mov [esi].nextitem,edi
         mov [esi].name,0
         mov [esi].value,0
         mov [esi].total_size,4
         mov [esi].mem_type,MT_SDWORD
+        mov [esi].total_length,0
+        .if [ebx].tokval == T_DOT_ENUMT
+            inc [esi].total_length
+        .endif
+
         add ebx,16
         inc i
 
@@ -60,6 +72,7 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     Tokenize( eax, 0, ebx, TOK_DEFAULT )
                     add Token_Count,eax
                 .endif
+
             .else
 
                 mov type,T_SDWORD
@@ -77,22 +90,27 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     .if eax != ERROR
                         mov [esi].total_size,opndx.value
                         add ebx,16
-                        .if opndx.mem_type & MT_SIGNED
-                            .switch pascal eax
-                            .case 2: mov type,T_SWORD  : mov [esi].mem_type,MT_SWORD
-                            .case 1: mov type,T_SBYTE  : mov [esi].mem_type,MT_SBYTE
-                            .endsw
-                        .else
-                            .switch pascal eax
-                            .case 4: mov type,T_DWORD : mov [esi].mem_type,MT_DWORD
-                            .case 2: mov type,T_WORD  : mov [esi].mem_type,MT_WORD
-                            .case 1: mov type,T_BYTE  : mov [esi].mem_type,MT_BYTE
-                            .endsw
+                        .if [esi].total_length == 0
+                            .if ( [esi].total_length == 0 )
+                                .if opndx.mem_type & MT_SIGNED
+                                    .switch pascal eax
+                                    .case 2: mov type,T_SWORD  : mov [esi].mem_type,MT_SWORD
+                                    .case 1: mov type,T_SBYTE  : mov [esi].mem_type,MT_SBYTE
+                                    .endsw
+                                .else
+                                    .switch pascal eax
+                                    .case 4: mov type,T_DWORD : mov [esi].mem_type,MT_DWORD
+                                    .case 2: mov type,T_WORD  : mov [esi].mem_type,MT_WORD
+                                    .case 1: mov type,T_BYTE  : mov [esi].mem_type,MT_BYTE
+                                    .endsw
+                                .endif
+                            .endif
                         .endif
                     .endif
                 .endif
                 AddLineQueueX( "%s typedef %r", name, type )
             .endif
+
             .if ( [ebx].token == T_STRING )
 
                 mov [esi].name,[ebx].string_ptr
@@ -109,14 +127,14 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if ModuleInfo.list
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
-    .endif
+    .endsw
 
     .while [ebx].token != T_FINAL
 
         mov name,[ebx].string_ptr
         add ebx,16
         .if [ebx-16].token == T_STRING && word ptr [eax] == '}'
-            mov CurrEnum,NULL
+            mov CurrEnum,[esi].nextitem
             .break
         .endif
         inc i
@@ -170,14 +188,18 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             add ebx,16
             inc i
         .elseif [ebx].token == T_FINAL && [esi].name == NULL
-            mov CurrEnum,NULL
+            mov CurrEnum,[esi].nextitem
+        .endif
+        mov eax,opndx.value
+        .if [esi].total_length
+            mul [esi].total_size
         .endif
         .if edi
             lea edx,@CStr("%s equ 0x%x")
         .else
             lea edx,@CStr("%s equ %d")
         .endif
-        AddLineQueueX(edx, name, opndx.value)
+        AddLineQueueX(edx, name, eax)
     .endw
     .return asmerr(2008, [ebx].tokpos) .if [ebx].token != T_FINAL
     .if ModuleInfo.line_queue.head

@@ -1001,7 +1001,8 @@ ParseClass proc uses esi edi ebx j:int_t, tokenarray:tok_t, buffer:string_t
 
     .if [esi].token != T_FINAL && [esi+16].token == T_COLON
 
-        .switch [esi].token
+        mov al,[esi].token
+        .switch al
         .case T_INSTRUCTION
         .case T_REG
         .case T_DIRECTIVE
@@ -1507,8 +1508,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             mov ebx,tokenarray
             xor edi,edi
-
-            .switch [ebx+16].token
+            mov al,[ebx+16].token
+            .switch al
             .case T_DIRECTIVE
             .case T_INSTRUCTION
             .case T_REG

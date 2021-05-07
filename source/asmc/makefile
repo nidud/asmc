@@ -38,17 +38,17 @@ objects = \
     src\X86\assume.obj \
     src\X86\atofloat.obj \
     src\X86\backptch.obj \
-    src\bin.obj \
+    src\X86\bin.obj \
     src\X86\branch.obj \
     src\X86\class.obj \
     src\X86\cmdline.obj \
     src\X86\codegen.obj \
-    src\coff.obj \
-    src\condasm.obj \
-    src\context.obj \
-    src\cpumodel.obj \
-    src\data.obj \
-    src\dbgcv.obj \
+    src\X86\coff.obj \
+    src\X86\condasm.obj \
+    src\X86\context.obj \
+    src\X86\cpumodel.obj \
+    src\X86\data.obj \
+    src\X86\dbgcv.obj \
     src\X86\directiv.obj \
     src\elf.obj \
     src\end.obj \

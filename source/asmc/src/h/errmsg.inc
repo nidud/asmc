@@ -12,7 +12,7 @@ NOTE_MACRO_CALLED_FROM equ 1
 NOTE_ITERATION_MACRO_CALLED_FROM equ 2
 NOTE_MAIN_LINE_CODE equ 3
 
-PrintNote proto :int_t, :vararg
+PrintNote proto __cdecl :int_t, :vararg
 ErrnoStr proto
 WriteError proto
 

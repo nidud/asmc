@@ -1,5 +1,10 @@
-
-;; handles ASSUME
+; ASSUME.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; handles ASSUME
+;
 
 include string.inc
 include malloc.inc
@@ -18,8 +23,6 @@ include fastpass.inc
 OperandSize proto :int_t, :ptr code_info
 
 NUM_STDREGS equ 16
-
-;; prototypes
 
 ;; todo: move static variables to ModuleInfo
 
@@ -223,31 +226,28 @@ ModelAssumeInit proc
 
     ;; Generates codes for assume
 
-    .switch( ModuleInfo._model )
+    mov al,ModuleInfo._model
+    and eax,7
+    .switch jmp eax
     .case MODEL_FLAT
         lea edx,szError
         .if ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 )
             lea edx,szNothing
         .endif
-        AddLineQueueX( "%r %r:%r,%r:%r,%r:%r,%r:%r,%r:%s,%r:%s",
-                  T_ASSUME, T_CS, T_FLAT,
-                  T_DS, T_FLAT,
-                  T_SS, T_FLAT,
-                  T_ES, T_FLAT,
-                  T_FS, &szError,
-                  T_GS, edx )
+        AddLineQueueX( "assume cs:flat,ds:flat,ss:flat,es:flat,fs:%s,gs:%s",
+                  &szError, edx )
         .endc
-ifndef __ASMC64__
     .case MODEL_TINY
     .case MODEL_SMALL
     .case MODEL_COMPACT
     .case MODEL_MEDIUM
     .case MODEL_LARGE
     .case MODEL_HUGE
+ifndef __ASMC64__
 
         ;; v2.03: no DGROUP for COFF/ELF
 
-        .endc .if( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
+        .endc .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
 
         .if ( ModuleInfo._model == MODEL_TINY )
             lea edx,szDgroup
@@ -256,13 +256,15 @@ ifndef __ASMC64__
         .endif
 
         .if ( ModuleInfo.distance != STACK_FAR )
-            lea ecx,@CStr("%r %r:%s,%r:%s,%r:%s")
+            lea ecx,@CStr("assume cs:%s,ds:%s,ss:%s")
         .else
-            lea ecx,@CStr("%r %r:%s,%r:%s")
+            lea ecx,@CStr("assume cs:%s,ds:%s")
         .endif
-        AddLineQueueX( ecx, T_ASSUME, T_CS, edx, T_DS, &szDgroup, T_SS, &szDgroup )
+        lea eax,szDgroup
+        AddLineQueueX( ecx, edx, eax, eax )
         .endc
 endif
+    .case MODEL_NONE
     .endsw
     ret
 ModelAssumeInit endp
@@ -304,7 +306,7 @@ GetStdAssumeEx proc reg:int_t
 
 GetStdAssumeEx endp
 
-AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+
 ;; Handles ASSUME
 ;; syntax is :
 ;; - ASSUME
@@ -313,15 +315,16 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 ;; - ASSUME dataregister : qualified type [, dataregister : qualified type ]
 ;; - ASSUME register : ERROR | NOTHING | FLAT
 
+AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-    local reg:int_t
-    local j:int_t
-    local size:int_t
-    local flags:uint_t
-    local info:ptr assume_info
-    local segtable:int_t
-    local ti:qualified_type
-    local opnd:expr
+  local reg:int_t
+  local j:int_t
+  local size:int_t
+  local flags:uint_t
+  local info:ptr assume_info
+  local segtable:int_t
+  local ti:qualified_type
+  local opnd:expr
 
     xor eax,eax
     mov reg,eax

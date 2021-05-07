@@ -243,8 +243,8 @@ atofloat proc _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
             mov ecx,_out
             or  byte ptr [ecx+15],0x80
         .endif
-
-        .switch ( size )
+        mov eax,size
+        .switch al
         .case 2
             __cvtq_h(_out, _out)
             .if ( errno )

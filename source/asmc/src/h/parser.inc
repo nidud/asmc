@@ -62,10 +62,11 @@ VEX_START equ T_VBROADCASTSS ; first VEX encoded item
 
 ;; queue of symbols
 
-symbol_queue	STRUC
-head		dsym_t ?
-tail		dsym_t ?
-symbol_queue	ENDS
+.template symbol_queue
+    head ptr dsym ?
+    tail ptr dsym ?
+   .ends
+
 
 .enum queue_type {
    TAB_UNDEF,
@@ -75,10 +76,15 @@ symbol_queue	ENDS
    TAB_PROC,	;; PROC items
    TAB_ALIAS,	;; ALIAS items
    TAB_LAST	;;
-}
+   }
 
 ;; several lists, see enum queue_type above
-externdef	SymTables:symbol_queue
+externdef SymTables:symbol_queue
+
+SegTable    equ <SymTables[TAB_SEG*symbol_queue].head>
+ExtTable    equ <SymTables[TAB_EXT*symbol_queue].head>
+AliasTable  equ <SymTables[TAB_ALIAS*symbol_queue].head>
+ProcTable   equ <SymTables[TAB_PROC*symbol_queue].head>
 
 ;; values for <rm_info> (3 bits)
 ;; 000		  -> has rm_byte with w-, d- and/or s-bit in opcode

@@ -39,7 +39,7 @@ LS_FAR32 equ 0xFF06
     option procalign:4
     option proc:private
 
-noasmerr proc msg:int_t, args:vararg
+noasmerr proc __cdecl msg:int_t, args:vararg
 
     mov eax,ERROR
     ret

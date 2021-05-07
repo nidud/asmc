@@ -169,21 +169,19 @@ vect_decorate endp
 Mangle proc uses esi edi sym:asym_t, buffer:string_t
 
     mov ecx,sym
-    .switch( [ecx].langtype )
+    mov ax,[ecx].langtype
+    and eax,0x0F
+    mov esi,VoidMangler
+    .switch jmp eax
     .case LANG_C
         ;; leading underscore for C ?
-        mov esi,UScoreMangler
-        .if Options.no_cdecl_decoration
-            mov esi,VoidMangler
+        .if !Options.no_cdecl_decoration
+            mov esi,UScoreMangler
         .endif
         .endc
-    .case LANG_SYSCALL
-        mov esi,VoidMangler
-        .endc
     .case LANG_STDCALL
-        mov esi,StdcallMangler
-        .if Options.stdcall_decoration == STDCALL_NONE
-            mov esi,VoidMangler
+        .if Options.stdcall_decoration != STDCALL_NONE
+            mov esi,StdcallMangler
         .endif
         .endc
     .case LANG_PASCAL
@@ -205,9 +203,8 @@ Mangle proc uses esi edi sym:asym_t, buffer:string_t
         .endc
     .case LANG_VECTORCALL
         mov esi,vect_decorate
-        .endc
-    .default ;; LANG_NONE
-        mov esi,VoidMangler
+    .case LANG_NONE
+    .case LANG_SYSCALL
         .endc
     .endsw
     mov  edx,buffer

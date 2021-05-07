@@ -10,11 +10,7 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version %d.%d"
-#if ASMC_SUBMINOR_VER
- ".%02d"
-#endif
- ;
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR;
 char cp_copyright[] =
  "Copyright (C) The Asmc Contributors. All Rights Reserved.\n"
  "Portions Copyright (C) 1984-2002 Sybase, Inc. All Rights Reserved.\n";
@@ -109,7 +105,7 @@ void write_logo(void)
 {
     if ( !banner_printed ) {
 	banner_printed = 1;
-	printf( cp_logo, ASMC_MAJOR_VER, ASMC_MINOR_VER, ASMC_SUBMINOR_VER );
+	printf( cp_logo );
 	printf( "\n%s\n", cp_copyright );
     }
 }

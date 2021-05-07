@@ -1272,6 +1272,7 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local rc:int_t, cmd:uint_t, buffer[MAX_LINE_LEN]:char_t
   local opnd:expr
+  local brackets:byte
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -1302,6 +1303,14 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
     shl edx,4 ; v2.30.07: .SWITCH [JMP] [C|PASCAL] ...
     mov eax,HLLF_WHILE
 
+    mov brackets,0
+    .while ( [ebx+edx].token == T_OP_BRACKET )
+
+        inc i
+        inc brackets
+        add edx,16
+    .endw
+
     .if ( [ebx+edx].tokval == T_JMP )
 
         inc i
@@ -1309,6 +1318,7 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
     .endif
 
     .if ( [ebx+edx].token == T_ID )
+
         mov ecx,[ebx+edx].string_ptr
         mov ecx,[ecx]
         or  cl,0x20
@@ -1441,22 +1451,39 @@ endif
             .endsw
         .endif
 
-        mov edx,i
-        shl edx,4
-        strlen(strcpy(edi, [ebx+edx].asm_tok.tokpos))
-        inc eax
-        push eax
-        LclAlloc(eax)
-        pop ecx
+        mov ecx,Token_Count
+        shl ecx,4
+        .while ( brackets && [ebx+ecx-16].token == T_CL_BRACKET )
+            sub ecx,16
+            dec brackets
+        .endw
+        mov ecx,[ebx+ecx].tokpos
+        mov eax,i
+        shl eax,4
+        mov edi,[ebx+eax].tokpos
+        .while ( ecx > edi && byte ptr [ecx-1] <= ' ' )
+            dec ecx
+        .endw
+        sub ecx,edi
+        mov ebx,ecx
+        inc ecx
+        LclAlloc(ecx)
         mov [esi].condlines,eax
-        memcpy(eax, edi, ecx)
+        mov edx,esi
+        mov ecx,ebx
+        mov esi,edi
+        mov edi,eax
+        rep movsb
+        mov esi,edx
+        mov byte ptr [edi],0
+        mov ebx,tokenarray
     .endif
 
     mov eax,i
     shl eax,4
-    .if ![esi].flags && ([ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR)
+    .if ![esi].flags && ( [ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR )
 
-        mov rc,asmerr(2008, [ebx+eax].asm_tok.tokpos)
+        mov rc,asmerr( 2008, [ebx+eax].asm_tok.tokpos )
     .endif
 
     .if esi == ModuleInfo.HllFree

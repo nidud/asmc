@@ -221,7 +221,8 @@ output_opc proc uses edi ebx
 
     ;; check if address/operand size prefix is to be set
 
-    .switch [edi].byte1_info
+    mov al,[edi].byte1_info
+    .switch al
     .case F_16
         .if [esi].Ofssize >= USE32
             mov [esi].opsiz,1
@@ -258,7 +259,7 @@ output_opc proc uses edi ebx
     .endsw
 
     .if !( rflags & RWF_VEX )
-        .switch [edi].byte1_info
+        .switch al ; [edi].byte1_info
         .case F_660F
         .case F_660F38
         .case F_660F3A
@@ -984,7 +985,8 @@ output_opc proc uses edi ebx
 
         .if [edi].byte1_info >= F_0F
             OutputByte(EXTENDED_OPCODE)
-            .switch [edi].byte1_info
+            mov al,[edi].byte1_info
+            .switch al
             .case F_0F0F: OutputByte(EXTENDED_OPCODE) : .endc
             .case F_0F38
             .case F_F20F38

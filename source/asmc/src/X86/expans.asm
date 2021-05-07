@@ -1715,7 +1715,8 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:tok_t
                 .return NOT_ERROR
             .endif
         .elseif Token_Count > 1 && [edx+16].asm_tok.token == T_DIRECTIVE
-            .switch [edx+16].asm_tok.dirtype
+            mov al,[edx+16].asm_tok.dirtype
+            .switch al
             .case DRT_CATSTR
                 mov bracket_flags,-1
                 mov count,2

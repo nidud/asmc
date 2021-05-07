@@ -973,8 +973,8 @@ static ret_code coff_write_data( struct module_info *modinfo, struct coffmod *cm
                         il.Linenumber = 0x7FFF;
                     il.Type.VirtualAddress = lni->offset;
                 }
-                    last->debuginfo->line_numbers++;
-                    last->debuginfo->end_line = lni->number;
+                last->debuginfo->line_numbers++;
+                last->debuginfo->end_line = lni->number;
                 if ( fwrite( &il, 1, sizeof(il), CurrFile[OBJ] ) != sizeof(il) )
                     WriteError();
                 offset += sizeof(il);
@@ -993,7 +993,7 @@ static ret_code coff_write_data( struct module_info *modinfo, struct coffmod *cm
  * if yes, create it and set its contents.
  */
 
-static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm )
+/*static*/ void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm )
 /********************************************************************************/
 {
     struct dsym *exp;

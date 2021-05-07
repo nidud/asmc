@@ -1289,7 +1289,8 @@ endif
 
                         xor eax,eax
                         .if opnd.kind == EXPR_ADDR || ( opnd.flags & E_INDIRECT )
-                            .switch opnd.mem_type
+                            mov cl,opnd.mem_type
+                            .switch cl
                             .case MT_BYTE
                             .case MT_SBYTE  : mov eax,1 : .endc
                             .case MT_WORD

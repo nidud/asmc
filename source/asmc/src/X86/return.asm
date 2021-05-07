@@ -264,7 +264,8 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, type:to
 
         .elseif ( opnd.kind == EXPR_ADDR )
 
-            .switch opnd.mem_type
+            mov al,opnd.mem_type
+            .switch al
               .case MT_BYTE
               .case MT_SBYTE
               .case MT_WORD

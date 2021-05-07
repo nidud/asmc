@@ -9,11 +9,12 @@
 include fltintrn.inc
 include quadmath.inc
 
-STK_BUF_SIZE    equ 128
+BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
+STK_BUF_SIZE    equ BUFFERSIZE
 NDIG            equ 8
 D_CVT_DIGITS    equ 20
 LD_CVT_DIGITS   equ 23
-QF_CVT_DIGITS   equ 34
+QF_CVT_DIGITS   equ 38
 NO_TRUNC        equ 0x40    ; always provide ndigits in buffer
 E8_EXP          equ 0x4019
 E8_HIGH         equ 0xBEBC2000
@@ -33,16 +34,16 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
     local qf     :REAL16
     local tmp    :REAL16
-    local tmp2   :REAL16
     local i      :int_t
     local n      :int_t
     local nsig   :int_t
     local xexp   :int_t
     local p      :string_t
     local drop   :char_t
-    local value  :int_t
+    local value  :uint_t
     local maxsize:int_t
     local digits :int_t
+    local radix  :int_t
     local flt    :STRFLT
     local stkbuf[STK_BUF_SIZE]:char_t
 
@@ -55,8 +56,12 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     .endif
 
     mov     digits,ecx
+    mov     radix,10
     mov     ebx,cvt
     xor     eax,eax
+    mov     dword ptr tmp[0],eax
+    mov     dword ptr tmp[4],eax
+    mov     dword ptr tmp[8],eax
     mov     [ebx].n1,eax
     mov     [ebx].nz1,eax
     mov     [ebx].n2,eax
@@ -103,7 +108,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         mov [edx],eax
         mov [ebx].n1,3
 
-        .return
+        .return 0
     .endif
 
     .if !ecx
@@ -115,14 +120,14 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
     .else
 
-        mov esi,ecx
-        sub cx,0x3FFE
-        mov eax,30103
-        mul ecx
-        mov ecx,100000
-        div ecx
-        sub eax,NDIG / 2
-        mov xexp,eax
+        mov  esi,ecx
+        sub  ecx,0x3FFE
+        mov  eax,30103
+        imul ecx
+        mov  ecx,100000
+        idiv ecx
+        sub  eax,NDIG / 2
+        mov  xexp,eax
 
         .if eax
 
@@ -147,15 +152,15 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 rcr edx,1
                 rcr eax,1
 
-                .if (esi < E8_EXP || (esi == E8_EXP && edx < E8_HIGH))
+                .if ( esi < E8_EXP || ( esi == E8_EXP && edx < E8_HIGH ) )
 
                     ; number is < 1e8
 
                     mov xexp,0
 
                 .else
-                    .if (esi < E16_EXP || ((esi == E16_EXP && (edx < E16_HIGH || \
-                        (edx == E16_HIGH && eax < E16_LOW)))))
+                    .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
+                        ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
 
                         ; number is < 1e16
 
@@ -175,39 +180,37 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
     .endif
 
+    mov eax,[ebx].ndigits
     .if [ebx].flags & _ST_F
-
-        mov eax,[ebx].ndigits
         add eax,xexp
         add eax,2 + NDIG
         .ifs [ebx].scale > 0
-
             add eax,[ebx].scale
         .endif
     .else
-        mov eax,[ebx].ndigits
         add eax,4 + NDIG / 2 ; need at least this for rounding
     .endif
+    and eax,STK_BUF_SIZE-1
+    mov n,eax
 
     mov ecx,digits
     .if [ebx].flags & NO_TRUNC
-        shl ecx,1
+        add ecx,ecx
     .endif
     add ecx,NDIG / 2
-    .if eax > ecx
-        mov eax,ecx
-    .endif
-
-    mov n,eax
     mov maxsize,ecx
 
     ; convert ld into string of digits
     ; put in leading '0' in case we round 99...99 to 100...00
 
-    lea esi,stkbuf
-    mov word ptr [esi],'0'
-    inc esi
+    lea edi,stkbuf
+    mov word ptr [edi],'0'
+    inc edi
+    lea esi,qf
     mov i,0
+    mov bl,'0'
+    mov bh,byte ptr digits
+    sub bh,NDIG
 
     .whiles n > 0
 
@@ -217,52 +220,77 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             ; get long value to subtract
 
-            .if __cvtq_i32(edi)
-
+            mov cx,[esi+14]
+            and ecx,0x7FFF
+            .if ecx > 0x3FFF
+                mov edx,[esi+10]
+                sub ecx,0x3FFF
+                mov eax,1
+                .if ecx > 31
+                    mov ecx,31
+                .endif
+                shld eax,edx,cl
+                .if byte ptr [esi+15] & 0x80
+                    neg eax
+                .endif
                 mov value,eax
+                mov eax,ecx
+                neg ecx
+                add ecx,32
+                shr edx,cl
+                shl edx,cl
+                mov dword ptr tmp[10],edx
+                add eax,0x3FFF
+                .if byte ptr [esi+15] & 0x80
+                    or eax,0x8000
+                .endif
+                mov word ptr tmp[14],ax
 
-                __cvti32_q(&tmp, eax)
-                __subq(edi, &tmp)
+                __subq(esi, &tmp)
 
             .elseif i && value
 
-                mov [edi],eax
-                mov [edi+4],eax
-                mov [edi+8],eax
-                mov [edi+12],eax
+                mov [esi],eax
+                mov [esi+4],eax
+                mov [esi+8],eax
+                mov [esi+12],eax
 
             .endif
 
             .if n
-                __mulq(edi, &Q_1E8)
+                __mulq(esi, &Q_1E8)
             .endif
         .endif
 
-        .for ( ecx = NDIG, eax = value, ebx = 10: ecx: ecx-- )
-
-            xor edx,edx
-            div ebx
-            add dl,'0'
-            mov [esi+ecx-1],dl
-        .endf
-
+        mov eax,value
+        .if eax
+            .for ( ecx = NDIG : ecx : ecx-- )
+                xor edx,edx
+                div radix
+                add dl,'0'
+                or  bl,dl
+                mov [edi+ecx-1],dl
+            .endf
+            add edi,NDIG
+        .else
+            mov al,'0'
+            mov ecx,NDIG
+            rep stosb
+        .endif
         add i,NDIG
+        .if bl != '0'
+            sub bh,NDIG
+            .break .ifs
+        .endif
         mov value,0
-
-        add esi,NDIG
-        lea eax,stkbuf[STK_BUF_SIZE-NDIG]
-        .break .if esi > eax
-
     .endw
-
 
     ; get number of characters in buf
 
     .for ( eax = i, ; skip over leading zeros
            esi = &stkbuf[1],
            ecx = xexp,
-           ecx += NDIG-1,
-         : byte ptr [esi] == '0' : eax--, ecx--, esi++ )
+           ecx += NDIG-1 : byte ptr [esi] == '0' : eax--, ecx--, esi++ )
     .endf
 
     mov n,eax
@@ -270,22 +298,16 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov edx,[ebx].ndigits
 
     .if [ebx].flags & _ST_F
-
         add ecx,[ebx].scale
-        add edx,ecx
-        inc edx
-
+        lea edx,[edx+ecx+1]
     .elseif [ebx].flags & _ST_E
-
         .ifs [ebx].scale > 0
             inc edx
         .else
             add edx,[ebx].scale
         .endif
-
         inc ecx             ; xexp = xexp + 1 - scale
         sub ecx,[ebx].scale
-
     .endif
 
     .ifs edx >= 0           ; round and strip trailing zeros
@@ -294,27 +316,31 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
         mov eax,digits
         .if [ebx].flags & NO_TRUNC
-            shl eax,1
+            add eax,eax
         .endif
-        .if edx > eax
+        .ifs edx > eax
             mov edx,eax
         .endif
         mov maxsize,eax
         mov eax,'0'
-        .if n > edx && byte ptr [esi+edx] >= '5' || \
-            n == edx && byte ptr [esi+edx-1] == '9'
+        .ifs ( ( n > edx && byte ptr [esi+edx] >= '5' ) || \
+               ( n == edx && byte ptr [esi+edx-1] == '9' ) )
             mov al,'9'
         .endif
+
         lea edi,[esi+edx-1]
-        .while [edi] == al
-            dec edx
-            dec edi
-        .endw
+        xchg ecx,edx
+        inc ecx
+        std
+        repz scasb
+        cld
+        xchg ecx,edx
+        inc edi
         .if al == '9'       ; round up
             inc byte ptr [edi]
         .endif
         sub edi,esi
-        .ifs edi < 0
+        .ifs
             dec esi         ; repeating 9's rounded up to 10000...
             inc edx
             inc ecx
@@ -322,6 +348,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     .endif
 
     .ifs edx <= 0
+
         mov edx,1           ; nsig = 1
         xor ecx,ecx         ; xexp = 0
         mov stkbuf,'0'
@@ -332,80 +359,68 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov i,0
     mov eax,[ebx].flags
 
-    .ifs ( ecx < maxsize && ( eax & _ST_F || \
-         ( eax & _ST_G && ( ( ecx >= -4 && ecx < [ebx].ndigits ) || eax & _ST_CVT ) ) ) )
+    .ifs ( eax & _ST_F || ( eax & _ST_G && ( ( ecx >= -4 && ecx < [ebx].ndigits ) \
+          || eax & _ST_CVT ) ) )
 
         mov edi,buf
         inc ecx
 
         .if eax & _ST_G
-            .if edx < [ebx].ndigits && !(eax & _ST_DOT)
+            .ifs ( edx < [ebx].ndigits && !( eax & _ST_DOT ) )
                 mov [ebx].ndigits,edx
             .endif
             sub [ebx].ndigits,ecx
-            .ifs [ebx].ndigits < 0
+            .ifs ( [ebx].ndigits < 0 )
                 mov [ebx].ndigits,0
             .endif
-
         .endif
 
-        .ifs ecx <= 0 ; digits only to right of '.'
+        .ifs ( ecx <= 0 ) ; digits only to right of '.'
 
             .if !( eax & _ST_CVT )
 
                 mov byte ptr [edi],'0'
-                inc edi
-                .ifs [ebx].ndigits > 0 || eax & _ST_DOT
-                    mov byte ptr [edi],'.'
-                    inc edi
+                inc i
+
+                .ifs ( [ebx].ndigits > 0 || eax & _ST_DOT )
+                    mov byte ptr [edi+1],'.'
+                    inc i
                 .endif
             .endif
 
-            mov eax,edi
-            sub eax,buf
-            mov i,eax
-            mov [ebx].n1,eax
+            mov [ebx].n1,i
             mov eax,ecx
             neg eax
-
-            .if [ebx].ndigits < eax
+            .ifs ( [ebx].ndigits < eax )
                 mov ecx,[ebx].ndigits
                 neg ecx
             .endif
-
-            mov [ebx].decimal_place,ecx
+            mov eax,ecx
+            neg eax
+            mov [ebx].decimal_place,eax ; position of '.'
             mov [ebx].nz1,eax
-            add [ebx].ndigits,eax
-
-            .ifs [ebx].ndigits < edx
+            add [ebx].ndigits,ecx
+            .ifs ( [ebx].ndigits < edx )
                 mov edx,[ebx].ndigits
             .endif
-
-            mov ecx,eax
             mov [ebx].n2,edx
-            mov eax,[ebx].ndigits
-            add edx,ecx
-            sub eax,edx
-            mov [ebx].nz2,eax
-            mov eax,buf
+            sub edx,[ebx].ndigits
+            neg edx
+            mov [ebx].nz2,edx
+            add edi,[ebx].n1    ; number of leading characters
 
-            .if word ptr [eax] == '.0'
-                add i,ecx
-                sub edx,ecx
-                sub [ebx].nz2,ecx
-                mov eax,'0'
-                rep stosb
-            .endif
-
-            add i,edx
-            mov ecx,edx
-            rep movsb
-            mov ecx,[ebx].nz2
+            mov ecx,[ebx].nz1   ; followed by this many '0's
             add i,ecx
-            mov eax,'0'
+            mov al,'0'
+            rep stosb
+            mov ecx,[ebx].n2    ; followed by these characters
+            add i,ecx
+            rep movsb
+            mov ecx,[ebx].nz2   ; followed by this many '0's
+            add i,ecx
             rep stosb
 
-        .elseif edx < ecx ; zeros before '.'
+        .elseifs ( edx < ecx ) ; zeros before '.'
 
             add i,edx
             mov [ebx].n1,edx
@@ -416,6 +431,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov ecx,edx
             rep movsb
             add i,eax
+
             mov ecx,eax
             mov eax,'0'
             rep stosb
@@ -431,16 +447,20 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 .endif
             .endif
 
-            mov ecx,[ebx].ndigits
+            mov ecx,BUFFERSIZE-1
+            sub ecx,i
+            .ifs [ebx].ndigits < ecx
+                mov ecx,[ebx].ndigits
+            .endif
             mov [ebx].nz2,ecx
-
-            .if ( ecx > edx )
+            .if ecx > edx
                 sub ecx,edx
                 add i,ecx
                 mov eax,'0'
                 rep stosb
             .endif
-        .else                    ; enough digits before '.'
+
+        .else ; enough digits before '.'
 
             mov [ebx].decimal_place,ecx
             add i,ecx
@@ -449,7 +469,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov edi,buf
             mov ecx,[ebx].decimal_place
 
-            .if !([ebx].flags & _ST_CVT)
+            .if !( [ebx].flags & _ST_CVT )
                 .ifs [ebx].ndigits > 0 || [ebx].flags & _ST_DOT
 
                     mov eax,edi
@@ -520,7 +540,9 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             mov byte ptr [edi],'0'
             inc i
-
+            .if ecx >= maxsize
+                inc xexp
+            .endif
         .else
 
             mov eax,[ebx].scale

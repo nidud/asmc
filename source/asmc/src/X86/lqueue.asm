@@ -185,7 +185,7 @@ VLSPrintF proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
 VLSPrintF endp
 
-LSPrintF proc buffer:string_t, fmt:string_t, argptr:vararg
+LSPrintF proc __cdecl buffer:string_t, fmt:string_t, argptr:vararg
 
     VLSPrintF( buffer, fmt, &argptr )
     mov eax,buffer
@@ -193,7 +193,7 @@ LSPrintF proc buffer:string_t, fmt:string_t, argptr:vararg
 
 LSPrintF endp
 
-AddLineQueueX proc fmt:string_t, argptr:vararg
+AddLineQueueX proc __cdecl fmt:string_t, argptr:vararg
 
   local buffer:ptr char_t
 

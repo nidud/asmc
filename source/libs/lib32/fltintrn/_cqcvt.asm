@@ -28,7 +28,6 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
     .elseif ch_type == 'g'
         mov eax,_ST_G
     .endif
-
     mov cvt.flags,eax
     mov cvt.ndigits,ecx
     xor ecx,ecx

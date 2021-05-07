@@ -50,7 +50,6 @@ FL_LONGDOUBLE   equ 0x0400 ; long double
 FL_WIDECHAR     equ 0x0800
 FL_LONGLONG     equ 0x1000 ; long long value given
 FL_I64          equ 0x8000 ; 64-bit value given
-FL_CAPEXP       equ 0x10000
 
 ST_NORMAL       equ 0   ; normal state; outputting literal chars
 ST_PERCENT      equ 1   ; just read '%'
@@ -435,7 +434,7 @@ _woutput proc public uses edx ecx esi edi ebx fp:LPFILE, format:wstring_t, argli
                   .case 'E'
                   .case 'G'
                   .case 'A'
-                    or  esi,FL_CAPEXP   ; capitalize exponent
+                    or  esi,_ST_CAPEXP  ; capitalize exponent
                     add dl,'a' - 'A'    ; convert format char to lower
 
                     ; drop..
@@ -467,6 +466,8 @@ _woutput proc public uses edx ecx esi edi ebx fp:LPFILE, format:wstring_t, argli
                     mov eax,[ecx+4]
                     mov qfloat[4],eax
                     mov ebx,edx
+                    mov edx,esi
+                    and edx,_ST_CAPEXP
 
                     ; do the conversion
 
@@ -478,7 +479,8 @@ _woutput proc public uses edx ecx esi edi ebx fp:LPFILE, format:wstring_t, argli
 
                         ; Note: assumes ch is in ASCII range
 
-                        _cldcvt(&qfloat, text, edx, edi, esi)
+                        or edx,_ST_LONGDOUBLE
+                        _cldcvt(&qfloat, text, ebx, edi, edx)
 
                     .elseif esi & FL_LONGLONG
 
@@ -488,14 +490,12 @@ _woutput proc public uses edx ecx esi edi ebx fp:LPFILE, format:wstring_t, argli
                         mov eax,[ecx+12]
                         mov qfloat[12],eax
 
-                        ; Note: assumes ch is in ASCII range
-
-                        _cqcvt(&qfloat, text, edx, edi, esi)
+                        or edx,_ST_QUADFLOAT
+                        _cqcvt(&qfloat, text, ebx, edi, edx)
                     .else
 
-                        ; Note: assumes ch is in ASCII range
-
-                        _cfltcvt(&qfloat, text, edx, edi, esi)
+                        or edx,_ST_DOUBLE
+                        _cfltcvt(&qfloat, text, ebx, edi, edx)
                     .endif
 
                     ; '#' and precision == 0 means force a decimal point

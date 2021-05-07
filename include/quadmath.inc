@@ -5,12 +5,6 @@ _INC_QUADMATH equ <>
 
 include fltintrn.inc
 
-; Parsing flags
-
-FL_LONGDOUBLE	equ 0x0400
-FL_LONGLONG	equ 0x1000
-FL_CAPEXP	equ 0x10000
-
 ; Quadruple precision constants
 
 M_E		equ 2.71828182845904523536028747135266249775724709369996

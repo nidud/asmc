@@ -31,7 +31,7 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
     mov cvt.ndigits,r9d
 
     xor r8d,r8d
-    .if eax & _ST_E
+    .if eax & _ST_E or _ST_G
         inc r8d
     .endif
     mov cvt.scale,r8d

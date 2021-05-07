@@ -35,7 +35,6 @@ FL_LONGDOUBLE   equ 0x0400  ; long double
 FL_WIDECHAR     equ 0x0800
 FL_LONGLONG     equ 0x1000  ; long long or REAL16 value given
 FL_I64          equ 0x8000  ; 64-bit value given
-FL_CAPEXP       equ 0x10000
 
 ST_NORMAL       equ 0       ; normal state; outputting literal chars
 ST_PERCENT      equ 1       ; just read '%'
@@ -407,7 +406,7 @@ _output proc public uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr_t
                   .case 'E'
                   .case 'G'
                   .case 'A'
-                    or  esi,FL_CAPEXP   ; capitalize exponent
+                    or  esi,_ST_CAPEXP  ; capitalize exponent
                     add dl,'a' - 'A'    ; convert format char to lower
                     ;
                     ; DROP THROUGH
@@ -435,16 +434,21 @@ _output proc public uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr_t
                     add arglist,8
                     mov rax,[rcx]
                     mov ebx,edx
+                    mov edx,esi
+                    and edx,_ST_CAPEXP
                     ;
                     ; do the conversion
                     ;
-                    mov r8d,edx
+                    mov r8d,ebx
                     .if esi & FL_LONGDOUBLE
-                        _cldcvt(rax, text, r8d, edi, esi)
+                        or edx,_ST_LONGDOUBLE
+                        _cldcvt(rax, text, r8d, edi, edx)
                     .elseif esi & FL_LONGLONG
-                        _cqcvt(rax, text, r8d, edi, esi)
+                        or edx,_ST_QUADFLOAT
+                        _cqcvt(rax, text, r8d, edi, edx)
                     .else
-                        _cfltcvt(rcx, text, r8d, edi, esi)
+                        or edx,_ST_DOUBLE
+                        _cfltcvt(rcx, text, r8d, edi, edx)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

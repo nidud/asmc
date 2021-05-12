@@ -421,8 +421,8 @@ endif
             .elseif ( eax == 'lbtV' && byte ptr [esi+4] == 0 )
                 mov ecx,[ebx].sym
                 or  [ecx].asym.flag2,S_VTABLE
-                mov [ecx].asym.segm,edi
-                mov [edi].asym.segm,ecx
+                mov [ecx].asym.vtable,edi
+                mov [edi].asym.class,ecx
                 or  [edi].asym.flag2,S_ISVTABLE
             .endif
         .endif

@@ -12,6 +12,7 @@ if not exist tmp md tmp
 cd tmp
 
 for %%f in (..\src\bin\*.asm) do call :cmpbin %%f
+for %%f in (..\src\bin64\*.asm) do call :cmpbin %%f
 for %%f in (..\src\mz\*.asm)  do call :cmpmz  %%f
 for %%f in (..\src\err\*.asm) do call :cmperr %%f
 for %%f in (..\src\omf\*.asm) do call :lnkomf %%f
@@ -31,6 +32,9 @@ for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
 for %%f in (..\src\elf64\*.asm) do call :elf64 %%f
 for %%f in (..\src\vec64\*.asm) do call :vec64 %%f
+for %%f in (..\src\bin64\*.asm) do call :cv8bin %%f
+for %%f in (..\src\vec64\*.asm) do call :cv8Gv %%f
+for %%f in (..\src\win64\*.asm) do call :cv8 %%f
 
 call :safeseh
 call :dllimp
@@ -230,6 +234,27 @@ goto end
 fcmp %~n1.ERR ..\exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.ERR
+goto end
+
+:cv8
+%ASMX% -q -win64 -Zi8 %1
+fcmp -coff %~n1.obj ..\exp64\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
+goto end
+
+:cv8bin
+%ASMX% -q -win64 -D__ASMC64__ -Zi8 %1
+fcmp -coff %~n1.obj ..\exp64\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
+goto end
+
+:cv8Gv
+%ASMX% -q -win64 -Zi8 -Gv %1
+fcmp -coff %~n1.obj ..\exp64\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
 goto end
 
 :end

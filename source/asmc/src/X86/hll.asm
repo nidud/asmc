@@ -1553,7 +1553,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                     mov ecx,eax
                     xor eax,eax
                     .if ( [ecx].asym.flag2 & S_VTABLE )
-                        SearchNameInStruct( [ecx].asym.segm, edi, 0, 0 )
+                        SearchNameInStruct( [ecx].asym.vtable, edi, 0, 0 )
                     .endif
                     .if ( eax == NULL )
                         .if SearchNameInStruct( sym, edi, 0, 0 )
@@ -1588,10 +1588,10 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         .endif
         .if ( [esi].asym.flag2 & S_VTABLE )
 
-            .if SearchNameInStruct( [esi].asym.segm, name, 0, 0 )
+            .if SearchNameInStruct( [esi].asym.vtable, name, 0, 0 )
                 inc vtable
                 mov method,eax
-                mov esi,[esi].asym.segm
+                mov esi,[esi].asym.vtable
                 mov comptr,[esi].asym.name
             .endif
         .endif

@@ -89,7 +89,6 @@ fixup_t		typedef ptr fixup
 dlldesc_t	typedef ptr dll_desc
 segitem_t	typedef ptr seg_item
 debug_t		typedef ptr debug_info
-asym_t		typedef ptr asym
 dsym_t		typedef ptr dsym
 group_t		typedef ptr grp_info
 segment_t	typedef ptr seg_info
@@ -100,10 +99,6 @@ macro_t		typedef ptr macro_info
 sfield_t	typedef ptr sfield
 struct_t	typedef ptr struct_info
 tok_t		typedef ptr asm_tok
-
-CALLBACKC(internal_func, :asym_t, :ptr)
-CALLBACKC(macro_func, :ptr macro_instance, :string_t, :tok_t)
-
 
 debug_info	struct
 start_line	dd ?	;; procs's start line
@@ -154,18 +149,22 @@ M_MULTILINE	equ 0x08
 M_PURGED	equ 0x10
 
 asym		struct
-nextitem	asym_t ?	; next symbol in hash line
+nextitem	ptr asym ?	; next symbol in hash line
 name		string_t ?	; symbol name
 union
  offs		int_t ?		; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
  value		int_t ?		; used by SYM_INTERNAL (equates)
  uvalue		uint_t ?	; v2.01: equates (they are 33-bit!)
  string_ptr	string_t ?	; used by SYM_TMACRO
- substitute	asym_t ?	; v2.04b: used by SYM_ALIAS
- func_ptr	macro_func ?	; used by SYM_MACRO if predefined==1
+ substitute	ptr asym ?	; v2.04b: used by SYM_ALIAS
+ func_ptr	proc :ptr macro_instance, :string_t, :ptr asm_tok ; used by SYM_MACRO if predefined==1
  classlnameidx	int_t ?		; used by SYM_CLASS_LNAME
 ends
-segm		asym_t ?	; used by SYM_INTERNAL, SYM_EXTERNAL
+union
+ segm		ptr asym ?	; used by SYM_INTERNAL, SYM_EXTERNAL
+ class		ptr asym ?	; used by SYM_TYPE
+ vtable		ptr asym ?	; used by SYM_TYPE
+ends
 state		uchar_t ?
 mem_type	uchar_t ?
 reserved1	uchar_t ?
@@ -193,7 +192,7 @@ union				; for SYM_INTERNAL (data labels only), SYM_STRUCT_FIELD
  max_mbr_size	uint_t ?	; max size members
 				; SYM_STACK, SYM_TYPE (TYPEKIND_TYPEDEF), SYM_EXTERNAL,
 				; SYM_INTERNAL (code labels)
- target_type	asym_t ?	; set if ptr_memtype is MT_TYPE
+ target_type	ptr asym ?	; set if ptr_memtype is MT_TYPE
 ends
 regist		ushort_t 2 dup(?) ; SYM_TMACRO (if it's a register variable for FASTCALL)
 union				; for SYM_INTERNAL, SYM_STRUCT_FIELD,
@@ -209,9 +208,9 @@ ends				; offset field contain "local start offset" (=0)
 union				; SYM_INTERNAL, SYM_STRUCT_FIELD,
 				; SYM_STACK, SYM_EXTERNAL (comm==1):
  total_length	uint_t ?	; total number of elements (LENGTHOF)
- altname	asym_t ?	; SYM_EXTERNAL (comm==0): alternative name
+ altname	ptr asym ?	; SYM_EXTERNAL (comm==0): alternative name
  debuginfo	debug_t ?	; SYM_INTERNAL (isproc==1): debug info (COFF)
- sfunc_ptr	internal_func ? ; SYM_INTERNAL+predefined
+ sfunc_ptr	proc :ptr asym, :ptr ; SYM_INTERNAL+predefined
  struct				; SYM_TYPE
   cvtyperef	ushort_t ?	; codeview type index (used after assembly steps)
   typekind	ushort_t ?	; v2.04: moved from first_length, were it didn't work anymore
@@ -219,7 +218,7 @@ union				; SYM_INTERNAL, SYM_STRUCT_FIELD,
 ends
 name_size	ushort_t ?
 langtype	ushort_t ?
-type		asym_t ?	; set if memtype is MT_TYPE
+type		ptr asym ?	; set if memtype is MT_TYPE
 union				; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
  bp_fixup	fixup_t ?
  ext_idx	uint_t ?	; for SYM_EXTERNAL: table index ( for coff and elf )
@@ -229,6 +228,7 @@ union				; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
  ends
 ends
 asym		ends
+asym_t		typedef ptr asym
 
 ;;---------------------------------------------------------------------------
 ;; Structures for grpdef, segdef, externdef, pubdef, included library,

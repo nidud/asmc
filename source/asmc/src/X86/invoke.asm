@@ -1600,7 +1600,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( eax && [eax].asym.flag2 & S_ISVTABLE )
 
-                    mov ecx,[eax].asym.segm
+                    mov ecx,[eax].asym.class
                     strcat( strcat( strcpy( &buffer, [ecx].asym.name ), "_" ), [edi].asym.name )
                     mov pmacro,SymSearch( eax )
 

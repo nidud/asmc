@@ -20,10 +20,11 @@ if not exist tmp md tmp
 cd tmp
 
 for %%f in (..\src\bin\*.asm) do call :cmpbin %%f
+for %%f in (..\src\bin64\*.asm) do call :cmpbin %%f
 for %%f in (..\src\mz\*.asm)  do call :cmpmz  %%f
 for %%f in (..\src\err\*.asm) do call :cmperr %%f
-for %%f in (..\src\omf\*.asm) do call :cmpomf %%f
 for %%f in (..\src\omf\*.asm) do call :lnkomf %%f
+for %%f in (..\src\omf\*.asm) do call :cmpomf %%f
 for %%f in (..\src\coff\*.asm) do call :coff %%f
 for %%f in (..\src\cofferr\*.asm) do call :cofferr %%f
 for %%f in (..\src\win64\*.asm) do call :win64 %%f
@@ -37,7 +38,8 @@ for %%f in (..\src\ifdef\*.asm) do call :ifdef %%f
 for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
-for %%f in (..\src\Xc\*.asm) do call :Xc %%f
+for %%f in (..\src\elf64\*.asm) do call :elf64 %%f
+for %%f in (..\src\vec64\*.asm) do call :vec64 %%f
 
 call :safeseh
 call :dllimp
@@ -86,6 +88,10 @@ goto end
 %MLBASE% -q -win64 -Fo ..\exp\%~n1.obj %1
 goto end
 
+:vec64
+%MLBASE% -q -Gv -win64 -Fo ..\exp\%~n1.obj %1
+goto end
+
 :coffdbg
 %MLBASE% -q -coff -Zi -Fo ..\exp\%~n1.obj %1
 goto end
@@ -106,6 +112,10 @@ goto end
 
 :elf
 %MLBASE% -q -elf -Fo ..\exp\%~n1.obj %1
+goto end
+
+:elf64
+%MLBASE% -q -elf64 -Fo ..\exp\%~n1.obj %1
 goto end
 
 :omfcu
@@ -137,9 +147,5 @@ goto end
 %MLBASE% -q -eq -bin %1
 copy %~n1.err ..\exp\%~n1.err
 goto end
-
-:Xc
-%MLBASE% -q -Xc -bin %1
-copy %~n1.bin ..\exp\%~n1.bin
 
 :end

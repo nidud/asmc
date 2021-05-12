@@ -2,9 +2,9 @@
 ;--- VMX Extension, 64-bit
 ;--- added in v2.09
 
-ifdef __JWASM__
-	.x64
-	.model flat
+ifndef __ASMC64__
+    .x64
+    .model flat
 endif
 
 	.data
@@ -15,8 +15,8 @@ m128 label oword
 
 	.code
 
-ifdef __JWASM__
-	.x64p  ;privileged instructions
+ifndef __ASMC64__
+	.x64p ; privileged instructions
 endif
 
 	vmlaunch
@@ -49,11 +49,9 @@ if 1
 	invvpid eax, m128
 	invvpid ebx, m128
 endif
-
-ifdef __JWASM__
-	.x64
+ifndef __ASMC64__
+	.x64 ; privileged instructions
 endif
-
 	vmcall
 
 end

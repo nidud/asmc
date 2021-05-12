@@ -18,17 +18,6 @@ include expreval.inc
 
 ; item for .CLASS, .ENDS, and .COMDEF
 
-com_item    STRUC
-cmd         dd ?
-class       string_t ?
-langtype    dd ?
-sym         asym_t ?    ; .class name : public class
-type        asym_t ?
-vector      dd ?        ; T_AL..T_ZMM0
-method      dd ?        ; .INLINE/.OPERATOR/.STATIC
-com_item    ENDS
-LPCLASS     typedef ptr com_item
-
     .code
 
     option proc: private
@@ -98,7 +87,7 @@ ClassProto2 endp
     assume esi:ptr com_item
     assume edi:ptr sfield
 
-AddPublic proc uses esi edi ebx this:LPCLASS, sym:ptr asym
+AddPublic proc uses esi edi ebx this:ptr com_item, sym:ptr asym
 
   local q[256]:char_t
 
@@ -138,7 +127,7 @@ AddPublic proc uses esi edi ebx this:LPCLASS, sym:ptr asym
 
 AddPublic endp
 
-OpenVtbl proc uses esi ebx this:LPCLASS
+OpenVtbl proc uses esi ebx this:ptr com_item
 
   local q[256]:char_t
 
@@ -147,7 +136,7 @@ OpenVtbl proc uses esi ebx this:LPCLASS
 
     ; v2.30.32 - : public class
 
-    mov edx,[esi].sym
+    mov edx,[esi].publsym
     .return 0 .if !edx
     .return 1 .if !SymFind( strcat( strcpy( &q, [edx].asym.name ), "Vtbl" ) )
 
@@ -899,7 +888,7 @@ done:
         strcat(eax, "_")
         strcat(eax, name)
         .if SymFind( eax )
-            or [eax].asym.flag,S_METHOD
+            or [eax].asym.flag1,S_METHOD
         .endif
     .endif
     mov eax,retval
@@ -1263,7 +1252,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .return asmerr( 1011 ) .if !esi
 
         AddLineQueueX( "%s ends", [esi].asym.name )
-        mov edx,[edi].com_item.sym
+        mov edx,[edi].com_item.publsym
         .if edx
             .if !strcmp([edi].com_item.class, [esi].asym.name)
                 OpenVtbl(edi)
@@ -1349,9 +1338,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov ecx,[edx].com_item.class
         mov class_ptr,ecx
 
-        .if [edx].com_item.sym
+        .if [edx].com_item.publsym
 
-            mov ecx,[edx].com_item.sym
+            mov ecx,[edx].com_item.publsym
             mov ecx,[ecx].asym.name
         .endif
 
@@ -1363,7 +1352,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if eax
 
             mov ecx,eax
-            .if !SearchNameInStruct( ecx, edi, &i, 0 )
+            .if !SearchNameInStruct( ecx, edi, 0, 0 )
 
                 .if strcmp(edi, class_ptr) ; constructor ?
 
@@ -1395,17 +1384,17 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .if constructor
             .if SymFind( &token )
                 .if ( cmd != T_DOT_STATIC )
-                    or [eax].asym.flag,S_METHOD
+                    or [eax].asym.flag1,S_METHOD
                 .endif
                 .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
-                    or [eax].asym.sint_flag,SINT_ISSTATIC
+                    or [eax].asym.sflags,S_ISSTATIC
                 .endif
             .endif
         .endif
         MacroInline( &token, args, [ebx].tokpos , context, is_vararg )
         .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
             .if SymFind( &token )
-                or [eax].asym.sint_flag,SINT_ISSTATIC
+                or [eax].asym.sflags,S_ISSTATIC
             .endif
         .endif
         .return rc
@@ -1423,9 +1412,10 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov [eax].com_item.cmd,ecx
         mov [eax].com_item.type,edx
         mov [eax].com_item.langtype,edx
-        mov [eax].com_item.sym,edx
+        mov [eax].com_item.publsym,edx
         mov [eax].com_item.vector,edx
         mov [eax].com_item.method,edx
+        mov [eax].com_item.sym,edx
 
         mov esi,[ebx].string_ptr
         .if LclAlloc( &[strlen(esi) + 1] )
@@ -1474,7 +1464,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     .return asmerr( 2006, ebx ) .if !SymFind( ebx )
 
                     mov ecx,ModuleInfo.ComStack
-                    mov [ecx].com_item.sym,eax
+                    mov [ecx].com_item.publsym,eax
 
                 .else
 
@@ -1556,10 +1546,10 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endif
 
         mov ecx,ModuleInfo.ComStack
-        mov esi,[ecx].com_item.sym
+        mov esi,[ecx].com_item.publsym
         .if esi
             .if ( cmd != T_DOT_TEMPLATE )
-                .if !SearchNameInStruct( esi, "lpVtbl", &cmd, 0 )
+                .if !SearchNameInStruct( esi, "lpVtbl", 0, 0 )
                     AddLineQueueX( "lpVtbl ptr %sVtbl ?", &class )
                 .endif
             .endif

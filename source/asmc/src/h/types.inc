@@ -23,7 +23,7 @@ CreateType		proto :int_t, :tok_t, :string_t, :ptr ptr asym
 CreateTypeSymbol	proto :asym_t, :string_t, :int_t
 SearchNameInStruct	proto :asym_t, :string_t, :ptr uint_t, :int_t
 GetQualifiedType	proto :ptr int_t, :tok_t, :ptr qualified_type
-CreateStructField	proto :int_t, :tok_t, :string_t, :uchar_t, :asym_t, :int_t
+CreateStructField	proto :int_t, :tok_t, :string_t, :uchar_t, :asym_t, :uint_t
 UpdateStructSize	proto :asym_t
 SetStructCurrentOffset	proto :int_t
 AlignInStruct		proto :int_t

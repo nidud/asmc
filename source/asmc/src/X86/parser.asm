@@ -179,13 +179,13 @@ sym_ext2int proc sym:asym_t
     ;; v2.07: GlobalQueue has been removed
 
     mov ecx,sym
-    .if ( !( [ecx].flag & S_ISPROC ) && !( [ecx].flag & S_ISPUBLIC ) )
-        or [ecx].flag,S_ISPUBLIC
+    .if ( !( [ecx].flag1 & S_ISPROC ) && !( [ecx].flags & S_ISPUBLIC ) )
+        or [ecx].flags,S_ISPUBLIC
         AddPublicData( sym )
     .endif
     sym_remove_table( &SymTables[TAB_EXT*symbol_queue], sym )
     mov ecx,sym
-    .if !( [ecx].flag & S_ISPROC ) ;; v2.01: don't clear flags for PROTO
+    .if !( [ecx].flag1 & S_ISPROC ) ;; v2.01: don't clear flags for PROTO
         mov [ecx].first_size,0
     .endif
     mov [ecx].state,SYM_INTERNAL
@@ -289,7 +289,7 @@ SizeFromMemtype proc mem_type:uchar_t, Ofssize:int_t, type:asym_t
     .case MT_PROC
         mov eax,edx
         mov ecx,type
-        .if [ecx].sint_flag & SINT_ISFAR
+        .if [ecx].sflags & S_ISFAR
             add eax,2
         .endif
         .endc
@@ -432,7 +432,7 @@ check_assume proc private CodeInfo:ptr code_info, sym:asym_t, default_reg:int_t
     mov ecx,sym
     .if reg == ASSUME_NOTHING
         .if ecx
-            .if [ecx]._segment != NULL
+            .if [ecx].segm != NULL
                 asmerr(2074, [ecx].name)
             .else
                 mov eax,CodeInfo
@@ -1363,7 +1363,7 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
     .if [edi].flags & E_EXPLICIT && [edi].type
         mov ecx,[edi].type
         mov size,[ecx].asym.total_size
-        .if [ecx].asym.sint_flag & SINT_ISFAR
+        .if [ecx].asym.sflags & S_ISFAR
             or [esi].flags,CI_ISFAR
         .else
             and [esi].flags,not CI_ISFAR
@@ -1374,7 +1374,7 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
 
             mov ecx,[eax].asym.type
             mov size,[ecx].asym.total_size
-            .if [ecx].asym.sint_flag & SINT_ISFAR
+            .if [ecx].asym.sflags & S_ISFAR
                 or [esi].flags,CI_ISFAR
             .else
                 and [esi].flags,not CI_ISFAR
@@ -1388,17 +1388,17 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
         .elseif [eax].asym.mem_type == MT_PTR
 
             mov ecx,MT_NEAR
-            .if [eax].asym.sint_flag & SINT_ISFAR
+            .if [eax].asym.sflags & S_ISFAR
                 mov ecx,MT_FAR
             .endif
             mov size,SizeFromMemtype( cl, [eax].asym.Ofssize, NULL )
             mov ecx,sym
             and [esi].flags,not CI_ISFAR
-            .if [ecx].asym.sint_flag & SINT_ISFAR
+            .if [ecx].asym.sflags & S_ISFAR
                 or [esi].flags,CI_ISFAR
             .endif
         .else
-            .if [eax].asym.flag & S_ISARRAY
+            .if [eax].asym.flag1 & S_ISARRAY
                 mov ecx,[eax].asym.total_length
                 mov eax,[eax].asym.total_size
                 xor edx,edx

@@ -80,9 +80,8 @@ jumpExtend proc private uses esi ebx CodeInfo:ptr code_info, far_flag:int_t
     xor eax,1
     OutputByte( eax )
     OutputByte( ebx )
-    mov eax,T_JMP
-    mov [esi].token,ax
-    movzx eax,IndexFromToken(eax)
+    mov [esi].token,T_JMP
+    movzx eax,IndexFromToken(T_JMP)
     lea eax,InstrTable[eax*8]
     mov [esi].pinstr,eax
     ret
@@ -154,13 +153,13 @@ process_branch proc uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:dword, opn
         mov ecx,[ebx].sym
         mov eax,SegOverride
 
-        .if ( eax && ecx && [ecx].asym._segment )
+        .if ( eax && ecx && [ecx].asym.segm )
 
-            mov edx,[ecx].asym._segment
+            mov edx,[ecx].asym.segm
             mov edx,[edx].dsym.seginfo
             mov edx,[edx].seg_info.sgroup
 
-            .if ( eax != [ecx].asym._segment &&  eax != edx )
+            .if ( eax != [ecx].asym.segm &&  eax != edx )
 
                 .return( asmerr( 2074, [ecx].asym.name ) )
             .endif
@@ -198,7 +197,7 @@ process_branch proc uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:dword, opn
     ;; it's located, then assume it is a forward reference (=SYM_UNDEFINED)!
     ;; This applies to PROTOs and EXTERNDEFs in Pass 1.
 
-    .if ( ( state == SYM_EXTERNAL ) && [edi].sint_flag & SINT_WEAK )
+    .if ( ( state == SYM_EXTERNAL ) && [edi].sflags & S_WEAK )
         mov state,SYM_UNDEFINED
     .endif
 
@@ -211,11 +210,11 @@ process_branch proc uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:dword, opn
         and eax,0xFF
         mov ecx,adr
 
-        .ifs ( state == SYM_INTERNAL && [edi].asmpass != al && [edi]._offset < ecx )
+        .ifs ( state == SYM_INTERNAL && [edi].asmpass != al && [edi].offs < ecx )
         .else
-            mov adr,[edi]._offset ;; v2.02: init addr, so sym->offset isn't changed
+            mov adr,[edi].offs ;; v2.02: init addr, so sym->offset isn't changed
         .endif
-        mov symseg,[edi]._segment
+        mov symseg,[edi].segm
 
         .if ( eax == NULL || ( CurrSeg != eax ) )
 
@@ -414,7 +413,7 @@ process_branch proc uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:dword, opn
     .if ( [esi].token == T_CALL && [esi].mem_type == MT_EMPTY && \
           ( [edi].mem_type == MT_FAR || SegOverride ) )
 
-        mov eax,[edi]._segment
+        mov eax,[edi].segm
         mov symseg,eax
         xor ecx,ecx
 

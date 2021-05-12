@@ -323,7 +323,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
                     mov cnt_opnum,1
                     .if [ebx].token == T_ID
                         mov sym,SymSearch( [ebx].string_ptr )
-                        .if ( eax && [eax].asym.flag & S_ISDEFINED && ( [eax].asym.state == SYM_TMACRO || \
+                        .if ( eax && [eax].asym.flags & S_ISDEFINED && ( [eax].asym.state == SYM_TMACRO || \
                              ( [eax].asym.state == SYM_MACRO && ( [eax].asym.mac_flag & M_ISFUNC ) && \
                                [ebx+16].token == T_OP_BRACKET ) ) )
                             mov cnt_opnum,0
@@ -525,7 +525,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
                     .if [ebx].token == T_ID
                         .if SymSearch([ebx].string_ptr)
                             mov sym,eax
-                            .if ( [eax].asym.state == SYM_MACRO && [eax].asym.flag & S_ISDEFINED && \
+                            .if ( [eax].asym.state == SYM_MACRO && [eax].asym.flags & S_ISDEFINED && \
                                 [eax].asym.mac_flag & M_ISFUNC && [ebx+16].token == T_OP_BRACKET )
                                 inc idx
                                 mov idx,RunMacro( sym, idx, tokenarray, p, 0, &is_exitm2 )
@@ -550,14 +550,14 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
                                 sub ebx,16
                                 .continue
 
-                            .elseif ( [eax].asym.state == SYM_TMACRO && [eax].asym.flag & S_ISDEFINED )
+                            .elseif ( [eax].asym.state == SYM_TMACRO && [eax].asym.flags & S_ISDEFINED )
 
                                 mov ecx,parmidx
                                 mov edx,1
                                 shl edx,cl
                                 mov edi,info
                                 mov esi,mac
-                                .if ( [esi].sym.flag & S_PREDEFINED && ( [edi].autoexp & dx ) )
+                                .if ( [esi].sym.flags & S_PREDEFINED && ( [edi].autoexp & dx ) )
 
                                     strcpy( p, [eax].asym.string_ptr )
                                     ExpandTMacro( p, tokenarray, FALSE, 0 )
@@ -638,7 +638,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
                     mov [eax+ecx*4],edx
                 .endif
                 mov eax,p
-                .if [esi].sym.flag & S_PREDEFINED
+                .if [esi].sym.flags & S_PREDEFINED
                     sub eax,currparm
                     GetAlignedPointer( currparm, eax )
                 .endif
@@ -654,7 +654,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
 
                     .if ( !( [esi].sym.mac_flag & M_ISFUNC ) || [ebx].token != parm_end_delim )
                         dec parmidx
-                        .if ( !( [esi].sym.flag & S_PREDEFINED ) )
+                        .if ( !( [esi].sym.flags & S_PREDEFINED ) )
                             mov byte ptr [edx],','
                             inc edx
                             inc currparm
@@ -713,7 +713,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
 
     assume esi:asym_t
 
-    .if ( [esi].flag & S_PREDEFINED && [esi].func_ptr )
+    .if ( [esi].flags & S_PREDEFINED && [esi].func_ptr )
         mov mi.parmcnt,varargcnt
         [esi].func_ptr( &mi, _out, tokenarray )
         mov eax,is_exitm
@@ -1012,7 +1012,7 @@ ExpandText proc uses esi edi ebx line:string_t, tokenarray:tok_t, substitute:uin
                 mov byte ptr [edi],0
 
                 mov sym,SymSearch( pIdent )
-                .if ( eax && [eax].asym.flag & S_ISDEFINED )
+                .if ( eax && [eax].asym.flags & S_ISDEFINED )
                     .if ( [eax].asym.state == SYM_TMACRO )
 
                         ;; v2.08: no expansion inside quoted strings without &
@@ -1192,7 +1192,7 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
                 ;; expand macro functions
 
                 .if ( eax && [eax].asym.state == SYM_MACRO && \
-                      [eax].asym.flag & S_ISDEFINED && [eax].asym.mac_flag & M_ISFUNC && \
+                      [eax].asym.flags & S_ISDEFINED && [eax].asym.mac_flag & M_ISFUNC && \
                       [ebx+16].token == T_OP_BRACKET && equmode == FALSE )
 
                     mov ecx,[ebx].tokpos
@@ -1214,7 +1214,7 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, eq
                     mov expanded,TRUE
                     ;; is i to be decremented here?
                     .break
-                .elseif ( eax && [eax].asym.state == SYM_TMACRO && [eax].asym.flag & S_ISDEFINED )
+                .elseif ( eax && [eax].asym.state == SYM_TMACRO && [eax].asym.flags & S_ISDEFINED )
 
                     mov esi,outbuf
                     mov edi,buffer

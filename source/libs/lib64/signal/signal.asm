@@ -7,26 +7,25 @@
 include signal.inc
 
     .data
-    sig_table dq NSIG dup(0)
+    sig_table sigfunc_t NSIG dup(0)
 
     .code
 
-    option win64:nosave
+raise proc frame index:SINT
 
-raise proc index:SINT
+  local sigp:sigfunc_t
 
-    lea r8,sig_table
-    mov rax,[r8+rcx*8]
+    lea rax,sig_table
+    mov rax,[rax+rcx*8]
     .if rax
-        call rax
+        mov sigp,rax
+        sigp(ecx)
     .endif
     ret
 
 raise endp
 
-    option win64:rsp noauto
-
-signal proc index:SINT, func:ptr proc
+signal proc frame index:SINT, func:sigfunc_t
 
     lea r8,sig_table
     mov rax,[r8+rcx*8]

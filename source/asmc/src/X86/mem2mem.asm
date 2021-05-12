@@ -116,7 +116,7 @@ SizeFromExpression proc opnd:ptr expr
 
             mov eax,[ecx].asym.total_size
 
-            .if [ecx].asym.flag & S_ISARRAY
+            .if [ecx].asym.flag1 & S_ISARRAY
 
                 mov ecx,[ecx].asym.total_length
                 xor edx,edx

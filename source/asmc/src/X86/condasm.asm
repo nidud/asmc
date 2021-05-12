@@ -156,7 +156,7 @@ check_defd proc fastcall private name:string_t
     .if ( byte ptr [ecx] )
 
         .if SymSearch( ecx )
-            movzx eax,[eax].asym.flag
+            movzx eax,[eax].asym.flags
             and eax,S_ISDEFINED
         .endif
     .endif
@@ -242,7 +242,7 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             ;
         .elseif ( opndx.kind == EXPR_ADDR && !( opndx.flags & E_INDIRECT ) )
             mov edx,opndx.sym
-            add opndx.value,[edx].asym._offset
+            add opndx.value,[edx].asym.offs
 
             ;; v2.07: Masm doesn't accept a relocatable item,
             ;; so emit at least a warning!
@@ -385,7 +385,6 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                   [ebx+16].token == T_DOT && eax && \
                   ( ( [eax].asym.state == SYM_TYPE ) || [eax].asym.type ) )
 
-                .new value:int_t = 0
                 .repeat
                     add ebx,32
                     ;; if it's a structured variable, use its type!
@@ -393,7 +392,7 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                         mov eax,[eax].asym.type
                     .endif
                     mov ecx,eax
-                    SearchNameInStruct( ecx, [ebx].string_ptr, &value, 0 )
+                    SearchNameInStruct( ecx, [ebx].string_ptr, 0, 0 )
                 .until ( !( eax && [ebx+16].token == T_DOT ) )
                 .if ( eax )
                     mov esi,BLOCK_ACTIVE
@@ -411,7 +410,7 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .elseif ( al == T_RES_ID && [ebx].tokval == T_FLAT )
             ;; v2.09: special treatment of FLAT added
             mov eax,ModuleInfo.flat_grp
-            .if ( eax && [eax].asym.flag & S_ISDEFINED )
+            .if ( eax && [eax].asym.flags & S_ISDEFINED )
                 mov esi,BLOCK_ACTIVE
             .else
                 mov esi,BLOCK_INACTIVE
@@ -571,7 +570,6 @@ ErrorDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
               eax && ( ( [eax].asym.state == SYM_TYPE ) || [eax].asym.type ) )
 
             mov esi,edi
-            mov i,0
             .repeat
 
                 add esi,32
@@ -582,7 +580,7 @@ ErrorDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                     mov eax,[eax].asym.type
                 .endif
                 mov ecx,eax
-                SearchNameInStruct( ecx, [esi].asm_tok.string_ptr, &i, 0 )
+                SearchNameInStruct( ecx, [esi].asm_tok.string_ptr, 0, 0 )
             .until !( eax && [esi+16].asm_tok.token == T_DOT )
 
             .if ( [esi].asm_tok.token == T_ID )

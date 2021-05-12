@@ -242,7 +242,7 @@ GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
             .if opnd.kind == EXPR_ADDR
 
                 mov ecx,opnd.sym
-                add eax,[ecx].asym._offset
+                add eax,[ecx].asym.offs
                 xor edx,edx
             .endif
             mov [esi].labels[LTEST*4],eax
@@ -1004,9 +1004,9 @@ endif
 
                     .break .if !SymFind(GetLabelStr([esi].labels[LSTART*4], &labelx))
 
-                    .if ebx != [eax].asym._offset
+                    .if ebx != [eax].asym.offs
 
-                        mov ebx,[eax].asym._offset
+                        mov ebx,[eax].asym.offs
                         inc edi
                     .endif
                     ;

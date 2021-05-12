@@ -358,7 +358,7 @@ AliasDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if ( [edi].state == SYM_UNDEFINED )
                 .return( asmerr(2006, subst) )
             .elseif ( [edi].state != SYM_EXTERNAL && \
-                       ( [edi].state != SYM_INTERNAL || !( [edi].flag & S_ISPUBLIC ) ) )
+                       ( [edi].state != SYM_INTERNAL || !( [edi].flags & S_ISPUBLIC ) ) )
                 .return( asmerr(2217, subst) )
             .endif
         .endif

@@ -38,6 +38,9 @@ endif
 SIG_ERR		equ -1 ;; signal error value
 endif
 
+__sigfunc typedef proto __cdecl :int_t
+sigfunc_t typedef ptr __sigfunc
+
 ;; pointer to exception information pointers structure
 
 __pxcptinfoptrs proto
@@ -48,7 +51,7 @@ __pxcptinfoptrs proto
 ;; Function prototypes
 
 ifndef _M_CEE_PURE
-signal	proto __cdecl :int_t, :ptr_t
+signal	proto __cdecl :int_t, :sigfunc_t
 endif
 raise	proto __cdecl :int_t
 

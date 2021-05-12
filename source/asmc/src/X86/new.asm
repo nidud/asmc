@@ -354,7 +354,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
                         mov ecx,[eax].asym.string_ptr
 
-                        .if byte ptr [ecx] == '{' && !array && [ebx].sfield.sym.flag & S_ISARRAY
+                        .if byte ptr [ecx] == '{' && !array && [ebx].sfield.sym.flag1 & S_ISARRAY
 
                             mov     edx,eax
                             xor     eax,eax
@@ -444,7 +444,7 @@ AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, s
     .endif
 
     mov edi,sym
-    .if !( [edi].asym.flag & S_ISARRAY )
+    .if !( [edi].asym.flag1 & S_ISARRAY )
 
         .return AssignStruct( name, type, string )
     .endif
@@ -712,7 +712,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
         mov sym,eax
         .if creat
             mov [eax].asym.state,SYM_STACK
-            or  [eax].asym.flag,S_ISDEFINED
+            or  [eax].asym.flags,S_ISDEFINED
             mov [eax].asym.total_length,1
         .endif
 
@@ -755,7 +755,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
 
             mov ecx,sym
             mov [ecx].asym.total_length,opndx.value
-            or  [ecx].asym.flag,S_ISARRAY
+            or  [ecx].asym.flag1,S_ISARRAY
 
             .if [ebx].token == T_CL_SQ_BRACKET
 
@@ -793,7 +793,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
         .if creat
             mov [esi].is_ptr,ti.is_ptr
             .if ti.is_far
-                or [esi].sint_flag,SINT_ISFAR
+                or [esi].sflags,S_ISFAR
             .endif
             mov [esi].Ofssize,ti.Ofssize
             mov [esi].ptr_memtype,ti.ptr_memtype

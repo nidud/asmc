@@ -295,7 +295,7 @@ SetCurrOffset endp
 ;
 ; write object module
 ;
-WriteModule proc uses esi edi ebx modinfo
+WriteModule proc uses esi edi ebx modinfo:ptr module_info
 
     mov esi,SymTables[TAB_SEG*symbol_queue].head
     .while  esi
@@ -308,10 +308,7 @@ WriteModule proc uses esi edi ebx modinfo
 	mov esi,[esi].dsym.next
     .endw
 
-    mov	    eax,modinfo
-    push    eax
-    call    [eax].module_info.WriteModule
-    add	    esp,4
+    modinfo.WriteModule(modinfo)
 
     mov edi,Options.names[OPTN_LNKDEF_FN*4]
     .if edi
@@ -322,8 +319,8 @@ WriteModule proc uses esi edi ebx modinfo
 	    mov esi,SymTables[TAB_EXT*symbol_queue].head
 	    .while  esi
 		mov ebx,[esi].asym.dll
-		.if [esi].asym.flag & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.name \
-		    && ( !( [esi].asym.sint_flag & SINT_WEAK) || [esi].asym.flag & S_IAT_USED )
+		.if [esi].asym.flag1 & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.name \
+		    && ( !( [esi].asym.sflags & S_WEAK) || [esi].asym.flags & S_IAT_USED )
 
 		    Mangle(esi, ModuleInfo.stringbufferend)
 		    sprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
@@ -391,7 +388,7 @@ add_cmdline_tmacros proc uses esi edi ebx
 	    asmerr(2005, esi)
 	    .break
 	.endif
-	or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+	or  [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
 	mov [eax].asym.string_ptr,ebx
 	mov edi,[edi].qitem.next
     .endw
@@ -584,7 +581,7 @@ endif
 	mov eax,SymTables[TAB_EXT*symbol_queue].head
 	.while eax
 
-	    and [eax].asym.flag,not S_IAT_USED
+	    and [eax].asym.flags,not S_IAT_USED
 	    mov eax,[eax].dsym.next
 	.endw
     .endif
@@ -626,7 +623,7 @@ PassOneChecks proc uses esi edi
 	.if [eax].asym.state == SYM_INTERNAL
 
 	    mov edx,ecx
-	.elseif [eax].asym.state == SYM_EXTERNAL && [eax].asym.sint_flag & SINT_WEAK
+	.elseif [eax].asym.state == SYM_EXTERNAL && [eax].asym.sflags & S_WEAK
 
 	    mov eax,[ecx].qnode.next
 	    mov [edx].qnode.next,eax
@@ -645,7 +642,7 @@ PassOneChecks proc uses esi edi
     ;
     mov eax,SymTables[TAB_SEG*symbol_queue].head
     .while eax
-	.if ![eax].asym._segment
+	.if ![eax].asym.segm
 
 	    mov UseSavedState,0
 	    jmp aliases
@@ -659,7 +656,7 @@ PassOneChecks proc uses esi edi
     ;
     mov eax,ModuleInfo.SafeSEHQueue.head
     .while eax
-	.if [eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & S_ISPROC)
+	.if [eax].asym.state != SYM_INTERNAL || !( [eax].asym.flag1 & S_ISPROC )
 
 	    mov UseSavedState,0
 	    jmp aliases
@@ -679,7 +676,7 @@ aliases:
 	    ; check if symbol is external or public
 	    ;
 	    .if !eax || [eax].asym.state != SYM_EXTERNAL \
-		&& ([eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & S_ISPUBLIC))
+		&& ( [eax].asym.state != SYM_INTERNAL || !( [eax].asym.flags & S_ISPUBLIC ) )
 
 		mov UseSavedState,0
 		.break
@@ -689,7 +686,7 @@ aliases:
 	    ;
 	    .if [eax].asym.state == SYM_EXTERNAL
 
-		or [eax].asym.flag,S_USED
+		or [eax].asym.flags,S_USED
 	    .endif
 	    mov ecx,[ecx].dsym.next
 	.endw
@@ -701,18 +698,18 @@ aliases:
     .while edi
 	mov esi,edi
 	mov edi,[esi].dsym.next
-	.if [esi].asym.flag & S_USED
+	.if [esi].asym.flags & S_USED
 
-	    and [esi].asym.sint_flag,not SINT_WEAK
+	    and [esi].asym.sflags,not S_WEAK
 	.endif
-	.if [esi].asym.sint_flag & SINT_WEAK && !([esi].asym.flag & S_IAT_USED)
+	.if [esi].asym.sflags & S_WEAK && !([esi].asym.flags & S_IAT_USED)
 	    ;
 	    ; remove unused EXTERNDEF/PROTO items from queue.
 	    ;
 	    sym_remove_table(&SymTables[TAB_EXT*symbol_queue], esi)
 	    .continue
 	.endif
-	.continue .if [esi].asym.sint_flag & SINT_ISCOM
+	.continue .if [esi].asym.sflags & S_ISCOM
 	;
 	; optional alternate symbol must be INTERNAL or EXTERNAL. COFF (and ELF?)
 	; also wants internal symbols to be public (which is reasonable, since
@@ -724,7 +721,7 @@ aliases:
 
 	    .if [eax].asym.state == SYM_INTERNAL
 
-		.if !( [eax].asym.flag & S_ISPUBLIC ) && \
+		.if !( [eax].asym.flags & S_ISPUBLIC ) && \
 		    ( Options.output_format == OFORMAT_COFF || \
 		      Options.output_format == OFORMAT_ELF)
 
@@ -753,10 +750,7 @@ aliases:
 	.endif
 
 	.if ModuleInfo.Pass1Checks
-
-	    push offset ModuleInfo
-	    call ModuleInfo.Pass1Checks
-	    add esp,4
+	    ModuleInfo.Pass1Checks(&ModuleInfo)
 	.endif
     .endif
     ret

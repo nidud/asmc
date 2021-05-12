@@ -933,7 +933,7 @@ CatStrDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
 
     mov [edi].asym.state,SYM_TMACRO
-    or  [edi].asym.flag,S_ISDEFINED
+    or  [edi].asym.flags,S_ISDEFINED
 
     ;; v2.08: reuse string space if fastmem is on
 
@@ -991,7 +991,7 @@ SetTextMacro proc uses esi edi ebx tokenarray:ptr asm_tok, sym:ptr asym, name:st
     .endif
 
     mov [edi].asym.state,SYM_TMACRO
-    or  [edi].asym.flag,S_ISDEFINED
+    or  [edi].asym.flags,S_ISDEFINED
 
     mov ebx,tokenarray
     .if ( [ebx+32].token == T_STRING && [ebx+32].string_delim == '<' )
@@ -1050,7 +1050,7 @@ AddPredefinedText proc name:string_t, value:string_t
     .endif
 
     mov [eax].asym.state,SYM_TMACRO
-    or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+    or  [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
     mov ecx,value
     mov [eax].asym.string_ptr,ecx
 
@@ -1191,7 +1191,7 @@ SubStrDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov [esi].asym.state,SYM_TMACRO
-    or  [esi].asym.flag,S_ISDEFINED
+    or  [esi].asym.flags,S_ISDEFINED
     inc edi
     .if ( [esi].asym.total_size < edi )
         mov [esi].asym.total_size,edi
@@ -1534,7 +1534,7 @@ StringInit proc uses esi edi
     ;; add @TypeId() macro func
 
     mov edi,CreateMacro( "typeid" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,TypeIdFunc
     mov [edi].sym.mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
@@ -1548,7 +1548,7 @@ StringInit proc uses esi edi
     ;; add @CStr() macro func
 
     mov edi,CreateMacro( "@CStr" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,CStringFunc
     mov [edi].sym.mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
@@ -1560,7 +1560,7 @@ StringInit proc uses esi edi
     ;; add @CatStr() macro func
 
     mov edi,CreateMacro( "@CatStr" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,CatStrFunc
     mov [edi].sym.mac_flag,M_ISFUNC or M_ISVARARG
     mov esi,[edi].macroinfo
@@ -1572,7 +1572,7 @@ StringInit proc uses esi edi
     ;; add @InStr() macro func
 
     mov edi,CreateMacro( "@InStr" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,InStrFunc
     mov [edi].sym.mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
@@ -1589,7 +1589,7 @@ StringInit proc uses esi edi
     ;; add @SizeStr() macro func
 
     mov edi,CreateMacro( "@SizeStr" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,SizeStrFunc
     mov [edi].sym.mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
@@ -1601,7 +1601,7 @@ StringInit proc uses esi edi
     ;; add @SubStr() macro func
 
     mov edi,CreateMacro( "@SubStr" )
-    mov [edi].sym.flag,S_ISDEFINED or S_PREDEFINED
+    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
     mov [edi].sym.func_ptr,SubStrFunc
     mov [edi].sym.mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo

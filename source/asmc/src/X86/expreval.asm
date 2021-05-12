@@ -167,7 +167,7 @@ GetRecordMask proc fastcall uses esi edi ebx rec:dsym_t
 
     .for ( : ebx : ebx = [ebx].sfield.next )
 
-        mov ecx,[ebx].sfield.sym._offset
+        mov ecx,[ebx].sfield.sym.offs
         mov edi,[ebx].sfield.sym.total_size
         add edi,ecx
 
@@ -216,6 +216,8 @@ SetEvexOpt proc tok:tok_t
     ret
 
 SetEvexOpt endp
+
+FindDotSymbol proto :ptr asm_tok
 
 get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, flags:byte
 
@@ -332,12 +334,9 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
         .endif
         .endc
     .case T_ID
-        mov j,0
         mov esi,[ebx].string_ptr
         .if ( [edi].flags & E_IS_DOT )
             mov ecx,[edi].type
-method_ptr:
-            inc j
             xor eax,eax
             mov [edi].value,eax
             .if ecx
@@ -347,7 +346,7 @@ method_ptr:
                 .if SymFind(esi)
                     .if [eax].asym.state == SYM_TYPE
                         mov ecx,[edi].type
-                        .if !( eax == ecx || ( ecx && !( [ecx].asym.flag & S_ISDEFINED ) ) || ModuleInfo.oldstructs )
+                        .if !( eax == ecx || ( ecx && !( [ecx].asym.flags & S_ISDEFINED ) ) || ModuleInfo.oldstructs )
                             xor eax,eax
                         .endif
                     .elseif !( ModuleInfo.oldstructs && ( [eax].asym.state == SYM_STRUCT_FIELD || \
@@ -382,22 +381,13 @@ method_ptr:
                 .return fnasmerr( 2148, [eax].asym.name )
             .endif
 
-            .if ( ( eax == NULL ) && \
-                    ( [ebx-16].token == T_DOT && [ebx-32].token == T_ID ) )
+            .if ( ( eax == NULL ) && ( [ebx-16].token == T_DOT && \
+                ( [ebx-32].token == T_ID || [ebx-32].token == T_CL_SQ_BRACKET ) ) )
 
                 mov edx,tokenarray
                 .if [edx].asm_tok.tokval == T_INVOKE
-
-                    .if SymFind( [ebx-32].string_ptr )
-
-                        .if ( [eax].asym.is_ptr && [eax].asym.target_type )
-
-                            .if j < 4
-                                mov ecx,[eax].asym.target_type
-                                jmp method_ptr
-                            .endif
-                            xor eax,eax
-                        .endif
+                    .if FindDotSymbol( ebx )
+                        jmp method_ptr
                     .endif
                 .endif
             .endif
@@ -508,12 +498,13 @@ method_ptr:
         .elseif ( [eax].asym.state == SYM_ALIAS )
             mov eax,[eax].asym.substitute
         .endif
-        or [eax].asym.flag,S_USED
+method_ptr:
+        or [eax].asym.flags,S_USED
 
         .switch [eax].asym.state
         .case SYM_TYPE
             mov ecx,[eax].dsym.structinfo
-            .if ( [eax].asym.typekind != TYPE_TYPEDEF && [ecx].struct_info.flags & STINF_ISOPEN )
+            .if ( [eax].asym.typekind != TYPE_TYPEDEF && [ecx].struct_info.flags & SI_ISOPEN )
                 mov [edi].kind,EXPR_ERROR
                 .endc
             .endif
@@ -547,7 +538,7 @@ method_ptr:
         .case SYM_STRUCT_FIELD
             mov [edi].mbr,eax
             mov [edi].kind,EXPR_CONST
-            mov ecx,[eax].asym._offset
+            mov ecx,[eax].asym.offs
             add [edi].value,ecx
             .for : [eax].asym.type: eax = [eax].asym.type
             .endf
@@ -565,10 +556,10 @@ method_ptr:
             assume esi:asym_t
 
             mov [edi].kind,EXPR_ADDR
-            .if ( [esi].flag & S_PREDEFINED && [esi].sfunc_ptr )
+            .if ( [esi].flags & S_PREDEFINED && [esi].sfunc_ptr )
                 [esi].sfunc_ptr(esi, NULL)
             .endif
-            .if ( [esi].state == SYM_INTERNAL && [esi]._segment == NULL )
+            .if ( [esi].state == SYM_INTERNAL && [esi].segm == NULL )
                 mov [edi].kind,EXPR_CONST
                 mov [edi].uvalue,[esi].uvalue
                 mov [edi].hvalue,[esi].value3264
@@ -580,7 +571,7 @@ method_ptr:
                     mov dword ptr [edi].hlvalue[4],[esi].ext_idx
                 .endif
             .elseif [esi].state == SYM_EXTERNAL && [esi].mem_type == MT_EMPTY && \
-                 !( [esi].sint_flag & SINT_ISCOM )
+                 !( [esi].sflags & S_ISCOM )
                 or  [edi].flags,E_IS_ABS
                 mov [edi].sym,esi
             .else
@@ -592,7 +583,7 @@ method_ptr:
                     mov [edi].mem_type,[esi].mem_type
                 .endif
                 .if [esi].state == SYM_STACK
-                    mov eax,[esi]._offset
+                    mov eax,[esi].offs
                     add eax,StackAdj
                     cdq
                     mov [edi].value,eax
@@ -743,7 +734,7 @@ MakeConst proc fastcall opnd:expr_t
         .return .if Parse_Pass > PASS_1
         mov eax,[ecx].sym
         .return .if !( ( [eax].asym.state == SYM_UNDEFINED && [ecx].inst == EMPTY ) || \
-            ( [eax].asym.state == SYM_EXTERNAL && [eax].asym.sint_flag & SINT_WEAK && \
+            ( [eax].asym.state == SYM_EXTERNAL && [eax].asym.sflags & S_WEAK && \
               [ecx].flags & E_IS_ABS ) )
         mov [ecx].value,1
     .endif
@@ -771,15 +762,15 @@ MakeConst2 proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         .return fnasmerr(2018, [eax].name)
     .endif
     mov ebx,[edx].sym
-    .if ( ( [eax].state != SYM_UNDEFINED && [ebx]._segment != [eax]._segment && \
+    .if ( ( [eax].state != SYM_UNDEFINED && [ebx].segm != [eax].segm && \
             [ebx].state != SYM_UNDEFINED ) || [ebx].state == SYM_EXTERNAL )
         .return fnasmerr(2025)
     .endif
     mov eax,[ecx].sym
     mov [ecx].kind,EXPR_CONST
     mov [edx].kind,EXPR_CONST
-    add [ecx].value,[eax]._offset
-    add [edx].value,[ebx]._offset
+    add [ecx].value,[eax].offs
+    add [edx].value,[ebx].offs
     mov eax,NOT_ERROR
     ret
 
@@ -819,7 +810,7 @@ GetSizeValue proc fastcall sym:asym_t
     movzx edx,[ecx].mem_type
     .if edx == MT_PTR
         mov edx,MT_NEAR
-        .if [ecx].sint_flag & SINT_ISFAR
+        .if [ecx].sflags & S_ISFAR
             mov edx,MT_FAR
         .endif
     .endif
@@ -873,7 +864,7 @@ sizlen_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
     .endif
     .switch oper
     .case T_DOT_LENGTH
-        .if [eax].flag & S_ISDATA
+        .if [eax].flag1 & S_ISDATA
             mov [ecx].value,[eax].first_length
         .else
             mov [ecx].value,1
@@ -883,7 +874,7 @@ sizlen_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
         .if [edx].kind == EXPR_CONST
             mov eax,[edx].mbr
             mov [ecx].value,[eax].total_length
-        .elseif [eax].state == SYM_EXTERNAL && !( [eax].sint_flag & SINT_ISCOM )
+        .elseif [eax].state == SYM_EXTERNAL && !( [eax].sflags & S_ISCOM )
             mov [ecx].value,1
         .else
             mov [ecx].value,[eax].total_length
@@ -900,7 +891,7 @@ sizlen_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
             .else
                 mov [ecx].value,[edx].value
             .endif
-        .elseif [eax].flag & S_ISDATA
+        .elseif [eax].flag1 & S_ISDATA
             mov [ecx].value,[eax].first_size
         .elseif [eax].state == SYM_STACK
             GetSizeValue(eax)
@@ -935,7 +926,7 @@ sizlen_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
             .else
                 mov [ecx].value,[edx].value
             .endif
-        .elseif [eax].state == SYM_EXTERNAL && !( [eax].sint_flag & SINT_ISCOM )
+        .elseif [eax].state == SYM_EXTERNAL && !( [eax].sflags & S_ISCOM )
             GetSizeValue(eax)
             mov ecx,opnd1
             mov [ecx].value,eax
@@ -1079,7 +1070,7 @@ type_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
             mov [ecx].type_tok,[edx].type_tok
             mov eax,sym
             mov ecx,MT_NEAR
-            .if [eax].sint_flag & SINT_ISFAR
+            .if [eax].sflags & S_ISFAR
                 mov ecx,MT_FAR
             .endif
             SizeFromMemtype(cl, [eax].Ofssize, NULL)
@@ -1184,7 +1175,7 @@ opattr_op proc uses esi edi ebx oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym
     .if ( [edx].kind == EXPR_REG && !( [edx].flags & E_INDIRECT ) )
         or [ecx].value,OPATTR_REGISTER
     .endif
-    .if ( [edx].kind != EXPR_ERROR && [edx].kind != EXPR_FLOAT && ( ebx == NULL || [ebx].flag & S_ISDEFINED ) )
+    .if ( [edx].kind != EXPR_ERROR && [edx].kind != EXPR_FLOAT && ( ebx == NULL || [ebx].flags & S_ISDEFINED ) )
         or [ecx].value,OPATTR_DEFINED
     .endif
 
@@ -1428,7 +1419,7 @@ this_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
     .if eax == NULL
         mov thissym,SymAlloc("")
         mov [eax].asym.state,SYM_INTERNAL
-        or  [eax].asym.flag,S_ISDEFINED
+        or  [eax].asym.flags,S_ISDEFINED
     .endif
     mov ecx,opnd1
     mov edx,opnd2
@@ -1474,7 +1465,7 @@ wimask_op proc uses esi edi ebx oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym
             mov ebx,eax
             xor eax,eax
             xor edx,edx
-            mov ecx,[ebx]._offset
+            mov ecx,[ebx].offs
             mov edi,[ebx].total_size
             add edi,ecx
             .for ( : ecx < edi : ecx++ )
@@ -1660,14 +1651,14 @@ minus_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
                 .return fnasmerr(2094)
             .endif
             mov ebx,[ecx].sym
-            add [ecx].value,[ebx]._offset
+            add [ecx].value,[ebx].offs
             mov eax,[edx].sym
             .if Parse_Pass > PASS_1
                 .if ( ( [eax].asym.state == SYM_EXTERNAL || [ebx].state == SYM_EXTERNAL ) \
                     && eax != [ecx].sym )
                     .return( fnasmerr(2018, [ebx].name ) )
                 .endif
-                .if ( [ebx]._segment != [eax].asym._segment )
+                .if ( [ebx].segm != [eax].asym.segm )
                     .return( fnasmerr( 2025 ) )
                 .endif
                 mov eax,[edx].sym
@@ -1681,7 +1672,7 @@ minus_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
                 .endif
                 mov [ecx].kind,EXPR_ADDR
             .else
-                sub [ecx].value,[eax].asym._offset
+                sub [ecx].value,[eax].asym.offs
                 sbb [ecx].hvalue,0
                 sub [ecx].value,[edx].value
                 sbb [ecx].hvalue,[edx].hvalue
@@ -1794,7 +1785,7 @@ dot_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         .endif
         mov ebx,[ecx].mbr
         .if ebx && [ebx].state == SYM_TYPE
-            mov [ecx].value,[ebx]._offset
+            mov [ecx].value,[ebx].offs
             mov [ecx].hvalue,0
         .endif
         .if [ecx].flags & E_INDIRECT
@@ -1820,7 +1811,7 @@ dot_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         .endif
         mov ebx,[edx].mbr
         .if ebx && [ebx].state == SYM_TYPE
-            mov [edx].value,[ebx]._offset
+            mov [edx].value,[ebx].offs
             mov [edx].hvalue,0
         .endif
         add [ecx].value,[edx].value

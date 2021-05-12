@@ -460,8 +460,8 @@ static ret_code CheckAnonymousStruct( struct dsym *type )
 	    struct dsym *stype = (struct dsym *)f->sym.type;
 	    if ( stype->sym.typekind == TYPE_STRUCT ||
 		stype->sym.typekind == TYPE_UNION ) {
-	    if ( CheckAnonymousStruct( stype ) == ERROR )
-		return( ERROR );
+		if ( CheckAnonymousStruct( stype ) == ERROR )
+		    return( ERROR );
 	    }
 	}
     }

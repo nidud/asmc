@@ -11,6 +11,7 @@ include mangle.inc
 include proc.inc
 include atofloat.inc
 include regno.inc
+include types.inc
 
 QueueTestLines proto :string_t
 ExpandHllProc  proto :string_t, :int_t, :ptr asm_tok
@@ -181,8 +182,8 @@ PushInvokeParam proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr
 
     ;; v2.11: GetSymOfssize() doesn't work for state SYM_TYPE
 
-    movzx eax,[esi].asym.sint_flag
-    and eax,SINT_SEGOFSSIZE
+    movzx eax,[esi].asym.sflags
+    and eax,S_SEGOFSSIZE
     .if [esi].asym.state != SYM_TYPE
         GetSymOfssize(esi)
     .endif
@@ -227,7 +228,7 @@ PushInvokeParam proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr
 
 ifndef __ASMC64__
 
-            .if ( [edi].asym.sint_flag & SINT_ISFAR || psize == fptrsize )
+            .if ( [edi].asym.sflags & S_ISFAR || psize == fptrsize )
                 mov ecx,opnd.sym
                 .if ( ecx && [ecx].asym.state == SYM_STACK )
                     AddLineQueue( " push ss" )
@@ -257,7 +258,7 @@ ifndef __ASMC64__
             mov eax,2
             shl eax,cl
 
-            .if ( [edi].asym.sint_flag & SINT_ISFAR || psize > eax )
+            .if ( [edi].asym.sflags & S_ISFAR || psize > eax )
 
                 GetSegmentPart( &opnd, &buffer, &fullparam )
                 .if ( eax )
@@ -288,7 +289,7 @@ ifndef __ASMC64__
 
             .else
 
-                .if ( [edi].asym.sint_flag & SINT_ISVARARG && opnd.Ofssize == USE_EMPTY && opnd.sym )
+                .if ( [edi].asym.sflags & S_ISVARARG && opnd.Ofssize == USE_EMPTY && opnd.sym )
 
                     mov opnd.Ofssize,GetSymOfssize( opnd.sym )
                 .endif
@@ -301,13 +302,13 @@ ifndef __ASMC64__
                     ( [edi].asym.Ofssize == USE32 && CurrWordSize == 2 ) )
                     AddLineQueueX( " pushd offset %s", &fullparam )
                 .elseif ( CurrWordSize > 2 && [edi].asym.Ofssize == USE16 && \
-                        ( [edi].asym.sint_flag & SINT_ISFAR || Ofssize == USE16 ) ) ;; v2.11: added
+                        ( [edi].asym.sflags & S_ISFAR || Ofssize == USE16 ) ) ;; v2.11: added
                     AddLineQueueX( " pushw offset %s", &fullparam )
                 .else
-                    .if ( !( [esi].asym.sint_flag & SINT_ISINLINE && [edi].asym.sint_flag & SINT_ISVARARG ) )
+                    .if ( !( [esi].asym.sflags & S_ISINLINE && [edi].asym.sflags & S_ISVARARG ) )
                         AddLineQueueX( " push offset %s", &fullparam )
                         ;; v2.04: a 32bit offset pushed in 16-bit code
-                        .if ( [edi].asym.sint_flag & SINT_ISVARARG && CurrWordSize == 2 && opnd.Ofssize > USE16 )
+                        .if ( [edi].asym.sflags & S_ISVARARG && CurrWordSize == 2 && opnd.Ofssize > USE16 )
                             add size_vararg,CurrWordSize
                         .endif
                     .endif
@@ -316,9 +317,9 @@ ifndef __ASMC64__
 endif
         .endif
 
-        .if ( [edi].asym.sint_flag & SINT_ISVARARG )
+        .if ( [edi].asym.sflags & S_ISVARARG )
             movzx eax,CurrWordSize
-            .if ( [edi].asym.sint_flag & SINT_ISFAR )
+            .if ( [edi].asym.sflags & S_ISFAR )
                 add eax,eax
             .endif
             add size_vararg,eax
@@ -370,7 +371,7 @@ endif
 
         mov eax,asize
         add eax,asize2
-        .if ( ( [edi].asym.sint_flag & SINT_ISVARARG ) && al != CurrWordSize )
+        .if ( ( [edi].asym.sflags & S_ISVARARG ) && al != CurrWordSize )
             add size_vararg,asize2
         .else
             add asize,asize2
@@ -422,7 +423,7 @@ endif
 
             .if ( psize == 0 )
 
-                .if !( [edi].asym.sint_flag & SINT_ISVARARG )
+                .if !( [edi].asym.sflags & S_ISVARARG )
 
                     asmerr( 2114, ParamId )
                 .endif
@@ -464,7 +465,7 @@ endif
     movzx eax,CurrWordSize
     mov pushsize,eax
 
-    .if ( [edi].asym.sint_flag & SINT_ISVARARG )
+    .if ( [edi].asym.sflags & S_ISVARARG )
 
         mov psize,asize
     .endif
@@ -516,7 +517,7 @@ endif
             asmerr( 2133 )
         .endif
 
-        .if ( [edi].asym.sint_flag & SINT_ISVARARG )
+        .if ( [edi].asym.sflags & S_ISVARARG )
 
             mov eax,pushsize
 
@@ -613,7 +614,7 @@ endif
                 .case MT_BYTE
                 .case MT_SBYTE
 
-                    .if ( psize == 1 && !( [edi].asym.sint_flag & SINT_ISVARARG ) )
+                    .if ( psize == 1 && !( [edi].asym.sflags & S_ISVARARG ) )
 
                         AddLineQueueX( " mov al, %s", &fullparam )
                         AddLineQueueX( " push %r", t_regax )
@@ -692,7 +693,7 @@ endif
                             mov B[ecx],R0_USED ;; reset R0_H_CLEARED
 ifndef __ASMC64__
                         .else
-                            .if ( [edi].asym.sint_flag & SINT_ISVARARG || psize != 2 )
+                            .if ( [edi].asym.sflags & S_ISVARARG || psize != 2 )
 
                                 AddLineQueue( " pushw 0" )
                             .else
@@ -808,7 +809,7 @@ endif
            .new optype:dword = GetValueSp(eax)
 
             ;; v2.11
-            .if ( [edi].asym.sint_flag & SINT_ISVARARG && psize < pushsize )
+            .if ( [edi].asym.sflags & S_ISVARARG && psize < pushsize )
 
                 mov psize,pushsize
             .endif
@@ -1095,7 +1096,7 @@ endif
 
             .if ( psize < eax ) ;; ensure that the default argsize (2,4,8) is met
 
-                .if ( psize == 0 && [edi].asym.sint_flag & SINT_ISVARARG )
+                .if ( psize == 0 && [edi].asym.sflags & S_ISVARARG )
 
                     ;; v2.04: push a dword constant in 16-bit
 
@@ -1290,7 +1291,7 @@ endif
 
 skip_push:
 
-        .if ( [edi].asym.sint_flag & SINT_ISVARARG )
+        .if ( [edi].asym.sflags & S_ISVARARG )
 
             add size_vararg,psize
         .endif
@@ -1300,6 +1301,144 @@ skip_push:
 
 PushInvokeParam endp
 
+SkipSQBackets proc private uses ebx tok:ptr asm_tok
+
+    .for ( ebx = tok,
+           edx = 0, ; brackets
+           ecx = 1, ; SQ-brackets
+           ebx +=16 : ecx && [ebx].token != T_FINAL : ebx += 16 )
+
+        mov al,[ebx].token
+        .if ( al == T_OP_BRACKET )
+            inc edx
+        .elseif ( al == T_CL_BRACKET )
+            dec edx
+        .elseif ( !edx && al == T_OP_SQ_BRACKET )
+            inc ecx
+        .elseif ( !edx && al == T_CL_SQ_BRACKET )
+            dec ecx
+            .ifz
+                add ebx,16
+                .return ebx
+            .endif
+        .endif
+    .endf
+    xor eax,eax
+    ret
+
+SkipSQBackets endp
+
+GetSQBackets proc private uses esi edi ebx tok:ptr asm_tok, buffer:string_t
+
+    .if SkipSQBackets(tok)
+
+        mov ecx,[eax].asm_tok.tokpos
+        mov edi,buffer
+        mov esi,tok
+        mov esi,[esi].asm_tok.tokpos
+        sub ecx,esi
+        rep movsb
+        mov byte ptr [edi],0
+    .endif
+    ret
+
+GetSQBackets endp
+
+FindDotSymbol proc uses esi edi ebx tok:ptr asm_tok
+
+    mov ebx,tok
+
+    .while ( [ebx-16].token != T_COMMA && [ebx-16].token != T_DIRECTIVE )
+        sub ebx,asm_tok
+    .endw
+    .return .if !SymSearch( [ebx].string_ptr )
+    mov esi,eax
+
+    add ebx,asm_tok
+    .while ( [ebx].token != T_FINAL )
+
+        .return 0 .if ( [ebx].token == T_COMMA )
+
+        .if ( [ebx].token == T_OP_SQ_BRACKET )
+
+            .break .if !SkipSQBackets( ebx )
+            mov ebx,eax
+        .endif
+        xor eax,eax
+        .break .if ( [ebx].token != T_DOT )
+        add ebx,asm_tok
+
+        .if ( [esi].asym.mem_type == MT_TYPE )
+            mov esi,[esi].asym.type
+        .endif
+        .if ( [esi].asym.mem_type == MT_PTR )
+            mov esi,[esi].asym.target_type
+        .endif
+        .break .if ( !esi )
+        .break .if ( [esi].asym.state != SYM_TYPE )
+
+        mov esi,SearchNameInStruct( esi, [ebx].string_ptr, 0, 0 )
+        .break .if ( !esi )
+        .break .if ( ebx == tok )
+        add ebx,asm_tok
+    .endw
+    ret
+
+FindDotSymbol endp
+
+AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok
+
+  local buffer[128]:sbyte
+
+    mov ebx,tok
+    mov esi,sym
+
+    .if ( esi == NULL )
+        .if ( [ebx].token == T_REG )
+            .return .if ( [ebx].tokval == reg )
+            AddLineQueueX( " mov %r, %r", reg, [ebx].tokval )
+        .else
+            AddLineQueueX( " mov %r, %s", reg, [ebx].tokpos )
+        .endif
+        .return
+    .endif
+
+    AddLineQueueX( " mov %r, %s", reg, [esi].asym.name )
+    add ebx,asm_tok
+    .while ( [ebx].token != T_FINAL )
+
+        .break .if ( [ebx].token == T_COMMA )
+
+        .if ( [ebx].token == T_OP_SQ_BRACKET )
+
+            .break .if !GetSQBackets( ebx, &buffer )
+
+            mov ebx,eax
+            AddLineQueueX( " lea %r, [%r]%s", reg, reg, &buffer )
+        .endif
+
+        .break .if ( [ebx].token != T_DOT )
+
+        add ebx,asm_tok
+
+        .if ( [esi].asym.mem_type == MT_TYPE )
+            mov esi,[esi].asym.type
+        .endif
+        .if ( [esi].asym.mem_type == MT_PTR )
+            mov esi,[esi].asym.target_type
+        .endif
+        .break .if ( !esi )
+        .break .if ( [esi].asym.state != SYM_TYPE )
+
+        AddLineQueueX( " mov %r, [%r].%s.%s", reg, reg, [esi].asym.name, [ebx].string_ptr )
+
+        mov esi,SearchNameInStruct( esi, [ebx].string_ptr, 0, 0 )
+        .break .if ( !esi )
+        add ebx,asm_tok
+    .endw
+    ret
+
+AssignPointer endp
 
 ;; generate a call for a prototyped procedure
 
@@ -1310,6 +1449,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
   local arg:ptr dsym
   local p:string_t
   local q:string_t
+  local struct_ptr:ptr asm_tok
   local numParam:int_t
   local value:int_t
   local size:int_t
@@ -1326,6 +1466,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
   local pmacro:ptr asym
 
     mov r0flags,0
+    mov struct_ptr,NULL
     mov pmacro,NULL
 
     inc i ;; skip INVOKE directive
@@ -1399,8 +1540,8 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     .endif
     mov edx,[esi].type
     mov ecx,[esi].target_type
-    .if ( [esi].flag & S_ISPROC ) ;; the most simple case: symbol is a PROC
-    .elseif ( [esi].mem_type == MT_PTR && ecx && [ecx].asym.flag & S_ISPROC )
+    .if ( [esi].flag1 & S_ISPROC ) ;; the most simple case: symbol is a PROC
+    .elseif ( [esi].mem_type == MT_PTR && ecx && [ecx].asym.flag1 & S_ISPROC )
         mov sym,ecx
     .elseif ( [esi].mem_type == MT_PTR && ecx && [ecx].asym.mem_type == MT_PROC )
         mov pproc,ecx
@@ -1452,37 +1593,51 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .elseif ( [ebx].token == T_OP_SQ_BRACKET && \
                   [ebx+3*16].token == T_DOT && opnd.mbr )
 
-            strcpy( &buffer, [ebx+4*16].string_ptr )
+            mov edi,opnd.mbr
+            .if ( [edi].asym.flag1 & S_METHOD )
 
-            mov buffer[strlen(eax)-4],0
-            SymSearch( &buffer )
-            strcat( &buffer, "_" )
+                SymSearch( [ebx+4*16].string_ptr )
 
-            mov ecx,opnd.mbr
-            mov edi,[ecx].asym.name
+                .if ( eax && [eax].asym.flag2 & S_ISVTABLE )
 
-            .if ( B[edi] == '.' && ModuleInfo.dotname )
-                strcat( &buffer, "__" )
-                inc edi
-                strcat( eax, edi )
-            .else
-                strcat( &buffer, edi )
+                    mov ecx,[eax].asym.segm
+                    strcat( strcat( strcpy( &buffer, [ecx].asym.name ), "_" ), [edi].asym.name )
+                    mov pmacro,SymSearch( eax )
+
+                    .if ( eax && [eax].asym.state == SYM_TMACRO )
+                        mov pmacro,SymSearch( [eax].asym.string_ptr )
+                    .endif
+                    .if ( eax && [eax].asym.state != SYM_MACRO )
+                        mov pmacro,NULL
+                    .endif
+
+                .else
+
+                    mov  ecx,Token_Count
+                    dec  ecx
+                    imul edx,ecx,asm_tok
+                    add  edx,tokenarray
+
+                    .while ( edx > ebx )
+                        .break .if [edx].asm_tok.token == T_COMMA
+                        sub edx,asm_tok
+                        dec ecx
+                    .endw
+                    .if ( [edx].asm_tok.token == T_COMMA )
+
+                        lea eax,[edx+asm_tok]
+                        mov struct_ptr,eax
+                        mov [edx].asm_tok.token,T_FINAL
+                        mov Token_Count,ecx
+                    .endif
+                .endif
             .endif
-            mov pmacro,SymSearch(eax)
 
-            .if ( eax && [eax].asym.state == SYM_TMACRO )
-                mov pmacro,SymSearch( [eax].asym.string_ptr )
-            .endif
-
-            .if ( eax && [eax].asym.state != SYM_MACRO )
-                mov pmacro,NULL
-            .endif
-
-            or [esi].flag,S_METHOD
+            or [esi].flag1,S_METHOD
             .if ( pmacro )
-                or [esi].sint_flag,SINT_ISINLINE
-                .if ( [eax].asym.sint_flag & SINT_ISSTATIC )
-                    or [esi].sint_flag,SINT_ISSTATIC
+                or [esi].sflags,S_ISINLINE
+                .if ( [eax].asym.sflags & S_ISSTATIC )
+                    or [esi].sflags,S_ISSTATIC
                 .endif
             .endif
         .endif
@@ -1496,7 +1651,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     .endf
 
     mov j,i
-    .if ( [esi].sint_flag & SINT_ISSTATIC )
+    .if ( [esi].sflags & S_ISSTATIC )
         inc i
         imul ebx,i,asm_tok
         add ebx,tokenarray
@@ -1542,7 +1697,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         dec numParam
         mov size_vararg,0 ;; reset the VARARG parameter size count
 
-        .while ( edi && !( [edi].sym.sint_flag & SINT_ISVARARG ) )
+        .while ( edi && !( [edi].sym.sflags & S_ISVARARG ) )
             mov edi,[edi].nextparam
         .endw
         .for ( : k >= numParam: k-- )
@@ -1552,7 +1707,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         ;; move to first non-vararg parameter, if any
 
         mov edx,info
-        .for ( edi = [edx].proc_info.paralist : edi && [edi].sym.sint_flag & SINT_ISVARARG : edi = [edi].nextparam )
+        .for ( edi = [edx].proc_info.paralist : edi && [edi].sym.sflags & S_ISVARARG : edi = [edi].nextparam )
 
         .endf
     .endif
@@ -1605,7 +1760,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 mov edx,[edx].proc_info.paralist
                 .for ( : edx : edx = [edx].dsym.nextparam )
                     .if ( [edx].asym.state != SYM_TMACRO )
-                        add [edx].asym._offset,eax
+                        add [edx].asym.offs,eax
                     .endif
                 .endf
             .endif
@@ -1619,13 +1774,13 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             .for ( : edx : edx = [edx].dsym.nextparam )
                 .if ( [edx].asym.state != SYM_TMACRO )
-                    sub [edx].asym._offset,total
+                    sub [edx].asym.offs,total
                 .endif
             .endf
         .endif
 
     .else
-        .for ( numParam = 0 : edi && !( [edi].sym.sint_flag & SINT_ISVARARG ) : edi = [edi].nextparam, numParam++ )
+        .for ( numParam = 0 : edi && !( [edi].sym.sflags & S_ISVARARG ) : edi = [edi].nextparam, numParam++ )
             .if ( PushInvokeParam( i, tokenarray, pproc, edi, numParam, &r0flags ) == ERROR )
                 .if ( !pmacro )
                     asmerr( 2033, numParam)
@@ -1652,7 +1807,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     mov ecx,pproc
     mov edx,opnd.base_reg
     .if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 && \
-        (r0flags & R0_USED ) && [edx].asm_tok.bytval == 0 && !( [ecx].asym.flag & S_METHOD ) )
+        (r0flags & R0_USED ) && [edx].asm_tok.bytval == 0 && !( [ecx].asym.flag1 & S_METHOD ) )
         asmerr( 7002 )
     .endif
 
@@ -1667,8 +1822,8 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         add p,strlen( p )
         add p,Mangle( esi, p )
         inc namepos
-        .if ( !( [esi].flag & S_IAT_USED ) )
-            or [esi].flag,S_IAT_USED
+        .if ( !( [esi].flags & S_IAT_USED ) )
+            or [esi].flags,S_IAT_USED
             mov ecx,[esi].dll
             inc [ecx].dll_desc.cnt
             .if ( [esi].langtype != LANG_NONE && [esi].langtype != ModuleInfo.langtype )
@@ -1685,7 +1840,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     add ebx,tokenarray
     mov ecx,opnd.mbr
     .if ( pmacro || ( [ebx].token == T_OP_SQ_BRACKET && \
-        [ebx+3*16].token == T_DOT && ecx && [ecx].asym.flag & S_METHOD ) )
+        [ebx+3*16].token == T_DOT && ecx && [ecx].asym.flag1 & S_METHOD ) )
 
         .if ( pmacro )
 
@@ -1789,7 +1944,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( [ebx].token != T_FINAL )
 
-                    .if ( [edi].sym.sint_flag & SINT_ISSTATIC )
+                    .if ( [edi].sym.sflags & S_ISSTATIC )
                         strcat( p, [ebx+32].tokpos )
                     .else
                         strcat( p, [ebx+16].tokpos )
@@ -1798,14 +1953,14 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             .elseif ( [edx].proc_info.flags & PROC_HAS_VARARG )
 
-                .if ( [ebx+16].tokval == T_ADDR && [edi].sym.flag & S_METHOD )
+                .if ( [ebx+16].tokval == T_ADDR && [edi].sym.flag1 & S_METHOD )
                     strcat( p, [ebx+32].tokpos )
                 .else
                     strcat( p, [ebx+16].tokpos )
                 .endif
            .else
                 mov esi,1
-                .if ( [edi].sym.sint_flag & SINT_ISSTATIC )
+                .if ( [edi].sym.sflags & S_ISSTATIC )
                     strcat( p, [ebx+32].string_ptr )
                     mov esi,0
                 .else
@@ -1820,6 +1975,18 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .endif
             strcat( p, ")" )
 
+        .elseif struct_ptr
+
+            mov edi,T_EAX
+            .if ( ModuleInfo.Ofssize == USE64 )
+                .if ( [esi].langtype == LANG_SYSCALL )
+                    mov edi,T_R10
+                .else
+                    mov edi,T_RAX
+                .endif
+            .endif
+            mov ebx,struct_ptr
+            AssignPointer( SymSearch( [ebx].string_ptr ), edi, struct_ptr )
         .else
 
             imul ebx,parmpos,16
@@ -1832,7 +1999,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 .else
                     AddLineQueue( " mov rax, [rcx]" )
                 .endif
-ifndef __ASMC64p__
+ifndef __ASMC64__
             .elseif ( ModuleInfo.Ofssize == USE32 )
 
                 .new reg:int_t = T_EAX ;; v2.31 - skip mov eax,reg

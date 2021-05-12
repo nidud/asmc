@@ -137,6 +137,8 @@ struct asym {
     struct asym	    *segment;	   /* used by SYM_INTERNAL, SYM_EXTERNAL */
     unsigned char   state;
     unsigned char   mem_type;
+    unsigned char   reserved1;
+    unsigned char   reserved2;
     unsigned char   used:1,	  /* symbol has been referenced */
 		    isdefined:1,  /* symbol is "defined" in this pass */
 		    scoped:1,	  /* symbol is local label or SYM_STACK */
@@ -153,6 +155,8 @@ struct asym {
 		    fwdref:1,	  /* symbol was forward referenced */
 		    included:1,	  /* COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL) */
 		    method:1;	  /* v2.27: ptr is a class method */
+    unsigned char   flags2;
+    unsigned char   flags3;
 
     union {
 	/* for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD */

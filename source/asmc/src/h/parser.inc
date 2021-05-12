@@ -363,9 +363,15 @@ externdef InstrTable:instr_item		;; instruction table
 externdef SpecialTable:special_item	;; rest of res words
 externdef optable_idx:ushort_t		;; helper, access thru IndexFromToken() only
 
-IndexFromToken macro tok
+IndexFromToken_IMM32 macro tok
+    exitm<optable_idx[(tok-SPECIAL_LAST)*2]>
+    endm
+IndexFromToken_REG32 macro tok
     sub tok,SPECIAL_LAST
     exitm<optable_idx[tok*2]>
+    endm
+IndexFromToken macro tok
+%   exitm<typeid(IndexFromToken_,tok)(tok)>
     endm
 
 SizeFromMemtype		proto :uchar_t, :int_t, :asym_t

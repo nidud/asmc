@@ -36,8 +36,8 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
     mov edx,opndx
 
     mov [ecx].state,SYM_INTERNAL
-    or  [ecx].flag,S_ISEQUATE or S_ISDEFINED
-    and [ecx].flag,not S_ISPROC
+    or  [ecx].flags,S_ISEQUATE or S_ISDEFINED
+    and [ecx].flag1,not S_ISPROC
 
     .if ( [edx].kind == EXPR_CONST || \
         ( [edx].kind == EXPR_FLOAT && [edx].float_tok == NULL ) )
@@ -49,16 +49,16 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
             mov [ecx].total_length,dword ptr [edx].hlvalue
             mov [ecx].ext_idx,dword ptr [edx].hlvalue[4]
         .endif
-        mov [ecx]._segment,  NULL
+        mov [ecx].segm,  NULL
         .return
     .endif
 
     ;; for a PROC alias, copy the procinfo extension!
 
     mov edi,[edx].sym
-    .if [edi].flag & S_ISPROC
+    .if [edi].flag1 & S_ISPROC
 
-        or  [ecx].flag,S_ISPROC
+        or  [ecx].flag1,S_ISPROC
         ;; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [ecx].langtype,[edi].langtype
         assume ecx:dsym_t
@@ -82,25 +82,25 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
         mov [ecx].type,[edi].type
     .endif
     mov [ecx].value3264,0 ;; v2.09: added
-    mov [ecx]._segment,[edi]._segment
+    mov [ecx].segm,[edi].segm
 
     ;; labels are supposed to be added to the current segment's label_list chain.
     ;; this isn't done for alias equates, for various reasons.
     ;; consequently, if the alias was forward referenced, ensure that a third pass
     ;; will be done! regression test forward5.asm.
 
-    mov eax,[edi]._offset
+    mov eax,[edi].offs
     add eax,[edx].value
-    .if [ecx].flag & S_VARIABLE
-        mov [ecx]._offset,eax
-        .if Parse_Pass == PASS_2 && ( [ecx].flag & S_FWDREF )
+    .if [ecx].flags & S_VARIABLE
+        mov [ecx].offs,eax
+        .if Parse_Pass == PASS_2 && ( [ecx].flag1 & S_FWDREF )
             mov ModuleInfo.PhaseError,TRUE
         .endif
     .else
-        .if Parse_Pass != PASS_1 && [ecx]._offset != eax
+        .if Parse_Pass != PASS_1 && [ecx].offs != eax
             mov ModuleInfo.PhaseError,TRUE
         .endif
-        mov [ecx]._offset,eax
+        mov [ecx].offs,eax
         BackPatch(ecx)
     .endif
     ret
@@ -233,20 +233,20 @@ check_float:
             mov edi,SymCreate(name)
         .else
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], edi)
-            or byte ptr [edi].flag[1],( S_FWDREF shr 8 )
+            or [edi].flag1,S_FWDREF
         .endif
-        and byte ptr [edi].flag[1],not ( S_ISSAVED shr 8 )
+        and [edi].flag1,not S_ISSAVED
         .if StoreState
-            or byte ptr [edi].flag[1],( S_ISSAVED shr 8 )
+            or [edi].flag1,S_ISSAVED
         .endif
-    .elseif ( [edi].state == SYM_EXTERNAL && [edi].sint_flag & SINT_WEAK && [edi].mem_type == MT_EMPTY )
+    .elseif ( [edi].state == SYM_EXTERNAL && [edi].sflags & S_WEAK && [edi].mem_type == MT_EMPTY )
         sym_ext2int(edi)
-        and byte ptr [edi].flag[1],not ( S_ISSAVED shr 8 )
+        and [edi].flag1,not S_ISSAVED
         .if StoreState
-            or byte ptr [edi].flag[1],( S_ISSAVED shr 8 )
+            or [edi].flag1,S_ISSAVED
         .endif
     .else
-        .if ( [edi].state != SYM_INTERNAL || ( !( byte ptr [edi].flag & S_VARIABLE ) && \
+        .if ( [edi].state != SYM_INTERNAL || ( !( [edi].flags & S_VARIABLE ) && \
             ( opnd.uvalue != [edi].uvalue || opnd.hvalue != [edi].value3264 ) ) )
             asmerr(2005, [edi].name)
             .return NULL
@@ -257,13 +257,13 @@ check_float:
         ;; v2.10: store state only when variable is changed and has been
         ;; defined BEFORE SaveState() has been called.
 
-        .if StoreState && !( byte ptr [edi+1].flag & ( S_ISSAVED shr 8 ) )
+        .if StoreState && !( [edi].flag1 & S_ISSAVED )
             SaveVariableState(edi)
         .endif
     .endif
-    or byte ptr [edi].flag,S_VARIABLE
+    or byte ptr [edi].flags,S_VARIABLE
     ;; v2.09: allow internal variables to be set
-    .if ( byte ptr [edi].flag & S_PREDEFINED ) && [edi].sfunc_ptr
+    .if ( byte ptr [edi].flags & S_PREDEFINED ) && [edi].sfunc_ptr
         [edi].sfunc_ptr(edi, &opnd)
     .else
         SetValue(edi, &opnd)
@@ -302,19 +302,19 @@ CreateVariable proc uses edi name:string_t, value:int_t
     mov edi,SymSearch(name)
     .if edi == NULL
         mov edi,SymCreate(name)
-        and byte ptr [edi+1].flag,not ( S_ISSAVED shr 8 )
+        and [edi].flag1,not S_ISSAVED
         .if StoreState
-            or byte ptr [edi+1].flag,( S_ISSAVED shr 8 )
+            or [edi].flag1,S_ISSAVED
         .endif
     .elseif [edi].state == SYM_UNDEFINED
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], edi)
-        or  byte ptr [edi+1].flag,( S_FWDREF shr 8 )
-        and byte ptr [edi+1].flag,not ( S_ISSAVED shr 8 )
+        or  [edi].flag1,S_FWDREF
+        and [edi].flag1,not S_ISSAVED
         .if StoreState
-            or byte ptr [edi+1].flag,( S_ISSAVED shr 8 )
+            or [edi].flag1,S_ISSAVED
         .endif
     .else
-        .if !( byte ptr [edi].flag & S_ISEQUATE )
+        .if !( [edi].flags & S_ISEQUATE )
             asmerr(2005, name)
             .return NULL
         .endif
@@ -324,11 +324,11 @@ CreateVariable proc uses edi name:string_t, value:int_t
         ;; v2.10: store state only when variable is changed and has been
         ;; defined BEFORE SaveState() has been called.
 
-        .if StoreState && !( byte ptr [edi+1].flag & ( S_ISSAVED shr 8 ) )
+        .if StoreState && !( [edi].flag1 & S_ISSAVED )
             SaveVariableState(edi)
         .endif
     .endif
-    or  [edi].flag,S_ISDEFINED or S_VARIABLE or S_ISEQUATE
+    or  [edi].flags,S_ISDEFINED or S_VARIABLE or S_ISEQUATE
     mov [edi].state,SYM_INTERNAL
     mov eax,value
     mov [edi].value,eax
@@ -375,13 +375,13 @@ CreateConstant proc uses esi edi ebx tokenarray:tok_t
       .case edi == NULL
       .case [edi].state == SYM_UNDEFINED
       .case [edi].state == SYM_EXTERNAL && \
-          ( [edi].sint_flag & SINT_WEAK ) && !( byte ptr [edi+1].flag & ( S_ISPROC shr 8 ) )
+          ( [edi].sflags & S_WEAK ) && !( [edi].flag1 & S_ISPROC )
         ;; It's a "new" equate.
         ;; wait with definition until type of equate is clear
         .endc
       .case [edi].state == SYM_TMACRO
         .return SetTextMacro(ebx, edi, name, [esi].tokpos)
-      .case !( byte ptr [edi].flag & S_ISEQUATE )
+      .case !( byte ptr [edi].flags & S_ISEQUATE )
         asmerr( 2005, name )
         .return NULL
       .default
@@ -529,7 +529,7 @@ CreateConstant proc uses esi edi ebx tokenarray:tok_t
             .endc
         .case [edi].state == SYM_UNDEFINED
             sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], edi)
-            or byte ptr [edi+1].flag,( S_FWDREF shr 8 )
+            or [edi].flag1,S_FWDREF
             .endc
         .case [edi].state == SYM_EXTERNAL
             sym_ext2int(edi)
@@ -544,16 +544,16 @@ CreateConstant proc uses esi edi ebx tokenarray:tok_t
                 .endif
             .elseif opnd.kind == EXPR_ADDR
                 mov ecx,opnd.sym
-                mov edx,[ecx]._offset
+                mov edx,[ecx].offs
                 add edx,opnd.value
-                .if [edi]._offset != edx || [edi]._segment != [ecx]._segment
+                .if [edi].offs != edx || [edi].segm != [ecx].segm
                     asmerr(2005, name)
                     .return(NULL)
                 .endif
             .endif
         .endsw
 
-        and byte ptr [edi].flag,not S_VARIABLE
+        and byte ptr [edi].flags,not S_VARIABLE
         SetValue(edi, &opnd)
         .return edi
     .endif

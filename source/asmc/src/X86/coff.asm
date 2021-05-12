@@ -318,7 +318,7 @@ coff_write_section_table endp
 
 CoffGetType proc fastcall sym:ptr asym
 
-    .return( 0x20 ) .if ( [ecx].flag & S_ISPROC )
+    .return( 0x20 ) .if ( [ecx].flag1 & S_ISPROC )
     .return( IMAGE_SYM_TYPE_NULL )
 
 CoffGetType endp
@@ -330,16 +330,16 @@ CoffGetType endp
 CoffGetClass proc fastcall sym:ptr asym
 
     .if ( [ecx].state == SYM_EXTERNAL )
-        .if ( !( [ecx].sint_flag & SINT_ISCOM ) && [ecx].altname )
+        .if ( !( [ecx].sflags & S_ISCOM ) && [ecx].altname )
             .return( IMAGE_SYM_CLASS_WEAK_EXTERNAL )
         .else
             .return( IMAGE_SYM_CLASS_EXTERNAL )
         .endif
-    .elseif ( [ecx].flag & S_ISPUBLIC )
+    .elseif ( [ecx].flags & S_ISPUBLIC )
         .return( IMAGE_SYM_CLASS_EXTERNAL )
 
     ;; v2.09: don't declare private procs as label
-    .elseif ( [ecx].mem_type == MT_NEAR && !( [ecx].flag & S_ISPROC ) )
+    .elseif ( [ecx].mem_type == MT_NEAR && !( [ecx].flag1 & S_ISPROC ) )
         .return( IMAGE_SYM_CLASS_LABEL )
     .endif
     .return( IMAGE_SYM_CLASS_STATIC )
@@ -624,17 +624,17 @@ endif
 
         ;; skip "weak" (=unused) externdefs
 
-        .continue .if ( !( [edi].asym.sint_flag & SINT_ISCOM ) && [edi].asym.sint_flag & SINT_WEAK )
+        .continue .if ( !( [edi].asym.sflags & S_ISCOM ) && [edi].asym.sflags & S_WEAK )
 
         lea ebx,buffer
         mov ecx,Mangle( edi, ebx )
 
         ;; for COMMUNALs, store their size in the Value field
 
-        .if ( [edi].asym.sint_flag & SINT_ISCOM )
+        .if ( [edi].asym.sflags & S_ISCOM )
             mov value,[edi].asym.total_size
         .else
-            mov value,[edi].asym._offset ;; is always 0
+            mov value,[edi].asym.offs ;; is always 0
         .endif
 
         .if ( ecx > IMAGE_SIZEOF_SHORT_NAME )
@@ -644,14 +644,14 @@ endif
         mov esi,CoffGetClass( edi )
         mov ecx,CoffGetType( edi )
         xor eax,eax
-        .if ( !( [edi].asym.sint_flag & SINT_ISCOM ) && [edi].asym.altname )
+        .if ( !( [edi].asym.sflags & S_ISCOM ) && [edi].asym.altname )
             inc eax
         .endif
         coff_write_symbol( ebx, strpos, value, IMAGE_SYM_UNDEFINED, ecx, esi, eax )
         inc cntSymbols
 
         ;; for weak externals, write the auxiliary record
-        .if ( !( [edi].asym.sint_flag & SINT_ISCOM ) && [edi].asym.altname )
+        .if ( !( [edi].asym.sflags & S_ISCOM ) && [edi].asym.altname )
 
             memset( &ias, 0, sizeof(ias) )
             mov ecx,[edi].asym.altname
@@ -676,7 +676,7 @@ endif
         mov edx,[esi].asym.debuginfo
 
         .if ( Options.line_numbers && Options.debug_symbols != 4 && \
-            [esi].asym.flag & S_ISPROC && [edx].debug_info.file != lastfile )
+            [esi].asym.flag1 & S_ISPROC && [edx].debug_info.file != lastfile )
 
             mov lastfile,[edx].debug_info.file
             mov aux,GetFileAuxEntries( [edx].debug_info.file, &p )
@@ -693,8 +693,8 @@ endif
         .endif
 
         .if ( [esi].asym.state == SYM_INTERNAL )
-            .if ( [esi].asym._segment )
-                mov section,GetSegIdx( [esi].asym._segment )
+            .if ( [esi].asym.segm )
+                mov section,GetSegIdx( [esi].asym.segm )
             .else
                 mov section,IMAGE_SYM_ABSOLUTE
             .endif
@@ -702,7 +702,7 @@ endif
             mov section,IMAGE_SYM_UNDEFINED
         .endif
         mov aux,0
-        .if ( Options.line_numbers && [esi].asym.flag & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [esi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
             inc aux
         .endif
         mov ecx,ebx
@@ -712,12 +712,12 @@ endif
             xor ebx,ebx
         .endif
         mov p,ebx
-        mov value,[esi].asym._offset
+        mov value,[esi].asym.offs
         mov ebx,CoffGetType( esi )
         coff_write_symbol( p, strpos, value, section, ebx, CoffGetClass( esi ), aux )
         inc cntSymbols
 
-        .if ( Options.line_numbers && [esi].asym.flag & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [esi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
 
             ;; write:
             ;; 1.   the aux for the proc
@@ -754,7 +754,7 @@ endif
             mov value,[edx].debug_info.line_numbers
             coff_write_symbol( ".lf", 0, value, section, type, ebx, 0 )
 
-            mov eax,[esi].asym._offset
+            mov eax,[esi].asym.offs
             add eax,[esi].asym.total_size
             mov value,eax
             coff_write_symbol( ".ef", 0, value, section, type, ebx, 1 )
@@ -909,15 +909,15 @@ endif
 
     .for ( edi = ExtTable : edi : edi = [edi].dsym.next )
 
-        .continue .if ( !( [edi].asym.sint_flag & SINT_ISCOM ) && \
-                        [edi].asym.sint_flag & SINT_WEAK )
+        .continue .if ( !( [edi].asym.sflags & S_ISCOM ) && \
+                        [edi].asym.sflags & S_WEAK )
 
         mov [edi].asym.ext_idx,esi
         inc esi
 
         ;; weak externals need an additional aux entry
 
-        .if ( !( [edi].asym.sint_flag & SINT_ISCOM ) && [edi].asym.altname )
+        .if ( !( [edi].asym.sflags & S_ISCOM ) && [edi].asym.altname )
 
             inc esi
         .endif
@@ -934,9 +934,10 @@ if STATIC_PROCS
         .for( edi = ProcTable : edi : edi = [edi].dsym.nextproc )
 
             .if ( [edi].asym.state == SYM_INTERNAL && \
-                  !( [edi].asym.flag & S_ISPUBLIC or S_INCLUDED ) )
+                  !( [edi].asym.flags & S_ISPUBLIC ) && \
+                  !( [edi].asym.flag1 & S_INCLUDED ) )
 
-                or [edi].asym.flag,S_INCLUDED
+                or [edi].asym.flag1,S_INCLUDED
                 AddPublicData( edi )
             .endif
         .endf
@@ -952,7 +953,7 @@ endif
 
         ;; if line numbers are on, co, add 6 entries for procs
 
-        .if ( Options.line_numbers && [esi].asym.flag & S_ISPROC && Options.debug_symbols != 4 )
+        .if ( Options.line_numbers && [esi].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
 
             mov edx,[esi].asym.debuginfo
             mov ebx,cm
@@ -1102,7 +1103,7 @@ coff_write_fixups proc uses esi edi ebx section:ptr dsym, poffset:ptr uint_32, p
         mov type,cx
         mov ecx,[ebx].sym
 
-        .if ( [ecx].asym.flag & S_VARIABLE )
+        .if ( [ecx].asym.flags & S_VARIABLE )
 
             ;; just use the segment entry. This approach requires
             ;; that the offset is stored inline at the reloc location
@@ -1112,14 +1113,15 @@ coff_write_fixups proc uses esi edi ebx section:ptr dsym, poffset:ptr uint_32, p
             mov ecx,eax
 
         .elseif ( ( [ecx].asym.state == SYM_INTERNAL ) && \
-                   !( [ecx].asym.flag & S_INCLUDED or S_ISPUBLIC ) )
+                   !( [ecx].asym.flags & S_ISPUBLIC ) && \
+                   !( [ecx].asym.flag1 & S_INCLUDED ) )
 
-            or [ecx].asym.flag,S_INCLUDED
+            or [ecx].asym.flag1,S_INCLUDED
             AddPublicData( ecx )
             mov ecx,[ebx].sym
             mov [ecx].asym.ext_idx,esi
             inc esi
-            .if ( Options.line_numbers && [ecx].asym.flag & S_ISPROC && Options.debug_symbols != 4 )
+            .if ( Options.line_numbers && [ecx].asym.flag1 & S_ISPROC && Options.debug_symbols != 4 )
                 add esi,6
             .endif
         .endif
@@ -1344,8 +1346,8 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
         .for ( edi = ExtTable: edi: edi = [edi].dsym.next )
 
-            .if ( [edi].asym.flag & S_ISPROC && \
-                ( !( [edi].asym.sint_flag & SINT_WEAK ) || [edi].asym.flag & S_IAT_USED ) )
+            .if ( [edi].asym.flag1 & S_ISPROC && \
+                ( !( [edi].asym.sflags & S_WEAK ) || [edi].asym.flags & S_IAT_USED ) )
 
                 mov edx,[edi].asym.dll
                 .if ( edx )
@@ -1422,8 +1424,8 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
             .for ( edi = imp: edi: edi = [edi].dsym.next )
 
-                .if ( [edi].asym.flag & S_ISPROC && \
-                    ( !( [edi].asym.sint_flag & SINT_WEAK ) || [edi].asym.flag & S_IAT_USED ) && \
+                .if ( [edi].asym.flag1 & S_ISPROC && \
+                    ( !( [edi].asym.sflags & S_WEAK ) || [edi].asym.flags & S_IAT_USED ) && \
                       [edi].asym.dll )
 
                     mov edx,[edi].asym.dll
@@ -1498,8 +1500,8 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
             .for ( edi = imp: edi: edi = [edi].dsym.next )
 
-                .if ( [edi].asym.flag & S_ISPROC && \
-                    ( !( [edi].asym.sint_flag & SINT_WEAK ) || [edi].asym.flag & S_IAT_USED ) && \
+                .if ( [edi].asym.flag1 & S_ISPROC && \
+                    ( !( [edi].asym.sflags & S_WEAK ) || [edi].asym.flags & S_IAT_USED ) && \
                       [edi].asym.dll )
 
                     mov edx,[edi].asym.dll

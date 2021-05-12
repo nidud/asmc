@@ -466,12 +466,12 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov [esi].total_size,  ti.size
             mov [esi].mem_type,    ti.mem_type
             mov [esi].is_ptr,      ti.is_ptr
-            mov al,[esi].sint_flag
-            and al,not SINT_ISFAR
+            mov al,[esi].sflags
+            and al,not S_ISFAR
             .if ti.is_far
-                or al,SINT_ISFAR
+                or al,S_ISFAR
             .endif
-            mov [esi].sint_flag,al
+            mov [esi].sflags,al
             mov [esi].Ofssize,     ti.Ofssize
             mov [esi].ptr_memtype, ti.ptr_memtype ;; added v2.05 rc13
             .if ( ti.mem_type == MT_TYPE )
@@ -504,7 +504,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 .elseif ( ( [esi].state == SYM_SEG || [esi].state == SYM_GRP ) && opnd.inst == EMPTY )
                     mov [edi].symbol,esi
                 .elseif ( opnd.inst == T_SEG )
-                    mov [edi].symbol,[esi]._segment
+                    mov [edi].symbol,[esi].segm
                 .else
                     .return( asmerr( 2096 ) )
                 .endif
@@ -662,12 +662,12 @@ GetAssume proc override:asym_t, sym:asym_t, def:int_t, passume:ptr asym_t
         ;;
         mov eax,ASSUME_SS
     .else
-        search_assume( [edx].asym._segment, def, TRUE )
+        search_assume( [edx].asym.segm, def, TRUE )
     .endif
 
     .if( eax == ASSUME_NOTHING )
         mov edx,sym
-        .if( edx && [edx].asym.state == SYM_EXTERNAL && [edx].asym._segment == NULL )
+        .if( edx && [edx].asym.state == SYM_EXTERNAL && [edx].asym.segm == NULL )
             mov eax,def
         .endif
     .endif

@@ -115,32 +115,39 @@ next_proc	dd ?	;; index next proc
 next_file	dd ?	;; index next file
 debug_info	ends
 
-S_USED		equ 0x0001
-S_ISDEFINED	equ 0x0002
-S_SCOPED	equ 0x0004
-S_IAT_USED	equ 0x0008
-S_ISEQUATE	equ 0x0010
-S_PREDEFINED	equ 0x0020
-S_VARIABLE	equ 0x0040
-S_ISPUBLIC	equ 0x0080
-S_LIST		equ 0x0100
-S_ISARRAY	equ 0x0200
-S_ISDATA	equ 0x0400
-S_ISPROC	equ 0x0800
-S_ISSAVED	equ 0x1000
-S_FWDREF	equ 0x2000
-S_INCLUDED	equ 0x4000
-S_METHOD	equ 0x8000
+S_USED		equ 0x01 ; flags
+S_ISDEFINED	equ 0x02
+S_SCOPED	equ 0x04
+S_IAT_USED	equ 0x08
+S_ISEQUATE	equ 0x10
+S_PREDEFINED	equ 0x20
+S_VARIABLE	equ 0x40
+S_ISPUBLIC	equ 0x80
 
-SINT_SEGOFSSIZE equ 0x03
-SINT_ISCOM	equ 0x04
-SINT_WEAK	equ 0x08
-SINT_ISFAR	equ 0x10
-SINT_ISVARARG	equ 0x20
-SINT_ISINLINE	equ 0x40	; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
-SINT_ISSTATIC	equ 0x80	; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
+S_LIST		equ 0x01 ; flag1
+S_ISARRAY	equ 0x02
+S_ISDATA	equ 0x04
+S_ISPROC	equ 0x08
+S_ISSAVED	equ 0x10
+S_FWDREF	equ 0x20
+S_INCLUDED	equ 0x40
+S_METHOD	equ 0x80
 
-M_ISVARARG	equ 0x01
+S_CLASS		equ 0x01 ; flag2
+S_COMDEF	equ 0x02
+S_TEMPLATE	equ 0x04
+S_VTABLE	equ 0x08 ; base class - first member = lpVtbl
+S_ISVTABLE	equ 0x10 ; vtable struct - classVtbl
+
+S_SEGOFSSIZE	equ 0x03 ; sflags
+S_ISCOM		equ 0x04
+S_WEAK		equ 0x08
+S_ISFAR		equ 0x10
+S_ISVARARG	equ 0x20
+S_ISINLINE	equ 0x40 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
+S_ISSTATIC	equ 0x80 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
+
+M_ISVARARG	equ 0x01 ; mac_flag
 M_ISFUNC	equ 0x02
 M_LABEL		equ 0x04
 M_MULTILINE	equ 0x08
@@ -150,7 +157,7 @@ asym		struct
 nextitem	asym_t ?	; next symbol in hash line
 name		string_t ?	; symbol name
 union
- _offset	int_t ?		; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
+ offs		int_t ?		; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
  value		int_t ?		; used by SYM_INTERNAL (equates)
  uvalue		uint_t ?	; v2.01: equates (they are 33-bit!)
  string_ptr	string_t ?	; used by SYM_TMACRO
@@ -158,10 +165,15 @@ union
  func_ptr	macro_func ?	; used by SYM_MACRO if predefined==1
  classlnameidx	int_t ?		; used by SYM_CLASS_LNAME
 ends
-_segment	asym_t ?	; used by SYM_INTERNAL, SYM_EXTERNAL
+segm		asym_t ?	; used by SYM_INTERNAL, SYM_EXTERNAL
 state		uchar_t ?
 mem_type	uchar_t ?
-flag		dw ?		; bitfield
+reserved1	uchar_t ?
+reserved2	uchar_t ?
+flags		uchar_t ?	; bitfield
+flag1		uchar_t ?
+flag2		uchar_t ?
+flag3		uchar_t ?
 union				; for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD
  first_size	uint_t ?	; size of 1st initializer's dimension in bytes
  struct
@@ -171,7 +183,7 @@ union				; for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD
    ptr_memtype	uchar_t ?	; pointer target type
    asmpass	uchar_t ?	; SYM_INTERNAL (mem_type NEAR|FAR)
   ends
-  sint_flag	uchar_t ?
+  sflags	uchar_t ?
  ends
  mac_flag	uint_t ?	; for SYM_MACRO -- byte
 ends
@@ -357,13 +369,13 @@ TYPE_UNION	equ 2
 TYPE_TYPEDEF	equ 3
 TYPE_RECORD	equ 4
 
-STINF_ISINLINE	equ 1		;; STRUCT/UNION: inline (unused)
-STINF_ISOPEN	equ 2		;; STRUCT/UNION: set until the matching ENDS is found
-STINF_ORGINSIDE equ 4		;; STRUCT: struct contains an ORG
+SI_ISINLINE	equ 1		;; STRUCT/UNION: inline (unused)
+SI_ISOPEN	equ 2		;; STRUCT/UNION: set until the matching ENDS is found
+SI_ORGINSIDE	equ 4		;; STRUCT: struct contains an ORG
 
 struct_info	struct
-head		sfield_t ?	;; STRUCT/UNION/RECORD: start of field list
-tail		sfield_t ?	;; STRUCT/UNION/RECORD: current/next field
+head		ptr sfield ?	;; STRUCT/UNION/RECORD: start of field list
+tail		ptr sfield ?	;; STRUCT/UNION/RECORD: current/next field
 alignment	uchar_t ?	;; STRUCT: 1,2,4,8,16 or 32
 flags		uchar_t ?
 struct_info	ends

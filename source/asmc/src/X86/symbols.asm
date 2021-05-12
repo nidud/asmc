@@ -202,7 +202,7 @@ SymAlloc proc uses esi edi name:string_t
     lea edx,[eax+dsym]
     mov [eax].asym.name,edx
     .if ModuleInfo.cref
-        or [eax].asym.flag,S_LIST
+        or [eax].asym.flag1,S_LIST
     .endif
     .if edi
         mov ecx,edi
@@ -443,14 +443,14 @@ SymLookupLocal proc name:string_t
 
     .if !SymFind(name)
         SymAlloc(name)
-        or [eax].asym.flag,S_SCOPED
+        or [eax].asym.flags,S_SCOPED
         ;
         ; add the label to the local hash table
         ;
         mov ecx,lsym
         mov [ecx],eax
 
-    .elseif [eax].asym.state == SYM_UNDEFINED && !([eax].asym.flag & S_SCOPED)
+    .elseif [eax].asym.state == SYM_UNDEFINED && !( [eax].asym.flags & S_SCOPED )
         ;
         ; if the label was defined due to a FORWARD reference,
         ; its scope is to be changed from global to local.
@@ -461,7 +461,7 @@ SymLookupLocal proc name:string_t
         mov ecx,gsym
         mov [ecx],edx
         dec SymCount
-        or  [eax].asym.flag,S_SCOPED
+        or  [eax].asym.flags,S_SCOPED
         mov [eax].asym.nextitem,0
         mov ecx,lsym
         mov [ecx],eax
@@ -481,12 +481,12 @@ SymFree proc sym:asym_t
     movzx eax,[ecx].asym.state
     .switch eax
       .case SYM_INTERNAL
-        .if [ecx].asym.flag & S_ISPROC
+        .if [ecx].asym.flag1 & S_ISPROC
             DeleteProc( ecx )
         .endif
         .endc
       .case SYM_EXTERNAL
-        .if [ecx].asym.flag & S_ISPROC
+        .if [ecx].asym.flag1 & S_ISPROC
             DeleteProc( ecx )
         .endif
         mov ecx,sym
@@ -624,11 +624,10 @@ SymMakeAllSymbolsPublic proc uses esi edi
                 ; v2.09: symbol already added to public queue?
                 ; v2.10: no @@ code labels
                 ;
-                movzx eax,[edi].asym.flag
-                and eax,S_ISEQUATE or S_PREDEFINED or S_INCLUDED or S_ISPUBLIC
-
-                .if ZERO? && BYTE PTR [ecx+1] != '&'
-                    or [edi].asym.flag,S_ISPUBLIC
+                mov al,[ecx+1]
+                .if ( !( [edi].asym.flags & S_ISEQUATE or S_PREDEFINED or S_ISPUBLIC ) && \
+                      !( [edi].asym.flag1 & S_INCLUDED ) && al != '&' )
+                    or [edi].asym.flags,S_ISPUBLIC
                     AddPublicData(edi)
                 .endif
 
@@ -677,7 +676,7 @@ endif
     .while [esi].tmitem.name
         SymCreate([esi].tmitem.name)
         mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+        or  [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
         mov ecx,[esi].tmitem.value
         mov [eax].asym.string_ptr,ecx
         mov ecx,[esi].tmitem.store
@@ -690,9 +689,9 @@ endif
     .while [esi].eqitem.name
         SymCreate([esi].eqitem.name)
         mov [eax].asym.state,SYM_INTERNAL
-        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+        or  [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
         mov ecx,[esi].eqitem.value
-        mov [eax].asym._offset,ecx
+        mov [eax].asym.offs,ecx
         mov ecx,[esi].eqitem.sfunc_ptr
         mov [eax].asym.sfunc_ptr,ecx
         mov ecx,[esi].eqitem.store
@@ -703,20 +702,20 @@ endif
     ;
     ; @WordSize should not be listed
     ;
-    and [eax].asym.flag,not S_LIST
+    and [eax].asym.flag1,not S_LIST
 
     xor esi,esi
     .while esi < dyneqcount
         SymCreate(dyneqtable[esi*4])
 if 0
         mov [eax].asym.state,SYM_INTERNAL
-        or  [eax].asym.flag,S_ISDEFINED or S_ISEQUATE or S_VARIABLE
+        or  [eax].asym.flags,S_ISDEFINED or S_ISEQUATE or S_VARIABLE
 else
         mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+        or  [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
 endif
         mov ecx,dyneqvalue[esi*4]
-        ;mov [eax].asym._offset,ecx
+        ;mov [eax].asym.offs,ecx
         mov [eax].asym.string_ptr,ecx
         mov [eax].asym.sfunc_ptr,0
         inc esi
@@ -725,10 +724,10 @@ endif
     ; $ is an address (usually). Also, don't add it to the list
     ;
     mov eax,symPC
-    and [eax].asym.flag,not S_LIST
-    or  [eax].asym.flag,S_VARIABLE
+    and [eax].asym.flag1,not S_LIST
+    or  [eax].asym.flags,S_VARIABLE
     mov eax,LineCur
-    and [eax].asym.flag,not S_LIST
+    and [eax].asym.flag1,not S_LIST
     ret
 
 SymInit endp
@@ -753,8 +752,8 @@ SymPassInit proc pass:int_t
 
                 mov eax,gsym_table[ecx*4]
                 .while eax
-                    .if !([eax].asym.flag & S_PREDEFINED)
-                        and [eax].asym.flag,not S_ISDEFINED
+                    .if !( [eax].asym.flags & S_PREDEFINED )
+                        and [eax].asym.flags,not S_ISDEFINED
                     .endif
                     mov eax,[eax].asym.nextitem
                 .endw

@@ -131,7 +131,7 @@ GetTyperef proc uses esi sym:ptr asym, Ofssize:byte
                 .case 8  : .return ST_UINT8
                 .case 16 : .return ST_UINT8
                 .case 2
-                    .if ( [esi].asym.flag & S_ISARRAY && Options.debug_symbols == CV_SIGNATURE_C13 )
+                    .if ( [esi].asym.flag1 & S_ISARRAY && Options.debug_symbols == CV_SIGNATURE_C13 )
                         .return ST_CHAR16
                     .endif
                     .return ST_UINT2
@@ -149,12 +149,12 @@ GetTyperef proc uses esi sym:ptr asym, Ofssize:byte
             mov al,[esi].asym.Ofssize
             .switch al
             .case USE16
-                .if ( [esi].asym.sint_flag & SINT_ISFAR )
+                .if ( [esi].asym.sflags & S_ISFAR )
                     .return ST_PFVOID
                 .endif
                 .return ST_PVOID
             .case USE32
-                .if ( [esi].asym.sint_flag & SINT_ISFAR )
+                .if ( [esi].asym.sflags & S_ISFAR )
                     .return ST_32PFVOID
                 .endif
                 .return ST_32PVOID
@@ -228,7 +228,7 @@ GetStructLen proc sym:ptr asym, Ofssize:byte
         .if ( [ecx].asym.state == SYM_TYPE )
             .return( sizeof( UDTSYM_16t ) - 1 )
         .endif
-        .if ( [ecx].asym.flag & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+        .if ( [ecx].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
             .if ( Ofssize == USE16 )
                 .return sizeof( PROCSYM16 ) - 1
             .endif
@@ -241,7 +241,7 @@ GetStructLen proc sym:ptr asym, Ofssize:byte
             .return sizeof( LABELSYM32 ) - 1
         .endif
 if EQUATESYMS
-        .if ( [ecx].asym.flag & S_ISEQUATE )
+        .if ( [ecx].asym.flags & S_ISEQUATE )
             mov eax,sizeof( CONSTSYM_16t )
             .if ( [ecx].asym.value >= LF_NUMERIC )
                 add eax,2
@@ -254,14 +254,14 @@ endif
     .if ( [ecx].asym.state == SYM_TYPE )
         .return( sizeof( UDTSYM ) - 1 )
     .endif
-    .if ( [ecx].asym.flag & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [ecx].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
         .return sizeof( PROCSYM32 ) - 1
     .endif
     .if ( [ecx].asym.mem_type == MT_NEAR || [ecx].asym.mem_type == MT_FAR )
         .return sizeof( LABELSYM32 ) - 1
     .endif
 if EQUATESYMS
-    .if ( [ecx].asym.flag & S_ISEQUATE )
+    .if ( [ecx].asym.flags & S_ISEQUATE )
         mov eax,sizeof( CONSTSYM )
         .if ( [ecx].asym.value >= LF_NUMERIC )
             add eax,2
@@ -347,13 +347,13 @@ dbgcv::write_bitfield proc uses esi edi ebx types:ptr dsym, sym:ptr asym
         mov [edi].CV_BITFIELD_16t.size,( CV_BITFIELD_16t - sizeof(uint_16) )
         mov [edi].CV_BITFIELD_16t.leaf,LF_BITFIELD_16t
         mov [edi].CV_BITFIELD_16t.length,[ecx].asym.total_size
-        mov [edi].CV_BITFIELD_16t.position,[ecx].asym._offset
+        mov [edi].CV_BITFIELD_16t.position,[ecx].asym.offs
         mov [edi].CV_BITFIELD_16t.type,GetTyperef( types, USE16 )
     .else
         mov [edi].CV_BITFIELD.size,( CV_BITFIELD - sizeof(uint_16) )
         mov [edi].CV_BITFIELD.leaf,LF_BITFIELD
         mov [edi].CV_BITFIELD.length,[ecx].asym.total_size
-        mov [edi].CV_BITFIELD.position,[ecx].asym._offset
+        mov [edi].CV_BITFIELD.position,[ecx].asym.offs
         mov [edi].CV_BITFIELD.type,GetTyperef( types, USE16 )
         mov [edi].CV_BITFIELD.reserved,0xF1F2 ; added for alignment
     .endif
@@ -440,12 +440,12 @@ dbgcv::write_ptr_type proc fastcall uses esi edi ebx sym:ptr asym
 
     .if ( [esi].asym.Ofssize == USE16 )
         mov eax,CV_PTR_NEAR
-        .if ( [esi].asym.sint_flag & SINT_ISFAR )
+        .if ( [esi].asym.sflags & S_ISFAR )
             mov eax,CV_PTR_FAR
         .endif
     .elseif ( [esi].asym.Ofssize == USE32 )
         mov eax,CV_PTR_NEAR32
-        .if ( [esi].asym.sint_flag & SINT_ISFAR )
+        .if ( [esi].asym.sflags & S_ISFAR )
             mov eax,CV_PTR_FAR32
         .endif
     .else
@@ -514,7 +514,7 @@ dbgcv::cntproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr counter
     mov ecx,type
     xor edx,edx
     .if ( [ecx].asym.typekind != TYPE_RECORD )
-        add edx,[edi].asym._offset
+        add edx,[edi].asym.offs
         add edx,[esi].counters.ofs
     .endif
     .if ( edx >= LF_NUMERIC )
@@ -534,7 +534,7 @@ dbgcv::cntproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr counter
     .elseif ( [edi].asym.mem_type == MT_BITS && [edi].asym.cvtyperef == 0 )
         [ebx].write_bitfield( type, edi )
     .endif
-    .if ( [edi].asym.flag & S_ISARRAY )
+    .if ( [edi].asym.flag1 & S_ISARRAY )
         ;; temporarily (mis)use ext_idx1 member to store the type;
         ;; this field usually isn't used by struct fields
         mov [edi].asym.ext_idx1,[ebx].currtype
@@ -560,7 +560,7 @@ dbgcv::memberproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr coun
     xor eax,eax
     xor edx,edx
     .if ( [ecx].asym.typekind != TYPE_RECORD )
-        add edx,[edi].asym._offset
+        add edx,[edi].asym.offs
         add edx,[esi].counters.ofs
     .endif
     mov offs,edx
@@ -584,7 +584,7 @@ dbgcv::memberproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr coun
     .endif
     mov [edi].CV_MEMBER_16t.leaf,ax
     mov esi,mbr
-    .if ( [esi].asym.flag & S_ISARRAY )
+    .if ( [esi].asym.flag1 & S_ISARRAY )
         movzx eax,[esi].asym.ext_idx1
         mov [esi].asym.ext_idx1,0 ; reset the temporarily used field
     .else
@@ -632,10 +632,10 @@ dbgcv::enum_fields proc uses esi edi ebx symb:ptr dsym, enumfunc:cv_enum_func, c
             enumfunc( this, esi, &[edi].sfield.sym, cc )
         .elseif ( [edi].sfield.sym.type ) ;; is member a type (struct, union, record)?
             mov ecx,cc
-            add [ecx].counters.ofs,[edi].sfield.sym._offset
+            add [ecx].counters.ofs,[edi].sfield.sym.offs
             this.enum_fields( [edi].sfield.sym.type, enumfunc, cc )
             mov ecx,cc
-            sub [ecx].counters.ofs,[edi].sfield.sym._offset
+            sub [ecx].counters.ofs,[edi].sfield.sym.offs
         .elseif ( [esi].asym.typekind == TYPE_UNION )
             ;; v2.11: include anonymous union members.
             ;; to make the MS debugger work with those members, they must have a name -
@@ -1039,7 +1039,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
     ;;   - simple labels
     ;; - data labels, memtype != MT_NEAR | MT_FAR
 
-    .if ( [esi].asym.flag & S_ISPROC && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
+    .if ( [esi].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED ) ;; v2.10: no locals for -Zi0
 
         mov edx,[esi].dsym.procinfo
         mov pproc,edx
@@ -1070,7 +1070,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                 mov ecx,i
                 inc cnt[ecx*4]
 
-                .if ( [esi].asym.mem_type == MT_EMPTY && [esi].asym.sint_flag & SINT_ISVARARG )
+                .if ( [esi].asym.mem_type == MT_EMPTY && [esi].asym.sflags & S_ISVARARG )
                     mov typeref,ST_PVOID
                 .else
                     .if ( [esi].asym.mem_type == MT_PTR )
@@ -1080,7 +1080,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                     .endif
                     mov typeref,ax
                 .endif
-                .if ( [esi].asym.flag & S_ISARRAY )
+                .if ( [esi].asym.flag1 & S_ISARRAY )
                     [ebx].write_array_type( esi, typeref, Ofssize )
                     mov eax,[ebx].currtype
                     dec eax
@@ -1103,7 +1103,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             add eax,sizeof( PROCSYM16 ) - sizeof(uint_16)
             mov [edi].PROCSYM16.reclen,ax
             mov eax,S_LPROC16
-            .if ( [esi].asym.flag & S_ISPUBLIC )
+            .if ( [esi].asym.flags & S_ISPUBLIC )
                 mov eax,S_GPROC16
             .endif
             mov [edi].PROCSYM16.rectyp,ax
@@ -1129,14 +1129,14 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
 
             mov size,sizeof( PROCSYM32 )
             mov eax,S_LPROC32
-            .if ( [esi].asym.flag & S_ISPUBLIC )
+            .if ( [esi].asym.flags & S_ISPUBLIC )
                 mov eax,S_GPROC32
             .endif
             mov leaf,ax
             .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
                 mov size,sizeof( PROCSYM32_16t )
                 mov eax,S_LPROC32_16t
-                .if ( [esi].asym.flag & S_ISPUBLIC )
+                .if ( [esi].asym.flags & S_ISPUBLIC )
                     mov eax,S_GPROC32_16t
                 .endif
                 mov leaf,ax
@@ -1228,7 +1228,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
 
         ;.new typeref:uint_32
 
-        .if ( [esi].asym.flag & S_ISARRAY )
+        .if ( [esi].asym.flag1 & S_ISARRAY )
             [ebx].write_array_type( esi, 0, Ofssize )
             mov eax,[ebx].currtype
             dec eax
@@ -1256,20 +1256,20 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
         mov [edi].DATASYM32_16t.reclen,ax
         .if ( Ofssize == USE16 )
             mov eax,S_LDATA16
-            .if ( [esi].asym.flag & S_ISPUBLIC )
+            .if ( [esi].asym.flags & S_ISPUBLIC )
                 mov eax,S_GDATA16
             .endif
             mov leaf,ax
             mov rlctype,FIX_PTR16
         .else
             mov ecx,esi
-            mov ecx,[ecx].asym._segment
+            mov ecx,[ecx].asym.segm
             mov eax,1
             .if ( ( ModuleInfo.cv_opt & CVO_STATICTLS ) && [ecx].seg_info.clsym )
                 mov ecx,[ecx].seg_info.clsym
                 .if ( strcmp( [ecx].asym.name, "TLS" ) == 0 )
                     mov ecx,S_LTHREAD32_16t
-                    .if ( [esi].asym.flag & S_ISPUBLIC )
+                    .if ( [esi].asym.flags & S_ISPUBLIC )
                         mov ecx,S_GTHREAD32_16t
                     .endif
                 .endif
@@ -1277,12 +1277,12 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             .if ( eax )
                 .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
                     mov ecx,S_LDATA32_16t
-                    .if ( [esi].asym.flag & S_ISPUBLIC )
+                    .if ( [esi].asym.flags & S_ISPUBLIC )
                         mov ecx,S_GDATA32_16t
                     .endif
                 .else
                     mov ecx,S_LDATA32
-                    .if ( [esi].asym.flag & S_ISPUBLIC )
+                    .if ( [esi].asym.flags & S_ISPUBLIC )
                         mov ecx,S_GDATA32
                     .endif
                 .endif
@@ -1345,7 +1345,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
 
     ;; v2.10: no locals for -Zi0
 
-    .if ( [esi].asym.flag & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
+    .if ( [esi].asym.flag1 & S_ISPROC && Options.debug_ext >= CVEX_REDUCED )
 
         ;; scan local symbols again
 
@@ -1399,7 +1399,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                     add ax,[esi].asym.name_size
                     mov [edx].BPRELSYM16.reclen,ax
                     mov [edx].BPRELSYM16.rectyp,S_BPREL16
-                    mov [edx].BPRELSYM16.off,[esi].asym._offset
+                    mov [edx].BPRELSYM16.off,[esi].asym.offs
                     mov [edx].BPRELSYM16.typind,[esi].asym.ext_idx1
                 .else
 
@@ -1437,11 +1437,11 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                         .endif
                         mov edx,[ebx].ps
                         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-                            mov [edx].REGREL32_16t.off,[esi].asym._offset
+                            mov [edx].REGREL32_16t.off,[esi].asym.offs
                             mov [edx].REGREL32_16t.typind,[esi].asym.ext_idx1
                             mov [edx].REGREL32_16t.reg,size
                         .else
-                            mov [edx].REGREL32.off,[esi].asym._offset
+                            mov [edx].REGREL32.off,[esi].asym.offs
                             mov [edx].REGREL32.typind,[esi].asym.ext_idx1
                             mov [edx].REGREL32.reg,size
                         .endif
@@ -1462,10 +1462,10 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                         mov [edx].BPRELSYM32_16t.reclen,ax
                         mov [edx].BPRELSYM32_16t.rectyp,leaf
                         .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-                            mov [edx].BPRELSYM32_16t.off,[esi].asym._offset
+                            mov [edx].BPRELSYM32_16t.off,[esi].asym.offs
                             mov [edx].BPRELSYM32_16t.typind,[esi].asym.ext_idx1
                         .else
-                            mov [edx].BPRELSYM32.off,[esi].asym._offset
+                            mov [edx].BPRELSYM32.off,[esi].asym.offs
                             mov [edx].BPRELSYM32.typind,[esi].asym.ext_idx1
                         .endif
                     .endif
@@ -1837,7 +1837,7 @@ endif
                             shr eax,20
                             mov ecx,[ebx].line_number
                             mov edx,[ebx].sym
-                            mov edx,[edx].asym._offset
+                            mov edx,[edx].asym.offs
                         .else
                             mov eax,[ebx].srcfile
                             mov ecx,[ebx].number
@@ -2079,7 +2079,7 @@ endif
             ;; v2.10: no UDTs for -Zi0 and -Zi1
             .break .if ( Options.debug_ext < CVEX_NORMAL )
         .case SYM_INTERNAL
-            movzx eax,[esi].asym.flag
+            movzx eax,[esi].asym.flags
             mov edx,eax
             and edx,S_PREDEFINED
 if EQUATESYMS

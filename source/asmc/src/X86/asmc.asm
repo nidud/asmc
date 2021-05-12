@@ -101,7 +101,7 @@ AssembleSubdir endp
 
 GeneralFailure proc signo
     mov eax,signo
-	    .if eax != SIGTERM
+    .if eax != SIGTERM
 	mov eax,pCurrentException
 	PrintContext(
 	    [eax].EXCEPTION_POINTERS.ContextRecord,

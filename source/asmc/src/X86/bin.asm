@@ -240,7 +240,7 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
                 mov ecx,[ebx].fileoffset
                 sub ecx,[ebx].sizehdr
-                mov [eax].asym._offset,ecx
+                mov [eax].asym.offs,ecx
                 mov offs,0
 
             .else
@@ -356,7 +356,7 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
                 mov ecx,[ebx].sym
                 .if ecx
 
-                    mov ecx,[ecx].asym._segment
+                    mov ecx,[ecx].asym.segm
                     .if ecx && [ecx].dsym.seginfo
 
                         mov eax,[ecx].dsym.seginfo
@@ -381,11 +381,11 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
                     .if [edi].sgroup
 
                         mov edx,[edi].sgroup
-                        mov edx,[edx].asym._offset
+                        mov edx,[edx].asym.offs
                         and edx,0xf
                         add ecx,edx
                         mov edx,[edi].sgroup
-                        mov edx,[edx].asym._offset
+                        mov edx,[edx].asym.offs
                         shr edx,4
                         add eax,edx
                     .endif
@@ -483,19 +483,19 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
         mov codeptr,eax
 
         mov ecx,[ebx].sym
-        .if ( ecx && ( [ecx].asym._segment || [ecx].asym.flag & S_VARIABLE ) )
+        .if ( ecx && ( [ecx].asym.segm || [ecx].asym.flags & S_VARIABLE ) )
 
             ;; assembly time variable (also $ symbol) in reloc?
             ;; v2.07: moved inside if-block, using new local var "offset"
 
-            .if [ecx].asym.flag & S_VARIABLE
+            .if [ecx].asym.flags & S_VARIABLE
 
                 mov esi,[ebx].segment_var
                 mov offs,0
 
             .else
-                mov esi,[ecx].asym._segment
-                mov offs,[ecx].asym._offset
+                mov esi,[ecx].asym.segm
+                mov offs,[ecx].asym.offs
             .endif
 
             mov sg,esi
@@ -578,7 +578,7 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                 .if ( [esi].sgroup && [ebx].frame_type != FRAME_SEG )
 
                     mov ecx,[esi].sgroup
-                    mov eax,[ecx].asym._offset
+                    mov eax,[ecx].asym.offs
                     and eax,0x0F
                     add eax,[esi].start_offset
                     add eax,[ebx].offs
@@ -686,7 +686,7 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
                     mov sg,eax
                     mov esi,[eax].dsym.seginfo
-                    mov edx,[eax].asym._offset
+                    mov edx,[eax].asym.offs
                     shr edx,4
                     mov [ecx],dx
 
@@ -697,7 +697,7 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                     mov edx,[esi].start_offset
                     .if [esi].sgroup
                         mov eax,[esi].sgroup
-                        add edx,[eax].asym._offset
+                        add edx,[eax].asym.offs
                     .endif
                     shr edx,4
                     mov [ecx],dx
@@ -705,7 +705,7 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                 .elseif ( [ebx].frame_type == FRAME_GRP )
 
                     mov eax,[esi].sgroup
-                    mov eax,[eax].asym._offset
+                    mov eax,[eax].asym.offs
                     shr eax,4
                     mov [ecx],ax
                 .else
@@ -730,14 +730,14 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                 add ecx,2
                 .if ( [ebx].frame_type == FRAME_GRP )
                     mov eax,[esi].sgroup
-                    mov eax,[eax].asym._offset
+                    mov eax,[eax].asym.offs
                     shr eax,4
                     mov [ecx],ax
                 .else
                     mov eax,[esi].start_offset
                     .if [esi].sgroup
                         mov edx,[esi].sgroup
-                        add eax,[edx].asym._offset
+                        add eax,[edx].asym.offs
                     .endif
                     shr eax,4
                     mov [ecx],ax
@@ -757,14 +757,14 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                 mov [ecx],eax
                 .if ( [ebx].frame_type == FRAME_GRP )
                     mov eax,[esi].sgroup
-                    mov eax,[eax].asym._offset
+                    mov eax,[eax].asym.offs
                     shr eax,4
                     mov [ecx+4],ax
                 .else
                     mov eax,[esi].start_offset
                     .if [esi].sgroup
                         mov edx,[esi].sgroup
-                        add eax,[edx].asym._offset
+                        add eax,[edx].asym.offs
                     .endif
                     shr eax,4
                     mov [ecx+4],ax
@@ -907,7 +907,7 @@ endif
         time( &[ebx].IMAGE_PE_HEADER32.FileHeader.TimeDateStamp )
         CreateVariable( "@pe_file_flags", [edi].IMAGE_PE_HEADER32.FileHeader.Characteristics )
         .if eax
-            or [eax].asym.flag,S_PREDEFINED
+            or [eax].asym.flags,S_PREDEFINED
             lea ecx,set_file_flags
             mov [eax].asym.sfunc_ptr,ecx
         .endif
@@ -1171,7 +1171,7 @@ endif
             AddLineQueueX( "@%s_ilt label %r", esi, ptrtype )
 
             .for ( edi = SymTables[TAB_EXT*symbol_queue].head : edi : edi = [edi].dsym.next )
-                .if ( [edi].asym.flag & S_IAT_USED && [edi].asym.dll == ebx )
+                .if ( [edi].asym.flags & S_IAT_USED && [edi].asym.dll == ebx )
                     AddLineQueueX( "@LPPROC imagerel @%s_name", [edi].asym.name )
                 .endif
             .endf
@@ -1184,7 +1184,7 @@ endif
             AddLineQueueX( "@%s_iat label %r", esi, ptrtype )
 
             .for ( edi = SymTables[TAB_EXT*symbol_queue].head : edi : edi = [edi].dsym.next )
-                .if ( [edi].asym.flag & S_IAT_USED && [edi].asym.dll == ebx )
+                .if ( [edi].asym.flags & S_IAT_USED && [edi].asym.dll == ebx )
                     Mangle( edi, StringBufferEnd )
                     AddLineQueueX( "%s%s @LPPROC imagerel @%s_name",
                         ModuleInfo.imp_prefix, StringBufferEnd, [edi].asym.name )
@@ -1198,7 +1198,7 @@ endif
             AddLineQueueX( "%s" IMPSTRSUF " segment word %s", idataname, idataattr )
 
             .for ( edi = SymTables[TAB_EXT*symbol_queue].head : edi : edi = [edi].dsym.next )
-                .if ( [edi].asym.flag & S_IAT_USED && [edi].asym.dll == ebx )
+                .if ( [edi].asym.flags & S_IAT_USED && [edi].asym.dll == ebx )
                     AddLineQueueX( "@%s_name dw 0", [edi].asym.name )
                     AddLineQueueX( "db '%s',0", [edi].asym.name )
                     AddLineQueue( "even" )
@@ -1674,10 +1674,10 @@ endif
     .if ( ModuleInfo.start_label )
 
         mov eax,ModuleInfo.start_label
-        mov edx,[eax].asym._segment
+        mov edx,[eax].asym.segm
         mov esi,[edx].dsym.seginfo
         mov ecx,[esi].start_offset
-        add ecx,[eax].asym._offset
+        add ecx,[eax].asym.offs
 
 ifndef __ASMC64__
         .if ( ModuleInfo.defOfssize == USE64 )
@@ -1935,7 +1935,7 @@ bin_write_module proc uses esi edi ebx modinfo:ptr module_info
     .if ( [ebx].sub_format == SFORMAT_NONE )
         .if ( [ebx].start_label )
             mov eax,[ebx].start_label
-            .if ( cp.entryoffset == -1 || cp.entryseg != [eax].asym._segment )
+            .if ( cp.entryoffset == -1 || cp.entryseg != [eax].asym.segm )
                 .return( asmerr( 3003 ) )
             .endif
         .endif
@@ -1990,7 +1990,7 @@ bin_write_module proc uses esi edi ebx modinfo:ptr module_info
             mov eax,[esi].start_offset
             .if ( [esi].sgroup )
                 mov edx,[esi].sgroup
-                add eax,[edx].asym._offset
+                add eax,[edx].asym.offs
             .endif
             xor edx,edx
             .if eax & 0x0F
@@ -2011,16 +2011,16 @@ bin_write_module proc uses esi edi ebx modinfo:ptr module_info
         .if ( [ebx].start_label )
 
             mov ecx,[ebx].start_label
-            mov edx,[ecx].asym._segment
+            mov edx,[ecx].asym.segm
             mov esi,[edx].dsym.seginfo
             .if ( [esi].sgroup )
                 mov eax,[esi].sgroup
-                mov eax,[eax].asym._offset
+                mov eax,[eax].asym.offs
                 mov edx,eax
                 shr edx,4
                 and eax,0x0F
                 add eax,[esi].start_offset
-                add eax,[ecx].asym._offset
+                add eax,[ecx].asym.offs
                 mov [edi].e_ip,ax
                 mov [edi].e_cs,dx
             .else
@@ -2028,7 +2028,7 @@ bin_write_module proc uses esi edi ebx modinfo:ptr module_info
                 mov edx,eax
                 shr edx,4
                 and eax,0x0F
-                add eax,[ecx].asym._offset
+                add eax,[ecx].asym.offs
                 mov [edi].e_ip,ax
                 mov [edi].e_cs,dx
             .endif
@@ -2143,7 +2143,7 @@ bin_write_module endp
 bin_check_external proc modinfo:ptr module_info
 
     .for ( edx = SymTables[TAB_EXT*symbol_queue].head : edx : edx = [edx].dsym.next )
-        .if ( !( [edx].asym.sint_flag & SINT_WEAK ) || [edx].asym.flag & S_USED )
+        .if ( !( [edx].asym.sflags & S_WEAK ) || [edx].asym.flags & S_USED )
             .return( asmerr( 2014, [edx].asym.name ) )
         .endif
     .endf

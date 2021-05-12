@@ -712,7 +712,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                     .if [eax].asym.mac_flag & M_ISFUNC
 
                         and [esi].flags2,not DF_CEXPR
-                        .if [eax].asym.flag & S_PREDEFINED
+                        .if [eax].asym.flags & S_PREDEFINED
 
                             mov edx,[eax].asym.name
                             mov edx,[edx]
@@ -726,12 +726,12 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                         .endc
                     .endif
 
-                    .endc .if [eax].asym.flag & S_PREDEFINED
+                    .endc .if [eax].asym.flags & S_PREDEFINED
                     .endc .if ![eax].asym.string_ptr
                     .endc .if !SymFind( [eax].asym.string_ptr )
                     xor ecx,ecx
 
-                    .endc .if !( [eax].asym.flag & S_ISPROC )
+                    .endc .if !( [eax].asym.flag1 & S_ISPROC )
                     mov ecx,T_HLL_PROC
                     inc [esi].cstring
                     .endc
@@ -776,7 +776,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                   .case edx == SYM_STACK
                   .case edx == SYM_INTERNAL
                   .case edx == SYM_EXTERNAL
-                  .case [eax].asym.flag & S_ISPROC
+                  .case [eax].asym.flag1 & S_ISPROC
                     mov ecx,T_HLL_PROC
                     inc [esi].cstring
                     .endc

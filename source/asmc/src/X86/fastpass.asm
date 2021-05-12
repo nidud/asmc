@@ -165,12 +165,12 @@ SkipSavedState ENDP
 SaveVariableState PROC USES esi edi sym:asym_t
 
     mov esi,sym
-    or  [esi].asym.flag,S_ISSAVED
+    or  [esi].asym.flag1,S_ISSAVED
     mov edi,LclAlloc(equ_item)
     mov [edi].equ_item.next,0
     mov [edi].equ_item.sym,esi
     mov [edi].equ_item.isdefined,0
-    .if [esi].asym.flag & S_ISDEFINED
+    .if [esi].asym.flags & S_ISDEFINED
         inc [edi].equ_item.isdefined
     .endif
     mov [edi].equ_item.lvalue,[esi].asym.value
@@ -198,9 +198,9 @@ RestoreState PROC
             mov ecx,[edx].equ_item.sym
             mov [ecx].asym.value,[edx].equ_item.lvalue
             mov [ecx].asym.value3264,[edx].equ_item.hvalue
-            and [ecx].asym.flag,not S_ISDEFINED
+            and [ecx].asym.flags,not S_ISDEFINED
             .if [edx].equ_item.isdefined
-                and [ecx].asym.flag,not S_ISDEFINED
+                and [ecx].asym.flags,not S_ISDEFINED
             .endif
             mov edx,[edx].equ_item.next
         .endw

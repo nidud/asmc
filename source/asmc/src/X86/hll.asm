@@ -1012,7 +1012,6 @@ ExpandCStrings endp
 
 GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
 
-  local poffset:ptr
   local vname[64]:sbyte
 
     mov ecx,sym
@@ -1027,7 +1026,7 @@ GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
     .if SymFind(strcat(eax, "Vtbl"))
 
         mov ecx,eax
-        SearchNameInStruct(ecx, name, &poffset, 0)
+        SearchNameInStruct(ecx, name, 0, 0)
     .endif
     ret
 
@@ -1042,7 +1041,7 @@ GetProc proc private uses ebx token:tok_t
         SymFind([ebx].string_ptr)
     .endif
     .return .if !eax
-    .return .if [eax].asym.flag & S_ISPROC
+    .return .if [eax].asym.flag1 & S_ISPROC
 
     .if [ebx].token == T_ID && \
         [ebx+16].token == T_DOT && \
@@ -1052,7 +1051,7 @@ GetProc proc private uses ebx token:tok_t
 
     mov ecx,[eax].asym.target_type
     mov dl,[eax].asym.mem_type
-    .return ecx .if dl == MT_PTR && ecx && [ecx].asym.flag & S_ISPROC
+    .return ecx .if dl == MT_PTR && ecx && [ecx].asym.flag1 & S_ISPROC
 
     .if dl == MT_PTR && ecx && [ecx].asym.mem_type == MT_PROC
 
@@ -1372,17 +1371,18 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local opnd:expr
   local b[MAX_LINE_LEN]:char_t
   local name:string_t
-  local poffset:int_t
   local id:tok_t
   local args:tok_t
   local dots[10]:tok_t
   local static_struct:int_t
   local ClassVtbl[256]:char_t
   local sym:asym_t
+  local symt:asym_t
   local type:string_t
   local method:asym_t
   local comptr:string_t
   local constructor:int_t ; Class(..)
+  local vtable:int_t
   local brcount:int_t
   local sqcount:int_t
   local dotcount:int_t
@@ -1400,6 +1400,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov method,         eax
     mov comptr,         eax
     mov constructor,    eax
+    mov vtable,         eax
     mov j,              i
 
     shl eax,4
@@ -1451,7 +1452,6 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         ;       - [reg+foo([rax])].Class.Method()
         ;       - [reg].Method()
         ;
-
         xor eax,eax
         .if dotcount
 
@@ -1496,17 +1496,23 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     .else
 
         SymFind( [ebx].string_ptr )
+        mov edi,dotcount
+        .if edi
+            dec edi
+        .endif
 
-        .for esi=0, edi=dotcount: eax && edi > 1 && esi < edi: esi++, edi--
-            .if [eax].asym.is_ptr && [eax].asym.target_type
-                mov ecx,[eax].asym.target_type
-            .else
-                mov ecx,[eax].asym.type
+        .for ( esi = 0 : eax && edi : esi++, edi-- )
+            mov ecx,eax
+            .if ( [ecx].asym.mem_type == MT_TYPE )
+                mov ecx,[ecx].asym.type
+            .endif
+            .if ( [ecx].asym.mem_type == MT_PTR )
+                mov ecx,[ecx].asym.target_type
             .endif
             .break .if !ecx
             mov ebx,dots[esi*4]
             add ebx,16
-            SearchNameInStruct( ecx, [ebx].string_ptr, &poffset, 0 )
+            SearchNameInStruct( ecx, [ebx].string_ptr, 0, 0 )
         .endf
 
         mov sym,eax
@@ -1544,13 +1550,13 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                     type_struct:
 
                     mov sym,eax
-                    mov ecx,[eax].asym.name
-                    .if SymFind( strcat( strcpy( &ClassVtbl, ecx ), "Vtbl" ) )
-                        mov ecx,eax
-                        SearchNameInStruct( ecx, edi, &poffset, 0 )
+                    mov ecx,eax
+                    xor eax,eax
+                    .if ( [ecx].asym.flag2 & S_VTABLE )
+                        SearchNameInStruct( [ecx].asym.segm, edi, 0, 0 )
                     .endif
-                    .if !eax
-                        .if SearchNameInStruct( sym, edi, &poffset, 0 )
+                    .if ( eax == NULL )
+                        .if SearchNameInStruct( sym, edi, 0, 0 )
                             mov method,eax
                             mov sym,0
                         .endif
@@ -1573,112 +1579,111 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov ecx,7
     rep movsb
 
-    .if edx
+    .if ( edx && [edx].asym.state == SYM_TYPE && [edx].asym.typekind == TYPE_STRUCT )
 
-        .if [edx].asym.state == SYM_TYPE && [edx].asym.typekind == TYPE_STRUCT
+        mov esi,edx
+        mov comptr,[esi].asym.name
+        .if SearchNameInStruct( esi, name, 0, 0 )
+            mov method,eax
+        .endif
+        .if ( [esi].asym.flag2 & S_VTABLE )
 
-            mov eax,[edx].asym.name
-            mov comptr,eax
-
-            .if SearchNameInStruct( edx, name, &poffset, 0 )
-
+            .if SearchNameInStruct( [esi].asym.segm, name, 0, 0 )
+                inc vtable
                 mov method,eax
+                mov esi,[esi].asym.segm
+                mov comptr,[esi].asym.name
             .endif
-
-            .if SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
-
-                mov ecx,eax
-                .if SearchNameInStruct( ecx, name, &poffset, 0 )
-                    mov method,eax
-
-                    lea eax,ClassVtbl
-                    mov comptr,eax
-                .endif
-            .endif
-
-            .if method == NULL && strcmp(comptr, name) == 0
-
+        .endif
+        .if ( method == NULL )
+            .if ( strcmp( [esi].asym.name, name ) == 0 )
+                inc vtable
                 inc constructor
+            .endif
+        .endif
+    .endif
 
-            .elseif ( ModuleInfo.Ofssize == USE64 && !constructor )
+    .if ( comptr )
 
-                mov eax,method
+        .if ( ModuleInfo.Ofssize == USE64 && !constructor )
 
-                .if eax ; v2.28: Added for undefined symbol error..
+            mov eax,method
+            .if eax ; v2.28: Added for undefined symbol error..
 
-                    .if [eax].asym.mem_type == MT_TYPE && [eax].asym.type
-                        mov eax,[eax].asym.type
-                        .if [eax].asym.typekind == TYPE_TYPEDEF
-                            mov eax,[eax].asym.target_type
-
-                        .endif
+                .if [eax].asym.mem_type == MT_TYPE && [eax].asym.type
+                    mov eax,[eax].asym.type
+                    .if [eax].asym.typekind == TYPE_TYPEDEF
+                        mov eax,[eax].asym.target_type
                     .endif
-
-                    .if [eax].asym.langtype == LANG_SYSCALL
-
-                        mov eax,"01r[" ; v2.28: Added for :vararg
-                    .else
-                        mov eax,"xar["
-                    .endif
+                .endif
+                .if [eax].asym.langtype == LANG_SYSCALL
+                    mov eax,"01r[" ; v2.28: Added for :vararg
                 .else
                     mov eax,"xar["
                 .endif
             .else
-                mov eax,"xae["
+                mov eax,"xar["
             .endif
-            .if ( !constructor )
-                stosd
-                mov eax,".]"
-                stosw
+        .else
+            mov eax,"xae["
+        .endif
+
+        .if ( !constructor )
+
+            stosd
+            mov eax,".]"
+            stosw
+        .endif
+
+        mov esi,comptr
+        .while ( byte ptr [esi] )
+            movsb
+        .endw
+
+        .if ( type )
+            mov al,'.'
+            .if ( constructor )
+                mov al,'_'
             .endif
-            mov esi,comptr
-            .while byte ptr [esi]
+            stosb
+            mov esi,type
+            .while ( byte ptr [esi] )
                 movsb
             .endw
-            .if type
-                mov al,'.'
-                .if constructor
-                    mov al,'_'
-                .endif
-                stosb
-                mov esi,type
-                .while byte ptr [esi]
-                    movsb
-                .endw
-            .endif
+        .endif
 
-            .if [ebx].token == T_OP_SQ_BRACKET
+        .if ( [ebx].token == T_OP_SQ_BRACKET )
 
-                .if [ebx+32].token == T_CL_SQ_BRACKET
+            .if ( [ebx+32].token == T_CL_SQ_BRACKET )
 
-                    mov eax,[ebx+16].string_ptr
-                .else
-                    strcpy( &ClassVtbl, "addr [" )
-                    .for esi = &[ebx+16] : esi < sqbrend : esi += 16
-
-                        strcat( eax, [esi].asm_tok.string_ptr )
-                    .endf
-                .endif
-            .elseif dotcount
-                lea eax,ClassVtbl
-                mov esi,[ebx].tokpos
-                mov edx,args
-                sub edx,2*16
-                mov ecx,[edx].asm_tok.tokpos
-                sub ecx,esi
-                mov edx,edi
-                mov edi,eax
-                rep movsb
-                mov byte ptr [edi],0
-                mov edi,edx
+                mov eax,[ebx+16].string_ptr
             .else
-                mov eax,[ebx].string_ptr
+                strcpy( &ClassVtbl, "addr [" )
+                .for ( esi = &[ebx+16] : esi < sqbrend : esi += 16 )
+                    strcat( eax, [esi].asm_tok.string_ptr )
+                .endf
             .endif
-            mov comptr,eax
-            mov eax,method
-            .if eax
-                or [eax].asym.flag,S_METHOD
-            .endif
+
+        .elseif ( dotcount )
+
+            lea eax,ClassVtbl
+            mov esi,[ebx].tokpos
+            mov edx,args
+            sub edx,2*16
+            mov ecx,[edx].asm_tok.tokpos
+            sub ecx,esi
+            mov edx,edi
+            mov edi,eax
+            rep movsb
+            mov byte ptr [edi],0
+            mov edi,edx
+        .else
+            mov eax,[ebx].string_ptr
+        .endif
+        mov comptr,eax
+        mov eax,method
+        .if eax
+            or [eax].asym.flag1,S_METHOD
         .endif
     .endif
 
@@ -1702,7 +1707,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         mov eax,"0 ,"
         stosd
         dec edi
-    .elseif comptr
+    .elseif comptr && vtable
         mov eax,' ,'
         stosw
         .if static_struct
@@ -1761,6 +1766,15 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov byte ptr [edi],0
 
 done:
+    .if comptr && !vtable
+        mov eax,' ,'
+        stosw
+        mov esi,comptr
+        .while byte ptr [esi]
+            movsb
+        .endw
+        mov byte ptr [edi],0
+    .endif
 
     ; v2.21 -pe dllimport:<dll> external proto <no args> error
     ;
@@ -1782,7 +1796,7 @@ done:
 
                     mov eax,ecx
 
-                .elseif ( [ecx].asym.sint_flag & SINT_ISINLINE )
+                .elseif ( [ecx].asym.sflags & S_ISINLINE )
 
                     mov ecx,[ecx].asym.target_type
                     .if ( ecx && [ecx].asym.state == SYM_MACRO )

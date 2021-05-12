@@ -40,7 +40,7 @@ BackPatch proc uses esi edi ebx sym:asym_t
         ;; all relative fixups should occure only at first pass and they signal forward references
         ;; they must be removed after patching or skiped ( next processed as normal fixup )
 
-        mov eax,[esi]._segment
+        mov eax,[esi].segm
 
         ;; if fixup location is in another segment, backpatch is possible, but
         ;; complicated and it's a pretty rare case, so nothing's done.
@@ -58,7 +58,7 @@ BackPatch proc uses esi edi ebx sym:asym_t
                 ;; (only at first pass)
 
                 mov ModuleInfo.PhaseError,TRUE
-                inc [esi]._offset ;; a PUSH CS will be added
+                inc [esi].offs ;; a PUSH CS will be added
 
                 ;; todo: insert LABELOPT block here
 
@@ -98,7 +98,7 @@ BackPatch proc uses esi edi ebx sym:asym_t
             inc edi     ;; calculate the displacement
             mov ecx,[ebx].sym
             mov edx,[ebx].offs
-            add edx,[ecx].asym._offset
+            add edx,[ecx].asym.offs
             sub edx,[ebx].locofs
             sub edx,edi
             sub edx,1   ;; displacement
@@ -131,7 +131,7 @@ BackPatch proc uses esi edi ebx sym:asym_t
                     .case OPTJ_JXX      ;; Jxx for 386
                         inc edi         ;; fall through
                     .default            ;; normal JMP (and PUSH)
-                        mov edx,[esi]._segment
+                        mov edx,[esi].segm
                         mov edx,[edx].dsym.seginfo
                         assume edx:segment_t
                         .if( [edx].Ofssize )
@@ -163,9 +163,9 @@ if LABELOPT
 
                         .for ( ecx = [edx].label_list: ecx: ecx = [ecx].dsym.next )
 
-                            .break .if ( [ecx].asym._offset <= eax )
+                            .break .if ( [ecx].asym.offs <= eax )
 
-                            add [ecx].asym._offset,edi
+                            add [ecx].asym.offs,edi
                         .endf
 
                         ;; v2.03: also adjust fixup locations located between the
@@ -185,7 +185,7 @@ if LABELOPT
 
                         .endif
 else
-                        add [esi]._offset,edi
+                        add [esi].offs,edi
 endif
                         ;; it doesn't matter what's actually "written"
 

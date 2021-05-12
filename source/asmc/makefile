@@ -51,7 +51,7 @@ objects = \
     src\X86\dbgcv.obj \
     src\X86\directiv.obj \
     src\elf.obj \
-    src\end.obj \
+    src\X86\end.obj \
     src\X86\enum.obj \
     src\X86\equate.obj \
     src\X86\expans.obj \
@@ -59,16 +59,16 @@ objects = \
     src\extern.obj \
     src\X86\fastcall.obj \
     src\X86\fastpass.obj \
-    src\fixup.obj \
+    src\X86\fixup.obj \
     src\X86\for.obj \
-    src\fpfixup.obj \
+    src\X86\fpfixup.obj \
     src\X86\hll.obj \
     src\X86\input.obj \
     src\X86\invoke.obj \
-    src\label.obj \
+    src\X86\label.obj \
     src\linnum.obj \
     src\listing.obj \
-    src\logo.obj \
+    src\X86\logo.obj \
     src\loop.obj \
     src\X86\lqueue.obj \
     src\X86\ltype.obj \
@@ -96,7 +96,7 @@ objects = \
     src\X86\switch.obj \
     src\X86\symbols.obj \
     src\X86\tokenize.obj \
-    src\types.obj \
+    src\X86\types.obj \
     src\X86\undef.obj
 
 all: targets

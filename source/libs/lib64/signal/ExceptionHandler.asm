@@ -19,18 +19,17 @@ EH_NESTED_CALL	    equ 10h
 
     .code
 
-    option  win64:0
-    option  stackbase:rsp
-
-ExceptionHandler proc ExceptionRecord:PEXCEPTION_RECORD, EstablisherFrame:ptr dword,
-    ContextRecord:PCONTEXT, DispatcherContext:LPDWORD
+ExceptionHandler proc frame \
+	ExceptionRecord		: PEXCEPTION_RECORD,
+	EstablisherFrame	: ptr dword,
+	ContextRecord		: PCONTEXT,
+	DispatcherContext	: LPDWORD
 
   local CurrentException:EXCEPTION_POINTERS
 
     mov CurrentException.ExceptionRecord,rcx
     mov CurrentException.ContextRecord,r8
-    lea rax,CurrentException
-    mov pCurrentException,rax
+    mov pCurrentException,&CurrentException
 
     mov eax,[rcx].EXCEPTION_RECORD.ExceptionFlags
     .switch

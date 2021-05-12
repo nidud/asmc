@@ -677,7 +677,7 @@ endif
         .endif
     .endf ;; end for
     mov edx,mac
-    or  [edx].asym.flag,S_ISDEFINED
+    or  [edx].asym.flags,S_ISDEFINED
     and [edx].asym.mac_flag,not M_PURGED
     mov eax,NOT_ERROR
     ret
@@ -752,7 +752,7 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 .if SymAlloc(edi)
 
                     mov [esi].sym.target_type,eax
-                    or  [esi].sym.sint_flag,SINT_ISINLINE
+                    or  [esi].sym.sflags,S_ISINLINE
                     mov esi,eax
                     mov [esi].sym.altname,ebx
                     and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
@@ -788,13 +788,13 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
     mov edi,[esi].macroinfo
     mov [edi].srcfile,get_curr_srcfile()
 
-    .if ( ( Parse_Pass == PASS_1 ) || ( [esi].sym.flag & S_VARIABLE ) )
+    .if ( ( Parse_Pass == PASS_1 ) || ( [esi].sym.flags & S_VARIABLE ) )
         ;; is the macro redefined?
         .if [edi]._data != NULL
             ReleaseMacroData(esi)
             ;; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
             and [esi].sym.mac_flag,not M_ISFUNC
-            or  byte ptr [esi].sym.flag,S_VARIABLE
+            or  byte ptr [esi].sym.flags,S_VARIABLE
         .endif
         mov store_data,TRUE
     .else
@@ -937,7 +937,7 @@ if TRUEPURGE
         [esi].defined = FALSE;
 else
         ReleaseMacroData(esi)
-        or byte ptr [esi].flag,S_VARIABLE
+        or byte ptr [esi].flags,S_VARIABLE
         or [esi].mac_flag,M_PURGED
 endif
         inc i
@@ -993,7 +993,7 @@ MacroInit proc pass:int_t
         ;; add @Environ() macro func
 
         CreateMacro( "@Environ" )
-        or  byte ptr [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
+        or  byte ptr [eax].asym.flags,S_ISDEFINED or S_PREDEFINED
         or  [eax].asym.mac_flag,M_ISFUNC
         mov [eax].asym.func_ptr,EnvironFunc
         mov eax,[eax].dsym.macroinfo

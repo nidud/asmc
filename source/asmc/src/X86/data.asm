@@ -287,7 +287,7 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
             .endif
             mov eax,dword ptr opndx.llvalue
             mov edx,dword ptr opndx.llvalue[4]
-            mov ecx,[edi].sym._offset
+            mov ecx,[edi].sym.offs
             call __llshl
             or dword ptr dwRecInit,eax
             or dword ptr dwRecInit[4],edx
@@ -299,7 +299,7 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 inc i
             .endif
 
-        .elseif ( [edi].sym.flag & S_ISARRAY && \
+        .elseif ( [edi].sym.flag1 & S_ISARRAY && \
                   [ebx].token != T_FINAL && [ebx].token != T_COMMA )
 
             .if ( InitializeArray( edi, &i, tokenarray ) == ERROR )
@@ -376,9 +376,9 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 mov nextofs,[esi].asym.total_size
             .else
                 mov ecx,[edi].next
-                mov nextofs,[ecx].sfield.sym._offset
+                mov nextofs,[ecx].sfield.sym.offs
             .endif
-            mov ecx,[edi].sym._offset
+            mov ecx,[edi].sym.offs
             add ecx,[edi].sym.total_size
             .if ( ecx < eax )
                 sub eax,ecx
@@ -623,7 +623,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
 
         mov eax,sym
         .if ( eax )
-            or [eax].asym.flag,S_ISARRAY
+            or [eax].asym.flag1,S_ISARRAY
         .endif
 
         .if ( opndx.value == 0 )
@@ -756,7 +756,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
                     ;; v2.07: don't modify string_len! Instead
                     ;; mark field as array!
 
-                    or [edi].asym.flag,S_ISARRAY
+                    or [edi].asym.flag1,S_ISARRAY
                 .else
                     .return( asmerr( 2047 ) ) ;; MASM doesn't like ""
                 .endif
@@ -789,7 +789,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
                 .if ecx
                     dec eax
                     add total,eax
-                    or [edi].asym.flag,S_ISARRAY ;; v2.07: added
+                    or [edi].asym.flag1,S_ISARRAY ;; v2.07: added
                     .if ( first )
                         mov [edi].asym.first_length,1
                         mov [edi].asym.first_size,ecx
@@ -1184,7 +1184,7 @@ item_done:
         .if ( [ebx].token != T_FINAL && [ebx].token != T_CL_BRACKET )
             mov first,FALSE
             .if ( ecx )
-                or [ecx].asym.flag,S_ISARRAY
+                or [ecx].asym.flag1,S_ISARRAY
             .endif
             jmp next_item
         .endif
@@ -1304,7 +1304,7 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
         mov mem_type,MT_TYPE
         mov edi,[esi].dsym.structinfo
         .if ( [esi].asym.typekind != TYPE_TYPEDEF && \
-             ( [esi].asym.total_size == 0 || [edi].struct_info.flags & STINF_ORGINSIDE ) )
+             ( [esi].asym.total_size == 0 || [edi].struct_info.flags & SI_ORGINSIDE ) )
             .return( asmerr( 2159 ) )
         .endif
 
@@ -1378,14 +1378,14 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             .if ( StoreState )
                 FStoreLine(0)
             .endif
-            mov currofs,[esi].asym._offset
-            or [esi].asym.flag,S_ISDATA ;; 'first_size' is valid
+            mov currofs,[esi].asym.offs
+            or [esi].asym.flag1,S_ISDATA ;; 'first_size' is valid
         .else ;; v2.04: else branch added
             mov edx,CurrStruct
             mov edi,[edx].dsym.structinfo
             mov ecx,[edi].struct_info.tail
             lea esi,[ecx].sfield.sym
-            mov currofs,[esi].asym._offset
+            mov currofs,[esi].asym.offs
             mov eax,[ecx].sfield.next
             mov [edi].struct_info.tail,eax
         .endif
@@ -1413,8 +1413,8 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             .if ( Parse_Pass == PASS_1 )
 
                 .if ( [esi].asym.state == SYM_EXTERNAL && \
-                      [esi].asym.sint_flag & SINT_WEAK && \
-                      !( [esi].asym.flag & S_ISPROC ) ) ;; EXTERNDEF?
+                      [esi].asym.sflags & S_WEAK && \
+                      !( [esi].asym.flag1 & S_ISPROC ) ) ;; EXTERNDEF?
                     checktypes( esi, mem_type, type_sym )
                     sym_ext2int( esi )
                     mov [esi].asym.total_size,0
@@ -1437,8 +1437,8 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
                     ;; accept a symbol "redefinition" if addresses and types
                     ;; do match.
                     mov ecx,GetCurrOffset()
-                    .if ( [esi].asym._segment != CurrSeg || \
-                          [esi].asym._offset != ecx )
+                    .if ( [esi].asym.segm != CurrSeg || \
+                          [esi].asym.offs != ecx )
                         .return( asmerr(2005, name ) )
                     .endif
                     ;; check for symbol type conflict
@@ -1461,16 +1461,17 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
                 mov [esi].dsym.next,eax
                 mov [edx].seg_info.label_list,esi
             .else
-                mov old_offset,[esi].asym._offset
+                mov old_offset,[esi].asym.offs
             .endif
 
         label_defined:
 
             SetSymSegOfs( esi )
-            .if( Parse_Pass != PASS_1 && [esi].asym._offset != old_offset )
+            .if( Parse_Pass != PASS_1 && [esi].asym.offs != old_offset )
                 mov ModuleInfo.PhaseError,TRUE
             .endif
-            or  [esi].asym.flag,S_ISDEFINED or S_ISDATA
+            or  [esi].asym.flags,S_ISDEFINED
+            or  [esi].asym.flag1,S_ISDATA
             mov [esi].asym.mem_type,mem_type
             mov [esi].asym.type,type_sym
 

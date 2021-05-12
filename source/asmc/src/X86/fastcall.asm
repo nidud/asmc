@@ -100,7 +100,7 @@ fastcall_init endp
 ;; so it could be used by watc_param() as well.
 
 GetSegm macro x
-    exitm<[x].asym._segment>
+    exitm<[x].asym.segm>
     endm
 
 GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:string_t
@@ -118,9 +118,9 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:s
             strcpy( buffer, [edx].asm_tok.string_ptr )
         .endif
 
-    .elseif eax && [eax].asym._segment
+    .elseif eax && [eax].asym.segm
 
-        mov ebx,[eax].asym._segment
+        mov ebx,[eax].asym.segm
         mov ecx,[ebx].dsym.seginfo
 
         .if [ecx].seg_info.segtype == SEGTYPE_DATA || \
@@ -181,16 +181,16 @@ abs_param proc uses ebx pp:dsym_t, index:int_t, param:dsym_t, paramvalue:string_
     ; skip arg if :vararg and inline
 
     mov ebx,param
-    .if ( [ebx].asym.sint_flag & SINT_ISVARARG && \
-          [ecx].asym.sint_flag & SINT_ISINLINE )
+    .if ( [ebx].asym.sflags & S_ISVARARG && \
+          [ecx].asym.sflags & S_ISINLINE )
 
         .return
     .endif
 
     ; skip loading class pointer if :vararg and inline
 
-    .if ( [ecx].asym.sint_flag & SINT_ISINLINE && \
-          [ecx].asym.flag & S_METHOD && !index )
+    .if ( [ecx].asym.sflags & S_ISINLINE && \
+          [ecx].asym.flag1 & S_METHOD && !index )
 
         mov edx,[ecx].dsym.procinfo
         .if ( [edx].proc_info.flags & PROC_HAS_VARARG )
@@ -340,7 +340,7 @@ ms32_param endp
 ms32_fcend proc pp, numparams, value
 
     mov eax,pp
-    .if value && [eax].asym.sint_flag & SINT_ISINLINE
+    .if value && [eax].asym.sflags & S_ISINLINE
         AddLineQueueX( " add esp, %u", value )
     .endif
     ret
@@ -786,7 +786,7 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     add  eax,edi
 
     mov edx,pp ; v2.31.24: skip stack alloc if inline
-    .if ecx == esi && [edx].asym.sint_flag & SINT_ISINLINE
+    .if ecx == esi && [edx].asym.sflags & S_ISINLINE
         xor eax,eax
     .endif
     mov edx,value
@@ -909,7 +909,7 @@ GetPSize proc uses edi address:int_t, param:asym_t, opnd:expr_t
 
     ; v2.11: default size is 32-bit, not 64-bit
 
-    .if [edx].asym.sint_flag & SINT_ISVARARG
+    .if [edx].asym.sflags & S_ISVARARG
 
         xor eax,eax
         .if address || [edi].expr.inst == T_OFFSET
@@ -1050,6 +1050,8 @@ GetAccumulator proc psize:uint_t, regs:ptr
     ret
 
 GetAccumulator endp
+
+AssignPointer proto :ptr asym, :int_t, :ptr asm_tok
 
 ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:int_t,
         opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
@@ -1337,6 +1339,8 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
             asmerr(2114, &[esi+1])
         .endif
 
+    ret_regused:
+
         lea ecx,[esi+RPAR_START]
         mov eax,1
         shl eax,cl
@@ -1367,6 +1371,16 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     .case ecx == EXPR_FLOAT
         mov eax,psize
         .endc
+if 0
+    .case ecx == EXPR_ADDR && ( edx || [edx].asym.mem_type == MT_PTR )
+        mov ecx,[edi].expr.type_tok
+        .if ( ecx && [ecx+16].asm_tok.token == T_DOT )
+
+            movzx eax,ms64_regs[esi+3*4]
+            AssignPointer( edx, eax, ecx )
+            jmp ret_regused
+        .endif
+endif
     .case [edi].expr.mem_type != MT_EMPTY
         SizeFromMemtype([edi].expr.mem_type, USE64, [edi].expr.type)
         .endc
@@ -1515,7 +1529,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
                 [edi].expr.kind == EXPR_ADDR && \
                 [edi].expr.flags == E_INDIRECT && \
                 [ecx].asym.is_ptr && \
-                [edx].asym.flag & S_METHOD
+                [edx].asym.flag1 & S_METHOD
 
                 mov ebx,ecx
                 AddLineQueueX( " mov rax, %s", [ecx].asym.name )
@@ -1525,7 +1539,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
 
             .else
                 mov edx,param
-                .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sint_flag & SINT_ISVARARG
+                .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sflags & S_ISVARARG
                     mov ebx,get_register(ebx, 8) ; added v2.31
                 .endif
                 AddLineQueueX( " mov %r, %s", ebx, paramvalue )
@@ -1596,7 +1610,7 @@ elf64_pcheck proc public uses esi edi ebx pProc:dsym_t, paranode:dsym_t, used:pt
     mov dl,[esi].mem_type
 
     .switch
-      .case ( [esi].sint_flag & SINT_ISVARARG )
+      .case ( [esi].sflags & S_ISVARARG )
         xor eax,eax
         mov [esi].string_ptr,eax
         .return
@@ -1803,7 +1817,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
     mov psize,GetPSize(address, param, edi)
     mov edx,param
 
-    .if ( [edx].sint_flag & SINT_ISVARARG )
+    .if ( [edx].sflags & S_ISVARARG )
 
         .if fcscratch && ( eax == 16 || [edi].mem_type & MT_FLOAT )
             dec fcscratch
@@ -1830,8 +1844,8 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
     .endif
 
     mov ecx,pp
-    .if ( [edx].asym.sint_flag & SINT_ISVARARG && \
-          [ecx].asym.sint_flag & SINT_ISINLINE )
+    .if ( [edx].asym.sflags & S_ISVARARG && \
+          [ecx].asym.sflags & S_ISINLINE )
         .return 1
     .endif
     .if [edx].asym.mem_type == MT_ABS
@@ -1842,7 +1856,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
     .endif
 
     movzx eax,[edx].mem_type
-    .if  ( eax == MT_EMPTY && ( [edx].sint_flag & SINT_ISVARARG ) && \
+    .if  ( eax == MT_EMPTY && ( [edx].sflags & S_ISVARARG ) && \
            [edi].kind == EXPR_ADDR && [edi].mem_type & MT_FLOAT )
 
         .if SymFind(paramvalue)
@@ -2154,7 +2168,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
 
         .if eax != 16
             mov edx,param
-            .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sint_flag & SINT_ISVARARG
+            .if [edi].expr.kind == EXPR_FLOAT && [edx].asym.sflags & S_ISVARARG
                 mov ebx,get_register( ebx, 8 ); added v2.31
             .endif
             AddLineQueueX( " mov %r, %s", ebx, paramvalue )

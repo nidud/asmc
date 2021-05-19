@@ -13,11 +13,11 @@ MF_IGNARGS		equ 0x04 ;; ignore additional arguments (for FOR directive)
 ;; functions in expans.asm
 
 GetLiteralValue		proto :string_t, :string_t
-RunMacro		proto :dsym_t, :int_t, :tok_t, :string_t, :int_t, :ptr int_t
-ExpandText		proto :string_t, :tok_t, :uint_t
-ExpandLineItems		proto :string_t, :int_t, :tok_t, :int_t, :int_t
-ExpandLine		proto :string_t, :tok_t
-ExpandLiterals		proto :int_t, :tok_t
+RunMacro		proto :dsym_t, :int_t, :token_t, :string_t, :int_t, :ptr int_t
+ExpandText		proto :string_t, :token_t, :uint_t
+ExpandLineItems		proto :string_t, :int_t, :token_t, :int_t, :int_t
+ExpandLine		proto :string_t, :token_t
+ExpandLiterals		proto :int_t, :token_t
 LabelMacro		proto :uint_t
 
 ;; functions in macro.asm
@@ -25,15 +25,15 @@ LabelMacro		proto :uint_t
 CreateMacro		proto :string_t ;; create a macro symbol
 ReleaseMacroData	proto :dsym_t
 fill_placeholders	proto :string_t, :string_t, :uint_t, :uint_t, :array_t
-SkipCurrentQueue	proto :tok_t
-StoreMacro		proto :dsym_t, :int_t, :tok_t, :int_t ;; store macro content
+SkipCurrentQueue	proto :token_t
+StoreMacro		proto :dsym_t, :int_t, :token_t, :int_t ;; store macro content
 MacroInit		proto :int_t
 
 ;; functions in string.asm
 
-SetTextMacro		proto :tok_t, :asym_t, :string_t, :string_t ;; EQU for texts
+SetTextMacro		proto :token_t, :asym_t, :string_t, :string_t ;; EQU for texts
 AddPredefinedText	proto :string_t, :string_t
-TextItemError		proto :tok_t
+TextItemError		proto :token_t
 
 StringInit		proto
 MacroLineQueue		proto

@@ -1,5 +1,10 @@
-
-;; instruction encoding, scans opcode table and emits code.
+; CODEGEN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; instruction encoding, scans opcode table and emits code.
+;
 
 include limits.inc
 include asmc.inc
@@ -17,9 +22,9 @@ include proc.inc
 
 public  szNull
 
-extern  opnd_clstab:opnd_class
-extern  ResWordTable:ReservedWord
-extern  vex_flags:byte
+externdef opnd_clstab:opnd_class
+externdef ResWordTable:ReservedWord
+externdef vex_flags:byte
 
 ;; segment order must match the one in special.inc
 

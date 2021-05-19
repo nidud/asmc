@@ -32,14 +32,16 @@ DeleteGroup		proto :dsym_t
 
 ;; simplified segment functions
 
-SIM_CODE		equ 0
-SIM_STACK		equ 1
-SIM_DATA		equ 2
-SIM_DATA_UN		equ 3 ;; .DATA?
-SIM_FARDATA		equ 4
-SIM_FARDATA_UN		equ 5 ;; .FARDATA?
-SIM_CONST		equ 6
-SIM_LAST		equ 7
+.enum sim_seg {
+    SIM_CODE,
+    SIM_STACK,
+    SIM_DATA,
+    SIM_DATA_UN,    ;; .DATA?
+    SIM_FARDATA,
+    SIM_FARDATA_UN, ;; .FARDATA?
+    SIM_CONST,
+    SIM_LAST
+    }
 
 
 SimGetSegName		proto :int_t

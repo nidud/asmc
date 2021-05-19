@@ -417,6 +417,7 @@ _woutput proc public uses rsi rdi rbx fp:LPFILE, format:wstring_t, arglist:ptr_t
                         or edx,_ST_LONGDOUBLE
                         _cldcvt(rax, text, r8d, edi, edx)
                     .elseif esi & FL_LONGLONG
+                        or edx,_ST_QUADFLOAT
                         _cqcvt(rax, text, r8d, edi, edx)
                     .else
                         or edx,_ST_DOUBLE

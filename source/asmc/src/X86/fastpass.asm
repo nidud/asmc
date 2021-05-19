@@ -1,7 +1,7 @@
+; FASTPASS.ASM--
 ;
-;  This code is Public Domain.
-;
-;  ========================================================================
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Description:  implements the "fastpass" handling.
 ;       "fastpass" is an optimization which increases
@@ -14,6 +14,7 @@
 ;       just equates and type definitions, because there's no need
 ;       to save such lines during pass one.
 ;
+
 include stdio.inc
 include string.inc
 include malloc.inc

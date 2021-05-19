@@ -14,8 +14,8 @@ PragmaCheckOpen proto
 hll_t		typedef ptr hll_item
 
 InvertJump	proto fastcall :string_t
-GetExpression	proto :hll_t, :ptr int_t, :tok_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
-ForDirective	proto :int_t, :tok_t
+GetExpression	proto :hll_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
+ForDirective	proto :int_t, :token_t
 
 endif
 .pragma list(pop)

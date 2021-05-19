@@ -407,17 +407,6 @@ endif
             mov eax,[esi]
             .if ( al == 0 )
                 mov [ebx].sym,edi
-                .switch ( [ebx].cmd )
-                .case T_DOT_CLASS
-                    or [edi].asym.flag2,S_CLASS
-                    .endc
-                .case T_DOT_COMDEF
-                    or [edi].asym.flag2,S_COMDEF
-                    .endc
-                .case T_DOT_TEMPLATE
-                    or [edi].asym.flag2,S_TEMPLATE
-                    .endc
-                .endsw
             .elseif ( eax == 'lbtV' && byte ptr [esi+4] == 0 )
                 mov ecx,[ebx].sym
                 or  [ecx].asym.flag2,S_VTABLE

@@ -1,5 +1,10 @@
-
-;; Parser
+; PARSER.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Parser
+;
 
 include limits.inc
 include malloc.inc
@@ -75,14 +80,15 @@ InWordRange macro val
     exitm<!!(val !> 65535 || val !< -65535)>
     endm
 
-CALLBACKC(fpDirective, :int_t, :tok_t)
+CALLBACKC(fpDirective, :int_t, :token_t)
+
 extern ResWordTable:ReservedWord
 extern directive_tab:fpDirective
 
 ;; parsing of branch instructions with imm operand is found in branch.asm
 process_branch proto :ptr code_info, :uint_t, :expr_t
-ExpandLine proto :string_t, :tok_t
-ExpandHllProcEx proto :string_t, :int_t, :tok_t
+ExpandLine proto :string_t, :token_t
+ExpandHllProcEx proto :string_t, :int_t, :token_t
 
     .data
     SegOverride asym_t 0
@@ -193,13 +199,13 @@ sym_ext2int proc sym:asym_t
 
 sym_ext2int endp
 
-GetLangType proc i:ptr int_t, tokenarray:tok_t, plang:ptr byte
+GetLangType proc i:ptr int_t, tokenarray:token_t, plang:ptr byte
 
     mov ecx,i
     mov edx,[ecx]
     shl edx,4
     add edx,tokenarray
-    assume edx:tok_t
+    assume edx:token_t
 
     mov eax,[edx].string_ptr
     mov eax,[eax]
@@ -833,7 +839,7 @@ set_rm_sib endp
 ;; 2. Set global variable SegOverride if it's a SEG/GRP symbol
 ;;    (or whatever is assumed for the segment register)
 
-    assume edi:tok_t
+    assume edi:token_t
 
 segm_override proc uses esi edi ebx opndx:expr_t, CodeInfo:ptr code_info
 
@@ -1327,7 +1333,7 @@ idata_fixup proc uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uint_t, opndx
     .endif
     mov [esi].opnd[ebx].InsFixup,CreateFixup( [edi].sym, fixup_type, fixup_option )
     .if [edi].inst == T_LROFFSET
-        or [eax].fixup.loader_resolved,1
+        or [eax].fixup.fx_flag,FX_LOADER_RESOLVED
     .endif
     .if [edi].inst == T_IMAGEREL && fixup_type == FIX_OFF32
         mov [eax].fixup.type,FIX_OFF32_IMGREL
@@ -2997,7 +3003,7 @@ parsevex endp
 ;; - for other directives: call directive[]()
 ;; - for instructions: fill CodeInfo and call codegen()
 
-LabelMacro proc tokenarray:tok_t
+LabelMacro proc tokenarray:token_t
 
     mov edx,tokenarray
     .if Token_Count > 2 && [edx].asm_tok.token == T_ID && \
@@ -3011,22 +3017,22 @@ LabelMacro endp
 
 ;; callback PROC(...) [?]
 
-ProcType        proto :int_t, :tok_t, :string_t
-PublicDirective proto :int_t, :tok_t
-mem2mem         proto :uint_t, :uint_t, :tok_t, :ptr expr
-imm2xmm         proto :tok_t, :expr_t
-NewDirective    proto :int_t, :tok_t
+ProcType        proto :int_t, :token_t, :string_t
+PublicDirective proto :int_t, :token_t
+mem2mem         proto :uint_t, :uint_t, :token_t, :ptr expr
+imm2xmm         proto :token_t, :expr_t
+NewDirective    proto :int_t, :token_t
 
 externdef       CurrEnum:asym_t
-EnumDirective   proto :int_t, :tok_t
-ParseClass      proto :int_t, :tok_t, :string_t
+EnumDirective   proto :int_t, :token_t
+ParseClass      proto :int_t, :token_t, :string_t
 SizeFromExpression proto :ptr expr
 
-    assume ebx:tok_t
-    assume esi:tok_t
+    assume ebx:token_t
+    assume esi:token_t
     assume edi:nothing
 
-ParseLine proc uses esi edi ebx tokenarray:tok_t
+ParseLine proc uses esi edi ebx tokenarray:token_t
 
     local i:int_t
     local j:int_t
@@ -3335,7 +3341,7 @@ continue:
                         .else
                             strcat( eax, [ebx+32].tokpos )
                         .endif
-                        .if PreprocessLine( &tokenarray )
+                        .if PreprocessLine( tokenarray )
 
                             .return asmerr(2008, [ebx].string_ptr )
                         .endif
@@ -3980,8 +3986,8 @@ ProcessFile proc tokenarray:ptr asm_tok
             strcpy(edx, eax)
         .endif
         .repeat
-            .if PreprocessLine( &tokenarray )
-                ParseLine( tokenarray )
+            .if PreprocessLine( ModuleInfo.tokenarray )
+                ParseLine( ModuleInfo.tokenarray )
                 .if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
                     WritePreprocessedLine( CurrSource )
                 .endif

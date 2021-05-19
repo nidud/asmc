@@ -1,6 +1,10 @@
-;;
-;; string macro processing routines.
-;;
+; STRING.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; string macro processing routines.
+;
 
 include malloc.inc
 include asmc.inc
@@ -333,7 +337,7 @@ GetCurrentSegment endp
 
     option cstack:on
 
-GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
+GenerateCString proc uses esi edi ebx i, tokenarray:ptr asm_tok
 
   local rc:             int_t,
         q:              string_t,
@@ -365,7 +369,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
     xor eax,eax
     mov rc,eax
 
-    .if ModuleInfo.strict_masm_compat == 0
+    .if ( ModuleInfo.strict_masm_compat == 0 )
         ;
         ; need "quote"
         ;
@@ -418,7 +422,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
         mov al,ModuleInfo.line_flags
         mov lineflags,al
 
-        .while [ebx].asm_tok.token != T_FINAL
+        .while ( [ebx].asm_tok.token != T_FINAL )
 
             mov ecx,[ebx].asm_tok.tokpos
             mov ax,[ecx]
@@ -516,24 +520,33 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
                     AddLineQueue( b_seg )
                     InsertLineQueue()
                 .endif
+
                 strcpy( ModuleInfo.currsource, buffer )
-                TokenizeEx( 0, &tokenarray, TOK_DEFAULT )
+                Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+
                 mov ModuleInfo.token_count,eax
-                mov eax,i
-                shl eax,4
-                add eax,tokenarray
+
+                mov ecx,ModuleInfo.tokenarray
+                sub ebx,tokenarray
+                add ebx,ecx
+                mov tokenarray,ecx
+
+                imul eax,i,asm_tok
+                add eax,ecx
                 mov q,eax
-            .elseif al == ')'
+
+            .elseif ( al == ')' )
+
                 .break .if !brackets
-                sub brackets,1
-                .break .if ZERO?
-            .elseif al == '('
-                add brackets,1
+                dec brackets
+                .break .ifz
+            .elseif ( al == '(' )
+                inc brackets
             .endif
             add ebx,16
         .endw
 
-        .if equal == 0
+        .if ( equal == 0 )
             StoreLine( ModuleInfo.currsource, list_pos, 0 )
         .else
             mov ebx,ModuleInfo.GeneratedCode
@@ -551,7 +564,7 @@ GenerateCString ENDP
 
 ;; @CStr() macro
 
-CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
+CString PROC USES esi edi ebx buffer:string_t, tokenarray:token_t
 
   local string:         string_t,
         cursrc:         string_t,
@@ -699,10 +712,13 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
-                .if _stricmp( [ebx].name, "_DATA" )
-                    inc esi
-                    AddLineQueue( ".data" )
-                .elseif edi
+                .if ebx
+                    .if _stricmp( [ebx].name, "_DATA" )
+                        inc esi
+                        AddLineQueue( ".data" )
+                    .endif
+                .endif
+                .if edi && !esi
                     mov esi,2
                     AddLineQueue( ".const" )
                 .endif

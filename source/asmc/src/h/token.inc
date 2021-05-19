@@ -37,30 +37,45 @@ T_HLL_DELAYED       equ 0x08    ; [0]: delayed
 T_EVEX_OPT          equ 0x10    ; {T_STRING} -- {k1}{z}..
 T_HLL_DBLCOLON      equ 0x20
 
-asm_tok             struc
-token               uchar_t ?
-union
- dirtype            uchar_t ?   ; T_DIRECTIVE: type
- bytval             uchar_t ?   ; T_STYPE: memtype
- precedence         uchar_t ?   ; T_UNARY_OPERATOR/T_BINARY_OPERATOR
- string_delim       char_t ?    ; T_STRING: string delimiter
- floattype          char_t ?    ; T_FLOAT: 0 or 'r'
- numbase            char_t ?    ; T_NUM: number base
- specval            char_t ?    ; 1-byte special tokens: flags
-ends
-hll_flags           uchar_t ?   ; xx( if xx == macro/proc/label()
-hll_index           uchar_t ?
-union
-    tokval          uint_t ?    ; index if token is a reserved word
-    stringlen       uint_t ?    ; T_STRING: size
-    idarg           uint_t ?    ; T_ID: currently not used
-    itemlen         uint_t ?    ; T_NUM: size
-    lastidx         uint_t ?    ; T_FINAL: last index (used in RunMacro())
-ends
-string_ptr          string_t ?
-tokpos              string_t ?  ; points to item in CurrSource
-asm_tok             ends
-tok_t               typedef ptr asm_tok
+.template asm_tok
+    token               uchar_t ?
+    union
+     dirtype            uchar_t ?   ; T_DIRECTIVE: type
+     bytval             uchar_t ?   ; T_STYPE: memtype
+     precedence         uchar_t ?   ; T_UNARY_OPERATOR/T_BINARY_OPERATOR
+     string_delim       char_t ?    ; T_STRING: string delimiter
+     floattype          char_t ?    ; T_FLOAT: 0 or 'r'
+     numbase            char_t ?    ; T_NUM: number base
+     specval            char_t ?    ; 1-byte special tokens: flags
+    ends
+    hll_flags           uchar_t ?   ; xx( if xx == macro/proc/label()
+    hll_index           uchar_t ?
+    union
+     tokval             uint_t ?    ; index if token is a reserved word
+     stringlen          uint_t ?    ; T_STRING: size
+     idarg              uint_t ?    ; T_ID: currently not used
+     itemlen            uint_t ?    ; T_NUM: size
+     lastidx            uint_t ?    ; T_FINAL: last index (used in RunMacro())
+    ends
+    string_ptr          string_t ?
+    tokpos              string_t ?  ; points to item in CurrSource
+
+   .inline Load watcall i:abs=<i> {
+        imul    ebx,i,asm_tok
+        add     ebx,this
+        }
+
+   .inline Address fastcall i:int_t {
+        imul    eax,i,asm_tok
+        add     eax,this
+        }
+   .inline Index fastcall a:ptr {
+        mov     eax,a
+        sub     eax,this
+        shr     eax,4
+        }
+   .ends
+    token_t typedef ptr asm_tok
 
 endif
 .pragma list(pop)

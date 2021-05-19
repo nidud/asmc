@@ -51,6 +51,8 @@ OPT_REGAX       equ 0x20 ; use [R|E]AX to render jump-code
 OPT_ASSERT      equ 0x40 ; Generate .assert code
 OPT_PUSHF       equ 0x80 ; Push/Pop flags
 
+define NULLC    0
+
 ;; enumerations
 
 ; output formats. Order must match formatoptions[] in assemble.asm
@@ -615,7 +617,7 @@ externdef               szNothing       : char_t        ; NOTHING
 externdef               szDgroup        : char_t        ; DGROUP
 
 asmerr                  proto __cdecl :int_t, :vararg
-DelayExpand             proto fastcall :tok_t
+DelayExpand             proto fastcall :token_t
 AsmcKeywords            proto :int_t
 
 write_logo              proto
@@ -628,6 +630,7 @@ _atoow                  proto :string_t, :string_t, :int_t, :int_t
 myltoa                  proto :uint_t, :string_t, :uint_t, :int_t, :int_t
 write_options           proto
 ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
+SetMasm510              proto :int_t
 
 .pragma list(pop)
 endif

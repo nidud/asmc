@@ -1,5 +1,10 @@
-
-;; handles EQU and '=' directives.
+; EQUATE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; handles EQU and '=' directives.
+;
 
 include asmc.inc
 include memalloc.inc
@@ -28,7 +33,7 @@ public  minintvalues
     assume edx:expr_t
     assume ecx:asym_t
     assume edi:asym_t
-    assume ebx:tok_t
+    assume ebx:token_t
 
 SetValue proc private uses edi sym:asym_t, opndx:expr_t
 
@@ -110,7 +115,7 @@ SetValue endp
 ;; the '=' directive defines an assembly time variable.
 ;; this can only be a number (constant or relocatable).
 
-CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:tok_t
+CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:token_t
 
     local sym:asym_t
     local name:string_t
@@ -275,9 +280,9 @@ CreateAssemblyTimeVariable endp
 
 ;; '=' directive.
 
-    assume edx:tok_t
+    assume edx:token_t
 
-EqualSgnDirective proc i:int_t, tokenarray:tok_t
+EqualSgnDirective proc i:int_t, tokenarray:token_t
 
     mov edx,tokenarray
     .return asmerr(2008, [edx].string_ptr) .if [edx].token != T_ID
@@ -349,9 +354,9 @@ CreateVariable endp
 ;; - a text literal (enclosed in <>)
 ;; - anything. This will also become a text literal.
 
-    assume esi:tok_t
+    assume esi:token_t
 
-CreateConstant proc uses esi edi ebx tokenarray:tok_t
+CreateConstant proc uses esi edi ebx tokenarray:token_t
 
     local name:         string_t
     local i:            int_t
@@ -570,9 +575,9 @@ CreateConstant endp
 ;; However, if fastpass is on, the preprocessor step is skipped in
 ;; pass 2 and later, and then this function may be called.
 
-    assume ecx:tok_t
+    assume ecx:token_t
 
-EquDirective proc i:int_t, tokenarray:tok_t
+EquDirective proc i:int_t, tokenarray:token_t
 
     mov ecx,tokenarray
     .return asmerr(2008, [ecx].string_ptr) .if [ecx].token != T_ID

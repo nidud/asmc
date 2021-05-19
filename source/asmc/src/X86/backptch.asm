@@ -1,5 +1,10 @@
-
-;; backpatch: short forward jump optimization.
+; BACKPTCH.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; backpatch: short forward jump optimization.
+;
 
 include asmc.inc
 include symbols.inc
@@ -148,7 +153,7 @@ if LABELOPT
 
                             .for ( ecx = [edx].head: ecx: ecx = [ecx].fixup.nextrlc )
 
-                                .continue(1) .if ( [ecx].fixup.flags & FX_ORGOCCURED )
+                                .continue(1) .if ( [ecx].fixup.fx_flag & FX_ORGOCCURED )
 
                                 ;; do this check after the check for ORG!
 

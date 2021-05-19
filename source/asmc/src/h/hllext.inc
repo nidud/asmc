@@ -106,14 +106,14 @@ GetHllLabel macro
     endm
 
 GetLabelStr		proto :int_t, :string_t
-ExpandLine		proto :string_t, :tok_t
-ExpandCStrings		proto :tok_t
-EvaluateHllExpression	proto :hll_t, :ptr int_t, :tok_t, :int_t, :int_t, :string_t
-ExpandHllProc		proto :string_t, :int_t, :tok_t
-ExpandHllExpression	proto :hll_t, :ptr int_t, :tok_t, :int_t, :int_t, :string_t
+ExpandLine		proto :string_t, :token_t
+ExpandCStrings		proto :token_t
+EvaluateHllExpression	proto :hll_t, :ptr int_t, :token_t, :int_t, :int_t, :string_t
+ExpandHllProc		proto :string_t, :int_t, :token_t
+ExpandHllExpression	proto :hll_t, :ptr int_t, :token_t, :int_t, :int_t, :string_t
 QueueTestLines		proto :string_t
-HllContinueIf		proto :hll_t, :ptr int_t, :tok_t, :int_t, :hll_t, :int_t
-GenerateCString		proto :int_t, :tok_t
+HllContinueIf		proto :hll_t, :ptr int_t, :token_t, :int_t, :hll_t, :int_t
+GenerateCString		proto :int_t, :token_t
 
 .pragma list(pop)
 endif

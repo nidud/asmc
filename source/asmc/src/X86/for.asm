@@ -1,6 +1,11 @@
+; FOR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; .for <initialization>: <condition>: <increment/decrement>
 ;
+
 include string.inc
 include asmc.inc
 include tokenize.inc
@@ -110,15 +115,15 @@ Assignopc proc private uses edi buffer:string_t, opc1:string_t, opc2:string_t, s
 
 Assignopc endp
 
-ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:tok_t
+ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:token_t
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
     mov edi,buffer
     mov ebx,tokenarray
 
-    assume ebx:tok_t
-    assume esi:tok_t
+    assume ebx:token_t
+    assume esi:token_t
 
     mov edx,[ebx].string_ptr
     mov cl,[ebx].token
@@ -301,7 +306,7 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:tok_t
 ParseAssignment endp
 
 RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:tok_t
+    source:ptr sbyte, tokenarray:token_t
 
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
@@ -336,10 +341,10 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
 
 RenderAssignment endp
 
-    assume  ebx:tok_t
+    assume  ebx:token_t
     assume  esi:hll_t
 
-ForDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+ForDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
 local   rc:int_t,
         cmd:uint_t,

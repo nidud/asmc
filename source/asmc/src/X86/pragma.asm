@@ -90,9 +90,9 @@ MAXSTACK equ 16
 
     .code
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
-PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t, list_directive:int_t
   local opndx:expr

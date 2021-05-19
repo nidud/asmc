@@ -1,15 +1,21 @@
-
-;; Description:
-;; function               directive
-;;--------------------------------------------------
-;; EchoDirective()        ECHO
-;; IncludeDirective()     INCLUDE
-;; IncludeLibDirective()          INCLUDELIB
-;; IncBinDirective()      INCBIN
-;; AliasDirective()       ALIAS
-;; NameDirective()        NAME
-;; RadixDirective()       .RADIX
-;; SegOrderDirective()    .DOSSEG, .SEQ, .ALPHA
+; DIRECTIV.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Description:
+;
+; function               directive
+;--------------------------------------------------
+; EchoDirective()        ECHO
+; IncludeDirective()     INCLUDE
+; IncludeLibDirective()          INCLUDELIB
+; IncBinDirective()      INCBIN
+; AliasDirective()       ALIAS
+; NameDirective()        NAME
+; RadixDirective()       .RADIX
+; SegOrderDirective()    .DOSSEG, .SEQ, .ALPHA
+;
 
 include asmc.inc
 include memalloc.inc
@@ -27,25 +33,27 @@ include macro.inc
 public directive_tab
 
 res macro token, function
-exitm<function proto :int_t, :tok_t>
+exitm<function proto :int_t, :token_t>
 endm
 include dirtype.inc
 undef res
+
+CALLBACKC(fpDirective, :int_t, :token_t)
 
 .data
 
 ;; table of function addresses for directives
 res macro token, function
-exitm<dd function>
+exitm<fpDirective function>
 endm
-directive_tab label dword
+directive_tab label fpDirective
 include dirtype.inc
 undef res
 
 .code
 
 ;; should never be called
-StubDir proc i:int_t, tokenarray:tok_t
+StubDir proc i:int_t, tokenarray:token_t
 
     mov eax,ERROR
     ret
@@ -55,7 +63,7 @@ StubDir endp
 ;; handle ECHO directive.
 ;; displays text on the console
 
-EchoDirective proc i:int_t, tokenarray:tok_t
+EchoDirective proc i:int_t, tokenarray:token_t
 
     .if ( Parse_Pass == PASS_1 ) ;; display in pass 1 only
         .if ( Options.preprocessor_stdout == FALSE ) ;; don't print to stdout if -EP is on!
@@ -75,7 +83,7 @@ EchoDirective endp
 ;; is located becomes the "source" directory, that is, it is searched
 ;; FIRST if further INCLUDE directives are found inside the included file.
 
-IncludeDirective proc i:int_t, tokenarray:tok_t
+IncludeDirective proc i:int_t, tokenarray:token_t
 
     .if ( CurrFile[LST*4] )
         LstWriteSrcLine()
@@ -141,9 +149,9 @@ IncludeLibrary endp
 
 ;; directive INCLUDELIB
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
-IncludeLibDirective proc uses ebx i:int_t, tokenarray:tok_t
+IncludeLibDirective proc uses ebx i:int_t, tokenarray:token_t
 
     mov eax,NOT_ERROR
     .return .if ( Options.nolib ) ;; slip directive
@@ -182,7 +190,7 @@ IncludeLibDirective endp
 
 ;; INCBIN directive
 
-IncBinDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+IncBinDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
@@ -298,7 +306,7 @@ IncBinDirective endp
     assume esi:asym_t
     assume edi:asym_t
 
-AliasDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+AliasDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
     local subst:string_t
 
@@ -370,9 +378,9 @@ AliasDirective endp
 
 ;; the NAME directive is ignored in Masm v6
 
-    assume edx:tok_t
+    assume edx:token_t
 
-NameDirective proc i:int_t, tokenarray:tok_t
+NameDirective proc i:int_t, tokenarray:token_t
 
     .return(NOT_ERROR) .if ( Parse_Pass != PASS_1 )
 
@@ -408,7 +416,7 @@ NameDirective endp
 
 ;; .RADIX directive, value must be between 2 .. 16
 
-RadixDirective proc uses ebx i:int_t, tokenarray:tok_t
+RadixDirective proc uses ebx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
@@ -448,7 +456,7 @@ RadixDirective endp
 
 ;; DOSSEG, .DOSSEG, .ALPHA, .SEQ directives
 
-SegOrderDirective proc i:int_t, tokenarray:tok_t
+SegOrderDirective proc i:int_t, tokenarray:token_t
 
     imul eax,i,asm_tok
     add eax,tokenarray

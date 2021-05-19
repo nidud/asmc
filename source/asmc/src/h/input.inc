@@ -43,7 +43,7 @@ AddStringToIncludePath	proto :string_t
 InputInit		proto
 InputPassInit		proto
 InputFini		proto
-InputExtend		proto :ptr line_status, :ptr ptr asm_tok
+InputExtend		proto :ptr line_status
 PushInputStatus		proto :input_t
 PopInputStatus		proto :input_t
 GetCurrSrcPos		proto :string_t

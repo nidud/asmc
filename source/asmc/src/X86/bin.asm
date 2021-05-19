@@ -1,7 +1,12 @@
+; BIN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include malloc.inc
 include stddef.inc
 include time.inc
-
 include asmc.inc
 include memalloc.inc
 include parser.inc

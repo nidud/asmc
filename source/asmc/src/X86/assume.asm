@@ -315,7 +315,7 @@ GetStdAssumeEx endp
 ;; - ASSUME dataregister : qualified type [, dataregister : qualified type ]
 ;; - ASSUME register : ERROR | NOTHING | FLAT
 
-AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local reg:int_t
   local j:int_t
@@ -339,7 +339,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     .for( : i < Token_Count : i++, ebx += 16 )
 
-        assume ebx:tok_t
+        assume ebx:token_t
         assume edi:ptr assume_info
 
         .if ( [ebx].token == T_ID )

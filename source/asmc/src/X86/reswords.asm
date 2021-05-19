@@ -1,5 +1,10 @@
-
-;; reserved word handling, including hash table access
+; RESWORDS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; reserved word handling, including hash table access
+;
 
 include asmc.inc
 include memalloc.inc

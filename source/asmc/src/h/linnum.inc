@@ -4,19 +4,18 @@ __LINNUM_INC equ <>
 
 ;; internal line number information used if -Zd or -Zi is set
 
-line_num_info   struct
-next            ptr_t ?     ; line_num_info *
-number          uint_t ?    ; source line number, v2.06: changed to 32-bit
-union
- offs           uint_t ?
-                            ; is set if sym is != NULL ( COFF only )
- line_number    uint_t ?    ; :20, file:12;
-ends
-union
-    srcfile     uint_t ?
-    sym         asym_t ?    ; used if number is 0 ( COFF only )
-ends
-line_num_info   ends
+.template line_num_info
+    next            ptr line_num_info ?
+    number          dd ? ; source line number, v2.06: changed to 32-bit
+    union
+     offs           dd ?
+     line_number    dd ? ; is set if sym is != NULL ( COFF only ) :20, file:12;
+    ends
+    union
+     srcfile        dd ?
+     sym            ptr asym ? ; used if number is 0 ( COFF only )
+    ends
+   .ends
 
 LinnumInit      proto
 LinnumFini      proto

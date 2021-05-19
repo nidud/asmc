@@ -20,7 +20,7 @@ EH_NESTED_CALL      equ 10h
 
 pCurrentException   PEXCEPTION_POINTERS 0
 pExceptionReg       PEXCEPTION_REGISTRATION 0
-sig_table           dd NSIG dup(0)
+sig_table           sigfunc_t NSIG dup(0)
 
     .code
 
@@ -99,7 +99,7 @@ ExceptionHandler proc C private,
 
 ExceptionHandler endp
 
-signal proc index:int_t, func:PVOID
+signal proc index:int_t, func:sigfunc_t
     mov edx,index
     mov ecx,func
     mov eax,sig_table[edx*4]
@@ -108,12 +108,13 @@ signal proc index:int_t, func:PVOID
 signal endp
 
 raise proc index:int_t
+
+  local sigp:sigfunc_t
+
     mov ecx,index
-    mov eax,sig_table[ecx*4]
+    mov sigp,sig_table[ecx*4]
     .if eax
-        push ecx
-        call eax
-        add  esp,4
+        sigp(ecx)
     .endif
     ret
 raise endp

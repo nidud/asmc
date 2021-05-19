@@ -1,3 +1,8 @@
+; SWITCH.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 include string.inc
 include stdio.inc
 include stdlib.inc
@@ -363,9 +368,9 @@ GetMaxCaseValue proc uses esi edi ebx hll, min, max, min_table, max_table
     ret
 GetMaxCaseValue endp
 
-    assume esi:tok_t
+    assume esi:token_t
 
-IsCaseColon proc uses esi edi ebx tokenarray:tok_t
+IsCaseColon proc uses esi edi ebx tokenarray:token_t
 
     mov esi,tokenarray
     xor edi,edi
@@ -395,10 +400,10 @@ IsCaseColon proc uses esi edi ebx tokenarray:tok_t
     ret
 IsCaseColon endp
 
-    assume  ebx: tok_t
+    assume  ebx: token_t
 
 RenderMultiCase proc uses esi edi ebx hll:hll_t, i:ptr SDWORD, buffer:ptr char_t,
-        tokenarray:tok_t
+        tokenarray:token_t
 
   local result, colon
 
@@ -589,7 +594,7 @@ GetSwitchArg endp
 
     assume ebx:hll_t
 
-RenderSwitch proc uses esi edi ebx hll:hll_t, tokenarray:tok_t,
+RenderSwitch proc uses esi edi ebx hll:hll_t, tokenarray:token_t,
     buffer:string_t,  ; *switch.labels[LSTART]
     l_exit:string_t   ; *switch.labels[LEXIT]
 
@@ -1266,9 +1271,9 @@ endif
 
 RenderJTable endp
 
-    assume  ebx: tok_t
+    assume  ebx: token_t
 
-SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
+SwitchStart proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t, cmd:uint_t, buffer[MAX_LINE_LEN]:char_t
   local opnd:expr
@@ -1498,7 +1503,7 @@ endif
 
 SwitchStart endp
 
-SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:tok_t
+SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t,
         l_exit[16]:char_t ; exit or default label
@@ -1574,7 +1579,7 @@ SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:tok_t
             RenderSwitch(esi, tokenarray, edi, &l_exit)
         .endif
 
-        assume ebx:tok_t
+        assume ebx:token_t
     .until 1
 
     mov eax,[esi].labels[LEXIT*4]
@@ -1586,7 +1591,7 @@ SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
 SwitchEnd endp
 
-SwitchExit proc uses esi edi ebx i, tokenarray:tok_t
+SwitchExit proc uses esi edi ebx i, tokenarray:token_t
 
   local rc:     int_t,
         cmd:    int_t,
@@ -2036,7 +2041,7 @@ SwitchExit endp
 
     option proc: public
 
-SwitchDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+SwitchDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
     mov ecx,i
     mov edx,tokenarray

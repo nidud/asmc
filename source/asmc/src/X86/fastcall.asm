@@ -1,3 +1,8 @@
+; FASTCALL.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 include string.inc
 include limits.inc
 include malloc.inc
@@ -182,14 +187,14 @@ abs_param proc uses ebx pp:dsym_t, index:int_t, param:dsym_t, paramvalue:string_
 
     mov ebx,param
     .if ( [ebx].asym.sflags & S_ISVARARG && \
-          [ecx].asym.sflags & S_ISINLINE )
+          [ecx].asym.flag2 & S_ISINLINE )
 
         .return
     .endif
 
     ; skip loading class pointer if :vararg and inline
 
-    .if ( [ecx].asym.sflags & S_ISINLINE && \
+    .if ( [ecx].asym.flag2 & S_ISINLINE && \
           [ecx].asym.flag1 & S_METHOD && !index )
 
         mov edx,[ecx].dsym.procinfo
@@ -219,7 +224,7 @@ abs_param endp
 ifndef __ASMC64__
 
 ms32_fcstart proc uses ebx pp:dsym_t, numparams:int_t, start:int_t,
-    tokenarray:tok_t, value:ptr int_t
+    tokenarray:token_t, value:ptr int_t
 
     mov ebx,pp
 
@@ -340,7 +345,7 @@ ms32_param endp
 ms32_fcend proc pp, numparams, value
 
     mov eax,pp
-    .if value && [eax].asym.sflags & S_ISINLINE
+    .if value && [eax].asym.flag2 & S_ISINLINE
         AddLineQueueX( " add esp, %u", value )
     .endif
     ret
@@ -352,7 +357,7 @@ ms32_fcend endp
 ;-------------------------------------------------------------------------------
 
 vc32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
-    tokenarray:tok_t, value:ptr int_t
+    tokenarray:token_t, value:ptr int_t
 
     .for ecx=0, eax=pp, eax=[eax].dsym.procinfo,
          eax=[eax].proc_info.paralist: eax: eax=[eax].dsym.nextparam
@@ -522,12 +527,11 @@ vc32_param endp
 ;;
 
 watc_fcstart proc pp: dsym_t, numparams:int_t, start:int_t,
-        tokenarray: tok_t, value: ptr int_t
+        tokenarray: token_t, value: ptr int_t
     mov eax,1
     ret
 
 watc_fcstart endp
-
 
 watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
         opnd:ptr expr, paramvalue:string_t, r0used:ptr byte
@@ -535,8 +539,8 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 ;; get the register for parms 0 to 3,
 ;; using the watcom register parm passing conventions ( A D B C )
 
-  local opc, qual, i, regs[64]:byte, reg[4]:string_t, p:string_t, psize
-  local buffer[128]:byte, sreg:int_t
+  local regs[64]:byte, reg[4]:string_t, size:uint_t, psize:uint_t
+  local buffer[128]:byte, reg_32:int_t
 
     mov ebx,param
 
@@ -563,18 +567,24 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
     movzx eax,ModuleInfo.wordsize
     add fcscratch,eax
-    mov psize,SizeFromMemtype([ebx].asym.mem_type, USE_EMPTY, [ebx].asym.type)
+    mov psize,SizeFromMemtype( [ebx].asym.mem_type, USE_EMPTY, [ebx].asym.type )
+    mov eax,4
+    mov ecx,opnd
+    .if ( [ecx].expr.mem_type != MT_EMPTY )
+        SizeFromMemtype( [ecx].expr.mem_type, USE_EMPTY, [ecx].expr.type )
+    .endif
+    mov size,eax
 
-    .if strchr(edi, ':')
+    .if strchr( edi, ':' )
 
-        strcpy(&regs, edi)
+        strcpy( &regs, edi )
         movzx eax,ModuleInfo.wordsize
         add fcscratch,eax
 
-        .for ebx=&regs, edi=0: edi < 4: edi++
+        .for ( ebx = &regs, edi = 0 : edi < 4 : edi++ )
 
             mov [esi+edi*4],ebx
-            mov ebx,strchr(ebx, ':')
+            mov ebx,strchr( ebx, ':' )
             .break .if !ebx
             mov byte ptr [ebx],0
             add ebx,2
@@ -586,7 +596,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         mov edx,[edi].expr.sym
         mov esi,T_MOV
         mov ebx,T_OFFSET
-        .if [edi].expr.kind == EXPR_REG || [edx].asym.state == SYM_STACK
+        .if [edi].expr.kind == EXPR_REG || !edx || [edx].asym.state == SYM_STACK
             mov esi,T_LEA
             mov ebx,T_NULL
         .endif
@@ -610,7 +620,23 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
     .fors ebx = 3: ebx >= 0: ebx--
 
         mov ecx,reg[ebx*4]
+
         .if ecx
+
+            mov edx,[ecx]
+            .if ( dl == 'e' )
+                shr edx,8
+            .endif
+            mov eax,T_EAX
+            .if ( dl == 'd' )
+                mov eax,T_EDX
+            .elseif ( dl == 'b' )
+                mov eax,T_EBX
+            .elseif ( dl == 'c' )
+                mov eax,T_ECX
+            .endif
+            mov reg_32,eax
+
             mov edi,opnd
             .if [edi].expr.kind == EXPR_CONST
 
@@ -631,13 +657,20 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 .else
                     mov esi,T_NULL
                 .endif
-
                 .if ( eax == 0 || edx == 0 )
-                    AddLineQueueX( "xor %s, %s", ecx, ecx )
+                    .if ( ModuleInfo.Ofssize )
+                        AddLineQueueX( "xor %r, %r", reg_32, reg_32 )
+                    .else
+                        AddLineQueueX( "xor %s, %s", ecx, ecx )
+                    .endif
                 .elseif esi != T_NULL
                     AddLineQueueX( "mov %s, %r (%s)", ecx, esi, eax )
                 .else
-                    AddLineQueueX( "mov %s, %s", ecx, eax )
+                    .if ( ModuleInfo.Ofssize )
+                        AddLineQueueX( "mov %r, %s", reg_32, eax )
+                    .else
+                        AddLineQueueX( "mov %s, %s", ecx, eax )
+                    .endif
                 .endif
 
             .elseif [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
@@ -650,13 +683,45 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     movzx esi,[eax].asym.regist[2]
                     mov edi,[edx-32].asm_tok.tokval
                 .endif
-                .if esi != edi
-                    AddLineQueueX( "mov %r, %r", esi, edi )
+                SizeFromRegister( edi )
+                mov edx,psize
+                .if ( edx < 4 && ModuleInfo.Ofssize )
+                    mov esi,reg_32
                 .endif
-
+                .if ( esi != edi )
+                    .if ( ( eax < 4 || edx < 4 ) && ModuleInfo.Ofssize )
+                        mov ecx,param
+                        mov edx,T_MOVSX
+                        .if !( [ecx].asym.mem_type & MT_SIGNED )
+                            mov edx,T_MOVZX
+                        .endif
+                        AddLineQueueX( " %r %r, %r", edx, esi, edi )
+                    .else
+                        AddLineQueueX( " mov %r, %r", esi, edi )
+                    .endif
+                .endif
             .else
                 .if ebx == 0 && reg[4] == NULL
-                    AddLineQueueX("mov %s, %s", ecx, paramvalue)
+                    mov edi,param
+                    mov eax,size
+                    mov edx,psize
+                    .if ( ( eax < edx || edx < 4 ) && ModuleInfo.Ofssize )
+                        .if ( eax > edx )
+                            mov eax,edx
+                        .endif
+                        mov ecx,T_BYTE
+                        mov esi,reg_32
+                        .if ( eax == 2 )
+                            mov ecx,T_WORD
+                        .endif
+                         mov edx,T_MOVSX
+                         .if !( [edi].asym.mem_type & MT_SIGNED )
+                             mov edx,T_MOVZX
+                         .endif
+                         AddLineQueueX( " %r %r, %r ptr %s", edx, esi, ecx, paramvalue )
+                    .else
+                        AddLineQueueX( "mov %s, %s", ecx, paramvalue )
+                    .endif
                 .else
                     .if ModuleInfo.Ofssize
                         mov esi,T_DWORD
@@ -671,7 +736,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     mul ecx
                     mov ecx,psize
                     sub ecx,eax
-                    AddLineQueueX("mov %s, %r ptr %s[%u]", edi, esi, paramvalue, ecx)
+                    AddLineQueueX( "mov %s, %r ptr %s[%u]", edi, esi, paramvalue, ecx )
                 .endif
             .endif
         .endif
@@ -705,7 +770,7 @@ endif
 ;-------------------------------------------------------------------------------
 
 ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
-    tokenarray:tok_t, value:ptr int_t
+    tokenarray:token_t, value:ptr int_t
 
     ; v2.29: reg::reg id to fcscratch
 
@@ -786,7 +851,7 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     add  eax,edi
 
     mov edx,pp ; v2.31.24: skip stack alloc if inline
-    .if ecx == esi && [edx].asym.sflags & S_ISINLINE
+    .if ecx == esi && [edx].asym.flag2 & S_ISINLINE
         xor eax,eax
     .endif
     mov edx,value
@@ -900,7 +965,6 @@ check_register_overwrite proc uses esi edi ebx opnd:ptr expr,
     ret
 
 check_register_overwrite endp
-
 
 GetPSize proc uses edi address:int_t, param:asym_t, opnd:expr_t
 
@@ -1236,7 +1300,6 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
                 mov i,eax
 
             .else
-
                 .if [edi].expr.mem_type == MT_EMPTY
                     mov eax,4
                     ; added v2.31.25
@@ -1683,10 +1746,10 @@ elf64_pcheck proc public uses esi edi ebx pProc:dsym_t, paranode:dsym_t, used:pt
 elf64_pcheck endp
 
     assume esi:nothing
-    assume ebx:tok_t
+    assume ebx:token_t
 
 elf64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
-    tokenarray:tok_t, value:ptr int_t
+    tokenarray:token_t, value:ptr int_t
 
     ; v2.28: xmm id to fcscratch
 
@@ -1845,7 +1908,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t,
 
     mov ecx,pp
     .if ( [edx].asym.sflags & S_ISVARARG && \
-          [ecx].asym.sflags & S_ISINLINE )
+          [ecx].asym.flag2 & S_ISINLINE )
         .return 1
     .endif
     .if [edx].asym.mem_type == MT_ABS

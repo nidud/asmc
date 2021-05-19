@@ -1,13 +1,18 @@
-
-;; do macro expansion.
-
-;; functions:
-;; - myltoa()         generic function which replaces ltoa()
-;; - RunMacro         run a macro
-;; - ExpandText       expand a source line when % operator is at pos 0
-;; - ExpandLineItems   expand parts of a source line
-;; - ExpandLine       expand a source line
-;; - ExpandLiterals    expand <> or {} literals for struct initialization
+; EXPANS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; do macro expansion.
+;
+; functions:
+; - myltoa()         generic function which replaces ltoa()
+; - RunMacro         run a macro
+; - ExpandText       expand a source line when % operator is at pos 0
+; - ExpandLineItems   expand parts of a source line
+; - ExpandLine       expand a source line
+; - ExpandLiterals    expand <> or {} literals for struct initialization
+;
 
 include asmc.inc
 include memalloc.inc
@@ -80,7 +85,7 @@ myltoa endp
 
 ;; Read the current (macro) queue until it's done.
 
-SkipMacro proc private tokenarray:tok_t
+SkipMacro proc private tokenarray:token_t
 
     local buffer:ptr char_t
 
@@ -97,7 +102,7 @@ SkipMacro proc private tokenarray:tok_t
 
 SkipMacro endp
 
-ExpandTMacro proto :string_t, :tok_t, :int_t, :int_t
+ExpandTMacro proto :string_t, :token_t, :int_t, :int_t
 
 ;; run a macro.
 ;; - macro:  macro item
@@ -108,9 +113,9 @@ ExpandTMacro proto :string_t, :tok_t, :int_t, :int_t
 
     assume esi:dsym_t
     assume edi:ptr macro_info
-    assume ebx:tok_t
+    assume ebx:token_t
 
-RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
+RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
         _out:string_t, mflags:int_t, is_exitm:ptr int_t
 
     local currparm          :string_t
@@ -728,7 +733,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
     ;; may be redefined within the macro! Hence copy all values that are
     ;; needed later in the while loop to macro_instance!
 
-    mov mi.startline,[edi]._data
+    mov mi.startline,[edi].lines
     mov mi.currline,NULL
     mov mi.parmcnt,[edi].parmcnt
 
@@ -759,7 +764,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:tok_t,
 
 
         .while ( GetTextLine( CurrSource ) )
-            .continue .if ( PreprocessLine( &tokenarray ) == 0 )
+            .continue .if ( PreprocessLine( tokenarray ) == 0 )
 
             mov ebx,tokenarray
 
@@ -927,7 +932,7 @@ RunMacro endp
 
 ;; make room (or delete items) in the token buffer at position <start>
 
-AddTokens proc private uses ebx tokenarray:tok_t, start:int_t, count:int_t, _end:int_t
+AddTokens proc private uses ebx tokenarray:token_t, start:int_t, count:int_t, _end:int_t
 
     imul ecx,count,asm_tok
 
@@ -965,7 +970,7 @@ AddTokens endp
 ;; Both text macros and macro functions are expanded!
 
 
-ExpandText proc uses esi edi ebx line:string_t, tokenarray:tok_t, substitute:uint_t
+ExpandText proc uses esi edi ebx line:string_t, tokenarray:token_t, substitute:uint_t
 
     local pIdent:string_t
     local lvl:int_t
@@ -1159,7 +1164,7 @@ ExpandText endp
 ;; outbuf out: expanded value
 ;; equmode: if 1, don't expand macro functions
 
-ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:tok_t, equmode:int_t, level:int_t
+ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:token_t, equmode:int_t, level:int_t
 
     local old_tokencount:int_t
     local i:int_t
@@ -1254,7 +1259,7 @@ ExpandTMacro endp
 ;; - pos_line = position of item in source line
 
 RebuildLine proc private uses esi edi ebx newstring:string_t, i:int_t,
-        tokenarray:tok_t, oldlen:uint_t, pos_line:uint_t, addbrackets:int_t
+        tokenarray:token_t, oldlen:uint_t, pos_line:uint_t, addbrackets:int_t
 
     local dest:string_t
     local src:string_t
@@ -1335,7 +1340,7 @@ RebuildLine endp
 ;; *pi: index of token in tokenarray
 ;; equmode: if 1, dont expand macro functions
 
-ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:tok_t,
+ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:token_t,
         max:int_t, bracket_flags:int_t, equmode:int_t
 
     local pos:int_t
@@ -1587,7 +1592,7 @@ ExpandToken endp
 ;; equmode: 1=don't expand macro functions
 
 
-ExpandLineItems proc uses esi edi line:string_t, i:int_t, tokenarray:tok_t,
+ExpandLineItems proc uses esi edi line:string_t, i:int_t, tokenarray:token_t,
         addbrackets:int_t, equmode:int_t
 
     local k:int_t
@@ -1629,7 +1634,7 @@ ExpandLineItems endp
 ;; the literals explicitly.
 
 
-ExpandLiterals proc uses ebx i:int_t, tokenarray:tok_t
+ExpandLiterals proc uses ebx i:int_t, tokenarray:token_t
 
     xor eax,eax
     mov ebx,tokenarray
@@ -1659,7 +1664,7 @@ ExpandLiterals endp
 ;; scan current line for (text) macros and expand them.
 ;; this is only called when the % operator is not the first item.
 
-ExpandLine proc uses esi edi ebx string:string_t, tokenarray:tok_t
+ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
 
     local count         : int_t
     local bracket_flags : uint_t ;; flags

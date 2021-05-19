@@ -1,5 +1,8 @@
 ; ASSEMBLE.ASM--
-; Copyright (C) 2017 Asmc Developers
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
 include malloc.inc
 include io.inc
@@ -448,7 +451,7 @@ WritePreprocessedLine proc string:string_t
     ret
 WritePreprocessedLine endp
 
-SetMasm510 proc value
+SetMasm510 proc value:int_t
     mov eax,value
     mov ModuleInfo.m510,al
     mov ModuleInfo.oldstructs,al

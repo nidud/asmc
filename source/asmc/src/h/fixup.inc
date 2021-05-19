@@ -54,8 +54,8 @@ ELF64_DISALLOWED	equ 0x0F00 ;; exclude SEG, PTR16, PTR32, HIBYTE
     OPTJ_PUSH		;; PUSH
     }
 
-FX_ORGOCCURED	equ 0x0200
-FX_LOADER_RESOLVED equ 0x0100
+FX_ORGOCCURED		equ 0x02
+FX_LOADER_RESOLVED	equ 0x01
 
 fixup_t		typedef ptr fixup
 
@@ -68,9 +68,11 @@ fixup struct
  options	db ?
  union
   flags		dw ?
-  struct			;; the IP relative addressing needs to know where the instruction ends.
+  struct			;; the IP relative addressing needs to know
+				;; where the instruction ends.
    addbytes	db ?		;; the result <end of instruction> - <fixup location> is stored here.
-   loader_resolved db ?; : 1	;; operator LROFFSET
+   fx_flag	db ?
+   ; loader_resolved db ?; : 1	;; operator LROFFSET
    ; orgoccured uchar_t	 : 1	;; v2.04 ORG occured behind this fix
   ends
  ends

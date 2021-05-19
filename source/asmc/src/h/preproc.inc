@@ -4,8 +4,8 @@ __PREPROC_INC equ <>
 
 ;; v2.11: preprocessor functions moved from input.c to preproc.asm
 
-PreprocessLine proto :ptr tok_t
-WriteCodeLabel proto :string_t, :tok_t
+PreprocessLine proto :token_t
+WriteCodeLabel proto :string_t, :token_t
 
 endif
 .pragma list(pop)

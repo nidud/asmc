@@ -13,6 +13,8 @@ flags		    char_t ?	; v2.08: added
 flags2		    char_t ?	; v2.08: was global var g_flags
 flags3		    char_t ?	; v2.08: added
 brachets	    char_t ?	; v2.32: added
+tokenarray	    token_t ?	; v2.32: input to Tokenize() -- may change!
+outbuf		    string_t ?	; v2.32: output start -- may change!
 cstring		    char_t ?	; v2.32: added
 line_status	    ends
 
@@ -24,9 +26,8 @@ TOK_LINE	    equ 0x04	; full line is retokenized
 TF3_ISCONCAT	    equ 0x01	; line was concatenated
 TF3_EXPANSION	    equ 0x02	; expansion operator % at pos 0
 
-GetToken proto fastcall :tok_t, :ptr line_status
-Tokenize proto :string_t, :uint_t, :tok_t, :uint_t
-TokenizeEx proto :uint_t, :ptr tok_t, :uint_t
+GetToken proto fastcall :token_t, :ptr line_status
+Tokenize proto :string_t, :uint_t, :token_t, :uint_t
 
 endif
 .pragma list(pop)

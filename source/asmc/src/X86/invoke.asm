@@ -1,3 +1,8 @@
+; INVOKE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
 include asmc.inc
 include memalloc.inc
@@ -305,7 +310,7 @@ ifndef __ASMC64__
                         ( [edi].asym.sflags & S_ISFAR || Ofssize == USE16 ) ) ;; v2.11: added
                     AddLineQueueX( " pushw offset %s", &fullparam )
                 .else
-                    .if ( !( [esi].asym.sflags & S_ISINLINE && [edi].asym.sflags & S_ISVARARG ) )
+                    .if ( !( [esi].asym.flag2 & S_ISINLINE && [edi].asym.sflags & S_ISVARARG ) )
                         AddLineQueueX( " push offset %s", &fullparam )
                         ;; v2.04: a 32bit offset pushed in 16-bit code
                         .if ( [edi].asym.sflags & S_ISVARARG && CurrWordSize == 2 && opnd.Ofssize > USE16 )
@@ -1600,10 +1605,17 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( eax && [eax].asym.flag2 & S_ISVTABLE )
 
-                    mov ecx,[eax].asym.class
-                    strcat( strcat( strcpy( &buffer, [ecx].asym.name ), "_" ), [edi].asym.name )
-                    mov pmacro,SymSearch( eax )
+                    .if ( [edi].asym.flag2 & S_VMACRO )
 
+                        mov pmacro,[edi].asym.vmacro
+                        strcpy( &buffer, [eax].asym.name )
+                    .else
+                         mov ecx,[eax].asym.class
+                        strcat( strcat( strcpy( &buffer, [ecx].asym.name ), "_" ), [edi].asym.name )
+                        mov pmacro,SymSearch( eax )
+                    .endif
+
+                    mov eax,pmacro
                     .if ( eax && [eax].asym.state == SYM_TMACRO )
                         mov pmacro,SymSearch( [eax].asym.string_ptr )
                     .endif
@@ -1635,9 +1647,9 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             or [esi].flag1,S_METHOD
             .if ( pmacro )
-                or [esi].sflags,S_ISINLINE
-                .if ( [eax].asym.sflags & S_ISSTATIC )
-                    or [esi].sflags,S_ISSTATIC
+                or [esi].flag2,S_ISINLINE
+                .if ( [eax].asym.flag2 & S_ISSTATIC )
+                    or [esi].flag2,S_ISSTATIC
                 .endif
             .endif
         .endif
@@ -1651,7 +1663,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     .endf
 
     mov j,i
-    .if ( [esi].sflags & S_ISSTATIC )
+    .if ( [esi].flag2 & S_ISSTATIC )
         inc i
         imul ebx,i,asm_tok
         add ebx,tokenarray
@@ -1944,7 +1956,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( [ebx].token != T_FINAL )
 
-                    .if ( [edi].sym.sflags & S_ISSTATIC )
+                    .if ( [edi].sym.flag2 & S_ISSTATIC )
                         strcat( p, [ebx+32].tokpos )
                     .else
                         strcat( p, [ebx+16].tokpos )
@@ -1960,7 +1972,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 .endif
            .else
                 mov esi,1
-                .if ( [edi].sym.sflags & S_ISSTATIC )
+                .if ( [edi].sym.flag2 & S_ISSTATIC )
                     strcat( p, [ebx+32].string_ptr )
                     mov esi,0
                 .else

@@ -12,9 +12,11 @@ include quadmath.inc
 BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
 STK_BUF_SIZE    equ BUFFERSIZE
 NDIG            equ 8
-D_CVT_DIGITS    equ 20
-LD_CVT_DIGITS   equ 23
-QF_CVT_DIGITS   equ 38
+
+D_CVT_DIGITS    equ 28
+LD_CVT_DIGITS   equ 30
+QF_CVT_DIGITS   equ 45
+
 E8_EXP          equ 0x4019
 E8_HIGH         equ 0xBEBC2000
 E8_LOW          equ 0x00000000
@@ -213,19 +215,19 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov bh,byte ptr digits
     sub bh,NDIG
 
-    .whiles n > 0
+    .whiles ( n > 0 )
 
         sub n,NDIG
 
-        .if !value
+        .if ( value == 0 )
 
             ; get long value to subtract
 
             mov cx,[rsi+14]
             mov r8d,ecx
             and ecx,0x7FFF
-            .if ecx > 0x3FFF
 
+            .if ecx > 0x3FFF
                 and r8d,0x8000
                 mov edx,[rsi+10]
                 sub ecx,0x3FFF
@@ -246,36 +248,38 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 mov dword ptr tmp[10],edx
                 add eax,0x3FFF
                 or  eax,r8d
-
                 mov word ptr tmp[14],ax
 
                 __subq(rsi, &tmp)
-
-            .elseif i && value
-
-                mov [rsi],rax
-                mov [rsi+8],rax
             .endif
-
-            .if n
-
+            .ifs ( n > 0 )
                 __mulq(rsi, &Q_1E8)
             .endif
         .endif
 
         mov eax,value
+        mov ecx,NDIG
         .if eax
-            .for ( ecx = NDIG : ecx : ecx-- )
+            .ifs eax > 99999999
+                inc ecx
+                dec rdi
+            .endif
+            .for ( r8d = ecx : ecx : ecx-- )
                 xor edx,edx
                 div radix
                 add dl,'0'
                 or  bl,dl
+                .if cl > bh
+                    mov dl,'0'
+                    .if byte ptr [edi-1] == '9'
+                        mov dl,'9'
+                    .endif
+                .endif
                 mov [rdi+rcx-1],dl
             .endf
-            add rdi,NDIG
+            add rdi,r8
         .else
             mov al,'0'
-            mov ecx,NDIG
             rep stosb
         .endif
         add i,NDIG
@@ -549,10 +553,14 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         mov xexp,ecx
         mov r10d,edx
         mov rdi,r9
+
         .ifs [rbx].scale <= 0
 
             mov byte ptr [r9],'0'
             inc r8d
+            .if ecx >= maxsize
+                inc xexp
+            .endif
 
         .else
 
@@ -618,7 +626,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             sub ecx,r10d
             mov [rbx].nz1,ecx
             lea rdi,[r9+r8]
-            mov ecx,[rbx].ndigits
             add r8d,ecx
             mov eax,'0'
             rep stosb
@@ -636,14 +643,14 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             neg edi
         .endif
          inc r8d
+         mov eax,edi
 
          mov ecx,[rbx].expwidth
          .switch ecx
           .case 0           ; width unspecified
+            mov ecx,3
             .ifs eax >= 1000
                 mov ecx,4
-            .else
-                mov ecx,3
             .endif
             .endc
           .case 1
@@ -673,7 +680,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 sub edi,eax
                 mov ecx,[rbx].expwidth
             .endif
-            lea rax,[rsi+'0']
+            lea eax,[rsi+'0']
             mov [r9+r8],al
             inc r8d
          .endif

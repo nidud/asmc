@@ -1,3 +1,9 @@
+; PREPROC.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include stdio.inc
 include stdlib.inc
@@ -20,12 +26,12 @@ externdef directive_tab: dword
 
     .code
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
 ; preprocessor directive or macro procedure is preceded
 ; by a code label.
 
-WriteCodeLabel proc uses esi edi ebx line, tokenarray:tok_t
+WriteCodeLabel proc uses esi edi ebx line, tokenarray:token_t
 
     mov ebx,tokenarray
     .return asmerr(2008, [ebx].string_ptr) .if ( [ebx].token != T_ID )
@@ -64,9 +70,9 @@ WriteCodeLabel proc uses esi edi ebx line, tokenarray:tok_t
 WriteCodeLabel endp
 
 
-    assume ecx:tok_t
+    assume ecx:token_t
 
-DelayExpand proc fastcall tokenarray:tok_t
+DelayExpand proc fastcall tokenarray:token_t
 
     xor eax,eax
     .return .if !( [ecx].hll_flags & T_HLL_DELAY )
@@ -136,7 +142,7 @@ DelayExpand endp
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine proc uses esi ebx tokenarray:ptr tok_t
+PreprocessLine proc uses esi ebx tokenarray:token_t
 
     ;
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()
@@ -150,9 +156,8 @@ PreprocessLine proc uses esi ebx tokenarray:ptr tok_t
     ;
     ; Token_Count is the number of tokens scanned
     ;
-    mov Token_Count,TokenizeEx(0, tokenarray, 0)
-    mov eax,tokenarray
-    mov ebx,[eax]
+    mov Token_Count,Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+    mov ebx,ModuleInfo.tokenarray
 
 if REMOVECOMENT eq 0
     .if ( ( Token_Count == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
@@ -179,24 +184,25 @@ endif
 
             xor esi,esi
 
-            .if ( LabelMacro(ebx) == 0 )
+            .if ( LabelMacro( ebx ) == 0 )
 
-                .if ( DelayExpand(ebx) == 0 )
+                .if ( DelayExpand( ebx ) == 0 )
 
-                    mov esi,ExpandLine(CurrSource, ebx)
+                    mov esi,ExpandLine( CurrSource, ebx )
 
                 .elseif ( Parse_Pass == PASS_1 )
 
-                    ExpandLineItems(CurrSource, 0, ebx, 0, 1)
+                    ExpandLineItems( CurrSource, 0, ebx, 0, 1 )
                 .endif
             .endif
         .endif
         .return 0 .ifs ( esi < NOT_ERROR )
     .endif
 
+    mov ebx,ModuleInfo.tokenarray
     xor esi,esi
-    .if ModuleInfo.token_count > 2 && \
-        ( [ebx+16].asm_tok.token == T_COLON || [ebx+16].asm_tok.token == T_DBL_COLON )
+    .if ( ModuleInfo.token_count > 2 && \
+        ( [ebx+16].asm_tok.token == T_COLON || [ebx+16].asm_tok.token == T_DBL_COLON ) )
 
         mov esi,32
     .endif
@@ -216,7 +222,7 @@ endif
         ;
         .if esi > 16
 
-            .return 0 .if WriteCodeLabel(CurrSource, ebx) == ERROR
+            .return 0 .if WriteCodeLabel( CurrSource, ebx ) == ERROR
         .endif
         movzx eax,[ebx+esi].dirtype
         shr  esi,4
@@ -230,8 +236,9 @@ endif
     ;
     ; handle preprocessor directives which need a label
     ;
+    mov ebx,ModuleInfo.tokenarray
+    .if ( [ebx].token == T_ID && [ebx+16].token == T_DIRECTIVE )
 
-    .if [ebx].token == T_ID && [ebx+16].token == T_DIRECTIVE
         movzx   eax,[ebx+16].dirtype
         .switch eax
           .case DRT_EQU

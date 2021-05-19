@@ -1,13 +1,18 @@
-
-;; macro handling.
-
-;; functions:
-;; - CreateMacro             create a macro item
-;; - ReleaseMacroData used to redefine/purge a macro
-;; - StoreMacro      store a macro's parameter/local/line list
-;; - MacroDir        handle MACRO directive
-;; - PurgeDirective   handle PURGE directive
-;; - MacroInit       global macro initialization, set predefined macros
+; MACRO.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; macro handling.
+;
+; functions:
+; - CreateMacro             create a macro item
+; - ReleaseMacroData used to redefine/purge a macro
+; - StoreMacro      store a macro's parameter/local/line list
+; - MacroDir        handle MACRO directive
+; - PurgeDirective   handle PURGE directive
+; - MacroInit       global macro initialization, set predefined macros
+;
 
 include asmc.inc
 include memalloc.inc
@@ -303,25 +308,27 @@ store_placeholders endp
 
     assume esi:dsym_t
     assume edi:ptr macro_info
-    assume ebx:tok_t
+    assume ebx:token_t
 
-StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_data:int_t
+externdef token_stringbuf:ptr
 
-    local info:ptr macro_info
-    local src:string_t
-    local token:string_t
-    local mindex:int_t
-    local paranode:ptr mparm_list
-    local nextline:srcline_t
-    local nesting_depth:uint_t
-    local locals_done:int_t
-    local ls:line_status
-    local tok[2]:asm_tok
-    local mnames[MAX_PLACEHOLDERS]:mname_list ;; there are max 255 placeholders
-    local buffer:ptr char_t
-    local final:tok_t
+StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_data:int_t
 
-    mov buffer,alloca(ModuleInfo.max_line_len)
+  local info:ptr macro_info
+  local src:string_t
+  local token:string_t
+  local mindex:int_t
+  local paranode:ptr mparm_list
+  local nextline:srcline_t
+  local nesting_depth:uint_t
+  local locals_done:int_t
+  local ls:line_status
+  local tok[2]:asm_tok
+  local mnames[MAX_PLACEHOLDERS]:mname_list ;; there are max 255 placeholders
+  local final:token_t
+
+    mov ls.outbuf,token_stringbuf
+    mov ls.start,alloca( ModuleInfo.max_line_len )
 
     mov nesting_depth,0
     mov esi,mac
@@ -357,10 +364,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
             ;; Masm accepts reserved words and instructions as parameter
             ;; names! So just check that the token is a valid id.
 
-            movzx eax,byte ptr [eax]
-
-            .if ( !( ( _ltype[eax+1] & _LABEL ) || ( al == '.' && ModuleInfo.dotname ) ) || \
-                 [ebx].token == T_STRING )
+            .if ( !is_valid_id_first_char( [eax] ) || [ebx].token == T_STRING )
                 asmerr(2008, token )
                 .break
             .elseif ( [ebx].token != T_ID )
@@ -447,13 +451,15 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
     .endif
 
     mov locals_done,FALSE
-    lea eax,[edi]._data
+    lea eax,[edi].lines
     mov nextline,eax
 
-    ;; now read in the lines of the macro, and store them if store_data is TRUE
-    .for( :: )
+    ;
+    ; now read in the lines of the macro, and store them if store_data is TRUE
+    ;
+    .for ( :: )
 
-        mov src,GetLine( buffer )
+        mov src,GetLine( ls.start )
         .if eax == NULL
             asmerr(1008) ;; unmatched macro nesting
         .endif
@@ -461,19 +467,16 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
         ;; add the macro line to the listing file
         .if ModuleInfo.list
             and ModuleInfo.line_flags,not LOF_LISTED
-            LstWrite( LSTTYPE_MACROLINE, 0, buffer )
+            LstWrite( LSTTYPE_MACROLINE, 0, ls.start )
         .endif
         mov ls.input,src
-        mov ls.start,eax
         mov ls.index,0
 
     continue_scan:
 
         mov edx,ls.input
-        movzx eax,byte ptr [edx]
-        .while _ltype[eax+1] & _SPACE
+        .while ( islspace( [edx] ) )
             inc edx
-            mov al,[edx]
         .endw
         mov ls.input,edx
 
@@ -514,10 +517,8 @@ endif
                     LstWrite( LSTTYPE_MACROLINE, 0, ls.input )
                 .endif
                 mov edx,ls.input
-                movzx eax,byte ptr [edx]
-                .while _ltype[eax+1] & _SPACE
+                .while ( islspace( [edx] ) )
                     inc edx
-                    mov al,[edx]
                 .endw
                 mov ls.input,edx
             .endw
@@ -532,10 +533,8 @@ endif
             .continue .if !store_data
             .for ( :: )
                 mov edx,ls.input
-                movzx eax,byte ptr [edx]
-                .while _ltype[eax+1] & _SPACE
+                .while ( islspace( [edx] ) )
                     inc edx
-                    mov al,[edx]
                 .endw
                 mov ls.input,edx
                 .break .if al == 0 || al == ';' ;; 0 locals are ok
@@ -543,8 +542,7 @@ endif
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
                 mov edx,StringBufferEnd
-                movzx eax,byte ptr [edx]
-                .if ( !( ( _ltype[eax+1] & _LABEL ) || ( al == '.' && ModuleInfo.dotname ) ) )
+                .if ( !is_valid_id_first_char( [edx] ) )
                     asmerr( 2008, edx )
                     .break
                 .elseif tok[0].token != T_ID
@@ -571,15 +569,13 @@ endif
                 mov edi,info
                 inc [edi].localcnt
                 mov edx,ls.input
-                movzx eax,byte ptr [edx]
-                .while _ltype[eax+1] & _SPACE
+                .while ( islspace( [edx] ) )
                     inc edx
-                    mov al,[edx]
                 .endw
                 mov ls.input,edx
                 .if al == ','
                     inc ls.input
-                .elseif ( ( _ltype[eax+1] & _LABEL ) || ( al == '.' && ModuleInfo.dotname ) )
+                .elseif ( is_valid_id_first_char( eax ) )
                     asmerr( 2008, ls.input )
                     .break
                 .endif
@@ -701,7 +697,7 @@ CreateMacro proc name:string_t
         mov [ecx].parmcnt,dx
         mov [ecx].localcnt,dx
         mov [ecx].parmlist,edx
-        mov [ecx]._data,edx
+        mov [ecx].lines,edx
         mov [ecx].srcfile,edx
     .endif
     ret
@@ -719,7 +715,7 @@ ReleaseMacroData proc mac:dsym_t
     mov [ecx].parmcnt,ax
     mov [ecx].localcnt,ax
     mov [ecx].parmlist,eax
-    mov [ecx]._data,eax
+    mov [ecx].lines,eax
     mov [ecx].srcfile,eax
     ret
 
@@ -730,7 +726,7 @@ ReleaseMacroData endp
 
     assume esi:dsym_t
 
-MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
+MacroDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local store_data:int_t
 
@@ -752,7 +748,7 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
                 .if SymAlloc(edi)
 
                     mov [esi].sym.target_type,eax
-                    or  [esi].sym.sflags,S_ISINLINE
+                    or  [esi].sym.flag2,S_ISINLINE
                     mov esi,eax
                     mov [esi].sym.altname,ebx
                     and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
@@ -790,7 +786,7 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     .if ( ( Parse_Pass == PASS_1 ) || ( [esi].sym.flags & S_VARIABLE ) )
         ;; is the macro redefined?
-        .if [edi]._data != NULL
+        .if [edi].lines != NULL
             ReleaseMacroData(esi)
             ;; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
             and [esi].sym.mac_flag,not M_ISFUNC
@@ -820,7 +816,7 @@ lq_line ends
 
 LineQueue equ <ModuleInfo.line_queue>
 
-PreprocessLine proto :ptr ptr
+PreprocessLine proto :ptr asm_tok
 
 GeLineQueue proc private uses esi edi ebx buffer:string_t
 
@@ -890,14 +886,14 @@ MacroLineQueue proc
 
   local oldstat:input_status
   local oldline:GETLINE
-  local tokenarray:tok_t
+  local tokenarray:token_t
 
-    mov tokenarray,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus( &oldstat )
     inc ModuleInfo.GeneratedCode
     mov oldline,GetLine
     mov GetLine,GeLineQueue
-    .if GetLine(CurrSource)
-        PreprocessLine(&tokenarray)
+    .if GetLine( CurrSource )
+        PreprocessLine( tokenarray )
     .endif
     mov GetLine,oldline
     dec ModuleInfo.GeneratedCode
@@ -914,7 +910,7 @@ MacroLineQueue endp
 
     assume esi:asym_t
 
-PurgeDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+PurgeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
     inc i ;; skip directive
 
@@ -957,7 +953,7 @@ PurgeDirective endp
 ;; internal @Environ macro function */
 ;; v2.08: ensured no buffer overflow if environment variable is larger than MAX_LINE_LEN */
 
-EnvironFunc proc private uses esi edi ebx mi:ptr macro_instance, buffer:string_t, tokenarray:tok_t
+EnvironFunc proc private uses esi edi ebx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
     mov eax,mi
     mov eax,[eax].macro_instance.parm_array

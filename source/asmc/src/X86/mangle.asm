@@ -1,5 +1,10 @@
-
-;; Symbol name mangling routines.
+; MANGLE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Symbol name mangling routines.
+;
 
 include asmc.inc
 include memalloc.inc

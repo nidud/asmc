@@ -1,5 +1,10 @@
-
-;; expression evaluator.
+; EXPREVAL.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; expression evaluator.
+;
 
 include stddef.inc
 
@@ -85,9 +90,9 @@ TokenAssign proc fastcall uses esi edi ecx opnd1:expr_t, opnd2:expr_t
 
 TokenAssign endp
 
-    assume ecx:tok_t
+    assume ecx:token_t
 
-get_precedence proc fastcall item:tok_t
+get_precedence proc fastcall item:token_t
 
     mov al,[ecx].token
     .switch al
@@ -189,13 +194,13 @@ GetRecordMask proc fastcall uses esi edi ebx rec:dsym_t
 
 GetRecordMask endp
 
-    assume ebx:tok_t
+    assume ebx:token_t
     assume edi:expr_t
     assume ecx:nothing
 
 ; added v2.31.32
 
-SetEvexOpt proc tok:tok_t
+SetEvexOpt proc tok:token_t
 
     mov ecx,tok
     .if [ecx-1*16].asm_tok.token == T_COMMA && \
@@ -219,7 +224,7 @@ SetEvexOpt endp
 
 FindDotSymbol proto :ptr asm_tok
 
-get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, flags:byte
+get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t, flags:byte
 
     local tmp:string_t
     local sym:asym_t
@@ -2109,9 +2114,9 @@ cmp_types endp
 
     assume esi:expr_t
     assume edi:expr_t
-    assume ebx:tok_t
+    assume ebx:token_t
 
-calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
+calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
   local sym:asym_t
   local opnd:expr
@@ -2731,7 +2736,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
     ret
 calculate endp
 
-PrepareOp proc opnd:expr_t, old:expr_t, oper:tok_t
+PrepareOp proc opnd:expr_t, old:expr_t, oper:token_t
 
     mov ecx,opnd
     mov edx,old
@@ -2765,7 +2770,7 @@ PrepareOp proc opnd:expr_t, old:expr_t, oper:tok_t
 
 PrepareOp endp
 
-OperErr proc i:int_t, tokenarray:tok_t
+OperErr proc i:int_t, tokenarray:token_t
 
     mov eax,i
     shl eax,4
@@ -2781,9 +2786,9 @@ OperErr endp
 
     assume ecx:nothing
     assume edx:nothing
-    assume esi:tok_t
+    assume esi:token_t
 
-evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:tok_t, _end:int_t, flags:byte
+evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _end:int_t, flags:byte
 
   local rc:int_t
   local opnd2:expr
@@ -2965,7 +2970,7 @@ evaluate endp
 
     option proc:public
 
-EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:tok_t, end_tok:int_t,
+EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:token_t, end_tok:int_t,
         result:expr_t, flags:byte
 
     mov eax,start_tok

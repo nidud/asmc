@@ -1,3 +1,9 @@
+; HLL.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 include stdio.inc
 include stdlib.inc
@@ -66,7 +72,7 @@ CHARS_OR    equ '|' + ( '|' shl 8 )
 
     .code
 
-GetCOp proc fastcall private item;:tok_t
+GetCOp proc fastcall private item;:token_t
 
     mov edx,[ecx].asm_tok.string_ptr
     xor eax,eax
@@ -141,10 +147,10 @@ GetCOp  endp
 ; render an instruction
 ;
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
 RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:uint_t,
-        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:tok_t
+        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:token_t
 
   local reg:string_t
 
@@ -277,7 +283,7 @@ RenderJcc endp
 ;
 ; a "token" in a C expression actually is an assembly expression
 ;
-LGetToken proc private uses esi edi ebx hll:hll_t, i:int_t, tokenarray:tok_t, opnd:ptr expr
+LGetToken proc private uses esi edi ebx hll:hll_t, i:int_t, tokenarray:token_t, opnd:ptr expr
     ;
     ; scan for the next C operator in the token array.
     ; because the ASM evaluator may report an error if such a thing
@@ -329,7 +335,7 @@ GetLabel endp
 ;
 
 GetSimpleExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t,
-        tokenarray:tok_t, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
+        tokenarray:token_t, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
 local   op:         int_t,
         op1_pos:    int_t,
@@ -747,7 +753,7 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+GetAndExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
     ilabel:uint_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -820,7 +826,7 @@ GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+GetExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
     ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -931,11 +937,11 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-GenerateFloat proto :int_t, :tok_t
+GenerateFloat proto :int_t, :token_t
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
-ExpandCStrings proc uses edi ebx tokenarray:tok_t
+ExpandCStrings proc uses edi ebx tokenarray:token_t
 
     xor eax,eax
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
@@ -1012,9 +1018,8 @@ ExpandCStrings endp
 
 GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
 
-  local vname[64]:sbyte
-
     mov ecx,sym
+    xor eax,eax
     .if [ecx].asym.mem_type == MT_TYPE && [ecx].asym.type
         mov ecx,[ecx].asym.type
     .endif
@@ -1022,23 +1027,34 @@ GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
         ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.ptr_memtype == MT_TYPE )
         mov ecx,[ecx].asym.target_type
     .endif
-    strcpy(&vname, [ecx].asym.name)
-    .if SymFind(strcat(eax, "Vtbl"))
-
-        mov ecx,eax
-        SearchNameInStruct(ecx, name, 0, 0)
+    .if ( [ecx].asym.flag2 & S_VTABLE )
+        SearchNameInStruct( [ecx].asym.vtable, name, 0, 0 )
     .endif
     ret
 
 GetProcVtbl endp
 
-GetProc proc private uses ebx token:tok_t
+GetProc proc private uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, opnd:ptr expr
 
-    mov ebx,token
-    .if [ebx].token == T_REG
-        GetStdAssume(GetRegNo([ebx].tokval))
+    imul ebx,i,16
+    add ebx,tokenarray
+
+    .if ( [ebx].token == T_OP_SQ_BRACKET )
+
+        .for ( ecx = i, edx = ebx : [ebx].token != T_FINAL : ebx+=16, ecx++ )
+            .break .if ( [ebx].token == T_CL_SQ_BRACKET )
+        .endf
+        add ecx,3
+        add ebx,32
+        .return 0 .if ( [ebx+16].token !=  T_DOT )
+        .return 0 .if EvalOperand( &i, tokenarray, ecx, opnd, 0 ) == ERROR
+        mov ecx,opnd
+        mov eax,[ecx].expr.type
+
+    .elseif [ebx].token == T_REG
+        GetStdAssume( GetRegNo( [ebx].tokval) )
     .else
-        SymFind([ebx].string_ptr)
+        SymFind( [ebx].string_ptr )
     .endif
     .return .if !eax
     .return .if [eax].asym.flag1 & S_ISPROC
@@ -1046,7 +1062,7 @@ GetProc proc private uses ebx token:tok_t
     .if [ebx].token == T_ID && \
         [ebx+16].token == T_DOT && \
         [ebx+32].token == T_ID
-        .return GetProcVtbl(eax, [ebx+32].string_ptr)
+        .return GetProcVtbl( eax, [ebx+32].string_ptr )
     .endif
 
     mov ecx,[eax].asym.target_type
@@ -1114,11 +1130,105 @@ GetParamId proc uses esi edi id:int_t, sym:asym_t
 
 GetParamId endp
 
-StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
+GetMacroReturn proc uses esi ebx i:int_t, tokenarray:ptr asm_tok
+
+  local mac_name[128]:char_t
+  local opnd:expr
+
+    ;
+    ; v2.32.43 - test return value from inline function
+    ;
+    ; if the last line is retm<..> use this as return value
+    ;
+
+   .return .if !GetProc( i, tokenarray, &opnd )
+
+    .if ( [eax].asym.state == SYM_STRUCT_FIELD )
+
+        mov esi,eax
+
+        imul ebx,i,16
+        add ebx,tokenarray
+
+        .if ( [ebx].token == T_OP_SQ_BRACKET )
+            mov ecx,opnd.type
+        .else
+           .return .if !SymFind( [ebx].string_ptr )
+            xor ecx,ecx
+            .if ( [eax].asym.mem_type == MT_TYPE )
+                mov ecx,[eax].asym.type
+            .elseif ( [eax].asym.mem_type == MT_PTR )
+                mov ecx,[eax].asym.target_type
+            .endif
+        .endif
+        .return 0 .if ( !ecx || [ecx].asym.typekind != TYPE_STRUCT )
+
+        strcpy( &mac_name, [ecx].asym.name )
+        strcat( eax, "_" )
+        strcat( eax, [esi].asym.name )
+        .return .if !SymFind( eax )
+
+        .if ( [eax].asym.state == SYM_TMACRO )
+            .return .if !SymSearch( [eax].asym.string_ptr )
+        .endif
+
+        or  [esi].asym.flag2,S_VMACRO
+        mov [esi].asym.vmacro,eax ; vtable method is inline - sym->vmacro set
+        mov ecx,eax
+        xor eax,eax
+
+    .else
+
+        mov ecx,[eax].asym.target_type
+        mov edx,eax
+        xor eax,eax
+
+        .return .if !( [edx].asym.state == SYM_EXTERNAL || [edx].asym.state == SYM_STACK )
+        .return .if !ecx
+
+    .endif
+
+   .return .if [ecx].asym.state != SYM_MACRO
+
+    mov ecx,[ecx].dsym.macroinfo
+    mov ecx,[ecx].macro_info.lines
+   .return .if !ecx
+
+   .while [ecx].srcline.next
+        mov ecx,[ecx].srcline.next
+   .endw
+
+    lea ecx,[ecx].srcline.line
+    mov edx,[ecx]
+   .return .if edx != 'mter'
+
+    add ecx,4
+    mov dl,[ecx]
+   .while 1
+       .break .if !dl || dl == '<'
+        inc ecx
+        mov dl,[ecx]
+   .endw
+   .return .if dl != '<'
+   .repeat
+        inc ecx
+        mov dl,[ecx]
+       .continue(0) .if dl == ' '
+       .continue(0) .if dl == 9
+   .until 1
+   .return .if !dl
+   .return .if dl == '>'
+    mov eax,ecx
+    ret
+
+GetMacroReturn endp
+
+StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:token_t
 
   local sym:dsym_t
+  local mac:string_t
   local curr:asym_t
-  local proc_id:tok_t ; foo( 1, bar(...), ...)
+  local proc_id:token_t ; foo( 1, bar(...), ...)
   local parg_id:int_t ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax|xmm0]]
   local opnd:expr
   local bracket:int_t
@@ -1126,6 +1236,7 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
   local b[MAX_LINE_LEN]:char_t
 
     xor eax,eax
+    mov mac,     eax
     mov reg2,    eax
     mov proc_id, eax
     mov parg_id, eax
@@ -1165,10 +1276,17 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
         mov proc_id,esi
     .endif
 
-    mov eax,proc_id
-    .if eax && [eax].asm_tok.token != T_OP_SQ_BRACKET
+    .if GetMacroReturn( i, edi )
+        mov mac,eax
+        jmp macro_args
+    .endif
 
-        .if GetProc(eax)
+    mov ecx,proc_id
+    .if ecx ;&& [ecx].asm_tok.token != T_OP_SQ_BRACKET
+
+        sub ecx,tokenarray
+        shr ecx,4
+        .if GetProc( ecx, tokenarray, &opnd )
 
             mov sym,eax
             mov ecx,GetParamId( parg_id, eax )
@@ -1335,11 +1453,31 @@ endif
             .endif
         .endif
     .endif
-
-    mov ebx,GetResWName(esi, 0)
+    .if mac
+        mov ebx,mac
+    .else
+        mov ebx,GetResWName(esi, 0)
+    .endif
+macro_args:
     lea esi,b
     strcat(esi, " ")
-    strcat(esi, ebx)
+    .if mac
+        lea edi,[esi+strlen(esi)]
+        mov esi,mac
+        .while 1
+            lodsb
+            mov ah,[esi]
+            .break .if !al
+            .continue .if ax == '<!'
+            .continue .if ax == '>!'
+            stosb
+        .endw
+        mov [edi-1],al
+        lea esi,b
+        mov edi,tokenarray
+    .else
+        strcat(esi, ebx)
+    .endif
     .if reg2
         strcat(esi, "::")
         strcat(esi, GetResWName(reg2, 0))
@@ -1366,18 +1504,17 @@ endif
 StripSource endp
 
 
-LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:tok_t
+LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:token_t
 
   local opnd:expr
   local b[MAX_LINE_LEN]:char_t
   local name:string_t
-  local id:tok_t
-  local args:tok_t
-  local dots[10]:tok_t
+  local id:token_t
+  local args:token_t
+  local dots[10]:token_t
   local static_struct:int_t
   local ClassVtbl[256]:char_t
   local sym:asym_t
-  local symt:asym_t
   local type:string_t
   local method:asym_t
   local comptr:string_t
@@ -1386,7 +1523,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local brcount:int_t
   local sqcount:int_t
   local dotcount:int_t
-  local sqbrend:tok_t
+  local sqbrend:token_t
   local j:int_t
 
     xor eax,eax
@@ -1796,7 +1933,7 @@ done:
 
                     mov eax,ecx
 
-                .elseif ( [ecx].asym.sflags & S_ISINLINE )
+                .elseif ( [ecx].asym.flag2 & S_ISINLINE )
 
                     mov ecx,[ecx].asym.target_type
                     .if ( ecx && [ecx].asym.state == SYM_MACRO )
@@ -1826,7 +1963,7 @@ LKRenderHllProc endp
 
     assume ebx: NOTHING
 
-RenderHllProc proc private uses esi edi dst:string_t, i:uint_t, tokenarray:tok_t
+RenderHllProc proc private uses esi edi dst:string_t, i:uint_t, tokenarray:token_t
 
   local oldstat:input_status
 
@@ -1892,7 +2029,7 @@ endif
 
 QueueTestLines endp
 
-ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:tok_t
+ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:token_t
 
   local rc:int_t
 
@@ -1913,7 +2050,7 @@ ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:tok_t
 
                 ExpandCStrings( tokenarray )
                 mov rc,RenderHllProc( dst, esi, tokenarray )
-                .break
+                ;.break
             .endif
             add edi,16
             add esi,1
@@ -1924,7 +2061,7 @@ ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:tok_t
 
 ExpandHllProc endp
 
-ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:tok_t
+ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:token_t
 
   local rc:int_t
 
@@ -1959,7 +2096,7 @@ ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:tok_t
 
 ExpandHllProcEx endp
 
-EvaluateHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+EvaluateHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
             ilabel:int_t, is_true:int_t, buffer:string_t
 
   local hllop:hll_opnd, b[MAX_LINE_LEN]:char_t
@@ -2151,7 +2288,7 @@ endif
 
 EvaluateHllExpression endp
 
-ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
         ilabel:int_t, is_true:int_t, buffer:string_t
 
   local rc:DWORD,
@@ -2440,12 +2577,12 @@ GetJumpString proc private uses edx ecx cmd
 
 GetJumpString endp
 
-    assume  ebx: tok_t
+    assume  ebx: token_t
     assume  esi: hll_t
 
 ; .IF, .WHILE, .SWITCH or .REPEAT directive
 
-HllStartDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
+HllStartDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
 local   rc:         int_t,
         cmd:        uint_t,
@@ -2723,7 +2860,7 @@ HllStartDir endp
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
 ;
-HllEndDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
+HllEndDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t
 
@@ -2945,7 +3082,7 @@ HllEndDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
 HllEndDir endp
 
-HllContinueIf proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+HllContinueIf proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
     labelid:int_t, hll1:hll_t, is_true:int_t
 
   local rc:int_t, buff[16]:char_t
@@ -3068,7 +3205,7 @@ HllContinueIf endp
 ;    - jump to test / exit label of innermost .WHILE/.REPEAT block
 ;
 
-HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
+HllExitDir proc USES esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:     int_t,
         cont0:  int_t,

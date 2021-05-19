@@ -1,14 +1,18 @@
 include limits.inc
-include errno.inc
 include stdio.inc
+include errno.inc
 include string.inc
 include quadmath.inc
+
+.data
+format db " %s",10,"[%s]",10,0
+.code
 
     .assert:on
 
     T equ <@CStr>
 
-.template assert
+.template assert fastcall
 
     lastResult errno_t ?
 
@@ -18,24 +22,6 @@ include quadmath.inc
         _set_errno(0)
         }
 ;;;;;;;;
-
-    .static mulq {
-        this.__v(mulq, 0.0, 0.0, 0.0)
-        this.__v(mulq, 0.0, 1.0, 0.0)
-        this.__v(mulq, 0.0, -1.0, 0.0)
-        this.__v(mulq, 2.0, 1.0, 2.0)
-        this.__v(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Ar)
-        this.__v(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581061r)
-        this.__v(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
-
-        this.__m(mulq, 0.0, 0.0, 0.0)
-        this.__m(mulq, 0.0, 1.0, 0.0)
-        this.__m(mulq, 0.0, -1.0, 0.0)
-        this.__m(mulq, 2.0, 1.0, 2.0)
-        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Ar)
-        this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581061r)
-        this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
-        }
 
         .static __m :abs, :abs, :abs, :abs {
             local a, b, r
@@ -57,60 +43,33 @@ include quadmath.inc
                 __&_1&(addr a)
             endif
             if typeof(r) eq 16
-                mov rax,qword ptr a
-                mov rdx,qword ptr a[8]
-                mov rbx,qword ptr r
-                mov rcx,qword ptr r[8]
-                .assert( rax == rbx && rdx == rcx )
+                mov eax,dword ptr a
+                mov edx,dword ptr a[4]
+                mov ebx,dword ptr r
+                mov ecx,dword ptr r[4]
+                .assert( eax == ebx && edx == ecx )
+                mov eax,dword ptr a[8]
+                mov edx,dword ptr a[12]
+                mov ebx,dword ptr r[8]
+                mov ecx,dword ptr r[12]
+                .assert( eax == ebx && edx == ecx )
             else
                 mov ebx,r
                 .assert( eax == ebx )
             endif
             }
 
-        .static __v :abs, :abs, :abs, :abs {
-          local a, b, r
-           .data
-            align 16
-            a oword _2
-            ifnb <_4>
-                b oword _3
-                ifidn typeid(_4),<IMMFLT>
-                    r oword _4
-                else
-                    r errno_t _4
-                endif
-                .code
-                _1(a, b)
-            else
-                r oword _3
-                .code
-                _1(a)
-            endif
-            if typeof(r) eq 16
-                movq    rax,xmm0
-                movhlps xmm0,xmm0
-                movq    rdx,xmm0
-                mov     rbx,qword ptr r
-                mov     rcx,qword ptr r[8]
-                .assert( rax == rbx && rdx == rcx )
-            else
-                mov ebx,r
-                .assert( eax == ebx )
-            endif
-            }
+    .static mulq {
+        this.__m(mulq, 0.0, 0.0, 0.0)
+        this.__m(mulq, 0.0, 1.0, 0.0)
+        this.__m(mulq, 0.0, -1.0, 0.0)
+        this.__m(mulq, 2.0, 1.0, 2.0)
+        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Ar)
+        this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581061r)
+        this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
+        }
 
     .static divq {
-
-        this.__v(divq, 0.0, 0.0, 7FFF8000000000000000000000000000r)
-        this.__v(divq, 0.0, 1.0, 0.0)
-        this.__v(divq, 0.0, -1.0, 0.0)
-        this.__v(divq, 2.0, 1.0, 2.0)
-        this.__v(divq, 1.1, 2.2, 0.5)
-        this.__v(divq, 0.01, 0.1, 0.1)
-        this.__v(divq, 66666.6, 2.0, 33333.3)
-        this.__v(divq, 1.0001, 1000000.0002, 3FEB0C7659426EB346F3B91986814E5Er)
-
         this.__m(divq, 0.0, 0.0, 7FFF8000000000000000000000000000r)
         this.__m(divq, 0.0, 1.0, 0.0)
         this.__m(divq, 0.0, -1.0, 0.0)
@@ -122,15 +81,6 @@ include quadmath.inc
         }
 
     .static addq {
-
-        this.__v(addq, 0.0, 0.0, 0.0)
-        this.__v(addq, 1.0, 0.0, 1.0)
-        this.__v(addq, -1.0, 0.0, -1.0)
-        this.__v(addq, 1.0, 1.0, 2.0)
-        this.__v(addq, 1.1, 1.1, 2.2)
-        this.__v(addq, 999999.0001, 1.0001, 1000000.0002)
-        this.__v(addq, 0.09, 0.01, 0.1)
-
         this.__m(addq, 0.0, 0.0, 0.0)
         this.__m(addq, 1.0, 0.0, 1.0)
         this.__m(addq, -1.0, 0.0, -1.0)
@@ -141,14 +91,6 @@ include quadmath.inc
         }
 
     .static subq {
-
-        this.__v(subq, 0.0, 0.0, 0.0)
-        this.__v(subq, 1.0, 0.0, 1.0)
-        this.__v(subq, -1.0, 0.0, -1.0)
-        this.__v(subq, 1.0, 1.0, 0.0)
-        this.__v(subq, 1.1, 1.1, 0.0)
-        this.__v(subq, 10000000.0002, 999999.0001, 9000001.0001 )
-
         this.__m(subq, 0.0, 0.0, 0.0)
         this.__m(subq, 1.0, 0.0, 1.0)
         this.__m(subq, -1.0, 0.0, -1.0)
@@ -158,23 +100,6 @@ include quadmath.inc
         }
 
     .static cmpq {
-
-        this.__v(cmpq, 0.0, 1.0, -1 )
-        this.__v(cmpq, 0.0, 0.0, 0 )
-        this.__v(cmpq, 1.0, 0.0, 1 )
-        this.__v(cmpq, 0.0, 1.0, -1 )
-        this.__v(cmpq, -0.0, 0.0, -1 )
-        this.__v(cmpq, -1.0, -2.0, 1 )
-        this.__v(cmpq, 0.0, -1.0, 1 )
-        this.__v(cmpq, -1.0, -1.0, 0 )
-        this.__v(cmpq, -9.9, -9.9, 0 )
-        this.__v(cmpq, 9223372036854775808.0, 9223372036854775808.0, 0 )
-        this.__v(cmpq, 9223372036854775808.0, 9223372036854775807.0, 1 )
-        this.__v(cmpq, 9223372036854775807.0, 9223372036854775808.0, -1 )
-        this.__v(cmpq, -9223372036854775808.0, -9223372036854775808.0, 0 )
-        this.__v(cmpq, -9223372036854775807.0, -9223372036854775808.0, 1 )
-        this.__v(cmpq, -9223372036854775808.0, -9223372036854775807.0, -1 )
-
         this.__m(cmpq, 0.0, 1.0, -1 )
         this.__m(cmpq, 0.0, 0.0, 0 )
         this.__m(cmpq, 1.0, 0.0, 1 )
@@ -201,19 +126,6 @@ include quadmath.inc
 
 
     .static cvtq_h {
-
-        this.__vqh( 0, 0.0, 0 )
-        this.__vqh( 0, 1.0, 0x3C00 )
-        this.__vqh( 0, 1.000976563, 0x3C01 )
-        this.__vqh( 0, 0.0009765625, 0x1400 )
-        this.__vqh( 0, -2.0, 0xC000 )
-        this.__vqh( 0, 0.33325196, 0x3555 )
-        this.__vqh( 0, 65504.0, 0x7BFF )
-        this.__vqh( 0, 6.103515625e-05, 0x0400 )
-        this.__vqh( 0, 1.0/0.0, 0x7C00 )
-        this.__vqh( 0, -1.0/0.0, 0xFC00 )
-        this.__vqh( ERANGE, 5.960464478e-08, 0x0001 )
-
         this.__mqh( 0, 0.0, 0 )
         this.__mqh( 0, 1.0, 0x3C00 )
         this.__mqh( 0, 1.000976563, 0x3C01 )
@@ -226,20 +138,6 @@ include quadmath.inc
         this.__mqh( 0, -1.0/0.0, 0xFC00 )
         this.__mqh( ERANGE, 5.960464478e-08, 0x0001 )
         }
-        .static __vqh :abs, :abs, :abs {
-            local q, h
-            .data
-                align 16
-                q real16 _2
-                h dw _3
-            .code
-            cvtq_h(q)
-            movzx ebx,h
-            movzx eax,ax
-            .assert( eax == ebx )
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mqh :abs, :abs, :abs {
             local q, h
             .data
@@ -256,21 +154,8 @@ include quadmath.inc
             }
 
     .static cvtq_ss {
-        this.__vqss( 3.14159265358979323846264338327, 40490FDBr )
         this.__mqss( 3.14159265358979323846264338327, 40490FDBr )
         }
-        .static __vqss :abs, :abs {
-            local a, b
-            .data
-                align 16
-                a real16 _1
-                b real4 _2
-            .code
-            cvtq_ss(a)
-            movd eax,xmm0
-            mov edx,b
-            .assert( eax == edx )
-            }
         .static __mqss :abs, :abs {
             local a, b, r
             .data
@@ -286,21 +171,8 @@ include quadmath.inc
             }
 
     .static cvtq_sd {
-        this.__vqsd( 3.14159265358979323846264338327, 400921FB54442D18r )
         this.__mqsd( 3.14159265358979323846264338327, 400921FB54442D18r )
         }
-        .static __vqsd :abs, :abs {
-            local a, b
-            .data
-                align 16
-                a real16 _1
-                b real8 _2
-            .code
-            cvtq_sd(a)
-            movq rax,xmm0
-            mov rdx,b
-            .assert( rax == rdx )
-            }
         .static __mqsd :abs, :abs {
             local a, b, r
             .data
@@ -310,38 +182,19 @@ include quadmath.inc
                 r real8 0.0
             .code
             __cvtq_sd(addr r, addr a)
-            mov rax,r
-            mov rdx,b
-            .assert( rax == rdx )
+            mov eax,dword ptr r
+            mov edx,dword ptr b
+            mov ecx,dword ptr r[4]
+            mov ebx,dword ptr b[4]
+            .assert( eax == edx && ecx == ebx )
             }
 
     .static cvtq_ld {
-
-        this.__vqld( 0.0 )
-        this.__vqld( 1.0 )
-        this.__vqld( 9.0 / 7.0 )
-        this.__vqld( 3.14159265358979323846264338327 )
-
         this.__mqld( 0.0 )
         this.__mqld( 1.0 )
         this.__mqld( 9.0 / 7.0 )
         this.__mqld( 3.14159265358979323846264338327 )
         }
-        .static __vqld :abs {
-            local a, b
-            .data
-                align 16
-                a real16 _1
-                b real10 _1
-            .code
-            cvtq_ld(a)
-            movaps  a,xmm0
-            mov     rax,qword ptr b[0]
-            mov     rbx,qword ptr a[0]
-            movzx   ecx,word ptr b[8]
-            movzx   edx,word ptr a[8]
-            .assert( rax == rbx && edx == ecx )
-            }
         .static __mqld :abs {
             local a, b, r
             .data
@@ -351,28 +204,17 @@ include quadmath.inc
                 r real10 0.0
             .code
             __cvtq_ld(addr r, addr a)
-            mov     rax,qword ptr r
-            mov     rbx,qword ptr b
+            mov     eax,dword ptr r[4]
+            mov     ebx,dword ptr b[4]
             movzx   edx,word ptr r[8]
             movzx   ecx,word ptr b[8]
-            .assert( rax == rbx && edx == ecx )
+            .assert( eax == ebx && edx == ecx )
+            mov     eax,dword ptr r
+            mov     ebx,dword ptr b
+            .assert( eax == ebx )
             }
 
     .static cvtq_i32 {
-
-        this.__vqi32( 0, 0.0, 0)
-        this.__vqi32( 0, 0.10, 0, 0.0)
-        this.__vqi32( 0, 1.0, 1)
-        this.__vqi32( 0, 2.0, 2)
-        this.__vqi32( 0, 0.99999999, 0, 0.0)
-        this.__vqi32( 0, 7777777.0, 7777777)
-        this.__vqi32( 0, 2147483647.0, 2147483647)
-        this.__vqi32( 0, 2147483647.0, INT_MAX)
-        this.__vqi32( 0, -2147483648.0, INT_MIN)
-        this.__vqi32( 0, -1.0, UINT_MAX)
-        this.__vqi32( 0, -100000000000000000000.0, INT_MIN, -2147483648.0) ; ERANGE
-        this.__vqi32( 0, 100000000000000000000.0, INT_MAX, 2147483647.0) ; ERANGE
-
         this.__mqi32( 0, 0.0, 0)
         this.__mqi32( 0, 0.10, 0, 0.0)
         this.__mqi32( 0, 1.0, 1)
@@ -386,23 +228,6 @@ include quadmath.inc
         this.__mqi32( 0, -100000000000000000000.0, INT_MIN, -2147483648.0) ; ERANGE
         this.__mqi32( 0, 100000000000000000000.0, INT_MAX, 2147483647.0) ; ERANGE
         }
-        .static __vqi32 :abs, :abs, :abs, :abs {
-            local a, b
-            .data
-                align 16
-                ifnb <_4>
-                    a real16 _4
-                else
-                    a real16 _2
-                endif
-                b real16 _2
-            .code
-            cvtq_i32(a)
-            mov ebx,_3
-            .assert( eax == ebx )
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mqi32 :abs, :abs, :abs, :abs {
             local a, b
             .data
@@ -422,20 +247,6 @@ include quadmath.inc
             }
 
     .static cvtq_i64 {
-
-        this.__vqi64( 0, 0.0, 0)
-        this.__vqi64( 0, 0.10, 0, 0.0)
-        this.__vqi64( 0, 1.0, 1)
-        this.__vqi64( 0, 2.0, 2)
-        this.__vqi64( 0, 0.99999999, 0, 0.0)
-        this.__vqi64( 0, 7777777.0, 7777777)
-        this.__vqi64( 0, 9223372036854775807.0, 9223372036854775807)
-        this.__vqi64( 0, 9223372036854775807.0, _I64_MAX)
-        this.__vqi64( 0, -9223372036854775807.0, -9223372036854775807)
-        this.__vqi64( 0, 9223372036854775808.0, _I64_MAX, 9223372036854775807.0) ; ERANGE
-        this.__vqi64( ERANGE, -9223372036854775808.0, _I64_MIN, -9223372036854775808.0)
-        this.__vqi64( 0, -1.0, _UI64_MAX)
-
         this.__mqi64( 0, 0.0, 0)
         this.__mqi64( 0, 0.10, 0, 0.0)
         this.__mqi64( 0, 1.0, 1)
@@ -449,24 +260,6 @@ include quadmath.inc
         this.__mqi64( ERANGE, -9223372036854775808.0, _I64_MIN, -9223372036854775808.0)
         this.__mqi64( 0, -1.0, _UI64_MAX)
         }
-        .static __vqi64 :abs, :abs, :abs, :abs {
-            local a, b
-            .data
-                align 16
-                ifnb <_4>
-                    a real16 _4
-                else
-                    a real16 _2
-                endif
-                b real16 _2
-            .code
-            cvtq_i64(a)
-            mov rbx,_3
-            .assert( rax == rbx )
-
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mqi64 :abs, :abs, :abs, :abs {
             local a, b
             .data
@@ -479,29 +272,15 @@ include quadmath.inc
                 b real16 _2
             .code
             __cvtq_i64(addr a)
-            mov rbx,_3
-            .assert( rax == rbx )
+            mov ebx,LOW32(_3)
+            mov ecx,HIGH32(_3)
+            .assert( eax == ebx && edx == ecx )
 
             this.SetStatus()
             .assert( eax == _1 )
             }
 
     .static cvth_q {
-
-        this.__vhq( 0, 0.0, 0)
-        this.__vhq( 0, 1.0, 0x3C00)
-        this.__vhq( 0, 1.000976563, 0x3C01)
-        this.__vhq( 0, 0.0009765625, 0x1400)
-        this.__vhq( 0, -2.0, 0xC000)
-        this.__vhq( 0, 0.33325196, 0x3555)
-        this.__vhq( 0, 65504.0, 0x7BFF)
-        this.__vhq( 0, 6.103515625e-05, 0x0400)
-        this.__vhq( 0, 6.097555161e-05, 0x03FF)
-        this.__vhq( 0, 5.960464478e-08, 0x0001)
-        this.__vhq( 0, 1.0/0.0, 0x7C00)
-        this.__vhq( 0, -1.0/0.0, 0xFC00)
-        this.__vhq( EDOM, 0.0/0.0, 0xFFFF)
-
         this.__mhq( 0, 0.0, 0)
         this.__mhq( 0, 1.0, 0x3C00)
         this.__mhq( 0, 1.000976563, 0x3C01)
@@ -516,25 +295,6 @@ include quadmath.inc
         this.__mhq( 0, -1.0/0.0, 0xFC00)
         this.__mhq( EDOM, 0.0/0.0, 0xFFFF)
         }
-        .static __vhq :abs, :abs, :abs {
-            local b, q, w
-            .data
-                align 16
-                q real16 _2
-                b real16 0.0
-                w dw _3
-            .code
-            cvth_q(w)
-            movaps b,xmm0
-            mov al,byte ptr b[11]
-            mov edx,dword ptr b[12]
-            mov bl,byte ptr q[11]
-            mov ecx,dword ptr q[12]
-            .assert( edx == ecx && al == bl )
-
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mhq :abs, :abs, :abs {
             local b, q, w
             .data
@@ -555,15 +315,6 @@ include quadmath.inc
             }
 
     .static cvtss_q {
-
-        this.__vssq( 0,             0.0, 0.0 )
-        this.__vssq( 0,             1.0, 0x3F800000 )
-        this.__vssq( 0,            -2.0, 0xC0000000 )
-        this.__vssq( 0,  3.402823466e38, 3.402823466e38 )
-        this.__vssq( 0, 1.175494351e-38, 1.175494351e-38 )
-        this.__vssq( 0,            -0.0, 0x80000000 )
-        this.__vssq( EDOM,    0.0 / 0.0, 0x7F800000 )
-
         this.__mssq( 0,             0.0, 0.0 )
         this.__mssq( 0,             1.0, 0x3F800000 )
         this.__mssq( 0,            -2.0, 0xC0000000 )
@@ -572,23 +323,6 @@ include quadmath.inc
         this.__mssq( 0,            -0.0, 0x80000000 )
         this.__mssq( EDOM,    0.0 / 0.0, 0x7F800000 )
         }
-        .static __vssq :abs, :abs, :abs {
-            local a, b, r
-            .data
-                align 16
-                a real16 _2
-                b real16 0.0
-                r dd _3
-            .code
-            cvtss_q(r)
-            movaps b,xmm0
-            mov eax,dword ptr b[12]
-            mov ebx,dword ptr a[12]
-            .assert( eax == ebx )
-
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mssq :abs, :abs, :abs {
             local a, b, r
             .data
@@ -606,15 +340,6 @@ include quadmath.inc
             }
 
     .static cvtsd_q {
-
-        this.__vsdq( 0,             0.0, 0.0 )
-        this.__vsdq( 0,             1.0, 1.0 )
-        this.__vsdq( 0,            -2.0, -2.0 )
-        this.__vsdq( 0,  3.402823466e38, 3.402823466e38 )
-        this.__vsdq( 0, 1.175494351e-38, 1.175494351e-38 )
-        this.__vsdq( 0,            -0.0, -0.0 )
-        this.__vsdq( 0,       0.0 / 0.0, 0.0 / 0.0 )
-
         this.__msdq( 0,             0.0, 0.0 )
         this.__msdq( 0,             1.0, 1.0 )
         this.__msdq( 0,            -2.0, -2.0 )
@@ -623,22 +348,6 @@ include quadmath.inc
         this.__msdq( 0,            -0.0, -0.0 )
         this.__msdq( 0,       0.0 / 0.0, 0.0 / 0.0 )
         }
-        .static __vsdq :abs, :abs, :abs {
-            local a, b, r
-            .data
-                align 16
-                a real16 _2
-                b real16 0.0
-                r dq _3
-            .code
-            cvtsd_q(r)
-            movaps b,xmm0
-            mov rax,qword ptr b[8]
-            mov rbx,qword ptr a[8]
-            .assert( rax == rbx )
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __msdq :abs, :abs, :abs {
             local a, b, r
             .data
@@ -648,23 +357,16 @@ include quadmath.inc
                 r dq _3
             .code
             __cvtsd_q(addr b, addr r)
-            mov rax,qword ptr b[8]
-            mov rbx,qword ptr a[8]
-            .assert( rax == rbx )
+            mov eax,dword ptr b[8]
+            mov ebx,dword ptr a[8]
+            mov ecx,dword ptr b[12]
+            mov edx,dword ptr a[12]
+            .assert( eax == ebx && ecx == edx )
             this.SetStatus()
             .assert( eax == _1 )
             }
 
     .static cvtld_q {
-
-        this.__vldq(             0.0, 0.0 )
-        this.__vldq(             1.0, 1.0 )
-        this.__vldq(            -2.0, -2.0 )
-        this.__vldq(  3.402823466e38, 3.402823466e38 )
-        this.__vldq( 1.175494351e-38, 1.175494351e-38 )
-        this.__vldq(            -0.0, -0.0 )
-        this.__vldq(       0.0 / 0.0, 7FFF8000000000000000000000000000r )
-
         this.__mldq(             0.0, 0.0 )
         this.__mldq(             1.0, 1.0 )
         this.__mldq(            -2.0, -2.0 )
@@ -673,22 +375,6 @@ include quadmath.inc
         this.__mldq(            -0.0, -0.0 )
         this.__mldq(       0.0 / 0.0, 7FFF8000000000000000000000000000r )
         }
-        .static __vldq :abs, :abs {
-            local a, b, r
-            .data
-                align 16
-                a real16 _1
-                b real16 0.0
-                r real10 _2
-            .code
-            cvtld_q(r)
-            movaps b,xmm0
-            mov rax,qword ptr b[8]
-            mov rbx,qword ptr a[8]
-            .assert( rax == rbx )
-            this.SetStatus()
-            .assert( eax == 0 )
-            }
         .static __mldq :abs, :abs {
             local a, b, r
             .data
@@ -698,26 +384,16 @@ include quadmath.inc
                 r real10 _2
             .code
             __cvtld_q(addr b, addr r)
-            mov rax,qword ptr b[8]
-            mov rbx,qword ptr a[8]
-            .assert( rax == rbx )
+            mov eax,dword ptr b[8]
+            mov ebx,dword ptr a[8]
+            mov ecx,dword ptr b[12]
+            mov edx,dword ptr a[12]
+            .assert( eax == ebx && ecx == edx )
             this.SetStatus()
             .assert( eax == 0 )
             }
 
     .static cvti32_q {
-
-        this.__vi32q( 0, 0,                   0.0 )
-        this.__vi32q( 0, 1,                   1.0 )
-        this.__vi32q( 0, 2,                   2.0 )
-        this.__vi32q( 0, 7777777,       7777777.0 )
-        this.__vi32q( 0, 2147483647, 2147483647.0 )
-        this.__vi32q( 0, INT_MAX,    2147483647.0 )
-        this.__vi32q( 0, INT_MIN,   -2147483648.0 )
-        this.__vi32q( 0, UINT_MAX,           -1.0 )
-        this.__vi32q( 0, INT_MIN,   -2147483648.0 )
-        this.__vi32q( 0, INT_MAX,    2147483647.0 )
-
         this.__mi32q( 0, 0,                   0.0 )
         this.__mi32q( 0, 1,                   1.0 )
         this.__mi32q( 0, 2,                   2.0 )
@@ -729,23 +405,6 @@ include quadmath.inc
         this.__mi32q( 0, INT_MIN,   -2147483648.0 )
         this.__mi32q( 0, INT_MAX,    2147483647.0 )
         }
-        .static __vi32q :abs, :abs, :abs {
-            local a, i
-            .data
-                align 16
-                a real16 _3
-                i long_t _2
-            .code
-            cvti32_q(i)
-            movq    rax,xmm0
-            movhlps xmm0,xmm0
-            movq    rdx,xmm0
-            mov     rbx,qword ptr a
-            mov     rcx,qword ptr a[8]
-            .assert( rax == rbx && rdx == rcx )
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mi32q :abs, :abs, :abs {
             local a, b, i
             .data
@@ -755,28 +414,21 @@ include quadmath.inc
                 i long_t _2
             .code
             __cvti32_q(addr a, i)
-            mov rax,qword ptr a
-            mov rdx,qword ptr a[8]
-            mov rbx,qword ptr b
-            mov rcx,qword ptr b[8]
-            .assert( rax == rbx && rdx == rcx )
+            mov eax,dword ptr b[8]
+            mov ebx,dword ptr a[8]
+            mov ecx,dword ptr b[12]
+            mov edx,dword ptr a[12]
+            .assert( eax == ebx && edx == ecx )
+            mov eax,dword ptr b
+            mov ebx,dword ptr a
+            mov ecx,dword ptr b[4]
+            mov edx,dword ptr a[4]
+            .assert( eax == ebx && edx == ecx )
             this.SetStatus()
             .assert( eax == _1 )
             }
 
     .static cvti64_q {
-
-        this.__vi64q( 0, 0,                                       0.0 )
-        this.__vi64q( 0, 1,                                       1.0 )
-        this.__vi64q( 0, 2,                                       2.0 )
-        this.__vi64q( 0, 7777777,                           7777777.0 )
-        this.__vi64q( 0, 9223372036854775807,   9223372036854775807.0 )
-        this.__vi64q( 0, _I64_MAX,              9223372036854775807.0 )
-        this.__vi64q( 0, -9223372036854775807, -9223372036854775807.0 )
-        this.__vi64q( 0, _I64_MAX,              9223372036854775807.0 )
-        this.__vi64q( 0, _I64_MIN,             -9223372036854775808.0 )
-        this.__vi64q( 0, _UI64_MAX,                              -1.0 )
-
         this.__mi64q( 0, 0,                                       0.0 )
         this.__mi64q( 0, 1,                                       1.0 )
         this.__mi64q( 0, 2,                                       2.0 )
@@ -788,23 +440,6 @@ include quadmath.inc
         this.__mi64q( 0, _I64_MIN,             -9223372036854775808.0 )
         this.__mi64q( 0, _UI64_MAX,                              -1.0 )
         }
-        .static __vi64q :abs, :abs, :abs {
-            local a, i
-            .data
-                align 16
-                a real16 _3
-                i sqword _2
-            .code
-            cvti64_q(i)
-            movq    rax,xmm0
-            movhlps xmm0,xmm0
-            movq    rdx,xmm0
-            mov     rbx,qword ptr a
-            mov     rcx,qword ptr a[8]
-            .assert( rax == rbx && rdx == rcx )
-            this.SetStatus()
-            .assert( eax == _1 )
-            }
         .static __mi64q :abs, :abs, :abs {
             local a, b, i
             .data
@@ -814,48 +449,28 @@ include quadmath.inc
                 i sqword _2
             .code
             __cvti64_q(addr a, i)
-            mov rax,qword ptr a
-            mov rdx,qword ptr a[8]
-            mov rbx,qword ptr b
-            mov rcx,qword ptr b[8]
-            .assert( rax == rbx && rdx == rcx )
+            mov eax,dword ptr b[8]
+            mov ebx,dword ptr a[8]
+            mov ecx,dword ptr b[12]
+            mov edx,dword ptr a[12]
+            .assert( eax == ebx && edx == ecx )
+            mov eax,dword ptr b
+            mov ebx,dword ptr a
+            mov ecx,dword ptr b[4]
+            mov edx,dword ptr a[4]
+            .assert( eax == ebx && edx == ecx )
             this.SetStatus()
             .assert( eax == _1 )
             }
 
     .static cvta_q {
-
-        this.__vaq( addr @CStr( "." ), 0.0, '.' )
-        this.__vaq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
-        this.__vaq( addr @CStr( "-1e-0a" ), -1.0, 'a' )
-        this.__vaq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
-        this.__vaq( addr @CStr( "1.e8192" ), 7FFF0000000000000000000000000000r, 0 )
-        this.__vaq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
-
-        this.__maq( addr @CStr( "." ), 0.0, '.' )
-        this.__maq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
-        this.__maq( addr @CStr( "-1e-0a" ), -1.0, 'a' )
-        this.__maq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
-        this.__maq( addr @CStr( "1.e8192"), 7FFF0000000000000000000000000000r, 0 )
-        this.__maq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
+        this.__maq( addr T( "." ), 0.0, '.' )
+        this.__maq( addr T( "-1.0e-0a" ), -1.0, 'a' )
+        this.__maq( addr T( "-1e-0a" ), -1.0, 'a' )
+        this.__maq( addr T( "123456789.0" ), 123456789.0, 0 )
+        this.__maq( addr T( "1.e8192"), 7FFF0000000000000000000000000000r, 0 )
+        this.__maq( addr T( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
         }
-        .static __vaq :abs, :abs, :abs {
-            local a, eptr
-            .data
-                align 16
-                a real16 _2
-                eptr string_t NULL
-            .code
-            cvta_q(_1, addr eptr)
-            mov rdx,eptr
-            .assert( byte ptr [rdx] == _3 )
-            movq    rax,xmm0
-            movhlps xmm0,xmm0
-            movq    rdx,xmm0
-            mov     rbx,qword ptr a
-            mov     rcx,qword ptr a[8]
-            .assert( rax == rbx && rdx == rcx )
-            }
         .static __maq :abs, :abs, :abs {
             local a, b, eptr
             .data
@@ -865,18 +480,22 @@ include quadmath.inc
                 eptr string_t NULL
             .code
             __cvta_q(addr b, _1, addr eptr)
-            mov rdx,eptr
-            .assert( byte ptr [rdx] == _3 )
-            mov rax,qword ptr a
-            mov rdx,qword ptr a[8]
-            mov rbx,qword ptr b
-            mov rcx,qword ptr b[8]
-            .assert( rax == rbx && rdx == rcx )
+            mov edx,eptr
+            .assert( byte ptr [edx] == _3 )
+            mov eax,dword ptr b[8]
+            mov ebx,dword ptr a[8]
+            mov ecx,dword ptr b[12]
+            mov edx,dword ptr a[12]
+            .assert( eax == ebx && edx == ecx )
+            mov eax,dword ptr b
+            mov ebx,dword ptr a
+            mov ecx,dword ptr b[4]
+            mov edx,dword ptr a[4]
+            .assert( eax == ebx && edx == ecx )
             }
 
 
     .static cfltcvt {
-
         this.__vflt( 0.0, T( "0" ) )
         this.__vflt( 1.0, T( "1" ) )
         this.__vflt(-1.0, T("-1" ) )
@@ -905,7 +524,9 @@ include quadmath.inc
                 f int_t _5
             .code
             _cfltcvt(addr a, addr b, c, p, f)
-            strcmp(addr _2, addr b)
+            .if strcmp(addr _2, addr b)
+                printf(addr format, addr _2, addr b)
+            .endif
             .assert( eax == 0 )
             }
 
@@ -994,6 +615,7 @@ include quadmath.inc
 
         this.__qd( 3.141592653589793238462643383279502884197169399375105820974945,
                T( "3.141592653589793238462643383279502" ), 0, 33 )
+
         }
         .static __qd :abs, :abs, :abs=<0>, :abs=<0>, :abs=<_ST_QUADFLOAT> {
             local a, b, c, p, f
@@ -1017,20 +639,9 @@ include quadmath.inc
     .static acoshq {}
     .static asinq {}
     .static asinhq {}
-
-    .static atanq {
-        this.__v(atanq, 0.0, 0.0)
-        this.__v(atanq, 1.5, 0.9827937232473290679857106110146660710)
-        }
-
+    .static atanq {}
     .static atanhq {}
-
-    .static atan2q {
-        this.__v(atan2q, 0.0, 0.0, 0.0)
-        this.__v(atan2q, 1.0, 2.0, 3FFDDAC670561BB4F68ADFC88BD97874r)
-        this.__v(atan2q, 0.5, 1.5, 0.3217505543966421934014046143586613)
-        }
-
+    .static atan2q {}
     .static cbrtq {}
     .static ceilq {}
     .static copysignq {}
@@ -1082,14 +693,7 @@ include quadmath.inc
     .static sincosq {}
     .static sinhq {}
     .static sinq {}
-
-    .static sqrtq {
-
-        this.__v(sqrtq, 0.0, 0.0)
-        this.__v(sqrtq, 1.0, 1.0)
-        this.__v(sqrtq, 2.0, 1.4142135623730950488016887242097015)
-        }
-
+    .static sqrtq {}
     .static tanq {}
     .static tanhq {}
     .static tgammaq {}
@@ -1101,59 +705,20 @@ include quadmath.inc
 
 ;;;;;;;;
 
-    .static acosqf  {
-        this.__v(acosqf, 0.0, 3FFF921FB54442D1846A000000000000r) ; 1.570796326794896619
-        this.__v(acosqf, 0.5, 3FFF0C152382D7365678000000000000r) ; 1.047197551196597721
-        }
-    .static atanqf  {
-        this.__v(atanqf, 0.0, 0.0)
-        this.__v(atanqf, 1.5, 3FFEF730BD281F69B200000000000000r) ; 0.982793723247329068
-        }
-    .static atan2qf {
-        this.__v(atan2qf, 0.0, 0.0, 0.0)
-        this.__v(atan2qf, 0.5, 1.5, 3FFD4978FA3269EE1248000000000000r) ; 0.3217505543966421934
-        }
-    .static cbrtqf {
-        }
-    .static ceilqf {
-        this.__v(ceilqf, 0.0, 0.0)
-        this.__v(ceilqf, 2.5, 3.0)
-        }
-    .static cosqf {
-        this.__v(cosqf, 0.0, 1.0)
-        this.__v(cosqf, 10.0, 0BFFEAD9AC890C6B1F20A000000000000r) ; -0.8390715290764524523
-        }
-    .static expqf {
-        this.__v(expqf, 0.0, 1.0)
-        this.__v(expqf, 1.5, 40011ED3FE64FC542000000000000000r) ; 4.481689070338065406
-        }
-    .static floorqf {
-        this.__v(floorqf, 0.0, 0.0)
-        this.__v(floorqf, 2.57, 2.0)
-        }
-    .static fmodqf {
-        this.__v(fmodqf, 1.0, 1.0, 0.0)
-        this.__v(fmodqf, 1.5, 1.2, 3FFD3333333333333338000000000000r) ; 0.3
-        }
-    .static logqf {
-        this.__v(logqf, 1.5, 3FFD9F323ECBF984BF2C000000000000r) ; 0.4054651081081643820
-        }
-    .static log10qf {
-        this.__v(log10qf, 1.5, 3FFC68A288B60B7FC2B8000000000000r) ; 0.1760912590556812421
-        }
-    .static sinqf {
-        this.__v(sinqf, 0.0, 0.0)
-        this.__v(sinqf, 0.5, 3FFDEAEE8744B05EFE88000000000000r) ; 0.4794255386042030003
-        }
-    .static sqrtqf {
-        this.__v(sqrtqf, 0.0, 0.0)
-        this.__v(sqrtqf, 1.0, 1.0)
-        this.__v(sqrtqf, 2.0, 3FFF6A09E667F3BCD000000000000000r) ; 1.414213562373095148
-        }
-    .static tanqf {
-        this.__v(tanqf, 0.0, 0.0)
-        this.__v(tanqf, 1.5, 4002C33ED50B887775A6000000000000r) ; 14.10141994717171939
-        }
+    .static acosqf  {}
+    .static atanqf  {}
+    .static atan2qf {}
+    .static cbrtqf  {}
+    .static ceilqf  {}
+    .static cosqf   {}
+    .static expqf   {}
+    .static floorqf {}
+    .static fmodqf  {}
+    .static logqf   {}
+    .static log10qf {}
+    .static sinqf   {}
+    .static sqrtqf  {}
+    .static tanqf   {}
 
 ;;;;;;;;
 
@@ -1173,8 +738,6 @@ include quadmath.inc
         }
     .ends
 
-    .data
-     format db " %s",10,"[%s]",10,0
 
     .code
 

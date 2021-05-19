@@ -1,3 +1,9 @@
+; ASSERT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include malloc.inc
 include asmc.inc
 include condasm.inc
@@ -13,10 +19,10 @@ MAXSAVESTACK equ 124
 
     .code
 
-    assume ebx: tok_t
+    assume ebx: token_t
     assume esi: hll_t
 
-AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t,cmd:uint_t,
         buff[16]:char_t,

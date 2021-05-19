@@ -1,5 +1,10 @@
-
-;; processing file/macro input data.
+; INPUT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; processing file/macro input data.
+;
 
 include asmc.inc
 include memalloc.inc
@@ -860,7 +865,10 @@ AllocInput proc private uses esi edi
     lea ecx,[eax+esi]
     mov ModuleInfo.tokenarray,ecx
     lea eax,[ecx+edi]
+    mov ecx,token_stringbuf
     mov token_stringbuf,eax
+    sub ModuleInfo.stringbufferend,ecx
+    add ModuleInfo.stringbufferend,eax
     ret
 
 AllocInput endp
@@ -879,8 +887,8 @@ endif
 
     AllocInput()
 
-    mov esi,PushSrcItem(SIT_FILE, CurrFile[ASM*4])
-    AddFile(CurrFName[ASM*4])
+    mov esi,PushSrcItem( SIT_FILE, CurrFile[ASM*4] )
+    AddFile( CurrFName[ASM*4] )
     mov [esi].srcfile,ax
     mov ModuleInfo.srcfile,eax
     GetFName(eax)
@@ -905,32 +913,47 @@ InputPassInit endp
 
     assume esi:ptr line_status
 
-InputExtend proc uses esi edi ebx p:ptr line_status, tokenarray:ptr ptr asm_tok
+InputExtend proc uses esi edi ebx p:ptr line_status
 
-    mov eax,tokenarray
-    mov eax,[eax]
-    .return 0 .if eax != ModuleInfo.tokenarray
+  .new index:int_t
+  .new oldsrcline:ptr
+  .new oldstrings:ptr
+  .new oldtok:token_t = ModuleInfo.tokenarray
+  .new oldsize:uint_t = ModuleInfo.max_line_len
 
-    mov ecx,p
-    mov esi,[ecx].line_status.start
-    .return 0 .if esi != srclinebuffer
+    add ModuleInfo.max_line_len,eax
+    mov oldstrings,token_stringbuf
+    mov oldsrcline,srclinebuffer
 
-    mov ebx,ModuleInfo.max_line_len
-    add ModuleInfo.max_line_len,ebx
-    mov edi,token_stringbuf
+    mov esi,p
+    .if ( [esi].start != eax )
+
+        .return .if !LclAlloc( ModuleInfo.max_line_len )
+
+        mov ebx,eax
+        mov edx,[esi].start
+        sub [esi].input,edx
+        add [esi].input,ebx
+        mov [esi].start,ebx
+        mov ecx,oldsize
+        mov edi,ebx
+        mov esi,edx
+        rep movsb
+    .endif
+
+    mov esi,srclinebuffer
+    mov ebx,oldsize
 
     .return .if !AllocInput()
-
+    ;
     ; copy source line buffer, token buffer, and string buffer
-    mov  edx,edi
+    ;
     mov  edi,srclinebuffer
     mov  CurrSource,edi
 
     imul ecx,ebx,MAX_MACRO_NESTING + 1
     rep  movsb
     mov  edi,ModuleInfo.tokenarray
-    mov  ecx,tokenarray
-    mov  [ecx],edi
     mov  eax,ebx
     shr  eax,2
     imul ecx,eax,asm_tok * MAX_MACRO_NESTING
@@ -940,27 +963,40 @@ InputExtend proc uses esi edi ebx p:ptr line_status, tokenarray:ptr ptr asm_tok
     rep  movsb
 
     mov esi,p
-    mov eax,[esi].output
-    sub eax,edx
-    add eax,token_stringbuf
-    mov [esi].output,eax
-    mov eax,[esi].input
-    mov ebx,[esi].start
-    sub eax,ebx
-    mov edi,srclinebuffer
-    mov [esi].start,edi
-    add eax,edi
-    mov [esi].input,eax
+    mov eax,[esi].outbuf
+    .if ( eax == oldstrings )
+        sub [esi].output,eax
+        mov [esi].outbuf,token_stringbuf
+        add [esi].output,eax
+    .endif
 
-    mov edx,ModuleInfo.tokenarray
-    .for ( ecx = 0: ecx <= [esi].index: ecx++, edx += asm_tok)
-        mov eax,[edx].asm_tok.tokpos
-        sub eax,ebx
-        add eax,edi
-        mov [edx].asm_tok.tokpos,eax
-    .endf
-    mov eax,1
-    ret
+    mov eax,[esi].start
+    .if ( eax == oldsrcline )
+        sub [esi].input,eax
+        mov [esi].start,srclinebuffer
+        add [esi].input,eax
+    .endif
+
+    .if ( oldtok == [esi].tokenarray )
+
+        mov edx,ModuleInfo.tokenarray
+        mov [esi].tokenarray,edx
+        mov index,[esi].index
+        mov edi,srclinebuffer
+        sub edi,oldsrcline
+        mov esi,token_stringbuf
+        mov eax,oldstrings
+        sub esi,eax
+        add ebx,eax
+        assume edx:ptr asm_tok
+        .for ( ecx = 0 : ecx <= index : ecx++, edx += asm_tok )
+            add [edx].tokpos,edi
+            .if ( [edx].string_ptr >= eax && [edx].string_ptr <= ebx )
+                add [edx].string_ptr,esi
+            .endif
+        .endf
+    .endif
+    .return( TRUE )
 
 InputExtend endp
 

@@ -16,9 +16,9 @@ include atofloat.inc
 
     .code
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
-GetValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t,
+GetValue proc private uses esi edi ebx i:ptr int_t, tokenarray:token_t,
     type:ptr int_t, count:ptr int_t, directive:ptr int_t, retval:ptr int_t
 
     mov edx,i
@@ -94,7 +94,7 @@ GetValue endp
 
 CreateFloat proto :int_t, :expr_t, :string_t
 
-AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, type:tok_t, count:int_t
+AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:token_t, type:token_t, count:int_t
 
   local opnd        : expr
   local reg         : int_t
@@ -323,11 +323,11 @@ AssignValue endp
 
     assume esi:hll_t
 
-ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local count       : int_t
   local retval      : int_t
-  local type        : tok_t
+  local type        : token_t
   local directive   : int_t
   local buffer[128] : char_t
 

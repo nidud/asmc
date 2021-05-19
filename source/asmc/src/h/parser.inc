@@ -384,8 +384,8 @@ sym_ext2int		proto :asym_t
 OperandSize		proto :int_t, :ptr code_info
 set_frame		proto :asym_t
 set_frame2		proto :asym_t
-ParseLine		proto :tok_t
-ProcessFile		proto :tok_t
+ParseLine		proto :token_t
+ProcessFile		proto :token_t
 WritePreprocessedLine	proto :string_t
 parsevex		proto :string_t, :ptr uchar_t
 

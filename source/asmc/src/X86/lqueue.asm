@@ -1,6 +1,11 @@
-
-;; handle the line queue.
-;; this queue is used for "generated code".
+; LQUEUE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; handle the line queue.
+; this queue is used for "generated code".
+;
 
 include malloc.inc
 
@@ -215,10 +220,10 @@ AddLineQueueX endp
 RunLineQueue proc uses esi edi
 
   local oldstat:input_status
-  local tokenarray:tok_t
+  local tokenarray:token_t
 
     ;; v2.03: ensure the current source buffer is still aligned
-    mov tokenarray,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus( &oldstat )
     inc ModuleInfo.GeneratedCode
 
     ;; v2.11: line queues are no longer pushed onto the file stack.
@@ -228,12 +233,12 @@ RunLineQueue proc uses esi edi
 
         mov edi,[esi].lq_line.next
 
-        strcpy(CurrSource, &[esi].lq_line.line)
-        MemFree(esi)
+        strcpy( CurrSource, &[esi].lq_line.line )
+        MemFree( esi )
 
-        .if PreprocessLine(&tokenarray)
+        .if PreprocessLine( tokenarray )
 
-            ParseLine(tokenarray)
+            ParseLine( tokenarray )
         .endif
     .endf
 
@@ -246,22 +251,22 @@ RunLineQueue endp
 InsertLineQueue proc uses esi edi ebx
 
   local oldstat:input_status
-  local tokenarray:tok_t
+  local tokenarray:token_t
 
     mov ebx,ModuleInfo.GeneratedCode
-    mov tokenarray,PushInputStatus(&oldstat)
+    mov tokenarray,PushInputStatus( &oldstat )
 
     mov ModuleInfo.GeneratedCode,0
     .for ( esi = LineQueue.head, LineQueue.head = NULL : esi : esi = edi )
 
         mov edi,[esi].lq_line.next
 
-        strcpy(CurrSource, &[esi].lq_line.line)
-        MemFree(esi)
+        strcpy( CurrSource, &[esi].lq_line.line )
+        MemFree( esi )
 
-        .if PreprocessLine(&tokenarray)
+        .if PreprocessLine( tokenarray )
 
-            ParseLine(tokenarray)
+            ParseLine( tokenarray )
         .endif
     .endf
 

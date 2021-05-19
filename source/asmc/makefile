@@ -66,10 +66,10 @@ objects = \
     src\X86\input.obj \
     src\X86\invoke.obj \
     src\X86\label.obj \
-    src\linnum.obj \
+    src\X86\linnum.obj \
     src\listing.obj \
     src\X86\logo.obj \
-    src\loop.obj \
+    src\X86\loop.obj \
     src\X86\lqueue.obj \
     src\X86\ltype.obj \
     src\X86\macro.obj \
@@ -78,20 +78,20 @@ objects = \
     src\X86\memalloc.obj \
     src\X86\new.obj \
     src\omf.obj \
-    src\omffixup.obj \
-    src\omfint.obj \
-    src\option.obj \
+    src\X86\omffixup.obj \
+    src\X86\omfint.obj \
+    src\X86\option.obj \
     src\X86\parser.obj \
-    src\posndir.obj \
+    src\X86\posndir.obj \
     src\X86\pragma.obj \
     src\X86\preproc.obj \
     src\proc.obj \
     src\X86\regno.obj \
     src\X86\reswords.obj \
     src\X86\return.obj \
-    src\safeseh.obj \
+    src\X86\safeseh.obj \
     src\segment.obj \
-    src\simsegm.obj \
+    src\X86\simsegm.obj \
     src\X86\string.obj \
     src\X86\switch.obj \
     src\X86\symbols.obj \

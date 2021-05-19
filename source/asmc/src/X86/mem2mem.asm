@@ -128,7 +128,7 @@ SizeFromExpression proc opnd:ptr expr
 
 SizeFromExpression endp
 
-mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t, opnd:ptr expr
+mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr expr
 
   local op:int_t
   local reg:int_t
@@ -301,7 +301,7 @@ CreateFloat proto :int_t, :expr_t, :string_t
 
     assume edi:ptr asm_tok
 
-immarray16 proc uses esi edi tokenarray:tok_t, result:expr_t
+immarray16 proc uses esi edi tokenarray:token_t, result:expr_t
 
   local i:int_t
   local count:int_t
@@ -348,7 +348,7 @@ immarray16 proc uses esi edi tokenarray:tok_t, result:expr_t
 
 immarray16 endp
 
-imm2xmm proc uses esi edi tokenarray:tok_t, opnd:expr_t
+imm2xmm proc uses esi edi tokenarray:token_t, opnd:expr_t
 
   local flabel[16]:char_t
 

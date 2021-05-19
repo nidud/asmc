@@ -1,3 +1,9 @@
+; MEMALLOC.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include malloc.inc
 include string.inc
 include winbase.inc

@@ -8,20 +8,20 @@ externdef CurrProc:dsym_t		; current procedure
 externdef sym_ReservedStack:asym_t	; max stack space required by INVOKE
 
 ;; v2.11: proc status flags
+.enum proc_status {
+    PRST_INSIDE_PROLOGUE   = 0x01,
+    PRST_INSIDE_EPILOGUE   = 0x02,
+    PRST_FPO		   = 0x04,
+    PRST_PROLOGUE_NOT_DONE = 0x80
+    }
 
-PRST_INSIDE_PROLOGUE   equ 0x01
-PRST_INSIDE_EPILOGUE   equ 0x02
-PRST_FPO	       equ 0x04
-PRST_PROLOGUE_NOT_DONE equ 0x80
-
-
-ParseProc	proto :dsym_t, :int_t, :tok_t, :int_t, :uchar_t
+ParseProc	proto :ptr esym, :int_t, :token_t, :int_t, :uchar_t
 CreateProc	proto :asym_t, :string_t, :int_t
 DeleteProc	proto :dsym_t
 
 CopyPrototype	proto :dsym_t, :dsym_t
-RetInstr	proto :int_t, :tok_t, :int_t ; handle RET/IRET within procedures
-write_prologue	proto :tok_t
+RetInstr	proto :int_t, :token_t, :int_t ; handle RET/IRET within procedures
+write_prologue	proto :token_t
 ProcInit	proto
 
 ProcCheckOpen	proto

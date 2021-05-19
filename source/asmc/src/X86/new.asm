@@ -1,3 +1,9 @@
+; NEW.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include string.inc
 include asmc.inc
@@ -9,7 +15,7 @@ include atofloat.inc
 SIZE_DATAPTR    equ 0x68
 
 SymLCreate      proto :string_t
-GetQualifiedType proto :ptr int_t, :tok_t, :ptr qualified_type
+GetQualifiedType proto :ptr int_t, :token_t, :ptr qualified_type
 SetLocalOffsets proto :proc_t
 
 qualified_type  struc
@@ -26,7 +32,7 @@ qualified_type  ends
 
     .code
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
 ConstructorCall proc private uses esi edi ebx \
         name    : string_t,         ; id name
@@ -481,7 +487,7 @@ AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, s
 
 AssignId endp
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
 ; case = {0}
 
@@ -542,7 +548,7 @@ ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
 ClearStruct endp
 
 AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
-        tokenarray:tok_t, ti:ptr qualified_type
+        tokenarray:token_t, ti:ptr qualified_type
 
   local cc[256]:char_t
   local l2[256]:char_t
@@ -664,7 +670,7 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
 AssignValue endp
 
-AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
+AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:token_t
 
   local name  : string_t,
         type  : string_t,
@@ -672,7 +678,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
         creat : int_t,
         ti    : qualified_type,
         opndx : expr,
-        endtok: tok_t
+        endtok: token_t
 
     inc  i  ; go past directive
     imul ebx,i,asm_tok
@@ -875,7 +881,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:tok_t
 
 AddLocalDir endp
 
-NewDirective proc i:int_t, tokenarray:tok_t
+NewDirective proc i:int_t, tokenarray:token_t
 
   local rc:int_t, list:int_t
 

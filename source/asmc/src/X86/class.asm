@@ -1,3 +1,8 @@
+; CLASS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
 include stdio.inc
 include string.inc
@@ -177,7 +182,7 @@ get_operator proc token:string_t
 
 get_operator endp
 
-size_from_token proc tokenarray:tok_t
+size_from_token proc tokenarray:token_t
 
     xor eax,eax
     mov edx,tokenarray
@@ -201,7 +206,7 @@ size_from_token proc tokenarray:tok_t
 
 size_from_token endp
 
-get_param_size proc tokenarray:tok_t
+get_param_size proc tokenarray:token_t
 
     size_from_token( tokenarray )
     .if eax == 0 || eax > 64
@@ -213,7 +218,7 @@ get_param_size proc tokenarray:tok_t
 
 get_param_size endp
 
-get_token_size proc tokenarray:tok_t, class:string_t
+get_token_size proc tokenarray:token_t, class:string_t
 
     .return .if size_from_token( tokenarray )
 
@@ -229,9 +234,9 @@ get_token_size proc tokenarray:tok_t, class:string_t
 
 get_token_size endp
 
-    assume ebx:tok_t
+    assume ebx:token_t
 
-get_param_name proc uses esi edi ebx tokenarray:tok_t, token:string_t,
+get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
         size:string_t, count:array_t, isid:ptr int_t, context:array_t
 
     mov edi,token
@@ -276,6 +281,9 @@ get_param_name proc uses esi edi ebx tokenarray:tok_t, token:string_t,
         GetResWName(eax, edx)
     .endif
     add ebx,16
+    .if ( [ebx].token == T_RES_ID ) ; fastcall...
+        add ebx,16
+    .endif
     .if [ebx].token == T_DIRECTIVE && [ebx].tokval == T_EQU
         add ebx,16
         mov byte ptr [edi],'m'
@@ -362,7 +370,7 @@ GetClassVector proc uses esi edi class:string_t, vector:string_t
 
 GetClassVector endp
 
-ParseOperator proc uses esi edi ebx class:string_t, tokenarray:tok_t, buffer:string_t
+ParseOperator proc uses esi edi ebx class:string_t, tokenarray:token_t, buffer:string_t
 
   local arg_count : int_t
   local id        : int_t
@@ -469,7 +477,7 @@ ParseOperator endp
 
 .enum { Immediat, Float, Register, Memory, Pointer }
 
-GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
+GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:token_t
 
   local i:int_t
   local opnd:expr
@@ -704,7 +712,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
 GetTypeId ENDP
 
-ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
+ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t, buffer:string_t
 
   local retval:int_t
   local name:string_t
@@ -896,9 +904,9 @@ done:
 
 ProcType endp
 
-    assume esi:tok_t
+    assume esi:token_t
 
-ParseClass proc uses esi edi ebx j:int_t, tokenarray:tok_t, buffer:string_t
+ParseClass proc uses esi edi ebx j:int_t, tokenarray:token_t, buffer:string_t
 
   local i:int_t, q:int_t, class:string_t, name:string_t, tokval:int_t
 
@@ -1220,9 +1228,9 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
 
 MacroInline endp
 
-ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
-  local rc:int_t, args:tok_t, cmd:uint_t, public_pos:string_t,
+  local rc:int_t, args:token_t, cmd:uint_t, public_pos:string_t,
         class[256]:char_t, constructor:int_t
 
     mov rc,NOT_ERROR
@@ -1293,7 +1301,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             mov ecx,context
             mov context,NULL
 
-            assume ecx:tok_t
+            assume ecx:token_t
 
             .if [ecx].token == T_STRING && [ecx].bytval == '{'
 
@@ -1387,14 +1395,14 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
                     or [eax].asym.flag1,S_METHOD
                 .endif
                 .if ( cmd == T_DOT_STATIC && is_vararg == 0 )
-                    or [eax].asym.sflags,S_ISSTATIC
+                    or [eax].asym.flag2,S_ISSTATIC
                 .endif
             .endif
         .endif
         MacroInline( &token, args, [ebx].tokpos , context, is_vararg )
         .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
             .if SymFind( &token )
-                or [eax].asym.sflags,S_ISSTATIC
+                or [eax].asym.flag2,S_ISSTATIC
             .endif
         .endif
         .return rc

@@ -81,16 +81,16 @@ union		; value of expression
  chararray	uchar_t 16 dup(?)
 ends
 union
- quoted_string	tok_t ?	  ; for EXPR_CONST + quoted strings only
- float_tok	tok_t ?	  ; for EXPR_FLOAT only
+ quoted_string	token_t ?  ; for EXPR_CONST + quoted strings only
+ float_tok	token_t ?  ; for EXPR_FLOAT only
 ends
-base_reg	tok_t ?	  ; EXPR_ADDR: base register token, EXPR_REG: register token
-idx_reg		tok_t ?	  ; EXPR_ADDR: index register token
+base_reg	token_t ?  ; EXPR_ADDR: base register token, EXPR_REG: register token
+idx_reg		token_t ?  ; EXPR_ADDR: index register token
 union
- label_tok	tok_t ?	  ; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
- type_tok	tok_t ?	  ; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
+ label_tok	token_t ?  ; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
+ type_tok	token_t ?  ; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
 ends
-override	tok_t ?	  ; EXPR_ADDR: token holding the override label or segment register
+override	token_t ?  ; EXPR_ADDR: token holding the override label or segment register
 inst		int_t ?	  ; operator token
 kind		int_t ?	  ; Type of expression
 mem_type	uchar_t ?
@@ -112,7 +112,7 @@ EXPF_ONEOPND	equ 4	  ; private flag, used inside expreval.c only
 EXPF_IN_SQBR	equ 8	  ; private flag, used inside expreval.c only
 
 
-EvalOperand	proto :ptr int_t, :tok_t, :int_t, :expr_t, :uchar_t
+EvalOperand	proto :ptr int_t, :token_t, :int_t, :expr_t, :uchar_t
 ExprEvalInit	proto
 EmitConstError	proto :expr_t
 

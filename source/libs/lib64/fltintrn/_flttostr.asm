@@ -273,9 +273,9 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 div radix
                 add dl,'0'
                 or  bl,dl
-                .if ( cl > bh || ( cl == bh && dword ptr [edi-4] == '9999' ) )
+                .if ( cl > bh || ( cl == bh && dword ptr [rdi-4] == '9999' ) )
                     mov dl,'0'
-                    .if byte ptr [edi-1] == '9'
+                    .if byte ptr [rdi-1] == '9'
                         mov dl,'9'
                     .endif
                 .endif

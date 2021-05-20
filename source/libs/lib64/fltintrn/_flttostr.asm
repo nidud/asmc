@@ -9,13 +9,12 @@
 include fltintrn.inc
 include quadmath.inc
 
-BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
-STK_BUF_SIZE    equ BUFFERSIZE
+STK_BUF_SIZE    equ 512 ; ANSI-specified minimum is 509
 NDIG            equ 8
 
 D_CVT_DIGITS    equ 28
 LD_CVT_DIGITS   equ 30
-QF_CVT_DIGITS   equ 45
+QF_CVT_DIGITS   equ 44
 
 E8_EXP          equ 0x4019
 E8_HIGH         equ 0xBEBC2000
@@ -25,7 +24,8 @@ E16_HIGH        equ 0x8E1BC9BF
 E16_LOW         equ 0x04000000
 
     .data
-    Q_1E8 real16 40197D78400000000000000000000000r
+     Q_1E8      real16 40197D78400000000000000000000000r
+     e_space    db "#not enough space",0
 
     .code
 
@@ -45,7 +45,13 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
   local radix  :int_t
   local flt    :STRFLT
   local stkbuf[STK_BUF_SIZE]:char_t
+  local endbuf :ptr
 
+    mov rbx,cvt
+    mov eax,[rbx].bufsize
+    add rax,buf
+    dec rax
+    mov endbuf,rax
     mov eax,D_CVT_DIGITS
     .if r9d & _ST_LONGDOUBLE
         mov eax,LD_CVT_DIGITS
@@ -197,9 +203,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov n,eax
 
     mov ecx,digits
-    .if flags & _ST_NO_TRUNC
-        add ecx,ecx
-    .endif
+    add ecx,ecx
     add ecx,NDIG / 2
     mov maxsize,ecx
 
@@ -324,9 +328,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov edx,eax     ; nsig = n
         .endif
         mov eax,digits
-        .if flags & _ST_NO_TRUNC
-            add eax,eax
-        .endif
+        add eax,eax
         .ifs edx > eax
             mov edx,eax
         .endif
@@ -423,6 +425,13 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             add edi,[rbx].n1    ; number of leading characters
 
             mov ecx,[rbx].nz1   ; followed by this many '0's
+            mov eax,[rbx].n2
+            add eax,[rbx].nz2
+            add eax,ecx
+            lea rax,[rdi+rax]
+            cmp rax,endbuf
+            ja  overflow
+
             add r8d,ecx
             mov al,'0'
             rep stosb
@@ -444,21 +453,18 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov ecx,edx
             rep movsb
 
-            mov edx,eax
-            mov eax,'#'
-            mov ecx,BUFFERSIZE-2
-            sub ecx,r8d
-            sub ecx,r10d
-            .ifs edx < ecx || flags & _ST_NO_TRUNC
-                mov ecx,edx
-                mov eax,'0'
-            .endif
+            lea rcx,[rdi+rax+2]
+            cmp rcx,endbuf
+            ja  overflow
+            mov ecx,eax
+            mov eax,'0'
             add r8d,ecx
             rep stosb
 
+            mov ecx,r10d
             .if !( r11d & _ST_CVT )
 
-                .ifs ( r10d > 0 || r11d & _ST_DOT )
+                .ifs ( ecx > 0 || r11d & _ST_DOT )
 
                     mov byte ptr [rdi],'.'
                     inc rdi
@@ -467,11 +473,9 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 .endif
             .endif
 
-            mov ecx,BUFFERSIZE-1
-            sub ecx,r8d
-            .ifs r10d < ecx || flags & _ST_NO_TRUNC
-                mov ecx,r10d
-            .endif
+            lea rdx,[rdi+rcx]
+            cmp rdx,endbuf
+            ja  overflow
             mov [rbx].nz2,ecx
             add r8d,ecx
             rep stosb
@@ -514,6 +518,9 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov [rbx].nz1,edx
             sub ecx,eax
             add r8d,ecx
+            lea rdx,[rdi+rcx]
+            cmp rdx,endbuf
+            ja  overflow
             mov eax,'0'
             rep stosb
 
@@ -728,7 +735,14 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
          xor eax,eax
          mov [r9+r8],al
     .endif
+toend:
     ret
+overflow:
+    mov rdi,buf
+    lea rsi,e_space
+    mov ecx,sizeof(e_space)
+    rep movsb
+    jmp toend
 
 _flttostr endp
 

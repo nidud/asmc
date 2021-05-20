@@ -94,7 +94,7 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
    .new idx:int_t = -1
 
     inc i ;; skip OPTION directive
-    mov ebx,tokenarray.Address(i)
+    mov ebx,tokenarray.tokptr(i)
 
     .while ( [ebx].token != T_FINAL )
         mov esi,[ebx].string_ptr
@@ -365,7 +365,7 @@ endif
                                  [edx].asm_tok.token == T_DBL_COLON )
                 .endf
                 .return .if ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
-                mov ebx,tokenarray.Address(i)
+                mov ebx,tokenarray.tokptr(i)
                 .if ( opnd.kind == EXPR_EMPTY )
                 .elseif ( opnd.kind == EXPR_CONST )
                     .if ( opnd.value > 0xFFFF )
@@ -600,7 +600,7 @@ endif
             .endif
             inc i
         .endsw
-        mov ebx,tokenarray.Address(i)
+        mov ebx,tokenarray.tokptr(i)
         .break .if ( [ebx].token != T_COMMA )
         inc i
         add ebx,asm_tok

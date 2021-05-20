@@ -37,7 +37,7 @@ T_HLL_DELAYED       equ 0x08    ; [0]: delayed
 T_EVEX_OPT          equ 0x10    ; {T_STRING} -- {k1}{z}..
 T_HLL_DBLCOLON      equ 0x20
 
-.template asm_tok
+.template asm_tok watcall
     token               uchar_t ?
     union
      dirtype            uchar_t ?   ; T_DIRECTIVE: type
@@ -60,19 +60,9 @@ T_HLL_DBLCOLON      equ 0x20
     string_ptr          string_t ?
     tokpos              string_t ?  ; points to item in CurrSource
 
-   .inline Load watcall i:abs=<i> {
-        imul    ebx,i,asm_tok
-        add     ebx,this
-        }
-
-   .inline Address fastcall i:int_t {
-        imul    eax,i,asm_tok
-        add     eax,this
-        }
-   .inline Index fastcall a:ptr {
-        mov     eax,a
-        sub     eax,this
-        shr     eax,4
+   .inline tokptr :int_t {
+        imul    edx,edx,asm_tok
+        add     eax,edx
         }
    .ends
     token_t typedef ptr asm_tok

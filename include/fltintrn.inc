@@ -90,6 +90,7 @@ n1		int_t ?
 nz1		int_t ?
 n2		int_t ?
 nz2		int_t ?
+bufsize		int_t ?
 FLTINFO		ends
 LPFLTINFO	typedef ptr FLTINFO
 

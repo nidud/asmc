@@ -145,6 +145,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
     local cnt_opnum         :int_t
     local is_exitm2         :int_t
     local len               :int_t
+    local cvt               :FLTINFO
 
     mov savedStringBuffer,StringBufferEnd
     mov _retm,0
@@ -432,10 +433,37 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                             setl al
                             myltoa( opndx.uvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
-                            sprintf( StringBufferEnd, "%.31llf", opndx.llvalue, opndx.hlvalue )
-                            _cropzeros( StringBufferEnd )
-                            .if strchr( StringBufferEnd, '.' ) == NULL
-                                strcat( StringBufferEnd, ".0" );
+                            .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
+                                strcpy( StringBufferEnd, "16" )
+                            .else
+
+                                mov cvt.expchar,'e'
+                                mov cvt.flags,_ST_F
+                                mov cvt.ndigits,1
+                                mov cvt.scale,0
+                                mov cvt.expwidth,3
+                                mov cvt.bufsize,ModuleInfo.max_line_len
+
+                                movzx ecx,word ptr opndx.h64_h[2]
+                                and ecx,0x7FFF
+                                .if ecx < 0x3FFF
+                                    sub  ecx,0x3FFE
+                                    mov  eax,30103
+                                    imul ecx
+                                    mov  ecx,100000
+                                    idiv ecx
+                                    neg  eax
+                                    inc  eax
+                                    mov cvt.ndigits,eax
+                                .endif
+                                mov esi,StringBufferEnd
+                                inc esi
+                                _flttostr( &opndx, &cvt, esi, _ST_QUADFLOAT )
+                                .if ( cvt.sign == -1 )
+                                    mov byte ptr [esi-1],'-'
+                                .else
+                                    strcpy( StringBufferEnd, esi )
+                                .endif
                             .endif
                         .endif
                         .if i != max

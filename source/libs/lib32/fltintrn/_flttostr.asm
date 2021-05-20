@@ -9,13 +9,12 @@
 include fltintrn.inc
 include quadmath.inc
 
-BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
-STK_BUF_SIZE    equ BUFFERSIZE
+STK_BUF_SIZE    equ 512 ; ANSI-specified minimum is 509
 NDIG            equ 8
 
 D_CVT_DIGITS    equ 28
 LD_CVT_DIGITS   equ 30
-QF_CVT_DIGITS   equ 45
+QF_CVT_DIGITS   equ 44
 
 E8_EXP          equ 0x4019
 E8_HIGH         equ 0xBEBC2000
@@ -25,7 +24,8 @@ E16_HIGH        equ 0x8E1BC9BF
 E16_LOW         equ 0x04000000
 
     .data
-    Q_1E8 real16 40197D78400000000000000000000000r
+     Q_1E8      real16 40197D78400000000000000000000000r
+     e_space    db "#not enough space",0
 
     .code
 
@@ -45,7 +45,13 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
   local radix  :int_t
   local flt    :STRFLT
   local stkbuf[STK_BUF_SIZE]:char_t
+  local endbuf :ptr
 
+    mov ebx,cvt
+    mov eax,buf
+    add eax,[ebx].bufsize
+    dec eax
+    mov endbuf,eax
     mov eax,flags
     mov ecx,D_CVT_DIGITS
     .if eax & _ST_LONGDOUBLE
@@ -56,7 +62,6 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
     mov     digits,ecx
     mov     radix,10
-    mov     ebx,cvt
     xor     eax,eax
     mov     dword ptr tmp[0],eax
     mov     dword ptr tmp[4],eax
@@ -197,9 +202,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov n,eax
 
     mov ecx,digits
-    .if flags & _ST_NO_TRUNC
-        add ecx,ecx
-    .endif
+    add ecx,ecx
     add ecx,NDIG / 2
     mov maxsize,ecx
 
@@ -322,9 +325,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov edx,eax     ; nsig = n
         .endif
         mov eax,digits
-        .if flags & _ST_NO_TRUNC
-            add eax,eax
-        .endif
+        add eax,eax
         .ifs edx > eax
             mov edx,eax
         .endif
@@ -417,6 +418,11 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             add edi,[ebx].n1    ; number of leading characters
 
             mov ecx,[ebx].nz1   ; followed by this many '0's
+            lea eax,[edi+ecx]
+            add eax,[ebx].n2
+            add eax,[ebx].nz2
+            cmp eax,endbuf
+            ja  overflow
             add i,ecx
             mov al,'0'
             rep stosb
@@ -438,22 +444,18 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov ecx,edx
             rep movsb
 
-            mov edx,eax
-            mov eax,'#'
-            mov ecx,BUFFERSIZE-2
-            sub ecx,i
-            sub ecx,[ebx].ndigits
-            .ifs edx < ecx || flags & _ST_NO_TRUNC
-                mov ecx,edx
-                mov eax,'0'
-            .endif
+            lea ecx,[edi+eax+2]
+            cmp ecx,endbuf
+            ja  overflow
+            mov ecx,eax
+            mov eax,'0'
             add i,ecx
             rep stosb
 
-            mov edx,[ebx].ndigits
+            mov ecx,[ebx].ndigits
             .if !( [ebx].flags & _ST_CVT )
 
-                .ifs ( edx > 0 || [ebx].flags & _ST_DOT )
+                .ifs ( ecx > 0 || [ebx].flags & _ST_DOT )
 
                     mov byte ptr [edi],'.'
                     inc edi
@@ -462,11 +464,9 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 .endif
             .endif
 
-            mov ecx,BUFFERSIZE-1
-            sub ecx,i
-            .ifs edx <= ecx || flags & _ST_NO_TRUNC
-                mov ecx,edx
-            .endif
+            lea edx,[edi+ecx]
+            cmp edx,endbuf
+            ja  overflow
             mov [ebx].nz2,ecx
             add i,ecx
             rep stosb
@@ -505,6 +505,9 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             add edx,ecx
             mov [ebx].nz1,edx
             sub ecx,eax
+            lea eax,[edi+ecx]
+            cmp eax,endbuf
+            ja  overflow
             add i,ecx
             mov eax,'0'
             rep stosb
@@ -745,7 +748,14 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         xor eax,eax
         mov [edi+edx],al
     .endif
+toend:
     ret
+overflow:
+    mov edi,buf
+    lea esi,e_space
+    mov ecx,sizeof(e_space)
+    rep movsb
+    jmp toend
 
 _flttostr endp
 

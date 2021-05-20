@@ -1196,7 +1196,12 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
 
     AddLineQueueX( "%s macro %s", name, &mac )
 
-    .for edi = 0, esi = inline : strchr(esi, 10) :
+    mov esi,inline
+    .while ( islspace( [esi] ) )
+        inc esi
+    .endw
+
+    .for ( edi = 0 : strchr(esi, 10) : )
 
         mov ebx,eax
         mov byte ptr [ebx],0
@@ -1291,6 +1296,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         .new class_ptr  : string_t
         .new token[256] : char_t
         .new name[512]  : char_t
+        .new vtable     : asym_t
 
         mov is_vararg,0
         mov ebx,get_param_name( ebx, &token, edi, &args, &is_id, &context )
@@ -1352,7 +1358,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             mov ecx,[ecx].asym.name
         .endif
 
-        .if !SymFind( strcat( strcpy( &class, ecx ), "Vtbl" ) )
+        mov vtable,SymFind( strcat( strcpy( &class, ecx ), "Vtbl" ) )
+
+        .if ( eax == NULL )
 
             mov eax,CurrStruct
         .endif
@@ -1360,7 +1368,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         .if eax
 
             mov ecx,eax
-            .if !SearchNameInStruct( ecx, edi, 0, 0 )
+
+            .if !SearchNameInStruct( ecx, edi, 0, 0 ) || !vtable
 
                 .if strcmp(edi, class_ptr) ; constructor ?
 

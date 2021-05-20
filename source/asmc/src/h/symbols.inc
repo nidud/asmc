@@ -267,148 +267,6 @@ M_PURGED        equ 0x10
      ends
     ends
 
-    .inline used {          ; symbol has been referenced
-        retm<([eax].asym.flags & S_USED)>
-        }
-    .inline isdefined {     ; symbol is "defined" in this pass
-        retm<([eax].asym.flags & S_ISDEFINED)>
-        }
-    .inline scoped {        ; symbol is local label or SYM_STACK
-        retm<([eax].asym.flags & S_SCOPED)>
-        }
-    .inline iat_used {      ; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
-        retm<([eax].asym.flags & S_IAT_USED)>
-        }
-    .inline isequate {      ; symbol has been defined with EQU
-        retm<([eax].asym.flags & S_ISEQUATE)>
-        }
-    .inline predefined {    ; symbol is predefined
-        retm<([eax].asym.flags & S_PREDEFINED)>
-        }
-    .inline variable {      ; symbol is variable (defined by '=' directive)
-        retm<([eax].asym.flags & S_VARIABLE)>
-        }
-    .inline ispublic {      ; symbol has been added to the publics queue
-        retm<([eax].asym.flags & S_ISPUBLIC)>
-        }
-
-    .inline list {          ; symbol is to be listed
-        retm<([eax].asym.flag1 & S_LIST)>
-        }
-    .inline isarray {       ; symbol is an array (total_length is valid)
-        retm<([eax].asym.flag1 & S_ISARRAY)>
-        }
-    .inline isdata {        ; field first_size is valid
-        retm<([eax].asym.flag1 & S_ISDATA)>
-        }
-    .inline isproc {        ; symbol is PROC or PROTO; has proc_info extension
-        retm<([eax].asym.flag1 & S_ISPROC)>
-        }
-    .inline issaved {       ; assembly-time variables only: symbol has been saved
-        retm<([eax].asym.flag1 & S_ISSAVED)>
-        }
-    .inline fwdref {        ; symbol was forward referenced
-        retm<([eax].asym.flag1 & S_FWDREF)>
-        }
-    .inline included {      ; COFF: static symbol added to public queue.
-                            ; ELF:symbol added to symbol table (SYM_INTERNAL)
-        retm<([eax].asym.flag1 & S_INCLUDED)>
-        }
-    .inline method {        ; v2.27: ptr is a class method
-        retm<([eax].asym.flag1 & S_METHOD)>
-        }
-
-    .inline vtable {
-        retm<([eax].asym.flag2 & S_VTABLE)>
-        }
-    .inline isvtable {
-        retm<([eax].asym.flag2 & S_ISVTABLE)>
-        }
-    .inline vmacro {
-        retm<([eax].asym.flag2 & S_VMACRO)>
-        }
-    .inline isinline {
-        retm<([eax].asym.flag2 & S_ISINLINE)>
-        }
-    .inline isstatic {
-        retm<([eax].asym.flag2 & S_ISSTATIC)>
-        }
-
-    .inline seg_ofssize {   ; SYM_EXTERNAL only
-        mov al,[eax].asym.sflags
-        and eax,S_SEGOFSSIZE
-        }
-    .inline iscomm {        ; is communal
-        retm<([eax].asym.sflags & S_ISCOM)>
-        }
-    .inline weak {          ; 1 if an unused "externdef"
-        retm<([eax].asym.sflags & S_WEAK)>
-        }
-    .inline isfar {         ; SYM_EXTERNAL, SYM_TYPE, SYM_STACK
-        retm<([eax].asym.sflags & S_ISFAR)>
-        }
-    .inline is_vararg {     ; SYM_STACK, VARARG param
-        retm<([eax].asym.sflags & S_ISVARARG)>
-        }
-
-    .inline mac_vararg {    ; accept additional params
-        retm<([eax].asym.mac_flag & M_ISVARARG)>
-        }
-    .inline isfunc {        ; it's a macro function
-        retm<([eax].asym.mac_flag & M_ISFUNC)>
-        }
-    .inline mlabel {        ; macro is "label-aware"
-        retm<([eax].asym.mac_flag & M_LABEL)>
-        }
-    .inline mac_multiline { ; v2.11: vararg arguments may be on multiple lines
-        retm<([eax].asym.mac_flag & M_MULTILINE)>
-        }
-    .inline purged {        ; macro has been PURGEd
-        retm<([eax].asym.mac_flag & M_PURGED)>
-        }
-
-    asym_setflag macro flag, pos, val
-      if val
-        or  [eax].asym.flag,(1 shl pos)
-      else
-        and [eax].asym.flag,not (1 shl pos)
-      endif
-      exitm<>
-      endm
-
-    .inline set_used        val:abs { asym_setflag(flags, 0, val) }
-    .inline set_isdefined   val:abs { asym_setflag(flags, 1, val) }
-    .inline set_scoped      val:abs { asym_setflag(flags, 2, val) }
-    .inline set_iat_used    val:abs { asym_setflag(flags, 3, val) }
-    .inline set_isequate    val:abs { asym_setflag(flags, 4, val) }
-    .inline set_predefined  val:abs { asym_setflag(flags, 5, val) }
-    .inline set_variable    val:abs { asym_setflag(flags, 6, val) }
-    .inline set_ispublic    val:abs { asym_setflag(flags, 7, val) }
-
-    .inline set_list        val:abs { asym_setflag(flag1, 0, val) }
-    .inline set_isarray     val:abs { asym_setflag(flag1, 1, val) }
-    .inline set_isdata      val:abs { asym_setflag(flag1, 2, val) }
-    .inline set_isproc      val:abs { asym_setflag(flag1, 3, val) }
-    .inline set_issaved     val:abs { asym_setflag(flag1, 4, val) }
-    .inline set_fwdref      val:abs { asym_setflag(flag1, 5, val) }
-    .inline set_included    val:abs { asym_setflag(flag1, 6, val) }
-    .inline set_method      val:abs { asym_setflag(flag1, 7, val) }
-
-    .inline set_seg_ofssize val:uint_t {
-        and [eax].asym.sflags,not S_SEGOFSSIZE
-        or  [eax].asym.sflags,dl
-        }
-    .inline set_iscomm          val:abs { asym_setflag(sflags, 2, val) }
-    .inline set_weak            val:abs { asym_setflag(sflags, 3, val) }
-    .inline set_isfar           val:abs { asym_setflag(sflags, 4, val) }
-    .inline set_is_vararg       val:abs { asym_setflag(sflags, 5, val) }
-
-    .inline set_mac_vararg      val:abs { asym_setflag(mac_flag, 0, val) }
-    .inline set_isfunc          val:abs { asym_setflag(mac_flag, 1, val) }
-    .inline set_mlabel          val:abs { asym_setflag(mac_flag, 2, val) }
-    .inline set_mac_multiline   val:abs { asym_setflag(mac_flag, 3, val) }
-    .inline set_purged          val:abs { asym_setflag(mac_flag, 4, val) }
-
     .inline nextitem            { retm<[eax].asym.nextitem> }
     .inline name                { retm<[eax].asym.name> }
     .inline offs                { retm<[eax].asym.offs> }
@@ -457,6 +315,88 @@ M_PURGED        equ 0x10
     .inline ext_idx             { retm<[eax].asym.ext_idx> }
     .inline ext_idx1            { retm<[eax].asym.ext_idx1> }
     .inline ext_idx2            { retm<[eax].asym.ext_idx2> }
+
+
+    .inline used            { retm<([eax].asym.flags & S_USED)> }
+    .inline isdefined       { retm<([eax].asym.flags & S_ISDEFINED)> }
+    .inline scoped          { retm<([eax].asym.flags & S_SCOPED)> }
+    .inline iat_used        { retm<([eax].asym.flags & S_IAT_USED)> }
+    .inline isequate        { retm<([eax].asym.flags & S_ISEQUATE)> }
+    .inline predefined      { retm<([eax].asym.flags & S_PREDEFINED)> }
+    .inline variable        { retm<([eax].asym.flags & S_VARIABLE)> }
+    .inline ispublic        { retm<([eax].asym.flags & S_ISPUBLIC)> }
+
+    .inline list            { retm<([eax].asym.flag1 & S_LIST)> }
+    .inline isarray         { retm<([eax].asym.flag1 & S_ISARRAY)> }
+    .inline isdata          { retm<([eax].asym.flag1 & S_ISDATA)> }
+    .inline isproc          { retm<([eax].asym.flag1 & S_ISPROC)> }
+    .inline issaved         { retm<([eax].asym.flag1 & S_ISSAVED)> }
+    .inline fwdref          { retm<([eax].asym.flag1 & S_FWDREF)> }
+    .inline included        { retm<([eax].asym.flag1 & S_INCLUDED)> }
+    .inline method          { retm<([eax].asym.flag1 & S_METHOD)> }
+
+    .inline vtable          { retm<([eax].asym.flag2 & S_VTABLE)> }
+    .inline isvtable        { retm<([eax].asym.flag2 & S_ISVTABLE)> }
+    .inline vmacro          { retm<([eax].asym.flag2 & S_VMACRO)> }
+    .inline isinline        { retm<([eax].asym.flag2 & S_ISINLINE)> }
+    .inline isstatic        { retm<([eax].asym.flag2 & S_ISSTATIC)> }
+
+    .inline seg_ofssize {
+        mov al,[eax].asym.sflags
+        and eax,S_SEGOFSSIZE
+        }
+    .inline iscomm          { retm<([eax].asym.sflags & S_ISCOM)> }
+    .inline weak            { retm<([eax].asym.sflags & S_WEAK)> }
+    .inline isfar           { retm<([eax].asym.sflags & S_ISFAR)> }
+    .inline is_vararg       { retm<([eax].asym.sflags & S_ISVARARG)> }
+
+    .inline mac_vararg      { retm<([eax].asym.mac_flag & M_ISVARARG)> }
+    .inline isfunc          { retm<([eax].asym.mac_flag & M_ISFUNC)> }
+    .inline mlabel          { retm<([eax].asym.mac_flag & M_LABEL)> }
+    .inline mac_multiline   { retm<([eax].asym.mac_flag & M_MULTILINE)> }
+    .inline purged          { retm<([eax].asym.mac_flag & M_PURGED)> }
+
+    asym_setflag macro flag, pos, val
+      if val
+        or  [eax].asym.flag,(1 shl pos)
+      else
+        and [eax].asym.flag,not (1 shl pos)
+      endif
+      exitm<>
+      endm
+
+    .inline set_used        val:abs { asym_setflag(flags, 0, val) }
+    .inline set_isdefined   val:abs { asym_setflag(flags, 1, val) }
+    .inline set_scoped      val:abs { asym_setflag(flags, 2, val) }
+    .inline set_iat_used    val:abs { asym_setflag(flags, 3, val) }
+    .inline set_isequate    val:abs { asym_setflag(flags, 4, val) }
+    .inline set_predefined  val:abs { asym_setflag(flags, 5, val) }
+    .inline set_variable    val:abs { asym_setflag(flags, 6, val) }
+    .inline set_ispublic    val:abs { asym_setflag(flags, 7, val) }
+
+    .inline set_list        val:abs { asym_setflag(flag1, 0, val) }
+    .inline set_isarray     val:abs { asym_setflag(flag1, 1, val) }
+    .inline set_isdata      val:abs { asym_setflag(flag1, 2, val) }
+    .inline set_isproc      val:abs { asym_setflag(flag1, 3, val) }
+    .inline set_issaved     val:abs { asym_setflag(flag1, 4, val) }
+    .inline set_fwdref      val:abs { asym_setflag(flag1, 5, val) }
+    .inline set_included    val:abs { asym_setflag(flag1, 6, val) }
+    .inline set_method      val:abs { asym_setflag(flag1, 7, val) }
+
+    .inline set_seg_ofssize val:uint_t {
+        and [eax].asym.sflags,not S_SEGOFSSIZE
+        or  [eax].asym.sflags,dl
+        }
+    .inline set_iscomm          val:abs { asym_setflag(sflags, 2, val) }
+    .inline set_weak            val:abs { asym_setflag(sflags, 3, val) }
+    .inline set_isfar           val:abs { asym_setflag(sflags, 4, val) }
+    .inline set_is_vararg       val:abs { asym_setflag(sflags, 5, val) }
+
+    .inline set_mac_vararg      val:abs { asym_setflag(mac_flag, 0, val) }
+    .inline set_isfunc          val:abs { asym_setflag(mac_flag, 1, val) }
+    .inline set_mlabel          val:abs { asym_setflag(mac_flag, 2, val) }
+    .inline set_mac_multiline   val:abs { asym_setflag(mac_flag, 3, val) }
+    .inline set_purged          val:abs { asym_setflag(mac_flag, 4, val) }
 
    .ends
     asym_t          typedef ptr asym
@@ -534,62 +474,61 @@ MAX_SEGALIGNMENT equ 0xFF
 ;; PROC item
 
 PROC_HAS_VARARG equ 0x01        ; last param is VARARG
-PROC_PE_TYPE    equ 0x02        ; PROC: prolog-epilog type, 1=use LEAVE
-PROC_ISEXPORT   equ 0x04        ; PROC: EXPORT attribute set
-PROC_FORCEFRAME equ 0x08        ; PROC: FORCEFRAME prologuearg?
-PROC_LOADDS     equ 0x10        ; PROC: LOADDS prologuearg?
-PROC_STACKPARAM equ 0x20        ; PROC: 1=stack params exists ( not just register params )
-PROC_ISFRAME    equ 0x40        ; PROC: FRAME attribute set?
+PROC_PE_TYPE    equ 0x02        ; prolog-epilog type, 1=use LEAVE
+PROC_ISEXPORT   equ 0x04        ; EXPORT attribute set
+PROC_FORCEFRAME equ 0x08        ; FORCEFRAME prologuearg?
+PROC_LOADDS     equ 0x10        ; LOADDS prologuearg?
+PROC_STACKPARAM equ 0x20        ; 1=stack params exists ( not just register params )
+PROC_ISFRAME    equ 0x40        ; FRAME attribute set?
 PROC_FPO        equ 0x80
 
-.template proc_info
-    regslist        ptr word ?      ; PROC: list of registers to be saved
+.template proc_info watcall
+
+    regslist        ptr word ?      ; list of registers to be saved
     paralist        ptr dsym ?      ; list of parameters
-    locallist       ptr dsym ?      ; PROC: list of local variables
-    labellist       ptr dsym ?      ; PROC: list of local labels
+    locallist       ptr dsym ?      ; list of local variables
+    labellist       ptr dsym ?      ; list of local labels
     parasize        uint_t ?        ; total no. of bytes used by parameters
-    localsize       uint_t ?        ; PROC: total no. of bytes used by local variables
-    prologuearg     string_t ?      ; PROC: prologuearg attribute
-    exc_handler     ptr asym ?      ; PROC: exc handler set by FRAME
-    ReservedStack   int_t ?         ; PROC: win64: additional reserved stack
-    prolog_list_pos uint_t ?        ; PROC: prologue list pos
+    localsize       uint_t ?        ; total no. of bytes used by local variables
+    prologuearg     string_t ?      ; prologuearg attribute
+    exc_handler     ptr asym ?      ; exc handler set by FRAME
+    ReservedStack   int_t ?         ; win64: additional reserved stack
+    prolog_list_pos uint_t ?        ; prologue list pos
     flags           uchar_t ?
-    size_prolog     uchar_t ?       ; PROC: v2.10: prologue size
-    basereg         ushort_t ?      ; PROC: v2.11: stack base register
+    size_prolog     uchar_t ?       ; v2.10: prologue size
+    basereg         ushort_t ?      ; v2.11: stack base register
 
-    .inline has_vararg {        ; last param is VARARG
-        retm<([eax].proc_info.flags & PROC_HAS_VARARG)>
-        }
-    .inline pe_type {           ; prolog-epilog type, 1=use LEAVE
-        retm<([eax].proc_info.flags & PROC_PE_TYPE)>
-        }
-    .inline isexport {          ; EXPORT attribute set
-        retm<([eax].proc_info.flags & PROC_ISEXPORT)>
-        }
-    .inline forceframe {        ; FORCEFRAME prologuearg?
-        retm<([eax].proc_info.flags & PROC_FORCEFRAME)>
-        }
-    .inline loadds {            ; LOADDS prologuearg?
-        retm<([eax].proc_info.flags & PROC_LOADDS)>
-        }
-    .inline stackparam {        ; 1=stack params exists ( not just register params )
-        retm<([eax].proc_info.flags & PROC_STACKPARAM)>
-        }
-    .inline isframe {           ; FRAME attribute set?
-        retm<([eax].proc_info.flags & PROC_ISFRAME)>
-        }
-    .inline fpo {
-        retm<([eax].proc_info.flags & PROC_FPO)>
-        }
+    .inline regslist        { retm<[eax].proc_info.regslist> }
+    .inline paralist        { retm<[eax].proc_info.paralist> }
+    .inline locallist       { retm<[eax].proc_info.locallist> }
+    .inline labellist       { retm<[eax].proc_info.labellist> }
+    .inline parasize        { retm<[eax].proc_info.parasize> }
+    .inline localsize       { retm<[eax].proc_info.localsize> }
+    .inline prologuearg     { retm<[eax].proc_info.prologuearg> }
+    .inline exc_handler     { retm<[eax].proc_info.exc_handler> }
+    .inline ReservedStack   { retm<[eax].proc_info.ReservedStack> }
+    .inline prolog_list_pos { retm<[eax].proc_info.prolog_list_pos> }
+    .inline flags           { retm<[eax].proc_info.flags> }
+    .inline size_prolog     { retm<[eax].proc_info.size_prolog> }
+    .inline basereg         { retm<[eax].proc_info.basereg> }
 
-    proc_setflag macro pos, val
-      if val
-        or  [eax].proc_info.flags,(1 shl pos)
-      else
-        and [eax].proc_info.flags,not (1 shl pos)
-      endif
-      exitm<>
-      endm
+    .inline has_vararg      { retm<([eax].proc_info.flags & PROC_HAS_VARARG)> }
+    .inline pe_type         { retm<([eax].proc_info.flags & PROC_PE_TYPE)> }
+    .inline isexport        { retm<([eax].proc_info.flags & PROC_ISEXPORT)> }
+    .inline forceframe      { retm<([eax].proc_info.flags & PROC_FORCEFRAME)> }
+    .inline loadds          { retm<([eax].proc_info.flags & PROC_LOADDS)> }
+    .inline stackparam      { retm<([eax].proc_info.flags & PROC_STACKPARAM)> }
+    .inline isframe         { retm<([eax].proc_info.flags & PROC_ISFRAME)> }
+    .inline fpo             { retm<([eax].proc_info.flags & PROC_FPO)> }
+
+        proc_setflag macro pos, val
+          if val
+            or  [eax].proc_info.flags,(1 shl pos)
+          else
+            and [eax].proc_info.flags,not (1 shl pos)
+          endif
+          exitm<>
+          endm
 
     .inline set_has_vararg  val:abs { proc_setflag(0, val) }
     .inline set_pe_type     val:abs { proc_setflag(1, val) }
@@ -600,44 +539,14 @@ PROC_FPO        equ 0x80
     .inline set_isframe     val:abs { proc_setflag(6, val) }
     .inline set_fpo         val:abs { proc_setflag(7, val) }
 
-    .inline regslist {
-        retm<[eax].proc_info.regslist>
+    .inline add_parasize size:uint_t {
+        add [eax].proc_info.parasize,size
         }
-    .inline paralist {
-        retm<[eax].proc_info.paralist>
-        }
-    .inline locallist {
-        retm<[eax].proc_info.locallist>
-        }
-    .inline labellist {
-        retm<[eax].proc_info.labellist>
-        }
-    .inline parasize {
-        retm<[eax].proc_info.parasize>
-        }
-    .inline localsize {
-        retm<[eax].proc_info.localsize>
-        }
-    .inline prologuearg {
-        retm<[eax].proc_info.prologuearg>
-        }
-    .inline exc_handler {
-        retm<[eax].proc_info.exc_handler>
-        }
-    .inline ReservedStack {
-        retm<[eax].proc_info.ReservedStack>
-        }
-    .inline prolog_list_pos {
-        retm<[eax].proc_info.prolog_list_pos>
-        }
-    .inline flags {
-        retm<[eax].proc_info.flags>
-        }
-    .inline size_prolog {
-        retm<[eax].proc_info.size_prolog>
-        }
-    .inline basereg {
-        retm<[eax].proc_info.basereg>
+
+    .inline set_export val:uint_t {
+        and [eax].proc_info.flags,not PROC_ISEXPORT
+        shl edx,2
+        or  [eax].proc_info.flags,dl
         }
 
    .ends
@@ -745,58 +654,6 @@ dsym            ends
     next        ptr dsym ?
     list        ptr dsym ?
 
-    .inline has_vararg {        ; last param is VARARG
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_HAS_VARARG)>
-        }
-    .inline pe_type {           ; prolog-epilog type, 1=use LEAVE
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_PE_TYPE)>
-        }
-    .inline isexport {          ; EXPORT attribute set
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_ISEXPORT)>
-        }
-    .inline forceframe {        ; FORCEFRAME prologuearg?
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_FORCEFRAME)>
-        }
-    .inline loadds {            ; LOADDS prologuearg?
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_LOADDS)>
-        }
-    .inline stackparam {        ; 1=stack params exists ( not just register params )
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_STACKPARAM)>
-        }
-    .inline isframe {           ; FRAME attribute set?
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_ISFRAME)>
-        }
-    .inline fpo {
-        mov eax,[eax].esym.info
-        retm<([eax].proc_info.flags & PROC_FPO)>
-        }
-
-    dsym_setflag macro pos, val
-        mov eax,[eax].esym.info
-      if val
-        or  [eax].proc_info.flags,(1 shl pos)
-      else
-        and [eax].proc_info.flags,not (1 shl pos)
-      endif
-      exitm<>
-      endm
-
-    .inline set_has_vararg  val:abs { dsym_setflag(0, val) }
-    .inline set_pe_type     val:abs { dsym_setflag(1, val) }
-    .inline set_isexport    val:abs { dsym_setflag(2, val) }
-    .inline set_forceframe  val:abs { dsym_setflag(3, val) }
-    .inline set_loadds      val:abs { dsym_setflag(4, val) }
-    .inline set_stackparam  val:abs { dsym_setflag(5, val) }
-    .inline set_isframe     val:abs { dsym_setflag(6, val) }
-    .inline set_fpo         val:abs { dsym_setflag(7, val) }
-
     .inline seginfo         { retm<[eax].esym.info> }
     .inline grpinfo         { retm<[eax].esym.info> }
     .inline procinfo        { retm<[eax].esym.info> }
@@ -809,65 +666,8 @@ dsym            ends
     .inline nextlocal       { retm<[eax].esym.list> }
     .inline nextparam       { retm<[eax].esym.list> }
 
-    .inline regslist {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.regslist>
-        }
-    .inline paralist {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.paralist>
-        }
-    .inline locallist {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.locallist>
-        }
-    .inline labellist {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.labellist>
-        }
-    .inline parasize {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.parasize>
-        }
-    .inline localsize {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.localsize>
-        }
-    .inline prologuearg {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.prologuearg>
-        }
-    .inline exc_handler {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.exc_handler>
-        }
-    .inline ReservedStack {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.ReservedStack>
-        }
-    .inline prolog_list_pos {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.prolog_list_pos>
-        }
-    .inline flags {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.flags>
-        }
-    .inline size_prolog {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.size_prolog>
-        }
-    .inline basereg {
-        mov eax,[eax].esym.info
-        retm<[eax].proc_info.basereg>
-        }
-
-    .inline add_parasize size:uint_t {
-        mov eax,[eax].esym.info
-        add [eax].proc_info.parasize,size
-        }
     .inline get_public {
-        movzx eax,[eax].asym.flags
+        movzx eax,[eax].esym.flags
         and al,S_ISPUBLIC
         }
 

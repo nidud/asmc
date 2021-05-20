@@ -14,6 +14,7 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
 
   local cvt:FLTINFO
 
+    mov cvt.bufsize,512
     mov edx,flags
     mov eax,'e'
     .if edx & _ST_CAPEXP

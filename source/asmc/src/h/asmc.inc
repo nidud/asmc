@@ -459,6 +459,8 @@ SIT_MACRO       equ 1
     masm_keywords           db ?    ; -Znk
     arch                    db ?    ; -arch:AVX[2|512]
     frame_auto              db ?    ; -frame
+    floatformat             db ?    ; option floatformat:<e|f|g>
+    floatdigits             dd ?    ; option floatdigits:<value>
    .ends
 
 module_vars struct
@@ -589,6 +591,8 @@ module_info struct
     assert_proc             ptr ?   ; .assert:<proc/macro name>
     codepage                dd ?    ;
     class_label             dd ?    ;
+    floatformat             db ?    ; option floatformat:<e|f|g>
+    floatdigits             dd ?    ; option floatdigits:<value>
 module_info ends
 
 Token_Count             equ <ModuleInfo.token_count>

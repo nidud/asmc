@@ -208,52 +208,50 @@ replace_parm proc uses esi edi ebx line:string_t, start:string_t, len:int_t, mna
 replace_parm endp
 
 store_placeholders proc private uses esi edi ebx line:string_t, mnames:ptr mname_list
-
-    ;; scan a macro source line for parameter and local names.
-    ;; - line: the source line
-    ;; - mnames: list of macro params + locals
-    ;; if a param/local is found, replace the name by a 2-byte placeholder.
-
-    local qlevel:uchar_t
+    ;
+    ; scan a macro source line for parameter and local names.
+    ; - line: the source line
+    ; - mnames: list of macro params + locals
+    ; if a param/local is found, replace the name by a 2-byte placeholder.
+    ;
+  local qlevel:uchar_t
 
     xor edi,edi ;; number of replacements in this line
     xor ebx,ebx
     mov qlevel,bl
 
-    .for ( esi = line: byte ptr [esi]: )
+    .for ( esi = line : byte ptr [esi] : )
 
-        movzx eax,byte ptr [esi]
         movzx ecx,byte ptr [esi-1]
-
-        .if ( _ltype[eax+1] & _DIGIT )
-
-            ;; skip numbers (they may contain alphas)
-            ;; this is not exactly what masm does. Masm
-            ;; stops at the first non-digit.
-
+        .if isldigit( [esi] )
+            ;
+            ; skip numbers (they may contain alphas)
+            ; this is not exactly what masm does. Masm
+            ; stops at the first non-digit.
+            ;
             .repeat
                 inc esi
-                mov al,[esi]
-            .until !( _ltype[eax+1] & _DIGIT or _LABEL )
+            .until !is_valid_id_char( [esi] )
 
-        .elseif ( _ltype[eax+1] & _DIGIT or _LABEL || \
+        .elseif ( is_valid_id_char( eax ) || \
                 ( al == '.' && ModuleInfo.dotname && \
                 ( esi == line || ( cl != ']' && ( !( _ltype[ecx+1] & _DIGIT or _LABEL ) ) ) ) ) )
 
             mov edx,esi
             .repeat
                 inc esi
-                mov al,[esi]
-            .until !( _ltype[eax+1] & _DIGIT or _LABEL )
-
-            ;; v2.08: both a '&' before AND after the name trigger substitution (and disappear)
+            .until !is_valid_id_char( [esi] )
+            ;
+            ; v2.08: both a '&' before AND after the name trigger substitution (and disappear)
+            ;
             xor eax,eax
             .if ( ( edx > line && byte ptr [edx-1] == '&' ) || byte ptr [esi] == '&' )
                 inc eax
             .endif
             .if ( bl == 0 || eax )
-                ;; look for this word in the macro parms, and replace it if it is
-
+                ;
+                ; look for this word in the macro parms, and replace it if it is
+                ;
                 mov eax,esi
                 sub eax,edx
                 .if replace_parm( line, edx, eax, mnames )
@@ -264,7 +262,9 @@ store_placeholders proc private uses esi edi ebx line:string_t, mnames:ptr mname
         .else
             .switch eax
             .case '!'
-                ;; v2.11: skip next char only if it is a "special" one; see expans40.asm
+                ;
+                ; v2.11: skip next char only if it is a "special" one; see expans40.asm
+                ;
                 .if bl == 0
                     movzx eax,byte ptr [esi+1]
                     .if strchr( "<>\"'", eax )
@@ -599,12 +599,10 @@ endif
         .elseif tok[0].token == T_DIRECTIVE
             .if tok[0].tokval == T_EXITM || tok[0].tokval == T_RETM
                 .if nesting_depth == 0
-                    movzx eax,byte ptr [edx]
-                    .while _ltype[eax+1] & _SPACE
+                    .while islspace( [edx] )
                         inc edx
-                        mov al,[edx]
                     .endw
-                    .if al && al != ';'
+                    .if ( al && al != ';' )
                         mov edx,mac
                         or [edx].asym.mac_flag,M_ISFUNC
                     .endif
@@ -619,43 +617,39 @@ endif
                 inc nesting_depth ;; FOR[C], IRP[C], REP[EA]T, WHILE
             .endif
         .elseif tok[0].token != T_INSTRUCTION || byte ptr [edx] == '&'
-
-            ;; Skip any token != directive or instruction (and no '&' attached)
-            ;; might be text macro ids, macro function calls,
-            ;; code labels, ...
-
-            .for (::)
+            ;
+            ; Skip any token != directive or instruction (and no '&' attached)
+            ; might be text macro ids, macro function calls,
+            ; code labels, ...
+            ;
+            .for ( :: )
                 mov tok[0].token,T_FINAL
-                mov edx,ls.input
-                movzx eax,byte ptr [edx]
-                .while _ltype[eax+1] & _SPACE
-                    inc edx
-                    mov al,[edx]
-                .endw
-                mov ls.input,edx
-                .break .if al == 0 || al == ';'
-                movzx edi,byte ptr [edx-1]
+                mov ls.input,ltokstart(ls.input)
+                .break .if cl == 0 || cl == ';'
+                movzx edi,byte ptr [eax-1]
                 .break .if GetToken( &tok[0], &ls ) == ERROR
                 mov edx,ls.input
                 .break .if ( ( tok[0].token == T_INSTRUCTION || tok[0].token == T_DIRECTIVE ) && \
                     edi != '&' && byte ptr [edx] != '&' )
             .endf
-            .if tok[0].token == T_DIRECTIVE
-                ;; MACRO or loop directive?
-                .if tok[0].tokval == T_MACRO || tok[0].dirtype == DRT_LOOPDIR
+            .if ( tok[0].token == T_DIRECTIVE )
+                ;
+                ; MACRO or loop directive?
+                ;
+                .if ( tok[0].tokval == T_MACRO || tok[0].dirtype == DRT_LOOPDIR )
                     inc nesting_depth
                 .endif
             .endif
         .endif
-
-        ;; store the line, but first check for placeholders!
-        ;; this is to be improved. store_placeholders() is too
-        ;; primitive. It's necessary to use the tokenizer.
-
-        .if store_data
+        ;
+        ; store the line, but first check for placeholders!
+        ; this is to be improved. store_placeholders() is too
+        ; primitive. It's necessary to use the tokenizer.
+        ;
+        .if ( store_data )
 
             xor eax,eax
-            .if mindex
+            .if ( mindex )
                 store_placeholders( src, &mnames )
             .endif
             push eax
@@ -671,7 +665,7 @@ endif
             mov nextline,eax
             memcpy( &[eax].srcline.line, src, edi )
         .endif
-    .endf ;; end for
+    .endf
     mov edx,mac
     or  [edx].asym.flags,S_ISDEFINED
     and [edx].asym.mac_flag,not M_PURGED
@@ -686,7 +680,8 @@ StoreMacro endp
 
 CreateMacro proc name:string_t
 
-    .if SymCreate(name)
+    .if ( SymCreate(name) )
+
         mov [eax].asym.state,SYM_MACRO
         and [eax].asym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
         push eax

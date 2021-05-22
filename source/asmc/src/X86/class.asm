@@ -1070,30 +1070,16 @@ ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
     ; :abs, name:ptr, x:abs=<val>, ...
 
-    .for ebx = args, edi = buffer, esi = 1 : esi < count : esi++
+    .for ( ebx = args, edi = buffer, esi = 1 : esi < count : esi++ )
 
-        xor eax,eax
-        .repeat
+        mov ebx,ltokstart(ebx)
 
-            mov al,[ebx]
-            inc ebx
-
-            .continue(0) .if _ltype[eax+1] & _SPACE
-        .until 1
-        dec ebx
-
-        .if al == ':' || !( _ltype[eax+1] & _LABEL )
+        .if ( cl == ':' || !( _ltype[ecx+1] & _LABEL) )
 
             add edi,sprintf( edi, "_%u, ", esi )
-
         .else
 
-            .while 1
-
-                mov al,[ebx]
-
-                .break .if !( _ltype[eax+1] & _LABEL or _DIGIT )
-
+            .while is_valid_id_char( [ebx] )
                 stosb
                 inc ebx
             .endw

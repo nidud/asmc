@@ -86,7 +86,9 @@ Options global_options {
         0,                      ;; .nolib
         0,                      ;; .masm_keywords
         0,                      ;; .arch
-        0 }                     ;; .frame_auto
+        0,                      ;; .frame_auto
+        0,                      ;; .floatformat
+        1 }                     ;; .floatdigits
 
 else
 
@@ -149,7 +151,9 @@ Options global_options {
         0,                      ;; .nolib
         0,                      ;; .masm_keywords
         0,                      ;; .arch
-        0 }                     ;; .frame_auto
+        0,                      ;; .frame_auto
+        0,                      ;; .floatformat
+        1 }                     ;; .floatdigits
 endif
 
     align 4
@@ -284,8 +288,8 @@ get_fname endp
 set_option_n_name proc fastcall uses esi edi idx:int_t, name:string_t
 
     movzx eax,B[edx]
-    .if al != '.'
-        .if (!(_ltype[eax+1] & (_DIGIT or _LABEL)))
+    .if ( al != '.' )
+        .if ( !is_valid_id_char( eax ) )
             xor eax,eax
         .endif
     .endif

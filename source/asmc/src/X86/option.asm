@@ -106,19 +106,25 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         mov idx,edi
         inc i
         add ebx,asm_tok
-        ;; v2.06: check for colon separator here
+        ;
+        ; v2.06: check for colon separator here
+        ;
         .if ( edi >= NOARGOPTS )
             .if ( [ebx].token != T_COLON )
                 .return( asmerr( 2065, "" ) )
             .endif
             inc i
             add ebx,asm_tok
-            ;; there must be something after the colon
+            ;
+            ; there must be something after the colon
+            ;
             .if ( [ebx].token == T_FINAL )
                 sub ebx,asm_tok*2 ;; position back to option identifier
                 .break
             .endif
-            ;; reject option if -Zne is set
+            ;
+            ; reject option if -Zne is set
+            ;
             .if ( edi >= MASMOPTS && ModuleInfo.strict_masm_compat )
                 sub ebx,asm_tok*2
                 .break
@@ -197,21 +203,23 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 .endc
             .endsw
         .case OP_PROLOGUE
-            ;; OPTION PROLOGUE:macroname
-            ;; the prologue macro must be a macro function with 6 params:
-            ;; name macro procname, flag, parmbytes, localbytes, <reglist>, userparms
-            ;; procname: name of procedure
-            ;; flag: bits 0-2: calling convention
-            ;; bit 3: undef
-            ;; bit 4: 1 if caller restores ESP
-            ;; bit 5: 1 if proc is far
-            ;; bit 6: 1 if proc is private
-            ;; bit 7: 1 if proc is export
-            ;; bit 8: for epilogue: 1 if IRET, 0 if RET
-            ;; parmbytes: no of bytes for all params
-            ;; localbytes: no of bytes for all locals
-            ;; reglist: list of registers to save/restore, separated by commas
-            ;; userparms: prologuearg specified in PROC
+            ;
+            ; OPTION PROLOGUE:macroname
+            ; the prologue macro must be a macro function with 6 params:
+            ; name macro procname, flag, parmbytes, localbytes, <reglist>, userparms
+            ; procname: name of procedure
+            ; flag: bits 0-2: calling convention
+            ; bit 3: undef
+            ; bit 4: 1 if caller restores ESP
+            ; bit 5: 1 if proc is far
+            ; bit 6: 1 if proc is private
+            ; bit 7: 1 if proc is export
+            ; bit 8: for epilogue: 1 if IRET, 0 if RET
+            ; parmbytes: no of bytes for all params
+            ; localbytes: no of bytes for all locals
+            ; reglist: list of registers to save/restore, separated by commas
+            ; userparms: prologuearg specified in PROC
+            ;
             .if ( [ebx].token != T_ID )
                 .return( asmerr(2008, [ebx].tokpos ) )
             .endif
@@ -260,7 +268,9 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .if ( [ebx].token == T_RES_ID )
                 .if ( GetLangType( &i, tokenarray, &ModuleInfo.langtype ) == NOT_ERROR )
 ifndef __ASMC64__
-                    ;; update @Interface assembly time variable
+                    ;
+                    ; update @Interface assembly time variable
+                    ;
                     .if ( ModuleInfo._model != MODEL_NONE && sym_Interface )
                         mov ecx,sym_Interface
                         mov [ecx].asym.value,ModuleInfo.langtype
@@ -290,8 +300,10 @@ endif
                     .endf
                     mov ecx,esi
                     sub ecx,edi
-                    ;; todo: if MAX_ID_LEN can be > 255, then check size,
-                    ;; since a reserved word's size must be <= 255
+                    ;
+                    ; todo: if MAX_ID_LEN can be > 255, then check size,
+                    ; since a reserved word's size must be <= 255
+                    ;
                     .if ( FindResWord( edi, ecx ) != 0 )
                         DisableKeyword( eax )
                     .else
@@ -319,8 +331,10 @@ endif
                 inc i
             .endif
         .case OP_OFFSET ;; GROUP | FLAT | SEGMENT
-            ;; default is GROUP.
-            ;; determines result of OFFSET operator fixups if .model isn't set.
+            ;
+            ; default is GROUP.
+            ; determines result of OFFSET operator fixups if .model isn't set.
+            ;
             .if ( !_stricmp( esi, "GROUP" ) )
                 mov ModuleInfo.offsettype,OT_GROUP
             .elseif ( !_stricmp( esi, "FLAT" ) )
@@ -332,8 +346,10 @@ endif
             .endif
             inc i
         .case OP_SEGMENT ;; USE16 | USE32 | FLAT
-            ;; this option set the default offset size for segments and
-            ;; externals defined outside of segments.
+            ;
+            ; this option set the default offset size for segments and
+            ; externals defined outside of segments.
+            ;
             .if ( [ebx].token == T_RES_ID && [ebx].tokval == T_FLAT )
                 mov eax,ModuleInfo.curr_cpu
                 and eax,P_CPU_MASK
@@ -388,7 +404,9 @@ endif
                     inc j
                 .endif
             .endf
-            ;; ensure data integrity of the params
+            ;
+            ; ensure data integrity of the params
+            ;
             .if ( ModuleInfo.sub_format == SFORMAT_MZ )
                 .if ( ModuleInfo.mz_ofs_fixups < 0x1E )
                     mov ModuleInfo.mz_ofs_fixups,0x1E
@@ -426,7 +444,6 @@ endif
             .else
                 .return( asmerr( 2026 ) )
             .endif
-            inc i
         .case OP_RENAMEKEYWORD ;; <keyword>,new_name
             .break .if ( [ebx].token != T_STRING || [ebx].string_delim != '<' )
             inc i
@@ -435,8 +452,10 @@ endif
             inc i
             add ebx,asm_tok
             .break .if ( [ebx].token != T_ID )
-            ;; todo: if MAX_ID_LEN can be > 255, then check size,
-            ;; since a reserved word's size must be <= 255
+            ;
+            ; todo: if MAX_ID_LEN can be > 255, then check size,
+            ; since a reserved word's size must be <= 255
+            ;
             mov esi,FindResWord( esi, strlen( esi ) )
             .if ( esi == 0 )
                 .return( asmerr( 2086 ) )
@@ -444,8 +463,10 @@ endif
             RenameKeyword( esi, [ebx].string_ptr, strlen( [ebx].string_ptr ) )
             inc i
         .case OP_WIN64
-            ;; if -win64 isn't set, skip the option
-            ;; v2.09: skip option if Ofssize != USE64
+            ;
+            ; if -win64 isn't set, skip the option
+            ; v2.09: skip option if Ofssize != USE64
+            ;
             .if ( ModuleInfo.defOfssize != USE64 )
                 .while ( [ebx].token != T_FINAL && [ebx].token != T_COMMA )
                     inc i
@@ -505,7 +526,9 @@ endif
                 mov ModuleInfo.CurrDll,NULL
             .elseif ( [ebx].token == T_STRING && [ebx].string_delim == '<' )
                 .if ( Parse_Pass == PASS_1 )
-                    ;; allow a zero-sized name!
+                    ;
+                    ; allow a zero-sized name!
+                    ;
                     .if ( byte ptr [esi] == NULLC )
                         xor esi,esi
                     .else
@@ -598,7 +621,27 @@ endif
             .else
                 .return( asmerr( 2026 ) )
             .endif
+        .case OP_FLOATFORMAT ; : <e|f|g>
+            .if ( !_stricmp( esi, "E" ) )
+                mov ModuleInfo.floatformat,'e'
+            .elseif ( !_stricmp( esi, "F" ) )
+                mov ModuleInfo.floatformat,0
+            .elseif ( !_stricmp( esi, "G" ) )
+                mov ModuleInfo.floatformat,'g'
+            .else
+                .break
+            .endif
             inc i
+        .case OP_FLOATDIGITS ; : <value>
+            .return .if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .if ( opnd.kind == EXPR_CONST )
+                .if ( opnd.value > 0xFF )
+                    .return( EmitConstError( &opnd ) )
+                .endif
+                mov ModuleInfo.floatdigits,opnd.value
+            .else
+                .return( asmerr( 2026 ) )
+            .endif
         .endsw
         mov ebx,tokenarray.tokptr(i)
         .break .if ( [ebx].token != T_COMMA )

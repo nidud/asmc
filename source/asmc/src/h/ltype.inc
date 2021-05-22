@@ -51,9 +51,12 @@ islupper proto watcall c:byte {
 islxdigit proto watcall c:byte {
     retm<(_ltype[eax+1] & _HEX)>
     }
+islabel proto watcall c:byte {
+    retm<(_ltype[eax+1] & _LABEL)>
+    }
 
 is_valid_id_char proto watcall c:byte {
-    retm<(_ltype[eax+1] & (_LABEL or _LDIGIT))>
+    retm<(_ltype[eax+1] & (_LABEL or _DIGIT))>
     }
 is_valid_id_first_char proto watcall :byte {
     retm<((al == '.' && ModuleInfo.dotname) || (_ltype[eax+1] & _LABEL))>
@@ -66,7 +69,7 @@ is_valid_first_char proto watcall c:byte {
     }
 
 ltokstart proto fastcall string:string_t {
-    .while islspace( [ecx] )
+    .while ( islspace( [ecx] ) )
         inc ecx
     .endw
     xchg ecx,eax

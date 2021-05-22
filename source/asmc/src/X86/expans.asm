@@ -343,9 +343,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                         .break .if [ebx].token == T_FINAL || [ebx].token == T_COMMA
 
                         mov edx,[ebx].string_ptr
-                        movzx eax,byte ptr [edx]
-
-                        .if ( _ltype[eax+1] & _LABEL || ( al == '.' && ModuleInfo.dotname ) )
+                        .if ( is_valid_id_first_char( [edx] ) )
 
                             .if ( [ebx+16].token == T_OP_BRACKET )
 
@@ -391,10 +389,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                     add   ebx,tokenarray
                     mov   esi,[ebx].tokpos
                     sub   ecx,esi
-                    movzx eax,byte ptr [esi+ecx-1]
-                    .while _ltype[eax+1] & _SPACE
+                    .while islspace( [esi+ecx-1] )
                         dec ecx
-                        mov al,[esi+ecx-1]
                     .endw
                     mov cnt,ecx
                     mov edi,p
@@ -438,23 +434,33 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                             .else
 
                                 mov cvt.expchar,'e'
-                                mov cvt.flags,_ST_F
-                                mov cvt.ndigits,1
-                                mov cvt.scale,0
                                 mov cvt.expwidth,3
+                                mov cvt.ndigits,ModuleInfo.floatdigits
                                 mov cvt.bufsize,ModuleInfo.max_line_len
 
-                                movzx ecx,word ptr opndx.h64_h[2]
-                                and ecx,0x7FFF
-                                .if ecx < 0x3FFF
-                                    sub  ecx,0x3FFE
-                                    mov  eax,30103
-                                    imul ecx
-                                    mov  ecx,100000
-                                    idiv ecx
-                                    neg  eax
-                                    inc  eax
-                                    mov cvt.ndigits,eax
+                                .if ( ModuleInfo.floatformat == 'e' )
+                                    mov cvt.scale,1
+                                    mov cvt.flags,_ST_E
+                                .elseif ( ModuleInfo.floatformat == 'g' )
+                                    mov cvt.scale,1
+                                    mov cvt.flags,_ST_G
+                                .else
+                                    mov cvt.scale,0
+                                    mov cvt.flags,_ST_F
+if 0
+                                    movzx ecx,word ptr opndx.h64_h[2]
+                                    and ecx,0x7FFF
+                                    .if ecx < 0x3FFF
+                                        sub  ecx,0x3FFE
+                                        mov  eax,30103
+                                        imul ecx
+                                        mov  ecx,100000
+                                        idiv ecx
+                                        neg  eax
+                                        inc  eax
+                                        mov cvt.ndigits,eax
+                                    .endif
+endif
                                 .endif
                                 mov esi,StringBufferEnd
                                 inc esi
@@ -466,9 +472,11 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                 .endif
                             .endif
                         .endif
-                        .if i != max
-                            ;; the evaluator was unable to evaluate the full expression. the rest
-                            ;; has to be "copied"
+                        .if ( i != max )
+                            ;
+                            ; the evaluator was unable to evaluate the full expression. the rest
+                            ; has to be "copied"
+                            ;
                             imul ebx,i,asm_tok
                             add  ebx,tokenarray
                             strcat( StringBufferEnd, [ebx].tokpos )
@@ -622,10 +630,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                       ( [ebx+16].token == T_COMMA || [ebx+16].token == parm_end_delim ) )
 
                     mov edx,[ebx].tokpos
-                    movzx eax,byte ptr [edx+ecx-1]
-                    .while ( _ltype[eax+1] & _SPACE )
+                    .while islspace( [edx+ecx-1] )
                         dec ecx
-                        mov al,[edx+ecx-1]
                     .endw
                 .endif
 
@@ -899,16 +905,12 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                     mov esi,StringBufferEnd
                                 .endif
                                 inc esi
-                                movzx eax,byte ptr [esi]
-                                .while( _ltype[eax+1] & _SPACE )
+                                .while islspace( [esi] )
                                     inc esi
-                                    mov al,[esi]
                                 .endw
                                 .if !_memicmp( esi, [ebx+16].string_ptr, len )
-
-                                    mov ecx,len
-                                    mov al,[esi+ecx] ;; label found!
-                                    .break .if !( _ltype[eax+1] & _LABEL or _DIGIT )
+                                    mov ecx,len ;; label found!
+                                    .break .if !is_valid_id_char( [esi+ecx]  )
                                 .endif
                             .endif
                         .endf
@@ -1029,26 +1031,24 @@ ExpandText proc uses esi edi ebx line:string_t, tokenarray:token_t, substitute:u
         mov eax,lvl
         mov esi,_sp[eax*4]
 
-        .while byte ptr [esi]
+        .while ( byte ptr [esi] )
 
-            movzx eax,byte ptr [esi]
+            .if ( is_valid_id_first_char( [esi] ) && ( substitute || !quoted_string ) )
 
-            .if ( ( _ltype[eax+1] & _LABEL || ( al == '.' && ModuleInfo.dotname ) ) && \
-                  ( substitute != 0 || quoted_string == 0 ) )
                 mov pIdent,edi
                 .repeat
-                    mov [edi],al
-                    inc edi
+                    stosb
                     inc esi
-                    mov al,[esi]
-                .until !( _ltype[eax+1] & _LABEL or _DIGIT )
+                .until !is_valid_id_char( [esi] )
                 mov byte ptr [edi],0
 
                 mov sym,SymSearch( pIdent )
                 .if ( eax && [eax].asym.flags & S_ISDEFINED )
                     .if ( [eax].asym.state == SYM_TMACRO )
 
-                        ;; v2.08: no expansion inside quoted strings without &
+                        ;
+                        ; v2.08: no expansion inside quoted strings without &
+                        ;
                         mov edx,pIdent
                         .continue .if ( quoted_string && \
                             byte ptr [edx-1] != '&' && byte ptr [esi] != '&' )
@@ -1077,13 +1077,13 @@ ExpandText proc uses esi edi ebx line:string_t, tokenarray:token_t, substitute:u
                         ;; expand macro functions.
 
                         mov edx,esi
-                        movzx eax,byte ptr [esi]
-                        .while ( _ltype[eax+1] & _SPACE )
+                        .while islspace( [edx] )
                             inc edx
-                            mov al,[edx]
                         .endw
-                        ;; no macro function invokation if the '(' is missing!
-                        .if ( byte ptr [edx] == '(' )
+                        ;
+                        ; no macro function invokation if the '(' is missing!
+                        ;
+                        .if ( al == '(' )
 
                             mov i,Token_Count
                             inc i

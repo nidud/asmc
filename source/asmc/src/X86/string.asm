@@ -151,8 +151,7 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
                 jmp case_format
 
               .case 'x'
-                movzx eax,BYTE PTR [esi+1]
-                .if _ltype[eax+1] & _HEX
+                .if islxdigit( [esi+1] )
 
                     add esi,1
                     and eax,not 30h
@@ -1028,13 +1027,11 @@ SetTextMacro proc uses esi edi ebx tokenarray:ptr asm_tok, sym:ptr asym, name:st
 
         mov esi,strlen( value )
         mov edx,value
-        xor eax,eax
 
         ;; skip trailing spaces
 
         .for ( : esi : esi-- )
-            mov al,[edx+esi-1]
-            .break .if ( !( _ltype[eax+1] & _SPACE ) )
+            .break .if !islspace( [edx+esi-1] )
         .endf
     .endif
     lea ecx,[esi+1]

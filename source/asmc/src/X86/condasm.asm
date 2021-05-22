@@ -168,9 +168,7 @@ check_defd endp
 check_blank proc fastcall private string:string_t
 
     .for ( : byte ptr [ecx] : ecx++ )
-
-        movzx eax,byte ptr [ecx]
-        .return FALSE .if ( !( _ltype[eax+1] & _SPACE ) )
+        .return FALSE .if ( !islspace( [ecx] ) )
     .endf
     .return( TRUE )
 check_blank endp

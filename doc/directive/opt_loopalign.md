@@ -6,10 +6,11 @@ Asmc Macro Assembler Reference
 
 This controls the alignment for .WHILE and .REPEAT labels. The default value is 0.
 
-	jmp loop_start
-	ALIGN <loopalign> ; align label after jump
-	loop_label:
-
+```assembly
+jmp loop_start
+ALIGN <loopalign> ; align label after jump
+loop_label:
+```
 #### See Also
 
 [Directives Reference](readme.md)

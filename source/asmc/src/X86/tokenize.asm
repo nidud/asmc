@@ -595,9 +595,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:token_t , p:ptr line_statu
         .if eax == 'tuo'    ; %OUT directive?
 
             mov eax,[esi].input
-            movzx   eax,BYTE PTR [eax+4]
-
-            .if !( _ltype[eax+1] & _LABEL or _DIGIT )
+            .if !is_valid_id_char( [eax+4] )
 
                 mov [ebx].token,T_DIRECTIVE
                 mov [ebx].tokval,T_ECHO
@@ -1123,17 +1121,15 @@ endif
 ifdef CHEXPREFIX
     .endif
 endif
-    .if eax
+    .if ( eax )
         mov [ebx].token,T_NUM
         mov [ebx].numbase,al
         sub ecx,[esi].input
         mov [ebx].itemlen,ecx
     .else
         mov [ebx].token,T_BAD_NUM
-        movzx eax,BYTE PTR [edx]
-        .while _ltype[eax+1] & _LABEL or _DIGIT
-            add edx,1
-            mov al,[edx]
+        .while ( is_valid_id_char( [edx] ) )
+            inc edx
         .endw
     .endif
 
@@ -1197,27 +1193,22 @@ get_id proc fastcall uses esi edi ebx buf:token_t, p:ptr line_status
     mov [ebx].bytval,0 ; added v2.27
 
     mov eax,[esi]
-
-    .if ax == '"L' && [edx].brachets
-
+    .if ( ax == '"L' && [edx].brachets )
         stosb
         inc [edx].input
         inc [edx].output
         .return get_string(ebx, p)
     .endif
 
-    movzx eax,al
     .repeat
-        mov [edi],al
-        add edi,1
-        add esi,1
-        mov al,[esi]
-    .until !(_ltype[eax+1] & _LABEL or _DIGIT)
+        stosb
+        inc esi
+    .until !is_valid_id_char( [esi] )
 
     mov ecx,edi
     sub ecx,[edx].output
 
-    .if ecx > MAX_ID_LEN
+    .if ( ecx > MAX_ID_LEN )
 
         asmerr(2043)
         mov edi,[edx].output
@@ -1229,7 +1220,7 @@ get_id proc fastcall uses esi edi ebx buf:token_t, p:ptr line_status
     mov eax,[edx].output
     mov al,[eax]
 
-    .if ecx == 1 && al == '?'
+    .if ( ecx == 1 && al == '?' )
 
         mov [edx].input,esi
         mov [ebx].token,T_QUESTION_MARK
@@ -1383,25 +1374,21 @@ GetToken proc fastcall tokenarray:token_t, p:ptr line_status
     ;
     mov [ecx].asm_tok.hll_flags,0
     mov eax,[edx].input
-    movzx eax,BYTE PTR [eax]
 
     .switch
-
-      .case BYTE PTR _ltype[eax+1] & _DIGIT
+      .case isldigit( [eax] )
         jmp get_number
-
-      .case _ltype[eax+1] & _LABEL
+      .case islabel( eax )
         jmp get_id
 
-      .case al == '`'
+      .case ( al == '`' )
         .endc .if ModuleInfo.strict_masm_compat
         jmp get_id_in_backquotes
 
-      .case al == '.'
+      .case ( al == '.' )
 
         mov eax,[edx].input
-        movzx eax,BYTE PTR [eax+1]
-        .endc .if !( _ltype[eax+1] & _LABEL or _DIGIT )
+        .endc .if !is_valid_id_char( [eax+1] )
 
         movzx eax,[ecx-16].asm_tok.token
         .if ( [edx].index == 0 || ( eax != T_REG && eax != T_CL_BRACKET && \

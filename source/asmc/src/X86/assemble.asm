@@ -366,13 +366,11 @@ add_cmdline_tmacros proc uses esi edi ebx
 	.endif
 
 	xor ecx,ecx
-	movzx eax,byte ptr [esi]
-	.if !((_ltype[eax+1] & _LABEL) || al == '.')
+	.if ( !is_valid_first_char( [esi] ) )
 	    inc ecx
 	.else
-	    .for edx = &[esi+1], al = [edx] : eax: edx++, al = [edx]
-
-		.if !(_ltype[eax+1] & (_LABEL or _DIGIT))
+	    .for ( edx = &[esi+1], al = [edx] : eax: edx++, al = [edx] )
+		.if ( !is_valid_id_char( eax ) )
 		    inc ecx
 		    .break
 		.endif
@@ -431,18 +429,16 @@ WritePreprocessedLine proc string:string_t
     PrintEmptyLine db 1
     .code
     .if ModuleInfo.token_count > 0
-	mov eax,string
-	movzx ecx,byte ptr [eax]
-	.while byte ptr _ltype[ecx+1] & _SPACE
-	    add eax,1
-	    mov cl,[eax]
+	mov ecx,string
+	.while islspace( [ecx] )
+	    inc ecx
 	.endw
-	.if ecx == '%'
-	    inc eax
+	.if eax == '%'
+	    inc ecx
 	.else
-	    mov eax,string
+	    mov ecx,string
 	.endif
-	printf("%s\n", eax)
+	printf("%s\n", ecx)
 	mov PrintEmptyLine,1
     .elseif PrintEmptyLine
 	mov PrintEmptyLine,0
@@ -576,6 +572,9 @@ endif
     mov ModuleInfo.win64_flags,Options.win64_flags
     mov ModuleInfo.strict_masm_compat,Options.strict_masm_compat
     mov ModuleInfo.frame_auto,Options.frame_auto
+    mov ModuleInfo.floatformat,Options.floatformat
+    mov ModuleInfo.floatdigits,Options.floatdigits
+
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;
@@ -867,11 +866,11 @@ get_module_name proc private uses esi edi
     ;
     lea esi,ModuleInfo.name
     _strupr(esi)
+    xor eax,eax
     .while 1
-	movzx eax,byte ptr [esi]
-	add esi,1
-	.break	.if !eax
-	.continue .if _ltype[eax+1] & _DIGIT or _LABEL
+	lodsb
+	.break	.if !al
+	.continue .if is_valid_id_char( eax )
 	mov byte ptr [esi-1],'_'
     .endw
     ;
@@ -943,7 +942,7 @@ res macro token, oldlen, newlen, oldname, newname
     endm
 .data
 masmkeyw label MASMKEYW
-include oldkeyw.h
+include oldkeyw.inc
 OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
 .code
 

@@ -17,9 +17,9 @@ externdef sym_ReservedStack:asym_t	; max stack space required by INVOKE
 
 ParseProc	proto :ptr esym, :int_t, :token_t, :int_t, :uchar_t
 CreateProc	proto :asym_t, :string_t, :int_t
-DeleteProc	proto :dsym_t
+DeleteProc	proto :ptr esym
 
-CopyPrototype	proto :dsym_t, :dsym_t
+CopyPrototype	proto :ptr esym, :ptr esym
 RetInstr	proto :int_t, :token_t, :int_t ; handle RET/IRET within procedures
 write_prologue	proto :token_t
 ProcInit	proto

@@ -665,14 +665,11 @@ method_ptr:
             .endc
         .endif
         mov ecx,[ebx].string_ptr
-        movzx eax,byte ptr [ecx]
-        mov al,_ltype[eax+1]
-        and eax,_UPPER or _LOWER
-        .if [ebx].token == T_BAD_NUM
+        .if ( [ebx].token == T_BAD_NUM )
             fnasmerr( 2048, ecx )
-        .elseif [ebx].token == T_COLON
+        .elseif ( [ebx].token == T_COLON )
             fnasmerr( 2009 )
-        .elseif eax
+        .elseif ( islalpha( [ecx] ) )
             fnasmerr( 2016, [ebx].tokpos )
         .else
             fnasmerr( 2008, [ebx].tokpos )
@@ -1513,7 +1510,7 @@ res macro token, function
     endm
     align 8
 unaryop label unaryop_t
-include unaryop.h
+include unaryop.inc
 undef res
     .code
 

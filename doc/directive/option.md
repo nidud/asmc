@@ -14,6 +14,8 @@ Enables and disables features of the assembler. Available options include:
 - EPILOGUE
 - EXPR16
 - EXPR32
+- [FLOATDIGITS](opt_floatdigits.md)
+- [FLOATFORMAT](opt_floatformat.md)
 - LANGUAGE
 - LJMP
 - NOLJMP

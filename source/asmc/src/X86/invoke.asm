@@ -1391,9 +1391,12 @@ FindDotSymbol proc uses esi edi ebx tok:ptr asm_tok
 
 FindDotSymbol endp
 
-AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok
+AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
+        pclass:ptr asym, langtype:int_t
 
   local buffer[128]:sbyte
+  local vreg:int_t
+  local vtable:byte
 
     mov ebx,tok
     mov esi,sym
@@ -1408,7 +1411,56 @@ AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok
         .return
     .endif
 
-    AddLineQueueX( " mov %r, %s", reg, [esi].asym.name )
+    mov vtable,0
+    mov edi,pclass
+    .if ( edi && [edi].asym.flag2 & S_ISVTABLE )
+
+        .switch ( langtype )
+        .case LANG_SYSCALL
+            mov eax,T_RDI
+            .endc
+        .case LANG_FASTCALL
+            mov eax,T_ECX
+            .if ( ModuleInfo.Ofssize == USE64 )
+                mov eax,T_RCX
+            .endif
+            .endc
+        .case LANG_WATCALL
+            mov eax,T_EAX
+        .endsw
+
+        .if ( eax )
+
+            mov ecx,reg
+            mov reg,eax
+            mov edi,eax
+            mov vreg,ecx
+
+            add ebx,asm_tok
+            .if ( [ebx].token == T_OP_SQ_BRACKET )
+                .return .if !GetSQBackets( ebx, &buffer )
+                mov ebx,eax
+                AddLineQueueX( " lea %r, [%r]%s", edi, edi, &buffer )
+            .endif
+            .return .if ( [ebx].token != T_DOT )
+            add ebx,asm_tok
+            .if ( [esi].asym.mem_type == MT_TYPE )
+                mov esi,[esi].asym.type
+            .endif
+            .if ( [esi].asym.mem_type == MT_PTR )
+                mov esi,[esi].asym.target_type
+            .endif
+            .return .if ( !esi )
+            .return .if ( [esi].asym.state != SYM_TYPE )
+            AddLineQueueX( " mov %r, [%r].%s.%s", edi, edi, [esi].asym.name, [ebx].string_ptr )
+            mov esi,SearchNameInStruct( esi, [ebx].string_ptr, 0, 0 )
+            .return .if ( !esi )
+            mov vtable,1
+        .endif
+    .endif
+    .if ( !vtable )
+        AddLineQueueX( " mov %r, %s", reg, [esi].asym.name )
+    .endif
     add ebx,asm_tok
     .while ( [ebx].token != T_FINAL )
 
@@ -1441,6 +1493,9 @@ AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok
         .break .if ( !esi )
         add ebx,asm_tok
     .endw
+    .if ( vtable )
+        AddLineQueueX( " mov %r, [%r]", vreg, reg )
+    .endif
     ret
 
 AssignPointer endp
@@ -1454,7 +1509,6 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
   local arg:ptr dsym
   local p:string_t
   local q:string_t
-  local struct_ptr:ptr asm_tok
   local numParam:int_t
   local value:int_t
   local size:int_t
@@ -1469,6 +1523,8 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
   local buffer[MAX_LINE_LEN]:char_t
   local fastcall_id:int_t
   local pmacro:ptr asym
+  local pclass:ptr asym
+  local struct_ptr:ptr asm_tok
 
     mov r0flags,0
     mov struct_ptr,NULL
@@ -1601,7 +1657,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             mov edi,opnd.mbr
             .if ( [edi].asym.flag1 & S_METHOD )
 
-                SymSearch( [ebx+4*16].string_ptr )
+                mov pclass,SymSearch( [ebx+4*16].string_ptr )
 
                 .if ( eax && [eax].asym.flag2 & S_ISVTABLE )
 
@@ -1623,7 +1679,11 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                         mov pmacro,NULL
                     .endif
 
-                .else
+                .endif
+
+                .if ( [edi].asym.flag2 & S_VPARRAY )
+
+                    and [edi].asym.flag2,not S_VPARRAY
 
                     mov  ecx,Token_Count
                     dec  ecx
@@ -1998,7 +2058,8 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 .endif
             .endif
             mov ebx,struct_ptr
-            AssignPointer( SymSearch( [ebx].string_ptr ), edi, struct_ptr )
+            mov ecx,SymSearch( [ebx].string_ptr )
+            AssignPointer( ecx, edi, struct_ptr, pclass, [esi].langtype )
         .else
 
             imul ebx,parmpos,16
@@ -2016,7 +2077,12 @@ ifndef __ASMC64__
 
                 .new reg:int_t = T_EAX ;; v2.31 - skip mov eax,reg
 
-                .if ( [ebx+16].tokval != T_EAX )
+                .if ( [esi].langtype == LANG_WATCALL )
+                    ; do nothing: class in eax
+                .elseif ( [esi].langtype == LANG_FASTCALL )
+                    ; class in ecx
+                    mov reg,T_ECX
+                .elseif ( [ebx+16].tokval != T_EAX )
 
                     .if ( [ebx+16].token == T_REG && \
                           [ebx+16].tokval > T_EAX && \

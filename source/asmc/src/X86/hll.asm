@@ -1517,6 +1517,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local sym:asym_t
   local type:string_t
   local method:asym_t
+  local sym1:asym_t
   local comptr:string_t
   local constructor:int_t ; Class(..)
   local vtable:int_t
@@ -1525,6 +1526,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local dotcount:int_t
   local sqbrend:token_t
   local j:int_t
+  local vparray:asym_t
 
     xor eax,eax
     mov brcount,        eax
@@ -1538,6 +1540,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov comptr,         eax
     mov constructor,    eax
     mov vtable,         eax
+    mov vparray,        eax
     mov j,              i
 
     shl eax,4
@@ -1632,7 +1635,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
 
     .else
 
-        SymFind( [ebx].string_ptr )
+        mov sym1,SymFind( [ebx].string_ptr )
         mov edi,dotcount
         .if edi
             dec edi
@@ -1649,11 +1652,21 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
             .break .if !ecx
             mov ebx,dots[esi*4]
             add ebx,16
-            SearchNameInStruct( ecx, [ebx].string_ptr, 0, 0 )
+            mov vparray,SearchNameInStruct( ecx, [ebx].string_ptr, 0, 0 )
         .endf
 
         mov sym,eax
         xor ecx,ecx
+        .if ( vparray )
+            mov edx,sym1
+            .if ( edx != eax && [edx].asym.mem_type != MT_PTR )
+                .if ( dotcount == 2 )
+                    mov vparray,NULL  ; static class.ptr.proc()
+                .else
+                    inc static_struct ; static class.ptr.ptr...proc()
+                .endif
+            .endif
+        .endif
 
         .if dotcount
 
@@ -1672,15 +1685,15 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         mov ebx,id
         .if eax
 
-            .if [eax].asym.mem_type == MT_TYPE && [eax].asym.type
+            .if ( [eax].asym.mem_type == MT_TYPE && [eax].asym.type )
 
                 mov eax,[eax].asym.type
 
-                .if [eax].asym.typekind == TYPE_TYPEDEF
+                .if ( [eax].asym.typekind == TYPE_TYPEDEF )
 
                     mov ecx,[eax].asym.target_type
 
-                .elseif [eax].asym.typekind == TYPE_STRUCT
+                .elseif ( [eax].asym.typekind == TYPE_STRUCT )
 
                     inc static_struct
 
@@ -1701,8 +1714,8 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                     mov ecx,sym
                 .endif
 
-            .elseif [eax].asym.mem_type == MT_PTR && \
-                    ( [eax].asym.state == SYM_STACK || [eax].asym.state == SYM_EXTERNAL )
+            .elseif ( [eax].asym.mem_type == MT_PTR && \
+                    ( [eax].asym.state == SYM_STACK || [eax].asym.state == SYM_EXTERNAL ) )
 
                 mov ecx,[eax].asym.target_type
             .endif
@@ -1737,6 +1750,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
                 inc vtable
                 inc constructor
             .endif
+        .elseif ( vparray )
+            mov eax,method
+            or [eax].asym.flag2,S_VPARRAY
         .endif
     .endif
 
@@ -1821,6 +1837,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         mov eax,method
         .if eax
             or [eax].asym.flag1,S_METHOD
+            .if ( !vtable )
+                or [eax].asym.flag2,S_VPARRAY
+            .endif
         .endif
     .endif
 
@@ -1855,7 +1874,12 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         .endif
         mov esi,comptr
         .while byte ptr [esi]
-            movsb
+            lodsb
+            .if ( al == '.' && vparray )
+                mov vtable,0
+                .break
+            .endif
+            stosb
         .endw
     .endif
     mov byte ptr [edi],0

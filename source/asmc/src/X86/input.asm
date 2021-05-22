@@ -490,17 +490,9 @@ open_file_in_include_path proc private uses esi edi ebx name:string_t, fullpath:
     local namelen:int_t
     local file:ptr FILE
 
-    mov   file,NULL
-    mov   edx,name
-    movzx eax,byte ptr [edx]
-    add   edx,1
-    .while _ltype[eax+1] & _SPACE
-        mov al,[edx]
-        add edx,1
-    .endw
-    dec edx
-    mov name,edx
-    mov namelen,strlen(edx)
+    mov file,NULL
+    mov name,ltokstart(name)
+    mov namelen,strlen(eax)
 
     .for ( ebx = ModuleInfo.IncludePath: ebx: ebx = next )
 
@@ -731,12 +723,7 @@ GetTextLine endp
 
 AddStringToIncludePath proc uses esi edi string:string_t
 
-    mov esi,string
-    xor eax,eax
-    .repeat
-        lodsb
-    .until !( _ltype[eax+1] & _SPACE )
-    dec esi
+    mov esi,ltokstart(string)
     mov edi,esi
     mov ecx,-1
     xor eax,eax

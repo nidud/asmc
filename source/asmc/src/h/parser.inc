@@ -48,7 +48,7 @@ OpCls macro op1, op2, op3
     endm
 .enum instr_token {
     INS_FIRST_1 = SPECIAL_LAST - 1, ;; to ensure tokens are unique
-include instruct.h
+include instruct.inc
 }
 undef insm
 undef insn

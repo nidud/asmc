@@ -43,7 +43,6 @@ externdef list_pos:DWORD
 
     .code
 
-    OPTION PROCALIGN:4
 ;
 ; save the current status (happens in pass one only) and
 ; switch to "save precompiled lines" mode.
@@ -119,20 +118,20 @@ StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
         ;
         ; v2.08: don't store % operator at pos 0
         ;
-        movzx eax,BYTE PTR [ecx]
-        .while BYTE PTR _ltype[eax+1] & _SPACE
+        .while islspace( [ecx] )
             inc ecx
-            mov al,[ecx]
         .endw
-        .if eax == '%'
-            mov eax,[ecx+1]
-            movzx edx,BYTE PTR [ecx+4]
-            and eax,00FFFFFFh
-            or  eax,00202020h
-            .if eax != 'tuo' || _ltype[edx+1] & _LABEL or _DIGIT
-                mov BYTE PTR [ecx],' '
+
+        .if ( al == '%' )
+
+            mov edx,[ecx+1]
+            and edx,0xFFFFFF
+            or  edx,0x202020
+            .if ( edx != 'tuo' || is_valid_id_char( [ecx+4] ) )
+                mov byte ptr [ecx],' '
             .endif
         .endif
+
         .if LineStore.head
             mov eax,LineStore.tail
             mov [eax].line_item.next,esi
@@ -177,7 +176,7 @@ SaveVariableState PROC USES esi edi sym:asym_t
     mov [edi].equ_item.lvalue,[esi].asym.value
     mov [edi].equ_item.hvalue,[esi].asym.value3264
     mov [edi].equ_item.mem_type,[esi].asym.mem_type
-    .if modstate.tail
+    .if ( modstate.tail )
         mov eax,modstate.tail
         mov [eax].equ_item.next,edi
         mov modstate.tail,edi

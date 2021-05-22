@@ -31,7 +31,7 @@
     UWOP_PUSH_MACHFRAME  = 10 ; .PUSHFRAME  - push a machine frame ( SS, RSP, EFL, CS, RIP [ERRCODE] )
     }
 
-.template UNWIND_CODE
+.template UNWIND_CODE watcall
     union
      struct
       CodeOffset    db ?    ; offset within prolog
@@ -39,13 +39,28 @@
      ends
      FrameOffset    dw ?
     ends
-   .inline UnwindOp fastcall {
-        mov al,[this].UNWIND_CODE.unwind
-        and eax,0x0F
+   .inline UnwindOp {
+        mov     al,[this].UNWIND_CODE.unwind
+        and     eax,0x0F
         }
-   .inline OpInfo fastcall {
-        movzx eax,[this].UNWIND_CODE.unwind
-        shr eax,4
+   .inline OpInfo {
+        movzx   eax,[this].UNWIND_CODE.unwind
+        shr     eax,4
+        }
+   .inline set_UnwindOp :uchar_t {
+        and     [eax].UNWIND_CODE.unwind,not 0x0F
+        or      [eax].UNWIND_CODE.unwind,dl
+        }
+   .inline set_OpInfo :uchar_t {
+        shl     dl,4
+        and     [eax].UNWIND_CODE.unwind,not 0xF0
+        or      [eax].UNWIND_CODE.unwind,dl
+        }
+   .inline set_FrameOffset :ushort_t {
+        mov     [eax].UNWIND_CODE.FrameOffset,dx
+        }
+   .inline set_CodeOffset :uchar_t {
+        mov     [eax].UNWIND_CODE.CodeOffset,dl
         }
    .ends
 
@@ -58,7 +73,12 @@
     UNW_FLAG_CHAININFO = 4
     }
 
-.template UNWIND_INFO
+define UNWIND_INFO_VERSION          0x03 ; is 1
+define UNWIND_INFO_FLAGS            0xFC ; see UNW_FLAG_ values
+define UNWIND_INFO_FRAMEREGISTER    0x0F ; if nonzero, function uses a frame pointer
+define UNWIND_INFO_FRAMEOFFSET      0xF0 ; offset frame reg from RSP * 16
+
+.template UNWIND_INFO watcall
 
     version         db ?
     SizeOfProlog    db ?    ; size of prolog in bytes
@@ -73,21 +93,40 @@ if 0
     ExceptionData   dd 1 dup(?)
 endif
 
-   .inline Version fastcall {
-        mov al,[this].UNWIND_INFO.version
-        and eax,0x03        ; is 1
+   .static Version {
+        mov     al,this.version
+        and     eax,UNWIND_INFO_VERSION
         }
-   .inline Flags fastcall {
-        movzx eax,[this].UNWIND_INFO.version
-        shr eax,2           ; see UNW_FLAG_ values
+   .static Flags {
+        movzx   eax,this.version
+        shr     eax,2
         }
-   .inline FrameRegister fastcall {
-        mov al,[this].UNWIND_INFO.register
-        and eax,0x0F        ; if nonzero, function uses a frame pointer
+   .static FrameRegister {
+        mov     al,this.register
+        and     eax,UNWIND_INFO_FRAMEREGISTER
         }
-   .inline FrameOffset fastcall {
-        movzx eax,[this].UNWIND_INFO.register
-        shr eax,4           ; offset frame reg from RSP * 16
+   .static FrameOffset {
+        movzx   eax,this.register
+        shr     eax,4
+        }
+
+   .static set_Version :uchar_t {
+        and     this.version,not UNWIND_INFO_VERSION
+        or      this.version,_1
+        }
+   .static set_Flags :uchar_t {
+        and     this.version,not UNWIND_INFO_FLAGS
+        shl     _1,2
+        or      this.version,_1
+        }
+   .static set_FrameRegister :uchar_t {
+        and     this.register,not UNWIND_INFO_FRAMEREGISTER
+        or      this.register,_1
+        }
+   .static set_FrameOffset :uchar_t {
+        and     this.register,not UNWIND_INFO_FRAMEOFFSET
+        shl     _1,4
+        or      this.register,_1
         }
    .ends
 

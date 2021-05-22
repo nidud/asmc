@@ -687,6 +687,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 mov edx,psize
                 .if ( edx < 4 && ModuleInfo.Ofssize )
                     mov esi,reg_32
+                    mov edx,4
                 .endif
                 .if ( esi != edi )
                     .if ( ( eax < 4 || edx < 4 ) && ModuleInfo.Ofssize )

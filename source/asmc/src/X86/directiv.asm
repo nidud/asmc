@@ -103,15 +103,17 @@ IncludeDirective proc i:int_t, tokenarray:token_t
         .endif
         mov ecx,[eax].asm_tok.string_ptr
     .else
-        ;; if the filename isn't enclosed in <>, use anything that comes
-        ;; after INCLUDE - and remove trailing white spaces.
-        mov ecx,[eax].asm_tok.tokpos
+        ;
+        ; if the filename isn't enclosed in <>, use anything that comes
+        ; after INCLUDE - and remove trailing white spaces.
+        ;
+        mov  ecx,[eax].asm_tok.tokpos
         imul eax,Token_Count,asm_tok
-        add eax,tokenarray
+        add  eax,tokenarray
+
         .for ( edx = [eax].asm_tok.tokpos, edx--: edx > ecx: edx-- )
-            movzx eax,byte ptr [edx]
-            .break .if !( _ltype[eax+1] & _SPACE )
-            mov byte ptr [edx],0
+            .break .if !islspace( [edx] )
+            mov [edx],ah
         .endf
     .endif
     .if SearchFile( ecx, TRUE )
@@ -176,9 +178,8 @@ IncludeLibDirective proc uses ebx i:int_t, tokenarray:token_t
         imul ebx,Token_Count,asm_tok
         add ebx,tokenarray
         .for ( edx = [ebx].tokpos, edx--: edx > ecx: edx-- )
-            movzx eax,byte ptr [edx]
-            .break .if !( _ltype[eax+1] & _SPACE )
-            mov byte ptr [edx],0
+            .break .if !islspace( [edx] )
+            mov [edx],ah
         .endf
     .endif
 

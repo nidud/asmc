@@ -58,3 +58,4 @@ opt( WSTRING )          ; ; <ON|OFF>
 opt( CODEPAGE )         ; : <value>
 opt( FLOATFORMAT )      ; : <e|f|g>
 opt( FLOATDIGITS )      ; : <value>
+opt( LINESIZE )         ; : <value>

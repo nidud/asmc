@@ -15,6 +15,8 @@ include parser.inc
 include reswords.inc
 include expreval.inc
 include equate.inc
+include tokenize.inc
+include input.inc
 
 define MAX_LOOP_ALIGN 16
 define MAX_CASE_ALIGN 16
@@ -22,6 +24,8 @@ define MAX_CASE_ALIGN 16
 ifndef __ASMC64__
 extern sym_Interface:ptr asym
 endif
+extern token_stringbuf:ptr
+
 UpdateStackBase  proto :ptr asym, :ptr
 UpdateProcStatus proto :ptr asym, :ptr
 
@@ -92,6 +96,7 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
    .new opnd:expr
    .new idx:int_t = -1
+   .new p:line_status
 
     inc i ;; skip OPTION directive
     mov ebx,tokenarray.tokptr(i)
@@ -639,6 +644,31 @@ endif
                     .return( EmitConstError( &opnd ) )
                 .endif
                 mov ModuleInfo.floatdigits,opnd.value
+            .else
+                .return( asmerr( 2026 ) )
+            .endif
+        .case OP_LINESIZE ; : <value>
+            .return .if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .if ( opnd.kind == EXPR_CONST )
+                .if ( opnd.value > 0xFFFF )
+                    .return( EmitConstError( &opnd ) )
+                .endif
+                mov p.input,ModuleInfo.currsource
+                mov p.start,eax
+                mov p.tokenarray,ModuleInfo.tokenarray
+                mov p.outbuf,token_stringbuf
+                mov p.output,eax
+                mov p.index,0
+                mov esi,ModuleInfo.max_line_len
+                .while ( esi < opnd.value )
+                    .if ( InputExtend( &p ) == 0 )
+                        .return( asmerr( 1009 ) )
+                    .endif
+                    .if ( esi == ModuleInfo.max_line_len )
+                        .return( asmerr( 1901 ) )
+                    .endif
+                    mov esi,ModuleInfo.max_line_len
+                .endw
             .else
                 .return( asmerr( 2026 ) )
             .endif

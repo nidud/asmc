@@ -18,6 +18,7 @@ Enables and disables features of the assembler. Available options include:
 - [FLOATFORMAT](opt_floatformat.md)
 - LANGUAGE
 - LJMP
+- [LINESIZE](opt_linesize.md)
 - NOLJMP
 - M510
 - NOM510

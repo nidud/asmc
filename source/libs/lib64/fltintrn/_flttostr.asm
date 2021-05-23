@@ -33,15 +33,13 @@ E16_LOW         equ 0x04000000
 
 _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint_t
 
-  local qf     :REAL16
-  local tmp    :REAL16
   local i      :int_t
   local n      :int_t
+  local qf     :REAL16
   local nsig   :int_t
   local xexp   :int_t
   local maxsize:int_t
   local digits :int_t
-  local flt    :STRFLT
   local stkbuf[STK_BUF_SIZE]:char_t
   local endbuf :ptr
 
@@ -66,7 +64,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov [rbx].nz2,eax
     mov [rbx].decimal_place,eax
     lea rdi,qf
-    mov flt.mantissa,rdi
     mov rsi,rcx
     mov ecx,7
     rep movsw
@@ -79,6 +76,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     movzx   ecx,ax
     lea     rdi,qf
     xor     eax,eax
+    movaps  xmm0,[rdi]
 
     .if ecx == Q_EXPMASK
 
@@ -140,8 +138,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 neg eax
                 mov xexp,eax
                 neg eax
-                mov flt.exponent,eax
-                _fltscale(&flt)
+                fltscale(xmm0, eax)
 
             .else
 
@@ -172,9 +169,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                     and eax,NOT (NDIG / 2 - 1)
                     mov xexp,eax
                     neg eax
-                    mov flt.exponent,eax
-
-                    _fltscale(&flt)
+                    fltscale(xmm0, eax)
                 .endif
             .endif
         .endif
@@ -208,6 +203,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     inc rdi
     xor ebx,ebx
     mov i,ebx
+    movaps xmm3,xmm0
 
     .while ( n > 0 )
 
@@ -217,12 +213,11 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             ; get value to subtract
 
-            __cvtq_i64(&qf)
-            mov rbx,rax
-            __cvti64_q(&tmp, rbx)
-            __subq(&qf, &tmp)
+            mov rbx,cvtq_i64(xmm3)
             .ifs ( n > 0 )
-                __mulq(&qf, &Q_1E16)
+                subq(xmm3, cvti64_q(rbx))
+                mulq(xmm0, Q_1E16)
+                movaps xmm3,xmm0
             .endif
         .endif
 
@@ -327,7 +322,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         mov rdi,r9
         inc ecx
         mov r11d,eax
-
 
         .if eax & _ST_G
             .ifs ( edx < r10d && !( eax & _ST_DOT ) )
@@ -496,7 +490,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             ; cvt->scale should be 1 indicating 1 digit before decimal place
             ; so decrement ndigits to get number of digits after decimal place
 
-            .if (edx < eax && !([rbx].flags & _ST_DOT))
+            .if ( edx < eax && !( [rbx].flags & _ST_DOT) )
                 mov eax,edx
             .endif
             dec eax
@@ -505,7 +499,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             .endif
         .endif
 
-        mov [ebx].ndigits,eax
+        mov [rbx].ndigits,eax
         mov xexp,ecx
         mov r10d,edx
         mov rdi,r9

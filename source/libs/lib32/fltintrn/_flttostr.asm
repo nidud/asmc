@@ -12,16 +12,16 @@ include quadmath.inc
 STK_BUF_SIZE    equ 512 ; ANSI-specified minimum is 509
 NDIG            equ 16
 
-D_CVT_DIGITS    equ 28
-LD_CVT_DIGITS   equ 31
-QF_CVT_DIGITS   equ 44
+D_CVT_DIGITS    equ 20
+LD_CVT_DIGITS   equ 23
+QF_CVT_DIGITS   equ 34
 
-E8_EXP          equ 0x4019
-E8_HIGH         equ 0xBEBC2000
-E8_LOW          equ 0x00000000
 E16_EXP         equ 0x4034
 E16_HIGH        equ 0x8E1BC9BF
 E16_LOW         equ 0x04000000
+E32_EXP         equ 0x4069
+E32_HIGH        equ (0x80000000 or (0x3B8B5B50 shr 1))
+E32_LOW         equ (0x56E16B3B shr 1)
 
     .data
      Q_1E16     real16 1.E16
@@ -155,19 +155,20 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 rcr edx,1
                 rcr eax,1
 
-                .if ( esi < E8_EXP || ( esi == E8_EXP && edx < E8_HIGH ) )
+                .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
+                    ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
 
-                    ; number is < 1e8
+                    ; number is < 1e16
 
                     mov xexp,0
 
                 .else
-                    .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
-                        ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
+                    .if ( esi < E32_EXP || ( ( esi == E32_EXP && ( edx < E32_HIGH || \
+                        ( edx == E32_HIGH && eax < E32_LOW ) ) ) ) )
 
-                        ; number is < 1e16
+                        ; number is < 1e32
 
-                        mov xexp,8
+                        mov xexp,16
                     .endif
 
                     ; scale number down
@@ -200,7 +201,6 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov n,eax
 
     mov ecx,digits
-    add ecx,ecx
     add ecx,NDIG / 2
     mov maxsize,ecx
 
@@ -279,14 +279,12 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     ; get number of characters in buf
 
     .for ( eax = i, ; skip over leading zeros
+           edx = STK_BUF_SIZE-2,
            esi = &stkbuf[1],
            ecx = xexp,
-           ecx += NDIG-1 : byte ptr [esi] == '0' : eax--, ecx--, esi++ )
+           ecx += NDIG-1 : edx && byte ptr [esi] == '0' : eax--, ecx--, edx--, esi++ )
     .endf
 
-    .if eax > digits
-        mov eax,digits
-    .endif
     mov n,eax
     mov ebx,cvt
     mov edx,[ebx].ndigits
@@ -309,17 +307,14 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov edx,eax ; nsig = n
         .endif
         mov eax,digits
-        add eax,eax
         .ifs edx > eax
             mov edx,eax
         .endif
         mov maxsize,eax
         mov eax,'0'
-        .ifs ( ( n > edx && byte ptr [esi+edx] >= '5' ) || \
-               ( n == edx && byte ptr [esi+edx-1] == '9' ) )
+        .ifs ( n > edx && byte ptr [esi+edx] >= '5' )
             mov al,'9'
         .endif
-
         lea edi,[esi+edx-1]
         xchg ecx,edx
         inc ecx

@@ -30,11 +30,10 @@ include intrin.inc
     Q1e4096 real16 752588C0A40514412F3592982A7F0095r
     QINF    real16 7FFF0000000000000000000000000000r
 
+
     .code
 
 fltscale proc vectorcall uses rsi rdi rbx q:real16, exponent:int_t
-
-  local signed:int_t
 
     mov edi,edx
     .ifs ( edi > 4096 )
@@ -51,7 +50,7 @@ fltscale proc vectorcall uses rsi rdi rbx q:real16, exponent:int_t
     .if edi
 
         xor ebx,ebx
-        movaps xmm3,xmm0
+        movaps xmm2,xmm0
         movaps xmm0,{ 1.0 }
 
         .ifs ( edi < 0 )
@@ -69,9 +68,9 @@ fltscale proc vectorcall uses rsi rdi rbx q:real16, exponent:int_t
         .endf
 
         .if ebx
-            divq(xmm3, xmm0)
+            divq(xmm2, xmm0)
         .else
-            mulq(xmm3, xmm0)
+            mulq(xmm2, xmm0)
         .endif
     .endif
     ret

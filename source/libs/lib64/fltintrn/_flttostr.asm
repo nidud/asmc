@@ -12,18 +12,19 @@ include quadmath.inc
 STK_BUF_SIZE    equ 512 ; ANSI-specified minimum is 509
 NDIG            equ 16
 
-D_CVT_DIGITS    equ 28
-LD_CVT_DIGITS   equ 30
-QF_CVT_DIGITS   equ 44
+D_CVT_DIGITS    equ 20
+LD_CVT_DIGITS   equ 23
+QF_CVT_DIGITS   equ 34
 
-E8_EXP          equ 0x4019
-E8_HIGH         equ 0xBEBC2000
-E8_LOW          equ 0x00000000
 E16_EXP         equ 0x4034
 E16_HIGH        equ 0x8E1BC9BF
 E16_LOW         equ 0x04000000
+E32_EXP         equ 0x4069
+E32_HIGH        equ (0x80000000 or (0x3B8B5B50 shr 1))
+E32_LOW         equ (0x56E16B3B shr 1)
 
     .data
+     Q_1E1      real16 1.E1
      Q_1E16     real16 1.E16
      e_space    db "#not enough space",0
 
@@ -73,7 +74,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov     [rbx].sign,ecx
     and     eax,Q_EXPMASK   ; make number positive
     mov     word ptr qf[14],ax
-    movzx   ecx,ax
+    mov     ecx,eax
     lea     rdi,qf
     xor     eax,eax
     movaps  xmm0,[rdi]
@@ -148,19 +149,20 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 rcr edx,1
                 rcr eax,1
 
-                .if ( esi < E8_EXP || ( esi == E8_EXP && edx < E8_HIGH ) )
+                .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
+                    ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
 
-                    ; number is < 1e8
+                    ; number is < 1e16
 
                     mov xexp,0
 
                 .else
-                    .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
-                        ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
+                    .if ( esi < E32_EXP || ( ( esi == E32_EXP && ( edx < E32_HIGH || \
+                        ( edx == E32_HIGH && eax < E32_LOW ) ) ) ) )
 
-                        ; number is < 1e16
+                        ; number is < 1e32
 
-                        mov xexp,8
+                        mov xexp,16
                     .endif
 
                     ; scale number down
@@ -191,7 +193,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov n,eax
 
     mov ecx,digits
-    add ecx,ecx
     add ecx,NDIG / 2
     mov maxsize,ecx
 
@@ -201,29 +202,29 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     lea rdi,stkbuf
     mov word ptr [rdi],'0'
     inc rdi
-    xor ebx,ebx
-    mov i,ebx
+    xor esi,esi
+    mov i,esi
     movaps xmm3,xmm0
 
     .while ( n > 0 )
 
         sub n,NDIG
 
-        .if ( rbx == 0 )
+        .if ( rsi == 0 )
 
             ; get value to subtract
 
-            mov rbx,cvtq_i64(xmm3)
+            mov rsi,cvtq_i64(xmm3)
             .ifs ( n > 0 )
-                subq(xmm3, cvti64_q(rbx))
+                subq(xmm3, cvti64_q(rsi))
                 mulq(xmm0, Q_1E16)
                 movaps xmm3,xmm0
             .endif
         .endif
 
         mov ecx,NDIG
-        .if rbx
-            .for ( rax = rbx, r8d = 10 : ecx : ecx-- )
+        .if rsi
+            .for ( rax = rsi, r8d = 10 : ecx : ecx-- )
                 xor edx,edx
                 div r8
                 add dl,'0'
@@ -235,9 +236,8 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             rep stosb
         .endif
         add i,NDIG
-        xor ebx,ebx
+        xor esi,esi
     .endw
-
 
     ; get number of characters in buf
 
@@ -254,11 +254,11 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov rbx,cvt
     mov edx,[rbx].ndigits
 
-    .if [rbx].flags & _ST_F
+    .if ( [rbx].flags & _ST_F )
         add ecx,[rbx].scale
         lea edx,[rdx+rcx+1]
-    .elseif [rbx].flags & _ST_E
-        .ifs [rbx].scale > 0
+    .elseif ( [rbx].flags & _ST_E )
+        .ifs ( [rbx].scale > 0 )
             inc edx
         .else
             add edx,[rbx].scale
@@ -267,19 +267,17 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         sub ecx,[rbx].scale
     .endif
 
-    .ifs edx >= 0           ; round and strip trailing zeros
+    .ifs ( edx >= 0 )       ; round and strip trailing zeros
         .ifs edx > eax
             mov edx,eax     ; nsig = n
         .endif
         mov eax,digits
-        add eax,eax
         .ifs edx > eax
             mov edx,eax
         .endif
         mov maxsize,eax
         mov eax,'0'
-        .ifs ( ( n > edx && byte ptr [rsi+rdx] >= '5' ) || \
-               ( n == edx && byte ptr [rsi+rdx-1] == '9' ) )
+        .ifs ( n > edx && byte ptr [rsi+rdx] >= '5' )
             mov al,'9'
         .endif
 

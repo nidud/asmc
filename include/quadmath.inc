@@ -108,6 +108,7 @@ cvta_q		proto __vectorcall :string_t, :ptr string_t
 qtofpu		proto __vectorcall :real16
 fputoq		proto __vectorcall
 
+fltscale	proto __vectorcall :real16, :int_t
 cfltcvt		proto __vectorcall :real8, :string_t, :int_t, :int_t, :int_t
 cldcvt		proto __vectorcall :real10, :string_t, :int_t, :int_t, :int_t
 cqfcvt		proto __vectorcall :real16, :string_t, :int_t, :int_t, :int_t

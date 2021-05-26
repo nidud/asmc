@@ -14,7 +14,7 @@ NDIG            equ 16
 
 D_CVT_DIGITS    equ 20
 LD_CVT_DIGITS   equ 23
-QF_CVT_DIGITS   equ 34
+QF_CVT_DIGITS   equ 33
 
 E16_EXP         equ 0x4034
 E16_HIGH        equ 0x8E1BC9BF

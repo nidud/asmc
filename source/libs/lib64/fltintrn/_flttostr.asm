@@ -14,7 +14,7 @@ NDIG            equ 16
 
 D_CVT_DIGITS    equ 20
 LD_CVT_DIGITS   equ 23
-QF_CVT_DIGITS   equ 34
+QF_CVT_DIGITS   equ 33
 
 E16_EXP         equ 0x4034
 E16_HIGH        equ 0x8E1BC9BF
@@ -24,7 +24,6 @@ E32_HIGH        equ (0x80000000 or (0x3B8B5B50 shr 1))
 E32_LOW         equ (0x56E16B3B shr 1)
 
     .data
-     Q_1E1      real16 1.E1
      Q_1E16     real16 1.E16
      e_space    db "#not enough space",0
 

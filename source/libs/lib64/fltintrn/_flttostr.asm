@@ -276,7 +276,8 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
         mov maxsize,eax
         mov eax,'0'
-        .ifs ( n > edx && byte ptr [rsi+rdx] >= '5' )
+        .ifs ( ( n > edx && byte ptr [rsi+rdx] >= '5' ) || \
+            ( edx == digits && byte ptr [rsi+rdx-1] == '9' ) )
             mov al,'9'
         .endif
 

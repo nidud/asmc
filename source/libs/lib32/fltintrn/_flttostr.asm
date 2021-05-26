@@ -312,7 +312,8 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
         mov maxsize,eax
         mov eax,'0'
-        .ifs ( n > edx && byte ptr [esi+edx] >= '5' )
+        .ifs ( ( n > edx && byte ptr [esi+edx] >= '5' ) || \
+            ( edx == digits && byte ptr [esi+edx-1] == '9' ) )
             mov al,'9'
         .endif
         lea edi,[esi+edx-1]

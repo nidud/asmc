@@ -8,234 +8,246 @@ include quadmath.inc
 
     .code
 
-    option win64:rsp noauto
+    option dotname, win64:rsp noauto
 
 mulq proc vectorcall uses rsi rdi rbx A:real16, B:real16
 
-    movq    rax,xmm0
+    movq    rax,xmm0        ; unpack to rdx:rax and rdi:rbx
     movhlps xmm0,xmm0
     movq    rdx,xmm0
     movq    rbx,xmm1
     movhlps xmm0,xmm1
     movq    rdi,xmm0
 
-    shld    rsi,rdi,16
+    shld    rsi,rdi,16      ; put exponent int esi
     shld    rdi,rbx,16
     shl     rbx,16
-    mov     r8d,esi
-    and     r8d,Q_EXPMASK
-    neg     r8d
-    rcr     rdi,1
-    rcr     rbx,1
-
     shld    rsi,rdx,16
     shld    rdx,rax,16
     shl     rax,16
-    mov     r8d,esi
-    and     r8d,Q_EXPMASK
-    neg     r8d
+    mov     r9d,esi
+
+    add     si,1            ; validate..
+    jc      .error_nan_a
+    jo      .error_nan_a
+    add     esi,0xFFFF
+    jc      .error_nan_b
+    jo      .error_nan_b
+    sub     esi,0x10000
+
+.if_zero_a:
+    mov     rcx,rax
+    or      rcx,rdx
+    jnz     .if_zero_b
+    add     si,si
+    jz      .error_zero_a   ; return +-0
+    rcr     si,1
+
+.if_zero_b:
+    mov     rcx,rbx
+    or      rcx,rdi
+    jnz     .init_done
+    test    esi,0x7FFF0000
+    jz      .error_zero_b
+
+.init_done:
+
+    stc
     rcr     rdx,1
     rcr     rax,1
+    stc
+    rcr     rdi,1
+    rcr     rbx,1
 
-    jmp     entry
+    mov     ecx,esi
+    rol     ecx,16
+    sar     ecx,16
+    sar     esi,16
+    and     ecx,0x80007FFF
+    and     esi,0x80007FFF
+    add     esi,ecx
 
-    .switch jmp r8
+.calculate_exponent:
+    sub     si,0x3FFE
+    jc      .if_exponent_too_small
+    cmp     si,0x7FFF       ; quit if exponent is negative
+    ja      .return_overflow
+.if_exponent_too_small:
+    cmp     si,-65
+    jl      .return_underflow
 
-      .case 0                   ; return 0
-        xor eax,eax
-        xor edx,edx
-        xor esi,esi
-        .endc
+    mov     r10,rbx
+    mov     r11,rdi
+    mov     r8,rax
+    mov     r9,rdi
+    mov     rdi,rdx
+    mul     r10
+    mov     rbx,rdx
+    mov     rcx,rax
+    mov     rax,rdi
+    mul     r11
+    mov     r11,rdx
+    xchg    r10,rax
+    mov     rdx,rdi
+    mul     rdx
+    add     rbx,rax
+    adc     r10,rdx
+    adc     r11,0
+    mov     rax,r8
+    mov     rdx,r9
+    mul     rdx
+    add     rbx,rax
+    adc     r10,rdx
+    adc     r11,0
+    mov     rax,r10
+    mov     rdx,r11
 
-      .case 1                   ; return B
-        mov rax,rbx
-        mov rdx,rdi
-        shr esi,16
-        .endc
+    test    rdx,rdx
+    js      .test_overflow
 
-      .case 2                   ; overflow
-        mov esi,0x7FFF
-        xor eax,eax
-        xor edx,edx
-        .endc
+    add     rbx,rbx
+    adc     rax,rax
+    adc     rdx,rdx
+    dec     si
 
-      .case 3                   ; A is a NaN or infinity
-        mov r8,0x8000000000000000
-        .if ( !rax && rdx == r8 && !rbx && !rdi )
-            mov esi,-1 ; -NaN
-            .endc
-        .endif
-        dec si
-        add esi,0x10000
-        .ifnb
-            .ifno
-                .ifs ( !rax && rdx == r8 && esi < 0 )
-                    xor esi,0x8000
-                .endif
-                .endc
-            .endif
-        .endif
-        sub esi,0x10000
-        .if rdx == rdi
-            cmp rax,rbx
-        .endif
-        .ifna
-            .ifz
-                .endc .if ( rax || rdx != r8 )
-                or si,si
-                .ifs
-                    xor esi,0x80000000
-                .endif
-            .endif
-            .gotosw(1)
-        .endif
-        .endc
+.test_overflow:
 
-      .case 4                   ; B is a NaN or infinity
-        sub esi,0x10000
-        mov r8,0x8000000000000000
-        .if ( rbx == 0 && rdi == r8 )
+    add     rbx,rbx
+    jnc     .rounding
+    jnz     .overflow
+    bt      rax,0
 
-            .if ( !rax && !rdx )
-                mov esi,-1      ; -NaN
-            .else
-                or si,si
-                .ifs            ; flip sign bit
-                    xor esi,0x80000000
-                .endif
-            .endif
-        .endif
-        .gotosw(1)
+.overflow:
 
-      .case <entry> 5           ; A is 0
-        add si,si               ; place sign in carry
-        .endc .ifz              ; return 0
-        rcr si,1                ; restore sign of A
-        .gotosw(9) .if ( rbx || rdi )
+    adc     rax,0
+    adc     rdx,0
+    jnc     .rounding
 
-      .case 6                   ; B is 0
-        .gotosw(0) .if !( esi & 0x7FFF0000 )
-        .gotosw(9)
+    rcr     rdx,1
+    rcr     rax,1
+    inc     si
+    cmp     si,0x7FFF
+    je      .return_infinity
 
-      .case 7
-        dec si
-        add esi,esi
-        rcr si,1
-        xor eax,eax
-        xor edx,edx
-        .endc
+.rounding:
 
-      .case 8
+    mov     ecx,eax
+    and     ecx,0x7FFF
+    cmp     ecx,0x2000;1900
+    jb      .validate
 
-        add si,1                ; add 1 to exponent
-        .gotosw(3) .ifc         ; quit if NaN
-        .gotosw(3) .ifo
-        add esi,0xFFFF          ; readjust low exponent and inc high word
-        .gotosw(4) .ifc         ; quit if NaN
-        .gotosw(4) .ifo
-        sub esi,0x10000         ; readjust high exponent
+    add     rax,0x8000
+    adc     rdx,0
+    jnc     .validate
 
-        .gotosw(5) .if ( rax == 0 && rdx == 0 )
-        .gotosw(6) .if ( rbx == 0 && rdi == 0 )
+    rcr     rdx,1
+    rcr     rax,1
+    inc     si
 
-      .case 9
+.validate:
 
-        mov ecx,esi         ; exponent and sign of A into EDI
-        rol ecx,16          ; shift to top
-        sar ecx,16          ; duplicate sign
-        sar esi,16          ; ...
-        and ecx,0x80007FFF  ; isolate signs and exponent
-        and esi,0x80007FFF  ; ...
-        add esi,ecx         ; determine exponent of result and sign
-        sub si,0x3FFE       ; remove extra bias
-        .ifnc               ; exponent negative ?
-            .gotosw(2) .if ( si > 0x7FFF )
-        .endif
-        .gotosw(7) .ifs si < -64
+    test    si,si
+    jng     .return_zero
+    add     esi,esi
+    rcr     si,1
 
-        mov     r10,rbx
-        mov     r11,rdi
-        mov     r8,rax
-        mov     r9,rdi
-        mov     rdi,rdx
-        mul     r10
-        mov     rbx,rdx
-        mov     rcx,rax
-        mov     rax,rdi
-        mul     r11
-        mov     r11,rdx
-        xchg    r10,rax
-        mov     rdx,rdi
-        mul     rdx
-        add     rbx,rax
-        adc     r10,rdx
-        adc     r11,0
-        mov     rax,r8
-        mov     rdx,r9
-        mul     rdx
-        add     rbx,rax
-        adc     r10,rdx
-        adc     r11,0
-        mov     rdx,rbx
-        mov     rax,rcx
-        mov     rcx,rdx
-        mov     rax,r10
-        mov     rdx,r11
-        test    rdx,rdx
+.done:
 
-        .ifns ; if not normalized
+    shl     rax,1
+    rcl     rdx,1
+    shrd    rax,rdx,16
 
-            add rcx,rcx
-            adc rax,rax
-            adc rdx,rdx
-            dec si
-        .endif
+.error:
 
-        shl ecx,1
-        .ifc
-            .ifz
-                .if ecx
-                    stc
-                .else
-                    bt eax,0
-                .endif
-            .endif
-            adc rax,0
-            adc rdx,0
-            .ifc
-                rcr rdx,1
-                rcr rax,1
-                inc si
-                .gotosw(2) .if ( si == 0x7FFF )
-            .endif
-        .endif
+    shrd    rdx,rsi,16
+    movq    xmm0,rax
+    movq    xmm1,rdx
+    movlhps xmm0,xmm1
 
-        or si,si
-        .ifng
-            mov ecx,esi
-            .ifz
-                mov cl,1
-            .else
-                neg cx
-            .endif
-            shrd rax,rdx,cl
-            shr rdx,cl
-            xor si,si
-        .endif
+.toend:
 
-        add esi,esi
-        rcr si,1
-
-    .endsw
-
-    shl  rax,1          ; shift bits back
-    rcl  rdx,1          ; shift high bit out..
-    shrd rax,rdx,16
-    shrd rdx,rsi,16     ; exponent and sign
-    movq xmm0,rax
-    movq xmm1,rdx
-    movlhps xmm0,xmm1   ; return result
     ret
+
+.error_zero_a:
+    rcr     si,1
+    test    esi,0x80008000
+    jz      .return_zero
+    mov     esi,0x8000
+    jmp     .error
+
+.error_zero_b:
+    test    esi,0x80008000
+    jz      .return_zero
+    mov     esi,0x80000000
+    jmp     .return_b
+
+.return_nan:
+    mov     esi,0xFFFF
+    mov     edx,1
+    rol     rdx,1
+    xor     eax,eax
+    jmp     .error
+
+.return_overflow:
+
+.return_infinity:
+    mov     esi,0x7FFF
+    xor     eax,eax
+    xor     edx,edx
+    jmp     .error
+
+.return_underflow:
+
+.return_zero:
+    xorps   xmm0,xmm0
+    jmp     .toend
+
+.return_b:
+    mov     rax,rbx
+    mov     rdx,rdi
+    shr     esi,16
+    jmp     .done
+
+.error_nan_a:
+    dec     si
+    add     esi,0x10000
+    jb      @F
+    jo      @F
+    jns     .done
+    test    rax,rax
+    jnz     .done
+    test    rdx,rdx
+    jnz     .done
+    xor     esi,0x8000
+    jmp     .error
+@@:
+    sub     esi,0x10000
+    mov     rcx,rax
+    or      rcx,rdx
+    or      rcx,rbx
+    or      rcx,rdi
+    jnz     @F
+    or      esi,-1
+    jmp     .return_nan
+@@:
+    cmp     rdx,rdi
+    jb      .return_b
+    ja      .done
+    cmp     rax,rbx
+    jna     .return_b
+    jmp     .done
+
+.error_nan_b:
+    sub     esi,0x10000
+    test    rbx,rbx
+    jnz     .return_b
+    test    rdi,rdi
+    jnz     .return_b
+    mov     ecx,esi
+    shl     ecx,16
+    xor     esi,ecx
+    and     esi,0x80000000
+    jmp     .return_b
 
 mulq endp
 

@@ -27,7 +27,7 @@ __cvth_q proc x:ptr, h:ptr
                 ;
                 ; Invalid exception
                 ;
-                mov ecx,Q_EXPMASK
+                mov ecx,0xFFFF
                 mov eax,0x40000000 ; QNaN
                 _set_errno(EDOM)
             .else

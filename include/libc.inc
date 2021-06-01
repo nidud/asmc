@@ -177,11 +177,13 @@ int8_t		typedef sbyte
 int16_t		typedef sword
 int32_t		typedef sdword
 int64_t		typedef sqword
+int128_t	typedef oword
 
 uint8_t		typedef byte
 uint16_t	typedef word
 uint32_t	typedef dword
 uint64_t	typedef qword
+uint128_t	typedef oword
 
 ifdef DEBUG
 .template array_type

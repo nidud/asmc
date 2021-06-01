@@ -6,29 +6,30 @@
 
 include malloc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-alloca	PROC byte_count:UINT
+alloca proc byte_count:UINT
 
-	lea	eax,[esp+8]
-	mov	ecx,[eax-4]	; size to probe
+    mov     ecx,[esp]   ; return address
+    mov     eax,[esp+4] ; size to probe
+    add     esp,8
+@@:
+    cmp     eax,_PAGESIZE_
+    jb      @F
+    sub     esp,_PAGESIZE_
+    test    [esp],eax
+    sub     eax,_PAGESIZE_
+    jmp     @B
+@@:
+    sub     esp,eax
+    and     esp,-16     ; align 16
+    mov     eax,esp
+    sub     esp,4
+    test    [esp],eax   ; probe page
+    jmp     ecx
 
-	.while	ecx > _PAGESIZE_
+alloca endp
 
-	    sub	 eax,_PAGESIZE_
-	    test [eax],eax
-	    sub	 ecx,_PAGESIZE_
-	.endw
-
-	sub	eax,ecx
-	and	eax,-16		; align 16
-	test	[eax-4],eax	; probe page
-	mov	ecx,[esp]
-	lea	esp,[eax-4]
-	jmp	ecx
-
-alloca	ENDP
-
-	END
+    end

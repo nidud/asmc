@@ -7,8 +7,8 @@
 include quadmath.inc
 
     .data
-    table real16 \
-        40024000000000000000000000000000r,
+     table real16 \
+        40024000000000000000000000000000r, ; 1.e1
         40059000000000000000000000000000r,
         400C3880000000000000000000000000r,
         40197D78400000000000000000000000r,
@@ -20,7 +20,7 @@ include quadmath.inc
         46A3C633415D4C1D238D98CAB8A978A0r,
         4D4892ECEB0D02EA182ECA1A7A51E316r,
         5A923D1676BB8A7ABBC94E9A519C6535r,
-        752588C0A40514412F3592982A7F0095r, ; 1.e4096
+        752588C0A40514412F3592982A7F0094r, ; 5 1.e4096
         7FFF0000000000000000000000000000r  ; INF
 
     .code
@@ -34,11 +34,6 @@ fltscale proc vectorcall uses rsi rdi rbx q:real16, exponent:int_t
 
         mulq(xmm0, [rsi+12*16])
         sub edi,4096
-
-    .elseif ( sdword ptr edi < -4096 )
-
-        divq(xmm0, [rsi+12*16])
-        add edi,4096
     .endif
 
     .if edi

@@ -1369,7 +1369,7 @@ RebuildLine endp
 ;; equmode: if 1, dont expand macro functions
 
 ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:token_t,
-        max:int_t, bracket_flags:int_t, equmode:int_t
+        max:int_t, bracket_flags:int_t, equmode:int_t, buffer:ptr char_t
 
     local pos:int_t
     local tmp:int_t
@@ -1381,10 +1381,8 @@ ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:token_
     local opndx:expr
     local sym:asym_t
     local rc:int_t
-    local buffer:ptr char_t
     local old_tokencount:int_t
 
-    mov buffer,alloca(ModuleInfo.max_line_len)
     mov eax,pi
     mov i,[eax]
     mov addbrackets,bracket_flags
@@ -1623,14 +1621,17 @@ ExpandToken endp
 ExpandLineItems proc uses esi edi line:string_t, i:int_t, tokenarray:token_t,
         addbrackets:int_t, equmode:int_t
 
-    local k:int_t
+  local k:int_t
+  local buffer:int_t
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
     .for esi = 0 :: esi++
 
         mov edi,NOT_ERROR
         .for ( k = i : k < Token_Count : )
 
-            ExpandToken( line, &k, tokenarray, Token_Count, addbrackets, equmode )
+            ExpandToken( line, &k, tokenarray, Token_Count, addbrackets, equmode, buffer )
             .break(1) .if eax == ERROR
             .if eax == STRING_EXPANDED
                 mov edi,eax
@@ -1694,12 +1695,15 @@ ExpandLiterals endp
 
 ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
 
-    local count         : int_t
-    local bracket_flags : uint_t ;; flags
-    local flags         : int_t
-    local lvl           : int_t
-    local rc            : int_t
-    local addbrackets   : int_t
+  local count         : int_t
+  local bracket_flags : uint_t ;; flags
+  local flags         : int_t
+  local lvl           : int_t
+  local rc            : int_t
+  local addbrackets   : int_t
+  local buffer:int_t
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
     ;; filter certain conditions.
     ;; bracket_flags: for (preprocessor) directives that expect a literal
@@ -1732,7 +1736,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 .if [ebx].dirtype == DRT_ERRDIR
                     .if ( [ebx].tokval == T_DOT_ERRDEF || [ebx].tokval == T_DOT_ERRNDEF )
                         .if esi
-                            mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE )
+                            mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                         .endif
                         .while [ebx].token != T_FINAL && [ebx].token != T_COMMA
                             inc esi
@@ -1761,13 +1765,13 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 .endc
             .case DRT_SIZESTR
                 ;; syntax: label SIZESTR literal
-                mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE )
+                mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 mov bracket_flags,0x1
                 mov count,2
                 .endc
             .case DRT_INSTR
                 ;; syntax: label INSTR [number,] literal, literal
-                mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE )
+                mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 ;; check if the optional <number> argument is given
                 .for esi = 2, eax = 0, ecx = 0: esi < Token_Count: esi++
                     imul ebx,esi,asm_tok
@@ -1793,7 +1797,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 ;; the name is an exception, if it's not the macro itself
 
                 .if ( eax && [eax].asym.state != SYM_MACRO )
-                    mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE )
+                    mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 .endif
                 mov count,Token_Count ;; stop further expansion
                 .endc
@@ -1807,7 +1811,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
             .endsw
         .else
             ;; v2.08: expand the very first token and then ...
-            mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE );
+            mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
             .return .if eax == ERROR || eax == EMPTY
 
             .if ( rc == STRING_EXPANDED )
@@ -1819,7 +1823,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
             .endif
             mov eax,tokenarray
             .if ( count == 1 && [eax].asm_tok.token == T_ID && [eax+16].asm_tok.token == T_ID )
-                mov rc,ExpandToken( string, &count, tokenarray, 2, FALSE, FALSE )
+                mov rc,ExpandToken( string, &count, tokenarray, 2, FALSE, FALSE, buffer )
                 .return .if eax == ERROR || eax == EMPTY
                 .if rc == STRING_EXPANDED
                     mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
@@ -1843,7 +1847,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
             .if bracket_flags != -1
                 shr bracket_flags,1
             .endif
-            ExpandToken( string, &count, tokenarray, Token_Count, addbrackets, FALSE )
+            ExpandToken( string, &count, tokenarray, Token_Count, addbrackets, FALSE, buffer )
             .return .ifs ( eax < NOT_ERROR ) ;; ERROR or EMPTY?
             .if eax == STRING_EXPANDED
                 mov rc,STRING_EXPANDED

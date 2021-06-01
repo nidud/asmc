@@ -20,21 +20,32 @@ include quadmath.inc
 ;;;;;;;;
 
     .static mulq {
+
         this.__v(mulq, 0.0, 0.0, 0.0)
         this.__v(mulq, 0.0, 1.0, 0.0)
-        this.__v(mulq, 0.0, -1.0, 0.0)
+        this.__v(mulq, 0.0, -1.0, -0.0)
+        this.__v(mulq, -0.0, 1.0, -0.0)
+        this.__v(mulq, 1.0, 0.0, 0.0)
+        this.__v(mulq, -1.0, 0.0, -0.0)
+        this.__v(mulq, 6.6e-4094, 1.e-4096, 0.0)
+
+        this.__v(mulq, 1.e8192, 1.e-4096, INFINITY )
         this.__v(mulq, 2.0, 1.0, 2.0)
-        this.__v(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Ar)
-        this.__v(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581061r)
-        this.__v(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
+        this.__v(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Br)
+        this.__v(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581063r)
+        this.__v(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749757r)
+        this.__v(mulq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 4012E8548001A378EB79354B10749757r)
+        this.__v(mulq, 0489B0325A80EC580DF467361195C592r, 1.e4096, 39B04B892AA10FE037723CDDFA146D1Fr )
 
         this.__m(mulq, 0.0, 0.0, 0.0)
         this.__m(mulq, 0.0, 1.0, 0.0)
-        this.__m(mulq, 0.0, -1.0, 0.0)
+        this.__m(mulq, 0.0, -1.0, -0.0)
         this.__m(mulq, 2.0, 1.0, 2.0)
-        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Ar)
-        this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581061r)
-        this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749755r)
+        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Br)
+        this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581063r)
+        this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749757r)
+        this.__m(mulq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 4012E8548001A378EB79354B10749757r)
+        this.__m(mulq, 0489B0325A80EC580DF467361195C592r, 1.e4096, 39B04B892AA10FE037723CDDFA146D1Fr )
         }
 
         .static __m :abs, :abs, :abs, :abs {
@@ -102,21 +113,23 @@ include quadmath.inc
 
     .static divq {
 
-        this.__v(divq, 0.0, 0.0, 7FFF8000000000000000000000000000r)
+        this.__v(divq, 0.0, 0.0, NAN)
         this.__v(divq, 0.0, 1.0, 0.0)
-        this.__v(divq, 0.0, -1.0, 0.0)
+        this.__v(divq, 0.0, -1.0, -0.0)
         this.__v(divq, 2.0, 1.0, 2.0)
         this.__v(divq, 1.1, 2.2, 0.5)
-        this.__v(divq, 0.01, 0.1, 0.1)
+        this.__v(divq, 0.01, 0.1, 3FFB9999999999999999999999999999r)
+        this.__v(divq, 8.88888888888888888888888888888888e2079, 1.e-4096, INFINITY)
         this.__v(divq, 66666.6, 2.0, 33333.3)
-        this.__v(divq, 1.0001, 1000000.0002, 3FEB0C7659426EB346F3B91986814E5Er)
+        this.__v(divq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 3FEB0C7659426EB346F3B91986814E5Er)
+        this.__v(divq, 0489B0325A80EC580DF467361195C592r, 0AD84DBA0991A59D3FBC5BC702474388r, 39B04B892AA10FE037723CDDFA146D1Er )
 
-        this.__m(divq, 0.0, 0.0, 7FFF8000000000000000000000000000r)
+        this.__m(divq, 0.0, 0.0, NAN)
         this.__m(divq, 0.0, 1.0, 0.0)
-        this.__m(divq, 0.0, -1.0, 0.0)
+        this.__m(divq, 0.0, -1.0, -0.0)
         this.__m(divq, 2.0, 1.0, 2.0)
         this.__m(divq, 1.1, 2.2, 0.5)
-        this.__m(divq, 0.01, 0.1, 0.1)
+        this.__m(divq, 0.01, 0.1, 0.1);3FFB9999999999999999999999999999r)
         this.__m(divq, 66666.6, 2.0, 33333.3)
         this.__m(divq, 1.0001, 1000000.0002, 3FEB0C7659426EB346F3B91986814E5Er)
         }
@@ -128,16 +141,16 @@ include quadmath.inc
         this.__v(addq, -1.0, 0.0, -1.0)
         this.__v(addq, 1.0, 1.0, 2.0)
         this.__v(addq, 1.1, 1.1, 2.2)
-        this.__v(addq, 999999.0001, 1.0001, 1000000.0002)
-        this.__v(addq, 0.09, 0.01, 0.1)
+        this.__v(addq, 999999.0001, 1.0001, 4012E8480001A36E2EB1C432CA57A786r)
+        this.__v(addq, 0.09, 0.01, 3FFB9999999999999999999999999999r)
 
         this.__m(addq, 0.0, 0.0, 0.0)
         this.__m(addq, 1.0, 0.0, 1.0)
         this.__m(addq, -1.0, 0.0, -1.0)
         this.__m(addq, 1.0, 1.0, 2.0)
         this.__m(addq, 1.1, 1.1, 2.2)
-        this.__m(addq, 999999.0001, 1.0001, 1000000.0002)
-        this.__m(addq, 0.09, 0.01, 0.1)
+        this.__m(addq, 999999.0001, 1.0001, 4012E8480001A36E2EB1C432CA57A786r)
+        this.__m(addq, 0.09, 0.01, 3FFB9999999999999999999999999999r)
         }
 
     .static subq {
@@ -211,7 +224,7 @@ include quadmath.inc
         this.__vqh( 0, 65504.0, 0x7BFF )
         this.__vqh( 0, 6.103515625e-05, 0x0400 )
         this.__vqh( 0, 1.0/0.0, 0x7C00 )
-        this.__vqh( 0, -1.0/0.0, 0xFC00 )
+        this.__vqh( 0, -1.0/0.0, 0x7C00 )
         this.__vqh( ERANGE, 5.960464478e-08, 0x0001 )
 
         this.__mqh( 0, 0.0, 0 )
@@ -223,7 +236,7 @@ include quadmath.inc
         this.__mqh( 0, 65504.0, 0x7BFF )
         this.__mqh( 0, 6.103515625e-05, 0x0400 )
         this.__mqh( 0, 1.0/0.0, 0x7C00 )
-        this.__mqh( 0, -1.0/0.0, 0xFC00 )
+        this.__mqh( 0, -1.0/0.0, 0x7C00 )
         this.__mqh( ERANGE, 5.960464478e-08, 0x0001 )
         }
         .static __vqh :abs, :abs, :abs {
@@ -498,9 +511,9 @@ include quadmath.inc
         this.__vhq( 0, 6.103515625e-05, 0x0400)
         this.__vhq( 0, 6.097555161e-05, 0x03FF)
         this.__vhq( 0, 5.960464478e-08, 0x0001)
-        this.__vhq( 0, 1.0/0.0, 0x7C00)
-        this.__vhq( 0, -1.0/0.0, 0xFC00)
-        this.__vhq( EDOM, 0.0/0.0, 0xFFFF)
+        this.__vhq( 0, INFINITY, 0x7C00)
+        this.__vhq( 0, 0FFFF0000000000000000000000000000r, 0xFC00)
+        this.__vhq( EDOM, 7FFF8000000000000000000000000000r, 0x7FFF)
 
         this.__mhq( 0, 0.0, 0)
         this.__mhq( 0, 1.0, 0x3C00)
@@ -513,8 +526,8 @@ include quadmath.inc
         this.__mhq( 0, 6.097555161e-05, 0x03FF)
         this.__mhq( 0, 5.960464478e-08, 0x0001)
         this.__mhq( 0, 1.0/0.0, 0x7C00)
-        this.__mhq( 0, -1.0/0.0, 0xFC00)
-        this.__mhq( EDOM, 0.0/0.0, 0xFFFF)
+        this.__mhq( 0, 0FFFF0000000000000000000000000000r, 0xFC00)
+        this.__mhq( EDOM, 7FFF8000000000000000000000000000r, 0x7FFF)
         }
         .static __vhq :abs, :abs, :abs {
             local b, q, w
@@ -562,7 +575,7 @@ include quadmath.inc
         this.__vssq( 0,  3.402823466e38, 3.402823466e38 )
         this.__vssq( 0, 1.175494351e-38, 1.175494351e-38 )
         this.__vssq( 0,            -0.0, 0x80000000 )
-        this.__vssq( EDOM,    0.0 / 0.0, 0x7F800000 )
+        this.__vssq( EDOM, 7FFF8000000000000000000000000000r, 0x7F800000 )
 
         this.__mssq( 0,             0.0, 0.0 )
         this.__mssq( 0,             1.0, 0x3F800000 )
@@ -570,7 +583,7 @@ include quadmath.inc
         this.__mssq( 0,  3.402823466e38, 3.402823466e38 )
         this.__mssq( 0, 1.175494351e-38, 1.175494351e-38 )
         this.__mssq( 0,            -0.0, 0x80000000 )
-        this.__mssq( EDOM,    0.0 / 0.0, 0x7F800000 )
+        this.__mssq( EDOM, 7FFF8000000000000000000000000000r, 0x7F800000 )
         }
         .static __vssq :abs, :abs, :abs {
             local a, b, r
@@ -663,7 +676,7 @@ include quadmath.inc
         this.__vldq(  3.402823466e38, 3.402823466e38 )
         this.__vldq( 1.175494351e-38, 1.175494351e-38 )
         this.__vldq(            -0.0, -0.0 )
-        this.__vldq(       0.0 / 0.0, 7FFF8000000000000000000000000000r )
+        this.__vldq(       0.0 / 0.0, 0FFFF8000000000000000000000000000r )
 
         this.__mldq(             0.0, 0.0 )
         this.__mldq(             1.0, 1.0 )
@@ -671,7 +684,7 @@ include quadmath.inc
         this.__mldq(  3.402823466e38, 3.402823466e38 )
         this.__mldq( 1.175494351e-38, 1.175494351e-38 )
         this.__mldq(            -0.0, -0.0 )
-        this.__mldq(       0.0 / 0.0, 7FFF8000000000000000000000000000r )
+        this.__mldq(       0.0 / 0.0, 0FFFF8000000000000000000000000000r )
         }
         .static __vldq :abs, :abs {
             local a, b, r
@@ -829,26 +842,29 @@ include quadmath.inc
         this.__vaq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
         this.__vaq( addr @CStr( "-1e-0a" ), -1.0, 'a' )
         this.__vaq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
-        this.__vaq( addr @CStr( "1.e8192" ), 7FFF0000000000000000000000000000r, 0 )
+        this.__vaq( addr @CStr( "1.e8192" ), INFINITY, 0 )
         this.__vaq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
+        this.__vaq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
 
         this.__maq( addr @CStr( "." ), 0.0, '.' )
         this.__maq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
         this.__maq( addr @CStr( "-1e-0a" ), -1.0, 'a' )
         this.__maq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
-        this.__maq( addr @CStr( "1.e8192"), 7FFF0000000000000000000000000000r, 0 )
+        this.__maq( addr @CStr( "1.e8192"), INFINITY, 0 )
         this.__maq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
+        this.__maq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
+
         }
-        .static __vaq :abs, :abs, :abs {
+        .static __vaq string:abs, val:abs, e:abs {
             local a, eptr
             .data
                 align 16
-                a real16 _2
+                a real16 val
                 eptr string_t NULL
             .code
-            cvta_q(_1, addr eptr)
+            cvta_q(string, addr eptr)
             mov rdx,eptr
-            .assert( byte ptr [rdx] == _3 )
+            .assert( byte ptr [rdx] == e )
             movq    rax,xmm0
             movhlps xmm0,xmm0
             movq    rdx,xmm0
@@ -1029,14 +1045,14 @@ include quadmath.inc
 
     .static atanq {
         this.__v(atanq, 0.0, 0.0)
-        this.__v(atanq, 1.5, 0.9827937232473290679857106110146660710)
+        this.__v(atanq, 1.5, 3FFEF730BD281F69B200F10F5E197794r)
         }
 
     .static atanhq {}
 
     .static atan2q {
         this.__v(atan2q, 0.0, 0.0, 0.0)
-        this.__v(atan2q, 1.0, 2.0, 3FFDDAC670561BB4F68ADFC88BD97874r)
+        this.__v(atan2q, 1.0, 2.0, 3FFDDAC670561BB4F68ADFC88BD97875r)
         this.__v(atan2q, 0.5, 1.5, 0.3217505543966421934014046143586613)
         }
 
@@ -1096,7 +1112,7 @@ include quadmath.inc
 
         this.__v(sqrtq, 0.0, 0.0)
         this.__v(sqrtq, 1.0, 1.0)
-        this.__v(sqrtq, 2.0, 1.4142135623730950488016887242097015)
+        this.__v(sqrtq, 2.0, 3FFF6A09E667F3BCC908B2FB1366EAA6r)
         }
 
     .static tanq {}

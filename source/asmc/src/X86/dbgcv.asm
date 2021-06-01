@@ -1936,7 +1936,7 @@ endif
         mov [edi].COMPILESYM3.verFEQFE,    0
         mov [edi].COMPILESYM3.verMajor,    ASMC_MAJOR_VER
         mov [edi].COMPILESYM3.verMinor,    ASMC_MINOR_VER
-        mov [edi].COMPILESYM3.verBuild,    ASMC_SUBMINOR_VER*100
+        mov [edi].COMPILESYM3.verBuild,    0;ASMC_SUBMINOR_VER*100
         mov [edi].COMPILESYM3.verQFE,      0
 
         mov edi,cv.ps

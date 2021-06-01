@@ -5,15 +5,17 @@
 ;
 
 include quadmath.inc
-include intrin.inc
 
     .code
 
+    option dotname
+
 __divq proc uses esi edi ebx A:ptr, B:ptr
 
-  local dividend[2]:__m128i
-  local divisor [2]:__m128i
-  local reminder[2]:__m128i
+  local dividend[4]:dword
+  local divisor [4]:dword
+  local reminder[4]:dword
+  local quotient[4]:dword
   local bits:int_t
 
     mov     edx,B           ; A(si:ecx:ebx:edx:eax), B(highword(esi):stack)
@@ -23,18 +25,10 @@ __divq proc uses esi edi ebx A:ptr, B:ptr
     mov     ebx,[edx+6]
     mov     ecx,[edx+10]
     mov     si,[edx+14]
-    and     si,Q_EXPMASK
-    neg     si
-    mov     si,[edx+14]
-    rcr     ecx,1
-    rcr     ebx,1
-    rcr     edi,1
-    rcr     eax,1
-    mov     divisor.m128i_u32[0],eax
-    mov     divisor.m128i_u32[4],edi
-    mov     divisor.m128i_u32[8],ebx
-    mov     divisor.m128i_u32[12],ecx
-
+    mov     divisor[0],eax
+    mov     divisor[4],edi
+    mov     divisor[8],ebx
+    mov     divisor[12],ecx
     shl     esi,16
     mov     ecx,A
     mov     ax,[ecx]
@@ -43,367 +37,251 @@ __divq proc uses esi edi ebx A:ptr, B:ptr
     mov     ebx,[ecx+6]
     mov     edi,[ecx+10]
     mov     si,[ecx+14]
-    and     si,Q_EXPMASK
-    neg     si
-    mov     si,[ecx+14]
+
+    add     si,1            ; validate..
+    jc      .error_nan_a
+    jo      .error_nan_a
+    add     esi,0xFFFF
+    jc      .error_nan_b
+    jo      .error_nan_b
+    sub     esi,0x10000
+
+    mov     ecx,divisor[0]
+    or      ecx,divisor[4]
+    or      ecx,divisor[8]
+    or      ecx,divisor[12]
+    jnz     .if_zero_a
+
+    test    esi,0x7FFF0000
+    jz      .error_zero_b
+
+.if_zero_a:
+    mov     ecx,eax
+    or      ecx,edx
+    or      ecx,ebx
+    or      ecx,edi
+    jnz     .init_done
+    add     si,si
+    jz      .error_zero_a
+    rcr     si,1
+
+.init_done:
+
+    stc
+    rcr     divisor[0x0C],1
+    rcr     divisor[0x08],1
+    rcr     divisor[0x04],1
+    rcr     divisor[0x00],1
+    stc
     rcr     edi,1
     rcr     ebx,1
     rcr     edx,1
     rcr     eax,1
 
-    .repeat ; create frame -- no loop
+    mov     ecx,esi
+    rol     ecx,16
+    sar     ecx,16
+    sar     esi,16
+    and     ecx,0x80007FFF
+    and     esi,0x80007FFF
+    rol     ecx,16
+    rol     esi,16
+    add     cx,si
+    rol     ecx,16
+    rol     esi,16
 
-        add     si,1            ; add 1 to exponent
-        jc      er_NaN_A        ; quit if NaN
-        jo      er_NaN_A        ; ...
-        add     esi,0xFFFF      ; readjust low exponent and inc high word
-        jc      er_NaN_B        ; quit if NaN
-        jo      er_NaN_B        ; ...
-        sub     esi,0x10000     ; readjust high exponent
+.if_is_a_denormal_a:
+    test    cx,cx
+    jnz     .if_is_a_denormal_b
+.normalize_a:
+    dec     cx
+    add     eax,eax
+    adc     edx,edx
+    adc     ebx,ebx
+    adc     edi,edi
+    jnc     .normalize_a
 
-        mov     ecx,divisor.m128i_u32[0]
-        or      ecx,divisor.m128i_u32[4]
-        or      ecx,divisor.m128i_u32[8]
-        or      ecx,divisor.m128i_u32[12]
+.if_is_a_denormal_b:
+    test    si,si
+    jnz     .calculate_exponent
+    push    eax
+.normalize_b:
+    dec     si
+    mov     eax,divisor[0]
+    add     divisor[0],eax
+    mov     eax,divisor[4]
+    adc     divisor[4],eax
+    mov     eax,divisor[8]
+    adc     divisor[8],eax
+    mov     eax,divisor[12]
+    adc     divisor[12],eax
+    jnc     .normalize_a
+    pop     eax
 
-        .ifz
+.calculate_exponent:
+    sub     cx,si
+    add     cx,0x3FFF
+    js      .if_exponent_is_too_small
+    cmp     cx,0x7FFF       ; quit if exponent is negative
+    jnb     .return_infinity
+.if_exponent_is_too_small:
+    cmp     cx,-65
+    jl      .return_underflow
 
-            .if !( esi & 0x7FFF0000 )
+.divide:
 
-                mov ecx,eax
-                or  ecx,edx
-                or  ecx,ebx
-                or  ecx,edi
+    push    ecx
 
-                .ifz    ; exit if A is 0
+    define  RBITS 9
 
-                    mov edi,esi
-                    add di,di
+    shrd    eax,edx,RBITS
+    shrd    edx,ebx,RBITS
+    shrd    ebx,edi,RBITS
+    shr     edi,RBITS
+    mov     reminder[0x0],eax
+    mov     reminder[0x4],edx
+    mov     reminder[0x8],ebx
+    mov     reminder[0xC],edi
 
-                    .ifz
+    mov     ecx,divisor[0x0]
+    mov     edx,divisor[0x4]
+    mov     ebx,divisor[0x8]
+    mov     edi,divisor[0xC]
+    shrd    ecx,edx,RBITS
+    shrd    edx,ebx,RBITS
+    shrd    ebx,edi,RBITS
+    shr     edi,RBITS
 
-                        ; Invalid operation - return NaN
+    xor     eax,eax
+    mov     quotient[0x0],eax
+    mov     quotient[0x4],eax
+    mov     quotient[0x8],eax
+    mov     quotient[0xC],eax
+    mov     divisor [0x0],eax
+    mov     divisor [0x4],eax
+    mov     divisor [0x8],eax
+    mov     divisor [0xC],eax
+    mov     dividend[0x0],eax
+    mov     dividend[0x4],eax
+    mov     dividend[0x8],eax
+    mov     dividend[0xC],eax
 
-                        mov edi,0x40000000
-                        mov esi,0x7FFF
-                        .break
-                    .endif
-                .endif
+    mov     bits,113 + (16 - RBITS)
+    xor     esi,esi
+    add     ecx,ecx
+    adc     edx,edx
+    adc     ebx,ebx
+    adc     edi,edi
 
-                ; zero divide - return infinity
+.divide_1:
+    shr     edi,1
+    rcr     ebx,1
+    rcr     edx,1
+    rcr     ecx,1
+    rcr     esi,1
+    rcr     divisor[0x8],1
+    rcr     divisor[0x4],1
+    rcr     divisor[0x0],1
+    sub     dividend[0x0],divisor[0x0]
+    sbb     dividend[0x4],divisor[0x4]
+    sbb     dividend[0x8],divisor[0x8]
+    sbb     dividend[0xC],esi
+    sbb     reminder[0x0],ecx
+    sbb     reminder[0x4],edx
+    sbb     reminder[0x8],ebx
+    sbb     reminder[0xC],edi
+    cmc
+    jc      .divide_3
 
-                or esi,0x7FFF
-                jmp return_m0
-            .endif
-        .endif
+.divide_2:
+    add     quotient[0x0],quotient[0x0]
+    adc     quotient[0x4],quotient[0x4]
+    adc     quotient[0x8],quotient[0x8]
+    adc     quotient[0xC],quotient[0xC]
+    dec     bits
+    jz      .end_divide
+    shr     edi,1
+    rcr     ebx,1
+    rcr     edx,1
+    rcr     ecx,1
 
-        mov ecx,eax
-        or  ecx,edx
-        or  ecx,ebx
-        or  ecx,edi
-        .ifz
-            add si,si
-            .break .ifz
-            rcr si,1        ; put back the sign
-        .endif
-        mov ecx,esi         ; exponent and sign of A into EDI
-        rol ecx,16          ; shift to top
-        sar ecx,16          ; duplicate sign
-        sar esi,16          ; ...
-        and ecx,0x80007FFF  ; isolate signs and exponent
-        and esi,0x80007FFF  ; ...
-        rol ecx,16          ; rotate signs to bottom
-        rol esi,16          ; ...
-        add cx,si           ; calc sign of result
-        rol ecx,16          ; rotate signs to top
-        rol esi,16          ; ...
-        .if !cx             ; if A is a denormal
-            .repeat         ; then normalize it
-                dec cx      ; - decrement exponent
-                add eax,eax ; - shift fraction left
-                adc edx,edx
-                adc ebx,ebx
-                adc edi,edi
-            .untilb         ; - until implied 1 bit is on
-        .endif
-        .if !si             ; if B is a denormal
-            push eax
-            .repeat
-                dec si
-                mov eax,divisor.m128i_u32[0]
-                add divisor.m128i_u32[0],eax
-                mov eax,divisor.m128i_u32[4]
-                adc divisor.m128i_u32[4],eax
-                mov eax,divisor.m128i_u32[8]
-                adc divisor.m128i_u32[8],eax
-                mov eax,divisor.m128i_u32[12]
-                adc divisor.m128i_u32[12],eax
-            .untilb
-            pop eax
-        .endif
-        sub cx,si           ; calculate exponent of result
-        add cx,0x3FFF       ; add in removed bias
-        .ifns               ; overflow ?
-            .if cx >= 0x7FFF    ; quit if exponent is negative
-                mov si,0x7FFF   ; - set infinity
-                jmp return_si0  ; return infinity
-            .endif
-        .endif
-        cmp cx,-65          ; if exponent is too small
-        jl return_0         ; return underflow
+    rcr     esi,1
+    rcr     divisor[0x8],1
+    rcr     divisor[0x4],1
+    rcr     divisor[0x0],1
+    add     dividend[0x0],divisor[0x0]
+    adc     dividend[0x4],divisor[0x4]
+    adc     dividend[0x8],divisor[0x8]
+    adc     dividend[0xC],esi
+    adc     reminder[0x0],ecx
+    adc     reminder[0x4],edx
+    adc     reminder[0x8],ebx
+    adc     reminder[0xC],edi
+    jnc     .divide_2
 
-        push ecx
+.divide_3:
+    adc     quotient[0x0],quotient[0x0]
+    adc     quotient[0x4],quotient[0x4]
+    adc     quotient[0x8],quotient[0x8]
+    adc     quotient[0xC],quotient[0xC]
+    dec     bits
+    jnz     .divide_1
 
-        mov reminder.m128i_u32[0x10],eax    ; dividend --> reminder
-        mov reminder.m128i_u32[0x14],edx
-        mov reminder.m128i_u32[0x18],ebx
-        mov reminder.m128i_u32[0x1C],edi
+.end_divide:
 
-        xor eax,eax
-        mov bits,eax
+    pop     esi
 
-        mov dividend.m128i_u32[0x00],eax    ; quotient (dividend) --> 0
-        mov dividend.m128i_u32[0x04],eax
-        mov dividend.m128i_u32[0x08],eax
-        mov dividend.m128i_u32[0x0C],eax
-        mov dividend.m128i_u32[0x10],eax
-        mov reminder.m128i_u32[0x00],eax    ; 0, dividend
-        mov reminder.m128i_u32[0x04],eax
-        mov reminder.m128i_u32[0x08],eax
-        mov reminder.m128i_u32[0x0C],eax
-        mov divisor.m128i_u32[0x10],eax     ; divisor, 0
-        mov divisor.m128i_u32[0x14],eax
-        mov divisor.m128i_u32[0x18],eax
-        mov divisor.m128i_u32[0x1C],eax
+    mov     eax,quotient[0x0]
+    mov     edx,quotient[0x4]
+    mov     ebx,quotient[0x8]
+    mov     edi,quotient[0xC]
+    dec     si
 
-        .repeat
+.rounding:
 
-            mov esi,divisor.m128i_u32[0x00]
-            mov edi,divisor.m128i_u32[0x04]
-            mov edx,divisor.m128i_u32[0x08]
-            mov ebx,divisor.m128i_u32[0x0C]
-            mov ecx,divisor.m128i_u32[0x10]
+    mov     ecx,eax
+    and     ecx,0x3F
+    cmp     ecx,27
+    jb      .overflow
 
-            .while 1
+    add     eax,0x40
+    adc     edx,0
+    adc     ebx,0
+    adc     edi,0
 
-                ; divisor *= 2
+.overflow:
 
-                add esi,esi
-                adc edi,edi
-                adc edx,edx
-                adc ebx,ebx
-                adc ecx,ecx
-                adc divisor.m128i_u32[0x14],divisor.m128i_u32[0x14]
-                adc divisor.m128i_u32[0x18],divisor.m128i_u32[0x18]
-                adc divisor.m128i_u32[0x1C],divisor.m128i_u32[0x1C]
+    bt      edi,32 - RBITS ; overflow bit
+    jnc     .reset
 
-                .break .ifc
+    rcr     edi,1
+    rcr     ebx,1
+    rcr     edx,1
+    rcr     eax,1
+    add     esi,1
 
-                .if divisor.m128i_u32[0x1C] == reminder.m128i_u32[0x1C] && \
-                    divisor.m128i_u32[0x18] == reminder.m128i_u32[0x18] && \
-                    divisor.m128i_u32[0x14] == reminder.m128i_u32[0x14] && \
-                    ecx == reminder.m128i_u32[0x10] && \
-                    ebx == reminder.m128i_u32[0x0C] && \
-                    edx == reminder.m128i_u32[0x08] && \
-                    edi == reminder.m128i_u32[0x04]
-                    cmp esi,reminder.m128i_u32[0x00]
-                .endif
-                .break .ifa
-                inc bits
-            .endw
+.reset:
 
-            .while 1
+    shld    edi,ebx,RBITS
+    shld    ebx,edx,RBITS
+    shld    edx,eax,RBITS
+    shl     eax,RBITS
+    test    si,si
+    jng     .return_zero
+    add     esi,esi
+    rcr     si,1
 
-                ; divisor /= 2
+.done:
 
-                rcr divisor.m128i_u32[0x1C],1
-                rcr divisor.m128i_u32[0x18],1
-                rcr divisor.m128i_u32[0x14],1
-                rcr ecx,1
-                rcr ebx,1
-                rcr edx,1
-                rcr edi,1
-                rcr esi,1
-
-                ; reminder -= divisor
-
-                sub reminder.m128i_u32[0x00],esi
-                sbb reminder.m128i_u32[0x04],edi
-                sbb reminder.m128i_u32[0x08],edx
-                sbb reminder.m128i_u32[0x0C],ebx
-                sbb reminder.m128i_u32[0x10],ecx
-                sbb reminder.m128i_u32[0x14],divisor.m128i_u32[0x14]
-                sbb reminder.m128i_u32[0x18],divisor.m128i_u32[0x18]
-                sbb reminder.m128i_u32[0x1C],divisor.m128i_u32[0x1C]
-
-                cmc
-                .ifnc
-
-                    .repeat
-
-                        ; dividend *= 2
-
-                        add dividend.m128i_u32[0x00],dividend.m128i_u32[0x00]
-                        adc dividend.m128i_u32[0x04],dividend.m128i_u32[0x04]
-                        adc dividend.m128i_u32[0x08],dividend.m128i_u32[0x08]
-                        adc dividend.m128i_u32[0x0C],dividend.m128i_u32[0x0C]
-                        adc dividend.m128i_u32[0x10],dividend.m128i_u32[0x10]
-
-                        dec bits
-                        .break(1) .ifs
-
-                            ; reminder += divisor
-
-                            ; reminder not needed here..
-
-                        ; divisor /= 2
-
-                        shr divisor.m128i_u32[0x1C],1
-                        rcr divisor.m128i_u32[0x18],1
-                        rcr divisor.m128i_u32[0x14],1
-                        rcr ecx,1
-                        rcr ebx,1
-                        rcr edx,1
-                        rcr edi,1
-                        rcr esi,1
-
-                        ; reminder += divisor
-
-                        add reminder.m128i_u32[0x00],esi
-                        adc reminder.m128i_u32[0x04],edi
-                        adc reminder.m128i_u32[0x08],edx
-                        adc reminder.m128i_u32[0x0C],ebx
-                        adc reminder.m128i_u32[0x10],ecx
-                        adc reminder.m128i_u32[0x14],divisor.m128i_u32[0x14]
-                        adc reminder.m128i_u32[0x18],divisor.m128i_u32[0x18]
-                        adc reminder.m128i_u32[0x1C],divisor.m128i_u32[0x1C]
-                    .untilb
-                .endif
-
-                ; dividend *= 2
-
-                adc dividend.m128i_u32[0x00],dividend.m128i_u32[0x00]
-                adc dividend.m128i_u32[0x04],dividend.m128i_u32[0x04]
-                adc dividend.m128i_u32[0x08],dividend.m128i_u32[0x08]
-                adc dividend.m128i_u32[0x0C],dividend.m128i_u32[0x0C]
-                adc dividend.m128i_u32[0x10],dividend.m128i_u32[0x10]
-                dec bits
-                .break .ifs
-            .endw
-        .until 1
-        pop esi
-
-        mov eax,dividend.m128i_u32[0] ; load quotient
-        mov edx,dividend.m128i_u32[4]
-        mov ebx,dividend.m128i_u32[8]
-        mov edi,dividend.m128i_u32[12]
-        dec si
-        shr dividend.m128i_u8[16],1 ; overflow bit..
-
-        .ifc
-            rcr edi,1
-            rcr ebx,1
-            rcr edx,1
-            rcr eax,1
-            inc esi
-        .endif
-        or si,si
-        .ifng
-            .ifz
-                mov cl,1
-            .else
-                neg si
-                mov ecx,esi
-            .endif
-            shrd eax,edx,cl
-            shrd edx,ebx,cl
-            shrd ebx,edi,cl
-            shr edi,cl
-            xor esi,esi
-        .endif
-        add esi,esi
-        rcr si,1
-        .break
-
-      er_NaN_A:             ; A is a NaN or infinity
-        dec si
-        add esi,0x10000
-        .ifnb
-            .ifno
-                .ifs
-                    .if !eax && !edx && !ebx && edi == 0x80000000
-                        xor esi,0x8000
-                    .endif
-                .endif
-                .break
-            .endif
-        .endif
-        sub esi,0x10000
-        .if !eax && !edx && !ebx
-            mov ecx,divisor.m128i_u32[0]
-            or  ecx,divisor.m128i_u32[4]
-            or  ecx,divisor.m128i_u32[8]
-            .ifz
-                .if edi == 0x80000000 && edi == divisor.m128i_u32[12]
-                    sar edi,1
-                    or  esi,-1 ; -NaN
-                    .break
-                .endif
-            .endif
-        .endif
-        .if edi == divisor.m128i_u32[12]
-            .if ebx == divisor.m128i_u32[8]
-                .if edx == divisor.m128i_u32[4]
-                    cmp eax,divisor.m128i_u32[0]
-                .endif
-            .endif
-        .endif
-        jna return_B
-        .break
-
-      er_NaN_B:             ; B is a NaN or infinity
-        sub esi,0x10000
-        mov ecx,divisor.m128i_u32[0]
-        or  ecx,divisor.m128i_u32[4]
-        or  ecx,divisor.m128i_u32[8]
-        .ifz
-            mov edi,0x80000000
-            .if edi == divisor.m128i_u32[12]
-                mov eax,esi
-                shl eax,16
-                xor esi,eax
-                and esi,edi
-                sub divisor.m128i_u32[12],edi
-            .endif
-        .endif
-      return_B:
-        mov eax,divisor.m128i_u32[0]
-        mov edx,divisor.m128i_u32[4]
-        mov ebx,divisor.m128i_u32[8]
-        mov edi,divisor.m128i_u32[12]
-        shr esi,16
-        .break
-      return_0:
-        xor esi,esi
-        jmp return_m0
-      overflow:
-        mov esi,0x7FFF
-      return_si0:
-        add esi,esi
-        rcr si,1
-      return_m0:
-        xor eax,eax
-        xor edx,edx
-        xor ebx,ebx
-        xor edi,edi
-    .until 1
-
-    mov ecx,A
     shl eax,1           ; shift bits back
     rcl edx,1
     rcl ebx,1
     rcl edi,1           ; shift high bit out..
     shr eax,16          ; 16 low bits
+
+.error:
+
+    mov ecx,A
     mov [ecx],ax
     mov [ecx+2],edx
     mov [ecx+6],ebx
@@ -411,6 +289,107 @@ __divq proc uses esi edi ebx A:ptr, B:ptr
     mov [ecx+14],si     ; exponent and sign
     mov eax,ecx         ; return result
     ret
+
+.error_zero_a:
+    rcr     si,1
+    test    esi,0x80008000
+    jz      .return_zero
+    mov     esi,0x8000
+    jmp     .error
+
+.error_zero_b:
+    mov     ecx,eax
+    or      ecx,edx
+    or      ecx,ebx
+    or      ecx,edi
+    jnz     .return_infinity
+    mov     ecx,esi
+    add     cx,cx
+    jnz     .return_infinity
+
+.return_nan:
+    mov     esi,0xFFFF
+    mov     edi,0x80000000
+    xor     eax,eax
+    xor     edx,edx
+    xor     ebx,ebx
+    jmp     .error
+
+.return_underflow:
+    and     cx,0x7FFF
+    cmp     cx,0x3FFF
+    jae     .return_zero
+
+.return_infinity:
+    mov     esi,0x7FFF
+    jmp     .return_0
+
+.return_zero:
+    xor     esi,esi
+.return_0:
+    xor     eax,eax
+    xor     edx,edx
+    xor     ebx,ebx
+    xor     edi,edi
+    jmp     .error
+
+.return_b:
+    mov     eax,divisor[0]
+    mov     edx,divisor[4]
+    mov     ebx,divisor[8]
+    mov     edi,divisor[12]
+    shr     esi,16
+    jmp     .done
+
+.error_nan_a:
+    dec     si
+    add     esi,0x10000
+    jb      @F
+    jo      @F
+    jns     .done
+    mov     ecx,eax
+    or      ecx,edx
+    or      ecx,ebx
+    or      ecx,edi
+    jnz     .done
+    xor     esi,0x8000
+    jmp     .error
+@@:
+    sub     esi,0x10000
+    mov     ecx,eax
+    or      ecx,edx
+    or      ecx,ebx
+    or      ecx,edi
+    or      ecx,divisor[0]
+    or      ecx,divisor[4]
+    or      ecx,divisor[8]
+    or      ecx,divisor[12]
+    jz      .return_nan
+    cmp     edi,divisor[12]
+    jb      .return_b
+    ja      .done
+    cmp     ebx,divisor[8]
+    jb      .return_b
+    ja      .done
+    cmp     edx,divisor[4]
+    jb      .return_b
+    ja      .done
+    cmp     eax,divisor[0]
+    jna     .return_b
+    jmp     .done
+
+.error_nan_b:
+    sub     esi,0x10000
+    mov     ecx,divisor[0]
+    or      ecx,divisor[4]
+    or      ecx,divisor[8]
+    or      ecx,divisor[12]
+    jnz     .return_b
+    mov     ecx,esi
+    shl     ecx,16
+    xor     esi,ecx
+    and     esi,0x80000000
+    jmp     .return_b
 
 __divq endp
 

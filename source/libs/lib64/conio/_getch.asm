@@ -39,6 +39,7 @@ _getch proc uses rbx rdi rsi
                 dec esi
             .endw
         .endif
+        Sleep(1)
     .endw
     mov eax,edi
     ret

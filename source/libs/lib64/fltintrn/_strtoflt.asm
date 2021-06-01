@@ -6,14 +6,13 @@
 
 include fltintrn.inc
 include errno.inc
+include quadmath.inc
 
     .data
     real real16 0.0
     flt STRFLT <0,0,0,real>
 
     .code
-
-    option win64:nosave
 
 _strtoflt proc string:string_t
 
@@ -81,125 +80,77 @@ _strtoflt proc string:string_t
         mov rax,[r10]
         mov rdx,[r10+8]
 
-        .if ( sign == '-' )
-
-            neg rdx
-            neg rax
-            sbb rdx,0
-        .endif
-        ;
-        ; get bit-count of number
-        ;
         xor ecx,ecx
-        bsr rcx,rdx
-        .ifz
-            bsr rcx,rax
-        .else
-            add ecx,64
-        .endif
-        .ifnz
-            inc ecx
-        .endif
+        mov r8d,Q_EXPBIAS
 
-        .if ecx
-            ;
-            ; shift number to bit-size
-            ;
-            ; - 0x0001 --> 0x8000
-            ;
-            mov r8d,Q_SIGBITS
-            mov r9d,r8d
-            sub r9d,ecx
-
-            .if ecx > r8d
-                sub ecx,r8d
-                ;
-                ; or 0x10000 --> 0x1000
-                ;
-                .if cl >= 64
-                    mov rax,rdx
-                    xor edx,edx
-                    sub cl,64
-                .endif
-                shrd rax,rdx,cl
-                shr rdx,cl
-
-            .elseif r9d
-
-                mov ecx,r9d
-                .if cl >= 64
-                    mov rdx,rax
-                    xor eax,eax
-                    sub cl,64
-                .endif
-                shld rdx,rax,cl
-                shl rax,cl
-
+        .if rax || rdx
+            .if rdx         ; find most significant non-zero bit
+                bsr rcx,rdx
+                add ecx,64
+            .else
+                bsr rcx,rax
             .endif
-            mov [r10],rax
-            mov [r10+8],rdx
-            ;
-            ; create exponent bias and mask
-            ;
-            mov ecx,Q_EXPBIAS+Q_SIGBITS-1
-            sub ecx,r9d         ; - shift count
-            and ecx,Q_EXPMASK   ; remove sign bit
-            .if flt.flags & _ST_NEGNUM
-                or cx,0x8000
+            mov ch,cl       ; shift bits into position
+            mov cl,127
+            sub cl,ch
+            .if cl >= 64
+                sub cl,64
+                mov rdx,rax
+                xor eax,eax
             .endif
-            mov [r10+14],cx
+            shld rdx,rax,cl
+            shl rax,cl
+            shr ecx,8       ; get shift count
+            add ecx,r8d     ; calculate exponent
         .else
             or flt.flags,_ST_ISZERO
         .endif
 
+        shl rax,1
+        rcl rdx,1
+        mov r9d,flt.flags
 
-        mov ecx,flt.flags
-        mov ax,[r10+14]
-        and eax,Q_EXPMASK
-        mov edx,1
+        .if ( sign == '-' || r9d & _ST_NEGNUM )
 
-        .switch
-          .case ecx & _ST_ISNAN or _ST_ISINF or _ST_INVALID
-            mov edx,0x7FFF0000
-            .if ecx & _ST_ISNAN or _ST_INVALID
-                or edx,0x00004000
-            .endif
-            .endc
-          .case ecx & _ST_OVERFLOW
-          .case eax >= Q_EXPMAX + Q_EXPBIAS
-            mov edx,0x7FFF0000
-            .if ecx & _ST_NEGNUM
-                or edx,0x80000000
-            .endif
-            .endc
-          .case ecx & _ST_UNDERFLOW
-            xor edx,edx
-            .endc
-        .endsw
-
-        .if edx != 1
-
-            shl rdx,32
-            xor eax,eax
-            mov [r10+0x00],rax
-            mov [r10+0x08],rdx
-            _set_errno(ERANGE)
-
-        .elseif flt.exponent && !( flt.flags & _ST_ISHEX )
-
-            _fltscale(&flt)
+            or cx,0x8000
         .endif
 
-        .if flt.flags & _ST_NEGNUM
+        mov r8d,ecx
+        and r8d,Q_EXPMASK
+        .switch
+          .case r9d & _ST_ISNAN or _ST_ISINF or _ST_INVALID
+          .case r9d & _ST_UNDERFLOW
+          .case r9d & _ST_OVERFLOW
+          .case r8d >= Q_EXPMAX + Q_EXPBIAS
+            or  ecx,0x7FFF
+            xor eax,eax
+            xor edx,edx
+        .endsw
 
-            mov rdx,flt.mantissa
-            or byte ptr [rdx+15],0x80
+        shrd rax,rdx,16
+        shrd rdx,rcx,16
+        .if r9d & _ST_ISNAN or _ST_INVALID
+            inc eax
+        .endif
+        movq xmm0,rax
+        movq xmm1,rdx
+        movlhps xmm0,xmm1
+        movaps real,xmm0
+
+        and ecx,Q_EXPMASK
+        .if ecx >= 0x7FFF
+
+            _set_errno(ERANGE)
+
+        .elseif ( flt.exponent && !( flt.flags & _ST_ISHEX ) )
+
+            fltscale(xmm0, flt.exponent)
+            movaps real,xmm0
         .endif
 
         mov eax,flt.exponent
         add eax,digits
         dec eax
-
         .ifs eax > 4932
             or flt.flags,_ST_OVERFLOW
         .endif

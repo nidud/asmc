@@ -30,7 +30,7 @@ __cvth_q proc x:ptr, h:ptr
                 ; Invalid exception
                 ;
                 _set_errno(EDOM)
-                mov ecx,Q_EXPMASK
+                mov ecx,0xFFFF
                 mov eax,0x40000000 ; QNaN
             .else
                 xor eax,eax

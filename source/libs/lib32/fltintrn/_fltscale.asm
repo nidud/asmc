@@ -9,11 +9,8 @@ include quadmath.inc
 include intrin.inc
 
     .data
-
-    ; Assembler version independent hard values
-
-    table real16 \
-        40024000000000000000000000000000r,
+     table real16 \
+        40024000000000000000000000000000r,  ; 1.e1
         40059000000000000000000000000000r,
         400C3880000000000000000000000000r,
         40197D78400000000000000000000000r,
@@ -25,8 +22,10 @@ include intrin.inc
         46A3C633415D4C1D238D98CAB8A978A0r,
         4D4892ECEB0D02EA182ECA1A7A51E316r,
         5A923D1676BB8A7ABBC94E9A519C6535r,
-        752588C0A40514412F3592982A7F0095r,
-        7FFF0000000000000000000000000000r
+        752588C0A40514412F3592982A7F0095r,  ; 1.e4096
+        7FFF0000000000000000000000000000r   ; INF
+     Q_1E4096 real16 \
+        752588C0A40514412F3592982A7F0094r   ; 5-4 1.e4096
 
     .code
 
@@ -39,14 +38,12 @@ _fltscale proc uses esi edi ebx fp:ptr STRFLT
 
     mov ebx,fp
     mov edi,[ebx].exponent
-    .ifs ( edi > 4096 )
 
+    .ifs ( edi > 4096 )
         __mulq([ebx].mantissa, &table[12*16])
         sub edi,4096
-
     .elseif ( sdword ptr edi < -4096 )
-
-        __divq([ebx].mantissa, &table[12*16])
+        __divq([ebx].mantissa, &Q_1E4096)
         add edi,4096
     .endif
 
@@ -68,13 +65,10 @@ _fltscale proc uses esi edi ebx fp:ptr STRFLT
         .endif
 
         .for ( esi = &table : edi : edi >>= 1, esi += 16 )
-
             .if ( edi & 1 )
-
                 __mulq(&factor, esi)
             .endif
         .endf
-
         .if signed
             __divq([ebx].mantissa, &factor)
         .else

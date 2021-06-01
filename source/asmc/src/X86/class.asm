@@ -5,6 +5,7 @@
 ;
 
 include stdio.inc
+include malloc.inc
 include string.inc
 include asmc.inc
 include symbols.inc
@@ -712,7 +713,7 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:token_t
 
 GetTypeId ENDP
 
-ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t, buffer:string_t
+ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local retval:int_t
   local name:string_t
@@ -722,6 +723,9 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t, buffer:string_t
   local P$[16]:char_t
   local T$[16]:char_t
   local constructor:int_t
+  local buffer:string_t
+
+    mov buffer,alloca(ModuleInfo.max_line_len)
 
     mov ebx,i
     shl ebx,4

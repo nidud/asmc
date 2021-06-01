@@ -145,7 +145,7 @@ M_LABEL         equ 0x04
 M_MULTILINE     equ 0x08
 M_PURGED        equ 0x10
 
-.template asym watcall
+.template asym
     nextitem        ptr asym ?      ; next symbol in hash line
     name            string_t ?      ; symbol name
     union
@@ -266,194 +266,6 @@ M_PURGED        equ 0x10
       ext_idx2      ushort_t ?      ; omf: (external definition) index for weak external
      ends
     ends
-
-    .inline nextitem            { retm<[eax].asym.nextitem> }
-    .inline name                { retm<[eax].asym.name> }
-    .inline offs                { retm<[eax].asym.offs> }
-    .inline value               { retm<[eax].asym.value> }
-    .inline uvalue              { retm<[eax].asym.uvalue> }
-    .inline string_ptr          { retm<[eax].asym.string_ptr> }
-    .inline substitute          { retm<[eax].asym.substitute> }
-    .inline classlnameidx       { retm<[eax].asym.classlnameidx> }
-    .inline segm                { retm<[eax].asym.segm> }
-    .inline class               { retm<[eax].asym.class> }
-    .inline vtable              { retm<[eax].asym.vtable> }
-    .inline vmacro              { retm<[eax].asym.vmacro> }
-    .inline state               { retm<[eax].asym.state> }
-    .inline mem_type            { retm<[eax].asym.mem_type> }
-    .inline reserved1           { retm<[eax].asym.reserved1> }
-    .inline reserved2           { retm<[eax].asym.reserved2> }
-    .inline flags               { retm<[eax].asym.flags> }
-    .inline flag1               { retm<[eax].asym.flag1> }
-    .inline flag2               { retm<[eax].asym.flag2> }
-    .inline flag3               { retm<[eax].asym.flag3> }
-    .inline first_size          { retm<[eax].asym.first_size> }
-    .inline Ofssize             { retm<[eax].asym.Ofssize> }
-    .inline is_ptr              { retm<[eax].asym.is_ptr> }
-    .inline ptr_memtype         { retm<[eax].asym.ptr_memtype> }
-    .inline asmpass             { retm<[eax].asym.asmpass> }
-    .inline sflags              { retm<[eax].asym.sflags> }
-    .inline mac_flag            { retm<[eax].asym.mac_flag> }
-    .inline first_length        { retm<[eax].asym.first_length> }
-    .inline max_mbr_size        { retm<[eax].asym.max_mbr_size> }
-    .inline target_type         { retm<[eax].asym.target_type> }
-    .inline regist0             { retm<[eax].asym.regist[0]> }
-    .inline regist1             { retm<[eax].asym.regist[2]> }
-    .inline total_size          { retm<[eax].asym.total_size> }
-    .inline value3264           { retm<[eax].asym.value3264> }
-    .inline dll                 { retm<[eax].asym.dll> }
-    .inline max_offset          { retm<[eax].asym.max_offset> }
-    .inline total_length        { retm<[eax].asym.total_length> }
-    .inline altname             { retm<[eax].asym.altname> }
-    .inline debuginfo           { retm<[eax].asym.debuginfo> }
-    .inline cvtyperef           { retm<[eax].asym.cvtyperef> }
-    .inline typekind            { retm<[eax].asym.typekind> }
-    .inline name_size           { retm<[eax].asym.name_size> }
-    .inline langtype            { retm<[eax].asym.langtype> }
-    .inline type                { retm<[eax].asym.type> }
-    .inline bp_fixup            { retm<[eax].asym.bp_fixup> }
-    .inline ext_idx             { retm<[eax].asym.ext_idx> }
-    .inline ext_idx1            { retm<[eax].asym.ext_idx1> }
-    .inline ext_idx2            { retm<[eax].asym.ext_idx2> }
-
-    .inline set_nextitem        : ptr asym  { mov [this].asym.nextitem,         _1 }
-    .inline set_name            : string_t  { mov [this].asym.name,             _1 }
-    .inline set_offset          : int_t     { mov [this].asym.offs,             _1 }
-    .inline set_value           : int_t     { mov [this].asym.value,            _1 }
-    .inline set_uvalue          : uint_t    { mov [this].asym.uvalue,           _1 }
-    .inline set_string_ptr      : string_t  { mov [this].asym.string_ptr,       _1 }
-    .inline set_substitute      : ptr asym  { mov [this].asym.substitute,       _1 }
-    .inline set_classlnameidx   : int_t     { mov [this].asym.classlnameidx,    _1 }
-    .inline set_segment         : ptr asym  { mov [this].asym.segm,             _1 }
-    .inline set_class           : ptr asym  { mov [this].asym.class,            _1 }
-    .inline set_vtable          : ptr asym  { mov [this].asym.vtable,           _1 }
-    .inline set_vmacro          : ptr asym  { mov [this].asym.vmacro,           _1 }
-    .inline set_state           : uchar_t   { mov [this].asym.state,            _1 }
-    .inline set_mem_type        : uchar_t   { mov [this].asym.mem_type,         _1 }
-    .inline set_reserved1       : uchar_t   { mov [this].asym.reserved1,        _1 }
-    .inline set_reserved2       : uchar_t   { mov [this].asym.reserved2,        _1 }
-    .inline set_flags           : uchar_t   { mov [this].asym.flags,            _1 }
-    .inline set_flag1           : uchar_t   { mov [this].asym.flag1,            _1 }
-    .inline set_flag2           : uchar_t   { mov [this].asym.flag2,            _1 }
-    .inline set_flag3           : uchar_t   { mov [this].asym.flag3,            _1 }
-    .inline set_first_size      : uint_t    { mov [this].asym.first_size,       _1 }
-    .inline set_Ofssize         : uchar_t   { mov [this].asym.Ofssize,          _1 }
-    .inline set_is_ptr          : uchar_t   { mov [this].asym.is_ptr,           _1 }
-    .inline set_ptr_memtype     : uchar_t   { mov [this].asym.ptr_memtype,      _1 }
-    .inline set_asmpass         : uchar_t   { mov [this].asym.asmpass,          _1 }
-    .inline set_sflags          : uchar_t   { mov [this].asym.sflags,           _1 }
-    .inline set_mac_flag        : uchar_t   { mov [this].asym.mac_flag,         _1 }
-    .inline set_first_length    : uint_t    { mov [this].asym.first_length,     _1 }
-    .inline set_max_mbr_size    : uint_t    { mov [this].asym.max_mbr_size,     _1 }
-    .inline set_target_type     : ptr asym  { mov [this].asym.target_type,      _1 }
-    .inline set_regist0         : ushort_t  { mov [this].asym.regist[0],        _1 }
-    .inline set_regist1         : ushort_t  { mov [this].asym.regist[2],        _1 }
-    .inline set_total_size      : uint_t    { mov [this].asym.total_size,       _1 }
-    .inline set_value3264       : int_t     { mov [this].asym.value3264,        _1 }
-    .inline set_dll             : dlldesc_t { mov [this].asym.dll,              _1 }
-    .inline set_max_offset      : int_t     { mov [this].asym.max_offset,       _1 }
-    .inline set_total_length    : uint_t    { mov [this].asym.total_length,     _1 }
-    .inline set_altname         : ptr asym  { mov [this].asym.altname,          _1 }
-    .inline set_debuginfo       : debug_t   { mov [this].asym.debuginfo,        _1 }
-    .inline set_cvtyperef       : ushort_t  { mov [this].asym.cvtyperef,        _1 }
-    .inline set_typekind        : ushort_t  { mov [this].asym.typekind,         _1 }
-    .inline set_name_size       : ushort_t  { mov [this].asym.name_size,        _1 }
-    .inline set_langtype        : ushort_t  { mov [this].asym.langtype,         _1 }
-    .inline set_type            : ptr asym  { mov [this].asym.type,             _1 }
-    .inline set_bp_fixup        : fixup_t   { mov [this].asym.bp_fixup,         _1 }
-    .inline set_ext_idx         : uint_t    { mov [this].asym.ext_idx,          _1 }
-    .inline set_ext_idx1        : ushort_t  { mov [this].asym.ext_idx1,         _1 }
-    .inline set_ext_idx2        : ushort_t  { mov [this].asym.ext_idx2,         _1 }
-
-    .inline add_offset          : int_t     { add [this].asym.offs,             _1 }
-
-    .inline used            { retm<([eax].asym.flags & S_USED)> }
-    .inline isdefined       { retm<([eax].asym.flags & S_ISDEFINED)> }
-    .inline scoped          { retm<([eax].asym.flags & S_SCOPED)> }
-    .inline iat_used        { retm<([eax].asym.flags & S_IAT_USED)> }
-    .inline isequate        { retm<([eax].asym.flags & S_ISEQUATE)> }
-    .inline predefined      { retm<([eax].asym.flags & S_PREDEFINED)> }
-    .inline variable        { retm<([eax].asym.flags & S_VARIABLE)> }
-    .inline ispublic        { retm<([eax].asym.flags & S_ISPUBLIC)> }
-
-    .inline list            { retm<([eax].asym.flag1 & S_LIST)> }
-    .inline isarray         { retm<([eax].asym.flag1 & S_ISARRAY)> }
-    .inline isdata          { retm<([eax].asym.flag1 & S_ISDATA)> }
-    .inline isproc          { retm<([eax].asym.flag1 & S_ISPROC)> }
-    .inline issaved         { retm<([eax].asym.flag1 & S_ISSAVED)> }
-    .inline fwdref          { retm<([eax].asym.flag1 & S_FWDREF)> }
-    .inline included        { retm<([eax].asym.flag1 & S_INCLUDED)> }
-    .inline method          { retm<([eax].asym.flag1 & S_METHOD)> }
-
-    .inline vtable          { retm<([eax].asym.flag2 & S_VTABLE)> }
-    .inline isvtable        { retm<([eax].asym.flag2 & S_ISVTABLE)> }
-    .inline vmacro          { retm<([eax].asym.flag2 & S_VMACRO)> }
-    .inline isinline        { retm<([eax].asym.flag2 & S_ISINLINE)> }
-    .inline isstatic        { retm<([eax].asym.flag2 & S_ISSTATIC)> }
-
-    .inline seg_ofssize {
-        mov al,[eax].asym.sflags
-        and eax,S_SEGOFSSIZE
-        }
-    .inline iscomm          { retm<([eax].asym.sflags & S_ISCOM)> }
-    .inline weak            { retm<([eax].asym.sflags & S_WEAK)> }
-    .inline isfar           { retm<([eax].asym.sflags & S_ISFAR)> }
-    .inline is_vararg       { retm<([eax].asym.sflags & S_ISVARARG)> }
-
-    .inline mac_vararg      { retm<([eax].asym.mac_flag & M_ISVARARG)> }
-    .inline isfunc          { retm<([eax].asym.mac_flag & M_ISFUNC)> }
-    .inline mlabel          { retm<([eax].asym.mac_flag & M_LABEL)> }
-    .inline mac_multiline   { retm<([eax].asym.mac_flag & M_MULTILINE)> }
-    .inline purged          { retm<([eax].asym.mac_flag & M_PURGED)> }
-
-    asym_setflag macro flag, pos, val
-      if val
-        or  [eax].asym.flag,(1 shl pos)
-      else
-        and [eax].asym.flag,not (1 shl pos)
-      endif
-      exitm<>
-      endm
-
-    .inline set_used        val:abs { asym_setflag(flags, 0, val) }
-    .inline set_isdefined   val:abs { asym_setflag(flags, 1, val) }
-    .inline set_scoped      val:abs { asym_setflag(flags, 2, val) }
-    .inline set_iat_used    val:abs { asym_setflag(flags, 3, val) }
-    .inline set_isequate    val:abs { asym_setflag(flags, 4, val) }
-    .inline set_predefined  val:abs { asym_setflag(flags, 5, val) }
-    .inline set_variable    val:abs { asym_setflag(flags, 6, val) }
-    .inline set_ispublic    val:abs { asym_setflag(flags, 7, val) }
-
-    .inline set_list        val:abs { asym_setflag(flag1, 0, val) }
-    .inline set_isarray     val:abs { asym_setflag(flag1, 1, val) }
-    .inline set_isdata      val:abs { asym_setflag(flag1, 2, val) }
-    .inline set_isproc      val:abs { asym_setflag(flag1, 3, val) }
-    .inline set_issaved     val:abs { asym_setflag(flag1, 4, val) }
-    .inline set_fwdref      val:abs { asym_setflag(flag1, 5, val) }
-    .inline set_included    val:abs { asym_setflag(flag1, 6, val) }
-    .inline set_method      val:abs { asym_setflag(flag1, 7, val) }
-
-    .inline set_seg_ofssize val:uint_t {
-        and [eax].asym.sflags,not S_SEGOFSSIZE
-        or  [eax].asym.sflags,dl
-        }
-    .inline set_iscomm          val:abs { asym_setflag(sflags, 2, val) }
-    .inline set_weak            val:abs { asym_setflag(sflags, 3, val) }
-    .inline set_isfar           val:abs { asym_setflag(sflags, 4, val) }
-    .inline set_is_vararg       val:abs { asym_setflag(sflags, 5, val) }
-
-    .inline set_mac_vararg      val:abs { asym_setflag(mac_flag, 0, val) }
-    .inline set_isfunc          val:abs { asym_setflag(mac_flag, 1, val) }
-    .inline set_mlabel          val:abs { asym_setflag(mac_flag, 2, val) }
-    .inline set_mac_multiline   val:abs { asym_setflag(mac_flag, 3, val) }
-    .inline set_purged          val:abs { asym_setflag(mac_flag, 4, val) }
-
-    .inline set_vtable          val:abs { asym_setflag(flag2, 0, val) }
-    .inline set_isvtable        val:abs { asym_setflag(flag2, 1, val) }
-    .inline set_vmacro          val:abs { asym_setflag(flag2, 2, val) }
-    .inline set_isinline        val:abs { asym_setflag(flag2, 3, val) }
-    .inline set_isstatic        val:abs { asym_setflag(flag2, 4, val) }
-
    .ends
     asym_t          typedef ptr asym
 
@@ -538,9 +350,7 @@ PROC_STACKPARAM equ 0x20        ; 1=stack params exists ( not just register para
 PROC_ISFRAME    equ 0x40        ; FRAME attribute set?
 PROC_FPO        equ 0x80
 
-.pragma list(push, 1)
-
-.template proc_info watcall
+.template proc_info
 
     regslist        ptr word ?      ; list of registers to be saved
     paralist        ptr dsym ?      ; list of parameters
@@ -555,74 +365,7 @@ PROC_FPO        equ 0x80
     flags           uchar_t ?
     size_prolog     uchar_t ?       ; v2.10: prologue size
     basereg         ushort_t ?      ; v2.11: stack base register
-
-    .inline regslist        { retm<[eax].proc_info.regslist> }
-    .inline paralist        { retm<[eax].proc_info.paralist> }
-    .inline locallist       { retm<[eax].proc_info.locallist> }
-    .inline labellist       { retm<[eax].proc_info.labellist> }
-    .inline parasize        { retm<[eax].proc_info.parasize> }
-    .inline localsize       { retm<[eax].proc_info.localsize> }
-    .inline prologuearg     { retm<[eax].proc_info.prologuearg> }
-    .inline exc_handler     { retm<[eax].proc_info.exc_handler> }
-    .inline ReservedStack   { retm<[eax].proc_info.ReservedStack> }
-    .inline prolog_list_pos { retm<[eax].proc_info.prolog_list_pos> }
-    .inline flags           { retm<[eax].proc_info.flags> }
-    .inline size_prolog     { retm<[eax].proc_info.size_prolog> }
-    .inline basereg         { retm<[eax].proc_info.basereg> }
-
-    .inline has_vararg      { retm<([eax].proc_info.flags & PROC_HAS_VARARG)> }
-    .inline pe_type         { retm<([eax].proc_info.flags & PROC_PE_TYPE)> }
-    .inline isexport        { retm<([eax].proc_info.flags & PROC_ISEXPORT)> }
-    .inline forceframe      { retm<([eax].proc_info.flags & PROC_FORCEFRAME)> }
-    .inline loadds          { retm<([eax].proc_info.flags & PROC_LOADDS)> }
-    .inline stackparam      { retm<([eax].proc_info.flags & PROC_STACKPARAM)> }
-    .inline isframe         { retm<([eax].proc_info.flags & PROC_ISFRAME)> }
-    .inline fpo             { retm<([eax].proc_info.flags & PROC_FPO)> }
-
-        proc_setflag macro pos, val
-          if val
-            or  [eax].proc_info.flags,(1 shl pos)
-          else
-            and [eax].proc_info.flags,not (1 shl pos)
-          endif
-          exitm<>
-          endm
-
-    .inline set_has_vararg  val:abs { proc_setflag(0, val) }
-    .inline set_pe_type     val:abs { proc_setflag(1, val) }
-    .inline set_isexport    val:abs { proc_setflag(2, val) }
-    .inline set_forceframe  val:abs { proc_setflag(3, val) }
-    .inline set_loadds      val:abs { proc_setflag(4, val) }
-    .inline set_stackparam  val:abs { proc_setflag(5, val) }
-    .inline set_isframe     val:abs { proc_setflag(6, val) }
-    .inline set_fpo         val:abs { proc_setflag(7, val) }
-
-
-    .inline set_regslist        : ptr word { mov [this].proc_info.regslist,          _1 }
-    .inline set_paralist        : ptr dsym { mov [this].proc_info.paralist,          _1 }
-    .inline set_locallist       : ptr dsym { mov [this].proc_info.locallist,         _1 }
-    .inline set_labellist       : ptr dsym { mov [this].proc_info.labellist,         _1 }
-    .inline set_parasize        : uint_t   { mov [this].proc_info.parasize,          _1 }
-    .inline set_localsize       : uint_t   { mov [this].proc_info.localsize,         _1 }
-    .inline set_prologuearg     : string_t { mov [this].proc_info.prologuearg,       _1 }
-    .inline set_exc_handler     : ptr asym { mov [this].proc_info.exc_handler,       _1 }
-    .inline set_ReservedStack   : int_t    { mov [this].proc_info.ReservedStack,     _1 }
-    .inline set_prolog_list_pos : uint_t   { mov [this].proc_info.prolog_list_pos,   _1 }
-    .inline set_flags           : uchar_t  { mov [this].proc_info.flags,             _1 }
-    .inline set_size_prolog     : uchar_t  { mov [this].proc_info.size_prolog,       _1 }
-    .inline set_basereg         : ushort_t { mov [this].proc_info.basereg,           _1 }
-
-    .inline add_parasize        : uint_t   { add [this].proc_info.parasize,          _1 }
-
-    .inline set_export val:uint_t {
-        and [eax].proc_info.flags,not PROC_ISEXPORT
-        shl edx,2
-        or  [eax].proc_info.flags,dl
-        }
-
    .ends
-
-.pragma list(pop)
 
 ;; macro parameter
 
@@ -717,47 +460,6 @@ union
  nextparam      dsym_t ? ;; used by SYM_EXTERNAL (weak=FALSE) if altname is set
 ends
 dsym            ends
-
-.pragma list(push, 1)
-
-.template esym watcall : public asym
-
-    info        ptr proc_info ?
-    next        ptr dsym ?
-    list        ptr dsym ?
-
-    .inline seginfo         { retm<[eax].esym.info> }
-    .inline grpinfo         { retm<[eax].esym.info> }
-    .inline procinfo        { retm<[eax].esym.info> }
-    .inline structinfo      { retm<[eax].esym.info> }
-    .inline macroinfo       { retm<[eax].esym.info> }
-    .inline nextll          { retm<[eax].esym.info> }
-    .inline next            { retm<[eax].esym.next> }
-    .inline prev            { retm<[eax].esym.list> }
-    .inline nextproc        { retm<[eax].esym.list> }
-    .inline nextlocal       { retm<[eax].esym.list> }
-    .inline nextparam       { retm<[eax].esym.list> }
-
-    .inline set_seginfo     : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_grpinfo     : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_procinfo    : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_structinfo  : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_macroinfo   : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_nextll      : ptr esym { mov [eax].esym.info, _1 }
-    .inline set_next        : ptr esym { mov [eax].esym.next, _1 }
-    .inline set_prev        : ptr esym { mov [eax].esym.list, _1 }
-    .inline set_nextproc    : ptr esym { mov [eax].esym.list, _1 }
-    .inline set_nextlocal   : ptr esym { mov [eax].esym.list, _1 }
-    .inline set_nextparam   : ptr esym { mov [eax].esym.list, _1 }
-
-    .inline get_public {
-        movzx eax,[eax].esym.flags
-        and al,S_ISPUBLIC
-        }
-
-    .ends
-
-.pragma list(pop)
 
 SymAlloc        proto :string_t
 SymFree         proto :asym_t

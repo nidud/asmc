@@ -3017,7 +3017,7 @@ LabelMacro endp
 
 ;; callback PROC(...) [?]
 
-ProcType        proto :int_t, :token_t, :string_t
+ProcType        proto :int_t, :token_t
 PublicDirective proto :int_t, :token_t
 mem2mem         proto :uint_t, :uint_t, :token_t, :ptr expr
 imm2xmm         proto :token_t, :expr_t
@@ -3047,7 +3047,7 @@ ParseLine proc uses esi edi ebx tokenarray:token_t
     mov ebx,tokenarray
     .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_ID )
 
-    mov buffer,alloca(ModuleInfo.max_line_len)
+    mov buffer,NULL ; v2.32 - may not be used..
 
 continue:
 
@@ -3077,9 +3077,13 @@ continue:
         .endf
     .endif
 
-    mov edi,buffer
-
     .if j
+
+        .if ( buffer == NULL )
+
+            mov buffer,alloca(ModuleInfo.max_line_len)
+            mov edi,eax
+        .endif
 
         .return ParseLine( ebx ) .if ParseClass( j, ebx, edi )
 
@@ -3119,8 +3123,9 @@ continue:
 
             write_prologue(ebx)
         .endif
-
-        ;; create a global or local code label
+        ;
+        ; create a global or local code label
+        ;
         xor eax,eax
         .if ( ModuleInfo.scoped && CurrProc && [ebx+16].token != T_DBL_COLON )
             inc eax
@@ -3128,7 +3133,9 @@ continue:
         .if CreateLabel( [ebx].string_ptr, MT_NEAR, NULL, eax ) == NULL
             .return ERROR
         .endif
-        ;; v2.26: make label:: public
+        ;
+        ; v2.26: make label:: public
+        ;
         .if ( [ebx+16].token == T_DBL_COLON && ModuleInfo.scoped && !CurrProc )
 
             mov [ebx+16].token,T_FINAL
@@ -3139,14 +3146,15 @@ continue:
         lea esi,[ebx+32]
 
         .if [esi].token == T_FINAL
-            ;; v2.06: this is a bit too late. Should be done BEFORE
-            ;; CreateLabel, because of '@@'. There's a flag supposed to
-            ;; be used for this handling, LOF_STORED in line_flags.
-            ;; It's only a problem if a '@@:' is the first line
-            ;; in the code section.
-            ;; v2.10: is no longer an issue because the label counter has
-            ;; been moved to module_vars (see global.h).
-
+            ;
+            ; v2.06: this is a bit too late. Should be done BEFORE
+            ; CreateLabel, because of '@@'. There's a flag supposed to
+            ; be used for this handling, LOF_STORED in line_flags.
+            ; It's only a problem if a '@@:' is the first line
+            ; in the code section.
+            ; v2.10: is no longer an issue because the label counter has
+            ; been moved to module_vars (see global.h).
+            ;
             FStoreLine(0)
             .if CurrFile[LST*4]
                 LstWrite( LSTTYPE_LABEL, 0, NULL )
@@ -3178,19 +3186,21 @@ continue:
     .endif
 
     .if j || [esi].token != T_INSTRUCTION
-        ;; a code label before a data item is only accepted in Masm5 compat mode
+        ;
+        ; a code label before a data item is only accepted in Masm5 compat mode
+        ;
         mov Frame_Type,FRAME_NONE
         mov SegOverride,NULL
         .if ( i == 0 && ( j || [ebx].token == T_ID ) )
-
-            ;; token at pos 0 may be a label.
-            ;; it IS a label if:
-            ;; 1. token at pos 1 is a directive (lbl dd ...)
-            ;; 2. token at pos 0 is NOT a userdef type ( lbl DWORD ...)
-            ;; 3. inside a struct and token at pos 1 is a userdef type
-            ;;    or a predefined type. (usertype DWORD|usertype ... )
-            ;;    the separate namespace allows this syntax here.
-
+            ;
+            ; token at pos 0 may be a label.
+            ; it IS a label if:
+            ; 1. token at pos 1 is a directive (lbl dd ...)
+            ; 2. token at pos 0 is NOT a userdef type ( lbl DWORD ...)
+            ; 3. inside a struct and token at pos 1 is a userdef type
+            ;    or a predefined type. (usertype DWORD|usertype ... )
+            ;    the separate namespace allows this syntax here.
+            ;
             .if [ebx+16].token == T_DIRECTIVE
                 inc i
                 add esi,16
@@ -3225,7 +3235,7 @@ continue:
                         FStoreLine(0)
                     .endif
                 .endif
-                mov edi,ProcType( i, tokenarray, edi )
+                mov edi,ProcType( i, tokenarray )
                 .if ( ModuleInfo.list && ( Parse_Pass == PASS_1 || ModuleInfo.GeneratedCode || UseSavedState == FALSE ) )
                     LstWriteSrcLine()
                 .endif
@@ -3317,7 +3327,14 @@ continue:
 
         .if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( [ebx].hll_flags & T_HLL_PROC ) )
 
-            ;; invoke handle import, call do not..
+            .if ( buffer == NULL )
+
+                mov buffer,alloca(ModuleInfo.max_line_len)
+                mov edi,eax
+            .endif
+            ;
+            ; invoke handle import, call do not..
+            ;
             lea esi,@CStr( ".new " )
             .if !IsType( [ebx].string_ptr ) ; added 2.31.44
                 lea esi,@CStr( "invoke " )
@@ -3430,8 +3447,15 @@ continue:
 
             .if ( [esi].hll_flags & T_HLL_PROC )
 
-                ;; v2.21 - mov reg,proc(...)
-                ;; v2.27 - mov reg,class.proc(...)
+                .if ( buffer == NULL )
+
+                    mov buffer,alloca(ModuleInfo.max_line_len)
+                    mov edi,eax
+                .endif
+                ;
+                ; v2.21 - mov reg,proc(...)
+                ; v2.27 - mov reg,class.proc(...)
+                ;
                 .return .if ExpandHllProcEx( buffer, j, ebx ) == ERROR
                 .if eax == STRING_EXPANDED
                     FStoreLine(0)
@@ -3504,7 +3528,9 @@ continue:
 
         .switch opndx[edi].kind
         .case EXPR_FLOAT
-            ;; v2.06: accept float constants for PUSH
+            ;
+            ; v2.06: accept float constants for PUSH
+            ;
             .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
                 .if ( ModuleInfo.strict_masm_compat == FALSE )
 
@@ -3539,15 +3565,24 @@ continue:
                         .endif
                     .endif
                 .endif
-                ;; Masm message is: real or BCD number not allowed
+                ;
+                ; Masm message is: real or BCD number not allowed
+                ;
                 .return asmerr( 2050 )
             .endif
-            ;; fall through
+            ;
+            ; fall through
+            ;
         .case EXPR_EMPTY
-
-            ;; added v2.30.11 - allow mov reg,.new Class()
-
+            ;
+            ; added v2.30.11 - allow mov reg,.new Class()
+            ;
             .if ( i > 1 && [esi].token == T_DIRECTIVE && [esi].tokval == T_DOT_NEW )
+
+                .if ( buffer == NULL )
+
+                    mov buffer,alloca(ModuleInfo.max_line_len)
+                .endif
 
                 mov  eax,tokenarray
                 mov  eax,[eax].asm_tok.tokpos
@@ -3570,12 +3605,14 @@ continue:
                     mov Token_Count,Tokenize(strcpy(CurrSource, buffer), 0, tokenarray, TOK_DEFAULT)
                     .return ParseLine(tokenarray)
                 .endif
-                .return NOT_ERROR;
+                .return NOT_ERROR
             .endif
             .if i == Token_Count
                 sub esi,16 ;; v2.08: if there was a terminating comma, display it
             .endif
-            ;; fall through
+            ;
+            ; fall through
+            ;
         .case EXPR_ERROR
             .return asmerr(2008, [esi].string_ptr )
         .endsw
@@ -3748,19 +3785,21 @@ continue:
             .endif
             .endc
         .endsw
-    .endf ;; end for
-    ;; 4 arguments are valid vor AVX only
+    .endf
+    ;
+    ; 4 arguments are valid vor AVX only
+    ;
     .if ebx != j
         .for ( : [esi].token != T_COMMA: i--, esi -= 16 )
         .endf
         .return asmerr(2008, [esi].tokpos)
     .endif
-
-    ;; for FAR calls/jmps some special handling is required:
-    ;; in the instruction tables, the "far" entries are located BEHIND
-    ;; the "near" entries, that's why it's needed to skip all items
-    ;; until the next "first" item is found.
-
+    ;
+    ; for FAR calls/jmps some special handling is required:
+    ; in the instruction tables, the "far" entries are located BEHIND
+    ; the "near" entries, that's why it's needed to skip all items
+    ; until the next "first" item is found.
+    ;
     .if CodeInfo.flags & CI_ISFAR
         .if CodeInfo.token == T_CALL || CodeInfo.token == T_JMP
             .repeat
@@ -3776,7 +3815,9 @@ continue:
     and eax,II_ALLOWED_PREFIX
 
     .if eax == AP_REP || eax == AP_REPxx
-        ;; v2.31.24: immediate operand to XMM
+        ;
+        ; v2.31.24: immediate operand to XMM
+        ;
         .if ( ModuleInfo.strict_masm_compat == 0 && CodeInfo.token == T_MOVSD )
             .if ( CodeInfo.opnd[OPND1].type == OP_XMM && \
                 ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
@@ -3810,11 +3851,15 @@ continue:
                 .endw
                 mov CodeInfo.pinstr,edx
             .endif
-            ;; v2.06: moved here from process_const()
+            ;
+            ; v2.06: moved here from process_const()
+            ;
             .if CodeInfo.token == T_IMUL
-                ;; the 2-operand form with an immediate as second op
-                ;; is actually a 3-operand form. That's why the rm byte
-                ;; has to be adjusted.
+                ;
+                ; the 2-operand form with an immediate as second op
+                ; is actually a 3-operand form. That's why the rm byte
+                ; has to be adjusted.
+                ;
                 mov eax,CodeInfo.opnd[OPNI2].InsFixup
                 .if eax
                     mov eax,[eax].fixup.sym

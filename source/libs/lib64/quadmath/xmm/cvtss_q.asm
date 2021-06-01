@@ -22,7 +22,7 @@ cvtss_q proc vectorcall f:real4
         .if cl != 0xFF
             add cx,0x3FFF-0x7F
         .else
-            or ch,0x7F
+            or ch,0xFF
             .if !( edx & 0x7FFFFFFF )
 
                 ; Invalid exception
@@ -31,7 +31,7 @@ cvtss_q proc vectorcall f:real4
                 mov errno,EDOM
             .endif
         .endif
-        or edx,0x80000000
+        ;or edx,0x80000000
     .elseif edx
         or cx,0x3FFF-0x7F+1 ; set exponent
         .while 1

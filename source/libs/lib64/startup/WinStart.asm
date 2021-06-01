@@ -19,6 +19,8 @@ _initterm proto __cdecl :ptr, :ptr
     dd 564A4A50h
     db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
+WinMainCRTStartup::
+
 WinStart proc frame uses rbx
 
     _initterm( &__xi_a, &__xi_z )

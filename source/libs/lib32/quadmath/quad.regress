@@ -233,8 +233,8 @@ main proc
     errval( 0, compare(addq, -1.0, 0.0, -1.0))
     errval( 0, compare(addq, 1.0, 1.0, 2.0))
     errval( 0, compare(addq, 1.1, 1.1, 2.2))
-    errval( 0, compare(addq, 999999.0001, 1.0001, 1000000.0002))
-    errval( 0, compare(addq, 0.09, 0.01, 0.1))
+    errval( 0, compare(addq, 999999.0001, 1.0001, 4012E8480001A36E2EB1C432CA57A786r));1000000.0002)
+    errval( 0, compare(addq, 0.09, 0.01, 3FFB9999999999999999999999999999r));0.1)
 
     errval( 0, compare(subq, 0.0, 0.0, 0.0))
     errval( 0, compare(subq, 1.0, 0.0, 1.0))
@@ -250,10 +250,10 @@ main proc
     errval( 0, compare(divq, 1.1, 2.2, 0.5))
 if 1
 
-    errval( 0, compare(divq, 0.01, 0.1, 0.1))
+    errval( 0, compare(divq, 0.01, 0.1, 3FFB9999999999999999999999999999r));0.1)
     errval( 0, compare(divq, 66666.6, 2.0, 33333.3))
     ; 0x3FEB0C7659426EB346F3B91986814E5F
-    errval( 0, compare(divq, 1.0001, 1000000.0002, 0x3FEB0C7659426EB346F3B91986814E5E))
+    errval( 0, compare(divq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 0x3FEB0C7659426EB346F3B91986814E5E))
 endif
     errval( 0, compare(mulq, 0.0, 0.0, 0.0))
     errval( 0, compare(mulq, 0.0, 1.0, 0.0))
@@ -261,11 +261,11 @@ endif
     errval( 0, compare(mulq, 2.0, 1.0, 2.0))
     ; 0x400035C28F5C28F5C28F5C28F5C28F5C - 2.42
 
-    errval( 0, compare(mulq, 1.1, 2.2, 0x400035C28F5C28F5C28F5C28F5C28F5A))
+    errval( 0, compare(mulq, 1.1, 2.2, 0x400035C28F5C28F5C28F5C28F5C28F5B))
     ; 0x3FF50624DD2F1A9FBE76C8B439581062 - 1.e-03
-    errval( 0, compare(mulq, 0.01, 0.1, 0x3FF50624DD2F1A9FBE76C8B439581061))
+    errval( 0, compare(mulq, 0.01, 0.1, 0x3FF50624DD2F1A9FBE76C8B439581063))
     ; 0x4012E8548001A378EB79354B10749756 - 1000100.0002
-    errval( 0, compare(mulq, 1.0001, 1000000.0002, 0x4012E8548001A378EB79354B10749755))
+    errval( 0, compare(mulq, 1.0001, 1000000.0002, 0x4012E8548001A378EB79354B10749757))
 
     __cvta_q(&x, ".", &eptr )
     errval( 0, comparea(x, 0.0, eptr, '.'))
@@ -276,7 +276,7 @@ endif
     __cvta_q(&x, "123456789.0", &eptr )
     errval( 0, comparea(x, 123456789.0, eptr, 0))
     __cvta_q(&x, "1.e8192", &eptr )
-    errval( 0, comparea(x, 0x7FFF0000000000000000000000000000, eptr, 0))
+    errval( 0, comparea(x, INFINITY, eptr, 0)) ; ?
     ret
 
 main endp

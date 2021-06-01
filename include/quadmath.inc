@@ -42,8 +42,8 @@ M_HL4		equ 4.151180863237415757165285561959537515799410019
 M_ACC2		equ 2.640647263387478295711248440058223113730493441
 M_ACC3		equ 4.287372893578830648645201991089526317058943389
 M_ACC4		equ 5.534907817649887676220380749279383354399213359
-INFINITY	equ 1.0e999999999
-NAN		equ (0.0 / 0.0)
+INFINITY	equ 7FFF0000000000000000000000000000r
+NAN		equ 0FFFF8000000000000000000000000000r
 
 ; */+-
 ; Return pointer to A (result)
@@ -104,6 +104,7 @@ cvtsd_q		proto __vectorcall :real8
 cvtld_q		proto __vectorcall :real10
 cvti32_q	proto __vectorcall :long_t
 cvti64_q	proto __vectorcall :int64_t
+cvti128_q	proto __vectorcall :int128_t
 cvta_q		proto __vectorcall :string_t, :ptr string_t
 qtofpu		proto __vectorcall :real16
 fputoq		proto __vectorcall

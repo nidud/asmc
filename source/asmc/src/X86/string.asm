@@ -353,208 +353,209 @@ GenerateCString proc uses esi edi ebx i, tokenarray:ptr asm_tok
         brackets:       BYTE,
         Unicode:        BYTE
 
-    mov ebx,ModuleInfo.max_line_len
-    lea eax,[ebx+ebx*2+64*2]
+    xor eax,eax
+    mov rc,eax
+
+    .return .if ( ModuleInfo.strict_masm_compat )
+
+    ;
+    ; need "quote"
+    ;
+    mov ebx,i
+    mov esi,tokenarray
+    shl ebx,4
+    add ebx,esi
+    mov brackets,al
+    mov edx,eax
+    ;
+    ; proc( "", ( ... ), "" )
+    ;
+    .while [ebx].asm_tok.token != T_FINAL
+
+        mov ecx,[ebx].asm_tok.string_ptr
+        movzx ecx,W[ecx]
+
+        .switch cl
+        .case 'L'
+            .endc .if ch != '"'
+        .case '"'
+            mov eax,1
+            .break
+        .case ')'
+            .break .if !brackets
+            sub brackets,1
+            .endc
+        .case '('
+            add brackets,1
+            ;
+            ; need one open bracket
+            ;
+            add edx,1
+            .endc
+        .endsw
+        add ebx,16
+    .endw
+
+    .return .if !eax
+    xor eax,eax
+    .return .if !edx
+
+    inc eax
+    mov rc,eax
+
+    mov edi,ModuleInfo.max_line_len
+    lea eax,[edi+edi*2+64*2]
     mov buffer,alloca(eax)
-    add eax,ebx
+    add eax,edi
     mov b_data,eax
-    add eax,ebx
+    add eax,edi
     mov b_line,eax
-    add eax,ebx
+    add eax,edi
     mov b_seg,eax
     add eax,64
     mov b_label,eax
 
-    xor eax,eax
-    mov rc,eax
+    mov edi,LineStoreCurr
+    add edi,line_item.line
+    strcpy(b_line, edi)
+    mov B[edi],';'
+    mov equal,strcmp(eax, [esi].asm_tok.tokpos)
+    mov al,ModuleInfo.line_flags
+    mov lineflags,al
 
-    .if ( ModuleInfo.strict_masm_compat == 0 )
-        ;
-        ; need "quote"
-        ;
-        mov ebx,i
-        mov esi,tokenarray
-        shl ebx,4
-        add ebx,esi
-        mov brackets,al
-        mov edx,eax
-        ;
-        ; proc( "", ( ... ), "" )
-        ;
-        .while [ebx].asm_tok.token != T_FINAL
+    .while ( [ebx].asm_tok.token != T_FINAL )
 
-            mov ecx,[ebx].asm_tok.string_ptr
-            movzx ecx,W[ecx]
+        mov ecx,[ebx].asm_tok.tokpos
+        mov ax,[ecx]
+        .if al == '"' || ax == '"L'
 
-            .switch cl
-              .case 'L'
-                .endc .if ch != '"'
-              .case '"'
-                mov eax,1
-                .break
-              .case ')'
-                .break .if !brackets
-                sub brackets,1
-                .endc
-              .case '('
-                add brackets,1
-                ;
-                ; need one open bracket
-                ;
-                add edx,1
-                .endc
-            .endsw
-            add ebx,16
-        .endw
-
-        .return .if !eax
-        xor eax,eax
-        .return .if !edx
-
-        inc eax
-        mov rc,eax
-        mov edi,LineStoreCurr
-        add edi,line_item.line
-        strcpy(b_line, edi)
-        mov B[edi],';'
-        mov equal,strcmp(eax, [esi].asm_tok.tokpos)
-        mov al,ModuleInfo.line_flags
-        mov lineflags,al
-
-        .while ( [ebx].asm_tok.token != T_FINAL )
-
-            mov ecx,[ebx].asm_tok.tokpos
-            mov ax,[ecx]
-            .if al == '"' || ax == '"L'
-
-                mov edi,ecx
-                mov esi,ecx
-                mov q,ebx
-                ;
-                ; v2.28 -- token behind may be 'L'
-                ;
-                .if [ebx-16].asm_tok.token == T_ID
-                    mov eax,[ebx-16].asm_tok.string_ptr
-                    mov eax,[eax]
-                    .if ax == 'L'
-                        sub q,16
-                        dec esi
-                    .endif
+            mov edi,ecx
+            mov esi,ecx
+            mov q,ebx
+            ;
+            ; v2.28 -- token behind may be 'L'
+            ;
+            .if [ebx-16].asm_tok.token == T_ID
+                mov eax,[ebx-16].asm_tok.string_ptr
+                mov eax,[eax]
+                .if ax == 'L'
+                    sub q,16
+                    dec esi
                 .endif
-                lea eax,[ebx+16]
-                mov e,eax
-                ParseCString( b_label, buffer, esi, &StringOffset, &Unicode )
-
-                mov NewString,eax
-                mov esi,StringOffset
-
-                .if equal
-                    ;
-                    ; strip "string" from LineStoreCurr
-                    ;
-                    push esi
-                    sub esi,edi
-                    memcpy( b_data, edi, esi )
-                    mov B[eax+esi],0
-                    .if strstr( b_line, eax )
-                        mov edi,eax
-                        lea eax,[edi+esi]
-                        SkipSpace(ecx, eax)
-                        .if ecx != ',' && ecx != ')'
-                            .if strrchr( &[edi+1], '"' )
-                                add eax,1
-                            .endif
-                        .endif
-                        .if eax
-                            strcpy( b_data, eax )
-                            strcpy( edi, "addr " )
-                            strcat( edi, b_label )
-                            strcat( edi, b_data )
-                        .endif
-                    .endif
-                    pop esi
-                .endif
-
-                .if NewString
-                    mov eax,buffer
-                    mov eax,[eax]
-                    and eax,0x00FFFFFF
-                    .if eax != '""'
-                        .if Unicode
-                            lea ecx,@CStr(" %s dw %s,0")
-                        .else
-                            lea ecx,@CStr(" %s sbyte %s,0")
-                        .endif
-                        sprintf(b_data, ecx, b_label, buffer)
-                    .else
-                        .if Unicode
-                            lea ecx,@CStr(" %s dw 0")
-                        .else
-                            lea ecx,@CStr(" %s sbyte 0")
-                        .endif
-                        sprintf(b_data, ecx, b_label)
-                    .endif
-                .elseif ModuleInfo.list
-                    and ModuleInfo.line_flags,NOT LOF_LISTED
-                .endif
-
-                mov eax,q
-                mov eax,[eax].asm_tok.tokpos
-                mov BYTE PTR [eax],0
-                mov eax,tokenarray
-                mov ecx,[eax].asm_tok.tokpos
-                strcat(strcpy( buffer, ecx), "addr ")
-                strcat(eax, b_label)
-                SkipSpace(ecx, esi)
-
-                .if ecx
-                    strcat(strcat(eax, " " ), esi)
-                .endif
-
-                .if NewString
-                    GetCurrentSegment(b_seg)
-                    AddLineQueue( ".data" )
-                    AddLineQueue( b_data )
-                    AddLineQueue( "_DATA ends" )
-                    AddLineQueue( b_seg )
-                    InsertLineQueue()
-                .endif
-
-                strcpy( ModuleInfo.currsource, buffer )
-                Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
-
-                mov ModuleInfo.token_count,eax
-
-                mov ecx,ModuleInfo.tokenarray
-                sub ebx,tokenarray
-                add ebx,ecx
-                mov tokenarray,ecx
-
-                imul eax,i,asm_tok
-                add eax,ecx
-                mov q,eax
-
-            .elseif ( al == ')' )
-
-                .break .if !brackets
-                dec brackets
-                .break .ifz
-            .elseif ( al == '(' )
-                inc brackets
             .endif
-            add ebx,16
-        .endw
+            lea eax,[ebx+16]
+            mov e,eax
+            ParseCString( b_label, buffer, esi, &StringOffset, &Unicode )
 
-        .if ( equal == 0 )
-            StoreLine( ModuleInfo.currsource, list_pos, 0 )
-        .else
-            mov ebx,ModuleInfo.GeneratedCode
-            mov ModuleInfo.GeneratedCode,0
-            StoreLine( b_line, list_pos, 0 )
-            mov ModuleInfo.GeneratedCode,ebx
+            mov NewString,eax
+            mov esi,StringOffset
+
+            .if equal
+                ;
+                ; strip "string" from LineStoreCurr
+                ;
+                push esi
+                sub esi,edi
+                memcpy( b_data, edi, esi )
+                mov B[eax+esi],0
+                .if strstr( b_line, eax )
+                    mov edi,eax
+                    lea eax,[edi+esi]
+                    SkipSpace(ecx, eax)
+                    .if ecx != ',' && ecx != ')'
+                        .if strrchr( &[edi+1], '"' )
+                            add eax,1
+                        .endif
+                    .endif
+                    .if eax
+                        strcpy( b_data, eax )
+                        strcpy( edi, "addr " )
+                        strcat( edi, b_label )
+                        strcat( edi, b_data )
+                    .endif
+                .endif
+                pop esi
+            .endif
+
+            .if NewString
+                mov eax,buffer
+                mov eax,[eax]
+                and eax,0x00FFFFFF
+                .if eax != '""'
+                    .if Unicode
+                        lea ecx,@CStr(" %s dw %s,0")
+                    .else
+                        lea ecx,@CStr(" %s sbyte %s,0")
+                    .endif
+                    sprintf(b_data, ecx, b_label, buffer)
+                .else
+                    .if Unicode
+                        lea ecx,@CStr(" %s dw 0")
+                    .else
+                        lea ecx,@CStr(" %s sbyte 0")
+                    .endif
+                    sprintf(b_data, ecx, b_label)
+                .endif
+            .elseif ModuleInfo.list
+                and ModuleInfo.line_flags,NOT LOF_LISTED
+            .endif
+
+            mov eax,q
+            mov eax,[eax].asm_tok.tokpos
+            mov BYTE PTR [eax],0
+            mov eax,tokenarray
+            mov ecx,[eax].asm_tok.tokpos
+            strcat(strcpy( buffer, ecx), "addr ")
+            strcat(eax, b_label)
+            SkipSpace(ecx, esi)
+
+            .if ecx
+                strcat(strcat(eax, " " ), esi)
+            .endif
+
+            .if NewString
+                GetCurrentSegment(b_seg)
+                AddLineQueue( ".data" )
+                AddLineQueue( b_data )
+                AddLineQueue( "_DATA ends" )
+                AddLineQueue( b_seg )
+                InsertLineQueue()
+            .endif
+
+            strcpy( ModuleInfo.currsource, buffer )
+            Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+
+            mov ModuleInfo.token_count,eax
+
+            mov ecx,ModuleInfo.tokenarray
+            sub ebx,tokenarray
+            add ebx,ecx
+            mov tokenarray,ecx
+
+            imul eax,i,asm_tok
+            add eax,ecx
+            mov q,eax
+
+        .elseif ( al == ')' )
+
+            .break .if !brackets
+            dec brackets
+            .break .ifz
+        .elseif ( al == '(' )
+            inc brackets
         .endif
-        mov ModuleInfo.line_flags,lineflags
+        add ebx,16
+    .endw
+
+    .if ( equal == 0 )
+        StoreLine( ModuleInfo.currsource, list_pos, 0 )
+    .else
+        mov ebx,ModuleInfo.GeneratedCode
+        mov ModuleInfo.GeneratedCode,0
+        StoreLine( b_line, list_pos, 0 )
+        mov ModuleInfo.GeneratedCode,ebx
     .endif
+    mov ModuleInfo.line_flags,lineflags
     mov eax,rc
     ret
 

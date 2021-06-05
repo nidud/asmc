@@ -633,6 +633,8 @@ endif
                 mov ModuleInfo.floatformat,0
             .elseif ( !_stricmp( esi, "G" ) )
                 mov ModuleInfo.floatformat,'g'
+            .elseif ( !_stricmp( esi, "X" ) )
+                mov ModuleInfo.floatformat,'x'
             .else
                 .break
             .endif

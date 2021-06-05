@@ -16,7 +16,7 @@ include quadmath.inc
 strtod proc uses esi edi ebx nptr:string_t, endptr:string_t
 
     mov esi,_strtoflt(nptr)
-    mov ebx,[esi].STRFLT.mantissa
+    lea ebx,[esi].STRFLT.mantissa
     mov edi,[esi].STRFLT.flags
     mov ax,[ebx+14]
     and eax,0x7FFF

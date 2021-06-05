@@ -844,7 +844,7 @@ include quadmath.inc
         this.__vaq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
         this.__vaq( addr @CStr( "1.e8192" ), INFINITY, 0 )
         this.__vaq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
-        this.__vaq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
+        this.__vaq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C593r, 0 )
 
         this.__maq( addr @CStr( "." ), 0.0, '.' )
         this.__maq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
@@ -852,7 +852,7 @@ include quadmath.inc
         this.__maq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
         this.__maq( addr @CStr( "1.e8192"), INFINITY, 0 )
         this.__maq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
-        this.__maq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
+        ;this.__maq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
 
         }
         .static __vaq string:abs, val:abs, e:abs {

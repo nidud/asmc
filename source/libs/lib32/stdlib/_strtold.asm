@@ -16,7 +16,7 @@ include quadmath.inc
 _strtold proc uses esi edi ebx string:string_t, suffix:string_t
 
     mov     esi,_strtoflt(string)
-    mov     ebx,[esi].STRFLT.mantissa
+    lea     ebx,[esi].STRFLT.mantissa
     mov     edi,[esi].STRFLT.flags
     ;
     ; real16 --> real10

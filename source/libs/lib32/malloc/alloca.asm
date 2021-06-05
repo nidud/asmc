@@ -19,7 +19,7 @@ alloca proc byte_count:UINT
     cmp     eax,_PAGESIZE_
     jb      @F
     sub     esp,_PAGESIZE_
-    test    [esp],eax
+    or      dword ptr [esp],0
     sub     eax,_PAGESIZE_
     jmp     @B
 @@:
@@ -27,7 +27,7 @@ alloca proc byte_count:UINT
     and     esp,-16     ; align 16
     mov     eax,esp
     sub     esp,4
-    test    [esp],eax   ; probe page
+    or      dword ptr [esp],0
     jmp     ecx
 
 alloca endp

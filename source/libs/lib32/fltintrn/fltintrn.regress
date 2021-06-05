@@ -42,7 +42,7 @@ format db " %s",10,"[%s]",10,0
                 .code
                 __&_1&(addr a)
             endif
-            if typeof(r) eq 16
+            if sizeof(r) eq 16
                 mov eax,dword ptr a
                 mov edx,dword ptr a[4]
                 mov ebx,dword ptr r
@@ -64,13 +64,12 @@ format db " %s",10,"[%s]",10,0
         this.__m(mulq, 0.0, 1.0, 0.0)
         this.__m(mulq, 0.0, -1.0, -0.0)
         this.__m(mulq, 2.0, 1.0, 2.0)
-        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Br)
-        this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581063r)
-        this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749757r) ; 57
-        this.__m(mulq, 8.88888888888888888888888888888888e-4583, 1.e4096,
-            39B04B892AA10FE037723CDDFA146D1Fr)
-        this.__m(mulq, 0489B0325A80EC580DF467361195C592r, 1.e4096,
-            39B04B892AA10FE037723CDDFA146D1Fr)
+        this.__m(mulq, 1.1, 2.2, 2.4200000000000000000000000000000003)
+        this.__m(mulq, 0.01, 0.1, 0.0010000000000000000000000000000000001)
+
+        this.__m(mulq, 1.0001, 1000000.0002, 1000100.00020002)
+        this.__m(mulq, 8.88888888888888888888888888888888e-4583, 1.e4096, 39B04B892AA10FE037723CDDFA146D1Fr);8.88888888888888888888888888888888e-487
+        this.__m(mulq, 0489B0325A80EC580DF467361195C592r, 1.e4096, 39B04B892AA10FE037723CDDFA146D1Fr)
         }
 
     .static divq {
@@ -140,8 +139,10 @@ format db " %s",10,"[%s]",10,0
         this.__mqh( 0, 0.33325196, 0x3555 )
         this.__mqh( 0, 65504.0, 0x7BFF )
         this.__mqh( 0, 6.103515625e-05, 0x0400 )
+        this.__mqh( 0, 6.097555161e-05, 0x03FE )
         this.__mqh( 0, 1.0/0.0, 0x7C00 )
         this.__mqh( 0, -1.0/0.0, 0x7C00 )
+        this.__mqh( 0, 0.0/0.0, 0xFFFF )
         this.__mqh( ERANGE, 5.960464478e-08, 0x0001 )
         }
         .static __mqh :abs, :abs, :abs {
@@ -160,6 +161,13 @@ format db " %s",10,"[%s]",10,0
             }
 
     .static cvtq_ss {
+        this.__mqss( 0.0, 0 )
+        this.__mqss( 1.0, 0x3F800000 )
+        this.__mqss( -2.0, 0xC0000000 )
+        this.__mqss( 3.402823466e38, 3.402823466e38 )
+        this.__mqss( 1.175494351e-38, 1.175494351e-38 )
+        this.__mqss( -0.0, 0 )
+        this.__mqss( 0.0/0.0, 0xFFC00000 )
         this.__mqss( 3.14159265358979323846264338327, 40490FDBr )
         }
         .static __mqss :abs, :abs {
@@ -167,13 +175,13 @@ format db " %s",10,"[%s]",10,0
             .data
                 align 16
                 a real16 _1
-                b real4 _2
                 r real4 0.0
+                b dd _2
             .code
             __cvtq_ss(addr r, addr a)
             mov eax,r
-            mov edx,b
-            .assert( eax == edx )
+            mov ebx,b
+            .assert( eax == ebx )
             }
 
     .static cvtq_sd {
@@ -221,69 +229,59 @@ format db " %s",10,"[%s]",10,0
             }
 
     .static cvtq_i32 {
-        this.__mqi32( 0, 0.0, 0)
-        this.__mqi32( 0, 0.10, 0, 0.0)
-        this.__mqi32( 0, 1.0, 1)
-        this.__mqi32( 0, 2.0, 2)
-        this.__mqi32( 0, 0.99999999, 0, 0.0)
-        this.__mqi32( 0, 7777777.0, 7777777)
-        this.__mqi32( 0, 2147483647.0, 2147483647)
-        this.__mqi32( 0, 2147483647.0, INT_MAX)
-        this.__mqi32( 0, -2147483648.0, INT_MIN)
-        this.__mqi32( 0, -1.0, UINT_MAX)
-        this.__mqi32( 0, -100000000000000000000.0, INT_MIN, -2147483648.0) ; ERANGE
-        this.__mqi32( 0, 100000000000000000000.0, INT_MAX, 2147483647.0) ; ERANGE
+        this.__mqi32( 0.0, 0)
+        this.__mqi32( 0.10, 0)
+        this.__mqi32( 1.0, 1)
+        this.__mqi32( 2.0, 2)
+        this.__mqi32( 0.99999999, 0)
+        this.__mqi32( 7777777.0, 7777777)
+        this.__mqi32( 2147483647.0, 2147483647)
+        this.__mqi32( 2147483647.0, INT_MAX)
+        this.__mqi32( -2147483648.0, INT_MIN)
+        this.__mqi32( -1.0, UINT_MAX)
+        this.__mqi32( -100000000000000000000.0, INT_MIN, ERANGE)
+        this.__mqi32( 100000000000000000000.0, INT_MAX, ERANGE)
         }
-        .static __mqi32 :abs, :abs, :abs, :abs {
-            local a, b
+        .static __mqi32 :abs, :abs, e:abs=<0> {
+            local a
             .data
                 align 16
-                ifnb <_4>
-                    a real16 _4
-                else
-                    a real16 _2
-                endif
-                b real16 _2
+                a real16 _1
             .code
             __cvtq_i32(addr a)
-            mov ebx,_3
+            mov ebx,_2
             .assert( eax == ebx )
             this.SetStatus()
-            .assert( eax == _1 )
+            .assert( eax == e )
             }
 
     .static cvtq_i64 {
-        this.__mqi64( 0, 0.0, 0)
-        this.__mqi64( 0, 0.10, 0, 0.0)
-        this.__mqi64( 0, 1.0, 1)
-        this.__mqi64( 0, 2.0, 2)
-        this.__mqi64( 0, 0.99999999, 0, 0.0)
-        this.__mqi64( 0, 7777777.0, 7777777)
-        this.__mqi64( 0, 9223372036854775807.0, 9223372036854775807)
-        this.__mqi64( 0, 9223372036854775807.0, _I64_MAX)
-        this.__mqi64( 0, -9223372036854775807.0, -9223372036854775807)
-        this.__mqi64( 0, 9223372036854775808.0, _I64_MAX, 9223372036854775807.0) ; ERANGE
-        this.__mqi64( ERANGE, -9223372036854775808.0, _I64_MIN, -9223372036854775808.0)
-        this.__mqi64( 0, -1.0, _UI64_MAX)
+        this.__mqi64( 0.0, 0)
+        this.__mqi64( 0.10, 0)
+        this.__mqi64( 1.0, 1)
+        this.__mqi64( 2.0, 2)
+        this.__mqi64( 0.99999999, 0)
+        this.__mqi64( 7777777.0, 7777777)
+        this.__mqi64( 9223372036854775807.0, 9223372036854775807)
+        this.__mqi64( 9223372036854775807.0, _I64_MAX)
+        this.__mqi64( -9223372036854775807.0, -9223372036854775807)
+        this.__mqi64( 9223372036854775808.0, _I64_MAX, ERANGE)
+        this.__mqi64( -9223372036854775808.0, _I64_MIN, ERANGE)
+        this.__mqi64( -1.0, _UI64_MAX)
         }
-        .static __mqi64 :abs, :abs, :abs, :abs {
-            local a, b
+        .static __mqi64 :abs, :abs, e:abs=<0> {
+            local a
             .data
                 align 16
-                ifnb <_4>
-                    a real16 _4
-                else
-                    a real16 _2
-                endif
-                b real16 _2
+                a real16 _1
             .code
             __cvtq_i64(addr a)
-            mov ebx,LOW32(_3)
-            mov ecx,HIGH32(_3)
+            mov ebx,LOW32(_2)
+            mov ecx,HIGH32(_2)
             .assert( eax == ebx && edx == ecx )
 
             this.SetStatus()
-            .assert( eax == _1 )
+            .assert( eax == e )
             }
 
     .static cvth_q {
@@ -299,7 +297,10 @@ format db " %s",10,"[%s]",10,0
         this.__mhq( 0, 5.960464478e-08, 0x0001)
         this.__mhq( 0, INFINITY, 0x7C00)
         this.__mhq( 0, 0FFFF0000000000000000000000000000r, 0xFC00)
+        this.__mhq( 0, 1.0/0.0, 0x7C00)
+        this.__mhq( 0, 0FFFF0000000000000000000000000000r, 0xFC00)
         this.__mhq( EDOM, 7FFF8000000000000000000000000000r, 0x7FFF)
+        this.__mhq( EDOM, 7FFF8000000000000000000000000000r, 0xFFFF)
         }
         .static __mhq :abs, :abs, :abs {
             local b, q, w

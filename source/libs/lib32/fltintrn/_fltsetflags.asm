@@ -15,11 +15,11 @@ _fltsetflags proc uses esi edi fp:ptr STRFLT, string:string_t, flags:uint_t
     mov edi,fp
     mov esi,string
     xor eax,eax
-    mov edx,[edi].mantissa
-    mov [edx],eax
-    mov [edx+4],eax
-    mov [edx+8],eax
-    mov [edx+12],eax
+    mov [edi],eax
+    mov [edi+4],eax
+    mov [edi+8],eax
+    mov [edi+12],eax
+    mov [edi+16],ax
     mov [edi].exponent,eax
     mov ecx,flags
     or  ecx,_ST_ISZERO
@@ -57,12 +57,7 @@ _fltsetflags proc uses esi edi fp:ptr STRFLT, string:string_t, flags:uint_t
 
                 add esi,2
                 or  ecx,_ST_ISNAN
-                mov edx,[edi].mantissa
-                mov eax,0x7FFF
-                .if ecx & _ST_NEGNUM
-                    or eax,0x8000
-                .endif
-                mov [edx+14],ax
+                mov [edi].mantissa.e,0xFFFF
                 movzx eax,byte ptr [esi]
 
                 .if ( al == '(' )

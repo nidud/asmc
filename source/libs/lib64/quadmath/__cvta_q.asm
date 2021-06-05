@@ -10,20 +10,10 @@ include quadmath.inc
 
 __cvta_q proc number:ptr, string:string_t, endptr:ptr string_t
 
-    _strtoflt(rdx)
-
-    mov rcx,endptr
-    .if rcx
-
-        mov rdx,[rax].STRFLT.string
-        mov [rcx],rdx
-    .endif
-
-    mov rdx,[rax].STRFLT.mantissa
-    mov rcx,number
-    mov qword ptr [rcx+0x00],[rdx+0x00]
-    mov qword ptr [rcx+0x08],[rdx+0x08]
-    mov rax,rcx
+    mov rcx,rdx
+    cvta_q(rcx, r9)
+    mov rax,number
+    movups [rax],xmm0
     ret
 
 __cvta_q endp

@@ -24,7 +24,6 @@ E32_HIGH        equ (0x80000000 or (0x3B8B5B50 shr 1))
 E32_LOW         equ (0x56E16B3B shr 1)
 
     .data
-     Q_1E16     real16 1.E16
      e_space    db "#not enough space",0
 
     .code
@@ -33,8 +32,6 @@ E32_LOW         equ (0x56E16B3B shr 1)
 
 _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint_t
 
-  local qf     :REAL16
-  local tmp    :REAL16
   local i      :int_t
   local n      :int_t
   local nsig   :int_t
@@ -44,6 +41,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
   local digits :int_t
   local radix  :int_t
   local flt    :STRFLT
+  local tmp    :STRFLT
   local stkbuf[STK_BUF_SIZE]:char_t
   local endbuf :ptr
 
@@ -59,40 +57,39 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     .elseif eax & _ST_QUADFLOAT
         mov ecx,QF_CVT_DIGITS
     .endif
+    mov digits,ecx
+    mov radix,10
 
-    mov     digits,ecx
-    mov     radix,10
-    xor     eax,eax
-    mov     [ebx].n1,eax
-    mov     [ebx].nz1,eax
-    mov     [ebx].n2,eax
-    mov     [ebx].nz2,eax
-    mov     [ebx].decimal_place,eax
-    mov     value,eax
-    mov     value[4],eax
-    lea     edi,qf
-    mov     flt.mantissa,edi
-    mov     esi,q
-    mov     ecx,7
-    rep     movsw
-    lodsw
-    bt      eax,15
-    sbb     ecx,ecx
-    mov     [ebx].sign,ecx
-    and     eax,Q_EXPMASK   ; make number positive
-    mov     word ptr qf[14],ax
-    movzx   ecx,ax
-    lea     edi,qf
-    xor     eax,eax
+    xor eax,eax
+    mov [ebx].n1,eax
+    mov [ebx].nz1,eax
+    mov [ebx].n2,eax
+    mov [ebx].nz2,eax
+    mov [ebx].decimal_place,eax
+    mov value,eax
+    mov value[4],eax
+
+    _fltunpack(&flt, q)
+    mov ax,flt.mantissa.e
+    bt  eax,15
+    sbb ecx,ecx
+    mov [ebx].sign,ecx
+    and eax,Q_EXPMASK   ; make number positive
+    mov flt.mantissa.e,ax
+
+    movzx ecx,ax
+    lea edi,flt
+    xor eax,eax
+    mov flt.flags,eax
 
     .if ecx == Q_EXPMASK
 
         ; NaN or Inf
 
-        or ax,[edi+12]
-        or eax,[edi+8]
         or eax,[edi]
         or eax,[edi+4]
+        or eax,[edi+8]
+        or eax,[edi+12]
 
         .ifz
             mov eax,'fni'
@@ -101,11 +98,9 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov eax,'nan'
             or  [ebx].flags,_ST_ISNAN
         .endif
-
         .if flags & _ST_CAPEXP
             and eax,NOT 0x202020
         .endif
-
         mov edx,buf
         mov [edx],eax
         mov [ebx].n1,3
@@ -119,6 +114,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
         mov [ebx].sign,eax ; force sign to +0.0
         mov xexp,eax
+        mov flt.flags,_ST_ISZERO
 
     .else
 
@@ -149,11 +145,8 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             .else
 
-                mov eax,[edi+6]
-                mov edx,[edi+10]
-                stc
-                rcr edx,1
-                rcr eax,1
+                mov eax,[edi+8]
+                mov edx,[edi+12]
 
                 .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
                     ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
@@ -220,13 +213,13 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             ;
             ; get value to subtract
             ;
-            __cvtq_i64(&qf)
+            _flttoi64(&flt)
             mov value,eax
             mov value[4],edx
-            __cvti64_q(&tmp, edx::eax)
-            __subq(&qf, &tmp)
+            _i64toflt(&tmp, edx::eax)
+            _fltsub(&flt, &tmp)
             .ifs ( n > 0 )
-                __mulq(&qf, &Q_1E16)
+                _fltmul(&flt, &EXQ_1E16)
             .endif
         .endif
 
@@ -311,11 +304,26 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov edx,eax
         .endif
         mov maxsize,eax
+
         mov eax,'0'
         .ifs ( ( n > edx && byte ptr [esi+edx] >= '5' ) || \
             ( edx == digits && byte ptr [esi+edx-1] == '9' ) )
             mov al,'9'
         .endif
+
+        mov edi,[ebx].scale
+        add edi,[ebx].ndigits
+        .if ( al == '9' && edx == edi && \
+            byte ptr [esi+edx] != '9' &&  byte ptr [esi+edx-1] == '9' )
+            .while edi
+                dec edi
+                .break .if byte ptr [esi+edi] != '9'
+            .endw
+            .if byte ptr [esi+edi] == '9'
+                 mov al,'0'
+            .endif
+        .endif
+
         lea edi,[esi+edx-1]
         xchg ecx,edx
         inc ecx
@@ -335,7 +343,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
     .endif
 
-    .ifs edx <= 0
+    .ifs edx <= 0 || flt.flags == _ST_ISZERO
 
         mov edx,1    ; nsig = 1
         xor ecx,ecx  ; xexp = 0

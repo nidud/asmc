@@ -337,8 +337,8 @@ Graphics::InitObjects proc uses rsi rdi rbx r12 r13 r14
         mov edx,[rsi].bmi.bmiHeader.biWidth
         mov r8d,[rsi].bmi.bmiHeader.biHeight
         neg r8d
-        mov rcx,[rbx+rdi*8]
-        [rcx].Object.Init(edx, r8d)
+        mov rax,[rbx+rdi*8]
+        [rax].Object.Init(edx, r8d)
 
     .endf
     mov rax,rsi
@@ -355,8 +355,8 @@ Graphics::MoveObjects proc uses rsi rdi rbx
 
         .for edi = 0: edi < [rsi].bcount: edi++
 
-            mov rcx,[rbx+rdi*8]
-            [rcx].Object.Move()
+            mov rax,[rbx+rdi*8]
+            [rax].Object.Move()
         .endf
     .endif
     ret
@@ -373,8 +373,8 @@ Graphics::HideObjects proc uses rsi rdi rbx
 
         .for edi = 0: edi < [rsi].bcount: edi++
 
-            mov rcx,[rbx+rdi*8]
-            [rcx].Object.Hide()
+            mov rax,[rbx+rdi*8]
+            [rax].Object.Hide()
         .endf
     .endif
     ret

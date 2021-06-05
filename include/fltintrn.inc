@@ -70,11 +70,26 @@ Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
 Q_DIGITS	equ 38
 Q_SIGDIG	equ 49
 
+.enum rounding_mode {
+    rm_none,
+    rm_downward,
+    rm_tonearest,
+    rm_towardzero,
+    rm_upward,
+    rm_num_modes
+    }
+
+EXTFLOAT	struct		; extended (134-bit, 128+16) float
+l		uint64_t ?
+h		uint64_t ?
+e		short_t ?
+EXTFLOAT	ends
+
 STRFLT		struct
+mantissa	EXTFLOAT <>	; 128-bit mantissa
 flags		int_t ?		; parsing flags
 exponent	int_t ?		; exponent of floating point number
 string		string_t ?	; pointer to buffer or string
-mantissa	ptr_t ?		; pointer to 128-bit mantissa
 STRFLT		ends
 LPSTRFLT	typedef ptr STRFLT
 
@@ -103,8 +118,52 @@ _forcdecpt	proto __cdecl :string_t
 _cropzeros	proto __cdecl :string_t
 _fltsetflags	proto __cdecl :ptr STRFLT, :string_t, :uint_t
 _destoflt	proto __cdecl :ptr STRFLT, :string_t
+_fltunpack	proto __cdecl :ptr STRFLT, :ptr
+_fltpackfp	proto __cdecl :ptr, :ptr STRFLT
 _fltscale	proto __cdecl :ptr STRFLT
+_fltround	proto __cdecl :ptr STRFLT
+_fltgetrounding proto __cdecl
+_fltsetrounding proto __cdecl :rounding_mode
 _fptostr	proto __cdecl :string_t, :int_t, :ptr STRFLT
+
+_fltadd		proto __cdecl :ptr STRFLT, :ptr STRFLT
+_fltsub		proto __cdecl :ptr STRFLT, :ptr STRFLT
+_fltdiv		proto __cdecl :ptr STRFLT, :ptr STRFLT
+_fltmul		proto __cdecl :ptr STRFLT, :ptr STRFLT
+_flttoi		proto __cdecl :ptr STRFLT
+_flttoi64	proto __cdecl :ptr STRFLT
+_itoflt		proto __cdecl :ptr STRFLT, :int_t
+_i64toflt	proto __cdecl :ptr STRFLT, :int64_t
+
+
+externdef _fltpowtable	:EXTFLOAT
+
+ externdef EXQ_1E1	:EXTFLOAT
+ externdef EXQ_1E2	:EXTFLOAT
+ externdef EXQ_1E4	:EXTFLOAT
+ externdef EXQ_1E8	:EXTFLOAT
+ externdef EXQ_1E16	:EXTFLOAT
+ externdef EXQ_1E32	:EXTFLOAT
+ externdef EXQ_1E64	:EXTFLOAT
+ externdef EXQ_1E128	:EXTFLOAT
+ externdef EXQ_1E256	:EXTFLOAT
+ externdef EXQ_1E512	:EXTFLOAT
+ externdef EXQ_1E1024	:EXTFLOAT
+ externdef EXQ_1E2048	:EXTFLOAT
+ externdef EXQ_1E4096	:EXTFLOAT
+ externdef EXQ_1E_1	:EXTFLOAT
+ externdef EXQ_1E_2	:EXTFLOAT
+ externdef EXQ_1E_4	:EXTFLOAT
+ externdef EXQ_1E_8	:EXTFLOAT
+ externdef EXQ_1E_16	:EXTFLOAT
+ externdef EXQ_1E_32	:EXTFLOAT
+ externdef EXQ_1E_64	:EXTFLOAT
+ externdef EXQ_1E_128	:EXTFLOAT
+ externdef EXQ_1E_256	:EXTFLOAT
+ externdef EXQ_1E_512	:EXTFLOAT
+ externdef EXQ_1E_1024	:EXTFLOAT
+ externdef EXQ_1E_2048	:EXTFLOAT
+ externdef EXQ_1E_4096	:EXTFLOAT
 
 endif
 

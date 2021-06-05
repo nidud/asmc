@@ -22,7 +22,7 @@ _fptostr proc buf:string_t, digits:int_t, pflt:ptr STRFLT
     ; Copy the digits of the value into the buffer (with 0 padding)
     ; and insert the terminating null character.
 
-    .fors ( r9 = [r8].STRFLT.mantissa, r10d = edx : r10d > 0 : r10d--, rcx++ )
+    .fors ( r9 = &[r8].STRFLT.mantissa, r10d = edx : r10d > 0 : r10d--, rcx++ )
 
         mov al,[r9]
         .if al

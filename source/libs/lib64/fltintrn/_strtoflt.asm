@@ -9,14 +9,13 @@ include errno.inc
 include quadmath.inc
 
     .data
-    real real16 0.0
-    flt STRFLT <0,0,0,real>
+    flt STRFLT { { 0, 0, 0 }, 0, 0, 0 }
 
     .code
 
 _strtoflt proc string:string_t
 
-  local buffer[128]:char_t
+  local buffer[256]:char_t
   local digits:int_t
   local sign:int_t
 
@@ -52,7 +51,7 @@ _strtoflt proc string:string_t
 
             mov r8d,10
         .endif
-        mov r10,flt.mantissa
+        lea r10,flt.mantissa
         mov r11,r10
         .while 1
 
@@ -102,40 +101,31 @@ _strtoflt proc string:string_t
             shl rax,cl
             shr ecx,8       ; get shift count
             add ecx,r8d     ; calculate exponent
+            mov [r10],rax
+            mov [r10+8],rdx
         .else
             or flt.flags,_ST_ISZERO
         .endif
-
-        shl rax,1
-        rcl rdx,1
         mov r9d,flt.flags
-
         .if ( sign == '-' || r9d & _ST_NEGNUM )
-
             or cx,0x8000
         .endif
 
         mov r8d,ecx
         and r8d,Q_EXPMASK
         .switch
-          .case r9d & _ST_ISNAN or _ST_ISINF or _ST_INVALID
-          .case r9d & _ST_UNDERFLOW
-          .case r9d & _ST_OVERFLOW
+          .case r9d & _ST_ISNAN or _ST_ISINF or _ST_INVALID or _ST_UNDERFLOW or _ST_OVERFLOW
           .case r8d >= Q_EXPMAX + Q_EXPBIAS
             or  ecx,0x7FFF
             xor eax,eax
-            xor edx,edx
+            mov flt.mantissa.l,rax
+            mov flt.mantissa.h,rax
+            .if r9d & _ST_ISNAN or _ST_INVALID
+                or ecx,0x8000
+                or byte ptr flt.mantissa.h[7],0x80
+            .endif
         .endsw
-
-        shrd rax,rdx,16
-        shrd rdx,rcx,16
-        .if r9d & _ST_ISNAN or _ST_INVALID
-            inc eax
-        .endif
-        movq xmm0,rax
-        movq xmm1,rdx
-        movlhps xmm0,xmm1
-        movaps real,xmm0
+        mov flt.mantissa.e,cx
 
         and ecx,Q_EXPMASK
         .if ecx >= 0x7FFF
@@ -144,8 +134,7 @@ _strtoflt proc string:string_t
 
         .elseif ( flt.exponent && !( flt.flags & _ST_ISHEX ) )
 
-            fltscale(xmm0, flt.exponent)
-            movaps real,xmm0
+            _fltscale(&flt)
         .endif
 
         mov eax,flt.exponent
@@ -157,6 +146,7 @@ _strtoflt proc string:string_t
         .ifs eax < -4932
             or flt.flags,_ST_UNDERFLOW
         .endif
+        _fltpackfp(&flt, &flt)
 
     .until 1
     lea rax,flt

@@ -24,7 +24,6 @@ E32_HIGH        equ (0x80000000 or (0x3B8B5B50 shr 1))
 E32_LOW         equ (0x56E16B3B shr 1)
 
     .data
-     Q_1E16     real16 1.E16
      e_space    db "#not enough space",0
 
     .code
@@ -35,11 +34,12 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
   local i      :int_t
   local n      :int_t
-  local qf     :REAL16
   local nsig   :int_t
   local xexp   :int_t
   local maxsize:int_t
   local digits :int_t
+  local flt    :STRFLT
+  local tmp    :STRFLT
   local stkbuf[STK_BUF_SIZE]:char_t
   local endbuf :ptr
 
@@ -63,28 +63,27 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     mov [rbx].n2,eax
     mov [rbx].nz2,eax
     mov [rbx].decimal_place,eax
-    lea rdi,qf
-    mov rsi,rcx
-    mov ecx,7
-    rep movsw
-    lodsw
-    bt      eax,15
-    sbb     ecx,ecx
-    mov     [rbx].sign,ecx
-    and     eax,Q_EXPMASK   ; make number positive
-    mov     word ptr qf[14],ax
-    mov     ecx,eax
-    lea     rdi,qf
-    xor     eax,eax
-    movaps  xmm0,[rdi]
+
+    _fltunpack(&flt, q)
+
+    mov ax,flt.mantissa.e
+    bt  eax,15
+    sbb ecx,ecx
+    mov [rbx].sign,ecx
+    and eax,Q_EXPMASK   ; make number positive
+    mov flt.mantissa.e,ax
+
+    movzx ecx,ax
+    lea rdi,flt
+    xor eax,eax
+    mov flt.flags,eax
 
     .if ecx == Q_EXPMASK
 
         ; NaN or Inf
 
-        or ax,[rdi+12]
-        or eax,[rdi+8]
-        or rax,[rdi]
+        or rax,flt.mantissa.l
+        or rax,flt.mantissa.h
         .ifz
 
             ; INFINITY
@@ -114,6 +113,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
         mov [rbx].sign,eax ; force sign to +0.0
         mov xexp,eax
+        mov flt.flags,_ST_ISZERO
 
     .else
 
@@ -138,15 +138,14 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                 neg eax
                 mov xexp,eax
                 neg eax
-                fltscale(xmm0, eax)
+                mov flt.exponent,eax
+
+                _fltscale(&flt)
 
             .else
 
-                mov eax,[rdi+6]
-                mov edx,[rdi+10]
-                stc
-                rcr edx,1
-                rcr eax,1
+                mov eax,[rdi+8]
+                mov edx,[rdi+12]
 
                 .if ( esi < E16_EXP || ( ( esi == E16_EXP && ( edx < E16_HIGH || \
                     ( edx == E16_HIGH && eax < E16_LOW ) ) ) ) )
@@ -170,7 +169,8 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
                     and eax,NOT (NDIG / 2 - 1)
                     mov xexp,eax
                     neg eax
-                    fltscale(xmm0, eax)
+                    mov flt.exponent,eax
+                    _fltscale(&flt)
                 .endif
             .endif
         .endif
@@ -184,7 +184,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             add eax,[rbx].scale
         .endif
     .else
-        add eax,4 + NDIG / 2 ; need at least this for rounding
+        add eax,16 + NDIG / 2 ; need at least this for rounding
     .endif
     .if eax > STK_BUF_SIZE-1-NDIG
         mov eax,STK_BUF_SIZE-1-NDIG
@@ -203,7 +203,6 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
     inc rdi
     xor esi,esi
     mov i,esi
-    movaps xmm3,xmm0
 
     .while ( n > 0 )
 
@@ -213,11 +212,11 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             ; get value to subtract
 
-            mov rsi,cvtq_i64(xmm3)
+            mov rsi,_flttoi64(&flt)
             .ifs ( n > 0 )
-                subq(xmm3, cvti64_q(rsi))
-                mulq(xmm0, Q_1E16)
-                movaps xmm3,xmm0
+                _i64toflt(&tmp, rsi)
+                _fltsub(&flt, &tmp)
+                _fltmul(&flt, &EXQ_1E16)
             .endif
         .endif
 
@@ -281,6 +280,19 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             mov al,'9'
         .endif
 
+        mov r8d,[rbx].scale
+        add r8d,[rbx].ndigits
+        .if ( al == '9' && edx == r8d && \
+            byte ptr [rsi+rdx] != '9' &&  byte ptr [rsi+rdx-1] == '9' )
+            .while r8d
+                dec r8d
+                .break .if byte ptr [rsi+r8] != '9'
+            .endw
+            .if byte ptr [rsi+r8] == '9'
+                 mov al,'0'
+            .endif
+        .endif
+
         lea rdi,[rsi+rdx-1]
         xchg ecx,edx
         inc ecx
@@ -300,7 +312,7 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
         .endif
     .endif
 
-    .ifs edx <= 0
+    .ifs edx <= 0 || flt.flags == _ST_ISZERO
 
         mov edx,1           ; nsig = 1
         xor ecx,ecx         ; xexp = 0

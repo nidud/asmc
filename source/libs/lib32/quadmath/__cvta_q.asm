@@ -19,7 +19,7 @@ __cvta_q proc number:ptr, string:string_t, endptr:ptr string_t
         mov [ecx],edx
     .endif
 
-    mov edx,[eax].STRFLT.mantissa
+    lea edx,[eax].STRFLT.mantissa
     mov ecx,number
     mov dword ptr [ecx+0x00],[edx+0x00]
     mov dword ptr [ecx+0x04],[edx+0x04]

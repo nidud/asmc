@@ -15,9 +15,9 @@ _fltsetflags proc uses rsi rdi fp:ptr STRFLT, string:string_t, flags:uint_t
     mov rdi,rcx
     mov rsi,rdx
     xor eax,eax
-    mov rdx,[rdi].mantissa
-    mov [rdx],rax
-    mov [rdx+8],rax
+    mov [rdi].mantissa.l,rax
+    mov [rdi].mantissa.h,rax
+    mov [rdi].mantissa.e,ax
     mov [rdi].exponent,eax
     mov ecx,r8d
     or  ecx,_ST_ISZERO
@@ -55,12 +55,7 @@ _fltsetflags proc uses rsi rdi fp:ptr STRFLT, string:string_t, flags:uint_t
 
                 add rsi,2
                 or  ecx,_ST_ISNAN
-                mov rdx,[rdi].mantissa
-                mov eax,0x7FFF
-                .if ecx & _ST_NEGNUM
-                    or eax,0x8000
-                .endif
-                mov [rdx+14],ax
+                mov [rdi].mantissa.e,0xFFFF
                 movzx eax,byte ptr [rsi]
 
                 .if ( al == '(' )

@@ -27,6 +27,7 @@ include macro.inc
 include condasm.inc
 include listing.inc
 include fltintrn.inc
+include lqueue.inc
 
 public MacroLocals
 
@@ -431,6 +432,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 strcpy( StringBufferEnd, "16" )
+                            .elseif ( ModuleInfo.floatformat == 'x' )
+                                LSPrintF( StringBufferEnd, "%q%q", opndx.hlvalue, opndx.llvalue )
                             .else
 
                                 mov cvt.expchar,'e'
@@ -447,20 +450,6 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                 .else
                                     mov cvt.scale,0
                                     mov cvt.flags,_ST_F
-if 0
-                                    movzx ecx,word ptr opndx.h64_h[2]
-                                    and ecx,0x7FFF
-                                    .if ecx < 0x3FFF
-                                        sub  ecx,0x3FFE
-                                        mov  eax,30103
-                                        imul ecx
-                                        mov  ecx,100000
-                                        idiv ecx
-                                        neg  eax
-                                        inc  eax
-                                        mov cvt.ndigits,eax
-                                    .endif
-endif
                                 .endif
                                 mov esi,StringBufferEnd
                                 inc esi

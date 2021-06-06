@@ -62,7 +62,7 @@ _flttoi64 proc p:ptr STRFLT
             pop esi
         .endif
         mov ecx,p
-        .if byte ptr [ecx+16] & 0x80
+        .if byte ptr [ecx+17] & 0x80
             neg edx
             neg eax
             sbb edx,0

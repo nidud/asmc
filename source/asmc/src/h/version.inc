@@ -5,8 +5,8 @@ define ASMC_VERSION         232
 
 define ASMC_MAJOR_VER       2
 define ASMC_MINOR_VER       32
-define ASMC_SUBMINOR_VER    50
+define ASMC_SUBMINOR_VER    51
 
-define ASMC_VERSSTR         <"2.32.50">
+define ASMC_VERSSTR         <"2.32.51">
 
 endif

@@ -8,8 +8,11 @@ include fltintrn.inc
 
     .code
 
+    option win64:rsp noauto
+
 _fltmul proc uses rsi rdi rbx a:ptr STRFLT, b:ptr STRFLT
 
+    mov     r10,rcx
     mov     rbx,[rdx].STRFLT.mantissa.l
     mov     rdi,[rdx].STRFLT.mantissa.h
     mov     si, [rdx].STRFLT.mantissa.e
@@ -50,30 +53,29 @@ if_too_small:
     cmp     si,-65
     jl      return_underflow
 
-    mov     r10,rbx
+    mov     rcx,rbx
     mov     r11,rdi
     mov     r8,rax
     mov     r9,rdi
     mov     rdi,rdx
-    mul     r10
+    mul     rcx
     mov     rbx,rdx
-    mov     rcx,rax
     mov     rax,rdi
     mul     r11
     mov     r11,rdx
-    xchg    r10,rax
+    xchg    rcx,rax
     mov     rdx,rdi
     mul     rdx
     add     rbx,rax
-    adc     r10,rdx
+    adc     rcx,rdx
     adc     r11,0
     mov     rax,r8
     mov     rdx,r9
     mul     rdx
     add     rbx,rax
-    adc     r10,rdx
+    adc     rcx,rdx
     adc     r11,0
-    mov     rax,r10
+    mov     rax,rcx
     mov     rdx,r11
 
     test    rdx,rdx
@@ -99,11 +101,10 @@ validate:
 
 done:
 
-    mov     rcx,a
-    mov     [rcx].STRFLT.mantissa.l,rax
-    mov     [rcx].STRFLT.mantissa.h,rdx
-    mov     [rcx].STRFLT.mantissa.e,si
-    mov     rax,rcx
+    mov     [r10].STRFLT.mantissa.l,rax
+    mov     [r10].STRFLT.mantissa.h,rdx
+    mov     [r10].STRFLT.mantissa.e,si
+    mov     rax,r10
     ret
 
 error_zero_a:

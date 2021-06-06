@@ -186,7 +186,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             add eax,[ebx].scale
         .endif
     .else
-        add eax,4 + NDIG / 2 ; need at least this for rounding
+        add eax,NDIG + NDIG / 2 ; need at least this for rounding
     .endif
     .if eax > STK_BUF_SIZE-1-NDIG
         mov eax,STK_BUF_SIZE-1-NDIG

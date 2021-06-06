@@ -6,7 +6,7 @@
 
 include fltintrn.inc
 
-define  MAX_EXP_INDEX 13
+define MAX_EXP_INDEX 13
 
     .code
 

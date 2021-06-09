@@ -3253,7 +3253,7 @@ MCI_TMSF_FRAME macro tmsf
 	endm
 
 MCI_MAKE_TMSF macro t, m, s, f
-	exitm<(((t OR (( (t or (m shl 8)) or ((s or (f shl 8)) shl 16)))>
+	exitm<((((t) or ((m) shl 8)) or (((s) or ((f) shl 8)) shl 16)))>
 	endm
 
 MCI_HMS_HOUR macro hms

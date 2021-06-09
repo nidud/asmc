@@ -445,10 +445,10 @@ g_type_get_type_registration_serial proto __cdecl
 
 
 G_DEFINE_TYPE macro TN, t_n, T_P
-	exitm<G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, {})>
+	exitm<.err>
 	endm
 G_DEFINE_TYPE_WITH_CODE macro TN, t_n, T_P, _C_
-	exitm<_G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, 0) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()>
+	exitm<.err>
 	endm
 G_DEFINE_TYPE_WITH_PRIVATE macro TN, t_n, T_P
 	exitm<G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, 0, G_ADD_PRIVATE (TN))>
@@ -457,21 +457,21 @@ G_DEFINE_ABSTRACT_TYPE macro TN, t_n, T_P
 	exitm<G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, G_TYPE_FLAG_ABSTRACT, {})>
 	endm
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE macro TN, t_n, T_P, _C_
-	exitm<_G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, G_TYPE_FLAG_ABSTRACT) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()>
+	exitm<.err>
 	endm
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE macro TN, t_n, T_P
 	exitm<G_DEFINE_TYPE_EXTENDED (TN, t_n, T_P, G_TYPE_FLAG_ABSTRACT, G_ADD_PRIVATE (TN))>
 	endm
 G_DEFINE_TYPE_EXTENDED macro TN, t_n, T_P, _f_, _C_
-	exitm<_G_DEFINE_TYPE_EXTENDED_BEGIN (TN, t_n, T_P, _f_) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()>
+	exitm<.err>
 	endm
 
 G_DEFINE_INTERFACE macro TN, t_n, T_P
-	exitm<G_DEFINE_INTERFACE_WITH_CODE(TN, t_n, T_P, ;)>
+	exitm<G_DEFINE_INTERFACE_WITH_CODE(TN, t_n, T_P)>
 	endm
 
 G_DEFINE_INTERFACE_WITH_CODE macro TN, t_n, T_P, _C_
-	exitm<_G_DEFINE_INTERFACE_EXTENDED_BEGIN(TN, t_n, T_P) {_C_;} _G_DEFINE_INTERFACE_EXTENDED_END()>
+	exitm<.err>
 	endm
 
 G_IMPLEMENT_INTERFACE macro TYPE_IFACE, iface_init
@@ -521,10 +521,10 @@ _G_DEFINE_INTERFACE_EXTENDED_END macro
 	endm
 
 G_DEFINE_BOXED_TYPE macro TypeName, type_name, copy_func, free_func
-	exitm<G_DEFINE_BOXED_TYPE_WITH_CODE (TypeName, type_name, copy_func, free_func, {})>
+	exitm<.err>
 	endm
 G_DEFINE_BOXED_TYPE_WITH_CODE macro TypeName, type_name, copy_func, free_func, _C_
-	exitm<_G_DEFINE_BOXED_TYPE_BEGIN (TypeName, type_name, copy_func, free_func) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()>
+	exitm<.err>
 	endm
 
 _G_DEFINE_BOXED_TYPE_BEGIN macro TypeName, type_name, copy_func, free_func
@@ -535,7 +535,7 @@ G_DEFINE_POINTER_TYPE macro TypeName, type_name
 	exitm<G_DEFINE_POINTER_TYPE_WITH_CODE (TypeName, type_name, {})>
 	endm
 G_DEFINE_POINTER_TYPE_WITH_CODE macro TypeName, type_name, _C_
-	exitm<_G_DEFINE_POINTER_TYPE_BEGIN (TypeName, type_name) {_C_;} _G_DEFINE_TYPE_EXTENDED_END()>
+	exitm<.err>
 	endm
 
 _G_DEFINE_POINTER_TYPE_BEGIN macro TypeName, type_name

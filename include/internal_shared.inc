@@ -218,7 +218,7 @@ else
             .if _MallocaComputeSize(size) <= _ALLOCA_S_THRESHOLD
                 _MarkAllocaS(_alloca(_MallocaComputeSize(size)), _ALLOCA_S_STACK_MARKER)
             .else
-                _MarkAllocaS(_malloc_crt(_MallocaComputeSize(size)), _ALLOCA_S_HEAP_MARKER))
+                _MarkAllocaS(_malloc_crt(_MallocaComputeSize(size)), _ALLOCA_S_HEAP_MARKER)
             .endif
         .endif
         exitm<>

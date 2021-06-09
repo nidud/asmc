@@ -87,10 +87,10 @@ RGBA_MAKE macro r, g, b, a
 	endm
 
 D3DRGB macro r, g, b
-	exitm<(0xff000000 or ((((r) * 255)) shl 16) or ((((g) * 255)) shl 8) or ((b) * 255))>
+	exitm<(0xff000000 or (((r) * 255) shl 16) or (((g) * 255) shl 8) or ((b) * 255))>
 	endm
 D3DRGBA macro r, g, b, a
-	exitm<(((((a) * 255)) << 24) or ((((r) * 255)) shl 16) or ((((g) * 255)) shl 8) or ((b) * 255)>
+	exitm<((((a) * 255) shl 24) or (((r) * 255) shl 16) or (((g) * 255) shl 8) or ((b) * 255))>
 	endm
 RGB_GETRED macro rgb
 	exitm<(((rgb) SHR 16) AND 0xff)>

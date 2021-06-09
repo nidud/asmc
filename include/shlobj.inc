@@ -2642,7 +2642,6 @@ REST_USEDESKTOPINICACHE equ 0x41000005
 endif
 endif
 
-;SHSTDAPI_(IStream
 OpenRegStream proto WINAPI \
 		  hkey: HKEY,
 	     pszSubkey: LPCWSTR,
@@ -3264,7 +3263,6 @@ ShellFolderView_SetPoints macro _hwnd, _pdtobj
 	endm
 
 ;include poppack.inc
-;SHSTDAPI_(IContextMenu
 SHFind_InitMenuPopup proto WINAPI \
 		 hmenu: HMENU,
 	     hwndOwner: HWND,

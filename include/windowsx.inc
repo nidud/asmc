@@ -516,7 +516,7 @@ FORWARD_WM_WINDOWPOSCHANGED macro hwnd, lpwpos, fn
 
 ;; void Cls_OnMove(HWND hwnd, int x, int y)
 HANDLE_WM_MOVE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), 0)>
 	endm
 
 FORWARD_WM_MOVE macro hwnd, x, y, fn
@@ -775,7 +775,7 @@ FORWARD_WM_SYSDEADCHAR macro hwnd, h, cRepeat, fn
 
 ;; void Cls_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 HANDLE_WM_MOUSEMOVE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), wParam), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), wParam, 0)>
 	endm
 
 FORWARD_WM_MOUSEMOVE macro hwnd, x, y, keyFlags, fn
@@ -808,7 +808,7 @@ FORWARD_WM_LBUTTONUP macro hwnd, x, y, keyFlags, fn
 
 ;; void Cls_OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 HANDLE_WM_RBUTTONDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_RBUTTONDOWN macro hwnd, fDoubleClick, x, y, keyFlags, fn
@@ -818,12 +818,12 @@ FORWARD_WM_RBUTTONDOWN macro hwnd, fDoubleClick, x, y, keyFlags, fn
 
 ;; void Cls_OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 HANDLE_WM_RBUTTONDBLCLK macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 ;; void Cls_OnRButtonUp(HWND hwnd, int x, int y, UINT flags)
 HANDLE_WM_RBUTTONUP macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_RBUTTONUP macro hwnd, x, y, keyFlags, fn
@@ -832,7 +832,7 @@ FORWARD_WM_RBUTTONUP macro hwnd, x, y, keyFlags, fn
 
 ;; void Cls_OnMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 HANDLE_WM_MBUTTONDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_MBUTTONDOWN macro hwnd, fDoubleClick, x, y, keyFlags, fn
@@ -841,13 +841,13 @@ FORWARD_WM_MBUTTONDOWN macro hwnd, fDoubleClick, x, y, keyFlags, fn
 
 ;; void Cls_OnMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 HANDLE_WM_MBUTTONDBLCLK macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 
 ;; void Cls_OnMButtonUp(HWND hwnd, int x, int y, UINT flags)
 HANDLE_WM_MBUTTONUP macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_MBUTTONUP macro hwnd, x, y, keyFlags, fn
@@ -856,7 +856,7 @@ FORWARD_WM_MBUTTONUP macro hwnd, x, y, keyFlags, fn
 
 ;; void Cls_OnNCMouseMove(HWND hwnd, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCMOUSEMOVE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCMOUSEMOVE macro hwnd, x, y, codeHitTest, fn
@@ -865,7 +865,7 @@ FORWARD_WM_NCMOUSEMOVE macro hwnd, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCLBUTTONDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCLBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
@@ -874,12 +874,12 @@ FORWARD_WM_NCLBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCLBUTTONDBLCLK macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 ;; void Cls_OnNCLButtonUp(HWND hwnd, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCLBUTTONUP macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCLBUTTONUP macro hwnd, x, y, codeHitTest, fn
@@ -888,7 +888,7 @@ FORWARD_WM_NCLBUTTONUP macro hwnd, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCRBUTTONDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCRBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
@@ -897,12 +897,12 @@ FORWARD_WM_NCRBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCRBUTTONDBLCLK macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 ;; void Cls_OnNCRButtonUp(HWND hwnd, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCRBUTTONUP macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCRBUTTONUP macro hwnd, x, y, codeHitTest, fn
@@ -911,7 +911,7 @@ FORWARD_WM_NCRBUTTONUP macro hwnd, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCMBUTTONDOWN macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, FALSE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCMBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
@@ -920,12 +920,12 @@ FORWARD_WM_NCMBUTTONDOWN macro hwnd, fDoubleClick, x, y, codeHitTest, fn
 
 ;; void Cls_OnNCMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCMBUTTONDBLCLK macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, TRUE, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 ;; void Cls_OnNCMButtonUp(HWND hwnd, int x, int y, UINT codeHitTest)
 HANDLE_WM_NCMBUTTONUP macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(lParam), HIWORD(lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_NCMBUTTONUP macro hwnd, x, y, codeHitTest, fn
@@ -952,7 +952,7 @@ FORWARD_WM_CANCELMODE macro hwnd, fn
 
 ;; void Cls_OnTimer(HWND hwnd, UINT id)
 HANDLE_WM_TIMER macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam)), 0)>
+	exitm<fn(hwnd, (wParam), 0)>
 	endm
 
 FORWARD_WM_TIMER macro hwnd, id, fn
@@ -1032,7 +1032,7 @@ FORWARD_WM_HSCROLL macro hwnd, hwndCtl, cd, pos, fn
 
 ;; void Cls_OnVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 HANDLE_WM_VSCROLL macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (lParam), (LOWORD(wParam)),  HIWORD(wParam)), 0)>
+	exitm<fn(hwnd, (lParam), (LOWORD(wParam),  HIWORD(wParam)), 0)>
 	endm
 
 FORWARD_WM_VSCROLL macro hwnd, hwndCtl, code, pos, fn
@@ -1122,7 +1122,7 @@ FORWARD_WM_DRAWCLIPBOARD macro hwnd, fn
 
 ;; void Cls_OnPaintClipboard(HWND hwnd, HWND hwndCBViewer, LPPAINTSTRUCT lpPaintStruct)
 HANDLE_WM_PAINTCLIPBOARD macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), GlobalLock(lParam)), GlobalUnlock(lParam), 0)>
+	exitm<fn(hwnd, (wParam), GlobalLock(lParam), GlobalUnlock(lParam), 0)>
 	endm
 
 FORWARD_WM_PAINTCLIPBOARD macro hwnd, hwndCBViewer, lpPaintStruct, fn
@@ -1131,7 +1131,7 @@ FORWARD_WM_PAINTCLIPBOARD macro hwnd, hwndCBViewer, lpPaintStruct, fn
 
 ;; void Cls_OnSizeClipboard(HWND hwnd, HWND hwndCBViewer, LPRECT lprc)
 HANDLE_WM_SIZECLIPBOARD macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), GlobalLock(lParam)), GlobalUnlock(lParam), 0)>
+	exitm<fn(hwnd, (wParam), GlobalLock(lParam), GlobalUnlock(lParam), 0)>
 	endm
 
 FORWARD_WM_SIZECLIPBOARD macro hwnd, hwndCBViewer, lprc, fn
@@ -1140,7 +1140,7 @@ FORWARD_WM_SIZECLIPBOARD macro hwnd, hwndCBViewer, lprc, fn
 
 ;; void Cls_OnVScrollClipboard(HWND hwnd, HWND hwndCBViewer, UINT code, int pos)
 HANDLE_WM_VSCROLLCLIPBOARD macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(lParam)), 0)>
+	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(lParam), 0)>
 	endm
 
 FORWARD_WM_VSCROLLCLIPBOARD macro hwnd, hwndCBViewer, code, pos, fn
@@ -1185,7 +1185,7 @@ FORWARD_WM_SETCURSOR macro hwnd, hwndCursor, codeHitTest, msg, fn
 
 ;; void Cls_OnSysCommand(HWND hwnd, UINT cmd, int x, int y)
 HANDLE_WM_SYSCOMMAND macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, wParam, LOWORD(lParam), HIWORD(lParam)), 0)>
+	exitm<fn(hwnd, wParam, LOWORD(lParam), HIWORD(lParam), 0)>
 	endm
 
 FORWARD_WM_SYSCOMMAND macro hwnd, cmd, x, y, fn
@@ -1213,7 +1213,7 @@ FORWARD_WM_MDIDESTROY macro hwnd, hwndDestroy, fn
 ;; NOTE: Usable only by MDI client windows
 ;; void Cls_MDIActivate(HWND hwnd, BOOL fActive, HWND hwndActivate, HWND hwndDeactivate)
 HANDLE_WM_MDIACTIVATE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (lParam == hwnd), (lParam), (wParam)), 0)>
+	exitm<fn(hwnd, (lParam == hwnd), (lParam), (wParam), 0)>
 	endm
 
 FORWARD_WM_MDIACTIVATE macro hwnd, fActive, hwndActivate, hwndDeactivate, fn
@@ -1222,7 +1222,7 @@ FORWARD_WM_MDIACTIVATE macro hwnd, fActive, hwndActivate, hwndDeactivate, fn
 
 ;; void Cls_MDIRestore(HWND hwnd, HWND hwndRestore)
 HANDLE_WM_MDIRESTORE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam)), 0)>
+	exitm<fn(hwnd, (wParam), 0)>
 	endm
 
 FORWARD_WM_MDIRESTORE macro hwnd, hwndRestore, fn
@@ -1240,7 +1240,7 @@ FORWARD_WM_MDINEXT macro hwnd, hwndCur, fPrev, fn
 
 ;; void Cls_MDIMaximize(HWND hwnd, HWND hwndMaximize)
 HANDLE_WM_MDIMAXIMIZE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam)), 0)>
+	exitm<fn(hwnd, (wParam), 0)>
 	endm
 
 FORWARD_WM_MDIMAXIMIZE macro hwnd, hwndMaximize, fn
@@ -1320,7 +1320,7 @@ FORWARD_WM_NEXTDLGCTL macro hwnd, hwndSetFocus, fNext, fn
 
 ;; void Cls_OnParentNotify(HWND hwnd, UINT msg, HWND hwndChild, int idChild)
 HANDLE_WM_PARENTNOTIFY macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, LOWORD(wParam), (lParam), HIWORD(wParam)), 0)>
+	exitm<fn(hwnd, LOWORD(wParam), (lParam), HIWORD(wParam), 0)>
 	endm
 
 FORWARD_WM_PARENTNOTIFY macro hwnd, msg, hwndChild, idChild, fn
@@ -1329,7 +1329,7 @@ FORWARD_WM_PARENTNOTIFY macro hwnd, msg, hwndChild, idChild, fn
 
 ;; void Cls_OnEnterIdle(HWND hwnd, UINT source, HWND hwndSource)
 HANDLE_WM_ENTERIDLE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), (lParam)), 0)>
+	exitm<fn(hwnd, (wParam), (lParam), 0)>
 	endm
 
 FORWARD_WM_ENTERIDLE macro hwnd, source, hwndSource, fn
@@ -1404,7 +1404,7 @@ FORWARD_WM_CTLCOLORSTATIC macro hwnd, hdc, hwndChild, fn
 
 ;; void Cls_OnSetFont(HWND hwndCtl, HFONT hfont, BOOL fRedraw)
 HANDLE_WM_SETFONT macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), (lParam)), 0)>
+	exitm<fn(hwnd, (wParam), (lParam), 0)>
 	endm
 
 FORWARD_WM_SETFONT macro hwnd, hfont, fRedraw, fn
@@ -1485,7 +1485,7 @@ FORWARD_WM_QUEUESYNC macro hwnd, fn
 if (WINVER GE 0x030a)
 ;; void Cls_OnCommNotify(HWND hwnd, int cid, UINT flags)
 HANDLE_WM_COMMNOTIFY macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), LOWORD(lParam)), 0)>
+	exitm<fn(hwnd, (wParam), LOWORD(lParam), 0)>
 	endm
 
 FORWARD_WM_COMMNOTIFY macro hwnd, cid, flags, fn
@@ -1495,7 +1495,7 @@ endif
 
 ;; void Cls_OnDisplayChange(HWND hwnd, UINT bitsPerPixel, UINT cxScreen, UINT cyScreen)
 HANDLE_WM_DISPLAYCHANGE macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(wParam)), 0)>
+	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(wParam), 0)>
 	endm
 
 FORWARD_WM_DISPLAYCHANGE macro hwnd, bitsPerPixel, cxScreen, cyScreen, fn
@@ -1513,7 +1513,7 @@ FORWARD_WM_DEVICECHANGE macro hwnd, uEvent, dwEventData, fn
 
 ;; void Cls_OnContextMenu(HWND hwnd, HWND hwndContext, UINT xPos, UINT yPos)
 HANDLE_WM_CONTEXTMENU macro hwnd, wParam, lParam, fn
-	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(lParam)), 0)>
+	exitm<fn(hwnd, (wParam), LOWORD(lParam), HIWORD(lParam), 0)>
 	endm
 
 FORWARD_WM_CONTEXTMENU macro hwnd, hwndContext, xPos, yPos, fn

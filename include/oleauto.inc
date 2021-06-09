@@ -99,13 +99,11 @@ SafeArrayAllocDescriptorEx proto WINAPI \
 SafeArrayAllocData proto WINAPI \
 		   psa: ptr SAFEARRAY
 
-;WINOLEAUTAPI_(SAFEARRAY
 SafeArrayCreate proto WINAPI \
 		    vt: VARTYPE,
 		 cDims: UINT,
 	     rgsabound: ptr SAFEARRAYBOUND
 
-;WINOLEAUTAPI_(SAFEARRAY
 SafeArrayCreateEx proto WINAPI \
 		    vt: VARTYPE,
 		 cDims: UINT,
@@ -134,27 +132,22 @@ SafeArrayRedim proto WINAPI \
 		   psa: ptr SAFEARRAY,
 	   psaboundNew: ptr SAFEARRAYBOUND
 
-;WINOLEAUTAPI_(UINT)
 SafeArrayGetDim proto WINAPI \
 		   psa: ptr SAFEARRAY
 
-;WINOLEAUTAPI_(UINT)
 SafeArrayGetElemsize proto WINAPI \
 		   psa: ptr SAFEARRAY
 
-;WINOLEAUTAPI
 SafeArrayGetUBound proto WINAPI \
 		   psa: ptr SAFEARRAY,
 		  nDim: UINT,
 	      plUbound: ptr LONG
 
-;WINOLEAUTAPI
 SafeArrayGetLBound proto WINAPI \
 		   psa: ptr SAFEARRAY,
 		  nDim: UINT,
 	      plLbound: ptr LONG
 
-;WINOLEAUTAPI
 SafeArrayLock proto WINAPI \
 		   psa: ptr SAFEARRAY
 
@@ -219,13 +212,11 @@ SafeArrayGetVartype proto WINAPI \
 		   psa: ptr SAFEARRAY,
 		   pvt: ptr VARTYPE
 
-;WINOLEAUTAPI_(SAFEARRAY
 SafeArrayCreateVector proto WINAPI \
 		    vt: VARTYPE,
 	       lLbound: LONG,
 	     cElements: ULONG
 
-;WINOLEAUTAPI_(SAFEARRAY
 SafeArrayCreateVectorEx proto WINAPI \
 		    vt: VARTYPE,
 	       lLbound: LONG,
@@ -233,8 +224,6 @@ SafeArrayCreateVectorEx proto WINAPI \
 	       pvExtra: PVOID
 
 
-
-;WINOLEAUTAPI_(void)
 VariantInit proto WINAPI \
 		 pvarg: ptr VARIANTARG
 

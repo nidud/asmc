@@ -45,9 +45,6 @@ else
 TARGET_IS_NT351_OR_WIN95_OR_LATER equ 0
 endif
 
-
-;#define small char
-;typedef BYTE byte;
 boolean			typedef BYTE
 
 ifndef _HYPER_DEFINED
@@ -106,14 +103,6 @@ RPC_VAR_ENTRY		equ <c>
 endif
 
 
-if defined(_M_MRX000) OR defined(_M_IX86) OR defined(_M_ALPHA)
-__MIDL_DECLSPEC_DLLIMPORT equ <__declspec(dllimport)>
-__MIDL_DECLSPEC_DLLEXPORT equ <__declspec(dllexport)>
-else
-__MIDL_DECLSPEC_DLLIMPORT equ <>
-__MIDL_DECLSPEC_DLLEXPORT equ <>
-endif
-
 NDR_CCONTEXT		typedef PVOID
 
 _NDR_SCONTEXT		STRUC
@@ -128,7 +117,6 @@ NDRSContextValue macro hContext
 
 cbNDRContext		equ 20
 
-;void
 CALLBACK(NDR_RUNDOWN, context:PVOID)
 
 SCONTEXT_QUEUE		STRUC
@@ -180,44 +168,6 @@ NDRSContextUnmarshallEx proto WINAPI \
 ;void
 RpcSsDestroyClientContext proto WINAPI \
 	 ContextHandle: PVOID
-
-
-
-byte_from_ndr macro source, target
-	.err <Macro not implemented>
-	endm
-byte_array_from_ndr macro Source, LowerIndex, UpperIndex, Target
-	.err <Macro not implemented>
-	endm
-boolean_from_ndr macro source, target
-	.err <Macro not implemented>
-	endm
-boolean_array_from_ndr macro Source, LowerIndex, UpperIndex, Target
-	.err <Macro not implemented>
-	endm
-small_from_ndr macro source, target
-	.err <Macro not implemented>
-	endm
-small_from_ndr_temp macro source, target, format
-	.err <Macro not implemented>
-	endm
-small_array_from_ndr macro Source, LowerIndex, UpperIndex, Target
-	.err <Macro not implemented>
-	endm
-
-
-ifdef __RPC_WIN32__
-MIDL_ascii_strlen macro string
-	exitm<strlen(string)>
-	endm
-MIDL_ascii_strcpy macro target,source
-	exitm<strcpy(target,source)>
-	endm
-MIDL_memset macro s,c,n
-	exitm<memset(s,c,n)>
-	endm
-endif
-
 
 ;void
 NDRcopy proto WINAPI \
@@ -378,30 +328,6 @@ midl_allocate proto WINAPI \
 
 error_status_t		typedef DWORD
 
-NdrMarshConfStringHdr macro p, s, l
-	exitm<(_midl_ma4( p, DWORD) = s, _midl_ma4( p, DWORD) = 0, _midl_ma4( p, DWORD) = l)>
-	endm
-
-NdrUnMarshConfStringHdr macro p, s, l
-	exitm<((s=_midl_unma4(p,DWORD), (_midl_addp(p,4)),  (l=_midl_unma4(p,DWORD))>
-	endm
-
-NdrMarshCCtxtHdl macro pc,p
-	exitm<(NDRCContextMarshall( (NDR_CCONTEXT)pc, p ),p+20)>
-	endm
-
-NdrUnMarshCCtxtHdl macro pc,p,h,drep
-	exitm<(NDRCContextUnmarshall((NDR_CONTEXT)pc,h,p,drep), p+20)>
-	endm
-
-NdrUnMarshSCtxtHdl macro pc, p,drep
-	exitm<(pc = NdrSContextUnMarshall(p,drep ))>
-	endm
-
-
-NdrMarshSCtxtHdl macro pc,p,rd
-	exitm<(NdrSContextMarshall((NDR_SCONTEXT)pc,p, (NDR_RUNDOWN)rd)>
-	endm
 
 NdrFieldOffset macro s,f
 	exitm<s.f>
@@ -418,13 +344,8 @@ NdrFcLong macro s
 	endm
 
 
-RPC_BAD_STUB_DATA_EXCEPTION_FILTER equ ( (RpcExceptionCode() EQ STATUS_ACCESS_VIOLATION) OR (RpcExceptionCode() EQ STATUS_DATATYPE_MISAIGNMENT) OR (RpcExceptionCode() EQ RPC_X_BAD_STUB_DATA) )
+RPC_BAD_STUB_DATA_EXCEPTION_FILTER equ <( (RpcExceptionCode() EQ STATUS_ACCESS_VIOLATION) OR (RpcExceptionCode() EQ STATUS_DATATYPE_MISAIGNMENT) OR (RpcExceptionCode() EQ RPC_X_BAD_STUB_DATA) )>
 
-
-
-;MIDL_STUB_MESSAGE	typedef STRUC
-;MIDL_STUB_DESC		typedef STRUC
-;FULL_PTR_XLAT_TABLES	typedef STRUC
 
 RPC_BUFPTR		typedef LPBYTE
 RPC_LENGTH		typedef DWORD
@@ -596,9 +517,7 @@ COMM_FAULT_OFFSETS	ENDS
 
 
 MIDL_STUB_DESC		STRUC
-
 RpcInterfaceInformation PVOID ?
-
 pfnAllocate		PVOID ? ; (*pfnAllocate)(size_t)
 pfnFree			PVOID ? ; (*pfnFree)(PVOID)
 UNION IMPLICIT_HANDLE_INFO
@@ -606,30 +525,22 @@ UNION IMPLICIT_HANDLE_INFO
  pPrimitiveHandle	PVOID ? ; handle_t* ?
  pGenericBindingInfo	PGENERIC_BINDING_INFO ?
 ENDS
-
 apfnNdrRundownRoutines	NDR_RUNDOWN ?
 aGenericBindingRoutinePairs PGENERIC_BINDING_ROUTINE_PAIR ?
 apfnExprEval		PVOID ? ; EXPR_EVAL* ?
 aXmitQuintuple		PXMIT_ROUTINE_QUINTUPLE ?
 pFormatTypes		LPBYTE ?
 fCheckBounds		SINT ?
-
 Version			dd ?
-
-
 pMallocFreeStruct	PVOID ? ; MALLOC_FREE_STRUCT* ?
 MIDLVersion		LONG ?
 CommFaultOffsets	PVOID ? ; COMM_FAULT_OFFSETS* ?
-
-
 aUserMarshalQuadruple	PVOID ? ; USER_MARSHAL_ROUTINE_QUADRUPLE* ?
-
 Reserved1		LONG ?
 Reserved2		LONG ?
 Reserved3		LONG ?
 Reserved4		LONG ?
 Reserved5		LONG ?
-
 MIDL_STUB_DESC		ENDS
 PMIDL_STUB_DESC		typedef ptr MIDL_STUB_DESC
 PMIDL_XMIT_TYPE		typedef PVOID
@@ -1466,8 +1377,6 @@ NdrGetDcomProtocolVersion proto WINAPI \
 	      pStubMsg: PMIDL_STUB_MESSAGE,
 	      pVersion: ptr RPC_VERSION
 
-
-
 ;void
 NdrPipesInitialize proto WINAPI \
 	      pStubMsg: PMIDL_STUB_MESSAGE,
@@ -1497,9 +1406,6 @@ NdrIsAppDoneWithPipes proto WINAPI \
 ;void
 NdrPipesDone proto WINAPI \
 	      pStubMsg: PMIDL_STUB_MESSAGE
-
-
-
 
 ;CLIENT_CALL_RETURN RPC_VAR_ENTRY
 NdrClientCall2 proto WINAPI \

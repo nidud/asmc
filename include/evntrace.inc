@@ -1213,13 +1213,13 @@ StartTrace		equ <StartTraceW>
 ControlTrace		equ <ControlTraceW>
 if defined(__TRACE_W2K_COMPATIBLE)
 StopTrace macro a,b,c
-	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_STOP>
+	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_STOP)>
 	endm
 QueryTrace macro a,b,c
-	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_QUERY>
+	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_QUERY)>
 	endm
 UpdateTrace macro a,b,c
-	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_UPDATE>
+	exitm<ControlTraceW((a),(b),(c), EVENT_TRACE_CONTROL_UPDATE)>
 	endm
 else
 StopTrace		equ <StopTraceW>
@@ -1243,13 +1243,13 @@ StartTrace		equ <StartTraceA>
 ControlTrace		equ <ControlTraceA>
 if defined(__TRACE_W2K_COMPATIBLE)
 StopTrace macro a,b,c
-	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_STOP>
+	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_STOP)>
 	endm
 QueryTrace macro a,b,c
-	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_QUERY>
+	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_QUERY)>
 	endm
 UpdateTrace macro a,b,c
-	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_UPDATE>
+	exitm<ControlTraceA((a),(b),(c), EVENT_TRACE_CONTROL_UPDATE)>
 	endm
 else
 StopTrace		equ <StopTraceA>

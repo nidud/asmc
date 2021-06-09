@@ -5133,7 +5133,7 @@ TVE_COLLAPSERESET	equ 0x8000
 TVM_GETITEMRECT		equ (TV_FIRST + 4)
 TreeView_GetItemRect macro hwnd, hitem, prc, code
 	mov [prc],hitem
-	exitm<SNDMSG(hwnd, TVM_GETITEMRECT, code, prc))>
+	exitm<SNDMSG(hwnd, TVM_GETITEMRECT, code, prc)>
 	endm
 
 TVM_GETCOUNT		equ (TV_FIRST + 5)

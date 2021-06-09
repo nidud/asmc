@@ -506,11 +506,11 @@ _mm512_fmadd_ps macro v1, v2, v3
 	endm
 
 _mm512_mask_fmadd_ps macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fmadd_round_ps((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fmadd_round_ps((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fmadd_ps macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fmadd_round_ps((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fmadd_round_ps((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fmadd_round_pd macro v1, v2, v3, e4
@@ -522,11 +522,11 @@ _mm512_fmadd_pd macro v1, v2, v3
 	endm
 
 _mm512_mask_fmadd_pd macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fmadd_round_pd((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fmadd_round_pd((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fmadd_pd macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fmadd_round_pd((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fmadd_round_pd((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fmsub_round_ps macro v1, v2, v3, e4
@@ -538,11 +538,11 @@ _mm512_fmsub_ps macro v1, v2, v3
 	endm
 
 _mm512_mask_fmsub_ps macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fmsub_round_ps((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fmsub_round_ps((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fmsub_ps macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fmsub_round_ps((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fmsub_round_ps((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fmsub_round_pd macro v1, v2, v3, e4
@@ -554,11 +554,11 @@ _mm512_fmsub_pd macro v1, v2, v3
 	endm
 
 _mm512_mask_fmsub_pd macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fmsub_round_pd((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fmsub_round_pd((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fmsub_pd macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fmsub_round_pd((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fmsub_round_pd((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fnmadd_round_ps macro v1, v2, v3, e4
@@ -570,11 +570,11 @@ _mm512_fnmadd_ps macro v1, v2, v3
 	endm
 
 _mm512_mask_fnmadd_ps macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fnmadd_round_ps((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fnmadd_round_ps((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fnmadd_ps macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fnmadd_round_ps((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fnmadd_round_ps((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fnmadd_round_pd macro v1, v2, v3, e4
@@ -586,11 +586,11 @@ _mm512_fnmadd_pd macro v1, v2, v3
 	endm
 
 _mm512_mask_fnmadd_pd macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fnmadd_round_pd((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fnmadd_round_pd((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fnmadd_pd macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fnmadd_round_pd((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fnmadd_round_pd((_k1), (v1), (v2), (v3))>
 	endm
 
 
@@ -603,11 +603,11 @@ _mm512_fnmsub_ps macro v1, v2, v3
 	endm
 
 _mm512_mask_fnmsub_ps macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fnmsub_round_ps((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fnmsub_round_ps((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fnmsub_ps macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fnmsub_round_ps((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fnmsub_round_ps((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_fnmsub_round_pd macro v1, v2, v3, e4
@@ -619,11 +619,11 @@ _mm512_fnmsub_pd macro v1, v2, v3
 	endm
 
 _mm512_mask_fnmsub_pd macro v1, _k1, v2, v3
-	exitm<_mm512_mask_fnmsub_round_pd((v1), (_k1), (v2), (v3),>
+	exitm<_mm512_mask_fnmsub_round_pd((v1), (_k1), (v2), (v3))>
 	endm
 
 _mm512_maskz_fnmsub_pd macro _k1, v1, v2, v3
-	exitm<_mm512_maskz_fnmsub_round_pd((_k1), (v1), (v2), (v3),>
+	exitm<_mm512_maskz_fnmsub_round_pd((_k1), (v1), (v2), (v3))>
 	endm
 
 _mm512_sqrt_ps macro v1
@@ -3830,7 +3830,7 @@ _mm512_cvtepi32_ps macro v
 	endm
 
 _mm512_mask_cvtepi32_ps macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepi32_ps((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepi32_ps((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepi32_ps macro _k1, v2
@@ -3842,7 +3842,7 @@ _mm512_cvtepu32_ps macro v
 	endm
 
 _mm512_mask_cvtepu32_ps macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepu32_ps((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepu32_ps((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepu32_ps macro _k1, v2
@@ -3854,7 +3854,7 @@ _mm512_cvtps_epi32 macro v
 	endm
 
 _mm512_mask_cvtps_epi32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundps_epi32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundps_epi32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtps_epi32 macro _k1, v2
@@ -3866,7 +3866,7 @@ _mm512_cvttps_epi32 macro v
 	endm
 
 _mm512_mask_cvttps_epi32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundps_epi32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundps_epi32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttps_epi32 macro _k1, v2
@@ -3878,7 +3878,7 @@ _mm512_cvtps_epu32 macro v
 	endm
 
 _mm512_mask_cvtps_epu32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundps_epu32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundps_epu32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtps_epu32 macro _k1, v2
@@ -3890,7 +3890,7 @@ _mm512_cvttps_epu32 macro v
 	endm
 
 _mm512_mask_cvttps_epu32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundps_epu32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundps_epu32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttps_epu32 macro _k1, v2
@@ -3902,7 +3902,7 @@ _mm512_cvtpd_epi32 macro v
 	endm
 
 _mm512_mask_cvtpd_epi32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundpd_epi32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundpd_epi32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtpd_epi32 macro _k1, v2
@@ -3914,7 +3914,7 @@ _mm512_cvttpd_epi32 macro v
 	endm
 
 _mm512_mask_cvttpd_epi32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundpd_epi32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundpd_epi32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttpd_epi32 macro _k1, v2
@@ -3926,7 +3926,7 @@ _mm512_cvtpd_epu32 macro v
 	endm
 
 _mm512_mask_cvtpd_epu32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundpd_epu32((v1),(_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundpd_epu32((v1),(_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtpd_epu32 macro _k1, v2
@@ -3938,7 +3938,7 @@ _mm512_cvttpd_epu32 macro v
 	endm
 
 _mm512_mask_cvttpd_epu32 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundpd_epu32((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundpd_epu32((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttpd_epu32 macro _k1, v2
@@ -3974,7 +3974,7 @@ _mm512_cvtepi64_pd macro v
 	endm
 
 _mm512_mask_cvtepi64_pd macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepi64_pd((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepi64_pd((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepi64_pd macro _k1, v2
@@ -3986,7 +3986,7 @@ _mm512_cvtepu64_pd macro v
 	endm
 
 _mm512_mask_cvtepu64_pd macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepu64_pd((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepu64_pd((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepu64_pd macro _k1, v2
@@ -3998,7 +3998,7 @@ _mm512_cvtpd_epi64 macro v
 	endm
 
 _mm512_mask_cvtpd_epi64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundpd_epi64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundpd_epi64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtpd_epi64 macro _k1, v2
@@ -4010,7 +4010,7 @@ _mm512_cvtpd_epu64 macro v
 	endm
 
 _mm512_mask_cvtpd_epu64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundpd_epu64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundpd_epu64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtpd_epu64 macro _k1, v2
@@ -4022,7 +4022,7 @@ _mm512_cvttpd_epi64 macro v
 	endm
 
 _mm512_mask_cvttpd_epi64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundpd_epi64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundpd_epi64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttpd_epi64 macro _k1, v2
@@ -4035,7 +4035,7 @@ _mm512_cvttpd_epu64 macro v
 	endm
 
 _mm512_mask_cvttpd_epu64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundpd_epu64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundpd_epu64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttpd_epu64 macro _k1, v2
@@ -4047,7 +4047,7 @@ _mm512_cvtps_epi64 macro v
 	endm
 
 _mm512_mask_cvtps_epi64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundps_epi64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundps_epi64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtps_epi64 macro _k1, v2
@@ -4059,7 +4059,7 @@ _mm512_cvtps_epu64 macro v
 	endm
 
 _mm512_mask_cvtps_epu64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundps_epu64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundps_epu64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtps_epu64 macro _k1, v2
@@ -4071,7 +4071,7 @@ _mm512_cvtepi64_ps macro v
 	endm
 
 _mm512_mask_cvtepi64_ps macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepi64_ps((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepi64_ps((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepi64_ps macro _k1, v2
@@ -4083,7 +4083,7 @@ _mm512_cvtepu64_ps macro v
 	endm
 
 _mm512_mask_cvtepu64_ps macro v1, _k1, v2
-	exitm<_mm512_mask_cvt_roundepu64_ps((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvt_roundepu64_ps((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvtepu64_ps macro _k1, v2
@@ -4107,7 +4107,7 @@ _mm512_cvttps_epu64 macro v
 	endm
 
 _mm512_mask_cvttps_epu64 macro v1, _k1, v2
-	exitm<_mm512_mask_cvtt_roundps_epu64((v1), (_k1), (v2),>
+	exitm<_mm512_mask_cvtt_roundps_epu64((v1), (_k1), (v2))>
 	endm
 
 _mm512_maskz_cvttps_epu64 macro _k1, v2

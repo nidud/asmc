@@ -453,7 +453,7 @@ else
 ATL_MAKEINTRESOURCE equ <ATL_MAKEINTRESOURCEA>
 endif
 ATL_IS_INTRESOURCE macro _r
-if ((_r) shr 16) eq 0)
+if (((_r) shr 16) eq 0)
     exitm<1>
 else
     exitm<0>

@@ -313,15 +313,15 @@ endif
 endif
 
 IsLButtonDown macro
-	exitm<GetKeyState(VK_LBUTTON) < 0)>
+	exitm<(GetKeyState(VK_LBUTTON) !< 0)>
 	endm
 
 IsRButtonDown macro
-	exitm<GetKeyState(VK_RBUTTON) < 0)>
+	exitm<(GetKeyState(VK_RBUTTON) !< 0)>
 	endm
 
 IsMButtonDown macro
-	exitm<GetKeyState(VK_MBUTTON) < 0)>
+	exitm<(GetKeyState(VK_MBUTTON) !< 0)>
 	endm
 
 SubclassDialog macro hwndDlg, lpfn

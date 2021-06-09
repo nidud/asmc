@@ -18,7 +18,7 @@ GTK_CHECK_VERSION macro major,minor,micro
     if (GTK_MAJOR_VERSION eq (major) and GTK_MINOR_VERSION gt (minor))
 	exitm<1>
     endif
-    if (GTK_MAJOR_VERSION eq (major) and GTK_MINOR_VERSION eq (minor) and GTK_MICRO_VERSION ge (micro)))
+    if (GTK_MAJOR_VERSION eq (major) and GTK_MINOR_VERSION eq (minor) and GTK_MICRO_VERSION ge (micro))
 	exitm<1>
     endif
     exitm<0>

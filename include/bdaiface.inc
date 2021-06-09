@@ -837,7 +837,6 @@ PBDA_Encoder_BitrateMode_Average equ 0x00000003
 ifndef __IBDA_FDC_INTERFACE_DEFINED__
 __IBDA_FDC_INTERFACE_DEFINED__ equ 1
 
-;SID_BDA_FDC equ __uuidof(IBDA_FDC
 DEFINE_GUID(CLSID_PBDA_FDC_DATA_TYPE, 0xe7dbf9a0, 0x22ab, 0x4047, 0x8e, 0x67, 0xef, 0x9a, 0xd5, 0x4, 0xe7, 0x29)
 
 DEFINE_IIDX(IBDA_FDC, "138adc7e-58ae-437f-b0b4-c9fe19d5b4ac")

@@ -8,7 +8,7 @@ include io.inc
 include share.inc
 include stdio.inc
 include fcntl.inc
-include stat.inc
+include sys/stat.inc
 include errno.inc
 include winbase.inc
 
@@ -124,7 +124,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
         not r11d
         and r9d,r11d
 
-        .if !( r9d & S_IWRITE )
+        .if !( r9d & _S_IWRITE )
 
             mov r10d,FILE_ATTRIBUTE_READONLY
         .endif

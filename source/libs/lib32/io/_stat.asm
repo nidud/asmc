@@ -8,14 +8,14 @@ include io.inc
 include time.inc
 include direct.inc
 include errno.inc
-include stat.inc
+include sys/stat.inc
 include string.inc
 include stdlib.inc
 include malloc.inc
 include crtl.inc
 include winbase.inc
 
-A_D equ 10h
+A_D equ 0x10
 
 .code
 
@@ -33,15 +33,15 @@ _lk_getltime proc private ft
                 SystemTime.wHour,
                 SystemTime.wMinute,
                 SystemTime.wSecond
-            )
+                )
         .endif
     .endif
     ret
 _lk_getltime ENDP
 
-_stat proc uses esi edi ebx fname:LPSTR, buf:PVOID
+_stat proc uses esi edi ebx fname:ptr sbyte, buf:ptr stat
 
-local path, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:BYTE
+  local path, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:BYTE
 
     mov esi,fname
     mov edi,buf
@@ -51,10 +51,10 @@ local path, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:BYTE
 
     mov eax,[esi]
     .if ah == ':'
-        test eax,00FF0000h
-        jz error_1
-        or al,20h
-        sub al,'a' - 1
+        test  eax,00FF0000h
+        jz    error_1
+        or    al,20h
+        sub   al,'a' - 1
         movzx eax,al
     .else
         _getdrive()
@@ -79,42 +79,42 @@ local path, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:BYTE
         mov ff.nFileSizeLow,eax
         mov ff.cFileName,al
         _loctotime_t(80, 1, 1, eax, eax, eax)
-        mov [edi].S_STAT.st_mtime,eax
-        mov [edi].S_STAT.st_atime,eax
-        mov [edi].S_STAT.st_ctime,eax
+        mov [edi].stat.st_mtime,eax
+        mov [edi].stat.st_atime,eax
+        mov [edi].stat.st_ctime,eax
     .else
         FindClose(eax)
         _lk_getltime(addr ff.ftLastWriteTime)
         test eax,eax
         jz error_2
-        mov [edi].S_STAT.st_mtime,eax
+        mov [edi].stat.st_mtime,eax
         .if !_lk_getltime( addr ff.ftLastAccessTime )
-        mov eax,[edi].S_STAT.st_mtime
+        mov eax,[edi].stat.st_mtime
         .endif
-        mov [edi].S_STAT.st_atime,eax
+        mov [edi].stat.st_atime,eax
         .if !_lk_getltime( addr ff.ftCreationTime )
-        mov eax,[edi].S_STAT.st_mtime
+        mov eax,[edi].stat.st_mtime
         .endif
-        mov [edi].S_STAT.st_ctime,eax
+        mov [edi].stat.st_ctime,eax
     .endif
 
     mov eax,[esi]
     mov edx,ff.dwFileAttributes
-    mov ecx,S_IFDIR or S_IEXEC
-    mov ebx,S_IREAD
+    mov ecx,_S_IFDIR or _S_IEXEC
+    mov ebx,_S_IREAD
     .if ah == ':'
         add esi,2
         shr eax,16
     .endif
     .if (al && !(dl & A_D)) && (ah || (al != '\' && al != '/'))
-        mov ecx,S_IFREG
+        mov ecx,_S_IFREG
     .endif
     .if !(dl & A_D)
-        mov ebx,S_IREAD or S_IWRITE
+        mov ebx,_S_IREAD or _S_IWRITE
     .endif
     or ebx,ecx
     .if __isexec(esi)
-        or ebx,S_IEXEC
+        or ebx,_S_IEXEC
     .endif
 
     mov ecx,ebx
@@ -124,18 +124,18 @@ local path, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:BYTE
     or  ebx,ecx
     shr eax,6
     or  eax,ebx
-    mov [edi].S_STAT.st_mode,ax
-    mov [edi].S_STAT.st_nlink,1
+    mov [edi].stat.st_mode,ax
+    mov [edi].stat.st_nlink,1
     mov eax,ff.nFileSizeLow
-    mov [edi].S_STAT.st_size,eax
+    mov [edi].stat.st_size,eax
     xor eax,eax
-    mov [edi].S_STAT.st_uid,ax
-    mov [edi].S_STAT.st_ino,ax
-    mov [edi].S_STAT.st_gid,eax
+    mov [edi].stat.st_uid,ax
+    mov [edi].stat.st_ino,ax
+    mov [edi].stat.st_gid,ax
     mov eax,drive
     dec eax
-    mov [edi].S_STAT.st_dev,eax
-    mov [edi].S_STAT.st_rdev,eax
+    mov [edi].stat.st_dev,eax
+    mov [edi].stat.st_rdev,eax
     xor eax,eax
 toend:
     ret

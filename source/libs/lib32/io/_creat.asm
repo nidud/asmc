@@ -6,7 +6,7 @@
 
 include io.inc
 include fcntl.inc
-include stat.inc
+include sys/stat.inc
 include errno.inc
 include winbase.inc
 
@@ -17,12 +17,12 @@ _creat proc path:LPSTR, flag
     mov edx,_A_NORMAL
     mov ecx,O_WRONLY
     mov eax,flag
-    and eax,S_IREAD or S_IWRITE
+    and eax,_S_IREAD or _S_IWRITE
     .repeat
-        .if eax != S_IWRITE
+        .if eax != _S_IWRITE
         mov ecx,O_RDWR
-        .if eax != S_IREAD or S_IWRITE
-            .if eax == S_IREAD
+        .if eax != _S_IREAD or _S_IWRITE
+            .if eax == _S_IREAD
             mov ecx,O_RDONLY
             mov edx,_A_RDONLY
             .else

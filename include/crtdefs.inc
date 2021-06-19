@@ -516,35 +516,24 @@ endif
 endif
 
 ifndef _ERRNO_T_DEFINED
-_ERRNO_T_DEFINED equ 1
+define _ERRNO_T_DEFINED
 errno_t typedef sdword
 endif
-
 ifndef _TIME32_T_DEFINED
+define _TIME32_T_DEFINED
 __time32_t typedef sdword
-_TIME32_T_DEFINED equ 1
 endif
-
 ifndef _TIME64_T_DEFINED
+define _TIME64_T_DEFINED
 __time64_t typedef sqword
-_TIME64_T_DEFINED equ 1
 endif
 
 ifndef _TIME_T_DEFINED
-_TIME_T_DEFINED equ <>
+define _TIME_T_DEFINED
 ifdef _WIN64
-time_t		typedef sqword
+time_t typedef sqword
 else
-time_t		typedef sdword
-endif
-endif
-
-ifndef _CONST_RETURN
-ifdef __cplusplus
-_CONST_RETURN equ <const>
-_CRT_CONST_CORRECT_OVERLOADS equ 1
-else
-_CONST_RETURN equ <>
+time_t typedef sdword
 endif
 endif
 

@@ -31,7 +31,7 @@ include quadmath.inc
 
         this.__v(mulq, 1.e8192, 1.e-4096, INFINITY )
         this.__v(mulq, 2.0, 1.0, 2.0)
-        this.__v(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Br)
+        this.__v(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Dr)
         this.__v(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581063r)
         this.__v(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749757r)
         this.__v(mulq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 4012E8548001A378EB79354B10749757r)
@@ -41,7 +41,7 @@ include quadmath.inc
         this.__m(mulq, 0.0, 1.0, 0.0)
         this.__m(mulq, 0.0, -1.0, -0.0)
         this.__m(mulq, 2.0, 1.0, 2.0)
-        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Br)
+        this.__m(mulq, 1.1, 2.2, 400035C28F5C28F5C28F5C28F5C28F5Dr)
         this.__m(mulq, 0.01, 0.1, 3FF50624DD2F1A9FBE76C8B439581063r)
         this.__m(mulq, 1.0001, 1000000.0002, 4012E8548001A378EB79354B10749757r)
         this.__m(mulq, 3FFF00068DB8BAC710CB295E9E1B089Ar, 4012E8480001A36E2EB1C432CA57A787r, 4012E8548001A378EB79354B10749757r)
@@ -129,7 +129,7 @@ include quadmath.inc
         this.__m(divq, 0.0, -1.0, -0.0)
         this.__m(divq, 2.0, 1.0, 2.0)
         this.__m(divq, 1.1, 2.2, 0.5)
-        this.__m(divq, 0.01, 0.1, 0.1);3FFB9999999999999999999999999999r)
+        this.__m(divq, 0.01, 0.1, 3FFB9999999999999999999999999999r)
         this.__m(divq, 66666.6, 2.0, 33333.3)
         this.__m(divq, 1.0001, 1000000.0002, 3FEB0C7659426EB346F3B91986814E5Er)
         }
@@ -844,15 +844,15 @@ include quadmath.inc
         this.__vaq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
         this.__vaq( addr @CStr( "1.e8192" ), INFINITY, 0 )
         this.__vaq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
-        this.__vaq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C593r, 0 )
+        this.__vaq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 8.88888888888888888888888888888888e-4583, 0 )
 
         this.__maq( addr @CStr( "." ), 0.0, '.' )
         this.__maq( addr @CStr( "-1.0e-0a" ), -1.0, 'a' )
         this.__maq( addr @CStr( "-1e-0a" ), -1.0, 'a' )
         this.__maq( addr @CStr( "123456789.0" ), 123456789.0, 0 )
         this.__maq( addr @CStr( "1.e8192"), INFINITY, 0 )
-        this.__maq( addr @CStr( "3.14159265358979323846264338327"), 4000921FB54442D18469898CC516A159r, 0 )
-        ;this.__maq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 0489B0325A80EC580DF467361195C592r, 0 )
+        this.__maq( addr @CStr( "3.14159265358979323846264338327"), 3.14159265358979323846264338327, 0 )
+        this.__maq( addr @CStr( "8.88888888888888888888888888888888e-4583"), 8.88888888888888888888888888888888e-4583, 0 )
 
         }
         .static __vaq string:abs, val:abs, e:abs {
@@ -1112,7 +1112,7 @@ include quadmath.inc
 
         this.__v(sqrtq, 0.0, 0.0)
         this.__v(sqrtq, 1.0, 1.0)
-        this.__v(sqrtq, 2.0, 3FFF6A09E667F3BCC908B2FB1366EAA6r)
+        this.__v(sqrtq, 2.0, 3FFF6A09E667F3BCC908B2FB1366EAA7r)
         }
 
     .static tanq {}

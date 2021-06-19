@@ -8,7 +8,7 @@ include io.inc
 include time.inc
 include direct.inc
 include errno.inc
-include stat.inc
+include sys/stat.inc
 include string.inc
 include stdlib.inc
 include malloc.inc
@@ -40,7 +40,7 @@ _lk_getltime proc private ft:PVOID
 
 _lk_getltime endp
 
-_stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
+_stat proc uses rsi rdi rbx fname:ptr sbyte, buf:ptr stat
 
   local path:LPSTR, drive, ff:WIN32_FIND_DATA, pathbuf[_MAX_PATH]:byte
 
@@ -84,30 +84,30 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
             mov ff.nFileSizeLow,eax
             mov ff.cFileName,0
             _loctotime_t(80, 1, 1, 0, 0, 0)
-            mov [rdi].S_STAT.st_mtime,eax
-            mov [rdi].S_STAT.st_atime,eax
-            mov [rdi].S_STAT.st_ctime,eax
+            mov [rdi].stat.st_mtime,eax
+            mov [rdi].stat.st_atime,eax
+            mov [rdi].stat.st_ctime,eax
         .else
 
             FindClose(rax)
             .ifd !_lk_getltime(&ff.ftLastWriteTime)
                 .return _dosmaperr(GetLastError())
             .endif
-            mov [rdi].S_STAT.st_mtime,eax
+            mov [rdi].stat.st_mtime,eax
             .ifd !_lk_getltime(&ff.ftLastAccessTime)
-                mov eax,[rdi].S_STAT.st_mtime
+                mov eax,[rdi].stat.st_mtime
             .endif
-            mov [rdi].S_STAT.st_atime,eax
+            mov [rdi].stat.st_atime,eax
             .ifd !_lk_getltime(&ff.ftCreationTime)
-                mov eax,[rdi].S_STAT.st_mtime
+                mov eax,[rdi].stat.st_mtime
             .endif
-            mov [rdi].S_STAT.st_ctime,eax
+            mov [rdi].stat.st_ctime,eax
         .endif
 
         mov eax,[rsi]
         mov edx,ff.dwFileAttributes
-        mov ecx,S_IFDIR or S_IEXEC
-        mov ebx,S_IREAD
+        mov ecx,_S_IFDIR or _S_IEXEC
+        mov ebx,_S_IREAD
 
         .if ah == ':'
             add esi,2
@@ -115,15 +115,15 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
         .endif
         .if al && !(dl & A_D)
             .if ah || al != '\' && al != '/'
-                mov ecx,S_IFREG
+                mov ecx,_S_IFREG
             .endif
         .endif
         .if !(dl & A_D)
-            mov ebx,S_IREAD or S_IWRITE
+            mov ebx,_S_IREAD or _S_IWRITE
         .endif
         or  ebx,ecx
         .if __isexec(rsi)
-            or ebx,S_IEXEC
+            or ebx,_S_IEXEC
         .endif
         mov ecx,ebx
         and ecx,01C0h
@@ -132,18 +132,21 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
         or  ebx,ecx
         shr eax,6
         or  eax,ebx
-        mov [rdi].S_STAT.st_mode,ax
-        mov [rdi].S_STAT.st_nlink,1
+        mov [rdi].stat.st_mode,ax
+        mov [rdi].stat.st_nlink,1
         mov eax,ff.nFileSizeLow
-        mov [rdi].S_STAT.st_size,eax
+        mov edx,ff.nFileSizeHigh
+        shl rdx,32
+        or  rax,rdx
+        mov [rdi].stat.st_size,rax
         xor eax,eax
-        mov [rdi].S_STAT.st_uid,ax
-        mov [rdi].S_STAT.st_ino,ax
-        mov [rdi].S_STAT.st_gid,eax
+        mov [rdi].stat.st_uid,ax
+        mov [rdi].stat.st_ino,ax
+        mov [rdi].stat.st_gid,ax
         mov eax,drive
         dec eax
-        mov [rdi].S_STAT.st_dev,eax
-        mov [rdi].S_STAT.st_rdev,eax
+        mov [rdi].stat.st_dev,eax
+        mov [rdi].stat.st_rdev,eax
         .return 0
     .until 1
     _set_errno(ENOENT)

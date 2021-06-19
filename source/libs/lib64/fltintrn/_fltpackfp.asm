@@ -8,7 +8,7 @@ include fltintrn.inc
 
     .code
 
-_fltpackfp proc q:ptr, p:ptr STRFLT
+_fltpackfp proc dst:ptr, src:ptr STRFLT
 
     _fltround(rdx)
 
@@ -19,7 +19,7 @@ _fltpackfp proc q:ptr, p:ptr STRFLT
     rcl     rdx,1
     shrd    rax,rdx,16
     shrd    rdx,rcx,16
-    mov     rcx,p
+    mov     rcx,dst
     mov     [rcx],rax
     mov     [rcx+8],rdx
     movaps  xmm0,[rcx]

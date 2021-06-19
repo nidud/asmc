@@ -2,7 +2,7 @@ include io.inc
 include stdio.inc
 include string.inc
 include fcntl.inc
-include stat.inc
+include sys/stat.inc
 
 	.data
 	buf db 4096 dup(?)
@@ -10,7 +10,7 @@ include stat.inc
 
 main	proc c
 
-	.assert _creat("test.fil",S_IREAD or S_IWRITE) != -1
+	.assert _creat("test.fil",_S_IREAD or _S_IWRITE) != -1
 	.assert !_close(eax)
 	.assert _open("test.fil",O_RDWR) == 3
 	mov	esi,eax

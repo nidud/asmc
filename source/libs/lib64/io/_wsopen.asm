@@ -7,7 +7,7 @@
 include io.inc
 include share.inc
 include fcntl.inc
-include stat.inc
+include sys/stat.inc
 include errno.inc
 include winbase.inc
 include winnt.inc
@@ -129,7 +129,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
         not  edx            ; -1
         and  eax,edx        ; 0284h
         mov  edx,oflag
-        and  eax,S_IWRITE   ; 0080h
+        and  eax,_S_IWRITE  ; 0080h
         pop  rax
         .ifz
             mov ecx,FILE_ATTRIBUTE_READONLY

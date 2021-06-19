@@ -146,10 +146,10 @@ _strtoflt proc string:string_t
         .ifs eax < -4932
             or flt.flags,_ST_UNDERFLOW
         .endif
-        _fltpackfp(&flt, &flt)
 
     .until 1
-    lea rax,flt
+
+    _fltpackfp(&flt, &flt)
     ret
 
 _strtoflt endp

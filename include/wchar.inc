@@ -1,5 +1,5 @@
 ifndef __WCHAR_INC
-__WCHAR_INC equ <>
+define __WCHAR_INC
 .pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
@@ -14,16 +14,16 @@ endif
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _TIME_T_DEFINED
-_TIME_T_DEFINED equ <>
+define _TIME_T_DEFINED
 ifdef _WIN64
-time_t		typedef sqword
+time_t typedef sqword
 else
-time_t		typedef sdword
+time_t typedef sdword
 endif
 endif
 
 ifndef _WCHAR_T_DEFINED
-_WCHAR_T_DEFINED equ <>
+define _WCHAR_T_DEFINED
 wchar_t typedef WORD
 endif
 
@@ -31,14 +31,14 @@ WCHAR_MIN	equ 0
 WCHAR_MAX	equ 0xFFFF
 
 ifndef _WCTYPE_T_DEFINED
-_WCTYPE_T_DEFINED equ <>
+define _WCTYPE_T_DEFINED
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
 endif
 
 
 ifndef _VA_LIST_DEFINED
-_VA_LIST_DEFINED equ <>
+define _VA_LIST_DEFINED
 ifdef  _M_ALPHA
 va_list		STRUC
 a0		LPSTR ?
@@ -50,11 +50,11 @@ endif
 endif
 
 ifndef WEOF
-WEOF			equ 0xFFFF
+WEOF		equ 0xFFFF
 endif
 
 ifndef _FILE_DEFINED
-_FILE_DEFINED equ <>
+define _FILE_DEFINED
 _iobuf		STRUC
 _ptr		LPSTR ?
 _cnt		SINT ?
@@ -79,12 +79,12 @@ endif
 endif
 
 ifndef _FSIZE_T_DEFINED
-_FSIZE_T_DEFINED equ <>
+define _FSIZE_T_DEFINED
 _fsize_t	typedef size_t
 endif
 
 ifndef _WFINDDATA_T_DEFINED
-_WFINDDATA_T_DEFINED equ <>
+define _WFINDDATA_T_DEFINED
 _wfinddata_t	STRUC
 attrib		dd ?
 time_create	time_t ?
@@ -165,7 +165,7 @@ _WDIRECT_DEFINED equ 1
 endif
 
 ifndef _WIO_DEFINED
-
+define _WIO_DEFINED
 _waccess	proto __cdecl :ptr wchar_t, :SINT
 _wchmod		proto __cdecl :ptr wchar_t, :SINT
 _wcreat		proto __cdecl :ptr wchar_t, :SINT
@@ -176,24 +176,19 @@ _wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG
 _wsopen		proto _CDecl :ptr wchar_t, :SINT, :SINT, :VARARG
 _wmktemp	proto __cdecl :ptr wchar_t
-
-if     _INTEGRAL_MAX_BITS GE 64
+if _INTEGRAL_MAX_BITS GE 64
 _wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
 _wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
 endif
-
-_WIO_DEFINED	equ 1
 endif
 
 ifndef _WLOCALE_DEFINED
-
+define _WLOCALE_DEFINED
 _wsetlocale	proto __cdecl :SINT, :ptr wchar_t
-
-_WLOCALE_DEFINED equ 1
 endif
 
 ifndef _WPROCESS_DEFINED
-_WPROCESS_DEFINED equ <>
+define _WPROCESS_DEFINED
 
 _wexecl		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
 _wexecle	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
@@ -266,81 +261,75 @@ endif
 ifndef _POSIX_
 
 ifndef _INO_T_DEFINED
-_INO_T_DEFINED equ <>
-_ino_t		typedef WORD
-if NOT __STDC__
-ino_t		typedef WORD
+define _INO_T_DEFINED
+_ino_t typedef word
 endif
-endif
-
 ifndef _DEV_T_DEFINED
-_dev_t		typedef UINT
-if NOT __STDC__
-dev_t		typedef UINT
+define _DEV_T_DEFINED
+_dev_t typedef dword
 endif
-_DEV_T_DEFINED	equ 1
-endif
-
 ifndef _OFF_T_DEFINED
+define _OFF_T_DEFINED
 ifdef _WIN64
-_off_t		typedef QWORD
+_off_t typedef qword
 else
-_off_t		typedef SDWORD
+_off_t typedef sdword
 endif
-if NOT __STDC__
-off_t		typedef _off_t
 endif
-_OFF_T_DEFINED	equ 1
+ifndef _TIME32_T_DEFINED
+define _TIME32_T_DEFINED
+__time32_t typedef sdword
 endif
 
 ifndef _STAT_DEFINED
-_STAT_DEFINED equ <>
+define _STAT_DEFINED
 
-_STAT		STRUC
-st_dev		_dev_t ?
-st_ino		_ino_t ?
-st_mode		dw ?
-st_nlink	dw ?
-st_uid		dw ?
-st_gid		dw ?
-st_rdev		_dev_t ?
-st_size		_off_t ?
-st_atime	time_t ?
-st_mtime	time_t ?
-st_ctime	time_t ?
-_STAT		ENDS
+.pragma pack(push, 4)
 
-if NOT __STDC__
-stat		STRUC
-st_dev		_dev_t ?
-st_ino		_ino_t ?
-st_mode		dw ?
-st_nlink	dw ?
-st_uid		dw ?
-st_gid		dw ?
-st_rdev		_dev_t ?
-st_size		_off_t ?
-st_atime	time_t ?
-st_mtime	time_t ?
-st_ctime	time_t ?
-stat		ENDS
-endif
+.template _STAT
+    st_dev	_dev_t ?
+    st_ino	_ino_t ?
+    st_mode	word ?
+    st_nlink	sword ?
+    st_uid	sword ?
+    st_gid	sword ?
+    st_rdev	_dev_t ?
+    st_size	_off_t ?
+    st_atime	time_t ?
+    st_mtime	time_t ?
+    st_ctime	time_t ?
+   .ends
 
-if _INTEGRAL_MAX_BITS GE 64
-_stati64	STRUC
-st_dev		_dev_t ?
-st_ino		_ino_t ?
-st_mode		dw ?
-st_nlink	dw ?
-st_uid		dw ?
-st_gid		dw ?
-st_rdev		_dev_t ?
-st_size		dq ?
-st_atime	time_t ?
-st_mtime	time_t ?
-st_ctime	time_t ?
-_stati64	ENDS
-endif
+.template stat
+    st_dev	_dev_t ?
+    st_ino	_ino_t ?
+    st_mode	word ?
+    st_nlink	sword ?
+    st_uid	sword ?
+    st_gid	sword ?
+    st_rdev	_dev_t ?
+    st_size	_off_t ?
+    st_atime	__time32_t ?
+    st_mtime	__time32_t ?
+    st_ctime	__time32_t ?
+   .ends
+
+.template _stati64
+    st_dev	_dev_t ?
+    st_ino	_ino_t ?
+    st_mode	word ?
+    st_nlink	sword ?
+    st_uid	sword ?
+    st_gid	sword ?
+    st_rdev	_dev_t ?
+    st_size	dq ?
+    st_atime	time_t ?
+    st_mtime	time_t ?
+    st_ctime	time_t ?
+   .ends
+
+.pragma pack(pop)
+
 endif
 
 ifndef _WSTAT_DEFINED

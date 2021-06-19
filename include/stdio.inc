@@ -50,6 +50,10 @@ FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
 
+_fileno proto fastcall fp:LPFILE {
+    mov eax,[fp].FILE._file
+    }
+
 if not defined(_MSVCRT) or defined(_CRTBLD)
 ifndef _LINUX
 externdef	_bufin:BYTE

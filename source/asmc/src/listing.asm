@@ -360,6 +360,7 @@ endif
     .if ( ModuleInfo.CurrComment )
         mov len2,strlen( ModuleInfo.CurrComment )
     .endif
+    mov eax,len2
     add eax,len
     add eax,sizeof( ll.buffer ) + NLSIZ
     add list_pos,eax
@@ -426,7 +427,7 @@ LstSetPosition proc
           UseSavedState && \
           ModuleInfo.GeneratedCode == 0 )
 
-        add list_pos,LineStoreCurr.get_pos()
+        mov list_pos,LineStoreCurr.get_pos()
         fseek( CurrFile[LST*4], list_pos, SEEK_SET )
         or ModuleInfo.line_flags,LOF_SKIPPOS
     .endif

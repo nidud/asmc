@@ -1658,7 +1658,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:token_t
                 .if ( eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR ) )
                     LQJumpLabel( T_JMP, [esi].labels[LEXIT*4] )
                 .endif
-
+if 0
         .elseif Parse_Pass == PASS_1
                 ;
                 ; error A7007: .CASE without .ENDC: assumed fall through
@@ -1667,7 +1667,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:token_t
                 .while [eax].hll_item.caselist
                     mov eax,[eax].hll_item.caselist
                 .endw
-if 1
+
                 .if ( eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR ) )
                     asmerr( 7007 )
                 .endif

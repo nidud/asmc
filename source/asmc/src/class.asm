@@ -238,7 +238,7 @@ get_token_size endp
     assume ebx:token_t
 
 get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
-        size:string_t, count:array_t, isid:ptr int_t, context:array_t
+        size:string_t, count:array_t, isid:ptr int_t, context:array_t, langtype:ptr int_t
 
     mov edi,token
     mov ebx,tokenarray
@@ -283,6 +283,9 @@ get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
     .endif
     add ebx,16
     .if ( [ebx].token == T_RES_ID ) ; fastcall...
+        mov ecx,langtype
+        mov eax,[ebx].tokval
+        mov [ecx],eax
         add ebx,16
     .endif
     .if [ebx].token == T_DIRECTIVE && [ebx].tokval == T_EQU
@@ -382,14 +385,16 @@ ParseOperator proc uses esi edi ebx class:string_t, tokenarray:token_t, buffer:s
   local oldstat   : input_status
   local vector[128]: char_t
   local brachets  : int_t
+  local langtype  : int_t
 
     mov ebx,tokenarray
+    mov langtype,0
 
     ; class :: + (...) / (...)
 
     .while 1
 
-        mov ebx,get_param_name( ebx, &name, &size, &arg_count, &id, &context )
+        mov ebx,get_param_name( ebx, &name, &size, &arg_count, &id, &context, &langtype )
         .return .if eax == ERROR
 
         mov esi,ebx
@@ -720,6 +725,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
   local IsCom:uchar_t
   local IsType:uchar_t
   local language[32]:char_t
+  local langtype:int_t
   local P$[16]:char_t
   local T$[16]:char_t
   local constructor:int_t
@@ -731,11 +737,14 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
     shl ebx,4
     add ebx,tokenarray
     mov constructor,0
+    mov langtype,0
 
     mov name,[ebx-16].string_ptr
     mov retval,NOT_ERROR
     mov esi,ModuleInfo.ComStack
     .if esi
+        mov ecx,[esi].com_item.langtype
+        mov langtype,ecx
         .if !strcmp(eax, [esi].com_item.class)
 
             ClassProto2( name, name, esi, [ebx+16].tokpos )
@@ -813,16 +822,11 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
                 strcat(edi, [ebx].string_ptr)
                 add ebx,16
 
-            .elseif !esi && ModuleInfo.ComStack
+            .elseif !esi && langtype
 
-                mov ecx,ModuleInfo.ComStack
-                mov edx,[ecx].com_item.langtype
-                .if edx
-
-                    GetResWName(edx, &language)
-                    strcat(edi, " ")
-                    strcat(edi, &language)
-                .endif
+                GetResWName(langtype, &language)
+                strcat(edi, " ")
+                strcat(edi, &language)
             .endif
             xor esi,esi
         .endif
@@ -1268,18 +1272,6 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
       .case T_DOT_STATIC
       .case T_DOT_OPERATOR
 
-        mov esi,ModuleInfo.ComStack
-        mov ecx,CurrStruct
-        .if esi && [esi].com_item.type
-        .elseif !ecx || !esi
-            .return asmerr( 1011 )
-        .endif
-        mov [esi].com_item.method,eax
-
-        ; .operator + [:type] [{..}]
-
-        lea ebx,[ebx+edx+16]
-
         .new is_id      : int_t
         .new is_vararg  : int_t
         .new context    : string_t
@@ -1287,9 +1279,23 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         .new token[256] : char_t
         .new name[512]  : char_t
         .new vtable     : asym_t
+        .new langtype   :int_t
+
+        mov esi,ModuleInfo.ComStack
+        mov ecx,CurrStruct
+        .if esi && [esi].com_item.type
+        .elseif !ecx || !esi
+            .return asmerr( 1011 )
+        .endif
+        mov [esi].com_item.method,eax
+        mov langtype,[esi].com_item.langtype
+
+        ; .operator + [:type] [{..}]
+
+        lea ebx,[ebx+edx+16]
 
         mov is_vararg,0
-        mov ebx,get_param_name( ebx, &token, edi, &args, &is_id, &context )
+        mov ebx,get_param_name( ebx, &token, edi, &args, &is_id, &context, &langtype )
         .return .if eax == ERROR
 
         .if context ; { inline code }
@@ -1363,7 +1369,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
                 .if strcmp(edi, class_ptr) ; constructor ?
 
-                    ClassProto( edi, [esi].com_item.langtype, [ebx].tokpos, T_PROC )
+                    ClassProto( edi, langtype, [ebx].tokpos, T_PROC )
                 .else
 
                     ClassProto2( class_ptr, edi, esi, [ebx].tokpos )

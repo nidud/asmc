@@ -733,20 +733,20 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
         mov esi,CreateMacro(edi)
 
-    .elseif [esi].sym.state != SYM_MACRO
+    .elseif [esi].state != SYM_MACRO
 
-        .if [esi].sym.state != SYM_UNDEFINED
+        .if [esi].state != SYM_UNDEFINED
 
-            .if [esi].sym.state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat
+            .if [esi].state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat
 
                 mov ebx,edx
                 .if SymAlloc(edi)
 
-                    mov [esi].sym.target_type,eax
-                    or  [esi].sym.flag2,S_ISINLINE
+                    mov [esi].target_type,eax
+                    or  [esi].flag2,S_ISINLINE
                     mov esi,eax
-                    mov [esi].sym.altname,ebx
-                    and [esi].sym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
+                    mov [esi].altname,ebx
+                    and [esi].mac_flag,not ( M_ISVARARG or M_ISFUNC )
                     jmp alloc_macroinfo
                 .else
                     .return asmerr( 2005, edi )
@@ -768,7 +768,7 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
             alloc_macroinfo:
 
-            mov [esi].sym.state,SYM_MACRO
+            mov [esi].state,SYM_MACRO
             mov [esi].macroinfo,LclAlloc(macro_info)
             mov edi,eax
             mov ecx,macro_info
@@ -779,13 +779,13 @@ MacroDir proc uses esi edi ebx i:int_t, tokenarray:token_t
     mov edi,[esi].macroinfo
     mov [edi].srcfile,get_curr_srcfile()
 
-    .if ( ( Parse_Pass == PASS_1 ) || ( [esi].sym.flags & S_VARIABLE ) )
+    .if ( ( Parse_Pass == PASS_1 ) || ( [esi].flags & S_VARIABLE ) )
         ;; is the macro redefined?
         .if [edi].lines != NULL
             ReleaseMacroData(esi)
             ;; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
-            and [esi].sym.mac_flag,not M_ISFUNC
-            or  byte ptr [esi].sym.flags,S_VARIABLE
+            and [esi].mac_flag,not M_ISFUNC
+            or  byte ptr [esi].flags,S_VARIABLE
         .endif
         mov store_data,TRUE
     .else

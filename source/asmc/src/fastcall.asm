@@ -794,7 +794,7 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     mov eax,numparams
     mov esi,4
     mov edi,8
-    .if [edx].dsym.sym.langtype == LANG_VECTORCALL
+    .if [edx].asym.langtype == LANG_VECTORCALL
         mov esi,6
         mov edi,16
     .endif
@@ -1142,7 +1142,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     mov arg_offset,eax
 
     mov ecx,pp
-    .if [ecx].dsym.sym.langtype == LANG_VECTORCALL
+    .if [ecx].asym.langtype == LANG_VECTORCALL
         mov vector_call,TRUE
     .endif
 

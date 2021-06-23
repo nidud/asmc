@@ -1,34 +1,34 @@
-.pragma list(push, 0)
-
-;; prototypes of TYPES.ASM
-
+; TYPES.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __TYPES_INC
-__TYPES_INC equ <>
+define __TYPES_INC
 
-;; qualified_type us used for parsing a qualified type.
+; qualified_type us used for parsing a qualified type.
 
-qualified_type		struct
+.template qualified_type
     size		int_t ?
-    symtype		asym_t ?
+    symtype		ptr asym ?
     mem_type		db ?
-    is_ptr		db ?	;; contains level of indirection
+    is_ptr		db ?	; contains level of indirection
     is_far		db ?
     Ofssize		db ?
     ptr_memtype		db ?
-qualified_type		ends
+   .ends
 
-externdef CurrStruct:dsym_t	;; start of current STRUCT list
+externdef CurrStruct:ptr dsym	; start of current STRUCT list
 
 CreateType		proto :int_t, :token_t, :string_t, :ptr ptr asym
-CreateTypeSymbol	proto :asym_t, :string_t, :int_t
-SearchNameInStruct	proto :asym_t, :string_t, :ptr uint_t, :int_t
-GetQualifiedType	proto :ptr int_t, :token_t, :ptr qualified_type
-CreateStructField	proto :int_t, :token_t, :string_t, :uchar_t, :asym_t, :uint_t
-UpdateStructSize	proto :asym_t
+CreateTypeSymbol	proto :ptr asym, :string_t, :int_t
+SearchNameInStruct	proto :ptr asym, :string_t, :ptr uint_t, :int_t
+GetQualifiedType	proto :ptr int_t, :ptr asm_tok, :ptr qualified_type
+CreateStructField	proto :int_t, :ptr asm_tok, :string_t, :uchar_t, :ptr asym, :uint_t
+UpdateStructSize	proto :ptr asym
 SetStructCurrentOffset	proto :int_t
 AlignInStruct		proto :int_t
 TypesInit		proto
 DeleteType macro t
     endm
 endif
-.pragma list(pop)

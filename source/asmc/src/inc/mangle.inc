@@ -1,11 +1,14 @@
-.pragma list(push, 0)
+; MANGLE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Declaration for mangler routines (name decoration)
+;
 ifndef __MANGLE_INC
-__MANGLE_INC equ <>
+define __MANGLE_INC
 
-;; Declaration for mangler routines (=name decoration)
-
-Mangle      proto :asym_t, :string_t
-SetMangler  proto :asym_t, :int_t, :string_t
+Mangle      proto :ptr asym, :string_t
+SetMangler  proto :ptr asym, :int_t, :string_t
 
 endif
-.pragma list(pop)

@@ -1,4 +1,11 @@
+; DIRECTVE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 ifndef __ASMC64__
+
 res(DOT_8086, .8086, 0, DRT_CPU, 0, P_86, P_86)
 res(DOT_186,  .186,  0, DRT_CPU, 0, P_86, P_186)
 res(DOT_286,  .286,  0, DRT_CPU, 0, P_86, P_286)
@@ -22,6 +29,7 @@ res(DOT_8087, .8087, 0, DRT_CPU, 0, P_86, P_87)
 res(DOT_287,  .287,  0, DRT_CPU, 0, P_86, P_287)
 res(DOT_387,  .387,  0, DRT_CPU, 0, P_86, P_387)
 res(DOT_NO87, .no87, 0, DRT_CPU, 0, P_86, P_NO87)
+
 endif
 
 res(DOT_CREF,	    .cref,	 0, DRT_LISTING, 0, P_86, 0)
@@ -181,10 +189,13 @@ res(DOT_RETURN,	    .return,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or D
 res(DOT_PRAGMA,	    .pragma,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_PRAGMA, 0, P_86, 0)
 
 ifndef __ASMC64__
+
 res(DOT_EXIT,	    .exit,	 DF_CGEN or DF_STORE, DRT_STARTEXIT, 0, P_86, 0)
 res(DOT_STARTUP,    .startup,	 DF_CGEN or DF_STORE, DRT_STARTEXIT, 0, P_86, 0)
 res(DOT_MODEL,	    .model,	 DF_CGEN, DRT_MODEL, 0, P_86, 0)
+
 endif
+
 res(DOT_RADIX,	    .radix,	 0, DRT_RADIX, 0, P_86, 0)
 res(DOT_SAFESEH,    .safeseh,	 0, DRT_SAFESEH, RWF_IA32, P_386, 0)
 res(DOT_ERR,	    .err,	 DF_STRPARM or DF_STORE, DRT_ERRDIR, 0, P_86, 0)

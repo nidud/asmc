@@ -533,7 +533,7 @@ GetMemtypeString proc uses esi edi ebx sym:ptr asym, buffer:string_t
             mov edi,strings[LS_NEAR]
         .else
             movzx ecx,[esi].asym.Ofssize
-            .if ( [esi].asym.sflags & S_ISFAR )
+            .if ( [esi].asym.is_far )
                 mov edi,strings[LS_FAR16+ecx*4]
             .else
                 mov edi,strings[LS_NEAR16+ecx*4]
@@ -634,22 +634,22 @@ log_struct proc uses esi edi ebx sym:ptr asym, name:string_t, ofs:int_32
 
     .for( ebx = [esi].struct_info.head : ebx : ebx = [ebx].next )
 
-        .if ( [ebx].sym.mem_type == MT_TYPE && [ebx].ivalue[0] == NULLC )
+        .if ( [ebx].mem_type == MT_TYPE && [ebx].ivalue[0] == NULLC )
 
-            mov ecx,[ebx].sym.offs
+            mov ecx,[ebx].offs
             add ecx,ofs
-            log_struct( [ebx].sym.type, [ebx].sym.name, ecx )
+            log_struct( [ebx].type, [ebx].name, ecx )
 
         .else
 
             ; don't list unstructured fields without name
             ; but do list them if they are structured
 
-            mov ecx,[ebx].sym.name
+            mov ecx,[ebx].name
 
-            .if ( byte ptr [ecx] || ( [ebx].sym.mem_type == MT_TYPE ) )
+            .if ( byte ptr [ecx] || ( [ebx].mem_type == MT_TYPE ) )
 
-                movzx eax,[ebx].sym.name_size
+                movzx eax,[ebx].name_size
                 add eax,prefix
                 mov ecx,eax
                 add eax,offset dots
@@ -661,13 +661,13 @@ log_struct proc uses esi edi ebx sym:ptr asym, name:string_t, ofs:int_32
                 .for ( esi = 0: esi < prefix: esi++ )
                     LstPrintf(" ")
                 .endf
-                mov ecx,[ebx].sym.offs
+                mov ecx,[ebx].offs
                 add ecx,[edi].asym.offs
                 add ecx,ofs
-                LstPrintf( "%s %s        %8X   ", [ebx].sym.name, pdots, ecx )
+                LstPrintf( "%s %s        %8X   ", [ebx].name, pdots, ecx )
                 LstPrintf( "%s", GetMemtypeString( ebx, NULL ) )
-                .if ( [ebx].sym.flag1 & S_ISARRAY )
-                    LstPrintf( "[%u]", [ebx].sym.total_length )
+                .if ( [ebx].flag1 & S_ISARRAY )
+                    LstPrintf( "[%u]", [ebx].total_length )
                 .endif
                 LstNL()
             .endif
@@ -700,7 +700,7 @@ log_record proc uses esi edi ebx sym:ptr asym
 
     .for ( ebx = [esi].struct_info.head: ebx: ebx = [ebx].next )
 
-        movzx eax,[ebx].sym.name_size
+        movzx eax,[ebx].name_size
         add eax,2
         mov ecx,eax
         add eax,offset dots
@@ -712,10 +712,10 @@ log_record proc uses esi edi ebx sym:ptr asym
         xor eax,eax
         mov dword ptr mask[0],eax
         mov dword ptr mask[4],eax
-        mov esi,[ebx].sym.offs
-        add esi,[ebx].sym.total_size
+        mov esi,[ebx].offs
+        add esi,[ebx].total_size
 
-        .for ( ecx = [ebx].sym.offs, edx = 0: ecx < esi: ecx++ )
+        .for ( ecx = [ebx].offs, edx = 0: ecx < esi: ecx++ )
 
             mov eax,1
             .if ecx >= 32
@@ -735,10 +735,10 @@ log_record proc uses esi edi ebx sym:ptr asym
         .endif
         .if ( [edi].asym.total_size > 4 )
             LstPrintf( "  %s %s      %6X  %7X  %016I64X %s",
-                [ebx].sym.name, pdots, [ebx].sym.offs, [ebx].sym.total_size, mask, ecx )
+                [ebx].name, pdots, [ebx].offs, [ebx].total_size, mask, ecx )
         .else
             LstPrintf( "  %s %s      %6X  %7X  %08X %s",
-                [ebx].sym.name, pdots, [ebx].sym.offs, [ebx].sym.total_size, mask, ecx )
+                [ebx].name, pdots, [ebx].offs, [ebx].total_size, mask, ecx )
         .endif
         LstNL()
     .endf

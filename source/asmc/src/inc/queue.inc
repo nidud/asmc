@@ -1,9 +1,13 @@
-.pragma list(push, 0)
-ifndef __QUEUE_INC
-__QUEUE_INC equ <>
-
+; QUEUE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; interface for queue.asm
 ; This file is included by asmc.inc
+;
+ifndef __QUEUE_INC
+define __QUEUE_INC
 
 qnode	struct
 next	ptr ?
@@ -24,4 +28,3 @@ QEnqueue proto fastcall :ptr qdesc, :ptr
 QAddItem proto fastcall :ptr qdesc, :ptr
 
 endif
-.pragma list(pop)

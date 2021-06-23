@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; HLL.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __HLL_INC
-__HLL_INC equ <>
+define __HLL_INC
 
-NULLC		equ 0
+define NULLC	0
 
 HllInit		proto :int_t ;; reset counter for hll labels
 HllCheckOpen	proto
@@ -11,11 +15,8 @@ ClassCheckOpen	proto
 PragmaInit	proto
 PragmaCheckOpen proto
 
-hll_t		typedef ptr hll_item
-
 InvertJump	proto fastcall :string_t
-GetExpression	proto :hll_t, :ptr int_t, :token_t, :int_t, :uint_t, :string_t, :ptr hll_opnd
-ForDirective	proto :int_t, :token_t
+GetExpression	proto :ptr hll_item, :ptr int_t, :ptr asm_tok, :int_t, :uint_t, :string_t, :ptr hll_opnd
+ForDirective	proto :int_t, :ptr asm_tok
 
 endif
-.pragma list(pop)

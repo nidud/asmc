@@ -245,7 +245,7 @@ atofloat proc _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
         .if ( errno )
             asmerr( 2104, inp )
         .endif
-        .if( negative )
+        .if ( negative )
             mov ecx,_out
             or  byte ptr [ecx+15],0x80
         .endif
@@ -287,9 +287,9 @@ atofloat proc _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftype:uchar_t
 
 atofloat endp
 
-    assume ebx:expr_t
+    assume ebx:ptr expr
 
-quad_resize proc uses esi ebx opnd:expr_t, size:uint_t
+quad_resize proc uses esi ebx opnd:ptr expr, size:uint_t
 
     mov errno,0
     mov ebx,opnd

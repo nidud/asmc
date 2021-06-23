@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; LQUEUE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; v2.11: line queue functions moved from input.asm to lqueue.asm
+;
 ifndef __LQUEUE_INC
-__LQUEUE_INC equ <>
-
-;; v2.11: line queue functions moved from input.asm to lqueue.asm
+define __LQUEUE_INC
 
 DeleteLineQueue proto
 AddLineQueue    proto :string_t
@@ -17,4 +21,3 @@ is_linequeue_populated macro
     endm
 
 endif
-.pragma list(pop)

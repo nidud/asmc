@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; DATA.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __DATA_INC
-__DATA_INC equ <>
+define __DATA_INC
 
-data_dir proto :int_t, :token_t, :asym_t
+data_dir proto :int_t, :ptr asm_tok, :ptr asym
 
 endif
-.pragma list(pop)
+

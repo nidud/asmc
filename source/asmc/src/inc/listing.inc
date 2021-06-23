@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; LISTING.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; listing interface.
+;
 ifndef __LISTING_INC
 define __LISTING_INC
-
-;; listing interface.
 
 .enum lsttype {
     LSTTYPE_DATA,
@@ -25,4 +29,3 @@ LstNL		proto
 LstWrite	proto :int_t, :uint_t, :ptr
 
 endif
-.pragma list(pop)

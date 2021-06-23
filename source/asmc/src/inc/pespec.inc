@@ -1,9 +1,12 @@
-
-;; PE definitions
-;; see also: coffspec.inc
-
-ifndef PE_H
-PE_H equ <>
+; PESPEC.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; PE definitions
+; see also: coffspec.inc
+ifndef __PE_INC
+define __PE_INC
 
 IMAGE_DOS_HEADER	STRUC
 e_magic			dw ?
@@ -143,21 +146,21 @@ FileHeader			IMAGE_FILE_HEADER <>
 OptionalHeader			IMAGE_OPTIONAL_HEADER64 <>
 IMAGE_PE_HEADER64		ENDS
 
-;; base relocations
+; base relocations
 
 IMAGE_BASE_RELOCATION		STRUC
 VirtualAddress			dd ?
 SizeOfBlock			dd ?
 IMAGE_BASE_RELOCATION		ENDS
 
-IMAGE_REL_BASED_ABSOLUTE	equ 0  ;; relocation is skipped
-IMAGE_REL_BASED_HIGH		equ 1  ;; high 16-bits of a 32-bit target
-IMAGE_REL_BASED_LOW		equ 2  ;; low 16-bits of a 32-bit target
-IMAGE_REL_BASED_HIGHLOW		equ 3  ;; 32-bit target
-IMAGE_REL_BASED_HIGHADJ		equ 4  ;; 32-bit target; first high 16-bits, then low 16-bits in next slot
-IMAGE_REL_BASED_DIR64		equ 10 ;; 64-bit target
+IMAGE_REL_BASED_ABSOLUTE	equ 0  ; relocation is skipped
+IMAGE_REL_BASED_HIGH		equ 1  ; high 16-bits of a 32-bit target
+IMAGE_REL_BASED_LOW		equ 2  ; low 16-bits of a 32-bit target
+IMAGE_REL_BASED_HIGHLOW		equ 3  ; 32-bit target
+IMAGE_REL_BASED_HIGHADJ		equ 4  ; 32-bit target; first high 16-bits, then low 16-bits in next slot
+IMAGE_REL_BASED_DIR64		equ 10 ; 64-bit target
 
-;; PE resource directory structure
+; PE resource directory structure
 
 IMAGE_RESOURCE_DIRECTORY	STRUC
 Characteristics			dd ?
@@ -171,8 +174,8 @@ IMAGE_RESOURCE_DIRECTORY	ENDS
 IMAGE_RESOURCE_DIRECTORY_ENTRY	STRUC
 UNION
   NameOffset			dd ?
-  Name				dd ? ;; ID is an offset to an IMAGE_RESOURCE_DIR_STRING_U struct
-  Id				dw ? ;; ID is an integer (usually a resource type )
+  Name				dd ? ; ID is an offset to an IMAGE_RESOURCE_DIR_STRING_U struct
+  Id				dw ? ; ID is an integer (usually a resource type )
 ENDS
 UNION
   OffsetToData			dd ?

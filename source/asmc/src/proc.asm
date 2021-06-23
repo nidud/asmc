@@ -612,9 +612,7 @@ LocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .endif
         mov ecx,loc
         mov [ecx].asym.is_ptr,ti.is_ptr
-        .if ti.is_far
-            or [ecx].asym.sflags,S_ISFAR
-        .endif
+        mov [ecx].asym.is_far,ti.is_far
         mov [ecx].asym.Ofssize,ti.Ofssize
         mov [ecx].asym.ptr_memtype,ti.ptr_memtype
         mov eax,ti.size
@@ -926,12 +924,9 @@ ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr as
             .endif
             mov on,ah
 
-            test [edi].asym.sflags,S_ISFAR
-            setnz cl
-
             .if ( ti.mem_type != [edi].asym.mem_type || \
                 ( ti.mem_type == MT_TYPE && tn != to ) || \
-                ( ti.mem_type == MT_PTR && ( ti.is_far != cl || on != oo || \
+                ( ti.mem_type == MT_PTR && ( ti.is_far != [edi].asym.is_far || on != oo || \
                  ( !fast_type && ( ti.ptr_memtype != [edi].asym.ptr_memtype || tn != to ) ) ) ) )
                 asmerr( 2111, name )
             .endif
@@ -979,9 +974,7 @@ ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr as
 
             ; v2.05: moved BEFORE fastcall_tab()
 
-            .if ( ti.is_far )
-                or [edi].asym.sflags,S_ISFAR
-            .endif
+            mov [edi].asym.is_far,ti.is_far
             mov [edi].asym.Ofssize,ti.Ofssize
             mov [edi].asym.is_ptr,ti.is_ptr
             mov [edi].asym.ptr_memtype,ti.ptr_memtype
@@ -1009,8 +1002,7 @@ ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr as
 
                 mov eax,2
                 mov ecx,p
-                mov cl,[ecx].asym.sflags
-                and cl,S_SEGOFSSIZE
+                mov cl,[ecx].asym.segoffsize
                 shl eax,cl
                 .if ( IsPROC )
                     movzx eax,CurrWordSize
@@ -1302,9 +1294,7 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
     ;
     mov edi,p
     .if ( [edi].asym.state == SYM_TYPE )
-        mov al,[edi].asym.sflags
-        and al,S_SEGOFSSIZE
-        mov oldofssize,al
+        mov oldofssize,[edi].asym.segoffsize
     .else
         mov oldofssize,GetSymOfssize( edi )
     .endif
@@ -1321,8 +1311,7 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
     .else
         mov [edi].asym.mem_type,newmemtype
         .if ( IsPROC == FALSE )
-            and [edi].asym.sflags,not S_SEGOFSSIZE
-            or  [edi].asym.sflags,newofssize
+            mov [edi].asym.segoffsize,newofssize
         .endif
     .endif
 
@@ -1646,9 +1635,7 @@ CreateProc proc uses esi edi sym:ptr asym, name:string_t, state:sym_state
     .if ( edi )
         mov [edi].asym.state,state
         .if ( state != SYM_INTERNAL )
-            and [edi].asym.sflags,not S_SEGOFSSIZE
-            mov al,ModuleInfo.Ofssize
-            or [edi].asym.sflags,al
+            mov [edi].asym.segoffsize,ModuleInfo.Ofssize
         .endif
         mov [edi].dsym.procinfo,LclAlloc( sizeof( proc_info ) )
 if 0 ; zero alloc..
@@ -1979,10 +1966,7 @@ CopyPrototype proc uses esi edi p:ptr dsym, src:ptr dsym
     ;
     ; we use the PROTO part, not the TYPE part
     ;
-    mov al,[ecx].asym.sflags
-    and al,S_SEGOFSSIZE
-    and [edi].asym.sflags,not S_SEGOFSSIZE
-    or  [edi].asym.sflags,al
+    mov [edi].asym.segoffsize,[ecx].asym.segoffsize
     or  [edi].asym.flag1,S_ISPROC
     mov [esi].paralist,NULL
 

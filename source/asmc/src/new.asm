@@ -215,8 +215,8 @@ AssignString proc private uses esi edi ebx name:string_t, fp:ptr sfield, string:
   local opndx:expr
 
     mov edx,fp
-    mov ebx,[edx].sfield.sym.total_size
-    mov edi,[edx].sfield.sym.name
+    mov ebx,[edx].sfield.total_size
+    mov edi,[edx].sfield.name
 
     .repeat
 
@@ -295,12 +295,12 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
         .if byte ptr [esi] == '{'
 
             strcpy( edi, name )
-            mov ecx,[ebx].sfield.sym.name
+            mov ecx,[ebx].sfield.name
             .if byte ptr [ecx]
                 strcat( edi, "." )
-                strcat( edi, [ebx].sfield.sym.name )
+                strcat( edi, [ebx].sfield.name )
             .endif
-            mov esi,AssignStruct( edi, [ebx].sfield.sym.type, esi )
+            mov esi,AssignStruct( edi, [ebx].sfield.type, esi )
 
             .break .if !eax
             .while byte ptr [esi] == ' ' || byte ptr [esi] == 9
@@ -360,7 +360,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
                         mov ecx,[eax].asym.string_ptr
 
-                        .if byte ptr [ecx] == '{' && !array && [ebx].sfield.sym.flag1 & S_ISARRAY
+                        .if byte ptr [ecx] == '{' && !array && [ebx].sfield.flag1 & S_ISARRAY
 
                             mov     edx,eax
                             xor     eax,eax
@@ -402,11 +402,11 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
 
             .if val
                 .if val == '"' || ( val == 'L' &&  val[1] == '"')
-                    AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [ebx].sfield.sym.name, &val )
+                    AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [ebx].sfield.name, &val )
                 .elseif array
-                    mov eax,[ebx].sfield.sym.total_size
+                    mov eax,[ebx].sfield.total_size
                     xor edx,edx
-                    div [ebx].sfield.sym.total_length
+                    div [ebx].sfield.total_length
                     mov ecx,array
                     dec ecx
                     mul ecx
@@ -441,7 +441,7 @@ AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, s
 
     .if !type
         mov esi,sym
-        lea edi,f.sym
+        lea edi,f
         mov ecx,asym
         rep movsb
         mov f.next,NULL
@@ -724,12 +724,12 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:token_t
 
         .if ti.Ofssize == USE16
             .if creat
-                mov [eax].dsym.sym.mem_type,MT_WORD
+                mov [eax].dsym.mem_type,MT_WORD
             .endif
             mov ti.size,word
         .else
             .if creat
-                mov [eax].dsym.sym.mem_type,MT_DWORD
+                mov [eax].dsym.mem_type,MT_DWORD
             .endif
             mov ti.size,dword
         .endif
@@ -798,9 +798,7 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:token_t
 
         .if creat
             mov [esi].is_ptr,ti.is_ptr
-            .if ti.is_far
-                or [esi].sflags,S_ISFAR
-            .endif
+            mov [esi].is_far,ti.is_far
             mov [esi].Ofssize,ti.Ofssize
             mov [esi].ptr_memtype,ti.ptr_memtype
             mov eax,ti.size

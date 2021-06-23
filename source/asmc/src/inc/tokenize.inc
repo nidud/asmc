@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; TOKENIZE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __TOKENIZE_INC
-__TOKENIZE_INC equ <>
+define __TOKENIZE_INC
 
-;; prototypes for tokenizer
+; prototypes for tokenizer
 
 line_status	    struc
 input		    string_t ?
@@ -30,4 +34,3 @@ GetToken proto fastcall :token_t, :ptr line_status
 Tokenize proto :string_t, :uint_t, :token_t, :uint_t
 
 endif
-.pragma list(pop)

@@ -1,19 +1,27 @@
-;; DRT_ values ( directive types )
-;; items CONDDIR ... INCLUDE must be first, INCLUDE the last of them.
-;; DATADIR must be the first non-preprocessor directive!
+; DIRTYPE.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; DRT_ values ( directive types )
+; items CONDDIR ... INCLUDE must be first, INCLUDE the last of them.
+; DATADIR must be the first non-preprocessor directive!
+;
 
-res( CONDDIR,	CondAsmDirective ) ;; conditional assembly directive (IF, ELSE, ...)
-res( LOOPDIR,	LoopDirective )	   ;; loop directive (FOR, REPEAT, WHILE, ...)
-res( PURGE,	PurgeDirective )   ;; PURGE directive
-res( INCLUDE,	IncludeDirective ) ;; INCLUDE directive
-res( MACRO,	MacroDir )	   ;; MACRO directive
-res( CATSTR,	CatStrDir )	   ;; TEXTEQU + CATSTR directives
-res( SUBSTR,	SubStrDir )	   ;; SUBSTR directive
-res( MACINT,	StubDir )	   ;; "internal macro" directives EXITM, ENDM, GOTO
-;; non-preprocessor directives
-res( DATADIR,	StubDir )	   ;; "data" directives DB, DW, DD, ...
+res( CONDDIR,	CondAsmDirective ) ; conditional assembly directive (IF, ELSE, ...)
+res( LOOPDIR,	LoopDirective )	   ; loop directive (FOR, REPEAT, WHILE, ...)
+res( PURGE,	PurgeDirective )   ; PURGE directive
+res( INCLUDE,	IncludeDirective ) ; INCLUDE directive
+res( MACRO,	MacroDir )	   ; MACRO directive
+res( CATSTR,	CatStrDir )	   ; TEXTEQU + CATSTR directives
+res( SUBSTR,	SubStrDir )	   ; SUBSTR directive
+res( MACINT,	StubDir )	   ; "internal macro" directives EXITM, ENDM, GOTO
+
+; non-preprocessor directives
+
+res( DATADIR,	StubDir )	   ; "data" directives DB, DW, DD, ...
 res( END,	EndDirective )
-res( ERRDIR,	ErrorDirective )   ;; v2.05: no longer preprocessor directives
+res( ERRDIR,	ErrorDirective )   ; v2.05: no longer preprocessor directives
 ifndef __ASMC64__
 res( CPU,	CpuDirective )
 endif
@@ -57,7 +65,7 @@ res( LABEL,	LabelDirective )
 res( ALIAS,	AliasDirective )
 res( ECHO,	EchoDirective )
 res( EQU,	EquDirective )
-res( EQUALSGN,	EqualSgnDirective ) ;; '=' directive
+res( EQUALSGN,	EqualSgnDirective ) ; '=' directive
 res( INCBIN,	IncBinDirective )
 res( INCLIB,	IncludeLibDirective )
 res( DOT_NAME,	NameDirective )

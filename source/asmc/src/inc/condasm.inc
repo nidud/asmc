@@ -3,18 +3,16 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; Description:  prototypes for conditional assembly and errors
+; prototypes for conditional assembly and errors
 ;
-.pragma list(push, 0)
-
 ifndef __CONDASM_INC
 define __CONDASM_INC
 
 .enum if_state {
-    BLOCK_ACTIVE,    ;; current cond is true
-    BLOCK_INACTIVE,  ;; current IF cond is false, looking for elseif
-    BLOCK_DONE       ;; done TRUE section of current if, just nuke
-    }                ;; everything until we see an endif
+    BLOCK_ACTIVE,    ; current cond is true
+    BLOCK_INACTIVE,  ; current IF cond is false, looking for elseif
+    BLOCK_DONE       ; done TRUE section of current if, just nuke
+    }                ; everything until we see an endif
 
 .enum cond_class {
     CC_NULL,
@@ -26,7 +24,7 @@ define __CONDASM_INC
     CC_PASS2,
     }
 
-externdef       CurrIfState:if_state
+externdef CurrIfState:if_state
 
 CondPrepare     proto :int_t
 GetIfNestLevel  proto
@@ -35,4 +33,4 @@ CondCheckOpen   proto
 CondInit        proto
 
 endif
-.pragma list(pop)
+

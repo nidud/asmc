@@ -16,11 +16,11 @@ include hllext.inc
     .code
 
     option proc: private
-    assume esi:  hll_t
+    assume esi:  ptr hll_item
 
 .pragma warning(disable: 6004)
 
-LQAddLabelIdBuffer proc fastcall id, buffer
+LQAddLabelIdBuffer proc fastcall id:uint_t, buffer:string_t
 
     AddLineQueueX( "%s%s", GetLabelStr( id, buffer ), LABELQUAL )
     ret
@@ -28,7 +28,7 @@ LQAddLabelIdBuffer proc fastcall id, buffer
 LQAddLabelIdBuffer endp
 
 
-LQAddLabelId proc id
+LQAddLabelId proc id:uint_t
 
   local buffer[32]:sbyte
 
@@ -38,7 +38,7 @@ LQAddLabelId proc id
 LQAddLabelId endp
 
 
-LQJumpLabel proc x, id
+LQJumpLabel proc x:int_t, id:uint_t
 
   local buffer[32]:sbyte
 
@@ -48,7 +48,7 @@ LQJumpLabel proc x, id
 LQJumpLabel endp
 
 
-LQJumpLabel64 proc x, base, id
+LQJumpLabel64 proc x:uint_t, base:string_t, id:uint_t
 
   local buffer[32]:sbyte
 
@@ -58,7 +58,7 @@ LQJumpLabel64 proc x, base, id
 LQJumpLabel64 endp
 
 
-RenderCase proc uses esi edi ebx hll:hll_t, case:hll_t, buffer:string_t
+RenderCase proc uses esi edi ebx hll:ptr hll_item, case:ptr hll_item, buffer:string_t
 
     mov esi,hll
     mov ebx,case
@@ -81,18 +81,15 @@ RenderCase proc uses esi edi ebx hll:hll_t, case:hll_t, buffer:string_t
         AddLineQueueX( " cmp %s, %s", [esi].condlines, eax )
         LQJumpLabel( T_JBE, [ebx].hll_item.labels[LSTART*4] )
         LQAddLabelId(edi)
-
     .else
-
         AddLineQueueX( " cmp %s, %s", [esi].condlines, edx )
         LQJumpLabel( T_JE, [ebx].hll_item.labels[LSTART*4] )
-
     .endif
     ret
 
 RenderCase endp
 
-RenderCCMP proc uses esi edi ebx hll:hll_t, buffer:string_t
+RenderCCMP proc uses esi edi ebx hll:ptr hll_item, buffer:string_t
 
     mov esi,hll
     mov edi,buffer
@@ -107,7 +104,7 @@ RenderCCMP proc uses esi edi ebx hll:hll_t, buffer:string_t
 
 RenderCCMP endp
 
-GetLowCount proc hll:hll_t, min, dist
+GetLowCount proc hll:ptr hll_item, min:int_t, dist:int_t
 
     mov ecx,min
     add ecx,dist
@@ -126,7 +123,7 @@ GetLowCount proc hll:hll_t, min, dist
 
 GetLowCount endp
 
-GetHighCount proc hll:hll_t, max, dist
+GetHighCount proc hll:ptr hll_item, max:int_t, dist:int_t
 
     mov ecx,max
     sub ecx,dist
@@ -145,7 +142,7 @@ GetHighCount proc hll:hll_t, max, dist
 
 GetHighCount endp
 
-SetLowCount proc uses esi hll:hll_t, count, min, dist
+SetLowCount proc uses esi hll:ptr hll_item, count:int_t, min:int_t, dist:int_t
 
     mov ecx,min
     mov edx,count
@@ -168,7 +165,7 @@ SetLowCount proc uses esi hll:hll_t, count, min, dist
 
 SetLowCount endp
 
-SetHighCount proc uses esi hll:hll_t, count, max, dist
+SetHighCount proc uses esi hll:ptr hll_item, count:int_t, max:int_t, dist:int_t
 
     mov ecx,max
     mov edx,count
@@ -192,7 +189,7 @@ SetHighCount proc uses esi hll:hll_t, count, max, dist
 
 SetHighCount endp
 
-GetCaseVal proc fastcall private hll, val
+GetCaseVal proc fastcall private hll:ptr hll_item, val:int_t
 
     mov eax,[ecx].hll_item.caselist
     .while eax
@@ -209,7 +206,7 @@ GetCaseVal proc fastcall private hll, val
 
 GetCaseVal endp
 
-RemoveVal proc fastcall private hll, val
+RemoveVal proc fastcall private hll:ptr hll_item, val:int_t
 
     .if GetCaseVal()
 
@@ -220,7 +217,7 @@ RemoveVal proc fastcall private hll, val
 
 RemoveVal endp
 
-GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
+GetCaseValue proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok, dcount:uint_t, scount:uint_t
 
   local i, opnd:expr
 
@@ -295,7 +292,7 @@ GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
     ret
 GetCaseValue endp
 
-GetMaxCaseValue proc uses esi edi ebx hll, min, max, min_table, max_table
+GetMaxCaseValue proc uses esi edi ebx hll:ptr hll_item, min:int_t, max:int_t, min_table:int_t, max_table:int_t
 
     mov esi,hll
     xor edi,edi
@@ -368,9 +365,9 @@ GetMaxCaseValue proc uses esi edi ebx hll, min, max, min_table, max_table
     ret
 GetMaxCaseValue endp
 
-    assume esi:token_t
+    assume esi:ptr asm_tok
 
-IsCaseColon proc uses esi edi ebx tokenarray:token_t
+IsCaseColon proc uses esi edi ebx tokenarray:ptr asm_tok
 
     mov esi,tokenarray
     xor edi,edi
@@ -400,10 +397,10 @@ IsCaseColon proc uses esi edi ebx tokenarray:token_t
     ret
 IsCaseColon endp
 
-    assume  ebx: token_t
+    assume  ebx: ptr asm_tok
 
-RenderMultiCase proc uses esi edi ebx hll:hll_t, i:ptr SDWORD, buffer:ptr char_t,
-        tokenarray:token_t
+RenderMultiCase proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, buffer:ptr char_t,
+        tokenarray:ptr asm_tok
 
   local result, colon
 
@@ -471,7 +468,7 @@ RenderMultiCase proc uses esi edi ebx hll:hll_t, i:ptr SDWORD, buffer:ptr char_t
         mov [ebx],eax
 
         mov esi,hll
-        assume esi:hll_t
+        assume esi:ptr hll_item
 
         .if [esi].flags & HLLF_PASCAL
 
@@ -490,7 +487,7 @@ RenderMultiCase proc uses esi edi ebx hll:hll_t, i:ptr SDWORD, buffer:ptr char_t
     ret
 RenderMultiCase endp
 
-CompareMaxMin proc reg, max, min, around
+CompareMaxMin proc reg:string_t, max:int_t, min:int_t, around:string_t
     AddLineQueueX( " cmp %s, %d", reg, min )
     AddLineQueueX( " jl %s", around )
     AddLineQueueX( " cmp %s, %d", reg, max )
@@ -501,7 +498,7 @@ CompareMaxMin endp
 ;
 ; Move .SWITCH <arg> to [R|E]AX
 ;
-GetSwitchArg proc uses ebx reg, flags, arg
+GetSwitchArg proc uses ebx reg:int_t, flags:int_t, arg:int_t
 
   local buffer[64]:sbyte
 
@@ -592,9 +589,9 @@ endif
 
 GetSwitchArg endp
 
-    assume ebx:hll_t
+    assume ebx:ptr hll_item
 
-RenderSwitch proc uses esi edi ebx hll:hll_t, tokenarray:token_t,
+RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok,
     buffer:string_t,  ; *switch.labels[LSTART]
     l_exit:string_t   ; *switch.labels[LEXIT]
 
@@ -1177,9 +1174,9 @@ toend:
     ret
 RenderSwitch endp
 
-    assume  esi: hll_t
+    assume  esi: ptr hll_item
 
-RenderJTable proc uses esi edi ebx hll:hll_t
+RenderJTable proc uses esi edi ebx hll:ptr hll_item
 
   local l_exit[16]:sbyte, l_jtab[16]:sbyte  ; jump table address
 
@@ -1271,9 +1268,9 @@ endif
 
 RenderJTable endp
 
-    assume  ebx: token_t
+    assume  ebx: ptr asm_tok
 
-SwitchStart proc uses esi edi ebx i:int_t, tokenarray:token_t
+SwitchStart proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t, cmd:uint_t, buffer[MAX_LINE_LEN]:char_t
   local opnd:expr
@@ -1503,7 +1500,7 @@ endif
 
 SwitchStart endp
 
-SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:token_t
+SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t,
         l_exit[16]:char_t ; exit or default label
@@ -1548,7 +1545,7 @@ SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:token_t
         .endif
 
         mov ebx,[esi].caselist
-        assume ebx:hll_t
+        assume ebx:ptr hll_item
 
         mov cl,ModuleInfo.casealign
         .if cl
@@ -1579,7 +1576,7 @@ SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:token_t
             RenderSwitch(esi, tokenarray, edi, &l_exit)
         .endif
 
-        assume ebx:token_t
+        assume ebx:ptr asm_tok
     .until 1
 
     mov eax,[esi].labels[LEXIT*4]
@@ -1591,14 +1588,14 @@ SwitchEnd proc uses esi edi ebx i:int_t, tokenarray:token_t
 
 SwitchEnd endp
 
-SwitchExit proc uses esi edi ebx i, tokenarray:token_t
+SwitchExit proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local rc:     int_t,
         cmd:    int_t,
         buff    [16]:char_t,
         buffer  [MAX_LINE_LEN]:char_t,
         gotosw: int_t,
-        hll:    hll_t,
+        hll:    ptr hll_item,
         name:   string_t
 
     mov esi,ModuleInfo.HllStack
@@ -2041,7 +2038,7 @@ SwitchExit endp
 
     option proc: public
 
-SwitchDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
+SwitchDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
     mov ecx,i
     mov edx,tokenarray

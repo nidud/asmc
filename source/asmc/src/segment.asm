@@ -562,8 +562,7 @@ GetSymOfssize proc sym:ptr asym
     .if ( GetSegm( sym ) == NULL )
         mov eax,sym
         .if ( [eax].asym.state == SYM_EXTERNAL )
-            movzx eax,[eax].asym.sflags
-            and eax,S_SEGOFSSIZE
+            movzx eax,[eax].asym.segoffsize
             .return
         .endif
         .if ( [eax].asym.state == SYM_STACK || [eax].asym.state == SYM_GRP )

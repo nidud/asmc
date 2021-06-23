@@ -186,7 +186,7 @@ LoopDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     mov ecx,sizeof(macinfo)
     rep stosb
 
-    mov tmpmacro.sym.name,&@CStr("")
+    mov tmpmacro.name,&@CStr("")
     mov tmpmacro.macroinfo,&macinfo
     mov macinfo.srcfile,get_curr_srcfile()
     lea edi,tmpmacro

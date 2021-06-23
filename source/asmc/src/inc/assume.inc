@@ -1,15 +1,20 @@
-.pragma list(push, 0)
+; ASSUME.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __ASSUME_INC
-__ASSUME_INC equ <>
+define __ASSUME_INC
 
-;; flags for error field, used for GPR's ASSUME:ERROR|NOTHING
+; flags for error field, used for GPR's ASSUME:ERROR|NOTHING
 
-err_flags	typedef int_t
-RL_ERROR	equ 0x01
-RX_ERROR	equ 0x02
-ERX_ERROR	equ 0x04
-RRX_ERROR	equ 0x08
-RH_ERROR	equ 0x10
+.enum err_flags {
+    RL_ERROR	= 0x01,
+    RX_ERROR	= 0x02,
+    ERX_ERROR	= 0x04,
+    RRX_ERROR	= 0x08,
+    RH_ERROR	= 0x10
+    }
 
 
 assume_info	struct
@@ -18,7 +23,7 @@ error		db ?	 ; register assumed to ERROR
 is_flat		db ?	 ; register assumed to FLAT
 assume_info	ends
 
-;; v2.05: introduced
+; v2.05: introduced
 stdassume_typeinfo struct
 type		asym_t ?
 target_type	asym_t ?
@@ -27,17 +32,17 @@ ptr_memtype	db ?
 is_ptr		db ?
 stdassume_typeinfo ends
 
-;; segment assume table is sorted by seg reg number: ES,CS,SS,DS,FS,GS.
-;; see enum assume_segreg in globals.h.
-;;
+; segment assume table is sorted by seg reg number: ES,CS,SS,DS,FS,GS.
+; see enum assume_segreg in globals.h.
+
 externdef	SegAssumeTable:assume_info
 
-;; standard register assume table; contains 8/16 entries for the GPRs
+; standard register assume table; contains 8/16 entries for the GPRs
 externdef	StdAssumeTable:assume_info
 
-NUM_SEGREGS	equ 6
+define NUM_SEGREGS 6
 
-AssumeInit	proto :int_t ;init assume tables
+AssumeInit	proto :int_t ; init assume tables
 
 search_assume	proto :asym_t, :int_t, :int_t
 GetAssume	proto :asym_t, :asym_t, :int_t, :asym_t
@@ -53,4 +58,3 @@ SetStdAssumeTable proto :ptr, :ptr stdassume_typeinfo
 GetStdAssumeTable proto :ptr, :ptr stdassume_typeinfo
 
 endif
-.pragma list(pop)

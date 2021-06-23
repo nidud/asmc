@@ -19,8 +19,8 @@ MAXSAVESTACK equ 124
 
     .code
 
-    assume ebx: token_t
-    assume esi: hll_t
+    assume ebx: ptr asm_tok
+    assume esi: ptr hll_item
 
 AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 

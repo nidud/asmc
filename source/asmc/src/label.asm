@@ -143,9 +143,7 @@ CreateLabel proc uses esi edi ebx name:string_t, mem_type:byte, ti:ptr qualified
             .else
                 mov [edi].asym.Ofssize,[ebx].Ofssize
                 mov [edi].asym.is_ptr,[ebx].is_ptr
-                .if [ebx].is_far
-                    or [edi].asym.sflags,S_ISFAR
-                .endif
+                mov [edi].asym.is_far,[ebx].is_far
                 mov [edi].asym.target_type,[ebx].symtype
                 mov [edi].asym.ptr_memtype,[ebx].ptr_memtype
             .endif

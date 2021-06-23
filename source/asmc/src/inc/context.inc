@@ -1,11 +1,14 @@
-.pragma list(push, 0)
+; CONTEXT.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; PUSHCONTEXT/POPCONTEXT interface
+;
 ifndef __CONTEXT_INC
-__CONTEXT_INC equ <>
-
-;; PUSHCONTEXT/POPCONTEXT interface
+define __CONTEXT_INC
 
 ContextInit proto :int_t
 ContextFini proto
 
 endif
-.pragma list(pop)

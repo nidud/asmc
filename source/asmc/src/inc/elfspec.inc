@@ -6,8 +6,8 @@
 ; Executable and Linkable Format (ELF) definitions.
 ;
 
-ifndef _ELFSPEC_H_INCLUDED_
-define _ELFSPEC_H_INCLUDED_
+ifndef __ELFSPEC_INC
+define __ELFSPEC_INC
 
 ; the main header
 

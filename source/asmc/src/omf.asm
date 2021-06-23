@@ -1278,7 +1278,7 @@ endif
 
             mov numsize,1
 
-            .if ( [esi].asym.sflags & S_ISFAR )
+            .if ( [esi].asym.is_far )
 
                 mov number[0],COMDEF_FAR ; 0x61
                 add numsize,put_comdef_number( &number[1], [esi].asym.total_length )

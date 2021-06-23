@@ -1,3 +1,7 @@
+; INSTRUCT.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Description: table of instructions. Other reserved words see special.h
 ;
@@ -33,7 +37,7 @@ insn(CALL, 2,  OpCls( RGT8, NONE,  NONE  ), 0,      0, no_WDS, 0xFF, 0x10, P_86,
 insn(CALL, 3,  OpCls( M32,  NONE,  NONE  ), F_32,   0, no_WDS, 0xFF, 0x10, P_386, 0,0)
 insn(CALL, 4,  OpCls( M16,  NONE,  NONE  ), F_16,   0, no_WDS, 0xFF, 0x10, P_86,  0,0)
 
-;; start entries for FAR call
+; start entries for FAR call
 
 insm(CALL, 6,  OpCls( I32,  NONE,  NONE  ), F_16,   0, no_RM,  0x9A, 0x00, P_86,  0,0)
 insn(CALL, 7,  OpCls( I48,  NONE,  NONE  ), F_32,   0, no_RM,  0x9A, 0x00, P_386, 0,0)
@@ -46,14 +50,14 @@ insn(JMP, 3,   OpCls( RGT8, NONE,  NONE  ), 0,      0, no_WDS, 0xFF, 0x20, P_86,
 insn(JMP, 4,   OpCls( M32,  NONE,  NONE  ), F_32,   0, no_WDS, 0xFF, 0x20, P_386, 0,0)
 insn(JMP, 5,   OpCls( M16,  NONE,  NONE  ), F_16,   0, no_WDS, 0xFF, 0x20, P_86,  0,0)
 
-;; entries for FAR jmp
+; entries for FAR jmp
 
 insm(JMP, 7,   OpCls( I32,  NONE,  NONE  ), F_16,   0, no_RM,  0xEA, 0x00, P_86,  0,0)
 insn(JMP, 8,   OpCls( I48,  NONE,  NONE  ), F_32,   0, no_RM,  0xEA, 0x00, P_386, 0,0)
 insn(JMP, 9,   OpCls( M32,  NONE,  NONE  ), F_16,   0, no_WDS, 0xFF, 0x28, P_86,  0,0)
 insn(JMP, 10,  OpCls( M48,  NONE,  NONE  ), F_32,   0, no_WDS, 0xFF, 0x28, P_386, 0,0)
 
-;; for conditional jumps, the SHORT version must always be first!
+; for conditional jumps, the SHORT version must always be first!
 
 insa(JA,  ja,  OpCls( I8, NONE, NONE ), 0,    0, no_RM, 0x77, 0x00, P_86, 0,0)
 insn(JA,  1,   OpCls( I,  NONE, NONE ), F_0F, 0, no_RM, 0x87, 0x00, P_386,0,0)
@@ -135,8 +139,8 @@ insx(LOOPZW, loopzw,  OpCls( I8,   NONE,  NONE  ), F_16A,  0,  no_RM,  0xE1, 0x0
 insx(LOOPNEW,loopnew, OpCls( I8,   NONE,  NONE  ), F_16A,  0,  no_RM,  0xE0, 0x00, P_86,  0,0, RWF_IA32)
 insx(LOOPNZW,loopnzw, OpCls( I8,   NONE,  NONE  ), F_16A,  0,  no_RM,  0xE0, 0x00, P_86,  0,0, RWF_IA32)
 
-;; arith instructions. Masm v6 encodes operand types R,R differently
-;; (direction bit is NOT set). JWasm does like Masm v8+.
+; arith instructions. Masm v6 encodes operand types R,R differently
+; (direction bit is NOT set). JWasm does like Masm v8+.
 
 insa(ADD, add,    OpCls(RGT8, I8,   NONE), 0, 0, no_WDS, 0x83, 0x00, P_86, 0,0)
 insn(ADD, 1,      OpCls(R,    R_MS, NONE), 0, 1, 0,      0x02, 0x00, P_86, 0,0)
@@ -196,7 +200,7 @@ insn(CMP, 6,      OpCls(MGT8, I8,   NONE), 0, 0, no_WDS, 0x83, 0x38, P_86, 0,0)
 insn(CMP, 7,      OpCls(MS,   R,    NONE), 0, 0, 0,      0x38, 0x00, P_86, 0,0)
 insn(CMP, 8,      OpCls(MS,   I,    NONE), 0, 0, 0,      0x80, 0x38, P_86, 0,0)
 
-;; std bitshift instructions
+; std bitshift instructions
 
 insa(RCL, rcl, OpCls( R_MS, CL_ONLY, NONE ), 0, 0, 0, 0xD2, 0x10, P_86,  0,0)
 insn(RCL, 1,   OpCls( R_MS, I_1,     NONE ), 0, 0, 0, 0xD0, 0x10, P_86,  0,0)
@@ -223,7 +227,7 @@ insa(SHR, shr, OpCls( R_MS, CL_ONLY, NONE ), 0, 0, 0, 0xD2, 0x28, P_86,  0,0)
 insn(SHR, 1,   OpCls( R_MS, I_1,     NONE ), 0, 0, 0, 0xD0, 0x28, P_86,  0,0)
 insn(SHR, 2,   OpCls( R_MS, I8_U,    NONE ), 0, 0, 0, 0xC0, 0x28, P_186, 0,0)
 
-;; string instructions
+; string instructions
 
 insa(CMPS,  cmps,     OpCls( MS,       MS,         NONE ), 0,      0,  no_RM,  0xA6, 0x00, P_86,        AP_REPxx,0)
 insa(CMPSB, cmpsb,    OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xA6, 0x00, P_86,        AP_REPxx,0)
@@ -279,7 +283,7 @@ insn(STOSW, 1,        OpCls( M16,      NONE,       NONE ), F_16,   0,  no_RM,  0
 insa(STOSD, stosd,    OpCls( NONE,     NONE,       NONE ), F_32,   0,  no_RM,  0xAB, 0x00, P_386,       AP_REP,0)
 insn(STOSD, 1,        OpCls( M32,      NONE,       NONE ), F_32,   0,  no_RM,  0xAB, 0x00, P_386,       AP_REP,0)
 
-;; instructions invalid for IA32+
+; instructions invalid for IA32+
 
 insx(AAA, aaa,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0x37, 0x00, P_86,        0,0, RWF_IA32 )
 insx(AAD, aad,        OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0xD5, 0x0A, P_86,        0,0, RWF_IA32 )
@@ -304,16 +308,16 @@ insn(PUSHD,  3,       OpCls( SR86,     NONE,       NONE ), 0,      1,  R_in_OP,0
 insn(PUSHD,  4,       OpCls( SR,       NONE,       NONE ), F_0F,   1,  R_in_OP,0x80, 0x00, P_386,       0,0)
 insn(PUSHD,  5,       OpCls( M32,      NONE,       NONE ), 0,      0,  0,      0xFF, 0x30, P_386,       0,0)
 
-;; unlike their names suggest, RETD/RETW will always create a 32-/16-bit far ret
+; unlike their names suggest, RETD/RETW will always create a 32-/16-bit far ret
 
 insx(RETD, retd,      OpCls( I16,      NONE,       NONE ), F_32,   0,  no_RM,  0xCA, 0x00, P_386,       0,0, RWF_IA32 )
 insn(RETD, 1,         OpCls( NONE,     NONE,       NONE ), F_32,   0,  no_RM,  0xCB, 0x00, P_386,       0,0)
 insx(RETW, retw,      OpCls( I16,      NONE,       NONE ), F_16,   0,  no_RM,  0xCA, 0x00, P_86,        0,0, RWF_IA32 )
 insn(RETW, 1,         OpCls( NONE,     NONE,       NONE ), F_16,   0,  no_RM,  0xCB, 0x00, P_86,        0,0)
 
-;; protected-mode instructions
-;; some (i.e. SMSW) also work with 32bit register as first operand, but Masm
-;; won't accept. to make JWasm accept, change OP_R16 to OP_RGT8
+; protected-mode instructions
+; some (i.e. SMSW) also work with 32bit register as first operand, but Masm
+; won't accept. to make JWasm accept, change OP_R16 to OP_RGT8
 
 insa(ARPL, arpl,      OpCls( R16_M16,  R16,      NONE ), 0,       0,  no_WDS, 0x63, 0x00, P_286,       0,0)
 insa(LLDT, lldt,      OpCls( R16_M16,  NONE,     NONE ), F_0FNO66,0,  no_WDS, 0x00, 0x10, P_286p,      0,0)
@@ -325,7 +329,7 @@ insa(STR,  str,       OpCls( R16_M16,  NONE,     NONE ), F_0FNO66,0,  no_WDS, 0x
 insa(VERR, verr,      OpCls( R16_M16,  NONE,     NONE ), F_0FNO66,0,  no_WDS, 0x00, 0x20, P_286,       0,0)
 insa(VERW, verw,      OpCls( R16_M16,  NONE,     NONE ), F_0FNO66,0,  no_WDS, 0x00, 0x28, P_286,       0,0)
 
-;; one-operand register/memory instructions
+; one-operand register/memory instructions
 
 insa(DIV, div,        OpCls( R,        NONE,       NONE ), 0,      0,  0,      0xF6, 0x30, P_86,        0,0)
 insn(DIV, 1,          OpCls( M08,      NONE,       NONE ), 0,      0,  0,      0xF6, 0x30, P_86,        0,0)
@@ -343,7 +347,7 @@ insa(NOT, not,        OpCls( R,        NONE,       NONE ), 0,      0,  0,      0
 insn(NOT, 1,          OpCls( M08,      NONE,       NONE ), 0,      0,  0,      0xF6, 0x10, P_86,        AP_LOCK,0)
 insn(NOT, 2,          OpCls( MGT8,     NONE,       NONE ), 0,      0,  0,      0xF7, 0x10, P_86,        AP_LOCK,0)
 
-;; prefixes. must start with LOCK, end with REPZ and be consecutive
+; prefixes. must start with LOCK, end with REPZ and be consecutive
 
 insa(LOCK,  lock,     OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xF0, 0,    P_86,        AP_LOCK,0)
 insa(REP,   rep,      OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xF3, 0,    P_86,        AP_REP,0)
@@ -369,7 +373,7 @@ insn(BTS,  1,         OpCls( RGT8,     I8_U,       NONE ), F_0F,   0,  no_WDS, 0
 insn(BTS,  2,         OpCls( MGT8,     RGT8,       NONE ), F_0F,   0,  no_WDS, 0xAB, 0x00, P_386,       AP_LOCK,0)
 insn(BTS,  3,         OpCls( MGT8,     I8_U,       NONE ), F_0F,   0,  no_WDS, 0xBA, 0x28, P_386,       AP_LOCK,0)
 
-;; set/reset flags
+; set/reset flags
 
 insa(CMC, cmc,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xF5, 0x00, P_86,        0,0)
 insa(CLC, clc,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xF8, 0x00, P_86,        0,0)
@@ -379,7 +383,7 @@ insa(STI, sti,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0
 insa(CLD, cld,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xFC, 0x00, P_86,        0,0)
 insa(STD, std,        OpCls( NONE,     NONE,       NONE ), 0,      0,  no_RM,  0xFD, 0x00, P_86,        0,0)
 
-;; INC/DEC. (hack for 64-bit in reswords.asm!)
+; INC/DEC. (hack for 64-bit in reswords.asm!)
 
 insa(INC, inc,        OpCls( RGT8,     NONE,       NONE ), 0,      0,  R_in_OP,0x40, 0x00, P_86,        0,0)
 insn(INC, 1,          OpCls( R,        NONE,       NONE ), 0,      0,  0,      0xFE, 0x00, P_86,        0,0)
@@ -390,7 +394,7 @@ insn(DEC, 1,          OpCls( R,        NONE,       NONE ), 0,      0,  0,      0
 insn(DEC, 2,          OpCls( M08,      NONE,       NONE ), 0,      0,  0,      0xFE, 0x08, P_86,        AP_LOCK,0)
 insn(DEC, 3,          OpCls( MGT8,     NONE,       NONE ), 0,      0,  0,      0xFF, 0x08, P_86,        AP_LOCK,0)
 
-;; PUSH/POP (16- and 32-bit only)
+; PUSH/POP (16- and 32-bit only)
 
 insa(PUSH,  push,     OpCls( R16_R32,  NONE,       NONE ), 0,     0,  R_in_OP,0x50, 0x00, P_86,        0,0)
 insn(PUSH, 1,         OpCls( I8,       NONE,       NONE ), 0,     0,  no_RM,  0x6A, 0x00, P_186,       0,0)
@@ -459,8 +463,8 @@ insa(INVLPG, invlpg,  OpCls( M_ANY,    NONE,       NONE ), F_0F,   0,  no_WDS, 0
 insa(IRET, iret,      OpCls( NONE,     NONE,       NONE ), F_16,   0,  no_RM,  0xCF, 0x00, P_86,        0,0)
 insa(IRETD, iretd,    OpCls( NONE,     NONE,       NONE ), F_32,   0,  no_RM,  0xCF, 0x00, P_386,       0,0)
 
-;; the F-suffix variants of IRET|IRETD are just aliases and pretty useless.
-;; In Masm v8+, IRETF has disappeared, but IRETDF is still there.
+; the F-suffix variants of IRET|IRETD are just aliases and pretty useless.
+; In Masm v8+, IRETF has disappeared, but IRETDF is still there.
 
 insa(IRETF, iretf,    OpCls( NONE,     NONE,       NONE ), F_16,   0,  no_RM,  0xCF, 0x00, P_86,        0,0)
 insa(IRETDF, iretdf,  OpCls( NONE,     NONE,       NONE ), F_32,   0,  no_RM,  0xCF, 0x00, P_386,       0,0)
@@ -582,7 +586,7 @@ insa(CMOVPO,  cmovpo,  OpCls( RGT8, R_MS, NONE ), F_0F, 1, no_WDS, 0x4B, 0x00, P
 insa(CMOVS,   cmovs,   OpCls( RGT8, R_MS, NONE ), F_0F, 1, no_WDS, 0x48, 0x00, P_686, 0,0)
 insa(CMOVZ,   cmovz,   OpCls( RGT8, R_MS, NONE ), F_0F, 1, no_WDS, 0x44, 0x00, P_686, 0,0)
 
-;; FPU opcodes
+; FPU opcodes
 
 insa(FCMOVB, fcmovb,  OpCls( ST,       STI,        NONE ), 0,      0,  0,      0xDA, 0xC0, P_686,       0,0)
 insa(FCMOVBE, fcmovbe,OpCls( ST,       STI,        NONE ), 0,      0,  0,      0xDA, 0xD0, P_686,       0,0)
@@ -753,7 +757,7 @@ insa(FDECSTP, fdecstp,OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0
 insa(FINCSTP, fincstp,OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0xD9, 0xF7, P_87,        0,0)
 insa(FFREE, ffree,    OpCls( STI,      NONE,       NONE ), 0,      0,  0,      0xDD, 0xC0, P_87,        0,0)
 
-;; FFREEP is undocumented (same as FFREE + POP)
+; FFREEP is undocumented (same as FFREE + POP)
 
 insa(FFREEP, ffreep,  OpCls( STI,      NONE,       NONE ), 0,      0,  0,      0xDF, 0xC0, P_87,        0,0)
 insa(FNOP, fnop,      OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0xD9, 0xD0, P_87,        0,0)
@@ -774,7 +778,7 @@ insa(FXTRACT, fxtract,OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0
 insa(FYL2X, fyl2x,    OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0xD9, 0xF1, P_87,        0,0)
 insa(FYL2XP1, fyl2xp1,OpCls( NONE,     NONE,       NONE ), 0,      0,  0,      0xD9, 0xF9, P_87,        0,0)
 
-;; MMX/SSE related opcodes (except SSE instructions CMPSD and MOVSD)
+; MMX/SSE related opcodes (except SSE instructions CMPSD and MOVSD)
 
 insa(EMMS, emms,      OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x77, 0x00, P_586 or P_MMX, 0,0)
 insa(CLFLUSH, clflush,OpCls( M_ANY,    NONE,       NONE ), F_0F,   0,  no_WDS, 0xAE, 0x38, P_686 or P_SSE2,0,0)
@@ -906,7 +910,7 @@ insa(CVTSS2SD, cvtss2sd,   OpCls( XMM,      XMM_M32,  NONE ), F_F30F, 1, no_WDS,
 insa(MASKMOVDQU, maskmovdqu, OpCls( XMM,    XMM,      NONE ), F_660F, 1, no_WDS, 0xF7, 0x00, P_686 or P_SSE2,0,0)
 insa(MASKMOVQ, maskmovq,   OpCls( MMX,      MMX,      NONE ), F_0F,   1, no_WDS, 0xF7, 0x00, P_686 or P_SSE1,0,0)
 
-;; Masm (ML64) uses MOVD if a 64-bit register is src,dst. Intel docs prefer MOVQ
+; Masm (ML64) uses MOVD if a 64-bit register is src,dst. Intel docs prefer MOVQ
 
 insa(MOVD, movd,      OpCls( MMX,      RMGT16,   NONE ), F_0F,   1,  no_WDS, 0x6E, 0x00, P_586 or P_MMX, 0,0xE0)
 insn(MOVD, 1,         OpCls( XMM,      RMGT16,   NONE ), F_660F, 1,  no_WDS, 0x6E, 0x00, P_686 or P_SSE2,0,0xE0)
@@ -1144,7 +1148,7 @@ insa(UNPCKHPS, unpckhps, OpCls( XMM, XMM_M128_M32, NONE ), F_0F,   1,  no_WDS, 0
 insa(UNPCKLPD, unpcklpd, OpCls( XMM, XMM_M128_M64, NONE ), F_660F, 1,  no_WDS, 0x14, 0x00, P_686 or P_SSE2,0,0xE0)
 insa(UNPCKLPS, unpcklps, OpCls( XMM, XMM_M128_M32, NONE ), F_0F,   1,  no_WDS, 0x14, 0x00, P_686 or P_SSE1,0,0xE0)
 
-;; K3D instructions
+; K3D instructions
 
 insa(FEMMS, femms,      OpCls( NONE,     NONE,     NONE ), F_0F,   0,  no_RM,  0x0E, 0x00, P_586 or P_K3D, 0,0)
 insa(PREFETCH, prefetch,OpCls( M_ANY,    NONE,     NONE ), F_0F,   0,  no_WDS, 0x0D, 0x00, P_586 or P_K3D, 0,0)
@@ -1235,7 +1239,7 @@ insa(AESKEYGENASSIST,aeskeygenassist,OpCls(XMM,XMM_M128,I8_U),F_660F3A,1,no_WDS,
 insa(ADCX, adcx,        OpCls( R32,  R32_M32,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 insn(ADCX, 1,           OpCls( R64,  R64_M64,  NONE ), F_660F38,1,  no_WDS, 0xF6, 0x00, P_686 or P_SSSE3, 0,0)
 
-;; CDQE must be first in this group, see reswords.asm
+; CDQE must be first in this group, see reswords.asm
 
 insx(CDQE, cdqe,        OpCls( NONE,     NONE,       NONE ), F_48,   0,  no_RM,  0x98, 0x00, P_64,     0,0,      RWF_X64)
 insx(CQO, cqo,          OpCls( NONE,     NONE,       NONE ), F_48,   0,  no_RM,  0x99, 0x00, P_64,     0,0,      RWF_X64)
@@ -1255,7 +1259,7 @@ insn(SCASQ, 1,          OpCls( M64,      NONE,       NONE ), F_48,   0,  no_RM, 
 insx(STOSQ, stosq,      OpCls( NONE,     NONE,       NONE ), F_48,   0,  no_RM,  0xAB, 0x00, P_64,     AP_REP,0,   RWF_X64)
 insn(STOSQ, 1,          OpCls( M64,      NONE,       NONE ), F_48,   0,  no_RM,  0xAB, 0x00, P_64,     AP_REP,0)
 
-;; PEXTRQ/PINSRQ need a REX.W prefix if M64 is dst/src!
+; PEXTRQ/PINSRQ need a REX.W prefix if M64 is dst/src!
 
 insx(PEXTRQ, pextrq,    OpCls( R64_M64,  XMM,        I8_U ), F_660F3A,0, no_WDS, 0x16, 0x00, P_64 or P_SSE4,0, 0xE0, RWF_X64)
 insx(PINSRQ, pinsrq,    OpCls( XMM,      R64_M64,    I8_U ), F_660F3A,1, no_WDS, 0x22, 0x00, P_64 or P_SSE4,0, 0xE0, RWF_X64)
@@ -1263,7 +1267,7 @@ insx(SWAPGS, swapgs,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  0,     
 insx(SYSCALL_, syscall, OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_64,     0,0, RWF_X64)
 insx(SYSRET, sysret,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x07, 0x00, P_64,     0,0, RWF_X64)
 
-;; SSE4.1
+; SSE4.1
 
 insa(BLENDPD, blendpd,  OpCls( XMM,      XMM_M128, I8_U ), F_660F3A, 1,  no_WDS, 0x0D, 0x00, P_686 or P_SSE4, 0,0)
 insa(BLENDPS, blendps,  OpCls( XMM,      XMM_M128, I8_U ), F_660F3A, 1,  no_WDS, 0x0C, 0x00, P_686 or P_SSE4, 0,0)
@@ -1328,7 +1332,7 @@ insa(ROUNDPD, roundpd,  OpCls( XMM,      XMM_M128, I8_U ), F_660F3A, 1,  no_WDS,
 insa(ROUNDSS, roundss,  OpCls( XMM,      XMM_M32 , I8_U ), F_660F3A, 1,  no_WDS, 0x0A, 0x00, P_686 or P_SSE4, 0,0)
 insa(ROUNDSD, roundsd,  OpCls( XMM,      XMM_M64 , I8_U ), F_660F3A, 1,  no_WDS, 0x0B, 0x00, P_686 or P_SSE4, 0,0)
 
-;; SSE4.2
+; SSE4.2
 
 insa(CRC32, crc32,      OpCls( RGT16,    R8_M08,   NONE ), F_F20F38, 1, no_WDS, 0xF0, 0x00, P_686 or P_SSE4, 0,0)
 insn(CRC32, 1,          OpCls( RGT16,    RGT8_MS,  NONE ), F_F20F38, 1, no_WDS, 0xF1, 0x00, P_686 or P_SSE4, 0,0)
@@ -1371,7 +1375,7 @@ insa(VMWRITE, vmwrite,  OpCls( R32,     R32_M32,   NONE ), F_0F,    1, no_WDS, 0
 insa(INVEPT,  invept,   OpCls( RGT16,   M128,      NONE ), F_660F38,1, no_WDS, 0x80, 0x00, P_686p,0,0)
 insa(INVVPID, invvpid,  OpCls( RGT16,   M128,      NONE ), F_660F38,1, no_WDS, 0x81, 0x00, P_686p,0,0)
 
-;; VBROADCASTSS is first VEX encoded instruction (VEX_START in parser.inc).
+; VBROADCASTSS is first VEX encoded instruction (VEX_START in parser.inc).
 
 insv(VBROADCASTSS, vbroadcastss, OpCls( XMM,  XMM_M32,    NONE ), F_660F38, 1, no_WDS, 0x18, 0x00, P_686 or P_AVX, 0,0xE0, RWF_VEX or RWF_T1S, VX_NND or VX_RW0 )
 insn(VBROADCASTSS, 1,           OpCls( YMM,   XMM_M32,    NONE ), F_660F38, 1, no_WDS, 0x18, 0x00, P_686 or P_AVX, 0,0xE0)
@@ -1391,10 +1395,10 @@ insv(VMASKMOVPD, vmaskmovpd, OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1, no
 insn(VMASKMOVPD, 1,          OpCls( M128,     XMM,        NONE ), F_660F38,0, no_WDS, 0x2F, 0x00, P_686 or P_AVX, 0,0)
 insv(VPBLENDVB, vpblendvb,   OpCls( XMM,      XMM_M128,   XMM  ), F_660F3A,1, no_WDS, 0x4C, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L )
 insv(VPERMILPD, vpermilpd,   OpCls( XMM,  XMM_M128_M64,   NONE ), F_660F38,1, no_WDS, 0x0D, 0x00, P_686 or P_AVX, 0,0xE2, RWF_VEX, VX_L or VX_IMM )
-;; bug v2.17 vpermilpd: Selection by immediate byte operand: C4 RXB.00011 0.1111.1.01 05 /r ib
+; bug v2.17 vpermilpd: Selection by immediate byte operand: C4 RXB.00011 0.1111.1.01 05 /r ib
 insn(VPERMILPD, 1,           OpCls( XMM,  XMM_M128_M64,   I8_U ), F_660F3A,1, no_WDS, 0x05, 0x00, P_686 or P_AVX, 0,0x82)
 insv(VPERMILPS, vpermilps,   OpCls( XMM,  XMM_M128_M32,   NONE ), F_660F38,1, no_WDS, 0x0C, 0x00, P_686 or P_AVX, 0,0x80, RWF_VEX, VX_L or VX_IMM or VX_RW0 )
-;; bug v2.17 vpermilps: Selection by immediate byte operand: C4 RXB.00011 0.1111.1.01 04 /r ib
+; bug v2.17 vpermilps: Selection by immediate byte operand: C4 RXB.00011 0.1111.1.01 04 /r ib
 insn(VPERMILPS, 1,           OpCls( XMM,  XMM_M128_M32,   I8_U ), F_660F3A,1, no_WDS, 0x04, 0x00, P_686 or P_AVX, 0,0x80)
 insv(VPERM2F128, vperm2f128, OpCls( YMM,      YMM_M256,   I8_U ), F_660F3A,1, no_WDS, 0x06, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, 0 )
 insv(VTESTPS, vtestps,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1, no_WDS, 0x0E, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L or VX_NND )
@@ -1661,7 +1665,7 @@ avxins(UNPCKHPS ,VUNPCKHPS ,vunpckhps ,    0, VX_L or VX_RW0 )
 avxins(UNPCKLPD ,VUNPCKLPD ,vunpcklpd ,    0, VX_L or VX_RW1 )
 avxins(UNPCKLPS ,VUNPCKLPS ,vunpcklps ,    0, VX_L or VX_RW0 )
 
-;; AVX-2 - v2.26
+; AVX-2 - v2.26
 
 avxins(MOVMSKPD, VMOVMSKPD, vmovmskpd,  0, VX_L or VX_NND )
 avxins(MOVMSKPS, VMOVMSKPS, vmovmskps,  0, VX_L or VX_NND )
@@ -1698,7 +1702,7 @@ insn(VPBROADCASTW, 1,           OpCls( XMM,   XMM_M16,    NONE ), F_660F38, 1, n
 insv(VPBROADCASTB, vpbroadcastb, OpCls( XMM,  R8,         NONE ), F_660F38, 1, no_WDS, 0x7A, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L or VX_NND or VX_HALF )
 insn(VPBROADCASTB, 1,       OpCls( XMM,       XMM_M08,    NONE ), F_660F38, 1, no_WDS, 0x78, 0x00, P_686 or P_AVX, 0,0)
 
-;; GPR instructions v2.28
+; GPR instructions v2.28
 
 insv(ANDN,      andn,        OpCls( RGT16,    RGT16,      R_MS ), F_0F38,   1, no_WDS, 0xF2, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L )
 insv(MULX,      mulx,        OpCls( RGT16,    RGT16,      R_MS ), F_F20F38, 1, no_WDS, 0xF6, 0x00, P_686 or P_AVX, 0,0, RWF_VEX, VX_L )
@@ -1714,7 +1718,7 @@ insv(BLSI,      blsi,        OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, n
 insv(BLSMSK,    blsmsk,      OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, no_WDS, 0xF3, 0x10, P_686 or P_AVX, 0,0x09, RWF_VEX, VX_L )
 insv(BLSR,      blsr,        OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, no_WDS, 0xF3, 0x08, P_686 or P_AVX, 0,0x09, RWF_VEX, VX_L )
 
-;;  AVX-512 - v2.26
+;  AVX-512 - v2.26
 
 insv(VPERMW,  vpermw,        OpCls( XMM, XMM_M128,        NONE ), F_660F38, 1, no_WDS, 0x8D, 0x00, P_686 or P_AVX, 0,0xF0, RWF_VEX or RWF_EVEX, VX_L or VX_RW1 )
 insv(VPSRAVW, vpsravw,       OpCls( XMM, XMM_M128,        NONE ), F_660F38, 1, no_WDS, 0x11, 0x00, P_686 or P_AVX, 0,0xF0, RWF_VEX or RWF_EVEX, VX_L or VX_RW1)

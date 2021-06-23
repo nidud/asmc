@@ -1,10 +1,14 @@
-.pragma list(push, 0)
+; OMF.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; interface to OMF format output functions
+;
 ifndef __OMF_INC
-__OMF_INC equ <>
+define __OMF_INC
 
-;; interface to OMF format output functions
-
-;; max size of LEDATA data is 1024 - (1+2+1/2+2/4+1) = 1014
+; max size of LEDATA data is 1024 - (1+2+1/2+2/4+1) = 1014
 
 MAX_LEDATA_THRESHOLD equ (1024 - 10)
 
@@ -15,4 +19,4 @@ omf_FlushCurrSeg    proto
 omf_check_flush     proto :ptr line_num_info
 
 endif
-.pragma list(pop)
+

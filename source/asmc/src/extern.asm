@@ -60,12 +60,11 @@ CreateExternal proc private uses esi sym:ptr asym, name:string_t, weak:char_t
 
     .if ( esi )
         mov [esi].asym.state,SYM_EXTERNAL
-        mov al,ModuleInfo.Ofssize
+        mov [esi].asym.segoffsize,ModuleInfo.Ofssize
+        and [esi].asym.sflags,not ( S_WEAK or S_ISCOM )
         .if ( weak )
-            or  al,S_WEAK
+            or  [esi].asym.sflags,S_WEAK
         .endif
-        and [esi].asym.sflags,not ( S_SEGOFSSIZE or S_ISCOM )
-        or  [esi].asym.sflags,al
         sym_add_table( &SymTables[TAB_EXT*symbol_queue], esi ) ; add EXTERNAL
     .endif
     .return( esi )
@@ -86,10 +85,10 @@ CreateComm proc private uses esi sym:ptr asym, name:string_t
 
     .if ( esi )
         mov [esi].asym.state,SYM_EXTERNAL
-        mov al,ModuleInfo.Ofssize
-        or  al,S_ISCOM
-        and [esi].asym.sflags,not ( S_SEGOFSSIZE or S_WEAK or S_ISFAR )
-        or  [esi].asym.sflags,al
+        mov [esi].asym.segoffsize,ModuleInfo.Ofssize
+        mov [esi].asym.is_far,0
+        and [esi].asym.sflags,not S_WEAK
+        or  [esi].asym.sflags,S_ISCOM
         sym_add_table( &SymTables[TAB_EXT*symbol_queue], esi ) ; add EXTERNAL
     .endif
     .return( esi )
@@ -295,8 +294,7 @@ ExterndefDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             .if ( ti.is_ptr == 0 && al != ModuleInfo.Ofssize )
 
-                and [esi].asym.sflags,not S_SEGOFSSIZE
-                or  [esi].asym.sflags,al
+                mov [esi].asym.segoffsize,al
                 mov ecx,[esi].asym.segm
                 .if ( ecx )
                     mov edx,[ecx].dsym.seginfo
@@ -308,10 +306,7 @@ ExterndefDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             mov [esi].asym.mem_type,ti.mem_type
             mov [esi].asym.is_ptr,ti.is_ptr
-            and [esi].asym.sflags,not S_ISFAR
-            .if ( ti.is_far )
-                or [esi].asym.sflags,S_ISFAR
-            .endif
+            mov [esi].asym.is_far,ti.is_far
             mov [esi].asym.ptr_memtype,ti.ptr_memtype
             mov eax,ti.symtype
             .if ( ti.mem_type == MT_TYPE )
@@ -438,8 +433,7 @@ MakeExtern proc name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr asym, Of
     .endif
     or  [ecx].asym.flags,S_ISDEFINED
     mov [ecx].asym.mem_type,mem_type
-    and [ecx].asym.sflags,not S_SEGOFSSIZE
-    or  [ecx].asym.sflags,Ofssize
+    mov [ecx].asym.segoffsize,Ofssize
     mov [ecx].asym.type,vartype
    .return( ecx )
 
@@ -677,12 +671,10 @@ endif
             .if ( [edi].asym.mem_type == MT_TYPE )
                 mov edx,[edi].asym.type
             .endif
-            test [edi].asym.sflags,S_ISFAR
-            setnz cl
 
             .if ( [edi].asym.mem_type != ti.mem_type || \
                   [edi].asym.is_ptr != ti.is_ptr || \
-                  cl != ti.is_far || \
+                  [edi].asym.is_far != ti.is_far || \
                   ( [edi].asym.is_ptr && [edi].asym.ptr_memtype != ti.ptr_memtype ) || \
                   edx != ti.symtype || \
                   ( langtype != LANG_NONE && [edi].asym.langtype != LANG_NONE && [edi].asym.langtype != langtype ) )
@@ -695,14 +687,11 @@ endif
         mov [edi].asym.Ofssize,ti.Ofssize
 
         .if ( ti.is_ptr == 0 && ti.Ofssize != ModuleInfo.Ofssize )
-            mov al,[edi].asym.sflags
-            or  al,ti.Ofssize
             mov ecx,[edi].asym.segm
             .if ( ecx )
                 mov edx,[ecx].dsym.seginfo
             .endif
-            mov [edi].asym.sflags,al
-            and al,S_SEGOFSSIZE
+            mov [edi].asym.segoffsize,ti.Ofssize
             .if ( ecx && [edx].seg_info.Ofssize != al )
                 mov [edi].asym.segm,NULL
             .endif
@@ -710,10 +699,7 @@ endif
 
         mov [edi].asym.mem_type,ti.mem_type
         mov [edi].asym.is_ptr,ti.is_ptr
-        and [edi].asym.sflags,not S_ISFAR
-        .if ( ti.is_far )
-            or [edi].asym.sflags,S_ISFAR
-        .endif
+        mov [edi].asym.is_far,ti.is_far
         mov [edi].asym.ptr_memtype,ti.ptr_memtype
         .if ( ti.mem_type == MT_TYPE )
             mov [edi].asym.type,ti.symtype
@@ -744,16 +730,13 @@ ExternDirective endp
 
 ; helper for COMM directive
 
-MakeComm proc private uses edi name:string_t, sym:ptr asym, size:dword, count:dword, isfar:int_t
+MakeComm proc private uses edi name:string_t, sym:ptr asym, size:dword, count:dword, isfar:uchar_t
 
     mov edi,CreateComm( sym, name )
     .return .if ( edi == NULL )
 
     mov [edi].asym.total_length,count
-    and [edi].asym.sflags,not S_ISFAR
-    .if ( isfar )
-        or [edi].asym.sflags,S_ISFAR
-    .endif
+    mov [edi].asym.is_far,isfar
 
     ; v2.04: don't set segment if communal is far and -Zg is set
 

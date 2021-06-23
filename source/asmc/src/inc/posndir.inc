@@ -5,8 +5,8 @@
 ;
 ; Description:  interface posndir.asm - handles ORG, ALIGN, EVEN directives
 ;
-ifndef _POSNDIR_H_
-define _POSNDIR_H_
+ifndef __POSNDIR_INC
+define __POSNDIR_INC
 
 AlignCurrOffset proto :int_t
 

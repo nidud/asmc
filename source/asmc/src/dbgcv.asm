@@ -149,12 +149,12 @@ GetTyperef proc uses esi sym:ptr asym, Ofssize:byte
             mov al,[esi].asym.Ofssize
             .switch al
             .case USE16
-                .if ( [esi].asym.sflags & S_ISFAR )
+                .if ( [esi].asym.is_far )
                     .return ST_PFVOID
                 .endif
                 .return ST_PVOID
             .case USE32
-                .if ( [esi].asym.sflags & S_ISFAR )
+                .if ( [esi].asym.is_far )
                     .return ST_32PFVOID
                 .endif
                 .return ST_32PVOID
@@ -440,12 +440,12 @@ dbgcv::write_ptr_type proc fastcall uses esi edi ebx sym:ptr asym
 
     .if ( [esi].asym.Ofssize == USE16 )
         mov eax,CV_PTR_NEAR
-        .if ( [esi].asym.sflags & S_ISFAR )
+        .if ( [esi].asym.is_far )
             mov eax,CV_PTR_FAR
         .endif
     .elseif ( [esi].asym.Ofssize == USE32 )
         mov eax,CV_PTR_NEAR32
-        .if ( [esi].asym.sflags & S_ISFAR )
+        .if ( [esi].asym.is_far )
             mov eax,CV_PTR_FAR32
         .endif
     .else
@@ -628,29 +628,29 @@ dbgcv::enum_fields proc uses esi edi ebx symb:ptr dsym, enumfunc:cv_enum_func, c
     mov esi,symb
     mov ecx,[esi].dsym.structinfo
     .for ( edi = [ecx].struct_info.head, ebx = 0: edi: edi = [edi].sfield.next )
-        .if ( [edi].sfield.sym.name_size ) ;; has member a name?
-            enumfunc( this, esi, &[edi].sfield.sym, cc )
-        .elseif ( [edi].sfield.sym.type ) ;; is member a type (struct, union, record)?
+        .if ( [edi].sfield.name_size ) ;; has member a name?
+            enumfunc( this, esi, edi, cc )
+        .elseif ( [edi].sfield.type ) ;; is member a type (struct, union, record)?
             mov ecx,cc
-            add [ecx].counters.ofs,[edi].sfield.sym.offs
-            this.enum_fields( [edi].sfield.sym.type, enumfunc, cc )
+            add [ecx].counters.ofs,[edi].sfield.offs
+            this.enum_fields( [edi].sfield.type, enumfunc, cc )
             mov ecx,cc
-            sub [ecx].counters.ofs,[edi].sfield.sym.offs
+            sub [ecx].counters.ofs,[edi].sfield.offs
         .elseif ( [esi].asym.typekind == TYPE_UNION )
             ;; v2.11: include anonymous union members.
             ;; to make the MS debugger work with those members, they must have a name -
             ;; a temporary name is generated below which starts with "@@".
             ;;
-            .new pold:string_t = [edi].sfield.sym.name
+            .new pold:string_t = [edi].sfield.name
             .new tmpname[8]:char_t
 
             sprintf( &tmpname, "@@%u", ebx )
-            mov [edi].sfield.sym.name_size,ax
+            mov [edi].sfield.name_size,ax
             inc ebx
-            mov [edi].sfield.sym.name,&tmpname
-            enumfunc( this, esi, &[edi].sfield.sym, cc )
-            mov [edi].sfield.sym.name,pold
-            mov [edi].sfield.sym.name_size,0
+            mov [edi].sfield.name,&tmpname
+            enumfunc( this, esi, edi, cc )
+            mov [edi].sfield.name,pold
+            mov [edi].sfield.name_size,0
         .endif
     .endf
     ret

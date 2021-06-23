@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; LINNUM.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; internal line number information used if -Zd or -Zi is set
+;
 ifndef __LINNUM_INC
-__LINNUM_INC equ <>
-
-;; internal line number information used if -Zd or -Zi is set
+define __LINNUM_INC
 
 .template line_num_info
     next            ptr line_num_info ?
@@ -17,9 +21,9 @@ __LINNUM_INC equ <>
     ends
    .ends
 
-LinnumInit      proto
-LinnumFini      proto
+LinnumInit proto
+LinnumFini proto
 QueueDeleteLinnum proto :qdesc_t
 
 endif
-.pragma list(pop)
+

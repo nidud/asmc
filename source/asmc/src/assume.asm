@@ -466,12 +466,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             mov [esi].total_size,  ti.size
             mov [esi].mem_type,    ti.mem_type
             mov [esi].is_ptr,      ti.is_ptr
-            mov al,[esi].sflags
-            and al,not S_ISFAR
-            .if ti.is_far
-                or al,S_ISFAR
-            .endif
-            mov [esi].sflags,al
+            mov [esi].is_far,      ti.is_far
             mov [esi].Ofssize,     ti.Ofssize
             mov [esi].ptr_memtype, ti.ptr_memtype ;; added v2.05 rc13
             .if ( ti.mem_type == MT_TYPE )

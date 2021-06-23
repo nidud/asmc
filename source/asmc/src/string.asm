@@ -1548,9 +1548,9 @@ StringInit proc uses esi edi
     ;; add @TypeId() macro func
 
     mov edi,CreateMacro( "typeid" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,TypeIdFunc
-    mov [edi].sym.mac_flag,M_ISFUNC
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,TypeIdFunc
+    mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,2
     mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
@@ -1562,9 +1562,9 @@ StringInit proc uses esi edi
     ;; add @CStr() macro func
 
     mov edi,CreateMacro( "@CStr" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,CStringFunc
-    mov [edi].sym.mac_flag,M_ISFUNC
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,CStringFunc
+    mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,1
     mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1574,9 +1574,9 @@ StringInit proc uses esi edi
     ;; add @CatStr() macro func
 
     mov edi,CreateMacro( "@CatStr" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,CatStrFunc
-    mov [edi].sym.mac_flag,M_ISFUNC or M_ISVARARG
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,CatStrFunc
+    mov [edi].mac_flag,M_ISFUNC or M_ISVARARG
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,1
     mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1586,9 +1586,9 @@ StringInit proc uses esi edi
     ;; add @InStr() macro func
 
     mov edi,CreateMacro( "@InStr" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,InStrFunc
-    mov [edi].sym.mac_flag,M_ISFUNC
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,InStrFunc
+    mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,3
     mov [esi].autoexp,1
@@ -1603,9 +1603,9 @@ StringInit proc uses esi edi
     ;; add @SizeStr() macro func
 
     mov edi,CreateMacro( "@SizeStr" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,SizeStrFunc
-    mov [edi].sym.mac_flag,M_ISFUNC
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,SizeStrFunc
+    mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,1
     mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) )
@@ -1615,9 +1615,9 @@ StringInit proc uses esi edi
     ;; add @SubStr() macro func
 
     mov edi,CreateMacro( "@SubStr" )
-    mov [edi].sym.flags,S_ISDEFINED or S_PREDEFINED
-    mov [edi].sym.func_ptr,SubStrFunc
-    mov [edi].sym.mac_flag,M_ISFUNC
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,SubStrFunc
+    mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
     mov [esi].parmcnt,3
     mov [esi].autoexp,2 + 4 ;; param 2 (pos) and 3 (size) are expanded

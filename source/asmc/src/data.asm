@@ -39,13 +39,13 @@ OutputDataBytes macro x, y
     exitm<OutputBytes( x, y, NULL )>
     endm
 
-;; initialize an array inside a structure
-;; if there are no brackets, the next comma, '>' or '}' will terminate
-;;
-;; valid initialization are:
-;; - an expression, might contain DUP or a string enclosed in quotes.
-;; - a literal enclosed in <> or {} which then is supposed to contain
-;;   single items.
+; initialize an array inside a structure
+; if there are no brackets, the next comma, '>' or '}' will terminate
+;
+; valid initialization are:
+; - an expression, might contain DUP or a string enclosed in quotes.
+; - a literal enclosed in <> or {} which then is supposed to contain
+;   single items.
 
     .code
 
@@ -81,15 +81,16 @@ InitializeArray proc uses esi edi ebx f:ptr sfield, pi:ptr int_t, tokenarray:ptr
     mov edi,f
 
     mov oldofs,GetCurrOffset()
-    mov no_of_bytes,SizeFromMemtype( [edi].sym.mem_type, USE_EMPTY, [edi].sym.type )
+    mov no_of_bytes,SizeFromMemtype( [edi].mem_type, USE_EMPTY, [edi].type )
 
-    ;; If current item is a literal enclosed in <> or {}, just use this
-    ;; item. Else, use all items until a comma or EOL is found.
+    ; If current item is a literal enclosed in <> or {}, just use this
+    ; item. Else, use all items until a comma or EOL is found.
 
     .if ( [ebx].token != T_STRING || \
         ( [ebx].string_delim != '<' &&  [ebx].string_delim != '{' ) )
 
-        ;; scan for comma or final. Ignore commas inside DUP argument
+        ; scan for comma or final. Ignore commas inside DUP argument
+
         .for( edx = i,
               esi = ebx,
               ecx = 0,
@@ -119,49 +120,53 @@ InitializeArray proc uses esi edi ebx f:ptr sfield, pi:ptr int_t, tokenarray:ptr
         sub ecx,[ebx].tokpos
         mov esi,f
 
-        ;; v2.07: accept an "empty" quoted string as array initializer for byte arrays
+        ; v2.07: accept an "empty" quoted string as array initializer for byte arrays
+
         .if ( ecx == 2 && \
-            [edi].sym.total_size == [edi].sym.total_length && \
+            [edi].total_size == [edi].total_length && \
             ( [ebx].string_delim == '"' || [ebx].string_delim == "'" ) )
             mov rc,NOT_ERROR
         .else
             mov lvl,i ;; i must remain the start index
-            movzx ecx,[edi].sym.mem_type
+            movzx ecx,[edi].mem_type
             and ecx,MT_FLOAT
             mov rc,data_item( &lvl, tokenarray, NULL, no_of_bytes,
-                    [edi].sym.type, 1, FALSE, ecx, FALSE, edx )
+                    [edi].type, 1, FALSE, ecx, FALSE, edx )
         .endif
 
     .else
 
-        ;; initializer is a literal
+        ; initializer is a literal
+
         mov ecx,pi
         inc dword ptr [ecx]
         mov old_tokencount,Token_Count
         inc eax
         mov j,eax
-        ;; if the string is empty, use the default initializer
+
+        ; if the string is empty, use the default initializer
+
         .if ( [ebx].stringlen == 0 )
             mov Token_Count,Tokenize( &[edi].ivalue, j, tokenarray, TOK_RESCAN )
         .else
             mov Token_Count,Tokenize( [ebx].string_ptr, j, tokenarray, TOK_RESCAN )
         .endif
-        movzx ecx,[edi].sym.mem_type
+        movzx ecx,[edi].mem_type
         and ecx,MT_FLOAT
-        mov rc,data_item( &j, tokenarray, NULL, no_of_bytes, [edi].sym.type, 1,
+        mov rc,data_item( &j, tokenarray, NULL, no_of_bytes, [edi].type, 1,
                 FALSE, ecx, FALSE, Token_Count )
         mov Token_Count,old_tokencount
     .endif
 
-    ;; get size of array items
+    ; get size of array items
 
     GetCurrOffset()
     sub eax,oldofs
     mov no_of_bytes,eax
 
-    .if ( eax > [edi].sym.total_size )
+    .if ( eax > [edi].total_size )
         mov rc,asmerr( 2036, [ebx].tokpos )
-    .elseif ( eax < [edi].sym.total_size )
+    .elseif ( eax < [edi].total_size )
         .new filler:char_t = 0
         mov ecx,CurrSeg
         .if ecx
@@ -169,18 +174,19 @@ InitializeArray proc uses esi edi ebx f:ptr sfield, pi:ptr int_t, tokenarray:ptr
         .endif
         .if ( ecx && [ecx].seg_info.segtype == SEGTYPE_BSS )
 
-            mov eax,[edi].sym.total_size
+            mov eax,[edi].total_size
             sub eax,no_of_bytes
             SetCurrOffset( CurrSeg, eax, TRUE, TRUE )
         .else
-            ;; v2.07: if element size is 1 and a string is used as initial value,
-            ;; pad array with spaces!
 
-            .if ( [edi].sym.total_size == [edi].sym.total_length && \
+            ; v2.07: if element size is 1 and a string is used as initial value,
+            ; pad array with spaces!
+
+            .if ( [edi].total_size == [edi].total_length && \
                 ( [edi].ivalue[0] == '"' || [edi].ivalue[0] == "'" ) )
                 mov filler,' '
             .endif
-            mov eax,[edi].sym.total_size
+            mov eax,[edi].total_size
             sub eax,no_of_bytes
             FillDataBytes( filler, eax )
         .endif
@@ -189,17 +195,17 @@ InitializeArray proc uses esi edi ebx f:ptr sfield, pi:ptr int_t, tokenarray:ptr
 
 InitializeArray endp
 
-;; initialize a STRUCT/UNION/RECORD data item
-;; index:    index of initializer literal
-;; symtype:  type of data item
-;; embedded: is != NULL if proc is called recursively
-;;
-;; up to v2.08, this proc did emit ASM lines with simple types
-;; to actually "fill" the structure.
-;; since v2.09, it calls data_item() directly.
-;;
-;; Since this function may be reentered, it's necessary to save/restore
-;; global variable Token_Count.
+; initialize a STRUCT/UNION/RECORD data item
+; index:    index of initializer literal
+; symtype:  type of data item
+; embedded: is != NULL if proc is called recursively
+;
+; up to v2.08, this proc did emit ASM lines with simple types
+; to actually "fill" the structure.
+; since v2.09, it calls data_item() directly.
+;
+; Since this function may be reentered, it's necessary to save/restore
+; global variable Token_Count.
 
 InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
         symtype:ptr dsym, embedded:ptr asym
@@ -229,8 +235,8 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
 
         mov Token_Count,Tokenize( [ebx].string_ptr, i, tokenarray, TOK_RESCAN )
 
-        ;; once Token_Count has been modified, don't exit without
-        ;; restoring this value!
+        ; once Token_Count has been modified, don't exit without
+        ; restoring this value!
 
     .elseif ( esi && ( [ebx].token == T_COMMA || [ebx].token == T_FINAL ) )
         mov i,Token_Count
@@ -253,9 +259,9 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
     mov edx,[esi].dsym.structinfo
     .for ( edi = [edx].struct_info.head: edi: edi = [edi].next )
 
-        ;; is it a RECORD field?
+        ; is it a RECORD field?
 
-        .if ( [edi].sym.mem_type == MT_BITS )
+        .if ( [edi].mem_type == MT_BITS )
             .if ( [ebx].token == T_COMMA || [ebx].token == T_FINAL )
                 .if ( [edi].ivalue[0] )
                     mov j,Token_Count
@@ -276,30 +282,31 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 asmerr( 2026 )
             .endif
 
-            ;; fixme: max bits in 64-bit is 64 - see MAXRECBITS!
-            mov ecx,[edi].sym.total_size
+            ; fixme: max bits in 64-bit is 64 - see MAXRECBITS!
+
+            mov ecx,[edi].total_size
             .if ( ecx < 32 )
                 mov eax,1
                 shl eax,cl
                 .if ( opndx.uvalue >= eax )
-                    asmerr( 2071, [edi].sym.name )
+                    asmerr( 2071, [edi].name )
                 .endif
             .endif
             mov eax,dword ptr opndx.llvalue
             mov edx,dword ptr opndx.llvalue[4]
-            mov ecx,[edi].sym.offs
+            mov ecx,[edi].offs
             call __llshl
             or dword ptr dwRecInit,eax
             or dword ptr dwRecInit[4],edx
 
         .elseif ( [edi].ivalue[0] == 0 )  ;; embedded struct?
 
-            InitStructuredVar( i, tokenarray, [edi].sym.type, &[edi].sym )
+            InitStructuredVar( i, tokenarray, [edi].type, edi )
             .if ( [ebx].token == T_STRING )
                 inc i
             .endif
 
-        .elseif ( [edi].sym.flag1 & S_ISARRAY && \
+        .elseif ( [edi].flag1 & S_ISARRAY && \
                   [ebx].token != T_FINAL && [ebx].token != T_COMMA )
 
             .if ( InitializeArray( edi, &i, tokenarray ) == ERROR )
@@ -309,17 +316,18 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 .break
             .endif
 
-        .elseif ( [edi].sym.total_size == [edi].sym.total_length && \
+        .elseif ( [edi].total_size == [edi].total_length && \
                   [ebx].token == T_STRING && [ebx].stringlen > 1 && \
                   ( [ebx].string_delim == '"' || [ebx].string_delim == "'" ) )
 
-            ;; v2.07: it's a byte type, but no array, string initializer must have true length 1
+            ; v2.07: it's a byte type, but no array, string initializer must have true length 1
+
             asmerr( 2041 )
             inc i
 
         .else
 
-            mov no_of_bytes,SizeFromMemtype( [edi].sym.mem_type, USE_EMPTY, [edi].sym.type )
+            mov no_of_bytes,SizeFromMemtype( [edi].mem_type, USE_EMPTY, [edi].type )
 
             .if ( [ebx].token == T_FINAL || [ebx].token == T_COMMA )
 
@@ -328,15 +336,15 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 inc eax
                 mov j,eax
                 mov Token_Count,Tokenize( &[edi].ivalue, eax, tokenarray, TOK_RESCAN )
-                mov cl,[edi].sym.mem_type
+                mov cl,[edi].mem_type
                 and ecx,MT_FLOAT
-                data_item( &j, tokenarray, NULL, no_of_bytes, [edi].sym.type, 1,
+                data_item( &j, tokenarray, NULL, no_of_bytes, [edi].type, 1,
                     FALSE, ecx, FALSE, Token_Count )
                 pop Token_Count
 
             .else
 
-                ;; ignore commas enclosed in () ( might occur inside DUP argument! ).
+                ; ignore commas enclosed in () ( might occur inside DUP argument! ).
 
                 .for ( j = i,
                       eax = ebx,
@@ -356,11 +364,11 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                 .if ( ecx )
                     asmerr( 2181, [eax].asm_tok.tokpos )
                 .else
-                    mov cl,[edi].sym.mem_type
+                    mov cl,[edi].mem_type
                     and ecx,MT_FLOAT
                     .if ( data_item( &j, tokenarray, NULL, no_of_bytes,
-                            [edi].sym.type, 1, FALSE, ecx, FALSE, i ) == ERROR )
-                        asmerr( 2104, [edi].sym.name )
+                            [edi].type, 1, FALSE, ecx, FALSE, i ) == ERROR )
+                        asmerr( 2104, [edi].name )
                     .endif
                 .endif
             .endif
@@ -368,24 +376,26 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
         imul ebx,i,asm_tok
         add ebx,tokenarray
 
-        ;; Add padding bytes if necessary (never inside RECORDS!).
-        ;; f->next == NULL : it's the last field of the struct/union/record
+        ; Add padding bytes if necessary (never inside RECORDS!).
+        ; f->next == NULL : it's the last field of the struct/union/record
 
         .if ( [esi].asym.typekind != TYPE_RECORD )
             .if ( [edi].next == NULL || [esi].asym.typekind == TYPE_UNION )
                 mov nextofs,[esi].asym.total_size
             .else
                 mov ecx,[edi].next
-                mov nextofs,[ecx].sfield.sym.offs
+                mov nextofs,[ecx].sfield.offs
             .endif
-            mov ecx,[edi].sym.offs
-            add ecx,[edi].sym.total_size
+            mov ecx,[edi].offs
+            add ecx,[edi].total_size
             .if ( ecx < eax )
                 sub eax,ecx
                 SetCurrOffset( CurrSeg, eax, TRUE, TRUE )
             .endif
         .endif
-        ;; for a union, just the first field is initialized
+
+        ; for a union, just the first field is initialized
+
         .break .if ( [esi].asym.typekind == TYPE_UNION )
 
         .if ( [edi].next != NULL )
@@ -425,20 +435,22 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
         asmerr( 2036, [ebx].tokpos )
     .endif
 
-    ;; restore token status
+    ; restore token status
+
     mov Token_Count,old_tokencount
     mov StringBufferEnd,old_stringbufferend
     .return( NOT_ERROR )
 
 InitStructuredVar endp
 
-;;
-;; convert a string into little endian format - ( LSB 1st, LSW 1st ... etc ).
-;; <len> is the TYPE, may be 2,4,6,8,10?,16
-;;
+;
+; convert a string into little endian format - ( LSB 1st, LSW 1st ... etc ).
+; <len> is the TYPE, may be 2,4,6,8,10?,16
+;
+
 little_endian proc fastcall uses ebx src:string_t, len:dword
 
-    ;; v2.06: input and output buffer must be different!
+    ; v2.06: input and output buffer must be different!
 
     mov ebx,StringBufferEnd
     .for ( : edx > 1 : ebx++, ecx++, edx-- )
@@ -458,8 +470,8 @@ little_endian endp
 
 output_float proc uses esi opnd:ptr expr, size:dword
 
-  ;; v2.07: buffer extended to max size of a data item (=32).
-  ;; test case: XMMWORD REAL10 ptr 1.0
+  ; v2.07: buffer extended to max size of a data item (=32).
+  ; test case: XMMWORD REAL10 ptr 1.0
 
   local i:int_t
   local buffer[32]:char_t
@@ -487,30 +499,30 @@ output_float proc uses esi opnd:ptr expr, size:dword
 
 output_float endp
 
-;;
-;; initialize a data item or struct member;
-;; - start_pos: contains tokenarray[] index [in/out]
-;; - tokenarray[]: token array
-;;
-;; - sym:
-;;   for data item:     label (may be NULL)
-;;   for struct member: field/member (is never NULL)
-;;
-;; - no_of_bytes: size of item in bytes
-;; - type_sym:
-;;   for data item:     if != NULL, item is a STRUCT/UNION/RECORD.
-;;   for struct member: if != NULL, item is a STRUCT/UNION/RECORD/TYPEDEF.
-;;
-;; - dup: array size if called by DUP operator, otherwise 1
-;; - inside_struct: TRUE=inside a STRUCT declaration
-;; - is_float: TRUE=item is float
-;; - first: TRUE=first item in a line
-;;
-;; the symbol will have its 'isarray' flag set if any of the following is true:
-;; 1. at least 2 items separated by a comma are used for initialization
-;; 2. the DUP operator occures
-;; 3. item size is 1 and a quoted string with len > 1 is used as initializer
-
+;
+; initialize a data item or struct member;
+; - start_pos: contains tokenarray[] index [in/out]
+; - tokenarray[]: token array
+;
+; - sym:
+;   for data item:     label (may be NULL)
+;   for struct member: field/member (is never NULL)
+;
+; - no_of_bytes: size of item in bytes
+; - type_sym:
+;   for data item:     if != NULL, item is a STRUCT/UNION/RECORD.
+;   for struct member: if != NULL, item is a STRUCT/UNION/RECORD/TYPEDEF.
+;
+; - dup: array size if called by DUP operator, otherwise 1
+; - inside_struct: TRUE=inside a STRUCT declaration
+; - is_float: TRUE=item is float
+; - first: TRUE=first item in a line
+;
+; the symbol will have its 'isarray' flag set if any of the following is true:
+; 1. at least 2 items separated by a comma are used for initialization
+; 2. the DUP operator occures
+; 3. item size is 1 and a quoted string with len > 1 is used as initializer
+;
 
 ifndef __UNIX__
 MultiByteToWideChar proto WINAPI :int_t, :int_t, :string_t, :int_t, :ptr word, :int_t
@@ -540,10 +552,12 @@ data_item proc uses esi edi ebx start_pos:ptr int_t, tokenarray:ptr asm_tok, sym
     imul ebx,eax,asm_tok
     add ebx,tokenarray
 
-next_item:  ;; <--- continue scan if a comma has been detected
-    ;; since v1.94, the expression evaluator won't handle strings
-    ;; enclosed in <> or {}. That is, in previous versions syntax
-    ;; "mov eax,<1>" was accepted, now it's rejected.
+next_item:
+
+    ; <--- continue scan if a comma has been detected
+    ; since v1.94, the expression evaluator won't handle strings
+    ; enclosed in <> or {}. That is, in previous versions syntax
+    ; "mov eax,<1>" was accepted, now it's rejected.
 
     .if ( [ebx].token == T_STRING && \
         ( [ebx].string_delim == '<' || [ebx].string_delim == '{' ) )
@@ -551,11 +565,11 @@ next_item:  ;; <--- continue scan if a comma has been detected
         mov esi,type_sym
         .if ( esi )
 
-            ;; it's either a real data item - then inside_struct is FALSE -
-            ;; or a structure FIELD of arbitrary type.
-            ;;
-            ;; v2.10: regression in v2.09: alias types weren't skipped for
-            ;; InitStructuredVar()
+            ; it's either a real data item - then inside_struct is FALSE -
+            ; or a structure FIELD of arbitrary type.
+            ;
+            ; v2.10: regression in v2.09: alias types weren't skipped for
+            ; InitStructuredVar()
 
             .while ( [esi].asym.type )
                 mov esi,[esi].asym.type
@@ -566,15 +580,16 @@ next_item:  ;; <--- continue scan if a comma has been detected
                     .return
                 .endif
             .else
-                ;; v2.09: emit a warning if a TYPEDEF member is a simple type,
-                ;; but is initialized with a literal.
-                ;; Note: Masm complains about such literals only if the struct
-                ;; is instanced OR -Fl is set.
-                ;; fixme: the best solution is to always set type_sym to NULL if
-                ;; the type is a TYPEDEF. if the item is a struct member, then
-                ;; sym is ALWAYS != NULL and the symbol's type can be gained from
-                ;; there.
-                ;; v2.10: aliases are now already skipped here ( see above ).
+
+                ; v2.09: emit a warning if a TYPEDEF member is a simple type,
+                ; but is initialized with a literal.
+                ; Note: Masm complains about such literals only if the struct
+                ; is instanced OR -Fl is set.
+                ; fixme: the best solution is to always set type_sym to NULL if
+                ; the type is a TYPEDEF. if the item is a struct member, then
+                ; sym is ALWAYS != NULL and the symbol's type can be gained from
+                ; there.
+                ; v2.10: aliases are now already skipped here ( see above ).
 
                 .if( [esi].asym.typekind == TYPE_TYPEDEF && Parse_Pass == PASS_1 )
                     asmerr( 8001, [ebx].tokpos )
@@ -597,7 +612,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
         add ebx,tokenarray
     .endif
 
-    ;; handle DUP operator
+    ; handle DUP operator
 
     .if ( [ebx].token == T_RES_ID && [ebx].tokval == T_DUP )
         .if ( opndx.kind != EXPR_CONST )
@@ -609,7 +624,9 @@ next_item:  ;; <--- continue scan if a comma has been detected
             .endif
             .return( ERROR )
         .endif
-        ;; max dup is 0x7fffffff
+
+        ; max dup is 0x7fffffff
+
         .if ( opndx.value < 0 )
             .return( asmerr( 2092 ) )
         .endif
@@ -648,10 +665,10 @@ next_item:  ;; <--- continue scan if a comma has been detected
             .return( asmerr( 2065, ")" ) )
         .endif
 
-        ;; v2.09: SIZE and LENGTH actually don't return values for
-        ;; "first initializer, but the "first dimension" values
-        ;; v2.11: fixme: if the first dimension is 0 ( opndx.value == 0),
-        ;; Masm ignores the expression - may be a Masm bug!
+        ; v2.09: SIZE and LENGTH actually don't return values for
+        ; "first initializer, but the "first dimension" values
+        ; v2.11: fixme: if the first dimension is 0 ( opndx.value == 0),
+        ; Masm ignores the expression - may be a Masm bug!
 
         mov ecx,sym
         .if ( ecx && first && Parse_Pass == PASS_1 )
@@ -666,7 +683,9 @@ next_item:  ;; <--- continue scan if a comma has been detected
         inc i
         jmp item_done
     .endif
-    ;; a STRUCT/UNION/RECORD data item needs a literal as initializer
+
+    ; a STRUCT/UNION/RECORD data item needs a literal as initializer
+
     mov ecx,type_sym
     .if( ecx )
         .while ( [ecx].asym.type )
@@ -677,10 +696,13 @@ next_item:  ;; <--- continue scan if a comma has been detected
         .endif
     .endif
 
-    ;; handle '?'
+    ; handle '?'
+
     .if ( opndx.kind == EXPR_EMPTY && [ebx].token == T_QUESTION_MARK )
         mov opndx.uvalue,no_of_bytes
-        ;; tiny optimization for uninitialized arrays
+
+        ; tiny optimization for uninitialized arrays
+
         mov ecx,start_pos
         mov edx,i
         .if ( [ebx+16].token != T_COMMA && edx == [ecx] )
@@ -698,7 +720,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
         jmp item_done
     .endif
 
-    ;; warn about initialized data in BSS/AT segments
+    ; warn about initialized data in BSS/AT segments
 
     .if ( Parse_Pass == PASS_2 && inside_struct == FALSE && \
           initwarn == FALSE )
@@ -737,7 +759,7 @@ next_item:  ;; <--- continue scan if a comma has been detected
             .return( asmerr( 2187 ) )
         .endif
 
-        ;; a string returned by the evaluator (enclosed in quotes!)?
+        ; a string returned by the evaluator (enclosed in quotes!)?
 
         .if ( opndx.quoted_string )
 
@@ -748,25 +770,31 @@ next_item:  ;; <--- continue scan if a comma has been detected
 
             mov string_len,[ecx].asm_tok.stringlen ;; this is the length without quotes
 
-            ;; v2.07: check for empty string for ALL types
+            ; v2.07: check for empty string for ALL types
+
             .if ( eax == 0 )
                 .if ( inside_struct )
-                    ;; when the struct is declared, it's no error -
-                    ;; but won't be accepted when the struct is instanced.
-                    ;; v2.07: don't modify string_len! Instead
-                    ;; mark field as array!
+
+                    ; when the struct is declared, it's no error -
+                    ; but won't be accepted when the struct is instanced.
+                    ; v2.07: don't modify string_len! Instead
+                    ; mark field as array!
 
                     or [edi].asym.flag1,S_ISARRAY
                 .else
                     .return( asmerr( 2047 ) ) ;; MASM doesn't like ""
                 .endif
             .endif
-            ;; a string is only regarded as an array if item size is 1
-            ;; else it is regarded as ONE item
+
+            ; a string is only regarded as an array if item size is 1
+            ; else it is regarded as ONE item
+
             .if ( no_of_bytes != 1 )
                 .if ( eax > no_of_bytes )
-                    ;; v2.22 - unicode
-                    ;; v2.23 - use L"Unicode"
+
+                    ; v2.22 - unicode
+                    ; v2.23 - use L"Unicode"
+
                     .if ( inside_struct || !( ( ModuleInfo.strict_masm_compat == 0 ) && \
                            ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) && \
                          no_of_bytes == 2 ) )
@@ -789,21 +817,21 @@ next_item:  ;; <--- continue scan if a comma has been detected
                 .if ecx
                     dec eax
                     add total,eax
-                    or [edi].asym.flag1,S_ISARRAY ;; v2.07: added
+                    or [edi].asym.flag1,S_ISARRAY ; v2.07: added
                     .if ( first )
                         mov [edi].asym.first_length,1
                         mov [edi].asym.first_size,ecx
-                        mov first,FALSE ;; avoid to touch first_xxx fields below
+                        mov first,FALSE ; avoid to touch first_xxx fields below
                     .endif
                 .endif
             .endif
 
             .if ( !inside_struct )
 
-                ;; anything bigger than a byte must be stored in little-endian
-                ;; format -- LSB first
-                ;; v2.22 - unicode
-                ;; v2.23 - use L"Unicode"
+                ; anything bigger than a byte must be stored in little-endian
+                ; format -- LSB first
+                ; v2.22 - unicode
+                ; v2.23 - use L"Unicode"
 
                 .if ( ( ModuleInfo.strict_masm_compat == 0 ) && \
                       ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) && \
@@ -844,13 +872,13 @@ endif
             .endif
         .else
 
-            ;; it's NOT a string
+            ; it's NOT a string
 
             .if ( !inside_struct )
 
-                ;; the evaluator cannot handle types with size > 16.
-                ;; so if a (simple) type is larger ( YMMWORD? ),
-                ;; clear anything which is above.
+                ; the evaluator cannot handle types with size > 16.
+                ; so if a (simple) type is larger ( YMMWORD? ),
+                ; clear anything which is above.
 
                 .if ( no_of_bytes > 16 )
                     OutputDataBytes( &opndx.chararray, 16 )
@@ -875,8 +903,8 @@ endif
                     .endif
                     OutputDataBytes( &opndx.chararray, no_of_bytes )
 
-                    ;; check that there's no significant data left
-                    ;; which hasn't been emitted.
+                    ; check that there's no significant data left
+                    ; which hasn't been emitted.
 
                     .if ( no_of_bytes <= sizeof( int_64 ) )
                         mov eax,0xFF
@@ -904,15 +932,17 @@ endif
         .endc
     .case EXPR_ADDR
 
-        ;; since a fixup will be created, 8 bytes is max.
-        ;; there's no way to define an initialized tbyte "far64" address,
-        ;; because there's no fixup available for the selector part.
+        ; since a fixup will be created, 8 bytes is max.
+        ; there's no way to define an initialized tbyte "far64" address,
+        ; because there's no fixup available for the selector part.
 
         .if ( no_of_bytes > sizeof(uint_64) )
             AsmerrSymName( 2104, sym )
             .endc
         .endif
-        ;; indirect addressing (incl. stack variables) is invalid
+
+        ; indirect addressing (incl. stack variables) is invalid
+
         .if ( opndx.flags & E_INDIRECT )
             asmerr( 2032 )
             .endc
@@ -929,10 +959,13 @@ endif
         .endif
 
         inc total
-        ;; for STRUCT fields, don't emit anything!
+
+        ; for STRUCT fields, don't emit anything!
+
         .endc .if ( inside_struct )
 
-        ;; determine what type of fixup is to be created
+        ; determine what type of fixup is to be created
+
         mov eax,opndx.inst
         xor edi,edi
         mov esi,opndx.sym
@@ -947,9 +980,9 @@ endif
             mov eax,no_of_bytes
             .switch ( eax )
             .case 1
-                ;; forward reference?
+                ; forward reference?
                 .if ( Parse_Pass == PASS_1 && esi && [esi].asym.state == SYM_UNDEFINED )
-                    mov edi,FIX_VOID ;; v2.10: was regression in v2.09
+                    mov edi,FIX_VOID ; v2.10: was regression in v2.09
                 .else
                     asmerr( 2071 )
                     mov edi,FIX_OFF8
@@ -986,10 +1019,10 @@ endif
             mov edi,FIX_OFF32_SECREL
             .endc
         .case T_DOT_LOW
-            mov edi,FIX_OFF8 ;; OMF, BIN + GNU-ELF only
+            mov edi,FIX_OFF8    ; OMF, BIN + GNU-ELF only
             .endc
         .case T_DOT_HIGH
-            mov edi,FIX_HIBYTE ;; OMF only
+            mov edi,FIX_HIBYTE  ; OMF only
             .endc
         .case T_LOWWORD
             mov edi,FIX_OFF16
@@ -998,7 +1031,7 @@ endif
             .endif
             .endc
         .case T_HIGH32
-            ;; no break
+            ; no break
         .case T_HIGHWORD
             mov edi,FIX_VOID
             asmerr( 2026 )
@@ -1010,9 +1043,9 @@ endif
             .endif
             .endc
         .default
-            ;; size < 2 can work with T_LOW|T_HIGH operator only
+            ; size < 2 can work with T_LOW|T_HIGH operator only
             .if ( no_of_bytes < 2 )
-                ;; forward reference?
+                ; forward reference?
                 .if ( Parse_Pass == PASS_1 && esi && [esi].asym.state == SYM_UNDEFINED )
                     ;
                 .else
@@ -1024,8 +1057,9 @@ endif
                     .endc
                 .endif
             .endif
-            ;; if the symbol references a segment or group,
-            ;; then generate a segment fixup.
+
+            ; if the symbol references a segment or group,
+            ; then generate a segment fixup.
 
             .if ( esi && ( [esi].asym.state == SYM_SEG || [esi].asym.state == SYM_GRP ) )
                 mov edi,FIX_SEG
@@ -1033,8 +1067,10 @@ endif
             .endif
             .switch ( no_of_bytes )
             .case 2
-                ;; accept "near16" override, else complain
-                ;; if symbol's offset is 32bit
+
+                ; accept "near16" override, else complain
+                ; if symbol's offset is 32bit
+
                 .if ( opndx.flags & E_EXPLICIT )
                     .if ( SizeFromMemtype( opndx.mem_type, opndx.Ofssize,
                             opndx.type ) > no_of_bytes )
@@ -1049,13 +1085,14 @@ endif
                 mov edi,FIX_OFF16
                 .endc
             .case 4
-                ;; masm generates:
-                ;; off32 if curr segment is 32bit,
-                ;; ptr16 if curr segment is 16bit,
-                ;; and ignores type overrides.
-                ;; if it's a NEAR external, size is 16, and
-                ;; format isn't OMF, error 'symbol type conflict'
-                ;; is displayed
+
+                ; masm generates:
+                ; off32 if curr segment is 32bit,
+                ; ptr16 if curr segment is 16bit,
+                ; and ignores type overrides.
+                ; if it's a NEAR external, size is 16, and
+                ; format isn't OMF, error 'symbol type conflict'
+                ; is displayed
 
                 .if ( opndx.flags & E_EXPLICIT )
                     .if ( opndx.mem_type == MT_FAR )
@@ -1074,10 +1111,11 @@ endif
                         .endif
                     .endif
                 .else
-                    ;; what's done if code size is 16 is Masm-compatible.
-                    ;; It's not very smart, however.
-                    ;; A better strategy is to choose fixup type depending
-                    ;; on the symbol's offset size.
+
+                    ; what's done if code size is 16 is Masm-compatible.
+                    ; It's not very smart, however.
+                    ; A better strategy is to choose fixup type depending
+                    ; on the symbol's offset size.
 
                     .if ( ModuleInfo.Ofssize == USE16 )
                         .if ( opndx.mem_type == MT_NEAR && \
@@ -1094,10 +1132,12 @@ endif
                 .endif
                 .endc
             .case 6
-                ;; Masm generates a PTR32 fixup in OMF!
-                ;; and a DIR32 fixup in COFF.
 
-                ;; COFF/ELF has no far fixups
+                ; Masm generates a PTR32 fixup in OMF!
+                ; and a DIR32 fixup in COFF.
+
+                ; COFF/ELF has no far fixups
+
                 .if ( Options.output_format == OFORMAT_COFF || \
                       Options.output_format == OFORMAT_ELF )
                     mov edi,FIX_OFF32
@@ -1106,11 +1146,13 @@ endif
                 .endif
                 .endc
             .default
-                ;; Masm generates
-                ;; off32 if curr segment is 32bit
-                ;; ptr16 if curr segment is 16bit
-                ;; JWasm additionally accepts a FAR32 PTR override
-                ;; and generates a ptr32 fixup then
+
+                ; Masm generates
+                ; off32 if curr segment is 32bit
+                ; ptr16 if curr segment is 16bit
+                ; JWasm additionally accepts a FAR32 PTR override
+                ; and generates a ptr32 fixup then
+
                 .if ( opndx.flags & E_EXPLICIT && opndx.mem_type == MT_FAR && \
                       opndx.Ofssize == USE32 )
                     mov edi,FIX_PTR32
@@ -1126,7 +1168,8 @@ endif
         .endsw
         mov fixup_type,edi
 
-        ;; v2.07: fixup type check moved here
+        ; v2.07: fixup type check moved here
+
         mov eax,1
         mov ecx,edi
         shl eax,cl
@@ -1141,22 +1184,24 @@ endif
         .endif
         mov fixp,NULL
         .if ( write_to_file )
-            ;; there might be a segment override:
-            ;; a segment, a group or a segment register.
-            ;; Init var SegOverride, it's used inside set_frame()
+
+            ; there might be a segment override:
+            ; a segment, a group or a segment register.
+            ; Init var SegOverride, it's used inside set_frame()
 
             mov SegOverride,NULL
             segm_override( &opndx, NULL )
 
-            ;; set global vars Frame and Frame_Datum
-            ;; opndx.sym may be NULL, then SegOverride is set.
+            ; set global vars Frame and Frame_Datum
+            ; opndx.sym may be NULL, then SegOverride is set.
+
             .if ( ModuleInfo.offsettype == OT_SEGMENT && \
                 ( opndx.inst == T_OFFSET || opndx.inst == T_SEG ))
                 set_frame2( opndx.sym )
             .else
                 set_frame( opndx.sym )
             .endif
-            ;; uses Frame and Frame_Datum
+            ; uses Frame and Frame_Datum
             mov fixp,CreateFixup( opndx.sym, fixup_type, OPTJ_NONE )
         .endif
         OutputBytes( &opndx.value, no_of_bytes, fixp )
@@ -1164,10 +1209,12 @@ endif
     .case EXPR_REG
         asmerr( 2032 )
         .endc
-    .default ;; unknown opndx.kind, shouldn't happen
+    .default ; unknown opndx.kind, shouldn't happen
         .return( asmerr( 2008, "" ) )
     .endsw
+
 item_done:
+
     mov ecx,sym
     .if( ecx && first && Parse_Pass == PASS_1 )
         mov eax,total
@@ -1189,6 +1236,7 @@ item_done:
             jmp next_item
         .endif
     .endif
+
     .endf
 
     mov ecx,sym
@@ -1207,13 +1255,13 @@ data_item endp
 
 checktypes proc sym:ptr asym, mem_type:byte, type_sym:ptr asym
 
-    ;; for EXTERNDEF, check type changes
+    ; for EXTERNDEF, check type changes
 
     mov ecx,sym
     mov al,[ecx].asym.mem_type
     .if ( al != MT_EMPTY )
 
-        ;; skip alias types
+        ; skip alias types
 
         mov edx,type_sym
         mov ah,mem_type
@@ -1234,16 +1282,16 @@ checktypes proc sym:ptr asym, mem_type:byte, type_sym:ptr asym
 
 checktypes endp
 
-;;
-;; parse data definition line. Syntax:
-;; [label] directive|simple type|arbitrary type initializer [,...]
-;; - directive: DB, DW, ...
-;; - simple type: BYTE, WORD, ...
-;; - arbitrary type: struct, union, typedef or record name
-;; arguments:
-;; i: index of directive or type
-;; type_sym: userdef type or NULL
-;;
+;
+; parse data definition line. Syntax:
+; [label] directive|simple type|arbitrary type initializer [,...]
+; - directive: DB, DW, ...
+; - simple type: BYTE, WORD, ...
+; - arbitrary type: struct, union, typedef or record name
+; arguments:
+; i: index of directive or type
+; type_sym: userdef type or NULL
+;
 
 data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asym
 
@@ -1259,12 +1307,13 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
     imul ebx,i,asm_tok
     add ebx,tokenarray
 
-    ;; v2.05: the previous test in parser.c wasn't fool-proved
+    ; v2.05: the previous test in parser.c wasn't fool-proved
+
     .if ( i > 1 && ModuleInfo.m510 == FALSE )
-        .return( asmerr(2008, [ebx].string_ptr ) )
+        .return( asmerr( 2008, [ebx].string_ptr ) )
     .endif
     .if ( [ebx+16].token == T_FINAL )
-        .return( asmerr(2008, [ebx].tokpos ) )
+        .return( asmerr( 2008, [ebx].tokpos ) )
     .endif
 
     mov o,1
@@ -1295,11 +1344,12 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
         .endif
     .endif
 
-    ;; set values for mem_type and no_of_bytes
+    ; set values for mem_type and no_of_bytes
+
     mov esi,type_sym
     .if ( esi )
 
-        ;; if the parser found a TYPE id, type_sym is != NULL
+        ; if the parser found a TYPE id, type_sym is != NULL
 
         mov mem_type,MT_TYPE
         mov edi,[esi].dsym.structinfo
@@ -1308,10 +1358,11 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             .return( asmerr( 2159 ) )
         .endif
 
-        ;; v2.09: expand literals inside <> or {}.
-        ;; Previously this was done inside InitStructuredVar()
+        ; v2.09: expand literals inside <> or {}.
+        ; Previously this was done inside InitStructuredVar()
 
         .if ( Parse_Pass == PASS_1 || UseSavedState == FALSE )
+
             mov ecx,i
             inc ecx
             ExpandLiterals( ecx, tokenarray )
@@ -1319,7 +1370,9 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
 
         mov no_of_bytes,[esi].asym.total_size
         .if ( no_of_bytes == 0 )
-            ;; a void type is not valid
+
+            ; a void type is not valid
+
             .if ( [esi].asym.typekind == TYPE_TYPEDEF )
                 .return( asmerr( 2004, [esi].asym.name ) )
             .endif
@@ -1327,10 +1380,10 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
 
     .else
 
-        ;; it's either a predefined type or a data directive. For types, the index
-        ;; into the simpletype table is in <bytval>, for data directives
-        ;; the index is found in <sflags>.
-        ;; v2.06: SimpleType is obsolete. Use token index directly!
+        ; it's either a predefined type or a data directive. For types, the index
+        ; into the simpletype table is in <bytval>, for data directives
+        ; the index is found in <sflags>.
+        ; v2.06: SimpleType is obsolete. Use token index directly!
 
         mov eax,[ebx].tokval
         .if ( [ebx].token == T_STYPE )
@@ -1340,7 +1393,9 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             .return( asmerr( 2004, [ebx].string_ptr ) )
         .endif
         mov mem_type,GetMemtypeSp( eax )
-        ;; types NEAR[16|32], FAR[16|32] and PROC are invalid here
+
+        ; types NEAR[16|32], FAR[16|32] and PROC are invalid here
+
         mov ecx,eax
         and ecx,MT_SPECIAL_MASK
         .if ( cl == MT_ADDRESS )
@@ -1354,9 +1409,8 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
         mov no_of_bytes,eax
     .endif
 
-    ;; if i == 1, there's a (data) label at pos 0.
-    ;; (note: if -Zm is set, a code label may be at pos 0, and
-    ;; i is 2 then.)
+    ; if i == 1, there's a (data) label at pos 0.
+    ; note: if -Zm is set, a code label may be at pos 0, and i is 2 then.
 
     mov edx,tokenarray
     mov ecx,[edx].asm_tok.string_ptr
@@ -1366,11 +1420,14 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
     mov name,ecx
     xor esi,esi
 
-    ;; in a struct declaration?
+    ; in a struct declaration?
+
     .if ( CurrStruct )
 
-        ;; structure parsing is done in the first pass only
+        ; structure parsing is done in the first pass only
+
         .if ( Parse_Pass == PASS_1 )
+
             mov esi,CreateStructField( i, tokenarray, name, mem_type, type_sym, no_of_bytes )
             .if ( eax == NULL )
                 .return( ERROR )
@@ -1379,15 +1436,15 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
                 FStoreLine(0)
             .endif
             mov currofs,[esi].asym.offs
-            or [esi].asym.flag1,S_ISDATA ;; 'first_size' is valid
-        .else ;; v2.04: else branch added
+            or [esi].asym.flag1,S_ISDATA ; 'first_size' is valid
+
+        .else ; v2.04: else branch added
+
             mov edx,CurrStruct
             mov edi,[edx].dsym.structinfo
-            mov ecx,[edi].struct_info.tail
-            lea esi,[ecx].sfield.sym
+            mov esi,[edi].struct_info.tail
             mov currofs,[esi].asym.offs
-            mov eax,[ecx].sfield.next
-            mov [edi].struct_info.tail,eax
+            mov [edi].struct_info.tail,[esi].sfield.next
         .endif
 
     .else
@@ -1406,9 +1463,12 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             mov currofs,GetCurrOffset()
         .endif
 
-        ;; is a label accociated with the data definition?
+        ; is a label accociated with the data definition?
+
         .if ( name )
-            ;; get/create the label.
+
+            ; get/create the label.
+
             mov esi,SymLookup( name )
             .if ( Parse_Pass == PASS_1 )
 
@@ -1425,36 +1485,44 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
 
                     sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], esi )
                     mov [esi].asym.state,SYM_INTERNAL
-                    ;; v2.11: Set the symbol's langtype. It may have been set
-                    ;; by a PUBLIC directive, so take care not to overwrite it.
-                    ;; Problem: Masm doesn't do this - might be a bug.
+
+                    ; v2.11: Set the symbol's langtype. It may have been set
+                    ; by a PUBLIC directive, so take care not to overwrite it.
+                    ; Problem: Masm doesn't do this - might be a bug.
 
                     .if ( [esi].asym.langtype == LANG_NONE )
                         mov [esi].asym.langtype,ModuleInfo.langtype
                     .endif
                 .elseif ( [esi].asym.state == SYM_INTERNAL)
 
-                    ;; accept a symbol "redefinition" if addresses and types
-                    ;; do match.
+                    ; accept a symbol "redefinition" if addresses and types
+                    ; do match.
+
                     mov ecx,GetCurrOffset()
                     .if ( [esi].asym.segm != CurrSeg || \
                           [esi].asym.offs != ecx )
                         .return( asmerr(2005, name ) )
                     .endif
-                    ;; check for symbol type conflict
+
+                    ; check for symbol type conflict
+
                     .if ( checktypes( esi, mem_type, type_sym ) == ERROR )
                         .return( ERROR )
                     .endif
-                    ;; v2.09: reset size and length ( might have been set by LABEL directive )
+
+                    ; v2.09: reset size and length ( might have been set by LABEL directive )
+
                     mov [esi].asym.total_size,0
                     mov [esi].asym.total_length,0
-                    jmp label_defined; ;; don't relink the label
+                    jmp label_defined ; don't relink the label
 
                 .else
                     .return( asmerr( 2005, [esi].asym.name ) )
                 .endif
-                ;; add the label to the linked list attached to curr segment
-                ;; this allows to reduce the number of passes (see Fixup.c)
+
+                ; add the label to the linked list attached to curr segment
+                ; this allows to reduce the number of passes (see Fixup.c)
+
                 mov ecx,CurrSeg
                 mov edx,[ecx].dsym.seginfo
                 mov eax,[edx].seg_info.label_list
@@ -1475,8 +1543,8 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             mov [esi].asym.mem_type,mem_type
             mov [esi].asym.type,type_sym
 
-            ;; backpatch for data items? Yes, if the item is defined
-            ;; in a code segment then its offset may change!
+            ; backpatch for data items? Yes, if the item is defined
+            ; in a code segment then its offset may change!
 
             BackPatch( esi )
         .endif
@@ -1486,7 +1554,9 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
             .while ( [edi].asym.mem_type == MT_TYPE )
                 mov edi,[edi].asym.type
             .endw
-            ;; if it is just a type alias, skip the arbitrary type
+
+            ; if it is just a type alias, skip the arbitrary type
+
             .if ( [edi].asym.typekind == TYPE_TYPEDEF )
                 mov type_sym,NULL
             .endif
@@ -1507,7 +1577,8 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
         .return( asmerr(2008, [ebx].tokpos ) )
     .endif
 
-    ;; v2.06: update struct size after ALL items have been processed
+    ; v2.06: update struct size after ALL items have been processed
+
     .if ( CurrStruct )
         UpdateStructSize( esi )
     .endif

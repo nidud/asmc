@@ -1,8 +1,12 @@
-.pragma list(push, 0)
+; INPUT.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __INPUT_INC
-__INPUT_INC equ <>
+define __INPUT_INC
 
-;; prototypes for input queueing/processing procedures
+; prototypes for input queueing/processing procedures
 
 macro_instance	struct
 currline	srcline_t ?
@@ -13,9 +17,9 @@ _macro		asym_t ?
 parmcnt		uint_t ?
 macro_instance	ends
 
-;; for line numbers, the source files have to be stored
-;; in a list in the very same order as they appear in
-;; the input stream.
+; for line numbers, the source files have to be stored
+; in a list in the very same order as they appear in
+; the input stream.
 
 fileseq_t	typedef ptr file_seq
 file_seq	struct
@@ -97,4 +101,3 @@ SkipSpaceR macro reg, base
     endm
 
 endif
-.pragma list(pop)

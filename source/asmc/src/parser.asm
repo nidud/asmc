@@ -295,7 +295,7 @@ SizeFromMemtype proc mem_type:uchar_t, Ofssize:int_t, type:asym_t
     .case MT_PROC
         mov eax,edx
         mov ecx,type
-        .if [ecx].sflags & S_ISFAR
+        .if [ecx].is_far
             add eax,2
         .endif
         .endc
@@ -1369,7 +1369,7 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
     .if [edi].flags & E_EXPLICIT && [edi].type
         mov ecx,[edi].type
         mov size,[ecx].asym.total_size
-        .if [ecx].asym.sflags & S_ISFAR
+        .if [ecx].asym.is_far
             or [esi].flags,CI_ISFAR
         .else
             and [esi].flags,not CI_ISFAR
@@ -1380,7 +1380,7 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
 
             mov ecx,[eax].asym.type
             mov size,[ecx].asym.total_size
-            .if [ecx].asym.sflags & S_ISFAR
+            .if [ecx].asym.is_far
                 or [esi].flags,CI_ISFAR
             .else
                 and [esi].flags,not CI_ISFAR
@@ -1394,13 +1394,13 @@ SetPtrMemtype proc private uses esi edi CodeInfo:ptr code_info, opndx:expr_t
         .elseif [eax].asym.mem_type == MT_PTR
 
             mov ecx,MT_NEAR
-            .if [eax].asym.sflags & S_ISFAR
+            .if [eax].asym.is_far
                 mov ecx,MT_FAR
             .endif
             mov size,SizeFromMemtype( cl, [eax].asym.Ofssize, NULL )
             mov ecx,sym
             and [esi].flags,not CI_ISFAR
-            .if [ecx].asym.sflags & S_ISFAR
+            .if [ecx].asym.is_far
                 or [esi].flags,CI_ISFAR
             .endif
         .else

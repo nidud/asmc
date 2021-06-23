@@ -29,11 +29,11 @@ include segment.inc
 ;
 ; current LST file position
 ;
-externdef list_pos:DWORD
+externdef list_pos:uint_t
 
     .data?
     LineStore       qdesc <>
-    LineStoreCurr   line_t ?        ; must be global!
+    LineStoreCurr   ptr line_item ? ; must be global!
     StoreState      int_t ?
     UseSavedState   int_t ?
     modstate        mod_state <>    ; struct to store assembly status

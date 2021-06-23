@@ -100,31 +100,31 @@ SearchNameInStruct proc uses esi edi ebx tstruct:ptr asym, name:string_t,
 
         ;; recursion: if member has no name, check if it is a structure
         ;; and scan this structure's fieldlist then
-        mov eax,[ebx].sym.name
+        mov eax,[ebx].name
         .if ( byte ptr [eax] == 0 )
             ;; there are 2 cases: an anonymous inline struct ...
-            .if ( [ebx].sym.state == SYM_TYPE )
+            .if ( [ebx].state == SYM_TYPE )
                 .if ( SearchNameInStruct( ebx, name, poffset, level ) )
                     mov esi,eax
                     mov ecx,poffset
                     .if ecx
-                        add [ecx],[ebx].sym.offs
+                        add [ecx],[ebx].offs
                     .endif
                     .break
                 .endif
             ;; or an anonymous structured field
-            .elseif ([ebx].sym.mem_type == MT_TYPE )
-                .if ( SearchNameInStruct( [ebx].sym.type, name, poffset, level ) )
+            .elseif ([ebx].mem_type == MT_TYPE )
+                .if ( SearchNameInStruct( [ebx].type, name, poffset, level ) )
                     mov esi,eax
                     mov ecx,poffset
                     .if ecx
-                        add [ecx],[ebx].sym.offs
+                        add [ecx],[ebx].offs
                     .endif
                     .break
                 .endif
             .endif
-        .elseif ( di == [ebx].sym.name_size )
-            .if ( SymCmpFunc( name, [ebx].sym.name, edi ) == 0 )
+        .elseif ( di == [ebx].name_size )
+            .if ( SymCmpFunc( name, [ebx].name, edi ) == 0 )
                 mov esi,ebx
                 .break
             .endif
@@ -149,7 +149,7 @@ AreStructsEqual proc private uses edi ebx newstr:ptr dsym, oldstr:ptr dsym
     mov edi,[ecx].struct_info.head
 
     ;; kind of structs must be identical
-    .if ( [ebx].sym.typekind != [edi].sym.typekind )
+    .if ( [ebx].typekind != [edi].typekind )
         .return( FALSE )
     .endif
 
@@ -158,17 +158,17 @@ AreStructsEqual proc private uses edi ebx newstr:ptr dsym, oldstr:ptr dsym
             .return( FALSE )
         .endif
         ;; for global member names, don't check the name if it's ""
-        mov eax,[edi].sym.name
+        mov eax,[edi].name
 
         .if ( ModuleInfo.oldstructs && byte ptr [eax] == 0 )
             ;
-        .elseif ( strcmp( [ebx].sym.name, [edi].sym.name ) )
+        .elseif ( strcmp( [ebx].name, [edi].name ) )
             .return( FALSE )
         .endif
-        .if ( [ebx].sym.offs != [edi].sym.offs )
+        .if ( [ebx].offs != [edi].offs )
             .return( FALSE )
         .endif
-        .if ( [ebx].sym.total_size != [edi].sym.total_size )
+        .if ( [ebx].total_size != [edi].total_size )
             .return( FALSE )
         .endif
     .endf
@@ -315,7 +315,7 @@ endif
         .if ( ecx )
             mov ecx,[ecx].dsym.structinfo
             mov edx,[ecx].struct_info.tail
-            mov edi,[edx].sfield.sym.type
+            mov edi,[edx].sfield.type
             mov [ecx].struct_info.tail,[edx].sfield.next
         .endif
         mov ecx,[edi].dsym.structinfo
@@ -474,8 +474,8 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
     .if ( [esi].struct_info.flags & SI_ORGINSIDE )
         .for ( ecx = 0, edx = [esi].struct_info.head: edx: edx = [edx].sfield.next )
-            .if ( [edx].sfield.sym.offs < ecx )
-                mov ecx,[edx].sfield.sym.offs
+            .if ( [edx].sfield.offs < ecx )
+                mov ecx,[edx].sfield.offs
             .endif
         .endf
         mov eax,[edi].asym.total_size
@@ -577,14 +577,14 @@ CheckAnonymousStruct proc fastcall private uses edi type_ptr:ptr dsym
 
     mov ecx,[ecx].dsym.structinfo
     .for ( edi = [ecx].struct_info.head : edi : edi = [edi].next )
-        mov eax,[edi].sym.name
+        mov eax,[edi].name
         .if ( byte ptr [eax] )
-            SearchNameInStruct( CurrStruct, [edi].sym.name, 0, 0 )
+            SearchNameInStruct( CurrStruct, [edi].name, 0, 0 )
             .if ( eax )
                 .return( asmerr( 2005, [eax].asym.name ) )
             .endif
-        .elseif ( [edi].sym.type )
-            mov eax,[edi].sym.type
+        .elseif ( [edi].type )
+            mov eax,[edi].type
             .if ( [eax].asym.typekind == TYPE_STRUCT || \
                   [eax].asym.typekind == TYPE_UNION )
                 .if ( CheckAnonymousStruct( eax ) == ERROR )
@@ -701,9 +701,9 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
 
     ;; create the struct field symbol
 
-    mov [edi].sym.name_size,len
+    mov [edi].name_size,len
     .if ( eax )
-        mov [edi].sym.name,LclAlloc( &[eax+1] )
+        mov [edi].name,LclAlloc( &[eax+1] )
         mov esi,name
         mov ecx,len
         mov edx,edi
@@ -712,15 +712,15 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
         mov byte ptr [edi],0
         mov edi,edx
     .else
-        mov [edi].sym.name,&@CStr("")
+        mov [edi].name,&@CStr("")
     .endif
-    mov [edi].sym.state,SYM_STRUCT_FIELD
+    mov [edi].state,SYM_STRUCT_FIELD
     .if ( ModuleInfo.cref )
-        or [edi].sym.flag1,S_LIST
+        or [edi].flag1,S_LIST
     .endif
-    or  [edi].sym.flags,S_ISDEFINED
-    mov [edi].sym.mem_type,mem_type
-    mov [edi].sym.type,vartype
+    or  [edi].flags,S_ISDEFINED
+    mov [edi].mem_type,mem_type
+    mov [edi].type,vartype
     mov [edi].next,NULL
 
     mov esi,s
@@ -789,7 +789,7 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
     .if ( size > [ecx].asym.max_mbr_size )
         mov [ecx].asym.max_mbr_size,size
     .endif
-    mov [edi].sym.offs,offs
+    mov [edi].offs,offs
 
     ;; if -Zm is on, create a global symbol
 
@@ -993,10 +993,7 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
                               [edi].asym.mem_type == MT_PROC || \
                               [edi].asym.mem_type == MT_FAR ) )
 
-                            mov [esi].is_far,0
-                            .if ( [edi].asym.sflags & S_ISFAR )
-                                mov [esi].is_far,1
-                            .endif
+                            mov [esi].is_far,[edi].asym.is_far
                             .if ( [edi].asym.Ofssize != USE_EMPTY )
                                 mov [esi].Ofssize,[edi].asym.Ofssize
                             .endif
@@ -1004,10 +1001,7 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
                     .else
                         mov [esi].ptr_memtype,[edi].asym.ptr_memtype
                         .if ( distance == FALSE && [esi].is_ptr == 1 )
-                            mov [esi].is_far,0
-                            .if ( [edi].asym.sflags & S_ISFAR )
-                                mov [esi].is_far,1
-                            .endif
+                            mov [esi].is_far,[edi].asym.is_far
                             .if ( [edi].asym.Ofssize != USE_EMPTY )
                                 mov [esi].Ofssize,[edi].asym.Ofssize
                             .endif
@@ -1047,10 +1041,7 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
         mov edi,[esi].symtype
         .if ( [edi].asym.typekind == TYPE_TYPEDEF )
             mov [esi].mem_type,[edi].asym.mem_type
-            mov [esi].is_far,0
-            .if ( [edi].asym.sflags & S_ISFAR )
-                mov [esi].is_far,1
-            .endif
+            mov [esi].is_far,[edi].asym.is_far
             mov [esi].is_ptr,[edi].asym.is_ptr
             mov [esi].Ofssize,[edi].asym.Ofssize
             mov [esi].size,[edi].asym.total_size
@@ -1146,16 +1137,14 @@ endif
 
         assume esi:nothing
         mov [edi].asym.mem_type,MT_PROC
-        mov al,[esi].asym.sflags
-        and al,S_SEGOFSSIZE
-        mov [edi].asym.Ofssize,al
+        mov [edi].asym.Ofssize,[esi].asym.segoffsize
         ;; v2.03: set value of field total_size (previously was 0)
         mov eax,2
         mov cl,[edi].asym.Ofssize
         shl eax,cl
         mov [edi].asym.total_size,eax
         .if ( [esi].asym.mem_type != MT_NEAR )
-            or  [edi].asym.sflags,S_ISFAR ;; v2.04: added
+            mov [edi].asym.is_far,1 ;; v2.04: added
             add [edi].asym.total_size,2
         .endif
         mov [edi].asym.target_type,esi
@@ -1198,14 +1187,12 @@ endif
         .if ( ti.Ofssize != USE_EMPTY )
             mov bh,ti.Ofssize
         .endif
-        cmp bl,bl
+        cmp bl,bh
         setnz bl
-        test [edi].asym.sflags,S_ISFAR
-        setnz bh
         .if ( ti.mem_type != [edi].asym.mem_type || \
             ( ti.mem_type == MT_TYPE && ecx != edx ) || \
             ( ti.mem_type == MT_PTR && \
-            ( ti.is_far != bh || bl || \
+            ( ti.is_far != [edi].asym.is_far || bl || \
               ti.ptr_memtype != [edi].asym.ptr_memtype || \
               ecx != edx ) ) )
             .return( asmerr( 2004, name ) )
@@ -1216,9 +1203,7 @@ endif
     mov [edi].asym.Ofssize,ti.Ofssize
     mov [edi].asym.total_size,ti.size
     mov [edi].asym.is_ptr,ti.is_ptr
-    .if ( ti.is_far )
-        or [edi].asym.sflags,S_ISFAR
-    .endif
+    mov [edi].asym.is_far,ti.is_far
     .if ( ti.mem_type == MT_TYPE )
         mov [edi].asym.type,ti.symtype
     .else
@@ -1406,9 +1391,9 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             assume edi:ptr sfield
 
             mov ecx,len
-            mov [edi].sym.name_size,cx
+            mov [edi].name_size,cx
             inc ecx
-            mov [edi].sym.name,LclAlloc( ecx )
+            mov [edi].name,LclAlloc( ecx )
 
             mov edx,edi
             mov edi,eax
@@ -1417,12 +1402,12 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             rep movsb
             mov edi,edx
 
-            and [edi].sym.flag1,not S_LIST
+            and [edi].flag1,not S_LIST
             mov al,ModuleInfo.cref
-            or  [edi].sym.flag1,al
-            mov [edi].sym.state,SYM_STRUCT_FIELD
-            mov [edi].sym.mem_type,MT_BITS
-            mov [edi].sym.total_size,opndx.value
+            or  [edi].flag1,al
+            mov [edi].state,SYM_STRUCT_FIELD
+            mov [edi].mem_type,MT_BITS
+            mov [edi].total_size,opndx.value
             .if ( !oldr )
                 SymAddGlobal( edi )
             .endif
@@ -1484,8 +1469,8 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     ;; set the bit position
     mov ecx,[esi].dsym.structinfo
     .for ( edi = [ecx].struct_info.head: edi: edi = [edi].next )
-        sub eax,[edi].sym.total_size
-        mov [edi].sym.offs,eax
+        sub eax,[edi].total_size
+        mov [edi].offs,eax
     .endf
     .if ( oldr )
         .if ( redef_err > 0 || \

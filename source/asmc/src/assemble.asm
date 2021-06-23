@@ -180,9 +180,9 @@ OutputByte proc uses esi edi ebx char:int_t
     mov [edi].seg_info.written,1
     mov eax,[edi].seg_info.current_loc
 
-    .if eax > [esi].dsym.sym.max_offset
+    .if eax > [esi].dsym.max_offset
 
-	mov [esi].dsym.sym.max_offset,eax
+	mov [esi].dsym.max_offset,eax
     .endif
     ret
 OutputByte endp
@@ -244,8 +244,8 @@ OutputBytes proc uses esi edi ebx pbytes:ptr byte, len:int_t, fxptr:ptr fixup
     add [edi].seg_info.bytes_written,eax
     mov [edi].seg_info.written,1
     mov eax,[edi].seg_info.current_loc
-    .if eax > [esi].dsym.sym.max_offset
-	mov [esi].dsym.sym.max_offset,eax
+    .if eax > [esi].dsym.max_offset
+	mov [esi].dsym.max_offset,eax
     .endif
     ret
 OutputBytes endp
@@ -288,8 +288,8 @@ SetCurrOffset proc uses esi edi ebx dseg:dsym_t, value:uint_t, relative:int_t, s
     mov [edi].seg_info.current_loc,ebx
     mov [edi].seg_info.written,0
     mov eax,[edi].seg_info.current_loc
-    .if eax > [esi].dsym.sym.max_offset
-	mov [esi].dsym.sym.max_offset,eax
+    .if eax > [esi].dsym.max_offset
+	mov [esi].dsym.max_offset,eax
     .endif
     mov eax,NOT_ERROR
     ret
@@ -303,9 +303,9 @@ WriteModule proc uses esi edi ebx modinfo:ptr module_info
     mov esi,SymTables[TAB_SEG*symbol_queue].head
     .while  esi
 	mov eax,[esi].dsym.seginfo
-	.if [eax].seg_info.Ofssize == USE16 && [esi].dsym.sym.max_offset > 10000h
+	.if [eax].seg_info.Ofssize == USE16 && [esi].dsym.max_offset > 10000h
 	    .if Options.output_format == OFORMAT_OMF
-		asmerr( 2103, [esi].dsym.sym.name )
+		asmerr( 2103, [esi].dsym.name )
 	    .endif
 	.endif
 	mov esi,[esi].dsym.next

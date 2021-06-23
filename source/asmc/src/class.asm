@@ -38,24 +38,16 @@ ClassProto proc uses esi edi class:string_t, langtype:int_t, args:string_t, type
     mov al,1
 
     .while al && edi < ecx
-
         lodsb
-
         .if al == '='
-
             lodsb
-
             .while al && al != '>'
-
                 lodsb
             .endw
-
             .if al
-
                 lodsb
             .endif
         .endif
-
         stosb
     .endw
 
@@ -105,9 +97,9 @@ AddPublic proc uses esi edi ebx this:ptr com_item, sym:ptr asym
         .for ( edx = [ebx].dsym.structinfo,
                edi = [edx].struct_info.head : edi : edi = [edi].next )
 
-            .if [edi].sym.type
+            .if [edi].type
 
-                mov edx,[edi].sym.type
+                mov edx,[edi].type
                 .if [edx].asym.typekind == TYPE_STRUCT
 
                     AddPublic(esi, edx)
@@ -117,13 +109,13 @@ AddPublic proc uses esi edi ebx this:ptr com_item, sym:ptr asym
                     movzx ecx,[ebx].asym.name_size
                     mov word ptr [eax+ecx-4],'_'
 
-                    .if SymFind( strcat( eax, [edi].sym.name ) )
+                    .if SymFind( strcat( eax, [edi].name ) )
 
                         mov edx,[eax].asym.name
                         .if [eax].asym.state == SYM_TMACRO
                             mov edx,[eax].asym.string_ptr
                         .endif
-                        AddLineQueueX( "%s_%s equ <%s>", [esi].class, [edi].sym.name, edx )
+                        AddLineQueueX( "%s_%s equ <%s>", [esi].class, [edi].name, edx )
                     .endif
                 .endif
             .endif
@@ -1229,7 +1221,7 @@ MacroInline endp
 
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
-  local rc:int_t, args:token_t, cmd:uint_t, public_pos:string_t,
+  local rc:int_t, args:token_t, cmd:uint_t,
         class[256]:char_t, constructor:int_t
 
     mov rc,NOT_ERROR
@@ -1262,8 +1254,13 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         mov edx,[edi].com_item.publsym
         .if edx
             .if !strcmp([edi].com_item.class, [esi].asym.name)
-                OpenVtbl(edi)
-                AddLineQueueX( "%sVtbl ends", [esi].asym.name )
+
+                mov edx,[edi].com_item.publsym
+                .if SymFind( strcat( strcpy( &class, [edx].asym.name ), "Vtbl" ) )
+
+                    OpenVtbl(edi)
+                    AddLineQueueX( "%sVtbl ends", [esi].asym.name )
+                .endif
             .endif
         .endif
         .endc
@@ -1439,69 +1436,49 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         ; v2.32.20 - removed typedefs
         strcpy( edi, esi )
 
-        .if ( [ebx+16].token == T_ID )
+        add ebx,16
+        .if ( [ebx].token == T_ID )
 
-            mov eax,[ebx+16].string_ptr
+            mov eax,[ebx].string_ptr
             mov eax,[eax]
             or  al,0x20
 
             .if ( ax == 'c' )
 
-                mov [ebx+16].token,T_RES_ID
-                mov [ebx+16].tokval,T_CCALL
-                mov [ebx+16].bytval,1
+                mov [ebx].token,T_RES_ID
+                mov [ebx].tokval,T_CCALL
+                mov [ebx].bytval,1
             .endif
         .endif
 
-        lea eax,[ebx+16]
-        mov edx,[ebx+16].tokval
-        .if ( [ebx+16].token != T_FINAL && edx >= T_CCALL && edx <= T_WATCALL )
+        mov edx,[ebx].tokval
+        .if ( [ebx].token != T_FINAL && edx >= T_CCALL && edx <= T_WATCALL )
 
             mov ecx,ModuleInfo.ComStack
             mov [ecx].com_item.langtype,edx
-            add eax,16
+            add ebx,16
         .endif
-        mov args,eax
-        mov public_pos,NULL
 
-        .for ( edi = 0, ebx = args : [ebx].token != T_FINAL : ebx += 16 )
+        .if ( [ebx].token == T_COLON )
 
-            .if ( [ebx].token == T_COLON )
+            .if ( [ebx+16].token  == T_DIRECTIVE && [ebx+16].tokval == T_PUBLIC )
 
-                .if ( [ebx+asm_tok].token  == T_DIRECTIVE && \
-                      [ebx+asm_tok].tokval == T_PUBLIC )
+                mov ebx,[ebx+32].string_ptr
+                .return asmerr( 2006, ebx ) .if !SymFind( ebx )
 
-                    mov public_pos,[ebx].tokpos
-                    mov byte ptr [eax],0
-                    mov ebx,[ebx+asm_tok*2].string_ptr
-                    .return asmerr( 2006, ebx ) .if !SymFind( ebx )
-
-                    mov ecx,ModuleInfo.ComStack
-                    mov [ecx].com_item.publsym,eax
-
-                .else
-
-                    inc edi
-                .endif
-                .break
+                mov ecx,ModuleInfo.ComStack
+                mov [ecx].com_item.publsym,eax
             .endif
-        .endf
+        .endif
 
         .if ( cmd == T_DOT_CLASS )
 
-            mov eax,public_pos
-            .if eax
-                mov byte ptr [eax],':'
-            .endif
-
-            mov eax,8
-            .if ( ModuleInfo.Ofssize == USE32 )
-                mov eax,4
-            .endif
+            movzx eax,ModuleInfo.Ofssize
+            shl eax,2
             mov cl,ModuleInfo.fieldalign
             mov edx,1
             shl edx,cl
-            .if ( edx < eax )
+            .if ( eax && edx < eax )
                 AddLineQueueX( "%s struct %d", esi, eax )
             .else
                 AddLineQueueX( "%s struct", esi )

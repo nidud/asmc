@@ -72,7 +72,7 @@ CHARS_OR    equ '|' + ( '|' shl 8 )
 
     .code
 
-GetCOp proc fastcall private item;:token_t
+GetCOp proc fastcall private item;:ptr asm_tok
 
     mov edx,[ecx].asm_tok.string_ptr
     xor eax,eax
@@ -147,10 +147,10 @@ GetCOp  endp
 ; render an instruction
 ;
 
-    assume ebx:token_t
+    assume ebx:ptr asm_tok
 
 RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:uint_t,
-        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:token_t
+        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:ptr asm_tok
 
   local reg:string_t
 
@@ -283,7 +283,7 @@ RenderJcc endp
 ;
 ; a "token" in a C expression actually is an assembly expression
 ;
-LGetToken proc private uses esi edi ebx hll:hll_t, i:int_t, tokenarray:token_t, opnd:ptr expr
+LGetToken proc private uses esi edi ebx hll:ptr hll_item, i:int_t, tokenarray:ptr asm_tok, opnd:ptr expr
     ;
     ; scan for the next C operator in the token array.
     ; because the ASM evaluator may report an error if such a thing
@@ -334,8 +334,8 @@ GetLabel endp
 ; 4. one token (short form for "<token> != 0")
 ;
 
-GetSimpleExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t,
-        tokenarray:token_t, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
+GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
+        tokenarray:ptr asm_tok, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
 local   op:         int_t,
         op1_pos:    int_t,
@@ -753,7 +753,7 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
+GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
     ilabel:uint_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -826,7 +826,7 @@ GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
+GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
     ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
   local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
@@ -937,11 +937,11 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-GenerateFloat proto :int_t, :token_t
+GenerateFloat proto :int_t, :ptr asm_tok
 
-    assume ebx:token_t
+    assume ebx:ptr asm_tok
 
-ExpandCStrings proc uses edi ebx tokenarray:token_t
+ExpandCStrings proc uses edi ebx tokenarray:ptr asm_tok
 
     xor eax,eax
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
@@ -1223,12 +1223,12 @@ GetMacroReturn proc uses esi ebx i:int_t, tokenarray:ptr asm_tok
 
 GetMacroReturn endp
 
-StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:token_t
+StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm_tok
 
   local sym:dsym_t
   local mac:string_t
   local curr:asym_t
-  local proc_id:token_t ; foo( 1, bar(...), ...)
+  local proc_id:ptr asm_tok ; foo( 1, bar(...), ...)
   local parg_id:int_t ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax|xmm0]]
   local opnd:expr
   local bracket:int_t
@@ -1504,14 +1504,14 @@ macro_args:
 StripSource endp
 
 
-LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:token_t
+LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:ptr asm_tok
 
   local opnd:expr
   local b[MAX_LINE_LEN]:char_t
   local name:string_t
-  local id:token_t
-  local args:token_t
-  local dots[10]:token_t
+  local id:ptr asm_tok
+  local args:ptr asm_tok
+  local dots[10]:ptr asm_tok
   local static_struct:int_t
   local ClassVtbl[256]:char_t
   local sym:asym_t
@@ -1524,7 +1524,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
   local brcount:int_t
   local sqcount:int_t
   local dotcount:int_t
-  local sqbrend:token_t
+  local sqbrend:ptr asm_tok
   local j:int_t
   local vparray:asym_t
 
@@ -1987,7 +1987,7 @@ LKRenderHllProc endp
 
     assume ebx: NOTHING
 
-RenderHllProc proc private uses esi edi dst:string_t, i:uint_t, tokenarray:token_t
+RenderHllProc proc private uses esi edi dst:string_t, i:uint_t, tokenarray:ptr asm_tok
 
   local oldstat:input_status
 
@@ -2053,7 +2053,7 @@ endif
 
 QueueTestLines endp
 
-ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:token_t
+ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t
 
@@ -2085,7 +2085,7 @@ ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:token_t
 
 ExpandHllProc endp
 
-ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:token_t
+ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t
 
@@ -2120,7 +2120,7 @@ ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:token_t
 
 ExpandHllProcEx endp
 
-EvaluateHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
+EvaluateHllExpression proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
             ilabel:int_t, is_true:int_t, buffer:string_t
 
   local hllop:hll_opnd, b[MAX_LINE_LEN]:char_t
@@ -2312,7 +2312,7 @@ endif
 
 EvaluateHllExpression endp
 
-ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
+ExpandHllExpression proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
         ilabel:int_t, is_true:int_t, buffer:string_t
 
   local rc:DWORD,
@@ -2471,7 +2471,7 @@ CheckCXZLines proc private uses esi edi ebx p
 
 CheckCXZLines endp
 
-RenderUntilXX proc private uses edi hll:hll_t, cmd:uint_t
+RenderUntilXX proc private uses edi hll:ptr hll_item, cmd:uint_t
 
   local buffer[32]:char_t
 
@@ -2601,12 +2601,12 @@ GetJumpString proc private uses edx ecx cmd
 
 GetJumpString endp
 
-    assume  ebx: token_t
-    assume  esi: hll_t
+    assume  ebx: ptr asm_tok
+    assume  esi: ptr hll_item
 
 ; .IF, .WHILE, .SWITCH or .REPEAT directive
 
-HllStartDir proc uses esi edi ebx i:int_t, tokenarray:token_t
+HllStartDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
 local   rc:         int_t,
         cmd:        uint_t,
@@ -2884,7 +2884,7 @@ HllStartDir endp
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
 ;
-HllEndDir proc uses esi edi ebx i:int_t, tokenarray:token_t
+HllEndDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t
 
@@ -3106,8 +3106,8 @@ HllEndDir proc uses esi edi ebx i:int_t, tokenarray:token_t
 
 HllEndDir endp
 
-HllContinueIf proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:token_t,
-    labelid:int_t, hll1:hll_t, is_true:int_t
+HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asm_tok,
+    labelid:int_t, hll1:ptr hll_item, is_true:int_t
 
   local rc:int_t, buff[16]:char_t
   local buffer[256]:char_t
@@ -3229,14 +3229,14 @@ HllContinueIf endp
 ;    - jump to test / exit label of innermost .WHILE/.REPEAT block
 ;
 
-HllExitDir proc USES esi edi ebx i:int_t, tokenarray:token_t
+HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
   local rc:     int_t,
         cont0:  int_t,
         cmd:    int_t,
         buff    [16]:char_t,
         buffer  [MAX_LINE_LEN]:char_t,
-        hll:    hll_t
+        hll:    ptr hll_item
 
     mov esi,ModuleInfo.HllStack
     mov hll,esi

@@ -164,11 +164,11 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
     imul ebx,idx,asm_tok
     add  ebx,tokenarray
 
-    ;; invokation of macro functions requires params enclosed in "()"
+    ; invokation of macro functions requires params enclosed in "()"
 
     mov parm_end_delim,T_FINAL
-    .if [esi].sym.mac_flag & M_ISFUNC
-        .if [ebx].token == T_OP_BRACKET ;; should be always true
+    .if ( [esi].mac_flag & M_ISFUNC )
+        .if ( [ebx].token == T_OP_BRACKET ) ; should be always true
             inc idx
             add ebx,16
             mov parm_end_delim,T_CL_BRACKET
@@ -178,8 +178,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
         mov byte ptr [eax],0
     .endif
     ;; v2.08: if macro is purged, return "void"
-    .if [esi].sym.mac_flag & M_PURGED
-        .if bracket_level > 0
+    .if ( [esi].mac_flag & M_PURGED )
+        .if ( bracket_level > 0 )
             .for ( : bracket_level && [ebx].token != T_FINAL: idx++, ebx += 16 )
                 .if [ebx].token == T_OP_BRACKET
                     inc bracket_level
@@ -213,8 +213,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
 
     mov ebx,tokenarray
     mov parmidx,0
-    .if [esi].sym.mac_flag & M_LABEL
-        .if mflags & MF_LABEL
+    .if ( [esi].mac_flag & M_LABEL )
+        .if ( mflags & MF_LABEL )
             mov i,strlen( [ebx].string_ptr )
             mov ecx,parmidx
             mov edx,mi.parm_array
@@ -265,7 +265,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
 
         .if ( [ebx].token == T_FINAL || [ebx].token == parm_end_delim || \
             ( [ebx].token == T_COMMA && \
-              ( !( [esi].sym.mac_flag & M_ISVARARG ) || parmidx != ecx ) ) )
+              ( !( [esi].mac_flag & M_ISVARARG ) || parmidx != ecx ) ) )
 
             ;; it's a blank parm
             imul eax,parmidx,mparm_list
@@ -587,7 +587,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                 shl edx,cl
                                 mov edi,info
                                 mov esi,mac
-                                .if ( [esi].sym.flags & S_PREDEFINED && ( [edi].autoexp & dx ) )
+                                .if ( [esi].flags & S_PREDEFINED && ( [edi].autoexp & dx ) )
 
                                     strcpy( p, [eax].asym.string_ptr )
                                     ExpandTMacro( p, tokenarray, FALSE, 0 )
@@ -659,14 +659,14 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
             dec eax
             mov edx,currparm
 
-            .if [esi].sym.mac_flag & M_ISVARARG && parmidx == eax
-                .if varargcnt == 0
+            .if ( [esi].mac_flag & M_ISVARARG && parmidx == eax )
+                .if ( varargcnt == 0 )
                     mov eax,mi.parm_array
                     mov ecx,parmidx
                     mov [eax+ecx*4],edx
                 .endif
                 mov eax,p
-                .if [esi].sym.flags & S_PREDEFINED
+                .if ( [esi].flags & S_PREDEFINED )
                     sub eax,currparm
                     GetAlignedPointer( currparm, eax )
                 .endif
@@ -680,9 +680,9 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                     add ebx,16
                     mov edx,eax
 
-                    .if ( !( [esi].sym.mac_flag & M_ISFUNC ) || [ebx].token != parm_end_delim )
+                    .if ( !( [esi].mac_flag & M_ISFUNC ) || [ebx].token != parm_end_delim )
                         dec parmidx
-                        .if ( !( [esi].sym.flags & S_PREDEFINED ) )
+                        .if ( !( [esi].flags & S_PREDEFINED ) )
                             mov byte ptr [edx],','
                             inc edx
                             inc currparm
@@ -722,7 +722,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                 ;; v2.09: changed to a warning only (Masm-compatible)
                 imul eax,i,asm_tok
                 add eax,tokenarray
-                asmerr( 4006, [esi].sym.name, [eax].asm_tok.tokpos )
+                asmerr( 4006, [esi].name, [eax].asm_tok.tokpos )
             .endif
         .endif
         inc idx
@@ -733,7 +733,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
         ;; (in this case, the caller knows better what to do ).
 
         .if ( !( mflags & MF_IGNARGS ) )
-            asmerr( 4006, [esi].sym.name, [ebx].tokpos )
+            asmerr( 4006, [esi].name, [ebx].tokpos )
         .endif
     .endif
 

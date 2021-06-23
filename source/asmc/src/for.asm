@@ -15,7 +15,7 @@ include hllext.inc
 
     .code
 
-strtrim PROC string:string_t
+strtrim proc string:string_t
 
     .if strlen( string )
 
@@ -31,7 +31,7 @@ strtrim PROC string:string_t
     .endif
     ret
 
-strtrim ENDP
+strtrim endp
 
 GetCondition proc private string:ptr sbyte
 
@@ -115,15 +115,15 @@ Assignopc proc private uses edi buffer:string_t, opc1:string_t, opc2:string_t, s
 
 Assignopc endp
 
-ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:token_t
+ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asm_tok
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
     mov edi,buffer
     mov ebx,tokenarray
 
-    assume ebx:token_t
-    assume esi:token_t
+    assume ebx:ptr asm_tok
+    assume esi:ptr asm_tok
 
     mov edx,[ebx].string_ptr
     mov cl,[ebx].token
@@ -306,7 +306,7 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:token
 ParseAssignment endp
 
 RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:token_t
+    source:ptr sbyte, tokenarray:ptr asm_tok
 
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
@@ -341,10 +341,10 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
 
 RenderAssignment endp
 
-    assume  ebx:token_t
-    assume  esi:hll_t
+    assume  ebx:ptr asm_tok
+    assume  esi:ptr hll_item
 
-ForDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
+ForDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
 local   rc:int_t,
         cmd:uint_t,

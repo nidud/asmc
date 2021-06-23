@@ -1,15 +1,19 @@
-.pragma list(push, 0)
+; EXTERN.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; prototypes of extern.asm
+;
 ifndef __EXTERN_INC
-__EXTERN_INC equ <>
+define __EXTERN_INC
 
-;; prototypes of extern.asm
-
-MakeExtern	proto :string_t, :uchar_t, :asym_t, :asym_t, :uchar_t
-AddPublicData	proto fastcall :asym_t
+MakeExtern proto :string_t, :uchar_t, :ptr asym, :ptr asym, :uchar_t
+AddPublicData proto fastcall :ptr asym
 
 FreePubQueue macro
     exitm<mov ModuleInfo.PubQueue.head,NULL>
     endm
 
 endif
-.pragma list(pop)
+

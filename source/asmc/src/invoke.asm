@@ -187,8 +187,7 @@ PushInvokeParam proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr
 
     ;; v2.11: GetSymOfssize() doesn't work for state SYM_TYPE
 
-    movzx eax,[esi].asym.sflags
-    and eax,S_SEGOFSSIZE
+    movzx eax,[esi].asym.segoffsize
     .if [esi].asym.state != SYM_TYPE
         GetSymOfssize(esi)
     .endif
@@ -233,7 +232,7 @@ PushInvokeParam proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr
 
 ifndef __ASMC64__
 
-            .if ( [edi].asym.sflags & S_ISFAR || psize == fptrsize )
+            .if ( [edi].asym.is_far || psize == fptrsize )
                 mov ecx,opnd.sym
                 .if ( ecx && [ecx].asym.state == SYM_STACK )
                     AddLineQueue( " push ss" )
@@ -263,7 +262,7 @@ ifndef __ASMC64__
             mov eax,2
             shl eax,cl
 
-            .if ( [edi].asym.sflags & S_ISFAR || psize > eax )
+            .if ( [edi].asym.is_far || psize > eax )
 
                 GetSegmentPart( &opnd, &buffer, &fullparam )
                 .if ( eax )
@@ -307,7 +306,7 @@ ifndef __ASMC64__
                     ( [edi].asym.Ofssize == USE32 && CurrWordSize == 2 ) )
                     AddLineQueueX( " pushd offset %s", &fullparam )
                 .elseif ( CurrWordSize > 2 && [edi].asym.Ofssize == USE16 && \
-                        ( [edi].asym.sflags & S_ISFAR || Ofssize == USE16 ) ) ;; v2.11: added
+                        ( [edi].asym.is_far || Ofssize == USE16 ) ) ;; v2.11: added
                     AddLineQueueX( " pushw offset %s", &fullparam )
                 .else
                     .if ( !( [esi].asym.flag2 & S_ISINLINE && [edi].asym.sflags & S_ISVARARG ) )
@@ -324,7 +323,7 @@ endif
 
         .if ( [edi].asym.sflags & S_ISVARARG )
             movzx eax,CurrWordSize
-            .if ( [edi].asym.sflags & S_ISFAR )
+            .if ( [edi].asym.is_far )
                 add eax,eax
             .endif
             add size_vararg,eax
@@ -1769,7 +1768,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         dec numParam
         mov size_vararg,0 ;; reset the VARARG parameter size count
 
-        .while ( edi && !( [edi].sym.sflags & S_ISVARARG ) )
+        .while ( edi && !( [edi].sflags & S_ISVARARG ) )
             mov edi,[edi].nextparam
         .endw
         .for ( : k >= numParam: k-- )
@@ -1779,7 +1778,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         ;; move to first non-vararg parameter, if any
 
         mov edx,info
-        .for ( edi = [edx].proc_info.paralist : edi && [edi].sym.sflags & S_ISVARARG : edi = [edi].nextparam )
+        .for ( edi = [edx].proc_info.paralist : edi && [edi].sflags & S_ISVARARG : edi = [edi].nextparam )
 
         .endf
     .endif
@@ -1817,7 +1816,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 ;; set push size to DWORD/QWORD
 
-                mov eax,[edi].sym.total_size
+                mov eax,[edi].total_size
                 .if (eax < 4)
                     mov eax,4
                 .endif
@@ -1852,7 +1851,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .endif
 
     .else
-        .for ( numParam = 0 : edi && !( [edi].sym.sflags & S_ISVARARG ) : edi = [edi].nextparam, numParam++ )
+        .for ( numParam = 0 : edi && !( [edi].sflags & S_ISVARARG ) : edi = [edi].nextparam, numParam++ )
             .if ( PushInvokeParam( i, tokenarray, pproc, edi, numParam, &r0flags ) == ERROR )
                 .if ( !pmacro )
                     asmerr( 2033, numParam)
@@ -1953,41 +1952,41 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                     .for ( edi = [edx].proc_info.paralist: ind: edi = [edi].nextparam, ind-- )
                     .endf
 
-                    mov args[ebx*4],[edi].sym.string_ptr
-                    mov size,SizeFromMemtype( [edi].sym.mem_type, [edi].sym.Ofssize, [edi].sym.type )
+                    mov args[ebx*4],[edi].string_ptr
+                    mov size,SizeFromMemtype( [edi].mem_type, [edi].Ofssize, [edi].type )
 
                     xor eax,eax
                     .if ( [esi].langtype == LANG_SYSCALL )
-                        movzx eax,[edi].sym.regist[0]
+                        movzx eax,[edi].regist[0]
                     .elseif ( ebx < 4 )
-                        .if ( [edi].sym.mem_type & MT_FLOAT && size <= 16 )
+                        .if ( [edi].mem_type & MT_FLOAT && size <= 16 )
                             lea eax,[ebx + T_XMM0]
-                        .elseif ( [edi].sym.mem_type == MT_YWORD )
+                        .elseif ( [edi].mem_type == MT_YWORD )
                             lea eax,[ebx + T_YMM0]
-                        .elseif ( [edi].sym.mem_type == MT_ZWORD )
+                        .elseif ( [edi].mem_type == MT_ZWORD )
                             lea eax,[ebx + T_ZMM0]
                         .elseif ( ModuleInfo.Ofssize == USE64 || ebx < stk )
                             movzx eax,win64regs[ebx]
                         .endif
                     .elseif ( ebx < 6 && [esi].langtype == LANG_VECTORCALL )
-                        .if ( [edi].sym.mem_type & MT_FLOAT && size <= 16 )
+                        .if ( [edi].mem_type & MT_FLOAT && size <= 16 )
                             lea eax,[ebx + T_XMM0]
-                        .elseif ( [edi].sym.mem_type == MT_YWORD )
+                        .elseif ( [edi].mem_type == MT_YWORD )
                             lea eax,[ebx + T_YMM0]
-                        .elseif ( [edi].sym.mem_type == MT_ZWORD )
+                        .elseif ( [edi].mem_type == MT_ZWORD )
                             lea eax,[ebx + T_ZMM0]
                         .endif
                     .endif
                     mov reg,eax
 
                     .if ( [esi].langtype == LANG_WATCALL && ebx < 4 )
-                        .if ( [edi].sym.mem_type == MT_ABS )
-                            mov args[ebx*4],[edi].sym.name
-                            mov [edi].sym.name,&@CStr("")
+                        .if ( [edi].mem_type == MT_ABS )
+                            mov args[ebx*4],[edi].name
+                            mov [edi].name,&@CStr("")
                         .endif
-                    .elseif ( [edi].sym.mem_type == MT_ABS )
-                        mov args[ebx*4],[edi].sym.name
-                        mov [edi].sym.name,&@CStr("")
+                    .elseif ( [edi].mem_type == MT_ABS )
+                        mov args[ebx*4],[edi].name
+                        mov [edi].name,&@CStr("")
                     .elseif ( reg )
                         mov args[ebx*4],get_regname(reg, size)
                     .else
@@ -2016,7 +2015,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
                 .if ( [ebx].token != T_FINAL )
 
-                    .if ( [edi].sym.flag2 & S_ISSTATIC )
+                    .if ( [edi].flag2 & S_ISSTATIC )
                         strcat( p, [ebx+32].tokpos )
                     .else
                         strcat( p, [ebx+16].tokpos )
@@ -2025,14 +2024,14 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             .elseif ( [edx].proc_info.flags & PROC_HAS_VARARG )
 
-                .if ( [ebx+16].tokval == T_ADDR && [edi].sym.flag1 & S_METHOD )
+                .if ( [ebx+16].tokval == T_ADDR && [edi].flag1 & S_METHOD )
                     strcat( p, [ebx+32].tokpos )
                 .else
                     strcat( p, [ebx+16].tokpos )
                 .endif
            .else
                 mov esi,1
-                .if ( [edi].sym.flag2 & S_ISSTATIC )
+                .if ( [edi].flag2 & S_ISSTATIC )
                     strcat( p, [ebx+32].string_ptr )
                     mov esi,0
                 .else

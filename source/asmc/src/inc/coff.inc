@@ -5,9 +5,6 @@
 ;
 ; prototypes of functions defined in coff.asm
 ;
-; Change history:
-; 2021-04-29 - (...)
-;
 ifndef __COFF_INC
 define __COFF_INC
 
@@ -27,7 +24,7 @@ define __COFF_INC
     q qdesc <>
    .ends
 
-;; v2.12: all coff global variables replaced by struct coffmod
+; v2.12: all coff global variables replaced by struct coffmod
 
 .template coffmod
     directives      ptr dsym ?  ; .drectve section, contains linker directives

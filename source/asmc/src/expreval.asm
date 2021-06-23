@@ -172,8 +172,8 @@ GetRecordMask proc fastcall uses esi edi ebx rec:dsym_t
 
     .for ( : ebx : ebx = [ebx].sfield.next )
 
-        mov ecx,[ebx].sfield.sym.offs
-        mov edi,[ebx].sfield.sym.total_size
+        mov ecx,[ebx].sfield.offs
+        mov edi,[ebx].sfield.total_size
         add edi,ecx
 
         .for ( : ecx < edi : ecx++ )
@@ -812,7 +812,7 @@ GetSizeValue proc fastcall sym:asym_t
     movzx edx,[ecx].mem_type
     .if edx == MT_PTR
         mov edx,MT_NEAR
-        .if [ecx].sflags & S_ISFAR
+        .if [ecx].is_far
             mov edx,MT_FAR
         .endif
     .endif
@@ -1072,7 +1072,7 @@ type_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
             mov [ecx].type_tok,[edx].type_tok
             mov eax,sym
             mov ecx,MT_NEAR
-            .if [eax].sflags & S_ISFAR
+            .if [eax].is_far
                 mov ecx,MT_FAR
             .endif
             SizeFromMemtype(cl, [eax].Ofssize, NULL)
@@ -1491,8 +1491,7 @@ wimask_op proc uses esi edi ebx oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym
             mov eax,[eax].dsym.structinfo
             mov esi,[eax].struct_info.head
             .for ( : esi : esi = [esi].sfield.next )
-                mov ebx,[esi].sfield.sym
-                add [ecx].value,[ebx].total_size
+                add [ecx].value,[esi].sfield.total_size
             .endf
         .else
             mov [ecx].value,[eax].asym.total_size

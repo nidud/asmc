@@ -1,24 +1,28 @@
-.pragma list(push, 0)
+; TOKEN.INC--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ifndef __TOKEN_INC
-__TOKEN_INC equ <>
+define __TOKEN_INC
 
 ; T_INSTRUCTION - T_RES_ID are reserved words.
 ; T_REG - T_RES_ID match RWT_REG - RWT_RES_ID
 
 T_FINAL             equ 0
-T_INSTRUCTION       equ 1       ;; 1
-T_REG               equ 2       ;; 2 (==RWT_REG)
-T_DIRECTIVE         equ 3       ;; 3 (==RWT_DIRECTIVE)
-T_UNARY_OPERATOR    equ 4       ;; 4 (==RWT_UNARY_OP)
-T_BINARY_OPERATOR   equ 5       ;; 5 (==RWT_BINARY_OP)
-T_STYPE             equ 6       ;; 6 (==RWT_STYPE)
-T_RES_ID            equ 7       ;; 7 (==RWT_RES_ID)
-T_ID                equ 8       ;; 8
-T_STRING            equ 9       ;; 9
-T_NUM               equ 10      ;; A
-T_FLOAT             equ 11      ;; B
-T_BAD_NUM           equ 12      ;; C
-T_DBL_COLON         equ 13      ;; D
+T_INSTRUCTION       equ 1       ; 1
+T_REG               equ 2       ; 2 (==RWT_REG)
+T_DIRECTIVE         equ 3       ; 3 (==RWT_DIRECTIVE)
+T_UNARY_OPERATOR    equ 4       ; 4 (==RWT_UNARY_OP)
+T_BINARY_OPERATOR   equ 5       ; 5 (==RWT_BINARY_OP)
+T_STYPE             equ 6       ; 6 (==RWT_STYPE)
+T_RES_ID            equ 7       ; 7 (==RWT_RES_ID)
+T_ID                equ 8       ; 8
+T_STRING            equ 9       ; 9
+T_NUM               equ 10      ; A
+T_FLOAT             equ 11      ; B
+T_BAD_NUM           equ 12      ; C
+T_DBL_COLON         equ 13      ; D
 
 T_OP_BRACKET        equ '('
 T_OP_SQ_BRACKET     equ '['
@@ -68,4 +72,3 @@ T_HLL_DBLCOLON      equ 0x20
     token_t typedef ptr asm_tok
 
 endif
-.pragma list(pop)

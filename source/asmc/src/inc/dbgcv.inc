@@ -27,10 +27,8 @@
 ;
 ;		https://github.com/Microsoft/microsoft-pdb/
 ;
-.pragma list(push, 0)
-
-ifndef CVDBG_H
-define CVDBG_H
+ifndef __CVDBG_INC
+define __CVDBG_INC
 
 .pragma pack(push, 1)
 
@@ -48,11 +46,11 @@ ifndef CV_ZEROLEN
 define CV_ZEROLEN
 endif
 
-define CV_SIGNATURE_C6		0  ;; Actual signature is GT 64K
-define CV_SIGNATURE_C7		1  ;; First explicit signature
-define CV_SIGNATURE_C11		2  ;; C11 (vc5.x) 32-bit types
-define CV_SIGNATURE_C13		4  ;; C13 (vc7.x) zero terminated names
-define CV_SIGNATURE_RESERVED	5  ;; All signatures from 5 to 64K are reserved
+define CV_SIGNATURE_C6		0  ; Actual signature is GT 64K
+define CV_SIGNATURE_C7		1  ; First explicit signature
+define CV_SIGNATURE_C11		2  ; C11 (vc5.x) 32-bit types
+define CV_SIGNATURE_C13		4  ; C13 (vc7.x) zero terminated names
+define CV_SIGNATURE_RESERVED	5  ; All signatures from 5 to 64K are reserved
 
 define CV_MAXOFFSET   0xffffffff
 
@@ -70,41 +68,41 @@ SIG70			typedef GUID
 PSIG70			typedef ptr SIG70
 PCSIG70			typedef ptr SIG70
 
-;;
-;; CodeView Symbol and Type OMF type information is broken up into two
-;; ranges.  Type indices less than 0x1000 describe type information
-;; that is frequently used.  Type indices above 0x1000 are used to
-;; describe more complex features such as functions, arrays and
-;; structures.
-;;
+;
+; CodeView Symbol and Type OMF type information is broken up into two
+; ranges.  Type indices less than 0x1000 describe type information
+; that is frequently used.  Type indices above 0x1000 are used to
+; describe more complex features such as functions, arrays and
+; structures.
+;
 
-;;
-;;  Primitive types have predefined meaning that is encoded in the
-;;  values of the various bit fields in the value.
-;;
-;; A CodeView primitive type is defined as:
-;;
-;;	1 1
-;;	1 089  7654  3	210
-;;	r mode type  r	sub
-;;
-;;	Where
-;;	    mode is the pointer mode
-;;	    type is a type indicator
-;;	    sub	 is a subtype enumeration
-;;	    r	 is a reserved field
-;;
-;; See Microsoft Symbol and Type OMF (Version 4.0) for more
-;; information.
-;;
+;
+;  Primitive types have predefined meaning that is encoded in the
+;  values of the various bit fields in the value.
+;
+; A CodeView primitive type is defined as:
+;
+;	1 1
+;	1 089  7654  3	210
+;	r mode type  r	sub
+;
+;	Where
+;	    mode is the pointer mode
+;	    type is a type indicator
+;	    sub	 is a subtype enumeration
+;	    r	 is a reserved field
+;
+; See Microsoft Symbol and Type OMF (Version 4.0) for more
+; information.
+;
 
-define CV_MMASK		0x700 ;; mode mask
-define CV_TMASK		0x0f0 ;; type mask
-define CV_SMASK		0x00f ;; subtype mask
+define CV_MMASK		0x700 ; mode mask
+define CV_TMASK		0x0f0 ; type mask
+define CV_SMASK		0x00f ; subtype mask
 
-define CV_MSHIFT	8     ;; primitive mode right shift count
-define CV_TSHIFT	4     ;; primitive type right shift count
-define CV_SSHIFT	0     ;; primitive subtype right shift count
+define CV_MSHIFT	8     ; primitive mode right shift count
+define CV_TSHIFT	4     ; primitive type right shift count
+define CV_SSHIFT	0     ; primitive subtype right shift count
 
 CV_PRIMITIVE		typedef WORD
 
@@ -317,7 +315,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
 	.endif
 	}
 
-;; Special Types
+; Special Types
 
 .enum TYPE_ENUM_e {
 
@@ -666,7 +664,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
 
 .enum LEAF_ENUM_e {
 
-    ;; leaf indices starting records but referenced from symbol records
+    ; leaf indices starting records but referenced from symbol records
 
     LF_MODIFIER_16t	= 0x0001,
     LF_POINTER_16t	= 0x0002,
@@ -691,7 +689,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     LF_OEM_16t		= 0x0015,
     LF_TYPESERVER_ST	= 0x0016,
 
-    ;; leaf indices starting records but referenced only from type records
+    ; leaf indices starting records but referenced only from type records
 
     LF_SKIP_16t		= 0x0200,
     LF_ARGLIST_16t	= 0x0201,
@@ -722,7 +720,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     LF_ONEMETHOD_16t	= 0x040c,
     LF_VFUNCOFF_16t	= 0x040d,
 
-;; 32-bit type index versions of leaves, all have the 0x1000 bit set
+; 32-bit type index versions of leaves, all have the 0x1000 bit set
 
     LF_TI16_MAX		= 0x1000,
     LF_MODIFIER		= 0x1001,
@@ -743,7 +741,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     LF_ALIAS_ST		= 0x1010,
     LF_OEM2		= 0x1011,
 
-    ;; leaf indices starting records but referenced only from type records
+    ; leaf indices starting records but referenced only from type records
 
     LF_SKIP		= 0x1200,
     LF_ARGLIST		= 0x1201,
@@ -774,7 +772,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     LF_MEMBERMODIFY_ST	= 0x140e,
     LF_MANAGED_ST	= 0x140f,
 
-    ;; Types w/ SZ names
+    ; Types w/ SZ names
 
     LF_ST_MAX		= 0x1500,
 
@@ -811,7 +809,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     LF_VFTABLE		= 0x151d,
     LF_ENDOFLEAFRECORD	= LF_VFTABLE,
 
-    LF_TYPE_LAST,	;; one greater than the last type record
+    LF_TYPE_LAST,	; one greater than the last type record
     LF_TYPE_MAX		= LF_TYPE_LAST - 1,
 
     LF_FUNC_ID		= 0x1601,
@@ -873,8 +871,8 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; Type enum for pointer records
-;; Pointers can be one of the following types
+; Type enum for pointer records
+; Pointers can be one of the following types
 
 .enum CV_ptrtype_e {
     CV_PTR_NEAR		= 0x00,
@@ -894,14 +892,14 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;;
-;; Mode enum for pointers
-;; Pointers can have one of the following modes
-;;
-;;  To support for l-value and r-value reference, we added CV_PTR_MODE_LVREF
-;;  and CV_PTR_MODE_RVREF.  CV_PTR_MODE_REF should be removed at some point.
-;;  We keep it now so that old code that uses it won't be broken.
-;;
+;
+; Mode enum for pointers
+; Pointers can have one of the following modes
+;
+;  To support for l-value and r-value reference, we added CV_PTR_MODE_LVREF
+;  and CV_PTR_MODE_RVREF.  CV_PTR_MODE_REF should be removed at some point.
+;  We keep it now so that old code that uses it won't be broken.
+;
 
 .enum CV_ptrmode_e {
     CV_PTR_MODE_PTR	= 0x00,
@@ -914,7 +912,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for pointer-to-member types
+; enumeration for pointer-to-member types
 
 .enum CV_pmtype_e {
     CV_PMTYPE_Undef	= 0x00,
@@ -929,7 +927,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for method properties
+; enumeration for method properties
 
 .enum CV_methodprop_e {
     CV_MTvanilla	= 0x00,
@@ -942,7 +940,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for virtual shape table entries
+; enumeration for virtual shape table entries
 
 .enum CV_VTS_desc_e {
     CV_VTS_near		= 0x00,
@@ -956,7 +954,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for LF_LABEL address modes
+; enumeration for LF_LABEL address modes
 
 .enum CV_LABEL_TYPE_e {
     CV_LABEL_NEAR	= 0,
@@ -964,7 +962,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for LF_MODIFIER values
+; enumeration for LF_MODIFIER values
 
 .enum CV_modifier_t : WORD {
     MOD_const		= 0x0001,
@@ -973,7 +971,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; enumeration for HFA kinds
+; enumeration for HFA kinds
 
 .enum CV_HFA_e {
     CV_HFA_none		= 0,
@@ -983,7 +981,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;;  enumeration for MoCOM UDT kinds
+;  enumeration for MoCOM UDT kinds
 
 .enum CV_MOCOM_UDT_e {
     CV_MOCOM_UDT_none	   = 0,
@@ -993,57 +991,57 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; bit field structure describing class/struct/union/enum properties
+; bit field structure describing class/struct/union/enum properties
 
 .enum CV_prop_t : WORD {
-    CV_prop_packed	  = 0x0001 ;; true if structure is packed
-    CV_prop_ctor	  = 0x0002 ;; true if constructors or destructors present
-    CV_prop_ovlops	  = 0x0004 ;; true if overloaded operators present
-    CV_prop_isnested	  = 0x0008 ;; true if this is a nested class
-    CV_prop_cnested	  = 0x0010 ;; true if this class contains nested types
-    CV_prop_opassign	  = 0x0020 ;; true if overloaded assignment (=)
-    CV_prop_opcast	  = 0x0040 ;; true if casting methods
-    CV_prop_fwdref	  = 0x0080 ;; true if forward reference (incomplete defn)
-    CV_prop_scoped	  = 0x0100 ;; scoped definition
-    CV_prop_hasuniquename = 0x0200 ;; true if there is a decorated name following the regular name
-    CV_prop_sealed	  = 0x0400 ;; true if class cannot be used as a base class
-    CV_prop_hfa		  = 0x1800 ;; CV_HFA_e
-    CV_prop_intrinsic	  = 0x2000 ;; true if class is an intrinsic type (e.g. __m128d)
-    CV_prop_mocom	  = 0xC000 ;; CV_MOCOM_UDT_e
+    CV_prop_packed	  = 0x0001 ; true if structure is packed
+    CV_prop_ctor	  = 0x0002 ; true if constructors or destructors present
+    CV_prop_ovlops	  = 0x0004 ; true if overloaded operators present
+    CV_prop_isnested	  = 0x0008 ; true if this is a nested class
+    CV_prop_cnested	  = 0x0010 ; true if this class contains nested types
+    CV_prop_opassign	  = 0x0020 ; true if overloaded assignment (=)
+    CV_prop_opcast	  = 0x0040 ; true if casting methods
+    CV_prop_fwdref	  = 0x0080 ; true if forward reference (incomplete defn)
+    CV_prop_scoped	  = 0x0100 ; scoped definition
+    CV_prop_hasuniquename = 0x0200 ; true if there is a decorated name following the regular name
+    CV_prop_sealed	  = 0x0400 ; true if class cannot be used as a base class
+    CV_prop_hfa		  = 0x1800 ; CV_HFA_e
+    CV_prop_intrinsic	  = 0x2000 ; true if class is an intrinsic type (e.g. __m128d)
+    CV_prop_mocom	  = 0xC000 ; CV_MOCOM_UDT_e
     }
 
 
-;; class field attribute
+; class field attribute
 
 .enum CV_fldattr_t : WORD {
 
-    CV_fldattr_access	   = 0x0003 ;; access protection CV_access_t
-    CV_fldattr_mprop	   = 0x001C ;; method properties CV_methodprop_t
-    CV_fldattr_pseudo	   = 0x0020 ;; compiler generated fcn and does not exist
-    CV_fldattr_noinherit   = 0x0040 ;; true if class cannot be inherited
-    CV_fldattr_noconstruct = 0x0080 ;; true if class cannot be constructed
-    CV_fldattr_compgenx	   = 0x0100 ;; compiler generated fcn and does exist
-    CV_fldattr_sealed	   = 0x0200 ;; true if method cannot be overridden
+    CV_fldattr_access	   = 0x0003 ; access protection CV_access_t
+    CV_fldattr_mprop	   = 0x001C ; method properties CV_methodprop_t
+    CV_fldattr_pseudo	   = 0x0020 ; compiler generated fcn and does not exist
+    CV_fldattr_noinherit   = 0x0040 ; true if class cannot be inherited
+    CV_fldattr_noconstruct = 0x0080 ; true if class cannot be constructed
+    CV_fldattr_compgenx	   = 0x0100 ; compiler generated fcn and does exist
+    CV_fldattr_sealed	   = 0x0200 ; true if method cannot be overridden
     }
 
 
-;; function flags
+; function flags
 
 .enum CV_funcattr_t : BYTE {
-    CV_funcattr_cxxreturnudt = 0x01 ;; true if C++ style ReturnUDT
-    CV_funcattr_ctor	     = 0x02 ;; true if func is an instance constructor
-    CV_funcattr_ctorvbase    = 0x04 ;; true if func is an instance constructor
-    }				    ;; of a class with virtual bases
+    CV_funcattr_cxxreturnudt = 0x01 ; true if C++ style ReturnUDT
+    CV_funcattr_ctor	     = 0x02 ; true if func is an instance constructor
+    CV_funcattr_ctorvbase    = 0x04 ; true if func is an instance constructor
+    }				    ; of a class with virtual bases
 
 
-;; matrix flags
+; matrix flags
 
 .enum CV_matrixattr_t : BYTE {
-    CV_matrixattr_row_major = 0x01 ;; true if matrix has row-major layout
-    }				   ;; (column-major is default)
+    CV_matrixattr_row_major = 0x01 ; true if matrix has row-major layout
+    }				   ; (column-major is default)
 
 
-;;  Structures to access to the type records
+;  Structures to access to the type records
 
 .template TYPTYPE fastcall
     len	  dw ?
@@ -1075,242 +1073,242 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     }
 
 
-;; memory representation of pointer to member. These representations are
-;; indexed by the enumeration above in the LF_POINTER record
-;;
-;; representation of a 16:16 pointer to data for a class with no
-;; virtual functions or virtual bases
+; memory representation of pointer to member. These representations are
+; indexed by the enumeration above in the LF_POINTER record
+;
+; representation of a 16:16 pointer to data for a class with no
+; virtual functions or virtual bases
 
 .template CV_PDMR16_NONVIRT
-    mdisp CV_off16_t ?	;; displacement to data (NULL = -1)
+    mdisp CV_off16_t ?	; displacement to data (NULL = -1)
     .ends
 
 
-;; representation of a 16:16 pointer to data for a class with virtual
-;; functions
+; representation of a 16:16 pointer to data for a class with virtual
+; functions
 
 .template CV_PMDR16_VFCN
-    mdisp CV_off16_t ?	;; displacement to data ( NULL = 0)
+    mdisp CV_off16_t ?	; displacement to data ( NULL = 0)
     .ends
 
 
-;; representation of a 16:16 pointer to data for a class with
-;; virtual bases
+; representation of a 16:16 pointer to data for a class with
+; virtual bases
 
 .template CV_PDMR16_VBASE
-    mdisp CV_off16_t ?	;; displacement to data
-    pdisp CV_off16_t ?	;; this pointer displacement to vbptr
-    vdisp CV_off16_t ?	;; displacement within vbase table
-    .ends		;; NULL = (,,0xffff)
+    mdisp CV_off16_t ?	; displacement to data
+    pdisp CV_off16_t ?	; this pointer displacement to vbptr
+    vdisp CV_off16_t ?	; displacement within vbase table
+    .ends		; NULL = (,,0xffff)
 
 
-;; representation of a 32 bit pointer to data for a class with
-;; or without virtual functions and no virtual bases
+; representation of a 32 bit pointer to data for a class with
+; or without virtual functions and no virtual bases
 
 .template CV_PDMR32_NVVFCN
-    mdisp CV_off32_t ?	;; displacement to data (NULL = 0x80000000)
+    mdisp CV_off32_t ?	; displacement to data (NULL = 0x80000000)
     .ends
 
 
-;; representation of a 32 bit pointer to data for a class
-;; with virtual bases
+; representation of a 32 bit pointer to data for a class
+; with virtual bases
 
 .template CV_PDMR32_VBASE
-    mdisp CV_off32_t ?	;; displacement to data
-    pdisp CV_off32_t ?	;; this pointer displacement
-    vdisp CV_off32_t ?	;; vbase table displacement
-   .ends		;; NULL = (,,0xffffffff)
+    mdisp CV_off32_t ?	; displacement to data
+    pdisp CV_off32_t ?	; this pointer displacement
+    vdisp CV_off32_t ?	; vbase table displacement
+   .ends		; NULL = (,,0xffffffff)
 
 
-;; representation of a 16:16 pointer to near member function for a
-;; class with no virtual functions or bases and a single address point */
+; representation of a 16:16 pointer to near member function for a
+; class with no virtual functions or bases and a single address point */
 
 .template CV_PMFR16_NEARNVSA
-    off	  CV_uoff16_t ? ;; near address of function (NULL = 0)
+    off	  CV_uoff16_t ? ; near address of function (NULL = 0)
     .ends
 
 
-;; representation of a 16 bit pointer to member functions of a
-;; class with no virtual bases and multiple address points
+; representation of a 16 bit pointer to member functions of a
+; class with no virtual bases and multiple address points
 
 .template CV_PMFR16_NEARNVMA
-    off	  CV_uoff16_t ? ;; offset of function (NULL = 0,x)
+    off	  CV_uoff16_t ? ; offset of function (NULL = 0,x)
     disp  SWORD ?
     .ends
 
 
-;; representation of a 16 bit pointer to member function of a
-;; class with virtual bases
+; representation of a 16 bit pointer to member function of a
+; class with virtual bases
 
 .template CV_PMFR16_NEARVBASE
-    off	  CV_uoff16_t ? ;; offset of function (NULL = 0,x,x,x)
-    mdisp CV_off16_t ?	;; displacement to data
-    pdisp CV_off16_t ?	;; this pointer displacement
-    vdisp CV_off16_t ?	;; vbase table displacement
+    off	  CV_uoff16_t ? ; offset of function (NULL = 0,x,x,x)
+    mdisp CV_off16_t ?	; displacement to data
+    pdisp CV_off16_t ?	; this pointer displacement
+    vdisp CV_off16_t ?	; vbase table displacement
     .ends
 
 
-;; representation of a 16:16 pointer to far member function for a
-;; class with no virtual bases and a single address point
+; representation of a 16:16 pointer to far member function for a
+; class with no virtual bases and a single address point
 
 .template CV_PMFR16_FARNVSA
-    off	  CV_uoff16_t ? ;; offset of function (NULL = 0:0)
-    _seg  dw ?		;; segment of function
+    off	  CV_uoff16_t ? ; offset of function (NULL = 0:0)
+    _seg  dw ?		; segment of function
     .ends
 
 
-;; representation of a 16:16 far pointer to member functions of a
-;; class with no virtual bases and multiple address points
+; representation of a 16:16 far pointer to member functions of a
+; class with no virtual bases and multiple address points
 
 .template CV_PMFR16_FARNVMA
-    off	  CV_uoff16_t ? ;; offset of function (NULL = 0:0,x)
+    off	  CV_uoff16_t ? ; offset of function (NULL = 0:0,x)
     _seg  dw ?
     disp  SWORD ?
     .ends
 
 
-;; representation of a 16:16 far pointer to member function of a
-;; class with virtual bases
+; representation of a 16:16 far pointer to member function of a
+; class with virtual bases
 
 .template CV_PMFR16_FARVBASE
-    off	  CV_uoff16_t ? ;; offset of function (NULL = 0:0,x,x,x)
+    off	  CV_uoff16_t ? ; offset of function (NULL = 0:0,x,x,x)
     _seg  dw ?
-    mdisp CV_off16_t ?	;; displacement to data
-    pdisp CV_off16_t ?	;; this pointer displacement
-    vdisp CV_off16_t ?	;; vbase table displacement
+    mdisp CV_off16_t ?	; displacement to data
+    pdisp CV_off16_t ?	; this pointer displacement
+    vdisp CV_off16_t ?	; vbase table displacement
     .ends
 
 
-;; representation of a 32 bit pointer to member function for a
-;; class with no virtual bases and a single address point
+; representation of a 32 bit pointer to member function for a
+; class with no virtual bases and a single address point
 
 .template CV_PMFR32_NVSA
-    off	  CV_uoff32_t ? ;; near address of function (NULL = 0L)
+    off	  CV_uoff32_t ? ; near address of function (NULL = 0L)
     .ends
 
 
-;; representation of a 32 bit pointer to member function for a
-;; class with no virtual bases and multiple address points
+; representation of a 32 bit pointer to member function for a
+; class with no virtual bases and multiple address points
 
 .template CV_PMFR32_NVMA
-    off	  CV_uoff32_t ? ;; near address of function (NULL = 0L,x)
+    off	  CV_uoff32_t ? ; near address of function (NULL = 0L,x)
     disp  CV_off32_t ?
     .ends
 
 
-;; representation of a 32 bit pointer to member function for a
-;; class with virtual bases
+; representation of a 32 bit pointer to member function for a
+; class with virtual bases
 
 .template CV_PMFR32_VBASE
-    off	  CV_uoff32_t ? ;; near address of function (NULL = 0L,x,x,x)
-    mdisp CV_off32_t ?	;; displacement to data
-    pdisp CV_off32_t ?	;; this pointer displacement
-    vdisp CV_off32_t ?	;; vbase table displacement
+    off	  CV_uoff32_t ? ; near address of function (NULL = 0L,x,x,x)
+    mdisp CV_off32_t ?	; displacement to data
+    pdisp CV_off32_t ?	; this pointer displacement
+    vdisp CV_off32_t ?	; vbase table displacement
     .ends
 
 
-;; Easy leaf - used for generic casting to reference leaf field
-;; of a subfield of a complex list
+; Easy leaf - used for generic casting to reference leaf field
+; of a subfield of a complex list
 
 .template lfEasy
-    leaf  dw ?	;; LF_...
+    leaf  dw ?	; LF_...
     .ends
 
 
-;; Type record for LF_MODIFIER
+; Type record for LF_MODIFIER
 
 .template CV_MODIFIER_16t
     size  dw ?
-    leaf  dw ?			;; LF_MODIFIER_16t
-    attr  CV_modifier_t ?	;; modifier attribute modifier_t
-    type  CV_typ16_t ?		;; modified type
+    leaf  dw ?			; LF_MODIFIER_16t
+    attr  CV_modifier_t ?	; modifier attribute modifier_t
+    type  CV_typ16_t ?		; modified type
     .ends
 
 .template CV_MODIFIER
     size  dw ?
-    leaf  dw ?			;; LF_MODIFIER
-    type  CV_typ_t ?		;; modified type
-    attr  CV_modifier_t ?	;; modifier attribute modifier_t
+    leaf  dw ?			; LF_MODIFIER
+    type  CV_typ_t ?		; modified type
+    attr  CV_modifier_t ?	; modifier attribute modifier_t
     .ends
 
 
-;; type record for LF_POINTER
+; type record for LF_POINTER
 
 .enum CV_ptr16_t : WORD {
-    CV_ptr16_type		= 0x001F ;; ordinal specifying pointer type (CV_ptrtype_e)
-    CV_ptr16_mode		= 0x00E0 ;; ordinal specifying pointer mode (CV_ptrmode_e)
-    CV_ptr16_isflat32		= 0x0100 ;; true if 0:32 pointer
-    CV_ptr16_isvolatile		= 0x0200 ;; TRUE if volatile pointer
-    CV_ptr16_isconst		= 0x0400 ;; TRUE if pointer
-    CV_ptr16_isunaligned	= 0x0800 ;; TRUE if unaligned pointer
+    CV_ptr16_type		= 0x001F ; ordinal specifying pointer type (CV_ptrtype_e)
+    CV_ptr16_mode		= 0x00E0 ; ordinal specifying pointer mode (CV_ptrmode_e)
+    CV_ptr16_isflat32		= 0x0100 ; true if 0:32 pointer
+    CV_ptr16_isvolatile		= 0x0200 ; TRUE if volatile pointer
+    CV_ptr16_isconst		= 0x0400 ; TRUE if pointer
+    CV_ptr16_isunaligned	= 0x0800 ; TRUE if unaligned pointer
     }
 
 .enum CV_ptr_t : DWORD {
-    CV_ptr_ptrtype		= 0x0000001F ;; ordinal specifying pointer type (CV_ptrtype_e)
-    CV_ptr_ptrmode		= 0x000000E0 ;; ordinal specifying pointer mode (CV_ptrmode_e)
-    CV_ptr_isflat32		= 0x00000100 ;; true if 0:32 pointer
-    CV_ptr_isvolatile		= 0x00000200 ;; TRUE if volatile pointer
-    CV_ptr_is			= 0x00000400 ;; TRUE if pointer
-    CV_ptr_isunaligned		= 0x00000800 ;; TRUE if unaligned pointer
-    CV_ptr_isrestrict		= 0x00001000 ;; TRUE if restricted pointer (allow agressive opts)
-    CV_ptr_size			= 0x0007E000 ;; size of pointer (in bytes)
-    CV_ptr_ismocom		= 0x00080000 ;; TRUE if it is a MoCOM pointer (^ or %)
-    CV_ptr_islref		= 0x00100000 ;; TRUE if it is this pointer of member function with & ref-qualifier
-    CV_ptr_isrref		= 0x00200000 ;; TRUE if it is this pointer of member function with && ref-qualifier
+    CV_ptr_ptrtype		= 0x0000001F ; ordinal specifying pointer type (CV_ptrtype_e)
+    CV_ptr_ptrmode		= 0x000000E0 ; ordinal specifying pointer mode (CV_ptrmode_e)
+    CV_ptr_isflat32		= 0x00000100 ; true if 0:32 pointer
+    CV_ptr_isvolatile		= 0x00000200 ; TRUE if volatile pointer
+    CV_ptr_is			= 0x00000400 ; TRUE if pointer
+    CV_ptr_isunaligned		= 0x00000800 ; TRUE if unaligned pointer
+    CV_ptr_isrestrict		= 0x00001000 ; TRUE if restricted pointer (allow agressive opts)
+    CV_ptr_size			= 0x0007E000 ; size of pointer (in bytes)
+    CV_ptr_ismocom		= 0x00080000 ; TRUE if it is a MoCOM pointer (^ or %)
+    CV_ptr_islref		= 0x00100000 ; TRUE if it is this pointer of member function with & ref-qualifier
+    CV_ptr_isrref		= 0x00200000 ; TRUE if it is this pointer of member function with && ref-qualifier
     }
 
 .template CV_POINTER_16t
     size	dw ?
-    leaf	dw ?		;; LF_POINTER_16t
+    leaf	dw ?		; LF_POINTER_16t
     attr	CV_ptr16_t ?
-    utype	CV_typ16_t ?	;; type index of the underlying type
+    utype	CV_typ16_t ?	; type index of the underlying type
     union
      struct
-      pmclass	 CV_typ16_t ?	;; index of containing class for pointer to member
-      pmenum	 dw ?		;; enumeration specifying pm format (CV_pmtype_e)
+      pmclass	 CV_typ16_t ?	; index of containing class for pointer to member
+      pmenum	 dw ?		; enumeration specifying pm format (CV_pmtype_e)
      ends
-     bseg	 dw ?		;; base segment if PTR_BASE_SEG
-     Sym	 db 1 dup(?)	;; copy of base symbol record (including length)
+     bseg	 dw ?		; base segment if PTR_BASE_SEG
+     Sym	 db 1 dup(?)	; copy of base symbol record (including length)
      struct
-      index	 CV_typ16_t ?	;; type index if CV_PTR_BASE_TYPE
-      name	 db 1 dup(?)	;; name of base type
+      index	 CV_typ16_t ?	; type index if CV_PTR_BASE_TYPE
+      name	 db 1 dup(?)	; name of base type
      ends
     ends
    .ends
 
 .template CV_POINTER
     len		dw ?
-    leaf	dw ?		;; LF_POINTER
-    utype	CV_typ_t ?	;; type index of the underlying type
+    leaf	dw ?		; LF_POINTER
+    utype	CV_typ_t ?	; type index of the underlying type
     attr	CV_ptr_t ?
     union
      struct
-      pmclass	 CV_typ_t ?	;; index of containing class for pointer to member
-      pmenum	 CV_typ_t ?	;; enumeration specifying pm format (CV_pmtype_e)
+      pmclass	 CV_typ_t ?	; index of containing class for pointer to member
+      pmenum	 CV_typ_t ?	; enumeration specifying pm format (CV_pmtype_e)
      ends
-     bseg	 dw ?		;; base segment if PTR_BASE_SEG
-     Sym	 db 1 dup(?)	;; copy of base symbol record (including length)
+     bseg	 dw ?		; base segment if PTR_BASE_SEG
+     Sym	 db 1 dup(?)	; copy of base symbol record (including length)
      struct
-      index	 CV_typ_t ?	;; type index if CV_PTR_BASE_TYPE
-      name	 db 1 dup(?)	;; name of base type
+      index	 CV_typ_t ?	; type index if CV_PTR_BASE_TYPE
+      name	 db 1 dup(?)	; name of base type
      ends
     ends
    .ends
 
 
-;; type record for LF_ARRAY
+; type record for LF_ARRAY
 
 .template CV_ARRAY_16t
     size	dw ?
-    leaf	dw ?		;; LF_ARRAY_16t
-    elemtype	CV_typ16_t ?	;; type index of element type
-    idxtype	CV_typ16_t ?	;; type index of indexing type
+    leaf	dw ?		; LF_ARRAY_16t
+    elemtype	CV_typ16_t ?	; type index of element type
+    idxtype	CV_typ16_t ?	; type index of indexing type
     data	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_ARRAY
     size	dw ?
-    leaf	dw ?		;; LF_ARRAY
+    leaf	dw ?		; LF_ARRAY
     elemtype	CV_typ_t ?
     idxtype	CV_typ_t ?
     data	db CV_ZEROLEN dup(?)
@@ -1319,7 +1317,7 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
 
 .template CV_STRIDED_ARRAY
     size	dw ?
-    leaf	dw ?		;; LF_STRIDED_ARRAY
+    leaf	dw ?		; LF_STRIDED_ARRAY
     elemtype	CV_typ_t ?
     idxtype	CV_typ_t ?
     stride	dd ?
@@ -1327,41 +1325,41 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
    .ends
 
 
-;; type record for LF_VECTOR
+; type record for LF_VECTOR
 
 .template CV_VECTOR
     size	dw ?
-    leaf	dw ?		;; LF_VECTOR
-    elemtype	CV_typ_t ?	;; type index of element type
-    count	dd ?		;; number of elements in the vector
+    leaf	dw ?		; LF_VECTOR
+    elemtype	CV_typ_t ?	; type index of element type
+    count	dd ?		; number of elements in the vector
     data	db CV_ZEROLEN dup(?)
    .ends
 
 
-;; type record for LF_MATRIX
+; type record for LF_MATRIX
 
 .template CV_MATRIX
     size	dw ?
-    leaf	dw ?		;; LF_MATRIX
-    elemtype	CV_typ_t ?	;; type index of element type
-    rows	dd ?		;; number of rows
-    cols	dd ?		;; number of columns
+    leaf	dw ?		; LF_MATRIX
+    elemtype	CV_typ_t ?	; type index of element type
+    rows	dd ?		; number of rows
+    cols	dd ?		; number of columns
     majorStride dd ?
     matattr	CV_matrixattr_t ?
     data	db CV_ZEROLEN dup(?)
    .ends
 
 
-;; type record for LF_CLASS, LF_STRUCTURE
+; type record for LF_CLASS, LF_STRUCTURE
 
 .template CV_CLASS_16t
     size	dw ?
-    leaf	dw ?		;; LF_CLASS_16t, LF_STRUCT_16t
-    count	dw ?		;; count of number of elements in class
-    field	CV_typ16_t ?	;; type index of LF_FIELD descriptor list
-    property	CV_prop_t ?	;; property attribute field (prop_t)
-    derived	CV_typ16_t ?	;; type index of derived from list if not zero
-    vshape	CV_typ16_t ?	;; type index of vshape table for this class
+    leaf	dw ?		; LF_CLASS_16t, LF_STRUCT_16t
+    count	dw ?		; count of number of elements in class
+    field	CV_typ16_t ?	; type index of LF_FIELD descriptor list
+    property	CV_prop_t ?	; property attribute field (prop_t)
+    derived	CV_typ16_t ?	; type index of derived from list if not zero
+    vshape	CV_typ16_t ?	; type index of vshape table for this class
     data	db CV_ZEROLEN dup(?)
    .ends
 
@@ -1369,7 +1367,7 @@ CV_STRUCT_16t	typedef CV_CLASS_16t
 
 .template CV_CLASS
     size	dw ?
-    leaf	dw ?		;; LF_CLASS, LF_STRUCT, LF_INTERFACE
+    leaf	dw ?		; LF_CLASS, LF_STRUCT, LF_INTERFACE
     count	dw ?
     property	CV_prop_t ?
     field	CV_typ_t ?
@@ -1382,20 +1380,20 @@ CV_STRUCT	typedef CV_CLASS
 CV_INTERFACE	typedef CV_CLASS
 
 
-;; type record for LF_UNION
+; type record for LF_UNION
 
 .template CV_UNION_16t
     size	dw ?
-    leaf	dw ?		;; LF_UNION_16t
-    count	dw ?		;; count of number of elements in class
-    field	CV_typ16_t ?	;; type index of LF_FIELD descriptor list
-    property	CV_prop_t ?	;; property attribute field
+    leaf	dw ?		; LF_UNION_16t
+    count	dw ?		; count of number of elements in class
+    field	CV_typ16_t ?	; type index of LF_FIELD descriptor list
+    property	CV_prop_t ?	; property attribute field
     data	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_UNION
     size	dw ?
-    leaf	dw ?		;; LF_UNION
+    leaf	dw ?		; LF_UNION
     count	dw ?
     property	CV_prop_t ?
     field	CV_typ_t ?
@@ -1403,55 +1401,55 @@ CV_INTERFACE	typedef CV_CLASS
    .ends
 
 
-;; type record for LF_ALIAS
+; type record for LF_ALIAS
 
 .template CV_ALIAS
     size	dw ?
-    leaf	dw ?		;; LF_ALIAS
-    utype	CV_typ_t ?	;; underlying type
-    Name	db 1 dup(?)	;; alias name
+    leaf	dw ?		; LF_ALIAS
+    utype	CV_typ_t ?	; underlying type
+    Name	db 1 dup(?)	; alias name
    .ends
 
 CV_ItemId	typedef CV_typ_t
 
 .template CV_FUNC_ID
     size	dw ?
-    leaf	dw ?		;; LF_FUNC_ID
-    scopeId	CV_ItemId ?	;; parent scope of the ID, 0 if global
-    type	CV_typ_t ?	;; function type
+    leaf	dw ?		; LF_FUNC_ID
+    scopeId	CV_ItemId ?	; parent scope of the ID, 0 if global
+    type	CV_typ_t ?	; function type
     name	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_MFUNC_ID
     size	dw ?
-    leaf	dw ?		;; LF_MFUNC_ID
-    parentType	CV_typ_t ?	;; type index of parent
-    type	CV_typ_t ?	;; function type
+    leaf	dw ?		; LF_MFUNC_ID
+    parentType	CV_typ_t ?	; type index of parent
+    type	CV_typ_t ?	; function type
     name	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_STRING_ID
     size	dw ?
-    leaf	db ?		;; LF_STRING_ID
-    id		CV_ItemId ?	;; ID to list of sub string IDs
+    leaf	db ?		; LF_STRING_ID
+    id		CV_ItemId ?	; ID to list of sub string IDs
     name	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_UDT_SRC_LINE
     size	dw ?
-    leaf	dw ?		;; LF_UDT_SRC_LINE
-    type	CV_typ_t ?	;; UDT's type index
-    src		CV_ItemId ?	;; index to LF_STRING_ID record where source file name is saved
-    line	dd ?		;; line number
+    leaf	dw ?		; LF_UDT_SRC_LINE
+    type	CV_typ_t ?	; UDT's type index
+    src		CV_ItemId ?	; index to LF_STRING_ID record where source file name is saved
+    line	dd ?		; line number
    .ends
 
 .template CV_UDT_MOD_SRC_LINE
     size	dw ?
-    leaf	dw ?		;; LF_UDT_MOD_SRC_LINE
-    type	CV_typ_t ?	;; UDT's type index
-    src		CV_ItemId ?	;; index into string table where source file name is saved
-    line	dd ?		;; line number
-    imod	dw ?		;; module that contributes this UDT definition
+    leaf	dw ?		; LF_UDT_MOD_SRC_LINE
+    type	CV_typ_t ?	; UDT's type index
+    src		CV_ItemId ?	; index into string table where source file name is saved
+    line	dd ?		; line number
+    imod	dw ?		; module that contributes this UDT definition
    .ends
 
 
@@ -1465,164 +1463,164 @@ CV_ItemId	typedef CV_typ_t
     }
 
 
-;; type record for build information
+; type record for build information
 
 .template CV_BUILDINFO
     size	dw ?
-    leaf	dw ?		;; LF_BUILDINFO
-    count	dw ?		;; number of arguments
-    arg		CV_ItemId CV_BUILDINFO_KNOWN dup(?)	;; arguments as CodeItemId
+    leaf	dw ?		; LF_BUILDINFO
+    count	dw ?		; number of arguments
+    arg		CV_ItemId CV_BUILDINFO_KNOWN dup(?)	; arguments as CodeItemId
    .ends
 
 
-;; type record for LF_MANAGED
+; type record for LF_MANAGED
 
 .template CV_MANAGED
-    leaf	dw ?		;; LF_MANAGED
-    Name	db 1 dup(?)	;; utf8, zero terminated managed type name
+    leaf	dw ?		; LF_MANAGED
+    Name	db 1 dup(?)	; utf8, zero terminated managed type name
    .ends
 
-;; type record for LF_ENUM
+; type record for LF_ENUM
 
 .template CV_ENUM_16t
-    leaf	dw ?		;; LF_ENUM_16t
-    count	dw ?		;; count of number of elements in class
-    utype	CV_typ16_t ?	;; underlying type of the enum
-    field	CV_typ16_t ?	;; type index of LF_FIELD descriptor list
-    property	CV_prop_t ?	;; property attribute field
-    Name	db 1 dup(?)	;; length prefixed name of enum
+    leaf	dw ?		; LF_ENUM_16t
+    count	dw ?		; count of number of elements in class
+    utype	CV_typ16_t ?	; underlying type of the enum
+    field	CV_typ16_t ?	; type index of LF_FIELD descriptor list
+    property	CV_prop_t ?	; property attribute field
+    Name	db 1 dup(?)	; length prefixed name of enum
    .ends
 
 .template CV_ENUM
-    leaf	dw ?		;; LF_ENUM
-    count	dw ?		;; count of number of elements in class
-    property	CV_prop_t ?	;; property attribute field
-    utype	CV_typ_t ?	;; underlying type of the enum
-    field	CV_typ_t ?	;; type index of LF_FIELD descriptor list
-    Name	db 1 dup(?)	;; length prefixed name of enum
+    leaf	dw ?		; LF_ENUM
+    count	dw ?		; count of number of elements in class
+    property	CV_prop_t ?	; property attribute field
+    utype	CV_typ_t ?	; underlying type of the enum
+    field	CV_typ_t ?	; type index of LF_FIELD descriptor list
+    Name	db 1 dup(?)	; length prefixed name of enum
    .ends
 
 
-;; Type record for LF_PROCEDURE
+; Type record for LF_PROCEDURE
 
 .template CV_PROCEDURE_16t
     size	dw ?
-    leaf	dw ?		;; LF_PROCEDURE_16t
-    rvtype	CV_typ16_t ?	;; type index of return value
-    calltype	db ?		;; calling convention (CV_call_t)
-    funcattr	CV_funcattr_t ? ;; attributes
-    parmcount	dw ?		;; number of parameters
-    arglist	CV_typ16_t ?	;; type index of argument list
+    leaf	dw ?		; LF_PROCEDURE_16t
+    rvtype	CV_typ16_t ?	; type index of return value
+    calltype	db ?		; calling convention (CV_call_t)
+    funcattr	CV_funcattr_t ? ; attributes
+    parmcount	dw ?		; number of parameters
+    arglist	CV_typ16_t ?	; type index of argument list
    .ends
 
 .template CV_PROCEDURE
     size	dw ?
-    leaf	dw ?		;; LF_PROCEDURE
-    rvtype	CV_typ_t ?	;; type index of return value
-    calltype	db ?		;; calling convention (CV_call_t)
-    funcattr	CV_funcattr_t ? ;; attributes
-    parmcount	dw ?		;; number of parameters
-    arglist	CV_typ_t ?	;; type index of argument list
+    leaf	dw ?		; LF_PROCEDURE
+    rvtype	CV_typ_t ?	; type index of return value
+    calltype	db ?		; calling convention (CV_call_t)
+    funcattr	CV_funcattr_t ? ; attributes
+    parmcount	dw ?		; number of parameters
+    arglist	CV_typ_t ?	; type index of argument list
    .ends
 
 
-;; Type record for member function
+; Type record for member function
 
 .template CV_MFUNCTION_16t
     size	dw ?
-    leaf	dw ?		;; LF_MFUNCTION_16t
-    rvtype	CV_typ16_t ?	;; type index of return value
-    classtype	CV_typ16_t ?	;; type index of containing class
-    thistype	CV_typ16_t ?	;; type index of this pointer (model specific)
-    calltype	db ?		;; calling convention (call_t)
-    funcattr	CV_funcattr_t ? ;; attributes
-    parmcount	dw ?		;; number of parameters
-    arglist	CV_typ16_t ?	;; type index of argument list
-    thisadjust	sdword ?	;; this adjuster (long because pad required anyway)
+    leaf	dw ?		; LF_MFUNCTION_16t
+    rvtype	CV_typ16_t ?	; type index of return value
+    classtype	CV_typ16_t ?	; type index of containing class
+    thistype	CV_typ16_t ?	; type index of this pointer (model specific)
+    calltype	db ?		; calling convention (call_t)
+    funcattr	CV_funcattr_t ? ; attributes
+    parmcount	dw ?		; number of parameters
+    arglist	CV_typ16_t ?	; type index of argument list
+    thisadjust	sdword ?	; this adjuster (long because pad required anyway)
    .ends
 
 .template CV_MFUNCTION
     size	dw ?
-    leaf	dw ?		;; LF_MFUNCTION
-    rvtype	CV_typ_t ?	;; type index of return value
-    classtype	CV_typ_t ?	;; type index of containing class
-    thistype	CV_typ_t ?	;; type index of this pointer (model specific)
-    calltype	db ?		;; calling convention (call_t)
-    funcattr	CV_funcattr_t ? ;; attributes
-    parmcount	dw ?		;; number of parameters
-    arglist	CV_typ_t ?	;; type index of argument list
-    thisadjust	sdword ?	;; this adjuster (long because pad required anyway)
+    leaf	dw ?		; LF_MFUNCTION
+    rvtype	CV_typ_t ?	; type index of return value
+    classtype	CV_typ_t ?	; type index of containing class
+    thistype	CV_typ_t ?	; type index of this pointer (model specific)
+    calltype	db ?		; calling convention (call_t)
+    funcattr	CV_funcattr_t ? ; attributes
+    parmcount	dw ?		; number of parameters
+    arglist	CV_typ_t ?	; type index of argument list
+    thisadjust	sdword ?	; this adjuster (long because pad required anyway)
    .ends
 
 
-;; type record for basic array
+; type record for basic array
 
 .template CV_BARRAY_16t
     size	dw ?
-    leaf	dw ?		;; LF_BARRAY_16t
-    utype	CV_typ16_t ?	;; type index of underlying type
+    leaf	dw ?		; LF_BARRAY_16t
+    utype	CV_typ16_t ?	; type index of underlying type
    .ends
 
 .template CV_BARRAY
     size	dw ?
-    leaf	dw ?		;; LF_BARRAY
-    utype	CV_typ_t ?	;; type index of underlying type
+    leaf	dw ?		; LF_BARRAY
+    utype	CV_typ_t ?	; type index of underlying type
    .ends
 
 
-;; type record for assembler labels
+; type record for assembler labels
 
 .template CV_LABEL
     size	dw ?
-    leaf	dw ?		;; LF_LABEL
-    mode	dw ?		;; addressing mode of label
+    leaf	dw ?		; LF_LABEL
+    mode	dw ?		; addressing mode of label
    .ends
 
 
-;; argument list leaf
+; argument list leaf
 
 .template CV_ARGLIST_16t
     size	dw ?
-    leaf	dw ?		;; LF_ARGLIST_16t
-    count	dw ?		;; number of arguments
-    arg		CV_typ16_t CV_ZEROLEN dup(?) ;; number of arguments
+    leaf	dw ?		; LF_ARGLIST_16t
+    count	dw ?		; number of arguments
+    arg		CV_typ16_t CV_ZEROLEN dup(?) ; number of arguments
    .ends
 
 .template CV_ARGLIST
     size	dw ?
-    leaf	dw ?		;; LF_ARGLIST, LF_SUBSTR_LIST
-    count	dd ?		;; number of arguments
-    arg		CV_typ_t CV_ZEROLEN dup(?) ;; number of arguments
+    leaf	dw ?		; LF_ARGLIST, LF_SUBSTR_LIST
+    count	dd ?		; number of arguments
+    arg		CV_typ_t CV_ZEROLEN dup(?) ; number of arguments
    .ends
 
 .template CV_FIELDLIST
     size	dw ?
-    leaf	dw ?		;; LF_FIELDLIST, LF_FIELDLIST_16t
-    data	db CV_ZEROLEN dup(?) ;; field list sub lists
+    leaf	dw ?		; LF_FIELDLIST, LF_FIELDLIST_16t
+    data	db CV_ZEROLEN dup(?) ; field list sub lists
    .ends
 
 
-;; type record for LF_BITFIELD
+; type record for LF_BITFIELD
 
 .template CV_BITFIELD_16t
     size	dw ?
-    leaf	dw ?		;; LF_BITFIELD_16t
+    leaf	dw ?		; LF_BITFIELD_16t
     length	db ?
     position	db ?
-    type	CV_typ16_t ?	;; type of bitfield
+    type	CV_typ16_t ?	; type of bitfield
    .ends
 
 .template CV_BITFIELD
     size	dw ?
-    leaf	dw ?		;; LF_BITFIELD
-    type	CV_typ_t ?	;; type of bitfield
+    leaf	dw ?		; LF_BITFIELD
+    type	CV_typ_t ?	; type of bitfield
     length	db ?
     position	db ?
-    reserved	dw ?		;; align 4...
+    reserved	dw ?		; align 4...
    .ends
 
 
-;; Symbol definitions
+; Symbol definitions
 
 .enum SYM_ENUM_e {
 
@@ -1675,7 +1673,7 @@ CV_ItemId	typedef CV_typ_t
     S_LPROCMIPS_16t =  0x0300,
     S_GPROCMIPS_16t =  0x0301,
 
-    ;; if these ref symbols have names following then the names are in ST format
+    ; if these ref symbols have names following then the names are in ST format
 
     S_PROCREF_ST    =  0x0400,
     S_DATAREF_ST    =  0x0401,
@@ -1684,10 +1682,10 @@ CV_ItemId	typedef CV_typ_t
     S_LPROCREF_ST   =  0x0403,
     S_OEM	    =  0x0404,
 
-    ;; sym records with 32-bit types embedded instead of 16-bit
-    ;;	 all have 0x1000 bit set for easy identification
-    ;;	 only do the 32-bit target versions since we don't really
-    ;;	 care about 16-bit ones anymore.
+    ; sym records with 32-bit types embedded instead of 16-bit
+    ;	 all have 0x1000 bit set for easy identification
+    ;	 only do the 32-bit target versions since we don't really
+    ;	 care about 16-bit ones anymore.
 
     S_TI16_MAX	    =  0x1000,
 
@@ -1713,21 +1711,21 @@ CV_ItemId	typedef CV_typ_t
     S_FRAMEPROC	    =  0x1012,
     S_COMPILE2_ST   =  0x1013,
 
-    ;; new symbols necessary for 16-bit enumerates of IA64 registers
-    ;; and IA64 specific symbols
+    ; new symbols necessary for 16-bit enumerates of IA64 registers
+    ; and IA64 specific symbols
 
     S_MANYREG2_ST   =  0x1014,
     S_LPROCIA64_ST  =  0x1015,
     S_GPROCIA64_ST  =  0x1016,
 
-    ;; Local symbols for IL
+    ; Local symbols for IL
 
     S_LOCALSLOT_ST  =  0x1017,
     S_PARAMSLOT_ST  =  0x1018,
 
     S_ANNOTATION    =  0x1019,
 
-    ;; symbols to support managed code debugging
+    ; symbols to support managed code debugging
 
     S_GMANPROC_ST   =  0x101a,
     S_LMANPROC_ST   =  0x101b,
@@ -1746,7 +1744,7 @@ CV_ItemId	typedef CV_typ_t
     S_MANTYPREF	    =  0x1028,
     S_UNAMESPACE_ST =  0x1029,
 
-    ;; Symbols w/ SZ name fields. All name fields contain utf8 encoded strings.
+    ; Symbols w/ SZ name fields. All name fields contain utf8 encoded strings.
 
     S_ST_MAX	    =  0x1100,
 
@@ -1780,7 +1778,7 @@ CV_ItemId	typedef CV_typ_t
     S_SLOT	    = S_LOCALSLOT,
     S_PARAMSLOT	    =  0x111b,
 
-    ;; symbols to support managed code debugging
+    ; symbols to support managed code debugging
 
     S_LMANDATA	    =  0x111c,
     S_GMANDATA	    =  0x111d,
@@ -1792,7 +1790,7 @@ CV_ItemId	typedef CV_typ_t
     S_MANMANYREG2   =  0x1123,
     S_UNAMESPACE    =  0x1124,
 
-    ;; ref symbols with name fields
+    ; ref symbols with name fields
 
     S_PROCREF	    =  0x1125,
     S_DATAREF	    =  0x1126,
@@ -1800,24 +1798,24 @@ CV_ItemId	typedef CV_typ_t
     S_ANNOTATIONREF =  0x1128,
     S_TOKENREF	    =  0x1129,
 
-    ;; continuation of managed symbols
+    ; continuation of managed symbols
 
     S_GMANPROC	    =  0x112a,
     S_LMANPROC	    =  0x112b,
 
-    ;; short, light-weight thunks
+    ; short, light-weight thunks
 
     S_TRAMPOLINE    =  0x112c,
     S_MANCONSTANT   =  0x112d,
 
-    ;; native attributed local/parms
+    ; native attributed local/parms
 
     S_ATTR_FRAMEREL =  0x112e,
     S_ATTR_REGISTER =  0x112f,
     S_ATTR_REGREL   =  0x1130,
     S_ATTR_MANYREG  =  0x1131,
 
-    ;; Separated code (from the compiler) support
+    ; Separated code (from the compiler) support
 
     S_SEPCODE	    =  0x1132,
 
@@ -1847,7 +1845,7 @@ CV_ItemId	typedef CV_typ_t
     S_DEFRANGE_FRAMEPOINTER_REL_FULL_SCOPE =  0x1144,
     S_DEFRANGE_REGISTER_REL =  0x1145,
 
-    ;; S_PROC symbols that reference ID instead of type
+    ; S_PROC symbols that reference ID instead of type
 
     S_LPROC32_ID     =	0x1146,
     S_GPROC32_ID     =	0x1147,
@@ -1899,7 +1897,7 @@ endif
     }
 
 
-;; enum describing the compile flag source language
+; enum describing the compile flag source language
 
 .enum CV_CFL_LANG {
     CV_CFL_C	    = 0x00,
@@ -1924,7 +1922,7 @@ endif
     }
 
 
-;; enum describing target processor
+; enum describing target processor
 
 .enum CV_CPU_TYPE_e {
     CV_CFL_8080		= 0x00,
@@ -2974,102 +2972,102 @@ endif
     }
 
 
-;; subfield record for non-static data members
+; subfield record for non-static data members
 
 .template CV_MEMBER_16t
-    leaf	dw ?		;; LF_MEMBER_16t
-    index	CV_typ16_t ?	;; index of type record for field
-    attr	CV_fldattr_t ?	;; attribute mask
+    leaf	dw ?		; LF_MEMBER_16t
+    index	CV_typ16_t ?	; index of type record for field
+    attr	CV_fldattr_t ?	; attribute mask
     offs	db CV_ZEROLEN dup(?)
    .ends
 
 .template CV_MEMBER
-    leaf	dw ?		;; LF_MEMBER
+    leaf	dw ?		; LF_MEMBER
     attr	CV_fldattr_t ?
     index	CV_typ_t ?
     offs	db CV_ZEROLEN dup(?)
    .ends
 
 .template DATASYM32_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_LDATA32_16t, S_GDATA32_16t or S_PUB32_16t
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_LDATA32_16t, S_GDATA32_16t or S_PUB32_16t
     off		CV_uoff32_t ?
     _seg	dw ?
-    typind	CV_typ16_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    typind	CV_typ16_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template DATASYM32
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_LDATA32, S_GDATA32, S_LMANDATA, S_GMANDATA
-    typind	CV_typ_t ?	;; Type index, or Metadata token if a managed symbol
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_LDATA32, S_GDATA32, S_LMANDATA, S_GMANDATA
+    typind	CV_typ_t ?	; Type index, or Metadata token if a managed symbol
     off		CV_uoff32_t ?
     _seg	dw ?
-    name	db 1 dup(?)	;; Length-prefixed name
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template REGREL32_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_REGREL32_16t
-    off		CV_uoff32_t ?	;; offset of symbol
-    reg		dw ?		;; register index for symbol
-    typind	CV_typ16_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_REGREL32_16t
+    off		CV_uoff32_t ?	; offset of symbol
+    reg		dw ?		; register index for symbol
+    typind	CV_typ16_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template REGREL32
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_REGREL32
-    off		CV_uoff32_t ?	;; offset of symbol
-    typind	CV_typ_t ?	;; Type index or metadata token
-    reg		dw ?		;; register index for symbol
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_REGREL32
+    off		CV_uoff32_t ?	; offset of symbol
+    typind	CV_typ_t ?	; Type index or metadata token
+    reg		dw ?		; register index for symbol
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template REGSYM_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_REGISTER_16t
-    typind	CV_typ16_t ?	;; Type index
-    reg		dw ?		;; register enumerate
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_REGISTER_16t
+    typind	CV_typ16_t ?	; Type index
+    reg		dw ?		; register enumerate
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template REGSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_REGISTER
-    typind	CV_typ_t ?	;; Type index or Metadata token
-    reg		dw ?		;; register enumerate
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_REGISTER
+    typind	CV_typ_t ?	; Type index or Metadata token
+    reg		dw ?		; register enumerate
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template BPRELSYM32_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_BPREL32_16t
-    off		CV_off32_t ?	;; BP-relative offset
-    typind	CV_typ16_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_BPREL32_16t
+    off		CV_off32_t ?	; BP-relative offset
+    typind	CV_typ16_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template BPRELSYM32
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_BPREL32
-    off		CV_off32_t ?	;; BP-relative offset
-    typind	CV_typ_t ?	;; Type index or Metadata token
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_BPREL32
+    off		CV_off32_t ?	; BP-relative offset
+    typind	CV_typ_t ?	; Type index or Metadata token
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template BPRELSYM16
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_BPREL16
-    off		CV_off16_t ?	;; BP-relative offset
-    typind	CV_typ16_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_BPREL16
+    off		CV_off16_t ?	; BP-relative offset
+    typind	CV_typ16_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
-;; enum describing function return method
+; enum describing function return method
 
 .enum cv_proc_flags {
     CV_PROCF_FPO	= 0x01,
@@ -3081,122 +3079,122 @@ endif
 .enum CV_PROCFLAGS : BYTE {
     CV_PFLAG_bAll	= 0xFF,
     CV_PFLAG_grfAll	= 0xFF,
-    CV_PFLAG_NOFPO	= 0x01, ;; frame pointer present
-    CV_PFLAG_INT	= 0x02, ;; interrupt return
-    CV_PFLAG_FAR	= 0x04, ;; far return
-    CV_PFLAG_NEVER	= 0x08, ;; function does not return
-    CV_PFLAG_NOTREACHED = 0x10, ;; label isn't fallen into
-    CV_PFLAG_CUST_CALL	= 0x20, ;; custom calling convention
-    CV_PFLAG_NOINLINE	= 0x40, ;; function marked as noinline
-    CV_PFLAG_OPTDBGINFO = 0x80	;; function has debug information for optimized code
+    CV_PFLAG_NOFPO	= 0x01, ; frame pointer present
+    CV_PFLAG_INT	= 0x02, ; interrupt return
+    CV_PFLAG_FAR	= 0x04, ; far return
+    CV_PFLAG_NEVER	= 0x08, ; function does not return
+    CV_PFLAG_NOTREACHED = 0x10, ; label isn't fallen into
+    CV_PFLAG_CUST_CALL	= 0x20, ; custom calling convention
+    CV_PFLAG_NOINLINE	= 0x40, ; function marked as noinline
+    CV_PFLAG_OPTDBGINFO = 0x80	; function has debug information for optimized code
     }
 
 
 .template LABELSYM16
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_LABEL16
-    off		CV_uoff16_t ?	;; offset of symbol
-    _seg	dw ?		;; segment of symbol
-    flags	CV_PROCFLAGS ?	;; flags
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_LABEL16
+    off		CV_uoff16_t ?	; offset of symbol
+    _seg	dw ?		; segment of symbol
+    flags	CV_PROCFLAGS ?	; flags
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template PROCSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_GPROC16 or S_LPROC16
-    pParent	dd ?		;; pointer to the parent
-    pEnd	dd ?		;; pointer to this blocks end
-    pNext	dd ?		;; pointer to next symbol
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_GPROC16 or S_LPROC16
+    pParent	dd ?		; pointer to the parent
+    pEnd	dd ?		; pointer to this blocks end
+    pNext	dd ?		; pointer to next symbol
    .ends
 
 .template PROCSYM16
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_GPROC16 or S_LPROC16
-    pParent	dd ?		;; pointer to the parent
-    pEnd	dd ?		;; pointer to this blocks end
-    pNext	dd ?		;; pointer to next symbol
-    len		dw ?		;; Proc length
-    DbgStart	dw ?		;; Debug start offset
-    DbgEnd	dw ?		;; Debug end offset
-    off		CV_uoff16_t ?	;; offset of symbol
-    _seg	dw ?		;; segment of symbol
-    typind	CV_typ16_t ?	;; Type index
-    flags	CV_PROCFLAGS ?	;; Proc flags
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_GPROC16 or S_LPROC16
+    pParent	dd ?		; pointer to the parent
+    pEnd	dd ?		; pointer to this blocks end
+    pNext	dd ?		; pointer to next symbol
+    len		dw ?		; Proc length
+    DbgStart	dw ?		; Debug start offset
+    DbgEnd	dw ?		; Debug end offset
+    off		CV_uoff16_t ?	; offset of symbol
+    _seg	dw ?		; segment of symbol
+    typind	CV_typ16_t ?	; Type index
+    flags	CV_PROCFLAGS ?	; Proc flags
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template PROCSYM32_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_GPROC32_16t or S_LPROC32_16t
-    pParent	dd ?		;; pointer to the parent
-    pEnd	dd ?		;; pointer to this blocks end
-    pNext	dd ?		;; pointer to next symbol
-    len		dd ?		;; Proc length
-    DbgStart	dd ?		;; Debug start offset
-    DbgEnd	dd ?		;; Debug end offset
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_GPROC32_16t or S_LPROC32_16t
+    pParent	dd ?		; pointer to the parent
+    pEnd	dd ?		; pointer to this blocks end
+    pNext	dd ?		; pointer to next symbol
+    len		dd ?		; Proc length
+    DbgStart	dd ?		; Debug start offset
+    DbgEnd	dd ?		; Debug end offset
     off		CV_uoff32_t ?
     _seg	dw ?
-    typind	CV_typ16_t ?	;; Type index
-    flags	CV_PROCFLAGS ?	;; Proc flags
-    name	db 1 dup(?)	;; Length-prefixed name
+    typind	CV_typ16_t ?	; Type index
+    flags	CV_PROCFLAGS ?	; Proc flags
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template PROCSYM32
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_GPROC32, S_LPROC32, S_GPROC32_ID, S_LPROC32_ID, S_LPROC32_DPC or S_LPROC32_DPC_ID
-    pParent	dd ?		;; pointer to the parent
-    pEnd	dd ?		;; pointer to this blocks end
-    pNext	dd ?		;; pointer to next symbol
-    len		dd ?		;; Proc length
-    DbgStart	dd ?		;; Debug start offset
-    DbgEnd	dd ?		;; Debug end offset
-    typind	CV_typ_t ?	;; Type index or ID
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_GPROC32, S_LPROC32, S_GPROC32_ID, S_LPROC32_ID, S_LPROC32_DPC or S_LPROC32_DPC_ID
+    pParent	dd ?		; pointer to the parent
+    pEnd	dd ?		; pointer to this blocks end
+    pNext	dd ?		; pointer to next symbol
+    len		dd ?		; Proc length
+    DbgStart	dd ?		; Debug start offset
+    DbgEnd	dd ?		; Debug end offset
+    typind	CV_typ_t ?	; Type index or ID
     off		CV_uoff32_t ?
     _seg	dw ?
-    flags	CV_PROCFLAGS ?	;; Proc flags
-    name	db 1 dup(?)	;; Length-prefixed name
+    flags	CV_PROCFLAGS ?	; Proc flags
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template LABELSYM32
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_LABEL32
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_LABEL32
     off		CV_uoff32_t ?
     _seg	dw ?
-    flags	CV_PROCFLAGS ?	;; flags
-    name	db 1 dup(?)	;; Length-prefixed name
+    flags	CV_PROCFLAGS ?	; flags
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template UDTSYM_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_UDT_16t | S_COBOLUDT_16t
-    typind	CV_typ16_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_UDT_16t | S_COBOLUDT_16t
+    typind	CV_typ16_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template UDTSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_UDT | S_COBOLUDT
-    typind	CV_typ_t ?	;; Type index
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_UDT | S_COBOLUDT
+    typind	CV_typ_t ?	; Type index
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 .template CONSTSYM_16t
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_CONSTANT_16t
-    typind	CV_typ16_t ?	;; Type index (containing enum if enumerate)
-    value	dw ?		;; numeric leaf containing value
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_CONSTANT_16t
+    typind	CV_typ16_t ?	; Type index (containing enum if enumerate)
+    value	dw ?		; numeric leaf containing value
     name	db CV_ZEROLEN dup(?)
    .ends
 
 .template CONSTSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_CONSTANT or S_MANCONSTANT
-    typind	CV_typ_t ?	;; Type index (containing enum if enumerate) or metadata token
-    value	dw ?		;; numeric leaf containing value
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_CONSTANT or S_MANCONSTANT
+    typind	CV_typ_t ?	; Type index (containing enum if enumerate) or metadata token
+    value	dw ?		; numeric leaf containing value
     name	db CV_ZEROLEN dup(?)
    .ends
 
@@ -3208,106 +3206,106 @@ endif
     }
 
 .enum CV_cflags : WORD {
-    CV_cflags_pcode	= 0x0001, ;; true if pcode present
-    CV_cflags_floatprec = 0x0006, ;; floating precision
-    CV_cflags_floatpkg	= 0x0018, ;; float package
-    CV_cflags_ambdata	= 0x00E0, ;; ambient data model
-    CV_cflags_ambcode	= 0x0700, ;; ambient code model
-    CV_cflags_mode32	= 0x0800, ;; true if compiled 32 bit mode
-    CV_cflags_pad	= 0xF000  ;; reserved
+    CV_cflags_pcode	= 0x0001, ; true if pcode present
+    CV_cflags_floatprec = 0x0006, ; floating precision
+    CV_cflags_floatpkg	= 0x0018, ; float package
+    CV_cflags_ambdata	= 0x00E0, ; ambient data model
+    CV_cflags_ambcode	= 0x0700, ; ambient code model
+    CV_cflags_mode32	= 0x0800, ; true if compiled 32 bit mode
+    CV_cflags_pad	= 0xF000  ; reserved
     }
 
 .template CFLAGSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_COMPILE
-    machine	db ?		;; target processor
-    language	db ?		;; language index
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_COMPILE
+    machine	db ?		; target processor
+    language	db ?		; language index
     flags	CV_cflags ?
-    ver		db 1 dup(?)	;; Length-prefixed compiler version string
+    ver		db 1 dup(?)	; Length-prefixed compiler version string
    .ends
 
 .enum CV_compflags : DWORD {
-    CV_comp_iLanguage		= 0x000000FF, ;; language index
-    CV_comp_fEC			= 0x00000100, ;; compiled for E/C
-    CV_comp_fNoDbgInfo		= 0x00000200, ;; not compiled with debug info
-    CV_comp_fLTCG		= 0x00000400, ;; compiled with LTCG
-    CV_comp_fNoDataAlign	= 0x00000800, ;; compiled with -Bzalign
-    CV_comp_fManagedPresent	= 0x00001000, ;; managed code/data present
-    CV_comp_fSecurityChecks	= 0x00002000, ;; compiled with /GS
-    CV_comp_fHotPatch		= 0x00004000, ;; compiled with /hotpatch
-    CV_comp_fCVTCIL		= 0x00008000, ;; converted with CVTCIL
-    CV_comp_fMSILModule		= 0x00010000, ;; MSIL netmodule
-    CV_comp_pad			= 0xFFFE0000, ;; reserved, must be 0
+    CV_comp_iLanguage		= 0x000000FF, ; language index
+    CV_comp_fEC			= 0x00000100, ; compiled for E/C
+    CV_comp_fNoDbgInfo		= 0x00000200, ; not compiled with debug info
+    CV_comp_fLTCG		= 0x00000400, ; compiled with LTCG
+    CV_comp_fNoDataAlign	= 0x00000800, ; compiled with -Bzalign
+    CV_comp_fManagedPresent	= 0x00001000, ; managed code/data present
+    CV_comp_fSecurityChecks	= 0x00002000, ; compiled with /GS
+    CV_comp_fHotPatch		= 0x00004000, ; compiled with /hotpatch
+    CV_comp_fCVTCIL		= 0x00008000, ; converted with CVTCIL
+    CV_comp_fMSILModule		= 0x00010000, ; MSIL netmodule
+    CV_comp_pad			= 0xFFFE0000, ; reserved, must be 0
     }
 
 .template COMPILESYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_COMPILE2
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_COMPILE2
     flags	CV_compflags ?
-    machine	dw ?		;; target processor
-    verFEMajor	dw ?		;; front end major version #
-    verFEMinor	dw ?		;; front end minor version #
-    verFEBuild	dw ?		;; front end build version #
-    verMajor	dw ?		;; back end major version #
-    verMinor	dw ?		;; back end minor version #
-    verBuild	dw ?		;; back end build version #
+    machine	dw ?		; target processor
+    verFEMajor	dw ?		; front end major version #
+    verFEMinor	dw ?		; front end minor version #
+    verFEBuild	dw ?		; front end build version #
+    verMajor	dw ?		; back end major version #
+    verMinor	dw ?		; back end minor version #
+    verBuild	dw ?		; back end build version #
     verSt	db 1 dup(?)
    .ends
 
 
 .enum CV_compflags3 : DWORD {
-    CV_comp3_iLanguage		= 0x000000FF, ;; language index
-    CV_comp3_fEC		= 0x00000100, ;; compiled for E/C
-    CV_comp3_fNoDbgInfo		= 0x00000200, ;; not compiled with debug info
-    CV_comp3_fLTCG		= 0x00000400, ;; compiled with LTCG
-    CV_comp3_fNoDataAlign	= 0x00000800, ;; compiled with -Bzalign
-    CV_comp3_fManagedPresent	= 0x00001000, ;; managed code/data present
-    CV_comp3_fSecurityChecks	= 0x00002000, ;; compiled with /GS
-    CV_comp3_fHotPatch		= 0x00004000, ;; compiled with /hotpatch
-    CV_comp3_fCVTCIL		= 0x00008000, ;; converted with CVTCIL
-    CV_comp3_fMSILModule	= 0x00010000, ;; MSIL netmodule
-    CV_comp3_fSdl		= 0x00020000, ;; compiled with /sdl
-    CV_comp3_fPGO		= 0x00040000, ;; compiled with /ltcg:pgo or pgu
-    CV_comp3_fExp		= 0x00080000, ;; .exp module
-    CV_comp3_pad		= 0xFFF00000, ;; reserved, must be 0
+    CV_comp3_iLanguage		= 0x000000FF, ; language index
+    CV_comp3_fEC		= 0x00000100, ; compiled for E/C
+    CV_comp3_fNoDbgInfo		= 0x00000200, ; not compiled with debug info
+    CV_comp3_fLTCG		= 0x00000400, ; compiled with LTCG
+    CV_comp3_fNoDataAlign	= 0x00000800, ; compiled with -Bzalign
+    CV_comp3_fManagedPresent	= 0x00001000, ; managed code/data present
+    CV_comp3_fSecurityChecks	= 0x00002000, ; compiled with /GS
+    CV_comp3_fHotPatch		= 0x00004000, ; compiled with /hotpatch
+    CV_comp3_fCVTCIL		= 0x00008000, ; converted with CVTCIL
+    CV_comp3_fMSILModule	= 0x00010000, ; MSIL netmodule
+    CV_comp3_fSdl		= 0x00020000, ; compiled with /sdl
+    CV_comp3_fPGO		= 0x00040000, ; compiled with /ltcg:pgo or pgu
+    CV_comp3_fExp		= 0x00080000, ; .exp module
+    CV_comp3_pad		= 0xFFF00000, ; reserved, must be 0
     }
 
 .template COMPILESYM3
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_COMPILE2
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_COMPILE2
     flags	CV_compflags3 ?
-    machine	dw ?		;; target processor
-    verFEMajor	dw ?		;; front end major version
-    verFEMinor	dw ?		;; front end minor version
-    verFEBuild	dw ?		;; front end build version
-    verFEQFE	dw ?		;; front end QFE version
-    verMajor	dw ?		;; back end major version
-    verMinor	dw ?		;; back end minor version
-    verBuild	dw ?		;; back end build version
-    verQFE	dw ?		;; back end QFE version
-    verSz	db 1 dup(?)	;; Zero terminated compiler version string
+    machine	dw ?		; target processor
+    verFEMajor	dw ?		; front end major version
+    verFEMinor	dw ?		; front end minor version
+    verFEBuild	dw ?		; front end build version
+    verFEQFE	dw ?		; front end QFE version
+    verMajor	dw ?		; back end major version
+    verMinor	dw ?		; back end minor version
+    verBuild	dw ?		; back end build version
+    verQFE	dw ?		; back end QFE version
+    verSz	db 1 dup(?)	; Zero terminated compiler version string
    .ends
 
 
 .template ENVBLOCKSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_ENVBLOCK
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_ENVBLOCK
     flags	db ?
-    rgsz	db 1 dup(?)	;; Sequence of zero-terminated strings
+    rgsz	db 1 dup(?)	; Sequence of zero-terminated strings
    .ends
 
 
 .template OBJNAMESYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_OBJNAME
-    signature	dd ?		;; signature
-    name	db 1 dup(?)	;; Length-prefixed name
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_OBJNAME
+    signature	dd ?		; signature
+    name	db 1 dup(?)	; Length-prefixed name
    .ends
 
 
 .template ENDARGSYM
-    reclen	dw ?		;; Record length
-    rectyp	dw ?		;; S_ENDARG
+    reclen	dw ?		; Record length
+    rectyp	dw ?		; S_ENDARG
    .ends
 
 
@@ -3351,13 +3349,13 @@ endif
 define CV_LINES_HAVE_COLUMNS 0x0001
 
 .enum CV_lineflags {
-    CV_lineflags_linenumStart	= 0x00FFFFFF, ;; line where statement/expression starts
-    CV_lineflags_deltaLineEnd	= 0x7F000000, ;; delta to line where statement ends (optional)
-    CV_lineflags_fStatement	= 0x80000000  ;; true if a statement linenumber, else an expression line num
+    CV_lineflags_linenumStart	= 0x00FFFFFF, ; line where statement/expression starts
+    CV_lineflags_deltaLineEnd	= 0x7F000000, ; delta to line where statement ends (optional)
+    CV_lineflags_fStatement	= 0x80000000  ; true if a statement linenumber, else an expression line num
     }
 
 .template CV_Line_t
-    offs	dd ?		;; Offset to start of code bytes for line number
+    offs	dd ?		; Offset to start of code bytes for line number
     flags	CV_lineflags ?
    .ends
 
@@ -3371,4 +3369,3 @@ CV_columnpos_t		typedef WORD
 .pragma pack(pop)
 
 endif
-.pragma list(pop)

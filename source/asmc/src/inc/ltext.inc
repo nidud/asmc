@@ -1,5 +1,5 @@
 
-;; text constants for listing
+; text constants for listing
 
 ltext(BYTE,	"Byte"	 )
 ltext(WORD,	"Word"	 )
@@ -10,7 +10,7 @@ ltext(TBYTE,	"TByte"	 )
 ltext(PARA,	"Para"	 )
 ltext(OWORD,	"XmmWord")
 ltext(PAGE,	"Page"	 )
-;; [L]NEAR|FAR[16|32|64] variants must be consecutive
+; [L]NEAR|FAR[16|32|64] variants must be consecutive
 ltext(NEAR,	"Near"	 )
 ltext(NEAR16,	"Near16" )
 ltext(NEAR32,	"Near32" )
@@ -44,7 +44,9 @@ ltext(ALIAS,	"Alias"	 )
 ltext(ABS,	"Abs"	 )
 ltext(COMM,	"COMM"	 )
 ltext(VARARG,	"VARARG" )
-;; language order must match enum lang_type in globals.h
+
+; language order must match enum lang_type in globals.h
+
 ltext(VOID,	""	 )
 ltext(CCALL,	"C"	 )
 ltext(SYSCALL,	"SYSCALL")

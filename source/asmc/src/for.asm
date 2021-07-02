@@ -15,7 +15,7 @@ include hllext.inc
 
     .code
 
-strtrim proc string:string_t
+strtrim proc private string:string_t
 
     .if strlen( string )
 
@@ -222,9 +222,9 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
                 Assignopc( edi, "mov", [ebx].tokpos, &[ecx+1] )
                 Assignopc( edi, "not", [ebx].tokpos, NULL )
             .else
-                ;;
-                ;; mov reg,0 --> xor reg,reg
-                ;;
+                ;
+                ; mov reg,0 --> xor reg,reg
+                ;
                 mov eax,[esi+16].string_ptr
                 mov ax,[eax]
                 .if ( dh == T_NUM && ax == '0' && \
@@ -346,7 +346,7 @@ RenderAssignment endp
 
 ForDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
-local   rc:int_t,
+  local rc:int_t,
         cmd:uint_t,
         p:string_t,
         q:string_t,

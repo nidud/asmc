@@ -57,7 +57,7 @@ put16 proc watcall private p:ptr byte, value:word
 
 put16 endp
 
-put32 proc watcall p:ptr byte, value:dword
+put32 proc watcall private p:ptr byte, value:dword
 
     WriteU32( eax, edx )
     add eax,4

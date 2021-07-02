@@ -49,6 +49,8 @@ OutputDataBytes macro x, y
 
     .code
 
+    option proc:private
+
 AsmerrSymName proc fastcall error:int_t, sym:ptr asym
 
     lea eax,@CStr("")
@@ -1292,6 +1294,8 @@ checktypes endp
 ; i: index of directive or type
 ; type_sym: userdef type or NULL
 ;
+
+    option proc:public
 
 data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asym
 

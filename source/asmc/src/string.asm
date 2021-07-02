@@ -559,12 +559,12 @@ GenerateCString proc uses esi edi ebx i, tokenarray:ptr asm_tok
     mov eax,rc
     ret
 
-GenerateCString ENDP
+GenerateCString endp
 
 
 ;; @CStr() macro
 
-CString PROC USES esi edi ebx buffer:string_t, tokenarray:token_t
+CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
 
   local string:         string_t,
         cursrc:         string_t,

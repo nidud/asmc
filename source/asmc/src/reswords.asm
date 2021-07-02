@@ -18,7 +18,6 @@ public optable_idx
 public opnd_clstab
 public ResWordTable
 public vex_flags
-public resw_table
 
 HASH_TABITEMS equ 1024
 
@@ -466,7 +465,7 @@ b64bit int_t FALSE ;; resw tables in 64bit mode?
 
     .code
 
-get_hash proc fastcall uses ebx token:string_t, len:byte
+get_hash proc fastcall private uses ebx token:string_t, len:byte
 
     xor eax,eax
     and edx,0xFF

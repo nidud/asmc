@@ -11,20 +11,13 @@ include winbase.inc
 include asmc.inc
 include symbols.inc
 include input.inc
+include tchar.inc
 
-CATCHBREAK	equ 1
+define CATCHBREAK
 
-AssembleModule	proto :dword
-close_files	proto
-CmdlineFini	proto
-ParseCmdline	proto :ptr, :ptr
-write_usage	proto
-ifdef __ASMC64__
-define_name	proto :string_t, :string_t
-endif
 .code
 
-strfcat proc uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
+strfcat proc private uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
 
     mov edx,buffer
     mov esi,path
@@ -44,15 +37,14 @@ strfcat proc uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
     .endif
 
     dec edi
-    .if edi != edx	; add slash if missing
+    .if edi != edx  ; add slash if missing
 	mov al,[edi-1]
 	.if !( al == '\' || al == '/' )
 	    mov al,'\'
 	    stosb
 	.endif
     .endif
-
-    mov esi,file	; add file name
+    mov esi,file    ; add file name
     .repeat
 	lodsb
 	stosb
@@ -62,7 +54,7 @@ strfcat proc uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
 
 strfcat endp
 
-AssembleSubdir proc uses esi edi ebx directory, wild
+AssembleSubdir proc private uses esi edi ebx directory:string_t, wild:string_t
 
   local rc, path[_MAX_PATH]:byte, h, ff:WIN32_FIND_DATA
 
@@ -102,13 +94,15 @@ AssembleSubdir proc uses esi edi ebx directory, wild
 
 AssembleSubdir endp
 
-GeneralFailure proc signo
+GeneralFailure proc private signo:int_t
     mov eax,signo
     .if eax != SIGTERM
+ifndef __PE__
 	mov eax,pCurrentException
 	PrintContext(
 	    [eax].EXCEPTION_POINTERS.ContextRecord,
 	    [eax].EXCEPTION_POINTERS.ExceptionRecord)
+endif
 	asmerr( 1901 )
     .endif
     close_files()
@@ -117,7 +111,7 @@ GeneralFailure proc signo
 
 GeneralFailure endp
 
-main proc c
+main proc
 
   local rc, numArgs, numFiles, ff:WIN32_FIND_DATA
 
@@ -185,5 +179,5 @@ endif
 
 main endp
 
-    end
+    end _tstart
 

@@ -8,7 +8,7 @@
 ifndef __PREPROC_INC
 define __PREPROC_INC
 
-PreprocessLine proto :token_t
-WriteCodeLabel proto :string_t, :token_t
+PreprocessLine proto :ptr asm_tok
+WriteCodeLabel proto :string_t, :ptr asm_tok
 
 endif

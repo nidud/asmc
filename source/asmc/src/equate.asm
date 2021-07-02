@@ -19,9 +19,6 @@ include input.inc
 include fixup.inc
 include atofloat.inc
 
-public  maxintvalues
-public  minintvalues
-
     .data
     maxintvalues int_t -1,0, -1,0,-1,0x7fffffff
     minintvalues int_t 0,-1, 0,-1, 0,0x80000000

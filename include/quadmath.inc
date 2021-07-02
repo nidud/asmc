@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef _INC_QUADMATH
-_INC_QUADMATH equ <>
+define _INC_QUADMATH
 
 include fltintrn.inc
 

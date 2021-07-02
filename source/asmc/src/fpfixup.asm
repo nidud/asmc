@@ -20,7 +20,7 @@ include omfspec.inc
 .enum fp_patches {
     FPP_WAIT,
     FPP_NORMAL,
-    FPP_ES, ;; last 6 entries match order of ASSUME_ES, ...
+    FPP_ES, ; last 6 entries match order of ASSUME_ES, ...
     FPP_CS,
     FPP_SS,
     FPP_DS,
@@ -28,10 +28,10 @@ include omfspec.inc
     FPP_GS
     }
 
-;; FP 16-bit fixup names.
-;; Known by MS VC, Open Watcom, Borland and Digital Mars:
-;;  FIWRQQ, FIDRQQ, FIERQQ, FICRQQ, FISRQQ, FIARQQ, FIFRQQ, FIGRQQ,
-;;                          FJCRQQ, FJSRQQ, FJARQQ, FJFRQQ, FJGRQQ
+; FP 16-bit fixup names.
+; Known by MS VC, Open Watcom, Borland and Digital Mars:
+;  FIWRQQ, FIDRQQ, FIERQQ, FICRQQ, FISRQQ, FIARQQ, FIFRQQ, FIGRQQ,
+;                          FJCRQQ, FJSRQQ, FJARQQ, FJFRQQ, FJGRQQ
 
 define patchmask 0xF8FF
 
@@ -59,7 +59,7 @@ AddFloatingPointEmulationFixup proc uses esi edi ebx CodeInfo:ptr code_info
         add edi,2
     .endif
 
-    ;; emit 1-2 externals for the patch if not done already
+    ; emit 1-2 externals for the patch if not done already
 
     .for ( ebx = 0 : ebx < 2 : ebx++ )
 
@@ -83,12 +83,13 @@ AddFloatingPointEmulationFixup proc uses esi edi ebx CodeInfo:ptr code_info
         .endif
     .endf
 
-    ;; no need for fixups if no object file is written
+    ; no need for fixups if no object file is written
+
     .return .if ( write_to_file == FALSE )
 
-    ;; make sure the next 3 bytes in code stream aren't separated.
-    ;; The first fixup covers bytes $+0 and $+1, the (possible) second
-    ;; fixup covers bytes $+1 and $+2.
+    ; make sure the next 3 bytes in code stream aren't separated.
+    ; The first fixup covers bytes $+0 and $+1, the (possible) second
+    ; fixup covers bytes $+1 and $+2.
 
     mov edi,CurrSeg
     mov edx,[edi].dsym.seginfo

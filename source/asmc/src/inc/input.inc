@@ -50,7 +50,6 @@ InputFini		proto
 InputExtend		proto :ptr line_status
 PushInputStatus		proto :input_t
 PopInputStatus		proto :input_t
-GetCurrSrcPos		proto :string_t
 ClearSrcStack		proto
 get_curr_srcfile	proto
 set_curr_srcfile	proto :uint_t, :uint_t

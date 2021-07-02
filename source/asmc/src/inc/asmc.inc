@@ -605,7 +605,6 @@ CurrFName               equ <ModuleInfo.curr_fname>
 StringBufferEnd         equ <ModuleInfo.stringbufferend>
 
 externdef               Parse_Pass      : uint_t
-externdef               LineStore       : qdesc
 externdef               ModuleInfo      : module_info
 externdef               Options         : global_options
 externdef               write_to_file   : uint_t
@@ -616,10 +615,15 @@ externdef               ModelToken      : string_t
 externdef               LastCodeBufSize : int_t
 externdef               stackreg        : uint_t
 externdef               regax           : uint_t
-
-externdef               szError         : char_t        ; ERROR
-externdef               szNothing       : char_t        ; NOTHING
 externdef               szDgroup        : char_t        ; DGROUP
+
+
+AssembleModule          proto :string_t
+close_files             proto
+CmdlineFini             proto
+ParseCmdline            proto :ptr string_t, :ptr int_t
+write_usage             proto
+define_name             proto :string_t, :string_t
 
 asmerr                  proto __cdecl :int_t, :vararg
 DelayExpand             proto fastcall :token_t

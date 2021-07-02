@@ -2800,7 +2800,7 @@ win64_SaveRegParams endp
 ; write prolog code
 ;
 
-write_default_prologue proc uses esi edi ebx
+write_default_prologue proc private uses esi edi ebx
 
    .new info:ptr proc_info
    .new regist:ptr word

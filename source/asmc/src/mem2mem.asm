@@ -18,7 +18,7 @@ include atofloat.inc
 
     .code
 
-InlineCopy proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
+InlineCopy proc private uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 
     mov esi,T_ESI
     mov edi,T_EDI
@@ -43,7 +43,7 @@ InlineCopy proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 InlineCopy endp
 
 
-InlineMove proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
+InlineMove proc private uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 
   local type:uint_t
 
@@ -81,7 +81,7 @@ InlineMove proc uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 
 InlineMove endp
 
-RetLineQueue proc
+RetLineQueue proc private
 
     .if ModuleInfo.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
@@ -92,7 +92,7 @@ RetLineQueue proc
 
 RetLineQueue endp
 
-SizeFromExpression proc opnd:ptr expr
+SizeFromExpression proc private opnd:ptr expr
 
     mov edx,opnd
     mov ecx,[edx].expr.mbr
@@ -301,7 +301,7 @@ CreateFloat proto :int_t, :expr_t, :string_t
 
     assume edi:ptr asm_tok
 
-immarray16 proc uses esi edi tokenarray:token_t, result:expr_t
+immarray16 proc private uses esi edi tokenarray:token_t, result:expr_t
 
   local i:int_t
   local count:int_t

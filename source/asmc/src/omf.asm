@@ -1011,7 +1011,7 @@ omf_write_lnames endp
 ; - the TAB_EXT queue of externals
 ; v2.09: index (ext_idx1, ext_idx2 ) is now set inside this function.
 
-GetExt proc r:ptr readext
+GetExt proc private r:ptr readext
 
     mov ecx,r
     .if ( [ecx].readext.method == 0 )

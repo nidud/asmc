@@ -136,7 +136,7 @@ fill_placeholders proc uses esi edi ebx dst:string_t, src:string_t, argc:uint_t,
 
 fill_placeholders endp
 
-replace_parm proc uses esi edi ebx line:string_t, start:string_t, len:int_t, mnames:ptr mname_list
+replace_parm proc private uses esi edi ebx line:string_t, start:string_t, len:int_t, mnames:ptr mname_list
 
     ;; scan list of macro paras/locals if current word is found.
     ;; - line: current line

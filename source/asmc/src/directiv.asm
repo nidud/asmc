@@ -52,6 +52,8 @@ undef res
 
 .code
 
+    option proc:private
+
 ;; should never be called
 StubDir proc i:int_t, tokenarray:token_t
 

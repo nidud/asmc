@@ -17,6 +17,11 @@ include types.inc
 include assume.inc
 include fastpass.inc
 
+define B <BYTE PTR>
+define W <WORD PTR>
+define D <DWORD PTR>
+
+
 .pragma warning(disable: 6004)
 
 ; c binary ops.
@@ -72,7 +77,7 @@ CHARS_OR    equ '|' + ( '|' shl 8 )
 
     .code
 
-GetCOp proc fastcall private item;:ptr asm_tok
+GetCOp proc fastcall private item:ptr asm_tok
 
     mov edx,[ecx].asm_tok.string_ptr
     xor eax,eax
@@ -110,7 +115,7 @@ GetCOp proc fastcall private item;:ptr asm_tok
         ;
         ; a valid "flag" string must end with a question mark
         ;
-      .case BYTE PTR [edx + strlen(edx) - 1] == '?'
+      .case B[edx + strlen(edx) - 1] == '?'
 
         mov ecx,[edx]
         and ecx,not 0x20202020
@@ -234,7 +239,7 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
         sprintf(edi, ", %d", ecx)
         add edi,eax
     .endif
-    mov WORD PTR [edi],EOLCHAR
+    mov W[edi],EOLCHAR
     lea eax,[edi+1]
     ret
 
@@ -275,7 +280,7 @@ RenderJcc proc private uses edi dst, cc, _neg, _label
 
     sprintf( edi, "@C%04X", _label )
     lea eax,[edi+eax+1]
-    mov WORD PTR [eax-1],EOLCHAR
+    mov W[eax-1],EOLCHAR
     ret
 
 RenderJcc endp
@@ -320,12 +325,9 @@ LGetToken proc private uses esi edi ebx hll:ptr hll_item, i:int_t, tokenarray:pt
     ret
 LGetToken endp
 
-GetLabel proc fastcall hll, index
-
-    mov eax,[ecx].hll_item.labels[edx*4]
-    ret
-
-GetLabel endp
+GetLabel proto watcall hll:ptr hll_item, index:int_t {
+    mov eax,[eax].hll_item.labels[edx*4]
+    }
 
 ; a "simple" expression is
 ; 1. two tokens, coupled with a <cmp> operator: == != >= <= > <
@@ -337,7 +339,7 @@ GetLabel endp
 GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
         tokenarray:ptr asm_tok, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
-local   op:         int_t,
+  local op:         int_t,
         op1_pos:    int_t,
         op1_end:    int_t,
         op2_pos:    int_t,
@@ -353,7 +355,7 @@ local   op:         int_t,
     add ebx,tokenarray
 
     mov eax,[ebx].string_ptr
-    .while  WORD PTR [eax] == '!'
+    .while W[eax] == '!'
 
         add edi,1
         add ebx,16
@@ -392,7 +394,7 @@ local   op:         int_t,
 
         .if eax
 
-            inc DWORD PTR [esi]
+            inc D[esi]
             .return .if GetExpression(hll, esi, tokenarray, ilabel, is_true, buffer, hllop) == ERROR
 
             mov ebx,[esi]
@@ -400,7 +402,7 @@ local   op:         int_t,
             add ebx,tokenarray
             .return asmerr(2154) .if ( [ebx].token != T_CL_BRACKET )
 
-            inc DWORD PTR [esi]
+            inc D[esi]
             .return NOT_ERROR
         .endif
     .endif
@@ -521,11 +523,11 @@ local   op:         int_t,
             mov edx,is_true
             xor edx,1
 
-            .if (( is_true && op1.value ) || ( edx && op1.value == 0 ))
+            .if ( ( is_true && op1.value ) || ( edx && op1.value == 0 ) )
 
                 sprintf( buffer, "jmp @C%04X%s", _label, &EOLSTR )
             .else
-                mov BYTE PTR [eax],NULLC
+                mov B[eax],NULLC
             .endif
             .endc
         .endsw
@@ -546,7 +548,7 @@ local   op:         int_t,
 
         mov eax,[ebx+eax].string_ptr
         .if word ptr [eax] == '&'
-            inc dword ptr [esi]
+            inc D[esi]
         .endif
     .endif
 
@@ -664,9 +666,10 @@ GetSimpleExpression endp
 ; - jmp -> 0
 ; - 0    -> jmp
 ;
-InvertJump proc fastcall p:string_t
 
-    .if BYTE PTR [ecx] == NULLC ; v2.11: convert 0 to "jmp"
+InvertJump proc fastcall private p:string_t
+
+    .if B[ecx] == NULLC ; v2.11: convert 0 to "jmp"
 
         strcpy( ecx, "jmp " )
         ret
@@ -682,24 +685,24 @@ InvertJump proc fastcall p:string_t
       .case 's'
       .case 'p'
       .case 'o'
-        mov BYTE PTR [ecx+1],al
-        mov BYTE PTR [ecx],'n'
+        mov B[ecx+1],al
+        mov B[ecx],'n'
         ret
       .case 'n'
-        mov BYTE PTR [ecx],ah
-        mov BYTE PTR [ecx+1],' '
+        mov B[ecx],ah
+        mov B[ecx+1],' '
         ret
       .case 'a'
-        mov BYTE PTR [ecx],'b'
+        mov B[ecx],'b'
         .endc
       .case 'b'
-        mov BYTE PTR [ecx],'a'
+        mov B[ecx],'a'
         .endc
       .case 'g'
-        mov BYTE PTR [ecx],'l'
+        mov B[ecx],'l'
         .endc
       .case 'l'
-        mov BYTE PTR [ecx],'g'
+        mov B[ecx],'g'
         .endc
       .default
         ;
@@ -708,16 +711,16 @@ InvertJump proc fastcall p:string_t
         .if al == 'm'
 
             sub ecx,1
-            mov BYTE PTR [ecx],NULLC
+            mov B[ecx],NULLC
         .endif
         ret
     .endsw
 
     .if ah == 'e'
 
-        mov BYTE PTR [ecx+1],' '
+        mov B[ecx+1],' '
     .else
-        mov BYTE PTR [ecx+1],'e'
+        mov B[ecx+1],'e'
     .endif
     ret
 
@@ -773,7 +776,7 @@ GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, to
 
         .break .if GetCOp(eax) != COP_AND
 
-        inc DWORD PTR [ebx]
+        inc D[ebx]
         mov ebx,[edi].hll_opnd.lastjmp
         .if ebx && is_true
 
@@ -786,7 +789,7 @@ GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, to
 
             ;; v2.11: there might be a 0 at lastjmp
 
-            .if BYTE PTR [ebx]
+            .if B[ebx]
 
                 strcat(GetLabelStr(truelabel, &[ebx+4]), &EOLSTR)
             .endif
@@ -856,7 +859,7 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
         ; 4a. create a new label
         ; 4b. replace the "false" label in the generated code by the new label
         ;
-        inc DWORD PTR [ebx]
+        inc D[ebx]
         mov ebx,[edi].hll_opnd.lastjmp
 
         .if ebx && !is_true
@@ -868,7 +871,7 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
                 mov truelabel,GetHllLabel()
             .endif
 
-            .if BYTE PTR [ebx]
+            .if B[ebx]
 
                 strcat( GetLabelStr( truelabel, &[ebx+4] ), &EOLSTR )
             .endif
@@ -906,7 +909,7 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
 
             ReplaceLabel(esi, [edi].hll_opnd.lasttruelabel, truelabel)
             strchr(ebx, EOLCHAR)
-            mov BYTE PTR [eax+1],0
+            mov B[eax+1],0
         .endif
 
         strlen(esi)
@@ -993,7 +996,7 @@ ExpandCStrings proc uses edi ebx tokenarray:ptr asm_tok
             .for : [ebx].token != T_FINAL : ebx += 16
 
                 mov edx,[ebx].string_ptr
-                movzx eax,BYTE PTR [edx]
+                movzx eax,B[edx]
 
                 .switch eax
                   .case '"'
@@ -1041,7 +1044,7 @@ GetProc proc private uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, opnd:ptr 
 
     .if ( [ebx].token == T_OP_SQ_BRACKET )
 
-        .for ( ecx = i, edx = ebx : [ebx].token != T_FINAL : ebx+=16, ecx++ )
+        .for ( ecx = i : [ebx].token != T_FINAL : ebx+=16, ecx++ )
             .break .if ( [ebx].token == T_CL_SQ_BRACKET )
         .endf
         add ecx,3
@@ -1101,7 +1104,7 @@ isfnptr:
 
 GetProc endp
 
-GetParamId proc uses esi edi id:int_t, sym:asym_t
+GetParamId proc private uses esi edi id:int_t, sym:asym_t
 
     mov edi,sym
     mov edx,[edi].dsym.procinfo
@@ -1130,7 +1133,7 @@ GetParamId proc uses esi edi id:int_t, sym:asym_t
 
 GetParamId endp
 
-GetMacroReturn proc uses esi ebx i:int_t, tokenarray:ptr asm_tok
+GetMacroReturn proc private uses esi ebx i:int_t, tokenarray:ptr asm_tok
 
   local mac_name[128]:char_t
   local opnd:expr
@@ -1453,11 +1456,8 @@ endif
             .endif
         .endif
     .endif
-    .if mac
-        mov ebx,mac
-    .else
-        mov ebx,GetResWName(esi, 0)
-    .endif
+    mov ebx,GetResWName(esi, 0)
+
 macro_args:
     lea esi,b
     strcat(esi, " ")
@@ -1976,7 +1976,7 @@ done:
     .endif
 
     mov eax,dst
-    .if BYTE PTR [eax] != 0
+    .if B[eax] != 0
         strcat(eax, &EOLSTR)
     .endif
     strcat(dst, &b)
@@ -2017,12 +2017,12 @@ QueueTestLines proc uses esi edi src:string_t
         mov edi,esi
         .if strchr( esi, EOLCHAR )
 
-            mov BYTE PTR [eax],0
+            mov B[eax],0
             inc eax
         .endif
         mov esi,eax
 
-        .if BYTE PTR [edi]
+        .if B[edi]
 if 1
             xor edx,edx
             .if esi
@@ -2059,7 +2059,7 @@ ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:ptr asm_tok
 
     mov rc,NOT_ERROR
     mov eax,dst
-    mov BYTE PTR [eax],0
+    mov B[eax],0
 
     .if ( ModuleInfo.strict_masm_compat == 0 )
 
@@ -2165,7 +2165,7 @@ EvaluateHllExpression proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
     .if ExpandHllProc( edi, [esi], ebx ) != ERROR
 
         mov ecx,buffer
-        mov BYTE PTR [ecx],0
+        mov B[ecx],0
 
         .if GetExpression( hll, esi, ebx, ilabel, is_true, ecx, &hllop ) != ERROR
 
@@ -2179,18 +2179,18 @@ EvaluateHllExpression proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
             mov eax,[eax].hll_item.flags
             and eax,HLLF_IFD or HLLF_IFW or HLLF_IFB
 
-            .if eax && BYTE PTR [edi]
+            .if eax && B[edi]
                 ;
                 ; Parse a "cmp ax" or "test ax,ax" and resize
                 ; to B/W/D ([r|e]ax).
                 ;
                 mov edx,buffer
                 mov ecx,[edx]
-                .while BYTE PTR [edx] > ' '
+                .while B[edx] > ' '
 
                     add edx,1
                 .endw
-                .while BYTE PTR [edx] == ' '
+                .while B[edx] == ' '
 
                     add edx,1
                 .endw
@@ -2225,30 +2225,30 @@ EvaluateHllExpression proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
 ifndef __ASMC64__
                         .if ModuleInfo.Ofssize == USE64
 endif
-                            mov BYTE PTR [edx],'e'
+                            mov B[edx],'e'
                             .if !ecx && ax == [ebx] ; v2.27 - .ifd foo() & imm --> test eax,emm
 
-                                mov BYTE PTR [ebx],'e'
+                                mov B[ebx],'e'
                             .endif
 
 ifndef __ASMC64__
                         .elseif ModuleInfo.Ofssize == USE16
 
-                            .if BYTE PTR [edx+2] != ' '
+                            .if B[edx+2] != ' '
 
                                 .if ecx
 
-                                    mov DWORD PTR [edx-4],'ro '
+                                    mov D[edx-4],'ro '
                                 .else
-                                    mov DWORD PTR [edx-5],' dna'
+                                    mov D[edx-5],' dna'
                                 .endif
                                 dec edx
                             .endif
                             mov [edx+1],ax
-                            mov BYTE PTR [edx],'e'
+                            mov B[edx],'e'
                             .if !ecx
 
-                                mov BYTE PTR [ebx-1],'e'
+                                mov B[ebx-1],'e'
                             .endif
                         .endif
 endif
@@ -2297,10 +2297,10 @@ endif
                 .endif
             .endif
 
-            .if BYTE PTR [edi]
+            .if B[edi]
 
                 strlen( edi )
-                mov WORD PTR [edi+eax],EOLCHAR
+                mov W[edi+eax],EOLCHAR
                 strcat( edi, buffer )
                 strcpy( buffer, edi )
             .endif
@@ -2453,7 +2453,7 @@ CheckCXZLines proc private uses esi edi ebx p
                 mov [esi],eax
                 .if edx == 2
 
-                    mov BYTE PTR [esi+4],'e'
+                    mov B[esi+4],'e'
                 .endif
             .endif
         .endif
@@ -2696,7 +2696,7 @@ local   rc:         int_t,
             ;
             ; if no lines have been created, the LTEST label isn't needed
             ;
-            .if BYTE PTR [edi] == NULLC
+            .if B[edi] == NULLC
                 mov [esi].labels[LTEST*4],0
             .endif
         .endif
@@ -2763,7 +2763,7 @@ local   rc:         int_t,
                 ;
                 ; just ".while" without expression is accepted
                 ;
-                mov BYTE PTR [edi],NULLC
+                mov B[edi],NULLC
                 mov eax,ERROR
             .endif
 
@@ -3141,7 +3141,7 @@ HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:pt
                 mov [esi].flags,edx
                 mov [esi].cmd,HLL_BREAK
                 mov eax,i
-                inc dword ptr [eax]
+                inc D[eax]
                 EvaluateHllExpression(esi, eax, tokenarray, labelid, is_true, edi)
                 mov rc,eax
                 .if eax == NOT_ERROR
@@ -3177,7 +3177,7 @@ HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:pt
               .case T_DOT_IFA .. T_DOT_IFNZ
 
                 mov eax,i
-                inc dword ptr [eax]
+                inc D[eax]
                 GetLabelStr([esi].labels[ecx*4], &buff)
                 strcpy(edi, GetJumpString( [ebx].tokval))
                 strcat(edi, " ")

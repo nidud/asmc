@@ -130,7 +130,7 @@ SetDefaultOfssize endp
 ;; Win64 only:
 ;; - @ReservedStack (numeric)
 
-SetModel proc uses esi edi ebx
+SetModel proc private uses esi edi ebx
 
     ;; if model is set, it disables OT_SEGMENT of -Zm switch
 

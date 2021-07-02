@@ -298,7 +298,7 @@ SetCurrOffset endp
 ;
 ; write object module
 ;
-WriteModule proc uses esi edi ebx modinfo:ptr module_info
+WriteModule proc private uses esi edi ebx modinfo:ptr module_info
 
     mov esi,SymTables[TAB_SEG*symbol_queue].head
     .while  esi
@@ -343,7 +343,7 @@ WriteModule proc uses esi edi ebx modinfo:ptr module_info
     ret
 WriteModule endp
 
-add_cmdline_tmacros proc uses esi edi ebx
+add_cmdline_tmacros proc private uses esi edi ebx
 
     push ebp
     mov	 ebp,esp
@@ -398,7 +398,7 @@ add_cmdline_tmacros proc uses esi edi ebx
     ret
 add_cmdline_tmacros endp
 
-add_incpaths proc uses esi
+add_incpaths proc private uses esi
     mov esi,Options.queues[OPTQ_INCPATH*4]
     .while esi
 	AddStringToIncludePath(&[esi].qitem.value)
@@ -407,7 +407,7 @@ add_incpaths proc uses esi
     ret
 add_incpaths endp
 
-CmdlParamsInit proc pass
+CmdlParamsInit proc private pass:int_t
     .if pass == PASS_1
 
 	add_cmdline_tmacros()
@@ -469,7 +469,7 @@ SetMasm510 proc value:int_t
     ret
 SetMasm510 endp
 
-ModulePassInit proc uses esi
+ModulePassInit proc private uses esi
 
     mov ecx,Options.cpu
     mov esi,Options._model
@@ -592,7 +592,7 @@ ModulePassInit endp
 ;
 ; checks after pass one has been finished without errors
 ;
-PassOneChecks proc uses esi edi
+PassOneChecks proc private uses esi edi
     ;
     ; check for open structures and segments has been done inside the
     ; END directive handling already
@@ -770,7 +770,7 @@ PassOneChecks endp
 ;    - restore the state
 ;    - read preprocessed lines and feed ParseLine() with it
 ;
-OnePass proc uses esi edi
+OnePass proc private uses esi edi
 
     InputPassInit()
     ModulePassInit()
@@ -946,7 +946,7 @@ include oldkeyw.inc
 OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
 .code
 
-MasmKeywords proc uses ebx disable:int_t
+MasmKeywords proc private uses ebx disable:int_t
 
     .if ( disable == 0 )
 	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
@@ -1188,7 +1188,7 @@ AssembleFini proc private
     ret
 AssembleFini endp
 
-RewindToWin64 proc
+RewindToWin64 proc private
 
     .if !( Options.output_format == OFORMAT_BIN && Options.sub_format == SFORMAT_NONE )
 
@@ -1205,7 +1205,7 @@ RewindToWin64 proc
 
 RewindToWin64 endp
 
-AssembleModule proc uses esi edi ebx source
+AssembleModule proc uses esi edi ebx source:string_t
 
   local curr_written, prev_written
 

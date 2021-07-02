@@ -184,8 +184,7 @@ get_string proc uses esi edi ebx buf:ptr asm_tok, p:ptr line_status
             tsrc:       string_t,
             tcount:     uint_t,
             maxlen:     uint_t,
-            maxl_1:     uint_t,
-            cstring:    byte
+            maxl_1:     uint_t
 
     mov     edx,p
     mov     ebx,buf

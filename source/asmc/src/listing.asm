@@ -435,6 +435,8 @@ LstSetPosition proc
 
 LstSetPosition endp
 
+    option proc: private
+
 get_seg_align proc fastcall s:ptr seg_info, buffer:string_t
 
     movzx ecx,[ecx].seg_info.alignment
@@ -1211,6 +1213,8 @@ compare_syms proc p1:ptr, p2:ptr
     .return( strcmp( [ecx].asym.name, [edx].asym.name ) )
 
 compare_syms endp
+
+    option proc: public
 
 ; write symbol table listing
 

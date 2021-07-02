@@ -44,10 +44,6 @@ DeleteLineQueue proc uses esi edi
 
 DeleteLineQueue endp
 
-NewLineQueue proc
-    ret
-NewLineQueue endp
-
 ;; Add a line to the current line queue.
 
 AddLineQueue proc uses esi edi line:string_t
@@ -72,7 +68,7 @@ AddLineQueue endp
 
 ;; Add a line to the current line queue, "printf" format.
 
-VLSPrintF proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
+VLSPrintF proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
   local numbuf[16]:char_t
 

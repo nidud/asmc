@@ -1357,7 +1357,7 @@ RebuildLine endp
 ;; *pi: index of token in tokenarray
 ;; equmode: if 1, dont expand macro functions
 
-ExpandToken proc uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:token_t,
+ExpandToken proc private uses esi edi ebx line:string_t, pi:ptr int_t, tokenarray:token_t,
         max:int_t, bracket_flags:int_t, equmode:int_t, buffer:ptr char_t
 
     local pos:int_t

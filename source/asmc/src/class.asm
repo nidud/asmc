@@ -1066,7 +1066,7 @@ ParseClass endp
 
     assume esi:nothing
 
-ParseMacroArgs proc uses esi edi ebx buffer:string_t, count:int_t, args:string_t
+ParseMacroArgs proc private uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
     ; :abs, name:ptr, x:abs=<val>, ...
 

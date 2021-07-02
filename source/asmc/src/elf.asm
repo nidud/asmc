@@ -162,7 +162,7 @@ ElfConvertSectionName endp
 
 ; get number of sections that have relocations
 
-get_num_reloc_sections proc
+get_num_reloc_sections proc private
 
     .for ( eax = 0, ecx = SymTables[TAB_SEG*symbol_queue].head: ecx: ecx = [ecx].dsym.next )
         mov edx,[ecx].dsym.seginfo

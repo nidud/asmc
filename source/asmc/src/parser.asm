@@ -2922,7 +2922,7 @@ IsType endp
 ; Merge Mask                 {k1}
 ; Zero Mask                  {k1}{z}
 ;
-parsevex proc string:string_t, result:ptr uchar_t
+parsevex proc private string:string_t, result:ptr uchar_t
 
     mov edx,string
     mov ecx,result

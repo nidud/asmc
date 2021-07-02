@@ -704,7 +704,7 @@ CreateClassLname endp
 ; set the segment's class. report an error if the class has been set
 ; already and the new value differs.
 
-SetSegmentClass proc s:ptr dsym, name:string_t
+SetSegmentClass proc private s:ptr dsym, name:string_t
 
     .if ( CreateClassLname( name ) == NULL )
         .return( ERROR )
@@ -951,7 +951,7 @@ SegmentDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
         mov typeidx,FindToken( esi, &SegAttrToken, count_SegAttrToken )
         .if ( typeidx < 0 )
-            asmerr( 2015, esi )
+            asmerr( 2015, esi, "attributes" )
             .continue
         .endif
         mov type,&SegAttrValue[eax*typeinfo]
@@ -966,7 +966,7 @@ SegmentDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         and eax,ecx
 
         .if ( eax )
-            asmerr( 2015, esi )
+            asmerr( 2015, esi, "attributes" )
             .continue
         .endif
 

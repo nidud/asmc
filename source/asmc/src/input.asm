@@ -406,7 +406,7 @@ SetLineNumber endp
 
     assume ecx:ptr src_item
 
-GetCurrSrcPos proc buffer:string_t
+GetCurrSrcPos proc private buffer:string_t
 
     .for ( ecx = ModuleInfo.src_stack: ecx : ecx = [ecx].next )
 

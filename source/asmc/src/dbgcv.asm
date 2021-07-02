@@ -97,6 +97,8 @@ reg64  db 0, 2, 3, 1, 7, 6, 4, 5
 
    .code
 
+    option proc:private
+
 ;; translate symbol's mem_type to a codeview typeref
 
 GetTyperef proc uses esi sym:ptr asym, Ofssize:byte
@@ -1631,6 +1633,7 @@ vtable dbgcvVtbl {
 ;; field Options.debug_symbols contains the format version
 ;; which is to be generated (CV4_, CV5_ or CV8_SIGNATURE)
 
+    option proc:public
 
 cv_write_debug_tables proc uses esi edi ebx symbols:ptr dsym, types:ptr dsym, pv:ptr
 

@@ -49,7 +49,7 @@ externdef list_pos:uint_t
 ; the status is then restored in further passes,
 ; and the precompiled lines are used for assembly then.
 ;
-SaveState PROC
+SaveState proc private
     xor eax,eax
     mov modstate.head,eax
     mov modstate.tail,eax
@@ -69,9 +69,9 @@ SaveState PROC
     AssumeSaveState()
     ContextSaveState()  ; save pushcontext/popcontext stack
     ret
-SaveState ENDP
+SaveState endp
 
-StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
+StoreLine proc uses esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
 
     xor eax,eax
     .return .if ( eax != NoLineStore )
@@ -142,15 +142,15 @@ StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
     .endif
     ret
 
-StoreLine ENDP
+StoreLine endp
 
 ; an error has been detected in pass one. it should be
 ; reported in pass 2, so ensure that a full source scan is done then
 ;
-SkipSavedState PROC
+SkipSavedState proc
     mov UseSavedState,0
     ret
-SkipSavedState ENDP
+SkipSavedState endp
 
 ; for FASTPASS, just pass 1 is a full pass, the other passes
 ; don't start from scratch and they just assemble the preprocessed
@@ -162,7 +162,7 @@ SkipSavedState ENDP
 ; - it is changed
 ; - it was defined when StoreState() is called
 ;
-SaveVariableState PROC USES esi edi sym:asym_t
+SaveVariableState proc uses esi edi sym:asym_t
 
     mov esi,sym
     or  [esi].asym.flag1,S_ISSAVED
@@ -185,9 +185,9 @@ SaveVariableState PROC USES esi edi sym:asym_t
         mov modstate.tail,edi
     .endif
     ret
-SaveVariableState ENDP
+SaveVariableState endp
 
-RestoreState PROC
+RestoreState proc
 
     .if modstate.init
 
@@ -227,9 +227,9 @@ RestoreState PROC
     mov eax,LineStore.head
     ret
 
-RestoreState ENDP
+RestoreState endp
 
-FastpassInit PROC
+FastpassInit proc
 
     xor eax,eax
     mov StoreState,eax
@@ -239,6 +239,6 @@ FastpassInit PROC
     mov UseSavedState,eax
     ret
 
-FastpassInit ENDP
+FastpassInit endp
 
     END

@@ -55,7 +55,7 @@ elf64regs       uint_8 T_RDI, T_RSI, T_RDX, T_RCX, T_R8, T_R9
     assume ebx:ptr asm_tok
     B equ <byte ptr>
 
-SkipTypecast proc uses esi edi ebx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
+SkipTypecast proc private uses esi edi ebx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
 
     mov  edi,fullparam
     imul ebx,i,asm_tok
@@ -95,7 +95,7 @@ SkipTypecast endp
 ;; psize,asize: size of parameter/argument in bytes.
 ;;
 
-PushInvokeParam proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
+PushInvokeParam proc private uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
         curr:ptr dsym, reqParam:int_t, r0flags:ptr uint_8
 
   local currParm:int_t
@@ -1390,7 +1390,7 @@ FindDotSymbol proc uses esi edi ebx tok:ptr asm_tok
 
 FindDotSymbol endp
 
-AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
+AssignPointer proc private uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
         pclass:ptr asym, langtype:int_t
 
   local buffer[128]:sbyte

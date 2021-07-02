@@ -453,7 +453,7 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
 CondAsmDirective endp
 
-GetErrText proc uses ebx i:int_t, tokenarray:ptr asm_tok
+GetErrText proc private uses ebx i:int_t, tokenarray:ptr asm_tok
 
     imul ebx,i,asm_tok
     add ebx,tokenarray

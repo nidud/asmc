@@ -10,7 +10,7 @@ include io.inc
 
     .code
 
-_wperror proc frame message:wstring_t
+_wperror proc message:wstring_t
 
   local buffer[512]:char_t
 

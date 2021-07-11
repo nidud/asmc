@@ -9,9 +9,7 @@ include crtl.inc
 
     .code
 
-    option win64:rsp nosave
-
-strext proc frame uses rsi string:LPSTR
+strext proc uses rsi string:LPSTR
 
     mov rsi,strfn(rcx)
 

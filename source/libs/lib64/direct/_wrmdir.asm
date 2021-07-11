@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-_wrmdir proc frame directory:LPWSTR
+_wrmdir proc directory:LPWSTR
 
     .if RemoveDirectoryW(rcx)
         xor eax,eax

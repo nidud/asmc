@@ -1,0 +1,198 @@
+include limits.inc
+include errno.inc
+include stdio.inc
+include string.inc
+include quadmath.inc
+
+    .assert:on
+
+    T equ <@CStr>
+
+.template assert
+
+    lastResult errno_t ?
+
+    .static assert {
+
+        mov this.lastResult,0
+        _set_errno(0)
+        }
+;;;;;;;;
+
+    .static __a :abs, :abs, :abs, :abs {
+        local a, b, r
+        .data
+        align 16
+        a oword _2
+        b oword _3
+        r oword _4
+        .code
+        __&_1&(addr a, addr b)
+        mov rax,qword ptr a
+        mov rdx,qword ptr a[8]
+        mov rbx,qword ptr r
+        mov rcx,qword ptr r[8]
+        .assert( rax == rbx && rdx == rcx )
+        }
+
+    .static addo {
+        this.__a(addo, 0, 0, 0)
+        this.__a(addo, 1, 0, 1)
+        this.__a(addo, 0x7FFFFFFF, 1, 0x80000000)
+        this.__a(addo, 0x7FFFFFFFFFFFFFFF, 1, 0x8000000000000000)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFE, 1, 0xFFFFFFFFFFFFFFFF)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFF, 1, 0x10000000000000000)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFE, 2, 0x10000000000000000)
+        }
+    .static subo {
+        this.__a(subo, 0, 0, 0)
+        this.__a(subo, 1, 0, 1)
+        this.__a(subo, 0x10000000000000000, 0xFFFFFFFFFFFFFFFF, 1)
+        this.__a(subo, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE)
+        this.__a(subo, 0x80000000000000000000000000000000, 1, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        this.__a(subo, 0x80000000000000000000000000000000, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 1)
+        this.__a(subo, 0, 1, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
+
+    .static __m :abs, :abs, :abs, :abs=<0> {
+        local a, b, r, o, h
+        .data
+        align 16
+        a oword _1
+        b oword _2
+        r oword _3
+        o oword _4
+        h oword ?
+        .code
+
+        __mulo(addr a, addr b, addr h)
+
+        mov rax,qword ptr a
+        mov rdx,qword ptr a[8]
+        mov rbx,qword ptr r
+        mov rcx,qword ptr r[8]
+        .assert( rax == rbx && rdx == rcx )
+        mov rax,qword ptr h
+        mov rdx,qword ptr h[8]
+        mov rbx,qword ptr o
+        mov rcx,qword ptr o[8]
+        .assert( rax == rbx && rdx == rcx )
+        }
+
+    .static mulo {
+        this.__m(0, 0, 0, 0)
+        this.__m(2, 0, 0, 0)
+        this.__m(4, 2, 8, 0)
+        this.__m(0x80000000000000000000000000000000, 2, 0, 1)
+        }
+
+    .static __d dividend:abs, divisor:abs, :abs, :abs=<0> {
+        local a, b, d, r, o
+        .data
+        align 16
+        a oword dividend
+        b oword divisor
+        d oword _3
+        r oword _4
+        o oword ?
+        .code
+        __divo(addr a, addr b, addr o)
+        mov rax,qword ptr a
+        mov rdx,qword ptr a[8]
+        mov rbx,qword ptr d
+        mov rcx,qword ptr d[8]
+        .assert( rax == rbx && rdx == rcx )
+        mov rax,qword ptr r
+        mov rdx,qword ptr r[8]
+        mov rbx,qword ptr o
+        mov rcx,qword ptr o[8]
+        .assert( rax == rbx && rdx == rcx )
+        }
+
+    .static divo {
+        this.__d(0, 0, 0)
+        this.__d(1, 0, 0)
+        this.__d(1, 1, 1)
+        this.__d(0x80000000000000000000000000000000, 2, 0x40000000000000000000000000000000)
+        this.__d(0x80000000000000000000000000000000, 10, 0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC, 8)
+        }
+
+    .static __s :abs, :abs, :abs, :abs, :abs {
+        local a, r
+        .data
+        align 16
+        a oword _2
+        r oword _5
+        .code
+        __&_1&(addr a, _3, _4)
+        mov rax,qword ptr a
+        mov rdx,qword ptr a[8]
+        mov rbx,qword ptr r
+        mov rcx,qword ptr r[8]
+        .assert( rax == rbx && rdx == rcx )
+        }
+
+    .static shro {
+        this.__s(shro, 0, 0, 0, 0)
+        this.__s(shro, 2, 1, 32, 1)
+        this.__s(shro, 0x8000000000000000, 1, 64, 0x4000000000000000)
+        this.__s(shro, 0x80000000000000000, 1, 128, 0x40000000000000000)
+        this.__s(shro, 0x80000000000000000000000000000000, 1, 128, 0x40000000000000000000000000000000)
+        }
+
+    .static shlo {
+        this.__s(shlo, 0, 0, 0, 0)
+        this.__s(shlo, 2, 1, 32, 4)
+        this.__s(shlo, 0x4000000000000000, 1, 64, 0x8000000000000000)
+        this.__s(shlo, 0x40000000000000000, 1, 128, 0x80000000000000000)
+        this.__s(shlo, 0x40000000000000000000000000000000, 1, 128, 0x80000000000000000000000000000000)
+        }
+
+    .static saro {
+        this.__s(saro, 0, 0, 0, 0)
+        this.__s(saro, 2, 1, 32, 1)
+        this.__s(saro, 0x8000000000000000, 1, 64, 0x4000000000000000)
+        this.__s(saro, 0x80000000000000000, 1, 128, 0x40000000000000000)
+        this.__s(saro, 0x80000000000000000000000000000000, 1, 128, 0xC0000000000000000000000000000000)
+        }
+
+;;;;;;;;
+
+    .static SetStatus :abs {
+
+        .new status:errno_t
+        ifnb <_1>
+            mov status,_1
+        else
+            _get_errno(&status)
+            _set_errno(0)
+        endif
+        mov eax,status
+        .if eax
+            mov this.lastResult,eax
+        .endif
+        }
+    .ends
+
+    .code
+
+main proc
+
+    .new this:assert()
+
+    ; */+-
+
+    this.mulo()
+    this.divo()
+    this.addo()
+    this.subo()
+    this.shro()
+    this.shlo()
+    this.saro()
+
+    this.SetStatus()
+    ret
+
+main endp
+
+    end

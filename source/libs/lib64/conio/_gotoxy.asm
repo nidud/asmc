@@ -10,7 +10,7 @@ include conio.inc
 
     option win64:nosave
 
-_gotoxy proc frame x:UINT, y:UINT
+_gotoxy proc x:UINT, y:UINT
 
     shl edx,16
     or  edx,ecx

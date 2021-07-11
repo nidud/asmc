@@ -10,7 +10,7 @@ include ctype.inc
 
 if WINVER GE 0x0600
 
-_strlwr proc frame uses rsi string:string_t
+_strlwr proc uses rsi string:string_t
 
     .for ( rsi = rcx : byte ptr [rsi] : rsi++ )
 
@@ -18,7 +18,6 @@ _strlwr proc frame uses rsi string:string_t
 	tolower(ecx)
 	mov [rsi],al
     .endf
-
     mov rax,string
 
 else

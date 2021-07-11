@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-_scenter proc frame x:int_t, y:int_t, lsize:int_t, string:string_t
+_scenter proc x:int_t, y:int_t, lsize:int_t, string:string_t
 
     .ifd strlen(r9) > lsize
 

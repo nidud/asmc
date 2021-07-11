@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-printf proc frame uses rsi rdi rbx format:LPSTR, argptr:VARARG
+printf proc uses rsi rdi rbx format:LPSTR, argptr:VARARG
 
     lea rsi,stdout
     mov rbx,_stbuf(rsi)

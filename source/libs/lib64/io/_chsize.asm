@@ -9,7 +9,7 @@ include errno.inc
 
     .code
 
-_chsize proc frame uses rdi rsi handle:int_t, new_size:qword
+_chsize proc uses rdi rsi handle:int_t, new_size:qword
 
   local buffer[512]:char_t
   local current_offset:qword

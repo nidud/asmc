@@ -9,7 +9,7 @@ include stdio.inc
 
     .code
 
-_scputf proc frame x:int_t, y:int_t, format:string_t, argptr:vararg
+_scputf proc x:int_t, y:int_t, format:string_t, argptr:vararg
 
     vsprintf(&_bufin, format, &argptr)
     _scputs(x, y, &_bufin)

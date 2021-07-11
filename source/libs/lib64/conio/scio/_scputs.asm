@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_scputs proc frame x:int_t, y:int_t, string:string_t
+_scputs proc x:int_t, y:int_t, string:string_t
 
     _gotoxy(ecx, edx)
     _cputs(string)

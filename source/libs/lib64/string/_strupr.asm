@@ -12,7 +12,7 @@ strupr::
 
 if WINVER GE 0x0600
 
-_strupr proc frame uses rsi string:string_t
+_strupr proc uses rsi string:string_t
 
     .for ( rsi = rcx : byte ptr [rsi] : rsi++ )
 

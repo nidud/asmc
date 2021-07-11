@@ -12,7 +12,7 @@ include winbase.inc
 
     .code
 
-clock proc frame
+clock proc
 
   local ct:FILETIME
 
@@ -26,7 +26,7 @@ clock proc frame
 
 clock endp
 
-__inittime proc frame
+__inittime proc
 
   local ct:FILETIME
 

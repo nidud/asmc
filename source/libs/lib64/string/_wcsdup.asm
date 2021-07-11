@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-_wcsdup proc frame string:LPWSTR
+_wcsdup proc string:LPWSTR
 
     .if wcslen(rcx)
 

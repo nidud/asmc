@@ -9,7 +9,7 @@ include errno.inc
 
     .code
 
-bsearch_s proc frame uses rsi rdi rbx r12 r13 r14 key:ptr, base:ptr, num:size_t,
+bsearch_s proc uses rsi rdi rbx r12 r13 r14 key:ptr, base:ptr, num:size_t,
         _width:size_t, compare:_PtFuncCompare_s, context:ptr
 
     ;; validation section

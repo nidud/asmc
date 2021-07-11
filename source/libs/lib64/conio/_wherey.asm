@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_wherey proc frame
+_wherey proc
 
   local ci:CONSOLE_SCREEN_BUFFER_INFO
 

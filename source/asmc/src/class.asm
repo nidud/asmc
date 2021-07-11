@@ -1222,12 +1222,14 @@ MacroInline endp
 ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
   local rc:int_t, args:token_t, cmd:uint_t,
-        class[256]:char_t, constructor:int_t
+        class[256]:char_t, constructor:int_t,
+        close_directive:int_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
     lea edi,class
     mov constructor,0
+    mov close_directive,0 ; added v2.32.55
 
     mov edx,i
     shl edx,4
@@ -1246,7 +1248,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             .return rc
         .endif
 
-        mov ModuleInfo.ComStack,0
+        mov close_directive,1 ; ComStack needs to be active in StructDirective()
         .endc .if [edi].com_item.type
         .return asmerr( 1011 ) .if !esi
 
@@ -1554,6 +1556,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
     .endif
     .if ModuleInfo.line_queue.head
         RunLineQueue()
+    .endif
+    .if close_directive
+        mov ModuleInfo.ComStack,0
     .endif
     mov eax,rc
     ret

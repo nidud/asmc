@@ -15,7 +15,7 @@ BUF_SIZE    equ 1025 ; size of LF translation buffer
 
 .code
 
-_write proc frame uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
+_write proc uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 
   local lfcount:int_t           ; count of line feeds
   local charcount:int_t         ; count of chars written so far

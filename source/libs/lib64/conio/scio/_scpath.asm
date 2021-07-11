@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-_scpath proc frame x:int_t, y:int_t, max:int_t, string:string_t
+_scpath proc x:int_t, y:int_t, max:int_t, string:string_t
 
   local b[16]:byte
 

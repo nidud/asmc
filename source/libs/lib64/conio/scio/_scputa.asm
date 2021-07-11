@@ -8,9 +8,7 @@ include conio.inc
 
     .code
 
-    option win64:nosave
-
-_scputa proc frame x:int_t, y:int_t, l:int_t, a:uchar_t
+_scputa proc x:int_t, y:int_t, l:int_t, a:uchar_t
 
   local NumberOfAttrsWritten:dword
 

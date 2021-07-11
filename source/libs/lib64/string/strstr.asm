@@ -8,7 +8,7 @@ include string.inc
 
     .code
 
-strstr proc frame uses rsi rdi rbx dst:LPSTR, src:LPSTR
+strstr proc uses rsi rdi rbx dst:LPSTR, src:LPSTR
 
     mov rdi,rcx
     mov rbx,rdx

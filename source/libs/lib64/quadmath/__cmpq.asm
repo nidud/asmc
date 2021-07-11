@@ -14,7 +14,10 @@ include intrin.inc
     option win64:rsp nosave noauto
 
 __cmpq proc A:ptr, B:ptr
-
+ifdef __UNIX__
+    mov rcx,rdi
+    mov rdx,rsi
+endif
     assume rcx:ptr __m128i
     assume rdx:ptr __m128i
 

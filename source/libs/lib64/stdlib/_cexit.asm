@@ -10,7 +10,7 @@ doexit proto :int_t, :int_t, :int_t
 
     .code
 
-_cexit proc frame
+_cexit proc
 
     doexit(0, 0, 1) ; full term, return to caller
 

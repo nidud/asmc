@@ -14,7 +14,7 @@ _GLOBAL equ 2
 
     .code
 
-_recalloc_base proc frame uses rsi rdi memblock:ptr, count:size_t, newsize:size_t
+_recalloc_base proc uses rsi rdi memblock:ptr, count:size_t, newsize:size_t
 
   local retp:ptr_t, size_orig:size_t, old_size:size_t
 

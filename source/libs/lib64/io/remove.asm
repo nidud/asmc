@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-remove proc frame file:LPSTR
+remove proc file:LPSTR
 
     .if DeleteFileA(rcx)
 

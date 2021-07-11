@@ -11,10 +11,9 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
     assume rbx:ptr _iobuf
 
-ftell proc frame uses rdi rbx fp:LPFILE
+ftell proc uses rdi rbx fp:LPFILE
 
   local filepos:SINT
   local fd:HANDLE

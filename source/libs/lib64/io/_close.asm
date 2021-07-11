@@ -11,7 +11,7 @@ include winbase.inc
 
     .code
 
-_close proc frame handle:int_t
+_close proc handle:int_t
 
     lea rax,_osfile
     .if ecx < 3 || ecx >= _nfile || !(byte ptr [rax+rcx] & FH_OPEN)

@@ -12,7 +12,7 @@ _GLOBAL equ 2
 
     .code
 
-realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
+realloc proc uses rsi rdi pblck:ptr, newsize:size_t
 
     ;
     ; special cases, handling mandated by ANSI

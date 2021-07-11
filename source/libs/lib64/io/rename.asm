@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-rename proc frame Oldname:LPSTR, Newname:LPSTR
+rename proc Oldname:LPSTR, Newname:LPSTR
 
     .if MoveFile(rcx, rdx)
         xor eax,eax

@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-_wchdir proc frame directory:LPWSTR
+_wchdir proc directory:LPWSTR
 
   local abspath[_MAX_PATH]:wchar_t, result[4]:wchar_t
 

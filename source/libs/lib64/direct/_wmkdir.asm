@@ -11,7 +11,7 @@ include winbase.inc
 
     .code
 
-_wmkdir proc frame directory:LPWSTR
+_wmkdir proc directory:LPWSTR
 
     .if CreateDirectoryW(rcx, 0)
         xor eax,eax

@@ -1045,6 +1045,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
     struct com_item *o = ModuleInfo.g.ComStack;
     int         langtype;
     struct asym *vtable;
+    int         close_directive = 0;
 
     i++;
 
@@ -1055,7 +1056,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                 rc = asmerr( 1011 );
             return rc;
         }
-        ModuleInfo.g.ComStack = NULL;
+        close_directive = 1;
         if ( o->type )
             break;
         if ( !CurrStruct )
@@ -1281,6 +1282,9 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 );
     if ( is_linequeue_populated() )
         RunLineQueue();
+    if ( close_directive )
+        ModuleInfo.g.ComStack = NULL;
+
     return rc;
 }
 

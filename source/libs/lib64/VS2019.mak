@@ -1,6 +1,6 @@
 !include srcpath
 
-AFLAGS = -Zi8 -Zp8 -D_CRTBLD -Cs -I$(inc_dir)
+AFLAGS = -frame -Zi8 -Zp8 -D_CRTBLD -Cs -I$(inc_dir)
 
 target_path = $(lib_dir)\x64
 

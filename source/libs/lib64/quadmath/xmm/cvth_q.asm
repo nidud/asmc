@@ -14,7 +14,6 @@ include errno.inc
 cvth_q proc vectorcall h:real2
 
     movd    eax,xmm0
-    mov     r8,rcx
     movsx   eax,ax              ; get half value
     mov     ecx,eax             ; get exponent and sign
     shl     eax,H_EXPBITS+16    ; shift fraction into place

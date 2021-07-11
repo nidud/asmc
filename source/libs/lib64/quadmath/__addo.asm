@@ -4,21 +4,28 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include quadmath.inc
+   .code
 
-    .code
+__addo::
 
-    option win64:rsp noauto
+ifdef __UNIX__
 
-__addo proc a:ptr, b:ptr
+    mov     rax,[rsi]
+    add     [rdi],rax
+    mov     rax,[rsi+8]
+    adc     [rdi+8],rax
+    mov     rax,rdi
 
-    mov rax,[rdx]
-    add [rcx],rax
-    mov rax,[rdx+8]
-    adc [rcx+8],rax
-    mov rax,rcx
+else
+
+    mov     rax,[rdx]
+    add     [rcx],rax
+    mov     rax,[rdx+8]
+    adc     [rcx+8],rax
+    mov     rax,rcx
+
+endif
+
     ret
-
-__addo endp
 
     end

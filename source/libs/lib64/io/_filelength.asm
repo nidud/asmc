@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-_filelength proc frame handle:SINT
+_filelength proc handle:SINT
 
   local FileSize:QWORD
 

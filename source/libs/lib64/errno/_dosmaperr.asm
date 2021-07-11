@@ -10,7 +10,7 @@ _get_errno_from_oserr proto oserrno:ulong_t
 
     .code
 
-_dosmaperr proc frame oserrno:ulong_t
+_dosmaperr proc oserrno:ulong_t
 
     _set_doserrno(ecx)
     _set_errno(_get_errno_from_oserr(ecx))

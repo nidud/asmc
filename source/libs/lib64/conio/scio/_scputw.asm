@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_scputw proc frame x:int_t, y:int_t, l:int_t, w:ushort_t
+_scputw proc x:int_t, y:int_t, l:int_t, w:ushort_t
 
     shr r9d,8
     .ifnz

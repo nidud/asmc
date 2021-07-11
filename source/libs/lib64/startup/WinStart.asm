@@ -21,7 +21,7 @@ _initterm proto __cdecl :ptr, :ptr
 
 WinMainCRTStartup::
 
-WinStart proc frame uses rbx
+WinStart proc uses rbx
 
     _initterm( &__xi_a, &__xi_z )
     mov rbx,GetModuleHandle(0)

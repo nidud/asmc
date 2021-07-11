@@ -9,9 +9,7 @@ include io.inc
 
     .code
 
-    option win64:rsp nosave
-
-fclose proc frame uses rsi rbx fp:LPFILE
+fclose proc uses rsi rbx fp:LPFILE
 
     mov eax,[rcx]._iobuf._flag
     and eax,_IOREAD or _IOWRT or _IORW

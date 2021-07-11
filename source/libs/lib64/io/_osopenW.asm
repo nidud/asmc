@@ -10,7 +10,7 @@ include conio.inc
 
     .code
 
-_osopenW proc frame lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
+_osopenW proc lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
         lpSecurity:ptr, dwCreation:DWORD, dwAttributes:DWORD
 
   local NameW[1024]:wchar_t

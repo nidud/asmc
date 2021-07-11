@@ -11,7 +11,7 @@ include errno.inc
 
     .code
 
-_mkdir proc frame directory:LPSTR
+_mkdir proc directory:LPSTR
 
     .if !CreateDirectoryA(rcx, 0)
 

@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_getxyw proc frame x:int_t, y:int_t
+_getxyw proc x:int_t, y:int_t
 
   local Attrib:byte
 

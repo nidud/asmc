@@ -70,7 +70,7 @@ MAX_EACCES_RANGE equ ERROR_SHARING_BUFFER_EXCEEDED
 
     .code
 
-_get_errno_from_oserr proc frame oserrno:ulong_t
+_get_errno_from_oserr proc oserrno:ulong_t
 
     .for (rdx = &errtable, eax = 0: eax < ERRTABLESIZE: ++eax)
 

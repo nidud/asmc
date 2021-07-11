@@ -27,51 +27,47 @@ _C_Exit_Done        int_t FALSE
 
     .code
 
-doexit proc frame code:int_t, quick:int_t, retcaller:int_t
-
-    .repeat
+doexit proc code:int_t, quick:int_t, retcaller:int_t
 
 if not defined(_CRT_APP) and defined(CRTDLL)
-        .if (!retcaller && check_managed_app())
-
-            ;;
-            ;; Only if the EXE is managed then we call CorExitProcess.
-            ;; Native cleanup is done in .cctor of the EXE
-            ;; If the Exe is Native then native clean up should be done
-            ;; before calling (Cor)ExitProcess.
-            ;;
-            __crtCorExitProcess(code)
-        .endif
+    .if (!retcaller && check_managed_app())
+        ;
+        ; Only if the EXE is managed then we call CorExitProcess.
+        ; Native cleanup is done in .cctor of the EXE
+        ; If the Exe is Native then native clean up should be done
+        ; before calling (Cor)ExitProcess.
+        ;
+        __crtCorExitProcess(code)
+    .endif
 endif
 
-        .if (_C_Exit_Done != TRUE)
-            mov _C_Termination_Done,TRUE
+    .if (_C_Exit_Done != TRUE)
+        mov _C_Termination_Done,TRUE
 
-            ;; save callable exit flag (for use by terminators)
-            mov _exitflag,r8b ;; 0 = term, !0 = callable exit
+        ; save callable exit flag (for use by terminators)
+        mov _exitflag,r8b ; 0 = term, !0 = callable exit
 ifndef CRTDLL
-            ;;
-            ;; do terminators
-            ;;
-            _initterm(&__xt_a, &__xt_z)
+        ;
+        ; do terminators
+        ;
+        _initterm(&__xt_a, &__xt_z)
 endif
 if not defined(CRTDLL) and defined(_DEBUG)
-            ;; Dump all memory leaks
-            .if (!retcaller && _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) & _CRTDBG_LEAK_CHECK_DF)
+        ; Dump all memory leaks
+        .if (!retcaller && _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) & _CRTDBG_LEAK_CHECK_DF)
 
-                __freeCrtMemory()
-                _CrtDumpMemoryLeaks()
-            .endif
-endif
+            __freeCrtMemory()
+            _CrtDumpMemoryLeaks()
         .endif
-        ;; return to OS or to caller
+endif
+    .endif
 
-        .break .if (retcaller)
+    ; return to OS or to caller
 
-        mov _C_Exit_Done,TRUE
-        __crtExitProcess(code)
+    .return .if (retcaller)
 
-    .until 1
+    mov _C_Exit_Done,TRUE
+    __crtExitProcess(code)
     ret
 
 doexit endp

@@ -10,7 +10,7 @@ include io.inc
 
     .code
 
-perror proc frame message:string_t
+perror proc message:string_t
 
     .if rcx
         .if byte ptr [rcx]

@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-_cputs proc frame string:string_t
+_cputs proc string:string_t
 
   local num_written:ulong_t
     ;

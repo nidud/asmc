@@ -8,7 +8,7 @@ include conio.inc
 
     .code
 
-_scputbg proc frame x:int_t, y:int_t, l:int_t, a:uchar_t
+_scputbg proc x:int_t, y:int_t, l:int_t, a:uchar_t
 
     .for ( a <<= 4 : l : l--, x++ )
 

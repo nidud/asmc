@@ -6,14 +6,12 @@
 
 include stdlib.inc
 
-;; worker routine prototype
+; worker routine prototype
 doexit proto :int_t, :int_t, :int_t
 
     .code
 
-    option win64:rsp nosave
-
-exit proc frame retval:int_t
+exit proc retval:int_t
 
     doexit(ecx, 0, 0) ; full term, kill process
 

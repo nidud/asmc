@@ -9,7 +9,7 @@ include limits.inc
 
     .code
 
-vsprintf proc frame string:string_t, format:string_t, argptr:ptr
+vsprintf proc string:string_t, format:string_t, argptr:ptr
 
   local o:_iobuf
 

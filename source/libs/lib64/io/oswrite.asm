@@ -10,7 +10,7 @@ include winbase.inc
 
     .code
 
-oswrite proc frame uses rbx h:SINT, b:PVOID, z:SIZE_T
+oswrite proc uses rbx h:SINT, b:PVOID, z:SIZE_T
 
   local NumberOfBytesWritten:dword
 

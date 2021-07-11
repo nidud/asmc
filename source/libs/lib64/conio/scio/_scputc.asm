@@ -8,9 +8,7 @@ include conio.inc
 
     .code
 
-    option win64:nosave
-
-_scputc proc frame x:int_t, y:int_t, l:int_t, char:char_t
+_scputc proc x:int_t, y:int_t, l:int_t, char:char_t
 
   local NumberOfCharsWritten:int_t
 

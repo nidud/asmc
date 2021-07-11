@@ -15,7 +15,7 @@ include signal.inc
 
     assume r11:PCONTEXT
 
-PrintContext proc frame ExcContext:PCONTEXT, ExcRecord:ptr EXCEPTION_RECORD
+PrintContext proc ExcContext:PCONTEXT, ExcRecord:ptr EXCEPTION_RECORD
 
   local flags[17]:sbyte
 

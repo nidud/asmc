@@ -12,7 +12,7 @@ include winbase.inc
 
     .code
 
-_lseeki64 PROC frame handle:SINT, offs:QWORD, pos:UINT
+_lseeki64 proc handle:SINT, offs:QWORD, pos:UINT
 
   local lpNewFilePointer:QWORD
 
@@ -27,6 +27,6 @@ _lseeki64 PROC frame handle:SINT, offs:QWORD, pos:UINT
         .endif
     .endif
     ret
-_lseeki64 ENDP
+_lseeki64 endp
 
-    END
+    end

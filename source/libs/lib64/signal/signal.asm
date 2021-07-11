@@ -11,7 +11,7 @@ include signal.inc
 
     .code
 
-raise proc frame index:SINT
+raise proc index:SINT
 
   local sigp:sigfunc_t
 
@@ -25,7 +25,7 @@ raise proc frame index:SINT
 
 raise endp
 
-signal proc frame index:SINT, func:sigfunc_t
+signal proc index:SINT, func:sigfunc_t
 
     lea r8,sig_table
     mov rax,[r8+rcx*8]

@@ -11,7 +11,7 @@ include winbase.inc
 
     .code
 
-_rmdir proc frame directory:LPSTR
+_rmdir proc directory:LPSTR
 
     .if RemoveDirectoryA(rcx)
         xor eax,eax

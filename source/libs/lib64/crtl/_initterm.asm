@@ -10,9 +10,7 @@ MAXENTRIES equ 256
 
     .code
 
-    option win64:nosave
-
-_initterm proc frame uses rsi rdi rbx pfbegin:ptr, pfend:ptr
+_initterm proc uses rsi rdi rbx pfbegin:ptr, pfend:ptr
 
   local entries[MAXENTRIES]:uint64_t
 

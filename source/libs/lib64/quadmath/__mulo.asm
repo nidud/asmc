@@ -12,19 +12,22 @@ include quadmath.inc
 
 __mulo proc multiplier:ptr, multiplicand:ptr, highproduct:ptr
 
-    push rcx
-
     mov rax,[rcx]
     mov r10,[rcx+8]
     mov r9, [rdx+8]
 
-    .if !r10 && !r9
-        .if r8
+    .if ( !r10 && !r9 )
+
+        .if ( r8 )
+
             mov [r8],r9
             mov [r8+8],r9
         .endif
+
         mul qword ptr [rdx]
+
     .else
+        push rcx
         mov  r11,[rdx]
         mul  r11         ; a * b
         push rax
@@ -39,7 +42,9 @@ __mulo proc multiplier:ptr, multiplicand:ptr, highproduct:ptr
         adc  rcx,rdx
         mov  edx,0
         adc  edx,0
-        .if r8
+
+        .if ( r8 )
+
             xchg rdx,r9
             mov  rax,r10
             mul  rdx     ; a[8] * b[8]
@@ -48,10 +53,12 @@ __mulo proc multiplier:ptr, multiplicand:ptr, highproduct:ptr
             mov  [r8],rax
             mov  [r8+8],rdx
         .endif
+
         pop rax
         mov rdx,r11
+        pop rcx
     .endif
-    pop rcx
+
     mov [rcx],rax
     mov [rcx+8],rdx
     mov rax,rcx

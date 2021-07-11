@@ -26,7 +26,7 @@ _initterm proto __cdecl :ptr, :ptr
 
 wcstart::
 
-wmainCRTStartup proc frame
+wmainCRTStartup proc
 
 	_initterm( &__xi_a, &__xi_z )
 	exit( wmain( __argc, __wargv, _wenviron ) )

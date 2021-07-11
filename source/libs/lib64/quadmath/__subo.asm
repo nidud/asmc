@@ -4,21 +4,28 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include quadmath.inc
+   .code
 
-    option win64:rsp noauto
+__subo::
 
-    .code
+ifdef __UNIX__
 
-__subo proc a:ptr, b:ptr
+    mov     rax,[rsi]
+    sub     [rdi],rax
+    mov     rax,[rsi+8]
+    sbb     [rdi+8],rax
+    mov     rax,rdi
 
-    mov rax,[rdx+8]
-    sub [rcx+8],rax
-    mov rax,[rdx]
-    sbb [rcx],rax
-    mov rax,rcx
+else
+
+    mov     rax,[rdx]
+    sub     [rcx],rax
+    mov     rax,[rdx+8]
+    sbb     [rcx+8],rax
+    mov     rax,rcx
+
+endif
+
     ret
-
-__subo endp
 
     end

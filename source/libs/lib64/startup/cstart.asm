@@ -31,7 +31,7 @@ externdef __xt_z:ptr
 
 cstart::
 
-mainCRTStartup proc frame
+mainCRTStartup proc
 
 	_initterm( &__xi_a, &__xi_z )
 	exit( main( __argc, __argv, _environ ) )

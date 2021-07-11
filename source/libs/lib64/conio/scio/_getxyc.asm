@@ -8,9 +8,7 @@ include conio.inc
 
     .code
 
-    option win64:nosave
-
-_getxyc proc frame x:int_t, y:int_t
+_getxyc proc x:int_t, y:int_t
 
     movzx r9d,dl
     shl   r9d,16

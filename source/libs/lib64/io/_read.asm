@@ -17,7 +17,7 @@ include winbase.inc
 
     .code
 
-_read proc frame uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
+_read proc uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
 
   local bytes_read:int_t        ; number of bytes read
   local os_read:int_t           ; bytes read on OS call

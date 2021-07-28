@@ -32,7 +32,9 @@ IMPILTSUF  equ <"4"> ;; ILT segment suffix
 IMPIATSUF  equ <"5"> ;; IAT segment suffix
 IMPSTRSUF  equ <"6"> ;; import strings segment suffix
 
-;; pespec.inc contains MZ header declaration
+;
+; pespec.inc contains MZ header declaration
+;
 
 include pespec.inc
 
@@ -40,7 +42,9 @@ SortSegments proto :int_t
 
 .data
 
-;; if the structure changes, option.c, SetMZ() might need adjustment!
+;
+; if the structure changes, option.c, SetMZ() might need adjustment!
+;
 
 MZDATA      struct
 ofs_fixups  dw ?    ; offset start fixups
@@ -134,7 +138,9 @@ mzcodelz char_t 7,12,14,12,7,7,6,13,8,7,12,7,3,0
 
 ifndef __ASMC64__
 
-;; default 32-bit PE header
+;
+; default 32-bit PE header
+;
 
 pe32def IMAGE_PE_HEADER32 {
     'EP',
@@ -155,7 +161,9 @@ pe32def IMAGE_PE_HEADER32 {
     }}
 endif
 
-;; default 64-bit PE header
+;
+; default 64-bit PE header
+;
 
 pe64def IMAGE_PE_HEADER64 {
     'EP',
@@ -182,7 +190,9 @@ pe64def IMAGE_PE_HEADER64 {
 
     option proc:private
 
-    ;; calculate starting offset of segments and groups
+    ;
+    ; calculate starting offset of segments and groups
+    ;
 
     assume ebx:ptr calc_param
     assume edi:ptr seg_info
@@ -236,7 +246,9 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
     .else
         .if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
 
-            ;; v2.24
+            ;
+            ; v2.24
+            ;
 
             mov offs,[ebx].rva
         .else
@@ -250,12 +262,14 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
             .else
 
-                ;; v2.12: the old way wasn't correct. if there's a segment between the
-                ;; segments of a group, it affects the offset as well ( if it
-                ;; occupies space in the file )! the value stored in grp->sym.total_size
-                ;; is no longer used (or, more exactly, used as a flag only).
-                ;;
-                ;; offset = ( cp->fileoffset - cp->sizehdr ) - grp->sym.offset;
+                ;
+                ; v2.12: the old way wasn't correct. if there's a segment between the
+                ; segments of a group, it affects the offset as well ( if it
+                ; occupies space in the file )! the value stored in grp->sym.total_size
+                ; is no longer used (or, more exactly, used as a flag only).
+                ;
+                ; offset = ( cp->fileoffset - cp->sizehdr ) - grp->sym.offset;
+                ;
 
                 mov ecx,[eax].asym.total_size
                 add ecx,alignbytes
@@ -264,17 +278,21 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
         .endif
     .endif
 
-    ;; v2.04: added */
-    ;; v2.05: this addition did mess sample Win32_5.asm, because the
-    ;; "empty" alignment sections are now added to <fileoffset>.
-    ;; todo: VA in binary map is displayed wrong.
+    ;
+    ; v2.04: added */
+    ; v2.05: this addition did mess sample Win32_5.asm, because the
+    ; "empty" alignment sections are now added to <fileoffset>.
+    ; todo: VA in binary map is displayed wrong.
+    ;
 
     .if ( [ebx].first == FALSE )
 
-        ;; v2.05: do the reset more carefully.
-        ;; Do reset start_loc only if
-        ;; - segment is in a group and
-        ;; - group isn't FLAT or segment's name contains '$'
+        ;
+        ; v2.05: do the reset more carefully.
+        ; Do reset start_loc only if
+        ; - segment is in a group and
+        ; - group isn't FLAT or segment's name contains '$'
+        ;
 
         mov eax,grp
         .if ( eax )
@@ -300,8 +318,10 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
             mov [ebx].imagestart,[edi].start_loc
         .endif
 
-        ;; there's no real entry address for BIN, therefore the
-        ;; start label must be at the very beginning of the file
+        ;
+        ; there's no real entry address for BIN, therefore the
+        ; start label must be at the very beginning of the file
+        ;
 
         .if [ebx].entryoffset == -1
 
@@ -324,7 +344,9 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
         mov [ecx].asym.total_size,offs
 
-        ;; v2.07: for 16-bit groups, ensure that it fits in 64 kB
+        ;
+        ; v2.07: for 16-bit groups, ensure that it fits in 64 kB
+        ;
 
         .if ( [ecx].asym.total_size > 0x10000 && [ecx].asym.Ofssize == USE16 )
 
@@ -336,8 +358,10 @@ CalcOffset proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
 CalcOffset endp
 
-;; if pDst==NULL: count the number of segment related fixups
-;; if pDst!=NULL: write segment related fixups
+;
+; if pDst==NULL: count the number of segment related fixups
+; if pDst!=NULL: write segment related fixups
+;
 
     assume ebx:ptr fixup
 
@@ -357,7 +381,9 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
             .case FIX_PTR16
             .case FIX_SEG
 
-                ;; ignore fixups for absolute segments
+                ;
+                ; ignore fixups for absolute segments
+                ;
                 mov ecx,[ebx].sym
                 .if ecx
 
@@ -373,7 +399,9 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
 
                 .if ( pDst )
 
-                    ;; v2.04: fixed
+                    ;
+                    ; v2.04: fixed
+                    ;
 
                     mov eax,[ebx].locofs
                     mov ecx,[edi].start_offset
@@ -401,7 +429,9 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
                         add ecx,4
                     .endif
 
-                    ;; offset may be > 64 kB
+                    ;
+                    ; offset may be > 64 kB
+                    ;
 
                     .while ecx >= 0x10000
 
@@ -422,9 +452,11 @@ GetSegRelocs proc uses esi edi ebx pDst:ptr uint_16
 
 GetSegRelocs endp
 
-;; get image size.
-;; memimage=FALSE: get size without uninitialized segments (BSS and STACK)
-;; memimage=TRUE: get full size
+;
+; get image size.
+; memimage=FALSE: get size without uninitialized segments (BSS and STACK)
+; memimage=TRUE: get full size
+;
 
 GetImageSize proc uses esi edi ebx memimage:int_t
 
@@ -463,9 +495,11 @@ GetImageSize proc uses esi edi ebx memimage:int_t
 GetImageSize endp
 
 
-;; micro-linker. resolve internal fixups.
-
-;; handle the fixups contained in a segment
+;
+; micro-linker. resolve internal fixups.
+;
+; handle the fixups contained in a segment
+;
 
 DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
 
@@ -490,8 +524,10 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
         mov ecx,[ebx].sym
         .if ( ecx && ( [ecx].asym.segm || [ecx].asym.flags & S_VARIABLE ) )
 
-            ;; assembly time variable (also $ symbol) in reloc?
-            ;; v2.07: moved inside if-block, using new local var "offset"
+            ;
+            ; assembly time variable (also $ symbol) in reloc?
+            ; v2.07: moved inside if-block, using new local var "offset"
+            ;
 
             .if [ecx].asym.flags & S_VARIABLE
 
@@ -507,10 +543,12 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
             mov esi,[esi].dsym.seginfo
             assume esi:ptr seg_info
 
-            ;; the offset result consists of
-            ;; - the symbol's offset
-            ;; - the fixup's offset (usually the displacement )
-            ;; - the segment/group offset in the image
+            ;
+            ; the offset result consists of
+            ; - the symbol's offset
+            ; - the fixup's offset (usually the displacement )
+            ; - the segment/group offset in the image
+            ;
 
             mov al,[ebx].type
             .switch al
@@ -532,8 +570,10 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
                 sub eax,[esi].start_loc
                 mov value,eax
 
-                ;; check if symbol's segment name contains a '$'.
-                ;; If yes, search the segment without suffix.
+                ;
+                ; check if symbol's segment name contains a '$'.
+                ; If yes, search the segment without suffix.
+                ;
 
                 mov ecx,sg
                 .if ( strchr( [ecx].asym.name, '$' ) )
@@ -570,8 +610,10 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
             .case FIX_RELOFF16
             .case FIX_RELOFF32
 
-                ;; v1.96: special handling for "relative" fixups
-                ;; v2.28: removed fixup->offset..
+                ;
+                ; v1.96: special handling for "relative" fixups
+                ; v2.28: removed fixup->offset..
+                ;
 
                 mov eax,[esi].start_offset
                 add eax,offs
@@ -635,7 +677,9 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
             add [ecx],ax
             .endc
         .case FIX_RELOFF32
-            ;; adjust the location for EIP-related offsets if USE64
+            ;
+            ; adjust the location for EIP-related offsets if USE64
+            ;
             .if ( [edi].Ofssize == USE64 )
                 movzx edx,[ebx].addbytes
                 sub edx,4
@@ -673,7 +717,9 @@ DoFixup proc uses esi edi ebx curr:ptr dsym, cp:ptr calc_param
             .endc
         .case FIX_SEG
 
-            ;; absolute segments are ok
+            ;
+            ; absolute segments are ok
+            ;
 
             mov eax,[ebx].sym
             .if eax && [eax].asym.state == SYM_SEG
@@ -948,11 +994,13 @@ pe_create_section_table proc uses esi edi ebx
 
         mov objtab,edi
 
-        ;; before objects can be counted, the segment types
-        ;; SEGTYPE_CDATA ( for readonly segments ) &
-        ;; SEGTYPE_RSRC ( for resource segments )
-        ;; SEGTYPE_RELOC ( for relocations )
-        ;; must be set  - also, init lname_idx field
+        ;
+        ; before objects can be counted, the segment types
+        ; SEGTYPE_CDATA ( for readonly segments ) &
+        ; SEGTYPE_RSRC ( for resource segments )
+        ; SEGTYPE_RELOC ( for relocations )
+        ; must be set  - also, init lname_idx field
+        ;
 
         .for ( edi = SymTables[TAB_SEG*symbol_queue].head : edi : edi = [edi].dsym.next )
 
@@ -979,7 +1027,9 @@ pe_create_section_table proc uses esi edi ebx
             .endif
         .endf
 
-        ;; count objects ( without header types )
+        ;
+        ; count objects ( without header types )
+        ;
 
         .for ( ebx = 1, esi = 0: ebx < SIZE_PEFLAT: ebx++ )
 
@@ -999,7 +1049,9 @@ pe_create_section_table proc uses esi edi ebx
             imul ebx,esi,IMAGE_SECTION_HEADER
             mov [edi].asym.max_offset,ebx
 
-            ;; alloc space for 1 more section (.reloc)
+            ;
+            ; alloc space for 1 more section (.reloc)
+            ;
             mov esi,[edi].dsym.seginfo
             mov [esi].CodeBuffer,LclAlloc( &[ebx+IMAGE_SECTION_HEADER] )
         .endif
@@ -1036,11 +1088,15 @@ pe_emit_export_data proc uses esi edi ebx
     lea esi,ModuleInfo.name
     AddLineQueue( "option dotname" )
 
-    ;; create .edata segment
+    ;
+    ; create .edata segment
+    ;
     AddLineQueueX( "%s segment dword %s", edataname, edataattr )
     time( &timedate )
 
-    ;; create export directory: Characteristics, Timedate, MajMin, Name, Base, ...
+    ;
+    ; create export directory: Characteristics, Timedate, MajMin, Name, Base, ...
+    ;
 
     AddLineQueueX( "DD 0, 0%xh, 0, imagerel @%s_name, %u, %u, %u, imagerel @%s_func, imagerel @%s_names, imagerel @%s_nameord",
         timedate, esi, 1, ebx, ebx, esi, esi, esi )
@@ -1048,8 +1104,10 @@ pe_emit_export_data proc uses esi edi ebx
     mov name,esi
     mov cnt,ebx
 
-    ;; the name pointer table must be in ascending order!
-    ;; so we have to fill an array of exports and sort it.
+    ;
+    ; the name pointer table must be in ascending order!
+    ; so we have to fill an array of exports and sort it.
+    ;
 
     imul ecx,ebx,expitem
     mov pitems,alloca(ecx)
@@ -1069,9 +1127,11 @@ pe_emit_export_data proc uses esi edi ebx
     .endf
     qsort( pitems, cnt, sizeof( expitem ), compare_exp )
 
-    ;; emit export address table.
-    ;; would be possible to just use the array of sorted names,
-    ;; but we want to emit the EAT being sorted by address.
+    ;
+    ; emit export address table.
+    ; would be possible to just use the array of sorted names,
+    ; but we want to emit the EAT being sorted by address.
+    ;
 
     AddLineQueueX( "@%s_func label dword", name )
 
@@ -1084,21 +1144,27 @@ pe_emit_export_data proc uses esi edi ebx
         .endif
     .endf
 
-    ;; emit the name pointer table
+    ;
+    ; emit the name pointer table
+    ;
     AddLineQueueX( "@%s_names label dword", name )
 
     .for ( esi = pitems, ebx = 0: ebx < cnt: ebx++, esi += expitem )
         AddLineQueueX( "DD imagerel @%s", [esi].name )
     .endf
 
-    ;; ordinal table. each ordinal is an index into the export address table
+    ;
+    ; ordinal table. each ordinal is an index into the export address table
+    ;
     AddLineQueueX( "@%s_nameord label word", name )
 
     .for ( esi = pitems, ebx = 0: ebx < cnt: ebx++, esi += expitem )
         AddLineQueueX( "DW %u", [esi].idx )
     .endf
 
-    ;; v2.10: name+ext of dll
+    ;
+    ; v2.10: name+ext of dll
+    ;
     .for ( ebx = CurrFName[OBJ*4], ebx += strlen( ebx ): ebx > CurrFName[OBJ*4]: ebx-- )
         .break .if ( B[ebx] == '/' || B[ebx] == '\' || B[ebx] == ':' )
     .endf
@@ -1118,26 +1184,31 @@ pe_emit_export_data proc uses esi edi ebx
         .endif
     .endf
 
-    ;; exit .edata segment
+    ;
+    ; exit .edata segment
+    ;
     AddLineQueueX( "%s ends", edataname )
     RunLineQueue()
     ret
 
 pe_emit_export_data endp
 
-;; write import data.
-;; convention:
-;; .idata$2: import directory
-;; .idata$3: final import directory NULL entry
-;; .idata$4: ILT entry
-;; .idata$5: IAT entry
-;; .idata$6: strings
+;
+; write import data.
+; convention:
+; .idata$2: import directory
+; .idata$3: final import directory NULL entry
+; .idata$4: ILT entry
+; .idata$5: IAT entry
+; .idata$6: strings
+;
 
 pe_emit_import_data proc uses esi edi ebx
 
     .new type:int_t = 0
     .new ptrtype:int_t = T_QWORD
     .new cpalign:string_t = "ALIGN(8)"
+
 ifndef __ASMC64__
     .if ( ModuleInfo.defOfssize != USE64 )
         mov ptrtype,T_DWORD
@@ -1151,27 +1222,39 @@ endif
 
         .if ( [ebx].cnt )
 
-            .new pdot:string_t
             .if ( !type )
+
                 mov type,1
                 AddLineQueue( "@LPPROC typedef ptr proc" )
                 AddLineQueue( "option dotname" )
             .endif
 
-            lea esi,[ebx].name
+            .new name[256]:char_t
 
-            ;; avoid . in IDs
-            .if ( strchr( esi, '.') )
+            mov esi,strcpy(&name, &[ebx].name)
+
+            ;
+            ; avoid '.' and '-' in IDs
+            ;
+            .while ( strchr( esi, '.') )
+
                 mov B[eax],'_'
-            .endif
-            mov pdot,eax
+            .endw
+            .while ( strchr( esi, '-') )
 
-            ;; import directory entry
+                mov B[eax],'_'
+            .endw
+
+            ;
+            ; import directory entry
+            ;
             AddLineQueueX( "%s" IMPDIRSUF " segment dword %s", idataname, idataattr )
             AddLineQueueX( "DD imagerel @%s_ilt, 0, 0, imagerel @%s_name, imagerel @%s_iat", esi, esi, esi )
             AddLineQueueX( "%s" IMPDIRSUF " ends", idataname )
 
-            ;; emit ILT
+            ;
+            ; emit ILT
+            ;
             AddLineQueueX( "%s" IMPILTSUF " segment %s %s", idataname, cpalign, idataattr )
             AddLineQueueX( "@%s_ilt label %r", esi, ptrtype )
 
@@ -1180,11 +1263,15 @@ endif
                     AddLineQueueX( "@LPPROC imagerel @%s_name", [edi].asym.name )
                 .endif
             .endf
-            ;; ILT termination entry
+            ;
+            ; ILT termination entry
+            ;
             AddLineQueueX( "@LPPROC 0" )
             AddLineQueueX( "%s" IMPILTSUF " ends", idataname )
 
-            ;; emit IAT
+            ;
+            ; emit IAT
+            ;
             AddLineQueueX( "%s" IMPIATSUF " segment %s %s", idataname, cpalign, idataattr )
             AddLineQueueX( "@%s_iat label %r", esi, ptrtype )
 
@@ -1195,40 +1282,41 @@ endif
                         ModuleInfo.imp_prefix, StringBufferEnd, [edi].asym.name )
                 .endif
             .endf
-            ;; IAT termination entry
+            ;
+            ; IAT termination entry
+            ;
             AddLineQueueX( "@LPPROC 0" )
             AddLineQueueX( "%s" IMPIATSUF " ends", idataname )
 
-            ;; emit name table
+            ;
+            ; emit name table
+            ;
             AddLineQueueX( "%s" IMPSTRSUF " segment word %s", idataname, idataattr )
 
             .for ( edi = SymTables[TAB_EXT*symbol_queue].head : edi : edi = [edi].dsym.next )
+
                 .if ( [edi].asym.flags & S_IAT_USED && [edi].asym.dll == ebx )
+
                     AddLineQueueX( "@%s_name dw 0", [edi].asym.name )
                     AddLineQueueX( "db '%s',0", [edi].asym.name )
                     AddLineQueue( "even" )
                 .endif
             .endf
 
-            ;; dll name table entry
-            .if ( pdot )
-                mov edx,pdot
-                mov B[edx],0
-                inc edx
-                AddLineQueueX( "@%s_%s_name db '%s.%s',0", esi, edx, esi, edx )
-                mov eax,pdot
-                mov B[eax],'.'
-            .else
-                AddLineQueueX( "@%s_name db '%s',0", esi, esi )
-            .endif
+            ;
+            ; dll name table entry
+            ;
 
+            AddLineQueueX( "@%s_name db '%s',0", esi, &[ebx].name )
             AddLineQueue( "even" );
             AddLineQueueX("%s" IMPSTRSUF " ends", idataname )
 
         .endif
     .endf
     .if ( is_linequeue_populated() )
-        ;; import directory NULL entry
+        ;
+        ; import directory NULL entry
+        ;
         AddLineQueueX("%s" IMPNDIRSUF " segment dword %s", idataname, idataattr )
         AddLineQueue( "DD 0, 0, 0, 0, 0" )
         AddLineQueueX("%s" IMPNDIRSUF " ends", idataname )

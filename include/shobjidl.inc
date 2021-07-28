@@ -1,56 +1,56 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
- .err <this stub requires an updated version of rpcndr>
+.err <this stub requires an updated version of rpcndr>
 endif
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
 ifndef __shobjidl_h__
-__shobjidl_h__ equ <>
+define __shobjidl_h__
 
 ifndef __IContextMenu_FWD_DEFINED__
-__IContextMenu_FWD_DEFINED__ equ 1
+define __IContextMenu_FWD_DEFINED__
 endif
 ifndef __IContextMenu2_FWD_DEFINED__
-__IContextMenu2_FWD_DEFINED__ equ 1
+define __IContextMenu2_FWD_DEFINED__
 endif
 ifndef __IContextMenu3_FWD_DEFINED__
-__IContextMenu3_FWD_DEFINED__ equ 1
+define __IContextMenu3_FWD_DEFINED__
 endif
 ifndef __IExecuteCommand_FWD_DEFINED__
-__IExecuteCommand_FWD_DEFINED__ equ 1
+define __IExecuteCommand_FWD_DEFINED__
 endif
 ifndef __IPersistFolder_FWD_DEFINED__
-__IPersistFolder_FWD_DEFINED__ equ 1
+define __IPersistFolder_FWD_DEFINED__
 endif
 ifndef __IRunnableTask_FWD_DEFINED__
-__IRunnableTask_FWD_DEFINED__ equ 1
+define __IRunnableTask_FWD_DEFINED__
 endif
 ifndef __IShellTaskScheduler_FWD_DEFINED__
-__IShellTaskScheduler_FWD_DEFINED__ equ 1
+define __IShellTaskScheduler_FWD_DEFINED__
 endif
 ifndef __IQueryCodePage_FWD_DEFINED__
-__IQueryCodePage_FWD_DEFINED__ equ 1
+define __IQueryCodePage_FWD_DEFINED__
 endif
 ifndef __IPersistFolder2_FWD_DEFINED__
-__IPersistFolder2_FWD_DEFINED__ equ 1
+define __IPersistFolder2_FWD_DEFINED__
 endif
 ifndef __IPersistFolder3_FWD_DEFINED__
-__IPersistFolder3_FWD_DEFINED__ equ 1
+define __IPersistFolder3_FWD_DEFINED__
 endif
 ifndef __IPersistIDList_FWD_DEFINED__
-__IPersistIDList_FWD_DEFINED__ equ 1
+define __IPersistIDList_FWD_DEFINED__
 endif
 ifndef __IEnumIDList_FWD_DEFINED__
-__IEnumIDList_FWD_DEFINED__ equ 1
+define __IEnumIDList_FWD_DEFINED__
 endif
 ifndef __IEnumFullIDList_FWD_DEFINED__
 __IEnumFullIDList_FWD_DEFINED__ equ 1
@@ -2822,8 +2822,10 @@ endif
 
 ifdef _UNICODE
 IShellLink		equ <IShellLinkW>
+IID_IShellLink		equ <IID_IShellLinkW>
 else
 IShellLink		equ <IShellLinkA>
+IID_IShellLink		equ <IID_IShellLinkA>
 endif
 SLR_FLAGS		typedef SDWORD
 SLR_NO_UI		equ 0x1
@@ -5475,7 +5477,7 @@ DEFINE_IIDX(ITrayDeskBand, "6D67E846-5B9C-4db8-9CBC-DDE12F4254F1")
 endif
 
 ifndef __IBandHost_INTERFACE_DEFINED__
-__IBandHost_INTERFACE_DEFINED__ equ 1
+define __IBandHost_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBandHost, "B9075C7C-D48E-403f-AB99-D6C77A1084AC")
 
@@ -5494,15 +5496,16 @@ EXPLORERPANE		typedef GUID
 REFEXPLORERPANE		typedef ptr EXPLORERPANE
 
 ifndef __IExplorerPaneVisibility_INTERFACE_DEFINED__
-__IExplorerPaneVisibility_INTERFACE_DEFINED__ equ 1
+define __IExplorerPaneVisibility_INTERFACE_DEFINED__
 
-EPS_DONTCARE		equ 0
-EPS_DEFAULT_ON		equ 0x1
-EPS_DEFAULT_OFF		equ 0x2
-EPS_STATEMASK		equ 0xffff
-EPS_INITIALSTATE	equ 0x10000
-EPS_FORCE		equ 0x20000
-EXPLORERPANESTATE	typedef DWORD
+.enum EXPLORERPANESTATE {
+    EPS_DONTCARE	= 0,
+    EPS_DEFAULT_ON	= 0x1,
+    EPS_DEFAULT_OFF	= 0x2,
+    EPS_STATEMASK	= 0xffff,
+    EPS_INITIALSTATE	= 0x10000,
+    EPS_FORCE		= 0x20000
+    }
 
 DEFINE_IIDX(IExplorerPaneVisibility, "e07010ec-bc17-44c0-97b0-46c7c95b9edc")
 
@@ -5517,7 +5520,7 @@ endif
 SID_ExplorerPaneVisibility equ <IID_IExplorerPaneVisibility>
 
 ifndef __IContextMenuCB_INTERFACE_DEFINED__
-__IContextMenuCB_INTERFACE_DEFINED__ equ 1
+define __IContextMenuCB_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContextMenuCB, "3409E930-5A39-11d1-83FA-00A0C90DC849")
 
@@ -5533,7 +5536,7 @@ endif
 endif
 
 ifndef __IDefaultExtractIconInit_INTERFACE_DEFINED__
-__IDefaultExtractIconInit_INTERFACE_DEFINED__ equ 1
+define __IDefaultExtractIconInit_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDefaultExtractIconInit, "41ded17d-d6b3-4261-997d-88c60e4b1d58")
 
@@ -5556,26 +5559,28 @@ SHCreateDefaultExtractIcon proto WINAPI \
 		   ppv: PVOID
 
 ifndef __IExplorerCommand_INTERFACE_DEFINED__
-__IExplorerCommand_INTERFACE_DEFINED__ equ 1
+define __IExplorerCommand_INTERFACE_DEFINED__
 
-ECS_ENABLED		equ 0
-ECS_DISABLED		equ 0x1
-ECS_HIDDEN		equ 0x2
-ECS_CHECKBOX		equ 0x4
-ECS_CHECKED		equ 0x8
-ECS_RADIOCHECK		equ 0x10
-EXPCMDSTATE		typedef DWORD
+.enum EXPCMDSTATE {
+    ECS_ENABLED		= 0,
+    ECS_DISABLED	= 0x1,
+    ECS_HIDDEN		= 0x2,
+    ECS_CHECKBOX	= 0x4,
+    ECS_CHECKED		= 0x8,
+    ECS_RADIOCHECK	= 0x10
+    }
 
-ECF_DEFAULT		equ 0
-ECF_HASSUBCOMMANDS	equ 0x1
-ECF_HASSPLITBUTTON	equ 0x2
-ECF_HIDELABEL		equ 0x4
-ECF_ISSEPARATOR		equ 0x8
-ECF_HASLUASHIELD	equ 0x10
-ECF_SEPARATORBEFORE	equ 0x20
-ECF_SEPARATORAFTER	equ 0x40
-ECF_ISDROPDOWN		equ 0x80
-EXPCMDFLAGS		typedef DWORD
+.enum EXPCMDFLAGS {
+    ECF_DEFAULT		= 0,
+    ECF_HASSUBCOMMANDS	= 0x1,
+    ECF_HASSPLITBUTTON	= 0x2,
+    ECF_HIDELABEL	= 0x4,
+    ECF_ISSEPARATOR	= 0x8,
+    ECF_HASLUASHIELD	= 0x10,
+    ECF_SEPARATORBEFORE = 0x20,
+    ECF_SEPARATORAFTER	= 0x40,
+    ECF_ISDROPDOWN	= 0x80
+    }
 
 DEFINE_IIDX(IExplorerCommand, "a08ce4d0-fa25-44ab-b57c-c7b1c323e0b9")
 
@@ -5595,7 +5600,7 @@ DEFINE_IIDX(IExplorerCommand, "a08ce4d0-fa25-44ab-b57c-c7b1c323e0b9")
 endif
 
 ifndef __IExplorerCommandState_INTERFACE_DEFINED__
-__IExplorerCommandState_INTERFACE_DEFINED__ equ 1
+define __IExplorerCommandState_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IExplorerCommandState, "bddacb60-7657-47ae-8445-d23e1acf82ae")
 
@@ -5608,7 +5613,7 @@ DEFINE_IIDX(IExplorerCommandState, "bddacb60-7657-47ae-8445-d23e1acf82ae")
 endif
 
 ifndef __IInitializeCommand_INTERFACE_DEFINED__
-__IInitializeCommand_INTERFACE_DEFINED__ equ 1
+define __IInitializeCommand_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInitializeCommand, "85075acf-231f-40ea-9610-d26b7b58f638")
 
@@ -5621,7 +5626,7 @@ DEFINE_IIDX(IInitializeCommand, "85075acf-231f-40ea-9610-d26b7b58f638")
 endif
 
 ifndef __IEnumExplorerCommand_INTERFACE_DEFINED__
-__IEnumExplorerCommand_INTERFACE_DEFINED__ equ 1
+define __IEnumExplorerCommand_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumExplorerCommand, "a88826f8-186f-4987-aade-ea0cef8fbfe8")
 
@@ -5637,7 +5642,7 @@ DEFINE_IIDX(IEnumExplorerCommand, "a88826f8-186f-4987-aade-ea0cef8fbfe8")
 endif
 
 ifndef __IExplorerCommandProvider_INTERFACE_DEFINED__
-__IExplorerCommandProvider_INTERFACE_DEFINED__ equ 1
+define __IExplorerCommandProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IExplorerCommandProvider, "64961751-0835-43c0-8ffe-d57686530e64")
 
@@ -5651,7 +5656,7 @@ DEFINE_IIDX(IExplorerCommandProvider, "64961751-0835-43c0-8ffe-d57686530e64")
 endif
 
 ifndef __IMarkupCallback_INTERFACE_DEFINED__
-__IMarkupCallback_INTERFACE_DEFINED__ equ 1
+define __IMarkupCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMarkupCallback, "4440306e-d79a-48d0-88e6-a42692279bfb")
 
@@ -5670,29 +5675,33 @@ endif
 HTHEME			typedef HANDLE
 
 ifndef __IControlMarkup_INTERFACE_DEFINED__
-__IControlMarkup_INTERFACE_DEFINED__ equ 1
+define __IControlMarkup_INTERFACE_DEFINED__
 
-MARKUPSIZE		typedef SDWORD
-MARKUPSIZE_CALCWIDTH	equ 0
-MARKUPSIZE_CALCHEIGHT	equ ( MARKUPSIZE_CALCWIDTH + 1 )
+.enum MARKUPSIZE {
+    MARKUPSIZE_CALCWIDTH  = 0,
+    MARKUPSIZE_CALCHEIGHT = ( MARKUPSIZE_CALCWIDTH + 1 )
+    }
 
-MARKUPLINKTEXT		typedef SDWORD
-MARKUPLINKTEXT_URL	equ 0
-MARKUPLINKTEXT_ID	equ ( MARKUPLINKTEXT_URL + 1 )
-MARKUPLINKTEXT_TEXT	equ ( MARKUPLINKTEXT_ID + 1 )
+.enum MARKUPLINKTEXT {
+    MARKUPLINKTEXT_URL	= 0,
+    MARKUPLINKTEXT_ID	= ( MARKUPLINKTEXT_URL + 1 ),
+    MARKUPLINKTEXT_TEXT = ( MARKUPLINKTEXT_ID + 1 )
+    }
 
-MARKUPSTATE_FOCUSED	equ 0x1
-MARKUPSTATE_ENABLED	equ 0x2
-MARKUPSTATE_VISITED	equ 0x4
-MARKUPSTATE_HOT		equ 0x8
-MARKUPSTATE_DEFAULTCOLORS equ 0x10
-MARKUPSTATE_ALLOWMARKUP equ 0x40000000
-MARKUPSTATE		typedef DWORD
+.enum MARKUPSTATE {
+    MARKUPSTATE_FOCUSED = 0x1,
+    MARKUPSTATE_ENABLED = 0x2,
+    MARKUPSTATE_VISITED = 0x4,
+    MARKUPSTATE_HOT	= 0x8,
+    MARKUPSTATE_DEFAULTCOLORS = 0x10,
+    MARKUPSTATE_ALLOWMARKUP = 0x40000000
+    }
 
-MARKUPMESSAGE		typedef SDWORD
-MARKUPMESSAGE_KEYEXECUTE  equ 0
-MARKUPMESSAGE_CLICKEXECUTE equ ( MARKUPMESSAGE_KEYEXECUTE + 1 )
-MARKUPMESSAGE_WANTFOCUS equ ( MARKUPMESSAGE_CLICKEXECUTE + 1 )
+.enum MARKUPMESSAGE {
+    MARKUPMESSAGE_KEYEXECUTE   = 0,
+    MARKUPMESSAGE_CLICKEXECUTE = ( MARKUPMESSAGE_KEYEXECUTE + 1 ),
+    MARKUPMESSAGE_WANTFOCUS    = ( MARKUPMESSAGE_CLICKEXECUTE + 1 )
+    }
 
 DEFINE_IIDX(IControlMarkup, "D6D2FBAE-F116-458c-8C34-03569877A2D2")
 
@@ -5732,7 +5741,7 @@ DEFINE_IIDX(IControlMarkup, "D6D2FBAE-F116-458c-8C34-03569877A2D2")
 endif
 
 ifndef __IInitializeNetworkFolder_INTERFACE_DEFINED__
-__IInitializeNetworkFolder_INTERFACE_DEFINED__ equ 1
+define __IInitializeNetworkFolder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInitializeNetworkFolder, "6e0f9881-42a8-4f2a-97f8-8af4e026d92d")
 
@@ -5744,14 +5753,15 @@ DEFINE_IIDX(IInitializeNetworkFolder, "6e0f9881-42a8-4f2a-97f8-8af4e026d92d")
 
 endif
 
-CPVIEW			typedef SDWORD
-CPVIEW_CLASSIC		equ 0
-CPVIEW_ALLITEMS		equ CPVIEW_CLASSIC
-CPVIEW_CATEGORY		equ 1
-CPVIEW_HOME		equ CPVIEW_CATEGORY
+.enum CPVIEW {
+    CPVIEW_CLASSIC	= 0,
+    CPVIEW_ALLITEMS	= CPVIEW_CLASSIC,
+    CPVIEW_CATEGORY	= 1,
+    CPVIEW_HOME		= CPVIEW_CATEGORY
+    }
 
 ifndef __IOpenControlPanel_INTERFACE_DEFINED__
-__IOpenControlPanel_INTERFACE_DEFINED__ equ 1
+define __IOpenControlPanel_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpenControlPanel, "D11AD862-66DE-4DF4-BF6C-1F5621996AF1")
 
@@ -5766,7 +5776,7 @@ DEFINE_IIDX(IOpenControlPanel, "D11AD862-66DE-4DF4-BF6C-1F5621996AF1")
 endif
 
 ifndef __IComputerInfoChangeNotify_INTERFACE_DEFINED__
-__IComputerInfoChangeNotify_INTERFACE_DEFINED__ equ 1
+define __IComputerInfoChangeNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComputerInfoChangeNotify, "0DF60D92-6818-46d6-B358-D66170DDE466")
 
@@ -5781,7 +5791,7 @@ endif
 STR_FILE_SYS_BIND_DATA	equ <L"File System Bind Data">
 
 ifndef __IFileSystemBindData_INTERFACE_DEFINED__
-__IFileSystemBindData_INTERFACE_DEFINED__ equ 1
+define __IFileSystemBindData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFileSystemBindData, "01E18D10-4D8B-11d2-855D-006008059367")
 
@@ -5795,7 +5805,7 @@ DEFINE_IIDX(IFileSystemBindData, "01E18D10-4D8B-11d2-855D-006008059367")
 endif
 
 ifndef __IFileSystemBindData2_INTERFACE_DEFINED__
-__IFileSystemBindData2_INTERFACE_DEFINED__ equ 1
+define __IFileSystemBindData2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFileSystemBindData2, "3acf075f-71db-4afa-81f0-3fc4fdf2a5b8")
 
@@ -5813,11 +5823,12 @@ endif
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
 ifndef __ICustomDestinationList_INTERFACE_DEFINED__
-__ICustomDestinationList_INTERFACE_DEFINED__ equ 1
+define __ICustomDestinationList_INTERFACE_DEFINED__
 
-KNOWNDESTCATEGORY	typedef SDWORD
-KDC_FREQUENT		equ 1
-KDC_RECENT		equ ( KDC_FREQUENT + 1 )
+.enum KNOWNDESTCATEGORY {
+    KDC_FREQUENT	= 1,
+    KDC_RECENT		= ( KDC_FREQUENT + 1 )
+    }
 
 DEFINE_IIDX(ICustomDestinationList, "6332debf-87b5-4670-90c0-5e57b408a49e")
 
@@ -5838,7 +5849,7 @@ DEFINE_IIDX(ICustomDestinationList, "6332debf-87b5-4670-90c0-5e57b408a49e")
 endif
 
 ifndef __IApplicationDestinations_INTERFACE_DEFINED__
-__IApplicationDestinations_INTERFACE_DEFINED__ equ 1
+define __IApplicationDestinations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IApplicationDestinations, "12337d35-94c6-48a0-bce7-6a9c69d4d600")
 
@@ -5853,11 +5864,12 @@ DEFINE_IIDX(IApplicationDestinations, "12337d35-94c6-48a0-bce7-6a9c69d4d600")
 endif
 
 ifndef __IApplicationDocumentLists_INTERFACE_DEFINED__
-__IApplicationDocumentLists_INTERFACE_DEFINED__ equ 1
+define __IApplicationDocumentLists_INTERFACE_DEFINED__
 
-APPDOCLISTTYPE		typedef SDWORD
-ADLT_RECENT		equ 0
-ADLT_FREQUENT		equ ( ADLT_RECENT + 1 )
+.enum APPDOCLISTTYPE {
+    ADLT_RECENT		= 0,
+    ADLT_FREQUENT	= ( ADLT_RECENT + 1 )
+    }
 
 DEFINE_IIDX(IApplicationDocumentLists, "3c594f9f-9f30-47a1-979a-c9e83d3d0a06")
 
@@ -5871,7 +5883,7 @@ DEFINE_IIDX(IApplicationDocumentLists, "3c594f9f-9f30-47a1-979a-c9e83d3d0a06")
 endif
 
 ifndef __IObjectWithAppUserModelID_INTERFACE_DEFINED__
-__IObjectWithAppUserModelID_INTERFACE_DEFINED__ equ 1
+define __IObjectWithAppUserModelID_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectWithAppUserModelID, "36db0196-9665-46d1-9ba7-d3709eecf9ed")
 
@@ -5885,7 +5897,7 @@ DEFINE_IIDX(IObjectWithAppUserModelID, "36db0196-9665-46d1-9ba7-d3709eecf9ed")
 endif
 
 ifndef __IObjectWithProgID_INTERFACE_DEFINED__
-__IObjectWithProgID_INTERFACE_DEFINED__ equ 1
+define __IObjectWithProgID_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectWithProgID, "71e806fb-8dee-46fc-bf8c-7748a8a1ae13")
 
@@ -5899,7 +5911,7 @@ DEFINE_IIDX(IObjectWithProgID, "71e806fb-8dee-46fc-bf8c-7748a8a1ae13")
 endif
 
 ifndef __IUpdateIDList_INTERFACE_DEFINED__
-__IUpdateIDList_INTERFACE_DEFINED__ equ 1
+define __IUpdateIDList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUpdateIDList, "6589b6d2-5f8d-4b9e-b7e0-23cdd9717d8c")
 
@@ -5923,7 +5935,7 @@ endif
 
 
 ifndef __IDesktopGadget_INTERFACE_DEFINED__
-__IDesktopGadget_INTERFACE_DEFINED__ equ 1
+define __IDesktopGadget_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDesktopGadget, "c1646bc4-f298-4f91-a204-eb2dd1709d1a")
 
@@ -5938,27 +5950,31 @@ endif
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
 ifndef __IDesktopWallpaper_INTERFACE_DEFINED__
-__IDesktopWallpaper_INTERFACE_DEFINED__ equ <>
+define __IDesktopWallpaper_INTERFACE_DEFINED__
 
-DESKTOP_SLIDESHOW_OPTIONS typedef sdword
-DSO_SHUFFLEIMAGES	equ 0x1
+.enum DESKTOP_SLIDESHOW_OPTIONS {
+    DSO_SHUFFLEIMAGES	= 0x1
+    }
 
-DESKTOP_SLIDESHOW_STATE typedef sdword
-DSS_ENABLED		equ 0x1
-DSS_SLIDESHOW		equ 0x2
-DSS_DISABLED_BY_REMOTE_SESSION equ 0x4
+.enum DESKTOP_SLIDESHOW_STATE {
+    DSS_ENABLED		= 0x1,
+    DSS_SLIDESHOW	= 0x2,
+    DSS_DISABLED_BY_REMOTE_SESSION = 0x4
+    }
 
-DESKTOP_SLIDESHOW_DIRECTION typedef sdword
-DSD_FORWARD		equ 0
-DSD_BACKWARD		equ 1
+.enum DESKTOP_SLIDESHOW_DIRECTION {
+    DSD_FORWARD		= 0,
+    DSD_BACKWARD	= 1
+    }
 
-DESKTOP_WALLPAPER_POSITION typedef sdword
-DWPOS_CENTER		equ 0
-DWPOS_TILE		equ 1
-DWPOS_STRETCH		equ 2
-DWPOS_FIT		equ 3
-DWPOS_FILL		equ 4
-DWPOS_SPAN		equ 5
+.enum DESKTOP_WALLPAPER_POSITION {
+    DWPOS_CENTER	= 0,
+    DWPOS_TILE		= 1,
+    DWPOS_STRETCH	= 2,
+    DWPOS_FIT		= 3,
+    DWPOS_FILL		= 4,
+    DWPOS_SPAN		= 5
+    }
 
 DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
 
@@ -5989,15 +6005,16 @@ endif
 HOMEGROUP_SECURITY_GROUP equ <L"HomeUsers">
 
 ifndef __IHomeGroup_INTERFACE_DEFINED__
-__IHomeGroup_INTERFACE_DEFINED__ equ 1
+define __IHomeGroup_INTERFACE_DEFINED__
 
-HOMEGROUPSHARINGCHOICES typedef SDWORD
-HGSC_NONE		equ 0
-HGSC_MUSICLIBRARY	equ 0x1
-HGSC_PICTURESLIBRARY	equ 0x2
-HGSC_VIDEOSLIBRARY	equ 0x4
-HGSC_DOCUMENTSLIBRARY	equ 0x8
-HGSC_PRINTERS		equ 0x10
+.enum HOMEGROUPSHARINGCHOICES {
+    HGSC_NONE			= 0x0,
+    HGSC_MUSICLIBRARY		= 0x1,
+    HGSC_PICTURESLIBRARY	= 0x2,
+    HGSC_VIDEOSLIBRARY		= 0x4,
+    HGSC_DOCUMENTSLIBRARY	= 0x8,
+    HGSC_PRINTERS		= 0x10
+    }
 
 
 DEFINE_IIDX(IHomeGroup, "7a3bd1d9-35a9-4fb3-a467-f48cac35e2d0")
@@ -6038,28 +6055,32 @@ DEFINE_IIDX(IOpenSearchSource, "F0EE7333-E6FC-479b-9F25-A860C234A38E")
 endif
 
 ifndef __IShellLibrary_INTERFACE_DEFINED__
-__IShellLibrary_INTERFACE_DEFINED__ equ 1
+define __IShellLibrary_INTERFACE_DEFINED__
 
 
-LIBRARYFOLDERFILTER	typedef SDWORD
-LFF_FORCEFILESYSTEM	equ 1
-LFF_STORAGEITEMS	equ 2
-LFF_ALLITEMS		equ 3
+.enum LIBRARYFOLDERFILTER {
+    LFF_FORCEFILESYSTEM = 1,
+    LFF_STORAGEITEMS = 2,
+    LFF_ALLITEMS = 3
+    }
 
-LIBRARYOPTIONFLAGS	typedef SDWORD
-LOF_DEFAULT		equ 0
-LOF_PINNEDTONAVPANE	equ 0x1
-LOF_MASK_ALL		equ 0x1
+.enum LIBRARYOPTIONFLAGS {
+    LOF_DEFAULT,
+    LOF_PINNEDTONAVPANE,
+    LOF_MASK_ALL = 1
+    }
 
-DEFAULTSAVEFOLDERTYPE	typedef SDWORD
-DSFT_DETECT		equ 1
-DSFT_PRIVATE		equ ( DSFT_DETECT + 1 )
-DSFT_PUBLIC		equ ( DSFT_PRIVATE + 1 )
+.enum DEFAULTSAVEFOLDERTYPE {
+    DSFT_DETECT = 1,
+    DSFT_PRIVATE = ( DSFT_DETECT + 1 ),
+    DSFT_PUBLIC = ( DSFT_PRIVATE + 1 )
+    }
 
-LIBRARYSAVEFLAGS	typedef SDWORD
-LSF_FAILIFTHERE		equ 0
-LSF_OVERRIDEEXISTING	equ 0x1
-LSF_MAKEUNIQUENAME	equ 0x2
+.enum LIBRARYSAVEFLAGS {
+    LSF_FAILIFTHERE,
+    LSF_OVERRIDEEXISTING,
+    LSF_MAKEUNIQUENAME
+    }
 
 
 DEFINE_IIDX(IShellLibrary, "11a66efa-382e-451a-9234-1e0e12ef3085")
@@ -6118,15 +6139,16 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
-ACTIVATEOPTIONS		typedef sdword
-AO_NONE			equ 0
-AO_DESIGNMODE		equ 0x1
-AO_NOERRORUI		equ 0x2
-AO_NOSPLASHSCREEN	equ 0x4
+.enum ACTIVATEOPTIONS {
+    AO_NONE		= 0,
+    AO_DESIGNMODE	= 0x1,
+    AO_NOERRORUI	= 0x2,
+    AO_NOSPLASHSCREEN	= 0x4
+    }
 
 
 ifndef __IApplicationActivationManager_INTERFACE_DEFINED__
-__IApplicationActivationManager_INTERFACE_DEFINED__ equ <>
+define __IApplicationActivationManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IApplicationActivationManager, "2e941141-7f97-4756-ba1d-9decde894a3d")
 
@@ -6142,68 +6164,80 @@ endif
 endif
 
 ifndef __ShellObjects_LIBRARY_DEFINED__
-__ShellObjects_LIBRARY_DEFINED__ equ 1
-
-SID_PublishingWizard equ <CSID_PublishingWizard>
-DEFINE_GUID(CLSID_ShellLink, 0x00021401,0,0,0xC0,0,0,0,0,0,0,0x46)
+define __ShellObjects_LIBRARY_DEFINED__
 
 externdef LIBID_ShellObjects:IID
-DEFINE_GUID(CLSID_ShellDesktop,			0x00021400,0x0000,0x0000,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46)
-DEFINE_GUID(CLSID_ShellFSFolder,		0xF3364BA0,0x65B9,0x11CE,0xA9,0xBA,0x00,0xAA,0x00,0x4A,0xE8,0x37)
-DEFINE_GUID(CLSID_NetworkPlaces,		0x208D2C60,0x3AEA,0x1069,0xA2,0xD7,0x08,0x00,0x2B,0x30,0x30,0x9D)
-DEFINE_GUID(CLSID_ShellLink,			0x00021401,0x0000,0x0000,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46)
-DEFINE_GUID(CLSID_QueryCancelAutoPlay,		0x331F1768,0x05A9,0x4ddd,0xB8,0x6E,0xDA,0xE3,0x4D,0xDC,0x99,0x8A)
-DEFINE_GUID(CLSID_DriveSizeCategorizer,		0x94357B53,0xCA29,0x4b78,0x83,0xAE,0xE8,0xFE,0x74,0x09,0x13,0x4F)
-DEFINE_GUID(CLSID_DriveTypeCategorizer,		0xB0A8F3CF,0x4333,0x4bab,0x88,0x73,0x1C,0xCB,0x1C,0xAD,0xA4,0x8B)
-DEFINE_GUID(CLSID_FreeSpaceCategorizer,		0xB5607793,0x24AC,0x44c7,0x82,0xE2,0x83,0x17,0x26,0xAA,0x6C,0xB7)
-DEFINE_GUID(CLSID_TimeCategorizer,		0x3bb4118f,0xddfd,0x4d30,0xa3,0x48,0x9f,0xb5,0xd6,0xbf,0x1a,0xfe)
-DEFINE_GUID(CLSID_SizeCategorizer,		0x55d7b852,0xf6d1,0x42f2,0xaa,0x75,0x87,0x28,0xa1,0xb2,0xd2,0x64)
-DEFINE_GUID(CLSID_AlphabeticalCategorizer,	0x3c2654c6,0x7372,0x4f6b,0xb3,0x10,0x55,0xd6,0x12,0x8f,0x49,0xd2)
-DEFINE_GUID(CLSID_MergedCategorizer,		0x8e827c11,0x33e7,0x4bc1,0xb2,0x42,0x8c,0xd9,0xa1,0xc2,0xb3,0x04)
-DEFINE_GUID(CLSID_ImageProperties,		0x7ab770c7,0x0e23,0x4d7a,0x8a,0xa2,0x19,0xbf,0xad,0x47,0x98,0x29)
-DEFINE_GUID(CLSID_PropertiesUI,			0xd912f8cf,0x0396,0x4915,0x88,0x4e,0xfb,0x42,0x5d,0x32,0x94,0x3b)
-DEFINE_GUID(CLSID_UserNotification,		0x0010890e,0x8789,0x413c,0xad,0xbc,0x48,0xf5,0xb5,0x11,0xb3,0xaf)
-DEFINE_GUID(CLSID_CDBurn,			0xfbeb8a05,0xbeee,0x4442,0x80,0x4e,0x40,0x9d,0x6c,0x45,0x15,0xe9)
-DEFINE_GUID(CLSID_TaskbarList,			0x56FDF344,0xFD6D,0x11d0,0x95,0x8A,0x00,0x60,0x97,0xC9,0xA0,0x90)
-DEFINE_GUID(CLSID_StartMenuPin,			0xa2a9545d,0xa0c2,0x42b4,0x97,0x08,0xa0,0xb2,0xba,0xdd,0x77,0xc8)
-DEFINE_GUID(CLSID_WebWizardHost,		0xc827f149,0x55c1,0x4d28,0x93,0x5e,0x57,0xe4,0x7c,0xae,0xd9,0x73)
-DEFINE_GUID(CLSID_PublishDropTarget,		0xCC6EEFFB,0x43F6,0x46c5,0x96,0x19,0x51,0xD5,0x71,0x96,0x7F,0x7D)
-DEFINE_GUID(CLSID_PublishingWizard,		0x6b33163c,0x76a5,0x4b6c,0xbf,0x21,0x45,0xde,0x9c,0xd5,0x03,0xa1)
-DEFINE_GUID(CLSID_InternetPrintOrdering,	0xadd36aa8,0x751a,0x4579,0xa2,0x66,0xd6,0x6f,0x52,0x02,0xcc,0xbb)
-DEFINE_GUID(CLSID_ExplorerBrowser,		0x71f96385,0xddd6,0x48d3,0xa0,0xc1,0xae,0x06,0xe8,0xb0,0x55,0xfb)
-DEFINE_GUID(CLSID_FolderViewHost,		0x20b1cb23,0x6968,0x4eb9,0xb7,0xd4,0xa6,0x6d,0x00,0xd0,0x7c,0xee)
-DEFINE_GUID(CLSID_ImageRecompress,		0x6e33091c,0xd2f8,0x4740,0xb5,0x5e,0x2e,0x11,0xd1,0x47,0x7a,0x2c)
-DEFINE_GUID(CLSID_TrayBandSiteService,		0xF60AD0A0,0xE5E1,0x45cb,0xB5,0x1A,0xE1,0x5B,0x9F,0x8B,0x29,0x34)
-DEFINE_GUID(CLSID_TrayDeskBand,			0xE6442437,0x6C68,0x4f52,0x94,0xDD,0x2C,0xFE,0xD2,0x67,0xEF,0xB9)
-DEFINE_GUID(CLSID_AttachmentServices,		0x4125dd96,0xe03a,0x4103,0x8f,0x70,0xe0,0x59,0x7d,0x80,0x3b,0x9c)
-DEFINE_GUID(CLSID_DocPropShellExtension,	0x883373C3,0xBF89,0x11D1,0xBE,0x35,0x08,0x00,0x36,0xB1,0x1A,0x03)
-DEFINE_GUID(CLSID_ShellItem,			0x9ac9fbe1,0xe0a2,0x4ad6,0xb4,0xee,0xe2,0x12,0x01,0x3e,0xa9,0x17)
-DEFINE_GUID(CLSID_NamespaceWalker,		0x72eb61e0,0x8672,0x4303,0x91,0x75,0xf2,0xe4,0xc6,0x8b,0x2e,0x7c)
-DEFINE_GUID(CLSID_FileOperation,		0x3ad05575,0x8857,0x4850,0x92,0x77,0x11,0xb8,0x5b,0xdb,0x8e,0x09)
-DEFINE_GUID(CLSID_FileOpenDialog,		0xDC1C5A9C,0xE88A,0x4dde,0xA5,0xA1,0x60,0xF8,0x2A,0x20,0xAE,0xF7)
-DEFINE_GUID(CLSID_FileSaveDialog,		0xC0B4E2F3,0xBA21,0x4773,0x8D,0xBA,0x33,0x5E,0xC9,0x46,0xEB,0x8B)
-DEFINE_GUID(CLSID_KnownFolderManager,		0x4df0c730,0xdf9d,0x4ae3,0x91,0x53,0xaa,0x6b,0x82,0xe9,0x79,0x5a)
-DEFINE_GUID(CLSID_FSCopyHandler,		0xD197380A,0x0A79,0x4dc8,0xA0,0x33,0xED,0x88,0x2C,0x2F,0xA1,0x4B)
-DEFINE_GUID(CLSID_SharingConfigurationManager,	0x49F371E1,0x8C5C,0x4d9c,0x9A,0x3B,0x54,0xA6,0x82,0x7F,0x51,0x3C)
-DEFINE_GUID(CLSID_PreviousVersions,		0x596AB062,0xB4D2,0x4215,0x9F,0x74,0xE9,0x10,0x9B,0x0A,0x81,0x53)
-DEFINE_GUID(CLSID_NetworkConnections,		0x7007ACC7,0x3202,0x11D1,0xAA,0xD2,0x00,0x80,0x5F,0xC1,0x27,0x0E)
-DEFINE_GUID(CLSID_NamespaceTreeControl,		0xAE054212,0x3535,0x4430,0x83,0xED,0xD5,0x01,0xAA,0x66,0x80,0xE6)
-DEFINE_GUID(CLSID_IENamespaceTreeControl,	0xACE52D03,0xE5CD,0x4b20,0x82,0xFF,0xE7,0x1B,0x11,0xBE,0xAE,0x1D)
-DEFINE_GUID(CLSID_ScheduledTasks,		0xD6277990,0x4C6A,0x11CF,0x8D,0x87,0x00,0xAA,0x00,0x60,0xF5,0xBF)
-DEFINE_GUID(CLSID_ApplicationAssociationRegistration,	0x591209c7,0x767b,0x42b2,0x9f,0xba,0x44,0xee,0x46,0x15,0xf2,0xc7)
-DEFINE_GUID(CLSID_ApplicationAssociationRegistrationUI, 0x1968106d,0xf3b5,0x44cf,0x89,0x0e,0x11,0x6f,0xcb,0x9e,0xce,0xf1)
-DEFINE_GUID(CLSID_SearchFolderItemFactory,	0x14010e02,0xbbbd,0x41f0,0x88,0xe3,0xed,0xa3,0x71,0x21,0x65,0x84)
-DEFINE_GUID(CLSID_OpenControlPanel,		0x06622D85,0x6856,0x4460,0x8D,0xE1,0xA8,0x19,0x21,0xB4,0x1C,0x4B)
-DEFINE_GUID(CLSID_MailRecipient,		0x9E56BE60,0xC50F,0x11CF,0x9A,0x2C,0x00,0xA0,0xC9,0x0A,0x90,0xCE)
-DEFINE_GUID(CLSID_NetworkExplorerFolder,	0xF02C1A0D,0xBE21,0x4350,0x88,0xB0,0x73,0x67,0xFC,0x96,0xEF,0x3C)
-DEFINE_GUID(CLSID_DestinationList,		0x77f10cf0,0x3db5,0x4966,0xb5,0x20,0xb7,0xc5,0x4f,0xd3,0x5e,0xd6)
-DEFINE_GUID(CLSID_ApplicationDestinations,	0x86c14003,0x4d6b,0x4ef3,0xa7,0xb4,0x05,0x06,0x66,0x3b,0x2e,0x68)
-DEFINE_GUID(CLSID_ApplicationDocumentLists,	0x86bec222,0x30f2,0x47e0,0x9f,0x25,0x60,0xd1,0x1c,0xd7,0x5c,0x28)
-DEFINE_GUID(CLSID_HomeGroup,			0xDE77BA04,0x3C92,0x4d11,0xA1,0xA5,0x42,0x35,0x2A,0x53,0xE0,0xE3)
-DEFINE_GUID(CLSID_ShellLibrary,			0xd9b3211d,0xe57f,0x4426,0xaa,0xef,0x30,0xa8,0x06,0xad,0xd3,0x97)
-DEFINE_GUID(CLSID_AppStartupLink,		0x273eb5e7,0x88b0,0x4843,0xbf,0xef,0xe2,0xc8,0x1d,0x43,0xaa,0xe5)
-DEFINE_GUID(CLSID_EnumerableObjectCollection,	0x2d3468c1,0x36a7,0x43b6,0xac,0x24,0xd3,0xf0,0x2f,0xd9,0x60,0x7a)
-DEFINE_GUID(CLSID_DesktopGadget,		0x924ccc1b,0x6562,0x4c85,0x86,0x57,0xd1,0x77,0x92,0x52,0x22,0xb6)
+
+define SID_PublishingWizard <CSID_PublishingWizard>
+
+DEFINE_GUIDS(CLSID_DesktopWallpaper, "C2CF3110-460E-4fc1-B9D0-8A1C0C9CC4BD")
+DEFINE_GUIDS(CLSID_ShellDesktop, "00021400-0000-0000-C000-000000000046")
+DEFINE_GUIDS(CLSID_ShellFSFolder, "F3364BA0-65B9-11CE-A9BA-00AA004AE837")
+DEFINE_GUIDS(CLSID_NetworkPlaces, "208D2C60-3AEA-1069-A2D7-08002B30309D")
+DEFINE_GUIDS(CLSID_ShellLink, "00021401-0000-0000-C000-000000000046")
+DEFINE_GUIDS(CLSID_QueryCancelAutoPlay, "331F1768-05A9-4ddd-B86E-DAE34DDC998A")
+DEFINE_GUIDS(CLSID_DriveSizeCategorizer, "94357B53-CA29-4b78-83AE-E8FE7409134F")
+DEFINE_GUIDS(CLSID_DriveTypeCategorizer, "B0A8F3CF-4333-4bab-8873-1CCB1CADA48B")
+DEFINE_GUIDS(CLSID_FreeSpaceCategorizer, "B5607793-24AC-44c7-82E2-831726AA6CB7")
+DEFINE_GUIDS(CLSID_TimeCategorizer, "3bb4118f-ddfd-4d30-a348-9fb5d6bf1afe")
+DEFINE_GUIDS(CLSID_SizeCategorizer, "55d7b852-f6d1-42f2-aa75-8728a1b2d264")
+DEFINE_GUIDS(CLSID_AlphabeticalCategorizer, "3c2654c6-7372-4f6b-b310-55d6128f49d2")
+DEFINE_GUIDS(CLSID_MergedCategorizer, "8e827c11-33e7-4bc1-b242-8cd9a1c2b304")
+DEFINE_GUIDS(CLSID_ImageProperties, "7ab770c7-0e23-4d7a-8aa2-19bfad479829")
+DEFINE_GUIDS(CLSID_PropertiesUI, "d912f8cf-0396-4915-884e-fb425d32943b")
+DEFINE_GUIDS(CLSID_UserNotification, "0010890e-8789-413c-adbc-48f5b511b3af")
+DEFINE_GUIDS(CLSID_CDBurn, "fbeb8a05-beee-4442-804e-409d6c4515e9")
+DEFINE_GUIDS(CLSID_TaskbarList, "56FDF344-FD6D-11d0-958A-006097C9A090")
+DEFINE_GUIDS(CLSID_StartMenuPin, "a2a9545d-a0c2-42b4-9708-a0b2badd77c8")
+DEFINE_GUIDS(CLSID_WebWizardHost, "c827f149-55c1-4d28-935e-57e47caed973")
+DEFINE_GUIDS(CLSID_PublishDropTarget, "CC6EEFFB-43F6-46c5-9619-51D571967F7D")
+DEFINE_GUIDS(CLSID_PublishingWizard, "6b33163c-76a5-4b6c-bf21-45de9cd503a1")
+DEFINE_GUIDS(CLSID_InternetPrintOrdering, "add36aa8-751a-4579-a266-d66f5202ccbb")
+DEFINE_GUIDS(CLSID_FolderViewHost, "20b1cb23-6968-4eb9-b7d4-a66d00d07cee")
+DEFINE_GUIDS(CLSID_ExplorerBrowser, "71f96385-ddd6-48d3-a0c1-ae06e8b055fb")
+DEFINE_GUIDS(CLSID_ImageRecompress, "6e33091c-d2f8-4740-b55e-2e11d1477a2c")
+DEFINE_GUIDS(CLSID_TrayBandSiteService, "F60AD0A0-E5E1-45cb-B51A-E15B9F8B2934")
+DEFINE_GUIDS(CLSID_TrayDeskBand, "E6442437-6C68-4f52-94DD-2CFED267EFB9")
+DEFINE_GUIDS(CLSID_AttachmentServices, "4125dd96-e03a-4103-8f70-e0597d803b9c")
+DEFINE_GUIDS(CLSID_DocPropShellExtension, "883373C3-BF89-11D1-BE35-080036B11A03")
+DEFINE_GUIDS(CLSID_ShellItem, "9ac9fbe1-e0a2-4ad6-b4ee-e212013ea917")
+DEFINE_GUIDS(CLSID_NamespaceWalker, "72eb61e0-8672-4303-9175-f2e4c68b2e7c")
+DEFINE_GUIDS(CLSID_FileOperation, "3ad05575-8857-4850-9277-11b85bdb8e09")
+DEFINE_GUIDS(CLSID_FileOpenDialog, "DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7")
+DEFINE_GUIDS(CLSID_FileSaveDialog, "C0B4E2F3-BA21-4773-8DBA-335EC946EB8B")
+DEFINE_GUIDS(CLSID_KnownFolderManager, "4df0c730-df9d-4ae3-9153-aa6b82e9795a")
+DEFINE_GUIDS(CLSID_FSCopyHandler, "D197380A-0A79-4dc8-A033-ED882C2FA14B")
+DEFINE_GUIDS(CLSID_SharingConfigurationManager, "49F371E1-8C5C-4d9c-9A3B-54A6827F513C")
+DEFINE_GUIDS(CLSID_PreviousVersions, "596AB062-B4D2-4215-9F74-E9109B0A8153")
+DEFINE_GUIDS(CLSID_NetworkConnections, "7007ACC7-3202-11D1-AAD2-00805FC1270E")
+DEFINE_GUIDS(CLSID_NamespaceTreeControl, "AE054212-3535-4430-83ED-D501AA6680E6")
+DEFINE_GUIDS(CLSID_IENamespaceTreeControl, "ACE52D03-E5CD-4b20-82FF-E71B11BEAE1D")
+DEFINE_GUIDS(CLSID_ScheduledTasks, "D6277990-4C6A-11CF-8D87-00AA0060F5BF")
+DEFINE_GUIDS(CLSID_ApplicationAssociationRegistration, "591209c7-767b-42b2-9fba-44ee4615f2c7")
+DEFINE_GUIDS(CLSID_ApplicationAssociationRegistrationUI, "1968106d-f3b5-44cf-890e-116fcb9ecef1")
+DEFINE_GUIDS(CLSID_SearchFolderItemFactory, "14010e02-bbbd-41f0-88e3-eda371216584")
+DEFINE_GUIDS(CLSID_OpenControlPanel, "06622D85-6856-4460-8DE1-A81921B41C4B")
+DEFINE_GUIDS(CLSID_MailRecipient, "9E56BE60-C50F-11CF-9A2C-00A0C90A90CE")
+DEFINE_GUIDS(CLSID_NetworkExplorerFolder, "F02C1A0D-BE21-4350-88B0-7367FC96EF3C")
+DEFINE_GUIDS(CLSID_DestinationList, "77f10cf0-3db5-4966-b520-b7c54fd35ed6")
+DEFINE_GUIDS(CLSID_ApplicationDestinations, "86c14003-4d6b-4ef3-a7b4-0506663b2e68")
+DEFINE_GUIDS(CLSID_ApplicationDocumentLists, "86bec222-30f2-47e0-9f25-60d11cd75c28")
+DEFINE_GUIDS(CLSID_HomeGroup, "DE77BA04-3C92-4d11-A1A5-42352A53E0E3")
+DEFINE_GUIDS(CLSID_ShellLibrary, "d9b3211d-e57f-4426-aaef-30a806add397")
+DEFINE_GUIDS(CLSID_AppStartupLink, "273eb5e7-88b0-4843-bfef-e2c81d43aae5")
+DEFINE_GUIDS(CLSID_EnumerableObjectCollection, "2d3468c1-36a7-43b6-ac24-d3f02fd9607a")
+DEFINE_GUIDS(CLSID_DesktopGadget, "924ccc1b-6562-4c85-8657-d177925222b6")
+DEFINE_GUIDS(CLSID_AccessibilityDockingService, "29CE1D46-B481-4AA0-A08A-D3EBC8ACA402")
+DEFINE_GUIDS(CLSID_FrameworkInputPane, "D5120AA3-46BA-44C5-822D-CA8092C1FC72")
+DEFINE_GUIDS(CLSID_DefFolderMenu, "c63382be-7933-48d0-9ac8-85fb46be2fdd")
+DEFINE_GUIDS(CLSID_AppVisibility, "7E5FE3D9-985F-4908-91F9-EE19F9FD1514")
+DEFINE_GUIDS(CLSID_AppShellVerbHandler, "4ED3A719-CEA8-4BD9-910D-E252F997AFC2")
+DEFINE_GUIDS(CLSID_ExecuteUnknown, "e44e9428-bdbc-4987-a099-40dc8fd255e7")
+DEFINE_GUIDS(CLSID_PackageDebugSettings, "B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")
+DEFINE_GUIDS(CLSID_SuspensionDependencyManager, "6B273FC5-61FD-4918-95A2-C3B5E9D7F581")
+DEFINE_GUIDS(CLSID_ApplicationActivationManager, "45BA127D-10A8-46EA-8AB7-56EA9078943C")
+DEFINE_GUIDS(CLSID_ApplicationDesignModeSettings, "958a6fb5-dcb2-4faf-aafd-7fb054ad1a3b")
+DEFINE_GUIDS(CLSID_ExecuteFolder, "11dbb47c-a525-400b-9e80-a54615a090c0")
 
 endif
 
@@ -6223,9 +6257,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 if (_WIN32_IE GE _WIN32_IE_IE70)
-LIBRARYMANAGEDIALOGOPTIONS typedef sdword
-LMD_DEFAULT		equ 0
-LMD_ALLOWUNINDEXABLENETWORKLOCATIONS equ 0x1
+
+.enum LIBRARYMANAGEDIALOGOPTIONS {
+    LMD_DEFAULT,
+    LMD_ALLOWUNINDEXABLENETWORKLOCATIONS
+    }
 
 SHShowManageLibraryUI proto WINAPI \
 	    psiLibrary: ptr IShellItem,
@@ -6249,7 +6285,7 @@ endif ; if (NTDDI_VERSION GE NTDDI_WIN7)
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
 ifndef __IAssocHandlerInvoker_INTERFACE_DEFINED__
-__IAssocHandlerInvoker_INTERFACE_DEFINED__ equ 1
+define __IAssocHandlerInvoker_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAssocHandlerInvoker, "92218CAB-ECAA-4335-8133-807FD234C2EE")
 
@@ -6263,7 +6299,7 @@ DEFINE_IIDX(IAssocHandlerInvoker, "92218CAB-ECAA-4335-8133-807FD234C2EE")
 endif
 
 ifndef __IAssocHandler_INTERFACE_DEFINED__
-__IAssocHandler_INTERFACE_DEFINED__ equ 1
+define __IAssocHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAssocHandler, "F04061AC-1659-4a3f-A954-775AA57FC083")
 
@@ -6282,7 +6318,7 @@ DEFINE_IIDX(IAssocHandler, "F04061AC-1659-4a3f-A954-775AA57FC083")
 endif
 
 ifndef __IEnumAssocHandlers_INTERFACE_DEFINED__
-__IEnumAssocHandlers_INTERFACE_DEFINED__ equ 1
+define __IEnumAssocHandlers_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumAssocHandlers, "973810ae-9599-4b88-9e4d-6ee98c9552da")
 
@@ -6294,10 +6330,10 @@ DEFINE_IIDX(IEnumAssocHandlers, "973810ae-9599-4b88-9e4d-6ee98c9552da")
 
 endif
 
-ASSOC_FILTER		typedef SDWORD
-ASSOC_FILTER_NONE	equ 0
-ASSOC_FILTER_RECOMMENDED equ 0x1
-ASSOC_FILTER		typedef SINT
+.enum ASSOC_FILTER {
+    ASSOC_FILTER_NONE,
+    ASSOC_FILTER_RECOMMENDED
+    }
 
 ;SHSTDAPI
 SHAssocEnumHandlers proto WINAPI \
@@ -6333,7 +6369,7 @@ DEFINE_IIDX(IDataObjectProvider, "3D25F6D6-4B2A-433c-9184-7C33AD35D001")
 endif
 
 ifndef __IDataTransferManagerInterop_INTERFACE_DEFINED__
-__IDataTransferManagerInterop_INTERFACE_DEFINED__ equ <>
+define __IDataTransferManagerInterop_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataTransferManagerInterop, "3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")
 
@@ -6351,7 +6387,7 @@ endif ;; NTDDI_WIN8
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
 ifndef __IFrameworkInputPaneHandler_INTERFACE_DEFINED__
-__IFrameworkInputPaneHandler_INTERFACE_DEFINED__ equ <>
+define __IFrameworkInputPaneHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFrameworkInputPaneHandler, "226C537B-1E76-4D9E-A760-33DB29922F18")
 
@@ -6365,7 +6401,7 @@ DEFINE_IIDX(IFrameworkInputPaneHandler, "226C537B-1E76-4D9E-A760-33DB29922F18")
 endif
 
 ifndef __IFrameworkInputPane_INTERFACE_DEFINED__
-__IFrameworkInputPane_INTERFACE_DEFINED__ equ <>
+define __IFrameworkInputPane_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFrameworkInputPane, "5752238B-24F0-495A-82F1-2FD593056796")
 
@@ -6401,12 +6437,13 @@ endif ;; NTDDI_WIN8
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
-UNDOCK_REASON		typedef sdword
-UR_RESOLUTION_CHANGE	equ 0
-UR_MONITOR_DISCONNECT	equ 1
+.enum UNDOCK_REASON {
+    UR_RESOLUTION_CHANGE,
+    UR_MONITOR_DISCONNECT
+    }
 
 ifndef __IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__
-__IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__ equ <>
+define __IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibilityDockingServiceCallback, "157733FD-A592-42E5-B594-248468C5A81B")
 
@@ -6419,7 +6456,7 @@ DEFINE_IIDX(IAccessibilityDockingServiceCallback, "157733FD-A592-42E5-B594-24846
 endif
 
 ifndef __IAccessibilityDockingService_INTERFACE_DEFINED__
-__IAccessibilityDockingService_INTERFACE_DEFINED__ equ <>
+define __IAccessibilityDockingService_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibilityDockingService, "8849DC22-CEDF-4C95-998D-051419DD3F76")
 
@@ -6433,13 +6470,14 @@ DEFINE_IIDX(IAccessibilityDockingService, "8849DC22-CEDF-4C95-998D-051419DD3F76"
 
 endif
 
-MONITOR_APP_VISIBILITY	typedef sdword
-MAV_UNKNOWN		equ 0
-MAV_NO_APP_VISIBLE	equ 1
-MAV_APP_VISIBLE		equ 2
+.enum MONITOR_APP_VISIBILITY {
+    MAV_UNKNOWN,
+    MAV_NO_APP_VISIBLE,
+    MAV_APP_VISIBLE
+    }
 
 ifndef __IAppVisibilityEvents_INTERFACE_DEFINED__
-__IAppVisibilityEvents_INTERFACE_DEFINED__ equ <>
+define __IAppVisibilityEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAppVisibilityEvents, "6584CE6B-7D82-49C2-89C9-C6BC02BA8C38")
 
@@ -6453,7 +6491,7 @@ DEFINE_IIDX(IAppVisibilityEvents, "6584CE6B-7D82-49C2-89C9-C6BC02BA8C38")
 endif
 
 ifndef __IAppVisibility_INTERFACE_DEFINED__
-__IAppVisibility_INTERFACE_DEFINED__ equ <>
+define __IAppVisibility_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAppVisibility, "2246EA2D-CAEA-4444-A3C4-6DE827E44313")
 
@@ -6468,15 +6506,16 @@ DEFINE_IIDX(IAppVisibility, "2246EA2D-CAEA-4444-A3C4-6DE827E44313")
 
 endif
 
-PACKAGE_EXECUTION_STATE typedef sdword
-PES_UNKNOWN		equ 0
-PES_RUNNING		equ 1
-PES_SUSPENDING		equ 2
-PES_SUSPENDED		equ 3
-PES_TERMINATED		equ 4
+.enum PACKAGE_EXECUTION_STATE {
+    PES_UNKNOWN,
+    PES_RUNNING,
+    PES_SUSPENDING,
+    PES_SUSPENDED,
+    PES_TERMINATED
+    }
 
 ifndef __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__
-__IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__ equ <>
+define __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPackageExecutionStateChangeNotification, "1BB12A62-2AD8-432B-8CCF-0C2C52AFCD5B")
 
@@ -6489,7 +6528,7 @@ DEFINE_IIDX(IPackageExecutionStateChangeNotification, "1BB12A62-2AD8-432B-8CCF-0
 endif
 
 ifndef __IPackageDebugSettings_INTERFACE_DEFINED__
-__IPackageDebugSettings_INTERFACE_DEFINED__ equ <>
+define __IPackageDebugSettings_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPackageDebugSettings, "F27C3930-8029-4AD1-94E3-3DBA417810C1")
 
@@ -6516,7 +6555,7 @@ DEFINE_IIDX(IPackageDebugSettings, "F27C3930-8029-4AD1-94E3-3DBA417810C1")
 endif
 
 ifndef __ISuspensionDependencyManager_INTERFACE_DEFINED__
-__ISuspensionDependencyManager_INTERFACE_DEFINED__ equ 1
+define __ISuspensionDependencyManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISuspensionDependencyManager, "52B83A42-2543-416A-81D9-C0DE7969C8B3")
 
@@ -6530,12 +6569,13 @@ DEFINE_IIDX(ISuspensionDependencyManager, "52B83A42-2543-416A-81D9-C0DE7969C8B3"
 
 endif
 
-AHE_TYPE		typedef SDWORD
-AHE_DESKTOP		equ 0
-AHE_IMMERSIVE		equ 1
+.enum AHE_TYPE {
+    AHE_DESKTOP,
+    AHE_IMMERSIVE
+    }
 
 ifndef __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__
-__IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__ equ 1
+define __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IExecuteCommandApplicationHostEnvironment, "18B21AA9-E184-4FF0-9F5E-F882D03771B3")
 
@@ -6547,13 +6587,14 @@ DEFINE_IIDX(IExecuteCommandApplicationHostEnvironment, "18B21AA9-E184-4FF0-9F5E-
 
 endif
 
-EC_HOST_UI_MODE		typedef SDWORD
-ECHUIM_DESKTOP		equ 0
-ECHUIM_IMMERSIVE	equ ( ECHUIM_DESKTOP + 1 )
-ECHUIM_SYSTEM_LAUNCHER	equ ( ECHUIM_IMMERSIVE + 1 )
+.enum EC_HOST_UI_MODE {
+    ECHUIM_DESKTOP,
+    ECHUIM_IMMERSIVE = ( ECHUIM_DESKTOP + 1 ),
+    ECHUIM_SYSTEM_LAUNCHER = ( ECHUIM_IMMERSIVE + 1 )
+    }
 
 ifndef __IExecuteCommandHost_INTERFACE_DEFINED__
-__IExecuteCommandHost_INTERFACE_DEFINED__ equ 1
+define __IExecuteCommandHost_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IExecuteCommandHost, "4b6832a2-5f04-4c9d-b89d-727a15d103e7")
 
@@ -6566,19 +6607,22 @@ DEFINE_IIDX(IExecuteCommandHost, "4b6832a2-5f04-4c9d-b89d-727a15d103e7")
 endif
 
 SID_ExecuteCommandHost	equ <IID_IExecuteCommandHost>
-APPLICATION_VIEW_STATE	typedef SDWORD
-AVS_FULLSCREEN_LANDSCAPE equ 0
-AVS_FILLED		equ ( AVS_FULLSCREEN_LANDSCAPE + 1 )
-AVS_SNAPPED		equ ( AVS_FILLED + 1 )
-AVS_FULLSCREEN_PORTRAIT equ ( AVS_SNAPPED + 1 )
 
-EDGE_GESTURE_KIND	typedef SDWORD
-EGK_TOUCH		equ 0
-EGK_KEYBOARD		equ ( EGK_TOUCH + 1 )
-EGK_MOUSE		equ ( EGK_KEYBOARD + 1 )
+.enum APPLICATION_VIEW_STATE {
+    AVS_FULLSCREEN_LANDSCAPE,
+    AVS_FILLED = ( AVS_FULLSCREEN_LANDSCAPE + 1 ),
+    AVS_SNAPPED = ( AVS_FILLED + 1 ),
+    AVS_FULLSCREEN_PORTRAIT = ( AVS_SNAPPED + 1 )
+    }
+
+.enum EDGE_GESTURE_KIND {
+    EGK_TOUCH,
+    EGK_KEYBOARD = ( EGK_TOUCH + 1 ),
+    EGK_MOUSE = ( EGK_KEYBOARD + 1 )
+    }
 
 ifndef __IApplicationDesignModeSettings_INTERFACE_DEFINED__
-__IApplicationDesignModeSettings_INTERFACE_DEFINED__ equ 1
+define __IApplicationDesignModeSettings_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IApplicationDesignModeSettings, "2A3DEE9A-E31D-46D6-8508-BCC597DB3557")
 
@@ -6640,7 +6684,7 @@ STR_TAB_REUSE_IDENTIFIER equ <L"Tab Reuse Identifier">
 STR_REFERRER_IDENTIFIER equ <L"Referrer Identifier">
 
 ifndef __ILaunchTargetMonitor_INTERFACE_DEFINED__
-__ILaunchTargetMonitor_INTERFACE_DEFINED__ equ 1
+define __ILaunchTargetMonitor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILaunchTargetMonitor,"266FBC7E-490D-46ED-A96B-2274DB252003")
 
@@ -6653,16 +6697,18 @@ DEFINE_IIDX(ILaunchTargetMonitor,"266FBC7E-490D-46ED-A96B-2274DB252003")
 endif
 
 DEFINE_GUID(SID_LaunchTargetMonitor, 0x8d547fa1, 0xcc45, 0x40c8, 0xb7, 0xc1, 0xd4, 0x8c, 0x18, 0x3f, 0x13, 0xf3);
-APPLICATION_VIEW_SIZE_PREFERENCE typedef SDWORD
-AVSP_DEFAULT		equ 0
-AVSP_USE_LESS		equ 1
-AVSP_USE_HALF		equ 2
-AVSP_USE_MORE		equ 3
-AVSP_USE_MINIMUM	equ 4
-AVSP_USE_NONE		equ 5
+
+.enum APPLICATION_VIEW_SIZE_PREFERENCE {
+    AVSP_DEFAULT,
+    AVSP_USE_LESS,
+    AVSP_USE_HALF,
+    AVSP_USE_MORE,
+    AVSP_USE_MINIMUM,
+    AVSP_USE_NONE
+    }
 
 ifndef __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__
-__ILaunchSourceViewSizePreference_INTERFACE_DEFINED__ equ 1
+define __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILaunchSourceViewSizePreference, "E5AA01F7-1FB8-4830-8720-4E6734CBD5F3")
 
@@ -6678,7 +6724,7 @@ endif
 DEFINE_GUID(SID_LaunchSourceViewSizePreference, 0x80605492, 0x67d9, 0x414f, 0xaf, 0x89, 0xa1, 0xcd, 0xf1, 0x24, 0x2b, 0xc1);
 
 ifndef __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__
-__ILaunchTargetViewSizePreference_INTERFACE_DEFINED__ equ 1
+define __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILaunchTargetViewSizePreference, "2F0666C6-12F7-4360-B511-A394A0553725")
 
@@ -6693,7 +6739,7 @@ endif
 DEFINE_GUID(SID_LaunchTargetViewSizePreference, 0x26db2472, 0xb7b7, 0x406b, 0x97, 0x2, 0x73, 0xa, 0x4e, 0x20, 0xd3, 0xbf);
 
 ifndef __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__
-__ILaunchSourceAppUserModelId_INTERFACE_DEFINED__ equ 1
+define __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILaunchSourceAppUserModelId, "989191AC-28FF-4CF0-9584-E0D078BC2396")
 
@@ -6711,7 +6757,7 @@ endif ;; NTDDI_WINBLUE
 
 
 ifndef __IInitializeWithWindow_INTERFACE_DEFINED__
-__IInitializeWithWindow_INTERFACE_DEFINED__ equ 1
+define __IInitializeWithWindow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInitializeWithWindow, "3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")
 
@@ -6759,12 +6805,13 @@ endif ;; NTDDI_WIN8
 
 if (NTDDI_VERSION GE NTDDI_WINBLUE)
 
-FLYOUT_PLACEMENT	typedef SDWORD
-FP_DEFAULT		equ 0
-FP_ABOVE		equ ( FP_DEFAULT + 1 )
-FP_BELOW		equ ( FP_ABOVE + 1 )
-FP_LEFT			equ ( FP_BELOW + 1 )
-FP_RIGHT		equ ( FP_LEFT + 1 )
+.enum FLYOUT_PLACEMENT {
+    FP_DEFAULT,
+    FP_ABOVE = ( FP_DEFAULT + 1 ),
+    FP_BELOW = ( FP_ABOVE + 1 ),
+    FP_LEFT = ( FP_BELOW + 1 ),
+    FP_RIGHT = ( FP_LEFT + 1 )
+    }
 
 ifndef __IContactManagerInterop_INTERFACE_DEFINED__
 __IContactManagerInterop_INTERFACE_DEFINED__ equ 1

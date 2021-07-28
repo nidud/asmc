@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,96 +18,8 @@ include ole2.inc
 endif
 
 ifndef __windows2Eui2Enotifications_h__
-__windows2Eui2Enotifications_h__ equ <>
+define __windows2Eui2Enotifications_h__
 
-
-ifndef ____FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__
-____FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__
-____FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__
-____FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__
-____FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__
-____FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__
-____FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable_FWD_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable_FWD_DEFINED__ equ 1
-endif
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs_FWD_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs_FWD_DEFINED__ equ 1
-endif
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs_FWD_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotification_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_FWD_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_FWD_DEFINED__ equ 1
-endif
 
 include inspectable.inc
 include AsyncInfo.inc
@@ -116,39 +28,12 @@ include Windows.Foundation.inc
 include Windows.Data.Xml.Dom.inc
 include windows.foundation.collections.inc
 
-ifndef DEF___FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification_USE
-DEF___FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification_USE equ 1
+ifndef DEF__FIIterator_ScheduledTileNotification_USE
+define DEF__FIIterator_ScheduledTileNotification_USE
 
-DEFINE_IIDX(__FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification, "5665e491-6543-5036-935f-b5157950b359")
+DEFINE_IIDX(FIIterator_ScheduledTileNotification, "5665e491-6543-5036-935f-b5157950b359")
 
-.comdef __FIIterator_1_Windows__CUI__CNotifications__CScheduledTileNotification : public IInspectable
-
-    get_Current		proc :ptr
-    get_HasCurrent	proc :ptr
-    MoveNext		proc :ptr
-    GetMany		proc :SINT, :ptr, :dword
-    .ends
-
-endif
-
-ifndef ____FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(__FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification, "4b60d1e5-52ae-5766-9720-be4ad086f952")
-
-.comdef __FIIterable_1_Windows__CUI__CNotifications__CScheduledTileNotification : public IInspectable
-
-    First		proc :ptr
-    .ends
-
-endif
-
-ifndef ____FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__
-____FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(__FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification, "304238b6-888a-5dd2-96cd-bfca8927483b")
-
-.comdef __FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotification : public IInspectable
+.comdef FIIterator_ScheduledTileNotification : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -158,24 +43,51 @@ DEFINE_IIDX(__FIIterator_1_Windows__CUI__CNotifications__CScheduledToastNotifica
 
 endif
 
-ifndef ____FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__ equ 1
+ifndef __FIIterable_ScheduledTileNotification_INTERFACE_DEFINED__
+define __FIIterable_ScheduledTileNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification, "7a7b2a51-c182-5846-a861-4f9c036f24ad")
+DEFINE_IIDX(FIIterable_ScheduledTileNotification, "4b60d1e5-52ae-5766-9720-be4ad086f952")
 
-.comdef __FIIterable_1_Windows__CUI__CNotifications__CScheduledToastNotification : public IInspectable
+.comdef FIIterable_ScheduledTileNotification : public IInspectable
 
     First		proc :ptr
     .ends
 
 endif
 
-ifndef ____FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification_INTERFACE_DEFINED__ equ 1
+ifndef __FIIterator_ScheduledToastNotification_INTERFACE_DEFINED__
+define __FIIterator_ScheduledToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification, "4f729c64-a213-52e9-af8b-58adca3e597f")
+DEFINE_IIDX(FIIterator_ScheduledToastNotification, "304238b6-888a-5dd2-96cd-bfca8927483b")
 
-.comdef __FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotification : public IInspectable
+.comdef FIIterator_ScheduledToastNotification : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :dword
+    .ends
+
+endif
+
+ifndef __FIIterable_ScheduledToastNotification_INTERFACE_DEFINED__
+define __FIIterable_ScheduledToastNotification_INTERFACE_DEFINED__
+
+DEFINE_IIDX(FIIterable_ScheduledToastNotification, "7a7b2a51-c182-5846-a861-4f9c036f24ad")
+
+.comdef FIIterable_ScheduledToastNotification : public IInspectable
+
+    First		proc :ptr
+    .ends
+
+endif
+
+ifndef __FIVectorView_ScheduledTileNotification_INTERFACE_DEFINED__
+define __FIVectorView_ScheduledTileNotification_INTERFACE_DEFINED__
+
+DEFINE_IIDX(FIVectorView_ScheduledTileNotification, "4f729c64-a213-52e9-af8b-58adca3e597f")
+
+.comdef FIVectorView_ScheduledTileNotification : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -185,12 +97,12 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CNotifications__CScheduledTileNotific
 
 endif
 
-ifndef ____FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification_INTERFACE_DEFINED__ equ 1
+ifndef __FIVectorView_ScheduledToastNotification_INTERFACE_DEFINED__
+define __FIVectorView_ScheduledToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification, "ba0aff1f-6a8a-5a7e-a9f7-505b6266a436")
+DEFINE_IIDX(FIVectorView_CScheduledToastNotification, "ba0aff1f-6a8a-5a7e-a9f7-505b6266a436")
 
-.comdef __FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotification : public IInspectable
+.comdef FIVectorView_ScheduledToastNotification : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -200,43 +112,43 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CNotifications__CScheduledToastNotifi
 
 endif
 
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable_INTERFACE_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable_INTERFACE_DEFINED__ equ 1
+ifndef __ToastNotification_IInspectable_INTERFACE_DEFINED__
+define __ToastNotification_IInspectable_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable, "ab54de2d-97d9-5528-b6ad-105afe156530")
+DEFINE_IIDX(ToastNotification_IInspectable, "ab54de2d-97d9-5528-b6ad-105afe156530")
 
-.comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_IInspectable : public IUnknown
-
-    _Invoke		proc :ptr, :ptr
-    .ends
-
-endif
-
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs_INTERFACE_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs, "61c2402f-0ed0-5a18-ab69-59f4aa99a368")
-
-.comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastDismissedEventArgs : public IUnknown
+.comdef ToastNotification_IInspectable : public IUnknown
 
     _Invoke		proc :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs_INTERFACE_DEFINED__
-____FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs_INTERFACE_DEFINED__ equ 1
+ifndef __ToastDismissedEventArgs_INTERFACE_DEFINED__
+define __ToastDismissedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs, "95e3e803-c969-5e3a-9753-ea2ad22a9a33")
+DEFINE_IIDX(ToastDismissedEventArgs, "61c2402f-0ed0-5a18-ab69-59f4aa99a368")
 
-.comdef __FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotification_Windows__CUI__CNotifications__CToastFailedEventArgs : public IUnknown
+.comdef ToastDismissedEventArgs : public IUnknown
 
     _Invoke		proc :ptr, :ptr
     .ends
 
 endif
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CNotificationSetting {
+ifndef __ToastFailedEventArgs_INTERFACE_DEFINED__
+define __ToastFailedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ToastFailedEventArgs, "95e3e803-c969-5e3a-9753-ea2ad22a9a33")
+
+.comdef ToastFailedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+.enum NotificationSetting {
     NotificationSetting_Enabled = 0,
     NotificationSetting_DisabledForApplication	= 1,
     NotificationSetting_DisabledForUser = 2,
@@ -244,19 +156,19 @@ endif
     NotificationSetting_DisabledByManifest	= 4
     }
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CToastDismissalReason {
+.enum ToastDismissalReason {
     ToastDismissalReason_UserCanceled	= 0,
     ToastDismissalReason_ApplicationHidden	= 1,
     ToastDismissalReason_TimedOut	= 2
     }
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CBadgeTemplateType {
+.enum BadgeTemplateType {
     BadgeTemplateType_BadgeGlyph	= 0,
     BadgeTemplateType_BadgeNumber	= 1
     }
 
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CTileTemplateType {
+.enum TileTemplateType {
     TileTemplateType_TileSquareImage	= 0,
     TileTemplateType_TileSquareBlock	= 1,
     TileTemplateType_TileSquareText01	= 2,
@@ -383,7 +295,7 @@ endif
     TileTemplateType_TileWide432x210IconWithBadgeAndText	= 1002
     }
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CToastTemplateType {
+.enum ToastTemplateType {
     ToastTemplateType_ToastImageAndText01	= 0,
     ToastTemplateType_ToastImageAndText02	= 1,
     ToastTemplateType_ToastImageAndText03	= 2,
@@ -394,7 +306,7 @@ endif
     ToastTemplateType_ToastText04	= 7
     }
 
-.enum __x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence {
+.enum PeriodicUpdateRecurrence {
     PeriodicUpdateRecurrence_HalfHour	= 0,
     PeriodicUpdateRecurrence_Hour	= 1,
     PeriodicUpdateRecurrence_SixHours	= 2,
@@ -403,63 +315,63 @@ endif
     }
 
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_INTERFACE_DEFINED__ equ 1
+ifndef __IToastDismissedEventArgs_INTERFACE_DEFINED__
+define __IToastDismissedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs, "3F89D935-D9CB-4538-A0F0-FFE7659938F8")
+DEFINE_IIDX(IToastDismissedEventArgs, "3F89D935-D9CB-4538-A0F0-FFE7659938F8")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs : public IInspectable
+.comdef IToastDismissedEventArgs : public IInspectable
 
     get_Reason		proc :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_INTERFACE_DEFINED__ equ 1
+ifndef __IToastFailedEventArgs_INTERFACE_DEFINED__
+define __IToastFailedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs, "35176862-CFD4-44F8-AD64-F500FD896C3B")
+DEFINE_IIDX(IToastFailedEventArgs, "35176862-CFD4-44F8-AD64-F500FD896C3B")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs : public IInspectable
+.comdef IToastFailedEventArgs : public IInspectable
 
     get_ErrorCode	proc :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_INTERFACE_DEFINED__ equ 1
+ifndef __IToastActivatedEventArgs_INTERFACE_DEFINED__
+define __IToastActivatedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs, "E3BF92F3-C197-436F-8265-0625824F8DAC")
+DEFINE_IIDX(IToastActivatedEventArgs, "E3BF92F3-C197-436F-8265-0625824F8DAC")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs : public IInspectable
+.comdef IToastActivatedEventArgs : public IInspectable
 
     get_Arguments	proc :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_INTERFACE_DEFINED__ equ 1
+ifndef __ITileUpdateManagerStatics_INTERFACE_DEFINED__
+define __ITileUpdateManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics, "DA159E5D-3EA9-4986-8D84-B09D5E12276D")
+DEFINE_IIDX(ITileUpdateManagerStatics, "DA159E5D-3EA9-4986-8D84-B09D5E12276D")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics : public IInspectable
+.comdef ITileUpdateManagerStatics : public IInspectable
 
     CreateTileUpdaterForApplication proc :ptr
     CreateTileUpdaterForApplicationWithId proc :HSTRING, :ptr
     CreateTileUpdaterForSecondaryTile proc :HSTRING, :ptr
-    GetTemplateContent	proc :__x_ABI_CWindows_CUI_CNotifications_CTileTemplateType, :ptr
+    GetTemplateContent	proc :TileTemplateType, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_INTERFACE_DEFINED__ equ 1
+ifndef __ITileUpdater_INTERFACE_DEFINED__
+define __ITileUpdater_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileUpdater, "0942A48B-1D91-44EC-9243-C1E821C29A20")
+DEFINE_IIDX(ITileUpdater, "0942A48B-1D91-44EC-9243-C1E821C29A20")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CITileUpdater : public IInspectable
+.comdef ITileUpdater : public IInspectable
 
     Update		proc :ptr
     Clear		proc
@@ -468,21 +380,21 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileUpdater, "0942A48B-1D91-44
     AddToSchedule	proc :ptr
     RemoveFromSchedule	proc :ptr
     GetScheduledTileNotifications proc :ptr
-    StartPeriodicUpdate proc :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
-    StartPeriodicUpdateAtTime proc :ptr, :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
+    StartPeriodicUpdate proc :ptr, :PeriodicUpdateRecurrence
+    StartPeriodicUpdateAtTime proc :ptr, :ptr, :PeriodicUpdateRecurrence
     StopPeriodicUpdate	proc
-    StartPeriodicUpdateBatch proc :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
-    StartPeriodicUpdateBatchAtTime proc :ptr, :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
+    StartPeriodicUpdateBatch proc :ptr, :PeriodicUpdateRecurrence
+    StartPeriodicUpdateBatchAtTime proc :ptr, :ptr, :PeriodicUpdateRecurrence
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_INTERFACE_DEFINED__ equ 1
+ifndef __ITileUpdater2_INTERFACE_DEFINED__
+define __ITileUpdater2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileUpdater2, "A2266E12-15EE-43ED-83F5-65B352BB1A84")
+DEFINE_IIDX(ITileUpdater2, "A2266E12-15EE-43ED-83F5-65B352BB1A84")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CITileUpdater2 : public IInspectable
+.comdef ITileUpdater2 : public IInspectable
 
     EnableNotificationQueueForSquare150x150 proc :boolean
     EnableNotificationQueueForWide310x150 proc :boolean
@@ -491,57 +403,57 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileUpdater2, "A2266E12-15EE-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_INTERFACE_DEFINED__ equ 1
+ifndef __IBadgeUpdateManagerStatics_INTERFACE_DEFINED__
+define __IBadgeUpdateManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics, "33400FAA-6DD5-4105-AEBC-9B50FCA492DA")
+DEFINE_IIDX(IBadgeUpdateManagerStatics, "33400FAA-6DD5-4105-AEBC-9B50FCA492DA")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics : public IInspectable
+.comdef IBadgeUpdateManagerStatics : public IInspectable
 
     CreateBadgeUpdaterForApplication proc :ptr
     CreateBadgeUpdaterForApplicationWithId proc :HSTRING, :ptr
     CreateBadgeUpdaterForSecondaryTile proc :HSTRING, :ptr
-    GetTemplateContent	proc :__x_ABI_CWindows_CUI_CNotifications_CBadgeTemplateType, :ptr
+    GetTemplateContent	proc :BadgeTemplateType, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_INTERFACE_DEFINED__ equ 1
+ifndef __IBadgeUpdater_INTERFACE_DEFINED__
+define __IBadgeUpdater_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater, "B5FA1FD4-7562-4F6C-BFA3-1B6ED2E57F2F")
+DEFINE_IIDX(IBadgeUpdater, "B5FA1FD4-7562-4F6C-BFA3-1B6ED2E57F2F")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater : public IInspectable
+.comdef IBadgeUpdater : public IInspectable
 
     Update		proc :ptr
     Clear		proc
-    StartPeriodicUpdate proc :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
-    StartPeriodicUpdateAtTime proc :ptr, :ptr, :__x_ABI_CWindows_CUI_CNotifications_CPeriodicUpdateRecurrence
+    StartPeriodicUpdate proc :ptr, :PeriodicUpdateRecurrence
+    StartPeriodicUpdateAtTime proc :ptr, :ptr, :PeriodicUpdateRecurrence
     StopPeriodicUpdate	proc
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_INTERFACE_DEFINED__ equ 1
+ifndef IToastNotificationManagerStatics_INTERFACE_DEFINED__
+define IToastNotificationManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics, "50AC103F-D235-4598-BBEF-98FE4D1A3AD4")
+DEFINE_IIDX(IToastNotificationManagerStatics, "50AC103F-D235-4598-BBEF-98FE4D1A3AD4")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics : public IInspectable
+.comdef IToastNotificationManagerStatics : public IInspectable
 
     CreateToastNotifier proc :ptr
     CreateToastNotifierWithId proc :HSTRING, :ptr
-    GetTemplateContent	proc :__x_ABI_CWindows_CUI_CNotifications_CToastTemplateType, :ptr
+    GetTemplateContent	proc :ToastTemplateType, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_INTERFACE_DEFINED__ equ 1
+ifndef __IToastNotifier_INTERFACE_DEFINED__
+define __IToastNotifier_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotifier, "75927B93-03F3-41EC-91D3-6E5BAC1B38E7")
+DEFINE_IIDX(IToastNotifier, "75927B93-03F3-41EC-91D3-6E5BAC1B38E7")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastNotifier : public IInspectable
+.comdef IToastNotifier : public IInspectable
 
     Show		proc :ptr
     Hide		proc :ptr
@@ -553,24 +465,24 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotifier, "75927B93-03F3-
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_INTERFACE_DEFINED__ equ 1
+ifndef __ITileNotificationFactory_INTERFACE_DEFINED__
+define __ITileNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory, "C6ABDD6E-4928-46C8-BDBF-81A047DEA0D4")
+DEFINE_IIDX(ITileNotificationFactory, "C6ABDD6E-4928-46C8-BDBF-81A047DEA0D4")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory : public IInspectable
+.comdef ITileNotificationFactory : public IInspectable
 
     CreateTileNotification proc :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotification_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CITileNotification_INTERFACE_DEFINED__ equ 1
+ifndef __ITileNotification_INTERFACE_DEFINED__
+define __ITileNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileNotification, "EBAEC8FA-50EC-4C18-B4D0-3AF02E5540AB")
+DEFINE_IIDX(ITileNotification, "EBAEC8FA-50EC-4C18-B4D0-3AF02E5540AB")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CITileNotification : public IInspectable
+.comdef ITileNotification : public IInspectable
 
     get_Content		proc :ptr
     put_ExpirationTime	proc :ptr
@@ -581,24 +493,24 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CITileNotification, "EBAEC8FA-50
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_INTERFACE_DEFINED__ equ 1
+ifndef __IBadgeNotificationFactory_INTERFACE_DEFINED__
+define __IBadgeNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory, "EDF255CE-0618-4D59-948A-5A61040C52F9")
+DEFINE_IIDX(IBadgeNotificationFactory, "EDF255CE-0618-4D59-948A-5A61040C52F9")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory : public IInspectable
+.comdef IBadgeNotificationFactory : public IInspectable
 
     CreateBadgeNotification proc :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_INTERFACE_DEFINED__ equ 1
+ifndef __IBadgeNotification_INTERFACE_DEFINED__
+define __IBadgeNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification, "075CB4CA-D08A-4E2F-9233-7E289C1F7722")
+DEFINE_IIDX(IBadgeNotification, "075CB4CA-D08A-4E2F-9233-7E289C1F7722")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification : public IInspectable
+.comdef IBadgeNotification : public IInspectable
 
     get_Content		proc :ptr
     put_ExpirationTime	proc :ptr
@@ -607,31 +519,31 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification, "075CB4CA-D
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_INTERFACE_DEFINED__ equ 1
+ifndef __IToastNotificationFactory_INTERFACE_DEFINED__
+define __IToastNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory, "04124B20-82C6-4229-B109-FD9ED4662B53")
+DEFINE_IIDX(IToastNotificationFactory, "04124B20-82C6-4229-B109-FD9ED4662B53")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory : public IInspectable
+.comdef IToastNotificationFactory : public IInspectable
 
     CreateToastNotification proc :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_INTERFACE_DEFINED__ equ 1
+ifndef __IToastNotification_INTERFACE_DEFINED__
+define __IToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotification, "997E2675-059E-4E60-8B06-1760917C8B80")
+DEFINE_IIDX(IToastNotification, "997E2675-059E-4E60-8B06-1760917C8B80")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIToastNotification : public IInspectable
+.comdef IToastNotification : public IInspectable
 
     get_Content		proc :ptr
     put_ExpirationTime	proc :ptr
     get_ExpirationTime	proc :ptr
     add_Dismissed	proc :ptr, :ptr
     remove_Dismissed	proc :EventRegistrationToken
-    add_Activated	proc :ptr, :ptr
+    add_Activated	proc :ptr IInspectable, :ptr EventRegistrationToken
     remove_Activated	proc :EventRegistrationToken
     add_Failed		proc :ptr, :ptr
     remove_Failed	proc :EventRegistrationToken
@@ -639,12 +551,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIToastNotification, "997E2675-0
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_INTERFACE_DEFINED__ equ 1
+ifndef __IScheduledToastNotificationFactory_INTERFACE_DEFINED__
+define __IScheduledToastNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory, "E7BED191-0BB9-4189-8394-31761B476FD7")
+DEFINE_IIDX(IScheduledToastNotificationFactory, "E7BED191-0BB9-4189-8394-31761B476FD7")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory : public IInspectable
+.comdef IScheduledToastNotificationFactory : public IInspectable
 
     CreateScheduledToastNotification proc :ptr, :ptr, :ptr
     CreateScheduledToastNotificationRecurring proc :ptr, :ptr, :ptr, :UINT32, :ptr
@@ -652,12 +564,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFact
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_INTERFACE_DEFINED__ equ 1
+ifndef __IScheduledToastNotification_INTERFACE_DEFINED__
+define __IScheduledToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification, "79F577F8-0DE7-48CD-9740-9B370490C838")
+DEFINE_IIDX(IScheduledToastNotification, "79F577F8-0DE7-48CD-9740-9B370490C838")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification : public IInspectable
+.comdef IScheduledToastNotification : public IInspectable
 
     get_Content		proc :ptr
     get_DeliveryTime	proc :ptr
@@ -669,24 +581,24 @@ DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification, "7
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_INTERFACE_DEFINED__ equ 1
+ifndef __IScheduledTileNotificationFactory_INTERFACE_DEFINED__
+define __IScheduledTileNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory, "3383138A-98C0-4C3B-BBD6-4A633C7CFC29")
+DEFINE_IIDX(IScheduledTileNotificationFactory, "3383138A-98C0-4C3B-BBD6-4A633C7CFC29")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory : public IInspectable
+.comdef IScheduledTileNotificationFactory : public IInspectable
 
     CreateScheduledTileNotification proc :ptr, :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_INTERFACE_DEFINED__
-____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_INTERFACE_DEFINED__ equ 1
+ifndef __IScheduledTileNotification_INTERFACE_DEFINED__
+define __IScheduledTileNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification, "0ABCA6D5-99DC-4C78-A11C-C9E7F86D7EF7")
+DEFINE_IIDX(IScheduledTileNotification, "0ABCA6D5-99DC-4C78-A11C-C9E7F86D7EF7")
 
-.comdef __x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification : public IInspectable
+.comdef IScheduledTileNotification : public IInspectable
 
     get_Content		proc :ptr
     get_DeliveryTime	proc :ptr
@@ -715,42 +627,13 @@ RuntimeClass_Windows_UI_Notifications_BadgeUpdateManager equ <L"Windows.UI.Notif
 RuntimeClass_Windows_UI_Notifications_ToastNotificationManager equ <L"Windows.UI.Notifications.ToastNotificationManager">
 RuntimeClass_Windows_UI_Notifications_ToastActivatedEventArgs equ <L"Windows.UI.Notifications.ToastActivatedEventArgs">
 
-HSTRING_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
+HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr DWORD, :ptr HSTRING
+HSTRING_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr DWORD, :ptr HSTRING
 
 endif

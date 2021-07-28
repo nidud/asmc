@@ -18,89 +18,7 @@ include ole2.inc
 endif
 
 ifndef __windows2Edata2Exml2Edom_h__
-__windows2Edata2Exml2Edom_h__ equ 1
-
-ifndef ____FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__
-____FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__
-____FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__
-____FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument_FWD_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument_FWD_DEFINED__
-____FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNode_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNode_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlElement_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlElement_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIDtdEntity_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIDtdEntity_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlComment_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlComment_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlText_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlText_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics_FWD_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics_FWD_DEFINED__ equ 1
-endif
+define __windows2Edata2Exml2Edom_h__
 
 include inspectable.inc
 include AsyncInfo.inc
@@ -110,12 +28,12 @@ include Windows.Storage.inc
 
 include windows.foundation.collections.inc
 
-ifndef DEF___FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode_USE
-DEF___FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode_USE equ 1
+ifndef DEF___FIIterator_IXmlNode_USE
+define DEF___FIIterator_IXmlNode_USE
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode, "3833a35e-2c61-56bd-b093-3694165f8898")
+DEFINE_IIDX(__FIIterator_IXmlNode, "3833a35e-2c61-56bd-b093-3694165f8898")
 
-.comdef __FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode : public IInspectable
+.comdef __FIIterator_IXmlNode : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -125,24 +43,24 @@ DEFINE_IIDX(__FIIterator_1_Windows__CData__CXml__CDom__CIXmlNode, "3833a35e-2c61
 
 endif
 
-ifndef ____FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode_INTERFACE_DEFINED__ equ 1
+ifndef ____FIIterable_IXmlNode_INTERFACE_DEFINED__
+define ____FIIterable_IXmlNode_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode, "f1146ffc-8c92-56e8-93f1-711f86722633")
+DEFINE_IIDX(__FIIterable_IXmlNode, "f1146ffc-8c92-56e8-93f1-711f86722633")
 
-.comdef __FIIterable_1_Windows__CData__CXml__CDom__CIXmlNode : public IInspectable
+.comdef __FIIterable_IXmlNode : public IInspectable
 
     First		proc :ptr
     .ends
 
 endif
 
-ifndef ____FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode_INTERFACE_DEFINED__ equ 1
+ifndef ____FIVectorView_IXmlNode_INTERFACE_DEFINED__
+define ____FIVectorView_IXmlNode_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode, "139d959e-e7b5-5cb6-a596-4b544478da9b")
+DEFINE_IIDX(__FIVectorView_IXmlNode, "139d959e-e7b5-5cb6-a596-4b544478da9b")
 
-.comdef __FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode : public IInspectable
+.comdef __FIVectorView_IXmlNode : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -152,24 +70,24 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CData__CXml__CDom__CIXmlNode, "139d959e-e7
 
 endif
 
-ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument_INTERFACE_DEFINED__ equ 1
+ifndef __FIAsyncOperationCompletedHandler_XmlDocument_INTERFACE_DEFINED__
+define __FIAsyncOperationCompletedHandler_XmlDocument_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument, "5eef7817-93dd-5c0b-9e5a-eb490408f3a9")
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_XmlDocument, "5eef7817-93dd-5c0b-9e5a-eb490408f3a9")
 
-.comdef __FIAsyncOperationCompletedHandler_1_Windows__CData__CXml__CDom__CXmlDocument : public IUnknown
+.comdef __FIAsyncOperationCompletedHandler_XmlDocument : public IUnknown
 
     _Invoke		proc :ptr, :AsyncStatus
     .ends
 
 endif
 
-ifndef ____FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument_INTERFACE_DEFINED__ equ 1
+ifndef ____FIAsyncOperation_XmlDocument_INTERFACE_DEFINED__
+define ____FIAsyncOperation_XmlDocument_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument, "f858e239-1896-5982-8495-143168478eb8")
+DEFINE_IIDX(__FIAsyncOperation_XmlDocument, "f858e239-1896-5982-8495-143168478eb8")
 
-.comdef __FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument : public IInspectable
+.comdef __FIAsyncOperation_XmlDocument : public IInspectable
 
     put_Completed	proc :ptr
     get_Completed	proc :ptr
@@ -178,7 +96,7 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CData__CXml__CDom__CXmlDocument, "f858
 
 endif
 
-.enum _x_ABI_CWindows_CData_CXml_CDom_CNodeType {
+.enum NodeType {
     NodeType_Invalid		= 0,
     NodeType_ElementNode	= 1,
     NodeType_AttributeNode	= 2,
@@ -194,12 +112,12 @@ endif
     NodeType_NotationNode	= 12
     }
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlNodeSelector_INTERFACE_DEFINED__
+define __IXmlNodeSelector_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector, "63DBBA8B-D0DB-4FE1-B745-F9433AFDC25B")
+DEFINE_IIDX(IXmlNodeSelector, "63DBBA8B-D0DB-4FE1-B745-F9433AFDC25B")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector : public IInspectable
+.comdef IXmlNodeSelector : public IInspectable
 
     SelectSingleNode	proc :HSTRING, :ptr
     SelectNodes		proc :HSTRING, :ptr
@@ -209,12 +127,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSelector, "63DBBA8B-D0DB-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlNodeSerializer_INTERFACE_DEFINED__
+define __IXmlNodeSerializer_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer, "5CC5B382-E6DD-4991-ABEF-06D8D2E7BD0C")
+DEFINE_IIDX(IXmlNodeSerializer, "5CC5B382-E6DD-4991-ABEF-06D8D2E7BD0C")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer : public IInspectable
+.comdef IXmlNodeSerializer : public IInspectable
 
     GetXml		proc :ptr
     get_InnerText	proc :ptr
@@ -223,12 +141,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeSerializer, "5CC5B382-E6DD
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNode_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNode_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlNode_INTERFACE_DEFINED__
+define __IXmlNode_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNode, "1C741D59-2122-47D5-A856-83F3D4214875")
+DEFINE_IIDX(IXmlNode, "1C741D59-2122-47D5-A856-83F3D4214875")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlNode : public IInspectable
+.comdef IXmlNode : public IInspectable
 
     get_NodeValue	proc :ptr
     put_NodeValue	proc :ptr
@@ -257,24 +175,24 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNode, "1C741D59-2122-47D5-A856
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDomImplementation_INTERFACE_DEFINED__
+define __IXmlDomImplementation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation, "6DE58132-F11D-4FBB-8CC6-583CBA93112F")
+DEFINE_IIDX(IXmlDomImplementation, "6DE58132-F11D-4FBB-8CC6-583CBA93112F")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDomImplementation : public IInspectable
+.comdef IXmlDomImplementation : public IInspectable
 
     HasFeature		proc :HSTRING, :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDocumentType_INTERFACE_DEFINED__
+define __IXmlDocumentType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType, "F7342425-9781-4964-8E94-9B1C6DFC9BC7")
+DEFINE_IIDX(IXmlDocumentType, "F7342425-9781-4964-8E94-9B1C6DFC9BC7")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType : public IInspectable
+.comdef IXmlDocumentType : public IInspectable
 
     get_Name		proc :ptr
     get_Entities	proc :ptr
@@ -283,12 +201,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentType, "F7342425-9781-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlAttribute_INTERFACE_DEFINED__
+define __IXmlAttribute_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute, "AC144AA4-B4F1-4DB6-B206-8A22C308DB0A")
+DEFINE_IIDX(IXmlAttribute, "AC144AA4-B4F1-4DB6-B206-8A22C308DB0A")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute : public IInspectable
+.comdef IXmlAttribute : public IInspectable
 
     get_Name		proc :ptr
     get_Specified	proc :ptr
@@ -298,23 +216,23 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlAttribute, "AC144AA4-B4F1-4DB6
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDocumentFragment_INTERFACE_DEFINED__
+define __IXmlDocumentFragment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment, "E2EA6A96-0C21-44A5-8BC9-9E4A262708EC")
+DEFINE_IIDX(IXmlDocumentFragment, "E2EA6A96-0C21-44A5-8BC9-9E4A262708EC")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentFragment : public IInspectable
+.comdef IXmlDocumentFragment : public IInspectable
 
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlElement_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlElement_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlElement_INTERFACE_DEFINED__
+define __IXmlElement_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlElement, "2DFB8A1F-6B10-4EF8-9F83-EFCCE8FAEC37")
+DEFINE_IIDX(IXmlElement, "2DFB8A1F-6B10-4EF8-9F83-EFCCE8FAEC37")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlElement : public IInspectable
+.comdef IXmlElement : public IInspectable
 
     get_TagName		proc :ptr
     GetAttribute	proc :HSTRING, :ptr
@@ -333,12 +251,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlElement, "2DFB8A1F-6B10-4EF8-9
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation_INTERFACE_DEFINED__ equ 1
+ifndef __IDtdNotation_INTERFACE_DEFINED__
+define __IDtdNotation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation, "8CB4E04D-6D46-4EDB-AB73-DF83C51AD397")
+DEFINE_IIDX(IDtdNotation, "8CB4E04D-6D46-4EDB-AB73-DF83C51AD397")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIDtdNotation : public IInspectable
+.comdef IDtdNotation : public IInspectable
 
     get_PublicId	proc :ptr
     get_SystemId	proc :ptr
@@ -360,23 +278,23 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIDtdEntity, "6A0B5FFC-63B4-480F-9E
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlEntityReference_INTERFACE_DEFINED__
+define __IXmlEntityReference_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference, "2E2F47BC-C3D0-4CCF-BB86-0AB8C36A61CF")
+DEFINE_IIDX(IXmlEntityReference, "2E2F47BC-C3D0-4CCF-BB86-0AB8C36A61CF")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlEntityReference : public IInspectable
+.comdef IXmlEntityReference : public IInspectable
 
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlProcessingInstruction_INTERFACE_DEFINED__
+define __IXmlProcessingInstruction_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction, "2707FD1E-1E92-4ECE-B6F4-26F069078DDC")
+DEFINE_IIDX(IXmlProcessingInstruction, "2707FD1E-1E92-4ECE-B6F4-26F069078DDC")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction : public IInspectable
+.comdef IXmlProcessingInstruction : public IInspectable
 
     get_Target		proc :ptr
     get_Data		proc :ptr
@@ -385,12 +303,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlProcessingInstruction, "2707FD
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlCharacterData_INTERFACE_DEFINED__
+define __IXmlCharacterData_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData, "132E42AB-4E36-4DF6-B1C8-0CE62FD88B26")
+DEFINE_IIDX(IXmlCharacterData, "132E42AB-4E36-4DF6-B1C8-0CE62FD88B26")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData : public IInspectable
+.comdef IXmlCharacterData : public IInspectable
 
     get_Data		proc :ptr
     put_Data		proc :HSTRING
@@ -404,46 +322,46 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlCharacterData, "132E42AB-4E36-
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlComment_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlComment_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlComment_INTERFACE_DEFINED__
+define __IXmlComment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlComment, "BCA474D5-B61F-4611-9CAC-2E92E3476D47")
+DEFINE_IIDX(IXmlComment, "BCA474D5-B61F-4611-9CAC-2E92E3476D47")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlComment : public IInspectable
+.comdef IXmlComment : public IInspectable
 
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlText_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlText_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlText_INTERFACE_DEFINED__
+define __IXmlText_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlText, "F931A4CB-308D-4760-A1D5-43B67450AC7E")
+DEFINE_IIDX(IXmlText, "F931A4CB-308D-4760-A1D5-43B67450AC7E")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlText : public IInspectable
+.comdef IXmlText : public IInspectable
 
     SplitText		proc :UINT32, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlCDataSection_INTERFACE_DEFINED__
+define __IXmlCDataSection_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection, "4D04B46F-C8BD-45B4-8899-0400D7C2C60F")
+DEFINE_IIDX(IXmlCDataSection, "4D04B46F-C8BD-45B4-8899-0400D7C2C60F")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlCDataSection : public IInspectable
+.comdef IXmlCDataSection : public IInspectable
 
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDocument_INTERFACE_DEFINED__
+define __IXmlDocument_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument, "F7F3A506-1E87-42D6-BCFB-B8C809FA5494")
+DEFINE_IIDX(IXmlDocument, "F7F3A506-1E87-42D6-BCFB-B8C809FA5494")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument : public IInspectable
+.comdef IXmlDocument : public IInspectable
 
     get_Doctype		proc :ptr
     get_Implementation	proc :ptr
@@ -466,12 +384,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocument, "F7F3A506-1E87-42D6-
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlNamedNodeMap_INTERFACE_DEFINED__
+define __IXmlNamedNodeMap_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap, "B3A69EB0-AAB0-4B82-A6FA-B1453F7C021B")
+DEFINE_IIDX(IXmlNamedNodeMap, "B3A69EB0-AAB0-4B82-A6FA-B1453F7C021B")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap : public IInspectable
+.comdef IXmlNamedNodeMap : public IInspectable
 
     get_Length		proc :ptr
     Item		proc :UINT32, :ptr
@@ -485,12 +403,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNamedNodeMap, "B3A69EB0-AAB0-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlNodeList_INTERFACE_DEFINED__
+define __IXmlNodeList_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList, "8C60AD77-83A4-4EC1-9C54-7BA429E13DA6")
+DEFINE_IIDX(IXmlNodeList, "8C60AD77-83A4-4EC1-9C54-7BA429E13DA6")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList : public IInspectable
+.comdef IXmlNodeList : public IInspectable
 
     get_Length		proc :ptr
     Item		proc :UINT32, :ptr
@@ -498,12 +416,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlNodeList, "8C60AD77-83A4-4EC1-
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlLoadSettings_INTERFACE_DEFINED__
+define __IXmlLoadSettings_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings, "58AA07A8-FED6-46F7-B4C5-FB1BA72108D6")
+DEFINE_IIDX(IXmlLoadSettings, "58AA07A8-FED6-46F7-B4C5-FB1BA72108D6")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings : public IInspectable
+.comdef IXmlLoadSettings : public IInspectable
 
     get_MaxElementDepth proc :ptr
     put_MaxElementDepth proc :UINT32
@@ -519,12 +437,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlLoadSettings, "58AA07A8-FED6-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDocumentIO_INTERFACE_DEFINED__
+define __IXmlDocumentIO_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO, "6CD0E74E-EE65-4489-9EBF-CA43E87BA637")
+DEFINE_IIDX(IXmlDocumentIO, "6CD0E74E-EE65-4489-9EBF-CA43E87BA637")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO : public IInspectable
+.comdef IXmlDocumentIO : public IInspectable
 
     LoadXml		proc :HSTRING
     LoadXmlWithSettings proc :HSTRING, :ptr
@@ -533,12 +451,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentIO, "6CD0E74E-EE65-448
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics_INTERFACE_DEFINED__ equ 1
+ifndef __IXmlDocumentStatics_INTERFACE_DEFINED__
+define __IXmlDocumentStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics, "5543D254-D757-4B79-9539-232B18F50BF1")
+DEFINE_IIDX(IXmlDocumentStatics, "5543D254-D757-4B79-9539-232B18F50BF1")
 
-.comdef __x_ABI_CWindows_CData_CXml_CDom_CIXmlDocumentStatics : public IInspectable
+.comdef IXmlDocumentStatics : public IInspectable
 
     LoadFromUriAsync	proc :ptr, :ptr
     LoadFromUriWithSettingsAsync proc :ptr, :ptr, :ptr

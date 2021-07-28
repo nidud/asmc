@@ -68,6 +68,8 @@ ifndef INITGUID
 include cguid.inc
 endif
 
+.pragma comment(lib, ole32)
+
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 CoGetMalloc proto WINAPI :DWORD, :ptr LPMALLOC
 endif

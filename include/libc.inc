@@ -1,49 +1,48 @@
-.pragma list(push, 0)
 ifndef __LIBC_INC
+define __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
-define __LIBC_INC
 define __STDC__
 define __LIBC__ 232
 ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
-  .err <incorrect version. Use the header that matches with the Asmc Assembler.>
+.err <incorrect version. Use the header that matches with the Asmc Assembler.>
 endif
 endif
-;;
-;; Architecture kinds:
-;;     _WIN64 (#define symbols)
-;;     _X86_
-;;     _AMD64_
-;;     _IA64_
-;;
-;; Machine Architectures:
-;;     _M_IX86
-;;     _M_AMD64
-;;     _M_IA64
-;;
+;
+; Architecture kinds:
+;     _WIN64 (#define symbols)
+;     _X86_
+;     _AMD64_
+;     _IA64_
+;
+; Machine Architectures:
+;     _M_IX86
+;     _M_AMD64
+;     _M_IA64
+;
 ifdef _WIN64
 define _IA64_
-define _M_X64	100
+define _M_X64 100
 define _M_IA64
 elseifdef _AMD64
 define _AMD64_
 define _M_AMD64 100
 else
 define _X86_
-define _M_IX86	600
+define _M_IX86 600
 endif
 
 ifdef _LINUX
-_CType	equ <syscall>
-_CDecl	equ <syscall>
-__cdecl equ <syscall>
+define _CType  <syscall>
+define _CDecl  <syscall>
+define __cdecl <syscall>
 elseifdef _STDCALL_SUPPORTED
-_CDecl	equ <c>
-_CType	equ <stdcall>
-__cdecl equ <stdcall>
-WINAPI	equ <stdcall>
+define _CDecl  <c>
+define _CType  <stdcall>
+define __cdecl <stdcall>
+define WINAPI  <stdcall>
 endif
 
 ifdef __PE__	; asmc /pe
@@ -54,25 +53,25 @@ endif
 
 ifndef _CDecl	; vararg (...) type
 ifdef _WIN64
-_CDecl equ <fastcall>
+define _CDecl <fastcall>
 else
-_CDecl equ <c>
+define _CDecl <c>
 endif
 endif
 
 ifndef __cdecl	; libc/msvcrt types
 ifdef _WIN64
-__cdecl equ <fastcall>
+define __cdecl <fastcall>
 else
-__cdecl equ <c>
+define __cdecl <c>
 endif
 endif
 
 ifndef _CType	; default (user) type
 ifdef _WIN64
-_CType equ <fastcall>
+define _CType <fastcall>
 else
-_CType equ <c>
+define _CType <c>
 endif
 endif
 ;
@@ -81,28 +80,28 @@ endif
 include sdkddkver.inc
 
 ifndef _MSC_VER
-;;
-;; _MSC_VER Defined as an integer literal that encodes the major and minor number
-;; elements of the compiler's version number. The major number is the first
-;; element of the period-delimited version number and the minor number is the
-;; second element. For example, if the version number of the Visual C++ compiler
-;; is 17.00.51106.1, the _MSC_VER macro evaluates to 1700. Enter cl /? at the
-;; command line to view the compiler's version number. This macro is always defined.
-;;
-define _MSC_VER 1200 ;; Visual C++ version 12.0
+;
+; _MSC_VER Defined as an integer literal that encodes the major and minor number
+; elements of the compiler's version number. The major number is the first
+; element of the period-delimited version number and the minor number is the
+; second element. For example, if the version number of the Visual C++ compiler
+; is 17.00.51106.1, the _MSC_VER macro evaluates to 1700. Enter cl /? at the
+; command line to view the compiler's version number. This macro is always defined.
+;
+define _MSC_VER 1200 ; Visual C++ version 12.0
 endif
 
 ifndef _MSC_FULL_VER
-;;
-;; _MSC_FULL_VER Defined as an integer literal that encodes the major, minor,
-;; and build number elements of the compiler's version number. The major number
-;; is the first element of the period-delimited version number, the minor number
-;; is the second element, and the build number is the third element. For example,
-;; if the version number of the Visual C++ compiler is 15.00.20706.01, the
-;; _MSC_FULL_VER macro evaluates to 150020706. Enter cl /? at the command line
-;; to view the compiler's version number. This macro is always defined.
-;;
-define _MSC_FULL_VER 120000000 ;; Visual C++ version 12.0
+;
+; _MSC_FULL_VER Defined as an integer literal that encodes the major, minor,
+; and build number elements of the compiler's version number. The major number
+; is the first element of the period-delimited version number, the minor number
+; is the second element, and the build number is the third element. For example,
+; if the version number of the Visual C++ compiler is 15.00.20706.01, the
+; _MSC_FULL_VER macro evaluates to 150020706. Enter cl /? at the command line
+; to view the compiler's version number. This macro is always defined.
+;
+define _MSC_FULL_VER 120000000 ; Visual C++ version 12.0
 endif
 
 ifndef _WIN32
@@ -115,48 +114,42 @@ option	frame:auto
 SIZE_T	typedef QWORD
 else
 ifdef __SSE__
-	.686
-	.xmm
+.686
+.xmm
 else
-	.486
+.486
 endif
 ifdef _AMD64
-	.x64
+.x64
 endif
-	.model	flat, _CType
+.model	flat, _CType
 SIZE_T	typedef dword
 endif
 
 ifndef _WCHAR_T_DEFINED
-_WCHAR_T_DEFINED equ <>
-wchar_t		typedef word
+define _WCHAR_T_DEFINED
+wchar_t typedef word
 endif
 
 ifndef _WCTYPE_T_DEFINED
-_WCTYPE_T_DEFINED equ <>
-wint_t		typedef wchar_t
-wctype_t	typedef wchar_t
+define _WCTYPE_T_DEFINED
+wint_t typedef wchar_t
+wctype_t typedef wchar_t
 endif
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED	equ <>
+define _TCHAR_DEFINED
 ifdef _UNICODE
-TCHAR		typedef wchar_t
-PTCHAR		typedef ptr wchar_t
-PTBYTE		typedef ptr wchar_t
-LPTSTR		typedef ptr wchar_t
+TCHAR	typedef wchar_t
+PTCHAR	typedef ptr wchar_t
+PTBYTE	typedef ptr wchar_t
+LPTSTR	typedef ptr wchar_t
 else
-TCHAR		typedef sbyte
-PTCHAR		typedef ptr sbyte
-LPTSTR		typedef ptr sbyte
-PTBYTE		typedef ptr byte
+TCHAR	typedef sbyte
+PTCHAR	typedef ptr sbyte
+LPTSTR	typedef ptr sbyte
+PTBYTE	typedef ptr byte
 endif
-endif
-
-ifdef _WIN64
-__fastcall	equ <fastcall>
-else
-__fastcall	equ <watcall>
 endif
 
 ptr_t		typedef ptr
@@ -189,11 +182,11 @@ ifdef DEBUG
 .template array_type
     base string_t ?
     argv string_t 7 dup(?)
-.ends
+   .ends
 .template warray_type
-    base	wstring_t ?
-    argv	wstring_t 7 dup(?)
-.ends
+    base wstring_t ?
+    argv wstring_t 7 dup(?)
+   .ends
 array_t		typedef ptr array_type
 warray_t	typedef ptr warray_type
 else
@@ -217,9 +210,9 @@ define TRUE	1
 define FALSE	0
 define NULL	0
 
-option		casemap:none
-size_t		typedef SIZE_T
-assert_exit	proto
+option casemap:none
+size_t typedef SIZE_T
+assert_exit proto
 
 ifndef _CALLBACK_DEFINED
 _CALLBACK_DEFINED equ <>
@@ -234,5 +227,3 @@ CALLBACK macro id, arguments:VARARG
 endif
 
 endif
-.pragma list(pop)
-

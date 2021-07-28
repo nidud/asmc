@@ -13,6 +13,7 @@ cabinet
 cfgmgr32
 clusapi
 comctl32
+combase
 comdlg32
 compstui
 comsvcs
@@ -72,6 +73,7 @@ imm32
 inseng
 iphlpapi
 kernel32
+kernelbase
 ksuser
 ktmw32
 loadperf
@@ -168,6 +170,7 @@ vssapi
 webservices
 wer
 winbio
+Windows.storage
 ;winfax
 winhttp
 wininet

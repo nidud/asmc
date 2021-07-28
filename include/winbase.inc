@@ -1742,7 +1742,7 @@ wWinMain proto WINAPI \
 	      nShowCmd: SINT
 
 ifdef __PE__
-option dllimport:<kernel32>
+.pragma comment(lib, kernel32)
 endif
 
 ;BOOL
@@ -3604,7 +3604,7 @@ QueryRecoveryAgents equ <QueryRecoveryAgentsA>
 endif
 
 ifdef __PE__
-option dllimport:<kernel32>
+.pragma comment(lib, kernel32)
 endif
 
 lstrcatA	PROTO WINAPI :LPSTR, :LPSTR
@@ -7415,7 +7415,7 @@ if (_WIN32_WINNT GE 0x0500)
 WAITORTIMERCALLBACK	typedef WAITORTIMERCALLBACKFUNC
 
 ifdef __PE__
-option dllimport:<kernel32>
+.pragma comment(lib, kernel32)
 endif
 
 ;BOOL

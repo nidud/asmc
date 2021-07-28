@@ -1,5 +1,5 @@
 ifndef __ROAPI_H_
-__ROAPI_H_ equ <>
+define __ROAPI_H_
 
 ifdef _CONTRACT_GEN
 include nt.inc
@@ -17,21 +17,21 @@ include hstring.inc
 ifndef _APISET_ROAPI_VER
 ifdef _APISET_MINCORE_VERSION
 if _APISET_MINCORE_VERSION ge 0x0100
-_APISET_ROAPI_VER equ 0x0100
+define _APISET_ROAPI_VER 0x0100
 endif
 endif
 endif
 
 .enum RO_INIT_TYPE {
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     RO_INIT_SINGLETHREADED = 0,
-endif
     RO_INIT_MULTITHREADED  = 1,
     }
 
 RO_REGISTRATION_COOKIE typedef ptr
 
 CALLBACK(PFNGETACTIVATIONFACTORY, :HSTRING, :ptr ptr IActivationFactory)
+
+.pragma comment(lib, combase, "api-ms-win-core-winrt-l1-1-0")
 
 RoInitialize proto WINAPI \
                   : RO_INIT_TYPE

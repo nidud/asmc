@@ -1,5 +1,5 @@
 ifndef __WINSTRING_H_
-__WINSTRING_H_ equ <>
+define __WINSTRING_H_
 
 ifdef _CONTRACT_GEN
 include nt.inc
@@ -15,10 +15,12 @@ include rpc.inc
 ifndef _APISET_WINRT_STRING_VER
 ifdef _APISET_MINCORE_VERSION
 if _APISET_MINCORE_VERSION GE 0x0100
-_APISET_WINRT_STRING_VER equ 0x0100
+define _APISET_WINRT_STRING_VER 0x0100
 endif
 endif
 endif
+
+.pragma comment(lib, combase)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 

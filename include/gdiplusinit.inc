@@ -1,10 +1,10 @@
 ifndef _GDIPLUSINIT_H
-_GDIPLUSINIT_H equ <>
+define _GDIPLUSINIT_H
 
 .enum DebugEventLevel {
     DebugEventLevelFatal,
     DebugEventLevelWarning
-}
+    }
 
 ;; Callback function that GDI+ can call, on debug builds, for assertions
 ;; and warnings.
@@ -98,12 +98,9 @@ GdiplusShutdown proto WINAPI \
     StartupParameters           SINT ?
     Token                       ULONG_PTR ?
 
-    .inline GdiPlus :vararg {
-        ifnb <_1>
-            mov this.GdiplusVersion,_1
-        else
-            mov this.GdiplusVersion,2
-        endif
+    .static GdiPlus Version:abs=<2> {
+
+        mov this.GdiplusVersion,Version
         mov this.DebugEventCallback,NULL
         mov this.SuppressBackgroundThread,FALSE
         mov this.SuppressExternalCodecs,FALSE

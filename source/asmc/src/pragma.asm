@@ -319,6 +319,14 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             mov esi,[ebx].string_ptr
             strcpy(&stdlib, esi)
 
+            .while ( [ebx+16].token == T_DOT )
+
+                strcat(&stdlib, [ebx+16].string_ptr)
+                strcat(&stdlib, [ebx+32].string_ptr)
+                add i,2
+                add ebx,32
+            .endw
+
             .if ( byte ptr [esi] == '"' )
 
                 inc esi
@@ -348,20 +356,29 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
             lea esi,dynlib
             lea edi,stdlib
-            .if ( strchr(esi, '.') )
-                mov byte ptr [eax],0
+            .if ( strrchr(esi, '.') )
+
+                mov ecx,[eax+1]
+                or  ecx,0xFFFFFF
+                .if ( ecx == 'bil' || ecx == 'lld' )
+                    mov byte ptr [eax],0
+                .endif
             .endif
-            .if ( strchr(edi, '.') )
-                mov byte ptr [eax],0
+            .if ( strrchr(edi, '.') )
+
+                mov ecx,[eax+1]
+                or  ecx,0xFFFFFF
+                .if ( ecx == 'bil' || ecx == 'lld' )
+                    mov byte ptr [eax],0
+                .endif
             .endif
 
             .if ( Options.output_format == OFORMAT_BIN )
 
-                .if !( dynlib )
+                .if ( dynlib == 0 )
                     mov esi,edi
                 .endif
-
-                AddLineQueueX(" option dllimport:<%s>", esi)
+                AddLineQueueX(" option dllimport:<%s.dll>", esi)
 
             .elseif !( byte ptr [esi] )
 
@@ -369,14 +386,21 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
             .else
 
-                AddLineQueueX("ifdef _%s", _strupr(esi))
-                AddLineQueueX("includelib %s.lib", _strlwr(esi))
-                AddLineQueue( "else" )
-                AddLineQueueX("includelib %s.lib", edi)
-                AddLineQueue( "endif" )
+                .new u[256]:char_t
+
+                _strupr( strcpy( &u, esi ) )
+                .while ( strchr( eax, '-' ) )
+                    mov byte ptr [eax],'_'
+                .endw
+
+                AddLineQueueX( "ifdef _%s", &u )
+                AddLineQueueX( "includelib %s.lib", esi )
+                AddLineQueue(  "else" )
+                AddLineQueueX( "includelib %s.lib", edi )
+                AddLineQueue(  "endif" )
             .endif
 
-        .elseif eax == 'nil'
+        .elseif ( eax == 'nil' )
 
             mov eax,[esi+3]
             or  eax,0x202020

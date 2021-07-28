@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,96 +18,7 @@ include ole2.inc
 endif
 
 ifndef __windows2Edata2Etext_h__
-__windows2Edata2Etext_h__ equ 1
-
-
-ifndef ____FIIterator_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__
-____FIIterator_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__
-____FIIterable_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterator_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__
-____FIIterator_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__
-____FIIterable_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterator_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIIterator_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIIterable_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterator_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__
-____FIIterator_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__
-____FIIterable_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__
-____FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CAlternateWordForm_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CSelectableWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____FIVectorView_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISemanticTextQuery_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISemanticTextQuery_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIAlternateWordForm_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIAlternateWordForm_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordSegment_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIWordSegment_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordSegment_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIWordsSegmenter_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordsSegmenter_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter_FWD_DEFINED__ equ 1
-endif
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory_FWD_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory_FWD_DEFINED__ equ 1
-endif
+define __windows2Edata2Etext_h__
 
 include inspectable.inc
 include AsyncInfo.inc
@@ -116,11 +27,11 @@ include Windows.Foundation.inc
 include windows.foundation.collections.inc
 
 ifndef DEF___FIIterator_1_Windows__CData__CText__CAlternateWordForm_USE
-DEF___FIIterator_1_Windows__CData__CText__CAlternateWordForm_USE equ 1
+define DEF___FIIterator_1_Windows__CData__CText__CAlternateWordForm_USE
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CAlternateWordForm, "7f463f8a-e08f-516e-b4b8-81b5417bfb58")
+DEFINE_IIDX(IIterator_AlternateWordForm, "7f463f8a-e08f-516e-b4b8-81b5417bfb58")
 
-.comdef __FIIterator_1_Windows__CData__CText__CAlternateWordForm : public IInspectable
+.comdef IIterator_AlternateWordForm : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -131,11 +42,11 @@ DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CAlternateWordForm, "7f463f8a-
 endif
 
 ifndef ____FIIterable_1_Windows__CData__CText__CAlternateWordForm_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CData__CText__CAlternateWordForm_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CData__CText__CAlternateWordForm_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CAlternateWordForm, "ae838c29-60c1-5093-ae61-0ed22857db05")
+DEFINE_IIDX(IIterable_AlternateWordForm, "ae838c29-60c1-5093-ae61-0ed22857db05")
 
-.comdef __FIIterable_1_Windows__CData__CText__CAlternateWordForm : public IInspectable
+.comdef IIterable_AlternateWordForm : public IInspectable
 
     First		proc :ptr
     .ends
@@ -143,11 +54,11 @@ DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CAlternateWordForm, "ae838c29-
 endif
 
 ifndef ____FIIterator_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__
-____FIIterator_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterator_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CSelectableWordSegment, "a5842459-147d-5a88-8f23-a3398afd8a85")
+DEFINE_IIDX(IIterator_SelectableWordSegment, "a5842459-147d-5a88-8f23-a3398afd8a85")
 
-.comdef __FIIterator_1_Windows__CData__CText__CSelectableWordSegment : public IInspectable
+.comdef IIterator_SelectableWordSegment : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -158,11 +69,11 @@ DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CSelectableWordSegment, "a5842
 endif
 
 ifndef ____FIIterable_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CSelectableWordSegment, "784b0cec-1348-5334-91e5-2e013294e211")
+DEFINE_IIDX(IIterable_SelectableWordSegment, "784b0cec-1348-5334-91e5-2e013294e211")
 
-.comdef __FIIterable_1_Windows__CData__CText__CSelectableWordSegment : public IInspectable
+.comdef IIterable_SelectableWordSegment : public IInspectable
 
     First		proc :ptr
     .ends
@@ -170,11 +81,11 @@ DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CSelectableWordSegment, "784b0
 endif
 
 ifndef ____FIIterator_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIIterator_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterator_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CTextSegment, "645a39b4-f001-5272-9015-fb4a327179ae")
+DEFINE_IIDX(IIterator_TextSegment, "645a39b4-f001-5272-9015-fb4a327179ae")
 
-.comdef __FIIterator_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IIterator_TextSegment : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -185,11 +96,11 @@ DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CTextSegment, "645a39b4-f001-5
 endif
 
 ifndef ____FIIterable_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CTextSegment, "5498f4f3-cee4-5b72-9729-815c4ad7b9dc")
+DEFINE_IIDX(IIterable_TextSegment, "5498f4f3-cee4-5b72-9729-815c4ad7b9dc")
 
-.comdef __FIIterable_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IIterable_TextSegment : public IInspectable
 
     First		proc :ptr
     .ends
@@ -197,11 +108,11 @@ DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CTextSegment, "5498f4f3-cee4-5
 endif
 
 ifndef ____FIIterator_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__
-____FIIterator_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterator_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CWordSegment, "aeb846b3-664b-545e-ab93-f5fc66d24e32")
+DEFINE_IIDX(IIterator_WordSegment, "aeb846b3-664b-545e-ab93-f5fc66d24e32")
 
-.comdef __FIIterator_1_Windows__CData__CText__CWordSegment : public IInspectable
+.comdef IIterator_WordSegment : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -212,11 +123,11 @@ DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CWordSegment, "aeb846b3-664b-5
 endif
 
 ifndef ____FIIterable_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CWordSegment, "d14dc94a-a311-5ddc-bf8b-d58795d87d6d")
+DEFINE_IIDX(IIterable_WordSegment, "d14dc94a-a311-5ddc-bf8b-d58795d87d6d")
 
-.comdef __FIIterable_1_Windows__CData__CText__CWordSegment : public IInspectable
+.comdef IIterable_WordSegment : public IInspectable
 
     First		proc :ptr
     .ends
@@ -224,11 +135,11 @@ DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CWordSegment, "d14dc94a-a311-5
 endif
 
 ifndef ____FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CTextSegment, "2f245f9d-eb5f-5641-9dcc-6ab1946cc7e6")
+DEFINE_IIDX(IVectorView_TextSegment, "2f245f9d-eb5f-5641-9dcc-6ab1946cc7e6")
 
-.comdef __FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IVectorView_TextSegment : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -239,11 +150,11 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CTextSegment, "2f245f9d-eb5f
 endif
 
 ifndef ____FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment, "77b4daf4-4f4f-5568-90ee-1a32cf0caaea")
+DEFINE_IIDX(IKeyValuePair_IVectorView_TextSegment, "77b4daf4-4f4f-5568-90ee-1a32cf0caaea")
 
-.comdef __FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IKeyValuePair_IVectorView_TextSegment : public IInspectable
 
     get_Key		proc :ptr
     get_Value		proc :ptr
@@ -252,11 +163,11 @@ DEFINE_IIDX(__FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__C
 endif
 
 ifndef ____FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment, "00078aa3-8676-5f06-adf5-ffe5d661d670")
+DEFINE_IIDX(IIterator_KeyValuePair_IVectorView_TextSegment, "00078aa3-8676-5f06-adf5-ffe5d661d670")
 
-.comdef __FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IIterator_IKeyValuePair_IVectorView_TextSegment : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -267,11 +178,11 @@ DEFINE_IIDX(__FIIterator_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__
 endif
 
 ifndef ____FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment, "f819a276-b3f5-54d4-b8fd-c9adb7f700e3")
+DEFINE_IIDX(IIterable_IKeyValuePair_IVectorView_TextSegment, "f819a276-b3f5-54d4-b8fd-c9adb7f700e3")
 
-.comdef __FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IIterable_KeyValuePair_IVectorView_TextSegment : public IInspectable
 
     First		proc :ptr
     .ends
@@ -279,11 +190,11 @@ DEFINE_IIDX(__FIIterable_1___FIKeyValuePair_2_HSTRING___FIVectorView_1_Windows__
 endif
 
 ifndef ____FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment, "91d443d6-3777-5102-b0bc-3d4183a26ff9")
+DEFINE_IIDX(IMapView_IVectorView_TextSegment, "91d443d6-3777-5102-b0bc-3d4183a26ff9")
 
-.comdef __FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IMapView_IVectorView_TextSegment : public IInspectable
 
     Lookup		proc :HSTRING, :ptr
     get_Size		proc :dword
@@ -294,11 +205,11 @@ DEFINE_IIDX(__FIMapView_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextS
 endif
 
 ifndef ____FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
-____FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__ equ 1
+define ____FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment, "a31b6540-b2b1-536d-818f-8ade7051c3b3")
+DEFINE_IIDX(IMap_IVectorView_TextSegment, "a31b6540-b2b1-536d-818f-8ade7051c3b3")
 
-.comdef __FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegment : public IInspectable
+.comdef IMap_IVectorView_TextSegment : public IInspectable
 
     Lookup		proc :HSTRING, :ptr
     get_Size		proc :dword
@@ -311,27 +222,12 @@ DEFINE_IIDX(__FIMap_2_HSTRING___FIVectorView_1_Windows__CData__CText__CTextSegme
 
 endif
 
-ifndef ____FIVectorView_1_Windows__CData__CText__CAlternateWordForm_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CAlternateWordForm_INTERFACE_DEFINED__ equ 1
+ifndef __IVectorView_AlternateWordForm_INTERFACE_DEFINED__
+define __IVectorView_AlternateWordForm_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CAlternateWordForm, "6b742ff2-746a-5545-a6ed-3bba453cf5d9")
+DEFINE_IIDX(IVectorView_AlternateWordForm, "6b742ff2-746a-5545-a6ed-3bba453cf5d9")
 
-.comdef __FIVectorView_1_Windows__CData__CText__CAlternateWordForm : public IInspectable
-
-    GetAt		proc :SINT, :ptr
-    get_Size		proc :dword
-    IndexOf		proc :ptr, :dword, :ptr
-    GetMany		proc :SINT, :SINT, :ptr, :dword
-    .ends
-
-endif
-
-ifndef ____FIVectorView_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CSelectableWordSegment_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CSelectableWordSegment, "33f90a72-86f4-5027-b50a-6939a1f9d560")
-
-.comdef __FIVectorView_1_Windows__CData__CText__CSelectableWordSegment : public IInspectable
+.comdef IVectorView_AlternateWordForm : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -341,12 +237,12 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CSelectableWordSegment, "33f
 
 endif
 
-ifndef ____FIVectorView_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CData__CText__CWordSegment_INTERFACE_DEFINED__ equ 1
+ifndef __IVectorView_SelectableWordSegment_INTERFACE_DEFINED__
+define __IVectorView_SelectableWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CWordSegment, "c706749a-e11d-5e07-8534-2bd23ec210f9")
+DEFINE_IIDX(IVectorView_SelectableWordSegment, "33f90a72-86f4-5027-b50a-6939a1f9d560")
 
-.comdef __FIVectorView_1_Windows__CData__CText__CWordSegment : public IInspectable
+.comdef IVectorView_SelectableWordSegment : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :dword
@@ -356,7 +252,22 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CWordSegment, "c706749a-e11d
 
 endif
 
-.enum __x_ABI_CWindows_CData_CText_CUnicodeGeneralCategory {
+ifndef __IVectorView_WordSegment_INTERFACE_DEFINED__
+define __IVectorView_WordSegment_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IVectorView_WordSegment, "c706749a-e11d-5e07-8534-2bd23ec210f9")
+
+.comdef IVectorView_WordSegment : public IInspectable
+
+    GetAt		proc :SINT, :ptr
+    get_Size		proc :dword
+    IndexOf		proc :ptr, :dword, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :dword
+    .ends
+
+endif
+
+.enum UnicodeGeneralCategory {
     UnicodeGeneralCategory_UppercaseLetter	= 0,
     UnicodeGeneralCategory_LowercaseLetter	= 1,
     UnicodeGeneralCategory_TitlecaseLetter	= 2,
@@ -389,14 +300,14 @@ endif
     UnicodeGeneralCategory_NotAssigned	= 29
     }
 
-.enum __x_ABI_CWindows_CData_CText_CUnicodeNumericType {
+.enum UnicodeNumericType {
     UnicodeNumericType_None	= 0,
     UnicodeNumericType_Decimal	= 1,
     UnicodeNumericType_Digit	= 2,
     UnicodeNumericType_Numeric	= 3
     }
 
-.enum __x_ABI_CWindows_CData_CText_CAlternateNormalizationFormat {
+.enum AlternateNormalizationFormat {
     AlternateNormalizationFormat_NotNormalized	= 0,
     AlternateNormalizationFormat_Number = 1,
     AlternateNormalizationFormat_Currency	= 3,
@@ -404,42 +315,42 @@ endif
     AlternateNormalizationFormat_Time	= 5
     }
 
-_x_ABI_CWindows_CData_CText_CTextSegment STRUC
+TextSegment		STRUC
 StartPosition		UINT32 ?
 Length			UINT32 ?
-_x_ABI_CWindows_CData_CText_CTextSegment ENDS
+TextSegment		ENDS
 
 
-ifndef ____x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler_INTERFACE_DEFINED__ equ 1
+ifndef __IWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
+define __IWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler, "A5DD6357-BF2A-4C4F-A31F-29E71C6F8B35")
+DEFINE_IIDX(IWordSegmentsTokenizingHandler, "A5DD6357-BF2A-4C4F-A31F-29E71C6F8B35")
 
-.comdef __x_ABI_CWindows_CData_CText_CIWordSegmentsTokenizingHandler : public IUnknown
-
-    _Invoke		proc :ptr, :ptr
-    .ends
-
-endif
-
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler_INTERFACE_DEFINED__ equ 1
-
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler, "3A3DFC9C-AEDE-4DC7-9E6C-41C044BD3592")
-
-.comdef __x_ABI_CWindows_CData_CText_CISelectableWordSegmentsTokenizingHandler : public IUnknown
+.comdef IWordSegmentsTokenizingHandler : public IUnknown
 
     _Invoke		proc :ptr, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory_INTERFACE_DEFINED__ equ 1
+ifndef __ISelectableWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
+define __ISelectableWordSegmentsTokenizingHandler_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory, "238C0503-F995-4587-8777-A2B7D80ACFEF")
+DEFINE_IIDX(ISelectableWordSegmentsTokenizingHandler, "3A3DFC9C-AEDE-4DC7-9E6C-41C044BD3592")
 
-.comdef __x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory : public IInspectable
+.comdef ISelectableWordSegmentsTokenizingHandler : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef __ISemanticTextQueryFactory_INTERFACE_DEFINED__
+define __ISemanticTextQueryFactory_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ISemanticTextQueryFactory, "238C0503-F995-4587-8777-A2B7D80ACFEF")
+
+.comdef ISemanticTextQueryFactory : public IInspectable
 
     Create		proc :HSTRING, :ptr
     CreateWithLanguage	proc :HSTRING, :HSTRING, :ptr
@@ -447,12 +358,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISemanticTextQueryFactory, "238C0503-F
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CISemanticTextQuery_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISemanticTextQuery_INTERFACE_DEFINED__ equ 1
+ifndef __ISemanticTextQuery_INTERFACE_DEFINED__
+define __ISemanticTextQuery_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISemanticTextQuery, "6A1CAB51-1FB2-4909-80B8-35731A2B3E7F")
+DEFINE_IIDX(ISemanticTextQuery, "6A1CAB51-1FB2-4909-80B8-35731A2B3E7F")
 
-.comdef __x_ABI_CWindows_CData_CText_CISemanticTextQuery : public IInspectable
+.comdef ISemanticTextQuery : public IInspectable
 
     Find		proc :HSTRING, :ptr
     FindInProperty	proc :HSTRING, :HSTRING, :ptr
@@ -460,12 +371,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISemanticTextQuery, "6A1CAB51-1FB2-490
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics_INTERFACE_DEFINED__ equ 1
+ifndef __IUnicodeCharactersStatics_INTERFACE_DEFINED__
+define __IUnicodeCharactersStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics, "97909E87-9291-4F91-B6C8-B6E359D7A7FB")
+DEFINE_IIDX(IUnicodeCharactersStatics, "97909E87-9291-4F91-B6C8-B6E359D7A7FB")
 
-.comdef __x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics : public IInspectable
+.comdef IUnicodeCharactersStatics : public IInspectable
 
     GetCodepointFromSurrogatePair proc :UINT32, :UINT32, :ptr
     GetSurrogatePairFromCodepoint proc :UINT32, :ptr, :ptr
@@ -488,12 +399,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIUnicodeCharactersStatics, "97909E87-9
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CIAlternateWordForm_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIAlternateWordForm_INTERFACE_DEFINED__ equ 1
+ifndef __IAlternateWordForm_INTERFACE_DEFINED__
+define __IAlternateWordForm_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIAlternateWordForm, "47396C1E-51B9-4207-9146-248E636A1D1D")
+DEFINE_IIDX(IAlternateWordForm, "47396C1E-51B9-4207-9146-248E636A1D1D")
 
-.comdef __x_ABI_CWindows_CData_CText_CIAlternateWordForm : public IInspectable
+.comdef IAlternateWordForm : public IInspectable
 
     get_SourceTextSegment proc :ptr
     get_AlternateText	proc :ptr
@@ -502,12 +413,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIAlternateWordForm, "47396C1E-51B9-420
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordSegment_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordSegment_INTERFACE_DEFINED__ equ 1
+ifndef __ISelectableWordSegment_INTERFACE_DEFINED__
+define __ISelectableWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordSegment, "916A4CB7-8AA7-4C78-B374-5DEDB752E60B")
+DEFINE_IIDX(ISelectableWordSegment, "916A4CB7-8AA7-4C78-B374-5DEDB752E60B")
 
-.comdef __x_ABI_CWindows_CData_CText_CISelectableWordSegment : public IInspectable
+.comdef ISelectableWordSegment : public IInspectable
 
     get_Text		proc :ptr
     get_SourceTextSegment proc :ptr
@@ -515,12 +426,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordSegment, "916A4CB7-8AA7
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CIWordSegment_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordSegment_INTERFACE_DEFINED__ equ 1
+ifndef __IWordSegment_INTERFACE_DEFINED__
+define __IWordSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordSegment, "D2D4BA6D-987C-4CC0-B6BD-D49A11B38F9A")
+DEFINE_IIDX(IWordSegment, "D2D4BA6D-987C-4CC0-B6BD-D49A11B38F9A")
 
-.comdef __x_ABI_CWindows_CData_CText_CIWordSegment : public IInspectable
+.comdef IWordSegment : public IInspectable
 
     get_Text		proc :ptr
     get_SourceTextSegment proc :ptr
@@ -529,12 +440,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordSegment, "D2D4BA6D-987C-4CC0-B6BD
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CIWordsSegmenter_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordsSegmenter_INTERFACE_DEFINED__ equ 1
+ifndef __IWordsSegmenter_INTERFACE_DEFINED__
+define __IWordsSegmenter_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordsSegmenter, "86B4D4D1-B2FE-4E34-A81D-66640300454F")
+DEFINE_IIDX(IWordsSegmenter, "86B4D4D1-B2FE-4E34-A81D-66640300454F")
 
-.comdef __x_ABI_CWindows_CData_CText_CIWordsSegmenter : public IInspectable
+.comdef IWordsSegmenter : public IInspectable
 
     get_ResolvedLanguage proc :ptr
     GetTokenAt		proc :HSTRING, :UINT32, :ptr
@@ -544,24 +455,24 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordsSegmenter, "86B4D4D1-B2FE-4E34-A
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory_INTERFACE_DEFINED__ equ 1
+ifndef __IWordsSegmenterFactory_INTERFACE_DEFINED__
+define __IWordsSegmenterFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory, "E6977274-FC35-455C-8BFB-6D7F4653CA97")
+DEFINE_IIDX(IWordsSegmenterFactory, "E6977274-FC35-455C-8BFB-6D7F4653CA97")
 
-.comdef __x_ABI_CWindows_CData_CText_CIWordsSegmenterFactory : public IInspectable
+.comdef IWordsSegmenterFactory : public IInspectable
 
     CreateWithLanguage	proc :HSTRING, :ptr
     .ends
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter_INTERFACE_DEFINED__ equ 1
+ifndef __ISelectableWordsSegmenter_INTERFACE_DEFINED__
+define __ISelectableWordsSegmenter_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter, "F6DC31E7-4B13-45C5-8897-7D71269E085D")
+DEFINE_IIDX(ISelectableWordsSegmenter, "F6DC31E7-4B13-45C5-8897-7D71269E085D")
 
-.comdef __x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter : public IInspectable
+.comdef ISelectableWordsSegmenter : public IInspectable
 
     get_ResolvedLanguage proc :ptr
     GetTokenAt		proc :HSTRING, :UINT32, :ptr
@@ -571,12 +482,12 @@ DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordsSegmenter, "F6DC31E7-4
 
 endif
 
-ifndef ____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory_INTERFACE_DEFINED__ equ 1
+ifndef __ISelectableWordsSegmenterFactory_INTERFACE_DEFINED__
+define __ISelectableWordsSegmenterFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory, "8C7A7648-6057-4339-BC70-F210010A4150")
+DEFINE_IIDX(ISelectableWordsSegmenterFactory, "8C7A7648-6057-4339-BC70-F210010A4150")
 
-.comdef __x_ABI_CWindows_CData_CText_CISelectableWordsSegmenterFactory : public IInspectable
+.comdef ISelectableWordsSegmenterFactory : public IInspectable
 
     CreateWithLanguage	proc :HSTRING, :ptr
     .ends

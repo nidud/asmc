@@ -247,6 +247,11 @@ C_ASSERT(sizeof(LONG) eq 4)
 C_ASSERT(sizeof(ULONG) eq 4)
 C_ASSERT(sizeof(UINT_PTR) eq sizeof(ULONG_PTR))
 
+ifdef _WIN64
+define __fastcall <fastcall>
+else
+define __fastcall <watcall>
+endif
 
 Int8ToUChar proto __fastcall :INT8, :ptr UCHAR {
 

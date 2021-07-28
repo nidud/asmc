@@ -4,6 +4,8 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
+.pragma comment(lib, kernelbase, "api-ms-win-core-path-l1-1-0")
+
 ifndef _APISET_PATH_VER
 ifdef _APISET_MINCORE_VERSION
 if _APISET_MINCORE_VERSION GE 0x0100

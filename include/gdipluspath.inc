@@ -303,6 +303,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     .inline AddRectangle :abs, :vararg {
         this.typeid(AddRectangle, _1)(_1, _2)
         }
+    .inline AddRectangleIMM32 :vararg {
+        GdipAddPathRectangleI(this.nativePath, _1)
+        GdipSetStatus(this)
+        }
+    .inline AddRectangleREG32  :vararg { this.AddRectangleIMM32(_1) }
+    .inline AddRectangleSDWORD :vararg { this.AddRectangleIMM32(_1) }
     .inline AddRectanglePRectF :ptr RectF, :vararg {
         GdipAddPathRectangle(this.nativePath,\
                 [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height)

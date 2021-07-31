@@ -17,7 +17,7 @@ option dotname
 __xi_a dq 0
 .CRT$XI0 ENDS
 .CRT$XIA SEGMENT ALIGN(8) 'CONST'
-x      dq 0
+       dq 0
 .CRT$XIA ENDS
 .CRT$XIZ SEGMENT ALIGN(8) 'CONST'
 __xi_z dq 0

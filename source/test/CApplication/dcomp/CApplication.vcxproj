@@ -9,9 +9,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DirectCompositionEffects</RootNamespace>
+    <RootNamespace>CApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectGuid>{493AFC35-76FC-40AE-8E74-1C1F64A70189}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -45,17 +44,18 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalOptions>/LIBPATH:..\..\..\..\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>..\..\..\include</IncludePaths>
-      <AdditionalOptions>-ws -D__CV__ -Zp8 %(AdditionalOptions)</AdditionalOptions>
+      <IncludePaths>..\..\..\..\include</IncludePaths>
+      <WCharacterSet>Unicode</WCharacterSet>
+      <AdditionalOptions>-Zp8 %(AdditionalOptions)</AdditionalOptions>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="DirectCompositionEffects.asm" />
+    <ASMC Include="CApplication.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

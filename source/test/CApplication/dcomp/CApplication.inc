@@ -2,8 +2,8 @@
 ; https://github.com/microsoft/Windows-classic-samples/tree/master/Samples/DirectCompositionEffects
 ;
 
-WINVER       equ 0x0700
-_WIN32_WINNT equ 0x0700
+define WINVER 0x0700
+define _WIN32_WINNT 0x0700
 
 include windows.inc
 include atlbase.inc
@@ -12,11 +12,12 @@ include d2d1_1.inc
 include dcomp.inc
 include dwmapi.inc
 include math.inc
+include tchar.inc
 
-IDS_FONT_TYPEFACE           equ <"Segoe UI Light">
-IDS_FONT_HEIGHT_LOGO        equ 0
-IDS_FONT_HEIGHT_TITLE       equ 50
-IDS_FONT_HEIGHT_DESCRIPTION equ 22
+define IDS_FONT_TYPEFACE <"Segoe UI Light">
+define IDS_FONT_HEIGHT_LOGO 0
+define IDS_FONT_HEIGHT_TITLE 50
+define IDS_FONT_HEIGHT_DESCRIPTION 22
 
 .enum VIEW_STATE { ZOOMEDOUT, ZOOMEDIN, }
 .enum ACTION_TYPE { ZOOMOUT, ZOOMIN, }
@@ -24,11 +25,6 @@ IDS_FONT_HEIGHT_DESCRIPTION equ 22
 .class CApplication
 
     _hinstance HINSTANCE ?
-
-    _fontTypeface WCHAR 32 dup(?)
-    _fontHeightLogo int_t ?
-    _fontHeightTitle int_t ?
-    _fontHeightDescription int_t ?
 
     _hwnd HWND ?
 
@@ -113,5 +109,4 @@ IDS_FONT_HEIGHT_DESCRIPTION equ 22
     OnPaint proc
 
     UpdateVisuals proc :int_t, :int_t
-
-    .ends
+   .ends

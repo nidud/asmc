@@ -1,16 +1,9 @@
 
-include DirectCompositionEffects.inc
+include CApplication.inc
 
-ifdef __CV__
-.pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
-.pragma comment(linker,"/DEFAULTLIB:dcomp.lib")
-.pragma comment(linker,"/DEFAULTLIB:d3d11.lib")
-.pragma comment(linker,"/DEFAULTLIB:d2d1.lib")
-endif
+define _gridSize 100.0
 
 .data
-_application ptr CApplication NULL
-_gridSize int_t 100
 
 IID_ID2D1Factory        GUID {0x06152247,0x6f50,0x465a,{0x92,0x45,0x11,0x8b,0xfd,0x3b,0x60,0x07}}
 IID_IDXGIDevice         GUID {0x54ec77fa,0x1377,0x44e6,{0x8c,0x32,0x88,0xfd,0x5f,0x44,0xc8,0x4c}}
@@ -283,13 +276,13 @@ CApplication::CreateDCompositionVisualTree proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            lea r8,[rdi]._surfaceLeftChild[rbx*8]
+            lea rcx,[rdi]._surfaceLeftChild[rbx*8]
             mov edx,[rdi]._tileSize
             .switch pascal rbx
-            .case 0: [rdi].CreateSurface(edx, 0.0, 1.0, 0.0, r8)
-            .case 1: [rdi].CreateSurface(edx, 0.5, 0.0, 0.5, r8)
-            .case 2: [rdi].CreateSurface(edx, 0.5, 0.5, 0.0, r8)
-            .case 3: [rdi].CreateSurface(edx, 0.0, 0.0, 1.0, r8)
+            .case 0: [rdi].CreateSurface(edx, 0.0, 1.0, 0.0, rcx)
+            .case 1: [rdi].CreateSurface(edx, 0.5, 0.0, 0.5, rcx)
+            .case 2: [rdi].CreateSurface(edx, 0.5, 0.5, 0.0, rcx)
+            .case 3: [rdi].CreateSurface(edx, 0.0, 0.0, 1.0, rcx)
             .endsw
             mov hr,eax
         .endif
@@ -510,7 +503,7 @@ CApplication::SetEffectOnVisualLeft proc uses rdi
 
     .if (SUCCEEDED(hr))
 
-        cvtsi2ss xmm5,_gridSize
+        movss xmm5,_gridSize
         movss xmm1,beginOffsetX
         mulss xmm1,xmm5
         movss xmm2,offsetY
@@ -524,7 +517,7 @@ CApplication::SetEffectOnVisualLeft proc uses rdi
 
     .if (SUCCEEDED(hr))
 
-        cvtsi2ss xmm3,_gridSize
+        movss xmm3,_gridSize
         movss xmm1,xmm3
         movss xmm2,xmm3
         mulss xmm1,3.5
@@ -539,7 +532,7 @@ CApplication::SetEffectOnVisualLeft proc uses rdi
 
     .if (SUCCEEDED(hr))
 
-        cvtsi2ss xmm0,_gridSize
+        movss xmm0,_gridSize
         movss xmm3,-1.0
         mulss xmm0,9.0
         divss xmm3,xmm0
@@ -606,7 +599,7 @@ CApplication::SetEffectOnVisualLeftChildren proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            cvtsi2ss xmm0,_gridSize
+            movss xmm0,_gridSize
             cvtsi2ss xmm1,c
             cvtsi2ss xmm2,r
 
@@ -696,7 +689,7 @@ CApplication::SetEffectOnVisualRight proc uses rdi
 
     .if (SUCCEEDED(hr))
 
-        cvtsi2ss xmm0,_gridSize
+        movss xmm0,_gridSize
         movss xmm1,beginOffsetX
         movss xmm2,offsetY
         movss xmm3,endOffsetX
@@ -1366,8 +1359,6 @@ CApplication::UpdateVisuals proc currentVisual:int_t, nextVisual:int_t
 CApplication::UpdateVisuals endp
 
 
-    option win64:rsp noauto
-
 ;; Destroys D2D Device
 
 CApplication::DestroyD2D1Device proc
@@ -1438,7 +1429,6 @@ CApplication::DestroyDCompositionDevice endp
 
 CApplication::Release proc
 
-    mov _application,NULL
     ret
 
 CApplication::Release endp
@@ -1451,7 +1441,7 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
     mov [rcx].lpVtbl,r8
     mov [rcx]._hinstance,rdx
     mov [rcx]._hwnd,NULL
-    mov edx,_gridSize
+    mov edx,100;_gridSize
     lea eax,[rdx+rdx*2]
     mov [rcx]._tileSize,eax
     lea eax,[rdx+rdx*8]
@@ -1462,7 +1452,6 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
     mov [rcx]._state,ZOOMEDOUT
     mov [rcx]._actionType,ZOOMOUT
     mov [rcx]._currentVisual,0
-    mov _application,rcx
 
     for q,<Release,
         Run,
@@ -1510,40 +1499,45 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
 CApplication::CApplication endp
 
 
-    option win64:rbp save auto
-
-
 ;; Main Window procedure
 
 WindowProc proc hwnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .switch edx
+    .if ( edx == WM_CREATE )
 
-        .case WM_LBUTTONUP
-            _application.OnLeftButton()
-            .endc
+        SetWindowLongPtr(rcx, GWLP_USERDATA, [r9].CREATESTRUCT.lpCreateParams)
+        .return 1
+    .endif
 
-        .case WM_KEYDOWN
-            _application.OnKeyDown(r8)
-            .endc
+    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
 
-        .case WM_CLOSE
-            _application.OnClose()
-            .endc
+    .switch ( msg )
 
-        .case WM_DESTROY
-            _application.OnDestroy()
-            .endc
+    .case WM_LBUTTONUP
+        Application.OnLeftButton()
+        .endc
 
-        .case WM_PAINT
-            _application.OnPaint()
-            .endc
+    .case WM_KEYDOWN
+        Application.OnKeyDown(wParam)
+        .endc
 
-        .case WM_CHAR
-            .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
+    .case WM_CLOSE
+        Application.OnClose()
+        .endc
 
-        .default
-            DefWindowProc(rcx, edx, r8, r9)
+    .case WM_DESTROY
+        Application.OnDestroy()
+        .endc
+
+    .case WM_PAINT
+        Application.OnPaint()
+        .endc
+
+    .case WM_CHAR
+        .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
+
+    .default
+        DefWindowProc(hwnd, msg, wParam, lParam)
     .endsw
     ret
 
@@ -1552,85 +1546,50 @@ WindowProc endp
 
 ;; Creates the application window
 
-CApplication::CreateApplicationWindow proc
+CApplication::CreateApplicationWindow proc uses rdi
 
-    .new hr:HRESULT = S_OK
-    .new wcex:WNDCLASSEX
+    mov rdi,rcx
 
-    mov wcex.cbSize,sizeof(wcex)
-    mov wcex.style,CS_HREDRAW or CS_VREDRAW
-    mov wcex.lpfnWndProc,&WindowProc
-    mov wcex.cbClsExtra,0
-    mov wcex.cbWndExtra,0
-    mov wcex.hInstance,[rcx]._hinstance
-    mov wcex.hIcon,NULL
-    mov wcex.hCursor,LoadCursor(NULL, IDC_ARROW)
-    mov wcex.hbrBackground,GetStockObject(WHITE_BRUSH)
-    mov wcex.lpszMenuName,NULL
-    mov wcex.lpszClassName,&@CStr("MainWindowClass")
-    mov wcex.hIconSm,NULL
+    .new wc:WNDCLASSEX = {
+        WNDCLASSEX,                     ; .cbSize
+        CS_HREDRAW or CS_VREDRAW,       ; .style
+        &WindowProc,                    ; .lpfnWndProc
+        0,                              ; .cbClsExtra
+        sizeof(LONG_PTR),               ; .cbWndExtra
+        [rdi]._hinstance,               ; .hInstance
+        NULL,                           ; .hIcon
+        LoadCursor(NULL, IDC_ARROW),    ; .hCursor
+        GetStockObject(BLACK_BRUSH),    ; .hbrBackground
+        NULL,                           ; .lpszMenuName
+        "MainWindowClass",              ; .lpszClassName
+        NULL                            ; .hIconSm
+        }
 
-    RegisterClassEx(&wcex)
+    .return E_FAIL .if ( RegisterClassEx( &wc ) == 0 )
 
-    mov hr,E_FAIL
-    .if eax
-        mov hr,S_OK
-    .endif
+    .new rect:RECT( 0, 0, [rdi]._windowWidth, [rdi]._windowHeight )
 
-    .if (SUCCEEDED(hr))
+    AdjustWindowRect(&rect, WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
-        mov rcx,this
-        .new rect:RECT( 0, 0, [rcx]._windowWidth, [rcx]._windowHeight )
+    mov eax,rect.right
+    sub eax,rect.left
+    mov [rdi]._windowWidth,eax
 
-        AdjustWindowRect(&rect, WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
+    mov eax,rect.bottom
+    sub eax,rect.top
+    mov [rdi]._windowHeight,eax
 
-        mov rcx,this
-        mov r8,[rcx]._hinstance
-
-        mov ecx,rect.right
-        sub ecx,rect.left
-        mov edx,rect.bottom
-        sub edx,rect.top
-        CreateWindowExW(
-           0,
-           L"MainWindowClass",
-           L"DirectComposition Effects Sample",
+    .if CreateWindowEx(0, "MainWindowClass", "DirectComposition Effects Sample",
            WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-           CW_USEDEFAULT,
-           CW_USEDEFAULT,
-           ecx,
-           edx,
-           NULL,
-           NULL,
-           r8,
-           NULL)
+           CW_USEDEFAULT, CW_USEDEFAULT,
+           [rdi]._windowWidth, [rdi]._windowHeight,
+           NULL, NULL, [rdi]._hinstance, rdi) == NULL
 
-        mov rcx,this
-        mov [rcx]._hwnd,rax
-
-        .if (rax == NULL)
-
-            mov hr,E_UNEXPECTED
-        .endif
+        .return E_UNEXPECTED
     .endif
+    mov [rdi]._hwnd,rax
 
-    .if (SUCCEEDED(hr))
-
-        mov rcx,this
-        mov [rcx]._fontHeightLogo,IDS_FONT_HEIGHT_LOGO
-        mov [rcx]._fontHeightTitle,IDS_FONT_HEIGHT_TITLE
-        mov [rcx]._fontHeightDescription,IDS_FONT_HEIGHT_DESCRIPTION
-
-        lea r8,@CStr(IDS_FONT_TYPEFACE)
-        lea rdx,[rcx]._fontTypeface
-        .for ( ecx = 0: ecx < 32 && word ptr [r8]: ecx++, rdx += 2, r8 += 2 )
-            mov ax,[r8]
-            mov [rdx],ax
-        .endf
-        mov word ptr [rdx],0
-    .endif
-
-    .return hr
+   .return S_OK
 
 CApplication::CreateApplicationWindow endp
 
@@ -1828,23 +1787,24 @@ CApplication::OnPaint proc uses rdi
     mov rdi,rcx
     .new hdc:HDC = BeginPaint([rcx]._hwnd, &ps)
 
-    ;; get the dimensions of the main window.
+    ; get the dimensions of the main window.
 
     GetClientRect([rdi]._hwnd, &rcClient)
 
-    ;; Logo
+    ; Logo
     xor ecx,ecx
-    .new hlogo:HFONT = CreateFontW([rdi]._fontHeightLogo, ecx, ecx, ecx, ecx, ecx, ecx,
-            ecx, ecx, ecx, ecx, ecx, ecx, &[rdi]._fontTypeface) ;; Logo Font and Size
+    .new hlogo:HFONT = CreateFontW(IDS_FONT_HEIGHT_LOGO, ecx, ecx, ecx, ecx, ecx, ecx,
+            ecx, ecx, ecx, ecx, ecx, ecx, IDS_FONT_TYPEFACE) ; Logo Font and Size
 
     .if (hlogo != NULL)
 
        .new hOldFont:HFONT = SelectObject(hdc, hlogo)
+        SetTextColor(hdc, GetSysColor(COLOR_GRAYTEXT))
         SetBkMode(hdc, TRANSPARENT)
 
         mov rcClient.top,10
         mov rcClient.left,50
-        DrawTextW(hdc, L"Windows samples", -1, &rcClient, DT_WORDBREAK)
+        DrawTextW(hdc, "Windows samples", -1, &rcClient, DT_WORDBREAK)
         SelectObject(hdc, hOldFont)
         DeleteObject(hlogo)
     .endif
@@ -1852,30 +1812,28 @@ CApplication::OnPaint proc uses rdi
     ;; Title
 
     xor ecx,ecx
-    .new htitle:HFONT = CreateFontW([rdi]._fontHeightTitle, ecx, ecx, ecx, ecx, ecx,
-            ecx, ecx, ecx, ecx, ecx, ecx, ecx, &[rdi]._fontTypeface) ;; Title Font and Size
+    .new htitle:HFONT = CreateFontW(IDS_FONT_HEIGHT_TITLE, ecx, ecx, ecx, ecx, ecx,
+            ecx, ecx, ecx, ecx, ecx, ecx, ecx, IDS_FONT_TYPEFACE) ; Title Font and Size
 
     .if (htitle != NULL)
 
         .new hOldFont:HFONT = SelectObject(hdc, htitle)
 
-        SetTextColor(hdc, GetSysColor(COLOR_WINDOWTEXT))
-
         mov rcClient.top,25
         mov rcClient.left,50
 
-        DrawTextW(hdc, L"DirectComposition Effects Sample", -1, &rcClient, DT_WORDBREAK)
+        DrawTextW(hdc, "DirectComposition Effects Sample", -1, &rcClient, DT_WORDBREAK)
         SelectObject(hdc, hOldFont)
         DeleteObject(htitle)
     .endif
 
-    ;; Description
+    ; Description
     .new hdescription:HFONT
 
     xor ecx,ecx
-    mov hdescription,CreateFontW([rdi]._fontHeightDescription, ecx, ecx, ecx,
+    mov hdescription,CreateFontW(IDS_FONT_HEIGHT_DESCRIPTION, ecx, ecx, ecx,
             ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx,
-            &[rdi]._fontTypeface) ;; Description Font and Size
+            IDS_FONT_TYPEFACE) ; Description Font and Size
 
     .if (hdescription != NULL)
 

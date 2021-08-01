@@ -951,7 +951,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
         LstPrintf( ecx, strings[LS_EXTERNAL] )
         mov ecx,[esi].asym.dll
         .if ( ecx )
-            LstPrintf( "(%.8s) ", [ecx].asym.name )
+            LstPrintf( "(%.8s) ", &[ecx].dll_desc.name )
         .endif
     .endif
 

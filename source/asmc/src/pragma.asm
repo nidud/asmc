@@ -378,7 +378,7 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 .if ( dynlib == 0 )
                     mov esi,edi
                 .endif
-                AddLineQueueX(" option dllimport:<%s.dll>", esi)
+                AddLineQueueX(" option dllimport:<%s>", esi)
 
             .elseif !( byte ptr [esi] )
 

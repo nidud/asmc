@@ -322,7 +322,7 @@ WriteModule proc private uses esi edi ebx modinfo:ptr module_info
 	    mov esi,SymTables[TAB_EXT*symbol_queue].head
 	    .while  esi
 		mov ebx,[esi].asym.dll
-		.if [esi].asym.flag1 & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.name \
+		.if [esi].asym.flag1 & S_ISPROC && ebx && [ebx].dll_desc.name \
 		    && ( !( [esi].asym.sflags & S_WEAK) || [esi].asym.flags & S_IAT_USED )
 
 		    Mangle(esi, ModuleInfo.stringbufferend)

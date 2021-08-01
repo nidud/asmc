@@ -9,6 +9,8 @@ ifndef GDIPVER
 GDIPVER         equ 0x0110;0x0100
 endif
 
+.pragma comment(lib, gdiplus)
+
 .pragma pack(push, 8)
 
 include GdiplusMem.inc

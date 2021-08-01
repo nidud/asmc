@@ -10,8 +10,6 @@ endif
 ifndef _WINUSER_
 _WINUSER_ equ <>
 
-.pragma comment(lib, user32)
-
 ifndef WINVER
 WINVER	equ 0x0500
 endif
@@ -27,6 +25,8 @@ include stdarg.inc
 ifndef NOAPISET
 ;include libloaderapi.inc
 endif
+
+.pragma comment(lib, user32)
 
 ifndef NOUSER
 

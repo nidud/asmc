@@ -161,6 +161,72 @@ CApplication::DestroyApplicationWindow proc uses rdi
 
 CApplication::DestroyApplicationWindow endp
 
+
+; Makes the host window full-screen by placing non-client elements outside the display.
+
+CApplication::GoFullScreen proc uses rsi rdi rbx
+
+    mov rdi,rcx
+
+    mov [rdi].m_isFullScreen,TRUE
+
+    ; The window must be styled as layered for proper rendering.
+    ; It is styled as transparent so that it does not capture mouse clicks.
+    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED or WS_EX_TRANSPARENT)
+
+    ; Give the window a system menu so it can be closed on the taskbar.
+    SetWindowLong([rdi].m_hwnd, GWL_STYLE,  WS_CAPTION or WS_SYSMENU)
+
+    ; Calculate the span of the display area.
+   .new hDC:HDC = GetDC(NULL)
+   .new xSpan:int_t = GetSystemMetrics(SM_CXSCREEN)
+   .new ySpan:int_t = GetSystemMetrics(SM_CYSCREEN)
+    ReleaseDC(NULL, hDC)
+
+    ; Calculate the size of system elements.
+   .new xBorder:int_t = GetSystemMetrics(SM_CXFRAME)
+   .new yCaption:int_t = GetSystemMetrics(SM_CYCAPTION)
+   .new yBorder:int_t = GetSystemMetrics(SM_CYFRAME)
+
+    ; Calculate the window origin and span for full-screen mode.
+    mov eax,xBorder
+    neg eax
+   .new xOrigin:int_t = eax
+    mov eax,yBorder
+    neg eax
+    sub eax,yCaption
+   .new yOrigin:int_t = eax
+    imul eax,xBorder,2
+    add xSpan,eax
+    imul eax,yBorder,2
+    add eax,yCaption
+    add ySpan,eax
+
+    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan,
+        SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    ret
+
+CApplication::GoFullScreen endp
+
+
+; Makes the host window resizable and focusable.
+
+define RESTOREDWINDOWSTYLES WS_SIZEBOX or WS_SYSMENU or WS_CLIPCHILDREN or WS_CAPTION or WS_MAXIMIZEBOX
+
+CApplication::GoPartialScreen proc uses rdi
+
+    mov rdi,rcx
+    mov [rdi].m_isFullScreen,FALSE
+
+    SetWindowLong([rdi].m_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST or WS_EX_LAYERED)
+    SetWindowLong([rdi].m_hwnd, GWL_STYLE, RESTOREDWINDOWSTYLES)
+    SetWindowPos([rdi].m_hwnd, HWND_TOPMOST,
+        [rdi].m_rect.left, [rdi].m_rect.top, [rdi].m_rect.right, [rdi].m_rect.bottom,
+        SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
+    ret
+
+CApplication::GoPartialScreen endp
+
     assume rsi:ptr object
 
 CApplication::OnSize proc uses rdi lParam:LPARAM
@@ -218,7 +284,10 @@ CApplication::OnTimer proc uses rsi rdi rbx
         sub r8d,ecx
         mov r9d,[rsi].m_pos.y
         sub r9d,ecx
+        add r8d,2
+        add r9d,2
         add ecx,ecx
+        sub ecx,4
         g.FillEllipse(&b, r8d, r9d, ecx, ecx)
         b.Release()
         p.Release()
@@ -312,7 +381,13 @@ CApplication::OnKeyDown proc wParam:WPARAM
             SetTimer([rcx].m_hwnd, ID_TIMER, [rcx].m_timer, NULL)
         .endif
         .endc
-
+    .case VK_F11
+        .if ( [rcx].m_isFullScreen )
+            this.GoPartialScreen()
+        .else
+            this.GoFullScreen()
+        .endif
+        .endc
     .endsw
     .return 0
 
@@ -361,6 +436,20 @@ CApplication::OnPaint proc uses rsi rdi rbx
     ; get the dimensions of the main window.
 
     GetClientRect([rdi].m_hwnd, &rcClient)
+
+    .if ( [rdi].m_isFullScreen == TRUE )
+
+        mov [rdi].m_rc.left,0
+        mov [rdi].m_rc.top,0
+        mov eax,rcClient.right
+        sub eax,rcClient.left
+        mov [rdi].m_rc.right,eax
+        mov eax,rcClient.bottom
+        sub eax,rcClient.top
+        mov [rdi].m_rc.bottom,eax
+
+        jmp full_screen
+    .endif
 
     mov [rdi].m_rc.left,50
     mov eax,[rdi].m_width
@@ -450,7 +539,12 @@ CApplication::OnPaint proc uses rsi rdi rbx
         SelectObject(hdc, hOldFont)
         DeleteObject(hdescription)
     .endif
+
+full_screen:
+
     EndPaint([rdi].m_hwnd, &ps)
+
+    .return 1 .if ( [rdi].m_bitmap )
 
     mov edx,[rdi].m_rc.bottom
     sub edx,[rdi].m_rc.top
@@ -570,16 +664,19 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    .new rect:RECT( 0, 0, [rdi].m_width, [rdi].m_height )
+    mov [rdi].m_rect.left,0
+    mov [rdi].m_rect.top,0
+    mov [rdi].m_rect.right,[rdi].m_width
+    mov [rdi].m_rect.bottom,[rdi].m_height
 
-    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
+    AdjustWindowRect(&[rdi].m_rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
-    mov eax,rect.right
-    sub eax,rect.left
+    mov eax,[rdi].m_rect.right
+    sub eax,[rdi].m_rect.left
     mov [rdi].m_width,eax
 
-    mov eax,rect.bottom
-    sub eax,rect.top
+    mov eax,[rdi].m_rect.bottom
+    sub eax,[rdi].m_rect.top
     mov [rdi].m_height,eax
 
     .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME,
@@ -609,6 +706,7 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
     mov [rcx].m_height,600
     mov [rcx].m_bitmap,NULL
     mov [rcx].m_timer,20
+    mov [rcx].m_isFullScreen,FALSE
 
     for q,<Run,
         BeforeEnteringMessageLoop,
@@ -618,6 +716,8 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
         ShowApplicationWindow,
         DestroyApplicationWindow,
         InitObjects,
+        GoFullScreen,
+        GoPartialScreen,
         OnKeyDown,
         OnClose,
         OnDestroy,

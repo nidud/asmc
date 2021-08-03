@@ -31,7 +31,6 @@ define MAXOBJ 100
 
     CGFont          proc :ptr wchar_t, :ptr wchar_t, :StringFormatFlags
     Release         proc
-
     SetFamily       proc :ptr wchar_t
     SetColor        proc :ARGB
     SetSize         proc :int_t
@@ -39,9 +38,7 @@ define MAXOBJ 100
     SetFormat       proc :StringFormatFlags
     SetAlignment    proc :StringAlignment
     SetGDI          proc :HDC, :int_t, :int_t
-    GetGDI          proc
     Draw            proc :int_t, :int_t, :ptr wchar_t, :vararg
-    DrawString      proc :ptr RECT, :ptr wchar_t, :int_t
    .ends
 
 

@@ -153,99 +153,33 @@ CGFont::SetGDI proc uses rbx hdc:HDC, width:int_t, height:int_t
 
 CGFont::SetGDI endp
 
-CGFont::GetGDI proc
-
-    mov rax,[rcx].CGFont.m_gp
-    ret
-
-CGFont::GetGDI endp
-
-CGFont::DrawString proc uses rbx rc:ptr RECT, string:ptr wchar_t, size:int_t
+CGFont::Draw proc uses rbx x:int_t, y:int_t, format:ptr wchar_t, argptr:vararg
 
  local rect:RectF
  local brush:ptr
+ local buffer[512]:wchar_t
 
     mov      rbx,rcx
-    cvtsi2ss xmm0,[rdx].RECT.left
+    cvtsi2ss xmm0,edx
     movss    rect.X,xmm0
-    cvtsi2ss xmm0,[rdx].RECT.top
+    cvtsi2ss xmm0,r8d
     movss    rect.Y,xmm0
-    mov      eax,[rdx].RECT.right
-    sub      eax,[rdx].RECT.left
+    mov      eax,[rbx].m_width
+    sub      eax,edx
     cvtsi2ss xmm0,eax
     movss    rect.Width,xmm0
-    mov      eax,[rdx].RECT.bottom
-    sub      eax,[rdx].RECT.top
+    mov      eax,[rbx].m_height
+    sub      eax,r8d
     cvtsi2ss xmm0,eax
     movss    rect.Height,xmm0
 
+    vswprintf(&buffer, format, &argptr)
     GdipCreateSolidFill([rbx].m_color, &brush)
-    GdipDrawString([rbx].m_gp, string, size, [rbx].m_font, &rect, [rbx].m_format, brush)
+    GdipDrawString([rbx].m_gp, &buffer, -1, [rbx].m_font, &rect, [rbx].m_format, brush)
     GdipDeleteBrush(brush)
     ret
 
-CGFont::DrawString endp
-
-CGFont::Draw proc uses rbx x:int_t, y:int_t, format:ptr wchar_t, argptr:vararg
-
- local buffer[512]:wchar_t
- local rc:RECT
-
-    mov rbx,rcx
-    mov rc.left,edx
-    mov rc.top,r8d
-    mov rc.right,[rbx].m_width
-    mov rc.bottom,[rbx].m_height
-
-    vswprintf(&buffer, format, &argptr)
-    [rbx].DrawString(&rc, &buffer, -1)
-    ret
-
 CGFont::Draw endp
-
-CGFont::LoadFont proc uses rbx file:ptr wchar_t, size:int_t
-
-   .new hr:HRESULT
-   .new dwriteFactory3:ptr IDWriteFactory3
-
-    mov rbx,rcx
-    mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory3, &dwriteFactory3)
-    .if (SUCCEEDED(hr))
-
-       .new m_dwFactory:ptr IDWriteFactory5
-        mov hr,dwriteFactory3.QueryInterface(&IID_IDWriteFactory5, &m_dwFactory)
-
-        .if (SUCCEEDED(hr) && AddFontResource(file))
-
-           .new m_dwFontColl:ptr IDWriteFontCollection1
-            mov hr,m_dwFactory.GetSystemFontCollection(0, &m_dwFontColl, FALSE)
-
-            .if (SUCCEEDED(hr))
-
-                mov hr,m_dwFactory.CreateTextFormat(
-                    IDS_FONT2,
-                    m_dwFontColl,
-                    DWRITE_FONT_WEIGHT_NORMAL,
-                    DWRITE_FONT_STYLE_ITALIC,
-                    DWRITE_FONT_STRETCH_NORMAL,
-                    14.0,
-                    "",
-                    &[rbx].m_dwFormat)
-
-                .if (SUCCEEDED(hr))
-                    [rbx].SetFamily(IDS_FONT2)
-                    ;[rbx].SetFont(IDS_FONT2, size, Gray)
-                    mov [rbx].m_file,file
-                .endif
-                m_dwFontColl.Release()
-            .endif
-            m_dwFactory.Release()
-        .endif
-        dwriteFactory3.Release()
-    .endif
-    .return hr
-
-CGFont::LoadFont endp
 
 CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:StringFormatFlags
 
@@ -264,8 +198,7 @@ CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:St
     lea rdx,[rbx+CGFont]
     mov [rbx],rdx
 
-    for q,<Release,SetFamily,SetColor,SetSize,SetFont,SetFormat,SetGDI,
-           GetGDI,Draw,DrawString,SetAlignment>
+    for q,<Release,SetFamily,SetColor,SetSize,SetFont,SetFormat,SetGDI,Draw,SetAlignment>
         lea rcx,CGFont_&q
         mov [rdx].CGFontVtbl.&q,rcx
         endm

@@ -772,7 +772,7 @@ endif
 ;;---------------------------------------------------------------------------
 ;; String format flags
 ;;
-;;  DirectionRightToLeft		 - For horizontal text, the reading order is
+;;  DirectionRightToLeft	 - For horizontal text, the reading order is
 ;;				   right to left. This value is called
 ;;				   the base embedding level by the Unicode
 ;;				   bidirectional engine.
@@ -804,7 +804,7 @@ endif
 ;;				   cause some pixels outside the formatting
 ;;				   rectangle to be clipped or painted.
 ;;
-;;  DisplayFormatControl		 - Causes control characters such as the
+;;  DisplayFormatControl	 - Causes control characters such as the
 ;;				   left-to-right mark to be shown in the
 ;;				   output with a representative glyph.
 ;;

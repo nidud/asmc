@@ -513,7 +513,7 @@ DEFINE_IIDX(IDWriteFactory1, "30572f99-dac6-41db-a16e-0486307e606a")
 .comdef IDWriteFactory1 : public IDWriteFactory
 
     GetEudcFontCollection proc :ptr ptr IDWriteFontCollection, :BOOL
-    CreateCustomRenderingParams2 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams1
+    ;CreateCustomRenderingParams2 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams1
     .ENDS
 
 DEFINE_IIDX(IDWriteFontFace1, "a71efdb4-9fdb-4838-ad90-cfc3be8c3daf")

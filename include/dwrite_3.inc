@@ -6,15 +6,12 @@ include dwrite_2.inc
 ifndef DWRITE_E_REMOTEFONT
 DWRITE_E_REMOTEFONT	equ _HRESULT_TYPEDEF_(0x8898500D)
 endif
-
 ifndef DWRITE_E_DOWNLOADCANCELLED
 DWRITE_E_DOWNLOADCANCELLED equ _HRESULT_TYPEDEF_(0x8898500E)
 endif
-
 ifndef DWRITE_E_DOWNLOADFAILED
 DWRITE_E_DOWNLOADFAILED equ _HRESULT_TYPEDEF_(0x8898500F)
 endif
-
 ifndef DWRITE_E_TOOMANYDOWNLOADS
 DWRITE_E_TOOMANYDOWNLOADS equ _HRESULT_TYPEDEF_(0x88985010)
 endif
@@ -77,16 +74,47 @@ DEFINE_IIDX(IDWriteRenderingParams3, "B7924BAA-391B-412A-8C5C-E44CC2D867DC")
 
 DEFINE_IIDX(IDWriteFactory3, "9A1B41C3-D3BB-466A-87FC-FE67556A3B65")
 
-.comdef IDWriteFactory3 : public IDWriteFactory2
-
-    ;CreateGlyphRunAnalysis proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE1, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
-    ;CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE1, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams3
+.comdef IDWriteFactory3 : public IUnknown
+; 0
+    GetSystemFontCollection0	proc :ptr ptr IDWriteFontCollection, :BOOL
+    CreateCustomFontCollection	proc :ptr IDWriteFontCollectionLoader, :UINT32, :ptr ptr IDWriteFontCollection
+    RegisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
+    UnregisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
+    CreateFontFileReference	proc :ptr WCHAR, :ptr FILETIME, :ptr ptr IDWriteFontFile
+    CreateCustomFontFileReference proc :UINT32, :ptr IDWriteFontFileLoader, :ptr ptr IDWriteFontFile
+    CreateFontFace		proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFace
+    CreateRenderingParams	proc :ptr ptr IDWriteRenderingParams
+    CreateMonitorRenderingParams proc :HMONITOR, :ptr ptr IDWriteRenderingParams
+    CreateCustomRenderingParams0 proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams
+    RegisterFontFileLoader	proc :ptr IDWriteFontFileLoader
+    UnregisterFontFileLoader	proc :ptr IDWriteFontFileLoader
+    CreateTextFormat		proc :ptr ptr WCHAR, :ptr IDWriteFontCollection, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr WCHAR, :ptr ptr IDWriteTextFormat
+    CreateTypography		proc :ptr ptr IDWriteTypography
+    GetGdiInterop		proc :ptr ptr IDWriteGdiInterop
+    CreateTextLayout		proc :ptr WCHAR, :UINT32, :ptr IDWriteTextFormat,  :FLOAT, :FLOAT, :ptr ptr IDWriteTextLayout
+    CreateGdiCompatibleTextLayout proc :UINT32, :ptr IDWriteTextFormat, :FLOAT, :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :ptr ptr IDWriteTextLayout
+    CreateEllipsisTrimmingSign	proc :ptr IDWriteTextFormat, :ptr ptr IDWriteInlineObject
+    CreateTextAnalyzer		proc :ptr ptr IDWriteTextAnalyzer
+    CreateNumberSubstitution	proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr WCHAR, :BOOL, :ptr ptr IDWriteNumberSubstitution
+    CreateGlyphRunAnalysis0	proc :ptr DWRITE_GLYPH_RUN, :FLOAT, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+; 1
+    GetEudcFontCollection proc :ptr ptr IDWriteFontCollection, :BOOL
+    CreateCustomRenderingParams1 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams1
+; 2
+    GetSystemFontFallback proc :ptr ptr IDWriteFontFallback
+    CreateFontFallbackBuilder proc :ptr ptr IDWriteFontFallbackBuilder
+    TranslateColorGlyphRun proc :FLOAT, :FLOAT, :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_GLYPH_RUN_DESCRIPTION, :DWRITE_MEASURING_MODE, :ptr DWRITE_MATRIX, :UINT32, :ptr ptr IDWriteColorGlyphRunEnumerator
+    CreateCustomRenderingParams2 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams2
+    CreateGlyphRunAnalysis2 proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+; 3
+    CreateGlyphRunAnalysis proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE1, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+    CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE1, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams3
     CreateFontFaceReference proc :ptr WCHAR, :ptr FILETIME, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
-    ;CreateFontFaceReference2 proc :ptr IDWriteFontFile, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
+    CreateFontFaceReference? proc :ptr IDWriteFontFile, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
     GetSystemFontSet proc :ptr ptr IDWriteFontSet
     CreateFontSetBuilder proc :ptr ptr IDWriteFontSetBuilder
     CreateFontCollectionFromFontSet proc :ptr IDWriteFontSet, :ptr ptr IDWriteFontCollection1
-    ;GetSystemFontCollection proc :BOOL, :ptr ptr IDWriteFontCollection1, :BOOL
+    GetSystemFontCollection proc :BOOL, :ptr ptr IDWriteFontCollection1, :BOOL
     GetFontDownloadQueue proc :ptr ptr IDWriteFontDownloadQueue
     .ENDS
 
@@ -367,14 +395,52 @@ DEFINE_IIDX(IDWriteFontFace4, "27F2A904-4EB8-441D-9678-0563F53E3E2F")
 
 DEFINE_IIDX(IDWriteFactory4, "4B0B5BD3-0797-4549-8AC5-FE915CC53856")
 
-.comdef IDWriteFactory4 : public IDWriteFactory3
-
-    ;TranslateColorGlyphRun proc :D2D1_POINT_2F, :ptr DWRITE_GLYPH_RUN,
-    ;	:ptr DWRITE_GLYPH_RUN_DESCRIPTION, :DWRITE_GLYPH_IMAGE_FORMATS,
-    ;	:DWRITE_MEASURING_MODE, :ptr DWRITE_MATRIX, :UINT32, :ptr ptr IDWriteColorGlyphRunEnumerator1
-    ComputeGlyphOrigins proc :ptr DWRITE_GLYPH_RUN, :DWRITE_MEASURING_MODE, :D2D1_POINT_2F,
-	:ptr DWRITE_MATRIX
-    ;ComputeGlyphOrigins proc :ptr DWRITE_GLYPH_RUN, :D2D1_POINT_2F
+.comdef IDWriteFactory4 : public IUnknown
+; 0
+    GetSystemFontCollection0	proc :ptr ptr IDWriteFontCollection, :BOOL
+    CreateCustomFontCollection	proc :ptr IDWriteFontCollectionLoader, :UINT32, :ptr ptr IDWriteFontCollection
+    RegisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
+    UnregisterFontCollectionLoader proc :ptr IDWriteFontCollectionLoader
+    CreateFontFileReference	proc :ptr WCHAR, :ptr FILETIME, :ptr ptr IDWriteFontFile
+    CreateCustomFontFileReference proc :UINT32, :ptr IDWriteFontFileLoader, :ptr ptr IDWriteFontFile
+    CreateFontFace		proc :DWRITE_FONT_FACE_TYPE, :UINT32, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFace
+    CreateRenderingParams	proc :ptr ptr IDWriteRenderingParams
+    CreateMonitorRenderingParams proc :HMONITOR, :ptr ptr IDWriteRenderingParams
+    CreateCustomRenderingParams0 proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams
+    RegisterFontFileLoader	proc :ptr IDWriteFontFileLoader
+    UnregisterFontFileLoader	proc :ptr IDWriteFontFileLoader
+    CreateTextFormat		proc :ptr ptr WCHAR, :ptr IDWriteFontCollection, :DWRITE_FONT_WEIGHT, :DWRITE_FONT_STYLE, :DWRITE_FONT_STRETCH, :FLOAT, :ptr WCHAR, :ptr ptr IDWriteTextFormat
+    CreateTypography		proc :ptr ptr IDWriteTypography
+    GetGdiInterop		proc :ptr ptr IDWriteGdiInterop
+    CreateTextLayout		proc :ptr WCHAR, :UINT32, :ptr IDWriteTextFormat,  :FLOAT, :FLOAT, :ptr ptr IDWriteTextLayout
+    CreateGdiCompatibleTextLayout proc :UINT32, :ptr IDWriteTextFormat, :FLOAT, :FLOAT, :FLOAT, :ptr DWRITE_MATRIX, :BOOL, :ptr ptr IDWriteTextLayout
+    CreateEllipsisTrimmingSign	proc :ptr IDWriteTextFormat, :ptr ptr IDWriteInlineObject
+    CreateTextAnalyzer		proc :ptr ptr IDWriteTextAnalyzer
+    CreateNumberSubstitution	proc :DWRITE_NUMBER_SUBSTITUTION_METHOD, :ptr WCHAR, :BOOL, :ptr ptr IDWriteNumberSubstitution
+    CreateGlyphRunAnalysis0	proc :ptr DWRITE_GLYPH_RUN, :FLOAT, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+; 1
+    GetEudcFontCollection	proc :ptr ptr IDWriteFontCollection, :BOOL
+    CreateCustomRenderingParams1 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :ptr ptr IDWriteRenderingParams1
+; 2
+    GetSystemFontFallback	proc :ptr ptr IDWriteFontFallback
+    CreateFontFallbackBuilder	proc :ptr ptr IDWriteFontFallbackBuilder
+    TranslateColorGlyphRun2	proc :FLOAT, :FLOAT, :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_GLYPH_RUN_DESCRIPTION, :DWRITE_MEASURING_MODE, :ptr DWRITE_MATRIX, :UINT32, :ptr ptr IDWriteColorGlyphRunEnumerator
+    CreateCustomRenderingParams2 proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams2
+    CreateGlyphRunAnalysis2	proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+; 3
+    CreateGlyphRunAnalysis	proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE1, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
+    CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE1, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams3
+    CreateFontFaceReference	proc :ptr WCHAR, :ptr FILETIME, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
+    CreateFontFaceReference?	proc :ptr IDWriteFontFile, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
+    GetSystemFontSet		proc :ptr ptr IDWriteFontSet
+    CreateFontSetBuilder	proc :ptr ptr IDWriteFontSetBuilder
+    CreateFontCollectionFromFontSet proc :ptr IDWriteFontSet, :ptr ptr IDWriteFontCollection1
+    GetSystemFontCollection	proc :BOOL, :ptr ptr IDWriteFontCollection1, :BOOL
+    GetFontDownloadQueue	proc :ptr ptr IDWriteFontDownloadQueue
+; 4
+    TranslateColorGlyphRun	proc :D2D1_POINT_2F, :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_GLYPH_RUN_DESCRIPTION, :DWRITE_GLYPH_IMAGE_FORMATS, :DWRITE_MEASURING_MODE, :ptr DWRITE_MATRIX, :UINT32, :ptr ptr IDWriteColorGlyphRunEnumerator1
+    ComputeGlyphOrigins		proc :ptr DWRITE_GLYPH_RUN, :DWRITE_MEASURING_MODE, :D2D1_POINT_2F, :ptr DWRITE_MATRIX
+    ComputeGlyphOrigins?	proc :ptr DWRITE_GLYPH_RUN, :D2D1_POINT_2F
     .ENDS
 
 endif

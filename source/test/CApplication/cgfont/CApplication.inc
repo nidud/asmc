@@ -7,6 +7,7 @@ include gdiplus.inc
 include d2d1.inc
 include dwrite_3.inc
 include stdio.inc
+include Pathcch.inc
 include tchar.inc
 
 define IDS_FONT         <"Segoe UI Light">
@@ -27,7 +28,7 @@ define MAXOBJ 100
     m_width         int_t ?
     m_height        int_t ?
     m_file          ptr wchar_t ?
-    m_dwFormat      ptr IDWriteTextFormat ?
+    m_dwFormat      ptr IDWriteTextFormat1 ?
 
     CGFont          proc :ptr wchar_t, :ptr wchar_t, :StringFormatFlags
     Release         proc

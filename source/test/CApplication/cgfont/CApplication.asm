@@ -67,7 +67,9 @@ CGFont::Release proc uses rbx
     .endif
     .if ( [rbx].m_file )
         RemoveFontResource([rbx].m_file)
-        this.m_dwFormat.Release()
+        .if ( [rbx].m_dwFormat )
+            this.m_dwFormat.Release()
+        .endif
     .endif
     CoTaskMemFree(rbx)
     ret
@@ -76,7 +78,7 @@ CGFont::Release endp
 
 CGFont::SetFamily proc uses rbx family:ptr wchar_t
 
-    mov rbx,this;rcx
+    mov rbx,rcx
     .if ( [rbx].m_family )
         GdipDeleteFontFamily([rbx].m_family)
     .endif
@@ -95,7 +97,7 @@ CGFont::SetColor endp
 
 CGFont::SetSize proc uses rbx size:int_t
 
-    mov rbx,this;rcx
+    mov rbx,rcx
     .if ( [rbx].m_font )
         GdipDeleteFont([rbx].m_font)
     .endif
@@ -107,7 +109,6 @@ CGFont::SetSize endp
 
 CGFont::SetFont proc name:ptr wchar_t, size:int_t, color:ARGB
 
-mov rax,this
     mov [rcx].CGFont.m_color,r9d
     this.SetFamily(rdx)
     this.SetSize(size)
@@ -185,6 +186,7 @@ CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:St
 
    .return .if !CoTaskMemAlloc(CGFont + CGFontVtbl)
 
+    mov this,rax
     mov rbx,rax
     mov rdi,rax
     xor eax,eax
@@ -234,7 +236,6 @@ CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:St
                             &[rbx].m_dwFormat)
 
                         .if (SUCCEEDED(hr))
-
                             mov [rbx].m_file,file
                             [rbx].SetFamily(family)
                         .endif
@@ -329,7 +330,6 @@ CApplication::AfterLeavingMessageLoop proc
 
 CApplication::AfterLeavingMessageLoop endp
 
-
 ; Shows the application window
 
     assume rdi:ptr CApplication
@@ -346,9 +346,22 @@ CApplication::ShowApplicationWindow proc uses rdi
 
     .if ( bSucceeded )
 
+        .new hr:HRESULT
+        .new fontPath[MAX_PATH]:wchar_t
+        .return .ifd !GetModuleFileName(NULL, &fontPath, ARRAYSIZE(fontPath))
+
+        PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
+ifdef __VS__ ; x64/Debug
+        PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
+        PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
+endif
+        .new ppszPathOut:PWSTR = NULL
+        mov hr,PathAllocCombine(&fontPath, "Caudex-Italic.ttf", PATHCCH_NONE, &ppszPathOut)
+        .return FALSE .if (FAILED(hr))
+
         mov [rdi].m_f1,CGFont(IDS_FONT, NULL, StringFormatFlagsNoWrap)
+        mov [rdi].m_f2,CGFont(IDS_FONT2, ppszPathOut, StringFormatFlagsNoWrap)
         mov [rdi].m_f3,CGFont(IDS_FONT, NULL, StringFormatFlagsNoWrap)
-        mov [rdi].m_f2,CGFont(IDS_FONT2, "Caudex-Italic.ttf", StringFormatFlagsNoWrap)
         this.m_f2.SetAlignment(StringAlignmentCenter)
         ShowWindow([rdi].m_hwnd, SW_SHOW)
         UpdateWindow([rdi].m_hwnd)
@@ -376,7 +389,7 @@ CApplication::DestroyApplicationWindow proc uses rdi
             this.m_f2.Release()
         .endif
         .if ( [rdi].m_f3 )
-            this.m_f2.Release()
+            this.m_f3.Release()
         .endif
         .if ( [rdi].m_mem )
             DeleteDC([rdi].m_mem)
@@ -501,7 +514,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
     GdipDeletePath(p)
 
     this.m_f2.Draw(0, [rdi].m_texty,
-        "Caudex Version 1.01\n"
+        "Caudex Version 1.07\n"
         "TrueType Font\n\n"
         "Loaded from disk file\n"
         "Caudex-Italic.ttf")
@@ -515,7 +528,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
     this.m_f3.Draw(ecx, edx, "Timer: %d\nObjects: %d", [rdi].m_timer, [rdi].m_count)
 
     sub [rdi].m_texty,2
-    .if ( [rdi].m_texty < -350 )
+    .if ( [rdi].m_texty < -400 )
         mov eax,[rdi].m_rc.bottom
         sub eax,[rdi].m_rc.top
         mov [rdi].m_texty,eax

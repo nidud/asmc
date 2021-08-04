@@ -52,6 +52,7 @@
       <GenerateDebugInformation>8</GenerateDebugInformation>
       <IncludePaths>..\..\..\..\include</IncludePaths>
       <WCharacterSet>Unicode</WCharacterSet>
+      <AdditionalOptions>/D__VS__ %(AdditionalOptions)</AdditionalOptions>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>

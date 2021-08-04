@@ -6,24 +6,24 @@ include minwinbase.inc
 
 .pragma comment(lib, kernelbase, "api-ms-win-core-path-l1-1-0")
 
-ifndef _APISET_PATH_VER
-ifdef _APISET_MINCORE_VERSION
-if _APISET_MINCORE_VERSION GE 0x0100
-_APISET_PATH_VER equ 0x0100
-endif
-endif
-endif
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-PATHCCH_ALLOW_LONG_PATHS equ 0x00000001
+.enum PATHCCH_OPTIONS {
+    PATHCCH_NONE = 0x0,
+    PATHCCH_ALLOW_LONG_PATHS = 0x01,
+    PATHCCH_FORCE_ENABLE_LONG_NAME_PROCESS = 0x02,
+    PATHCCH_FORCE_DISABLE_LONG_NAME_PROCESS = 0x04,
+    PATHCCH_DO_NOT_NORMALIZE_SEGMENTS = 0x08,
+    PATHCCH_ENSURE_IS_EXTENDED_LENGTH_PATH = 0x10,
+    PATHCCH_ENSURE_TRAILING_SLASH = 0x020,
+    }
 
+PATHCCH_ALLOW_LONG_PATHS equ 0x00000001
 
 VOLUME_PREFIX		equ <L"\\\\?\\Volume">
 VOLUME_PREFIX_LEN	equ (ARRAYSIZE(VOLUME_PREFIX) - 1)
 
 PATHCCH_MAX_CCH		equ 0x8000
-
 
 ;BOOL
 PathIsUNCEx proto WINAPI \
@@ -174,110 +174,6 @@ PathAllocCanonicalize proto WINAPI \
 	     pszPathIn: PCWSTR,
 	       dwFlags: DWORD,
 	   ppszPathOut: ptr PWSTR
-
-if 0
-ifndef PATHCCH_NO_DEPRECATE
-
-undef PathAddBackslash
-undef PathAddBackslashA
-undef PathAddBackslashW
-
-undef PathAddExtension
-undef PathAddExtensionA
-undef PathAddExtensionW
-
-undef PathAppend
-undef PathAppendA
-undef PathAppendW
-
-undef PathCanonicalize
-undef PathCanonicalizeA
-undef PathCanonicalizeW
-
-undef PathCombine
-undef PathCombineA
-undef PathCombineW
-
-undef PathRenameExtension
-undef PathRenameExtensionA
-undef PathRenameExtensionW
-
-ifdef DEPRECATE_SUPPORTED
-
-pragma_deprecated macro p
-	exitm<>
-	endm
-
-pragma_deprecated(PathIsRelativeWorker)
-pragma_deprecated(StrIsEqualWorker)
-pragma_deprecated(FindPreviousBackslashWorker)
-pragma_deprecated(IsHexDigitWorker)
-pragma_deprecated(StringIsGUIDWorker)
-pragma_deprecated(PathIsVolumeGUIDWorker)
-pragma_deprecated(IsValidExtensionWorker)
-
-pragma_deprecated(PathAddBackslash)
-pragma_deprecated(PathAddBackslashA)
-pragma_deprecated(PathAddBackslashW)
-
-pragma_deprecated(PathAddExtension)
-pragma_deprecated(PathAddExtensionA)
-pragma_deprecated(PathAddExtensionW)
-
-pragma_deprecated(PathAppend)
-pragma_deprecated(PathAppendA)
-pragma_deprecated(PathAppendW)
-
-pragma_deprecated(PathCanonicalize)
-pragma_deprecated(PathCanonicalizeA)
-pragma_deprecated(PathCanonicalizeW)
-
-pragma_deprecated(PathCombine)
-pragma_deprecated(PathCombineA)
-pragma_deprecated(PathCombineW)
-
-pragma_deprecated(PathRenameExtension)
-pragma_deprecated(PathRenameExtensionA)
-pragma_deprecated(PathRenameExtensionW)
-
-else
-
-PathIsRelativeWorker	equ <PathIsRelativeWorker_is_internal_to_pathcch>
-StrIsEqualWorker	equ <StrIsEqualWorker_is_internal_to_pathcch>
-FindPreviousBackslashWorker equ <FindPreviousBackslashWorker_is_internal_to_pathcch>
-IsHexDigitWorker	equ <IsHexDigitWorker_is_internal_to_pathcch>
-StringIsGUIDWorker	equ <StringIsGUIDWorker_is_internal_to_pathcch>
-PathIsVolumeGUIDWorker	equ <PathIsVolumeGUIDWorker_is_internal_to_pathcch>
-IsValidExtensionWorker	equ <IsValidExtensionWorker_is_internal_to_pathcch>
-
-PathAddBackslash	equ <PathAddBackslash_instead_use_PathCchAddBackslash>
-PathAddBackslashA	equ <PathAddBackslash_instead_use_PathCchAddBackslash>
-PathAddBackslashW	equ <PathAddBackslash_instead_use_PathCchAddBackslash>
-
-PathAddExtension	equ <PathAddExtension_instead_use_PathCchAddExtension>
-PathAddExtensionA	equ <PathAddExtension_instead_use_PathCchAddExtension>
-PathAddExtensionW	equ <PathAddExtension_instead_use_PathCchAddExtension>
-
-PathAppend		equ <PathAppend_instead_use_PathCchAppend>
-PathAppendA		equ <PathAppend_instead_use_PathCchAppend>
-PathAppendW		equ <PathAppend_instead_use_PathCchAppend>
-
-PathCanonicalize	equ <PathCanonicalize_instead_use_PathCchCanonicalize>
-PathCanonicalizeA	equ <PathCanonicalize_instead_use_PathCchCanonicalize>
-PathCanonicalizeW	equ <PathCanonicalize_instead_use_PathCchCanonicalize>
-
-PathCombine		equ <PathCombine_instead_use_PathCchCombine>
-PathCombineA		equ <PathCombine_instead_use_PathCchCombine>
-PathCombineW		equ <PathCombine_instead_use_PathCchCombine>
-
-PathRenameExtension	equ <PathRenameExtension_instead_use_PathCchRenameExtension>
-PathRenameExtensionA	equ <PathRenameExtension_instead_use_PathCchRenameExtension>
-PathRenameExtensionW	equ <PathRenameExtension_instead_use_PathCchRenameExtension>
-
-endif
-endif
-
-endif
 
 endif
 

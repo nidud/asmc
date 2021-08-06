@@ -149,10 +149,15 @@ DEFINE_IIDX(IDWriteFontSetBuilder, "2F642AFE-9C68-4F40-B8BE-457401AFCB3D")
 
 DEFINE_IIDX(IDWriteFontCollection1, "53585141-D9F8-4095-8321-D73CF6BD116C")
 
-.comdef IDWriteFontCollection1 : public IDWriteFontCollection
+.comdef IDWriteFontCollection1 : public IUnknown
 
+    GetFontFamilyCount	proc
+    GetFontFamily?	proc :UINT32, :ptr ptr IDWriteFontFamily
+    FindFamilyName	proc :ptr WCHAR, :ptr UINT32, :ptr BOOL
+    GetFontFromFontFace proc :ptr IDWriteFontFace, :ptr ptr IDWriteFont
+; 1
     GetFontSet		proc :ptr ptr IDWriteFontSet
-    ;GetFontFamily	proc :UINT32, :ptr ptr IDWriteFontFamily1
+    GetFontFamily	proc :UINT32, :ptr ptr IDWriteFontFamily1
     .ENDS
 
 
@@ -712,8 +717,16 @@ DEFINE_IIDX(IDWriteFontFamily2, "3ED49E77-A398-4261-B9CF-C126C2131EF3")
 
 DEFINE_IIDX(IDWriteFontCollection2, "514039C6-4617-4064-BF8B-92EA83E506E0")
 
-.comdef IDWriteFontCollection2 : public IDWriteFontCollection1
+.comdef IDWriteFontCollection2 : public IUnknown
 
+    GetFontFamilyCount	proc
+    GetFontFamily0	proc :UINT32, :ptr ptr IDWriteFontFamily
+    FindFamilyName	proc :ptr WCHAR, :ptr UINT32, :ptr BOOL
+    GetFontFromFontFace proc :ptr IDWriteFontFace, :ptr ptr IDWriteFont
+; 1
+    GetFontSet1		proc :ptr ptr IDWriteFontSet
+    GetFontFamily1	proc :UINT32, :ptr ptr IDWriteFontFamily1
+; 2
     GetFontFamily	proc :UINT32, :ptr ptr IDWriteFontFamily2
     GetMatchingFonts	proc :ptr WCHAR, :UINT32, :ptr ptr IDWriteFontList2
     GetFontFamilyModel	proc

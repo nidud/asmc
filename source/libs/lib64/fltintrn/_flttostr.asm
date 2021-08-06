@@ -102,7 +102,8 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             and eax,NOT 0x202020
         .endif
-        mov [r8],eax
+        mov rcx,buf
+        mov [rcx],eax
         mov [rbx].n1,3
         .return 64
     .endif
@@ -375,7 +376,8 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             sub edx,r10d
             neg edx
             mov [rbx].nz2,edx
-            add edi,[rbx].n1    ; number of leading characters
+            mov ecx,[rbx].n1    ; number of leading characters
+            add rdi,rcx
 
             mov ecx,[rbx].nz1   ; followed by this many '0's
             mov eax,[rbx].n2

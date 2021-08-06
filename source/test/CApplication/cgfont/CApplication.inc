@@ -4,8 +4,6 @@ define NTDDI_VERSION    0x0A000003
 
 include windows.inc
 include gdiplus.inc
-include d2d1.inc
-include dwrite_3.inc
 include stdio.inc
 include Pathcch.inc
 include tchar.inc
@@ -28,7 +26,6 @@ define MAXOBJ 100
     m_width         int_t ?
     m_height        int_t ?
     m_file          ptr wchar_t ?
-    m_dwFormat      ptr IDWriteTextFormat1 ?
 
     CGFont          proc :ptr wchar_t, :ptr wchar_t, :StringFormatFlags
     Release         proc
@@ -92,8 +89,3 @@ define MAXOBJ 100
     DestroyApplicationWindow    proc
    .ends
 
-ifdef __PE__
-.data
- IID_IDWriteFactory3 GUID _IID_IDWriteFactory3
- IID_IDWriteFactory5 GUID _IID_IDWriteFactory5
-endif

@@ -7,6 +7,38 @@ define ID_TIMER     1
 
     .code
 
+ErrorMessage proc hr:HRESULT, format:LPTSTR, args:vararg
+
+  local szMessage:LPTSTR
+  local buffer[512]:wchar_t
+  local message[512]:wchar_t
+
+    vswprintf(&buffer, format, &args)
+
+    mov edx,hr
+    .if (HRESULT_FACILITY(edx) == FACILITY_WINDOWS)
+
+        mov hr,HRESULT_CODE(edx)
+    .endif
+
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER or \
+        FORMAT_MESSAGE_FROM_SYSTEM or \
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        hr,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        &szMessage,
+        0,
+        NULL)
+
+    swprintf(&message, "%s\n\nError code: %08X\n\n%s", &buffer, hr, szMessage)
+    MessageBox(NULL, &message, "Error", MB_OK or MB_ICONERROR)
+    LocalFree(szMessage)
+    .return hr
+
+ErrorMessage endp
+
 BoundRand proc b:uint_t
 
     mov eax,ecx
@@ -50,32 +82,6 @@ RandRGB endp
 
    assume rbx:ptr CGFont
 
-CGFont::Release proc uses rbx
-
-    mov rbx,rcx
-    .if ( [rbx].m_font )
-        GdipDeleteFont([rbx].m_font)
-    .endif
-    .if ( [rbx].m_family )
-        GdipDeleteFontFamily([rbx].m_family)
-    .endif
-    .if ( [rbx].m_format )
-        GdipDeleteStringFormat([rbx].m_format)
-    .endif
-    .if ( [rbx].m_gp )
-        GdipDeleteGraphics([rbx].m_gp)
-    .endif
-    .if ( [rbx].m_file )
-        RemoveFontResource([rbx].m_file)
-        .if ( [rbx].m_dwFormat )
-            this.m_dwFormat.Release()
-        .endif
-    .endif
-    CoTaskMemFree(rbx)
-    ret
-
-CGFont::Release endp
-
 CGFont::SetFamily proc uses rbx family:ptr wchar_t
 
     mov rbx,rcx
@@ -83,6 +89,13 @@ CGFont::SetFamily proc uses rbx family:ptr wchar_t
         GdipDeleteFontFamily([rbx].m_family)
     .endif
     GdipCreateFontFamilyFromName(family, NULL, &[rbx].m_family)
+
+    .if ( eax )
+        ;
+        ; FontFamilyNotFound 0xE
+        ;
+        ErrorMessage(eax, "GdipCreateFontFamilyFromName(\"%s\")", family)
+    .endif
     ret
 
 CGFont::SetFamily endp
@@ -184,7 +197,7 @@ CGFont::Draw endp
 
 CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:StringFormatFlags
 
-   .return .if !CoTaskMemAlloc(CGFont + CGFontVtbl)
+   .return .if !LocalAlloc(LMEM_FIXED or LMEM_ZEROINIT, CGFont + CGFontVtbl)
 
     mov this,rax
     mov rbx,rax
@@ -207,46 +220,12 @@ CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:St
 
     .if ( file )
 
-       .new hr:HRESULT
-       .new dwriteFactory3:ptr IDWriteFactory3
-        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory3, &dwriteFactory3)
+        .if ( AddFontResource(file) )
 
-        .if (SUCCEEDED(hr))
-
-           .new m_dwFactory:ptr IDWriteFactory5
-            mov hr,dwriteFactory3.QueryInterface(&IID_IDWriteFactory5, &m_dwFactory)
-
-            .if (SUCCEEDED(hr))
-
-                .if ( AddFontResource(file) )
-
-                   .new m_dwFontColl:ptr IDWriteFontCollection1
-                    mov hr,m_dwFactory.GetSystemFontCollection(0, &m_dwFontColl, FALSE)
-
-                    .if (SUCCEEDED(hr))
-
-                        mov hr,m_dwFactory.CreateTextFormat(
-                            family,
-                            m_dwFontColl,
-                            DWRITE_FONT_WEIGHT_NORMAL,
-                            DWRITE_FONT_STYLE_ITALIC,
-                            DWRITE_FONT_STRETCH_NORMAL,
-                            14.0,
-                            "",
-                            &[rbx].m_dwFormat)
-
-                        .if (SUCCEEDED(hr))
-                            mov [rbx].m_file,file
-                            [rbx].SetFamily(family)
-                        .endif
-                        m_dwFontColl.Release()
-                    .endif
-                    m_dwFactory.Release()
-                .endif
-                dwriteFactory3.Release()
-            .endif
+            mov [rbx].m_file,file
         .endif
-    .elseif ( family )
+    .endif
+    .if ( family )
         [rbx].SetFamily(family)
     .endif
     .if ( Format )
@@ -256,6 +235,29 @@ CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:St
     ret
 
 CGFont::CGFont endp
+
+CGFont::Release proc uses rbx
+
+    mov rbx,rcx
+    .if ( [rbx].m_font )
+        GdipDeleteFont([rbx].m_font)
+    .endif
+    .if ( [rbx].m_family )
+        GdipDeleteFontFamily([rbx].m_family)
+    .endif
+    .if ( [rbx].m_format )
+        GdipDeleteStringFormat([rbx].m_format)
+    .endif
+    .if ( [rbx].m_gp )
+        GdipDeleteGraphics([rbx].m_gp)
+    .endif
+    .if ( [rbx].m_file )
+        RemoveFontResource([rbx].m_file)
+    .endif
+    LocalFree(rbx)
+    ret
+
+CGFont::Release endp
 
     assume rbx:nothing
 
@@ -351,18 +353,20 @@ CApplication::ShowApplicationWindow proc uses rdi
         .return .ifd !GetModuleFileName(NULL, &fontPath, ARRAYSIZE(fontPath))
 
         PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
+        PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
 ifdef __VS__ ; x64/Debug
         PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
         PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
 endif
         .new ppszPathOut:PWSTR = NULL
-        mov hr,PathAllocCombine(&fontPath, "Caudex-Italic.ttf", PATHCCH_NONE, &ppszPathOut)
+        mov hr,PathAllocCombine(&fontPath, "fonts\\peric.ttf", PATHCCH_NONE, &ppszPathOut)
         .return FALSE .if (FAILED(hr))
 
         mov [rdi].m_f1,CGFont(IDS_FONT, NULL, StringFormatFlagsNoWrap)
         mov [rdi].m_f2,CGFont(IDS_FONT2, ppszPathOut, StringFormatFlagsNoWrap)
-        mov [rdi].m_f3,CGFont(IDS_FONT, NULL, StringFormatFlagsNoWrap)
+        mov [rdi].m_f3,CGFont("Lucida Console", NULL, StringFormatFlagsNoWrap)
         this.m_f2.SetAlignment(StringAlignmentCenter)
+        this.m_f3.SetColor(Wheat)
         ShowWindow([rdi].m_hwnd, SW_SHOW)
         UpdateWindow([rdi].m_hwnd)
         SetTimer([rdi].m_hwnd, ID_TIMER, [rdi].m_timer, NULL)
@@ -462,7 +466,7 @@ CApplication::OnSize proc uses rdi lParam:LPARAM
             mov [rdi].m_g2,this.m_f2.SetGDI([rdi].m_mem, ecx, [rdi].m_rc.bottom)
             GdipSetSmoothingMode(rax, SmoothingModeHighQuality)
             this.m_f2.SetSize(48)
-            this.m_f3.SetSize(12)
+            this.m_f3.SetSize(14)
         .endif
     .endif
     .return 1
@@ -525,7 +529,7 @@ CApplication::OnTimer proc uses rsi rdi rbx
     mov edx,[rdi].m_rc.bottom
     sub edx,[rdi].m_rc.top
     sub edx,52
-    this.m_f3.Draw(ecx, edx, "Timer: %d\nObjects: %d", [rdi].m_timer, [rdi].m_count)
+    this.m_f3.Draw(ecx, edx, "Timer:   %d\nObjects: %d", [rdi].m_timer, [rdi].m_count)
 
     sub [rdi].m_texty,2
     .if ( [rdi].m_texty < -400 )

@@ -1391,7 +1391,7 @@ FindDotSymbol proc uses esi edi ebx tok:ptr asm_tok
 FindDotSymbol endp
 
 AssignPointer proc private uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
-        pclass:ptr asym, langtype:int_t
+        pclass:ptr asym, langtype:int_t, pmacro:ptr asym
 
   local buffer[128]:sbyte
   local vreg:int_t
@@ -1492,7 +1492,7 @@ AssignPointer proc private uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm
         .break .if ( !esi )
         add ebx,asm_tok
     .endw
-    .if ( vtable )
+    .if ( vtable && !pmacro )
         AddLineQueueX( " mov %r, [%r]", vreg, reg )
     .endif
     ret
@@ -2030,6 +2030,7 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                     strcat( p, [ebx+16].tokpos )
                 .endif
            .else
+                push esi
                 mov esi,1
                 .if ( [edi].flag2 & S_ISSTATIC )
                     strcat( p, [ebx+32].string_ptr )
@@ -2043,10 +2044,13 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                         strcat( p, args[esi*4] )
                     .endif
                 .endf
+                pop esi
             .endif
             strcat( p, ")" )
 
-        .elseif struct_ptr
+        .endif
+
+        .if struct_ptr
 
             mov edi,T_EAX
             .if ( ModuleInfo.Ofssize == USE64 )
@@ -2058,8 +2062,9 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .endif
             mov ebx,struct_ptr
             mov ecx,SymSearch( [ebx].string_ptr )
-            AssignPointer( ecx, edi, struct_ptr, pclass, [esi].langtype )
-        .else
+            AssignPointer( ecx, edi, struct_ptr, pclass, [esi].langtype, pmacro)
+
+        .elseif ( !pmacro )
 
             imul ebx,parmpos,16
             add ebx,tokenarray

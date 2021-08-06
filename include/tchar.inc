@@ -1774,10 +1774,11 @@ endif ; __GUI__
 mainCRTStartup endp
 
 _tstart equ <mainCRTStartup>
-
+_tend equ <>
 else
 
 _tstart equ <>
+_tend equ <end>
 
 endif ; __PE__
 

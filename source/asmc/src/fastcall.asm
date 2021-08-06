@@ -1116,8 +1116,6 @@ GetAccumulator proc psize:uint_t, regs:ptr
 
 GetAccumulator endp
 
-AssignPointer proto :ptr asym, :int_t, :ptr asm_tok
-
 ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:int_t,
         opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
 
@@ -1435,16 +1433,6 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
     .case ecx == EXPR_FLOAT
         mov eax,psize
         .endc
-if 0
-    .case ecx == EXPR_ADDR && ( edx || [edx].asym.mem_type == MT_PTR )
-        mov ecx,[edi].expr.type_tok
-        .if ( ecx && [ecx+16].asm_tok.token == T_DOT )
-
-            movzx eax,ms64_regs[esi+3*4]
-            AssignPointer( edx, eax, ecx )
-            jmp ret_regused
-        .endif
-endif
     .case [edi].expr.mem_type != MT_EMPTY
         SizeFromMemtype([edi].expr.mem_type, USE64, [edi].expr.type)
         .endc

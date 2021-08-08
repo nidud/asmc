@@ -452,7 +452,7 @@ ListViewApp::CreateDeviceResources proc uses rsi
                 96.0
                 }
 
-            mov hr,this.m_pRT.CreateBitmap?(
+            mov hr,this.m_pRT.CreateBitmap(
                 size,
                 NULL,
                 0,
@@ -1024,7 +1024,7 @@ ListViewApp::OnRender proc uses rsi rdi rbx
             ;; The icon is stored in the image atlas. We reference it's position
             ;; in the atlas and it's destination on the screen.
 
-            pRT.DrawBitmap?(
+            pRT.DrawBitmap(
                 [rsi].m_pBitmapAtlas,
                 &r1,
                 opacity,

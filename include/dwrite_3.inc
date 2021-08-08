@@ -340,20 +340,139 @@ DWRITE_LINE_SPACING	ENDS
 
 DEFINE_IIDX(IDWriteTextFormat2, "F67E0EDD-9E3D-4ECC-8C32-4183253DFE70")
 
-.comdef IDWriteTextFormat2 : public IDWriteTextFormat1
+.comdef IDWriteTextFormat2 : public IUnknown
 
-    ;SetLineSpacing	proc :ptr DWRITE_LINE_SPACING
-    ;GetLineSpacing	proc :ptr DWRITE_LINE_SPACING
+    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
+    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
+    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
+    SetReadingDirection proc :DWRITE_READING_DIRECTION
+    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
+    SetIncrementalTabStop proc :FLOAT
+    SetTrimming		proc :ptr DWRITE_TRIMMING, :ptr IDWriteInlineObject
+    SetLineSpacing?	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
+    GetTextAlignment	proc
+    GetParagraphAlignment proc
+    GetWordWrapping	proc
+    GetReadingDirection proc
+    GetFlowDirection	proc
+    GetIncrementalTabStop proc
+    GetTrimming		proc :ptr DWRITE_TRIMMING, :ptr ptr
+    GetLineSpacing?	proc :ptr DWRITE_LINE_SPACING_METHOD, :ptr FOAT, :ptr LOAT
+    GetFontCollection	proc :ptr ptr IDWriteFontCollection
+    GetFontFamilyNameLength proc
+    GetFontFamilyName	proc :UINT32
+    GetFontWeight	proc
+    GetFontStyle	proc
+    GetFontStretch	proc
+    GetFontSize		proc
+    GetLocaleNameLength proc
+    GetLocaleName	proc :UINT32
+; 1
+    SetVerticalGlyphOrientation proc :DWRITE_VERTICAL_GLYPH_ORIENTATION
+    GetVerticalGlyphOrientation proc
+    SetLastLineWrapping proc :BOOL
+    GetLastLineWrapping proc
+    SetOpticalAlignment proc :DWRITE_OPTICAL_ALIGNMENT
+    GetOpticalAlignment proc
+    SetFontFallback	proc :ptr IDWriteFontFallback
+    GetFontFallback	proc :ptr ptr IDWriteFontFallback
+; 2
+    SetLineSpacing	proc :ptr DWRITE_LINE_SPACING
+    GetLineSpacing	proc :ptr DWRITE_LINE_SPACING
     .ENDS
 
 DEFINE_IIDX(IDWriteTextLayout3, "07DDCD52-020E-4DE8-AC33-6C953D83F92D")
 
-.comdef IDWriteTextLayout3 : public IDWriteTextLayout2
+.comdef IDWriteTextLayout3 : public IUnknown
 
+    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
+    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
+    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
+    SetReadingDirection proc :DWRITE_READING_DIRECTION
+    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
+    SetIncrementalTabStop proc :FLOAT
+    SetTrimming		proc :ptr DWRITE_TRIMMING, :ptr IDWriteInlineObject
+    SetLineSpacing?	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
+    GetTextAlignment	proc
+    GetParagraphAlignment proc
+    GetWordWrapping	proc
+    GetReadingDirection proc
+    GetFlowDirection	proc
+    GetIncrementalTabStop proc
+    GetTrimming		proc :ptr DWRITE_TRIMMING, :ptr ptr
+    GetLineSpacing?	proc :ptr DWRITE_LINE_SPACING_METHOD, :ptr FOAT, :ptr LOAT
+    GetFontCollection?	proc :ptr ptr IDWriteFontCollection
+    GetFontFamilyNameLength? proc
+    GetFontFamilyName?	proc :UINT32
+    GetFontWeight?	proc
+    GetFontStyle?	proc
+    GetFontStretch?	proc
+    GetFontSize?	proc
+    GetLocaleNameLength? proc
+    GetLocaleName?	proc :UINT32
+
+    SetMaxWidth		proc :FLOAT
+    SetMaxHeight	proc :FLOAT
+    SetFontCollection	proc :ptr IDWriteFontCollection, :DWRITE_TEXT_RANGE
+    SetFontFamilyName	proc :ptr WCHAR, :DWRITE_TEXT_RANGE
+    SetFontWeight	proc :DWRITE_FONT_WEIGHT, :DWRITE_TEXT_RANGE
+    SetFontStyle	proc :DWRITE_FONT_STYLE, :DWRITE_TEXT_RANGE
+    SetFontStretch	proc :DWRITE_FONT_STRETCH, :DWRITE_TEXT_RANGE
+    SetFontSize		proc :FLOAT, :DWRITE_TEXT_RANGE
+    SetUnderline	proc :BOOL, :DWRITE_TEXT_RANGE
+    SetStrikethrough	proc :BOOL, :DWRITE_TEXT_RANGE
+    SetDrawingEffect	proc :ptr IUnknown, :DWRITE_TEXT_RANGE
+    SetInlineObject	proc :ptr IDWriteInlineObject, :DWRITE_TEXT_RANGE
+    SetTypography	proc :ptr IDWriteTypography, :DWRITE_TEXT_RANGE
+    SetLocaleName	proc :ptr WCHAR, :DWRITE_TEXT_RANGE
+    GetMaxWidth		proc
+    GetMaxHeight	proc
+
+    GetFontCollection	proc :UINT32, :ptr ptr IDWriteFontCollection, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyName	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontWeight	proc :UINT32, :ptr DWRITE_FONT_WEIGHT, :ptr DWRITE_TEXT_RANGE
+    GetFontStyle	proc :UINT32, :ptr DWRITE_FONT_STYLE, :ptr DWRITE_TEXT_RANGE
+    GetFontStretch	proc :UINT32, :ptr DWRITE_FONT_STRETCH, :ptr DWRITE_TEXT_RANGE
+    GetFontSize		proc :UINT32, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+
+    GetUnderline	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
+    GetStrikethrough	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
+    GetDrawingEffect	proc :UINT32, :ptr IUnknown, :ptr DWRITE_TEXT_RANGE
+    GetInlineObject	proc :UINT32, :ptr IDWriteInlineObject, :ptr DWRITE_TEXT_RANGE
+    GetTypography	proc :UINT32, :ptr IDWriteTypography, :ptr DWRITE_TEXT_RANGE
+
+    GetLocaleNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetLocaleName	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
+    Draw		proc :ptr, :ptr IDWriteTextRenderer, :FLOAT, :FLOAT
+    GetLineMetrics?	proc :UINT32, :ptr UINT32
+    GetMetrics?		proc :ptr DWRITE_TEXT_METRICS
+    GetOverhangMetrics	proc :ptr DWRITE_OVERHANG_METRICS
+    GetClusterMetrics	proc :UINT32, :ptr UINT32
+    DetermineMinWidth	proc :ptr FLOAT
+    HitTestPoint	proc :FLOAT, :FLOAT, :ptr BOOL, :ptr BOOL, :ptr DWRITE_HIT_TEST_METRICS
+    HitTestTextPosition proc :UINT32, :BOOL, :ptr FLOAT, :ptr FLOAT, :ptr DWRITE_HIT_TEST_METRICS
+    HitTestTextRange	proc :UINT32, :UINT32, :FLOAT, :FLOAT, :UINT32, :ptr UINT32
+; 1
+    SetPairKerning	proc :BOOL, :DWRITE_TEXT_RANGE
+    GetPairKerning	proc :UINT32, :ptr isPairKerningEnabled, :ptr DWRITE_TEXT_RANGE
+    SetCharacterSpacing proc :FLOAT, :FLOAT, :FLOAT, :DWRITE_TEXT_RANGE
+    GetCharacterSpacing proc :UINT32, :ptr FLOAT, :ptr FLOAT, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+; 2
+    GetMetrics		proc :ptr DWRITE_TEXT_METRICS1
+    SetVerticalGlyphOrientation proc :DWRITE_VERTICAL_GLYPH_ORIENTATION
+    GetVerticalGlyphOrientation proc
+    SetLastLineWrapping proc :BOOL
+    GetLastLineWrapping proc
+    SetOpticalAlignment proc :DWRITE_OPTICAL_ALIGNMENT
+    GetOpticalAlignment proc
+    SetFontFallback	proc :ptr IDWriteFontFallback
+    GetFontFallback	proc :ptr ptr IDWriteFontFallback
+; 3
     InvalidateLayout	proc
-    ;SetLineSpacing	proc :ptr DWRITE_LINE_SPACING
-    ;GetLineSpacing	proc :ptr DWRITE_LINE_SPACING
-    ;GetLineMetrics	proc :UINT32, :ptr UINT32
+    SetLineSpacing	proc :ptr DWRITE_LINE_SPACING
+    GetLineSpacing	proc :ptr DWRITE_LINE_SPACING
+    GetLineMetrics	proc :UINT32, :ptr UINT32
     .ENDS
 
 
@@ -750,9 +869,9 @@ DEFINE_IIDX(IDWriteTextFormat3, "6D3B5641-E550-430D-A85B-B7BF48A93427")
 
 .comdef IDWriteTextFormat3 : public IDWriteTextFormat2
 
-    SetFontAxisValues	proc :UINT32
+    SetFontAxisValues	proc :ptr DWRITE_FONT_AXIS_VALUE, :UINT32
     GetFontAxisValueCount proc
-    GetFontAxisValues	proc :UINT32
+    GetFontAxisValues	proc :ptr DWRITE_FONT_AXIS_VALUE, :UINT32
     GetAutomaticFontAxes proc
     SetAutomaticFontAxes proc :DWRITE_AUTOMATIC_FONT_AXES
     .ENDS

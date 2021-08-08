@@ -486,7 +486,61 @@ DEFINE_IIDX(ID2D1DrawingStateBlock1, "689f1f85-c72e-4e33-8f19-85754efd5ace")
 
 DEFINE_IIDX(ID2D1DeviceContext, "e8f7fe7a-191c-466d-ad95-975678bda998")
 
-.comdef ID2D1DeviceContext : public ID2D1RenderTarget
+.comdef ID2D1DeviceContext : public ID2D1Resource
+
+    CreateBitmap?		proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr, :ptr
+    CreateBitmapFromWicBitmap?	proc :ptr, :ptr, :ptr
+    CreateSharedBitmap		proc :REFIID, :ptr, :ptr, :ptr
+    CreateBitmapBrush?		proc :ptr, :ptr, :ptr, :ptr
+    CreateSolidColorBrush	proc :ptr, :ptr, :ptr
+    CreateGradientStopCollection? proc :ptr, :UINT, :D2D1_GAMMA, :D2D1_EXTEND_MODE, :ptr
+    CreateLinearGradientBrush	proc :ptr, :ptr, :ptr, :ptr
+    CreateRadialGradientBrush	proc :ptr D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES, :ptr D2D1_BRUSH_PROPERTIES, :ptr ID2D1GradientStopCollection, :ptr ptr ID2D1RadialGradientBrush
+    CreateCompatibleRenderTarget proc :ptr, :ptr, :ptr, :D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS, :ptr
+    CreateLayer			proc :ptr, :ptr
+    CreateMesh			proc :ptr
+    DrawLine			proc :D2D1_POINT_2F, :D2D1_POINT_2F, :ptr, :FLOAT, :ptr
+    DrawRectangle		proc :ptr, :ptr, :FLOAT, :ptr
+    FillRectangle		proc :ptr, :ptr
+    DrawRoundedRectangle	proc :ptr, :ptr, :FLOAT, :ptr
+    FillRoundedRectangle	proc :ptr, :ptr
+    DrawEllipse			proc :ptr D2D1_ELLIPSE, :ptr ID2D1Brush, :FLOAT, :ptr ID2D1StrokeStyle
+    FillEllipse			proc :ptr D2D1_ELLIPSE, :ptr ID2D1Brush
+    DrawGeometry		proc :ptr, :ptr, :FLOAT, :ptr
+    FillGeometry		proc :ptr, :ptr, :ptr
+    FillMesh			proc :ptr, :ptr
+    FillOpacityMask?		proc :ptr, :ptr, :D2D1_OPACITY_MASK_CONTENT, :ptr, :ptr
+    DrawBitmap?			proc :ptr, :ptr, :FLOAT, :D2D1_BITMAP_INTERPOLATION_MODE, :ptr
+    DrawText			proc :ptr, :UINT, :ptr, :ptr, :ptr, :D2D1_DRAW_TEXT_OPTIONS, :DWRITE_MEASURING_MODE
+    DrawTextLayout		proc :D2D1_POINT_2F, :ptr, :ptr, :D2D1_DRAW_TEXT_OPTIONS
+    DrawGlyphRun?		proc :D2D1_POINT_2F, :ptr, :ptr, :DWRITE_MEASURING_MODE
+    SetTransform		proc :ptr
+    GetTransform		proc :ptr
+    SetAntialiasMode		proc :D2D1_ANTIALIAS_MODE
+    GetAntialiasMode		proc
+    SetTextAntialiasMode	proc :D2D1_TEXT_ANTIALIAS_MODE
+    GetTextAntialiasMode	proc
+    SetTextRenderingParams	proc :ptr
+    GetTextRenderingParams	proc :ptr
+    SetTags			proc :D2D1_TAG, :D2D1_TAG
+    GetTags			proc :ptr, :ptr
+    PushLayer?			proc :ptr, :ptr
+    PopLayer			proc
+    Flush			proc :ptr, :ptr
+    SaveDrawingState		proc :ptr
+    RestoreDrawingState		proc :ptr
+    PushAxisAlignedClip		proc :ptr, :D2D1_ANTIALIAS_MODE
+    PopAxisAlignedClip		proc
+    Clear			proc :ptr
+    BeginDraw			proc
+    EndDraw			proc :ptr, :ptr
+    GetPixelFormat		proc
+    SetDpi			proc :FLOAT, :FLOAT
+    GetDpi			proc :ptr, :ptr
+    GetSize			proc :ptr D2D1_SIZE_F
+    GetPixelSize		proc :ptr D2D1_SIZE_U
+    GetMaximumBitmapSize	proc
+    IsSupported			proc :ptr
 
     CreateBitmap	proc :D2D1_SIZE_U, :ptr, :UINT32, :ptr, :ptr ptr
     CreateBitmapFromWicBitmap proc :ptr, :ptr, :ptr ptr

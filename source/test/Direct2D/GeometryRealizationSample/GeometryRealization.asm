@@ -663,7 +663,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
                     ;; Note: The antialias mode must be set to aliased prior to calling
                     ;; FillOpacityMask.
                     ;;
-                    pRT.FillOpacityMask?(
+                    pRT.FillOpacityMask(
                         pBitmap,
                         pBrush,
                         D2D1_OPACITY_MASK_CONTENT_GRAPHICS,
@@ -690,7 +690,7 @@ GeometryRealization::RenderToTarget proc uses rsi \
                     ;; Note: The antialias mode must be set to aliased prior to calling
                     ;; FillOpacityMask.
                     ;;
-                    pRT.FillOpacityMask?(
+                    pRT.FillOpacityMask(
                         pBitmap,
                         pBrush,
                         D2D1_OPACITY_MASK_CONTENT_GRAPHICS,

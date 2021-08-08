@@ -812,7 +812,33 @@ DEFINE_IIDX(IDWriteTextRenderer, "ef8a8135-5cc6-45fe-8825-c5a0724eb819")
 
 DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
 
-.comdef IDWriteTextLayout : public IDWriteTextFormat
+.comdef IDWriteTextLayout : public IUnknown
+
+    SetTextAlignment	proc :DWRITE_TEXT_ALIGNMENT
+    SetParagraphAlignment proc :DWRITE_PARAGRAPH_ALIGNMENT
+    SetWordWrapping	proc :DWRITE_WORD_WRAPPING
+    SetReadingDirection proc :DWRITE_READING_DIRECTION
+    SetFlowDirection	proc :DWRITE_FLOW_DIRECTION
+    SetIncrementalTabStop proc :FLOAT
+    SetTrimming		proc :ptr DWRITE_TRIMMING, :ptr IDWriteInlineObject
+    SetLineSpacing	proc :DWRITE_LINE_SPACING_METHOD, :FLOAT, :FLOAT
+    GetTextAlignment	proc
+    GetParagraphAlignment proc
+    GetWordWrapping	proc
+    GetReadingDirection proc
+    GetFlowDirection	proc
+    GetIncrementalTabStop proc
+    GetTrimming		proc :ptr DWRITE_TRIMMING, :ptr ptr
+    GetLineSpacing	proc :ptr DWRITE_LINE_SPACING_METHOD, :ptr FOAT, :ptr LOAT
+    GetFontCollection?	proc :ptr ptr IDWriteFontCollection
+    GetFontFamilyNameLength? proc
+    GetFontFamilyName?	proc :UINT32
+    GetFontWeight?	proc
+    GetFontStyle?	proc
+    GetFontStretch?	proc
+    GetFontSize?	proc
+    GetLocaleNameLength? proc
+    GetLocaleName	proc :UINT32
 
     SetMaxWidth		proc :FLOAT
     SetMaxHeight	proc :FLOAT
@@ -831,13 +857,13 @@ DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
     GetMaxWidth		proc
     GetMaxHeight	proc
 
-    GetFontCollection2	proc :UINT32, :ptr ptr IDWriteFontCollection, :ptr DWRITE_TEXT_RANGE
-    GetFontFamilyNameLength2 proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
-    GetFontFamilyName2	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
-    GetFontWeight2	proc :UINT32, :ptr DWRITE_FONT_WEIGHT, :ptr DWRITE_TEXT_RANGE
-    GetFontStyle2	proc :UINT32, :ptr DWRITE_FONT_STYLE, :ptr DWRITE_TEXT_RANGE
-    GetFontStretch2	proc :UINT32, :ptr DWRITE_FONT_STRETCH, :ptr DWRITE_TEXT_RANGE
-    GetFontSize2	proc :UINT32, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
+    GetFontCollection	proc :UINT32, :ptr ptr IDWriteFontCollection, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontFamilyName	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
+    GetFontWeight	proc :UINT32, :ptr DWRITE_FONT_WEIGHT, :ptr DWRITE_TEXT_RANGE
+    GetFontStyle	proc :UINT32, :ptr DWRITE_FONT_STYLE, :ptr DWRITE_TEXT_RANGE
+    GetFontStretch	proc :UINT32, :ptr DWRITE_FONT_STRETCH, :ptr DWRITE_TEXT_RANGE
+    GetFontSize		proc :UINT32, :ptr FLOAT, :ptr DWRITE_TEXT_RANGE
 
     GetUnderline	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
     GetStrikethrough	proc :UINT32, :ptr BOOL, :ptr DWRITE_TEXT_RANGE
@@ -845,7 +871,7 @@ DEFINE_IIDX(IDWriteTextLayout, "53737037-6d14-410b-9bfe-0b182bb70961")
     GetInlineObject	proc :UINT32, :ptr IDWriteInlineObject, :ptr DWRITE_TEXT_RANGE
     GetTypography	proc :UINT32, :ptr IDWriteTypography, :ptr DWRITE_TEXT_RANGE
 
-    GetLocaleNameLength2 proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
+    GetLocaleNameLength proc :UINT32, :ptr UINT32, :ptr DWRITE_TEXT_RANGE
     GetLocaleName2	proc :UINT32, :UINT32, :ptr DWRITE_TEXT_RANGE
     Draw		proc :ptr, :ptr IDWriteTextRenderer, :FLOAT, :FLOAT
     GetLineMetrics	proc :UINT32, :ptr UINT32

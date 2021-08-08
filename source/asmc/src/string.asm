@@ -609,13 +609,19 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
         .endif
     .endif
 
-    .if [ebx].token == T_OP_BRACKET && [ebx+asm_tok].token == T_NUM && \
-        [ebx+asm_tok*2].token == T_CL_BRACKET
+    .if ( [ebx].token == T_OP_BRACKET && \
+          ( [ebx+asm_tok].token == T_NUM && [ebx+asm_tok*2].token == T_CL_BRACKET ) || \
+          ( [ebx+asm_tok].token == '-' && [ebx+asm_tok*2].token == T_NUM && \
+            [ebx+asm_tok*3].token == T_CL_BRACKET ) )
+
 
         ; return label[-value]
 
         .new opnd:expr
 
+        .if ( [ebx+asm_tok].token == '-' )
+            add ebx,16
+        .endif
         add ebx,16
 
         _atoow( &opnd, [ebx].string_ptr, [ebx].numbase, [ebx].itemlen )
@@ -627,18 +633,27 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
             asmerr( 2156 )
             .return 0
         .endif
+        ;
+        ; allow @CStr(-1) --> last index + 1
+        ;
+        mov ecx,opnd.value
+        mov edx,ModuleInfo.StrStack
 
-        .for eax = opnd.value,
-             edx = ModuleInfo.StrStack : eax && edx : eax--, edx=[edx].str_item.next
-        .endf
-
-        .if edx == NULL
-
-            asmerr( 2156 )
-            .return 0
+        .if ( [ebx-asm_tok].token == '-' )
+            xor eax,eax
+            .if ( edx )
+                movzx eax,[edx].str_item.index
+            .endif
+            add eax,ecx
+        .else
+            .for ( eax = ecx : eax && edx : eax--, edx=[edx].str_item.next )
+            .endf
+            .if ( edx == NULL )
+                asmerr( 2156 )
+                .return 0
+            .endif
+            movzx eax,[edx].str_item.index
         .endif
-
-        movzx eax,[edx].str_item.index
         sprintf(buffer, "DS%04X", eax)
         .return 1
     .endif

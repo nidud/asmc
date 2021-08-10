@@ -201,6 +201,9 @@ CApplication::OnSize proc uses rdi width:UINT, height:UINT
 
     mov rdi,rcx
 
+    mov [rdi].m_size.width,edx
+    mov [rdi].m_size.height,r8d
+
     mov [rdi].m_rc.top,0
     mov [rdi].m_rc.left,0
     mov [rdi].m_rc.right,edx
@@ -214,7 +217,7 @@ CApplication::OnSize proc uses rdi width:UINT, height:UINT
         sub [rdi].m_rc.bottom,100
     .endif
 
-    .new size:D2D1_SIZE_U = { edx, r8d }
+    ;.new size:D2D1_SIZE_U = { edx, r8d }
 
     .if ( this.CreateDeviceResources() )
 
@@ -229,7 +232,7 @@ CApplication::OnSize proc uses rdi width:UINT, height:UINT
         ; EndDraw.
         ;
 
-        this.m_pRT.Resize(&size)
+        this.m_pRT.Resize(&[rdi].m_size)
         this.InitObjects()
     .endif
     .return 0
@@ -285,8 +288,8 @@ CApplication::OnKeyDown proc wParam:WPARAM
         .endc
     .case VK_DOWN
         .for ( rdx = &[rcx].m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
-            mov eax,[rdx].object.m_mov.x
-            .ifs ( eax > 1 || eax < -1 )
+            .if ( ( [rdx].object.m_mov.x > 1 || [rdx].object.m_mov.x < -1 ) && \
+                  ( [rdx].object.m_mov.y > 1 || [rdx].object.m_mov.y < -1 ) )
                 .if ( [rdx].object.m_mov.x < 0 )
                     inc [rdx].object.m_mov.x
                 .else
@@ -302,7 +305,8 @@ CApplication::OnKeyDown proc wParam:WPARAM
         .endc
     .case VK_UP
         .for ( rdx = &[rcx].m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
-            .if ( [rdx].object.m_mov.x < 30 && [rdx].object.m_mov.x > -30 )
+            .if ( ( [rdx].object.m_mov.x < 30 && [rdx].object.m_mov.x > -30 ) && \
+                  ( [rdx].object.m_mov.y < 30 && [rdx].object.m_mov.y > -30 ) )
                 .if ( [rdx].object.m_mov.x < 0 )
                     dec [rdx].object.m_mov.x
                 .else
@@ -410,8 +414,8 @@ CApplication::InitObjects proc uses rsi rdi rbx
         cmova ecx,edx
         shr ecx,3
         mov [rsi].m_radius,RangeRand(ecx, 8)
-        mov [rsi].m_mov.x,RangeRand(10, 1)
-        mov [rsi].m_mov.y,RangeRand(10, 1)
+        mov [rsi].m_mov.x,RangeRand(9, 1)
+        mov [rsi].m_mov.y,RangeRand(9, 1)
         mov ecx,[rdi].m_rc.right
         sub ecx,[rdi].m_rc.left
         sub ecx,[rsi].m_radius
@@ -578,9 +582,6 @@ CApplication::CreateDeviceResources proc uses rdi
 
     .if ( ![rdi].m_pRT )
 
-       .new rc:RECT
-        GetClientRect([rdi].m_hwnd, &rc)
-
         ; Create a Direct2D render target.
 
        .new renderTargetProperties:D2D1_RENDER_TARGET_PROPERTIES = {
@@ -591,13 +592,10 @@ CApplication::CreateDeviceResources proc uses rdi
             D2D1_FEATURE_LEVEL_DEFAULT
             }
 
-        mov eax,rc.bottom
-        sub eax,rc.top
-        mov edx,rc.right
-        sub edx,rc.left
-
        .new hwndRenderTargetProperties:D2D1_HWND_RENDER_TARGET_PROPERTIES = {
-            [rdi].m_hwnd, { eax, edx }, D2D1_PRESENT_OPTIONS_NONE
+            [rdi].m_hwnd,
+            { [rdi].m_size.width, [rdi].m_size.height },
+            D2D1_PRESENT_OPTIONS_NONE
             }
 
         mov hr,this.m_pD2DFactory.CreateHwndRenderTarget(
@@ -651,7 +649,7 @@ CApplication::RenderMainContent proc uses rsi rdi rbx
             .new pGradientStops:ptr ID2D1GradientStopCollection
             .new gradientStops[2]:D2D1_GRADIENT_STOP = {
                     { 0.0, { 0.0, 0.0, 0.0, 0.0 } },
-                    { 1.0, { 0.0, 0.0, 0.0, 0.9 } } }
+                    { 1.0, { 0.0, 0.0, 0.0, 0.6 } } }
             .new gradisnBrushProperties:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES = {
                     { 250.0, 100.0 }, { 4.0, -4.0 }, 50.0, 50.0 }
             .new brushProperties:D2D1_BRUSH_PROPERTIES = {

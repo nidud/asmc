@@ -24,6 +24,10 @@ endif
 
 .code
 
+SUCCESS proto fastcall hr:int_t {
+    retm<(sdword ptr ecx !>= 0)>
+    }
+
 ; Instantiate INetFwPolicy2
 
 WFCOMInitialize proc ppNetFwPolicy2:ptr ptr INetFwPolicy2
@@ -59,32 +63,29 @@ Get_FirewallSettings_PerProfileType proc ProfileTypePassed:NET_FW_PROFILE_TYPE2,
    .new action:NET_FW_ACTION
 
     printf("******************************************\n")
-    pNetFwPolicy2.get_FirewallEnabled(ProfileTypePassed, &bIsEnabled)
-    .if (SUCCEEDED(eax))
+
+    .if (SUCCESS(pNetFwPolicy2.get_FirewallEnabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("Firewall is %s\n", get_enabled(bIsEnabled))
     .endif
-    pNetFwPolicy2.get_BlockAllInboundTraffic(ProfileTypePassed, &bIsEnabled)
-    .if (SUCCEEDED(eax))
+    .if (SUCCESS(pNetFwPolicy2.get_BlockAllInboundTraffic(ProfileTypePassed, &bIsEnabled)))
 
         printf("Block all inbound traffic is %s\n", get_enabled(bIsEnabled))
     .endif
-    pNetFwPolicy2.get_NotificationsDisabled(ProfileTypePassed, &bIsEnabled)
-    .if (SUCCEEDED(eax))
+    .if (SUCCESS(pNetFwPolicy2.get_NotificationsDisabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("Notifications are %s\n", get_enabled(bIsEnabled))
     .endif
-    pNetFwPolicy2.get_UnicastResponsesToMulticastBroadcastDisabled(ProfileTypePassed, &bIsEnabled)
-    .if (SUCCEEDED(eax))
+    .if (SUCCESS(pNetFwPolicy2.get_UnicastResponsesToMulticastBroadcastDisabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("UnicastResponsesToMulticastBroadcast is %s\n", get_enabled(bIsEnabled))
     .endif
-    pNetFwPolicy2.get_DefaultInboundAction(ProfileTypePassed, &action)
-    .if (SUCCEEDED(eax))
+    .if (SUCCESS(pNetFwPolicy2.get_DefaultInboundAction(ProfileTypePassed, &action)))
+
         printf("Default inbound action is %s\n", get_allowed(action))
     .endif
-    pNetFwPolicy2.get_DefaultOutboundAction(ProfileTypePassed, &action)
-    .if (SUCCEEDED(eax))
+    .if (SUCCESS(pNetFwPolicy2.get_DefaultOutboundAction(ProfileTypePassed, &action)))
+
         printf("Default outbound action is %s\n", get_allowed(action))
     .endif
     printf("\n")
@@ -146,7 +147,7 @@ Cleanup:
 
     ; Uninitialize COM.
 
-    .if (SUCCEEDED(hrComInit))
+    .if (SUCCESS(hrComInit))
 
         CoUninitialize()
     .endif

@@ -35,6 +35,7 @@ define ID_TIMER     1
     m_hInstance         HINSTANCE ?
     m_hwnd              HWND ?
     m_rect              RECT <>
+    m_size              D2D1_SIZE_U <>
     m_rc                RECT <>
     m_obj               object MAXOBJ dup(<>)
     m_count             uint_t ?

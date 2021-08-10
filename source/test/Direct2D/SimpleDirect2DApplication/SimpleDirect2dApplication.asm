@@ -3,40 +3,36 @@ include SimpleDirect2dApplication.inc
 
 .code
 
-;;
-;; Provides the entry point to the application.
-;;
+;
+; Provides the entry point to the application.
+;
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
   local vtable:DemoAppVtbl
 
-    ;; Ignore the return value because we want to run the program even in the
-    ;; unlikely event that HeapSetInformation fails.
+    ; Ignore the return value because we want to run the program even in the
+    ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
-    CoInitialize(NULL)
-    .if (SUCCEEDED(eax))
+    .if (SUCCEEDED(CoInitialize(NULL)))
 
        .new app:DemoApp(&vtable)
 
-        app.Initialize()
-
-        .if (SUCCEEDED(eax))
+        .if (SUCCEEDED(app.Initialize()))
 
             app.RunMessageLoop()
         .endif
         CoUninitialize()
     .endif
-
     .return 0
 
 wWinMain endp
 
-;;
-;; Initialize members.
-;;
+;
+; Initialize members.
+;
 
 DemoApp::DemoApp proc uses rdi vtable:ptr
 
@@ -67,33 +63,33 @@ DemoApp::DemoApp endp
 
     assume rsi:ptr DemoApp
 
-;;
-;; Release resources.
-;;
+;
+; Release resources.
+;
 
 DemoApp::Release proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pD2DFactory,             ID2D1Factory)
-    SafeRelease(&[rsi].m_pWICFactory,             IWICImagingFactory)
-    SafeRelease(&[rsi].m_pDWriteFactory,          IDWriteFactory)
-    SafeRelease(&[rsi].m_pRenderTarget,           ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pTextFormat,             IDWriteTextFormat)
-    SafeRelease(&[rsi].m_pPathGeometry,           ID2D1PathGeometry)
-    SafeRelease(&[rsi].m_pLinearGradientBrush,    ID2D1LinearGradientBrush)
-    SafeRelease(&[rsi].m_pBlackBrush,             ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pGridPatternBitmapBrush, ID2D1BitmapBrush)
-    SafeRelease(&[rsi].m_pBitmap,                 ID2D1Bitmap)
-    ;SafeRelease(&[rsi].m_pAnotherBitmap,          ID2D1Bitmap)
+    SafeRelease([rsi].m_pD2DFactory)
+    SafeRelease([rsi].m_pWICFactory)
+    SafeRelease([rsi].m_pDWriteFactory)
+    SafeRelease([rsi].m_pRenderTarget)
+    SafeRelease([rsi].m_pTextFormat)
+    SafeRelease([rsi].m_pPathGeometry)
+    SafeRelease([rsi].m_pLinearGradientBrush)
+    SafeRelease([rsi].m_pBlackBrush)
+    SafeRelease([rsi].m_pGridPatternBitmapBrush)
+    SafeRelease([rsi].m_pBitmap)
+    ;SafeRelease([rsi].m_pAnotherBitmap)
     ret
 
 DemoApp::Release endp
 
 
-;;
-;; Creates the application window and initializes
-;; device-independent resources.
-;;
+;
+; Creates the application window and initializes
+; device-independent resources.
+;
 DemoApp::Initialize proc uses rsi
 
   local wcex:WNDCLASSEX
@@ -101,12 +97,12 @@ DemoApp::Initialize proc uses rsi
 
     mov rsi,rcx
 
-    ;; Initialize device-indpendent resources, such
-    ;; as the Direct2D factory.
+    ; Initialize device-indpendent resources, such
+    ; as the Direct2D factory.
 
     .ifd !this.CreateDeviceIndependentResources()
 
-        ;; Register the window class.
+        ; Register the window class.
 
         mov wcex.cbSize,        WNDCLASSEX
         mov wcex.style,         CS_HREDRAW or CS_VREDRAW
@@ -123,10 +119,10 @@ DemoApp::Initialize proc uses rsi
 
         RegisterClassEx(&wcex)
 
-        ;; Create the application window.
-        ;;
-        ;; Because the CreateWindow function takes its size in pixels, we
-        ;; obtain the system DPI and use it to scale the window size.
+        ; Create the application window.
+        ;
+        ; Because the CreateWindow function takes its size in pixels, we
+        ; obtain the system DPI and use it to scale the window size.
 
         this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
@@ -152,20 +148,11 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(
-            0,
-            L"D2DDemoApp",
-            L"Direct2D Demo Application",
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            ecx,
-            edx,
-            NULL,
-            NULL,
-            HINST_THISCOMPONENT,
-            this
-            )
+        .if CreateWindowEx(0, "D2DDemoApp", "Direct2D Demo Application",
+                WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
+                NULL, NULL, HINST_THISCOMPONENT, this )
+
             mov [rsi].m_hwnd,rax
             ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
             UpdateWindow([rsi].m_hwnd)
@@ -177,14 +164,14 @@ DemoApp::Initialize proc uses rsi
 DemoApp::Initialize endp
 
 
-;;
-;; Create resources which are not bound
-;; to any device. Their lifetime effectively extends for the
-;; duration of the app. These resources include the Direct2D,
-;; DirectWrite, and WIC factories; and a DirectWrite Text Format object
-;; (used for identifying particular font characteristics) and
-;; a Direct2D geometry.
-;;
+;
+; Create resources which are not bound
+; to any device. Their lifetime effectively extends for the
+; duration of the app. These resources include the Direct2D,
+; DirectWrite, and WIC factories; and a DirectWrite Text Format object
+; (used for identifying particular font characteristics) and
+; a Direct2D geometry.
+;
 
 DemoApp::CreateDeviceIndependentResources proc uses rsi
 
@@ -194,7 +181,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
     mov pSink,NULL
     mov rdi,rcx
 
-    ;; Create a Direct2D factory.
+    ; Create a Direct2D factory.
 
     mov hr,D2D1CreateFactory(
         D2D1_FACTORY_TYPE_SINGLE_THREADED,
@@ -204,7 +191,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create WIC factory.
+        ; Create WIC factory.
 
         mov hr,CoCreateInstance(
             &CLSID_WICImagingFactory,
@@ -217,7 +204,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a DirectWrite factory.
+        ; Create a DirectWrite factory.
 
         mov hr,DWriteCreateFactory(
             DWRITE_FACTORY_TYPE_SHARED,
@@ -228,7 +215,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a DirectWrite text format object.
+        ; Create a DirectWrite text format object.
 
         mov hr,this.m_pDWriteFactory.CreateTextFormat(
             L"Verdana",
@@ -244,19 +231,19 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Center the text horizontally and vertically.
+        ; Center the text horizontally and vertically.
 
         this.m_pTextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER)
         this.m_pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
 
-        ;; Create a path geometry.
+        ; Create a path geometry.
 
         mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pPathGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; Use the geometry sink to write to the path geometry.
+        ; Use the geometry sink to write to the path geometry.
 
         mov hr,this.m_pPathGeometry.Open(&pSink)
     .endif
@@ -302,12 +289,12 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
 DemoApp::CreateDeviceIndependentResources endp
 
-;;
-;;  This method creates resources which are bound to a particular
-;;  Direct3D device. It's all centralized here, in case the resources
-;;  need to be recreated in case of Direct3D device loss (eg. display
-;;  change, remoting, removal of video card, etc).
-;;
+;
+;  This method creates resources which are bound to a particular
+;  Direct3D device. It's all centralized here, in case the resources
+;  need to be recreated in case of Direct3D device loss (eg. display
+;  change, remoting, removal of video card, etc).
+;
 
 GetSampleFile proc
 
@@ -315,7 +302,7 @@ GetSampleFile proc
   local hINet:HINTERNET
   local hFile:HANDLE
   local dwNumberOfBytesRead:uint_t
-  local fp:LPFILE
+  local fp:ptr FILE
   local buffer[1024]:char_t
   local hr:HRESULT
 
@@ -349,8 +336,7 @@ GetSampleFile proc
 
     InternetCloseHandle(hINet)
     WSACleanup()
-
-    .return hr
+   .return hr
 
 GetSampleFile endp
 
@@ -374,7 +360,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
         sub eax,rc.top
         mov size.height,eax
 
-        ;; Create a Direct2D render target.
+        ; Create a Direct2D render target.
 
         mov rdi,D2D1::RenderTargetProperties()
         mov r8,D2D1::HwndRenderTargetProperties([rsi].m_hwnd, size)
@@ -382,7 +368,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            ;; Create a black brush.
+            ; Create a black brush.
 
             mov rdx,D3DCOLORVALUE(Black, 1.0)
             mov rdi,[rsi].m_pRenderTarget
@@ -395,7 +381,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
             mov pGradientStops,NULL
 
-            ;; Create a linear gradient.
+            ; Create a linear gradient.
 
            .new stops[2]:D2D1_GRADIENT_STOP
 
@@ -430,9 +416,9 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
             .endif
         .endif
 
-        ;; Create a bitmap from an application resource.
+        ; Create a bitmap from an application resource.
 
-        ;; get the image from git..
+        ; get the image from git..
 
         mov hr,GetSampleFile()
 
@@ -450,7 +436,7 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            ;; Create a bitmap by loading it from a file.
+            ; Create a bitmap by loading it from a file.
 
             mov [rsi].m_pAnotherBitmap,[rsi].m_pBitmap
         .endif
@@ -460,14 +446,13 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
             mov hr,[rsi].CreateGridPatternBrush([rsi].m_pRenderTarget, &[rsi].m_pGridPatternBitmapBrush)
         .endif
     .endif
-
     .return hr
 
 DemoApp::CreateDeviceResources endp
 
-;;
-;; Creates a pattern brush.
-;;
+;
+; Creates a pattern brush.
+;
 DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
         ppBitmapBrush:ptr ptr ID2D1BitmapBrush
 
@@ -476,7 +461,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
     mov hr,S_OK
 
-    ;; Create a compatible render target.
+    ; Create a compatible render target.
 
     mov pCompatibleRenderTarget,NULL
     mov rdx,D2D1::SizeF(10.0, 10.0)
@@ -490,7 +475,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
     .if (SUCCEEDED(hr))
 
-        ;; Draw a pattern.
+        ; Draw a pattern.
 
         .new pGridBrush:ptr ID2D1SolidColorBrush
         .new color:D3DCOLORVALUE = { 0.93, 0.94, 0.96, 1.0 }
@@ -509,7 +494,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
             pCompatibleRenderTarget.FillRectangle(D2D1::RectF(0.0, 0.1, 1.0, 10.0), pGridBrush)
             pCompatibleRenderTarget.EndDraw(NULL, NULL)
 
-            ;; Retrieve the bitmap from the render target.
+            ; Retrieve the bitmap from the render target.
 
            .new pGridBitmap:ptr ID2D1Bitmap
 
@@ -518,11 +503,11 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
             .if (SUCCEEDED(hr))
 
-                ;; Choose the tiling mode for the bitmap brush.
+                ; Choose the tiling mode for the bitmap brush.
 
                 mov r8,D2D1::BitmapBrushProperties(D2D1_EXTEND_MODE_WRAP, D2D1_EXTEND_MODE_WRAP)
 
-                ;; Create the bitmap brush.
+                ; Create the bitmap brush.
 
                 mov hr,this.m_pRenderTarget.CreateBitmapBrush(
                         pGridBitmap,
@@ -538,32 +523,31 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
         pCompatibleRenderTarget.Release()
     .endif
-
     .return hr
 
 DemoApp::CreateGridPatternBrush endp
 
-;;
-;;  Discard device-specific resources which need to be recreated
-;;  when a Direct3D device is lost
-;;
+;
+;  Discard device-specific resources which need to be recreated
+;  when a Direct3D device is lost
+;
 
 DemoApp::DiscardDeviceResources proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pRenderTarget, ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pBitmap, ID2D1Bitmap)
-    SafeRelease(&[rsi].m_pBlackBrush, ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pLinearGradientBrush, ID2D1LinearGradientBrush)
-    ;SafeRelease(&[rsi].m_pAnotherBitmap, ID2D1Bitmap)
-    SafeRelease(&[rsi].m_pGridPatternBitmapBrush, ID2D1BitmapBrush)
+    SafeRelease([rsi].m_pRenderTarget)
+    SafeRelease([rsi].m_pBitmap)
+    SafeRelease([rsi].m_pBlackBrush)
+    SafeRelease([rsi].m_pLinearGradientBrush)
+    ;SafeRelease([rsi].m_pAnotherBitmap)
+    SafeRelease([rsi].m_pGridPatternBitmapBrush)
     ret
 
 DemoApp::DiscardDeviceResources endp
 
-;;
-;; The main window message loop.
-;;
+;
+; The main window message loop.
+;
 
 DemoApp::RunMessageLoop proc
 
@@ -579,20 +563,20 @@ DemoApp::RunMessageLoop proc
 DemoApp::RunMessageLoop endp
 
 
-;;
-;;  Called whenever the application needs to display the client
-;;  window. This method draws a bitmap a couple times, draws some
-;;  geometries, and writes "Hello, World"
-;;
-;;  Note that this function will not render anything if the window
-;;  is occluded (e.g. when the screen is locked).
-;;  Also, this function will automatically discard device-specific
-;;  resources if the Direct3D device disappears during function
-;;  invocation, and will recreate the resources the next time it's
-;;  invoked.
-;;
+;
+;  Called whenever the application needs to display the client
+;  window. This method draws a bitmap a couple times, draws some
+;  geometries, and writes "Hello, World"
+;
+;  Note that this function will not render anything if the window
+;  is occluded (e.g. when the screen is locked).
+;  Also, this function will automatically discard device-specific
+;  resources if the Direct3D device disappears during function
+;  invocation, and will recreate the resources the next time it's
+;  invoked.
+;
 
-sc_helloWorld equ <L"Hello, World!">
+sc_helloWorld equ <"Hello, World!">
 
 DemoApp::OnRender proc uses rsi
 
@@ -612,7 +596,7 @@ DemoApp::OnRender proc uses rsi
     .if ( !( pRT.CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED ) )
 
 
-        ;; Retrieve the size of the render target.
+        ; Retrieve the size of the render target.
 
        .new renderTargetSize:D2D1_SIZE_F
        .new size:D2D1_SIZE_F
@@ -622,7 +606,7 @@ DemoApp::OnRender proc uses rsi
         pRT.SetTransform(m.Identity())
         pRT.Clear(D3DCOLORVALUE(White, 1.0))
 
-        ;; Paint a grid background.
+        ; Paint a grid background.
 
         mov r.left,   0.0
         mov r.top,    0.0
@@ -633,13 +617,13 @@ DemoApp::OnRender proc uses rsi
 
         this.m_pBitmap.GetSize(&size)
 
-        ;; Draw a bitmap in the upper-left corner of the window.
+        ; Draw a bitmap in the upper-left corner of the window.
 
         mov r.right,  size.width
         mov r.bottom, size.height
         pRT.DrawBitmap([rsi].m_pBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
-        ;; Draw a bitmap at the lower-right corner of the window.
+        ; Draw a bitmap at the lower-right corner of the window.
 
         this.m_pAnotherBitmap.GetSize(&size)
 
@@ -654,8 +638,8 @@ DemoApp::OnRender proc uses rsi
 
         pRT.DrawBitmap([rsi].m_pAnotherBitmap, &r, 1.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL)
 
-        ;; Set the world transform to a 45 degree rotation at the center of the render target
-        ;; and write "Hello, World".
+        ; Set the world transform to a 45 degree rotation at the center of the render target
+        ; and write "Hello, World".
 
         movss xmm0,renderTargetSize.width
         divss xmm0,2.0
@@ -680,16 +664,16 @@ DemoApp::OnRender proc uses rsi
             DWRITE_MEASURING_MODE_NATURAL
             )
 
-        ;;
-        ;; Reset back to the identity transform
-        ;;
+        ;
+        ; Reset back to the identity transform
+        ;
 
         movss xmm0,renderTargetSize.height
         subss xmm0,200.0
         movss m._32,xmm0
         pRT.SetTransform(&m)
 
-        ;; Fill the hour glass geometry with a gradient.
+        ; Fill the hour glass geometry with a gradient.
 
         pRT.FillGeometry(
             [rsi].m_pPathGeometry,
@@ -703,7 +687,7 @@ DemoApp::OnRender proc uses rsi
         movss m._31,xmm0
         pRT.SetTransform(&m)
 
-        ;; Fill the hour glass geometry with a gradient.
+        ; Fill the hour glass geometry with a gradient.
 
         pRT.FillGeometry(
             [rsi].m_pPathGeometry,
@@ -718,15 +702,14 @@ DemoApp::OnRender proc uses rsi
             this.DiscardDeviceResources()
         .endif
     .endif
-
     .return hr
 
 DemoApp::OnRender endp
 
-;;
-;;  If the application receives a WM_SIZE message, this method
-;;  resize the render target appropriately.
-;;
+;
+;  If the application receives a WM_SIZE message, this method
+;  resize the render target appropriately.
+;
 
 DemoApp::OnResize proc width:UINT, height:UINT
 
@@ -738,9 +721,9 @@ DemoApp::OnResize proc width:UINT, height:UINT
         mov size.width,edx
         mov size.height,r8d
 
-        ;; Note: This method can fail, but it's okay to ignore the
-        ;; error here -- it will be repeated on the next call to
-        ;; EndDraw.
+        ; Note: This method can fail, but it's okay to ignore the
+        ; error here -- it will be repeated on the next call to
+        ; EndDraw.
 
         [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
@@ -749,9 +732,9 @@ DemoApp::OnResize proc width:UINT, height:UINT
 DemoApp::OnResize endp
 
 
-;;
-;; The window message handler.
-;;
+;
+; The window message handler.
+;
 
 WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
@@ -822,10 +805,10 @@ WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
 WndProc endp
 
-;;
-;; Creates a Direct2D bitmap from a resource in the
-;; application resource file.
-;;
+;
+; Creates a Direct2D bitmap from a resource in the
+; application resource file.
+;
 
 DemoApp::LoadResourceBitmap proc \
     pRenderTarget:      ptr ID2D1RenderTarget,
@@ -862,7 +845,7 @@ DemoApp::LoadResourceBitmap proc \
     mov pImageFile,rax
     mov imageFileSize,eax
 
-    ;; Locate the resource.
+    ; Locate the resource.
 
     mov imageResHandle,FindResourceW(HINST_THISCOMPONENT, resourceName, resourceType)
     mov hr,E_FAIL
@@ -872,7 +855,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Load the resource.
+        ; Load the resource.
 
         mov imageResDataHandle,LoadResource(HINST_THISCOMPONENT, imageResHandle)
         mov hr,E_FAIL
@@ -883,7 +866,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Lock it to get a system memory pointer.
+        ; Lock it to get a system memory pointer.
 
         mov pImageFile,LockResource(imageResDataHandle)
         mov hr,E_FAIL
@@ -895,7 +878,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Calculate the size.
+        ; Calculate the size.
 
         mov imageFileSize,SizeofResource(HINST_THISCOMPONENT, imageResHandle)
         mov hr,E_FAIL
@@ -907,7 +890,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a WIC stream to map onto the memory.
+        ; Create a WIC stream to map onto the memory.
 
         mov hr,pIWICFactory.CreateStream(&pStream)
 
@@ -915,7 +898,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Initialize the stream with the memory pointer and size.
+        ; Initialize the stream with the memory pointer and size.
 
         mov hr,pStream.InitializeFromMemory(
             pImageFile,
@@ -925,7 +908,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a decoder for the stream.
+        ; Create a decoder for the stream.
 
         mov hr,pIWICFactory.CreateDecoderFromStream(
             pStream,
@@ -937,23 +920,23 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;; Create the initial frame.
+        ; Create the initial frame.
 
         mov hr,pDecoder.GetFrame(0, &pSource)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; Convert the image format to 32bppPBGRA
-        ;; (DXGI_FORMAT_B8G8R8A8_UNORM + D2D1_ALPHA_MODE_PREMULTIPLIED).
+        ; Convert the image format to 32bppPBGRA
+        ; (DXGI_FORMAT_B8G8R8A8_UNORM + D2D1_ALPHA_MODE_PREMULTIPLIED).
 
         mov hr,pIWICFactory.CreateFormatConverter(&pConverter)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; If a new width or height was specified, create an
-        ;; IWICBitmapScaler and use it to resize the image.
+        ; If a new width or height was specified, create an
+        ; IWICBitmapScaler and use it to resize the image.
 
         .if (destinationWidth != 0 || destinationHeight != 0)
 
@@ -1024,7 +1007,7 @@ DemoApp::LoadResourceBitmap proc \
 
     .if (SUCCEEDED(hr))
 
-        ;;create a Direct2D bitmap from the WIC bitmap.
+        ; create a Direct2D bitmap from the WIC bitmap.
 
         mov hr,pRenderTarget.CreateBitmapFromWicBitmap(
             pConverter,
@@ -1033,20 +1016,19 @@ DemoApp::LoadResourceBitmap proc \
             )
     .endif
 
-    SafeRelease(&pDecoder,      IWICBitmapDecoder)
-    SafeRelease(&pSource,       IWICBitmapFrameDecode)
-    SafeRelease(&pStream,       IWICStream)
-    SafeRelease(&pConverter,    IWICFormatConverter)
-    SafeRelease(&pScaler,       IWICBitmapScaler)
-
-    .return hr
+    SafeRelease(pDecoder)
+    SafeRelease(pSource)
+    SafeRelease(pStream)
+    SafeRelease(pConverter)
+    SafeRelease(pScaler)
+   .return hr
 
 DemoApp::LoadResourceBitmap endp
 
-;;
-;; Creates a Direct2D bitmap from the specified
-;; file name.
-;;
+;
+; Creates a Direct2D bitmap from the specified
+; file name.
+;
 
 DemoApp::LoadBitmapFromFile proc \
     pRenderTarget:      ptr ID2D1RenderTarget,
@@ -1082,23 +1064,23 @@ DemoApp::LoadBitmapFromFile proc \
     .if (SUCCEEDED(hr))
 
 
-        ;; Create the initial frame.
+        ; Create the initial frame.
 
         mov hr,pDecoder.GetFrame(0, &pSource)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; Convert the image format to 32bppPBGRA
-        ;; (DXGI_FORMAT_B8G8R8A8_UNORM + D2D1_ALPHA_MODE_PREMULTIPLIED).
+        ; Convert the image format to 32bppPBGRA
+        ; (DXGI_FORMAT_B8G8R8A8_UNORM + D2D1_ALPHA_MODE_PREMULTIPLIED).
 
         mov hr,pIWICFactory.CreateFormatConverter(&pConverter)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; If a new width or height was specified, create an
-        ;; IWICBitmapScaler and use it to resize the image.
+        ; If a new width or height was specified, create an
+        ; IWICBitmapScaler and use it to resize the image.
 
         .if (destinationWidth != 0 || destinationHeight != 0)
 
@@ -1153,7 +1135,7 @@ DemoApp::LoadBitmapFromFile proc \
                 .endif
             .endif
 
-        .else ;; Don't scale the image.
+        .else ; Don't scale the image.
 
             mov hr,pConverter.Initialize(
                 pSource,
@@ -1167,7 +1149,7 @@ DemoApp::LoadBitmapFromFile proc \
     .endif
     .if (SUCCEEDED(hr))
 
-        ;; Create a Direct2D bitmap from the WIC bitmap.
+        ; Create a Direct2D bitmap from the WIC bitmap.
 
         mov hr,pRenderTarget.CreateBitmapFromWicBitmap(
             pConverter,
@@ -1176,13 +1158,12 @@ DemoApp::LoadBitmapFromFile proc \
             )
     .endif
 
-    SafeRelease(&pDecoder,      IWICBitmapDecoder)
-    SafeRelease(&pSource,       IWICBitmapFrameDecode)
-    SafeRelease(&pStream,       IWICStream)
-    SafeRelease(&pConverter,    IWICFormatConverter)
-    SafeRelease(&pScaler,       IWICBitmapScaler)
-
-    .return hr
+    SafeRelease(pDecoder)
+    SafeRelease(pSource)
+    SafeRelease(pStream)
+    SafeRelease(pConverter)
+    SafeRelease(pScaler)
+   .return hr
 
 DemoApp::LoadBitmapFromFile endp
 

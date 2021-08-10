@@ -24,10 +24,6 @@ endif
 
 .code
 
-SUCCESS proto fastcall hr:int_t {
-    retm<(sdword ptr ecx !>= 0)>
-    }
-
 ; Instantiate INetFwPolicy2
 
 WFCOMInitialize proc ppNetFwPolicy2:ptr ptr INetFwPolicy2
@@ -35,9 +31,9 @@ WFCOMInitialize proc ppNetFwPolicy2:ptr ptr INetFwPolicy2
    .new hr:HRESULT = S_OK
     mov hr,CoCreateInstance(&CLSID_NetFwPolicy2, NULL, CLSCTX_INPROC_SERVER,
             &IID_INetFwPolicy2, ppNetFwPolicy2)
-    .if (FAILED(hr))
+    .if (FAILED(eax))
 
-        printf("CoCreateInstance for INetFwPolicy2 failed: 0x%08lx\n", hr)
+        printf("CoCreateInstance for INetFwPolicy2 failed: 0x%08lx\n", eax)
     .endif
     .return hr
 
@@ -64,27 +60,27 @@ Get_FirewallSettings_PerProfileType proc ProfileTypePassed:NET_FW_PROFILE_TYPE2,
 
     printf("******************************************\n")
 
-    .if (SUCCESS(pNetFwPolicy2.get_FirewallEnabled(ProfileTypePassed, &bIsEnabled)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_FirewallEnabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("Firewall is %s\n", get_enabled(bIsEnabled))
     .endif
-    .if (SUCCESS(pNetFwPolicy2.get_BlockAllInboundTraffic(ProfileTypePassed, &bIsEnabled)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_BlockAllInboundTraffic(ProfileTypePassed, &bIsEnabled)))
 
         printf("Block all inbound traffic is %s\n", get_enabled(bIsEnabled))
     .endif
-    .if (SUCCESS(pNetFwPolicy2.get_NotificationsDisabled(ProfileTypePassed, &bIsEnabled)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_NotificationsDisabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("Notifications are %s\n", get_enabled(bIsEnabled))
     .endif
-    .if (SUCCESS(pNetFwPolicy2.get_UnicastResponsesToMulticastBroadcastDisabled(ProfileTypePassed, &bIsEnabled)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_UnicastResponsesToMulticastBroadcastDisabled(ProfileTypePassed, &bIsEnabled)))
 
         printf("UnicastResponsesToMulticastBroadcast is %s\n", get_enabled(bIsEnabled))
     .endif
-    .if (SUCCESS(pNetFwPolicy2.get_DefaultInboundAction(ProfileTypePassed, &action)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_DefaultInboundAction(ProfileTypePassed, &action)))
 
         printf("Default inbound action is %s\n", get_allowed(action))
     .endif
-    .if (SUCCESS(pNetFwPolicy2.get_DefaultOutboundAction(ProfileTypePassed, &action)))
+    .if (SUCCEEDED(pNetFwPolicy2.get_DefaultOutboundAction(ProfileTypePassed, &action)))
 
         printf("Default outbound action is %s\n", get_allowed(action))
     .endif
@@ -147,7 +143,7 @@ Cleanup:
 
     ; Uninitialize COM.
 
-    .if (SUCCESS(hrComInit))
+    .if (SUCCEEDED(hrComInit))
 
         CoUninitialize()
     .endif

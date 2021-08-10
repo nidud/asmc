@@ -1,125 +1,71 @@
-
-;; Modify the following defines if you have to target a platform prior to the ones specified below.
-;; Refer to MSDN for the latest info on corresponding values for different platforms.
-ifndef WINVER               ;; Allow use of features specific to Windows 7 or later.
-WINVER equ 0x0501           ;; Change this to the appropriate value to target other versions of Windows.
+ifndef WINVER
+define WINVER 0x0501
+endif
+ifndef _WIN32_WINNT
+define _WIN32_WINNT 0x0501
+endif
+ifndef _WIN32_WINDOWS
+define _WIN32_WINDOWS 0x0410
+endif
+ifndef _WIN32_IE
+define _WIN32_IE 0x0600
 endif
 
-ifndef _WIN32_WINNT         ;; Allow use of features specific to Windows 7 or later.
-_WIN32_WINNT equ 0x0501     ;; Change this to the appropriate value to target other versions of Windows.
-endif
-
-ifndef _WIN32_WINDOWS       ;; Allow use of features specific to Windows 98 or later.
-_WIN32_WINDOWS equ 0x0410   ;; Change this to the appropriate value to target Windows Me or later.
-endif
-
-ifndef _WIN32_IE            ;; Allow use of features specific to IE 6.0 or later.
-_WIN32_IE equ 0x0600        ;; Change this to the appropriate value to target other versions of IE.
-endif
-
-ifndef _UNICODE
-_UNICODE equ 1
-endif
-
-;; Windows Header Files:
 include windows.inc
-
-;; C RunTime Header Files
-include stdlib.inc
-include malloc.inc
-include memory.inc
-include wchar.inc
-
-include wininet.inc
 include stdio.inc
-
 include d2d1.inc
-include d2d1helper.inc
 include dwrite.inc
 include wincodec.inc
 include tchar.inc
 
 option dllimport:none
 
-SafeRelease proto :ptr, :abs {
 
-    mov rax,[_1]
-    .if rax
-        mov qword ptr [_1],NULL
-        [rax]._2.Release()
-    .endif
-    }
-
-ifndef HINST_THISCOMPONENT
-ifndef _MSVCRT
-extern __ImageBase:byte
-endif
-HINST_THISCOMPONENT equ <&__ImageBase>
-endif
-
-    .data
+.data
 ifdef _MSVCRT
-    IID_ID2D1Factory                IID _IID_ID2D1Factory
-    IID_IDWriteFactory              IID _IID_IDWriteFactory
-    IID_IWICImagingFactory          IID _IID_IWICImagingFactory
-    CLSID_WICImagingFactory         IID _CLSID_WICImagingFactory
-    GUID_WICPixelFormat32bppBGR     IID _GUID_WICPixelFormat32bppBGR
-    GUID_ContainerFormatPng         IID _GUID_ContainerFormatPng
-    GUID_WICPixelFormatDontCare     IID _GUID_WICPixelFormatDontCare
+ IID_ID2D1Factory                IID _IID_ID2D1Factory
+ IID_IDWriteFactory              IID _IID_IDWriteFactory
+ IID_IWICImagingFactory          IID _IID_IWICImagingFactory
+ CLSID_WICImagingFactory         IID _CLSID_WICImagingFactory
+ GUID_WICPixelFormat32bppBGR     IID _GUID_WICPixelFormat32bppBGR
+ GUID_ContainerFormatPng         IID _GUID_ContainerFormatPng
+ GUID_WICPixelFormatDontCare     IID _GUID_WICPixelFormatDontCare
 endif
-    stops D2D1_GRADIENT_STOP {0.0,{0.0,1.0,1.0,1.0}},{1.0,{0.0,0.0,1.0,1.0}}
+ stops D2D1_GRADIENT_STOP {0.0,{0.0,1.0,1.0,1.0}},{1.0,{0.0,0.0,1.0,1.0}}
 
 
-    .code
+.code
 
 SaveToImageFile proc
 
-    local hr:HRESULT
-
-
-    ;;
-    ;; Create Factories
-    ;;
-
-    local pWICFactory:ptr IWICImagingFactory
-    local pD2DFactory:ptr ID2D1Factory
-    local pDWriteFactory:ptr IDWriteFactory
-    local pWICBitmap:ptr IWICBitmap
-    local pRT:ptr ID2D1RenderTarget
-    local pTextFormat:ptr IDWriteTextFormat
-    local pPathGeometry:ptr ID2D1PathGeometry
-    local pSink:ptr ID2D1GeometrySink
-    local pGradientStops:ptr ID2D1GradientStopCollection
-    local pLGBrush:ptr ID2D1LinearGradientBrush
-    local pBlackBrush:ptr ID2D1SolidColorBrush
-    local pEncoder:ptr IWICBitmapEncoder
-    local pFrameEncode:ptr IWICBitmapFrameEncode
-    local pStream:ptr IWICStream
-    local Color:D3DCOLORVALUE
-    local rtSize:D2D1_SIZE_F
-    local Matrix:Matrix3x2F
-    local size:D2D1_SIZE_F
-    local rc:D2D1_RECT_F
-    local b:D2D1_BEZIER_SEGMENT
-    local lg:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
-
-    mov hr,S_OK
-
     xor eax,eax
-    mov pWICFactory,rax
-    mov pD2DFactory,rax
-    mov pDWriteFactory,rax
-    mov pWICBitmap,rax
-    mov pRT,rax
-    mov pTextFormat,rax
-    mov pPathGeometry,rax
-    mov pSink,rax
-    mov pGradientStops,rax
-    mov pLGBrush,rax
-    mov pBlackBrush,rax
-    mov pEncoder,rax
-    mov pFrameEncode,rax
-    mov pStream,rax
+
+    ;
+    ; Create Factories
+    ;
+
+  .new hr:HRESULT = eax ; S_OK
+  .new pWICFactory:ptr IWICImagingFactory = rax
+  .new pD2DFactory:ptr ID2D1Factory = rax
+  .new pDWriteFactory:ptr IDWriteFactory = rax
+  .new pWICBitmap:ptr IWICBitmap = rax
+  .new pRT:ptr ID2D1RenderTarget = rax
+  .new pTextFormat:ptr IDWriteTextFormat = rax
+  .new pPathGeometry:ptr ID2D1PathGeometry = rax
+  .new pSink:ptr ID2D1GeometrySink = rax
+  .new pGradientStops:ptr ID2D1GradientStopCollection = rax
+  .new pLGBrush:ptr ID2D1LinearGradientBrush = rax
+  .new pBlackBrush:ptr ID2D1SolidColorBrush = rax
+  .new pEncoder:ptr IWICBitmapEncoder = rax
+  .new pFrameEncode:ptr IWICBitmapFrameEncode = rax
+  .new pStream:ptr IWICStream = rax
+  .new Color:D3DCOLORVALUE
+  .new rtSize:D2D1_SIZE_F
+  .new Matrix:Matrix3x2F
+  .new size:D2D1_SIZE_F
+  .new rc:D2D1_RECT_F
+  .new b:D2D1_BEZIER_SEGMENT
+  .new lg:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
 
 
     mov hr,CoCreateInstance(
@@ -148,9 +94,9 @@ SaveToImageFile proc
             )
     .endif
 
-    ;;
-    ;; Create IWICBitmap and RT
-    ;;
+    ;
+    ; Create IWICBitmap and RT
+    ;
 
     sc_bitmapWidth  equ 640
     sc_bitmapHeight equ 480
@@ -179,11 +125,11 @@ SaveToImageFile proc
 
     .if (SUCCEEDED(hr))
 
-        ;;
-        ;; Create text format
-        ;;
+        ;
+        ; Create text format
+        ;
 
-        sc_fontName equ <L"Calibri">
+        sc_fontName equ <"Calibri">
         sc_fontSize equ 50.0
 
         mov hr,pDWriteFactory.CreateTextFormat(
@@ -204,9 +150,9 @@ SaveToImageFile proc
 
         pTextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER)
 
-        ;;
-        ;; Create a path geometry representing an hour glass
-        ;;
+        ;
+        ; Create a path geometry representing an hour glass
+        ;
 
         mov hr,pD2DFactory.CreatePathGeometry(&pPathGeometry)
     .endif
@@ -252,9 +198,9 @@ SaveToImageFile proc
 
     .if (SUCCEEDED(hr))
 
-        ;;
-        ;; Create a linear-gradient brush
-        ;;
+        ;
+        ; Create a linear-gradient brush
+        ;
 
         mov hr,pRT.CreateGradientStopCollection(
             &stops,
@@ -293,9 +239,9 @@ SaveToImageFile proc
 
     .if (SUCCEEDED(hr))
 
-        ;;
-        ;; Render into the bitmap
-        ;;
+        ;
+        ; Render into the bitmap
+        ;
 
         pRT.BeginDraw()
 
@@ -312,12 +258,12 @@ SaveToImageFile proc
 
         Matrix.Rotation(45.0, size)
 
-        ;; Set the world transform to a 45 degree rotation at the center of the render target
-        ;; and write "Hello, World".
+        ; Set the world transform to a 45 degree rotation at the center of the render target
+        ; and write "Hello, World".
 
         pRT.SetTransform(&Matrix)
 
-        sc_helloWorld equ <L"Hello, World!">
+        sc_helloWorld equ <"Hello, World!">
 
         mov rc.left,0.0
         mov rc.top,0.0
@@ -334,9 +280,9 @@ SaveToImageFile proc
             DWRITE_MEASURING_MODE_NATURAL
             )
 
-        ;;
-        ;; Reset back to the identity transform
-        ;;
+        ;
+        ; Reset back to the identity transform
+        ;
         movss xmm2,rtSize.height
         subss xmm2,200.0
         Matrix.Translation(0.0, xmm2)
@@ -356,16 +302,16 @@ SaveToImageFile proc
 
     .if (SUCCEEDED(hr))
 
-        ;;
-        ;; Save image to file
-        ;;
+        ;
+        ; Save image to file
+        ;
 
         mov hr,pWICFactory.CreateStream(&pStream)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        mov hr,pStream.InitializeFromFilename(L"output.png", GENERIC_WRITE)
+        mov hr,pStream.InitializeFromFilename("output.png", GENERIC_WRITE)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -413,34 +359,29 @@ SaveToImageFile proc
         mov hr,pEncoder.Commit()
     .endif
 
-    SafeRelease(&pWICFactory,       IWICImagingFactory)
-    SafeRelease(&pD2DFactory,       ID2D1Factory)
-    SafeRelease(&pDWriteFactory,    IDWriteFactory)
-    SafeRelease(&pWICBitmap,        IWICBitmap)
-    SafeRelease(&pRT,               ID2D1RenderTarget)
-    SafeRelease(&pTextFormat,       IDWriteTextFormat)
-    SafeRelease(&pPathGeometry,     ID2D1PathGeometry)
-    SafeRelease(&pSink,             ID2D1GeometrySink)
-    SafeRelease(&pGradientStops,    ID2D1GradientStopCollection)
-    SafeRelease(&pLGBrush,          ID2D1LinearGradientBrush)
-    SafeRelease(&pBlackBrush,       ID2D1SolidColorBrush)
-    SafeRelease(&pEncoder,          IWICBitmapEncoder)
-    SafeRelease(&pFrameEncode,      IWICBitmapFrameEncode)
-    SafeRelease(&pStream,           IWICStream)
-
-    .return hr
+    SafeRelease(pWICFactory)
+    SafeRelease(pD2DFactory)
+    SafeRelease(pDWriteFactory)
+    SafeRelease(pWICBitmap)
+    SafeRelease(pRT)
+    SafeRelease(pTextFormat)
+    SafeRelease(pPathGeometry)
+    SafeRelease(pSink)
+    SafeRelease(pGradientStops)
+    SafeRelease(pLGBrush)
+    SafeRelease(pBlackBrush)
+    SafeRelease(pEncoder)
+    SafeRelease(pFrameEncode)
+    SafeRelease(pStream)
+   .return hr
 
 SaveToImageFile endp
 
 
-;/*=========================================================================*\
-;    Main
-;\*=========================================================================*/
-
 wmain proc
 
-    ;; Ignoring the return value because we want to continue running even in the
-    ;; unlikely event that HeapSetInformation fails.
+    ; Ignoring the return value because we want to continue running even in the
+    ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
@@ -448,12 +389,10 @@ wmain proc
 
         .ifd SaveToImageFile()
 
-            wprintf(L"Unexpected error: 0x%x", eax)
+            wprintf("Unexpected error: 0x%x", eax)
         .endif
-
         CoUninitialize()
     .endif
-
     .return 0
 
 wmain endp

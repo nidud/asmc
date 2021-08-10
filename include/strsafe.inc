@@ -1,5 +1,5 @@
 ifndef _STRSAFE_H_INCLUDED_
-_STRSAFE_H_INCLUDED_ equ <>
+define _STRSAFE_H_INCLUDED_
 
 include stdio.inc
 include string.inc
@@ -10,16 +10,16 @@ include winapifamily.inc
 ALIGNMENT_MACHINE equ 1
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ <>
+define _HRESULT_DEFINED
 HRESULT typedef int32_t
 endif
 
-SUCCEEDED macro hr
-    exitm<(sdword ptr hr !>= 0)>
-    endm
-FAILED macro hr
-    exitm<(sdword ptr hr !< 0)>
-    endm
+SUCCEEDED proto watcall hr:HRESULT {
+    retm<(sdword ptr eax !>= 0)>
+    }
+FAILED proto watcall hr:HRESULT {
+    retm<(sdword ptr eax !< 0)>
+    }
 
 S_OK equ 0
 

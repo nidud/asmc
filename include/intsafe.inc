@@ -81,12 +81,12 @@ endif
 
 HRESULT			typedef LONG
 
-SUCCEEDED macro hr
-	exitm<(sdword ptr hr !>= 0)>
-	endm
-FAILED macro hr
-	exitm<(sdword ptr hr !< 0)>
-	endm
+SUCCEEDED proto watcall hr:HRESULT {
+	retm<(sdword ptr eax !>= 0)>
+	}
+FAILED proto watcall hr:HRESULT {
+	retm<(sdword ptr eax !< 0)>
+	}
 
 S_OK equ 0
 

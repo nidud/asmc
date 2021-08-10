@@ -867,15 +867,14 @@ ERROR_FILE_NOT_ENCRYPTED	equ 6007
 ERROR_NOT_EXPORT_FORMAT equ 6008
 
 SEVERITY_SUCCESS	equ 0
-SEVERITY_ERROR	equ 1
+SEVERITY_ERROR		equ 1
 
-
-SUCCEEDED macro hr
-	exitm<(sdword ptr hr !>= 0)>
-	endm
-FAILED macro hr
-	exitm<(sdword ptr hr !< 0)>
-	endm
+SUCCEEDED proto watcall hr:HRESULT {
+	retm<(sdword ptr eax !>= 0)>
+	}
+FAILED proto watcall hr:HRESULT {
+	retm<(sdword ptr eax !< 0)>
+	}
 
 IS_ERROR macro Status
 	exitm <( ( Status ) shr 31 == SEVERITY_ERROR ) >

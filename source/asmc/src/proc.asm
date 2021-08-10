@@ -96,11 +96,12 @@ ifndef __ASMC64__
 ms32_regs16         special_token T_AX, T_DX, T_BX
 ms32_regs32         special_token T_ECX, T_EDX
 ms32_maxreg         dd lengthof(ms32_regs16), lengthof(ms32_regs32)
+endif
 watc_regs8          special_token T_AL, T_DL, T_BL, T_CL
 watc_regs16         special_token T_AX, T_DX, T_BX, T_CX
 watc_regs32         special_token T_EAX, T_EDX, T_EBX, T_ECX
+watc_regs64         special_token T_RAX, T_RDX, T_RBX, T_RCX
 watc_regs_qw        special_token T_AX, T_BX, T_CX, T_DX
-endif
 ms64_regs           special_token T_RCX, T_RDX, T_R8, T_R9
 ;
 ; win64 non-volatile GPRs:
@@ -121,8 +122,8 @@ ifndef __ASMC64__
 ms32_pcheck         proto :ptr dsym, :ptr dsym, :ptr int_t
 vc32_pcheck         proto :ptr dsym, :ptr dsym, :ptr int_t
 vc32_return         proto :ptr dsym, :string_t
-watc_pcheck         proto :ptr dsym, :ptr dsym, :ptr int_t
 endif
+watc_pcheck         proto :ptr dsym, :ptr dsym, :ptr int_t
 ms64_pcheck         proto :ptr dsym, :ptr dsym, :ptr int_t
 ms64_return         proto :ptr dsym, :string_t
 elf64_pcheck        proto :ptr dsym, :ptr dsym, :ptr int_t
@@ -144,7 +145,7 @@ fastcall_tab fastcall_conv \
 else
 fastcall_tab fastcall_conv \
     { 0, 0 },                      ;; FCT_MSC
-    { 0, 0 },                      ;; FCT_WATCOMC
+    { watc_pcheck, 0 },            ;; FCT_WATCOMC
     { ms64_pcheck,  ms64_return }, ;; FCT_WIN64
     { elf64_pcheck, ms64_return }, ;; FCT_ELF64
     { 0, 0 },                      ;; FCT_VEC32
@@ -191,8 +192,6 @@ ROUND_UP proto watcall i:uint_t, r:uint_t {
 ; in VARARG procs, all parameters are pushed onto the stack!
 ;
 
-ifndef __ASMC64__
-
 watc_pcheck proc private uses esi edi ebx p:ptr dsym, paranode:ptr dsym, used:ptr int_t
 
   .new newflg:int_t
@@ -218,7 +217,7 @@ watc_pcheck proc private uses esi edi ebx p:ptr dsym, paranode:ptr dsym, used:pt
 
     ; v2.05: rewritten. The old code didn't allow to "fill holes"
 
-    .if ( ebx == 8 )
+    .if ( ebx == 8 && Ofssize == USE32 )
         mov edx,15
         mov ecx,4
         .if Ofssize
@@ -259,9 +258,11 @@ watc_pcheck proc private uses esi edi ebx p:ptr dsym, paranode:ptr dsym, used:pt
         .endif
         .endc
     .case 8
-        .if ( Ofssize )
+        .if ( Ofssize == USE32 )
             mov [esi].asym.regist[0],watc_regs32[edi]
             mov [esi].asym.regist[2],watc_regs32[edi+1*4]
+        .elseif ( Ofssize == USE64 )
+            mov [esi].asym.regist[0],watc_regs64[edi]
         .else
 
             ; the AX:BX:CX:DX sequence is for 16-bit only.
@@ -292,6 +293,8 @@ watc_pcheck proc private uses esi edi ebx p:ptr dsym, paranode:ptr dsym, used:pt
     .return( 1 )
 
 watc_pcheck endp
+
+ifndef __ASMC64__
 
 ;
 ; the MS Win32 fastcall ABI is simple: register ecx and edx are used,

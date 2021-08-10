@@ -217,8 +217,6 @@ CApplication::OnSize proc uses rdi width:UINT, height:UINT
         sub [rdi].m_rc.bottom,100
     .endif
 
-    ;.new size:D2D1_SIZE_U = { edx, r8d }
-
     .if ( this.CreateDeviceResources() )
 
         .return ErrorMessage(eax, "CreateDeviceResources()" )

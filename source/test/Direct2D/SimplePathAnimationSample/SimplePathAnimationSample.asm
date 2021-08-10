@@ -2,20 +2,13 @@
 include SimplePathAnimationSample.inc
 
 .code
-;/******************************************************************
-;*                                                                 *
-;*  WinMain                                                        *
-;*                                                                 *
-;*  Application entrypoint                                         *
-;*                                                                 *
-;******************************************************************/
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
   local vtable:DemoAppVtbl
 
-    ;; Ignore the return value because we want to run the program even in the
-    ;; unlikely event that HeapSetInformation fails.
+    ; Ignore the return value because we want to run the program even in the
+    ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
@@ -32,14 +25,6 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
 
 wWinMain endp
 
-
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::DemoApp constructor                                   *
-;*                                                                 *
-;*  Initialize member data                                         *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::DemoApp proc uses rdi vtable:ptr
 
@@ -66,34 +51,18 @@ DemoApp::DemoApp endp
 
     assume rsi:ptr DemoApp
 
-;******************************************************************
-;*                                                                *
-;*  DemoApp::Release destructor                                   *
-;*                                                                *
-;*  Tear down resources                                           *
-;*                                                                *
-;******************************************************************
-
 DemoApp::Release proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pD2DFactory, ID2D1Factory)
-    SafeRelease(&[rsi].m_pRT, ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pPathGeometry, ID2D1PathGeometry)
-    SafeRelease(&[rsi].m_pObjectGeometry, ID2D1PathGeometry)
-    SafeRelease(&[rsi].m_pRedBrush, ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pYellowBrush, ID2D1SolidColorBrush)
+    SafeRelease([rsi].m_pD2DFactory)
+    SafeRelease([rsi].m_pRT)
+    SafeRelease([rsi].m_pPathGeometry)
+    SafeRelease([rsi].m_pObjectGeometry)
+    SafeRelease([rsi].m_pRedBrush)
+    SafeRelease([rsi].m_pYellowBrush)
     ret
 
 DemoApp::Release endp
-
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::Initialize                                            *
-;*                                                                 *
-;*  Create application window and device-independent resources     *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::Initialize proc uses rsi
 
@@ -102,7 +71,7 @@ DemoApp::Initialize proc uses rsi
 
     mov rsi,rcx
 
-    ;;register window class
+    ; register window class
 
     mov wcex.cbSize,        WNDCLASSEX
     mov wcex.style,         CS_HREDRAW or CS_VREDRAW
@@ -121,10 +90,10 @@ DemoApp::Initialize proc uses rsi
 
     .ifd !this.CreateDeviceIndependentResources()
 
-        ;; Create the application window.
-        ;;
-        ;; Because the CreateWindow function takes its size in pixels, we
-        ;; obtain the system DPI and use it to scale the window size.
+        ; Create the application window.
+        ;
+        ; Because the CreateWindow function takes its size in pixels, we
+        ; obtain the system DPI and use it to scale the window size.
 
         this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
@@ -177,8 +146,8 @@ DemoApp::Initialize proc uses rsi
                 ZeroMemory(&[rsi].m_DwmTimingInfo, DWM_TIMING_INFO)
                 mov [rsi].m_DwmTimingInfo.cbSize,DWM_TIMING_INFO
 
-                ;; Get the composition refresh rate. If the DWM isn't running,
-                ;; get the refresh rate from GDI -- probably going to be 60Hz
+                ; Get the composition refresh rate. If the DWM isn't running,
+                ; get the refresh rate from GDI -- probably going to be 60Hz
 
                 DwmGetCompositionTimingInfo(NULL, &[rsi].m_DwmTimingInfo)
 
@@ -205,15 +174,11 @@ DemoApp::Initialize proc uses rsi
 
 DemoApp::Initialize endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::CreateDeviceIndependentResources                      *
-;*                                                                 *
-;*  This method is used to create resources which are not bound    *
-;*  to any device. Their lifetime effectively extends for the      *
-;*  duration of the app.                                           *
-;*                                                                 *
-;******************************************************************/
+;
+;  This method is used to create resources which are not bound
+;  to any device. Their lifetime effectively extends for the
+;  duration of the app.
+;
 
 DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
@@ -223,7 +188,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
     mov rsi,rcx
     mov pSink,NULL
 
-    ;; Create a Direct2D factory.
+    ; Create a Direct2D factory.
     mov hr,D2D1CreateFactory(
             D2D1_FACTORY_TYPE_SINGLE_THREADED,
             &IID_ID2D1Factory,
@@ -233,15 +198,15 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
     .if (SUCCEEDED(hr))
 
-        ;; Create the path geometry.
+        ; Create the path geometry.
 
         mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pPathGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; Write to the path geometry using the geometry sink. We are going to create a
-        ;; spiral
+        ; Write to the path geometry using the geometry sink. We are going to create a
+        ; spiral
 
         mov hr,this.m_pPathGeometry.Open(&pSink)
     .endif
@@ -296,15 +261,15 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
     .if (SUCCEEDED(hr))
 
-        ;; Create the path geometry.
+        ; Create the path geometry.
 
         mov hr,this.m_pD2DFactory.CreatePathGeometry(&[rsi].m_pObjectGeometry)
     .endif
 
     .if (SUCCEEDED(hr))
 
-        ;; Write to the object geometry using the geometry sink.
-        ;; We are going to create a simple triangle
+        ; Write to the object geometry using the geometry sink.
+        ; We are going to create a simple triangle
 
         mov hr,this.m_pObjectGeometry.Open(&pSink)
     .endif
@@ -333,16 +298,12 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi rbx
 
 DemoApp::CreateDeviceIndependentResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::CreateDeviceResources                                 *
-;*                                                                 *
-;*  This method creates resources which are bound to a particular  *
-;*  D3D device. It's all centralized here, in case the resources   *
-;*  need to be recreated in case of D3D device loss (eg. display   *
-;*  change, remoting, removal of video card, etc).                 *
-;*                                                                 *
-;******************************************************************/
+;
+;  This method creates resources which are bound to a particular
+;  D3D device. It's all centralized here, in case the resources
+;  need to be recreated in case of D3D device loss (eg. display
+;  change, remoting, removal of video card, etc).
+;
 
 DemoApp::CreateDeviceResources proc uses rsi
 
@@ -364,19 +325,19 @@ DemoApp::CreateDeviceResources proc uses rsi
         sub eax,rc.top
         mov size.height,eax
 
-        ;; Create a Direct2D render target
+        ; Create a Direct2D render target
 
         mov r8, D2D1_HwndRenderTargetProperties([rsi].m_hwnd, size)
         mov rdx,D2D1_RenderTargetProperties()
 
         .ifd !this.m_pD2DFactory.CreateHwndRenderTarget(rdx, r8, &[rsi].m_pRT)
 
-            ;; Create a red brush.
+            ; Create a red brush.
 
             mov rdx,D3DCOLORVALUE(Red, 1.0)
             .ifd !this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pRedBrush)
 
-                ;; Create a yellow brush.
+                ; Create a yellow brush.
 
                 mov rdx,D3DCOLORVALUE(Yellow, 1.0)
                 this.m_pRT.CreateSolidColorBrush(rdx, NULL, &[rsi].m_pYellowBrush)
@@ -387,32 +348,21 @@ DemoApp::CreateDeviceResources proc uses rsi
 
 DemoApp::CreateDeviceResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::DiscardDeviceResources                                *
-;*                                                                 *
-;*  Discard device-specific resources which need to be recreated   *
-;*  when a D3D device is lost                                      *
-;*                                                                 *
-;******************************************************************/
+;
+;  Discard device-specific resources which need to be recreated
+;  when a D3D device is lost
+;
 
 DemoApp::DiscardDeviceResources proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pRT, ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pRedBrush, ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pYellowBrush, ID2D1SolidColorBrush)
+    SafeRelease([rsi].m_pRT)
+    SafeRelease([rsi].m_pRedBrush)
+    SafeRelease([rsi].m_pYellowBrush)
     ret
 
 DemoApp::DiscardDeviceResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::RunMessageLoop                                        *
-;*                                                                 *
-;*  Main window message loop                                       *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::RunMessageLoop proc
 
@@ -427,21 +377,17 @@ DemoApp::RunMessageLoop proc
 
 DemoApp::RunMessageLoop endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnRender                                              *
-;*                                                                 *
-;*  Called whenever the application needs to display the client    *
-;*  window. This method draws a single frame of animated content   *
-;*                                                                 *
-;*  Note that this function will not render anything if the window *
-;*  is occluded (e.g. when the screen is locked).                  *
-;*  Also, this function will automatically discard device-specific *
-;*  resources if the D3D device disappears during function         *
-;*  invocation, and will recreate the resources the next time it's *
-;*  invoked.                                                       *
-;*                                                                 *
-;******************************************************************/
+;
+;  Called whenever the application needs to display the client
+;  window. This method draws a single frame of animated content
+;
+;  Note that this function will not render anything if the window
+;  is occluded (e.g. when the screen is locked).
+;  Also, this function will automatically discard device-specific
+;  resources if the D3D device disappears during function
+;  invocation, and will recreate the resources the next time it's
+;  invoked.
+;
 
 DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
 
@@ -482,34 +428,34 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
         movss point.y,xmm1
         translation.Translation(xmm0, xmm1)
 
-        ;; Prepare to draw.
+        ; Prepare to draw.
         pRT.BeginDraw()
 
-        ;; Reset to identity transform
+        ; Reset to identity transform
         pRT.SetTransform(m.Identity())
 
-        ;;clear the render target contents
+        ; clear the render target contents
         pRT.Clear(D3DCOLORVALUE(Black, 1.0))
 
-        ;;center the path
+        ; center the path
         m.SetProduct(&scale, &translation)
         pRT.SetTransform(&m)
 
-        ;;draw the path in red
+        ; draw the path in red
         pRT.DrawGeometry([rsi].m_pPathGeometry, [rsi].m_pRedBrush, 0.6, NULL)
 
         lea rcx,[rsi].m_Animation
         [rcx].Animation.GetValue([rsi].m_Time, EaseInOutExponentialAnimation)
 
-        ;; Ask the geometry to give us the point that corresponds with the
-        ;; length at the current time.
+        ; Ask the geometry to give us the point that corresponds with the
+        ; length at the current time.
 
         mov hr,this.m_pPathGeometry.ComputePointAtLength(xmm0, NULL, 1.0, &point, &tangent)
 
         .assert(SUCCEEDED(hr))
 
-        ;; Reorient the triangle so that it follows the
-        ;; direction of the path.
+        ; Reorient the triangle so that it follows the
+        ; direction of the path.
 
         mov triangleMatrix._11,tangent.x
         mov triangleMatrix._12,tangent.y
@@ -522,10 +468,10 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
 
         pRT.SetTransform(&m)
 
-        ;; Draw the yellow triangle.
+        ; Draw the yellow triangle.
         pRT.FillGeometry([rsi].m_pObjectGeometry, [rsi].m_pYellowBrush, NULL)
 
-        ;; Commit the drawing operations.
+        ; Commit the drawing operations.
         mov hr,pRT.EndDraw(NULL, NULL)
 
         .if (hr == D2DERR_RECREATE_TARGET)
@@ -534,7 +480,7 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
             this.DiscardDeviceResources()
         .endif
 
-        ;; When we reach the end of the animation, loop back to the beginning.
+        ; When we reach the end of the animation, loop back to the beginning.
 
         movss  xmm0,[rsi].m_Time
         comiss xmm0,[rsi].m_Animation.m_Duration
@@ -561,14 +507,10 @@ DemoApp::OnRender proc uses rsi ps:PAINTSTRUCT
 DemoApp::OnRender endp
 
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnResize                                              *
-;*                                                                 *
-;*  If the application receives a WM_SIZE message, this method     *
-;*  resize the render target appropriately.                        *
-;*                                                                 *
-;******************************************************************/
+;
+;  If the application receives a WM_SIZE message, this method
+;  resize the render target appropriately.
+;
 
 DemoApp::OnResize proc width:UINT, height:UINT
 
@@ -580,9 +522,9 @@ DemoApp::OnResize proc width:UINT, height:UINT
         mov size.width,edx
         mov size.height,r8d
 
-        ;; Note: This method can fail, but it's okay to ignore the
-        ;; error here -- it will be repeated on the next call to
-        ;; EndDraw.
+        ; Note: This method can fail, but it's okay to ignore the
+        ; error here -- it will be repeated on the next call to
+        ; EndDraw.
 
         [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
@@ -590,14 +532,6 @@ DemoApp::OnResize proc width:UINT, height:UINT
 
 DemoApp::OnResize endp
 
-
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::WndProc                                               *
-;*                                                                 *
-;*  Window message handler                                         *
-;*                                                                 *
-;******************************************************************/
 
 WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 

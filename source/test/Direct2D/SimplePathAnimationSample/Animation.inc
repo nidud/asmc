@@ -1,12 +1,6 @@
 
 include math.inc
 
-;/******************************************************************
-;*                                                                 *
-;* Base Animation Class                                            *
-;*                                                                 *
-;******************************************************************/
-
 .template Animation
 
     m_Duration  float ?
@@ -54,11 +48,9 @@ include math.inc
         }
     .ends
 
-;/******************************************************************
-;*                                                                 *
-;* Linearly Interpolate Between Start and End                      *
-;*                                                                 *
-;******************************************************************/
+;
+; Linearly Interpolate Between Start and End
+;
 
 .template LinearAnimation : public Animation
 
@@ -75,11 +67,6 @@ include math.inc
         }
     .ends
 
-;/******************************************************************
-;*                                                                 *
-;*                                                                 *
-;*                                                                 *
-;******************************************************************/
 
 .template EaseInExponentialAnimation : public Animation
 
@@ -105,11 +92,6 @@ include math.inc
         }
     .ends
 
-;/******************************************************************
-;*                                                                 *
-;*                                                                 *
-;*                                                                 *
-;******************************************************************/
 
 .template EaseOutExponentialAnimation : public Animation
 
@@ -137,11 +119,6 @@ include math.inc
         }
     .ends
 
-;/******************************************************************
-;*                                                                 *
-;*                                                                 *
-;*                                                                 *
-;******************************************************************/
 
 .template EaseInOutExponentialAnimation : public Animation
 

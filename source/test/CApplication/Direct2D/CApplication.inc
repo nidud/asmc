@@ -76,14 +76,6 @@ define ID_TIMER     1
     DestroyApplicationWindow proc
    .ends
 
-SafeRelease proto p:abs {
-    mov rax,p
-    .if rax
-        mov p,NULL
-        [rax].@SubStr(typeid(p), 2).Release()
-    .endif
-    }
-
 ifdef _MSVCRT
 .data
  IID_ID2D1Factory   IID _IID_ID2D1Factory

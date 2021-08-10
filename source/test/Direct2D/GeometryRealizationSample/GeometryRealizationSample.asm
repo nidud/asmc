@@ -1,3 +1,10 @@
+; GEOMETRYREALIZATIONSAMPLE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; From: https://github.com/microsoft/Windows-classic-samples/
+;
 
 include stdafx.inc
 ifdef _MSVCRT
@@ -20,57 +27,38 @@ sc_zoomStep             equ 1.5
 sc_zoomSubStep          equ 1.1
 sc_strokeWidth          equ 1.0
 
-;; This determines that maximum texture size we will
-;; generate for our realizations.
+; This determines that maximum texture size we will
+; generate for our realizations.
 
 sc_maxRealizationDimension equ 2000
 
 .code
 
-;/******************************************************************
-;*                                                                 *
-;*  WinMain                                                        *
-;*                                                                 *
-;*  Application entrypoint                                         *
-;*                                                                 *
-;******************************************************************/
-
-wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
+wWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
   local vtable:DemoAppVtbl
   local tmring:RingBuffer
 
-    ;; Ignore the return value because we want to continue running even in the
-    ;; unlikely event that HeapSetInformation fails.
+    ; Ignore the return value because we want to continue running even in the
+    ; unlikely event that HeapSetInformation fails.
 
     HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0)
 
-    CoInitialize(NULL)
-    .if (SUCCEEDED(eax))
+    .if (SUCCEEDED(CoInitialize(NULL)))
 
-       .new app:DemoApp(&vtable, &tmring)
-        app.Initialize()
+        .new app:DemoApp(&vtable, &tmring)
 
-        .if (SUCCEEDED(eax))
+        .if (SUCCEEDED(app.Initialize()))
 
             app.RunMessageLoop()
-
         .endif
         app.Release()
         CoUninitialize()
     .endif
-
     .return 0
 
 wWinMain endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::DemoApp constructor                                   *
-;*                                                                 *
-;*  Initialize member data                                         *
-;*                                                                 *
-;******************************************************************/
 
     assume rsi:ptr DemoApp
 
@@ -122,36 +110,22 @@ DemoApp::DemoApp proc uses rdi rsi vtable:ptr, tmring:ptr
 
 DemoApp::DemoApp endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::~DemoApp destructor                                   *
-;*                                                                 *
-;*  Tear down resources                                            *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::Release proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pD2DFactory,       ID2D1Factory)
-    SafeRelease(&[rsi].m_pWICFactory,       IWICImagingFactory)
-    SafeRelease(&[rsi].m_pDWriteFactory,    IDWriteFactory)
-    SafeRelease(&[rsi].m_pRT,               ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pTextFormat,       IDWriteTextFormat)
-    SafeRelease(&[rsi].m_pSolidColorBrush,  ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pRealization,      IGeometryRealization)
-    SafeRelease(&[rsi].m_pGeometry,         ID2D1Geometry)
+    SafeRelease([rsi].m_pD2DFactory)
+    SafeRelease([rsi].m_pWICFactory)
+    SafeRelease([rsi].m_pDWriteFactory)
+    SafeRelease([rsi].m_pRT)
+    SafeRelease([rsi].m_pTextFormat)
+    SafeRelease([rsi].m_pSolidColorBrush)
+    SafeRelease([rsi].m_pRealization)
+    SafeRelease([rsi].m_pGeometry)
     ret
 
 DemoApp::Release endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::Initialize                                            *
-;*                                                                 *
-;*  Create application window and device-independent resources     *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::Initialize proc uses rsi
 
@@ -160,12 +134,12 @@ DemoApp::Initialize proc uses rsi
 
     mov rsi,rcx
 
-    ;; Initialize device-indpendent resources, such
-    ;; as the Direct2D factory.
+    ; Initialize device-indpendent resources, such
+    ; as the Direct2D factory.
 
-    .ifd !this.CreateDeviceIndependentResources()
+    .ifd ( !this.CreateDeviceIndependentResources() )
 
-        ;; Register the window class.
+        ; Register the window class.
 
         mov wcex.cbSize,        WNDCLASSEX
         mov wcex.style,         CS_HREDRAW or CS_VREDRAW
@@ -182,10 +156,10 @@ DemoApp::Initialize proc uses rsi
 
         RegisterClassEx(&wcex)
 
-        ;; Create the application window.
-        ;;
-        ;; Because the CreateWindow function takes its size in pixels, we
-        ;; obtain the system DPI and use it to scale the window size.
+        ; Create the application window.
+        ;
+        ; Because the CreateWindow function takes its size in pixels, we
+        ; obtain the system DPI and use it to scale the window size.
 
         this.m_pD2DFactory.GetDesktopDpi(&dpiX, &dpiY)
 
@@ -211,22 +185,12 @@ DemoApp::Initialize proc uses rsi
         sub         edx,eax
         neg         edx
 
-        .if CreateWindowEx(
-            0,
-            "D2DDemoApp",
-            "D2D Demo App",
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            ecx,
-            edx,
-            NULL,
-            NULL,
-            HINST_THISCOMPONENT,
-            this
-            )
-            mov [rsi].m_hwnd,rax
+        .if CreateWindowEx(0, "D2DDemoApp", "D2D Demo App",
+                WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT, ecx, edx,
+                NULL, NULL, HINST_THISCOMPONENT, this)
 
+            mov [rsi].m_hwnd,rax
             ShowWindow([rsi].m_hwnd, SW_SHOWNORMAL)
             UpdateWindow([rsi].m_hwnd)
             mov eax,S_OK
@@ -238,19 +202,14 @@ DemoApp::Initialize proc uses rsi
 
 DemoApp::Initialize endp
 
-
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::CreateDeviceIndependentResources                      *
-;*                                                                 *
-;*  This method is used to create resources which are not bound    *
-;*  to any device. Their lifetime effectively extends for the      *
-;*  duration of the app. These resources include the D2D,          *
-;*  DWrite, and WIC factories; and a DWrite Text Format object     *
-;*  (used for identifying particular font characteristics) and     *
-;*  a D2D geometry.                                                *
-;*                                                                 *
-;******************************************************************/
+;
+;  This method is used to create resources which are not bound
+;  to any device. Their lifetime effectively extends for the
+;  duration of the app. These resources include the D2D,
+;  DWrite, and WIC factories; and a DWrite Text Format object
+;  (used for identifying particular font characteristics) and
+;  a D2D geometry.
+;
 
 DemoApp::CreateDeviceIndependentResources proc uses rsi
 
@@ -258,14 +217,14 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     mov rsi,rcx
 
-    ;; Create the Direct2D factory.
+    ; Create the Direct2D factory.
 
     mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
         &IID_ID2D1Factory, NULL, &[rsi].m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 
-        ;; Create WIC factory.
+        ; Create WIC factory.
 
         mov hr,CoCreateInstance(
             &CLSID_WICImagingFactory,
@@ -278,7 +237,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a DirectWrite factory.
+        ; Create a DirectWrite factory.
 
         mov hr,DWriteCreateFactory(
             DWRITE_FACTORY_TYPE_SHARED,
@@ -290,7 +249,7 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a DirectWrite text format object.
+        ; Create a DirectWrite text format object.
 
         mov hr,this.m_pDWriteFactory.CreateTextFormat(
             sc_fontName,
@@ -303,37 +262,30 @@ DemoApp::CreateDeviceIndependentResources proc uses rsi
             &[rsi].m_pTextFormat
             )
     .endif
-
     .return hr
 
 DemoApp::CreateDeviceIndependentResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::CreateDeviceResources                                 *
-;*                                                                 *
-;*  This method creates resources which are bound to a particular  *
-;*  D3D device. It's all centralized here, in case the resources   *
-;*  need to be recreated in case of D3D device loss (eg. display   *
-;*  change, remoting, removal of video card, etc).                 *
-;*                                                                 *
-;******************************************************************/
+;
+;  This method creates resources which are bound to a particular
+;  D3D device. It's all centralized here, in case the resources
+;  need to be recreated in case of D3D device loss (eg. display
+;  change, remoting, removal of video card, etc).
+;
 
 DemoApp::CreateDeviceResources proc uses rsi
 
-  local hr:HRESULT
-  local rc:RECT
-  local pRealizationFactory:ptr IGeometryRealizationFactory
+  .new hr:HRESULT = S_OK
+  .new rc:RECT
+  .new pRealizationFactory:ptr IGeometryRealizationFactory = NULL
 
     mov rsi,rcx
-    mov hr,S_OK
-    mov pRealizationFactory,NULL
 
-    .if ![rsi].m_pRT
+    .if ( ![rsi].m_pRT )
 
         GetClientRect([rsi].m_hwnd, &rc)
 
-        ;; Create a Direct2D render target.
+        ; Create a Direct2D render target.
 
        .new p:D2D1_RENDER_TARGET_PROPERTIES
         mov p.type,     D2D1_RENDER_TARGET_TYPE_DEFAULT
@@ -358,7 +310,7 @@ DemoApp::CreateDeviceResources proc uses rsi
 
         .if (SUCCEEDED(hr))
 
-            ;; Create brushes.
+            ; Create brushes.
 
            .new color:D3DCOLORVALUE(White, 1.0)
 
@@ -387,54 +339,36 @@ DemoApp::CreateDeviceResources proc uses rsi
 
             mov [rsi].m_updateRealization,TRUE
         .endif
-
-        SafeRelease(&pRealizationFactory, IGeometryRealizationFactory)
+        SafeRelease(pRealizationFactory)
     .endif
-
     .return hr
 
 DemoApp::CreateDeviceResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::DiscardDeviceResources                                *
-;*                                                                 *
-;*  Discard device-specific resources which need to be recreated   *
-;*  when a Direct3D device is lost.                                *
-;*                                                                 *
-;******************************************************************/
+;
+; Discard device-specific resources which need to be recreated
+; when a Direct3D device is lost.
+;
 
 DemoApp::DiscardDeviceResources proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pRT,               ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pSolidColorBrush,  ID2D1SolidColorBrush)
-    SafeRelease(&[rsi].m_pRealization,      IGeometryRealization)
+    SafeRelease([rsi].m_pRT)
+    SafeRelease([rsi].m_pSolidColorBrush)
+    SafeRelease([rsi].m_pRealization)
     ret
 
 DemoApp::DiscardDeviceResources endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::DiscardGeometryData                                   *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::DiscardGeometryData proc
 
     mov [rcx].DemoApp.m_updateRealization,TRUE
-    SafeRelease(&[rcx].DemoApp.m_pGeometry, ID2D1Geometry)
+    SafeRelease([rcx].DemoApp.m_pGeometry)
     ret
 
 DemoApp::DiscardGeometryData endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::RunMessageLoop                                        *
-;*                                                                 *
-;*  Main window message loop                                       *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::RunMessageLoop proc
 
@@ -452,25 +386,18 @@ DemoApp::RunMessageLoop endp
 
 DemoApp::CreateGeometries proc uses rsi
 
-  local hr:HRESULT
+  .new hr:HRESULT = S_OK
 
     mov rsi,rcx
-    mov hr,S_OK
-    xor eax,eax
 
-    .if rax == [rsi].m_pGeometry
+    .if ( [rsi].m_pGeometry == NULL )
 
-       .new squareWidth     : float
-       .new pFactory        : ptr ID2D1Factory
-       .new pRealization    : ptr IGeometryRealization
-       .new pGeometry       : ptr ID2D1TransformedGeometry
-       .new pPathGeometry   : ptr ID2D1PathGeometry
-       .new pSink           : ptr ID2D1GeometrySink
-
-        mov pRealization    , rax
-        mov pGeometry       , rax
-        mov pPathGeometry   , rax
-        mov pSink           , rax
+       .new squareWidth:float
+       .new pFactory:ptr ID2D1Factory
+       .new pRealization:ptr IGeometryRealization = NULL
+       .new pGeometry:ptr ID2D1TransformedGeometry = NULL
+       .new pPathGeometry:ptr ID2D1PathGeometry = NULL
+       .new pSink:ptr ID2D1GeometrySink = NULL
 
         movss       xmm0,0.9 * sc_boardWidth
         cvtsi2ss    xmm1,[rsi].m_numSquares
@@ -478,14 +405,14 @@ DemoApp::CreateGeometries proc uses rsi
         movss       squareWidth,xmm0
         mov         pFactory,[rsi].m_pD2DFactory
 
-        ;; Create the path geometry.
+        ; Create the path geometry.
 
         mov hr,pFactory.CreatePathGeometry(&pPathGeometry)
 
         .if (SUCCEEDED(hr))
 
-            ;; Write to the path geometry using the geometry sink to
-            ;; create an hour glass shape.
+            ; Write to the path geometry using the geometry sink to
+            ; create an hour glass shape.
 
             mov hr,pPathGeometry.Open(&pSink)
         .endif
@@ -545,17 +472,16 @@ DemoApp::CreateGeometries proc uses rsi
 
         .if (SUCCEEDED(hr))
 
-            ;; Transfer the reference.
+            ; Transfer the reference.
             mov [rsi].m_pGeometry,pGeometry
             mov pGeometry,NULL
         .endif
 
-        SafeRelease(&pRealization,  IGeometryRealization)
-        SafeRelease(&pGeometry,     ID2D1TransformedGeometry)
-        SafeRelease(&pPathGeometry, ID2D1PathGeometry)
-        SafeRelease(&pSink,         ID2D1GeometrySink)
+        SafeRelease(pRealization)
+        SafeRelease(pGeometry)
+        SafeRelease(pPathGeometry)
+        SafeRelease(pSink)
     .endif
-
     .return hr
 
 DemoApp::CreateGeometries endp
@@ -630,12 +556,12 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
             mulss       xmm0,1.4142135623730950488016887242097
             movss       length,xmm0
 
-            ;;
-            ;; The intensity variable determines the color and speed of rotation of the
-            ;; realization instance. We choose a function that is rotationaly
-            ;; symmetric about the center of the grid, which produces a nice
-            ;; effect.
-            ;;
+            ;
+            ; The intensity variable determines the color and speed of rotation of the
+            ; realization instance. We choose a function that is rotationaly
+            ; symmetric about the center of the grid, which produces a nice
+            ; effect.
+            ;
 
             movss       xmm0,x
             mulss       xmm0,xmm0
@@ -648,9 +574,7 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
             movss       xmm1,0.2
             mulss       xmm1,time
             addss       xmm0,xmm1
-            sinf(
-                xmm0
-                )
+            sinf(xmm0)
             addss       xmm0,1.0
             mulss       xmm0,0.5
             movss       intensity,xmm0
@@ -681,21 +605,21 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
 
             .if [rsi].m_updateRealization
 
-                ;;
-                ;; Note: It would actually be a little simpler to generate our
-                ;; realizations prior to entering RenderMainContent. We instead
-                ;; generate the realizations based on the top-left primitive in
-                ;; the grid, so we can illustrate the fact that realizations
-                ;; appear identical to their unrealized counter-parts when the
-                ;; exact same world transform is supplied. Only the top left
-                ;; realization will look identical, though, as shifting or
-                ;; rotating an AA realization can introduce fuzziness.
-                ;;
-                ;; Realizations are regenerated every frame, so to
-                ;; demonstrate that the realization geometry produces identical
-                ;; results, you actually need to pause (<space>), which forces
-                ;; a regeneration.
-                ;;
+                ;
+                ; Note: It would actually be a little simpler to generate our
+                ; realizations prior to entering RenderMainContent. We instead
+                ; generate the realizations based on the top-left primitive in
+                ; the grid, so we can illustrate the fact that realizations
+                ; appear identical to their unrealized counter-parts when the
+                ; exact same world transform is supplied. Only the top left
+                ; realization will look identical, though, as shifting or
+                ; rotating an AA realization can introduce fuzziness.
+                ;
+                ; Realizations are regenerated every frame, so to
+                ; demonstrate that the realization geometry produces identical
+                ; results, you actually need to pause (<space>), which forces
+                ; a regeneration.
+                ;
 
                 mov hr,pRZ.Update(
                     [rsi].m_pGeometry,
@@ -751,37 +675,31 @@ DemoApp::RenderMainContent proc uses rsi rdi rbx time:float
             .endif
         .endf
     .endf
-
     .return hr
 
 DemoApp::RenderMainContent endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnRender                                              *
-;*                                                                 *
-;*  Called whenever the application needs to display the client    *
-;*  window. This method draws the main content (a 2D array of      *
-;*  spinning geometries) and some perf statistics.                 *
-;*                                                                 *
-;*  Note that this function will not render anything if the window *
-;*  is occluded (e.g. when the screen is locked).                   *
-;*  Also, this function will automatically discard device-specific *
-;*  resources if the D3D device disappears during function         *
-;*  invocation, and will recreate the resources the next time it's *
-;*  invoked.                                                       *
-;*                                                                 *
-;******************************************************************/
+;
+;  Called whenever the application needs to display the client
+;  window. This method draws the main content (a 2D array of
+;  spinning geometries) and some perf statistics.
+;
+;  Note that this function will not render anything if the window
+;  is occluded (e.g. when the screen is locked).
+;  Also, this function will automatically discard device-specific
+;  resources if the D3D device disappears during function
+;  invocation, and will recreate the resources the next time it's
+;  invoked.
+;
 
 DemoApp::OnRender proc uses rsi rdi
 
-  local hr:HRESULT
-  local time:LARGE_INTEGER
-  local frequency:LARGE_INTEGER
-  local floatTime:float
+  .new hr:HRESULT = S_OK
+  .new time:LARGE_INTEGER
+  .new frequency:LARGE_INTEGER
+  .new floatTime:float
 
     mov rsi,rcx
-    mov hr,S_OK
 
     QueryPerformanceCounter(&time)
     QueryPerformanceFrequency(&frequency)
@@ -873,33 +791,25 @@ DemoApp::OnRender proc uses rsi rdi
             .endif
         .endif
     .endif
-
     .return hr
 
 DemoApp::OnRender endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::RenderTextInfo                                        *
-;*                                                                 *
-;*  Draw the stats text (AA type, fps, etc...).                    *
-;*                                                                 *
-;******************************************************************/
+;
+;  Draw the stats text (AA type, fps, etc...).
+;
 
 DemoApp::RenderTextInfo proc uses rsi rdi rbx
 
-  local hr:HRESULT
-  local textBuffer[400]:WCHAR
-  local frequency:LARGE_INTEGER
-  local fps:float
-  local primsPerSecond:float
-  local numPrimitives:UINT
-  local pRB:ptr RingBuffer
+  .new hr:HRESULT = S_OK
+  .new textBuffer[400]:WCHAR
+  .new frequency:LARGE_INTEGER
+  .new fps:float = 0.0
+  .new primsPerSecond:float = 0.0
+  .new numPrimitives:UINT
+  .new pRB:ptr RingBuffer
 
     mov rsi,rcx
-    mov hr,S_OK
-    mov fps,0.0
-    mov primsPerSecond,0.0
 
     QueryPerformanceFrequency(&frequency)
 
@@ -1007,12 +917,7 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
         subss xmm0,sc_textInfoBoxInset
         movss rr.rect.bottom,xmm0
 
-        [rbx].ID2D1SolidColorBrush.SetColor(
-            c.Init(
-                White,
-                1.0
-                )
-            )
+        [rbx].ID2D1SolidColorBrush.SetColor(c.Init(White, 1.0))
         mov r8,wcsnlen(&textBuffer, ARRAYSIZE(textBuffer))
         [rdi].DrawText(
             &textBuffer,
@@ -1029,14 +934,10 @@ DemoApp::RenderTextInfo proc uses rsi rdi rbx
 
 DemoApp::RenderTextInfo endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnResize                                              *
-;*                                                                 *
-;*  If the application receives a WM_SIZE message, this method     *
-;*  resizes the render target appropriately.                       *
-;*                                                                 *
-;******************************************************************/
+;
+;  If the application receives a WM_SIZE message, this method
+;  resizes the render target appropriately.
+;
 
 DemoApp::OnResize proc width:UINT, height:UINT
 
@@ -1048,9 +949,9 @@ DemoApp::OnResize proc width:UINT, height:UINT
         mov size.width,edx
         mov size.height,r8d
 
-        ;; Note: This method can fail, but it's okay to ignore the
-        ;; error here -- it will be repeated on the next call to
-        ;; EndDraw.
+        ; Note: This method can fail, but it's okay to ignore the
+        ; error here -- it will be repeated on the next call to
+        ; EndDraw.
 
         [rcx].ID2D1HwndRenderTarget.Resize(&size)
     .endif
@@ -1058,11 +959,6 @@ DemoApp::OnResize proc width:UINT, height:UINT
 
 DemoApp::OnResize endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnKeyDown                                             *
-;*                                                                 *
-;******************************************************************/
 
     assume rcx:ptr DemoApp
 
@@ -1115,7 +1011,7 @@ DemoApp::OnKeyDown proc vkey:SWORD
         .endif
         mov [rcx].m_numSquares,eax
 
-        ;; Regenerate the geometries.
+        ; Regenerate the geometries.
         [rcx].DiscardGeometryData()
         .endc
 
@@ -1127,7 +1023,7 @@ DemoApp::OnKeyDown proc vkey:SWORD
         .endif
         mov [rcx].m_numSquares,eax
 
-        ;; Regenerate the geometries.
+        ; Regenerate the geometries.
         [rcx].DiscardGeometryData()
         .endc
     .endsw
@@ -1135,11 +1031,6 @@ DemoApp::OnKeyDown proc vkey:SWORD
 
 DemoApp::OnKeyDown endp
 
-;/******************************************************************
-;*                                                                 *
-;*  OnMouseMove                                                    *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::OnMouseMove proc lParam:LPARAM
 
@@ -1170,11 +1061,6 @@ DemoApp::OnMouseMove proc lParam:LPARAM
 
 DemoApp::OnMouseMove endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::OnWheel                                               *
-;*                                                                 *
-;******************************************************************/
 
 DemoApp::OnWheel proc wParam:WPARAM
 
@@ -1196,15 +1082,8 @@ DemoApp::OnWheel proc wParam:WPARAM
 
 DemoApp::OnWheel endp
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp::WndProc                                               *
-;*                                                                 *
-;*  Window message handler                                         *
-;*                                                                 *
-;******************************************************************/
 
-WndProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local result:LRESULT
   local wasHandled:BOOL

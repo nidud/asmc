@@ -1,18 +1,4 @@
 
-;/******************************************************************
-;*                                                                 *
-;*  DemoApp                                                        *
-;*                                                                 *
-;******************************************************************/
-
-    LPID2D1Factory          typedef ptr ID2D1Factory
-    LPIWICImagingFactory    typedef ptr IWICImagingFactory
-    LPIDWriteFactory        typedef ptr IDWriteFactory
-    LPID2D1HwndRenderTarget typedef ptr ID2D1HwndRenderTarget
-    LPIDWriteTextFormat     typedef ptr IDWriteTextFormat
-    LPID2D1SolidColorBrush  typedef ptr ID2D1SolidColorBrush
-    LPIGeometryRealization  typedef ptr IGeometryRealization
-
 .class DemoApp
 
     m_hwnd              HWND ?
@@ -29,16 +15,16 @@
     m_timeDelta         LONGLONG ?
     m_targetZoomFactor  float ?
     m_currentZoomFactor float ?
-    m_times             LPRingBuffer ?
+    m_times             ptr RingBuffer ?
 
-    m_pD2DFactory       LPID2D1Factory ?
-    m_pWICFactory       LPIWICImagingFactory ?
-    m_pDWriteFactory    LPIDWriteFactory ?
-    m_pRT               LPID2D1HwndRenderTarget ?
-    m_pTextFormat       LPIDWriteTextFormat ?
-    m_pSolidColorBrush  LPID2D1SolidColorBrush ?
-    m_pRealization      LPIGeometryRealization ?
-    m_pGeometry         LPID2D1Geometry ?
+    m_pD2DFactory       ptr ID2D1Factory ?
+    m_pWICFactory       ptr IWICImagingFactory ?
+    m_pDWriteFactory    ptr IDWriteFactory ?
+    m_pRT               ptr ID2D1HwndRenderTarget ?
+    m_pTextFormat       ptr IDWriteTextFormat ?
+    m_pSolidColorBrush  ptr ID2D1SolidColorBrush ?
+    m_pRealization      ptr IGeometryRealization ?
+    m_pGeometry         ptr ID2D1Geometry ?
 
     DemoApp             proc :ptr, :ptr
     Release             proc
@@ -59,5 +45,4 @@
     OnWheel             proc :WPARAM
 
     WndProc             proto :HWND, :UINT, :WPARAM, :LPARAM
-
-    .ends
+   .ends

@@ -3,18 +3,15 @@ IDR_MAINMENU            equ 104
 IDM_EXIT                equ 106
 IDM_FILE                equ 107
 
-LPIWICImagingFactory    typedef ptr IWICImagingFactory
-LPIWICBitmapSource      typedef ptr IWICBitmapSource
-
 option dllimport:none
 
 .class DemoApp
 
     m_hInst             HINSTANCE ?
     m_pGdiPlusBitmap    Bitmap <>
-    m_pbBuffer          LPBYTE ?
-    m_pIWICFactory      LPIWICImagingFactory ?
-    m_pOriginalBitmapSource LPIWICBitmapSource ?
+    m_pbBuffer          ptr BYTE ?
+    m_pIWICFactory      ptr IWICImagingFactory ?
+    m_pOriginalBitmapSource ptr IWICBitmapSource ?
 
     DemoApp             proc
     Release             proc
@@ -28,28 +25,14 @@ option dllimport:none
 
     WndProc             proc :HWND, :UINT, :WPARAM, :LPARAM
     OnPaint             proc :HWND
-
-    .ends
-
-SafeRelease proto :ptr, :abs {
-    mov rax,[_1]
-    .if rax
-        mov qword ptr [_1],NULL
-        [rax]._2.Release()
-    .endif
-    }
+   .ends
 
 ifdef _MSVCRT
-
-    .data
-
-    IID_IWICImagingFactory      IID _IID_IWICImagingFactory
-    CLSID_WICImagingFactory     IID _CLSID_WICImagingFactory
-    IID_IWICBitmapSource        IID _IID_IWICBitmapSource
-    GUID_WICPixelFormat32bppBGR IID _GUID_WICPixelFormat32bppBGR
-
-    @CurSeg ends
-
+.data
+ IID_IWICImagingFactory      IID _IID_IWICImagingFactory
+ CLSID_WICImagingFactory     IID _CLSID_WICImagingFactory
+ IID_IWICBitmapSource        IID _IID_IWICBitmapSource
+ GUID_WICPixelFormat32bppBGR IID _GUID_WICPixelFormat32bppBGR
 endif
 
 

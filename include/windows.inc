@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _WINDOWS_
-_WINDOWS_ equ <>
+define _WINDOWS_
 
 .pragma cref(push, 0)
 
@@ -13,7 +13,7 @@ if not defined(_68K_)	and \
    not defined(_X86_)	and \
    not defined(_IA64_)	and \
    not defined(_AMD64_) and defined(_M_IX86)
-_X86_  equ <>
+define _X86_
 endif
 
 if not defined(_68K_)	and \
@@ -21,7 +21,7 @@ if not defined(_68K_)	and \
    not defined(_X86_)	and \
    not defined(_IA64_)	and \
    not defined(_AMD64_) and defined(_M_AMD64)
-_AMD64_ equ <>
+define _AMD64_
 endif
 
 if not defined(_68K_)	and \
@@ -29,7 +29,7 @@ if not defined(_68K_)	and \
    not defined(_X86_)	and \
    not defined(_IA64_)	and \
    not defined(_AMD64_) and defined(_M_M68K)
-_68K_  equ <>
+define _68K_
 endif
 
 if not defined(_68K_)	and \
@@ -37,7 +37,7 @@ if not defined(_68K_)	and \
    not defined(_X86_)	and \
    not defined(_IA64_)	and \
    not defined(_AMD64_) and defined(_M_MPPC)
-_MPPC_ equ <>
+define _MPPC_
 endif
 
 if not defined(_68K_)	and \
@@ -46,49 +46,53 @@ if not defined(_68K_)	and \
    not defined(_M_IX86) and \
    not defined(_AMD64_) and defined(_M_IA64)
 ifndef _IA64_
-_IA64_ equ <>
+define _IA64_
 endif
 endif
 
 ifndef _WIN32_WINNT
 ifndef WINVER
-_WIN32_WINNT	equ 0x0400
+define _WIN32_WINNT 0x0400
 else
-_WIN32_WINNT	equ WINVER
+define _WIN32_WINNT WINVER
 endif
 endif
 ifndef _WIN32_WINDOWS
 ifndef WINVER
-_WIN32_WINDOWS	equ 400h
+define _WIN32_WINDOWS 0x400
 else
-_WIN32_WINDOWS	equ WINVER
+define _WIN32_WINDOWS WINVER
 endif
 endif
 
 ifndef _WIN32_FUSION
-_WIN32_FUSION	equ 0
+define _WIN32_FUSION 0
 endif
 ifndef _WIN32_WCE
 ;_WIN32_WCE	equ 0
 endif
 
 ifndef ISOLATION_AWARE_ENABLED
-ISOLATION_AWARE_ENABLED equ 0
+define ISOLATION_AWARE_ENABLED 0
 endif
 
 ifndef WINVER
-WINVER equ 0x0400
+define WINVER 0x0400
 else
 if defined(_WIN32_WINNT) and (WINVER LT 0x0400) and (_WIN32_WINNT GT 0x0400)
 .err <WINVER setting conflicts with _WIN32_WINNT setting>
 endif
 endif
 
+ifndef HINST_THISCOMPONENT
+define HINST_THISCOMPONENT <&__ImageBase>
+endif
+
 ifndef SNDMSG
 ifndef _MAC
-SNDMSG equ <SendMessage>
+define SNDMSG <SendMessage>
 else
-SNDMSG equ <AfxSendMessage>
+define SNDMSG <AfxSendMessage>
 endif
 endif
 
@@ -429,11 +433,11 @@ _nstrdup    equ <_strdup>
 hmemcpy	    equ <MoveMemory>
 
 ifndef DECLARE_HANDLE32
-DECLARE_HANDLE32    equ <DECLARE_HANDLE>
+define DECLARE_HANDLE32 <DECLARE_HANDLE>
 endif
 
 ifndef _INC_WINDOWS
-_INC_WINDOWS equ <>
+define _INC_WINDOWS
 
 include excpt.inc
 include stdarg.inc

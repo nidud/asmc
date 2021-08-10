@@ -796,10 +796,10 @@ ifndef __ASMC64__
     .case '0fz'         ;; -zf0
         mov Options.fctype,FCT_MSC
         .return
+endif
     .case '1fz'         ;; -zf1
         mov Options.fctype,FCT_WATCOMC
         .return
-endif
     .case 'gZ'          ;; -Zg
         mov Options.masm_compat_gencode,1
         .return

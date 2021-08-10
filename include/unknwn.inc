@@ -1,8 +1,8 @@
 ifndef __UNKNWN_INC
-__UNKNWN_INC equ <>
+define __UNKNWN_INC
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 440
+define __REQUIRED_RPCNDR_H_VERSION__ 440
 endif
 
 include rpc.inc
@@ -10,6 +10,35 @@ include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
+endif
+
+ifndef __SAFE_RELEASE
+define __SAFE_RELEASE
+SafeRelease proto p:abs {
+    mov rax,p
+    .if rax
+	mov p,NULL
+	[rax].@SubStr(typeid(p), 2).Release()
+    .endif
+    }
+endif
+
+ifndef __SAFE_REPLACE
+define __SAFE_REPLACE
+SafeReplace proto :ptr ptr, :ptr {
+   .new prev_ptr:ptr
+    mov rax,[rcx]
+    mov [rcx],rdx
+    mov prev_ptr,rcx
+    .if rax
+	[rax].IUnknown.Release()
+	mov rcx,prev_ptr
+    .endif
+    mov rax,[rcx]
+    .if rax
+	[rax].IUnknown.AddRef()
+    .endif
+    }
 endif
 
 ifndef COM_NO_WINDOWS_H

@@ -5955,6 +5955,8 @@ e_lfanew		dd ?
 IMAGE_DOS_HEADER	ENDS
 PIMAGE_DOS_HEADER	typedef ptr IMAGE_DOS_HEADER
 
+externdef __ImageBase:IMAGE_DOS_HEADER
+
 IMAGE_OS2_HEADER	STRUC
 ne_magic		dw ?
 ne_ver			CHAR ?

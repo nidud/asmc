@@ -1,20 +1,16 @@
-;; Modify the following defines if you have to target a platform prior to the ones specified below.
-;; Refer to MSDN for the latest info on corresponding values for different platforms.
-
-ifndef WINVER                   ;; Allow use of features specific to Windows XP or later.
-WINVER equ 0x0501               ;; Change this to the appropriate value to target other versions of Windows.
+ifndef WINVER
+define WINVER 0x0501
 endif
-ifndef _WIN32_WINNT             ;; Allow use of features specific to Windows XP or later.
-_WIN32_WINNT equ 0x0501         ;; Change this to the appropriate value to target other versions of Windows.
+ifndef _WIN32_WINNT
+define _WIN32_WINNT 0x0501
 endif
-ifndef _WIN32_WINDOWS           ;; Allow use of features specific to Windows 98 or later.
-_WIN32_WINDOWS equ 0x0410       ;; Change this to the appropriate value to target Windows Me or later.
+ifndef _WIN32_WINDOWS
+define _WIN32_WINDOWS 0x0410
 endif
-ifndef _WIN32_IE                ;; Allow use of features specific to IE 6.0 or later.
-_WIN32_IE equ 0x0600            ;; Change this to the appropriate value to target other versions of IE.
+ifndef _WIN32_IE
+define _WIN32_IE 0x0600
 endif
-
-WIN32_LEAN_AND_MEAN equ 1       ;; Exclude rarely-used stuff from Windows headers
+define WIN32_LEAN_AND_MEAN
 
 include windows.inc
 include wincodec.inc
@@ -25,26 +21,15 @@ include tchar.inc
 
 include WICAnimatedGif.inc
 
-DELAY_TIMER_ID equ 1    ;; Global ID for the timer, only one timer is used
-
-;; Utility inline functions
-
-SafeRelease proto :ptr, :abs {
-
-    mov rax,[_1]
-    .if rax
-        mov qword ptr [_1],NULL
-        [rax]._2.Release()
-    .endif
-    }
+define DELAY_TIMER_ID 1  ; Global ID for the timer, only one timer is used
 
     .code
 
-;;
-;;  DemoApp::DemoApp constructor
-;;
-;;  Initializes member data
-;;
+;
+;  DemoApp::DemoApp constructor
+;
+;  Initializes member data
+;
 
 DemoApp::DemoApp proc uses rdi vtable:ptr
 
@@ -81,11 +66,11 @@ DemoApp::DemoApp proc uses rdi vtable:ptr
 
 DemoApp::DemoApp endp
 
-;;
-;;  WinMain
-;;
-;;  Application entrypoint
-;;
+;
+;  WinMain
+;
+;  Application entrypoint
+;
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, nCmdShow:SINT
 
@@ -121,32 +106,32 @@ wWinMain endp
 
     assume rsi:ptr DemoApp
 
-;;
-;;  DemoApp::~DemoApp destructor
-;;
-;;  Tears down resources
-;;
+;
+;  DemoApp::~DemoApp destructor
+;
+;  Tears down resources
+;
 
 DemoApp::Release proc uses rsi
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pD2DFactory, ID2D1Factory)
-    SafeRelease(&[rsi].m_pHwndRT, ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pFrameComposeRT, ID2D1BitmapRenderTarget)
-    SafeRelease(&[rsi].m_pRawFrame, ID2D1Bitmap)
-    SafeRelease(&[rsi].m_pSavedFrame, ID2D1Bitmap)
-    SafeRelease(&[rsi].m_pIWICFactory, IWICImagingFactory)
-    SafeRelease(&[rsi].m_pDecoder, IWICBitmapDecoder)
+    SafeRelease([rsi].m_pD2DFactory)
+    SafeRelease([rsi].m_pHwndRT)
+    SafeRelease([rsi].m_pFrameComposeRT)
+    SafeRelease([rsi].m_pRawFrame)
+    SafeRelease([rsi].m_pSavedFrame)
+    SafeRelease([rsi].m_pIWICFactory)
+    SafeRelease([rsi].m_pDecoder)
     ret
 
 DemoApp::Release endp
 
 
-;;
-;;  DemoApp::Initialize
-;;
-;;  Creates application window and device-independent resources
-;;
+;
+;  DemoApp::Initialize
+;
+;  Creates application window and device-independent resources
+;
 
 DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
 
@@ -156,7 +141,7 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
     mov rsi,rcx
     mov rdi,rdx
 
-    ;; Register window class
+    ; Register window class
 
     mov wcex.cbSize,        WNDCLASSEX
     mov wcex.style,         CS_HREDRAW or CS_VREDRAW
@@ -231,12 +216,12 @@ DemoApp::Initialize proc uses rsi rdi hInstance:HINSTANCE
 DemoApp::Initialize endp
 
 
-;;
-;; DemoApp::CreateDeviceResources
-;;
-;; Creates a D2D hwnd render target for displaying gif frames
-;; to users and a D2D bitmap render for composing frames.
-;;
+;
+; DemoApp::CreateDeviceResources
+;
+; Creates a D2D hwnd render target for displaying gif frames
+; to users and a D2D bitmap render for composing frames.
+;
 
 DemoApp::CreateDeviceResources proc uses rsi
 
@@ -290,10 +275,10 @@ DemoApp::CreateDeviceResources proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a bitmap render target used to compose frames. Bitmap render
-        ;; targets cannot be resized, so we always recreate it.
+        ; Create a bitmap render target used to compose frames. Bitmap render
+        ; targets cannot be resized, so we always recreate it.
 
-        SafeRelease(&[rsi].m_pFrameComposeRT, ID2D1BitmapRenderTarget)
+        SafeRelease([rsi].m_pFrameComposeRT)
 
         cvtsi2ss xmm0,[rsi].m_cxGifImage
         cvtsi2ss xmm1,[rsi].m_cyGifImage
@@ -361,7 +346,7 @@ DemoApp::OnRender proc
                    .new color:D3DCOLORVALUE(Black, 0.0)
                     pRT.BeginDraw()
                     pRT.Clear(&color)
-                    pRT.DrawBitmap?(
+                    pRT.DrawBitmap(
                         pFrameToRender, &drawRect,
                         1.0,
                         D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
@@ -373,18 +358,17 @@ DemoApp::OnRender proc
         .endif
     .endif
 
-    SafeRelease(&pFrameToRender, ID2D1Bitmap)
-
-    .return hr
+    SafeRelease(pFrameToRender)
+   .return hr
 
 DemoApp::OnRender endp
 
-;;
-;; DemoApp::GetFileOpen
-;;
-;; Creates an open file dialog box and returns the filename
-;; of the file selected(if any).
-;;
+;
+; DemoApp::GetFileOpen
+;
+; Creates an open file dialog box and returns the filename
+; of the file selected(if any).
+;
 
 DemoApp::GetFileOpen proc pszFileName:ptr WCHAR, cchFileName:DWORD
 
@@ -759,19 +743,19 @@ DemoApp::GetGlobalMetadata proc uses rsi
     .endif
 
     PropVariantClear(&propValue)
-    SafeRelease(&pMetadataQueryReader, IWICMetadataQueryReader)
-    .return hr
+    SafeRelease(pMetadataQueryReader)
+   .return hr
 
 DemoApp::GetGlobalMetadata endp
 
-;;
-;; DemoApp::GetRawFrame()
-;;
-;; Decodes the current raw frame, retrieves its timing
-;; information, disposal method, and frame dimension for
-;; rendering.  Raw frame is the frame read directly from the gif
-;; file without composing.
-;;
+;
+; DemoApp::GetRawFrame()
+;
+; Decodes the current raw frame, retrieves its timing
+; information, disposal method, and frame dimension for
+; rendering.  Raw frame is the frame read directly from the gif
+; file without composing.
+;
 
 DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
@@ -812,11 +796,11 @@ DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
     .if (SUCCEEDED(hr))
 
-        ;; Create a D2DBitmap from IWICBitmapSource
+        ; Create a D2DBitmap from IWICBitmapSource
 
-        SafeRelease(&[rsi].m_pRawFrame, ID2D1Bitmap)
+        SafeRelease([rsi].m_pRawFrame)
 
-        mov hr,this.m_pHwndRT.CreateBitmapFromWicBitmap?(
+        mov hr,this.m_pHwndRT.CreateBitmapFromWicBitmap(
             pConverter,
             NULL,
             &[rsi].m_pRawFrame)
@@ -824,11 +808,11 @@ DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
     .if (SUCCEEDED(hr))
 
-        ;; Get Metadata Query Reader from the frame
+        ; Get Metadata Query Reader from the frame
         mov hr,pWicFrame.GetMetadataQueryReader(&pFrameMetadataQueryReader)
     .endif
 
-    ;; Get the Metadata for the current frame
+    ; Get the Metadata for the current frame
     .if (SUCCEEDED(hr))
 
         mov hr,pFrameMetadataQueryReader.GetMetadataByName(L"/imgdesc/Left", &propValue)
@@ -982,19 +966,19 @@ DemoApp::GetRawFrame proc uses rsi uFrameIndex:UINT
 
     PropVariantClear(&propValue)
 
-    SafeRelease(&pConverter, IWICFormatConverter)
-    SafeRelease(&pWicFrame, IWICBitmapFrameDecode)
-    SafeRelease(&pFrameMetadataQueryReader, IWICMetadataQueryReader)
+    SafeRelease(pConverter)
+    SafeRelease(pWicFrame)
+    SafeRelease(pFrameMetadataQueryReader)
 
     .return hr
 
 DemoApp::GetRawFrame endp
 
-;;
-;; DemoApp::GetBackgroundColor()
-;;
-;; Reads and stores the background color for gif.
-;;
+;
+; DemoApp::GetBackgroundColor()
+;
+; Reads and stores the background color for gif.
+;
 
 DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQueryReader
 
@@ -1013,9 +997,9 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     PropVariantInit(&propVariant)
 
-    ;; If we have a global palette, get the palette and background color
+    ; If we have a global palette, get the palette and background color
 
-    mov hr,pMetadataQueryReader.GetMetadataByName(L"/logscrdesc/GlobalColorTableFlag", &propVariant)
+    mov hr,pMetadataQueryReader.GetMetadataByName("/logscrdesc/GlobalColorTableFlag", &propVariant)
     .if (SUCCEEDED(hr))
 
         mov hr,S_OK
@@ -1028,9 +1012,9 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .if (SUCCEEDED(hr))
 
-        ;; Background color index
+        ; Background color index
 
-        mov hr,pMetadataQueryReader.GetMetadataByName(L"/logscrdesc/BackgroundColorIndex", &propVariant)
+        mov hr,pMetadataQueryReader.GetMetadataByName("/logscrdesc/BackgroundColorIndex", &propVariant)
         .if (SUCCEEDED(hr))
 
             mov hr,S_OK
@@ -1046,7 +1030,7 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
         .endif
     .endif
 
-    ;; Get the color from the palette
+    ; Get the color from the palette
 
     .if (SUCCEEDED(hr))
 
@@ -1055,7 +1039,7 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .if (SUCCEEDED(hr))
 
-        ;; Get the global palette
+        ; Get the global palette
 
         mov hr,this.m_pDecoder.CopyPalette(pWicPalette)
     .endif
@@ -1067,7 +1051,7 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .if (SUCCEEDED(hr))
 
-        ;; Check whether background color is outside range
+        ; Check whether background color is outside range
 
         mov hr,S_OK
         .if (backgroundIndex >= cColorsCopied)
@@ -1077,13 +1061,13 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .if (SUCCEEDED(hr))
 
-        ;; Get the color in ARGB format
+        ; Get the color in ARGB format
 
         movzx ecx,backgroundIndex
         mov dwBGColor,rgColors[rcx*4]
 
-        ;; The background color is in ARGB format, and we want to
-        ;; extract the alpha value and convert it in FLOAT
+        ; The background color is in ARGB format, and we want to
+        ; extract the alpha value and convert it in FLOAT
 
         .new alpha:FLOAT
 
@@ -1097,18 +1081,18 @@ DemoApp::GetBackgroundColor proc uses rsi pMetadataQueryReader:ptr IWICMetadataQ
 
     .endif
 
-    SafeRelease(&pWicPalette, IWICPalette)
+    SafeRelease(pWicPalette)
     .return hr
 
 DemoApp::GetBackgroundColor endp
 
-;;
-;; DemoApp::CalculateDrawRectangle()
-;;
-;; Calculates a specific rectangular area of the hwnd
-;; render target to draw a bitmap containing the current
-;; composed frame.
-;;
+;
+; DemoApp::CalculateDrawRectangle()
+;
+; Calculates a specific rectangular area of the hwnd
+; render target to draw a bitmap containing the current
+; composed frame.
+;
 
     assume rbx:ptr D2D1_RECT_F
 
@@ -1121,7 +1105,7 @@ DemoApp::CalculateDrawRectangle proc uses rsi rbx drawRect:ptr D2D1_RECT_F
     mov rsi,rcx
     mov rbx,rdx
 
-    ;; Top and left of the client rectangle are both 0
+    ; Top and left of the client rectangle are both 0
     .if !GetClientRect([rsi].m_hWnd, &rcClient)
 
         GetLastError()
@@ -1130,8 +1114,8 @@ DemoApp::CalculateDrawRectangle proc uses rsi rbx drawRect:ptr D2D1_RECT_F
 
     .if (SUCCEEDED(hr))
 
-        ;; Calculate the area to display the image
-        ;; Center the image if the client rectangle is larger
+        ; Calculate the area to display the image
+        ; Center the image if the client rectangle is larger
 
         cvtsi2ss xmm1,[rsi].m_cxGifImagePixel
         cvtsi2ss xmm2,[rsi].m_cyGifImagePixel
@@ -1149,8 +1133,8 @@ DemoApp::CalculateDrawRectangle proc uses rsi rbx drawRect:ptr D2D1_RECT_F
         movss [rbx].bottom,xmm0
 
 
-        ;; If the client area is resized to be smaller than the image size, scale
-        ;; the image, and preserve the aspect ratio
+        ; If the client area is resized to be smaller than the image size, scale
+        ; the image, and preserve the aspect ratio
 
         cvtsi2ss xmm1,[rsi].m_cxGifImagePixel
         divss    xmm1,xmm2
@@ -1191,12 +1175,12 @@ DemoApp::CalculateDrawRectangle endp
 
     assume rbx:nothing
 
-;;
-;; DemoApp::RestoreSavedFrame()
-;;
-;; Copys the saved frame to the frame in the bitmap render
-;; target.
-;;
+;
+; DemoApp::RestoreSavedFrame()
+;
+; Copys the saved frame to the frame in the bitmap render
+; target.
+;
 
     assume rcx:ptr DemoApp
 
@@ -1217,19 +1201,19 @@ DemoApp::RestoreSavedFrame proc
         pFrameToCopyTo.CopyFromBitmap(NULL, [rcx].m_pSavedFrame, NULL)
     .endif
     mov hr,eax
-    SafeRelease(&pFrameToCopyTo, ID2D1Bitmap)
+    SafeRelease(pFrameToCopyTo)
     mov eax,hr
     ret
 
 DemoApp::RestoreSavedFrame endp
 
-;;
-;; DemoApp::ClearCurrentFrameArea()
-;;
-;; Clears a rectangular area equal to the area overlaid by the
-;; current raw frame in the bitmap render target with background
-;; color.
-;;
+;
+; DemoApp::ClearCurrentFrameArea()
+;
+; Clears a rectangular area equal to the area overlaid by the
+; current raw frame in the bitmap render target with background
+; color.
+;
 
 DemoApp::ClearCurrentFrameArea proc uses rsi
 
@@ -1251,12 +1235,12 @@ DemoApp::ClearCurrentFrameArea proc uses rsi
 
 DemoApp::ClearCurrentFrameArea endp
 
-;;
-;; DemoApp::DisposeCurrentFrame()
-;;
-;; At the end of each delay, disposes the current frame
-;; based on the disposal method specified.
-;;
+;
+; DemoApp::DisposeCurrentFrame()
+;
+; At the end of each delay, disposes the current frame
+; based on the disposal method specified.
+;
 
 DemoApp::DisposeCurrentFrame proc
 
@@ -1286,13 +1270,13 @@ DemoApp::DisposeCurrentFrame proc
 
 DemoApp::DisposeCurrentFrame endp
 
-;;
-;; DemoApp::OverlayNextFrame()
-;;
-;; Loads and draws the next raw frame into the composed frame
-;; render target. This is called after the current frame is
-;; disposed.
-;;
+;
+; DemoApp::OverlayNextFrame()
+;
+; Loads and draws the next raw frame into the composed frame
+; render target. This is called after the current frame is
+; disposed.
+;
 
 DemoApp::OverlayNextFrame proc uses rsi rbx
 
@@ -1334,7 +1318,7 @@ DemoApp::OverlayNextFrame proc uses rsi rbx
 
         ;; Produce the next frame
 
-        pRT.DrawBitmap?(
+        pRT.DrawBitmap(
             [rsi].m_pRawFrame,
             &[rsi].m_framePosition,
             1.0,
@@ -1394,7 +1378,7 @@ DemoApp::SaveComposedFrame proc uses rsi
             pFrameToBeSaved.GetPixelSize(&bitmapSize)
             pFrameToBeSaved.GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY)
             pFrameToBeSaved.GetPixelFormat(&bitmapProp.pixelFormat)
-            mov hr,this.m_pFrameComposeRT.CreateBitmap?(
+            mov hr,this.m_pFrameComposeRT.CreateBitmap(
                 bitmapSize,
                 NULL,
                 0,
@@ -1406,21 +1390,21 @@ DemoApp::SaveComposedFrame proc uses rsi
 
     .if (SUCCEEDED(hr))
 
-        ;; Copy the whole bitmap
+        ; Copy the whole bitmap
 
         mov hr,this.m_pSavedFrame.CopyFromBitmap(NULL, pFrameToBeSaved, NULL)
     .endif
 
-    SafeRelease(&pFrameToBeSaved, ID2D1Bitmap)
-    .return hr
+    SafeRelease(pFrameToBeSaved)
+   .return hr
 
 DemoApp::SaveComposedFrame endp
 
-;;
-;; DemoApp::SelectAndDisplayGif()
-;;
-;; Opens a dialog and displays a selected image.
-;;
+;
+; DemoApp::SelectAndDisplayGif()
+;
+; Opens a dialog and displays a selected image.
+;
 
 DemoApp::SelectAndDisplayGif proc uses rsi
 
@@ -1446,8 +1430,8 @@ DemoApp::SelectAndDisplayGif proc uses rsi
         mov [rsi].m_uLoopNumber,0
         mov [rsi].m_fHasLoop,FALSE
 
-        SafeRelease(&[rsi].m_pSavedFrame, ID2D1Bitmap)
-        SafeRelease(&[rsi].m_pDecoder, IWICBitmapDecoder)
+        SafeRelease([rsi].m_pSavedFrame)
+        SafeRelease([rsi].m_pDecoder)
 
         ;; Create a decoder for the gif file
 
@@ -1587,9 +1571,9 @@ DemoApp::RecoverDeviceResources proc uses rsi
   local hr:HRESULT
 
     mov rsi,rcx
-    SafeRelease(&[rsi].m_pHwndRT, ID2D1HwndRenderTarget)
-    SafeRelease(&[rsi].m_pFrameComposeRT, ID2D1BitmapRenderTarget)
-    SafeRelease(&[rsi].m_pSavedFrame, ID2D1Bitmap)
+    SafeRelease([rsi].m_pHwndRT)
+    SafeRelease([rsi].m_pFrameComposeRT)
+    SafeRelease([rsi].m_pSavedFrame)
 
     mov [rsi].m_uNextFrameIndex,0
     mov [rsi].m_uFrameDisposal,DM_NONE ;; No previous frames. Use disposal none.
@@ -1600,7 +1584,7 @@ DemoApp::RecoverDeviceResources proc uses rsi
 
         .if [rsi].m_cFrames > 0
 
-            ;; Load the first frame
+            ; Load the first frame
             mov hr,this.ComposeNextFrame()
             InvalidateRect([rsi].m_hWnd, NULL, FALSE)
         .endif

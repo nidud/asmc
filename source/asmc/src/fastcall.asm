@@ -77,7 +77,7 @@ ms32_regs label byte
     db T_ECX, T_EDX
 else
     dd 0, 0, 0 ; FCT_MSC
-    dd 0, 0, 0 ; FCT_WATCOMC
+    dd watc_fcstart, watc_fcend , watc_param ; FCT_WATCOMC
     dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_WIN64
     dd elf64_fcstart,elf64_fcend,elf64_param ; FCT_ELF64
     dd 0, 0, 0 ; FCT_VEC32
@@ -512,6 +512,8 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
 vc32_param endp
 
+endif
+
 ;-------------------------------------------------------------------------------
 ; FCT_WATCOMC
 ;-------------------------------------------------------------------------------
@@ -596,7 +598,8 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         mov edx,[edi].expr.sym
         mov esi,T_MOV
         mov ebx,T_OFFSET
-        .if [edi].expr.kind == EXPR_REG || !edx || [edx].asym.state == SYM_STACK
+        .if [edi].expr.kind == EXPR_REG || !edx || \
+            [edx].asym.state == SYM_STACK || ModuleInfo.Ofssize == USE64
             mov esi,T_LEA
             mov ebx,T_NULL
         .endif
@@ -624,7 +627,7 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
         .if ecx
 
             mov edx,[ecx]
-            .if ( dl == 'e' )
+            .if ( dl == 'e' || dl == 'r' )
                 shr edx,8
             .endif
             mov eax,T_EAX
@@ -634,6 +637,9 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 mov eax,T_EBX
             .elseif ( dl == 'c' )
                 mov eax,T_ECX
+            .endif
+            .if ( ModuleInfo.Ofssize == USE64 && psize > 4 )
+                add eax,T_RAX - T_EAX
             .endif
             mov reg_32,eax
 
@@ -659,7 +665,11 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 .endif
                 .if ( eax == 0 || edx == 0 )
                     .if ( ModuleInfo.Ofssize )
-                        AddLineQueueX( "xor %r, %r", reg_32, reg_32 )
+                        mov eax,reg_32
+                        .if ( ModuleInfo.Ofssize == USE64 && eax > T_EBX )
+                            sub eax,T_RAX - T_EAX
+                        .endif
+                        AddLineQueueX( "xor %r, %r", eax, eax )
                     .else
                         AddLineQueueX( "xor %s, %s", ecx, ecx )
                     .endif
@@ -667,7 +677,11 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     AddLineQueueX( "mov %s, %r (%s)", ecx, esi, eax )
                 .else
                     .if ( ModuleInfo.Ofssize )
-                        AddLineQueueX( "mov %r, %s", reg_32, eax )
+                        mov ecx,reg_32
+                        .if ( ModuleInfo.Ofssize == USE64 && ecx > T_EBX )
+                            sub ecx,T_RAX - T_EAX
+                        .endif
+                        AddLineQueueX( "mov %r, %s", ecx, eax )
                     .else
                         AddLineQueueX( "mov %s, %s", ecx, eax )
                     .endif
@@ -724,7 +738,9 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                         AddLineQueueX( "mov %s, %s", ecx, paramvalue )
                     .endif
                 .else
-                    .if ModuleInfo.Ofssize
+                    .if ModuleInfo.Ofssize == USE64
+                        mov esi,T_QWORD
+                    .elseif ModuleInfo.Ofssize == USE32
                         mov esi,T_DWORD
                     .else
                         mov esi,T_WORD
@@ -764,7 +780,6 @@ watc_fcend proc pp, numparams, value
     ret
 
 watc_fcend endp
-endif
 
 ;-------------------------------------------------------------------------------
 ; FCT_WIN64

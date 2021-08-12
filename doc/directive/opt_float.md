@@ -7,7 +7,7 @@ Asmc Macro Assembler Reference
 This controls the default size of a float expression value. The options are 4 or 8. The default value is 4.
 
 ```assembly
-option floatdigits: 8
+option float: 8
 
     .if ( xmm0 > 2.0 )
 

@@ -224,7 +224,7 @@ AssignPointer endp
 
 ifdef USE_INDIRECTION
 
-HandleIndirection proc uses esi edi ebx sym:ptr asym, tokenarray:ptr asm_tok
+HandleIndirection proc uses esi edi ebx sym:ptr asym, tokenarray:ptr asm_tok, pos:int_t
 
   local reg:uint_t
   local inst:uint_t
@@ -232,8 +232,12 @@ HandleIndirection proc uses esi edi ebx sym:ptr asym, tokenarray:ptr asm_tok
   local buffer[128]:sbyte
 
     mov ebx,tokenarray
-    mov inst,[ebx-3*16].tokval
-    mov dest,[ebx-2*16].tokval
+    .if ( pos )
+        mov inst,[ebx-16].tokval    ; cmp p.p.p, expr
+    .else
+        mov inst,[ebx-3*16].tokval  ; cmp reg, p.p.p
+        mov dest,[ebx-2*16].tokval
+    .endif
 
     mov reg,T_EAX
     .if ( ModuleInfo.Ofssize == USE64 )
@@ -255,6 +259,14 @@ HandleIndirection proc uses esi edi ebx sym:ptr asym, tokenarray:ptr asm_tok
         .endif
 
         .break .if ( [ebx].token != T_DOT )
+        .if ( pos )
+            .if ( [ebx+32].token == T_OP_SQ_BRACKET )
+                .break .if ( !SkipSQBackets( &[ebx+32] ) )
+                .break .if ( [eax].asm_tok.token != T_DOT )
+            .else
+                .break .if ( [ebx+32].token != T_DOT )
+            .endif
+        .endif
         add ebx,asm_tok
 
         .if ( [esi].asym.mem_type == MT_TYPE )
@@ -281,7 +293,11 @@ HandleIndirection proc uses esi edi ebx sym:ptr asym, tokenarray:ptr asm_tok
     .if ( [esi].asym.mem_type == MT_PTR )
         mov esi,[esi].asym.target_type
     .endif
-    AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [esi].asym.name, [ebx-16].tokpos)
+    .if ( pos )
+        AddLineQueueX( " %r [%r].%s%s", inst, reg, [esi].asym.name, [ebx].tokpos )
+    .else
+        AddLineQueueX( " %r %r, [%r].%s.%s", inst, dest, reg, [esi].asym.name, [ebx-16].tokpos )
+    .endif
     RetLineQueue()
     ret
 

@@ -3795,30 +3795,42 @@ continue:
 
 ifdef USE_INDIRECTION
 
-    .if ( ebx == 2 && opndx.kind == EXPR_REG && opndx[expr].kind == EXPR_ADDR )
+    assume edi:ptr expr
 
-        mov esi,opndx[expr].base_reg
-        mov eax,opndx[expr].sym
-        mov edx,opndx[expr].mbr
-        mov ecx,opndx[expr].type
+    .if ( ebx == 2 && \
+          ( ( opndx.kind == EXPR_REG && opndx[expr].kind == EXPR_ADDR ) || \
+            ( opndx.kind == EXPR_ADDR && opndx[expr].kind != EXPR_ADDR ) ) )
 
-        .if ( esi && eax && edx );&& ecx )
+        mov ecx,1
+        lea edi,opndx
+        .if ( [edi].kind == EXPR_REG )
+            add edi,expr
+            dec ecx
+        .endif
+        mov ebx,[edi].base_reg
+        mov eax,[edi].sym
+        mov edx,[edi].mbr
 
-            .if ( [esi-3*16].token  == T_INSTRUCTION && \
-                  [esi-32].token    == T_REG && \
-                  [esi-16].token    == T_COMMA && \
-                  [esi].token       == T_ID && \
-                  [esi+16].token    == T_DOT )
+        .if ( ebx && eax && edx && [edi].flags & E_IS_DOT )
 
-                mov ecx,[eax].asym.target_type
-                .if ( [eax].asym.mem_type == MT_PTR && \
-                      [eax].asym.is_ptr && \
-                      [ecx].asym.state == SYM_TYPE )
+            mov edx,[eax].asym.target_type
+            .if ( [eax].asym.mem_type == MT_PTR && \
+                  [eax].asym.is_ptr && \
+                  [edx].asym.state == SYM_TYPE && \
+                  [ebx].token == T_ID && \
+                  ( [ebx+16].token == T_DOT || [ebx+16].token == T_OP_SQ_BRACKET ) )
 
-                    .return HandleIndirection(eax, esi)
+                .if ( ( !ecx && \
+                        [ebx-3*16].token == T_INSTRUCTION && \
+                        [ebx-32].token == T_REG && \
+                        [ebx-16].token == T_COMMA \
+                      ) || ( ecx && [ebx-16].token == T_INSTRUCTION )
+                    )
+                    .return HandleIndirection(eax, ebx, ecx)
                 .endif
             .endif
         .endif
+        mov ebx,2
     .endif
 
 endif

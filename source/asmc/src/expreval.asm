@@ -714,15 +714,34 @@ index_connect proc fastcall opnd1:expr_t, opnd2:expr_t
             .else
                 mov [ecx].idx_reg,eax
             .endif
+ifdef USE_INDIRECTION
+        .elseif ( [eax-16].asm_tok.token == T_OP_SQ_BRACKET && \
+                  [eax-32].asm_tok.token == T_ID && \
+                  [eax-48].asm_tok.token == T_DOT )
+            mov eax,[ecx].sym
+            .if ( !( eax && [eax].asym.mem_type == MT_PTR && [eax].asym.is_ptr ) )
+                .return fnasmerr(2030)
+            .endif
+endif
         .else
             .return fnasmerr(2030)
         .endif
         or [ecx].flags,E_INDIRECT
     .endif
-    .if [edx].idx_reg != NULL
+    mov eax,[edx].idx_reg
+    .if eax != NULL
         .if [ecx].idx_reg == NULL
-            mov [ecx].idx_reg,[edx].idx_reg
+            mov [ecx].idx_reg,eax
             mov [ecx].scale,[edx].scale
+ifdef USE_INDIRECTION
+        .elseif ( [eax-16].asm_tok.token == T_OP_SQ_BRACKET && \
+                  [eax-32].asm_tok.token == T_ID && \
+                  [eax-48].asm_tok.token == T_DOT )
+            mov eax,[ecx].sym
+            .if ( !( eax && [eax].asym.mem_type == MT_PTR && [eax].asym.is_ptr ) )
+                .return fnasmerr(2030)
+            .endif
+endif
         .else
             .return fnasmerr(2030)
         .endif
@@ -1822,10 +1841,16 @@ dot_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         add [ecx].value,[edx].value
         adc [ecx].hvalue,[edx].hvalue
         mov [ecx].mem_type,[edx].mem_type
+        mov [ecx].type,[edx].type
         .if ebx
             mov [ecx].mbr,ebx
+ifdef USE_INDIRECTION
+            .if ( eax && [edx].flags & E_IS_DOT )
+                or [ecx].flags,E_IS_DOT
+            .endif
+endif
         .endif
-        mov [ecx].type,[edx].type
+
     .elseif [ecx].kind == EXPR_CONST && [edx].kind == EXPR_CONST
         .if [edx].mbr == NULL && !ModuleInfo.oldstructs
             .return struct_field_error(ecx)

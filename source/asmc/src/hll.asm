@@ -346,13 +346,19 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
         op2_end:    int_t,
         op1:        expr,
         op2:        expr,
-        _label
+        _label:     ptr,
+        inst_cmp:   ptr sbyte,
+        is_float:   byte
+
 
     mov esi,i
     mov edi,[esi]
     mov ebx,edi
     shl ebx,4
     add ebx,tokenarray
+    mov is_float,0
+    lea eax,@CStr( "cmp" )
+    mov inst_cmp,eax
 
     mov eax,[ebx].string_ptr
     .while W[eax] == '!'
@@ -414,6 +420,19 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     ;
     mov op1_pos,edi
     .return .if LGetToken(hll, esi, ebx, &op1) == ERROR
+    .if ( op1.kind == EXPR_REG && !( op1.flags & E_INDIRECT ) )
+        mov eax,op1.base_reg
+        .if ( eax )
+            .if ( GetValueSp([eax].asm_tok.tokval) & ( OP_XMM or OP_YMM or OP_ZMM ) )
+                lea eax,@CStr( "comisd" )
+                .if ( ModuleInfo.flt_size == 4 )
+                    lea eax,@CStr( "comiss" )
+                .endif
+                mov inst_cmp,eax
+                mov is_float,1
+            .endif
+        .endif
+    .endif
 
     mov edi,[esi]
     mov op1_end,edi
@@ -491,7 +510,7 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
 
         .switch eax
           .case EXPR_REG
-            .if !( op1.flags & E_INDIRECT )
+            .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
 
                 lea eax,@CStr( "test" )
                 .if Options.masm_compat_gencode
@@ -509,7 +528,8 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             ; no break
             ;
           .case EXPR_ADDR
-            RenderInstr( buffer, "cmp", op1_pos, op1_end, EMPTY, 0, ebx )
+
+            RenderInstr( buffer, inst_cmp, op1_pos, op1_end, EMPTY, 0, ebx )
             mov edx,hllop
             mov [edx].hll_opnd.lastjmp,eax
             RenderJcc( eax, 'z', is_true, _label )
@@ -555,7 +575,13 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     .return .if LGetToken(hll, esi, ebx, &op2) == ERROR
 
     mov eax,op2.kind
-    .return asmerr(2154) .if eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG
+    .if ( eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG )
+        .if ( eax == EXPR_FLOAT && is_float )
+            mov op2.kind,EXPR_ADDR
+        .else
+            .return asmerr(2154)
+        .endif
+    .endif
 
     mov edi,[esi]
     mov op2_end,edi
@@ -590,8 +616,8 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
         mov eax,DWORD PTR op2.value64
         or  eax,DWORD PTR op2.value64[4]
 
-        .if !eax && (ecx == COP_EQ || ecx == COP_NE) && op1.kind == EXPR_REG && \
-            !( op1.flags & E_INDIRECT ) && op2.kind == EXPR_CONST
+        .if ( !eax && (ecx == COP_EQ || ecx == COP_NE) && op1.kind == EXPR_REG && \
+              !( op1.flags & E_INDIRECT ) && op2.kind == EXPR_CONST && !is_float )
             ;
             ; v2.22 - switch /Zg to OR
             ;
@@ -602,7 +628,7 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             .endif
             RenderInstr( buffer, eax, op1_pos, op1_end, op1_pos, op1_end, ebx )
         .else
-            RenderInstr( buffer, "cmp",  op1_pos, op1_end, op2_pos, op2_end, ebx )
+            RenderInstr( buffer, inst_cmp,  op1_pos, op1_end, op2_pos, op2_end, ebx )
         .endif
         ;
         ; v2.22 - signed compare S, SB, SW, SD

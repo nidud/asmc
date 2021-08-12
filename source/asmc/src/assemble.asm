@@ -574,6 +574,7 @@ endif
     mov ModuleInfo.frame_auto,Options.frame_auto
     mov ModuleInfo.floatformat,Options.floatformat
     mov ModuleInfo.floatdigits,Options.floatdigits
+    mov ModuleInfo.flt_size,Options.flt_size
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

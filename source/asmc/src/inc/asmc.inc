@@ -465,6 +465,7 @@ define SIT_MACRO       1
     frame_auto              db ?    ; -frame
     floatformat             db ?    ; option floatformat:<e|f|g>
     floatdigits             dd ?    ; option floatdigits:<value>
+    flt_size                db ?    ; option float:<4|8>
    .ends
 
 .template module_vars
@@ -595,6 +596,7 @@ define SIT_MACRO       1
     codepage                uint_t ?
     class_label             uint_t ?
     floatformat             db ?            ; option floatformat:<e|f|g>
+    flt_size                db ?            ; option float:<4|8>
     floatdigits             int_t ?         ; option floatdigits:<value>
    .ends
 

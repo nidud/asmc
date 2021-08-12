@@ -88,7 +88,8 @@ Options global_options {
         0,                      ;; .arch
         0,                      ;; .frame_auto
         0,                      ;; .floatformat
-        1 }                     ;; .floatdigits
+        1,                      ;; .floatdigits
+        4 }                     ;; .flt_size
 
 else
 
@@ -153,7 +154,8 @@ Options global_options {
         0,                      ;; .arch
         0,                      ;; .frame_auto
         0,                      ;; .floatformat
-        1 }                     ;; .floatdigits
+        1,                      ;; .floatdigits
+        4 }                     ;; .flt_size
 endif
 
     align 4

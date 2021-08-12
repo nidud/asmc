@@ -14,6 +14,7 @@ Enables and disables features of the assembler. Available options include:
 - EPILOGUE
 - EXPR16
 - EXPR32
+- [FLOAT](opt_float.md)
 - [FLOATDIGITS](opt_floatdigits.md)
 - [FLOATFORMAT](opt_floatformat.md)
 - LANGUAGE

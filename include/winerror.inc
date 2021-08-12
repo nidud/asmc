@@ -869,10 +869,10 @@ ERROR_NOT_EXPORT_FORMAT equ 6008
 SEVERITY_SUCCESS	equ 0
 SEVERITY_ERROR		equ 1
 
-SUCCEEDED proto watcall hr:HRESULT {
+SUCCEEDED proto watcall hr:sdword {
 	retm<(sdword ptr eax !>= 0)>
 	}
-FAILED proto watcall hr:HRESULT {
+FAILED proto watcall hr:sdword {
 	retm<(sdword ptr eax !< 0)>
 	}
 

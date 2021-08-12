@@ -51,6 +51,7 @@ objects = \
     src\for.obj \
     src\fpfixup.obj \
     src\hll.obj \
+    src\Indirection.obj \
     src\input.obj \
     src\invoke.obj \
     src\label.obj \

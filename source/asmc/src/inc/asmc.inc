@@ -12,6 +12,8 @@ include stdlib.inc
 include string.inc
 include inttype.inc
 
+define USE_INDIRECTION
+
 define OLDKEYWORDS          ; NAME, SIZE, ..
 define CHEXPREFIX           ; 0x prefix
 

@@ -81,7 +81,7 @@ InlineMove proc private uses esi edi ebx dst:ptr, src:ptr, count:uint_t
 
 InlineMove endp
 
-RetLineQueue proc private
+RetLineQueue proc
 
     .if ModuleInfo.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )

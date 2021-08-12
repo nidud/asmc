@@ -551,6 +551,10 @@ method_ptr:
             mov [edi].mem_type,cl
             .if [eax].asym.state == SYM_TYPE && [eax].asym.typekind != TYPE_TYPEDEF
                 mov [edi].type,eax
+ifdef USE_INDIRECTION
+            .elseif ( cl == MT_PTR && [eax].asym.is_ptr && [eax].asym.ptr_memtype != MT_PROC )
+                mov [edi].type,[eax].asym.target_type
+endif
             .else
                 mov [edi].type,NULL
             .endif
@@ -2745,12 +2749,17 @@ PrepareOp proc opnd:expr_t, old:expr_t, oper:token_t
     .switch [eax].asm_tok.token
     .case T_DOT
         mov eax,[edx].sym
-        .if [edx].type
+        .if ( [edx].type )
             mov [ecx].type,[edx].type
             or  [ecx].flags,E_IS_DOT
         .elseif ( !ModuleInfo.oldstructs && eax && [eax].asym.state == SYM_UNDEFINED )
             mov [ecx].type,NULL
             or  [ecx].flags,E_IS_DOT
+ifdef USE_INDIRECTION
+        .elseif ( eax && [eax].asym.mem_type == MT_PTR && [eax].asym.is_ptr )
+            mov [ecx].type,[eax].asym.target_type
+            or  [ecx].flags,E_IS_DOT
+endif
         .endif
         .endc
     .case T_UNARY_OPERATOR

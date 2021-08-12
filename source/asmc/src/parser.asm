@@ -33,6 +33,7 @@ include condasm.inc
 include extern.inc
 include atofloat.inc
 include reswords.inc
+include Indirection.inc
 
 public SegOverride
 
@@ -3494,8 +3495,8 @@ continue:
         omf_OutSelect( FALSE )
     .endif
 
-    ;; get the instruction's arguments.
-    ;; This loop accepts up to 4 arguments if AVXSUPP is on
+    ; get the instruction's arguments.
+    ; This loop accepts up to 4 arguments if AVXSUPP is on
 
     .for ( j = 0: j < lengthof(opndx) && [esi].token != T_FINAL: j++ )
         .if j
@@ -3512,7 +3513,7 @@ continue:
 
         .if [esi-16].hll_flags & T_EVEX_OPT
             mov CodeInfo.evex,1
-            lea ebx,[esi-16] ;; get transform modifiers
+            lea ebx,[esi-16] ; get transform modifiers
             .repeat
                 .if !parsevex( [ebx].string_ptr, &CodeInfo.evexP3 )
                     .return asmerr(2008, [ebx].string_ptr )
@@ -3534,7 +3535,7 @@ continue:
             .if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD )
                 .if ( ModuleInfo.strict_masm_compat == FALSE )
 
-                    ;; v2.27: convert to REAL
+                    ; v2.27: convert to REAL
 
                     .if ( opndx[edi].mem_type != MT_EMPTY )
                         movzx eax,CurrWordSize ; added v2.31.31
@@ -3626,11 +3627,11 @@ continue:
     .for ( q = 0, ebx = 0: ebx < j && ebx < MAX_OPND: ebx++, q++ )
 
         mov Frame_Type,FRAME_NONE
-        mov SegOverride,0 ;; segreg prefix is stored in RegOverride
+        mov SegOverride,0 ; segreg prefix is stored in RegOverride
         imul edx,ebx,expr
 
-        ;; if encoding is VEX and destination op is XMM, YMM or memory,
-        ;; the second argument may be stored in the vexregop field.
+        ; if encoding is VEX and destination op is XMM, YMM or memory,
+        ; the second argument may be stored in the vexregop field.
 
         movzx eax,CodeInfo.token
         mov ecx,CodeInfo.opnd[OPND1].type
@@ -3649,7 +3650,8 @@ continue:
                      ( ( eax == T_VMOVSD || eax == T_VMOVSS ) && \
                      ( opndx[expr].kind != EXPR_REG || opndx[expr].flags & E_INDIRECT ) ) ) )
 
-                ;; v2.11: VMOVSD and VMOVSS always have 2 ops if a memory op is involved
+                ; v2.11: VMOVSD and VMOVSS always have 2 ops if a memory op is involved
+
             .else
                 .return asmerr(2070) .if opndx[expr].kind != EXPR_REG
                 mov eax,opndx[edx].base_reg
@@ -3657,26 +3659,28 @@ continue:
                 .return asmerr(2070) .if !( GetValueSp(eax) & \
                     ( OP_R32 or OP_R64 or OP_XMM or OP_YMM or OP_ZMM or OP_K ) )
 
-                ;; fixme: check if there's an operand behind OPND2 at all!
-                ;; if no, there's no point to continue with switch (opndx[].kind).
-                ;; v2.11: additional check for j <= 2 added
+                ; fixme: check if there's an operand behind OPND2 at all!
+                ; if no, there's no point to continue with switch (opndx[].kind).
+                ; v2.11: additional check for j <= 2 added
 
                 .if ( j <= 2 )
 
-                    ;; v2.11: next line should be activated - currently the error is emitted below as syntax error
+                    ; v2.11: next line should be activated - currently the
+                    ; error is emitted below as syntax error
 
                     movzx eax,CodeInfo.token
                     .if ResWordTable[eax*8].flags & RWF_EVEX
                         inc j
                     .endif
 
-                ;; flag VX_DST is set if an immediate is expected as operand 3
+                    ; flag VX_DST is set if an immediate is expected as operand 3
+
                 .elseif ( ( edi & VX_DST ) && ( opndx[expr*2].kind == EXPR_CONST ) )
 
                     .if opndx[OPND1].base_reg
 
-                        ;; first operand register is moved to vexregop
-                        ;; handle VEX.NDD
+                        ; first operand register is moved to vexregop
+                        ; handle VEX.NDD
 
                         mov ecx,opndx[edx].base_reg
                         mov eax,[ecx].asm_tok.tokval
@@ -3708,8 +3712,8 @@ continue:
                     mov eax,[ecx].asm_tok.tokval
                     mov eax,GetValueSp(eax)
 
-                    ;; v2.08: no error here if first op is an untyped memory reference
-                    ;; note that OP_M includes OP_M128, but not OP_M256 (to be fixed?)
+                    ; v2.08: no error here if first op is an untyped memory reference
+                    ; note that OP_M includes OP_M128, but not OP_M256 (to be fixed?)
 
                     .if ( CodeInfo.opnd[OPND1].type == OP_M )
 
@@ -3719,8 +3723,10 @@ continue:
                         ( CodeInfo.opnd[OPND1].type & (OP_XMM or OP_M128 ) ) )
                         .return asmerr(2070)
                     .endif
-                    ;; second operand register is moved to vexregop
-                    ;; to be fixed: CurrOpnd is always OPND2, so use this const here
+
+                    ; second operand register is moved to vexregop
+                    ; to be fixed: CurrOpnd is always OPND2, so use this const here
+
                     mov edi,eax
                     mov al,[ecx].asm_tok.bytval
                     inc al
@@ -3758,11 +3764,11 @@ continue:
             .return .if process_const( &CodeInfo, ebx, &opndx[edx] ) == ERROR
             .endc
         .case EXPR_REG
-            .if opndx[edx].flags & E_INDIRECT ;; indirect operand ( "[EBX+...]" )?
+            .if opndx[edx].flags & E_INDIRECT ; indirect operand ( "[EBX+...]" )?
                 .return .if process_address( &CodeInfo, ebx, &opndx[edx] ) == ERROR
             .else
 
-                ;; process_register() can't handle 3rd operand
+                ; process_register() can't handle 3rd operand
 
                 .if ebx == OPND3
 
@@ -3786,6 +3792,36 @@ continue:
             .endc
         .endsw
     .endf
+
+ifdef USE_INDIRECTION
+
+    .if ( ebx == 2 && opndx.kind == EXPR_REG && opndx[expr].kind == EXPR_ADDR )
+
+        mov esi,opndx[expr].base_reg
+        mov eax,opndx[expr].sym
+        mov edx,opndx[expr].mbr
+        mov ecx,opndx[expr].type
+
+        .if ( esi && eax && edx );&& ecx )
+
+            .if ( [esi-3*16].token  == T_INSTRUCTION && \
+                  [esi-32].token    == T_REG && \
+                  [esi-16].token    == T_COMMA && \
+                  [esi].token       == T_ID && \
+                  [esi+16].token    == T_DOT )
+
+                mov ecx,[eax].asym.target_type
+                .if ( [eax].asym.mem_type == MT_PTR && \
+                      [eax].asym.is_ptr && \
+                      [ecx].asym.state == SYM_TYPE )
+
+                    .return HandleIndirection(eax, esi)
+                .endif
+            .endif
+        .endif
+    .endif
+
+endif
     ;
     ; 4 arguments are valid vor AVX only
     ;
@@ -3830,7 +3866,7 @@ continue:
     .else
         .if ebx > 1
 
-            ;; v1.96: check if a third argument is ok
+            ; v1.96: check if a third argument is ok
 
             .if ebx > 2
 
@@ -3854,7 +3890,7 @@ continue:
             ;
             ; v2.06: moved here from process_const()
             ;
-            .if CodeInfo.token == T_IMUL
+            .if ( CodeInfo.token == T_IMUL )
                 ;
                 ; the 2-operand form with an immediate as second op
                 ; is actually a 3-operand form. That's why the rm byte
@@ -4009,7 +4045,7 @@ continue:
         .endif
     .endif
 
-    ;; now call the code generator
+    ; now call the code generator
 
     codegen(&CodeInfo, oldofs)
     ret

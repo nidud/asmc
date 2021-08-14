@@ -3,6 +3,9 @@ include windows.inc
 include gdiplus.inc
 include tchar.inc
 
+define CLASS_NAME <"MainWindowClass">
+define WINDOW_NAME <"Windows samples">
+
 define IDS_FONT_TYPEFACE <"Segoe UI Light">
 define IDS_FONT_HEIGHT_LOGO 0
 define IDS_FONT_HEIGHT_TITLE 50
@@ -32,7 +35,7 @@ define MAXOBJ 100
     m_delay         uint_t ?
     m_suspend       uint_t ?
 
-    CApplication    proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication    proc :HINSTANCE
     Run             proc
     OnKeyDown       proc :WPARAM
     OnClose         proc

@@ -12,6 +12,7 @@ include stdlib.inc
 include string.inc
 include inttype.inc
 
+define USE_COMALLOC
 define USE_INDIRECTION
 
 define OLDKEYWORDS          ; NAME, SIZE, ..

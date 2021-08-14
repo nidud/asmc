@@ -1375,7 +1375,22 @@ CatStrFunc proc private uses esi edi ebx mi:ptr macro_instance, buffer:string_t,
     .return( NOT_ERROR )
 CatStrFunc endp
 
-TypeIdFunc proc private  mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+ifdef USE_COMALLOC
+
+ComAlloc proto :string_t, :token_t
+
+ComAllocFunc proc private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
+    .if ( ComAlloc( buffer, tokenarray ) == 0 )
+        mov edx,mi
+        mov edx,[edx].macro_instance.parm_array
+        strcpy( buffer, [edx] )
+    .endif
+    .return( NOT_ERROR )
+ComAllocFunc endp
+
+endif
+
+TypeIdFunc proc private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr asm_tok
     .if ( GetTypeId( buffer, tokenarray ) == 0 )
         mov edx,mi
         mov edx,[edx].macro_instance.parm_array
@@ -1560,7 +1575,23 @@ StringInit proc uses esi edi
     assume edi:ptr dsym
     assume esi:ptr macro_info
 
-    ;; add @TypeId() macro func
+ifdef USE_COMALLOC
+
+    ; add @ComAlloc() macro func
+
+    mov edi,CreateMacro( "@ComAlloc" )
+    mov [edi].flags,S_ISDEFINED or S_PREDEFINED
+    mov [edi].func_ptr,ComAllocFunc
+    mov [edi].mac_flag,M_ISFUNC
+    mov esi,[edi].macroinfo
+    mov [esi].parmcnt,1
+    mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) )
+    mov [eax].mparm_list.deflt,NULL
+    mov [eax].mparm_list.required,TRUE
+
+endif
+
+    ; add @TypeId() macro func
 
     mov edi,CreateMacro( "typeid" )
     mov [edi].flags,S_ISDEFINED or S_PREDEFINED

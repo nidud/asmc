@@ -17,7 +17,7 @@ define IDS_FONT_HEIGHT_DESCRIPTION 22
     m_width         int_t ?
     m_height        int_t ?
 
-    CApplication    proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication    proc :HINSTANCE
     Run             proc
     OnKeyDown       proc :WPARAM
     OnClose         proc

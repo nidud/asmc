@@ -470,7 +470,7 @@ AssignId proc private uses esi edi ebx name:string_t, sym:asym_t, type:asym_t, s
 
     .for ( : ebx : ebx--, edi += size )
 
-        LSPrintF( &Id, "%s[%d]", name, edi )
+        tsprintf( &Id, "%s[%d]", name, edi )
         mov esi,AssignStruct( &Id, type, esi )
         lodsb
         .break .if !al

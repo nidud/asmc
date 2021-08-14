@@ -12,19 +12,15 @@ CApplication::Run proc
 
     .new result:int_t = 0
 
-    this.BeforeEnteringMessageLoop()
-
-    .if (SUCCEEDED(eax))
+    .if (SUCCEEDED(this.BeforeEnteringMessageLoop()))
 
         mov result,this.EnterMessageLoop()
     .else
-
         MessageBox(NULL, "An error occuring when running the sample", NULL, MB_OK)
     .endif
 
     this.AfterLeavingMessageLoop()
-
-    .return result
+   .return result
 
 CApplication::Run endp
 
@@ -269,23 +265,23 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .return 1
     .endif
 
-    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
+    .new app:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
 
     .switch ( message )
     .case WM_SIZE
-        Application.OnSize(lParam)
+        app.OnSize(lParam)
         .endc
     .case WM_KEYDOWN
-        Application.OnKeyDown(wParam)
+        app.OnKeyDown(wParam)
         .endc
     .case WM_CLOSE
-        Application.OnClose()
+        app.OnClose()
         .endc
     .case WM_DESTROY
-        Application.OnDestroy()
+        app.OnDestroy()
         .endc
     .case WM_PAINT
-        Application.OnPaint()
+        app.OnPaint()
         .endc
     .case WM_CHAR
         .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
@@ -350,39 +346,22 @@ CApplication::CreateApplicationWindow endp
 
 ; Provides the entry point to the application
 
-    assume rcx:ptr CApplication
+CApplication::CApplication proc instance:HINSTANCE
 
-CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
+    @ComAlloc(CApplication)
 
-    mov [rcx].lpVtbl,r8
-    mov [rcx].m_hInstance,rdx
-    mov [rcx].m_hwnd,NULL
-    mov [rcx].m_width,900
-    mov [rcx].m_height,600
-
-    for q,<Run,
-        BeforeEnteringMessageLoop,
-        EnterMessageLoop,
-        AfterLeavingMessageLoop,
-        CreateApplicationWindow,
-        ShowApplicationWindow,
-        DestroyApplicationWindow,
-        OnKeyDown,
-        OnClose,
-        OnDestroy,
-        OnPaint,
-        OnSize>
-        mov [r8].CApplicationVtbl.q,&CApplication_&q
-        endm
+    mov rcx,instance
+    mov [rax].CApplication.m_hInstance,rcx
+    mov [rax].CApplication.m_width,900
+    mov [rax].CApplication.m_height,600
     ret
 
 CApplication::CApplication endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
-    .new vt:CApplicationVtbl
-    .new application:CApplication(hInstance, &vt)
-    .return application.Run()
+    .new app:ptr CApplication(hInstance)
+    .return app.Run()
 
 _tWinMain endp
 

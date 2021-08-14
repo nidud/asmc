@@ -66,9 +66,9 @@ AddLineQueue proc uses esi edi line:string_t
 
 AddLineQueue endp
 
-;; Add a line to the current line queue, "printf" format.
+; Add a line to the current line queue, "printf" format.
 
-VLSPrintF proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
+tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
   local numbuf[16]:char_t
 
@@ -184,15 +184,15 @@ VLSPrintF proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
     mov eax,buffer
     ret
 
-VLSPrintF endp
+tvsprintf endp
 
-LSPrintF proc __cdecl buffer:string_t, fmt:string_t, argptr:vararg
+tsprintf proc __cdecl buffer:string_t, fmt:string_t, argptr:vararg
 
-    VLSPrintF( buffer, fmt, &argptr )
+    tvsprintf( buffer, fmt, &argptr )
     mov eax,buffer
     ret
 
-LSPrintF endp
+tsprintf endp
 
 AddLineQueueX proc __cdecl fmt:string_t, argptr:vararg
 
@@ -200,7 +200,7 @@ AddLineQueueX proc __cdecl fmt:string_t, argptr:vararg
 
     mov buffer,alloca(ModuleInfo.max_line_len)
 
-    VLSPrintF( buffer, fmt, &argptr )
+    tvsprintf( buffer, fmt, &argptr )
     AddLineQueue(buffer)
     ret
 

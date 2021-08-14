@@ -99,45 +99,15 @@ ClusterMapToMappingArray proc uses rsi rdi rbx \
 
 ClusterMapToMappingArray endp
 
-LayoutToCanvasBuilder::LayoutToCanvasBuilder proc uses rdi xpsFactory:ptr IXpsOMObjectFactory
+    assume rsi:ptr LayoutToCanvasBuilder
 
-   .return .if !malloc(LayoutToCanvasBuilder + LayoutToCanvasBuilderVtbl)
+LayoutToCanvasBuilder::LayoutToCanvasBuilder proc uses rsi xpsFactory:ptr IXpsOMObjectFactory
 
-    mov rdx,rax
-    add rax,LayoutToCanvasBuilder
-    mov [rdx],rax
-    lea rdi,[rdx+8]
-    xor eax,eax
-    mov ecx,(LayoutToCanvasBuilder - 8) / 8
-    rep stosq
-    inc [rdx].LayoutToCanvasBuilder._refCount
-
-    for q,<Release,
-           AddRef,
-           QueryInterface,
-           AddLinePath,
-           IsPixelSnappingDisabled,
-           GetCurrentTransform,
-           GetPixelsPerDip,
-           DrawGlyphRun,
-           DrawUnderline,
-           DrawStrikethrough,
-           DrawInlineObject,
-           GenerateNewFontPartUri,
-           FindOrCreateFontResource,
-           GetResources,
-           GetCanvas,
-           delete,
-           CreateRootCanvasAndResources>
-        lea rax,LayoutToCanvasBuilder_&q
-        mov [rdi].LayoutToCanvasBuilderVtbl.&q,rax
-        endm
-
-    mov this,rdx
-    mov [rdx].LayoutToCanvasBuilder._xpsFactory,xpsFactory
-
-    this.AddRef()
-    mov rax,this
+    mov rsi,@ComAlloc(LayoutToCanvasBuilder)
+    inc [rsi]._refCount
+    mov [rsi]._xpsFactory,xpsFactory
+    [rsi].AddRef()
+    mov rax,rsi
     ret
 
 LayoutToCanvasBuilder::LayoutToCanvasBuilder endp
@@ -146,8 +116,6 @@ LayoutToCanvasBuilder::LayoutToCanvasBuilder endp
 ;; This internal method creates empty canvas with resource dictionary holding
 ;; one solid color brush. It also creates empty IXpsOMPartResources object.
 ;;
-
-    assume rsi:ptr LayoutToCanvasBuilder
 
 LayoutToCanvasBuilder::CreateRootCanvasAndResources proc uses rsi
 

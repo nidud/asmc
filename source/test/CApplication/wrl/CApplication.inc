@@ -28,7 +28,7 @@ define IDS_FONT_HEIGHT_DESCRIPTION 22
     m_AppVisibility ptr IAppVisibility ?
     m_yoffs         uint_t ?
 
-    CApplication    proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication    proc :HINSTANCE
     Run             proc
     OnKeyDown       proc :WPARAM
     OnClose         proc

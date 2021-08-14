@@ -262,20 +262,9 @@ CSimpleObject::delete endp
 
 CSimpleObject::CSimpleObject proc
 
-    .if CoTaskMemAlloc(CSimpleObject + CSimpleObjectVtbl)
-
-        mov [rax].CSimpleObject.m_cRef,1
-        lea rdx,[rax+CSimpleObject]
-        mov [rax],rdx
-
-        for q,<Release,AddRef,QueryInterface,Read,Write,Seek,SetSize,CopyTo,
-               Commit,Revert,LockRegion,UnlockRegion,Stat,Clone,delete>
-
-            lea rcx,CSimpleObject_&q
-            mov [rdx].CSimpleObjectVtbl.&q,rcx
-            endm
-    .endif
-     ret
+    @ComAlloc(CSimpleObject)
+    mov [rax].CSimpleObject.m_cRef,1
+    ret
 
 CSimpleObject::CSimpleObject endp
 
@@ -355,16 +344,8 @@ CClassFactory::LockServer endp
 
 CClassFactory::CClassFactory proc
 
-    .if CoTaskMemAlloc(CClassFactory + CClassFactoryVtbl)
-
-        lea rcx,[rax+CClassFactory]
-        mov [rax],rcx
-        for q,<Release,AddRef,QueryInterface,CreateInstance,LockServer>
-            lea rdx,CClassFactory_&q
-            mov [rcx].CClassFactoryVtbl.&q,rdx
-            endm
-    .endif
-     ret
+    @ComAlloc(CClassFactory)
+    ret
 
 CClassFactory::CClassFactory endp
 

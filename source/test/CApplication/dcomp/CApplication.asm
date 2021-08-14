@@ -1436,11 +1436,10 @@ CApplication::Release endp
 
 ;; Provides the entry point to the application
 
-CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
+CApplication::CApplication proc instance:HINSTANCE
 
-    mov [rcx].lpVtbl,r8
-    mov [rcx]._hinstance,rdx
-    mov [rcx]._hwnd,NULL
+    mov rcx,@ComAlloc(CApplication)
+    mov [rcx]._hinstance,instance
     mov edx,100;_gridSize
     lea eax,[rdx+rdx*2]
     mov [rcx]._tileSize,eax
@@ -1451,55 +1450,13 @@ CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
     mov [rcx]._windowHeight,eax
     mov [rcx]._state,ZOOMEDOUT
     mov [rcx]._actionType,ZOOMOUT
-    mov [rcx]._currentVisual,0
-
-    for q,<Release,
-        Run,
-        BeforeEnteringMessageLoop,
-        EnterMessageLoop,
-        AfterLeavingMessageLoop,
-        CreateApplicationWindow,
-        ShowApplicationWindow,
-        DestroyApplicationWindow,
-        CreateD2D1Factory,
-        DestroyD2D1Factory,
-        CreateD2D1Device,
-        DestroyD2D1Device,
-        CreateD3D11Device,
-        DestroyD3D11Device,
-        CreateDCompositionDevice,
-        DestroyDCompositionVisualTree,
-        CreateDCompositionVisualTree,
-        DestroyDCompositionDevice,
-        CreateSurface,
-        CreateTranslateTransform,
-        CreateTranslateTransform2,
-        CreateScaleTransform,
-        CreateScaleTransform2,
-        CreateRotateTransform,
-        CreateRotateTransform2,
-        CreatePerspectiveTransform,
-        CreateLinearAnimation,
-        SetEffectOnVisuals,
-        SetEffectOnVisualLeft,
-        SetEffectOnVisualLeftChildren,
-        SetEffectOnVisualRight,
-        ZoomOut,
-        ZoomIn,
-        OnKeyDown,
-        OnLeftButton,
-        OnClose,
-        OnDestroy,
-        OnPaint,
-        UpdateVisuals>
-        mov [r8].CApplicationVtbl.q,&CApplication_&q
-        endm
+    mov rax,rcx
     ret
 
 CApplication::CApplication endp
 
 
-;; Main Window procedure
+; Main Window procedure
 
 WindowProc proc hwnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
 
@@ -1509,33 +1466,25 @@ WindowProc proc hwnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
         .return 1
     .endif
 
-    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
-
+    .new app:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
     .switch ( msg )
-
     .case WM_LBUTTONUP
-        Application.OnLeftButton()
+        app.OnLeftButton()
         .endc
-
     .case WM_KEYDOWN
-        Application.OnKeyDown(wParam)
+        app.OnKeyDown(wParam)
         .endc
-
     .case WM_CLOSE
-        Application.OnClose()
+        app.OnClose()
         .endc
-
     .case WM_DESTROY
-        Application.OnDestroy()
+        app.OnDestroy()
         .endc
-
     .case WM_PAINT
-        Application.OnPaint()
+        app.OnPaint()
         .endc
-
     .case WM_CHAR
         .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
-
     .default
         DefWindowProc(hwnd, msg, wParam, lParam)
     .endsw
@@ -1864,9 +1813,8 @@ CApplication::OnPaint endp
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, iCmdShow:int_t
 
-    .new vt:CApplicationVtbl
-    .new application:CApplication(hInstance, &vt)
-    .return application.Run()
+    .new app:ptr CApplication(hInstance)
+    .return app.Run()
 
 wWinMain endp
 

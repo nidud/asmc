@@ -430,7 +430,7 @@ CApplication::InitObjects endp
 
     assume rsi:nothing
 
-CApplication::GoFullScreen proc uses rsi rdi rbx
+CApplication::GoFullScreen proc uses rdi rbx
 
     mov rdi,rcx
     mov [rdi].m_isFullScreen,TRUE
@@ -495,7 +495,7 @@ CApplication::GoPartialScreen endp
 ;  a D2D geometry.
 ;
 
-CApplication::CreateDeviceIndependentResources proc
+CApplication::CreateDeviceIndependentResources proc uses rdi
 
     mov rdi,rcx
 
@@ -733,7 +733,7 @@ CApplication::RenderMainContent endp
 
 sc_textInfoBoxInset equ 14.0
 
-CApplication::RenderTextInfo proc uses rsi rdi rbx
+CApplication::RenderTextInfo proc uses rdi
 
    .new hr:HRESULT = S_OK
    .new textBuffer[400]:WCHAR
@@ -884,32 +884,32 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .return 1
     .endif
 
-    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
+    .new app:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
 
     .switch ( message )
     .case WM_SIZE
         movzx edx,word ptr lParam
         movzx r8d,word ptr lParam[2]
-        Application.OnSize(edx, r8d)
+        app.OnSize(edx, r8d)
         .endc
     .case WM_KEYDOWN
-        Application.OnKeyDown(wParam)
+        app.OnKeyDown(wParam)
         .endc
     .case WM_CLOSE
-        Application.OnClose()
+        app.OnClose()
         .endc
     .case WM_DESTROY
-        Application.OnDestroy()
+        app.OnDestroy()
         .endc
     .case WM_TIMER
-        Application.OnRender()
+        app.OnRender()
         .endc
     .case WM_PAINT
     .case WM_DISPLAYCHANGE
        .new ps:PAINTSTRUCT
         BeginPaint(hwnd, &ps)
         EndPaint(hwnd, &ps)
-        .return 0
+       .return 0
     .case WM_CHAR
         .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
     .default
@@ -1000,39 +1000,10 @@ CApplication::CreateApplicationWindow endp
 
 CApplication::CApplication proc uses rdi hInstance:HINSTANCE
 
-    .return .if !HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, CApplication + CApplicationVtbl)
-
-    mov rdi,rax
-    lea rcx,[rdi+CApplication]
-    mov [rdi].lpVtbl,rcx
+    mov rdi,@ComAlloc(CApplication)
     mov [rdi].m_hInstance,hInstance
     mov [rdi].m_timer,30
     mov [rdi].m_intensity,300
-
-    for q,<\
-        Release,
-        Run,
-        BeforeEnteringMessageLoop,
-        EnterMessageLoop,
-        AfterLeavingMessageLoop,
-        CreateApplicationWindow,
-        ShowApplicationWindow,
-        DestroyApplicationWindow,
-        InitObjects,
-        GoFullScreen,
-        GoPartialScreen,
-        OnKeyDown,
-        OnClose,
-        OnDestroy,
-        OnSize,
-        OnRender,
-        CreateDeviceIndependentResources,
-        CreateDeviceResources,
-        RenderMainContent,
-        RenderTextInfo,
-        DiscardDeviceResources>
-        mov [rcx].CApplicationVtbl.q,&CApplication_&q
-    endm
     mov rax,rdi
     ret
 
@@ -1054,7 +1025,7 @@ CApplication::Release proc uses rsi rdi rbx
     SafeRelease([rdi].m_pRT)
     SafeRelease([rdi].m_pDWriteFactory)
     SafeRelease([rdi].m_pD2DFactory)
-    HeapFree(GetProcessHeap(), 0, rdi)
+    free(rdi)
     ret
 
 CApplication::Release endp
@@ -1071,8 +1042,7 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPWSTR, i
     .new hr:HRESULT = CoInitialize(NULL)
     .if (SUCCEEDED(hr))
 
-        .new app:ptr CApplication(hInstance)
-
+       .new app:ptr CApplication(hInstance)
         mov hr,app.Run()
         app.Release()
         CoUninitialize()

@@ -32,6 +32,7 @@ objects = \
     src\cmdline.obj \
     src\codegen.obj \
     src\coff.obj \
+    src\com.obj \
     src\condasm.obj \
     src\context.obj \
     src\cpumodel.obj \

@@ -689,13 +689,13 @@ GetTypeId PROC USES esi edi ebx buffer:string_t, tokenarray:token_t
 
     .switch type
     .case Immediat
-        LSPrintF( edi, "IMM%d", size )
+        tsprintf( edi, "IMM%d", size )
         .return 1
     .case Float
         strcpy( edi, "IMMFLT" )
         .return 1
     .case Register
-        LSPrintF( edi, "REG%d", size )
+        tsprintf( edi, "REG%d", size )
         .return 1
     .case Memory
          strcpy( edi, &name )

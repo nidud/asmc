@@ -29,7 +29,7 @@ define MAXOBJ 3
     m_rc            RECT <>
     m_obj           object MAXOBJ dup(<>)
 
-    CApplication    proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication    proc :HINSTANCE
     Run             proc
     OnKeyDown       proc :WPARAM
     OnClose         proc

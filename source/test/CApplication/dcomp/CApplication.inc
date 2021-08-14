@@ -61,7 +61,7 @@ define IDS_FONT_HEIGHT_DESCRIPTION 22
 
     WindowProc proto :HWND, :UINT, :WPARAM, :LPARAM
 
-    CApplication proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication proc :HINSTANCE
     Release proc
 
     Run proc

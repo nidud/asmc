@@ -433,7 +433,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 strcpy( StringBufferEnd, "16" )
                             .elseif ( ModuleInfo.floatformat == 'x' )
-                                LSPrintF( StringBufferEnd, "%q%q", opndx.hlvalue, opndx.llvalue )
+                                tsprintf( StringBufferEnd, "%q%q", opndx.hlvalue, opndx.llvalue )
                             .else
 
                                 mov cvt.expchar,'e'

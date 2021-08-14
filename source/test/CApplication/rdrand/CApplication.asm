@@ -13,10 +13,10 @@ BoundRand proc b:uint_t
     neg eax
     xor edx,edx
     div ecx
-    .repeat
+    .while 1
         rdrand eax
-        .continue(0) .if (eax < edx)
-    .until 1
+        .break .if ( eax >= edx )
+    .endw
     xor edx,edx
     div ecx
     mov eax,edx
@@ -136,6 +136,11 @@ CApplication::ShowApplicationWindow proc uses rdi
         ShowWindow([rdi].m_hwnd, SW_SHOW)
         UpdateWindow([rdi].m_hwnd)
         SetTimer([rdi].m_hwnd, ID_TIMER, [rdi].m_timer, NULL)
+        GetWindowRect([rdi].m_hwnd, &[rdi].m_rect)
+        GdipCreateStringFormat(StringFormatFlagsNoWrap,
+                LANG_NEUTRAL, &[rdi].m_fontformat)
+        this.SetFont(IDS_FONT_TYPEFACE, 12.0, Gray)
+        this.GoPartialScreen()
     .endif
 
     .return bSucceeded
@@ -150,6 +155,27 @@ CApplication::DestroyApplicationWindow proc uses rdi
     mov rdi,rcx
     .if ( [rdi].m_hwnd != NULL )
 
+        .if ( [rdi].m_g )
+            GdipDeleteGraphics([rdi].m_g)
+        .endif
+        .if ( [rdi].m_gm )
+            GdipDeleteGraphics([rdi].m_gm)
+        .endif
+        .if ( [rdi].m_mem )
+            DeleteDC([rdi].m_mem)
+        .endif
+        .if ( [rdi].m_hdc )
+            ReleaseDC([rdi].m_hwnd, [rdi].m_hdc)
+        .endif
+        .if ( [rdi].m_font )
+            GdipDeleteFont([rdi].m_font)
+        .endif
+        .if ( [rdi].m_fontfamily )
+            GdipDeleteFontFamily([rdi].m_fontfamily)
+        .endif
+        .if ( [rdi].m_fontformat )
+            GdipDeleteStringFormat([rdi].m_fontformat)
+        .endif
         .if ( [rdi].m_bitmap )
             DeleteObject( [rdi].m_bitmap )
         .endif
@@ -164,10 +190,9 @@ CApplication::DestroyApplicationWindow endp
 
 ; Makes the host window full-screen by placing non-client elements outside the display.
 
-CApplication::GoFullScreen proc uses rsi rdi rbx
+CApplication::GoFullScreen proc uses rdi
 
     mov rdi,rcx
-
     mov [rdi].m_isFullScreen,TRUE
 
     ; The window must be styled as layered for proper rendering.
@@ -201,7 +226,6 @@ CApplication::GoFullScreen proc uses rsi rdi rbx
     imul eax,yBorder,2
     add eax,yCaption
     add ySpan,eax
-
     SetWindowPos([rdi].m_hwnd, HWND_TOPMOST, xOrigin, yOrigin, xSpan, ySpan,
         SWP_SHOWWINDOW or SWP_NOZORDER or SWP_NOACTIVATE)
     ret
@@ -210,8 +234,6 @@ CApplication::GoFullScreen endp
 
 
 ; Makes the host window resizable and focusable.
-
-define RESTOREDWINDOWSTYLES WS_SIZEBOX or WS_SYSMENU or WS_CLIPCHILDREN or WS_CAPTION or WS_MAXIMIZEBOX
 
 CApplication::GoPartialScreen proc uses rdi
 
@@ -227,58 +249,88 @@ CApplication::GoPartialScreen proc uses rdi
 
 CApplication::GoPartialScreen endp
 
-    assume rsi:ptr object
 
 CApplication::OnSize proc uses rdi lParam:LPARAM
 
-    mov rdi,rcx
+    mov rdi,this;rcx
     movzx eax,dx
     shr edx,16
-    mov [rdi].m_width,eax
-    mov [rdi].m_height,edx
+    mov [rdi].m_rc.top,0
+    mov [rdi].m_rc.left,0
+    mov [rdi].m_rc.right,eax
+    mov [rdi].m_rc.bottom,edx
 
+    .if ( [rdi].m_isFullScreen == FALSE )
+        mov [rdi].m_rc.top,130
+        mov [rdi].m_rc.left,50
+        sub [rdi].m_rc.right,50
+        sub [rdi].m_rc.bottom,100
+    .endif
+    .if ( [rdi].m_mem )
+        DeleteDC([rdi].m_mem)
+    .endif
+    .if ( [rdi].m_hdc )
+        ReleaseDC([rdi].m_hwnd, [rdi].m_hdc)
+    .endif
     .if ( [rdi].m_bitmap )
-
         DeleteObject([rdi].m_bitmap)
         mov [rdi].m_bitmap,NULL
+    .endif
+    mov [rdi].m_hdc,GetDC([rdi].m_hwnd)
+    mov [rdi].m_mem,CreateCompatibleDC([rdi].m_hdc)
+    .if ( [rdi].m_g )
+        GdipDeleteGraphics([rdi].m_g)
+    .endif
+    .if ( [rdi].m_gm )
+        GdipDeleteGraphics([rdi].m_gm)
+    .endif
+    GdipCreateFromHDC([rdi].m_hdc, &[rdi].m_g)
+    mov edx,[rdi].m_rc.bottom
+    sub edx,[rdi].m_rc.top
+    .ifs ( edx > 100 )
+        mov ecx,[rdi].m_rc.right
+        sub ecx,[rdi].m_rc.left
+        .ifs ( ecx > 100 )
+            mov [rdi].m_bitmap,CreateCompatibleBitmap([rdi].m_hdc, ecx, edx)
+            [rdi].InitObjects()
+            SelectObject([rdi].m_mem, [rdi].m_bitmap)
+            GdipCreateFromHDC([rdi].m_mem, &[rdi].m_gm)
+            GdipSetSmoothingMode([rdi].m_gm, SmoothingModeHighQuality)
+        .endif
     .endif
     .return 1
 
 CApplication::OnSize endp
 
 
+    assume rsi:ptr object
+
 CApplication::OnTimer proc uses rsi rdi rbx
 
     mov rdi,rcx
    .return 0 .if ( [rdi].m_bitmap == NULL )
 
-   .new hdc:HDC = GetDC([rdi].m_hwnd)
-   .new mem:HDC = CreateCompatibleDC(hdc)
-
-    SelectObject(mem, [rdi].m_bitmap)
-
-   .new g:Graphics(mem)
-    g.SetSmoothingMode(SmoothingModeHighQuality)
-    g.Clear(ColorAlpha(Black, 230))
+    GdipGraphicsClear([rdi].m_gm, ColorAlpha(Black, 230))
 
    .new count:SINT = 1
    .new FullTranslucent:ARGB = ColorAlpha(Black, 230)
+   .new p:ptr
+   .new b:ptr
+
+    GdipCreatePath(FillModeAlternate, &p)
 
     .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
 
-       .new p:GraphicsPath()
         mov ecx,[rsi].m_radius
         mov edx,[rsi].m_pos.x
         sub edx,ecx
         mov r8d,[rsi].m_pos.y
         sub r8d,ecx
         add ecx,ecx
-        p.AddEllipse(edx, r8d, ecx, ecx)
-
-       .new b:PathGradientBrush(&p)
-        b.SetCenterColor([rsi].m_color)
-        b.SetSurroundColors(&FullTranslucent, &count)
-
+        GdipAddPathEllipseI(p, edx, r8d, ecx, ecx)
+        GdipCreatePathGradientFromPath(p, &b)
+        GdipSetPathGradientCenterColor(b, [rsi].m_color)
+        GdipSetPathGradientSurroundColorsWithCount(b, &FullTranslucent, &count)
         mov ecx,[rsi].m_radius
         mov r8d,[rsi].m_pos.x
         sub r8d,ecx
@@ -288,20 +340,26 @@ CApplication::OnTimer proc uses rsi rdi rbx
         add r9d,2
         add ecx,ecx
         sub ecx,4
-        g.FillEllipse(&b, r8d, r9d, ecx, ecx)
-        b.Release()
-        p.Release()
+        GdipFillEllipseI([rdi].m_gm, b, r8d, r9d, ecx, ecx)
+        GdipDeleteBrush(b)
+        GdipResetPath(p)
     .endf
+    GdipDeletePath(p)
 
-    g.Release()
+    mov ecx,[rdi].m_rc.right
+    sub ecx,[rdi].m_rc.left
+    shr ecx,4
+    mov edx,[rdi].m_rc.bottom
+    sub edx,[rdi].m_rc.top
+    sub edx,26
+    this.DrawString([rdi].m_gm, ecx, edx,
+        "Timer: %d - the default minimum value is 10", [rdi].m_timer)
 
     mov ecx,[rdi].m_rc.right
     sub ecx,[rdi].m_rc.left
     mov edx,[rdi].m_rc.bottom
     sub edx,[rdi].m_rc.top
-    BitBlt(hdc, [rdi].m_rc.left, [rdi].m_rc.top, ecx, edx, mem, 0, 0, SRCCOPY)
-    ReleaseDC([rdi].m_hwnd, hdc)
-    DeleteDC(mem)
+    BitBlt([rdi].m_hdc, [rdi].m_rc.left, [rdi].m_rc.top, ecx, edx, [rdi].m_mem, 0, 0, SRCCOPY)
 
    .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
 
@@ -372,14 +430,14 @@ CApplication::OnKeyDown proc wParam:WPARAM
         this.InitObjects()
         .endc
     .case VK_NEXT
-        inc [rcx].m_timer
-        SetTimer([rcx].m_hwnd, ID_TIMER, [rcx].m_timer, NULL)
-        .endc
-    .case VK_PRIOR
         .if ( [rcx].m_timer > 10 )
             dec [rcx].m_timer
             SetTimer([rcx].m_hwnd, ID_TIMER, [rcx].m_timer, NULL)
         .endif
+        .endc
+    .case VK_PRIOR
+        inc [rcx].m_timer
+        SetTimer([rcx].m_hwnd, ID_TIMER, [rcx].m_timer, NULL)
         .endc
     .case VK_F11
         .if ( [rcx].m_isFullScreen )
@@ -423,146 +481,34 @@ CApplication::OnDestroy endp
 
 ; Handles the WM_PAINT message
 
-CApplication::OnPaint proc uses rsi rdi rbx
+    assume rcx:nothing
 
-   .new rcClient:RECT
-   .new ps:PAINTSTRUCT
-   .new height:int_t = 0
+CApplication::OnPaint proc uses rdi
+
+  local ps:PAINTSTRUCT
 
     mov rdi,rcx
+    BeginPaint([rdi].m_hwnd, &ps)
 
-   .new hdc:HDC = BeginPaint([rdi].m_hwnd, &ps)
+    .if ( [rdi].m_isFullScreen == FALSE )
 
-    ; get the dimensions of the main window.
-
-    GetClientRect([rdi].m_hwnd, &rcClient)
-
-    .if ( [rdi].m_isFullScreen == TRUE )
-
-        mov [rdi].m_rc.left,0
-        mov [rdi].m_rc.top,0
-        mov eax,rcClient.right
-        sub eax,rcClient.left
-        mov [rdi].m_rc.right,eax
-        mov eax,rcClient.bottom
-        sub eax,rcClient.top
-        mov [rdi].m_rc.bottom,eax
-
-        jmp full_screen
+        this.SetFont(NULL, 20.0, 0)
+        this.DrawString([rdi].m_g, 50, 32, "CApplication RDRAND")
+        this.SetFont(NULL, 12.0, 0)
+        this.DrawString([rdi].m_g, 50, 10, "Windows samples")
+        this.DrawString([rdi].m_g, 50, 73,
+                "This sample use the CApplication class and GDI+\n"
+                "Random Count, Speed, Color, and Size")
+        mov ecx,[rdi].m_rc.bottom
+        add ecx,8
+        mov edx,[rdi].m_rc.right
+        shr edx,1
+        this.DrawString([rdi].m_g, edx, ecx,
+                "Use keys UP or DOWN to adjust the speed.\n"
+                "Use keys PGUP or PGDN to adjust the timer.\n"
+                "Use Enter to reset and F11 to toggle full screen.")
     .endif
-
-    mov [rdi].m_rc.left,50
-    mov eax,[rdi].m_width
-    sub eax,50
-    mov [rdi].m_rc.right,eax
-
-    ; Logo
-
-    xor ecx,ecx
-    .new hlogo:HFONT = CreateFont(IDS_FONT_HEIGHT_LOGO, ecx, ecx, ecx, ecx, ecx, ecx,
-            ecx, ecx, ecx, ecx, ecx, ecx, IDS_FONT_TYPEFACE) ; Logo Font and Size
-
-    .if ( hlogo != NULL )
-
-       .new hOldFont:HFONT = SelectObject(hdc, hlogo)
-
-        SetTextColor(hdc, GetSysColor(COLOR_GRAYTEXT))
-        SetBkMode(hdc, TRANSPARENT)
-
-        mov rcClient.top,10
-        mov rcClient.left,50
-        mov height,DrawText(hdc, "Windows samples", -1, &rcClient, DT_WORDBREAK)
-        SelectObject(hdc, hOldFont)
-        DeleteObject(hlogo)
-    .endif
-
-    ; Title
-
-    xor ecx,ecx
-   .new htitle:HFONT = CreateFont(IDS_FONT_HEIGHT_TITLE, ecx, ecx, ecx, ecx, ecx,
-            ecx, ecx, ecx, ecx, ecx, ecx, ecx, IDS_FONT_TYPEFACE) ; Title Font and Size
-
-    .if (htitle != NULL)
-
-       .new hOldFont:HFONT = SelectObject(hdc, htitle)
-
-        mov eax,height
-        add eax,10
-        mov rcClient.top,eax
-        mov rcClient.left,50
-
-        mov height,DrawText(hdc, "CApplication Class :: RDRAND", -1, &rcClient, DT_WORDBREAK)
-        SelectObject(hdc, hOldFont)
-        DeleteObject(htitle)
-    .endif
-
-    ; Description
-
-   .new hdescription:HFONT
-
-    xor ecx,ecx
-    mov hdescription,CreateFont(IDS_FONT_HEIGHT_DESCRIPTION, ecx, ecx, ecx,
-            ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx, ecx,
-            IDS_FONT_TYPEFACE) ; Description Font and Size
-
-    .if (hdescription != NULL)
-
-       .new hOldFont:HFONT = SelectObject(hdc, hdescription)
-
-        mov eax,height
-        add eax,40
-        mov rcClient.top,eax
-        mov rcClient.left,50
-
-        DrawText(hdc,
-            "This sample use the CApplication class and GDI+\n"
-            "Random Count, Speed, Color, and Size",
-            -1, &rcClient, DT_WORDBREAK)
-
-        add eax,rcClient.top
-        add eax,6
-        mov [rdi].m_rc.top,eax
-        mov eax,[rdi].m_height
-        sub eax,100
-        mov rcClient.top,eax
-        sub eax,16
-        mov [rdi].m_rc.bottom,eax
-        mov eax,[rdi].m_width
-        shr eax,1
-        mov rcClient.left,eax
-
-        DrawText(hdc,
-            "A) Use keys UP or DOWN to adjust the speed.\n"
-            "B) Use keys PGUP or PGDN to adjust the timer.\n"
-            "C) Use Enter to reset.", -1, &rcClient,
-            DT_WORDBREAK)
-        SelectObject(hdc, hOldFont)
-        DeleteObject(hdescription)
-    .endif
-
-full_screen:
-
     EndPaint([rdi].m_hwnd, &ps)
-
-    .return 1 .if ( [rdi].m_bitmap )
-
-    mov edx,[rdi].m_rc.bottom
-    sub edx,[rdi].m_rc.top
-    .ifs ( edx > 100 )
-        mov ecx,[rdi].m_rc.right
-        sub ecx,[rdi].m_rc.left
-        .ifs ( ecx > 100 )
-
-            mov hdc,GetDC([rdi].m_hwnd)
-            mov ecx,[rdi].m_rc.right
-            sub ecx,[rdi].m_rc.left
-            mov edx,[rdi].m_rc.bottom
-            sub edx,[rdi].m_rc.top
-            mov [rdi].m_bitmap,CreateCompatibleBitmap(hdc, ecx, edx)
-            ReleaseDC([rdi].m_hwnd, hdc)
-            [rdi].InitObjects()
-        .endif
-    .endif
    .return 1
 
 CApplication::OnPaint endp
@@ -571,7 +517,6 @@ CApplication::OnPaint endp
 CApplication::InitObjects proc uses rsi rdi rbx
 
     mov rdi,rcx
-
     mov [rdi].m_count,RangeRand(MAXOBJ, 1)
 
     .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < [rdi].m_count: ebx++, rsi += sizeof(object) )
@@ -664,25 +609,8 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    mov [rdi].m_rect.left,0
-    mov [rdi].m_rect.top,0
-    mov [rdi].m_rect.right,[rdi].m_width
-    mov [rdi].m_rect.bottom,[rdi].m_height
-
-    AdjustWindowRect(&[rdi].m_rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
-
-    mov eax,[rdi].m_rect.right
-    sub eax,[rdi].m_rect.left
-    mov [rdi].m_width,eax
-
-    mov eax,[rdi].m_rect.bottom
-    sub eax,[rdi].m_rect.top
-    mov [rdi].m_height,eax
-
-    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME,
-           WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-           CW_USEDEFAULT, CW_USEDEFAULT,
-           [rdi].m_width, [rdi].m_height,
+    .if CreateWindowEx(0, CLASS_NAME, WINDOW_NAME, RESTOREDWINDOWSTYLES,
+           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
            NULL, NULL, [rdi].m_hInstance, rdi) == NULL
 
         .return E_UNEXPECTED
@@ -697,44 +625,69 @@ CApplication::CreateApplicationWindow endp
 
     assume rcx:ptr CApplication
 
-CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
+CApplication::SetFont proc uses rdi name:ptr wchar_t, size:real4, color:ARGB
 
-    mov [rcx].lpVtbl,r8
-    mov [rcx].m_hInstance,rdx
-    mov [rcx].m_hwnd,NULL
-    mov [rcx].m_width,900
-    mov [rcx].m_height,600
-    mov [rcx].m_bitmap,NULL
-    mov [rcx].m_timer,20
-    mov [rcx].m_isFullScreen,FALSE
+    mov rdi,rcx
+    .if ( r9d )
+        mov [rdi].m_fontcolor,r9d
+    .endif
+    .if ( rdx )
+        .if ( [rdi].m_fontfamily )
+            GdipDeleteFontFamily([rdi].m_fontfamily)
+        .endif
+        GdipCreateFontFamilyFromName(name, NULL, &[rdi].m_fontfamily)
+    .endif
+    .if ( [rdi].m_font )
+        GdipDeleteFont([rdi].m_font)
+    .endif
+    GdipCreateFont([rdi].m_fontfamily, size, [rdi].m_fontstyle, [rdi].m_fontunit, &[rdi].m_font)
+    ret
 
-    for q,<Run,
-        BeforeEnteringMessageLoop,
-        EnterMessageLoop,
-        AfterLeavingMessageLoop,
-        CreateApplicationWindow,
-        ShowApplicationWindow,
-        DestroyApplicationWindow,
-        InitObjects,
-        GoFullScreen,
-        GoPartialScreen,
-        OnKeyDown,
-        OnClose,
-        OnDestroy,
-        OnPaint,
-        OnSize,
-        OnTimer>
-        mov [r8].CApplicationVtbl.q,&CApplication_&q
-        endm
+CApplication::SetFont endp
+
+CApplication::DrawString proc uses rsi rdi rbx gdi:ptr, x:int_t, y:int_t, format:ptr wchar_t, argptr:vararg
+
+ local buffer[512]:wchar_t
+ local rc:RectF
+ local brush:ptr
+
+    mov rdi,rcx
+    cvtsi2ss xmm0,r8d
+    movss rc.X,xmm0
+    cvtsi2ss xmm0,r9d
+    movss rc.Y,xmm0
+    cvtsi2ss xmm0,[rdi].m_rect.right
+    movss rc.Width,xmm0
+    cvtsi2ss xmm0,[rdi].m_rect.bottom
+    movss rc.Height,xmm0
+
+    vswprintf(&buffer, format, &argptr)
+    GdipCreateSolidFill([rdi].m_fontcolor, &brush)
+    GdipDrawString(gdi, &buffer, -1, [rdi].m_font, &rc, [rdi].m_fontformat, brush)
+    GdipDeleteBrush(brush)
+    ret
+
+CApplication::DrawString endp
+
+CApplication::CApplication proc instance:HINSTANCE
+
+    @ComAlloc(CApplication)
+
+    mov rcx,rax
+    mov [rcx].m_hInstance,instance
+    mov [rcx].m_timer,10
+    mov [rcx].m_fontstyle,FontStyleRegular
+    mov [rcx].m_fontunit,UnitPoint
+    mov [rcx].m_fontcolor,LightGray
+    mov rax,rcx
     ret
 
 CApplication::CApplication endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
-    .new vt:CApplicationVtbl
-    .new application:CApplication(hInstance, &vt)
-    .return application.Run()
+    .new app:ptr CApplication(hInstance)
+    .return app.Run()
 
 _tWinMain endp
 

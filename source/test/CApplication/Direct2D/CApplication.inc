@@ -13,8 +13,9 @@ include tchar.inc
 
 option dllimport:none
 
-define CLASS_NAME   <"MainWindowClass">
-define WINDOW_NAME  <"Windows samples">
+define CLASS_NAME <"MainWindowClass">
+define WINDOW_NAME <"Windows samples">
+
 define IDS_TEXTFONT <"Segoe UI Light">
 define IDS_MONOFONT <"Lucida Console">
 define WINDOWSTYLES WS_OVERLAPPEDWINDOW

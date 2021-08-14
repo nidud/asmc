@@ -119,6 +119,8 @@ S_FWDREF        equ 0x20
 S_INCLUDED      equ 0x40
 S_METHOD        equ 0x80
 
+                         ; flag2
+
 S_VTABLE        equ 0x01 ; base class - first member = lpVtbl
 S_ISVTABLE      equ 0x02 ; vtable struct - classVtbl
 S_VMACRO        equ 0x04 ; vtable method is inline - sym->vmacro set

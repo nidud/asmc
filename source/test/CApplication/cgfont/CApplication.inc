@@ -4,6 +4,8 @@ define NTDDI_VERSION    0x0A000003
 
 include windows.inc
 include gdiplus.inc
+;include d2d1.inc
+;include dwrite_3.inc
 include stdio.inc
 include Pathcch.inc
 include tchar.inc
@@ -68,7 +70,7 @@ define MAXOBJ 100
     m_f2            ptr CGFont ?
     m_f3            ptr CGFont ?
 
-    CApplication    proc :HINSTANCE, :ptr CApplicationVtbl
+    CApplication    proc :HINSTANCE
     Run             proc
     OnKeyDown       proc :WPARAM
     OnClose         proc

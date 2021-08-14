@@ -543,41 +543,22 @@ CApplication::CreateApplicationWindow endp
 
 ; Provides the entry point to the application
 
-    assume rcx:ptr CApplication
+CApplication::CApplication proc instance:HINSTANCE
 
-CApplication::CApplication proc instance:HINSTANCE, vtable:ptr CApplicationVtbl
+    @ComAlloc(CApplication)
 
-    mov [rcx].lpVtbl,r8
-    mov [rcx].m_hInstance,rdx
-    mov [rcx].m_hwnd,NULL
-    mov [rcx].m_width,900
-    mov [rcx].m_height,600
-    mov [rcx].m_bitmap,NULL
-
-    for q,<Run,
-        BeforeEnteringMessageLoop,
-        EnterMessageLoop,
-        AfterLeavingMessageLoop,
-        CreateApplicationWindow,
-        ShowApplicationWindow,
-        DestroyApplicationWindow,
-        OnKeyDown,
-        OnClose,
-        OnDestroy,
-        OnPaint,
-        OnSize,
-        OnTimer>
-        mov [r8].CApplicationVtbl.q,&CApplication_&q
-        endm
+    mov rcx,instance
+    mov [rax].CApplication.m_hInstance,rcx
+    mov [rax].CApplication.m_width,900
+    mov [rax].CApplication.m_height,600
     ret
 
 CApplication::CApplication endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
-    .new vt:CApplicationVtbl
-    .new application:CApplication(hInstance, &vt)
-    .return application.Run()
+    .new app:ptr CApplication(hInstance)
+    .return app.Run()
 
 _tWinMain endp
 

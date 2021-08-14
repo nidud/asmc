@@ -272,26 +272,14 @@ CRowsetEventListener::Release endp
 
 CreateComObject proc pp:ptr ptr CRowsetEventListener
 
-    xor eax,eax
+    @ComAlloc(CRowsetEventListener)
+
+    mov rcx,pp
     mov [rcx],rax
-
-    .if HeapAlloc(GetProcessHeap(), 0, CRowsetEventListener + CRowsetEventListenerVtbl)
-
-        lea rcx,[rax+CRowsetEventListener]
-        mov [rax],rcx
-        mov [rax].CRowsetEventListener.spDBCreateCommand,NULL
-        for q,<Release,AddRef,QueryInterface,OnNewItem,OnChangedItem,OnDeletedItem,OnRowsetEvent,PrintURL>
-            lea rdx,CRowsetEventListener_&q
-            mov [rcx].CRowsetEventListenerVtbl.&q,rdx
-            endm
-        mov rcx,pp
-        mov [rcx],rax
-    .endif
-    .if rax
-        mov rax,S_OK
-    .else
-        mov eax,E_OUTOFMEMORY
-    .endif
+    mov edx,S_OK
+    and rax,rax
+    mov eax,E_OUTOFMEMORY
+    cmovnz eax,edx
     ret
 
 CreateComObject endp

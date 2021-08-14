@@ -197,26 +197,10 @@ CGFont::Draw endp
 
 CGFont::CGFont proc uses rdi rbx family:ptr wchar_t, file:ptr wchar_t, Format:StringFormatFlags
 
-   .return .if !LocalAlloc(LMEM_FIXED or LMEM_ZEROINIT, CGFont + CGFontVtbl)
-
-    mov this,rax
-    mov rbx,rax
-    mov rdi,rax
-    xor eax,eax
-    mov ecx,CGFont
-    rep stosb
-
+    mov rbx,@ComAlloc(CGFont)
     mov [rbx].m_style,FontStyleRegular
     mov [rbx].m_unit,UnitPoint
     mov [rbx].m_color,Gray
-
-    lea rdx,[rbx+CGFont]
-    mov [rbx],rdx
-
-    for q,<Release,SetFamily,SetColor,SetSize,SetFont,SetFormat,SetGDI,Draw,SetAlignment>
-        lea rcx,CGFont_&q
-        mov [rdx].CGFontVtbl.&q,rcx
-        endm
 
     .if ( file )
 
@@ -254,7 +238,7 @@ CGFont::Release proc uses rbx
     .if ( [rbx].m_file )
         RemoveFontResource([rbx].m_file)
     .endif
-    LocalFree(rbx)
+    free(rbx)
     ret
 
 CGFont::Release endp
@@ -359,7 +343,7 @@ ifdef __VS__ ; x64/Debug
         PathCchRemoveFileSpec(&fontPath, ARRAYSIZE(fontPath))
 endif
         .new ppszPathOut:PWSTR = NULL
-        mov hr,PathAllocCombine(&fontPath, "fonts\\peric.ttf", PATHCCH_NONE, &ppszPathOut)
+        mov hr,PathAllocCombine(&fontPath, "..\\fonts\\Caudex-Italic.ttf", PATHCCH_NONE, &ppszPathOut)
         .return FALSE .if (FAILED(hr))
 
         mov [rdi].m_f1,CGFont(IDS_FONT, NULL, StringFormatFlagsNoWrap)
@@ -799,26 +783,26 @@ WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .return 1
     .endif
 
-    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
+    .new app:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
 
     .switch ( message )
     .case WM_SIZE
-        Application.OnSize(lParam)
+        app.OnSize(lParam)
         .endc
     .case WM_KEYDOWN
-        Application.OnKeyDown(wParam)
+        app.OnKeyDown(wParam)
         .endc
     .case WM_CLOSE
-        Application.OnClose()
+        app.OnClose()
         .endc
     .case WM_DESTROY
-        Application.OnDestroy()
+        app.OnDestroy()
         .endc
     .case WM_PAINT
-        Application.OnPaint()
+        app.OnPaint()
         .endc
     .case WM_TIMER
-        Application.OnTimer()
+        app.OnTimer()
         .endc
     .case WM_CHAR
         .gotosw(WM_DESTROY) .if wParam == VK_ESCAPE
@@ -869,32 +853,20 @@ CApplication::CreateApplicationWindow endp
 
 ; Provides the entry point to the application
 
-CApplication::CApplication proc uses rdi instance:HINSTANCE, vtable:ptr CApplicationVtbl
+CApplication::CApplication proc uses rdi hInstance:HINSTANCE
 
-    mov r9,rcx
-    mov rdi,rcx
-    xor eax,eaX
-    mov ecx,CApplication
-    rep stosb
-    mov rdi,r9
-    mov [rdi].lpVtbl,r8
-    mov [rdi].m_hInstance,rdx
+    mov rdi,@ComAlloc(CApplication)
+    mov [rdi].m_hInstance,hInstance
     mov [rdi].m_timer,20
-    for q,<Run,BeforeEnteringMessageLoop,EnterMessageLoop,AfterLeavingMessageLoop,
-        CreateApplicationWindow,ShowApplicationWindow,DestroyApplicationWindow,
-        InitObjects,GoFullScreen,GoPartialScreen,OnKeyDown,OnClose,OnDestroy,
-        OnPaint,OnSize,OnTimer>
-        mov [r8].CApplicationVtbl.q,&CApplication_&q
-    endm
+    mov rax,rdi
     ret
 
 CApplication::CApplication endp
 
 _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
-    .new vt:CApplicationVtbl
-    .new application:CApplication(hInstance, &vt)
-    .return application.Run()
+    .new app:ptr CApplication(hInstance)
+    .return app.Run()
 
 _tWinMain endp
 

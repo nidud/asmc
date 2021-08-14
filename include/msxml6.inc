@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,377 +18,25 @@ include ole2.inc
 endif
 
 ifndef __msxml6_h__
-__msxml6_h__ equ <>
-
-
-ifndef __IXMLDOMNode_FWD_DEFINED__
-__IXMLDOMNode_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMDocument_FWD_DEFINED__
-__IXMLDOMDocument_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMDocument2_FWD_DEFINED__
-__IXMLDOMDocument2_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMDocument3_FWD_DEFINED__
-__IXMLDOMDocument3_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMSchemaCollection_FWD_DEFINED__
-__IXMLDOMSchemaCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNodeList_FWD_DEFINED__
-__IXMLDOMNodeList_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMSelection_FWD_DEFINED__
-__IXMLDOMSelection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNamedNodeMap_FWD_DEFINED__
-__IXMLDOMNamedNodeMap_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMDocumentFragment_FWD_DEFINED__
-__IXMLDOMDocumentFragment_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMCharacterData_FWD_DEFINED__
-__IXMLDOMCharacterData_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMAttribute_FWD_DEFINED__
-__IXMLDOMAttribute_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMElement_FWD_DEFINED__
-__IXMLDOMElement_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMText_FWD_DEFINED__
-__IXMLDOMText_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMComment_FWD_DEFINED__
-__IXMLDOMComment_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMProcessingInstruction_FWD_DEFINED__
-__IXMLDOMProcessingInstruction_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMCDATASection_FWD_DEFINED__
-__IXMLDOMCDATASection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMDocumentType_FWD_DEFINED__
-__IXMLDOMDocumentType_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNotation_FWD_DEFINED__
-__IXMLDOMNotation_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMEntity_FWD_DEFINED__
-__IXMLDOMEntity_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMEntityReference_FWD_DEFINED__
-__IXMLDOMEntityReference_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMImplementation_FWD_DEFINED__
-__IXMLDOMImplementation_FWD_DEFINED__ equ 1
-endif
-ifndef __IXTLRuntime_FWD_DEFINED__
-__IXTLRuntime_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseError_FWD_DEFINED__
-__IXMLDOMParseError_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseError2_FWD_DEFINED__
-__IXMLDOMParseError2_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseErrorCollection_FWD_DEFINED__
-__IXMLDOMParseErrorCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __XMLDOMDocumentEvents_FWD_DEFINED__
-__XMLDOMDocumentEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IXSLProcessor_FWD_DEFINED__
-__IXSLProcessor_FWD_DEFINED__ equ 1
-endif
-ifndef __IXSLTemplate_FWD_DEFINED__
-__IXSLTemplate_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLHttpRequest_FWD_DEFINED__
-__IXMLHttpRequest_FWD_DEFINED__ equ 1
-endif
-ifndef __IServerXMLHTTPRequest_FWD_DEFINED__
-__IServerXMLHTTPRequest_FWD_DEFINED__ equ 1
-endif
-ifndef __IServerXMLHTTPRequest2_FWD_DEFINED__
-__IServerXMLHTTPRequest2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXXMLReader_FWD_DEFINED__
-__ISAXXMLReader_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXXMLFilter_FWD_DEFINED__
-__ISAXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXLocator_FWD_DEFINED__
-__ISAXLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXEntityResolver_FWD_DEFINED__
-__ISAXEntityResolver_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXContentHandler_FWD_DEFINED__
-__ISAXContentHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXDTDHandler_FWD_DEFINED__
-__ISAXDTDHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXErrorHandler_FWD_DEFINED__
-__ISAXErrorHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXLexicalHandler_FWD_DEFINED__
-__ISAXLexicalHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXDeclHandler_FWD_DEFINED__
-__ISAXDeclHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXAttributes_FWD_DEFINED__
-__ISAXAttributes_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXXMLReader_FWD_DEFINED__
-__IVBSAXXMLReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXXMLFilter_FWD_DEFINED__
-__IVBSAXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXLocator_FWD_DEFINED__
-__IVBSAXLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXEntityResolver_FWD_DEFINED__
-__IVBSAXEntityResolver_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXContentHandler_FWD_DEFINED__
-__IVBSAXContentHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXDTDHandler_FWD_DEFINED__
-__IVBSAXDTDHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXErrorHandler_FWD_DEFINED__
-__IVBSAXErrorHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXLexicalHandler_FWD_DEFINED__
-__IVBSAXLexicalHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXDeclHandler_FWD_DEFINED__
-__IVBSAXDeclHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXAttributes_FWD_DEFINED__
-__IVBSAXAttributes_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXWriter_FWD_DEFINED__
-__IMXWriter_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXAttributes_FWD_DEFINED__
-__IMXAttributes_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXReaderControl_FWD_DEFINED__
-__IMXReaderControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXSchemaDeclHandler_FWD_DEFINED__
-__IMXSchemaDeclHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXNamespacePrefixes_FWD_DEFINED__
-__IMXNamespacePrefixes_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBMXNamespaceManager_FWD_DEFINED__
-__IVBMXNamespaceManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXNamespaceManager_FWD_DEFINED__
-__IMXNamespaceManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXXMLFilter_FWD_DEFINED__
-__IMXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMSchemaCollection2_FWD_DEFINED__
-__IXMLDOMSchemaCollection2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaStringCollection_FWD_DEFINED__
-__ISchemaStringCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaItemCollection_FWD_DEFINED__
-__ISchemaItemCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaItem_FWD_DEFINED__
-__ISchemaItem_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchema_FWD_DEFINED__
-__ISchema_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaParticle_FWD_DEFINED__
-__ISchemaParticle_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAttribute_FWD_DEFINED__
-__ISchemaAttribute_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaElement_FWD_DEFINED__
-__ISchemaElement_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaType_FWD_DEFINED__
-__ISchemaType_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaComplexType_FWD_DEFINED__
-__ISchemaComplexType_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAttributeGroup_FWD_DEFINED__
-__ISchemaAttributeGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaModelGroup_FWD_DEFINED__
-__ISchemaModelGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAny_FWD_DEFINED__
-__ISchemaAny_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaIdentityConstraint_FWD_DEFINED__
-__ISchemaIdentityConstraint_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaNotation_FWD_DEFINED__
-__ISchemaNotation_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNode_FWD_DEFINED__
-__IXMLDOMNode_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNotation_FWD_DEFINED__
-__IXMLDOMNotation_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMEntity_FWD_DEFINED__
-__IXMLDOMEntity_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseError_FWD_DEFINED__
-__IXMLDOMParseError_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseError2_FWD_DEFINED__
-__IXMLDOMParseError2_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMParseErrorCollection_FWD_DEFINED__
-__IXMLDOMParseErrorCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXTLRuntime_FWD_DEFINED__
-__IXTLRuntime_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXXMLReader_FWD_DEFINED__
-__ISAXXMLReader_FWD_DEFINED__ equ 1
-endif
-ifndef __ISAXXMLFilter_FWD_DEFINED__
-__ISAXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IVBSAXXMLFilter_FWD_DEFINED__
-__IVBSAXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXReaderControl_FWD_DEFINED__
-__IMXReaderControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXSchemaDeclHandler_FWD_DEFINED__
-__IMXSchemaDeclHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaItem_FWD_DEFINED__
-__ISchemaItem_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaParticle_FWD_DEFINED__
-__ISchemaParticle_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaElement_FWD_DEFINED__
-__ISchemaElement_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaType_FWD_DEFINED__
-__ISchemaType_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaComplexType_FWD_DEFINED__
-__ISchemaComplexType_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAny_FWD_DEFINED__
-__ISchemaAny_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaModelGroup_FWD_DEFINED__
-__ISchemaModelGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __IMXXMLFilter_FWD_DEFINED__
-__IMXXMLFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAttribute_FWD_DEFINED__
-__ISchemaAttribute_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaAttributeGroup_FWD_DEFINED__
-__ISchemaAttributeGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaIdentityConstraint_FWD_DEFINED__
-__ISchemaIdentityConstraint_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaNotation_FWD_DEFINED__
-__ISchemaNotation_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMNodeList_FWD_DEFINED__
-__IXMLDOMNodeList_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDOMSelection_FWD_DEFINED__
-__IXMLDOMSelection_FWD_DEFINED__ equ 1
-endif
-ifndef __XMLDOMDocumentEvents_FWD_DEFINED__
-__XMLDOMDocumentEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __DOMDocument60_FWD_DEFINED__
-__DOMDocument60_FWD_DEFINED__ equ 1
-endif
-ifndef __FreeThreadedDOMDocument60_FWD_DEFINED__
-__FreeThreadedDOMDocument60_FWD_DEFINED__ equ 1
-endif
-ifndef __XMLSchemaCache60_FWD_DEFINED__
-__XMLSchemaCache60_FWD_DEFINED__ equ 1
-endif
-ifndef __XSLTemplate60_FWD_DEFINED__
-__XSLTemplate60_FWD_DEFINED__ equ 1
-endif
-ifndef __XMLHTTP60_FWD_DEFINED__
-__XMLHTTP60_FWD_DEFINED__ equ 1
-endif
-ifndef __FreeThreadedXMLHTTP60_FWD_DEFINED__
-__FreeThreadedXMLHTTP60_FWD_DEFINED__ equ 1
-endif
-ifndef __ServerXMLHTTP60_FWD_DEFINED__
-__ServerXMLHTTP60_FWD_DEFINED__ equ 1
-endif
-ifndef __SAXXMLReader60_FWD_DEFINED__
-__SAXXMLReader60_FWD_DEFINED__ equ 1
-endif
-ifndef __MXXMLWriter60_FWD_DEFINED__
-__MXXMLWriter60_FWD_DEFINED__ equ 1
-endif
-ifndef __MXHTMLWriter60_FWD_DEFINED__
-__MXHTMLWriter60_FWD_DEFINED__ equ 1
-endif
-ifndef __SAXAttributes60_FWD_DEFINED__
-__SAXAttributes60_FWD_DEFINED__ equ 1
-endif
-ifndef __MXNamespaceManager60_FWD_DEFINED__
-__MXNamespaceManager60_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLHTTPRequest2Callback_FWD_DEFINED__
-__IXMLHTTPRequest2Callback_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLHTTPRequest2_FWD_DEFINED__
-__IXMLHTTPRequest2_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLHTTPRequest3Callback_FWD_DEFINED__
-__IXMLHTTPRequest3Callback_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLHTTPRequest3_FWD_DEFINED__
-__IXMLHTTPRequest3_FWD_DEFINED__ equ 1
-endif
+define __msxml6_h__
 
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
-
 include winapifamily.inc
 
 ifdef _WIN64
-ULONG_PTR		typedef qword
-PULONG_PTR		typedef ptr qword
+ULONG_PTR typedef qword
+PULONG_PTR typedef ptr qword
 else
-ULONG_PTR		typedef dword
-PULONG_PTR		typedef ptr dword
+ULONG_PTR typedef dword
+PULONG_PTR typedef ptr dword
 endif
+
 ifdef __ISAXXMLReader_INTERFACE_DEFINED__
 undef __MSXML2_LIBRARY_DEFINED__
 endif
+
 ifdef __USE_MSXML6_NAMESPACE__
 endif
 
@@ -1873,22 +1521,16 @@ endif
 endif
 
 ifndef __MSXML2_LIBRARY_DEFINED__
-__MSXML2_LIBRARY_DEFINED__ equ 1
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
+define __MSXML2_LIBRARY_DEFINED__
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-CLSID_XmlHttpRequest	equ <CLSID_FreeThreadedXMLHTTP60>
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+define CLSID_XmlHttpRequest <CLSID_FreeThreadedXMLHTTP60>
 endif
 
 externdef LIBID_MSXML2:IID
 
 ifndef __XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__
-__XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__ equ 1
+define __XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__
 
 externdef DIID_XMLDOMDocumentEvents:IID
 
@@ -1921,8 +1563,10 @@ E_XML_INVALID		equ 0xC00CE225
 E_XML_BUFFERTOOSMALL	equ 0xC00CE226
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-if NOT defined(__msxml_xhr_enums)
-__msxml_xhr_enums equ 1
+
+ifndef __msxml_xhr_enums
+define __msxml_xhr_enums
+
 .enum XHR_COOKIE_STATE {
     XHR_COOKIE_STATE_UNKNOWN	= 0,
     XHR_COOKIE_STATE_ACCEPT	= 0x1,
@@ -1988,6 +1632,7 @@ __msxml_xhr_enums equ 1
     }
 
 endif
+
 XHR_COOKIE		STRUC
 pwszUrl			LPWSTR ?
 pwszName		LPWSTR ?
@@ -1996,7 +1641,6 @@ pwszP3PPolicy		LPWSTR ?
 ftExpires		FILETIME <>
 dwFlags			dd ?
 XHR_COOKIE		ENDS
-
 
 ifndef __IXMLHTTPRequest2Callback_INTERFACE_DEFINED__
 __IXMLHTTPRequest2Callback_INTERFACE_DEFINED__ equ 1
@@ -2085,4 +1729,3 @@ VARIANT_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
 VARIANT_UserFree64	proto WINAPI :ptr DWORD, :ptr VARIANT
 
 endif
-end

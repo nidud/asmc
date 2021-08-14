@@ -1942,40 +1942,40 @@ ClearCustData proto WINAPI \
 
 if __STDC__ OR defined(NONAMELESSUNION)
 V_UNION macro X, Y
-	exitm<((X).n1.n2.n3.Y)>
+	exitm<(X.n1.n2.n3.Y)>
 	endm
 V_VT macro X
-	exitm<((X).n1.n2.vt)>
+	exitm<(X.n1.n2.vt)>
 	endm
 V_RECORDINFO macro X
-	exitm<((X).n1.n2.n3.brecVal.pRecInfo)>
+	exitm<(X.n1.n2.n3.brecVal.pRecInfo)>
 	endm
 V_RECORD macro X
-	exitm<((X).n1.n2.n3.brecVal.pvRecord)>
+	exitm<(X.n1.n2.n3.brecVal.pvRecord)>
 	endm
 else
-V_UNION macro X, Y
-	exitm<((X).Y)>
-	endm
-V_VT macro X
-	exitm<((X).vt)>
-	endm
-V_RECORDINFO macro X
-	exitm<((X).pRecInfo)>
-	endm
-V_RECORD macro X
-	exitm<((X).pvRecord)>
-	endm
+V_UNION proto fastcall X:ptr VARIANT, Y:abs {
+	retm<[rcx].VARIANT.Y>
+	}
+V_VT proto fastcall X:ptr VARIANT {
+	retm<[rcx].VARIANT.vt>
+	}
+V_RECORDINFO proto fastcall X:ptr VARIANT {
+	retm<[rcx].VARIANT.pRecInfo>
+	}
+V_RECORD proto fastcall X:ptr VARIANT {
+	retm<[rcx].VARIANT.pvRecord>
+	}
 endif
 
 V_ISBYREF macro X
-	exitm<(V_VT(X) AND VT_BYREF)>
+	exitm<(V_VT(X) & VT_BYREF)>
 	endm
 V_ISARRAY macro X
-	exitm<(V_VT(X) AND VT_ARRAY)>
+	exitm<(V_VT(X) & VT_ARRAY)>
 	endm
 V_ISVECTOR macro X
-	exitm<(V_VT(X) AND VT_VECTOR)>
+	exitm<(V_VT(X) & VT_VECTOR)>
 	endm
 V_NONE macro X
 	exitm<V_I2(X)>
@@ -2059,9 +2059,9 @@ V_BSTR macro X
 V_BSTRREF macro X
 	exitm<V_UNION(X, pbstrVal)>
 	endm
-V_DISPATCH macro X
-	exitm<V_UNION(X, pdispVal)>
-	endm
+V_DISPATCH proto fastcall X:ptr VARIANT {
+	retm<[rcx].VARIANT.pdispVal>
+	}
 V_DISPATCHREF macro X
 	exitm<V_UNION(X, ppdispVal)>
 	endm

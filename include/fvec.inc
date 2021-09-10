@@ -1,5 +1,5 @@
 ifndef _FVEC_H_INCLUDED
-_FVEC_H_INCLUDED equ <>
+define _FVEC_H_INCLUDED
 
     option win64:align
 
@@ -12,64 +12,8 @@ include vcruntime.inc
 .template F32vec4
     vec __m128 <>
 
-    .operator = :real4, :real4, :real4, :real4 {
-        movss xmm4,_4
-        movss xmm0,_1
-        _mm_store_ps([this], _mm_set_ps(xmm0, _2, _3, xmm4))
-        }
-    .operator = :vec128_t {
-        _mm_store_ps([this], _1)
-        }
-    .operator = :real4 {
-        _mm_store_ps([this], _mm_set_ps1(_mm_store_ps(xmm0, _1)))
-        }
-    .operator = :real8 {
-        _mm_store_ps([this], _mm_set_ps1(_mm_cvtsd_ss(xmm0, _1)))
-        }
     .inline __m128 {
         _mm_store_ps(xmm0, [this])
-        }
-    .operator & :vec128_t {
-        _mm_and_ps(xmm0, _1)
-        }
-    .operator | :vec128_t {
-        _mm_or_ps(xmm0, _1)
-        }
-    .operator ^ :vec128_t {
-        _mm_xor_ps(xmm0, _1)
-        }
-    .operator + :vec128_t {
-        _mm_add_ps(xmm0, _1)
-        }
-    .operator - :vec128_t {
-        _mm_sub_ps(xmm0, _1)
-        }
-    .operator * :vec128_t {
-        _mm_mul_ps(xmm0, _1)
-        }
-    .operator / :vec128_t {
-        _mm_div_ps(xmm0, _1)
-        }
-    .operator += :vec128_t {
-        _mm_store_ps([this], _mm_add_ps(xmm0, _1))
-        }
-    .operator -= :vec128_t {
-        _mm_store_ps([this], _mm_sub_ps(xmm0, _1))
-        }
-    .operator *= :vec128_t {
-        _mm_store_ps([this], _mm_mul_ps(xmm0, _1))
-        }
-    .operator /= :vec128_t {
-        _mm_store_ps([this], _mm_div_ps(xmm0, _1))
-        }
-    .operator &= :vec128_t {
-        _mm_store_ps([this], _mm_and_ps(xmm0, _1))
-        }
-    .operator |= :vec128_t {
-        _mm_store_ps([this], _mm_or_ps(xmm0, _1))
-        }
-    .operator ^= :vec128_t {
-        _mm_store_ps([this], _mm_xor_ps(xmm0, _1))
         }
 
     .inline add_horizontal {
@@ -208,61 +152,9 @@ endif
 .template F32vec1
     vec __m128 <>
 
-    .operator = :vec128_t {
-        _mm_store_ps([this], _1)
-        }
-    .operator = :real4 {
-        _mm_store_ss([this], _mm_set_ss(_1))
-        }
-    .operator = :real8 {
-        _mm_store_ps([this], _mm_set_ss(_mm_cvtsd_ss(xmm0, _1)))
-        }
     .inline __m128 {
         _mm_store_ps(xmm0, [this])
         }
-    .operator & :vec128_t {
-        _mm_and_ps(xmm0, _1)
-        }
-    .operator | :vec128_t {
-        _mm_or_ps(xmm0, _1)
-        }
-    .operator ^ :vec128_t {
-        _mm_xor_ps(xmm0, _1)
-        }
-    .operator + :vec128_t {
-        _mm_add_ss(xmm0, _1)
-        }
-    .operator - :vec128_t {
-        _mm_sub_ss(xmm0, _1)
-        }
-    .operator * :vec128_t {
-        _mm_mul_ss(xmm0, _1)
-        }
-    .operator / :vec128_t {
-        _mm_div_ss(xmm0, _1)
-        }
-    .operator += :vec128_t {
-        _mm_store_ps([this], _mm_add_ss(xmm0, _1))
-        }
-    .operator -= :vec128_t {
-        _mm_store_ps([this], _mm_sub_ss(xmm0, _1))
-        }
-    .operator *= :vec128_t {
-        _mm_store_ps([this], _mm_mul_ss(xmm0, _1))
-        }
-    .operator /= :vec128_t {
-        _mm_store_ps([this], _mm_div_ss(xmm0, _1))
-        }
-    .operator &= :vec128_t {
-        _mm_store_ps([this], _mm_and_ps(xmm0, _1))
-        }
-    .operator |= :vec128_t {
-        _mm_store_ps([this], _mm_or_ps(xmm0, _1))
-        }
-    .operator ^= :vec128_t {
-        _mm_store_ps([this], _mm_xor_ps(xmm0, _1))
-        }
-
     .inline sqrt {
         _mm_sqrt_ss(xmm0)
         }
@@ -272,7 +164,6 @@ endif
     .inline rsqrt {
         _mm_rsqrt_ss(xmm0)
         }
-
     .inline rcp_nr {
         _mm_store_ps(xmm1, xmm0)
         _mm_rcp_ss(xmm0)

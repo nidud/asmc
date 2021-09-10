@@ -44,7 +44,6 @@ define __EXPREVAL_INC
     AT_ALL   = AT_TYPE or AT_LABEL or AT_IND or AT_REG or AT_FIELD or AT_NUM or AT_UNDEF or AT_BF or AT_FLOAT
     }
 
-
 ; expression, returned by expression evaluator
 
 define E_INDIRECT	0x01 ; indirect addressing used
@@ -107,7 +106,6 @@ mbr		ptr asym ?	; struct member
 type		ptr asym ?	; for DOT operator. Must be last (see TokenAssign)!
 expr		ends
 expr_t		typedef ptr expr
-
 
 ; flags for last argument of EvalOperand()
 

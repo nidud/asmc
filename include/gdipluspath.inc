@@ -12,19 +12,19 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     .inline GraphicsPath :abs, :vararg {
         ifnb <_1>
-            this.typeid(GraphicsPath, _1)(_1, _2)
+            this.typeid(GraphicsPath_, _1)(_1, _2)
         else
-            this.GraphicsPathIMM32(FillModeAlternate)
+            this.GraphicsPath_imm(FillModeAlternate)
         endif
         mov this.lastResult,eax
         }
-    .inline GraphicsPathIMM32 :abs {
+    .inline GraphicsPath_imm :abs {
         GdipCreatePath(_1, this)
         }
-    .inline GraphicsPathPPointF :abs, :abs, :abs, :abs=<FillModeAlternate> {
+    .inline GraphicsPath_ptrPointF :abs, :abs, :abs, :abs=<FillModeAlternate> {
         GdipCreatePath2(_1, _2, _3, _4, this)
         }
-    .inline GraphicsPathPPoint :abs, :abs, :abs, :abs=<FillModeAlternate> {
+    .inline GraphicsPath_ptrPoint :abs, :abs, :abs, :abs=<FillModeAlternate> {
         GdipCreatePath2I(_1, _2, _3, _4, this)
         }
 
@@ -162,104 +162,104 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline AddLine :abs, :vararg {
-        this.typeid(AddLine, _1)(_1, _2)
+        this.typeid(AddLine_, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .inline AddLineIMMFLT :vararg {
+    .inline AddLine_flt :vararg {
         GdipAddPathLine(this.nativePath, _1)
         }
-    .inline AddLineIMM32 :vararg {
+    .inline AddLine_imm :vararg {
         GdipAddPathLineI(this.nativePath, _1)
         }
-    .inline AddLineREG128   :vararg { this.AddLineIMMFLT(_1) }
-    .inline AddLineREAL4    :vararg { this.AddLineIMMFLT(_1) }
-    .inline AddLineREG32    :vararg { this.AddLineIMM32(_1) }
-    .inline AddLineSDWORD   :vararg { this.AddLineIMM32(_1) }
+    .inline AddLine_oword   :vararg { this.AddLine_flt(_1) }
+    .inline AddLine_real4   :vararg { this.AddLine_flt(_1) }
+    .inline AddLine_dword   :vararg { this.AddLine_imm(_1) }
+    .inline AddLine_sdword  :vararg { this.AddLine_imm(_1) }
 
-    .inline AddLinePPointF :ptr PointF, :ptr PointF, :vararg {
-        this.AddLineIMMFLT([rdx].PointF.X, [rdx].PointF.Y, [r8].PointF.X, [r8].PointF.Y)
+    .inline AddLine_ptrPointF :ptr PointF, :ptr PointF, :vararg {
+        this.AddLine_flt([rdx].PointF.X, [rdx].PointF.Y, [r8].PointF.X, [r8].PointF.Y)
         }
-    .inline AddLinePPoint :ptr Point, :ptr Point, :vararg {
-        this.AddLineIMM32([rdx].Point.X, [rdx].Point.Y, [r8].Point.X, [r8].Point.Y)
+    .inline AddLine_ptrPoint :ptr Point, :ptr Point, :vararg {
+        this.AddLine_imm([rdx].Point.X, [rdx].Point.Y, [r8].Point.X, [r8].Point.Y)
         }
 
     .inline AddLines :abs, :vararg {
-        this.typeid(AddLines, _1)(_1, _2)
+        this.typeid(AddLines_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline AddLinesPPointF :vararg {
+    .inline AddLines_ptrPointF :vararg {
         GdipAddPathLine2(this.nativePath, _1)
         }
-    .inline AddLinesPPoint :vararg {
+    .inline AddLines_ptrPoint :vararg {
         GdipAddPathLine2I(this.nativePath, _1)
         }
 
     .inline AddArc :abs, :vararg {
-        this.typeid(AddArc, _1)(_1, _2)
+        this.typeid(AddArc_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline AddArcIMMFLT :vararg {
+    .inline AddArc_flt :vararg {
         GdipAddPathArc(this.nativePath, _1)
         }
-    .inline AddArcIMM32 :vararg {
+    .inline AddArc_imm :vararg {
         GdipAddPathArcI(this.nativePath, _1)
         }
-    .inline AddArcREG128   :vararg { this.AddArcIMMFLT(_1) }
-    .inline AddArcREAL4    :vararg { this.AddArcIMMFLT(_1) }
-    .inline AddArcREG32    :vararg { this.AddArcIMM32(_1) }
-    .inline AddArcSDWORD   :vararg { this.AddArcIMM32(_1) }
+    .inline AddArc_oword  :vararg { this.AddArc_flt(_1) }
+    .inline AddArc_real4  :vararg { this.AddArc_flt(_1) }
+    .inline AddArc_dword  :vararg { this.AddArc_imm(_1) }
+    .inline AddArc_sdword :vararg { this.AddArc_imm(_1) }
 
-    .inline AddArcPRectF :ptr RectF, :vararg {
+    .inline AddArc_ptrRectF :ptr RectF, :vararg {
         GdipAddPathArc(this.nativePath, \
             [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
         }
-    .inline AddArcPRect :ptr Rect, :vararg {
+    .inline AddArc_ptrRect :ptr Rect, :vararg {
         GdipAddPathArcI(this.nativePath, \
             [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
         }
 
     .inline AddBezier :abs, :vararg {
-        this.typeid(AddBezier, _1)(_1, _2)
+        this.typeid(AddBezier_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline AddBezierREG128   :vararg { this.AddBezierIMMFLT(_1) }
-    .inline AddBezierREAL4  :vararg { this.AddBezierIMMFLT(_1) }
-    .inline AddBezierREG32    :vararg { this.AddBezierIMM32(_1) }
-    .inline AddBezierSDWORD   :vararg { this.AddBezierIMM32(_1) }
+    .inline AddBezier_oword  :vararg { this.AddBezier_flt(_1) }
+    .inline AddBezier_real4  :vararg { this.AddBezier_flt(_1) }
+    .inline AddBezier_dword  :vararg { this.AddBezier_imm(_1) }
+    .inline AddBezier_sdword :vararg { this.AddBezier_imm(_1) }
 
-    .inline AddBezierIMMFLT :vararg {
+    .inline AddBezier_flt :vararg {
         GdipAddPathBezier(this.nativePath, _1)
         }
-    .inline AddBezierIMM32 :vararg {
+    .inline AddBezier_imm :vararg {
         GdipAddPathBezierI(this.nativePath, _1)
         }
-    .inline AddBezierPPointF :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
+    .inline AddBezier_ptrPointF :ptr PointF, :ptr PointF, :ptr PointF, :ptr PointF, :vararg {
         mov r10,[rsp+8*4]
         GdipAddPathBezier(this.nativePath, [rdx].PointF.X, [rdx].PointF.Y,\
             [r8].PointF.X, [r8].PointF.Y, [r9].PointF.X, [r9].PointF.Y, [r10].PointF.X, [r10].PointF.Y)
         }
-    .inline AddBezierPPoint :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
+    .inline AddBezier_ptrPoint :ptr Point, :ptr Point, :ptr Point, :ptr Point, :vararg {
         mov r10,[rsp+8*4]
         GdipAddPathBezierI(this.nativePath, [rdx].Point.X, [rdx].Point.Y,\
             [r8].Point.X, [r8].Point.Y, [r9].Point.X, [r9].Point.Y, [r10].Point.X, [r10].Point.Y)
         }
 
     .inline AddBeziers :abs, :vararg {
-        this.typeid(AddBeziers, _1)(_1, _2)
+        this.typeid(AddBeziers_, _1)(_1, _2)
         }
-    .inline AddBeziersPPointF :vararg {
+    .inline AddBeziers_ptrPointF :vararg {
         GdipAddPathBeziers(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddBeziersPPoint :vararg {
+    .inline AddBeziers_ptrPoint :vararg {
         GdipAddPathBeziersI(this.nativePath, _1)
         GdipSetStatus(this)
         }
 
     .inline AddCurve :abs, :vararg {
-        this.typeid(AddCurve, _1)(_1, _2)
+        this.typeid(AddCurve_, _1)(_1, _2)
         }
-    .inline AddCurvePPointF :abs, :abs, :abs, :abs, :vararg {
+    .inline AddCurve_ptrPointF :abs, :abs, :abs, :abs, :vararg {
         ifb <_3>
             GdipAddPathCurve(this.nativePath, _1, _2)
         elseifb <_4>
@@ -269,7 +269,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         endif
         GdipSetStatus(this)
         }
-    .inline AddCurvePPoint :abs, :abs, :abs, :abs, :vararg {
+    .inline AddCurve_ptrPoint :abs, :abs, :abs, :abs, :vararg {
         ifb <_3>
             GdipAddPathCurveI(this.nativePath, _1, _2)
         elseifb <_4>
@@ -281,9 +281,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline AddClosedCurve :abs, :vararg {
-        this.typeid(AddClosedCurve, _1)(_1, _2)
+        this.typeid(AddClosedCurve_, _1)(_1, _2)
         }
-    .inline AddClosedCurvePPointF :abs, :abs, :abs, :vararg {
+    .inline AddClosedCurve_ptrPointF :abs, :abs, :abs, :vararg {
         ifb <_3>
             GdipAddPathClosedCurve(this.nativePath, _1, _2)
         else
@@ -291,7 +291,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         endif
         GdipSetStatus(this)
         }
-    .inline AddClosedCurvePPoint :abs, :abs, :abs, :vararg {
+    .inline AddClosedCurve_ptrPoint :abs, :abs, :abs, :vararg {
         ifb <_3>
             GdipAddPathClosedCurveI(this.nativePath, _1, _2)
         else
@@ -301,77 +301,77 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline AddRectangle :abs, :vararg {
-        this.typeid(AddRectangle, _1)(_1, _2)
+        this.typeid(AddRectangle_, _1)(_1, _2)
         }
-    .inline AddRectangleIMM32 :vararg {
+    .inline AddRectangle_imm :vararg {
         GdipAddPathRectangleI(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddRectangleREG32  :vararg { this.AddRectangleIMM32(_1) }
-    .inline AddRectangleSDWORD :vararg { this.AddRectangleIMM32(_1) }
-    .inline AddRectanglePRectF :ptr RectF, :vararg {
+    .inline AddRectangle_dword  :vararg { this.AddRectangle_imm(_1) }
+    .inline AddRectangle_sdword :vararg { this.AddRectangle_imm(_1) }
+    .inline AddRectangle_ptrRectF :ptr RectF, :vararg {
         GdipAddPathRectangle(this.nativePath,\
                 [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height)
         GdipSetStatus(this)
         }
-    .inline AddRectanglePRect :ptr Rect, :vararg {
+    .inline AddRectangle_ptrRect :ptr Rect, :vararg {
         GdipAddPathRectangleI(this.nativePath,\
                 [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height)
         GdipSetStatus(this)
         }
 
     .inline AddRectangles :abs, :vararg {
-        this.typeid(AddRectangles, _1)(_1, _2)
+        this.typeid(AddRectangles_, _1)(_1, _2)
         }
-    .inline AddRectanglesPRectF :vararg {
+    .inline AddRectangles_ptrRectF :vararg {
         GdipAddPathRectangles(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddRectanglesPRect :vararg {
+    .inline AddRectangles_ptrRect :vararg {
         GdipAddPathRectanglesI(this.nativePath, _1)
         GdipSetStatus(this)
         }
 
     .inline AddEllipse :abs, :vararg {
-        this.typeid(AddEllipse, _1)(_1, _2)
+        this.typeid(AddEllipse_, _1)(_1, _2)
         }
-    .inline AddEllipseIMMFLT :vararg {
+    .inline AddEllipse_flt :vararg {
         GdipAddPathEllipse(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddEllipseIMM32 :vararg {
+    .inline AddEllipse_imm :vararg {
         GdipAddPathEllipseI(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddEllipseREG128 :vararg { this.AddEllipseIMMFLT(_1) }
-    .inline AddEllipseREAL4  :vararg { this.AddEllipseIMMFLT(_1) }
-    .inline AddEllipseREG32  :vararg { this.AddEllipseIMM32(_1) }
-    .inline AddEllipseSDWORD :vararg { this.AddEllipseIMM32(_1) }
+    .inline AddEllipse_oword  :vararg { this.AddEllipse_flt(_1) }
+    .inline AddEllipse_real4  :vararg { this.AddEllipse_flt(_1) }
+    .inline AddEllipse_dword  :vararg { this.AddEllipse_imm(_1) }
+    .inline AddEllipse_sdword :vararg { this.AddEllipse_imm(_1) }
 
     .inline AddPie :abs, :vararg {
-        this.typeid(AddPie, _1)(_1, _2)
+        this.typeid(AddPie_, _1)(_1, _2)
         }
-    .inline AddPieIMMFLT :vararg {
+    .inline AddPie_flt :vararg {
         GdipAddPathPie(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddPieIMM32 :vararg {
+    .inline AddPie_imm :vararg {
         GdipAddPathPieI(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddPieREG128 :vararg { this.AddPieIMMFLT(_1) }
-    .inline AddPieREAL4  :vararg { this.AddPieIMMFLT(_1) }
-    .inline AddPieREG32  :vararg { this.AddPieIMM32(_1) }
-    .inline AddPieSDWORD :vararg { this.AddPieIMM32(_1) }
+    .inline AddPie_oword  :vararg { this.AddPie_flt(_1) }
+    .inline AddPie_real4  :vararg { this.AddPie_flt(_1) }
+    .inline AddPie_dword  :vararg { this.AddPie_imm(_1) }
+    .inline AddPie_sdword :vararg { this.AddPie_imm(_1) }
 
     .inline AddPolygon :abs, :vararg {
-        this.typeid(AddPolygon, _1)(_1, _2)
+        this.typeid(AddPolygon_, _1)(_1, _2)
         }
-    .inline AddPolygonPPointF :vararg {
+    .inline AddPolygon_ptrPointF :vararg {
         GdipAddPathPolygon(this.nativePath, _1)
         GdipSetStatus(this)
         }
-    .inline AddPolygonPPoint :vararg {
+    .inline AddPolygon_ptrPoint :vararg {
         GdipAddPathPolygonI(this.nativePath, _1)
         GdipSetStatus(this)
         }
@@ -384,10 +384,10 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline AddString :abs, :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(AddString, _6)(_1, _2, _3, _4, _5, _6, _7, _8)
+        this.typeid(AddString_, _6)(_1, _2, _3, _4, _5, _6, _7, _8)
         }
 
-    .inline AddStringPPointF :abs, :abs,\
+    .inline AddString_ptrPointF :abs, :abs,\
             :ptr FontFamily, :abs, :abs, :ptr PointF, :ptr StringFormat, :vararg {
 
         .new    rect:RectF
@@ -408,7 +408,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .inline AddStringPRectF :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
+    .inline AddString_ptrRectF :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
         .if r9
             mov r9,[r9].FontFamily.nativeFamily
         .endif
@@ -420,15 +420,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .inline AddStringPPoint :abs, :abs, :ptr FontFamily, :abs, :abs, :ptr Point, :ptr StringFormat, :vararg {
+    .inline AddString_ptrPoint :abs, :abs, :ptr FontFamily, :abs, :abs, :ptr Point, :ptr StringFormat, :vararg {
 
-       .new     rect:Rect
+       .new rect:Rect
 
-        mov     r10,_6
-        mov     rect.X,[r10].PointF.X
-        mov     rect.Y,[r10].PointF.Y
-        mov     rect.X,0.0
-        mov     rect.X,0.0
+        mov r10,_6
+        mov rect.X,[r10].PointF.X
+        mov rect.Y,[r10].PointF.Y
+        mov rect.X,0.0
+        mov rect.X,0.0
         .if r9
             mov r9,[r9].FontFamily.nativeFamily
         .endif
@@ -440,12 +440,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GdipSetStatus(this)
         }
 
-    .inline AddStringPRect :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
+    .inline AddString_ptrRect :abs, :abs, :ptr FontFamily, :abs, :abs, :abs, :ptr StringFormat, :vararg {
 
         .if r9
             mov r9,[r9].FontFamily.nativeFamily
         .endif
-        mov     r10,[rsp+7*8]
+        mov r10,[rsp+7*8]
         .if r10
             mov r10,[r10].StringFormat.nativeFormat
         .endif
@@ -464,11 +464,11 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; This is not always the tightest bounds.
 
     .inline GetBounds :abs, :vararg {
-        this.typeid(GetBounds, _1)(_1, _2)
+        this.typeid(GetBounds_, _1)(_1, _2)
         }
-    .inline GetBoundsPRectF :ptr RectF, :ptr Matrix, :ptr Pen {
+    .inline GetBounds_ptrRectF :ptr RectF, :ptr Matrix, :ptr Pen {
         }
-    .inline GetBoundsPRect :ptr Rect, :ptr Matrix, :ptr Pen {
+    .inline GetBounds_ptrRect :ptr Rect, :ptr Matrix, :ptr Pen {
         }
 
     ;; Once flattened, the resultant path is made of line segments and
@@ -531,13 +531,13 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline GetPathPoints :abs, :vararg {
-        this.typeid(GetPathPoints, _1)(_1, _2)
+        this.typeid(GetPathPoints_, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .inline GetPathPointsPPointF :abs, :vararg {
+    .inline GetPathPoints_ptrPointF :abs, :vararg {
         GdipGetPathPoints(this.nativePath, _1, _2)
         }
-    .inline GetPathPointsPPoint :abs, :vararg {
+    .inline GetPathPoints_ptrPoint :abs, :vararg {
         GdipGetPathPointsI(this.nativePath, _1, _2)
         }
 
@@ -547,28 +547,28 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline IsVisible :abs, :vararg {
-        this.typeid(IsVisible, _1)(_1, _2)
+        this.typeid(IsVisible_, _1)(_1, _2)
         }
-    .inline IsVisibleIMM32 :vararg {
+    .inline IsVisible_imm :vararg {
         mov eax,NotImplemented
         }
-    .inline IsVisibleIMMFLT :vararg {
+    .inline IsVisible_flt :vararg {
         mov eax,NotImplemented
         }
-    .inline IsVisiblePPoint :ptr Point, :vararg {
+    .inline IsVisible_ptrPoint :ptr Point, :vararg {
         this.IsVisible([rdx].Point.X, [rdx].Point.Y, _2)
         }
-    .inline IsVisiblePPointF :ptr PointF, :vararg {
+    .inline IsVisible_ptrPointF :ptr PointF, :vararg {
         this.IsVisible([rdx].PointF.X, [rdx].PointF.Y, _2)
         }
 
     .inline IsOutlineVisible :abs, :vararg {
-        this.typeid(IsOutlineVisible, _1)(_1, _2)
+        this.typeid(IsOutlineVisible_, _1)(_1, _2)
         }
-    .inline IsOutlineVisibleIMM32 :vararg {
+    .inline IsOutlineVisible_imm :vararg {
         mov eax,NotImplemented
         }
-    .inline IsOutlineVisibleIMMFLT :vararg {
+    .inline IsOutlineVisible_flt :vararg {
         mov eax,NotImplemented
         }
     .inline IsOutlineVisible3 :ptr PointF, :vararg {
@@ -618,14 +618,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
     .inline NextSubpath :abs, :vararg {
-        this.typeid(NextSubpath, _1)(_1, _2)
+        this.typeid(NextSubpath_, _1)(_1, _2)
         }
-    .inline NextSubpathPSDWORD :vararg {
+    .inline NextSubpath_ptrsdword :vararg {
         GdipPathIterNextSubpath(this.nativeIterator, addr this.scratch, _1)
         this.SetStatus()
         mov eax,this.scratch
         }
-    .inline NextSubpathPGraphicsPath :ptr GraphicsPath, :vararg {
+    .inline NextSubpath_ptrGraphicsPath :ptr GraphicsPath, :vararg {
         .if rdx
             mov rdx,[rdx].GraphicsPath.nativePath
         .endif
@@ -641,14 +641,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline NextMarker :abs, :vararg {
-        this.typeid(NextMarker, _1)(_1, _2)
+        this.typeid(NextMarker_, _1)(_1, _2)
         }
-    .inline NextMarkerPSDWORD :vararg {
+    .inline NextMarker_ptrsdword :vararg {
         GdipPathIterNextMarker(this.nativeIterator, addr this.scratch, _1)
         this.SetStatus()
         mov eax,this.scratch
         }
-    .inline NextMarkerPGraphicsPath :ptr GraphicsPath, :vararg {
+    .inline NextMarker_ptrGraphicsPath :ptr GraphicsPath, :vararg {
         .if rdx
             mov rdx,[rdx].GraphicsPath.nativePath
         .endif
@@ -715,17 +715,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     GpPathGradient typedef PathGradientBrush
 
     .inline PathGradientBrush :abs, :vararg {
-        this.typeid(PathGradientBrush, _1)(_1, _2)
+        this.typeid(PathGradientBrush_, _1)(_1, _2)
         mov this.lastResult,eax
         }
 
-    .inline PathGradientBrushPPointF :abs, :abs, :abs=<WrapModeClamp>, :vararg {
+    .inline PathGradientBrush_ptrPointF :abs, :abs, :abs=<WrapModeClamp>, :vararg {
         GdipCreatePathGradient(_1, _2, _3, addr this.nativeBrush)
         }
-    .inline PathGradientBrushPPoint :abs, :abs, :abs=<WrapModeClamp>, :vararg {
+    .inline PathGradientBrush_ptrPoint :abs, :abs, :abs=<WrapModeClamp>, :vararg {
         GdipCreatePathGradientI(_1, _2, _3, addr this.nativeBrush)
         }
-    .inline PathGradientBrushPGraphicsPath :ptr GraphicsPath, :vararg {
+    .inline PathGradientBrush_ptrGraphicsPath :ptr GraphicsPath, :vararg {
         mov rcx,rdx
         GdipCreatePathGradientFromPath([rcx].GraphicsPath.nativePath, addr this.nativeBrush)
         }
@@ -788,35 +788,35 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline GetCenterPoint :abs, :vararg {
-        this.typeid(GetCenterPoint, _1)(_1, _2)
+        this.typeid(GetCenterPoint_, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .inline GetCenterPointPPointF :vararg {
+    .inline GetCenterPoint_ptrPointF :vararg {
         GdipGetPathGradientCenterPoint(this.nativeBrush, _1)
         }
-    .inline GetCenterPointPPoint :vararg {
+    .inline GetCenterPoint_ptrPoint :vararg {
         GdipGetPathGradientCenterPointI(this.nativeBrush, _1)
         }
 
     .inline SetCenterPoint :abs, :vararg {
-        this.typeid(SetCenterPoint, _1)(_1, _2)
+        this.typeid(SetCenterPoint_, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .inline SetCenterPointPPointF :vararg {
+    .inline SetCenterPoint_ptrPointF :vararg {
         GdipSetPathGradientCenterPoint(this.nativeBrush, _1)
         }
-    .inline SetCenterPointPPoint :vararg {
+    .inline SetCenterPoint_ptrPoint :vararg {
         GdipSetPathGradientCenterPointI(this.nativeBrush, _1)
         }
 
     .inline GetRectangle :abs, :vararg {
-        this.typeid(GetRectangle, _1)(_1, _2)
+        this.typeid(GetRectangle_, _1)(_1, _2)
         GdipSetStatus(this)
         }
-    .inline GetRectanglePRectF :vararg {
+    .inline GetRectangle_ptrRectF :vararg {
         GdipGetPathGradientRect(this.nativeBrush, _1)
         }
-    .inline GetRectanglePRect :vararg {
+    .inline GetRectangle_ptrRect :vararg {
         GdipGetPathGradientRectI(this.nativeBrush, _1)
         }
 

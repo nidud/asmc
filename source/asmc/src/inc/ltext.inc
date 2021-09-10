@@ -9,6 +9,8 @@ ltext(QWORD,	"QWord"	 )
 ltext(TBYTE,	"TByte"	 )
 ltext(PARA,	"Para"	 )
 ltext(OWORD,	"XmmWord")
+ltext(YWORD,	"YWord")
+ltext(ZWORD,	"ZWord")
 ltext(PAGE,	"Page"	 )
 ; [L]NEAR|FAR[16|32|64] variants must be consecutive
 ltext(NEAR,	"Near"	 )

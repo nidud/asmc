@@ -478,10 +478,10 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                         mov edx,[ecx].asm_tok.string_ptr
                     .endif
                     atofloat( edi, edx, 16, eax, 0 )
-                    AddLineQueueX( " pushd high32(0x%q)", [edi].expr.hlvalue )
-                    AddLineQueueX( " pushd low32 (0x%q)", [edi].expr.hlvalue )
-                    AddLineQueueX( " pushd high32(0x%q)", [edi].expr.llvalue )
-                    AddLineQueueX( " pushd low32 (0x%q)", [edi].expr.llvalue )
+                    AddLineQueueX( " pushd high32(0x%16lx)", [edi].expr.hlvalue )
+                    AddLineQueueX( " pushd low32 (0x%16lx)", [edi].expr.hlvalue )
+                    AddLineQueueX( " pushd high32(0x%16lx)", [edi].expr.llvalue )
+                    AddLineQueueX( " pushd low32 (0x%16lx)", [edi].expr.llvalue )
                     AddLineQueueX( " movups %r, [esp]", ebx )
                     AddLineQueue ( " add esp, 16" )
                     .endc

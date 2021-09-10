@@ -548,7 +548,7 @@ local	pszApp:PWSTR,
 	    CloseHandle(pi.hThread)
 	.else
 
-	    mov hr,HRESULT_FROM_WIN32(GetLastError())
+	    mov hr,HRESULT_FROM_WIN32R(GetLastError())
 	.endif
 
 	CoTaskMemFree(pszApp)
@@ -589,7 +589,7 @@ local pszApp:PWSTR, pszCmdLine:PWSTR, hr:HRESULT, sei:SHELLEXECUTEINFOW
 
 	    .ASSERT(hr == S_OK)
 	.else
-	    mov hr,HRESULT_FROM_WIN32(GetLastError())
+	    mov hr,HRESULT_FROM_WIN32R(GetLastError())
 	.endif
 
 	CoTaskMemFree(pszApp)

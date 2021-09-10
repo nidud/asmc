@@ -1,5 +1,5 @@
 ifndef __ATLEXCEPT_H__
-__ATLEXCEPT_H__ equ <>
+define __ATLEXCEPT_H__
 
 include atldef.inc
 include atltrace.inc
@@ -11,9 +11,7 @@ _AtlRaiseException proto :abs, :abs=<EXCEPTION_NONCONTINUABLE> {
     }
 endif
 .template CAtlException
-
     m_hr HRESULT ?
-
     .inline CAtlException :abs=<E_FAIL> {
         mov [this].CAtlException.m_hr,_1
         }
@@ -26,50 +24,44 @@ ifdef _AFX
 .err<MFC projects must use default implementation of AtlThrow()>
 endif
 else
-AtlThrowImpl proto :HRESULT {
-
+AtlThrowImpl proto watcall :HRESULT {
 ifdef _AFX
-    .if( ecx == E_OUTOFMEMORY )
-
+    .if( eax == E_OUTOFMEMORY )
         AfxThrowMemoryException()
     .else
-        AfxThrowOleException( ecx )
+        AfxThrowOleException(eax)
     .endif
 else
-    CAtlException( ecx )
+    CAtlException(eax)
 endif
-}
+    }
 endif
 
-AtlThrowLastWin32 proto {
-    GetLastError()
-    AtlThrow( HRESULT_FROM_WIN32( eax ) )
-}
+AtlThrowLastWin32 proto fastcall {
+    AtlThrow( HRESULT_FROM_WIN32R( GetLastError() ) )
+    }
 
 else
 
 ifndef _ATL_CUSTOM_THROW
-AtlThrowImpl proto :HRESULT {
-    .switch(ecx)
-
-    .case E_OUTOFMEMORY:
-        mov ecx,STATUS_NO_MEMORY
+AtlThrowImpl proto watcall :HRESULT {
+    .switch(eax)
+    .case E_OUTOFMEMORY
+        mov eax,STATUS_NO_MEMORY
         .endc
     .default
-        mov ecx,EXCEPTION_ILLEGAL_INSTRUCTION
+        mov eax,EXCEPTION_ILLEGAL_INSTRUCTION
     .endsw
-    _AtlRaiseException(ecx)
-}
+    _AtlRaiseException(eax)
+    }
 endif
 if 0
 AtlThrowLastWin32 proto {
-    GetLastError()
-    AtlThrow( HRESULT_FROM_WIN32( eax ) )
-}
+    AtlThrow( HRESULT_FROM_WIN32R( GetLastError() ) )
+    }
 endif
 
 endif
-
 
 .pragma pack(pop)
 

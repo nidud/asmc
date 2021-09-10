@@ -44,7 +44,7 @@ endif
         endif
         }
 
-    .inline PRECT :abs, :abs, :abs, :abs {
+    .inline ptrRECT :abs, :abs, :abs, :abs {
         ifnb <_1>
             mov [this].RECT.left,    _1
         endif
@@ -59,7 +59,7 @@ endif
         endif
         }
 
-    .inline IMM32 :vararg {
+    .inline imm :vararg {
       local rc
        .new rc:RECT
         rc.mem_RECT(_1)

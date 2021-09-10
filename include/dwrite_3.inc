@@ -2,6 +2,7 @@ ifndef DWRITE_3_H_INCLUDED
 define DWRITE_3_H_INCLUDED
 
 include dwrite_2.inc
+include d2d1.inc
 
 ifndef DWRITE_E_REMOTEFONT
 DWRITE_E_REMOTEFONT	equ _HRESULT_TYPEDEF_(0x8898500D)
@@ -109,8 +110,8 @@ DEFINE_IIDX(IDWriteFactory3, "9A1B41C3-D3BB-466A-87FC-FE67556A3B65")
 ; 3
     CreateGlyphRunAnalysis proc :ptr DWRITE_GLYPH_RUN, :ptr DWRITE_MATRIX, :DWRITE_RENDERING_MODE1, :DWRITE_MEASURING_MODE, :DWRITE_GRID_FIT_MODE, :DWRITE_TEXT_ANTIALIAS_MODE, :FLOAT, :FLOAT, :ptr ptr IDWriteGlyphRunAnalysis
     CreateCustomRenderingParams proc :FLOAT, :FLOAT, :FLOAT, :FLOAT, :DWRITE_PIXEL_GEOMETRY, :DWRITE_RENDERING_MODE1, :DWRITE_GRID_FIT_MODE, :ptr ptr IDWriteRenderingParams3
-    CreateFontFaceReference proc :ptr WCHAR, :ptr FILETIME, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
-    CreateFontFaceReference? proc :ptr IDWriteFontFile, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
+    CreateFontFaceReference? proc :ptr WCHAR, :ptr FILETIME, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
+    CreateFontFaceReference proc :ptr IDWriteFontFile, :UINT32, :DWRITE_FONT_SIMULATIONS, :ptr ptr IDWriteFontFaceReference
     GetSystemFontSet proc :ptr ptr IDWriteFontSet
     CreateFontSetBuilder proc :ptr ptr IDWriteFontSetBuilder
     CreateFontCollectionFromFontSet proc :ptr IDWriteFontSet, :ptr ptr IDWriteFontCollection1

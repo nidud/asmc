@@ -212,12 +212,12 @@ __GDIPLUS_COLOR_H equ <>
         ifb <_1>
             mov eax,Black
         else
-            this.typeid(Color, _1)(_1, _2)
+            this.typeid(Color_, _1)(_1, _2)
         endif
         mov this.Argb,eax
         }
 
-    .inline ColorIMM32 :abs, :abs, :abs, :abs, :vararg {
+    .inline Color_imm :abs, :abs, :abs, :abs, :vararg {
         ifb <_2>
             mov eax,_1
         elseifb <_4>

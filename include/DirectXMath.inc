@@ -1068,9 +1068,9 @@ XMScalarACosEst		proto XM_CALLCONV :float
 
 ;; Internals
 
-XMVECTOR::GetLeadingBit proto vectorcall
-XMVECTOR::multi_sll_epi32 proto vectorcall :XMVECTOR
-XMVECTOR::multi_srl_epi32 proto vectorcall :XMVECTOR
+XMVECTOR_GetLeadingBit proto vectorcall :XMVECTOR
+XMVECTOR_multi_sll_epi32 proto vectorcall :XMVECTOR, :XMVECTOR
+XMVECTOR_multi_srl_epi32 proto vectorcall :XMVECTOR, :XMVECTOR
 
 if defined(__XNAMATH_H__) and defined(XMMin)
 undef XMMin

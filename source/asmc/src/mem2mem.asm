@@ -263,6 +263,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
                 AddLineQueueX( " mov eax, dword ptr %s[4]", ebx )
                 AddLineQueueX( " cmp dword ptr %s[4], eax", dst )
                 AddLineQueueX( " jne %s", &buffer )
+
                 AddLineQueueX( " mov eax, dword ptr %s", ebx )
                 AddLineQueueX( " cmp dword ptr %s, eax", dst )
                 AddLineQueueX( "%s:", &buffer )

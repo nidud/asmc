@@ -9,18 +9,9 @@ endif
 
     option casemap:none, win64:auto
 
-    stack typedef ptr qword
-
-.template stack
-    .inline leave { mov rcx,this }
-    .ends
     .code
 
 main proc
-    ;
-    ; failed without argument(s)
-    ;
-    stack::leave()
 
     ; @easycode: typeof(<float>) failed within a macro()
     ;
@@ -32,7 +23,7 @@ main proc
     ;
     ; skippes <?> as part of <name>
     ;
-%   ifidn <typeid(rax)typeid(rax)>,<REG64REG64>
+%   ifidn <typeid(rax)typeid(rax)>,<qwordqword>
         mov eax,0
     else
         mov eax,-1

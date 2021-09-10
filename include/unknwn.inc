@@ -1,16 +1,19 @@
-ifndef __UNKNWN_INC
-define __UNKNWN_INC
-
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 define __REQUIRED_RPCNDR_H_VERSION__ 440
 endif
-
 include rpc.inc
 include rpcndr.inc
-
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+include wtypes.inc
+
+ifndef __UNKNWN_INC
+define __UNKNWN_INC
 
 ifndef __SAFE_RELEASE
 define __SAFE_RELEASE
@@ -18,7 +21,7 @@ SafeRelease proto fastcall p:abs {
     mov rax,p
     .if rax
 	mov p,NULL
-	[rax].@SubStr(typeid(p), 2).Release()
+	[rax].@SubStr(typeid(p), 4).Release()
     .endif
     }
 SafeReplace proto fastcall :ptr ptr, :ptr {
@@ -35,27 +38,7 @@ SafeReplace proto fastcall :ptr ptr, :ptr {
 	[rax].IUnknown.AddRef()
     .endif
     }
-ComAlloc proto fastcall class:abs {
-    .return .if !HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, class + &class&Vtbl)
-    lea rdx,[rax+class]
-    mov [rax],rdx
-ifdef &class&Type
-%   for q,<&class&Type>
-      mov [rdx].&class&Vtbl.q,&&class&_&q
-      endm
 endif
-    }
-ComFree proto fastcall p:abs {
-    HeapFree(GetProcessHeap(), 0, p)
-    }
-endif
-
-ifndef COM_NO_WINDOWS_H
-include windows.inc
-include ole2.inc
-endif
-
-include wtypes.inc
 
 .pragma comment(lib, rpcrt4)
 

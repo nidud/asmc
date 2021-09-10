@@ -7,12 +7,12 @@
 ;
 
 include stddef.inc
+include crtl.inc
 
 include asmc.inc
-include crtl.inc
+include expreval.inc
 include parser.inc
 include reswords.inc
-include expreval.inc
 include segment.inc
 include proc.inc
 include assume.inc
@@ -80,8 +80,9 @@ init_expr endp
 
 TokenAssign proc fastcall uses esi edi ecx opnd1:expr_t, opnd2:expr_t
 
-    ;; note that offsetof() is used. This means, don't change position
-    ;; of field <type> in expr!
+    ; note that offsetof() is used. This means, don't change position
+    ; of field <type> in expr!
+
     mov esi,edx
     mov edi,ecx
     mov ecx,offsetof( expr, type )
@@ -93,6 +94,64 @@ TokenAssign endp
     assume ecx:token_t
 
 get_precedence proc fastcall item:token_t
+    ;
+    ; The following table is taken verbatim from MASM 6.1 Programmer's Guide,
+    ; page 14, Table 1.3.
+    ;
+    ; 1            (), []
+    ; 2            LENGTH, SIZE, WIDTH, MASK, LENGTHOF, SIZEOF
+    ; 3            . (structure-field-name operator)
+    ; 4            : (segment override operator), PTR
+    ; 5            LROFFSET, OFFSET, SEG, THIS, TYPE
+    ; 6            HIGH, HIGHWORD, LOW, LOWWORD
+    ; 7            +, - (unary)
+    ; 8            *, /, MOD, SHL, SHR
+    ; 9            +, - (binary)
+    ; 10           EQ, NE, LT, LE, GT, GE
+    ; 11           NOT
+    ; 12           AND
+    ; 13           OR, XOR
+    ; 14           OPATTR, SHORT, .TYPE
+    ;
+    ; The following table appears in QuickHelp online documentation for
+    ; both MASM 6.0 and 6.1. It's slightly different!
+    ;
+    ; 1            LENGTH, SIZE, WIDTH, MASK
+    ; 2            (), []
+    ; 3            . (structure-field-name operator)
+    ; 4            : (segment override operator), PTR
+    ; 5            THIS, OFFSET, SEG, TYPE
+    ; 6            HIGH, LOW
+    ; 7            +, - (unary)
+    ; 8            *, /, MOD, SHL, SHR
+    ; 9            +, - (binary)
+    ; 10           EQ, NE, LT, LE, GT, GE
+    ; 11           NOT
+    ; 12           AND
+    ; 13           OR, XOR
+    ; 14           SHORT, OPATTR, .TYPE, ADDR
+    ;
+    ; japheth: the first table is the prefered one. Reasons:
+    ; - () and [] must be first.
+    ; - it contains operators SIZEOF, LENGTHOF, HIGHWORD, LOWWORD, LROFFSET
+    ; - ADDR is no operator for expressions. It's exclusively used inside
+    ;   INVOKE directive.
+    ;
+    ; However, what's wrong in both tables is the precedence of
+    ; the dot operator: Actually for both JWasm and Wasm the dot precedence
+    ; is 2 and LENGTH, SIZE, ... have precedence 3 instead.
+    ;
+    ; Precedence of operator TYPE was 5 in original Wasm source. It has
+    ; been changed to 4, as described in the Masm docs. This allows syntax
+    ; "TYPE DWORD ptr xxx"
+    ;
+    ; v2.02: another case which is problematic:
+    ;     mov al,BYTE PTR CS:[]
+    ; Since PTR and ':' have the very same priority, the evaluator will
+    ; first calculate 'BYTE PTR CS'. This is invalid, but didn't matter
+    ; prior to v2.02 because register coercion was never checked for
+    ; plausibility. Solution: priority of ':' is changed from 4 to 3.
+    ;
 
     mov al,[ecx].token
     .switch al
@@ -101,6 +160,11 @@ get_precedence proc fastcall item:token_t
         .return [ecx].precedence
     .case T_OP_BRACKET
     .case T_OP_SQ_BRACKET
+        ; v2.08: with -Zm, the priority of [] and (), if
+        ; used as binary operator, is 9 (like binary +/-).
+        ; test cases: mov ax,+5[bx]
+        ;             mov ax,-5[bx]
+        ;
         mov eax,1
         .if ModuleInfo.m510
             mov eax,9
@@ -208,7 +272,7 @@ SetEvexOpt proc tok:token_t
         [ecx-3*16].asm_tok.token == T_INSTRUCTION
 
         mov eax,GetValueSp([ecx-2*16].asm_tok.tokval)
-        .if eax & OP_XMM ;or OP_YMM or OP_ZMM )
+        .if eax & OP_XMM
 
             .if [ecx-3*16].asm_tok.tokval < VEX_START && \
                 [ecx-3*16].asm_tok.tokval >= T_ADDPD
@@ -286,7 +350,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
         .if ecx > 16
             mov ecx,16
         .endif
-        .for : ecx: ecx--
+        .for ( : ecx: ecx-- )
             mov al,[edx]
             inc edx
             mov [edi].chararray[ecx-1],al
@@ -354,6 +418,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
                         .if !( eax == ecx || ( ecx && !( [ecx].asym.flags & S_ISDEFINED ) ) || ModuleInfo.oldstructs )
                             xor eax,eax
                         .endif
+
                     .elseif !( ModuleInfo.oldstructs && ( [eax].asym.state == SYM_STRUCT_FIELD || \
                               [eax].asym.state == SYM_EXTERNAL || [eax].asym.state == SYM_INTERNAL ) )
                         xor eax,eax
@@ -374,48 +439,49 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
             SymFind(esi)
         .endif
 
-        .if ( eax == NULL || [eax].asym.state == SYM_UNDEFINED || \
-            ( [eax].asym.state == SYM_TYPE && [eax].asym.typekind == TYPE_NONE ) || \
+        .if ( eax == NULL || [eax].asym.state == SYM_UNDEFINED ||
+              ( [eax].asym.state == SYM_TYPE && [eax].asym.typekind == TYPE_NONE ) ||
               [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO )
 
             .if ( [edi].flags & E_IS_OPEATTR )
+
                 mov [edi].kind,EXPR_ERROR
-                .endc
+               .endc
             .endif
-            .if ( eax && ( [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO ) )
+            .if ( eax &&
+                 ( [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO ) )
                 .return fnasmerr( 2148, [eax].asym.name )
             .endif
-
-            .if ( ( eax == NULL ) && ( [ebx-16].token == T_DOT && \
-                ( [ebx-32].token == T_ID || [ebx-32].token == T_CL_SQ_BRACKET ) ) )
+            .if ( eax == NULL && ( [ebx-16].token == T_DOT &&
+                 ( [ebx-32].token == T_ID || [ebx-32].token == T_CL_SQ_BRACKET ) ) )
 
                 mov edx,tokenarray
-                .if [edx].asm_tok.tokval == T_INVOKE
-                    .if FindDotSymbol( ebx )
+                .if ( [edx].asm_tok.tokval == T_INVOKE )
+                    .if ( FindDotSymbol( ebx ) )
                         jmp method_ptr
                     .endif
                 .endif
             .endif
 
             .if ( Parse_Pass == PASS_1 && !( flags & EXPF_NOUNDEF ) )
-                .if eax == NULL
+                .if ( eax == NULL )
                     mov ecx,[edi].type
-                    .if ecx == NULL
+                    .if ( ecx == NULL )
                         SymLookup(esi)
                         push eax
                         mov [eax].asym.state,SYM_UNDEFINED
                         sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], eax )
                         pop eax
-                    .elseif [ecx].asym.typekind != TYPE_NONE
+                    .elseif ( [ecx].asym.typekind != TYPE_NONE )
                         .return fnasmerr(2006, esi)
                     .else
                         mov eax,nullmbr
-                        .if !eax
+                        .if ( !eax )
                             SymAlloc("")
                         .endif
                         mov [edi].mbr,eax
                         mov [edi].kind,EXPR_CONST
-                        .endc
+                       .endc
                     .endif
                 .endif
             .else
@@ -426,7 +492,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
                     or  eax,0x20202020
                     mov edx,[esi+4]
                     or  edx,0x202020
-                    .if eax == 'ifed' && edx == 'den'
+                    .if ( eax == 'ifed' && edx == 'den' )
 
                         .if ( i && [ebx+16].token == T_OP_BRACKET )
 
@@ -440,42 +506,50 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
 
                             mov ecx,idx
                             mov eax,i
-                            .if [ebx].token == T_CL_BRACKET
+
+                            .if ( [ebx].token == T_CL_BRACKET )
                                 mov [ecx],eax
                                 dec [edi].value ; <> -- defined()
                                 dec [edi].hvalue
-                                .endc
+                               .endc
                             .endif
-                            .if [ebx].token == T_NUM && [ebx+16].token == T_CL_BRACKET
+
+                            .if ( [ebx].token == T_NUM &&
+                                  [ebx+16].token == T_CL_BRACKET )
+
                                 dec [edi].value ; <> -- defined()
                                 dec [edi].hvalue
                                 inc eax
                                 mov [ecx],eax
-                                .endc
+                               .endc
                             .endif
 
-                            .if [ebx].token == T_ID && [ebx+16].token == T_CL_BRACKET
+                            .if ( [ebx].token == T_ID &&
+                                  [ebx+16].token == T_CL_BRACKET )
 
                                 inc eax
                                 mov [ecx],eax
-                                .if SymFind([ebx].string_ptr)
-                                    .if [eax].asym.state != SYM_UNDEFINED
+                                .if ( SymFind([ebx].string_ptr) )
+                                    .if ( [eax].asym.state != SYM_UNDEFINED )
+
                                         dec [edi].value ; symbol defined
                                         dec [edi].hvalue
-                                        .endc
+                                       .endc
                                     .endif
                                 .endif
 
                                 ;; -- symbol not defined --
 
-                                .endc .if ( [ebx+32].token == T_FINAL || \
-                                            [ebx+32].tokval != T_AND  || \
+                                .endc .if ( [ebx+32].token == T_FINAL ||
+                                            [ebx+32].tokval != T_AND  ||
                                             [ebx-48].tokval == T_NOT )
 
                                     ;; [not defined(symbol)] - return 0
 
 
-                                ;; [defined(symbol) and] - return 0 and skip rest of line... */
+                                ; [defined(symbol) and]
+                                ; - return 0 and skip rest of line...
+
                                 add ebx,48
                                 mov edx,i
                                 add edx,3
@@ -495,7 +569,7 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:token_t
                         .endif
                     .endif
                 .endif
-                .if byte ptr [esi+1] == '&'
+                .if ( byte ptr [esi+1] == '&' )
                     lea esi,@CStr("@@")
                 .endif
                 .return fnasmerr( 2006, esi )
@@ -522,12 +596,12 @@ method_ptr:
             or  [edi].flags,E_IS_TYPE
             mov [edi].type,eax
             and ecx,MT_SPECIAL_MASK
-            .if [eax].asym.typekind == TYPE_RECORD
+            .if ( [eax].asym.typekind == TYPE_RECORD )
                 GetRecordMask(eax)
                 mov [edi].value,eax
                 mov [edi].hvalue,edx
             .elseif ( ecx == MT_ADDRESS )
-                .if [eax].asym.mem_type == MT_PROC
+                .if ( [eax].asym.mem_type == MT_PROC )
                     mov ecx,[eax].asym.total_size
                     mov [edi].value,ecx
                     mov cl,[eax].asym.Ofssize
@@ -545,14 +619,17 @@ method_ptr:
             mov [edi].kind,EXPR_CONST
             mov ecx,[eax].asym.offs
             add [edi].value,ecx
-            .for : [eax].asym.type: eax = [eax].asym.type
+            .for ( : [eax].asym.type : eax = [eax].asym.type )
             .endf
             mov cl,[eax].asym.mem_type
             mov [edi].mem_type,cl
-            .if [eax].asym.state == SYM_TYPE && [eax].asym.typekind != TYPE_TYPEDEF
+            .if ( [eax].asym.state == SYM_TYPE && [eax].asym.typekind != TYPE_TYPEDEF )
                 mov [edi].type,eax
 ifdef USE_INDIRECTION
-            .elseif ( cl == MT_PTR && [eax].asym.is_ptr && [eax].asym.ptr_memtype != MT_PROC )
+            .elseif ( cl == MT_PTR &&
+                      [eax].asym.is_ptr &&
+                      [eax].asym.ptr_memtype != MT_PROC )
+
                 mov [edi].type,[eax].asym.target_type
 endif
             .else
@@ -579,19 +656,21 @@ endif
                     mov dword ptr [edi].hlvalue,[esi].total_length
                     mov dword ptr [edi].hlvalue[4],[esi].ext_idx
                 .endif
-            .elseif [esi].state == SYM_EXTERNAL && [esi].mem_type == MT_EMPTY && \
-                 !( [esi].sflags & S_ISCOM )
+            .elseif ( [esi].state == SYM_EXTERNAL &&
+                      [esi].mem_type == MT_EMPTY &&
+                     !( [esi].sflags & S_ISCOM ) )
+
                 or  [edi].flags,E_IS_ABS
                 mov [edi].sym,esi
             .else
                 mov [edi].label_tok,ebx
                 mov ecx,[esi].type
-                .if ecx && [ecx].asym.mem_type != MT_EMPTY
+                .if ( ecx && [ecx].asym.mem_type != MT_EMPTY )
                     mov [edi].mem_type,[ecx].asym.mem_type
                 .else
                     mov [edi].mem_type,[esi].mem_type
                 .endif
-                .if [esi].state == SYM_STACK
+                .if ( [esi].state == SYM_STACK )
                     mov eax,[esi].offs
                     add eax,StackAdj
                     cdq
@@ -608,9 +687,9 @@ endif
                     mov [ebx].bytval,al
                 .endif
                 mov [edi].sym,esi
-                .for : [esi].type : esi = [esi].type
+                .for ( : [esi].type : esi = [esi].type )
                 .endf
-                .if [esi].state == SYM_TYPE && [esi].typekind != TYPE_TYPEDEF
+                .if ( [esi].state == SYM_TYPE && [esi].typekind != TYPE_TYPEDEF )
                     mov [edi].type,esi
                 .else
                     mov [edi].type,NULL
@@ -643,9 +722,12 @@ endif
             mov [edi].kind,EXPR_ADDR
 
             ; added v2.31.32: typeof(addr ...)
-        .elseif ( [ebx].tokval == T_ADDR && i > 2 && \
-            ( [ebx-16].tokval == T_TYPEOF || [ebx-32].tokval == T_TYPEOF ) && \
-            ( [ebx+16].token == T_ID || [ebx+16].token == T_OP_SQ_BRACKET  ) )
+        .elseif ( [ebx].tokval == T_ADDR && i > 2 &&
+                  ( [ebx-16].tokval == T_TYPEOF ||
+                    [ebx-32].tokval == T_TYPEOF ) &&
+                  ( [ebx+16].token == T_ID ||
+                    [ebx+16].token == T_OP_SQ_BRACKET ) )
+
             inc dword ptr [edx]
             mov [edi].kind,EXPR_ADDR
             mov [edi].mem_type,MT_PTR
@@ -662,7 +744,8 @@ endif
         .endc
     .default
         .if ( [edi].flags & E_IS_OPEATTR )
-            .if ( [ebx].token == T_FINAL || [ebx].token == T_CL_BRACKET || \
+            .if ( [ebx].token == T_FINAL ||
+                  [ebx].token == T_CL_BRACKET ||
                   [ebx].token == T_CL_SQ_BRACKET )
                 .return( NOT_ERROR )
             .endif
@@ -2818,7 +2901,8 @@ OperErr endp
     assume edx:nothing
     assume esi:token_t
 
-evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _end:int_t, flags:byte
+evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t,
+        tokenarray:token_t, _end:int_t, flags:byte
 
   local rc:int_t
   local opnd2:expr
@@ -2837,33 +2921,41 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _e
     add eax,tokenarray
     mov last,eax
 
-    .if ( [edi].kind == EXPR_EMPTY &&  !( [ebx].token == T_OP_BRACKET || \
-          [ebx].token == T_OP_SQ_BRACKET || [ebx].token == '+' || \
-          [ebx].token == '-' || [ebx].token == T_UNARY_OPERATOR ) )
+    mov al,[ebx].token
+    .if ( [edi].kind == EXPR_EMPTY &&
+          al != T_OP_BRACKET &&
+          al != T_OP_SQ_BRACKET &&
+          al != '+' &&
+          al != '-' &&
+          al != T_UNARY_OPERATOR
+        )
         mov rc,get_operand( edi, i, tokenarray, flags )
         mov eax,i
-        mov ebx,[eax]
-        shl ebx,4
+        imul ebx,[eax],16
         add ebx,tokenarray
     .endif
 
-    .while ( rc == NOT_ERROR && ebx < last && [ebx].token != T_CL_BRACKET && \
+    .while ( rc == NOT_ERROR && ebx < last &&
+             [ebx].token != T_CL_BRACKET &&
              [ebx].token != T_CL_SQ_BRACKET )
 
         mov esi,ebx
 
         .if ( [edi].kind != EXPR_EMPTY )
 
-            movzx eax,[esi].token
-            .if ( eax == '+' || eax == '-' )
+            mov dl,[esi].token
+            .if ( dl == '+' || dl == '-' )
 
                 mov [esi].specval,1
 
-            .elseif( !( eax >= T_OP_BRACKET || eax == T_UNARY_OPERATOR || \
-                eax == T_BINARY_OPERATOR ) || eax == T_UNARY_OPERATOR )
+            .elseif ( !( dl >= T_OP_BRACKET ||
+                         dl == T_UNARY_OPERATOR ||
+                         dl == T_BINARY_OPERATOR ) ||
+                      dl == T_UNARY_OPERATOR )
 
-                ;; v2.26 - added for {k1}{z}..
-                .if ( eax == T_STRING && [esi].string_delim == '{' )
+                ; v2.26 - added for {k1}{z}..
+                .if ( dl == T_STRING && [esi].string_delim == '{' )
+
                     SetEvexOpt(esi)
                     mov edx,i
                     inc dword ptr [edx]
@@ -2880,6 +2972,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _e
                 .endif
             .endif
         .endif
+
         mov edx,i
         inc dword ptr [edx]
         add ebx,16
@@ -2978,9 +3071,12 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _e
             movzx eax,[ebx].token
         .endw
 
-        .if rc == ERROR && opnd2.flags & E_IS_OPEATTR
-            .while( ebx < last && [ebx].token != T_CL_BRACKET && \
-                 [ebx].token != T_CL_SQ_BRACKET )
+        .if ( rc == ERROR && opnd2.flags & E_IS_OPEATTR )
+
+            .while ( ebx < last &&
+                    [ebx].token != T_CL_BRACKET &&
+                    [ebx].token != T_CL_SQ_BRACKET )
+
                 mov ecx,i
                 inc dword ptr [ecx]
                 add ebx,16
@@ -2988,7 +3084,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t, tokenarray:token_t, _e
             mov opnd2.kind,EXPR_EMPTY
             mov rc,NOT_ERROR
         .endif
-        .if rc != ERROR
+        .if ( rc != ERROR )
             mov rc,calculate( edi, &opnd2, esi )
         .endif
         .break .if ( flags & EXPF_ONEOPND )
@@ -3010,17 +3106,17 @@ EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:token_t, end_tok:i
     add ebx,tokenarray
 
     init_expr( result )
-    .for( : esi < end_tok : esi++, ebx += 16 )
-
-        ;; Check if a token is a valid part of an expression.
-        ;; chars + - * / . : [] and () are operators.
-        ;; also done here:
-        ;; T_INSTRUCTION  SHL, SHR, AND, OR, XOR changed to T_BINARY_OPERATOR
-        ;; T_INSTRUCTION  NOT                    changed to T_UNARY_OPERATOR
-        ;; T_DIRECTIVE    PROC                   changed to T_STYPE
-        ;; for the new operators the precedence is set.
-        ;; DUP, comma or other instructions or directives terminate the expression.
-
+    .for ( : esi < end_tok : esi++, ebx += 16 )
+        ;
+        ; Check if a token is a valid part of an expression.
+        ; chars + - * / . : [] and () are operators.
+        ; also done here:
+        ; T_INSTRUCTION  SHL, SHR, AND, OR, XOR changed to T_BINARY_OPERATOR
+        ; T_INSTRUCTION  NOT                    changed to T_UNARY_OPERATOR
+        ; T_DIRECTIVE    PROC                   changed to T_STYPE
+        ; for the new operators the precedence is set.
+        ; DUP, comma or other instructions or directives terminate the expression.
+        ;
         movzx eax,[ebx].token
         .switch eax
         .case T_INSTRUCTION
@@ -3059,14 +3155,14 @@ EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:token_t, end_tok:i
             .endsw
             .break
         .case T_RES_ID
-            .break .if [ebx].tokval == T_DUP ;; DUP must terminate the expression
+            .break .if [ebx].tokval == T_DUP ; DUP must terminate the expression
             .continue
         .case T_DIRECTIVE
-            ;; PROC is converted to a type
+            ; PROC is converted to a type
             .if [ebx].tokval == T_PROC
                 mov [ebx].token,T_STYPE
-                ;; v2.06: avoid to use ST_PROC
-                ;;item->bytval = ST_PROC;
+                ; v2.06: avoid to use ST_PROC
+                ; item->bytval = ST_PROC;
                 mov  dl,ModuleInfo._model
                 mov  eax,1
                 xchg ecx,edx
@@ -3080,7 +3176,7 @@ EvalOperand proc uses esi ebx start_tok:ptr int_t, tokenarray:token_t, end_tok:i
                 mov [ebx].tokval,eax
                 .continue
             .endif
-            ;; fall through. Other directives will end the expression
+            ; fall through. Other directives will end the expression
         .case T_COMMA
             .break
         .endsw

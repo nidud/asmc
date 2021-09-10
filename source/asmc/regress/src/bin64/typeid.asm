@@ -11,65 +11,56 @@ endif
 
 .enum type_identifier {
 
-    T_IMM32,
-    T_IMM64,
-    T_IMM128,
-    T_IMMFLT,
+    T_imm,
+    T_flt,
 
-    T_REG8,
-    T_REG16,
-    T_REG32,
-    T_REG64,
-    T_REG128,
-    T_REG256,
-    T_REG512,
+    T_byte,
+    T_sbyte,
+    T_word,
+    T_sword,
+    T_real2,
+    T_dword,
+    T_sdword,
+    T_real4,
+    T_fword,
+    T_qword,
+    T_sqword,
+    T_real8,
+    T_tbyte,
+    T_real10,
+    T_oword,
+    T_real16,
+    T_yword,
+    T_zword,
+    T_proc,
+    T_near,
+    T_far,
+    T_ptr,
 
-    T_BYTE,
-    T_SBYTE,
-    T_WORD,
-    T_SWORD,
-    T_REAL2,
-    T_DWORD,
-    T_SDWORD,
-    T_REAL4,
-    T_FWORD,
-    T_QWORD,
-    T_SQWORD,
-    T_REAL8,
-    T_TBYTE,
-    T_REAL10,
-    T_OWORD,
-    T_REAL16,
-    T_YWORD,
-    T_ZWORD,
-    T_PROC,
-    T_NEAR,
-    T_FAR,
-    T_PTR,
-
-    T_PBYTE,
-    T_PSBYTE,
-    T_PWORD,
-    T_PSWORD,
-    T_PREAL2,
-    T_PDWORD,
-    T_PSDWORD,
-    T_PREAL4,
-    T_PFWORD,
-    T_PQWORD,
-    T_PSQWORD,
-    T_PREAL8,
-    T_PTBYTE,
-    T_PREAL10,
-    T_POWORD,
-    T_PREAL16,
-    T_PYWORD,
-    T_PZWORD,
-    T_PPROC,
-    T_PNEAR,
-    T_PFAR,
-    T_PPTR,
-    T_PVOID
+    T_ptrbyte,
+    T_ptrsbyte,
+    T_ptrword,
+    T_ptrsword,
+    T_ptrreal2,
+    T_ptrdword,
+    T_ptrsdword,
+    T_ptrreal4,
+    T_ptrfword,
+    T_ptrqword,
+    T_ptrsqword,
+    T_ptrreal8,
+    T_ptrtbyte,
+    T_ptrreal10,
+    T_ptroword,
+    T_ptrreal16,
+    T_ptryword,
+    T_ptrzword,
+    T_ptrproc,
+    T_ptrnear,
+    T_ptrfar,
+    T_ptrptr,
+    T_R,
+    T_ptrptrR
     }
 
 types proto args:vararg {
@@ -78,21 +69,11 @@ types proto args:vararg {
         endm
         }
 
-    ostream typedef ptr
-    cout    equ <ostream::>
-
-.template ostream
-
-    .inline PSBYTE :ptr sbyte {
-        mov rax,_1
-        }
-    .inline PWORD :ptr word {
-        mov rax,_1
-        }
-    .operator << :abs {
-        cout typeid(_1)(_1)
-        }
-    .ends
+.template R
+    x dd ?
+    y dd ?
+   .ends
+   PR typedef ptr ptr R
 
     .code
 
@@ -143,13 +124,13 @@ main proc
     local pt:ptr near
     local pu:ptr far
     local pv:ptr ptr
+    local r:R
+    local ppr:PR
 
+    types( 1, 1.0, al, ax, eax, rax, xmm0, ymm0, zmm0, [rax], r, ppr )
     types( ma, mb, mc, md, me, mf, mg, mh, mi, mj, mk, ml, mm, mn, mo, mp, mq, mr, ms, mt, mu, mv )
     types( pa, pb, pc, pd, pe, pf, pg, ph, pi, pj, pk, pl, pm, pn, po, pp, pq, pr, ps, pt, pu, pv )
     types( main, addr main )
-
-    cout << pb << pc
-    cout << "Ascii string" << ( L"Unicode string" )
     ret
 
 main endp

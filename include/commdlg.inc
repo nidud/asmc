@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_COMMDLG
-_INC_COMMDLG equ <>
+define _INC_COMMDLG
 
 if (WINVER GE 0x0500)
 ifdef DEFINE_GUID

@@ -31,60 +31,99 @@ include lqueue.inc
 
 public MacroLocals
 
-;; TEVALUE_UNSIGNED
-;; 1 = the % operator used in an TEXTEQU expression is supposed to
-;;     return an UNSIGNED value ( Masm-compatible ).
+; TEVALUE_UNSIGNED
+; 1 = the % operator used in an TEXTEQU expression is supposed to
+;     return an UNSIGNED value ( Masm-compatible ).
 
 TEVALUE_UNSIGNED equ 1
 MAX_TEXTMACRO_NESTING equ 20
 
 GetMacroLine proto :ptr macro_instance, :string_t
+
 .data
-MacroLocals int_t 0     ;; counter for LOCAL names
-MacroLevel  dd 0        ;; current macro nesting level
-__digits    char_t "0123456789ABCDEF"
+ MacroLocals int_t 0     ; counter for LOCAL names
+ MacroLevel  dd 0        ; current macro nesting level
+.code
 
-    .code
+; C ltoa() isn't fully compatible since hex digits are lower case.
+; for JWasm, it's ensured that 2 <= radix <= 16.
 
-;; C ltoa() isn't fully compatible since hex digits are lower case.
-;; for JWasm, it's ensured that 2 <= radix <= 16.
+myltoa proc uses esi edi ebx value:qword, buffer:string_t, radix:uint_t, sign:int_t, addzero:int_t
 
-myltoa proc uses esi edi ebx value:uint_t, buffer:string_t, radix:uint_t, sign:int_t, addzero:int_t
-
-  local tmpbuf[34]:char_t
+  local tmpbuf[64]:char_t
 
     mov edi,buffer
-    mov ebx,value
-    .if sign
+    mov eax,dword ptr value
+    mov edx,dword ptr value[4]
+
+    .if ( sign )
+
         mov byte ptr [edi],'-'
         inc edi
-        neg ebx
-    .elseif ebx == 0
+        neg eax
+        neg edx
+        sbb edx,0
+
+    .elseif ( edx == 0 && eax == 0 )
+
         mov word ptr [edi],'0'
-        .return edi
+       .return 1
     .endif
-    .for ( ecx = radix, esi = 33, tmpbuf[33] = 0 : ebx : )
-        mov eax,ebx
-        xor edx,edx
-        div ecx
-        mov ebx,eax
-        dec esi
-        mov tmpbuf[esi],__digits[edx]
+
+    .for ( esi = &tmpbuf[63] : eax || edx : esi-- )
+
+        .if ( !edx || !radix )
+
+            div radix
+            mov ecx,edx
+            xor edx,edx
+
+        .else
+
+            push edi
+            .for ( ebx = 64, ecx = 0, edi = 0 : ebx : ebx-- )
+
+                add eax,eax
+                adc edx,edx
+                adc ecx,ecx
+                adc edi,edi
+
+                .if ( edi || ecx >= radix )
+
+                    sub ecx,radix
+                    sbb edi,0
+                    inc eax
+                .endif
+            .endf
+            pop edi
+        .endif
+
+        add cl,'0'
+        .if cl > '9'
+            add cl,'A'-'9'-1
+        .endif
+        mov [esi],cl
     .endf
-    .if addzero && tmpbuf[esi] > '9' ;; v2: add a leading '0' if first digit is alpha
+    inc esi
+
+    ; v2: add a leading '0' if first digit is alpha
+
+    .if ( addzero && byte ptr [esi] > '9' )
         mov byte ptr [edi],'0'
         inc edi
     .endif
-    mov ecx,34
+
+    lea ecx,tmpbuf[64]
     sub ecx,esi
-    lea esi,tmpbuf[esi]
     rep movsb
-    mov eax,buffer
+    mov byte ptr [edi],0
+    mov eax,edi
+    sub eax,buffer
     ret
 
 myltoa endp
 
-;; Read the current (macro) queue until it's done.
+; Read the current (macro) queue until it's done.
 
 SkipMacro proc private tokenarray:token_t
 
@@ -92,9 +131,9 @@ SkipMacro proc private tokenarray:token_t
 
     mov buffer,alloca(ModuleInfo.max_line_len)
 
-    ;; The queue isn't just thrown away, because any
-    ;; coditional assembly directives found in the source
-    ;; must be executed.
+    ; The queue isn't just thrown away, because any
+    ; coditional assembly directives found in the source
+    ; must be executed.
 
     .while GetTextLine( buffer )
         Tokenize( buffer, 0, tokenarray, TOK_DEFAULT )
@@ -105,12 +144,12 @@ SkipMacro endp
 
 ExpandTMacro proto :string_t, :token_t, :int_t, :int_t
 
-;; run a macro.
-;; - macro:  macro item
-;; - out:    value to return (for macro functions)
-;; - label:  token of label ( or -1 if none )
-;; - is_exitm: returns TRUE if EXITM has been hit
-;; returns index of token not processed or -1 on errors
+; run a macro.
+; - macro:  macro item
+; - out:    value to return (for macro functions)
+; - label:  token of label ( or -1 if none )
+; - is_exitm: returns TRUE if EXITM has been hit
+; returns index of token not processed or -1 on errors
 
     assume esi:dsym_t
     assume edi:ptr macro_info
@@ -428,12 +467,12 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                             xor eax,eax
                             cmp opndx.hvalue,0
                             setl al
-                            myltoa( opndx.uvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
+                            myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 strcpy( StringBufferEnd, "16" )
                             .elseif ( ModuleInfo.floatformat == 'x' )
-                                tsprintf( StringBufferEnd, "%q%q", opndx.hlvalue, opndx.llvalue )
+                                tsprintf( StringBufferEnd, "%016lX%016lX", opndx.hlvalue, opndx.llvalue )
                             .else
 
                                 mov cvt.expchar,'e'
@@ -1564,14 +1603,17 @@ ExpandToken proc private uses esi edi ebx line:string_t, pi:ptr int_t, tokenarra
             mov Token_Count,old_tokencount
         .endif
 if TEVALUE_UNSIGNED
-        ;; v2.03: Masm compatible: returns an unsigned value
-        myltoa( opndx.value, StringBufferEnd, ModuleInfo.radix, FALSE, FALSE )
+
+        ; v2.03: Masm compatible: returns an unsigned value
+        xor edx,edx
+        mov ecx,opndx.value
+        myltoa( edx::ecx, StringBufferEnd, ModuleInfo.radix, FALSE, FALSE )
 else
         xor eax,eax
         .if opndx.hvalue < 0
             mov eax,1
         .endif
-        myltoa( opndx.value, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
+        myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
 endif
         ;; v2.05: get size of string to be "replaced"
 
@@ -1645,11 +1687,11 @@ ExpandLineItems proc uses esi edi line:string_t, i:int_t, tokenarray:token_t,
 
 ExpandLineItems endp
 
-;; v2.09: added, expand literals for structured data items.
-;; since 2.09, initialization of structure members is no longer
-;; done by generated code, but more directly inside data.c.
-;; This improves Masm-compatibility, but OTOH requires to expand
-;; the literals explicitly.
+; v2.09: added, expand literals for structured data items.
+; since 2.09, initialization of structure members is no longer
+; done by generated code, but more directly inside data.c.
+; This improves Masm-compatibility, but OTOH requires to expand
+; the literals explicitly.
 
 
 ExpandLiterals proc uses ebx i:int_t, tokenarray:token_t
@@ -1657,7 +1699,7 @@ ExpandLiterals proc uses ebx i:int_t, tokenarray:token_t
     xor eax,eax
     mov ebx,tokenarray
 
-    ;; count non-empty literals
+    ; count non-empty literals
     .for ( ecx = i: ecx < Token_Count: ecx++ )
         shl ecx,4
         .if ( [ebx+ecx].token == T_STRING && [ebx+ecx].stringlen && \
@@ -1666,8 +1708,8 @@ ExpandLiterals proc uses ebx i:int_t, tokenarray:token_t
         .endif
         shr ecx,4
     .endf
-    ;; if non-empty literals are found, expand the line. if the line
-    ;; was expanded, re-tokenize it.
+    ; if non-empty literals are found, expand the line. if the line
+    ; was expanded, re-tokenize it.
     imul ecx,i,asm_tok
     add ebx,ecx
     .if eax
@@ -1679,24 +1721,24 @@ ExpandLiterals proc uses ebx i:int_t, tokenarray:token_t
 
 ExpandLiterals endp
 
-;; scan current line for (text) macros and expand them.
-;; this is only called when the % operator is not the first item.
+; scan current line for (text) macros and expand them.
+; this is only called when the % operator is not the first item.
 
 ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
 
   local count         : int_t
-  local bracket_flags : uint_t ;; flags
+  local bracket_flags : uint_t
   local flags         : int_t
   local lvl           : int_t
   local rc            : int_t
   local addbrackets   : int_t
-  local buffer:int_t
+  local buffer        : string_t
 
     mov buffer,alloca(ModuleInfo.max_line_len)
 
-    ;; filter certain conditions.
-    ;; bracket_flags: for (preprocessor) directives that expect a literal
-    ;; parameter, the expanded argument has to be enclosed in '<>' again.
+    ; filter certain conditions.
+    ; bracket_flags: for (preprocessor) directives that expect a literal
+    ; parameter, the expanded argument has to be enclosed in '<>' again.
 
     mov ebx,tokenarray
 
@@ -1707,23 +1749,155 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
         mov count,esi
         mov rc,esi
 
-        .if ( Token_Count > 2 && ( [ebx+16].token == T_COLON || \
-            [ebx+16].token == T_DBL_COLON ) && [ebx+32].token == T_DIRECTIVE )
-            mov esi,2
-            add ebx,32
+        .if ( Token_Count > 2 )
+
+            .if ( [ebx+16].token == T_COLON || [ebx+16].token == T_DBL_COLON )
+
+                ; no expansion right of label:[:]
+
+                .if ( [ebx].token != T_ID ||
+                      [ebx+16].token == T_COLON ||
+                      [ebx+32].token != T_ID )
+                    .return 0
+                .endif
+
+                .if ( SymFind( [ebx+32].string_ptr ) )
+                    .if ( [eax].asym.state == SYM_MACRO )
+                        .return 0
+                    .endif
+                .endif
+
+                ;
+                ; class::name proto/proc
+                ; - add 'this:ptr class' as first argument
+                ;
+
+                .if ( [ebx+3*16].token == T_OP_BRACKET ||
+                      [ebx+3*16].tokval == T_ENDP )
+
+                    mov edi,[ebx+16].tokpos
+                    mov esi,[ebx+32].tokpos
+                    mov al,'_'
+                    stosb
+                    mov ecx,strlen(esi)
+                    inc ecx
+                    rep movsb
+
+                .else
+
+                    ;
+                    ;  proc or proto
+                    ;
+
+                    mov edi,buffer
+                    mov edx,tokenarray
+                    mov esi,[edx].asm_tok.tokpos
+                    mov ecx,[ebx+16].tokpos
+                    sub ecx,esi
+                    rep movsb
+                    mov al,'_'
+                    stosb
+                    mov esi,[ebx+32].tokpos
+                    ;
+                    ; class::name proc syscall private uses regs name:dword,..
+                    ;
+                    .for ( edx = 3*16 : [ebx+edx].token != T_FINAL : edx+=16 )
+                        .break .if ( [ebx+edx].token == T_COLON )
+                        .break .if ( [ebx+edx].token == T_STRING )
+                    .endf
+                    .if ( [ebx+edx].token == T_COLON && [ebx+edx-16].token == T_ID )
+
+                        mov eax,[ebx+edx-16].string_ptr
+                        mov eax,[eax]
+                        or  al,0x20
+                        .if ( ax != 'c' )
+                            sub edx,16
+                        .endif
+                    .endif
+                    mov ecx,[ebx+edx].tokpos
+                    sub ecx,esi
+                    rep movsb
+                    .if ( byte ptr [edi-1] == ' ' )
+                        dec edi
+                    .endif
+                    ; " this:ptr class"
+                    mov eax,'iht '
+                    stosd
+                    mov eax,'tp:s'
+                    stosd
+                    mov ax,' r'
+                    stosw
+                    mov ecx,[ebx].string_ptr
+                    mov al,[ecx]
+                    .while al
+                        stosb
+                        inc ecx
+                        mov al,[ecx]
+                    .endw
+                    .if ( [ebx+edx].token == T_COLON || [ebx+edx+16].token == T_COLON )
+                        mov eax,' ,'
+                        stosw
+                    .endif
+                    mov ecx,strlen(esi)
+                    inc ecx
+                    rep movsb
+                    strcpy(string, buffer)
+                .endif
+                mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+               .continue
+            .endif
+
+            ;
+            ; assume further id::id is function::calls() or name::space
+            ;
+
+            .if ( [ebx].hll_flags & T_HLL_DBLCOLON )
+
+                push ebx
+                .for ( edi = 0 : [ebx].token != T_FINAL : ebx += 16 )
+
+                    .if ( [ebx+16].token == T_DBL_COLON )
+
+                        mov al,[ebx].token
+                        mov ah,[ebx+32].token
+                        .if ( [ebx+3*16].token == T_OP_BRACKET ||
+                              ( al < T_STRING && al > T_REG &&
+                                ah < T_STRING && ah > T_REG ) )
+
+                            mov edi,[ebx+16].tokpos
+                            .while ( byte ptr [edi-1] <= ' ' )
+                                dec edi
+                            .endw
+                            mov esi,[ebx+32].tokpos
+                            mov al,'_'
+                            stosb
+                            mov ecx,strlen(esi)
+                            inc ecx
+                            rep movsb
+                            mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+                        .endif
+                    .endif
+                .endf
+                pop ebx
+            .endif
         .endif
 
         mov edx,tokenarray
-        .if [ebx].token == T_DIRECTIVE
-            mov flags,GetValueSp( [ebx].tokval )
-            .if flags & DF_STRPARM
-                mov bracket_flags,-1
-                ;; v2.08 handle .ERRDEF and .ERRNDEF here. Previously
-                ;; expansion for these directives was handled in condasm.asm,
-                ;; and the directives were flagged as DF_NOEXPAND.
+        .if ( [ebx].token == T_DIRECTIVE )
 
-                .if [ebx].dirtype == DRT_ERRDIR
-                    .if ( [ebx].tokval == T_DOT_ERRDEF || [ebx].tokval == T_DOT_ERRNDEF )
+            mov flags,GetValueSp( [ebx].tokval )
+            .if ( eax & DF_STRPARM )
+
+                mov bracket_flags,-1
+
+                ; v2.08 handle .ERRDEF and .ERRNDEF here. Previously
+                ; expansion for these directives was handled in condasm.asm,
+                ; and the directives were flagged as DF_NOEXPAND.
+
+                .if ( [ebx].dirtype == DRT_ERRDIR )
+                    .if ( [ebx].tokval == T_DOT_ERRDEF ||
+                          [ebx].tokval == T_DOT_ERRNDEF )
+
                         .if esi
                             mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                         .endif
@@ -1731,15 +1905,18 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                             inc esi
                             add ebx,asm_tok
                         .endw
-                        mov count,esi ;; don't expand the symbol name
+                        mov count,esi ; don't expand the symbol name
                     .endif
                 .endif
-            .elseif flags & DF_NOEXPAND
-                ;; [ELSE]IF[N]DEF, ECHO, FOR[C]
-                ;; .[NO|X]CREF, INCLUDE
-                ;; don't expand arguments
+
+            .elseif ( eax & DF_NOEXPAND )
+
+                ; [ELSE]IF[N]DEF, ECHO, FOR[C]
+                ; .[NO|X]CREF, INCLUDE
+                ; don't expand arguments
                 .return NOT_ERROR
             .endif
+
         .elseif Token_Count > 1 && [edx+16].asm_tok.token == T_DIRECTIVE
             mov al,[edx+16].asm_tok.dirtype
             .switch al
@@ -1748,20 +1925,20 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 mov count,2
                 .endc
             .case DRT_SUBSTR
-                ;; syntax: name SUBSTR <literal>, pos [, size]
+                ; syntax: name SUBSTR <literal>, pos [, size]
                 mov bracket_flags,0x1
                 mov count,2
                 .endc
             .case DRT_SIZESTR
-                ;; syntax: label SIZESTR literal
+                ; syntax: label SIZESTR literal
                 mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 mov bracket_flags,0x1
                 mov count,2
                 .endc
             .case DRT_INSTR
-                ;; syntax: label INSTR [number,] literal, literal
+                ; syntax: label INSTR [number,] literal, literal
                 mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
-                ;; check if the optional <number> argument is given
+                ; check if the optional <number> argument is given
                 .for esi = 2, eax = 0, ecx = 0: esi < Token_Count: esi++
                     imul ebx,esi,asm_tok
                     add ebx,tokenarray
@@ -1782,33 +1959,34 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 .endc
             .case DRT_MACRO
                 SymSearch( [edx].asm_tok.string_ptr )
-                ;; don't expand macro DEFINITIONs!
-                ;; the name is an exception, if it's not the macro itself
+                ; don't expand macro DEFINITIONs!
+                ; the name is an exception, if it's not the macro itself
 
                 .if ( eax && [eax].asym.state != SYM_MACRO )
                     mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
                 .endif
-                mov count,Token_Count ;; stop further expansion
+                mov count,Token_Count ; stop further expansion
                 .endc
             .case DRT_EQU
-                ;; EQU is a special case. If the - expanded - expression is
-                ;; a number, then the value for EQU is numeric. Else the
-                ;; expression isn't expanded at all. This effectively makes it
-                ;; impossible to expand EQU lines here.
+                ; EQU is a special case. If the - expanded - expression is
+                ; a number, then the value for EQU is numeric. Else the
+                ; expression isn't expanded at all. This effectively makes it
+                ; impossible to expand EQU lines here.
 
                 .return NOT_ERROR
             .endsw
         .else
-            ;; v2.08: expand the very first token and then ...
+            ; v2.08: expand the very first token and then ...
             mov rc,ExpandToken( string, &count, tokenarray, 1, FALSE, FALSE, buffer )
             .return .if eax == ERROR || eax == EMPTY
 
             .if ( rc == STRING_EXPANDED )
-                ;; ... fully retokenize - the expansion might have revealed a conditional
-                ;; assembly directive
-
+                ;
+                ; ... fully retokenize - the expansion might have revealed a
+                ; conditional assembly directive
+                ;
                 mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                .continue
+               .continue
             .endif
             mov eax,tokenarray
             .if ( count == 1 && [eax].asm_tok.token == T_ID && [eax+16].asm_tok.token == T_ID )
@@ -1820,13 +1998,14 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 .endif
             .endif
         .endif
-        ;; scan the line from left to right for (text) macros.
-        ;; it's currently not quite correct. a macro proc should only
-        ;; be evaluated in the following cases:
-        ;; 1. it is the first token of a line
-        ;; 2. it is the second token, and the first one is an ID
-        ;; 3. it is the third token, the first one is an ID and
-        ;;    the second is a ':' or '::'.
+
+        ; scan the line from left to right for (text) macros.
+        ; it's currently not quite correct. a macro proc should only
+        ; be evaluated in the following cases:
+        ; 1. it is the first token of a line
+        ; 2. it is the second token, and the first one is an ID
+        ; 3. it is the third token, the first one is an ID and
+        ;    the second is a ':' or '::'.
 
         .while ( count < Token_Count )
 
@@ -1837,7 +2016,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 shr bracket_flags,1
             .endif
             ExpandToken( string, &count, tokenarray, Token_Count, addbrackets, FALSE, buffer )
-            .return .ifs ( eax < NOT_ERROR ) ;; ERROR or EMPTY?
+            .return .ifs ( eax < NOT_ERROR ) ; ERROR or EMPTY?
             .if eax == STRING_EXPANDED
                 mov rc,STRING_EXPANDED
             .endif
@@ -1852,7 +2031,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
         .else
             .break
         .endif
-    .endf ;; end for()
+    .endf
 
     .return asmerr( 2123 ) .if ( lvl == MAX_TEXTMACRO_NESTING )
     mov eax,rc

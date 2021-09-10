@@ -8,4 +8,4 @@ Declares a static method type for a Asmc class interface.
 
 #### See Also
 
-[.CLASS](dot_class.md) | [.OPERATOR](dot_operator.md) | [.ENDS](dot_ends.md)
+[.CLASS](dot_class.md) | [.ENDS](dot_ends.md)

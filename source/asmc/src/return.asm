@@ -169,26 +169,36 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asm_tok, t
 
         .elseif ( opnd.kind == EXPR_CONST )
 
-            mov edx,opnd.hvalue
-            mov eax,opnd.value
+            mov edx,opnd.quoted_string
 
-            .ifs ( !edx && eax > 0 )
+            .if ( edx && [edx].asm_tok.token == T_STRING )
 
-                mov ecx,reg
-                .if ecx == T_RAX
-                    mov ecx,T_EAX
-                .endif
-                AddLineQueueX( "mov %r,%d", ecx, eax )
+                AddLineQueueX( " lea %r, @CStr(%s)", reg, [edx].asm_tok.string_ptr )
                 dec esi
 
-            .elseif ( !eax && !edx )
+            .else
 
-                mov eax,reg
-                .if eax == T_RAX
-                    mov eax,T_EAX
+                mov edx,opnd.hvalue
+                mov eax,opnd.value
+
+                .ifs ( !edx && eax > 0 )
+
+                    mov ecx,reg
+                    .if ecx == T_RAX
+                        mov ecx,T_EAX
+                    .endif
+                    AddLineQueueX( "mov %r,%d", ecx, eax )
+                    dec esi
+
+                .elseif ( !eax && !edx )
+
+                    mov eax,reg
+                    .if eax == T_RAX
+                        mov eax,T_EAX
+                    .endif
+                    AddLineQueueX( "xor %r,%r", eax, eax )
+                    dec esi
                 .endif
-                AddLineQueueX( "xor %r,%r", eax, eax )
-                dec esi
             .endif
 
         .elseif ( opnd.kind == EXPR_REG && !( opnd.flags & E_INDIRECT ) )

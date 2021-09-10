@@ -27,11 +27,11 @@ sc_blueMask     equ (0xff shl sc_blueShift)
         ifidn typeid(this),<D3DCOLORVALUE>
             this.Init(_1)
         else
-            [rcx].D3DCOLORVALUE.typeid(D3DCOLORVALUE, this)(_1)
+            [rcx].D3DCOLORVALUE.typeid(D3DCOLORVALUE_, this)(_1)
         endif
         }
 
-    .inline D3DCOLORVALUEIMM32 :vararg {
+    .inline D3DCOLORVALUE_imm :vararg {
       local n
        .new n:D3DCOLORVALUE
         n.Init(_1)
@@ -42,14 +42,14 @@ sc_blueMask     equ (0xff shl sc_blueShift)
             lea rcx,this
         endif
         ifnb <_2>
-            ifidn typeid(_2),<REG128>
+            ifidn typeid(_2),<oword>
                 movss [rcx].D3DCOLORVALUE.a,_2
             else
                 mov [rcx].D3DCOLORVALUE.a,_2
             endif
         endif
         ifnb <_1>
-            ifidn typeid(_1),<IMM32>
+            ifidn typeid(_1),<imm>
                %mov [rcx].D3DCOLORVALUE.r, @CatStr(%((_1 and sc_redMask) shr sc_redShift),     <.0>) / 255.0
                %mov [rcx].D3DCOLORVALUE.g, @CatStr(%((_1 and sc_greenMask) shr sc_greenShift), <.0>) / 255.0
                %mov [rcx].D3DCOLORVALUE.b, @CatStr(%((_1 and sc_blueMask) shr sc_blueShift),   <.0>) / 255.0

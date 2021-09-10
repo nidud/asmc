@@ -1215,14 +1215,14 @@ endif
 
                             mov ecx,r0flags
                             or B[ecx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%q", opnd.llvalue )
+                            AddLineQueueX( " mov rax, 0x%lx", opnd.llvalue )
                             AddLineQueue( " push rax" )
 ifndef __ASMC64__
                         .else
 
                             mov ebx,T_PUSHD
-                            AddLineQueueX( " pushd high32 (0x%q)", opnd.llvalue )
-                            AddLineQueueX( " pushd low32 (0x%q)",  opnd.llvalue )
+                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.llvalue )
+                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.llvalue )
 endif
                         .endif
                         jmp skip_push
@@ -1234,32 +1234,32 @@ ifndef __ASMC64__
                         .if Ofssize == USE32
 
                             mov ebx,T_PUSHD
-                            AddLineQueueX( " pushd high32 (0x%q)", opnd.hlvalue )
-                            AddLineQueueX( " pushd low32 (0x%q)",  opnd.hlvalue )
-                            AddLineQueueX( " pushd high32 (0x%q)", opnd.llvalue )
-                            AddLineQueueX( " pushd low32 (0x%q)",  opnd.llvalue )
+                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.hlvalue )
+                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.hlvalue )
+                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.llvalue )
+                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.llvalue )
                             jmp skip_push
                         .endif
 endif
                         .if ( opnd.h64_h == 0 || opnd.h64_h == -1 )
 
-                            AddLineQueueX( " push 0x%q", opnd.hlvalue )
+                            AddLineQueueX( " push 0x%lx", opnd.hlvalue )
                         .else
 
                             mov ecx,r0flags
                             or B[ecx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%q", opnd.hlvalue )
+                            AddLineQueueX( " mov rax, 0x%lx", opnd.hlvalue )
                             AddLineQueue( " push rax" )
                         .endif
 
                         .if ( opnd.l64_h == 0 || opnd.l64_h == -1 )
 
-                            AddLineQueueX( " push 0x%q", opnd.llvalue )
+                            AddLineQueueX( " push 0x%lx", opnd.llvalue )
                         .else
 
                             mov ecx,r0flags
                             or B[ecx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%q", opnd.llvalue )
+                            AddLineQueueX( " mov rax, 0x%lx", opnd.llvalue )
                             AddLineQueue( " push rax" )
                         .endif
                         jmp skip_push

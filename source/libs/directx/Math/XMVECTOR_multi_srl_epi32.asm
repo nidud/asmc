@@ -9,7 +9,7 @@ include DirectXMath.inc
 
     option win64:rsp nosave noauto
 
-XMVECTOR::multi_srl_epi32 proc vectorcall V:XMVECTOR
+XMVECTOR_multi_srl_epi32 proc vectorcall this:XMVECTOR, V:XMVECTOR
 
     _mm_store_ps(xmm3, xmm0)
     _mm_store_ps(xmm4, xmm1)
@@ -51,6 +51,6 @@ XMVECTOR::multi_srl_epi32 proc vectorcall V:XMVECTOR
     _mm_store_ps(xmm0, xmm2)
     ret
 
-XMVECTOR::multi_srl_epi32 endp
+XMVECTOR_multi_srl_epi32 endp
 
     end

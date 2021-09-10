@@ -263,12 +263,12 @@ ifdef _WIN64
 
     .inline RECT :vararg {
 	ifidn typeid(this),<RECT>
-	    this.InitRECT(_1)
+	    this.Init_RECT(_1)
 	else
-	    [rcx].RECT.typeid(RECT, this)(_1)
+	    [rcx].RECT.typeid(RECT_, this)(_1)
 	endif
 	}
-    .inline RECTIMM32 :vararg {
+    .inline RECT_imm :vararg {
       local rc
        .new rc:RECT
 	rc.InitRECT(_1)
@@ -277,13 +277,13 @@ ifdef _WIN64
 
     .inline Init :vararg {
 	ifidn typeid(this),<RECT>
-	    this.InitRECT(_1)
+	    this.Init_RECT(_1)
 	else
-	    [rcx].RECT.typeid(Init, this)(_1)
+	    [rcx].RECT.typeid(Init_, this)(_1)
 	endif
 	}
 
-    .inline InitRECT :abs, :abs, :abs, :abs, :vararg {
+    .inline Init_RECT :abs, :abs, :abs, :abs, :vararg {
 	ifnb <_1>
 	    mov this.left,    _1
 	endif
@@ -298,7 +298,7 @@ ifdef _WIN64
 	endif
 	}
 
-    .inline InitREG64 :abs, :abs, :abs, :abs {
+    .inline Init_dword :abs, :abs, :abs, :abs {
 	ifnb <_1>
 	    mov [this].RECT.left,    _1
 	endif
@@ -313,8 +313,8 @@ ifdef _WIN64
 	endif
 	}
 
-    .inline InitPRECT :abs, :abs, :abs, :abs {
-	[rcx].RECT.InitREG64(_1, _2, _3, _4)
+    .inline Init_ptrRECT :abs, :abs, :abs, :abs {
+	[rcx].RECT.Init_qword(_1, _2, _3, _4)
 	}
 
     .inline Width :abs=<eax> {

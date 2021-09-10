@@ -13,8 +13,7 @@ _wcsdup proc string:LPWSTR
 
     .if wcslen(rcx)
 
-        add eax,2
-        .if malloc(rax)
+        .if malloc(&[rax*2+2])
 
             wcscpy(rax, string)
         .endif

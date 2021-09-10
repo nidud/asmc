@@ -1,10 +1,9 @@
-.pragma list(push, 0)
 ifndef __WTYPES_INC
-__WTYPES_INC equ <>
+define __WTYPES_INC
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 440
+define __REQUIRED_RPCNDR_H_VERSION__ 440
 endif
-
 include rpc.inc
 include rpcndr.inc
 
@@ -14,7 +13,7 @@ MIDL_user_allocate proto WINAPI :size_t
 MIDL_user_free proto WINAPI :PVOID
 
 ifndef __IWinTypes_INTERFACE_DEFINED__
-__IWinTypes_INTERFACE_DEFINED__ equ <>
+define __IWinTypes_INTERFACE_DEFINED__
 
 RemHGLOBAL	STRUC
 fNullHGlobal	LONG ?
@@ -839,6 +838,6 @@ pTreatAsClsid		LPCLSID ?
 cPackages		dd ?
 pPackageDetail		LPPACKAGEDETAIL ?
 PACKAGEINFO		ENDS
-
-endif
 .pragma list(pop)
+endif
+

@@ -142,255 +142,247 @@ ifdef _WIN64
     .ends
 
 
-    D2D1 typedef ptr
+D2D1_FloatMax proto {
+    ifdef FLT_MAX
+        movss xmm0,FLT_MAX
+    else
+        movss xmm0,3.402823466e+38
+    endif
+    }
 
-.template D2D1
+D2D1_Point2 proto fastcall :dword, :dword {
 
+  local T
+   .new T:Point
+    mov T.x,_1
+    mov T.y,_2
+    lea rax,T
+    }
 
-    .inline FloatMax {
-        ifdef FLT_MAX
-            movss xmm0,FLT_MAX
-        else
-            movss xmm0,3.402823466e+38
-        endif
-        }
+D2D1_Point2F proto fastcall :abs=<0.0>, :abs=<0.0> {
 
+  local T
+   .new T:D2D1_POINT_2F
 
-    .inline Point2 :dword, :dword {
-
-       local T
-        .new T:Point
-
+    ifidn typeid(_1),<oword>
+        movss T.x,_1
+    else
         mov T.x,_1
+    endif
+    ifidn typeid(_2),<oword>
+        movss T.y,_2
+    else
         mov T.y,_2
-        lea _3,T
-        }
+    endif
+    lea rax,T
+    }
 
-    .inline Point2F :abs=<0.0>, :abs=<0.0> {
+D2D1_Point2U proto fastcall :abs=<0>, :abs=<0> {
 
-       local T
-        .new T:D2D1_POINT_2F
+  local T
+   .new T:D2D1_POINT_2U
 
-        ifidn typeid(_1),<REG128>
-            movss T.x,_1
-        else
-            mov T.x,_1
-        endif
-        ifidn typeid(_2),<REG128>
-            movss T.y,_2
-        else
-            mov T.y,_2
-        endif
-        lea rax,T
-        }
+    mov T.x,_1
+    mov T.y,_2
+    lea rax,T
+    }
 
-    .inline Point2U :abs=<0>, :abs=<0> {
+D2D1_Size proto fastcall :uint_t, :uint_t {
 
-       local T
-        .new T:D2D1_POINT_2U
+  local T
+   .new T:Size
 
-        mov T.x,_1
-        mov T.y,_2
-        lea rax,T
-        }
+    mov T.width, _1
+    mov T.height,_2
+    lea rax,T
+    }
 
-    .inline Size :uint_t, :uint_t {
+D2D1_SizeF proto fastcall :abs=<0.0>, :abs=<0.0> {
 
-       local T
-        .new T:Size
-
-        mov T.width,ecx
-        mov T.height,edx
-        lea rax,T
-        }
-
-    .inline SizeF :abs=<0.0>, :abs=<0.0> {
-
-       local T
-        .new T:D2D1_SIZE_F
-        ifidn typeid(_1),<REG128>
-            movss T.width, _1
-        else
-            mov T.width, _1
-        endif
-        ifidn typeid(_2),<REG128>
-            movss T.height,_2
-        else
-            mov T.height,_2
-        endif
-        lea rax,T
-        }
-
-    .inline SizeU :abs=<0>, :abs=<0> {
-
-       local T
-        .new T:D2D1_SIZE_U
-
+  local T
+   .new T:D2D1_SIZE_F
+    ifidn typeid(_1),<oword>
+        movss T.width, _1
+    else
         mov T.width, _1
+    endif
+    ifidn typeid(_2),<oword>
+        movss T.height,_2
+    else
         mov T.height,_2
-        lea rax,T
-        }
+    endif
+    lea rax,T
+    }
 
-    .inline Rect :uint_t, :uint_t, :uint_t, :uint_t {
+D2D1_SizeU proto fastcall :abs=<0>, :abs=<0> {
 
-       local T
-        .new T:Rect
+  local T
+   .new T:D2D1_SIZE_U
 
-        mov T.left,   ecx
-        mov T.top,    edx
-        mov T.right,  r8d
-        mov T.bottom, r9d
-        lea rax,T
-        }
+    mov T.width, _1
+    mov T.height,_2
+    lea rax,T
+    }
 
-    .inline RectF :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
+D2D1_Rect proto fastcall :uint_t, :uint_t, :uint_t, :uint_t {
 
-       local T
-        .new T:D2D1_RECT_F
+  local T
+   .new T:Rect
 
-        ifidn typeid(_1),<REG128>
-            movss T.left,_1
-        else
-            mov T.left,_1
-        endif
-        ifidn typeid(_2),<REG128>
-            movss T.top,_2
-        else
-            mov T.top,_2
-        endif
-        ifidn typeid(_3),<REG128>
-            movss T.right,_3
-        else
-            mov T.right,_3
-        endif
-        ifidn typeid(_4),<REG128>
-            movss T.bottom,_4
-        else
-            mov T.bottom,_4
-        endif
-        lea rax,T
-        }
+    mov T.left,   _1
+    mov T.top,    _2
+    mov T.right,  _3
+    mov T.bottom, _4
+    lea rax,T
+    }
 
-    .inline RectU :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0> {
+D2D1_RectF proto fastcall :abs=<0.0>, :abs=<0.0>, :abs=<0.0>, :abs=<0.0> {
 
-       local T
-        .new T:D2D1_RECT_U
+  local T
+   .new T:D2D1_RECT_F
 
-        mov T.left,   _1
-        mov T.top,    _2
-        mov T.right,  _3
-        mov T.bottom, _4
-        lea rax,T
-        }
+    ifidn typeid(_1),<oword>
+        movss T.left,_1
+    else
+        mov T.left,_1
+    endif
+    ifidn typeid(_2),<oword>
+        movss T.top,_2
+    else
+        mov T.top,_2
+    endif
+    ifidn typeid(_3),<oword>
+        movss T.right,_3
+    else
+        mov T.right,_3
+    endif
+    ifidn typeid(_4),<oword>
+        movss T.bottom,_4
+    else
+        mov T.bottom,_4
+    endif
+    lea rax,T
+    }
 
-    .inline InfiniteRect {
+D2D1_RectU proto fastcall :abs=<0>, :abs=<0>, :abs=<0>, :abs=<0> {
 
-       local T
-        .new T:D2D1_RECT_F
+  local T
+   .new T:D2D1_RECT_U
 
-        ifdef FLT_MAX
-            mov T.left,  -FLT_MAX
-            mov T.top,   -FLT_MAX
-            mov T.right,  FLT_MAX
-            mov T.bottom, FLT_MAX
-        else
-            mov T.left,  -3.402823466e+38
-            mov T.top,   -3.402823466e+38
-            mov T.right,  3.402823466e+38
-            mov T.bottom, 3.402823466e+38
-        endif
-        lea rax,T
-        }
+    mov T.left,   _1
+    mov T.top,    _2
+    mov T.right,  _3
+    mov T.bottom, _4
+    lea rax,T
+    }
 
+D2D1_InfiniteRect proto fastcall {
 
-    .inline ArcSegment :ptr D2D1_POINT_2F, :ptr D2D1_SIZE_F, :abs, :abs, :abs {
+  local T
+   .new T:D2D1_RECT_F
 
-       local T
-        .new T:D2D1_ARC_SEGMENT
-
-        mov T.point,[rcx]
-        mov T.size, [rdx]
-        mov T.rotationAngle,_3
-        mov T.sweepDirection,_4
-        mov T.arcSize,_5
-        lea rax,T
-        }
-
-    .inline BezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
-
-       local T
-        .new T:D2D1_BEZIER_SEGMENT
-
-        mov T.point1,[rcx]
-        mov T.point2,[rdx]
-        mov T.point3,[r8]
-        lea rax,T
-        }
+    ifdef FLT_MAX
+        mov T.left,  -FLT_MAX
+        mov T.top,   -FLT_MAX
+        mov T.right,  FLT_MAX
+        mov T.bottom, FLT_MAX
+    else
+        mov T.left,  -3.402823466e+38
+        mov T.top,   -3.402823466e+38
+        mov T.right,  3.402823466e+38
+        mov T.bottom, 3.402823466e+38
+    endif
+    lea rax,T
+    }
 
 
-    .inline Ellipse :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+D2D1_ArcSegment proto fastcall :ptr D2D1_POINT_2F, :ptr D2D1_SIZE_F, :abs, :abs, :abs {
 
-       local T
-        .new T:D2D1_ELLIPSE
+  local T
+   .new T:D2D1_ARC_SEGMENT
 
-        mov   T.point,[rcx]
-        movss T.radiusX,xmm1
-        movss T.radiusY,xmm2
-        lea   rax,T
-        }
+    mov T.point,[_1]
+    mov T.size, [_2]
+    mov T.rotationAngle,_3
+    mov T.sweepDirection,_4
+    mov T.arcSize,_5
+    lea rax,T
+    }
 
-    .inline RoundedRect :ptr D2D1_RECT_F, :FLOAT, :FLOAT {
+D2D1_BezierSegment proto fastcall :ptr D2D1_POINT_2F,
+        :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
 
-       local T
-        .new T:D2D1_ROUNDED_RECT
+  local T
+   .new T:D2D1_BEZIER_SEGMENT
 
-        mov   T.rect,[rcx]
-        movss T.radiusX,xmm1
-        movss T.radiusY,xmm2
-        lea   rax,T
-        }
+    mov T.point1,[_1]
+    mov T.point2,[_2]
+    mov T.point3,[_3]
+    lea rax,T
+    }
 
-    .inline BrushProperties :abs=<1.0>, :abs {
 
-       local T
-        .new T:D2D1_BRUSH_PROPERTIES
+D2D1_Ellipse proto fastcall :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
 
-        mov T.opacity,_1
-        ifb <_2>
-            xor eax,eax
-            mov T.transform._11,1.0
-            mov T.transform._12,eax
-            mov T.transform._21,eax
-            mov T.transform._22,1.0
-            mov T.transform._31,eax
-            mov T.transform._32,eax
-        else
-            mov T.transform,[rdx]
-        endif
-        lea rax,T
-        }
+  local T
+   .new T:D2D1_ELLIPSE
 
-    .inline GradientStop :FLOAT, :ptr D2D1_COLOR_F {
+    mov   T.point,[_1]
+    movss T.radiusX,_2
+    movss T.radiusY,_3
+    lea   rax,T
+    }
 
-       local T
-        .new T:D2D1_GRADIENT_STOP
+D2D1_RoundedRect proto fastcall :ptr D2D1_RECT_F, :FLOAT, :FLOAT {
 
-        movss T.position,xmm0
-        mov   T.color,[rdx]
-        lea   rax,T
-        }
+  local T
+   .new T:D2D1_ROUNDED_RECT
 
-    .inline QuadraticBezierSegment :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+    mov   T.rect,[rcx]
+    movss T.radiusX,xmm1
+    movss T.radiusY,xmm2
+    lea   rax,T
+    }
 
-       local T
-        .new T:D2D1_QUADRATIC_BEZIER_SEGMENT
+D2D1_BrushProperties proto fastcall :abs=<1.0>, :abs {
 
-        mov T.point1,[rcx]
-        mov T.point2,[rdx]
-        lea rax,T
-        }
+  local T
+   .new T:D2D1_BRUSH_PROPERTIES
+    mov T.opacity,_1
+    ifb <_2>
+        xor eax,eax
+        mov T.transform._11,1.0
+        mov T.transform._12,eax
+        mov T.transform._21,eax
+        mov T.transform._22,1.0
+        mov T.transform._31,eax
+        mov T.transform._32,eax
+    else
+        mov T.transform,[_2]
+    endif
+    lea rax,T
+    }
 
-    .inline StrokeStyleProperties \
+D2D1_GradientStop proto fastcall :FLOAT, :ptr D2D1_COLOR_F {
+
+  local T
+   .new T:D2D1_GRADIENT_STOP
+
+    movss T.position,_1
+    mov   T.color,[_2]
+    lea   rax,T
+    }
+
+D2D1_QuadraticBezierSegment proto fastcall :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+
+  local T
+   .new T:D2D1_QUADRATIC_BEZIER_SEGMENT
+    mov T.point1,[_1]
+    mov T.point2,[_2]
+    lea rax,T
+    }
+
+D2D1_StrokeStyleProperties proto fastcall \
             :abs=<D2D1_CAP_STYLE_FLAT>,
             :abs=<D2D1_CAP_STYLE_FLAT>,
             :abs=<D2D1_CAP_STYLE_FLAT>,
@@ -399,87 +391,85 @@ ifdef _WIN64
             :abs=<D2D1_DASH_STYLE_SOLID>,
             :abs=<0.0> {
 
-       local T
-        .new T:D2D1_STROKE_STYLE_PROPERTIES
+  local T
+   .new T:D2D1_STROKE_STYLE_PROPERTIES
 
-        mov T.startCap,   _1
-        mov T.endCap,     _2
-        mov T.dashCap,    _3
-        mov T.lineJoin,   _4
-        mov T.miterLimit, _5
-        mov T.dashStyle,  _6
-        mov T.dashOffset, _7
-        lea rax,T
-        }
+    mov T.startCap,   _1
+    mov T.endCap,     _2
+    mov T.dashCap,    _3
+    mov T.lineJoin,   _4
+    mov T.miterLimit, _5
+    mov T.dashStyle,  _6
+    mov T.dashOffset, _7
+    lea rax,T
+    }
 
-    .inline BitmapBrushProperties :abs=<D2D1_EXTEND_MODE_CLAMP>, :abs=<D2D1_EXTEND_MODE_CLAMP>,
-        :abs=<D2D1_BITMAP_INTERPOLATION_MODE_LINEAR> {
+D2D1_BitmapBrushProperties proto fastcall :abs=<D2D1_EXTEND_MODE_CLAMP>,
+        :abs=<D2D1_EXTEND_MODE_CLAMP>, :abs=<D2D1_BITMAP_INTERPOLATION_MODE_LINEAR> {
 
-       local T
-        .new T:D2D1_BITMAP_BRUSH_PROPERTIES
+  local T
+   .new T:D2D1_BITMAP_BRUSH_PROPERTIES
 
-        mov T.extendModeX,_1
-        mov T.extendModeY,_2
-        mov T.interpolationMode,_3
-        lea rax,T
-        }
+    mov T.extendModeX,_1
+    mov T.extendModeY,_2
+    mov T.interpolationMode,_3
+    lea rax,T
+    }
 
-    .inline LinearGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
+D2D1_LinearGradientBrushProperties proto fastcall :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F {
 
-       local T
-        .new T:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
+  local T
+   .new T:D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES
 
-        mov T.startPoint, [rcx]
-        mov T.endPoint,   [rdx]
-        lea rax,T
-        }
+    mov T.startPoint, [_1]
+    mov T.endPoint,   [_2]
+    lea rax,T
+    }
 
-    .inline RadialGradientBrushProperties :ptr D2D1_POINT_2F, :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
+D2D1_RadialGradientBrushProperties proto fastcall :ptr D2D1_POINT_2F,
+        :ptr D2D1_POINT_2F, :FLOAT, :FLOAT {
 
-       local T
-        .new T:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES
+  local T
+   .new T:D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES
 
-        mov   T.center,[rcx]
-        mov   T.gradientOriginOffset,[rdx]
-        movss T.radiusX,xmm2
-        movss T.radiusY,xmm3
-        lea   rax,T
-        }
+    mov   T.center,[rcx]
+    mov   T.gradientOriginOffset,[rdx]
+    movss T.radiusX,xmm2
+    movss T.radiusY,xmm3
+    lea   rax,T
+    }
 
+;
+; PixelFormat
+;
+D2D1_PixelFormat proto fastcall :abs=<DXGI_FORMAT_UNKNOWN>, :abs=<D2D1_ALPHA_MODE_UNKNOWN> {
 
-    ;;
-    ;; PixelFormat
-    ;;
-    .inline PixelFormat :abs=<DXGI_FORMAT_UNKNOWN>, :abs=<D2D1_ALPHA_MODE_UNKNOWN> {
+  local T
+   .new T:D2D1_PIXEL_FORMAT
 
-       local T
-        .new T:D2D1_PIXEL_FORMAT
+    mov T.format,_1
+    mov T.alphaMode,_2
+    lea rax,T
+    }
 
-        mov T.format,_1
-        mov T.alphaMode,_2
-        lea rax,T
-        }
+;
+; Bitmaps
+;
+D2D1_BitmapProperties proto fastcall :ptr D2D1_PIXEL_FORMAT, :abs=<96.0>, :abs=<96.0> {
 
+  local T
+   .new T:D2D1_BITMAP_PROPERTIES
 
-    ;;
-    ;; Bitmaps
-    ;;
-    .inline BitmapProperties :ptr D2D1_PIXEL_FORMAT, :abs=<96.0>, :abs=<96.0> {
+    mov T.pixelFormat,[rcx]
+    mov T.dpiX,_2
+    mov T.dpiY,_3
+    lea rax,T
+    }
 
-       local T
-        .new T:D2D1_BITMAP_PROPERTIES
-
-        mov T.pixelFormat,[rcx]
-        mov T.dpiX,_2
-        mov T.dpiY,_3
-        lea rax,T
-        }
-
-
-    ;;
-    ;; Render Targets
-    ;;
-    .inline RenderTargetProperties \
+;
+; Render Targets
+;
+D2D1_RenderTargetProperties proto fastcall \
             :abs=<D2D1_RENDER_TARGET_TYPE_DEFAULT>,
             :abs,
             :abs=<0.0>,
@@ -487,40 +477,40 @@ ifdef _WIN64
             :abs=<D2D1_RENDER_TARGET_USAGE_NONE>,
             :abs=<D2D1_FEATURE_LEVEL_DEFAULT> {
 
-       local T
-        .new T:D2D1_RENDER_TARGET_PROPERTIES
+  local T
+   .new T:D2D1_RENDER_TARGET_PROPERTIES
 
-        mov T.type,     _1
-        mov T.dpiX,     _3
-        mov T.dpiY,     _4
-        mov T.usage,    _5
-        mov T.minLevel, _6
-        ifb <_2>
-            mov T.pixelFormat.format,DXGI_FORMAT_UNKNOWN
-            mov T.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
-        else
-            ifdif <_2>,<rdx>
-                mov rdx,_2
-            endif
-            mov T.pixelFormat,[rdx]
+    mov T.type,     _1
+    mov T.dpiX,     _3
+    mov T.dpiY,     _4
+    mov T.usage,    _5
+    mov T.minLevel, _6
+    ifb <_2>
+        mov T.pixelFormat.format,DXGI_FORMAT_UNKNOWN
+        mov T.pixelFormat.alphaMode,D2D1_ALPHA_MODE_UNKNOWN
+    else
+        ifdif <_2>,<rdx>
+            mov rdx,_2
         endif
-        lea rax,T
-        }
+        mov T.pixelFormat,[rdx]
+    endif
+    lea rax,T
+    }
 
 
-    .inline HwndRenderTargetProperties :HWND, :D2D1_SIZE_U, :abs=<D2D1_PRESENT_OPTIONS_NONE> {
+D2D1_HwndRenderTargetProperties proto fastcall :HWND, :D2D1_SIZE_U,
+        :abs=<D2D1_PRESENT_OPTIONS_NONE> {
 
-       local T
-        .new T:D2D1_HWND_RENDER_TARGET_PROPERTIES
+  local T
+   .new T:D2D1_HWND_RENDER_TARGET_PROPERTIES
+    mov T.hwnd,_1
+    mov T.pixelSize,_2
+    mov T.presentOptions,_3
+    lea rax,T
+    }
 
-        mov T.hwnd,rcx
-        mov T.pixelSize,rdx
-        mov T.presentOptions,_3
-        lea rax,T
-        }
 
-
-    .inline LayerParameters :ptr D2D1_RECT_F,
+D2D1_LayerParameters proto fastcall :ptr D2D1_RECT_F,
         :ptr,
         :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
         :D2D1_MATRIX_3X2_F,
@@ -528,48 +518,46 @@ ifdef _WIN64
         :ptr ID2D1Brush,
         :abs=<D2D1_LAYER_OPTIONS_NONE> {
 
-       local T
-        .new T:D2D1_LAYER_PARAMETERS ; { 0 }
+  local T
+   .new T:D2D1_LAYER_PARAMETERS ; { 0 }
 
-        mov T.contentBounds,     [rcx]
-        mov T.geometricMask,     [rdx]
-        mov T.maskAntialiasMode, _3
-        mov T.maskTransform,     _4
-        mov T.opacity,           _5
-        mov T.opacityBrush,      _6
-        mov T.layerOptions,      _7
-        lea rax,T
-        }
+    mov T.contentBounds,     [_1]
+    mov T.geometricMask,     [_2]
+    mov T.maskAntialiasMode, _3
+    mov T.maskTransform,     _4
+    mov T.opacity,           _5
+    mov T.opacityBrush,      _6
+    mov T.layerOptions,      _7
+    lea rax,T
+    }
 
 
-    .inline DrawingStateDescription \
+D2D1_DrawingStateDescription proto fastcall \
         :abs=<D2D1_ANTIALIAS_MODE_PER_PRIMITIVE>,
         :abs=<D2D1_TEXT_ANTIALIAS_MODE_DEFAULT>,
         :abs=<0>,
         :abs=<0>,
         :abs=<0> {
 
-       local T
-        .new T:D2D1_DRAWING_STATE_DESCRIPTION
+  local T
+   .new T:D2D1_DRAWING_STATE_DESCRIPTION
 
-        mov T.antialiasMode,     _1
-        mov T.textAntialiasMode, _2
-        mov T.tag1,              _3
-        mov T.tag2,              _4
-        mov T.transform,         _5
-        lea rax,T
-        }
+    mov T.antialiasMode,     _1
+    mov T.textAntialiasMode, _2
+    mov T.tag1,              _3
+    mov T.tag2,              _4
+    mov T.transform,         _5
+    lea rax,T
+    }
 
 
-    .inline IdentityMatrix {
-        Matrix3x2F::Identity()
-        }
-
-    .ends
+D2D1_IdentityMatrix proto {
+    Matrix3x2F::Identity()
+    }
 
 endif
 
-;; Common color constants
+; Common color constants
 
 .enum {
 

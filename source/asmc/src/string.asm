@@ -24,7 +24,6 @@ include quadmath.inc
 
 externdef list_pos:DWORD
 
-myltoa proto :uint_t, :string_t, :uint_t, :int_t, :int_t
 GetTypeId proto :string_t, :ptr asm_tok
 
 ;; Stact for "quoted strings" and floats
@@ -853,12 +852,12 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
             AddLineQueueX( "%s dd 0x%x", buffer, opc.value )
             .endc
         .case 8
-            AddLineQueueX( "%s dq 0x%q", buffer, opc.llvalue )
+            AddLineQueueX( "%s dq 0x%lx", buffer, opc.llvalue )
             .endc
         .case 10
         .case 16
             AddLineQueueX( "%s label real%d", buffer, size )
-            AddLineQueueX( "oword 0x%q%q", opc.hlvalue, opc.llvalue )
+            AddLineQueueX( "oword 0x%16lx%16lx", opc.hlvalue, opc.llvalue )
             .endc
         .endsw
         AddLineQueue( "_DATA ends" )
@@ -1487,7 +1486,8 @@ InStrFunc proc private uses esi edi ebx mi:ptr macro_instance, buffer:string_t, 
         .if strstr( ecx, edx )
             sub eax,ebx
             lea ecx,[eax+1]
-            myltoa( ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+            xor edx,edx
+            myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
         .endif
     .endif
 
@@ -1507,7 +1507,8 @@ SizeStrFunc proc private mi:ptr macro_instance, buffer:string_t, tokenarray:ptr 
 
     .if ( ecx )
         mov ecx,strlen( ecx )
-        myltoa( ecx, buffer, ModuleInfo. radix, FALSE, TRUE )
+        xor edx,edx
+        myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
     .else
         mov edx,buffer
         mov eax,'0'

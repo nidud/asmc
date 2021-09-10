@@ -493,8 +493,12 @@ log_macro endp
 
 SimpleTypeString proc fastcall mem_type:byte
 
-    and ecx,MT_SIZE_MASK
-    inc ecx
+    .if ecx == MT_ZWORD
+        mov ecx,64
+    .else
+        and ecx,MT_SIZE_MASK
+        inc ecx
+    .endif
     .switch ( ecx )
     .case 1: .return( strings[LS_BYTE] )
     .case 2: .return( strings[LS_WORD] )
@@ -503,6 +507,8 @@ SimpleTypeString proc fastcall mem_type:byte
     .case 8: .return( strings[LS_QWORD] )
     .case 10:.return( strings[LS_TBYTE] )
     .case 16:.return( strings[LS_OWORD] )
+    .case 32:.return( strings[LS_YWORD] )
+    .case 64:.return( strings[LS_ZWORD] )
     .endsw
     .return( "" )
 

@@ -19,27 +19,26 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     scratch     int_t ?
 
     .inline Pen :abs, :vararg {
-        this.typeid(Pen, _1)(_1, _2)
+        this.typeid(Pen_, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .inline PenPBrush :ptr Brush, :abs=<1.0>, :vararg {
+    .inline Pen_ptrBrush :ptr Brush, :abs=<1.0>, :vararg {
         mov rcx,rdx
         GdipCreatePen2([rcx].Brush.nativeBrush, _2, UnitWorld, addr this.nativePen)
         }
-    .inline PenPColor :ptr Color, :abs=<1.0>, :vararg {
+    .inline Pen_ptrColor :ptr Color, :abs=<1.0>, :vararg {
         mov rcx,rdx
         GdipCreatePen1([rcx].Color.Argb, _2, UnitWorld, addr this.nativePen)
         }
-    .inline PenColor :abs, :abs=<1.0>, :vararg {
+    .inline Pen_Color :abs, :abs=<1.0>, :vararg {
         GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
         }
-    .inline PenIMM32 :abs, :abs=<1.0>, :vararg {
+    .inline Pen_imm :abs, :abs=<1.0>, :vararg {
         GdipCreatePen1(_1, _2, UnitWorld, addr this.nativePen)
         }
-    .inline PenREG32 :vararg { this.PenIMM32(_1) }
-    .inline PenDWORD :vararg { this.PenIMM32(_1) }
+    .inline Pen_dword :vararg { this.Pen_imm(_1) }
 
-    .inline PenPPen :ptr Pen, :Status, :vararg {
+    .inline Pen_ptrPen :ptr Pen, :Status, :vararg {
         mov this.lastResult,r8d
         this.SetNativePen(rdx)
         }

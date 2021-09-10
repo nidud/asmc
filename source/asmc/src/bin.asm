@@ -2237,7 +2237,9 @@ bin_check_external proc modinfo:ptr module_info
 
     .for ( edx = SymTables[TAB_EXT*symbol_queue].head : edx : edx = [edx].dsym.next )
         .if ( !( [edx].asym.sflags & S_WEAK ) || [edx].asym.flags & S_USED )
-            .return( asmerr( 2014, [edx].asym.name ) )
+            .if ( !( [edx].asym.flag2 & S_ISINLINE ) )
+                .return( asmerr( 2014, [edx].asym.name ) )
+            .endif
         .endif
     .endf
     .return( NOT_ERROR )

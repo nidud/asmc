@@ -25,7 +25,7 @@ include atofloat.inc
 
     .code
 
-;; set the value of a constant (EQU) or an assembly time variable (=)
+; set the value of a constant (EQU) or an assembly time variable (=)
 
     assume edx:expr_t
     assume ecx:asym_t
@@ -55,13 +55,13 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
         .return
     .endif
 
-    ;; for a PROC alias, copy the procinfo extension!
+    ; for a PROC alias, copy the procinfo extension!
 
     mov edi,[edx].sym
     .if [edi].flag1 & S_ISPROC
 
         or  [ecx].flag1,S_ISPROC
-        ;; v2.12: must be copied as well, or INVOKE won't work correctly
+        ; v2.12: must be copied as well, or INVOKE won't work correctly
         mov [ecx].langtype,[edi].langtype
         assume ecx:dsym_t
         assume edi:dsym_t
@@ -72,11 +72,11 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
 
     mov [ecx].mem_type,[edx].mem_type
 
-    ;; v2.01: allow equates of variables with arbitrary type.
-    ;; Currently the expression evaluator sets opndx.mem_type
-    ;; to the mem_type of the type (i.e. QWORD for a struct with size 8),
-    ;; which is a bad idea in this case. So the original mem_type of the
-    ;; label is used instead.
+    ; v2.01: allow equates of variables with arbitrary type.
+    ; Currently the expression evaluator sets opndx.mem_type
+    ; to the mem_type of the type (i.e. QWORD for a struct with size 8),
+    ; which is a bad idea in this case. So the original mem_type of the
+    ; label is used instead.
 
     .if ( [edi].mem_type == MT_TYPE && !( [edx].flags & E_EXPLICIT ) )
 
@@ -86,10 +86,10 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
     mov [ecx].value3264,0 ;; v2.09: added
     mov [ecx].segm,[edi].segm
 
-    ;; labels are supposed to be added to the current segment's label_list chain.
-    ;; this isn't done for alias equates, for various reasons.
-    ;; consequently, if the alias was forward referenced, ensure that a third pass
-    ;; will be done! regression test forward5.asm.
+    ; labels are supposed to be added to the current segment's label_list chain.
+    ; this isn't done for alias equates, for various reasons.
+    ; consequently, if the alias was forward referenced, ensure that a third pass
+    ; will be done! regression test forward5.asm.
 
     mov eax,[edi].offs
     add eax,[edx].value
@@ -109,8 +109,8 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
 
 SetValue endp
 
-;; the '=' directive defines an assembly time variable.
-;; this can only be a number (constant or relocatable).
+; the '=' directive defines an assembly time variable.
+; this can only be a number (constant or relocatable).
 
 CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:token_t
 
@@ -118,13 +118,14 @@ CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:token_t
     local name:string_t
     local i:int_t
     local opnd:expr
+    local opn2:expr
 
     mov i,2
     mov ebx,tokenarray
     mov name,[ebx].string_ptr
     add ebx,2*16
 
-    ;; v2.08: for plain numbers ALWAYS avoid to call evaluator
+    ; v2.08: for plain numbers ALWAYS avoid to call evaluator
 
     .if ( [ebx].token == T_NUM && [ebx+16].token == T_FINAL )
 
@@ -135,7 +136,7 @@ check_number:
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
 
-        ;; v2.08: check added. the number must be 32-bit
+        ; v2.08: check added. the number must be 32-bit
 
         .if dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4]
             mov eax,1
@@ -169,9 +170,9 @@ check_number:
         .endif
     .else
 
-        ;; v2.09: don't create not-(yet)-defined symbols. Example:
-        ;; E1 = E1 or 1
-        ;; must NOT create E1.
+        ; v2.09: don't create not-(yet)-defined symbols. Example:
+        ; E1 = E1 or 1
+        ; must NOT create E1.
 
         .return .if EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR
 
@@ -184,26 +185,26 @@ check_number:
             .return NULL
         .endif
 
-        ;; expression may be a constant or a relocatable item.
-        ;; v2.09: kind may be EXPR_CONST and still include an undefined symbol.
-        ;; This is caused by MakeConst() in expreval.c. Brackets changed so
-        ;; opnd.sym is also checked for opnd.kind == EXPR_CONST.
+        ; expression may be a constant or a relocatable item.
+        ; v2.09: kind may be EXPR_CONST and still include an undefined symbol.
+        ; This is caused by MakeConst() in expreval.c. Brackets changed so
+        ; opnd.sym is also checked for opnd.kind == EXPR_CONST.
 
         mov ecx,opnd.sym
         .if ( opnd.kind != EXPR_CONST && \
             ( opnd.kind != EXPR_ADDR || ( opnd.flags & E_INDIRECT ) ) || \
             ( ecx != NULL && [ecx].state != SYM_INTERNAL ) )
 
-            ;; v2.09: no error if argument is a forward reference,
-            ;; but don't create the variable either. Will enforce an
-            ;; error if referenced symbol is still undefined in pass 2.
+            ; v2.09: no error if argument is a forward reference,
+            ; but don't create the variable either. Will enforce an
+            ; error if referenced symbol is still undefined in pass 2.
 
-            .if ecx && [ecx].state == SYM_UNDEFINED && !( opnd.flags & E_INDIRECT )
+            .if ( ecx && [ecx].state == SYM_UNDEFINED && !( opnd.flags & E_INDIRECT ) )
                 .if StoreState == FALSE
                     FStoreLine(0) ;; make sure this line is evaluated in pass two
                 .endif
 
-            .elseif !ecx && opnd.kind == EXPR_FLOAT && !ModuleInfo.strict_masm_compat
+            .elseif ( !ecx && opnd.kind == EXPR_FLOAT && !ModuleInfo.strict_masm_compat )
 
                 mov opnd.mem_type,MT_REAL16
                 mov opnd.kind,EXPR_CONST
@@ -215,12 +216,12 @@ check_number:
             .return NULL
         .endif
 
-        ;; v2.08: accept any result that fits in 64-bits from expression evaluator
+        ; v2.08: accept any result that fits in 64-bits from expression evaluator
         .if ( dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4] )
             EmitConstError(&opnd)
-            .return NULL
+           .return NULL
         .endif
-        ;; for quoted strings, the same restrictions as for plain numbers apply
+        ; for quoted strings, the same restrictions as for plain numbers apply
         .if ( opnd.quoted_string )
             jmp check_number
         .endif
@@ -254,17 +255,17 @@ check_float:
             .return NULL
         .endif
 
-        ;; v2.04a regression in v2.04. Do not save the variable when it
-        ;; is defined the first time
-        ;; v2.10: store state only when variable is changed and has been
-        ;; defined BEFORE SaveState() has been called.
+        ; v2.04a regression in v2.04. Do not save the variable when it
+        ; is defined the first time
+        ; v2.10: store state only when variable is changed and has been
+        ; defined BEFORE SaveState() has been called.
 
         .if StoreState && !( [edi].flag1 & S_ISSAVED )
             SaveVariableState(edi)
         .endif
     .endif
     or byte ptr [edi].flags,S_VARIABLE
-    ;; v2.09: allow internal variables to be set
+    ; v2.09: allow internal variables to be set
     .if ( byte ptr [edi].flags & S_PREDEFINED ) && [edi].sfunc_ptr
         [edi].sfunc_ptr(edi, &opnd)
     .else
@@ -275,7 +276,7 @@ check_float:
 
 CreateAssemblyTimeVariable endp
 
-;; '=' directive.
+; '=' directive.
 
     assume edx:token_t
 
@@ -294,10 +295,10 @@ EqualSgnDirective proc i:int_t, tokenarray:token_t
 
 EqualSgnDirective endp
 
-;; CreateVariable().
-;; define an assembly time variable directly without using the token buffer.
-;; this is used for some internally generated variables (SIZESTR, INSTR, @Cpu)
-;; NO listing is written! The value is ensured to be max 16-bit wide.
+; CreateVariable().
+; define an assembly time variable directly without using the token buffer.
+; this is used for some internally generated variables (SIZESTR, INSTR, @Cpu)
+; NO listing is written! The value is ensured to be max 16-bit wide.
 
 CreateVariable proc uses edi name:string_t, value:int_t
 
@@ -322,9 +323,9 @@ CreateVariable proc uses edi name:string_t, value:int_t
         .endif
         mov [edi].value3264,0
 
-        ;; v2.09: don't save variable when it is defined the first time
-        ;; v2.10: store state only when variable is changed and has been
-        ;; defined BEFORE SaveState() has been called.
+        ; v2.09: don't save variable when it is defined the first time
+        ; v2.10: store state only when variable is changed and has been
+        ; defined BEFORE SaveState() has been called.
 
         .if StoreState && !( [edi].flag1 & S_ISSAVED )
             SaveVariableState(edi)
@@ -332,24 +333,23 @@ CreateVariable proc uses edi name:string_t, value:int_t
     .endif
     or  [edi].flags,S_ISDEFINED or S_VARIABLE or S_ISEQUATE
     mov [edi].state,SYM_INTERNAL
-    mov eax,value
-    mov [edi].value,eax
+    mov [edi].value,value
     mov eax,edi
     ret
 
 CreateVariable endp
 
 
-;; CreateConstant()
-;; this is the worker behind EQU.
-;; EQU may define 3 different types of equates:
-;; - numeric constants (with or without "type")
-;; - relocatable items ( aliases )
-;; - text macros
-;; the argument may be
-;; - an expression which can be evaluated to a number or address
-;; - a text literal (enclosed in <>)
-;; - anything. This will also become a text literal.
+; CreateConstant()
+; this is the worker behind EQU.
+; EQU may define 3 different types of equates:
+; - numeric constants (with or without "type")
+; - relocatable items ( aliases )
+; - text macros
+; the argument may be
+; - an expression which can be evaluated to a number or address
+; - a text literal (enclosed in <>)
+; - anything. This will also become a text literal.
 
     assume esi:token_t
 
@@ -371,15 +371,15 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
     lea esi,[ebx+32]
 
     .switch
-        ;; if a literal follows, the equate MUST be(come) a text macro
+        ; if a literal follows, the equate MUST be(come) a text macro
       .case [esi].token == T_STRING && [esi].string_delim == '<'
         .return SetTextMacro(ebx, edi, name, NULL)
       .case edi == NULL
       .case [edi].state == SYM_UNDEFINED
       .case [edi].state == SYM_EXTERNAL && \
           ( [edi].sflags & S_WEAK ) && !( [edi].flag1 & S_ISPROC )
-        ;; It's a "new" equate.
-        ;; wait with definition until type of equate is clear
+        ; It's a "new" equate.
+        ; wait with definition until type of equate is clear
         .endc
       .case [edi].state == SYM_TMACRO
         .return SetTextMacro(ebx, edi, name, [esi].tokpos)
@@ -394,7 +394,7 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
         mov [edi].asmpass,al
     .endsw
 
-    ;; try to evaluate the expression
+    ; try to evaluate the expression
 
     .if [esi].token == T_NUM && Token_Count == 3
 
@@ -402,8 +402,8 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
 
     do_single_number:
 
-        ;; value is a plain number. it will be accepted only if it fits into 32-bits.
-        ;; Else a text macro is created.
+        ; value is a plain number. it will be accepted only if it fits into 32-bits.
+        ; Else a text macro is created.
 
         _atoow( &opnd, [esi].string_ptr, [esi].numbase, [esi].itemlen )
 
@@ -414,9 +414,9 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
         mov opnd.flags,0
 
-        ;; v2.08: does it fit in 32-bits
+        ; v2.08: does it fit in 32-bits
 
-        .if dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4]
+        .if ( dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4] )
 
             mov eax,1
         .else
@@ -452,10 +452,10 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
         mov p,[esi].tokpos
         .if Parse_Pass == PASS_1
 
-            ;; if the expression cannot be evaluated to a numeric value,
-            ;; it's to become a text macro. The value of this macro will be
-            ;; the original (unexpanded!) line - that's why it has to be
-            ;; saved here to argbuffer[].
+            ; if the expression cannot be evaluated to a numeric value,
+            ; it's to become a text macro. The value of this macro will be
+            ; the original (unexpanded!) line - that's why it has to be
+            ; saved here to argbuffer[].
 
             ; v2.32.39 - added error 'missing right parenthesis'
             ; -- '(' triggers multiple lines..
@@ -477,12 +477,12 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
             mov esi,eax
             mov edi,edx
 
-            ;; expand EQU argument (macro functions won't be expanded!)
+            ; expand EQU argument (macro functions won't be expanded!)
 
             .if ExpandLineItems( p, 2, ebx, FALSE, TRUE )
 
-                ;; v2.08: if expansion result is a plain number, handle is specifically.
-                ;; this is necessary because values of expressions may be 64-bit now.
+                ; v2.08: if expansion result is a plain number, handle is specifically.
+                ; this is necessary because values of expressions may be 64-bit now.
 
                 lea eax,argbuffer
                 mov p,eax ;; ensure that p points to unexpanded source
@@ -493,30 +493,30 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
         .endif
         mov rc,EvalOperand( &i, ebx, Token_Count, &opnd, EXPF_NOERRMSG or EXPF_NOUNDEF )
 
-        ;; v2.08: if it's a quoted string, handle it like a plain number
-        ;; v2.10: quoted_string field is != 0 if kind == EXPR_FLOAT,
-        ;; so this is a regression in v2.08-2.09.
+        ; v2.08: if it's a quoted string, handle it like a plain number
+        ; v2.10: quoted_string field is != 0 if kind == EXPR_FLOAT,
+        ; so this is a regression in v2.08-2.09.
 
         .if opnd.quoted_string && opnd.kind == EXPR_CONST
-            dec i ;; v2.09: added; regression in v2.08 and v2.08a
+            dec i ; v2.09: added; regression in v2.08 and v2.08a
             jmp check_single_number
         .endif
 
-        ;; check here if last token has been reached?
+        ; check here if last token has been reached?
     .endif
 
-    ;; what is an acceptable 'number' for EQU?
-    ;; 1. a numeric value - if magnitude is <= 64 (or 32, if it's a plain number)
-    ;;    This includes struct fields.
-    ;; 2. an address - if it is direct, has a label and is of type SYM_INTERNAL -
-    ;;    that is, no forward references, no seg, groups, externals;
-    ;;    Anything else will be stored as a text macro.
-    ;; v2.04: large parts rewritten.
+    ; what is an acceptable 'number' for EQU?
+    ; 1. a numeric value - if magnitude is <= 64 (or 32, if it's a plain number)
+    ;    This includes struct fields.
+    ; 2. an address - if it is direct, has a label and is of type SYM_INTERNAL -
+    ;    that is, no forward references, no seg, groups, externals;
+    ;    Anything else will be stored as a text macro.
+    ; v2.04: large parts rewritten.
 
     mov eax,i
     shl eax,4
     mov edx,dword ptr opnd.hlvalue
-    or  edx,dword ptr opnd.hlvalue[4] ;; magnitude <= 64 bits?
+    or  edx,dword ptr opnd.hlvalue[4] ; magnitude <= 64 bits?
     mov ecx,opnd.sym
 
     .if ( rc != ERROR && [ebx+eax].token == T_FINAL && ( ( opnd.kind == EXPR_CONST \
@@ -538,8 +538,8 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
             .endc
         .case cmpvalue
             .if opnd.kind == EXPR_CONST
-                ;; for 64bit, it may be necessary to check 64bit value!
-                ;; v2.08: always compare 64-bit values
+                ; for 64bit, it may be necessary to check 64bit value!
+                ; v2.08: always compare 64-bit values
                 .if [edi].value != opnd.value || [edi].value3264 != opnd.hvalue
                     asmerr(2005, name)
                     .return(NULL)
@@ -566,19 +566,20 @@ CreateConstant endp
 
     assume esi:nothing
 
-;; EQU directive.
-;; This function is called rarely, since EQU
-;; is a preprocessor directive handled directly inside PreprocessLine().
-;; However, if fastpass is on, the preprocessor step is skipped in
-;; pass 2 and later, and then this function may be called.
+; EQU directive.
+; This function is called rarely, since EQU
+; is a preprocessor directive handled directly inside PreprocessLine().
+; However, if fastpass is on, the preprocessor step is skipped in
+; pass 2 and later, and then this function may be called.
 
     assume ecx:token_t
 
 EquDirective proc i:int_t, tokenarray:token_t
 
     mov ecx,tokenarray
-    .return asmerr(2008, [ecx].string_ptr) .if [ecx].token != T_ID
-
+    .if [ecx].token != T_ID
+        .return asmerr(2008, [ecx].string_ptr)
+    .endif
     .if CreateConstant(ecx)
         .if ModuleInfo.list == TRUE
             LstWrite(LSTTYPE_EQUATE, 0, eax)

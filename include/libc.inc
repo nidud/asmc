@@ -4,7 +4,7 @@ define __LIBC_INC
 ; Master include file for the Asmc RTL library.
 ;
 define __STDC__
-define __LIBC__ 232
+define __LIBC__ 233
 ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
 .err <incorrect version. Use the header that matches with the Asmc Assembler.>

@@ -55,7 +55,7 @@ include quadmath.inc
             a oword _2
             ifnb <_4>
                 b oword _3
-                ifidn typeid(_4),<IMMFLT>
+                ifidn typeid(_4),<flt>
                     r oword _4
                 else
                     r errno_t _4
@@ -86,7 +86,7 @@ include quadmath.inc
             a oword _2
             ifnb <_4>
                 b oword _3
-                ifidn typeid(_4),<IMMFLT>
+                ifidn typeid(_4),<flt>
                     r oword _4
                 else
                     r errno_t _4

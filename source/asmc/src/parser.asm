@@ -3004,18 +3004,6 @@ parsevex endp
 ;; - for other directives: call directive[]()
 ;; - for instructions: fill CodeInfo and call codegen()
 
-LabelMacro proc tokenarray:token_t
-
-    mov edx,tokenarray
-    .if Token_Count > 2 && [edx].asm_tok.token == T_ID && \
-       ( [edx+16].asm_tok.token == T_COLON || [edx+16].asm_tok.token == T_DBL_COLON )
-        .return 1 .if [edx+32].asm_tok.token != T_FINAL
-    .endif
-    xor eax,eax
-    ret
-
-LabelMacro endp
-
 ;; callback PROC(...) [?]
 
 ProcType        proto :int_t, :token_t
@@ -3026,7 +3014,6 @@ NewDirective    proto :int_t, :token_t
 
 externdef       CurrEnum:asym_t
 EnumDirective   proto :int_t, :token_t
-ParseClass      proto :int_t, :token_t, :string_t
 SizeFromExpression proto :ptr expr
 
     assume ebx:token_t
@@ -3053,32 +3040,10 @@ ParseLine proc uses esi edi ebx tokenarray:token_t
 continue:
 
     mov i,0
-    mov j,0
 
-    .if ( Token_Count > 2 && ( [ebx].token == T_ID || [ebx].token == T_STYPE ) && \
-       ( [ebx+16].token == T_COLON || [ebx+16].token == T_DBL_COLON ) )
-
-        .if [ebx+32].token != T_FINAL
-            inc j
-        .endif
-
-    .elseif Token_Count > 3 && [ebx].hll_flags & T_HLL_DBLCOLON
-
-        .for ( eax = 1, edx = 16: [ebx+edx+32].token != T_FINAL: eax++, edx += 16 )
-
-            .if ( ( [ebx+edx].token == T_ID || [ebx+edx].token == T_STYPE ) && \
-                [ebx+edx+16].token == T_DBL_COLON && [ebx+edx+3*16].token == T_OP_BRACKET )
-
-                ;; .break .if !TDialog::TDialog( &p )
-
-                inc eax
-                mov j,eax
-                .break
-            .endif
-        .endf
-    .endif
-
-    .if j
+    .if ( Token_Count > 2 && [ebx].token == T_ID &&
+          ( [ebx+16].token == T_COLON ||
+            [ebx+16].token == T_DBL_COLON ) )
 
         .if ( buffer == NULL )
 
@@ -3086,9 +3051,7 @@ continue:
             mov edi,eax
         .endif
 
-        .return ParseLine( ebx ) .if ParseClass( j, ebx, edi )
-
-        ;; break label: macro/hll lines
+        ; break label: macro/hll lines
 
         strcpy( edi, [ebx+32].tokpos )
         strcpy( CurrSource, [ebx].string_ptr )
@@ -3098,11 +3061,11 @@ continue:
 
         .return .if ParseLine( ebx ) == ERROR
 
-        .if ModuleInfo.list ;; v2.26 -- missing line from list file (wiesl)
+        .if ModuleInfo.list ; v2.26 -- missing line from list file (wiesl)
             and ModuleInfo.line_flags,not LOF_LISTED
         .endif
 
-        ;; parse macro or hll function
+        ; parse macro or hll function
 
         strcpy(CurrSource, edi)
         mov Token_Count,Tokenize(CurrSource, 0, ebx, TOK_DEFAULT)
@@ -3114,7 +3077,7 @@ continue:
 
         mov i,0
 
-        ;; label:
+        ; label:
 
     .elseif ( [ebx].token == T_ID && ( [ebx+16].token == T_COLON || [ebx+16].token == T_DBL_COLON ) )
 
@@ -3164,7 +3127,7 @@ continue:
         .endif
     .endif
 
-    ;; handle directives and (anonymous) data items
+    ; handle directives and (anonymous) data items
 
     mov esi,i
     shl esi,4
@@ -3370,7 +3333,6 @@ continue:
             .return asmerr(2008, [esi].string_ptr )
         .endif
     .endif
-
 
     .return asmerr( 2037 ) .if CurrStruct
     .if ProcStatus & PRST_PROLOGUE_NOT_DONE

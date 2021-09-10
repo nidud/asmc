@@ -127,6 +127,7 @@ S_VMACRO        equ 0x04 ; vtable method is inline - sym->vmacro set
 S_ISINLINE      equ 0x08 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
 S_ISSTATIC      equ 0x10 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
 S_VPARRAY       equ 0x20 ; p.p.proc() -- nested function call
+S_OPERATOR      equ 0x40
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02

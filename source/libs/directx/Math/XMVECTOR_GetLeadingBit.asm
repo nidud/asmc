@@ -7,7 +7,7 @@ include DirectXMath.inc
 
     .code
 
-XMVECTOR::GetLeadingBit proc vectorcall
+XMVECTOR_GetLeadingBit proc vectorcall this:XMVECTOR
 
   local r:XMVECTOR, s:XMVECTOR
 

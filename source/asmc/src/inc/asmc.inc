@@ -32,11 +32,11 @@ define MAX_STRUCT_NESTING   32   ; limit for "anonymous structs" only
 define MAX_LNAME            255  ; OMF lnames - length must fit in 1 byte
 define LNAME_NULL           0    ; OMF first entry in lnames array
 
+include ltype.inc
+include token.inc
 include symbols.inc
 include errmsg.inc      ; must be located AFTER #defines lines
 include queue.inc
-include ltype.inc
-include token.inc
 
 define EMPTY            (-2) ; function return values
 define ERROR            (-1)
@@ -397,8 +397,6 @@ define SIT_MACRO       1
     class       string_t ?
     langtype    dd ?
     publsym     ptr asym ?  ; .class name : public class
-    type        ptr asym ?  ; vector type
-    vector      dd ?        ; T_AL..T_ZMM0
     method      dd ?        ; .INLINE/.OPERATOR/.STATIC
     sym         ptr asym ?  ; set by StructDirective()
    .ends
@@ -641,7 +639,7 @@ FillDataBytes           proto :byte, :int_t
 OutputBytes             proto :ptr byte, :int_t, :ptr fixup
 AddLinnumDataRef        proto :uint_t, :uint_t
 _atoow                  proto :string_t, :string_t, :int_t, :int_t
-myltoa                  proto :uint_t, :string_t, :uint_t, :int_t, :int_t
+myltoa                  proto :qword, :string_t, :uint_t, :int_t, :int_t
 write_options           proto
 ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
 SetMasm510              proto :int_t

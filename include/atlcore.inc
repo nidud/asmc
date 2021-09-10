@@ -91,13 +91,10 @@ endif
         mov eax,S_OK
         }
     .inline Init {
-       .new This:HRESULT
-       .new hr:HRESULT
-        mov hr,S_OK
-        mov This,this
+       .new This:ptr = this
+       .new hr:HRESULT = S_OK
         .if (!_AtlInitializeCriticalSectionEx(this, 0, 0))
-            GetLastError()
-            mov hr,HRESULT_FROM_WIN32(eax)
+            mov hr,HRESULT_FROM_WIN32R(GetLastError())
         .endif
         mov eax,hr
         mov this,This

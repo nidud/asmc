@@ -15,32 +15,32 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ifb <_1>
             GdipCreateRegion(addr this.nativeRegion)
         else
-            this.typeid(Region, _1)(_1, _2)
+            this.typeid(Region_, _1)(_1, _2)
         endif
         mov this.lastResult,eax
         }
-    .inline RegionPRect :ptr Rect, :vararg {
+    .inline Region_ptrRect :ptr Rect, :vararg {
         mov rcx,rdx
         GdipCreateRegionRectI(rcx, addr this.nativeRegion)
         }
-    .inline RegionPRectF :ptr RectF, :vararg {
+    .inline Region_ptrRectF :ptr RectF, :vararg {
         mov rcx,rdx
         GdipCreateRegionRect(rcx, addr this.nativeRegion)
         }
-    .inline RegionPGraphicsPath :ptr GraphicsPath, :vararg {
+    .inline Region_ptrGraphicsPath :ptr GraphicsPath, :vararg {
         mov rcx,[rdx].GraphicsPath.nativePath
         GdipCreateRegionPath(rcx, addr this.nativeRegion)
         }
-    .inline RegionPBYTE :ptr BYTE, :int_t, :vararg {
+    .inline Region_ptrbyte :ptr BYTE, :int_t, :vararg {
         mov rcx,rdx
         mov edx,r8d
         GdipCreateRegionRgnData(rcx, edx, addr this.nativeRegion)
         }
-    .inline RegionPVOID :HRGN, :vararg {
+    .inline Region_ptr :HRGN, :vararg {
         mov rcx,rdx
         GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
         }
-    .inline RegionPRegion :ptr Region, :vararg {
+    .inline Region_ptrRegion :ptr Region, :vararg {
         this.SetNativeRegion([rdx].Region.nativeRegion)
         }
 
@@ -107,19 +107,19 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 region_combine macro token, name, mode
     .inline token :abs, :vararg {
-        this.typeid(name, _1)(_1, _2)
+        this.typeid(&name&_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline &name&PRect :abs, :vararg {
+    .inline &name&_ptrRect :abs, :vararg {
         GdipCombineRegionRectI(this.nativeRegion, _1, mode)
         }
-    .inline &name&PRectF :abs, :vararg {
+    .inline &name&_ptrRectF :abs, :vararg {
         GdipCombineRegionRect(this.nativeRegion, _1, mode)
         }
-    .inline &name&PGraphicsPath :ptr GraphicsPath, :vararg {
+    .inline &name&_ptrGraphicsPath :ptr GraphicsPath, :vararg {
         GdipCombineRegionPath(this.nativeRegion, [rdx].GraphicsPath.nativePath, mode)
         }
-    .inline &name&PRegion :ptr Region, :vararg {
+    .inline &name&_ptrRegion :ptr Region, :vararg {
         GdipCombineRegionRegion(this.nativeRegion, [rdx].Region.nativeRegion, mode)
         }
     exitm<>
@@ -131,13 +131,13 @@ region_combine macro token, name, mode
     region_combine(Complement,  Complement, CombineModeComplement)
 
     .inline Translate :abs, :vararg {
-        this.typeid(Translate, _1)(_1, _2)
+        this.typeid(Translate_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline TranslateIMMFLT :abs, :abs, :vararg {
+    .inline Translate_flt :abs, :abs, :vararg {
         GdipTranslateRegion(this.nativeRegion, _1, _2)
         }
-    .inline TranslateIMM32 :abs, :abs, :vararg {
+    .inline Translate_imm :abs, :abs, :vararg {
         GdipTranslateRegionI(this.nativeRegion, _1, _2)
         }
 
@@ -147,14 +147,14 @@ region_combine macro token, name, mode
         }
 
     .inline GetBounds :abs, :vararg {
-        this.typeid(GetBounds, _1)(_1, _2)
+        this.typeid(GetBounds_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline GetBoundsPRect :ptr Rect, :ptr Graphics, :vararg {
+    .inline GetBounds_ptrRect :ptr Rect, :ptr Graphics, :vararg {
         xchg rdx,r8
         GdipGetRegionBoundsI(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
         }
-    .inline GetBoundsPRectF :ptr RectF, :ptr Graphics, :vararg {
+    .inline GetBounds_ptrRectF :ptr RectF, :ptr Graphics, :vararg {
         xchg rdx,r8
         GdipGetRegionBounds(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
         }
@@ -177,29 +177,29 @@ region_combine macro token, name, mode
         }
 
     .inline IsVisible :abs, :vararg {
-        this.typeid(IsVisible, _1)(_1, _2)
+        this.typeid(IsVisible_, _1)(_1, _2)
         this.SetStatus()
         mov eax,this.scratch
         }
-    .inline IsVisiblePRect :ptr Rect, :ptr Graphics, :vararg {
+    .inline IsVisible_ptrRect :ptr Rect, :ptr Graphics, :vararg {
         .if r8
             mov r8,[r8].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionRectI(this.nativeRegion, [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, r8, addr this.scratch)
         }
-    .inline IsVisiblePRectF :ptr RectF, :ptr Graphics, :vararg {
+    .inline IsVisible_ptrRectF :ptr RectF, :ptr Graphics, :vararg {
         .if r8
             mov r8,[r8].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionRect(this.nativeRegion, [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, r8, addr this.scratch)
         }
-    .inline IsVisiblePPoint :ptr Point, :ptr Graphics, :vararg {
+    .inline IsVisible_ptrPoint :ptr Point, :ptr Graphics, :vararg {
         .if r8
             mov r8,[r8].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionPointI(this.nativeRegion, [rdx].Point.X, [rdx].Point.Y, r8, addr this.scratch)
         }
-    .inline IsVisiblePPointF :ptr PointF, :ptr Graphics, :vararg {
+    .inline IsVisible_ptrPointF :ptr PointF, :ptr Graphics, :vararg {
         .if r8
             mov r8,[r8].Graphics.nativeGraphics
         .endif
@@ -207,58 +207,58 @@ region_combine macro token, name, mode
         }
 
     ; IsVisible(INT, INT, ...)
-    .inline IsVisibleIMM32 :abs, :abs, :abs, :vararg {
+    .inline IsVisible_imm :abs, :abs, :abs, :vararg {
         ifb <_3>
             ; IsVisible(INT, INT)
             GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, NULL, addr this.scratch)
         else
-            this.typeid(IsVisibleIMM32, _3)(_1, _2, _3, _4)
+            this.typeid(IsVisible_imm_, _3)(_1, _2, _3, _4)
         endif
         }
     ; IsVisible(INT, INT, Graphics*)
-    .inline IsVisibleIMM32PGraphics :abs, :abs, :ptr Graphics, :vararg {
+    .inline IsVisible_imm_ptrGraphics :abs, :abs, :ptr Graphics, :vararg {
         .if r9
             mov r9,[r9].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, r9, addr this.scratch)
         }
     ; IsVisible(INT, INT, INT, INT, Graphics*)
-    .inline IsVisibleIMM32IMM32 :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
+    .inline IsVisible_imm_imm :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
         mov r10,[rsp+8*5]
         .if r10
             mov r10,[r10].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionRectI(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
         }
-    .inline IsVisibleREG32 :vararg { this.IsVisibleIMM32(_1) }
-    .inline IsVisibleSDWORD :vararg { this.IsVisibleIMM32(_1) }
+    .inline IsVisible_dword  :vararg { this.IsVisible_imm(_1) }
+    .inline IsVisible_sdword :vararg { this.IsVisible_imm(_1) }
 
     ; IsVisible(REAL, REAL, ...)
-    .inline IsVisibleIMMFLT :abs, :abs, :abs, :vararg {
+    .inline IsVisible_flt :abs, :abs, :abs, :vararg {
         ifb <_3>
             ; IsVisible(REAL, REAL)
             GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, NULL, addr this.scratch)
         else
-            this.typeid(IsVisibleIMMFLT, _3)(_1, _2, _3, _4)
+            this.typeid(IsVisible_flt_, _3)(_1, _2, _3, _4)
         endif
         }
     ; IsVisible(REAL, REAL, Graphics*)
-    .inline IsVisibleIMMFLTPGraphics :abs, :abs, :ptr Graphics, :vararg {
+    .inline IsVisible_flt_ptrGraphics :abs, :abs, :ptr Graphics, :vararg {
         .if r9
             mov r9,[r9].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, r9, addr this.scratch)
         }
     ; IsVisible(REAL, REAL, REAL, REAL, Graphics*)
-    .inline IsVisibleIMMFLTIMMFLT :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
+    .inline IsVisible_flt_flt :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
         mov r10,[rsp+8*5]
         .if r10
             mov r10,[r10].Graphics.nativeGraphics
         .endif
         GdipIsVisibleRegionRect(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
         }
-    .inline IsVisibleREG128 :vararg { this.IsVisibleIMMFLT(_1) }
-    .inline IsVisibleREGeal4 :vararg { this.IsVisibleIMMFLT(_1) }
+    .inline IsVisible_oword :vararg { this.IsVisible_flt(_1) }
+    .inline IsVisible_real4 :vararg { this.IsVisible_flt(_1) }
 
     .inline Equals :ptr Region, :ptr Graphics, :vararg {
         GdipIsEqualRegion(this.nativeRegion, [rdx].Region.nativeRegion, [r8].Graphics.nativeGraphics, addr this.scratch)
@@ -272,15 +272,15 @@ region_combine macro token, name, mode
         }
 
     .inline GetRegionScans :abs, :abs, :vararg {
-        this.typeid(GetRegionScans, _2)(_1, _2, _3)
+        this.typeid(GetRegionScans_, _2)(_1, _2, _3)
         this.SetStatus()
         }
-    .inline GetRegionScansPRectF :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
+    .inline GetRegionScans_ptrRectF :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
         xchg r9,rdx
         xchg r8,rdx
         GdipGetRegionScans(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
         }
-    .inline GetRegionScansPRect :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
+    .inline GetRegionScans_ptrRect :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
         xchg r9,rdx
         xchg r8,rdx
         GdipGetRegionScansI(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
@@ -311,11 +311,11 @@ region_combine macro token, name, mode
             mov eax,Ok
             mov this.nativeFamily,NULL
         else
-            this.typeid(FontFamily, _1)(_1, _2)
+            this.typeid(FontFamily_, _1)(_1, _2)
         endif
         mov this.lastResult,eax
         }
-    .inline FontFamilyPWORD :ptr word, :abs, :vararg {
+    .inline FontFamily_ptrword :ptr word, :abs, :vararg {
         mov rcx,rdx
         ifb <_2>
             xor edx,edx
@@ -327,7 +327,7 @@ region_combine macro token, name, mode
         .endif
         GdipCreateFontFamilyFromName(rcx, rdx, addr this.nativeFamily)
         }
-    .inline FontFamilyPFontFamily :ptr FontFamily, :vararg {
+    .inline FontFamily_ptrFontFamily :ptr FontFamily, :vararg {
         mov this.nativeFamily,_1
         mov this.lastResult,Ok
         }
@@ -446,15 +446,15 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         ifb <_2>
             GdipCreateFontFromDC(_1, addr this.nativeFont)
         else
-            this.typeid(Font, _1)(_1, _2, _3)
+            this.typeid(Font_, _1)(_1, _2, _3)
         endif
         mov this.lastResult,eax
         }
 
-    .inline FontHDC :abs, :abs, :vararg {
-        this.typeid(Font, _2)(_1, _2)
+    .inline Font_HDC :abs, :abs, :vararg {
+        this.typeid(Font_, _2)(_1, _2)
         }
-    .inline FontPVOID :HDC, :HFONT, :vararg {
+    .inline Font_ptr :HDC, :HFONT, :vararg {
         .if r8
             .new lf:LOGFONTA
             .new hdc:HDC
@@ -470,7 +470,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
             GdipCreateFontFromDC(rcx, addr this.nativeFont)
         .endif
         }
-    .inline FontPLOGFONTW :HDC, :ptr LOGFONTW, :vararg {
+    .inline Font_ptrLOGFONTW :HDC, :ptr LOGFONTW, :vararg {
         mov rcx,rdx
         .if r8
             mov rdx,r8
@@ -479,7 +479,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
             GdipCreateFontFromDC(rcx, addr this.nativeFont)
         .endif
         }
-    .inline FontPLOGFONTA :HDC, :ptr LOGFONTA, :vararg {
+    .inline Font_ptrLOGFONTA :HDC, :ptr LOGFONTA, :vararg {
         mov rcx,rdx
         .if r8
             mov rdx,r8
@@ -488,7 +488,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
             GdipCreateFontFromDC(rcx, addr this.nativeFont)
         .endif
         }
-    .inline FontPFontFamily :ptr FontFamily, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :vararg {
+    .inline Font_ptrFontFamily :ptr FontFamily, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :vararg {
         mov rcx,rdx
         .if ecx
             mov rcx,[rcx].FontFamily.nativeFamily
@@ -496,7 +496,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         GdipCreateFont(rcx, _2, _3, _4, addr this.nativeFont)
         }
 
-    .inline FontPWORD :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL>, :vararg {
+    .inline Font_ptrword :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL>, :vararg {
 
         .new emSize:REAL
 
@@ -529,7 +529,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         }
 
 
-    .inline FontPFont :ptr Font, :Status {
+    .inline Font_ptrFont :ptr Font, :Status {
         mov [this].Font.nativeFamily,_1
         mov [this].Font.lastResult,_2
         }
@@ -603,17 +603,17 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         }
 
     .inline GetHeight :abs, :vararg {
-        this.typeid(GetHeight, _1)(_1, _2)
+        this.typeid(GetHeight_, _1)(_1, _2)
         this.SetStatus()
         mov eax,this.scratch
         }
-    .inline GetHeightPGraphics :ptr Graphics, :vararg {
+    .inline GetHeight_ptrGraphics :ptr Graphics, :vararg {
         .if rdx
             mov rdx,[rdx].Graphics.nativeGraphics
         .endif
         GdipGetFontHeight(this.nativeFont, rdx, addr this.scratch)
         }
-    .inline GetHeightIMMFLT :abs, :vararg {
+    .inline GetHeight_flt :abs, :vararg {
         GdipGetFontHeightGivenDPI(this.nativeFont, _1, addr this.scratch)
         }
 
@@ -789,25 +789,25 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
         }
 
     .inline Save :abs, :vararg {
-        this.typeid(Save, _1)(_1, _2)
+        this.typeid(Save_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline SavePWORD :abs, :abs, :abs=<0>, :vararg {
+    .inline Save_ptrword :abs, :abs, :abs=<0>, :vararg {
         GdipSaveImageToFile(this.nativeImage, _1, _2, _3)
         }
-    .inline SavePIStream :abs, :abs, :abs=<0>, :vararg {
+    .inline Save_ptrIStream :abs, :abs, :abs=<0>, :vararg {
         GdipSaveImageToStream(this.nativeImage, _1, _2, _3)
         }
 
     .inline SaveAdd :abs, :vararg {
-        this.typeid(SaveAdd, _1)(_1, _2)
+        this.typeid(SaveAdd_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline SaveAddPEncoderParameters :vararg {
+    .inline SaveAdd_ptrEncoderParameters :vararg {
         GdipSaveAdd(this.nativeImage, _1)
         this.SetStatus()
         }
-    .inline SaveAddPImage :ptr Image, :ptr EncoderParameters, :vararg {
+    .inline SaveAdd_ptrImage :ptr Image, :ptr EncoderParameters, :vararg {
         mov eax,InvalidParameter
         .if rdx
             mov rdx,[rdx].Image.nativeImage
@@ -1027,10 +1027,10 @@ endif
 
     .inline Image :abs, :vararg {
         mov this.nativeImage,NULL
-        this.typeid(Image, _1)(_1, _2)
+        this.typeid(Image_, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .inline ImagePWORD :ptr WCHAR, :abs=<FALSE>, :vararg {
+    .inline Image_ptrword :ptr WCHAR, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         if _2
             GdipLoadImageFromFileICM(rcx, addr this.nativeImage)
@@ -1038,7 +1038,7 @@ endif
             GdipLoadImageFromFile(rcx, addr this.nativeImage)
         endif
         }
-    .inline ImagePIStream :ptr IStream, :abs=<FALSE>, :vararg {
+    .inline Image_ptrIStream :ptr IStream, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         if _2
             GdipLoadImageFromStreamICM(rcx, addr this.nativeImage)
@@ -1047,11 +1047,11 @@ endif
         endif
         }
     .inline FromFile :vararg {
-        this.ImagePWORD(_1)
+        this.Image_ptrword(_1)
         mov this.lastResult,eax
         }
     .inline FromStream :vararg {
-        this.ImagePIStream(_1)
+        this.Image_ptrIStream(_1)
         mov this.lastResult,eax
         }
 
@@ -1086,11 +1086,11 @@ endif
             mov this.nativeImage,NULL
             mov this.lastResult,NotImplemented
         else
-            this.typeid(Bitmap, _1)(_1, _2)
+            this.typeid(Bitmap_, _1)(_1, _2)
             mov this.lastResult,eax
         endif
         }
-    .inline BitmapPWORD :ptr WCHAR, :abs=<FALSE>, :vararg {
+    .inline Bitmap_ptrword :ptr WCHAR, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         if _2
             GdipCreateBitmapFromFileICM(rcx, addr this.nativeImage)
@@ -1098,7 +1098,7 @@ endif
             GdipCreateBitmapFromFile(rcx, addr this.nativeImage)
         endif
         }
-    .inline BitmapPIStream :ptr IStream, :abs=<FALSE>, :vararg {
+    .inline Bitmap_ptrIStream :ptr IStream, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         if _2
             GdipCreateBitmapFromStreamICM(rcx, addr this.nativeImage)
@@ -1107,30 +1107,27 @@ endif
         endif
         }
 
-    .inline BitmapIMM32 :abs, :abs, :abs, :vararg {
-        this.typeid(BitmapIMM32, _3)(_1, _2, _3, _4)
+    .inline Bitmap_imm :abs, :abs, :abs, :vararg {
+        this.typeid(Bitmap_imm_, _3)(_1, _2, _3, _4)
         }
-    .inline BitmapSDWORD :abs, :abs, :abs, :vararg {
-        this.typeid(BitmapIMM32, _3)(_1, _2, _3, _4)
+    .inline Bitmap_sdword :abs, :abs, :abs, :vararg {
+        this.typeid(Bitmap_imm_, _3)(_1, _2, _3, _4)
         }
-    .inline BitmapDWORD :abs, :abs, :abs, :vararg {
-        this.typeid(BitmapIMM32, _3)(_1, _2, _3, _4)
+    .inline Bitmap_dword :abs, :abs, :abs, :vararg {
+        this.typeid(Bitmap_dword_, _3)(_1, _2, _3, _4)
         }
-    .inline BitmapREG32 :abs, :abs, :abs, :vararg {
-        this.typeid(BitmapREG32, _3)(_1, _2, _3, _4)
-        }
-    .inline BitmapIMM32IMM32 :abs, :abs, :abs, :abs, :vararg {
+    .inline Bitmap_imm_imm :abs, :abs, :abs, :abs, :vararg {
         ifb <_4>
             GdipCreateBitmapFromScan0(_1, _2, 0, _3, NULL, addr this.nativeImage)
         else
             GdipCreateBitmapFromScan0(_1, _2, _3, _4, _5, addr this.nativeImage)
         endif
         }
-    .inline BitmapIMM32DWORD :abs, :abs, :abs, :abs, :vararg {
-        this.BitmapIMM32IMM32(_1, _2, _3, _4, _5)
+    .inline Bitmap_imm_dword :abs, :abs, :abs, :abs, :vararg {
+        this.Bitmap_imm_imm(_1, _2, _3, _4, _5)
         }
 
-    .inline BitmapREG32REG32 :abs, :abs, :abs, :abs, :vararg {
+    .inline Bitmap_dword_dword :abs, :abs, :abs, :abs, :vararg {
         mov ecx,_1
         mov edx,_2
         mov r8d,_3
@@ -1140,55 +1137,55 @@ endif
             GdipCreateBitmapFromScan0(ecx, edx, r8d, _4, _5, addr this.nativeImage)
         endif
         }
-    .inline BitmapIMM32PGraphics :int_t, :int_t, :ptr Graphics, :vararg {
+    .inline Bitmap_imm_ptrGraphics :int_t, :int_t, :ptr Graphics, :vararg {
         mov ecx,edx
         mov edx,r8d
         mov r8,r9
         GdipCreateBitmapFromGraphics(ecx, edx, [r8].Graphics.nativeGraphics, addr this.nativeImage)
         }
-    .inline BitmapPIDirectDrawSurface7 :ptr IDirectDrawSurface7, :vararg {
+    .inline Bitmap_ptrIDirectDrawSurface7 :ptr IDirectDrawSurface7, :vararg {
         mov rcx,rdx
         GdipCreateBitmapFromDirectDrawSurface(rcx, addr this.nativeImage)
         }
-    .inline BitmapPBITMAPINFO :ptr BITMAPINFO, :ptr, :vararg {
+    .inline Bitmap_ptrBITMAPINFO :ptr BITMAPINFO, :ptr, :vararg {
         mov rcx,rdx
         mov rdx,r8
         GdipCreateBitmapFromGdiDib(rcx, rdx, addr this.nativeImage)
         }
 
-    .inline BitmapPVOID :abs, :abs, :vararg {
+    .inline Bitmap_ptr :abs, :abs, :vararg {
         mov rcx,_1
         ifb <_2>
             GdipCreateBitmapFromHICON(rcx, addr this.nativeImage)
         else
-            this.typeid(BitmapPVOID, _2)(_1, _2, _3)
+            this.typeid(Bitmap_ptr_, _2)(_1, _2, _3)
         endif
         }
-    .inline BitmapPVOIDPVOID :HBITMAP, :HPALETTE, :vararg {
+    .inline Bitmap_ptr_ptr :HBITMAP, :HPALETTE, :vararg {
         mov rdx,r8
         GdipCreateBitmapFromHBITMAP(rcx, rdx, addr this.nativeImage)
         }
-    .inline BitmapPVOIDPWORD :HINSTANCE, :ptr WCHAR, :vararg {
+    .inline Bitmap_ptr_ptrword :HINSTANCE, :ptr WCHAR, :vararg {
         mov rdx,r8
         GdipCreateBitmapFromResource(rcx, rdx, addr this.nativeImage)
         }
 
     undef Bitmap_FromFile
     .inline FromFile :vararg {
-        this.BitmapPWORD(_1)
+        this.Bitmap_ptrword(_1)
         mov this.lastResult,eax
         }
 
     .inline FromStream :vararg {
-        this.BitmapPIStream(_1)
+        this.Bitmap_ptrIStream(_1)
         mov this.lastResult,eax
         }
 
     .inline Clone :abs, :vararg {
-        this.typeid(Clone, _1)(_1, _2)
+        this.typeid(Clone_, _1)(_1, _2)
         }
 
-    .inline CloneIMM32 :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline Clone_imm :abs, :abs, :abs, :abs, :abs, :vararg {
 
        .new clone:Bitmap
 
@@ -1198,11 +1195,11 @@ endif
         lea rax,clone
         }
 
-    .inline ClonePRect :ptr Rect, :abs, :vararg {
-        this.CloneIMM32([rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
+    .inline Clone_ptrRect :ptr Rect, :abs, :vararg {
+        this.Clone_imm([rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
         }
 
-    .inline CloneIMMFLT :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline Clone_flt :abs, :abs, :abs, :abs, :abs, :vararg {
 
        .new clone:Bitmap
 
@@ -1210,8 +1207,8 @@ endif
         mov clone.lastResult,eax
         lea rax,clone
         }
-    .inline ClonePRectF :ptr RectF, :abs, :vararg {
-        this.CloneIMMFLT([rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
+    .inline Clone_ptrRectF :ptr RectF, :abs, :vararg {
+        this.Clone_flt([rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
         }
 
     .inline LockBits :vararg {
@@ -1259,10 +1256,10 @@ if (GDIPVER GE 0x0110)
         }
 
     .inline ApplyEffect :abs, :vararg {
-        this.typeid(ApplyEffect, _1)(_1, _2)
+        this.typeid(ApplyEffect_, _1)(_1, _2)
         }
 
-    .inline ApplyEffectPEffect :ptr Effect, :ptr RECT, :vararg {
+    .inline ApplyEffect_ptrEffect :ptr Effect, :ptr RECT, :vararg {
 
        .new effect:ptr Effect
        .new ROI:ptr RECT
@@ -1281,7 +1278,7 @@ if (GDIPVER GE 0x0110)
                 [rdx].Effect.useAuxData, &[rdx].Effect.auxData,  &[rdx].Effect.auxDataSize)
         }
 
-    .inline ApplyEffectPBitmap :ptr ptr Bitmap, :int_t, :ptr Effect, :ptr RECT, :ptr RECT, :ptr ptr Bitmap {
+    .inline ApplyEffect_ptrBitmap :ptr ptr Bitmap, :int_t, :ptr Effect, :ptr RECT, :ptr RECT, :ptr ptr Bitmap {
 
         .repeat
 
@@ -1535,28 +1532,28 @@ endif
 .template Metafile : public ImageBase
 
     .inline Metafile :abs, :vararg {
-        this.typeid(Metafile, _1)(_1, _2)
+        this.typeid(Metafile_, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .inline MetafilePVOID :abs, :abs, :vararg {
-        this.typeid(MetafilePVOID, _2)(_1, _2, _3)
+    .inline Metafile_ptr :abs, :abs, :vararg {
+        this.typeid(Metafile_ptr_, _2)(_1, _2, _3)
         }
 
-    ;; Playback a metafile from a HMETAFILE
-    ;; If deleteWmf is TRUE, then when the metafile is deleted,
-    ;; the hWmf will also be deleted.  Otherwise, it won't be.
-    ;; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
+    ; Playback a metafile from a HMETAFILE
+    ; If deleteWmf is TRUE, then when the metafile is deleted,
+    ; the hWmf will also be deleted.  Otherwise, it won't be.
+    ; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
 
-    .inline MetafilePVOIDPWmfPlaceableFileHeader :abs, :abs, :abs=<FALSE>, :vararg {
+    .inline Metafile_ptr_ptrWmfPlaceableFileHeader :abs, :abs, :abs=<FALSE>, :vararg {
         GdipCreateMetafileFromWmf(_1, _3, _2, addr this.nativeImage)
         }
 
-    ;; Playback a metafile from a HENHMETAFILE
-    ;; If deleteEmf is TRUE, then when the metafile is deleted,
-    ;; the hEmf will also be deleted.  Otherwise, it won't be.
-    ;; Metafile(HENHMETAFILE, BOOL = FALSE)
+    ; Playback a metafile from a HENHMETAFILE
+    ; If deleteEmf is TRUE, then when the metafile is deleted,
+    ; the hEmf will also be deleted.  Otherwise, it won't be.
+    ; Metafile(HENHMETAFILE, BOOL = FALSE)
 
-    .inline MetafilePVOIDIMM32 :abs, :abs, :abs, :vararg {
+    .inline Metafile_ptr_imm :abs, :abs, :abs, :vararg {
         ifb <_3>
             ifb <_2>
                 GdipCreateMetafileFromEmf(_1, FALSE, addr this.nativeImage)
@@ -1564,142 +1561,142 @@ endif
                 GdipCreateMetafileFromEmf(_1, _2, addr this.nativeImage)
             endif
         else
-            this.typeid(MetafilePVOIDIMM32, _3)(_1, _2, _3, _4)
+            this.typeid(Metafile_ptr_imm_, _3)(_1, _2, _3, _4)
         endif
         }
 
     ;; Metafile(WCHAR*)
 
-    .inline MetafilePWORD :abs, :abs, :vararg {
+    .inline Metafile_ptrword :abs, :abs, :vararg {
         ifb <_2>
             GdipCreateMetafileFromFile(_1, addr this.nativeImage)
         else
-            this.typeid(MetafilePWORD, _2)(_1, _2, _3)
+            this.typeid(Metafile_ptrword_, _2)(_1, _2, _3)
         endif
         }
 
-    ;; Playback a WMF metafile from a file.
-    ;; Metafile(WCHAR*, WmfPlaceableFileHeader*)
+    ; Playback a WMF metafile from a file.
+    ; Metafile(WCHAR*, WmfPlaceableFileHeader*)
 
-    .inline MetafilePWORDPWmfPlaceableFileHeader :abs, :abs, :vararg {
+    .inline Metafile_ptrword_ptrWmfPlaceableFileHeader :abs, :abs, :vararg {
         GdipCreateMetafileFromWmfFile(_1, _2, addr this.nativeImage)
         }
 
-    ;; Metafile(IStream*)
+    ; Metafile(IStream*)
 
-    .inline MetafilePIStream :abs, :abs, :vararg {
+    .inline Metafile_ptrIStream :abs, :abs, :vararg {
         ifb <_2>
             GdipCreateMetafileFromStream(_1, addr this.nativeImage)
         else
-            this.typeid(MetafilePIStream, _2)(_1, _2, _3)
+            this.typeid(Metafile_ptrIStream_, _2)(_1, _2, _3)
         endif
         }
 
-    ;; Record a metafile to memory.
-    ;; Metafile(HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+    ; Record a metafile to memory.
+    ; Metafile(HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePVOIDIMM32PWORD :abs, :abs=<EmfTypeEmfPlusDual>, :abs, :vararg {
+    .inline Metafile_ptr_imm_ptrword :abs, :abs=<EmfTypeEmfPlusDual>, :abs, :vararg {
         GdipRecordMetafile(_1, _2, NULL, MetafileFrameUnitGdi,  _3, addr this.nativeImage)
         }
 
-    ;; Record a metafile to memory.
-    ;; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+    ; Record a metafile to memory.
+    ; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePVOIDPRectF :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptr_ptrRectF :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafile(_1, _4, _2, _3, _5, addr this.nativeImage)
         }
 
     ;; Record a metafile to memory.
     ;; Metafile(HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePVOIDPRect :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptr_ptrRect :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileI(_1, _4, _2, _3, _5, addr this.nativeImage)
         }
 
-    .inline MetafilePWORDPVOID :abs, :abs, :abs, :vararg {
+    .inline Metafile_ptrword_ptr :abs, :abs, :abs, :vararg {
         ifb <_3>
             GdipRecordMetafileFileName(_1, _2, EmfTypeEmfPlusDual, NULL, MetafileFrameUnitGdi, NULL, addr this.nativeImage)
         else
-            this.typeid(MetafilePWORDPVOID, _3)(_1, _2, _3, _4)
+            this.typeid(Metafile_ptrword_ptr_, _3)(_1, _2, _3, _4)
         endif
         }
 
-    ;; Metafile(WCHAR*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+    ; Metafile(WCHAR*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePWORDPVOIDIMM32 :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptrword_ptr_imm :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileFileName(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)
         }
 
-    ;; Metafile(WCHAR*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+    ; Metafile(WCHAR*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePWORDPVOIDPRectF :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
+    .inline Metafile_ptrword_ptr_ptrRectF :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
         GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
         }
 
-    ;; Metafile(WCHAR*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+    ; Metafile(WCHAR*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePWORDPVOIDPRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptrword_ptr_ptrRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
         }
 
 
-    .inline MetafilePIStreamPVOID :abs, :abs, :abs, :vararg {
-        this.typeid(MetafilePIStreamPVOID, _3)(_1, _2, _3, _4)
+    .inline Metafile_ptrIStream_ptr :abs, :abs, :abs, :vararg {
+        this.typeid(Metafile_ptrIStream_ptr_, _3)(_1, _2, _3, _4)
         }
 
     ;; Metafile(IStream*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePIStreamPVOIDIMM32 :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptrIStream_ptr_imm :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileStream(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)
         }
 
     ;; Metafile(IStream*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePIStreamPVOIDPRectF :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptrIStream_ptr_ptrRectF :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileStream(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
         }
 
     ;; Metafile(IStream*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 
-    .inline MetafilePIStreamPVOIDPRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
+    .inline Metafile_ptrIStream_ptr_ptrRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
         GdipRecordMetafileStreamI(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
         }
 
     .inline GetMetafileHeader :abs, :vararg {
-        this.typeid(GetMetafileHeader, _1)(_1, _2)
+        this.typeid(GetMetafileHeader_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline GetMetafileHeaderPVOID :abs, :abs, :vararg {
-        this.typeid(GetMetafileHeaderPVOID, _2)(_1, _2, _3)
+    .inline GetMetafileHeader_ptr :abs, :abs, :vararg {
+        this.typeid(GetMetafileHeader_ptr_, _2)(_1, _2, _3)
         }
 
     ;; GetMetafileHeader(HMETAFILE, WmfPlaceableFileHeader*, MetafileHeader*)
 
-    .inline GetMetafileHeaderPVOIDPWmfPlaceableFileHeader :abs, :abs, :abs, :vararg {
+    .inline GetMetafileHeader_ptr_ptrWmfPlaceableFileHeader :abs, :abs, :abs, :vararg {
         GdipGetMetafileHeaderFromWmf(_1, _2, _3)
         }
 
     ;; GetMetafileHeader(HENHMETAFILE, MetafileHeader*)
 
-    .inline GetMetafileHeaderPVOIDPMetafileHeader :abs, :abs, :vararg {
+    .inline GetMetafileHeader_ptr_ptrMetafileHeader :abs, :abs, :vararg {
         GdipGetMetafileHeaderFromEmf(_1, _2)
         }
 
     ;; GetMetafileHeader(WCHAR*, MetafileHeader*)
 
-    .inline GetMetafileHeaderPWORD :abs, :abs, :vararg {
+    .inline GetMetafileHeader_ptrword :abs, :abs, :vararg {
         GdipGetMetafileHeaderFromFile(_1, _2)
         }
 
     ;; GetMetafileHeader(IStream*, MetafileHeader*)
 
-    .inline GetMetafileHeaderPIStream :abs, :abs, :vararg {
+    .inline GetMetafileHeader_ptrIStream :abs, :abs, :vararg {
         GdipGetMetafileHeaderFromStream(_1, _2)
         }
 
     ;; GetMetafileHeader(MetafileHeader*)
 
-    .inline GetMetafileHeaderPMetafileHeader :abs, :vararg {
+    .inline GetMetafileHeader_ptrMetafileHeader :abs, :vararg {
         GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1)
         }
 
@@ -1752,17 +1749,17 @@ if (GDIPVER GE 0x0110)
 
     .inline ConvertToEmfPlus :ptr Graphics, :abs, :vararg {
         mov rcx,rdx
-        this.typeid(ConvertToEmfPlus, _2)(rdx, _2, _3)
+        this.typeid(ConvertToEmfPlus_, _2)(rdx, _2, _3)
         this.SetStatus()
         }
 
-    .inline ConvertToEmfPlusPSDWORD :abs, :vararg {
+    .inline ConvertToEmfPlus_ptrsdword :abs, :vararg {
         GdipConvertToEmfPlus([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
         }
-    .inline ConvertToEmfPlusPWORD :abs, :vararg {
+    .inline ConvertToEmfPlus_ptrword :abs, :vararg {
         GdipConvertToEmfPlusToFile([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
         }
-    .inline ConvertToEmfPlusPIStream :abs, :vararg {
+    .inline ConvertToEmfPlus_ptrIStream :abs, :vararg {
         GdipConvertToEmfPlusToStream([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
         }
 endif

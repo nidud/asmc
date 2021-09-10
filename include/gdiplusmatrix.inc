@@ -14,20 +14,20 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ifb <_1>
             GdipCreateMatrix(addr this.nativeMatrix)
         else
-            this.typeid(Matrix, _1)(_1, _2)
+            this.typeid(Matrix_, _1)(_1, _2)
         endif
         mov this.lastResult,eax
         }
 
-    .inline MatrixIMMFLT :vararg {
+    .inline Matrix_flt :vararg {
         GdipCreateMatrix2(_1, addr this.nativeMatrix)
         }
-    .inline MatrixPRectF :ptr RectF, :ptr PointF, :vararg {
+    .inline Matrix_ptrRectF :ptr RectF, :ptr PointF, :vararg {
         mov rcx,rdx
         mov rdx,r8
         GdipCreateMatrix3(rcx, rdx, addr this.nativeMatrix)
         }
-    .inline MatrixPRect :ptr Rect, :ptr Point, :vararg {
+    .inline Matrix_ptrRect :ptr Rect, :ptr Point, :vararg {
         mov rcx,rdx
         mov rdx,r8
         GdipCreateMatrix3I(rcx, rdx, addr this.nativeMatrix)
@@ -152,24 +152,24 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; float version
 
     .inline TransformPoints :abs, :vararg {
-        this.typeid(TransformPoints, _1)(_1, _2)
+        this.typeid(TransformPoints_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline TransformPointsPPointF :vararg {
+    .inline TransformPoints_ptrPointF :vararg {
         GdipTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .inline TransformPointsPPoint :vararg {
+    .inline TransformPoints_ptrPoint :vararg {
         GdipTransformMatrixPointsI(this.nativeMatrix, _1)
         }
 
     .inline TransformVectors :abs, :vararg {
-        this.typeid(TransformVectors, _1)(_1, _2)
+        this.typeid(TransformVectors_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline TransformVectorsPPointF :vararg {
+    .inline TransformVectors_ptrPointF :vararg {
         GdipVectorTransformMatrixPoints(this.nativeMatrix, _1)
         }
-    .inline TransformVectorsPPoint :vararg {
+    .inline TransformVectors_ptrPoint :vararg {
         GdipVectorTransformMatrixPointsI(this.nativeMatrix, _1)
         }
 

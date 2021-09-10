@@ -1,5 +1,5 @@
 ifndef __ATLCOMCLI_H__
-__ATLCOMCLI_H__ equ <>
+define __ATLCOMCLI_H__
 
 include atlcore.inc
 include ole2.inc
@@ -8,15 +8,13 @@ include olectl.inc
 endif
 
 .pragma pack(push,_ATL_PACKING)
-if 0
-AtlHresultFromLastError proto {
-    GetLastError()
-    HRESULT_FROM_WIN32(eax)
-}
-endif
-AtlHresultFromWin32 proto :DWORD {
-    HRESULT_FROM_WIN32( ecx )
-}
+
+AtlHresultFromLastError proto watcall {
+    HRESULT_FROM_WIN32R(GetLastError())
+    }
+AtlHresultFromWin32 proto watcall :sdword {
+    HRESULT_FROM_WIN32R(eax)
+    }
 
 
 AtlComPtrAssign proto :ptr ptr IUnknown, :ptr IUnknown

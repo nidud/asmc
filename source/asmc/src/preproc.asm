@@ -22,7 +22,9 @@ REMOVECOMENT    equ 0 ; 1=remove comments from source
 TF3_ISCONCAT    equ 1 ; line was concatenated
 TF3_EXPANSION   equ 2 ; expansion operator % at pos 0
 
-externdef directive_tab: dword
+CALLBACKC(fpDirective, :int_t, :token_t)
+
+externdef directive_tab: fpDirective
 
     .code
 
@@ -50,13 +52,12 @@ WriteCodeLabel proc uses esi edi ebx line, tokenarray:token_t
     mov [ebx+32].asm_tok.token,T_FINAL
     mov edi,[ebx+32].asm_tok.tokpos
     mov al,[edi]
-    mov BYTE PTR [edi],0
+    mov byte ptr [edi],0
     push ModuleInfo.token_count
     mov ModuleInfo.token_count,2
     push eax
     ParseLine(ebx)
-    .if Options.preprocessor_stdout
-
+    .if ( Options.preprocessor_stdout )
         WritePreprocessedLine(line)
     .endif
     pop eax
@@ -75,15 +76,17 @@ WriteCodeLabel endp
 DelayExpand proc fastcall tokenarray:token_t
 
     xor eax,eax
-    .return .if !( [ecx].hll_flags & T_HLL_DELAY )
-    .return .if ModuleInfo.strict_masm_compat
-    .return .if Parse_Pass != PASS_1
-    .return .if eax != NoLineStore
+    .if ( !( [ecx].hll_flags & T_HLL_DELAY ) ||
+           al != ModuleInfo.strict_masm_compat ||
+          eax != Parse_Pass ||
+          eax != NoLineStore )
+        .return
+    .endif
 
     .repeat
 
         .repeat
-            .ifs eax >= ModuleInfo.token_count
+            .ifs ( eax >= ModuleInfo.token_count )
                 or [ecx].hll_flags,T_HLL_DELAYED
                 .return 1
             .endif
@@ -91,12 +94,12 @@ DelayExpand proc fastcall tokenarray:token_t
             test [ecx+edx*2].hll_flags,T_HLL_MACRO
             lea eax,[eax+1]
             .continue(0) .ifz
-        .until [ecx+edx*2].token == T_OP_BRACKET
+        .until ( [ecx+edx*2].token == T_OP_BRACKET )
 
         mov edx,1   ; one open bracket found
         .while 1
 
-            .ifs eax >= ModuleInfo.token_count
+            .ifs ( eax >= ModuleInfo.token_count )
                 or [ecx].hll_flags,T_HLL_DELAYED
                 .return 1
             .endif
@@ -114,13 +117,13 @@ DelayExpand proc fastcall tokenarray:token_t
                 .continue(01)
               .case T_STRING
                 push edx
-                mov  edx,[ecx+eax].string_ptr
-                .if byte ptr [edx] != '<'
+                mov edx,[ecx+eax].string_ptr
+                .if ( byte ptr [edx] != '<' )
                     mov edx,[ecx+eax].tokpos
-                    .if byte ptr [edx] == '<'
+                    .if ( byte ptr [edx] == '<' )
                         pop eax
                         asmerr(7008, edx)
-                        .break
+                       .break
                     .endif
                 .endif
                 pop edx
@@ -166,7 +169,7 @@ if REMOVECOMENT eq 0
     .endif
 endif
 
-    mov  eax,ModuleInfo.token_count
+    mov eax,ModuleInfo.token_count
     .return .if ( eax == 0 )
     ;
     ; CurrIfState != BLOCK_ACTIVE && Token_Count == 1 | 3 may happen
@@ -176,7 +179,7 @@ endif
     .if ( CurrIfState == BLOCK_ACTIVE )
 
         shl eax,4
-        .if [ebx+eax].bytval & TF3_EXPANSION
+        .if ( [ebx+eax].bytval & TF3_EXPANSION )
 
             mov esi,ExpandText(CurrSource, ebx, 1)
 
@@ -184,16 +187,13 @@ endif
 
             xor esi,esi
 
-            .if ( LabelMacro( ebx ) == 0 )
+            .if ( DelayExpand( ebx ) == 0 )
 
-                .if ( DelayExpand( ebx ) == 0 )
+                mov esi,ExpandLine( CurrSource, ebx )
 
-                    mov esi,ExpandLine( CurrSource, ebx )
+            .elseif ( Parse_Pass == PASS_1 )
 
-                .elseif ( Parse_Pass == PASS_1 )
-
-                    ExpandLineItems( CurrSource, 0, ebx, 0, 1 )
-                .endif
+                ExpandLineItems( CurrSource, 0, ebx, 0, 1 )
             .endif
         .endif
         .return 0 .ifs ( esi < NOT_ERROR )
@@ -220,17 +220,15 @@ endif
         ;
         ; if i != 0, then a code label is located before the directive
         ;
-        .if esi > 16
-
+        .if ( esi > 16 )
             .return 0 .if WriteCodeLabel( CurrSource, ebx ) == ERROR
         .endif
         movzx eax,[ebx+esi].dirtype
-        shr  esi,4
-        push ebx
-        push esi
-        call directive_tab[eax*4]
-        add  esp,8
-        .return 0
+        shr esi,4
+        mov ecx,directive_tab[eax*4]
+        assume ecx:fpDirective
+        ecx(esi, ebx)
+       .return 0
     .endif
 
     ;
@@ -279,11 +277,9 @@ endif
           .case DRT_CATSTR ; CATSTR + TEXTEQU directives
           .case DRT_SUBSTR
             movzx eax,[ebx+16].dirtype
-            push ebx
-            push 1
-            call directive_tab[eax*4]
-            add esp,8
-            .return 0
+            mov ecx,directive_tab[eax*4]
+            ecx(1, ebx)
+           .return 0
         .endsw
     .endif
     mov eax,ModuleInfo.token_count

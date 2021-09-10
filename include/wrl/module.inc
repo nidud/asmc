@@ -1,5 +1,5 @@
 ifndef _WRL_MODULE_H_
-_WRL_MODULE_H_ equ <>
+define _WRL_MODULE_H_
 
 include roapi.inc
 ifdef BUILD_WINDOWS
@@ -30,5 +30,41 @@ include wrl\wrappers\corewrappers.inc
     FactoryCacheEnabled,
     FactoryCacheDisabled
     }
+
+.template FactoryCache
+    factory		ptr IUnknown ?
+    union cookie
+     winrt		RO_REGISTRATION_COOKIE ?
+     com		dd ?
+    ends
+   .ends
+
+.template CreatorMap
+    factoryCreator	proc local :ptr dword, :ptr, :REFIID, :ptr ptr IUnknown
+    union activationId
+     clsid ptr		IID ?
+     getRuntimeName	proc local
+    ends
+    getTrustLevel	proc local
+    factoryCache	ptr FactoryCache ?
+    serverName		ptr wchar_t ?
+   .ends
+
+.class FactoryBase
+   .ends
+
+
+IsServerNameEqual proto entry:ptr CreatorMap, serverName:ptr wchar_t
+
+
+.class Module : public ModuleBase
+
+    Module		 proc
+    Release		 proc
+    Create		 proc :ModuleType
+    GetActivationFactory proc :HSTRING, :ptr ptr IActivationFactory, :ptr wchar_t
+    GetClassObject	 proc :REFCLSID, :REFIID, :ptr ptr, :ptr wchar_t
+    Terminate		 proc :ptr wchar_t, :BOOL
+   .ends
 
 endif

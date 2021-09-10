@@ -184,7 +184,7 @@ _fullpath proc uses esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
                     inc esi
                 .endif
 
-            .elseif (al == '.' && ((ah == '\' || ah == '/') || !ah))
+            .elseif ( al == '.' && ( ( ah == '\' || ah == '/' ) || !ah ) )
 
                 inc esi
                 .if byte ptr [esi] != 0

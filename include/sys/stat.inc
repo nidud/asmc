@@ -44,6 +44,25 @@ define _TIME32_T_DEFINED
 __time32_t typedef sdword
 endif
 
+ifndef _STAT_DEFINED
+define _STAT_DEFINED
+
+.pragma pack(push, 4)
+
+.template _STAT
+    st_dev      _dev_t ?
+    st_ino      _ino_t ?
+    st_mode     word ?
+    st_nlink    sword ?
+    st_uid      sword ?
+    st_gid      sword ?
+    st_rdev     _dev_t ?
+    st_size     _off_t ?
+    st_atime    time_t ?
+    st_mtime    time_t ?
+    st_ctime    time_t ?
+   .ends
+
 .template stat
     st_dev      _dev_t ?
     st_ino      _ino_t ?
@@ -57,6 +76,24 @@ endif
     st_mtime    __time32_t ?
     st_ctime    __time32_t ?
    .ends
+
+.template _stati64
+    st_dev      _dev_t ?
+    st_ino      _ino_t ?
+    st_mode     word ?
+    st_nlink    sword ?
+    st_uid      sword ?
+    st_gid      sword ?
+    st_rdev     _dev_t ?
+    st_size     dq ?
+    st_atime    time_t ?
+    st_mtime    time_t ?
+    st_ctime    time_t ?
+   .ends
+
+.pragma pack(pop)
+
+endif
 
 _stat proto __cdecl :ptr sbyte, :ptr stat
 

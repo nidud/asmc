@@ -4,9 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-INITGUID        equ 1
-WINVER          equ 0x0700
-_WIN32_WINNT    equ 0x0700
+define INITGUID         1
+
+define WINVER           0x0A00
+define _WIN32_WINNT     0x0A00
+define NTDDI_VERSION    0x0A000003
 
 include aclui.inc
 include activaut.inc
@@ -19,7 +21,7 @@ include asptlb.inc
 include d3d11_1.inc
 include d3dx9.inc
 include d2d1.inc
-include dwrite.inc
+include dwrite_3.inc
 include dinput.inc
 include dsound.inc
 include shlguid.inc

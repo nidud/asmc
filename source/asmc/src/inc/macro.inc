@@ -22,7 +22,6 @@ ExpandText		proto :string_t, :ptr asm_tok, :uint_t
 ExpandLineItems		proto :string_t, :int_t, :ptr asm_tok, :int_t, :int_t
 ExpandLine		proto :string_t, :ptr asm_tok
 ExpandLiterals		proto :int_t, :ptr asm_tok
-LabelMacro		proto :uint_t
 
 ; functions in macro.asm
 

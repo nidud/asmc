@@ -56,7 +56,6 @@ Asmc Macro Assembler Reference
 - [.IF](dot_if.md)
 - [.INLINE](dot_inline.md)
 - [.NEW](dot_new.md)
-- [.OPERATOR](dot_operator.md)
 - [.REPEAT](dot_repeat.md)
 - [.RETURN](dot_return.md)
 - [.STATIC](dot_static.md)

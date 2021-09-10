@@ -1,5 +1,5 @@
 ifndef _WRL_DEF_H_
-_WRL_DEF_H_ equ <>
+define _WRL_DEF_H_
 
 include sdkddkver.inc
 include sal.inc
@@ -13,12 +13,12 @@ if NTDDI_VERSION LT NTDDI_VISTA
 endif
 
 ifdef _M_IA64
-.err <WRL doesn't support IA64 architecture>
+;.err <WRL doesn't support IA64 architecture>
 endif
 
 if (( not defined(_PREFAST_) or (_MSC_FULL_VER ge 160021202)) )
 else
-nullptr  equ 0
+define nullptr 0
 endif
 
 endif

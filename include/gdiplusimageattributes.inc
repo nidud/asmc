@@ -16,12 +16,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ifb <_1>
             GdipCreateImageAttributes(addr this.nativeImageAttr)
         else
-            this.typeid(ImageAttributes, _1)(_1, _2)
+            this.typeid(ImageAttributes_, _1)(_1, _2)
         endif
         mov this.lastResult,eax
         }
 
-    .inline ImageAttributesPImageAttributes :ptr ImageAttributes, :Status, :vararg {
+    .inline ImageAttributes_ptrImageAttributes :ptr ImageAttributes, :Status, :vararg {
         mov this.nativeImageAttr,rdx
         mov this.lastResult,r8d
         }

@@ -86,6 +86,7 @@ objects = \
     src\switch.obj \
     src\symbols.obj \
     src\tokenize.obj \
+    src\typeid.obj \
     src\types.obj \
     src\undef.obj
 

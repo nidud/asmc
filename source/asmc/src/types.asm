@@ -661,8 +661,9 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
                     .ifs ( [eax].asym.value3264 < 0 )
                         inc ecx
                     .endif
-                    mov edx,[eax].asym.uvalue
-                    myltoa( edx, edi, ModuleInfo.radix, ecx, TRUE )
+                    mov esi,[eax].asym.uvalue
+                    xor edx,edx
+                    myltoa( edx::esi, edi, ModuleInfo.radix, ecx, TRUE )
                     add edi,strlen( edi )
                     mov al,' '
                     stosb

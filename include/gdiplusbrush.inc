@@ -100,7 +100,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov this.nativeBrush,NULL
         mov rcx,rdx
         ifnb <_3>
-            this.typeid(TextureBrush, _2)(rdx, _2, _3, _4)
+            this.typeid(TextureBrush_, _2)(rdx, _2, _3, _4)
         else
             GdipCreateTexture([rcx].Image.nativeImage, _2, addr this.nativeBrush)
         endif
@@ -113,7 +113,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; It is NOT used to crop the metafile image, so only the width
     ;; and height values matter for metafiles.
 
-    .inline TextureBrushPRectF :abs, :ptr RectF, :ptr ImageAttributes, :vararg {
+    .inline TextureBrush_ptrRectF :abs, :ptr RectF, :ptr ImageAttributes, :vararg {
         xor edx,edx
         .if r9
             mov rdx,[r9].ImageAttributes.nativeImageAttr
@@ -126,7 +126,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
                             addr this.nativeBrush)
         }
 
-    .inline TextureBrushPRect :abs, :ptr Rect, :ptr ImageAttributes, :vararg {
+    .inline TextureBrush_ptrRect :abs, :ptr Rect, :ptr ImageAttributes, :vararg {
         xor edx,edx
         .if r9
             mov rdx,[r9].ImageAttributes.nativeImageAttr
@@ -139,40 +139,40 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
                             addr this.nativeBrush)
         }
 
-    .inline TextureBrushIMM32 :abs, :abs, :abs, :vararg {
-        this.typeid(TextureBrushIMM32, _3)(_1, _2, _3, _4)
+    .inline TextureBrush_imm :abs, :abs, :abs, :vararg {
+        this.typeid(TextureBrush_imm_, _3)(_1, _2, _3, _4)
         }
-    .inline TextureBrushREG32 :abs, :abs, :abs, :vararg {
-        this.typeid(TextureBrushIMM32, _3)(_1, _2, _3, _4)
+    .inline TextureBrush_dword :abs, :abs, :abs, :vararg {
+        this.typeid(TextureBrush_imm_, _3)(_1, _2, _3, _4)
         }
-    .inline TextureBrushSDWORD :abs, :abs, :abs, :vararg {
-        this.typeid(TextureBrushIMM32, _3)(_1, _2, _3, _4)
+    .inline TextureBrush_sdword :abs, :abs, :abs, :vararg {
+        this.typeid(TextureBrush_imm_, _3)(_1, _2, _3, _4)
         }
 
-    .inline TextureBrushIMM32IMMFLT :abs, :vararg {
+    .inline TextureBrush_imm_flt :abs, :vararg {
         GdipCreateTexture2([rcx].Image.nativeImage, _2, addr this.nativeBrush)
         }
-    .inline TextureBrushIMM32REAL4 :vararg {
-        this.TextureBrushIMM32IMMFLT(_1)
+    .inline TextureBrush_imm_real4 :vararg {
+        this.TextureBrush_imm_flt(_1)
         }
-    .inline TextureBrushIMM32REG128 :vararg {
-        this.TextureBrushIMM32FLT(_1)
+    .inline TextureBrush_imm_oword :vararg {
+        this.TextureBrush_imm_flt(_1)
         }
 
-    .inline TextureBrushIMM32IMM32 :abs, :vararg {
+    .inline TextureBrush_imm_imm :abs, :vararg {
         GdipCreateTexture2I([rcx].Image.nativeImage, _2, addr this.nativeBrush)
         }
-    .inline TextureBrushIMM32SDWORD :vararg {
-        this.TextureBrushIMM32IMM32(_1)
+    .inline TextureBrush_imm_sdword :vararg {
+        this.TextureBrush_imm_imm(_1)
         }
-    .inline TextureBrushIMM32REG32 :vararg {
-        this.TextureBrushIMM32IMM32(_1)
+    .inline TextureBrush_imm_dword :vararg {
+        this.TextureBrush_imm_imm(_1)
         }
 
-    .inline TextureBrushIMM32PRectF :abs, :abs, :ptr RectF, :vararg {
+    .inline TextureBrush_imm_ptrRectF :abs, :abs, :ptr RectF, :vararg {
         GdipCreateTexture2([rcx].Image.nativeImage, _2, [r9].RectF.X, [r9].RectF.Y, [r9].RectF.Width, [r9].RectF.Height, addr this.nativeBrush)
         }
-    .inline TextureBrushIMM32PRect :abs, :abs, :ptr Rect, :vararg {
+    .inline TextureBrush_imm_ptrRect :abs, :abs, :ptr Rect, :vararg {
         mov r10,r9
         GdipCreateTexture2I([rcx].Image.nativeImage, _2, [r10].Rect.X, [r9].Rect.Y, [r9].Rect.Width, [r9].Rect.Height, addr this.nativeBrush)
         }
@@ -245,49 +245,49 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 .template LinearGradientBrush : public Brush
 
     .inline LinearGradientBrush :abs, :vararg {
-        this.typeid(LinearGradientBrush, _1)(_1, _2)
+        this.typeid(LinearGradientBrush_, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .inline LinearGradientBrushPPointF :ptr PointF, :ptr PointF, :ARGB, :vararg {
+    .inline LinearGradientBrush_ptrPointF :ptr PointF, :ptr PointF, :ARGB, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
         GdipCreateLineBrush(rcx, rdx, r8d, _4, WrapModeTile, addr this.nativeBrush)
         }
-    .inline LinearGradientBrushPPoint :ptr Point, :ptr Point, :ARGB, :vararg {
+    .inline LinearGradientBrush_ptrPoint :ptr Point, :ptr Point, :ARGB, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
         GdipCreateLineBrushI(rcx, rdx, r8d, _4, WrapModeTile, addr this.nativeBrush)
         }
-    .inline LinearGradientBrushPRectF :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(LinearGradientBrushPRectF, _4)(_1, _2, _3, _4, _5)
+    .inline LinearGradientBrush_ptrRectF :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(LinearGradientBrush_ptrRectF_, _4)(_1, _2, _3, _4, _5)
         }
-    .inline LinearGradientBrushPRect :abs, :abs, :abs, :abs, :vararg {
-        this.typeid(LinearGradientBrushPRect, _4)(_1, _2, _3, _4, _5)
+    .inline LinearGradientBrush_ptrRect :abs, :abs, :abs, :abs, :vararg {
+        this.typeid(LinearGradientBrush_ptrRect_, _4)(_1, _2, _3, _4, _5)
         }
-    .inline LinearGradientBrushPRectFIMM32 :ptr RectF, :ARGB, :ARGB, :vararg {
+    .inline LinearGradientBrush_ptrRectF_imm :ptr RectF, :ARGB, :ARGB, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
         mov r9d,_4
         GdipCreateLineBrushFromRect(rcx, edx, r8d, r9d, WrapModeTile, addr this.nativeBrush)
         }
-    .inline LinearGradientBrushPRectIMM32 :ptr Rect, :ARGB, :ARGB, :vararg {
+    .inline LinearGradientBrush_ptrRect_imm :ptr Rect, :ARGB, :ARGB, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
         mov r9d,_4
         GdipCreateLineBrushFromRectI(rcx, edx, r8d, r9d, WrapModeTile, addr this.nativeBrush)
         }
-    .inline LinearGradientBrushPRectFIMMFLT :ptr RectF, :ARGB, :ARGB, :abs, :abs=<FALSE>, :vararg {
+    .inline LinearGradientBrush_ptrRectF_flt :ptr RectF, :ARGB, :ARGB, :abs, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
         mov r9d,_5
         GdipCreateLineBrushFromRectWithAngle(rcx, edx, r8d, _4, r9d, WrapModeTile, addr this.nativeBrush)
         }
-    .inline LinearGradientBrushPRectIMMFLT :ptr Rect, :ARGB, :ARGB, :abs, :abs=<FALSE>, :vararg {
+    .inline LinearGradientBrush_ptrRect_flt :ptr Rect, :ARGB, :ARGB, :abs, :abs=<FALSE>, :vararg {
         mov rcx,rdx
         mov rdx,r8
         mov r8d,r9d
@@ -309,13 +309,13 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         }
 
     .inline GetRectangle :abs, :vararg {
-        this.typeid(GetRectangle, _1)(_1, _2)
+        this.typeid(GetRectangle_, _1)(_1, _2)
         this.SetStatus()
         }
-    .inline GetRectanglePRectF :vararg {
+    .inline GetRectangle_ptrRectF :vararg {
         GdipGetLineRect(this.nativeBrush, _1)
         }
-    .inline GetRectanglePRect :vararg {
+    .inline GetRectangle_ptrRect :vararg {
         GdipGetLineRectI(this.nativeBrush, _1)
         }
 

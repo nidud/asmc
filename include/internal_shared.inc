@@ -269,9 +269,9 @@ ifdef __cplusplus
         _p ptr_t ?
 
         .inline __crt_unique_heap_ptr :abs=<NULL>, :vararg {
-            this.typeid(__crt_unique_heap_ptr, _1)(_1)
+            this.typeid(__crt_unique_heap_ptr_, _1)(_1)
             }
-        .inline __crt_unique_heap_ptrIMM32 :abs, :vararg {
+        .inline __crt_unique_heap_ptr_imm :abs, :vararg {
             mov this._p,_1
             }
         .inline __crt_unique_heap_ptrP__crt_unique_heap_ptr :ptr __crt_unique_heap_ptr, :vararg {

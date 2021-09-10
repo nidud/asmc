@@ -881,7 +881,7 @@ IS_ERROR macro Status
 	endm
 
 HRESULT_CODE macro hr
-    ifidn typeid(hr),<IMM32>
+    ifidn typeid(hr),<imm>
 	exitm <( ( hr ) and 0xFFFF )>
     else
 	ifdif <hr>,<eax>
@@ -893,7 +893,7 @@ HRESULT_CODE macro hr
     endm
 
 SCODE_CODE macro sc
-    ifidn typeid(sc),<IMM32>
+    ifidn typeid(sc),<imm>
 	exitm <( ( sc ) and 0xFFFF )>
     else
 	ifdif <sc>,<eax>
@@ -905,7 +905,7 @@ SCODE_CODE macro sc
     endm
 
 HRESULT_FACILITY macro hr
-    ifidn typeid(hr),<IMM32>
+    ifidn typeid(hr),<imm>
 	exitm<(((hr) shr 16) and 0x1fff)>
     else
 	ifdif <hr>,<eax>
@@ -938,21 +938,19 @@ MAKE_SCODE macro sev,fac,code
 
 FACILITY_NT_BIT equ 0x10000000
 
+HRESULT_FROM_WIN32R proto watcall hr:sdword {
+    .if ( eax )
+	and eax,0x0000FFFF
+	or  eax,(FACILITY_WIN32 shl 16) or 0x80000000
+    .endif
+    }
 HRESULT_FROM_WIN32 macro x
-    if (typeof(x))
-	.if x
-	    and x,0x0000FFFF
-	    or	x,(FACILITY_WIN32 shl 16) or 0x80000000
-	.endif
-	exitm<x>
-    else
-	if x
-	    exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
-	else
-	    exitm<0>
-	endif
+    if x
+	exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
     endif
-	endm
+    exitm<0>
+    endm
+
 HRESULT_FROM_NT macro x
 	exitm <( ( ( x )  or  FACILITY_NT_BIT ) ) >
 	endm

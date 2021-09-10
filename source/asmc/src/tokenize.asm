@@ -405,7 +405,6 @@ continue:
                         mov edx,p
                         add edi,[edx].output
 
-                        ; .operator ... {
                         ; name proto ... {
                         ; type::name proto ... {
 
@@ -414,8 +413,9 @@ continue:
                         mov edx,[ecx+asm_tok].asm_tok.tokval
                         mov ecx,[ecx+asm_tok*3].asm_tok.tokval
 
-                        .if ( eax == T_DOT_STATIC || eax == T_DOT_OPERATOR || \
-                              eax == T_DOT_INLINE || edx == T_PROTO || ecx == T_PROTO )
+                        .if ( eax == T_DOT_STATIC ||
+                              eax == T_DOT_INLINE ||
+                              edx == T_PROTO || ecx == T_PROTO )
 
                             .while GetTextLine( &[edi+1] )
 

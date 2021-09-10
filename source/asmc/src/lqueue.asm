@@ -16,7 +16,6 @@ include input.inc
 include parser.inc
 include preproc.inc
 
-myltoa proto :uint_t, :string_t, :uint_t, :int_t, :int_t
 extern ResWordTable:ReservedWord
 
 lq_line struct  ;; item of a line queue
@@ -70,109 +69,96 @@ AddLineQueue endp
 
 tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
-  local numbuf[16]:char_t
+  local numbuf[64]:char_t
+  local fldwidth:uint_t
 
-    mov ebx,argptr
     .for ( esi = fmt, edi = buffer : byte ptr [esi] : )
 
         lodsb
-        .if al == '%'
+        .if ( al == '%' )
+
+            mov fldwidth,0
             lodsb
-            .switch al
-            .case 'q' ; added v2.31.32: qword hex
-                push    esi
-                push    edi
-                push    ebx
-                lea     edi,numbuf
-                mov     ecx,16
-                mov     eax,'0'
-                rep     stosb
-                mov     eax,[ebx]
-                mov     edx,[ebx+4]
-                lea     ebx,[edi-1]
-                mov     edi,16
-                .fors ( : eax || edx || edi > 0 : edi-- )
-                    .if !edx
-                        mov ecx,16
-                        div ecx
-                        mov ecx,edx
-                        xor edx,edx
-                    .else
-                        push edi
-                        .for ecx = 64, esi = 0, edi = 0 : ecx : ecx--
-                            add eax,eax
-                            adc edx,edx
-                            adc esi,esi
-                            adc edi,edi
-                            .if edi || esi >= 16
-                                sub esi,16
-                                sbb edi,0
-                                inc eax
-                            .endif
-                        .endf
-                        mov ecx,esi
-                        pop edi
-                    .endif
-                    add ecx,'0'
-                    .ifs ecx > '9'
-                        add ecx,'A'-'9'-1
-                    .endif
-                    mov [ebx],cl
-                    dec ebx
-                .endf
-                pop     ebx
-                pop     edi
-                pop     esi
-                add     ebx,8
-                mov     ecx,16
-                lea     eax,numbuf
-                xchg    eax,esi
-                rep     movsb
-                mov     byte ptr [edi],0
-                mov     esi,eax
-                .endc
-            .case 'r'
-                mov     eax,[ebx]
-                add     ebx,4
-                movzx   ecx,ResWordTable[eax*8].len
-                mov     eax,ResWordTable[eax*8].name
-                xchg    eax,esi
-                rep     movsb
-                mov     byte ptr [edi],0
-                mov     esi,eax
-                .endc
-            .case 's'
+            .while ( al >= '0' && al <= '9' )
+
+                movsx eax,al
+                imul edx,fldwidth,10
+                add eax,edx
+                add eax,-48
+                mov fldwidth,eax
+                lodsb
+            .endw
+            mov ebx,argptr
+            xor edx,edx
+            mov ecx,[ebx]
+            add ebx,4
+            .if ( al == 'l' )
+                lodsb
                 mov edx,[ebx]
                 add ebx,4
+            .endif
+            mov argptr,ebx
+
+            .switch al
+
+            .case 'r'
+                mov     eax,ResWordTable[ecx*8].name
+                movzx   ecx,ResWordTable[ecx*8].len
+                xchg    eax,esi
+                rep     movsb
+                mov     byte ptr [edi],0
+                mov     esi,eax
+               .endc
+
+            .case 's'
                 .repeat
-                    mov al,[edx]
+                    mov al,[ecx]
                     mov [edi],al
-                    inc edx
+                    inc ecx
                     inc edi
                 .until !al
                 dec edi
-                .endc
+               .endc
+
             .case 'd'
             .case 'u'
             .case 'x'
-                mov edx,[ebx]
-                add ebx,4
-                .if ( al == 'x' )
-                    myltoa( edx, edi, 16, FALSE, FALSE )
-                    add edi,strlen(edi)
-                .else
-                    mov eax,1
-                    .ifs edx >= 0
-                        dec eax
+            .case 'X'
+                xor ebx,ebx
+                or  al,0x20
+                cmp al,'x'
+                mov eax,16
+                .ifnz
+                    mov eax,10
+                    and ecx,ecx
+                    .ifs
+                        inc ebx
                     .endif
-                    myltoa( edx, edi, 10, eax, FALSE )
-                    add edi,strlen(edi)
-                    ;; v2.07: add a 't' suffix if radix is != 10
-                    .endc .if ( ModuleInfo.radix == 10 )
-                    mov al,'t'
-                    stosb
                 .endif
-                .endc
+
+                .if ( myltoa( edx::ecx, &numbuf, eax, ebx, FALSE ) < fldwidth )
+
+                    mov ecx,fldwidth
+                    sub ecx,eax
+                    mov edx,eax
+                    mov al,'0'
+                    rep stosb
+                    mov eax,edx
+                .endif
+                mov ecx,eax
+                mov edx,esi
+                lea esi,numbuf
+                rep movsb
+                mov esi,edx
+                mov al,[esi-1]
+
+                ; v2.07: add a 't' suffix if radix is != 10
+
+               .endc .if ( ModuleInfo.radix == 10 )
+               .endc .if ( al != 'd' && al != 'u' )
+                mov al,'t'
+                stosb
+               .endc
             .default
                 stosb
             .endsw

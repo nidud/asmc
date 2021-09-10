@@ -336,40 +336,29 @@ GetLabel proto watcall hll:ptr hll_item, index:int_t {
 ; 4. one token (short form for "<token> != 0")
 ;
 
-GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
-        tokenarray:ptr asm_tok, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
+GetSimpleExpression proc private uses esi edi ebx \
+        hll:        ptr hll_item,
+        i:          ptr int_t,
+        tokenarray: ptr asm_tok,
+        ilabel:     int_t,
+        is_true:    uint_t,
+        buffer:     string_t,
+        hllop:      ptr hll_opnd
 
-  local op:         int_t,
-        op1_pos:    int_t,
-        op1_end:    int_t,
-        op2_pos:    int_t,
-        op2_end:    int_t,
-        op1:        expr,
-        op2:        expr,
-        _label:     ptr,
-        inst_cmp:   ptr sbyte,
-        is_float:   byte
+    mov  esi,i
+    mov  edi,[esi]
+    imul ebx,edi,asm_tok
+    add  ebx,tokenarray
 
+    .for ( eax = [ebx].string_ptr : word ptr [eax] == '!' : eax = [ebx].string_ptr )
 
-    mov esi,i
-    mov edi,[esi]
-    mov ebx,edi
-    shl ebx,4
-    add ebx,tokenarray
-    mov is_float,0
-    lea eax,@CStr( "cmp" )
-    mov inst_cmp,eax
-
-    mov eax,[ebx].string_ptr
-    .while W[eax] == '!'
-
-        add edi,1
+        inc edi
         add ebx,16
+
         mov eax,1
         sub eax,is_true
         mov is_true,eax
-        mov eax,[ebx].string_ptr
-    .endw
+    .endf
     mov [esi],edi
     ;
     ; the problem with '()' is that is might enclose just a standard Masm
@@ -377,39 +366,42 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     ; entirely by the expression evaluator, while the latter case is to be
     ; handled HERE!
     ;
-    .if [ebx].token == T_OP_BRACKET
+    .if ( [ebx].token == T_OP_BRACKET )
 
-        mov esi,1
-        add ebx,16
-        movzx eax,[ebx].token
-        .while eax != T_FINAL
-            .if eax == T_OP_BRACKET
-                add esi,1
-            .elseif eax == T_CL_BRACKET
-                sub esi,1
+        .for ( edi = 1, ebx += 16,
+            al = [ebx].token : al != T_FINAL : ebx += 16, al = [ebx].token )
+            .if ( al == T_OP_BRACKET )
+                inc edi
+            .elseif ( al == T_CL_BRACKET )
+                dec edi
                 .break .ifz ; a standard Masm expression?
             .else
-                .break .if GetCOp(ebx) != COP_NONE
+                .break .if ( GetCOp(ebx) != COP_NONE )
             .endif
-            add ebx,16
-            movzx eax,[ebx].token
-        .endw
+        .endf
 
-        mov eax,esi
-        mov esi,i
+        .if ( edi )
 
-        .if eax
+            inc dword ptr [esi]
 
-            inc D[esi]
-            .return .if GetExpression(hll, esi, tokenarray, ilabel, is_true, buffer, hllop) == ERROR
+            .if GetExpression(
+                    hll,
+                    esi,
+                    tokenarray,
+                    ilabel,
+                    is_true,
+                    buffer,
+                    hllop) == ERROR
+                .return
+            .endif
 
-            mov ebx,[esi]
-            shl ebx,4
-            add ebx,tokenarray
-            .return asmerr(2154) .if ( [ebx].token != T_CL_BRACKET )
-
-            inc D[esi]
-            .return NOT_ERROR
+            imul ebx,[esi],asm_tok
+            add  ebx,tokenarray
+            .if ( [ebx].token != T_CL_BRACKET )
+                .return asmerr(2154)
+            .endif
+            inc dword ptr [esi]
+           .return NOT_ERROR
         .endif
     .endif
 
@@ -418,56 +410,60 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     ;
     ; get (first) operand
     ;
-    mov op1_pos,edi
-    .return .if LGetToken(hll, esi, ebx, &op1) == ERROR
+   .new is_float:byte = 0
+   .new inst_cmp:string_t = "cmp"
+   .new op1_pos:int_t = edi
+   .new op1:expr
+
+    .if LGetToken(hll, esi, ebx, &op1) == ERROR
+        .return
+    .endif
+
     .if ( op1.kind == EXPR_REG && !( op1.flags & E_INDIRECT ) )
+
         mov eax,op1.base_reg
+
         .if ( eax )
-            .if ( GetValueSp([eax].asm_tok.tokval) & ( OP_XMM or OP_YMM or OP_ZMM ) )
+
+            .if ( GetValueSp( [eax].asm_tok.tokval ) & ( OP_XMM or OP_YMM or OP_ZMM ) )
+
                 lea eax,@CStr( "comisd" )
                 .if ( ModuleInfo.flt_size == 4 )
                     lea eax,@CStr( "comiss" )
                 .endif
                 mov inst_cmp,eax
-                mov is_float,1
+                inc is_float
             .endif
         .endif
     .endif
 
     mov edi,[esi]
-    mov op1_end,edi
+   .new op1_end:int_t = edi
 
-    mov eax,edi     ; get operator
-    shl eax,4
-    add eax,ebx
-    GetCOp(eax)
+    lea eax,[edi*8] ; get operator
+    lea eax,[ebx+eax*2]
     ;
     ; lower precedence operator ( && or || ) detected?
     ;
-    .if eax == COP_AND || eax == COP_OR
-
+    .if ( GetCOp(eax) == COP_AND || eax == COP_OR )
         mov eax,COP_NONE
-    .elseif eax != COP_NONE
-
+    .elseif ( eax != COP_NONE )
         inc edi
         mov [esi],edi
     .endif
-    mov op,eax
-
-    GetLabel(hll, ilabel)
-    mov _label,eax
+    .new op:int_t = eax
+    .new jcclabel:int_t = GetLabel(hll, ilabel)
     ;
     ; check for special operators with implicite operand:
     ; COP_ZERO, COP_CARRY, COP_SIGN, COP_PARITY, COP_OVERFLOW
     ;
     mov edx,op
-    .if edx >= COP_ZERO
+    .if ( edx >= COP_ZERO )
 
         .return asmerr(2154) .if ( op1.kind != EXPR_EMPTY )
 
         mov ecx,hllop
-        mov eax,buffer
-        mov [ecx].hll_opnd.lastjmp,eax
+        mov [ecx].hll_opnd.lastjmp,buffer
         movzx ecx,flaginstr[edx - COP_ZERO]
         mov edx,is_true
         xor edx,1
@@ -475,7 +471,7 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
         ; v2.27.30: ZERO? || CARRY? --> LE
 
         lea eax,[edi+1]
-        .if eax < ModuleInfo.token_count && ( op == COP_ZERO || op == COP_CARRY )
+        .if ( eax < ModuleInfo.token_count && ( op == COP_ZERO || op == COP_CARRY ) )
 
             push ecx
             push edx
@@ -485,7 +481,7 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             pop edx
             pop ecx
 
-            .if eax == COP_ZERO || eax == COP_CARRY
+            .if ( eax == COP_ZERO || eax == COP_CARRY )
 
                 mov ecx,'a'
                 xor edx,1
@@ -494,8 +490,8 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             .endif
         .endif
 
-        RenderJcc( buffer, ecx, edx, _label )
-        .return NOT_ERROR
+        RenderJcc( buffer, ecx, edx, jcclabel )
+       .return NOT_ERROR
     .endif
 
     mov eax,op1.kind
@@ -506,22 +502,21 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
         .return asmerr(2050)  ; v2.10: added
     .endsw
 
-    .if op == COP_NONE
+    .if ( op == COP_NONE )
 
         .switch eax
           .case EXPR_REG
             .if ( !( op1.flags & E_INDIRECT ) && is_float == 0 )
 
                 lea eax,@CStr( "test" )
-                .if Options.masm_compat_gencode
-
+                .if ( Options.masm_compat_gencode )
                     lea eax,@CStr( "or" )
                 .endif
                 RenderInstr( buffer, eax, op1_pos, op1_end,
                     op1_pos, op1_end, ebx )
                 mov edx,hllop
                 mov [edx].hll_opnd.lastjmp,eax
-                RenderJcc( eax, 'z', is_true, _label )
+                RenderJcc( eax, 'z', is_true, jcclabel )
                 .endc
             .endif
             ;
@@ -532,26 +527,23 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             RenderInstr( buffer, inst_cmp, op1_pos, op1_end, EMPTY, 0, ebx )
             mov edx,hllop
             mov [edx].hll_opnd.lastjmp,eax
-            RenderJcc( eax, 'z', is_true, _label )
+            RenderJcc( eax, 'z', is_true, jcclabel )
             .endc
           .case EXPR_CONST
-            .return EmitConstError(&op1) .if ( op1.hvalue != 0 && op1.hvalue != -1 )
-
+            .if ( op1.hvalue != 0 && op1.hvalue != -1 )
+                .return EmitConstError( &op1 )
+            .endif
             mov ecx,hllop
-            mov eax,buffer
-            mov [ecx].hll_opnd.lastjmp,eax
+            mov [ecx].hll_opnd.lastjmp,buffer
             mov edx,is_true
             xor edx,1
-
             .if ( ( is_true && op1.value ) || ( edx && op1.value == 0 ) )
-
-                sprintf( buffer, "jmp @C%04X%s", _label, &EOLSTR )
+                sprintf( buffer, "jmp @C%04X%s", jcclabel, &EOLSTR )
             .else
                 mov B[eax],NULLC
             .endif
             .endc
         .endsw
-
         .return NOT_ERROR
     .endif
 
@@ -559,19 +551,19 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     ; get second operand for binary operator
     ;
     mov edi,[esi]
-    mov op2_pos,edi
+   .new op2_pos:int_t = edi
 
     ; v2.30 - test if second operand starts with '&'
 
     imul eax,edi,asm_tok
-    .if [ebx+eax].token == T_STRING
-
+    .if ( [ebx+eax].token == T_STRING )
         mov eax,[ebx+eax].string_ptr
-        .if word ptr [eax] == '&'
-            inc D[esi]
+        .if ( word ptr [eax] == '&' )
+            inc dword ptr [esi]
         .endif
     .endif
 
+    .new op2:expr
     .return .if LGetToken(hll, esi, ebx, &op2) == ERROR
 
     mov eax,op2.kind
@@ -584,29 +576,27 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
     .endif
 
     mov edi,[esi]
-    mov op2_end,edi
+   .new op2_end:int_t = edi
 
     assume ebx: NOTHING
     ;
     ; now generate ASM code for expression
     ;
     mov ecx,op
-    .if ecx == COP_ANDB
+    .if ( ecx == COP_ANDB )
         ;
         ; v2.22 - switch /Zg to OR
         ;
-        lea eax,@CStr( "test" )
+        lea eax,@CStr("test")
         .if Options.masm_compat_gencode
-
-            lea eax,@CStr( "or" )
+            lea eax,@CStr("or")
         .endif
         RenderInstr( buffer, eax, op1_pos, op1_end, op2_pos, op2_end, ebx )
-
         mov ecx,hllop
         mov [ecx].hll_opnd.lastjmp,eax
-        RenderJcc( eax, 'e', is_true, _label )
+        RenderJcc( eax, 'e', is_true, jcclabel )
 
-    .elseif ecx <= COP_LE
+    .elseif ( ecx <= COP_LE )
         ;
         ; ==, !=, >, <, >= or <= operator
         ;
@@ -621,63 +611,60 @@ GetSimpleExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t,
             ;
             ; v2.22 - switch /Zg to OR
             ;
-            lea eax,@CStr( "test" )
-            .if Options.masm_compat_gencode
-
-                lea eax,@CStr( "or" )
+            lea eax,@CStr("test")
+            .if ( Options.masm_compat_gencode )
+                lea eax,@CStr("or")
             .endif
             RenderInstr( buffer, eax, op1_pos, op1_end, op1_pos, op1_end, ebx )
         .else
             RenderInstr( buffer, inst_cmp,  op1_pos, op1_end, op2_pos, op2_end, ebx )
         .endif
+        mov ebx,hllop
+        mov [ebx].hll_opnd.lastjmp,eax
+
         ;
         ; v2.22 - signed compare S, SB, SW, SD
         ;
         mov edx,hll
         xor edi,edi
         mov ecx,[edx].hll_item.flags
-
-if 0 ; v2.23 removed..
-        .if ecx & HLLF_IFS or HLLF_IFB or HLLF_IFW or HLLF_IFD
-            ;
-            ; assume .ifx proc() --> .ifx reg
-            ;
-            .return asmerr(2154) .if ( op1.kind != EXPR_REG )
-        .endif
-endif
-
-        .if ecx & HLLF_IFS
-
+        .if ( ecx & HLLF_IFS )
             inc edi
         .endif
 
         mov ecx,op
         movzx edx,op1.mem_type
-        movzx ebx,op2.mem_type
+        movzx eax,op2.mem_type
         and edx,MT_SPECIAL_MASK
-        and ebx,MT_SPECIAL_MASK
+        and eax,MT_SPECIAL_MASK
 
-        .if edi || edx == MT_SIGNED || ebx == MT_SIGNED
+        .if ( edi || edx == MT_SIGNED || eax == MT_SIGNED )
+if 0
+            .if ( op1.kind == EXPR_ADDR && op2.kind == EXPR_ADDR )
 
-            movzx edx,signed_cjmptype[ecx - COP_EQ]
+                mov edx,hll
+                .if ( [edx].hll_item.labels[LSTART*4] == 0 )
+
+                    inc ModuleInfo.hll_label
+                    mov edi,ModuleInfo.hll_label
+                    mov [edx].hll_item.labels[LSTART*4],edi
+                .endif
+            .endif
+endif
+            movzx edx,signed_cjmptype[ecx-COP_EQ]
         .else
-            movzx edx,unsign_cjmptype[ecx - COP_EQ]
+            movzx edx,unsign_cjmptype[ecx-COP_EQ]
         .endif
 
-        mov ebx,hllop
-        mov [ebx].hll_opnd.lastjmp,eax
-        mov ebx,is_true
-        .if !neg_cjmptype[ecx - COP_EQ]
-
-            xor ebx,1
+        mov eax,is_true
+        .if ( !neg_cjmptype[ecx-COP_EQ] )
+            xor eax,1
         .endif
-        RenderJcc( eax, edx, ebx, _label )
+        RenderJcc( [ebx].hll_opnd.lastjmp, edx, eax, jcclabel )
     .else
-
         .return asmerr(2154)
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return NOT_ERROR
 
 GetSimpleExpression endp
 

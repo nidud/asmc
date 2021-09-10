@@ -1,52 +1,23 @@
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 ifndef RPC_NO_WINDOWS_H
 include windows.inc
 endif
 ifndef __RPC_H__
-__RPC_H__ equ <>
-
+define __RPC_H__
 ifdef _WIN32
-__RPC_WIN32__ equ 1
+define __RPC_WIN32__
 else
-__RPC_WIN64__ equ 1
+define __RPC_WIN64__
 endif
+
 include basetsd.inc
 
-STDMETHOD macro name, arguments:VARARG
-	local __type, __ptr
-ifnb <arguments>
-	__type typedef proto WINAPI :ptr, &arguments
-else
-	__type typedef proto WINAPI :ptr
-endif
-	__ptr typedef ptr __type
-	name __ptr ?
-	endm
+I_RPC_HANDLE	typedef ptr
+RPC_STATUS	typedef sdword
 
-ifndef __MIDL_USER_DEFINED
-midl_user_allocate	equ <MID_user_allocate>
-midl_user_free		equ <MID_user_free>
-__MIDL_USER_DEFINED	equ 1
-endif
-
-I_RPC_HANDLE		typedef ptr
-RPC_STATUS		typedef sdword
-RPC_UNICODE_SUPPORTED	equ 1
-
-if (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
-__RPC_FAR		equ <>
-__RPC_API		equ <stdcall>
-__RPC_USER		equ <stdcall>
-__RPC_STUB		equ <stdcall>
-RPC_ENTRY		equ <stdcall>
-else
-__RPC_FAR		equ <>
-__RPC_API		equ <>
-__RPC_USER		equ <>
-__RPC_STUB		equ <>
-endif
+define RPC_UNICODE_SUPPORTED
 
 .pragma comment(lib, rpcrt4)
 
@@ -57,7 +28,6 @@ include excpt.inc
 include winerror.inc
 
 CALLBACK(MACYIELDCALLBACK, :ptr sword)
-;RPC_ENTRY		typedef ptr MACYIELDCALLBACK
 
 ;RPC_ENTRY
 RpcMacSetYieldInfo proto WINAPI \

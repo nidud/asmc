@@ -57,10 +57,10 @@ get_mask128 macro x:=<xmm2>
         ifidn typeid(this),<M128>
             this.Init(_1)
         else
-            [rcx].M128.typeid(M128, this)(_1)
+            [rcx].M128.typeid(M128_, this)(_1)
         endif
         }
-        .inline M128IMM32 :vararg {
+        .inline M128_imm :vararg {
           local n
            .new n:M128
             n.Init(_1)
@@ -72,39 +72,15 @@ get_mask128 macro x:=<xmm2>
             ifidn typeid(this),<M128>
                 lea rcx,this
             endif
-            [rcx].M128.typeid(Init, _1)(_1)
+            [rcx].M128.typeid(Init_, _1)(_1)
         endif
         }
-        .inline InitIMMFLT :abs {
+        .inline Init_flt :abs {
             movaps xmm0,{ _1, _1, _1, _1 }
             }
 
-    .operator = :vec128_t {
-        _mm_store_ps([this], _1)
-        }
     .inline __m128i {
         _mm_store_ps(xmm0, [this])
-        }
-    .operator &= :vec128_t {
-        _mm_and_si128(xmm0, _1)
-        _mm_store_ps([this],xmm0)
-        }
-    .operator |= :vec128_t {
-        _mm_or_si128(xmm0, _1)
-        _mm_store_ps([this],xmm0)
-        }
-    .operator ^= :vec128_t {
-        _mm_xor_si128(xmm0, _1)
-        _mm_store_ps([this],xmm0)
-        }
-    .operator & :vec128_t {
-        _mm_and_si128(xmm0, _1)
-        }
-    .operator | :vec128_t {
-        _mm_or_si128(xmm0, _1)
-        }
-    .operator ^ :vec128_t {
-        _mm_xor_si128(xmm0, _1)
         }
     .inline andnot :vec128_t {
         _mm_andnot_si128(xmm0, _1)
@@ -124,33 +100,6 @@ get_mask128 macro x:=<xmm2>
 
 .template I64vec2 : public M128
 
-    .operator = :int64_t, :int64_t {
-        mov [this+0],_1
-        mov [this+8],_2
-        I64vec2___m128i(this)
-        }
-    .operator += :vec128_t {
-        _mm_add_epi64(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator -= :vec128_t {
-        _mm_sub_epi64(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator <<= :vec128_t {
-        _mm_sll_epi64(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator >>= :vec128_t {
-        _mm_srl_epi64(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator << :vec128_t {
-        _mm_sll_epi64(xmm0, _1)
-        }
-    .operator >> :vec128_t {
-        _mm_srl_epi64(xmm0, _1)
-        }
     .inline unpack_low :vec128_t {
         _mm_unpacklo_epi64(xmm0, _1)
         }
@@ -160,12 +109,6 @@ get_mask128 macro x:=<xmm2>
     .inline sum_abs :vec128_t {
         _mm_sad_epu8(xmm0, _1)
         }
-    .operator << :abs {
-        _mm_slli_epi64(xmm0, _1)
-        }
-    .operator >> :abs {
-        _mm_srli_epi64(xmm0, _1)
-        }
     .ends
 
 .pragma list(push, 1)
@@ -174,35 +117,6 @@ get_mask128 macro x:=<xmm2>
 
 .template I32vec4 : public M128
 
-    .operator = :abs, :abs, :abs, :abs {
-        mov dword ptr [this+0x00],_4
-        mov dword ptr [this+0x04],_3
-        mov dword ptr [this+0x08],_2
-        mov dword ptr [this+0x0C],_1
-        I32vec4___m128i(this)
-        }
-    .operator += :vec128_t {
-        _mm_add_epi32(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator -= :vec128_t {
-        _mm_sub_epi32(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator <<= :vec128_t {
-        _mm_sll_epi32(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator >>= :vec128_t {
-        _mm_srl_epi32(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator << :vec128_t {
-        _mm_sll_epi32(xmm0, _1)
-        }
-    .operator >> :vec128_t {
-        _mm_srl_epi32(xmm0, _1)
-        }
     .inline cmpeq :vec128_t {
         _mm_cmpeq_epi32(xmm0, _1)
         }
@@ -214,13 +128,6 @@ get_mask128 macro x:=<xmm2>
         }
     .inline unpack_high :vec128_t {
         _mm_unpackhi_epi32(xmm0, _1)
-        }
-    .operator <<= :abs {
-        _mm_slli_epi32(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator << :abs {
-        _mm_slli_epi32(xmm0, _1)
         }
     .ends
 
@@ -252,8 +159,6 @@ endif
 
 .template Iu32vec4 : public I32vec4
 
-    .operator * :vec128_t { _mm_mul_epu32(xmm0, _1) }
-
 if defined (_ENABLE_VEC_DEBUG)
     .inline cout :string_t {
         .new this_ptr:ptr
@@ -273,38 +178,6 @@ endif
 
 .template I16vec8 : public M128
 
-    .operator = :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs {
-        mov dword ptr [this+0x00],((_2 shl 16) or _1)
-        mov dword ptr [this+0x04],((_4 shl 16) or _3)
-        mov dword ptr [this+0x08],((_6 shl 16) or _5)
-        mov dword ptr [this+0x0C],((_8 shl 16) or _7)
-        I16vec8___m128i(this)
-        }
-    .operator += :vec128_t {
-        _mm_add_epi16(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator -= :vec128_t {
-        _mm_sub_epi16(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator *= :vec128_t {
-        _mm_mullo_epi16(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator <<  :vec128_t {
-        _mm_sll_epi16(xmm0, _1)
-        }
-    .operator <<= :vec128_t {
-        _mm_sll_epi16(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator << :abs {
-        _mm_slli_epi16(xmm0, _1)
-        }
-    .operator <<= :abs {
-        _mm_store_ps([this],_mm_slli_epi16(xmm0, _1))
-        }
     .inline rmul16 :vec128_t {
         _mm_mullo_epi16(xmm0, _1)
         }
@@ -361,11 +234,6 @@ endif
 
 .template Iu16vec8 : public I16vec8
 
-    .operator >>  :vec128_t { _mm_srl_epi16(xmm0, _1) }
-    .operator >>= :vec128_t {
-        _mm_srl_epi16(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
     .inline sat_add   :vec128_t { _mm_adds_epu16 (xmm0, _1) }
     .inline sat_sub   :vec128_t { _mm_subs_epu16 (xmm0, _1) }
     .inline simd_avg  :vec128_t { _mm_avg_epu16  (xmm0, _1) }
@@ -394,26 +262,6 @@ endif
 
 .template I8vec16 : public M128
 
-    .operator = :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs,\
-                :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs {
-        exitm<I16vec8_mequ888(this,
-            ((_16 shl 8) or _15),
-            ((_14 shl 8) or _13),
-            ((_12 shl 8) or _11),
-            ((_10 shl 8) or _9),
-            (( _8 shl 8) or _7),
-            (( _6 shl 8) or _5),
-            (( _4 shl 8) or _3),
-            (( _2 shl 8) or _1))>
-        }
-    .operator += :vec128_t {
-        _mm_add_epi8(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
-    .operator -= :vec128_t {
-        _mm_sub_epi8(xmm0, _1)
-        _mm_store_ps([this], xmm0)
-        }
     .inline cmpeq :vec128_t {
         _mm_cmpeq_epi8(xmm0, _1)
         }
@@ -560,45 +408,6 @@ endif
 .template F64vec2
     vec __m128d <>
 
-    .operator = :real8, :real8 {
-        movsd [this+0],_1
-        movsd [this+8],_2
-        F64vec2___m128d(this) }
-    .operator = :vec128_t {
-        _mm_store_ps([this], _mm_store_ps(xmm0, _1)) }
-    .operator __m128d {
-        _mm_store_ps(xmm0, [this]) }
-
-    .operator & :vec128_t { _mm_and_pd(xmm0, _1) }
-    .operator | :vec128_t { _mm_or_pd (xmm0, _1) }
-    .operator ^ :vec128_t { _mm_xor_pd(xmm0, _1) }
-    .operator + :vec128_t { _mm_add_pd(xmm0, _1) }
-    .operator - :vec128_t { _mm_sub_pd(xmm0, _1) }
-    .operator * :vec128_t { _mm_mul_pd(xmm0, _1) }
-    .operator / :vec128_t { _mm_div_pd(xmm0, _1) }
-
-    .operator += :vec128_t {
-        _mm_add_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator -= :vec128_t {
-        _mm_sub_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator *= :vec128_t {
-        _mm_mul_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator /= :vec128_t {
-        _mm_div_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator &= :vec128_t {
-        _mm_and_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator |= :vec128_t {
-        _mm_or_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-    .operator ^= :vec128_t {
-        _mm_xor_pd(xmm0, _1)
-        _mm_store_ps([this], xmm0) }
-
     .inline add_horizontal {
         _mm_move_pd(xmm1, xmm0)
         _mm_shuffle_pd(xmm1, xmm1, 1)
@@ -725,34 +534,6 @@ IntToF64vec2 macro _A, _B
 .template F32vec8
     vec __m256 <>
 
-    .operator = :abs, :abs, :abs, :abs, :abs, :abs, :abs, :abs {
-        mov dword ptr [this+0x00],_1
-        mov dword ptr [this+0x04],_2
-        mov dword ptr [this+0x08],_3
-        mov dword ptr [this+0x0C],_4
-        mov dword ptr [this+0x10],_5
-        mov dword ptr [this+0x14],_6
-        mov dword ptr [this+0x18],_7
-        mov dword ptr [this+0x1C],_8
-        F32vec8___m256(this)
-        }
-    .operator = :real4 {
-        movd eax,_1
-        mov [this+0x00],eax
-        mov [this+0x04],eax
-        mov [this+0x08],eax
-        mov [this+0x0C],eax
-        mov [this+0x10],eax
-        mov [this+0x14],eax
-        mov [this+0x18],eax
-        mov [this+0x1C],eax
-        F32vec8___m256(this)
-        }
-    .operator = :real8 {
-        _mm_cvtsd_ss(_1, _1)
-        F32vec8_mequ4(this, _1) }
-    .operator = :vec256_t {
-        _mm256_store_ps([this], _mm256_store_ps(ymm0, _1)) }
     .inline __m256 {
         _mm256_store_ps(ymm0, [this]) }
 
@@ -875,64 +656,9 @@ endif
 .template F64vec4
     vec __m256d <>
 
-    .operator = :real8, :real8, :real8, :real8 {
-        movsd qword ptr [this+0x00],_4
-        movsd qword ptr [this+0x08],_3
-        movsd qword ptr [this+0x10],_2
-        movsd qword ptr [this+0x18],_1
-        F32vec8___m256(this)
-        }
-    .operator = :real8 {
-        movsd [this+0x00],_1
-        movsd [this+0x08],_1
-        movsd [this+0x10],_1
-        movsd [this+0x18],_1
-        F32vec8___m256(this)
-        }
-    .operator = :vec256_t {
-        _mm256_store_ps([this], _mm256_store_ps(ymm0, _1))
-        }
     .inline __m256 {
         _mm256_store_ps(ymm0, [this])
         }
-
-    .operator & :vec256_t { _mm256_and_pd(ymm0, _1) }
-    .operator | :vec256_t { _mm256_or_pd (ymm0, _1) }
-    .operator ^ :vec256_t { _mm256_xor_pd(ymm0, _1) }
-    .operator + :vec256_t { _mm256_add_pd(ymm0, _1) }
-    .operator - :vec256_t { _mm256_sub_pd(ymm0, _1) }
-    .operator * :vec256_t { _mm256_mul_pd(ymm0, _1) }
-    .operator / :vec256_t { _mm256_div_pd(ymm0, _1) }
-
-    .operator += :vec256_t {
-        _mm256_add_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator -= :vec256_t {
-        _mm256_sub_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator *= :vec256_t {
-        _mm256_mul_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator /= :vec256_t {
-        _mm256_div_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator &= :vec256_t {
-        _mm256_and_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator |= :vec256_t {
-        _mm256_or_pd (ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-    .operator ^= :vec256_t {
-        _mm256_xor_pd(ymm0, _1)
-        _mm256_store_ps([this], ymm0)
-        }
-
 
     .inline add_horizontal {
         _mm256_store_pd(ymm1, ymm0)

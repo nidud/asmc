@@ -17,7 +17,7 @@ public  _crtheap
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+CreateHeap proto private :size_t
 
 ; Allocates memory blocks.
 ;
@@ -53,7 +53,7 @@ malloc proc byte_count:size_t
                     lea rax,[rdx+HEAP]
                     add rdx,[rdx].HEAP.size
                     mov _heap_free,rdx
-                    ret
+                   .return
 
                 .endif
             .endif
@@ -91,60 +91,11 @@ malloc proc byte_count:size_t
                 .endw
             .endif
         .endif
-        ;
-        ; Create heap.
-        ;
-        push rcx
-        push rbx
-        sub rsp,0x28
-        mov ebx,_amblksiz
-        add ebx,HEAP
-        .if rbx < rcx
-            mov rbx,rcx
+
+        .if ( CreateHeap(rcx) )
+
+            .continue(0)
         .endif
-        add rbx,HEAP
-        HeapAlloc(GetProcessHeap(), 0, rbx)
-        add rsp,0x28
-        mov rdx,rbx
-        pop rbx
-        pop rcx
-        .if !rax
-
-            _set_errno(ENOMEM)
-            ret
-        .endif
-
-        xor r8,r8
-        sub rdx,HEAP
-
-        mov [rax].HEAP.size,rdx
-        mov [rax+8],r8
-        mov [rax].HEAP.next,r8
-        mov [rax].HEAP.prev,r8
-        mov [rax+rdx].HEAP.size,r8
-        mov [rax+rdx].HEAP.type,_HEAP_LOCAL
-        mov [rax+rdx].HEAP.prev,rax
-
-        mov rdx,_heap_base
-        .if rdx
-
-            .while [rdx].HEAP.next != r8
-
-                mov rdx,[rdx].HEAP.next
-            .endw
-            mov [rdx].HEAP.next,rax
-            mov [rax].HEAP.prev,rdx
-        .else
-            mov _heap_base,rax
-        .endif
-        mov _heap_free,rax
-
-        mov rdx,rax
-        mov rax,[rdx].HEAP.size
-        .continue(0) .if rax >= rcx
-
-        _set_errno(ENOMEM)
-        xor eax,eax
     .until 1
     ret
 
@@ -195,31 +146,26 @@ free proc memblock:ptr
 
                     .if rdx == [rcx+r8].HEAP.size
 
-                        push rax
-                        push rbx
-                        mov  rbx,rcx
                         ;
                         ; unlink the node
                         ;
-                        mov rcx,[rbx].HEAP.prev
-                        mov rax,[rbx].HEAP.next
-                        .if rcx
-                            mov [rcx].HEAP.next,rax
+                        mov rdx,[rcx].HEAP.prev
+                        mov rax,[rcx].HEAP.next
+                        .if rdx
+                            mov [rdx].HEAP.next,rax
                         .endif
                         .if rax
-                            mov [rax].HEAP.prev,rcx
+                            mov [rax].HEAP.prev,rdx
                         .endif
                         mov rax,_heap_base
-                        .if rax == rbx
+                        .if rax == rcx
                             xor rax,rax
                             mov _heap_base,rax
                         .endif
                         mov _heap_free,rax
-                        sub rsp,0x28
-                        HeapFree(GetProcessHeap(), 0, rbx)
-                        add rsp,0x28
-                        pop rbx
-                        pop rax
+                        mov memblock,rcx
+
+                        HeapFree(GetProcessHeap(), 0, memblock)
                     .endif
                 .endif
             .endif
@@ -228,5 +174,59 @@ free proc memblock:ptr
     ret
 
 free endp
+
+
+CreateHeap proc private uses rbx size:size_t
+
+    mov ebx,_amblksiz
+    add ebx,HEAP
+    .if rbx < rcx
+        mov rbx,rcx
+    .endif
+    add rbx,HEAP
+
+    .if ( HeapAlloc(GetProcessHeap(), 0, rbx) == NULL )
+
+        _set_errno(ENOMEM)
+       .return
+    .endif
+
+    mov rdx,rbx
+    mov rcx,size
+    xor r8,r8
+    sub rdx,HEAP
+
+    mov [rax].HEAP.size,rdx
+    mov [rax+8],r8
+    mov [rax].HEAP.next,r8
+    mov [rax].HEAP.prev,r8
+    mov [rax+rdx].HEAP.size,r8
+    mov [rax+rdx].HEAP.type,_HEAP_LOCAL
+    mov [rax+rdx].HEAP.prev,rax
+
+    mov rdx,_heap_base
+    .if rdx
+
+        .while [rdx].HEAP.next != r8
+
+            mov rdx,[rdx].HEAP.next
+        .endw
+        mov [rdx].HEAP.next,rax
+        mov [rax].HEAP.prev,rdx
+    .else
+        mov _heap_base,rax
+    .endif
+    mov _heap_free,rax
+
+    mov rdx,rax
+    mov rax,[rdx].HEAP.size
+    .if rax >= rcx
+        .return
+    .endif
+    _set_errno(ENOMEM)
+    xor eax,eax
+    ret
+
+CreateHeap endp
 
     END

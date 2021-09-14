@@ -428,7 +428,7 @@ endif
             .endif
         .case OP_FRAME ;; AUTO | NOAUTO | ADD -- default is NOAUTO
             .if ( !_stricmp( esi, "AUTO" ) )
-                mov ModuleInfo.frame_auto,1
+                or ModuleInfo.frame_auto,1
             .elseif ( [ebx].tokval == T_ADD )
                 mov ModuleInfo.frame_auto,3
             .elseif ( !_stricmp( esi, "NOAUTO" ) )
@@ -497,7 +497,7 @@ endif
                             or ModuleInfo.win64_flags,W64F_AUTOSTACKSP
                         .elseif ( edi == T_RBP )
                             InitStackBase( T_RBP )
-                            mov ModuleInfo.frame_auto,1
+                            or ModuleInfo.frame_auto,1
                             or ModuleInfo.win64_flags,(W64F_AUTOSTACKSP or W64F_SAVEREGPARAMS)
                         .elseif ( edi == T_ALIGN )
                             .if ( !ModuleInfo.win64_flags )

@@ -9,9 +9,6 @@ include wchar.inc
 
     .code
 
-_putwch proc wc:UINT
-_putwch endp
-
 _putwch_nolock proc wc:UINT
 
   local cchWritten:DWORD
@@ -40,5 +37,10 @@ _putwch_nolock proc wc:UINT
     ret
 
 _putwch_nolock endp
+
+_putwch proc wc:UINT
+    _putwch_nolock(ecx)
+    ret
+_putwch endp
 
     END

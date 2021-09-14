@@ -2833,7 +2833,7 @@ write_default_prologue proc private uses esi edi ebx
 
     .if ( [esi].flags & PROC_ISFRAME )
 
-        .if ( ModuleInfo.frame_auto )
+        .if ( ModuleInfo.frame_auto & 1 )
 
             ; win64 default prologue when PROC FRAME and
             ; OPTION FRAME:AUTO is set
@@ -3614,7 +3614,7 @@ write_default_epilogue proc private uses esi edi ebx
 
     .if ( [esi].flags & PROC_ISFRAME )
 
-        .if ( ModuleInfo.frame_auto )
+        .if ( ModuleInfo.frame_auto & 1 )
 
             ; Win64 default epilogue if PROC FRAME and OPTION FRAME:AUTO is set
 

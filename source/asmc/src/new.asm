@@ -401,9 +401,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
             .endif
 
             .if val
-                .if val == '"' || ( val == 'L' &&  val[1] == '"')
-                    AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [ebx].sfield.name, &val )
-                .elseif array
+                .if array
                     mov eax,[ebx].sfield.total_size
                     xor edx,edx
                     div [ebx].sfield.total_length
@@ -411,6 +409,15 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                     dec ecx
                     mul ecx
                     mov ecx,eax
+                .endif
+
+                .if val == '"' || ( val == 'L' &&  val[1] == '"')
+                    .if array
+                        AddLineQueueX( " mov %s[%d], &@CStr(%s)", name, ecx, &val )
+                    .else
+                        AddLineQueueX( " mov %s.%s, &@CStr(%s)", name, [ebx].sfield.name, &val )
+                    .endif
+                .elseif array
                     AddLineQueueX( " mov %s[%d], %s", name, ecx, &val )
                 .else
                     AssignString( name, ebx, &val )

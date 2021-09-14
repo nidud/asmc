@@ -1,7 +1,7 @@
 ifndef __glu_h__
 ifndef __GLU_H__
-__glu_h__ equ <>
-__GLU_H__ equ <>
+define __glu_h__
+define __GLU_H__
 
 include winapifamily.inc
 include GL/gl.inc

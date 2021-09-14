@@ -8,7 +8,7 @@ include ctype.inc
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp
 
 isspace proc char:SINT
     lea rax,_ctype

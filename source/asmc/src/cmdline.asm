@@ -626,13 +626,13 @@ ifndef __ASMC64__
     .case 'cpf'             ;; -fpc
         mov Options.cpu,P_NO87
         .return
-else
+endif
     .case 'marf'            ;; -frame
         .if ( Options.output_format != OFORMAT_BIN )
             mov Options.frame_auto,3
         .endif
         .return
-endif
+
 ifndef __ASMC64__
     .case 'cG'              ;; -Gc
         mov Options.langtype,LANG_PASCAL

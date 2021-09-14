@@ -22,8 +22,6 @@ include input.inc
 include tokenize.inc
 include expreval.inc
 
-; item for .CLASS, .ENDS, and .COMDEF
-
     .code
 
     option proc: private
@@ -77,7 +75,7 @@ ClassProto2 proc uses esi edi class:string_t, method:string_t, item:ptr com_item
         .else
             tsprintf( &buffer, ":ptr %s", class )
         .endif
-        mov edi,eax
+        lea edi,buffer
     .endif
     ClassProto( &name, [esi].langtype, edi, T_PROTO )
     ret
@@ -272,8 +270,8 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
 
     inc ModuleInfo.class_label
 
-    sprintf( &T$, "T$%04X", ModuleInfo.class_label )
-    sprintf( &P$, "P$%04X", ModuleInfo.class_label )
+    tsprintf( &T$, "T$%04X", ModuleInfo.class_label )
+    tsprintf( &P$, "P$%04X", ModuleInfo.class_label )
 
     strcat( strcpy( edi, &T$ ), " typedef proto" )
 
@@ -404,7 +402,7 @@ ParseMacroArgs proc private uses esi edi ebx buffer:string_t, count:int_t, args:
 
         .if ( cl == ':' || !( _ltype[ecx+1] & _LABEL) )
 
-            add edi,sprintf( edi, "_%u, ", esi )
+            add edi,tsprintf( edi, "_%u, ", esi )
         .else
 
             .while is_valid_id_char( [ebx] )
@@ -478,7 +476,7 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
 
     .else
 
-        ; .operator|.static name this, [name1]:type, ... { ... }
+        ; .static name this, [name1]:type, ... { ... }
         ; args: this, _1, _2, ...
 
         lea edi,[strcpy( edi, "this" ) + 4]
@@ -570,10 +568,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             .endif
             .return rc
         .endif
+        .return asmerr( 1011 ) .if !esi
 
         mov close_directive,1 ; ComStack needs to be active in StructDirective()
-
-        .return asmerr( 1011 ) .if !esi
 
         AddLineQueueX( "%s ends", [esi].asym.name )
         mov edx,[edi].com_item.publsym
@@ -600,13 +597,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         .endif
         mov [esi].com_item.method,eax
         mov langtype,[esi].com_item.langtype
-
-        ; .operator + [:type] [{..}]
-
-        lea ebx,[ebx+edx+16]
-
         mov is_vararg,0
-        mov ebx,get_param_name( ebx, &token, &args, &is_id, &context, &langtype )
+
+        mov ebx,get_param_name( &[ebx+edx+16], &token, &args, &is_id, &context, &langtype )
         .return .if eax == ERROR
 
         .if context ; { inline code }
@@ -675,7 +668,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
         ; .operator + :type { ... }
 
-        sprintf( &token, "%s_%s", class_ptr, &name )
+        tsprintf( &token, "%s_%s", class_ptr, &name )
 
         .if ModuleInfo.list
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )

@@ -167,7 +167,8 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
        .endif
     .endf
     mov byte ptr [edi],0
-    mov eax,buffer
+    mov eax,edi
+    sub eax,buffer
     ret
 
 tvsprintf endp
@@ -175,7 +176,6 @@ tvsprintf endp
 tsprintf proc __cdecl buffer:string_t, fmt:string_t, argptr:vararg
 
     tvsprintf( buffer, fmt, &argptr )
-    mov eax,buffer
     ret
 
 tsprintf endp

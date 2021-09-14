@@ -1,5 +1,5 @@
 ifndef __glut_h__
-__glut_h__ equ <>
+define __glut_h__
 ifndef _CRT_TERMINATE_DEFINED
  include stdlib.inc
 endif
@@ -26,6 +26,7 @@ endif ;; _WIN32
 ifdef _GLPE
 ifndef _WIN64
 ifndef _REGS6432
+define _REGS6432
     rax equ <eax>
     rbx equ <ebx>
     rcx equ <ecx>
@@ -34,7 +35,6 @@ ifndef _REGS6432
     rsi equ <esi>
     rbp equ <ebp>
     rsp equ <esp>
-_REGS6432 equ 1
 endif
 endif
 

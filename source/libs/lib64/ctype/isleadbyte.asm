@@ -8,7 +8,7 @@ include ctype.inc
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp
 
 isleadbyte proc wc:SINT
     lea rax,_ctype

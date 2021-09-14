@@ -1,5 +1,5 @@
 ifndef _GLAUX_H
-_GLAUX_H equ <>
+define _GLAUX_H
 
 include windows.inc
 include gl/gl.inc
@@ -190,7 +190,7 @@ CALLBACK(AUXMOUSEPROC, :ptr AUX_EVENTREC)
     AUX_USE_ID = 1,
     AUX_EXACT_MATCH,
     AUX_MINIMUM_CRITERIA
-}
+    }
 
 ;void
 auxInitDisplayMode	proto WINAPI :GLenum

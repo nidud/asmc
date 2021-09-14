@@ -28,22 +28,24 @@ define D <DWORD PTR>
 ; Order of items COP_EQ - COP_LE  and COP_ZERO - COP_OVERFLOW
 ; must not be changed.
 
-COP_NONE        equ 0
-COP_EQ          equ 1       ; ==
-COP_NE          equ 2       ; !=
-COP_GT          equ 3       ; >
-COP_LT          equ 4       ; <
-COP_GE          equ 5       ; >=
-COP_LE          equ 6       ; <=
-COP_AND         equ 7       ; &&
-COP_OR          equ 8       ; ||
-COP_ANDB        equ 9       ; &
-COP_NEG         equ 10      ; !
-COP_ZERO        equ 11      ; ZERO?  not really a valid C operator
-COP_CARRY       equ 12      ; CARRY?     not really a valid C operator
-COP_SIGN        equ 13      ; SIGN?  not really a valid C operator
-COP_PARITY      equ 14      ; PARITY?   not really a valid C operator
-COP_OVERFLOW    equ 15      ; OVERFLOW? not really a valid C operator
+.enum {
+    COP_NONE,
+    COP_EQ,       ; ==
+    COP_NE,       ; !=
+    COP_GT,       ; >
+    COP_LT,       ; <
+    COP_GE,       ; >=
+    COP_LE,       ; <=
+    COP_AND,      ; &&
+    COP_OR,       ; ||
+    COP_ANDB,     ; &
+    COP_NEG,      ; !
+    COP_ZERO,     ; ZERO?  not really a valid C operator
+    COP_CARRY,    ; CARRY?     not really a valid C operator
+    COP_SIGN,     ; SIGN?  not really a valid C operator
+    COP_PARITY,   ; PARITY?   not really a valid C operator
+    COP_OVERFLOW  ; OVERFLOW? not really a valid C operator
+    }
 
 .data
 
@@ -51,12 +53,12 @@ EOLSTR          db EOLCHAR,0
 ;
 ; items in table below must match order COP_ZERO - COP_OVERFLOW
 ;
-flaginstr       db 'z','c','s','p','o'
+flaginstr       db 'zcspo'
 ;
 ; items in tables below must match order COP_EQ - COP_LE
 ;
-unsign_cjmptype db 'z','z','a','b','b','a'
-signed_cjmptype db 'z','z','g','l','l','g'
+unsign_cjmptype db 'zzabba'
+signed_cjmptype db 'zzgllg'
 neg_cjmptype    db 0,1,0,0,1,1
 
 ;
@@ -68,12 +70,12 @@ neg_cjmptype    db 0,1,0,0,1,1
 ; detected.
 ;
 
-CHARS_EQ    equ '=' + ( '=' shl 8 )
-CHARS_NE    equ '!' + ( '=' shl 8 )
-CHARS_GE    equ '>' + ( '=' shl 8 )
-CHARS_LE    equ '<' + ( '=' shl 8 )
-CHARS_AND   equ '&' + ( '&' shl 8 )
-CHARS_OR    equ '|' + ( '|' shl 8 )
+define CHARS_EQ    ('=' + ( '=' shl 8 ))
+define CHARS_NE    ('!' + ( '=' shl 8 ))
+define CHARS_GE    ('>' + ( '=' shl 8 ))
+define CHARS_LE    ('<' + ( '=' shl 8 ))
+define CHARS_AND   ('&' + ( '&' shl 8 ))
+define CHARS_OR    ('|' + ( '|' shl 8 ))
 
     .code
 
@@ -157,7 +159,7 @@ GetCOp  endp
 RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:uint_t,
         end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:ptr asm_tok
 
-  local reg:string_t
+  local reg:int_t
 
     mov reg,0
 
@@ -170,14 +172,14 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
     .if ecx != EMPTY && ModuleInfo.Ofssize != USE16
 
         shl ecx,4
-        .if [ebx+ecx].token == T_STRING
+        .if ( [ebx+ecx].token == T_STRING )
 
             mov eax,[ebx+ecx].string_ptr
-            .if word ptr [eax] == '&'
+            .if ( word ptr [eax] == '&' )
 
-                lea eax,@CStr("eax")
+                mov eax,T_EAX
                 .if ModuleInfo.Ofssize == USE64
-                    lea eax,@CStr("rax")
+                    mov eax,T_RAX
                 .endif
                 mov reg,eax
 
@@ -186,8 +188,7 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
                 mov dl,[esi]
                 mov byte ptr [esi],0
                 push edx
-                sprintf(edi, "lea %s, %s\n", eax, [ebx+ecx+16].tokpos)
-                add edi,eax
+                add edi,tsprintf(edi, "lea %r, %s\n", eax, [ebx+ecx+16].tokpos)
                 pop edx
                 mov [esi],dl
             .endif
@@ -218,26 +219,22 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
 
     .if eax != EMPTY
 
-        mov word ptr [edi],' ,'
-        add edi,2
-
         ; copy the second operand's tokens
         .if reg
-            mov ecx,3
-            mov esi,reg
+            add edi,tsprintf(edi, ", %r", reg)
         .else
+            mov word ptr [edi],' ,'
+            add edi,2
             shl ecx,4
             shl eax,4
             mov ecx,[ebx+ecx].asm_tok.tokpos
             mov esi,[ebx+eax].asm_tok.tokpos
             sub ecx,esi
+            rep movsb
         .endif
-        rep movsb
 
     .elseif ecx != EMPTY
-
-        sprintf(edi, ", %d", ecx)
-        add edi,eax
+        add edi,tsprintf(edi, ", %d", ecx)
     .endif
     mov W[edi],EOLCHAR
     lea eax,[edi+1]
@@ -245,16 +242,16 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
 
 RenderInstr endp
 
-GetLabelStr proc l_id:int_t, buff:string_t
-    sprintf( buff, "@C%04X", l_id )
-    mov eax,buff
+GetLabelStr proc l_id:int_t, buffer:string_t
+    tsprintf( buffer, "@C%04X", l_id )
+    mov eax,buffer
     ret
 GetLabelStr endp
 
 ;
 ; render a Jcc instruction
 ;
-RenderJcc proc private uses edi dst, cc, _neg, _label
+RenderJcc proc private uses edi dst:string_t, cc:int_t, _neg:int_t, _label:int_t
     ;
     ; create the jump opcode: j[n]cc
     ;
@@ -264,7 +261,6 @@ RenderJcc proc private uses edi dst, cc, _neg, _label
     stosb
     mov ecx,_neg
     .if ecx
-
         mov eax,'n'
         stosb
     .endif
@@ -273,12 +269,11 @@ RenderJcc proc private uses edi dst, cc, _neg, _label
     stosb
     mov eax,' '
     .if !ecx
-
         stosb       ; make sure there's room for the inverse jmp
     .endif
     stosb
 
-    sprintf( edi, "@C%04X", _label )
+    tsprintf( edi, "@C%04X", _label )
     lea eax,[edi+eax+1]
     mov W[eax-1],EOLCHAR
     ret
@@ -305,19 +300,19 @@ LGetToken proc private uses esi edi ebx hll:ptr hll_item, i:int_t, tokenarray:pt
            GetCOp(ebx) == COP_NONE : edi++, ebx += 16 )
     .endf
 
-    .if edi == [esi]
+    .if ( edi == [esi] )
 
         mov eax,opnd
         mov [eax].expr.kind,EXPR_EMPTY
         mov eax,NOT_ERROR
 
-    .elseif EvalOperand( esi, tokenarray, edi, opnd, 0 ) != ERROR
+    .elseif ( EvalOperand( esi, tokenarray, edi, opnd, 0 ) != ERROR )
         ;
         ; v2.11: emit error 'syntax error in control flow directive'.
         ; May happen for expressions like ".if 1 + CARRY?"
         ;
         mov eax,NOT_ERROR
-        .if [esi] > edi
+        .if ( [esi] > edi )
 
             asmerr(2154)
         .endif
@@ -354,7 +349,6 @@ GetSimpleExpression proc private uses esi edi ebx \
 
         inc edi
         add ebx,16
-
         mov eax,1
         sub eax,is_true
         mov is_true,eax
@@ -538,7 +532,7 @@ GetSimpleExpression proc private uses esi edi ebx \
             mov edx,is_true
             xor edx,1
             .if ( ( is_true && op1.value ) || ( edx && op1.value == 0 ) )
-                sprintf( buffer, "jmp @C%04X%s", jcclabel, &EOLSTR )
+                tsprintf( buffer, "jmp @C%04X%s", jcclabel, &EOLSTR )
             .else
                 mov B[eax],NULLC
             .endif
@@ -639,18 +633,6 @@ GetSimpleExpression proc private uses esi edi ebx \
         and eax,MT_SPECIAL_MASK
 
         .if ( edi || edx == MT_SIGNED || eax == MT_SIGNED )
-if 0
-            .if ( op1.kind == EXPR_ADDR && op2.kind == EXPR_ADDR )
-
-                mov edx,hll
-                .if ( [edx].hll_item.labels[LSTART*4] == 0 )
-
-                    inc ModuleInfo.hll_label
-                    mov edi,ModuleInfo.hll_label
-                    mov [edx].hll_item.labels[LSTART*4],edi
-                .endif
-            .endif
-endif
             movzx edx,signed_cjmptype[ecx-COP_EQ]
         .else
             movzx edx,unsign_cjmptype[ecx-COP_EQ]
@@ -682,7 +664,7 @@ GetSimpleExpression endp
 
 InvertJump proc fastcall private p:string_t
 
-    .if B[ecx] == NULLC ; v2.11: convert 0 to "jmp"
+    .if ( B[ecx] == NULLC ) ; v2.11: convert 0 to "jmp"
 
         strcpy( ecx, "jmp " )
         ret
@@ -728,9 +710,7 @@ InvertJump proc fastcall private p:string_t
         .endif
         ret
     .endsw
-
     .if ah == 'e'
-
         mov B[ecx+1],' '
     .else
         mov B[ecx+1],'e'
@@ -747,7 +727,7 @@ InvertJump endp
 ;
 ReplaceLabel proc private uses esi edi ebx p, olabel, nlabel
 
-local oldlbl[16]:char_t, newlbl[16]:char_t
+  local oldlbl[16]:char_t, newlbl[16]:char_t
 
     mov ebx,p
     lea esi,oldlbl
@@ -759,7 +739,6 @@ local oldlbl[16]:char_t, newlbl[16]:char_t
     mov ebx,strlen(edi)
     mov eax,p
     .while strstr(eax, esi)
-
         memcpy(eax, edi, ebx)
         add eax,ebx
     .endw
@@ -800,15 +779,15 @@ GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, to
                 mov truelabel,GetHllLabel()
             .endif
 
-            ;; v2.11: there might be a 0 at lastjmp
+            ; v2.11: there might be a 0 at lastjmp
 
             .if B[ebx]
 
                 strcat(GetLabelStr(truelabel, &[ebx+4]), &EOLSTR)
             .endif
 
-                ;; v2.22 .while  (eax || edx) && ecx -- failed
-                ;;   .while !(eax || edx) && ecx -- failed
+                ; v2.22 .while  (eax || edx) && ecx -- failed
+                ;   .while !(eax || edx) && ecx -- failed
 
             mov ebx,esi
             .if [edi].hll_opnd.lasttruelabel
@@ -819,7 +798,7 @@ GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, to
             mov olabel,GetLabel(hll, ilabel)
             strlen(ebx)
             add ebx,eax
-            sprintf(ebx, "%s%s%s", GetLabelStr(olabel, &buff), LABELQUAL, &EOLSTR)
+            tsprintf(ebx, "%s%s%s", GetLabelStr(olabel, &buff), LABELQUAL, &EOLSTR)
             ReplaceLabel(buffer, olabel, nlabel)
             mov [edi].hll_opnd.lastjmp,0
         .endif
@@ -875,22 +854,22 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
         inc D[ebx]
         mov ebx,[edi].hll_opnd.lastjmp
 
-        .if ebx && !is_true
+        .if ( ebx && !is_true )
 
             InvertJump( ebx )
 
-            .if truelabel == 0
+            .if ( truelabel == 0 )
 
                 mov truelabel,GetHllLabel()
             .endif
 
-            .if B[ebx]
+            .if ( B[ebx] )
 
                 strcat( GetLabelStr( truelabel, &[ebx+4] ), &EOLSTR )
             .endif
 
             mov ebx,esi
-            .if [edi].hll_opnd.lasttruelabel
+            .if ( [edi].hll_opnd.lasttruelabel )
 
                 ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
             .endif
@@ -901,12 +880,12 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
             strlen(ebx)
             add ebx,eax
             mov eax,hll
-            .if [eax].hll_item.cmd == HLL_REPEAT
+            .if ( [eax].hll_item.cmd == HLL_REPEAT )
 
                 ReplaceLabel( buffer, olabel, nlabel )
-                sprintf( ebx, "%s%s%s", GetLabelStr( nlabel, &buff ), LABELQUAL, &EOLSTR )
+                tsprintf( ebx, "%s%s%s", GetLabelStr( nlabel, &buff ), LABELQUAL, &EOLSTR )
             .else
-                sprintf( ebx, "%s%s%s", GetLabelStr( olabel, &buff ), LABELQUAL, &EOLSTR )
+                tsprintf( ebx, "%s%s%s", GetLabelStr( olabel, &buff ), LABELQUAL, &EOLSTR )
                 ReplaceLabel( buffer, olabel, nlabel )
             .endif
         .endif
@@ -915,10 +894,10 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr int_t, token
         mov [edi].hll_opnd.lasttruelabel,0
     .endw
 
-    .if truelabel
+    .if ( truelabel )
 
         mov ebx,[edi].hll_opnd.lastjmp
-        .if ebx && [edi].hll_opnd.lasttruelabel
+        .if ( ebx && [edi].hll_opnd.lasttruelabel )
 
             ReplaceLabel(esi, [edi].hll_opnd.lasttruelabel, truelabel)
             strchr(ebx, EOLCHAR)
@@ -964,18 +943,18 @@ ExpandCStrings proc uses edi ebx tokenarray:ptr asm_tok
 
     .for ( edi = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edi++ )
 
-        .if [ebx].hll_flags & T_HLL_PROC
+        .if ( [ebx].hll_flags & T_HLL_PROC )
 
             .return .if GenerateCString( edi, tokenarray )
 
             ; id[..]
-            .if [ebx].token == T_ID && [ebx+16].token == T_OP_SQ_BRACKET
+            .if ( [ebx].token == T_ID && [ebx+16].token == T_OP_SQ_BRACKET )
 
                 add ebx,16
                 inc edi
             .endif
 
-            .if [ebx].token == T_OP_SQ_BRACKET
+            .if ( [ebx].token == T_OP_SQ_BRACKET )
 
                 ; invoke [...][.type].x(...)
 
@@ -994,7 +973,7 @@ ExpandCStrings proc uses edi ebx tokenarray:ptr asm_tok
                     add ebx,16
                 .endif
             .endif
-            .while [ebx+16].token == T_DOT
+            .while ( [ebx+16].token == T_DOT )
                 add ebx,32
             .endw
             mov ecx,1
@@ -1006,7 +985,7 @@ ExpandCStrings proc uses edi ebx tokenarray:ptr asm_tok
                 .break
             .endif
 
-            .for : [ebx].token != T_FINAL : ebx += 16
+            .for ( : [ebx].token != T_FINAL : ebx += 16 )
 
                 mov edx,[ebx].string_ptr
                 movzx eax,B[edx]
@@ -1036,11 +1015,11 @@ GetProcVtbl proc private sym:ptr asym, name:ptr sbyte
 
     mov ecx,sym
     xor eax,eax
-    .if [ecx].asym.mem_type == MT_TYPE && [ecx].asym.type
+    .if ( [ecx].asym.mem_type == MT_TYPE && [ecx].asym.type )
         mov ecx,[ecx].asym.type
     .endif
-    .if [ecx].asym.target_type && \
-        ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.ptr_memtype == MT_TYPE )
+    .if ( [ecx].asym.target_type &&
+          ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.ptr_memtype == MT_TYPE ) )
         mov ecx,[ecx].asym.target_type
     .endif
     .if ( [ecx].asym.flag2 & S_VTABLE )
@@ -1157,7 +1136,7 @@ GetMacroReturn proc private uses esi ebx i:int_t, tokenarray:ptr asm_tok
     ; if the last line is retm<..> use this as return value
     ;
 
-   .return .if !GetProc( i, tokenarray, &opnd )
+    .return .if !GetProc( i, tokenarray, &opnd )
 
     .if ( [eax].asym.state == SYM_STRUCT_FIELD )
 
@@ -1204,7 +1183,7 @@ GetMacroReturn proc private uses esi ebx i:int_t, tokenarray:ptr asm_tok
 
     .endif
 
-   .return .if [ecx].asym.state != SYM_MACRO
+   .return .if ( [ecx].asym.state != SYM_MACRO )
 
     mov ecx,[ecx].dsym.macroinfo
     mov ecx,[ecx].macro_info.lines
@@ -1216,24 +1195,24 @@ GetMacroReturn proc private uses esi ebx i:int_t, tokenarray:ptr asm_tok
 
     lea ecx,[ecx].srcline.line
     mov edx,[ecx]
-   .return .if edx != 'mter'
+   .return .if ( edx != 'mter' )
 
     add ecx,4
     mov dl,[ecx]
    .while 1
-       .break .if !dl || dl == '<'
+       .break .if ( !dl || dl == '<' )
         inc ecx
         mov dl,[ecx]
    .endw
-   .return .if dl != '<'
+   .return .if ( dl != '<' )
    .repeat
         inc ecx
         mov dl,[ecx]
-       .continue(0) .if dl == ' '
-       .continue(0) .if dl == 9
+       .continue(0) .if ( dl == ' ' )
+       .continue(0) .if ( dl == 9 )
    .until 1
-   .return .if !dl
-   .return .if dl == '>'
+   .return .if ( !dl )
+   .return .if ( dl == '>' )
     mov eax,ecx
     ret
 
@@ -1260,8 +1239,8 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm
 
     .for ( edi = &b, ebx = tokenarray, edx = 0 : edx < i : edx++, ebx += 16 )
 
-        .if edx
-            .if [ebx].hll_flags & T_HLL_PROC
+        .if ( edx )
+            .if ( [ebx].hll_flags & T_HLL_PROC )
                 mov proc_id,ebx
                 mov parg_id,0
             .endif

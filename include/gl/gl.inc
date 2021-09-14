@@ -1,7 +1,7 @@
 ifndef __gl_h_
-__gl_h_ equ <>
+define __gl_h_
 ifndef __GL_H__
-__GL_H__ equ <>
+define __GL_H__
 ifndef _WINDEF_
  include windef.inc
 endif

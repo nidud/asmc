@@ -1,6 +1,0 @@
-
-[.]
-0=BC,13,0,15,4,13E0,%AsmcDir%\source\asmc\src\X86\return.asm
-1=4A0,0,0,4,4,13E0,%AsmcDir%\source\asmc\src\X86\hll.asm
-2=520,16,0,31,4,13E0,%AsmcDir%\source\asmc\src\X86\switch.asm
-3=533,11,0,14,4,13E0,%AsmcDir%\source\asmc\src\X86\tokenize.asm

@@ -1,9 +1,0 @@
-
-[.]
-0=E7,12,0,4,4,13E0,%AsmcDir%\source\asmc\src\X86\class.asm
-1=172,10,0,30,4,13E0,%AsmcDir%\source\asmc\src\X86\tokenize.asm
-2=358,11,0,18,8,17E0,%AsmcDir%\source\asmc\src\proc.c
-3=13A,17,0,23,8,17E0,%AsmcDir%\source\asmc\src\tokenize.c
-4=BB,12,0,4,4,13E0,%AsmcDir%\source\asmc\src\class.c
-5=C65,1E,0,50,4,13E0,%AsmcDir%\source\asmc\src\X86\parser.asm
-6=9D3,19,0,0,8,17E0,%AsmcDir%\source\asmc\src\parser.c

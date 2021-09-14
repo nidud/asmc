@@ -1,5 +1,5 @@
 ifndef __ACCESS_CONTROL__
-__ACCESS_CONTROL__ equ <>
+define __ACCESS_CONTROL__
 include wtypes.inc
 .pragma list(push, 0)
 

@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 
 **OPTION FRAME**:[AUTO|NOAUTO|ADD]
 
-This is only valid with in 64-bit, and causes ASMC to generate a function table entry in .pdata and unwind information in .xdata for a function's structured exception handling unwind behavior.
+This is only valid in 64-bit, and causes ASMC to generate a function table entry in .pdata and unwind information in .xdata for a function's structured exception handling unwind behavior.
 
 When the FRAME attribute is used, it must be followed by an .ENDPROLOG directive.
 

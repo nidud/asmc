@@ -2,8 +2,6 @@ Asmc Macro Assembler Reference
 
 ### OPTION NOKEYWORD
 
-**OPTION NOKEYWORD**
-
 - Rename any offending symbols in your code.
 - Selectively disable keywords with the OPTION NOKEYWORD directive.
 

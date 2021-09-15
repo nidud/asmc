@@ -2,8 +2,6 @@ Asmc Macro Assembler Reference
 
 ### OPTION RENAMEKEYWORD
 
-**OPTION RENAMEKEYWORD**:<_current_name_>=_new_name_
-
 This option allows to rename a keyword, so it can be used under a different name.
 
     OPTION RENAMEKEYWORD:<current_name>=new_name

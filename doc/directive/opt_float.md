@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### OPTION FLOAT
 
-**OPTION FLOAT**:[_size_]
+**OPTION FLOAT**:_byteSize_
 
 This controls the default size of a float expression value. The options are 4 or 8. The default value is 4.
 

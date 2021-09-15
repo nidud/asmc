@@ -6,7 +6,7 @@ Asmc Macro Assembler Reference
 
 This controls Unicode creation. Value is the first argument to MultiByteToWideChar(). The default value is 0.
 
-The switch /ws is also extended to /ws[[=]<value>].
+The switch /ws is also extended to /ws[_value_].
 
     option codepage:865     ; /ws865
     option codepage:CP_UTF8 ; /ws65001

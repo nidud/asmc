@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### OPTION FIELDALIGN
 
-**OPTION FIELDALIGN**:<Value>
+**OPTION FIELDALIGN**:_Value_
 
 Sets the default value for structure alignment. The default value is 1 or the value set by cmdline switch /Zp.
 

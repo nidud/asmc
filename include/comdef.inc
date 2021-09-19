@@ -1,23 +1,13 @@
 ifndef _INC_COMDEF
-_INC_COMDEF equ <>
-
-ifndef __cplusplus
-ifndef __ASMC__
-.err <Native Compiler support only available in C++ compiler>
-endif
-endif
-
-ifdef _M_CEE_PURE
-.err <comdef.inc header cannot be included under /clr:safe or /clr:pure>
-endif
+define _INC_COMDEF
 
 ifdef WINAPI_FAMILY
 include winapifamily.inc
 if not WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-_COMDEF_NOT_WINAPI_FAMILY_DESKTOP_APP equ 1
+define _COMDEF_NOT_WINAPI_FAMILY_DESKTOP_APP
 endif
 if defined(WINAPI_FAMILY_PHONE_APP) and WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_PHONE_APP)
-_COMDEF_WINAPI_FAMILY_PHONE_APP ewu 1
+define _COMDEF_WINAPI_FAMILY_PHONE_APP
 endif
 endif
 
@@ -261,20 +251,6 @@ ifndef _COM_SMARTPTR
  endif
  _COM_SMARTPTR        equ <_com_ptr_t>
  _COM_SMARTPTR_LEVEL2 equ <_com_IIID>
-endif
-
-ifdef _COM_SMARTPTR
- ifndef _COM_SMARTPTR_TYPEDEF
-  ifdef _COM_SMARTPTR_LEVEL2
-   _COM_SMARTPTR_TYPEDEF macro Interface, IID
-    exitm<>
-    endm
-  else
-   _COM_SMARTPTR_TYPEDEF macro Interface, IID
-    exitm<>
-    endm
-  endif
- endif
 endif
 
 ifndef _COM_NO_STANDARD_GUIDS_

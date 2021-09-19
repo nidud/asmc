@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,24 +18,10 @@ include ole2.inc
 endif
 
 ifndef __tvratings_h__
-__tvratings_h__ equ <>
-
-ifndef __IXDSToRat_FWD_DEFINED__
-__IXDSToRat_FWD_DEFINED__ equ 1
-endif
-ifndef __IEvalRat_FWD_DEFINED__
-__IEvalRat_FWD_DEFINED__ equ 1
-endif
-ifndef __XDSToRat_FWD_DEFINED__
-__XDSToRat_FWD_DEFINED__ equ 1
-endif
-ifndef __EvalRat_FWD_DEFINED__
-__EvalRat_FWD_DEFINED__ equ 1
-endif
+define __tvratings_h__
 
 include oaidl.inc
 include ocidl.inc
-
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
@@ -164,7 +150,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     }
 
 ifndef __IXDSToRat_INTERFACE_DEFINED__
-__IXDSToRat_INTERFACE_DEFINED__ equ 1
+define __IXDSToRat_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXDSToRat, "C5C5C5B0-3ABC-11D6-B25B-00C04FA0C026")
 
@@ -172,12 +158,12 @@ DEFINE_IIDX(IXDSToRat, "C5C5C5B0-3ABC-11D6-B25B-00C04FA0C026")
 
     Init		proc
     ParseXDSBytePair	proc :BYTE, :BYTE, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IEvalRat_INTERFACE_DEFINED__
-__IEvalRat_INTERFACE_DEFINED__ equ 1
+define __IEvalRat_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEvalRat, "C5C5C5B1-3ABC-11D6-B25B-00C04FA0C026")
 
@@ -190,12 +176,12 @@ DEFINE_IIDX(IEvalRat, "C5C5C5B1-3ABC-11D6-B25B-00C04FA0C026")
     MostRestrictiveRating proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG, :EnTvRat_System,
 	:EnTvRat_GenericLevel, :LONG, :ptr EnTvRat_System, :ptr EnTvRat_GenericLevel, :ptr LONG
     TestRating proc :EnTvRat_System, :EnTvRat_GenericLevel, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __TVRATINGSLib_LIBRARY_DEFINED__
-__TVRATINGSLib_LIBRARY_DEFINED__ equ 1
+define __TVRATINGSLib_LIBRARY_DEFINED__
 
 externdef LIBID_TVRATINGSLib:IID
 

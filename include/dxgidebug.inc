@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,17 +18,7 @@ include ole2.inc
 endif
 
 ifndef __dxgidebug_h__
-__dxgidebug_h__ equ <>
-
-ifndef __IDXGIInfoQueue_FWD_DEFINED__
-__IDXGIInfoQueue_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDebug_FWD_DEFINED__
-__IDXGIDebug_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDebug1_FWD_DEFINED__
-__IDXGIDebug1_FWD_DEFINED__ equ 1
-endif
+define __dxgidebug_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -103,7 +93,7 @@ DXGIGetDebugInterface proto WINAPI \
 		      : ptr ptr
 
 ifndef __IDXGIInfoQueue_INTERFACE_DEFINED__
-__IDXGIInfoQueue_INTERFACE_DEFINED__ equ 1
+define __IDXGIInfoQueue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIInfoQueue, "D67441C7-672A-476f-9E82-CD55B44949CE")
 
@@ -146,24 +136,24 @@ DEFINE_IIDX(IDXGIInfoQueue, "D67441C7-672A-476f-9E82-CD55B44949CE")
     GetBreakOnID	proc :DXGI_DEBUG_ID, :DXGI_INFO_QUEUE_MESSAGE_ID
     SetMuteDebugOutput	proc :DXGI_DEBUG_ID, :BOOL
     GetMuteDebugOutput	proc :DXGI_DEBUG_ID
-    .ends
+   .ends
 
 endif
 
 ifndef __IDXGIDebug_INTERFACE_DEFINED__
-__IDXGIDebug_INTERFACE_DEFINED__ equ 1
+define __IDXGIDebug_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIDebug, "119E7452-DE9E-40fe-8806-88F90C12B441")
 
 .comdef IDXGIDebug : public IUnknown
 
     ReportLiveObjects	proc :ptr GUID, :DXGI_DEBUG_RLO_FLAGS
-    .ends
+   .ends
 
 endif
 
 ifndef __IDXGIDebug1_INTERFACE_DEFINED__
-__IDXGIDebug1_INTERFACE_DEFINED__ equ 1
+define __IDXGIDebug1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIDebug1, "c5a05f0c-16f2-4adf-9f4d-a8c4d58ac550")
 
@@ -172,7 +162,7 @@ DEFINE_IIDX(IDXGIDebug1, "c5a05f0c-16f2-4adf-9f4d-a8c4d58ac550")
     EnableLeakTrackingForThread proc
     DisableLeakTrackingForThread proc
     IsLeakTrackingEnabledForThread proc
-    .ends
+   .ends
 
 endif
 endif

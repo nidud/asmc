@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,54 +18,16 @@ include ole2.inc
 endif
 
 ifndef __transact_h__
-__transact_h__ equ <>
-
-ifndef __ITransaction_FWD_DEFINED__
-__ITransaction_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionCloner_FWD_DEFINED__
-__ITransactionCloner_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransaction2_FWD_DEFINED__
-__ITransaction2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionDispenser_FWD_DEFINED__
-__ITransactionDispenser_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionOptions_FWD_DEFINED__
-__ITransactionOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionOutcomeEvents_FWD_DEFINED__
-__ITransactionOutcomeEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ITmNodeName_FWD_DEFINED__
-__ITmNodeName_FWD_DEFINED__ equ 1
-endif
-ifndef __IKernelTransaction_FWD_DEFINED__
-__IKernelTransaction_FWD_DEFINED__ equ 1
-endif
+define __transact_h__
 
 include unknwn.inc
-
 include winerror.inc
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-ifndef DECLSPEC_UUID
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-DECLSPEC_UUID macro x
-	exitm<__declspec(uuid(x))>
-	endm
-else
-DECLSPEC_UUID macro x
-	exitm<>
-	endm
-endif
-endif
-
 ifndef __BasicTransactionTypes_INTERFACE_DEFINED__
-__BasicTransactionTypes_INTERFACE_DEFINED__ equ 1
+define __BasicTransactionTypes_INTERFACE_DEFINED__
 
 BOID			STRUC
 rgb			db  16	dup(?)
@@ -73,7 +35,7 @@ BOID			ENDS
 
 BOID_NULL		equ IID_NULL
 ifndef MAX_TRAN_DESC_DEFINED
-MAX_TRAN_DESC_DEFINED equ <>
+define MAX_TRAN_DESC_DEFINED
 
 .enum TX_MISC_CONSTANTS {
     MAX_TRAN_DESC	= 40
@@ -189,7 +151,7 @@ XACTOPT			ENDS
 endif
 
 ifndef __ITransaction_INTERFACE_DEFINED__
-__ITransaction_INTERFACE_DEFINED__ equ 1
+define __ITransaction_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransaction, 0x0fb15084, 0xaf41, 0x11ce, 0xbd, 0x2b, 0x20, 0x4c, 0x4f, 0x4f, 0x50, 0x20)
 
@@ -198,36 +160,36 @@ DEFINE_GUID(IID_ITransaction, 0x0fb15084, 0xaf41, 0x11ce, 0xbd, 0x2b, 0x20, 0x4c
     Commit		proc :BOOL, :DWORD, :DWORD
     Abort		proc :ptr, :BOOL, :BOOL
     GetTransactionInfo	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionCloner_INTERFACE_DEFINED__
-__ITransactionCloner_INTERFACE_DEFINED__ equ 1
+define __ITransactionCloner_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransactionCloner, 0x02656950, 0x2152, 0x11d0, 0x94, 0x4C, 0x00, 0xA0, 0xC9, 0x05, 0x41, 0x6E)
 
 .comdef ITransactionCloner : public ITransaction
 
     CloneWithCommitDisabled proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransaction2_INTERFACE_DEFINED__
-__ITransaction2_INTERFACE_DEFINED__ equ 1
+define __ITransaction2_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransaction2, 0x34021548, 0x0065, 0x11d3, 0xba, 0xc1, 0x00, 0xc0, 0x4f, 0x79, 0x7b, 0xe2)
 
 .comdef ITransaction2 : public ITransactionCloner
 
     GetTransactionInfo2 proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionDispenser_INTERFACE_DEFINED__
-__ITransactionDispenser_INTERFACE_DEFINED__ equ 1
+define __ITransactionDispenser_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransactionDispenser, 0x3A6AD9E1, 0x23B9, 0x11cf, 0xAD, 0x60, 0x00, 0xAA, 0x00, 0xA7, 0x4C, 0xCD)
 
@@ -235,12 +197,12 @@ DEFINE_GUID(IID_ITransactionDispenser, 0x3A6AD9E1, 0x23B9, 0x11cf, 0xAD, 0x60, 0
 
     GetOptionsObject	proc :ptr
     BeginTransaction	proc :ptr, :ISOLEVEL, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionOptions_INTERFACE_DEFINED__
-__ITransactionOptions_INTERFACE_DEFINED__ equ 1
+define __ITransactionOptions_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransactionOptions, 0x3A6AD9E0, 0x23B9, 0x11cf, 0xAD, 0x60, 0x00, 0xAA, 0x00, 0xA7, 0x4C, 0xCD)
 
@@ -248,12 +210,12 @@ DEFINE_GUID(IID_ITransactionOptions, 0x3A6AD9E0, 0x23B9, 0x11cf, 0xAD, 0x60, 0x0
 
     SetOptions		proc :ptr
     GetOptions		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionOutcomeEvents_INTERFACE_DEFINED__
-__ITransactionOutcomeEvents_INTERFACE_DEFINED__ equ 1
+define __ITransactionOutcomeEvents_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITransactionOutcomeEvents, 0x3A6AD9E2, 0x23B9, 0x11cf, 0xAD, 0x60, 0x00, 0xAA, 0x00, 0xA7, 0x4C, 0xCD)
 
@@ -263,12 +225,12 @@ DEFINE_GUID(IID_ITransactionOutcomeEvents, 0x3A6AD9E2, 0x23B9, 0x11cf, 0xAD, 0x6
     Aborted		proc :ptr, :BOOL, :ptr, :HRESULT
     HeuristicDecision	proc :DWORD, :ptr, :HRESULT
     Indoubt		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITmNodeName_INTERFACE_DEFINED__
-__ITmNodeName_INTERFACE_DEFINED__ equ 1
+define __ITmNodeName_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ITmNodeName, 0x30274F88, 0x6EE4, 0x474e, 0x9B, 0x95, 0x78, 0x07, 0xBC, 0x9E, 0xF8, 0xCF)
 
@@ -276,19 +238,19 @@ DEFINE_GUID(IID_ITmNodeName, 0x30274F88, 0x6EE4, 0x474e, 0x9B, 0x95, 0x78, 0x07,
 
     GetNodeNameSize	proc :ptr
     GetNodeName		proc :ULONG, :LPWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IKernelTransaction_INTERFACE_DEFINED__
-__IKernelTransaction_INTERFACE_DEFINED__ equ 1
+define __IKernelTransaction_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IKernelTransaction, 0x79427a2b, 0xf895, 0x40e0, 0xbe, 0x79, 0xb5, 0x7d, 0xc8, 0x2e, 0xd2, 0x31)
 
 .comdef IKernelTransaction : public IUnknown
 
     GetHandle		proc :ptr
-    .ends
+   .ends
 
 endif
 endif

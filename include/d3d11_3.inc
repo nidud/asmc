@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,41 +18,7 @@ include ole2.inc
 endif
 
 ifndef __d3d11_3_h__
-__d3d11_3_h__ equ <>
-
-ifndef __ID3D11Texture2D1_FWD_DEFINED__
-__ID3D11Texture2D1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Texture3D1_FWD_DEFINED__
-__ID3D11Texture3D1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11RasterizerState2_FWD_DEFINED__
-__ID3D11RasterizerState2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ShaderResourceView1_FWD_DEFINED__
-__ID3D11ShaderResourceView1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11RenderTargetView1_FWD_DEFINED__
-__ID3D11RenderTargetView1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11UnorderedAccessView1_FWD_DEFINED__
-__ID3D11UnorderedAccessView1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Query1_FWD_DEFINED__
-__ID3D11Query1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DeviceContext3_FWD_DEFINED__
-__ID3D11DeviceContext3_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Fence_FWD_DEFINED__
-__ID3D11Fence_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DeviceContext4_FWD_DEFINED__
-__ID3D11DeviceContext4_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Device3_FWD_DEFINED__
-__ID3D11Device3_FWD_DEFINED__ equ 1
-endif
+define __d3d11_3_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -88,19 +54,15 @@ MiscFlags		UINT ?
 TextureLayout		D3D11_TEXTURE_LAYOUT ?
 D3D11_TEXTURE2D_DESC1	ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11Texture2D1_INTERFACE_DEFINED__
-__ID3D11Texture2D1_INTERFACE_DEFINED__ equ 1
+define __ID3D11Texture2D1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Texture2D1, "51218251-1E33-4617-9CCB-4D3A4367E7BB")
 
 .comdef ID3D11Texture2D1 : public ID3D11Texture2D
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -117,19 +79,15 @@ MiscFlags		UINT ?
 TextureLayout		D3D11_TEXTURE_LAYOUT ?
 D3D11_TEXTURE3D_DESC1	ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11Texture3D1_INTERFACE_DEFINED__
-__ID3D11Texture3D1_INTERFACE_DEFINED__ equ 1
+define __ID3D11Texture3D1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Texture3D1, "0C711683-2853-4846-9BB0-F3E60639E46A")
 
 .comdef ID3D11Texture3D1 : public ID3D11Texture3D
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -153,19 +111,15 @@ ForcedSampleCount	UINT ?
 ConservativeRaster	D3D11_CONSERVATIVE_RASTERIZATION_MODE ?
 D3D11_RASTERIZER_DESC2	ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11RasterizerState2_INTERFACE_DEFINED__
-__ID3D11RasterizerState2_INTERFACE_DEFINED__ equ 1
+define __ID3D11RasterizerState2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11RasterizerState2, "6fbd02fb-209f-46c4-b059-2ed15586a6ac")
 
 .comdef ID3D11RasterizerState2 : public ID3D11RasterizerState1
 
     GetDesc2		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -201,19 +155,15 @@ BufferEx		D3D11_BUFFEREX_SRV <>
 ENDS
 D3D11_SHADER_RESOURCE_VIEW_DESC1 ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11ShaderResourceView1_INTERFACE_DEFINED__
-__ID3D11ShaderResourceView1_INTERFACE_DEFINED__ equ 1
+define __ID3D11ShaderResourceView1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11ShaderResourceView1, "91308b87-9040-411d-8c67-c39253ce3802")
 
 .comdef ID3D11ShaderResourceView1 : public ID3D11ShaderResourceView
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -244,19 +194,15 @@ Texture3D		D3D11_TEX3D_RTV <>
 ENDS
 D3D11_RENDER_TARGET_VIEW_DESC1 ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11RenderTargetView1_INTERFACE_DEFINED__
-__ID3D11RenderTargetView1_INTERFACE_DEFINED__ equ 1
+define __ID3D11RenderTargetView1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11RenderTargetView1, "ffbe2e23-f011-418a-ac56-5ceed7c5b94b")
 
 .comdef ID3D11RenderTargetView1 : public ID3D11RenderTargetView
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -285,19 +231,15 @@ Texture3D		D3D11_TEX3D_UAV <>
 ENDS
 D3D11_UNORDERED_ACCESS_VIEW_DESC1 ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11UnorderedAccessView1_INTERFACE_DEFINED__
-__ID3D11UnorderedAccessView1_INTERFACE_DEFINED__ equ 1
+define __ID3D11UnorderedAccessView1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11UnorderedAccessView1, "7b3b6153-a886-4544-ab37-6537c8500403")
 
 .comdef ID3D11UnorderedAccessView1 : public ID3D11UnorderedAccessView
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -307,19 +249,15 @@ MiscFlags		UINT ?
 ContextType		D3D11_CONTEXT_TYPE ?
 D3D11_QUERY_DESC1	ENDS
 
-if NOT defined( D3D11_NO_HELPERS ) AND defined( __cplusplus )
-endif
-
 ifndef __ID3D11Query1_INTERFACE_DEFINED__
-__ID3D11Query1_INTERFACE_DEFINED__ equ 1
+define __ID3D11Query1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Query1, "631b4766-36dc-461d-8db6-c47e13e60916")
 
 .comdef ID3D11Query1 : public ID3D11Query
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -331,7 +269,7 @@ endif
     }
 
 ifndef __ID3D11DeviceContext3_INTERFACE_DEFINED__
-__ID3D11DeviceContext3_INTERFACE_DEFINED__ equ 1
+define __ID3D11DeviceContext3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11DeviceContext3, "b4e3c01d-e79e-4637-91b2-510e9f4c9b8f")
 
@@ -340,13 +278,12 @@ DEFINE_IIDX(ID3D11DeviceContext3, "b4e3c01d-e79e-4637-91b2-510e9f4c9b8f")
     Flush1		proc :D3D11_CONTEXT_TYPE, :HANDLE
     SetHardwareProtectionState proc :BOOL
     GetHardwareProtectionState proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11Fence_INTERFACE_DEFINED__
-__ID3D11Fence_INTERFACE_DEFINED__ equ 1
+define __ID3D11Fence_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Fence, "affde9d1-1df7-4bb7-8a34-0f46251dab80")
 
@@ -355,13 +292,12 @@ DEFINE_IIDX(ID3D11Fence, "affde9d1-1df7-4bb7-8a34-0f46251dab80")
     CreateSharedHandle	proc :ptr, :DWORD, :LPCWSTR, :ptr
     GetCompletedValue	proc
     SetEventOnCompletion proc :UINT64, :HANDLE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11DeviceContext4_INTERFACE_DEFINED__
-__ID3D11DeviceContext4_INTERFACE_DEFINED__ equ 1
+define __ID3D11DeviceContext4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11DeviceContext4, "917600da-f58c-4c33-98d8-3e15b390fa24")
 
@@ -369,13 +305,12 @@ DEFINE_IIDX(ID3D11DeviceContext4, "917600da-f58c-4c33-98d8-3e15b390fa24")
 
     Signal		proc :ptr, :UINT64
     _Wait		proc :ptr, :UINT64
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11Device3_INTERFACE_DEFINED__
-__ID3D11Device3_INTERFACE_DEFINED__ equ 1
+define __ID3D11Device3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Device3, "A05C8C37-D2C6-4732-B3A0-9CE0B0DC9AE6")
 
@@ -392,8 +327,7 @@ DEFINE_IIDX(ID3D11Device3, "A05C8C37-D2C6-4732-B3A0-9CE0B0DC9AE6")
     CreateDeferredContext3 proc :UINT, :ptr
     WriteToSubresource	proc :ptr, :UINT, :ptr, :ptr, :UINT, :UINT
     ReadFromSubresource proc :ptr, :UINT, :UINT, :ptr, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 

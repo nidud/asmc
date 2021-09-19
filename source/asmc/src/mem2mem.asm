@@ -137,9 +137,11 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
   local dst:string_t
   local src:string_t
   local buffer[16]:char_t
+  local isfloat:byte
 
     mov ebx,op1
     mov edi,op2
+    mov isfloat,0
 
     .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) || ModuleInfo.strict_masm_compat == 1 )
 
@@ -162,6 +164,14 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
             ;; added v2.31.50
         .elseif size == 0 && [esi].expr.mem_type == MT_EMPTY
             mov size,eax
+        .endif
+    .endif
+
+    .if ( [esi].expr.mem_type & MT_FLOAT || [esi+expr].expr.mem_type & MT_FLOAT )
+
+        mov isfloat,1
+        .if ( size != 4 && size != 8 )
+            .return asmerr( 2070 )
         .endif
     .endif
 
@@ -231,7 +241,22 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
 
         .if size <= ecx
 
-            AddLineQueueX( " mov %r, %s", esi, eax )
+            mov ecx,T_MOV
+            .if ( isfloat )
+                mov ecx,T_MOVSS
+                mov edx,T_COMISS
+                .if ( size == 8 )
+                    mov ecx,T_MOVSD
+                    mov edx,T_COMISD
+                .endif
+                .if ( op == T_CMP )
+                    mov op,edx
+                .endif
+                mov esi,T_XMM0
+                mov edi,T_XMM0
+                mov eax,dst
+            .endif
+            AddLineQueueX( " %r %r, %s", ecx, esi, eax )
 
         .elseif op == T_MOV
 
@@ -288,7 +313,13 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
         .endif
     .endif
     .if ebx
-        AddLineQueueX( " %r %s, %r", op, dst, edi )
+        .if ( isfloat )
+            mov ecx,src
+            inc ecx
+            AddLineQueueX( " %r %r, %s", op, edi, ecx )
+        .else
+            AddLineQueueX( " %r %s, %r", op, dst, edi )
+        .endif
         mov eax,src
         mov [eax],bl
     .endif

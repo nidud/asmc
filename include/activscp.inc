@@ -1,105 +1,30 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __activscp_h__
-__activscp_h__ equ <>
 
-ifndef __IActiveScriptSite_FWD_DEFINED__
-__IActiveScriptSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptError_FWD_DEFINED__
-__IActiveScriptError_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptError64_FWD_DEFINED__
-__IActiveScriptError64_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptSiteWindow_FWD_DEFINED__
-__IActiveScriptSiteWindow_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptSiteUIControl_FWD_DEFINED__
-__IActiveScriptSiteUIControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptSiteInterruptPoll_FWD_DEFINED__
-__IActiveScriptSiteInterruptPoll_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScript_FWD_DEFINED__
-__IActiveScript_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParse32_FWD_DEFINED__
-__IActiveScriptParse32_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParse64_FWD_DEFINED__
-__IActiveScriptParse64_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedureOld32_FWD_DEFINED__
-__IActiveScriptParseProcedureOld32_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedureOld64_FWD_DEFINED__
-__IActiveScriptParseProcedureOld64_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedure32_FWD_DEFINED__
-__IActiveScriptParseProcedure32_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedure64_FWD_DEFINED__
-__IActiveScriptParseProcedure64_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedure2_32_FWD_DEFINED__
-__IActiveScriptParseProcedure2_32_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptParseProcedure2_64_FWD_DEFINED__
-__IActiveScriptParseProcedure2_64_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptEncode_FWD_DEFINED__
-__IActiveScriptEncode_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptHostEncode_FWD_DEFINED__
-__IActiveScriptHostEncode_FWD_DEFINED__ equ 1
-endif
-ifndef __IBindEventHandler_FWD_DEFINED__
-__IBindEventHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptStats_FWD_DEFINED__
-__IActiveScriptStats_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptProperty_FWD_DEFINED__
-__IActiveScriptProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ITridentEventSink_FWD_DEFINED__
-__ITridentEventSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptGarbageCollector_FWD_DEFINED__
-__IActiveScriptGarbageCollector_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptSIPInfo_FWD_DEFINED__
-__IActiveScriptSIPInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptSiteTraceInfo_FWD_DEFINED__
-__IActiveScriptSiteTraceInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptTraceInfo_FWD_DEFINED__
-__IActiveScriptTraceInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptStringCompare_FWD_DEFINED__
-__IActiveScriptStringCompare_FWD_DEFINED__ equ 1
-endif
+ifndef __activscp_h__
+define __activscp_h__
 
 include ocidl.inc
+
 ifndef __ActivScp_h
-__ActivScp_h equ <>
+define __ActivScp_h
 
 ifndef _NO_SCRIPT_GUIDS
 DEFINE_GUID(CATID_ActiveScript, 0xf0b7a1a1, 0x9847, 0x11cf, 0x8f, 0x20, 0x00, 0x80, 0x5f, 0x2c, 0xd0, 0x64)
@@ -270,7 +195,7 @@ SCRIPTTHREADID_BASE	equ (-2)
 SCRIPTTHREADID_ALL	equ (-3)
 
 ifndef __IActiveScriptSite_INTERFACE_DEFINED__
-__IActiveScriptSite_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSite_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSite : public IUnknown
 
@@ -282,71 +207,65 @@ __IActiveScriptSite_INTERFACE_DEFINED__ equ 1
     OnScriptError	proc :ptr
     OnEnterScript	proc
     OnLeaveScript	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptError_INTERFACE_DEFINED__
-__IActiveScriptError_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptError_INTERFACE_DEFINED__
 
 .comdef IActiveScriptError : public IUnknown
 
     GetExceptionInfo	proc :ptr
     GetSourcePosition	proc :ptr, :ptr, :ptr
     GetSourceLineText	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptError64_INTERFACE_DEFINED__
-__IActiveScriptError64_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptError64_INTERFACE_DEFINED__
 
 .comdef IActiveScriptError64 : public IActiveScriptError
 
     GetSourcePosition64 proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptSiteWindow_INTERFACE_DEFINED__
-__IActiveScriptSiteWindow_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSiteWindow_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSiteWindow : public IUnknown
 
     GetWindow		proc :ptr
     EnableModeless	proc :BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptSiteUIControl_INTERFACE_DEFINED__
-__IActiveScriptSiteUIControl_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSiteUIControl_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSiteUIControl : public IUnknown
 
     GetUIBehavior	proc :SCRIPTUICITEM, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__
-__IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSiteInterruptPoll : public IUnknown
 
     QueryContinue	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScript_INTERFACE_DEFINED__
-__IActiveScript_INTERFACE_DEFINED__ equ 1
+define __IActiveScript_INTERFACE_DEFINED__
 
 .comdef IActiveScript : public IUnknown
 
@@ -363,34 +282,31 @@ __IActiveScript_INTERFACE_DEFINED__ equ 1
     GetScriptThreadState proc :SCRIPTTHREADID, :ptr
     InterruptScriptThread proc :SCRIPTTHREADID, :ptr, :DWORD
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptParse32_INTERFACE_DEFINED__
-__IActiveScriptParse32_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParse32_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParse32 : public IUnknown
 
     InitNew		proc
     AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr, :ptr
     ParseScriptText	proc :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptParse64_INTERFACE_DEFINED__
-__IActiveScriptParse64_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParse64_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParse64 : public IUnknown
 
     InitNew		proc
     AddScriptlet	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr, :ptr
     ParseScriptText	proc :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -404,24 +320,22 @@ endif
 PIActiveScriptParse	typedef ptr IActiveScriptParse
 
 ifndef __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__
-__IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedureOld32 : public IUnknown
 
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__
-__IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedureOld64 : public IUnknown
 
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -435,24 +349,22 @@ endif
 PIActiveScriptParseProcedureOld typedef ptr IActiveScriptParseProcedureOld
 
 ifndef __IActiveScriptParseProcedure32_INTERFACE_DEFINED__
-__IActiveScriptParseProcedure32_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedure32_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedure32 : public IUnknown
 
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptParseProcedure64_INTERFACE_DEFINED__
-__IActiveScriptParseProcedure64_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedure64_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedure64 : public IUnknown
 
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -466,20 +378,18 @@ endif
 PIActiveScriptParseProcedure typedef ptr IActiveScriptParseProcedure
 
 ifndef __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
-__IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedure2_32 : public IActiveScriptParseProcedure32
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__
-__IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__
 
 .comdef IActiveScriptParseProcedure2_64 : public IActiveScriptParseProcedure64
-
-    .ends
+   .ends
 
 endif
 
@@ -493,129 +403,118 @@ endif
 PIActiveScriptParseProcedure2 typedef ptr IActiveScriptParseProcedure2
 
 ifndef __IActiveScriptEncode_INTERFACE_DEFINED__
-__IActiveScriptEncode_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptEncode_INTERFACE_DEFINED__
 
 .comdef IActiveScriptEncode : public IUnknown
 
     EncodeSection	proc :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr
     DecodeScript	proc :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr
     GetEncodeProgId	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptHostEncode_INTERFACE_DEFINED__
-__IActiveScriptHostEncode_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptHostEncode_INTERFACE_DEFINED__
 
 .comdef IActiveScriptHostEncode : public IUnknown
 
     EncodeScriptHostFile proc :BSTR, :ptr, :sdword, :BSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBindEventHandler_INTERFACE_DEFINED__
-__IBindEventHandler_INTERFACE_DEFINED__ equ 1
+define __IBindEventHandler_INTERFACE_DEFINED__
 
 .comdef IBindEventHandler : public IUnknown
 
     BindHandler		proc :LPCOLESTR, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptStats_INTERFACE_DEFINED__
-__IActiveScriptStats_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptStats_INTERFACE_DEFINED__
 
 .comdef IActiveScriptStats : public IUnknown
 
     GetStat		proc :DWORD, :ptr, :ptr
     GetStatEx		proc :REFGUID, :ptr, :ptr
     ResetStats		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptProperty_INTERFACE_DEFINED__
-__IActiveScriptProperty_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptProperty_INTERFACE_DEFINED__
 
 .comdef IActiveScriptProperty : public IUnknown
 
     GetProperty		proc :DWORD, :ptr, :ptr
     SetProperty		proc :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ITridentEventSink_INTERFACE_DEFINED__
-__ITridentEventSink_INTERFACE_DEFINED__ equ 1
+define __ITridentEventSink_INTERFACE_DEFINED__
 
 .comdef ITridentEventSink : public IUnknown
 
     FireEvent		proc :LPCOLESTR, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptGarbageCollector_INTERFACE_DEFINED__
-__IActiveScriptGarbageCollector_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptGarbageCollector_INTERFACE_DEFINED__
 
 .comdef IActiveScriptGarbageCollector : public IUnknown
 
     CollectGarbage	proc :SCRIPTGCTYPE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptSIPInfo_INTERFACE_DEFINED__
-__IActiveScriptSIPInfo_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSIPInfo_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSIPInfo : public IUnknown
 
     GetSIPOID		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__
-__IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__
 
 .comdef IActiveScriptSiteTraceInfo : public IUnknown
 
     SendScriptTraceInfo proc :SCRIPTTRACEINFO, :GUID, :DWORD, :LONG, :LONG, :DWORD64
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptTraceInfo_INTERFACE_DEFINED__
-__IActiveScriptTraceInfo_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptTraceInfo_INTERFACE_DEFINED__
 
 .comdef IActiveScriptTraceInfo : public IUnknown
 
     StartScriptTracing	proc :ptr, :GUID
     StopScriptTracing	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptStringCompare_INTERFACE_DEFINED__
-__IActiveScriptStringCompare_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptStringCompare_INTERFACE_DEFINED__
 
 .comdef IActiveScriptStringCompare : public IUnknown
 
     StrComp		proc :BSTR, :BSTR, :ptr
-
-    .ends
+   .ends
 
 endif
 

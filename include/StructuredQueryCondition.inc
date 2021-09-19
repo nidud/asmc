@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -14,17 +14,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __structuredquerycondition_h__
-__structuredquerycondition_h__ equ <>
-
-ifndef __IRichChunk_FWD_DEFINED__
-__IRichChunk_FWD_DEFINED__ equ 1
-endif
-ifndef __ICondition_FWD_DEFINED__
-__ICondition_FWD_DEFINED__ equ 1
-endif
-ifndef __ICondition2_FWD_DEFINED__
-__ICondition2_FWD_DEFINED__ equ 1
-endif
+define __structuredquerycondition_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -56,18 +46,18 @@ include propidl.inc
 }
 
 ifndef __IRichChunk_INTERFACE_DEFINED__
-__IRichChunk_INTERFACE_DEFINED__ equ 1
+define __IRichChunk_INTERFACE_DEFINED__
 
 externdef IID_IRichChunk:IID
 
 .comdef IRichChunk : public IUnknown
 
     GetData		proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __ICondition_INTERFACE_DEFINED__
-__ICondition_INTERFACE_DEFINED__ equ 1
+define __ICondition_INTERFACE_DEFINED__
 
 externdef IID_ICondition:IID
 
@@ -80,11 +70,11 @@ externdef IID_ICondition:IID
     GetValueNormalization proc :ptr
     GetInputTerms	proc :ptr, :ptr, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __ICondition2_INTERFACE_DEFINED__
-__ICondition2_INTERFACE_DEFINED__ equ 1
+define __ICondition2_INTERFACE_DEFINED__
 
 externdef IID_ICondition2:IID
 
@@ -92,7 +82,7 @@ externdef IID_ICondition2:IID
 
     GetLocale		proc :ptr
     GetLeafConditionInfo proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ;; Additional Prototypes for ALL interfaces

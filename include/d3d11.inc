@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,106 +18,9 @@ include ole2.inc
 endif
 
 ifndef __d3d11_h__
-__d3d11_h__ equ <>
+define __d3d11_h__
 
 .pragma comment(lib, d3d11)
-
-ifndef __ID3D11DeviceChild_FWD_DEFINED__
-__ID3D11DeviceChild_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DepthStencilState_FWD_DEFINED__
-__ID3D11DepthStencilState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11BlendState_FWD_DEFINED__
-__ID3D11BlendState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11RasterizerState_FWD_DEFINED__
-__ID3D11RasterizerState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Resource_FWD_DEFINED__
-__ID3D11Resource_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Buffer_FWD_DEFINED__
-__ID3D11Buffer_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Texture1D_FWD_DEFINED__
-__ID3D11Texture1D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Texture2D_FWD_DEFINED__
-__ID3D11Texture2D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Texture3D_FWD_DEFINED__
-__ID3D11Texture3D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11View_FWD_DEFINED__
-__ID3D11View_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ShaderResourceView_FWD_DEFINED__
-__ID3D11ShaderResourceView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11RenderTargetView_FWD_DEFINED__
-__ID3D11RenderTargetView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DepthStencilView_FWD_DEFINED__
-__ID3D11DepthStencilView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11UnorderedAccessView_FWD_DEFINED__
-__ID3D11UnorderedAccessView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11VertexShader_FWD_DEFINED__
-__ID3D11VertexShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11HullShader_FWD_DEFINED__
-__ID3D11HullShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DomainShader_FWD_DEFINED__
-__ID3D11DomainShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11GeometryShader_FWD_DEFINED__
-__ID3D11GeometryShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11PixelShader_FWD_DEFINED__
-__ID3D11PixelShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ComputeShader_FWD_DEFINED__
-__ID3D11ComputeShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11InputLayout_FWD_DEFINED__
-__ID3D11InputLayout_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11SamplerState_FWD_DEFINED__
-__ID3D11SamplerState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Asynchronous_FWD_DEFINED__
-__ID3D11Asynchronous_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Query_FWD_DEFINED__
-__ID3D11Query_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Predicate_FWD_DEFINED__
-__ID3D11Predicate_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Counter_FWD_DEFINED__
-__ID3D11Counter_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ClassInstance_FWD_DEFINED__
-__ID3D11ClassInstance_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ClassLinkage_FWD_DEFINED__
-__ID3D11ClassLinkage_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11CommandList_FWD_DEFINED__
-__ID3D11CommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11DeviceContext_FWD_DEFINED__
-__ID3D11DeviceContext_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Device_FWD_DEFINED__
-__ID3D11Device_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11VideoProcessorEnumerator_FWD_DEFINED__
-__ID3D11VideoProcessorEnumerator_FWD_DEFINED__ equ 1
-endif
 
 include oaidl.inc
 include ocidl.inc
@@ -125,7 +28,7 @@ include dxgi.inc
 include d3dcommon.inc
 
 ifndef _D3D11_CONSTANTS
-_D3D11_CONSTANTS equ 1
+define _D3D11_CONSTANTS
 D3D11_16BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffff )
 D3D11_32BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffffffff )
 D3D11_8BIT_INDEX_STRIP_CUT_VALUE equ ( 0xff )
@@ -758,7 +661,7 @@ back			UINT ?
 D3D11_BOX		ENDS
 
 ifndef __ID3D11DeviceChild_INTERFACE_DEFINED__
-__ID3D11DeviceChild_INTERFACE_DEFINED__ equ 1
+define __ID3D11DeviceChild_INTERFACE_DEFINED__
 
 .comdef ID3D11DeviceChild : public IUnknown
 
@@ -766,7 +669,8 @@ __ID3D11DeviceChild_INTERFACE_DEFINED__ equ 1
     GetPrivateData	proc :REFGUID, :ptr, pDataSize:ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
-    .ends
+   .ends
+
 endif
 
 D3D11_COMPARISON_FUNC	typedef SDWORD
@@ -812,13 +716,12 @@ BackFace		D3D11_DEPTH_STENCILOP_DESC <>
 D3D11_DEPTH_STENCIL_DESC ENDS
 
 ifndef __ID3D11DepthStencilState_INTERFACE_DEFINED__
-__ID3D11DepthStencilState_INTERFACE_DEFINED__ equ 1
+define __ID3D11DepthStencilState_INTERFACE_DEFINED__
 
 .comdef ID3D11DepthStencilState : public ID3D11DeviceChild
 
     GetDesc		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -873,11 +776,11 @@ RenderTarget		D3D11_RENDER_TARGET_BLEND_DESC 8 dup(<>)
 D3D11_BLEND_DESC	ENDS
 
 ifndef __ID3D11BlendState_INTERFACE_DEFINED__
-__ID3D11BlendState_INTERFACE_DEFINED__ equ 1
+define __ID3D11BlendState_INTERFACE_DEFINED__
 
 .comdef ID3D11BlendState : public ID3D11DepthStencilState
+   .ends
 
-    .ends
 endif
 
 D3D11_RASTERIZER_DESC	STRUC
@@ -894,11 +797,11 @@ AntialiasedLineEnable	BOOL ?
 D3D11_RASTERIZER_DESC	ENDS
 
 ifndef __ID3D11RasterizerState_INTERFACE_DEFINED__
-__ID3D11RasterizerState_INTERFACE_DEFINED__ equ 1
+define __ID3D11RasterizerState_INTERFACE_DEFINED__
 
 .comdef ID3D11RasterizerState : public ID3D11DepthStencilState
+   .ends
 
-    .ends
 endif
 
 D3D11_SUBRESOURCE_DATA	STRUC
@@ -914,15 +817,15 @@ DepthPitch		UINT ?
 D3D11_MAPPED_SUBRESOURCE ENDS
 
 ifndef __ID3D11Resource_INTERFACE_DEFINED__
-__ID3D11Resource_INTERFACE_DEFINED__ equ 1
+define __ID3D11Resource_INTERFACE_DEFINED__
 
 .comdef ID3D11Resource : public ID3D11DeviceChild
 
     GetType		proc :ptr
     SetEvictionPriority proc :UINT
     GetEvictionPriority proc
+   .ends
 
-    .ends
 endif
 
 D3D11_BUFFER_DESC	STRUC
@@ -935,15 +838,14 @@ StructureByteStride	UINT ?
 D3D11_BUFFER_DESC	ENDS
 
 ifndef __ID3D11Buffer_INTERFACE_DEFINED__
-__ID3D11Buffer_INTERFACE_DEFINED__ equ 1
+define __ID3D11Buffer_INTERFACE_DEFINED__
 
 .comdef ID3D11Buffer : public ID3D11Resource
 
     GetDesc		proc :ptr
+   .ends
+    LPID3D11Buffer	typedef ptr ID3D11Buffer
 
-    .ends
-
-LPID3D11Buffer		typedef ptr ID3D11Buffer
 endif
 
 D3D11_TEXTURE1D_DESC	STRUC
@@ -958,11 +860,11 @@ MiscFlags		UINT ?
 D3D11_TEXTURE1D_DESC	ENDS
 
 ifndef __ID3D11Texture1D_INTERFACE_DEFINED__
-__ID3D11Texture1D_INTERFACE_DEFINED__ equ 1
+define __ID3D11Texture1D_INTERFACE_DEFINED__
 
 .comdef ID3D11Texture1D : public ID3D11Buffer
+   .ends
 
-    .ends
 endif
 
 D3D11_TEXTURE2D_DESC	STRUC
@@ -979,11 +881,10 @@ MiscFlags		UINT ?
 D3D11_TEXTURE2D_DESC	ENDS
 
 ifndef __ID3D11Texture2D_INTERFACE_DEFINED__
-__ID3D11Texture2D_INTERFACE_DEFINED__ equ 1
+define __ID3D11Texture2D_INTERFACE_DEFINED__
 
 .comdef ID3D11Texture2D : public ID3D11Buffer
-
-    .ends
+   .ends
     LPID3D11Texture2D	typedef ptr ID3D11Texture2D
 endif
 
@@ -1000,11 +901,10 @@ MiscFlags		UINT ?
 D3D11_TEXTURE3D_DESC	ENDS
 
 ifndef __ID3D11Texture3D_INTERFACE_DEFINED__
-__ID3D11Texture3D_INTERFACE_DEFINED__ equ 1
+define __ID3D11Texture3D_INTERFACE_DEFINED__
 
 .comdef ID3D11Texture3D : public ID3D11Buffer
-
-    .ends
+   .ends
 endif
 
 D3D11_TEXTURECUBE_FACE	typedef SDWORD
@@ -1016,13 +916,13 @@ D3D11_TEXTURECUBE_FACE_POSITIVE_Z equ 4
 D3D11_TEXTURECUBE_FACE_NEGATIVE_Z equ 5
 
 ifndef __ID3D11View_INTERFACE_DEFINED__
-__ID3D11View_INTERFACE_DEFINED__ equ 1
+define __ID3D11View_INTERFACE_DEFINED__
 
 .comdef ID3D11View : public ID3D11DeviceChild
 
     GetResource		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D11_BUFFER_SRV	STRUC
@@ -1114,13 +1014,13 @@ ENDS
 D3D11_SHADER_RESOURCE_VIEW_DESC ENDS
 
 ifndef __ID3D11ShaderResourceView_INTERFACE_DEFINED__
-__ID3D11ShaderResourceView_INTERFACE_DEFINED__ equ 1
+define __ID3D11ShaderResourceView_INTERFACE_DEFINED__
 
 .comdef ID3D11ShaderResourceView : public ID3D11View
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D11_BUFFER_RTV	STRUC
@@ -1185,13 +1085,11 @@ ENDS
 D3D11_RENDER_TARGET_VIEW_DESC ENDS
 
 ifndef __ID3D11RenderTargetView_INTERFACE_DEFINED__
-__ID3D11RenderTargetView_INTERFACE_DEFINED__ equ 1
+define __ID3D11RenderTargetView_INTERFACE_DEFINED__
 
 .comdef ID3D11RenderTargetView : public ID3D11ShaderResourceView
-
-    .ends
-
-LPID3D11RenderTargetView typedef ptr ID3D11RenderTargetView
+   .ends
+    LPID3D11RenderTargetView typedef ptr ID3D11RenderTargetView
 endif
 
 D3D11_TEX1D_DSV		STRUC
@@ -1242,7 +1140,7 @@ ENDS
 D3D11_DEPTH_STENCIL_VIEW_DESC ENDS
 
 ifndef __ID3D11DepthStencilView_INTERFACE_DEFINED__
-__ID3D11DepthStencilView_INTERFACE_DEFINED__ equ 1
+define __ID3D11DepthStencilView_INTERFACE_DEFINED__
 
 .comdef ID3D11DepthStencilView : public ID3D11ShaderResourceView
 
@@ -1302,73 +1200,65 @@ ENDS
 D3D11_UNORDERED_ACCESS_VIEW_DESC ENDS
 
 ifndef __ID3D11UnorderedAccessView_INTERFACE_DEFINED__
-__ID3D11UnorderedAccessView_INTERFACE_DEFINED__ equ 1
+define __ID3D11UnorderedAccessView_INTERFACE_DEFINED__
 
 .comdef ID3D11UnorderedAccessView : public ID3D11View
 
     GetDesc		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11VertexShader_INTERFACE_DEFINED__
-__ID3D11VertexShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11VertexShader_INTERFACE_DEFINED__
 
 .comdef ID3D11VertexShader : public ID3D11DeviceChild
-
-    .ends
+   .ends
 
 LPID3D11VertexShader	typedef ptr ID3D11VertexShader
 endif
 
 ifndef __ID3D11HullShader_INTERFACE_DEFINED__
-__ID3D11HullShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11HullShader_INTERFACE_DEFINED__
 
 .comdef ID3D11HullShader : public ID3D11DeviceChild
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D11DomainShader_INTERFACE_DEFINED__
-__ID3D11DomainShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11DomainShader_INTERFACE_DEFINED__
 
 .comdef ID3D11DomainShader : public ID3D11DeviceChild
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11GeometryShader_INTERFACE_DEFINED__
-__ID3D11GeometryShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11GeometryShader_INTERFACE_DEFINED__
 
 .comdef ID3D11GeometryShader : public ID3D11DeviceChild
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11PixelShader_INTERFACE_DEFINED__
-__ID3D11PixelShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11PixelShader_INTERFACE_DEFINED__
 
 .comdef ID3D11PixelShader : public ID3D11DeviceChild
-
-    .ends
-
-LPID3D11PixelShader	typedef ptr ID3D11PixelShader
+   .ends
+    LPID3D11PixelShader typedef ptr ID3D11PixelShader
 endif
 
 ifndef __ID3D11ComputeShader_INTERFACE_DEFINED__
-__ID3D11ComputeShader_INTERFACE_DEFINED__ equ 1
+define __ID3D11ComputeShader_INTERFACE_DEFINED__
 
 .comdef ID3D11ComputeShader : public ID3D11DeviceChild
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11InputLayout_INTERFACE_DEFINED__
-__ID3D11InputLayout_INTERFACE_DEFINED__ equ 1
+define __ID3D11InputLayout_INTERFACE_DEFINED__
 
 .comdef ID3D11InputLayout : public ID3D11DeviceChild
-
-    .ends
+   .ends
 
 LPID3D11InputLayout	typedef ptr ID3D11InputLayout
 endif
@@ -1446,11 +1336,10 @@ MaxLOD			FLOAT ?
 D3D11_SAMPLER_DESC	ENDS
 
 ifndef __ID3D11SamplerState_INTERFACE_DEFINED__
-__ID3D11SamplerState_INTERFACE_DEFINED__ equ 1
+define __ID3D11SamplerState_INTERFACE_DEFINED__
 
 .comdef ID3D11SamplerState : public ID3D11DepthStencilState
-
-    .ends
+   .ends
 endif
 
 D3D11_FORMAT_SUPPORT	typedef SDWORD
@@ -1493,13 +1382,12 @@ D3D11_FORMAT_SUPPORT2_UAV_TYPED_LOAD equ 0x40
 D3D11_FORMAT_SUPPORT2_UAV_TYPED_STORE equ 0x80
 
 ifndef __ID3D11Asynchronous_INTERFACE_DEFINED__
-__ID3D11Asynchronous_INTERFACE_DEFINED__ equ 1
+define __ID3D11Asynchronous_INTERFACE_DEFINED__
 
 .comdef ID3D11Asynchronous : public ID3D11DeviceChild
 
     GetDataSize		proc
-
-    .ends
+   .ends
 endif
 
 D3D11_ASYNC_GETDATA_FLAG typedef SDWORD
@@ -1532,17 +1420,16 @@ MiscFlags		UINT ?
 D3D11_QUERY_DESC	ENDS
 
 ifndef __ID3D11Query_INTERFACE_DEFINED__
-__ID3D11Query_INTERFACE_DEFINED__ equ 1
+define __ID3D11Query_INTERFACE_DEFINED__
 
 .comdef ID3D11Query : public ID3D11Asynchronous
 
     GetDesc		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11Predicate_INTERFACE_DEFINED__
-__ID3D11Predicate_INTERFACE_DEFINED__ equ 1
+define __ID3D11Predicate_INTERFACE_DEFINED__
 
 .comdef ID3D11Predicate : public ID3D11Query
 
@@ -1594,7 +1481,7 @@ NumDetectableParallelUnits UINT8 ?
 D3D11_COUNTER_INFO	ENDS
 
 ifndef __ID3D11Counter_INTERFACE_DEFINED__
-__ID3D11Counter_INTERFACE_DEFINED__ equ 1
+define __ID3D11Counter_INTERFACE_DEFINED__
 
 .comdef ID3D11Counter : public ID3D11Query
 
@@ -1621,7 +1508,7 @@ Created			BOOL ?
 D3D11_CLASS_INSTANCE_DESC ENDS
 
 ifndef __ID3D11ClassInstance_INTERFACE_DEFINED__
-__ID3D11ClassInstance_INTERFACE_DEFINED__ equ 1
+define __ID3D11ClassInstance_INTERFACE_DEFINED__
 
 .comdef ID3D11ClassInstance : public ID3D11DeviceChild
 
@@ -1629,29 +1516,27 @@ __ID3D11ClassInstance_INTERFACE_DEFINED__ equ 1
     GetDesc		proc :ptr
     GetInstanceName	proc
     GetTypeName		proc
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D11ClassLinkage_INTERFACE_DEFINED__
-__ID3D11ClassLinkage_INTERFACE_DEFINED__ equ 1
+define __ID3D11ClassLinkage_INTERFACE_DEFINED__
 
 .comdef ID3D11ClassLinkage : public ID3D11DeviceChild
 
     GetClassInstance	proc :LPCSTR, :UINT, :ptr
     CreateClassInstance proc :LPCSTR, :UINT, :UINT, :UINT, :UINT, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11CommandList_INTERFACE_DEFINED__
-__ID3D11CommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D11CommandList_INTERFACE_DEFINED__
 
 .comdef ID3D11CommandList : public ID3D11DeviceChild
 
     GetContextFlags	proc
-
-    .ends
+   .ends
 endif
 
 D3D11_FEATURE		typedef SDWORD
@@ -1685,7 +1570,7 @@ ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x BOOL ?
 D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS ENDS
 
 ifndef __ID3D11DeviceContext_INTERFACE_DEFINED__
-__ID3D11DeviceContext_INTERFACE_DEFINED__ equ 1
+define __ID3D11DeviceContext_INTERFACE_DEFINED__
 
 .comdef ID3D11DeviceContext : public ID3D11DeviceChild
 
@@ -1797,14 +1682,13 @@ __ID3D11DeviceContext_INTERFACE_DEFINED__ equ 1
     GetType		proc
     GetContextFlags	proc
     FinishCommandList	proc :BOOL, :ptr
-
-    .ends
+   .ends
 
 LPID3D11DeviceContext	typedef ptr ID3D11DeviceContext
 endif
 
 ifndef __ID3D11Device_INTERFACE_DEFINED__
-__ID3D11Device_INTERFACE_DEFINED__ equ 1
+define __ID3D11Device_INTERFACE_DEFINED__
 
 .comdef ID3D11Device : public IUnknown
 
@@ -1848,8 +1732,7 @@ __ID3D11Device_INTERFACE_DEFINED__ equ 1
     GetImmediateContext proc :ptr
     SetExceptionMode	proc :UINT
     GetExceptionMode	proc
-
-    .ends
+   .ends
 
 LPID3D11Device		typedef ptr ID3D11Device
 endif
@@ -2150,7 +2033,7 @@ ppFutureSurfacesRight	PVOID ? ; ID3D11VideoProcessorInputView
 D3D11_VIDEO_PROCESSOR_STREAM ENDS
 
 ifndef __ID3D11VideoProcessorEnumerator_INTERFACE_DEFINED__
-__ID3D11VideoProcessorEnumerator_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoProcessorEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoProcessorEnumerator, "31627037-53AB-4200-9061-05FAA9AB45F9")
 
@@ -2162,12 +2045,11 @@ DEFINE_IIDX(ID3D11VideoProcessorEnumerator, "31627037-53AB-4200-9061-05FAA9AB45F
     GetVideoProcessorRateConversionCaps proc :UINT, :ptr D3D11_VIDEO_PROCESSOR_RATE_CONVERSION_CAPS
     GetVideoProcessorCustomRate proc :UINT, :UINT, :ptr D3D11_VIDEO_PROCESSOR_CUSTOM_RATE
     GetVideoProcessorFilterRange proc :D3D11_VIDEO_PROCESSOR_FILTER, :ptr D3D11_VIDEO_PROCESSOR_FILTER_RANGE
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11VideoContext_INTERFACE_DEFINED__
-__ID3D11VideoContext_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoContext, "61F21C45-3C0E-4a74-9CEA-67100D9AD5E4")
 
@@ -2231,13 +2113,12 @@ DEFINE_IIDX(ID3D11VideoContext, "61F21C45-3C0E-4a74-9CEA-67100D9AD5E4")
     ConfigureAuthenticatedChannel proc :ptr ID3D11AuthenticatedChannel, :UINT, :ptr, :ptr
     VideoProcessorSetStreamRotation proc :ptr ID3D11VideoProcessor, :UINT, :BOOL, :D3D11_VIDEO_PROCESSOR_ROTATION
     VideoProcessorGetStreamRotation proc :ptr ID3D11VideoProcessor, :UINT, :ptr BOOL, :ptr D3D11_VIDEO_PROCESSOR_ROTATION
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11VideoDevice_INTERFACE_DEFINED__
-__ID3D11VideoDevice_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoDevice, "10EC4D5B-975A-4689-B9E4-D0AAC30FE333")
 
@@ -2260,8 +2141,7 @@ DEFINE_IIDX(ID3D11VideoDevice, "10EC4D5B-975A-4689-B9E4-D0AAC30FE333")
     CheckCryptoKeyExchange proc :ptr GUID, :ptr GUID, :UINT, :ptr GUID
     SetPrivateData proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr IUnknown
-
-    .ends
+   .ends
 
 endif
 
@@ -2372,7 +2252,7 @@ D3D11_VIDEO_DECODER_EXTENSION	ENDS
 
 
 ifndef __ID3D11VideoDecoder_INTERFACE_DEFINED__
-__ID3D11VideoDecoder_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoDecoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoDecoder, "3C9C5B51-995D-48d1-9B8D-FA5CAEDED65C")
 
@@ -2380,8 +2260,7 @@ DEFINE_IIDX(ID3D11VideoDecoder, "3C9C5B51-995D-48d1-9B8D-FA5CAEDED65C")
 
     GetCreationParameters proc :ptr D3D11_VIDEO_DECODER_DESC, :ptr D3D11_VIDEO_DECODER_CONFIG
     GetDriverHandle	proc :ptr HANDLE
-
-    .ends
+   .ends
 
 endif
 

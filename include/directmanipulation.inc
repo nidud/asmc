@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,74 +18,7 @@ include ole2.inc
 endif
 
 ifndef __directmanipulation_h__
-__directmanipulation_h__ equ <>
-
-ifndef __IDirectManipulationManager_FWD_DEFINED__
-__IDirectManipulationManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationManager2_FWD_DEFINED__
-__IDirectManipulationManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationViewport_FWD_DEFINED__
-__IDirectManipulationViewport_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationViewport2_FWD_DEFINED__
-__IDirectManipulationViewport2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationViewportEventHandler_FWD_DEFINED__
-__IDirectManipulationViewportEventHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationContent_FWD_DEFINED__
-__IDirectManipulationContent_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationPrimaryContent_FWD_DEFINED__
-__IDirectManipulationPrimaryContent_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationDragDropEventHandler_FWD_DEFINED__
-__IDirectManipulationDragDropEventHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationDragDropBehavior_FWD_DEFINED__
-__IDirectManipulationDragDropBehavior_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationInteractionEventHandler_FWD_DEFINED__
-__IDirectManipulationInteractionEventHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationFrameInfoProvider_FWD_DEFINED__
-__IDirectManipulationFrameInfoProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationCompositor_FWD_DEFINED__
-__IDirectManipulationCompositor_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationUpdateHandler_FWD_DEFINED__
-__IDirectManipulationUpdateHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationUpdateManager_FWD_DEFINED__
-__IDirectManipulationUpdateManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationAutoScrollBehavior_FWD_DEFINED__
-__IDirectManipulationAutoScrollBehavior_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationParametricMotionBehavior_FWD_DEFINED__
-__IDirectManipulationParametricMotionBehavior_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectManipulationParametricMotionCurve_FWD_DEFINED__
-__IDirectManipulationParametricMotionCurve_FWD_DEFINED__ equ 1
-endif
-ifndef __DirectManipulationViewport_FWD_DEFINED__
-__DirectManipulationViewport_FWD_DEFINED__ equ 1
-endif
-ifndef __DirectManipulationUpdateManager_FWD_DEFINED__
-__DirectManipulationUpdateManager_FWD_DEFINED__ equ 1
-endif
-ifndef __DirectManipulationPrimaryContent_FWD_DEFINED__
-__DirectManipulationPrimaryContent_FWD_DEFINED__ equ 1
-endif
-ifndef __DirectManipulationManager_FWD_DEFINED__
-__DirectManipulationManager_FWD_DEFINED__ equ 1
-endif
-ifndef __DCompManipulationCompositor_FWD_DEFINED__
-__DCompManipulationCompositor_FWD_DEFINED__ equ 1
-endif
+define __directmanipulation_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -211,7 +144,7 @@ DEFINE_GUID(CLSID_AutoScrollBehavior,0x26126a51,0x3c70,0x4c9a,0xae,0xc2,0x94,0x8
 
 
 ifndef __IDirectManipulationManager_INTERFACE_DEFINED__
-__IDirectManipulationManager_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationManager, "FBF5D3B4-70C7-4163-9322-5A6F660D6FBC")
 
@@ -224,26 +157,24 @@ DEFINE_IIDX(IDirectManipulationManager, "FBF5D3B4-70C7-4163-9322-5A6F660D6FBC")
     GetUpdateManager	proc :REFIID, :ptr
     CreateViewport	proc :ptr, :HWND, :REFIID, :ptr
     CreateContent	proc :ptr, :REFCLSID, :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationManager2_INTERFACE_DEFINED__
-__IDirectManipulationManager2_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationManager2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationManager2, "923CCAAC-61E1-4385-B726-017AF189882A")
 
 .comdef IDirectManipulationManager2 : public IDirectManipulationManager
 
     CreateBehavior	proc :REFCLSID, :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationViewport_INTERFACE_DEFINED__
-__IDirectManipulationViewport_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationViewport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationViewport, "952121DA-D69F-45F9-B0F9-F23944321A6D")
 
@@ -277,13 +208,12 @@ DEFINE_IIDX(IDirectManipulationViewport, "952121DA-D69F-45F9-B0F9-F23944321A6D")
     SetUpdateMode	proc :DIRECTMANIPULATION_INPUT_MODE
     Stop		proc
     Abandon		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationViewport2_INTERFACE_DEFINED__
-__IDirectManipulationViewport2_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationViewport2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationViewport2, "923CCAAC-61E1-4385-B726-017AF189882A")
 
@@ -292,13 +222,12 @@ DEFINE_IIDX(IDirectManipulationViewport2, "923CCAAC-61E1-4385-B726-017AF189882A"
     AddBehavior		proc :ptr, :ptr
     RemoveBehavior	proc :DWORD
     RemoveAllBehaviors	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationViewportEventHandler_INTERFACE_DEFINED__
-__IDirectManipulationViewportEventHandler_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationViewportEventHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationViewportEventHandler, "952121DA-D69F-45F9-B0F9-F23944321A6D")
 
@@ -307,13 +236,12 @@ DEFINE_IIDX(IDirectManipulationViewportEventHandler, "952121DA-D69F-45F9-B0F9-F2
     OnViewportStatusChanged proc :ptr, :DIRECTMANIPULATION_STATUS, :DIRECTMANIPULATION_STATUS
     OnViewportUpdated	proc :ptr
     OnContentUpdated	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationContent_INTERFACE_DEFINED__
-__IDirectManipulationContent_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationContent, "B89962CB-3D89-442B-BB58-5098FA0F9F16")
 
@@ -327,13 +255,12 @@ DEFINE_IIDX(IDirectManipulationContent, "B89962CB-3D89-442B-BB58-5098FA0F9F16")
     GetOutputTransform	proc
     GetContentTransform proc
     SyncContentTransform proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationPrimaryContent_INTERFACE_DEFINED__
-__IDirectManipulationPrimaryContent_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationPrimaryContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationPrimaryContent, "C12851E4-1698-4625-B9B1-7CA3EC18630B")
 
@@ -348,8 +275,7 @@ DEFINE_IIDX(IDirectManipulationPrimaryContent, "C12851E4-1698-4625-B9B1-7CA3EC18
     SetVerticalAlignment proc :DIRECTMANIPULATION_VERTICALALIGNMENT
     GetInertiaEndTransform proc
     GetCenterPoint	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -362,15 +288,14 @@ DIRECTMANIPULATION_DRAG_DROP_CANCELLED equ 4
 DIRECTMANIPULATION_DRAG_DROP_COMMITTED equ 5
 
 ifndef __IDirectManipulationDragDropEventHandler_INTERFACE_DEFINED__
-__IDirectManipulationDragDropEventHandler_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationDragDropEventHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationDragDropEventHandler, "1FA11B10-701B-41AE-B5F2-49E36BD595AA")
 
 .comdef IDirectManipulationDragDropEventHandler : public IUnknown
 
     OnDragDropStatusChange proc :ptr, :DIRECTMANIPULATION_DRAG_DROP_STATUS, :DIRECTMANIPULATION_DRAG_DROP_STATUS
-
-    .ends
+   .ends
 
 endif
 
@@ -382,7 +307,7 @@ DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_SELECT_DRAG equ 0x20
 DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION_HOLD_DRAG equ 0x40
 
 ifndef __IDirectManipulationDragDropBehavior_INTERFACE_DEFINED__
-__IDirectManipulationDragDropBehavior_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationDragDropBehavior_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationDragDropBehavior, "814B5AF5-C2C8-4270-A9B7-A198CE8D02FA")
 
@@ -390,8 +315,7 @@ DEFINE_IIDX(IDirectManipulationDragDropBehavior, "814B5AF5-C2C8-4270-A9B7-A198CE
 
     SetConfiguration	proc :DIRECTMANIPULATION_DRAG_DROP_CONFIGURATION
     GetStatus		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -405,33 +329,31 @@ DIRECTMANIPULATION_INTERACTION_TYPE_GESTURE_PINCH_ZOOM equ 5
 DIRECTMANIPULATION_INTERACTION_END equ 100
 
 ifndef __IDirectManipulationInteractionEventHandler_INTERFACE_DEFINED__
-__IDirectManipulationInteractionEventHandler_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationInteractionEventHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationInteractionEventHandler, "E43F45B8-42B4-403E-B1F2-273B8F510830")
 
 .comdef IDirectManipulationInteractionEventHandler : public IUnknown
 
     OnInteraction	proc :ptr, :DIRECTMANIPULATION_INTERACTION_TYPE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationFrameInfoProvider_INTERFACE_DEFINED__
-__IDirectManipulationFrameInfoProvider_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationFrameInfoProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationFrameInfoProvider, "fb759dba-6f4c-4c01-874e-19c8a05907f9")
 
 .comdef IDirectManipulationFrameInfoProvider : public IUnknown
 
     GetNextFrameInfo	proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationCompositor_INTERFACE_DEFINED__
-__IDirectManipulationCompositor_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationCompositor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationCompositor, "537A0825-0387-4EFA-B62F-71EB1F085A7E")
 
@@ -441,26 +363,24 @@ DEFINE_IIDX(IDirectManipulationCompositor, "537A0825-0387-4EFA-B62F-71EB1F085A7E
     RemoveContent	proc :ptr
     SetUpdateManager	proc :ptr
     Flush		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationUpdateHandler_INTERFACE_DEFINED__
-__IDirectManipulationUpdateHandler_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationUpdateHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationUpdateHandler, "790B6337-64F8-4FF5-A269-B32BC2AF27A7")
 
 .comdef IDirectManipulationUpdateHandler : public IUnknown
 
     Update		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectManipulationUpdateManager_INTERFACE_DEFINED__
-__IDirectManipulationUpdateManager_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationUpdateManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationUpdateManager, "B0AE62FD-BE34-46E7-9CAA-D361FACBB9CC")
 
@@ -469,8 +389,7 @@ DEFINE_IIDX(IDirectManipulationUpdateManager, "B0AE62FD-BE34-46E7-9CAA-D361FACBB
     RegisterWaitHandleCallback proc :HANDLE, :ptr, :ptr
     UnregisterWaitHandleCallback proc :DWORD
     Update		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -480,24 +399,23 @@ DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION_FORWARD equ 1
 DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION_REVERSE equ 2
 
 ifndef __IDirectManipulationAutoScrollBehavior_INTERFACE_DEFINED__
-__IDirectManipulationAutoScrollBehavior_INTERFACE_DEFINED__ equ 1
+define __IDirectManipulationAutoScrollBehavior_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectManipulationAutoScrollBehavior, "6D5954D4-2003-4356-9B31-D051C9FF0AF7")
 
 .comdef IDirectManipulationAutoScrollBehavior : public IUnknown
 
     SetConfiguration	proc :DIRECTMANIPULATION_MOTION_TYPES, :DIRECTMANIPULATION_AUTOSCROLL_CONFIGURATION
-
-    .ends
+   .ends
 
 endif
 
 endif ;; #if (NTDDI_VERSION GT NTDDI_WIN8)
 
 ifndef __DirectManipulation_LIBRARY_DEFINED__
-__DirectManipulation_LIBRARY_DEFINED__ equ 1
+define __DirectManipulation_LIBRARY_DEFINED__
 
-externdef		LIBID_DirectManipulation:IID
+externdef LIBID_DirectManipulation:IID
 DEFINE_GUIDS(CLSID_DirectManipulationViewport,		"34E211B6-3650-4F75-8334-FA359598E1C5")
 DEFINE_GUIDS(CLSID_DirectManipulationUpdateManager,	"9FC1BFD5-1835-441A-B3B1-B6CC74B727D0")
 DEFINE_GUIDS(CLSID_DirectManipulationPrimaryContent,	"CAA02661-D59E-41C7-8393-3BA3BACB6B57")
@@ -505,7 +423,5 @@ DEFINE_GUIDS(CLSID_DirectManipulationManager,		"54E211B6-3650-4F75-8334-FA359598
 DEFINE_GUIDS(CLSID_DCompManipulationCompositor,		"79DEA627-A08A-43AC-8EF5-6900B9299126")
 
 endif
-
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 endif

@@ -1,34 +1,28 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __bits1_5_h__
-__bits1_5_h__ equ <>
 
-ifndef __IBackgroundCopyJob2_FWD_DEFINED__
-__IBackgroundCopyJob2_FWD_DEFINED__ equ 1
-endif
-ifndef __BackgroundCopyManager1_5_FWD_DEFINED__
-__BackgroundCopyManager1_5_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyJob2_FWD_DEFINED__
-__IBackgroundCopyJob2_FWD_DEFINED__ equ 1
-endif
+ifndef __bits1_5_h__
+define __bits1_5_h__
+
 include bits.inc
 
 ifndef __IBackgroundCopyJob2_INTERFACE_DEFINED__
-__IBackgroundCopyJob2_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyJob2_INTERFACE_DEFINED__
 
 BG_JOB_REPLY_PROGRESS	STRUC
 BytesTotal		UINT64 ?
@@ -107,15 +101,14 @@ externdef		IID_IBackgroundCopyJob2:IID
     GetReplyFileName	proc :ptr
     SetCredentials	proc :ptr
     RemoveCredentials	proc :BG_AUTH_TARGET, :BG_AUTH_SCHEME
-
-    .ends
+   .ends
 
 endif
 
 ifndef __BackgroundCopyManager1_5_LIBRARY_DEFINED__
-__BackgroundCopyManager1_5_LIBRARY_DEFINED__ equ 1
+define __BackgroundCopyManager1_5_LIBRARY_DEFINED__
 
-externdef		LIBID_BackgroundCopyManager1_5:IID
+externdef LIBID_BackgroundCopyManager1_5:IID
 
 DEFINE_GUIDS(CLSID_BackgroundCopyManager1_5, "f087771f-d74f-4c1a-bb8a-e16aca9124ea")
 

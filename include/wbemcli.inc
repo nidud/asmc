@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,156 +18,14 @@ include ole2.inc
 endif
 
 ifndef __wbemcli_h__
-__wbemcli_h__ equ <>
-
-ifndef __IWbemClassObject_FWD_DEFINED__
-__IWbemClassObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectAccess_FWD_DEFINED__
-__IWbemObjectAccess_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemQualifierSet_FWD_DEFINED__
-__IWbemQualifierSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemServices_FWD_DEFINED__
-__IWbemServices_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemLocator_FWD_DEFINED__
-__IWbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectSink_FWD_DEFINED__
-__IWbemObjectSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumWbemClassObject_FWD_DEFINED__
-__IEnumWbemClassObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemCallResult_FWD_DEFINED__
-__IWbemCallResult_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemContext_FWD_DEFINED__
-__IWbemContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IUnsecuredApartment_FWD_DEFINED__
-__IUnsecuredApartment_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemUnsecuredApartment_FWD_DEFINED__
-__IWbemUnsecuredApartment_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemStatusCodeText_FWD_DEFINED__
-__IWbemStatusCodeText_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemBackupRestore_FWD_DEFINED__
-__IWbemBackupRestore_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemBackupRestoreEx_FWD_DEFINED__
-__IWbemBackupRestoreEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemRefresher_FWD_DEFINED__
-__IWbemRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemHiPerfEnum_FWD_DEFINED__
-__IWbemHiPerfEnum_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemConfigureRefresher_FWD_DEFINED__
-__IWbemConfigureRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemLocator_FWD_DEFINED__
-__WbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemContext_FWD_DEFINED__
-__WbemContext_FWD_DEFINED__ equ 1
-endif
-ifndef __UnsecuredApartment_FWD_DEFINED__
-__UnsecuredApartment_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemClassObject_FWD_DEFINED__
-__WbemClassObject_FWD_DEFINED__ equ 1
-endif
-ifndef __MofCompiler_FWD_DEFINED__
-__MofCompiler_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemStatusCodeText_FWD_DEFINED__
-__WbemStatusCodeText_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemBackupRestore_FWD_DEFINED__
-__WbemBackupRestore_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemRefresher_FWD_DEFINED__
-__WbemRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemObjectTextSrc_FWD_DEFINED__
-__WbemObjectTextSrc_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemClassObject_FWD_DEFINED__
-__IWbemClassObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemQualifierSet_FWD_DEFINED__
-__IWbemQualifierSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemLocator_FWD_DEFINED__
-__IWbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectSink_FWD_DEFINED__
-__IWbemObjectSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectSinkEx_FWD_DEFINED__
-__IWbemObjectSinkEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumWbemClassObject_FWD_DEFINED__
-__IEnumWbemClassObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemContext_FWD_DEFINED__
-__IWbemContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemCallResult_FWD_DEFINED__
-__IWbemCallResult_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemServices_FWD_DEFINED__
-__IWbemServices_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemShutdown_FWD_DEFINED__
-__IWbemShutdown_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectTextSrc_FWD_DEFINED__
-__IWbemObjectTextSrc_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemObjectAccess_FWD_DEFINED__
-__IWbemObjectAccess_FWD_DEFINED__ equ 1
-endif
-ifndef __IMofCompiler_FWD_DEFINED__
-__IMofCompiler_FWD_DEFINED__ equ 1
-endif
-ifndef __IUnsecuredApartment_FWD_DEFINED__
-__IUnsecuredApartment_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemUnsecuredApartment_FWD_DEFINED__
-__IWbemUnsecuredApartment_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemStatusCodeText_FWD_DEFINED__
-__IWbemStatusCodeText_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemBackupRestore_FWD_DEFINED__
-__IWbemBackupRestore_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemBackupRestoreEx_FWD_DEFINED__
-__IWbemBackupRestoreEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemRefresher_FWD_DEFINED__
-__IWbemRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemHiPerfEnum_FWD_DEFINED__
-__IWbemHiPerfEnum_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemConfigureRefresher_FWD_DEFINED__
-__IWbemConfigureRefresher_FWD_DEFINED__ equ 1
-endif
+define __wbemcli_h__
 
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __WbemClient_v1_LIBRARY_DEFINED__
-__WbemClient_v1_LIBRARY_DEFINED__ equ 1
+define __WbemClient_v1_LIBRARY_DEFINED__
 
 .enum WBEM_GENUS_TYPE {
     WBEM_GENUS_CLASS	= 1,
@@ -548,7 +406,7 @@ CIMTYPE typedef LONG
 externdef LIBID_WbemClient_v1:IID
 
 ifndef __IWbemClassObject_INTERFACE_DEFINED__
-__IWbemClassObject_INTERFACE_DEFINED__ equ 1
+define __IWbemClassObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemClassObject, "dc12a681-737f-11cf-884d-00aa004b2e24")
 
@@ -578,12 +436,12 @@ DEFINE_IIDX(IWbemClassObject, "dc12a681-737f-11cf-884d-00aa004b2e24")
     EndMethodEnumeration proc
     GetMethodQualifierSet proc :LPCWSTR, :ptr
     GetMethodOrigin	proc :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemObjectAccess_INTERFACE_DEFINED__
-__IWbemObjectAccess_INTERFACE_DEFINED__ equ 1
+define __IWbemObjectAccess_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemObjectAccess, "49353c9a-516b-11d1-aea6-00c04fb68820")
 
@@ -599,12 +457,12 @@ DEFINE_IIDX(IWbemObjectAccess, "49353c9a-516b-11d1-aea6-00c04fb68820")
     GetPropertyInfoByHandle proc :LONG, :ptr, :ptr
     _Lock		proc :LONG
     Unlock		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemQualifierSet_INTERFACE_DEFINED__
-__IWbemQualifierSet_INTERFACE_DEFINED__ equ 1
+define __IWbemQualifierSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemQualifierSet, "dc12a680-737f-11cf-884d-00aa004b2e24")
 
@@ -617,12 +475,12 @@ DEFINE_IIDX(IWbemQualifierSet, "dc12a680-737f-11cf-884d-00aa004b2e24")
     BeginEnumeration	proc :LONG
     Next		proc :LONG, :ptr, :ptr, :ptr
     EndEnumeration	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemServices_INTERFACE_DEFINED__
-__IWbemServices_INTERFACE_DEFINED__ equ 1
+define __IWbemServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemServices, "9556dc99-828c-11cf-a37e-00aa003240c7")
 
@@ -651,24 +509,24 @@ DEFINE_IIDX(IWbemServices, "9556dc99-828c-11cf-a37e-00aa003240c7")
     ExecNotificationQueryAsync proc :BSTR, :BSTR, :LONG, :ptr, :ptr
     ExecMethod		proc :BSTR, :BSTR, :LONG, :ptr, :ptr, :ptr, :ptr
     ExecMethodAsync	proc :BSTR, :BSTR, :LONG, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemLocator_INTERFACE_DEFINED__
-__IWbemLocator_INTERFACE_DEFINED__ equ 1
+define __IWbemLocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemLocator, "dc12a687-737f-11cf-884d-00aa004b2e24")
 
 .comdef IWbemLocator : public IUnknown
 
     ConnectServer	proc :BSTR, :BSTR, :BSTR, :BSTR, :LONG, :BSTR, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemObjectSink_INTERFACE_DEFINED__
-__IWbemObjectSink_INTERFACE_DEFINED__ equ 1
+define __IWbemObjectSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemObjectSink, "7c857801-7381-11cf-884d-00aa004b2e24")
 
@@ -676,12 +534,12 @@ DEFINE_IIDX(IWbemObjectSink, "7c857801-7381-11cf-884d-00aa004b2e24")
 
     Indicate		proc :LONG, :ptr
     SetStatus		proc :LONG, :HRESULT, :BSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumWbemClassObject_INTERFACE_DEFINED__
-__IEnumWbemClassObject_INTERFACE_DEFINED__ equ 1
+define __IEnumWbemClassObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumWbemClassObject, "027947e1-d731-11ce-a357-000000000001")
 
@@ -692,12 +550,12 @@ DEFINE_IIDX(IEnumWbemClassObject, "027947e1-d731-11ce-a357-000000000001")
     NextAsync		proc :ULONG, :ptr
     Clone		proc :ptr
     Skip		proc :LONG, :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemCallResult_INTERFACE_DEFINED__
-__IWbemCallResult_INTERFACE_DEFINED__ equ 1
+define __IWbemCallResult_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemCallResult, "44aca675-e8fc-11d0-a07c-00c04fb68820")
 
@@ -707,12 +565,12 @@ DEFINE_IIDX(IWbemCallResult, "44aca675-e8fc-11d0-a07c-00c04fb68820")
     GetResultString	proc :LONG, :ptr
     GetResultServices	proc :LONG, :ptr
     GetCallStatus	proc :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemContext_INTERFACE_DEFINED__
-__IWbemContext_INTERFACE_DEFINED__ equ 1
+define __IWbemContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemContext, "44aca674-e8fc-11d0-a07c-00c04fb68820")
 
@@ -727,36 +585,36 @@ DEFINE_IIDX(IWbemContext, "44aca674-e8fc-11d0-a07c-00c04fb68820")
     GetValue		proc :LPCWSTR, :LONG, :ptr
     DeleteValue		proc :LPCWSTR, :LONG
     DeleteAll		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IUnsecuredApartment_INTERFACE_DEFINED__
-__IUnsecuredApartment_INTERFACE_DEFINED__ equ 1
+define __IUnsecuredApartment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUnsecuredApartment, "1cfaba8c-1523-11d1-ad79-00c04fd8fdff")
 
 .comdef IUnsecuredApartment : public IUnknown
 
     CreateObjectStub	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemUnsecuredApartment_INTERFACE_DEFINED__
-__IWbemUnsecuredApartment_INTERFACE_DEFINED__ equ 1
+define __IWbemUnsecuredApartment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemUnsecuredApartment, "31739d04-3471-4cf4-9a7c-57a44ae71956")
 
 .comdef IWbemUnsecuredApartment : public IUnsecuredApartment
 
     CreateSinkStub	proc :ptr, :DWORD, :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemStatusCodeText_INTERFACE_DEFINED__
-__IWbemStatusCodeText_INTERFACE_DEFINED__ equ 1
+define __IWbemStatusCodeText_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemStatusCodeText, "eb87e1bc-3233-11d2-aec9-00c04fb68820")
 
@@ -764,12 +622,12 @@ DEFINE_IIDX(IWbemStatusCodeText, "eb87e1bc-3233-11d2-aec9-00c04fb68820")
 
     GetErrorCodeText	proc :HRESULT, :LCID, :LONG, :ptr
     GetFacilityCodeText proc :HRESULT, :LCID, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemBackupRestore_INTERFACE_DEFINED__
-__IWbemBackupRestore_INTERFACE_DEFINED__ equ 1
+define __IWbemBackupRestore_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemBackupRestore, "C49E32C7-BC8B-11d2-85D4-00105A1F8304")
 
@@ -777,12 +635,12 @@ DEFINE_IIDX(IWbemBackupRestore, "C49E32C7-BC8B-11d2-85D4-00105A1F8304")
 
     Backup		proc :LPCWSTR, :LONG
     Restore		proc :LPCWSTR, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemBackupRestoreEx_INTERFACE_DEFINED__
-__IWbemBackupRestoreEx_INTERFACE_DEFINED__ equ 1
+define __IWbemBackupRestoreEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemBackupRestoreEx, "A359DEC5-E813-4834-8A2A-BA7F1D777D76")
 
@@ -790,24 +648,24 @@ DEFINE_IIDX(IWbemBackupRestoreEx, "A359DEC5-E813-4834-8A2A-BA7F1D777D76")
 
     _Pause		proc
     Resume		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemRefresher_INTERFACE_DEFINED__
-__IWbemRefresher_INTERFACE_DEFINED__ equ 1
+define __IWbemRefresher_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemRefresher, "49353c99-516b-11d1-aea6-00c04fb68820")
 
 .comdef IWbemRefresher : public IUnknown
 
     Refresh		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemHiPerfEnum_INTERFACE_DEFINED__
-__IWbemHiPerfEnum_INTERFACE_DEFINED__ equ 1
+define __IWbemHiPerfEnum_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemHiPerfEnum, "2705C288-79AE-11d2-B348-00105A1F8177")
 
@@ -817,12 +675,12 @@ DEFINE_IIDX(IWbemHiPerfEnum, "2705C288-79AE-11d2-B348-00105A1F8177")
     RemoveObjects	proc :LONG, :ULONG, :ptr
     GetObjects		proc :LONG, :ULONG, :ptr, :ptr
     RemoveAll		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemConfigureRefresher_INTERFACE_DEFINED__
-__IWbemConfigureRefresher_INTERFACE_DEFINED__ equ 1
+define __IWbemConfigureRefresher_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemConfigureRefresher, "49353c92-516b-11d1-aea6-00c04fb68820")
 
@@ -833,7 +691,7 @@ DEFINE_IIDX(IWbemConfigureRefresher, "49353c92-516b-11d1-aea6-00c04fb68820")
     AddRefresher	proc :ptr, :LONG, :ptr
     Remove		proc :LONG, :LONG
     AddEnum		proc :ptr, :LPCWSTR, :LONG, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -850,7 +708,7 @@ DEFINE_GUIDS(CLSID_WbemObjectTextSrc, "8D1C559D-84F0-4bb3-A7D5-56A7435A9BA6")
 endif
 
 ifndef __IWbemObjectSinkEx_INTERFACE_DEFINED__
-__IWbemObjectSinkEx_INTERFACE_DEFINED__ equ 1
+define __IWbemObjectSinkEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemObjectSinkEx, "e7d35cfa-348b-485e-b524-252725d697ca")
 
@@ -861,19 +719,19 @@ DEFINE_IIDX(IWbemObjectSinkEx, "e7d35cfa-348b-485e-b524-252725d697ca")
     PromptUser		proc :BSTR, :sbyte, :dword
     WriteProgress	proc :BSTR, :BSTR, :BSTR, :ULONG, :ULONG
     WriteStreamParameter proc :BSTR, :ptr, :ULONG, :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemShutdown_INTERFACE_DEFINED__
-__IWbemShutdown_INTERFACE_DEFINED__ equ 1
+define __IWbemShutdown_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemShutdown, "b7b31df9-d515-11d3-a11c-00105a1f515a")
 
 .comdef IWbemShutdown : public IUnknown
 
     Shutdown		proc :LONG, :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -894,7 +752,7 @@ endif
     }
 
 ifndef __IWbemObjectTextSrc_INTERFACE_DEFINED__
-__IWbemObjectTextSrc_INTERFACE_DEFINED__ equ 1
+define __IWbemObjectTextSrc_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemObjectTextSrc, "bfbf883a-cad7-11d3-a11b-00105a1f515a")
 
@@ -902,7 +760,7 @@ DEFINE_IIDX(IWbemObjectTextSrc, "bfbf883a-cad7-11d3-a11b-00105a1f515a")
 
     GetText		proc :LONG, :ptr, :ULONG, :ptr, :ptr
     CreateFromText	proc :LONG, :BSTR, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -933,7 +791,7 @@ WBEM_COMPILE_STATUS_INFO ENDS
     }
 
 ifndef __IMofCompiler_INTERFACE_DEFINED__
-__IMofCompiler_INTERFACE_DEFINED__ equ 1
+define __IMofCompiler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMofCompiler, "6daf974e-2e37-11d2-aec9-00c04fb68820")
 
@@ -942,7 +800,7 @@ DEFINE_IIDX(IMofCompiler, "6daf974e-2e37-11d2-aec9-00c04fb68820")
     CompileFile		proc :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
     CompileBuffer	proc :LONG, :ptr, :LPWSTR, :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
     CreateBMOF		proc :LPWSTR, :LPWSTR, :LPWSTR, :LONG, :LONG, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 

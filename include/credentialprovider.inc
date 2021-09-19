@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,96 +18,7 @@ include ole2.inc
 endif
 
 ifndef __credentialprovider_h__
-__credentialprovider_h__ equ <>
-
-
-ifndef __ICredentialProviderCredential_FWD_DEFINED__
-__ICredentialProviderCredential_FWD_DEFINED__ equ 1
-endif
-ifndef __IQueryContinueWithStatus_FWD_DEFINED__
-__IQueryContinueWithStatus_FWD_DEFINED__ equ 1
-endif
-ifndef __IConnectableCredentialProviderCredential_FWD_DEFINED__
-__IConnectableCredentialProviderCredential_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderCredentialEvents_FWD_DEFINED__
-__ICredentialProviderCredentialEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProvider_FWD_DEFINED__
-__ICredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderEvents_FWD_DEFINED__
-__ICredentialProviderEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderFilter_FWD_DEFINED__
-__ICredentialProviderFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderCredential2_FWD_DEFINED__
-__ICredentialProviderCredential2_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderCredentialWithFieldOptions_FWD_DEFINED__
-__ICredentialProviderCredentialWithFieldOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderCredentialEvents2_FWD_DEFINED__
-__ICredentialProviderCredentialEvents2_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderUser_FWD_DEFINED__
-__ICredentialProviderUser_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderUserArray_FWD_DEFINED__
-__ICredentialProviderUserArray_FWD_DEFINED__ equ 1
-endif
-ifndef __ICredentialProviderSetUserArray_FWD_DEFINED__
-__ICredentialProviderSetUserArray_FWD_DEFINED__ equ 1
-endif
-ifndef __PasswordCredentialProvider_FWD_DEFINED__
-__PasswordCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __V1PasswordCredentialProvider_FWD_DEFINED__
-__V1PasswordCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __PINLogonCredentialProvider_FWD_DEFINED__
-__PINLogonCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __NPCredentialProvider_FWD_DEFINED__
-__NPCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __SmartcardCredentialProvider_FWD_DEFINED__
-__SmartcardCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __V1SmartcardCredentialProvider_FWD_DEFINED__
-__V1SmartcardCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __SmartcardPinProvider_FWD_DEFINED__
-__SmartcardPinProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __SmartcardReaderSelectionProvider_FWD_DEFINED__
-__SmartcardReaderSelectionProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __SmartcardWinRTProvider_FWD_DEFINED__
-__SmartcardWinRTProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __GenericCredentialProvider_FWD_DEFINED__
-__GenericCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __RASProvider_FWD_DEFINED__
-__RASProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __OnexCredentialProvider_FWD_DEFINED__
-__OnexCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __OnexPlapSmartcardCredentialProvider_FWD_DEFINED__
-__OnexPlapSmartcardCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __VaultProvider_FWD_DEFINED__
-__VaultProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __WinBioCredentialProvider_FWD_DEFINED__
-__WinBioCredentialProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __V1WinBioCredentialProvider_FWD_DEFINED__
-__V1WinBioCredentialProvider_FWD_DEFINED__ equ 1
-endif
+define __credentialprovider_h__
 
 include wtypes.inc
 include shobjidl.inc
@@ -202,7 +113,7 @@ CREDENTIAL_PROVIDER_NO_DEFAULT equ (-1)
 
 
 ifndef __ICredentialProviderCredential_INTERFACE_DEFINED__
-__ICredentialProviderCredential_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderCredential_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderCredential, "63913a93-40c1-481a-818d-4072ff8c70cc")
 
@@ -231,20 +142,20 @@ endif
 
 
 ifndef __IQueryContinueWithStatus_INTERFACE_DEFINED__
-__IQueryContinueWithStatus_INTERFACE_DEFINED__ equ 1
+define __IQueryContinueWithStatus_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IQueryContinueWithStatus, "9090be5b-502b-41fb-bccc-0049a6c7254b")
 
 .comdef IQueryContinueWithStatus : public IQueryContinue
 
     SetStatusMessage	proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IConnectableCredentialProviderCredential_INTERFACE_DEFINED__
-__IConnectableCredentialProviderCredential_INTERFACE_DEFINED__ equ 1
+define __IConnectableCredentialProviderCredential_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConnectableCredentialProviderCredential, "9387928b-ac75-4bf9-8ab2-2b93c4a55290")
 
@@ -252,12 +163,12 @@ DEFINE_IIDX(IConnectableCredentialProviderCredential, "9387928b-ac75-4bf9-8ab2-2
 
     Connect		proc :ptr
     Disconnect		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderCredentialEvents_INTERFACE_DEFINED__
-__ICredentialProviderCredentialEvents_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderCredentialEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderCredentialEvents, "fa6fa76b-66b7-4b11-95f1-86171118e816")
 
@@ -273,12 +184,12 @@ DEFINE_IIDX(ICredentialProviderCredentialEvents, "fa6fa76b-66b7-4b11-95f1-861711
     AppendFieldComboBoxItem proc :ptr, :DWORD, :LPCWSTR
     SetFieldSubmitButton proc :ptr, :DWORD, :DWORD
     OnCreatingWindow	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProvider_INTERFACE_DEFINED__
-__ICredentialProvider_INTERFACE_DEFINED__ equ 1
+define __ICredentialProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProvider, "d27c3481-5a1c-45b2-8aaa-c20ebbe8229e")
 
@@ -292,24 +203,24 @@ DEFINE_IIDX(ICredentialProvider, "d27c3481-5a1c-45b2-8aaa-c20ebbe8229e")
     GetFieldDescriptorAt proc :DWORD, :ptr
     GetCredentialCount	proc :ptr, :ptr, :ptr
     GetCredentialAt	proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderEvents_INTERFACE_DEFINED__
-__ICredentialProviderEvents_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderEvents, "34201e5a-a787-41a3-a5a4-bd6dcf2a854e")
 
 .comdef ICredentialProviderEvents : public IUnknown
 
     CredentialsChanged	proc :UINT_PTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderFilter_INTERFACE_DEFINED__
-__ICredentialProviderFilter_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderFilter, "a5da53f9-d475-4080-a120-910c4a739880")
 
@@ -317,38 +228,38 @@ DEFINE_IIDX(ICredentialProviderFilter, "a5da53f9-d475-4080-a120-910c4a739880")
 
     Filter		proc :CREDENTIAL_PROVIDER_USAGE_SCENARIO, :DWORD, :ptr, :ptr, :DWORD
     UpdateRemoteCredential proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
 ifndef __ICredentialProviderCredential2_INTERFACE_DEFINED__
-__ICredentialProviderCredential2_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderCredential2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderCredential2, "fd672c54-40ea-4d6e-9b49-cfb1a7507bd7")
 
 .comdef ICredentialProviderCredential2 : public ICredentialProviderCredential
 
     GetUserSid		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderCredentialWithFieldOptions_INTERFACE_DEFINED__
-__ICredentialProviderCredentialWithFieldOptions_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderCredentialWithFieldOptions_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderCredentialWithFieldOptions, "DBC6FB30-C843-49E3-A645-573E6F39446A")
 
 .comdef ICredentialProviderCredentialWithFieldOptions : public IUnknown
 
     GetFieldOptions	proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderCredentialEvents2_INTERFACE_DEFINED__
-__ICredentialProviderCredentialEvents2_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderCredentialEvents2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderCredentialEvents2, "B53C00B6-9922-4B78-B1F4-DDFE774DC39B")
 
@@ -357,12 +268,12 @@ DEFINE_IIDX(ICredentialProviderCredentialEvents2, "B53C00B6-9922-4B78-B1F4-DDFE7
     BeginFieldUpdates	proc
     EndFieldUpdates	proc
     SetFieldOptions	proc :ptr, :DWORD, :CREDENTIAL_PROVIDER_CREDENTIAL_FIELD_OPTIONS
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderUser_INTERFACE_DEFINED__
-__ICredentialProviderUser_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderUser_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderUser, "13793285-3ea6-40fd-b420-15f47da41fbb")
 
@@ -372,7 +283,7 @@ DEFINE_IIDX(ICredentialProviderUser, "13793285-3ea6-40fd-b420-15f47da41fbb")
     GetProviderID	proc :ptr
     GetStringValue	proc :REFPROPERTYKEY, :ptr
     GetValue		proc :REFPROPERTYKEY, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -380,7 +291,7 @@ DEFINE_GUID(Identity_LocalUserProvider, 0xA198529B, 0x730F, 0x4089, 0xB6, 0x46, 
 
 
 ifndef __ICredentialProviderUserArray_INTERFACE_DEFINED__
-__ICredentialProviderUserArray_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderUserArray_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderUserArray, "90C119AE-0F18-4520-A1F1-114366A40FE8")
 
@@ -390,28 +301,28 @@ DEFINE_IIDX(ICredentialProviderUserArray, "90C119AE-0F18-4520-A1F1-114366A40FE8"
     GetAccountOptions	proc :ptr
     GetCount		proc :ptr
     GetAt		proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICredentialProviderSetUserArray_INTERFACE_DEFINED__
-__ICredentialProviderSetUserArray_INTERFACE_DEFINED__ equ 1
+define __ICredentialProviderSetUserArray_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICredentialProviderSetUserArray, "095c1484-1c0c-4388-9c6d-500e61bf84bd")
 
 .comdef ICredentialProviderSetUserArray : public IUnknown
 
     SetUserArray	proc :ptr
-    .ends
+   .ends
 
 endif
 
 endif
 
 ifndef __CredentialProviders_LIBRARY_DEFINED__
-__CredentialProviders_LIBRARY_DEFINED__ equ 1
+define __CredentialProviders_LIBRARY_DEFINED__
 
-externdef	LIBID_CredentialProviders:IID
+externdef LIBID_CredentialProviders:IID
 
 DEFINE_GUIDS(CLSID_PasswordCredentialProvider, "60b78e88-ead8-445c-9cfd-0b87f74ea6cd")
 DEFINE_GUIDS(CLSID_V1PasswordCredentialProvider, "6f45dc1e-5384-457a-bc13-2cd81b0d28ed")
@@ -511,8 +422,4 @@ HWND_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr HWND
 
-
-
 endif
-
-

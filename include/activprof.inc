@@ -1,28 +1,26 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
  .err <this stub requires an updated version of rpcndr.h>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __activprof_h__
-__activprof_h__ equ <>
+define __activprof_h__
+
 .pragma list(push, 0)
 
-ifndef __IActiveScriptProfilerControl_FWD_DEFINED__
-__IActiveScriptProfilerControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptProfilerCallback_FWD_DEFINED__
-__IActiveScriptProfilerCallback_FWD_DEFINED__ equ 1
-endif
 include unknwn.inc
 
 ACTIVPROF_E_PROFILER_PRESENT	   equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x0200)
@@ -30,7 +28,7 @@ ACTIVPROF_E_PROFILER_ABSENT	   equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x
 ACTIVPROF_E_UNABLE_TO_APPLY_ACTION equ MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x0202)
 
 ifndef __ActivProf_h
-__ActivProf_h equ <>
+define __ActivProf_h
 
 PROFILER_SCRIPT_TYPE typedef SDWORD
 PROFILER_SCRIPT_TYPE_USER equ 0
@@ -45,7 +43,7 @@ PROFILER_EVENT_MASK_TRACE_ALL equ ( PROFILER_EVENT_MASK_TRACE_SCRIPT_FUNCTION_CA
 PROFILER_TOKEN typedef LONG
 
 ifndef __IActiveScriptProfilerControl_INTERFACE_DEFINED__
-__IActiveScriptProfilerControl_INTERFACE_DEFINED__ equ <>
+define __IActiveScriptProfilerControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IActiveScriptProfilerControl, "784b5ff0-69b0-47d1-a7dc-2518f4230e90")
 
@@ -54,13 +52,12 @@ DEFINE_IIDX(IActiveScriptProfilerControl, "784b5ff0-69b0-47d1-a7dc-2518f4230e90"
     StartProfiling proc :REFCLSID, :DWORD, :DWORD
     SetProfilerEventMask proc :DWORD
     StopProfiling proc :HRESULT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptProfilerCallback_INTERFACE_DEFINED__
-__IActiveScriptProfilerCallback_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptProfilerCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IActiveScriptProfilerCallback, "740eca23-7d9d-42e5-ba9d-f8b24b1c7a9b")
 
@@ -72,8 +69,7 @@ DEFINE_IIDX(IActiveScriptProfilerCallback, "740eca23-7d9d-42e5-ba9d-f8b24b1c7a9b
     FunctionCompiled	proc :PROFILER_TOKEN, :PROFILER_TOKEN, :ptr, :ptr, :ptr
     OnFunctionEnter	proc :PROFILER_TOKEN, :PROFILER_TOKEN
     OnFunctionExit	proc :PROFILER_TOKEN, :PROFILER_TOKEN
-
-    .ends
+   .ends
 
 endif
 endif

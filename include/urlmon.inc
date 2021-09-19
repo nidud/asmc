@@ -5,107 +5,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __urlmon_h__
-__urlmon_h__ equ <>
-
-ifndef __IPersistMoniker_FWD_DEFINED__
-__IPersistMoniker_FWD_DEFINED__ equ 1
-endif
-ifndef __IBindProtocol_FWD_DEFINED__
-__IBindProtocol_FWD_DEFINED__ equ 1
-endif
-ifndef __IBinding_FWD_DEFINED__
-__IBinding_FWD_DEFINED__ equ 1
-endif
-ifndef __IBindStatusCallback_FWD_DEFINED__
-__IBindStatusCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IAuthenticate_FWD_DEFINED__
-__IAuthenticate_FWD_DEFINED__ equ 1
-endif
-ifndef __IHttpNegotiate_FWD_DEFINED__
-__IHttpNegotiate_FWD_DEFINED__ equ 1
-endif
-ifndef __IWindowForBindingUI_FWD_DEFINED__
-__IWindowForBindingUI_FWD_DEFINED__ equ 1
-endif
-ifndef __ICodeInstall_FWD_DEFINED__
-__ICodeInstall_FWD_DEFINED__ equ 1
-endif
-ifndef __IUri_FWD_DEFINED__
-__IUri_FWD_DEFINED__ equ 1
-endif
-ifndef __IUriContainer_FWD_DEFINED__
-__IUriContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IUriBuilder_FWD_DEFINED__
-__IUriBuilder_FWD_DEFINED__ equ 1
-endif
-
-
-ifndef __IUriBuilderFactory_FWD_DEFINED__
-__IUriBuilderFactory_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IWinInetInfo_FWD_DEFINED__
-__IWinInetInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IHttpSecurity_FWD_DEFINED__
-__IHttpSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __IWinInetHttpInfo_FWD_DEFINED__
-__IWinInetHttpInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IBindHost_FWD_DEFINED__
-__IBindHost_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternet_FWD_DEFINED__
-__IInternet_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetBindInfo_FWD_DEFINED__
-__IInternetBindInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetProtocolRoot_FWD_DEFINED__
-__IInternetProtocolRoot_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetProtocol_FWD_DEFINED__
-__IInternetProtocol_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetProtocolSink_FWD_DEFINED__
-__IInternetProtocolSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetSession_FWD_DEFINED__
-__IInternetSession_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetThreadSwitch_FWD_DEFINED__
-__IInternetThreadSwitch_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetPriority_FWD_DEFINED__
-__IInternetPriority_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetProtocolInfo_FWD_DEFINED__
-__IInternetProtocolInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetSecurityMgrSite_FWD_DEFINED__
-__IInternetSecurityMgrSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetSecurityManager_FWD_DEFINED__
-__IInternetSecurityManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetHostSecurityManager_FWD_DEFINED__
-__IInternetHostSecurityManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternetZoneManager_FWD_DEFINED__
-__IInternetZoneManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISoftDistExt_FWD_DEFINED__
-__ISoftDistExt_FWD_DEFINED__ equ 1
-endif
-ifndef __IDataFilter_FWD_DEFINED__
-__IDataFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IEncodingFilterFactory_FWD_DEFINED__
-__IEncodingFilterFactory_FWD_DEFINED__ equ 1
-endif
+define __urlmon_h__
 
 include objidl.inc
 include oleidl.inc
@@ -368,10 +268,10 @@ INET_E_CANNOT_LOCK_REQUEST equ _HRESULT_TYPEDEF_(0x800C0016)
 INET_E_ERROR_FIRST	equ _HRESULT_TYPEDEF_(0x800C0002)
 INET_E_ERROR_LAST	equ INET_E_REDIRECT_TO_DIR
 ifndef _LPPERSISTMONIKER_DEFINED
-_LPPERSISTMONIKER_DEFINED equ 1
+define _LPPERSISTMONIKER_DEFINED
 
 ifndef __IPersistMoniker_INTERFACE_DEFINED__
-__IPersistMoniker_INTERFACE_DEFINED__ equ 1
+define __IPersistMoniker_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistMoniker, "79eac9c9-baf9-11ce-8c82-00aa004ba90b")
 
@@ -383,8 +283,7 @@ DEFINE_IIDX(IPersistMoniker, "79eac9c9-baf9-11ce-8c82-00aa004ba90b")
     Save		proc :ptr, :LPBC, :BOOL
     SaveCompleted	proc :ptr, :LPBC
     GetCurMoniker	proc :ptr
-
-    .ends
+   .ends
 
 LPPERSISTMONIKER	typedef ptr IPersistMoniker
 
@@ -392,28 +291,27 @@ endif
 
 endif
 ifndef _LPBINDPROTOCOL_DEFINED
-_LPBINDPROTOCOL_DEFINED equ 1
+define _LPBINDPROTOCOL_DEFINED
 
 ifndef __IBindProtocol_INTERFACE_DEFINED__
-__IBindProtocol_INTERFACE_DEFINED__ equ 1
+define __IBindProtocol_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBindProtocol, "79eac9cd-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IBindProtocol : public IUnknown
 
     CreateBinding	proc :LPCWSTR, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPBINDPROTOCOL		typedef ptr IBindProtocol
 
 endif
 endif
 ifndef _LPBINDING_DEFINED
-_LPBINDING_DEFINED equ 1
+define _LPBINDING_DEFINED
 
 ifndef __IBinding_INTERFACE_DEFINED__
-__IBinding_INTERFACE_DEFINED__ equ 1
+define __IBinding_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBinding, "79eac9c0-baf9-11ce-8c82-00aa004ba90b")
 
@@ -425,32 +323,25 @@ DEFINE_IIDX(IBinding, "79eac9c0-baf9-11ce-8c82-00aa004ba90b")
     SetPriority		proc :LONG
     GetPriority		proc :ptr
     GetBindResult	proc :ptr, :ptr, :ptr, :DWORD
-
-    .ends
+   .ends
 
 LPBINDING		typedef ptr IBinding
 
 endif
 endif
 ifndef _LPBINDSTATUSCALLBACK_DEFINED
-_LPBINDSTATUSCALLBACK_DEFINED equ 1
+define _LPBINDSTATUSCALLBACK_DEFINED
 
 ifndef __IBindStatusCallback_INTERFACE_DEFINED__
-__IBindStatusCallback_INTERFACE_DEFINED__ equ 1
-
-;typedef enum __MIDL_IBindStatusCallback_0001
+define __IBindStatusCallback_INTERFACE_DEFINED__
 
 BINDVERB_GET		equ 0
 BINDVERB_POST		equ 0x1
 BINDVERB_PUT		equ 0x2
 BINDVERB_CUSTOM		equ 0x3
 
-;typedef enum __MIDL_IBindStatusCallback_0002
-
 BINDINFOF_URLENCODESTGMEDDATA equ 0x1
 BINDINFOF_URLENCODEDEXTRAINFO equ 0x2
-
-;typedef enum __MIDL_IBindStatusCallback_0003
 
 BINDF_ASYNCHRONOUS	equ 0x1
 BINDF_ASYNCSTORAGE	equ 0x2
@@ -521,15 +412,11 @@ tymed			dd ?
 RemFORMATETC		ENDS
 LPREMFORMATETC		typedef ptr RemFORMATETC
 
-;typedef enum __MIDL_IBindStatusCallback_0004
-
 BSCF_FIRSTDATANOTIFICATION equ 0x1
 BSCF_INTERMEDIATEDATANOTIFICATION equ 0x2
 BSCF_LASTDATANOTIFICATION equ 0x4
 BSCF_DATAFULLYAVAILABLE equ 0x8
 BSCF_AVAILABLEDATASIZEUNKNOWN equ 0x10
-
-;typedef enum tagBINDSTATUS
 
 BINDSTATUS_FINDINGRESOURCE equ 1
 BINDSTATUS_CONNECTING	equ BINDSTATUS_FINDINGRESOURCE + 1
@@ -569,36 +456,34 @@ DEFINE_IIDX(IBindStatusCallback, "79eac9c1-baf9-11ce-8c82-00aa004ba90b")
     GetBindInfo		proc :ptr, :ptr
     OnDataAvailable	proc :DWORD, :DWORD, :ptr, :ptr
     OnObjectAvailable	proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 LPBINDSTATUSCALLBACK	typedef ptr IBindStatusCallback
 
 endif
 endif
 ifndef _LPAUTHENTICATION_DEFINED
-_LPAUTHENTICATION_DEFINED equ 1
+define _LPAUTHENTICATION_DEFINED
 
 ifndef __IAuthenticate_INTERFACE_DEFINED__
-__IAuthenticate_INTERFACE_DEFINED__ equ 1
+define __IAuthenticate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAuthenticate, "79eac9d0-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IAuthenticate : public IUnknown
 
     Authenticate	proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPAUTHENTICATION	typedef ptr IAuthenticate
 
 endif
 endif
 ifndef _LPHTTPNEGOTIATE_DEFINED
-_LPHTTPNEGOTIATE_DEFINED equ 1
+define _LPHTTPNEGOTIATE_DEFINED
 
 ifndef __IHttpNegotiate_INTERFACE_DEFINED__
-__IHttpNegotiate_INTERFACE_DEFINED__ equ 1
+define __IHttpNegotiate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IHttpNegotiate, "79eac9d2-baf9-11ce-8c82-00aa004ba90b")
 
@@ -606,26 +491,24 @@ DEFINE_IIDX(IHttpNegotiate, "79eac9d2-baf9-11ce-8c82-00aa004ba90b")
 
     BeginningTransaction proc :LPCWSTR, :LPCWSTR, :DWORD, :ptr
     OnResponse		proc :DWORD, :LPCWSTR, :LPCWSTR, :ptr
-
-    .ends
+   .ends
 
 LPHTTPNEGOTIATE		typedef ptr IHttpNegotiate
 
 endif
 endif
 ifndef _LPWINDOWFORBINDINGUI_DEFINED
-_LPWINDOWFORBINDINGUI_DEFINED equ 1
+define _LPWINDOWFORBINDINGUI_DEFINED
 
 ifndef __IWindowForBindingUI_INTERFACE_DEFINED__
-__IWindowForBindingUI_INTERFACE_DEFINED__ equ 1
+define __IWindowForBindingUI_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWindowForBindingUI, "79eac9d5-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWindowForBindingUI : public IUnknown
 
     GetWindow		proc :REFGUID, :ptr
-
-    .ends
+   .ends
 
 LPWINDOWFORBINDINGUI	typedef ptr IWindowForBindingUI
 
@@ -633,12 +516,10 @@ endif
 endif
 
 ifndef _LPCODEINSTALL_DEFINED
-_LPCODEINSTALL_DEFINED equ 1
+define _LPCODEINSTALL_DEFINED
 
 ifndef __ICodeInstall_INTERFACE_DEFINED__
-__ICodeInstall_INTERFACE_DEFINED__ equ 1
-
-;typedef enum __MIDL_ICodeInstall_0001
+define __ICodeInstall_INTERFACE_DEFINED__
 
 CIP_DISK_FULL		equ 0
 CIP_ACCESS_DENIED	equ CIP_DISK_FULL + 1
@@ -656,7 +537,7 @@ DEFINE_IIDX(ICodeInstall, "79eac9d1-baf9-11ce-8c82-00aa004ba90b")
 
     OnCodeInstallProblem proc :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
 
-    .ends
+   .ends
 
 LPCODEINSTALL		typedef ptr ICodeInstall
 
@@ -664,7 +545,7 @@ endif
 endif
 
 ifndef __IUri_INTERFACE_DEFINED__
-__IUri_INTERFACE_DEFINED__ equ 1
+define __IUri_INTERFACE_DEFINED__
 
 .enum Uri_PROPERTY {
     Uri_PROPERTY_ABSOLUTE_URI	= 0,
@@ -729,7 +610,7 @@ DEFINE_IIDX(IUri, "A39EE748-6A27-4817-A6F2-13914BEF5890")
     GetZone		proc :ptr DWORD
     GetProperties	proc :ptr LPWORD
     IsEqual		proc :ptr IUri, :ptr BOOL
-    .ends
+   .ends
 
 endif
 
@@ -813,19 +694,19 @@ Uri_ENCODING_RFC equ (Uri_ENCODING_USER_INFO_AND_PATH_IS_PERCENT_ENCODED_UTF8 or
 UriBuilder_USE_ORIGINAL_FLAGS equ 0x00000001
 
 ifndef __IUriContainer_INTERFACE_DEFINED__
-__IUriContainer_INTERFACE_DEFINED__ equ 1
+define __IUriContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUriContainer, "a158a630-ed6f-45fb-b987-f68676f57752")
 
 .comdef IUriContainer : public IUnknown
 
     GetIUri		proc :ptr ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IUriBuilder_INTERFACE_DEFINED__
-__IUriBuilder_INTERFACE_DEFINED__ equ 1
+define __IUriBuilder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUriBuilder, "4221B2E1-8955-46c0-BD5B-DE9897565DE7")
 
@@ -854,12 +735,12 @@ DEFINE_IIDX(IUriBuilder, "4221B2E1-8955-46c0-BD5B-DE9897565DE7")
     SetUserName		proc :LPCWSTR
     RemoveProperties	proc :DWORD
     HasBeenModified	proc :ptr BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IUriBuilderFactory_INTERFACE_DEFINED__
-__IUriBuilderFactory_INTERFACE_DEFINED__ equ 1
+define __IUriBuilderFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUriBuilderFactory, "E982CE48-0B96-440c-BC37-0C869B27A29E")
 
@@ -867,8 +748,7 @@ DEFINE_IIDX(IUriBuilderFactory, "E982CE48-0B96-440c-BC37-0C869B27A29E")
 
     CreateIUriBuilder	proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
     CreateInitializedIUriBuilder proc :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
-
-    .ends
+   .ends
 
 endif
 
@@ -880,18 +760,17 @@ CreateIUriBuilder proto WINAPI \
 
 
 ifndef _LPWININETINFO_DEFINED
-_LPWININETINFO_DEFINED equ 1
+define _LPWININETINFO_DEFINED
 
 ifndef __IWinInetInfo_INTERFACE_DEFINED__
-__IWinInetInfo_INTERFACE_DEFINED__ equ 1
+define __IWinInetInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWinInetInfo, "79eac9d6-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWinInetInfo : public IUnknown
 
     QueryOption		proc :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPWININETINFO		typedef ptr IWinInetInfo
 
@@ -899,36 +778,34 @@ endif
 endif
 WININETINFO_OPTION_LOCK_HANDLE equ 65534
 ifndef _LPHTTPSECURITY_DEFINED
-_LPHTTPSECURITY_DEFINED equ 1
+define _LPHTTPSECURITY_DEFINED
 
 ifndef __IHttpSecurity_INTERFACE_DEFINED__
-__IHttpSecurity_INTERFACE_DEFINED__ equ 1
+define __IHttpSecurity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IHttpSecurity, "79eac9d7-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IHttpSecurity : public IWindowForBindingUI
 
     OnSecurityProblem	proc :DWORD
-
-    .ends
+   .ends
 
 LPHTTPSECURITY		typedef ptr IHttpSecurity
 
 endif
 endif
 ifndef _LPWININETHTTPINFO_DEFINED
-_LPWININETHTTPINFO_DEFINED equ 1
+define _LPWININETHTTPINFO_DEFINED
 
 ifndef __IWinInetHttpInfo_INTERFACE_DEFINED__
-__IWinInetHttpInfo_INTERFACE_DEFINED__ equ 1
+define __IWinInetHttpInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWinInetHttpInfo, "79eac9d8-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWinInetHttpInfo : public IWinInetInfo
 
     QueryInfo		proc :DWORD, :PVOID, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPWININETHTTPINFO	typedef ptr IWinInetHttpInfo
 
@@ -937,11 +814,11 @@ endif
 SID_IBindHost		equ <IID_IBindHost>
 SID_SBindHost		equ <IID_IBindHost>
 ifndef _LPBINDHOST_DEFINED
-_LPBINDHOST_DEFINED equ 1
+define _LPBINDHOST_DEFINED
 externdef		SID_BindHost:GUID
 
 ifndef __IBindHost_INTERFACE_DEFINED__
-__IBindHost_INTERFACE_DEFINED__ equ 1
+define __IBindHost_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBindHost, "fc4801a1-2ba9-11cf-a229-00aa003d7352")
 
@@ -950,8 +827,7 @@ DEFINE_IIDX(IBindHost, "fc4801a1-2ba9-11cf-a229-00aa003d7352")
     CreateMoniker	proc :LPOLESTR,:ptr, :ptr, :DWORD
     MonikerBindToStorage proc :ptr, :ptr, :ptr, :REFIID, :ptr
     MonikerBindToObject proc :ptr, :ptr, :ptr, :REFIID, :ptr
-
-    .ends
+   .ends
 
 LPBINDHOST		typedef ptr IBindHost
 
@@ -1083,33 +959,31 @@ HlinkNavigateMoniker proto WINAPI \
 	     pmkTarget: ptr IMoniker
 
 
-ifndef	 _URLMON_NO_ASYNC_PLUGABLE_PROTOCOLS_
+ifndef _URLMON_NO_ASYNC_PLUGABLE_PROTOCOLS_
 
 ifndef _LPIINTERNET
-_LPIINTERNET equ 1
+define _LPIINTERNET
 
 ifndef __IInternet_INTERFACE_DEFINED__
-__IInternet_INTERFACE_DEFINED__ equ 1
+define __IInternet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternet, "79eac9e0-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternet : public IUnknown
 
-    .ends
+   .ends
 
 LPIINTERNET		typedef ptr IInternet
 endif
 endif
 
 ifndef _LPIINTERNETBINDINFO
-_LPIINTERNETBINDINFO equ 1
+define _LPIINTERNETBINDINFO
 
 ifndef __IInternetBindInfo_INTERFACE_DEFINED__
-__IInternetBindInfo_INTERFACE_DEFINED__ equ 1
+define __IInternetBindInfo_INTERFACE_DEFINED__
 
 LPIINTERNETBINDINFO	typedef ptr IInternetBindInfo
-
-;typedef enum tagBINDSTRING
 
 BINDSTRING_HEADERS	equ 1
 BINDSTRING_ACCEPT_MIMES equ BINDSTRING_HEADERS + 1
@@ -1132,16 +1006,15 @@ DEFINE_IIDX(IInternetBindInfo, "79eac9e1-baf9-11ce-8c82-00aa004ba90b")
 
     GetBindInfo		proc :ptr, :ptr
     GetBindString	proc :DWORD, :ptr, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLROOT_DEFINED
-_LPIINTERNETPROTOCOLROOT_DEFINED equ 1
+define _LPIINTERNETPROTOCOLROOT_DEFINED
 
 ifndef __IInternetProtocolRoot_INTERFACE_DEFINED__
-__IInternetProtocolRoot_INTERFACE_DEFINED__ equ 1
+define __IInternetProtocolRoot_INTERFACE_DEFINED__
 
 LPIINTERNETPROTOCOLROOT typedef ptr IInternetProtocolRoot
 
@@ -1176,16 +1049,15 @@ DEFINE_IIDX(IInternetProtocolRoot, "79eac9e3-baf9-11ce-8c82-00aa004ba90b")
     Terminate		proc :DWORD
     Suspend		proc
     Resume		proc
-
-    .ends
+   .ends
 
 endif
 endif
 ifndef _LPIINTERNETPROTOCOL_DEFINED
-_LPIINTERNETPROTOCOL_DEFINED equ 1
+define _LPIINTERNETPROTOCOL_DEFINED
 
 ifndef __IInternetProtocol_INTERFACE_DEFINED__
-__IInternetProtocol_INTERFACE_DEFINED__ equ 1
+define __IInternetProtocol_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetProtocol, "79eac9e4-baf9-11ce-8c82-00aa004ba90b")
 
@@ -1195,18 +1067,17 @@ DEFINE_IIDX(IInternetProtocol, "79eac9e4-baf9-11ce-8c82-00aa004ba90b")
     Seek		proc :LARGE_INTEGER, :DWORD, :ptr
     LockRequest		proc :DWORD
     UnlockRequest	proc
-
-    .ends
+   .ends
 
 LPIINTERNETPROTOCOL	typedef ptr IInternetProtocol
 
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLSINK_DEFINED
-_LPIINTERNETPROTOCOLSINK_DEFINED equ 1
+define _LPIINTERNETPROTOCOLSINK_DEFINED
 
 ifndef __IInternetProtocolSink_INTERFACE_DEFINED__
-__IInternetProtocolSink_INTERFACE_DEFINED__ equ 1
+define __IInternetProtocolSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetProtocolSink, "79eac9e5-baf9-11ce-8c82-00aa004ba90b")
 
@@ -1216,20 +1087,17 @@ DEFINE_IIDX(IInternetProtocolSink, "79eac9e5-baf9-11ce-8c82-00aa004ba90b")
     ReportProgress	proc :DWORD, :LPWSTR
     ReportData		proc :DWORD, :DWORD, :DWORD
     ReportResult	proc :HRESULT, :DWORD, :LPWSTR
-
-    .ends
+   .ends
 
 LPIINTERNETPROTOCOLSINK typedef ptr IInternetProtocolSink
 
 endif
 endif
 ifndef _LPIINTERNETSESSION_DEFINED
-_LPIINTERNETSESSION_DEFINED equ 1
+define _LPIINTERNETSESSION_DEFINED
 
 ifndef __IInternetSession_INTERFACE_DEFINED__
-__IInternetSession_INTERFACE_DEFINED__ equ 1
-
-;typedef enum _tagOIBDG_FLAGS
+define __IInternetSession_INTERFACE_DEFINED__
 
 OIBDG_APARTMENTTHREADED equ 0x100
 
@@ -1244,18 +1112,17 @@ DEFINE_IIDX(IInternetSession, "79eac9e7-baf9-11ce-8c82-00aa004ba90b")
     CreateBinding	proc :LPBC, :LPWSTR, :ptr, :ptr, :ptr, :DWORD
     SetSessionOption	proc :DWORD, :PVOID, :DWORD, :DWORD
     GetSessionOption	proc :DWORD, :PVOID, :ptr, :DWORD
-
-    .ends
+   .ends
 
 LPIINTERNETSESSION	typedef ptr IInternetSession
 
 endif
 endif
 ifndef _LPIINTERNETTHREADSWITCH_DEFINED
-_LPIINTERNETTHREADSWITCH_DEFINED equ 1
+define _LPIINTERNETTHREADSWITCH_DEFINED
 
 ifndef __IInternetThreadSwitch_INTERFACE_DEFINED__
-__IInternetThreadSwitch_INTERFACE_DEFINED__ equ 1
+define __IInternetThreadSwitch_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetThreadSwitch, "79eac9e8-baf9-11ce-8c82-00aa004ba90b")
 
@@ -1263,18 +1130,17 @@ DEFINE_IIDX(IInternetThreadSwitch, "79eac9e8-baf9-11ce-8c82-00aa004ba90b")
 
     Prepare		proc
     Continue		proc :ptr, :PRPC_MESSAGE, :ptr
-
-    .ends
+   .ends
 
 LPIINTERNETTHREADSWITCH typedef ptr IInternetThreadSwitch
 
 endif
 endif
 ifndef _LPIINTERNETPRIORITY_DEFINED
-_LPIINTERNETPRIORITY_DEFINED equ 1
+define _LPIINTERNETPRIORITY_DEFINED
 
 ifndef __IInternetPriority_INTERFACE_DEFINED__
-__IInternetPriority_INTERFACE_DEFINED__ equ 1
+define __IInternetPriority_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetPriority, "79eac9eb-baf9-11ce-8c82-00aa004ba90b")
 
@@ -1282,18 +1148,17 @@ DEFINE_IIDX(IInternetPriority, "79eac9eb-baf9-11ce-8c82-00aa004ba90b")
 
     SetPriority		proc :LONG
     GetPriority		proc :ptr
-
-    .ends
+   .ends
 
 LPIINTERNETPRIORITY	typedef ptr IInternetPriority
 
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLINFO_DEFINED
-_LPIINTERNETPROTOCOLINFO_DEFINED equ 1
+define _LPIINTERNETPROTOCOLINFO_DEFINED
 
 ifndef __IInternetProtocolInfo_INTERFACE_DEFINED__
-__IInternetProtocolInfo_INTERFACE_DEFINED__ equ 1
+define __IInternetProtocolInfo_INTERFACE_DEFINED__
 
 LPIINTERNETPROTOCOLINFO typedef ptr IInternetProtocolInfo
 
@@ -1342,8 +1207,7 @@ DEFINE_IIDX(IInternetProtocolInfo, "79eac9ec-baf9-11ce-8c82-00aa004ba90b")
     CombineUrl		proc :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
     CompareUrl		proc :LPWSTR, :LPWSTR, :DWORD
     QueryInfo		proc :LPWSTR, :QUERYOPTION, :DWORD, :PVOID, :DWORD, :ptr, :DWORD
-
-    .ends
+   .ends
 
 endif
 endif
@@ -1480,10 +1344,10 @@ SID_SInternetSecurityManager equ IID_IInternetSecurityManager
 SID_SInternetHostSecurityManager equ IID_IInternetHostSecurityManager
 
 ifndef _LPINTERNETSECURITYMGRSITE_DEFINED
-_LPINTERNETSECURITYMGRSITE_DEFINED equ 1
+define _LPINTERNETSECURITYMGRSITE_DEFINED
 
 ifndef __IInternetSecurityMgrSite_INTERFACE_DEFINED__
-__IInternetSecurityMgrSite_INTERFACE_DEFINED__ equ 1
+define __IInternetSecurityMgrSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetSecurityMgrSite, "79eac9ed-baf9-11ce-8c82-00aa004ba90b")
 
@@ -1491,19 +1355,17 @@ DEFINE_IIDX(IInternetSecurityMgrSite, "79eac9ed-baf9-11ce-8c82-00aa004ba90b")
 
     GetWindow		proc :ptr
     EnableModeless	proc :BOOL
-
-    .ends
+   .ends
 
 endif
 endif
 ifndef _LPINTERNETSECURITYMANANGER_DEFINED
-_LPINTERNETSECURITYMANANGER_DEFINED equ 1
+define _LPINTERNETSECURITYMANANGER_DEFINED
 
 ifndef __IInternetSecurityManager_INTERFACE_DEFINED__
-__IInternetSecurityManager_INTERFACE_DEFINED__ equ 1
+define __IInternetSecurityManager_INTERFACE_DEFINED__
 
 MAX_SIZE_SECURITY_ID	equ 512
-;typedef enum __MIDL_IInternetSecurityManager_0001
 
 PUAF_DEFAULT		equ 0
 PUAF_NOUI		equ 0x1
@@ -1511,8 +1373,6 @@ PUAF_ISFILE		equ 0x2
 PUAF_WARN_IF_DENIED	equ 0x4
 PUAF_FORCEUI_FOREGROUND equ 0x8
 PUAF_CHECK_TIFS		equ 0x10
-
-;typedef enum __MIDL_IInternetSecurityManager_0002
 
 SZM_CREATE		equ 0
 SZM_DELETE		equ 0x1
@@ -1529,16 +1389,15 @@ DEFINE_IIDX(IInternetSecurityManager, "79eac9ee-baf9-11ce-8c82-00aa004ba90b")
     QueryCustomPolicy	proc :LPWSTR, :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
     SetZoneMapping	proc :DWORD, :LPWSTR, :DWORD
     GetZoneMappings	proc :DWORD, :ptr, :DWORD
-
-    .ends
+   .ends
 
 endif
 endif
 ifndef _LPINTERNETHOSTSECURITYMANANGER_DEFINED
-_LPINTERNETHOSTSECURITYMANANGER_DEFINED equ 1
+define _LPINTERNETHOSTSECURITYMANANGER_DEFINED
 
 ifndef __IInternetHostSecurityManager_INTERFACE_DEFINED__
-__IInternetHostSecurityManager_INTERFACE_DEFINED__ equ 1
+define __IInternetHostSecurityManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternetHostSecurityManager, "3af280b6-cb3f-11d0-891e-00c04fb6bfc4")
 
@@ -1547,8 +1406,7 @@ DEFINE_IIDX(IInternetHostSecurityManager, "3af280b6-cb3f-11d0-891e-00c04fb6bfc4"
     GetSecurityId	proc :ptr, :ptr, :DWORD
     ProcessUrlAction	proc :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :DWORD
     QueryCustomPolicy	proc :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
-
-    .ends
+   .ends
 
 endif
 endif
@@ -1660,10 +1518,10 @@ SetUrlPolicyPermissions macro d,d2
 
 
 ifndef _LPINTERNETZONEMANAGER_DEFINED
-_LPINTERNETZONEMANAGER_DEFINED equ 1
+define _LPINTERNETZONEMANAGER_DEFINED
 
 ifndef __IInternetZoneManager_INTERFACE_DEFINED__
-__IInternetZoneManager_INTERFACE_DEFINED__ equ 1
+define __IInternetZoneManager_INTERFACE_DEFINED__
 
 ;typedef enum tagURLZONE
 
@@ -1734,8 +1592,7 @@ DEFINE_IIDX(IInternetZoneManager, "79eac9ef-baf9-11ce-8c82-00aa004ba90b")
     GetZoneAt		proc :DWORD, :DWORD, :ptr
     DestroyZoneEnumerator proc :DWORD
     CopyTemplatePoliciesToZone proc :DWORD, :DWORD, :DWORD
-
-    .ends
+   .ends
 
 LPURLZONEMANAGER	typedef ptr IInternetZoneManager
 
@@ -1743,7 +1600,7 @@ endif
 endif
 externdef CLSID_SoftDistExt:IID
 ifndef _LPSOFTDISTEXT_DEFINED
-_LPSOFTDISTEXT_DEFINED equ 1
+define _LPSOFTDISTEXT_DEFINED
 
 SOFTDIST_FLAG_USAGE_EMAIL equ 0x00000001
 SOFTDIST_FLAG_USAGE_PRECACHE equ 0x00000002
@@ -1784,7 +1641,7 @@ SOFTDISTINFO		ENDS
 LPSOFTDISTINFO		typedef ptr SOFTDISTINFO
 
 ifndef __ISoftDistExt_INTERFACE_DEFINED__
-__ISoftDistExt_INTERFACE_DEFINED__ equ 1
+define __ISoftDistExt_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISoftDistExt, "B15B8DC1-C7E1-11d0-8680-00AA00BDCB71")
 
@@ -1794,8 +1651,7 @@ DEFINE_IIDX(ISoftDistExt, "B15B8DC1-C7E1-11d0-8680-00AA00BDCB71")
     GetFirstCodeBase	proc :ptr, :ptr
     GetNextCodeBase	proc :ptr, :ptr
     AsyncInstallDistributionUnit proc :ptr, :LPVOID, :DWORD, :LPCODEBASEHOLD
-
-    .ends
+   .ends
 
 endif
 
@@ -1813,10 +1669,10 @@ SetSoftwareUpdateAdvertisementState proto WINAPI \
 
 endif
 ifndef _LPDATAFILTER_DEFINED
-_LPDATAFILTER_DEFINED equ 1
+define _LPDATAFILTER_DEFINED
 
 ifndef __IDataFilter_INTERFACE_DEFINED__
-__IDataFilter_INTERFACE_DEFINED__ equ 1
+define __IDataFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataFilter, "69d14c80-c18e-11d0-a9ce-006097942311")
 
@@ -1825,8 +1681,7 @@ DEFINE_IIDX(IDataFilter, "69d14c80-c18e-11d0-a9ce-006097942311")
     DoEncode		proc :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
     DoDecode		proc :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
     SetEncodingLevel	proc :DWORD
-
-    .ends
+   .ends
 
 LPDATAFILTER		typedef ptr IDataFilter
 
@@ -1834,17 +1689,17 @@ endif
 endif
 
 ifndef _LPENCODINGFILTERFACTORY_DEFINED
-_LPENCODINGFILTERFACTORY_DEFINED equ 1
+define _LPENCODINGFILTERFACTORY_DEFINED
 PROTOCOLFILTERDATA	STRUC
 cbSize			dd ?
-pProtocolSink		PVOID ?;LPIInternetProtocolSink ?
-pProtocol		PVOID ?;LPIInternetProtocol ?
+pProtocolSink		ptr IInternetProtocolSink ?
+pProtocol		ptr IInternetProtocol ?
 pUnk			LPUNKNOWN ?
 dwFilterFlags		dd ?
 PROTOCOLFILTERDATA	ENDS
 
 ifndef __IEncodingFilterFactory_INTERFACE_DEFINED__
-__IEncodingFilterFactory_INTERFACE_DEFINED__ equ 1
+define __IEncodingFilterFactory_INTERFACE_DEFINED__
 
 DATAINFO		STRUC
 ulTotalSize		dd ?
@@ -1859,15 +1714,14 @@ DEFINE_IIDX(IEncodingFilterFactory, "70bdde00-c18e-11d0-a9ce-006097942311")
 
     FindBestFilter	proc :LPWSTR, :LPWSTR, :DATAINFO, :ptr
     GetDefaultFilter	proc :LPWSTR, :LPWSTR, :ptr
-
-    .ends
+   .ends
 
 LPENCODINGFILTERFACTORY typedef ptr IEncodingFilterFactory
 
 endif
 endif
 ifndef _HITLOGGING_DEFINED
-_HITLOGGING_DEFINED equ 1
+define _HITLOGGING_DEFINED
 ;BOOL
 IsLoggingEnabledA proto WINAPI \
 		pszUrl: LPCTSTR
@@ -1892,5 +1746,4 @@ WriteHitLogging proto WINAPI \
 	 lpLogginginfo: LPHIT_LOGGING_INFO
 
 endif
-
 endif

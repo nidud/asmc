@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,44 +18,7 @@ include ole2.inc
 endif
 
 ifndef __d3d12video_h__
-__d3d12video_h__ equ <>
-
-ifndef __ID3D12VideoDecoderHeap_FWD_DEFINED__
-__ID3D12VideoDecoderHeap_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoDevice_FWD_DEFINED__
-__ID3D12VideoDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoDecoder_FWD_DEFINED__
-__ID3D12VideoDecoder_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoProcessor_FWD_DEFINED__
-__ID3D12VideoProcessor_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoDecodeCommandList_FWD_DEFINED__
-__ID3D12VideoDecodeCommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoProcessCommandList_FWD_DEFINED__
-__ID3D12VideoProcessCommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoDecodeCommandList1_FWD_DEFINED__
-__ID3D12VideoDecodeCommandList1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoProcessCommandList1_FWD_DEFINED__
-__ID3D12VideoProcessCommandList1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoMotionEstimator_FWD_DEFINED__
-__ID3D12VideoMotionEstimator_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoMotionVectorHeap_FWD_DEFINED__
-__ID3D12VideoMotionVectorHeap_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoDevice1_FWD_DEFINED__
-__ID3D12VideoDevice1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VideoEncodeCommandList_FWD_DEFINED__
-__ID3D12VideoEncodeCommandList_FWD_DEFINED__ equ 1
-endif
+define __d3d12video_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -222,17 +185,17 @@ EnableStereo		BOOL ?
 D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC ENDS
 
 ifndef __ID3D12VideoDecoderHeap_INTERFACE_DEFINED__
-__ID3D12VideoDecoderHeap_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDecoderHeap_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDecoderHeap : public ID3D12Pageable
 
     GetDesc		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12VideoDevice_INTERFACE_DEFINED__
-__ID3D12VideoDevice_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDevice_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDevice : public IUnknown
 
@@ -240,17 +203,17 @@ __ID3D12VideoDevice_INTERFACE_DEFINED__ equ 1
     CreateVideoDecoder	proc :ptr, :REFIID, :ptr
     CreateVideoDecoderHeap proc :ptr, :REFIID, :ptr
     CreateVideoProcessor proc :UINT, :ptr, :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12VideoDecoder_INTERFACE_DEFINED__
-__ID3D12VideoDecoder_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDecoder_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDecoder : public ID3D12Pageable
 
     GetDesc		proc
-    .ends
+   .ends
 
 endif
 
@@ -457,7 +420,7 @@ ConversionArguments	D3D12_VIDEO_DECODE_CONVERSION_ARGUMENTS <>
 D3D12_VIDEO_DECODE_OUTPUT_STREAM_ARGUMENTS ENDS
 
 ifndef __ID3D12VideoProcessor_INTERFACE_DEFINED__
-__ID3D12VideoProcessor_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoProcessor_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoProcessor : public ID3D12Pageable
 
@@ -465,7 +428,7 @@ __ID3D12VideoProcessor_INTERFACE_DEFINED__ equ 1
     GetNumInputStreamDescs proc
     GetInputStreamDescs proc :UINT, :ptr
     GetOutputStreamDesc proc
-    .ends
+   .ends
 
 endif
 
@@ -603,7 +566,7 @@ TargetRectangle		D3D12_RECT <>
 D3D12_VIDEO_PROCESS_OUTPUT_STREAM_ARGUMENTS ENDS
 
 ifndef __ID3D12VideoDecodeCommandList_INTERFACE_DEFINED__
-__ID3D12VideoDecodeCommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDecodeCommandList_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDecodeCommandList : public ID3D12CommandList
 
@@ -621,13 +584,13 @@ __ID3D12VideoDecodeCommandList_INTERFACE_DEFINED__ equ 1
     EndEvent		proc
     DecodeFrame		proc :ptr, :ptr, :ptr
     WriteBufferImmediate proc :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ID3D12VideoProcessCommandList_INTERFACE_DEFINED__
-__ID3D12VideoProcessCommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoProcessCommandList_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoProcessCommandList : public ID3D12CommandList
 
@@ -645,7 +608,7 @@ __ID3D12VideoProcessCommandList_INTERFACE_DEFINED__ equ 1
     EndEvent		proc
     ProcessFrames	proc :ptr, :ptr, :UINT, :ptr
     WriteBufferImmediate proc :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -672,12 +635,12 @@ Histograms		D3D12_VIDEO_DECODE_OUTPUT_HISTOGRAM 4 dup(<>)
 D3D12_VIDEO_DECODE_OUTPUT_STREAM_ARGUMENTS1 ENDS
 
 ifndef __ID3D12VideoDecodeCommandList1_INTERFACE_DEFINED__
-__ID3D12VideoDecodeCommandList1_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDecodeCommandList1_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDecodeCommandList1 : public ID3D12VideoDecodeCommandList
 
     DecodeFrame1	proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -693,12 +656,12 @@ FieldType		D3D12_VIDEO_FIELD_TYPE ?
 D3D12_VIDEO_PROCESS_INPUT_STREAM_ARGUMENTS1 ENDS
 
 ifndef __ID3D12VideoProcessCommandList1_INTERFACE_DEFINED__
-__ID3D12VideoProcessCommandList1_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoProcessCommandList1_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoProcessCommandList1 : public ID3D12VideoProcessCommandList
 
     ProcessFrames1	proc :ptr, :ptr, :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -759,13 +722,13 @@ SizeRange		D3D12_VIDEO_SIZE_RANGE <>
 D3D12_VIDEO_MOTION_ESTIMATOR_DESC ENDS
 
 ifndef __ID3D12VideoMotionEstimator_INTERFACE_DEFINED__
-__ID3D12VideoMotionEstimator_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoMotionEstimator_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoMotionEstimator : public ID3D12Pageable
 
     GetDesc		proc
     GetProtectedResourceSession proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -778,24 +741,24 @@ SizeRange		D3D12_VIDEO_SIZE_RANGE <>
 D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC ENDS
 
 ifndef __ID3D12VideoMotionVectorHeap_INTERFACE_DEFINED__
-__ID3D12VideoMotionVectorHeap_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoMotionVectorHeap_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoMotionVectorHeap : public ID3D12Pageable
 
     GetDesc		proc
     GetProtectedResourceSession proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12VideoDevice1_INTERFACE_DEFINED__
-__ID3D12VideoDevice1_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoDevice1_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoDevice1 : public ID3D12VideoDevice
 
     CreateVideoMotionEstimator proc :ptr, :ptr, :REFIID, :ptr
     CreateVideoMotionVectorHeap proc :ptr, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -831,7 +794,7 @@ D3D12_RESOLVE_VIDEO_MOTION_VECTOR_HEAP_INPUT ENDS
 
 
 ifndef __ID3D12VideoEncodeCommandList_INTERFACE_DEFINED__
-__ID3D12VideoEncodeCommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12VideoEncodeCommandList_INTERFACE_DEFINED__
 
 .comdef ID3D12VideoEncodeCommandList : public ID3D12CommandList
 
@@ -851,7 +814,7 @@ __ID3D12VideoEncodeCommandList_INTERFACE_DEFINED__ equ 1
     ResolveMotionVectorHeap proc :ptr, :ptr
     WriteBufferImmediate proc :UINT, :ptr
     SetProtectedResourceSession proc :ptr
-    .ends
+   .ends
 
 endif
 

@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,17 +18,13 @@ include ole2.inc
 endif
 
 ifndef __dcompanimation_h__
-__dcompanimation_h__ equ <>
-
-ifndef __IDCompositionAnimation_FWD_DEFINED__
-__IDCompositionAnimation_FWD_DEFINED__ equ 1
-endif
+define __dcompanimation_h__
 
 include wtypes.inc
 include unknwn.inc
 
 ifndef __IDCompositionAnimation_INTERFACE_DEFINED__
-__IDCompositionAnimation_INTERFACE_DEFINED__ equ 1
+define __IDCompositionAnimation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDCompositionAnimation, "CBFD91D9-51B2-45e4-B3DE-D19CCFB863C5")
 

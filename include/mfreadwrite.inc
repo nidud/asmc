@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,32 +18,7 @@ include ole2.inc
 endif
 
 ifndef __mfreadwrite_h__
-__mfreadwrite_h__ equ <>
-
-ifndef __IMFReadWriteClassFactory_FWD_DEFINED__
-__IMFReadWriteClassFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSourceReader_FWD_DEFINED__
-__IMFSourceReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSourceReaderEx_FWD_DEFINED__
-__IMFSourceReaderEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSourceReaderCallback_FWD_DEFINED__
-__IMFSourceReaderCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSinkWriter_FWD_DEFINED__
-__IMFSinkWriter_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSinkWriterEx_FWD_DEFINED__
-__IMFSinkWriterEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSinkWriterEncoderConfig_FWD_DEFINED__
-__IMFSinkWriterEncoderConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSinkWriterCallback_FWD_DEFINED__
-__IMFSinkWriterCallback_FWD_DEFINED__ equ 1
-endif
+define __mfreadwrite_h__
 
 include mfobjects.inc
 include MFTransform.inc
@@ -51,6 +26,7 @@ include MFTransform.inc
 .pragma comment(lib, mfreadwrite)
 
 include winapifamily.inc
+
 if (WINVER GE _WIN32_WINNT_WIN7)
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
@@ -58,7 +34,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 DEFINE_GUID(CLSID_MFReadWriteClassFactory, 0x48e2ed0f, 0x98c2, 0x4a37, 0xbe, 0xd5, 0x16, 0x63, 0x12, 0xdd, 0xd8, 0x3f)
 
 ifndef __IMFReadWriteClassFactory_INTERFACE_DEFINED__
-__IMFReadWriteClassFactory_INTERFACE_DEFINED__ equ 1
+define __IMFReadWriteClassFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFReadWriteClassFactory, "E7FE2E12-661C-40DA-92F9-4F002AB67627")
 
@@ -66,7 +42,7 @@ DEFINE_IIDX(IMFReadWriteClassFactory, "E7FE2E12-661C-40DA-92F9-4F002AB67627")
 
     CreateInstanceFromURL proc :REFCLSID, :LPCWSTR, :ptr, :REFIID, :ptr
     CreateInstanceFromObject proc :REFCLSID, :ptr, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -130,7 +106,7 @@ if (WINVER GE _WIN32_WINNT_WIN8)
 endif
 
 ifndef __IMFSourceReader_INTERFACE_DEFINED__
-__IMFSourceReader_INTERFACE_DEFINED__ equ 1
+define __IMFSourceReader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSourceReader, "70ae66f2-c809-4e4f-8915-bdcb406b7993")
 
@@ -146,7 +122,7 @@ DEFINE_IIDX(IMFSourceReader, "70ae66f2-c809-4e4f-8915-bdcb406b7993")
     Flush		proc :DWORD
     GetServiceForStream proc :DWORD, :REFGUID, :REFIID, :ptr
     GetPresentationAttribute proc :DWORD, :REFGUID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -155,7 +131,7 @@ endif
 if (WINVER GE _WIN32_WINNT_WIN8)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 ifndef __IMFSourceReaderEx_INTERFACE_DEFINED__
-__IMFSourceReaderEx_INTERFACE_DEFINED__ equ 1
+define __IMFSourceReaderEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSourceReaderEx, "7b981cf0-560e-4116-9875-b099895f23d7")
 
@@ -165,7 +141,7 @@ DEFINE_IIDX(IMFSourceReaderEx, "7b981cf0-560e-4116-9875-b099895f23d7")
     AddTransformForStream proc :DWORD, :ptr
     RemoveAllTransformsForStream proc :DWORD
     GetTransformForStream proc :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 endif
@@ -173,7 +149,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 ifndef __IMFSourceReaderCallback_INTERFACE_DEFINED__
-__IMFSourceReaderCallback_INTERFACE_DEFINED__ equ 1
+define __IMFSourceReaderCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSourceReaderCallback, "deec8d99-fa1d-4d82-84c2-2c8969944867")
 
@@ -182,7 +158,7 @@ DEFINE_IIDX(IMFSourceReaderCallback, "deec8d99-fa1d-4d82-84c2-2c8969944867")
     OnReadSample	proc :HRESULT, :DWORD, :DWORD, :LONGLONG, :ptr
     OnFlush		proc :DWORD
     OnEvent		proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -235,7 +211,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 ifndef __IMFSinkWriter_INTERFACE_DEFINED__
-__IMFSinkWriter_INTERFACE_DEFINED__ equ 1
+define __IMFSinkWriter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSinkWriter, "3137f1cd-fe5e-4805-a5d8-fb477448cb3d")
 
@@ -252,26 +228,26 @@ DEFINE_IIDX(IMFSinkWriter, "3137f1cd-fe5e-4805-a5d8-fb477448cb3d")
     Finalize		proc
     GetServiceForStream proc :DWORD, :REFGUID, :REFIID, :ptr
     GetStatistics	proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 if (WINVER GE _WIN32_WINNT_WIN8)
 
 ifndef __IMFSinkWriterEx_INTERFACE_DEFINED__
-__IMFSinkWriterEx_INTERFACE_DEFINED__ equ 1
+define __IMFSinkWriterEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSinkWriterEx, "588d72ab-5Bc1-496a-8714-b70617141b25")
 
 .comdef IMFSinkWriterEx : public IMFSinkWriter
 
     GetTransformForStream proc :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFSinkWriterEncoderConfig_INTERFACE_DEFINED__
-__IMFSinkWriterEncoderConfig_INTERFACE_DEFINED__ equ 1
+define __IMFSinkWriterEncoderConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSinkWriterEncoderConfig, "17C3779E-3CDE-4EDE-8C60-3899F5F53AD6")
 
@@ -279,14 +255,14 @@ DEFINE_IIDX(IMFSinkWriterEncoderConfig, "17C3779E-3CDE-4EDE-8C60-3899F5F53AD6")
 
     SetTargetMediaType	proc :DWORD, :ptr, :ptr
     PlaceEncodingParameters proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 endif
 
 ifndef __IMFSinkWriterCallback_INTERFACE_DEFINED__
-__IMFSinkWriterCallback_INTERFACE_DEFINED__ equ 1
+define __IMFSinkWriterCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSinkWriterCallback, "666f76de-33d2-41b9-a458-29ed0a972c58")
 
@@ -294,18 +270,15 @@ DEFINE_IIDX(IMFSinkWriterCallback, "666f76de-33d2-41b9-a458-29ed0a972c58")
 
     OnFinalize		proc :HRESULT
     OnMarker		proc :DWORD, :LPVOID
-    .ends
+   .ends
 
 endif
-
 
 DEFINE_GUID( MF_READWRITE_DISABLE_CONVERTERS, 0x98d5b065, 0x1374, 0x4847, 0x8d, 0x5d, 0x31, 0x52, 0x0f, 0xee, 0x71, 0x56);
 DEFINE_GUID( MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, 0xa634a91c, 0x822b, 0x41b9, 0xa4, 0x94, 0x4d, 0xe4, 0x64, 0x36, 0x12, 0xb0);
 endif
-
 endif
 if (WINVER GE _WIN32_WINNT_WIN8)
-
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 DEFINE_GUID( MF_READWRITE_MMCSS_CLASS, 0x39384300, 0xd0eb, 0x40b1, 0x87, 0xa0, 0x33, 0x18, 0x87, 0x1b, 0x5a, 0x53);
 DEFINE_GUID( MF_READWRITE_MMCSS_PRIORITY, 0x43ad19ce, 0xf33f, 0x4ba9, 0xa5, 0x80, 0xe4, 0xcd, 0x12, 0xf2, 0xd1, 0x44);
@@ -313,9 +286,5 @@ DEFINE_GUID( MF_READWRITE_MMCSS_CLASS_AUDIO, 0x430847da, 0x0890, 0x4b0e, 0x93, 0
 DEFINE_GUID( MF_READWRITE_MMCSS_PRIORITY_AUDIO, 0x273db885, 0x2de2, 0x4db2, 0xa6, 0xa7, 0xfd, 0xb6, 0x6f, 0xb4, 0x0b, 0x61);
 DEFINE_GUID( MF_READWRITE_D3D_OPTIONAL, 0x216479d9, 0x3071, 0x42ca, 0xbb, 0x6c, 0x4c, 0x22, 0x10, 0x2e, 0x1d, 0x18);
 endif
-
 endif
-
 endif
-
-

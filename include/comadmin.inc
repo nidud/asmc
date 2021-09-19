@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,51 +18,18 @@ include ole2.inc
 endif
 
 ifndef __comadmin_h__
-__comadmin_h__ equ <>
-
-ifndef __ICOMAdminCatalog_FWD_DEFINED__
-__ICOMAdminCatalog_FWD_DEFINED__ equ 1
-endif
-ifndef __ICOMAdminCatalog2_FWD_DEFINED__
-__ICOMAdminCatalog2_FWD_DEFINED__ equ 1
-endif
-ifndef __ICatalogObject_FWD_DEFINED__
-__ICatalogObject_FWD_DEFINED__ equ 1
-endif
-ifndef __ICatalogCollection_FWD_DEFINED__
-__ICatalogCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __COMAdminCatalog_FWD_DEFINED__
-__COMAdminCatalog_FWD_DEFINED__ equ 1
-endif
-ifndef __COMAdminCatalogObject_FWD_DEFINED__
-__COMAdminCatalogObject_FWD_DEFINED__ equ 1
-endif
-ifndef __COMAdminCatalogCollection_FWD_DEFINED__
-__COMAdminCatalogCollection_FWD_DEFINED__ equ 1
-endif
+define __comadmin_h__
 
 include unknwn.inc
 include oaidl.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 include objbase.inc
-ifndef DECLSPEC_UUID
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-DECLSPEC_UUID macro x
-	exitm<__declspec(uuid(x))>
-	endm
-else
-DECLSPEC_UUID macro x
-	exitm<>
-	endm
-endif
-endif
 
 ifndef __ICOMAdminCatalog_INTERFACE_DEFINED__
-__ICOMAdminCatalog_INTERFACE_DEFINED__ equ 1
+define __ICOMAdminCatalog_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICOMAdminCatalog, "DD662187-DFC2-11d1-A2CF-00805FC79235")
 
@@ -94,7 +61,7 @@ DEFINE_IIDX(ICOMAdminCatalog, "DD662187-DFC2-11d1-A2CF-00805FC79235")
     InstallMultipleEventClasses proc :BSTR, :ptr SAFEARRAY, :ptr SAFEARRAY
     InstallEventClass	proc :BSTR, :BSTR, :BSTR, :BSTR
     GetEventClassesForIID proc :BSTR, :ptr SAFEARRAY, :ptr SAFEARRAY, :ptr SAFEARRAY
-    .ends
+   .ends
 
 endif
 
@@ -108,7 +75,7 @@ endif
     }
 
 ifndef __ICOMAdminCatalog2_INTERFACE_DEFINED__
-__ICOMAdminCatalog2_INTERFACE_DEFINED__ equ 1
+define __ICOMAdminCatalog2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICOMAdminCatalog2, "790C6E0B-9194-4cc9-9426-A48A63185696")
 
@@ -145,12 +112,12 @@ DEFINE_IIDX(ICOMAdminCatalog2, "790C6E0B-9194-4cc9-9426-A48A63185696")
     InstallPartition	proc :BSTR, :BSTR, :LONG, :BSTR, :BSTR, :BSTR
     QueryApplicationFile2 proc :BSTR, :ptr ptr IDispatch
     GetComponentVersionCount proc :BSTR, :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ICatalogObject_INTERFACE_DEFINED__
-__ICatalogObject_INTERFACE_DEFINED__ equ 1
+define __ICatalogObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICatalogObject, "6eb22871-8a19-11d0-81b6-00a0c9231c29")
 
@@ -163,12 +130,12 @@ DEFINE_IIDX(ICatalogObject, "6eb22871-8a19-11d0-81b6-00a0c9231c29")
     IsPropertyReadOnly	proc :BSTR, :ptr VARIANT_BOOL
     get_Valid		proc :ptr VARIANT_BOOL
     IsPropertyWriteOnly proc :BSTR, :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __ICatalogCollection_INTERFACE_DEFINED__
-__ICatalogCollection_INTERFACE_DEFINED__ equ 1
+define __ICatalogCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICatalogCollection, "6eb22872-8a19-11d0-81b6-00a0c9231c29")
 
@@ -190,12 +157,12 @@ DEFINE_IIDX(ICatalogCollection, "6eb22872-8a19-11d0-81b6-00a0c9231c29")
     get_DataStoreMinorVersion proc :ptr LONG
     PopulateByKey	proc :ptr SAFEARRAY
     PopulateByQuery	proc :BSTR, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __COMAdmin_LIBRARY_DEFINED__
-__COMAdmin_LIBRARY_DEFINED__ equ <>
+define __COMAdmin_LIBRARY_DEFINED__
 
 .enum COMAdminComponentType {
     COMAdmin32BitComponent	= 0x1,

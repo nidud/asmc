@@ -1,42 +1,25 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
-ifndef __adojet_h__
-__adojet_h__ equ <>
 
-ifndef __IReplica_FWD_DEFINED__
-__IReplica_FWD_DEFINED__ equ 1
-endif
-ifndef __Filter_FWD_DEFINED__
-__Filter_FWD_DEFINED__ equ 1
-endif
-ifndef __Filters_FWD_DEFINED__
-__Filters_FWD_DEFINED__ equ 1
-endif
-ifndef __IJetEngine_FWD_DEFINED__
-__IJetEngine_FWD_DEFINED__ equ 1
-endif
-ifndef __Replica_FWD_DEFINED__
-__Replica_FWD_DEFINED__ equ 1
-endif
-ifndef __JetEngine_FWD_DEFINED__
-__JetEngine_FWD_DEFINED__ equ 1
-endif
+ifndef __adojet_h__
+define __adojet_h__
 
 TARGET_IS_NT40_OR_LATER equ 1
 
 ifndef __JRO_LIBRARY_DEFINED__
-__JRO_LIBRARY_DEFINED__ equ 1
+define __JRO_LIBRARY_DEFINED__
 
 ReplicaTypeEnum		typedef SDWORD
 jrRepTypeNotReplicable	equ 0
@@ -70,7 +53,7 @@ jrFilterTypeRelationship equ 0x2
 externdef		LIBID_JRO:IID
 
 ifndef __IReplica_INTERFACE_DEFINED__
-__IReplica_INTERFACE_DEFINED__ equ 1
+define __IReplica_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IReplica, "D2D139E0-B6CA-11d1-9F31-00C04FC29D52")
 
@@ -97,13 +80,12 @@ DEFINE_IIDX(IReplica, "D2D139E0-B6CA-11d1-9F31-00C04FC29D52")
     PopulatePartial	proc :BSTR
     Synchronize		proc :BSTR, :SyncTypeEnum, :SyncModeEnum
     get_Filters		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __Filter_INTERFACE_DEFINED__
-__Filter_INTERFACE_DEFINED__ equ 1
+define __Filter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Filter, "D2D139E1-B6CA-11d1-9F31-00C04FC29D52")
 
@@ -112,13 +94,12 @@ DEFINE_IIDX(Filter, "D2D139E1-B6CA-11d1-9F31-00C04FC29D52")
     get_TableName	proc :ptr
     get_FilterType	proc :ptr
     get_FilterCriteria	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __Filters_INTERFACE_DEFINED__
-__Filters_INTERFACE_DEFINED__ equ 1
+define __Filters_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Filters, "D2D139E2-B6CA-11d1-9F31-00C04FC29D52")
 
@@ -130,13 +111,12 @@ DEFINE_IIDX(Filters, "D2D139E2-B6CA-11d1-9F31-00C04FC29D52")
     get_Item		proc :VARIANT, :ptr
     Append		proc :BSTR, :FilterTypeEnum, :BSTR
     Delete		proc :VARIANT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IJetEngine_INTERFACE_DEFINED__
-__IJetEngine_INTERFACE_DEFINED__ equ 1
+define __IJetEngine_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IJetEngine, "9F63D980-FF25-11D1-BB6F-00C04FAE22DA")
 
@@ -144,8 +124,7 @@ DEFINE_IIDX(IJetEngine, "9F63D980-FF25-11D1-BB6F-00C04FAE22DA")
 
     CompactDatabase	proc :BSTR, :BSTR
     RefreshCache	proc :ptr
-
-    .ends
+   .ends
 
 endif
 

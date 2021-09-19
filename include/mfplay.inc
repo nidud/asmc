@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,23 +18,12 @@ include ole2.inc
 endif
 
 ifndef __mfplay_h__
-__mfplay_h__ equ <>
-
-ifndef __IMFPMediaPlayer_FWD_DEFINED__
-__IMFPMediaPlayer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFPMediaItem_FWD_DEFINED__
-__IMFPMediaItem_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFPMediaPlayerCallback_FWD_DEFINED__
-__IMFPMediaPlayerCallback_FWD_DEFINED__ equ 1
-endif
+define __mfplay_h__
 
 include unknwn.inc
 include propsys.inc
 include mfidl.inc
 include evr.inc
-
 include winapifamily.inc
 
 .pragma comment(lib, mfplay)
@@ -82,7 +71,7 @@ MFPCreateMediaPlayer proto WINAPI \
 	 ppMediaPlayer: ptr IMFPMediaPlayer
 
 ifndef __IMFPMediaPlayer_INTERFACE_DEFINED__
-__IMFPMediaPlayer_INTERFACE_DEFINED__ equ 1
+define __IMFPMediaPlayer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFPMediaPlayer, "A714590A-58AF-430a-85BF-44F5EC838D85")
 
@@ -124,7 +113,7 @@ DEFINE_IIDX(IMFPMediaPlayer, "A714590A-58AF-430a-85BF-44F5EC838D85")
     RemoveEffect	proc :ptr
     RemoveAllEffects	proc
     Shutdown		proc
-    .ends
+   .ends
     LPIMFPMediaPlayer	typedef ptr IMFPMediaPlayer
 
 endif
@@ -133,7 +122,7 @@ endif
 DEFINE_GUID( MFP_POSITIONTYPE_100NS, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 )
 
 ifndef __IMFPMediaItem_INTERFACE_DEFINED__
-__IMFPMediaItem_INTERFACE_DEFINED__ equ 1
+define __IMFPMediaItem_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFPMediaItem, "90EB3E6B-ECBF-45cc-B1DA-C6FE3EA70D57")
 
@@ -158,7 +147,7 @@ DEFINE_IIDX(IMFPMediaItem, "90EB3E6B-ECBF-45cc-B1DA-C6FE3EA70D57")
     GetCharacteristics	proc :ptr
     SetStreamSink	proc :DWORD, :ptr
     GetMetadata		proc :ptr
-    .ends
+   .ends
     LPIMFPMediaItem	typedef ptr IMFPMediaItem
 
 endif
@@ -314,18 +303,17 @@ MFP_GET_ACQUIRE_USER_CREDENTIAL_EVENT macro pHdr
 	endm
 
 ifndef __IMFPMediaPlayerCallback_INTERFACE_DEFINED__
-__IMFPMediaPlayerCallback_INTERFACE_DEFINED__ equ 1
+define __IMFPMediaPlayerCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFPMediaPlayerCallback, "766C8FFB-5FDB-4fea-A28D-B912996F51BD")
 
 .comdef IMFPMediaPlayerCallback : public IUnknown
 
     OnMediaPlayerEvent	proc :ptr
-    .ends
+   .ends
 
 endif
 
 endif ;; (WINVER GE _WIN32_WINNT_WIN7)
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 endif

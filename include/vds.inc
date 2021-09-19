@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,230 +18,17 @@ include ole2.inc
 endif
 
 ifndef __vds_h__
-__vds_h__ equ <>
-
-ifndef __IEnumVdsObject_FWD_DEFINED__
-__IEnumVdsObject_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsAsync_FWD_DEFINED__
-__IVdsAsync_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsAdviseSink_FWD_DEFINED__
-__IVdsAdviseSink_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsProvider_FWD_DEFINED__
-__IVdsProvider_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsProviderSupport_FWD_DEFINED__
-__IVdsProviderSupport_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSwProvider_FWD_DEFINED__
-__IVdsSwProvider_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsPack_FWD_DEFINED__
-__IVdsPack_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsPack2_FWD_DEFINED__
-__IVdsPack2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDisk_FWD_DEFINED__
-__IVdsDisk_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDisk2_FWD_DEFINED__
-__IVdsDisk2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDiskOnline_FWD_DEFINED__
-__IVdsDiskOnline_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsAdvancedDisk_FWD_DEFINED__
-__IVdsAdvancedDisk_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsAdvancedDisk2_FWD_DEFINED__
-__IVdsAdvancedDisk2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsAdvancedDisk3_FWD_DEFINED__
-__IVdsAdvancedDisk3_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsCreatePartitionEx_FWD_DEFINED__
-__IVdsCreatePartitionEx_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsRemovable_FWD_DEFINED__
-__IVdsRemovable_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolume_FWD_DEFINED__
-__IVdsVolume_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolume2_FWD_DEFINED__
-__IVdsVolume2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumeOnline_FWD_DEFINED__
-__IVdsVolumeOnline_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumePlex_FWD_DEFINED__
-__IVdsVolumePlex_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDisk3_FWD_DEFINED__
-__IVdsDisk3_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsHwProvider_FWD_DEFINED__
-__IVdsHwProvider_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsHwProviderType_FWD_DEFINED__
-__IVdsHwProviderType_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsHwProviderType2_FWD_DEFINED__
-__IVdsHwProviderType2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsHwProviderStoragePools_FWD_DEFINED__
-__IVdsHwProviderStoragePools_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystem_FWD_DEFINED__
-__IVdsSubSystem_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystem2_FWD_DEFINED__
-__IVdsSubSystem2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystemNaming_FWD_DEFINED__
-__IVdsSubSystemNaming_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystemIscsi_FWD_DEFINED__
-__IVdsSubSystemIscsi_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystemInterconnect_FWD_DEFINED__
-__IVdsSubSystemInterconnect_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsControllerPort_FWD_DEFINED__
-__IVdsControllerPort_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsController_FWD_DEFINED__
-__IVdsController_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsControllerControllerPort_FWD_DEFINED__
-__IVdsControllerControllerPort_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDrive_FWD_DEFINED__
-__IVdsDrive_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDrive2_FWD_DEFINED__
-__IVdsDrive2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLun_FWD_DEFINED__
-__IVdsLun_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLun2_FWD_DEFINED__
-__IVdsLun2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunNaming_FWD_DEFINED__
-__IVdsLunNaming_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunNumber_FWD_DEFINED__
-__IVdsLunNumber_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunControllerPorts_FWD_DEFINED__
-__IVdsLunControllerPorts_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunMpio_FWD_DEFINED__
-__IVdsLunMpio_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunIscsi_FWD_DEFINED__
-__IVdsLunIscsi_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsLunPlex_FWD_DEFINED__
-__IVdsLunPlex_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiPortal_FWD_DEFINED__
-__IVdsIscsiPortal_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiTarget_FWD_DEFINED__
-__IVdsIscsiTarget_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiPortalGroup_FWD_DEFINED__
-__IVdsIscsiPortalGroup_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsStoragePool_FWD_DEFINED__
-__IVdsStoragePool_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsMaintenance_FWD_DEFINED__
-__IVdsMaintenance_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVdProvider_FWD_DEFINED__
-__IVdsVdProvider_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVDisk_FWD_DEFINED__
-__IVdsVDisk_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsOpenVDisk_FWD_DEFINED__
-__IVdsOpenVDisk_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceLoader_FWD_DEFINED__
-__IVdsServiceLoader_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsService_FWD_DEFINED__
-__IVdsService_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceUninstallDisk_FWD_DEFINED__
-__IVdsServiceUninstallDisk_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceHba_FWD_DEFINED__
-__IVdsServiceHba_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceIscsi_FWD_DEFINED__
-__IVdsServiceIscsi_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceInitialization_FWD_DEFINED__
-__IVdsServiceInitialization_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsHbaPort_FWD_DEFINED__
-__IVdsHbaPort_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiInitiatorAdapter_FWD_DEFINED__
-__IVdsIscsiInitiatorAdapter_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiInitiatorPortal_FWD_DEFINED__
-__IVdsIscsiInitiatorPortal_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDiskPartitionMF_FWD_DEFINED__
-__IVdsDiskPartitionMF_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumeMF_FWD_DEFINED__
-__IVdsVolumeMF_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumeMF2_FWD_DEFINED__
-__IVdsVolumeMF2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumeShrink_FWD_DEFINED__
-__IVdsVolumeShrink_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsSubSystemImportTarget_FWD_DEFINED__
-__IVdsSubSystemImportTarget_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsIscsiPortalLocal_FWD_DEFINED__
-__IVdsIscsiPortalLocal_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceSAN_FWD_DEFINED__
-__IVdsServiceSAN_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsVolumeMF3_FWD_DEFINED__
-__IVdsVolumeMF3_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsDiskPartitionMF2_FWD_DEFINED__
-__IVdsDiskPartitionMF2_FWD_DEFINED__ equ <>
-endif
-ifndef __IVdsServiceSw_FWD_DEFINED__
-__IVdsServiceSw_FWD_DEFINED__ equ <>
-endif
+define __vds_h__
 
 include oaidl.inc
 include vdssys.inc
 include vdserr.inc
 include vdslun.inc
+include winapifamily.inc
 
-include winapifamily.inc
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-VDS_OBJECT_ID		typedef GUID
+VDS_OBJECT_ID typedef GUID
 
 .enum VDS_OBJECT_TYPE {
 	VDS_OT_UNKNOWN	= 0,
@@ -760,7 +547,7 @@ ulWeight		ULONG ?
 VDS_PATH_POLICY		ENDS
 
 ifndef __IEnumVdsObject_INTERFACE_DEFINED__
-__IEnumVdsObject_INTERFACE_DEFINED__ equ 1
+define __IEnumVdsObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumVdsObject, "118610b7-8d94-4030-b5b8-500889788e4e")
 
@@ -770,13 +557,12 @@ DEFINE_IIDX(IEnumVdsObject, "118610b7-8d94-4030-b5b8-500889788e4e")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsAsync_INTERFACE_DEFINED__
-__IVdsAsync_INTERFACE_DEFINED__ equ 1
+define __IVdsAsync_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsAsync, "d5d23b6d-5a55-4492-9889-397a3c2d2dbc")
 
@@ -785,56 +571,45 @@ DEFINE_IIDX(IVdsAsync, "d5d23b6d-5a55-4492-9889-397a3c2d2dbc")
     Cancel		proc
     _Wait		proc :ptr, :ptr
     QueryStatus		proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsAdviseSink_INTERFACE_DEFINED__
-__IVdsAdviseSink_INTERFACE_DEFINED__ equ 1
+define __IVdsAdviseSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsAdviseSink, "8326cd1d-cf59-4936-b786-5efc08798e25")
 
 .comdef IVdsAdviseSink : public IUnknown
 
     OnNotify		proc :LONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsProvider_INTERFACE_DEFINED__
-__IVdsProvider_INTERFACE_DEFINED__ equ 1
+define __IVdsProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsProvider, "10c5e575-7984-4e81-a56b-431f5f92ae42")
 
 .comdef IVdsProvider : public IUnknown
 
     GetProperties	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsProviderSupport_INTERFACE_DEFINED__
-__IVdsProviderSupport_INTERFACE_DEFINED__ equ 1
+define __IVdsProviderSupport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsProviderSupport, "1732be13-e8f9-4a03-bfbc-5f616aa66ce1")
 
 .comdef IVdsProviderSupport : public IUnknown
 
     GetVersionSupport	proc :ptr
-
-    .ends
+   .ends
 
 endif
-
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 
 VDS_PACK_STATUS		typedef SDWORD
 VDS_PS_UNKNOWN		equ 0
@@ -1213,7 +988,7 @@ CHANGE_PARTITION_TYPE_PARAMETERS ENDS
 
 
 ifndef __IVdsSwProvider_INTERFACE_DEFINED__
-__IVdsSwProvider_INTERFACE_DEFINED__ equ 1
+define __IVdsSwProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSwProvider, "9aa58360-ce33-4f92-b658-ed24b14425b8")
 
@@ -1221,13 +996,12 @@ DEFINE_IIDX(IVdsSwProvider, "9aa58360-ce33-4f92-b658-ed24b14425b8")
 
     QueryPacks		proc :ptr
     CreatePack		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsPack_INTERFACE_DEFINED__
-__IVdsPack_INTERFACE_DEFINED__ equ 1
+define __IVdsPack_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsPack, "3b69d7f5-9d94-4648-91ca-79939ba263bf")
 
@@ -1243,26 +1017,24 @@ DEFINE_IIDX(IVdsPack, "3b69d7f5-9d94-4648-91ca-79939ba263bf")
     ReplaceDisk		proc :VDS_OBJECT_ID, :VDS_OBJECT_ID, :ptr
     RemoveMissingDisk	proc :VDS_OBJECT_ID
     Recover		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsPack2_INTERFACE_DEFINED__
-__IVdsPack2_INTERFACE_DEFINED__ equ 1
+define __IVdsPack2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsPack2, "13B50BFF-290A-47DD-8558-B7C58DB1A71A")
 
 .comdef IVdsPack2 : public IUnknown
 
     CreateVolume2	proc :VDS_VOLUME_TYPE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDisk_INTERFACE_DEFINED__
-__IVdsDisk_INTERFACE_DEFINED__ equ 1
+define __IVdsDisk_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDisk, "07e5c822-f00c-47a1-8fce-b244da56fd06")
 
@@ -1275,26 +1047,24 @@ DEFINE_IIDX(IVdsDisk, "07e5c822-f00c-47a1-8fce-b244da56fd06")
     ConvertStyle	proc :VDS_PARTITION_STYLE
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDisk2_INTERFACE_DEFINED__
-__IVdsDisk2_INTERFACE_DEFINED__ equ 1
+define __IVdsDisk2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDisk2, "40F73C8B-687D-4a13-8D96-3D7F2E683936")
 
 .comdef IVdsDisk2 : public IUnknown
 
     SetSANMode		proc :BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDiskOnline_INTERFACE_DEFINED__
-__IVdsDiskOnline_INTERFACE_DEFINED__ equ 1
+define __IVdsDiskOnline_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDiskOnline, "90681B1D-6A7F-48e8-9061-31B7AA125322")
 
@@ -1302,13 +1072,12 @@ DEFINE_IIDX(IVdsDiskOnline, "90681B1D-6A7F-48e8-9061-31B7AA125322")
 
     Online		proc
     Offline		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsAdvancedDisk_INTERFACE_DEFINED__
-__IVdsAdvancedDisk_INTERFACE_DEFINED__ equ 1
+define __IVdsAdvancedDisk_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsAdvancedDisk, "6e6f6b40-977c-4069-bddd-ac710059f8c0")
 
@@ -1324,26 +1093,24 @@ DEFINE_IIDX(IVdsAdvancedDisk, "6e6f6b40-977c-4069-bddd-ac710059f8c0")
     GetDriveLetter	proc :ULONGLONG, :ptr
     FormatPartition	proc :ULONGLONG, :VDS_FILE_SYSTEM_TYPE, :LPWSTR, :DWORD, :BOOL, :BOOL, :BOOL, :ptr
     Clean		proc :BOOL, :BOOL, :BOOL, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsAdvancedDisk2_INTERFACE_DEFINED__
-__IVdsAdvancedDisk2_INTERFACE_DEFINED__ equ 1
+define __IVdsAdvancedDisk2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsAdvancedDisk2, "9723f420-9355-42de-ab66-e31bb15beeac")
 
 .comdef IVdsAdvancedDisk2 : public IUnknown
 
     ChangePartitionType proc :ULONGLONG, :BOOL, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsAdvancedDisk3_INTERFACE_DEFINED__
-__IVdsAdvancedDisk3_INTERFACE_DEFINED__ equ 1
+define __IVdsAdvancedDisk3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsAdvancedDisk3, "3858C0D5-0F35-4BF5-9714-69874963BC36")
 
@@ -1351,26 +1118,24 @@ DEFINE_IIDX(IVdsAdvancedDisk3, "3858C0D5-0F35-4BF5-9714-69874963BC36")
 
     GetProperties	proc :ptr
     GetUniqueId		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsCreatePartitionEx_INTERFACE_DEFINED__
-__IVdsCreatePartitionEx_INTERFACE_DEFINED__ equ 1
+define __IVdsCreatePartitionEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsCreatePartitionEx, "9882f547-cfc3-420b-9750-00dfbec50662")
 
 .comdef IVdsCreatePartitionEx : public IUnknown
 
     CreatePartitionEx	proc :ULONGLONG, :ULONGLONG, :ULONG, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsRemovable_INTERFACE_DEFINED__
-__IVdsRemovable_INTERFACE_DEFINED__ equ 1
+define __IVdsRemovable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsRemovable, "0316560b-5db4-4ed9-bbb5-213436ddc0d9")
 
@@ -1378,13 +1143,12 @@ DEFINE_IIDX(IVdsRemovable, "0316560b-5db4-4ed9-bbb5-213436ddc0d9")
 
     QueryMedia		proc
     Eject		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolume_INTERFACE_DEFINED__
-__IVdsVolume_INTERFACE_DEFINED__ equ 1
+define __IVdsVolume_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolume, "88306bb2-e71f-478c-86a2-79da200a0f11")
 
@@ -1401,39 +1165,36 @@ DEFINE_IIDX(IVdsVolume, "88306bb2-e71f-478c-86a2-79da200a0f11")
     Delete		proc :BOOL
     SetFlags		proc :ULONG, :BOOL
     ClearFlags		proc :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolume2_INTERFACE_DEFINED__
-__IVdsVolume2_INTERFACE_DEFINED__ equ 1
+define __IVdsVolume2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolume2, "72AE6713-DCBB-4a03-B36B-371F6AC6B53D")
 
 .comdef IVdsVolume2 : public IUnknown
 
     GetProperties2	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumeOnline_INTERFACE_DEFINED__
-__IVdsVolumeOnline_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumeOnline_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumeOnline, "1BE2275A-B315-4f70-9E44-879B3A2A53F2")
 
 .comdef IVdsVolumeOnline : public IUnknown
 
     Online		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumePlex_INTERFACE_DEFINED__
-__IVdsVolumePlex_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumePlex_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumePlex, "4daa0135-e1d1-40f1-aaa5-3cc1e53221c3")
 
@@ -1443,13 +1204,12 @@ DEFINE_IIDX(IVdsVolumePlex, "4daa0135-e1d1-40f1-aaa5-3cc1e53221c3")
     GetVolume		proc :ptr
     QueryExtents	proc
     Repair		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDisk3_INTERFACE_DEFINED__
-__IVdsDisk3_INTERFACE_DEFINED__ equ 1
+define __IVdsDisk3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDisk3, "8F4B2F5D-EC15-4357-992F-473EF10975B9")
 
@@ -1457,16 +1217,9 @@ DEFINE_IIDX(IVdsDisk3, "8F4B2F5D-EC15-4357-992F-473EF10975B9")
 
     GetProperties2	proc :ptr
     QueryFreeExtents	proc :ULONG
-
-    .ends
+   .ends
 
 endif
-
-
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-include winapifamily.inc
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 VDS_SUB_SYSTEM_STATUS	typedef SDWORD
@@ -2014,7 +1767,7 @@ VDS_STORAGE_POOL_DRIVE_EXTENT ENDS
 PVDS_STORAGE_POOL_DRIVE_EXTENT typedef ptr VDS_STORAGE_POOL_DRIVE_EXTENT
 
 ifndef __IVdsHwProvider_INTERFACE_DEFINED__
-__IVdsHwProvider_INTERFACE_DEFINED__ equ 1
+define __IVdsHwProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsHwProvider, "d99bdaae-b13a-4178-9fdb-e27f16b4603e")
 
@@ -2023,39 +1776,36 @@ DEFINE_IIDX(IVdsHwProvider, "d99bdaae-b13a-4178-9fdb-e27f16b4603e")
     QuerySubSystems	proc :ptr
     Reenumerate		proc
     Refresh		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsHwProviderType_INTERFACE_DEFINED__
-__IVdsHwProviderType_INTERFACE_DEFINED__ equ 1
+define __IVdsHwProviderType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsHwProviderType, "3e0f5166-542d-4fc6-947a-012174240b7e")
 
 .comdef IVdsHwProviderType : public IUnknown
 
     GetProviderType	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsHwProviderType2_INTERFACE_DEFINED__
-__IVdsHwProviderType2_INTERFACE_DEFINED__ equ 1
+define __IVdsHwProviderType2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsHwProviderType2, "8190236f-c4d0-4e81-8011-d69512fcc984")
 
 .comdef IVdsHwProviderType2 : public IUnknown
 
     GetProviderType2	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsHwProviderStoragePools_INTERFACE_DEFINED__
-__IVdsHwProviderStoragePools_INTERFACE_DEFINED__ equ 1
+define __IVdsHwProviderStoragePools_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsHwProviderStoragePools, "d5b5937a-f188-4c79-b86c-11c920ad11b8")
 
@@ -2064,13 +1814,12 @@ DEFINE_IIDX(IVdsHwProviderStoragePools, "d5b5937a-f188-4c79-b86c-11c920ad11b8")
     QueryStoragePools	proc :ULONG, :ULONGLONG, :ptr, :ptr
     CreateLunInStoragePool proc :VDS_LUN_TYPE, :ULONGLONG, :VDS_OBJECT_ID, :LPWSTR, :ptr, :ptr
     QueryMaxLunCreateSizeInStoragePool proc :VDS_LUN_TYPE, :VDS_OBJECT_ID, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystem_INTERFACE_DEFINED__
-__IVdsSubSystem_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystem_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystem, "6fcee2d3-6d90-4f91-80e2-a5c7caaca9d8")
 
@@ -2088,13 +1837,12 @@ DEFINE_IIDX(IVdsSubSystem, "6fcee2d3-6d90-4f91-80e2-a5c7caaca9d8")
     ReplaceDrive	proc :VDS_OBJECT_ID, :VDS_OBJECT_ID
     SetStatus		proc :VDS_SUB_SYSTEM_STATUS
     QueryMaxLunCreateSize proc :VDS_LUN_TYPE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystem2_INTERFACE_DEFINED__
-__IVdsSubSystem2_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystem2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystem2, "be666735-7800-4a77-9d9c-40f85b87e292")
 
@@ -2104,26 +1852,24 @@ DEFINE_IIDX(IVdsSubSystem2, "be666735-7800-4a77-9d9c-40f85b87e292")
     GetDrive2		proc :SWORD, :SWORD, :ULONG, :ptr
     CreateLun2		proc :VDS_LUN_TYPE, :ULONGLONG
     QueryMaxLunCreateSize2 proc :VDS_LUN_TYPE
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystemNaming_INTERFACE_DEFINED__
-__IVdsSubSystemNaming_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystemNaming_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystemNaming, "0d70faa3-9cd4-4900-aa20-6981b6aafc75")
 
 .comdef IVdsSubSystemNaming : public IUnknown
 
     SetFriendlyName	proc :LPWSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystemIscsi_INTERFACE_DEFINED__
-__IVdsSubSystemIscsi_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystemIscsi_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystemIscsi, "0027346f-40d0-4b45-8cec-5906dc0380c8")
 
@@ -2133,26 +1879,24 @@ DEFINE_IIDX(IVdsSubSystemIscsi, "0027346f-40d0-4b45-8cec-5906dc0380c8")
     QueryPortals	proc :ptr
     CreateTarget	proc :LPWSTR, :LPWSTR, :ptr
     SetIpsecGroupPresharedKey proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystemInterconnect_INTERFACE_DEFINED__
-__IVdsSubSystemInterconnect_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystemInterconnect_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystemInterconnect, "9e6fa560-c141-477b-83ba-0b6c38f7febf")
 
 .comdef IVdsSubSystemInterconnect : public IUnknown
 
     GetSupportedInterconnects proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsControllerPort_INTERFACE_DEFINED__
-__IVdsControllerPort_INTERFACE_DEFINED__ equ 1
+define __IVdsControllerPort_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsControllerPort, "18691d0d-4e7f-43e8-92e4-cf44beeed11c")
 
@@ -2163,13 +1907,12 @@ DEFINE_IIDX(IVdsControllerPort, "18691d0d-4e7f-43e8-92e4-cf44beeed11c")
     QueryAssociatedLuns proc :ptr
     Reset		proc
     SetStatus		proc :VDS_PORT_STATUS
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsController_INTERFACE_DEFINED__
-__IVdsController_INTERFACE_DEFINED__ equ 1
+define __IVdsController_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsController, "cb53d96e-dffb-474a-a078-790d1e2bc082")
 
@@ -2183,26 +1926,24 @@ DEFINE_IIDX(IVdsController, "cb53d96e-dffb-474a-a078-790d1e2bc082")
     Reset		proc
     QueryAssociatedLuns proc :ptr
     SetStatus		proc :VDS_CONTROLLER_STATUS
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsControllerControllerPort_INTERFACE_DEFINED__
-__IVdsControllerControllerPort_INTERFACE_DEFINED__ equ 1
+define __IVdsControllerControllerPort_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsControllerControllerPort, "ca5d735f-6bae-42c0-b30e-f2666045ce71")
 
 .comdef IVdsControllerControllerPort : public IUnknown
 
     QueryControllerPorts proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDrive_INTERFACE_DEFINED__
-__IVdsDrive_INTERFACE_DEFINED__ equ 1
+define __IVdsDrive_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDrive, "ff24efa4-aade-4b6b-898b-eaa6a20887c7")
 
@@ -2214,26 +1955,24 @@ DEFINE_IIDX(IVdsDrive, "ff24efa4-aade-4b6b-898b-eaa6a20887c7")
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
     SetStatus		proc :VDS_DRIVE_STATUS
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDrive2_INTERFACE_DEFINED__
-__IVdsDrive2_INTERFACE_DEFINED__ equ 1
+define __IVdsDrive2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDrive2, "60b5a730-addf-4436-8ca7-5769e2d1ffa4")
 
 .comdef IVdsDrive2 : public IUnknown
 
     GetProperties2	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLun_INTERFACE_DEFINED__
-__IVdsLun_INTERFACE_DEFINED__ equ 1
+define __IVdsLun_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLun, "3540a9c7-e60f-4111-a840-8bba6c2c83d8")
 
@@ -2256,13 +1995,12 @@ DEFINE_IIDX(IVdsLun, "3540a9c7-e60f-4111-a840-8bba6c2c83d8")
     ApplyHints		proc :ptr
     SetStatus		proc :VDS_LUN_STATUS
     QueryMaxLunExtendSize proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLun2_INTERFACE_DEFINED__
-__IVdsLun2_INTERFACE_DEFINED__ equ 1
+define __IVdsLun2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLun2, "e5b3a735-9efb-499a-8071-4394d9ee6fcb")
 
@@ -2270,39 +2008,36 @@ DEFINE_IIDX(IVdsLun2, "e5b3a735-9efb-499a-8071-4394d9ee6fcb")
 
     QueryHints2		proc :ptr
     ApplyHints2		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunNaming_INTERFACE_DEFINED__
-__IVdsLunNaming_INTERFACE_DEFINED__ equ 1
+define __IVdsLunNaming_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunNaming, "907504cb-6b4e-4d88-a34d-17ba661fbb06")
 
 .comdef IVdsLunNaming : public IUnknown
 
     SetFriendlyName	proc :LPWSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunNumber_INTERFACE_DEFINED__
-__IVdsLunNumber_INTERFACE_DEFINED__ equ 1
+define __IVdsLunNumber_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunNumber, "d3f95e46-54b3-41f9-b678-0f1871443a08")
 
 .comdef IVdsLunNumber : public IUnknown
 
     GetLunNumber	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunControllerPorts_INTERFACE_DEFINED__
-__IVdsLunControllerPorts_INTERFACE_DEFINED__ equ 1
+define __IVdsLunControllerPorts_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunControllerPorts, "451fe266-da6d-406a-bb60-82e534f85aeb")
 
@@ -2310,13 +2045,12 @@ DEFINE_IIDX(IVdsLunControllerPorts, "451fe266-da6d-406a-bb60-82e534f85aeb")
 
     AssociateControllerPorts proc :ptr, :LONG
     QueryActiveControllerPorts proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunMpio_INTERFACE_DEFINED__
-__IVdsLunMpio_INTERFACE_DEFINED__ equ 1
+define __IVdsLunMpio_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunMpio, "7c5fbae3-333a-48a1-a982-33c15788cde3")
 
@@ -2326,13 +2060,12 @@ DEFINE_IIDX(IVdsLunMpio, "7c5fbae3-333a-48a1-a982-33c15788cde3")
     GetLoadBalancePolicy proc :ptr
     SetLoadBalancePolicy proc :VDS_LOADBALANCE_POLICY_ENUM
     GetSupportedLbPolicies proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunIscsi_INTERFACE_DEFINED__
-__IVdsLunIscsi_INTERFACE_DEFINED__ equ 1
+define __IVdsLunIscsi_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunIscsi, "0d7c1e64-b59b-45ae-b86a-2c2cc6a42067")
 
@@ -2340,13 +2073,12 @@ DEFINE_IIDX(IVdsLunIscsi, "0d7c1e64-b59b-45ae-b86a-2c2cc6a42067")
 
     AssociateTargets	proc
     QueryAssociatedTargets proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsLunPlex_INTERFACE_DEFINED__
-__IVdsLunPlex_INTERFACE_DEFINED__ equ 1
+define __IVdsLunPlex_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsLunPlex, "0ee1a790-5d2e-4abb-8c99-c481e8be2138")
 
@@ -2357,13 +2089,12 @@ DEFINE_IIDX(IVdsLunPlex, "0ee1a790-5d2e-4abb-8c99-c481e8be2138")
     QueryExtents	proc
     QueryHints		proc :ptr
     ApplyHints		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiPortal_INTERFACE_DEFINED__
-__IVdsIscsiPortal_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiPortal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiPortal, "7fa1499d-ec85-4a8a-a47b-ff69201fcd34")
 
@@ -2376,13 +2107,12 @@ DEFINE_IIDX(IVdsIscsiPortal, "7fa1499d-ec85-4a8a-a47b-ff69201fcd34")
     SetIpsecTunnelAddress proc :ptr, :ptr
     GetIpsecSecurity	proc :ptr, :ptr
     SetIpsecSecurity	proc :ptr, :ULONGLONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiTarget_INTERFACE_DEFINED__
-__IVdsIscsiTarget_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiTarget_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiTarget, "aa8f5055-83e5-4bcc-aa73-19851a36a849")
 
@@ -2398,13 +2128,12 @@ DEFINE_IIDX(IVdsIscsiTarget, "aa8f5055-83e5-4bcc-aa73-19851a36a849")
     SetSharedSecret	proc :ptr, :LPWSTR
     RememberInitiatorSharedSecret proc :LPWSTR, :ptr
     GetConnectedInitiators proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiPortalGroup_INTERFACE_DEFINED__
-__IVdsIscsiPortalGroup_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiPortalGroup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiPortalGroup, "fef5f89d-a3dd-4b36-bf28-e7dde045c593")
 
@@ -2416,13 +2145,12 @@ DEFINE_IIDX(IVdsIscsiPortalGroup, "fef5f89d-a3dd-4b36-bf28-e7dde045c593")
     AddPortal		proc :VDS_OBJECT_ID, :ptr
     RemovePortal	proc :VDS_OBJECT_ID, :ptr
     Delete		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsStoragePool_INTERFACE_DEFINED__
-__IVdsStoragePool_INTERFACE_DEFINED__ equ 1
+define __IVdsStoragePool_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsStoragePool, "932ca8cf-0eb3-4ba8-9620-22665d7f8450")
 
@@ -2434,13 +2162,12 @@ DEFINE_IIDX(IVdsStoragePool, "932ca8cf-0eb3-4ba8-9620-22665d7f8450")
     QueryDriveExtents	proc
     QueryAllocatedLuns	proc :ptr
     QueryAllocatedStoragePools proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsMaintenance_INTERFACE_DEFINED__
-__IVdsMaintenance_INTERFACE_DEFINED__ equ 1
+define __IVdsMaintenance_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsMaintenance, "daebeef3-8523-47ed-a2b9-05cecce2a1ae")
 
@@ -2449,16 +2176,10 @@ DEFINE_IIDX(IVdsMaintenance, "daebeef3-8523-47ed-a2b9-05cecce2a1ae")
     StartMaintenance	proc :VDS_MAINTENANCE_OPERATION
     StopMaintenance	proc :VDS_MAINTENANCE_OPERATION
     PulseMaintenance	proc :VDS_MAINTENANCE_OPERATION, :ULONG
-
-    .ends
+   .ends
 
 endif
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if (WINVER GE _WIN32_WINNT_WIN7)
 
 VDS_CREATE_VDISK_PARAMETERS STRUC
@@ -2473,7 +2194,7 @@ VDS_CREATE_VDISK_PARAMETERS ENDS
 PVDS_CREATE_VDISK_PARAMETERS typedef ptr VDS_CREATE_VDISK_PARAMETERS
 
 ifndef __IVdsVdProvider_INTERFACE_DEFINED__
-__IVdsVdProvider_INTERFACE_DEFINED__ equ 1
+define __IVdsVdProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVdProvider, "b481498c-8354-45f9-84a0-0bdd2832a91f")
 
@@ -2484,8 +2205,7 @@ DEFINE_IIDX(IVdsVdProvider, "b481498c-8354-45f9-84a0-0bdd2832a91f")
     AddVDisk		proc :PVIRTUAL_STORAGE_TYPE, :LPWSTR, :ptr
     GetDiskFromVDisk	proc :ptr, :ptr
     GetVDiskFromDisk	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -2519,7 +2239,7 @@ VDS_VDISK_PROPERTIES	ENDS
 PVDS_VDISK_PROPERTIES	typedef ptr VDS_VDISK_PROPERTIES
 
 ifndef __IVdsVDisk_INTERFACE_DEFINED__
-__IVdsVDisk_INTERFACE_DEFINED__ equ 1
+define __IVdsVDisk_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVDisk, "1e062b84-e5e6-4b4b-8a25-67b81e8f13e8")
 
@@ -2529,13 +2249,12 @@ DEFINE_IIDX(IVdsVDisk, "1e062b84-e5e6-4b4b-8a25-67b81e8f13e8")
     GetProperties	proc :PVDS_VDISK_PROPERTIES
     GetHostVolume	proc :ptr
     GetDeviceName	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsOpenVDisk_INTERFACE_DEFINED__
-__IVdsOpenVDisk_INTERFACE_DEFINED__ equ 1
+define __IVdsOpenVDisk_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsOpenVDisk, "75c8f324-f715-4fe3-a28e-f9011b61a4a1")
 
@@ -2547,15 +2266,13 @@ DEFINE_IIDX(IVdsOpenVDisk, "75c8f324-f715-4fe3-a28e-f9011b61a4a1")
     Compact		proc :COMPACT_VIRTUAL_DISK_FLAG, :ULONG, :ptr
     Merge		proc :MERGE_VIRTUAL_DISK_FLAG, :ULONG, :ptr
     Expand		proc :EXPAND_VIRTUAL_DISK_FLAG, :ULONGLONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 VDS_ATTACH_VIRTUAL_DISK_FLAG_USE_FILE_ACL equ 0x1
 
 endif ;; _WIN32_WINNT_WIN7
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 ;; {9C38ED61-D565-4728-AEEE-C80952F0ECDE}
@@ -2682,20 +2399,19 @@ VDS_QUERY_HARDWARE_PROVIDERS equ 0x2
 VDS_QUERY_VIRTUALDISK_PROVIDERS equ 0x4
 
 ifndef __IVdsServiceLoader_INTERFACE_DEFINED__
-__IVdsServiceLoader_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceLoader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceLoader, "e0393303-90d4-4a97-ab71-e9b671ee2729")
 
 .comdef IVdsServiceLoader : public IUnknown
 
     LoadService		proc :LPWSTR, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsService_INTERFACE_DEFINED__
-__IVdsService_INTERFACE_DEFINED__ equ 1
+define __IVdsService_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsService, "0818a8ef-9ba9-40d8-a6f9-e22833cc771e")
 
@@ -2718,13 +2434,12 @@ DEFINE_IIDX(IVdsService, "0818a8ef-9ba9-40d8-a6f9-e22833cc771e")
     Reboot		proc
     SetFlags		proc :ULONG
     ClearFlags		proc :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceUninstallDisk_INTERFACE_DEFINED__
-__IVdsServiceUninstallDisk_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceUninstallDisk_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceUninstallDisk, "B6B22DA8-F903-4be7-B492-C09D875AC9DA")
 
@@ -2732,26 +2447,24 @@ DEFINE_IIDX(IVdsServiceUninstallDisk, "B6B22DA8-F903-4be7-B492-C09D875AC9DA")
 
     GetDiskIdFromLunInfo proc :ptr, :ptr
     UninstallDisks	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceHba_INTERFACE_DEFINED__
-__IVdsServiceHba_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceHba_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceHba, "0ac13689-3134-47c6-a17c-4669216801be")
 
 .comdef IVdsServiceHba : public IUnknown
 
     QueryHbaPorts	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceIscsi_INTERFACE_DEFINED__
-__IVdsServiceIscsi_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceIscsi_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceIscsi, "14fbe036-3ed7-4e10-90e9-a5ff991aff01")
 
@@ -2764,26 +2477,24 @@ DEFINE_IIDX(IVdsServiceIscsi, "14fbe036-3ed7-4e10-90e9-a5ff991aff01")
     SetAllIpsecSecurity proc :VDS_OBJECT_ID, :ULONGLONG, :ptr
     SetInitiatorSharedSecret proc :ptr, :VDS_OBJECT_ID
     RememberTargetSharedSecret proc :VDS_OBJECT_ID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceInitialization_INTERFACE_DEFINED__
-__IVdsServiceInitialization_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceInitialization_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceInitialization, "4afc3636-db01-4052-80c3-03bbcb8d3c69")
 
 .comdef IVdsServiceInitialization : public IUnknown
 
     Initialize		proc :LPWSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsHbaPort_INTERFACE_DEFINED__
-__IVdsHbaPort_INTERFACE_DEFINED__ equ 1
+define __IVdsHbaPort_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsHbaPort, "2abd757f-2851-4997-9a13-47d2a885d6ca")
 
@@ -2791,13 +2502,12 @@ DEFINE_IIDX(IVdsHbaPort, "2abd757f-2851-4997-9a13-47d2a885d6ca")
 
     GetProperties	proc :ptr
     SetAllPathStatuses	proc :VDS_PATH_STATUS
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiInitiatorAdapter_INTERFACE_DEFINED__
-__IVdsIscsiInitiatorAdapter_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiInitiatorAdapter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiInitiatorAdapter, "b07fedd4-1682-4440-9189-a39b55194dc5")
 
@@ -2807,13 +2517,12 @@ DEFINE_IIDX(IVdsIscsiInitiatorAdapter, "b07fedd4-1682-4440-9189-a39b55194dc5")
     QueryInitiatorPortals proc :ptr
     LoginToTarget	proc :VDS_ISCSI_LOGIN_TYPE, :VDS_OBJECT_ID, :VDS_OBJECT_ID, :VDS_OBJECT_ID, :ULONG, :BOOL, :BOOL, :VDS_ISCSI_AUTH_TYPE, :ptr
     LogoutFromTarget	proc :VDS_OBJECT_ID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiInitiatorPortal_INTERFACE_DEFINED__
-__IVdsIscsiInitiatorPortal_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiInitiatorPortal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiInitiatorPortal, "38a0a9ab-7cc8-4693-ac07-1f28bd03c3da")
 
@@ -2824,13 +2533,12 @@ DEFINE_IIDX(IVdsIscsiInitiatorPortal, "38a0a9ab-7cc8-4693-ac07-1f28bd03c3da")
     SetIpsecTunnelAddress proc :ptr, :ptr
     GetIpsecSecurity	proc :VDS_OBJECT_ID, :ptr
     SetIpsecSecurity	proc :VDS_OBJECT_ID, :ULONGLONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDiskPartitionMF_INTERFACE_DEFINED__
-__IVdsDiskPartitionMF_INTERFACE_DEFINED__ equ 1
+define __IVdsDiskPartitionMF_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDiskPartitionMF, "538684e0-ba3d-4bc0-aca9-164aff85c2a9")
 
@@ -2840,13 +2548,12 @@ DEFINE_IIDX(IVdsDiskPartitionMF, "538684e0-ba3d-4bc0-aca9-164aff85c2a9")
     GetPartitionFileSystemTypeName proc :ULONGLONG, :ptr
     QueryPartitionFileSystemFormatSupport proc :ULONGLONG
     FormatPartitionEx	proc :ULONGLONG, :LPWSTR, :USHORT, :ULONG, :LPWSTR, :BOOL, :BOOL, :BOOL, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumeMF_INTERFACE_DEFINED__
-__IVdsVolumeMF_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumeMF_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumeMF, "ee2d5ded-6236-4169-931d-b9778ce03dc6")
 
@@ -2862,13 +2569,12 @@ DEFINE_IIDX(IVdsVolumeMF, "ee2d5ded-6236-4169-931d-b9778ce03dc6")
     Dismount		proc :BOOL, :BOOL
     SetFileSystemFlags	proc :ULONG
     ClearFileSystemFlags proc :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumeMF2_INTERFACE_DEFINED__
-__IVdsVolumeMF2_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumeMF2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumeMF2, "4dbcee9a-6343-4651-b85f-5e75d74d983c")
 
@@ -2877,13 +2583,12 @@ DEFINE_IIDX(IVdsVolumeMF2, "4dbcee9a-6343-4651-b85f-5e75d74d983c")
     GetFileSystemTypeName proc :ptr
     QueryFileSystemFormatSupport proc
     FormatEx		proc :LPWSTR, :USHORT, :ULONG, :LPWSTR, :BOOL, :BOOL, :BOOL, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumeShrink_INTERFACE_DEFINED__
-__IVdsVolumeShrink_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumeShrink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumeShrink, "d68168c9-82a2-4f85-b6e9-74707c49a58f")
 
@@ -2891,13 +2596,12 @@ DEFINE_IIDX(IVdsVolumeShrink, "d68168c9-82a2-4f85-b6e9-74707c49a58f")
 
     QueryMaxReclaimableBytes proc :ptr
     Shrink		proc :ULONGLONG, :ULONGLONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsSubSystemImportTarget_INTERFACE_DEFINED__
-__IVdsSubSystemImportTarget_INTERFACE_DEFINED__ equ 1
+define __IVdsSubSystemImportTarget_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsSubSystemImportTarget, "83bfb87f-43fb-4903-baa6-127f01029eec")
 
@@ -2905,26 +2609,24 @@ DEFINE_IIDX(IVdsSubSystemImportTarget, "83bfb87f-43fb-4903-baa6-127f01029eec")
 
     GetImportTarget	proc :ptr
     SetImportTarget	proc :LPWSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsIscsiPortalLocal_INTERFACE_DEFINED__
-__IVdsIscsiPortalLocal_INTERFACE_DEFINED__ equ 1
+define __IVdsIscsiPortalLocal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsIscsiPortalLocal, "ad837c28-52c1-421d-bf04-fae7da665396")
 
 .comdef IVdsIscsiPortalLocal : public IUnknown
 
     SetIpsecSecurityLocal proc :ULONGLONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceSAN_INTERFACE_DEFINED__
-__IVdsServiceSAN_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceSAN_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceSAN, "FC5D23E8-A88B-41a5-8DE0-2D2F73C5A630")
 
@@ -2932,13 +2634,12 @@ DEFINE_IIDX(IVdsServiceSAN, "FC5D23E8-A88B-41a5-8DE0-2D2F73C5A630")
 
     GetSANPolicy	proc :ptr
     SetSANPolicy	proc :VDS_SAN_POLICY
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsVolumeMF3_INTERFACE_DEFINED__
-__IVdsVolumeMF3_INTERFACE_DEFINED__ equ 1
+define __IVdsVolumeMF3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsVolumeMF3, "6788FAF9-214E-4b85-BA59-266953616E09")
 
@@ -2947,38 +2648,33 @@ DEFINE_IIDX(IVdsVolumeMF3, "6788FAF9-214E-4b85-BA59-266953616E09")
     QueryVolumeGuidPathnames proc
     FormatEx2		proc :LPWSTR, :USHORT, :ULONG, :LPWSTR, :DWORD, :ptr
     OfflineVolume	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsDiskPartitionMF2_INTERFACE_DEFINED__
-__IVdsDiskPartitionMF2_INTERFACE_DEFINED__ equ 1
+define __IVdsDiskPartitionMF2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsDiskPartitionMF2, "9CBE50CA-F2D2-4bf4-ACE1-96896B729625")
 
 .comdef IVdsDiskPartitionMF2 : public IUnknown
 
     FormatPartitionEx2	proc :ULONGLONG, :LPWSTR, :USHORT, :ULONG, :LPWSTR, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVdsServiceSw_INTERFACE_DEFINED__
-__IVdsServiceSw_INTERFACE_DEFINED__ equ 1
+define __IVdsServiceSw_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVdsServiceSw, "15fc031c-0652-4306-b2c3-f558b8f837e2")
 
 .comdef IVdsServiceSw : public IUnknown
 
     GetDiskObject	proc :LPCWSTR, :ptr
-
-    .ends
+   .ends
 
 endif
+
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-endif
-
-
+endif ;; __vds_h__

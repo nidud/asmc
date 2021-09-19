@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,464 +18,7 @@ include ole2.inc
 endif
 
 ifndef __autosvcs_h__
-__autosvcs_h__ equ <>
-
-ifndef __ISecurityIdentityColl_FWD_DEFINED__
-__ISecurityIdentityColl_FWD_DEFINED__ equ 1
-endif
-ifndef __ISecurityCallersColl_FWD_DEFINED__
-__ISecurityCallersColl_FWD_DEFINED__ equ 1
-endif
-ifndef __ISecurityCallContext_FWD_DEFINED__
-__ISecurityCallContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetSecurityCallContext_FWD_DEFINED__
-__IGetSecurityCallContext_FWD_DEFINED__ equ 1
-endif
-ifndef __SecurityProperty_FWD_DEFINED__
-__SecurityProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ContextInfo_FWD_DEFINED__
-__ContextInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ContextInfo2_FWD_DEFINED__
-__ContextInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __ObjectContext_FWD_DEFINED__
-__ObjectContext_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionContextEx_FWD_DEFINED__
-__ITransactionContextEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionContext_FWD_DEFINED__
-__ITransactionContext_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateWithTransactionEx_FWD_DEFINED__
-__ICreateWithTransactionEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateWithLocalTransaction_FWD_DEFINED__
-__ICreateWithLocalTransaction_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateWithTipTransactionEx_FWD_DEFINED__
-__ICreateWithTipTransactionEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IComLTxEvents_FWD_DEFINED__
-__IComLTxEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComUserEvent_FWD_DEFINED__
-__IComUserEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IComThreadEvents_FWD_DEFINED__
-__IComThreadEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComAppEvents_FWD_DEFINED__
-__IComAppEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComInstanceEvents_FWD_DEFINED__
-__IComInstanceEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTransactionEvents_FWD_DEFINED__
-__IComTransactionEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComMethodEvents_FWD_DEFINED__
-__IComMethodEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectEvents_FWD_DEFINED__
-__IComObjectEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComResourceEvents_FWD_DEFINED__
-__IComResourceEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComSecurityEvents_FWD_DEFINED__
-__IComSecurityEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectPoolEvents_FWD_DEFINED__
-__IComObjectPoolEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectPoolEvents2_FWD_DEFINED__
-__IComObjectPoolEvents2_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectConstructionEvents_FWD_DEFINED__
-__IComObjectConstructionEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComActivityEvents_FWD_DEFINED__
-__IComActivityEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComIdentityEvents_FWD_DEFINED__
-__IComIdentityEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComQCEvents_FWD_DEFINED__
-__IComQCEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComExceptionEvents_FWD_DEFINED__
-__IComExceptionEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ILBEvents_FWD_DEFINED__
-__ILBEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComCRMEvents_FWD_DEFINED__
-__IComCRMEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComMethod2Events_FWD_DEFINED__
-__IComMethod2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTrackingInfoEvents_FWD_DEFINED__
-__IComTrackingInfoEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTrackingInfoCollection_FWD_DEFINED__
-__IComTrackingInfoCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTrackingInfoObject_FWD_DEFINED__
-__IComTrackingInfoObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTrackingInfoProperties_FWD_DEFINED__
-__IComTrackingInfoProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IComApp2Events_FWD_DEFINED__
-__IComApp2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __IComTransaction2Events_FWD_DEFINED__
-__IComTransaction2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __IComInstance2Events_FWD_DEFINED__
-__IComInstance2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectPool2Events_FWD_DEFINED__
-__IComObjectPool2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __IComObjectConstruction2Events_FWD_DEFINED__
-__IComObjectConstruction2Events_FWD_DEFINED__ equ 1
-endif
-ifndef __ISystemAppEventData_FWD_DEFINED__
-__ISystemAppEventData_FWD_DEFINED__ equ 1
-endif
-ifndef __IMtsEvents_FWD_DEFINED__
-__IMtsEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IMtsEventInfo_FWD_DEFINED__
-__IMtsEventInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IMTSLocator_FWD_DEFINED__
-__IMTSLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IMtsGrp_FWD_DEFINED__
-__IMtsGrp_FWD_DEFINED__ equ 1
-endif
-ifndef __IMessageMover_FWD_DEFINED__
-__IMessageMover_FWD_DEFINED__ equ 1
-endif
-ifndef __IEventServerTrace_FWD_DEFINED__
-__IEventServerTrace_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetAppTrackerData_FWD_DEFINED__
-__IGetAppTrackerData_FWD_DEFINED__ equ 1
-endif
-ifndef __IDispenserManager_FWD_DEFINED__
-__IDispenserManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IHolder_FWD_DEFINED__
-__IHolder_FWD_DEFINED__ equ 1
-endif
-ifndef __IDispenserDriver_FWD_DEFINED__
-__IDispenserDriver_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionProxy_FWD_DEFINED__
-__ITransactionProxy_FWD_DEFINED__ equ 1
-endif
-ifndef __IContextSecurityPerimeter_FWD_DEFINED__
-__IContextSecurityPerimeter_FWD_DEFINED__ equ 1
-endif
-ifndef __ITxProxyHolder_FWD_DEFINED__
-__ITxProxyHolder_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectContext_FWD_DEFINED__
-__IObjectContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectControl_FWD_DEFINED__
-__IObjectControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumNames_FWD_DEFINED__
-__IEnumNames_FWD_DEFINED__ equ 1
-endif
-ifndef __ISecurityProperty_FWD_DEFINED__
-__ISecurityProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ObjectControl_FWD_DEFINED__
-__ObjectControl_FWD_DEFINED__ equ 1
-endif
-ifndef __ISharedProperty_FWD_DEFINED__
-__ISharedProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ISharedPropertyGroup_FWD_DEFINED__
-__ISharedPropertyGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __ISharedPropertyGroupManager_FWD_DEFINED__
-__ISharedPropertyGroupManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectConstruct_FWD_DEFINED__
-__IObjectConstruct_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectConstructString_FWD_DEFINED__
-__IObjectConstructString_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectContextActivity_FWD_DEFINED__
-__IObjectContextActivity_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectContextInfo_FWD_DEFINED__
-__IObjectContextInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectContextInfo2_FWD_DEFINED__
-__IObjectContextInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionStatus_FWD_DEFINED__
-__ITransactionStatus_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectContextTip_FWD_DEFINED__
-__IObjectContextTip_FWD_DEFINED__ equ 1
-endif
-ifndef __IPlaybackControl_FWD_DEFINED__
-__IPlaybackControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetContextProperties_FWD_DEFINED__
-__IGetContextProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IContextState_FWD_DEFINED__
-__IContextState_FWD_DEFINED__ equ 1
-endif
-ifndef __IPoolManager_FWD_DEFINED__
-__IPoolManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISelectCOMLBServer_FWD_DEFINED__
-__ISelectCOMLBServer_FWD_DEFINED__ equ 1
-endif
-ifndef __ICOMLBArguments_FWD_DEFINED__
-__ICOMLBArguments_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmLogControl_FWD_DEFINED__
-__ICrmLogControl_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmCompensatorVariants_FWD_DEFINED__
-__ICrmCompensatorVariants_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmCompensator_FWD_DEFINED__
-__ICrmCompensator_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmMonitorLogRecords_FWD_DEFINED__
-__ICrmMonitorLogRecords_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmMonitorClerks_FWD_DEFINED__
-__ICrmMonitorClerks_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmMonitor_FWD_DEFINED__
-__ICrmMonitor_FWD_DEFINED__ equ 1
-endif
-ifndef __ICrmFormatLogRecords_FWD_DEFINED__
-__ICrmFormatLogRecords_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceIISIntrinsicsConfig_FWD_DEFINED__
-__IServiceIISIntrinsicsConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceComTIIntrinsicsConfig_FWD_DEFINED__
-__IServiceComTIIntrinsicsConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceSxsConfig_FWD_DEFINED__
-__IServiceSxsConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __ICheckSxsConfig_FWD_DEFINED__
-__ICheckSxsConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceInheritanceConfig_FWD_DEFINED__
-__IServiceInheritanceConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceThreadPoolConfig_FWD_DEFINED__
-__IServiceThreadPoolConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceTransactionConfigBase_FWD_DEFINED__
-__IServiceTransactionConfigBase_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceTransactionConfig_FWD_DEFINED__
-__IServiceTransactionConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceSysTxnConfig_FWD_DEFINED__
-__IServiceSysTxnConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceSynchronizationConfig_FWD_DEFINED__
-__IServiceSynchronizationConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceTrackerConfig_FWD_DEFINED__
-__IServiceTrackerConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServicePartitionConfig_FWD_DEFINED__
-__IServicePartitionConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceCall_FWD_DEFINED__
-__IServiceCall_FWD_DEFINED__ equ 1
-endif
-ifndef __IAsyncErrorNotify_FWD_DEFINED__
-__IAsyncErrorNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IServiceActivity_FWD_DEFINED__
-__IServiceActivity_FWD_DEFINED__ equ 1
-endif
-ifndef __IThreadPoolKnobs_FWD_DEFINED__
-__IThreadPoolKnobs_FWD_DEFINED__ equ 1
-endif
-ifndef __IComStaThreadPoolKnobs_FWD_DEFINED__
-__IComStaThreadPoolKnobs_FWD_DEFINED__ equ 1
-endif
-ifndef __IComMtaThreadPoolKnobs_FWD_DEFINED__
-__IComMtaThreadPoolKnobs_FWD_DEFINED__ equ 1
-endif
-ifndef __IComStaThreadPoolKnobs2_FWD_DEFINED__
-__IComStaThreadPoolKnobs2_FWD_DEFINED__ equ 1
-endif
-ifndef __IProcessInitializer_FWD_DEFINED__
-__IProcessInitializer_FWD_DEFINED__ equ 1
-endif
-ifndef __IServicePoolConfig_FWD_DEFINED__
-__IServicePoolConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IServicePool_FWD_DEFINED__
-__IServicePool_FWD_DEFINED__ equ 1
-endif
-ifndef __IManagedPooledObj_FWD_DEFINED__
-__IManagedPooledObj_FWD_DEFINED__ equ 1
-endif
-ifndef __IManagedPoolAction_FWD_DEFINED__
-__IManagedPoolAction_FWD_DEFINED__ equ 1
-endif
-ifndef __IManagedObjectInfo_FWD_DEFINED__
-__IManagedObjectInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IAppDomainHelper_FWD_DEFINED__
-__IAppDomainHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IAssemblyLocator_FWD_DEFINED__
-__IAssemblyLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IManagedActivationEvents_FWD_DEFINED__
-__IManagedActivationEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ISendMethodEvents_FWD_DEFINED__
-__ISendMethodEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionResourcePool_FWD_DEFINED__
-__ITransactionResourcePool_FWD_DEFINED__ equ 1
-endif
-ifndef __IMTSCall_FWD_DEFINED__
-__IMTSCall_FWD_DEFINED__ equ 1
-endif
-ifndef __IContextProperties_FWD_DEFINED__
-__IContextProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjPool_FWD_DEFINED__
-__IObjPool_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionProperty_FWD_DEFINED__
-__ITransactionProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __IMTSActivity_FWD_DEFINED__
-__IMTSActivity_FWD_DEFINED__ equ 1
-endif
-ifndef __SecurityIdentity_FWD_DEFINED__
-__SecurityIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __SecurityCallers_FWD_DEFINED__
-__SecurityCallers_FWD_DEFINED__ equ 1
-endif
-ifndef __SecurityCallContext_FWD_DEFINED__
-__SecurityCallContext_FWD_DEFINED__ equ 1
-endif
-ifndef __GetSecurityCallContextAppObject_FWD_DEFINED__
-__GetSecurityCallContextAppObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IContextState_FWD_DEFINED__
-__IContextState_FWD_DEFINED__ equ 1
-endif
-ifndef __Dummy30040732_FWD_DEFINED__
-__Dummy30040732_FWD_DEFINED__ equ 1
-endif
-ifndef __ContextInfo_FWD_DEFINED__
-__ContextInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ContextInfo2_FWD_DEFINED__
-__ContextInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __ObjectControl_FWD_DEFINED__
-__ObjectControl_FWD_DEFINED__ equ 1
-endif
-ifndef __TransactionContext_FWD_DEFINED__
-__TransactionContext_FWD_DEFINED__ equ 1
-endif
-ifndef __TransactionContextEx_FWD_DEFINED__
-__TransactionContextEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ByotServerEx_FWD_DEFINED__
-__ByotServerEx_FWD_DEFINED__ equ 1
-endif
-ifndef __CServiceConfig_FWD_DEFINED__
-__CServiceConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __ServicePool_FWD_DEFINED__
-__ServicePool_FWD_DEFINED__ equ 1
-endif
-ifndef __ServicePoolConfig_FWD_DEFINED__
-__ServicePoolConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __SharedProperty_FWD_DEFINED__
-__SharedProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __SharedPropertyGroup_FWD_DEFINED__
-__SharedPropertyGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __SharedPropertyGroupManager_FWD_DEFINED__
-__SharedPropertyGroupManager_FWD_DEFINED__ equ 1
-endif
-ifndef __COMEvents_FWD_DEFINED__
-__COMEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __CoMTSLocator_FWD_DEFINED__
-__CoMTSLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __MtsGrp_FWD_DEFINED__
-__MtsGrp_FWD_DEFINED__ equ 1
-endif
-ifndef __ComServiceEvents_FWD_DEFINED__
-__ComServiceEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ComSystemAppEventData_FWD_DEFINED__
-__ComSystemAppEventData_FWD_DEFINED__ equ 1
-endif
-ifndef __CRMClerk_FWD_DEFINED__
-__CRMClerk_FWD_DEFINED__ equ 1
-endif
-ifndef __CRMRecoveryClerk_FWD_DEFINED__
-__CRMRecoveryClerk_FWD_DEFINED__ equ 1
-endif
-ifndef __LBEvents_FWD_DEFINED__
-__LBEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __MessageMover_FWD_DEFINED__
-__MessageMover_FWD_DEFINED__ equ 1
-endif
-ifndef __DispenserManager_FWD_DEFINED__
-__DispenserManager_FWD_DEFINED__ equ 1
-endif
-ifndef __PoolMgr_FWD_DEFINED__
-__PoolMgr_FWD_DEFINED__ equ 1
-endif
-ifndef __EventServer_FWD_DEFINED__
-__EventServer_FWD_DEFINED__ equ 1
-endif
-ifndef __TrackerServer_FWD_DEFINED__
-__TrackerServer_FWD_DEFINED__ equ 1
-endif
-ifndef __AppDomainHelper_FWD_DEFINED__
-__AppDomainHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __ClrAssemblyLocator_FWD_DEFINED__
-__ClrAssemblyLocator_FWD_DEFINED__ equ 1
-endif
+define __autosvcs_h__
 
 include unknwn.inc
 include oaidl.inc
@@ -488,20 +31,9 @@ include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 include objbase.inc
-ifndef DECLSPEC_UUID
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-DECLSPEC_UUID macro x
-	exitm<__declspec(uuid(x))>
-	endm
-else
-DECLSPEC_UUID macro x
-	exitm<>
-	endm
-endif
-endif
 
 ifndef __ISecurityIdentityColl_INTERFACE_DEFINED__
-__ISecurityIdentityColl_INTERFACE_DEFINED__ equ 1
+define __ISecurityIdentityColl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISecurityIdentityColl, "CAFC823C-B441-11d1-B82B-0000F8757E2A")
 
@@ -510,12 +42,12 @@ DEFINE_IIDX(ISecurityIdentityColl, "CAFC823C-B441-11d1-B82B-0000F8757E2A")
     get_Count		proc :ptr LONG
     get_Item		proc :BSTR, :ptr VARIANT
     get__NewEnum	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __ISecurityCallersColl_INTERFACE_DEFINED__
-__ISecurityCallersColl_INTERFACE_DEFINED__ equ 1
+define __ISecurityCallersColl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISecurityCallersColl, "CAFC823D-B441-11d1-B82B-0000F8757E2A")
 
@@ -524,12 +56,12 @@ DEFINE_IIDX(ISecurityCallersColl, "CAFC823D-B441-11d1-B82B-0000F8757E2A")
     get_Count		proc :ptr LONG
     get_Item		proc :LONG, :ptr ptr ISecurityIdentityColl
     get__NewEnum	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __ISecurityCallContext_INTERFACE_DEFINED__
-__ISecurityCallContext_INTERFACE_DEFINED__ equ 1
+define __ISecurityCallContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISecurityCallContext, "CAFC823E-B441-11d1-B82B-0000F8757E2A")
 
@@ -541,24 +73,24 @@ DEFINE_IIDX(ISecurityCallContext, "CAFC823E-B441-11d1-B82B-0000F8757E2A")
     IsCallerInRole	proc :BSTR, :ptr VARIANT_BOOL
     IsSecurityEnabled	proc :ptr VARIANT_BOOL
     IsUserInRole	proc :ptr VARIANT, :BSTR, :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IGetSecurityCallContext_INTERFACE_DEFINED__
-__IGetSecurityCallContext_INTERFACE_DEFINED__ equ 1
+define __IGetSecurityCallContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetSecurityCallContext, "CAFC823F-B441-11d1-B82B-0000F8757E2A")
 
 .comdef IGetSecurityCallContext : public IDispatch
 
     GetSecurityCallContext proc :ptr ptr ISecurityCallContext
-    .ends
+   .ends
 
 endif
 
 ifndef __SecurityProperty_INTERFACE_DEFINED__
-__SecurityProperty_INTERFACE_DEFINED__ equ 1
+define __SecurityProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(SecurityProperty, "E74A7215-014D-11d1-A63C-00A0C911B4E0")
 
@@ -568,12 +100,12 @@ DEFINE_IIDX(SecurityProperty, "E74A7215-014D-11d1-A63C-00A0C911B4E0")
     GetDirectCreatorName proc :ptr BSTR
     GetOriginalCallerName proc :ptr BSTR
     GetOriginalCreatorName proc :ptr BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ContextInfo_INTERFACE_DEFINED__
-__ContextInfo_INTERFACE_DEFINED__ equ 1
+define __ContextInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ContextInfo, "19A5A02C-0AC8-11d2-B286-00C04F8EF934")
 
@@ -584,12 +116,12 @@ DEFINE_IIDX(ContextInfo, "19A5A02C-0AC8-11d2-B286-00C04F8EF934")
     GetTransactionId	proc :ptr BSTR
     GetActivityId	proc :ptr BSTR
     GetContextId	proc :ptr BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ContextInfo2_INTERFACE_DEFINED__
-__ContextInfo2_INTERFACE_DEFINED__ equ 1
+define __ContextInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ContextInfo2, "c99d6e75-2375-11d4-8331-00c04f605588")
 
@@ -598,12 +130,12 @@ DEFINE_IIDX(ContextInfo2, "c99d6e75-2375-11d4-8331-00c04f605588")
     GetPartitionId	proc :ptr BSTR
     GetApplicationId	proc :ptr BSTR
     GetApplicationInstanceId proc :ptr BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ObjectContext_INTERFACE_DEFINED__
-__ObjectContext_INTERFACE_DEFINED__ equ 1
+define __ObjectContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ObjectContext, "74C08646-CEDB-11CF-8B49-00AA00B8A790")
 
@@ -622,12 +154,12 @@ DEFINE_IIDX(ObjectContext, "74C08646-CEDB-11CF-8B49-00AA00B8A790")
     get__NewEnum	proc :ptr ptr IUnknown
     get_Security	proc :ptr ptr SecurityProperty
     get_ContextInfo	proc :ptr ptr ContextInfo
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionContextEx_INTERFACE_DEFINED__
-__ITransactionContextEx_INTERFACE_DEFINED__ equ 1
+define __ITransactionContextEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionContextEx, "7999FC22-D3C6-11CF-ACAB-00A024A55AEF")
 
@@ -636,12 +168,12 @@ DEFINE_IIDX(ITransactionContextEx, "7999FC22-D3C6-11CF-ACAB-00A024A55AEF")
     CreateInstance	proc :REFCLSID, :REFIID, :ptr ptr
     Commit		proc
     Abort		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionContext_INTERFACE_DEFINED__
-__ITransactionContext_INTERFACE_DEFINED__ equ 1
+define __ITransactionContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionContext, "7999FC21-D3C6-11CF-ACAB-00A024A55AEF")
 
@@ -650,43 +182,43 @@ DEFINE_IIDX(ITransactionContext, "7999FC21-D3C6-11CF-ACAB-00A024A55AEF")
     CreateInstance	proc :BSTR, :ptr VARIANT
     Commit		proc
     Abort		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ICreateWithTransactionEx_INTERFACE_DEFINED__
-__ICreateWithTransactionEx_INTERFACE_DEFINED__ equ 1
+define __ICreateWithTransactionEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateWithTransactionEx, "455ACF57-5345-11d2-99CF-00C04F797BC9")
 
 .comdef ICreateWithTransactionEx : public IUnknown
 
     CreateInstance	proc :ptr ITransaction, :REFCLSID, :REFIID, :ptr ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICreateWithLocalTransaction_INTERFACE_DEFINED__
-__ICreateWithLocalTransaction_INTERFACE_DEFINED__ equ 1
+define __ICreateWithLocalTransaction_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateWithLocalTransaction, "227AC7A8-8423-42ce-B7CF-03061EC9AAA3")
 
 .comdef ICreateWithLocalTransaction : public IUnknown
 
     CreateInstanceWithSysTx proc :ptr IUnknown, :REFCLSID, :REFIID, :ptr ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICreateWithTipTransactionEx_INTERFACE_DEFINED__
-__ICreateWithTipTransactionEx_INTERFACE_DEFINED__ equ 1
+define __ICreateWithTipTransactionEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateWithTipTransactionEx, "455ACF59-5345-11d2-99CF-00C04F797BC9")
 
 .comdef ICreateWithTipTransactionEx : public IUnknown
 
     CreateInstance	proc :BSTR, :REFCLSID, :REFIID, :ptr ptr
-    .ends
+   .ends
 
 endif
 
@@ -695,7 +227,7 @@ MTS_RESID		typedef qword
 ULONG64			typedef qword
 
 ifndef _COMSVCSEVENTINFO_
-_COMSVCSEVENTINFO_ equ <>
+define _COMSVCSEVENTINFO_
 
 COMSVCSEVENTINFO	STRUC
 cbSize			dd ?
@@ -710,7 +242,7 @@ COMSVCSEVENTINFO	ENDS
 endif
 
 ifndef __IComLTxEvents_INTERFACE_DEFINED__
-__IComLTxEvents_INTERFACE_DEFINED__ equ 1
+define __IComLTxEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComLTxEvents, "605CF82C-578E-4298-975D-82BABCD9E053")
 
@@ -721,24 +253,24 @@ DEFINE_IIDX(IComLTxEvents, "605CF82C-578E-4298-975D-82BABCD9E053")
     OnLtxTransactionAbort proc :ptr, :GUID
     OnLtxTransactionCommit proc :ptr, :GUID
     OnLtxTransactionPromote proc :ptr, :GUID, :GUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IComUserEvent_INTERFACE_DEFINED__
-__IComUserEvent_INTERFACE_DEFINED__ equ 1
+define __IComUserEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComUserEvent, "683130A4-2E50-11d2-98A5-00C04F8EE1C4")
 
 .comdef IComUserEvent : public IUnknown
 
     OnUserEvent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IComThreadEvents_INTERFACE_DEFINED__
-__IComThreadEvents_INTERFACE_DEFINED__ equ 1
+define __IComThreadEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComThreadEvents, "683130A5-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -755,12 +287,12 @@ DEFINE_IIDX(IComThreadEvents, "683130A5-2E50-11d2-98A5-00C04F8EE1C4")
     OnThreadWorkReject	proc :ptr, :ULONG64, :ULONG64, :DWORD
     OnThreadAssignApartment proc :ptr, :REFGUID, :ULONG64
     OnThreadUnassignApartment proc :ptr, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IComAppEvents_INTERFACE_DEFINED__
-__IComAppEvents_INTERFACE_DEFINED__ equ 1
+define __IComAppEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComAppEvents, "683130A6-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -769,12 +301,12 @@ DEFINE_IIDX(IComAppEvents, "683130A6-2E50-11d2-98A5-00C04F8EE1C4")
     OnAppActivation	proc :ptr, :GUID
     OnAppShutdown	proc :ptr, :GUID
     OnAppForceShutdown	proc :ptr, :GUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IComInstanceEvents_INTERFACE_DEFINED__
-__IComInstanceEvents_INTERFACE_DEFINED__ equ 1
+define __IComInstanceEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComInstanceEvents, "683130A7-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -787,7 +319,7 @@ DEFINE_IIDX(IComInstanceEvents, "683130A7-2E50-11d2-98A5-00C04F8EE1C4")
 endif
 
 ifndef __IComTransactionEvents_INTERFACE_DEFINED__
-__IComTransactionEvents_INTERFACE_DEFINED__ equ 1
+define __IComTransactionEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTransactionEvents, "683130A8-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -797,12 +329,12 @@ DEFINE_IIDX(IComTransactionEvents, "683130A8-2E50-11d2-98A5-00C04F8EE1C4")
     OnTransactionPrepare proc :ptr, :REFGUID, :BOOL
     OnTransactionAbort	proc :ptr, :REFGUID
     OnTransactionCommit proc :ptr, :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IComMethodEvents_INTERFACE_DEFINED__
-__IComMethodEvents_INTERFACE_DEFINED__ equ 1
+define __IComMethodEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComMethodEvents, "683130A9-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -811,12 +343,12 @@ DEFINE_IIDX(IComMethodEvents, "683130A9-2E50-11d2-98A5-00C04F8EE1C4")
     OnMethodCall	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :ULONG
     OnMethodReturn	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :ULONG, :HRESULT
     OnMethodException	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectEvents_INTERFACE_DEFINED__
-__IComObjectEvents_INTERFACE_DEFINED__ equ 1
+define __IComObjectEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectEvents, "683130AA-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -828,12 +360,12 @@ DEFINE_IIDX(IComObjectEvents, "683130AA-2E50-11d2-98A5-00C04F8EE1C4")
     OnEnableCommit	proc :ptr, :ULONG64
     OnSetComplete	proc :ptr, :ULONG64
     OnSetAbort		proc :ptr, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IComResourceEvents_INTERFACE_DEFINED__
-__IComResourceEvents_INTERFACE_DEFINED__ equ 1
+define __IComResourceEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComResourceEvents, "683130AB-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -844,12 +376,12 @@ DEFINE_IIDX(IComResourceEvents, "683130AB-2E50-11d2-98A5-00C04F8EE1C4")
     OnResourceRecycle	proc :ptr, :ULONG64, :LPCOLESTR, :ULONG64
     OnResourceDestroy	proc :ptr, :ULONG64, :HRESULT, :LPCOLESTR, :ULONG64
     OnResourceTrack	proc :ptr, :ULONG64, :LPCOLESTR, :ULONG64, :BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IComSecurityEvents_INTERFACE_DEFINED__
-__IComSecurityEvents_INTERFACE_DEFINED__ equ 1
+define __IComSecurityEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComSecurityEvents, "683130AC-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -857,12 +389,12 @@ DEFINE_IIDX(IComSecurityEvents, "683130AC-2E50-11d2-98A5-00C04F8EE1C4")
 
     OnAuthenticate	proc :ptr, :REFGUID, :ULONG64, :REFGUID, :ULONG, :ULONG, :ptr, :BOOL
     OnAuthenticateFail	proc :ptr, :REFGUID, :ULONG64, :REFGUID, :ULONG, :ULONG, :ptr, :BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectPoolEvents_INTERFACE_DEFINED__
-__IComObjectPoolEvents_INTERFACE_DEFINED__ equ 1
+define __IComObjectPoolEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectPoolEvents, "683130AD-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -872,12 +404,12 @@ DEFINE_IIDX(IComObjectPoolEvents, "683130AD-2E50-11d2-98A5-00C04F8EE1C4")
     OnObjPoolGetObject	proc :ptr, :REFGUID, :REFGUID, :DWORD, :ULONG64
     OnObjPoolRecycleToTx proc :ptr, :REFGUID, :REFGUID, :REFGUID, :ULONG64
     OnObjPoolGetFromTx	proc :ptr, :REFGUID, :REFGUID, :REFGUID, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectPoolEvents2_INTERFACE_DEFINED__
-__IComObjectPoolEvents2_INTERFACE_DEFINED__ equ 1
+define __IComObjectPoolEvents2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectPoolEvents2, "683130AE-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -888,24 +420,24 @@ DEFINE_IIDX(IComObjectPoolEvents2, "683130AE-2E50-11d2-98A5-00C04F8EE1C4")
     OnObjPoolCreateDecision proc :ptr, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
     OnObjPoolTimeout	proc :ptr, :REFGUID, :REFGUID, :DWORD
     OnObjPoolCreatePool proc :ptr, :REFGUID, :DWORD, :DWORD, :DWORD
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectConstructionEvents_INTERFACE_DEFINED__
-__IComObjectConstructionEvents_INTERFACE_DEFINED__ equ 1
+define __IComObjectConstructionEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectConstructionEvents, "683130AF-2E50-11d2-98A5-00C04F8EE1C4")
 
 .comdef IComObjectConstructionEvents : public IUnknown
 
     OnObjectConstruct	proc :ptr, :REFGUID, :LPCOLESTR, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IComActivityEvents_INTERFACE_DEFINED__
-__IComActivityEvents_INTERFACE_DEFINED__ equ 1
+define __IComActivityEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComActivityEvents, "683130B0-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -918,24 +450,24 @@ DEFINE_IIDX(IComActivityEvents, "683130B0-2E50-11d2-98A5-00C04F8EE1C4")
     OnActivityReenter	proc :ptr, :REFGUID, :DWORD, :DWORD
     OnActivityLeave	proc :ptr, :REFGUID, :REFGUID
     OnActivityLeaveSame proc :ptr, :REFGUID, :DWORD
-    .ends
+   .ends
 
 endif
 
 ifndef __IComIdentityEvents_INTERFACE_DEFINED__
-__IComIdentityEvents_INTERFACE_DEFINED__ equ 1
+define __IComIdentityEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComIdentityEvents, "683130B1-2E50-11d2-98A5-00C04F8EE1C4")
 
 .comdef IComIdentityEvents : public IUnknown
 
     OnIISRequestInfo	proc :ptr, :ULONG64, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IComQCEvents_INTERFACE_DEFINED__
-__IComQCEvents_INTERFACE_DEFINED__ equ 1
+define __IComQCEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComQCEvents, "683130B2-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -948,24 +480,24 @@ DEFINE_IIDX(IComQCEvents, "683130B2-2E50-11d2-98A5-00C04F8EE1C4")
     OnQCMoveToReTryQueue proc :ptr, :REFGUID, :REFGUID, :ULONG
     OnQCMoveToDeadQueue proc :ptr, :REFGUID, :REFGUID
     OnQCPlayback	proc :ptr, :ULONG64, :REFGUID, :REFGUID, :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __IComExceptionEvents_INTERFACE_DEFINED__
-__IComExceptionEvents_INTERFACE_DEFINED__ equ 1
+define __IComExceptionEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComExceptionEvents, "683130B3-2E50-11d2-98A5-00C04F8EE1C4")
 
 .comdef IComExceptionEvents : public IUnknown
 
     OnExceptionUser	proc :ptr, :ULONG, :ULONG64, :LPCOLESTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ILBEvents_INTERFACE_DEFINED__
-__ILBEvents_INTERFACE_DEFINED__ equ 1
+define __ILBEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILBEvents, "683130B4-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -974,12 +506,12 @@ DEFINE_IIDX(ILBEvents, "683130B4-2E50-11d2-98A5-00C04F8EE1C4")
     TargetUp		proc :BSTR, :BSTR
     TargetDown		proc :BSTR, :BSTR
     EngineDefined	proc :BSTR, :ptr VARIANT, :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IComCRMEvents_INTERFACE_DEFINED__
-__IComCRMEvents_INTERFACE_DEFINED__ equ 1
+define __IComCRMEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComCRMEvents, "683130B5-2E50-11d2-98A5-00C04F8EE1C4")
 
@@ -1000,12 +532,12 @@ DEFINE_IIDX(IComCRMEvents, "683130B5-2E50-11d2-98A5-00C04F8EE1C4")
     OnCRMForget		proc :ptr, :ptr GUID
     OnCRMForce		proc :ptr, :ptr GUID
     OnCRMDeliver	proc :ptr, :ptr GUID, :BOOL, :DWORD
-    .ends
+   .ends
 
 endif
 
 ifndef __IComMethod2Events_INTERFACE_DEFINED__
-__IComMethod2Events_INTERFACE_DEFINED__ equ 1
+define __IComMethod2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComMethod2Events, "FB388AAA-567D-4024-AF8E-6E93EE748573")
 
@@ -1014,19 +546,19 @@ DEFINE_IIDX(IComMethod2Events, "FB388AAA-567D-4024-AF8E-6E93EE748573")
     OnMethodCall2	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :DWORD, :ULONG
     OnMethodReturn2	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :DWORD, :ULONG, :HRESULT
     OnMethodException2	proc :ptr, :ULONG64, :REFCLSID, :REFIID, :DWORD, :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IComTrackingInfoEvents_INTERFACE_DEFINED__
-__IComTrackingInfoEvents_INTERFACE_DEFINED__ equ 1
+define __IComTrackingInfoEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTrackingInfoEvents, "4e6cdcc9-fb25-4fd5-9cc5-c9f4b6559cec")
 
 .comdef IComTrackingInfoEvents : public IUnknown
 
     OnNewTrackingInfo	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1037,7 +569,7 @@ endif
     }
 
 ifndef __IComTrackingInfoCollection_INTERFACE_DEFINED__
-__IComTrackingInfoCollection_INTERFACE_DEFINED__ equ 1
+define __IComTrackingInfoCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTrackingInfoCollection, "c266c677-c9ad-49ab-9fd9-d9661078588a")
 
@@ -1046,24 +578,24 @@ DEFINE_IIDX(IComTrackingInfoCollection, "c266c677-c9ad-49ab-9fd9-d9661078588a")
     Type		proc :ptr
     Count		proc :ptr
     Item		proc :ULONG, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IComTrackingInfoObject_INTERFACE_DEFINED__
-__IComTrackingInfoObject_INTERFACE_DEFINED__ equ 1
+define __IComTrackingInfoObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTrackingInfoObject, "116e42c5-d8b1-47bf-ab1e-c895ed3e2372")
 
 .comdef IComTrackingInfoObject : public IUnknown
 
     GetValue		proc :LPOLESTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IComTrackingInfoProperties_INTERFACE_DEFINED__
-__IComTrackingInfoProperties_INTERFACE_DEFINED__ equ 1
+define __IComTrackingInfoProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTrackingInfoProperties, "789b42be-6f6b-443a-898e-67abf390aa14")
 
@@ -1071,12 +603,12 @@ DEFINE_IIDX(IComTrackingInfoProperties, "789b42be-6f6b-443a-898e-67abf390aa14")
 
     PropCount		proc :ptr
     GetPropName		proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IComApp2Events_INTERFACE_DEFINED__
-__IComApp2Events_INTERFACE_DEFINED__ equ 1
+define __IComApp2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComApp2Events, "1290BC1A-B219-418d-B078-5934DED08242")
 
@@ -1087,12 +619,12 @@ DEFINE_IIDX(IComApp2Events, "1290BC1A-B219-418d-B078-5934DED08242")
     OnAppForceShutdown2 proc :ptr, :GUID
     OnAppPaused2	proc :ptr, :GUID, :BOOL
     OnAppRecycle2	proc :ptr, :GUID, :GUID, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IComTransaction2Events_INTERFACE_DEFINED__
-__IComTransaction2Events_INTERFACE_DEFINED__ equ 1
+define __IComTransaction2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComTransaction2Events, "A136F62A-2F94-4288-86E0-D8A1FA4C0299")
 
@@ -1102,12 +634,12 @@ DEFINE_IIDX(IComTransaction2Events, "A136F62A-2F94-4288-86E0-D8A1FA4C0299")
     OnTransactionPrepare2 proc :ptr, :REFGUID, :BOOL
     OnTransactionAbort2 proc :ptr, :REFGUID
     OnTransactionCommit2 proc :ptr, :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IComInstance2Events_INTERFACE_DEFINED__
-__IComInstance2Events_INTERFACE_DEFINED__ equ 1
+define __IComInstance2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComInstance2Events, "20E3BF07-B506-4ad5-A50C-D2CA5B9C158E")
 
@@ -1115,12 +647,12 @@ DEFINE_IIDX(IComInstance2Events, "20E3BF07-B506-4ad5-A50C-D2CA5B9C158E")
 
     OnObjectCreate2	proc :ptr, :REFGUID, :REFCLSID, :REFGUID, :ULONG64, :ULONG64, :REFGUID
     OnObjectDestroy2	proc :ptr, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectPool2Events_INTERFACE_DEFINED__
-__IComObjectPool2Events_INTERFACE_DEFINED__ equ 1
+define __IComObjectPool2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectPool2Events, "65BF6534-85EA-4f64-8CF4-3D974B2AB1CF")
 
@@ -1130,24 +662,24 @@ DEFINE_IIDX(IComObjectPool2Events, "65BF6534-85EA-4f64-8CF4-3D974B2AB1CF")
     OnObjPoolGetObject2 proc :ptr, :REFGUID, :REFGUID, :DWORD, :ULONG64, :REFGUID
     OnObjPoolRecycleToTx2 proc :ptr, :REFGUID, :REFGUID, :REFGUID, :ULONG64
     OnObjPoolGetFromTx2 proc :ptr, :REFGUID, :REFGUID, :REFGUID, :ULONG64, :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IComObjectConstruction2Events_INTERFACE_DEFINED__
-__IComObjectConstruction2Events_INTERFACE_DEFINED__ equ 1
+define __IComObjectConstruction2Events_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComObjectConstruction2Events, "4B5A7827-8DF2-45c0-8F6F-57EA1F856A9F")
 
 .comdef IComObjectConstruction2Events : public IUnknown
 
     OnObjectConstruct2	proc :ptr, :REFGUID, :LPCOLESTR, :ULONG64, :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __ISystemAppEventData_INTERFACE_DEFINED__
-__ISystemAppEventData_INTERFACE_DEFINED__ equ 1
+define __ISystemAppEventData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISystemAppEventData, "D6D48A3C-D5C5-49E7-8C74-99E4889ED52F")
 
@@ -1155,12 +687,12 @@ DEFINE_IIDX(ISystemAppEventData, "D6D48A3C-D5C5-49E7-8C74-99E4889ED52F")
 
     Startup		proc
     OnDataChanged	proc :DWORD, :DWORD, :DWORD, :BSTR, :DWORD, :ULONG64
-    .ends
+   .ends
 
 endif
 
 ifndef __IMtsEvents_INTERFACE_DEFINED__
-__IMtsEvents_INTERFACE_DEFINED__ equ 1
+define __IMtsEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMtsEvents, "BACEDF4D-74AB-11D0-B162-00AA00BA3258")
 
@@ -1171,12 +703,12 @@ DEFINE_IIDX(IMtsEvents, "BACEDF4D-74AB-11D0-B162-00AA00BA3258")
     PostEvent		proc :ptr VARIANT
     get_FireEvents	proc :ptr VARIANT_BOOL
     GetProcessID	proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMtsEventInfo_INTERFACE_DEFINED__
-__IMtsEventInfo_INTERFACE_DEFINED__ equ 1
+define __IMtsEventInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMtsEventInfo, "D56C3DC1-8482-11d0-B170-00AA00BA3258")
 
@@ -1187,24 +719,24 @@ DEFINE_IIDX(IMtsEventInfo, "D56C3DC1-8482-11d0-B170-00AA00BA3258")
     get_EventID		proc :ptr BSTR
     get_Count		proc :ptr LONG
     get_Value		proc :BSTR, :ptr VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMTSLocator_INTERFACE_DEFINED__
-__IMTSLocator_INTERFACE_DEFINED__ equ 1
+define __IMTSLocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMTSLocator, "D19B8BFD-7F88-11D0-B16E-00AA00BA3258")
 
 .comdef IMTSLocator : public IDispatch
 
     GetEventDispatcher	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMtsGrp_INTERFACE_DEFINED__
-__IMtsGrp_INTERFACE_DEFINED__ equ 1
+define __IMtsGrp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMtsGrp, "4B2E958C-0393-11D1-B1AB-00AA00BA3258")
 
@@ -1213,12 +745,12 @@ DEFINE_IIDX(IMtsGrp, "4B2E958C-0393-11D1-B1AB-00AA00BA3258")
     get_Count		proc :ptr LONG
     Item		proc :LONG, :ptr ptr IUnknown
     Refresh		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMessageMover_INTERFACE_DEFINED__
-__IMessageMover_INTERFACE_DEFINED__ equ 1
+define __IMessageMover_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMessageMover, "588A085A-B795-11D1-8054-00C04FC340EE")
 
@@ -1231,12 +763,12 @@ DEFINE_IIDX(IMessageMover, "588A085A-B795-11D1-8054-00C04FC340EE")
     get_CommitBatchSize proc :ptr LONG
     put_CommitBatchSize proc :LONG
     MoveMessages	proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IEventServerTrace_INTERFACE_DEFINED__
-__IEventServerTrace_INTERFACE_DEFINED__ equ 1
+define __IEventServerTrace_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEventServerTrace, "9A9F12B8-80AF-47ab-A579-35EA57725370")
 
@@ -1245,7 +777,7 @@ DEFINE_IIDX(IEventServerTrace, "9A9F12B8-80AF-47ab-A579-35EA57725370")
     StartTraceGuid	proc :BSTR, :BSTR, :LONG
     StopTraceGuid	proc :BSTR, :BSTR, :LONG
     EnumTraceGuid	proc :ptr LONG, :ptr BSTR
-    .ends
+   .ends
 
 endif
 
@@ -1327,7 +859,7 @@ m_cCallsFailed		dd ?
 CLSIDDATA2		ENDS
 
 ifndef __IGetAppTrackerData_INTERFACE_DEFINED__
-__IGetAppTrackerData_INTERFACE_DEFINED__ equ 1
+define __IGetAppTrackerData_INTERFACE_DEFINED__
 
 DATA_NOT_AVAILABLE	equ ( 0xffffffff )
 
@@ -1428,7 +960,7 @@ DEFINE_IIDX(IGetAppTrackerData, "507C3AC8-3E12-4cb0-9366-653D3E050638")
     GetComponentDetails proc :REFGUID, :DWORD, :REFCLSID, :DWORD, :ptr ComponentSummary, :ptr ComponentStatistics,  :ptr ComponentHangMonitorInfo
     GetTrackerDataAsCollectionObject proc :ptr ptr IUnknown
     GetSuggestedPollingInterval proc :ptr DWORD
-    .ends
+   .ends
 
 IGetAppTrackerData_RemoteGetApplicationProcessDetails_Stub proto __cdecl \
 		  This: ptr IRpcStubBuffer,
@@ -1445,17 +977,6 @@ IGetAppTrackerData_RemoteGetComponentDetails_Stub proto __cdecl \
 
 endif
 
-ifndef DECLSPEC_UUID
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-DECLSPEC_UUID macro x
-	exitm<__declspec(uuid(x))>
-	endm
-else
-DECLSPEC_UUID macro x
-	exitm<>
-	endm
-endif
-endif
 RESTYPID		typedef DWORD_PTR
 RESID			typedef DWORD_PTR
 SRESID			typedef LPOLESTR
@@ -1468,7 +989,7 @@ TRANSID			typedef DWORD_PTR
 MTXDM_E_ENLISTRESOURCEFAILED equ 0x8004E100
 
 ifndef __IDispenserManager_INTERFACE_DEFINED__
-__IDispenserManager_INTERFACE_DEFINED__ equ 1
+define __IDispenserManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDispenserManager, "5cb31e10-2b5f-11cf-be10-00aa00a2fa25")
 
@@ -1476,12 +997,12 @@ DEFINE_IIDX(IDispenserManager, "5cb31e10-2b5f-11cf-be10-00aa00a2fa25")
 
     RegisterDispenser	proc :ptr, :LPCOLESTR, :ptr
     GetContext		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IHolder_INTERFACE_DEFINED__
-__IHolder_INTERFACE_DEFINED__ equ 1
+define __IHolder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IHolder, "bf6a1850-2b45-11cf-be10-00aa00a2fa25")
 
@@ -1495,12 +1016,12 @@ DEFINE_IIDX(IHolder, "bf6a1850-2b45-11cf-be10-00aa00a2fa25")
     UntrackResourceS	proc :constSRESID, :BOOL
     Close		proc
     RequestDestroyResource proc :RESID
-    .ends
+   .ends
 
 endif
 
 ifndef __IDispenserDriver_INTERFACE_DEFINED__
-__IDispenserDriver_INTERFACE_DEFINED__ equ 1
+define __IDispenserDriver_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDispenserDriver, "208b3651-2b48-11cf-be10-00aa00a2fa25")
 
@@ -1512,7 +1033,7 @@ DEFINE_IIDX(IDispenserDriver, "208b3651-2b48-11cf-be10-00aa00a2fa25")
     ResetResource	proc :RESID
     DestroyResource	proc :RESID
     DestroyResourceS	proc :constSRESID
-    .ends
+   .ends
 
 endif
 
@@ -1535,7 +1056,7 @@ externdef		GUID_FinalizerCID:GUID
 externdef		IID_IEnterActivityWithNoLock:GUID
 
 ifndef __ITransactionProxy_INTERFACE_DEFINED__
-__ITransactionProxy_INTERFACE_DEFINED__ equ 1
+define __ITransactionProxy_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionProxy, "02558374-DF2E-4dae-BD6B-1D5C994F9BDC")
 
@@ -1548,12 +1069,12 @@ DEFINE_IIDX(ITransactionProxy, "02558374-DF2E-4dae-BD6B-1D5C994F9BDC")
     GetIsolationLevel	proc :ptr
     GetIdentifier	proc :ptr
     IsReusable		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IContextSecurityPerimeter_INTERFACE_DEFINED__
-__IContextSecurityPerimeter_INTERFACE_DEFINED__ equ 1
+define __IContextSecurityPerimeter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContextSecurityPerimeter, "A7549A29-A7C4-42e1-8DC1-7E3D748DC24A")
 
@@ -1561,24 +1082,24 @@ DEFINE_IIDX(IContextSecurityPerimeter, "A7549A29-A7C4-42e1-8DC1-7E3D748DC24A")
 
     GetPerimeterFlag	proc :ptr
     SetPerimeterFlag	proc :BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __ITxProxyHolder_INTERFACE_DEFINED__
-__ITxProxyHolder_INTERFACE_DEFINED__ equ 1
+define __ITxProxyHolder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITxProxyHolder, "13D86F31-0139-41af-BCAD-C7D50435FE9F")
 
 .comdef ITxProxyHolder : public IUnknown
 
     GetIdentifier	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectContext_INTERFACE_DEFINED__
-__IObjectContext_INTERFACE_DEFINED__ equ 1
+define __IObjectContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectContext, "51372ae0-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1592,12 +1113,12 @@ DEFINE_IIDX(IObjectContext, "51372ae0-cae7-11cf-be81-00aa00a2fa25")
     IsInTransaction	proc
     IsSecurityEnabled	proc
     IsCallerInRole	proc :BSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectControl_INTERFACE_DEFINED__
-__IObjectControl_INTERFACE_DEFINED__ equ 1
+define __IObjectControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectControl, "51372aec-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1606,12 +1127,12 @@ DEFINE_IIDX(IObjectControl, "51372aec-cae7-11cf-be81-00aa00a2fa25")
     Activate		proc
     Deactivate		proc
     CanBePooled		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumNames_INTERFACE_DEFINED__
-__IEnumNames_INTERFACE_DEFINED__ equ 1
+define __IEnumNames_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNames, "51372af2-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1621,12 +1142,12 @@ DEFINE_IIDX(IEnumNames, "51372af2-cae7-11cf-be81-00aa00a2fa25")
     Skip		proc :LONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISecurityProperty_INTERFACE_DEFINED__
-__ISecurityProperty_INTERFACE_DEFINED__ equ 1
+define __ISecurityProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISecurityProperty, "51372aea-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1637,12 +1158,12 @@ DEFINE_IIDX(ISecurityProperty, "51372aea-cae7-11cf-be81-00aa00a2fa25")
     GetDirectCallerSID	proc :ptr
     GetOriginalCallerSID proc :ptr
     ReleaseSID		proc :PSID
-    .ends
+   .ends
 
 endif
 
 ifndef __ObjectControl_INTERFACE_DEFINED__
-__ObjectControl_INTERFACE_DEFINED__ equ 1
+define __ObjectControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ObjectControl, "7DC41850-0C31-11d0-8B79-00AA00B8A790")
 
@@ -1651,12 +1172,12 @@ DEFINE_IIDX(ObjectControl, "7DC41850-0C31-11d0-8B79-00AA00B8A790")
     Activate		proc
     Deactivate		proc
     CanBePooled		proc :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __ISharedProperty_INTERFACE_DEFINED__
-__ISharedProperty_INTERFACE_DEFINED__ equ 1
+define __ISharedProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISharedProperty, "2A005C01-A5DE-11CF-9E66-00AA00A3F464")
 
@@ -1664,12 +1185,12 @@ DEFINE_IIDX(ISharedProperty, "2A005C01-A5DE-11CF-9E66-00AA00A3F464")
 
     get_Value		proc :ptr VARIANT
     put_Value		proc :VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __ISharedPropertyGroup_INTERFACE_DEFINED__
-__ISharedPropertyGroup_INTERFACE_DEFINED__ equ 1
+define __ISharedPropertyGroup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISharedPropertyGroup, "2A005C07-A5DE-11CF-9E66-00AA00A3F464")
 
@@ -1679,12 +1200,12 @@ DEFINE_IIDX(ISharedPropertyGroup, "2A005C07-A5DE-11CF-9E66-00AA00A3F464")
     get_PropertyByPosition proc :SINT, :ptr ptr ISharedProperty
     CreateProperty	proc :BSTR, :ptr VARIANT_BOOL, :ptr ptr ISharedProperty
     get_Property	proc :BSTR, :ptr ptr ISharedProperty
-    .ends
+   .ends
 
 endif
 
 ifndef __ISharedPropertyGroupManager_INTERFACE_DEFINED__
-__ISharedPropertyGroupManager_INTERFACE_DEFINED__ equ 1
+define __ISharedPropertyGroupManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISharedPropertyGroupManager, "2A005C0D-A5DE-11CF-9E66-00AA00A3F464")
 
@@ -1693,48 +1214,48 @@ DEFINE_IIDX(ISharedPropertyGroupManager, "2A005C0D-A5DE-11CF-9E66-00AA00A3F464")
     CreatePropertyGroup proc :BSTR, :ptr LONG, :ptr LONG, :ptr VARIANT_BOOL, :ptr ptr ISharedPropertyGroup
     get_Group		proc :BSTR, :ptr ptr ISharedPropertyGroup
     get__NewEnum	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectConstruct_INTERFACE_DEFINED__
-__IObjectConstruct_INTERFACE_DEFINED__ equ 1
+define __IObjectConstruct_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectConstruct, "41C4F8B3-7439-11D2-98CB-00C04F8EE1C4")
 
 .comdef IObjectConstruct : public IUnknown
 
     Construct		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectConstructString_INTERFACE_DEFINED__
-__IObjectConstructString_INTERFACE_DEFINED__ equ 1
+define __IObjectConstructString_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectConstructString, "41C4F8B2-7439-11D2-98CB-00C04F8EE1C4")
 
 .comdef IObjectConstructString : public IDispatch
 
     get_ConstructString proc :ptr BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectContextActivity_INTERFACE_DEFINED__
-__IObjectContextActivity_INTERFACE_DEFINED__ equ 1
+define __IObjectContextActivity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectContextActivity, "51372afc-cae7-11cf-be81-00aa00a2fa25")
 
 .comdef IObjectContextActivity : public IUnknown
 
     GetActivityId	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectContextInfo_INTERFACE_DEFINED__
-__IObjectContextInfo_INTERFACE_DEFINED__ equ 1
+define __IObjectContextInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectContextInfo, "75B52DDB-E8ED-11d1-93AD-00AA00BA3258")
 
@@ -1745,12 +1266,12 @@ DEFINE_IIDX(IObjectContextInfo, "75B52DDB-E8ED-11d1-93AD-00AA00BA3258")
     GetTransactionId	proc :ptr
     GetActivityId	proc :ptr
     GetContextId	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectContextInfo2_INTERFACE_DEFINED__
-__IObjectContextInfo2_INTERFACE_DEFINED__ equ 1
+define __IObjectContextInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectContextInfo2, "594BE71A-4BC4-438b-9197-CFD176248B09")
 
@@ -1759,12 +1280,12 @@ DEFINE_IIDX(IObjectContextInfo2, "594BE71A-4BC4-438b-9197-CFD176248B09")
     GetPartitionId	proc :ptr GUID
     GetApplicationId	proc :ptr GUID
     GetApplicationInstanceId proc :ptr GUID
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionStatus_INTERFACE_DEFINED__
-__ITransactionStatus_INTERFACE_DEFINED__ equ 1
+define __ITransactionStatus_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionStatus, "61F589E8-3724-4898-A0A4-664AE9E1D1B4")
 
@@ -1772,24 +1293,24 @@ DEFINE_IIDX(ITransactionStatus, "61F589E8-3724-4898-A0A4-664AE9E1D1B4")
 
     SetTransactionStatus proc :HRESULT
     GetTransactionStatus proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectContextTip_INTERFACE_DEFINED__
-__IObjectContextTip_INTERFACE_DEFINED__ equ 1
+define __IObjectContextTip_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectContextTip, "92FD41CA-BAD9-11d2-9A2D-00C04F797BC9")
 
 .comdef IObjectContextTip : public IUnknown
 
     GetTipUrl		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IPlaybackControl_INTERFACE_DEFINED__
-__IPlaybackControl_INTERFACE_DEFINED__ equ 1
+define __IPlaybackControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPlaybackControl, "51372afd-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1797,12 +1318,12 @@ DEFINE_IIDX(IPlaybackControl, "51372afd-cae7-11cf-be81-00aa00a2fa25")
 
     FinalClientRetry	proc
     FinalServerRetry	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IGetContextProperties_INTERFACE_DEFINED__
-__IGetContextProperties_INTERFACE_DEFINED__ equ 1
+define __IGetContextProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetContextProperties, "51372af4-cae7-11cf-be81-00aa00a2fa25")
 
@@ -1811,7 +1332,7 @@ DEFINE_IIDX(IGetContextProperties, "51372af4-cae7-11cf-be81-00aa00a2fa25")
     Count		proc :ptr
     GetProperty		proc :BSTR, :ptr
     EnumNames		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1821,7 +1342,7 @@ endif
     }
 
 ifndef __IContextState_INTERFACE_DEFINED__
-__IContextState_INTERFACE_DEFINED__ equ 1
+define __IContextState_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContextState, "3C05E54B-A42A-11d2-AFC4-00C04F8EE1C4")
 
@@ -1831,24 +1352,24 @@ DEFINE_IIDX(IContextState, "3C05E54B-A42A-11d2-AFC4-00C04F8EE1C4")
     GetDeactivateOnReturn proc :ptr
     SetMyTransactionVote proc :TransactionVote
     GetMyTransactionVote proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IPoolManager_INTERFACE_DEFINED__
-__IPoolManager_INTERFACE_DEFINED__ equ 1
+define __IPoolManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPoolManager, "0a469861-5a91-43a0-99b6-d5e179bb0631")
 
 .comdef IPoolManager : public IDispatch
 
     ShutdownPool	proc :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ISelectCOMLBServer_INTERFACE_DEFINED__
-__ISelectCOMLBServer_INTERFACE_DEFINED__ equ 1
+define __ISelectCOMLBServer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISelectCOMLBServer, "dcf443f4-3f8a-4872-b9f0-369a796d12d6")
 
@@ -1856,12 +1377,12 @@ DEFINE_IIDX(ISelectCOMLBServer, "dcf443f4-3f8a-4872-b9f0-369a796d12d6")
 
     Init		proc
     GetLBServer		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICOMLBArguments_INTERFACE_DEFINED__
-__ICOMLBArguments_INTERFACE_DEFINED__ equ 1
+define __ICOMLBArguments_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICOMLBArguments, "3a0f150f-8ee5-4b94-b40e-aef2f9e42ed2")
 
@@ -1871,7 +1392,7 @@ DEFINE_IIDX(ICOMLBArguments, "3a0f150f-8ee5-4b94-b40e-aef2f9e42ed2")
     SetCLSID		proc :ptr
     GetMachineName	proc :ULONG, :ptr WCHAR
     SetMachineName	proc :ULONG, :ptr WCHAR
-    .ends
+   .ends
 
 endif
 
@@ -1890,7 +1411,7 @@ SafeRef			proto __cdecl :REFIID, :ptr IUnknown
 RecycleSurrogate	proto __cdecl :LONG
 
 ifndef __ICrmLogControl_INTERFACE_DEFINED__
-__ICrmLogControl_INTERFACE_DEFINED__ equ 1
+define __ICrmLogControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmLogControl, "A0E174B3-D26E-11d2-8F84-00805FC7BCD9")
 
@@ -1903,12 +1424,12 @@ DEFINE_IIDX(ICrmLogControl, "A0E174B3-D26E-11d2-8F84-00805FC7BCD9")
     ForgetLogRecord	proc
     ForceTransactionToAbort proc
     WriteLogRecord	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ICrmCompensatorVariants_INTERFACE_DEFINED__
-__ICrmCompensatorVariants_INTERFACE_DEFINED__ equ 1
+define __ICrmCompensatorVariants_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmCompensatorVariants, "F0BAF8E4-7804-11d1-82E9-00A0C91EEDE9")
 
@@ -1924,22 +1445,21 @@ DEFINE_IIDX(ICrmCompensatorVariants, "F0BAF8E4-7804-11d1-82E9-00A0C91EEDE9")
     BeginAbortVariants	proc :VARIANT_BOOL
     AbortRecordVariants proc :ptr VARIANT, :ptr VARIANT_BOOL
     EndAbortVariants	proc
-    .ends
+   .ends
 
 endif
 
 ifndef _tagCrmLogRecordRead_
-_tagCrmLogRecordRead_ equ 1
+define _tagCrmLogRecordRead_
 CrmLogRecordRead	STRUC
 dwCrmFlags		dd ?
 dwSequenceNumber	dd ?
 blobUserData		BLOB <>
 CrmLogRecordRead	ENDS
-
 endif
 
 ifndef __ICrmCompensator_INTERFACE_DEFINED__
-__ICrmCompensator_INTERFACE_DEFINED__ equ 1
+define __ICrmCompensator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmCompensator, "BBC01830-8D3B-11d1-82EC-00A0C91EEDE9")
 
@@ -1955,12 +1475,12 @@ DEFINE_IIDX(ICrmCompensator, "BBC01830-8D3B-11d1-82EC-00A0C91EEDE9")
     BeginAbort		proc :BOOL
     AbortRecord		proc :CrmLogRecordRead, :ptr
     EndAbort		proc
-    .ends
+   .ends
 
 endif
 
 ifndef _tagCrmTransactionState_
-_tagCrmTransactionState_ equ 1
+define _tagCrmTransactionState_
 .enum CrmTransactionState {
     TxState_Active	= 0,
     TxState_Committed	= ( TxState_Active + 1 ) ,
@@ -1971,7 +1491,7 @@ _tagCrmTransactionState_ equ 1
 endif
 
 ifndef __ICrmMonitorLogRecords_INTERFACE_DEFINED__
-__ICrmMonitorLogRecords_INTERFACE_DEFINED__ equ 1
+define __ICrmMonitorLogRecords_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmMonitorLogRecords, "70C8E441-C7ED-11d1-82FB-00A0C91EEDE9")
 
@@ -1982,12 +1502,12 @@ DEFINE_IIDX(ICrmMonitorLogRecords, "70C8E441-C7ED-11d1-82FB-00A0C91EEDE9")
     get_StructuredRecords proc :ptr VARIANT_BOOL
     GetLogRecord	proc :DWORD, :ptr CrmLogRecordRead
     GetLogRecordVariants proc :VARIANT, :LPVARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __ICrmMonitorClerks_INTERFACE_DEFINED__
-__ICrmMonitorClerks_INTERFACE_DEFINED__ equ 1
+define __ICrmMonitorClerks_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmMonitorClerks, "70C8E442-C7ED-11d1-82FB-00A0C91EEDE9")
 
@@ -2000,12 +1520,12 @@ DEFINE_IIDX(ICrmMonitorClerks, "70C8E442-C7ED-11d1-82FB-00A0C91EEDE9")
     Description		proc :VARIANT, :LPVARIANT
     TransactionUOW	proc :VARIANT, :LPVARIANT
     ActivityId		proc :VARIANT, :LPVARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __ICrmMonitor_INTERFACE_DEFINED__
-__ICrmMonitor_INTERFACE_DEFINED__ equ 1
+define __ICrmMonitor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmMonitor, "70C8E443-C7ED-11d1-82FB-00A0C91EEDE9")
 
@@ -2013,12 +1533,12 @@ DEFINE_IIDX(ICrmMonitor, "70C8E443-C7ED-11d1-82FB-00A0C91EEDE9")
 
     GetClerks		proc :ptr ptr ICrmMonitorClerks
     HoldClerk		proc :VARIANT, :LPVARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __ICrmFormatLogRecords_INTERFACE_DEFINED__
-__ICrmFormatLogRecords_INTERFACE_DEFINED__ equ 1
+define __ICrmFormatLogRecords_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICrmFormatLogRecords, "9C51D821-C98B-11d1-82FB-00A0C91EEDE9")
 
@@ -2028,7 +1548,7 @@ DEFINE_IIDX(ICrmFormatLogRecords, "9C51D821-C98B-11d1-82FB-00A0C91EEDE9")
     GetColumnHeaders	proc :VARIANT
     GetColumn		proc :CrmLogRecordRead, :LPVARIANT
     GetColumnVariants	proc :VARIANT, :LPVARIANT
-    .ends
+   .ends
 
 endif
 
@@ -2091,31 +1611,31 @@ endif
     }
 
 ifndef __IServiceIISIntrinsicsConfig_INTERFACE_DEFINED__
-__IServiceIISIntrinsicsConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceIISIntrinsicsConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceIISIntrinsicsConfig, "1a0cf920-d452-46f4-bc36-48118d54ea52")
 
 .comdef IServiceIISIntrinsicsConfig : public IUnknown
 
     IISIntrinsicsConfig proc :CSC_IISIntrinsicsConfig
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceComTIIntrinsicsConfig_INTERFACE_DEFINED__
-__IServiceComTIIntrinsicsConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceComTIIntrinsicsConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceComTIIntrinsicsConfig, "09e6831e-04e1-4ed4-9d0f-e8b168bafeaf")
 
 .comdef IServiceComTIIntrinsicsConfig : public IUnknown
 
     ComTIIntrinsicsConfig proc :CSC_COMTIIntrinsicsConfig
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceSxsConfig_INTERFACE_DEFINED__
-__IServiceSxsConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceSxsConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceSxsConfig, "c7cd7379-f3f2-4634-811b-703281d73e08")
 
@@ -2124,36 +1644,36 @@ DEFINE_IIDX(IServiceSxsConfig, "c7cd7379-f3f2-4634-811b-703281d73e08")
     SxsConfig		proc :CSC_SxsConfig
     SxsName		proc :LPCWSTR
     SxsDirectory	proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ICheckSxsConfig_INTERFACE_DEFINED__
-__ICheckSxsConfig_INTERFACE_DEFINED__ equ 1
+define __ICheckSxsConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICheckSxsConfig, "0FF5A96F-11FC-47d1-BAA6-25DD347E7242")
 
 .comdef ICheckSxsConfig : public IUnknown
 
     IsSameSxsConfig	proc :LPCWSTR, :LPCWSTR, :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceInheritanceConfig_INTERFACE_DEFINED__
-__IServiceInheritanceConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceInheritanceConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceInheritanceConfig, "92186771-d3b4-4d77-a8ea-ee842d586f35")
 
 .comdef IServiceInheritanceConfig : public IUnknown
 
     ContainingContextTreatment proc :CSC_InheritanceConfig
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceThreadPoolConfig_INTERFACE_DEFINED__
-__IServiceThreadPoolConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceThreadPoolConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceThreadPoolConfig, "186d89bc-f277-4bcc-80d5-4df7b836ef4a")
 
@@ -2161,12 +1681,12 @@ DEFINE_IIDX(IServiceThreadPoolConfig, "186d89bc-f277-4bcc-80d5-4df7b836ef4a")
 
     SelectThreadPool	proc :CSC_ThreadPool
     SetBindingInfo	proc :CSC_Binding
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceTransactionConfigBase_INTERFACE_DEFINED__
-__IServiceTransactionConfigBase_INTERFACE_DEFINED__ equ 1
+define __IServiceTransactionConfigBase_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceTransactionConfigBase, "772b3fbe-6ffd-42fb-b5f8-8f9b260f3810")
 
@@ -2177,60 +1697,60 @@ DEFINE_IIDX(IServiceTransactionConfigBase, "772b3fbe-6ffd-42fb-b5f8-8f9b260f3810
     TransactionTimeout	proc :ULONG
     BringYourOwnTransaction proc :LPCWSTR
     NewTransactionDescription proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceTransactionConfig_INTERFACE_DEFINED__
-__IServiceTransactionConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceTransactionConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceTransactionConfig, "59f4c2a3-d3d7-4a31-b6e4-6ab3177c50b9")
 
 .comdef IServiceTransactionConfig : public IServiceTransactionConfigBase
 
     ConfigureBYOT	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceSysTxnConfig_INTERFACE_DEFINED__
-__IServiceSysTxnConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceSysTxnConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceSysTxnConfig, "33CAF1A1-FCB8-472b-B45E-967448DED6D8")
 
 .comdef IServiceSysTxnConfig : public IServiceTransactionConfig
 
     ConfigureBYOTSysTxn proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceSynchronizationConfig_INTERFACE_DEFINED__
-__IServiceSynchronizationConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceSynchronizationConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceSynchronizationConfig, "fd880e81-6dce-4c58-af83-a208846c0030")
 
 .comdef IServiceSynchronizationConfig : public IUnknown
 
     ConfigureSynchronization proc :CSC_SynchronizationConfig
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceTrackerConfig_INTERFACE_DEFINED__
-__IServiceTrackerConfig_INTERFACE_DEFINED__ equ 1
+define __IServiceTrackerConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceTrackerConfig, "6c3a3e1d-0ba6-4036-b76f-d0404db816c9")
 
 .comdef IServiceTrackerConfig : public IUnknown
 
     TrackerConfig	proc :CSC_TrackerConfig, :LPCWSTR, :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IServicePartitionConfig_INTERFACE_DEFINED__
-__IServicePartitionConfig_INTERFACE_DEFINED__ equ 1
+define __IServicePartitionConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServicePartitionConfig, "80182d03-5ea4-4831-ae97-55beffc2e590")
 
@@ -2238,36 +1758,36 @@ DEFINE_IIDX(IServicePartitionConfig, "80182d03-5ea4-4831-ae97-55beffc2e590")
 
     PartitionConfig	proc :CSC_PartitionConfig
     PartitionID		proc :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceCall_INTERFACE_DEFINED__
-__IServiceCall_INTERFACE_DEFINED__ equ 1
+define __IServiceCall_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceCall, "BD3E2E12-42DD-40f4-A09A-95A50C58304B")
 
 .comdef IServiceCall : public IUnknown
 
     OnCall		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IAsyncErrorNotify_INTERFACE_DEFINED__
-__IAsyncErrorNotify_INTERFACE_DEFINED__ equ 1
+define __IAsyncErrorNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAsyncErrorNotify, "FE6777FB-A674-4177-8F32-6D707E113484")
 
 .comdef IAsyncErrorNotify : public IUnknown
 
     OnError		proc :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __IServiceActivity_INTERFACE_DEFINED__
-__IServiceActivity_INTERFACE_DEFINED__ equ 1
+define __IServiceActivity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServiceActivity, "67532E0C-9E2F-4450-A354-035633944E17")
 
@@ -2277,12 +1797,12 @@ DEFINE_IIDX(IServiceActivity, "67532E0C-9E2F-4450-A354-035633944E17")
     AsynchronousCall	proc :ptr
     BindToCurrentThread proc
     UnbindFromThread	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IThreadPoolKnobs_INTERFACE_DEFINED__
-__IThreadPoolKnobs_INTERFACE_DEFINED__ equ 1
+define __IThreadPoolKnobs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IThreadPoolKnobs, "51372af7-cae7-11cf-be81-00aa00a2fa25")
 
@@ -2298,12 +1818,12 @@ DEFINE_IIDX(IThreadPoolKnobs, "51372af7-cae7-11cf-be81-00aa00a2fa25")
     SetMaxQueuedRequests proc :LONG
     SetMinThreads	proc :LONG
     SetQueueDepth	proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IComStaThreadPoolKnobs_INTERFACE_DEFINED__
-__IComStaThreadPoolKnobs_INTERFACE_DEFINED__ equ 1
+define __IComStaThreadPoolKnobs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComStaThreadPoolKnobs, "324B64FA-33B6-11d2-98B7-00C04F8EE1C4")
 
@@ -2320,12 +1840,12 @@ DEFINE_IIDX(IComStaThreadPoolKnobs, "324B64FA-33B6-11d2-98B7-00C04F8EE1C4")
     GetThreadCount	proc :ptr
     GetQueueDepth	proc :ptr
     SetQueueDepth	proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IComMtaThreadPoolKnobs_INTERFACE_DEFINED__
-__IComMtaThreadPoolKnobs_INTERFACE_DEFINED__ equ 1
+define __IComMtaThreadPoolKnobs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComMtaThreadPoolKnobs, "F9A76D2E-76A5-43eb-A0C4-49BEC8E48480")
 
@@ -2335,12 +1855,12 @@ DEFINE_IIDX(IComMtaThreadPoolKnobs, "F9A76D2E-76A5-43eb-A0C4-49BEC8E48480")
     MTAGetMaxThreadCount proc :ptr
     MTASetThrottleValue proc :DWORD
     MTAGetThrottleValue proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IComStaThreadPoolKnobs2_INTERFACE_DEFINED__
-__IComStaThreadPoolKnobs2_INTERFACE_DEFINED__ equ 1
+define __IComStaThreadPoolKnobs2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComStaThreadPoolKnobs2, "73707523-FF9A-4974-BF84-2108DC213740")
 
@@ -2356,12 +1876,12 @@ DEFINE_IIDX(IComStaThreadPoolKnobs2, "73707523-FF9A-4974-BF84-2108DC213740")
     SetMaxCSR		proc :LONG
     GetWaitTimeForThreadCleanup proc :ptr
     SetWaitTimeForThreadCleanup proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IProcessInitializer_INTERFACE_DEFINED__
-__IProcessInitializer_INTERFACE_DEFINED__ equ 1
+define __IProcessInitializer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProcessInitializer, "1113f52d-dc7f-4943-aed6-88d04027e32a")
 
@@ -2369,12 +1889,12 @@ DEFINE_IIDX(IProcessInitializer, "1113f52d-dc7f-4943-aed6-88d04027e32a")
 
     Startup		proc :ptr
     Shutdown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IServicePoolConfig_INTERFACE_DEFINED__
-__IServicePoolConfig_INTERFACE_DEFINED__ equ 1
+define __IServicePoolConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServicePoolConfig, "a9690656-5bca-470c-8451-250c1f43a33e")
 
@@ -2390,12 +1910,12 @@ DEFINE_IIDX(IServicePoolConfig, "a9690656-5bca-470c-8451-250c1f43a33e")
     get_TransactionAffinity proc :ptr BOOL
     put_ClassFactory	proc :ptr IClassFactory
     get_ClassFactory	proc :ptr ptr IClassFactory
-    .ends
+   .ends
 
 endif
 
 ifndef __IServicePool_INTERFACE_DEFINED__
-__IServicePool_INTERFACE_DEFINED__ equ 1
+define __IServicePool_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServicePool, "b302df81-ea45-451e-99a2-09f9fd1b1e13")
 
@@ -2404,36 +1924,36 @@ DEFINE_IIDX(IServicePool, "b302df81-ea45-451e-99a2-09f9fd1b1e13")
     Initialize		proc :ptr
     GetObject		proc :REFIID, :ptr
     Shutdown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IManagedPooledObj_INTERFACE_DEFINED__
-__IManagedPooledObj_INTERFACE_DEFINED__ equ 1
+define __IManagedPooledObj_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IManagedPooledObj, "c5da4bea-1b42-4437-8926-b6a38860a770")
 
 .comdef IManagedPooledObj : public IUnknown
 
     SetHeld		proc :BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IManagedPoolAction_INTERFACE_DEFINED__
-__IManagedPoolAction_INTERFACE_DEFINED__ equ 1
+define __IManagedPoolAction_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IManagedPoolAction, "da91b74e-5388-4783-949d-c1cd5fb00506")
 
 .comdef IManagedPoolAction : public IUnknown
 
     LastRelease		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IManagedObjectInfo_INTERFACE_DEFINED__
-__IManagedObjectInfo_INTERFACE_DEFINED__ equ 1
+define __IManagedObjectInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IManagedObjectInfo, "1427c51a-4584-49d8-90a0-c50d8086cbe9")
 
@@ -2443,12 +1963,12 @@ DEFINE_IIDX(IManagedObjectInfo, "1427c51a-4584-49d8-90a0-c50d8086cbe9")
     GetIObjectControl	proc :ptr
     SetInPool		proc :BOOL, :ptr
     SetWrapperStrength	proc :BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IAppDomainHelper_INTERFACE_DEFINED__
-__IAppDomainHelper_INTERFACE_DEFINED__ equ 1
+define __IAppDomainHelper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAppDomainHelper, "c7b67079-8255-42c6-9ec0-6994a3548780")
 
@@ -2456,24 +1976,24 @@ DEFINE_IIDX(IAppDomainHelper, "c7b67079-8255-42c6-9ec0-6994a3548780")
 
     Initialize		proc :ptr
     DoCallback		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAssemblyLocator_INTERFACE_DEFINED__
-__IAssemblyLocator_INTERFACE_DEFINED__ equ 1
+define __IAssemblyLocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAssemblyLocator, "391ffbb9-a8ee-432a-abc8-baa238dab90f")
 
 .comdef IAssemblyLocator : public IDispatch
 
     GetModules		proc :BSTR, :BSTR, :BSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IManagedActivationEvents_INTERFACE_DEFINED__
-__IManagedActivationEvents_INTERFACE_DEFINED__ equ 1
+define __IManagedActivationEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IManagedActivationEvents, "a5f325af-572f-46da-b8ab-827c3d95d99e")
 
@@ -2481,12 +2001,12 @@ DEFINE_IIDX(IManagedActivationEvents, "a5f325af-572f-46da-b8ab-827c3d95d99e")
 
     CreateManagedStub	proc :ptr, :BOOL
     DestroyManagedStub	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISendMethodEvents_INTERFACE_DEFINED__
-__ISendMethodEvents_INTERFACE_DEFINED__ equ 1
+define __ISendMethodEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISendMethodEvents, "2732fd59-b2b4-4d44-878c-8b8f09626008")
 
@@ -2494,12 +2014,12 @@ DEFINE_IIDX(ISendMethodEvents, "2732fd59-b2b4-4d44-878c-8b8f09626008")
 
     SendMethodCall	proc :ptr, :REFIID, :DWORD
     SendMethodReturn	proc :ptr, :REFIID, :DWORD, :HRESULT, :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionResourcePool_INTERFACE_DEFINED__
-__ITransactionResourcePool_INTERFACE_DEFINED__ equ 1
+define __ITransactionResourcePool_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionResourcePool, "C5FEB7C1-346A-11D1-B1CC-00AA00BA3258")
 
@@ -2507,26 +2027,26 @@ DEFINE_IIDX(ITransactionResourcePool, "C5FEB7C1-346A-11D1-B1CC-00AA00BA3258")
 
     PutResource		proc :ptr, :ptr
     GetResource		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 MTSCreateActivity	proto WINAPI :REFIID, :ptr ptr
 
 ifndef __IMTSCall_INTERFACE_DEFINED__
-__IMTSCall_INTERFACE_DEFINED__ equ 1
+define __IMTSCall_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMTSCall, "51372AEF-CAE7-11CF-BE81-00AA00A2FA25")
 
 .comdef IMTSCall : public IUnknown
 
     OnCall		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IContextProperties_INTERFACE_DEFINED__
-__IContextProperties_INTERFACE_DEFINED__ equ 1
+define __IContextProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContextProperties, "D396DA85-BF8F-11d1-BBAE-00C04FC2FA5F")
 
@@ -2537,12 +2057,12 @@ DEFINE_IIDX(IContextProperties, "D396DA85-BF8F-11d1-BBAE-00C04FC2FA5F")
     EnumNames		proc :ptr
     SetProperty		proc :BSTR, :VARIANT
     RemoveProperty	proc :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjPool_INTERFACE_DEFINED__
-__IObjPool_INTERFACE_DEFINED__ equ 1
+define __IObjPool_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjPool, "7D8805A0-2EA7-11D1-B1CC-00AA00BA3258")
 
@@ -2555,12 +2075,12 @@ DEFINE_IIDX(IObjPool, "7D8805A0-2EA7-11D1-B1CC-00AA00BA3258")
     PutEndTx		proc :ptr
     Reserved5		proc
     Reserved6		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionProperty_INTERFACE_DEFINED__
-__ITransactionProperty_INTERFACE_DEFINED__ equ 1
+define __ITransactionProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionProperty, "788ea814-87b1-11d1-bba6-00c04fc2fa5f")
 
@@ -2584,12 +2104,12 @@ DEFINE_IIDX(ITransactionProperty, "788ea814-87b1-11d1-bba6-00c04fc2fa5f")
     Reserved15		proc
     Reserved16		proc
     Reserved17		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMTSActivity_INTERFACE_DEFINED__
-__IMTSActivity_INTERFACE_DEFINED__ equ 1
+define __IMTSActivity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMTSActivity, "51372AF0-CAE7-11CF-BE81-00AA00A2FA25")
 
@@ -2600,12 +2120,12 @@ DEFINE_IIDX(IMTSActivity, "51372AF0-CAE7-11CF-BE81-00AA00A2FA25")
     Reserved1		proc
     BindToCurrentThread proc
     UnbindFromThread	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __COMSVCSLib_LIBRARY_DEFINED__
-__COMSVCSLib_LIBRARY_DEFINED__ equ 1
+define __COMSVCSLib_LIBRARY_DEFINED__
 
 .enum Error_Constants {
     mtsErrCtxAborted	= 0x8004e002,
@@ -2647,7 +2167,7 @@ __COMSVCSLib_LIBRARY_DEFINED__ equ 1
     }
 
 ifndef _tagCrmFlags_
-_tagCrmFlags_ equ 1
+define _tagCrmFlags_
 .enum CRMFLAGS {
     CRMFLAG_FORGETTARGET	= 0x1,
     CRMFLAG_WRITTENDURINGPREPARE	= 0x2,
@@ -2660,7 +2180,7 @@ _tagCrmFlags_ equ 1
 
 endif
 ifndef _tagCrmRegFlags_
-_tagCrmRegFlags_ equ 1
+define _tagCrmRegFlags_
 .enum CRMREGFLAGS {
     CRMREGFLAG_PREPAREPHASE	= 0x1,
     CRMREGFLAG_COMMITPHASE	= 0x2,
@@ -2671,7 +2191,7 @@ _tagCrmRegFlags_ equ 1
 
 endif
 
-externdef		LIBID_COMSVCSLib:IID
+externdef LIBID_COMSVCSLib:IID
 
 DEFINE_GUIDS(CLSID_SecurityIdentity, "ecabb0a5-7f19-11d2-978e-0000f8757e2a")
 DEFINE_GUIDS(CLSID_SecurityCallers, "ecabb0a6-7f19-11d2-978e-0000f8757e2a")

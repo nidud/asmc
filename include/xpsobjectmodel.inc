@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,184 +18,14 @@ include ole2.inc
 endif
 
 ifndef __xpsobjectmodel_h__
-__xpsobjectmodel_h__ equ <>
-
-ifndef __IXpsOMShareable_FWD_DEFINED__
-__IXpsOMShareable_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMVisual_FWD_DEFINED__
-__IXpsOMVisual_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPart_FWD_DEFINED__
-__IXpsOMPart_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGlyphsEditor_FWD_DEFINED__
-__IXpsOMGlyphsEditor_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGlyphs_FWD_DEFINED__
-__IXpsOMGlyphs_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDashCollection_FWD_DEFINED__
-__IXpsOMDashCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMMatrixTransform_FWD_DEFINED__
-__IXpsOMMatrixTransform_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGeometry_FWD_DEFINED__
-__IXpsOMGeometry_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGeometryFigure_FWD_DEFINED__
-__IXpsOMGeometryFigure_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGeometryFigureCollection_FWD_DEFINED__
-__IXpsOMGeometryFigureCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPath_FWD_DEFINED__
-__IXpsOMPath_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMBrush_FWD_DEFINED__
-__IXpsOMBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGradientStopCollection_FWD_DEFINED__
-__IXpsOMGradientStopCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMSolidColorBrush_FWD_DEFINED__
-__IXpsOMSolidColorBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMTileBrush_FWD_DEFINED__
-__IXpsOMTileBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMVisualBrush_FWD_DEFINED__
-__IXpsOMVisualBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMImageBrush_FWD_DEFINED__
-__IXpsOMImageBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGradientStop_FWD_DEFINED__
-__IXpsOMGradientStop_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMGradientBrush_FWD_DEFINED__
-__IXpsOMGradientBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMLinearGradientBrush_FWD_DEFINED__
-__IXpsOMLinearGradientBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMRadialGradientBrush_FWD_DEFINED__
-__IXpsOMRadialGradientBrush_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMResource_FWD_DEFINED__
-__IXpsOMResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPartResources_FWD_DEFINED__
-__IXpsOMPartResources_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDictionary_FWD_DEFINED__
-__IXpsOMDictionary_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMFontResource_FWD_DEFINED__
-__IXpsOMFontResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMFontResourceCollection_FWD_DEFINED__
-__IXpsOMFontResourceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMImageResource_FWD_DEFINED__
-__IXpsOMImageResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMImageResourceCollection_FWD_DEFINED__
-__IXpsOMImageResourceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMColorProfileResource_FWD_DEFINED__
-__IXpsOMColorProfileResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMColorProfileResourceCollection_FWD_DEFINED__
-__IXpsOMColorProfileResourceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPrintTicketResource_FWD_DEFINED__
-__IXpsOMPrintTicketResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMRemoteDictionaryResource_FWD_DEFINED__
-__IXpsOMRemoteDictionaryResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMRemoteDictionaryResourceCollection_FWD_DEFINED__
-__IXpsOMRemoteDictionaryResourceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMSignatureBlockResourceCollection_FWD_DEFINED__
-__IXpsOMSignatureBlockResourceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDocumentStructureResource_FWD_DEFINED__
-__IXpsOMDocumentStructureResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMStoryFragmentsResource_FWD_DEFINED__
-__IXpsOMStoryFragmentsResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMSignatureBlockResource_FWD_DEFINED__
-__IXpsOMSignatureBlockResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMVisualCollection_FWD_DEFINED__
-__IXpsOMVisualCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMCanvas_FWD_DEFINED__
-__IXpsOMCanvas_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPage_FWD_DEFINED__
-__IXpsOMPage_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPageReference_FWD_DEFINED__
-__IXpsOMPageReference_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPageReferenceCollection_FWD_DEFINED__
-__IXpsOMPageReferenceCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDocument_FWD_DEFINED__
-__IXpsOMDocument_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDocumentCollection_FWD_DEFINED__
-__IXpsOMDocumentCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMDocumentSequence_FWD_DEFINED__
-__IXpsOMDocumentSequence_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMCoreProperties_FWD_DEFINED__
-__IXpsOMCoreProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPackage_FWD_DEFINED__
-__IXpsOMPackage_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMObjectFactory_FWD_DEFINED__
-__IXpsOMObjectFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMNameCollection_FWD_DEFINED__
-__IXpsOMNameCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPartUriCollection_FWD_DEFINED__
-__IXpsOMPartUriCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPackageWriter_FWD_DEFINED__
-__IXpsOMPackageWriter_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMPackageTarget_FWD_DEFINED__
-__IXpsOMPackageTarget_FWD_DEFINED__ equ 1
-endif
-ifndef __IXpsOMThumbnailGenerator_FWD_DEFINED__
-__IXpsOMThumbnailGenerator_FWD_DEFINED__ equ 1
-endif
-ifndef __XpsOMObjectFactory_FWD_DEFINED__
-__XpsOMObjectFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __XpsOMThumbnailGenerator_FWD_DEFINED__
-__XpsOMThumbnailGenerator_FWD_DEFINED__ equ 1
-endif
+define __xpsobjectmodel_h__
 
 include oaidl.inc
 include ocidl.inc
 include msopc.inc
-
 include winapifamily.inc
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -381,7 +211,7 @@ XPS_COLOR		ENDS
 
 
 ifndef __IXpsOMShareable_INTERFACE_DEFINED__
-__IXpsOMShareable_INTERFACE_DEFINED__ equ 1
+define __IXpsOMShareable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMShareable, "7137398F-2FC1-454D-8C6A-2C3115A16ECE")
 
@@ -389,13 +219,13 @@ DEFINE_IIDX(IXpsOMShareable, "7137398F-2FC1-454D-8C6A-2C3115A16ECE")
 
     GetOwner		proc :ptr
     GetType		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMVisual_INTERFACE_DEFINED__
-__IXpsOMVisual_INTERFACE_DEFINED__ equ 1
+define __IXpsOMVisual_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMVisual, "BC3E7333-FB0B-4af3-A819-0B4EAAD0D2FD")
 
@@ -426,13 +256,13 @@ DEFINE_IIDX(IXpsOMVisual, "BC3E7333-FB0B-4af3-A819-0B4EAAD0D2FD")
     SetHyperlinkNavigateUri proc :ptr
     GetLanguage		proc :ptr
     SetLanguage		proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPart_INTERFACE_DEFINED__
-__IXpsOMPart_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPart_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPart, "74eb2f0b-a91e-4486-afac-0fabeca3dfc6")
 
@@ -440,13 +270,13 @@ DEFINE_IIDX(IXpsOMPart, "74eb2f0b-a91e-4486-afac-0fabeca3dfc6")
 
     GetPartName		proc :ptr
     SetPartName		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGlyphsEditor_INTERFACE_DEFINED__
-__IXpsOMGlyphsEditor_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGlyphsEditor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGlyphsEditor, "A5AB8616-5B16-4B9F-9629-89B323ED7909")
 
@@ -470,13 +300,13 @@ DEFINE_IIDX(IXpsOMGlyphsEditor, "A5AB8616-5B16-4B9F-9629-89B323ED7909")
     SetIsSideways	proc :BOOL
     GetDeviceFontName	proc :ptr
     SetDeviceFontName	proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGlyphs_INTERFACE_DEFINED__
-__IXpsOMGlyphs_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGlyphs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGlyphs, "819B3199-0A5A-4B64-BEC7-A9E17E780DE2")
 
@@ -509,13 +339,13 @@ DEFINE_IIDX(IXpsOMGlyphs, "819B3199-0A5A-4B64-BEC7-A9E17E780DE2")
     SetFillBrushLookup	proc :LPCWSTR
     GetGlyphsEditor	proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDashCollection_INTERFACE_DEFINED__
-__IXpsOMDashCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDashCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDashCollection, "081613F4-74EB-48F2-83B3-37A9CE2D7DC6")
 
@@ -527,13 +357,13 @@ DEFINE_IIDX(IXpsOMDashCollection, "081613F4-74EB-48F2-83B3-37A9CE2D7DC6")
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMMatrixTransform_INTERFACE_DEFINED__
-__IXpsOMMatrixTransform_INTERFACE_DEFINED__ equ 1
+define __IXpsOMMatrixTransform_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMMatrixTransform, "B77330FF-BB37-4501-A93E-F1B1E50BFC46")
 
@@ -542,13 +372,13 @@ DEFINE_IIDX(IXpsOMMatrixTransform, "B77330FF-BB37-4501-A93E-F1B1E50BFC46")
     GetMatrix		proc :ptr
     SetMatrix		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGeometry_INTERFACE_DEFINED__
-__IXpsOMGeometry_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGeometry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGeometry, "64FCF3D7-4D58-44BA-AD73-A13AF6492072")
 
@@ -563,13 +393,13 @@ DEFINE_IIDX(IXpsOMGeometry, "64FCF3D7-4D58-44BA-AD73-A13AF6492072")
     GetTransformLookup	proc :ptr
     SetTransformLookup	proc :LPCWSTR
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGeometryFigure_INTERFACE_DEFINED__
-__IXpsOMGeometryFigure_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGeometryFigure_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGeometryFigure, "D410DC83-908C-443E-8947-B1795D3C165A")
 
@@ -590,13 +420,13 @@ DEFINE_IIDX(IXpsOMGeometryFigure, "D410DC83-908C-443E-8947-B1795D3C165A")
     GetSegmentDataCount proc :ptr
     GetSegmentStrokePattern proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGeometryFigureCollection_INTERFACE_DEFINED__
-__IXpsOMGeometryFigureCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGeometryFigureCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGeometryFigureCollection, "FD48C3F3-A58E-4B5A-8826-1DE54ABE72B2")
 
@@ -608,13 +438,13 @@ DEFINE_IIDX(IXpsOMGeometryFigureCollection, "FD48C3F3-A58E-4B5A-8826-1DE54ABE72B
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPath_INTERFACE_DEFINED__
-__IXpsOMPath_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPath_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPath, "37D38BB6-3EE9-4110-9312-14B194163337")
 
@@ -657,13 +487,13 @@ DEFINE_IIDX(IXpsOMPath, "37D38BB6-3EE9-4110-9312-14B194163337")
     GetFillBrushLookup	proc :ptr
     SetFillBrushLookup	proc :LPCWSTR
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMBrush_INTERFACE_DEFINED__
-__IXpsOMBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMBrush, "56A3F80C-EA4C-4187-A57B-A2A473B2B42B")
 
@@ -671,13 +501,13 @@ DEFINE_IIDX(IXpsOMBrush, "56A3F80C-EA4C-4187-A57B-A2A473B2B42B")
 
     GetOpacity		proc :ptr
     SetOpacity		proc :FLOAT
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGradientStopCollection_INTERFACE_DEFINED__
-__IXpsOMGradientStopCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGradientStopCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGradientStopCollection, "C9174C3A-3CD3-4319-BDA4-11A39392CEEF")
 
@@ -689,13 +519,13 @@ DEFINE_IIDX(IXpsOMGradientStopCollection, "C9174C3A-3CD3-4319-BDA4-11A39392CEEF"
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMSolidColorBrush_INTERFACE_DEFINED__
-__IXpsOMSolidColorBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMSolidColorBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMSolidColorBrush, "A06F9F05-3BE9-4763-98A8-094FC672E488")
 
@@ -704,13 +534,13 @@ DEFINE_IIDX(IXpsOMSolidColorBrush, "A06F9F05-3BE9-4763-98A8-094FC672E488")
     GetColor		proc :ptr, :ptr
     SetColor		proc :ptr, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMTileBrush_INTERFACE_DEFINED__
-__IXpsOMTileBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMTileBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMTileBrush, "0FC2328D-D722-4A54-B2EC-BE90218A789E")
 
@@ -727,13 +557,13 @@ DEFINE_IIDX(IXpsOMTileBrush, "0FC2328D-D722-4A54-B2EC-BE90218A789E")
     SetViewport		proc :ptr
     GetTileMode		proc :ptr
     SetTileMode		proc :XPS_TILE_MODE
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMVisualBrush_INTERFACE_DEFINED__
-__IXpsOMVisualBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMVisualBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMVisualBrush, "97E294AF-5B37-46B4-8057-874D2F64119B")
 
@@ -745,13 +575,13 @@ DEFINE_IIDX(IXpsOMVisualBrush, "97E294AF-5B37-46B4-8057-874D2F64119B")
     GetVisualLookup	proc :ptr
     SetVisualLookup	proc :LPCWSTR
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMImageBrush_INTERFACE_DEFINED__
-__IXpsOMImageBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMImageBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMImageBrush, "3DF0B466-D382-49EF-8550-DD94C80242E4")
 
@@ -762,13 +592,13 @@ DEFINE_IIDX(IXpsOMImageBrush, "3DF0B466-D382-49EF-8550-DD94C80242E4")
     GetColorProfileResource proc :ptr
     SetColorProfileResource proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGradientStop_INTERFACE_DEFINED__
-__IXpsOMGradientStop_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGradientStop_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGradientStop, "5CF4F5CC-3969-49B5-A70A-5550B618FE49")
 
@@ -780,13 +610,13 @@ DEFINE_IIDX(IXpsOMGradientStop, "5CF4F5CC-3969-49B5-A70A-5550B618FE49")
     GetColor		proc :ptr, :ptr
     SetColor		proc :ptr, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMGradientBrush_INTERFACE_DEFINED__
-__IXpsOMGradientBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMGradientBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMGradientBrush, "EDB59622-61A2-42C3-BACE-ACF2286C06BF")
 
@@ -802,13 +632,13 @@ DEFINE_IIDX(IXpsOMGradientBrush, "EDB59622-61A2-42C3-BACE-ACF2286C06BF")
     SetSpreadMethod	proc :XPS_SPREAD_METHOD
     GetColorInterpolationMode proc :ptr
     SetColorInterpolationMode proc :XPS_COLOR_INTERPOLATION
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMLinearGradientBrush_INTERFACE_DEFINED__
-__IXpsOMLinearGradientBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMLinearGradientBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMLinearGradientBrush, "005E279F-C30D-40FF-93EC-1950D3C528DB")
 
@@ -819,13 +649,13 @@ DEFINE_IIDX(IXpsOMLinearGradientBrush, "005E279F-C30D-40FF-93EC-1950D3C528DB")
     GetEndPoint		proc :ptr
     SetEndPoint		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMRadialGradientBrush_INTERFACE_DEFINED__
-__IXpsOMRadialGradientBrush_INTERFACE_DEFINED__ equ 1
+define __IXpsOMRadialGradientBrush_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMRadialGradientBrush, "75F207E5-08BF-413C-96B1-B82B4064176B")
 
@@ -838,25 +668,25 @@ DEFINE_IIDX(IXpsOMRadialGradientBrush, "75F207E5-08BF-413C-96B1-B82B4064176B")
     GetGradientOrigin	proc :ptr
     SetGradientOrigin	proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMResource_INTERFACE_DEFINED__
-__IXpsOMResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMResource, "da2ac0a2-73a2-4975-ad14-74097c3ff3a5")
 
 .comdef IXpsOMResource : public IXpsOMPart
 
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPartResources_INTERFACE_DEFINED__
-__IXpsOMPartResources_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPartResources_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPartResources, "f4cf7729-4864-4275-99b3-a8717163ecaf")
 
@@ -866,13 +696,13 @@ DEFINE_IIDX(IXpsOMPartResources, "f4cf7729-4864-4275-99b3-a8717163ecaf")
     GetImageResources	proc :ptr
     GetColorProfileResources proc :ptr
     GetRemoteDictionaryResources proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDictionary_INTERFACE_DEFINED__
-__IXpsOMDictionary_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDictionary_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDictionary, "897C86B8-8EAF-4AE3-BDDE-56419FCF4236")
 
@@ -888,13 +718,13 @@ DEFINE_IIDX(IXpsOMDictionary, "897C86B8-8EAF-4AE3-BDDE-56419FCF4236")
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :LPCWSTR, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMFontResource_INTERFACE_DEFINED__
-__IXpsOMFontResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMFontResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMFontResource, "a8c45708-47d9-4af4-8d20-33b48c9b8485")
 
@@ -903,13 +733,13 @@ DEFINE_IIDX(IXpsOMFontResource, "a8c45708-47d9-4af4-8d20-33b48c9b8485")
     GetStream		proc :ptr
     SetContent		proc :ptr, :XPS_FONT_EMBEDDING, :ptr
     GetEmbeddingOption	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMFontResourceCollection_INTERFACE_DEFINED__
-__IXpsOMFontResourceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMFontResourceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMFontResourceCollection, "70B4A6BB-88D4-4FA8-AAF9-6D9C596FDBAD")
 
@@ -922,13 +752,13 @@ DEFINE_IIDX(IXpsOMFontResourceCollection, "70B4A6BB-88D4-4FA8-AAF9-6D9C596FDBAD"
     Append		proc :ptr
     RemoveAt		proc :UINT32
     GetByPartName	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMImageResource_INTERFACE_DEFINED__
-__IXpsOMImageResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMImageResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMImageResource, "3db8417d-ae50-485e-9a44-d7758f78a23f")
 
@@ -937,13 +767,13 @@ DEFINE_IIDX(IXpsOMImageResource, "3db8417d-ae50-485e-9a44-d7758f78a23f")
     GetStream		proc :ptr
     SetContent		proc :ptr, :XPS_IMAGE_TYPE, :ptr
     GetImageType	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMImageResourceCollection_INTERFACE_DEFINED__
-__IXpsOMImageResourceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMImageResourceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMImageResourceCollection, "7A4A1A71-9CDE-4B71-B33F-62DE843EABFE")
 
@@ -956,13 +786,13 @@ DEFINE_IIDX(IXpsOMImageResourceCollection, "7A4A1A71-9CDE-4B71-B33F-62DE843EABFE
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
     GetByPartName	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMColorProfileResource_INTERFACE_DEFINED__
-__IXpsOMColorProfileResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMColorProfileResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMColorProfileResource, "67bd7d69-1eef-4bb1-b5e7-6f4f87be8abe")
 
@@ -970,13 +800,13 @@ DEFINE_IIDX(IXpsOMColorProfileResource, "67bd7d69-1eef-4bb1-b5e7-6f4f87be8abe")
 
     GetStream		proc :ptr
     SetContent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMColorProfileResourceCollection_INTERFACE_DEFINED__
-__IXpsOMColorProfileResourceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMColorProfileResourceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMColorProfileResourceCollection, "12759630-5FBA-4283-8F7D-CCA849809EDB")
 
@@ -989,13 +819,13 @@ DEFINE_IIDX(IXpsOMColorProfileResourceCollection, "12759630-5FBA-4283-8F7D-CCA84
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
     GetByPartName	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPrintTicketResource_INTERFACE_DEFINED__
-__IXpsOMPrintTicketResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPrintTicketResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPrintTicketResource, "e7ff32d2-34aa-499b-bbe9-9cd4ee6c59f7")
 
@@ -1003,13 +833,13 @@ DEFINE_IIDX(IXpsOMPrintTicketResource, "e7ff32d2-34aa-499b-bbe9-9cd4ee6c59f7")
 
     GetStream		proc :ptr
     SetContent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMRemoteDictionaryResource_INTERFACE_DEFINED__
-__IXpsOMRemoteDictionaryResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMRemoteDictionaryResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMRemoteDictionaryResource, "c9bd7cd4-e16a-4bf8-8c84-c950af7a3061")
 
@@ -1017,13 +847,13 @@ DEFINE_IIDX(IXpsOMRemoteDictionaryResource, "c9bd7cd4-e16a-4bf8-8c84-c950af7a306
 
     GetDictionary	proc :ptr
     SetDictionary	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMRemoteDictionaryResourceCollection_INTERFACE_DEFINED__
-__IXpsOMRemoteDictionaryResourceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMRemoteDictionaryResourceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMRemoteDictionaryResourceCollection, "5C38DB61-7FEC-464A-87BD-41E3BEF018BE")
 
@@ -1036,13 +866,13 @@ DEFINE_IIDX(IXpsOMRemoteDictionaryResourceCollection, "5C38DB61-7FEC-464A-87BD-4
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
     GetByPartName	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMSignatureBlockResourceCollection_INTERFACE_DEFINED__
-__IXpsOMSignatureBlockResourceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMSignatureBlockResourceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMSignatureBlockResourceCollection, "AB8F5D8E-351B-4D33-AAED-FA56F0022931")
 
@@ -1055,13 +885,13 @@ DEFINE_IIDX(IXpsOMSignatureBlockResourceCollection, "AB8F5D8E-351B-4D33-AAED-FA5
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
     GetByPartName	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDocumentStructureResource_INTERFACE_DEFINED__
-__IXpsOMDocumentStructureResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDocumentStructureResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDocumentStructureResource, "85febc8a-6b63-48a9-af07-7064e4ecff30")
 
@@ -1070,13 +900,13 @@ DEFINE_IIDX(IXpsOMDocumentStructureResource, "85febc8a-6b63-48a9-af07-7064e4ecff
     GetOwner		proc :ptr
     GetStream		proc :ptr
     SetContent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMStoryFragmentsResource_INTERFACE_DEFINED__
-__IXpsOMStoryFragmentsResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMStoryFragmentsResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMStoryFragmentsResource, "c2b3ca09-0473-4282-87ae-1780863223f0")
 
@@ -1085,13 +915,13 @@ DEFINE_IIDX(IXpsOMStoryFragmentsResource, "c2b3ca09-0473-4282-87ae-1780863223f0"
     GetOwner		proc :ptr
     GetStream		proc :ptr
     SetContent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMSignatureBlockResource_INTERFACE_DEFINED__
-__IXpsOMSignatureBlockResource_INTERFACE_DEFINED__ equ 1
+define __IXpsOMSignatureBlockResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMSignatureBlockResource, "4776ad35-2e04-4357-8743-ebf6c171a905")
 
@@ -1100,13 +930,13 @@ DEFINE_IIDX(IXpsOMSignatureBlockResource, "4776ad35-2e04-4357-8743-ebf6c171a905"
     GetOwner		proc :ptr
     GetStream		proc :ptr
     SetContent		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMVisualCollection_INTERFACE_DEFINED__
-__IXpsOMVisualCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMVisualCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMVisualCollection, "94D8ABDE-AB91-46A8-82B7-F5B05EF01A96")
 
@@ -1118,13 +948,13 @@ DEFINE_IIDX(IXpsOMVisualCollection, "94D8ABDE-AB91-46A8-82B7-F5B05EF01A96")
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMCanvas_INTERFACE_DEFINED__
-__IXpsOMCanvas_INTERFACE_DEFINED__ equ 1
+define __IXpsOMCanvas_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMCanvas, "221D1452-331E-47c6-87E9-6CCEFB9B5BA3")
 
@@ -1143,13 +973,13 @@ DEFINE_IIDX(IXpsOMCanvas, "221D1452-331E-47c6-87E9-6CCEFB9B5BA3")
     GetDictionaryResource proc :ptr
     SetDictionaryResource proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPage_INTERFACE_DEFINED__
-__IXpsOMPage_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPage, "d3e18888-f120-4fee-8c68-35296eae91d4")
 
@@ -1177,13 +1007,13 @@ DEFINE_IIDX(IXpsOMPage, "d3e18888-f120-4fee-8c68-35296eae91d4")
     Write		proc :ptr, :BOOL
     GenerateUnusedLookupKey proc :XPS_OBJECT_TYPE, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPageReference_INTERFACE_DEFINED__
-__IXpsOMPageReference_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPageReference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPageReference, "ED360180-6F92-4998-890D-2F208531A0A0")
 
@@ -1206,13 +1036,13 @@ DEFINE_IIDX(IXpsOMPageReference, "ED360180-6F92-4998-890D-2F208531A0A0")
     CollectPartResources proc :ptr
     HasRestrictedFonts	proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPageReferenceCollection_INTERFACE_DEFINED__
-__IXpsOMPageReferenceCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPageReferenceCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPageReferenceCollection, "CA16BA4D-E7B9-45C5-958B-F98022473745")
 
@@ -1224,13 +1054,13 @@ DEFINE_IIDX(IXpsOMPageReferenceCollection, "CA16BA4D-E7B9-45C5-958B-F98022473745
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDocument_INTERFACE_DEFINED__
-__IXpsOMDocument_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDocument_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDocument, "2C2C94CB-AC5F-4254-8EE9-23948309D9F0")
 
@@ -1244,13 +1074,13 @@ DEFINE_IIDX(IXpsOMDocument, "2C2C94CB-AC5F-4254-8EE9-23948309D9F0")
     SetDocumentStructureResource proc :ptr
     GetSignatureBlockResources proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDocumentCollection_INTERFACE_DEFINED__
-__IXpsOMDocumentCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDocumentCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDocumentCollection, "D1C87F0D-E947-4754-8A25-971478F7E83E")
 
@@ -1262,13 +1092,13 @@ DEFINE_IIDX(IXpsOMDocumentCollection, "D1C87F0D-E947-4754-8A25-971478F7E83E")
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMDocumentSequence_INTERFACE_DEFINED__
-__IXpsOMDocumentSequence_INTERFACE_DEFINED__ equ 1
+define __IXpsOMDocumentSequence_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMDocumentSequence, "56492EB4-D8D5-425e-8256-4C2B64AD0264")
 
@@ -1278,13 +1108,13 @@ DEFINE_IIDX(IXpsOMDocumentSequence, "56492EB4-D8D5-425e-8256-4C2B64AD0264")
     GetDocuments	proc :ptr ptr
     GetPrintTicketResource proc :ptr
     SetPrintTicketResource proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMCoreProperties_INTERFACE_DEFINED__
-__IXpsOMCoreProperties_INTERFACE_DEFINED__ equ 1
+define __IXpsOMCoreProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMCoreProperties, "3340FE8F-4027-4aa1-8F5F-D35AE45FE597")
 
@@ -1324,13 +1154,13 @@ DEFINE_IIDX(IXpsOMCoreProperties, "3340FE8F-4027-4aa1-8F5F-D35AE45FE597")
     GetVersion		proc :ptr
     SetVersion		proc :LPCWSTR
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPackage_INTERFACE_DEFINED__
-__IXpsOMPackage_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPackage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPackage, "18C3DF65-81E1-4674-91DC-FC452F5A416F")
 
@@ -1346,13 +1176,13 @@ DEFINE_IIDX(IXpsOMPackage, "18C3DF65-81E1-4674-91DC-FC452F5A416F")
     SetThumbnailResource proc :ptr
     WriteToFile		proc :LPCWSTR, :LPSECURITY_ATTRIBUTES, :DWORD, :BOOL
     WriteToStream	proc :ptr, :BOOL
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMObjectFactory_INTERFACE_DEFINED__
-__IXpsOMObjectFactory_INTERFACE_DEFINED__ equ 1
+define __IXpsOMObjectFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMObjectFactory, "f9b2a685-a50d-4fc2-b764-b56e093ea0ca")
 
@@ -1395,13 +1225,13 @@ DEFINE_IIDX(IXpsOMObjectFactory, "f9b2a685-a50d-4fc2-b764-b56e093ea0ca")
     CreatePackageWriterOnStream proc :ptr, :BOOL, :XPS_INTERLEAVING, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     CreatePartUri	proc :LPCWSTR, :ptr
     CreateReadOnlyStreamOnFile proc :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMNameCollection_INTERFACE_DEFINED__
-__IXpsOMNameCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMNameCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMNameCollection, "4BDDF8EC-C915-421B-A166-D173D25653D2")
 
@@ -1409,13 +1239,13 @@ DEFINE_IIDX(IXpsOMNameCollection, "4BDDF8EC-C915-421B-A166-D173D25653D2")
 
     GetCount		proc :ptr
     GetAt		proc :UINT32, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPartUriCollection_INTERFACE_DEFINED__
-__IXpsOMPartUriCollection_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPartUriCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPartUriCollection, "57C650D4-067C-4893-8C33-F62A0633730F")
 
@@ -1427,13 +1257,13 @@ DEFINE_IIDX(IXpsOMPartUriCollection, "57C650D4-067C-4893-8C33-F62A0633730F")
     RemoveAt		proc :UINT32
     SetAt		proc :UINT32, :ptr
     Append		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPackageWriter_INTERFACE_DEFINED__
-__IXpsOMPackageWriter_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPackageWriter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPackageWriter, "4E2AA182-A443-42c6-B41B-4F8E9DE73FF9")
 
@@ -1444,20 +1274,20 @@ DEFINE_IIDX(IXpsOMPackageWriter, "4E2AA182-A443-42c6-B41B-4F8E9DE73FF9")
     AddResource		proc :ptr
     Close		proc
     IsClosed		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IXpsOMPackageTarget_INTERFACE_DEFINED__
-__IXpsOMPackageTarget_INTERFACE_DEFINED__ equ 1
+define __IXpsOMPackageTarget_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMPackageTarget, "219A9DB0-4959-47D0-8034-B1CE84F41A4D")
 
 .comdef IXpsOMPackageTarget : public IUnknown
 
     CreateXpsOMPackageWriter proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1466,14 +1296,14 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IXpsOMThumbnailGenerator_INTERFACE_DEFINED__
-__IXpsOMThumbnailGenerator_INTERFACE_DEFINED__ equ 1
+define __IXpsOMThumbnailGenerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXpsOMThumbnailGenerator, "15B873D5-1971-41E8-83A3-6578403064C7")
 
 .comdef IXpsOMThumbnailGenerator : public IUnknown
 
     GenerateThumbnail	proc :ptr, :XPS_IMAGE_TYPE, :XPS_THUMBNAIL_SIZE, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1482,17 +1312,12 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 ifndef __MSXPS_LIBRARY_DEFINED__
-__MSXPS_LIBRARY_DEFINED__ equ 1
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-endif
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
+define __MSXPS_LIBRARY_DEFINED__
 
 DEFINE_GUIDS(CLSID_XpsOMObjectFactory, "E974D26D-3D9B-4D47-88CC-3872F2DC3585")
 DEFINE_GUIDS(CLSID_XpsOMThumbnailGenerator, "7E4A23E2-B969-4761-BE35-1A8CED58E323")
 
-endif ; __MSXPS_LIBRARY_DEFINED__
+endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 XPS_E_INVALID_LANGUAGE	equ MAKE_HRESULT(1, FACILITY_XPS, 0x000)

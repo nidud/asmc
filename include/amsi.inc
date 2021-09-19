@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,20 +19,7 @@ include ole2.inc
 endif
 
 ifndef __amsi_h__
-__amsi_h__ equ <>
-
-ifndef __IAmsiStream_FWD_DEFINED__
-__IAmsiStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IAntimalwareProvider_FWD_DEFINED__
-__IAntimalwareProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IAntimalwareUacProvider_FWD_DEFINED__
-__IAntimalwareUacProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IAntimalware_FWD_DEFINED__
-__IAntimalware_FWD_DEFINED__ equ 1
-endif
+define __amsi_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -160,7 +147,7 @@ AMSI_UAC_REQUEST_CONTEXT ENDS
 LPAMSI_UAC_REQUEST_CONTEXT typedef ptr AMSI_UAC_REQUEST_CONTEXT
 
 ifndef __IAmsiStream_INTERFACE_DEFINED__
-__IAmsiStream_INTERFACE_DEFINED__ equ 1
+define __IAmsiStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAmsiStream, "3e47f2e5-81d4-4d3b-897f-545096770373")
 
@@ -168,12 +155,12 @@ DEFINE_IIDX(IAmsiStream, "3e47f2e5-81d4-4d3b-897f-545096770373")
 
     GetAttribute	proc :AMSI_ATTRIBUTE, :ULONG, :ptr, :ptr
     Read		proc :ULONGLONG, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAntimalwareProvider_INTERFACE_DEFINED__
-__IAntimalwareProvider_INTERFACE_DEFINED__ equ 1
+define __IAntimalwareProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAntimalwareProvider, "b2cabfe3-fe04-42b1-a5df-08d483d4d125")
 
@@ -182,12 +169,12 @@ DEFINE_IIDX(IAntimalwareProvider, "b2cabfe3-fe04-42b1-a5df-08d483d4d125")
     Scan		proc :ptr, :ptr
     CloseSession	proc :ULONGLONG
     DisplayName		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAntimalwareUacProvider_INTERFACE_DEFINED__
-__IAntimalwareUacProvider_INTERFACE_DEFINED__ equ 1
+define __IAntimalwareUacProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAntimalwareUacProvider, "b2cabfe4-fe04-42b1-a5df-08d483d4d125")
 
@@ -195,13 +182,13 @@ DEFINE_IIDX(IAntimalwareUacProvider, "b2cabfe4-fe04-42b1-a5df-08d483d4d125")
 
     UacScan		proc :LPAMSI_UAC_REQUEST_CONTEXT, :ptr
     DisplayName		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IAntimalware_INTERFACE_DEFINED__
-__IAntimalware_INTERFACE_DEFINED__ equ 1
+define __IAntimalware_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAntimalware, "82d29c2e-f062-44e6-b5c9-3d9a2f24a2df")
 
@@ -209,7 +196,7 @@ DEFINE_IIDX(IAntimalware, "82d29c2e-f062-44e6-b5c9-3d9a2f24a2df")
 
     Scan		proc :ptr, :ptr, :ptr
     CloseSession	proc :ULONGLONG
-    .ends
+   .ends
 
 endif
 

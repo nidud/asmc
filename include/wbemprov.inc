@@ -1,15 +1,15 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
 include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
+.err <this stub requires an updated version of rpcndr.inc>
 endif
 
 ifndef COM_NO_WINDOWS_H
@@ -18,101 +18,16 @@ include ole2.inc
 endif
 
 ifndef __wbemprov_h__
-__wbemprov_h__ equ <>
-
-ifndef __IWbemPropertyProvider_FWD_DEFINED__
-__IWbemPropertyProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemUnboundObjectSink_FWD_DEFINED__
-__IWbemUnboundObjectSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProvider_FWD_DEFINED__
-__IWbemEventProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProviderQuerySink_FWD_DEFINED__
-__IWbemEventProviderQuerySink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProviderSecurity_FWD_DEFINED__
-__IWbemEventProviderSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventConsumerProvider_FWD_DEFINED__
-__IWbemEventConsumerProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemProviderInitSink_FWD_DEFINED__
-__IWbemProviderInitSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemProviderInit_FWD_DEFINED__
-__IWbemProviderInit_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemHiPerfProvider_FWD_DEFINED__
-__IWbemHiPerfProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemDecoupledRegistrar_FWD_DEFINED__
-__IWbemDecoupledRegistrar_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemAdministrativeLocator_FWD_DEFINED__
-__WbemAdministrativeLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemAuthenticatedLocator_FWD_DEFINED__
-__WbemAuthenticatedLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemUnauthenticatedLocator_FWD_DEFINED__
-__WbemUnauthenticatedLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemDecoupledRegistrar_FWD_DEFINED__
-__WbemDecoupledRegistrar_FWD_DEFINED__ equ 1
-endif
-ifndef __WbemDecoupledBasicEventProvider_FWD_DEFINED__
-__WbemDecoupledBasicEventProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemUnboundObjectSink_FWD_DEFINED__
-__IWbemUnboundObjectSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemPropertyProvider_FWD_DEFINED__
-__IWbemPropertyProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProvider_FWD_DEFINED__
-__IWbemEventProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProviderQuerySink_FWD_DEFINED__
-__IWbemEventProviderQuerySink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventProviderSecurity_FWD_DEFINED__
-__IWbemEventProviderSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemProviderIdentity_FWD_DEFINED__
-__IWbemProviderIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventConsumerProvider_FWD_DEFINED__
-__IWbemEventConsumerProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemProviderInitSink_FWD_DEFINED__
-__IWbemProviderInitSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemProviderInit_FWD_DEFINED__
-__IWbemProviderInit_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemHiPerfProvider_FWD_DEFINED__
-__IWbemHiPerfProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemDecoupledRegistrar_FWD_DEFINED__
-__IWbemDecoupledRegistrar_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemDecoupledBasicEventProvider_FWD_DEFINED__
-__IWbemDecoupledBasicEventProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWbemEventSink_FWD_DEFINED__
-__IWbemEventSink_FWD_DEFINED__ equ 1
-endif
+define __wbemprov_h__
 
 include objidl.inc
 include oleidl.inc
 include oaidl.inc
 include wbemcli.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 WBEM_VARIANT		typedef VARIANT
 WBEM_WSTR		typedef LPWSTR
 WBEM_CWSTR		typedef LPCWSTR
@@ -124,12 +39,12 @@ WBEM_CWSTR		typedef LPCWSTR
     }
 
 ifndef __WbemProviders_v1_LIBRARY_DEFINED__
-__WbemProviders_v1_LIBRARY_DEFINED__ equ 1
+define __WbemProviders_v1_LIBRARY_DEFINED__
 
 externdef LIBID_WbemProviders_v1:IID
 
 ifndef __IWbemPropertyProvider_INTERFACE_DEFINED__
-__IWbemPropertyProvider_INTERFACE_DEFINED__ equ 1
+define __IWbemPropertyProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemPropertyProvider, "CE61E841-65BC-11d0-B6BD-00AA003240C7")
 
@@ -137,36 +52,36 @@ DEFINE_IIDX(IWbemPropertyProvider, "CE61E841-65BC-11d0-B6BD-00AA003240C7")
 
     GetProperty		proc :LONG, :BSTR, :BSTR, :BSTR, :BSTR, :ptr
     PutProperty		proc :LONG, :BSTR, :BSTR, :BSTR, :BSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemUnboundObjectSink_INTERFACE_DEFINED__
-__IWbemUnboundObjectSink_INTERFACE_DEFINED__ equ 1
+define __IWbemUnboundObjectSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemUnboundObjectSink, "e246107b-b06e-11d0-ad61-00c04fd8fdff")
 
 .comdef IWbemUnboundObjectSink : public IUnknown
 
     IndicateToConsumer	proc :ptr, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemEventProvider_INTERFACE_DEFINED__
-__IWbemEventProvider_INTERFACE_DEFINED__ equ 1
+define __IWbemEventProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemEventProvider, "e245105b-b06e-11d0-ad61-00c04fd8fdff")
 
 .comdef IWbemEventProvider : public IUnknown
 
     ProvideEvents	proc :ptr, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemEventProviderQuerySink_INTERFACE_DEFINED__
-__IWbemEventProviderQuerySink_INTERFACE_DEFINED__ equ 1
+define __IWbemEventProviderQuerySink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemEventProviderQuerySink, "580acaf8-fa1c-11d0-ad72-00c04fd8fdff")
 
@@ -174,60 +89,60 @@ DEFINE_IIDX(IWbemEventProviderQuerySink, "580acaf8-fa1c-11d0-ad72-00c04fd8fdff")
 
     NewQuery		proc :LONG, :WBEM_WSTR, :WBEM_WSTR
     CancelQuery		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemEventProviderSecurity_INTERFACE_DEFINED__
-__IWbemEventProviderSecurity_INTERFACE_DEFINED__ equ 1
+define __IWbemEventProviderSecurity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemEventProviderSecurity, "631f7d96-d993-11d2-b339-00105a1f4aaf")
 
 .comdef IWbemEventProviderSecurity : public IUnknown
 
     AccessCheck		proc :WBEM_CWSTR, :WBEM_CWSTR, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemEventConsumerProvider_INTERFACE_DEFINED__
-__IWbemEventConsumerProvider_INTERFACE_DEFINED__ equ 1
+define __IWbemEventConsumerProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemEventConsumerProvider, "e246107a-b06e-11d0-ad61-00c04fd8fdff")
 
 .comdef IWbemEventConsumerProvider : public IUnknown
 
     FindConsumer	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemProviderInitSink_INTERFACE_DEFINED__
-__IWbemProviderInitSink_INTERFACE_DEFINED__ equ 1
+define __IWbemProviderInitSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemProviderInitSink, "1be41571-91dd-11d1-aeb2-00c04fb68820")
 
 .comdef IWbemProviderInitSink : public IUnknown
 
     SetStatus		proc :LONG, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemProviderInit_INTERFACE_DEFINED__
-__IWbemProviderInit_INTERFACE_DEFINED__ equ 1
+define __IWbemProviderInit_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemProviderInit, "1be41572-91dd-11d1-aeb2-00c04fb68820")
 
 .comdef IWbemProviderInit : public IUnknown
 
     Initialize		proc :LPWSTR, :LONG, :LPWSTR, :LPWSTR, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemHiPerfProvider_INTERFACE_DEFINED__
-__IWbemHiPerfProvider_INTERFACE_DEFINED__ equ 1
+define __IWbemHiPerfProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemHiPerfProvider, "49353c93-516b-11d1-aea6-00c04fb68820")
 
@@ -239,12 +154,12 @@ DEFINE_IIDX(IWbemHiPerfProvider, "49353c93-516b-11d1-aea6-00c04fb68820")
     StopRefreshing	proc :ptr, :LONG, :LONG
     CreateRefreshableEnum proc :ptr, :LPCWSTR, :ptr, :LONG, :ptr, :ptr, :ptr
     GetObjects		proc :ptr, :LONG, :ptr, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWbemDecoupledRegistrar_INTERFACE_DEFINED__
-__IWbemDecoupledRegistrar_INTERFACE_DEFINED__ equ 1
+define __IWbemDecoupledRegistrar_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemDecoupledRegistrar, "1005cbcf-e64f-4646-bcd3-3a089d8a84b4")
 
@@ -252,7 +167,7 @@ DEFINE_IIDX(IWbemDecoupledRegistrar, "1005cbcf-e64f-4646-bcd3-3a089d8a84b4")
 
     Register		proc :LONG, :ptr, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
     UnRegister		proc
-    .ends
+   .ends
 
 endif
 
@@ -265,14 +180,14 @@ DEFINE_GUIDS(CLSID_WbemDecoupledBasicEventProvider, "f5f75737-2843-4f22-933d-c76
 endif
 
 ifndef __IWbemProviderIdentity_INTERFACE_DEFINED__
-__IWbemProviderIdentity_INTERFACE_DEFINED__ equ 1
+define __IWbemProviderIdentity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemProviderIdentity, "631f7d97-d993-11d2-b339-00105a1f4aaf")
 
 .comdef IWbemProviderIdentity : public IUnknown
 
     SetRegistrationObject proc :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -291,7 +206,7 @@ endif
 
 
 ifndef __IWbemDecoupledBasicEventProvider_INTERFACE_DEFINED__
-__IWbemDecoupledBasicEventProvider_INTERFACE_DEFINED__ equ 1
+define __IWbemDecoupledBasicEventProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemDecoupledBasicEventProvider, "86336d20-ca11-4786-9ef1-bc8a946b42fc")
 
@@ -299,7 +214,7 @@ DEFINE_IIDX(IWbemDecoupledBasicEventProvider, "86336d20-ca11-4786-9ef1-bc8a946b4
 
     GetSink		proc :LONG, :ptr, :ptr
     GetService		proc :LONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -310,7 +225,7 @@ endif
     }
 
 ifndef __IWbemEventSink_INTERFACE_DEFINED__
-__IWbemEventSink_INTERFACE_DEFINED__ equ 1
+define __IWbemEventSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWbemEventSink, "3ae0080a-7e3a-4366-bf89-0feedc931659")
 
@@ -320,10 +235,8 @@ DEFINE_IIDX(IWbemEventSink, "3ae0080a-7e3a-4366-bf89-0feedc931659")
     IsActive		proc
     GetRestrictedSink	proc :LONG
     SetBatchingParameters proc :LONG, :DWORD, :DWORD
-    .ends
+   .ends
 
 endif
-
 endif
-
 endif

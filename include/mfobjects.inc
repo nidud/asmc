@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,87 +18,12 @@ include ole2.inc
 endif
 
 ifndef __mfobjects_h__
-__mfobjects_h__ equ <>
-
-ifndef __IMFAttributes_FWD_DEFINED__
-__IMFAttributes_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFMediaBuffer_FWD_DEFINED__
-__IMFMediaBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSample_FWD_DEFINED__
-__IMFSample_FWD_DEFINED__ equ 1
-endif
-ifndef __IMF2DBuffer_FWD_DEFINED__
-__IMF2DBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMF2DBuffer2_FWD_DEFINED__
-__IMF2DBuffer2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFDXGIBuffer_FWD_DEFINED__
-__IMFDXGIBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFMediaType_FWD_DEFINED__
-__IMFMediaType_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFAudioMediaType_FWD_DEFINED__
-__IMFAudioMediaType_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoMediaType_FWD_DEFINED__
-__IMFVideoMediaType_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFAsyncResult_FWD_DEFINED__
-__IMFAsyncResult_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFAsyncCallback_FWD_DEFINED__
-__IMFAsyncCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFAsyncCallbackLogging_FWD_DEFINED__
-__IMFAsyncCallbackLogging_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFMediaEvent_FWD_DEFINED__
-__IMFMediaEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFMediaEventGenerator_FWD_DEFINED__
-__IMFMediaEventGenerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFRemoteAsyncCallback_FWD_DEFINED__
-__IMFRemoteAsyncCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFByteStream_FWD_DEFINED__
-__IMFByteStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFByteStreamProxyClassFactory_FWD_DEFINED__
-__IMFByteStreamProxyClassFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFSampleOutputStream_FWD_DEFINED__
-__IMFSampleOutputStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFCollection_FWD_DEFINED__
-__IMFCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFMediaEventQueue_FWD_DEFINED__
-__IMFMediaEventQueue_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFActivate_FWD_DEFINED__
-__IMFActivate_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFPluginControl_FWD_DEFINED__
-__IMFPluginControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFPluginControl2_FWD_DEFINED__
-__IMFPluginControl2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFDXGIDeviceManager_FWD_DEFINED__
-__IMFDXGIDeviceManager_FWD_DEFINED__ equ 1
-endif
+define __mfobjects_h__
 
 include unknwn.inc
 include propsys.inc
 include mediaobj.inc
-
 include winapifamily.inc
-
 include mmreg.inc
 
 if 0
@@ -155,7 +80,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     }
 
 ifndef __IMFAttributes_INTERFACE_DEFINED__
-__IMFAttributes_INTERFACE_DEFINED__ equ 1
+define __IMFAttributes_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFAttributes, "2cd2d921-c447-44a7-a13c-4adabfc247e3")
 
@@ -191,7 +116,7 @@ DEFINE_IIDX(IMFAttributes, "2cd2d921-c447-44a7-a13c-4adabfc247e3")
     GetCount		proc :ptr
     GetItemByIndex	proc :UINT32, :ptr, :ptr
     CopyAllItems	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -211,7 +136,7 @@ MFDeserializeAttributesFromStream proto __cdecl \
 
 
 ifndef __IMFMediaBuffer_INTERFACE_DEFINED__
-__IMFMediaBuffer_INTERFACE_DEFINED__ equ 1
+define __IMFMediaBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFMediaBuffer, "045FA593-8799-42b8-BC8D-8968C6453507")
 
@@ -222,12 +147,12 @@ DEFINE_IIDX(IMFMediaBuffer, "045FA593-8799-42b8-BC8D-8968C6453507")
     GetCurrentLength	proc :ptr
     SetCurrentLength	proc :DWORD
     GetMaxLength	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFSample_INTERFACE_DEFINED__
-__IMFSample_INTERFACE_DEFINED__ equ 1
+define __IMFSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSample, "c40a00f2-b93a-4d80-ae8c-5a1c634f58e4")
 
@@ -247,12 +172,12 @@ DEFINE_IIDX(IMFSample, "c40a00f2-b93a-4d80-ae8c-5a1c634f58e4")
     RemoveAllBuffers	proc
     GetTotalLength	proc :ptr
     CopyToBuffer	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMF2DBuffer_INTERFACE_DEFINED__
-__IMF2DBuffer_INTERFACE_DEFINED__ equ 1
+define __IMF2DBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMF2DBuffer, "7DC9D5F9-9ED9-44ec-9BBF-0600BB589FBB")
 
@@ -265,7 +190,7 @@ DEFINE_IIDX(IMF2DBuffer, "7DC9D5F9-9ED9-44ec-9BBF-0600BB589FBB")
     GetContiguousLength proc :ptr
     ContiguousCopyTo	proc :ptr, :DWORD
     ContiguousCopyFrom	proc :ptr, :DWORD
-    .ends
+   .ends
 
 endif
 
@@ -278,7 +203,7 @@ endif
     }
 
 ifndef __IMF2DBuffer2_INTERFACE_DEFINED__
-__IMF2DBuffer2_INTERFACE_DEFINED__ equ 1
+define __IMF2DBuffer2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMF2DBuffer2, "33ae5ea6-4316-436f-8ddd-d73d22f829ec")
 
@@ -286,12 +211,12 @@ DEFINE_IIDX(IMF2DBuffer2, "33ae5ea6-4316-436f-8ddd-d73d22f829ec")
 
     Lock2DSize		proc :MF2DBuffer_LockFlags, :ptr, :ptr
     Copy2DTo		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFDXGIBuffer_INTERFACE_DEFINED__
-__IMFDXGIBuffer_INTERFACE_DEFINED__ equ 1
+define __IMFDXGIBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFDXGIBuffer, "e7174cfa-1c9e-48b1-8866-626226bfc258")
 
@@ -301,12 +226,12 @@ DEFINE_IIDX(IMFDXGIBuffer, "e7174cfa-1c9e-48b1-8866-626226bfc258")
     GetSubresourceIndex proc :ptr
     GetUnknown		proc :REFIID, :REFIID, :ptr
     SetUnknown		proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFMediaType_INTERFACE_DEFINED__
-__IMFMediaType_INTERFACE_DEFINED__ equ 1
+define __IMFMediaType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFMediaType, "44ae0fa8-ea31-4109-8d2e-4cae4997c555")
 
@@ -317,7 +242,7 @@ DEFINE_IIDX(IMFMediaType, "44ae0fa8-ea31-4109-8d2e-4cae4997c555")
     IsEqual		proc :ptr, :ptr
     GetRepresentation	proc :ptr GUID, :ptr
     FreeRepresentation	proc :ptr GUID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -331,14 +256,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMFAudioMediaType_INTERFACE_DEFINED__
-__IMFAudioMediaType_INTERFACE_DEFINED__ equ 1
+define __IMFAudioMediaType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFAudioMediaType, "26a0adc3-ce26-4672-9304-69552edd3faf")
 
 .comdef IMFAudioMediaType : public IMFMediaType
 
     GetAudioFormat	proc
-    .ends
+   .ends
 
 endif
 
@@ -609,7 +534,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMFVideoMediaType_INTERFACE_DEFINED__
-__IMFVideoMediaType_INTERFACE_DEFINED__ equ 1
+define __IMFVideoMediaType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoMediaType, "b99f381f-a8f9-47a2-a5af-ca3a225a3890")
 
@@ -617,7 +542,7 @@ DEFINE_IIDX(IMFVideoMediaType, "b99f381f-a8f9-47a2-a5af-ca3a225a3890")
 
     GetVideoFormat	proc
     GetVideoRepresentation proc :GUID, :ptr, :LONG
-    .ends
+   .ends
 
 endif
 
@@ -626,7 +551,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IMFAsyncResult_INTERFACE_DEFINED__
-__IMFAsyncResult_INTERFACE_DEFINED__ equ 1
+define __IMFAsyncResult_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFAsyncResult, "ac6b7889-0740-4d51-8619-905994a55cc6")
 
@@ -637,12 +562,12 @@ DEFINE_IIDX(IMFAsyncResult, "ac6b7889-0740-4d51-8619-905994a55cc6")
     SetStatus		proc :HRESULT
     GetObject		proc :ptr
     GetStateNoAddRef	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFAsyncCallback_INTERFACE_DEFINED__
-__IMFAsyncCallback_INTERFACE_DEFINED__ equ 1
+define __IMFAsyncCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFAsyncCallback, "a27003cf-2354-4f2a-8d6a-ab7cff15437e")
 
@@ -650,7 +575,7 @@ DEFINE_IIDX(IMFAsyncCallback, "a27003cf-2354-4f2a-8d6a-ab7cff15437e")
 
     GetParameters	proc :ptr, :ptr
     _Invoke		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -659,7 +584,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMFAsyncCallbackLogging_INTERFACE_DEFINED__
-__IMFAsyncCallbackLogging_INTERFACE_DEFINED__ equ 1
+define __IMFAsyncCallbackLogging_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFAsyncCallbackLogging, "c7a4dca1-f5f0-47b6-b92b-bf0106d25791")
 
@@ -667,7 +592,7 @@ DEFINE_IIDX(IMFAsyncCallbackLogging, "c7a4dca1-f5f0-47b6-b92b-bf0106d25791")
 
     GetObjectPointer	proc
     GetObjectTag	proc
-    .ends
+   .ends
 
 endif
 
@@ -812,7 +737,7 @@ MFASYNC_CALLBACK_QUEUE_ALL equ 0xFFFFFFFF
 MediaEventType		typedef DWORD
 
 ifndef __IMFMediaEvent_INTERFACE_DEFINED__
-__IMFMediaEvent_INTERFACE_DEFINED__ equ 1
+define __IMFMediaEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFMediaEvent, "DF598932-F10C-4E39-BBA2-C308F101DAA3")
 
@@ -822,7 +747,7 @@ DEFINE_IIDX(IMFMediaEvent, "DF598932-F10C-4E39-BBA2-C308F101DAA3")
     GetExtendedType	proc :ptr
     GetStatus		proc :ptr
     GetValue		proc :ptr
-    .ends
+   .ends
     LPIMFMediaEvent	typedef ptr IMFMediaEvent
 
 endif
@@ -830,7 +755,7 @@ endif
 MF_EVENT_FLAG_NO_WAIT	equ 0x00000001
 
 ifndef __IMFMediaEventGenerator_INTERFACE_DEFINED__
-__IMFMediaEventGenerator_INTERFACE_DEFINED__ equ 1
+define __IMFMediaEventGenerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFMediaEventGenerator, "2CD0BD52-BCD5-4B89-B62C-EADC0C031E7D")
 
@@ -840,7 +765,7 @@ DEFINE_IIDX(IMFMediaEventGenerator, "2CD0BD52-BCD5-4B89-B62C-EADC0C031E7D")
     BeginGetEvent	proc :ptr, :ptr
     EndGetEvent		proc :ptr, :ptr
     QueueEvent		proc :MediaEventType, :REFGUID, :HRESULT, :ptr
-    .ends
+   .ends
 
 IMFMediaEventGenerator_RemoteBeginGetEvent_Proxy proto __cdecl \
 		   This: ptr IMFMediaEventGenerator,
@@ -868,18 +793,13 @@ IMFMediaEventGenerator_RemoteEndGetEvent_Stub proto __cdecl \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
-
 endif
-
-
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMFRemoteAsyncCallback_INTERFACE_DEFINED__
-__IMFRemoteAsyncCallback_INTERFACE_DEFINED__ equ 1
+define __IMFRemoteAsyncCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFRemoteAsyncCallback, "a27003d0-2354-4f2a-8d6a-ab7cff15437e")
 
@@ -900,7 +820,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     }
 
 ifndef __IMFByteStream_INTERFACE_DEFINED__
-__IMFByteStream_INTERFACE_DEFINED__ equ 1
+define __IMFByteStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFByteStream, "ad4c1b00-4bf7-422f-9175-756693d9130d")
 
@@ -921,7 +841,7 @@ DEFINE_IIDX(IMFByteStream, "ad4c1b00-4bf7-422f-9175-756693d9130d")
     Seek		proc :MFBYTESTREAM_SEEK_ORIGIN, :LONGLONG, :DWORD, :ptr
     Flush		proc
     Close		proc
-    .ends
+   .ends
 
 IMFByteStream_RemoteBeginRead_Proxy proto __cdecl \
 		  This: ptr IMFByteStream,
@@ -1005,14 +925,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 DEFINE_GUID(CLSID_MFByteStreamProxyClassFactory, 0x770e8e77, 0x4916, 0x441c, 0xa9, 0xa7, 0xb3, 0x42, 0xd0, 0xee, 0xbc, 0x71 );
 
 ifndef __IMFByteStreamProxyClassFactory_INTERFACE_DEFINED__
-__IMFByteStreamProxyClassFactory_INTERFACE_DEFINED__ equ 1
+define __IMFByteStreamProxyClassFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFByteStreamProxyClassFactory, "a6b43f84-5c0a-42e8-a44d-b1857a76992f")
 
 .comdef IMFByteStreamProxyClassFactory : public IUnknown
 
     CreateByteStreamProxy proc :ptr, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1041,7 +961,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IMFSampleOutputStream_INTERFACE_DEFINED__
-__IMFSampleOutputStream_INTERFACE_DEFINED__ equ 1
+define __IMFSampleOutputStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFSampleOutputStream, "8feed468-6f7e-440d-869a-49bdd283ad0d")
 
@@ -1050,12 +970,12 @@ DEFINE_IIDX(IMFSampleOutputStream, "8feed468-6f7e-440d-869a-49bdd283ad0d")
     BeginWriteSample	proc :ptr, :ptr, :ptr
     EndWriteSample	proc :ptr
     Close		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFCollection_INTERFACE_DEFINED__
-__IMFCollection_INTERFACE_DEFINED__ equ 1
+define __IMFCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFCollection, "5BC8A76B-869A-46a3-9B03-FA218A66AEBE")
 
@@ -1067,12 +987,12 @@ DEFINE_IIDX(IMFCollection, "5BC8A76B-869A-46a3-9B03-FA218A66AEBE")
     RemoveElement	proc :DWORD, :ptr
     InsertElementAt	proc :DWORD, :ptr
     RemoveAllElements	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFMediaEventQueue_INTERFACE_DEFINED__
-__IMFMediaEventQueue_INTERFACE_DEFINED__ equ 1
+define __IMFMediaEventQueue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFMediaEventQueue, "36f846fc-2256-48b6-b58e-e2b638316581")
 
@@ -1085,12 +1005,12 @@ DEFINE_IIDX(IMFMediaEventQueue, "36f846fc-2256-48b6-b58e-e2b638316581")
     QueueEventParamVar	proc :MediaEventType, :REFGUID, :HRESULT, :ptr
     QueueEventParamUnk	proc :MediaEventType, :REFGUID, :HRESULT, :ptr
     Shutdown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFActivate_INTERFACE_DEFINED__
-__IMFActivate_INTERFACE_DEFINED__ equ 1
+define __IMFActivate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFActivate, "7FEE9E9A-4A89-47a6-899C-B6A53A70FB67")
 
@@ -1099,7 +1019,7 @@ DEFINE_IIDX(IMFActivate, "7FEE9E9A-4A89-47a6-899C-B6A53A70FB67")
     ActivateObject	proc :REFIID, :ptr
     ShutdownObject	proc
     DetachObject	proc
-    .ends
+   .ends
 
 endif
 
@@ -1117,7 +1037,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     }
 
 ifndef __IMFPluginControl_INTERFACE_DEFINED__
-__IMFPluginControl_INTERFACE_DEFINED__ equ 1
+define __IMFPluginControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFPluginControl, "5c6c44bf-1db6-435b-9249-e8cd10fdec96")
 
@@ -1129,7 +1049,7 @@ DEFINE_IIDX(IMFPluginControl, "5c6c44bf-1db6-435b-9249-e8cd10fdec96")
     IsDisabled		proc :DWORD, :REFCLSID
     GetDisabledByIndex	proc :DWORD, :DWORD, :ptr
     SetDisabled		proc :DWORD, :REFCLSID, :BOOL
-    .ends
+   .ends
 
 endif
 
@@ -1140,14 +1060,14 @@ endif
     }
 
 ifndef __IMFPluginControl2_INTERFACE_DEFINED__
-__IMFPluginControl2_INTERFACE_DEFINED__ equ 1
+define __IMFPluginControl2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFPluginControl2, "C6982083-3DDC-45CB-AF5E-0F7A8CE4DE77")
 
 .comdef IMFPluginControl2 : public IMFPluginControl
 
     SetPolicy		proc :MF_PLUGIN_CONTROL_POLICY
-    .ends
+   .ends
 
 endif
 
@@ -1156,7 +1076,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IMFDXGIDeviceManager_INTERFACE_DEFINED__
-__IMFDXGIDeviceManager_INTERFACE_DEFINED__ equ 1
+define __IMFDXGIDeviceManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFDXGIDeviceManager, "eb533d5d-2db6-40f8-97a9-494692014f07")
 
@@ -1169,12 +1089,10 @@ DEFINE_IIDX(IMFDXGIDeviceManager, "eb533d5d-2db6-40f8-97a9-494692014f07")
     ResetDevice		proc :ptr, :UINT
     TestDevice		proc :HANDLE
     UnlockDevice	proc :HANDLE, :BOOL
-    .ends
+   .ends
 
 endif
-
 endif
-
 endif ;; (WINVER GE _WIN32_WINNT_WIN7)
 
 
@@ -1195,7 +1113,6 @@ LPSAFEARRAY_UserMarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
 LPSAFEARRAY_UserUnmarshal64	proto WINAPI :ptr DWORD, :ptr sbyte, :ptr LPSAFEARRAY
 LPSAFEARRAY_UserFree64		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
 
-
 IMFMediaEventGenerator_BeginGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
 IMFMediaEventGenerator_BeginGetEvent_Stub	proto __cdecl :ptr, :ptr
 IMFMediaEventGenerator_EndGetEvent_Proxy	proto __cdecl :ptr, :ptr, :ptr
@@ -1208,6 +1125,5 @@ IMFByteStream_BeginWrite_Proxy			proto __cdecl :ptr, :ptr, :ULONG, :ptr, :ptr
 IMFByteStream_BeginWrite_Stub			proto __cdecl :ptr, :ptr, :ULONG, :ptr
 IMFByteStream_EndWrite_Proxy			proto __cdecl :ptr, :ptr, :ptr
 IMFByteStream_EndWrite_Stub			proto __cdecl :ptr, :ptr, :ptr
-
 
 endif

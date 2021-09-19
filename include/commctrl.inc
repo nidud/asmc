@@ -1,6 +1,5 @@
 ifndef _INC_COMMCTRL
-_INC_COMMCTRL equ <>
-.pragma list(push, 0)
+define _INC_COMMCTRL
 
 ifndef _WIN32_IE
 _WIN32_IE equ 0x0400
@@ -9,7 +8,7 @@ elseif (_WIN32_IE LT 0x0400) AND defined(_WIN32_WINNT) AND (_WIN32_WINNT GE 0x05
 endif
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ 1
+define _HRESULT_DEFINED
 HRESULT typedef sdword
 endif
 ifndef HKEY
@@ -8040,6 +8039,4 @@ endif
 endif
 
 endif
-
-.pragma list(pop)
 endif

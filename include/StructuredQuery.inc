@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,78 +19,10 @@ include ole2.inc
 endif
 
 ifndef __structuredquery_h__
-__structuredquery_h__ equ <>
-
-ifndef __IQueryParser_FWD_DEFINED__
-__IQueryParser_FWD_DEFINED__ equ 1
-endif
-ifndef __IConditionFactory_FWD_DEFINED__
-__IConditionFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IQuerySolution_FWD_DEFINED__
-__IQuerySolution_FWD_DEFINED__ equ 1
-endif
-ifndef __IConditionFactory2_FWD_DEFINED__
-__IConditionFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __IConditionGenerator_FWD_DEFINED__
-__IConditionGenerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IInterval_FWD_DEFINED__
-__IInterval_FWD_DEFINED__ equ 1
-endif
-ifndef __IMetaData_FWD_DEFINED__
-__IMetaData_FWD_DEFINED__ equ 1
-endif
-ifndef __IEntity_FWD_DEFINED__
-__IEntity_FWD_DEFINED__ equ 1
-endif
-ifndef __IRelationship_FWD_DEFINED__
-__IRelationship_FWD_DEFINED__ equ 1
-endif
-ifndef __INamedEntity_FWD_DEFINED__
-__INamedEntity_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaProvider_FWD_DEFINED__
-__ISchemaProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITokenCollection_FWD_DEFINED__
-__ITokenCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __INamedEntityCollector_FWD_DEFINED__
-__INamedEntityCollector_FWD_DEFINED__ equ 1
-endif
-ifndef __ISchemaLocalizerSupport_FWD_DEFINED__
-__ISchemaLocalizerSupport_FWD_DEFINED__ equ 1
-endif
-ifndef __IQueryParserManager_FWD_DEFINED__
-__IQueryParserManager_FWD_DEFINED__ equ 1
-endif
-ifndef __QueryParser_FWD_DEFINED__
-__QueryParser_FWD_DEFINED__ equ 1
-endif
-ifndef __NegationCondition_FWD_DEFINED__
-__NegationCondition_FWD_DEFINED__ equ 1
-endif
-ifndef __CompoundCondition_FWD_DEFINED__
-__CompoundCondition_FWD_DEFINED__ equ 1
-endif
-ifndef __LeafCondition_FWD_DEFINED__
-__LeafCondition_FWD_DEFINED__ equ 1
-endif
-ifndef __ConditionFactory_FWD_DEFINED__
-__ConditionFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __Interval_FWD_DEFINED__
-__Interval_FWD_DEFINED__ equ 1
-endif
-ifndef __QueryParserManager_FWD_DEFINED__
-__QueryParserManager_FWD_DEFINED__ equ 1
-endif
+define __structuredquery_h__
 
 include StructuredQueryCondition.inc
 include ObjectArray.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -170,7 +102,7 @@ include propkeydef.inc
     }
 
 ifndef __IQueryParser_INTERFACE_DEFINED__
-__IQueryParser_INTERFACE_DEFINED__ equ 1
+define __IQueryParser_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IQueryParser, "2EBDEE67-3505-43f8-9946-EA44ABC8E5B0")
 
@@ -184,12 +116,12 @@ DEFINE_IIDX(IQueryParser, "2EBDEE67-3505-43f8-9946-EA44ABC8E5B0")
     RestateToString	proc :ptr, :BOOL, :ptr
     ParsePropertyValue	proc :LPCWSTR, :LPCWSTR, :ptr
     RestatePropertyValueToString proc :ptr, :BOOL, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IConditionFactory_INTERFACE_DEFINED__
-__IConditionFactory_INTERFACE_DEFINED__ equ 1
+define __IConditionFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConditionFactory, "A5EFE073-B16F-474f-9F3E-9F8B497A3E08")
 
@@ -199,12 +131,12 @@ DEFINE_IIDX(IConditionFactory, "A5EFE073-B16F-474f-9F3E-9F8B497A3E08")
     MakeAndOr		proc :CONDITION_TYPE, :ptr, :BOOL, :ptr
     MakeLeaf		proc :LPCWSTR, :CONDITION_OPERATION, :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :BOOL, :ptr
     Resolve		proc :ptr, :STRUCTURED_QUERY_RESOLVE_OPTION, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IQuerySolution_INTERFACE_DEFINED__
-__IQuerySolution_INTERFACE_DEFINED__ equ 1
+define __IQuerySolution_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IQuerySolution, "D6EBC66B-8921-4193-AFDD-A1789FB7FF57")
 
@@ -213,7 +145,7 @@ DEFINE_IIDX(IQuerySolution, "D6EBC66B-8921-4193-AFDD-A1789FB7FF57")
     GetQuery		proc :ptr, :ptr
     GetErrors		proc :REFIID, :ptr
     GetLexicalData	proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -229,7 +161,7 @@ endif
 
 
 ifndef __IConditionFactory2_INTERFACE_DEFINED__
-__IConditionFactory2_INTERFACE_DEFINED__ equ 1
+define __IConditionFactory2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConditionFactory2, "71D222E1-432F-429e-8C13-B6DAFDE5077A")
 
@@ -244,12 +176,12 @@ DEFINE_IIDX(IConditionFactory2, "71D222E1-432F-429e-8C13-B6DAFDE5077A")
     CreateBooleanLeaf	proc :REFPROPERTYKEY, :CONDITION_OPERATION, :BOOL, :CONDITION_CREATION_OPTIONS, :REFIID, :ptr
     CreateLeaf		proc :REFPROPERTYKEY, :CONDITION_OPERATION, :REFPROPVARIANT, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :CONDITION_CREATION_OPTIONS, :REFIID, :ptr
     ResolveCondition	proc :ptr, :STRUCTURED_QUERY_RESOLVE_OPTION, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IConditionGenerator_INTERFACE_DEFINED__
-__IConditionGenerator_INTERFACE_DEFINED__ equ 1
+define __IConditionGenerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConditionGenerator, "92D2CC58-4386-45a3-B98C-7E0CE64A4117")
 
@@ -259,36 +191,36 @@ DEFINE_IIDX(IConditionGenerator, "92D2CC58-4386-45a3-B98C-7E0CE64A4117")
     RecognizeNamedEntities proc :LPCWSTR, :LCID, :ptr, :ptr
     GenerateForLeaf	proc :ptr, :LPCWSTR, :CONDITION_OPERATION, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr, :ptr, :ptr, :BOOL, :ptr, :ptr
     DefaultPhrase	proc :LPCWSTR, :ptr, :BOOL, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IInterval_INTERFACE_DEFINED__
-__IInterval_INTERFACE_DEFINED__ equ 1
+define __IInterval_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInterval, "6BF0A714-3C18-430b-8B5D-83B1C234D3DB")
 
 .comdef IInterval : public IUnknown
 
     GetLimits		proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMetaData_INTERFACE_DEFINED__
-__IMetaData_INTERFACE_DEFINED__ equ 1
+define __IMetaData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMetaData, "780102B0-C43B-4876-BC7B-5E9BA5C88794")
 
 .comdef IMetaData : public IUnknown
 
     GetData		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IEntity_INTERFACE_DEFINED__
-__IEntity_INTERFACE_DEFINED__ equ 1
+define __IEntity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEntity, "24264891-E80B-4fd3-B7CE-4FF2FAE8931F")
 
@@ -302,12 +234,12 @@ DEFINE_IIDX(IEntity, "24264891-E80B-4fd3-B7CE-4FF2FAE8931F")
     NamedEntities	proc :REFIID, :ptr
     GetNamedEntity	proc :LPCWSTR, :ptr
     DefaultPhrase	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRelationship_INTERFACE_DEFINED__
-__IRelationship_INTERFACE_DEFINED__ equ 1
+define __IRelationship_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRelationship, "2769280B-5108-498c-9C7F-A51239B63147")
 
@@ -318,12 +250,12 @@ DEFINE_IIDX(IRelationship, "2769280B-5108-498c-9C7F-A51239B63147")
     Destination		proc :ptr
     MetaData		proc :REFIID, :ptr
     DefaultPhrase	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __INamedEntity_INTERFACE_DEFINED__
-__INamedEntity_INTERFACE_DEFINED__ equ 1
+define __INamedEntity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INamedEntity, "ABDBD0B1-7D54-49fb-AB5C-BFF4130004CD")
 
@@ -331,12 +263,12 @@ DEFINE_IIDX(INamedEntity, "ABDBD0B1-7D54-49fb-AB5C-BFF4130004CD")
 
     GetValue		proc :ptr
     DefaultPhrase	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISchemaProvider_INTERFACE_DEFINED__
-__ISchemaProvider_INTERFACE_DEFINED__ equ 1
+define __ISchemaProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISchemaProvider, "8CF89BCB-394C-49b2-AE28-A59DD4ED7F68")
 
@@ -349,12 +281,12 @@ DEFINE_IIDX(ISchemaProvider, "8CF89BCB-394C-49b2-AE28-A59DD4ED7F68")
     Localize		proc :LCID, :ptr
     SaveBinary		proc :LPCWSTR
     LookupAuthoredNamedEntity proc :ptr, :LPCWSTR, :ptr, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITokenCollection_INTERFACE_DEFINED__
-__ITokenCollection_INTERFACE_DEFINED__ equ 1
+define __ITokenCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITokenCollection, "22D8B4F2-F577-4adb-A335-C2AE88416FAB")
 
@@ -362,7 +294,7 @@ DEFINE_IIDX(ITokenCollection, "22D8B4F2-F577-4adb-A335-C2AE88416FAB")
 
     NumberOfTokens	proc :ptr
     GetToken		proc :ULONG, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -373,31 +305,31 @@ endif
     }
 
 ifndef __INamedEntityCollector_INTERFACE_DEFINED__
-__INamedEntityCollector_INTERFACE_DEFINED__ equ 1
+define __INamedEntityCollector_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INamedEntityCollector, "AF2440F6-8AFC-47d0-9A7F-396A0ACFB43D")
 
 .comdef INamedEntityCollector : public IUnknown
 
     _Add		proc :ULONG, :ULONG, :ULONG, :ULONG, :ptr, :LPCWSTR, :NAMED_ENTITY_CERTAINTY
-    .ends
+   .ends
 
 endif
 
 ifndef __ISchemaLocalizerSupport_INTERFACE_DEFINED__
-__ISchemaLocalizerSupport_INTERFACE_DEFINED__ equ 1
+define __ISchemaLocalizerSupport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISchemaLocalizerSupport, "CA3FDCA2-BFBE-4eed-90D7-0CAEF0A1BDA1")
 
 .comdef ISchemaLocalizerSupport : public IUnknown
 
     Localize		proc :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IQueryParserManager_INTERFACE_DEFINED__
-__IQueryParserManager_INTERFACE_DEFINED__ equ 1
+define __IQueryParserManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IQueryParserManager, "A879E3C4-AF77-44fb-8F37-EBD1487CF920")
 
@@ -406,7 +338,7 @@ DEFINE_IIDX(IQueryParserManager, "A879E3C4-AF77-44fb-8F37-EBD1487CF920")
     CreateLoadedParser	proc :LPCWSTR, :LANGID, :REFIID, :ptr
     InitializeOptions	proc :BOOL, :BOOL, :ptr
     SetOption		proc :QUERY_PARSER_MANAGER_OPTION, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -416,7 +348,7 @@ cLength			ULONG ?
 HITRANGE		ENDS
 
 ifndef __StructuredQuery1_LIBRARY_DEFINED__
-__StructuredQuery1_LIBRARY_DEFINED__ equ 1
+define __StructuredQuery1_LIBRARY_DEFINED__
 
 externdef LIBID_StructuredQuery1:IID
 DEFINE_GUIDS(CLSID_QueryParser, "B72F8FD8-0FAB-4dd9-BDBF-245A6CE1485B")

@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,26 +18,7 @@ include ole2.inc
 endif
 
 ifndef __mediaobj_h__
-__mediaobj_h__ equ <>
-
-ifndef __IMediaBuffer_FWD_DEFINED__
-__IMediaBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaObject_FWD_DEFINED__
-__IMediaObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumDMO_FWD_DEFINED__
-__IEnumDMO_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaObjectInPlace_FWD_DEFINED__
-__IMediaObjectInPlace_FWD_DEFINED__ equ 1
-endif
-ifndef __IDMOQualityControl_FWD_DEFINED__
-__IDMOQualityControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IDMOVideoOutputOptimizations_FWD_DEFINED__
-__IDMOVideoOutputOptimizations_FWD_DEFINED__ equ 1
-endif
+define __mediaobj_h__
 
 include unknwn.inc
 include objidl.inc
@@ -107,7 +88,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMediaBuffer_INTERFACE_DEFINED__
-__IMediaBuffer_INTERFACE_DEFINED__ equ 1
+define __IMediaBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaBuffer, "59eff8b9-938c-4a26-82f2-95cb84cdc837")
 
@@ -116,7 +97,7 @@ DEFINE_IIDX(IMediaBuffer, "59eff8b9-938c-4a26-82f2-95cb84cdc837")
     SetLength		proc :DWORD
     GetMaxLength	proc :ptr
     GetBufferAndLength	proc
-    .ends
+   .ends
     LPIMediaBuffer	typedef ptr IMediaBuffer
 
 endif
@@ -131,7 +112,7 @@ DMO_OUTPUT_DATA_BUFFER	ENDS
 PDMO_OUTPUT_DATA_BUFFER typedef ptr DMO_OUTPUT_DATA_BUFFER
 
 ifndef __IMediaObject_INTERFACE_DEFINED__
-__IMediaObject_INTERFACE_DEFINED__ equ 1
+define __IMediaObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaObject, "d8ad0f58-5494-4102-97c5-ec798e59bcf4")
 
@@ -158,12 +139,12 @@ DEFINE_IIDX(IMediaObject, "d8ad0f58-5494-4102-97c5-ec798e59bcf4")
     ProcessInput	proc :DWORD, :ptr, :DWORD, :REFERENCE_TIME, :REFERENCE_TIME
     ProcessOutput	proc :DWORD, :DWORD
     _Lock		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumDMO_INTERFACE_DEFINED__
-__IEnumDMO_INTERFACE_DEFINED__ equ 1
+define __IEnumDMO_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumDMO, "2c3cd98a-2bfa-4a53-9c27-5249ba64ba0f")
 
@@ -173,7 +154,7 @@ DEFINE_IIDX(IEnumDMO, "2c3cd98a-2bfa-4a53-9c27-5249ba64ba0f")
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -183,7 +164,7 @@ endif
     }
 
 ifndef __IMediaObjectInPlace_INTERFACE_DEFINED__
-__IMediaObjectInPlace_INTERFACE_DEFINED__ equ 1
+define __IMediaObjectInPlace_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaObjectInPlace, "651b9ad0-0fc7-4aa9-9538-d89931010741")
 
@@ -192,7 +173,7 @@ DEFINE_IIDX(IMediaObjectInPlace, "651b9ad0-0fc7-4aa9-9538-d89931010741")
     Process		proc :ULONG
     Clone		proc :ptr
     GetLatency		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -201,7 +182,7 @@ endif
     }
 
 ifndef __IDMOQualityControl_INTERFACE_DEFINED__
-__IDMOQualityControl_INTERFACE_DEFINED__ equ 1
+define __IDMOQualityControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDMOQualityControl, "65abea96-cf36-453f-af8a-705e98f16260")
 
@@ -210,7 +191,7 @@ DEFINE_IIDX(IDMOQualityControl, "65abea96-cf36-453f-af8a-705e98f16260")
     SetNow		proc :REFERENCE_TIME
     SetStatus		proc :DWORD
     GetStatus		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -219,7 +200,7 @@ endif
     }
 
 ifndef __IDMOVideoOutputOptimizations_INTERFACE_DEFINED__
-__IDMOVideoOutputOptimizations_INTERFACE_DEFINED__ equ 1
+define __IDMOVideoOutputOptimizations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDMOVideoOutputOptimizations, "be8f4f4e-5b16-4d29-b350-7f6b5d9298ac")
 
@@ -229,7 +210,7 @@ DEFINE_IIDX(IDMOVideoOutputOptimizations, "be8f4f4e-5b16-4d29-b350-7f6b5d9298ac"
     SetOperationMode	proc :ULONG, :DWORD
     GetCurrentOperationMode proc :ULONG, :ptr
     GetCurrentSampleRequirements proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 endif

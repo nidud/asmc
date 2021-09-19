@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,33 +18,14 @@ include ole2.inc
 endif
 
 ifndef __dispex_h__
-__dispex_h__ equ <>
-
-ifndef __IDispatchEx_FWD_DEFINED__
-__IDispatchEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IDispError_FWD_DEFINED__
-__IDispError_FWD_DEFINED__ equ 1
-endif
-ifndef __IVariantChangeType_FWD_DEFINED__
-__IVariantChangeType_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectIdentity_FWD_DEFINED__
-__IObjectIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __ICanHandleException_FWD_DEFINED__
-__ICanHandleException_FWD_DEFINED__ equ 1
-endif
-ifndef __IProvideRuntimeContext_FWD_DEFINED__
-__IProvideRuntimeContext_FWD_DEFINED__ equ 1
-endif
+define __dispex_h__
 
 include ocidl.inc
 
 .pragma comment(lib, uuid)
 
 ifndef DISPEX_H_
-DISPEX_H_ equ <>
+define DISPEX_H_
 
 include winapifamily.inc
 
@@ -110,7 +91,7 @@ DISPID_STARTENUM	equ <DISPID_UNKNOWN>
 endif
 
 ifndef __IDispatchEx_INTERFACE_DEFINED__
-__IDispatchEx_INTERFACE_DEFINED__ equ 1
+define __IDispatchEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDispatchEx, "A6EF9860-C720-11d0-9337-00A0C90DCAA9")
 
@@ -124,12 +105,12 @@ DEFINE_IIDX(IDispatchEx, "A6EF9860-C720-11d0-9337-00A0C90DCAA9")
     GetMemberName	proc :DISPID, :ptr
     GetNextDispID	proc :DWORD, :DISPID, :ptr
     GetNameSpaceParent	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDispError_INTERFACE_DEFINED__
-__IDispError_INTERFACE_DEFINED__ equ 1
+define __IDispError_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDispError, "A6EF9861-C720-11d0-9337-00A0C90DCAA9")
 
@@ -141,55 +122,55 @@ DEFINE_IIDX(IDispError, "A6EF9861-C720-11d0-9337-00A0C90DCAA9")
     GetSource		proc :ptr
     GetHelpInfo		proc :ptr, :ptr
     GetDescription	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IVariantChangeType_INTERFACE_DEFINED__
-__IVariantChangeType_INTERFACE_DEFINED__ equ 1
+define __IVariantChangeType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVariantChangeType, "A6EF9862-C720-11d0-9337-00A0C90DCAA9")
 
 .comdef IVariantChangeType : public IUnknown
 
     ChangeType		proc :ptr, :ptr, :LCID, :VARTYPE
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectIdentity_INTERFACE_DEFINED__
-__IObjectIdentity_INTERFACE_DEFINED__ equ 1
+define __IObjectIdentity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectIdentity, "CA04B7E6-0D21-11d1-8CC5-00C04FC2B085")
 
 .comdef IObjectIdentity : public IUnknown
 
     IsEqualObject	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICanHandleException_INTERFACE_DEFINED__
-__ICanHandleException_INTERFACE_DEFINED__ equ 1
+define __ICanHandleException_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICanHandleException, "c5598e60-b307-11d1-b27d-006008c3fbfb")
 
 .comdef ICanHandleException : public IUnknown
 
     CanHandleException	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IProvideRuntimeContext_INTERFACE_DEFINED__
-__IProvideRuntimeContext_INTERFACE_DEFINED__ equ 1
+define __IProvideRuntimeContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProvideRuntimeContext, "10E2414A-EC59-49d2-BC51-5ADD2C36FEBC")
 
 .comdef IProvideRuntimeContext : public IUnknown
 
     GetCurrentSourceContext proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 

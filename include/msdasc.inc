@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,32 +18,7 @@ include ole2.inc
 endif
 
 ifndef __msdasc_h__
-__msdasc_h__ equ <>
-
-ifndef __IService_FWD_DEFINED__
-__IService_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBPromptInitialize_FWD_DEFINED__
-__IDBPromptInitialize_FWD_DEFINED__ equ 1
-endif
-ifndef __IDataInitialize_FWD_DEFINED__
-__IDataInitialize_FWD_DEFINED__ equ 1
-endif
-ifndef __IDataSourceLocator_FWD_DEFINED__
-__IDataSourceLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __DataLinks_FWD_DEFINED__
-__DataLinks_FWD_DEFINED__ equ 1
-endif
-ifndef __MSDAINITIALIZE_FWD_DEFINED__
-__MSDAINITIALIZE_FWD_DEFINED__ equ 1
-endif
-ifndef __PDPO_FWD_DEFINED__
-__PDPO_FWD_DEFINED__ equ 1
-endif
-ifndef __RootBinder_FWD_DEFINED__
-__RootBinder_FWD_DEFINED__ equ 1
-endif
+define __msdasc_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -68,14 +43,14 @@ STGM_RECURSIVE		equ 0x01000000
 STGM_STRICTOPEN		equ 0x40000000
 
 ifndef __IService_INTERFACE_DEFINED__
-__IService_INTERFACE_DEFINED__ equ 1
+define __IService_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IService, "06210E88-01F5-11D1-B512-0080C781C384")
 
 .comdef IService : public IUnknown
 
     InvokeService	proc :ptr IUnknown
-    .ends
+   .ends
 
 endif
 
@@ -92,7 +67,7 @@ DBPROMPTOPTIONS typedef DWORD
 
 
 ifndef __IDBPromptInitialize_INTERFACE_DEFINED__
-__IDBPromptInitialize_INTERFACE_DEFINED__ equ 1
+define __IDBPromptInitialize_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBPromptInitialize, "2206CCB0-19C1-11D1-89E0-00C04FD7A829")
 
@@ -100,12 +75,12 @@ DEFINE_IIDX(IDBPromptInitialize, "2206CCB0-19C1-11D1-89E0-00C04FD7A829")
 
     PromptDataSource	proc :ptr IUnknown, :HWND, :DBPROMPTOPTIONS, :ULONG, :ptr DBSOURCETYPE, :LPCOLESTR, :REFIID, :ptr ptr IUnknown
     PromptFileName	proc :HWND, :DBPROMPTOPTIONS, :LPCOLESTR, :LPCOLESTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDataInitialize_INTERFACE_DEFINED__
-__IDataInitialize_INTERFACE_DEFINED__ equ 1
+define __IDataInitialize_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataInitialize, "2206CCB1-19C1-11D1-89E0-00C04FD7A829")
 
@@ -117,17 +92,17 @@ DEFINE_IIDX(IDataInitialize, "2206CCB1-19C1-11D1-89E0-00C04FD7A829")
     CreateDBInstanceEx	proc :REFCLSID, :ptr, :DWORD, :LPOLESTR, :ptr, :ULONG, :ptr
     LoadStringFromStorage proc :LPCOLESTR, :ptr
     WriteStringToStorage proc :LPCOLESTR, :LPCOLESTR, :DWORD
-    .ends
+   .ends
 
 endif
 
 ifndef __MSDASC_LIBRARY_DEFINED__
-__MSDASC_LIBRARY_DEFINED__ equ 1
+define __MSDASC_LIBRARY_DEFINED__
 
-externdef		LIBID_MSDASC:IID
+externdef LIBID_MSDASC:IID
 
 ifndef __IDataSourceLocator_INTERFACE_DEFINED__
-__IDataSourceLocator_INTERFACE_DEFINED__ equ 1
+define __IDataSourceLocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataSourceLocator, "2206CCB2-19C1-11D1-89E0-00C04FD7A829")
 
@@ -137,7 +112,7 @@ DEFINE_IIDX(IDataSourceLocator, "2206CCB2-19C1-11D1-89E0-00C04FD7A829")
     put_hWnd		proc :COMPATIBLE_LONG
     PromptNew		proc :ptr
     PromptEdit		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 

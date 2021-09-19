@@ -1,100 +1,31 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __d3d10_h__
-__d3d10_h__ equ <>
 
-ifndef __ID3D10DeviceChild_FWD_DEFINED__
-__ID3D10DeviceChild_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10DepthStencilState_FWD_DEFINED__
-__ID3D10DepthStencilState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10BlendState_FWD_DEFINED__
-__ID3D10BlendState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10RasterizerState_FWD_DEFINED__
-__ID3D10RasterizerState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Resource_FWD_DEFINED__
-__ID3D10Resource_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Buffer_FWD_DEFINED__
-__ID3D10Buffer_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Texture1D_FWD_DEFINED__
-__ID3D10Texture1D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Texture2D_FWD_DEFINED__
-__ID3D10Texture2D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Texture3D_FWD_DEFINED__
-__ID3D10Texture3D_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10View_FWD_DEFINED__
-__ID3D10View_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10ShaderResourceView_FWD_DEFINED__
-__ID3D10ShaderResourceView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10RenderTargetView_FWD_DEFINED__
-__ID3D10RenderTargetView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10DepthStencilView_FWD_DEFINED__
-__ID3D10DepthStencilView_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10VertexShader_FWD_DEFINED__
-__ID3D10VertexShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10GeometryShader_FWD_DEFINED__
-__ID3D10GeometryShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10PixelShader_FWD_DEFINED__
-__ID3D10PixelShader_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10InputLayout_FWD_DEFINED__
-__ID3D10InputLayout_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10SamplerState_FWD_DEFINED__
-__ID3D10SamplerState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Asynchronous_FWD_DEFINED__
-__ID3D10Asynchronous_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Query_FWD_DEFINED__
-__ID3D10Query_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Predicate_FWD_DEFINED__
-__ID3D10Predicate_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Counter_FWD_DEFINED__
-__ID3D10Counter_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Device_FWD_DEFINED__
-__ID3D10Device_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Multithread_FWD_DEFINED__
-__ID3D10Multithread_FWD_DEFINED__ equ 1
-endif
+ifndef __d3d10_h__
+define __d3d10_h__
+
 include oaidl.inc
 include ocidl.inc
 include dxgi.inc
 
 ifndef _D3D10_CONSTANTS
-_D3D10_CONSTANTS equ 1
+define _D3D10_CONSTANTS
 D3D10_16BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffff )
 D3D10_32BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffffffff )
 D3D10_8BIT_INDEX_STRIP_CUT_VALUE equ ( 0xff )
@@ -517,7 +448,7 @@ back			UINT ?
 D3D10_BOX		ENDS
 
 ifndef __ID3D10DeviceChild_INTERFACE_DEFINED__
-__ID3D10DeviceChild_INTERFACE_DEFINED__ equ 1
+define __ID3D10DeviceChild_INTERFACE_DEFINED__
 
 .comdef ID3D10DeviceChild : public IUnknown
 
@@ -525,8 +456,8 @@ __ID3D10DeviceChild_INTERFACE_DEFINED__ equ 1
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_COMPARISON_FUNC	typedef SDWORD
@@ -572,13 +503,13 @@ BackFace		D3D10_DEPTH_STENCILOP_DESC <>
 D3D10_DEPTH_STENCIL_DESC ENDS
 
 ifndef __ID3D10DepthStencilState_INTERFACE_DEFINED__
-__ID3D10DepthStencilState_INTERFACE_DEFINED__ equ 1
+define __ID3D10DepthStencilState_INTERFACE_DEFINED__
 
 .comdef ID3D10DepthStencilState : public ID3D10DeviceChild
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_BLEND		typedef SDWORD
@@ -627,11 +558,11 @@ RenderTargetWriteMask	UINT8 8 dup(?)
 D3D10_BLEND_DESC	ENDS
 
 ifndef __ID3D10BlendState_INTERFACE_DEFINED__
-__ID3D10BlendState_INTERFACE_DEFINED__ equ 1
+define __ID3D10BlendState_INTERFACE_DEFINED__
 
 .comdef ID3D10BlendState : public ID3D10DepthStencilState
-
     .ends
+
 endif
 
 D3D10_RASTERIZER_DESC	STRUC
@@ -648,11 +579,11 @@ AntialiasedLineEnable	BOOL ?
 D3D10_RASTERIZER_DESC	ENDS
 
 ifndef __ID3D10RasterizerState_INTERFACE_DEFINED__
-__ID3D10RasterizerState_INTERFACE_DEFINED__ equ 1
+define __ID3D10RasterizerState_INTERFACE_DEFINED__
 
 .comdef ID3D10RasterizerState : public ID3D10DepthStencilState
+   .ends
 
-    .ends
 endif
 
 D3D10_SUBRESOURCE_DATA	STRUC
@@ -662,15 +593,15 @@ SysMemSlicePitch	UINT ?
 D3D10_SUBRESOURCE_DATA	ENDS
 
 ifndef __ID3D10Resource_INTERFACE_DEFINED__
-__ID3D10Resource_INTERFACE_DEFINED__ equ 1
+define __ID3D10Resource_INTERFACE_DEFINED__
 
 .comdef ID3D10Resource : public ID3D10DeviceChild
 
     GetType		proc :ptr
     SetEvictionPriority proc :UINT
     GetEvictionPriority proc
+   .ends
 
-    .ends
 endif
 
 D3D10_BUFFER_DESC	STRUC
@@ -682,15 +613,15 @@ MiscFlags		UINT ?
 D3D10_BUFFER_DESC	ENDS
 
 ifndef __ID3D10Buffer_INTERFACE_DEFINED__
-__ID3D10Buffer_INTERFACE_DEFINED__ equ 1
+define __ID3D10Buffer_INTERFACE_DEFINED__
 
 .comdef ID3D10Buffer : public ID3D10Resource
 
     Map			proc :D3D10_MAP, :UINT, :ptr
     Unmap		proc
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_TEXTURE1D_DESC	STRUC
@@ -705,15 +636,15 @@ MiscFlags		UINT ?
 D3D10_TEXTURE1D_DESC	ENDS
 
 ifndef __ID3D10Texture1D_INTERFACE_DEFINED__
-__ID3D10Texture1D_INTERFACE_DEFINED__ equ 1
+define __ID3D10Texture1D_INTERFACE_DEFINED__
 
 .comdef ID3D10Texture1D : public ID3D10Resource
 
     Map			proc :UINT, :D3D10_MAP, :UINT, :ptr
     Unmap		proc :UINT
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_TEXTURE2D_DESC	STRUC
@@ -735,11 +666,11 @@ RowPitch		UINT ?
 D3D10_MAPPED_TEXTURE2D	ENDS
 
 ifndef __ID3D10Texture2D_INTERFACE_DEFINED__
-__ID3D10Texture2D_INTERFACE_DEFINED__ equ 1
+define __ID3D10Texture2D_INTERFACE_DEFINED__
 
 .comdef ID3D10Texture2D : public ID3D10Texture1D
+   .ends
 
-    .ends
 endif
 
 D3D10_TEXTURE3D_DESC	STRUC
@@ -761,11 +692,11 @@ DepthPitch		UINT ?
 D3D10_MAPPED_TEXTURE3D	ENDS
 
 ifndef __ID3D10Texture3D_INTERFACE_DEFINED__
-__ID3D10Texture3D_INTERFACE_DEFINED__ equ 1
+define __ID3D10Texture3D_INTERFACE_DEFINED__
 
 .comdef ID3D10Texture3D : public ID3D10Texture1D
-
     .ends
+
 endif
 
 D3D10_TEXTURECUBE_FACE	typedef SDWORD
@@ -777,13 +708,13 @@ D3D10_TEXTURECUBE_FACE_POSITIVE_Z equ 4
 D3D10_TEXTURECUBE_FACE_NEGATIVE_Z equ 5
 
 ifndef __ID3D10View_INTERFACE_DEFINED__
-__ID3D10View_INTERFACE_DEFINED__ equ 1
+define __ID3D10View_INTERFACE_DEFINED__
 
 .comdef ID3D10View : public ID3D10DeviceChild
 
     GetResource		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_BUFFER_SRV	STRUC
@@ -857,13 +788,13 @@ ENDS
 D3D10_SHADER_RESOURCE_VIEW_DESC ENDS
 
 ifndef __ID3D10ShaderResourceView_INTERFACE_DEFINED__
-__ID3D10ShaderResourceView_INTERFACE_DEFINED__ equ 1
+define __ID3D10ShaderResourceView_INTERFACE_DEFINED__
 
 .comdef ID3D10ShaderResourceView : public ID3D10View
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_BUFFER_RTV	STRUC
@@ -928,10 +859,9 @@ ENDS
 D3D10_RENDER_TARGET_VIEW_DESC ENDS
 
 ifndef __ID3D10RenderTargetView_INTERFACE_DEFINED__
-__ID3D10RenderTargetView_INTERFACE_DEFINED__ equ 1
+define __ID3D10RenderTargetView_INTERFACE_DEFINED__
 
 .comdef ID3D10RenderTargetView : public ID3D10ShaderResourceView
-
     .ends
 endif
 
@@ -978,43 +908,43 @@ ENDS
 D3D10_DEPTH_STENCIL_VIEW_DESC ENDS
 
 ifndef __ID3D10DepthStencilView_INTERFACE_DEFINED__
-__ID3D10DepthStencilView_INTERFACE_DEFINED__ equ 1
+define __ID3D10DepthStencilView_INTERFACE_DEFINED__
 
 .comdef ID3D10DepthStencilView : public ID3D10ShaderResourceView
-
     .ends
+
 endif
 
 ifndef __ID3D10VertexShader_INTERFACE_DEFINED__
-__ID3D10VertexShader_INTERFACE_DEFINED__ equ 1
+define __ID3D10VertexShader_INTERFACE_DEFINED__
 
 .comdef ID3D10VertexShader : public ID3D10DeviceChild
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10GeometryShader_INTERFACE_DEFINED__
-__ID3D10GeometryShader_INTERFACE_DEFINED__ equ 1
+define __ID3D10GeometryShader_INTERFACE_DEFINED__
 
 .comdef ID3D10GeometryShader : public ID3D10DeviceChild
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10PixelShader_INTERFACE_DEFINED__
-__ID3D10PixelShader_INTERFACE_DEFINED__ equ 1
+define __ID3D10PixelShader_INTERFACE_DEFINED__
 
 .comdef ID3D10PixelShader : public ID3D10DeviceChild
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10InputLayout_INTERFACE_DEFINED__
-__ID3D10InputLayout_INTERFACE_DEFINED__ equ 1
+define __ID3D10InputLayout_INTERFACE_DEFINED__
 
 .comdef ID3D10InputLayout : public ID3D10DeviceChild
+   .ends
 
-    .ends
 endif
 
 D3D10_FILTER		typedef SDWORD
@@ -1094,13 +1024,13 @@ MaxLOD			FLOAT ?
 D3D10_SAMPLER_DESC	ENDS
 
 ifndef __ID3D10SamplerState_INTERFACE_DEFINED__
-__ID3D10SamplerState_INTERFACE_DEFINED__ equ 1
+define __ID3D10SamplerState_INTERFACE_DEFINED__
 
 .comdef ID3D10SamplerState : public ID3D10DeviceChild
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_FORMAT_SUPPORT	typedef SDWORD
@@ -1131,7 +1061,7 @@ D3D10_FORMAT_SUPPORT_SHADER_GATHER equ 0x800000
 D3D10_FORMAT_SUPPORT_BACK_BUFFER_CAST equ 0x1000000
 
 ifndef __ID3D10Asynchronous_INTERFACE_DEFINED__
-__ID3D10Asynchronous_INTERFACE_DEFINED__ equ 1
+define __ID3D10Asynchronous_INTERFACE_DEFINED__
 
 .comdef ID3D10Asynchronous : public ID3D10DeviceChild
 
@@ -1139,8 +1069,8 @@ __ID3D10Asynchronous_INTERFACE_DEFINED__ equ 1
     _End		proc
     GetData		proc
     GetDataSize		proc
+   .ends
 
-    .ends
 endif
 
 D3D10_ASYNC_GETDATA_FLAG typedef SDWORD
@@ -1165,21 +1095,21 @@ MiscFlags		UINT ?
 D3D10_QUERY_DESC	ENDS
 
 ifndef __ID3D10Query_INTERFACE_DEFINED__
-__ID3D10Query_INTERFACE_DEFINED__ equ 1
+define __ID3D10Query_INTERFACE_DEFINED__
 
 .comdef ID3D10Query : public ID3D10Asynchronous
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10Predicate_INTERFACE_DEFINED__
-__ID3D10Predicate_INTERFACE_DEFINED__ equ 1
+define __ID3D10Predicate_INTERFACE_DEFINED__
 
 .comdef ID3D10Predicate : public ID3D10Query
+   .ends
 
-    .ends
 endif
 
 D3D10_QUERY_DATA_TIMESTAMP_DISJOINT STRUC
@@ -1242,17 +1172,17 @@ NumDetectableParallelUnits UINT8 ?
 D3D10_COUNTER_INFO	ENDS
 
 ifndef __ID3D10Counter_INTERFACE_DEFINED__
-__ID3D10Counter_INTERFACE_DEFINED__ equ 1
+define __ID3D10Counter_INTERFACE_DEFINED__
 
 .comdef ID3D10Counter : public ID3D10Asynchronous
 
     GetDesc		proc :ptr
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10Device_INTERFACE_DEFINED__
-__ID3D10Device_INTERFACE_DEFINED__ equ 1
+define __ID3D10Device_INTERFACE_DEFINED__
 
 .comdef ID3D10Device : public IUnknown
 
@@ -1351,12 +1281,12 @@ __ID3D10Device_INTERFACE_DEFINED__ equ 1
     OpenSharedResource	proc :HANDLE, :REFIID, :ptr
     SetTextFilterSize	proc :UINT, :UINT
     GetTextFilterSize	proc :ptr, :ptr
+   .ends
 
-    .ends
 endif
 
 ifndef __ID3D10Multithread_INTERFACE_DEFINED__
-__ID3D10Multithread_INTERFACE_DEFINED__ equ 1
+define __ID3D10Multithread_INTERFACE_DEFINED__
 
 .comdef ID3D10Multithread : public IUnknown
 
@@ -1364,8 +1294,8 @@ __ID3D10Multithread_INTERFACE_DEFINED__ equ 1
     _Leave		proc
     SetMultithreadProtected proc :BOOL
     GetMultithreadProtected proc
+   .ends
 
-    .ends
 endif
 
 D3D10_CREATE_DEVICE_FLAG typedef SDWORD

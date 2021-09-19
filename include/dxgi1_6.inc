@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,20 +18,7 @@ include ole2.inc
 endif
 
 ifndef __dxgi1_6_h__
-__dxgi1_6_h__ equ <>
-
-ifndef __IDXGIAdapter4_FWD_DEFINED__
-__IDXGIAdapter4_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIOutput6_FWD_DEFINED__
-__IDXGIOutput6_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory6_FWD_DEFINED__
-__IDXGIFactory6_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory7_FWD_DEFINED__
-__IDXGIFactory7_FWD_DEFINED__ equ 1
-endif
+define __dxgi1_6_h__
 
 include dxgi1_5.inc
 
@@ -64,12 +51,12 @@ ComputePreemptionGranularity DXGI_COMPUTE_PREEMPTION_GRANULARITY ?
 DXGI_ADAPTER_DESC3	ENDS
 
 ifndef __IDXGIAdapter4_INTERFACE_DEFINED__
-__IDXGIAdapter4_INTERFACE_DEFINED__ equ 1
+define __IDXGIAdapter4_INTERFACE_DEFINED__
 
 .comdef IDXGIAdapter4 : public IDXGIAdapter3
 
     GetDesc3		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -97,13 +84,13 @@ DXGI_OUTPUT_DESC1	ENDS
     }
 
 ifndef __IDXGIOutput6_INTERFACE_DEFINED__
-__IDXGIOutput6_INTERFACE_DEFINED__ equ 1
+define __IDXGIOutput6_INTERFACE_DEFINED__
 
 .comdef IDXGIOutput6 : public IDXGIOutput5
 
     GetDesc1		proc :ptr
     CheckHardwareCompositionSupport proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -114,23 +101,23 @@ endif
     }
 
 ifndef __IDXGIFactory6_INTERFACE_DEFINED__
-__IDXGIFactory6_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory6_INTERFACE_DEFINED__
 
 .comdef IDXGIFactory6 : public IDXGIFactory5
 
     EnumAdapterByGpuPreference proc :UINT, :DXGI_GPU_PREFERENCE, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDXGIFactory7_INTERFACE_DEFINED__
-__IDXGIFactory7_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory7_INTERFACE_DEFINED__
 
 .comdef IDXGIFactory7 : public IDXGIFactory6
     RegisterAdaptersChangedEvent proc :HANDLE, :ptr
     UnregisterAdaptersChangedEvent proc :DWORD
-    .ends
+   .ends
 
 endif
 

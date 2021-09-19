@@ -567,6 +567,15 @@ GetSimpleExpression proc private uses esi edi ebx \
         .else
             .return asmerr(2154)
         .endif
+    .elseif ( eax == EXPR_ADDR && is_float )
+
+        ; ( xmm0 > float/double )
+
+        .if ( op2.mem_type == MT_REAL4 )
+            mov inst_cmp,&@CStr( "comiss" )
+        .elseif ( op2.mem_type == MT_REAL8 )
+            mov inst_cmp,&@CStr( "comisd" )
+        .endif
     .endif
 
     mov edi,[esi]

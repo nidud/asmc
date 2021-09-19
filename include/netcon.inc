@@ -1,10 +1,10 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -20,62 +20,7 @@ include ole2.inc
 endif
 
 ifndef __NETCON_INC
-__NETCON_INC equ <>
-
-ifndef __IEnumNetConnection_FWD_DEFINED__
-__IEnumNetConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetConnection_FWD_DEFINED__
-__INetConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetConnectionManager_FWD_DEFINED__
-__INetConnectionManager_FWD_DEFINED__ equ 1
-endif
-ifndef __INetConnectionConnectUi_FWD_DEFINED__
-__INetConnectionConnectUi_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumNetSharingPortMapping_FWD_DEFINED__
-__IEnumNetSharingPortMapping_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingPortMappingProps_FWD_DEFINED__
-__INetSharingPortMappingProps_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingPortMapping_FWD_DEFINED__
-__INetSharingPortMapping_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumNetSharingEveryConnection_FWD_DEFINED__
-__IEnumNetSharingEveryConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumNetSharingPublicConnection_FWD_DEFINED__
-__IEnumNetSharingPublicConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumNetSharingPrivateConnection_FWD_DEFINED__
-__IEnumNetSharingPrivateConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingPortMappingCollection_FWD_DEFINED__
-__INetSharingPortMappingCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetConnectionProps_FWD_DEFINED__
-__INetConnectionProps_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingConfiguration_FWD_DEFINED__
-__INetSharingConfiguration_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingEveryConnectionCollection_FWD_DEFINED__
-__INetSharingEveryConnectionCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingPublicConnectionCollection_FWD_DEFINED__
-__INetSharingPublicConnectionCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingPrivateConnectionCollection_FWD_DEFINED__
-__INetSharingPrivateConnectionCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __INetSharingManager_FWD_DEFINED__
-__INetSharingManager_FWD_DEFINED__ equ 1
-endif
-ifndef __NetSharingManager_FWD_DEFINED__
-__NetSharingManager_FWD_DEFINED__ equ 1
-endif
+define __NETCON_INC
 
 include oaidl.inc
 include prsht.inc
@@ -86,7 +31,7 @@ externdef CLSID_NetSharingManager:CLSID
 NETCON_MAX_NAME_LEN equ 256
 
 ifndef __IEnumNetConnection_INTERFACE_DEFINED__
-__IEnumNetConnection_INTERFACE_DEFINED__ equ 1
+define __IEnumNetConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNetConnection, "C08956A0-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -96,12 +41,11 @@ DEFINE_IIDX(IEnumNetConnection, "C08956A0-1CD3-11D1-B1C5-00805FC1270E")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __INetConnection_INTERFACE_DEFINED__
-__INetConnection_INTERFACE_DEFINED__ equ 1
+define __INetConnection_INTERFACE_DEFINED__
 
 .enum NETCON_CHARACTERISTIC_FLAGS {
 	NCCF_NONE		= 0,
@@ -190,8 +134,7 @@ DEFINE_IIDX(INetConnection, "C08956A1-1CD3-11D1-B1C5-00805FC1270E")
     GetProperties	proc :ptr
     GetUiObjectClassId	proc :ptr
     Rename		proc :LPCWSTR
-
-    .ends
+   .ends
 endif
 
 ;STDAPI_(VOID)
@@ -203,7 +146,7 @@ NcIsValidConnectionName proto WINAPI \
 	      pszwName: PCWSTR
 
 ifndef __INetConnectionManager_INTERFACE_DEFINED__
-__INetConnectionManager_INTERFACE_DEFINED__ equ 1
+define __INetConnectionManager_INTERFACE_DEFINED__
 
 
 NETCONMGR_ENUM_FLAGS	typedef SDWORD
@@ -215,13 +158,12 @@ DEFINE_IIDX(INetConnectionManager, "C08956A2-1CD3-11D1-B1C5-00805FC1270E")
 .comdef INetConnectionManager : public IUnknown
 
     EnumConnections	proc :NETCONMGR_ENUM_FLAGS, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetConnectionConnectUi_INTERFACE_DEFINED__
-__INetConnectionConnectUi_INTERFACE_DEFINED__ equ 1
+define __INetConnectionConnectUi_INTERFACE_DEFINED__
 
 NETCONUI_CONNECT_FLAGS	typedef SDWORD
 NCUC_DEFAULT		equ 0
@@ -235,13 +177,12 @@ DEFINE_IIDX(INetConnectionConnectUi, "C08956A3-1CD3-11D1-B1C5-00805FC1270E")
     SetConnection	proc :ptr
     Connect		proc :HWND, :DWORD
     Disconnect		proc :HWND, :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumNetSharingPortMapping_INTERFACE_DEFINED__
-__IEnumNetSharingPortMapping_INTERFACE_DEFINED__ equ 1
+define __IEnumNetSharingPortMapping_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNetSharingPortMapping, "C08956B0-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -251,13 +192,12 @@ DEFINE_IIDX(IEnumNetSharingPortMapping, "C08956B0-1CD3-11D1-B1C5-00805FC1270E")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingPortMappingProps_INTERFACE_DEFINED__
-__INetSharingPortMappingProps_INTERFACE_DEFINED__ equ 1
+define __INetSharingPortMappingProps_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingPortMappingProps, "24B7E9B5-E38F-4685-851B-00892CF5F940")
 
@@ -271,13 +211,12 @@ DEFINE_IIDX(INetSharingPortMappingProps, "24B7E9B5-E38F-4685-851B-00892CF5F940")
     get_TargetName	proc :ptr
     get_TargetIPAddress proc :ptr
     get_Enabled		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingPortMapping_INTERFACE_DEFINED__
-__INetSharingPortMapping_INTERFACE_DEFINED__ equ 1
+define __INetSharingPortMapping_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingPortMapping, "C08956B1-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -287,13 +226,12 @@ DEFINE_IIDX(INetSharingPortMapping, "C08956B1-1CD3-11D1-B1C5-00805FC1270E")
     Enable		proc
     get_Properties	proc :ptr
     Delete		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumNetSharingEveryConnection_INTERFACE_DEFINED__
-__IEnumNetSharingEveryConnection_INTERFACE_DEFINED__ equ 1
+define __IEnumNetSharingEveryConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNetSharingEveryConnection, "C08956B8-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -303,13 +241,12 @@ DEFINE_IIDX(IEnumNetSharingEveryConnection, "C08956B8-1CD3-11D1-B1C5-00805FC1270
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumNetSharingPublicConnection_INTERFACE_DEFINED__
-__IEnumNetSharingPublicConnection_INTERFACE_DEFINED__ equ 1
+define __IEnumNetSharingPublicConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNetSharingPublicConnection, "C08956B4-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -319,13 +256,12 @@ DEFINE_IIDX(IEnumNetSharingPublicConnection, "C08956B4-1CD3-11D1-B1C5-00805FC127
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__
-__IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__ equ 1
+define __IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumNetSharingPrivateConnection, "C08956B5-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -335,13 +271,12 @@ DEFINE_IIDX(IEnumNetSharingPrivateConnection, "C08956B5-1CD3-11D1-B1C5-00805FC12
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingPortMappingCollection_INTERFACE_DEFINED__
-__INetSharingPortMappingCollection_INTERFACE_DEFINED__ equ 1
+define __INetSharingPortMappingCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingPortMappingCollection, "02E4A2DE-DA20-4E34-89C8-AC22275A010B")
 
@@ -349,13 +284,12 @@ DEFINE_IIDX(INetSharingPortMappingCollection, "02E4A2DE-DA20-4E34-89C8-AC22275A0
 
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetConnectionProps_INTERFACE_DEFINED__
-__INetConnectionProps_INTERFACE_DEFINED__ equ 1
+define __INetConnectionProps_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetConnectionProps, "F4277C95-CE5B-463D-8167-5662D9BCAA72")
 
@@ -367,13 +301,12 @@ DEFINE_IIDX(INetConnectionProps, "F4277C95-CE5B-463D-8167-5662D9BCAA72")
     get_Status		proc :ptr
     get_MediaType	proc :ptr
     get_Characteristics proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingConfiguration_INTERFACE_DEFINED__
-__INetSharingConfiguration_INTERFACE_DEFINED__ equ 1
+define __INetSharingConfiguration_INTERFACE_DEFINED__
 
 SHARINGCONNECTIONTYPE	typedef SDWORD
 ICSSHARINGTYPE_PUBLIC	equ 0
@@ -403,13 +336,12 @@ DEFINE_IIDX(INetSharingConfiguration, "C08956B6-1CD3-11D1-B1C5-00805FC1270E")
     get_EnumPortMappings proc :SHARINGCONNECTION_ENUM_FLAGS, :ptr
     AddPortMapping	proc :BSTR, :UCHAR, :USHORT, :USHORT, :DWORD, :BSTR, :ICS_TARGETTYPE, :ptr
     RemovePortMapping	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingEveryConnectionCollection_INTERFACE_DEFINED__
-__INetSharingEveryConnectionCollection_INTERFACE_DEFINED__ equ 1
+define __INetSharingEveryConnectionCollection_INTERFACE_DEFINED_
 
 DEFINE_IIDX(INetSharingEveryConnectionCollection, "33C4643C-7811-46FA-A89A-768597BD7223")
 
@@ -417,13 +349,12 @@ DEFINE_IIDX(INetSharingEveryConnectionCollection, "33C4643C-7811-46FA-A89A-76859
 
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingPublicConnectionCollection_INTERFACE_DEFINED__
-__INetSharingPublicConnectionCollection_INTERFACE_DEFINED__ equ 1
+define __INetSharingPublicConnectionCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingPublicConnectionCollection, "7D7A6355-F372-4971-A149-BFC927BE762A")
 
@@ -431,13 +362,12 @@ DEFINE_IIDX(INetSharingPublicConnectionCollection, "7D7A6355-F372-4971-A149-BFC9
 
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__
-__INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__ equ 1
+define __INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingPrivateConnectionCollection, "38AE69E0-4409-402A-A2CB-E965C727F840")
 
@@ -445,13 +375,12 @@ DEFINE_IIDX(INetSharingPrivateConnectionCollection, "38AE69E0-4409-402A-A2CB-E96
 
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __INetSharingManager_INTERFACE_DEFINED__
-__INetSharingManager_INTERFACE_DEFINED__ equ 1
+define __INetSharingManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INetSharingManager, "C08956B7-1CD3-11D1-B1C5-00805FC1270E")
 
@@ -463,13 +392,12 @@ DEFINE_IIDX(INetSharingManager, "C08956B7-1CD3-11D1-B1C5-00805FC1270E")
     get_INetSharingConfigurationForINetConnection proc :ptr, :ptr
     get_EnumEveryConnection proc :ptr
     get_NetConnectionProps proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __NETCONLib_LIBRARY_DEFINED__
-__NETCONLib_LIBRARY_DEFINED__ equ <>
+define __NETCONLib_LIBRARY_DEFINED__
 
 externdef LIBID_NETCONLib:IID
 DEFINE_GUIDS(CLSID_NetSharingManager, "5C63C1AD-3956-4FF8-8486-40034758315B")

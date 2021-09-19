@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,128 +18,7 @@ include ole2.inc
 endif
 
 ifndef __dia2_h__
-__dia2_h__ equ <>
-
-ifndef __IDiaLoadCallback_FWD_DEFINED__
-__IDiaLoadCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaLoadCallback2_FWD_DEFINED__
-__IDiaLoadCallback2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaReadExeAtOffsetCallback_FWD_DEFINED__
-__IDiaReadExeAtOffsetCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaReadExeAtRVACallback_FWD_DEFINED__
-__IDiaReadExeAtRVACallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaDataSource_FWD_DEFINED__
-__IDiaDataSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumSymbols_FWD_DEFINED__
-__IDiaEnumSymbols_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumSymbolsByAddr_FWD_DEFINED__
-__IDiaEnumSymbolsByAddr_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumSourceFiles_FWD_DEFINED__
-__IDiaEnumSourceFiles_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumInputAssemblyFiles_FWD_DEFINED__
-__IDiaEnumInputAssemblyFiles_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumLineNumbers_FWD_DEFINED__
-__IDiaEnumLineNumbers_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumInjectedSources_FWD_DEFINED__
-__IDiaEnumInjectedSources_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumSegments_FWD_DEFINED__
-__IDiaEnumSegments_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumSectionContribs_FWD_DEFINED__
-__IDiaEnumSectionContribs_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumFrameData_FWD_DEFINED__
-__IDiaEnumFrameData_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumDebugStreamData_FWD_DEFINED__
-__IDiaEnumDebugStreamData_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumDebugStreams_FWD_DEFINED__
-__IDiaEnumDebugStreams_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaAddressMap_FWD_DEFINED__
-__IDiaAddressMap_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaSession_FWD_DEFINED__
-__IDiaSession_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaSymbol_FWD_DEFINED__
-__IDiaSymbol_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaSourceFile_FWD_DEFINED__
-__IDiaSourceFile_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaInputAssemblyFile_FWD_DEFINED__
-__IDiaInputAssemblyFile_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaLineNumber_FWD_DEFINED__
-__IDiaLineNumber_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaSectionContrib_FWD_DEFINED__
-__IDiaSectionContrib_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaSegment_FWD_DEFINED__
-__IDiaSegment_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaInjectedSource_FWD_DEFINED__
-__IDiaInjectedSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackWalkFrame_FWD_DEFINED__
-__IDiaStackWalkFrame_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaFrameData_FWD_DEFINED__
-__IDiaFrameData_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaImageData_FWD_DEFINED__
-__IDiaImageData_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaTable_FWD_DEFINED__
-__IDiaTable_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumTables_FWD_DEFINED__
-__IDiaEnumTables_FWD_DEFINED__ equ 1
-endif
-ifndef __DiaSource_FWD_DEFINED__
-__DiaSource_FWD_DEFINED__ equ 1
-endif
-ifndef __DiaSourceAlt_FWD_DEFINED__
-__DiaSourceAlt_FWD_DEFINED__ equ 1
-endif
-ifndef __DiaStackWalker_FWD_DEFINED__
-__DiaStackWalker_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaPropertyStorage_FWD_DEFINED__
-__IDiaPropertyStorage_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackFrame_FWD_DEFINED__
-__IDiaStackFrame_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaEnumStackFrames_FWD_DEFINED__
-__IDiaEnumStackFrames_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackWalkHelper_FWD_DEFINED__
-__IDiaStackWalkHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackWalker_FWD_DEFINED__
-__IDiaStackWalker_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackWalkHelper2_FWD_DEFINED__
-__IDiaStackWalkHelper2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDiaStackWalker2_FWD_DEFINED__
-__IDiaStackWalker2_FWD_DEFINED__ equ 1
-endif
+define __dia2_h__
 
 include objidl.inc
 include oaidl.inc
@@ -195,7 +74,7 @@ include cvconst.inc
 CALLBACKC(PfnPDBDebugDirV, :BOOL, :ptr)
 
 ifndef __IDiaLoadCallback_INTERFACE_DEFINED__
-__IDiaLoadCallback_INTERFACE_DEFINED__ equ 1
+define __IDiaLoadCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaLoadCallback, "C32ADB82-73F4-421b-95D5-A4706EDF5DBE")
 
@@ -206,12 +85,12 @@ DEFINE_IIDX(IDiaLoadCallback, "C32ADB82-73F4-421b-95D5-A4706EDF5DBE")
     NotifyOpenPDB	proc :LPCOLESTR, :HRESULT
     RestrictRegistryAccess proc
     RestrictSymbolServerAccess proc
-    .ends
+   .ends
 endif
 
 
 ifndef __IDiaLoadCallback2_INTERFACE_DEFINED__
-__IDiaLoadCallback2_INTERFACE_DEFINED__ equ 1
+define __IDiaLoadCallback2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaLoadCallback2, "4688a074-5a4d-4486-aea8-7b90711d9f7c")
 
@@ -221,33 +100,33 @@ DEFINE_IIDX(IDiaLoadCallback2, "4688a074-5a4d-4486-aea8-7b90711d9f7c")
     RestrictReferencePathAccess proc
     RestrictDBGAccess	proc
     RestrictSystemRootAccess proc
-    .ends
+   .ends
 endif
 
 ifndef __IDiaReadExeAtOffsetCallback_INTERFACE_DEFINED__
-__IDiaReadExeAtOffsetCallback_INTERFACE_DEFINED__ equ 1
+define __IDiaReadExeAtOffsetCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaReadExeAtOffsetCallback, "587A461C-B80B-4f54-9194-5032589A6319")
 
 .comdef IDiaReadExeAtOffsetCallback : public IUnknown
 
     ReadExecutableAt	proc :DWORDLONG, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaReadExeAtRVACallback_INTERFACE_DEFINED__
-__IDiaReadExeAtRVACallback_INTERFACE_DEFINED__ equ 1
+define __IDiaReadExeAtRVACallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaReadExeAtRVACallback, "8E3F80CA-7517-432a-BA07-285134AAEA8E")
 
 .comdef IDiaReadExeAtRVACallback : public IUnknown
 
     ReadExecutableAtRVA proc :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaDataSource_INTERFACE_DEFINED__
-__IDiaDataSource_INTERFACE_DEFINED__ equ 1
+define __IDiaDataSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaDataSource, "79F1BB5F-B66E-48e5-B6A9-1545C323CA3D")
 
@@ -261,11 +140,11 @@ DEFINE_IIDX(IDiaDataSource, "79F1BB5F-B66E-48e5-B6A9-1545C323CA3D")
     openSession		proc :ptr
     loadDataFromCodeViewInfo proc :LPCOLESTR, :LPCOLESTR, :DWORD, :ptr, :ptr
     loadDataFromMiscInfo proc :LPCOLESTR, :LPCOLESTR, :DWORD, :DWORD, :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumSymbols_INTERFACE_DEFINED__
-__IDiaEnumSymbols_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumSymbols_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumSymbols, "CAB72C48-443B-48f5-9B0B-42F0820AB29A")
 
@@ -278,11 +157,11 @@ DEFINE_IIDX(IDiaEnumSymbols, "CAB72C48-443B-48f5-9B0B-42F0820AB29A")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumSymbolsByAddr_INTERFACE_DEFINED__
-__IDiaEnumSymbolsByAddr_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumSymbolsByAddr_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumSymbolsByAddr, "624B7D9C-24EA-4421-9D06-3B577471C1FA")
 
@@ -294,11 +173,11 @@ DEFINE_IIDX(IDiaEnumSymbolsByAddr, "624B7D9C-24EA-4421-9D06-3B577471C1FA")
     Next		proc :ULONG, :ptr, :ptr
     Prev		proc :ULONG, :ptr, :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumSourceFiles_INTERFACE_DEFINED__
-__IDiaEnumSourceFiles_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumSourceFiles_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumSourceFiles, "10F3DBD9-664F-4469-B808-9471C7A50538")
 
@@ -311,11 +190,11 @@ DEFINE_IIDX(IDiaEnumSourceFiles, "10F3DBD9-664F-4469-B808-9471C7A50538")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumInputAssemblyFiles_INTERFACE_DEFINED__
-__IDiaEnumInputAssemblyFiles_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumInputAssemblyFiles_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumInputAssemblyFiles, "1C7FF653-51F7-457E-8419-B20F57EF7E4D")
 
@@ -328,11 +207,11 @@ DEFINE_IIDX(IDiaEnumInputAssemblyFiles, "1C7FF653-51F7-457E-8419-B20F57EF7E4D")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumLineNumbers_INTERFACE_DEFINED__
-__IDiaEnumLineNumbers_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumLineNumbers_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumLineNumbers, "FE30E878-54AC-44f1-81BA-39DE940F6052")
 
@@ -345,11 +224,11 @@ DEFINE_IIDX(IDiaEnumLineNumbers, "FE30E878-54AC-44f1-81BA-39DE940F6052")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumInjectedSources_INTERFACE_DEFINED__
-__IDiaEnumInjectedSources_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumInjectedSources_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumInjectedSources, "D5612573-6925-4468-8883-98CDEC8C384A")
 
@@ -362,11 +241,11 @@ DEFINE_IIDX(IDiaEnumInjectedSources, "D5612573-6925-4468-8883-98CDEC8C384A")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumSegments_INTERFACE_DEFINED__
-__IDiaEnumSegments_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumSegments_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumSegments, "E8368CA9-01D1-419d-AC0C-E31235DBDA9F")
 
@@ -379,11 +258,11 @@ DEFINE_IIDX(IDiaEnumSegments, "E8368CA9-01D1-419d-AC0C-E31235DBDA9F")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumSectionContribs_INTERFACE_DEFINED__
-__IDiaEnumSectionContribs_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumSectionContribs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumSectionContribs, "1994DEB2-2C82-4b1d-A57F-AFF424D54A68")
 
@@ -396,11 +275,11 @@ DEFINE_IIDX(IDiaEnumSectionContribs, "1994DEB2-2C82-4b1d-A57F-AFF424D54A68")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumFrameData_INTERFACE_DEFINED__
-__IDiaEnumFrameData_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumFrameData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumFrameData, "9FC77A4B-3C1C-44ed-A798-6C1DEEA53E1F")
 
@@ -415,11 +294,11 @@ DEFINE_IIDX(IDiaEnumFrameData, "9FC77A4B-3C1C-44ed-A798-6C1DEEA53E1F")
     Clone		proc :ptr
     frameByRVA		proc :DWORD, :ptr
     frameByVA		proc :ULONGLONG, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumDebugStreamData_INTERFACE_DEFINED__
-__IDiaEnumDebugStreamData_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumDebugStreamData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumDebugStreamData, "486943E8-D187-4a6b-A3C4-291259FFF60D")
 
@@ -433,11 +312,11 @@ DEFINE_IIDX(IDiaEnumDebugStreamData, "486943E8-D187-4a6b-A3C4-291259FFF60D")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumDebugStreams_INTERFACE_DEFINED__
-__IDiaEnumDebugStreams_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumDebugStreams_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumDebugStreams, "08CBB41E-47A6-4f87-92F1-1C9C87CED044")
 
@@ -450,7 +329,7 @@ DEFINE_IIDX(IDiaEnumDebugStreams, "08CBB41E-47A6-4f87-92F1-1C9C87CED044")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 DiaAddressMapEntry	STRUC
@@ -459,7 +338,7 @@ rvaTo			dd ?
 DiaAddressMapEntry	ENDS
 
 ifndef __IDiaAddressMap_INTERFACE_DEFINED__
-__IDiaAddressMap_INTERFACE_DEFINED__ equ 1
+define __IDiaAddressMap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaAddressMap, "B62A2E7A-067A-4ea3-B598-04C09717502C")
 
@@ -473,11 +352,11 @@ DEFINE_IIDX(IDiaAddressMap, "B62A2E7A-067A-4ea3-B598-04C09717502C")
     put_imageAlign	proc :DWORD
     set_imageHeaders	proc :DWORD, :ptr, :BOOL
     set_addressMap	proc :DWORD, :ptr, :BOOL
-    .ends
+   .ends
 endif
 
 ifndef __IDiaSession_INTERFACE_DEFINED__
-__IDiaSession_INTERFACE_DEFINED__ equ 1
+define __IDiaSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaSession, "2F609EE1-D1C8-4E24-8288-3326BADCD211")
 
@@ -542,11 +421,11 @@ DEFINE_IIDX(IDiaSession, "2F609EE1-D1C8-4E24-8288-3326BADCD211")
     getExports		proc :ptr
     getHeapAllocationSites proc :ptr
     findInputAssemblyFile proc :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaSymbol_INTERFACE_DEFINED__
-__IDiaSymbol_INTERFACE_DEFINED__ equ 1
+define __IDiaSymbol_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaSymbol, "cb787b2f-bd6c-4635-ba52-933126bd2dcd")
 
@@ -788,12 +667,12 @@ DEFINE_IIDX(IDiaSymbol, "cb787b2f-bd6c-4635-ba52-933126bd2dcd")
     get_bindID		proc :ptr
     get_bindSpace	proc :ptr
     get_bindSlot	proc :ptr
-    .ends
+   .ends
 endif
 
 
 ifndef __IDiaSourceFile_INTERFACE_DEFINED__
-__IDiaSourceFile_INTERFACE_DEFINED__ equ 1
+define __IDiaSourceFile_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaSourceFile, "A2EF5353-F5A8-4eb3-90D2-CB526ACB3CDD")
 
@@ -804,11 +683,11 @@ DEFINE_IIDX(IDiaSourceFile, "A2EF5353-F5A8-4eb3-90D2-CB526ACB3CDD")
     get_checksumType	proc :ptr
     get_compilands	proc :ptr
     get_checksum	proc :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaInputAssemblyFile_INTERFACE_DEFINED__
-__IDiaInputAssemblyFile_INTERFACE_DEFINED__ equ 1
+define __IDiaInputAssemblyFile_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaInputAssemblyFile, "3BFE56B0-390C-4863-9430-1F3D083B7684")
 
@@ -820,11 +699,11 @@ DEFINE_IIDX(IDiaInputAssemblyFile, "3BFE56B0-390C-4863-9430-1F3D083B7684")
     get_pdbAvailableAtILMerge proc :ptr
     get_fileName	proc :ptr
     get_version		proc :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaLineNumber_INTERFACE_DEFINED__
-__IDiaLineNumber_INTERFACE_DEFINED__ equ 1
+define __IDiaLineNumber_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaLineNumber, "B388EB14-BE4D-421d-A8A1-6CF7AB057086")
 
@@ -844,11 +723,11 @@ DEFINE_IIDX(IDiaLineNumber, "B388EB14-BE4D-421d-A8A1-6CF7AB057086")
     get_sourceFileId	proc :ptr
     get_statement	proc :ptr
     get_compilandId	proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaSectionContrib_INTERFACE_DEFINED__
-__IDiaSectionContrib_INTERFACE_DEFINED__ equ 1
+define __IDiaSectionContrib_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaSectionContrib, "0CF4B60E-35B1-4c6c-BDD8-854B9C8E3857")
 
@@ -876,11 +755,11 @@ DEFINE_IIDX(IDiaSectionContrib, "0CF4B60E-35B1-4c6c-BDD8-854B9C8E3857")
     get_relocationsCrc	proc :ptr
     get_compilandId	proc :ptr
     get_code16bit	proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaSegment_INTERFACE_DEFINED__
-__IDiaSegment_INTERFACE_DEFINED__ equ 1
+define __IDiaSegment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaSegment, "0775B784-C75B-4449-848B-B7BD3159545B")
 
@@ -895,11 +774,11 @@ DEFINE_IIDX(IDiaSegment, "0775B784-C75B-4449-848B-B7BD3159545B")
     get_addressSection	proc :ptr
     get_relativeVirtualAddress proc :ptr
     get_virtualAddress	proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaInjectedSource_INTERFACE_DEFINED__
-__IDiaInjectedSource_INTERFACE_DEFINED__ equ 1
+define __IDiaInjectedSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaInjectedSource, "AE605CDC-8105-4a23-B710-3259F1E26112")
 
@@ -912,7 +791,7 @@ DEFINE_IIDX(IDiaInjectedSource, "AE605CDC-8105-4a23-B710-3259F1E26112")
     get_virtualFilename proc :ptr
     get_sourceCompression proc :ptr
     get_source		proc :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 _MIDL___MIDL_itf_dia2_0000_0025_0001 typedef SDWORD
@@ -922,7 +801,7 @@ E_DIA_FRAME_ACCESS	equ ( E_DIA_SYNTAX + 1 )
 E_DIA_VALUE		equ ( E_DIA_FRAME_ACCESS + 1 )
 
 ifndef __IDiaStackWalkFrame_INTERFACE_DEFINED__
-__IDiaStackWalkFrame_INTERFACE_DEFINED__ equ 1
+define __IDiaStackWalkFrame_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackWalkFrame, "07C590C1-438D-4F47-BDCD-4397BC81AD75")
 
@@ -933,11 +812,11 @@ DEFINE_IIDX(IDiaStackWalkFrame, "07C590C1-438D-4F47-BDCD-4397BC81AD75")
     readMemory		proc :MemoryTypeEnum, :ULONGLONG, :DWORD, :ptr, :ptr
     searchForReturnAddress proc :ptr, :ptr
     searchForReturnAddressStart proc :ptr, :ULONGLONG, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaFrameData_INTERFACE_DEFINED__
-__IDiaFrameData_INTERFACE_DEFINED__ equ 1
+define __IDiaFrameData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaFrameData, "A39184B7-6A36-42de-8EEC-7DF9F3F59F33")
 
@@ -961,11 +840,11 @@ DEFINE_IIDX(IDiaFrameData, "A39184B7-6A36-42de-8EEC-7DF9F3F59F33")
     get_type		proc :ptr
     get_functionParent	proc :ptr
     execute		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaImageData_INTERFACE_DEFINED__
-__IDiaImageData_INTERFACE_DEFINED__ equ 1
+define __IDiaImageData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaImageData, "C8E40ED2-A1D9-4221-8692-3CE661184B44")
 
@@ -974,11 +853,11 @@ DEFINE_IIDX(IDiaImageData, "C8E40ED2-A1D9-4221-8692-3CE661184B44")
     get_relativeVirtualAddress proc :ptr
     get_virtualAddress	proc :ptr
     get_imageBase	proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaTable_INTERFACE_DEFINED__
-__IDiaTable_INTERFACE_DEFINED__ equ 1
+define __IDiaTable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaTable, "4A59FB77-ABAC-469b-A30B-9ECC85BFEF14")
 
@@ -988,11 +867,11 @@ DEFINE_IIDX(IDiaTable, "4A59FB77-ABAC-469b-A30B-9ECC85BFEF14")
     get_name		proc :ptr
     get_Count		proc :ptr
     Item		proc :DWORD, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumTables_INTERFACE_DEFINED__
-__IDiaEnumTables_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumTables_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumTables, "C65C2B0A-1150-4d7a-AFCC-E05BF3DEE81E")
 
@@ -1005,11 +884,11 @@ DEFINE_IIDX(IDiaEnumTables, "C65C2B0A-1150-4d7a-AFCC-E05BF3DEE81E")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 endif
 
 ifndef __Dia2Lib_LIBRARY_DEFINED__
-__Dia2Lib_LIBRARY_DEFINED__ equ 1
+define __Dia2Lib_LIBRARY_DEFINED__
 
 externdef		LIBID_Dia2Lib:IID
 DEFINE_GUIDS(CLSID_DiaSource,	   "e6756135-1e65-4d17-8576-610761398c3c")
@@ -1028,7 +907,7 @@ DiaTable_FrameData	equ <L"FrameData">
 DiaTable_InputAssemblyFiles equ <L"InputAssemblyFiles">
 
 ifndef __IDiaPropertyStorage_INTERFACE_DEFINED__
-__IDiaPropertyStorage_INTERFACE_DEFINED__ equ 1
+define __IDiaPropertyStorage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaPropertyStorage, "9d416f9c-e184-45b2-a4f0-ce517f719e9b")
 
@@ -1042,11 +921,11 @@ DEFINE_IIDX(IDiaPropertyStorage, "9d416f9c-e184-45b2-a4f0-ce517f719e9b")
     ReadBOOL		proc :PROPID, :ptr
     ReadULONGLONG	proc :PROPID, :ptr
     ReadBSTR		proc :PROPID, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaStackFrame_INTERFACE_DEFINED__
-__IDiaStackFrame_INTERFACE_DEFINED__ equ 1
+define __IDiaStackFrame_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackFrame, "5edbc96d-cdd6-4792-afbe-cc89007d9610")
 
@@ -1067,11 +946,11 @@ DEFINE_IIDX(IDiaStackFrame, "5edbc96d-cdd6-4792-afbe-cc89007d9610")
     get_allocatesBasePointer proc :ptr
     get_maxStack	proc :ptr
     get_registerValue	proc :DWORD, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaEnumStackFrames_INTERFACE_DEFINED__
-__IDiaEnumStackFrames_INTERFACE_DEFINED__ equ 1
+define __IDiaEnumStackFrames_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaEnumStackFrames, "ec9d461d-ce74-4711-a020-7d8f9a1dd255")
 
@@ -1079,7 +958,7 @@ DEFINE_IIDX(IDiaEnumStackFrames, "ec9d461d-ce74-4711-a020-7d8f9a1dd255")
 
     Next		proc :ULONG, :ptr, :ptr
     Reset		proc
-    .ends
+   .ends
 endif
 
 FPODATA			STRUC
@@ -1091,7 +970,7 @@ cdwFlags		dw ?
 FPODATA			ENDS
 
 ifndef __IDiaStackWalkHelper_INTERFACE_DEFINED__
-__IDiaStackWalkHelper_INTERFACE_DEFINED__ equ 1
+define __IDiaStackWalkHelper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackWalkHelper, "21F81B1B-C5BB-42A3-BC4F-CCBAA75B9F19")
 
@@ -1109,11 +988,11 @@ DEFINE_IIDX(IDiaStackWalkHelper, "21F81B1B-C5BB-42A3-BC4F-CCBAA75B9F19")
     addressForVA	proc :ULONGLONG, :ptr, :ptr
     numberOfFunctionFragmentsForVA proc :ULONGLONG, :DWORD, :ptr
     functionFragmentsForVA proc :ULONGLONG, :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaStackWalker_INTERFACE_DEFINED__
-__IDiaStackWalker_INTERFACE_DEFINED__ equ 1
+define __IDiaStackWalker_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackWalker, "5485216b-a54c-469f-9670-52b24d5229bb")
 
@@ -1121,27 +1000,27 @@ DEFINE_IIDX(IDiaStackWalker, "5485216b-a54c-469f-9670-52b24d5229bb")
 
     getEnumFrames	proc :ptr, :ptr
     getEnumFrames2	proc :CV_CPU_TYPE_e, :ptr, :ptr
-    .ends
+   .ends
 endif
 
 ifndef __IDiaStackWalkHelper2_INTERFACE_DEFINED__
-__IDiaStackWalkHelper2_INTERFACE_DEFINED__ equ 1
+define __IDiaStackWalkHelper2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackWalkHelper2, "8222c490-507b-4bef-b3bd-41dca7b5934c")
 
 .comdef IDiaStackWalkHelper2 : public IDiaStackWalkHelper
 
-    .ends
+   .ends
 endif
 
 ifndef __IDiaStackWalker2_INTERFACE_DEFINED__
-__IDiaStackWalker2_INTERFACE_DEFINED__ equ 1
+define __IDiaStackWalker2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDiaStackWalker2, "7c185885-a015-4cac-9411-0f4fb39b1f3a")
 
 .comdef IDiaStackWalker2 : public IDiaStackWalker
 
-    .ends
+   .ends
 endif
 
 endif

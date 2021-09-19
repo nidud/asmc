@@ -1,26 +1,8 @@
 include rpc.inc
 include rpcndr.inc
 ifndef __msxml_h__
-__msxml_h__ equ <>
+define __msxml_h__
 
-ifndef __IXMLElementCollection_FWD_DEFINED__
-__IXMLElementCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLDocument_FWD_DEFINED__
-__IXMLDocument_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLElement_FWD_DEFINED__
-__IXMLElement_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLError_FWD_DEFINED__
-__IXMLError_FWD_DEFINED__ equ 1
-endif
-ifndef __IXMLElementNotificationSink_FWD_DEFINED__
-__IXMLElementNotificationSink_FWD_DEFINED__ equ 1
-endif
-ifndef __XMLDocument_FWD_DEFINED__
-__XMLDocument_FWD_DEFINED__ equ 1
-endif
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
@@ -31,7 +13,7 @@ MIDL_user_allocate proto WINAPI :size_t
 MIDL_user_free proto WINAPI :PVOID
 
 ifndef __MSXML_LIBRARY_DEFINED__
-__MSXML_LIBRARY_DEFINED__ equ 1
+define __MSXML_LIBRARY_DEFINED__
 
 .enum DOMNodeType {
     NODE_INVALID	= 0,
@@ -73,18 +55,18 @@ XML_ERROR		ENDS
 externdef LIBID_MSXML:IID
 
 ifndef __IXMLDOMImplementation_INTERFACE_DEFINED__
-__IXMLDOMImplementation_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMImplementation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMImplementation, "2933BF8F-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMImplementation : public IDispatch
 
     hasFeature		proc :BSTR, :BSTR, :ptr VARIANT_BOOL
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMNode_INTERFACE_DEFINED__
-__IXMLDOMNode_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMNode_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMNode, "2933BF80-7B36-11d2-B20E-00C04F983E60")
 
@@ -126,12 +108,11 @@ DEFINE_IIDX(IXMLDOMNode, "2933BF80-7B36-11d2-B20E-00C04F983E60")
     get_prefix		proc :ptr BSTR
     get_baseName	proc :ptr BSTR
     transformNodeToObject proc :ptr IXMLDOMNode, :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMDocumentFragment_INTERFACE_DEFINED__
-__IXMLDOMDocumentFragment_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMDocumentFragment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMDocumentFragment, "3efaa413-272f-11d2-836f-0000f87a7782")
 
@@ -141,7 +122,7 @@ DEFINE_IIDX(IXMLDOMDocumentFragment, "3efaa413-272f-11d2-836f-0000f87a7782")
 endif
 
 ifndef __IXMLDOMDocument_INTERFACE_DEFINED__
-__IXMLDOMDocument_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMDocument_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMDocument, "2933BF81-7B36-11d2-B20E-00C04F983E60")
 
@@ -180,12 +161,11 @@ DEFINE_IIDX(IXMLDOMDocument, "2933BF81-7B36-11d2-B20E-00C04F983E60")
     put_onreadystatechange	proc :VARIANT
     put_ondataavailable		proc :VARIANT
     put_ontransformnode		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMNodeList_INTERFACE_DEFINED__
-__IXMLDOMNodeList_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMNodeList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMNodeList, "2933BF82-7B36-11d2-B20E-00C04F983E60")
 
@@ -196,12 +176,11 @@ DEFINE_IIDX(IXMLDOMNodeList, "2933BF82-7B36-11d2-B20E-00C04F983E60")
     nextNode		proc :ptr ptr IXMLDOMNode
     reset		proc
     get__newEnum	proc :ptr ptr IUnknown
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMNamedNodeMap_INTERFACE_DEFINED__
-__IXMLDOMNamedNodeMap_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMNamedNodeMap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMNamedNodeMap, "2933BF83-7B36-11d2-B20E-00C04F983E60")
 
@@ -217,12 +196,11 @@ DEFINE_IIDX(IXMLDOMNamedNodeMap, "2933BF83-7B36-11d2-B20E-00C04F983E60")
     nextNode		proc :ptr ptr IXMLDOMNode
     reset		proc
     get__newEnum	proc :ptr ptr IUnknown
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMCharacterData_INTERFACE_DEFINED__
-__IXMLDOMCharacterData_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMCharacterData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMCharacterData, "2933BF84-7B36-11d2-B20E-00C04F983E60")
 
@@ -236,12 +214,11 @@ DEFINE_IIDX(IXMLDOMCharacterData, "2933BF84-7B36-11d2-B20E-00C04F983E60")
     insertData		proc :sdword, :BSTR
     deleteData		proc :sdword, :sdword
     replaceData		proc :sdword, :sdword, :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMAttribute_INTERFACE_DEFINED__
-__IXMLDOMAttribute_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMAttribute_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMAttribute, "2933BF85-7B36-11d2-B20E-00C04F983E60")
 
@@ -250,12 +227,11 @@ DEFINE_IIDX(IXMLDOMAttribute, "2933BF85-7B36-11d2-B20E-00C04F983E60")
     get_name		proc :ptr BSTR
     get_value		proc :ptr VARIANT
     put_value		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMElement_INTERFACE_DEFINED__
-__IXMLDOMElement_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMElement_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMElement, "2933BF86-7B36-11d2-B20E-00C04F983E60")
 
@@ -270,24 +246,22 @@ DEFINE_IIDX(IXMLDOMElement, "2933BF86-7B36-11d2-B20E-00C04F983E60")
     removeAttributeNode	 proc :ptr IXMLDOMAttribute, :ptr ptr IXMLDOMAttribute
     getElementsByTagName proc :BSTR, :ptr ptr IXMLDOMNodeList
     normalize		 proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMText_INTERFACE_DEFINED__
-__IXMLDOMText_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMText_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMText, "2933BF87-7B36-11d2-B20E-00C04F983E60")
 
 .comdef IXMLDOMText : public IXMLDOMCharacterData
 
     splitText		proc :LONG, :ptr ptr IXMLDOMText
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMComment_INTERFACE_DEFINED__
-__IXMLDOMComment_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMComment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMComment, "2933BF88-7B36-11d2-B20E-00C04F983E60")
 
@@ -297,7 +271,7 @@ DEFINE_IIDX(IXMLDOMComment, "2933BF88-7B36-11d2-B20E-00C04F983E60")
 endif
 
 ifndef __IXMLDOMProcessingInstruction_INTERFACE_DEFINED__
-__IXMLDOMProcessingInstruction_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMProcessingInstruction_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMProcessingInstruction, "2933BF89-7B36-11d2-B20E-00C04F983E60")
 
@@ -306,12 +280,11 @@ DEFINE_IIDX(IXMLDOMProcessingInstruction, "2933BF89-7B36-11d2-B20E-00C04F983E60"
     get_target		proc :ptr BSTR
     get_data		proc :ptr BSTR
     put_data		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMCDATASection_INTERFACE_DEFINED__
-__IXMLDOMCDATASection_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMCDATASection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMCDATASection, "2933BF8A-7B36-11d2-B20E-00C04F983E60")
 
@@ -321,7 +294,7 @@ DEFINE_IIDX(IXMLDOMCDATASection, "2933BF8A-7B36-11d2-B20E-00C04F983E60")
 endif
 
 ifndef __IXMLDOMDocumentType_INTERFACE_DEFINED__
-__IXMLDOMDocumentType_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMDocumentType_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMDocumentType, "2933BF8B-7B36-11d2-B20E-00C04F983E60")
 
@@ -330,12 +303,11 @@ DEFINE_IIDX(IXMLDOMDocumentType, "2933BF8B-7B36-11d2-B20E-00C04F983E60")
     get_name		proc :ptr BSTR
     get_entities	proc :ptr ptr IXMLDOMNamedNodeMap
     get_notations	proc :ptr ptr IXMLDOMNamedNodeMap
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMNotation_INTERFACE_DEFINED__
-__IXMLDOMNotation_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMNotation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMNotation, "2933BF8C-7B36-11d2-B20E-00C04F983E60")
 
@@ -343,12 +315,11 @@ DEFINE_IIDX(IXMLDOMNotation, "2933BF8C-7B36-11d2-B20E-00C04F983E60")
 
     get_publicId	proc :ptr VARIANT
     get_systemId	proc :ptr VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMEntity_INTERFACE_DEFINED__
-__IXMLDOMEntity_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMEntity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMEntity, "2933BF8D-7B36-11d2-B20E-00C04F983E60")
 
@@ -357,12 +328,11 @@ DEFINE_IIDX(IXMLDOMEntity, "2933BF8D-7B36-11d2-B20E-00C04F983E60")
     get_publicId	proc :ptr VARIANT
     get_systemId	proc :ptr VARIANT
     get_notationName	proc :ptr BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDOMEntityReference_INTERFACE_DEFINED__
-__IXMLDOMEntityReference_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMEntityReference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMEntityReference, "2933BF8E-7B36-11d2-B20E-00C04F983E60")
 
@@ -372,7 +342,7 @@ DEFINE_IIDX(IXMLDOMEntityReference, "2933BF8E-7B36-11d2-B20E-00C04F983E60")
 endif
 
 ifndef __IXMLDOMParseError_INTERFACE_DEFINED__
-__IXMLDOMParseError_INTERFACE_DEFINED__ equ <>
+define __IXMLDOMParseError_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDOMParseError, "3efaa426-272f-11d2-836f-0000f87a7782")
 
@@ -385,12 +355,11 @@ DEFINE_IIDX(IXMLDOMParseError, "3efaa426-272f-11d2-836f-0000f87a7782")
     get_line		proc :ptr LONG
     get_linepos		proc :ptr LONG
     get_filepos		proc :ptr LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IXTLRuntime_INTERFACE_DEFINED__
-__IXTLRuntime_INTERFACE_DEFINED__ equ <>
+define __IXTLRuntime_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXTLRuntime, "3efaa425-272f-11d2-836f-0000f87a7782")
 
@@ -405,12 +374,11 @@ DEFINE_IIDX(IXTLRuntime, "3efaa425-272f-11d2-836f-0000f87a7782")
     formatNumber	proc :real8, :BSTR, :ptr BSTR
     formatDate		proc :VARIANT, :BSTR, :VARIANT, :ptr BSTR
     formatTime		proc :VARIANT, :BSTR, :VARIANT, :ptr BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLElementCollection_INTERFACE_DEFINED__
-__IXMLElementCollection_INTERFACE_DEFINED__ equ 1
+define __IXMLElementCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLElementCollection, "65725580-9B5D-11d0-9BFE-00C04FC99C8E")
 
@@ -420,12 +388,11 @@ DEFINE_IIDX(IXMLElementCollection, "65725580-9B5D-11d0-9BFE-00C04FC99C8E")
     get_length		proc :ptr
     get__newEnum	proc :ptr
     item		proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__
-__XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__ equ <>
+define __XMLDOMDocumentEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_IIDX(XMLDOMDocumentEvents, "3efaa427-272f-11d2-836f-0000f87a7782")
 
@@ -435,7 +402,7 @@ DEFINE_IIDX(XMLDOMDocumentEvents, "3efaa427-272f-11d2-836f-0000f87a7782")
 endif
 
 ifndef __IXMLHttpRequest_INTERFACE_DEFINED__
-__IXMLHttpRequest_INTERFACE_DEFINED__ equ <>
+define __IXMLHttpRequest_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLHttpRequest, "ED8C108D-4349-11D2-91A4-00C04F7969E8")
 
@@ -455,12 +422,12 @@ DEFINE_IIDX(IXMLHttpRequest, "ED8C108D-4349-11D2-91A4-00C04F7969E8")
     get_responseStream	proc :ptr VARIANT
     get_readyState	proc :ptr
     put_onreadystatechange proc :ptr IDispatch
-    .ends
+   .ends
 
 endif
 
 ifndef __IXMLDSOControl_INTERFACE_DEFINED__
-__IXMLDSOControl_INTERFACE_DEFINED__ equ <>
+define __IXMLDSOControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDSOControl, "310afa62-0575-11d2-9ca9-0060b0ec3d39")
 
@@ -471,12 +438,11 @@ DEFINE_IIDX(IXMLDSOControl, "310afa62-0575-11d2-9ca9-0060b0ec3d39")
     get_JavaDSOCompatible proc :ptr BOOL
     put_JavaDSOCompatible proc :BOOL
     get_readyState	proc :ptr LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLDocument_INTERFACE_DEFINED__
-__IXMLDocument_INTERFACE_DEFINED__ equ 1
+define __IXMLDocument_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLDocument, "F52E2B61-18A1-11d1-B105-00805F49916B")
 
@@ -496,12 +462,11 @@ DEFINE_IIDX(IXMLDocument, "F52E2B61-18A1-11d1-B105-00805F49916B")
     get_doctype		proc :ptr
     get_dtdURL		proc :ptr
     createElement	proc :VARIANT, :VARIANT, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLElement_INTERFACE_DEFINED__
-__IXMLElement_INTERFACE_DEFINED__ equ 1
+define __IXMLElement_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLElement, "3F7F31AC-E15F-11d0-9C25-00C04FC99C8E")
 
@@ -519,25 +484,23 @@ DEFINE_IIDX(IXMLElement, "3F7F31AC-E15F-11d0-9C25-00C04FC99C8E")
     put_text		proc :BSTR
     addChild		proc :ptr
     removeChild		proc :ptr, :LONG, :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IXMLError_INTERFACE_DEFINED__
-__IXMLError_INTERFACE_DEFINED__ equ 1
+define __IXMLError_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXMLError, "948C5AD3-C58D-11d0-9C0B-00C04FC99C8E")
 
 .comdef IXMLError : public IUnknown
 
     GetErrorInfo	proc :ptr
-
-    .ends
+   .ends
 endif
 
 
 ifndef __IXMLElementNotificationSink_INTERFACE_DEFINED__
-__IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
+define __IXMLElementNotificationSink_INTERFACE_DEFINED__
 
 externdef IID_IXMLElementNotificationSink:IID
 
@@ -548,8 +511,7 @@ externdef IID_IXMLElementNotificationSink:IID
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     ChildAdded		proc :ptr
-
-    .ends
+   .ends
 
 endif
 DEFINE_GUIDS(CLSID_XMLDocument, "CFC399AF-D876-11d0-9C10-00C04FC99C8E")

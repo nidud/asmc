@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,194 +18,22 @@ include ole2.inc
 endif
 
 ifndef __objidlbase_h__
-__objidlbase_h__ equ <>
-
-ifndef __IMarshal_FWD_DEFINED__
-__IMarshal_FWD_DEFINED__ equ 1
-endif
-ifndef __INoMarshal_FWD_DEFINED__
-__INoMarshal_FWD_DEFINED__ equ 1
-endif
-ifndef __IAgileObject_FWD_DEFINED__
-__IAgileObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IActivationFilter_FWD_DEFINED__
-__IActivationFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IMarshal2_FWD_DEFINED__
-__IMarshal2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMalloc_FWD_DEFINED__
-__IMalloc_FWD_DEFINED__ equ 1
-endif
-ifndef __IStdMarshalInfo_FWD_DEFINED__
-__IStdMarshalInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IExternalConnection_FWD_DEFINED__
-__IExternalConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IMultiQI_FWD_DEFINED__
-__IMultiQI_FWD_DEFINED__ equ 1
-endif
-ifndef __AsyncIMultiQI_FWD_DEFINED__
-__AsyncIMultiQI_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternalUnknown_FWD_DEFINED__
-__IInternalUnknown_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumUnknown_FWD_DEFINED__
-__IEnumUnknown_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumString_FWD_DEFINED__
-__IEnumString_FWD_DEFINED__ equ 1
-endif
-ifndef __ISequentialStream_FWD_DEFINED__
-__ISequentialStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IStream_FWD_DEFINED__
-__IStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcChannelBuffer_FWD_DEFINED__
-__IRpcChannelBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcChannelBuffer2_FWD_DEFINED__
-__IRpcChannelBuffer2_FWD_DEFINED__ equ 1
-endif
-ifndef __IAsyncRpcChannelBuffer_FWD_DEFINED__
-__IAsyncRpcChannelBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcChannelBuffer3_FWD_DEFINED__
-__IRpcChannelBuffer3_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcSyntaxNegotiate_FWD_DEFINED__
-__IRpcSyntaxNegotiate_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcProxyBuffer_FWD_DEFINED__
-__IRpcProxyBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcStubBuffer_FWD_DEFINED__
-__IRpcStubBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IPSFactoryBuffer_FWD_DEFINED__
-__IPSFactoryBuffer_FWD_DEFINED__ equ 1
-endif
-ifndef __IChannelHook_FWD_DEFINED__
-__IChannelHook_FWD_DEFINED__ equ 1
-endif
-ifndef __IClientSecurity_FWD_DEFINED__
-__IClientSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __IServerSecurity_FWD_DEFINED__
-__IServerSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcOptions_FWD_DEFINED__
-__IRpcOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __IGlobalOptions_FWD_DEFINED__
-__IGlobalOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __ISurrogate_FWD_DEFINED__
-__ISurrogate_FWD_DEFINED__ equ 1
-endif
-ifndef __IGlobalInterfaceTable_FWD_DEFINED__
-__IGlobalInterfaceTable_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronize_FWD_DEFINED__
-__ISynchronize_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronizeHandle_FWD_DEFINED__
-__ISynchronizeHandle_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronizeEvent_FWD_DEFINED__
-__ISynchronizeEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronizeContainer_FWD_DEFINED__
-__ISynchronizeContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronizeMutex_FWD_DEFINED__
-__ISynchronizeMutex_FWD_DEFINED__ equ 1
-endif
-ifndef __ICancelMethodCalls_FWD_DEFINED__
-__ICancelMethodCalls_FWD_DEFINED__ equ 1
-endif
-ifndef __IAsyncManager_FWD_DEFINED__
-__IAsyncManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ICallFactory_FWD_DEFINED__
-__ICallFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IRpcHelper_FWD_DEFINED__
-__IRpcHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IReleaseMarshalBuffers_FWD_DEFINED__
-__IReleaseMarshalBuffers_FWD_DEFINED__ equ 1
-endif
-ifndef __IWaitMultiple_FWD_DEFINED__
-__IWaitMultiple_FWD_DEFINED__ equ 1
-endif
-ifndef __IAddrTrackingControl_FWD_DEFINED__
-__IAddrTrackingControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IAddrExclusionControl_FWD_DEFINED__
-__IAddrExclusionControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IPipeByte_FWD_DEFINED__
-__IPipeByte_FWD_DEFINED__ equ 1
-endif
-ifndef __AsyncIPipeByte_FWD_DEFINED__
-__AsyncIPipeByte_FWD_DEFINED__ equ 1
-endif
-ifndef __IPipeLong_FWD_DEFINED__
-__IPipeLong_FWD_DEFINED__ equ 1
-endif
-ifndef __AsyncIPipeLong_FWD_DEFINED__
-__AsyncIPipeLong_FWD_DEFINED__ equ 1
-endif
-ifndef __IPipeDouble_FWD_DEFINED__
-__IPipeDouble_FWD_DEFINED__ equ 1
-endif
-ifndef __AsyncIPipeDouble_FWD_DEFINED__
-__AsyncIPipeDouble_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumContextProps_FWD_DEFINED__
-__IEnumContextProps_FWD_DEFINED__ equ 1
-endif
-ifndef __IContext_FWD_DEFINED__
-__IContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjContext_FWD_DEFINED__
-__IObjContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IComThreadingInfo_FWD_DEFINED__
-__IComThreadingInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IProcessInitControl_FWD_DEFINED__
-__IProcessInitControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IFastRundown_FWD_DEFINED__
-__IFastRundown_FWD_DEFINED__ equ 1
-endif
-ifndef __IMarshalingStream_FWD_DEFINED__
-__IMarshalingStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IAgileReference_FWD_DEFINED__
-__IAgileReference_FWD_DEFINED__ equ 1
-endif
+define __objidlbase_h__
 
 include unknwnbase.inc
 include winapifamily.inc
 
 if(NTDDI_VERSION GE NTDDI_VISTA AND NOT defined(_WIN32_WINNT))
-_WIN32_WINNT equ 0x0600
+define _WIN32_WINNT 0x0600
 endif
 if(NTDDI_VERSION GE NTDDI_WS03 AND NOT defined(_WIN32_WINNT))
-_WIN32_WINNT equ 0x0502
+define _WIN32_WINNT 0x0502
 endif
 if(NTDDI_VERSION GE NTDDI_WINXP AND NOT defined(_WIN32_WINNT))
-_WIN32_WINNT equ 0x0501
+define _WIN32_WINNT 0x0501
 endif
 if(NTDDI_VERSION GE NTDDI_WIN2K AND NOT defined(_WIN32_WINNT))
-_WIN32_WINNT equ 0x0500
+define _WIN32_WINNT 0x0500
 endif
 
 ifndef _OBJIDLBASE_
@@ -220,7 +48,7 @@ dwReserved2		dd ?
 COSERVERINFO		ENDS
 
 ifndef __IMarshal_INTERFACE_DEFINED__
-__IMarshal_INTERFACE_DEFINED__ equ 1
+define __IMarshal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
 
@@ -232,14 +60,14 @@ DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
     UnmarshalInterface	proc :ptr, :REFIID, :ptr
     ReleaseMarshalData	proc :ptr
     DisconnectObject	proc :DWORD
-    .ends
+   .ends
 
     LPMARSHAL typedef ptr IMarshal
 
 endif
 
 ifndef __INoMarshal_INTERFACE_DEFINED__
-__INoMarshal_INTERFACE_DEFINED__ equ 1
+define __INoMarshal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(INoMarshal, "ecc8691b-c1db-4dc0-855e-65f6c551af49")
 
@@ -250,7 +78,7 @@ DEFINE_IIDX(INoMarshal, "ecc8691b-c1db-4dc0-855e-65f6c551af49")
 endif
 
 ifndef __IAgileObject_INTERFACE_DEFINED__
-__IAgileObject_INTERFACE_DEFINED__ equ 1
+define __IAgileObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAgileObject, "94ea2b94-e9cc-49e0-c0ff-ee64ca8f5b90")
 
@@ -265,7 +93,7 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IActivationFilter_INTERFACE_DEFINED__
-__IActivationFilter_INTERFACE_DEFINED__ equ 1
+define __IActivationFilter_INTERFACE_DEFINED__
 
 .enum ACTIVATIONTYPE {
     ACTIVATIONTYPE_UNCATEGORIZED = 0,
@@ -281,12 +109,12 @@ DEFINE_IIDX(IActivationFilter, "00000017-0000-0000-C000-000000000046")
 .comdef IActivationFilter : public IUnknown
 
     HandleActivation	proc :DWORD, :REFCLSID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMarshal2_INTERFACE_DEFINED__
-__IMarshal2_INTERFACE_DEFINED__ equ 1
+define __IMarshal2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMarshal2, "000001cf-0000-0000-C000-000000000046")
 
@@ -299,7 +127,7 @@ DEFINE_IIDX(IMarshal2, "000001cf-0000-0000-C000-000000000046")
 endif
 
 ifndef __IMalloc_INTERFACE_DEFINED__
-__IMalloc_INTERFACE_DEFINED__ equ 1
+define __IMalloc_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMalloc, "00000002-0000-0000-C000-000000000046")
 
@@ -311,28 +139,28 @@ DEFINE_IIDX(IMalloc, "00000002-0000-0000-C000-000000000046")
     GetSize		proc :ptr
     DidAlloc		proc :ptr
     HeapMinimize	proc
-    .ends
+   .ends
 
     LPMALLOC typedef ptr IMalloc
 
 endif
 
 ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
-__IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
+define __IStdMarshalInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStdMarshalInfo, "00000018-0000-0000-C000-000000000046")
 
 .comdef IStdMarshalInfo : public IUnknown
 
     GetClassForHandler	proc :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
     LPSTDMARSHALINFO typedef ptr IStdMarshalInfo
 
 endif
 
 ifndef __IExternalConnection_INTERFACE_DEFINED__
-__IExternalConnection_INTERFACE_DEFINED__ equ 1
+define __IExternalConnection_INTERFACE_DEFINED__
 
 .enum EXTCONN {
     EXTCONN_STRONG	= 0x1,
@@ -346,7 +174,7 @@ DEFINE_IIDX(IExternalConnection, "00000019-0000-0000-C000-000000000046")
 
     AddConnection	proc :DWORD, :DWORD
     ReleaseConnection	proc :DWORD, :DWORD, :BOOL
-    .ends
+   .ends
 
     LPEXTERNALCONNECTION typedef ptr IExternalConnection
 
@@ -363,21 +191,21 @@ hr			HRESULT ?
 MULTI_QI		ENDS
 
 ifndef __IMultiQI_INTERFACE_DEFINED__
-__IMultiQI_INTERFACE_DEFINED__ equ 1
+define __IMultiQI_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMultiQI, "00000020-0000-0000-C000-000000000046")
 
 .comdef IMultiQI : public IUnknown
 
     QueryMultipleInterfaces proc :ULONG, :ptr
-    .ends
+   .ends
 
     LPMULTIQI typedef ptr IMultiQI
 
 endif
 
 ifndef __AsyncIMultiQI_INTERFACE_DEFINED__
-__AsyncIMultiQI_INTERFACE_DEFINED__ equ 1
+define __AsyncIMultiQI_INTERFACE_DEFINED__
 
 DEFINE_IIDX(AsyncIMultiQI, "000e0020-0000-0000-C000-000000000046")
 
@@ -385,7 +213,7 @@ DEFINE_IIDX(AsyncIMultiQI, "000e0020-0000-0000-C000-000000000046")
 
     Begin_QueryMultipleInterfaces proc :ULONG, :ptr
     Finish_QueryMultipleInterfaces proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -394,14 +222,14 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IInternalUnknown_INTERFACE_DEFINED__
-__IInternalUnknown_INTERFACE_DEFINED__ equ 1
+define __IInternalUnknown_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternalUnknown, "00000021-0000-0000-C000-000000000046")
 
 .comdef IInternalUnknown : public IUnknown
 
     QueryInternalInterface proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -410,7 +238,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IEnumUnknown_INTERFACE_DEFINED__
-__IEnumUnknown_INTERFACE_DEFINED__ equ 1
+define __IEnumUnknown_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumUnknown, "00000100-0000-0000-C000-000000000046")
 
@@ -420,14 +248,14 @@ DEFINE_IIDX(IEnumUnknown, "00000100-0000-0000-C000-000000000046")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
     LPENUMUNKNOWN typedef ptr IEnumUnknown
 
 endif
 
 ifndef __IEnumString_INTERFACE_DEFINED__
-__IEnumString_INTERFACE_DEFINED__ equ 1
+define __IEnumString_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumString, "00000101-0000-0000-C000-000000000046")
 
@@ -437,14 +265,14 @@ DEFINE_IIDX(IEnumString, "00000101-0000-0000-C000-000000000046")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
     LPENUMSTRING typedef ptr IEnumString
 
 endif
 
 ifndef __ISequentialStream_INTERFACE_DEFINED__
-__ISequentialStream_INTERFACE_DEFINED__ equ 1
+define __ISequentialStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISequentialStream, "0c733a30-2a1c-11ce-ade5-00aa0044773d")
 
@@ -452,12 +280,12 @@ DEFINE_IIDX(ISequentialStream, "0c733a30-2a1c-11ce-ade5-00aa0044773d")
 
     Read		proc :ptr, :ULONG, :ptr
     Write		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IStream_INTERFACE_DEFINED__
-__IStream_INTERFACE_DEFINED__ equ 1
+define __IStream_INTERFACE_DEFINED__
 
 STATSTG			STRUC
 pwcsName		LPOLESTR ?
@@ -505,14 +333,14 @@ DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
     UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
     Stat		proc :ptr, :DWORD
     Clone		proc :ptr
-    .ends
+   .ends
 
     LPSTREAM		typedef ptr IStream
 
 endif
 
 ifndef __IRpcChannelBuffer_INTERFACE_DEFINED__
-__IRpcChannelBuffer_INTERFACE_DEFINED__ equ 1
+define __IRpcChannelBuffer_INTERFACE_DEFINED__
 
 RPCOLEDATAREP		typedef ULONG
 
@@ -537,7 +365,7 @@ DEFINE_IIDX(IRpcChannelBuffer, "D5F56B60-593B-101A-B569-08002B2DBF7A")
     FreeBuffer		proc :ptr
     GetDestCtx		proc :ptr, :ptr
     IsConnected		proc
-    .ends
+   .ends
 
 endif
 
@@ -546,19 +374,19 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRpcChannelBuffer2_INTERFACE_DEFINED__
-__IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
+define __IRpcChannelBuffer2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcChannelBuffer2, "594f31d0-7f19-11d0-b194-00a0c90dc8bf")
 
 .comdef IRpcChannelBuffer2 : public IRpcChannelBuffer
 
     GetProtocolVersion	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__
-__IAsyncRpcChannelBuffer_INTERFACE_DEFINED__ equ 1
+define __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
 
@@ -567,12 +395,12 @@ DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
     Send		proc :ptr, :ptr, :ptr
     Receive		proc :ptr, :ptr
     GetDestCtxEx	proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
-__IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
+define __IRpcChannelBuffer3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
 
@@ -585,24 +413,24 @@ DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
     GetDestCtxEx	proc :ptr, :ptr, :ptr
     GetState		proc :ptr, :ptr
     RegisterAsync	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRpcSyntaxNegotiate_INTERFACE_DEFINED__
-__IRpcSyntaxNegotiate_INTERFACE_DEFINED__ equ 1
+define __IRpcSyntaxNegotiate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcSyntaxNegotiate, "58a08519-24c8-4935-b482-3fd823333a4f")
 
 .comdef IRpcSyntaxNegotiate : public IUnknown
 
     NegotiateSyntax	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
-__IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
+define __IRpcProxyBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcProxyBuffer, "D5F56A34-593B-101A-B569-08002B2DBF7A")
 
@@ -610,7 +438,7 @@ DEFINE_IIDX(IRpcProxyBuffer, "D5F56A34-593B-101A-B569-08002B2DBF7A")
 
     Connect		proc :ptr
     Disconnect		proc
-    .ends
+   .ends
 
 endif
 
@@ -619,7 +447,7 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IRpcStubBuffer_INTERFACE_DEFINED__
-__IRpcStubBuffer_INTERFACE_DEFINED__ equ 1
+define __IRpcStubBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
 
@@ -632,12 +460,12 @@ DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
     CountRefs		proc
     DebugServerQueryInterface proc :ptr
     DebugServerRelease	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IPSFactoryBuffer_INTERFACE_DEFINED__
-__IPSFactoryBuffer_INTERFACE_DEFINED__ equ 1
+define __IPSFactoryBuffer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPSFactoryBuffer, "D5F569D0-593B-101A-B569-08002B2DBF7A")
 
@@ -645,7 +473,7 @@ DEFINE_IIDX(IPSFactoryBuffer, "D5F569D0-593B-101A-B569-08002B2DBF7A")
 
     CreateProxy		proc :ptr, :REFIID, :ptr, :ptr
     CreateStub		proc :REFIID, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -664,7 +492,7 @@ pObject			LPVOID ?
 SChannelHookCallInfo	ENDS
 
 ifndef __IChannelHook_INTERFACE_DEFINED__
-__IChannelHook_INTERFACE_DEFINED__ equ 1
+define __IChannelHook_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IChannelHook, "1008c4a0-7613-11cf-9af1-0020af6e72f4")
 
@@ -676,7 +504,7 @@ DEFINE_IIDX(IChannelHook, "1008c4a0-7613-11cf-9af1-0020af6e72f4")
     ServerNotify	proc :REFGUID, :REFIID, :ULONG, :ptr, :DWORD
     ServerGetSize	proc :REFGUID, :REFIID, :HRESULT, :ptr
     ServerFillBuffer	proc :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
-    .ends
+   .ends
 
 endif
 
@@ -689,7 +517,7 @@ if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IClientSecurity_INTERFACE_DEFINED__
-__IClientSecurity_INTERFACE_DEFINED__ equ 1
+define __IClientSecurity_INTERFACE_DEFINED__
 
 SOLE_AUTHENTICATION_SERVICE STRUC
 dwAuthnSvc		dd ?
@@ -744,7 +572,7 @@ DEFINE_IIDX(IClientSecurity, "0000013D-0000-0000-C000-000000000046")
     QueryBlanket	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     SetBlanket		proc :ptr, :DWORD, :DWORD, :ptr, :DWORD, :DWORD, :ptr, :DWORD
     CopyProxy		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -753,7 +581,7 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IServerSecurity_INTERFACE_DEFINED__
-__IServerSecurity_INTERFACE_DEFINED__ equ 1
+define __IServerSecurity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IServerSecurity, "0000013E-0000-0000-C000-000000000046")
 
@@ -763,7 +591,7 @@ DEFINE_IIDX(IServerSecurity, "0000013E-0000-0000-C000-000000000046")
     ImpersonateClient	proc
     RevertToSelf	proc
     IsImpersonating	proc
-    .ends
+   .ends
 
 endif
 
@@ -781,7 +609,7 @@ endif
     }
 
 ifndef __IRpcOptions_INTERFACE_DEFINED__
-__IRpcOptions_INTERFACE_DEFINED__ equ 1
+define __IRpcOptions_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcOptions, "00000144-0000-0000-C000-000000000046")
 
@@ -789,7 +617,7 @@ DEFINE_IIDX(IRpcOptions, "00000144-0000-0000-C000-000000000046")
 
     Set			proc :ptr, :RPCOPT_PROPERTIES, :ULONG_PTR
     Query		proc :ptr, :RPCOPT_PROPERTIES, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -837,7 +665,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     }
 
 ifndef __IGlobalOptions_INTERFACE_DEFINED__
-__IGlobalOptions_INTERFACE_DEFINED__ equ 1
+define __IGlobalOptions_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGlobalOptions, "0000015B-0000-0000-C000-000000000046")
 
@@ -845,7 +673,7 @@ DEFINE_IIDX(IGlobalOptions, "0000015B-0000-0000-C000-000000000046")
 
     Set			proc :GLOBALOPT_PROPERTIES, :ULONG_PTR
     Query		proc :GLOBALOPT_PROPERTIES, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -856,7 +684,7 @@ endif ;; (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __ISurrogate_INTERFACE_DEFINED__
-__ISurrogate_INTERFACE_DEFINED__ equ 1
+define __ISurrogate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
 
@@ -864,14 +692,14 @@ DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
 
     LoadDllServer	proc :REFCLSID
     FreeSurrogate	proc
-    .ends
+   .ends
 
     LPSURROGATE typedef ptr ISurrogate
 
 endif
 
 ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
-__IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
+define __IGlobalInterfaceTable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
 
@@ -880,7 +708,7 @@ DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
     RegisterInterfaceInGlobal proc :ptr, :REFIID, :ptr
     RevokeInterfaceFromGlobal proc :DWORD
     GetInterfaceFromGlobal proc :DWORD, :REFIID, :ptr
-    .ends
+   .ends
 
     LPGLOBALINTERFACETABLE typedef ptr IGlobalInterfaceTable
 
@@ -891,7 +719,7 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISynchronize_INTERFACE_DEFINED__
-__ISynchronize_INTERFACE_DEFINED__ equ 1
+define __ISynchronize_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronize, "00000030-0000-0000-C000-000000000046")
 
@@ -900,36 +728,36 @@ DEFINE_IIDX(ISynchronize, "00000030-0000-0000-C000-000000000046")
     _Wait		proc :DWORD, :DWORD
     Signal		proc
     Reset		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ISynchronizeHandle_INTERFACE_DEFINED__
-__ISynchronizeHandle_INTERFACE_DEFINED__ equ 1
+define __ISynchronizeHandle_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronizeHandle, "00000031-0000-0000-C000-000000000046")
 
 .comdef ISynchronizeHandle : public IUnknown
 
     GetHandle		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISynchronizeEvent_INTERFACE_DEFINED__
-__ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
+define __ISynchronizeEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronizeEvent, "00000032-0000-0000-C000-000000000046")
 
 .comdef ISynchronizeEvent : public ISynchronizeHandle
 
     SetEventHandle	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISynchronizeContainer_INTERFACE_DEFINED__
-__ISynchronizeContainer_INTERFACE_DEFINED__ equ 1
+define __ISynchronizeContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronizeContainer, "00000033-0000-0000-C000-000000000046")
 
@@ -937,24 +765,24 @@ DEFINE_IIDX(ISynchronizeContainer, "00000033-0000-0000-C000-000000000046")
 
     AddSynchronize	proc :ptr
     WaitMultiple	proc :DWORD, :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISynchronizeMutex_INTERFACE_DEFINED__
-__ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
+define __ISynchronizeMutex_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronizeMutex, "00000025-0000-0000-C000-000000000046")
 
 .comdef ISynchronizeMutex : public ISynchronize
 
     ReleaseMutex	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ICancelMethodCalls_INTERFACE_DEFINED__
-__ICancelMethodCalls_INTERFACE_DEFINED__ equ 1
+define __ICancelMethodCalls_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
 
@@ -962,14 +790,14 @@ DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
 
     Cancel		proc :ULONG
     TestCancel		proc
-    .ends
+   .ends
 
     LPCANCELMETHODCALLS typedef ptr ICancelMethodCalls
 
 endif
 
 ifndef __IAsyncManager_INTERFACE_DEFINED__
-__IAsyncManager_INTERFACE_DEFINED__ equ 1
+define __IAsyncManager_INTERFACE_DEFINED__
 
 .enum DCOM_CALL_STATE {
     DCOM_NONE		= 0,
@@ -984,24 +812,24 @@ DEFINE_IIDX(IAsyncManager, "0000002A-0000-0000-C000-000000000046")
     CompleteCall	proc :HRESULT
     GetCallContext	proc :REFIID, :ptr
     GetState		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ICallFactory_INTERFACE_DEFINED__
-__ICallFactory_INTERFACE_DEFINED__ equ 1
+define __ICallFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICallFactory, "1c733a30-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ICallFactory : public IUnknown
 
     CreateCall		proc :REFIID, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRpcHelper_INTERFACE_DEFINED__
-__IRpcHelper_INTERFACE_DEFINED__ equ 1
+define __IRpcHelper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRpcHelper, "00000149-0000-0000-C000-000000000046")
 
@@ -1009,24 +837,24 @@ DEFINE_IIDX(IRpcHelper, "00000149-0000-0000-C000-000000000046")
 
     GetDCOMProtocolVersion proc :ptr
     GetIIDFromOBJREF	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IReleaseMarshalBuffers_INTERFACE_DEFINED__
-__IReleaseMarshalBuffers_INTERFACE_DEFINED__ equ 1
+define __IReleaseMarshalBuffers_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IReleaseMarshalBuffers, "eb0cb9e8-7996-11d2-872e-0000f8080859")
 
 .comdef IReleaseMarshalBuffers : public IUnknown
 
     ReleaseMarshalBuffer proc :ptr, :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWaitMultiple_INTERFACE_DEFINED__
-__IWaitMultiple_INTERFACE_DEFINED__ equ 1
+define __IWaitMultiple_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWaitMultiple, "0000002B-0000-0000-C000-000000000046")
 
@@ -1034,12 +862,12 @@ DEFINE_IIDX(IWaitMultiple, "0000002B-0000-0000-C000-000000000046")
 
     WaitMultiple	proc :DWORD, :ptr
     AddSynchronize	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAddrTrackingControl_INTERFACE_DEFINED__
-__IAddrTrackingControl_INTERFACE_DEFINED__ equ 1
+define __IAddrTrackingControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAddrTrackingControl, "00000147-0000-0000-C000-000000000046")
 
@@ -1047,14 +875,14 @@ DEFINE_IIDX(IAddrTrackingControl, "00000147-0000-0000-C000-000000000046")
 
     EnableCOMDynamicAddrTracking proc
     DisableCOMDynamicAddrTracking proc
-    .ends
+   .ends
 
     LPADDRTRACKINGCONTROL typedef ptr IAddrTrackingControl
 
 endif
 
 ifndef __IAddrExclusionControl_INTERFACE_DEFINED__
-__IAddrExclusionControl_INTERFACE_DEFINED__ equ 1
+define __IAddrExclusionControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAddrExclusionControl, "00000148-0000-0000-C000-000000000046")
 
@@ -1062,14 +890,14 @@ DEFINE_IIDX(IAddrExclusionControl, "00000148-0000-0000-C000-000000000046")
 
     GetCurrentAddrExclusionList proc :REFIID, :ptr
     UpdateAddrExclusionList proc :ptr
-    .ends
+   .ends
 
     LPADDREXCLUSIONCONTROL typedef ptr IAddrExclusionControl
 
 endif
 
 ifndef __IPipeByte_INTERFACE_DEFINED__
-__IPipeByte_INTERFACE_DEFINED__ equ 1
+define __IPipeByte_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPipeByte, "DB2F3ACA-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1077,12 +905,12 @@ DEFINE_IIDX(IPipeByte, "DB2F3ACA-2F86-11d1-8E04-00C04FB9989A")
 
     Pull		proc :ptr, :ULONG, :ptr
     _Push		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __AsyncIPipeByte_INTERFACE_DEFINED__
-__AsyncIPipeByte_INTERFACE_DEFINED__ equ 1
+define __AsyncIPipeByte_INTERFACE_DEFINED__
 
 DEFINE_IIDX(AsyncIPipeByte, "DB2F3ACB-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1092,12 +920,12 @@ DEFINE_IIDX(AsyncIPipeByte, "DB2F3ACB-2F86-11d1-8E04-00C04FB9989A")
     Finish_Pull		proc :ptr, :ptr
     Begin_Push		proc
     Finish_Push		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IPipeLong_INTERFACE_DEFINED__
-__IPipeLong_INTERFACE_DEFINED__ equ 1
+define __IPipeLong_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPipeLong, "DB2F3ACC-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1105,12 +933,12 @@ DEFINE_IIDX(IPipeLong, "DB2F3ACC-2F86-11d1-8E04-00C04FB9989A")
 
     Pull		proc :ptr, :ULONG, :ptr
     _Push		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __AsyncIPipeLong_INTERFACE_DEFINED__
-__AsyncIPipeLong_INTERFACE_DEFINED__ equ 1
+define __AsyncIPipeLong_INTERFACE_DEFINED__
 
 DEFINE_IIDX(AsyncIPipeLong, "DB2F3ACD-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1120,12 +948,12 @@ DEFINE_IIDX(AsyncIPipeLong, "DB2F3ACD-2F86-11d1-8E04-00C04FB9989A")
     Finish_Pull		proc :ptr, :ptr
     Begin_Push		proc
     Finish_Push		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IPipeDouble_INTERFACE_DEFINED__
-__IPipeDouble_INTERFACE_DEFINED__ equ 1
+define __IPipeDouble_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPipeDouble, "DB2F3ACE-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1133,12 +961,12 @@ DEFINE_IIDX(IPipeDouble, "DB2F3ACE-2F86-11d1-8E04-00C04FB9989A")
 
     Pull		proc :ptr, :ULONG, :ptr
     _Push		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __AsyncIPipeDouble_INTERFACE_DEFINED__
-__AsyncIPipeDouble_INTERFACE_DEFINED__ equ 1
+define __AsyncIPipeDouble_INTERFACE_DEFINED__
 
 DEFINE_IIDX(AsyncIPipeDouble, "DB2F3ACF-2F86-11d1-8E04-00C04FB9989A")
 
@@ -1148,7 +976,7 @@ DEFINE_IIDX(AsyncIPipeDouble, "DB2F3ACF-2F86-11d1-8E04-00C04FB9989A")
     Finish_Pull		proc :ptr, :ptr
     Begin_Push		proc
     Finish_Push		proc
-    .ends
+   .ends
 
 endif
 
@@ -1163,7 +991,7 @@ pUnk			LPUNKNOWN ?
 ContextProperty		ENDS
 
 ifndef __IEnumContextProps_INTERFACE_DEFINED__
-__IEnumContextProps_INTERFACE_DEFINED__ equ 1
+define __IEnumContextProps_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumContextProps, "000001c1-0000-0000-C000-000000000046")
 
@@ -1174,14 +1002,14 @@ DEFINE_IIDX(IEnumContextProps, "000001c1-0000-0000-C000-000000000046")
     Reset		proc
     Clone		proc :ptr
     Count		proc :ptr
-    .ends
+   .ends
 
     LPENUMCONTEXTPROPS	typedef ptr IEnumContextProps
 
 endif
 
 ifndef __IContext_INTERFACE_DEFINED__
-__IContext_INTERFACE_DEFINED__ equ 1
+define __IContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContext, "000001c0-0000-0000-C000-000000000046")
 
@@ -1191,14 +1019,14 @@ DEFINE_IIDX(IContext, "000001c0-0000-0000-C000-000000000046")
     RemoveProperty	proc :REFGUID
     GetProperty		proc :REFGUID, :ptr, :ptr
     EnumContextProps	proc :ptr
-    .ends
+   .ends
 
 endif
 
 if NOT defined(BUILDTYPE_COMSVCS) AND NOT (defined(_COMBASEAPI_) OR defined(_OLE32_))
 
 ifndef __IObjContext_INTERFACE_DEFINED__
-__IObjContext_INTERFACE_DEFINED__ equ 1
+define __IObjContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
 
@@ -1211,7 +1039,7 @@ DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
     Reserved5		proc
     Reserved6		proc
     Reserved7		proc
-    .ends
+   .ends
 
 endif
 
@@ -1252,7 +1080,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 APARTMENTID		typedef DWORD
 
 ifndef __IComThreadingInfo_INTERFACE_DEFINED__
-__IComThreadingInfo_INTERFACE_DEFINED__ equ 1
+define __IComThreadingInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IComThreadingInfo, "000001ce-0000-0000-C000-000000000046")
 
@@ -1262,24 +1090,24 @@ DEFINE_IIDX(IComThreadingInfo, "000001ce-0000-0000-C000-000000000046")
     GetCurrentThreadType proc :ptr
     GetCurrentLogicalThreadId proc :ptr
     SetCurrentLogicalThreadId proc :REFGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IProcessInitControl_INTERFACE_DEFINED__
-__IProcessInitControl_INTERFACE_DEFINED__ equ 1
+define __IProcessInitControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProcessInitControl, "72380d55-8d2b-43a3-8513-2b6ef31434e9")
 
 .comdef IProcessInitControl : public IUnknown
 
     ResetInitializerTimeout proc :DWORD
-    .ends
+   .ends
 
 endif
 
 ifndef __IFastRundown_INTERFACE_DEFINED__
-__IFastRundown_INTERFACE_DEFINED__ equ 1
+define __IFastRundown_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFastRundown, "00000040-0000-0000-C000-000000000046")
 
@@ -1296,14 +1124,14 @@ endif
     }
 
 ifndef __IMarshalingStream_INTERFACE_DEFINED__
-__IMarshalingStream_INTERFACE_DEFINED__ equ 1
+define __IMarshalingStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMarshalingStream, "D8F2F5E6-6102-4863-9F26-389A4676EFDE")
 
 .comdef IMarshalingStream : public IStream
 
     GetMarshalingContextAttribute proc :CO_MARSHALING_CONTEXT_ATTRIBUTES, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1312,7 +1140,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IAgileReference_INTERFACE_DEFINED__
-__IAgileReference_INTERFACE_DEFINED__ equ 1
+define __IAgileReference_INTERFACE_DEFINED__
 endif
 
 else
@@ -1322,7 +1150,7 @@ DEFINE_IIDX(IAgileReference, "C03F6A43-65A4-9818-987E-E0B810D2A6F2")
 .comdef IAgileReference : public IUnknown
 
     Resolve		proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1330,7 +1158,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 externdef IID_ICallbackWithNoReentrancyToApplicationSTA:GUID
 endif
 
-_OBJIDLBASE_ equ 1
+define _OBJIDLBASE_
 endif ;; _OBJIDLBASE_
 
 endif ;; __objidlbase_h__

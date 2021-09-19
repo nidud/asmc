@@ -1,10 +1,10 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -15,30 +15,10 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __amstream_h__
-__amstream_h__ equ <>
 
-ifndef __IAMMultiMediaStream_FWD_DEFINED__
-__IAMMultiMediaStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMMediaStream_FWD_DEFINED__
-__IAMMediaStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaStreamFilter_FWD_DEFINED__
-__IMediaStreamFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectDrawMediaSampleAllocator_FWD_DEFINED__
-__IDirectDrawMediaSampleAllocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectDrawMediaSample_FWD_DEFINED__
-__IDirectDrawMediaSample_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMMediaTypeStream_FWD_DEFINED__
-__IAMMediaTypeStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMMediaTypeSample_FWD_DEFINED__
-__IAMMediaTypeSample_FWD_DEFINED__ equ 1
-endif
+ifndef __amstream_h__
+define __amstream_h__
+
 include unknwn.inc
 include mmstream.inc
 include strmif.inc
@@ -75,7 +55,7 @@ include ddraw.inc
 }
 
 ifndef __IAMMultiMediaStream_INTERFACE_DEFINED__
-__IAMMultiMediaStream_INTERFACE_DEFINED__ equ 1
+define __IAMMultiMediaStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMMultiMediaStream, "BEBE595C-9A6F-11d0-8FDE-00C04FD9189D")
 
@@ -88,12 +68,12 @@ DEFINE_IIDX(IAMMultiMediaStream, "BEBE595C-9A6F-11d0-8FDE-00C04FD9189D")
     OpenFile		proc :LPCWSTR, :DWORD
     OpenMoniker		proc :ptr, :ptr, :DWORD
     Render		proc :DWORD
+   .ends
 
-    .ends
 endif
 
 ifndef __IAMMediaStream_INTERFACE_DEFINED__
-__IAMMediaStream_INTERFACE_DEFINED__ equ 1
+define __IAMMediaStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMMediaStream, "BEBE595D-9A6F-11d0-8FDE-00C04FD9189D")
 
@@ -104,12 +84,12 @@ DEFINE_IIDX(IAMMediaStream, "BEBE595D-9A6F-11d0-8FDE-00C04FD9189D")
     JoinAMMultiMediaStream proc :ptr
     JoinFilter		proc :ptr
     JoinFilterGraph	proc :ptr
+   .ends
 
-    .ends
 endif
 
 ifndef __IMediaStreamFilter_INTERFACE_DEFINED__
-__IMediaStreamFilter_INTERFACE_DEFINED__ equ 1
+define __IMediaStreamFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaStreamFilter, "BEBE595E-9A6F-11d0-8FDE-00C04FD9189D")
 
@@ -124,25 +104,24 @@ DEFINE_IIDX(IMediaStreamFilter, "BEBE595E-9A6F-11d0-8FDE-00C04FD9189D")
     WaitUntil		proc :REFERENCE_TIME
     Flush		proc :BOOL
     EndOfStream		proc
+   .ends
 
-    .ends
 endif
 
 ifndef __IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__
-__IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__ equ 1
+define __IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectDrawMediaSampleAllocator, "AB6B4AFC-F6E4-11d0-900D-00C04FD9189D")
 
 .comdef IDirectDrawMediaSampleAllocator : public IUnknown
 
     GetDirectDraw	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectDrawMediaSample_INTERFACE_DEFINED__
-__IDirectDrawMediaSample_INTERFACE_DEFINED__ equ 1
+define __IDirectDrawMediaSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectDrawMediaSample, "AB6B4AFE-F6E4-11d0-900D-00C04FD9189D")
 
@@ -150,12 +129,12 @@ DEFINE_IIDX(IDirectDrawMediaSample, "AB6B4AFE-F6E4-11d0-900D-00C04FD9189D")
 
     GetSurfaceAndReleaseLock proc :ptr, :ptr
     LockMediaSamplePointer proc
+   .ends
 
-    .ends
 endif
 
 ifndef __IAMMediaTypeStream_INTERFACE_DEFINED__
-__IAMMediaTypeStream_INTERFACE_DEFINED__ equ 1
+define __IAMMediaTypeStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMMediaTypeStream, "AB6B4AFA-F6E4-11d0-900D-00C04FD9189D")
 
@@ -166,12 +145,12 @@ DEFINE_IIDX(IAMMediaTypeStream, "AB6B4AFA-F6E4-11d0-900D-00C04FD9189D")
     CreateSample	proc :LONG, :ptr, :DWORD, :ptr, :ptr
     GetStreamAllocatorRequirements proc :ptr
     SetStreamAllocatorRequirements proc :ptr
+   .ends
 
-    .ends
 endif
 
 ifndef __IAMMediaTypeSample_INTERFACE_DEFINED__
-__IAMMediaTypeSample_INTERFACE_DEFINED__ equ 1
+define __IAMMediaTypeSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMMediaTypeSample, "AB6B4AFB-F6E4-11d0-900D-00C04FD9189D")
 
@@ -194,8 +173,7 @@ DEFINE_IIDX(IAMMediaTypeSample, "AB6B4AFB-F6E4-11d0-900D-00C04FD9189D")
     SetDiscontinuity	proc :BOOL
     GetMediaTime	proc :ptr, :ptr
     SetMediaTime	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 

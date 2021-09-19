@@ -1,5 +1,5 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 440
+define __REQUIRED_RPCNDR_H_VERSION__ 440
 endif
 include rpc.inc
 include rpcndr.inc
@@ -11,74 +11,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __oleidl_h__
-__oleidl_h__ equ <>
-
-ifndef __IOleAdviseHolder_FWD_DEFINED__
-__IOleAdviseHolder_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleCache_FWD_DEFINED__
-__IOleCache_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleCache2_FWD_DEFINED__
-__IOleCache2_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleCacheControl_FWD_DEFINED__
-__IOleCacheControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IParseDisplayName_FWD_DEFINED__
-__IParseDisplayName_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleContainer_FWD_DEFINED__
-__IOleContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleClientSite_FWD_DEFINED__
-__IOleClientSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleObject_FWD_DEFINED__
-__IOleObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleWindow_FWD_DEFINED__
-__IOleWindow_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleLink_FWD_DEFINED__
-__IOleLink_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleItemContainer_FWD_DEFINED__
-__IOleItemContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceUIWindow_FWD_DEFINED__
-__IOleInPlaceUIWindow_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceActiveObject_FWD_DEFINED__
-__IOleInPlaceActiveObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceFrame_FWD_DEFINED__
-__IOleInPlaceFrame_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceObject_FWD_DEFINED__
-__IOleInPlaceObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceSite_FWD_DEFINED__
-__IOleInPlaceSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IContinue_FWD_DEFINED__
-__IContinue_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewObject_FWD_DEFINED__
-__IViewObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewObject2_FWD_DEFINED__
-__IViewObject2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDropSource_FWD_DEFINED__
-__IDropSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IDropTarget_FWD_DEFINED__
-__IDropTarget_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumOLEVERB_FWD_DEFINED__
-__IEnumOLEVERB_FWD_DEFINED__ equ 1
-endif
+define __oleidl_h__
 
 include objidl.inc
 
@@ -86,7 +19,7 @@ include objidl.inc
 MIDL_user_free proto WINAPI :PVOID
 
 ifndef __IOleAdviseHolder_INTERFACE_DEFINED__
-__IOleAdviseHolder_INTERFACE_DEFINED__ equ 1
+define __IOleAdviseHolder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleAdviseHolder, "00000111-0000-0000-C000-000000000046")
 
@@ -98,15 +31,14 @@ DEFINE_IIDX(IOleAdviseHolder, "00000111-0000-0000-C000-000000000046")
     SendOnRename	proc :ptr
     SendOnSave		proc
     SendOnClose		proc
-
-    .ends
+   .ends
 
 LPOLEADVISEHOLDER	typedef ptr IOleAdviseHolder
 
 endif
 
 ifndef __IOleCache_INTERFACE_DEFINED__
-__IOleCache_INTERFACE_DEFINED__ equ 1
+define __IOleCache_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleCache, "0000011e-0000-0000-C000-000000000046")
 
@@ -117,15 +49,14 @@ DEFINE_IIDX(IOleCache, "0000011e-0000-0000-C000-000000000046")
     EnumCache		proc :ptr
     InitCache		proc :ptr
     SetData		proc :ptr, :ptr, :BOOL
-
-    .ends
+   .ends
 
 LPOLECACHE		typedef ptr IOleCache
 
 endif
 
 ifndef __IOleCache2_INTERFACE_DEFINED__
-__IOleCache2_INTERFACE_DEFINED__ equ 1
+define __IOleCache2_INTERFACE_DEFINED__
 
 UPDFCACHE_NODATACACHE	equ ( 0x1 )
 UPDFCACHE_ONSAVECACHE	equ ( 0x2 )
@@ -147,15 +78,14 @@ DEFINE_IIDX(IOleCache2, "00000128-0000-0000-C000-000000000046")
 
     UpdateCache		proc :LPDATAOBJECT, :DWORD, :LPVOID
     DiscardCache	proc :DWORD
-
-    .ends
+   .ends
 
 LPOLECACHE2		typedef ptr IOleCache2
 
 endif
 
 ifndef __IOleCacheControl_INTERFACE_DEFINED__
-__IOleCacheControl_INTERFACE_DEFINED__ equ 1
+define __IOleCacheControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleCacheControl, "00000129-0000-0000-C000-000000000046")
 
@@ -163,30 +93,28 @@ DEFINE_IIDX(IOleCacheControl, "00000129-0000-0000-C000-000000000046")
 
     OnRun		proc :LPDATAOBJECT
     OnStop		proc
-
-    .ends
+   .ends
 
 PPOLECACHECONTROL	typedef ptr IOleCacheControl
 
 endif
 
 ifndef __IParseDisplayName_INTERFACE_DEFINED__
-__IParseDisplayName_INTERFACE_DEFINED__ equ 1
+define __IParseDisplayName_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IParseDisplayName, "0000011a-0000-0000-C000-000000000046")
 
 .comdef IParseDisplayName : public IUnknown
 
     ParseDisplayName	proc :ptr, :LPOLESTR, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPPARSEDISPLAYNAME	typedef ptr IParseDisplayName
 
 endif
 
 ifndef __IOleContainer_INTERFACE_DEFINED__
-__IOleContainer_INTERFACE_DEFINED__ equ 1
+define __IOleContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleContainer, "0000011b-0000-0000-C000-000000000046")
 
@@ -194,15 +122,14 @@ DEFINE_IIDX(IOleContainer, "0000011b-0000-0000-C000-000000000046")
 
     EnumObjects		proc :DWORD, :ptr
     LockContainer	proc :BOOL
-
-    .ends
+   .ends
 
 LPOLECONTAINER		typedef ptr IOleContainer
 
 endif
 
 ifndef __IOleClientSite_INTERFACE_DEFINED__
-__IOleClientSite_INTERFACE_DEFINED__ equ 1
+define __IOleClientSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleClientSite, "00000118-0000-0000-C000-000000000046")
 
@@ -214,15 +141,14 @@ DEFINE_IIDX(IOleClientSite, "00000118-0000-0000-C000-000000000046")
     ShowObject		proc
     OnShowWindow	proc :BOOL
     RequestNewObjectLayout proc
-
-    .ends
+   .ends
 
 LPOLECLIENTSITE		typedef ptr IOleClientSite
 
 endif
 
 ifndef __IOleObject_INTERFACE_DEFINED__
-__IOleObject_INTERFACE_DEFINED__ equ 1
+define __IOleObject_INTERFACE_DEFINED__
 
 ;typedef enum tagOLEGETMONIKER
 OLEGETMONIKER_ONLYIFTHERE equ 1
@@ -298,14 +224,14 @@ DEFINE_IIDX(IOleObject, "00000112-0000-0000-C000-000000000046")
     EnumAdvise		proc :ptr
     GetMiscStatus	proc :DWORD, :ptr
     SetColorScheme	proc :ptr
-    .ends
+   .ends
 
 LPOLEOBJECT		typedef ptr IOleObject
 
 endif
 
 ifndef __IOLETypes_INTERFACE_DEFINED__
-__IOLETypes_INTERFACE_DEFINED__ equ 1
+define __IOLETypes_INTERFACE_DEFINED__
 
 ;typedef enum tagOLERENDER
 
@@ -335,7 +261,7 @@ LPLINKSRCDESCRIPTOR	typedef ptr OBJECTDESCRIPTOR
 endif
 
 ifndef __IOleWindow_INTERFACE_DEFINED__
-__IOleWindow_INTERFACE_DEFINED__ equ 1
+define __IOleWindow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleWindow, "00000114-0000-0000-C000-000000000046")
 
@@ -343,15 +269,14 @@ DEFINE_IIDX(IOleWindow, "00000114-0000-0000-C000-000000000046")
 
     GetWindow		proc :ptr
     ContextSensitiveHelp proc :BOOL
-
-    .ends
+   .ends
 
 LPOLEWINDOW		typedef ptr IOleWindow
 
 endif
 
 ifndef __IOleLink_INTERFACE_DEFINED__
-__IOleLink_INTERFACE_DEFINED__ equ 1
+define __IOleLink_INTERFACE_DEFINED__
 
 ;typedef enum tagOLEUPDATE
 
@@ -380,15 +305,14 @@ DEFINE_IIDX(IOleLink, "0000011d-0000-0000-C000-000000000046")
     GetBoundSource	proc :ptr
     UnbindSource	proc
     Update		proc :ptr
-
-    .ends
+   .ends
 
 LPOLELINK		typedef ptr IOleLink
 
 endif
 
 ifndef __IOleItemContainer_INTERFACE_DEFINED__
-__IOleItemContainer_INTERFACE_DEFINED__ equ 1
+define __IOleItemContainer_INTERFACE_DEFINED__
 
 ;typedef enum tagBINDSPEED
 
@@ -411,15 +335,14 @@ DEFINE_IIDX(IOleItemContainer, "0000011c-0000-0000-C000-000000000046")
     GetObject		proc :LPOLESTR, :DWORD, :ptr, :REFIID, :ptr
     GetObjectStorage	proc :LPOLESTR, :ptr, :REFIID, :ptr
     IsRunning		proc :LPOLESTR
-
-    .ends
+   .ends
 
 LPOLEITEMCONTAINER	typedef ptr IOleItemContainer
 
 endif
 
 ifndef __IOleInPlaceUIWindow_INTERFACE_DEFINED__
-__IOleInPlaceUIWindow_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceUIWindow_INTERFACE_DEFINED__
 
 BORDERWIDTHS		typedef RECT
 LPBORDERWIDTHS		typedef LPRECT
@@ -433,15 +356,14 @@ DEFINE_IIDX(IOleInPlaceUIWindow, "00000115-0000-0000-C000-000000000046")
     RequestBorderSpace	proc :LPCBORDERWIDTHS
     SetBorderSpace	proc :LPCBORDERWIDTHS
     SetActiveObject	proc :ptr, :LPCOLESTR
-
-    .ends
+   .ends
 
 LPOLEINPLACEUIWINDOW	typedef ptr IOleInPlaceUIWindow
 
 endif
 
 ifndef __IOleInPlaceActiveObject_INTERFACE_DEFINED__
-__IOleInPlaceActiveObject_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceActiveObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleInPlaceActiveObject, "00000117-0000-0000-C000-000000000046")
 
@@ -452,15 +374,14 @@ DEFINE_IIDX(IOleInPlaceActiveObject, "00000117-0000-0000-C000-000000000046")
     OnDocWindowActivate proc :BOOL
     ResizeBorder	proc :LPCRECT, :ptr, :BOOL
     EnableModeless	proc :BOOL
-
-    .ends
+   .ends
 
 LPOLEINPLACEACTIVEOBJECT typedef ptr IOleInPlaceActiveObject
 
 endif
 
 ifndef __IOleInPlaceFrame_INTERFACE_DEFINED__
-__IOleInPlaceFrame_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceFrame_INTERFACE_DEFINED__
 
 OLEINPLACEFRAMEINFO	STRUC
 cb			UINT ?
@@ -488,15 +409,14 @@ DEFINE_IIDX(IOleInPlaceFrame, "00000116-0000-0000-C000-000000000046")
     SetStatusText	proc :LPCOLESTR
     EnableModeless	proc :BOOL
     TranslateAccelerator proc :LPMSG, :WORD
-
-    .ends
+   .ends
 
 LPOLEINPLACEFRAME	typedef ptr IOleInPlaceFrame
 
 endif
 
 ifndef __IOleInPlaceObject_INTERFACE_DEFINED__
-__IOleInPlaceObject_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleInPlaceObject, "00000113-0000-0000-C000-000000000046")
 
@@ -506,15 +426,14 @@ DEFINE_IIDX(IOleInPlaceObject, "00000113-0000-0000-C000-000000000046")
     UIDeactivate	proc
     SetObjectRects	proc :LPCRECT, :LPCRECT
     ReactivateAndUndo	proc
-
-    .ends
+   .ends
 
 LPOLEINPLACEOBJECT	typedef ptr IOleInPlaceObject
 
 endif
 
 ifndef __IOleInPlaceSite_INTERFACE_DEFINED__
-__IOleInPlaceSite_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleInPlaceSite, "00000119-0000-0000-C000-000000000046")
 
@@ -530,28 +449,26 @@ DEFINE_IIDX(IOleInPlaceSite, "00000119-0000-0000-C000-000000000046")
     DiscardUndoState	proc
     DeactivateAndUndo	proc
     OnPosRectChange	proc :LPCRECT
-
-    .ends
+   .ends
 
 LPOLEINPLACESITE	typedef ptr IOleInPlaceSite
 
 endif
 
 ifndef __IContinue_INTERFACE_DEFINED__
-__IContinue_INTERFACE_DEFINED__ equ 1
+define __IContinue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContinue, "0000012a-0000-0000-C000-000000000046")
 
 .comdef IContinue : public IUnknown
 
     FContinue		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IViewObject_INTERFACE_DEFINED__
-__IViewObject_INTERFACE_DEFINED__ equ 1
+define __IViewObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewObject, "0000010d-0000-0000-C000-000000000046")
 
@@ -563,30 +480,28 @@ DEFINE_IIDX(IViewObject, "0000010d-0000-0000-C000-000000000046")
     Unfreeze		proc :DWORD
     SetAdvise		proc :DWORD, :DWORD, :ptr
     GetAdvise		proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPVIEWOBJECT		typedef ptr IViewObject
 
 endif
 
 ifndef __IViewObject2_INTERFACE_DEFINED__
-__IViewObject2_INTERFACE_DEFINED__ equ 1
+define __IViewObject2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewObject2, "00000127-0000-0000-C000-000000000046")
 
 .comdef IViewObject2 : public IViewObject
 
     GetExtent		proc :DWORD, :SDWORD, :ptr, :LPSIZEL
-
-    .ends
+   .ends
 
 LPVIEWOBJECT2		typedef ptr IViewObject2
 
 endif
 
 ifndef __IDropSource_INTERFACE_DEFINED__
-__IDropSource_INTERFACE_DEFINED__ equ 1
+define __IDropSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDropSource, "00000121-0000-0000-C000-000000000046")
 
@@ -594,15 +509,14 @@ DEFINE_IIDX(IDropSource, "00000121-0000-0000-C000-000000000046")
 
     QueryContinueDrag	proc :BOOL, :DWORD
     GiveFeedback	proc :DWORD
-
-    .ends
+   .ends
 
 LPDROPSOURCE		typedef ptr IDropSource
 
 endif
 
 ifndef __IDropTarget_INTERFACE_DEFINED__
-__IDropTarget_INTERFACE_DEFINED__ equ 1
+define __IDropTarget_INTERFACE_DEFINED__
 
 MK_ALT			equ ( 0x20 )
 DROPEFFECT_NONE		equ ( 0 )
@@ -624,15 +538,14 @@ DEFINE_IIDX(IDropTarget, "00000122-0000-0000-C000-000000000046")
     DragOver		proc :DWORD, :POINTL, :ptr
     DragLeave		proc
     Drop		proc :ptr, :DWORD, :POINTL, :ptr
-
-    .ends
+   .ends
 
 LPDROPTARGET		typedef ptr IDropTarget
 
 endif
 
 ifndef __IEnumOLEVERB_INTERFACE_DEFINED__
-__IEnumOLEVERB_INTERFACE_DEFINED__ equ 1
+define __IEnumOLEVERB_INTERFACE_DEFINED__
 
 OLEVERB			STRUC
 lVerb			LONG ?
@@ -655,8 +568,7 @@ DEFINE_IIDX(IEnumOLEVERB, "0000012B-0000-0000-C000-000000000046")
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 LPENUMOLEVERB		typedef ptr IEnumOLEVERB
 

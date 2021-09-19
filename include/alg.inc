@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,62 +18,7 @@ include ole2.inc
 endif
 
 ifndef __alg_h__
-__alg_h__ equ <>
-
-ifndef __IAdapterInfo_FWD_DEFINED__
-__IAdapterInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IPendingProxyConnection_FWD_DEFINED__
-__IPendingProxyConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IDataChannel_FWD_DEFINED__
-__IDataChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistentDataChannel_FWD_DEFINED__
-__IPersistentDataChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __IPrimaryControlChannel_FWD_DEFINED__
-__IPrimaryControlChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __ISecondaryControlChannel_FWD_DEFINED__
-__ISecondaryControlChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumAdapterInfo_FWD_DEFINED__
-__IEnumAdapterInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IAdapterNotificationSink_FWD_DEFINED__
-__IAdapterNotificationSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IApplicationGatewayServices_FWD_DEFINED__
-__IApplicationGatewayServices_FWD_DEFINED__ equ 1
-endif
-ifndef __IApplicationGateway_FWD_DEFINED__
-__IApplicationGateway_FWD_DEFINED__ equ 1
-endif
-ifndef __ApplicationGatewayServices_FWD_DEFINED__
-__ApplicationGatewayServices_FWD_DEFINED__ equ 1
-endif
-ifndef __PrimaryControlChannel_FWD_DEFINED__
-__PrimaryControlChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __SecondaryControlChannel_FWD_DEFINED__
-__SecondaryControlChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __AdapterInfo_FWD_DEFINED__
-__AdapterInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __EnumAdapterInfo_FWD_DEFINED__
-__EnumAdapterInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __PendingProxyConnection_FWD_DEFINED__
-__PendingProxyConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __DataChannel_FWD_DEFINED__
-__DataChannel_FWD_DEFINED__ equ 1
-endif
-ifndef __PersistentDataChannel_FWD_DEFINED__
-__PersistentDataChannel_FWD_DEFINED__ equ 1
-endif
+define __alg_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -85,28 +30,28 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ALG_MAXIMUM_PORT_RANGE_SIZE equ ( 10 )
 
 .enum ALG_PROTOCOL {
-	eALG_TCP	= 0x1,
-	eALG_UDP	= 0x2
+    eALG_TCP	= 0x1,
+    eALG_UDP	= 0x2
     }
 .enum ALG_CAPTURE {
-	eALG_SOURCE_CAPTURE = 0x1,
-	eALG_DESTINATION_CAPTURE = 0x2
+    eALG_SOURCE_CAPTURE = 0x1,
+    eALG_DESTINATION_CAPTURE = 0x2
     }
 .enum ALG_DIRECTION {
-	eALG_INBOUND	= 0x1,
-	eALG_OUTBOUND	= 0x2,
-	eALG_BOTH	= 0x3
+    eALG_INBOUND	= 0x1,
+    eALG_OUTBOUND	= 0x2,
+    eALG_BOTH	= 0x3
     }
 .enum ALG_ADAPTER_TYPE {
-	eALG_PRIVATE	= 0x1,
-	eALG_BOUNDARY	= 0x2,
-	eALG_FIREWALLED = 0x4
+    eALG_PRIVATE	= 0x1,
+    eALG_BOUNDARY	= 0x2,
+    eALG_FIREWALLED = 0x4
     }
 .enum ALG_NOTIFICATION {
-	eALG_NONE	= 0,
-	eALG_SESSION_CREATION = 0x1,
-	eALG_SESSION_DELETION = 0x2,
-	eALG_SESSION_BOTH = 0x3
+    eALG_NONE	= 0,
+    eALG_SESSION_CREATION = 0x1,
+    eALG_SESSION_DELETION = 0x2,
+    eALG_SESSION_BOTH = 0x3
     }
 
 ALG_PRIMARY_CHANNEL_PROPERTIES STRUC
@@ -157,7 +102,7 @@ eDirection		ALG_DIRECTION ?
 ALG_PERSISTENT_DATA_CHANNEL_PROPERTIES ENDS
 
 ifndef __IAdapterInfo_INTERFACE_DEFINED__
-__IAdapterInfo_INTERFACE_DEFINED__ equ 1
+define __IAdapterInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAdapterInfo, "480BF94A-09FD-4F8A-A3E0-B0700282D84D")
 
@@ -166,26 +111,24 @@ DEFINE_IIDX(IAdapterInfo, "480BF94A-09FD-4F8A-A3E0-B0700282D84D")
     GetAdapterIndex	proc :ptr
     GetAdapterType	proc :ptr
     GetAdapterAddresses proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPendingProxyConnection_INTERFACE_DEFINED__
-__IPendingProxyConnection_INTERFACE_DEFINED__ equ 1
+define __IPendingProxyConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPendingProxyConnection, "B68E5043-3E3D-4CC2-B9C1-5F8F88FEE81C")
 
 .comdef IPendingProxyConnection : public IUnknown
 
     Cancel		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDataChannel_INTERFACE_DEFINED__
-__IDataChannel_INTERFACE_DEFINED__ equ 1
+define __IDataChannel_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataChannel, "AD42D12A-4AD0-4856-919E-E854C91D1856")
 
@@ -195,13 +138,12 @@ DEFINE_IIDX(IDataChannel, "AD42D12A-4AD0-4856-919E-E854C91D1856")
     GetChannelProperties proc :ptr
     GetSessionCreationEventHandle proc :ptr
     GetSessionDeletionEventHandle proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPersistentDataChannel_INTERFACE_DEFINED__
-__IPersistentDataChannel_INTERFACE_DEFINED__ equ 1
+define __IPersistentDataChannel_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistentDataChannel, "A180E934-D92A-415D-9144-759F8054E8F6")
 
@@ -209,13 +151,12 @@ DEFINE_IIDX(IPersistentDataChannel, "A180E934-D92A-415D-9144-759F8054E8F6")
 
     Cancel		proc
     GetChannelProperties proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPrimaryControlChannel_INTERFACE_DEFINED__
-__IPrimaryControlChannel_INTERFACE_DEFINED__ equ 1
+define __IPrimaryControlChannel_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPrimaryControlChannel, "1A2E8B62-9012-4BE6-84AE-32BD66BA657A")
 
@@ -224,13 +165,12 @@ DEFINE_IIDX(IPrimaryControlChannel, "1A2E8B62-9012-4BE6-84AE-32BD66BA657A")
     Cancel		proc
     GetChannelProperties proc :ptr
     GetOriginalDestinationInformation proc :ULONG, :USHORT, :ptr, :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ISecondaryControlChannel_INTERFACE_DEFINED__
-__ISecondaryControlChannel_INTERFACE_DEFINED__ equ 1
+define __ISecondaryControlChannel_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISecondaryControlChannel, "A23F9D10-714C-41FE-8471-FFB19BC28454")
 
@@ -239,13 +179,12 @@ DEFINE_IIDX(ISecondaryControlChannel, "A23F9D10-714C-41FE-8471-FFB19BC28454")
     Cancel		proc
     GetChannelProperties proc :ptr
     GetOriginalDestinationInformation proc :ULONG, :USHORT, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumAdapterInfo_INTERFACE_DEFINED__
-__IEnumAdapterInfo_INTERFACE_DEFINED__ equ 1
+define __IEnumAdapterInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumAdapterInfo, "A23F9D11-714C-41FE-8471-FFB19BC28454")
 
@@ -255,13 +194,12 @@ DEFINE_IIDX(IEnumAdapterInfo, "A23F9D11-714C-41FE-8471-FFB19BC28454")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAdapterNotificationSink_INTERFACE_DEFINED__
-__IAdapterNotificationSink_INTERFACE_DEFINED__ equ 1
+define __IAdapterNotificationSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAdapterNotificationSink, "44AB2DC3-23B2-47DE-8228-2E1CCEEB9911")
 
@@ -271,13 +209,12 @@ DEFINE_IIDX(IAdapterNotificationSink, "44AB2DC3-23B2-47DE-8228-2E1CCEEB9911")
     AdapterRemoved	proc :ptr
     AdapterModified	proc :ptr
     AdapterUpdatePortMapping proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IApplicationGatewayServices_INTERFACE_DEFINED__
-__IApplicationGatewayServices_INTERFACE_DEFINED__ equ 1
+define __IApplicationGatewayServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IApplicationGatewayServices, "5134842A-FDCE-485D-93CD-DE1640643BBE")
 
@@ -296,13 +233,12 @@ DEFINE_IIDX(IApplicationGatewayServices, "5134842A-FDCE-485D-93CD-DE1640643BBE")
     StartAdapterNotifications proc :ptr, :ptr
     StopAdapterNotifications proc :DWORD
     LookupAdapterPortMapping proc :ULONG, :UCHAR, :ULONG, :USHORT, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IApplicationGateway_INTERFACE_DEFINED__
-__IApplicationGateway_INTERFACE_DEFINED__ equ 1
+define __IApplicationGateway_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IApplicationGateway, "5134842B-FDCE-485D-93CD-DE1640643BBE")
 
@@ -310,15 +246,14 @@ DEFINE_IIDX(IApplicationGateway, "5134842B-FDCE-485D-93CD-DE1640643BBE")
 
     Initialize		proc :ptr
     Stop		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ALGLib_LIBRARY_DEFINED__
-__ALGLib_LIBRARY_DEFINED__ equ 1
+define __ALGLib_LIBRARY_DEFINED__
 
-externdef		LIBID_ALGLib:IID
+externdef LIBID_ALGLib:IID
 DEFINE_GUIDS(CLSID_ApplicationGatewayServices, "F8ADE1D3-49DF-4B75-9005-EF9508E6A337")
 DEFINE_GUIDS(CLSID_PrimaryControlChannel, "3CEB5509-C1CD-432F-9D8F-65D1E286AA80")
 DEFINE_GUIDS(CLSID_SecondaryControlChannel, "7B3181A0-C92F-4567-B0FA-CD9A10ECD7D1")

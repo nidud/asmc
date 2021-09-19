@@ -1,10 +1,10 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,50 +19,7 @@ include ole2.inc
 endif
 
 ifndef __dxgi_h__
-__dxgi_h__ equ <>
-
-ifndef __IDXGIObject_FWD_DEFINED__
-__IDXGIObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDeviceSubObject_FWD_DEFINED__
-__IDXGIDeviceSubObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIResource_FWD_DEFINED__
-__IDXGIResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIKeyedMutex_FWD_DEFINED__
-__IDXGIKeyedMutex_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGISurface_FWD_DEFINED__
-__IDXGISurface_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGISurface1_FWD_DEFINED__
-__IDXGISurface1_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIAdapter_FWD_DEFINED__
-__IDXGIAdapter_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIOutput_FWD_DEFINED__
-__IDXGIOutput_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGISwapChain_FWD_DEFINED__
-__IDXGISwapChain_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory_FWD_DEFINED__
-__IDXGIFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDevice_FWD_DEFINED__
-__IDXGIDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory1_FWD_DEFINED__
-__IDXGIFactory1_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIAdapter1_FWD_DEFINED__
-__IDXGIAdapter1_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDevice1_FWD_DEFINED__
-__IDXGIDevice1_FWD_DEFINED__ equ 1
-endif
+define __dxgi_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -177,7 +134,7 @@ Flags			UINT ?
 DXGI_SWAP_CHAIN_DESC	ENDS
 
 ifndef __IDXGIObject_INTERFACE_DEFINED__
-__IDXGIObject_INTERFACE_DEFINED__ equ 1
+define __IDXGIObject_INTERFACE_DEFINED__
 
 .comdef IDXGIObject : public IUnknown
 
@@ -185,12 +142,11 @@ __IDXGIObject_INTERFACE_DEFINED__ equ 1
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
     GetParent		proc :REFIID, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IDXGIDeviceSubObject_INTERFACE_DEFINED__
-__IDXGIDeviceSubObject_INTERFACE_DEFINED__ equ 1
+define __IDXGIDeviceSubObject_INTERFACE_DEFINED__
 
 .comdef IDXGIDeviceSubObject : public IDXGIObject
 
@@ -200,7 +156,7 @@ __IDXGIDeviceSubObject_INTERFACE_DEFINED__ equ 1
 endif
 
 ifndef __IDXGIResource_INTERFACE_DEFINED__
-__IDXGIResource_INTERFACE_DEFINED__ equ 1
+define __IDXGIResource_INTERFACE_DEFINED__
 
 .comdef IDXGIResource : public IDXGIDeviceSubObject
 
@@ -208,19 +164,17 @@ __IDXGIResource_INTERFACE_DEFINED__ equ 1
     GetUsage		proc :ptr
     SetEvictionPriority proc :UINT
     GetEvictionPriority proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IDXGIKeyedMutex_INTERFACE_DEFINED__
-__IDXGIKeyedMutex_INTERFACE_DEFINED__ equ 1
+define __IDXGIKeyedMutex_INTERFACE_DEFINED__
 
 .comdef IDXGIKeyedMutex : public IDXGIDeviceSubObject
 
     AcquireSync		proc :UINT64, :DWORD
     ReleaseSync		proc :UINT64
-
-    .ends
+   .ends
 endif
 
 DXGI_MAP_READ		equ 1
@@ -228,38 +182,35 @@ DXGI_MAP_WRITE		equ 2
 DXGI_MAP_DISCARD	equ 4
 
 ifndef __IDXGISurface_INTERFACE_DEFINED__
-__IDXGISurface_INTERFACE_DEFINED__ equ 1
+define __IDXGISurface_INTERFACE_DEFINED__
 
 .comdef IDXGISurface : public IDXGIDeviceSubObject
 
     GetDesc		proc :ptr
     Map			proc :ptr, :UINT
     Unmap		proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IDXGISurface1_INTERFACE_DEFINED__
-__IDXGISurface1_INTERFACE_DEFINED__ equ 1
+define __IDXGISurface1_INTERFACE_DEFINED__
 
 .comdef IDXGISurface1 : public IDXGISurface
 
     GetDC		proc :BOOL, :ptr
     ReleaseDC		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IDXGIAdapter_INTERFACE_DEFINED__
-__IDXGIAdapter_INTERFACE_DEFINED__ equ 1
+define __IDXGIAdapter_INTERFACE_DEFINED__
 
 .comdef IDXGIAdapter : public IDXGIObject
 
     EnumOutputs		proc :UINT, :ptr
     GetDesc		proc :ptr
     CheckInterfaceSupport proc :REFGUID, :ptr
-
-    .ends
+   .ends
     LPIDXGIAdapter	typedef ptr IDXGIAdapter
 endif
 
@@ -267,7 +218,7 @@ DXGI_ENUM_MODES_INTERLACED equ 1
 DXGI_ENUM_MODES_SCALING equ 2
 
 ifndef __IDXGIOutput_INTERFACE_DEFINED__
-__IDXGIOutput_INTERFACE_DEFINED__ equ 1
+define __IDXGIOutput_INTERFACE_DEFINED__
 
 .comdef IDXGIOutput : public IDXGIObject
 
@@ -283,8 +234,7 @@ __IDXGIOutput_INTERFACE_DEFINED__ equ 1
     SetDisplaySurface	proc :ptr
     GetDisplaySurfaceData proc :ptr
     GetFrameStatistics	proc :ptr
-
-    .ends
+   .ends
 endif
 
 DXGI_MAX_SWAP_CHAIN_BUFFERS equ ( 16 )
@@ -293,7 +243,7 @@ DXGI_PRESENT_DO_NOT_SEQUENCE equ 0x00000002
 DXGI_PRESENT_RESTART	equ 0x00000004
 
 ifndef __IDXGISwapChain_INTERFACE_DEFINED__
-__IDXGISwapChain_INTERFACE_DEFINED__ equ 1
+define __IDXGISwapChain_INTERFACE_DEFINED__
 
 .comdef IDXGISwapChain : public IDXGIDeviceSubObject
 
@@ -307,8 +257,7 @@ __IDXGISwapChain_INTERFACE_DEFINED__ equ 1
     GetContainingOutput proc :ptr
     GetFrameStatistics	proc :ptr
     GetLastPresentCount proc :ptr
-
-    .ends
+   .ends
     LPIDXGISwapChain	typedef ptr IDXGISwapChain
 endif
 
@@ -318,7 +267,7 @@ DXGI_MWA_NO_PRINT_SCREEN equ ( 1 SHL 2 )
 DXGI_MWA_VALID		equ ( 0x7 )
 
 ifndef __IDXGIFactory_INTERFACE_DEFINED__
-__IDXGIFactory_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory_INTERFACE_DEFINED__
 
 .comdef IDXGIFactory : public IDXGIObject
 
@@ -327,8 +276,7 @@ __IDXGIFactory_INTERFACE_DEFINED__ equ 1
     GetWindowAssociation proc :ptr
     CreateSwapChain	proc :ptr, :ptr, :ptr
     CreateSoftwareAdapter proc :HMODULE, :ptr
-
-    .ends
+   .ends
 endif
 
 ;HRESULT
@@ -342,7 +290,7 @@ CreateDXGIFactory1 proto WINAPI \
 	     ppFactory: PVOID
 
 ifndef __IDXGIDevice_INTERFACE_DEFINED__
-__IDXGIDevice_INTERFACE_DEFINED__ equ 1
+define __IDXGIDevice_INTERFACE_DEFINED__
 
 .comdef IDXGIDevice : public IDXGIObject
 
@@ -351,8 +299,7 @@ __IDXGIDevice_INTERFACE_DEFINED__ equ 1
     QueryResourceResidency proc :ptr, :ptr, :UINT
     SetGPUThreadPriority proc :SINT
     GetGPUThreadPriority proc :ptr
-
-    .ends
+   .ends
     LPIDXGIDevice	typedef ptr IDXGIDevice
 endif
 
@@ -380,36 +327,33 @@ WhitePoints		FLOAT  16  dup(?)
 DXGI_DISPLAY_COLOR_SPACE ENDS
 
 ifndef __IDXGIFactory1_INTERFACE_DEFINED__
-__IDXGIFactory1_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory1_INTERFACE_DEFINED__
 
 .comdef IDXGIFactory1 : public IDXGIFactory
 
     EnumAdapters1	proc :UINT, :ptr
     IsCurrent		proc
-
-    .ends
+   .ends
     LPIDXGIFactory1	typedef ptr IDXGIFactory1
 endif
 
 ifndef __IDXGIAdapter1_INTERFACE_DEFINED__
-__IDXGIAdapter1_INTERFACE_DEFINED__ equ 1
+define __IDXGIAdapter1_INTERFACE_DEFINED__
 
 .comdef IDXGIAdapter1 : public IDXGIAdapter
 
     GetDesc1		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IDXGIDevice1_INTERFACE_DEFINED__
-__IDXGIDevice1_INTERFACE_DEFINED__ equ 1
+define __IDXGIDevice1_INTERFACE_DEFINED__
 
 .comdef IDXGIDevice1 : public IDXGIDevice
 
     SetMaximumFrameLatency proc :UINT
     GetMaximumFrameLatency proc :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUID(IID_IDXGIObject,		0xaec22fb8,0x76f3,0x4639,0x9b,0xe0,0x28,0xeb,0x43,0xa6,0x7a,0x2e)

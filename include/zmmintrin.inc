@@ -1,5 +1,5 @@
 ifndef _ZMMINTRIN_H_INCLUDED
-_ZMMINTRIN_H_INCLUDED equ <>
+define _ZMMINTRIN_H_INCLUDED
 
 ifndef _INCLUDED_IMM
 .err <Header should only be included from immintrin.h>

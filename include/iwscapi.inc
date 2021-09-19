@@ -20,16 +20,6 @@ endif
 ifndef __iwscapi_h__
 define __iwscapi_h__
 
-ifndef __IWscProduct_FWD_DEFINED__
-define __IWscProduct_FWD_DEFINED__
-endif
-ifndef __IWSCProductList_FWD_DEFINED__
-define __IWSCProductList_FWD_DEFINED__
-endif
-ifndef __WSCProductList_FWD_DEFINED__
-define __WSCProductList_FWD_DEFINED__
-endif
-
 include oaidl.inc
 include ocidl.inc
 
@@ -61,7 +51,7 @@ DEFINE_IIDX(IWscProduct, "8C38232E-3A45-4A27-92B0-1A16A975F669")
     get_SignatureStatus proc :ptr
     get_RemediationPath proc :ptr
     get_ProductStateTimestamp proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -75,7 +65,7 @@ DEFINE_IIDX(IWSCProductList, "722A338C-6E8E-4E72-AC27-1417FB0C81C2")
     Initialize		proc :ULONG
     get_Count		proc :ptr
     get_Item		proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 

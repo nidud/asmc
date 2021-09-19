@@ -1,25 +1,16 @@
-.pragma list(push, 0)
 ifndef _WINNT_
-_WINNT_ equ <>
+define _WINNT_
 
 include ctype.inc
 include string.inc
 include basetsd.inc
 ifndef _WIN32_FUSION
-_WIN32_FUSION equ 0
-endif
-
-ifndef __declspec
-__declspec macro x:vararg
-	endm
+define _WIN32_FUSION
 endif
 
 ANYSIZE_ARRAY equ 1
 
 .pragma comment(lib, ntdll)
-
-;include specstrings.inc
-;include kernelspecs.inc
 
 if defined(_WIN64) or defined(_M_ALPHA)
 MAX_NATURAL_ALIGNMENT		equ QWORD
@@ -74,50 +65,6 @@ PROBE_ALIGNMENT macro _s
 	endm
 endif
 
-if 0
-;ifndef SORTPP_PASS
-C_ASSERT macro e
-	if e
-	    exitm<__C_ASSERT__[1]>
-	else
-	    exitm<__C_ASSERT__[-1]>
-	endif
-	endm
-else
-C_ASSERT macro e
-	endm
-endif
-
-if (defined(_M_IX86) OR defined(_M_IA64) OR defined(_M_AMD64)) AND NOT defined(MIDL_PASS)
-DECLSPEC_IMPORT		equ <__declspec(dllimport)>
-else
-DECLSPEC_IMPORT		equ <>
-endif
-
-ifndef DECLSPEC_NORETURN
-if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
-DECLSPEC_NORETURN	equ <__declspec(noreturn)>
-else
-DECLSPEC_NORETURN	equ <>
-endif
-endif
-
-ifndef DECLSPEC_NOTHROW
-if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
-DECLSPEC_NOTHROW	equ <__declspec(nothrow)>
-else
-DECLSPEC_NOTHROW	equ <>
-endif
-endif
-
-ifndef DECLSPEC_ALIGN
-DECLSPEC_ALIGN macro x
-if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
-	exitm<__declspec(align(x))>
-endif
-	endm
-endif
-
 ifndef SYSTEM_CACHE_ALIGNMENT_SIZE
 if defined(_AMD64_) or defined(_X86_)
 SYSTEM_CACHE_ALIGNMENT_SIZE equ 64
@@ -126,74 +73,14 @@ SYSTEM_CACHE_ALIGNMENT_SIZE equ 128
 endif
 endif
 
-ifndef DECLSPEC_CACHEALIGN
-DECLSPEC_CACHEALIGN	equ DECLSPEC_ALIGN(SYSTEM_CACHE_ALIGNMENT_SIZE)
-endif
-
-ifndef DECLSPEC_UUID
-DECLSPEC_UUID macro x
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-	exitm<__declspec(uuid(x))>
+ifndef DECLSPEC_ALIGN
+DECLSPEC_ALIGN macro x
+if (_MSC_VER GE 1300)
+	exitm<x>
+else
+	exitm<>
 endif
 	endm
-endif
-
-ifndef DECLSPEC_NOVTABLE
-if (_MSC_VER GE 1100) AND defined(__cplusplus)
-DECLSPEC_NOVTABLE	equ <__declspec(novtable)>
-else
-DECLSPEC_NOVTABLE	equ <>
-endif
-endif
-
-ifndef DECLSPEC_SELECTANY
-if (_MSC_VER GE 1100)
-DECLSPEC_SELECTANY	equ <__declspec(selectany)>
-else
-DECLSPEC_SELECTANY	equ <>
-endif
-endif
-
-ifndef NOP_FUNCTION
-if (_MSC_VER GE 1210)
-NOP_FUNCTION		equ <__noop>
-else
-NOP_FUNCTION		equ <>
-endif
-endif
-
-ifndef DECLSPEC_ADDRSAFE
-if (_MSC_VER GE 1200) AND (defined(_M_ALPHA) OR defined(_M_AXP64))
-DECLSPEC_ADDRSAFE	equ <__declspec(address_safe)>
-else
-DECLSPEC_ADDRSAFE	equ <>
-endif
-endif
-
-ifndef DECLSPEC_NOINLINE
-if (_MSC_VER GE 1300)
-DECLSPEC_NOINLINE	equ <__declspec(noinline)>
-else
-DECLSPEC_NOINLINE	equ <>
-endif
-endif
-
-ifndef FORCEINLINE
-if (_MSC_VER GE 1200)
-FORCEINLINE		equ <__forceinline>
-else
-FORCEINLINE		equ <__inline>
-endif
-endif
-
-ifndef DECLSPEC_DEPRECATED
-if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
-DECLSPEC_DEPRECATED	equ <__declspec(deprecated)>
-DEPRECATE_SUPPORTED	equ <>
-else
-DECLSPEC_DEPRECATED	equ <>
-;undef	DEPRECATE_SUPPORTED
-endif
 endif
 
 ifdef DEPRECATE_DDK_FUNCTIONS
@@ -212,153 +99,114 @@ PRAGMA_DEPRECATED_DDK	equ 0
 endif
 
 
-PVOID			typedef ptr
-PVOID64			typedef ptr
-
-if (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
-NTAPI			equ <stdcall>
-else
-NTAPI			equ <>
-endif
-
-ifndef _M_CEE_PURE
-NTAPI_INLINE		equ <NTAPI>
-else
-NTAPI_INLINE		equ <>
-endif
-
-
-ifndef _NTSYSTEM_
-NTSYSAPI		equ <DECSPEC_IMPORT>
-NTSYSCALLAPI		equ <DECSPEC_IMPORT>
-else
-NTSYSAPI		equ <>
-ifdef _NTDLLBUILD_
-NTSYSCALLAPI		equ <>
-else
-NTSYSCALLAPI		equ <DECSPEC_ADDRSAFE>
-endif
-endif
-
-
+PVOID		typedef ptr
+PVOID64		typedef ptr
 ifndef VOID
-VOID			equ <>
-CHAR			typedef sbyte
-;SHORT			typedef sword
-LONG			typedef sdword
-;ifndef MIDL_PASS
-;INT			typedef sdword
-;endif
+VOID		equ <>
+CHAR		typedef sbyte
+LONG		typedef sdword
 endif
 
+WCHAR		typedef word ; 16-bit UNICODE character
+PWCH		typedef ptr WCHAR
+LPWCH		typedef ptr WCHAR
+PWCHAR		typedef ptr WCHAR
+PCWCH		typedef ptr WCHAR
+LPCWCH		typedef ptr WCHAR
+NWPSTR		typedef ptr WCHAR
+LPWSTR		typedef ptr WCHAR
+PWSTR		typedef ptr WCHAR
+PZPWSTR		typedef ptr PWSTR
+PCZPWSTR	typedef ptr PWSTR
+LPUWSTR		typedef ptr WCHAR
+PUWSTR		typedef ptr WCHAR
+LPCWSTR		typedef ptr WCHAR
+PCWSTR		typedef ptr WCHAR
+PZPCWSTR	typedef ptr PCWSTR
+LPCUWSTR	typedef ptr WCHAR
+PCUWSTR		typedef ptr WCHAR
 
-WCHAR			typedef word ; 16-bit UNICODE character
+PZZWSTR		typedef ptr WCHAR
+PCZZWSTR	typedef ptr WCHAR
+PUZZWSTR	typedef ptr WCHAR ;UNALIGNED
+PCUZZWSTR	typedef ptr WCHAR ;UNALIGNED
 
-PWCH			typedef ptr WCHAR
-LPWCH			typedef ptr WCHAR
-PWCHAR			typedef ptr WCHAR
-PCWCH			typedef ptr WCHAR
-LPCWCH			typedef ptr WCHAR
-NWPSTR			typedef ptr WCHAR
-LPWSTR			typedef ptr WCHAR
-PWSTR			typedef ptr WCHAR
-PZPWSTR			typedef ptr PWSTR
-PCZPWSTR		typedef ptr PWSTR
-LPUWSTR			typedef ptr WCHAR
-PUWSTR			typedef ptr WCHAR
-LPCWSTR			typedef ptr WCHAR
-PCWSTR			typedef ptr WCHAR
-PZPCWSTR		typedef ptr PCWSTR
-LPCUWSTR		typedef ptr WCHAR
-PCUWSTR			typedef ptr WCHAR
-
-PZZWSTR			typedef ptr WCHAR
-PCZZWSTR		typedef ptr WCHAR
-PUZZWSTR		typedef ptr WCHAR ;UNALIGNED
-PCUZZWSTR		typedef ptr WCHAR ;UNALIGNED
-
-PNZWCH			typedef ptr WCHAR
-PCNZWCH			typedef ptr WCHAR
-PUNZWCH			typedef ptr WCHAR ;UNALIGNED
-PCUNZWCH		typedef ptr WCHAR ;UNALIGNED
+PNZWCH		typedef ptr WCHAR
+PCNZWCH		typedef ptr WCHAR
+PUNZWCH		typedef ptr WCHAR ;UNALIGNED
+PCUNZWCH	typedef ptr WCHAR ;UNALIGNED
 
 if _WIN32_WINNT GE 0x0600
 
-PCWCHAR			typedef ptr WCHAR
-PCUWCHAR		typedef ptr WCHAR ;UNALIGNED
-
-
-UCSCHAR			typedef dword
-
+PCWCHAR		typedef ptr WCHAR
+PCUWCHAR	typedef ptr WCHAR ;UNALIGNED
+UCSCHAR		typedef dword
 
 UCSCHAR_INVALID_CHARACTER equ 0xffffffff
 
-MIN_UCSCHAR		equ 0
+MIN_UCSCHAR	equ 0
+MAX_UCSCHAR	equ 0x0010FFFF
 
-
-MAX_UCSCHAR		equ 0x0010FFFF
-
-PUCSCHAR		typedef ptr UCSCHAR
-PCUCSCHAR		typedef ptr UCSCHAR
-PUCSSTR			typedef ptr UCSCHAR
-PUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
-PCUCSSTR		typedef ptr UCSCHAR
-PCUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
-PUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
-PCUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
+PUCSCHAR	typedef ptr UCSCHAR
+PCUCSCHAR	typedef ptr UCSCHAR
+PUCSSTR		typedef ptr UCSCHAR
+PUUCSSTR	typedef ptr UCSCHAR ;UNALIGNED
+PCUCSSTR	typedef ptr UCSCHAR
+PCUUCSSTR	typedef ptr UCSCHAR ;UNALIGNED
+PUUCSCHAR	typedef ptr UCSCHAR ;UNALIGNED
+PCUUCSCHAR	typedef ptr UCSCHAR ;UNALIGNED
 
 endif
 
-PCH			typedef ptr CHAR
-LPCH			typedef ptr CHAR
-PCCH			typedef ptr CHAR
-PCHAR			typedef ptr CHAR
-LPCCH			typedef ptr CHAR
-NPSTR			typedef ptr CHAR
-LPSTR			typedef ptr CHAR
-PSTR			typedef ptr CHAR
-PZPSTR			typedef ptr PSTR
-PCZPSTR			typedef ptr PSTR
-LPCSTR			typedef ptr CHAR
-PCSTR			typedef ptr CHAR
-PZPCSTR			typedef ptr PCSTR
-PZZSTR			typedef ptr CHAR
-PCZZSTR			typedef ptr CHAR
-PNZCH			typedef ptr CHAR
-PCNZCH			typedef ptr CHAR
+PCH		typedef ptr CHAR
+LPCH		typedef ptr CHAR
+PCCH		typedef ptr CHAR
+PCHAR		typedef ptr CHAR
+LPCCH		typedef ptr CHAR
+NPSTR		typedef ptr CHAR
+LPSTR		typedef ptr CHAR
+PSTR		typedef ptr CHAR
+PZPSTR		typedef ptr PSTR
+PCZPSTR		typedef ptr PSTR
+LPCSTR		typedef ptr CHAR
+PCSTR		typedef ptr CHAR
+PZPCSTR		typedef ptr PCSTR
+PZZSTR		typedef ptr CHAR
+PCZZSTR		typedef ptr CHAR
+PNZCH		typedef ptr CHAR
+PCNZCH		typedef ptr CHAR
 
 ifdef _UNICODE
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED equ <>
-TBYTE			typedef WCHAR
-TCHAR			typedef WCHAR
-PTCHAR			typedef ptr WCHAR
-PTBYTE			typedef ptr WCHAR
+define _TCHAR_DEFINED
+TBYTE		typedef WCHAR
+TCHAR		typedef WCHAR
+PTCHAR		typedef ptr WCHAR
+PTBYTE		typedef ptr WCHAR
 endif
 
-PTCH			typedef LPWCH
-LPTCH			typedef LPWCH
-PCTCH			typedef LPCWCH
-LPCTCH			typedef LPCWCH
-PTSTR			typedef LPWSTR
-LPTSTR			typedef LPWSTR
-PCTSTR			typedef LPCWSTR
-LPCTSTR			typedef LPCWSTR
-LPUTSTR			typedef LPUWSTR
-PUTSTR			typedef LPUWSTR
-PCUTSTR			typedef LPCUWSTR
-LPCUTSTR		typedef LPCUWSTR
-;LP			typedef LPWSTR
+PTCH		typedef LPWCH
+LPTCH		typedef LPWCH
+PCTCH		typedef LPCWCH
+LPCTCH		typedef LPCWCH
+PTSTR		typedef LPWSTR
+LPTSTR		typedef LPWSTR
+PCTSTR		typedef LPCWSTR
+LPCTSTR		typedef LPCWSTR
+LPUTSTR		typedef LPUWSTR
+PUTSTR		typedef LPUWSTR
+PCUTSTR		typedef LPCUWSTR
+LPCUTSTR	typedef LPCUWSTR
 
-PZZTSTR			typedef PZZWSTR
-PCZZTSTR		typedef PCZZWSTR
-PUZZTSTR		typedef PUZZWSTR
-PCUZZTSTR		typedef PCUZZWSTR
-PNZTCH			typedef PNZWCH
-PCNZTCH			typedef PCNZWCH
-PUNZTCH			typedef PUNZWCH
-PCUNZTCH		typedef PCUNZWCH
+PZZTSTR		typedef PZZWSTR
+PCZZTSTR	typedef PCZZWSTR
+PUZZTSTR	typedef PUZZWSTR
+PCUZZTSTR	typedef PCUZZWSTR
+PNZTCH		typedef PNZWCH
+PCNZTCH		typedef PCNZWCH
+PUNZTCH		typedef PUNZWCH
+PCUNZTCH	typedef PCUNZWCH
 
 __TEXT macro quote
 	exitm<L&quote&>
@@ -367,34 +215,33 @@ __TEXT macro quote
 else ; _UNICODE
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED equ <>
-TBYTE			typedef CHAR
-TCHAR			typedef CHAR
-PTCHAR			typedef ptr CHAR
-PTBYTE			typedef ptr CHAR
+define _TCHAR_DEFINED
+TBYTE		typedef CHAR
+TCHAR		typedef CHAR
+PTCHAR		typedef ptr CHAR
+PTBYTE		typedef ptr CHAR
 endif
 
-PTCH			typedef LPCH
-LPTCH			typedef LPCH
-PCTCH			typedef LPCCH
-LPCTCH			typedef LPCCH
-PTSTR			typedef LPSTR
-LPTSTR			typedef LPSTR
-PUTSTR			typedef LPSTR
-LPUTSTR			typedef LPSTR
-PCTSTR			typedef LPCSTR
-LPCTSTR			typedef LPCSTR
-PCUTSTR			typedef LPCSTR
-LPCUTSTR		typedef LPCSTR
-;LP			typedef LPSTR
-PZZTSTR			typedef PZZSTR
-PUZZTSTR		typedef PZZSTR
-PCZZTSTR		typedef PCZZSTR
-PCUZZTSTR		typedef PCZZSTR
-PNZTCH			typedef PNZCH
-PUNZTCH			typedef PNZCH
-PCNZTCH			typedef PCNZCH
-PCUNZTCH		typedef PCNZCH
+PTCH		typedef LPCH
+LPTCH		typedef LPCH
+PCTCH		typedef LPCCH
+LPCTCH		typedef LPCCH
+PTSTR		typedef LPSTR
+LPTSTR		typedef LPSTR
+PUTSTR		typedef LPSTR
+LPUTSTR		typedef LPSTR
+PCTSTR		typedef LPCSTR
+LPCTSTR		typedef LPCSTR
+PCUTSTR		typedef LPCSTR
+LPCUTSTR	typedef LPCSTR
+PZZTSTR		typedef PZZSTR
+PUZZTSTR	typedef PZZSTR
+PCZZTSTR	typedef PCZZSTR
+PCUZZTSTR	typedef PCZZSTR
+PNZTCH		typedef PNZCH
+PUNZTCH		typedef PNZCH
+PCNZTCH		typedef PCNZCH
+PCUNZTCH	typedef PCNZCH
 
 __TEXT	macro quote
 	exitm<quote>
@@ -406,8 +253,8 @@ TEXT	macro quote
 	exitm<__TEXT(quote)>
 	endm
 
-PSHORT			typedef ptr sword
-PLONG			typedef ptr LONG
+PSHORT	typedef ptr sword
+PLONG	typedef ptr LONG
 
 ALL_PROCESSOR_GROUPS	equ 0xffff
 
@@ -451,18 +298,14 @@ endif
 PHANDLE typedef ptr HANDLE
 
 
-FCHAR		typedef BYTE
-FSHORT		typedef WORD
-FLONG		typedef DWORD
+FCHAR	typedef BYTE
+FSHORT	typedef WORD
+FLONG	typedef DWORD
 
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED	equ <>
-ifdef __midl
-HRESULT			typedef LONG
-else
-HRESULT			typedef LONG;__success(return >= 0) long
-endif
+define _HRESULT_DEFINED
+HRESULT typedef LONG
 endif
 
 
@@ -476,14 +319,11 @@ STDAPIVCALLTYPE		equ <fastcall>
 else
 
 if defined(_WIN32) or defined(_MPPC_)
-
-
 ifdef _68K_
 STDMETHODCALLTYPE	equ <c>
 else
 STDMETHODCALLTYPE	equ <stdcall>
 endif
-
 STDMETHODVCALLTYPE	equ <c>
 STDAPICALLTYPE		equ <stdcall>
 STDAPIVCALLTYPE		equ <c>
@@ -492,7 +332,6 @@ STDMETHODCALLTYPE	equ <stdcall>
 STDMETHODVCALLTYPE	equ <c>
 STDAPICALLTYPE		equ <stdcall>
 STDAPIVCALLTYPE		equ <c>
-
 endif
 endif
 
@@ -536,18 +375,11 @@ LCID		typedef DWORD
 PLCID		typedef PDWORD
 LANGID		typedef WORD
 
-
-
 APPLICATION_ERROR_MASK	     equ 0x20000000
 ERROR_SEVERITY_SUCCESS	     equ 0x00000000
 ERROR_SEVERITY_INFORMATIONAL equ 0x40000000
 ERROR_SEVERITY_WARNING	     equ 0x80000000
 ERROR_SEVERITY_ERROR	     equ 0xC0000000
-
-
-if defined(_M_IA64) AND NOT defined(MIDL_PASS)
-;__declspec(align(16))
-endif
 
 FLOAT128	STRUC
 LowPart		dq ?
@@ -556,9 +388,7 @@ FLOAT128	ENDS
 PFLOAT128	typedef PTR FLOAT128
 
 
-_ULONGLONG_	equ <>
-
-;if (NOT defined(MIDL_PASS) OR defined(__midl)) AND ( NOT defined(_M_IX86) OR (defined(_INTEGRAL_MAX_BITS) AND _INTEGRAL_MAX_BITS GE 64))
+define _ULONGLONG_
 
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
 
@@ -639,12 +469,6 @@ Int64ShrlMod32 macro a, b
 
 elseifdef _M_IX86
 
-if 0
-Int32x32To64 macro a, b
-	endm
-UInt32x32To64 macro a, b
-	endm
-else
 Int32x32To64 proto WINAPI \
     Multiplier: LONG,
   Multiplicand: LONG
@@ -652,26 +476,6 @@ Int32x32To64 proto WINAPI \
 UInt32x32To64 proto WINAPI \
     Multiplier: DWORD,
   Multiplicand: DWORD
-endif
-
-if 0;DECLSPEC_NOINLINE
-
-;ULONGLONG
-Int64ShllMod32 proto WINAPI \
-	 Value: ULONGLONG,
-    ShiftCount: DWORD
-
-;LONGLONG
-Int64ShraMod32 proto WINAPI \
-	 Value: ULONGLONG,
-    ShiftCount: DWORD
-
-;ULONGLONG
-Int64ShrlMod32 proto WINAPI \
-	 Value: ULONGLONG,
-    ShiftCount: DWORD
-
-else
 
 Int64ShllMod32 macro Value, ShiftCount
 	mov	ecx, ShiftCount
@@ -696,8 +500,6 @@ Int64ShrlMod32 macro Value, ShiftCount
 	shrd	eax, edx, cl
 	shr	edx, cl
 	endm
-
-endif
 
 else
 
@@ -762,8 +564,7 @@ PLIST_ENTRY64		typedef ptr LIST_ENTRY64
 include guiddef.inc
 
 ifndef __OBJECTID_DEFINED
-__OBJECTID_DEFINED equ 1
-
+define __OBJECTID_DEFINED
 OBJECTID	STRUC	; size is 20
 Lineage		GUID <>
 Uniquifier	dd ?
@@ -964,9 +765,6 @@ PRODUCT_ENTERPRISE_E	equ 0x00000046
 PRODUCT_ULTIMATE_E	equ 0x00000047
 
 PRODUCT_UNLICENSED	equ 0xABCDABCD
-
-;include <sdkddkver.h>
-
 
 LANG_NEUTRAL		equ 0x00
 LANG_INVARIANT		equ 0x7f
@@ -1357,7 +1155,6 @@ SORT_GEORGIAN_TRADITIONAL equ 0x0
 SORT_GEORGIAN_MODERN	equ 0x1
 
 
-
 MAKELANGID MACRO usPrimaryLanguage, usSubLanguage
 	EXITM<((usSubLanguage SHL 10) OR usPrimaryLanguage)>
 	ENDM
@@ -1417,25 +1214,15 @@ DBG_UNREFERENCED_PARAMETER macro P
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
 	endm
-
 else
-
-
 UNREFERENCED_PARAMETER macro P
 	endm
 DBG_UNREFERENCED_PARAMETER macro P
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
 	endm
-
 endif
 
-
-if (_MSC_VER GT 1200)
-DEFAULT_UNREACHABLE	equ <default: __assume(0)>
-else
-DEFAULT_UNREACHABLE	equ <>
-endif
 
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>
@@ -1509,17 +1296,13 @@ MAXIMUM_SUSPEND_COUNT	equ MAXCHAR	; Maximum times thread can be suspended
 KSPIN_LOCK	typedef UINT_PTR
 PKSPIN_LOCK	typedef PTR KSPIN_LOCK
 
-
-DECLSPEC_ALIGN(16)
-M128A		STRUC
+M128A		STRUC DECLSPEC_ALIGN(16)
 _Low		ULONGLONG ?
 _High		LONGLONG ?
 M128A		ENDS
 PM128A		typedef ptr M128A
 
-
-DECLSPEC_ALIGN(16)
-XSAVE_FORMAT		STRUC
+XSAVE_FORMAT		STRUC DECLSPEC_ALIGN(16)
 ControlWord		dw ?
 StatusWord		dw ?
 TagWord			db ?
@@ -1534,35 +1317,25 @@ Reserved3		dw ?
 MxCsr			dd ?
 MxCsr_Mask		dd ?
 FloatRegisters		M128A 8 dup(<>)
-
 ifdef _WIN64
-
 XmmRegisters		M128A 16 dup(<>)
 Reserved4		db 96 dup(?)
-
 else
-
 XmmRegisters		M128A 8 dup(<>)
 Reserved4		db 192 dup(?)
-
-
 StackControl		dd 7 dup(?)
 Cr0NpxState		dd ?
-
 endif
-
 XSAVE_FORMAT		ENDS
 PXSAVE_FORMAT		typedef ptr XSAVE_FORMAT
 
-DECLSPEC_ALIGN(8)
-XSAVE_AREA_HEADER	STRUC
+XSAVE_AREA_HEADER	STRUC DECLSPEC_ALIGN(8)
 Mask			dd ?
 Reserved		dd 7 dup(?)
 XSAVE_AREA_HEADER	ENDS
 PXSAVE_AREA_HEADER	typedef ptr XSAVE_AREA_HEADER
 
-DECLSPEC_ALIGN(16)
-XSAVE_AREA		STRUC
+XSAVE_AREA		STRUC DECLSPEC_ALIGN(16)
 LegacyState		XSAVE_FORMAT <>
 Header			XSAVE_AREA_HEADER <>
 XSAVE_AREA		ENDS
@@ -2500,9 +2273,9 @@ FLOATING_SAVE_AREA	ENDS
 PFLOATING_SAVE_AREA	typedef PTR FLOATING_SAVE_AREA
 
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
-
-C_ASSERT(XSAVE_FORMAT == MAXIMUM_SUPPORTED_EXTENSION)
-
+if (XSAVE_FORMAT NE MAXIMUM_SUPPORTED_EXTENSION)
+	.err <XSAVE_FORMAT != MAXIMUM_SUPPORTED_EXTENSION>
+endif
 endif
 
 .pragma pack(push, 4)
@@ -5361,49 +5134,63 @@ CORE_PARKING_POLICY_CHANGE_ROCKET	equ 2
 POWER_DEVICE_IDLE_POLICY_PERFORMANCE	equ 0
 POWER_DEVICE_IDLE_POLICY_CONSERVATIVE	equ 1
 
-SYSTEM_POWER_STATE		typedef sdword ; enum
-PSYSTEM_POWER_STATE		typedef ptr SYSTEM_POWER_STATE
+.enum SYSTEM_POWER_STATE {
+    PowerSystemUnspecified = 0,
+    PowerSystemWorking	   = 1,
+    PowerSystemSleeping1   = 2,
+    PowerSystemSleeping2   = 3,
+    PowerSystemSleeping3   = 4,
+    PowerSystemHibernate   = 5,
+    PowerSystemShutdown	   = 6,
+    PowerSystemMaximum	   = 7
+    }
 
-    PowerSystemUnspecified	equ 0
-    PowerSystemWorking		equ 1
-    PowerSystemSleeping1	equ 2
-    PowerSystemSleeping2	equ 3
-    PowerSystemSleeping3	equ 4
-    PowerSystemHibernate	equ 5
-    PowerSystemShutdown		equ 6
-    PowerSystemMaximum		equ 7
+PSYSTEM_POWER_STATE typedef ptr SYSTEM_POWER_STATE
 
-POWER_SYSTEM_MAXIMUM		equ 7
+define POWER_SYSTEM_MAXIMUM 7
 
-POWER_ACTION			typedef sdword ; enum
-PPOWER_ACTION			typedef ptr POWER_ACTION
+.enum POWER_ACTION {
+    PowerActionNone = 0,
+    PowerActionReserved,
+    PowerActionSleep,
+    PowerActionHibernate,
+    PowerActionShutdown,
+    PowerActionShutdownReset,
+    PowerActionShutdownOff,
+    PowerActionWarmEject
+    }
 
-    PowerActionNone		equ 0
-    PowerActionReserved		equ 1
-    PowerActionSleep		equ 2
-    PowerActionHibernate	equ 3
-    PowerActionShutdown		equ 4
-    PowerActionShutdownReset	equ 5
-    PowerActionShutdownOff	equ 6
-    PowerActionWarmEject	equ 7
+PPOWER_ACTION typedef ptr POWER_ACTION
 
+.enum DEVICE_POWER_STATE {
+    PowerDeviceUnspecified,
+    PowerDeviceD0,
+    PowerDeviceD1,
+    PowerDeviceD2,
+    PowerDeviceD3,
+    PowerDeviceMaximum
+    }
 
-DEVICE_POWER_STATE		typedef sdword ; enum
-PDEVICE_POWER_STATE		typedef ptr DEVICE_POWER_STATE
+PDEVICE_POWER_STATE typedef ptr DEVICE_POWER_STATE
 
-    PowerDeviceUnspecified	equ 0
-    PowerDeviceD0		equ 1
-    PowerDeviceD1		equ 2
-    PowerDeviceD2		equ 3
-    PowerDeviceD3		equ 4
-    PowerDeviceMaximum		equ 5
+.enum MONITOR_DISPLAY_STATE {
+    PowerMonitorOff,
+    PowerMonitorOn,
+    PowerMonitorDim
+    }
 
-MONITOR_DISPLAY_STATE		typedef sdword ; enum
-PMONITOR_DISPLAY_STATE		typedef ptr MONITOR_DISPLAY_STATE
+PMONITOR_DISPLAY_STATE typedef ptr MONITOR_DISPLAY_STATE
 
-    PowerMonitorOff		equ 0
-    PowerMonitorOn		equ 1
-    PowerMonitorDim		equ 2
+.enum USER_ACTIVITY_PRESENCE {
+    PowerUserPresent = 0,
+    PowerUserNotPresent,
+    PowerUserInactive,
+    PowerUserMaximum,
+    PowerUserInvalid = PowerUserMaximum
+    }
+
+PUSER_ACTIVITY_PRESENCE typedef ptr USER_ACTIVITY_PRESENCE
+
 
 ES_SYSTEM_REQUIRED		equ 0x00000001
 ES_DISPLAY_REQUIRED		equ 0x00000002
@@ -5414,35 +5201,33 @@ ES_CONTINUOUS			equ 0x80000000
 EXECUTION_STATE			typedef DWORD
 PEXECUTION_STATE		typedef ptr DWORD
 
-LATENCY_TIME			typedef sdword ; enum {
-LT_DONT_CARE			equ 0
-LT_LOWEST_LATENCY		equ 1
+.enum LATENCY_TIME {
+    LT_DONT_CARE,
+    LT_LOWEST_LATENCY
+    }
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
-
-DIAGNOSTIC_REASON_VERSION	equ 0
+DIAGNOSTIC_REASON_VERSION		equ 0
 DIAGNOSTIC_REASON_SIMPLE_STRING		equ 0x00000001
 DIAGNOSTIC_REASON_DETAILED_STRING	equ 0x00000002
 DIAGNOSTIC_REASON_NOT_SPECIFIED		equ 0x80000000
 DIAGNOSTIC_REASON_INVALID_FLAGS		equ (not 0x80000003)
-
 endif
 
 POWER_REQUEST_CONTEXT_VERSION		equ 0
-
 POWER_REQUEST_CONTEXT_SIMPLE_STRING	equ 0x00000001
 POWER_REQUEST_CONTEXT_DETAILED_STRING	equ 0x00000002
 
-POWER_REQUEST_TYPE		typedef sdword ; enum _
-PPOWER_REQUEST_TYPE		typedef ptr POWER_REQUEST_TYPE
+.enum POWER_REQUEST_TYPE {
+    PowerRequestDisplayRequired,
+    PowerRequestSystemRequired,
+    PowerRequestAwayModeRequired,
+    PowerRequestExecutionRequired
+    }
 
-PowerRequestDisplayRequired	equ 0
-PowerRequestSystemRequired	equ 1
-PowerRequestAwayModeRequired	equ 2
-PowerRequestMaximum		equ 3
+PPOWER_REQUEST_TYPE typedef ptr POWER_REQUEST_TYPE
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
-
 
 PDCAP_D0_SUPPORTED		equ 0x00000001
 PDCAP_D1_SUPPORTED		equ 0x00000002
@@ -5467,6 +5252,13 @@ CM_POWER_DATA		ENDS
 PCM_POWER_DATA		typedef ptr CM_POWER_DATA
 
 endif
+
+.enum SYSTEM_POWER_CONDITION {
+    PoAc,
+    PoDc,
+    PoHot,
+    PoConditionMaximum
+    }
 
 SYSTEM_POWER_CONDITION	typedef sdword ; enum {
 PoAc			equ 0
@@ -5497,18 +5289,20 @@ ButtonInstanceID	dd ?
 APPLICATIONLAUNCH_SETTING_VALUE ENDS
 PAPPLICATIONLAUNCH_SETTING_VALUE typedef ptr APPLICATIONLAUNCH_SETTING_VALUE
 
+.enum POWER_PLATFORM_ROLE {
+    PlatformRoleUnspecified = 0,
+    PlatformRoleDesktop,
+    PlatformRoleMobile,
+    PlatformRoleWorkstation,
+    PlatformRoleEnterpriseServer,
+    PlatformRoleSOHOServer,
+    PlatformRoleAppliancePC,
+    PlatformRolePerformanceServer, ;; v1 last supported
+    PlatformRoleSlate,		   ;; v2 last supported
+    PlatformRoleMaximum
+    }
 
-POWER_PLATFORM_ROLE	typedef sdword ; enum {
-PlatformRoleUnspecified		equ 0
-PlatformRoleDesktop		equ 1
-PlatformRoleMobile		equ 2
-PlatformRoleWorkstation		equ 3
-PlatformRoleEnterpriseServer	equ 4
-PlatformRoleSOHOServer		equ 5
-PlatformRoleAppliancePC		equ 6
-PlatformRolePerformanceServer	equ 7
-PlatformRoleMaximum		equ 8
-
+PPOWER_PLATFORM_ROLE typedef ptr POWER_PLATFORM_ROLE
 
 if (NTDDI_VERSION GE NTDDI_WINXP) OR NOT defined(_BATCLASS_)
 BATTERY_REPORTING_SCALE STRUC
@@ -6882,13 +6676,6 @@ IMAGE_REL_EBC_REL32	equ 0x0002
 IMAGE_REL_EBC_SECTION	equ 0x0003
 IMAGE_REL_EBC_SECREL	equ 0x0004
 
-EXT_IMM64 macro Value, Address, z, InstPos, ValPos
-	exitm <.err>;<Value  or	 = ( ( ( ( * ( Address )  shr	InstPos )  and	( ( 1  shl  z ) - 1 ) ) )  shl	ValPos ) >
-	endm
-INS_IMM64 macro Value, Address, z, InstPos, ValPos
-	exitm <.err>;<* Address = ( * Address	and   not  ( ( ( 1  shl	 z ) - 1 )  shl	 InstPos ) )	 or  ( ( ( ( Value  shr	 ValPos )  and	( ( 1  shl  z ) - 1 ) ) )  shl	InstPos ) >
-	endm
-
 EMARCH_ENC_I17_IMM7B_INST_WORD_X	equ 3
 EMARCH_ENC_I17_IMM7B_SIZE_X		equ 7
 EMARCH_ENC_I17_IMM7B_INST_WORD_POS_X	equ 4
@@ -7494,7 +7281,7 @@ IMPORT_OBJECT_NAME_NO_PREFIX	equ 2
 IMPORT_OBJECT_NAME_UNDECORATE	equ 3
 
 ifndef __IMAGE_COR20_HEADER_DEFINED__
-__IMAGE_COR20_HEADER_DEFINED__ equ <>
+define __IMAGE_COR20_HEADER_DEFINED__
 
 ReplacesCorHdrNumericDefines	typedef sdword ; enum
 
@@ -7529,30 +7316,23 @@ ReplacesCorHdrNumericDefines	typedef sdword ; enum
     MAX_CLASS_NAME			equ 1024
     MAX_PACKAGE_NAME			equ 1024
 
-IMAGE_COR20_HEADER		STRUC
-
-    cb				dd ?
-    MajorRuntimeVersion		dw ?
-    MinorRuntimeVersion		dw ?
-
-    MetaData			IMAGE_DATA_DIRECTORY <>
-    Flags			dd ?
-
-    UNION
-	EntryPointToken		dd ?
-	EntryPointRVA		dd ?
-    ENDS
-
-    Resources			IMAGE_DATA_DIRECTORY <>
-    StrongNameSignature		IMAGE_DATA_DIRECTORY <>
-
-    CodeManagerTable		IMAGE_DATA_DIRECTORY <>
-    VTableFixups		IMAGE_DATA_DIRECTORY <>
-    ExportAddressTableJumps	IMAGE_DATA_DIRECTORY <>
-
-    ManagedNativeHeader		IMAGE_DATA_DIRECTORY <>
-
-IMAGE_COR20_HEADER		ENDS
+IMAGE_COR20_HEADER	STRUC
+cb			dd ?
+MajorRuntimeVersion	dw ?
+MinorRuntimeVersion	dw ?
+MetaData		IMAGE_DATA_DIRECTORY <>
+Flags			dd ?
+UNION
+ EntryPointToken	dd ?
+ EntryPointRVA		dd ?
+ENDS
+Resources		IMAGE_DATA_DIRECTORY <>
+StrongNameSignature	IMAGE_DATA_DIRECTORY <>
+CodeManagerTable	IMAGE_DATA_DIRECTORY <>
+VTableFixups		IMAGE_DATA_DIRECTORY <>
+ExportAddressTableJumps IMAGE_DATA_DIRECTORY <>
+ManagedNativeHeader	IMAGE_DATA_DIRECTORY <>
+IMAGE_COR20_HEADER	ENDS
 PIMAGE_COR20_HEADER	typedef ptr IMAGE_COR20_HEADER
 
 endif
@@ -7568,71 +7348,39 @@ endif
 endif
 
 ifndef _SLIST_HEADER_
-_SLIST_HEADER_ equ <>
+define _SLIST_HEADER_
 
 ifdef _WIN64
-
-DECLSPEC_ALIGN(16)
-SLIST_ENTRY		STRUC
+SLIST_ENTRY		STRUC DECLSPEC_ALIGN(16)
 Next			PVOID ?;PSLIST_ENTRY ?
 SLIST_ENTRY		ENDS
 PSLIST_ENTRY		typedef ptr SLIST_ENTRY
-
 SLIST_ENTRY32		STRUC
 Next			dd ?
 SLIST_ENTRY32		ENDS
 PSLIST_ENTRY32		typedef ptr SLIST_ENTRY32
-
 else
-
 SLIST_ENTRY		equ <SINGLE_LIST_ENTRY>
 PSLIST_ENTRY		equ <PSINGLE_LIST_ENTRY>
-
 SLIST_ENTRY32		typedef SLIST_ENTRY
 PSLIST_ENTRY32		typedef ptr SLIST_ENTRY
-
 endif
 
 ifdef _WIN64
 
-DECLSPEC_ALIGN(16)
-SLIST_HEADER		UNION
+SLIST_HEADER		UNION DECLSPEC_ALIGN(16)
 STRUC
  Alignment		ULONGLONG ?
  Region			ULONGLONG ?
 ENDS
 STRUC Header8
  R0			ULONGLONG ?
-if 0
-	ULONGLONG Depth:16;
-	ULONGLONG Sequence:9;
-	ULONGLONG NextEntry:39;
-	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
-	ULONGLONG Init:1;	// 0: uninitialized; 1: initialized
-	ULONGLONG Reserved:59;
-	ULONGLONG Region:3;
-endif
 ENDS
 STRUC Header16
  R0			ULONGLONG ?
-if 0
-	ULONGLONG Depth:16;
-	ULONGLONG Sequence:48;
-	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
-	ULONGLONG Init:1;	// 0: uninitialized; 1: initialized
-	ULONGLONG Reserved:2;
-	ULONGLONG NextEntry:60; // last 4 bits are always 0's
-endif
 ENDS
 STRUC HeaderX64
  R0			ULONGLONG ?
-if 0
-	ULONGLONG Depth:16;
-	ULONGLONG Sequence:48;
-	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
-	ULONGLONG Reserved:3;
-	ULONGLONG NextEntry:60; // last 4 bits are always 0's
-endif
 ENDS
 SLIST_HEADER		ENDS
 PSLIST_HEADER		typedef ptr SLIST_HEADER
@@ -7691,7 +7439,7 @@ RtlInterlockedPopEntrySList32 proto WINAPI \
 endif
 
 ifndef _RTL_RUN_ONCE_DEF
-_RTL_RUN_ONCE_DEF equ <>
+define _RTL_RUN_ONCE_DEF
 
 RTL_RUN_ONCE_INIT	    equ <{0}>
 RTL_RUN_ONCE_CHECK_ONLY	    equ 0x00000001
@@ -9312,5 +9060,4 @@ endif
 
 .pragma pack(pop)
 endif
-.pragma list(pop)
 

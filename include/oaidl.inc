@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,68 +18,7 @@ include ole2.inc
 endif
 
 ifndef __oaidl_h__
-__oaidl_h__ equ <>
-
-ifndef __ICreateTypeInfo_FWD_DEFINED__
-__ICreateTypeInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateTypeInfo2_FWD_DEFINED__
-__ICreateTypeInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateTypeLib_FWD_DEFINED__
-__ICreateTypeLib_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateTypeLib2_FWD_DEFINED__
-__ICreateTypeLib2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDispatch_FWD_DEFINED__
-__IDispatch_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumVARIANT_FWD_DEFINED__
-__IEnumVARIANT_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeComp_FWD_DEFINED__
-__ITypeComp_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeInfo_FWD_DEFINED__
-__ITypeInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeInfo2_FWD_DEFINED__
-__ITypeInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeLib_FWD_DEFINED__
-__ITypeLib_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeLib2_FWD_DEFINED__
-__ITypeLib2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeChangeEvents_FWD_DEFINED__
-__ITypeChangeEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IErrorInfo_FWD_DEFINED__
-__IErrorInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateErrorInfo_FWD_DEFINED__
-__ICreateErrorInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ISupportErrorInfo_FWD_DEFINED__
-__ISupportErrorInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeFactory_FWD_DEFINED__
-__ITypeFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __ITypeMarshal_FWD_DEFINED__
-__ITypeMarshal_FWD_DEFINED__ equ 1
-endif
-ifndef __IRecordInfo_FWD_DEFINED__
-__IRecordInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IErrorLog_FWD_DEFINED__
-__IErrorLog_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyBag_FWD_DEFINED__
-__IPropertyBag_FWD_DEFINED__ equ 1
-endif
+define __oaidl_h__
 
 include objidl.inc
 
@@ -87,7 +26,7 @@ MIDL_user_allocate proto WINAPI :size_t
 MIDL_user_free proto WINAPI :ptr
 
 ifndef __IOleAutomationTypes_INTERFACE_DEFINED__
-__IOleAutomationTypes_INTERFACE_DEFINED__ equ 1
+define __IOleAutomationTypes_INTERFACE_DEFINED__
 
 CURRENCY		typedef CY
 
@@ -598,7 +537,7 @@ LPCUSTDATA		typedef ptr CUSTDATA
 endif
 
 ifndef __ICreateTypeInfo_INTERFACE_DEFINED__
-__ICreateTypeInfo_INTERFACE_DEFINED__ equ 1
+define __ICreateTypeInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateTypeInfo, "00020405-0000-0000-C000-000000000046")
 
@@ -627,15 +566,14 @@ DEFINE_IIDX(ICreateTypeInfo, "00020405-0000-0000-C000-000000000046")
     SetMops		proc :UINT, :BSTR
     SetTypeIdldesc	proc :ptr
     LayOut		proc
-
-    .ends
+   .ends
 
 LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
 
 endif
 
 ifndef __ICreateTypeInfo2_INTERFACE_DEFINED__
-__ICreateTypeInfo2_INTERFACE_DEFINED__ equ 1
+define __ICreateTypeInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateTypeInfo2, "0002040E-0000-0000-C000-000000000046")
 
@@ -656,13 +594,12 @@ DEFINE_IIDX(ICreateTypeInfo2, "0002040E-0000-0000-C000-000000000046")
     SetVarHelpStringContext proc :DWORD, :DWORD
     Invalidate		proc
     SetName		proc :LPOLESTR
-
-    .ends
+   .ends
     LPCREATETYPEINFO2	typedef ptr ICreateTypeInfo2
 endif
 
 ifndef __ICreateTypeLib_INTERFACE_DEFINED__
-__ICreateTypeLib_INTERFACE_DEFINED__ equ 1
+define __ICreateTypeLib_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateTypeLib, "00020406-0000-0000-C000-000000000046")
 
@@ -678,13 +615,12 @@ DEFINE_IIDX(ICreateTypeLib, "00020406-0000-0000-C000-000000000046")
     SetLcid		proc :LCID
     SetLibFlags		proc :DWORD
     SaveAllChanges	proc
-
-    .ends
+   .ends
     LPCREATETYPELIB	typedef ptr ICreateTypeLib
 endif
 
 ifndef __ICreateTypeLib2_INTERFACE_DEFINED__
-__ICreateTypeLib2_INTERFACE_DEFINED__ equ 1
+define __ICreateTypeLib2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateTypeLib2, "0002040F-0000-0000-C000-000000000046")
 
@@ -694,13 +630,12 @@ DEFINE_IIDX(ICreateTypeLib2, "0002040F-0000-0000-C000-000000000046")
     SetCustData		proc :REFGUID, :ptr
     SetHelpStringContext proc :DWORD
     SetHelpStringDll	proc :LPOLESTR
-
-    .ends
+   .ends
     LPCREATETYPELIB2	typedef ptr ICreateTypeLib2
 endif
 
 ifndef __IDispatch_INTERFACE_DEFINED__
-__IDispatch_INTERFACE_DEFINED__ equ 1
+define __IDispatch_INTERFACE_DEFINED__
 
 DISPID_UNKNOWN		equ ( -1 )
 DISPID_VALUE		equ ( 0 )
@@ -719,14 +654,14 @@ DEFINE_IIDX(IDispatch, "00020400-0000-0000-C000-000000000046")
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 LPDISPATCH		typedef ptr IDispatch
 
 endif
 
 ifndef __IEnumVARIANT_INTERFACE_DEFINED__
-__IEnumVARIANT_INTERFACE_DEFINED__ equ 1
+define __IEnumVARIANT_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumVARIANT, "00020404-0000-0000-C000-000000000046")
 
@@ -736,13 +671,12 @@ DEFINE_IIDX(IEnumVARIANT, "00020404-0000-0000-C000-000000000046")
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
     LPENUMVARIANT	typedef ptr IEnumVARIANT
 endif
 
 ifndef __ITypeComp_INTERFACE_DEFINED__
-__ITypeComp_INTERFACE_DEFINED__ equ 1
+define __ITypeComp_INTERFACE_DEFINED__
 
 .enum DESCKIND {
     DESCKIND_NONE	= 0,
@@ -766,14 +700,13 @@ DEFINE_IIDX(ITypeComp, "00020403-0000-0000-C000-000000000046")
 
     Bind		proc
     BindType		proc
-
-    .ends
+   .ends
     LPTYPECOMP		typedef ptr ITypeComp
 endif
 
 
 ifndef __ITypeInfo_INTERFACE_DEFINED__
-__ITypeInfo_INTERFACE_DEFINED__ equ 1
+define __ITypeInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITypeInfo, "00020401-0000-0000-C000-000000000046")
 
@@ -798,13 +731,12 @@ DEFINE_IIDX(ITypeInfo, "00020401-0000-0000-C000-000000000046")
     ReleaseTypeAttr	proc :ptr
     ReleaseFuncDesc	proc :ptr
     ReleaseVarDesc	proc :ptr
-
-    .ends
+   .ends
     LPTYPEINFO		typedef ptr ITypeInfo
 endif
 
 ifndef __ITypeInfo2_INTERFACE_DEFINED__
-__ITypeInfo2_INTERFACE_DEFINED__ equ 1
+define __ITypeInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITypeInfo2, "00020412-0000-0000-C000-000000000046")
 
@@ -825,13 +757,12 @@ DEFINE_IIDX(ITypeInfo2, "00020412-0000-0000-C000-000000000046")
     GetAllParamCustData proc :DWORD, :DWORD, :ptr
     GetAllVarCustData	proc :DWORD, :ptr
     GetAllImplTypeCustData proc :DWORD, :ptr
-
-    .ends
+   .ends
     LPTYPEINFO2		typedef ptr ITypeInfo2
 endif
 
 ifndef __ITypeLib_INTERFACE_DEFINED__
-__ITypeLib_INTERFACE_DEFINED__ equ 1
+define __ITypeLib_INTERFACE_DEFINED__
 
 .enum SYSKIND {
     SYS_WIN16		= 0,
@@ -872,13 +803,12 @@ DEFINE_IIDX(ITypeLib, "00020402-0000-0000-C000-000000000046")
     IsName		proc :LPOLESTR, :DWORD, :ptr
     FindName		proc :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
     ReleaseTLibAttr	proc :ptr
-
-    .ends
+   .ends
     LPTYPELIB		typedef ptr ITypeLib
 endif
 
 ifndef __ITypeLib2_INTERFACE_DEFINED__
-__ITypeLib2_INTERFACE_DEFINED__ equ 1
+define __ITypeLib2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITypeLib2, "00020411-0000-0000-C000-000000000046")
 
@@ -888,13 +818,12 @@ DEFINE_IIDX(ITypeLib2, "00020411-0000-0000-C000-000000000046")
     GetLibStatistics	proc :ptr, :ptr
     GetDocumentation2	proc :DWORD, :LCID, :ptr, :ptr, :ptr
     GetAllCustData	proc :ptr
-
-    .ends
+   .ends
     LPTYPELIB2		typedef ptr ITypeLib2
 endif
 
 ifndef __ITypeChangeEvents_INTERFACE_DEFINED__
-__ITypeChangeEvents_INTERFACE_DEFINED__ equ 1
+define __ITypeChangeEvents_INTERFACE_DEFINED__
 
 CHANGEKIND		typedef SDWORD
 CHANGEKIND_ADDMEMBER	equ 0
@@ -912,15 +841,14 @@ DEFINE_IIDX(ITypeChangeEvents, "00020410-0000-0000-C000-000000000046")
 
     RequestTypeChange	proc :CHANGEKIND, :ptr, :LPOLESTR, :ptr
     AfterTypeChange	proc :CHANGEKIND, :ptr, :LPOLESTR
-
-    .ends
+   .ends
     LPTYPECHANGEEVENTS	typedef ptr ITypeChangeEvents
 
 endif
 
 
 ifndef __IErrorInfo_INTERFACE_DEFINED__
-__IErrorInfo_INTERFACE_DEFINED__ equ 1
+define __IErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IErrorInfo, "1CF2B120-547D-101B-8E65-08002B2BD119")
 
@@ -931,13 +859,12 @@ DEFINE_IIDX(IErrorInfo, "1CF2B120-547D-101B-8E65-08002B2BD119")
     GetDescription	proc :ptr
     GetHelpFile		proc :ptr
     GetHelpContext	proc :ptr
-
-    .ends
+   .ends
     LPERRORINFO		typedef ptr IErrorInfo
 endif
 
 ifndef __ICreateErrorInfo_INTERFACE_DEFINED__
-__ICreateErrorInfo_INTERFACE_DEFINED__ equ 1
+define __ICreateErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateErrorInfo, "22F03340-547D-101B-8E65-08002B2BD119")
 
@@ -948,39 +875,36 @@ DEFINE_IIDX(ICreateErrorInfo, "22F03340-547D-101B-8E65-08002B2BD119")
     SetDescription	proc :LPOLESTR
     SetHelpFile		proc :LPOLESTR
     SetHelpContext	proc :DWORD
-
-    .ends
+   .ends
     LPCREATEERRORINFO	typedef ptr ICreateErrorInfo
 endif
 
 ifndef __ISupportErrorInfo_INTERFACE_DEFINED__
-__ISupportErrorInfo_INTERFACE_DEFINED__ equ 1
+define __ISupportErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISupportErrorInfo, "DF0B3D60-548F-101B-8E65-08002B2BD119")
 
 .comdef ISupportErrorInfo : public IUnknown
 
     InterfaceSupportsErrorInfo proc :REFIID
-
-    .ends
+   .ends
     LPSUPPORTERRORINFO	typedef ptr ISupportErrorInfo
 endif
 
 ifndef __ITypeFactory_INTERFACE_DEFINED__
-__ITypeFactory_INTERFACE_DEFINED__ equ 1
+define __ITypeFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITypeFactory, "0000002E-0000-0000-C000-000000000046")
 
 .comdef ITypeFactory : public IUnknown
 
     CreateFromTypeInfo	proc :ptr, :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ITypeMarshal_INTERFACE_DEFINED__
-__ITypeMarshal_INTERFACE_DEFINED__ equ 1
+define __ITypeMarshal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITypeMarshal, "0000002D-0000-0000-C000-000000000046")
 
@@ -990,13 +914,12 @@ DEFINE_IIDX(ITypeMarshal, "0000002D-0000-0000-C000-000000000046")
     Marshal		proc :PVOID, :DWORD, :PVOID, :DWORD, :ptr, :ptr
     Unmarshal		proc :PVOID, :DWORD, :DWORD, :ptr, :ptr
     Free		proc :PVOID
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IRecordInfo_INTERFACE_DEFINED__
-__IRecordInfo_INTERFACE_DEFINED__ equ 1
+define __IRecordInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
 
@@ -1018,26 +941,24 @@ DEFINE_IIDX(IRecordInfo, "0000002F-0000-0000-C000-000000000046")
     RecordCreate	proc
     RecordCreateCopy	proc :PVOID, :ptr
     RecordDestroy	proc :PVOID
-
-    .ends
+   .ends
     LPRECORDINFO	typedef ptr IRecordInfo
 endif
 
 ifndef __IErrorLog_INTERFACE_DEFINED__
-__IErrorLog_INTERFACE_DEFINED__ equ 1
+define __IErrorLog_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IErrorLog, "3127CA40-446E-11CE-8135-00AA004BB851")
 
 .comdef IErrorLog : public IUnknown
 
     AddError		proc :ptr, :ptr
-
-    .ends
+   .ends
     LPERRORLOG		typedef ptr IErrorLog
 endif
 
 ifndef __IPropertyBag_INTERFACE_DEFINED__
-__IPropertyBag_INTERFACE_DEFINED__ equ <>
+define __IPropertyBag_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPropertyBag, "55272A00-42CB-11CE-8135-00AA004BB851")
 
@@ -1045,8 +966,7 @@ DEFINE_IIDX(IPropertyBag, "55272A00-42CB-11CE-8135-00AA004BB851")
 
     Read		proc :LPCOLESTR, :ptr VARIANT, :ptr IErrorLog
     Write		proc :LPCOLESTR, :ptr VARIANT
-
-    .ends
+   .ends
     LPPROPERTYBAG	typedef ptr IPropertyBag
 endif
 

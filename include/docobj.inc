@@ -1,71 +1,34 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
  .err <this stub requires an updated version of rpcndr>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __docobj_h__
-__docobj_h__ equ <>
-
-ifndef __IOleDocument_FWD_DEFINED__
-__IOleDocument_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IOleDocumentSite_FWD_DEFINED__
-__IOleDocumentSite_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IOleDocumentView_FWD_DEFINED__
-__IOleDocumentView_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IEnumOleDocumentViews_FWD_DEFINED__
-__IEnumOleDocumentViews_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IContinueCallback_FWD_DEFINED__
-__IContinueCallback_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IPrint_FWD_DEFINED__
-__IPrint_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IOleCommandTarget_FWD_DEFINED__
-__IOleCommandTarget_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IZoomEvents_FWD_DEFINED__
-__IZoomEvents_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IProtectFocus_FWD_DEFINED__
-__IProtectFocus_FWD_DEFINED__ equ 1
-endif
-
-ifndef __IProtectedModeMenuServices_FWD_DEFINED__
-__IProtectedModeMenuServices_FWD_DEFINED__ equ 1
-endif
+define __docobj_h__
 
 include ocidl.inc
 
 ;pragma comment(lib,"uuid.lib")
 
 ifndef _LPOLEDOCUMENT_DEFINED
-_LPOLEDOCUMENT_DEFINED equ 1
+define _LPOLEDOCUMENT_DEFINED
 
 ifndef __IOleDocument_INTERFACE_DEFINED__
-__IOleDocument_INTERFACE_DEFINED__ equ 1
+define __IOleDocument_INTERFACE_DEFINED__
 
 .enum DOCMISC {
 
@@ -82,36 +45,34 @@ DEFINE_GUID(IID_IOleDocument, 0xb722bcc5, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0
     CreateView		proc :ptr, :ptr, :DWORD, :ptr
     GetDocMiscStatus	proc :ptr
     EnumViews		proc :ptr, :ptr
-
-    .ends
+   .ends
     LPOLEDOCUMENT	typedef ptr IOleDocument
 
 endif
 endif
 
 ifndef _LPOLEDOCUMENTSITE_DEFINED
-_LPOLEDOCUMENTSITE_DEFINED equ 1
+define _LPOLEDOCUMENTSITE_DEFINED
 
 ifndef __IOleDocumentSite_INTERFACE_DEFINED__
-__IOleDocumentSite_INTERFACE_DEFINED__ equ 1
+define __IOleDocumentSite_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IOleDocumentSite, 0xb722bcc7, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
 .comdef IOleDocumentSite : public IUnknown
 
     ActivateMe		proc :ptr
-
-    .ends
+   .ends
     LPOLEDOCUMENTSITE	typedef ptr IOleDocumentSite
 
 endif
 endif
 
 ifndef _LPOLEDOCUMENTVIEW_DEFINED
-_LPOLEDOCUMENTVIEW_DEFINED equ 1
+define _LPOLEDOCUMENTVIEW_DEFINED
 
 ifndef __IOleDocumentView_INTERFACE_DEFINED__
-__IOleDocumentView_INTERFACE_DEFINED__ equ 1
+define __IOleDocumentView_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
@@ -130,18 +91,17 @@ DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0x
     SaveViewState	proc :ptr
     ApplyViewState	proc :ptr
     Clone		proc :ptr, :ptr
-
-    .ends
+   .ends
     LPOLEDOCUMENTVIEW	typedef ptr IOleDocumentView
 
 endif
 endif
 
 ifndef _LPENUMOLEDOCUMENTVIEWS_DEFINED
-_LPENUMOLEDOCUMENTVIEWS_DEFINED equ 1
+define _LPENUMOLEDOCUMENTVIEWS_DEFINED
 
 ifndef __IEnumOleDocumentViews_INTERFACE_DEFINED__
-__IEnumOleDocumentViews_INTERFACE_DEFINED__ equ 1
+define __IEnumOleDocumentViews_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IEnumOleDocumentViews, 0xb722bcc8, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
@@ -151,17 +111,17 @@ DEFINE_GUID(IID_IEnumOleDocumentViews, 0xb722bcc8, 0x4e68, 0x101b, 0xa2,0xbc, 0x
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
     LPENUMOLEDOCUMENTVIEWS typedef ptr IEnumOleDocumentViews
 
 endif
 endif
 
 ifndef _LPCONTINUECALLBACK_DEFINED
-_LPCONTINUECALLBACK_DEFINED equ 1
+define _LPCONTINUECALLBACK_DEFINED
 
 ifndef __IContinueCallback_INTERFACE_DEFINED__
-__IContinueCallback_INTERFACE_DEFINED__ equ 1
+define __IContinueCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IContinueCallback, "b722bcca-4e68-101b-a2bc-00aa00404770")
 
@@ -169,18 +129,17 @@ DEFINE_IIDX(IContinueCallback, "b722bcca-4e68-101b-a2bc-00aa00404770")
 
     FContinue		proc
     FContinuePrinting	proc :LONG, :LONG, :ptr
-
-    .ends
+   .ends
     LPCONTINUECALLBACK	typedef ptr IContinueCallback
 
 endif ; __IContinueCallback_INTERFACE_DEFINED__
 endif ; _LPCONTINUECALLBACK_DEFINED
 
 ifndef _LPPRINT_DEFINED
-_LPPRINT_DEFINED equ 1
+define _LPPRINT_DEFINED
 
 ifndef __IPrint_INTERFACE_DEFINED__
-__IPrint_INTERFACE_DEFINED__ equ 1
+define __IPrint_INTERFACE_DEFINED__
 
 
 _MIDL_IPrint_0001	typedef SDWORD
@@ -222,10 +181,10 @@ endif  ; __IPrint_INTERFACE_DEFINED__
 endif  ; _LPPRINT_DEFINED
 
 ifndef _LPOLECOMMANDTARGET_DEFINED
-_LPOLECOMMANDTARGET_DEFINED equ 1
+define _LPOLECOMMANDTARGET_DEFINED
 
 ifndef __IOleCommandTarget_INTERFACE_DEFINED__
-__IOleCommandTarget_INTERFACE_DEFINED__ equ 1
+define __IOleCommandTarget_INTERFACE_DEFINED__
 
 OLECMDF			typedef SDWORD
 OLECMDF_SUPPORTED	equ 0x1
@@ -364,8 +323,7 @@ DEFINE_GUID(IID_IOleCommandTarget, 0xb722bccb, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0
 
     QueryStatus		proc :ptr, :ULONG, :OLECMD, :ptr
     Exec		proc :ptr, :DWORD, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
     LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
 
 endif ; __IOleCommandTarget_INTERFACE_DEFINED__
@@ -503,37 +461,35 @@ MSOCMDID_GETZOOMRANGE	equ <OLECMDID_GETZOOMRANGE>
 externdef		SID_SContainerDispatch:GUID
 
 ifndef __IZoomEvents_INTERFACE_DEFINED__
-__IZoomEvents_INTERFACE_DEFINED__ equ 1
+define __IZoomEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IZoomEvents, "41B68150-904C-4e17-A0BA-A438182E359D")
 
 .comdef IZoomEvents : public IUnknown
 
     OnZoomPercentChanged proc :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IProtectFocus_INTERFACE_DEFINED__
-__IProtectFocus_INTERFACE_DEFINED__ equ 1
+define __IProtectFocus_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IProtectFocus, 0xd81f90a3, 0x8156, 0x44f7, 0xad,0x28, 0x5a,0xbb,0x87,0x00,0x32,0x74)
 
 .comdef IProtectFocus : public IUnknown
 
     AllowFocusChange	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 SID_SProtectFocus	equ <IID_IProtectFocus>
 ifndef _LPPROTECTEDMODEMENUSERVICES_DEFINED
-_LPPROTECTEDMODEMENUSERVICES_DEFINED equ 1
+define _LPPROTECTEDMODEMENUSERVICES_DEFINED
 
 ifndef __IProtectedModeMenuServices_INTERFACE_DEFINED__
-__IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
+define __IProtectedModeMenuServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
 
@@ -542,8 +498,7 @@ DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
     CreateMenu		proc :ptr
     LoadMenu		proc :LPCWSTR, :LPCWSTR, :ptr
     LoadMenuID		proc :LPCWSTR, :WORD, :ptr
-
-    .ends
+   .ends
 
 endif
 endif

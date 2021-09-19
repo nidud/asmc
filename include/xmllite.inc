@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -13,17 +13,7 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __xmllite_h__
-__xmllite_h__ equ 1
-
-ifndef __IXmlReader_FWD_DEFINED__
-__IXmlReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IXmlResolver_FWD_DEFINED__
-__IXmlResolver_FWD_DEFINED__ equ 1
-endif
-ifndef __IXmlWriter_FWD_DEFINED__
-__IXmlWriter_FWD_DEFINED__ equ 1
-endif
+define __xmllite_h_
 
 include unknwn.inc
 include objidl.inc
@@ -73,7 +63,7 @@ CreateXmlWriterOutputWithEncodingName proto WINAPI \
 	      ppOutput: ptr IXmlWriterOutput
 
 ifndef __XmlLite_LIBRARY_DEFINED__
-__XmlLite_LIBRARY_DEFINED__ equ <>
+define __XmlLite_LIBRARY_DEFINED__
 
 .enum XmlNodeType {
     XmlNodeType_None		= 0,
@@ -231,7 +221,7 @@ __XmlLite_LIBRARY_DEFINED__ equ <>
 externdef LIBID_XmlLite:IID
 
 ifndef __IXmlReader_INTERFACE_DEFINED__
-__IXmlReader_INTERFACE_DEFINED__ equ <>
+define __IXmlReader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
 
@@ -260,26 +250,24 @@ DEFINE_IIDX(IXmlReader, "7279FC81-709D-4095-B63D-69FE4B0D9030")
     GetAttributeCount	proc :ptr
     GetDepth		proc :ptr
     IsEOF		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IXmlResolver_INTERFACE_DEFINED__
-__IXmlResolver_INTERFACE_DEFINED__ equ <>
+define __IXmlResolver_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXmlResolver, "7279FC82-709D-4095-B63D-69FE4B0D9030")
 
 .comdef IXmlResolver : public IUnknown
 
     ResolveUri		proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IXmlWriter_INTERFACE_DEFINED__
-__IXmlWriter_INTERFACE_DEFINED__ equ 1
+define __IXmlWriter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
 
@@ -314,16 +302,15 @@ DEFINE_IIDX(IXmlWriter, "7279FC88-709D-4095-B63D-69FE4B0D9030")
     WriteSurrogateCharEntity proc :WCHAR, :WCHAR
     WriteWhitespace	proc :LPCWSTR
     Flush		proc
-
-    .ends
+   .ends
 
 endif
 endif
 
 ifndef __PE__
-_IID_IXmlReader		equ <{ 0x7279FC81, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
-_IID_IXmlWriter		equ <{ 0x7279FC88, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
-_IID_IXmlResolver	equ <{ 0x7279FC82, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
+_IID_IXmlReader	  equ <{ 0x7279FC81, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
+_IID_IXmlWriter	  equ <{ 0x7279FC88, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
+_IID_IXmlResolver equ <{ 0x7279FC82, 0x709D, 0x4095, { 0xB6, 0x3D, 0x69, 0xFE, 0x4B, 0x0D, 0x90, 0x30 } }>
 endif
 
 endif

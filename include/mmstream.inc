@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -14,17 +14,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __mmstream_h__
-__mmstream_h__ equ <>
-
-ifndef __IMultiMediaStream_FWD_DEFINED__
-__IMultiMediaStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaStream_FWD_DEFINED__
-__IMediaStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IStreamSample_FWD_DEFINED__
-__IStreamSample_FWD_DEFINED__ equ 1
-endif
+define __mmstream_h__
 
 include unknwn.inc
 
@@ -79,7 +69,7 @@ SSUPDATE_ASYNC		equ 0x1
 SSUPDATE_CONTINUOUS	equ 0x2
 
 ifndef __IMultiMediaStream_INTERFACE_DEFINED__
-__IMultiMediaStream_INTERFACE_DEFINED__ equ 1
+define __IMultiMediaStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMultiMediaStream, "B502D1BC-9A57-11d0-8FDE-00C04FD9189D")
 
@@ -94,13 +84,12 @@ DEFINE_IIDX(IMultiMediaStream, "B502D1BC-9A57-11d0-8FDE-00C04FD9189D")
     GetDuration		proc :ptr
     Seek		proc :STREAM_TIME
     GetEndOfStreamEventHandle proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IMediaStream_INTERFACE_DEFINED__
-__IMediaStream_INTERFACE_DEFINED__ equ 1
+define __IMediaStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaStream, "B502D1BD-9A57-11d0-8FDE-00C04FD9189D")
 
@@ -112,13 +101,12 @@ DEFINE_IIDX(IMediaStream, "B502D1BD-9A57-11d0-8FDE-00C04FD9189D")
     AllocateSample	proc :DWORD, :ptr
     CreateSharedSample	proc :ptr, :DWORD, :ptr
     SendEndOfStream	proc :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IStreamSample_INTERFACE_DEFINED__
-__IStreamSample_INTERFACE_DEFINED__ equ 1
+define __IStreamSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStreamSample, "B502D1BE-9A57-11d0-8FDE-00C04FD9189D")
 
@@ -129,8 +117,7 @@ DEFINE_IIDX(IStreamSample, "B502D1BE-9A57-11d0-8FDE-00C04FD9189D")
     SetSampleTimes	proc :ptr, :ptr
     Update		proc :DWORD, :HANDLE, :PAPCFUNC, :DWORD_PTR
     CompletionStatus	proc :DWORD, :DWORD
-
-    .ends
+   .ends
 
 endif
 

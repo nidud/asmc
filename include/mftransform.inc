@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,11 +18,7 @@ include ole2.inc
 endif
 
 ifndef __mftransform_h__
-__mftransform_h__ equ <>
-
-ifndef __IMFTransform_FWD_DEFINED__
-__IMFTransform_FWD_DEFINED__ equ 1
-endif
+define __mftransform_h__
 
 include mfobjects.inc
 include winapifamily.inc
@@ -152,7 +148,7 @@ ProcessOutput		equ <MFTProcessOutput>
 endif
 
 ifndef __IMFTransform_INTERFACE_DEFINED__
-__IMFTransform_INTERFACE_DEFINED__ equ 1
+define __IMFTransform_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFTransform, "bf94c121-5b05-4e6f-8000-ba598961414d")
 

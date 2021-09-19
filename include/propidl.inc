@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,20 +18,7 @@ include ole2.inc
 endif
 
 ifndef __propidl_h__
-__propidl_h__ equ <>
-
-ifndef __IPropertyStorage_FWD_DEFINED__
-__IPropertyStorage_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertySetStorage_FWD_DEFINED__
-__IPropertySetStorage_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumSTATPROPSTG_FWD_DEFINED__
-__IEnumSTATPROPSTG_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumSTATPROPSETSTG_FWD_DEFINED__
-__IEnumSTATPROPSETSTG_FWD_DEFINED__ equ 1
-endif
+define __propidl_h__
 
 include objidl.inc
 include oaidl.inc
@@ -43,19 +30,12 @@ VERSIONEDSTREAM		ENDS
 
 LPVERSIONEDSTREAM	typedef ptr VersionedStream
 
-
 PROPSETFLAG_DEFAULT	equ 0
 PROPSETFLAG_NONSIMPLE	equ 1
 PROPSETFLAG_ANSI	equ 2
 PROPSETFLAG_UNBUFFERED	equ 4
 PROPSETFLAG_CASE_SENSITIVE equ 8
 PROPSET_BEHAVIOR_CASE_SENSITIVE equ 1
-
-ifdef MIDL_PASS
-;PROPVARIANT		typedef _inner_PROPVARIANT
-else
-;PROPVARIANT		typedef PROPVARIANT
-endif
 
 LPCHAR			typedef ptr sbyte
 LPUCHAR			typedef ptr byte
@@ -409,7 +389,7 @@ dwOSVersion		dd ?
 STATPROPSETSTG		ENDS
 
 ifndef __IPropertyStorage_INTERFACE_DEFINED__
-__IPropertyStorage_INTERFACE_DEFINED__ equ 1
+define __IPropertyStorage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPropertyStorage, "00000138-0000-0000-C000-000000000046")
 
@@ -427,13 +407,12 @@ DEFINE_IIDX(IPropertyStorage, "00000138-0000-0000-C000-000000000046")
     SetTimes		proc :ptr, :ptr, :ptr
     SetClass		proc :REFCLSID
     Stat		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPropertySetStorage_INTERFACE_DEFINED__
-__IPropertySetStorage_INTERFACE_DEFINED__ equ 1
+define __IPropertySetStorage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPropertySetStorage, "0000013A-0000-0000-C000-000000000046")
 
@@ -443,15 +422,14 @@ DEFINE_IIDX(IPropertySetStorage, "0000013A-0000-0000-C000-000000000046")
     Open		proc :REFFMTID, :DWORD, :ptr
     Delete		proc :REFFMTID
     Enum		proc :ptr
-
-    .ends
+   .ends
 
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 
 endif
 
 ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
-__IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
+define __IEnumSTATPROPSTG_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumSTATPROPSTG, "00000139-0000-0000-C000-000000000046")
 
@@ -461,15 +439,14 @@ DEFINE_IIDX(IEnumSTATPROPSTG, "00000139-0000-0000-C000-000000000046")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 
 endif
 
 ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
-__IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
+define __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumSTATPROPSETSTG, "0000013B-0000-0000-C000-000000000046")
 
@@ -479,8 +456,7 @@ DEFINE_IIDX(IEnumSTATPROPSETSTG, "0000013B-0000-0000-C000-000000000046")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 
@@ -549,7 +525,7 @@ PropStgNameToFmtId proto WINAPI \
 endif
 
 ifndef _SERIALIZEDPROPERTYVALUE_DEFINED_
-_SERIALIZEDPROPERTYVALUE_DEFINED_ equ 1
+define _SERIALIZEDPROPERTYVALUE_DEFINED_
 SERIALIZEDPROPERTYVALUE STRUC
 dwType			dd ?
 rgb			db 1 dup(?)

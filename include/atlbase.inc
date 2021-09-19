@@ -1,34 +1,22 @@
 ifndef __ATLBASE_H__
-__ATLBASE_H__ equ <>
-.pragma list(push, 0)
+define __ATLBASE_H__
 
 ifdef _UNICODE
 ifndef UNICODE
-UNICODE equ 1
+define UNICODE
 endif
 endif
 
 ifdef UNICODE
 ifndef _UNICODE
-_UNICODE equ 1
+define _UNICODE
 endif
 endif
 
 ifdef _DEBUG
 ifndef DEBUG
-DEBUG equ 1
+define DEBUG
 endif
-endif
-
-ifdef _ATL_DISABLE_NO_VTABLE
-ATL_NO_VTABLE equ <>
-else
-ATL_NO_VTABLE equ <__declspec(novtable)>
-endif
-
-ifndef _ATL_NO_PRAGMA_WARNINGS
-.pragma warning(disable: 6004)
-.pragma warning(disable: 7007)
 endif
 
 include windows.inc
@@ -51,31 +39,12 @@ include winreg.inc
 include atliface.inc
 
 ifndef _ATL_PACKING
-_ATL_PACKING equ 8
+define _ATL_PACKING 8
 endif
+
 .pragma pack(push, _ATL_PACKING)
 
 include atlconv.inc
-
-ifdef _ATL_DLL
-ATLAPI equ <__declspec(dllimport) WINAPI>
-ATLAPI_ macro x
-    exitm<x __declspec(dllimport) WINAPI>
-    endm
-ATLINLINE equ <>
-elseifdef _ATL_DLL_IMPL
-ATLAPI equ <__declspec(dllexport) WINAPI>
-ATLAPI_ macro x
-    exitm<x __declspec(dllexport) WINAPI>
-    endm
-ATLINLINE equ <>
-else
-ATLAPI equ <WINAPI>
-ATLAPI_ macro x
-    exitm<x WINAPI>
-    endm
-ATLINLINE equ <>
-endif
 
 CALLBACK(_ATL_CREATORFUNC, :ptr, :REFIID, :ptr LPVOID)
 CALLBACK(_ATL_CREATORARGFUNC, :ptr, :REFIID, :ptr LPVOID, :ULONG_PTR)
@@ -257,14 +226,9 @@ ifndef ATLTRACE
 ATLTRACE equ <AtlTrace>
 endif
 else
-ifndef ATLTRACE
-endif
 ATLTRACENOTIMPL macro funcname
 exitm<E_NOTIMPL>
 endm
-endif
-
-ifndef offsetofclass
 endif
 
 _ATL	 equ 1
@@ -288,7 +252,7 @@ ATL_VARIANT_FALSE equ ( 0 )
 ifndef _ATL_SINGLE_THREADED
 ifndef _ATL_APARTMENT_THREADED
 ifndef _ATL_FREE_THREADED
-_ATL_FREE_THREADED equ 1
+define _ATL_FREE_THREADED 1
 endif
 endif
 endif
@@ -311,5 +275,4 @@ UpdateRegistryFromResource equ <UpdateRegistryFromResourceD>
 endif
 
 .pragma pack(pop)
-.pragma list(pop)
 endif

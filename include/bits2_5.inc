@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -17,24 +17,14 @@ include ole2.inc
 endif
 
 ifndef __bits2_5_h__
-__bits2_5_h__ equ <>
-
-ifndef __IBackgroundCopyJobHttpOptions_FWD_DEFINED__
-__IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __BackgroundCopyManager2_5_FWD_DEFINED__
-__BackgroundCopyManager2_5_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyJobHttpOptions_FWD_DEFINED__
-__IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
-endif
+define __bits2_5_h__
 
 include bits.inc
 include bits1_5.inc
 include bits2_0.inc
 
 ifndef __IBackgroundCopyJobHttpOptions_INTERFACE_DEFINED__
-__IBackgroundCopyJobHttpOptions_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyJobHttpOptions_INTERFACE_DEFINED__
 
 BG_CERT_STORE_LOCATION typedef SDWORD
 BG_CERT_STORE_LOCATION_CURRENT_USER equ 0
@@ -58,13 +48,12 @@ DEFINE_IIDX(IBackgroundCopyJobHttpOptions, "f1bd1079-9f01-4bdc-8036-f09b70095066
     GetCustomHeaders	proc :ptr
     SetSecurityFlags	proc :ULONG
     GetSecurityFlags	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __BackgroundCopyManager2_5_LIBRARY_DEFINED__
-__BackgroundCopyManager2_5_LIBRARY_DEFINED__ equ 1
+define __BackgroundCopyManager2_5_LIBRARY_DEFINED__
 
 DEFINE_GUIDS(LIBID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")
 DEFINE_GUIDS(CLSID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")

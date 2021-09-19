@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,143 +18,7 @@ include ole2.inc
 endif
 
 ifndef __d3d12_h__
-__d3d12_h__ equ <>
-
-ifndef __ID3D12Object_FWD_DEFINED__
-__ID3D12Object_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DeviceChild_FWD_DEFINED__
-__ID3D12DeviceChild_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12RootSignature_FWD_DEFINED__
-__ID3D12RootSignature_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12RootSignatureDeserializer_FWD_DEFINED__
-__ID3D12RootSignatureDeserializer_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12VersionedRootSignatureDeserializer_FWD_DEFINED__
-__ID3D12VersionedRootSignatureDeserializer_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Pageable_FWD_DEFINED__
-__ID3D12Pageable_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Heap_FWD_DEFINED__
-__ID3D12Heap_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Resource_FWD_DEFINED__
-__ID3D12Resource_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12CommandAllocator_FWD_DEFINED__
-__ID3D12CommandAllocator_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Fence_FWD_DEFINED__
-__ID3D12Fence_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Fence1_FWD_DEFINED__
-__ID3D12Fence1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12PipelineState_FWD_DEFINED__
-__ID3D12PipelineState_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DescriptorHeap_FWD_DEFINED__
-__ID3D12DescriptorHeap_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12QueryHeap_FWD_DEFINED__
-__ID3D12QueryHeap_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12CommandSignature_FWD_DEFINED__
-__ID3D12CommandSignature_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12CommandList_FWD_DEFINED__
-__ID3D12CommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList_FWD_DEFINED__
-__ID3D12GraphicsCommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList1_FWD_DEFINED__
-__ID3D12GraphicsCommandList1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList2_FWD_DEFINED__
-__ID3D12GraphicsCommandList2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12CommandQueue_FWD_DEFINED__
-__ID3D12CommandQueue_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device_FWD_DEFINED__
-__ID3D12Device_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12PipelineLibrary_FWD_DEFINED__
-__ID3D12PipelineLibrary_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12PipelineLibrary1_FWD_DEFINED__
-__ID3D12PipelineLibrary1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device1_FWD_DEFINED__
-__ID3D12Device1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device2_FWD_DEFINED__
-__ID3D12Device2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device3_FWD_DEFINED__
-__ID3D12Device3_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12ProtectedSession_FWD_DEFINED__
-__ID3D12ProtectedSession_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12ProtectedResourceSession_FWD_DEFINED__
-__ID3D12ProtectedResourceSession_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device4_FWD_DEFINED__
-__ID3D12Device4_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12LifetimeOwner_FWD_DEFINED__
-__ID3D12LifetimeOwner_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12SwapChainAssistant_FWD_DEFINED__
-__ID3D12SwapChainAssistant_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12LifetimeTracker_FWD_DEFINED__
-__ID3D12LifetimeTracker_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12StateObject_FWD_DEFINED__
-__ID3D12StateObject_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12StateObjectProperties_FWD_DEFINED__
-__ID3D12StateObjectProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device5_FWD_DEFINED__
-__ID3D12Device5_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DeviceRemovedExtendedDataSettings_FWD_DEFINED__
-__ID3D12DeviceRemovedExtendedDataSettings_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DeviceRemovedExtendedData_FWD_DEFINED__
-__ID3D12DeviceRemovedExtendedData_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Device6_FWD_DEFINED__
-__ID3D12Device6_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Resource1_FWD_DEFINED__
-__ID3D12Resource1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Heap1_FWD_DEFINED__
-__ID3D12Heap1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList3_FWD_DEFINED__
-__ID3D12GraphicsCommandList3_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12MetaCommand_FWD_DEFINED__
-__ID3D12MetaCommand_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList4_FWD_DEFINED__
-__ID3D12GraphicsCommandList4_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Tools_FWD_DEFINED__
-__ID3D12Tools_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12GraphicsCommandList5_FWD_DEFINED__
-__ID3D12GraphicsCommandList5_FWD_DEFINED__ equ 1
-endif
+define __d3d12_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -163,7 +27,7 @@ include dxgiformat.inc
 include d3dcommon.inc
 
 ifndef _D3D12_CONSTANTS
-_D3D12_CONSTANTS equ 1
+define _D3D12_CONSTANTS
 D3D12_16BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffff )
 D3D12_32BIT_INDEX_STRIP_CUT_VALUE equ ( 0xffffffff )
 D3D12_8BIT_INDEX_STRIP_CUT_VALUE equ ( 0xff )
@@ -846,7 +710,7 @@ ConservativeRaster	D3D12_CONSERVATIVE_RASTERIZATION_MODE ?
 D3D12_RASTERIZER_DESC	ENDS
 
 ifndef __ID3D12Object_INTERFACE_DEFINED__
-__ID3D12Object_INTERFACE_DEFINED__ equ 1
+define __ID3D12Object_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Object, "c4fec28f-7966-4e95-9f94-f431cb56c3b8")
 
@@ -856,32 +720,30 @@ DEFINE_IIDX(ID3D12Object, "c4fec28f-7966-4e95-9f94-f431cb56c3b8")
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     SetName		proc :LPCWSTR
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ID3D12DeviceChild_INTERFACE_DEFINED__
-__ID3D12DeviceChild_INTERFACE_DEFINED__ equ 1
+define __ID3D12DeviceChild_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12DeviceChild, "905db94b-a00c-4140-9df5-2b64ca9ea357")
 
 .comdef ID3D12DeviceChild : public ID3D12Object
 
     GetDevice		proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12RootSignature_INTERFACE_DEFINED__
-__ID3D12RootSignature_INTERFACE_DEFINED__ equ 1
+define __ID3D12RootSignature_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12RootSignature, "c54a6b66-72df-4ee8-8be5-a946a1429214")
 
 .comdef ID3D12RootSignature : public ID3D12DeviceChild
-
-    .ends
+   .ends
 
 endif
 
@@ -2298,7 +2160,7 @@ DEFINE_IIDX(ID3D12RootSignatureDeserializer, "34AB647B-3CC8-46AC-841B-C0965645C0
 endif
 
 ifndef __ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__
-__ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__ equ 1
+define __ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12VersionedRootSignatureDeserializer, "7F91CE67-090C-4BB7-B78E-ED8FF2E31DA0")
 
@@ -2306,7 +2168,7 @@ DEFINE_IIDX(ID3D12VersionedRootSignatureDeserializer, "7F91CE67-090C-4BB7-B78E-E
 
     GetRootSignatureDescAtVersion proc :D3D_ROOT_SIGNATURE_VERSION, :ptr
     GetUnconvertedRootSignatureDesc proc
-    .ends
+   .ends
 
 endif
 
@@ -2508,30 +2370,29 @@ D3D12_COMMAND_SIGNATURE_DESC ENDS
 
 
 ifndef __ID3D12Pageable_INTERFACE_DEFINED__
-__ID3D12Pageable_INTERFACE_DEFINED__ equ 1
+define __ID3D12Pageable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Pageable, "63ee58fb-1268-4835-86da-f008ce62f0d6")
 
 .comdef ID3D12Pageable : public ID3D12DeviceChild
-
     .ends
 
 endif
 
 ifndef __ID3D12Heap_INTERFACE_DEFINED__
-__ID3D12Heap_INTERFACE_DEFINED__ equ 1
+define __ID3D12Heap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Heap, "6b3b2502-6e51-45b3-90ee-9884265e8df3")
 
 .comdef ID3D12Heap : public ID3D12Pageable
 
     GetDesc		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Resource_INTERFACE_DEFINED__
-__ID3D12Resource_INTERFACE_DEFINED__ equ 1
+define __ID3D12Resource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Resource, "696442be-a72e-4059-bc79-5b5c98040fad")
 
@@ -2544,19 +2405,19 @@ DEFINE_IIDX(ID3D12Resource, "696442be-a72e-4059-bc79-5b5c98040fad")
     WriteToSubresource	proc :UINT, :ptr, :ptr, :UINT, :UINT
     ReadFromSubresource proc :ptr, :UINT, :UINT, :UINT, :ptr
     GetHeapProperties	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12CommandAllocator_INTERFACE_DEFINED__
-__ID3D12CommandAllocator_INTERFACE_DEFINED__ equ 1
+define __ID3D12CommandAllocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12CommandAllocator, "6102dee4-af59-4b09-b999-b44d73f09b24")
 
 .comdef ID3D12CommandAllocator : public ID3D12Pageable
 
     Reset		proc
-    .ends
+   .ends
 
 endif
 
@@ -2570,21 +2431,19 @@ DEFINE_IIDX(ID3D12Fence, "0a753dcf-c4d8-4b91-adf6-be5a60d95a76")
     GetCompletedValue	proc
     SetEventOnCompletion proc :UINT64, :HANDLE
     Signal		proc :UINT64
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Fence1_INTERFACE_DEFINED__
-__ID3D12Fence1_INTERFACE_DEFINED__ equ 1
+define __ID3D12Fence1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Fence1, "433685fe-e22b-4ca0-a8db-b5b4f4dd0e4a")
 
 .comdef ID3D12Fence1 : public ID3D12Fence
 
     GetCreationFlags	proc
-
-    .ends
+   .ends
 
 endif
 
@@ -2601,7 +2460,7 @@ DEFINE_IIDX(ID3D12PipelineState, "765a30f3-f624-4c6f-a828-ace948622445")
 endif
 
 ifndef __ID3D12DescriptorHeap_INTERFACE_DEFINED__
-__ID3D12DescriptorHeap_INTERFACE_DEFINED__ equ 1
+define __ID3D12DescriptorHeap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12DescriptorHeap, "8efb471d-616c-4f49-90f7-127bb763fa51")
 
@@ -2610,12 +2469,12 @@ DEFINE_IIDX(ID3D12DescriptorHeap, "8efb471d-616c-4f49-90f7-127bb763fa51")
     GetDesc		proc
     GetCPUDescriptorHandleForHeapStart proc
     GetGPUDescriptorHandleForHeapStart proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12QueryHeap_INTERFACE_DEFINED__
-__ID3D12QueryHeap_INTERFACE_DEFINED__ equ 1
+define __ID3D12QueryHeap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12QueryHeap, "0d9658ae-ed45-469e-a61d-970ec583cab4")
 
@@ -2626,7 +2485,7 @@ DEFINE_IIDX(ID3D12QueryHeap, "0d9658ae-ed45-469e-a61d-970ec583cab4")
 endif
 
 ifndef __ID3D12CommandSignature_INTERFACE_DEFINED__
-__ID3D12CommandSignature_INTERFACE_DEFINED__ equ 1
+define __ID3D12CommandSignature_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12CommandSignature, "c36a797c-ec80-4f0a-8985-a7b2475082d1")
 
@@ -2637,19 +2496,19 @@ DEFINE_IIDX(ID3D12CommandSignature, "c36a797c-ec80-4f0a-8985-a7b2475082d1")
 endif
 
 ifndef __ID3D12CommandList_INTERFACE_DEFINED__
-__ID3D12CommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12CommandList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12CommandList, "7116d91c-e7e4-47ce-b8c6-ec8168f437e5")
 
 .comdef ID3D12CommandList : public ID3D12DeviceChild
 
     GetType		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12GraphicsCommandList_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList, "5b160d0f-ac1b-4185-8ba8-b3ae42a5a455")
 
@@ -2706,12 +2565,12 @@ DEFINE_IIDX(ID3D12GraphicsCommandList, "5b160d0f-ac1b-4185-8ba8-b3ae42a5a455")
     BeginEvent		proc :UINT
     EndEvent		proc
     ExecuteIndirect	proc :ptr, :UINT, :ptr, :UINT64, :ptr, :UINT64
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12GraphicsCommandList1_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList1_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList1, "553103fb-1fe7-4557-bb38-946d7d0e7ca7")
 
@@ -2723,8 +2582,7 @@ DEFINE_IIDX(ID3D12GraphicsCommandList1, "553103fb-1fe7-4557-bb38-946d7d0e7ca7")
     SetSamplePositions	proc :UINT, :UINT, :ptr
     ResolveSubresourceRegion proc :ptr, :UINT, :UINT, :UINT, :ptr, :UINT, :ptr, :DXGI_FORMAT, :D3D12_RESOLVE_MODE
     SetViewInstanceMask proc :UINT
-
-    .ends
+   .ends
 
 endif
 
@@ -2740,19 +2598,19 @@ D3D12_WRITEBUFFERIMMEDIATE_PARAMETER ENDS
     }
 
 ifndef __ID3D12GraphicsCommandList2_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList2_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList2, "38C3E585-FF17-412C-9150-4FC6F9D72A28")
 
 .comdef ID3D12GraphicsCommandList2 : public ID3D12GraphicsCommandList1
 
     WriteBufferImmediate proc :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12CommandQueue_INTERFACE_DEFINED__
-__ID3D12CommandQueue_INTERFACE_DEFINED__ equ 1
+define __ID3D12CommandQueue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12CommandQueue, "0ec870a6-5d7e-4c22-8cfc-5baae07616ed")
 
@@ -2769,7 +2627,7 @@ DEFINE_IIDX(ID3D12CommandQueue, "0ec870a6-5d7e-4c22-8cfc-5baae07616ed")
     GetTimestampFrequency proc :ptr
     GetClockCalibration proc :ptr, :ptr
     GetDesc		proc
-    .ends
+   .ends
 
 endif
 
@@ -2780,14 +2638,12 @@ _LUID			STRUC
 LowPart			dd ?
 HighPart		LONG ?
 LUID			ENDS
-
 PLUID			typedef ptr _LUID
-
 endif
 endif
 
 ifndef __ID3D12Device_INTERFACE_DEFINED__
-__ID3D12Device_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device, "189819f1-1db6-4b57-be54-1821339b85f7")
 
@@ -2830,13 +2686,12 @@ DEFINE_IIDX(ID3D12Device, "189819f1-1db6-4b57-be54-1821339b85f7")
     CreateCommandSignature proc :ptr, :ptr, :REFIID, :ptr
     GetResourceTiling	proc :ptr, :ptr, :ptr, :ptr, :ptr, :UINT, :ptr
     GetAdapterLuid	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12PipelineLibrary_INTERFACE_DEFINED__
-__ID3D12PipelineLibrary_INTERFACE_DEFINED__ equ 1
+define __ID3D12PipelineLibrary_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12PipelineLibrary, "c64226a8-9201-46af-b4cc-53fb9ff7414f")
 
@@ -2847,19 +2702,19 @@ DEFINE_IIDX(ID3D12PipelineLibrary, "c64226a8-9201-46af-b4cc-53fb9ff7414f")
     LoadComputePipeline proc :LPCWSTR, :ptr, :REFIID, :ptr
     GetSerializedSize	proc
     Serialize		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12PipelineLibrary1_INTERFACE_DEFINED__
-__ID3D12PipelineLibrary1_INTERFACE_DEFINED__ equ 1
+define __ID3D12PipelineLibrary1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12PipelineLibrary1, "80eabf42-2568-4e5e-bd82-c37f86961dc3")
 
 .comdef ID3D12PipelineLibrary1 : public ID3D12PipelineLibrary
 
     LoadPipeline	proc :LPCWSTR, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2878,7 +2733,7 @@ endif
     }
 
 ifndef __ID3D12Device1_INTERFACE_DEFINED__
-__ID3D12Device1_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device1, "77acce80-638e-4e65-8895-c1f23386863e")
 
@@ -2887,12 +2742,12 @@ DEFINE_IIDX(ID3D12Device1, "77acce80-638e-4e65-8895-c1f23386863e")
     CreatePipelineLibrary proc
     SetEventOnMultipleFenceCompletion proc :ptr, :UINT, :D3D12_MULTIPLE_FENCE_WAIT_FLAGS, :HANDLE
     SetResidencyPriority proc :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Device2_INTERFACE_DEFINED__
-__ID3D12Device2_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device2, "30baa41e-b15b-475c-a0bb-1af5c5b64328")
 
@@ -2909,7 +2764,7 @@ endif
     }
 
 ifndef __ID3D12Device3_INTERFACE_DEFINED__
-__ID3D12Device3_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device3, "81dadc15-2bad-4392-93c5-101345c4aa98")
 
@@ -2918,8 +2773,7 @@ DEFINE_IIDX(ID3D12Device3, "81dadc15-2bad-4392-93c5-101345c4aa98")
     OpenExistingHeapFromAddress proc :ptr, :REFIID, :ptr
     OpenExistingHeapFromFileMapping proc :HANDLE, :REFIID, :ptr
     EnqueueMakeResident proc :D3D12_RESIDENCY_FLAGS, :UINT
-
-    .ends
+   .ends
 
 endif
 
@@ -2943,7 +2797,7 @@ endif
     }
 
 ifndef __ID3D12ProtectedSession_INTERFACE_DEFINED__
-__ID3D12ProtectedSession_INTERFACE_DEFINED__ equ 1
+define __ID3D12ProtectedSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12ProtectedSession, "A1533D18-0AC1-4084-85B9-89A96116806B")
 
@@ -2951,7 +2805,7 @@ DEFINE_IIDX(ID3D12ProtectedSession, "A1533D18-0AC1-4084-85B9-89A96116806B")
 
     GetStatusFence	proc :REFIID, :ptr
     GetSessionStatus	proc
-    .ends
+   .ends
 
 endif
 
@@ -2975,19 +2829,19 @@ Flags			D3D12_PROTECTED_RESOURCE_SESSION_FLAGS ?
 D3D12_PROTECTED_RESOURCE_SESSION_DESC ENDS
 
 ifndef __ID3D12ProtectedResourceSession_INTERFACE_DEFINED__
-__ID3D12ProtectedResourceSession_INTERFACE_DEFINED__ equ 1
+define __ID3D12ProtectedResourceSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12ProtectedResourceSession, "6CD696F4-F289-40CC-8091-5A6C0A099C3D")
 
 .comdef ID3D12ProtectedResourceSession : public ID3D12ProtectedSession
 
     GetDesc		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Device4_INTERFACE_DEFINED__
-__ID3D12Device4_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device4, "e865df17-a9ee-46f9-a463-3098315aa2e5")
 
@@ -2999,7 +2853,7 @@ DEFINE_IIDX(ID3D12Device4, "e865df17-a9ee-46f9-a463-3098315aa2e5")
     CreateHeap1		proc :ptr, :ptr, :REFIID, :ptr
     CreateReservedResource1 proc :ptr, :D3D12_RESOURCE_STATES, :ptr, :ptr, :REFIID, :ptr
     GetResourceAllocationInfo1 proc :UINT, :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3009,19 +2863,19 @@ endif
     }
 
 ifndef __ID3D12LifetimeOwner_INTERFACE_DEFINED__
-__ID3D12LifetimeOwner_INTERFACE_DEFINED__ equ 1
+define __ID3D12LifetimeOwner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12LifetimeOwner, "e667af9f-cd56-4f46-83ce-032e595d70a8")
 
 .comdef ID3D12LifetimeOwner : public IUnknown
 
     LifetimeStateUpdated proc :D3D12_LIFETIME_STATE
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12SwapChainAssistant_INTERFACE_DEFINED__
-__ID3D12SwapChainAssistant_INTERFACE_DEFINED__ equ 1
+define __ID3D12SwapChainAssistant_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12SwapChainAssistant, "f1df64b6-57fd-49cd-8807-c0eb88b45c8f")
 
@@ -3031,20 +2885,19 @@ DEFINE_IIDX(ID3D12SwapChainAssistant, "f1df64b6-57fd-49cd-8807-c0eb88b45c8f")
     GetSwapChainObject	proc :REFIID, :ptr
     GetCurrentResourceAndCommandQueue proc :REFIID, :ptr, :REFIID, :ptr
     InsertImplicitSync	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12LifetimeTracker_INTERFACE_DEFINED__
-__ID3D12LifetimeTracker_INTERFACE_DEFINED__ equ 1
+define __ID3D12LifetimeTracker_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12LifetimeTracker, "3fd03d36-4eb1-424a-a582-494ecb8ba813")
 
 .comdef ID3D12LifetimeTracker : public ID3D12DeviceChild
 
     DestroyOwnedObject	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -3104,7 +2957,7 @@ ExecutionDirtyState	D3D12_GRAPHICS_STATES ?
 D3D12_META_COMMAND_DESC ENDS
 
 ifndef __ID3D12StateObject_INTERFACE_DEFINED__
-__ID3D12StateObject_INTERFACE_DEFINED__ equ 1
+define __ID3D12StateObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12StateObject, "47016943-fca8-4594-93ea-af258b55346d")
 
@@ -3115,7 +2968,7 @@ DEFINE_IIDX(ID3D12StateObject, "47016943-fca8-4594-93ea-af258b55346d")
 endif
 
 ifndef __ID3D12StateObjectProperties_INTERFACE_DEFINED__
-__ID3D12StateObjectProperties_INTERFACE_DEFINED__ equ 1
+define __ID3D12StateObjectProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12StateObjectProperties, "de5fa827-9bf9-4f26-89ff-d7f56fde3860")
 
@@ -3125,8 +2978,7 @@ DEFINE_IIDX(ID3D12StateObjectProperties, "de5fa827-9bf9-4f26-89ff-d7f56fde3860")
     GetShaderStackSize	proc :LPCWSTR
     GetPipelineStackSize proc
     SetPipelineStackSize proc :UINT64
-
-    .ends
+   .ends
 
 endif
 
@@ -3449,7 +3301,7 @@ D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO ENDS
     }
 
 ifndef __ID3D12Device5_INTERFACE_DEFINED__
-__ID3D12Device5_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device5, "8b4f173b-2fea-4b80-8f58-4307191ab95d")
 
@@ -3463,8 +3315,7 @@ DEFINE_IIDX(ID3D12Device5, "8b4f173b-2fea-4b80-8f58-4307191ab95d")
     CreateStateObject	proc :ptr, :REFIID, :ptr
     GetRaytracingAccelerationStructurePrebuildInfo proc :ptr, :ptr
     CheckDriverMatchingIdentifier proc :D3D12_SERIALIZED_DATA_TYPE, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -3613,7 +3464,7 @@ D3D12_VERSIONED_DEVICE_REMOVED_EXTENDED_DATA ENDS
 
 
 ifndef __ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__
-__ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__ equ 1
+define __ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12DeviceRemovedExtendedDataSettings, "82BC481C-6B9B-4030-AEDB-7EE3D1DF1E63")
 
@@ -3622,13 +3473,12 @@ DEFINE_IIDX(ID3D12DeviceRemovedExtendedDataSettings, "82BC481C-6B9B-4030-AEDB-7E
     SetAutoBreadcrumbsEnablement proc :D3D12_DRED_ENABLEMENT
     SetPageFaultEnablement proc :D3D12_DRED_ENABLEMENT
     SetWatsonDumpEnablement proc :D3D12_DRED_ENABLEMENT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__
-__ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__ equ 1
+define __ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12DeviceRemovedExtendedData, "98931D33-5AE8-4791-AA3C-1A73A2934E71")
 
@@ -3636,8 +3486,7 @@ DEFINE_IIDX(ID3D12DeviceRemovedExtendedData, "98931D33-5AE8-4791-AA3C-1A73A2934E
 
     GetAutoBreadcrumbsOutput proc :ptr
     GetPageFaultAllocationOutput proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -3656,54 +3505,50 @@ endif
     }
 
 ifndef __ID3D12Device6_INTERFACE_DEFINED__
-__ID3D12Device6_INTERFACE_DEFINED__ equ 1
+define __ID3D12Device6_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Device6, "c70b221b-40e4-4a17-89af-025a0727a6dc")
 
 .comdef ID3D12Device6 : public ID3D12Device5
 
     SetBackgroundProcessingMode proc :D3D12_BACKGROUND_PROCESSING_MODE, :D3D12_MEASUREMENTS_ACTION, :HANDLE, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Resource1_INTERFACE_DEFINED__
-__ID3D12Resource1_INTERFACE_DEFINED__ equ 1
+define __ID3D12Resource1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Resource1, "9D5E227A-4430-4161-88B3-3ECA6BB16E19")
 
 .comdef ID3D12Resource1 : public ID3D12Resource
 
     GetProtectedResourceSession proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Heap1_INTERFACE_DEFINED__
-__ID3D12Heap1_INTERFACE_DEFINED__ equ 1
+define __ID3D12Heap1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Heap1, "572F7389-2168-49E3-9693-D6DF5871BF6D")
 
 .comdef ID3D12Heap1 : public ID3D12Heap
 
     GetProtectedResourceSession proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12GraphicsCommandList3_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList3_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList3, "6FDA83A7-B84C-4E38-9AC8-C7BD22016B3D")
 
 .comdef ID3D12GraphicsCommandList3 : public ID3D12GraphicsCommandList2
 
     SetProtectedResourceSession proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -3779,15 +3624,14 @@ D3D12_RENDER_PASS_DEPTH_STENCIL_DESC ENDS
     }
 
 ifndef __ID3D12MetaCommand_INTERFACE_DEFINED__
-__ID3D12MetaCommand_INTERFACE_DEFINED__ equ 1
+define __ID3D12MetaCommand_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12MetaCommand, "DBB84C27-36CE-4FC9-B801-F048C46AC570")
 
 .comdef ID3D12MetaCommand : public ID3D12Pageable
 
     GetRequiredParameterResourceSize proc :D3D12_META_COMMAND_PARAMETER_STAGE, :UINT
-
-    .ends
+   .ends
 
 endif
 
@@ -3802,7 +3646,7 @@ Depth			UINT ?
 D3D12_DISPATCH_RAYS_DESC ENDS
 
 ifndef __ID3D12GraphicsCommandList4_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList4_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList4, "8754318e-d3a9-4541-98cf-645b50dc4874")
 
@@ -3817,13 +3661,12 @@ DEFINE_IIDX(ID3D12GraphicsCommandList4, "8754318e-d3a9-4541-98cf-645b50dc4874")
     CopyRaytracingAccelerationStructure proc :D3D12_GPU_VIRTUAL_ADDRESS, :D3D12_GPU_VIRTUAL_ADDRESS, :D3D12_RAYTRACING_ACCELERATION_STRUCTURE_COPY_MODE
     SetPipelineState1	proc :ptr
     DispatchRays	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Tools_INTERFACE_DEFINED__
-__ID3D12Tools_INTERFACE_DEFINED__ equ 1
+define __ID3D12Tools_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12Tools, "7071e1f0-e84b-4b33-974f-12fa49de65c5")
 
@@ -3831,8 +3674,7 @@ DEFINE_IIDX(ID3D12Tools, "7071e1f0-e84b-4b33-974f-12fa49de65c5")
 
     EnableShaderInstrumentation proc :BOOL
     ShaderInstrumentationEnabled proc
-
-    .ends
+   .ends
 
 endif
 
@@ -3918,7 +3760,7 @@ D3D12_GET_COARSE_SHADING_RATE_Y_AXIS macro y
 
 
 ifndef __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__
-__ID3D12GraphicsCommandList5_INTERFACE_DEFINED__ equ 1
+define __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D12GraphicsCommandList5, "55050859-4024-474c-87f5-6472eaee44ea")
 
@@ -3926,8 +3768,7 @@ DEFINE_IIDX(ID3D12GraphicsCommandList5, "55050859-4024-474c-87f5-6472eaee44ea")
 
     RSSetShadingRate	proc :D3D12_SHADING_RATE, :ptr
     RSSetShadingRateImage proc :ptr
-
-    .ends
+   .ends
 
 endif
 

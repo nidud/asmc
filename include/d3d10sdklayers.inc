@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,17 +18,7 @@ include ole2.inc
 endif
 
 ifndef __d3d10sdklayers_h__
-__d3d10sdklayers_h__ equ <>
-
-ifndef __ID3D10Debug_FWD_DEFINED__
-__ID3D10Debug_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10SwitchToRef_FWD_DEFINED__
-__ID3D10SwitchToRef_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10InfoQueue_FWD_DEFINED__
-__ID3D10InfoQueue_FWD_DEFINED__ equ 1
-endif
+define __d3d10sdklayers_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -40,7 +30,7 @@ D3D10_DEBUG_FEATURE_FINISH_PER_RENDER_OP equ ( 0x2 )
 D3D10_DEBUG_FEATURE_PRESENT_PER_RENDER_OP equ ( 0x4 )
 
 ifndef __ID3D10Debug_INTERFACE_DEFINED__
-__ID3D10Debug_INTERFACE_DEFINED__ equ 1
+define __ID3D10Debug_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D10Debug, "9B7E4E01-342C-4106-A19F-4F2704F689F0")
 
@@ -53,12 +43,12 @@ DEFINE_IIDX(ID3D10Debug, "9B7E4E01-342C-4106-A19F-4F2704F689F0")
     SetSwapChain	proc :ptr
     GetSwapChain	proc :ptr
     Validate		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D10SwitchToRef_INTERFACE_DEFINED__
-__ID3D10SwitchToRef_INTERFACE_DEFINED__ equ 1
+define __ID3D10SwitchToRef_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D10SwitchToRef, "9B7E4E02-342C-4106-A19F-4F2704F689F0")
 
@@ -66,7 +56,7 @@ DEFINE_IIDX(ID3D10SwitchToRef, "9B7E4E02-342C-4106-A19F-4F2704F689F0")
 
     SetUseRef		proc :BOOL
     GetUseRef		proc
-    .ends
+   .ends
 
 endif
 
@@ -645,7 +635,7 @@ D3D10_INFO_QUEUE_FILTER ENDS
 D3D10_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
 ifndef __ID3D10InfoQueue_INTERFACE_DEFINED__
-__ID3D10InfoQueue_INTERFACE_DEFINED__ equ 1
+define __ID3D10InfoQueue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D10InfoQueue, "1b940b17-2642-4d1f-ab1f-b99bad0c395f")
 
@@ -686,7 +676,7 @@ DEFINE_IIDX(ID3D10InfoQueue, "1b940b17-2642-4d1f-ab1f-b99bad0c395f")
     GetBreakOnID	proc :D3D10_MESSAGE_ID
     SetMuteDebugOutput	proc :BOOL
     GetMuteDebugOutput	proc
-    .ends
+   .ends
 
 endif
 endif

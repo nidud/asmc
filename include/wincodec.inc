@@ -1,16 +1,16 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
 include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
+.err <this stub requires an updated version of rpcndr.inc>
 endif
 
 ifndef COM_NO_WINDOWS_H
@@ -19,131 +19,7 @@ include ole2.inc
 endif
 
 ifndef __wincodec_h__
-__wincodec_h__ equ <>
-
-ifndef __IWICPalette_FWD_DEFINED__
-__IWICPalette_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapSource_FWD_DEFINED__
-__IWICBitmapSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICFormatConverter_FWD_DEFINED__
-__IWICFormatConverter_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICPlanarFormatConverter_FWD_DEFINED__
-__IWICPlanarFormatConverter_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapScaler_FWD_DEFINED__
-__IWICBitmapScaler_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapClipper_FWD_DEFINED__
-__IWICBitmapClipper_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapFlipRotator_FWD_DEFINED__
-__IWICBitmapFlipRotator_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapLock_FWD_DEFINED__
-__IWICBitmapLock_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmap_FWD_DEFINED__
-__IWICBitmap_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICColorContext_FWD_DEFINED__
-__IWICColorContext_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICColorTransform_FWD_DEFINED__
-__IWICColorTransform_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICFastMetadataEncoder_FWD_DEFINED__
-__IWICFastMetadataEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICStream_FWD_DEFINED__
-__IWICStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICEnumMetadataItem_FWD_DEFINED__
-__IWICEnumMetadataItem_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICMetadataQueryReader_FWD_DEFINED__
-__IWICMetadataQueryReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICMetadataQueryWriter_FWD_DEFINED__
-__IWICMetadataQueryWriter_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapEncoder_FWD_DEFINED__
-__IWICBitmapEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapFrameEncode_FWD_DEFINED__
-__IWICBitmapFrameEncode_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICPlanarBitmapFrameEncode_FWD_DEFINED__
-__IWICPlanarBitmapFrameEncode_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICImageEncoder_FWD_DEFINED__
-__IWICImageEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapDecoder_FWD_DEFINED__
-__IWICBitmapDecoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapSourceTransform_FWD_DEFINED__
-__IWICBitmapSourceTransform_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICPlanarBitmapSourceTransform_FWD_DEFINED__
-__IWICPlanarBitmapSourceTransform_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapFrameDecode_FWD_DEFINED__
-__IWICBitmapFrameDecode_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICProgressiveLevelControl_FWD_DEFINED__
-__IWICProgressiveLevelControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICProgressCallback_FWD_DEFINED__
-__IWICProgressCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapCodecProgressNotification_FWD_DEFINED__
-__IWICBitmapCodecProgressNotification_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICComponentInfo_FWD_DEFINED__
-__IWICComponentInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICFormatConverterInfo_FWD_DEFINED__
-__IWICFormatConverterInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapCodecInfo_FWD_DEFINED__
-__IWICBitmapCodecInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapEncoderInfo_FWD_DEFINED__
-__IWICBitmapEncoderInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICBitmapDecoderInfo_FWD_DEFINED__
-__IWICBitmapDecoderInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICPixelFormatInfo_FWD_DEFINED__
-__IWICPixelFormatInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICPixelFormatInfo2_FWD_DEFINED__
-__IWICPixelFormatInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICImagingFactory_FWD_DEFINED__
-__IWICImagingFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICImagingFactory2_FWD_DEFINED__
-__IWICImagingFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICDevelopRawNotificationCallback_FWD_DEFINED__
-__IWICDevelopRawNotificationCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICDevelopRaw_FWD_DEFINED__
-__IWICDevelopRaw_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICDdsDecoder_FWD_DEFINED__
-__IWICDdsDecoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICDdsEncoder_FWD_DEFINED__
-__IWICDdsEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IWICDdsFrameDecode_FWD_DEFINED__
-__IWICDdsFrameDecode_FWD_DEFINED__ equ 1
-endif
+define __wincodec_h__
 
 include wtypes.inc
 include propidl.inc
@@ -151,6 +27,7 @@ include ocidl.inc
 include dxgiformat.inc
 include intsafe.inc
 include dcommon.inc
+
 WINCODEC_SDK_VERSION1	equ 0x0236
 WINCODEC_SDK_VERSION2	equ 0x0237
 DEFINE_GUID(CLSID_WICImagingFactory1, 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa);
@@ -206,16 +83,8 @@ DEFINE_GUID(CLSID_WICFormatConverterNChannel, 0xc17cabb2, 0xd4a3, 0x47d7, 0xa5, 
 DEFINE_GUID(CLSID_WICFormatConverterWMPhoto, 0x9cb5172b, 0xd600, 0x46ba, 0xab, 0x77, 0x77, 0xbb, 0x7e, 0x3a, 0x00, 0xd9);
 DEFINE_GUID(CLSID_WICPlanarFormatConverter, 0x184132b8, 0x32f8, 0x4784, 0x91, 0x31, 0xdd, 0x72, 0x24, 0xb2, 0x34, 0x38);
 
-if (_WIN32_WINNT GE _WIN32_WINNT_WIN8) OR defined(_WIN7_PLATFORM_UPDATE)
-
-endif
-
-if 0
-ID2D1Device		typedef ptr DWORD
-ID2D1Image		typedef ptr DWORD
-D2D1_PIXEL_FORMAT	typedef ptr DWORD
-endif
 WICColor		typedef UINT32
+
 .template WICRect
     X	   int_t ?
     Y	   int_t ?
@@ -230,9 +99,6 @@ WICColor		typedef UINT32
     .ends
 
 WICInProcPointer	typedef ptr BYTE
-if 0
-WICInProcPointer	typedef ptr
-endif
 
 .enum WICColorContextType {
     WICColorContextUninitialized	= 0,
@@ -668,11 +534,8 @@ cbStride		UINT ?
 cbBufferSize		UINT ?
 WICBitmapPlane		ENDS
 
-externdef		__MIDL_itf_wincodec_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICPalette_INTERFACE_DEFINED__
-__IWICPalette_INTERFACE_DEFINED__ equ 1
+define __IWICPalette_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPalette, "00000040-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -688,13 +551,13 @@ DEFINE_IIDX(IWICPalette, "00000040-a8f2-4877-ba0a-fd2b6645fb94")
     IsBlackWhite	proc :ptr
     IsGrayscale		proc :ptr
     HasAlpha		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IWICBitmapSource_INTERFACE_DEFINED__
-__IWICBitmapSource_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapSource, "00000120-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -705,13 +568,13 @@ DEFINE_IIDX(IWICBitmapSource, "00000120-a8f2-4877-ba0a-fd2b6645fb94")
     GetResolution	proc :ptr, :ptr
     CopyPalette		proc :ptr
     CopyPixels		proc :ptr WICRect, :UINT, :UINT, :ptr byte
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IWICFormatConverter_INTERFACE_DEFINED__
-__IWICFormatConverter_INTERFACE_DEFINED__ equ 1
+define __IWICFormatConverter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICFormatConverter, "00000301-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -719,12 +582,12 @@ DEFINE_IIDX(IWICFormatConverter, "00000301-a8f2-4877-ba0a-fd2b6645fb94")
 
     Initialize		proc :ptr, :REFWICPixelFormatGUID, :WICBitmapDitherType, :ptr, :real8, :WICBitmapPaletteType
     CanConvert		proc :REFWICPixelFormatGUID, :REFWICPixelFormatGUID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICPlanarFormatConverter_INTERFACE_DEFINED__
-__IWICPlanarFormatConverter_INTERFACE_DEFINED__ equ 1
+define __IWICPlanarFormatConverter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPlanarFormatConverter, "BEBEE9CB-83B0-4DCC-8132-B0AAA55EAC96")
 
@@ -732,48 +595,48 @@ DEFINE_IIDX(IWICPlanarFormatConverter, "BEBEE9CB-83B0-4DCC-8132-B0AAA55EAC96")
 
     Initialize		proc :ptr ptr IWICBitmapSource, :UINT, :REFWICPixelFormatGUID, :WICBitmapDitherType, :ptr IWICPalette, :real8, :WICBitmapPaletteType
     CanConvert		proc :ptr WICPixelFormatGUID, :UINT, :REFWICPixelFormatGUID, :ptr BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapScaler_INTERFACE_DEFINED__
-__IWICBitmapScaler_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapScaler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapScaler, "00000302-a8f2-4877-ba0a-fd2b6645fb94")
 
 .comdef IWICBitmapScaler : public IWICBitmapSource
 
     Initialize		proc :ptr, :UINT, :UINT, :WICBitmapInterpolationMode
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapClipper_INTERFACE_DEFINED__
-__IWICBitmapClipper_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapClipper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapClipper, "E4FBCF03-223D-4e81-9333-D635556DD1B5")
 
 .comdef IWICBitmapClipper : public IWICBitmapSource
 
     Initialize		proc :ptr, :ptr WICRect
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapFlipRotator_INTERFACE_DEFINED__
-__IWICBitmapFlipRotator_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapFlipRotator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapFlipRotator, "5009834F-2D6A-41ce-9E1B-17C5AFF7A782")
 
 .comdef IWICBitmapFlipRotator : public IWICBitmapSource
 
     Initialize		proc :ptr, :WICBitmapTransformOptions
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapLock_INTERFACE_DEFINED__
-__IWICBitmapLock_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapLock_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapLock, "00000123-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -783,12 +646,12 @@ DEFINE_IIDX(IWICBitmapLock, "00000123-a8f2-4877-ba0a-fd2b6645fb94")
     GetStride		proc :ptr
     GetDataPointer	proc :ptr, :ptr
     GetPixelFormat	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmap_INTERFACE_DEFINED__
-__IWICBitmap_INTERFACE_DEFINED__ equ 1
+define __IWICBitmap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmap, "00000121-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -797,12 +660,12 @@ DEFINE_IIDX(IWICBitmap, "00000121-a8f2-4877-ba0a-fd2b6645fb94")
     _Lock		proc :ptr WICRect, :DWORD, :ptr
     SetPalette		proc :ptr
     SetResolution	proc :real8, :real8
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICColorContext_INTERFACE_DEFINED__
-__IWICColorContext_INTERFACE_DEFINED__ equ 1
+define __IWICColorContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICColorContext, "3C613A02-34B2-44ea-9A7C-45AEA9C6FD6D")
 
@@ -814,24 +677,24 @@ DEFINE_IIDX(IWICColorContext, "3C613A02-34B2-44ea-9A7C-45AEA9C6FD6D")
     GetType		proc :ptr
     GetProfileBytes	proc :UINT
     GetExifColorSpace	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICColorTransform_INTERFACE_DEFINED__
-__IWICColorTransform_INTERFACE_DEFINED__ equ 1
+define __IWICColorTransform_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICColorTransform, "B66F034F-D0E2-40ab-B436-6DE39E321A94")
 
 .comdef IWICColorTransform : public IWICBitmapSource
 
     Initialize		proc :ptr, :ptr, :ptr, :REFWICPixelFormatGUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICFastMetadataEncoder_INTERFACE_DEFINED__
-__IWICFastMetadataEncoder_INTERFACE_DEFINED__ equ 1
+define __IWICFastMetadataEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICFastMetadataEncoder, "B84E2C09-78C9-4AC4-8BD3-524AE1663A2F")
 
@@ -839,12 +702,12 @@ DEFINE_IIDX(IWICFastMetadataEncoder, "B84E2C09-78C9-4AC4-8BD3-524AE1663A2F")
 
     Commit		proc
     GetMetadataQueryWriter proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICStream_INTERFACE_DEFINED__
-__IWICStream_INTERFACE_DEFINED__ equ 1
+define __IWICStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICStream, "135FF860-22B7-4ddf-B0F6-218F4F299A43")
 
@@ -854,12 +717,12 @@ DEFINE_IIDX(IWICStream, "135FF860-22B7-4ddf-B0F6-218F4F299A43")
     InitializeFromFilename proc :LPCWSTR, :DWORD
     InitializeFromMemory proc :WICInProcPointer, :DWORD
     InitializeFromIStreamRegion proc :ptr IStream, :ULARGE_INTEGER, :ULARGE_INTEGER
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICEnumMetadataItem_INTERFACE_DEFINED__
-__IWICEnumMetadataItem_INTERFACE_DEFINED__ equ 1
+define __IWICEnumMetadataItem_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICEnumMetadataItem, "DC2BB46D-3F07-481E-8625-220C4AEDBB33")
 
@@ -869,12 +732,12 @@ DEFINE_IIDX(IWICEnumMetadataItem, "DC2BB46D-3F07-481E-8625-220C4AEDBB33")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICMetadataQueryReader_INTERFACE_DEFINED__
-__IWICMetadataQueryReader_INTERFACE_DEFINED__ equ 1
+define __IWICMetadataQueryReader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICMetadataQueryReader, "30989668-E1C9-4597-B395-458EEDB808DF")
 
@@ -884,12 +747,12 @@ DEFINE_IIDX(IWICMetadataQueryReader, "30989668-E1C9-4597-B395-458EEDB808DF")
     GetLocation		proc :UINT
     GetMetadataByName	proc :LPCWSTR, :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICMetadataQueryWriter_INTERFACE_DEFINED__
-__IWICMetadataQueryWriter_INTERFACE_DEFINED__ equ 1
+define __IWICMetadataQueryWriter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICMetadataQueryWriter, "A721791A-0DEF-4d06-BD91-2118BF1DB10B")
 
@@ -897,12 +760,12 @@ DEFINE_IIDX(IWICMetadataQueryWriter, "A721791A-0DEF-4d06-BD91-2118BF1DB10B")
 
     SetMetadataByName	proc :LPCWSTR, :ptr PROPVARIANT
     RemoveMetadataByName proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapEncoder_INTERFACE_DEFINED__
-__IWICBitmapEncoder_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapEncoder, "00000103-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -918,12 +781,12 @@ DEFINE_IIDX(IWICBitmapEncoder, "00000103-a8f2-4877-ba0a-fd2b6645fb94")
     CreateNewFrame	proc :ptr, :ptr
     Commit		proc
     GetMetadataQueryWriter proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapFrameEncode_INTERFACE_DEFINED__
-__IWICBitmapFrameEncode_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapFrameEncode_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapFrameEncode, "00000105-a8f2-4877-ba0a-fd2b6645fb94")
 
@@ -940,12 +803,12 @@ DEFINE_IIDX(IWICBitmapFrameEncode, "00000105-a8f2-4877-ba0a-fd2b6645fb94")
     WriteSource		proc :ptr, :ptr
     Commit		proc
     GetMetadataQueryWriter proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICPlanarBitmapFrameEncode_INTERFACE_DEFINED__
-__IWICPlanarBitmapFrameEncode_INTERFACE_DEFINED__ equ 1
+define __IWICPlanarBitmapFrameEncode_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPlanarBitmapFrameEncode, "F928B7B8-2221-40C1-B72E-7E82F1974D1A")
 
@@ -953,17 +816,14 @@ DEFINE_IIDX(IWICPlanarBitmapFrameEncode, "F928B7B8-2221-40C1-B72E-7E82F1974D1A")
 
     WritePixels		proc :UINT
     WriteSource		proc
-    .ends
+   .ends
 
 endif
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN8) OR defined(_WIN7_PLATFORM_UPDATE)
 
-externdef		__MIDL_itf_wincodec_0000_0019_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0019_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICImageEncoder_INTERFACE_DEFINED__
-__IWICImageEncoder_INTERFACE_DEFINED__ equ 1
+define __IWICImageEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICImageEncoder, "04C75BF8-3CE1-473B-ACC5-3CC4F5E94999")
 
@@ -972,16 +832,13 @@ DEFINE_IIDX(IWICImageEncoder, "04C75BF8-3CE1-473B-ACC5-3CC4F5E94999")
     WriteFrame		proc :ptr, :ptr, :ptr
     WriteFrameThumbnail proc :ptr, :ptr, :ptr
     WriteThumbnail	proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 endif
-
-externdef		__MIDL_itf_wincodec_0000_0020_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0020_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IWICBitmapDecoder_INTERFACE_DEFINED__
-__IWICBitmapDecoder_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapDecoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapDecoder, "9EDDE9E7-8DEE-47ea-99DF-E6FAF2ED44BF")
 
@@ -998,12 +855,12 @@ DEFINE_IIDX(IWICBitmapDecoder, "9EDDE9E7-8DEE-47ea-99DF-E6FAF2ED44BF")
     GetThumbnail	proc :ptr
     GetFrameCount	proc :ptr
     GetFrame		proc :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapSourceTransform_INTERFACE_DEFINED__
-__IWICBitmapSourceTransform_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapSourceTransform_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapSourceTransform, "3B16811B-6A43-4ec9-B713-3D5A0C13B940")
 
@@ -1013,12 +870,12 @@ DEFINE_IIDX(IWICBitmapSourceTransform, "3B16811B-6A43-4ec9-B713-3D5A0C13B940")
     GetClosestSize	proc :ptr, :ptr
     GetClosestPixelFormat proc :ptr
     DoesSupportTransform proc :WICBitmapTransformOptions, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICPlanarBitmapSourceTransform_INTERFACE_DEFINED__
-__IWICPlanarBitmapSourceTransform_INTERFACE_DEFINED__ equ 1
+define __IWICPlanarBitmapSourceTransform_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPlanarBitmapSourceTransform, "3AFF9CCE-BE95-4303-B927-E7D16FF4A613")
 
@@ -1026,12 +883,12 @@ DEFINE_IIDX(IWICPlanarBitmapSourceTransform, "3AFF9CCE-BE95-4303-B927-E7D16FF4A6
 
     DoesSupportTransform proc :ptr, :ptr, :WICBitmapTransformOptions, :WICPlanarOptions, :ptr, :UINT, :ptr
     CopyPixels		proc :ptr WICRect, :UINT, :UINT, :WICBitmapTransformOptions, :WICPlanarOptions, :ptr WICBitmapPlane, :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapFrameDecode_INTERFACE_DEFINED__
-__IWICBitmapFrameDecode_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapFrameDecode_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapFrameDecode, "3B16811B-6A43-4ec9-A813-3D930C13B940")
 
@@ -1040,12 +897,12 @@ DEFINE_IIDX(IWICBitmapFrameDecode, "3B16811B-6A43-4ec9-A813-3D930C13B940")
     GetMetadataQueryReader proc :ptr
     GetColorContexts	proc :UINT
     GetThumbnail	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICProgressiveLevelControl_INTERFACE_DEFINED__
-__IWICProgressiveLevelControl_INTERFACE_DEFINED__ equ 1
+define __IWICProgressiveLevelControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICProgressiveLevelControl, "DAAC296F-7AA5-4dbf-8D15-225C5976F891")
 
@@ -1054,24 +911,24 @@ DEFINE_IIDX(IWICProgressiveLevelControl, "DAAC296F-7AA5-4dbf-8D15-225C5976F891")
     GetLevelCount	proc :ptr
     GetCurrentLevel	proc :ptr
     SetCurrentLevel	proc :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICProgressCallback_INTERFACE_DEFINED__
-__IWICProgressCallback_INTERFACE_DEFINED__ equ 1
+define __IWICProgressCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICProgressCallback, "4776F9CD-9517-45FA-BF24-E89C5EC5C60C")
 
 .comdef IWICProgressCallback : public IUnknown
 
     Notify		proc :ULONG, :WICProgressOperation, :real8
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapCodecProgressNotification_INTERFACE_DEFINED__
-__IWICBitmapCodecProgressNotification_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapCodecProgressNotification_INTERFACE_DEFINED__
 
 CALLBACK(PFNProgressNotification, :LPVOID, :ULONG, :WICProgressOperation, :real8)
 
@@ -1080,25 +937,13 @@ DEFINE_IIDX(IWICBitmapCodecProgressNotification, "64C1024E-C3CF-4462-8078-88C2B1
 .comdef IWICBitmapCodecProgressNotification : public IUnknown
 
     RegisterProgressNotification proc :PFNProgressNotification, :LPVOID, :DWORD
-    .ends
-
-IWICBitmapCodecProgressNotification_Remote_RegisterProgressNotification_Proxy proto __cdecl \
-		  This: ptr IWICBitmapCodecProgressNotification,
-	    pICallback: ptr IWICProgressCallback,
-       dwProgressFlags: DWORD
-
-;void
-IWICBitmapCodecProgressNotification_Remote_RegisterProgressNotification_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+   .ends
 
 endif
 
 
 ifndef __IWICComponentInfo_INTERFACE_DEFINED__
-__IWICComponentInfo_INTERFACE_DEFINED__ equ 1
+define __IWICComponentInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICComponentInfo, "23BC3F0A-698B-4357-886B-F24D50671334")
 
@@ -1112,12 +957,12 @@ DEFINE_IIDX(IWICComponentInfo, "23BC3F0A-698B-4357-886B-F24D50671334")
     GetVersion		proc :UINT
     GetSpecVersion	proc :UINT
     GetFriendlyName	proc :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICFormatConverterInfo_INTERFACE_DEFINED__
-__IWICFormatConverterInfo_INTERFACE_DEFINED__ equ 1
+define __IWICFormatConverterInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICFormatConverterInfo, "9F34FB65-13F4-4f15-BC57-3726B5E53D9F")
 
@@ -1125,12 +970,12 @@ DEFINE_IIDX(IWICFormatConverterInfo, "9F34FB65-13F4-4f15-BC57-3726B5E53D9F")
 
     GetPixelFormats	proc :UINT
     CreateInstance	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapCodecInfo_INTERFACE_DEFINED__
-__IWICBitmapCodecInfo_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapCodecInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapCodecInfo, "E87A44C4-B76E-4c47-8B09-298EB12A2714")
 
@@ -1148,24 +993,24 @@ DEFINE_IIDX(IWICBitmapCodecInfo, "E87A44C4-B76E-4c47-8B09-298EB12A2714")
     DoesSupportLossless proc :ptr
     DoesSupportMultiframe proc :ptr
     MatchesMimeType	proc :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapEncoderInfo_INTERFACE_DEFINED__
-__IWICBitmapEncoderInfo_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapEncoderInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapEncoderInfo, "94C9B4EE-A09F-4f92-8A1E-4A9BCE7E76FB")
 
 .comdef IWICBitmapEncoderInfo : public IWICBitmapCodecInfo
 
     CreateInstance	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICBitmapDecoderInfo_INTERFACE_DEFINED__
-__IWICBitmapDecoderInfo_INTERFACE_DEFINED__ equ 1
+define __IWICBitmapDecoderInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICBitmapDecoderInfo, "D8CD007F-D08F-4191-9BFC-236EA7F0E4B5")
 
@@ -1174,24 +1019,12 @@ DEFINE_IIDX(IWICBitmapDecoderInfo, "D8CD007F-D08F-4191-9BFC-236EA7F0E4B5")
     GetPatterns		proc :UINT, :ptr WICBitmapPattern, :ptr UINT, :ptr UINT
     MatchesPattern	proc :ptr, :ptr
     CreateInstance	proc :ptr
-    .ends
-
-IWICBitmapDecoderInfo_Remote_GetPatterns_Proxy proto __cdecl \
-		  This: ptr IWICBitmapDecoderInfo,
-	    ppPatterns: ptr ptr WICBitmapPattern,
-	    pcPatterns: ptr UINT
-
-;void
-IWICBitmapDecoderInfo_Remote_GetPatterns_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+   .ends
 
 endif
 
 ifndef __IWICPixelFormatInfo_INTERFACE_DEFINED__
-__IWICPixelFormatInfo_INTERFACE_DEFINED__ equ 1
+define __IWICPixelFormatInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPixelFormatInfo, "E8EDA601-3D48-431a-AB44-69059BE88BBE")
 
@@ -1202,12 +1035,12 @@ DEFINE_IIDX(IWICPixelFormatInfo, "E8EDA601-3D48-431a-AB44-69059BE88BBE")
     GetBitsPerPixel	proc :ptr
     GetChannelCount	proc :ptr
     GetChannelMask	proc :UINT, :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICPixelFormatInfo2_INTERFACE_DEFINED__
-__IWICPixelFormatInfo2_INTERFACE_DEFINED__ equ 1
+define __IWICPixelFormatInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICPixelFormatInfo2, "A9DB33A2-AF5F-43C7-B679-74F5984B5AA4")
 
@@ -1215,12 +1048,12 @@ DEFINE_IIDX(IWICPixelFormatInfo2, "A9DB33A2-AF5F-43C7-B679-74F5984B5AA4")
 
     SupportsTransparency proc :ptr
     GetNumericRepresentation proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICImagingFactory_INTERFACE_DEFINED__
-__IWICImagingFactory_INTERFACE_DEFINED__ equ 1
+define __IWICImagingFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICImagingFactory, "ec5ec8a9-c395-4314-9c77-54d7a935ff70")
 
@@ -1251,24 +1084,21 @@ DEFINE_IIDX(IWICImagingFactory, "ec5ec8a9-c395-4314-9c77-54d7a935ff70")
     CreateFastMetadataEncoderFromFrameDecode proc :ptr, :ptr
     CreateQueryWriter	proc :REFGUID, :ptr, :ptr
     CreateQueryWriterFromReader proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN8) OR defined(_WIN7_PLATFORM_UPDATE)
 
-externdef		__MIDL_itf_wincodec_0000_0035_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0035_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICImagingFactory2_INTERFACE_DEFINED__
-__IWICImagingFactory2_INTERFACE_DEFINED__ equ 1
+define __IWICImagingFactory2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICImagingFactory2, "7B816B45-1996-4476-B132-DE9E247C8AF0")
 
 .comdef IWICImagingFactory2 : public IWICImagingFactory
 
     CreateImageEncoder	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1457,23 +1287,20 @@ WICRawChangeNotification_ToneCurve equ 0x00000800
 WICRawChangeNotification_Rotation equ 0x00001000
 WICRawChangeNotification_RenderMode equ 0x00002000
 
-externdef		__MIDL_itf_wincodec_0000_0036_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0036_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICDevelopRawNotificationCallback_INTERFACE_DEFINED__
-__IWICDevelopRawNotificationCallback_INTERFACE_DEFINED__ equ 1
+define __IWICDevelopRawNotificationCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICDevelopRawNotificationCallback, "95c75a6e-3e8c-4ec2-85a8-aebcc551e59b")
 
 .comdef IWICDevelopRawNotificationCallback : public IUnknown
 
     Notify		proc :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICDevelopRaw_INTERFACE_DEFINED__
-__IWICDevelopRaw_INTERFACE_DEFINED__ equ 1
+define __IWICDevelopRaw_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICDevelopRaw, "fbec5e44-f7be-4b65-b7f8-c0c81fef026d")
 
@@ -1511,29 +1338,7 @@ DEFINE_IIDX(IWICDevelopRaw, "fbec5e44-f7be-4b65-b7f8-c0c81fef026d")
     SetRenderMode	proc :WICRawRenderMode
     GetRenderMode	proc :ptr
     SetNotificationCallback proc :ptr
-    .ends
-
-
-;void
-IWICDevelopRaw_Remote_QueryRawCapabilitiesInfo_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;void
-IWICDevelopRaw_Remote_SetToneCurve_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;void
-IWICDevelopRaw_Remote_GetToneCurve_Stub proto __cdecl \
-		  This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+   .ends
 
 endif
 
@@ -1565,11 +1370,8 @@ Dimension		WICDdsDimension ?
 AlphaMode		WICDdsAlphaMode ?
 WICDdsParameters	ENDS
 
-externdef		__MIDL_itf_wincodec_0000_0038_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0038_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICDdsDecoder_INTERFACE_DEFINED__
-__IWICDdsDecoder_INTERFACE_DEFINED__ equ 1
+define __IWICDdsDecoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICDdsDecoder, "409cd537-8532-40cb-9774-e2feb2df4e9c")
 
@@ -1577,12 +1379,12 @@ DEFINE_IIDX(IWICDdsDecoder, "409cd537-8532-40cb-9774-e2feb2df4e9c")
 
     GetParameters	proc :ptr
     GetFrame		proc :UINT, :UINT, :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWICDdsEncoder_INTERFACE_DEFINED__
-__IWICDdsEncoder_INTERFACE_DEFINED__ equ 1
+define __IWICDdsEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICDdsEncoder, "5cacdb4c-407e-41b3-b936-d0f010cd6732")
 
@@ -1591,7 +1393,7 @@ DEFINE_IIDX(IWICDdsEncoder, "5cacdb4c-407e-41b3-b936-d0f010cd6732")
     SetParameters	proc :ptr
     GetParameters	proc :ptr
     CreateNewFrame	proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -1602,11 +1404,8 @@ BlockWidth		UINT ?
 BlockHeight		UINT ?
 WICDdsFormatInfo	ENDS
 
-externdef		__MIDL_itf_wincodec_0000_0040_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_wincodec_0000_0040_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWICDdsFrameDecode_INTERFACE_DEFINED__
-__IWICDdsFrameDecode_INTERFACE_DEFINED__ equ 1
+define __IWICDdsFrameDecode_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWICDdsFrameDecode, "3d4c0c61-18a4-41e4-bd80-481a4fc9f464")
 
@@ -1615,228 +1414,39 @@ DEFINE_IIDX(IWICDdsFrameDecode, "3d4c0c61-18a4-41e4-bd80-481a4fc9f464")
     GetSizeInBlocks	proc :ptr, :ptr
     GetFormatInfo	proc :ptr
     CopyBlocks		proc :ptr WICRect, :UINT, :UINT, :ptr byte
-    .ends
+   .ends
 
 endif
 
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
+BSTR_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
+BSTR_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
+BSTR_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr BSTR
+BSTR_UserFree proto WINAPI :ptr DWORD, :ptr BSTR
 
-;LPBYTE
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr BSTR
+HBITMAP_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
+HBITMAP_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HBITMAP
+HBITMAP_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HBITMAP
+HBITMAP_UserFree proto WINAPI :ptr DWORD, :ptr HBITMAP
 
-;LPBYTE
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr BSTR
+HICON_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
+HICON_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HICON
+HICON_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HICON
+HICON_UserFree proto WINAPI :ptr DWORD, :ptr HICON
 
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
+HPALETTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr HPALETTE
+HPALETTE_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
+HPALETTE_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr HPALETTE
+HPALETTE_UserFree proto WINAPI :ptr DWORD, :ptr HPALETTE
 
+LPSAFEARRAY_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserFree proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
 
-;DWORD
-HBITMAP_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-;LPBYTE
-HBITMAP_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HBITMAP
-
-;LPBYTE
-HBITMAP_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HBITMAP
-
-;void
-HBITMAP_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-;DWORD
-HICON_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HICON
-
-;LPBYTE
-HICON_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HICON
-
-;LPBYTE
-HICON_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HICON
-
-;void
-HICON_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HICON
-
-
-;DWORD
-HPALETTE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HPALETTE
-
-;LPBYTE
-HPALETTE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HPALETTE
-
-;LPBYTE
-HPALETTE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr HPALETTE
-
-;void
-HPALETTE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HPALETTE
-
-
-;DWORD
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr LPSAFEARRAY
-
-;LPBYTE
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-WICInProcPointer_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr WICInProcPointer
-
-;LPBYTE
-WICInProcPointer_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr WICInProcPointer
-
-;LPBYTE
-WICInProcPointer_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : ptr SBYTE,
-		      : ptr WICInProcPointer
-
-;void
-WICInProcPointer_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr WICInProcPointer
-
-
-;HRESULT
-IWICBitmapCodecProgressNotification_RegisterProgressNotification_Proxy proto __cdecl \
-		  This: ptr IWICBitmapCodecProgressNotification,
-pfnProgressNotification: PFNProgressNotification,
-		pvData: ptr,
-       dwProgressFlags: DWORD
-
-;HRESULT
-IWICBitmapCodecProgressNotification_RegisterProgressNotification_Stub proto __cdecl \
-		  This: ptr IWICBitmapCodecProgressNotification,
-	    pICallback: ptr IWICProgressCallback,
-       dwProgressFlags: DWORD
-
-
-;HRESULT
-IWICBitmapDecoderInfo_GetPatterns_Proxy proto __cdecl \
-		  This: ptr IWICBitmapDecoderInfo,
-	cbSizePatterns: UINT,
-	     pPatterns: ptr WICBitmapPattern,
-	    pcPatterns: ptr UINT,
-     pcbPatternsActual: ptr UINT
-
-
-
-;HRESULT
-IWICBitmapDecoderInfo_GetPatterns_Stub proto __cdecl \
-		  This: ptr IWICBitmapDecoderInfo,
-	    ppPatterns: ptr WICBitmapPattern,
-	    pcPatterns: ptr UINT
-
-
-;HRESULT
-IWICDevelopRaw_QueryRawCapabilitiesInfo_Proxy proto __cdecl \
-		  This: ptr IWICDevelopRaw,
-		 pInfo: ptr WICRawCapabilitiesInfo
-
-
-
-;HRESULT
-IWICDevelopRaw_QueryRawCapabilitiesInfo_Stub proto __cdecl \
-		  This: ptr IWICDevelopRaw,
-		 pInfo: ptr WICRawCapabilitiesInfo
-
-
-;HRESULT
-IWICDevelopRaw_SetToneCurve_Proxy proto __cdecl \
-		  This: ptr IWICDevelopRaw,
-       cbToneCurveSize: UINT,
-	    pToneCurve: ptr WICRawToneCurve
-
-
-
-;HRESULT
-IWICDevelopRaw_SetToneCurve_Stub proto __cdecl \
-		  This: ptr IWICDevelopRaw,
-	       cPoints: UINT,
-	       aPoints: ptr WICRawToneCurvePoint
-
-
-;HRESULT
-IWICDevelopRaw_GetToneCurve_Proxy proto __cdecl \
-		  This: ptr IWICDevelopRaw,
- cbToneCurveBufferSize: UINT,
-	    pToneCurve: ptr WICRawToneCurve,
-pcbActualToneCurveBufferSize: ptr UINT
-
-
-
-;HRESULT
-IWICDevelopRaw_GetToneCurve_Stub proto __cdecl \
-		  This: ptr IWICDevelopRaw,
-	      pcPoints: ptr UINT,
-	      paPoints: ptr WICRawToneCurvePoint
-
+WICInProcPointer_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr WICInProcPointer
+WICInProcPointer_UserMarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr WICInProcPointer
+WICInProcPointer_UserUnmarshal proto WINAPI :ptr DWORD, :ptr SBYTE, :ptr WICInProcPointer
+WICInProcPointer_UserFree proto WINAPI :ptr DWORD, :ptr WICInProcPointer
 
 endif
 .pragma list(pop)

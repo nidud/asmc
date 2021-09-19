@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,63 +18,16 @@ include ole2.inc
 endif
 
 ifndef __txcoord_h__
-__txcoord_h__ equ <>
-
-ifndef __ITransactionResourceAsync_FWD_DEFINED__
-__ITransactionResourceAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionLastResourceAsync_FWD_DEFINED__
-__ITransactionLastResourceAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionResource_FWD_DEFINED__
-__ITransactionResource_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionEnlistmentAsync_FWD_DEFINED__
-__ITransactionEnlistmentAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionLastEnlistmentAsync_FWD_DEFINED__
-__ITransactionLastEnlistmentAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionExportFactory_FWD_DEFINED__
-__ITransactionExportFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionImportWhereabouts_FWD_DEFINED__
-__ITransactionImportWhereabouts_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionExport_FWD_DEFINED__
-__ITransactionExport_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionImport_FWD_DEFINED__
-__ITransactionImport_FWD_DEFINED__ equ 1
-endif
-ifndef __ITipTransaction_FWD_DEFINED__
-__ITipTransaction_FWD_DEFINED__ equ 1
-endif
-ifndef __ITipHelper_FWD_DEFINED__
-__ITipHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __ITipPullSink_FWD_DEFINED__
-__ITipPullSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcNetworkAccessConfig_FWD_DEFINED__
-__IDtcNetworkAccessConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcNetworkAccessConfig2_FWD_DEFINED__
-__IDtcNetworkAccessConfig2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcNetworkAccessConfig3_FWD_DEFINED__
-__IDtcNetworkAccessConfig3_FWD_DEFINED__ equ 1
-endif
+define __txcoord_h__
 
 include transact.inc
 include objidl.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITransactionResourceAsync_INTERFACE_DEFINED__
-__ITransactionResourceAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionResourceAsync_INTERFACE_DEFINED__
 
 
 DEFINE_IIDX(ITransactionResourceAsync, "69E971F0-23CE-11cf-AD60-00AA00A74CCD")
@@ -85,12 +38,12 @@ DEFINE_IIDX(ITransactionResourceAsync, "69E971F0-23CE-11cf-AD60-00AA00A74CCD")
     CommitRequest	proc :DWORD, :ptr
     AbortRequest	proc :ptr, :BOOL, :ptr
     TMDown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionLastResourceAsync_INTERFACE_DEFINED__
-__ITransactionLastResourceAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionLastResourceAsync_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionLastResourceAsync, "C82BD532-5B30-11d3-8A91-00C04F79EB6D")
 
@@ -98,12 +51,12 @@ DEFINE_IIDX(ITransactionLastResourceAsync, "C82BD532-5B30-11d3-8A91-00C04F79EB6D
 
     DelegateCommit	proc :DWORD
     ForgetRequest	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionResource_INTERFACE_DEFINED__
-__ITransactionResource_INTERFACE_DEFINED__ equ 1
+define __ITransactionResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionResource, "EE5FF7B3-4572-11d0-9452-00A0C905416E")
 
@@ -113,12 +66,12 @@ DEFINE_IIDX(ITransactionResource, "EE5FF7B3-4572-11d0-9452-00A0C905416E")
     CommitRequest	proc :DWORD, :ptr
     AbortRequest	proc :ptr, :BOOL, :ptr
     TMDown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionEnlistmentAsync_INTERFACE_DEFINED__
-__ITransactionEnlistmentAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionEnlistmentAsync_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionEnlistmentAsync, "0fb15081-af41-11ce-bd2b-204c4f4f5020")
 
@@ -127,24 +80,24 @@ DEFINE_IIDX(ITransactionEnlistmentAsync, "0fb15081-af41-11ce-bd2b-204c4f4f5020")
     PrepareRequestDone	proc :HRESULT, :ptr, :ptr
     CommitRequestDone	proc :HRESULT
     AbortRequestDone	proc :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionLastEnlistmentAsync_INTERFACE_DEFINED__
-__ITransactionLastEnlistmentAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionLastEnlistmentAsync_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionLastEnlistmentAsync, "C82BD533-5B30-11d3-8A91-00C04F79EB6D")
 
 .comdef ITransactionLastEnlistmentAsync : public IUnknown
 
     TransactionOutcome	proc :XACTSTAT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionExportFactory_INTERFACE_DEFINED__
-__ITransactionExportFactory_INTERFACE_DEFINED__ equ 1
+define __ITransactionExportFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionExportFactory, "E1CF9B53-8745-11ce-A9BA-00AA006C3706")
 
@@ -152,19 +105,19 @@ DEFINE_IIDX(ITransactionExportFactory, "E1CF9B53-8745-11ce-A9BA-00AA006C3706")
 
     GetRemoteClassId	proc :ptr
     Create		proc :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionImportWhereabouts_INTERFACE_DEFINED__
-__ITransactionImportWhereabouts_INTERFACE_DEFINED__ equ 1
+define __ITransactionImportWhereabouts_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionImportWhereabouts, "0141fda4-8fc0-11ce-bd18-204c4f4f5020")
 
 .comdef ITransactionImportWhereabouts : public IUnknown
 
     GetWhereaboutsSize	proc :ptr
-    .ends
+   .ends
 
 ITransactionImportWhereabouts_RemoteGetWhereabouts_Stub proto __cdecl \
 		  This: ptr IRpcStubBuffer,
@@ -176,14 +129,14 @@ ITransactionImportWhereabouts_RemoteGetWhereabouts_Stub proto __cdecl \
 endif
 
 ifndef __ITransactionExport_INTERFACE_DEFINED__
-__ITransactionExport_INTERFACE_DEFINED__ equ 1
+define __ITransactionExport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionExport, "0141fda5-8fc0-11ce-bd18-204c4f4f5020")
 
 .comdef ITransactionExport : public IUnknown
 
     Export		proc :ptr, :ptr
-    .ends
+   .ends
 
 ITransactionExport_RemoteGetTransactionCookie_Stub proto __cdecl \
 		  This: ptr IRpcStubBuffer,
@@ -194,19 +147,19 @@ ITransactionExport_RemoteGetTransactionCookie_Stub proto __cdecl \
 endif
 
 ifndef __ITransactionImport_INTERFACE_DEFINED__
-__ITransactionImport_INTERFACE_DEFINED__ equ 1
+define __ITransactionImport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionImport, "E1CF9B5A-8745-11ce-A9BA-00AA006C3706")
 
 .comdef ITransactionImport : public IUnknown
 
     Import		proc :ULONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ITipTransaction_INTERFACE_DEFINED__
-__ITipTransaction_INTERFACE_DEFINED__ equ 1
+define __ITipTransaction_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITipTransaction, "17CF72D0-BAC5-11d1-B1BF-00C04FC2F3EF")
 
@@ -214,12 +167,12 @@ DEFINE_IIDX(ITipTransaction, "17CF72D0-BAC5-11d1-B1BF-00C04FC2F3EF")
 
     _Push		proc :ptr, :ptr
     GetTransactionUrl	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITipHelper_INTERFACE_DEFINED__
-__ITipHelper_INTERFACE_DEFINED__ equ 1
+define __ITipHelper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITipHelper, "17CF72D1-BAC5-11d1-B1BF-00C04FC2F3EF")
 
@@ -228,24 +181,24 @@ DEFINE_IIDX(ITipHelper, "17CF72D1-BAC5-11d1-B1BF-00C04FC2F3EF")
     Pull		proc :ptr, :ptr
     PullAsync		proc :ptr, :ptr, :ptr
     GetLocalTmUrl	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITipPullSink_INTERFACE_DEFINED__
-__ITipPullSink_INTERFACE_DEFINED__ equ 1
+define __ITipPullSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITipPullSink, "17CF72D2-BAC5-11d1-B1BF-00C04FC2F3EF")
 
 .comdef ITipPullSink : public IUnknown
 
     PullComplete	proc :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcNetworkAccessConfig_INTERFACE_DEFINED__
-__IDtcNetworkAccessConfig_INTERFACE_DEFINED__ equ 1
+define __IDtcNetworkAccessConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDtcNetworkAccessConfig, "9797C15D-A428-4291-87B6-0995031A678D")
 
@@ -264,7 +217,7 @@ DEFINE_IIDX(IDtcNetworkAccessConfig, "9797C15D-A428-4291-87B6-0995031A678D")
     GetXAAccess		proc :ptr
     SetXAAccess		proc :BOOL
     RestartDtcService	proc
-    .ends
+   .ends
 
 endif
 
@@ -275,7 +228,7 @@ endif
     }
 
 ifndef __IDtcNetworkAccessConfig2_INTERFACE_DEFINED__
-__IDtcNetworkAccessConfig2_INTERFACE_DEFINED__ equ 1
+define __IDtcNetworkAccessConfig2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDtcNetworkAccessConfig2, "A7AA013B-EB7D-4f42-B41C-B2DEC09AE034")
 
@@ -287,12 +240,12 @@ DEFINE_IIDX(IDtcNetworkAccessConfig2, "A7AA013B-EB7D-4f42-B41C-B2DEC09AE034")
     SetNetworkOutboundAccess proc :BOOL
     GetAuthenticationLevel proc :ptr
     SetAuthenticationLevel proc :AUTHENTICATION_LEVEL
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcNetworkAccessConfig3_INTERFACE_DEFINED__
-__IDtcNetworkAccessConfig3_INTERFACE_DEFINED__ equ 1
+define __IDtcNetworkAccessConfig3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDtcNetworkAccessConfig3, "76E4B4F3-2CA5-466b-89D5-FD218EE75B49")
 
@@ -300,7 +253,7 @@ DEFINE_IIDX(IDtcNetworkAccessConfig3, "76E4B4F3-2CA5-466b-89D5-FD218EE75B49")
 
     GetLUAccess		proc :ptr
     SetLUAccess		proc :BOOL
-    .ends
+   .ends
 
 endif
 

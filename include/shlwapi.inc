@@ -1,5 +1,5 @@
 ifndef _INC_SHLWAPI
-_INC_SHLWAPI equ <>
+define _INC_SHLWAPI
 .pragma list(push, 0)
 
 ifndef __LIBC_INC
@@ -18,11 +18,6 @@ endif
 
 ifdef _WIN32
 .pragma pack(push, 8)
-endif
-
-ifndef __IBindCtx_FWD_DEFINED__
-__IBindCtx_FWD_DEFINED__ equ 1
-;typedef interface IBindCtx IBindCtx;
 endif
 
 if defined(__cplusplus) AND defined(STRICT_CONST)
@@ -2632,7 +2627,7 @@ DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
     GetKey		proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY
     GetData		proc :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr DWORD
     GetEnum		proc :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
-    .ends
+   .ends
 
 ;LWSTDAPI
 AssocCreate proto WINAPI \
@@ -2726,10 +2721,6 @@ endif
 endif ;; NO_SHLWAPI_REG
 
 ifndef NO_SHLWAPI_STREAM
-
-ifndef __IStream_FWD_DEFINED__
-__IStream_FWD_DEFINED__ equ 1
-endif
 
 ;LWSTDAPI
 SHOpenRegStreamA proto WINAPI \
@@ -2919,10 +2910,6 @@ IStream_Size proto WINAPI \
 		  pstm: ptr IStream,
 		   pui: ptr ULARGE_INTEGER
 
-
-ifndef __IConnectionPoint_FWD_DEFINED__
-__IConnectionPoint_FWD_DEFINED__ equ 1
-endif
 
 ;LWSTDAPI
 ConnectToConnectionPoint proto WINAPI \

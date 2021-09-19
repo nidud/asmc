@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 
 include rpc.inc
@@ -11,284 +11,10 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __iads_h__
-__iads_h__ equ <>
-
-ifndef __IADs_FWD_DEFINED__
-__IADs_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsContainer_FWD_DEFINED__
-__IADsContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsCollection_FWD_DEFINED__
-__IADsCollection_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsMembers_FWD_DEFINED__
-__IADsMembers_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPropertyList_FWD_DEFINED__
-__IADsPropertyList_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPropertyEntry_FWD_DEFINED__
-__IADsPropertyEntry_FWD_DEFINED__ equ 1
-endif
-ifndef __PropertyEntry_FWD_DEFINED__
-__PropertyEntry_FWD_DEFINED__ equ <>
-endif
-ifndef __IADsPropertyValue_FWD_DEFINED__
-__IADsPropertyValue_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPropertyValue2_FWD_DEFINED__
-__IADsPropertyValue2_FWD_DEFINED__ equ 1
-endif
-ifndef __PropertyValue_FWD_DEFINED__
-__PropertyValue_FWD_DEFINED__ equ 1
-endif
-ifndef __IPrivateDispatch_FWD_DEFINED__
-__IPrivateDispatch_FWD_DEFINED__ equ 1
-endif
-ifndef __IPrivateUnknown_FWD_DEFINED__
-__IPrivateUnknown_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsExtension_FWD_DEFINED__
-__IADsExtension_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsDeleteOps_FWD_DEFINED__
-__IADsDeleteOps_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsNamespaces_FWD_DEFINED__
-__IADsNamespaces_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsClass_FWD_DEFINED__
-__IADsClass_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsProperty_FWD_DEFINED__
-__IADsProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsSyntax_FWD_DEFINED__
-__IADsSyntax_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsLocality_FWD_DEFINED__
-__IADsLocality_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsO_FWD_DEFINED__
-__IADsO_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsOU_FWD_DEFINED__
-__IADsOU_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsDomain_FWD_DEFINED__
-__IADsDomain_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsComputer_FWD_DEFINED__
-__IADsComputer_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsComputerOperations_FWD_DEFINED__
-__IADsComputerOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsGroup_FWD_DEFINED__
-__IADsGroup_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsUser_FWD_DEFINED__
-__IADsUser_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPrintQueue_FWD_DEFINED__
-__IADsPrintQueue_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPrintQueueOperations_FWD_DEFINED__
-__IADsPrintQueueOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPrintJob_FWD_DEFINED__
-__IADsPrintJob_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPrintJobOperations_FWD_DEFINED__
-__IADsPrintJobOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsService_FWD_DEFINED__
-__IADsService_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsServiceOperations_FWD_DEFINED__
-__IADsServiceOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsFileService_FWD_DEFINED__
-__IADsFileService_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsFileServiceOperations_FWD_DEFINED__
-__IADsFileServiceOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsFileShare_FWD_DEFINED__
-__IADsFileShare_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsSession_FWD_DEFINED__
-__IADsSession_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsResource_FWD_DEFINED__
-__IADsResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsOpenDSObject_FWD_DEFINED__
-__IADsOpenDSObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectoryObject_FWD_DEFINED__
-__IDirectoryObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectorySearch_FWD_DEFINED__
-__IDirectorySearch_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectorySchemaMgmt_FWD_DEFINED__
-__IDirectorySchemaMgmt_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsAggregatee_FWD_DEFINED__
-__IADsAggregatee_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsAggregator_FWD_DEFINED__
-__IADsAggregator_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsAccessControlEntry_FWD_DEFINED__
-__IADsAccessControlEntry_FWD_DEFINED__ equ 1
-endif
-ifndef __AccessControlEntry_FWD_DEFINED__
-__AccessControlEntry_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsAccessControlList_FWD_DEFINED__
-__IADsAccessControlList_FWD_DEFINED__ equ 1
-endif
-ifndef __AccessControlList_FWD_DEFINED__
-__AccessControlList_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsSecurityDescriptor_FWD_DEFINED__
-__IADsSecurityDescriptor_FWD_DEFINED__ equ 1
-endif
-ifndef __SecurityDescriptor_FWD_DEFINED__
-__SecurityDescriptor_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsLargeInteger_FWD_DEFINED__
-__IADsLargeInteger_FWD_DEFINED__ equ 1
-endif
-ifndef __LargeInteger_FWD_DEFINED__
-__LargeInteger_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsNameTranslate_FWD_DEFINED__
-__IADsNameTranslate_FWD_DEFINED__ equ 1
-endif
-ifndef __NameTranslate_FWD_DEFINED__
-__NameTranslate_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsCaseIgnoreList_FWD_DEFINED__
-__IADsCaseIgnoreList_FWD_DEFINED__ equ 1
-endif
-ifndef __CaseIgnoreList_FWD_DEFINED__
-__CaseIgnoreList_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsFaxNumber_FWD_DEFINED__
-__IADsFaxNumber_FWD_DEFINED__ equ 1
-endif
-ifndef __FaxNumber_FWD_DEFINED__
-__FaxNumber_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsNetAddress_FWD_DEFINED__
-__IADsNetAddress_FWD_DEFINED__ equ 1
-endif
-ifndef __NetAddress_FWD_DEFINED__
-__NetAddress_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsOctetList_FWD_DEFINED__
-__IADsOctetList_FWD_DEFINED__ equ 1
-endif
-ifndef __OctetList_FWD_DEFINED__
-__OctetList_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsEmail_FWD_DEFINED__
-__IADsEmail_FWD_DEFINED__ equ 1
-endif
-ifndef __Email_FWD_DEFINED__
-__Email_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPath_FWD_DEFINED__
-__IADsPath_FWD_DEFINED__ equ 1
-endif
-ifndef __Path_FWD_DEFINED__
-__Path_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsReplicaPointer_FWD_DEFINED__
-__IADsReplicaPointer_FWD_DEFINED__ equ 1
-endif
-ifndef __ReplicaPointer_FWD_DEFINED__
-__ReplicaPointer_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsAcl_FWD_DEFINED__
-__IADsAcl_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsTimestamp_FWD_DEFINED__
-__IADsTimestamp_FWD_DEFINED__ equ 1
-endif
-ifndef __Timestamp_FWD_DEFINED__
-__Timestamp_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPostalAddress_FWD_DEFINED__
-__IADsPostalAddress_FWD_DEFINED__ equ 1
-endif
-ifndef __PostalAddress_FWD_DEFINED__
-__PostalAddress_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsBackLink_FWD_DEFINED__
-__IADsBackLink_FWD_DEFINED__ equ 1
-endif
-ifndef __BackLink_FWD_DEFINED__
-__BackLink_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsTypedName_FWD_DEFINED__
-__IADsTypedName_FWD_DEFINED__ equ 1
-endif
-ifndef __TypedName_FWD_DEFINED__
-__TypedName_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsHold_FWD_DEFINED__
-__IADsHold_FWD_DEFINED__ equ 1
-endif
-ifndef __Hold_FWD_DEFINED__
-__Hold_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsObjectOptions_FWD_DEFINED__
-__IADsObjectOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsPathname_FWD_DEFINED__
-__IADsPathname_FWD_DEFINED__ equ 1
-endif
-ifndef __Pathname_FWD_DEFINED__
-__Pathname_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsADSystemInfo_FWD_DEFINED__
-__IADsADSystemInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ADSystemInfo_FWD_DEFINED__
-__ADSystemInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsWinNTSystemInfo_FWD_DEFINED__
-__IADsWinNTSystemInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __WinNTSystemInfo_FWD_DEFINED__
-__WinNTSystemInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsDNWithBinary_FWD_DEFINED__
-__IADsDNWithBinary_FWD_DEFINED__ equ 1
-endif
-ifndef __DNWithBinary_FWD_DEFINED__
-__DNWithBinary_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsDNWithString_FWD_DEFINED__
-__IADsDNWithString_FWD_DEFINED__ equ 1
-endif
-ifndef __DNWithString_FWD_DEFINED__
-__DNWithString_FWD_DEFINED__ equ 1
-endif
-ifndef __IADsSecurityUtility_FWD_DEFINED__
-__IADsSecurityUtility_FWD_DEFINED__ equ 1
-endif
-ifndef __ADsSecurityUtility_FWD_DEFINED__
-__ADsSecurityUtility_FWD_DEFINED__ equ 1
-endif
+define __iads_h__
 
 ifndef __ActiveDs_LIBRARY_DEFINED__
-__ActiveDs_LIBRARY_DEFINED__ equ 1
+define __ActiveDs_LIBRARY_DEFINED__
 
 ADSTYPEENUM typedef SDWORD
 ADSTYPE_INVALID		equ 0
@@ -866,7 +592,7 @@ ADS_SD_FORMAT_HEXSTRING equ 3
 externdef		LIBID_ActiveDs:IID
 
 ifndef __IADs_INTERFACE_DEFINED__
-__IADs_INTERFACE_DEFINED__ equ 1
+define __IADs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADs, "fd8256d0-fd15-11ce-abc4-02608c9e7553")
 
@@ -885,12 +611,11 @@ DEFINE_IIDX(IADs, "fd8256d0-fd15-11ce-abc4-02608c9e7553")
     GetEx		proc :BSTR, :ptr
     PutEx		proc :LONG, :BSTR, :VARIANT
     GetInfoEx		proc :VARIANT, :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsContainer_INTERFACE_DEFINED__
-__IADsContainer_INTERFACE_DEFINED__ equ 1
+define __IADsContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsContainer, "001677d0-fd16-11ce-abc4-02608c9e7553")
 
@@ -907,12 +632,11 @@ DEFINE_IIDX(IADsContainer, "001677d0-fd16-11ce-abc4-02608c9e7553")
     Delete		proc :BSTR, :BSTR
     CopyHere		proc :BSTR, :BSTR, :ptr
     MoveHere		proc :BSTR, :BSTR, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsCollection_INTERFACE_DEFINED__
-__IADsCollection_INTERFACE_DEFINED__ equ 1
+define __IADsCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsCollection, "72b945e0-253b-11cf-a988-00aa006bc149")
 
@@ -922,12 +646,11 @@ DEFINE_IIDX(IADsCollection, "72b945e0-253b-11cf-a988-00aa006bc149")
     _Add		proc :BSTR, :VARIANT
     Remove		proc :BSTR
     GetObject		proc :BSTR, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsMembers_INTERFACE_DEFINED__
-__IADsMembers_INTERFACE_DEFINED__ equ 1
+define __IADsMembers_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsMembers, "451a0030-72ec-11cf-b03b-00aa006e0975")
 
@@ -937,12 +660,11 @@ DEFINE_IIDX(IADsMembers, "451a0030-72ec-11cf-b03b-00aa006e0975")
     get__NewEnum	proc :ptr
     get_Filter		proc :ptr
     put_Filter		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPropertyList_INTERFACE_DEFINED__
-__IADsPropertyList_INTERFACE_DEFINED__ equ 1
+define __IADsPropertyList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPropertyList, "c6f602b6-8f69-11d0-8528-00c04fd8d503")
 
@@ -957,12 +679,11 @@ DEFINE_IIDX(IADsPropertyList, "c6f602b6-8f69-11d0-8528-00c04fd8d503")
     PutPropertyItem	proc :VARIANT
     ResetPropertyItem	proc :VARIANT
     PurgePropertyList	proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPropertyEntry_INTERFACE_DEFINED__
-__IADsPropertyEntry_INTERFACE_DEFINED__ equ 1
+define __IADsPropertyEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPropertyEntry, "05792c8e-941f-11d0-8529-00c04fd8d503")
 
@@ -977,14 +698,13 @@ DEFINE_IIDX(IADsPropertyEntry, "05792c8e-941f-11d0-8529-00c04fd8d503")
     put_ControlCode	proc :LONG
     get_Values		proc :ptr
     put_Values		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_PropertyEntry, "72d3edc2-a4c4-11d0-8533-00c04fd8d503")
 
 ifndef __IADsPropertyValue_INTERFACE_DEFINED__
-__IADsPropertyValue_INTERFACE_DEFINED__ equ 1
+define __IADsPropertyValue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPropertyValue, "79fa9ad0-a97c-11d0-8534-00c04fd8d503")
 
@@ -1015,12 +735,11 @@ DEFINE_IIDX(IADsPropertyValue, "79fa9ad0-a97c-11d0-8534-00c04fd8d503")
     put_LargeInteger	proc :ptr
     get_UTCTime		proc :ptr
     put_UTCTime		proc :DATE
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPropertyValue2_INTERFACE_DEFINED__
-__IADsPropertyValue2_INTERFACE_DEFINED__ equ 1
+define __IADsPropertyValue2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPropertyValue2, "306e831c-5bc7-11d1-a3b8-00c04fb950dc")
 
@@ -1028,14 +747,13 @@ DEFINE_IIDX(IADsPropertyValue2, "306e831c-5bc7-11d1-a3b8-00c04fb950dc")
 
     GetObjectProperty	proc :ptr, :ptr
     PutObjectProperty	proc :LONG, :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_PropertyValue, "7b9e38b0-a97c-11d0-8534-00c04fd8d503")
 
 ifndef __IPrivateDispatch_INTERFACE_DEFINED__
-__IPrivateDispatch_INTERFACE_DEFINED__ equ 1
+define __IPrivateDispatch_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPrivateDispatch, "86ab4bbe-65f6-11d1-8c13-00c04fd8d503")
 
@@ -1046,12 +764,11 @@ DEFINE_IIDX(IPrivateDispatch, "86ab4bbe-65f6-11d1-8c13-00c04fd8d503")
     ADSIGetTypeInfo	proc :UINT, :LCID, :ptr
     ADSIGetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
     ADSIInvoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IPrivateUnknown_INTERFACE_DEFINED__
-__IPrivateUnknown_INTERFACE_DEFINED__ equ 1
+define __IPrivateUnknown_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPrivateUnknown, "89126bab-6ead-11d1-8c18-00c04fd8d503")
 
@@ -1059,12 +776,11 @@ DEFINE_IIDX(IPrivateUnknown, "89126bab-6ead-11d1-8c18-00c04fd8d503")
 
     ADSIInitializeObject proc :BSTR, :BSTR, :LONG
     ADSIReleaseObject	proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsExtension_INTERFACE_DEFINED__
-__IADsExtension_INTERFACE_DEFINED__ equ 1
+define __IADsExtension_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsExtension, "3d35553c-d2b0-11d1-b17b-0000f87593a0")
 
@@ -1073,24 +789,22 @@ DEFINE_IIDX(IADsExtension, "3d35553c-d2b0-11d1-b17b-0000f87593a0")
     Operate		proc :DWORD, :VARIANT, :VARIANT, :VARIANT
     PrivateGetIDsOfNames proc :REFIID, :ptr, :SINT, :LCID, :ptr
     PrivateInvoke	proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsDeleteOps_INTERFACE_DEFINED__
-__IADsDeleteOps_INTERFACE_DEFINED__ equ 1
+define __IADsDeleteOps_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsDeleteOps, "b2bd0902-8878-11d1-8c21-00c04fd8d503")
 
 .comdef IADsDeleteOps : public IDispatch
 
     DeleteObject	proc :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsNamespaces_INTERFACE_DEFINED__
-__IADsNamespaces_INTERFACE_DEFINED__ equ 1
+define __IADsNamespaces_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsNamespaces, "28b96ba0-b330-11cf-a9ad-00aa006bc149")
 
@@ -1098,12 +812,11 @@ DEFINE_IIDX(IADsNamespaces, "28b96ba0-b330-11cf-a9ad-00aa006bc149")
 
     get_DefaultContainer proc :ptr
     put_DefaultContainer proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsClass_INTERFACE_DEFINED__
-__IADsClass_INTERFACE_DEFINED__ equ 1
+define __IADsClass_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsClass, "c8f93dd0-4ae0-11cf-9e73-00aa004a5691")
 
@@ -1139,12 +852,11 @@ DEFINE_IIDX(IADsClass, "c8f93dd0-4ae0-11cf-9e73-00aa004a5691")
     get_HelpFileContext proc :ptr
     put_HelpFileContext proc :LONG
     Qualifiers		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsProperty_INTERFACE_DEFINED__
-__IADsProperty_INTERFACE_DEFINED__ equ 1
+define __IADsProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsProperty, "c8f93dd3-4ae0-11cf-9e73-00aa004a5691")
 
@@ -1161,12 +873,11 @@ DEFINE_IIDX(IADsProperty, "c8f93dd3-4ae0-11cf-9e73-00aa004a5691")
     get_MultiValued	proc :ptr
     put_MultiValued	proc :VARIANT_BOOL
     Qualifiers		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsSyntax_INTERFACE_DEFINED__
-__IADsSyntax_INTERFACE_DEFINED__ equ 1
+define __IADsSyntax_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsSyntax, "c8f93dd2-4ae0-11cf-9e73-00aa004a5691")
 
@@ -1174,12 +885,11 @@ DEFINE_IIDX(IADsSyntax, "c8f93dd2-4ae0-11cf-9e73-00aa004a5691")
 
     get_OleAutoDataType proc :ptr
     put_OleAutoDataType proc :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsLocality_INTERFACE_DEFINED__
-__IADsLocality_INTERFACE_DEFINED__ equ 1
+define __IADsLocality_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsLocality, "a05e03a2-effe-11cf-8abc-00c04fd8d503")
 
@@ -1193,12 +903,11 @@ DEFINE_IIDX(IADsLocality, "a05e03a2-effe-11cf-8abc-00c04fd8d503")
     put_PostalAddress	proc :BSTR
     get_SeeAlso		proc :ptr
     put_SeeAlso		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsO_INTERFACE_DEFINED__
-__IADsO_INTERFACE_DEFINED__ equ 1
+define __IADsO_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsO, "a1cd2dc6-effe-11cf-8abc-00c04fd8d503")
 
@@ -1216,12 +925,11 @@ DEFINE_IIDX(IADsO, "a1cd2dc6-effe-11cf-8abc-00c04fd8d503")
     put_FaxNumber	proc :BSTR
     get_SeeAlso		proc :ptr
     put_SeeAlso		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsOU_INTERFACE_DEFINED__
-__IADsOU_INTERFACE_DEFINED__ equ 1
+define __IADsOU_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsOU, "a2f733b8-effe-11cf-8abc-00c04fd8d503")
 
@@ -1241,12 +949,11 @@ DEFINE_IIDX(IADsOU, "a2f733b8-effe-11cf-8abc-00c04fd8d503")
     put_SeeAlso		proc :VARIANT
     get_BusinessCategory proc :ptr
     put_BusinessCategory proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsDomain_INTERFACE_DEFINED__
-__IADsDomain_INTERFACE_DEFINED__ equ 1
+define __IADsDomain_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsDomain, "00e4c220-fd16-11ce-abc4-02608c9e7553")
 
@@ -1269,12 +976,11 @@ DEFINE_IIDX(IADsDomain, "00e4c220-fd16-11ce-abc4-02608c9e7553")
     put_AutoUnlockInterval proc :LONG
     get_LockoutObservationInterval proc :ptr
     put_LockoutObservationInterval proc :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsComputer_INTERFACE_DEFINED__
-__IADsComputer_INTERFACE_DEFINED__ equ 1
+define __IADsComputer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsComputer, "efe3cc70-1d9f-11cf-b1f3-02608c9e7553")
 
@@ -1312,12 +1018,11 @@ DEFINE_IIDX(IADsComputer, "efe3cc70-1d9f-11cf-b1f3-02608c9e7553")
     put_StorageCapacity proc :BSTR
     get_NetAddresses	proc :ptr
     put_NetAddresses	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsComputerOperations_INTERFACE_DEFINED__
-__IADsComputerOperations_INTERFACE_DEFINED__ equ 1
+define __IADsComputerOperations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsComputerOperations, "ef497680-1d9f-11cf-b1f3-02608c9e7553")
 
@@ -1325,12 +1030,11 @@ DEFINE_IIDX(IADsComputerOperations, "ef497680-1d9f-11cf-b1f3-02608c9e7553")
 
     Status		proc :ptr
     Shutdown		proc :VARIANT_BOOL
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsGroup_INTERFACE_DEFINED__
-__IADsGroup_INTERFACE_DEFINED__ equ 1
+define __IADsGroup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsGroup, "27636b00-410f-11cf-b1ff-02608c9e7553")
 
@@ -1342,12 +1046,11 @@ DEFINE_IIDX(IADsGroup, "27636b00-410f-11cf-b1ff-02608c9e7553")
     IsMember		proc :BSTR, :ptr
     _Add		proc :BSTR
     Remove		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsUser_INTERFACE_DEFINED__
-__IADsUser_INTERFACE_DEFINED__ equ 1
+define __IADsUser_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsUser, "3e37e320-17e2-11cf-abc4-02608c9e7553")
 
@@ -1444,12 +1147,11 @@ DEFINE_IIDX(IADsUser, "3e37e320-17e2-11cf-abc4-02608c9e7553")
     Groups		proc :ptr
     SetPassword		proc :BSTR
     ChangePassword	proc :BSTR, :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPrintQueue_INTERFACE_DEFINED__
-__IADsPrintQueue_INTERFACE_DEFINED__ equ 1
+define __IADsPrintQueue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPrintQueue, "b15160d0-1226-11cf-a985-00aa006bc149")
 
@@ -1481,12 +1183,11 @@ DEFINE_IIDX(IADsPrintQueue, "b15160d0-1226-11cf-a985-00aa006bc149")
     put_PrintDevices	proc :VARIANT
     get_NetAddresses	proc :ptr
     put_NetAddresses	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPrintQueueOperations_INTERFACE_DEFINED__
-__IADsPrintQueueOperations_INTERFACE_DEFINED__ equ 1
+define __IADsPrintQueueOperations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPrintQueueOperations, "124be5c0-156e-11cf-a986-00aa006bc149")
 
@@ -1497,12 +1198,11 @@ DEFINE_IIDX(IADsPrintQueueOperations, "124be5c0-156e-11cf-a986-00aa006bc149")
     _Pause		proc
     Resume		proc
     _Purge		proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPrintJob_INTERFACE_DEFINED__
-__IADsPrintJob_INTERFACE_DEFINED__ equ 1
+define __IADsPrintJob_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPrintJob, "32fb6780-1ed0-11cf-a988-00aa006bc149")
 
@@ -1526,12 +1226,11 @@ DEFINE_IIDX(IADsPrintJob, "32fb6780-1ed0-11cf-a988-00aa006bc149")
     put_Notify		proc :BSTR
     get_NotifyPath	proc :ptr
     put_NotifyPath	proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPrintJobOperations_INTERFACE_DEFINED__
-__IADsPrintJobOperations_INTERFACE_DEFINED__ equ 1
+define __IADsPrintJobOperations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPrintJobOperations, "9a52db30-1ecf-11cf-a988-00aa006bc149")
 
@@ -1544,12 +1243,11 @@ DEFINE_IIDX(IADsPrintJobOperations, "9a52db30-1ecf-11cf-a988-00aa006bc149")
     put_Position	proc :LONG
     _Pause		proc
     Resume		proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsService_INTERFACE_DEFINED__
-__IADsService_INTERFACE_DEFINED__ equ 1
+define __IADsService_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsService, "68af66e0-31ca-11cf-a98a-00aa006bc149")
 
@@ -1579,12 +1277,11 @@ DEFINE_IIDX(IADsService, "68af66e0-31ca-11cf-a98a-00aa006bc149")
     put_ServiceAccountPath proc :BSTR
     get_Dependencies	proc :ptr
     put_Dependencies	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsServiceOperations_INTERFACE_DEFINED__
-__IADsServiceOperations_INTERFACE_DEFINED__ equ 1
+define __IADsServiceOperations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsServiceOperations, "5d7b33f0-31ca-11cf-a98a-00aa006bc149")
 
@@ -1596,12 +1293,11 @@ DEFINE_IIDX(IADsServiceOperations, "5d7b33f0-31ca-11cf-a98a-00aa006bc149")
     _Pause		proc
     Continue		proc
     SetPassword		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsFileService_INTERFACE_DEFINED__
-__IADsFileService_INTERFACE_DEFINED__ equ 1
+define __IADsFileService_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsFileService, "a89d1900-31ca-11cf-a98a-00aa006bc149")
 
@@ -1611,12 +1307,11 @@ DEFINE_IIDX(IADsFileService, "a89d1900-31ca-11cf-a98a-00aa006bc149")
     put_Description	proc :BSTR
     get_MaxUserCount	proc :ptr
     put_MaxUserCount	proc :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsFileServiceOperations_INTERFACE_DEFINED__
-__IADsFileServiceOperations_INTERFACE_DEFINED__ equ 1
+define __IADsFileServiceOperations_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsFileServiceOperations, "a02ded10-31ca-11cf-a98a-00aa006bc149")
 
@@ -1624,12 +1319,11 @@ DEFINE_IIDX(IADsFileServiceOperations, "a02ded10-31ca-11cf-a98a-00aa006bc149")
 
     Sessions		proc :ptr
     Resources		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsFileShare_INTERFACE_DEFINED__
-__IADsFileShare_INTERFACE_DEFINED__ equ 1
+define __IADsFileShare_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsFileShare, "eb6dcaf0-4b83-11cf-a995-00aa006bc149")
 
@@ -1644,12 +1338,11 @@ DEFINE_IIDX(IADsFileShare, "eb6dcaf0-4b83-11cf-a995-00aa006bc149")
     put_Path		proc :BSTR
     get_MaxUserCount	proc :ptr
     put_MaxUserCount	proc :LONG
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsSession_INTERFACE_DEFINED__
-__IADsSession_INTERFACE_DEFINED__ equ 1
+define __IADsSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsSession, "398b7da0-4aab-11cf-ae2c-00aa006ebfb9")
 
@@ -1661,12 +1354,11 @@ DEFINE_IIDX(IADsSession, "398b7da0-4aab-11cf-ae2c-00aa006ebfb9")
     get_ComputerPath	proc :ptr
     get_ConnectTime	proc :ptr
     get_IdleTime	proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsResource_INTERFACE_DEFINED__
-__IADsResource_INTERFACE_DEFINED__ equ 1
+define __IADsResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsResource, "34a05b20-4aab-11cf-ae2c-00aa006ebfb9")
 
@@ -1676,24 +1368,23 @@ DEFINE_IIDX(IADsResource, "34a05b20-4aab-11cf-ae2c-00aa006ebfb9")
     get_UserPath	proc :ptr
     get_Path		proc :ptr
     get_LockCount	proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsOpenDSObject_INTERFACE_DEFINED__
-__IADsOpenDSObject_INTERFACE_DEFINED__ equ 1
+define __IADsOpenDSObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsOpenDSObject, "ddf2891e-0f9c-11d0-8ad4-00c04fd8d503")
 
 .comdef IADsOpenDSObject : public IDispatch
 
     OpenDSObject	proc :BSTR, :BSTR, :BSTR, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDirectoryObject_INTERFACE_DEFINED__
-__IDirectoryObject_INTERFACE_DEFINED__ equ 1
+define __IDirectoryObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectoryObject, "e798de2c-22e4-11d0-84fe-00c04fd8d503")
 
@@ -1704,12 +1395,11 @@ DEFINE_IIDX(IDirectoryObject, "e798de2c-22e4-11d0-84fe-00c04fd8d503")
     SetObjectAttributes proc :PADS_ATTR_INFO, :DWORD, :ptr
     CreateDSObject	proc :LPWSTR, :PADS_ATTR_INFO, :DWORD, :ptr
     DeleteDSObject	proc :LPWSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IDirectorySearch_INTERFACE_DEFINED__
-__IDirectorySearch_INTERFACE_DEFINED__ equ 1
+define __IDirectorySearch_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectorySearch, "109ba8ec-92f0-11d0-a790-00c04fd8d5a8")
 
@@ -1725,12 +1415,11 @@ DEFINE_IIDX(IDirectorySearch, "109ba8ec-92f0-11d0-a790-00c04fd8d5a8")
     GetColumn		proc :ADS_SEARCH_HANDLE, :LPWSTR, :PADS_SEARCH_COLUMN
     FreeColumn		proc :PADS_SEARCH_COLUMN
     CloseSearchHandle	proc :ADS_SEARCH_HANDLE
-
-    .ends
+   .ends
 endif
 
 ifndef __IDirectorySchemaMgmt_INTERFACE_DEFINED__
-__IDirectorySchemaMgmt_INTERFACE_DEFINED__ equ 1
+define __IDirectorySchemaMgmt_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDirectorySchemaMgmt, "75db3b9c-a4d8-11d0-a79c-00c04fd8d5a8")
 
@@ -1744,12 +1433,11 @@ DEFINE_IIDX(IDirectorySchemaMgmt, "75db3b9c-a4d8-11d0-a79c-00c04fd8d5a8")
     WriteClassDefinition proc :LPWSTR, :PADS_CLASS_DEF
     CreateClassDefinition proc :LPWSTR, :PADS_CLASS_DEF
     DeleteClassDefinition proc :LPWSTR
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsAggregatee_INTERFACE_DEFINED__
-__IADsAggregatee_INTERFACE_DEFINED__ equ 1
+define __IADsAggregatee_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsAggregatee, "1346ce8c-9039-11d0-8528-00c04fd8d503")
 
@@ -1759,12 +1447,11 @@ DEFINE_IIDX(IADsAggregatee, "1346ce8c-9039-11d0-8528-00c04fd8d503")
     DisconnectAsAggregatee proc
     RelinquishInterface proc :REFIID
     RestoreInterface	proc :REFIID
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsAggregator_INTERFACE_DEFINED__
-__IADsAggregator_INTERFACE_DEFINED__ equ 1
+define __IADsAggregator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsAggregator, "52db5fb0-941f-11d0-8529-00c04fd8d503")
 
@@ -1772,12 +1459,11 @@ DEFINE_IIDX(IADsAggregator, "52db5fb0-941f-11d0-8529-00c04fd8d503")
 
     ConnectAsAggregator proc :ptr
     DisconnectAsAggregator proc
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsAccessControlEntry_INTERFACE_DEFINED__
-__IADsAccessControlEntry_INTERFACE_DEFINED__ equ 1
+define __IADsAccessControlEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsAccessControlEntry, "b4f3a14c-9bdd-11d0-852c-00c04fd8d503")
 
@@ -1797,14 +1483,13 @@ DEFINE_IIDX(IADsAccessControlEntry, "b4f3a14c-9bdd-11d0-852c-00c04fd8d503")
     put_InheritedObjectType proc :BSTR
     get_Trustee		proc :ptr
     put_Trustee		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_AccessControlEntry, "b75ac000-9bdd-11d0-852c-00c04fd8d503")
 
 ifndef __IADsAccessControlList_INTERFACE_DEFINED__
-__IADsAccessControlList_INTERFACE_DEFINED__ equ 1
+define __IADsAccessControlList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsAccessControlList, "b7ee91cc-9bdd-11d0-852c-00c04fd8d503")
 
@@ -1818,14 +1503,13 @@ DEFINE_IIDX(IADsAccessControlList, "b7ee91cc-9bdd-11d0-852c-00c04fd8d503")
     RemoveAce		proc :ptr
     CopyAccessList	proc :ptr
     get__NewEnum	proc :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_AccessControlList, "b85ea052-9bdd-11d0-852c-00c04fd8d503")
 
 ifndef __IADsSecurityDescriptor_INTERFACE_DEFINED__
-__IADsSecurityDescriptor_INTERFACE_DEFINED__ equ 1
+define __IADsSecurityDescriptor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsSecurityDescriptor, "b8c787ca-9bdd-11d0-852c-00c04fd8d503")
 
@@ -1852,14 +1536,13 @@ DEFINE_IIDX(IADsSecurityDescriptor, "b8c787ca-9bdd-11d0-852c-00c04fd8d503")
     get_SaclDefaulted	proc :ptr
     put_SaclDefaulted	proc :VARIANT_BOOL
     CopySecurityDescriptor proc :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_SecurityDescriptor, "b958f73c-9bdd-11d0-852c-00c04fd8d503")
 
 ifndef __IADsLargeInteger_INTERFACE_DEFINED__
-__IADsLargeInteger_INTERFACE_DEFINED__ equ 1
+define __IADsLargeInteger_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsLargeInteger, "9068270b-0939-11d1-8be1-00c04fd8d503")
 
@@ -1869,14 +1552,13 @@ DEFINE_IIDX(IADsLargeInteger, "9068270b-0939-11d1-8be1-00c04fd8d503")
     put_HighPart	proc :LONG
     get_LowPart		proc :ptr
     put_LowPart		proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_LargeInteger, "927971f5-0939-11d1-8be1-00c04fd8d503")
 
 ifndef __IADsNameTranslate_INTERFACE_DEFINED__
-__IADsNameTranslate_INTERFACE_DEFINED__ equ 1
+define __IADsNameTranslate_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsNameTranslate, "b1b272a3-3625-11d1-a3a4-00c04fb950dc")
 
@@ -1889,14 +1571,13 @@ DEFINE_IIDX(IADsNameTranslate, "b1b272a3-3625-11d1-a3a4-00c04fb950dc")
     Get			proc :LONG, :ptr
     SetEx		proc :LONG, :VARIANT
     GetEx		proc :LONG, :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_NameTranslate, "274fae1f-3626-11d1-a3a4-00c04fb950dc")
 
 ifndef __IADsCaseIgnoreList_INTERFACE_DEFINED__
-__IADsCaseIgnoreList_INTERFACE_DEFINED__ equ 1
+define __IADsCaseIgnoreList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsCaseIgnoreList, "7b66b533-4680-11d1-a3b4-00c04fb950dc")
 
@@ -1904,14 +1585,13 @@ DEFINE_IIDX(IADsCaseIgnoreList, "7b66b533-4680-11d1-a3b4-00c04fb950dc")
 
     get_CaseIgnoreList	proc :ptr
     put_CaseIgnoreList	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_CaseIgnoreList, "15f88a55-4680-11d1-a3b4-00c04fb950dc")
 
 ifndef __IADsFaxNumber_INTERFACE_DEFINED__
-__IADsFaxNumber_INTERFACE_DEFINED__ equ 1
+define __IADsFaxNumber_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsFaxNumber, "a910dea9-4680-11d1-a3b4-00c04fb950dc")
 
@@ -1921,14 +1601,13 @@ DEFINE_IIDX(IADsFaxNumber, "a910dea9-4680-11d1-a3b4-00c04fb950dc")
     put_TelephoneNumber proc :BSTR
     get_Parameters	proc :ptr
     put_Parameters	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_FaxNumber, "a5062215-4681-11d1-a3b4-00c04fb950dc")
 
 ifndef __IADsNetAddress_INTERFACE_DEFINED__
-__IADsNetAddress_INTERFACE_DEFINED__ equ 1
+define __IADsNetAddress_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsNetAddress, "b21a50a9-4080-11d1-a3ac-00c04fb950dc")
 
@@ -1938,14 +1617,13 @@ DEFINE_IIDX(IADsNetAddress, "b21a50a9-4080-11d1-a3ac-00c04fb950dc")
     put_AddressType	proc :LONG
     get_Address		proc :ptr
     put_Address		proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_NetAddress, "b0b71247-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsOctetList_INTERFACE_DEFINED__
-__IADsOctetList_INTERFACE_DEFINED__ equ 1
+define __IADsOctetList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsOctetList, "7b28b80f-4680-11d1-a3b4-00c04fb950dc")
 
@@ -1953,14 +1631,13 @@ DEFINE_IIDX(IADsOctetList, "7b28b80f-4680-11d1-a3b4-00c04fb950dc")
 
     get_OctetList	proc :ptr
     put_OctetList	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_OctetList, "1241400f-4680-11d1-a3b4-00c04fb950dc")
 
 ifndef __IADsEmail_INTERFACE_DEFINED__
-__IADsEmail_INTERFACE_DEFINED__ equ 1
+define __IADsEmail_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsEmail, "97af011a-478e-11d1-a3b4-00c04fb950dc")
 
@@ -1970,14 +1647,13 @@ DEFINE_IIDX(IADsEmail, "97af011a-478e-11d1-a3b4-00c04fb950dc")
     put_Type		proc :LONG
     get_Address		proc :ptr
     put_Address		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_Email, "8f92a857-478e-11d1-a3b4-00c04fb950dc")
 
 ifndef __IADsPath_INTERFACE_DEFINED__
-__IADsPath_INTERFACE_DEFINED__ equ 1
+define __IADsPath_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPath, "b287fcd5-4080-11d1-a3ac-00c04fb950dc")
 
@@ -1989,14 +1665,13 @@ DEFINE_IIDX(IADsPath, "b287fcd5-4080-11d1-a3ac-00c04fb950dc")
     put_VolumeName	proc :BSTR
     get_Path		proc :ptr
     put_Path		proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_Path, "b2538919-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsReplicaPointer_INTERFACE_DEFINED__
-__IADsReplicaPointer_INTERFACE_DEFINED__ equ 1
+define __IADsReplicaPointer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsReplicaPointer, "f60fb803-4080-11d1-a3ac-00c04fb950dc")
 
@@ -2012,14 +1687,13 @@ DEFINE_IIDX(IADsReplicaPointer, "f60fb803-4080-11d1-a3ac-00c04fb950dc")
     put_Count		proc :LONG
     get_ReplicaAddressHints proc :ptr
     put_ReplicaAddressHints proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_ReplicaPointer, "f5d1badf-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsAcl_INTERFACE_DEFINED__
-__IADsAcl_INTERFACE_DEFINED__ equ 1
+define __IADsAcl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsAcl, "8452d3ab-0869-11d1-a377-00c04fb950dc")
 
@@ -2032,12 +1706,11 @@ DEFINE_IIDX(IADsAcl, "8452d3ab-0869-11d1-a377-00c04fb950dc")
     get_Privileges	proc :ptr
     put_Privileges	proc :LONG
     CopyAcl		proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsTimestamp_INTERFACE_DEFINED__
-__IADsTimestamp_INTERFACE_DEFINED__ equ 1
+define __IADsTimestamp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsTimestamp, "b2f5a901-4080-11d1-a3ac-00c04fb950dc")
 
@@ -2047,14 +1720,13 @@ DEFINE_IIDX(IADsTimestamp, "b2f5a901-4080-11d1-a3ac-00c04fb950dc")
     put_WholeSeconds	proc :LONG
     get_EventID		proc :ptr
     put_EventID		proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_Timestamp, "b2bed2eb-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsPostalAddress_INTERFACE_DEFINED__
-__IADsPostalAddress_INTERFACE_DEFINED__ equ 1
+define __IADsPostalAddress_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPostalAddress, "7adecf29-4680-11d1-a3b4-00c04fb950dc")
 
@@ -2062,14 +1734,13 @@ DEFINE_IIDX(IADsPostalAddress, "7adecf29-4680-11d1-a3b4-00c04fb950dc")
 
     get_PostalAddress	proc :ptr
     put_PostalAddress	proc :VARIANT
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_PostalAddress, "0a75afcd-4680-11d1-a3b4-00c04fb950dc")
 
 ifndef __IADsBackLink_INTERFACE_DEFINED__
-__IADsBackLink_INTERFACE_DEFINED__ equ 1
+define __IADsBackLink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsBackLink, "fd1302bd-4080-11d1-a3ac-00c04fb950dc")
 
@@ -2079,14 +1750,13 @@ DEFINE_IIDX(IADsBackLink, "fd1302bd-4080-11d1-a3ac-00c04fb950dc")
     put_RemoteID	proc :LONG
     get_ObjectName	proc :ptr
     put_ObjectName	proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_BackLink, "fcbf906f-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsTypedName_INTERFACE_DEFINED__
-__IADsTypedName_INTERFACE_DEFINED__ equ 1
+define __IADsTypedName_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsTypedName, "b371a349-4080-11d1-a3ac-00c04fb950dc")
 
@@ -2098,14 +1768,13 @@ DEFINE_IIDX(IADsTypedName, "b371a349-4080-11d1-a3ac-00c04fb950dc")
     put_Level		proc :LONG
     get_Interval	proc :ptr
     put_Interval	proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_TypedName, "b33143cb-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsHold_INTERFACE_DEFINED__
-__IADsHold_INTERFACE_DEFINED__ equ 1
+define __IADsHold_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsHold, "b3eb3b37-4080-11d1-a3ac-00c04fb950dc")
 
@@ -2115,14 +1784,13 @@ DEFINE_IIDX(IADsHold, "b3eb3b37-4080-11d1-a3ac-00c04fb950dc")
     put_ObjectName	proc :BSTR
     get_Amount		proc :ptr
     put_Amount		proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_Hold, "b3ad3e13-4080-11d1-a3ac-00c04fb950dc")
 
 ifndef __IADsObjectOptions_INTERFACE_DEFINED__
-__IADsObjectOptions_INTERFACE_DEFINED__ equ 1
+define __IADsObjectOptions_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsObjectOptions, "46f14fda-232b-11d1-a808-00c04fd8d5a8")
 
@@ -2130,12 +1798,11 @@ DEFINE_IIDX(IADsObjectOptions, "46f14fda-232b-11d1-a808-00c04fd8d5a8")
 
     GetOption		proc :LONG, :ptr
     SetOption		proc :LONG, :VARIANT
-
-    .ends
+   .ends
 endif
 
 ifndef __IADsPathname_INTERFACE_DEFINED__
-__IADsPathname_INTERFACE_DEFINED__ equ 1
+define __IADsPathname_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsPathname, "d592aed4-f420-11d0-a36e-00c04fb950dc")
 
@@ -2152,14 +1819,13 @@ DEFINE_IIDX(IADsPathname, "d592aed4-f420-11d0-a36e-00c04fb950dc")
     GetEscapedElement	proc :LONG, :BSTR, :ptr
     get_EscapedMode	proc :ptr
     put_EscapedMode	proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_Pathname, "080d0d78-f421-11d0-a36e-00c04fb950dc")
 
 ifndef __IADsADSystemInfo_INTERFACE_DEFINED__
-__IADsADSystemInfo_INTERFACE_DEFINED__ equ 1
+define __IADsADSystemInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsADSystemInfo, "5BB11929-AFD1-11d2-9CB9-0000F87A369E")
 
@@ -2178,14 +1844,13 @@ DEFINE_IIDX(IADsADSystemInfo, "5BB11929-AFD1-11d2-9CB9-0000F87A369E")
     GetDCSiteName	proc :BSTR, :ptr
     RefreshSchemaCache	proc
     GetTrees		proc :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_ADSystemInfo, "50B6327F-AFD1-11d2-9CB9-0000F87A369E")
 
 ifndef __IADsWinNTSystemInfo_INTERFACE_DEFINED__
-__IADsWinNTSystemInfo_INTERFACE_DEFINED__ equ 1
+define __IADsWinNTSystemInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsWinNTSystemInfo, "6C6D65DC-AFD1-11d2-9CB9-0000F87A369E")
 
@@ -2195,14 +1860,13 @@ DEFINE_IIDX(IADsWinNTSystemInfo, "6C6D65DC-AFD1-11d2-9CB9-0000F87A369E")
     get_ComputerName	proc :ptr
     get_DomainName	proc :ptr
     get_PDC		proc :ptr
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_WinNTSystemInfo, "66182EC4-AFD1-11d2-9CB9-0000F87A369E")
 
 ifndef __IADsDNWithBinary_INTERFACE_DEFINED__
-__IADsDNWithBinary_INTERFACE_DEFINED__ equ 1
+define __IADsDNWithBinary_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsDNWithBinary, "7e99c0a2-f935-11d2-ba96-00c04fb6d0d1")
 
@@ -2212,14 +1876,13 @@ DEFINE_IIDX(IADsDNWithBinary, "7e99c0a2-f935-11d2-ba96-00c04fb6d0d1")
     put_BinaryValue	proc :VARIANT
     get_DNString	proc :ptr
     put_DNString	proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_DNWithBinary, "7e99c0a3-f935-11d2-ba96-00c04fb6d0d1")
 
 ifndef __IADsDNWithString_INTERFACE_DEFINED__
-__IADsDNWithString_INTERFACE_DEFINED__ equ 1
+define __IADsDNWithString_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsDNWithString, "370df02e-f934-11d2-ba96-00c04fb6d0d1")
 
@@ -2229,14 +1892,13 @@ DEFINE_IIDX(IADsDNWithString, "370df02e-f934-11d2-ba96-00c04fb6d0d1")
     put_StringValue	proc :BSTR
     get_DNString	proc :ptr
     put_DNString	proc :BSTR
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_DNWithString, "334857cc-f934-11d2-ba96-00c04fb6d0d1")
 
 ifndef __IADsSecurityUtility_INTERFACE_DEFINED__
-__IADsSecurityUtility_INTERFACE_DEFINED__ equ 1
+define __IADsSecurityUtility_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IADsSecurityUtility, "a63251b2-5f21-474b-ab52-4a8efad10895")
 
@@ -2247,8 +1909,7 @@ DEFINE_IIDX(IADsSecurityUtility, "a63251b2-5f21-474b-ab52-4a8efad10895")
     ConvertSecurityDescriptor proc :VARIANT, :LONG, :LONG, :ptr
     get_SecurityMask	proc :ptr
     put_SecurityMask	proc :LONG
-
-    .ends
+   .ends
 endif
 
 DEFINE_GUIDS(CLSID_ADsSecurityUtility, "f270c64a-ffb8-4ae4-85fe-3a75e5347966")

@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,47 +18,9 @@ include ole2.inc
 endif
 
 ifndef __oleacc_h__
-__oleacc_h__ equ <>
-
-ifndef __IAccessible_FWD_DEFINED__
-__IAccessible_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleHandler_FWD_DEFINED__
-__IAccessibleHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleWindowlessSite_FWD_DEFINED__
-__IAccessibleWindowlessSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccIdentity_FWD_DEFINED__
-__IAccIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccPropServer_FWD_DEFINED__
-__IAccPropServer_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccPropServices_FWD_DEFINED__
-__IAccPropServices_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessible_FWD_DEFINED__
-__IAccessible_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleHandler_FWD_DEFINED__
-__IAccessibleHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccIdentity_FWD_DEFINED__
-__IAccIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccPropServer_FWD_DEFINED__
-__IAccPropServer_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccPropServices_FWD_DEFINED__
-__IAccPropServices_FWD_DEFINED__ equ 1
-endif
-ifndef __CAccPropServices_FWD_DEFINED__
-__CAccPropServices_FWD_DEFINED__ equ 1
-endif
+define __oleacc_h__
 
 include oaidl.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -244,7 +206,7 @@ DEFINE_GUID( PROPID_ACC_DODEFAULTACTION	 , 0x1ba09523, 0x2e3b, 0x49a6, 0xa0, 0x5
 
 
 ifndef __IAccessible_INTERFACE_DEFINED__
-__IAccessible_INTERFACE_DEFINED__ equ 1
+define __IAccessible_INTERFACE_DEFINED__
 
 DISPID_ACC_PARENT	equ ( -5000 )
 DISPID_ACC_CHILDCOUNT	equ ( -5001 )
@@ -417,12 +379,12 @@ DEFINE_IIDX(IAccessible, "618736e0-3c3d-11cf-810c-00aa00389b71")
     accDoDefaultAction	proc :VARIANT
     put_accName		proc :VARIANT, :BSTR
     put_accValue	proc :VARIANT, :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IAccessibleHandler_INTERFACE_DEFINED__
-__IAccessibleHandler_INTERFACE_DEFINED__ equ 1
+define __IAccessibleHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleHandler, "03022430-ABC4-11d0-BDE2-00AA001A1953")
 
@@ -435,7 +397,7 @@ DEFINE_IIDX(IAccessibleHandler, "03022430-ABC4-11d0-BDE2-00AA001A1953")
 endif
 
 ifndef __IAccessibleWindowlessSite_INTERFACE_DEFINED__
-__IAccessibleWindowlessSite_INTERFACE_DEFINED__ equ 1
+define __IAccessibleWindowlessSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleWindowlessSite, "BF3ABD9C-76DA-4389-9EB6-1427D25ABAB7")
 
@@ -458,33 +420,33 @@ endif
 MSAAPROPID typedef GUID
 
 ifndef __IAccIdentity_INTERFACE_DEFINED__
-__IAccIdentity_INTERFACE_DEFINED__ equ 1
+define __IAccIdentity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccIdentity, "7852b78d-1cfd-41c1-a615-9c0c85960b5f")
 
 .comdef IAccIdentity : public IUnknown
 
     GetIdentityString	proc :DWORD
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IAccPropServer_INTERFACE_DEFINED__
-__IAccPropServer_INTERFACE_DEFINED__ equ 1
+define __IAccPropServer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccPropServer, "76c0dbbb-15e0-4e7b-b61b-20eeea2001e0")
 
 .comdef IAccPropServer : public IUnknown
 
     GetPropValue	proc
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IAccPropServices_INTERFACE_DEFINED__
-__IAccPropServices_INTERFACE_DEFINED__ equ 1
+define __IAccPropServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccPropServices, "6e26e776-04f0-495d-80e4-3330352e3169")
 
@@ -505,13 +467,13 @@ DEFINE_IIDX(IAccPropServices, "6e26e776-04f0-495d-80e4-3330352e3169")
     ClearHmenuProps	proc :HMENU, :DWORD
     ComposeHmenuIdentityString proc :HMENU, :DWORD
     DecomposeHmenuIdentityString proc
-    .ends
+   .ends
 
 endif
 
 
 ifndef __Accessibility_LIBRARY_DEFINED__
-__Accessibility_LIBRARY_DEFINED__ equ 1
+define __Accessibility_LIBRARY_DEFINED__
 
 externdef LIBID_Accessibility:IID
 DEFINE_GUIDS(CLSID_CAccPropServices, "b5f8350b-0548-48b1-a6ee-88bd00b4a5e7")

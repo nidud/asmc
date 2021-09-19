@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,41 +18,12 @@ include ole2.inc
 endif
 
 ifndef __dxva2api_h__
-__dxva2api_h__ equ <>
-
-ifndef __IDirect3DDeviceManager9_FWD_DEFINED__
-__IDirect3DDeviceManager9_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoAccelerationService_FWD_DEFINED__
-__IDirectXVideoAccelerationService_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoDecoderService_FWD_DEFINED__
-__IDirectXVideoDecoderService_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoProcessorService_FWD_DEFINED__
-__IDirectXVideoProcessorService_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoDecoder_FWD_DEFINED__
-__IDirectXVideoDecoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoProcessor_FWD_DEFINED__
-__IDirectXVideoProcessor_FWD_DEFINED__ equ 1
-endif
-ifndef __IDirectXVideoMemoryConfiguration_FWD_DEFINED__
-__IDirectXVideoMemoryConfiguration_FWD_DEFINED__ equ 1
-endif
+define __dxva2api_h__
 
 include unknwn.inc
 
-if 0
-IDirect3DDevice9	typedef DWORD
-IDirect3DSurface9	typedef DWORD
-D3DFORMAT		typedef DWORD
-D3DPOOL			typedef DWORD
-endif
-
 ifndef DXVA2_API_DEFINED
-DXVA2_API_DEFINED equ 1
+define DXVA2_API_DEFINED
 DEFINE_GUID(DXVA2_ModeMPEG2_MoComp, 0xe6a9f44b, 0x61b0, 0x4563,0x9e,0xa4,0x63,0xd2,0xa3,0xc6,0xfe,0x66);
 DEFINE_GUID(DXVA2_ModeMPEG2_IDCT,   0xbf22ad00, 0x03ea, 0x4690,0x80,0x77,0x47,0x33,0x46,0x20,0x9b,0x7e);
 DEFINE_GUID(DXVA2_ModeMPEG2_VLD,    0xee27417f, 0x5e28, 0x4e65,0xbe,0xea,0x1d,0x26,0xb5,0x08,0xad,0xc9);
@@ -511,7 +482,7 @@ DXVA2_DecodeExecuteParams ENDS
 if defined(_D3D9_H_) OR defined(_d3d9P_H_)
 
 ifndef __IDirect3DDeviceManager9_INTERFACE_DEFINED__
-__IDirect3DDeviceManager9_INTERFACE_DEFINED__ equ 1
+define __IDirect3DDeviceManager9_INTERFACE_DEFINED__
 
 .comdef IDirect3DDeviceManager9
 
@@ -525,13 +496,13 @@ __IDirect3DDeviceManager9_INTERFACE_DEFINED__ equ 1
     LockDevice		proc :HANDLE, :ptr, :BOOL
     UnlockDevice	proc :HANDLE, :BOOL
     GetVideoService	proc :HANDLE, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDirectXVideoAccelerationService_INTERFACE_DEFINED__
-__IDirectXVideoAccelerationService_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoAccelerationService_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoAccelerationService
 
@@ -539,13 +510,13 @@ __IDirectXVideoAccelerationService_INTERFACE_DEFINED__ equ 1
     AddRef		proc
     Release		proc
     CreateSurface	proc :UINT, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :DWORD, :DWORD
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDirectXVideoDecoderService_INTERFACE_DEFINED__
-__IDirectXVideoDecoderService_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoDecoderService_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoDecoderService
 
@@ -557,13 +528,13 @@ __IDirectXVideoDecoderService_INTERFACE_DEFINED__ equ 1
     GetDecoderRenderTargets proc :REFGUID, :ptr, :ptr
     GetDecoderConfigurations proc :REFGUID, :const, :ptr, :ptr, :ptr
     CreateVideoDecoder	proc :REFGUID, :const, :const
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDirectXVideoProcessorService_INTERFACE_DEFINED__
-__IDirectXVideoProcessorService_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoProcessorService_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoProcessorService
 
@@ -579,13 +550,13 @@ __IDirectXVideoProcessorService_INTERFACE_DEFINED__ equ 1
     GetProcAmpRange	proc :REFGUID, :const, :D3DFORMAT, :UINT, :ptr
     GetFilterPropertyRange proc :REFGUID, :const, :D3DFORMAT, :UINT, :ptr
     CreateVideoProcessor proc :REFGUID, :const, :D3DFORMAT, :UINT, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDirectXVideoDecoder_INTERFACE_DEFINED__
-__IDirectXVideoDecoder_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoDecoder_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoDecoder
 
@@ -599,13 +570,13 @@ __IDirectXVideoDecoder_INTERFACE_DEFINED__ equ 1
     BeginFrame		proc :ptr, :ptr
     EndFrame		proc :ptr
     Execute		proc :const
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IDirectXVideoProcessor_INTERFACE_DEFINED__
-__IDirectXVideoProcessor_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoProcessor_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoProcessor
 
@@ -618,7 +589,7 @@ __IDirectXVideoProcessor_INTERFACE_DEFINED__ equ 1
     GetProcAmpRange	proc :UINT, :ptr
     GetFilterPropertyRange proc :UINT, :ptr
     VideoProcessBlt	proc :ptr, :const
-    .ends
+   .ends
 
 endif
 
@@ -631,7 +602,7 @@ endif
 
 
 ifndef __IDirectXVideoMemoryConfiguration_INTERFACE_DEFINED__
-__IDirectXVideoMemoryConfiguration_INTERFACE_DEFINED__ equ 1
+define __IDirectXVideoMemoryConfiguration_INTERFACE_DEFINED__
 
 .comdef IDirectXVideoMemoryConfiguration
 
@@ -640,7 +611,7 @@ __IDirectXVideoMemoryConfiguration_INTERFACE_DEFINED__ equ 1
     Release		proc
     GetAvailableSurfaceTypeByIndex proc :DWORD, :ptr
     SetSurfaceType	proc :DXVA2_SurfaceType
-    .ends
+   .ends
 
 endif
 

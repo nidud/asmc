@@ -1,31 +1,25 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __d3d10_1_h__
-__d3d10_1_h__ equ <>
 
-ifndef __ID3D10BlendState1_FWD_DEFINED__
-__ID3D10BlendState1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10ShaderResourceView1_FWD_DEFINED__
-__ID3D10ShaderResourceView1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D10Device1_FWD_DEFINED__
-__ID3D10Device1_FWD_DEFINED__ equ 1
-endif
+ifndef __d3d10_1_h__
+define __d3d10_1_h__
+
 include oaidl.inc
 include ocidl.inc
 
@@ -34,7 +28,7 @@ if defined( __d3d10_h__ ) AND NOT defined( D3D10_ARBITRARY_HEADER_ORDERING )
 endif
 
 ifndef _D3D10_1_CONSTANTS
-_D3D10_1_CONSTANTS equ 1
+define _D3D10_1_CONSTANTS
 D3D10_1_DEFAULT_SAMPLE_MASK equ ( 0xffffffff )
 
 D3D10_1_FLOAT16_FUSED_TOLERANCE_IN_ULP equ ( 0.6 )
@@ -87,7 +81,7 @@ RenderTarget		D3D10_RENDER_TARGET_BLEND_DESC1 8 dup(<>)
 D3D10_BLEND_DESC1	ENDS
 
 ifndef __ID3D10BlendState1_INTERFACE_DEFINED__
-__ID3D10BlendState1_INTERFACE_DEFINED__ equ 1
+define __ID3D10BlendState1_INTERFACE_DEFINED__
 
 .comdef ID3D10BlendState1 : public IUnknown
 
@@ -97,8 +91,8 @@ __ID3D10BlendState1_INTERFACE_DEFINED__ equ 1
     SetPrivateDataInterface	proc :REFGUID, :ptr
     GetDesc			proc :ptr
     GetDesc1			proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_TEXCUBE_ARRAY_SRV1 STRUC
@@ -139,7 +133,7 @@ ENDS
 D3D10_SHADER_RESOURCE_VIEW_DESC1 ENDS
 
 ifndef __ID3D10ShaderResourceView1_INTERFACE_DEFINED__
-__ID3D10ShaderResourceView1_INTERFACE_DEFINED__ equ 1
+define __ID3D10ShaderResourceView1_INTERFACE_DEFINED__
 
 .comdef ID3D10ShaderResourceView1 : public IUnknown
 
@@ -150,8 +144,8 @@ __ID3D10ShaderResourceView1_INTERFACE_DEFINED__ equ 1
     GetResource			proc :ptr
     GetDesc			proc :ptr
     GetDesc1			proc :ptr
+   .ends
 
-    .ends
 endif
 
 D3D10_STANDARD_MULTISAMPLE_QUALITY_LEVELS typedef SDWORD
@@ -159,7 +153,7 @@ D3D10_STANDARD_MULTISAMPLE_PATTERN equ 0xffffffff
 D3D10_CENTER_MULTISAMPLE_PATTERN equ 0xfffffffe
 
 ifndef __ID3D10Device1_INTERFACE_DEFINED__
-__ID3D10Device1_INTERFACE_DEFINED__ equ 1
+define __ID3D10Device1_INTERFACE_DEFINED__
 
 .comdef ID3D10Device1 : public IUnknown
 
@@ -261,8 +255,8 @@ __ID3D10Device1_INTERFACE_DEFINED__ equ 1
     CreateShaderResourceView1	proc :ptr, :ptr, :ptr
     CreateBlendState1		proc :ptr, :ptr
     GetFeatureLevel		proc
+   .ends
 
-    .ends
 endif
 
 D3D10_1_SDK_VERSION	equ ( ( 0 + 0x20 )  )

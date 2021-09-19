@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -16,14 +16,7 @@ include ole2.inc
 endif
 
 ifndef __d3d11ShaderTracing_h__
-__d3d11ShaderTracing_h__ equ <>
-
-ifndef __ID3D11ShaderTrace_FWD_DEFINED__
-__ID3D11ShaderTrace_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11ShaderTraceFactory_FWD_DEFINED__
-__ID3D11ShaderTraceFactory_FWD_DEFINED__ equ 1
-endif
+define __d3d11ShaderTracing_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -198,7 +191,7 @@ D3D11_TRACE_STEP	ENDS
 
 
 ifndef __ID3D11ShaderTrace_INTERFACE_DEFINED__
-__ID3D11ShaderTrace_INTERFACE_DEFINED__ equ 1
+define __ID3D11ShaderTrace_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11ShaderTrace, "36b013e6-2811-4845-baa7-d623fe0df104")
 
@@ -212,22 +205,20 @@ DEFINE_IIDX(ID3D11ShaderTrace, "36b013e6-2811-4845-baa7-d623fe0df104")
     GetStep		proc :UINT, :ptr
     GetWrittenRegister	proc :UINT, :UINT, :ptr, :ptr
     GetReadRegister	proc :UINT, :UINT, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ID3D11ShaderTraceFactory_INTERFACE_DEFINED__
-__ID3D11ShaderTraceFactory_INTERFACE_DEFINED__ equ 1
+define __ID3D11ShaderTraceFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11ShaderTraceFactory, "1fbad429-66ab-41cc-9617-667ac10e4459")
 
 .comdef ID3D11ShaderTraceFactory : public IUnknown
 
     CreateShaderTrace	proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 

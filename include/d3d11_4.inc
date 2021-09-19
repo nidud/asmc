@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,27 +18,7 @@ include ole2.inc
 endif
 
 ifndef __d3d11_4_h__
-__d3d11_4_h__ equ <>
-
-ifndef __ID3D11Device4_FWD_DEFINED__
-__ID3D11Device4_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Device5_FWD_DEFINED__
-__ID3D11Device5_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11Multithread_FWD_DEFINED__
-__ID3D11Multithread_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11VideoContext2_FWD_DEFINED__
-__ID3D11VideoContext2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11VideoDevice2_FWD_DEFINED__
-__ID3D11VideoDevice2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11VideoContext3_FWD_DEFINED__
-__ID3D11VideoContext3_FWD_DEFINED__ equ 1
-endif
-
+define __d3d11_4_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -47,7 +27,7 @@ include d3dcommon.inc
 include d3d11_3.inc
 
 ifndef __ID3D11Device4_INTERFACE_DEFINED__
-__ID3D11Device4_INTERFACE_DEFINED__ equ 1
+define __ID3D11Device4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Device4, "8992ab71-02e6-4b8d-ba48-b056dcda42c4")
 
@@ -55,13 +35,12 @@ DEFINE_IIDX(ID3D11Device4, "8992ab71-02e6-4b8d-ba48-b056dcda42c4")
 
     RegisterDeviceRemovedEvent proc :HANDLE, :ptr
     UnregisterDeviceRemoved proc :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11Device5_INTERFACE_DEFINED__
-__ID3D11Device5_INTERFACE_DEFINED__ equ 1
+define __ID3D11Device5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Device5, "8ffde202-a0e7-45df-9e01-e837801b5ea0")
 
@@ -69,13 +48,12 @@ DEFINE_IIDX(ID3D11Device5, "8ffde202-a0e7-45df-9e01-e837801b5ea0")
 
     OpenSharedFence	proc :HANDLE, :REFIID, :ptr
     CreateFence		proc :UINT64, :D3D11_FENCE_FLAG, :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11Multithread_INTERFACE_DEFINED__
-__ID3D11Multithread_INTERFACE_DEFINED__ equ 1
+define __ID3D11Multithread_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11Multithread, "9B7E4E00-342C-4106-A19F-4F2704F689F0")
 
@@ -85,13 +63,12 @@ DEFINE_IIDX(ID3D11Multithread, "9B7E4E00-342C-4106-A19F-4F2704F689F0")
     _Leave		proc
     SetMultithreadProtected proc :BOOL
     GetMultithreadProtected proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D11VideoContext2_INTERFACE_DEFINED__
-__ID3D11VideoContext2_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoContext2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoContext2, "C4E7374C-6243-4D1B-AE87-52B4F740E261")
 
@@ -101,8 +78,7 @@ DEFINE_IIDX(ID3D11VideoContext2, "C4E7374C-6243-4D1B-AE87-52B4F740E261")
     VideoProcessorGetOutputHDRMetaData proc :ptr, :ptr, :UINT, :ptr
     VideoProcessorSetStreamHDRMetaData proc :ptr, :UINT, :DXGI_HDR_METADATA_TYPE, :UINT, :ptr
     VideoProcessorGetStreamHDRMetaData proc :ptr, :UINT, :ptr, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -143,7 +119,7 @@ D3D11_FEATURE_DATA_VIDEO_DECODER_HISTOGRAM ENDS
     }
 
 ifndef __ID3D11VideoDevice2_INTERFACE_DEFINED__
-__ID3D11VideoDevice2_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoDevice2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoDevice2, "59C0CB01-35F0-4A70-8F67-87905C906A53")
 
@@ -151,8 +127,7 @@ DEFINE_IIDX(ID3D11VideoDevice2, "59C0CB01-35F0-4A70-8F67-87905C906A53")
 
     CheckFeatureSupport proc :D3D11_FEATURE_VIDEO
     NegotiateCryptoSessionKeyExchangeMT proc :ptr, :D3D11_CRYPTO_SESSION_KEY_EXCHANGE_FLAGS, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -169,7 +144,7 @@ cBlocksStripeClear	UINT ?
 D3D11_VIDEO_DECODER_BUFFER_DESC2 ENDS
 
 ifndef __ID3D11VideoContext3_INTERFACE_DEFINED__
-__ID3D11VideoContext3_INTERFACE_DEFINED__ equ 1
+define __ID3D11VideoContext3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ID3D11VideoContext3, "A9E2FAA0-CB39-418F-A0B7-D8AAD4DE672E")
 
@@ -177,8 +152,7 @@ DEFINE_IIDX(ID3D11VideoContext3, "A9E2FAA0-CB39-418F-A0B7-D8AAD4DE672E")
 
     DecoderBeginFrame1	proc :ptr, :ptr, :UINT, :UINT, :ptr
     SubmitDecoderBuffers2 proc :ptr, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 

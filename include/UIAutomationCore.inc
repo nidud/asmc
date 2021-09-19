@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -13,163 +13,9 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __uiautomationcore_h__
-__uiautomationcore_h__ equ <>
+define __uiautomationcore_h__
 
 .pragma comment(lib, UIAutomationCore)
-
-ifndef __IRawElementProviderSimple_FWD_DEFINED__
-__IRawElementProviderSimple_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderSimple2_FWD_DEFINED__
-__IRawElementProviderSimple2_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleEx_FWD_DEFINED__
-__IAccessibleEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderFragmentRoot_FWD_DEFINED__
-__IRawElementProviderFragmentRoot_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderFragment_FWD_DEFINED__
-__IRawElementProviderFragment_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderAdviseEvents_FWD_DEFINED__
-__IRawElementProviderAdviseEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderHwndOverride_FWD_DEFINED__
-__IRawElementProviderHwndOverride_FWD_DEFINED__ equ 1
-endif
-ifndef __IProxyProviderWinEventSink_FWD_DEFINED__
-__IProxyProviderWinEventSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IProxyProviderWinEventHandler_FWD_DEFINED__
-__IProxyProviderWinEventHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderWindowlessSite_FWD_DEFINED__
-__IRawElementProviderWindowlessSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleHostingElementProviders_FWD_DEFINED__
-__IAccessibleHostingElementProviders_FWD_DEFINED__ equ 1
-endif
-ifndef __IRawElementProviderHostingAccessibles_FWD_DEFINED__
-__IRawElementProviderHostingAccessibles_FWD_DEFINED__ equ 1
-endif
-ifndef __IDockProvider_FWD_DEFINED__
-__IDockProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IExpandCollapseProvider_FWD_DEFINED__
-__IExpandCollapseProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IGridProvider_FWD_DEFINED__
-__IGridProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IGridItemProvider_FWD_DEFINED__
-__IGridItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IInvokeProvider_FWD_DEFINED__
-__IInvokeProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IMultipleViewProvider_FWD_DEFINED__
-__IMultipleViewProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IRangeValueProvider_FWD_DEFINED__
-__IRangeValueProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IScrollItemProvider_FWD_DEFINED__
-__IScrollItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ISelectionProvider_FWD_DEFINED__
-__ISelectionProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IScrollProvider_FWD_DEFINED__
-__IScrollProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ISelectionItemProvider_FWD_DEFINED__
-__ISelectionItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ISynchronizedInputProvider_FWD_DEFINED__
-__ISynchronizedInputProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITableProvider_FWD_DEFINED__
-__ITableProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITableItemProvider_FWD_DEFINED__
-__ITableItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IToggleProvider_FWD_DEFINED__
-__IToggleProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransformProvider_FWD_DEFINED__
-__ITransformProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IValueProvider_FWD_DEFINED__
-__IValueProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IWindowProvider_FWD_DEFINED__
-__IWindowProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ILegacyIAccessibleProvider_FWD_DEFINED__
-__ILegacyIAccessibleProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IItemContainerProvider_FWD_DEFINED__
-__IItemContainerProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IVirtualizedItemProvider_FWD_DEFINED__
-__IVirtualizedItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectModelProvider_FWD_DEFINED__
-__IObjectModelProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IAnnotationProvider_FWD_DEFINED__
-__IAnnotationProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IStylesProvider_FWD_DEFINED__
-__IStylesProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ISpreadsheetProvider_FWD_DEFINED__
-__ISpreadsheetProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ISpreadsheetItemProvider_FWD_DEFINED__
-__ISpreadsheetItemProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransformProvider2_FWD_DEFINED__
-__ITransformProvider2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDragProvider_FWD_DEFINED__
-__IDragProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IDropTargetProvider_FWD_DEFINED__
-__IDropTargetProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextRangeProvider_FWD_DEFINED__
-__ITextRangeProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextProvider_FWD_DEFINED__
-__ITextProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextProvider2_FWD_DEFINED__
-__ITextProvider2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextEditProvider_FWD_DEFINED__
-__ITextEditProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextRangeProvider2_FWD_DEFINED__
-__ITextRangeProvider2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITextChildProvider_FWD_DEFINED__
-__ITextChildProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IUIAutomationPatternInstance_FWD_DEFINED__
-__IUIAutomationPatternInstance_FWD_DEFINED__ equ 1
-endif
-ifndef __IUIAutomationPatternHandler_FWD_DEFINED__
-__IUIAutomationPatternHandler_FWD_DEFINED__ equ 1
-endif
-ifndef __IUIAutomationRegistrar_FWD_DEFINED__
-__IUIAutomationRegistrar_FWD_DEFINED__ equ 1
-endif
-ifndef __CUIAutomationRegistrar_FWD_DEFINED__
-__CUIAutomationRegistrar_FWD_DEFINED__ equ 1
-endif
 
 include oaidl.inc
 include oleacc.inc
@@ -422,7 +268,7 @@ y			real8 ?
 UiaPoint		ENDS
 
 ifndef __UIA_LIBRARY_DEFINED__
-__UIA_LIBRARY_DEFINED__ equ 1
+define __UIA_LIBRARY_DEFINED__
 
 .enum UIAutomationType {
     UIAutomationType_Int	= 0x1,
@@ -501,14 +347,14 @@ externdef		LIBID_UIA:IID
 
 
 ifndef __UIA_OtherConstants_MODULE_DEFINED__
-__UIA_OtherConstants_MODULE_DEFINED__ equ 1
+define __UIA_OtherConstants_MODULE_DEFINED__
 
 UIA_ScrollPatternNoScroll equ -1.0
 
 endif
 
 ifndef __IRawElementProviderSimple_INTERFACE_DEFINED__
-__IRawElementProviderSimple_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderSimple_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderSimple, "d6dd68d1-86fd-4332-8666-9abedea2d24c")
 
@@ -518,24 +364,24 @@ DEFINE_IIDX(IRawElementProviderSimple, "d6dd68d1-86fd-4332-8666-9abedea2d24c")
     GetPatternProvider	proc :PATTERNID, :ptr
     GetPropertyValue	proc :PROPERTYID, :ptr
     get_HostRawElementProvider proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderSimple2_INTERFACE_DEFINED__
-__IRawElementProviderSimple2_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderSimple2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderSimple2, "A0A839A9-8DA1-4A82-806A-8E0D44E79F56")
 
 .comdef IRawElementProviderSimple2 : public IRawElementProviderSimple
 
     ShowContextMenu	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IAccessibleEx_INTERFACE_DEFINED__
-__IAccessibleEx_INTERFACE_DEFINED__ equ 1
+define __IAccessibleEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleEx, "f8b80ada-2c44-48d0-89be-5ff23c9cd875")
 
@@ -545,12 +391,12 @@ DEFINE_IIDX(IAccessibleEx, "f8b80ada-2c44-48d0-89be-5ff23c9cd875")
     GetIAccessiblePair	proc :ptr, :ptr
     GetRuntimeId	proc :ptr
     ConvertReturnedElement proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderFragmentRoot_INTERFACE_DEFINED__
-__IRawElementProviderFragmentRoot_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderFragmentRoot_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderFragmentRoot, "620ce2a5-ab8f-40a9-86cb-de3c75599b58")
 
@@ -558,12 +404,12 @@ DEFINE_IIDX(IRawElementProviderFragmentRoot, "620ce2a5-ab8f-40a9-86cb-de3c75599b
 
     ElementProviderFromPoint proc :real8, :real8, :ptr
     GetFocus		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderFragment_INTERFACE_DEFINED__
-__IRawElementProviderFragment_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderFragment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderFragment, "f7063da8-8359-439c-9297-bbc5299a7d87")
 
@@ -575,12 +421,12 @@ DEFINE_IIDX(IRawElementProviderFragment, "f7063da8-8359-439c-9297-bbc5299a7d87")
     GetEmbeddedFragmentRoots proc :ptr
     SetFocus		proc
     get_FragmentRoot	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderAdviseEvents_INTERFACE_DEFINED__
-__IRawElementProviderAdviseEvents_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderAdviseEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderAdviseEvents, "a407b27b-0f6d-4427-9292-473c7bf93258")
 
@@ -588,24 +434,24 @@ DEFINE_IIDX(IRawElementProviderAdviseEvents, "a407b27b-0f6d-4427-9292-473c7bf932
 
     AdviseEventAdded	proc :EVENTID, :ptr
     AdviseEventRemoved	proc :EVENTID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderHwndOverride_INTERFACE_DEFINED__
-__IRawElementProviderHwndOverride_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderHwndOverride_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderHwndOverride, "1d5df27c-8947-4425-b8d9-79787bb460b8")
 
 .comdef IRawElementProviderHwndOverride : public IUnknown
 
     GetOverrideProviderForHwnd proc :HWND, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IProxyProviderWinEventSink_INTERFACE_DEFINED__
-__IProxyProviderWinEventSink_INTERFACE_DEFINED__ equ 1
+define __IProxyProviderWinEventSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProxyProviderWinEventSink, "4fd82b78-a43e-46ac-9803-0a6969c7c183")
 
@@ -614,24 +460,24 @@ DEFINE_IIDX(IProxyProviderWinEventSink, "4fd82b78-a43e-46ac-9803-0a6969c7c183")
     AddAutomationPropertyChangedEvent proc :ptr, :PROPERTYID, :VARIANT
     AddAutomationEvent	proc :ptr, :EVENTID
     AddStructureChangedEvent proc :ptr, :StructureChangeType, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IProxyProviderWinEventHandler_INTERFACE_DEFINED__
-__IProxyProviderWinEventHandler_INTERFACE_DEFINED__ equ 1
+define __IProxyProviderWinEventHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProxyProviderWinEventHandler, "89592ad4-f4e0-43d5-a3b6-bad7e111b435")
 
 .comdef IProxyProviderWinEventHandler : public IUnknown
 
     RespondToWinEvent	proc :DWORD, :HWND, :LONG, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderWindowlessSite_INTERFACE_DEFINED__
-__IRawElementProviderWindowlessSite_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderWindowlessSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderWindowlessSite, "0a2a93cc-bfad-42ac-9b2e-0991fb0d3ea0")
 
@@ -639,12 +485,12 @@ DEFINE_IIDX(IRawElementProviderWindowlessSite, "0a2a93cc-bfad-42ac-9b2e-0991fb0d
 
     GetAdjacentFragment proc :NavigateDirection, :ptr
     GetRuntimeIdPrefix	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAccessibleHostingElementProviders_INTERFACE_DEFINED__
-__IAccessibleHostingElementProviders_INTERFACE_DEFINED__ equ 1
+define __IAccessibleHostingElementProviders_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleHostingElementProviders, "33AC331B-943E-4020-B295-DB37784974A3")
 
@@ -652,24 +498,24 @@ DEFINE_IIDX(IAccessibleHostingElementProviders, "33AC331B-943E-4020-B295-DB37784
 
     GetEmbeddedFragmentRoots proc :ptr
     GetObjectIdForProvider proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRawElementProviderHostingAccessibles_INTERFACE_DEFINED__
-__IRawElementProviderHostingAccessibles_INTERFACE_DEFINED__ equ 1
+define __IRawElementProviderHostingAccessibles_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRawElementProviderHostingAccessibles, "24BE0B07-D37D-487A-98CF-A13ED465E9B3")
 
 .comdef IRawElementProviderHostingAccessibles : public IUnknown
 
     GetEmbeddedAccessibles proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDockProvider_INTERFACE_DEFINED__
-__IDockProvider_INTERFACE_DEFINED__ equ 1
+define __IDockProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDockProvider, "159bc72c-4ad3-485e-9637-d7052edf0146")
 
@@ -677,12 +523,12 @@ DEFINE_IIDX(IDockProvider, "159bc72c-4ad3-485e-9637-d7052edf0146")
 
     SetDockPosition	proc :DockPosition
     get_DockPosition	proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IExpandCollapseProvider_INTERFACE_DEFINED__
-__IExpandCollapseProvider_INTERFACE_DEFINED__ equ 1
+define __IExpandCollapseProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IExpandCollapseProvider, "d847d3a5-cab0-4a98-8c32-ecb45c59ad24")
 
@@ -691,12 +537,12 @@ DEFINE_IIDX(IExpandCollapseProvider, "d847d3a5-cab0-4a98-8c32-ecb45c59ad24")
     Expand		proc
     Collapse		proc
     get_ExpandCollapseState proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IGridProvider_INTERFACE_DEFINED__
-__IGridProvider_INTERFACE_DEFINED__ equ 1
+define __IGridProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGridProvider, "b17d6187-0907-464b-a168-0ef17a1572b1")
 
@@ -705,12 +551,12 @@ DEFINE_IIDX(IGridProvider, "b17d6187-0907-464b-a168-0ef17a1572b1")
     GetItem		proc :SINT, :SINT, :ptr
     get_RowCount	proc :ptr
     get_ColumnCount	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IGridItemProvider_INTERFACE_DEFINED__
-__IGridItemProvider_INTERFACE_DEFINED__ equ 1
+define __IGridItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGridItemProvider, "d02541f1-fb81-4d64-ae32-f520f8a6dbd1")
 
@@ -721,24 +567,24 @@ DEFINE_IIDX(IGridItemProvider, "d02541f1-fb81-4d64-ae32-f520f8a6dbd1")
     get_RowSpan		proc :ptr
     get_ColumnSpan	proc :ptr
     get_ContainingGrid	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IInvokeProvider_INTERFACE_DEFINED__
-__IInvokeProvider_INTERFACE_DEFINED__ equ 1
+define __IInvokeProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInvokeProvider, "54fcb24b-e18e-47a2-b4d3-eccbe77599a2")
 
 .comdef IInvokeProvider : public IUnknown
 
     _Invoke		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMultipleViewProvider_INTERFACE_DEFINED__
-__IMultipleViewProvider_INTERFACE_DEFINED__ equ 1
+define __IMultipleViewProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMultipleViewProvider, "6278cab1-b556-4a1a-b4e0-418acc523201")
 
@@ -748,12 +594,12 @@ DEFINE_IIDX(IMultipleViewProvider, "6278cab1-b556-4a1a-b4e0-418acc523201")
     SetCurrentView	proc :SINT
     get_CurrentView	proc :ptr
     GetSupportedViews	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IRangeValueProvider_INTERFACE_DEFINED__
-__IRangeValueProvider_INTERFACE_DEFINED__ equ 1
+define __IRangeValueProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRangeValueProvider, "36dc7aef-33e6-4691-afe1-2be7274b3d33")
 
@@ -766,24 +612,24 @@ DEFINE_IIDX(IRangeValueProvider, "36dc7aef-33e6-4691-afe1-2be7274b3d33")
     get_Minimum		proc :ptr
     get_LargeChange	proc :ptr
     get_SmallChange	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IScrollItemProvider_INTERFACE_DEFINED__
-__IScrollItemProvider_INTERFACE_DEFINED__ equ 1
+define __IScrollItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IScrollItemProvider, "2360c714-4bf1-4b26-ba65-9b21316127eb")
 
 .comdef IScrollItemProvider : public IUnknown
 
     ScrollIntoView	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ISelectionProvider_INTERFACE_DEFINED__
-__ISelectionProvider_INTERFACE_DEFINED__ equ 1
+define __ISelectionProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISelectionProvider, "fb8b03af-3bdf-48d4-bd36-1a65793be168")
 
@@ -792,12 +638,12 @@ DEFINE_IIDX(ISelectionProvider, "fb8b03af-3bdf-48d4-bd36-1a65793be168")
     GetSelection	proc :ptr
     get_CanSelectMultiple proc :ptr
     get_IsSelectionRequired proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IScrollProvider_INTERFACE_DEFINED__
-__IScrollProvider_INTERFACE_DEFINED__ equ 1
+define __IScrollProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IScrollProvider, "b38b8077-1fc3-42a5-8cae-d40c2215055a")
 
@@ -811,12 +657,12 @@ DEFINE_IIDX(IScrollProvider, "b38b8077-1fc3-42a5-8cae-d40c2215055a")
     get_VerticalViewSize proc :ptr
     get_HorizontallyScrollable proc :ptr
     get_VerticallyScrollable proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISelectionItemProvider_INTERFACE_DEFINED__
-__ISelectionItemProvider_INTERFACE_DEFINED__ equ 1
+define __ISelectionItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISelectionItemProvider, "2acad808-b2d4-452d-a407-91ff1ad167b2")
 
@@ -827,12 +673,12 @@ DEFINE_IIDX(ISelectionItemProvider, "2acad808-b2d4-452d-a407-91ff1ad167b2")
     RemoveFromSelection proc
     get_IsSelected	proc :ptr
     get_SelectionContainer proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISynchronizedInputProvider_INTERFACE_DEFINED__
-__ISynchronizedInputProvider_INTERFACE_DEFINED__ equ 1
+define __ISynchronizedInputProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISynchronizedInputProvider, "29db1a06-02ce-4cf7-9b42-565d4fab20ee")
 
@@ -840,12 +686,12 @@ DEFINE_IIDX(ISynchronizedInputProvider, "29db1a06-02ce-4cf7-9b42-565d4fab20ee")
 
     StartListening	proc :SynchronizedInputType
     Cancel		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITableProvider_INTERFACE_DEFINED__
-__ITableProvider_INTERFACE_DEFINED__ equ 1
+define __ITableProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITableProvider, "9c860395-97b3-490a-b52a-858cc22af166")
 
@@ -854,12 +700,12 @@ DEFINE_IIDX(ITableProvider, "9c860395-97b3-490a-b52a-858cc22af166")
     GetRowHeaders	proc :ptr
     GetColumnHeaders	proc :ptr
     get_RowOrColumnMajor proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ITableItemProvider_INTERFACE_DEFINED__
-__ITableItemProvider_INTERFACE_DEFINED__ equ 1
+define __ITableItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITableItemProvider, "b9734fa6-771f-4d78-9c90-2517999349cd")
 
@@ -867,12 +713,12 @@ DEFINE_IIDX(ITableItemProvider, "b9734fa6-771f-4d78-9c90-2517999349cd")
 
     GetRowHeaderItems	proc :ptr
     GetColumnHeaderItems proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IToggleProvider_INTERFACE_DEFINED__
-__IToggleProvider_INTERFACE_DEFINED__ equ 1
+define __IToggleProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IToggleProvider, "56d00bd0-c4f4-433c-a836-1a52a57e0892")
 
@@ -880,12 +726,12 @@ DEFINE_IIDX(IToggleProvider, "56d00bd0-c4f4-433c-a836-1a52a57e0892")
 
     Toggle		proc
     get_ToggleState	proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransformProvider_INTERFACE_DEFINED__
-__ITransformProvider_INTERFACE_DEFINED__ equ 1
+define __ITransformProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransformProvider, "6829ddc4-4f91-4ffa-b86f-bd3e2987cb4c")
 
@@ -897,12 +743,12 @@ DEFINE_IIDX(ITransformProvider, "6829ddc4-4f91-4ffa-b86f-bd3e2987cb4c")
     get_CanMove		proc :ptr
     get_CanResize	proc :ptr
     get_CanRotate	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IValueProvider_INTERFACE_DEFINED__
-__IValueProvider_INTERFACE_DEFINED__ equ 1
+define __IValueProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IValueProvider, "c7935180-6fb3-4201-b174-7df73adbf64a")
 
@@ -911,12 +757,12 @@ DEFINE_IIDX(IValueProvider, "c7935180-6fb3-4201-b174-7df73adbf64a")
     SetValue		proc :LPCWSTR
     get_Value		proc :ptr
     get_IsReadOnly	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IWindowProvider_INTERFACE_DEFINED__
-__IWindowProvider_INTERFACE_DEFINED__ equ 1
+define __IWindowProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWindowProvider, "987df77b-db06-4d77-8f8a-86a9c3bb90b9")
 
@@ -931,12 +777,12 @@ DEFINE_IIDX(IWindowProvider, "987df77b-db06-4d77-8f8a-86a9c3bb90b9")
     get_WindowVisualState proc :ptr LONG
     get_WindowInteractionState proc :ptr LONG
     get_IsTopmost	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ILegacyIAccessibleProvider_INTERFACE_DEFINED__
-__ILegacyIAccessibleProvider_INTERFACE_DEFINED__ equ 1
+define __ILegacyIAccessibleProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILegacyIAccessibleProvider, "e44c3566-915d-4070-99c6-047bff5a08f5")
 
@@ -956,48 +802,48 @@ DEFINE_IIDX(ILegacyIAccessibleProvider, "e44c3566-915d-4070-99c6-047bff5a08f5")
     get_KeyboardShortcut proc :ptr
     GetSelection	proc :ptr
     get_DefaultAction	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IItemContainerProvider_INTERFACE_DEFINED__
-__IItemContainerProvider_INTERFACE_DEFINED__ equ 1
+define __IItemContainerProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IItemContainerProvider, "e747770b-39ce-4382-ab30-d8fb3f336f24")
 
 .comdef IItemContainerProvider : public IUnknown
 
     FindItemByProperty	proc :ptr, :PROPERTYID, :VARIANT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IVirtualizedItemProvider_INTERFACE_DEFINED__
-__IVirtualizedItemProvider_INTERFACE_DEFINED__ equ 1
+define __IVirtualizedItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVirtualizedItemProvider, "cb98b665-2d35-4fac-ad35-f3c60d0c0b8b")
 
 .comdef IVirtualizedItemProvider : public IUnknown
 
     Realize		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IObjectModelProvider_INTERFACE_DEFINED__
-__IObjectModelProvider_INTERFACE_DEFINED__ equ 1
+define __IObjectModelProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectModelProvider, "3ad86ebd-f5ef-483d-bb18-b1042a475d64")
 
 .comdef IObjectModelProvider : public IUnknown
 
     GetUnderlyingObjectModel proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IAnnotationProvider_INTERFACE_DEFINED__
-__IAnnotationProvider_INTERFACE_DEFINED__ equ 1
+define __IAnnotationProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAnnotationProvider, "f95c7e80-bd63-4601-9782-445ebff011fc")
 
@@ -1008,12 +854,12 @@ DEFINE_IIDX(IAnnotationProvider, "f95c7e80-bd63-4601-9782-445ebff011fc")
     get_Author		proc :ptr
     get_DateTime	proc :ptr
     get_Target		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IStylesProvider_INTERFACE_DEFINED__
-__IStylesProvider_INTERFACE_DEFINED__ equ 1
+define __IStylesProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStylesProvider, "19b6b649-f5d7-4a6d-bdcb-129252be588a")
 
@@ -1026,24 +872,24 @@ DEFINE_IIDX(IStylesProvider, "19b6b649-f5d7-4a6d-bdcb-129252be588a")
     get_Shape		proc :ptr
     get_FillPatternColor proc :ptr
     get_ExtendedProperties proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISpreadsheetProvider_INTERFACE_DEFINED__
-__ISpreadsheetProvider_INTERFACE_DEFINED__ equ 1
+define __ISpreadsheetProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISpreadsheetProvider, "6f6b5d35-5525-4f80-b758-85473832ffc7")
 
 .comdef ISpreadsheetProvider : public IUnknown
 
     GetItemByName	proc :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISpreadsheetItemProvider_INTERFACE_DEFINED__
-__ISpreadsheetItemProvider_INTERFACE_DEFINED__ equ 1
+define __ISpreadsheetItemProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISpreadsheetItemProvider, "eaed4660-7b3d-4879-a2e6-365ce603f3d0")
 
@@ -1052,12 +898,12 @@ DEFINE_IIDX(ISpreadsheetItemProvider, "eaed4660-7b3d-4879-a2e6-365ce603f3d0")
     get_Formula		proc :ptr
     GetAnnotationObjects proc :ptr
     GetAnnotationTypes	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransformProvider2_INTERFACE_DEFINED__
-__ITransformProvider2_INTERFACE_DEFINED__ equ 1
+define __ITransformProvider2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransformProvider2, "4758742f-7ac2-460c-bc48-09fc09308a93")
 
@@ -1069,12 +915,12 @@ DEFINE_IIDX(ITransformProvider2, "4758742f-7ac2-460c-bc48-09fc09308a93")
     get_ZoomMinimum	proc :ptr
     get_ZoomMaximum	proc :ptr
     ZoomByUnit		proc :ZoomUnit
-    .ends
+   .ends
 
 endif
 
 ifndef __IDragProvider_INTERFACE_DEFINED__
-__IDragProvider_INTERFACE_DEFINED__ equ 1
+define __IDragProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDragProvider, "6aa7bbbb-7ff9-497d-904f-d20b897929d8")
 
@@ -1084,12 +930,12 @@ DEFINE_IIDX(IDragProvider, "6aa7bbbb-7ff9-497d-904f-d20b897929d8")
     get_DropEffect	proc :ptr
     get_DropEffects	proc :ptr
     GetGrabbedItems	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDropTargetProvider_INTERFACE_DEFINED__
-__IDropTargetProvider_INTERFACE_DEFINED__ equ 1
+define __IDropTargetProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDropTargetProvider, "bae82bfd-358a-481c-85a0-d8b4d90a5d61")
 
@@ -1097,12 +943,12 @@ DEFINE_IIDX(IDropTargetProvider, "bae82bfd-358a-481c-85a0-d8b4d90a5d61")
 
     get_DropTargetEffect proc :ptr
     get_DropTargetEffects proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextRangeProvider_INTERFACE_DEFINED__
-__ITextRangeProvider_INTERFACE_DEFINED__ equ 1
+define __ITextRangeProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextRangeProvider, "5347ad7b-c355-46f8-aff5-909033582f63")
 
@@ -1126,12 +972,12 @@ DEFINE_IIDX(ITextRangeProvider, "5347ad7b-c355-46f8-aff5-909033582f63")
     RemoveFromSelection proc
     ScrollIntoView	proc :BOOL
     GetChildren		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextProvider_INTERFACE_DEFINED__
-__ITextProvider_INTERFACE_DEFINED__ equ 1
+define __ITextProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextProvider, "3589c92c-63f3-4367-99bb-ada653b77cf2")
 
@@ -1143,12 +989,12 @@ DEFINE_IIDX(ITextProvider, "3589c92c-63f3-4367-99bb-ada653b77cf2")
     RangeFromPoint	proc :UiaPoint, :ptr
     get_DocumentRange	proc :ptr
     get_SupportedTextSelection proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextProvider2_INTERFACE_DEFINED__
-__ITextProvider2_INTERFACE_DEFINED__ equ 1
+define __ITextProvider2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextProvider2, "0dc5e6ed-3e16-4bf1-8f9a-a979878bc195")
 
@@ -1156,12 +1002,12 @@ DEFINE_IIDX(ITextProvider2, "0dc5e6ed-3e16-4bf1-8f9a-a979878bc195")
 
     RangeFromAnnotation proc :ptr, :ptr
     GetCaretRange	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextEditProvider_INTERFACE_DEFINED__
-__ITextEditProvider_INTERFACE_DEFINED__ equ 1
+define __ITextEditProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextEditProvider, "EA3605B4-3A05-400E-B5F9-4E91B40F6176")
 
@@ -1169,24 +1015,24 @@ DEFINE_IIDX(ITextEditProvider, "EA3605B4-3A05-400E-B5F9-4E91B40F6176")
 
     GetActiveComposition proc :ptr
     GetConversionTarget proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextRangeProvider2_INTERFACE_DEFINED__
-__ITextRangeProvider2_INTERFACE_DEFINED__ equ 1
+define __ITextRangeProvider2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextRangeProvider2, "9BBCE42C-1921-4F18-89CA-DBA1910A0386")
 
 .comdef ITextRangeProvider2 : public ITextRangeProvider
 
     ShowContextMenu	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITextChildProvider_INTERFACE_DEFINED__
-__ITextChildProvider_INTERFACE_DEFINED__ equ 1
+define __ITextChildProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITextChildProvider, "4c2de2b9-c88f-4f88-a111-f1d336b7d1a9")
 
@@ -1194,12 +1040,12 @@ DEFINE_IIDX(ITextChildProvider, "4c2de2b9-c88f-4f88-a111-f1d336b7d1a9")
 
     get_TextContainer	proc :ptr
     get_TextRange	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IUIAutomationPatternInstance_INTERFACE_DEFINED__
-__IUIAutomationPatternInstance_INTERFACE_DEFINED__ equ 1
+define __IUIAutomationPatternInstance_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUIAutomationPatternInstance, "c03a7fe4-9431-409f-bed8-ae7c2299bc8d")
 
@@ -1207,12 +1053,12 @@ DEFINE_IIDX(IUIAutomationPatternInstance, "c03a7fe4-9431-409f-bed8-ae7c2299bc8d"
 
     GetProperty		proc :UINT, :BOOL, :UIAutomationType, :ptr
     CallMethod		proc :UINT, :ptr, :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IUIAutomationPatternHandler_INTERFACE_DEFINED__
-__IUIAutomationPatternHandler_INTERFACE_DEFINED__ equ 1
+define __IUIAutomationPatternHandler_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUIAutomationPatternHandler, "d97022f3-a947-465e-8b2a-ac4315fa54e8")
 
@@ -1220,12 +1066,12 @@ DEFINE_IIDX(IUIAutomationPatternHandler, "d97022f3-a947-465e-8b2a-ac4315fa54e8")
 
     CreateClientWrapper proc :ptr, :ptr
     Dispatch		proc :ptr, :UINT, :ptr, :UINT
-    .ends
+   .ends
 
 endif
 
 ifndef __IUIAutomationRegistrar_INTERFACE_DEFINED__
-__IUIAutomationRegistrar_INTERFACE_DEFINED__ equ 1
+define __IUIAutomationRegistrar_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUIAutomationRegistrar, "8609c4ec-4a1a-4d88-a357-5a66e060e1cf")
 
@@ -1234,7 +1080,7 @@ DEFINE_IIDX(IUIAutomationRegistrar, "8609c4ec-4a1a-4d88-a357-5a66e060e1cf")
     RegisterProperty	proc :ptr, :ptr
     RegisterEvent	proc :ptr, :ptr
     RegisterPattern	proc :ptr, :ptr, :ptr, :UINT, :ptr
-    .ends
+   .ends
 
 endif
 

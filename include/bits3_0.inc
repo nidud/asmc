@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -17,38 +17,7 @@ include ole2.inc
 endif
 
 ifndef __bits3_0_h__
-__bits3_0_h__ equ <>
-
-ifndef __IBitsPeerCacheRecord_FWD_DEFINED__
-__IBitsPeerCacheRecord_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumBitsPeerCacheRecords_FWD_DEFINED__
-__IEnumBitsPeerCacheRecords_FWD_DEFINED__ equ 1
-endif
-ifndef __IBitsPeer_FWD_DEFINED__
-__IBitsPeer_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumBitsPeers_FWD_DEFINED__
-__IEnumBitsPeers_FWD_DEFINED__ equ 1
-endif
-ifndef __IBitsPeerCacheAdministration_FWD_DEFINED__
-__IBitsPeerCacheAdministration_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyJob4_FWD_DEFINED__
-__IBackgroundCopyJob4_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyFile3_FWD_DEFINED__
-__IBackgroundCopyFile3_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyCallback2_FWD_DEFINED__
-__IBackgroundCopyCallback2_FWD_DEFINED__ equ 1
-endif
-ifndef __BackgroundCopyManager3_0_FWD_DEFINED__
-__BackgroundCopyManager3_0_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyJob4_FWD_DEFINED__
-__IBackgroundCopyJob4_FWD_DEFINED__ equ 1
-endif
+define __bits3_0_h__
 
 include bits.inc
 include bits1_5.inc
@@ -56,7 +25,7 @@ include bits2_0.inc
 include bits2_5.inc
 
 ifndef __IBitsPeerCacheRecord_INTERFACE_DEFINED__
-__IBitsPeerCacheRecord_INTERFACE_DEFINED__ equ 1
+define __IBitsPeerCacheRecord_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBitsPeerCacheRecord, "659cdeaf-489e-11d9-a9cd-000d56965251")
 
@@ -69,13 +38,12 @@ DEFINE_IIDX(IBitsPeerCacheRecord, "659cdeaf-489e-11d9-a9cd-000d56965251")
     GetLastAccessTime	proc :ptr
     IsFileValidated	proc
     GetFileRanges	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__
-__IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__ equ 1
+define __IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumBitsPeerCacheRecords, "659cdea4-489e-11d9-a9cd-000d56965251")
 
@@ -86,13 +54,12 @@ DEFINE_IIDX(IEnumBitsPeerCacheRecords, "659cdea4-489e-11d9-a9cd-000d56965251")
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBitsPeer_INTERFACE_DEFINED__
-__IBitsPeer_INTERFACE_DEFINED__ equ 1
+define __IBitsPeer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBitsPeer, "659cdea2-489e-11d9-a9cd-000d56965251")
 
@@ -101,13 +68,12 @@ DEFINE_IIDX(IBitsPeer, "659cdea2-489e-11d9-a9cd-000d56965251")
     GetPeerName		proc :ptr
     IsAuthenticated	proc :ptr
     IsAvailable		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumBitsPeers_INTERFACE_DEFINED__
-__IEnumBitsPeers_INTERFACE_DEFINED__ equ 1
+define __IEnumBitsPeers_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumBitsPeers, "659cdea5-489e-11d9-a9cd-000d56965251")
 
@@ -118,13 +84,12 @@ DEFINE_IIDX(IEnumBitsPeers, "659cdea5-489e-11d9-a9cd-000d56965251")
     Reset		proc
     Clone		proc :ptr
     GetCount		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBitsPeerCacheAdministration_INTERFACE_DEFINED__
-__IBitsPeerCacheAdministration_INTERFACE_DEFINED__ equ 1
+define __IBitsPeerCacheAdministration_INTERFACE_DEFINED__
 
 BG_ENABLE_PEERCACHING_CLIENT equ 0x0001
 BG_ENABLE_PEERCACHING_SERVER equ 0x0002
@@ -148,13 +113,12 @@ DEFINE_IIDX(IBitsPeerCacheAdministration, "659cdead-489e-11d9-a9cd-000d56965251"
     EnumPeers		proc :ptr
     ClearPeers		proc
     DiscoverPeers	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBackgroundCopyJob4_INTERFACE_DEFINED__
-__IBackgroundCopyJob4_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyJob4_INTERFACE_DEFINED__
 
 BG_JOB_ENABLE_PEERCACHING_CLIENT equ 0x0001
 BG_JOB_ENABLE_PEERCACHING_SERVER equ 0x0002
@@ -214,13 +178,12 @@ DEFINE_IIDX(IBackgroundCopyJob4, "659cdeae-489e-11d9-a9cd-000d56965251")
     GetOwnerElevationState proc :ptr
     SetMaximumDownloadTime proc :ULONG
     GetMaximumDownloadTime proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBackgroundCopyFile3_INTERFACE_DEFINED__
-__IBackgroundCopyFile3_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyFile3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyFile3, "659cdeaa-489e-11d9-a9cd-000d56965251")
 
@@ -235,13 +198,12 @@ DEFINE_IIDX(IBackgroundCopyFile3, "659cdeaa-489e-11d9-a9cd-000d56965251")
     SetValidationState	proc :BOOL
     GetValidationState	proc :ptr
     IsDownloadedFromPeer proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBackgroundCopyCallback2_INTERFACE_DEFINED__
-__IBackgroundCopyCallback2_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyCallback2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyCallback2, "659cdeac-489e-11d9-a9cd-000d56965251")
 
@@ -251,13 +213,12 @@ DEFINE_IIDX(IBackgroundCopyCallback2, "659cdeac-489e-11d9-a9cd-000d56965251")
     JobError		proc :ptr, :ptr
     JobModification	proc :ptr, :DWORD
     FileTransferred	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __BackgroundCopyManager3_0_LIBRARY_DEFINED__
-__BackgroundCopyManager3_0_LIBRARY_DEFINED__ equ 1
+define __BackgroundCopyManager3_0_LIBRARY_DEFINED__
 DEFINE_GUIDS(LIBID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
 DEFINE_GUIDS(CLSID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
 endif

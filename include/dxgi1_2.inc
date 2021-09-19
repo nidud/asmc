@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 
 include rpc.inc
@@ -12,20 +12,7 @@ include ole2.inc
 endif
 
 ifndef __dxgi1_2_h__
-__dxgi1_2_h__ equ <>
-
-ifndef __IDXGIDevice2_FWD_DEFINED__
-__IDXGIDevice2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGISwapChain1_FWD_DEFINED__
-__IDXGISwapChain1_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory2_FWD_DEFINED__
-__IDXGIFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIAdapter2_FWD_DEFINED__
-__IDXGIAdapter2_FWD_DEFINED__ equ 1
-endif
+define __dxgi1_2_h__
 
 include dxgi.inc
 
@@ -45,7 +32,7 @@ include dxgi.inc
 
 
 ifndef __IDXGIDevice2_INTERFACE_DEFINED__
-__IDXGIDevice2_INTERFACE_DEFINED__ equ 1
+define __IDXGIDevice2_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IDXGIDevice2, 0x05008617,0xfbfd,0x4051,0xa7,0x90,0x14,0x48,0x84,0xb4,0xf6,0xa9)
 
@@ -54,7 +41,7 @@ DEFINE_GUID(IID_IDXGIDevice2, 0x05008617,0xfbfd,0x4051,0xa7,0x90,0x14,0x48,0x84,
     OfferResources	proc :UINT, :ptr, :DXGI_OFFER_RESOURCE_PRIORITY
     ReclaimResources	proc :UINT, :ptr, :ptr
     EnqueueSetEvent	proc :HANDLE
-    .ends
+   .ends
 
 endif
 
@@ -91,7 +78,7 @@ pScrollOffset		LPPOINT ?
 DXGI_PRESENT_PARAMETERS ENDS
 
 ifndef __IDXGISwapChain1_INTERFACE_DEFINED__
-__IDXGISwapChain1_INTERFACE_DEFINED__ equ 1
+define __IDXGISwapChain1_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IDXGISwapChain1, 0x790a45f7, 0x0d42, 0x4876, 0x98,0x3a, 0x0a,0x55,0xcf,0xe6,0xf4,0xaa)
 
@@ -108,12 +95,12 @@ DEFINE_GUID(IID_IDXGISwapChain1, 0x790a45f7, 0x0d42, 0x4876, 0x98,0x3a, 0x0a,0x5
     GetBackgroundColor	proc :ptr
     SetRotation		proc :DXGI_MODE_ROTATION
     GetRotation		proc :ptr
-    .ends
+   .ends
     LPIDXGISwapChain1	typedef ptr IDXGISwapChain1
 endif
 
 ifndef __IDXGIFactory2_INTERFACE_DEFINED__
-__IDXGIFactory2_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory2_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IDXGIFactory2, 0x50c83a1c, 0xe072, 0x4c48, 0x87,0xb0, 0x36,0x30,0xfa,0x36,0xa6,0xd0)
 
@@ -130,8 +117,7 @@ DEFINE_GUID(IID_IDXGIFactory2, 0x50c83a1c, 0xe072, 0x4c48, 0x87,0xb0, 0x36,0x30,
     RegisterOcclusionStatusEvent proc :HANDLE, :ptr
     UnregisterOcclusionStatus proc :DWORD
     CreateSwapChainForComposition proc :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
     LPIDXGIFactory2 typedef ptr IDXGIFactory2
 endif
 
@@ -167,19 +153,19 @@ ComputePreemptionGranularity DXGI_COMPUTE_PREEMPTION_GRANULARITY ?
 DXGI_ADAPTER_DESC2	ENDS
 
 ifndef __IDXGIAdapter2_INTERFACE_DEFINED__
-__IDXGIAdapter2_INTERFACE_DEFINED__ equ 1
+define __IDXGIAdapter2_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IDXGIAdapter2, 0x0aa1ae0a, 0xfa0e, 0x4b84, 0x86,0x44, 0xe0,0x5f,0xf8,0xe5,0xac,0xb5)
 
 .comdef IDXGIAdapter2 : public IDXGIAdapter1
 
     GetDesc2		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDXGIOutput1_INTERFACE_DEFINED__
-__IDXGIOutput1_INTERFACE_DEFINED__ equ 1
+define __IDXGIOutput1_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIOutput1, "00cddea8-939b-4b83-a340-a685226666cc")
 
@@ -189,8 +175,7 @@ DEFINE_IIDX(IDXGIOutput1, "00cddea8-939b-4b83-a340-a685226666cc")
     FindClosestMatchingMode1 proc :ptr DXGI_MODE_DESC1, :ptr DXGI_MODE_DESC1, :ptr IUnknown
     GetDisplaySurfaceData1 proc :ptr IDXGIResource
     DuplicateOutput	proc :ptr IUnknown, :ptr ptr IDXGIOutputDuplication
-
-    .ends
+   .ends
 
 endif
 

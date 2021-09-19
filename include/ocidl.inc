@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -14,128 +14,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __ocidl_h__
-__ocidl_h__ equ <>
-
-ifndef __IEnumConnections_FWD_DEFINED__
-__IEnumConnections_FWD_DEFINED__ equ 1
-endif
-ifndef __IConnectionPoint_FWD_DEFINED__
-__IConnectionPoint_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumConnectionPoints_FWD_DEFINED__
-__IEnumConnectionPoints_FWD_DEFINED__ equ 1
-endif
-ifndef __IConnectionPointContainer_FWD_DEFINED__
-__IConnectionPointContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IClassFactory2_FWD_DEFINED__
-__IClassFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __IProvideClassInfo_FWD_DEFINED__
-__IProvideClassInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IProvideClassInfo2_FWD_DEFINED__
-__IProvideClassInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __IProvideMultipleClassInfo_FWD_DEFINED__
-__IProvideMultipleClassInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleControl_FWD_DEFINED__
-__IOleControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleControlSite_FWD_DEFINED__
-__IOleControlSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyPage_FWD_DEFINED__
-__IPropertyPage_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyPage2_FWD_DEFINED__
-__IPropertyPage2_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyPageSite_FWD_DEFINED__
-__IPropertyPageSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyNotifySink_FWD_DEFINED__
-__IPropertyNotifySink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISpecifyPropertyPages_FWD_DEFINED__
-__ISpecifyPropertyPages_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistMemory_FWD_DEFINED__
-__IPersistMemory_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistStreamInit_FWD_DEFINED__
-__IPersistStreamInit_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistPropertyBag_FWD_DEFINED__
-__IPersistPropertyBag_FWD_DEFINED__ equ 1
-endif
-ifndef __ISimpleFrameSite_FWD_DEFINED__
-__ISimpleFrameSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IFont_FWD_DEFINED__
-__IFont_FWD_DEFINED__ equ 1
-endif
-ifndef __IPicture_FWD_DEFINED__
-__IPicture_FWD_DEFINED__ equ 1
-endif
-ifndef __IPicture2_FWD_DEFINED__
-__IPicture2_FWD_DEFINED__ equ 1
-endif
-ifndef __IFontEventsDisp_FWD_DEFINED__
-__IFontEventsDisp_FWD_DEFINED__ equ 1
-endif
-ifndef __IFontDisp_FWD_DEFINED__
-__IFontDisp_FWD_DEFINED__ equ 1
-endif
-ifndef __IPictureDisp_FWD_DEFINED__
-__IPictureDisp_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceObjectWindowless_FWD_DEFINED__
-__IOleInPlaceObjectWindowless_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceSiteEx_FWD_DEFINED__
-__IOleInPlaceSiteEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleInPlaceSiteWindowless_FWD_DEFINED__
-__IOleInPlaceSiteWindowless_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewObjectEx_FWD_DEFINED__
-__IViewObjectEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleUndoUnit_FWD_DEFINED__
-__IOleUndoUnit_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleParentUndoUnit_FWD_DEFINED__
-__IOleParentUndoUnit_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumOleUndoUnits_FWD_DEFINED__
-__IEnumOleUndoUnits_FWD_DEFINED__ equ 1
-endif
-ifndef __IOleUndoManager_FWD_DEFINED__
-__IOleUndoManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IPointerInactive_FWD_DEFINED__
-__IPointerInactive_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectWithSite_FWD_DEFINED__
-__IObjectWithSite_FWD_DEFINED__ equ 1
-endif
-ifndef __IPerPropertyBrowsing_FWD_DEFINED__
-__IPerPropertyBrowsing_FWD_DEFINED__ equ 1
-endif
-ifndef __IPropertyBag2_FWD_DEFINED__
-__IPropertyBag2_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistPropertyBag2_FWD_DEFINED__
-__IPersistPropertyBag2_FWD_DEFINED__ equ 1
-endif
-ifndef __IAdviseSinkEx_FWD_DEFINED__
-__IAdviseSinkEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IQuickActivate_FWD_DEFINED__
-__IQuickActivate_FWD_DEFINED__ equ 1
-endif
+define __ocidl_h__
 
 include oleidl.inc
 include oaidl.inc
@@ -143,25 +22,27 @@ include servprov.inc
 include urlmon.inc
 
 ifndef __IOleControlTypes_INTERFACE_DEFINED__
-__IOleControlTypes_INTERFACE_DEFINED__ equ 1
+define __IOleControlTypes_INTERFACE_DEFINED__
 
-tagUASFLAGS		typedef SDWORD
-UAS_NORMAL		equ 0
-UAS_BLOCKED		equ 0x1
-UAS_NOPARENTENABLE	equ 0x2
-UAS_MASK		equ 0x3
+.enum UASFLAGS {
+	UAS_NORMAL,
+	UAS_BLOCKED,
+	UAS_NOPARENTENABLE,
+	UAS_MASK
+	}
 
-tagREADYSTATE		typedef SDWORD
-READYSTATE_UNINITIALIZED equ 0
-READYSTATE_LOADING	equ 1
-READYSTATE_LOADED	equ 2
-READYSTATE_INTERACTIVE	equ 3
-READYSTATE_COMPLETE	equ 4
+.enum READYSTATE {
+	READYSTATE_UNINITIALIZED,
+	READYSTATE_LOADING,
+	READYSTATE_LOADED,
+	READYSTATE_INTERACTIVE,
+	READYSTATE_COMPLETE
+	}
 
 endif
 
 ifndef __IEnumConnections_INTERFACE_DEFINED__
-__IEnumConnections_INTERFACE_DEFINED__ equ 1
+define __IEnumConnections_INTERFACE_DEFINED__
 
 PENUMCONNECTIONS	typedef ptr IEnumConnections
 LPENUMCONNECTIONS	typedef ptr IEnumConnections
@@ -180,13 +61,12 @@ DEFINE_IIDX(IEnumConnections, "B196B287-BAB4-101A-B69C-00AA00341D07")
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IConnectionPoint_INTERFACE_DEFINED__
-__IConnectionPoint_INTERFACE_DEFINED__ equ 1
+define __IConnectionPoint_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConnectionPoint, "B196B286-BAB4-101A-B69C-00AA00341D07")
 
@@ -197,8 +77,7 @@ DEFINE_IIDX(IConnectionPoint, "B196B286-BAB4-101A-B69C-00AA00341D07")
     Advise		proc :ptr, :ptr
     Unadvise		proc :DWORD
     EnumConnections	proc :ptr
-
-    .ends
+   .ends
 
 PCONNECTIONPOINT	typedef ptr IConnectionPoint
 LPCONNECTIONPOINT	typedef ptr IConnectionPoint
@@ -206,7 +85,7 @@ LPCONNECTIONPOINT	typedef ptr IConnectionPoint
 endif
 
 ifndef __IEnumConnectionPoints_INTERFACE_DEFINED__
-__IEnumConnectionPoints_INTERFACE_DEFINED__ equ 1
+define __IEnumConnectionPoints_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumConnectionPoints, "B196B285-BAB4-101A-B69C-00AA00341D07")
 
@@ -216,8 +95,7 @@ DEFINE_IIDX(IEnumConnectionPoints, "B196B285-BAB4-101A-B69C-00AA00341D07")
     Skip		proc :DWORD
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 PENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
 LPENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
@@ -225,7 +103,7 @@ LPENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
 endif
 
 ifndef __IConnectionPointContainer_INTERFACE_DEFINED__
-__IConnectionPointContainer_INTERFACE_DEFINED__ equ 1
+define __IConnectionPointContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConnectionPointContainer, "B196B284-BAB4-101A-B69C-00AA00341D07")
 
@@ -233,8 +111,7 @@ DEFINE_IIDX(IConnectionPointContainer, "B196B284-BAB4-101A-B69C-00AA00341D07")
 
     EnumConnectionPoints proc :ptr
     FindConnectionPoint proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 PCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
 LPCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
@@ -242,7 +119,7 @@ LPCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
 endif
 
 ifndef __IClassFactory2_INTERFACE_DEFINED__
-__IClassFactory2_INTERFACE_DEFINED__ equ 1
+define __IClassFactory2_INTERFACE_DEFINED__
 
 
 LICINFO			STRUC
@@ -259,23 +136,21 @@ DEFINE_IIDX(IClassFactory2, "B196B28F-BAB4-101A-B69C-00AA00341D07")
     GetLicInfo		proc :ptr
     RequestLicKey	proc :DWORD, :ptr
     CreateInstanceLic	proc :ptr, :ptr, :REFIID, :BSTR, :ptr
-
-    .ends
+   .ends
 
 LPCLASSFACTORY2		typedef ptr IClassFactory2
 
 endif
 
 ifndef __IProvideClassInfo_INTERFACE_DEFINED__
-__IProvideClassInfo_INTERFACE_DEFINED__ equ 1
+define __IProvideClassInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProvideClassInfo, "B196B283-BAB4-101A-B69C-00AA00341D07")
 
 .comdef IProvideClassInfo : public IUnknown
 
     GetClassInfo	proc :ptr
-
-    .ends
+   .ends
 
 LPPROVIDECLASSINFO	typedef ptr IProvideClassInfo
 
@@ -283,7 +158,7 @@ endif
 
 
 ifndef __IProvideClassInfo2_INTERFACE_DEFINED__
-__IProvideClassInfo2_INTERFACE_DEFINED__ equ 1
+define __IProvideClassInfo2_INTERFACE_DEFINED__
 
 GUIDKIND		typedef sdword
 GUIDKIND_DEFAULT_SOURCE_DISP_IID equ 1
@@ -293,8 +168,7 @@ DEFINE_IIDX(IProvideClassInfo2, "A6BC3AC0-DBAA-11CE-9DE3-00AA004BB851")
 .comdef IProvideClassInfo2 : public IProvideClassInfo
 
     GetGUID		proc :DWORD, :ptr
-
-    .ends
+   .ends
 
 LPPROVIDECLASSINFO2	typedef ptr IProvideClassInfo2
 
@@ -302,7 +176,7 @@ endif
 
 
 ifndef __IProvideMultipleClassInfo_INTERFACE_DEFINED__
-__IProvideMultipleClassInfo_INTERFACE_DEFINED__ equ 1
+define __IProvideMultipleClassInfo_INTERFACE_DEFINED__
 
 
 MULTICLASSINFO_GETTYPEINFO equ 0x00000001
@@ -317,15 +191,14 @@ DEFINE_IIDX(IProvideMultipleClassInfo, "A7ABA9C1-8983-11cf-8F20-00805F2CD064")
 
     GetMultiTypeInfoCount proc :ptr
     GetInfoOfIndex	proc :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPPROVIDEMULTIPLECLASSINFO typedef ptr IProvideMultipleClassInfo
 
 endif
 
 ifndef __IOleControl_INTERFACE_DEFINED__
-__IOleControl_INTERFACE_DEFINED__ equ 1
+define __IOleControl_INTERFACE_DEFINED__
 
 CONTROLINFO		STRUC
 cb			ULONG ?
@@ -347,15 +220,14 @@ DEFINE_IIDX(IOleControl, "B196B288-BAB4-101A-B69C-00AA00341D07")
     OnMnemonic		proc :ptr
     OnAmbientPropertyChange proc :DISPID
     FreezeEvents	proc :BOOL
-
-    .ends
+   .ends
 
 LPOLECONTROL		typedef ptr IOleControl
 
 endif
 
 ifndef __IOleControlSite_INTERFACE_DEFINED__
-__IOleControlSite_INTERFACE_DEFINED__ equ 1
+define __IOleControlSite_INTERFACE_DEFINED__
 
 POINTF			STRUC
 x			FLOAT ?
@@ -363,12 +235,13 @@ y			FLOAT ?
 POINTF			ENDS
 LPPOINTF		typedef ptr POINTF
 
-XFORMCOORDS		typedef SDWORD
-XFORMCOORDS_POSITION	equ 0x1
-XFORMCOORDS_SIZE	equ 0x2
-XFORMCOORDS_HIMETRICTOCONTAINER equ 0x4
-XFORMCOORDS_CONTAINERTOHIMETRIC equ 0x8
-XFORMCOORDS_EVENTCOMPAT equ 0x10
+.enum XFORMCOORDS {
+	XFORMCOORDS_POSITION		= 0x1,
+	XFORMCOORDS_SIZE		= 0x2,
+	XFORMCOORDS_HIMETRICTOCONTAINER = 0x4,
+	XFORMCOORDS_CONTAINERTOHIMETRIC = 0x8,
+	XFORMCOORDS_EVENTCOMPAT		= 0x10
+	}
 
 DEFINE_IIDX(IOleControlSite, "B196B289-BAB4-101A-B69C-00AA00341D07")
 
@@ -381,15 +254,14 @@ DEFINE_IIDX(IOleControlSite, "B196B289-BAB4-101A-B69C-00AA00341D07")
     TranslateAccelerator proc :ptr, :DWORD
     OnFocus		proc :BOOL
     ShowPropertyFrame	proc
-
-    .ends
+   .ends
 
 LPOLECONTROLSITE	typedef ptr IOleControlSite
 
 endif
 
 ifndef __IPropertyPage_INTERFACE_DEFINED__
-__IPropertyPage_INTERFACE_DEFINED__ equ 1
+define __IPropertyPage_INTERFACE_DEFINED__
 
 PROPPAGEINFO		STRUC
 cb			ULONG ?
@@ -416,8 +288,7 @@ DEFINE_IIDX(IPropertyPage, "B196B28D-BAB4-101A-B69C-00AA00341D07")
     Apply		proc
     Help		proc :LPCOLESTR
     TranslateAccelerator proc :ptr
-
-    .ends
+   .ends
 
 LPPROPERTYPAGE		typedef ptr IPropertyPage
 
@@ -425,15 +296,14 @@ endif
 
 
 ifndef __IPropertyPage2_INTERFACE_DEFINED__
-__IPropertyPage2_INTERFACE_DEFINED__ equ 1
+define __IPropertyPage2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPropertyPage2, "01E44665-24AC-101B-84ED-08002B2EC713")
 
 .comdef IPropertyPage2 : public IPropertyPage
 
     EditProperty	proc :DISPID
-
-    .ends
+   .ends
 
 LPPROPERTYPAGE2		typedef ptr IPropertyPage2
 
@@ -441,12 +311,13 @@ endif
 
 
 ifndef __IPropertyPageSite_INTERFACE_DEFINED__
-__IPropertyPageSite_INTERFACE_DEFINED__ equ 1
+define __IPropertyPageSite_INTERFACE_DEFINED__
 
-PROPPAGESTATUS		typedef SDWORD
-PROPPAGESTATUS_DIRTY	equ 0x1
-PROPPAGESTATUS_VALIDATE equ 0x2
-PROPPAGESTATUS_CLEAN	equ 0x4
+.enum PROPPAGESTATUS {
+	PROPPAGESTATUS_DIRTY	= 0x1,
+	PROPPAGESTATUS_VALIDATE = 0x2,
+	PROPPAGESTATUS_CLEAN	= 0x4
+	}
 
 DEFINE_IIDX(IPropertyPageSite, "B196B28C-BAB4-101A-B69C-00AA00341D07")
 
@@ -456,8 +327,7 @@ DEFINE_IIDX(IPropertyPageSite, "B196B28C-BAB4-101A-B69C-00AA00341D07")
     GetLocaleID		proc :ptr
     GetPageContainer	proc :ptr
     TranslateAccelerator proc :ptr
-
-    .ends
+   .ends
 
 LPPROPERTYPAGESITE	typedef ptr IPropertyPageSite
 
@@ -465,7 +335,7 @@ endif
 
 
 ifndef __IPropertyNotifySink_INTERFACE_DEFINED__
-__IPropertyNotifySink_INTERFACE_DEFINED__ equ 1
+define __IPropertyNotifySink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPropertyNotifySink, "9BFBBC02-EFF1-101A-84ED-00AA00341D07")
 
@@ -473,8 +343,7 @@ DEFINE_IIDX(IPropertyNotifySink, "9BFBBC02-EFF1-101A-84ED-00AA00341D07")
 
     OnChanged		proc :DISPID
     OnRequestEdit	proc :DISPID
-
-    .ends
+   .ends
 
 LPPROPERTYNOTIFYSINK	typedef ptr IPropertyNotifySink
 
@@ -482,7 +351,7 @@ endif
 
 
 ifndef __ISpecifyPropertyPages_INTERFACE_DEFINED__
-__ISpecifyPropertyPages_INTERFACE_DEFINED__ equ 1
+define __ISpecifyPropertyPages_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISpecifyPropertyPages, "B196B28B-BAB4-101A-B69C-00AA00341D07")
 
@@ -495,15 +364,14 @@ LPCAUUID		typedef ptr CAUUID
 .comdef ISpecifyPropertyPages : public IUnknown
 
     GetPages		proc :ptr
-
-    .ends
+   .ends
 
 LPSPECIFYPROPERTYPAGES	typedef ptr ISpecifyPropertyPages
 
 endif
 
 ifndef __IPersistMemory_INTERFACE_DEFINED__
-__IPersistMemory_INTERFACE_DEFINED__ equ 1
+define __IPersistMemory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistMemory, "BD1AE5E0-A6AE-11CE-BD37-504200C10000")
 
@@ -514,15 +382,14 @@ DEFINE_IIDX(IPersistMemory, "BD1AE5E0-A6AE-11CE-BD37-504200C10000")
     Save		proc :LPVOID, :BOOL, :ULONG
     GetSizeMax		proc :ptr
     InitNew		proc
-
-    .ends
+   .ends
 
 LPPERSISTMEMORY		typedef ptr IPersistMemory
 
 endif
 
 ifndef __IPersistStreamInit_INTERFACE_DEFINED__
-__IPersistStreamInit_INTERFACE_DEFINED__ equ 1
+define __IPersistStreamInit_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistStreamInit, "7FD52380-4E07-101B-AE2D-08002B2EC713")
 
@@ -533,8 +400,7 @@ DEFINE_IIDX(IPersistStreamInit, "7FD52380-4E07-101B-AE2D-08002B2EC713")
     Save		proc :LPSTREAM, :BOOL
     GetSizeMax		proc :ptr
     InitNew		proc
-
-    .ends
+   .ends
 
 LPPERSISTSTREAMINIT	typedef ptr IPersistStreamInit
 
@@ -542,7 +408,7 @@ endif
 
 
 ifndef __IPersistPropertyBag_INTERFACE_DEFINED__
-__IPersistPropertyBag_INTERFACE_DEFINED__ equ 1
+define __IPersistPropertyBag_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistPropertyBag, "37D84F60-42CB-11CE-8135-00AA004BB851")
 
@@ -551,15 +417,14 @@ DEFINE_IIDX(IPersistPropertyBag, "37D84F60-42CB-11CE-8135-00AA004BB851")
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
-
-    .ends
+   .ends
 
 LPPERSISTPROPERTYBAG	typedef ptr IPersistPropertyBag
 
 endif
 
 ifndef __ISimpleFrameSite_INTERFACE_DEFINED__
-__ISimpleFrameSite_INTERFACE_DEFINED__ equ 1
+define __ISimpleFrameSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISimpleFrameSite, "742B0E01-14E6-101B-914E-00AA00300CAB")
 
@@ -567,15 +432,14 @@ DEFINE_IIDX(ISimpleFrameSite, "742B0E01-14E6-101B-914E-00AA00300CAB")
 
     PreMessageFilter	proc :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :ptr
     PostMessageFilter	proc :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :DWORD
-
-    .ends
+   .ends
 
 LPSIMPLEFRAMESITE	typedef ptr ISimpleFrameSite
 
 endif
 
 ifndef __IFont_INTERFACE_DEFINED__
-__IFont_INTERFACE_DEFINED__ equ 1
+define __IFont_INTERFACE_DEFINED__
 
 if (defined(_WIN32) OR defined (_WIN64)) AND NOT defined(OLE2ANSI)
 TEXTMETRICOLE		typedef TEXTMETRICW
@@ -612,20 +476,20 @@ DEFINE_IIDX(IFont, "BEF6E002-A874-101A-8BBA-00AA00300CAB")
     AddRefHfont		proc :HFONT
     ReleaseHfont	proc :HFONT
     SetHdc		proc :HDC
-
-    .ends
+   .ends
 
 LPFONT			typedef ptr IFont
 
 endif
 
 ifndef __IPicture_INTERFACE_DEFINED__
-__IPicture_INTERFACE_DEFINED__ equ 1
+define __IPicture_INTERFACE_DEFINED__
 
 
-PICTUREATTRIBUTES	typedef SDWORD
-PICTURE_SCALABLE	equ 0x1
-PICTURE_TRANSPARENT	equ 0x2
+.enum PICTUREATTRIBUTES {
+	PICTURE_SCALABLE	= 0x1,
+	PICTURE_TRANSPARENT	= 0x2
+	}
 
 OLE_HANDLE		typedef ptr GUID ; DECLSPEC_UUID("66504313-BE0F-101A-8BBB-00AA00300CAB")
 OLE_XPOS_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504306-BE0F-101A-8BBB-00AA00300CAB")
@@ -651,15 +515,14 @@ DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
     PictureChanged	proc
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
-
-    .ends
+   .ends
 
 LPPICTURE		typedef ptr IPicture
 
 endif
 
 ifndef __IPicture2_INTERFACE_DEFINED__
-__IPicture2_INTERFACE_DEFINED__ equ 1
+define __IPicture2_INTERFACE_DEFINED__
 
 HHANDLE			typedef UINT_PTR
 
@@ -681,8 +544,7 @@ DEFINE_IIDX(IPicture2, "F5185DD8-2012-4b0b-AAD9-F052C6BD482B")
     PictureChanged	proc
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
-
-    .ends
+   .ends
 
 LPPICTURE2		typedef ptr IPicture2
 
@@ -690,7 +552,7 @@ endif
 
 
 ifndef __IFontEventsDisp_INTERFACE_DEFINED__
-__IFontEventsDisp_INTERFACE_DEFINED__ equ 1
+define __IFontEventsDisp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFontEventsDisp, "4EF6100A-AF88-11D0-9846-00C04FC29993")
 
@@ -703,7 +565,7 @@ LPFONTEVENTS		typedef ptr IFontEventsDisp
 endif
 
 ifndef __IFontDisp_INTERFACE_DEFINED__
-__IFontDisp_INTERFACE_DEFINED__ equ 1
+define __IFontDisp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFontDisp, "BEF6E003-A874-101A-8BBA-00AA00300CAB")
 
@@ -716,7 +578,7 @@ LPFONTDISP		typedef ptr IFontDisp
 endif
 
 ifndef __IPictureDisp_INTERFACE_DEFINED__
-__IPictureDisp_INTERFACE_DEFINED__ equ 1
+define __IPictureDisp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPictureDisp, "7BF80981-BF32-101A-8BBB-00AA00300CAB")
 
@@ -729,7 +591,7 @@ LPPICTUREDISP		typedef ptr IPictureDisp
 endif
 
 ifndef __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__
-__IOleInPlaceObjectWindowless_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleInPlaceObjectWindowless, "1C2056CC-5EF4-101B-8BC8-00AA003E3B29")
 
@@ -737,8 +599,7 @@ DEFINE_IIDX(IOleInPlaceObjectWindowless, "1C2056CC-5EF4-101B-8BC8-00AA003E3B29")
 
     OnWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
     GetDropTarget	proc :ptr
-
-    .ends
+   .ends
 
 LPOLEINPLACEOBJECTWINDOWLESS typedef ptr IOleInPlaceObjectWindowless
 
@@ -746,11 +607,12 @@ endif
 
 
 ifndef __IOleInPlaceSiteEx_INTERFACE_DEFINED__
-__IOleInPlaceSiteEx_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceSiteEx_INTERFACE_DEFINED__
 
 
-ACTIVATEFLAGS		typedef SDWORD
-ACTIVATE_WINDOWLESS	equ 1
+.enum ACTIVATEFLAGS {
+	ACTIVATE_WINDOWLESS = 1
+	}
 
 DEFINE_IIDX(IOleInPlaceSiteEx, "9C2CAD80-3424-11CF-B670-00AA004CD6D8")
 
@@ -759,8 +621,7 @@ DEFINE_IIDX(IOleInPlaceSiteEx, "9C2CAD80-3424-11CF-B670-00AA004CD6D8")
     OnInPlaceActivateEx proc :ptr, :DWORD
     OnInPlaceDeactivateEx proc :BOOL
     RequestUIActivate	proc
-
-    .ends
+   .ends
 
 LPOLEINPLACESITEEX	typedef ptr IOleInPlaceSiteEx
 
@@ -768,13 +629,14 @@ endif
 
 
 ifndef __IOleInPlaceSiteWindowless_INTERFACE_DEFINED__
-__IOleInPlaceSiteWindowless_INTERFACE_DEFINED__ equ 1
+define __IOleInPlaceSiteWindowless_INTERFACE_DEFINED__
 
 
-OLEDCFLAGS		typedef SDWORD
-OLEDC_NODRAW		equ 0x1
-OLEDC_PAINTBKGND	equ 0x2
-OLEDC_OFFSCREEN		equ 0x4
+.enum OLEDCFLAGS {
+	OLEDC_NODRAW	 = 0x1,
+	OLEDC_PAINTBKGND = 0x2,
+	OLEDC_OFFSCREEN	 = 0x4
+	}
 
 DEFINE_IIDX(IOleInPlaceSiteWindowless, "922EADA0-3424-11CF-B670-00AA004CD6D8")
 
@@ -792,34 +654,36 @@ DEFINE_IIDX(IOleInPlaceSiteWindowless, "922EADA0-3424-11CF-B670-00AA004CD6D8")
     ScrollRect		proc :DWORD, :DWORD, :LPCRECT, :LPCRECT
     AdjustRect		proc :LPRECT
     OnDefWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
-
-    .ends
+   .ends
 
 LPOLEINPLACESITEWINDOWLESS typedef ptr IOleInPlaceSiteWindowless
 
 endif
 
-ifndef	__IViewObjectEx_INTERFACE_DEFINED__
-__IViewObjectEx_INTERFACE_DEFINED__ equ 1
+ifndef __IViewObjectEx_INTERFACE_DEFINED__
+define __IViewObjectEx_INTERFACE_DEFINED__
 
 
-VIEWSTATUS		typedef SDWORD
-VIEWSTATUS_OPAQUE	equ 1
-VIEWSTATUS_SOLIDBKGND	equ 2
-VIEWSTATUS_DVASPECTOPAQUE equ 4
-VIEWSTATUS_DVASPECTTRANSPARENT equ 8
-VIEWSTATUS_SURFACE	equ 16
-VIEWSTATUS_3DSURFACE	equ 32
+.enum VIEWSTATUS {
+	VIEWSTATUS_OPAQUE		= 1,
+	VIEWSTATUS_SOLIDBKGND		= 2,
+	VIEWSTATUS_DVASPECTOPAQUE	= 4,
+	VIEWSTATUS_DVASPECTTRANSPARENT	= 8,
+	VIEWSTATUS_SURFACE		= 16,
+	VIEWSTATUS_3DSURFACE		= 32
+	}
 
-HITRESULT		typedef SDWORD
-HITRESULT_OUTSIDE	equ 0
-HITRESULT_TRANSPARENT	equ 1
-HITRESULT_CLOSE		equ 2
-HITRESULT_HIT		equ 3
+.enum HITRESULT {
+	HITRESULT_OUTSIDE,
+	HITRESULT_TRANSPARENT,
+	HITRESULT_CLOSE,
+	HITRESULT_HIT
+	}
 
-DVASPECT2		typedef SDWORD
-DVASPECT_OPAQUE		equ 16
-DVASPECT_TRANSPARENT	equ 32
+.enum DVASPECT2 {
+	DVASPECT_OPAQUE		= 16,
+	DVASPECT_TRANSPARENT	= 32
+	}
 
 DVEXTENTINFO		STRUC
 cb			ULONG ?
@@ -827,12 +691,14 @@ dwExtentMode		dd ?
 sizelProposed		SIZEL <>
 DVEXTENTINFO		ENDS
 
-DVEXTENTMODE		typedef SDWORD
-DVEXTENT_CONTENT	equ 0
-DVEXTENT_INTEGRAL	equ ( DVEXTENT_CONTENT + 1 )
+.enum DVEXTENTMODE {
+	DVEXTENT_CONTENT,
+	DVEXTENT_INTEGRAL
+	}
 
-DVASPECTINFOFLAG	typedef SDWORD
-DVASPECTINFOFLAG_CANOPTIMIZE equ 1
+.enum DVASPECTINFOFLAG {
+	DVASPECTINFOFLAG_CANOPTIMIZE = 1
+	}
 
 DVASPECTINFO		STRUC
 cb			ULONG ?
@@ -850,13 +716,12 @@ DEFINE_IIDX(IViewObjectEx, "3AF24292-0C96-11CE-A0CF-00AA00600AB8")
     QueryHitPoint	proc :DWORD, :LPCRECT, :POINT, :SDWORD, :ptr
     QueryHitRect	proc :DWORD, :LPCRECT, :LPCRECT, :SDWORD, :ptr
     GetNaturalExtent	proc :DWORD, :SDWORD, :ptr, :HDC, :ptr, :LPSIZEL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IOleUndoUnit_INTERFACE_DEFINED__
-__IOleUndoUnit_INTERFACE_DEFINED__ equ 1
+define __IOleUndoUnit_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleUndoUnit, "894AD3B0-EF97-11CE-9BC9-00AA00608E01")
 
@@ -866,15 +731,14 @@ DEFINE_IIDX(IOleUndoUnit, "894AD3B0-EF97-11CE-9BC9-00AA00608E01")
     GetDescription	proc :ptr
     GetUnitType		proc :ptr, :ptr
     OnNextAdd		proc
-
-    .ends
+   .ends
 
 LPOLEUNDOUNIT		typedef ptr IOleUndoUnit
 
 endif
 
 ifndef __IOleParentUndoUnit_INTERFACE_DEFINED__
-__IOleParentUndoUnit_INTERFACE_DEFINED__ equ 1
+define __IOleParentUndoUnit_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOleParentUndoUnit, "A1FAF330-EF97-11CE-9BC9-00AA00608E01")
 
@@ -885,14 +749,13 @@ DEFINE_IIDX(IOleParentUndoUnit, "A1FAF330-EF97-11CE-9BC9-00AA00608E01")
     _Add		proc :ptr
     FindUnit		proc :ptr
     GetParentState	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IEnumOleUndoUnits_INTERFACE_DEFINED__
-__IEnumOleUndoUnits_INTERFACE_DEFINED__ equ 1
+define __IEnumOleUndoUnits_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumOleUndoUnits, "B3E7C340-EF97-11CE-9BC9-00AA00608E01")
 
@@ -902,15 +765,14 @@ DEFINE_IIDX(IEnumOleUndoUnits, "B3E7C340-EF97-11CE-9BC9-00AA00608E01")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 LPENUMOLEUNDOUNITS	typedef ptr IEnumOleUndoUnits
 
 endif
 
 ifndef __IOleUndoManager_INTERFACE_DEFINED__
-__IOleUndoManager_INTERFACE_DEFINED__ equ 1
+define __IOleUndoManager_INTERFACE_DEFINED__
 
 
 DEFINE_IIDX(IOleUndoManager, "D001F200-EF97-11CE-9BC9-00AA00608E01")
@@ -930,20 +792,20 @@ SID_SOleUndoManager	equ <IID_IOleUndoManager>
     GetLastUndoDescription proc :ptr
     GetLastRedoDescription proc :ptr
     Enable		proc :BOOL
-
-    .ends
+   .ends
 
 LPOLEUNDOMANAGER	typedef ptr IOleUndoManager
 
 endif
 
 ifndef __IPointerInactive_INTERFACE_DEFINED__
-__IPointerInactive_INTERFACE_DEFINED__ equ 1
+define __IPointerInactive_INTERFACE_DEFINED__
 
-POINTERINACTIVE		typedef dword
-POINTERINACTIVE_ACTIVATEONENTRY	  equ 1
-POINTERINACTIVE_DEACTIVATEONLEAVE equ 2
-POINTERINACTIVE_ACTIVATEONDRAG	  equ 4
+.enum POINTERINACTIVE {
+	POINTERINACTIVE_ACTIVATEONENTRY	  = 1,
+	POINTERINACTIVE_DEACTIVATEONLEAVE = 2,
+	POINTERINACTIVE_ACTIVATEONDRAG	  = 4
+	}
 
 DEFINE_IIDX(IPointerInactive, "55980BA0-35AA-11CF-B671-00AA004CD6D8")
 
@@ -952,15 +814,14 @@ DEFINE_IIDX(IPointerInactive, "55980BA0-35AA-11CF-B671-00AA004CD6D8")
     GetActivationPolicy proc :ptr
     OnInactiveMouseMove proc :LPCRECT, :LONG, :LONG, :DWORD
     OnInactiveSetCursor proc :LPCRECT, :LONG, :LONG, :DWORD, :BOOL
-
-    .ends
+   .ends
 
 LPPOINTERINACTIVE	typedef ptr IPointerInactive
 
 endif
 
 ifndef __IObjectWithSite_INTERFACE_DEFINED__
-__IObjectWithSite_INTERFACE_DEFINED__ equ 1
+define __IObjectWithSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectWithSite, "FC4801A3-2BA9-11CF-A229-00AA003D7352")
 
@@ -968,8 +829,7 @@ DEFINE_IIDX(IObjectWithSite, "FC4801A3-2BA9-11CF-A229-00AA003D7352")
 
     SetSite		proc :ptr
     GetSite		proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 LPOBJECTWITHSITE	typedef ptr IObjectWithSite
 
@@ -977,7 +837,7 @@ endif
 
 
 ifndef __IPerPropertyBrowsing_INTERFACE_DEFINED__
-__IPerPropertyBrowsing_INTERFACE_DEFINED__ equ 1
+define __IPerPropertyBrowsing_INTERFACE_DEFINED__
 
 CALPOLESTR		STRUC
 cElems			ULONG ?
@@ -999,8 +859,7 @@ DEFINE_IIDX(IPerPropertyBrowsing, "376BD3AA-3845-101B-84ED-08002B2EC713")
     MapPropertyToPage	proc :DISPID, :ptr
     GetPredefinedStrings proc :DISPID, :ptr, :ptr
     GetPredefinedValue	proc :DISPID, :DWORD, :ptr
-
-    .ends
+   .ends
 
 LPPERPROPERTYBROWSING	typedef ptr IPerPropertyBrowsing
 
@@ -1008,7 +867,7 @@ endif
 
 
 ifndef __IPropertyBag2_INTERFACE_DEFINED__
-__IPropertyBag2_INTERFACE_DEFINED__ equ 1
+define __IPropertyBag2_INTERFACE_DEFINED__
 
 PROPBAG2_TYPE		typedef SDWORD
 
@@ -1030,8 +889,7 @@ DEFINE_IIDX(IPropertyBag2, "22F55882-280B-11d0-A8A9-00A0C90C2004")
     CountProperties	proc :ptr
     GetPropertyInfo	proc :DWORD, :DWORD, :ptr, :ptr
     LoadObject		proc :LPCOLESTR, :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 LPPROPERTYBAG2		typedef ptr IPropertyBag2
 
@@ -1039,7 +897,7 @@ endif
 
 
 ifndef __IPersistPropertyBag2_INTERFACE_DEFINED__
-__IPersistPropertyBag2_INTERFACE_DEFINED__ equ 1
+define __IPersistPropertyBag2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistPropertyBag2, "22F55881-280B-11d0-A8A9-00A0C90C2004")
 
@@ -1049,8 +907,7 @@ DEFINE_IIDX(IPersistPropertyBag2, "22F55881-280B-11d0-A8A9-00A0C90C2004")
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
     IsDirty		proc
-
-    .ends
+   .ends
 
 LPPERSISTPROPERTYBAG2	typedef ptr IPersistPropertyBag2
 
@@ -1058,35 +915,33 @@ endif
 
 
 ifndef __IAdviseSinkEx_INTERFACE_DEFINED__
-__IAdviseSinkEx_INTERFACE_DEFINED__ equ 1
+define __IAdviseSinkEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAdviseSinkEx, "3AF24290-0C96-11CE-A0CF-00AA00600AB8")
 
 .comdef IAdviseSinkEx : public IAdviseSink
 
     OnViewStatusChange	proc :DWORD
-
-    .ends
+   .ends
 
 LPADVISESINKEX		typedef ptr IAdviseSinkEx
 
 endif
 
 ifndef __IQuickActivate_INTERFACE_DEFINED__
-__IQuickActivate_INTERFACE_DEFINED__ equ 1
+define __IQuickActivate_INTERFACE_DEFINED__
 
 
-tagQACONTAINERFLAGS	typedef SDWORD
-QACONTAINER_SHOWHATCHING equ 0x1
-QACONTAINER_SHOWGRABHANDLES equ 0x2
-QACONTAINER_USERMODE	equ 0x4
-QACONTAINER_DISPLAYASDEFAULT equ 0x8
-QACONTAINER_UIDEAD	equ 0x10
-QACONTAINER_AUTOCLIP	equ 0x20
-QACONTAINER_MESSAGEREFLECT equ 0x40
-QACONTAINER_SUPPORTSMNEMONICS equ 0x80
-
-DECLSPEC_UUID("66504301-BE0F-101A-8BBB-00AA00300CAB")
+.enum QACONTAINERFLAGS {
+	QACONTAINER_SHOWHATCHING	= 0x1,
+	QACONTAINER_SHOWGRABHANDLES	= 0x2,
+	QACONTAINER_USERMODE		= 0x4,
+	QACONTAINER_DISPLAYASDEFAULT	= 0x8,
+	QACONTAINER_UIDEAD		= 0x10,
+	QACONTAINER_AUTOCLIP		= 0x20,
+	QACONTAINER_MESSAGEREFLECT	= 0x40,
+	QACONTAINER_SUPPORTSMNEMONICS	= 0x80
+	}
 
 OLE_COLOR		typedef DWORD
 
@@ -1125,8 +980,7 @@ DEFINE_IIDX(IQuickActivate, "CF51ED10-62FE-11CF-BF86-00A0C9034836")
     QuickActivate	proc :ptr, :ptr
     SetContentExtent	proc :LPSIZEL
     GetContentExtent	proc :LPSIZEL
-
-    .ends
+   .ends
 
 LPQUICKACTIVATE		typedef ptr IQuickActivate
 

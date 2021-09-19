@@ -20,10 +20,6 @@ endif
 ifndef __asyncinfo_h__
 define __asyncinfo_h__
 
-ifndef __IAsyncInfo_FWD_DEFINED__
-define __IAsyncInfo_FWD_DEFINED__
-endif
-
 include inspectable.inc
 
 .enum AsyncStatus {
@@ -45,7 +41,7 @@ DEFINE_IIDX(IAsyncInfo, "00000036-0000-0000-C000-000000000046")
     get_ErrorCode	proc :ptr
     Cancel		proc
     Close		proc
-    .ends
+   .ends
 
 endif
 endif

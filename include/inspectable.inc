@@ -20,10 +20,6 @@ endif
 ifndef __inspectable_h__
 define __inspectable_h__
 
-ifndef __IInspectable_FWD_DEFINED__
-define __IInspectable_FWD_DEFINED__
-endif
-
 include wtypes.inc
 include unknwn.inc
 include hstring.inc

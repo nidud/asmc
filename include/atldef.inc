@@ -185,40 +185,6 @@ exitm<.err>
 endm
 endif
 
-ifdef _ATL_DISABLE_NO_VTABLE
-ATL_NO_VTABLE equ <>
-else
-ATL_NO_VTABLE equ <__declspec(novtable)>
-endif
-
-ifdef _ATL_DISABLE_NOTHROW
-ATL_NOTHROW equ <>
-else
-ATL_NOTHROW equ <__declspec(nothrow)>
-endif
-
-ifdef _ATL_DISABLE_FORCEINLINE
-ATL_FORCEINLINE equ <>
-else
-ATL_FORCEINLINE equ <__forceinline>
-endif
-
-ifdef _ATL_DISABLE_NOINLINE
-ATL_NOINLINE equ <>
-else
-ATL_NOINLINE equ <__declspec( noinline )>
-endif
-
-ifdef _ATL_DISABLE_DEPRECATED
-ATL_DEPRECATED macro _Message
-exitm<>
-endm
-else
-ATL_DEPRECATED macro _Message
-exitm<__declspec( deprecated(_Message) )>
-endm
-endif
-
 ifdef _ATL_DEBUG_REFCOUNT
 ifndef _ATL_DEBUG_INTERFACES
 _ATL_DEBUG_INTERFACES equ 1

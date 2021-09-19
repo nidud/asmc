@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,20 +18,7 @@ include ole2.inc
 endif
 
 ifndef __dxgi1_5_h__
-__dxgi1_5_h__ equ <>
-
-ifndef __IDXGIOutput5_FWD_DEFINED__
-__IDXGIOutput5_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGISwapChain4_FWD_DEFINED__
-__IDXGISwapChain4_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIDevice4_FWD_DEFINED__
-__IDXGIDevice4_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory5_FWD_DEFINED__
-__IDXGIFactory5_FWD_DEFINED__ equ 1
-endif
+define __dxgi1_5_h__
 
 include dxgi1_4.inc
 
@@ -41,15 +28,14 @@ include dxgi1_4.inc
 
 
 ifndef __IDXGIOutput5_INTERFACE_DEFINED__
-__IDXGIOutput5_INTERFACE_DEFINED__ equ 1
+define __IDXGIOutput5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIOutput5, "80A07424-AB52-42EB-833C-0C42FD282D98")
 
 .comdef IDXGIOutput5 : public IDXGIOutput4
 
     DuplicateOutput1	proc :ptr, :UINT, :UINT
-
-    .ends
+   .ends
 
 endif
 
@@ -75,15 +61,14 @@ Data			db  72	dup(?)
 DXGI_HDR_METADATA_HDR10PLUS ENDS
 
 ifndef __IDXGISwapChain4_INTERFACE_DEFINED__
-__IDXGISwapChain4_INTERFACE_DEFINED__ equ 1
+define __IDXGISwapChain4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGISwapChain4, "3D585D5A-BD4A-489E-B1F4-3DBCB6452FFB")
 
 .comdef IDXGISwapChain4 : public IDXGISwapChain3
 
     SetHDRMetaData	proc :DXGI_HDR_METADATA_TYPE, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -98,7 +83,7 @@ endif
     }
 
 ifndef __IDXGIDevice4_INTERFACE_DEFINED__
-__IDXGIDevice4_INTERFACE_DEFINED__ equ 1
+define __IDXGIDevice4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIDevice4, "95B4F95F-D8DA-4CA4-9EE6-3B76D5968A10")
 
@@ -115,15 +100,14 @@ endif
     }
 
 ifndef __IDXGIFactory5_INTERFACE_DEFINED__
-__IDXGIFactory5_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIFactory5, "7632e1f5-ee65-4dca-87fd-84cd75f8838d")
 
 .comdef IDXGIFactory5 : public IDXGIFactory4
 
     CheckFeatureSupport proc :DXGI_FEATURE
-
-    .ends
+   .ends
 
 endif
 

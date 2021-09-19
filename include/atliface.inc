@@ -1,5 +1,5 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 440
+define __REQUIRED_RPCNDR_H_VERSION__ 440
 endif
 
 include rpc.inc
@@ -15,39 +15,7 @@ include ole2.inc
 endif
 
 ifndef __atliface_h__
-__atliface_h__ equ <>
-
-
-ifndef __IRegistrarBase_FWD_DEFINED__
-__IRegistrarBase_FWD_DEFINED__ equ 1
-endif
-ifndef __IRegistrar_FWD_DEFINED__
-__IRegistrar_FWD_DEFINED__ equ 1
-endif
-ifndef __IDocHostUIHandlerDispatch_FWD_DEFINED__
-__IDocHostUIHandlerDispatch_FWD_DEFINED__ equ 1
-endif
-ifndef __IAxWinHostWindow_FWD_DEFINED__
-__IAxWinHostWindow_FWD_DEFINED__ equ 1
-endif
-ifndef __IAxWinHostWindowLic_FWD_DEFINED__
-__IAxWinHostWindowLic_FWD_DEFINED__ equ 1
-endif
-ifndef __IAxWinAmbientDispatch_FWD_DEFINED__
-__IAxWinAmbientDispatch_FWD_DEFINED__ equ 1
-endif
-ifndef __IAxWinAmbientDispatchEx_FWD_DEFINED__
-__IAxWinAmbientDispatchEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IInternalConnection_FWD_DEFINED__
-__IInternalConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleProxy_FWD_DEFINED__
-__IAccessibleProxy_FWD_DEFINED__ equ 1
-endif
-ifndef __IAccessibleServer_FWD_DEFINED__
-__IAccessibleServer_FWD_DEFINED__ equ 1
-endif
+define __atliface_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -60,7 +28,7 @@ externdef CLSID_Registrar:CLSID
 
 
 ifndef __IRegistrarBase_INTERFACE_DEFINED__
-__IRegistrarBase_INTERFACE_DEFINED__ equ 1
+define __IRegistrarBase_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRegistrarBase, "e21f8a85-b05d-4243-8183-c7cb405588f7")
 
@@ -68,12 +36,12 @@ DEFINE_IIDX(IRegistrarBase, "e21f8a85-b05d-4243-8183-c7cb405588f7")
 
     AddReplacement	proc :LPCOLESTR, :LPCOLESTR
     ClearReplacements	proc
-    .ENDS
+   .ENDS
 
 endif
 
 ifndef __IRegistrar_INTERFACE_DEFINED__
-__IRegistrar_INTERFACE_DEFINED__ equ 1
+define __IRegistrar_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRegistrar, "44EC053B-400F-11D0-9DCD-00A0C90391D3")
 
@@ -87,13 +55,13 @@ DEFINE_IIDX(IRegistrar, "44EC053B-400F-11D0-9DCD-00A0C90391D3")
     StringUnregister	proc :LPCOLESTR
     ResourceRegister	proc :LPCOLESTR, :UINT, :LPCOLESTR
     ResourceUnregister	proc :LPCOLESTR, :UINT, :LPCOLESTR
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IDocHostUIHandlerDispatch_INTERFACE_DEFINED__
-__IDocHostUIHandlerDispatch_INTERFACE_DEFINED__ equ 1
+define __IDocHostUIHandlerDispatch_INTERFACE_DEFINED__
 
 
 .enum DOCHOSTUIDBLCLKDispatch {
@@ -135,13 +103,13 @@ DEFINE_IIDX(IDocHostUIHandlerDispatch, "425B5AF0-65F1-11d1-9611-0000F81E0D0D")
     GetExternal		proc :ptr ptr IDispatch
     TranslateUrl	proc :DWORD, :BSTR, :ptr BSTR
     FilterDataObject	proc :ptr IUnknown, :ptr ptr IUnknown
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IAxWinHostWindow_INTERFACE_DEFINED__
-__IAxWinHostWindow_INTERFACE_DEFINED__ equ 1
+define __IAxWinHostWindow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAxWinHostWindow, "B6EA2050-048A-11d1-82B9-00C04FB9942E")
 
@@ -153,13 +121,13 @@ DEFINE_IIDX(IAxWinHostWindow, "B6EA2050-048A-11d1-82B9-00C04FB9942E")
     QueryControl	proc :REFIID, :ptr ptr
     SetExternalDispatch proc :ptr IDispatch
     SetExternalUIHandler proc :ptr IDocHostUIHandlerDispatch
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IAxWinHostWindowLic_INTERFACE_DEFINED__
-__IAxWinHostWindowLic_INTERFACE_DEFINED__ equ 1
+define __IAxWinHostWindowLic_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAxWinHostWindowLic, "3935BDA8-4ED9-495c-8650-E01FC1E38A4B")
 
@@ -167,13 +135,13 @@ DEFINE_IIDX(IAxWinHostWindowLic, "3935BDA8-4ED9-495c-8650-E01FC1E38A4B")
 
     CreateControlLic	proc :LPCOLESTR, :HWND, :ptr IStream, :BSTR
     CreateControlLicEx	proc :LPCOLESTR, :HWND, :ptr IStream, :ptr ptr IUnknown, :REFIID, :ptr IUnknown, :BSTR
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IAxWinAmbientDispatch_INTERFACE_DEFINED__
-__IAxWinAmbientDispatch_INTERFACE_DEFINED__ equ 1
+define __IAxWinAmbientDispatch_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAxWinAmbientDispatch, "B6EA2051-048A-11d1-82B9-00C04FB9942E")
 
@@ -207,25 +175,25 @@ DEFINE_IIDX(IAxWinAmbientDispatch, "B6EA2051-048A-11d1-82B9-00C04FB9942E")
     get_AllowShowUI	proc :ptr VARIANT_BOOL
     put_OptionKeyPath	proc :BSTR
     get_OptionKeyPath	proc :ptr BSTR
-    .ENDS
+   .ENDS
 
 endif
 
 ifndef __IAxWinAmbientDispatchEx_INTERFACE_DEFINED__
-__IAxWinAmbientDispatchEx_INTERFACE_DEFINED__ equ 1
+define __IAxWinAmbientDispatchEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAxWinAmbientDispatchEx, "B2D0778B-AC99-4c58-A5C8-E7724E5316B5")
 
 .comdef IAxWinAmbientDispatchEx : public IAxWinAmbientDispatch
 
     SetAmbientDispatch	proc :ptr IDispatch
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IInternalConnection_INTERFACE_DEFINED__
-__IInternalConnection_INTERFACE_DEFINED__ equ 1
+define __IInternalConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IInternalConnection, "72AD0770-6A9F-11d1-BCEC-0060088F444E")
 
@@ -233,12 +201,12 @@ DEFINE_IIDX(IInternalConnection, "72AD0770-6A9F-11d1-BCEC-0060088F444E")
 
     AddConnection	proc
     ReleaseConnection	proc
-    .ENDS
+   .ENDS
 
 endif
 
 ifndef _ATL_PACKING
-_ATL_PACKING equ 8
+define _ATL_PACKING 8
 endif
 
 .pragma pack(push, _ATL_PACKING)
@@ -336,20 +304,20 @@ AtlAxGetControl proto WINAPI \
 .pragma pack(pop)
 
 ifndef __IAccessibleProxy_INTERFACE_DEFINED__
-__IAccessibleProxy_INTERFACE_DEFINED__ equ 1
+define __IAccessibleProxy_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleProxy, "7A7D9DCF-B7A1-4019-9031-258268846980")
 
 .comdef IAccessibleProxy : public IUnknown
 
     SetServer		proc :ptr IAccessible, :ptr IAccessibleServer
-    .ENDS
+   .ENDS
 
 endif
 
 
 ifndef __IAccessibleServer_INTERFACE_DEFINED__
-__IAccessibleServer_INTERFACE_DEFINED__ equ 1
+define __IAccessibleServer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAccessibleServer, "52C8FB5E-D779-4e77-AE9F-F611FA7E9D7A")
 
@@ -358,7 +326,7 @@ DEFINE_IIDX(IAccessibleServer, "52C8FB5E-D779-4e77-AE9F-F611FA7E9D7A")
     SetProxy		proc :ptr IAccessibleProxy
     GetHWND		proc :ptr HWND
     GetEnumVariant	proc :ptr ptr IEnumVARIANT
-    .ENDS
+   .ENDS
 
 endif
 

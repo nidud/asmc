@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,110 +18,7 @@ include ole2.inc
 endif
 
 ifndef __msopc_h__
-__msopc_h__ equ <>
-
-ifndef __IOpcUri_FWD_DEFINED__
-__IOpcUri_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPartUri_FWD_DEFINED__
-__IOpcPartUri_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcUri_FWD_DEFINED__
-__IOpcUri_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPartUri_FWD_DEFINED__
-__IOpcPartUri_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPackage_FWD_DEFINED__
-__IOpcPackage_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPart_FWD_DEFINED__
-__IOpcPart_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationship_FWD_DEFINED__
-__IOpcRelationship_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPartSet_FWD_DEFINED__
-__IOpcPartSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationshipSet_FWD_DEFINED__
-__IOpcRelationshipSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcPartEnumerator_FWD_DEFINED__
-__IOpcPartEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationshipEnumerator_FWD_DEFINED__
-__IOpcRelationshipEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignaturePartReference_FWD_DEFINED__
-__IOpcSignaturePartReference_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureRelationshipReference_FWD_DEFINED__
-__IOpcSignatureRelationshipReference_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationshipSelector_FWD_DEFINED__
-__IOpcRelationshipSelector_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureReference_FWD_DEFINED__
-__IOpcSignatureReference_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureCustomObject_FWD_DEFINED__
-__IOpcSignatureCustomObject_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcDigitalSignature_FWD_DEFINED__
-__IOpcDigitalSignature_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSigningOptions_FWD_DEFINED__
-__IOpcSigningOptions_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcDigitalSignatureManager_FWD_DEFINED__
-__IOpcDigitalSignatureManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignaturePartReferenceEnumerator_FWD_DEFINED__
-__IOpcSignaturePartReferenceEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureRelationshipReferenceEnumerator_FWD_DEFINED__
-__IOpcSignatureRelationshipReferenceEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationshipSelectorEnumerator_FWD_DEFINED__
-__IOpcRelationshipSelectorEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureReferenceEnumerator_FWD_DEFINED__
-__IOpcSignatureReferenceEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureCustomObjectEnumerator_FWD_DEFINED__
-__IOpcSignatureCustomObjectEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcCertificateEnumerator_FWD_DEFINED__
-__IOpcCertificateEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcDigitalSignatureEnumerator_FWD_DEFINED__
-__IOpcDigitalSignatureEnumerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignaturePartReferenceSet_FWD_DEFINED__
-__IOpcSignaturePartReferenceSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureRelationshipReferenceSet_FWD_DEFINED__
-__IOpcSignatureRelationshipReferenceSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcRelationshipSelectorSet_FWD_DEFINED__
-__IOpcRelationshipSelectorSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureReferenceSet_FWD_DEFINED__
-__IOpcSignatureReferenceSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcSignatureCustomObjectSet_FWD_DEFINED__
-__IOpcSignatureCustomObjectSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcCertificateSet_FWD_DEFINED__
-__IOpcCertificateSet_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpcFactory_FWD_DEFINED__
-__IOpcFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __OpcFactory_FWD_DEFINED__
-__OpcFactory_FWD_DEFINED__ equ 1
-endif
+define __msopc_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -133,7 +30,7 @@ if (NTDDI_VERSION GE NTDDI_WIN7)
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
 ifndef __IOpcUri_INTERFACE_DEFINED__
-__IOpcUri_INTERFACE_DEFINED__ equ 1
+define __IOpcUri_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcUri, "bc9c1b9b-d62c-49eb-aef0-3b4e0b28ebed")
 
@@ -142,13 +39,13 @@ DEFINE_IIDX(IOpcUri, "bc9c1b9b-d62c-49eb-aef0-3b4e0b28ebed")
     GetRelationshipsPartUri proc :ptr
     GetRelativeUri	proc :ptr, :ptr
     CombinePartUri	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcPartUri_INTERFACE_DEFINED__
-__IOpcPartUri_INTERFACE_DEFINED__ equ 1
+define __IOpcPartUri_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcPartUri, "7d3babe7-88b2-46ba-85cb-4203cb016c87")
 
@@ -158,7 +55,7 @@ DEFINE_IIDX(IOpcPartUri, "7d3babe7-88b2-46ba-85cb-4203cb016c87")
     ComparePartUri	proc :ptr, :ptr
     GetSourceUri	proc :ptr
     IsRelationshipsPartUri proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -167,9 +64,7 @@ endif ;; (NTDDI GE NTDDI_WIN7)
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __MSOPC_LIBRARY_DEFINED__
-__MSOPC_LIBRARY_DEFINED__ equ 1
-
-include winapifamily.inc
+define __MSOPC_LIBRARY_DEFINED__
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -314,15 +209,7 @@ OPC_E_ZIP_REQUIRES_64_BIT equ MAKE_HRESULT(1, FACILITY_OPC, 0x1010)
 endif ;; (NTDDI GE NTDDI_WIN7)
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
-
 if (NTDDI_VERSION GE NTDDI_WIN7)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -339,21 +226,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 endif
 
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
-
 endif ;; (NTDDI GE NTDDI_WIN7)
 
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
-
 if (NTDDI_VERSION GE NTDDI_WIN7)
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
@@ -394,17 +269,12 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     }
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-endif
-
 endif ;; (NTDDI GE NTDDI_WIN7)
 
-externdef		LIBID_MSOPC:IID
+externdef LIBID_MSOPC:IID
 
 ifndef __IOpcPackage_INTERFACE_DEFINED__
-__IOpcPackage_INTERFACE_DEFINED__ equ 1
+define __IOpcPackage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcPackage, "42195949-3B79-4fc8-89C6-FC7FB979EE70")
 
@@ -412,13 +282,13 @@ DEFINE_IIDX(IOpcPackage, "42195949-3B79-4fc8-89C6-FC7FB979EE70")
 
     GetPartSet		proc :ptr
     GetRelationshipSet	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcPart_INTERFACE_DEFINED__
-__IOpcPart_INTERFACE_DEFINED__ equ 1
+define __IOpcPart_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcPart, "42195949-3B79-4fc8-89C6-FC7FB979EE71")
 
@@ -429,13 +299,13 @@ DEFINE_IIDX(IOpcPart, "42195949-3B79-4fc8-89C6-FC7FB979EE71")
     GetName		proc :ptr
     GetContentType	proc :ptr
     GetCompressionOptions proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationship_INTERFACE_DEFINED__
-__IOpcRelationship_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationship_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationship, "42195949-3B79-4fc8-89C6-FC7FB979EE72")
 
@@ -446,13 +316,13 @@ DEFINE_IIDX(IOpcRelationship, "42195949-3B79-4fc8-89C6-FC7FB979EE72")
     GetSourceUri	proc :ptr
     GetTargetUri	proc :ptr
     GetTargetMode	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcPartSet_INTERFACE_DEFINED__
-__IOpcPartSet_INTERFACE_DEFINED__ equ 1
+define __IOpcPartSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcPartSet, "42195949-3B79-4fc8-89C6-FC7FB979EE73")
 
@@ -463,13 +333,13 @@ DEFINE_IIDX(IOpcPartSet, "42195949-3B79-4fc8-89C6-FC7FB979EE73")
     DeletePart		proc :ptr
     PartExists		proc :ptr, :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationshipSet_INTERFACE_DEFINED__
-__IOpcRelationshipSet_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationshipSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationshipSet, "42195949-3B79-4fc8-89C6-FC7FB979EE74")
 
@@ -482,13 +352,13 @@ DEFINE_IIDX(IOpcRelationshipSet, "42195949-3B79-4fc8-89C6-FC7FB979EE74")
     GetEnumerator	proc :ptr
     GetEnumeratorForType proc :LPCWSTR, :ptr
     GetRelationshipsContentStream proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcPartEnumerator_INTERFACE_DEFINED__
-__IOpcPartEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcPartEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcPartEnumerator, "42195949-3B79-4fc8-89C6-FC7FB979EE75")
 
@@ -498,13 +368,13 @@ DEFINE_IIDX(IOpcPartEnumerator, "42195949-3B79-4fc8-89C6-FC7FB979EE75")
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationshipEnumerator_INTERFACE_DEFINED__
-__IOpcRelationshipEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationshipEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationshipEnumerator, "42195949-3B79-4fc8-89C6-FC7FB979EE76")
 
@@ -514,13 +384,13 @@ DEFINE_IIDX(IOpcRelationshipEnumerator, "42195949-3B79-4fc8-89C6-FC7FB979EE76")
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignaturePartReference_INTERFACE_DEFINED__
-__IOpcSignaturePartReference_INTERFACE_DEFINED__ equ 1
+define __IOpcSignaturePartReference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignaturePartReference, "e24231ca-59f4-484e-b64b-36eeda36072c")
 
@@ -531,13 +401,13 @@ DEFINE_IIDX(IOpcSignaturePartReference, "e24231ca-59f4-484e-b64b-36eeda36072c")
     GetDigestMethod	proc :ptr
     GetDigestValue	proc
     GetTransformMethod	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureRelationshipReference_INTERFACE_DEFINED__
-__IOpcSignatureRelationshipReference_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureRelationshipReference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureRelationshipReference, "57babac6-9d4a-4e50-8b86-e5d4051eae7c")
 
@@ -549,13 +419,13 @@ DEFINE_IIDX(IOpcSignatureRelationshipReference, "57babac6-9d4a-4e50-8b86-e5d4051
     GetTransformMethod	proc :ptr
     GetRelationshipSigningOption proc :ptr
     GetRelationshipSelectorEnumerator proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationshipSelector_INTERFACE_DEFINED__
-__IOpcRelationshipSelector_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationshipSelector_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationshipSelector, "f8f26c7f-b28f-4899-84c8-5d5639ede75f")
 
@@ -563,13 +433,13 @@ DEFINE_IIDX(IOpcRelationshipSelector, "f8f26c7f-b28f-4899-84c8-5d5639ede75f")
 
     GetSelectorType	proc :ptr
     GetSelectionCriterion proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureReference_INTERFACE_DEFINED__
-__IOpcSignatureReference_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureReference_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureReference, "1b47005e-3011-4edc-be6f-0f65e5ab0342")
 
@@ -581,26 +451,26 @@ DEFINE_IIDX(IOpcSignatureReference, "1b47005e-3011-4edc-be6f-0f65e5ab0342")
     GetTransformMethod	proc :ptr
     GetDigestMethod	proc :ptr
     GetDigestValue	proc
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureCustomObject_INTERFACE_DEFINED__
-__IOpcSignatureCustomObject_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureCustomObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureCustomObject, "5d77a19e-62c1-44e7-becd-45da5ae51a56")
 
 .comdef IOpcSignatureCustomObject : public IUnknown
 
     GetXml		proc
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcDigitalSignature_INTERFACE_DEFINED__
-__IOpcDigitalSignature_INTERFACE_DEFINED__ equ 1
+define __IOpcDigitalSignature_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcDigitalSignature, "52ab21dd-1cd0-4949-bc80-0c1232d00cb4")
 
@@ -621,13 +491,13 @@ DEFINE_IIDX(IOpcDigitalSignature, "52ab21dd-1cd0-4949-bc80-0c1232d00cb4")
     GetCustomReferenceEnumerator proc :ptr
     GetCustomObjectEnumerator proc :ptr
     GetSignatureXml	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSigningOptions_INTERFACE_DEFINED__
-__IOpcSigningOptions_INTERFACE_DEFINED__ equ 1
+define __IOpcSigningOptions_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSigningOptions, "50d2d6a5-7aeb-46c0-b241-43ab0e9b407e")
 
@@ -650,13 +520,13 @@ DEFINE_IIDX(IOpcSigningOptions, "50d2d6a5-7aeb-46c0-b241-43ab0e9b407e")
     GetCertificateSet	proc :ptr
     GetSignaturePartName proc :ptr
     SetSignaturePartName proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcDigitalSignatureManager_INTERFACE_DEFINED__
-__IOpcDigitalSignatureManager_INTERFACE_DEFINED__ equ 1
+define __IOpcDigitalSignatureManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcDigitalSignatureManager, "d5e62a0b-696d-462f-94df-72e33cef2659")
 
@@ -670,13 +540,13 @@ DEFINE_IIDX(IOpcDigitalSignatureManager, "d5e62a0b-696d-462f-94df-72e33cef2659")
     Validate		proc :ptr, :ptr, :ptr
     Sign		proc :ptr, :ptr, :ptr
     ReplaceSignatureXml proc :ptr, :ptr, :UINT32, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignaturePartReferenceEnumerator_INTERFACE_DEFINED__
-__IOpcSignaturePartReferenceEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcSignaturePartReferenceEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignaturePartReferenceEnumerator, "80eb1561-8c77-49cf-8266-459b356ee99a")
 
@@ -686,13 +556,13 @@ DEFINE_IIDX(IOpcSignaturePartReferenceEnumerator, "80eb1561-8c77-49cf-8266-459b3
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureRelationshipReferenceEnumerator_INTERFACE_DEFINED__
-__IOpcSignatureRelationshipReferenceEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureRelationshipReferenceEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureRelationshipReferenceEnumerator, "773ba3e4-f021-48e4-aa04-9816db5d3495")
 
@@ -702,13 +572,13 @@ DEFINE_IIDX(IOpcSignatureRelationshipReferenceEnumerator, "773ba3e4-f021-48e4-aa
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationshipSelectorEnumerator_INTERFACE_DEFINED__
-__IOpcRelationshipSelectorEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationshipSelectorEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationshipSelectorEnumerator, "5e50a181-a91b-48ac-88d2-bca3d8f8c0b1")
 
@@ -718,13 +588,13 @@ DEFINE_IIDX(IOpcRelationshipSelectorEnumerator, "5e50a181-a91b-48ac-88d2-bca3d8f
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureReferenceEnumerator_INTERFACE_DEFINED__
-__IOpcSignatureReferenceEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureReferenceEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureReferenceEnumerator, "cfa59a45-28b1-4868-969e-fa8097fdc12a")
 
@@ -734,13 +604,13 @@ DEFINE_IIDX(IOpcSignatureReferenceEnumerator, "cfa59a45-28b1-4868-969e-fa8097fdc
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureCustomObjectEnumerator_INTERFACE_DEFINED__
-__IOpcSignatureCustomObjectEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureCustomObjectEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureCustomObjectEnumerator, "5ee4fe1d-e1b0-4683-8079-7ea0fcf80b4c")
 
@@ -750,13 +620,13 @@ DEFINE_IIDX(IOpcSignatureCustomObjectEnumerator, "5ee4fe1d-e1b0-4683-8079-7ea0fc
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcCertificateEnumerator_INTERFACE_DEFINED__
-__IOpcCertificateEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcCertificateEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcCertificateEnumerator, "85131937-8f24-421f-b439-59ab24d140b8")
 
@@ -766,13 +636,13 @@ DEFINE_IIDX(IOpcCertificateEnumerator, "85131937-8f24-421f-b439-59ab24d140b8")
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcDigitalSignatureEnumerator_INTERFACE_DEFINED__
-__IOpcDigitalSignatureEnumerator_INTERFACE_DEFINED__ equ 1
+define __IOpcDigitalSignatureEnumerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcDigitalSignatureEnumerator, "967b6882-0ba3-4358-b9e7-b64c75063c5e")
 
@@ -782,13 +652,13 @@ DEFINE_IIDX(IOpcDigitalSignatureEnumerator, "967b6882-0ba3-4358-b9e7-b64c75063c5
     MovePrevious	proc :ptr
     GetCurrent		proc :ptr
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignaturePartReferenceSet_INTERFACE_DEFINED__
-__IOpcSignaturePartReferenceSet_INTERFACE_DEFINED__ equ 1
+define __IOpcSignaturePartReferenceSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignaturePartReferenceSet, "6c9fe28c-ecd9-4b22-9d36-7fdde670fec0")
 
@@ -797,13 +667,13 @@ DEFINE_IIDX(IOpcSignaturePartReferenceSet, "6c9fe28c-ecd9-4b22-9d36-7fdde670fec0
     Create		proc :ptr, :LPCWSTR, :OPC_CANONICALIZATION_METHOD, :ptr
     Delete		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureRelationshipReferenceSet_INTERFACE_DEFINED__
-__IOpcSignatureRelationshipReferenceSet_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureRelationshipReferenceSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureRelationshipReferenceSet, "9f863ca5-3631-404c-828d-807e0715069b")
 
@@ -813,13 +683,13 @@ DEFINE_IIDX(IOpcSignatureRelationshipReferenceSet, "9f863ca5-3631-404c-828d-807e
     CreateRelationshipSelectorSet proc :ptr
     Delete		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcRelationshipSelectorSet_INTERFACE_DEFINED__
-__IOpcRelationshipSelectorSet_INTERFACE_DEFINED__ equ 1
+define __IOpcRelationshipSelectorSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcRelationshipSelectorSet, "6e34c269-a4d3-47c0-b5c4-87ff2b3b6136")
 
@@ -828,13 +698,13 @@ DEFINE_IIDX(IOpcRelationshipSelectorSet, "6e34c269-a4d3-47c0-b5c4-87ff2b3b6136")
     Create		proc :OPC_RELATIONSHIP_SELECTOR, :LPCWSTR, :ptr
     Delete		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureReferenceSet_INTERFACE_DEFINED__
-__IOpcSignatureReferenceSet_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureReferenceSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureReferenceSet, "f3b02d31-ab12-42dd-9e2f-2b16761c3c1e")
 
@@ -843,13 +713,13 @@ DEFINE_IIDX(IOpcSignatureReferenceSet, "f3b02d31-ab12-42dd-9e2f-2b16761c3c1e")
     Create		proc :ptr, :LPCWSTR, :LPCWSTR, :LPCWSTR, :OPC_CANONICALIZATION_METHOD, :ptr
     Delete		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcSignatureCustomObjectSet_INTERFACE_DEFINED__
-__IOpcSignatureCustomObjectSet_INTERFACE_DEFINED__ equ 1
+define __IOpcSignatureCustomObjectSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcSignatureCustomObjectSet, "8f792ac5-7947-4e11-bc3d-2659ff046ae1")
 
@@ -858,13 +728,13 @@ DEFINE_IIDX(IOpcSignatureCustomObjectSet, "8f792ac5-7947-4e11-bc3d-2659ff046ae1"
     Create		proc
     Delete		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcCertificateSet_INTERFACE_DEFINED__
-__IOpcCertificateSet_INTERFACE_DEFINED__ equ 1
+define __IOpcCertificateSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcCertificateSet, "56ea4325-8e2d-4167-b1a4-e486d24c8fa7")
 
@@ -873,13 +743,13 @@ DEFINE_IIDX(IOpcCertificateSet, "56ea4325-8e2d-4167-b1a4-e486d24c8fa7")
     _Add		proc :ptr
     Remove		proc :ptr
     GetEnumerator	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IOpcFactory_INTERFACE_DEFINED__
-__IOpcFactory_INTERFACE_DEFINED__ equ 1
+define __IOpcFactory_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpcFactory, "6d0b4446-cd73-4ab3-94f4-8ccdf6116154")
 
@@ -891,7 +761,7 @@ DEFINE_IIDX(IOpcFactory, "6d0b4446-cd73-4ab3-94f4-8ccdf6116154")
     ReadPackageFromStream proc :ptr, :OPC_READ_FLAGS, :ptr
     WritePackageToStream proc :ptr, :OPC_WRITE_FLAGS, :ptr
     CreateDigitalSignatureManager proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 

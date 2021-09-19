@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,122 +18,7 @@ include ole2.inc
 endif
 
 ifndef __txdtc_h__
-__txdtc_h__ equ <>
-
-ifndef __IXATransLookup_FWD_DEFINED__
-__IXATransLookup_FWD_DEFINED__ equ 1
-endif
-ifndef __IXATransLookup2_FWD_DEFINED__
-__IXATransLookup2_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManagerSink_FWD_DEFINED__
-__IResourceManagerSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManager_FWD_DEFINED__
-__IResourceManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ILastResourceManager_FWD_DEFINED__
-__ILastResourceManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManager2_FWD_DEFINED__
-__IResourceManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __IXAConfig_FWD_DEFINED__
-__IXAConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IRMHelper_FWD_DEFINED__
-__IRMHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IXAObtainRMInfo_FWD_DEFINED__
-__IXAObtainRMInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManagerFactory_FWD_DEFINED__
-__IResourceManagerFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManagerFactory2_FWD_DEFINED__
-__IResourceManagerFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __IPrepareInfo_FWD_DEFINED__
-__IPrepareInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IPrepareInfo2_FWD_DEFINED__
-__IPrepareInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetDispenser_FWD_DEFINED__
-__IGetDispenser_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionVoterBallotAsync2_FWD_DEFINED__
-__ITransactionVoterBallotAsync2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionVoterNotifyAsync2_FWD_DEFINED__
-__ITransactionVoterNotifyAsync2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionVoterFactory2_FWD_DEFINED__
-__ITransactionVoterFactory2_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionPhase0EnlistmentAsync_FWD_DEFINED__
-__ITransactionPhase0EnlistmentAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionPhase0NotifyAsync_FWD_DEFINED__
-__ITransactionPhase0NotifyAsync_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionPhase0Factory_FWD_DEFINED__
-__ITransactionPhase0Factory_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionTransmitter_FWD_DEFINED__
-__ITransactionTransmitter_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionTransmitterFactory_FWD_DEFINED__
-__ITransactionTransmitterFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionReceiver_FWD_DEFINED__
-__ITransactionReceiver_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionReceiverFactory_FWD_DEFINED__
-__ITransactionReceiverFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuConfigure_FWD_DEFINED__
-__IDtcLuConfigure_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecovery_FWD_DEFINED__
-__IDtcLuRecovery_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryFactory_FWD_DEFINED__
-__IDtcLuRecoveryFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryInitiatedByDtcTransWork_FWD_DEFINED__
-__IDtcLuRecoveryInitiatedByDtcTransWork_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryInitiatedByDtcStatusWork_FWD_DEFINED__
-__IDtcLuRecoveryInitiatedByDtcStatusWork_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryInitiatedByDtc_FWD_DEFINED__
-__IDtcLuRecoveryInitiatedByDtc_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryInitiatedByLuWork_FWD_DEFINED__
-__IDtcLuRecoveryInitiatedByLuWork_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRecoveryInitiatedByLu_FWD_DEFINED__
-__IDtcLuRecoveryInitiatedByLu_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRmEnlistment_FWD_DEFINED__
-__IDtcLuRmEnlistment_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRmEnlistmentSink_FWD_DEFINED__
-__IDtcLuRmEnlistmentSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuRmEnlistmentFactory_FWD_DEFINED__
-__IDtcLuRmEnlistmentFactory_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuSubordinateDtc_FWD_DEFINED__
-__IDtcLuSubordinateDtc_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuSubordinateDtcSink_FWD_DEFINED__
-__IDtcLuSubordinateDtcSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IDtcLuSubordinateDtcFactory_FWD_DEFINED__
-__IDtcLuSubordinateDtcFactory_FWD_DEFINED__ equ 1
-endif
+define __txdtc_h__
 
 include txcoord.inc
 include winapifamily.inc
@@ -198,37 +83,37 @@ xa_switch_t		ENDS
 endif
 
 ifndef __IXATransLookup_INTERFACE_DEFINED__
-__IXATransLookup_INTERFACE_DEFINED__ equ 1
+define __IXATransLookup_INTERFACE_DEFINED__
 
 .comdef IXATransLookup : public IUnknown
 
     Lookup		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IXATransLookup2_INTERFACE_DEFINED__
-__IXATransLookup2_INTERFACE_DEFINED__ equ 1
+define __IXATransLookup2_INTERFACE_DEFINED__
 
 .comdef IXATransLookup2 : public IUnknown
 
     Lookup		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManagerSink_INTERFACE_DEFINED__
-__IResourceManagerSink_INTERFACE_DEFINED__ equ 1
+define __IResourceManagerSink_INTERFACE_DEFINED__
 
 .comdef IResourceManagerSink : public IUnknown
 
     TMDown		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManager_INTERFACE_DEFINED__
-__IResourceManager_INTERFACE_DEFINED__ equ 1
+define __IResourceManager_INTERFACE_DEFINED__
 
 .comdef IResourceManager : public IUnknown
 
@@ -236,148 +121,148 @@ __IResourceManager_INTERFACE_DEFINED__ equ 1
     Reenlist		proc
     ReenlistmentComplete proc
     GetDistributedTransactionManager proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ILastResourceManager_INTERFACE_DEFINED__
-__ILastResourceManager_INTERFACE_DEFINED__ equ 1
+define __ILastResourceManager_INTERFACE_DEFINED__
 
 .comdef ILastResourceManager : public IUnknown
 
     TransactionCommitted proc
     RecoveryDone	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManager2_INTERFACE_DEFINED__
-__IResourceManager2_INTERFACE_DEFINED__ equ 1
+define __IResourceManager2_INTERFACE_DEFINED__
 
 .comdef IResourceManager2 : public IResourceManager
 
     Enlist2		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     Reenlist2		proc :ptr, :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IXAConfig_INTERFACE_DEFINED__
-__IXAConfig_INTERFACE_DEFINED__ equ 1
+define __IXAConfig_INTERFACE_DEFINED__
 
 .comdef IXAConfig : public IUnknown
 
     Initialize		proc :GUID
     Terminate		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IRMHelper_INTERFACE_DEFINED__
-__IRMHelper_INTERFACE_DEFINED__ equ 1
+define __IRMHelper_INTERFACE_DEFINED__
 
 .comdef IRMHelper : public IUnknown
 
     RMCount		proc :DWORD
     RMInfo		proc :ptr, :BOOL, :ptr, :ptr, :GUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IXAObtainRMInfo_INTERFACE_DEFINED__
-__IXAObtainRMInfo_INTERFACE_DEFINED__ equ 1
+define __IXAObtainRMInfo_INTERFACE_DEFINED__
 
 .comdef IXAObtainRMInfo : public IUnknown
 
     ObtainRMInfo	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManagerFactory_INTERFACE_DEFINED__
-__IResourceManagerFactory_INTERFACE_DEFINED__ equ 1
+define __IResourceManagerFactory_INTERFACE_DEFINED__
 
 .comdef IResourceManagerFactory : public IUnknown
 
     Create		proc :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManagerFactory2_INTERFACE_DEFINED__
-__IResourceManagerFactory2_INTERFACE_DEFINED__ equ 1
+define __IResourceManagerFactory2_INTERFACE_DEFINED__
 
 .comdef IResourceManagerFactory2 : public IResourceManagerFactory
 
     CreateEx		proc :ptr, :ptr, :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IPrepareInfo_INTERFACE_DEFINED__
-__IPrepareInfo_INTERFACE_DEFINED__ equ 1
+define __IPrepareInfo_INTERFACE_DEFINED__
 
 .comdef IPrepareInfo : public IUnknown
 
     GetPrepareInfoSize	proc :ptr
     GetPrepareInfo	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IPrepareInfo2_INTERFACE_DEFINED__
-__IPrepareInfo2_INTERFACE_DEFINED__ equ 1
+define __IPrepareInfo2_INTERFACE_DEFINED__
 
 .comdef IPrepareInfo2 : public IUnknown
 
     GetPrepareInfoSize	proc :ptr
     GetPrepareInfo	proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IGetDispenser_INTERFACE_DEFINED__
-__IGetDispenser_INTERFACE_DEFINED__ equ 1
+define __IGetDispenser_INTERFACE_DEFINED__
 
 .comdef IGetDispenser : public IUnknown
 
     GetDispenser	proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionVoterBallotAsync2_INTERFACE_DEFINED__
-__ITransactionVoterBallotAsync2_INTERFACE_DEFINED__ equ 1
+define __ITransactionVoterBallotAsync2_INTERFACE_DEFINED__
 
 .comdef ITransactionVoterBallotAsync2 : public IUnknown
 
     VoteRequestDone	proc :HRESULT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionVoterNotifyAsync2_INTERFACE_DEFINED__
-__ITransactionVoterNotifyAsync2_INTERFACE_DEFINED__ equ 1
+define __ITransactionVoterNotifyAsync2_INTERFACE_DEFINED__
 
 .comdef ITransactionVoterNotifyAsync2 : public ITransactionOutcomeEvents
 
     VoteRequest		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionVoterFactory2_INTERFACE_DEFINED__
-__ITransactionVoterFactory2_INTERFACE_DEFINED__ equ 1
+define __ITransactionVoterFactory2_INTERFACE_DEFINED__
 
 .comdef ITransactionVoterFactory2 : public IUnknown
 
     Create		proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionPhase0EnlistmentAsync_INTERFACE_DEFINED__
-__ITransactionPhase0EnlistmentAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionPhase0EnlistmentAsync_INTERFACE_DEFINED__
 
 .comdef ITransactionPhase0EnlistmentAsync : public IUnknown
 
@@ -386,33 +271,33 @@ __ITransactionPhase0EnlistmentAsync_INTERFACE_DEFINED__ equ 1
     Phase0Done		proc
     Unenlist		proc
     GetTransaction	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionPhase0NotifyAsync_INTERFACE_DEFINED__
-__ITransactionPhase0NotifyAsync_INTERFACE_DEFINED__ equ 1
+define __ITransactionPhase0NotifyAsync_INTERFACE_DEFINED__
 
 .comdef ITransactionPhase0NotifyAsync : public IUnknown
 
     Phase0Request	proc :BOOL
     EnlistCompleted	proc :HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionPhase0Factory_INTERFACE_DEFINED__
-__ITransactionPhase0Factory_INTERFACE_DEFINED__ equ 1
+define __ITransactionPhase0Factory_INTERFACE_DEFINED__
 
 .comdef ITransactionPhase0Factory : public IUnknown
 
     Create		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionTransmitter_INTERFACE_DEFINED__
-__ITransactionTransmitter_INTERFACE_DEFINED__ equ 1
+define __ITransactionTransmitter_INTERFACE_DEFINED__
 
 .comdef ITransactionTransmitter : public IUnknown
 
@@ -421,22 +306,22 @@ __ITransactionTransmitter_INTERFACE_DEFINED__ equ 1
     MarshalPropagationToken proc :ULONG
     UnmarshalReturnToken proc :ULONG, :ptr
     Reset		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionTransmitterFactory_INTERFACE_DEFINED__
-__ITransactionTransmitterFactory_INTERFACE_DEFINED__ equ 1
+define __ITransactionTransmitterFactory_INTERFACE_DEFINED__
 
 .comdef ITransactionTransmitterFactory : public IUnknown
 
     Create		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionReceiver_INTERFACE_DEFINED__
-__ITransactionReceiver_INTERFACE_DEFINED__ equ 1
+define __ITransactionReceiver_INTERFACE_DEFINED__
 
 .comdef ITransactionReceiver : public IUnknown
 
@@ -444,17 +329,17 @@ __ITransactionReceiver_INTERFACE_DEFINED__ equ 1
     GetReturnTokenSize	proc :ptr
     MarshalReturnToken	proc :ULONG
     Reset		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ITransactionReceiverFactory_INTERFACE_DEFINED__
-__ITransactionReceiverFactory_INTERFACE_DEFINED__ equ 1
+define __ITransactionReceiverFactory_INTERFACE_DEFINED__
 
 .comdef ITransactionReceiverFactory : public IUnknown
 
     Create		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -463,32 +348,32 @@ wcThreadsMax		dw ?
 PROXY_CONFIG_PARAMS	ENDS
 
 ifndef __IDtcLuConfigure_INTERFACE_DEFINED__
-__IDtcLuConfigure_INTERFACE_DEFINED__ equ 1
+define __IDtcLuConfigure_INTERFACE_DEFINED__
 
 .comdef IDtcLuConfigure : public IUnknown
 
     _Add		proc
     Delete		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecovery_INTERFACE_DEFINED__
-__IDtcLuRecovery_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecovery_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecovery : public IUnknown
 
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecoveryFactory_INTERFACE_DEFINED__
-__IDtcLuRecoveryFactory_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryFactory_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryFactory : public IUnknown
 
     Create		proc
-    .ends
+   .ends
 
 endif
 
@@ -548,7 +433,7 @@ endif
 
 
 ifndef __IDtcLuRecoveryInitiatedByDtcTransWork_INTERFACE_DEFINED__
-__IDtcLuRecoveryInitiatedByDtcTransWork_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryInitiatedByDtcTransWork_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryInitiatedByDtcTransWork : public IUnknown
 
@@ -565,32 +450,32 @@ __IDtcLuRecoveryInitiatedByDtcTransWork_INTERFACE_DEFINED__ equ 1
     ConversationLost	proc
     GetRecoverySeqNum	proc :ptr
     ObsoleteRecoverySeqNum proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecoveryInitiatedByDtcStatusWork_INTERFACE_DEFINED__
-__IDtcLuRecoveryInitiatedByDtcStatusWork_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryInitiatedByDtcStatusWork_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryInitiatedByDtcStatusWork : public IUnknown
 
     HandleCheckLuStatus proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecoveryInitiatedByDtc_INTERFACE_DEFINED__
-__IDtcLuRecoveryInitiatedByDtc_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryInitiatedByDtc_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryInitiatedByDtc : public IUnknown
 
     GetWork		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecoveryInitiatedByLuWork_INTERFACE_DEFINED__
-__IDtcLuRecoveryInitiatedByLuWork_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryInitiatedByLuWork_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryInitiatedByLuWork : public IUnknown
 
@@ -602,22 +487,22 @@ __IDtcLuRecoveryInitiatedByLuWork_INTERFACE_DEFINED__ equ 1
     HandleConfirmationOfOurCompareStates proc :DTCLUCOMPARESTATESCONFIRMATION
     HandleErrorFromOurCompareStates proc :DTCLUCOMPARESTATESERROR
     ConversationLost	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRecoveryInitiatedByLu_INTERFACE_DEFINED__
-__IDtcLuRecoveryInitiatedByLu_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRecoveryInitiatedByLu_INTERFACE_DEFINED__
 
 .comdef IDtcLuRecoveryInitiatedByLu : public IUnknown
 
     GetObjectToHandleWorkFromLu proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRmEnlistment_INTERFACE_DEFINED__
-__IDtcLuRmEnlistment_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRmEnlistment_INTERFACE_DEFINED__
 
 .comdef IDtcLuRmEnlistment : public IUnknown
 
@@ -627,12 +512,12 @@ __IDtcLuRmEnlistment_INTERFACE_DEFINED__ equ 1
     Committed		proc
     Forget		proc
     RequestCommit	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRmEnlistmentSink_INTERFACE_DEFINED__
-__IDtcLuRmEnlistmentSink_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRmEnlistmentSink_INTERFACE_DEFINED__
 
 .comdef IDtcLuRmEnlistmentSink : public IUnknown
 
@@ -645,22 +530,22 @@ __IDtcLuRmEnlistmentSink_INTERFACE_DEFINED__ equ 1
     Forget		proc
     Prepare		proc
     RequestCommit	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuRmEnlistmentFactory_INTERFACE_DEFINED__
-__IDtcLuRmEnlistmentFactory_INTERFACE_DEFINED__ equ 1
+define __IDtcLuRmEnlistmentFactory_INTERFACE_DEFINED__
 
 .comdef IDtcLuRmEnlistmentFactory : public IUnknown
 
     Create		proc :ptr, :DWORD, :ptr, :ptr, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuSubordinateDtc_INTERFACE_DEFINED__
-__IDtcLuSubordinateDtc_INTERFACE_DEFINED__ equ 1
+define __IDtcLuSubordinateDtc_INTERFACE_DEFINED__
 
 .comdef IDtcLuSubordinateDtc : public IUnknown
 
@@ -671,12 +556,12 @@ __IDtcLuSubordinateDtc_INTERFACE_DEFINED__ equ 1
     Forget		proc
     Prepare		proc
     RequestCommit	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuSubordinateDtcSink_INTERFACE_DEFINED__
-__IDtcLuSubordinateDtcSink_INTERFACE_DEFINED__ equ 1
+define __IDtcLuSubordinateDtcSink_INTERFACE_DEFINED__
 
 .comdef IDtcLuSubordinateDtcSink : public IUnknown
 
@@ -688,17 +573,17 @@ __IDtcLuSubordinateDtcSink_INTERFACE_DEFINED__ equ 1
     Committed		proc
     Forget		proc
     RequestCommit	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IDtcLuSubordinateDtcFactory_INTERFACE_DEFINED__
-__IDtcLuSubordinateDtcFactory_INTERFACE_DEFINED__ equ 1
+define __IDtcLuSubordinateDtcFactory_INTERFACE_DEFINED__
 
 .comdef IDtcLuSubordinateDtcFactory : public IUnknown
 
     Create		proc :ptr, :DWORD, :ptr, :ISOLEVEL, :ULONG, :ptr, :ptr, :ptr, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 

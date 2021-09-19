@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,126 +19,7 @@ include ole2.inc
 endif
 
 ifndef __searchapi_h__
-__searchapi_h__ equ <>
-
-ifndef __IUrlAccessor_FWD_DEFINED__
-__IUrlAccessor_FWD_DEFINED__ equ 1
-endif
-ifndef __IUrlAccessor2_FWD_DEFINED__
-__IUrlAccessor2_FWD_DEFINED__ equ 1
-endif
-ifndef __IUrlAccessor3_FWD_DEFINED__
-__IUrlAccessor3_FWD_DEFINED__ equ 1
-endif
-ifndef __IUrlAccessor4_FWD_DEFINED__
-__IUrlAccessor4_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpLockStatus_FWD_DEFINED__
-__IOpLockStatus_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchProtocolThreadContext_FWD_DEFINED__
-__ISearchProtocolThreadContext_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchProtocol_FWD_DEFINED__
-__ISearchProtocol_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchProtocol2_FWD_DEFINED__
-__ISearchProtocol2_FWD_DEFINED__ equ 1
-endif
-ifndef __IProtocolHandlerSite_FWD_DEFINED__
-__IProtocolHandlerSite_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchRoot_FWD_DEFINED__
-__ISearchRoot_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumSearchRoots_FWD_DEFINED__
-__IEnumSearchRoots_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchScopeRule_FWD_DEFINED__
-__ISearchScopeRule_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumSearchScopeRules_FWD_DEFINED__
-__IEnumSearchScopeRules_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCrawlScopeManager_FWD_DEFINED__
-__ISearchCrawlScopeManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCrawlScopeManager2_FWD_DEFINED__
-__ISearchCrawlScopeManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchItemsChangedSink_FWD_DEFINED__
-__ISearchItemsChangedSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchPersistentItemsChangedSink_FWD_DEFINED__
-__ISearchPersistentItemsChangedSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchViewChangedSink_FWD_DEFINED__
-__ISearchViewChangedSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchNotifyInlineSite_FWD_DEFINED__
-__ISearchNotifyInlineSite_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCatalogManager_FWD_DEFINED__
-__ISearchCatalogManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCatalogManager2_FWD_DEFINED__
-__ISearchCatalogManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchQueryHelper_FWD_DEFINED__
-__ISearchQueryHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetPrioritization_FWD_DEFINED__
-__IRowsetPrioritization_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetEvents_FWD_DEFINED__
-__IRowsetEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchManager_FWD_DEFINED__
-__ISearchManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchManager2_FWD_DEFINED__
-__ISearchManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchLanguageSupport_FWD_DEFINED__
-__ISearchLanguageSupport_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCatalogManager_FWD_DEFINED__
-__ISearchCatalogManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCatalogManager2_FWD_DEFINED__
-__ISearchCatalogManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchQueryHelper_FWD_DEFINED__
-__ISearchQueryHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchItemsChangedSink_FWD_DEFINED__
-__ISearchItemsChangedSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchCrawlScopeManager_FWD_DEFINED__
-__ISearchCrawlScopeManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumSearchScopeRules_FWD_DEFINED__
-__IEnumSearchScopeRules_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchManager_FWD_DEFINED__
-__ISearchManager_FWD_DEFINED__ equ 1
-endif
-ifndef __ISearchManager2_FWD_DEFINED__
-__ISearchManager2_FWD_DEFINED__ equ 1
-endif
-ifndef __CSearchManager_FWD_DEFINED__
-__CSearchManager_FWD_DEFINED__ equ 1
-endif
-ifndef __CSearchRoot_FWD_DEFINED__
-__CSearchRoot_FWD_DEFINED__ equ 1
-endif
-ifndef __CSearchScopeRule_FWD_DEFINED__
-__CSearchScopeRule_FWD_DEFINED__ equ 1
-endif
-ifndef __FilterRegistration_FWD_DEFINED__
-__FilterRegistration_FWD_DEFINED__ equ 1
-endif
-
+define __searchapi_h__
 
 include unknwn.inc
 include objidl.inc
@@ -155,12 +36,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ITEMID	typedef LONG
 
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 ifndef __IUrlAccessor_INTERFACE_DEFINED__
-__IUrlAccessor_INTERFACE_DEFINED__ equ 1
+define __IUrlAccessor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUrlAccessor, "0b63e318-9ccc-11d0-bcdb-00805fccce04")
 
@@ -179,13 +56,13 @@ DEFINE_IIDX(IUrlAccessor, "0b63e318-9ccc-11d0-bcdb-00805fccce04")
     GetSecurityProvider proc :ptr
     BindToStream	proc :ptr
     BindToFilter	proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IUrlAccessor2_INTERFACE_DEFINED__
-__IUrlAccessor2_INTERFACE_DEFINED__ equ 1
+define __IUrlAccessor2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUrlAccessor2, "c7310734-ac80-11d1-8df3-00c04fb6ef4f")
 
@@ -194,26 +71,26 @@ DEFINE_IIDX(IUrlAccessor2, "c7310734-ac80-11d1-8df3-00c04fb6ef4f")
     GetDisplayUrl	proc :ptr WCHAR, :DWORD, :ptr
     IsDocument		proc
     GetCodePage		proc :ptr WCHAR, :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IUrlAccessor3_INTERFACE_DEFINED__
-__IUrlAccessor3_INTERFACE_DEFINED__ equ 1
+define __IUrlAccessor3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUrlAccessor3, "6FBC7005-0455-4874-B8FF-7439450241A3")
 
 .comdef IUrlAccessor3 : public IUrlAccessor2
 
     GetImpersonationSidBlobs proc :LPCWSTR, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IUrlAccessor4_INTERFACE_DEFINED__
-__IUrlAccessor4_INTERFACE_DEFINED__ equ 1
+define __IUrlAccessor4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IUrlAccessor4, "5CC51041-C8D2-41d7-BCA3-9E9E286297DC")
 
@@ -221,18 +98,12 @@ DEFINE_IIDX(IUrlAccessor4, "5CC51041-C8D2-41d7-BCA3-9E9E286297DC")
 
     ShouldIndexItemContent proc :ptr
     ShouldIndexProperty proc :REFPROPERTYKEY, :ptr
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IOpLockStatus_INTERFACE_DEFINED__
-__IOpLockStatus_INTERFACE_DEFINED__ equ 1
+define __IOpLockStatus_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpLockStatus, "c731065d-ac80-11d1-8df3-00c04fb6ef4f")
 
@@ -241,13 +112,13 @@ DEFINE_IIDX(IOpLockStatus, "c731065d-ac80-11d1-8df3-00c04fb6ef4f")
     IsOplockValid	proc :ptr
     IsOplockBroken	proc :ptr
     GetOplockEventHandle proc :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchProtocolThreadContext_INTERFACE_DEFINED__
-__ISearchProtocolThreadContext_INTERFACE_DEFINED__ equ 1
+define __ISearchProtocolThreadContext_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchProtocolThreadContext, "c73106e1-ac80-11d1-8df3-00c04fb6ef4f")
 
@@ -256,16 +127,9 @@ DEFINE_IIDX(ISearchProtocolThreadContext, "c73106e1-ac80-11d1-8df3-00c04fb6ef4f"
     ThreadInit		proc
     ThreadShutdown	proc
     ThreadIdle		proc :DWORD
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 
 .pragma pack(push, 8)
 
@@ -318,7 +182,7 @@ pcwszContentClass	LPCWSTR ?
 ITEM_INFO		ENDS
 
 ifndef __ISearchProtocol_INTERFACE_DEFINED__
-__ISearchProtocol_INTERFACE_DEFINED__ equ 1
+define __ISearchProtocol_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchProtocol, "c73106ba-ac80-11d1-8df3-00c04fb6ef4f")
 
@@ -328,46 +192,40 @@ DEFINE_IIDX(ISearchProtocol, "c73106ba-ac80-11d1-8df3-00c04fb6ef4f")
     CreateAccessor	proc :LPCWSTR, :ptr, :ptr, :ptr, :ptr
     CloseAccessor	proc :ptr
     ShutDown		proc
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchProtocol2_INTERFACE_DEFINED__
-__ISearchProtocol2_INTERFACE_DEFINED__ equ 1
+define __ISearchProtocol2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchProtocol2, "7789F0B2-B5B2-4722-8B65-5DBD150697A9")
 
 .comdef ISearchProtocol2 : public ISearchProtocol
 
     CreateAccessorEx	proc :LPCWSTR, :ptr, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IProtocolHandlerSite_INTERFACE_DEFINED__
-__IProtocolHandlerSite_INTERFACE_DEFINED__ equ 1
+define __IProtocolHandlerSite_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IProtocolHandlerSite, "0b63e385-9ccc-11d0-bcdb-00805fccce04")
 
 .comdef IProtocolHandlerSite : public IUnknown
 
     GetFilter		proc :ptr, :LPCWSTR, :LPCWSTR, :ptr
-    .ends
+   .ends
 
 endif
 
 .pragma pack(pop)
 
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 ifndef __ISearchRoot_INTERFACE_DEFINED__
-__ISearchRoot_INTERFACE_DEFINED__ equ 1
+define __ISearchRoot_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchRoot, "04C18CCF-1F57-4CBD-88CC-3900F5195CE3")
 
@@ -395,13 +253,13 @@ DEFINE_IIDX(ISearchRoot, "04C18CCF-1F57-4CBD-88CC-3900F5195CE3")
     get_User		proc :ptr LPWSTR
     put_Password	proc :LPCWSTR
     get_Password	proc :ptr LPWSTR
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IEnumSearchRoots_INTERFACE_DEFINED__
-__IEnumSearchRoots_INTERFACE_DEFINED__ equ 1
+define __IEnumSearchRoots_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumSearchRoots, "AB310581-AC80-11D1-8DF3-00C04FB6EF52")
 
@@ -411,7 +269,7 @@ DEFINE_IIDX(IEnumSearchRoots, "AB310581-AC80-11D1-8DF3-00C04FB6EF52")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr ptr IEnumSearchRoots
-    .ends
+   .ends
 
 endif
 
@@ -422,7 +280,7 @@ endif
 
 
 ifndef __ISearchScopeRule_INTERFACE_DEFINED__
-__ISearchScopeRule_INTERFACE_DEFINED__ equ 1
+define __ISearchScopeRule_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchScopeRule, "AB310581-AC80-11D1-8DF3-00C04FB6EF53")
 
@@ -432,13 +290,13 @@ DEFINE_IIDX(ISearchScopeRule, "AB310581-AC80-11D1-8DF3-00C04FB6EF53")
     get_IsIncluded	proc :ptr BOOL
     get_IsDefault	proc :ptr BOOL
     get_FollowFlags	proc :ptr DWORD
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IEnumSearchScopeRules_INTERFACE_DEFINED__
-__IEnumSearchScopeRules_INTERFACE_DEFINED__ equ 1
+define __IEnumSearchScopeRules_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumSearchScopeRules, "AB310581-AC80-11D1-8DF3-00C04FB6EF54")
 
@@ -448,7 +306,7 @@ DEFINE_IIDX(IEnumSearchScopeRules, "AB310581-AC80-11D1-8DF3-00C04FB6EF54")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -460,7 +318,7 @@ endif
     }
 
 ifndef __ISearchCrawlScopeManager_INTERFACE_DEFINED__
-__ISearchCrawlScopeManager_INTERFACE_DEFINED__ equ 1
+define __ISearchCrawlScopeManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchCrawlScopeManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF55")
 
@@ -482,28 +340,22 @@ DEFINE_IIDX(ISearchCrawlScopeManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF55")
     SaveAll		proc
     GetParentScopeVersionId proc :LPCWSTR, :ptr
     RemoveDefaultScopeRule proc :LPCWSTR
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchCrawlScopeManager2_INTERFACE_DEFINED__
-__ISearchCrawlScopeManager2_INTERFACE_DEFINED__ equ 1
+define __ISearchCrawlScopeManager2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchCrawlScopeManager2, "6292F7AD-4E19-4717-A534-8FC22BCD5CCD")
 
 .comdef ISearchCrawlScopeManager2 : public ISearchCrawlScopeManager
 
     GetVersion		proc :ptr ptr LONG, :ptr HANDLE
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .enum SEARCH_KIND_OF_CHANGE {
     SEARCH_CHANGE_ADD	= 0,
@@ -522,7 +374,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 ifndef __ISearchItemsChangedSink_INTERFACE_DEFINED__
-__ISearchItemsChangedSink_INTERFACE_DEFINED__ equ 1
+define __ISearchItemsChangedSink_INTERFACE_DEFINED__
 
 SEARCH_ITEM_CHANGE	STRUC
 Change			SEARCH_KIND_OF_CHANGE ?
@@ -538,13 +390,13 @@ DEFINE_IIDX(ISearchItemsChangedSink, "AB310581-AC80-11D1-8DF3-00C04FB6EF58")
     StartedMonitoringScope proc :LPCWSTR
     StoppedMonitoringScope proc :LPCWSTR
     OnItemsChanged	proc :DWORD, :ptr SEARCH_ITEM_CHANGE, :ptr DWORD, :ptr HRESULT
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchPersistentItemsChangedSink_INTERFACE_DEFINED__
-__ISearchPersistentItemsChangedSink_INTERFACE_DEFINED__ equ 1
+define __ISearchPersistentItemsChangedSink_INTERFACE_DEFINED__
 
 
 SEARCH_ITEM_PERSISTENT_CHANGE STRUC
@@ -560,32 +412,25 @@ DEFINE_IIDX(ISearchPersistentItemsChangedSink, "A2FFDF9B-4758-4F84-B729-DF81A1A0
     StartedMonitoringScope proc :LPCWSTR
     StoppedMonitoringScope proc :LPCWSTR
     OnItemsChanged	proc :DWORD, :ptr SEARCH_ITEM_PERSISTENT_CHANGE, :ptr HRESULT
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchViewChangedSink_INTERFACE_DEFINED__
-__ISearchViewChangedSink_INTERFACE_DEFINED__ equ 1
+define __ISearchViewChangedSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchViewChangedSink, "AB310581-AC80-11D1-8DF3-00C04FB6EF65")
 
 .comdef ISearchViewChangedSink : public IUnknown
 
     OnChange		proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISearchNotifyInlineSite_INTERFACE_DEFINED__
-__ISearchNotifyInlineSite_INTERFACE_DEFINED__ equ 1
-
+define __ISearchNotifyInlineSite_INTERFACE_DEFINED__
 
 .enum SEARCH_INDEXING_PHASE {
     SEARCH_INDEXING_PHASE_GATHERER	= 0,
@@ -604,15 +449,9 @@ DEFINE_IIDX(ISearchNotifyInlineSite, "B5702E61-E75C-4B64-82A1-6CB4F832FCCF")
 
     OnItemIndexedStatusChange proc :SEARCH_INDEXING_PHASE, :DWORD, :SEARCH_ITEM_INDEXING_STATUS
     OnCatalogStatusChange proc :REFGUID, :REFGUID, :DWORD
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 .enum CatalogStatus {
     CATALOG_STATUS_IDLE = 0,
@@ -640,7 +479,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 ifndef __ISearchCatalogManager_INTERFACE_DEFINED__
-__ISearchCatalogManager_INTERFACE_DEFINED__ equ 1
+define __ISearchCatalogManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchCatalogManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF50")
 
@@ -685,25 +524,19 @@ PRIORITIZE_FLAGS	typedef int_t
 
 
 ifndef __ISearchCatalogManager2_INTERFACE_DEFINED__
-__ISearchCatalogManager2_INTERFACE_DEFINED__ equ 1
+define __ISearchCatalogManager2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchCatalogManager2, "7AC3286D-4D1D-4817-84FC-C1C85E3AF0D9")
 
 .comdef ISearchCatalogManager2 : public ISearchCatalogManager
 
     PrioritizeMatchingURLs proc :LPCWSTR, :PRIORITIZE_FLAGS
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISearchQueryHelper_INTERFACE_DEFINED__
-__ISearchQueryHelper_INTERFACE_DEFINED__ equ 1
+define __ISearchQueryHelper_INTERFACE_DEFINED__
 
 
 .enum SEARCH_TERM_EXPANSION {
@@ -760,7 +593,7 @@ endif
     }
 
 ifndef __IRowsetPrioritization_INTERFACE_DEFINED__
-__IRowsetPrioritization_INTERFACE_DEFINED__ equ 1
+define __IRowsetPrioritization_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetPrioritization, "42811652-079D-481B-87A2-09A69ECC5F44")
 
@@ -769,7 +602,7 @@ DEFINE_IIDX(IRowsetPrioritization, "42811652-079D-481B-87A2-09A69ECC5F44")
     SetScopePriority	proc :PRIORITY_LEVEL, :DWORD
     GetScopePriority	proc :ptr, :ptr
     GetScopeStatistics	proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -786,7 +619,7 @@ endif
     }
 
 ifndef __IRowsetEvents_INTERFACE_DEFINED__
-__IRowsetEvents_INTERFACE_DEFINED__ equ 1
+define __IRowsetEvents_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetEvents, "1551AEA5-5D66-4B11-86F5-D5634CB211B9")
 
@@ -796,18 +629,12 @@ DEFINE_IIDX(IRowsetEvents, "1551AEA5-5D66-4B11-86F5-D5634CB211B9")
     OnChangedItem	proc :REFPROPVARIANT, :ROWSETEVENT_ITEMSTATE, :ROWSETEVENT_ITEMSTATE
     OnDeletedItem	proc :REFPROPVARIANT, :ROWSETEVENT_ITEMSTATE
     OnRowsetEvent	proc :ROWSETEVENT_TYPE, :REFPROPVARIANT
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISearchManager_INTERFACE_DEFINED__
-__ISearchManager_INTERFACE_DEFINED__ equ 1
+define __ISearchManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF69")
 
@@ -826,13 +653,13 @@ DEFINE_IIDX(ISearchManager, "AB310581-AC80-11D1-8DF3-00C04FB6EF69")
     get_UseProxy	proc :ptr PROXY_ACCESS
     get_LocalBypass	proc :ptr BOOL
     get_PortNumber	proc :ptr DWORD
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISearchManager2_INTERFACE_DEFINED__
-__ISearchManager2_INTERFACE_DEFINED__ equ 1
+define __ISearchManager2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchManager2, "DBAB3F73-DB19-4A79-BFC0-A61A93886DDF")
 
@@ -840,20 +667,14 @@ DEFINE_IIDX(ISearchManager2, "DBAB3F73-DB19-4A79-BFC0-A61A93886DDF")
 
     CreateCatalog	proc :LPCWSTR, :ptr
     DeleteCatalog	proc :LPCWSTR
-    .ends
+   .ends
 
 endif
-
-endif
-
-include winapifamily.inc
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 DEFINE_GUIDS(CLSID_CSearchLanguageSupport, "6A68CC80-4337-4dbc-BD27-FBFB1053820B")
 
 ifndef __ISearchLanguageSupport_INTERFACE_DEFINED__
-__ISearchLanguageSupport_INTERFACE_DEFINED__ equ 1
+define __ISearchLanguageSupport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISearchLanguageSupport, "24C3CBAA-EBC1-491a-9EF1-9F6D8DEB1B8F")
 
@@ -864,14 +685,12 @@ DEFINE_IIDX(ISearchLanguageSupport, "24C3CBAA-EBC1-491a-9EF1-9F6D8DEB1B8F")
     LoadWordBreaker	proc :LCID, :REFIID, :ptr, :ptr
     LoadStemmer		proc :LCID, :REFIID, :ptr, :ptr
     IsPrefixNormalized	proc :LPCWSTR, :ULONG, :ptr
-    .ends
-
-endif
+   .ends
 
 endif
 
 ifndef __SearchAPILib_LIBRARY_DEFINED__
-__SearchAPILib_LIBRARY_DEFINED__ equ 1
+define __SearchAPILib_LIBRARY_DEFINED__
 
 externdef LIBID_SearchAPILib:IID
 DEFINE_GUIDS(CLSID_CSearchManager,	"7D096C5F-AC08-4f1f-BEB7-5C22C517CE39")

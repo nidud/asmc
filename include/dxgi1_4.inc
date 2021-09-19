@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,20 +18,7 @@ include ole2.inc
 endif
 
 ifndef __dxgi1_4_h__
-__dxgi1_4_h__ equ <>
-
-ifndef __IDXGISwapChain3_FWD_DEFINED__
-__IDXGISwapChain3_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIOutput4_FWD_DEFINED__
-__IDXGIOutput4_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIFactory4_FWD_DEFINED__
-__IDXGIFactory4_FWD_DEFINED__ equ 1
-endif
-ifndef __IDXGIAdapter3_FWD_DEFINED__
-__IDXGIAdapter3_FWD_DEFINED__ equ 1
-endif
+define __dxgi1_4_h__
 
 include dxgi1_3.inc
 
@@ -41,7 +28,7 @@ include dxgi1_3.inc
     }
 
 ifndef __IDXGISwapChain3_INTERFACE_DEFINED__
-__IDXGISwapChain3_INTERFACE_DEFINED__ equ 1
+define __IDXGISwapChain3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGISwapChain3, "94d99bdb-f1f8-4ab0-b236-7da0170edab1")
 
@@ -51,8 +38,7 @@ DEFINE_IIDX(IDXGISwapChain3, "94d99bdb-f1f8-4ab0-b236-7da0170edab1")
     CheckColorSpaceSupport proc :DXGI_COLOR_SPACE_TYPE, :ptr
     SetColorSpace1	proc :DXGI_COLOR_SPACE_TYPE
     ResizeBuffers1	proc :UINT, :UINT, :UINT, :DXGI_FORMAT, :UINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -61,20 +47,19 @@ endif
     }
 
 ifndef __IDXGIOutput4_INTERFACE_DEFINED__
-__IDXGIOutput4_INTERFACE_DEFINED__ equ 1
+define __IDXGIOutput4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIOutput4, "dc7dca35-2196-414d-9F53-617884032a60")
 
 .comdef IDXGIOutput4 : public IDXGIOutput3
 
     CheckOverlayColorSpaceSupport proc :DXGI_FORMAT, :DXGI_COLOR_SPACE_TYPE, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDXGIFactory4_INTERFACE_DEFINED__
-__IDXGIFactory4_INTERFACE_DEFINED__ equ 1
+define __IDXGIFactory4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIFactory4, "1bc6ea02-ef36-464f-bf0c-21ca39e5168a")
 
@@ -82,8 +67,7 @@ DEFINE_IIDX(IDXGIFactory4, "1bc6ea02-ef36-464f-bf0c-21ca39e5168a")
 
     EnumAdapterByLuid	proc :LUID, :REFIID, :ptr
     EnumWarpAdapter	proc :REFIID, :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -100,7 +84,7 @@ CurrentReservation	UINT64 ?
 DXGI_QUERY_VIDEO_MEMORY_INFO ENDS
 
 ifndef __IDXGIAdapter3_INTERFACE_DEFINED__
-__IDXGIAdapter3_INTERFACE_DEFINED__ equ 1
+define __IDXGIAdapter3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDXGIAdapter3, "645967A4-1392-4310-A798-8053CE3E93FD")
 
@@ -112,8 +96,7 @@ DEFINE_IIDX(IDXGIAdapter3, "645967A4-1392-4310-A798-8053CE3E93FD")
     SetVideoMemoryReservation proc :UINT, :DXGI_MEMORY_SEGMENT_GROUP, :UINT64
     RegisterVideoMemoryBudgetChangeNotificationEvent proc :HANDLE, :ptr
     UnregisterVideoMemoryBudgetChangeNotification proc :DWORD
-
-    .ends
+   .ends
 
 endif
 

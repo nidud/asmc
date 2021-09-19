@@ -1,9 +1,9 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,259 +19,14 @@ include ole2.inc
 endif
 
 ifndef __oledb_h__
-__oledb_h__ equ <>
+define __oledb_h__
 
-
-ifndef __IAccessor_FWD_DEFINED__
-__IAccessor_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowset_FWD_DEFINED__
-__IRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetInfo_FWD_DEFINED__
-__IRowsetInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetLocate_FWD_DEFINED__
-__IRowsetLocate_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetResynch_FWD_DEFINED__
-__IRowsetResynch_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetScroll_FWD_DEFINED__
-__IRowsetScroll_FWD_DEFINED__ equ 1
-endif
-ifndef __IChapteredRowset_FWD_DEFINED__
-__IChapteredRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetFind_FWD_DEFINED__
-__IRowsetFind_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowPosition_FWD_DEFINED__
-__IRowPosition_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowPositionChange_FWD_DEFINED__
-__IRowPositionChange_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewRowset_FWD_DEFINED__
-__IViewRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewChapter_FWD_DEFINED__
-__IViewChapter_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewSort_FWD_DEFINED__
-__IViewSort_FWD_DEFINED__ equ 1
-endif
-ifndef __IViewFilter_FWD_DEFINED__
-__IViewFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetView_FWD_DEFINED__
-__IRowsetView_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetExactScroll_FWD_DEFINED__
-__IRowsetExactScroll_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetChange_FWD_DEFINED__
-__IRowsetChange_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetUpdate_FWD_DEFINED__
-__IRowsetUpdate_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetIdentity_FWD_DEFINED__
-__IRowsetIdentity_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetNotify_FWD_DEFINED__
-__IRowsetNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetIndex_FWD_DEFINED__
-__IRowsetIndex_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommand_FWD_DEFINED__
-__ICommand_FWD_DEFINED__ equ 1
-endif
-ifndef __IMultipleResults_FWD_DEFINED__
-__IMultipleResults_FWD_DEFINED__ equ 1
-endif
-ifndef __IConvertType_FWD_DEFINED__
-__IConvertType_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandPrepare_FWD_DEFINED__
-__ICommandPrepare_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandProperties_FWD_DEFINED__
-__ICommandProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandText_FWD_DEFINED__
-__ICommandText_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandWithParameters_FWD_DEFINED__
-__ICommandWithParameters_FWD_DEFINED__ equ 1
-endif
-ifndef __IColumnsRowset_FWD_DEFINED__
-__IColumnsRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IColumnsInfo_FWD_DEFINED__
-__IColumnsInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBCreateCommand_FWD_DEFINED__
-__IDBCreateCommand_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBCreateSession_FWD_DEFINED__
-__IDBCreateSession_FWD_DEFINED__ equ 1
-endif
-ifndef __ISourcesRowset_FWD_DEFINED__
-__ISourcesRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBProperties_FWD_DEFINED__
-__IDBProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBInitialize_FWD_DEFINED__
-__IDBInitialize_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBInfo_FWD_DEFINED__
-__IDBInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBDataSourceAdmin_FWD_DEFINED__
-__IDBDataSourceAdmin_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBAsynchNotify_FWD_DEFINED__
-__IDBAsynchNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBAsynchStatus_FWD_DEFINED__
-__IDBAsynchStatus_FWD_DEFINED__ equ 1
-endif
-ifndef __ISessionProperties_FWD_DEFINED__
-__ISessionProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IIndexDefinition_FWD_DEFINED__
-__IIndexDefinition_FWD_DEFINED__ equ 1
-endif
-ifndef __ITableDefinition_FWD_DEFINED__
-__ITableDefinition_FWD_DEFINED__ equ 1
-endif
-ifndef __IOpenRowset_FWD_DEFINED__
-__IOpenRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBSchemaRowset_FWD_DEFINED__
-__IDBSchemaRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IMDDataset_FWD_DEFINED__
-__IMDDataset_FWD_DEFINED__ equ 1
-endif
-ifndef __IMDFind_FWD_DEFINED__
-__IMDFind_FWD_DEFINED__ equ 1
-endif
-ifndef __IMDRangeRowset_FWD_DEFINED__
-__IMDRangeRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IAlterTable_FWD_DEFINED__
-__IAlterTable_FWD_DEFINED__ equ 1
-endif
-ifndef __IAlterIndex_FWD_DEFINED__
-__IAlterIndex_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetChapterMember_FWD_DEFINED__
-__IRowsetChapterMember_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandPersist_FWD_DEFINED__
-__ICommandPersist_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetRefresh_FWD_DEFINED__
-__IRowsetRefresh_FWD_DEFINED__ equ 1
-endif
-ifndef __IParentRowset_FWD_DEFINED__
-__IParentRowset_FWD_DEFINED__ equ 1
-endif
-ifndef __IErrorRecords_FWD_DEFINED__
-__IErrorRecords_FWD_DEFINED__ equ 1
-endif
-ifndef __IErrorLookup_FWD_DEFINED__
-__IErrorLookup_FWD_DEFINED__ equ 1
-endif
-ifndef __ISQLErrorInfo_FWD_DEFINED__
-__ISQLErrorInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetDataSource_FWD_DEFINED__
-__IGetDataSource_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionLocal_FWD_DEFINED__
-__ITransactionLocal_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionJoin_FWD_DEFINED__
-__ITransactionJoin_FWD_DEFINED__ equ 1
-endif
-ifndef __ITransactionObject_FWD_DEFINED__
-__ITransactionObject_FWD_DEFINED__ equ 1
-endif
-ifndef __ITrusteeAdmin_FWD_DEFINED__
-__ITrusteeAdmin_FWD_DEFINED__ equ 1
-endif
-ifndef __ITrusteeGroupAdmin_FWD_DEFINED__
-__ITrusteeGroupAdmin_FWD_DEFINED__ equ 1
-endif
-ifndef __IObjectAccessControl_FWD_DEFINED__
-__IObjectAccessControl_FWD_DEFINED__ equ 1
-endif
-ifndef __ISecurityInfo_FWD_DEFINED__
-__ISecurityInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ITableCreation_FWD_DEFINED__
-__ITableCreation_FWD_DEFINED__ equ 1
-endif
-ifndef __ITableDefinitionWithConstraints_FWD_DEFINED__
-__ITableDefinitionWithConstraints_FWD_DEFINED__ equ 1
-endif
-ifndef __IRow_FWD_DEFINED__
-__IRow_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowChange_FWD_DEFINED__
-__IRowChange_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowSchemaChange_FWD_DEFINED__
-__IRowSchemaChange_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetRow_FWD_DEFINED__
-__IGetRow_FWD_DEFINED__ equ 1
-endif
-ifndef __IBindResource_FWD_DEFINED__
-__IBindResource_FWD_DEFINED__ equ 1
-endif
-ifndef __IScopedOperations_FWD_DEFINED__
-__IScopedOperations_FWD_DEFINED__ equ 1
-endif
-ifndef __ICreateRow_FWD_DEFINED__
-__ICreateRow_FWD_DEFINED__ equ 1
-endif
-ifndef __IDBBinderProperties_FWD_DEFINED__
-__IDBBinderProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IColumnsInfo2_FWD_DEFINED__
-__IColumnsInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __IRegisterProvider_FWD_DEFINED__
-__IRegisterProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetSession_FWD_DEFINED__
-__IGetSession_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetSourceRow_FWD_DEFINED__
-__IGetSourceRow_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetCurrentIndex_FWD_DEFINED__
-__IRowsetCurrentIndex_FWD_DEFINED__ equ 1
-endif
-ifndef __ICommandStream_FWD_DEFINED__
-__ICommandStream_FWD_DEFINED__ equ 1
-endif
-ifndef __IRowsetBookmark_FWD_DEFINED__
-__IRowsetBookmark_FWD_DEFINED__ equ 1
-endif
 
 include wtypes.inc
 include oaidl.inc
 include ocidl.inc
 include propidl.inc
 include transact.inc
-
 include winapifamily.inc
 
 if defined(_WIN64) OR defined(_ARM_)
@@ -333,7 +88,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __DBStructureDefinitions_INTERFACE_DEFINED__
-__DBStructureDefinitions_INTERFACE_DEFINED__ equ 1
+define __DBStructureDefinitions_INTERFACE_DEFINED__
 
 ifndef UNALIGNED
 if defined(_MIPS_) OR defined(_ALPHA_) OR defined(_PPC_)
@@ -2326,7 +2081,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IAccessor_INTERFACE_DEFINED__
-__IAccessor_INTERFACE_DEFINED__ equ 1
+define __IAccessor_INTERFACE_DEFINED__
 
 DBACCESSORFLAGS		typedef DWORD
 
@@ -2368,7 +2123,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowset_INTERFACE_DEFINED__
-__IRowset_INTERFACE_DEFINED__ equ 1
+define __IRowset_INTERFACE_DEFINED__
 
 
 DBROWOPTIONS		typedef DWORD
@@ -2391,7 +2146,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetInfo_INTERFACE_DEFINED__
-__IRowsetInfo_INTERFACE_DEFINED__ equ 1
+define __IRowsetInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetInfo, "0c733a55-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2409,7 +2164,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetLocate_INTERFACE_DEFINED__
-__IRowsetLocate_INTERFACE_DEFINED__ equ 1
+define __IRowsetLocate_INTERFACE_DEFINED__
 
 DBCOMPARE		typedef DWORD
 
@@ -2438,7 +2193,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetResynch_INTERFACE_DEFINED__
-__IRowsetResynch_INTERFACE_DEFINED__ equ 1
+define __IRowsetResynch_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetResynch, "0c733a84-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2446,7 +2201,7 @@ DEFINE_IIDX(IRowsetResynch, "0c733a84-2a1c-11ce-ade5-00aa0044773d")
 
     GetVisibleData	proc :HROW, :HACCESSOR, :ptr
     ResynchRows		proc :DBCOUNTITEM, :HROW, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2455,7 +2210,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetScroll_INTERFACE_DEFINED__
-__IRowsetScroll_INTERFACE_DEFINED__ equ 1
+define __IRowsetScroll_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetScroll, "0c733a7e-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2463,7 +2218,7 @@ DEFINE_IIDX(IRowsetScroll, "0c733a7e-2a1c-11ce-ade5-00aa0044773d")
 
     GetApproximatePosition proc :HCHAPTER, :DBBKMARK, :ptr, :ptr, :ptr
     GetRowsAtRatio	proc :HWATCHREGION, :HCHAPTER, :DBCOUNTITEM, :DBCOUNTITEM, :DBROWCOUNT, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2474,7 +2229,7 @@ if( OLEDBVER GE 0x0150 )
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IChapteredRowset_INTERFACE_DEFINED__
-__IChapteredRowset_INTERFACE_DEFINED__ equ 1
+define __IChapteredRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IChapteredRowset, "0c733a93-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2482,7 +2237,7 @@ DEFINE_IIDX(IChapteredRowset, "0c733a93-2a1c-11ce-ade5-00aa0044773d")
 
     AddRefChapter	proc :HCHAPTER, :ptr
     ReleaseChapter	proc :HCHAPTER, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2491,14 +2246,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetFind_INTERFACE_DEFINED__
-__IRowsetFind_INTERFACE_DEFINED__ equ 1
+define __IRowsetFind_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetFind, "0c733a9d-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowsetFind : public IUnknown
 
     FindNextRow		proc :HCHAPTER, :HACCESSOR, :ptr, :DBCOMPAREOP, :DBBKMARK, :ptr, :DBROWOFFSET, :DBROWCOUNT, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2507,7 +2262,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowPosition_INTERFACE_DEFINED__
-__IRowPosition_INTERFACE_DEFINED__ equ 1
+define __IRowPosition_INTERFACE_DEFINED__
 
 DBPOSITIONFLAGS		typedef DWORD
 
@@ -2527,7 +2282,7 @@ DEFINE_IIDX(IRowPosition, "0c733a94-2a1c-11ce-ade5-00aa0044773d")
     GetRowset		proc :REFIID, :ptr
     Initialize		proc :ptr
     SetRowPosition	proc :HCHAPTER, :HROW, :DBPOSITIONFLAGS
-    .ends
+   .ends
 
 endif
 
@@ -2536,14 +2291,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowPositionChange_INTERFACE_DEFINED__
-__IRowPositionChange_INTERFACE_DEFINED__ equ 1
+define __IRowPositionChange_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowPositionChange, "0997a571-126e-11d0-9f8a-00a0c9a0631e")
 
 .comdef IRowPositionChange : public IUnknown
 
     OnRowPositionChange proc :DBREASON, :DBEVENTPHASE, :BOOL
-    .ends
+   .ends
 
 endif
 
@@ -2552,7 +2307,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IViewRowset_INTERFACE_DEFINED__
-__IViewRowset_INTERFACE_DEFINED__ equ 1
+define __IViewRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewRowset, "0c733a97-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2560,7 +2315,7 @@ DEFINE_IIDX(IViewRowset, "0c733a97-2a1c-11ce-ade5-00aa0044773d")
 
     GetSpecification	proc :REFIID, :ptr
     OpenViewRowset	proc :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2569,7 +2324,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IViewChapter_INTERFACE_DEFINED__
-__IViewChapter_INTERFACE_DEFINED__ equ 1
+define __IViewChapter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewChapter, "0c733a98-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2577,7 +2332,7 @@ DEFINE_IIDX(IViewChapter, "0c733a98-2a1c-11ce-ade5-00aa0044773d")
 
     GetSpecification	proc :REFIID, :ptr
     OpenViewChapter	proc :HCHAPTER, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2586,7 +2341,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IViewSort_INTERFACE_DEFINED__
-__IViewSort_INTERFACE_DEFINED__ equ 1
+define __IViewSort_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewSort, "0c733a9a-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2594,7 +2349,7 @@ DEFINE_IIDX(IViewSort, "0c733a9a-2a1c-11ce-ade5-00aa0044773d")
 
     GetSortOrder	proc :ptr, :ptr
     SetSortOrder	proc :DBORDINAL, :DBSORT
-    .ends
+   .ends
 
 endif
 
@@ -2603,7 +2358,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IViewFilter_INTERFACE_DEFINED__
-__IViewFilter_INTERFACE_DEFINED__ equ 1
+define __IViewFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IViewFilter, "0c733a9b-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2612,7 +2367,7 @@ DEFINE_IIDX(IViewFilter, "0c733a9b-2a1c-11ce-ade5-00aa0044773d")
     GetFilter		proc :HACCESSOR, :ptr
     GetFilterBindings	proc :ptr, :ptr
     SetFilter		proc :HACCESSOR, :DBCOUNTITEM
-    .ends
+   .ends
 
 endif
 
@@ -2621,7 +2376,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetView_INTERFACE_DEFINED__
-__IRowsetView_INTERFACE_DEFINED__ equ 1
+define __IRowsetView_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetView, "0c733a99-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2629,7 +2384,7 @@ DEFINE_IIDX(IRowsetView, "0c733a99-2a1c-11ce-ade5-00aa0044773d")
 
     CreateView		proc :ptr, :REFIID, :ptr
     GetView		proc :HCHAPTER, :REFIID, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2641,14 +2396,14 @@ ifdef oledb_deprecated
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetExactScroll_INTERFACE_DEFINED__
-__IRowsetExactScroll_INTERFACE_DEFINED__ equ 1
+define __IRowsetExactScroll_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetExactScroll, "0c733a7f-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowsetExactScroll : public IRowsetScroll
 
     GetExactPosition	proc :HCHAPTER, :DBBKMARK, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2659,7 +2414,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetChange_INTERFACE_DEFINED__
-__IRowsetChange_INTERFACE_DEFINED__ equ 1
+define __IRowsetChange_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetChange, "0c733a05-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2668,7 +2423,7 @@ DEFINE_IIDX(IRowsetChange, "0c733a05-2a1c-11ce-ade5-00aa0044773d")
     DeleteRows		proc :HCHAPTER, :DBCOUNTITEM, :ptr, :ptr
     SetData		proc :HROW, :HACCESSOR, :ptr
     InsertRow		proc :HCHAPTER, :HACCESSOR, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2678,7 +2433,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetUpdate_INTERFACE_DEFINED__
-__IRowsetUpdate_INTERFACE_DEFINED__ equ 1
+define __IRowsetUpdate_INTERFACE_DEFINED__
 
 DBPENDINGSTATUS		typedef DWORD
 
@@ -2708,14 +2463,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetIdentity_INTERFACE_DEFINED__
-__IRowsetIdentity_INTERFACE_DEFINED__ equ 1
+define __IRowsetIdentity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetIdentity, "0c733a09-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowsetIdentity : public IUnknown
 
     IsSameRow		proc :HROW
-    .ends
+   .ends
 
 endif
 
@@ -2724,7 +2479,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetNotify_INTERFACE_DEFINED__
-__IRowsetNotify_INTERFACE_DEFINED__ equ 1
+define __IRowsetNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetNotify, "0c733a83-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2742,9 +2497,9 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetIndex_INTERFACE_DEFINED__
-__IRowsetIndex_INTERFACE_DEFINED__ equ 1
+define __IRowsetIndex_INTERFACE_DEFINED__
 
-DBSEEK			typedef DWORD
+DBSEEK typedef DWORD
 
 .enum DBSEEKENUM {
     DBSEEK_INVALID	= 0,
@@ -2787,7 +2542,7 @@ DEFINE_IIDX(IRowsetIndex, "0c733a82-2a1c-11ce-ade5-00aa0044773d")
     GetIndexInfo	proc :ptr, :ptr, :ptr, :ptr
     Seek		proc :HACCESSOR, :DBORDINAL, :ptr, :DBSEEK
     SetRange		proc :HACCESSOR, :DBORDINAL, :ptr, :DBORDINAL, :ptr, :DBRANGE
-    .ends
+   .ends
 
 endif
 
@@ -2796,7 +2551,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommand_INTERFACE_DEFINED__
-__ICommand_INTERFACE_DEFINED__ equ 1
+define __ICommand_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommand, "0c733a63-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2805,7 +2560,7 @@ DEFINE_IIDX(ICommand, "0c733a63-2a1c-11ce-ade5-00aa0044773d")
     Cancel		proc
     Execute		proc :ptr, :REFIID, :ptr, :ptr, :ptr
     GetDBSession	proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2814,9 +2569,9 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMultipleResults_INTERFACE_DEFINED__
-__IMultipleResults_INTERFACE_DEFINED__ equ 1
+define __IMultipleResults_INTERFACE_DEFINED__
 
-DBRESULTFLAG		typedef DB_LRESERVE
+DBRESULTFLAG typedef DB_LRESERVE
 
 .enum DBRESULTFLAGENUM {
     DBRESULTFLAG_DEFAULT	= 0,
@@ -2829,7 +2584,7 @@ DEFINE_IIDX(IMultipleResults, "0c733a90-2a1c-11ce-ade5-00aa0044773d")
 .comdef IMultipleResults : public IUnknown
 
     GetResult		proc :ptr, :DBRESULTFLAG, :REFIID, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2838,9 +2593,9 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IConvertType_INTERFACE_DEFINED__
-__IConvertType_INTERFACE_DEFINED__ equ 1
+define __IConvertType_INTERFACE_DEFINED__
 
-DBCONVERTFLAGS		typedef DWORD
+DBCONVERTFLAGS typedef DWORD
 
 .enum DBCONVERTFLAGSENUM {
     DBCONVERTFLAGS_COLUMN	= 0,
@@ -2860,7 +2615,7 @@ DEFINE_IIDX(IConvertType, "0c733a88-2a1c-11ce-ade5-00aa0044773d")
 .comdef IConvertType : public IUnknown
 
     CanConvert		proc :DBTYPE, :DBTYPE, :DBCONVERTFLAGS
-    .ends
+   .ends
 
 endif
 
@@ -2869,7 +2624,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandPrepare_INTERFACE_DEFINED__
-__ICommandPrepare_INTERFACE_DEFINED__ equ 1
+define __ICommandPrepare_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommandPrepare, "0c733a26-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2877,7 +2632,7 @@ DEFINE_IIDX(ICommandPrepare, "0c733a26-2a1c-11ce-ade5-00aa0044773d")
 
     Prepare		proc :ULONG
     Unprepare		proc
-    .ends
+   .ends
 
 endif
 
@@ -2886,7 +2641,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandProperties_INTERFACE_DEFINED__
-__ICommandProperties_INTERFACE_DEFINED__ equ 1
+define __ICommandProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommandProperties, "0c733a79-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2894,7 +2649,7 @@ DEFINE_IIDX(ICommandProperties, "0c733a79-2a1c-11ce-ade5-00aa0044773d")
 
     GetProperties	proc :ULONG, :ptr, :ptr, :ptr
     SetProperties	proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2903,7 +2658,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandText_INTERFACE_DEFINED__
-__ICommandText_INTERFACE_DEFINED__ equ 1
+define __ICommandText_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommandText, "0c733a27-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2911,7 +2666,7 @@ DEFINE_IIDX(ICommandText, "0c733a27-2a1c-11ce-ade5-00aa0044773d")
 
     GetCommandText	proc :ptr, :ptr
     SetCommandText	proc :REFGUID, :LPCOLESTR
-    .ends
+   .ends
 
 endif
 
@@ -2920,7 +2675,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandWithParameters_INTERFACE_DEFINED__
-__ICommandWithParameters_INTERFACE_DEFINED__ equ 1
+define __ICommandWithParameters_INTERFACE_DEFINED__
 
 DBPARAMBINDINFO		STRUC
 pwszDataSourceType	LPOLESTR ?
@@ -2939,7 +2694,7 @@ DEFINE_IIDX(ICommandWithParameters, "0c733a64-2a1c-11ce-ade5-00aa0044773d")
     GetParameterInfo	proc :ptr, :ptr, :ptr
     MapParameterNames	proc :DB_UPARAMS, :ptr, :ptr
     SetParameterInfo	proc :DB_UPARAMS, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2948,7 +2703,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IColumnsRowset_INTERFACE_DEFINED__
-__IColumnsRowset_INTERFACE_DEFINED__ equ 1
+define __IColumnsRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IColumnsRowset, "0c733a10-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2956,7 +2711,7 @@ DEFINE_IIDX(IColumnsRowset, "0c733a10-2a1c-11ce-ade5-00aa0044773d")
 
     GetAvailableColumns proc :ptr, :ptr
     GetColumnsRowset	proc :ptr, :DBORDINAL, :ptr, :REFIID, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2965,7 +2720,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IColumnsInfo_INTERFACE_DEFINED__
-__IColumnsInfo_INTERFACE_DEFINED__ equ 1
+define __IColumnsInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IColumnsInfo, "0c733a11-2a1c-11ce-ade5-00aa0044773d")
 
@@ -2973,7 +2728,7 @@ DEFINE_IIDX(IColumnsInfo, "0c733a11-2a1c-11ce-ade5-00aa0044773d")
 
     GetColumnInfo	proc :ptr
     MapColumnIDs	proc :DBORDINAL, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -2982,14 +2737,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBCreateCommand_INTERFACE_DEFINED__
-__IDBCreateCommand_INTERFACE_DEFINED__ equ 1
+define __IDBCreateCommand_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBCreateCommand, "0c733a1d-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IDBCreateCommand : public IUnknown
 
     CreateCommand	proc :ptr, :REFIID, :ptr
-    .ends
+   .ends
     LPIDBCreateCommand typedef ptr IDBCreateCommand
 
 endif
@@ -2999,14 +2754,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBCreateSession_INTERFACE_DEFINED__
-__IDBCreateSession_INTERFACE_DEFINED__ equ 1
+define __IDBCreateSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBCreateSession, "0c733a5d-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IDBCreateSession : public IUnknown
 
     CreateSession	proc :ptr, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3015,7 +2770,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISourcesRowset_INTERFACE_DEFINED__
-__ISourcesRowset_INTERFACE_DEFINED__ equ 1
+define __ISourcesRowset_INTERFACE_DEFINED__
 
 DBSOURCETYPE		typedef DWORD
 
@@ -3042,7 +2797,7 @@ DEFINE_IIDX(ISourcesRowset, "0c733a1e-2a1c-11ce-ade5-00aa0044773d")
 .comdef ISourcesRowset : public IUnknown
 
     GetSourcesRowset	proc :ptr, :REFIID, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3051,7 +2806,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBProperties_INTERFACE_DEFINED__
-__IDBProperties_INTERFACE_DEFINED__ equ 1
+define __IDBProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBProperties, "0c733a8a-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3060,7 +2815,7 @@ DEFINE_IIDX(IDBProperties, "0c733a8a-2a1c-11ce-ade5-00aa0044773d")
     GetProperties	proc :ULONG, :ptr, :ptr, :ptr
     GetPropertyInfo	proc :ULONG, :ptr, :ptr, :ptr, :ptr
     SetProperties	proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3069,7 +2824,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBInitialize_INTERFACE_DEFINED__
-__IDBInitialize_INTERFACE_DEFINED__ equ 1
+define __IDBInitialize_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBInitialize, "0c733a8b-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3077,7 +2832,7 @@ DEFINE_IIDX(IDBInitialize, "0c733a8b-2a1c-11ce-ade5-00aa0044773d")
 
     Initialize		proc
     Uninitialize	proc
-    .ends
+   .ends
 
 endif
 
@@ -3086,9 +2841,9 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBInfo_INTERFACE_DEFINED__
-__IDBInfo_INTERFACE_DEFINED__ equ 1
+define __IDBInfo_INTERFACE_DEFINED__
 
-DBLITERAL		typedef DWORD
+DBLITERAL typedef DWORD
 
 .enum DBLITERALENUM {
     DBLITERAL_INVALID	= 0,
@@ -3156,7 +2911,7 @@ DEFINE_IIDX(IDBInfo, "0c733a89-2a1c-11ce-ade5-00aa0044773d")
 
     GetKeywords		proc :ptr
     GetLiteralInfo	proc :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3165,7 +2920,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBDataSourceAdmin_INTERFACE_DEFINED__
-__IDBDataSourceAdmin_INTERFACE_DEFINED__ equ 1
+define __IDBDataSourceAdmin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBDataSourceAdmin, "0c733a7a-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3175,7 +2930,7 @@ DEFINE_IIDX(IDBDataSourceAdmin, "0c733a7a-2a1c-11ce-ade5-00aa0044773d")
     DestroyDataSource	proc
     GetCreationProperties proc :ULONG, :ptr, :ptr, :ptr, :ptr
     ModifyDataSource	proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3186,7 +2941,7 @@ if( OLEDBVER GE 0x0150 )
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBAsynchNotify_INTERFACE_DEFINED__
-__IDBAsynchNotify_INTERFACE_DEFINED__ equ 1
+define __IDBAsynchNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBAsynchNotify, "0c733a96-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3195,7 +2950,7 @@ DEFINE_IIDX(IDBAsynchNotify, "0c733a96-2a1c-11ce-ade5-00aa0044773d")
     OnLowResource	proc :DB_DWRESERVE
     OnProgress		proc :HCHAPTER, :DBASYNCHOP, :DBCOUNTITEM, :DBCOUNTITEM, :DBASYNCHPHASE, :LPOLESTR
     OnStop		proc :HCHAPTER, :DBASYNCHOP, :HRESULT, :LPOLESTR
-    .ends
+   .ends
 
 endif
 
@@ -3204,7 +2959,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBAsynchStatus_INTERFACE_DEFINED__
-__IDBAsynchStatus_INTERFACE_DEFINED__ equ 1
+define __IDBAsynchStatus_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBAsynchStatus, "0c733a95-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3212,7 +2967,7 @@ DEFINE_IIDX(IDBAsynchStatus, "0c733a95-2a1c-11ce-ade5-00aa0044773d")
 
     Abort		proc :HCHAPTER, :DBASYNCHOP
     GetStatus		proc :HCHAPTER, :DBASYNCHOP, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3222,7 +2977,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISessionProperties_INTERFACE_DEFINED__
-__ISessionProperties_INTERFACE_DEFINED__ equ 1
+define __ISessionProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISessionProperties, "0c733a85-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3230,7 +2985,7 @@ DEFINE_IIDX(ISessionProperties, "0c733a85-2a1c-11ce-ade5-00aa0044773d")
 
     GetProperties	proc :ULONG, :ptr, :ptr, :ptr
     SetProperties	proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3239,7 +2994,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IIndexDefinition_INTERFACE_DEFINED__
-__IIndexDefinition_INTERFACE_DEFINED__ equ 1
+define __IIndexDefinition_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IIndexDefinition, "0c733a68-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3247,7 +3002,7 @@ DEFINE_IIDX(IIndexDefinition, "0c733a68-2a1c-11ce-ade5-00aa0044773d")
 
     CreateIndex		proc :ptr, :ptr, :DBORDINAL, :ptr, :ULONG
     DropIndex		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3256,7 +3011,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITableDefinition_INTERFACE_DEFINED__
-__ITableDefinition_INTERFACE_DEFINED__ equ 1
+define __ITableDefinition_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITableDefinition, "0c733a86-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3266,7 +3021,7 @@ DEFINE_IIDX(ITableDefinition, "0c733a86-2a1c-11ce-ade5-00aa0044773d")
     DropTable		proc :ptr
     AddColumn		proc :ptr, :ptr, :ptr
     DropColumn		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3275,14 +3030,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IOpenRowset_INTERFACE_DEFINED__
-__IOpenRowset_INTERFACE_DEFINED__ equ 1
+define __IOpenRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOpenRowset, "0c733a69-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IOpenRowset : public IUnknown
 
     OpenRowset		proc :ptr, :ptr, :ptr, :REFIID, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3291,7 +3046,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBSchemaRowset_INTERFACE_DEFINED__
-__IDBSchemaRowset_INTERFACE_DEFINED__ equ 1
+define __IDBSchemaRowset_INTERFACE_DEFINED__
 
 
 CRESTRICTIONS_DBSCHEMA_ASSERTIONS equ 3
@@ -3354,7 +3109,7 @@ DEFINE_IIDX(IDBSchemaRowset, "0c733a7b-2a1c-11ce-ade5-00aa0044773d")
 
     GetRowset		proc :ptr, :REFGUID, :ULONG, :ptr, :REFIID, :ULONG, :ptr, :ptr
     GetSchemas		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3364,7 +3119,7 @@ if( OLEDBVER GE 0x0200 )
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMDDataset_INTERFACE_DEFINED__
-__IMDDataset_INTERFACE_DEFINED__ equ 1
+define __IMDDataset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMDDataset, "a07cccd1-8148-11d0-87bb-00c04fc33942")
 
@@ -3375,7 +3130,7 @@ DEFINE_IIDX(IMDDataset, "a07cccd1-8148-11d0-87bb-00c04fc33942")
     GetAxisRowset	proc :ptr, :DBCOUNTITEM, :REFIID, :ULONG, :ptr, :ptr
     GetCellData		proc :HACCESSOR, :DBORDINAL, :DBORDINAL, :ptr
     GetSpecification	proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3384,7 +3139,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMDFind_INTERFACE_DEFINED__
-__IMDFind_INTERFACE_DEFINED__ equ 1
+define __IMDFind_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMDFind, "a07cccd2-8148-11d0-87bb-00c04fc33942")
 
@@ -3392,7 +3147,7 @@ DEFINE_IIDX(IMDFind, "a07cccd2-8148-11d0-87bb-00c04fc33942")
 
     FindCell		proc :DBORDINAL, :DBCOUNTITEM, :ptr, :ptr
     FindTuple		proc :ULONG, :DBORDINAL, :DBCOUNTITEM, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3401,14 +3156,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IMDRangeRowset_INTERFACE_DEFINED__
-__IMDRangeRowset_INTERFACE_DEFINED__ equ 1
+define __IMDRangeRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMDRangeRowset, "0c733aa0-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IMDRangeRowset : public IUnknown
 
     GetRangeRowset	proc :ptr, :DBORDINAL, :DBORDINAL, :REFIID, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3417,7 +3172,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IAlterTable_INTERFACE_DEFINED__
-__IAlterTable_INTERFACE_DEFINED__ equ 1
+define __IAlterTable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAlterTable, "0c733aa5-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3425,7 +3180,7 @@ DEFINE_IIDX(IAlterTable, "0c733aa5-2a1c-11ce-ade5-00aa0044773d")
 
     AlterColumn		proc :ptr, :ptr, :DBCOLUMNDESCFLAGS, :ptr
     AlterTable		proc :ptr, :ptr, :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3434,14 +3189,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IAlterIndex_INTERFACE_DEFINED__
-__IAlterIndex_INTERFACE_DEFINED__ equ 1
+define __IAlterIndex_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAlterIndex, "0c733aa6-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IAlterIndex : public IUnknown
 
     AlterIndex		proc :ptr, :ptr, :ptr, :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3450,14 +3205,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetChapterMember_INTERFACE_DEFINED__
-__IRowsetChapterMember_INTERFACE_DEFINED__ equ 1
+define __IRowsetChapterMember_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetChapterMember, "0c733aa8-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowsetChapterMember : public IUnknown
 
     IsRowInChapter	proc :HCHAPTER, :HROW
-    .ends
+   .ends
 
 endif
 
@@ -3466,7 +3221,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandPersist_INTERFACE_DEFINED__
-__ICommandPersist_INTERFACE_DEFINED__ equ 1
+define __ICommandPersist_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommandPersist, "0c733aa7-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3476,7 +3231,7 @@ DEFINE_IIDX(ICommandPersist, "0c733aa7-2a1c-11ce-ade5-00aa0044773d")
     GetCurrentCommand	proc :ptr
     LoadCommand		proc :ptr, :DWORD
     SaveCommand		proc :ptr, :DWORD
-    .ends
+   .ends
 
 endif
 
@@ -3485,7 +3240,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetRefresh_INTERFACE_DEFINED__
-__IRowsetRefresh_INTERFACE_DEFINED__ equ 1
+define __IRowsetRefresh_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetRefresh, "0c733aa9-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3493,7 +3248,7 @@ DEFINE_IIDX(IRowsetRefresh, "0c733aa9-2a1c-11ce-ade5-00aa0044773d")
 
     RefreshVisibleData	proc :HCHAPTER, :DBCOUNTITEM, :ptr, :BOOL, :ptr, :ptr, :ptr
     GetLastVisibleData	proc :HROW, :HACCESSOR, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3502,14 +3257,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IParentRowset_INTERFACE_DEFINED__
-__IParentRowset_INTERFACE_DEFINED__ equ 1
+define __IParentRowset_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IParentRowset, "0c733aaa-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IParentRowset : public IUnknown
 
     GetChildRowset	proc :ptr, :DBORDINAL, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3519,7 +3274,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IErrorRecords_INTERFACE_DEFINED__
-__IErrorRecords_INTERFACE_DEFINED__ equ 1
+define __IErrorRecords_INTERFACE_DEFINED__
 
 IDENTIFIER_SDK_MASK	equ 0xF0000000
 IDENTIFIER_SDK_ERROR	equ 0x10000000
@@ -3541,7 +3296,7 @@ DEFINE_IIDX(IErrorRecords, "0c733a67-2a1c-11ce-ade5-00aa0044773d")
     GetErrorInfo	proc :ULONG, :LCID, :ptr
     GetErrorParameters	proc :ULONG, :ptr
     GetRecordCount	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3550,7 +3305,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IErrorLookup_INTERFACE_DEFINED__
-__IErrorLookup_INTERFACE_DEFINED__ equ 1
+define __IErrorLookup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IErrorLookup, "0c733a66-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3559,7 +3314,7 @@ DEFINE_IIDX(IErrorLookup, "0c733a66-2a1c-11ce-ade5-00aa0044773d")
     GetErrorDescription proc :HRESULT, :DWORD, :ptr, :LCID, :ptr, :ptr
     GetHelpInfo		proc :HRESULT, :DWORD, :LCID, :ptr, :ptr
     ReleaseErrors	proc :DWORD
-    .ends
+   .ends
 
 endif
 
@@ -3568,14 +3323,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISQLErrorInfo_INTERFACE_DEFINED__
-__ISQLErrorInfo_INTERFACE_DEFINED__ equ 1
+define __ISQLErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISQLErrorInfo, "0c733a74-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ISQLErrorInfo : public IUnknown
 
     GetSQLInfo		proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3584,14 +3339,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IGetDataSource_INTERFACE_DEFINED__
-__IGetDataSource_INTERFACE_DEFINED__ equ 1
+define __IGetDataSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetDataSource, "0c733a75-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IGetDataSource : public IUnknown
 
     GetDataSource	proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3600,7 +3355,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITransactionLocal_INTERFACE_DEFINED__
-__ITransactionLocal_INTERFACE_DEFINED__ equ 1
+define __ITransactionLocal_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionLocal, "0c733a5f-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3608,7 +3363,7 @@ DEFINE_IIDX(ITransactionLocal, "0c733a5f-2a1c-11ce-ade5-00aa0044773d")
 
     GetOptionsObject	proc :ptr
     StartTransaction	proc :ISOLEVEL, :ULONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3617,7 +3372,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITransactionJoin_INTERFACE_DEFINED__
-__ITransactionJoin_INTERFACE_DEFINED__ equ 1
+define __ITransactionJoin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionJoin, "0c733a5e-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3625,7 +3380,7 @@ DEFINE_IIDX(ITransactionJoin, "0c733a5e-2a1c-11ce-ade5-00aa0044773d")
 
     GetOptionsObject	proc :ptr
     JoinTransaction	proc :ptr, :ISOLEVEL, :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3634,14 +3389,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITransactionObject_INTERFACE_DEFINED__
-__ITransactionObject_INTERFACE_DEFINED__ equ 1
+define __ITransactionObject_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITransactionObject, "0c733a60-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ITransactionObject : public IUnknown
 
     GetTransactionObject proc :ULONG, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3658,7 +3413,7 @@ include accctrl.inc
 endif
 
 ifndef __ITrusteeAdmin_INTERFACE_DEFINED__
-__ITrusteeAdmin_INTERFACE_DEFINED__ equ 1
+define __ITrusteeAdmin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITrusteeAdmin, "0c733aa1-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3669,7 +3424,7 @@ DEFINE_IIDX(ITrusteeAdmin, "0c733aa1-2a1c-11ce-ade5-00aa0044773d")
     DeleteTrustee	proc :ptr
     SetTrusteeProperties proc :ptr, :ULONG, :ptr
     GetTrusteeProperties proc :ptr, :ULONG, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3678,7 +3433,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITrusteeGroupAdmin_INTERFACE_DEFINED__
-__ITrusteeGroupAdmin_INTERFACE_DEFINED__ equ 1
+define __ITrusteeGroupAdmin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITrusteeGroupAdmin, "0c733aa2-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3689,7 +3444,7 @@ DEFINE_IIDX(ITrusteeGroupAdmin, "0c733aa2-2a1c-11ce-ade5-00aa0044773d")
     IsMember		proc :ptr, :ptr, :ptr
     GetMembers		proc :ptr, :ptr, :ptr
     GetMemberships	proc :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3698,7 +3453,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IObjectAccessControl_INTERFACE_DEFINED__
-__IObjectAccessControl_INTERFACE_DEFINED__ equ 1
+define __IObjectAccessControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IObjectAccessControl, "0c733aa3-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3709,7 +3464,7 @@ DEFINE_IIDX(IObjectAccessControl, "0c733aa3-2a1c-11ce-ade5-00aa0044773d")
     IsObjectAccessAllowed proc :ptr, :ptr, :ptr
     SetObjectAccessRights proc :ptr, :ULONG, :ptr
     SetObjectOwner	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3718,10 +3473,10 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ISecurityInfo_INTERFACE_DEFINED__
-__ISecurityInfo_INTERFACE_DEFINED__ equ 1
+define __ISecurityInfo_INTERFACE_DEFINED__
 
 if( OLEDBVER GE 0x0210 )
-ACCESS_MASK		typedef DWORD
+ACCESS_MASK typedef DWORD
 
 
 .enum ACCESS_MASKENUM {
@@ -3753,7 +3508,7 @@ DEFINE_IIDX(ISecurityInfo, "0c733aa4-2a1c-11ce-ade5-00aa0044773d")
     GetCurrentTrustee	proc :ptr
     GetObjectTypes	proc :ptr, :ptr
     GetPermissions	proc :GUID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3764,19 +3519,19 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ITableCreation_INTERFACE_DEFINED__
-__ITableCreation_INTERFACE_DEFINED__ equ 1
+define __ITableCreation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITableCreation, "0c733abc-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ITableCreation : public ITableDefinition
 
     GetTableDefinition	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ITableDefinitionWithConstraints_INTERFACE_DEFINED__
-__ITableDefinitionWithConstraints_INTERFACE_DEFINED__ equ 1
+define __ITableDefinitionWithConstraints_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ITableDefinitionWithConstraints, "0c733aab-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3785,7 +3540,7 @@ DEFINE_IIDX(ITableDefinitionWithConstraints, "0c733aab-2a1c-11ce-ade5-00aa004477
     AddConstraint	proc :ptr, :ptr
     CreateTableWithConstraints proc :ptr, :ptr, :DBORDINAL, :ptr, :ULONG, :ptr, :REFIID, :ULONG, :ptr, :ptr, :ptr
     DropConstraint	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3796,7 +3551,7 @@ ifndef UNDER_CE
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRow_INTERFACE_DEFINED__
-__IRow_INTERFACE_DEFINED__ equ 1
+define __IRow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRow, "0c733ab4-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3805,7 +3560,7 @@ DEFINE_IIDX(IRow, "0c733ab4-2a1c-11ce-ade5-00aa0044773d")
     GetColumns		proc :DBORDINAL, :ptr
     GetSourceRowset	proc :REFIID, :ptr, :ptr
     Open		proc :ptr, :ptr, :REFGUID, :DWORD, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3814,14 +3569,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowChange_INTERFACE_DEFINED__
-__IRowChange_INTERFACE_DEFINED__ equ 1
+define __IRowChange_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowChange, "0c733ab5-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowChange : public IUnknown
 
     SetColumns		proc :DBORDINAL, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3830,7 +3585,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowSchemaChange_INTERFACE_DEFINED__
-__IRowSchemaChange_INTERFACE_DEFINED__ equ 1
+define __IRowSchemaChange_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowSchemaChange, "0c733aae-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3838,7 +3593,7 @@ DEFINE_IIDX(IRowSchemaChange, "0c733aae-2a1c-11ce-ade5-00aa0044773d")
 
     DeleteColumns	proc :DBORDINAL, :ptr, :ptr
     AddColumns		proc :DBORDINAL, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3847,7 +3602,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IGetRow_INTERFACE_DEFINED__
-__IGetRow_INTERFACE_DEFINED__ equ 1
+define __IGetRow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetRow, "0c733aaf-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3855,7 +3610,7 @@ DEFINE_IIDX(IGetRow, "0c733aaf-2a1c-11ce-ade5-00aa0044773d")
 
     GetRowFromHROW	proc :ptr, :HROW, :REFIID, :ptr
     GetURLFromHROW	proc :HROW, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3864,21 +3619,21 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IBindResource_INTERFACE_DEFINED__
-__IBindResource_INTERFACE_DEFINED__ equ 1
+define __IBindResource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBindResource, "0c733ab1-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IBindResource : public IUnknown
 
     Bind		proc :ptr, :LPCOLESTR, :DBBINDURLFLAG, :REFGUID, :REFIID, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IScopedOperations_INTERFACE_DEFINED__
-__IScopedOperations_INTERFACE_DEFINED__ equ 1
+define __IScopedOperations_INTERFACE_DEFINED__
 
-DBCOPYFLAGS		typedef DWORD
+DBCOPYFLAGS typedef DWORD
 
 .enum DBCOPYFLAGSENUM {
     DBCOPY_ASYNC		= 0x100,
@@ -3887,7 +3642,7 @@ DBCOPYFLAGS		typedef DWORD
     DBCOPY_NON_RECURSIVE	= 0x800,
     DBCOPY_ATOMIC		= 0x1000
     }
-DBMOVEFLAGS		typedef DWORD
+DBMOVEFLAGS typedef DWORD
 
 
 .enum DBMOVEFLAGSENUM {
@@ -3897,7 +3652,7 @@ DBMOVEFLAGS		typedef DWORD
     DBMOVE_ALLOW_EMULATION	= 0x400,
     DBMOVE_ATOMIC		= 0x1000
     }
-DBDELETEFLAGS		typedef DWORD
+DBDELETEFLAGS typedef DWORD
 
 
 .enum DBDELETEFLAGSENUM {
@@ -3913,26 +3668,23 @@ DEFINE_IIDX(IScopedOperations, "0c733ab0-2a1c-11ce-ade5-00aa0044773d")
     Move		proc :DBCOUNTITEM, :ptr, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr
     Delete		proc :DBCOUNTITEM, :ptr, :DWORD, :ptr
     OpenRowset		proc :ptr, :ptr, :ptr, :REFIID, :ULONG
-    .ends
+   .ends
 
 endif
 
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICreateRow_INTERFACE_DEFINED__
-__ICreateRow_INTERFACE_DEFINED__ equ 1
+define __ICreateRow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateRow, "0c733ab2-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ICreateRow : public IUnknown
 
     CreateRow		proc :ptr, :LPCOLESTR, :DBBINDURLFLAG, :REFGUID, :REFIID, :ptr, :ptr, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3941,14 +3693,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IDBBinderProperties_INTERFACE_DEFINED__
-__IDBBinderProperties_INTERFACE_DEFINED__ equ 1
+define __IDBBinderProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDBBinderProperties, "0c733ab3-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IDBBinderProperties : public IDBProperties
 
     Reset		proc
-    .ends
+   .ends
 
 endif
 
@@ -3957,14 +3709,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IColumnsInfo2_INTERFACE_DEFINED__
-__IColumnsInfo2_INTERFACE_DEFINED__ equ 1
+define __IColumnsInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IColumnsInfo2, "0c733ab8-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IColumnsInfo2 : public IColumnsInfo
 
     GetRestrictedColumnInfo proc :DBORDINAL, :ptr, :DWORD, :ptr, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -3973,7 +3725,7 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRegisterProvider_INTERFACE_DEFINED__
-__IRegisterProvider_INTERFACE_DEFINED__ equ 1
+define __IRegisterProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRegisterProvider, "0c733ab9-2a1c-11ce-ade5-00aa0044773d")
 
@@ -3982,7 +3734,7 @@ DEFINE_IIDX(IRegisterProvider, "0c733ab9-2a1c-11ce-ade5-00aa0044773d")
     GetURLMapping	proc :LPCOLESTR, :DB_DWRESERVE, :ptr
     SetURLMapping	proc :LPCOLESTR, :DB_DWRESERVE, :REFCLSID
     UnregisterProvider	proc :LPCOLESTR, :DB_DWRESERVE, :REFCLSID
-    .ends
+   .ends
 
 endif
 
@@ -3993,14 +3745,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IGetSession_INTERFACE_DEFINED__
-__IGetSession_INTERFACE_DEFINED__ equ 1
+define __IGetSession_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetSession, "0c733aba-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IGetSession : public IUnknown
 
     GetSession		proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -4009,26 +3761,23 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IGetSourceRow_INTERFACE_DEFINED__
-__IGetSourceRow_INTERFACE_DEFINED__ equ 1
+define __IGetSourceRow_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGetSourceRow, "0c733abb-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IGetSourceRow : public IUnknown
 
     GetSourceRow	proc :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 
-endif
-
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetCurrentIndex_INTERFACE_DEFINED__
-__IRowsetCurrentIndex_INTERFACE_DEFINED__ equ 1
+define __IRowsetCurrentIndex_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetCurrentIndex, "0c733abd-2a1c-11ce-ade5-00aa0044773d")
 
@@ -4036,7 +3785,7 @@ DEFINE_IIDX(IRowsetCurrentIndex, "0c733abd-2a1c-11ce-ade5-00aa0044773d")
 
     GetIndex		proc :ptr
     SetIndex		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -4048,7 +3797,7 @@ if( OLEDBVER GE 0x0260 )
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __ICommandStream_INTERFACE_DEFINED__
-__ICommandStream_INTERFACE_DEFINED__ equ 1
+define __ICommandStream_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICommandStream, "0c733abf-2a1c-11ce-ade5-00aa0044773d")
 
@@ -4056,7 +3805,7 @@ DEFINE_IIDX(ICommandStream, "0c733abf-2a1c-11ce-ade5-00aa0044773d")
 
     GetCommandStream	proc :ptr, :ptr, :ptr
     SetCommandStream	proc :REFIID, :REFGUID, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -4065,14 +3814,14 @@ endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __IRowsetBookmark_INTERFACE_DEFINED__
-__IRowsetBookmark_INTERFACE_DEFINED__ equ 1
+define __IRowsetBookmark_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRowsetBookmark, "0c733ac2-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef IRowsetBookmark : public IUnknown
 
     PositionOnBookmark	proc :HCHAPTER, :DBBKMARK, :ptr
-    .ends
+   .ends
 
 endif
 

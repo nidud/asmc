@@ -1,6 +1,5 @@
 ifndef __WINCRYPT_H__
-__WINCRYPT_H__ equ <>
-.pragma list(push, 0)
+define __WINCRYPT_H__
 ifndef _WINDEF_
  include windef.inc
 endif
@@ -13,7 +12,7 @@ include winapifamily.inc
 if(_WIN32_WINNT GE 0x0400)
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ 1
+define _HRESULT_DEFINED
 HRESULT typedef LONG
 endif
 
@@ -6530,6 +6529,4 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ifndef _WINCRYPT_NO_DPAPI
 include dpapi.inc
 endif
-
-.pragma list(pop)
 endif

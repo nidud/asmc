@@ -1,7 +1,5 @@
-.pragma list(push, 0)
 ifndef _WINBASE_
-_WINBASE_ equ <>
-
+define _WINBASE_
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -13,10 +11,10 @@ ifndef _WINDEF_
 endif
 
 ifndef _WIN32_WINDOWS
-_WIN32_WINDOWS equ 0x400
+define _WIN32_WINDOWS 0x400
 endif
 ifndef _WIN32_WINNT
-_WIN32_WINNT equ _WIN32_WINDOWS
+define _WIN32_WINNT _WIN32_WINDOWS
 endif
 
 GetImageBase macro
@@ -9021,5 +9019,4 @@ ReadThreadProfilingData proto WINAPI \
 endif ; (_WIN32_WINNT >= 0x0601)
 
 endif
-.pragma list(pop)
 

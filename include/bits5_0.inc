@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -19,16 +19,6 @@ endif
 
 ifndef __bits5_0_h__
 define __bits5_0_h__
-
-ifndef __IBackgroundCopyJob5_FWD_DEFINED__
-__IBackgroundCopyJob5_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyFile5_FWD_DEFINED__
-__IBackgroundCopyFile5_FWD_DEFINED__ equ 1
-endif
-ifndef __BackgroundCopyManager5_0_FWD_DEFINED__
-__BackgroundCopyManager5_0_FWD_DEFINED__ equ 1
-endif
 
 include bits.inc
 include bits1_5.inc
@@ -91,7 +81,7 @@ String			LPWSTR ?
 BITS_FILE_PROPERTY_VALUE ENDS
 
 ifndef __IBackgroundCopyJob5_INTERFACE_DEFINED__
-__IBackgroundCopyJob5_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyJob5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyJob5, "E847030C-BBBA-4657-AF6D-484AA42BF1FE")
 
@@ -104,7 +94,7 @@ DEFINE_IIDX(IBackgroundCopyJob5, "E847030C-BBBA-4657-AF6D-484AA42BF1FE")
 endif
 
 ifndef __IBackgroundCopyFile5_INTERFACE_DEFINED__
-__IBackgroundCopyFile5_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyFile5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyFile5, "85C1657F-DAFC-40E8-8834-DF18EA25717E")
 
@@ -117,16 +107,12 @@ DEFINE_IIDX(IBackgroundCopyFile5, "85C1657F-DAFC-40E8-8834-DF18EA25717E")
 endif
 
 ifndef __BackgroundCopyManager5_0_LIBRARY_DEFINED__
-__BackgroundCopyManager5_0_LIBRARY_DEFINED__ equ 1
+define __BackgroundCopyManager5_0_LIBRARY_DEFINED__
 
 externdef LIBID_BackgroundCopyManager5_0:IID
 
 DEFINE_GUIDS(CLSID_BackgroundCopyManager5_0, "1ECCA34C-E88A-44E3-8D6A-8921BDE9E452")
 
 endif
-
 endif
-
 endif
-
-

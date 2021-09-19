@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,239 +18,15 @@ include ole2.inc
 endif
 
 ifndef __wbemdisp_h__
-__wbemdisp_h__ equ <>
-
-ifndef __ISWbemServices_FWD_DEFINED__
-__ISWbemServices_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemLocator_FWD_DEFINED__
-__ISWbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObject_FWD_DEFINED__
-__ISWbemObject_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectSet_FWD_DEFINED__
-__ISWbemObjectSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemNamedValue_FWD_DEFINED__
-__ISWbemNamedValue_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemNamedValueSet_FWD_DEFINED__
-__ISWbemNamedValueSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemQualifier_FWD_DEFINED__
-__ISWbemQualifier_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemQualifierSet_FWD_DEFINED__
-__ISWbemQualifierSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemProperty_FWD_DEFINED__
-__ISWbemProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPropertySet_FWD_DEFINED__
-__ISWbemPropertySet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemMethod_FWD_DEFINED__
-__ISWbemMethod_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemMethodSet_FWD_DEFINED__
-__ISWbemMethodSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemEventSource_FWD_DEFINED__
-__ISWbemEventSource_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectPath_FWD_DEFINED__
-__ISWbemObjectPath_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemLastError_FWD_DEFINED__
-__ISWbemLastError_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSinkEvents_FWD_DEFINED__
-__ISWbemSinkEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSink_FWD_DEFINED__
-__ISWbemSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSecurity_FWD_DEFINED__
-__ISWbemSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPrivilege_FWD_DEFINED__
-__ISWbemPrivilege_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPrivilegeSet_FWD_DEFINED__
-__ISWbemPrivilegeSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemServicesEx_FWD_DEFINED__
-__ISWbemServicesEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectEx_FWD_DEFINED__
-__ISWbemObjectEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemDateTime_FWD_DEFINED__
-__ISWbemDateTime_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemRefresher_FWD_DEFINED__
-__ISWbemRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemRefreshableItem_FWD_DEFINED__
-__ISWbemRefreshableItem_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemLocator_FWD_DEFINED__
-__SWbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemNamedValueSet_FWD_DEFINED__
-__SWbemNamedValueSet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemObjectPath_FWD_DEFINED__
-__SWbemObjectPath_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemLastError_FWD_DEFINED__
-__SWbemLastError_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemSink_FWD_DEFINED__
-__SWbemSink_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemDateTime_FWD_DEFINED__
-__SWbemDateTime_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemRefresher_FWD_DEFINED__
-__SWbemRefresher_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemServices_FWD_DEFINED__
-__SWbemServices_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemServicesEx_FWD_DEFINED__
-__SWbemServicesEx_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemObject_FWD_DEFINED__
-__SWbemObject_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemObjectEx_FWD_DEFINED__
-__SWbemObjectEx_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemObjectSet_FWD_DEFINED__
-__SWbemObjectSet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemNamedValue_FWD_DEFINED__
-__SWbemNamedValue_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemQualifier_FWD_DEFINED__
-__SWbemQualifier_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemQualifierSet_FWD_DEFINED__
-__SWbemQualifierSet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemProperty_FWD_DEFINED__
-__SWbemProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemPropertySet_FWD_DEFINED__
-__SWbemPropertySet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemMethod_FWD_DEFINED__
-__SWbemMethod_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemMethodSet_FWD_DEFINED__
-__SWbemMethodSet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemEventSource_FWD_DEFINED__
-__SWbemEventSource_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemSecurity_FWD_DEFINED__
-__SWbemSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemPrivilege_FWD_DEFINED__
-__SWbemPrivilege_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemPrivilegeSet_FWD_DEFINED__
-__SWbemPrivilegeSet_FWD_DEFINED__ equ 1
-endif
-ifndef __SWbemRefreshableItem_FWD_DEFINED__
-__SWbemRefreshableItem_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemLocator_FWD_DEFINED__
-__ISWbemLocator_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemServices_FWD_DEFINED__
-__ISWbemServices_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemServicesEx_FWD_DEFINED__
-__ISWbemServicesEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObject_FWD_DEFINED__
-__ISWbemObject_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectEx_FWD_DEFINED__
-__ISWbemObjectEx_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemLastError_FWD_DEFINED__
-__ISWbemLastError_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectSet_FWD_DEFINED__
-__ISWbemObjectSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemNamedValueSet_FWD_DEFINED__
-__ISWbemNamedValueSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemNamedValue_FWD_DEFINED__
-__ISWbemNamedValue_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemObjectPath_FWD_DEFINED__
-__ISWbemObjectPath_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemProperty_FWD_DEFINED__
-__ISWbemProperty_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPropertySet_FWD_DEFINED__
-__ISWbemPropertySet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemQualifier_FWD_DEFINED__
-__ISWbemQualifier_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemQualifierSet_FWD_DEFINED__
-__ISWbemQualifierSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemMethod_FWD_DEFINED__
-__ISWbemMethod_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemMethodSet_FWD_DEFINED__
-__ISWbemMethodSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSink_FWD_DEFINED__
-__ISWbemSink_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSinkEvents_FWD_DEFINED__
-__ISWbemSinkEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemEventSource_FWD_DEFINED__
-__ISWbemEventSource_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemSecurity_FWD_DEFINED__
-__ISWbemSecurity_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPrivilege_FWD_DEFINED__
-__ISWbemPrivilege_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemPrivilegeSet_FWD_DEFINED__
-__ISWbemPrivilegeSet_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemDateTime_FWD_DEFINED__
-__ISWbemDateTime_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemRefreshableItem_FWD_DEFINED__
-__ISWbemRefreshableItem_FWD_DEFINED__ equ 1
-endif
-ifndef __ISWbemRefresher_FWD_DEFINED__
-__ISWbemRefresher_FWD_DEFINED__ equ 1
-endif
+define __wbemdisp_h__
 
 include dispex.inc
-
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifndef __WbemScripting_LIBRARY_DEFINED__
-__WbemScripting_LIBRARY_DEFINED__ equ 1
+define __WbemScripting_LIBRARY_DEFINED__
 
 DEFINE_IIDX(WbemChangeFlagEnum, "4A249B72-FC9A-11d1-8B1E-00600806D9B6")
 .enum WbemChangeFlagEnum {
@@ -527,7 +303,7 @@ DEFINE_IIDX(WbemObjectTextFormatEnum, "09FF1992-EA0E-11d3-B391-00105A1F473A")
 externdef LIBID_WbemScripting:IID
 
 ifndef __ISWbemServices_INTERFACE_DEFINED__
-__ISWbemServices_INTERFACE_DEFINED__ equ 1
+define __ISWbemServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemServices, "76A6415C-CB41-11d1-8B02-00600806D9B6")
 
@@ -552,12 +328,12 @@ DEFINE_IIDX(ISWbemServices, "76A6415C-CB41-11d1-8B02-00600806D9B6")
     ExecMethod		proc :BSTR, :BSTR, :ptr, :LONG, :ptr, :ptr
     ExecMethodAsync	proc :ptr, :BSTR, :BSTR, :ptr, :LONG, :ptr, :ptr
     get_Security_	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemLocator_INTERFACE_DEFINED__
-__ISWbemLocator_INTERFACE_DEFINED__ equ 1
+define __ISWbemLocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemLocator, "76A6415B-CB41-11d1-8B02-00600806D9B6")
 
@@ -565,12 +341,12 @@ DEFINE_IIDX(ISWbemLocator, "76A6415B-CB41-11d1-8B02-00600806D9B6")
 
     ConnectServer	proc :BSTR, :BSTR, :BSTR, :BSTR, :BSTR, :BSTR, :LONG, :ptr, :ptr
     get_Security_	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemObject_INTERFACE_DEFINED__
-__ISWbemObject_INTERFACE_DEFINED__ equ 1
+define __ISWbemObject_INTERFACE_DEFINED__
 
 WBEMS_DISPID_DERIVATION equ ( 23 )
 
@@ -603,12 +379,12 @@ DEFINE_IIDX(ISWbemObject, "76A6415A-CB41-11d1-8B02-00600806D9B6")
     get_Derivation_	proc :ptr
     get_Path_		proc :ptr
     get_Security_	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemObjectSet_INTERFACE_DEFINED__
-__ISWbemObjectSet_INTERFACE_DEFINED__ equ 1
+define __ISWbemObjectSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemObjectSet, "76A6415F-CB41-11d1-8B02-00600806D9B6")
 
@@ -619,12 +395,12 @@ DEFINE_IIDX(ISWbemObjectSet, "76A6415F-CB41-11d1-8B02-00600806D9B6")
     get_Count		proc :ptr
     get_Security_	proc :ptr
     ItemIndex		proc :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemNamedValue_INTERFACE_DEFINED__
-__ISWbemNamedValue_INTERFACE_DEFINED__ equ 1
+define __ISWbemNamedValue_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemNamedValue, "76A64164-CB41-11d1-8B02-00600806D9B6")
 
@@ -633,12 +409,12 @@ DEFINE_IIDX(ISWbemNamedValue, "76A64164-CB41-11d1-8B02-00600806D9B6")
     get_Value		proc :ptr
     put_Value		proc :ptr
     get_Name		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemNamedValueSet_INTERFACE_DEFINED__
-__ISWbemNamedValueSet_INTERFACE_DEFINED__ equ 1
+define __ISWbemNamedValueSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemNamedValueSet, "CF2376EA-CE8C-11d1-8B05-00600806D9B6")
 
@@ -651,12 +427,12 @@ DEFINE_IIDX(ISWbemNamedValueSet, "CF2376EA-CE8C-11d1-8B05-00600806D9B6")
     Remove		proc :BSTR, :LONG
     Clone		proc :ptr
     DeleteAll		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemQualifier_INTERFACE_DEFINED__
-__ISWbemQualifier_INTERFACE_DEFINED__ equ 1
+define __ISWbemQualifier_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemQualifier, "79B05932-D3B7-11d1-8B06-00600806D9B6")
 
@@ -673,12 +449,12 @@ DEFINE_IIDX(ISWbemQualifier, "79B05932-D3B7-11d1-8B06-00600806D9B6")
     get_IsOverridable	proc :ptr
     put_IsOverridable	proc :VARIANT_BOOL
     get_IsAmended	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemQualifierSet_INTERFACE_DEFINED__
-__ISWbemQualifierSet_INTERFACE_DEFINED__ equ 1
+define __ISWbemQualifierSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemQualifierSet, "9B16ED16-D3DF-11d1-8B08-00600806D9B6")
 
@@ -689,12 +465,12 @@ DEFINE_IIDX(ISWbemQualifierSet, "9B16ED16-D3DF-11d1-8B08-00600806D9B6")
     get_Count		proc :ptr
     _Add		proc :BSTR, :ptr, :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL, :LONG, :ptr
     Remove		proc :BSTR, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemProperty_INTERFACE_DEFINED__
-__ISWbemProperty_INTERFACE_DEFINED__ equ 1
+define __ISWbemProperty_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemProperty, "1A388F98-D4BA-11d1-8B09-00600806D9B6")
 
@@ -708,12 +484,12 @@ DEFINE_IIDX(ISWbemProperty, "1A388F98-D4BA-11d1-8B09-00600806D9B6")
     get_CIMType		proc :ptr
     get_Qualifiers_	proc :ptr
     get_IsArray		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemPropertySet_INTERFACE_DEFINED__
-__ISWbemPropertySet_INTERFACE_DEFINED__ equ 1
+define __ISWbemPropertySet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemPropertySet, "DEA0A7B2-D4BA-11d1-8B09-00600806D9B6")
 
@@ -724,12 +500,12 @@ DEFINE_IIDX(ISWbemPropertySet, "DEA0A7B2-D4BA-11d1-8B09-00600806D9B6")
     get_Count		proc :ptr
     _Add		proc :BSTR, :WbemCimtypeEnum, :VARIANT_BOOL, :LONG, :ptr
     Remove		proc :BSTR, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemMethod_INTERFACE_DEFINED__
-__ISWbemMethod_INTERFACE_DEFINED__ equ 1
+define __ISWbemMethod_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemMethod, "422E8E90-D955-11d1-8B09-00600806D9B6")
 
@@ -740,12 +516,12 @@ DEFINE_IIDX(ISWbemMethod, "422E8E90-D955-11d1-8B09-00600806D9B6")
     get_InParameters	proc :ptr
     get_OutParameters	proc :ptr
     get_Qualifiers_	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemMethodSet_INTERFACE_DEFINED__
-__ISWbemMethodSet_INTERFACE_DEFINED__ equ 1
+define __ISWbemMethodSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemMethodSet, "C93BA292-D955-11d1-8B09-00600806D9B6")
 
@@ -754,12 +530,12 @@ DEFINE_IIDX(ISWbemMethodSet, "C93BA292-D955-11d1-8B09-00600806D9B6")
     get__NewEnum	proc :ptr
     Item		proc :BSTR, :LONG, :ptr
     get_Count		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemEventSource_INTERFACE_DEFINED__
-__ISWbemEventSource_INTERFACE_DEFINED__ equ 1
+define __ISWbemEventSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemEventSource, "27D54D92-0EBE-11d2-8B22-00600806D9B6")
 
@@ -767,12 +543,12 @@ DEFINE_IIDX(ISWbemEventSource, "27D54D92-0EBE-11d2-8B22-00600806D9B6")
 
     NextEvent		proc :LONG, :ptr
     get_Security_	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemObjectPath_INTERFACE_DEFINED__
-__ISWbemObjectPath_INTERFACE_DEFINED__ equ 1
+define __ISWbemObjectPath_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemObjectPath, "5791BC27-CE9C-11d1-97BF-0000F81E849C")
 
@@ -801,47 +577,47 @@ DEFINE_IIDX(ISWbemObjectPath, "5791BC27-CE9C-11d1-97BF-0000F81E849C")
     put_Locale		proc :BSTR
     get_Authority	proc :ptr
     put_Authority	proc :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemLastError_INTERFACE_DEFINED__
-__ISWbemLastError_INTERFACE_DEFINED__ equ 1
+define __ISWbemLastError_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemLastError, "D962DB84-D4BB-11d1-8B09-00600806D9B6")
 
 .comdef ISWbemLastError : public ISWbemObject
 
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemSinkEvents_DISPINTERFACE_DEFINED__
-__ISWbemSinkEvents_DISPINTERFACE_DEFINED__ equ 1
+define __ISWbemSinkEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemSinkEvents, "75718CA0-F029-11d1-A1AC-00C04FB6C223")
 
 .comdef ISWbemSinkEvents : public IDispatch
 
-    .ends
+   .ends
 
 endif
 
 
 ifndef __ISWbemSink_INTERFACE_DEFINED__
-__ISWbemSink_INTERFACE_DEFINED__ equ 1
+define __ISWbemSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemSink, "75718C9F-F029-11d1-A1AC-00C04FB6C223")
 
 .comdef ISWbemSink : public IDispatch
 
     Cancel		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemSecurity_INTERFACE_DEFINED__
-__ISWbemSecurity_INTERFACE_DEFINED__ equ 1
+define __ISWbemSecurity_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemSecurity, "B54D66E6-2287-11d2-8B33-00600806D9B6")
 
@@ -852,12 +628,12 @@ DEFINE_IIDX(ISWbemSecurity, "B54D66E6-2287-11d2-8B33-00600806D9B6")
     get_AuthenticationLevel proc :ptr
     put_AuthenticationLevel proc :WbemAuthenticationLevelEnum
     get_Privileges	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemPrivilege_INTERFACE_DEFINED__
-__ISWbemPrivilege_INTERFACE_DEFINED__ equ 1
+define __ISWbemPrivilege_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemPrivilege, "26EE67BD-5804-11d2-8B4A-00600806D9B6")
 
@@ -868,12 +644,12 @@ DEFINE_IIDX(ISWbemPrivilege, "26EE67BD-5804-11d2-8B4A-00600806D9B6")
     get_Name		proc :ptr
     get_DisplayName	proc :ptr
     get_Identifier	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemPrivilegeSet_INTERFACE_DEFINED__
-__ISWbemPrivilegeSet_INTERFACE_DEFINED__ equ 1
+define __ISWbemPrivilegeSet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemPrivilegeSet, "26EE67BF-5804-11d2-8B4A-00600806D9B6")
 
@@ -886,12 +662,12 @@ DEFINE_IIDX(ISWbemPrivilegeSet, "26EE67BF-5804-11d2-8B4A-00600806D9B6")
     Remove		proc :WbemPrivilegeEnum
     DeleteAll		proc
     AddAsString		proc :BSTR, :VARIANT_BOOL, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemServicesEx_INTERFACE_DEFINED__
-__ISWbemServicesEx_INTERFACE_DEFINED__ equ 1
+define __ISWbemServicesEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemServicesEx, "D2F68443-85DC-427e-91D8-366554CC754C")
 
@@ -899,12 +675,12 @@ DEFINE_IIDX(ISWbemServicesEx, "D2F68443-85DC-427e-91D8-366554CC754C")
 
     Put			proc :ptr, :LONG, :ptr, :ptr
     PutAsync		proc :ptr, :ptr, :LONG, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemObjectEx_INTERFACE_DEFINED__
-__ISWbemObjectEx_INTERFACE_DEFINED__ equ 1
+define __ISWbemObjectEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemObjectEx, "269AD56A-8A67-4129-BC8C-0506DCFE9880")
 
@@ -914,12 +690,12 @@ DEFINE_IIDX(ISWbemObjectEx, "269AD56A-8A67-4129-BC8C-0506DCFE9880")
     get_SystemProperties_ proc :ptr
     GetText_		proc :WbemObjectTextFormatEnum, :LONG, :ptr, :ptr
     SetFromText_	proc :BSTR, :WbemObjectTextFormatEnum, :LONG, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemDateTime_INTERFACE_DEFINED__
-__ISWbemDateTime_INTERFACE_DEFINED__ equ 1
+define __ISWbemDateTime_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemDateTime, "5E97458A-CF77-11d3-B38F-00105A1F473A")
 
@@ -965,12 +741,12 @@ DEFINE_IIDX(ISWbemDateTime, "5E97458A-CF77-11d3-B38F-00105A1F473A")
     SetVarDate		proc :DATE, :VARIANT_BOOL
     GetFileTime		proc :VARIANT_BOOL, :ptr
     SetFileTime		proc :BSTR, :VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemRefresher_INTERFACE_DEFINED__
-__ISWbemRefresher_INTERFACE_DEFINED__ equ 1
+define __ISWbemRefresher_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemRefresher, "14D8250E-D9C2-11d3-B38F-00105A1F473A")
 
@@ -986,12 +762,12 @@ DEFINE_IIDX(ISWbemRefresher, "14D8250E-D9C2-11d3-B38F-00105A1F473A")
     get_AutoReconnect	proc :ptr
     put_AutoReconnect	proc :VARIANT_BOOL
     DeleteAll		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ISWbemRefreshableItem_INTERFACE_DEFINED__
-__ISWbemRefreshableItem_INTERFACE_DEFINED__ equ 1
+define __ISWbemRefreshableItem_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISWbemRefreshableItem, "5AD4BF92-DAAB-11d3-B38F-00105A1F473A")
 
@@ -1003,7 +779,7 @@ DEFINE_IIDX(ISWbemRefreshableItem, "5AD4BF92-DAAB-11d3-B38F-00105A1F473A")
     get_Object		proc :ptr
     get_ObjectSet	proc :ptr
     Remove		proc :LONG
-    .ends
+   .ends
 
 endif
 

@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,59 +18,19 @@ include ole2.inc
 endif
 
 ifndef __d3d12sdklayers_h__
-__d3d12sdklayers_h__ equ 1
-ifndef __ID3D12Debug_FWD_DEFINED__
-__ID3D12Debug_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Debug1_FWD_DEFINED__
-__ID3D12Debug1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Debug2_FWD_DEFINED__
-__ID3D12Debug2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12Debug3_FWD_DEFINED__
-__ID3D12Debug3_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugDevice1_FWD_DEFINED__
-__ID3D12DebugDevice1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugDevice_FWD_DEFINED__
-__ID3D12DebugDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugDevice2_FWD_DEFINED__
-__ID3D12DebugDevice2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugCommandQueue_FWD_DEFINED__
-__ID3D12DebugCommandQueue_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugCommandList1_FWD_DEFINED__
-__ID3D12DebugCommandList1_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugCommandList_FWD_DEFINED__
-__ID3D12DebugCommandList_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12DebugCommandList2_FWD_DEFINED__
-__ID3D12DebugCommandList2_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12SharingContract_FWD_DEFINED__
-__ID3D12SharingContract_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D12InfoQueue_FWD_DEFINED__
-__ID3D12InfoQueue_FWD_DEFINED__ equ 1
-endif
+define __d3d12sdklayers_h__
 
 include oaidl.inc
 include ocidl.inc
 include d3d12.inc
 
 ifndef __ID3D12Debug_INTERFACE_DEFINED__
-__ID3D12Debug_INTERFACE_DEFINED__ equ 1
+define __ID3D12Debug_INTERFACE_DEFINED__
 
 .comdef ID3D12Debug : public IUnknown
 
     EnableDebugLayer	proc
-
-    .ends
+   .ends
 
 endif
 
@@ -81,39 +41,36 @@ endif
     }
 
 ifndef __ID3D12Debug1_INTERFACE_DEFINED__
-__ID3D12Debug1_INTERFACE_DEFINED__ equ 1
+define __ID3D12Debug1_INTERFACE_DEFINED__
 
 .comdef ID3D12Debug1 : public IUnknown
 
     EnableDebugLayer	proc
     SetEnableGPUBasedValidation proc :BOOL
     SetEnableSynchronizedCommandQueueValidation proc :BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Debug2_INTERFACE_DEFINED__
-__ID3D12Debug2_INTERFACE_DEFINED__ equ 1
+define __ID3D12Debug2_INTERFACE_DEFINED__
 
 .comdef ID3D12Debug2 : public IUnknown
 
     SetGPUBasedValidationFlags proc :D3D12_GPU_BASED_VALIDATION_FLAGS
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12Debug3_INTERFACE_DEFINED__
-__ID3D12Debug3_INTERFACE_DEFINED__ equ 1
+define __ID3D12Debug3_INTERFACE_DEFINED__
 
 .comdef ID3D12Debug3 : public ID3D12Debug
 
     SetEnableGPUBasedValidation proc :BOOL
     SetEnableSynchronizedCommandQueueValidation proc :BOOL
     SetGPUBasedValidationFlags proc :D3D12_GPU_BASED_VALIDATION_FLAGS
-
-    .ends
+   .ends
 
 endif
 
@@ -165,49 +122,49 @@ SlowdownFactor		FLOAT ?
 D3D12_DEBUG_DEVICE_GPU_SLOWDOWN_PERFORMANCE_FACTOR ENDS
 
 ifndef __ID3D12DebugDevice1_INTERFACE_DEFINED__
-__ID3D12DebugDevice1_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugDevice1_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugDevice1 : public IUnknown
 
     SetDebugParameter	proc :D3D12_DEBUG_DEVICE_PARAMETER_TYPE
     GetDebugParameter	proc :D3D12_DEBUG_DEVICE_PARAMETER_TYPE
     ReportLiveDeviceObjects proc :D3D12_RLDO_FLAGS
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12DebugDevice_INTERFACE_DEFINED__
-__ID3D12DebugDevice_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugDevice_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugDevice : public IUnknown
 
     SetFeatureMask	proc :D3D12_DEBUG_FEATURE
     GetFeatureMask	proc
     ReportLiveDeviceObjects proc :D3D12_RLDO_FLAGS
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12DebugDevice2_INTERFACE_DEFINED__
-__ID3D12DebugDevice2_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugDevice2_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugDevice2 : public ID3D12DebugDevice
 
     SetDebugParameter	proc :D3D12_DEBUG_DEVICE_PARAMETER_TYPE
     GetDebugParameter	proc :D3D12_DEBUG_DEVICE_PARAMETER_TYPE
-    .ends
+   .ends
 
 endif
 
 DEFINE_GUID(DXGI_DEBUG_D3D12, 0xcf59a98c, 0xa950, 0x4326, 0x91, 0xef, 0x9b, 0xba, 0xa1, 0x7b, 0xfd, 0x95);
 
 ifndef __ID3D12DebugCommandQueue_INTERFACE_DEFINED__
-__ID3D12DebugCommandQueue_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugCommandQueue_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugCommandQueue : public IUnknown
 
     AssertResourceState proc :ptr, :UINT, :UINT
-    .ends
+   .ends
 
 endif
 
@@ -220,42 +177,42 @@ ShaderPatchMode		D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE ?
 D3D12_DEBUG_COMMAND_LIST_GPU_BASED_VALIDATION_SETTINGS ENDS
 
 ifndef __ID3D12DebugCommandList1_INTERFACE_DEFINED__
-__ID3D12DebugCommandList1_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugCommandList1_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugCommandList1 : public IUnknown
 
     AssertResourceState proc :ptr, :UINT, :UINT
     SetDebugParameter	proc :D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE
     GetDebugParameter	proc :D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12DebugCommandList_INTERFACE_DEFINED__
-__ID3D12DebugCommandList_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugCommandList_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugCommandList : public IUnknown
 
     AssertResourceState proc :ptr, :UINT, :UINT
     SetFeatureMask	proc :D3D12_DEBUG_FEATURE
     GetFeatureMask	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12DebugCommandList2_INTERFACE_DEFINED__
-__ID3D12DebugCommandList2_INTERFACE_DEFINED__ equ 1
+define __ID3D12DebugCommandList2_INTERFACE_DEFINED__
 
 .comdef ID3D12DebugCommandList2 : public ID3D12DebugCommandList
 
     SetDebugParameter	proc :D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE
     GetDebugParameter	proc :D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE
-    .ends
+   .ends
 
 endif
 
 ifndef __ID3D12SharingContract_INTERFACE_DEFINED__
-__ID3D12SharingContract_INTERFACE_DEFINED__ equ 1
+define __ID3D12SharingContract_INTERFACE_DEFINED__
 
 .comdef ID3D12SharingContract : public IUnknown
 
@@ -263,7 +220,7 @@ __ID3D12SharingContract_INTERFACE_DEFINED__ equ 1
     SharedFenceSignal	proc :ptr, :UINT64
     BeginCapturableWork proc :REFGUID
     EndCapturableWork	proc :REFGUID
-    .ends
+   .ends
 
 endif
 
@@ -1562,7 +1519,7 @@ D3D12_INFO_QUEUE_FILTER ENDS
 D3D12_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
 ifndef __ID3D12InfoQueue_INTERFACE_DEFINED__
-__ID3D12InfoQueue_INTERFACE_DEFINED__ equ 1
+define __ID3D12InfoQueue_INTERFACE_DEFINED__
 
 .comdef ID3D12InfoQueue : public IUnknown
 
@@ -1601,7 +1558,7 @@ __ID3D12InfoQueue_INTERFACE_DEFINED__ equ 1
     GetBreakOnID	proc :D3D12_MESSAGE_ID
     SetMuteDebugOutput	proc :BOOL
     GetMuteDebugOutput	proc
-    .ends
+   .ends
 
 endif
 

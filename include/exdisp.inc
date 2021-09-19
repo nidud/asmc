@@ -1,95 +1,27 @@
 .pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr>
 endif
-ifndef __exdisp_h__
-__exdisp_h__ equ <>
 
-ifndef __IWebBrowser_FWD_DEFINED__
-__IWebBrowser_FWD_DEFINED__ equ 1
-endif
-ifndef __DWebBrowserEvents_FWD_DEFINED__
-__DWebBrowserEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IWebBrowserApp_FWD_DEFINED__
-__IWebBrowserApp_FWD_DEFINED__ equ 1
-endif
-ifndef __IWebBrowser2_FWD_DEFINED__
-__IWebBrowser2_FWD_DEFINED__ equ 1
-endif
-ifndef __DWebBrowserEvents2_FWD_DEFINED__
-__DWebBrowserEvents2_FWD_DEFINED__ equ 1
-endif
-ifndef __WebBrowser_V1_FWD_DEFINED__
-__WebBrowser_V1_FWD_DEFINED__ equ 1
-endif
-ifndef __WebBrowser_FWD_DEFINED__
-__WebBrowser_FWD_DEFINED__ equ 1
-endif
-ifndef __InternetExplorer_FWD_DEFINED__
-__InternetExplorer_FWD_DEFINED__ equ 1
-endif
-ifndef __InternetExplorerMedium_FWD_DEFINED__
-__InternetExplorerMedium_FWD_DEFINED__ equ 1
-endif
-ifndef __ShellBrowserWindow_FWD_DEFINED__
-__ShellBrowserWindow_FWD_DEFINED__ equ 1
-endif
-ifndef __DShellWindowsEvents_FWD_DEFINED__
-__DShellWindowsEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellWindows_FWD_DEFINED__
-__IShellWindows_FWD_DEFINED__ equ 1
-endif
-ifndef __ShellWindows_FWD_DEFINED__
-__ShellWindows_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellUIHelper_FWD_DEFINED__
-__IShellUIHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellUIHelper2_FWD_DEFINED__
-__IShellUIHelper2_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellUIHelper3_FWD_DEFINED__
-__IShellUIHelper3_FWD_DEFINED__ equ 1
-endif
-ifndef __ShellUIHelper_FWD_DEFINED__
-__ShellUIHelper_FWD_DEFINED__ equ 1
-endif
-ifndef __DShellNameSpaceEvents_FWD_DEFINED__
-__DShellNameSpaceEvents_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellFavoritesNameSpace_FWD_DEFINED__
-__IShellFavoritesNameSpace_FWD_DEFINED__ equ 1
-endif
-ifndef __IShellNameSpace_FWD_DEFINED__
-__IShellNameSpace_FWD_DEFINED__ equ 1
-endif
-ifndef __ShellNameSpace_FWD_DEFINED__
-__ShellNameSpace_FWD_DEFINED__ equ 1
-endif
-ifndef __IScriptErrorList_FWD_DEFINED__
-__IScriptErrorList_FWD_DEFINED__ equ 1
-endif
-ifndef __CScriptErrorList_FWD_DEFINED__
-__CScriptErrorList_FWD_DEFINED__ equ 1
-endif
+ifndef __exdisp_h__
+define __exdisp_h__
 
 include ocidl.inc
 include docobj.inc
 
-SID_SkipHung		equ <IID_IEnumVARIANT>
+SID_SkipHung equ <IID_IEnumVARIANT>
 
 ifndef __SHDocVw_LIBRARY_DEFINED__
-__SHDocVw_LIBRARY_DEFINED__ equ 1
+define __SHDocVw_LIBRARY_DEFINED__
 
 .enum CommandStateChangeConstants {
 	CSC_UPDATECOMMANDS	= 0xffffffff,
@@ -128,7 +60,7 @@ __SHDocVw_LIBRARY_DEFINED__ equ 1
 externdef LIBID_SHDocVw:IID
 
 ifndef __IWebBrowser_INTERFACE_DEFINED__
-__IWebBrowser_INTERFACE_DEFINED__ equ 1
+define __IWebBrowser_INTERFACE_DEFINED__
 
 .enum BrowserNavConstants {
 	navOpenInNewWindow	= 0x1,
@@ -185,14 +117,13 @@ DEFINE_IIDX(IWebBrowser, "EAB22AC1-30C1-11CF-A7EB-0000C05BAE0B")
     get_LocationName	proc :ptr
     get_LocationURL	proc :ptr
     get_Busy		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __DWebBrowserEvents_DISPINTERFACE_DEFINED__
-__DWebBrowserEvents_DISPINTERFACE_DEFINED__ equ 1
+define __DWebBrowserEvents_DISPINTERFACE_DEFINED__
 
 
 DEFINE_IIDX(DWebBrowserEvents,"EAB22AC2-30C1-11CF-A7EB-0000C05BAE0B")
@@ -204,7 +135,7 @@ DEFINE_IIDX(DWebBrowserEvents,"EAB22AC2-30C1-11CF-A7EB-0000C05BAE0B")
 endif
 
 ifndef __IWebBrowserApp_INTERFACE_DEFINED__
-__IWebBrowserApp_INTERFACE_DEFINED__ equ 1
+define __IWebBrowserApp_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
 
@@ -230,13 +161,12 @@ DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00
     put_MenuBar		proc :VARIANT_BOOL
     get_FullScreen	proc :ptr
     put_FullScreen	proc :VARIANT_BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IWebBrowser2_INTERFACE_DEFINED__
-__IWebBrowser2_INTERFACE_DEFINED__ equ 1
+define __IWebBrowser2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IWebBrowser2, "D30C1661-CDAF-11d0-8A3E-00C04FC9E26E")
 
@@ -261,13 +191,12 @@ DEFINE_IIDX(IWebBrowser2, "D30C1661-CDAF-11d0-8A3E-00C04FC9E26E")
     put_AddressBar	proc :VARIANT_BOOL
     get_Resizable	proc :ptr
     put_Resizable	proc :VARIANT_BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __DWebBrowserEvents2_DISPINTERFACE_DEFINED__
-__DWebBrowserEvents2_DISPINTERFACE_DEFINED__ equ 1
+define __DWebBrowserEvents2_DISPINTERFACE_DEFINED__
 
 DEFINE_GUIDS(DIID_DWebBrowserEvents2, "34A715A0-6587-11D0-924A-0020AFC7AC4D")
 
@@ -281,7 +210,7 @@ DEFINE_GUIDS(CLSID_WebBrowser,	     "8856F961-340A-11D0-A96B-00C04FD705A2")
 DEFINE_GUIDS(CLSID_InternetExplorer, "0002DF01-0000-0000-C000-000000000046")
 
 ifndef __DShellWindowsEvents_DISPINTERFACE_DEFINED__
-__DShellWindowsEvents_DISPINTERFACE_DEFINED__ equ 1
+define __DShellWindowsEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_GUIDS(DIID_DShellWindowsEvents, "fe4106e0-399a-11d0-a48c-00a0c90a8f39")
 
@@ -292,7 +221,7 @@ endif
 
 
 ifndef __IShellWindows_INTERFACE_DEFINED__
-__IShellWindows_INTERFACE_DEFINED__ equ 1
+define __IShellWindows_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellWindows, "85CB6900-4D95-11CF-960C-0080C7F4EE85")
 
@@ -309,15 +238,14 @@ DEFINE_IIDX(IShellWindows, "85CB6900-4D95-11CF-960C-0080C7F4EE85")
     FindWindowSW	proc :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
     OnCreated		proc :SDWORD, :ptr
     ProcessAttachDetach proc :VARIANT_BOOL
-
-    .ends
+   .ends
 
 endif
 
 DEFINE_GUIDS(CLSID_ShellWindows, "9BA05972-F6A8-11CF-A442-00A0C90A8F39")
 
 ifndef __IShellUIHelper_INTERFACE_DEFINED__
-__IShellUIHelper_INTERFACE_DEFINED__ equ 1
+define __IShellUIHelper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellUIHelper, "729FE2F8-1EA8-11d1-8F85-00C04FC2FBE1")
 
@@ -336,14 +264,13 @@ DEFINE_IIDX(IShellUIHelper, "729FE2F8-1EA8-11d1-8F85-00C04FC2FBE1")
     AutoScan		proc :BSTR, :BSTR, :ptr
     AutoCompleteAttach	proc :ptr
     ShowBrowserUI	proc :BSTR, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IShellUIHelper2_INTERFACE_DEFINED__
-__IShellUIHelper2_INTERFACE_DEFINED__ equ 1
+define __IShellUIHelper2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellUIHelper2, "a7fe6eda-1932-4281-b881-87b31b8bc52c")
 
@@ -365,13 +292,12 @@ DEFINE_IIDX(IShellUIHelper2, "a7fe6eda-1932-4281-b881-87b31b8bc52c")
     RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
     RunOnceHasShown	proc :ptr
     SearchGuideUrl	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IShellUIHelper3_INTERFACE_DEFINED__
-__IShellUIHelper3_INTERFACE_DEFINED__ equ 1
+define __IShellUIHelper3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellUIHelper3, "528DF2EC-D419-40bc-9B6D-DCDBF9C1B25D")
 
@@ -390,13 +316,12 @@ DEFINE_IIDX(IShellUIHelper3, "528DF2EC-D419-40bc-9B6D-DCDBF9C1B25D")
     NavigateToSuggestedSites proc :BSTR
     ShowTabsHelp	proc
     ShowInPrivateHelp	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IShellUIHelper4_INTERFACE_DEFINED__
-__IShellUIHelper4_INTERFACE_DEFINED__ equ 1
+define __IShellUIHelper4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellUIHelper4, "B36E6A53-8073-499E-824C-D776330A333E")
 
@@ -420,13 +345,12 @@ DEFINE_IIDX(IShellUIHelper4, "B36E6A53-8073-499E-824C-D776330A333E")
     msAddTrackingProtectionList proc :BSTR, :BSTR
     msTrackingProtectionEnabled proc :ptr VARIANT_BOOL
     msActiveXFilteringEnabled proc :ptr VARIANT_BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IShellUIHelper5_INTERFACE_DEFINED__
-__IShellUIHelper5_INTERFACE_DEFINED__ equ 1
+define __IShellUIHelper5_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellUIHelper5, "A2A08B09-103D-4D3F-B91C-EA455CA82EFA")
 
@@ -439,15 +363,14 @@ DEFINE_IIDX(IShellUIHelper5, "A2A08B09-103D-4D3F-B91C-EA455CA82EFA")
     msDiagnoseConnectionUILess	proc
     msLaunchNetworkClientHelp  proc
     msChangeDefaultBrowser proc :VARIANT_BOOL
-
-    .ends
+   .ends
 
 endif
 
 DEFINE_GUIDS(CLSID_ShellUIHelper, "64AB4BB7-111E-11d1-8F79-00C04FC2FBE1")
 
 ifndef __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__
-__DShellNameSpaceEvents_DISPINTERFACE_DEFINED__ equ 1
+define __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_GUIDS(DIID_DShellNameSpaceEvents, "55136806-B2DE-11D1-B9F2-00A0C98BC547")
 
@@ -459,7 +382,7 @@ endif
 
 
 ifndef __IShellFavoritesNameSpace_INTERFACE_DEFINED__
-__IShellFavoritesNameSpace_INTERFACE_DEFINED__ equ 1
+define __IShellFavoritesNameSpace_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellFavoritesNameSpace, "55136804-B2DE-11D1-B9F2-00A0C98BC547")
 
@@ -478,14 +401,13 @@ DEFINE_IIDX(IShellFavoritesNameSpace, "55136804-B2DE-11D1-B9F2-00A0C98BC547")
     CreateSubscriptionForSelection proc :ptr
     DeleteSubscriptionForSelection proc :ptr
     SetRoot		proc :BSTR
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IShellNameSpace_INTERFACE_DEFINED__
-__IShellNameSpace_INTERFACE_DEFINED__ equ 1
+define __IShellNameSpace_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IShellNameSpace, "e572d3c9-37be-4ae2-825d-d521763e3108")
 
@@ -512,15 +434,14 @@ DEFINE_IIDX(IShellNameSpace, "e572d3c9-37be-4ae2-825d-d521763e3108")
     SelectedItems	proc :ptr
     Expand		proc :VARIANT, :DWORD
     UnselectAll		proc
-
-    .ends
+   .ends
 
 endif
 
 DEFINE_GUIDS(CLSID_ShellNameSpace, "55136805-B2DE-11D1-B9F2-00A0C98BC547")
 
 ifndef __IScriptErrorList_INTERFACE_DEFINED__
-__IScriptErrorList_INTERFACE_DEFINED__ equ 1
+define __IScriptErrorList_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IScriptErrorList, "F3470F24-15FD-11d2-BB2E-00805FF7EFCA")
 
@@ -540,8 +461,7 @@ DEFINE_IIDX(IScriptErrorList, "F3470F24-15FD-11d2-BB2E-00805FF7EFCA")
     setDetailsPaneOpen	proc :BOOL
     getPerErrorDisplay	proc :ptr
     setPerErrorDisplay	proc :BOOL
-
-    .ends
+   .ends
 
 endif
 

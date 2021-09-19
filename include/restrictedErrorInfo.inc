@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,14 +18,7 @@ include ole2.inc
 endif
 
 ifndef __restrictederrorinfo_h__
-__restrictederrorinfo_h__ equ 1
-
-ifndef __IRestrictedErrorInfo_FWD_DEFINED__
-__IRestrictedErrorInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __ILanguageExceptionErrorInfo_FWD_DEFINED__
-__ILanguageExceptionErrorInfo_FWD_DEFINED__ equ 1
-endif
+define __restrictederrorinfo_h__
 
 include oaidl.inc
 include winapifamily.inc
@@ -33,7 +26,7 @@ include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef __IRestrictedErrorInfo_INTERFACE_DEFINED__
-__IRestrictedErrorInfo_INTERFACE_DEFINED__ equ 1
+define __IRestrictedErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRestrictedErrorInfo, "82BA7092-4C88-427D-A7BC-16DD93FEB67E")
 
@@ -41,23 +34,20 @@ DEFINE_IIDX(IRestrictedErrorInfo, "82BA7092-4C88-427D-A7BC-16DD93FEB67E")
 
     GetErrorDetails     proc :ptr, :ptr, :ptr, :ptr
     GetReference        proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __ILanguageExceptionErrorInfo_INTERFACE_DEFINED__
-__ILanguageExceptionErrorInfo_INTERFACE_DEFINED__ equ 1
+define __ILanguageExceptionErrorInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ILanguageExceptionErrorInfo, "04a2dbf3-df83-116c-0946-0812abf6e07d")
 
 .comdef ILanguageExceptionErrorInfo : public IUnknown
 
     GetLanguageException proc :ptr
-    .ends
+   .ends
 
 endif
-
 endif
-
 endif
-

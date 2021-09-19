@@ -1,29 +1,24 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __d3d11sdklayers_h__
-__d3d11sdklayers_h__ equ 1
-ifndef __ID3D11Debug_FWD_DEFINED__
-__ID3D11Debug_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11SwitchToRef_FWD_DEFINED__
-__ID3D11SwitchToRef_FWD_DEFINED__ equ 1
-endif
-ifndef __ID3D11InfoQueue_FWD_DEFINED__
-__ID3D11InfoQueue_FWD_DEFINED__ equ 1
-endif
+define __d3d11sdklayers_h__
+
 include oaidl.inc
 include ocidl.inc
 include d3d11.inc
@@ -38,7 +33,7 @@ D3D11_RLDO_SUMMARY	equ 0x1
 D3D11_RLDO_DETAIL	equ 0x2
 
 ifndef __ID3D11Debug_INTERFACE_DEFINED__
-__ID3D11Debug_INTERFACE_DEFINED__ equ 1
+define __ID3D11Debug_INTERFACE_DEFINED__
 
 .comdef ID3D11Debug : public IUnknown
 
@@ -51,19 +46,17 @@ __ID3D11Debug_INTERFACE_DEFINED__ equ 1
     ValidateContext	proc :ptr
     ReportLiveDeviceObjects proc :D3D11_RLDO_FLAGS
     ValidateContextForDispatch proc :ptr
-
-    .ends
+   .ends
 endif
 
 ifndef __ID3D11SwitchToRef_INTERFACE_DEFINED__
-__ID3D11SwitchToRef_INTERFACE_DEFINED__ equ 1
+define __ID3D11SwitchToRef_INTERFACE_DEFINED__
 
 .comdef ID3D11SwitchToRef : public IUnknown
 
     SetUseRef		proc :BOOL
     GetUseRef		proc
-
-    .ends
+   .ends
 endif
 
 D3D11_MESSAGE_CATEGORY	typedef SDWORD
@@ -857,7 +850,7 @@ D3D11_INFO_QUEUE_FILTER ENDS
 D3D11_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
 ifndef __ID3D11InfoQueue_INTERFACE_DEFINED__
-__ID3D11InfoQueue_INTERFACE_DEFINED__ equ 1
+define __ID3D11InfoQueue_INTERFACE_DEFINED__
 
 .comdef ID3D11InfoQueue : public IUnknown
 
@@ -896,8 +889,7 @@ __ID3D11InfoQueue_INTERFACE_DEFINED__ equ 1
     GetBreakOnID	proc :D3D11_MESSAGE_ID
     SetMuteDebugOutput	proc :BOOL
     GetMuteDebugOutput	proc
-
-    .ends
+   .ends
 endif
 
 D3D11_REGKEY_PATH	equ __TEXT("Software\\Microsoft\\Direct3D")

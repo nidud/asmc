@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -13,461 +13,38 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __strmif_h__
-__strmif_h__ equ <>
 
-ifndef __ICreateDevEnum_FWD_DEFINED__
-__ICreateDevEnum_FWD_DEFINED__ equ 1
-endif
-ifndef __IPin_FWD_DEFINED__
-__IPin_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumPins_FWD_DEFINED__
-__IEnumPins_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumMediaTypes_FWD_DEFINED__
-__IEnumMediaTypes_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterGraph_FWD_DEFINED__
-__IFilterGraph_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumFilters_FWD_DEFINED__
-__IEnumFilters_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaFilter_FWD_DEFINED__
-__IMediaFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IBaseFilter_FWD_DEFINED__
-__IBaseFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IReferenceClock_FWD_DEFINED__
-__IReferenceClock_FWD_DEFINED__ equ 1
-endif
-ifndef __IReferenceClockTimerControl_FWD_DEFINED__
-__IReferenceClockTimerControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IReferenceClock2_FWD_DEFINED__
-__IReferenceClock2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaSample_FWD_DEFINED__
-__IMediaSample_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaSample2_FWD_DEFINED__
-__IMediaSample2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaSample2Config_FWD_DEFINED__
-__IMediaSample2Config_FWD_DEFINED__ equ 1
-endif
-ifndef __IMemAllocator_FWD_DEFINED__
-__IMemAllocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IMemAllocatorCallbackTemp_FWD_DEFINED__
-__IMemAllocatorCallbackTemp_FWD_DEFINED__ equ 1
-endif
-ifndef __IMemAllocatorNotifyCallbackTemp_FWD_DEFINED__
-__IMemAllocatorNotifyCallbackTemp_FWD_DEFINED__ equ 1
-endif
-ifndef __IMemInputPin_FWD_DEFINED__
-__IMemInputPin_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMovieSetup_FWD_DEFINED__
-__IAMovieSetup_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaSeeking_FWD_DEFINED__
-__IMediaSeeking_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumRegFilters_FWD_DEFINED__
-__IEnumRegFilters_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterMapper_FWD_DEFINED__
-__IFilterMapper_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterMapper2_FWD_DEFINED__
-__IFilterMapper2_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterMapper3_FWD_DEFINED__
-__IFilterMapper3_FWD_DEFINED__ equ 1
-endif
-ifndef __IQualityControl_FWD_DEFINED__
-__IQualityControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IOverlayNotify_FWD_DEFINED__
-__IOverlayNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IOverlayNotify2_FWD_DEFINED__
-__IOverlayNotify2_FWD_DEFINED__ equ 1
-endif
-ifndef __IOverlay_FWD_DEFINED__
-__IOverlay_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaEventSink_FWD_DEFINED__
-__IMediaEventSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IFileSourceFilter_FWD_DEFINED__
-__IFileSourceFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IFileSinkFilter_FWD_DEFINED__
-__IFileSinkFilter_FWD_DEFINED__ equ 1
-endif
-ifndef __IFileSinkFilter2_FWD_DEFINED__
-__IFileSinkFilter2_FWD_DEFINED__ equ 1
-endif
-ifndef __IGraphBuilder_FWD_DEFINED__
-__IGraphBuilder_FWD_DEFINED__ equ 1
-endif
-ifndef __ICaptureGraphBuilder_FWD_DEFINED__
-__ICaptureGraphBuilder_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMCopyCaptureFileProgress_FWD_DEFINED__
-__IAMCopyCaptureFileProgress_FWD_DEFINED__ equ 1
-endif
-ifndef __ICaptureGraphBuilder2_FWD_DEFINED__
-__ICaptureGraphBuilder2_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterGraph2_FWD_DEFINED__
-__IFilterGraph2_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterGraph3_FWD_DEFINED__
-__IFilterGraph3_FWD_DEFINED__ equ 1
-endif
-ifndef __IStreamBuilder_FWD_DEFINED__
-__IStreamBuilder_FWD_DEFINED__ equ 1
-endif
-ifndef __IAsyncReader_FWD_DEFINED__
-__IAsyncReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IGraphVersion_FWD_DEFINED__
-__IGraphVersion_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceConsumer_FWD_DEFINED__
-__IResourceConsumer_FWD_DEFINED__ equ 1
-endif
-ifndef __IResourceManager_FWD_DEFINED__
-__IResourceManager_FWD_DEFINED__ equ 1
-endif
-ifndef __IDistributorNotify_FWD_DEFINED__
-__IDistributorNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMStreamControl_FWD_DEFINED__
-__IAMStreamControl_FWD_DEFINED__ equ 1
-endif
-ifndef __ISeekingPassThru_FWD_DEFINED__
-__ISeekingPassThru_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMStreamConfig_FWD_DEFINED__
-__IAMStreamConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IConfigInterleaving_FWD_DEFINED__
-__IConfigInterleaving_FWD_DEFINED__ equ 1
-endif
-ifndef __IConfigAviMux_FWD_DEFINED__
-__IConfigAviMux_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVideoCompression_FWD_DEFINED__
-__IAMVideoCompression_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVfwCaptureDialogs_FWD_DEFINED__
-__IAMVfwCaptureDialogs_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVfwCompressDialogs_FWD_DEFINED__
-__IAMVfwCompressDialogs_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMDroppedFrames_FWD_DEFINED__
-__IAMDroppedFrames_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMAudioInputMixer_FWD_DEFINED__
-__IAMAudioInputMixer_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMBufferNegotiation_FWD_DEFINED__
-__IAMBufferNegotiation_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMAnalogVideoDecoder_FWD_DEFINED__
-__IAMAnalogVideoDecoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVideoProcAmp_FWD_DEFINED__
-__IAMVideoProcAmp_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMCameraControl_FWD_DEFINED__
-__IAMCameraControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVideoControl_FWD_DEFINED__
-__IAMVideoControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMCrossbar_FWD_DEFINED__
-__IAMCrossbar_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTuner_FWD_DEFINED__
-__IAMTuner_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTunerNotification_FWD_DEFINED__
-__IAMTunerNotification_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTVTuner_FWD_DEFINED__
-__IAMTVTuner_FWD_DEFINED__ equ 1
-endif
-ifndef __IBPCSatelliteTuner_FWD_DEFINED__
-__IBPCSatelliteTuner_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTVAudio_FWD_DEFINED__
-__IAMTVAudio_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTVAudioNotification_FWD_DEFINED__
-__IAMTVAudioNotification_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMAnalogVideoEncoder_FWD_DEFINED__
-__IAMAnalogVideoEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IKsPropertySet_FWD_DEFINED__
-__IKsPropertySet_FWD_DEFINED__ equ 1
-endif
-ifndef __IMediaPropertyBag_FWD_DEFINED__
-__IMediaPropertyBag_FWD_DEFINED__ equ 1
-endif
-ifndef __IPersistMediaPropertyBag_FWD_DEFINED__
-__IPersistMediaPropertyBag_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMPhysicalPinInfo_FWD_DEFINED__
-__IAMPhysicalPinInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMExtDevice_FWD_DEFINED__
-__IAMExtDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMExtTransport_FWD_DEFINED__
-__IAMExtTransport_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTimecodeReader_FWD_DEFINED__
-__IAMTimecodeReader_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTimecodeGenerator_FWD_DEFINED__
-__IAMTimecodeGenerator_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMTimecodeDisplay_FWD_DEFINED__
-__IAMTimecodeDisplay_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMDevMemoryAllocator_FWD_DEFINED__
-__IAMDevMemoryAllocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMDevMemoryControl_FWD_DEFINED__
-__IAMDevMemoryControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMStreamSelect_FWD_DEFINED__
-__IAMStreamSelect_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMResourceControl_FWD_DEFINED__
-__IAMResourceControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMClockAdjust_FWD_DEFINED__
-__IAMClockAdjust_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMFilterMiscFlags_FWD_DEFINED__
-__IAMFilterMiscFlags_FWD_DEFINED__ equ 1
-endif
-ifndef __IDrawVideoImage_FWD_DEFINED__
-__IDrawVideoImage_FWD_DEFINED__ equ 1
-endif
-ifndef __IDecimateVideoImage_FWD_DEFINED__
-__IDecimateVideoImage_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMVideoDecimationProperties_FWD_DEFINED__
-__IAMVideoDecimationProperties_FWD_DEFINED__ equ 1
-endif
-ifndef __IVideoFrameStep_FWD_DEFINED__
-__IVideoFrameStep_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMLatency_FWD_DEFINED__
-__IAMLatency_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMPushSource_FWD_DEFINED__
-__IAMPushSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMDeviceRemoval_FWD_DEFINED__
-__IAMDeviceRemoval_FWD_DEFINED__ equ 1
-endif
-ifndef __IDVEnc_FWD_DEFINED__
-__IDVEnc_FWD_DEFINED__ equ 1
-endif
-ifndef __IIPDVDec_FWD_DEFINED__
-__IIPDVDec_FWD_DEFINED__ equ 1
-endif
-ifndef __IDVRGB219_FWD_DEFINED__
-__IDVRGB219_FWD_DEFINED__ equ 1
-endif
-ifndef __IDVSplitter_FWD_DEFINED__
-__IDVSplitter_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMAudioRendererStats_FWD_DEFINED__
-__IAMAudioRendererStats_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMGraphStreams_FWD_DEFINED__
-__IAMGraphStreams_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMOverlayFX_FWD_DEFINED__
-__IAMOverlayFX_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMOpenProgress_FWD_DEFINED__
-__IAMOpenProgress_FWD_DEFINED__ equ 1
-endif
-ifndef __IMpeg2Demultiplexer_FWD_DEFINED__
-__IMpeg2Demultiplexer_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumStreamIdMap_FWD_DEFINED__
-__IEnumStreamIdMap_FWD_DEFINED__ equ 1
-endif
-ifndef __IMPEG2StreamIdMap_FWD_DEFINED__
-__IMPEG2StreamIdMap_FWD_DEFINED__ equ 1
-endif
-ifndef __IRegisterServiceProvider_FWD_DEFINED__
-__IRegisterServiceProvider_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMClockSlave_FWD_DEFINED__
-__IAMClockSlave_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMGraphBuilderCallback_FWD_DEFINED__
-__IAMGraphBuilderCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __ICodecAPI_FWD_DEFINED__
-__ICodecAPI_FWD_DEFINED__ equ 1
-endif
-ifndef __IGetCapabilitiesKey_FWD_DEFINED__
-__IGetCapabilitiesKey_FWD_DEFINED__ equ 1
-endif
-ifndef __IEncoderAPI_FWD_DEFINED__
-__IEncoderAPI_FWD_DEFINED__ equ 1
-endif
-ifndef __IVideoEncoder_FWD_DEFINED__
-__IVideoEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMDecoderCaps_FWD_DEFINED__
-__IAMDecoderCaps_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMCertifiedOutputProtection_FWD_DEFINED__
-__IAMCertifiedOutputProtection_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMAsyncReaderTimestampScaling_FWD_DEFINED__
-__IAMAsyncReaderTimestampScaling_FWD_DEFINED__ equ 1
-endif
-ifndef __IAMPluginControl_FWD_DEFINED__
-__IAMPluginControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdControl_FWD_DEFINED__
-__IDvdControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdInfo_FWD_DEFINED__
-__IDvdInfo_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdCmd_FWD_DEFINED__
-__IDvdCmd_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdState_FWD_DEFINED__
-__IDvdState_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdControl2_FWD_DEFINED__
-__IDvdControl2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdInfo2_FWD_DEFINED__
-__IDvdInfo2_FWD_DEFINED__ equ 1
-endif
-ifndef __IDvdGraphBuilder_FWD_DEFINED__
-__IDvdGraphBuilder_FWD_DEFINED__ equ 1
-endif
-ifndef __IDDrawExclModeVideo_FWD_DEFINED__
-__IDDrawExclModeVideo_FWD_DEFINED__ equ 1
-endif
-ifndef __IDDrawExclModeVideoCallback_FWD_DEFINED__
-__IDDrawExclModeVideoCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IPinConnection_FWD_DEFINED__
-__IPinConnection_FWD_DEFINED__ equ 1
-endif
-ifndef __IPinFlowControl_FWD_DEFINED__
-__IPinFlowControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IGraphConfig_FWD_DEFINED__
-__IGraphConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IGraphConfigCallback_FWD_DEFINED__
-__IGraphConfigCallback_FWD_DEFINED__ equ 1
-endif
-ifndef __IFilterChain_FWD_DEFINED__
-__IFilterChain_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRImagePresenter_FWD_DEFINED__
-__IVMRImagePresenter_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRSurfaceAllocator_FWD_DEFINED__
-__IVMRSurfaceAllocator_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRSurfaceAllocatorNotify_FWD_DEFINED__
-__IVMRSurfaceAllocatorNotify_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRWindowlessControl_FWD_DEFINED__
-__IVMRWindowlessControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRMixerControl_FWD_DEFINED__
-__IVMRMixerControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRMonitorConfig_FWD_DEFINED__
-__IVMRMonitorConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRFilterConfig_FWD_DEFINED__
-__IVMRFilterConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRAspectRatioControl_FWD_DEFINED__
-__IVMRAspectRatioControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRDeinterlaceControl_FWD_DEFINED__
-__IVMRDeinterlaceControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRMixerBitmap_FWD_DEFINED__
-__IVMRMixerBitmap_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRImageCompositor_FWD_DEFINED__
-__IVMRImageCompositor_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRVideoStreamControl_FWD_DEFINED__
-__IVMRVideoStreamControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRSurface_FWD_DEFINED__
-__IVMRSurface_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRImagePresenterConfig_FWD_DEFINED__
-__IVMRImagePresenterConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IVMRImagePresenterExclModeConfig_FWD_DEFINED__
-__IVMRImagePresenterExclModeConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IVPManager_FWD_DEFINED__
-__IVPManager_FWD_DEFINED__ equ 1
-endif
+ifndef __strmif_h__
+define __strmif_h__
+
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
 include ocidl.inc
 
-CDEF_CLASS_DEFAULT	equ 0x0001
-CDEF_BYPASS_CLASS_MANAGER equ 0x0002
-CDEF_MERIT_ABOVE_DO_NOT_USE equ 0x0008
-CDEF_DEVMON_CMGR_DEVICE equ 0x0010
-CDEF_DEVMON_DMO		equ 0x0020
-CDEF_DEVMON_PNP_DEVICE	equ 0x0040
-CDEF_DEVMON_FILTER	equ 0x0080
-CDEF_DEVMON_SELECTIVE_MASK equ 0x00f0
-
+define CDEF_CLASS_DEFAULT		0x0001
+define CDEF_BYPASS_CLASS_MANAGER	0x0002
+define CDEF_MERIT_ABOVE_DO_NOT_USE	0x0008
+define CDEF_DEVMON_CMGR_DEVICE		0x0010
+define CDEF_DEVMON_DMO			0x0020
+define CDEF_DEVMON_PNP_DEVICE		0x0040
+define CDEF_DEVMON_FILTER		0x0080
+define CDEF_DEVMON_SELECTIVE_MASK	0x00f0
 
 ifndef __ICreateDevEnum_INTERFACE_DEFINED__
-__ICreateDevEnum_INTERFACE_DEFINED__ equ 1
+define __ICreateDevEnum_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICreateDevEnum,"29840822-5B84-11D0-BD3B-00A0C911CE86")
 
 .comdef ICreateDevEnum : public IUnknown
 
     CreateClassEnumerator proc :REFCLSID, :ptr, :DWORD
-
-    .ends
+   .ends
 
 endif
 
-CHARS_IN_GUID		equ 39
+define CHARS_IN_GUID	39
+
 AM_MEDIA_TYPE		STRUC
 majortype		GUID <>
 subtype			GUID <>
@@ -481,14 +58,15 @@ pbFormat		LPBYTE ?
 AM_MEDIA_TYPE		ENDS
 PAM_MEDIA_TYPE		typedef ptr AM_MEDIA_TYPE
 
-PIN_DIRECTION		typedef SDWORD
-PINDIR_INPUT		equ 0
-PINDIR_OUTPUT		equ ( PINDIR_INPUT + 1 )
+.enum PIN_DIRECTION {
+    PINDIR_INPUT	= 0,
+    PINDIR_OUTPUT	= ( PINDIR_INPUT + 1 )
+    }
 
-MAX_PIN_NAME		equ 128
-MAX_FILTER_NAME		equ 128
+define MAX_PIN_NAME	128
+define MAX_FILTER_NAME	128
+
 REFERENCE_TIME		typedef LONGLONG
-
 REFTIME			typedef REAL8
 HSEMAPHORE		typedef DWORD_PTR
 HEVENT			typedef DWORD_PTR
@@ -501,7 +79,7 @@ cbPrefix		LONG ?
 ALLOCATOR_PROPERTIES	ENDS
 
 ifndef __IPin_INTERFACE_DEFINED__
-__IPin_INTERFACE_DEFINED__ equ 1
+define __IPin_INTERFACE_DEFINED__
 
 PIN_INFO		STRUC
 pFilter			PVOID ?
@@ -528,15 +106,14 @@ DEFINE_IIDX(IPin, "56a86891-0ad4-11ce-b03a-0020af0ba770")
     BeginFlush		proc
     EndFlush		proc
     NewSegment		proc :REFERENCE_TIME, :REFERENCE_TIME, :REAL8
-
-    .ends
+   .ends
 
 endif
 
 PPIN			typedef ptr IPin
 
 ifndef __IEnumPins_INTERFACE_DEFINED__
-__IEnumPins_INTERFACE_DEFINED__ equ 1
+define __IEnumPins_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumPins, "56a86892-0ad4-11ce-b03a-0020af0ba770")
 
@@ -546,15 +123,14 @@ DEFINE_IIDX(IEnumPins, "56a86892-0ad4-11ce-b03a-0020af0ba770")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 PENUMPINS		typedef ptr IEnumPins
 
 ifndef __IEnumMediaTypes_INTERFACE_DEFINED__
-__IEnumMediaTypes_INTERFACE_DEFINED__ equ 1
+define __IEnumMediaTypes_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumMediaTypes, "89c31040-846b-11ce-97d3-00aa0055595a")
 
@@ -564,15 +140,14 @@ DEFINE_IIDX(IEnumMediaTypes, "89c31040-846b-11ce-97d3-00aa0055595a")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 PENUMMEDIATYPES		typedef ptr IEnumMediaTypes
 
 ifndef __IFilterGraph_INTERFACE_DEFINED__
-__IFilterGraph_INTERFACE_DEFINED__ equ 1
+define __IFilterGraph_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterGraph, "56a8689f-0ad4-11ce-b03a-0020af0ba770")
 
@@ -586,15 +161,14 @@ DEFINE_IIDX(IFilterGraph, "56a8689f-0ad4-11ce-b03a-0020af0ba770")
     Reconnect		proc :ptr
     Disconnect		proc :ptr
     SetDefaultSyncSource proc
-
-    .ends
+   .ends
 
 PFILTERGRAPH		typedef ptr IFilterGraph
 
 endif
 
 ifndef __IEnumFilters_INTERFACE_DEFINED__
-__IEnumFilters_INTERFACE_DEFINED__ equ 1
+define __IEnumFilters_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumFilters, "56a86893-0ad4-11ce-b03a-0020af0ba770")
 
@@ -604,20 +178,20 @@ DEFINE_IIDX(IEnumFilters, "56a86893-0ad4-11ce-b03a-0020af0ba770")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 PENUMFILTERS		typedef ptr IEnumFilters
 
 endif
 
 ifndef __IMediaFilter_INTERFACE_DEFINED__
-__IMediaFilter_INTERFACE_DEFINED__ equ 1
+define __IMediaFilter_INTERFACE_DEFINED__
 
-FILTER_STATE		typedef SDWORD
-State_Stopped		equ 0
-State_Paused		equ ( State_Stopped + 1 )
-State_Running		equ ( State_Paused + 1 )
+.enum FILTER_STATE {
+    State_Stopped = 0,
+    State_Paused  = ( State_Stopped + 1 ),
+    State_Running = ( State_Paused + 1 )
+    }
 
 DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
 
@@ -629,18 +203,17 @@ DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
     GetState		proc :DWORD, :ptr
     SetSyncSource	proc :ptr
     GetSyncSource	proc :ptr
-
-    .ends
+   .ends
 
 PMEDIAFILTER		typedef ptr IMediaFilter
 
 endif
 
 ifndef __IBaseFilter_INTERFACE_DEFINED__
-__IBaseFilter_INTERFACE_DEFINED__ equ 1
+define __IBaseFilter_INTERFACE_DEFINED__
 
 FILTER_INFO		STRUC
-achName			WCHAR  128  dup(?)
+achName			dw 128 dup(?)
 pGraph			PFILTERGRAPH ?
 FILTER_INFO		ENDS
 
@@ -653,15 +226,14 @@ DEFINE_IIDX(IBaseFilter, "56a86895-0ad4-11ce-b03a-0020af0ba770")
     QueryFilterInfo	proc :ptr
     JoinFilterGraph	proc :ptr, :LPCWSTR
     QueryVendorInfo	proc :ptr
-
-    .ends
+   .ends
 
 PFILTER			typedef ptr IBaseFilter
 
 endif
 
 ifndef __IReferenceClock_INTERFACE_DEFINED__
-__IReferenceClock_INTERFACE_DEFINED__ equ 1
+define __IReferenceClock_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IReferenceClock, "56a86897-0ad4-11ce-b03a-0020af0ba770")
 
@@ -671,15 +243,14 @@ DEFINE_IIDX(IReferenceClock, "56a86897-0ad4-11ce-b03a-0020af0ba770")
     AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HEVENT, :ptr
     AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HSEMAPHORE, :ptr
     Unadvise		proc :DWORD_PTR
-
-    .ends
+   .ends
 
 PREFERENCECLOCK		typedef ptr IReferenceClock
 
 endif
 
 ifndef __IReferenceClockTimerControl_INTERFACE_DEFINED__
-__IReferenceClockTimerControl_INTERFACE_DEFINED__ equ 1
+define __IReferenceClockTimerControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IReferenceClockTimerControl, "ebec459c-2eca-4d42-a8af-30df557614b8")
 
@@ -687,26 +258,24 @@ DEFINE_IIDX(IReferenceClockTimerControl, "ebec459c-2eca-4d42-a8af-30df557614b8")
 
     SetDefaultTimerResolution proc :REFERENCE_TIME
     GetDefaultTimerResolution proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IReferenceClock2_INTERFACE_DEFINED__
-__IReferenceClock2_INTERFACE_DEFINED__ equ 1
+define __IReferenceClock2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IReferenceClock2, "36b73885-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IReferenceClock2 : public IReferenceClock
-
-    .ends
+   .ends
 
 PREFERENCECLOCK2	typedef ptr IReferenceClock2
 
 endif
 
 ifndef __IMediaSample_INTERFACE_DEFINED__
-__IMediaSample_INTERFACE_DEFINED__ equ 1
+define __IMediaSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaSample, "56a8689a-0ad4-11ce-b03a-0020af0ba770")
 
@@ -728,25 +297,26 @@ DEFINE_IIDX(IMediaSample, "56a8689a-0ad4-11ce-b03a-0020af0ba770")
     SetDiscontinuity	proc :BOOL
     GetMediaTime	proc :ptr, :ptr
     SetMediaTime	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 PMEDIASAMPLE		typedef ptr IMediaSample
 
 endif
 
-AM_SAMPLE_PROPERTY_FLAGS typedef SDWORD
-AM_SAMPLE_SPLICEPOINT	equ 0x1
-AM_SAMPLE_PREROLL	equ 0x2
-AM_SAMPLE_DATADISCONTINUITY equ 0x4
-AM_SAMPLE_TYPECHANGED	equ 0x8
-AM_SAMPLE_TIMEVALID	equ 0x10
-AM_SAMPLE_TIMEDISCONTINUITY equ 0x40
-AM_SAMPLE_FLUSH_ON_PAUSE equ 0x80
-AM_SAMPLE_STOPVALID	equ 0x100
-AM_SAMPLE_ENDOFSTREAM	equ 0x200
-AM_STREAM_MEDIA		equ 0
-AM_STREAM_CONTROL	equ 1
+.enum AM_SAMPLE_PROPERTY_FLAGS {
+	AM_SAMPLE_SPLICEPOINT	= 0x1,
+	AM_SAMPLE_PREROLL	= 0x2,
+	AM_SAMPLE_DATADISCONTINUITY	= 0x4,
+	AM_SAMPLE_TYPECHANGED	= 0x8,
+	AM_SAMPLE_TIMEVALID	= 0x10,
+	AM_SAMPLE_TIMEDISCONTINUITY	= 0x40,
+	AM_SAMPLE_FLUSH_ON_PAUSE	= 0x80,
+	AM_SAMPLE_STOPVALID	= 0x100,
+	AM_SAMPLE_ENDOFSTREAM	= 0x200,
+	AM_STREAM_MEDIA = 0,
+	AM_STREAM_CONTROL	= 1
+	}
+
 AM_SAMPLE2_PROPERTIES	STRUC
 cbData			dd ?
 dwTypeSpecificFlags	dd ?
@@ -761,7 +331,7 @@ cbBuffer		LONG ?
 AM_SAMPLE2_PROPERTIES	ENDS
 
 ifndef __IMediaSample2_INTERFACE_DEFINED__
-__IMediaSample2_INTERFACE_DEFINED__ equ 1
+define __IMediaSample2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
 
@@ -769,33 +339,31 @@ DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
 
     GetProperties	proc :DWORD, :ptr
     SetProperties	proc :DWORD, :ptr
-
-    .ends
+   .ends
 
 PMEDIASAMPLE2		typedef ptr IMediaSample2
 
 endif
 
 ifndef __IMediaSample2Config_INTERFACE_DEFINED__
-__IMediaSample2Config_INTERFACE_DEFINED__ equ 1
+define __IMediaSample2Config_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaSample2Config, "68961E68-832B-41ea-BC91-63593F3E70E3")
 
 .comdef IMediaSample2Config : public IUnknown
 
     GetSurface		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-AM_GBF_PREVFRAMESKIPPED equ 1
-AM_GBF_NOTASYNCPOINT	equ 2
-AM_GBF_NOWAIT		equ 4
-AM_GBF_NODDSURFACELOCK	equ 8
+define AM_GBF_PREVFRAMESKIPPED	1
+define AM_GBF_NOTASYNCPOINT	2
+define AM_GBF_NOWAIT		4
+define AM_GBF_NODDSURFACELOCK	8
 
 ifndef __IMemAllocator_INTERFACE_DEFINED__
-__IMemAllocator_INTERFACE_DEFINED__ equ 1
+define __IMemAllocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMemAllocator, "56a8689c-0ad4-11ce-b03a-0020af0ba770")
 
@@ -807,15 +375,14 @@ DEFINE_IIDX(IMemAllocator, "56a8689c-0ad4-11ce-b03a-0020af0ba770")
     Decommit		proc
     GetBuffer		proc :ptr, :ptr, :ptr, :DWORD
     ReleaseBuffer	proc :ptr
-
-    .ends
+   .ends
 
 PMEMALLOCATOR		typedef ptr IMemAllocator
 
 endif
 
 ifndef __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__
-__IMemAllocatorCallbackTemp_INTERFACE_DEFINED__ equ 1
+define __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
 
@@ -823,26 +390,24 @@ DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
 
     SetNotify		proc :ptr
     GetFreeCount	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__
-__IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__ equ 1
+define __IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMemAllocatorNotifyCallbackTemp, "92980b30-c1de-11d2-abf5-00a0c905f375")
 
 .comdef IMemAllocatorNotifyCallbackTemp : public IUnknown
 
     NotifyRelease	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IMemInputPin_INTERFACE_DEFINED__
-__IMemInputPin_INTERFACE_DEFINED__ equ 1
+define __IMemInputPin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMemInputPin, "56a8689d-0ad4-11ce-b03a-0020af0ba770")
 
@@ -854,15 +419,14 @@ DEFINE_IIDX(IMemInputPin, "56a8689d-0ad4-11ce-b03a-0020af0ba770")
     Receive		proc :ptr
     ReceiveMultiple	proc
     ReceiveCanBlock	proc
-
-    .ends
+   .ends
 
 PMEMINPUTPIN		typedef ptr IMemInputPin
 
 endif
 
 ifndef __IAMovieSetup_INTERFACE_DEFINED__
-__IAMovieSetup_INTERFACE_DEFINED__ equ 1
+define __IAMovieSetup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMovieSetup, "a3d8cec0-7e5a-11cf-bbc5-00805f6cef20")
 
@@ -870,37 +434,38 @@ DEFINE_IIDX(IAMovieSetup, "a3d8cec0-7e5a-11cf-bbc5-00805f6cef20")
 
     Register		proc
     Unregister		proc
-
-    .ends
+   .ends
 
 PAMOVIESETUP		typedef ptr IAMovieSetup
 
 endif
 
-AM_SEEKING_SeekingFlags typedef SDWORD
-AM_SEEKING_NoPositioning equ 0
-AM_SEEKING_AbsolutePositioning equ 0x1
-AM_SEEKING_RelativePositioning equ 0x2
-AM_SEEKING_IncrementalPositioning equ 0x3
-AM_SEEKING_PositioningBitsMask equ 0x3
-AM_SEEKING_SeekToKeyFrame equ 0x4
-AM_SEEKING_ReturnTime	equ 0x8
-AM_SEEKING_Segment	equ 0x10
-AM_SEEKING_NoFlush	equ 0x20
+.enum AM_SEEKING_SEEKING_FLAGS {
+	AM_SEEKING_NoPositioning	= 0,
+	AM_SEEKING_AbsolutePositioning	= 0x1,
+	AM_SEEKING_RelativePositioning	= 0x2,
+	AM_SEEKING_IncrementalPositioning = 0x3,
+	AM_SEEKING_PositioningBitsMask	= 0x3,
+	AM_SEEKING_SeekToKeyFrame	= 0x4,
+	AM_SEEKING_ReturnTime		= 0x8,
+	AM_SEEKING_Segment		= 0x10,
+	AM_SEEKING_NoFlush		= 0x20
+	}
 
-AM_SEEKING_SeekingCapabilities typedef SDWORD
-AM_SEEKING_CanSeekAbsolute equ 0x1
-AM_SEEKING_CanSeekForwards equ 0x2
-AM_SEEKING_CanSeekBackwards equ 0x4
-AM_SEEKING_CanGetCurrentPos equ 0x8
-AM_SEEKING_CanGetStopPos equ 0x10
-AM_SEEKING_CanGetDuration equ 0x20
-AM_SEEKING_CanPlayBackwards equ 0x40
-AM_SEEKING_CanDoSegments equ 0x80
-AM_SEEKING_Source	equ 0x100
+.enum AM_SEEKING_SEEKING_CAPABILITIES {
+	AM_SEEKING_CanSeekAbsolute	= 0x1,
+	AM_SEEKING_CanSeekForwards	= 0x2,
+	AM_SEEKING_CanSeekBackwards	= 0x4,
+	AM_SEEKING_CanGetCurrentPos	= 0x8,
+	AM_SEEKING_CanGetStopPos	= 0x10,
+	AM_SEEKING_CanGetDuration	= 0x20,
+	AM_SEEKING_CanPlayBackwards	= 0x40,
+	AM_SEEKING_CanDoSegments	= 0x80,
+	AM_SEEKING_Source		= 0x100
+	}
 
 ifndef __IMediaSeeking_INTERFACE_DEFINED__
-__IMediaSeeking_INTERFACE_DEFINED__ equ 1
+define __IMediaSeeking_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaSeeking, "36b73880-c2c8-11cf-8b46-00805f6cef60")
 
@@ -923,15 +488,15 @@ DEFINE_IIDX(IMediaSeeking, "36b73880-c2c8-11cf-8b46-00805f6cef60")
     SetRate		proc :REAL8
     GetRate		proc :ptr
     GetPreroll		proc :ptr
-
-    .ends
+   .ends
 
 PMEDIASEEKING		typedef ptr IMediaSeeking
 
 endif
 
-AM_MEDIAEVENT_FLAGS	typedef SDWORD
-AM_MEDIAEVENT_NONOTIFY	equ 0x01
+.enum AM_MEDIAEVENT_FLAGS {
+	AM_MEDIAEVENT_NONOTIFY	= 0x01
+	}
 
 REGFILTER		STRUC
 Clsid			CLSID <>
@@ -939,7 +504,7 @@ Name			LPWSTR ?
 REGFILTER		ENDS
 
 ifndef __IEnumRegFilters_INTERFACE_DEFINED__
-__IEnumRegFilters_INTERFACE_DEFINED__ equ 1
+define __IEnumRegFilters_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumRegFilters, "901db4c7-31ce-41a2-85dc-8fa0bf41b8da")
 
@@ -949,23 +514,23 @@ DEFINE_IIDX(IEnumRegFilters, "901db4c7-31ce-41a2-85dc-8fa0bf41b8da")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 PENUMREGFILTERS		typedef ptr IEnumRegFilters
 
 endif
 
 ifndef __IFilterMapper_INTERFACE_DEFINED__
-__IFilterMapper_INTERFACE_DEFINED__ equ 1
+define __IFilterMapper_INTERFACE_DEFINED__
 
-_MIDL_IFilterMapper_0001 typedef SDWORD
-MERIT_PREFERRED		equ 0x800000
-MERIT_NORMAL		equ 0x600000
-MERIT_UNLIKELY		equ 0x400000
-MERIT_DO_NOT_USE	equ 0x200000
-MERIT_SW_COMPRESSOR	equ 0x100000
-MERIT_HW_COMPRESSOR	equ 0x100050
+.enum __MIDL_IFilterMapper_0001 {
+	MERIT_PREFERRED		= 0x800000,
+	MERIT_NORMAL		= 0x600000,
+	MERIT_UNLIKELY		= 0x400000,
+	MERIT_DO_NOT_USE	= 0x200000,
+	MERIT_SW_COMPRESSOR	= 0x100000,
+	MERIT_HW_COMPRESSOR	= 0x100050
+	}
 
 DEFINE_IIDX(IFilterMapper, "56a868a4-0ad4-11ce-b03a-0020af0ba770")
 
@@ -979,8 +544,7 @@ DEFINE_IIDX(IFilterMapper, "56a868a4-0ad4-11ce-b03a-0020af0ba770")
     UnregisterFilterInstance proc :CLSID
     UnregisterPin	proc :CLSID, :LPCWSTR
     EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :CLSID, :CLSID, :BOOL, :BOOL, :CLSID, :CLSID
-
-    .ends
+   .ends
 
 endif
 
@@ -1010,11 +574,12 @@ dw2			dd ?
 REGPINMEDIUM		ENDS
 PREGPINMEDIUM		typedef ptr REGPINMEDIUM
 
-_MIDL___MIDL_itf_strmif_0000_0022_0001 typedef SDWORD
-REG_PINFLAG_B_ZERO	equ 0x1
-REG_PINFLAG_B_RENDERER	equ 0x2
-REG_PINFLAG_B_MANY	equ 0x4
-REG_PINFLAG_B_OUTPUT	equ 0x8
+.enum __MIDL___MIDL_itf_strmif_0000_0023_0001 {
+	REG_PINFLAG_B_ZERO	= 0x1,
+	REG_PINFLAG_B_RENDERER	= 0x2,
+	REG_PINFLAG_B_MANY	= 0x4,
+	REG_PINFLAG_B_OUTPUT	= 0x8
+	}
 
 REGFILTERPINS2		STRUC
 dwFlags			dd ?
@@ -1043,7 +608,7 @@ ENDS
 REGFILTER2		ENDS
 
 ifndef __IFilterMapper2_INTERFACE_DEFINED__
-__IFilterMapper2_INTERFACE_DEFINED__ equ 1
+define __IFilterMapper2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterMapper2, "56a868a3-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1053,27 +618,26 @@ DEFINE_IIDX(IFilterMapper2, "56a868a3-0ad4-11ce-b03a-0020af0ba770")
     UnregisterFilter	proc :ptr, :LPCOLESTR, :REFCLSID
     RegisterFilter	proc :REFCLSID, :LPCWSTR, :ptr, :ptr, :LPCOLESTR, :ptr
     EnumMatchingFilters proc :ptr, :DWORD, :BOOL, :DWORD, :BOOL, :DWORD, :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IFilterMapper3_INTERFACE_DEFINED__
-__IFilterMapper3_INTERFACE_DEFINED__ equ 1
+define __IFilterMapper3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterMapper3, "b79bb0b0-33c1-11d1-abe1-00a0c905f375")
 
 .comdef IFilterMapper3 : public IFilterMapper2
 
     GetICreateDevEnum	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-QualityMessageType	typedef SDWORD
-Famine			equ 0
-Flood			equ ( Famine + 1 )
+.enum QualityMessageType {
+	Famine	= 0,
+	Flood	= ( Famine + 1 )
+	}
 
 Quality			STRUC
 Type			QualityMessageType ?
@@ -1083,7 +647,7 @@ TimeStamp		REFERENCE_TIME ?
 Quality			ENDS
 
 ifndef __IQualityControl_INTERFACE_DEFINED__
-__IQualityControl_INTERFACE_DEFINED__ equ 1
+define __IQualityControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IQualityControl, "56a868a5-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1091,17 +655,18 @@ DEFINE_IIDX(IQualityControl, "56a868a5-0ad4-11ce-b03a-0020af0ba770")
 
     Notify		proc :ptr, :Quality
     SetSink		proc :ptr
-
-    .ends
+   .ends
 
 PQUALITYCONTROL		typedef ptr IQualityControl
 
 endif
 
-_MIDL___MIDL_itf_strmif_0000_0025_0001 typedef SDWORD
-CK_NOCOLORKEY		equ 0
-CK_INDEX		equ 0x1
-CK_RGB			equ 0x2
+.enum __MIDL___MIDL_itf_strmif_0000_0026_0001 {
+	CK_NOCOLORKEY	= 0,
+	CK_INDEX	= 0x1,
+	CK_RGB		= 0x2
+	}
+
 COLORKEY		STRUC
 KeyType			dd ?
 PaletteIndex		dd ?
@@ -1109,15 +674,16 @@ LowColorValue		COLORREF ?
 HighColorValue		COLORREF ?
 COLORKEY		ENDS
 
-_MIDL___MIDL_itf_strmif_0000_0025_0002 typedef SDWORD
-ADVISE_NONE		equ 0
-ADVISE_CLIPPING		equ 0x1
-ADVISE_PALETTE		equ 0x2
-ADVISE_COLORKEY		equ 0x4
-ADVISE_POSITION		equ 0x8
-ADVISE_DISPLAY_CHANGE	equ 0x10
-ADVISE_ALL		equ ADVISE_CLIPPING OR ADVISE_PALETTE OR ADVISE_COLORKEY OR ADVISE_POSITION
-ADVISE_ALL2		equ ADVISE_ALL OR ADVISE_DISPLAY_CHANGE
+.enum _MIDL___MIDL_itf_strmif_0000_0025_0002 {
+	ADVISE_NONE		= 0,
+	ADVISE_CLIPPING		= 0x1,
+	ADVISE_PALETTE		= 0x2,
+	ADVISE_COLORKEY		= 0x4,
+	ADVISE_POSITION		= 0x8,
+	ADVISE_DISPLAY_CHANGE	= 0x10,
+	ADVISE_ALL		= ADVISE_CLIPPING OR ADVISE_PALETTE OR ADVISE_COLORKEY OR ADVISE_POSITION,
+	ADVISE_ALL2		= ADVISE_ALL OR ADVISE_DISPLAY_CHANGE
+	}
 
 ifndef _WINGDI_
 RGNDATAHEADER		STRUC
@@ -1136,7 +702,7 @@ RGNDATA			ENDS
 endif
 
 ifndef __IOverlayNotify_INTERFACE_DEFINED__
-__IOverlayNotify_INTERFACE_DEFINED__ equ 1
+define __IOverlayNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOverlayNotify, "56a868a0-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1146,8 +712,7 @@ DEFINE_IIDX(IOverlayNotify, "56a868a0-0ad4-11ce-b03a-0020af0ba770")
     OnClipChange	proc :ptr, :ptr, :ptr
     OnColorKeyChange	proc :ptr
     OnPositionChange	proc :ptr, :ptr
-
-    .ends
+   .ends
     POVERLAYNOTIFY	typedef ptr IOverlayNotify
 endif
 
@@ -1160,20 +725,19 @@ DECLARE_HANDLE(HMONITOR)
 endif
 
 ifndef __IOverlayNotify2_INTERFACE_DEFINED__
-__IOverlayNotify2_INTERFACE_DEFINED__ equ 1
+define __IOverlayNotify2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOverlayNotify2, "680EFA10-D535-11D1-87C8-00A0C9223196")
 
 .comdef IOverlayNotify2 : public IOverlayNotify
 
     OnDisplayChange	proc :HMONITOR
-
-    .ends
+   .ends
     POVERLAYNOTIFY2	typedef ptr IOverlayNotify2
 endif
 
 ifndef __IOverlay_INTERFACE_DEFINED__
-__IOverlay_INTERFACE_DEFINED__ equ 1
+define __IOverlay_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IOverlay, "56a868a1-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1189,27 +753,26 @@ DEFINE_IIDX(IOverlay, "56a868a1-0ad4-11ce-b03a-0020af0ba770")
     GetVideoPosition	proc :ptr, :ptr
     Advise		proc :ptr, :DWORD
     Unadvise		proc
-    .ends
+   .ends
     POVERLAY		typedef ptr IOverlay
 endif
 
 ifndef __IMediaEventSink_INTERFACE_DEFINED__
-__IMediaEventSink_INTERFACE_DEFINED__ equ 1
+define __IMediaEventSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaEventSink, "56a868a2-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMediaEventSink : public IUnknown
 
     Notify		proc :LONG, :LONG_PTR, :LONG_PTR
-
-    .ends
+   .ends
 
 PMEDIAEVENTSINK		typedef ptr IMediaEventSink
 
 endif
 
 ifndef __IFileSourceFilter_INTERFACE_DEFINED__
-__IFileSourceFilter_INTERFACE_DEFINED__ equ 1
+define __IFileSourceFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFileSourceFilter, "56a868a6-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1217,13 +780,12 @@ DEFINE_IIDX(IFileSourceFilter, "56a868a6-0ad4-11ce-b03a-0020af0ba770")
 
     Load		proc :LPCOLESTR, :ptr
     GetCurFile		proc :ptr, :ptr
-
-    .ends
+   .ends
     PFILTERFILESOURCE	typedef ptr IFileSourceFilter
 endif
 
 ifndef __IFileSinkFilter_INTERFACE_DEFINED__
-__IFileSinkFilter_INTERFACE_DEFINED__ equ 1
+define __IFileSinkFilter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFileSinkFilter, "a2104830-7c70-11cf-8bce-00aa00a3f1a6")
 
@@ -1231,13 +793,12 @@ DEFINE_IIDX(IFileSinkFilter, "a2104830-7c70-11cf-8bce-00aa00a3f1a6")
 
     SetFileName		proc :LPCOLESTR, :ptr
     GetCurFile		proc :ptr, :ptr
-
-    .ends
+   .ends
     PFILTERFILESINK	typedef ptr IFileSinkFilter
 endif
 
 ifndef __IFileSinkFilter2_INTERFACE_DEFINED__
-__IFileSinkFilter2_INTERFACE_DEFINED__ equ 1
+define __IFileSinkFilter2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFileSinkFilter2, "00855B90-CE1B-11d0-BD4F-00A0C911CE86")
 
@@ -1245,16 +806,16 @@ DEFINE_IIDX(IFileSinkFilter2, "00855B90-CE1B-11d0-BD4F-00A0C911CE86")
 
     SetMode		proc :DWORD
     GetMode		proc :ptr
-
-    .ends
+   .ends
     PFILESINKFILTER2	typedef ptr IFileSinkFilter2
 endif
 
-AM_FILESINK_FLAGS	typedef SDWORD
-AM_FILE_OVERWRITE	equ 0x1
+.enum AM_FILESINK_FLAGS {
+	AM_FILE_OVERWRITE	= 0x1
+	}
 
 ifndef __IGraphBuilder_INTERFACE_DEFINED__
-__IGraphBuilder_INTERFACE_DEFINED__ equ 1
+define __IGraphBuilder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1267,12 +828,11 @@ DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
     SetLogFile		proc :DWORD_PTR
     Abort		proc
     ShouldOperationContinue proc
-
-    .ends
+   .ends
 endif
 
 ifndef __ICaptureGraphBuilder_INTERFACE_DEFINED__
-__ICaptureGraphBuilder_INTERFACE_DEFINED__ equ 1
+define __ICaptureGraphBuilder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICaptureGraphBuilder, "bf87b6e0-8c27-11d0-b3f0-00aa003761c5")
 
@@ -1286,26 +846,24 @@ DEFINE_IIDX(ICaptureGraphBuilder, "bf87b6e0-8c27-11d0-b3f0-00aa003761c5")
     ControlStream	proc :ptr, :ptr, :ptr, :ptr, :WORD, :WORD
     AllocCapFile	proc :LPCOLESTR, :DWORDLONG
     CopyCaptureFile	proc :LPOLESTR, :LPOLESTR, :SINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMCopyCaptureFileProgress_INTERFACE_DEFINED__
-__IAMCopyCaptureFileProgress_INTERFACE_DEFINED__ equ 1
+define __IAMCopyCaptureFileProgress_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMCopyCaptureFileProgress, "670d1d20-a068-11d0-b3f0-00aa003761c5")
 
 .comdef IAMCopyCaptureFileProgress : public IUnknown
 
     Progress		proc :SINT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ICaptureGraphBuilder2_INTERFACE_DEFINED__
-__ICaptureGraphBuilder2_INTERFACE_DEFINED__ equ 1
+define __ICaptureGraphBuilder2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICaptureGraphBuilder2, "93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")
 
@@ -1320,16 +878,16 @@ DEFINE_IIDX(ICaptureGraphBuilder2, "93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")
     AllocCapFile	proc :LPCOLESTR, :DWORDLONG
     CopyCaptureFile	proc :LPOLESTR, :LPOLESTR, :SINT, :ptr
     FindPin		proc :ptr, :PIN_DIRECTION, :ptr, :ptr, :BOOL, :SINT, :ptr
-
-    .ends
+   .ends
 
 endif
 
-AM_RENSDEREXFLAGS	typedef SDWORD
-AM_RENDEREX_RENDERTOEXISTINGRENDERERS equ 0x1
+.enum AM_RENSDEREXFLAGS {
+	AM_RENDEREX_RENDERTOEXISTINGRENDERERS = 0x1
+	}
 
 ifndef __IFilterGraph2_INTERFACE_DEFINED__
-__IFilterGraph2_INTERFACE_DEFINED__ equ 1
+define __IFilterGraph2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
 
@@ -1338,26 +896,24 @@ DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
     AddSourceFilterForMoniker proc :ptr, :ptr, :LPCWSTR, :ptr
     ReconnectEx		proc :ptr, :ptr
     RenderEx		proc :ptr, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IFilterGraph3_INTERFACE_DEFINED__
-__IFilterGraph3_INTERFACE_DEFINED__ equ 1
+define __IFilterGraph3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterGraph3, "aaf38154-b80b-422f-91e6-b66467509a07")
 
 .comdef IFilterGraph3 : public IFilterGraph2
 
     SetSyncSourceEx	proc :ptr, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IStreamBuilder_INTERFACE_DEFINED__
-__IStreamBuilder_INTERFACE_DEFINED__ equ 1
+define __IStreamBuilder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStreamBuilder, "56a868bf-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1365,13 +921,12 @@ DEFINE_IIDX(IStreamBuilder, "56a868bf-0ad4-11ce-b03a-0020af0ba770")
 
     Render		proc :ptr, :ptr
     Backout		proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAsyncReader_INTERFACE_DEFINED__
-__IAsyncReader_INTERFACE_DEFINED__ equ 1
+define __IAsyncReader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1385,26 +940,24 @@ DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
     Length		proc :ptr, :ptr
     BeginFlush		proc
     EndFlush		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IGraphVersion_INTERFACE_DEFINED__
-__IGraphVersion_INTERFACE_DEFINED__ equ 1
+define __IGraphVersion_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGraphVersion, "56a868ab-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IGraphVersion : public IUnknown
 
     QueryVersion	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceConsumer_INTERFACE_DEFINED__
-__IResourceConsumer_INTERFACE_DEFINED__ equ 1
+define __IResourceConsumer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IResourceConsumer, "56a868ad-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1412,13 +965,12 @@ DEFINE_IIDX(IResourceConsumer, "56a868ad-0ad4-11ce-b03a-0020af0ba770")
 
     AcquireResource	proc :LONG
     ReleaseResource	proc :LONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IResourceManager_INTERFACE_DEFINED__
-__IResourceManager_INTERFACE_DEFINED__ equ 1
+define __IResourceManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IResourceManager, "56a868ac-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1432,13 +984,12 @@ DEFINE_IIDX(IResourceManager, "56a868ac-0ad4-11ce-b03a-0020af0ba770")
     CancelRequest	proc :LONG, :ptr
     SetFocus		proc :ptr
     ReleaseFocus	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDistributorNotify_INTERFACE_DEFINED__
-__IDistributorNotify_INTERFACE_DEFINED__ equ 1
+define __IDistributorNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDistributorNotify, "56a868af-0ad4-11ce-b03a-0020af0ba770")
 
@@ -1449,16 +1000,16 @@ DEFINE_IIDX(IDistributorNotify, "56a868af-0ad4-11ce-b03a-0020af0ba770")
     Run			proc :REFERENCE_TIME
     SetSyncSource	proc :ptr
     NotifyGraphChange	proc
-
-    .ends
+   .ends
 
 endif
 
-AM_STREAM_INFO_FLAGS	typedef SDWORD
-AM_STREAM_INFO_START_DEFINED equ 0x1
-AM_STREAM_INFO_STOP_DEFINED equ 0x2
-AM_STREAM_INFO_DISCARDING equ 0x4
-AM_STREAM_INFO_STOP_SEND_EXTRA equ 0x10
+.enum AM_STREAM_INFO_FLAGS {
+	AM_STREAM_INFO_START_DEFINED	= 0x1,
+	AM_STREAM_INFO_STOP_DEFINED	= 0x2,
+	AM_STREAM_INFO_DISCARDING	= 0x4,
+	AM_STREAM_INFO_STOP_SEND_EXTRA	= 0x10
+	}
 
 AM_STREAM_INFO		STRUC
 tStart			REFERENCE_TIME ?
@@ -1469,7 +1020,7 @@ dwFlags			dd ?
 AM_STREAM_INFO		ENDS
 
 ifndef __IAMStreamControl_INTERFACE_DEFINED__
-__IAMStreamControl_INTERFACE_DEFINED__ equ 1
+define __IAMStreamControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMStreamControl, "36b73881-c2c8-11cf-8b46-00805f6cef60")
 
@@ -1478,26 +1029,24 @@ DEFINE_IIDX(IAMStreamControl, "36b73881-c2c8-11cf-8b46-00805f6cef60")
     StartAt		proc :ptr, :DWORD
     StopAt		proc :ptr, :BOOL, :DWORD
     GetInfo		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __ISeekingPassThru_INTERFACE_DEFINED__
-__ISeekingPassThru_INTERFACE_DEFINED__ equ 1
+define __ISeekingPassThru_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ISeekingPassThru, "36b73883-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef ISeekingPassThru : public IUnknown
 
     Init		proc :BOOL, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMStreamConfig_INTERFACE_DEFINED__
-__IAMStreamConfig_INTERFACE_DEFINED__ equ 1
+define __IAMStreamConfig_INTERFACE_DEFINED__
 
 VIDEO_STREAM_CONFIG_CAPS STRUC
 guid			GUID <>
@@ -1544,19 +1093,19 @@ DEFINE_IIDX(IAMStreamConfig, "C6E13340-30AC-11d0-A18C-00A0C9118956")
     GetFormat		proc :ptr
     GetNumberOfCapabilities proc :ptr, :ptr
     GetStreamCaps	proc :SINT, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IConfigInterleaving_INTERFACE_DEFINED__
-__IConfigInterleaving_INTERFACE_DEFINED__ equ 1
+define __IConfigInterleaving_INTERFACE_DEFINED__
 
-InterleavingMode	typedef SDWORD
-INTERLEAVE_NONE		equ 0
-INTERLEAVE_CAPTURE	equ ( INTERLEAVE_NONE + 1 )
-INTERLEAVE_FULL		equ ( INTERLEAVE_CAPTURE + 1 )
-INTERLEAVE_NONE_BUFFERED equ ( INTERLEAVE_FULL + 1 )
+.enum InterleavingMode {
+	INTERLEAVE_NONE		= 0,
+	INTERLEAVE_CAPTURE	= ( INTERLEAVE_NONE + 1 ),
+	INTERLEAVE_FULL		= ( INTERLEAVE_CAPTURE + 1 ),
+	INTERLEAVE_NONE_BUFFERED = ( INTERLEAVE_FULL + 1 )
+	}
 
 DEFINE_IIDX(IConfigInterleaving, "BEE3D220-157B-11d0-BD23-00A0C911CE86")
 
@@ -1566,13 +1115,12 @@ DEFINE_IIDX(IConfigInterleaving, "BEE3D220-157B-11d0-BD23-00A0C911CE86")
     get_Mode		proc :ptr
     put_Interleaving	proc :ptr, :ptr
     get_Interleaving	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IConfigAviMux_INTERFACE_DEFINED__
-__IConfigAviMux_INTERFACE_DEFINED__ equ 1
+define __IConfigAviMux_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IConfigAviMux, "5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6")
 
@@ -1582,20 +1130,20 @@ DEFINE_IIDX(IConfigAviMux, "5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6")
     GetMasterStream	proc :ptr
     SetOutputCompatibilityIndex proc :BOOL
     GetOutputCompatibilityIndex proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-CompressionCaps		typedef SDWORD
-CompressionCaps_CanQuality equ 0x1
-CompressionCaps_CanCrunch equ 0x2
-CompressionCaps_CanKeyFrame equ 0x4
-CompressionCaps_CanBFrame equ 0x8
-CompressionCaps_CanWindow equ 0x10
+.enum CompressionCaps {
+	CompressionCaps_CanQuality	= 0x1,
+	CompressionCaps_CanCrunch	= 0x2,
+	CompressionCaps_CanKeyFrame	= 0x4,
+	CompressionCaps_CanBFrame	= 0x8,
+	CompressionCaps_CanWindow	= 0x10
+	}
 
 ifndef __IAMVideoCompression_INTERFACE_DEFINED__
-__IAMVideoCompression_INTERFACE_DEFINED__ equ 1
+define __IAMVideoCompression_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVideoCompression, "C6E13343-30AC-11d0-A18C-00A0C9118956")
 
@@ -1612,24 +1160,25 @@ DEFINE_IIDX(IAMVideoCompression, "C6E13343-30AC-11d0-A18C-00A0C9118956")
     GetInfo		proc :LPWSTR, :ptr, :ptr, :ptr, :ptr, :ptr
     OverrideKeyFrame	proc :LONG
     OverrideFrameSize	proc :LONG, :LONG
-
-    .ends
+   .ends
 
 endif
 
-VfwCaptureDialogs	typedef SDWORD
-VfwCaptureDialog_Source equ 0x1
-VfwCaptureDialog_Format equ 0x2
-VfwCaptureDialog_Display equ 0x4
+.enum VfwCaptureDialogs {
+	VfwCaptureDialog_Source	 = 0x1,
+	VfwCaptureDialog_Format	 = 0x2,
+	VfwCaptureDialog_Display = 0x4
+	}
 
-VfwCompressDialogs	typedef SDWORD
-VfwCompressDialog_Config equ 0x1
-VfwCompressDialog_About equ 0x2
-VfwCompressDialog_QueryConfig equ 0x4
-VfwCompressDialog_QueryAbout equ 0x8
+.enum VfwCompressDialogs {
+	VfwCompressDialog_Config	= 0x1,
+	VfwCompressDialog_About		= 0x2,
+	VfwCompressDialog_QueryConfig	= 0x4,
+	VfwCompressDialog_QueryAbout	= 0x8
+	}
 
 ifndef __IAMVfwCaptureDialogs_INTERFACE_DEFINED__
-__IAMVfwCaptureDialogs_INTERFACE_DEFINED__ equ 1
+define __IAMVfwCaptureDialogs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVfwCaptureDialogs, "D8D715A0-6E5E-11D0-B3F0-00AA003761C5")
 
@@ -1638,13 +1187,12 @@ DEFINE_IIDX(IAMVfwCaptureDialogs, "D8D715A0-6E5E-11D0-B3F0-00AA003761C5")
     HasDialog		proc :SINT
     ShowDialog		proc :SINT, :HWND
     SendDriverMessage	proc :SINT, :SINT, :LONG, :LONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMVfwCompressDialogs_INTERFACE_DEFINED__
-__IAMVfwCompressDialogs_INTERFACE_DEFINED__ equ 1
+define __IAMVfwCompressDialogs_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVfwCompressDialogs, "D8D715A3-6E5E-11D0-B3F0-00AA003761C5")
 
@@ -1654,13 +1202,12 @@ DEFINE_IIDX(IAMVfwCompressDialogs, "D8D715A3-6E5E-11D0-B3F0-00AA003761C5")
     GetState		proc :LPVOID, :ptr
     SetState		proc
     SendDriverMessage	proc :SINT, :LONG, :LONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMDroppedFrames_INTERFACE_DEFINED__
-__IAMDroppedFrames_INTERFACE_DEFINED__ equ 1
+define __IAMDroppedFrames_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMDroppedFrames, "C6E13344-30AC-11d0-A18C-00A0C9118956")
 
@@ -1670,15 +1217,14 @@ DEFINE_IIDX(IAMDroppedFrames, "C6E13344-30AC-11d0-A18C-00A0C9118956")
     GetNumNotDropped	proc :ptr
     GetDroppedInfo	proc :LONG, :ptr, :ptr
     GetAverageFrameSize proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 AMF_AUTOMATICGAIN	equ -1.0
 
 ifndef __IAMAudioInputMixer_INTERFACE_DEFINED__
-__IAMAudioInputMixer_INTERFACE_DEFINED__ equ 1
+define __IAMAudioInputMixer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMAudioInputMixer, "54C39221-8380-11d0-B3F0-00AA003761C5")
 
@@ -1700,13 +1246,12 @@ DEFINE_IIDX(IAMAudioInputMixer, "54C39221-8380-11d0-B3F0-00AA003761C5")
     put_Bass		proc :REAL8
     get_Bass		proc :ptr
     get_BassRange	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMBufferNegotiation_INTERFACE_DEFINED__
-__IAMBufferNegotiation_INTERFACE_DEFINED__ equ 1
+define __IAMBufferNegotiation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMBufferNegotiation, "56ED71A0-AF5F-11D0-B3F0-00AA003761C5")
 
@@ -1714,77 +1259,82 @@ DEFINE_IIDX(IAMBufferNegotiation, "56ED71A0-AF5F-11D0-B3F0-00AA003761C5")
 
     SuggestAllocatorProperties proc :ptr
     GetAllocatorProperties proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-AnalogVideoStandard	typedef SDWORD
-AnalogVideo_None	equ 0
-AnalogVideo_NTSC_M	equ 0x1
-AnalogVideo_NTSC_M_J	equ 0x2
-AnalogVideo_NTSC_433	equ 0x4
-AnalogVideo_PAL_B	equ 0x10
-AnalogVideo_PAL_D	equ 0x20
-AnalogVideo_PAL_G	equ 0x40
-AnalogVideo_PAL_H	equ 0x80
-AnalogVideo_PAL_I	equ 0x100
-AnalogVideo_PAL_M	equ 0x200
-AnalogVideo_PAL_N	equ 0x400
-AnalogVideo_PAL_60	equ 0x800
-AnalogVideo_SECAM_B	equ 0x1000
-AnalogVideo_SECAM_D	equ 0x2000
-AnalogVideo_SECAM_G	equ 0x4000
-AnalogVideo_SECAM_H	equ 0x8000
-AnalogVideo_SECAM_K	equ 0x10000
-AnalogVideo_SECAM_K1	equ 0x20000
-AnalogVideo_SECAM_L	equ 0x40000
-AnalogVideo_SECAM_L1	equ 0x80000
-AnalogVideo_PAL_N_COMBO equ 0x100000
-AnalogVideoMask_MCE_NTSC equ ((((((AnalogVideo_NTSC_M OR AnalogVideo_NTSC_M_J) OR AnalogVideo_NTSC_433) OR AnalogVideo_PAL_M) OR AnalogVideo_PAL_N) OR AnalogVideo_PAL_60) OR AnalogVideo_PAL_N_COMBO)
-AnalogVideoMask_MCE_PAL equ ((((AnalogVideo_PAL_B OR AnalogVideo_PAL_D) OR AnalogVideo_PAL_G) OR AnalogVideo_PAL_H) OR AnalogVideo_PAL_I)
-AnalogVideoMask_MCE_SECAM equ (((((((AnalogVideo_SECAM_B OR AnalogVideo_SECAM_D) OR AnalogVideo_SECAM_G) OR AnalogVideo_SECAM_H) OR AnalogVideo_SECAM_K) OR AnalogVideo_SECAM_K1) OR AnalogVideo_SECAM_L) OR AnalogVideo_SECAM_L1)
+.enum AnalogVideoStandard {
+	AnalogVideo_None	= 0,
+	AnalogVideo_NTSC_M	= 0x1,
+	AnalogVideo_NTSC_M_J	= 0x2,
+	AnalogVideo_NTSC_433	= 0x4,
+	AnalogVideo_PAL_B	= 0x10,
+	AnalogVideo_PAL_D	= 0x20,
+	AnalogVideo_PAL_G	= 0x40,
+	AnalogVideo_PAL_H	= 0x80,
+	AnalogVideo_PAL_I	= 0x100,
+	AnalogVideo_PAL_M	= 0x200,
+	AnalogVideo_PAL_N	= 0x400,
+	AnalogVideo_PAL_60	= 0x800,
+	AnalogVideo_SECAM_B	= 0x1000,
+	AnalogVideo_SECAM_D	= 0x2000,
+	AnalogVideo_SECAM_G	= 0x4000,
+	AnalogVideo_SECAM_H	= 0x8000,
+	AnalogVideo_SECAM_K	= 0x10000,
+	AnalogVideo_SECAM_K1	= 0x20000,
+	AnalogVideo_SECAM_L	= 0x40000,
+	AnalogVideo_SECAM_L1	= 0x80000,
+	AnalogVideo_PAL_N_COMBO = 0x100000,
+	AnalogVideoMask_MCE_NTSC = ( ( ( ( ( ( AnalogVideo_NTSC_M or AnalogVideo_NTSC_M_J )  or AnalogVideo_NTSC_433 ) or AnalogVideo_PAL_M ) or AnalogVideo_PAL_N ) or AnalogVideo_PAL_60 ) or AnalogVideo_PAL_N_COMBO ) ,
+	AnalogVideoMask_MCE_PAL = ( ( ( ( AnalogVideo_PAL_B or AnalogVideo_PAL_D ) or AnalogVideo_PAL_G ) or AnalogVideo_PAL_H ) or AnalogVideo_PAL_I ) ,
+	AnalogVideoMask_MCE_SECAM = ( ( ( ( ( ( ( AnalogVideo_SECAM_B or AnalogVideo_SECAM_D ) or AnalogVideo_SECAM_G ) or AnalogVideo_SECAM_H ) or AnalogVideo_SECAM_K ) or AnalogVideo_SECAM_K1 ) or AnalogVideo_SECAM_L ) or AnalogVideo_SECAM_L1 )
+	}
 
-TunerInputType		typedef SDWORD
-TunerInputCable		equ 0
-TunerInputAntenna	equ ( TunerInputCable + 1 )
+.enum TunerInputType {
+	TunerInputCable = 0,
+	TunerInputAntenna = ( TunerInputCable + 1 )
+	}
 
 AnalogVideo_NTSC_Mask	equ 0x00000007
 AnalogVideo_PAL_Mask	equ 0x00100FF0
 AnalogVideo_SECAM_Mask	equ 0x000FF000
-VideoCopyProtectionType typedef SDWORD
-VideoCopyProtectionMacrovisionBasic equ 0
-VideoCopyProtectionMacrovisionCBI equ ( VideoCopyProtectionMacrovisionBasic + 1 )
 
-tagPhysicalConnectorType typedef SDWORD
-PhysConn_Video_Tuner	equ 1
-PhysConn_Video_Composite equ ( PhysConn_Video_Tuner + 1 )
-PhysConn_Video_SVideo	equ ( PhysConn_Video_Composite + 1 )
-PhysConn_Video_RGB	equ ( PhysConn_Video_SVideo + 1 )
-PhysConn_Video_YRYBY	equ ( PhysConn_Video_RGB + 1 )
-PhysConn_Video_SerialDigital equ ( PhysConn_Video_YRYBY + 1 )
-PhysConn_Video_ParallelDigital equ ( PhysConn_Video_SerialDigital + 1 )
-PhysConn_Video_SCSI	equ ( PhysConn_Video_ParallelDigital + 1 )
-PhysConn_Video_AUX	equ ( PhysConn_Video_SCSI + 1 )
-PhysConn_Video_1394	equ ( PhysConn_Video_AUX + 1 )
-PhysConn_Video_USB	equ ( PhysConn_Video_1394 + 1 )
-PhysConn_Video_VideoDecoder equ ( PhysConn_Video_USB + 1 )
-PhysConn_Video_VideoEncoder equ ( PhysConn_Video_VideoDecoder + 1 )
-PhysConn_Video_SCART	equ ( PhysConn_Video_VideoEncoder + 1 )
-PhysConn_Video_Black	equ ( PhysConn_Video_SCART + 1 )
-PhysConn_Audio_Tuner	equ 0x1000
-PhysConn_Audio_Line	equ ( PhysConn_Audio_Tuner + 1 )
-PhysConn_Audio_Mic	equ ( PhysConn_Audio_Line + 1 )
-PhysConn_Audio_AESDigital equ ( PhysConn_Audio_Mic + 1 )
-PhysConn_Audio_SPDIFDigital equ ( PhysConn_Audio_AESDigital + 1 )
-PhysConn_Audio_SCSI	equ ( PhysConn_Audio_SPDIFDigital + 1 )
-PhysConn_Audio_AUX	equ ( PhysConn_Audio_SCSI + 1 )
-PhysConn_Audio_1394	equ ( PhysConn_Audio_AUX + 1 )
-PhysConn_Audio_USB	equ ( PhysConn_Audio_1394 + 1 )
-PhysConn_Audio_AudioDecoder equ ( PhysConn_Audio_USB + 1 )
+.enum VideoCopyProtectionType {
+	VideoCopyProtectionMacrovisionBasic	= 0,
+	VideoCopyProtectionMacrovisionCBI	= ( VideoCopyProtectionMacrovisionBasic + 1 )
+	}
+
+.enum PhysicalConnectorType {
+	PhysConn_Video_Tuner	= 1,
+	PhysConn_Video_Composite = ( PhysConn_Video_Tuner + 1 ) ,
+	PhysConn_Video_SVideo	= ( PhysConn_Video_Composite + 1 ) ,
+	PhysConn_Video_RGB	= ( PhysConn_Video_SVideo + 1 ) ,
+	PhysConn_Video_YRYBY	= ( PhysConn_Video_RGB + 1 ) ,
+	PhysConn_Video_SerialDigital	= ( PhysConn_Video_YRYBY + 1 ) ,
+	PhysConn_Video_ParallelDigital	= ( PhysConn_Video_SerialDigital + 1 ) ,
+	PhysConn_Video_SCSI	= ( PhysConn_Video_ParallelDigital + 1 ) ,
+	PhysConn_Video_AUX	= ( PhysConn_Video_SCSI + 1 ) ,
+	PhysConn_Video_1394	= ( PhysConn_Video_AUX + 1 ) ,
+	PhysConn_Video_USB	= ( PhysConn_Video_1394 + 1 ) ,
+	PhysConn_Video_VideoDecoder	= ( PhysConn_Video_USB + 1 ) ,
+	PhysConn_Video_VideoEncoder	= ( PhysConn_Video_VideoDecoder + 1 ) ,
+	PhysConn_Video_SCART	= ( PhysConn_Video_VideoEncoder + 1 ) ,
+	PhysConn_Video_Black	= ( PhysConn_Video_SCART + 1 ) ,
+	PhysConn_Audio_Tuner	= 0x1000,
+	PhysConn_Audio_Line	= ( PhysConn_Audio_Tuner + 1 ) ,
+	PhysConn_Audio_Mic	= ( PhysConn_Audio_Line + 1 ) ,
+	PhysConn_Audio_AESDigital	= ( PhysConn_Audio_Mic + 1 ) ,
+	PhysConn_Audio_SPDIFDigital	= ( PhysConn_Audio_AESDigital + 1 ) ,
+	PhysConn_Audio_SCSI	= ( PhysConn_Audio_SPDIFDigital + 1 ) ,
+	PhysConn_Audio_AUX	= ( PhysConn_Audio_SCSI + 1 ) ,
+	PhysConn_Audio_1394	= ( PhysConn_Audio_AUX + 1 ) ,
+	PhysConn_Audio_USB	= ( PhysConn_Audio_1394 + 1 ) ,
+	PhysConn_Audio_AudioDecoder	= ( PhysConn_Audio_USB + 1 )
+	}
+
 
 ifndef __IAMAnalogVideoDecoder_INTERFACE_DEFINED__
-__IAMAnalogVideoDecoder_INTERFACE_DEFINED__ equ 1
+define __IAMAnalogVideoDecoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
 
@@ -1799,29 +1349,30 @@ DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
     get_NumberOfLines	proc :ptr
     put_OutputEnable	proc :LONG
     get_OutputEnable	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-VideoProcAmpProperty typedef SDWORD
-VideoProcAmp_Brightness equ 0
-VideoProcAmp_Contrast	equ ( VideoProcAmp_Brightness + 1 )
-VideoProcAmp_Hue	equ ( VideoProcAmp_Contrast + 1 )
-VideoProcAmp_Saturation equ ( VideoProcAmp_Hue + 1 )
-VideoProcAmp_Sharpness	equ ( VideoProcAmp_Saturation + 1 )
-VideoProcAmp_Gamma	equ ( VideoProcAmp_Sharpness + 1 )
-VideoProcAmp_ColorEnable equ ( VideoProcAmp_Gamma + 1 )
-VideoProcAmp_WhiteBalance equ ( VideoProcAmp_ColorEnable + 1 )
-VideoProcAmp_BacklightCompensation equ ( VideoProcAmp_WhiteBalance + 1 )
-VideoProcAmp_Gain	equ ( VideoProcAmp_BacklightCompensation + 1 )
+.enum VideoProcAmpProperty {
+	VideoProcAmp_Brightness = 0,
+	VideoProcAmp_Contrast	= ( VideoProcAmp_Brightness + 1 ) ,
+	VideoProcAmp_Hue	= ( VideoProcAmp_Contrast + 1 ) ,
+	VideoProcAmp_Saturation = ( VideoProcAmp_Hue + 1 ) ,
+	VideoProcAmp_Sharpness	= ( VideoProcAmp_Saturation + 1 ) ,
+	VideoProcAmp_Gamma	= ( VideoProcAmp_Sharpness + 1 ) ,
+	VideoProcAmp_ColorEnable = ( VideoProcAmp_Gamma + 1 ) ,
+	VideoProcAmp_WhiteBalance = ( VideoProcAmp_ColorEnable + 1 ) ,
+	VideoProcAmp_BacklightCompensation = ( VideoProcAmp_WhiteBalance + 1 ) ,
+	VideoProcAmp_Gain	= ( VideoProcAmp_BacklightCompensation + 1 )
+	}
 
-tagVideoProcAmpFlags	typedef SDWORD
-VideoProcAmp_Flags_Auto equ 0x1
-VideoProcAmp_Flags_Manual equ 0x2
+.enum VideoProcAmpFlags	 {
+	VideoProcAmp_Flags_Auto = 0x1,
+	VideoProcAmp_Flags_Manual = 0x2
+	}
 
 ifndef __IAMVideoProcAmp_INTERFACE_DEFINED__
-__IAMVideoProcAmp_INTERFACE_DEFINED__ equ 1
+define __IAMVideoProcAmp_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVideoProcAmp, "C6E13360-30AC-11d0-A18C-00A0C9118956")
 
@@ -1830,26 +1381,27 @@ DEFINE_IIDX(IAMVideoProcAmp, "C6E13360-30AC-11d0-A18C-00A0C9118956")
     GetRange		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
     Set			proc :LONG, :LONG, :LONG
     Get			proc :LONG, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
-CameraControlProperty typedef SDWORD
-CameraControl_Pan	equ 0
-CameraControl_Tilt	equ ( CameraControl_Pan + 1 )
-CameraControl_Roll	equ ( CameraControl_Tilt + 1 )
-CameraControl_Zoom	equ ( CameraControl_Roll + 1 )
-CameraControl_Exposure	equ ( CameraControl_Zoom + 1 )
-CameraControl_Iris	equ ( CameraControl_Exposure + 1 )
-CameraControl_Focus	equ ( CameraControl_Iris + 1 )
+.enum CameraControlProperty {
+	CameraControl_Pan	= 0,
+	CameraControl_Tilt	= ( CameraControl_Pan + 1 ) ,
+	CameraControl_Roll	= ( CameraControl_Tilt + 1 ) ,
+	CameraControl_Zoom	= ( CameraControl_Roll + 1 ) ,
+	CameraControl_Exposure	= ( CameraControl_Zoom + 1 ) ,
+	CameraControl_Iris	= ( CameraControl_Exposure + 1 ) ,
+	CameraControl_Focus	= ( CameraControl_Iris + 1 )
+	}
 
-tagCameraControlFlags	typedef SDWORD
-CameraControl_Flags_Auto equ 0x1
-CameraControl_Flags_Manual equ 0x2
+.enum CameraControlFlags {
+	CameraControl_Flags_Auto = 0x1,
+	CameraControl_Flags_Manual = 0x2
+	}
 
 ifndef __IAMCameraControl_INTERFACE_DEFINED__
-__IAMCameraControl_INTERFACE_DEFINED__ equ 1
+define __IAMCameraControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMCameraControl, "C6E13370-30AC-11d0-A18C-00A0C9118956")
 
@@ -1858,19 +1410,19 @@ DEFINE_IIDX(IAMCameraControl, "C6E13370-30AC-11d0-A18C-00A0C9118956")
     GetRange		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
     Set			proc :LONG, :LONG, :LONG
     Get			proc :LONG, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
-VideoControlFlags	typedef SDWORD
-VideoControlFlag_FlipHorizontal equ 0x1
-VideoControlFlag_FlipVertical equ 0x2
-VideoControlFlag_ExternalTriggerEnable equ 0x4
-VideoControlFlag_Trigger equ 0x8
+.enum VideoControlFlags {
+	VideoControlFlag_FlipHorizontal = 0x1,
+	VideoControlFlag_FlipVertical	= 0x2,
+	VideoControlFlag_ExternalTriggerEnable	= 0x4,
+	VideoControlFlag_Trigger	= 0x8
+	}
 
 ifndef __IAMVideoControl_INTERFACE_DEFINED__
-__IAMVideoControl_INTERFACE_DEFINED__ equ 1
+define __IAMVideoControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVideoControl, "6a2e0670-28e4-11d0-a18c-00a0c9118956")
 
@@ -1882,13 +1434,12 @@ DEFINE_IIDX(IAMVideoControl, "6a2e0670-28e4-11d0-a18c-00a0c9118956")
     GetCurrentActualFrameRate proc :ptr, :ptr
     GetMaxAvailableFrameRate proc :ptr, :LONG, :SIZEL, :ptr
     GetFrameRateList	proc :ptr, :LONG, :SIZEL, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMCrossbar_INTERFACE_DEFINED__
-__IAMCrossbar_INTERFACE_DEFINED__ equ 1
+define __IAMCrossbar_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMCrossbar, "C6E13380-30AC-11d0-A18C-00A0C9118956")
 
@@ -1899,32 +1450,35 @@ DEFINE_IIDX(IAMCrossbar, "C6E13380-30AC-11d0-A18C-00A0C9118956")
     Route		proc :LONG, :LONG
     get_IsRoutedTo	proc :LONG, :ptr
     get_CrossbarPinInfo proc :BOOL, :LONG, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
-AMTunerSubChannel	typedef SDWORD
-AMTUNER_SUBCHAN_NO_TUNE equ -2
-AMTUNER_SUBCHAN_DEFAULT equ -1
+.enum AMTunerSubChannel {
+	AMTUNER_SUBCHAN_NO_TUNE = -2,
+	AMTUNER_SUBCHAN_DEFAULT = -1
+	}
 
-AMTunerSignalStrength typedef SDWORD
-AMTUNER_HASNOSIGNALSTRENGTH equ -1
-AMTUNER_NOSIGNAL	equ 0
-AMTUNER_SIGNALPRESENT	equ 1
+.enum AMTunerSignalStrength {
+	AMTUNER_HASNOSIGNALSTRENGTH = -1,
+	AMTUNER_NOSIGNAL	= 0,
+	AMTUNER_SIGNALPRESENT	= 1
+	}
 
-AMTunerModeType		typedef SDWORD
-AMTUNER_MODE_DEFAULT	equ 0
-AMTUNER_MODE_TV		equ 0x1
-AMTUNER_MODE_FM_RADIO	equ 0x2
-AMTUNER_MODE_AM_RADIO	equ 0x4
-AMTUNER_MODE_DSS	equ 0x8
+.enum AMTunerModeType {
+	AMTUNER_MODE_DEFAULT	= 0,
+	AMTUNER_MODE_TV		= 0x1,
+	AMTUNER_MODE_FM_RADIO	= 0x2,
+	AMTUNER_MODE_AM_RADIO	= 0x4,
+	AMTUNER_MODE_DSS	= 0x8
+	}
 
-AMTunerEventType	typedef SDWORD
-AMTUNER_EVENT_CHANGED	equ 0x1
+.enum AMTunerEventType {
+	AMTUNER_EVENT_CHANGED	= 0x1
+	}
 
 ifndef __IAMTuner_INTERFACE_DEFINED__
-__IAMTuner_INTERFACE_DEFINED__ equ 1
+define __IAMTuner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTuner, "211A8761-03AC-11d1-8D13-00AA00BD8339")
 
@@ -1945,26 +1499,24 @@ DEFINE_IIDX(IAMTuner, "211A8761-03AC-11d1-8D13-00AA00BD8339")
     GetAvailableModes	proc :ptr
     RegisterNotificationCallBack proc :ptr, :LONG
     UnRegisterNotificationCallBack proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMTunerNotification_INTERFACE_DEFINED__
-__IAMTunerNotification_INTERFACE_DEFINED__ equ 1
+define __IAMTunerNotification_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTunerNotification, "211A8760-03AC-11d1-8D13-00AA00BD8339")
 
 .comdef IAMTunerNotification : public IUnknown
 
     OnEvent		proc :AMTunerEventType
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMTVTuner_INTERFACE_DEFINED__
-__IAMTVTuner_INTERFACE_DEFINED__ equ 1
+define __IAMTVTuner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
 
@@ -1981,13 +1533,12 @@ DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
     get_ConnectInput	proc :ptr
     get_VideoFrequency	proc :ptr
     get_AudioFrequency	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBPCSatelliteTuner_INTERFACE_DEFINED__
-__IBPCSatelliteTuner_INTERFACE_DEFINED__ equ 1
+define __IBPCSatelliteTuner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
 
@@ -1996,27 +1547,28 @@ DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
     get_DefaultSubChannelTypes proc :ptr, :ptr
     put_DefaultSubChannelTypes proc :LONG, :LONG
     IsTapingPermitted	proc
-
-    .ends
+   .ends
 
 endif
 
-TVAudioMode		typedef SDWORD
-AMTVAUDIO_MODE_MONO	equ 0x1
-AMTVAUDIO_MODE_STEREO	equ 0x2
-AMTVAUDIO_MODE_LANG_A	equ 0x10
-AMTVAUDIO_MODE_LANG_B	equ 0x20
-AMTVAUDIO_MODE_LANG_C	equ 0x40
-AMTVAUDIO_PRESET_STEREO equ 0x200
-AMTVAUDIO_PRESET_LANG_A equ 0x1000
-AMTVAUDIO_PRESET_LANG_B equ 0x2000
-AMTVAUDIO_PRESET_LANG_C equ 0x4000
+.enum TVAudioMode {
+	AMTVAUDIO_MODE_MONO	= 0x1,
+	AMTVAUDIO_MODE_STEREO	= 0x2,
+	AMTVAUDIO_MODE_LANG_A	= 0x10,
+	AMTVAUDIO_MODE_LANG_B	= 0x20,
+	AMTVAUDIO_MODE_LANG_C	= 0x40,
+	AMTVAUDIO_PRESET_STEREO = 0x200,
+	AMTVAUDIO_PRESET_LANG_A = 0x1000,
+	AMTVAUDIO_PRESET_LANG_B = 0x2000,
+	AMTVAUDIO_PRESET_LANG_C = 0x4000
+	}
 
-AMTVAudioEventType	typedef SDWORD
-AMTVAUDIO_EVENT_CHANGED equ 0x1
+.enum AMTVAudioEventType {
+	AMTVAUDIO_EVENT_CHANGED = 0x1
+	}
 
 ifndef __IAMTVAudio_INTERFACE_DEFINED__
-__IAMTVAudio_INTERFACE_DEFINED__ equ 1
+define __IAMTVAudio_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTVAudio, "83EC1C30-23D1-11d1-99E6-00A0C9560266")
 
@@ -2028,26 +1580,24 @@ DEFINE_IIDX(IAMTVAudio, "83EC1C30-23D1-11d1-99E6-00A0C9560266")
     put_TVAudioMode	proc :LONG
     RegisterNotificationCallBack proc :ptr, :LONG
     UnRegisterNotificationCallBack proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMTVAudioNotification_INTERFACE_DEFINED__
-__IAMTVAudioNotification_INTERFACE_DEFINED__ equ 1
+define __IAMTVAudioNotification_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTVAudioNotification, "83EC1C33-23D1-11d1-99E6-00A0C9560266")
 
 .comdef IAMTVAudioNotification : public IUnknown
 
     OnEvent		proc :AMTVAudioEventType
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMAnalogVideoEncoder_INTERFACE_DEFINED__
-__IAMAnalogVideoEncoder_INTERFACE_DEFINED__ equ 1
+define __IAMAnalogVideoEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
 
@@ -2060,21 +1610,21 @@ DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
     get_CopyProtection	proc :ptr
     put_CCEnable	proc :LONG
     get_CCEnable	proc :ptr
-
-    .ends
+   .ends
 endif
 
-AMPROPERTY_PIN		typedef SDWORD
-AMPROPERTY_PIN_CATEGORY equ 0
-AMPROPERTY_PIN_MEDIUM	equ ( AMPROPERTY_PIN_CATEGORY + 1 )
+.enum AMPROPERTY_PIN {
+	AMPROPERTY_PIN_CATEGORY = 0,
+	AMPROPERTY_PIN_MEDIUM	= ( AMPROPERTY_PIN_CATEGORY + 1 )
+	}
 
 ifndef _IKsPropertySet_
-_IKsPropertySet_ equ 1
-KSPROPERTY_SUPPORT_GET	equ 1
-KSPROPERTY_SUPPORT_SET	equ 2
+define _IKsPropertySet_
+define KSPROPERTY_SUPPORT_GET 1
+define KSPROPERTY_SUPPORT_SET 2
 
 ifndef __IKsPropertySet_INTERFACE_DEFINED__
-__IKsPropertySet_INTERFACE_DEFINED__ equ 1
+define __IKsPropertySet_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IKsPropertySet, "31EFAC30-515C-11d0-A9AA-00AA0061BE93")
 
@@ -2083,27 +1633,25 @@ DEFINE_IIDX(IKsPropertySet, "31EFAC30-515C-11d0-A9AA-00AA0061BE93")
     Set			proc :REFGUID, :DWORD, :LPVOID, :DWORD
     Get			proc :REFGUID, :DWORD, :LPVOID, :DWORD, :ptr
     QuerySupported	proc :REFGUID, :DWORD, :ptr
-
-    .ends
+   .ends
 endif
 
 endif
 
 ifndef __IMediaPropertyBag_INTERFACE_DEFINED__
-__IMediaPropertyBag_INTERFACE_DEFINED__ equ 1
+define __IMediaPropertyBag_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMediaPropertyBag, "6025A880-C0D5-11d0-BD4E-00A0C911CE86")
 
 .comdef IMediaPropertyBag : public IPropertyBag
 
     EnumProperty	proc :ULONG, :ptr, :ptr
-
-    .ends
+   .ends
     LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
 endif
 
 ifndef __IPersistMediaPropertyBag_INTERFACE_DEFINED__
-__IPersistMediaPropertyBag_INTERFACE_DEFINED__ equ 1
+define __IPersistMediaPropertyBag_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPersistMediaPropertyBag, "5738E040-B67F-11d0-BD4D-00A0C911CE86")
 
@@ -2112,27 +1660,25 @@ DEFINE_IIDX(IPersistMediaPropertyBag, "5738E040-B67F-11d0-BD4D-00A0C911CE86")
     InitNew		proc
     Load		proc :ptr, :ptr
     Save		proc :ptr, :BOOL, :BOOL
-
-    .ends
+   .ends
     LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
 endif
 
 ifndef __IAMPhysicalPinInfo_INTERFACE_DEFINED__
-__IAMPhysicalPinInfo_INTERFACE_DEFINED__ equ 1
+define __IAMPhysicalPinInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMPhysicalPinInfo, "F938C991-3029-11cf-8C44-00AA006B6814")
 
 .comdef IAMPhysicalPinInfo : public IUnknown
 
     GetPhysicalType	proc :ptr, :ptr
-
-    .ends
+   .ends
 endif
 
 PAMPHYSICALPININFO	typedef ptr IAMPhysicalPinInfo
 
 ifndef __IAMExtDevice_INTERFACE_DEFINED__
-__IAMExtDevice_INTERFACE_DEFINED__ equ 1
+define __IAMExtDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMExtDevice, "B5730A90-1A2C-11cf-8C23-00AA006B6814")
 
@@ -2146,15 +1692,14 @@ DEFINE_IIDX(IAMExtDevice, "B5730A90-1A2C-11cf-8C23-00AA006B6814")
     Calibrate		proc :HEVENT, :LONG, :ptr
     put_DevicePort	proc :LONG
     get_DevicePort	proc :ptr
-
-    .ends
+   .ends
 
 PEXTDEVICE		typedef ptr IAMExtDevice
 
 endif
 
 ifndef __IAMExtTransport_INTERFACE_DEFINED__
-__IAMExtTransport_INTERFACE_DEFINED__ equ 1
+define __IAMExtTransport_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMExtTransport, "A03CD5F0-3045-11cf-8C44-00AA006B6814")
 
@@ -2188,8 +1733,7 @@ DEFINE_IIDX(IAMExtTransport, "A03CD5F0-3045-11cf-8C44-00AA006B6814")
     SetEditProperty	proc :LONG, :LONG, :LONG
     get_EditStart	proc :ptr
     put_EditStart	proc :LONG
-
-    .ends
+   .ends
 
 endif
 
@@ -2217,7 +1761,7 @@ TIMECODE_SAMPLE		ENDS
 PTIMECODE_SAMPLE	typedef ptr TIMECODE_SAMPLE
 
 ifndef __IAMTimecodeReader_INTERFACE_DEFINED__
-__IAMTimecodeReader_INTERFACE_DEFINED__ equ 1
+define __IAMTimecodeReader_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTimecodeReader, "9B496CE1-811B-11cf-8C77-00AA006B6814")
 
@@ -2228,15 +1772,14 @@ DEFINE_IIDX(IAMTimecodeReader, "9B496CE1-811B-11cf-8C77-00AA006B6814")
     put_VITCLine	proc :LONG
     get_VITCLine	proc :ptr
     GetTimecode		proc :PTIMECODE_SAMPLE
-
-    .ends
+   .ends
 
 PIAMTIMECODEREADER	typedef ptr IAMTimecodeReader
 
 endif
 
 ifndef __IAMTimecodeGenerator_INTERFACE_DEFINED__
-__IAMTimecodeGenerator_INTERFACE_DEFINED__ equ 1
+define __IAMTimecodeGenerator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTimecodeGenerator, "9B496CE0-811B-11cf-8C77-00AA006B6814")
 
@@ -2248,15 +1791,14 @@ DEFINE_IIDX(IAMTimecodeGenerator, "9B496CE0-811B-11cf-8C77-00AA006B6814")
     get_VITCLine	proc :ptr
     SetTimecode		proc :PTIMECODE_SAMPLE
     GetTimecode		proc :PTIMECODE_SAMPLE
-
-    .ends
+   .ends
 
 PIAMTIMECODEGENERATOR	typedef ptr IAMTimecodeGenerator
 
 endif
 
 ifndef __IAMTimecodeDisplay_INTERFACE_DEFINED__
-__IAMTimecodeDisplay_INTERFACE_DEFINED__ equ 1
+define __IAMTimecodeDisplay_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMTimecodeDisplay, "9B496CE2-811B-11cf-8C77-00AA006B6814")
 
@@ -2266,15 +1808,14 @@ DEFINE_IIDX(IAMTimecodeDisplay, "9B496CE2-811B-11cf-8C77-00AA006B6814")
     SetTCDisplayEnable	proc :LONG
     GetTCDisplay	proc :LONG, :ptr
     SetTCDisplay	proc :LONG, :LONG
-
-    .ends
+   .ends
 
 PIAMTIMECODEDISPLAY	typedef ptr IAMTimecodeDisplay
 
 endif
 
 ifndef __IAMDevMemoryAllocator_INTERFACE_DEFINED__
-__IAMDevMemoryAllocator_INTERFACE_DEFINED__ equ 1
+define __IAMDevMemoryAllocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMDevMemoryAllocator, "c6545bf0-e76b-11d0-bd52-00a0c911ce86")
 
@@ -2285,15 +1826,14 @@ DEFINE_IIDX(IAMDevMemoryAllocator, "c6545bf0-e76b-11d0-bd52-00a0c911ce86")
     Alloc		proc
     Free		proc :ptr
     GetDevMemoryObject	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 PAMDEVMEMORYALLOCATOR	typedef ptr IAMDevMemoryAllocator
 
 endif
 
 ifndef __IAMDevMemoryControl_INTERFACE_DEFINED__
-__IAMDevMemoryControl_INTERFACE_DEFINED__ equ 1
+define __IAMDevMemoryControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMDevMemoryControl, "c6545bf1-e76b-11d0-bd52-00a0c911ce86")
 
@@ -2302,23 +1842,24 @@ DEFINE_IIDX(IAMDevMemoryControl, "c6545bf1-e76b-11d0-bd52-00a0c911ce86")
     QueryWriteSync	proc
     WriteSync		proc
     GetDevId		proc :ptr
-
-    .ends
+   .ends
 
 PAMDEVMEMORYCONTROL	typedef ptr IAMDevMemoryControl
 
 endif
 
-AMSTREAMSELECTINFOFLAGS typedef SDWORD
-AMSTREAMSELECTINFO_ENABLED equ 0x1
-AMSTREAMSELECTINFO_EXCLUSIVE equ 0x2
+.enum AMSTREAMSELECTINFOFLAGS {
+	AMSTREAMSELECTINFO_ENABLED	= 0x1,
+	AMSTREAMSELECTINFO_EXCLUSIVE	= 0x2
+	}
 
-AMSTREAMSELECTENABLEFLAGS typedef SDWORD
-AMSTREAMSELECTENABLE_ENABLE equ 0x1
-AMSTREAMSELECTENABLE_ENABLEALL equ 0x2
+.enum AMSTREAMSELECTENABLEFLAGS {
+	AMSTREAMSELECTENABLE_ENABLE	= 0x1,
+	AMSTREAMSELECTENABLE_ENABLEALL	= 0x2
+	}
 
 ifndef __IAMStreamSelect_INTERFACE_DEFINED__
-__IAMStreamSelect_INTERFACE_DEFINED__ equ 1
+define __IAMStreamSelect_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMStreamSelect, "c1960960-17f5-11d1-abe1-00a0c905f375")
 
@@ -2327,62 +1868,60 @@ DEFINE_IIDX(IAMStreamSelect, "c1960960-17f5-11d1-abe1-00a0c905f375")
     Count		proc :ptr
     Info		proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     Enable		proc :LONG, :DWORD
-
-    .ends
+   .ends
 
 PAMSTREAMSELECT		typedef ptr IAMStreamSelect
 
 endif
 
-AMRESCTL_RESERVEFLAGS	typedef SDWORD
-AMRESCTL_RESERVEFLAGS_RESERVE equ 0
-AMRESCTL_RESERVEFLAGS_UNRESERVE equ 0x1
+.enum AMRESCTL_RESERVEFLAGS {
+	AMRESCTL_RESERVEFLAGS_RESERVE	= 0,
+	AMRESCTL_RESERVEFLAGS_UNRESERVE = 0x1
+	}
 
 ifndef __IAMResourceControl_INTERFACE_DEFINED__
-__IAMResourceControl_INTERFACE_DEFINED__ equ 1
+define __IAMResourceControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMResourceControl, "8389d2d0-77d7-11d1-abe6-00a0c905f375")
 
 .comdef IAMResourceControl : public IUnknown
 
     Reserve		proc :DWORD, :PVOID
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMClockAdjust_INTERFACE_DEFINED__
-__IAMClockAdjust_INTERFACE_DEFINED__ equ 1
+define __IAMClockAdjust_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMClockAdjust, "4d5466b0-a49c-11d1-abe8-00a0c905f375")
 
 .comdef IAMClockAdjust : public IUnknown
 
     SetClockDelta	proc :REFERENCE_TIME
-
-    .ends
+   .ends
 
 endif
 
-AM_FILTER_MISC_FLAGS	typedef SDWORD
-AM_FILTER_MISC_FLAGS_IS_RENDERER equ 0x1
-AM_FILTER_MISC_FLAGS_IS_SOURCE equ 0x2
+.enum AM_FILTER_MISC_FLAGS {
+	AM_FILTER_MISC_FLAGS_IS_RENDERER = 0x1,
+	AM_FILTER_MISC_FLAGS_IS_SOURCE	= 0x2
+	}
 
 ifndef __IAMFilterMiscFlags_INTERFACE_DEFINED__
-__IAMFilterMiscFlags_INTERFACE_DEFINED__ equ 1
+define __IAMFilterMiscFlags_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMFilterMiscFlags, "2dd74950-a890-11d1-abe8-00a0c905f375")
 
 .comdef IAMFilterMiscFlags : public IUnknown
 
     GetMiscFlags	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDrawVideoImage_INTERFACE_DEFINED__
-__IDrawVideoImage_INTERFACE_DEFINED__ equ 1
+define __IDrawVideoImage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDrawVideoImage, "48efb120-ab49-11d2-aed2-00a0c995e8d5")
 
@@ -2391,13 +1930,12 @@ DEFINE_IIDX(IDrawVideoImage, "48efb120-ab49-11d2-aed2-00a0c995e8d5")
     DrawVideoImageBegin proc
     DrawVideoImageEnd	proc
     DrawVideoImageDraw	proc :HDC, :LPRECT, :LPRECT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDecimateVideoImage_INTERFACE_DEFINED__
-__IDecimateVideoImage_INTERFACE_DEFINED__ equ 1
+define __IDecimateVideoImage_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDecimateVideoImage, "2e5ea3e0-e924-11d2-b6da-00a0c995e8df")
 
@@ -2405,20 +1943,20 @@ DEFINE_IIDX(IDecimateVideoImage, "2e5ea3e0-e924-11d2-b6da-00a0c995e8df")
 
     SetDecimationImageSize proc :LONG, :LONG
     ResetDecimationImageSize proc
-
-    .ends
+   .ends
 
 endif
 
-DECIMATION_USAGE	typedef SDWORD
-DECIMATION_LEGACY	equ 0
-DECIMATION_USE_DECODER_ONLY equ ( DECIMATION_LEGACY + 1 )
-DECIMATION_USE_VIDEOPORT_ONLY equ ( DECIMATION_USE_DECODER_ONLY + 1 )
-DECIMATION_USE_OVERLAY_ONLY equ ( DECIMATION_USE_VIDEOPORT_ONLY + 1 )
-DECIMATION_DEFAULT	equ ( DECIMATION_USE_OVERLAY_ONLY + 1 )
+.enum DECIMATION_USAGE {
+	DECIMATION_LEGACY	= 0,
+	DECIMATION_USE_DECODER_ONLY	= ( DECIMATION_LEGACY + 1 ) ,
+	DECIMATION_USE_VIDEOPORT_ONLY	= ( DECIMATION_USE_DECODER_ONLY + 1 ) ,
+	DECIMATION_USE_OVERLAY_ONLY	= ( DECIMATION_USE_VIDEOPORT_ONLY + 1 ) ,
+	DECIMATION_DEFAULT	= ( DECIMATION_USE_OVERLAY_ONLY + 1 )
+	}
 
 ifndef __IAMVideoDecimationProperties_INTERFACE_DEFINED__
-__IAMVideoDecimationProperties_INTERFACE_DEFINED__ equ 1
+define __IAMVideoDecimationProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMVideoDecimationProperties, "60d32930-13da-11d3-9ec6-c4fcaef5c7be")
 
@@ -2427,12 +1965,12 @@ DEFINE_IIDX(IAMVideoDecimationProperties, "60d32930-13da-11d3-9ec6-c4fcaef5c7be"
     QueryDecimationUsage proc :ptr
 
     SetDecimationUsage	proc :DECIMATION_USAGE
-    .ends
+   .ends
 
 endif
 
 ifndef __IVideoFrameStep_INTERFACE_DEFINED__
-__IVideoFrameStep_INTERFACE_DEFINED__ equ 1
+define __IVideoFrameStep_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVideoFrameStep, "e46a9787-2b71-444d-a4b5-1fab7b708d6a")
 
@@ -2441,33 +1979,32 @@ DEFINE_IIDX(IVideoFrameStep, "e46a9787-2b71-444d-a4b5-1fab7b708d6a")
     Step		proc :DWORD, :ptr
     CanStep		proc :LONG, :ptr
     CancelStep		proc
-
-    .ends
+   .ends
 
 endif
 
-AM_PUSHSOURCE_FLAGS	typedef SDWORD
-AM_PUSHSOURCECAPS_INTERNAL_RM equ 0x1
-AM_PUSHSOURCECAPS_NOT_LIVE equ 0x2
-AM_PUSHSOURCECAPS_PRIVATE_CLOCK equ 0x4
-AM_PUSHSOURCEREQS_USE_STREAM_CLOCK equ 0x10000
-AM_PUSHSOURCEREQS_USE_CLOCK_CHAIN equ 0x20000
+.enum AM_PUSHSOURCE_FLAGS {
+	AM_PUSHSOURCECAPS_INTERNAL_RM	= 0x1,
+	AM_PUSHSOURCECAPS_NOT_LIVE	= 0x2,
+	AM_PUSHSOURCECAPS_PRIVATE_CLOCK = 0x4,
+	AM_PUSHSOURCEREQS_USE_STREAM_CLOCK = 0x10000,
+	AM_PUSHSOURCEREQS_USE_CLOCK_CHAIN  = 0x20000
+	}
 
 ifndef __IAMLatency_INTERFACE_DEFINED__
-__IAMLatency_INTERFACE_DEFINED__ equ 1
+define __IAMLatency_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMLatency, "62EA93BA-EC62-11d2-B770-00C04FB6BD3D")
 
 .comdef IAMLatency : public IUnknown
 
     GetLatency		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMPushSource_INTERFACE_DEFINED__
-__IAMPushSource_INTERFACE_DEFINED__ equ 1
+define __IAMPushSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
 
@@ -2479,13 +2016,12 @@ DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
     GetStreamOffset	proc :ptr
     GetMaxStreamOffset	proc :ptr
     SetMaxStreamOffset	proc :REFERENCE_TIME
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMDeviceRemoval_INTERFACE_DEFINED__
-__IAMDeviceRemoval_INTERFACE_DEFINED__ equ 1
+define __IAMDeviceRemoval_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMDeviceRemoval, "f90a6130-b658-11d2-ae49-0000f8754b99")
 
@@ -2494,8 +2030,7 @@ DEFINE_IIDX(IAMDeviceRemoval, "f90a6130-b658-11d2-ae49-0000f8754b99")
     DeviceInfo		proc :ptr, :ptr
     Reassociate		proc
     Disassociate	proc
-
-    .ends
+   .ends
 
 endif
 
@@ -2511,23 +2046,26 @@ DVINFO			ENDS
 
 PDVINFO			typedef ptr DVINFO
 
-DVENCODERRESOLUTION	typedef SDWORD
-DVENCODERRESOLUTION_720x480 equ 2012
-DVENCODERRESOLUTION_360x240 equ 2013
-DVENCODERRESOLUTION_180x120 equ 2014
-DVENCODERRESOLUTION_88x60 equ 2015
+.enum DVENCODERRESOLUTION {
+	DVENCODERRESOLUTION_720x480	= 2012,
+	DVENCODERRESOLUTION_360x240	= 2013,
+	DVENCODERRESOLUTION_180x120	= 2014,
+	DVENCODERRESOLUTION_88x60	= 2015
+	}
 
-DVENCODERVIDEOFORMAT	typedef SDWORD
-DVENCODERVIDEOFORMAT_NTSC equ 2000
-DVENCODERVIDEOFORMAT_PAL equ 2001
+.enum DVENCODERVIDEOFORMAT {
+	DVENCODERVIDEOFORMAT_NTSC	= 2000,
+	DVENCODERVIDEOFORMAT_PAL	= 2001
+	}
 
-DVENCODERFORMAT		typedef SDWORD
-DVENCODERFORMAT_DVSD	equ 2007
-DVENCODERFORMAT_DVHD	equ 2008
-DVENCODERFORMAT_DVSL	equ 2009
+.enum DVENCODERFORMAT {
+	DVENCODERFORMAT_DVSD	= 2007,
+	DVENCODERFORMAT_DVHD	= 2008,
+	DVENCODERFORMAT_DVSL	= 2009
+	}
 
 ifndef __IDVEnc_INTERFACE_DEFINED__
-__IDVEnc_INTERFACE_DEFINED__ equ 1
+define __IDVEnc_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDVEnc, "d18e17a0-aacb-11d0-afb0-00aa00b67a42")
 
@@ -2535,25 +2073,26 @@ DEFINE_IIDX(IDVEnc, "d18e17a0-aacb-11d0-afb0-00aa00b67a42")
 
     get_IFormatResolution proc :ptr, :ptr, :ptr, :BYTE, :ptr
     put_IFormatResolution proc :SINT, :SINT, :SINT, :BYTE, :ptr
-
-    .ends
+   .ends
 
 endif
 
-DVDECODERRESOLUTION	typedef SDWORD
-DVDECODERRESOLUTION_720x480 equ 1000
-DVDECODERRESOLUTION_360x240 equ 1001
-DVDECODERRESOLUTION_180x120 equ 1002
-DVDECODERRESOLUTION_88x60 equ 1003
+.enum DVDECODERRESOLUTION {
+	DVDECODERRESOLUTION_720x480	= 1000,
+	DVDECODERRESOLUTION_360x240	= 1001,
+	DVDECODERRESOLUTION_180x120	= 1002,
+	DVDECODERRESOLUTION_88x60	= 1003
+	}
 
-DVRESOLUTION		typedef SDWORD
-DVRESOLUTION_FULL	equ 1000
-DVRESOLUTION_HALF	equ 1001
-DVRESOLUTION_QUARTER	equ 1002
-DVRESOLUTION_DC		equ 1003
+.enum DVRESOLUTION {
+	DVRESOLUTION_FULL	= 1000,
+	DVRESOLUTION_HALF	= 1001,
+	DVRESOLUTION_QUARTER	= 1002,
+	DVRESOLUTION_DC = 1003
+	}
 
 ifndef __IIPDVDec_INTERFACE_DEFINED__
-__IIPDVDec_INTERFACE_DEFINED__ equ 1
+define __IIPDVDec_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IIPDVDec, "b8e8bd60-0bfe-11d0-af91-00aa00b67a42")
 
@@ -2561,71 +2100,69 @@ DEFINE_IIDX(IIPDVDec, "b8e8bd60-0bfe-11d0-af91-00aa00b67a42")
 
     get_IPDisplay	proc :ptr
     put_IPDisplay	proc :SINT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDVRGB219_INTERFACE_DEFINED__
-__IDVRGB219_INTERFACE_DEFINED__ equ 1
+define __IDVRGB219_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDVRGB219, "58473A19-2BC8-4663-8012-25F81BABDDD1")
 
 .comdef IDVRGB219 : public IUnknown
 
     SetRGB219		proc :BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDVSplitter_INTERFACE_DEFINED__
-__IDVSplitter_INTERFACE_DEFINED__ equ 1
+define __IDVSplitter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDVSplitter, "92a3a302-da7c-4a1f-ba7e-1802bb5d2d02")
 
 .comdef IDVSplitter : public IUnknown
 
     DiscardAlternateVideoFrames proc :SINT
-
-    .ends
+   .ends
 
 endif
 
-AM_AUDIO_RENDERER_STAT_PARAM typedef SDWORD
-AM_AUDREND_STAT_PARAM_BREAK_COUNT equ 1
-AM_AUDREND_STAT_PARAM_SLAVE_MODE equ ( AM_AUDREND_STAT_PARAM_BREAK_COUNT + 1 )
-AM_AUDREND_STAT_PARAM_SILENCE_DUR equ ( AM_AUDREND_STAT_PARAM_SLAVE_MODE + 1 )
-AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR equ ( AM_AUDREND_STAT_PARAM_SILENCE_DUR + 1 )
-AM_AUDREND_STAT_PARAM_DISCONTINUITIES equ ( AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR + 1 )
-AM_AUDREND_STAT_PARAM_SLAVE_RATE equ ( AM_AUDREND_STAT_PARAM_DISCONTINUITIES + 1 )
-AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR equ ( AM_AUDREND_STAT_PARAM_SLAVE_RATE + 1 )
-AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR equ ( AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR + 1 )
-AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR equ ( AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR + 1 )
-AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR equ ( AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR + 1 )
-AM_AUDREND_STAT_PARAM_BUFFERFULLNESS equ ( AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR + 1 )
-AM_AUDREND_STAT_PARAM_JITTER equ ( AM_AUDREND_STAT_PARAM_BUFFERFULLNESS + 1 )
+.enum AM_AUDIO_RENDERER_STAT_PARAM {
+	AM_AUDREND_STAT_PARAM_BREAK_COUNT	= 1,
+	AM_AUDREND_STAT_PARAM_SLAVE_MODE	= ( AM_AUDREND_STAT_PARAM_BREAK_COUNT + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SILENCE_DUR	= ( AM_AUDREND_STAT_PARAM_SLAVE_MODE + 1 ) ,
+	AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR	= ( AM_AUDREND_STAT_PARAM_SILENCE_DUR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_DISCONTINUITIES	= ( AM_AUDREND_STAT_PARAM_LAST_BUFFER_DUR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SLAVE_RATE	= ( AM_AUDREND_STAT_PARAM_DISCONTINUITIES + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR	= ( AM_AUDREND_STAT_PARAM_SLAVE_RATE + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_DROPWRITE_DUR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_HIGHLOWERROR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR	= ( AM_AUDREND_STAT_PARAM_SLAVE_LASTHIGHLOWERROR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_BUFFERFULLNESS	= ( AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR + 1 ) ,
+	AM_AUDREND_STAT_PARAM_JITTER	= ( AM_AUDREND_STAT_PARAM_BUFFERFULLNESS + 1 )
+	}
 
 ifndef __IAMAudioRendererStats_INTERFACE_DEFINED__
-__IAMAudioRendererStats_INTERFACE_DEFINED__ equ 1
+define __IAMAudioRendererStats_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMAudioRendererStats, "22320CB2-D41A-11d2-BF7C-D7CB9DF0BF93")
 
 .comdef IAMAudioRendererStats : public IUnknown
 
     GetStatParam	proc :DWORD, :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
-AM_INTF_SEARCH_FLAGS	typedef SDWORD
-AM_INTF_SEARCH_INPUT_PIN equ 0x1
-AM_INTF_SEARCH_OUTPUT_PIN equ 0x2
-AM_INTF_SEARCH_FILTER	equ 0x4
+.enum AM_INTF_SEARCH_FLAGS {
+	AM_INTF_SEARCH_INPUT_PIN	= 0x1,
+	AM_INTF_SEARCH_OUTPUT_PIN	= 0x2,
+	AM_INTF_SEARCH_FILTER	= 0x4
+	}
 
 ifndef __IAMGraphStreams_INTERFACE_DEFINED__
-__IAMGraphStreams_INTERFACE_DEFINED__ equ 1
+define __IAMGraphStreams_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMGraphStreams, "632105FA-072E-11d3-8AF9-00C04FB6BD3D")
 
@@ -2634,19 +2171,19 @@ DEFINE_IIDX(IAMGraphStreams, "632105FA-072E-11d3-8AF9-00C04FB6BD3D")
     FindUpstreamInterface proc :ptr, :REFIID, :ptr, :DWORD
     SyncUsingStreamOffset proc :BOOL
     SetMaxGraphLatency	proc :REFERENCE_TIME
-
-    .ends
+   .ends
 
 endif
 
-AMOVERLAYFX		typedef SDWORD
-AMOVERFX_NOFX		equ 0
-AMOVERFX_MIRRORLEFTRIGHT equ 0x2
-AMOVERFX_MIRRORUPDOWN	equ 0x4
-AMOVERFX_DEINTERLACE	equ 0x8
+.enum AMOVERLAYFX {
+	AMOVERFX_NOFX	= 0,
+	AMOVERFX_MIRRORLEFTRIGHT	= 0x2,
+	AMOVERFX_MIRRORUPDOWN	= 0x4,
+	AMOVERFX_DEINTERLACE	= 0x8
+	}
 
 ifndef __IAMOverlayFX_INTERFACE_DEFINED__
-__IAMOverlayFX_INTERFACE_DEFINED__ equ 1
+define __IAMOverlayFX_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMOverlayFX, "62fae250-7e65-4460-bfc9-6398b322073c")
 
@@ -2655,13 +2192,12 @@ DEFINE_IIDX(IAMOverlayFX, "62fae250-7e65-4460-bfc9-6398b322073c")
     QueryOverlayFXCaps	proc :ptr
     SetOverlayFX	proc :DWORD
     GetOverlayFX	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMOpenProgress_INTERFACE_DEFINED__
-__IAMOpenProgress_INTERFACE_DEFINED__ equ 1
+define __IAMOpenProgress_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMOpenProgress, "8E1C39A1-DE53-11cf-AA63-0080C744528D")
 
@@ -2669,13 +2205,12 @@ DEFINE_IIDX(IAMOpenProgress, "8E1C39A1-DE53-11cf-AA63-0080C744528D")
 
     QueryProgress	proc :ptr, :ptr
     AbortOperation	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IMpeg2Demultiplexer_INTERFACE_DEFINED__
-__IMpeg2Demultiplexer_INTERFACE_DEFINED__ equ 1
+define __IMpeg2Demultiplexer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMpeg2Demultiplexer, "436eee9c-264f-4242-90e1-4e330c107512")
 
@@ -2684,8 +2219,7 @@ DEFINE_IIDX(IMpeg2Demultiplexer, "436eee9c-264f-4242-90e1-4e330c107512")
     CreateOutputPin	proc :ptr, :LPWSTR, :ptr
     SetOutputPinMediaType proc :LPWSTR, :ptr
     DeleteOutputPin	proc :LPWSTR
-
-    .ends
+   .ends
 
 endif
 
@@ -2696,6 +2230,7 @@ MPEG2_PROGRAM_PACK_HEADER equ 0x00000003
 MPEG2_PROGRAM_PES_STREAM equ 0x00000004
 MPEG2_PROGRAM_SYSTEM_HEADER equ 0x00000005
 SUBSTREAM_FILTER_VAL_NONE equ 0x10000000
+
 STREAM_ID_MAP		STRUC
 stream_id		ULONG ?
 dwMediaSampleContent	dd ?
@@ -2704,7 +2239,7 @@ iDataOffset		SINT ?
 STREAM_ID_MAP		ENDS
 
 ifndef __IEnumStreamIdMap_INTERFACE_DEFINED__
-__IEnumStreamIdMap_INTERFACE_DEFINED__ equ 1
+define __IEnumStreamIdMap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumStreamIdMap, "945C1566-6202-46fc-96C7-D87F289C6534")
 
@@ -2714,13 +2249,12 @@ DEFINE_IIDX(IEnumStreamIdMap, "945C1566-6202-46fc-96C7-D87F289C6534")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IMPEG2StreamIdMap_INTERFACE_DEFINED__
-__IMPEG2StreamIdMap_INTERFACE_DEFINED__ equ 1
+define __IMPEG2StreamIdMap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMPEG2StreamIdMap, "D0E04C47-25B8-4369-925A-362A01D95444")
 
@@ -2729,26 +2263,24 @@ DEFINE_IIDX(IMPEG2StreamIdMap, "D0E04C47-25B8-4369-925A-362A01D95444")
     MapStreamId		proc :ULONG, :DWORD, :ULONG, :SINT
     UnmapStreamId	proc :ULONG, :ptr
     EnumStreamIdMap	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IRegisterServiceProvider_INTERFACE_DEFINED__
-__IRegisterServiceProvider_INTERFACE_DEFINED__ equ 1
+define __IRegisterServiceProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IRegisterServiceProvider, "7B3A2F01-0751-48DD-B556-004785171C54")
 
 .comdef IRegisterServiceProvider : public IUnknown
 
     RegisterService	proc :REFGUID, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMClockSlave_INTERFACE_DEFINED__
-__IAMClockSlave_INTERFACE_DEFINED__ equ 1
+define __IAMClockSlave_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMClockSlave, "9FD52741-176D-4b36-8F51-CA8F933223BE")
 
@@ -2756,13 +2288,12 @@ DEFINE_IIDX(IAMClockSlave, "9FD52741-176D-4b36-8F51-CA8F933223BE")
 
     SetErrorTolerance	proc :DWORD
     GetErrorTolerance	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMGraphBuilderCallback_INTERFACE_DEFINED__
-__IAMGraphBuilderCallback_INTERFACE_DEFINED__ equ 1
+define __IAMGraphBuilderCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMGraphBuilderCallback, "4995f511-9ddb-4f12-bd3b-f04611807b79")
 
@@ -2770,8 +2301,7 @@ DEFINE_IIDX(IAMGraphBuilderCallback, "4995f511-9ddb-4f12-bd3b-f04611807b79")
 
     SelectedFilter	proc :ptr
     CreatedFilter	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -2808,7 +2338,7 @@ AMCOPPStatusOutput	ENDS
 LPAMCOPPStatusOutput	typedef ptr AMCOPPStatusOutput
 
 ifndef __IAMCertifiedOutputProtection_INTERFACE_DEFINED__
-__IAMCertifiedOutputProtection_INTERFACE_DEFINED__ equ 1
+define __IAMCertifiedOutputProtection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMCertifiedOutputProtection, "6feded3e-0ff1-4901-a2f1-43f7012c8515")
 
@@ -2818,13 +2348,12 @@ DEFINE_IIDX(IAMCertifiedOutputProtection, "6feded3e-0ff1-4901-a2f1-43f7012c8515"
     SessionSequenceStart proc :ptr
     ProtectionCommand	proc :ptr
     ProtectionStatus	proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__
-__IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__ equ 1
+define __IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMAsyncReaderTimestampScaling, "cf7b26fc-9a00-485b-8147-3e789d5e8f67")
 
@@ -2832,13 +2361,12 @@ DEFINE_IIDX(IAMAsyncReaderTimestampScaling, "cf7b26fc-9a00-485b-8147-3e789d5e8f6
 
     GetTimestampMode	proc :ptr
     SetTimestampMode	proc :BOOL
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IAMPluginControl_INTERFACE_DEFINED__
-__IAMPluginControl_INTERFACE_DEFINED__ equ 1
+define __IAMPluginControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IAMPluginControl, "0e26a181-f40c-4635-8786-976284b52981")
 
@@ -2851,37 +2379,40 @@ DEFINE_IIDX(IAMPluginControl, "0e26a181-f40c-4635-8786-976284b52981")
     GetDisabledByIndex	proc :DWORD, :ptr
     SetDisabled		proc :REFCLSID, :BOOL
     IsLegacyDisabled	proc :LPCWSTR
-
-    .ends
+   .ends
 
 endif
 
 include ddraw.inc
 
-DVD_DOMAIN		typedef SDWORD
-DVD_DOMAIN_FirstPlay	equ 1
-DVD_DOMAIN_VideoManagerMenu equ ( DVD_DOMAIN_FirstPlay + 1 )
-DVD_DOMAIN_VideoTitleSetMenu equ ( DVD_DOMAIN_VideoManagerMenu + 1 )
-DVD_DOMAIN_Title	equ ( DVD_DOMAIN_VideoTitleSetMenu + 1 )
-DVD_DOMAIN_Stop		equ ( DVD_DOMAIN_Title + 1 )
+.enum DVD_DOMAIN {
+	DVD_DOMAIN_FirstPlay	= 1,
+	DVD_DOMAIN_VideoManagerMenu	= ( DVD_DOMAIN_FirstPlay + 1 ) ,
+	DVD_DOMAIN_VideoTitleSetMenu	= ( DVD_DOMAIN_VideoManagerMenu + 1 ) ,
+	DVD_DOMAIN_Title	= ( DVD_DOMAIN_VideoTitleSetMenu + 1 ) ,
+	DVD_DOMAIN_Stop = ( DVD_DOMAIN_Title + 1 )
+	}
 
-DVD_MENU_ID		typedef SDWORD
-DVD_MENU_Title		equ 2
-DVD_MENU_Root		equ 3
-DVD_MENU_Subpicture	equ 4
-DVD_MENU_Audio		equ 5
-DVD_MENU_Angle		equ 6
-DVD_MENU_Chapter	equ 7
+.enum DVD_MENU_ID {
+	DVD_MENU_Title	= 2,
+	DVD_MENU_Root	= 3,
+	DVD_MENU_Subpicture	= 4,
+	DVD_MENU_Audio	= 5,
+	DVD_MENU_Angle	= 6,
+	DVD_MENU_Chapter	= 7
+	}
 
-DVD_DISC_SIDE		typedef SDWORD
-DVD_SIDE_A		equ 1
-DVD_SIDE_B		equ 2
+.enum DVD_DISC_SIDE {
+	DVD_SIDE_A	= 1,
+	DVD_SIDE_B	= 2
+	}
 
-DVD_PREFERRED_DISPLAY_MODE typedef SDWORD
-DISPLAY_CONTENT_DEFAULT equ 0
-DISPLAY_16x9		equ 1
-DISPLAY_4x3_PANSCAN_PREFERRED equ 2
-DISPLAY_4x3_LETTERBOX_PREFERRED equ 3
+.enum DVD_PREFERRED_DISPLAY_MODE {
+	DISPLAY_CONTENT_DEFAULT = 0,
+	DISPLAY_16x9	= 1,
+	DISPLAY_4x3_PANSCAN_PREFERRED	= 2,
+	DISPLAY_4x3_LETTERBOX_PREFERRED = 3
+	}
 
 DVD_REGISTER		typedef WORD
 
@@ -2890,9 +2421,10 @@ ulCAT			ULONG ?
 pbATRI			db  768	 dup(?)
 DVD_ATR			ENDS
 
-DVD_FRAMERATE		typedef SDWORD
-DVD_FPS_25		equ 1
-DVD_FPS_30NonDrop	equ 3
+.enum DVD_FRAMERATE {
+	DVD_FPS_25	= 1,
+	DVD_FPS_30NonDrop	= 3
+	}
 
 DVD_TIMECODE		STRUC
 if 1
@@ -2909,17 +2441,20 @@ Frames10  :2		ULONG ?
 FrameRateCode: 2	ULONG ?
 endif
 DVD_TIMECODE		ENDS
-DVD_NavCmdType		typedef SDWORD
-DVD_NavCmdType_Pre	equ 1
-DVD_NavCmdType_Post	equ 2
-DVD_NavCmdType_Cell	equ 3
-DVD_NavCmdType_Button	equ 4
 
-DVD_TIMECODE_FLAGS	typedef SDWORD
-DVD_TC_FLAG_25fps	equ 0x1
-DVD_TC_FLAG_30fps	equ 0x2
-DVD_TC_FLAG_DropFrame	equ 0x4
-DVD_TC_FLAG_Interpolated equ 0x8
+.enum DVD_NavCmdType {
+	DVD_NavCmdType_Pre	= 1,
+	DVD_NavCmdType_Post	= 2,
+	DVD_NavCmdType_Cell	= 3,
+	DVD_NavCmdType_Button	= 4
+	}
+
+.enum DVD_TIMECODE_FLAGS {
+	DVD_TC_FLAG_25fps	= 0x1,
+	DVD_TC_FLAG_30fps	= 0x2,
+	DVD_TC_FLAG_DropFrame	= 0x4,
+	DVD_TC_FLAG_Interpolated = 0x8
+	}
 
 DVD_HMSF_TIMECODE	STRUC
 bHours			db ?
@@ -2942,129 +2477,139 @@ TimeCode		ULONG ?
 DVD_PLAYBACK_LOCATION	ENDS
 
 VALID_UOP_SOMTHING_OR_OTHER typedef DWORD
-VALID_UOP_FLAG		typedef SDWORD
 
-UOP_FLAG_Play_Title_Or_AtTime equ 0x1
-UOP_FLAG_Play_Chapter	equ 0x2
-UOP_FLAG_Play_Title	equ 0x4
-UOP_FLAG_Stop		equ 0x8
-UOP_FLAG_ReturnFromSubMenu equ 0x10
-UOP_FLAG_Play_Chapter_Or_AtTime equ 0x20
-UOP_FLAG_PlayPrev_Or_Replay_Chapter equ 0x40
-UOP_FLAG_PlayNext_Chapter equ 0x80
-UOP_FLAG_Play_Forwards	equ 0x100
-UOP_FLAG_Play_Backwards equ 0x200
-UOP_FLAG_ShowMenu_Title equ 0x400
-UOP_FLAG_ShowMenu_Root	equ 0x800
-UOP_FLAG_ShowMenu_SubPic equ 0x1000
-UOP_FLAG_ShowMenu_Audio equ 0x2000
-UOP_FLAG_ShowMenu_Angle equ 0x4000
-UOP_FLAG_ShowMenu_Chapter equ 0x8000
-UOP_FLAG_Resume		equ 0x10000
-UOP_FLAG_Select_Or_Activate_Button equ 0x20000
-UOP_FLAG_Still_Off	equ 0x40000
-UOP_FLAG_Pause_On	equ 0x80000
-UOP_FLAG_Select_Audio_Stream equ 0x100000
-UOP_FLAG_Select_SubPic_Stream equ 0x200000
-UOP_FLAG_Select_Angle	equ 0x400000
-UOP_FLAG_Select_Karaoke_Audio_Presentation_Mode equ 0x800000
-UOP_FLAG_Select_Video_Mode_Preference equ 0x1000000
+.enum VALID_UOP_FLAG {
+	UOP_FLAG_Play_Title_Or_AtTime	= 0x1,
+	UOP_FLAG_Play_Chapter	= 0x2,
+	UOP_FLAG_Play_Title	= 0x4,
+	UOP_FLAG_Stop	= 0x8,
+	UOP_FLAG_ReturnFromSubMenu	= 0x10,
+	UOP_FLAG_Play_Chapter_Or_AtTime = 0x20,
+	UOP_FLAG_PlayPrev_Or_Replay_Chapter	= 0x40,
+	UOP_FLAG_PlayNext_Chapter	= 0x80,
+	UOP_FLAG_Play_Forwards	= 0x100,
+	UOP_FLAG_Play_Backwards = 0x200,
+	UOP_FLAG_ShowMenu_Title = 0x400,
+	UOP_FLAG_ShowMenu_Root	= 0x800,
+	UOP_FLAG_ShowMenu_SubPic	= 0x1000,
+	UOP_FLAG_ShowMenu_Audio = 0x2000,
+	UOP_FLAG_ShowMenu_Angle = 0x4000,
+	UOP_FLAG_ShowMenu_Chapter	= 0x8000,
+	UOP_FLAG_Resume = 0x10000,
+	UOP_FLAG_Select_Or_Activate_Button	= 0x20000,
+	UOP_FLAG_Still_Off	= 0x40000,
+	UOP_FLAG_Pause_On	= 0x80000,
+	UOP_FLAG_Select_Audio_Stream	= 0x100000,
+	UOP_FLAG_Select_SubPic_Stream	= 0x200000,
+	UOP_FLAG_Select_Angle	= 0x400000,
+	UOP_FLAG_Select_Karaoke_Audio_Presentation_Mode = 0x800000,
+	UOP_FLAG_Select_Video_Mode_Preference	= 0x1000000
+	}
 
-DVD_CMD_FLAGS		typedef SDWORD
-DVD_CMD_FLAG_None	equ 0
-DVD_CMD_FLAG_Flush	equ 0x1
-DVD_CMD_FLAG_SendEvents equ 0x2
-DVD_CMD_FLAG_Block	equ 0x4
-DVD_CMD_FLAG_StartWhenRendered equ 0x8
-DVD_CMD_FLAG_EndAfterRendered equ 0x10
+.enum DVD_CMD_FLAGS {
+	DVD_CMD_FLAG_None	= 0,
+	DVD_CMD_FLAG_Flush	= 0x1,
+	DVD_CMD_FLAG_SendEvents = 0x2,
+	DVD_CMD_FLAG_Block	= 0x4,
+	DVD_CMD_FLAG_StartWhenRendered	= 0x8,
+	DVD_CMD_FLAG_EndAfterRendered	= 0x10
+	}
 
-DVD_OPTION_FLAG		typedef SDWORD
-DVD_ResetOnStop		equ 1
-DVD_NotifyParentalLevelChange equ 2
-DVD_HMSF_TimeCodeEvents equ 3
-DVD_AudioDuringFFwdRew	equ 4
-DVD_EnableNonblockingAPIs equ 5
-DVD_CacheSizeInMB	equ 6
-DVD_EnablePortableBookmarks equ 7
-DVD_EnableExtendedCopyProtectErrors equ 8
-DVD_NotifyPositionChange equ 9
-DVD_IncreaseOutputControl equ 10
-DVD_EnableStreaming	equ 11
-DVD_EnableESOutput	equ 12
-DVD_EnableTitleLength	equ 13
-DVD_DisableStillThrottle equ 14
-DVD_EnableLoggingEvents equ 15
-DVD_MaxReadBurstInKB	equ 16
-DVD_ReadBurstPeriodInMS equ 17
+.enum DVD_OPTION_FLAG {
+	DVD_ResetOnStop = 1,
+	DVD_NotifyParentalLevelChange	= 2,
+	DVD_HMSF_TimeCodeEvents = 3,
+	DVD_AudioDuringFFwdRew	= 4,
+	DVD_EnableNonblockingAPIs	= 5,
+	DVD_CacheSizeInMB	= 6,
+	DVD_EnablePortableBookmarks	= 7,
+	DVD_EnableExtendedCopyProtectErrors	= 8,
+	DVD_NotifyPositionChange	= 9,
+	DVD_IncreaseOutputControl	= 10,
+	DVD_EnableStreaming	= 11,
+	DVD_EnableESOutput	= 12,
+	DVD_EnableTitleLength	= 13,
+	DVD_DisableStillThrottle	= 14,
+	DVD_EnableLoggingEvents = 15,
+	DVD_MaxReadBurstInKB	= 16,
+	DVD_ReadBurstPeriodInMS = 17
+	}
 
-DVD_RELATIVE_BUTTON	typedef SDWORD
-DVD_Relative_Upper	equ 1
-DVD_Relative_Lower	equ 2
-DVD_Relative_Left	equ 3
-DVD_Relative_Right	equ 4
+.enum DVD_RELATIVE_BUTTON {
+	DVD_Relative_Upper	= 1,
+	DVD_Relative_Lower	= 2,
+	DVD_Relative_Left	= 3,
+	DVD_Relative_Right	= 4
+	}
 
-DVD_PARENTAL_LEVEL	typedef SDWORD
-DVD_PARENTAL_LEVEL_8	equ 0x8000
-DVD_PARENTAL_LEVEL_7	equ 0x4000
-DVD_PARENTAL_LEVEL_6	equ 0x2000
-DVD_PARENTAL_LEVEL_5	equ 0x1000
-DVD_PARENTAL_LEVEL_4	equ 0x800
-DVD_PARENTAL_LEVEL_3	equ 0x400
-DVD_PARENTAL_LEVEL_2	equ 0x200
-DVD_PARENTAL_LEVEL_1	equ 0x100
+.enum DVD_PARENTAL_LEVEL {
+	DVD_PARENTAL_LEVEL_8	= 0x8000,
+	DVD_PARENTAL_LEVEL_7	= 0x4000,
+	DVD_PARENTAL_LEVEL_6	= 0x2000,
+	DVD_PARENTAL_LEVEL_5	= 0x1000,
+	DVD_PARENTAL_LEVEL_4	= 0x800,
+	DVD_PARENTAL_LEVEL_3	= 0x400,
+	DVD_PARENTAL_LEVEL_2	= 0x200,
+	DVD_PARENTAL_LEVEL_1	= 0x100
+	}
 
-DVD_AUDIO_LANG_EXT	typedef SDWORD
-DVD_AUD_EXT_NotSpecified equ 0
-DVD_AUD_EXT_Captions	equ 1
-DVD_AUD_EXT_VisuallyImpaired equ 2
-DVD_AUD_EXT_DirectorComments1 equ 3
-DVD_AUD_EXT_DirectorComments2 equ 4
+.enum DVD_AUDIO_LANG_EXT {
+	DVD_AUD_EXT_NotSpecified	= 0,
+	DVD_AUD_EXT_Captions	= 1,
+	DVD_AUD_EXT_VisuallyImpaired	= 2,
+	DVD_AUD_EXT_DirectorComments1	= 3,
+	DVD_AUD_EXT_DirectorComments2	= 4
+	}
 
-DVD_SUBPICTURE_LANG_EXT typedef SDWORD
-DVD_SP_EXT_NotSpecified equ 0
-DVD_SP_EXT_Caption_Normal equ 1
-DVD_SP_EXT_Caption_Big	equ 2
-DVD_SP_EXT_Caption_Children equ 3
-DVD_SP_EXT_CC_Normal	equ 5
-DVD_SP_EXT_CC_Big	equ 6
-DVD_SP_EXT_CC_Children	equ 7
-DVD_SP_EXT_Forced	equ 9
-DVD_SP_EXT_DirectorComments_Normal equ 13
-DVD_SP_EXT_DirectorComments_Big equ 14
-DVD_SP_EXT_DirectorComments_Children equ 15
+.enum DVD_SUBPICTURE_LANG_EXT {
+	DVD_SP_EXT_NotSpecified = 0,
+	DVD_SP_EXT_Caption_Normal	= 1,
+	DVD_SP_EXT_Caption_Big	= 2,
+	DVD_SP_EXT_Caption_Children	= 3,
+	DVD_SP_EXT_CC_Normal	= 5,
+	DVD_SP_EXT_CC_Big	= 6,
+	DVD_SP_EXT_CC_Children	= 7,
+	DVD_SP_EXT_Forced	= 9,
+	DVD_SP_EXT_DirectorComments_Normal	= 13,
+	DVD_SP_EXT_DirectorComments_Big = 14,
+	DVD_SP_EXT_DirectorComments_Children	= 15
+	}
 
-DVD_AUDIO_APPMODE	typedef SDWORD
-DVD_AudioMode_None	equ 0
-DVD_AudioMode_Karaoke	equ 1
-DVD_AudioMode_Surround	equ 2
-DVD_AudioMode_Other	equ 3
+.enum DVD_AUDIO_APPMODE {
+	DVD_AudioMode_None	= 0,
+	DVD_AudioMode_Karaoke	= 1,
+	DVD_AudioMode_Surround	= 2,
+	DVD_AudioMode_Other	= 3
+	}
 
-DVD_AUDIO_FORMAT	typedef SDWORD
-DVD_AudioFormat_AC3	equ 0
-DVD_AudioFormat_MPEG1	equ 1
-DVD_AudioFormat_MPEG1_DRC equ 2
-DVD_AudioFormat_MPEG2	equ 3
-DVD_AudioFormat_MPEG2_DRC equ 4
-DVD_AudioFormat_LPCM	equ 5
-DVD_AudioFormat_DTS	equ 6
-DVD_AudioFormat_SDDS	equ 7
-DVD_AudioFormat_Other	equ 8
+.enum DVD_AUDIO_FORMAT {
+	DVD_AudioFormat_AC3	= 0,
+	DVD_AudioFormat_MPEG1	= 1,
+	DVD_AudioFormat_MPEG1_DRC	= 2,
+	DVD_AudioFormat_MPEG2	= 3,
+	DVD_AudioFormat_MPEG2_DRC	= 4,
+	DVD_AudioFormat_LPCM	= 5,
+	DVD_AudioFormat_DTS	= 6,
+	DVD_AudioFormat_SDDS	= 7,
+	DVD_AudioFormat_Other	= 8
+	}
 
-DVD_KARAOKE_DOWNMIX	typedef SDWORD
-DVD_Mix_0to0		equ 0x1
-DVD_Mix_1to0		equ 0x2
-DVD_Mix_2to0		equ 0x4
-DVD_Mix_3to0		equ 0x8
-DVD_Mix_4to0		equ 0x10
-DVD_Mix_Lto0		equ 0x20
-DVD_Mix_Rto0		equ 0x40
-DVD_Mix_0to1		equ 0x100
-DVD_Mix_1to1		equ 0x200
-DVD_Mix_2to1		equ 0x400
-DVD_Mix_3to1		equ 0x800
-DVD_Mix_4to1		equ 0x1000
-DVD_Mix_Lto1		equ 0x2000
-DVD_Mix_Rto1		equ 0x4000
+.enum DVD_KARAOKE_DOWNMIX {
+	DVD_Mix_0to0	= 0x1,
+	DVD_Mix_1to0	= 0x2,
+	DVD_Mix_2to0	= 0x4,
+	DVD_Mix_3to0	= 0x8,
+	DVD_Mix_4to0	= 0x10,
+	DVD_Mix_Lto0	= 0x20,
+	DVD_Mix_Rto0	= 0x40,
+	DVD_Mix_0to1	= 0x100,
+	DVD_Mix_1to1	= 0x200,
+	DVD_Mix_2to1	= 0x400,
+	DVD_Mix_3to1	= 0x800,
+	DVD_Mix_4to1	= 0x1000,
+	DVD_Mix_Lto1	= 0x2000,
+	DVD_Mix_Rto1	= 0x4000
+	}
 
 DVD_AudioAttributes	STRUC
 AppMode			DVD_AUDIO_APPMODE ?
@@ -3097,25 +2642,27 @@ Info			DVD_MUA_MixingInfo 8 dup(<>)
 Coeff			DVD_MUA_Coeff 8 dup(<>)
 DVD_MultichannelAudioAttributes ENDS
 
-DVD_KARAOKE_CONTENTS typedef SDWORD
-DVD_Karaoke_GuideVocal1 equ 0x1
-DVD_Karaoke_GuideVocal2 equ 0x2
-DVD_Karaoke_GuideMelody1 equ 0x4
-DVD_Karaoke_GuideMelody2 equ 0x8
-DVD_Karaoke_GuideMelodyA equ 0x10
-DVD_Karaoke_GuideMelodyB equ 0x20
-DVD_Karaoke_SoundEffectA equ 0x40
-DVD_Karaoke_SoundEffectB equ 0x80
+.enum DVD_KARAOKE_CONTENTS {
+	DVD_Karaoke_GuideVocal1 = 0x1,
+	DVD_Karaoke_GuideVocal2 = 0x2,
+	DVD_Karaoke_GuideMelody1 = 0x4,
+	DVD_Karaoke_GuideMelody2 = 0x8,
+	DVD_Karaoke_GuideMelodyA = 0x10,
+	DVD_Karaoke_GuideMelodyB = 0x20,
+	DVD_Karaoke_SoundEffectA = 0x40,
+	DVD_Karaoke_SoundEffectB = 0x80
+	}
 
-DVD_KARAOKE_ASSIGNMENT typedef SDWORD
-DVD_Assignment_reserved0 equ 0
-DVD_Assignment_reserved1 equ 1
-DVD_Assignment_LR	equ 2
-DVD_Assignment_LRM	equ 3
-DVD_Assignment_LR1	equ 4
-DVD_Assignment_LRM1	equ 5
-DVD_Assignment_LR12	equ 6
-DVD_Assignment_LRM12	equ 7
+.enum DVD_KARAOKE_ASSIGNMENT {
+	DVD_Assignment_reserved0 = 0,
+	DVD_Assignment_reserved1 = 1,
+	DVD_Assignment_LR	= 2,
+	DVD_Assignment_LRM	= 3,
+	DVD_Assignment_LR1	= 4,
+	DVD_Assignment_LRM1	= 5,
+	DVD_Assignment_LR12	= 6,
+	DVD_Assignment_LRM12	= 7
+	}
 
 DVD_KaraokeAttributes	STRUC
 bVersion		db ?
@@ -3125,10 +2672,11 @@ ChannelAssignment	DVD_KARAOKE_ASSIGNMENT ?
 wChannelContents	dw  8  dup(?)
 DVD_KaraokeAttributes	ENDS
 
-DVD_VIDEO_COMPRESSION typedef SDWORD
-DVD_VideoCompression_Other equ 0
-DVD_VideoCompression_MPEG1 equ 1
-DVD_VideoCompression_MPEG2 equ 2
+.enum DVD_VIDEO_COMPRESSION {
+	DVD_VideoCompression_Other	= 0,
+	DVD_VideoCompression_MPEG1	= 1,
+	DVD_VideoCompression_MPEG2	= 2
+	}
 
 DVD_VideoAttributes	STRUC
 fPanscanPermitted	BOOL ?
@@ -3146,15 +2694,17 @@ fIsSourceLetterboxed	BOOL ?
 fIsFilmMode		BOOL ?
 DVD_VideoAttributes	ENDS
 
-DVD_SUBPICTURE_TYPE	typedef SDWORD
-DVD_SPType_NotSpecified equ 0
-DVD_SPType_Language	equ 1
-DVD_SPType_Other	equ 2
+.enum DVD_SUBPICTURE_TYPE {
+	DVD_SPType_NotSpecified = 0,
+	DVD_SPType_Language	= 1,
+	DVD_SPType_Other	= 2
+	}
 
-DVD_SUBPICTURE_CODING typedef SDWORD
-DVD_SPCoding_RunLength	equ 0
-DVD_SPCoding_Extended	equ 1
-DVD_SPCoding_Other	equ 2
+.enum DVD_SUBPICTURE_CODING {
+	DVD_SPCoding_RunLength	= 0,
+	DVD_SPCoding_Extended	= 1,
+	DVD_SPCoding_Other	= 2
+	}
 
 DVD_SubpictureAttributes STRUC
 Type			DVD_SUBPICTURE_TYPE ?
@@ -3163,10 +2713,11 @@ Language		LCID ?
 LanguageExtension	DVD_SUBPICTURE_LANG_EXT ?
 DVD_SubpictureAttributes ENDS
 
-DVD_TITLE_APPMODE	typedef SDWORD
-DVD_AppMode_Not_Specified equ 0
-DVD_AppMode_Karaoke	equ 1
-DVD_AppMode_Other	equ 3
+.enum DVD_TITLE_APPMODE {
+	DVD_AppMode_Not_Specified = 0,
+	DVD_AppMode_Karaoke	= 1,
+	DVD_AppMode_Other	= 3
+	}
 
 DVD_TitleAttributes	STRUC
 UNION
@@ -3191,7 +2742,7 @@ SubpictureAttributes	DVD_SubpictureAttributes <>
 DVD_MenuAttributes	ENDS
 
 ifndef __IDvdControl_INTERFACE_DEFINED__
-__IDvdControl_INTERFACE_DEFINED__ equ 1
+define __IDvdControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdControl, "A70EFE61-E2A3-11d0-A9BE-00AA0061BE93")
 
@@ -3232,13 +2783,12 @@ DEFINE_IIDX(IDvdControl, "A70EFE61-E2A3-11d0-A9BE-00AA0061BE93")
     MouseActivate	proc :POINT
     MouseSelect		proc :POINT
     ChapterPlayAutoStop proc :ULONG, :ULONG, :ULONG
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDvdInfo_INTERFACE_DEFINED__
-__IDvdInfo_INTERFACE_DEFINED__ equ 1
+define __IDvdInfo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdInfo, "A70EFE60-E2A3-11d0-A9BE-00AA0061BE93")
 
@@ -3267,13 +2817,12 @@ DEFINE_IIDX(IDvdInfo, "A70EFE60-E2A3-11d0-A9BE-00AA0061BE93")
     GetNumberOfChapters proc :ULONG, :ptr
     GetTitleParentalLevels proc :ULONG, :ptr
     GetRoot		proc :LPSTR, :ULONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDvdCmd_INTERFACE_DEFINED__
-__IDvdCmd_INTERFACE_DEFINED__ equ 1
+define __IDvdCmd_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdCmd, "5a4a97e4-94ee-4a55-9751-74b5643aa27d")
 
@@ -3281,13 +2830,12 @@ DEFINE_IIDX(IDvdCmd, "5a4a97e4-94ee-4a55-9751-74b5643aa27d")
 
     WaitForStart	proc
     WaitForEnd		proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDvdState_INTERFACE_DEFINED__
-__IDvdState_INTERFACE_DEFINED__ equ 1
+define __IDvdState_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdState, "86303d6d-1c4a-4087-ab42-f711167048ef")
 
@@ -3295,13 +2843,12 @@ DEFINE_IIDX(IDvdState, "86303d6d-1c4a-4087-ab42-f711167048ef")
 
     GetDiscID		proc :ptr
     GetParentalLevel	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDvdControl2_INTERFACE_DEFINED__
-__IDvdControl2_INTERFACE_DEFINED__ equ 1
+define __IDvdControl2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdControl2, "33BC7430-EEC0-11D2-8201-00A0C9D74842")
 
@@ -3347,56 +2894,59 @@ DEFINE_IIDX(IDvdControl2, "33BC7430-EEC0-11D2-8201-00A0C9D74842")
     SelectDefaultMenuLanguage proc :LCID
     SelectDefaultAudioLanguage proc :LCID, :DVD_AUDIO_LANG_EXT
     SelectDefaultSubpictureLanguage proc :LCID, :DVD_SUBPICTURE_LANG_EXT
-
-    .ends
+   .ends
 
 endif
 
-DVD_TextStringType	typedef SDWORD
-DVD_Struct_Volume	equ 0x1
-DVD_Struct_Title	equ 0x2
-DVD_Struct_ParentalID	equ 0x3
-DVD_Struct_PartOfTitle	equ 0x4
-DVD_Struct_Cell		equ 0x5
-DVD_Stream_Audio	equ 0x10
-DVD_Stream_Subpicture	equ 0x11
-DVD_Stream_Angle	equ 0x12
-DVD_Channel_Audio	equ 0x20
-DVD_General_Name	equ 0x30
-DVD_General_Comments	equ 0x31
-DVD_Title_Series	equ 0x38
-DVD_Title_Movie		equ 0x39
-DVD_Title_Video		equ 0x3a
-DVD_Title_Album		equ 0x3b
-DVD_Title_Song		equ 0x3c
-DVD_Title_Other		equ 0x3f
-DVD_Title_Sub_Series	equ 0x40
-DVD_Title_Sub_Movie	equ 0x41
-DVD_Title_Sub_Video	equ 0x42
-DVD_Title_Sub_Album	equ 0x43
-DVD_Title_Sub_Song	equ 0x44
-DVD_Title_Sub_Other	equ 0x47
-DVD_Title_Orig_Series	equ 0x48
-DVD_Title_Orig_Movie	equ 0x49
-DVD_Title_Orig_Video	equ 0x4a
-DVD_Title_Orig_Album	equ 0x4b
-DVD_Title_Orig_Song	equ 0x4c
-DVD_Title_Orig_Other	equ 0x4f
-DVD_Other_Scene		equ 0x50
-DVD_Other_Cut		equ 0x51
-DVD_Other_Take		equ 0x52
+.enum DVD_TextStringType {
+	DVD_Struct_Volume	= 0x1,
+	DVD_Struct_Title	= 0x2,
+	DVD_Struct_ParentalID	= 0x3,
+	DVD_Struct_PartOfTitle	= 0x4,
+	DVD_Struct_Cell		= 0x5,
+	DVD_Stream_Audio	= 0x10,
+	DVD_Stream_Subpicture	= 0x11,
+	DVD_Stream_Angle	= 0x12,
+	DVD_Channel_Audio	= 0x20,
+	DVD_General_Name	= 0x30,
+	DVD_General_Comments	= 0x31,
+	DVD_Title_Series	= 0x38,
+	DVD_Title_Movie		= 0x39,
+	DVD_Title_Video		= 0x3a,
+	DVD_Title_Album		= 0x3b,
+	DVD_Title_Song		= 0x3c,
+	DVD_Title_Other		= 0x3f,
+	DVD_Title_Sub_Series	= 0x40,
+	DVD_Title_Sub_Movie	= 0x41,
+	DVD_Title_Sub_Video	= 0x42,
+	DVD_Title_Sub_Album	= 0x43,
+	DVD_Title_Sub_Song	= 0x44,
+	DVD_Title_Sub_Other	= 0x47,
+	DVD_Title_Orig_Series	= 0x48,
+	DVD_Title_Orig_Movie	= 0x49,
+	DVD_Title_Orig_Video	= 0x4a,
+	DVD_Title_Orig_Album	= 0x4b,
+	DVD_Title_Orig_Song	= 0x4c,
+	DVD_Title_Orig_Other	= 0x4f,
+	DVD_Other_Scene		= 0x50,
+	DVD_Other_Cut		= 0x51,
+	DVD_Other_Take		= 0x52
+	}
 
-DVD_TextCharSet		typedef SDWORD
-DVD_CharSet_Unicode	equ 0
-DVD_CharSet_ISO646	equ 1
-DVD_CharSet_JIS_Roman_Kanji equ 2
-DVD_CharSet_ISO8859_1	equ 3
-DVD_CharSet_ShiftJIS_Kanji_Roman_Katakana equ 4
+.enum DVD_TextCharSet {
+	DVD_CharSet_Unicode	= 0,
+	DVD_CharSet_ISO646	= 1,
+	DVD_CharSet_JIS_Roman_Kanji = 2,
+	DVD_CharSet_ISO8859_1	= 3,
+	DVD_CharSet_ShiftJIS_Kanji_Roman_Katakana = 4
+	}
+
 DVD_TITLE_MENU		equ 0x000
 DVD_STREAM_DATA_CURRENT equ 0x800
 DVD_STREAM_DATA_VMGM	equ 0x400
 DVD_STREAM_DATA_VTSM	equ 0x401
 DVD_DEFAULT_AUDIO_STREAM equ 0x0f
+
 DVD_DECODER_CAPS	STRUC
 dwSize			dd ?
 dwAudioCaps		dd ?
@@ -3419,7 +2969,7 @@ DVD_AUDIO_CAPS_DTS	equ 0x00000008
 DVD_AUDIO_CAPS_SDDS	equ 0x00000010
 
 ifndef __IDvdInfo2_INTERFACE_DEFINED__
-__IDvdInfo2_INTERFACE_DEFINED__ equ 1
+define __IDvdInfo2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdInfo2, "34151510-EEC0-11D2-8201-00A0C9D74842")
 
@@ -3464,28 +3014,29 @@ DEFINE_IIDX(IDvdInfo2, "34151510-EEC0-11D2-8201-00A0C9D74842")
     GetDecoderCaps	proc :ptr
     GetButtonRect	proc :ULONG, :ptr
     IsSubpictureStreamEnabled proc :ULONG, :ptr
-
-    .ends
+   .ends
 
 endif
 
-AM_DVD_GRAPH_FLAGS	typedef SDWORD
-AM_DVD_HWDEC_PREFER	equ 0x1
-AM_DVD_HWDEC_ONLY	equ 0x2
-AM_DVD_SWDEC_PREFER	equ 0x4
-AM_DVD_SWDEC_ONLY	equ 0x8
-AM_DVD_NOVPE		equ 0x100
-AM_DVD_DO_NOT_CLEAR	equ 0x200
-AM_DVD_VMR9_ONLY	equ 0x800
-AM_DVD_EVR_ONLY		equ 0x1000
-AM_DVD_EVR_QOS		equ 0x2000
-AM_DVD_ADAPT_GRAPH	equ 0x4000
-AM_DVD_MASK		equ 0xffff
+.enum AM_DVD_GRAPH_FLAGS {
+	AM_DVD_HWDEC_PREFER	= 0x1,
+	AM_DVD_HWDEC_ONLY	= 0x2,
+	AM_DVD_SWDEC_PREFER	= 0x4,
+	AM_DVD_SWDEC_ONLY	= 0x8,
+	AM_DVD_NOVPE	= 0x100,
+	AM_DVD_DO_NOT_CLEAR	= 0x200,
+	AM_DVD_VMR9_ONLY	= 0x800,
+	AM_DVD_EVR_ONLY = 0x1000,
+	AM_DVD_EVR_QOS	= 0x2000,
+	AM_DVD_ADAPT_GRAPH	= 0x4000,
+	AM_DVD_MASK	= 0xffff
+	}
 
-AM_DVD_STREAM_FLAGS	typedef SDWORD
-AM_DVD_STREAM_VIDEO	equ 0x1
-AM_DVD_STREAM_AUDIO	equ 0x2
-AM_DVD_STREAM_SUBPIC	equ 0x4
+.enum AM_DVD_STREAM_FLAGS {
+	AM_DVD_STREAM_VIDEO	= 0x1,
+	AM_DVD_STREAM_AUDIO	= 0x2,
+	AM_DVD_STREAM_SUBPIC	= 0x4
+	}
 
 AM_DVD_RENDERSTATUS	STRUC
 hrVPEStatus		HRESULT ?
@@ -3499,7 +3050,7 @@ dwFailedStreamsFlag	dd ?
 AM_DVD_RENDERSTATUS	ENDS
 
 ifndef __IDvdGraphBuilder_INTERFACE_DEFINED__
-__IDvdGraphBuilder_INTERFACE_DEFINED__ equ 1
+define __IDvdGraphBuilder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDvdGraphBuilder, "FCC152B6-F372-11d0-8E00-00C04FD7C08B")
 
@@ -3508,13 +3059,12 @@ DEFINE_IIDX(IDvdGraphBuilder, "FCC152B6-F372-11d0-8E00-00C04FD7C08B")
     GetFiltergraph	proc :ptr
     GetDvdInterface	proc :REFIID, :ptr
     RenderDvdVideoVolume proc :LPCWSTR, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IDDrawExclModeVideo_INTERFACE_DEFINED__
-__IDDrawExclModeVideo_INTERFACE_DEFINED__ equ 1
+define __IDDrawExclModeVideo_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDDrawExclModeVideo, "153ACC21-D83B-11d1-82BF-00A0C9696C8F")
 
@@ -3527,18 +3077,18 @@ DEFINE_IIDX(IDDrawExclModeVideo, "153ACC21-D83B-11d1-82BF-00A0C9696C8F")
     SetDrawParameters	proc :ptr, :ptr
     GetNativeVideoProps proc :ptr, :ptr, :ptr, :ptr
     SetCallbackInterface proc :ptr, :DWORD
-
-    .ends
+   .ends
 
 endif
 
-AM_OVERLAY_NOTIFY_FLAGS typedef SDWORD
-AM_OVERLAY_NOTIFY_VISIBLE_CHANGE equ 0x1
-AM_OVERLAY_NOTIFY_SOURCE_CHANGE equ 0x2
-AM_OVERLAY_NOTIFY_DEST_CHANGE equ 0x4
+.enum AM_OVERLAY_NOTIFY_FLAGS {
+	AM_OVERLAY_NOTIFY_VISIBLE_CHANGE = 0x1,
+	AM_OVERLAY_NOTIFY_SOURCE_CHANGE = 0x2,
+	AM_OVERLAY_NOTIFY_DEST_CHANGE	= 0x4
+	}
 
 ifndef __IDDrawExclModeVideoCallback_INTERFACE_DEFINED__
-__IDDrawExclModeVideoCallback_INTERFACE_DEFINED__ equ 1
+define __IDDrawExclModeVideoCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDDrawExclModeVideoCallback, "913c24a0-20ab-11d2-9038-00a0c9697298")
 
@@ -3547,13 +3097,12 @@ DEFINE_IIDX(IDDrawExclModeVideoCallback, "913c24a0-20ab-11d2-9038-00a0c9697298")
     OnUpdateOverlay	proc :BOOL, :DWORD, :BOOL, :ptr, :ptr, :BOOL, :ptr, :ptr
     OnUpdateColorKey	proc :ptr, :DWORD
     OnUpdateSize	proc :DWORD, :DWORD, :DWORD, :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPinConnection_INTERFACE_DEFINED__
-__IPinConnection_INTERFACE_DEFINED__ equ 1
+define __IPinConnection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPinConnection, "4a9a62d3-27d4-403d-91e9-89f540e55534")
 
@@ -3563,38 +3112,39 @@ DEFINE_IIDX(IPinConnection, "4a9a62d3-27d4-403d-91e9-89f540e55534")
     NotifyEndOfStream	proc :HANDLE
     IsEndPin		proc
     DynamicDisconnect	proc
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IPinFlowControl_INTERFACE_DEFINED__
-__IPinFlowControl_INTERFACE_DEFINED__ equ 1
+define __IPinFlowControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IPinFlowControl, "c56e9858-dbf3-4f6b-8119-384af2060deb")
 
 .comdef IPinFlowControl : public IUnknown
 
     Block		proc :DWORD, :HANDLE
-
-    .ends
+   .ends
 
 endif
 
-AM_PIN_FLOW_CONTROL_BLOCK_FLAGS typedef SDWORD
-AM_PIN_FLOW_CONTROL_BLOCK equ 0x1
-AM_GRAPH_CONFIG_RECONNECT_FLAGS typedef SDWORD
-AM_GRAPH_CONFIG_RECONNECT_DIRECTCONNECT equ 0x1
-AM_GRAPH_CONFIG_RECONNECT_CACHE_REMOVED_FILTERS equ 0x2
-AM_GRAPH_CONFIG_RECONNECT_USE_ONLY_CACHED_FILTERS equ 0x4
-
-REM_FILTER_FLAGS	typedef SDWORD
-REMFILTERF_LEAVECONNECTED equ 0x1
-AM_FILTER_FLAGS		typedef SDWORD
-AM_FILTER_FLAGS_REMOVABLE equ 0x1
+.enum AM_PIN_FLOW_CONTROL_BLOCK_FLAGS {
+	AM_PIN_FLOW_CONTROL_BLOCK = 0x1
+	}
+.enum AM_GRAPH_CONFIG_RECONNECT_FLAGS {
+	AM_GRAPH_CONFIG_RECONNECT_DIRECTCONNECT = 0x1,
+	AM_GRAPH_CONFIG_RECONNECT_CACHE_REMOVED_FILTERS = 0x2,
+	AM_GRAPH_CONFIG_RECONNECT_USE_ONLY_CACHED_FILTERS = 0x4
+	}
+.enum REM_FILTER_FLAGS {
+	REMFILTERF_LEAVECONNECTED = 0x1
+	}
+.enum AM_FILTER_FLAGS {
+	AM_FILTER_FLAGS_REMOVABLE = 0x1
+	}
 
 ifndef __IGraphConfig_INTERFACE_DEFINED__
-__IGraphConfig_INTERFACE_DEFINED__ equ 1
+define __IGraphConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGraphConfig, "03A1EB8E-32BF-4245-8502-114D08A9CB88")
 
@@ -3610,26 +3160,24 @@ DEFINE_IIDX(IGraphConfig, "03A1EB8E-32BF-4245-8502-114D08A9CB88")
     SetFilterFlags	proc :ptr, :DWORD
     GetFilterFlags	proc :ptr, :ptr
     RemoveFilterEx	proc :ptr, :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IGraphConfigCallback_INTERFACE_DEFINED__
-__IGraphConfigCallback_INTERFACE_DEFINED__ equ 1
+define __IGraphConfigCallback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IGraphConfigCallback, "ade0fd60-d19d-11d2-abf6-00a0c905f375")
 
 .comdef IGraphConfigCallback : public IUnknown
 
     Reconfigure		proc :PVOID, :DWORD
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IFilterChain_INTERFACE_DEFINED__
-__IFilterChain_INTERFACE_DEFINED__ equ 1
+define __IFilterChain_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IFilterChain, "DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29")
 
@@ -3639,32 +3187,19 @@ DEFINE_IIDX(IFilterChain, "DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29")
     PauseChain		proc :ptr, :ptr
     StopChain		proc :ptr, :ptr
     RemoveChain		proc :ptr, :ptr
+   .ends
 
-    .ends
-
-endif
-
-if 0
-LPDIRECTDRAW7		typedef ptr DWORD
-LPDIRECTDRAWSURFACE7	typedef ptr DWORD
-LPDDPIXELFORMAT		typedef ptr DWORD
-LPBITMAPINFOHEADER	typedef ptr DWORD
-
-DDCOLORKEY		STRUC
-dw1			dd ?
-dw2			dd ?
-DDCOLORKEY		ENDS
-LPDDCOLORKEY		typedef ptr DDCOLORKEY
 endif
 
 include ddraw.inc
 
-VMRPresentationFlags	typedef SDWORD
-VMRSample_SyncPoint	equ 0x1
-VMRSample_Preroll	equ 0x2
-VMRSample_Discontinuity equ 0x4
-VMRSample_TimeValid	equ 0x8
-VMRSample_SrcDstRectsValid equ 0x10
+.enum VMRPresentationFlags {
+	VMRSample_SyncPoint	= 0x1,
+	VMRSample_Preroll	= 0x2,
+	VMRSample_Discontinuity = 0x4,
+	VMRSample_TimeValid	= 0x8,
+	VMRSample_SrcDstRectsValid	= 0x10
+	}
 
 VMRPRESENTATIONINFO	STRUC
 dwFlags			dd ?
@@ -3679,7 +3214,7 @@ dwInterlaceFlags	dd ?
 VMRPRESENTATIONINFO	ENDS
 
 ifndef __IVMRImagePresenter_INTERFACE_DEFINED__
-__IVMRImagePresenter_INTERFACE_DEFINED__ equ 1
+define __IVMRImagePresenter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRImagePresenter, "CE704FE7-E71E-41fb-BAA2-C4403E1182F5")
 
@@ -3688,18 +3223,18 @@ DEFINE_IIDX(IVMRImagePresenter, "CE704FE7-E71E-41fb-BAA2-C4403E1182F5")
     StartPresenting	proc :DWORD_PTR
     StopPresenting	proc :DWORD_PTR
     PresentImage	proc :DWORD_PTR, :ptr
-
-    .ends
+   .ends
 
 endif
 
-VMRSurfaceAllocationFlags typedef SDWORD
-AMAP_PIXELFORMAT_VALID	equ 0x1
-AMAP_3D_TARGET		equ 0x2
-AMAP_ALLOW_SYSMEM	equ 0x4
-AMAP_FORCE_SYSMEM	equ 0x8
-AMAP_DIRECTED_FLIP	equ 0x10
-AMAP_DXVA_TARGET	equ 0x20
+.enum VMRSurfaceAllocationFlags {
+	AMAP_PIXELFORMAT_VALID	= 0x1,
+	AMAP_3D_TARGET	= 0x2,
+	AMAP_ALLOW_SYSMEM	= 0x4,
+	AMAP_FORCE_SYSMEM	= 0x8,
+	AMAP_DIRECTED_FLIP	= 0x10,
+	AMAP_DXVA_TARGET	= 0x20
+	}
 
 VMRALLOCATIONINFO	STRUC
 dwFlags			dd ?
@@ -3713,7 +3248,7 @@ szNativeSize		SIZEL <>
 VMRALLOCATIONINFO	ENDS
 
 ifndef __IVMRSurfaceAllocator_INTERFACE_DEFINED__
-__IVMRSurfaceAllocator_INTERFACE_DEFINED__ equ 1
+define __IVMRSurfaceAllocator_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRSurfaceAllocator, "31ce832e-4484-458b-8cca-f4d7e3db0b52")
 
@@ -3723,14 +3258,13 @@ DEFINE_IIDX(IVMRSurfaceAllocator, "31ce832e-4484-458b-8cca-f4d7e3db0b52")
     FreeSurface		proc :DWORD_PTR
     PrepareSurface	proc :DWORD_PTR, :LPDIRECTDRAWSURFACE7, :DWORD
     AdviseNotify	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__
-__IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__ equ 1
+define __IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRSurfaceAllocatorNotify, "aada05a8-5a4e-4729-af0b-cea27aed51e2")
 
@@ -3742,8 +3276,7 @@ DEFINE_IIDX(IVMRSurfaceAllocatorNotify, "aada05a8-5a4e-4729-af0b-cea27aed51e2")
     RestoreDDrawSurfaces proc
     NotifyEvent		proc :LONG, :LONG_PTR, :LONG_PTR
     SetBorderColor	proc :COLORREF
-
-    .ends
+   .ends
 
 endif
 
@@ -3752,7 +3285,7 @@ VMR_ARMODE_NONE		equ 0
 VMR_ARMODE_LETTER_BOX	equ ( VMR_ARMODE_NONE + 1 )
 
 ifndef __IVMRWindowlessControl_INTERFACE_DEFINED__
-__IVMRWindowlessControl_INTERFACE_DEFINED__ equ 1
+define __IVMRWindowlessControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRWindowlessControl, "0eb1088c-4dcd-46f0-878f-39dae86a51b7")
 
@@ -3773,31 +3306,31 @@ DEFINE_IIDX(IVMRWindowlessControl, "0eb1088c-4dcd-46f0-878f-39dae86a51b7")
     GetBorderColor	proc :ptr
     SetColorKey		proc :COLORREF
     GetColorKey		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
-VMRMixerPrefs		typedef SDWORD
-MixerPref_NoDecimation	equ 0x1
-MixerPref_DecimateOutput equ 0x2
-MixerPref_ARAdjustXorY	equ 0x4
-MixerPref_DecimationReserved equ 0x8
-MixerPref_DecimateMask	equ 0xf
-MixerPref_BiLinearFiltering equ 0x10
-MixerPref_PointFiltering equ 0x20
-MixerPref_FilteringMask equ 0xf0
-MixerPref_RenderTargetRGB equ 0x100
-MixerPref_RenderTargetYUV equ 0x1000
-MixerPref_RenderTargetYUV420 equ 0x200
-MixerPref_RenderTargetYUV422 equ 0x400
-MixerPref_RenderTargetYUV444 equ 0x800
-MixerPref_RenderTargetReserved equ 0xe000
-MixerPref_RenderTargetMask equ 0xff00
-MixerPref_DynamicSwitchToBOB equ 0x10000
-MixerPref_DynamicDecimateBy2 equ 0x20000
-MixerPref_DynamicReserved equ 0xc0000
-MixerPref_DynamicMask	equ 0xf0000
+.enum VMRMixerPrefs {
+	MixerPref_NoDecimation		= 0x1,
+	MixerPref_DecimateOutput	= 0x2,
+	MixerPref_ARAdjustXorY		= 0x4,
+	MixerPref_DecimationReserved	= 0x8,
+	MixerPref_DecimateMask		= 0xf,
+	MixerPref_BiLinearFiltering	= 0x10,
+	MixerPref_PointFiltering	= 0x20,
+	MixerPref_FilteringMask		= 0xf0,
+	MixerPref_RenderTargetRGB	= 0x100,
+	MixerPref_RenderTargetYUV	= 0x1000,
+	MixerPref_RenderTargetYUV420	= 0x200,
+	MixerPref_RenderTargetYUV422	= 0x400,
+	MixerPref_RenderTargetYUV444	= 0x800,
+	MixerPref_RenderTargetReserved	= 0xe000,
+	MixerPref_RenderTargetMask	= 0xff00,
+	MixerPref_DynamicSwitchToBOB	= 0x10000,
+	MixerPref_DynamicDecimateBy2	= 0x20000,
+	MixerPref_DynamicReserved	= 0xc0000,
+	MixerPref_DynamicMask		= 0xf0000
+	}
 
 NORMALIZEDRECT		STRUC
 left			REAL4 ?
@@ -3809,7 +3342,7 @@ NORMALIZEDRECT		ENDS
 PNORMALIZEDRECT		typedef ptr NORMALIZEDRECT
 
 ifndef __IVMRMixerControl_INTERFACE_DEFINED__
-__IVMRMixerControl_INTERFACE_DEFINED__ equ 1
+define __IVMRMixerControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRMixerControl, "1c1a17b0-bed0-415d-974b-dc6696131599")
 
@@ -3825,8 +3358,7 @@ DEFINE_IIDX(IVMRMixerControl, "1c1a17b0-bed0-415d-974b-dc6696131599")
     GetBackgroundClr	proc :ptr
     SetMixingPrefs	proc :DWORD
     GetMixingPrefs	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
@@ -3850,7 +3382,7 @@ dwRevision		dd ?
 VMRMONITORINFO		ENDS
 
 ifndef __IVMRMonitorConfig_INTERFACE_DEFINED__
-__IVMRMonitorConfig_INTERFACE_DEFINED__ equ 1
+define __IVMRMonitorConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRMonitorConfig, "9cf0b1b6-fbaa-4b7f-88cf-cf1f130a0dce")
 
@@ -3861,33 +3393,35 @@ DEFINE_IIDX(IVMRMonitorConfig, "9cf0b1b6-fbaa-4b7f-88cf-cf1f130a0dce")
     SetDefaultMonitor	proc :ptr
     GetDefaultMonitor	proc :ptr
     GetAvailableMonitors proc :ptr, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 
-VMRRenderPrefs		typedef SDWORD
-RenderPrefs_RestrictToInitialMonitor equ 0
-RenderPrefs_ForceOffscreen equ 0x1
-RenderPrefs_ForceOverlays equ 0x2
-RenderPrefs_AllowOverlays equ 0
-RenderPrefs_AllowOffscreen equ 0
-RenderPrefs_DoNotRenderColorKeyAndBorder equ 0x8
-RenderPrefs_Reserved	equ 0x10
-RenderPrefs_PreferAGPMemWhenMixing equ 0x20
-RenderPrefs_Mask	equ 0x3f
+.enum VMRRenderPrefs {
+	RenderPrefs_RestrictToInitialMonitor = 0,
+	RenderPrefs_ForceOffscreen	= 0x1,
+	RenderPrefs_ForceOverlays	= 0x2,
+	RenderPrefs_AllowOverlays	= 0,
+	RenderPrefs_AllowOffscreen	= 0,
+	RenderPrefs_DoNotRenderColorKeyAndBorder = 0x8,
+	RenderPrefs_Reserved	= 0x10,
+	RenderPrefs_PreferAGPMemWhenMixing = 0x20,
+	RenderPrefs_Mask	= 0x3f
+	}
 
-VMRMode			typedef SDWORD
-VMRMode_Windowed	equ 0x1
-VMRMode_Windowless	equ 0x2
-VMRMode_Renderless	equ 0x4
-VMRMode_Mask		equ 0x7
+.enum VMRMode {
+	VMRMode_Windowed	= 0x1,
+	VMRMode_Windowless	= 0x2,
+	VMRMode_Renderless	= 0x4,
+	VMRMode_Mask		= 0x7
+	}
 
-_MIDL___MIDL_itf_strmif_0000_0131_0001 typedef SDWORD
-MAX_NUMBER_OF_STREAMS	equ 16
+.enum __MIDL___MIDL_itf_strmif_0000_0131_0001 {
+	MAX_NUMBER_OF_STREAMS	= 16
+	}
 
 ifndef __IVMRFilterConfig_INTERFACE_DEFINED__
-__IVMRFilterConfig_INTERFACE_DEFINED__ equ 1
+define __IVMRFilterConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRFilterConfig, "9e5530c5-7034-48b4-bb46-0b8a6efc8e36")
 
@@ -3900,13 +3434,12 @@ DEFINE_IIDX(IVMRFilterConfig, "9e5530c5-7034-48b4-bb46-0b8a6efc8e36")
     GetRenderingPrefs	proc :ptr
     SetRenderingMode	proc :DWORD
     GetRenderingMode	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVMRAspectRatioControl_INTERFACE_DEFINED__
-__IVMRAspectRatioControl_INTERFACE_DEFINED__ equ 1
+define __IVMRAspectRatioControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRAspectRatioControl, "ede80b5c-bad6-4623-b537-65586c9f8dfd")
 
@@ -3914,26 +3447,27 @@ DEFINE_IIDX(IVMRAspectRatioControl, "ede80b5c-bad6-4623-b537-65586c9f8dfd")
 
     GetAspectRatioMode	proc :LPDWORD
     SetAspectRatioMode	proc :DWORD
-
-    .ends
+   .ends
 
 endif
 
-VMRDeinterlacePrefs	typedef SDWORD
-DeinterlacePref_NextBest equ 0x1
-DeinterlacePref_BOB	equ 0x2
-DeinterlacePref_Weave	equ 0x4
-DeinterlacePref_Mask	equ 0x7
+.enum VMRDeinterlacePrefs {
+	DeinterlacePref_NextBest = 0x1,
+	DeinterlacePref_BOB	= 0x2,
+	DeinterlacePref_Weave	= 0x4,
+	DeinterlacePref_Mask	= 0x7
+	}
 
-VMRDeinterlaceTech	typedef SDWORD
-DeinterlaceTech_Unknown equ 0
-DeinterlaceTech_BOBLineReplicate equ 0x1
-DeinterlaceTech_BOBVerticalStretch equ 0x2
-DeinterlaceTech_MedianFiltering equ 0x4
-DeinterlaceTech_EdgeFiltering equ 0x10
-DeinterlaceTech_FieldAdaptive equ 0x20
-DeinterlaceTech_PixelAdaptive equ 0x40
-DeinterlaceTech_MotionVectorSteered equ 0x80
+.enum VMRDeinterlaceTech {
+	DeinterlaceTech_Unknown = 0,
+	DeinterlaceTech_BOBLineReplicate	= 0x1,
+	DeinterlaceTech_BOBVerticalStretch	= 0x2,
+	DeinterlaceTech_MedianFiltering = 0x4,
+	DeinterlaceTech_EdgeFiltering	= 0x10,
+	DeinterlaceTech_FieldAdaptive	= 0x20,
+	DeinterlaceTech_PixelAdaptive	= 0x40,
+	DeinterlaceTech_MotionVectorSteered	= 0x80
+	}
 
 VMRFrequency		STRUC
 dwNumerator		dd ?
@@ -3959,7 +3493,7 @@ DeinterlaceTechnology	VMRDeinterlaceTech ?
 VMRDeinterlaceCaps	ENDS
 
 ifndef __IVMRDeinterlaceControl_INTERFACE_DEFINED__
-__IVMRDeinterlaceControl_INTERFACE_DEFINED__ equ 1
+define __IVMRDeinterlaceControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRDeinterlaceControl, "bb057577-0db8-4e6a-87a7-1a8c9a505a0f")
 
@@ -3972,8 +3506,7 @@ DEFINE_IIDX(IVMRDeinterlaceControl, "bb057577-0db8-4e6a-87a7-1a8c9a505a0f")
     GetDeinterlacePrefs proc :LPDWORD
     SetDeinterlacePrefs proc :DWORD
     GetActualDeinterlaceMode proc :DWORD, :LPGUID
-
-    .ends
+   .ends
 
 endif
 
@@ -3996,7 +3529,7 @@ VMRBITMAP_SRCCOLORKEY	equ 0x00000008
 VMRBITMAP_SRCRECT	equ 0x00000010
 
 ifndef __IVMRMixerBitmap_INTERFACE_DEFINED__
-__IVMRMixerBitmap_INTERFACE_DEFINED__ equ 1
+define __IVMRMixerBitmap_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRMixerBitmap, "1E673275-0257-40aa-AF20-7C608D4A0428")
 
@@ -4005,8 +3538,7 @@ DEFINE_IIDX(IVMRMixerBitmap, "1E673275-0257-40aa-AF20-7C608D4A0428")
     SetAlphaBitmap	proc :ptr
     UpdateAlphaBitmapParameters proc :PVMRALPHABITMAP
     GetAlphaBitmapParameters proc :PVMRALPHABITMAP
-
-    .ends
+   .ends
 
 endif
 
@@ -4021,7 +3553,7 @@ rNormal			NORMALIZEDRECT <>
 VMRVIDEOSTREAMINFO	ENDS
 
 ifndef __IVMRImageCompositor_INTERFACE_DEFINED__
-__IVMRImageCompositor_INTERFACE_DEFINED__ equ 1
+define __IVMRImageCompositor_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRImageCompositor, "7a4fb5af-479f-4074-bb40-ce6722e43c82")
 
@@ -4031,13 +3563,12 @@ DEFINE_IIDX(IVMRImageCompositor, "7a4fb5af-479f-4074-bb40-ce6722e43c82")
     TermCompositionTarget proc :ptr, :LPDIRECTDRAWSURFACE7
     SetStreamMediaType	proc :DWORD, :ptr, :BOOL
     CompositeImage	proc :ptr, :LPDIRECTDRAWSURFACE7, :ptr, :REFERENCE_TIME, :REFERENCE_TIME, :DWORD, :ptr, :UINT
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVMRVideoStreamControl_INTERFACE_DEFINED__
-__IVMRVideoStreamControl_INTERFACE_DEFINED__ equ 1
+define __IVMRVideoStreamControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRVideoStreamControl, "058d1f11-2a54-4bef-bd54-df706626b727")
 
@@ -4047,14 +3578,13 @@ DEFINE_IIDX(IVMRVideoStreamControl, "058d1f11-2a54-4bef-bd54-df706626b727")
     GetColorKey		proc :LPDDCOLORKEY
     SetStreamActiveState proc :BOOL
     GetStreamActiveState proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IVMRSurface_INTERFACE_DEFINED__
-__IVMRSurface_INTERFACE_DEFINED__ equ 1
+define __IVMRSurface_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRSurface, "a9849bbe-9ec8-4263-b764-62730f0d15d0")
 
@@ -4064,13 +3594,12 @@ DEFINE_IIDX(IVMRSurface, "a9849bbe-9ec8-4263-b764-62730f0d15d0")
     LockSurface		proc :ptr
     UnlockSurface	proc
     GetSurface		proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVMRImagePresenterConfig_INTERFACE_DEFINED__
-__IVMRImagePresenterConfig_INTERFACE_DEFINED__ equ 1
+define __IVMRImagePresenterConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRImagePresenterConfig, "9f3a1c85-8555-49ba-935f-be5b5b29d178")
 
@@ -4078,13 +3607,12 @@ DEFINE_IIDX(IVMRImagePresenterConfig, "9f3a1c85-8555-49ba-935f-be5b5b29d178")
 
     SetRenderingPrefs	proc :DWORD
     GetRenderingPrefs	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__
-__IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__ equ 1
+define __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVMRImagePresenterExclModeConfig, "e6f7ce40-4673-44f1-8f77-5499d68cb4ea")
 
@@ -4092,14 +3620,13 @@ DEFINE_IIDX(IVMRImagePresenterExclModeConfig, "e6f7ce40-4673-44f1-8f77-5499d68cb
 
     SetXlcModeDDObjAndPrimarySurface proc :LPDIRECTDRAW7, :LPDIRECTDRAWSURFACE7
     GetXlcModeDDObjAndPrimarySurface proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 
 ifndef __IVPManager_INTERFACE_DEFINED__
-__IVPManager_INTERFACE_DEFINED__ equ 1
+define __IVPManager_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVPManager, "aac18c18-e186-46d2-825d-a1f8dc8e395a")
 
@@ -4107,8 +3634,7 @@ DEFINE_IIDX(IVPManager, "aac18c18-e186-46d2-825d-a1f8dc8e395a")
 
     SetVideoPortIndex	proc :DWORD
     GetVideoPortIndex	proc :ptr
-
-    .ends
+   .ends
 
 endif
 

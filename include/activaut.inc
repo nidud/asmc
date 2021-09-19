@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 475
+define __REQUIRED_RPCNDR_H_VERSION__ 475
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 include rpc.inc
 include rpcndr.inc
@@ -13,29 +13,16 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __activaut_h__
-__activaut_h__ equ <>
+define __activaut_h__
+
 .pragma list(push, 0)
 
-ifndef __IScriptNode_FWD_DEFINED__
-__IScriptNode_FWD_DEFINED__ equ 1
-endif
-ifndef __IScriptEntry_FWD_DEFINED__
-__IScriptEntry_FWD_DEFINED__ equ 1
-endif
-ifndef __IScriptScriptlet_FWD_DEFINED__
-__IScriptScriptlet_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptAuthor_FWD_DEFINED__
-__IActiveScriptAuthor_FWD_DEFINED__ equ 1
-endif
-ifndef __IActiveScriptAuthorProcedure_FWD_DEFINED__
-__IActiveScriptAuthorProcedure_FWD_DEFINED__ equ 1
-endif
 include ocidl.inc
 
 ifndef __ActivAut_h
-__ActivAut_h equ 1
+define __ActivAut_h
 
 ifndef _NO_AUTHOR_GUIDS
 DEFINE_GUID(CATID_ActiveScriptAuthor, 0xaee2a92, 0xbcbb, 0x11d0, 0x8c, 0x72, 0x0, 0xc0, 0x4f, 0xc2, 0xb0, 0x85)
@@ -73,7 +60,7 @@ SOURCETEXT_ATTR_THIS		equ 0x0400
 SOURCE_TEXT_ATTR	typedef WORD
 
 ifndef __IScriptNode_INTERFACE_DEFINED__
-__IScriptNode_INTERFACE_DEFINED__ equ 1
+define __IScriptNode_INTERFACE_DEFINED__
 
 .comdef IScriptNode : public IUnknown
 
@@ -87,13 +74,12 @@ __IScriptNode_INTERFACE_DEFINED__ equ 1
     GetLanguage		proc :ptr
     CreateChildEntry	proc :ULONG, :DWORD, :LPCOLESTR, :ptr
     CreateChildHandler	proc :LPCOLESTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IScriptEntry_INTERFACE_DEFINED__
-__IScriptEntry_INTERFACE_DEFINED__ equ 1
+define __IScriptEntry_INTERFACE_DEFINED__
 
 .comdef IScriptEntry : public IScriptNode
 
@@ -108,13 +94,12 @@ __IScriptEntry_INTERFACE_DEFINED__ equ 1
     GetSignature	proc :ptr, :ptr
     SetSignature	proc :ptr, :ULONG
     GetRange		proc :ptr, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IScriptScriptlet_INTERFACE_DEFINED__
-__IScriptScriptlet_INTERFACE_DEFINED__ equ 1
+define __IScriptScriptlet_INTERFACE_DEFINED__
 
 .comdef IScriptScriptlet : public IScriptEntry
 
@@ -124,13 +109,12 @@ __IScriptScriptlet_INTERFACE_DEFINED__ equ 1
     SetEventName	proc :LPCOLESTR
     GetSimpleEventName	proc :ptr
     SetSimpleEventName	proc :LPCOLESTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptAuthor_INTERFACE_DEFINED__
-__IActiveScriptAuthor_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptAuthor_INTERFACE_DEFINED__
 
 .comdef IActiveScriptAuthor : public IUnknown
 
@@ -149,20 +133,18 @@ __IActiveScriptAuthor_INTERFACE_DEFINED__ equ 1
     GetChars		proc :DWORD, :ptr
     GetInfoFromContext	proc :LPCOLESTR, :ULONG, :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     IsCommitChar	proc :OLECHAR, :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__
-__IActiveScriptAuthorProcedure_INTERFACE_DEFINED__ equ 1
+define __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__
 
 .comdef IActiveScriptAuthorProcedure : public IUnknown
 
     ParseProcedureText	proc :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR,
 		:LPCOLESTR, :DWORD, :DWORD, :ptr
-
-    .ends
+   .ends
 
 endif
 

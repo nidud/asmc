@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,11 +18,7 @@ include ole2.inc
 endif
 
 ifndef __filter_h__
-__filter_h__ equ <>
-
-ifndef __IFilter_FWD_DEFINED__
-__IFilter_FWD_DEFINED__ equ 1
-endif
+define __filter_h__
 
 include unknwn.inc
 include objidl.inc
@@ -41,10 +37,10 @@ FULLPROPSPEC		ENDS
 endif
 
 ifndef __IFilter_INTERFACE_DEFINED__
-__IFilter_INTERFACE_DEFINED__ equ 1
+define __IFilter_INTERFACE_DEFINED__
 
 ifndef _IFILTER_INIT_DEFINED
-_IFILTER_INIT_DEFINED equ <>
+define _IFILTER_INIT_DEFINED
 
 .enum IFILTER_INIT {
     IFILTER_INIT_CANON_PARAGRAPHS	= 1,
@@ -65,14 +61,14 @@ _IFILTER_INIT_DEFINED equ <>
 endif
 
 ifndef _IFILTER_FLAGS_DEFINED
-_IFILTER_FLAGS_DEFINED equ <>
+define _IFILTER_FLAGS_DEFINED
 .enum IFILTER_FLAGS {
     IFILTER_FLAGS_OLE_PROPERTIES = 1
     }
 endif
 
 ifndef _CHUNKSTATE_DEFINED
-_CHUNKSTATE_DEFINED equ <>
+define _CHUNKSTATE_DEFINED
 .enum CHUNKSTATE {
     CHUNK_TEXT	= 0x1,
     CHUNK_VALUE = 0x2,
@@ -81,7 +77,7 @@ _CHUNKSTATE_DEFINED equ <>
 endif
 
 ifndef _CHUNK_BREAKTYPE_DEFINED
-_CHUNK_BREAKTYPE_DEFINED equ <>
+define _CHUNK_BREAKTYPE_DEFINED
 .enum CHUNK_BREAKTYPE {
     CHUNK_NO_BREAK = 0,
     CHUNK_EOW	= 1,
@@ -92,7 +88,7 @@ _CHUNK_BREAKTYPE_DEFINED equ <>
 endif
 
 ifndef _FILTERREGION_DEFINED
-_FILTERREGION_DEFINED equ <>
+define _FILTERREGION_DEFINED
 FILTERREGION		STRUC
 idChunk			ULONG ?
 cwcStart		ULONG ?
@@ -101,7 +97,7 @@ FILTERREGION		ENDS
 endif
 
 ifndef _STAT_CHUNK_DEFINED
-_STAT_CHUNK_DEFINED equ <>
+define _STAT_CHUNK_DEFINED
 STAT_CHUNK		STRUC
 idChunk			ULONG ?
 breakType		CHUNK_BREAKTYPE ?
@@ -123,7 +119,7 @@ DEFINE_IIDX(IFilter, "89BCB740-6119-101A-BCB7-00DD010655AF")
     GetText		proc :ptr, :ptr
     GetValue		proc :ptr
     BindRegion		proc :FILTERREGION, :REFIID, :ptr
-    .ends
+   .ends
 
 endif
 

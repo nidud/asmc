@@ -1,36 +1,24 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-ifndef __bits2_0_h__
-__bits2_0_h__ equ <>
 
-ifndef __IBackgroundCopyJob3_FWD_DEFINED__
-__IBackgroundCopyJob3_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyFile2_FWD_DEFINED__
-__IBackgroundCopyFile2_FWD_DEFINED__ equ 1
-endif
-ifndef __BackgroundCopyManager2_0_FWD_DEFINED__
-__BackgroundCopyManager2_0_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyJob3_FWD_DEFINED__
-__IBackgroundCopyJob3_FWD_DEFINED__ equ 1
-endif
-ifndef __IBackgroundCopyFile2_FWD_DEFINED__
-__IBackgroundCopyFile2_FWD_DEFINED__ equ 1
-endif
+ifndef __bits2_0_h__
+define __bits2_0_h__
+
 include bits.inc
 include bits1_5.inc
 
@@ -48,7 +36,7 @@ BG_COPY_FILE_ALL	equ 15
 
 
 ifndef __IBackgroundCopyJob3_INTERFACE_DEFINED__
-__IBackgroundCopyJob3_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyJob3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyJob3, "443c8934-90ff-48ed-bcde-26f5c7450042")
 
@@ -98,13 +86,12 @@ DEFINE_IIDX(IBackgroundCopyJob3, "443c8934-90ff-48ed-bcde-26f5c7450042")
     AddFileWithRanges	proc :LPCWSTR, :LPCWSTR, :DWORD, :BG_FILE_RANGE
     SetFileACLFlags	proc :DWORD
     GetFileACLFlags	proc :ptr
-
-    .ends
+   .ends
 
 endif
 
 ifndef __IBackgroundCopyFile2_INTERFACE_DEFINED__
-__IBackgroundCopyFile2_INTERFACE_DEFINED__ equ 1
+define __IBackgroundCopyFile2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBackgroundCopyFile2, "83e81b93-0873-474d-8a8c-f2018b1a939c")
 
@@ -115,13 +102,12 @@ DEFINE_IIDX(IBackgroundCopyFile2, "83e81b93-0873-474d-8a8c-f2018b1a939c")
     GetProgress		proc :ptr
     GetFileRanges	proc :ptr, :ptr
     SetRemoteName	proc :LPCWSTR
-
-    .ends
+   .ends
 
 endif
 
 ifndef __BackgroundCopyManager2_0_LIBRARY_DEFINED__
-__BackgroundCopyManager2_0_LIBRARY_DEFINED__ equ 1
+define __BackgroundCopyManager2_0_LIBRARY_DEFINED__
 
 DEFINE_GUIDS(LIBID_BackgroundCopyManager2_0, "6d18ad12-bde3-4393-b311-099c346e6df9")
 DEFINE_GUIDS(CLSID_BackgroundCopyManager2_0, "6d18ad12-bde3-4393-b311-099c346e6df9")

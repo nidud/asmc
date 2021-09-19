@@ -1,5 +1,6 @@
 ifndef _INC_WINAPIFAMILY
-_INC_WINAPIFAMILY equ <>
+define _INC_WINAPIFAMILY
+
 ifndef _WINDEF_
  include windef.inc
 endif

@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,218 +18,7 @@ include ole2.inc
 endif
 
 ifndef __segment_h__
-__segment_h__ equ <>
-
-ifndef __IMSVidRect_FWD_DEFINED__
-__IMSVidRect_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidGraphSegmentContainer_FWD_DEFINED__
-__IMSVidGraphSegmentContainer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidGraphSegment_FWD_DEFINED__
-__IMSVidGraphSegment_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidGraphSegmentUserInput_FWD_DEFINED__
-__IMSVidGraphSegmentUserInput_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidCompositionSegment_FWD_DEFINED__
-__IMSVidCompositionSegment_FWD_DEFINED__ equ 1
-endif
-ifndef __IEnumMSVidGraphSegment_FWD_DEFINED__
-__IEnumMSVidGraphSegment_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVRGraphSegment_FWD_DEFINED__
-__IMSVidVRGraphSegment_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidDevice_FWD_DEFINED__
-__IMSVidDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidDevice2_FWD_DEFINED__
-__IMSVidDevice2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidInputDevice_FWD_DEFINED__
-__IMSVidInputDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidDeviceEvent_FWD_DEFINED__
-__IMSVidDeviceEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidInputDeviceEvent_FWD_DEFINED__
-__IMSVidInputDeviceEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoInputDevice_FWD_DEFINED__
-__IMSVidVideoInputDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidPlayback_FWD_DEFINED__
-__IMSVidPlayback_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidPlaybackEvent_FWD_DEFINED__
-__IMSVidPlaybackEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidTuner_FWD_DEFINED__
-__IMSVidTuner_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidTunerEvent_FWD_DEFINED__
-__IMSVidTunerEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAnalogTuner_FWD_DEFINED__
-__IMSVidAnalogTuner_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAnalogTuner2_FWD_DEFINED__
-__IMSVidAnalogTuner2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAnalogTunerEvent_FWD_DEFINED__
-__IMSVidAnalogTunerEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFilePlayback_FWD_DEFINED__
-__IMSVidFilePlayback_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFilePlayback2_FWD_DEFINED__
-__IMSVidFilePlayback2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFilePlaybackEvent_FWD_DEFINED__
-__IMSVidFilePlaybackEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidWebDVD_FWD_DEFINED__
-__IMSVidWebDVD_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidWebDVD2_FWD_DEFINED__
-__IMSVidWebDVD2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidWebDVDEvent_FWD_DEFINED__
-__IMSVidWebDVDEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidWebDVDAdm_FWD_DEFINED__
-__IMSVidWebDVDAdm_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidOutputDevice_FWD_DEFINED__
-__IMSVidOutputDevice_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidOutputDeviceEvent_FWD_DEFINED__
-__IMSVidOutputDeviceEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFeature_FWD_DEFINED__
-__IMSVidFeature_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFeatureEvent_FWD_DEFINED__
-__IMSVidFeatureEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidEncoder_FWD_DEFINED__
-__IMSVidEncoder_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidClosedCaptioning_FWD_DEFINED__
-__IMSVidClosedCaptioning_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidClosedCaptioning2_FWD_DEFINED__
-__IMSVidClosedCaptioning2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidClosedCaptioning3_FWD_DEFINED__
-__IMSVidClosedCaptioning3_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidXDS_FWD_DEFINED__
-__IMSVidXDS_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidXDSEvent_FWD_DEFINED__
-__IMSVidXDSEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidDataServices_FWD_DEFINED__
-__IMSVidDataServices_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidDataServicesEvent_FWD_DEFINED__
-__IMSVidDataServicesEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoRenderer_FWD_DEFINED__
-__IMSVidVideoRenderer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoRendererEvent_FWD_DEFINED__
-__IMSVidVideoRendererEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidGenericSink_FWD_DEFINED__
-__IMSVidGenericSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidGenericSink2_FWD_DEFINED__
-__IMSVidGenericSink2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferRecordingControl_FWD_DEFINED__
-__IMSVidStreamBufferRecordingControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSink_FWD_DEFINED__
-__IMSVidStreamBufferSink_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSink2_FWD_DEFINED__
-__IMSVidStreamBufferSink2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSink3_FWD_DEFINED__
-__IMSVidStreamBufferSink3_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSinkEvent_FWD_DEFINED__
-__IMSVidStreamBufferSinkEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSinkEvent2_FWD_DEFINED__
-__IMSVidStreamBufferSinkEvent2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSinkEvent3_FWD_DEFINED__
-__IMSVidStreamBufferSinkEvent3_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSinkEvent4_FWD_DEFINED__
-__IMSVidStreamBufferSinkEvent4_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSource_FWD_DEFINED__
-__IMSVidStreamBufferSource_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSource2_FWD_DEFINED__
-__IMSVidStreamBufferSource2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSourceEvent_FWD_DEFINED__
-__IMSVidStreamBufferSourceEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSourceEvent2_FWD_DEFINED__
-__IMSVidStreamBufferSourceEvent2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferSourceEvent3_FWD_DEFINED__
-__IMSVidStreamBufferSourceEvent3_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidStreamBufferV2SourceEvent_FWD_DEFINED__
-__IMSVidStreamBufferV2SourceEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoRenderer2_FWD_DEFINED__
-__IMSVidVideoRenderer2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoRendererEvent2_FWD_DEFINED__
-__IMSVidVideoRendererEvent2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVMR9_FWD_DEFINED__
-__IMSVidVMR9_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidEVR_FWD_DEFINED__
-__IMSVidEVR_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidEVREvent_FWD_DEFINED__
-__IMSVidEVREvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAudioRenderer_FWD_DEFINED__
-__IMSVidAudioRenderer_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAudioRendererEvent_FWD_DEFINED__
-__IMSVidAudioRendererEvent_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAudioRendererEvent2_FWD_DEFINED__
-__IMSVidAudioRendererEvent2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidInputDevices_FWD_DEFINED__
-__IMSVidInputDevices_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidOutputDevices_FWD_DEFINED__
-__IMSVidOutputDevices_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidVideoRendererDevices_FWD_DEFINED__
-__IMSVidVideoRendererDevices_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidAudioRendererDevices_FWD_DEFINED__
-__IMSVidAudioRendererDevices_FWD_DEFINED__ equ 1
-endif
-ifndef __IMSVidFeatures_FWD_DEFINED__
-__IMSVidFeatures_FWD_DEFINED__ equ 1
-endif
+define __segment_h__
 
 include oaidl.inc
 include ocidl.inc
@@ -557,7 +346,7 @@ include olectl.inc
     }
 
 ifndef __IMSVidRect_INTERFACE_DEFINED__
-__IMSVidRect_INTERFACE_DEFINED__ equ 1
+define __IMSVidRect_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidRect, "7F5000A6-A440-47ca-8ACC-C0E75531A2C2")
 
@@ -574,12 +363,12 @@ DEFINE_IIDX(IMSVidRect, "7F5000A6-A440-47ca-8ACC-C0E75531A2C2")
     get_HWnd		proc :ptr HWND
     put_HWnd		proc :HWND
     put_Rect		proc :ptr IMSVidRect
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidGraphSegmentContainer_INTERFACE_DEFINED__
-__IMSVidGraphSegmentContainer_INTERFACE_DEFINED__ equ 1
+define __IMSVidGraphSegmentContainer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidGraphSegmentContainer, "3DD2903D-E0AA-11d2-B63A-00C04F79498E")
 
@@ -596,7 +385,7 @@ DEFINE_IIDX(IMSVidGraphSegmentContainer, "3DD2903D-E0AA-11d2-B63A-00C04F79498E")
     Decompose		proc :ptr
     IsWindowless	proc
     GetFocus		proc
-    .ends
+   .ends
 
 endif
 
@@ -607,7 +396,7 @@ endif
     }
 
 ifndef __IMSVidGraphSegment_INTERFACE_DEFINED__
-__IMSVidGraphSegment_INTERFACE_DEFINED__ equ 1
+define __IMSVidGraphSegment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidGraphSegment, "238DEC54-ADEB-4005-A349-F772B9AFEBC4")
 
@@ -628,7 +417,7 @@ DEFINE_IIDX(IMSVidGraphSegment, "238DEC54-ADEB-4005-A349-F772B9AFEBC4")
     PostStop		proc
     OnEventNotify	proc :LONG, :LONG_PTR, :LONG_PTR
     Decompose		proc
-    .ends
+   .ends
 
 endif
 
@@ -645,7 +434,7 @@ endif
 
 
 ifndef __IMSVidGraphSegmentUserInput_INTERFACE_DEFINED__
-__IMSVidGraphSegmentUserInput_INTERFACE_DEFINED__ equ 1
+define __IMSVidGraphSegmentUserInput_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidGraphSegmentUserInput, "301C060E-20D9-4587-9B03-F82ED9A9943C")
 
@@ -659,12 +448,12 @@ DEFINE_IIDX(IMSVidGraphSegmentUserInput, "301C060E-20D9-4587-9B03-F82ED9A9943C")
     MouseDown		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
     MouseMove		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
     MouseUp		proc :sword, :sword, :OLE_XPOS_PIXELS, :OLE_YPOS_PIXELS
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidCompositionSegment_INTERFACE_DEFINED__
-__IMSVidCompositionSegment_INTERFACE_DEFINED__ equ 1
+define __IMSVidCompositionSegment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidCompositionSegment, "1C15D483-911D-11d2-B632-00C04F79498E")
 
@@ -673,12 +462,12 @@ DEFINE_IIDX(IMSVidCompositionSegment, "1C15D483-911D-11d2-B632-00C04F79498E")
     Compose		proc :ptr, :ptr
     get_Up		proc :ptr ptr IMSVidGraphSegment
     get_Down		proc :ptr ptr IMSVidGraphSegment
-    .ends
+   .ends
 
 endif
 
 ifndef __IEnumMSVidGraphSegment_INTERFACE_DEFINED__
-__IEnumMSVidGraphSegment_INTERFACE_DEFINED__ equ 1
+define __IEnumMSVidGraphSegment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEnumMSVidGraphSegment, "3DD2903E-E0AA-11d2-B63A-00C04F79498E")
 
@@ -688,12 +477,12 @@ DEFINE_IIDX(IEnumMSVidGraphSegment, "3DD2903E-E0AA-11d2-B63A-00C04F79498E")
     Skip		proc :ULONG
     Reset		proc
     Clone		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVRGraphSegment_INTERFACE_DEFINED__
-__IMSVidVRGraphSegment_INTERFACE_DEFINED__ equ 1
+define __IMSVidVRGraphSegment_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVRGraphSegment, "DD47DE3F-9874-4f7b-8B22-7CB2688461E7")
 
@@ -720,12 +509,12 @@ DEFINE_IIDX(IMSVidVRGraphSegment, "DD47DE3F-9874-4f7b-8B22-7CB2688461E7")
     Refresh		proc
     DisplayChange	proc
     RePaint		proc :HDC
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidDevice_INTERFACE_DEFINED__
-__IMSVidDevice_INTERFACE_DEFINED__ equ 1
+define __IMSVidDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidDevice, "1C15D47C-911D-11d2-B632-00C04F79498E")
 
@@ -740,24 +529,24 @@ DEFINE_IIDX(IMSVidDevice, "1C15D47C-911D-11d2-B632-00C04F79498E")
     get__Category	proc :ptr GUID
     get__ClassID	proc :ptr GUID
     IsEqualDevice	proc :ptr IMSVidDevice, :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidDevice2_INTERFACE_DEFINED__
-__IMSVidDevice2_INTERFACE_DEFINED__ equ 1
+define __IMSVidDevice2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidDevice2, "87BD2783-EBC0-478C-B4A0-E8E7F43AB78E")
 
 .comdef IMSVidDevice2 : public IUnknown
 
     get_DevicePath	proc :ptr BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidInputDevice_INTERFACE_DEFINED__
-__IMSVidInputDevice_INTERFACE_DEFINED__ equ 1
+define __IMSVidInputDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidInputDevice, "37B0353D-A4C8-11d2-B634-00C04F79498E")
 
@@ -765,24 +554,24 @@ DEFINE_IIDX(IMSVidInputDevice, "37B0353D-A4C8-11d2-B634-00C04F79498E")
 
     IsViewable		proc :ptr VARIANT, :ptr VARIANT_BOOL
     View		proc :ptr VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidDeviceEvent_INTERFACE_DEFINED__
-__IMSVidDeviceEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidDeviceEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidDeviceEvent, "1C15D480-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidDeviceEvent : public IDispatch
 
     StateChange		proc :ptr IMSVidDevice, :LONG, :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidInputDeviceEvent_INTERFACE_DEFINED__
-__IMSVidInputDeviceEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidInputDeviceEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidInputDeviceEvent, "37B0353E-A4C8-11d2-B634-00C04F79498E")
 
@@ -793,7 +582,7 @@ DEFINE_IIDX(IMSVidInputDeviceEvent, "37B0353E-A4C8-11d2-B634-00C04F79498E")
 endif
 
 ifndef __IMSVidVideoInputDevice_INTERFACE_DEFINED__
-__IMSVidVideoInputDevice_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoInputDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoInputDevice, "1C15D47F-911D-11d2-B632-00C04F79498E")
 
@@ -804,7 +593,7 @@ DEFINE_IIDX(IMSVidVideoInputDevice, "1C15D47F-911D-11d2-B632-00C04F79498E")
 endif
 
 ifndef __IMSVidPlayback_INTERFACE_DEFINED__
-__IMSVidPlayback_INTERFACE_DEFINED__ equ 1
+define __IMSVidPlayback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidPlayback, "37B03538-A4C8-11d2-B634-00C04F79498E")
 
@@ -824,24 +613,24 @@ DEFINE_IIDX(IMSVidPlayback, "37B03538-A4C8-11d2-B634-00C04F79498E")
     put_PositionMode	proc :PositionModeList
     get_PositionMode	proc :ptr PositionModeList
     get_Length		proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidPlaybackEvent_INTERFACE_DEFINED__
-__IMSVidPlaybackEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidPlaybackEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidPlaybackEvent, "37B0353B-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidPlaybackEvent : public IMSVidInputDeviceEvent
 
     EndOfMedia		proc :ptr IMSVidPlayback
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidTuner_INTERFACE_DEFINED__
-__IMSVidTuner_INTERFACE_DEFINED__ equ 1
+define __IMSVidTuner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidTuner, "1C15D47D-911D-11d2-B632-00C04F79498E")
 
@@ -851,24 +640,24 @@ DEFINE_IIDX(IMSVidTuner, "1C15D47D-911D-11d2-B632-00C04F79498E")
     put_Tune		proc :ptr ITuneRequest
     get_TuningSpace	proc :ptr ptr ITuningSpace
     put_TuningSpace	proc :ptr ITuningSpace
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidTunerEvent_INTERFACE_DEFINED__
-__IMSVidTunerEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidTunerEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidTunerEvent, "1C15D485-911D-11d2-B632-00C04F79498E")
 
 .comdef IMSVidTunerEvent : public IMSVidInputDeviceEvent
 
     TuneChanged		proc :ptr IMSVidTuner
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidAnalogTuner_INTERFACE_DEFINED__
-__IMSVidAnalogTuner_INTERFACE_DEFINED__ equ 1
+define __IMSVidAnalogTuner_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAnalogTuner, "1C15D47E-911D-11d2-B632-00C04F79498E")
 
@@ -883,12 +672,12 @@ DEFINE_IIDX(IMSVidAnalogTuner, "1C15D47E-911D-11d2-B632-00C04F79498E")
     get_SAP		proc :ptr VARIANT_BOOL
     put_SAP		proc :VARIANT_BOOL
     ChannelAvailable	proc :LONG, :ptr LONG, :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidAnalogTuner2_INTERFACE_DEFINED__
-__IMSVidAnalogTuner2_INTERFACE_DEFINED__ equ 1
+define __IMSVidAnalogTuner2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAnalogTuner2, "37647BF7-3DDE-4cc8-A4DC-0D534D3D0037")
 
@@ -897,12 +686,12 @@ DEFINE_IIDX(IMSVidAnalogTuner2, "37647BF7-3DDE-4cc8-A4DC-0D534D3D0037")
     get_TVFormats	proc :ptr LONG
     get_TunerModes	proc :ptr LONG
     get_NumAuxInputs	proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidAnalogTunerEvent_INTERFACE_DEFINED__
-__IMSVidAnalogTunerEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidAnalogTunerEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAnalogTunerEvent, "1C15D486-911D-11d2-B632-00C04F79498E")
 
@@ -913,7 +702,7 @@ DEFINE_IIDX(IMSVidAnalogTunerEvent, "1C15D486-911D-11d2-B632-00C04F79498E")
 endif
 
 ifndef __IMSVidFilePlayback_INTERFACE_DEFINED__
-__IMSVidFilePlayback_INTERFACE_DEFINED__ equ 1
+define __IMSVidFilePlayback_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFilePlayback, "37B03539-A4C8-11d2-B634-00C04F79498E")
 
@@ -921,12 +710,12 @@ DEFINE_IIDX(IMSVidFilePlayback, "37B03539-A4C8-11d2-B634-00C04F79498E")
 
     get_FileName	proc :ptr BSTR
     put_FileName	proc :BSTR
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidFilePlayback2_INTERFACE_DEFINED__
-__IMSVidFilePlayback2_INTERFACE_DEFINED__ equ 1
+define __IMSVidFilePlayback2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFilePlayback2, "2F7E44AF-6E52-4660-BC08-D8D542587D72")
 
@@ -934,12 +723,12 @@ DEFINE_IIDX(IMSVidFilePlayback2, "2F7E44AF-6E52-4660-BC08-D8D542587D72")
 
     put__SourceFilter	proc :BSTR
     put___SourceFilter	proc :ptr GUID
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidFilePlaybackEvent_INTERFACE_DEFINED__
-__IMSVidFilePlaybackEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidFilePlaybackEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFilePlaybackEvent, "37B0353A-A4C8-11d2-B634-00C04F79498E")
 
@@ -1016,7 +805,7 @@ endif
     }
 
 ifndef __IMSVidWebDVD_INTERFACE_DEFINED__
-__IMSVidWebDVD_INTERFACE_DEFINED__ equ 1
+define __IMSVidWebDVD_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidWebDVD, "CF45F88B-AC56-4EE2-A73A-ED04E2885D3C")
 
@@ -1117,12 +906,12 @@ DEFINE_IIDX(IMSVidWebDVD, "CF45F88B-AC56-4EE2-A73A-ED04E2885D3C")
     get_ButtonRect	proc :LONG, :ptr ptr IMSVidRect
     get_DVDScreenInMouseCoordinates proc :ptr ptr IMSVidRect
     put_DVDScreenInMouseCoordinates proc :ptr IMSVidRect
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidWebDVD2_INTERFACE_DEFINED__
-__IMSVidWebDVD2_INTERFACE_DEFINED__ equ 1
+define __IMSVidWebDVD2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
 
@@ -1130,7 +919,7 @@ DEFINE_IIDX(IMSVidWebDVD2, "7027212F-EE9A-4a7c-8B67-F023714CDAFF")
 
     get_Bookmark	proc :ptr ptr BYTE, :ptr DWORD
     put_Bookmark	proc :ptr BYTE, :DWORD
-    .ends
+   .ends
 
 
 IMSVidWebDVD2_put_Bookmark_Stub proto __cdecl \
@@ -1142,7 +931,7 @@ IMSVidWebDVD2_put_Bookmark_Stub proto __cdecl \
 endif
 
 ifndef __IMSVidWebDVDEvent_INTERFACE_DEFINED__
-__IMSVidWebDVDEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidWebDVDEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidWebDVDEvent, "B4F7A674-9B83-49cb-A357-C63B871BE958")
 
@@ -1171,12 +960,12 @@ DEFINE_IIDX(IMSVidWebDVDEvent, "B4F7A674-9B83-49cb-A357-C63B871BE958")
     PlayPrevChapter	proc :VARIANT_BOOL
     ChangeKaraokePresMode proc :VARIANT_BOOL
     ChangeVideoPresMode proc :VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidWebDVDAdm_INTERFACE_DEFINED__
-__IMSVidWebDVDAdm_INTERFACE_DEFINED__ equ 1
+define __IMSVidWebDVDAdm_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidWebDVDAdm, "B8BE681A-EB2C-47f0-B415-94D5452F0E05")
 
@@ -1196,12 +985,12 @@ DEFINE_IIDX(IMSVidWebDVDAdm, "B8BE681A-EB2C-47f0-B415-94D5452F0E05")
     put_DefaultMenuLCID proc :LONG
     get_BookmarkOnStop	proc :ptr VARIANT_BOOL
     put_BookmarkOnStop	proc :VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidOutputDevice_INTERFACE_DEFINED__
-__IMSVidOutputDevice_INTERFACE_DEFINED__ equ 1
+define __IMSVidOutputDevice_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidOutputDevice, "37B03546-A4C8-11d2-B634-00C04F79498E")
 
@@ -1212,7 +1001,7 @@ DEFINE_IIDX(IMSVidOutputDevice, "37B03546-A4C8-11d2-B634-00C04F79498E")
 endif
 
 ifndef __IMSVidOutputDeviceEvent_INTERFACE_DEFINED__
-__IMSVidOutputDeviceEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidOutputDeviceEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidOutputDeviceEvent, "2E6A14E2-571C-11d3-B652-00C04F79498E")
 
@@ -1223,7 +1012,7 @@ DEFINE_IIDX(IMSVidOutputDeviceEvent, "2E6A14E2-571C-11d3-B652-00C04F79498E")
 endif
 
 ifndef __IMSVidFeature_INTERFACE_DEFINED__
-__IMSVidFeature_INTERFACE_DEFINED__ equ 1
+define __IMSVidFeature_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFeature, "37B03547-A4C8-11d2-B634-00C04F79498E")
 
@@ -1234,7 +1023,7 @@ DEFINE_IIDX(IMSVidFeature, "37B03547-A4C8-11d2-B634-00C04F79498E")
 endif
 
 ifndef __IMSVidFeatureEvent_INTERFACE_DEFINED__
-__IMSVidFeatureEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidFeatureEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFeatureEvent, "3DD2903C-E0AA-11d2-B63A-00C04F79498E")
 
@@ -1245,7 +1034,7 @@ DEFINE_IIDX(IMSVidFeatureEvent, "3DD2903C-E0AA-11d2-B63A-00C04F79498E")
 endif
 
 ifndef __IMSVidEncoder_INTERFACE_DEFINED__
-__IMSVidEncoder_INTERFACE_DEFINED__ equ 1
+define __IMSVidEncoder_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidEncoder, "C0020FD4-BEE7-43d9-A495-9F213117103D")
 
@@ -1253,12 +1042,12 @@ DEFINE_IIDX(IMSVidEncoder, "C0020FD4-BEE7-43d9-A495-9F213117103D")
 
     get_VideoEncoderInterface proc :ptr ptr IUnknown
     get_AudioEncoderInterface proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidClosedCaptioning_INTERFACE_DEFINED__
-__IMSVidClosedCaptioning_INTERFACE_DEFINED__ equ 1
+define __IMSVidClosedCaptioning_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidClosedCaptioning, "99652EA1-C1F7-414f-BB7B-1C967DE75983")
 
@@ -1266,12 +1055,12 @@ DEFINE_IIDX(IMSVidClosedCaptioning, "99652EA1-C1F7-414f-BB7B-1C967DE75983")
 
     get_Enable		proc :ptr VARIANT_BOOL
     put_Enable		proc :VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidClosedCaptioning2_INTERFACE_DEFINED__
-__IMSVidClosedCaptioning2_INTERFACE_DEFINED__ equ 1
+define __IMSVidClosedCaptioning2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidClosedCaptioning2, "E00CB864-A029-4310-9987-A873F5887D97")
 
@@ -1279,36 +1068,36 @@ DEFINE_IIDX(IMSVidClosedCaptioning2, "E00CB864-A029-4310-9987-A873F5887D97")
 
     get_Service		proc :ptr MSVidCCService
     put_Service		proc :MSVidCCService
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidClosedCaptioning3_INTERFACE_DEFINED__
-__IMSVidClosedCaptioning3_INTERFACE_DEFINED__ equ 1
+define __IMSVidClosedCaptioning3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidClosedCaptioning3, "C8638E8A-7625-4c51-9366-2F40A9831FC0")
 
 .comdef IMSVidClosedCaptioning3 : public IMSVidClosedCaptioning2
 
     get_TeleTextFilter	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidXDS_INTERFACE_DEFINED__
-__IMSVidXDS_INTERFACE_DEFINED__ equ 1
+define __IMSVidXDS_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidXDS, "11EBC158-E712-4d1f-8BB3-01ED5274C4CE")
 
 .comdef IMSVidXDS : public IMSVidFeature
 
     get_ChannelChangeInterface proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidXDSEvent_INTERFACE_DEFINED__
-__IMSVidXDSEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidXDSEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidXDSEvent, "6DB2317D-3B23-41ec-BA4B-701F407EAF3A")
 
@@ -1321,7 +1110,7 @@ DEFINE_IIDX(IMSVidXDSEvent, "6DB2317D-3B23-41ec-BA4B-701F407EAF3A")
 endif
 
 ifndef __IMSVidDataServices_INTERFACE_DEFINED__
-__IMSVidDataServices_INTERFACE_DEFINED__ equ 1
+define __IMSVidDataServices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidDataServices, "334125C1-77E5-11d3-B653-00C04F79498E")
 
@@ -1332,7 +1121,7 @@ DEFINE_IIDX(IMSVidDataServices, "334125C1-77E5-11d3-B653-00C04F79498E")
 endif
 
 ifndef __IMSVidDataServicesEvent_INTERFACE_DEFINED__
-__IMSVidDataServicesEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidDataServicesEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidDataServicesEvent, "334125C2-77E5-11d3-B653-00C04F79498E")
 
@@ -1349,7 +1138,7 @@ endif
     }
 
 ifndef __IMSVidVideoRenderer_INTERFACE_DEFINED__
-__IMSVidVideoRenderer_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoRenderer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoRenderer, "37B03540-A4C8-11d2-B634-00C04F79498E")
 
@@ -1385,24 +1174,24 @@ DEFINE_IIDX(IMSVidVideoRenderer, "37B03540-A4C8-11d2-B634-00C04F79498E")
     get_FramesPerSecond proc :ptr LONG
     get_DecimateInput	proc :ptr VARIANT_BOOL
     put_DecimateInput	proc :VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVideoRendererEvent_INTERFACE_DEFINED__
-__IMSVidVideoRendererEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoRendererEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoRendererEvent, "37B03545-A4C8-11d2-B634-00C04F79498E")
 
 .comdef IMSVidVideoRendererEvent : public IMSVidOutputDeviceEvent
 
     OverlayUnavailable	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidGenericSink_INTERFACE_DEFINED__
-__IMSVidGenericSink_INTERFACE_DEFINED__ equ 1
+define __IMSVidGenericSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidGenericSink, "6C29B41D-455B-4c33-963A-0D28E5E555EA")
 
@@ -1411,12 +1200,12 @@ DEFINE_IIDX(IMSVidGenericSink, "6C29B41D-455B-4c33-963A-0D28E5E555EA")
     SetSinkFilter	proc :BSTR
     get_SinkStreams	proc :ptr MSVidSinkStreams
     put_SinkStreams	proc :MSVidSinkStreams
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidGenericSink2_INTERFACE_DEFINED__
-__IMSVidGenericSink2_INTERFACE_DEFINED__ equ 1
+define __IMSVidGenericSink2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidGenericSink2, "6B5A28F3-47F1-4092-B168-60CABEC08F1C")
 
@@ -1424,12 +1213,12 @@ DEFINE_IIDX(IMSVidGenericSink2, "6B5A28F3-47F1-4092-B168-60CABEC08F1C")
 
     AddFilter		proc :BSTR
     ResetFilterList	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferRecordingControl_INTERFACE_DEFINED__
-__IMSVidStreamBufferRecordingControl_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferRecordingControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferRecordingControl, "160621AA-BBBC-4326-A824-C395AEBC6E74")
 
@@ -1443,12 +1232,12 @@ DEFINE_IIDX(IMSVidStreamBufferRecordingControl, "160621AA-BBBC-4326-A824-C395AEB
     get_RecordingStarted proc :ptr VARIANT_BOOL
     get_RecordingType	proc :ptr RecordingType
     get_RecordingAttribute proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSink_INTERFACE_DEFINED__
-__IMSVidStreamBufferSink_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSink_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSink, "159DBB45-CD1B-4dab-83EA-5CB1F4F21D07")
 
@@ -1460,24 +1249,24 @@ DEFINE_IIDX(IMSVidStreamBufferSink, "159DBB45-CD1B-4dab-83EA-5CB1F4F21D07")
     put_SinkName	proc :BSTR
     NameSetLock		proc
     get_SBESink		proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSink2_INTERFACE_DEFINED__
-__IMSVidStreamBufferSink2_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSink2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSink2, "2CA9FC63-C131-4E5A-955A-544A47C67146")
 
 .comdef IMSVidStreamBufferSink2 : public IMSVidStreamBufferSink
 
     UnlockProfile	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSink3_INTERFACE_DEFINED__
-__IMSVidStreamBufferSink3_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSink3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSink3, "4F8721D7-7D59-4D8B-99F5-A77775586BD5")
 
@@ -1501,12 +1290,12 @@ DEFINE_IIDX(IMSVidStreamBufferSink3, "4F8721D7-7D59-4D8B-99F5-A77775586BD5")
     put__DataAnalysisFilter proc :ptr GUID
     get__DataAnalysisFilter proc :ptr GUID
     get_LicenseErrorCode proc :ptr HRESULT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSinkEvent_INTERFACE_DEFINED__
-__IMSVidStreamBufferSinkEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSinkEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSinkEvent, "F798A36B-B05B-4bbe-9703-EAEA7D61CD51")
 
@@ -1515,12 +1304,12 @@ DEFINE_IIDX(IMSVidStreamBufferSinkEvent, "F798A36B-B05B-4bbe-9703-EAEA7D61CD51")
     CertificateFailure	proc
     CertificateSuccess	proc
     WriteFailure	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSinkEvent2_INTERFACE_DEFINED__
-__IMSVidStreamBufferSinkEvent2_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSinkEvent2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSinkEvent2, "3D7A5166-72D7-484b-A06F-286187B80CA1")
 
@@ -1528,36 +1317,36 @@ DEFINE_IIDX(IMSVidStreamBufferSinkEvent2, "3D7A5166-72D7-484b-A06F-286187B80CA1"
 
     EncryptionOn	proc
     EncryptionOff	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSinkEvent3_INTERFACE_DEFINED__
-__IMSVidStreamBufferSinkEvent3_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSinkEvent3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSinkEvent3, "735AD8D5-C259-48e9-81E7-D27953665B23")
 
 .comdef IMSVidStreamBufferSinkEvent3 : public IMSVidStreamBufferSinkEvent2
 
     LicenseChange	proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSinkEvent4_INTERFACE_DEFINED__
-__IMSVidStreamBufferSinkEvent4_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSinkEvent4_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSinkEvent4, "1B01DCB0-DAF0-412c-A5D1-590C7F62E2B8")
 
 .comdef IMSVidStreamBufferSinkEvent4 : public IMSVidStreamBufferSinkEvent3
 
     WriteFailureClear	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSource_INTERFACE_DEFINED__
-__IMSVidStreamBufferSource_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSource_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSource, "EB0C8CF9-6950-4772-87B1-47D11CF3A02F")
 
@@ -1570,12 +1359,12 @@ DEFINE_IIDX(IMSVidStreamBufferSource, "EB0C8CF9-6950-4772-87B1-47D11CF3A02F")
     put_BlockUnrated	proc :VARIANT_BOOL
     put_UnratedDelay	proc :LONG
     get_SBESource	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSource2_INTERFACE_DEFINED__
-__IMSVidStreamBufferSource2_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSource2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSource2, "E4BA9059-B1CE-40D8-B9A0-D4EA4A9989D3")
 
@@ -1586,12 +1375,12 @@ DEFINE_IIDX(IMSVidStreamBufferSource2, "E4BA9059-B1CE-40D8-B9A0-D4EA4A9989D3")
     get_VideoCounter	proc :ptr ptr IUnknown
     get_CCCounter	proc :ptr ptr IUnknown
     get_WSTCounter	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSourceEvent_INTERFACE_DEFINED__
-__IMSVidStreamBufferSourceEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSourceEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSourceEvent, "50CE8A7D-9C28-4DA8-9042-CDFA7116F979")
 
@@ -1606,24 +1395,24 @@ DEFINE_IIDX(IMSVidStreamBufferSourceEvent, "50CE8A7D-9C28-4DA8-9042-CDFA7116F979
     StaleDataRead	proc
     ContentBecomingStale proc
     StaleFileDeleted	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSourceEvent2_INTERFACE_DEFINED__
-__IMSVidStreamBufferSourceEvent2_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSourceEvent2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSourceEvent2, "7AEF50CE-8E22-4BA8-BC06-A92A458B4EF2")
 
 .comdef IMSVidStreamBufferSourceEvent2 : public IMSVidStreamBufferSourceEvent
 
     RateChange		proc :real8, :real8
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferSourceEvent3_INTERFACE_DEFINED__
-__IMSVidStreamBufferSourceEvent3_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferSourceEvent3_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferSourceEvent3, "CEABD6AB-9B90-4570-ADF1-3CE76E00A763")
 
@@ -1634,12 +1423,12 @@ DEFINE_IIDX(IMSVidStreamBufferSourceEvent3, "CEABD6AB-9B90-4570-ADF1-3CE76E00A76
     COPPBlocked		proc
     COPPUnblocked	proc
     ContentPrimarilyAudio proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidStreamBufferV2SourceEvent_INTERFACE_DEFINED__
-__IMSVidStreamBufferV2SourceEvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidStreamBufferV2SourceEvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidStreamBufferV2SourceEvent, "49C771F9-41B2-4CF7-9F9A-A313A8F6027E")
 
@@ -1654,12 +1443,12 @@ DEFINE_IIDX(IMSVidStreamBufferV2SourceEvent, "49C771F9-41B2-4CF7-9F9A-A313A8F602
     BroadcastEvent	proc :BSTR
     BroadcastEventEx	proc :BSTR, :ULONG, :ULONG, :ULONG, :ULONG
     ContentPrimarilyAudio proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVideoRenderer2_INTERFACE_DEFINED__
-__IMSVidVideoRenderer2_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoRenderer2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoRenderer2, "6BDD5C1E-2810-4159-94BC-05511AE8549B")
 
@@ -1672,24 +1461,24 @@ DEFINE_IIDX(IMSVidVideoRenderer2, "6BDD5C1E-2810-4159-94BC-05511AE8549B")
     _SetAllocator	proc :ptr IVMRSurfaceAllocator, :LONG
     put_SuppressEffects proc :VARIANT_BOOL
     get_SuppressEffects proc :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVideoRendererEvent2_INTERFACE_DEFINED__
-__IMSVidVideoRendererEvent2_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoRendererEvent2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoRendererEvent2, "7145ED66-4730-4fdb-8A53-FDE7508D3E5E")
 
 .comdef IMSVidVideoRendererEvent2 : public IMSVidOutputDeviceEvent
 
     OverlayUnavailable	proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVMR9_INTERFACE_DEFINED__
-__IMSVidVMR9_INTERFACE_DEFINED__ equ 1
+define __IMSVidVMR9_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVMR9, "D58B0015-EBEF-44bb-BBDD-3F3699D76EA1")
 
@@ -1700,12 +1489,12 @@ DEFINE_IIDX(IMSVidVMR9, "D58B0015-EBEF-44bb-BBDD-3F3699D76EA1")
     put_SuppressEffects proc :VARIANT_BOOL
     get_SuppressEffects proc :ptr VARIANT_BOOL
     get_Allocator	proc :ptr ptr IUnknown
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidEVR_INTERFACE_DEFINED__
-__IMSVidEVR_INTERFACE_DEFINED__ equ 1
+define __IMSVidEVR_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidEVR, "15E496AE-82A8-4cf9-A6B6-C561DC60398F")
 
@@ -1715,24 +1504,24 @@ DEFINE_IIDX(IMSVidEVR, "15E496AE-82A8-4cf9-A6B6-C561DC60398F")
     put_Presenter	proc :ptr IMFVideoPresenter
     put_SuppressEffects proc :VARIANT_BOOL
     get_SuppressEffects proc :ptr VARIANT_BOOL
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidEVREvent_INTERFACE_DEFINED__
-__IMSVidEVREvent_INTERFACE_DEFINED__ equ 1
+define __IMSVidEVREvent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidEVREvent, "349ABB10-883C-4F22-8714-CECAEEE45D62")
 
 .comdef IMSVidEVREvent : public IMSVidOutputDeviceEvent
 
     OnUserEvent		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidAudioRenderer_INTERFACE_DEFINED__
-__IMSVidAudioRenderer_INTERFACE_DEFINED__ equ 1
+define __IMSVidAudioRenderer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAudioRenderer, "37B0353F-A4C8-11d2-B634-00C04F79498E")
 
@@ -1742,7 +1531,7 @@ DEFINE_IIDX(IMSVidAudioRenderer, "37B0353F-A4C8-11d2-B634-00C04F79498E")
     get_Volume		proc :ptr LONG
     put_Balance		proc :LONG
     get_Balance		proc :ptr LONG
-    .ends
+   .ends
 
 endif
 
@@ -1758,7 +1547,7 @@ DEFINE_IIDX(IMSVidAudioRendererEvent, "37B03541-A4C8-11d2-B634-00C04F79498E")
 endif
 
 ifndef __IMSVidAudioRendererEvent2_INTERFACE_DEFINED__
-__IMSVidAudioRendererEvent2_INTERFACE_DEFINED__ equ 1
+define __IMSVidAudioRendererEvent2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAudioRendererEvent2, "E3F55729-353B-4c43-A028-50F79AA9A907")
 
@@ -1772,12 +1561,12 @@ DEFINE_IIDX(IMSVidAudioRendererEvent2, "E3F55729-353B-4c43-A028-50F79AA9A907")
     AVDDSurroundMode	proc
     AVDecCommonInputFormat proc
     AVDecCommonOutputFormat proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidInputDevices_INTERFACE_DEFINED__
-__IMSVidInputDevices_INTERFACE_DEFINED__ equ 1
+define __IMSVidInputDevices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidInputDevices, "C5702CD1-9B79-11d3-B654-00C04F79498E")
 
@@ -1788,12 +1577,12 @@ DEFINE_IIDX(IMSVidInputDevices, "C5702CD1-9B79-11d3-B654-00C04F79498E")
     get_Item		proc :VARIANT, :ptr ptr IMSVidInputDevice
     _Add		proc :ptr IMSVidInputDevice
     Remove		proc :VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidOutputDevices_INTERFACE_DEFINED__
-__IMSVidOutputDevices_INTERFACE_DEFINED__ equ 1
+define __IMSVidOutputDevices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidOutputDevices, "C5702CD2-9B79-11d3-B654-00C04F79498E")
 
@@ -1804,12 +1593,12 @@ DEFINE_IIDX(IMSVidOutputDevices, "C5702CD2-9B79-11d3-B654-00C04F79498E")
     get_Item		proc :VARIANT, :ptr ptr IMSVidOutputDevice
     _Add		proc :ptr IMSVidOutputDevice
     Remove		proc :VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidVideoRendererDevices_INTERFACE_DEFINED__
-__IMSVidVideoRendererDevices_INTERFACE_DEFINED__ equ 1
+define __IMSVidVideoRendererDevices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidVideoRendererDevices, "C5702CD3-9B79-11d3-B654-00C04F79498E")
 
@@ -1820,12 +1609,12 @@ DEFINE_IIDX(IMSVidVideoRendererDevices, "C5702CD3-9B79-11d3-B654-00C04F79498E")
     get_Item		proc :VARIANT, :ptr ptr IMSVidVideoRenderer
     _Add		proc :ptr IMSVidVideoRenderer
     Remove		proc :VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidAudioRendererDevices_INTERFACE_DEFINED__
-__IMSVidAudioRendererDevices_INTERFACE_DEFINED__ equ 1
+define __IMSVidAudioRendererDevices_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidAudioRendererDevices, "C5702CD4-9B79-11d3-B654-00C04F79498E")
 
@@ -1836,12 +1625,12 @@ DEFINE_IIDX(IMSVidAudioRendererDevices, "C5702CD4-9B79-11d3-B654-00C04F79498E")
     get_Item		proc :VARIANT, :ptr ptr IMSVidAudioRenderer
     _Add		proc :ptr IMSVidAudioRenderer
     Remove		proc :VARIANT
-    .ends
+   .ends
 
 endif
 
 ifndef __IMSVidFeatures_INTERFACE_DEFINED__
-__IMSVidFeatures_INTERFACE_DEFINED__ equ 1
+define __IMSVidFeatures_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMSVidFeatures, "C5702CD5-9B79-11d3-B654-00C04F79498E")
 
@@ -1852,7 +1641,7 @@ DEFINE_IIDX(IMSVidFeatures, "C5702CD5-9B79-11d3-B654-00C04F79498E")
     get_Item		proc :VARIANT, :ptr ptr IMSVidFeature
     _Add		proc :ptr IMSVidFeature
     Remove		proc :VARIANT
-    .ends
+   .ends
 
 endif
 endif

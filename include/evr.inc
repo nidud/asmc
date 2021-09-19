@@ -1,8 +1,8 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-__REQUIRED_RPCNDR_H_VERSION__ equ 500
+define __REQUIRED_RPCNDR_H_VERSION__ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
-__REQUIRED_RPCSAL_H_VERSION__ equ 100
+define __REQUIRED_RPCSAL_H_VERSION__ 100
 endif
 
 include rpc.inc
@@ -18,47 +18,7 @@ include ole2.inc
 endif
 
 ifndef __evr_h__
-__evr_h__ equ <>
-
-ifndef __IMFVideoPositionMapper_FWD_DEFINED__
-__IMFVideoPositionMapper_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoDeviceID_FWD_DEFINED__
-__IMFVideoDeviceID_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoDisplayControl_FWD_DEFINED__
-__IMFVideoDisplayControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoPresenter_FWD_DEFINED__
-__IMFVideoPresenter_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFDesiredSample_FWD_DEFINED__
-__IMFDesiredSample_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoMixerControl_FWD_DEFINED__
-__IMFVideoMixerControl_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoMixerControl2_FWD_DEFINED__
-__IMFVideoMixerControl2_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFVideoRenderer_FWD_DEFINED__
-__IMFVideoRenderer_FWD_DEFINED__ equ 1
-endif
-ifndef __IEVRFilterConfig_FWD_DEFINED__
-__IEVRFilterConfig_FWD_DEFINED__ equ 1
-endif
-ifndef __IEVRFilterConfigEx_FWD_DEFINED__
-__IEVRFilterConfigEx_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFTopologyServiceLookup_FWD_DEFINED__
-__IMFTopologyServiceLookup_FWD_DEFINED__ equ 1
-endif
-ifndef __IMFTopologyServiceLookupClient_FWD_DEFINED__
-__IMFTopologyServiceLookupClient_FWD_DEFINED__ equ 1
-endif
-ifndef __IEVRTrustedVideoPlugin_FWD_DEFINED__
-__IEVRTrustedVideoPlugin_FWD_DEFINED__ equ 1
-endif
+define __evr_h__
 
 include unknwn.inc
 include propidl.inc
@@ -117,26 +77,26 @@ DEFINE_GUID(MR_BUFFER_SERVICE, 0xa562248c, 0x9ac6, 0x4ffc, 0x9f, 0xba, 0x3a, 0xf
 DEFINE_GUID(VIDEO_ZOOM_RECT, 0x7aaa1638, 0x1b7f, 0x4c93, 0xbd, 0x89, 0x5b, 0x9c, 0x9f, 0xb6, 0xfc, 0xf0)
 
 ifndef __IMFVideoPositionMapper_INTERFACE_DEFINED__
-__IMFVideoPositionMapper_INTERFACE_DEFINED__ equ 1
+define __IMFVideoPositionMapper_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoPositionMapper, "1F6A9F17-E70B-4e24-8AE4-0B2C3BA7A4AE")
 
 .comdef IMFVideoPositionMapper : public IUnknown
 
     MapOutputCoordinateToInputStream proc :real4, :real4, :DWORD, :DWORD, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFVideoDeviceID_INTERFACE_DEFINED__
-__IMFVideoDeviceID_INTERFACE_DEFINED__ equ 1
+define __IMFVideoDeviceID_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoDeviceID, "A38D9567-5A9C-4f3c-B293-8EB415B279BA")
 
 .comdef IMFVideoDeviceID : public IUnknown
 
     GetDeviceID		proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -162,7 +122,7 @@ endif
     }
 
 ifndef _MFVideoNormalizedRect_
-_MFVideoNormalizedRect_ equ 1
+define _MFVideoNormalizedRect_
 MFVideoNormalizedRect	STRUC
 left			real4 ?
 top			real4 ?
@@ -172,7 +132,7 @@ MFVideoNormalizedRect	ENDS
 endif
 
 ifndef __IMFVideoDisplayControl_INTERFACE_DEFINED__
-__IMFVideoDisplayControl_INTERFACE_DEFINED__ equ 1
+define __IMFVideoDisplayControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoDisplayControl, "a490b1e4-ab84-4d31-a1b2-181e03b1077a")
 
@@ -194,7 +154,7 @@ DEFINE_IIDX(IMFVideoDisplayControl, "a490b1e4-ab84-4d31-a1b2-181e03b1077a")
     GetRenderingPrefs	proc :ptr
     SetFullscreen	proc :BOOL
     GetFullscreen	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -210,7 +170,7 @@ endif
     }
 
 ifndef __IMFVideoPresenter_INTERFACE_DEFINED__
-__IMFVideoPresenter_INTERFACE_DEFINED__ equ 1
+define __IMFVideoPresenter_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoPresenter, "29AFF080-182A-4a5d-AF3B-448F3A6346CB")
 
@@ -218,12 +178,12 @@ DEFINE_IIDX(IMFVideoPresenter, "29AFF080-182A-4a5d-AF3B-448F3A6346CB")
 
     ProcessMessage	proc :MFVP_MESSAGE_TYPE, :ULONG_PTR
     GetCurrentMediaType proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFDesiredSample_INTERFACE_DEFINED__
-__IMFDesiredSample_INTERFACE_DEFINED__ equ 1
+define __IMFDesiredSample_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFDesiredSample, "56C294D0-753E-4260-8D61-A3D8820B1D54")
 
@@ -232,12 +192,12 @@ DEFINE_IIDX(IMFDesiredSample, "56C294D0-753E-4260-8D61-A3D8820B1D54")
     GetDesiredSampleTimeAndDuration proc :ptr, :ptr
     SetDesiredSampleTimeAndDuration proc :LONGLONG, :LONGLONG
     Clear		proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFVideoMixerControl_INTERFACE_DEFINED__
-__IMFVideoMixerControl_INTERFACE_DEFINED__ equ 1
+define __IMFVideoMixerControl_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoMixerControl, "A5C6C53F-C202-4aa5-9695-175BA8C508A5")
 
@@ -247,7 +207,7 @@ DEFINE_IIDX(IMFVideoMixerControl, "A5C6C53F-C202-4aa5-9695-175BA8C508A5")
     GetStreamZOrder	proc :DWORD, :ptr
     SetStreamOutputRect proc :DWORD, :ptr
     GetStreamOutputRect proc :DWORD, :ptr
-    .ends
+   .ends
 
 endif
 
@@ -261,7 +221,7 @@ endif
     }
 
 ifndef __IMFVideoMixerControl2_INTERFACE_DEFINED__
-__IMFVideoMixerControl2_INTERFACE_DEFINED__ equ 1
+define __IMFVideoMixerControl2_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoMixerControl2, "8459616d-966e-4930-b658-54fa7e5a16d3")
 
@@ -269,24 +229,24 @@ DEFINE_IIDX(IMFVideoMixerControl2, "8459616d-966e-4930-b658-54fa7e5a16d3")
 
     SetMixingPrefs	proc :DWORD
     GetMixingPrefs	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFVideoRenderer_INTERFACE_DEFINED__
-__IMFVideoRenderer_INTERFACE_DEFINED__ equ 1
+define __IMFVideoRenderer_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFVideoRenderer, "DFDFD197-A9CA-43d8-B341-6AF3503792CD")
 
 .comdef IMFVideoRenderer : public IUnknown
 
     InitializeRenderer	proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef __IEVRFilterConfig_INTERFACE_DEFINED__
-__IEVRFilterConfig_INTERFACE_DEFINED__ equ 1
+define __IEVRFilterConfig_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEVRFilterConfig, "83E91E85-82C1-4ea7-801D-85DC50B75086")
 
@@ -294,7 +254,7 @@ DEFINE_IIDX(IEVRFilterConfig, "83E91E85-82C1-4ea7-801D-85DC50B75086")
 
     SetNumberOfStreams	proc :DWORD
     GetNumberOfStreams	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -304,7 +264,7 @@ endif
     }
 
 ifndef __IEVRFilterConfigEx_INTERFACE_DEFINED__
-__IEVRFilterConfigEx_INTERFACE_DEFINED__ equ 1
+define __IEVRFilterConfigEx_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEVRFilterConfigEx, "aea36028-796d-454f-beee-b48071e24304")
 
@@ -312,7 +272,7 @@ DEFINE_IIDX(IEVRFilterConfigEx, "aea36028-796d-454f-beee-b48071e24304")
 
     SetConfigPrefs	proc :DWORD
     GetConfigPrefs	proc :ptr
-    .ends
+   .ends
 
 endif
 
@@ -326,19 +286,19 @@ endif
     }
 
 ifndef __IMFTopologyServiceLookup_INTERFACE_DEFINED__
-__IMFTopologyServiceLookup_INTERFACE_DEFINED__ equ 1
+define __IMFTopologyServiceLookup_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFTopologyServiceLookup, "fa993889-4383-415a-a930-dd472a8cf6f7")
 
 .comdef IMFTopologyServiceLookup : public IUnknown
 
     LookupService	proc :MF_SERVICE_LOOKUP_TYPE, :DWORD, :REFGUID, :REFIID
-    .ends
+   .ends
 
 endif
 
 ifndef __IMFTopologyServiceLookupClient_INTERFACE_DEFINED__
-__IMFTopologyServiceLookupClient_INTERFACE_DEFINED__ equ 1
+define __IMFTopologyServiceLookupClient_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMFTopologyServiceLookupClient, "fa99388a-4383-415a-a930-dd472a8cf6f7")
 
@@ -346,12 +306,12 @@ DEFINE_IIDX(IMFTopologyServiceLookupClient, "fa99388a-4383-415a-a930-dd472a8cf6f
 
     InitServicePointers proc :ptr
     ReleaseServicePointers proc
-    .ends
+   .ends
 
 endif
 
 ifndef __IEVRTrustedVideoPlugin_INTERFACE_DEFINED__
-__IEVRTrustedVideoPlugin_INTERFACE_DEFINED__ equ 1
+define __IEVRTrustedVideoPlugin_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IEVRTrustedVideoPlugin, "83A4CE40-7710-494b-A893-A472049AF630")
 
@@ -361,7 +321,7 @@ DEFINE_IIDX(IEVRTrustedVideoPlugin, "83A4CE40-7710-494b-A893-A472049AF630")
     CanConstrict	proc :ptr
     SetConstriction	proc :DWORD
     DisableImageExport	proc :BOOL
-    .ends
+   .ends
 
 endif
 ifndef MFEVRDLL
@@ -416,7 +376,4 @@ HWND_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr HWND
 
-
 endif
-
-

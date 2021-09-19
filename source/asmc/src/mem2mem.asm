@@ -173,6 +173,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
         .if ( size != 4 && size != 8 )
             .return asmerr( 2070 )
         .endif
+        mov reg,T_XMM0
     .endif
 
     mov edx,edi
@@ -380,9 +381,11 @@ immarray16 proc private uses esi edi tokenarray:token_t, result:expr_t
 
 immarray16 endp
 
-imm2xmm proc uses esi edi tokenarray:token_t, opnd:expr_t
+imm2xmm proc uses esi edi ebx tokenarray:token_t, opnd:expr_t
 
   local flabel[16]:char_t
+  local i:int_t
+  local opnd2:expr
 
     mov edi,tokenarray
     mov esi,[edi].tokval
@@ -393,9 +396,20 @@ imm2xmm proc uses esi edi tokenarray:token_t, opnd:expr_t
     .elseif [ecx].expr.mem_type == MT_EMPTY
         mov edx,immarray16(edi, ecx)
     .endif
-    mov edi,[edi+asm_tok].tokval
     CreateFloat( edx, opnd, &flabel )
-    AddLineQueueX( " %r %r,%s", esi, edi, &flabel )
+    .if ( [edi+asm_tok].token == T_REG )
+        AddLineQueueX( " %r %r,%s", esi, [edi+asm_tok].tokval, &flabel )
+    .else
+        mov ebx,[edi+asm_tok].tokpos
+        mov i,1
+        EvalOperand( &i, tokenarray, ModuleInfo.token_count, &opnd2, 0 )
+        imul edi,i,asm_tok
+        add edi,tokenarray
+        mov edi,[edi].tokpos
+        mov byte ptr [edi],0
+        AddLineQueueX( " %r %s,%s", esi, ebx, &flabel )
+        mov byte ptr [edi],','
+    .endif
     RetLineQueue()
     ret
 

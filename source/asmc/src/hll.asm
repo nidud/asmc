@@ -562,8 +562,16 @@ GetSimpleExpression proc private uses esi edi ebx \
 
     mov eax,op2.kind
     .if ( eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG )
-        .if ( eax == EXPR_FLOAT && is_float )
-            mov op2.kind,EXPR_ADDR
+        .if ( eax == EXPR_FLOAT )
+            .if ( is_float )
+                mov op2.kind,EXPR_ADDR
+            .elseif ( op1.kind == EXPR_ADDR )
+                .if ( op1.mem_type == MT_REAL4 )
+                    mov inst_cmp,&@CStr( "comiss" )
+                .elseif ( op1.mem_type == MT_REAL8 )
+                    mov inst_cmp,&@CStr( "comisd" )
+                .endif
+            .endif
         .else
             .return asmerr(2154)
         .endif

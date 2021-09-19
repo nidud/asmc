@@ -963,8 +963,8 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
     .endif
 
     .if ( size || [esi].Ofssize == USE64 && [esi].token == T_MOV && CurrOpnd == OPND2 && \
-        ( [esi].opnd[OPND1].type & OP_R64 ) && ( ecx || \
-        ( [edi].flags & E_EXPLICIT && ( [edi].mem_type == MT_QWORD || [edi].mem_type == MT_SQWORD ) ) ) )
+          [esi].opnd[OPND1].type & OP_R64 && ( ecx || \
+          ( [edi].flags & E_EXPLICIT && ( [edi].mem_type == MT_QWORD || [edi].mem_type == MT_SQWORD ) ) ) )
 
         ;; CodeInfo->iswide = 1; ;; has been set by first operand already
 
@@ -981,7 +981,17 @@ idata_nofixup proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:uin
     .endif
     test edx,edx
     setg ch
-    .return EmitConstError(edi) .if ecx
+    .if ( ecx )
+        ; compare mem_float,imm_float64
+        .if ( [esi].Ofssize >= USE32 && [esi].token == T_COMISD &&
+              CurrOpnd == OPND2 && [esi].opnd[OPND1].type == OP_M64 )
+            mov [esi].opnd[ebx].type,OP_I64
+            mov [esi].opnd[ebx].data32h,edx
+            .return NOT_ERROR
+        .else
+            .return EmitConstError(edi)
+        .endif
+    .endif
 
     ;; v2.06: code simplified.
     ;; to be fixed: the "wide" bit should not be set here!
@@ -3967,8 +3977,10 @@ endif
         .if ( CodeInfo.Ofssize > USE16 && !ModuleInfo.strict_masm_compat )
 
             movzx eax,CodeInfo.token
+            mov ecx,CodeInfo.opnd[OPND1].type
+            mov edx,CodeInfo.opnd[OPNI2].type
 
-            .if ( ( CodeInfo.opnd[OPND1].type & OP_M_ANY ) && ( CodeInfo.opnd[OPNI2].type & OP_M_ANY ) )
+            .if ( ( ecx & OP_M_ANY ) && ( edx & OP_M_ANY ) )
 
                 ;; v2.30 - Memory to memory operands.
 
@@ -3983,11 +3995,17 @@ endif
                 .case T_AND
                 .case T_OR
                 .case T_XOR
-                    .return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPNI2].type, tokenarray, &opndx )
+                .case T_COMISS
+                .case T_COMISD
+                    .return mem2mem( ecx, edx, tokenarray, &opndx )
                 .endsw
             .endif
-
-            .if ( ( CodeInfo.opnd[OPND1].type == OP_XMM ) && ( CodeInfo.opnd[OPNI2].type & OP_I_ANY ) )
+            xor ebx,ebx
+            .if ( eax == T_COMISS && ecx == OP_M32 && ( edx & OP_I_ANY ) )
+                inc ebx
+            .elseif ( eax == T_COMISD && ecx == OP_M64 && ( edx & OP_I_ANY ) )
+                inc ebx
+            .elseif ( ( ecx == OP_XMM ) && ( edx & OP_I_ANY ) )
 
                 .switch eax
 
@@ -4013,8 +4031,11 @@ endif
                 .case T_UCOMISS
                 .case T_MOVD
                 .case T_MOVSS
-                    .return imm2xmm( tokenarray, &opndx[expr] )
+                    inc ebx
                 .endsw
+            .endif
+            .if ( ebx )
+                .return imm2xmm( tokenarray, &opndx[expr] )
             .endif
         .endif
     .endif

@@ -27,6 +27,12 @@ main proc
     .if (xmm0 > r8_2)
         nop
     .endif
+    .if (r4_1 > 4.0)
+        nop
+    .endif
+    .if (r8_1 > 8.0)
+        nop
+    .endif
 
     option float: 4 ; default
 

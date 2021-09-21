@@ -11,6 +11,9 @@ include proc.inc
 include hllext.inc
 include expreval.inc
 include atofloat.inc
+include fastpass.inc
+
+externdef list_pos:uint_t
 
 SIZE_DATAPTR    equ 0x68
 
@@ -604,25 +607,29 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     mov ecx,ti
 
-    .if [ecx].qualified_type.size == 8 && [ecx].qualified_type.Ofssize == USE32
+    .if ( [ecx].qualified_type.size == 8 )
 
-        .if flag & T_HLL_PROC && \
-            ( [ecx].qualified_type.mem_type == MT_QWORD || \
-              [ecx].qualified_type.mem_type == MT_SQWORD )
+        .if ( [ecx].qualified_type.Ofssize == USE32 && flag & T_HLL_PROC &&
+              ( [ecx].qualified_type.mem_type == MT_QWORD ||
+                [ecx].qualified_type.mem_type == MT_SQWORD ) )
 
             strcat( edi, "dword ptr " )
             strcpy( &l2, "mov dword ptr " )
             strcat( strcat( eax, name ), "[4], edx" )
 
-        .elseif EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR
+        .elseif ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
-            .if opndx.kind == EXPR_CONST
+            .if ( opndx.kind == EXPR_CONST )
 
-                AddLineQueueX( " mov dword ptr %s[0], %u", name, opndx.l64_l )
-                AddLineQueueX( " mov dword ptr %s[4], %u", name, opndx.l64_h )
-                imul eax,i,asm_tok
-                add  eax,tokenarray
-                .return
+                .if ( [ecx].qualified_type.Ofssize == USE32 ||
+                      ( [ebx].token != T_STRING && opndx.hvalue > 0 ) )
+
+                    AddLineQueueX( " mov dword ptr %s[0], %u", name, opndx.l64_l )
+                    AddLineQueueX( " mov dword ptr %s[4], %u", name, opndx.l64_h )
+                    imul eax,i,asm_tok
+                    add  eax,tokenarray
+                    .return
+                .endif
             .endif
         .endif
     .endif
@@ -880,7 +887,6 @@ AddLocalDir proc private uses esi edi ebx i:int_t, tokenarray:token_t
         mov [ecx].proc_info.localsize,0
         SetLocalOffsets(ecx)
     .endif
-
     mov eax,NOT_ERROR
     ret
 
@@ -893,13 +899,7 @@ NewDirective proc i:int_t, tokenarray:token_t
     .return asmerr(2012) .if CurrProc == NULL
 
     mov rc,AddLocalDir(i, tokenarray)
-
-    if 0
-    .if ModuleInfo.list
-        LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
-    .endif
-    endif
-    .if ModuleInfo.line_queue.head
+    .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
     .endif
     mov eax,rc

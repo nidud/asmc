@@ -414,15 +414,6 @@ CondAsmDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 mov esi,BLOCK_INACTIVE
             .endif
             add ebx,16
-        .elseif ( ModuleInfo.strict_masm_compat == FALSE && ( \
-                    al == T_RES_ID      || \
-                    al == T_STYPE       || \
-                    al == T_INSTRUCTION || \
-                    al == T_DIRECTIVE   || \
-                    al == T_REG )       && \
-                    [ebx+16].token == T_FINAL )
-            mov esi,BLOCK_ACTIVE
-            add ebx,16
         .endif
 
         .if ( [ebx].token != T_FINAL )

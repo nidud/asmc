@@ -3250,6 +3250,8 @@ runqueue:
     .if ( ModuleInfo.list && UseSavedState )
         .if ( Parse_Pass > PASS_1 )
             mov list_pos,[esi].prolog_list_pos
+        .else
+            mov [esi].prolog_list_pos,list_pos
         .endif
     .endif
 

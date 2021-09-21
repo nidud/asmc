@@ -3145,8 +3145,9 @@ continue:
 
     mov j,0
     .if ModuleInfo.ComStack
-        .if ( [ebx].token == T_STYPE || [ebx].token == T_INSTRUCTION ) && \
-            [ebx+16].token == T_DIRECTIVE && [ebx+16].tokval == T_PROC
+        .if ( [ebx].token == T_STYPE &&
+              [ebx+16].token == T_DIRECTIVE &&
+              [ebx+16].tokval == T_PROC )
             inc j
         .endif
     .elseif ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_DOT_INLINE )
@@ -3183,10 +3184,17 @@ continue:
                 .if eax == NULL
                     inc i
                     add esi,16
-                .elseif ( CurrStruct && ( [ebx+16].token == T_STYPE || \
-                        ( [ebx+16].token == T_ID && IsType([ebx+16].string_ptr ) ) ) )
-                    inc i
-                    add esi,16
+                .elseif ( CurrStruct )
+                    xor eax,eax
+                    .if ( [ebx+16].token == T_STYPE )
+                        inc eax
+                    .elseif ( [ebx+16].token == T_ID )
+                        IsType( [ebx+16].string_ptr )
+                    .endif
+                    .if ( eax )
+                        inc i
+                        add esi,16
+                    .endif
                 .endif
             .endif
         .endif

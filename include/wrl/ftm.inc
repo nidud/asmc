@@ -1,5 +1,5 @@
 ifndef _WRL_FTM_H_
-_WRL_FTM_H_ equ <>
+define _WRL_FTM_H_
 
 include wrl\implements.inc
 

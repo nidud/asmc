@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _API_SET_H_
-_API_SET_H_ equ <>
+define _API_SET_H_
 
 API_SET_PREFIX_NAME_A	equ <"API-">
 API_SET_PREFIX_NAME_A_SIZE equ 4 - 1

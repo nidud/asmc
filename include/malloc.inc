@@ -1,5 +1,5 @@
 ifndef _INC_MALLOC
-_INC_MALLOC equ <>
+define _INC_MALLOC
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
@@ -47,7 +47,7 @@ externdef _heap_base:heap_t
 externdef _heap_free:heap_t
 
 ifndef _CRT_ALLOCATION_DEFINED
-_CRT_ALLOCATION_DEFINED equ <>
+define _CRT_ALLOCATION_DEFINED
 calloc proto __cdecl :size_t, :size_t
 free proto __cdecl :ptr
 malloc proto __cdecl :size_t

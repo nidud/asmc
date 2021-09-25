@@ -1,5 +1,5 @@
 ifndef __LMJOIN_H__
-__LMJOIN_H__ equ <>
+define __LMJOIN_H__
 
 NETSETUP_NAME_TYPE      typedef SDWORD
 NetSetupUnknown         equ 0

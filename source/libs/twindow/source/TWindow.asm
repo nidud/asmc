@@ -295,8 +295,8 @@ TWindow::Child proc uses rdi rbx rcx rc:TRect, id:uint_t, type:uint_t
     mov [rax].TWindow.Index,ebx
     mov [rax].TWindow.Type,edi
     mov rbx,rax
-    lea rax,TWindow_DefWindowProc
-    mov [rbx].WndProc,rax
+    mov [rbx].WndProc,&TWindow::DefWindowProc
+
     .for ( rcx = [rbx].Prev : [rcx].Child : rcx = [rcx].Child )
     .endf
     mov [rcx].Child,rbx
@@ -380,7 +380,7 @@ TWindow::Read proc rect:trect_t, pc:PCHAR_INFO
     mov rax,[rcx].Class
     mov rcx,rdx
 
-    TRect_Read(rcx, [rax].TClass.StdOut, r8)
+    TRect::Read(rcx, [rax].TClass.StdOut, r8)
     mov rcx,this
     ret
 
@@ -391,7 +391,7 @@ TWindow::Write proc rect:trect_t, pc:PCHAR_INFO
     mov rax,[rcx].Class
     mov rcx,rdx
 
-    TRect_Write(rcx, [rax].TClass.StdOut, r8)
+    TRect::Write(rcx, [rax].TClass.StdOut, r8)
     mov rcx,this
     ret
 
@@ -402,7 +402,7 @@ TWindow::Exchange proc rc:trect_t, pc:PCHAR_INFO
     mov rax,[rcx].Class
     mov rcx,rdx
 
-    TRect_Exchange(rcx, [rax].TClass.StdOut, r8)
+    TRect::Exchange(rcx, [rax].TClass.StdOut, r8)
     mov rcx,this
     ret
 
@@ -2479,30 +2479,16 @@ TWindow::TWindow proc public uses rsi rdi rbx
   local ci: CONSOLE_SCREEN_BUFFER_INFO
 
     mov rdi,rcx
-    mov rbx,malloc( TWindow + TClass + TWindowVtbl )
+    mov rbx,@ComAlloc(TWindow)
     .if rdi
         stosq
     .endif
     .return .if !rax
-
+    mov [rbx].Class,malloc(TClass)
     mov rdi,rax
-    mov ecx,(TWindow + TClass) / 8
+    mov ecx,TClass / 8
     xor eax,eax
     rep stosq
-    mov [rbx].lpVtbl,rdi
-    lea rax,[rbx+TWindow]
-    mov [rbx].Class,rax
-
-    for q,<Open,Load,Resource,Release,Show,Hide,Move,Read,Write,Exchange,
-           SetShade,ClrShade,Clear,PutFrame,PutChar,PutString,PutPath,PutCenter,PutTitle,
-           MessageBox,CursorGet,CursorSet,CursorOn,CursorOff,CursorMove,
-           Register,Send,Post,PostQuit,DefWindowProc,Child,Window,PushButton,
-           GetFocus,SetFocus,GetItem,MoveConsole,SetConsole,SetMaxConsole,ConsoleSize,
-           CGetChar,CPutChar,CPutString,CPutPath,CPutCenter,CPutBackground>
-
-        lea rax,TWindow_&q
-        stosq
-        endm
 
     lea rax,AttributesDefault
     mov [rbx].Color,rax

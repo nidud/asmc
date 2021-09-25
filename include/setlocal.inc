@@ -23,7 +23,7 @@ _TIME_LENGTH		equ 8	; hh:mm:ss (null not included)
 
 
 ifndef __LC_TIME_DATA
-__LC_TIME_DATA equ <>
+define __LC_TIME_DATA
 __lc_time_data		STRUC
 wday_abbr		LPSTR  7 dup(?)
 wday			LPSTR  7 dup(?)
@@ -59,7 +59,7 @@ LC_STR_TYPE		equ 1
 LC_WSTR_TYPE		equ 2
 
 ifndef _SETLOC_STRUCT_DEFINED
-_SETLOC_STRUCT_DEFINED equ <>
+define _SETLOC_STRUCT_DEFINED
 
 _is_ctype_compatible	STRUC
 id			dd ?
@@ -90,7 +90,7 @@ _psetloc_downlevel_struct typedef ptr _setloc_downlevel_struct
 endif
 
 ifndef _THREADLOCALEINFO
-_THREADLOCALEINFO equ <>
+define _THREADLOCALEINFO
 
 ifndef LPSHORT
 LPINT			typedef ptr sdword
@@ -127,7 +127,7 @@ pthreadlocinfo		typedef ptr threadlocinfo
 endif
 
 ifndef _THREADMBCINFO
-_THREADMBCINFO equ <>
+define _THREADMBCINFO
 
 threadmbcinfo		STRUC
 refcount		int_t ?
@@ -188,7 +188,7 @@ __init_numeric		proto __cdecl :ptr threadlocinfo
 __init_time		proto __cdecl :ptr threadlocinfo
 __init_dummy		proto __cdecl :ptr threadlocinfo
 
-.class _LocaleUpdate :_locale_t
+.class _LocaleUpdate ;:_locale_t
 
     localeinfo	_locale_tstruct <>
     ptd		_ptiddata ?

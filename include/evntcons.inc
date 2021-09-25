@@ -1,5 +1,5 @@
 ifndef _EVNTCONS_H_
-_EVNTCONS_H_ equ <>
+define _EVNTCONS_H_
 
 include winapifamily.inc
 
@@ -24,7 +24,7 @@ EVENT_HEADER_EXT_TYPE_PROCESS_START_KEY equ 0x000D
 EVENT_HEADER_EXT_TYPE_MAX equ 0x000E
 
 ifndef EVENT_HEADER_EXTENDED_DATA_ITEM_DEF
-EVENT_HEADER_EXTENDED_DATA_ITEM_DEF equ <>
+define EVENT_HEADER_EXTENDED_DATA_ITEM_DEF
 EVENT_HEADER_EXTENDED_DATA_ITEM STRUC
 Reserved1               USHORT ?
 ExtType                 USHORT ?
@@ -97,7 +97,7 @@ EVENT_HEADER_FLAG_CLASSIC_HEADER equ 0x0100
 EVENT_HEADER_FLAG_PROCESSOR_INDEX equ 0x0200
 
 ifndef EVENT_HEADER_DEF
-EVENT_HEADER_DEF equ <>
+define EVENT_HEADER_DEF
 EVENT_HEADER            STRUC
 Size                    USHORT ?
 HeaderType              USHORT ?
@@ -121,7 +121,7 @@ PEVENT_HEADER           typedef ptr EVENT_HEADER
 endif
 
 ifndef EVENT_RECORD_DEF
-EVENT_RECORD_DEF equ <>
+define EVENT_RECORD_DEF
 EVENT_RECORD            STRUC
 EventHeader             EVENT_HEADER <>
 BufferContext           ETW_BUFFER_CONTEXT <>

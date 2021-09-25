@@ -1,5 +1,5 @@
 ifndef _DIACREATE_H_
-_DIACREATE_H_ equ <>
+define _DIACREATE_H_
 
 ;HRESULT
 NoRegCoCreate proto WINAPI \

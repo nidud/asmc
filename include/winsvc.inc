@@ -1,5 +1,5 @@
 ifndef _WINSVC_
-_WINSVC_ equ <>
+define _WINSVC_
 ifndef _WINDEF_
  include windef.inc
 endif

@@ -1,5 +1,5 @@
 ifndef __ATLCOMMEM_H__
-__ATLCOMMEM_H__ equ <>
+define __ATLCOMMEM_H__
 
 ifndef __ATLMEM_H__
 .err <ATLComMem.h requires atlmem.h to be included first>

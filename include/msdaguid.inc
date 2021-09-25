@@ -1,5 +1,5 @@
 ifndef MSDAGUID
-MSDAGUID equ <>
+define MSDAGUID
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ;undef OLEDBDECLSPEC

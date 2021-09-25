@@ -1,5 +1,5 @@
 ifndef _MINWINBASE_
-_MINWINBASE_ equ <>
+define _MINWINBASE_
 
 MoveMemory		equ <RtlMoveMemory>
 CopyMemory		equ <RtlCopyMemory>
@@ -7,7 +7,7 @@ FillMemory		equ <RtlFillMemory>
 ZeroMemory		equ <RtlZeroMemory>
 
 ifndef _SECURITY_ATTRIBUTES_
-_SECURITY_ATTRIBUTES_ equ <>
+define _SECURITY_ATTRIBUTES_
 SECURITY_ATTRIBUTES	STRUC
 nLength			dd ?
 lpSecurityDescriptor	PVOID ?
@@ -40,7 +40,7 @@ OVERLAPPED_ENTRY	ENDS
 LPOVERLAPPED_ENTRY	typedef ptr OVERLAPPED_ENTRY
 
 ifndef _FILETIME_
-_FILETIME_ equ <>
+define _FILETIME_
 FILETIME		STRUC
 dwLowDateTime		dd ?
 dwHighDateTime		dd ?

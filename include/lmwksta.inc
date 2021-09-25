@@ -1,5 +1,5 @@
 ifndef _LMWKSTA_
-_LMWKSTA_ equ <>
+define _LMWKSTA_
 
 include lmcons.inc
 include lmuseflg.inc

@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _OLE2_H_
-_OLE2_H_ equ <>
+define _OLE2_H_
 ifndef __LIBC_INC
  include libc.inc
 endif

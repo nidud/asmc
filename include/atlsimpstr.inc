@@ -1,5 +1,5 @@
 ifndef __ATLSIMPSTR_H__
-__ATLSIMPSTR_H__ equ <>
+define __ATLSIMPSTR_H__
 
 include atldef.inc
 include atlcore.inc

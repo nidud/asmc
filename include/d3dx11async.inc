@@ -1,5 +1,5 @@
 ifndef __D3DX11ASYNC_H__
-__D3DX11ASYNC_H__ equ <>
+define __D3DX11ASYNC_H__
 
 include d3dx11.inc
 

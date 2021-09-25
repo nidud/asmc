@@ -1,5 +1,5 @@
 ifndef _WS2DEF_
-_WS2DEF_ equ <>
+define _WS2DEF_
 
 include winapifamily.inc
 
@@ -139,7 +139,7 @@ PSOCKADDR		typedef ptr SOCKADDR
 LPSOCKADDR		typedef ptr SOCKADDR
 
 ifndef __CSADDR_DEFINED__
-__CSADDR_DEFINED__ equ 1
+define __CSADDR_DEFINED__
 
 
 SOCKET_ADDRESS		STRUC

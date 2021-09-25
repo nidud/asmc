@@ -1,5 +1,5 @@
 ifndef __BTHSDPDEF_H__
-__BTHSDPDEF_H__ equ <>
+define __BTHSDPDEF_H__
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

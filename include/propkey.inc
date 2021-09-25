@@ -1,5 +1,5 @@
 ifndef _INC_PROPKEY
-_INC_PROPKEY equ <>
+define _INC_PROPKEY
 
 ifndef DEFINE_API_PKEY
 DEFINE_API_PKEY macro name, managed_name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid

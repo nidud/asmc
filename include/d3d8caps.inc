@@ -1,5 +1,5 @@
 ifndef _D3D8CAPS_H
-_D3D8CAPS_H equ <>
+define _D3D8CAPS_H
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION	equ 0x0800

@@ -1,5 +1,5 @@
 ifndef _D2D1_EFFECT_AUTHOR_H_
-_D2D1_EFFECT_AUTHOR_H_ equ <>
+define _D2D1_EFFECT_AUTHOR_H_
 
 ifndef _D2D1_1_H_
 include d2d1_1.inc

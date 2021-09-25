@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __STDLIB_INC
-__STDLIB_INC equ <>
+define __STDLIB_INC
 
 include crtdefs.inc
 include limits.inc
@@ -8,7 +8,7 @@ include limits.inc
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _ONEXIT_T_DEFINED
-_ONEXIT_T_DEFINED equ <>
+define _ONEXIT_T_DEFINED
 ifndef _M_CEE_PURE
 CALLBACKC(_onexit_t)
 else
@@ -24,7 +24,7 @@ endif
 endif
 
 ifndef _DIV_T_DEFINED
-_DIV_T_DEFINED equ <>
+define _DIV_T_DEFINED
 
 _div_t		struct
 quot		int_t ?
@@ -43,7 +43,7 @@ _lldiv_t	ends
 endif
 
 ifndef _CRT_DOUBLE_DEC
-_CRT_DOUBLE_DEC equ <>
+define _CRT_DOUBLE_DEC
 
 ifndef _LDSUPPORT
 
@@ -143,7 +143,7 @@ _get_invalid_parameter_handler proto __cdecl
 endif
 
 ifndef _CRT_ERRNO_DEFINED
-_CRT_ERRNO_DEFINED equ <>
+define _CRT_ERRNO_DEFINED
 _errno		proto __cdecl
 _set_errno	proto __cdecl :int_t
 _get_errno	proto __cdecl :ptr int_t
@@ -241,7 +241,7 @@ _countof	equ <lengthof>
 endif
 
 ifndef _CRT_TERMINATE_DEFINED
-_CRT_TERMINATE_DEFINED equ <>
+define _CRT_TERMINATE_DEFINED
 exit		proto __cdecl :int_t
 _exit		proto __cdecl :int_t
 abort		proto __cdecl
@@ -281,7 +281,7 @@ atoll		proto __cdecl :string_t
 _atoll_l	proto __cdecl :string_t, :_locale_t
 
 ifndef _CRT_ALGO_DEFINED
-_CRT_ALGO_DEFINED equ <>
+define _CRT_ALGO_DEFINED
 CALLBACKC(LPQSORTCMD, :ptr, :ptr)
 if __STDC_WANT_SECURE_LIB__
 CALLBACKC(_PtFuncCompare_s, :ptr, :ptr, :ptr)
@@ -369,7 +369,7 @@ strtoqd		proto __cdecl :string_t, :string_t
 endif
 
 ifndef _CRT_SYSTEM_DEFINED
-_CRT_SYSTEM_DEFINED equ <>
+define _CRT_SYSTEM_DEFINED
 system		proto __cdecl :string_t
 endif
 
@@ -384,7 +384,7 @@ wcstombs_s	proto __cdecl :ptr size_t, :string_t, :size_t, :ptr wchar_t, :size_t
 _wcstombs_s_l	proto __cdecl :ptr size_t, :string_t, :size_t, :ptr wchar_t, :size_t, :_locale_t
 
 ifndef _CRT_ALLOCATION_DEFINED
-_CRT_ALLOCATION_DEFINED equ <>
+define _CRT_ALLOCATION_DEFINED
 calloc		proto __cdecl :size_t, :size_t
 free		proto __cdecl :ptr
 malloc		proto __cdecl :size_t
@@ -401,15 +401,15 @@ _aligned_msize	proto __cdecl :ptr, :size_t, :size_t
 endif
 
 ifndef _WSTDLIB_DEFINED
-_WSTDLIB_DEFINED equ <>
+define _WSTDLIB_DEFINED
 
 ifndef _WCHAR_T_DEFINED
-_WCHAR_T_DEFINED equ <>
+define _WCHAR_T_DEFINED
 wchar_t		typedef word
 endif
 
 ifndef _WCTYPE_T_DEFINED
-_WCTYPE_T_DEFINED equ <>
+define _WCTYPE_T_DEFINED
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
 endif
@@ -443,7 +443,7 @@ _wgetenv_s	proto __cdecl :ptr size_t, :wstring_t, :size_t, :wstring_t
 _wdupenv_s	proto __cdecl :warray_t, :ptr size_t, :wstring_t
 
 ifndef _CRT_WSYSTEM_DEFINED
-_CRT_WSYSTEM_DEFINED equ <>
+define _CRT_WSYSTEM_DEFINED
 _wsystem	proto __cdecl :wstring_t
 endif
 
@@ -500,7 +500,7 @@ _onexit		proto __cdecl :ptr
 endif
 
 ifndef _CRT_PERROR_DEFINED
-_CRT_PERROR_DEFINED equ <>
+define _CRT_PERROR_DEFINED
 perror		proto __cdecl :string_t
 endif
 
@@ -520,12 +520,12 @@ _splitpath_s	proto __cdecl :string_t, :string_t, :size_t, :string_t, :size_t, :s
 _swab		proto __cdecl :string_t, :string_t, :int_t
 
 ifndef _WSTDLIBP_DEFINED
-_WSTDLIBP_DEFINED equ <>
+define _WSTDLIBP_DEFINED
 
 _wfullpath	proto __cdecl :wstring_t, :wstring_t, :size_t
 _wmakepath_s	proto __cdecl :wstring_t, :size_t, :wstring_t, :wstring_t, :wstring_t, :wstring_t
 ifndef _CRT_WPERROR_DEFINED
-_CRT_WPERROR_DEFINED equ <>
+define _CRT_WPERROR_DEFINED
 _wperror	proto __cdecl :wstring_t
 endif
 _wputenv	proto __cdecl :wstring_t

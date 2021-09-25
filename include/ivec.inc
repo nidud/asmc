@@ -1,5 +1,5 @@
 ifndef _IVEC_H_INCLUDED
-_IVEC_H_INCLUDED equ <>
+define _IVEC_H_INCLUDED
 
 include mmintrin.inc
 

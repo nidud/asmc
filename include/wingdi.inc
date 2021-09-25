@@ -1,5 +1,5 @@
 ifndef _WINGDI_
-_WINGDI_ equ <>
+define _WINGDI_
 .pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc

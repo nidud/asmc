@@ -1,5 +1,5 @@
 ifndef _INC_COMUTIL
-_INC_COMUTIL equ <>
+define _INC_COMUTIL
 
 include ole2.inc
 

@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _DHCPSAPI_
-_DHCPSAPI_ equ <>
+define _DHCPSAPI_
 
 .pragma comment(lib, dhcpsapi)
 

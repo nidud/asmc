@@ -1,5 +1,5 @@
 ifndef __G_LIBCONFIG_H__
-__G_LIBCONFIG_H__ equ <>
+define __G_LIBCONFIG_H__
 
 include glib/gmacros.inc
 include limits.inc

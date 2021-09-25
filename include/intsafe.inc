@@ -1,5 +1,5 @@
 ifndef _INTSAFE_H_INCLUDED_
-_INTSAFE_H_INCLUDED_ equ <>
+define _INTSAFE_H_INCLUDED_
 
 include specstrings.inc
 

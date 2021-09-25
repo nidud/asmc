@@ -1,5 +1,5 @@
 ifndef ADC_INCLUDED
-ADC_INCLUDED equ <>
+define ADC_INCLUDED
 .pragma list(push, 0)
 
 _CLSID_FoxRowset	  equ <{0x3ff292b6,0xb204,0x11cf,{0x8d,0x23,0x0,0xaa,0x00,0x5f,0xfe,0x58}}>
@@ -32,7 +32,7 @@ _IID_IRowsetProperties	  equ <{0x1e837070,0xbcfc,0x11d1,{0x9a,0x2c,0x0,0xa0,0xc9
 
 
 ifndef _COMMON_ADC_AND_ADO_PROPS_
-_COMMON_ADC_AND_ADO_PROPS_ equ 1
+define _COMMON_ADC_AND_ADO_PROPS_
 
 .enum ADCPROP_UPDATECRITERIA_ENUM {
   adCriteriaKey = 0,

@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 .pragma cref(push, 0)
 ifndef __INTRIN_H_
-__INTRIN_H_ equ <>
+define __INTRIN_H_
 ifndef __LIBC_INC
  include libc.inc
 endif

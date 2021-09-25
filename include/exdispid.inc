@@ -1,5 +1,5 @@
 ifndef EXDISPID_H_
-EXDISPID_H_ equ <>
+define EXDISPID_H_
 .pragma list(push, 0)
 
 DISPID_BEFORENAVIGATE   equ 100

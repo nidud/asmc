@@ -1,5 +1,5 @@
 ifndef _ALERT_
-_ALERT_ equ <>
+define _ALERT_
 
 ;NET_API_STATUS
 NetAlertRaise proto WINAPI \

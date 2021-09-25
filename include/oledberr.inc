@@ -1,5 +1,5 @@
 ifndef _MSADERR_H_
-_MSADERR_H_ equ <>
+define _MSADERR_H_
 
 ifndef FACILITY_WINDOWS
 FACILITY_WINDOWS	equ 0x8

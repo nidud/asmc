@@ -1,5 +1,5 @@
 ifndef _INC_RTCSUP
-_INC_RTCSUP equ <>
+define _INC_RTCSUP
 
 ifdef _RTC
 ifndef _WIN32

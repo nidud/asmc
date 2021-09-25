@@ -1,26 +1,22 @@
 ifndef _INC_VADEFS
-_INC_VADEFS equ <>
+define _INC_VADEFS
 .pragma list(push, 0)
 
 _CRT_PACKING equ 8
 .pragma pack(push, _CRT_PACKING)
 
-ifndef _W64
-_W64 equ <>
-endif
-
 ifndef _UINTPTR_T_DEFINED
-_UINTPTR_T_DEFINED equ <>
+define _UINTPTR_T_DEFINED
 ifdef _WIN64
-uintptr_t		typedef qword
+uintptr_t typedef qword
 else
-uintptr_t		typedef dword
+uintptr_t typedef dword
 endif
 endif
 
 ifndef _VA_LIST_DEFINED
-_VA_LIST_DEFINED equ <>
-va_list			typedef ptr sbyte
+define _VA_LIST_DEFINED
+va_list typedef ptr sbyte
 endif
 
 _ADDRESSOF macro v

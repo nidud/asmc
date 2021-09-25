@@ -1,12 +1,12 @@
 include d3dx10.inc
 
 ifndef __D3DX9MATH_H__
-__D3DX9MATH_H__ equ <>
+define __D3DX9MATH_H__
 
 include math.inc
 
 ifndef D3DVECTOR_DEFINED
-D3DVECTOR_DEFINED equ <>
+define D3DVECTOR_DEFINED
 .template D3DVECTOR
     x	float ?
     y	float ?

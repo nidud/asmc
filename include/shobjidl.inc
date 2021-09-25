@@ -5371,7 +5371,7 @@ endif
 if (NTDDI_VERSION GE NTDDI_WIN8)
 
 ifndef __IDataObjectProvider_INTERFACE_DEFINED__
-__IDataObjectProvider_INTERFACE_DEFINED__ equ <>
+define __IDataObjectProvider_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDataObjectProvider, "3D25F6D6-4B2A-433c-9184-7C33AD35D001")
 

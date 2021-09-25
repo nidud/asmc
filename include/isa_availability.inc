@@ -1,5 +1,5 @@
 ifndef __ISA_AVAILABILITY__H__
-__ISA_AVAILABILITY__H__ equ <>
+define __ISA_AVAILABILITY__H__
 
 ISA_AVAILABILITY        typedef SDWORD
 __ISA_AVAILABLE_X86     equ 0

@@ -1,5 +1,5 @@
 ifndef __GLIB_GOBJECT_H__
-__GLIB_GOBJECT_H__ equ <>
+define __GLIB_GOBJECT_H__
 
 __GLIB_GOBJECT_H_INSIDE__ equ 1
 

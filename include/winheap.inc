@@ -1,5 +1,5 @@
 ifndef _INC_WINHEAP
-_INC_WINHEAP equ <>
+define _INC_WINHEAP
 
 include crtdefs.inc
 

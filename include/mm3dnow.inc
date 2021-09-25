@@ -1,5 +1,5 @@
 ifndef _MM3DNOW_H_INCLUDED
-_MM3DNOW_H_INCLUDED equ <>
+define _MM3DNOW_H_INCLUDED
 .pragma list(push, 0)
 
 ifndef _M_IX86

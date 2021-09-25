@@ -1,5 +1,5 @@
 ifndef _ACLUI_H_
-_ACLUI_H_ equ <>
+define _ACLUI_H_
 include objbase.inc
 include commctrl.inc
 include accctrl.inc

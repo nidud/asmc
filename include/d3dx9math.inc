@@ -1,6 +1,6 @@
 include d3dx9.inc
 ifndef __D3DX9MATH_H__
-__D3DX9MATH_H__ equ <>
+define __D3DX9MATH_H__
 include math.inc
 .pragma comment(lib, d3dx9_40)
 

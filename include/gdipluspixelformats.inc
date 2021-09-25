@@ -1,5 +1,5 @@
 ifndef _GDIPLUSPIXELFORMATS_H
-_GDIPLUSPIXELFORMATS_H equ <>
+define _GDIPLUSPIXELFORMATS_H
 
 ARGB                    typedef DWORD
 ARGB64                  typedef DWORDLONG

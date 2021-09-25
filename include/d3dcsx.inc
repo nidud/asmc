@@ -1,7 +1,7 @@
 include d3d11.inc
 
 ifndef __D3DX11GPGPU_H__
-__D3DX11GPGPU_H__ equ <>
+define __D3DX11GPGPU_H__
 
 D3DCSX_DLL_W		equ <L"d3dcsx_47.dll">
 D3DCSX_DLL_A		equ <"d3dcsx_47.dll">

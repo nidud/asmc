@@ -53,7 +53,7 @@ _initterm_e proto __cdecl :ptr _PIFV, :ptr _PIFV
 endif
 
 ifndef _CRT_ONEXIT_T_DEFINED
-_CRT_ONEXIT_T_DEFINED equ <>
+define _CRT_ONEXIT_T_DEFINED
 
     CALLBACK(_onexit_t)
     ifdef _M_CEE

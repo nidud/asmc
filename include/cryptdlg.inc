@@ -1,5 +1,5 @@
 ifndef __CRYPTDLG_H__
-__CRYPTDLG_H__ equ <>
+define __CRYPTDLG_H__
 
 include winapifamily.inc
 

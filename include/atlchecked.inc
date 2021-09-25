@@ -1,5 +1,5 @@
 ifndef __ATLCHECKED_H__
-__ATLCHECKED_H__ equ <>
+define __ATLCHECKED_H__
 
 include atldef.inc
 include atlexcept.inc
@@ -10,9 +10,7 @@ include wchar.inc
 include tchar.inc
 include stdlib.inc
 
-
 .pragma pack(push,_ATL_PACKING)
-
 
 AtlCrtErrorCheck proto :errno_t {
     .switch(ecx)
@@ -32,7 +30,6 @@ AtlCrtErrorCheck proto :errno_t {
     .endsw
     mov eax,ecx
 }
-
 
 ifdef _AFX
 ;ATLMFC_CRT_ERRORCHECK(expr) AFX_CRT_ERRORCHECK(expr)

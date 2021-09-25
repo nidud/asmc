@@ -1,5 +1,5 @@
 ifndef _LMAPIBUF_
-_LMAPIBUF_ equ <>
+define _LMAPIBUF_
 
 ;NET_API_STATUS
 NetApiBufferAllocate proto WINAPI \

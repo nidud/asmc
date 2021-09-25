@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __INC_CONIO
-__INC_CONIO equ <>
+define __INC_CONIO
 ifndef __LIBC_INC
  include libc.inc
 endif

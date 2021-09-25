@@ -1,5 +1,5 @@
 ifndef __DPAPI_H__
-__DPAPI_H__ equ <>
+define __DPAPI_H__
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

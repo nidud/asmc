@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __DDRAW_INCLUDED__
-__DDRAW_INCLUDED__ equ <>
+define __DDRAW_INCLUDED__
 ifndef _WINDEF_
 include windef.inc
 endif

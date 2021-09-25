@@ -1,17 +1,17 @@
 ifndef _INC_MEMORY
-_INC_MEMORY equ <>
+define _INC_MEMORY
 
 include crtdefs.inc
 
 ifndef _CONST_RETURN
-_CONST_RETURN equ <>
+define _CONST_RETURN
 endif
 _WConst_return equ _CONST_RETURN
 
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _CRT_MEMORY_DEFINED
-_CRT_MEMORY_DEFINED equ <>
+define _CRT_MEMORY_DEFINED
 _memccpy	proto __cdecl :ptr, :ptr, :int_t, :size_t
 memchr		proto __cdecl :ptr, :int_t, :size_t
 _memicmp	proto __cdecl :ptr, :ptr, :size_t

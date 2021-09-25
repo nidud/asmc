@@ -1,5 +1,5 @@
 ifndef __D3DX9_H__
-__D3DX9_H__ equ <>
+define __D3DX9_H__
 .pragma list(push, 0)
 include limits.inc
 

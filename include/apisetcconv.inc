@@ -1,4 +1,4 @@
 ifndef _APISETCCONV_
-_APISETCCONV_ equ <>
+define _APISETCCONV_
 
 endif ;; _APISETCCONV_

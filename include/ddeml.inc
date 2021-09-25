@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _INC_DDEMLH
-_INC_DDEMLH equ <>
+define _INC_DDEMLH
 
 HCONVLIST		typedef HANDLE
 HCONV			typedef HANDLE

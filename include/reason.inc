@@ -1,5 +1,5 @@
 ifndef SENTINEL_Reason
-SENTINEL_Reason equ <>
+define SENTINEL_Reason
 .pragma list(push, 0)
 
 SHTDN_REASON_FLAG_COMMENT_REQUIRED equ 0x01000000

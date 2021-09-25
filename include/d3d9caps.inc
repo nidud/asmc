@@ -1,5 +1,5 @@
 ifndef _d3d9CAPS_H
-_d3d9CAPS_H equ <>
+define _d3d9CAPS_H
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION	equ 0x0900

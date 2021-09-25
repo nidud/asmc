@@ -3,9 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.34 - xx xxx 2021
+- added directive .namespace and .endn
 
 Changes in 2.33 - 10 Sep 2021
-- removed directive .operator
 - added option float:<4|8>
 - added option floatformat:<x>
 - added option linesize:<value>

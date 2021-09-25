@@ -54,7 +54,7 @@ XACTTOMSG macro dwXact
     }
 
 ifndef _XID_T_DEFINED
-_XID_T_DEFINED equ <>
+define _XID_T_DEFINED
 XID			STRUC
 formatID		LONG ?
 gtrid_length		LONG ?

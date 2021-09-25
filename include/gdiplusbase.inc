@@ -1,5 +1,5 @@
 ifndef _GDIPLUSBASE_H
-_GDIPLUSBASE_H equ <>
+define _GDIPLUSBASE_H
 
 GdipSetStatus macro this
     test    eax,eax

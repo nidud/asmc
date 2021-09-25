@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef _P2P_H_
-_P2P_H_ equ <>
+define _P2P_H_
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

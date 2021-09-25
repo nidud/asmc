@@ -1,5 +1,5 @@
 ifndef _D3D_H_
-_D3D_H_ equ <>
+define _D3D_H_
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION	equ 0x0700

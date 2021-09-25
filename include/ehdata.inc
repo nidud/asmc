@@ -1,5 +1,5 @@
 ifndef _INC_EHDATA
-_INC_EHDATA equ <>
+define _INC_EHDATA
 
 ifdef ONLY_VALUES
 _EHDATA_NOHEADERS equ 1

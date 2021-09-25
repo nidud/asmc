@@ -1,5 +1,5 @@
 ifndef _INC_MSDOS
-_INC_MSDOS equ <>
+define _INC_MSDOS
 
 ifndef _CRTBLD
 ;;

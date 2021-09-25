@@ -1,5 +1,5 @@
 ifndef _SYNCHAPI_H_
-_SYNCHAPI_H_ equ <>
+define _SYNCHAPI_H_
 
 include libc.inc
 .pragma(comment(lib, kernel32))

@@ -1,5 +1,5 @@
 ifndef _IImgCtxObjects_H_
-_IImgCtxObjects_H_ equ <>
+define _IImgCtxObjects_H_
 
 include winapifamily.inc
 

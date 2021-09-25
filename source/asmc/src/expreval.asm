@@ -21,6 +21,7 @@ include types.inc
 include label.inc
 include atofloat.inc
 include quadmath.inc
+include operator.inc
 
 externdef StackAdj:uint_t
 
@@ -74,6 +75,7 @@ init_expr proc fastcall opnd:expr_t
     mov [ecx].sym,          eax
     mov [ecx].mbr,          eax
     mov [ecx].type,         eax
+    mov [ecx].op,           eax
     ret
 
 init_expr endp
@@ -2288,12 +2290,18 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .if [ebx].specval == 0
             .return( positive_op( esi, edi ) )
         .endif
-        .return( plus_op( esi, edi ) )
+        .if ( EvalOperator( esi, edi, ebx ) == ERROR )
+            .return( plus_op( esi, edi ) )
+        .endif
+        .endc
     .case '-'
         .if [ebx].specval == 0
             .return( negative_op( esi, edi ) )
         .endif
-        .return( minus_op( esi, edi ) )
+        .if ( EvalOperator( esi, edi, ebx ) == ERROR )
+            .return( minus_op( esi, edi ) )
+        .endif
+        .endc
     .case T_DOT
         .return( dot_op( esi, edi ) )
     .case T_COLON
@@ -2329,7 +2337,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
             mov [esi].kind,EXPR_ADDR
         .elseif [esi].kind == EXPR_FLOAT && [edi].kind == EXPR_FLOAT
             __mulq(esi, edi)
-        .else
+        .elseif ( EvalOperator( esi, edi, ebx ) == ERROR )
             .return( ConstError( esi, edi ) )
         .endif
         .endc
@@ -2338,6 +2346,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
             __divq(esi, edi)
             .endc
         .endif
+        .endc .if ( EvalOperator( esi, edi, ebx ) != ERROR )
         MakeConst( esi )
         MakeConst( edi )
         .if( !( [esi].kind == EXPR_CONST && [edi].kind == EXPR_CONST ) )

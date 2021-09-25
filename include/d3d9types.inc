@@ -1,5 +1,5 @@
 ifndef _d3d9TYPES_H_
-_d3d9TYPES_H_ equ <>
+define _d3d9TYPES_H_
 .pragma pack(push, 8)
 
 ifndef DIRECT3D_VERSION
@@ -11,8 +11,8 @@ if (DIRECT3D_VERSION GE 0x0900)
 include float.inc
 
 ifndef D3DCOLOR_DEFINED
+define D3DCOLOR_DEFINED
 D3DCOLOR typedef DWORD
-D3DCOLOR_DEFINED equ 1
 endif
 
 D3DCOLOR_ARGB macro a,r,g,b
@@ -37,7 +37,7 @@ D3DCOLOR_COLORVALUE macro r,g,b,a
 	endm
 
 ifndef D3DVECTOR_DEFINED
-D3DVECTOR_DEFINED equ <>
+define D3DVECTOR_DEFINED
 .template D3DVECTOR
     x	real4 ?
     y	real4 ?
@@ -51,7 +51,7 @@ D3DVECTOR_DEFINED equ <>
 endif
 
 ifndef D3DCOLORVALUE_DEFINED
-D3DCOLORVALUE_DEFINED equ <>
+define D3DCOLORVALUE_DEFINED
 
 sc_redShift	equ 16
 sc_greenShift	equ 8

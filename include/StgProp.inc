@@ -1,5 +1,5 @@
 ifndef _STGPROP_H_
-_STGPROP_H_ equ <>
+define _STGPROP_H_
 
 include winapifamily.inc
 

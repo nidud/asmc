@@ -1,5 +1,5 @@
 ifndef _PRSHT_H_
-_PRSHT_H_ equ <>
+define _PRSHT_H_
 ifndef __LIBC_INC
  include libc.inc
 endif

@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_OSCALLS
-_INC_OSCALLS equ <>
+define _INC_OSCALLS
 
 ifndef _CRTBLD
 ;;

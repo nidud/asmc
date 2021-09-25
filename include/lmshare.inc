@@ -1,5 +1,5 @@
 ifndef _LMSHARE_
-_LMSHARE_ equ <>
+define _LMSHARE_
 
 include lmcons.inc
 
@@ -255,7 +255,7 @@ endif
 
 
 ifndef _LMSESSION_
-_LMSESSION_ equ <>
+define _LMSESSION_
 
 ;NET_API_STATUS
 NetSessionEnum proto WINAPI \
@@ -344,7 +344,7 @@ SESI2_NUM_ELEMENTS	equ 9
 endif
 
 ifndef _LMCONNECTION_
-_LMCONNECTION_ equ <>
+define _LMCONNECTION_
 
 ;NET_API_STATUS
 NetConnectionEnum proto WINAPI \
@@ -379,7 +379,7 @@ LPCONNECTION_INFO_1	typedef ptr CONNECTION_INFO_1
 endif
 
 ifndef _LMFILE_
-_LMFILE_ equ <>
+define _LMFILE_
 
 ;NET_API_STATUS
 NetFileClose proto WINAPI \

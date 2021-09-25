@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef __RPCASYNC_H__
-__RPCASYNC_H__ equ <>
+define __RPCASYNC_H__
 
 RPC_ASYNC_VERSION_1_0	equ RPC_ASYNC_STATE
 

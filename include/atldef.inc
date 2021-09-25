@@ -1,5 +1,5 @@
 ifndef __ATLDEF_H__
-__ATLDEF_H__ equ <>
+define __ATLDEF_H__
 
 ifndef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 ifdef WINAPI_FAMILY
@@ -7,41 +7,39 @@ ifdef WINAPI_FAMILY
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-_ATL_USE_WINAPI_FAMILY_DESKTOP_APP equ 1
+define _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 else
 
 ifdef WINAPI_FAMILY_PHONE_APP
 if WINAPI_FAMILY eq WINAPI_FAMILY_PHONE_APP
-_ATL_USE_WINAPI_FAMILY_PHONE_APP equ 1
+define _ATL_USE_WINAPI_FAMILY_PHONE_APP
 endif
 endif
 
 ifdef WINAPI_FAMILY_APP
 if WINAPI_FAMILY eq WINAPI_FAMILY_APP
-_ATL_USE_WINAPI_FAMILY_APP equ 1
+define _ATL_USE_WINAPI_FAMILY_APP
 endif
 endif
-
 endif
-
 else
-_ATL_USE_WINAPI_FAMILY_DESKTOP_APP equ 1
+define _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 endif
 endif
 
 ifndef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
 
 ifndef _ATL_NO_SERVICE
-_ATL_NO_SERVICE equ <>
+define _ATL_NO_SERVICE
 endif
 ifndef _ATL_NO_COM_SUPPORT
-_ATL_NO_COM_SUPPORT equ <>
+define _ATL_NO_COM_SUPPORT
 endif
 ifndef _ATL_NO_COMMODULE
-_ATL_NO_COMMODULE equ <>
+define _ATL_NO_COMMODULE
 endif
 ifndef _ATL_NO_WIN_SUPPORT
-_ATL_NO_WIN_SUPPORT equ <>
+define _ATL_NO_WIN_SUPPORT
 endif
 
 endif
@@ -50,13 +48,6 @@ include atlrc.inc
 include errno.inc
 include stdlib.inc
 include sal.inc
-
-ifndef _ATL_DISABLE_NOTHROW_NEW
-;include new.inc
-_ATL_NEW equ <.new>
-else
-_ATL_NEW equ <.new>
-endif
 
 ifndef RC_INVOKED
 if defined(_ATL_MIXED) or not defined(_M_CEE)
@@ -68,26 +59,26 @@ else
 ;.err <Unsupported target architecture.>
 endif
 ifndef _ATL_NATIVE_INITIALIZATION
-_ATL_NATIVE_INITIALIZATION equ <>
+define _ATL_NATIVE_INITIALIZATION
 endif
 endif
 
 
 ifdef _UNICODE
 ifndef UNICODE
-UNICODE equ 1
+define UNICODE
 endif
 endif
 
 ifdef UNICODE
 ifndef _UNICODE
-_UNICODE equ 1
+define _UNICODE
 endif
 endif
 
 ifdef _DEBUG
 ifndef DEBUG
-DEBUG equ 1
+define DEBUG
 endif
 endif
 
@@ -107,7 +98,7 @@ endm
 endif
 
 ifdef _WIN64
-_ATL_SUPPORT_VT_I8 equ 1
+define _ATL_SUPPORT_VT_I8
 endif
 
 ifndef AtlThrow
@@ -187,52 +178,42 @@ endif
 
 ifdef _ATL_DEBUG_REFCOUNT
 ifndef _ATL_DEBUG_INTERFACES
-_ATL_DEBUG_INTERFACES equ 1
+define _ATL_DEBUG_INTERFACES
 endif
 endif
 
 ifdef _DEBUG
 ifndef _ATL_DEBUG
-_ATL_DEBUG equ 1
+define _ATL_DEBUG
 endif
 endif
 
 ifdef _ATL_DEBUG_INTERFACES
 ifndef _ATL_DEBUG
-_ATL_DEBUG equ 1
+define _ATL_DEBUG
 endif
 endif
 
 ifndef _ATL_HEAPFLAGS
 ifdef _MALLOC_ZEROINIT
-_ATL_HEAPFLAGS equ HEAP_ZERO_MEMORY
+define _ATL_HEAPFLAGS HEAP_ZERO_MEMORY
 else
-_ATL_HEAPFLAGS equ 0
+define _ATL_HEAPFLAGS 0
 endif
 endif
 
 ifndef _ATL_PACKING
-_ATL_PACKING equ 8
+define _ATL_PACKING 8
 endif
 
-ATLAPI equ <WINAPI>
-ATLAPI_ macro x
-exitm<x WINAPI>
-endm
-ATLAPIINL equ <ATLAPI>
-ATLAPIINL_ macro x
-exitm<ATLAPI_(x)>
-endm
-ATLINLINE equ <inline>
-
 ifdef _ATL_NO_EXCEPTIONS
-	ifdef _AFX
-	.err<MFC projects cannot define _ATL_NO_EXCEPTIONS>
-	endif
+ifdef _AFX
+.err<MFC projects cannot define _ATL_NO_EXCEPTIONS>
+endif
 else
-	ifndef _CPPUNWIND
-	_ATL_NO_EXCEPTIONS equ <>
-	endif
+ifndef _CPPUNWIND
+define _ATL_NO_EXCEPTIONS
+endif
 endif
 
 ifdef _CPPUNWIND
@@ -255,11 +236,11 @@ ifndef _ATLTRY
 _ATLTRY equ <try>
 ifdef _AFX
 _ATLCATCH macro e
-exitm<catch( CException* e )>
+exitm<catch(e)>
 endm
 else
 _ATLCATCH macro e
-exitm<catch( CAtlException e )>
+exitm<catch(e)>
 endm
 endif
 
@@ -285,25 +266,6 @@ _ATL_COM_BEGIN macro
 exitm<.err>
 endm
 endif
-
-ifdef _AFX
-else
-endif
-
-ifndef _ATL_COM_END
-endif
-
-else ;;_CPPUNWIND
-
-ifndef ATLTRYALLOC
-endif
-
-ifndef _ATLTRY
-endif
-
-endif
-
-ifndef ATLTRY
 endif
 
 _ATL	 equ 1
@@ -341,21 +303,21 @@ endif
 
 ifndef ATL_NO_LEAN_AND_MEAN
 ifndef WIN32_LEAN_AND_MEAN
-WIN32_LEAN_AND_MEAN equ 1
+define WIN32_LEAN_AND_MEAN
 endif
 ifndef NOMCX
-NOMCX equ 1
+define NOMCX
 endif
 endif
 
 ifdef NOSERVICE
 ifndef _ATL_NO_SERVICE
-_ATL_NO_SERVICE equ 1
+define _ATL_NO_SERVICE
 endif
 else
 ifdef _ATL_NO_SERVICE
 ifndef NOSERVICE
-NOSERVICE equ 1
+define NOSERVICE
 endif
 endif
 endif
@@ -457,7 +419,7 @@ exitm<>
 endm
 
 ifndef _FormatMessage_format_string_
-_FormatMessage_format_string_ equ <>
+define _FormatMessage_format_string_
 endif
 
 endif

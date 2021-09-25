@@ -1,5 +1,5 @@
 ifndef __STDIO_INC
-__STDIO_INC equ <>
+define __STDIO_INC
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
@@ -35,7 +35,7 @@ _IOCTRLZ	equ 0x2000
 _IOCOMMIT	equ 0x4000
 
 ifndef _FILE_DEFINED
-_FILE_DEFINED equ <>
+define _FILE_DEFINED
 _iobuf		STRUC SIZE_T
 _ptr		LPSTR ?
 _cnt		SINT ?
@@ -121,15 +121,15 @@ __acrt_iob_func proto __cdecl :dword
 endif
 
 ifndef _WSTDIO_DEFINED
-_WSTDIO_DEFINED equ <>
+define _WSTDIO_DEFINED
 
 ifndef _WCHAR_T_DEFINED
-_WCHAR_T_DEFINED equ <>
+define _WCHAR_T_DEFINED
 wchar_t		typedef WORD
 endif
 
 ifndef _WCTYPE_T_DEFINED
-_WCTYPE_T_DEFINED equ <>
+define _WCTYPE_T_DEFINED
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
 endif

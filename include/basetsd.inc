@@ -1,44 +1,8 @@
 ifndef _BASETSD_
-_BASETSD_ equ <>
+define _BASETSD_
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-if (defined(_M_MRX000) OR defined(_M_AMD64) OR defined(_M_IA64)) AND (_MSC_VER GE 1100) AND NOT defined(MIDL_PASS)
- POINTER_64 equ <ptr>
- POINTER_64_INT typedef qword
- ifdef _WIN64
-  POINTER_32 equ <ptr>
- else
-  POINTER_32 equ <>
- endif
-else
-  if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
-   POINTER_64 equ <ptr>
-  else
-   POINTER_64 equ <>
-  endif
- POINTER_64_INT typedef dword
- POINTER_32 equ <>
-endif
-
-if defined(_IA64_) OR defined(_AMD64_)
-FIRMWARE_PTR equ <>
-else
-FIRMWARE_PTR equ <POINTER_32>
-endif
-
-
-if 0 AND (_MSC_FULL_VER GE 140041204) AND NOT defined(MIDL_PASS)
-POINTER_SIGNED	 equ <__sptr>
-POINTER_UNSIGNED equ <__uptr>
-else
-POINTER_SIGNED	 equ <>
-POINTER_UNSIGNED equ <>
-endif
-
-SPOINTER_32 equ <POINTER_32 POINTER_SIGNED>
-UPOINTER_32 equ <POINTER_32 POINTER_UNSIGNED>
 
 INT8		typedef sbyte
 PINT8		typedef ptr sbyte
@@ -67,14 +31,6 @@ DWORD32		typedef dword
 PDWORD32	typedef ptr dword
 
 ifdef _WIN64
-if not defined(__midl) and (defined(_X86_) or defined(_M_IX86)) and _MSC_VER GE 1300
-_W64		equ <__w64>
-else
-_W64		equ <>
-endif
-endif
-
-ifdef _WIN64
 
     INT_PTR	typedef sqword
     PINT_PTR	typedef ptr sqword
@@ -86,7 +42,7 @@ ifdef _WIN64
     ULONG_PTR	typedef qword
     PULONG_PTR	typedef ptr qword
 
-    __int3264	equ <sqword> ; __int64
+    __int3264	typedef sqword ; __int64
 
 else
     INT_PTR	typedef sdword
@@ -99,7 +55,7 @@ else
     ULONG_PTR	typedef dword
     PULONG_PTR	typedef ptr dword
 
-    __int3264	equ <sdword> ; __int32
+    __int3264	typedef sdword ; __int32
 endif
 
 ifdef _WIN64
@@ -185,15 +141,15 @@ Handle64ToHandle macro h
     endm
 ;void *
 Ptr32ToPtr macro p ; const void * POINTER_32 p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 ;void *
 Handle32ToHandle macro h ; const void * POINTER_32 h
-    exitm<PVOID ptr h>
+    exitm<ptr h>
     endm
 ;void * POINTER_32
 PtrToPtr32 macro p ; const void *p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>
@@ -273,10 +229,10 @@ ULongToPtr macro ui ; const unsigned long ui
 ifndef __midl
 ;__inline
 PtrToPtr64 macro p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 Ptr64ToPtr macro p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 HandleToHandle64 macro h
     exitm<PtrToPtr64( h )>
@@ -288,15 +244,15 @@ endif
 
 ;void *
 Ptr32ToPtr macro p ; const void * POINTER_32 p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 ;void *
 Handle32ToHandle macro h ; const void * POINTER_32 h
-    exitm<PVOID ptr h>
+    exitm<ptr h>
     endm
 ;void * POINTER_32
 PtrToPtr32 macro p ; const void *p
-    exitm<PVOID ptr p>
+    exitm<ptr p>
     endm
 HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>

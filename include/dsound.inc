@@ -14,7 +14,7 @@ DIRECTSOUND_VERSION equ 0x0900
 endif
 endif
 ifndef __DSOUND_INCLUDED__
-__DSOUND_INCLUDED__ equ <>
+define __DSOUND_INCLUDED__
 
 ifndef DX_SHARED_DEFINES
 

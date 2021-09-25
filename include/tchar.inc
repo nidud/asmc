@@ -1,5 +1,5 @@
 ifndef _INC_TCHAR
-_INC_TCHAR equ <>
+define _INC_TCHAR
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
@@ -64,13 +64,13 @@ ifdef  _UNICODE
 include wchar.inc
 
 ifndef _WCTYPE_T_DEFINED
-_WCTYPE_T_DEFINED equ <>
+define _WCTYPE_T_DEFINED
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
 endif
 
 ifndef __TCHAR_DEFINED
-__TCHAR_DEFINED equ <>
+define __TCHAR_DEFINED
 _TCHAR		typedef wchar_t
 _TSCHAR		typedef wchar_t
 _TUCHAR		typedef wchar_t
@@ -79,7 +79,7 @@ _TINT		typedef wint_t
 endif
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED	equ <>
+define _TCHAR_DEFINED
 if NOT __STDC__
 TCHAR		typedef wchar_t
 endif
@@ -1347,7 +1347,7 @@ _istleadbyte		equ <isleadbyte>
 else
 
 ifndef __TCHAR_DEFINED
-__TCHAR_DEFINED equ <>
+define __TCHAR_DEFINED
 _TCHAR			typedef sbyte
 _TSCHAR			typedef sbyte
 _TUCHAR			typedef byte
@@ -1356,7 +1356,7 @@ _TINT			typedef sdword
 endif
 
 ifndef _TCHAR_DEFINED
-_TCHAR_DEFINED equ <>
+define _TCHAR_DEFINED
 if NOT __STDC__
 TCHAR			typedef sbyte
 endif

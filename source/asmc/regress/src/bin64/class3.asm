@@ -8,9 +8,9 @@ endif
 
     option win64:3
 
-    ; .class name [ : args ] [ : public class ]
+    ; .class name [ : public class ]
 
-.class a : byte
+.class a ; : byte -- v2.33.05: error
     A    dd ?
     GetA proc
 .ends

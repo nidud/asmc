@@ -1,6 +1,6 @@
 include winapifamily.inc
 ifndef _AVRT_
-_AVRT_ equ <>
+define _AVRT_
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

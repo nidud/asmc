@@ -1,5 +1,5 @@
 ifndef _NLDEF_
-_NLDEF_ equ <>
+define _NLDEF_
 
 include winapifamily.inc
 

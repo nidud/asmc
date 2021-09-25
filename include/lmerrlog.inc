@@ -1,5 +1,5 @@
 ifndef _LMERRLOG_
-_LMERRLOG_ equ <>
+define _LMERRLOG_
 
 ERROR_LOG		STRUC
 el_len			dd ?
@@ -18,7 +18,7 @@ LPERROR_LOG		typedef ptr ERROR_LOG
 REVISED_ERROR_LOG_STRUCT equ 1
 
 ifndef _LMHLOGDEFINED_
-_LMHLOGDEFINED_ equ <>
+define _LMHLOGDEFINED_
 
 HLOG			STRUC
 time			dd ?

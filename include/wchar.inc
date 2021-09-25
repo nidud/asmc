@@ -211,7 +211,7 @@ endif
 
 ifndef _WCTYPE_DEFINED
 ifndef _WCTYPE_INLINE_DEFINED
-_WCTYPE_INLINE_DEFINED equ <>
+define _WCTYPE_INLINE_DEFINED
 
 iswalpha macro _c
 	exitm<iswctype(_c,_APHA)>
@@ -333,7 +333,7 @@ define _STAT_DEFINED
 endif
 
 ifndef _WSTAT_DEFINED
-_WSTAT_DEFINED	equ <>
+define _WSTAT_DEFINED
 _wstatproto	proto __cdecl :ptr wchar_t, :ptr _STAT
 if _INTEGRAL_MAX_BITS GE 64
 _wstati64	proto __cdecl :ptr wchar_t, :ptr _stati64
@@ -402,7 +402,7 @@ _WSTDIO_DEFINED equ 1
 endif
 
 ifndef _WSTDLIB_DEFINED
-_WSTDLIB_DEFINED equ <>
+define _WSTDLIB_DEFINED
 
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
 _ltow		proto __cdecl :LONG, :ptr wchar_t, :SINT
@@ -487,7 +487,7 @@ _WSTRING_DEFINED equ 1
 endif
 
 ifndef _TM_DEFINED
-_TM_DEFINED equ <>
+define _TM_DEFINED
 tm		STRUC
 tm_sec		SINT ?
 tm_min		SINT ?

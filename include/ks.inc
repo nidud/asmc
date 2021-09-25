@@ -1,5 +1,5 @@
 ifndef _KS_
-_KS_ equ <>
+define _KS_
 
 ifdef __TCS__
 _KS_NO_ANONYMOUS_STRUCTURES_ equ 1

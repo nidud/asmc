@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_INTERNAL_SECURECRT
-_INC_INTERNAL_SECURECRT equ <>
+define _INC_INTERNAL_SECURECRT
 
 include internal.inc
 

@@ -3,7 +3,7 @@ ifdef _M_CEE_PURE
 endif
 
 ifndef _INC_COMIP
-_INC_COMIP equ <>
+define _INC_COMIP
 
 include Ole2.inc
 include comutil.inc

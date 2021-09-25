@@ -1,5 +1,5 @@
 ifndef _STDINT
-_STDINT equ <>
+define _STDINT
 .pragma list(push, 0)
 include vcruntime.inc
 

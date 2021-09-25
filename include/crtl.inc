@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef __CRTL_INC
-__CRTL_INC equ <>
+define __CRTL_INC
 
 ifndef __LIBC_INC
  include libc.inc

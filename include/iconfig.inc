@@ -1,5 +1,5 @@
 ifndef __ICONFIG_INC
-__ICONFIG_INC equ <>
+define __ICONFIG_INC
 
 include crtdefs.inc
 

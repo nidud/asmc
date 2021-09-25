@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINNETWK_
-_WINNETWK_ equ <>
+define _WINNETWK_
 .pragma list(push, 0)
 
 .pragma comment(lib, mpr)

@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __DIRECTXCOLORS_INC
-__DIRECTXCOLORS_INC equ <>
+define __DIRECTXCOLORS_INC
 include DirectXMath.inc
 
 externdef RGBA_AliceBlue	:XMVECTORF32

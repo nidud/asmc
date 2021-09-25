@@ -1,5 +1,5 @@
 ifndef _INCLUDED_AMM
-_INCLUDED_AMM equ <>
+define _INCLUDED_AMM
 .pragma list(push, 0)
 
 ; Definitions for AMD-specific intrinsics

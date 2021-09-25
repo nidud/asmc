@@ -11,47 +11,11 @@ include iconfig.inc
 
 ICMAXLINE equ 256
 
-    .data
-     vtable IConfigVtbl {
-        IConfig_Release,
-        IConfig_Read,
-        IConfig_Write,
-        IConfig_Find,
-        IConfig_GetEntry,
-        IConfig_Create,
-        IConfig_Delete,
-        IConfig_Unlink
-        }
     .code
 
     option procalign:8
 
     assume rcx:config_t
-
-IConfig::IConfig proc
-
-    .return .if !malloc(IConfig)
-
-    mov rcx,rax
-    mov rdx,this
-    .if rdx
-        mov [rdx],rax
-    .endif
-
-    lea rax,vtable
-    mov [rcx].lpVtbl,rax
-
-    xor eax,eax
-    mov [rcx].next,rax
-    mov [rcx].name,rax
-    mov [rcx].list,rax
-    mov [rcx].type,eax
-
-    mov rax,rcx
-    ret
-
-IConfig::IConfig endp
-
     assume rbx:config_t
 
 IConfig::Release proc uses rbx
@@ -340,13 +304,25 @@ IConfig::Delete endp
 
 IConfig::Unlink proc Parent:config_t
 
-    mov rax,[rcx].next
-    mov [rdx].IConfig.next,rax
+    mov [rdx].IConfig.next,[rcx].next
     xor eax,eax
     mov [rcx].next,rax
     [rcx].Release()
     ret
 
 IConfig::Unlink endp
+
+
+IConfig::IConfig proc
+
+    @ComAlloc(IConfig)
+
+    mov rdx,this
+    .if rdx
+        mov [rdx],rax
+    .endif
+    ret
+
+IConfig::IConfig endp
 
     end

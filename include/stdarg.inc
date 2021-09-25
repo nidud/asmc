@@ -1,5 +1,5 @@
 ifndef __STDARG_INC
-__STDARG_INC equ <>
+define __STDARG_INC
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

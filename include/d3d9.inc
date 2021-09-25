@@ -1,5 +1,5 @@
 ifndef _D3D9_H_
-_D3D9_H_ equ <>
+define _D3D9_H_
 .pragma list(push, 0)
 
 ifndef DIRECT3D_VERSION

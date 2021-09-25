@@ -1,5 +1,5 @@
 ifndef _LMSTATS_
-_LMSTATS_ equ <>
+define _LMSTATS_
 
 include lmcons.inc
 

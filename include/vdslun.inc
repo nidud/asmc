@@ -13,7 +13,7 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __vdslun_h__
-__vdslun_h__ equ <>
+define __vdslun_h__
 
 include oaidl.inc
 include ocidl.inc

@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _LZEXPAND_
-_LZEXPAND_ equ <>
+define _LZEXPAND_
 
 LZERROR_BADINHANDLE	equ -1
 LZERROR_BADOUTHANDLE	equ -2

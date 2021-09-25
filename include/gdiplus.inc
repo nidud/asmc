@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _GDIPLUS_H
-_GDIPLUS_H equ <>
+define _GDIPLUS_H
 include windef.inc
 
 INT16           typedef sword

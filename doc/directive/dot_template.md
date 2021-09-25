@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .TEMPLATE
 
-.TEMPLATE _name_ [[ : public _class_ ]]
+.TEMPLATE [[ <_vector_[, _type_]> ]] _name_ [[ : public _class_ ]]
 
 Declares a structure type for a Asmc class interface without a _vtable_ pointer.
 

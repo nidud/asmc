@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_STDDEF
-_INC_STDDEF equ <>
+define _INC_STDDEF
 
 include crtdefs.inc
 
@@ -9,7 +9,7 @@ NULL equ 0
 endif
 
 ifndef _CRT_ERRNO_DEFINED
-_CRT_ERRNO_DEFINED equ <>
+define _CRT_ERRNO_DEFINED
 _errno		proto __cdecl
 _set_errno	proto __cdecl :int_t
 _get_errno	proto __cdecl :ptr int_t

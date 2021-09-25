@@ -1,5 +1,5 @@
 ifndef __ATLTRACE_H__
-__ATLTRACE_H__ equ <>
+define __ATLTRACE_H__
 
 include atldef.inc
 include atlconv.inc
@@ -116,8 +116,8 @@ AtlTrace        equ <AtlTraceA>
 endif
 
 ifndef ATLTRACE
-ATLTRACE  equ <>
-ATLTRACE2 equ <>
+define ATLTRACE
+define ATLTRACE2
 endif
 
 ATLTRACENOTIMPL macro funcname

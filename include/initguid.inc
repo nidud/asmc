@@ -1,3 +1,3 @@
-INITGUID equ <>
+define INITGUID
 include guiddef.inc
 

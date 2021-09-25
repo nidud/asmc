@@ -1,5 +1,5 @@
 ifndef _LMAT_
-_LMAT_ equ <>
+define _LMAT_
 
 JOB_RUN_PERIODICALLY	equ 0x01
 JOB_EXEC_ERROR		equ 0x02

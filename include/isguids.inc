@@ -1,5 +1,5 @@
 ifndef _ISGUIDS_H_
-_ISGUIDS_H_ equ <>
+define _ISGUIDS_H_
 .pragma list(push, 0)
 
 DEFINE_GUID(CLSID_InternetShortcut,       0xFBF23B40, 0xE3F0, 0x101B, 0x84, 0x88, 0x00, 0xAA, 0x00, 0x3E, 0x56, 0xF8)

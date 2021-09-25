@@ -1,6 +1,6 @@
 include d3dx9.inc
 ifndef __D3DX9SHAPE_H__
-__D3DX9SHAPE_H__ equ <>
+define __D3DX9SHAPE_H__
 
 ;HRESULT
 D3DXCreateBox proto WINAPI \

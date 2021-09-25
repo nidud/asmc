@@ -4,7 +4,7 @@ define __LIBC_INC
 ; Master include file for the Asmc RTL library.
 ;
 define __STDC__
-define __LIBC__ 233
+define __LIBC__ 232
 ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
 .err <incorrect version. Use the header that matches with the Asmc Assembler.>
@@ -215,7 +215,7 @@ size_t typedef SIZE_T
 assert_exit proto
 
 ifndef _CALLBACK_DEFINED
-_CALLBACK_DEFINED equ <>
+define _CALLBACK_DEFINED
 CALLBACKC macro id, arguments:VARARG
     ?&id& typedef proto __cdecl &arguments
     exitm <id typedef ptr ?&id&>

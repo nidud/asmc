@@ -1,5 +1,5 @@
 ifndef _MSWSOCK_
-_MSWSOCK_ equ <>
+define _MSWSOCK_
 ifndef __LIBC_INC
  include libc.inc
 endif

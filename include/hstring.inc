@@ -13,7 +13,7 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __hstring_h__
-__hstring_h__ equ <>
+define __hstring_h__
 
 include wtypes.inc
 

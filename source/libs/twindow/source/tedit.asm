@@ -7,38 +7,47 @@
 include twindow.inc
 include malloc.inc
 
-    .data
     .code
 
     assume rcx:tedit_t
 
 TEdit::IsSelected proc
+
     mov eax,[rcx].clip_eo
     sub eax,[rcx].clip_so
     ret
+
 TEdit::IsSelected endp
 
+
 TEdit::ClipSet proc
+
     mov eax,[rcx].boffs
     add eax,[rcx].xoffs
     mov [rcx].clip_so,eax
     mov [rcx].clip_eo,eax
     ret
+
 TEdit::ClipSet endp
+
 
 TEdit::ClipDel proc
     ret
 TEdit::ClipDel endp
 
+
 TEdit::ClipCut proc x:uint_t
     ret
 TEdit::ClipCut endp
+
 
 TEdit::ClipPaste proc
     ret
 TEdit::ClipPaste endp
 
+
 TEdit::SetWinPos proc dialog:trect_t, item:trect_t
+
     mov     eax,[rdx]
     add     eax,[r8]
     movzx   edx,ah
@@ -46,10 +55,14 @@ TEdit::SetWinPos proc dialog:trect_t, item:trect_t
     mov     [rcx].xpos,eax
     mov     [rcx].ypos,edx
     ret
+
 TEdit::SetWinPos endp
 
+
 TEdit::SetCursor proc
-    .new TCursor()
+
+   .new TCursor()
+
     mov rcx,this
     mov edx,[rcx].xpos
     add edx,[rcx].xoffs
@@ -61,11 +74,14 @@ TEdit::SetCursor proc
     [rax].TCursor.Release()
     mov rcx,this
     ret
+
 TEdit::SetCursor endp
+
 
     assume rbx:tedit_t
 
 TEdit::GetLine proc uses rdi rbx
+
     mov rax,[rcx].base
     .if rax
         mov     rbx,rcx
@@ -87,45 +103,24 @@ TEdit::GetLine proc uses rdi rbx
         mov     rax,[rcx].base
     .endif
     ret
+
 TEdit::GetLine endp
 
+
 TEdit::Release proc
+
     free(rcx)
     ret
+
 TEdit::Release endp
 
-    .data
-    vtable TEditVtbl {
-        TEdit_Release,
-        TEdit_IsSelected,
-        TEdit_ClipSet,
-        TEdit_ClipDel,
-        TEdit_ClipCut,
-        TEdit_ClipPaste,
-        TEdit_GetLine,
-        TEdit_SetWinPos,
-        TEdit_SetCursor
-    }
-    .code
 
-TEdit::TEdit proc uses rsi rdi
+TEdit::TEdit proc
 
-    .if rcx == NULL
-
-        .return .if !malloc( TEdit )
-
-        mov rcx,rax
+    mov rax,rcx
+    .if rax == NULL
+        @ComAlloc(TEdit)
     .endif
-
-    xor eax,eax
-    mov rdx,rcx
-    mov rdi,rcx
-    mov ecx,TEdit/8
-    rep stosq
-    mov rcx,rdx
-    lea rax,vtable
-    mov [rcx],rax
-    mov rax,rdx
     ret
 
 TEdit::TEdit endp

@@ -1,5 +1,5 @@
 ifndef __QOS_H_
-__QOS_H_ equ <>
+define __QOS_H_
 ifndef __LIBC_INC
  include libc.inc
 endif

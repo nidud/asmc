@@ -1,5 +1,5 @@
 ifndef _INC_UIAUTOMATIONCOREAPI
-_INC_UIAUTOMATIONCOREAPI equ <>
+define _INC_UIAUTOMATIONCOREAPI
 
 include winapifamily.inc
 

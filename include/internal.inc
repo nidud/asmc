@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_INTERNAL
-_INC_INTERNAL equ <>
+define _INC_INTERNAL
 
 include crtdefs.inc
 include limits.inc
@@ -235,7 +235,7 @@ externdef		__favor:int_t
 endif
 
 ifndef _FILE_DEFINED
-_FILE_DEFINED		equ <>
+define _FILE_DEFINED
 _iobuf			STRUC
 _ptr			string_t ?
 _cnt			int_t ?
@@ -411,13 +411,13 @@ _wgetpath		proto :ptr wchar_t, :ptr wchar_t, :size_t
 externdef		_dowildcard:int_t
 
 ifndef _PNH_DEFINED
-_PNH_DEFINED equ <>
+define _PNH_DEFINED
 CALLBACKC(_PNH, :size_t)
 endif
 
 ifdef _M_CEE
 ifndef __MPNH_DEFINED
-__MPNH_DEFINED equ <>
+define __MPNH_DEFINED
 CALLBACKC(__MPNH, :size_t)
 endif
 endif
@@ -732,7 +732,7 @@ ifndef _SECURECRT_FILL_BUFFER_THRESHOLD
 ifdef _DEBUG
 _SECURECRT_FILL_BUFFER_THRESHOLD equ <__crtDebugFillThreshold>
 else
-_SECURECRT_FILL_BUFFER_THRESHOLD equ <>
+define _SECURECRT_FILL_BUFFER_THRESHOLD
 endif
 endif
 
@@ -778,9 +778,9 @@ _SECURECRT__FILL_BYTE macro _Position
 endif
 
 ifdef __cplusplus
-_REDIRECT_TO_L_VERSION_FUNC_PROLOGUE equ <>
+define _REDIRECT_TO_L_VERSION_FUNC_PROLOGUE
 else
-_REDIRECT_TO_L_VERSION_FUNC_PROLOGUE equ <>
+define _REDIRECT_TO_L_VERSION_FUNC_PROLOGUE
 endif
 
 _REDIRECT_TO_L_VERSION_1 macro _ReturnType, _FunctionName, _Type1
@@ -812,8 +812,8 @@ EncodePointer	proto WINAPI :ptr
 DecodePointer	proto WINAPI :ptr
 
 
-_BEGIN_SECURE_CRT_DEPRECATION_DISABLE equ <>
-_END_SECURE_CRT_DEPRECATION_DISABLE equ <>
+define _BEGIN_SECURE_CRT_DEPRECATION_DISABLE
+define _END_SECURE_CRT_DEPRECATION_DISABLE
 
 _ERRCHECK macro e
 	exitm<>

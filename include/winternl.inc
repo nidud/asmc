@@ -1,5 +1,5 @@
 ifndef _WINTERNL_
-_WINTERNL_ equ <>
+define _WINTERNL_
 .pragma list(push, 0)
 
 if (_WIN32_WINNT ge 0x0500)

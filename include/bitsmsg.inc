@@ -1,5 +1,5 @@
 ifndef _BGCPYMSG_
-_BGCPYMSG_ equ <>
+define _BGCPYMSG_
 
 BG_E_NOT_FOUND          equ 0x80200001
 BG_E_INVALID_STATE      equ 0x80200002

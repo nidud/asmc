@@ -1,5 +1,5 @@
 ifndef VIRT_DISK_API_DEF
-VIRT_DISK_API_DEF equ <>
+define VIRT_DISK_API_DEF
 
 .pragma comment(lib, virtdisk)
 

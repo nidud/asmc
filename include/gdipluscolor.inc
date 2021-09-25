@@ -1,5 +1,5 @@
 ifndef __GDIPLUS_COLOR_H
-__GDIPLUS_COLOR_H equ <>
+define __GDIPLUS_COLOR_H
 
 ;;----------------------------------------------------------------------------
 ;; Color mode

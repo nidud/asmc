@@ -1,5 +1,5 @@
 ifndef _D3DCAPS_H
-_D3DCAPS_H equ <>
+define _D3DCAPS_H
 
 include ddraw.inc
 

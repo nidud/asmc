@@ -6,7 +6,7 @@ __except:
     .if eax
         lea rax,@F
         mov [r8].CONTEXT._Rip,rax
-        xor rax, rax
+        xor eax,eax
         retn
         @@:
         mov eax,1

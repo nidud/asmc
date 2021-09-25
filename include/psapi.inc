@@ -1,5 +1,5 @@
 ifndef _PSAPI_H_
-_PSAPI_H_ equ <>
+define _PSAPI_H_
 
 include winapifamily.inc
 

@@ -3,7 +3,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 ifndef INCLUDED_TYPES_FCI_FDI
-INCLUDED_TYPES_FCI_FDI	equ <>
+define INCLUDED_TYPES_FCI_FDI
 
 ifndef DIAMONDAPI
 DIAMONDAPI equ <__cdecl>
@@ -110,7 +110,7 @@ endif ;; NOT INCLUDED_TYPES_FCI_FDI
 include basetsd.inc
 
 ifndef INCLUDED_FDI
-INCLUDED_FDI equ <>
+define INCLUDED_FDI
 
 include specstrings.inc
 

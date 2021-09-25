@@ -1,5 +1,5 @@
 ifndef _MFERROR_H
-_MFERROR_H equ <>
+define _MFERROR_H
 
 STATUS_SEVERITY macro hr
 	exitm<(((hr) SHR 30) AND 0x3)>

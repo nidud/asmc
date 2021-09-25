@@ -1,6 +1,5 @@
 ifndef _D2D1_3_H_
-_D2D1_3_H_ equ <>
-
+define _D2D1_3_H_
 ifndef _D2D1_2_H_
 include d2d1_2.inc
 endif
@@ -188,28 +187,6 @@ externdef		IID_ID2D1CommandSink5:IID
 externdef		IID_ID2D1DeviceContext6:IID
 externdef		IID_ID2D1Device6:IID
 externdef		IID_ID2D1Factory7:IID
-
-
-ifndef D2D_USE_C_DEFINITIONS
-
-if NTDDI_VERSION GE NTDDI_WIN10_TH2
-endif
-if NTDDI_VERSION GE NTDDI_WIN10_RS1
-endif
-if NTDDI_VERSION GE NTDDI_WIN10_RS2
-endif
-if NTDDI_VERSION GE NTDDI_WIN10_RS3
-endif
-
-endif
-
-
-ifdef D2D_USE_C_DEFINITIONS
-endif
-
-if NTDDI_VERSION GE NTDDI_WINTHRESHOLD
-endif
-
 
 include d2d1_3helper.inc
 endif

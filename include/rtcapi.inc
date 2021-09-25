@@ -1,5 +1,5 @@
 ifndef _INC_RTCAPI
-_INC_RTCAPI equ <>
+define _INC_RTCAPI
 
 if defined(_RTC) or defined(_CRTBLD) eq 0
 
@@ -26,7 +26,7 @@ _RTC_ERRTYPE_IGNORE         equ -1
 _RTC_ERRTYPE_ASK            equ -2
 
 ifndef _WCHAR_T_DEFINED
-_WCHAR_T_DEFINED equ <>
+define _WCHAR_T_DEFINED
 wchar_t typedef word
 endif
 

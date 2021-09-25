@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __IO_INC
-__IO_INC equ <>
+define __IO_INC
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -48,7 +48,7 @@ LPFILETIME	typedef ptr FILETIME
 endif
 
 ifndef _TIME_T_DEFINED
-_TIME_T_DEFINED equ <>
+define _TIME_T_DEFINED
 ifdef _WIN64
 time_t		typedef sqword
 else
@@ -68,7 +68,7 @@ name		db 260 dup(?)
 _finddata_t	ENDS
 
 ifndef _WFINDDATA_T_DEFINED
-_WFINDDATA_T_DEFINED equ <>
+define _WFINDDATA_T_DEFINED
 _wfinddata_t	STRUC
 attrib		dd ?
 time_create	time_t ?	;; -1 for FAT file systems
@@ -134,7 +134,7 @@ remove		proto __cdecl :LPSTR
 rename		proto __cdecl :LPSTR, :LPSTR
 
 ifndef _WIO_DEFINED
-_WIO_DEFINED equ <>
+define _WIO_DEFINED
 _waccess	proto __cdecl :ptr wchar_t, :SINT
 _wchmod		proto __cdecl :ptr wchar_t, :SINT
 _wcreat		proto __cdecl :ptr wchar_t, :SINT

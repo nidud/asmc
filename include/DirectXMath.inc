@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef __DIRECTXMATH_INC
-__DIRECTXMATH_INC equ <>
+define __DIRECTXMATH_INC
 
 include libc.inc
 

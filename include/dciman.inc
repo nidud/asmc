@@ -1,5 +1,5 @@
 ifndef _INC_DCIMAN
-_INC_DCIMAN equ <>
+define _INC_DCIMAN
 .pragma list(push, 0)
 
 include dciddi.inc

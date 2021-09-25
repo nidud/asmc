@@ -1,5 +1,5 @@
 ifndef _ADTGEN_H
-_ADTGEN_H equ <>
+define _ADTGEN_H
 .pragma list(push, 0)
 
 AUDIT_TYPE_LEGACY	equ 1

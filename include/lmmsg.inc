@@ -1,5 +1,5 @@
 ifndef _LMMSG_
-_LMMSG_ equ <>
+define _LMMSG_
 
 ;NET_API_STATUS
 NetMessageNameAdd proto WINAPI \

@@ -1,5 +1,5 @@
 ifndef __AUDIOSESSIONTYPES__
-__AUDIOSESSIONTYPES__ equ <>
+define __AUDIOSESSIONTYPES__
 MIDL_SIZE_IS macro x
 	 exitm<1>
 	 endm

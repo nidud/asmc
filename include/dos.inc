@@ -1,12 +1,12 @@
 ifndef _INC_DOS
-_INC_DOS equ <>
+define _INC_DOS
 
 include crtdefs.inc
 
 .pragma pack(push, _CRT_PACKING)
 
 ifndef _DISKFREE_T_DEFINED
-_DISKFREE_T_DEFINED equ <>
+define _DISKFREE_T_DEFINED
 _diskfree_t             struct
 total_clusters          dd ?
 avail_clusters          dd ?
@@ -25,7 +25,7 @@ _A_ARCH                 equ 0x20
 ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 
 ifndef _GETDISKFREE_DEFINED
-_GETDISKFREE_DEFINED equ <>
+define _GETDISKFREE_DEFINED
 _getdiskfree proto __cdecl :uint_t, :ptr _diskfree_t
 endif
 endif

@@ -1,5 +1,5 @@
 ifndef _D2D1_HELPER_H_
-_D2D1_HELPER_H_ equ <>
+define _D2D1_HELPER_H_
 
 ifndef _D2D1_H_
 include d2d1.inc

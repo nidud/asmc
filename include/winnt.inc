@@ -2312,7 +2312,7 @@ endif
 
 
 ifndef _LDT_ENTRY_DEFINED
-_LDT_ENTRY_DEFINED	equ <>
+define _LDT_ENTRY_DEFINED
 
 LDT_ENTRY_R0 RECORD \
 	    ldt_BaseHi:		8,
@@ -7585,7 +7585,7 @@ COMPRESSION_ENGINE_HIBER	equ 0x0200
 
 ifdef _DBG_MEMCPY_INLINE_
 if _DBG_MEMCPY_INLINE_ and not defined(MIDL_PASS) and not defined(_MEMCPY_INLINE_) and not defined(_CRTBLD)
-_MEMCPY_INLINE_ equ <>
+define _MEMCPY_INLINE_
 ;FORCEINLINE
 ;PVOID
 memcpy_inline macro dst, src, _size
@@ -8539,7 +8539,7 @@ TapeDriveMediaLifeExpired	equ 12
 TapeDriveSnappedTape		equ 13
 
 ifndef _NTTMAPI_
-_NTTMAPI_ equ <>
+define _NTTMAPI_
 
 include ktmtypes.inc
 

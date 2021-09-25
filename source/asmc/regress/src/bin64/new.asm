@@ -7,7 +7,7 @@ ifndef __ASMC64__
 endif
     .code
 
-.class T :word
+.class T
 .ends
 .class M
 .ends

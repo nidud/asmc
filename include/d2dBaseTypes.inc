@@ -1,12 +1,12 @@
 ifndef _D2DBASETYPES_INCLUDED
-_D2DBASETYPES_INCLUDED equ <>
+define _D2DBASETYPES_INCLUDED
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 endif
 
 ifndef D3DCOLORVALUE_DEFINED
-D3DCOLORVALUE_DEFINED equ <>
+define D3DCOLORVALUE_DEFINED
 
 sc_redShift     equ 16
 sc_greenShift   equ 8

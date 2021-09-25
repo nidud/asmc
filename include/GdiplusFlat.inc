@@ -1,12 +1,9 @@
 ifndef _FLATAPI_H
-_FLATAPI_H equ <>
+define _FLATAPI_H
 
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-;WINGDIPAPI		 equ __stdcall
-;GDIPCONST		 equ <>
 
 ;GpStatus
 GdipCreatePath proto WINAPI \

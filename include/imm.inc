@@ -7,7 +7,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 ifndef _IMM_
-_IMM_ equ <>
+define _IMM_
 
 if (WINVER GE 0x40A)
 HIMC			typedef HANDLE

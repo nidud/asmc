@@ -1,5 +1,5 @@
 ifndef NETERR_INCLUDED
-NETERR_INCLUDED equ <>
+define NETERR_INCLUDED
 
 NERR_Success            equ 0
 

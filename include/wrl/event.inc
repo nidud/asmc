@@ -1,5 +1,5 @@
 ifndef _WRL_EVENT_H_
-_WRL_EVENT_H_ equ <>
+define _WRL_EVENT_H_
 
 include wrl\def.inc
 include wrl\internal.inc

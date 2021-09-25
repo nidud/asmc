@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINSOCK2API_
-_WINSOCK2API_ equ <>
+ _WINSOCK2API_ equ <>
 _WINSOCKAPI_  equ <>
 
 include winapifamily.inc

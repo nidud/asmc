@@ -1,5 +1,5 @@
 ifndef _WS2IPDEF_
-_WS2IPDEF_ equ <>
+define _WS2IPDEF_
 
 include winapifamily.inc
 include in6addr.inc

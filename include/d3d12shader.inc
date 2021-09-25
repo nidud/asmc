@@ -1,5 +1,5 @@
 ifndef __D3D12SHADER_H__
-__D3D12SHADER_H__ equ <>
+define __D3D12SHADER_H__
 
 include d3dcommon.inc
 

@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef _D2D1_1_H_
-_D2D1_1_H_ equ <>
+define _D2D1_1_H_
 
 ifndef _D2D1_H_
 include d2d1.inc

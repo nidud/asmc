@@ -1,6 +1,6 @@
 
 ifndef __EHASSERT_H
-__EHASSERT_H equ <>
+define __EHASSERT_H
 
 include windef.inc
 

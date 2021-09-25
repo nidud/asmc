@@ -8,7 +8,7 @@ include winerror.inc
 ;; Declare reference to errno
 
 ifndef _CRT_ERRNO_DEFINED
-_CRT_ERRNO_DEFINED equ <>
+define _CRT_ERRNO_DEFINED
 _errno		proto __cdecl
 if defined(_LINUX)
 __set_errno proto :int_t
@@ -85,7 +85,7 @@ ENOTEMPTY	equ 41
 
 ifndef RC_INVOKED
 ifndef _SECURECRT_ERRCODE_VALUES_DEFINED
-_SECURECRT_ERRCODE_VALUES_DEFINED equ <>
+define _SECURECRT_ERRCODE_VALUES_DEFINED
 EINVAL		equ 22
 ERANGE		equ 34
 EILSEQ		equ 42

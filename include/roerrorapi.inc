@@ -1,5 +1,5 @@
 ifndef _ROERROR_H
-_ROERROR_H equ <>
+define _ROERROR_H
 
 ifdef _CONTRACT_GEN
 include nt.inc

@@ -1,5 +1,5 @@
 ifndef _NTDEF_
-_NTDEF_ equ <>
+define _NTDEF_
 
 include ctype.inc
 include winapifamily.inc

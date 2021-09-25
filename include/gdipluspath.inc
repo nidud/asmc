@@ -1,5 +1,5 @@
 ifndef _GDIPLUSPATH_H
-_GDIPLUSPATH_H equ <>
+define _GDIPLUSPATH_H
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

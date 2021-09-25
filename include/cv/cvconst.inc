@@ -2,7 +2,7 @@
 ;; codeview constant definitions
 ;;
 ifndef _CVCONST_H_
-_CVCONST_H_ equ <>
+define _CVCONST_H_
 
 ;; Enumeration for function call type
 

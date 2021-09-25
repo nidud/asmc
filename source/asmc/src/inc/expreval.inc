@@ -101,6 +101,7 @@ mem_type	uchar_t ?
 scale		uchar_t ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
 Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
 flags		uchar_t ?	; bit-flag
+op		ptr opinfo ?
 sym		ptr asym ?	; label used
 mbr		ptr asym ?	; struct member
 type		ptr asym ?	; for DOT operator. Must be last (see TokenAssign)!

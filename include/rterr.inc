@@ -1,5 +1,5 @@
 ifndef _INC_RTERR
-_INC_RTERR equ <>
+define _INC_RTERR
 
 ifndef _CRTBLD
 .err <ERROR: Use of C runtime library internal header file.>

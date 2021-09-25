@@ -1,5 +1,5 @@
 ifndef __ATLSTDTHUNK_H__
-__ATLSTDTHUNK_H__ equ <>
+define __ATLSTDTHUNK_H__
 
 include atldef.inc
 

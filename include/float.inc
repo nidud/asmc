@@ -145,7 +145,7 @@ _fpreset	proto __cdecl
 ;;
 
 ifndef _SIGN_DEFINED
-_SIGN_DEFINED equ <>
+define _SIGN_DEFINED
 _copysign proto __cdecl _Number:double, _Sign:double
 _chgsign proto __cdecl _X:double
 endif

@@ -616,7 +616,7 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
             strcat( edi, "dword ptr " )
             strcpy( &l2, "mov dword ptr " )
             strcat( strcat( eax, name ), "[4], edx" )
-
+        .elseif ( [ecx].qualified_type.Ofssize == USE64 && flag & T_HLL_PROC )
         .elseif ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
             .if ( opndx.kind == EXPR_CONST )

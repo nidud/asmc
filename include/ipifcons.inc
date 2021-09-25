@@ -1,5 +1,5 @@
 ifndef __IPIFCONS_H__
-__IPIFCONS_H__ equ <>
+define __IPIFCONS_H__
 
 include winapifamily.inc
 

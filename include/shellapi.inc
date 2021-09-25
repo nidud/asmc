@@ -1,5 +1,5 @@
 ifndef __SHELLAPI_INC
-__SHELLAPI_INC equ <>
+define __SHELLAPI_INC
 
 ifndef __LIBC_INC
  include libc.inc
@@ -893,7 +893,7 @@ Shell_NotifyIconGetRect proto WINAPI \
 
 
 ifndef SHFILEINFO_DEFINED
-SHFILEINFO_DEFINED equ <>
+define SHFILEINFO_DEFINED
 
 
 

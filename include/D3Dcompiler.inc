@@ -1,5 +1,5 @@
 ifndef __D3DCOMPILER_H__
-__D3DCOMPILER_H__ equ <>
+define __D3DCOMPILER_H__
 .pragma list(push, 0)
 include d3d11shader.inc
 

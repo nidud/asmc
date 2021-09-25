@@ -1,5 +1,5 @@
 ifndef _WINCON_
-_WINCON_ equ <>
+define _WINCON_
 .pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc

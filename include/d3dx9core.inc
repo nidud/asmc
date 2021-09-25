@@ -1,6 +1,6 @@
 include d3dx9.inc
 ifndef _D3DX9CORE_H
-_D3DX9CORE_H equ <>
+define _D3DX9CORE_H
 
 D3DX_VERSION		equ 0x0902
 ifndef D3DX_SDK_VERSION

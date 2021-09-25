@@ -1,5 +1,5 @@
 ifndef _OLEAUTO_H_
-_OLEAUTO_H_ equ <>
+define _OLEAUTO_H_
 
 .pragma comment(lib, oleaut32)
 

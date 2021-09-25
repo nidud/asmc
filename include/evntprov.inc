@@ -1,5 +1,5 @@
 ifndef _EVNTPROV_H_
-_EVNTPROV_H_ equ <>
+define _EVNTPROV_H_
 
 include winapifamily.inc
 
@@ -56,7 +56,7 @@ PEVENT_DATA_DESCRIPTOR	typedef ptr EVENT_DATA_DESCRIPTOR
 
 
 ifndef EVENT_DESCRIPTOR_DEF
-EVENT_DESCRIPTOR_DEF equ <>
+define EVENT_DESCRIPTOR_DEF
 
 EVENT_DESCRIPTOR	STRUC
 Id			USHORT ?

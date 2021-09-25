@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __WINNLS_INC
-__WINNLS_INC equ <>
+define __WINNLS_INC
 
 ifndef __LIBC_INC
  include libc.inc

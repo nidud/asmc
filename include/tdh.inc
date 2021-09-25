@@ -1,5 +1,5 @@
 ifndef __TDH_H__
-__TDH_H__ equ <>
+define __TDH_H__
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

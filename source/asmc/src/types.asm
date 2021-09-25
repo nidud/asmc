@@ -407,6 +407,7 @@ endif
             mov eax,[esi]
             .if ( al == 0 )
                 mov [ebx].sym,edi
+                or  [edi].asym.flag2,S_CLASS
             .elseif ( eax == 'lbtV' && byte ptr [esi+4] == 0 )
                 mov ecx,[ebx].sym
                 or  [ecx].asym.flag2,S_VTABLE

@@ -1,5 +1,5 @@
 ifndef _PDH_H_
-_PDH_H_ equ <>
+define _PDH_H_
 include windows.inc
 include winperf.inc
 .pragma list(push, 0)

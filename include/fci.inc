@@ -2,7 +2,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 ifndef INCLUDED_TYPES_FCI_FDI
-INCLUDED_TYPES_FCI_FDI	equ <>
+define INCLUDED_TYPES_FCI_FDI
 .pragma list(push, 0)
 
 ifndef DIAMONDAPI
@@ -108,7 +108,7 @@ endif
 endif ;; NOT INCLUDED_TYPES_FCI_FDI
 
 ifndef INCLUDED_FCI
-INCLUDED_FCI equ <>
+define INCLUDED_FCI
 
 include specstrings.inc
 include basetsd.inc

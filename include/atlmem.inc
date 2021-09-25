@@ -1,9 +1,8 @@
 ifndef __ATLMEM_H__
-__ATLMEM_H__ equ <>
+define __ATLMEM_H__
 
 include atlcore.inc
 include limits.inc
-
 
 .pragma pack(push,_ATL_PACKING)
 
@@ -35,11 +34,6 @@ DEFINE_IIDX(IAtlMemMgr, "654F7EF5-CFDF-4df9-A450-6C6A13C622C0")
 	m_bOwnHeap BOOL ?
 
 	CWin32Heap	proc
-ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
-endif
-
-ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
-endif
 	.ENDS
 
 ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP

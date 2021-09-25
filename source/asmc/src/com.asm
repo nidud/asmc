@@ -17,13 +17,14 @@ ifdef USE_COMALLOC
 AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
 
   local q[256]:char_t
+  local i:int_t
 
     mov esi,sym
 
     .if ( [esi].asym.total_size )
 
-        .for ( edx = [esi].dsym.structinfo,
-               edi = [edx].struct_info.head : edi : edi = [edi].next )
+        .for ( i = 0, edx = [esi].dsym.structinfo,
+               edi = [edx].struct_info.head : edi : edi = [edi].next, i++ )
 
             .if ( [edi].type )
 
@@ -35,6 +36,7 @@ AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
                 .else
 
                     strcat( strcpy( &q, name ), "_" )
+
                     mov ebx,1
                     .if ( SymFind( strcat( eax, [edi].name ) ) )
                         .if ( [eax].asym.state == SYM_MACRO || [eax].asym.state == SYM_TMACRO )
@@ -45,7 +47,12 @@ AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
                         mov ebx,reg
                         dec ebx
                         AddLineQueueX( "lea %r, %s", ebx, &q )
-                        AddLineQueueX( "mov [%r].%sVtbl.%s, %r", reg, name, [edi].name, ebx )
+                        ;
+                        ; v2.33.05 - assign member by offset
+                        ;
+                        movzx eax,ModuleInfo.Ofssize
+                        shl eax,2
+                        AddLineQueueX( "mov [%r+%d*%d], %r", reg, i, eax, ebx )
                     .endif
                 .endif
             .endif

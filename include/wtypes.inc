@@ -106,7 +106,7 @@ LPFILETIME	typedef ptr FILETIME
 endif
 
 ifndef _SYSTEMTIME_
-_SYSTEMTIME_ equ <>
+define _SYSTEMTIME_
 SYSTEMTIME	STRUC
 wYear		dw ?
 wMonth		dw ?
@@ -122,7 +122,7 @@ LPSYSTEMTIME	typedef ptr SYSTEMTIME
 endif
 
 ifndef _SECURITY_ATTRIBUTES_
-_SECURITY_ATTRIBUTES_ equ <>
+define _SECURITY_ATTRIBUTES_
 SECURITY_ATTRIBUTES	STRUC
 nLength			dd ?
 lpSecurityDescriptor	PVOID ?
@@ -185,14 +185,14 @@ SCODE			typedef LONG
 LPSCODE			typedef ptr LONG
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ <>
+define _HRESULT_DEFINED
 HRESULT		typedef LONG
 endif
 
 PSCODE		typedef ptr SCODE
 
 ifndef GUID_DEFINED
-GUID_DEFINED equ <>
+define GUID_DEFINED
 GUID		STRUC
 Data1		dd ?
 Data2		dw ?
@@ -202,13 +202,13 @@ GUID		ENDS
 endif
 
 ifndef __LPGUID_DEFINED__
-__LPGUID_DEFINED__ equ <>
+define __LPGUID_DEFINED__
 LPGUID		typedef ptr GUID
 endif
 
 ifndef __OBJECTID_DEFINED
-__OBJECTID_DEFINED equ <>
-_OBJECTID_DEFINED  equ <>
+define __OBJECTID_DEFINED
+define _OBJECTID_DEFINED
 OBJECTID	STRUC
 Lineage		GUID <>
 Uniquifier	dd ?
@@ -216,7 +216,7 @@ OBJECTID	ENDS
 endif
 
 ifndef __IID_DEFINED__
-__IID_DEFINED__ equ <>
+define __IID_DEFINED__
 IID		typedef GUID
 LPIID		typedef ptr IID
 IID_NULL	equ <GUID_NULL>
@@ -328,7 +328,7 @@ STATFLAG_NOOPEN		equ 2
 HCONTEXT	typedef PVOID
 
 ifndef _LCID_DEFINED
-_LCID_DEFINED equ <>
+define _LCID_DEFINED
 LCID		typedef DWORD
 endif
 
@@ -612,8 +612,8 @@ _VARIANT_BOOL	equ <>;/##/
 endif
 BOOLEAN		typedef boolean
 
-ifndef _tagBSTRBLOB_DEFINED
-_tagBSTRBLOB_DEFINED  equ <>
+ifndef _BSTRBLOB_DEFINED
+define _BSTRBLOB_DEFINED
 BSTRBLOB	STRUC
 cbSize		ULONG ?
 pData		LPBYTE ?
@@ -625,9 +625,9 @@ VARIANT_TRUE	equ 0xffff
 VARIANT_FALSE	equ 0
 
 ifndef _tagBLOB_DEFINED
-_tagBLOB_DEFINED equ <>
-_BLOB_DEFINED	 equ <>
-_LPBLOB_DEFINED	 equ <>
+define _tagBLOB_DEFINED
+define _BLOB_DEFINED
+define _LPBLOB_DEFINED
 BLOB		STRUC
 cbSize		ULONG ?
 pBlobData	LPBYTE ?
@@ -702,7 +702,7 @@ VT_TYPEMASK		equ 0xfff
 PROPID			typedef ULONG
 
 ifndef PROPERTYKEY_DEFINED
-PROPERTYKEY_DEFINED equ <>
+define PROPERTYKEY_DEFINED
 PROPERTYKEY	STRUC
 fmtid		GUID <>
 pid		DWORD ?
@@ -718,7 +718,7 @@ PSID_IDENTIFIER_AUTHORITY typedef ptr SID_IDENTIFIER_AUTHORITY
 endif
 
 ifndef SID_DEFINED
-SID_DEFINED equ <>
+define SID_DEFINED
 SID			STRUC
 Revision		dw ?
 SubAuthorityCount	dw ?

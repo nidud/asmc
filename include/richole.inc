@@ -1,5 +1,5 @@
 ifndef _RICHOLE_
-_RICHOLE_ equ <>
+define _RICHOLE_
 
 REOBJECT		STRUC
 cbStruct		dd ?

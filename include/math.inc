@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_MATH
-_INC_MATH equ <>
+define _INC_MATH
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -21,7 +21,7 @@ arg1            double ?    ; first argument to function
 arg2            double ?    ; second argument (if any) to function
 retval          double ?    ; value to be returned by function
 _exception      ends
-_EXCEPTION_DEFINED equ <>
+define _EXCEPTION_DEFINED
 endif
 
 ifndef _COMPLEX_DEFINED
@@ -32,7 +32,7 @@ _complex        ends
 ifndef __STDC__
 complex         equ <_complex>
 endif
-_COMPLEX_DEFINED equ <>
+define _COMPLEX_DEFINED
 endif
 endif  ; __assembler
 
@@ -58,7 +58,7 @@ HUGE_VAL        equ <_HUGE>
 
 ifndef __assembler  ; Protect from assembler
 ifndef _CRT_ABS_DEFINED
-_CRT_ABS_DEFINED equ <>
+define _CRT_ABS_DEFINED
 abs     proto __cdecl _X:SINT
 labs    proto __cdecl _X:sdword
 endif
@@ -70,7 +70,7 @@ atan2   proto __cdecl _Y:double, _X:double
 ifndef _SIGN_DEFINED
 copysign proto __cdecl _Number:double, _Sign:double
 _chgsign proto __cdecl _X:double
-_SIGN_DEFINED equ <>
+define _SIGN_DEFINED
 endif
 cos     proto __cdecl _X:double
 cosh    proto __cdecl _X:double
@@ -88,7 +88,7 @@ tanh    proto __cdecl _X:double
 sqrt    proto __cdecl _X:double
 
 ifndef _CRT_ATOF_DEFINED
-_CRT_ATOF_DEFINED equ <>
+define _CRT_ATOF_DEFINED
 atof    proto __cdecl _String:LPSTR
 ;_atof_l proto __cdecl _String:LPSTR, _Locale:SINT;_locale_t
 endif
@@ -103,7 +103,7 @@ _j1     proto __cdecl _X:double
 _jn     proto __cdecl _X:SINT, _Y:double
 ldexp   proto __cdecl _X:double, _Y:SINT
 ifndef _CRT_MATHERR_DEFINED
-_CRT_MATHERR_DEFINED equ <>
+define _CRT_MATHERR_DEFINED
 _matherr proto __cdecl _Except:ptr _exception
 endif
 modf    proto __cdecl _X:double, _Y:ptr double
@@ -201,7 +201,7 @@ endif
 
 ifdef _USE_MATH_DEFINES
 ifndef _MATH_DEFINES_DEFINED
-_MATH_DEFINES_DEFINED equ <>
+define _MATH_DEFINES_DEFINED
 M_E             equ 2.71828182845904523536
 M_LOG2E         equ 1.44269504088896340736
 M_LOG10E        equ 0.434294481903251827651

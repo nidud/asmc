@@ -1,5 +1,5 @@
 ifndef __ATLDBCLI_H__
-__ATLDBCLI_H__ equ <>
+define __ATLDBCLI_H__
 
 include atldef.inc
 

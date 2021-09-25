@@ -1,5 +1,5 @@
 ifndef _GDIPLUSGPSTUBS_H
-_GDIPLUSGPSTUBS_H equ <>
+define _GDIPLUSGPSTUBS_H
 
 GpStatus            typedef Status
 GpFillMode          typedef FillMode

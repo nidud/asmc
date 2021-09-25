@@ -1,5 +1,5 @@
 ifndef _VCRUNTIME_H
-_VCRUNTIME_H equ <>
+define _VCRUNTIME_H
 .pragma list(push, 0)
 include sal.inc
 include vadefs.inc
@@ -12,7 +12,7 @@ _CRT_END_C_HEADER macro
     endm
 
 ifndef _HAS_EXCEPTIONS
-_HAS_EXCEPTIONS equ <>
+define _HAS_EXCEPTIONS
 endif
 
 _CRT_STRINGIZE_ macro x

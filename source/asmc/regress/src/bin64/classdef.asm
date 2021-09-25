@@ -9,7 +9,7 @@ endif
 
     option win64:2
 
-.class Class :byte, :ptr
+.class Class
 
 ; 00 lpVtbl ptr ClassVtbl ?
 

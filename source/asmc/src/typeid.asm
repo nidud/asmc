@@ -19,7 +19,9 @@ GetType proc uses esi edi ebx buffer:string_t, opnd:ptr expr,
 
     mov edi,buffer
     .if ( string )
-        strcpy(edi, string)
+        .if ( edi != string )
+            strcpy(edi, string)
+        .endif
         add edi,strlen(edi)
     .else
         mov byte ptr [edi],0
@@ -222,7 +224,7 @@ GetTypeId proc uses esi edi ebx buffer:string_t, tokenarray:token_t
             .break
         .endsw
     .endf
-    .return 0 .if EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR
+    .return 0 .if ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
 
     xor ecx,ecx
     .if ( id )

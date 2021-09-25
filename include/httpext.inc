@@ -1,5 +1,5 @@
 ifndef _HTTPEXT_H_
-_HTTPEXT_H_ equ <>
+define _HTTPEXT_H_
 .pragma list(push, 0)
 
 include windows.inc

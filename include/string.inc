@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __STRING_INC
-__STRING_INC equ <>
+define __STRING_INC
 ifndef __LIBC_INC
  include libc.inc
 endif

@@ -1,5 +1,5 @@
 ifndef __ATLCORE_H__
-__ATLCORE_H__ equ <>
+define __ATLCORE_H__
 
 include atldef.inc
 include windows.inc

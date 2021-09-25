@@ -1,5 +1,5 @@
 ifndef _LMREMUTL_
-_LMREMUTL_ equ <>
+define _LMREMUTL_
 
 ifndef DESC_CHAR_UNICODE
 DESC_CHAR		typedef CHAR

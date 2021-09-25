@@ -1,5 +1,5 @@
 ifndef __EXCPT_INC
-__EXCPT_INC equ <>
+define __EXCPT_INC
 ifndef _WINDEF_
  include windef.inc
 endif

@@ -1,5 +1,5 @@
 ifndef KERNELSPECS_H
-KERNELSPECS_H equ <>
+define KERNELSPECS_H
 
 include DriverSpecs.inc
 

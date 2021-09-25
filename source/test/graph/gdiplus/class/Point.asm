@@ -39,13 +39,7 @@ main proc
     Point       (pSize)
     Point       (pPoint)
 
-    b.Equals    (pPoint)
-    b.radd8     (pPoint)
-    b.rsub8     (pPoint)
-
     p.Equals    (pPoint)
-    p.radd8     (pPoint)
-    p.rsub8     (pPoint)
     ret
 
 main endp

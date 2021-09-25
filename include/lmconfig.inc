@@ -1,5 +1,5 @@
 ifndef _LMCONFIG_
-_LMCONFIG_ equ <>
+define _LMCONFIG_
 
 REVISED_CONFIG_APIS equ 1
 

@@ -1,5 +1,5 @@
 ifndef _WSPIAPI_H_
-_WSPIAPI_H_ equ <>
+define _WSPIAPI_H_
 
 include winapifamily.inc
 

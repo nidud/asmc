@@ -1,5 +1,5 @@
 ifndef _MINWINDEF_
-_MINWINDEF_ equ <>
+define _MINWINDEF_
 
 include specstrings.inc
 include winapifamily.inc
@@ -23,7 +23,7 @@ WIN32  equ 1
 endif
 
 ifndef BASETYPES
-BASETYPES equ <>
+define BASETYPES
 ULONG	typedef dword
 PULONG	typedef ptr dword
 USHORT	typedef word
@@ -146,7 +146,7 @@ HFILE typedef SWORD
 endif
 
 ifndef _FILETIME_
-_FILETIME_ equ <>
+define _FILETIME_
 FILETIME	STRUC
 dwLowDateTime	dd ?
 dwHighDateTime	dd ?

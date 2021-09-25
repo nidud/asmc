@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _MCX_H_
-_MCX_H_ equ <>
+define _MCX_H_
 
 MODEMDEVCAPS		STRUC
 dwActualSize		dd ?

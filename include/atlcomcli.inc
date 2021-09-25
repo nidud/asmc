@@ -96,7 +96,6 @@ ATL_VARIANT_FALSE equ ( 0 )
 
 	.ENDS
 
-
 ifdef _ATL_NO_VARIANT_THROW
 ATLVARIANT_THROW equ <throw>
 else
@@ -106,13 +105,6 @@ endif
 .class CComVariant : public VARIANT
 
 	.ENDS
-
-
-ifdef _ATL_USE_WINAPI_FAMILY_DESKTOP_APP
-
-
-endif
-
 
 .pragma pack(pop)
 

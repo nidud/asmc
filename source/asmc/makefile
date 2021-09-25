@@ -66,10 +66,12 @@ objects = \
     src\mangle.obj \
     src\mem2mem.obj \
     src\memalloc.obj \
+    src\namespace.obj \
     src\new.obj \
     src\omf.obj \
     src\omffixup.obj \
     src\omfint.obj \
+    src\operator.obj \
     src\option.obj \
     src\parser.obj \
     src\posndir.obj \

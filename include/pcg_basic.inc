@@ -29,7 +29,7 @@
 ;;
 
 ifndef PCG_BASIC_H_INCLUDED
-PCG_BASIC_H_INCLUDED equ <>
+define PCG_BASIC_H_INCLUDED
 
 include libc.inc
 include stdint.inc

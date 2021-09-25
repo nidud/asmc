@@ -1,5 +1,5 @@
 ifndef __dxgicommon_h__
-__dxgicommon_h__ equ <>
+define __dxgicommon_h__
 
 DXGI_RATIONAL		STRUC
 Numerator		UINT ?

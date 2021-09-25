@@ -1,5 +1,5 @@
 ifndef _WINPERF_
-_WINPERF_ equ <>
+define _WINPERF_
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

@@ -119,14 +119,14 @@ S_FWDREF        equ 0x20
 S_INCLUDED      equ 0x40
 S_METHOD        equ 0x80
 
-                         ; flag2
-
-S_VTABLE        equ 0x01 ; base class - first member = lpVtbl
-S_ISVTABLE      equ 0x02 ; vtable struct - classVtbl
-S_VMACRO        equ 0x04 ; vtable method is inline - sym->vmacro set
-S_ISINLINE      equ 0x08 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
-S_ISSTATIC      equ 0x10 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
-S_VPARRAY       equ 0x20 ; p.p.proc() -- nested function call
+S_CLASS         equ 0x01 ; flag2
+S_VTABLE        equ 0x02 ; base class - first member = lpVtbl
+S_ISVTABLE      equ 0x04 ; vtable struct - classVtbl
+S_VMACRO        equ 0x08 ; vtable method is inline - sym->vmacro set
+S_ISINLINE      equ 0x10 ; v2.31.24: SYM_EXTERNAL.target_type == SYM_MACRO
+S_ISSTATIC      equ 0x20 ; v2.32.26: SYM_EXTERNAL.target_type == SYM_MACRO
+S_VPARRAY       equ 0x40 ; p.p.proc() -- nested function call
+S_OPERATOR      equ 0x80
 
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02

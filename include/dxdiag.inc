@@ -1,5 +1,5 @@
 ifndef _DXDIAG_H_
-_DXDIAG_H_ equ <>
+define _DXDIAG_H_
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

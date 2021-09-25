@@ -1,5 +1,5 @@
 ifndef _WMISTR_
-_WMISTR_ equ <>
+define _WMISTR_
 
 WNODE_HEADER		STRUC
 BufferSize		ULONG ?

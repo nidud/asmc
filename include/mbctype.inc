@@ -1,5 +1,5 @@
 ifndef _INC_MBCTYPE
-_INC_MBCTYPE equ <>
+define _INC_MBCTYPE
 
 include crtdefs.inc
 include ctype.inc
@@ -54,7 +54,7 @@ _MB_CP_LOCALE		equ -4
 
 
 ifndef _MBCTYPE_DEFINED
-_MBCTYPE_DEFINED equ <>
+define _MBCTYPE_DEFINED
 
 ;; MB control routines
 
@@ -89,7 +89,7 @@ _ismbbgraph	proto __cdecl :uint_t
 _ismbbgraph_l	proto __cdecl :uint_t, :_locale_t
 
 ifndef _MBLEADTRAIL_DEFINED
-_MBLEADTRAIL_DEFINED equ <>
+define _MBLEADTRAIL_DEFINED
 
 _ismbblead	proto __cdecl :uint_t
 _ismbblead_l	proto __cdecl :uint_t, :_locale_t

@@ -1,5 +1,5 @@
 ifndef _CDERR_
-_CDERR_ equ <>
+define _CDERR_
 
 CDERR_DIALOGFAILURE	equ 0xFFFF
 

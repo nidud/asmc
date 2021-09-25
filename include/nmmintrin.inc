@@ -1,5 +1,5 @@
 ifndef _INCLUDED_NMM
-_INCLUDED_NMM equ <>
+define _INCLUDED_NMM
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

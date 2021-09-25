@@ -2,10 +2,10 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef __RPCNDR_H_VERSION__
-__RPCNDR_H_VERSION__ equ 500
+define __RPCNDR_H_VERSION__ 500
 endif
 ifndef __RPCNDR_H__
-__RPCNDR_H__ equ <>
+define __RPCNDR_H__
 
 ifdef __REQUIRED_RPCNDR_H_VERSION__
  if ( __RPCNDR_H_VERSION__ LT __REQUIRED_RPCNDR_H_VERSION__ )

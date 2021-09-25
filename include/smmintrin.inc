@@ -1,5 +1,5 @@
 ifndef _INCLUDED_SMM
-_INCLUDED_SMM equ <>
+define _INCLUDED_SMM
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

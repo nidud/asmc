@@ -1,5 +1,5 @@
 ifndef _WINVER_
-_WINVER_ equ <>
+define _WINVER_
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

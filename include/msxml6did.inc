@@ -1,5 +1,5 @@
 ifndef __MSXML2DID_H__
-__MSXML2DID_H__ equ <>
+define __MSXML2DID_H__
 
 include winapifamily.inc
 

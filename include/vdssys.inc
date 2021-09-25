@@ -13,7 +13,7 @@ ifndef __RPCNDR_H_VERSION__
 endif
 
 ifndef __vdssys_h__
-__vdssys_h__ equ <>
+define __vdssys_h__
 
 include wtypes.inc
 include oaidl.inc

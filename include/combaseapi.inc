@@ -32,7 +32,7 @@ _WIN32_WINNT equ 0x0500
 endif
 
 ifndef _COMBASEAPI_H_
-_COMBASEAPI_H_ equ <>
+define _COMBASEAPI_H_
 
 .pragma pack(push, 8)
 

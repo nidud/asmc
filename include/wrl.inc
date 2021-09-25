@@ -1,5 +1,5 @@
 ifndef _WRL_H_
-_WRL_H_ equ <>
+define _WRL_H_
 
 include wrl\client.inc
 include wrl\implements.inc

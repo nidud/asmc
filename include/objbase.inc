@@ -2,7 +2,7 @@ include rpc.inc
 include rpcndr.inc
 include stdlib.inc
 ifndef _OBJBASE_H_
-_OBJBASE_H_ equ <>
+define _OBJBASE_H_
 
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 

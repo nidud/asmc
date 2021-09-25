@@ -1,16 +1,16 @@
 include winapifamily.inc
 ifndef __NCRYPT_H__
-__NCRYPT_H__ equ <>
+define __NCRYPT_H__
 
 ifndef __SECSTATUS_DEFINED__
 SECURITY_STATUS		typedef LONG
-__SECSTATUS_DEFINED__ equ 1
+define __SECSTATUS_DEFINED__
 endif
 
 include bcrypt.inc
 
 ifndef HCRYPTPROV_DEFINED
-HCRYPTPROV_DEFINED equ 1
+define HCRYPTPROV_DEFINED
 HCRYPTPROV		typedef ULONG_PTR
 HCRYPTKEY		typedef ULONG_PTR
 HCRYPTHASH		typedef ULONG_PTR

@@ -1,5 +1,5 @@
 ifndef __dxgitype_h__
-__dxgitype_h__ equ <>
+define __dxgitype_h__
 include dxgiformat.inc
 
 _FACDXGI		equ 0x87a

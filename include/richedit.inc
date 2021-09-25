@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _RICHEDIT_
-_RICHEDIT_ equ <>
+define _RICHEDIT_
 .pragma pack(push, 4)
 
 ifndef _RICHEDIT_VER

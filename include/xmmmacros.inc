@@ -1,5 +1,3 @@
 ifndef __XMMMACROS_INC
-__XMMMACROS_INC equ <>
-
-
+define __XMMMACROS_INC
 endif

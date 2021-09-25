@@ -1,5 +1,5 @@
 ifndef _WINERROR_
-_WINERROR_ equ <>
+define _WINERROR_
 .pragma list(push, 0)
 
 FACILITY_WINDOWS	equ 8

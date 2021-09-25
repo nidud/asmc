@@ -21,6 +21,7 @@ include macro.inc
 include input.inc
 include tokenize.inc
 include expreval.inc
+include operator.inc
 
     .code
 
@@ -151,10 +152,12 @@ OpenVtbl endp
 
     assume esi:nothing
     assume edi:nothing
-    assume ebx:token_t
+    assume ebx:ptr asm_tok
 
 get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
         count:ptr int_t, isid:ptr int_t, context:ptr string_t, langtype:ptr int_t
+
+   .new operator:byte = 0
 
     mov edi,token
     mov ebx,tokenarray
@@ -165,14 +168,19 @@ get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
     mov ecx,isid
     mov [ecx],eax
 
-    .if ( [ebx].token != T_ID )
-        .return asmerr( 1011 )
+    .if ( GetOpType( ebx, edi ) == ERROR )
+
+        .if ( [ebx].token != T_ID )
+            .return asmerr( 1011 )
+        .endif
+        strcpy( edi, [ebx].string_ptr )
+        mov ecx,isid
+        inc dword ptr [ecx]
+        add ebx,16
+    .else
+        mov ebx,eax
+        inc operator
     .endif
-    strcpy( edi, [ebx].string_ptr )
-    mov eax,1
-    mov ecx,isid
-    mov [ecx],eax
-    add ebx,16
 
     .if ( [ebx].token == T_RES_ID ) ; fastcall...
 
@@ -184,12 +192,19 @@ get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
 
     mov edi,ebx
     .for ( esi = 1 : [ebx].token != T_FINAL : ebx += 16 )
+
         .if ( [ebx].token == T_STRING && [ebx].bytval == '{' )
+
             mov ecx,context
             mov [ecx],ebx
             .break
+
         .elseif ( [ebx].token == T_COLON )
+
             inc esi
+            .if ( operator )
+                OperatorParam( &[ebx+16], token )
+            .endif
         .endif
     .endf
     mov ecx,count
@@ -199,8 +214,6 @@ get_param_name proc uses esi edi ebx tokenarray:token_t, token:string_t,
 get_param_name endp
 
     option proc: public
-
-    assume ebx:ptr asm_tok
 
 ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
 
@@ -227,12 +240,12 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
 
     .if ( esi )
 
-        mov ecx,[esi].com_item.langtype
-        mov langtype,ecx
+        mov langtype,[esi].com_item.langtype
+        mov edi,NameSpace( name, name )
 
-        .if ( strcmp(name, [esi].com_item.class) == 0 )
+        .if ( strcmp( edi, [esi].com_item.class ) == 0 )
 
-            ClassProto2( name, name, esi, [ebx+16].tokpos )
+            ClassProto2( edi, edi, esi, [ebx+16].tokpos )
             mov constructor,1
             jmp done
         .endif
@@ -375,10 +388,12 @@ done:
     .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
     .endif
-    .if constructor
-        strcpy(buffer, name)
-        strcat(eax, "_")
-        strcat(eax, name)
+
+    .if ( constructor )
+
+        strcpy( buffer, edi )
+        strcat( eax, "_" )
+        strcat( eax, edi )
         .if SymFind( eax )
             or [eax].asym.flag1,S_METHOD
         .endif
@@ -387,10 +402,6 @@ done:
     ret
 
 ProcType endp
-
-    assume esi:token_t
-
-    assume esi:nothing
 
 ParseMacroArgs proc private uses esi edi ebx buffer:string_t, count:int_t, args:string_t
 
@@ -545,6 +556,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
    .new class_ptr       : string_t
    .new vtable          : asym_t
    .new langtype        : int_t
+   .new vector[2]       : ushort_t = 0
    .new class[256]      : char_t
    .new token[256]      : char_t
    .new name[512]       : char_t
@@ -589,6 +601,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
       .case T_DOT_INLINE
       .case T_DOT_STATIC
+      .case T_DOT_OPERATOR
 
         mov esi,ModuleInfo.ComStack
         mov ecx,CurrStruct
@@ -629,6 +642,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 mov [ecx].token,T_FINAL
             .endif
             assume ecx:nothing
+        .elseif ( cmd == T_DOT_OPERATOR && Parse_Pass == PASS_1 )
+            asmerr( 2008, [ebx].tokpos )
         .endif
 
         mov edi,strcpy( &name, &token )
@@ -652,14 +667,18 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
             .if ( !SearchNameInStruct( ecx, edi, 0, 0 ) || !vtable )
 
-                .if ( strcmp(edi, class_ptr) ) ; constructor ?
+                strcmp(edi, class_ptr) ; constructor ?
+
+                .if ( eax && [esi].com_item.method != T_DOT_OPERATOR )
 
                     ClassProto( edi, langtype, [ebx].tokpos, T_PROC )
 
                 .else
 
                     ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
-                    inc constructor
+                    .if ( cmd != T_DOT_OPERATOR )
+                        inc constructor
+                    .endif
                 .endif
             .endif
         .endif
@@ -684,6 +703,11 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                     or [eax].asym.flag2,S_ISSTATIC
                 .endif
             .endif
+        .elseif ( cmd == T_DOT_OPERATOR )
+            mov eax,[esi].com_item.sym
+            .if ( eax )
+                or [eax].asym.flag2,S_OPERATOR
+            .endif
         .endif
         MacroInline( &token, args, [ebx].tokpos , context, is_vararg )
         .if !constructor && ( cmd == T_DOT_STATIC && is_vararg == 0 )
@@ -697,8 +721,23 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
       .case T_DOT_CLASS
       .case T_DOT_TEMPLATE
 
-       .return asmerr( 1011 ) .if ModuleInfo.ComStack
+        .if ModuleInfo.ComStack
+            .return asmerr( 1011 )
+        .endif
+        ;
+        ; .template <vector[, type]> T
+        ;
         lea ebx,[ebx+edx+16]
+        .if ( [ebx].token == T_STRING )
+            add ebx,16
+            mov vector,[ebx].tokval
+            mov vector[2],0
+            add ebx,32
+            .if ( [ebx-16].token == T_COMMA )
+                mov vector[2],[ebx].tokval
+                add ebx,32
+            .endif
+        .endif
 
         mov ModuleInfo.ComStack,LclAlloc( com_item )
         mov ecx,cmd
@@ -709,11 +748,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         mov [eax].com_item.method,edx
         mov [eax].com_item.sym,edx
 
-        mov esi,[ebx].string_ptr
-        LclAlloc( &[strlen(esi) + 1] )
+        mov esi,NameSpace([ebx].string_ptr, NULL)
         mov ecx,ModuleInfo.ComStack
         mov [ecx].com_item.class,eax
-        strcpy(eax, esi)
 
         ; v2.32.20 - removed typedefs
 
@@ -747,10 +784,14 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             .if ( [ebx+16].token  == T_DIRECTIVE && [ebx+16].tokval == T_PUBLIC )
 
                 mov ebx,[ebx+32].string_ptr
-                .return asmerr( 2006, ebx ) .if !SymFind( ebx )
+                .if !SymFind( ebx )
+                    .return asmerr( 2006, ebx )
+                .endif
 
                 mov ecx,ModuleInfo.ComStack
                 mov [ecx].com_item.publsym,eax
+            .else
+                asmerr( 2006, [ebx+16].string_ptr )
             .endif
         .endif
 
@@ -789,6 +830,13 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
     .endif
     .if ModuleInfo.line_queue.head
         RunLineQueue()
+    .endif
+    .if ( vector )
+        mov ecx,ModuleInfo.ComStack
+        mov esi,[ecx].com_item.sym
+        .if ( esi )
+            mov dword ptr [esi].asym.regist,dword ptr vector
+        .endif
     .endif
     .if close_directive
         mov ModuleInfo.ComStack,0

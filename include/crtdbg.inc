@@ -1,7 +1,7 @@
 include crtdefs.inc
 
 ifndef _INC_CRTDBG
-_INC_CRTDBG equ <>
+define _INC_CRTDBG
 
 .pragma pack(push, _CRT_PACKING)
 
@@ -432,7 +432,7 @@ else
 ifdef _DLL
 _CRTIMP equ <__declspec(dllimport)>
 else
-_CRTIMP equ <>
+define _CRTIMP
 endif
 endif
 endif

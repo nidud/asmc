@@ -1,5 +1,5 @@
 ifndef _WS2TCPIP_H_
-_WS2TCPIP_H_ equ <>
+define _WS2TCPIP_H_
 
 include winapifamily.inc
 

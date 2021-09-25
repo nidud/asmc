@@ -36,7 +36,7 @@ ifndef _CRT_FUNCTIONS_REQUIRED
 endif
 
 if not defined(_NO_INLINING) and not _CRT_FUNCTIONS_REQUIRED
-_NO_INLINING equ <> ;; Suppress <tchar.h> inlines
+define _NO_INLINING ;; Suppress <tchar.h> inlines
 endif
 
 ifndef _CRT_UNUSED
@@ -49,16 +49,16 @@ ifndef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
     ifdef WINAPI_FAMILY
         include winapifamily.inc
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-            _CRT_USE_WINAPI_FAMILY_DESKTOP_APP equ <>
+            define _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
         else
             ifdef WINAPI_FAMILY_PHONE_APP
                 if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-                    _CRT_USE_WINAPI_FAMILY_PHONE_APP equ <>
+                    define _CRT_USE_WINAPI_FAMILY_PHONE_APP
                 endif
             endif
         endif
     else
-        _CRT_USE_WINAPI_FAMILY_DESKTOP_APP equ <>
+        define _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
     endif
 endif
 
@@ -112,7 +112,7 @@ _CRT_INTERNAL_NONSTDC_NAMES macro
     endm
 
 if defined(_CRT_NONSTDC_NO_DEPRECATE) and not defined(_CRT_NONSTDC_NO_WARNINGS)
-    _CRT_NONSTDC_NO_WARNINGS equ <>
+    define _CRT_NONSTDC_NO_WARNINGS
 endif
 
 ifndef _CRT_NONSTDC_DEPRECATE
@@ -180,7 +180,7 @@ __STDC_SECURE_LIB__ equ 200411
 __GOT_SECURE_LIB__  equ __STDC_SECURE_LIB__ ;; For backwards compatibility
 
 ifndef __STDC_WANT_SECURE_LIB__
-__STDC_WANT_SECURE_LIB__ equ <>
+define __STDC_WANT_SECURE_LIB__
 endif
 
 if not __STDC_WANT_SECURE_LIB__ and not defined(_CRT_SECURE_NO_WARNINGS)
@@ -189,7 +189,7 @@ endif
 
 ifndef RC_INVOKED
     if defined(_CRT_SECURE_NO_DEPRECATE_GLOBALS) and not defined(_CRT_SECURE_NO_WARNINGS_GLOBALS)
-        _CRT_SECURE_NO_WARNINGS_GLOBALS equ <>
+        define _CRT_SECURE_NO_WARNINGS_GLOBALS
     endif
 endif
 
@@ -210,13 +210,13 @@ ifndef _CRT_INSECURE_DEPRECATE_GLOBALS
 endif
 
 if defined(_CRT_MANAGED_HEAP_NO_DEPRECATE) and not defined(_CRT_MANAGED_HEAP_NO_WARNINGS)
-    _CRT_MANAGED_HEAP_NO_WARNINGS equ <>
+    define _CRT_MANAGED_HEAP_NO_WARNINGS
 endif
 
 _SECURECRT_FILL_BUFFER_PATTERN equ 0xFE
 
 if defined(_CRT_OBSOLETE_NO_DEPRECATE) and not defined(_CRT_OBSOLETE_NO_WARNINGS)
-    _CRT_OBSOLETE_NO_WARNINGS equ <>
+    define _CRT_OBSOLETE_NO_WARNINGS
 endif
 
 ifndef _CRT_OBSOLETE
@@ -311,7 +311,7 @@ if defined(_USE_32BIT_TIME_T) and defined(_WIN64)
 endif
 
 if defined(_VCRT_BUILD) or defined(_CORECRT_BUILD)
-    _CRT_NO_TIME_T equ <>
+    define _CRT_NO_TIME_T
 endif
 
 ifndef _CRT_NO_TIME_T
@@ -323,7 +323,7 @@ ifndef _CRT_NO_TIME_T
 endif
 
 ifndef _TIME_T_DEFINED
-_TIME_T_DEFINED equ <>
+define _TIME_T_DEFINED
 endif
 
 if __STDC_WANT_SECURE_LIB__

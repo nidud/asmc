@@ -1473,6 +1473,7 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
 
             ; get/create the label.
 
+            mov name,NameSpace(name, name)
             mov esi,SymLookup( name )
             .if ( Parse_Pass == PASS_1 )
 

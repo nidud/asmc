@@ -1,5 +1,5 @@
 ifndef _DVEC_H_INCLUDED
-_DVEC_H_INCLUDED equ <>
+define _DVEC_H_INCLUDED
 
 include immintrin.inc
 include fvec.inc

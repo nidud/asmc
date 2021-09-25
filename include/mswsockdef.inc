@@ -1,5 +1,5 @@
 ifndef _MSWSOCKDEF_
-_MSWSOCKDEF_ equ <>
+define _MSWSOCKDEF_
 
 include winapifamily.inc
 

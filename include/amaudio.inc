@@ -1,5 +1,5 @@
 ifndef __AMAUDIO__
-__AMAUDIO__ equ <>
+define __AMAUDIO__
 .pragma list(push, 0)
 include mmsystem.inc
 include dsound.inc

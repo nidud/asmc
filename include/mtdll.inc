@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _INC_MTDLL
-_INC_MTDLL equ <>
+define _INC_MTDLL
 
 include crtdefs.inc
 include limits.inc

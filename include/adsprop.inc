@@ -1,5 +1,5 @@
 ifndef _ADSPROP_H_
-_ADSPROP_H_ equ <>
+define _ADSPROP_H_
 .pragma list(push, 0)
 
 WM_ADSPROP_NOTIFY_PAGEINIT equ (WM_USER + 1101)

@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _INC_MMSYSTEM
-_INC_MMSYSTEM equ <>
+define _INC_MMSYSTEM
 
 .pragma comment(lib, winmm)
 

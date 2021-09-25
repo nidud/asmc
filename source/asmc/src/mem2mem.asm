@@ -167,7 +167,11 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
         .endif
     .endif
 
-    .if ( [esi].expr.mem_type & MT_FLOAT || [esi+expr].expr.mem_type & MT_FLOAT )
+    mov edx,tokenarray
+    mov op,[edx].asm_tok.tokval
+
+    .if ( eax != T_MOV &&
+          ( [esi].expr.mem_type & MT_FLOAT || [esi+expr].expr.mem_type & MT_FLOAT ) )
 
         mov isfloat,1
         .if ( size != 4 && size != 8 )
@@ -203,7 +207,6 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
     .endif
 
     mov ebx,tokenarray
-    mov op,[ebx].asm_tok.tokval
     add ebx,16
     mov dst,[ebx].asm_tok.tokpos
 
@@ -253,9 +256,9 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
                 .if ( op == T_CMP )
                     mov op,edx
                 .endif
+                mov eax,dst
                 mov esi,T_XMM0
                 mov edi,T_XMM0
-                mov eax,dst
             .endif
             AddLineQueueX( " %r %r, %s", ecx, esi, eax )
 

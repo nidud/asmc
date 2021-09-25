@@ -1,10 +1,10 @@
 ifndef _IMAGEHLP_
-_IMAGEHLP_ equ <>
+define _IMAGEHLP_
 .pragma list(push, 0)
 
 ifdef _WIN64
 ifndef _IMAGEHLP64
-_IMAGEHLP64 equ <>
+define _IMAGEHLP64
 endif
 endif
 

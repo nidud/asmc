@@ -1,7 +1,7 @@
 include d3dx11.inc
 
 ifndef __D3DX11TEX_H__
-__D3DX11TEX_H__ equ <>
+define __D3DX11TEX_H__
 
 .enum D3DX11_FILTER_FLAG {
     D3DX11_FILTER_NONE		  =   (1 shl 0),

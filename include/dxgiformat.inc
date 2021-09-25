@@ -1,5 +1,5 @@
 ifndef __dxgiformat_h__
-__dxgiformat_h__ equ <>
+define __dxgiformat_h__
 
 DXGI_FORMAT_DEFINED     equ 1
 

@@ -1,5 +1,5 @@
 ifndef _ADODEF_H_
-_ADODEF_H_ equ <>
+define _ADODEF_H_
 .pragma list(push, 0)
 
 ADO_MAJOR		equ 6

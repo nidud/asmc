@@ -1,5 +1,5 @@
 ifndef _D3DX9XOF_H
-_D3DX9XOF_H equ <>
+define _D3DX9XOF_H
 include d3dx9.inc
 
 D3DXF_FILEFORMAT	typedef DWORD

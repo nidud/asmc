@@ -1,7 +1,7 @@
 include winapifamily.inc
 
 ifndef _PROPAPI_H_
-_PROPAPI_H_ equ <>
+define _PROPAPI_H_
 
 NTPROP typedef ptr
 

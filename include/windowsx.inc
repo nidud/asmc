@@ -1,6 +1,6 @@
 ifndef _INC_WINDOWSX
 .pragma list(push, 0)
-_INC_WINDOWSX equ <>
+define _INC_WINDOWSX
 
 ifndef SNDMSG
 ifndef _MAC

@@ -1,5 +1,5 @@
 ifndef __ADSIID_H__
-__ADSIID_H__ equ <>
+define __ADSIID_H__
 .pragma list(push, 0)
 
 externdef LIBID_ADs:GUID

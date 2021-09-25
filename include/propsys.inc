@@ -15,7 +15,7 @@ include ole2.inc
 endif
 
 ifndef __PROPSYS_INC
-__PROPSYS_INC equ <>
+define __PROPSYS_INC
 .pragma list(push, 0)
 
 include objidl.inc

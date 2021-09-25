@@ -1,5 +1,5 @@
 ifndef _DDEHEADER_INCLUDED_
-_DDEHEADER_INCLUDED_ equ <>
+define _DDEHEADER_INCLUDED_
 
 ifndef _WINDEF_
 include windef.inc

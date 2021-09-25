@@ -1,5 +1,5 @@
 ifndef __D3D10EFFECT_H__
-__D3D10EFFECT_H__ equ <>
+define __D3D10EFFECT_H__
 include d3d10.inc
 
 .enum D3D10_DEVICE_STATE_TYPES {

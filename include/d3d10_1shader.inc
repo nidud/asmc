@@ -1,5 +1,5 @@
 ifndef __D3D10_1SHADER_H__
-__D3D10_1SHADER_H__ equ <>
+define __D3D10_1SHADER_H__
 
 include d3d10shader.inc
 

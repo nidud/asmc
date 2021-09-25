@@ -77,8 +77,8 @@ TRect::Exchange proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
     shl     eax,2
     mov     rsi,alloca(eax)
 
-    .if TRect_Read(this, h, rsi)
-        TRect_Write(this, h, rdi)
+    .if TRect::Read(this, h, rsi)
+        TRect::Write(this, h, rdi)
         mov ecx,ebx
         rep movsd
     .endif

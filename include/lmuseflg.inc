@@ -1,5 +1,5 @@
 ifndef _LMUSEFLG_
-_LMUSEFLG_ equ <>
+define _LMUSEFLG_
 
 USE_NOFORCE             equ 0
 USE_FORCE               equ 1

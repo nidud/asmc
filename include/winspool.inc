@@ -1,5 +1,5 @@
 ifndef _WINSPOOL_
-_WINSPOOL_ equ <>
+define _WINSPOOL_
 .pragma list(push, 0)
 
 ifdef _WINUSER_

@@ -1,5 +1,5 @@
 ifndef __BCRYPT_H__
-__BCRYPT_H__ equ <>
+define __BCRYPT_H__
 
 include winapifamily.inc
 

@@ -18,7 +18,7 @@ include ole2.inc
 endif
 
 ifndef __comcat_h__
-__comcat_h__ equ <>
+define __comcat_h__
 include unknwn.inc
 ifndef __PE__
 .pragma comment(lib, uuid)
@@ -61,10 +61,10 @@ externdef CATID_InternetAware:CATID
 externdef CATID_DesignTimeUIActivatableControl:CATID
 
 ifndef _LPENUMGUID_DEFINED
-_LPENUMGUID_DEFINED equ <>
+define _LPENUMGUID_DEFINED
 
 ifndef __IEnumGUID_INTERFACE_DEFINED__
-__IEnumGUID_INTERFACE_DEFINED__ equ <>
+define __IEnumGUID_INTERFACE_DEFINED__
 
 LPENUMGUID typedef ptr IEnumGUID
 
@@ -83,10 +83,10 @@ endif
 endif
 
 ifndef _LPENUMCATEGORYINFO_DEFINED
-_LPENUMCATEGORYINFO_DEFINED equ <>
+define _LPENUMCATEGORYINFO_DEFINED
 
 ifndef __IEnumCATEGORYINFO_INTERFACE_DEFINED__
-__IEnumCATEGORYINFO_INTERFACE_DEFINED__ equ <>
+define __IEnumCATEGORYINFO_INTERFACE_DEFINED__
 
 LPENUMCATEGORYINFO typedef ptr IEnumCATEGORYINFO
 
@@ -111,10 +111,10 @@ endif
 endif
 
 ifndef _LPCATREGISTER_DEFINED
-_LPCATREGISTER_DEFINED equ <>
+define _LPCATREGISTER_DEFINED
 
 ifndef __ICatRegister_INTERFACE_DEFINED__
-__ICatRegister_INTERFACE_DEFINED__ equ <>
+define __ICatRegister_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICatRegister, "0002E012-0000-0000-C000-000000000046")
 
@@ -135,10 +135,10 @@ endif
 endif
 
 ifndef _LPCATINFORMATION_DEFINED
-_LPCATINFORMATION_DEFINED equ <>
+define _LPCATINFORMATION_DEFINED
 
 ifndef __ICatInformation_INTERFACE_DEFINED__
-__ICatInformation_INTERFACE_DEFINED__ equ <>
+define __ICatInformation_INTERFACE_DEFINED__
 
 DEFINE_IIDX(ICatInformation, "0002E013-0000-0000-C000-000000000046")
 

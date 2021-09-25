@@ -14,9 +14,9 @@ include dwrite_1.inc
     DWRITE_GRID_FIT_MODE_ENABLED
     }
 
-.template DWRITE_TEXT_METRICS1 : DWRITE_TEXT_METRICS STRUC
+.template DWRITE_TEXT_METRICS1 : public DWRITE_TEXT_METRICS
     heightIncludingTrailingWhitespace FLOAT ?
-    .ENDS
+   .ENDS
 
 
 DEFINE_IIDX(IDWriteTextRenderer1, "D3E0E934-22A0-427E-AAE4-7D9574B59DB1")

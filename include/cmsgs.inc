@@ -1,5 +1,5 @@
 ifndef _INC_CMSGS
-_INC_CMSGS equ <>
+define _INC_CMSGS
 
 ifndef _CRTBLD
 .err <ERROR: Use of C runtime library internal header file.>

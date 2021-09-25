@@ -1,5 +1,5 @@
 ifndef _IFDEF_
-_IFDEF_ equ <>
+define _IFDEF_
 
 include winapifamily.inc
 

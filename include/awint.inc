@@ -1,7 +1,7 @@
 ifdef _WIN32
 
 ifndef _INC_AWINC
-_INC_AWINC equ <>
+define _INC_AWINC
 
 ifndef _CRTBLD
 ;;

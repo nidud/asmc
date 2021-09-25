@@ -235,9 +235,16 @@ endif
     ; handle preprocessor directives which need a label
     ;
     mov ebx,ModuleInfo.tokenarray
+    xor eax,eax
     .if ( [ebx].token == T_ID && [ebx+16].token == T_DIRECTIVE )
+        movzx eax,[ebx+16].dirtype
+    .elseif ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_DEFINE &&
+              [ebx+16].token == T_ID )
+        movzx eax,[ebx].dirtype
+    .endif
 
-        movzx   eax,[ebx+16].dirtype
+    .if ( eax )
+
         .switch eax
           .case DRT_EQU
             ;

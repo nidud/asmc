@@ -1,5 +1,5 @@
 ifndef _WRL_INTERNAL_H_
-_WRL_INTERNAL_H_ equ <>
+define _WRL_INTERNAL_H_
 
 include windows.inc
 

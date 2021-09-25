@@ -1,5 +1,5 @@
 ifndef _LMDFS_
-_LMDFS_ equ <>
+define _LMDFS_
 
 DFS_VOLUME_STATES	equ 0xF
 DFS_VOLUME_STATE_OK	equ 1

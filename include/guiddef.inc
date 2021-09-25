@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef GUID_DEFINED
-GUID_DEFINED equ <>
+define GUID_DEFINED
 GUID	STRUC
 Data1	dd ?
 Data2	dw ?
@@ -63,7 +63,7 @@ DEFINE_IIDX macro name, x
 endif
 
 ifndef _GUIDDEF_H_
-_GUIDDEF_H_ equ <>
+define _GUIDDEF_H_
 ifndef __PE__
 ;includelib uuid.lib
 endif
@@ -100,30 +100,30 @@ IsEqualFMTID macro rfmtid1, rfmtid2
 	endm
 
 ifndef _REFGUID_DEFINED
-_REFGUID_DEFINED	equ <>
-REFGUID			typedef ptr IIDGUID
+define _REFGUID_DEFINED
+REFGUID typedef ptr IIDGUID
 endif
 
 ifndef _REFIID_DEFINED
-_REFIID_DEFINED		equ <>
-REFIID			typedef ptr IID
+define _REFIID_DEFINED
+REFIID	typedef ptr IID
 endif
 
 ifndef _REFCLSID_DEFINED
-_REFCLSID_DEFINED	equ <>
-REFCLSID		typedef ptr IID
+define _REFCLSID_DEFINED
+REFCLSID typedef ptr IID
 endif
 
 ifndef _REFFMTID_DEFINED
-_REFFMTID_DEFINED	equ <>
-REFFMTID		typedef ptr IID
+define _REFFMTID_DEFINED
+REFFMTID typedef ptr IID
 endif
 
 endif
 
 ifndef __midl
 ifndef _SYS_GUID_OPERATORS_
-_SYS_GUID_OPERATORS_	equ <>
+define _SYS_GUID_OPERATORS_
 include string.inc
 
 InlineIsEqualGUID macro rguid1, rguid2

@@ -1,5 +1,5 @@
 ifndef __ACCESS_CONTROL_API__
-__ACCESS_CONTROL_API__ equ <>
+define __ACCESS_CONTROL_API__
 include windows.inc
 include accctrl.inc
 .pragma list(push, 0)

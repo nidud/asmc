@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef NCB_INCLUDED
-NCB_INCLUDED equ <>
+define NCB_INCLUDED
 
 .pragma comment(lib, netapi32)
 

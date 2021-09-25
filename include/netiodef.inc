@@ -1,5 +1,5 @@
 ifndef _NETIODEF_
-_NETIODEF_ equ <>
+define _NETIODEF_
 
 include winapifamily.inc
 

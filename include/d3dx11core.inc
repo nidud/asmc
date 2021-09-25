@@ -1,7 +1,7 @@
 include d3dx11.inc
 
 ifndef __D3DX11CORE_H__
-__D3DX11CORE_H__ equ <>
+define __D3DX11CORE_H__
 
 D3DX11_DLL_W		equ <L"d3dx11_43.dll">
 D3DX11_DLL_A		equ <"d3dx11_43.dll">

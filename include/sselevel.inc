@@ -4,7 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 ifndef __SSELEVEL_INC
-__SSELEVEL_INC equ <>
+define __SSELEVEL_INC
 ifndef __LIBC_INC
  include libc.inc
 endif

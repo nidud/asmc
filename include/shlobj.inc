@@ -1,5 +1,5 @@
 ifndef _SHLOBJ_H_
-_SHLOBJ_H_ equ <>
+define _SHLOBJ_H_
 .pragma list(push, 0)
 .pragma comment(lib, shell32)
 

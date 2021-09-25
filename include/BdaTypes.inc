@@ -1,5 +1,5 @@
 ifndef _BDATYPES_
-_BDATYPES_ equ <>
+define _BDATYPES_
 
 include winapifamily.inc
 

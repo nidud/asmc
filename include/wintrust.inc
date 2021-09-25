@@ -1,5 +1,5 @@
 ifndef WINTRUST_H
-WINTRUST_H equ <>
+define WINTRUST_H
 .pragma list(push, 0)
 
 include wincrypt.inc

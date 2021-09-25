@@ -1,23 +1,23 @@
 ifndef _WINDEF_
-_WINDEF_ equ <>
+define _WINDEF_
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef NO_STRICT
 ifndef STRICT
-STRICT equ 1
+define STRICT
 endif
 endif
 
 ifdef _MAC
 ifndef _WIN32
-_WIN32 equ <>
+define _WIN32
 endif
 endif
 
 ifndef WIN32
-WIN32 equ <>
+define WIN32
 endif
 
 ifndef WINVER
@@ -25,7 +25,7 @@ WINVER equ 0x0500
 endif
 
 ifndef BASETYPES
-BASETYPES	equ 1
+define BASETYPES
 ULONG		typedef dword
 PULONG		typedef ptr ULONG
 USHORT		typedef word

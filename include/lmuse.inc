@@ -1,5 +1,5 @@
 ifndef _LMUSE_
-_LMUSE_ equ <>
+define _LMUSE_
 
 include lmcons.inc
 include lmuseflg.inc

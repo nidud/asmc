@@ -1,5 +1,5 @@
 ifndef __D3D11SHADER_H__
-__D3D11SHADER_H__ equ <>
+define __D3D11SHADER_H__
 .pragma list(push, 0)
 
 include d3dcommon.inc

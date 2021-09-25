@@ -1,5 +1,5 @@
 ifndef _LMSERVER_
-_LMSERVER_ equ <>
+define _LMSERVER_
 
 include winsvc.inc
 include lmcons.inc

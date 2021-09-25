@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _OLECTL_H_
-_OLECTL_H_ equ <>
+define _OLECTL_H_
 
 if NOT defined(__MKTYPLIB__) AND NOT defined(__midl)
 

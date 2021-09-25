@@ -1,5 +1,5 @@
 ifndef __NTQUERY_H__
-__NTQUERY_H__ equ <>
+define __NTQUERY_H__
 
 include winapifamily.inc
 

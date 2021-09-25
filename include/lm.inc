@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _LM_
-_LM_ equ <>
+define _LM_
 .pragma comment(lib, netapi32)
 
 include lmcons.inc

@@ -1,5 +1,5 @@
 ifndef _PNRPNS_H_
-_PNRPNS_H_ equ <>
+define _PNRPNS_H_
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

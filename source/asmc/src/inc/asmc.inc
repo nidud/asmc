@@ -37,6 +37,7 @@ include token.inc
 include symbols.inc
 include errmsg.inc      ; must be located AFTER #defines lines
 include queue.inc
+include namespace.inc
 
 define EMPTY            (-2) ; function return values
 define ERROR            (-1)
@@ -496,6 +497,7 @@ define SIT_MACRO       1
     ComStack                ptr com_item ?  ; v2.27: .CLASSDEF, .COMDEF, .ENDS
     RetStack                ptr hll_item ?  ; v2.30: .return info
     FltStack                ptr flt_item ?  ; v2.31 float stack
+    NspStack                ptr nsp_item ?  ; v2.33 namespace stack
     ContextStack            ptr byte ?
     ContextFree             ptr byte ?      ; v2.10: "free items" heap implemented.
     SavedContexts           ptr byte ?
@@ -643,5 +645,6 @@ myltoa                  proto :qword, :string_t, :uint_t, :int_t, :int_t
 write_options           proto
 ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
 SetMasm510              proto :int_t
+GetType                 proto :string_t, :ptr expr, :string_t, :int_t
 
 endif

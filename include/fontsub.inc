@@ -1,5 +1,5 @@
 ifndef FONTSUB_DOT_H_DEFINED
-FONTSUB_DOT_H_DEFINED equ <>
+define FONTSUB_DOT_H_DEFINED
 .pragma list(push, 0)
 
 CFP_ALLOCPROC		typedef proto __cdecl :size_t

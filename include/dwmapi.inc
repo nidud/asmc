@@ -1,18 +1,11 @@
 .pragma list(push, 0)
 
 ifndef _DWMAPI_H_
-_DWMAPI_H_ equ <>
+define _DWMAPI_H_
 
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-
-ifndef DWMAPI
-if NOT defined(_DWMAPI_)
-else
-endif
-endif
 
 ifndef MILCORE_KERNEL_COMPONENT
 include wtypes.inc

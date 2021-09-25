@@ -1,5 +1,5 @@
 ifndef _INCLUDED_TMM
-_INCLUDED_TMM equ <>
+define _INCLUDED_TMM
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
@@ -16,7 +16,7 @@ include pmmintrin.inc
 ifdef _MM2_FUNCTIONALITY
 ;; support old notation
 ifndef _MM_FUNCTIONALITY
-_MM_FUNCTIONALITY equ <>
+define _MM_FUNCTIONALITY
 endif
 endif
 

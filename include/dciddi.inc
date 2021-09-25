@@ -6,7 +6,7 @@ ifndef _WINNT_
  include winnt.inc
 endif
 ifndef _INC_DCIDDI
-_INC_DCIDDI equ <>
+define _INC_DCIDDI
 
 DCICOMMAND		equ 3075
 DCI_VERSION		equ 0x0100

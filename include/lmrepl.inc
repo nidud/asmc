@@ -1,5 +1,5 @@
 ifndef _LMREPL_
-_LMREPL_ equ <>
+define _LMREPL_
 
 REPL_ROLE_EXPORT	equ 1
 REPL_ROLE_IMPORT	equ 2

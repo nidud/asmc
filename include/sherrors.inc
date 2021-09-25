@@ -1,5 +1,5 @@
 ifndef _SHERROR_
-_SHERROR_ equ <>
+define _SHERROR_
 .pragma list(push, 0)
 
 include winerror.inc

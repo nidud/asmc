@@ -1,5 +1,5 @@
 ifndef __CRYPTUIAPI_H__
-__CRYPTUIAPI_H__ equ <>
+define __CRYPTUIAPI_H__
 
 include winapifamily.inc
 

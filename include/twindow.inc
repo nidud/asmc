@@ -1,5 +1,5 @@
 ifndef __TWINDOW_INC
-__TWINDOW_INC equ <>
+define __TWINDOW_INC
 include wincon.inc
 include winuser.inc
 ifndef WM_MOUSEWHEEL
@@ -112,13 +112,11 @@ color_t         typedef ptr TColor
         movzx   eax,[this].TRect.row
         mul     [this].TRect.col
         imul    eax,eax,CHAR_INFO
-        retm    <eax>
         }
     .inline Coord {
         movzx   eax,[this].TRect.row
         shl     eax,16
         mov     al,[this].TRect.col
-        retm    <eax>
         }
     .inline SmallRect {
         movzx   eax,[this].TRect.row
@@ -132,7 +130,6 @@ color_t         typedef ptr TColor
         dec     al
         shl     rax,32
         or      rax,rdx
-        retm    <rax>
         }
 .ends
 trect_t         typedef ptr TRect

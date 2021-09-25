@@ -7,9 +7,6 @@
 include malloc.inc
 include twindow.inc
 
-    .data
-    vtable TCursorVtbl { TCursor_Hide, TCursor_Show, TCursor_Move, TCursor_Release }
-
     .code
 
     assume rcx:cursor_t
@@ -61,22 +58,16 @@ TCursor::TCursor proc uses rsi rbx
 
   local ci:CONSOLE_SCREEN_BUFFER_INFO
 
-    mov rax,rcx
-    .if rax == NULL
-        .return .if !malloc( TCursor )
+    mov rbx,rcx
+    .if rbx == NULL
+        mov rbx,@ComAlloc(TCursor)
+        .return .if !rbx
     .endif
-    mov rbx,rax
-    mov rsi,GetStdHandle(STD_OUTPUT_HANDLE)
-    lea rdx,vtable
-    mov [rbx].lpVtbl,rdx
-    mov [rbx].Position,0
-    mov [rbx].Handle,rsi
-
-    .if GetConsoleScreenBufferInfo(rsi, &ci)
-
+    mov [rbx].Handle,GetStdHandle(STD_OUTPUT_HANDLE)
+    .if GetConsoleScreenBufferInfo([rbx].Handle, &ci)
         mov [rbx].Position,ci.dwCursorPosition
     .endif
-    GetConsoleCursorInfo(rsi, &[rbx].CursorInfo)
+    GetConsoleCursorInfo([rbx].Handle, &[rbx].CursorInfo)
     mov rax,rbx
     ret
 

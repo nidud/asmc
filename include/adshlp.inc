@@ -1,5 +1,5 @@
 ifndef _ADSHLP_
-_ADSHLP_ equ <>
+define _ADSHLP_
 .pragma list(push, 0)
 
 ;HRESULT

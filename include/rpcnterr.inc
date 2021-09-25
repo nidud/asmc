@@ -1,5 +1,5 @@
 ifndef __RPCNTERR_H__
-__RPCNTERR_H__ equ <>
+define __RPCNTERR_H__
 ifndef __LIBC_INC
  include libc.inc
 endif

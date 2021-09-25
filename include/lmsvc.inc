@@ -1,5 +1,5 @@
 ifndef _LMSVC_
-_LMSVC_ equ <>
+define _LMSVC_
 
 include lmsname.inc
 

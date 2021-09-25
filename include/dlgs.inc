@@ -1,5 +1,5 @@
 ifndef _DLGSH_INCLUDED_
-_DLGSH_INCLUDED_ equ <>
+define _DLGSH_INCLUDED_
 
 ctlFirst		equ 0x0400
 ctlLast			equ 0x04ff

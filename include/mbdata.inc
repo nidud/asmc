@@ -1,5 +1,5 @@
 ifndef _INC_MBDATA
-_INC_MBDATA equ <>
+define _INC_MBDATA
 
 include crtdefs.inc
 
@@ -12,7 +12,7 @@ NUM_ULINFO equ 12 ;; multibyte full-width-latin upper/lower info
 endif
 
 ifndef _THREADMBCINFO
-_THREADMBCINFO equ <>
+define _THREADMBCINFO
 threadmbcinfo	STRUC
 refcount	int_t ?
 mbcodepage	int_t ?
@@ -26,7 +26,7 @@ pthreadmbcinfo	typedef ptr threadmbcinfo
 endif
 
 ifndef _THREADLOCALEINFO
-_THREADLOCALEINFO equ <>
+define _THREADLOCALEINFO
 
 ifndef LPSHORT
 LPINT			typedef ptr sdword

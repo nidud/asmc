@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef __CTYPE_INC
-__CTYPE_INC equ <>
+define __CTYPE_INC
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -13,7 +13,7 @@ WEOF	equ 0xFFFF
 endif
 
 ifndef _CRT_CTYPEDATA_DEFINED
-_CRT_CTYPEDATA_DEFINED equ <>
+define _CRT_CTYPEDATA_DEFINED
 ifndef _CTYPE_DISABLE_MACROS
 ifdef _CRTBLD
 externdef	__newctype:ushort_t
@@ -155,7 +155,7 @@ __iscsymf	proto __cdecl :SINT
 __iscsym	proto __cdecl :SINT
 
 ifndef _WCTYPE_DEFINED
-_WCTYPE_DEFINED equ <>
+define _WCTYPE_DEFINED
 
 iswalpha	proto __cdecl :wint_t
 iswupper	proto __cdecl :wint_t

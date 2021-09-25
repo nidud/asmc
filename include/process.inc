@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef _INC_PROCESS
-_INC_PROCESS equ <>
+define _INC_PROCESS
 
 include crtdefs.inc
 
@@ -31,7 +31,7 @@ _endthreadex    proto __cdecl :uint_t
 endif
 
 ifndef _CRT_TERMINATE_DEFINED
-_CRT_TERMINATE_DEFINED equ <>
+define _CRT_TERMINATE_DEFINED
 undef   exit
 exit    proto __cdecl :int_t
 _exit   proto __cdecl :int_t
@@ -62,7 +62,7 @@ _spawnvp    proto __cdecl :int_t, :string_t, :string_t
 _spawnvpe   proto __cdecl :int_t, :string_t, :string_t, :ptr string_t
 
 ifndef _CRT_SYSTEM_DEFINED
-_CRT_SYSTEM_DEFINED equ <>
+define _CRT_SYSTEM_DEFINED
 system proto __cdecl :string_t
 endif
 
@@ -85,11 +85,11 @@ _wspawnve   proto __cdecl :int_t, :wstring_t, :wstring_t, :ptr wstring_t
 _wspawnvp   proto __cdecl :int_t, :wstring_t, :wstring_t
 _wspawnvpe  proto __cdecl :int_t, :wstring_t, :wstring_t, :ptr wstring_t
 ifndef _CRT_WSYSTEM_DEFINED
-_CRT_WSYSTEM_DEFINED equ <>
+define _CRT_WSYSTEM_DEFINED
 _wsystem proto __cdecl :ptr wchar_t
 endif
 
-_WPROCESS_DEFINED equ <>
+define _WPROCESS_DEFINED
 endif
 
 endif

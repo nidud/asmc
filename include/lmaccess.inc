@@ -1,5 +1,5 @@
 ifndef _LMUSER_
-_LMUSER_ equ <>
+define _LMUSER_
 
 include lmcons.inc
 
@@ -673,7 +673,7 @@ MODALS_DOMAIN_ID_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_DOMAIN_ID_PARMNUM
 endif ;; _LMUSER_
 
 ifndef _LMGROUP_
-_LMGROUP_ equ <>
+define _LMGROUP_
 
 ;NET_API_STATUS
 NetGroupAdd proto WINAPI \
@@ -829,7 +829,7 @@ GROUP_POSIX_ID_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + GROUP_POSIX_ID_PARMNUM)
 endif  ;; _LMGROUP_
 
 ifndef _LMLOCALGROUP_
-_LMLOCALGROUP_ equ <>
+define _LMLOCALGROUP_
 
 ;NET_API_STATUS
 NetLocalGroupAdd proto WINAPI \
@@ -1031,7 +1031,7 @@ PNET_DISPLAY_GROUP	typedef ptr NET_DISPLAY_GROUP
 endif  ;; _LMLOCALGROUP_
 
 ifndef _LMACCESS_
-_LMACCESS_ equ <>
+define _LMACCESS_
 
 ;NET_API_STATUS
 NetAccessAdd proto WINAPI \
@@ -1175,7 +1175,7 @@ NET_VALIDATE_PASSWORD_HISTORY_LENGTH equ 0x00000010
 NET_VALIDATE_PASSWORD_HISTORY equ 0x00000020
 
 if NOT defined(_WINBASE_) AND NOT defined(_FILETIME_)
-_FILETIME_		equ <>
+define _FILETIME_
 FILETIME		STRUC
 dwLowDateTime		dd ?
 dwHighDateTime		dd ?
@@ -1242,7 +1242,7 @@ NetValidatePasswordPolicyFree proto WINAPI \
 endif ;; _LMACCESS_
 
 ifndef _LMDOMAIN_
-_LMDOMAIN_ equ <>
+define _LMDOMAIN_
 
 ;NET_API_STATUS
 NetGetDCName proto WINAPI \

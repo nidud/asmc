@@ -1,5 +1,5 @@
 ifndef _GDIPLUSENUMS_H
-_GDIPLUSENUMS_H equ <>
+define _GDIPLUSENUMS_H
 
 FlatnessDefault		equ (1.0/4.0)
 

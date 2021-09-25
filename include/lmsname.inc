@@ -1,5 +1,5 @@
 ifndef _LMSNAME_
-_LMSNAME_ equ <>
+define _LMSNAME_
 
 SERVICE_WORKSTATION     equ <"LanmanWorkstation">
 SERVICE_LM20_WORKSTATION equ <"WORKSTATION">

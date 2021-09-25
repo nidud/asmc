@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _NTSECAPI_
-_NTSECAPI_ equ <>
+define _NTSECAPI_
 
 ifndef _NTDEF_
 PNTSTATUS		typedef ptr LONG

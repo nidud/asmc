@@ -1535,8 +1535,8 @@ ExpandToken proc private uses esi edi ebx line:string_t, pi:ptr int_t, tokenarra
                             .continue
                         .endif
 
-                        ;; v2.08: write optional code label. This has been
-                        ;; moved out from RunMacro().
+                        ; v2.08: write optional code label. This has been
+                        ; moved out from RunMacro().
 
                         .if edx == 2
                             .return .if WriteCodeLabel( line, tokenarray ) == ERROR
@@ -1547,19 +1547,25 @@ ExpandToken proc private uses esi edi ebx line:string_t, pi:ptr int_t, tokenarra
                             or ecx,MF_LABEL
                         .endif
                         inc edx
-                        mov i,RunMacro( sym, edx, tokenarray, NULL, ecx, &is_exitm )
-                        .return .if eax == -1
-                        .return EMPTY ;; no further processing
+                        .if ( RunMacro( sym, edx, tokenarray, NULL, ecx, &is_exitm ) == -1 )
+                            .return
+                        .endif
+                        .return EMPTY ; no further processing
                     .endif
 
                 .elseif [eax].asym.state == SYM_TMACRO
 
                     strcpy( buffer, [eax].asym.string_ptr )
-                    .return .if ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
+                    .if ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
+                        .return
+                    .endif
+
                     strlen( [ebx].string_ptr )
                     mov ecx,[ebx].tokpos
                     sub ecx,line
-                    .return .if RebuildLine( buffer, i, tokenarray, eax, ecx, addbrackets ) == ERROR
+                    .if RebuildLine( buffer, i, tokenarray, eax, ecx, addbrackets ) == ERROR
+                        .return
+                    .endif
                     mov rc,STRING_EXPANDED
                 .endif
             .endif
@@ -1735,19 +1741,18 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
   local buffer        : string_t
 
     mov buffer,alloca(ModuleInfo.max_line_len)
-
+    ;
     ; filter certain conditions.
     ; bracket_flags: for (preprocessor) directives that expect a literal
     ; parameter, the expanded argument has to be enclosed in '<>' again.
-
-    mov ebx,tokenarray
-
+    ;
     .for ( lvl = 0: lvl < MAX_TEXTMACRO_NESTING: lvl++ )
 
         xor esi,esi
         mov bracket_flags,esi
         mov count,esi
         mov rc,esi
+        mov ebx,tokenarray
 
         .if ( Token_Count > 2 )
 
@@ -1766,119 +1771,9 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                         .return 0
                     .endif
                 .endif
-
-                ;
-                ; class::name proto/proc
-                ; - add 'this:ptr class' as first argument
-                ;
-
-                .if ( [ebx+3*16].token == T_OP_BRACKET ||
-                      [ebx+3*16].tokval == T_ENDP )
-
-                    mov edi,[ebx+16].tokpos
-                    mov esi,[ebx+32].tokpos
-                    mov al,'_'
-                    stosb
-                    mov ecx,strlen(esi)
-                    inc ecx
-                    rep movsb
-
-                .else
-
-                    ;
-                    ;  proc or proto
-                    ;
-
-                    mov edi,buffer
-                    mov edx,tokenarray
-                    mov esi,[edx].asm_tok.tokpos
-                    mov ecx,[ebx+16].tokpos
-                    sub ecx,esi
-                    rep movsb
-                    mov al,'_'
-                    stosb
-                    mov esi,[ebx+32].tokpos
-                    ;
-                    ; class::name proc syscall private uses regs name:dword,..
-                    ;
-                    .for ( edx = 3*16 : [ebx+edx].token != T_FINAL : edx+=16 )
-                        .break .if ( [ebx+edx].token == T_COLON )
-                        .break .if ( [ebx+edx].token == T_STRING )
-                    .endf
-                    .if ( [ebx+edx].token == T_COLON && [ebx+edx-16].token == T_ID )
-
-                        mov eax,[ebx+edx-16].string_ptr
-                        mov eax,[eax]
-                        or  al,0x20
-                        .if ( ax != 'c' )
-                            sub edx,16
-                        .endif
-                    .endif
-                    mov ecx,[ebx+edx].tokpos
-                    sub ecx,esi
-                    rep movsb
-                    .if ( byte ptr [edi-1] == ' ' )
-                        dec edi
-                    .endif
-                    ; " this:ptr class"
-                    mov eax,'iht '
-                    stosd
-                    mov eax,'tp:s'
-                    stosd
-                    mov ax,' r'
-                    stosw
-                    mov ecx,[ebx].string_ptr
-                    mov al,[ecx]
-                    .while al
-                        stosb
-                        inc ecx
-                        mov al,[ecx]
-                    .endw
-                    .if ( [ebx+edx].token == T_COLON || [ebx+edx+16].token == T_COLON )
-                        mov eax,' ,'
-                        stosw
-                    .endif
-                    mov ecx,strlen(esi)
-                    inc ecx
-                    rep movsb
-                    strcpy(string, buffer)
+                .if ( [ebx+32].token == T_DIRECTIVE )
+                    add ebx,32
                 .endif
-                mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-               .continue
-            .endif
-
-            ;
-            ; assume further id::id is function::calls() or name::space
-            ;
-
-            .if ( [ebx].hll_flags & T_HLL_DBLCOLON )
-
-                push ebx
-                .for ( edi = 0 : [ebx].token != T_FINAL : ebx += 16 )
-
-                    .if ( [ebx+16].token == T_DBL_COLON )
-
-                        mov al,[ebx].token
-                        mov ah,[ebx+32].token
-                        .if ( [ebx+3*16].token == T_OP_BRACKET ||
-                              ( al < T_STRING && al > T_REG &&
-                                ah < T_STRING && ah > T_REG ) )
-
-                            mov edi,[ebx+16].tokpos
-                            .while ( byte ptr [edi-1] <= ' ' )
-                                dec edi
-                            .endw
-                            mov esi,[ebx+32].tokpos
-                            mov al,'_'
-                            stosb
-                            mov ecx,strlen(esi)
-                            inc ecx
-                            rep movsb
-                            mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
-                        .endif
-                    .endif
-                .endf
-                pop ebx
             .endif
         .endif
 
@@ -1918,6 +1813,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
             .endif
 
         .elseif Token_Count > 1 && [edx+16].asm_tok.token == T_DIRECTIVE
+
             mov al,[edx+16].asm_tok.dirtype
             .switch al
             .case DRT_CATSTR
@@ -1998,7 +1894,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 .endif
             .endif
         .endif
-
+        ;
         ; scan the line from left to right for (text) macros.
         ; it's currently not quite correct. a macro proc should only
         ; be evaluated in the following cases:
@@ -2006,7 +1902,7 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
         ; 2. it is the second token, and the first one is an ID
         ; 3. it is the third token, the first one is an ID and
         ;    the second is a ':' or '::'.
-
+        ;
         .while ( count < Token_Count )
 
             mov eax,bracket_flags
@@ -2026,11 +1922,127 @@ ExpandLine proc uses esi edi ebx string:string_t, tokenarray:token_t
                 inc count
             .endif
         .endw
+
         .if rc == STRING_EXPANDED
             mov Token_Count,Tokenize( string, 0, tokenarray, TOK_RESCAN or TOK_LINE )
-        .else
-            .break
         .endif
+
+        mov ebx,tokenarray
+        .if ( Token_Count > 2 && [ebx].hll_flags & T_HLL_DBLCOLON )
+
+            .for ( : [ebx].token != T_FINAL : ebx += 16 )
+
+                .if ( [ebx+16].token == T_DBL_COLON )
+
+                    xor edi,edi
+                    .if ( [ebx+3*16].token == T_DIRECTIVE &&
+                        ( [ebx+3*16].tokval == T_PROC || [ebx+3*16].tokval == T_PROTO ) )
+
+                        ; if 'class::name proto|proc'
+
+                        inc edi
+                        .if ( SymSearch( [ebx].string_ptr ) )
+                            .if ( [eax].asym.flag2 & S_CLASS )
+
+                                ; - add 'this:ptr class' as first argument
+
+                                inc edi
+                            .endif
+                        .endif
+
+                    .else
+
+                        mov al,[ebx].token
+                        mov ah,[ebx+32].token
+                        .if ( [ebx+3*16].token == T_OP_BRACKET ||
+                              ( al < T_STRING && al > T_REG &&
+                                ah < T_STRING && ah > T_REG ) )
+                            inc edi
+                        .endif
+
+                    .endif
+
+                    .if ( edi == 1 )
+
+                        mov edi,[ebx+16].tokpos
+                        .while ( byte ptr [edi-1] <= ' ' )
+                            dec edi
+                        .endw
+                        mov esi,[ebx+32].tokpos
+                        mov al,'_'
+                        stosb
+                        mov ecx,strlen(esi)
+                        inc ecx
+                        rep movsb
+
+                    .elseif ( edi > 1 )
+
+                        mov edi,buffer
+                        mov edx,tokenarray
+                        mov esi,[edx].asm_tok.tokpos
+                        mov ecx,[ebx+16].tokpos
+                        sub ecx,esi
+                        rep movsb
+                        mov al,'_'
+                        stosb
+                        mov esi,[ebx+32].tokpos
+
+                        ;
+                        ; class::name proc syscall private uses regs name:dword,..
+                        ;
+                        .for ( edx = 3*16 : [ebx+edx].token != T_FINAL : edx+=16 )
+                            .break .if ( [ebx+edx].token == T_COLON )
+                            .break .if ( [ebx+edx].token == T_STRING )
+                        .endf
+
+                        .if ( [ebx+edx].token == T_COLON && [ebx+edx-16].token == T_ID )
+
+                            sub edx,16
+                        .endif
+
+                        mov ecx,[ebx+edx].tokpos
+                        sub ecx,esi
+                        rep movsb
+
+                        .if ( byte ptr [edi-1] == ' ' )
+                            dec edi
+                        .endif
+
+                        ; add " this:ptr class"
+
+                        mov eax,'iht '
+                        stosd
+                        mov eax,'tp:s'
+                        stosd
+                        mov ax,' r'
+                        stosw
+                        mov ecx,[ebx].string_ptr
+                        mov al,[ecx]
+                        .while al
+                            stosb
+                            inc ecx
+                            mov al,[ecx]
+                        .endw
+
+                        .if ( [ebx+edx].token == T_COLON || [ebx+edx+16].token == T_COLON )
+                            mov eax,' ,'
+                            stosw
+                        .endif
+                        mov ecx,strlen(esi)
+                        inc ecx
+                        rep movsb
+                        strcpy(string, buffer)
+                    .endif
+
+                    .if ( edi )
+
+                        mov Token_Count,Tokenize( string, 0, tokenarray, TOK_DEFAULT )
+                        sub ebx,16
+                    .endif
+                .endif
+            .endf
+        .endif
+        .break .if ( rc != STRING_EXPANDED )
     .endf
 
     .return asmerr( 2123 ) .if ( lvl == MAX_TEXTMACRO_NESTING )

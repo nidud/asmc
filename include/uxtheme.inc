@@ -1,5 +1,5 @@
 ifndef _UXTHEME_H_
-_UXTHEME_H_ equ <>
+define _UXTHEME_H_
 
 include winapifamily.inc
 

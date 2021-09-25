@@ -1,5 +1,5 @@
 ifndef __ATLCONV_H__
-__ATLCONV_H__ equ <>
+define __ATLCONV_H__
 
 include atldef.inc
 include stddef.inc
@@ -8,16 +8,16 @@ include atlalloc.inc
 ifndef __wtypes_h__
 
 if not defined(_X86_) and not defined(_IA64_) and not defined(_AMD64_) and defined(_M_IX86)
-_X86_ equ <>
+define _X86_
 endif
 
 if not defined(_X86_) and not defined(_IA64_) and not defined(_AMD64_) and defined(_M_AMD64)
-_AMD64_ equ <>
+define _AMD64_
 endif
 
 if not defined(_X86_) and not defined(_M_IX86) and not defined(_AMD64_) and defined(_M_IA64)
 if not defined(_IA64_)
-_IA64_ equ <>
+define _IA64_
 endif
 endif
 
@@ -71,71 +71,6 @@ else
 endif
 endm
 
-
 .pragma pack(pop)
-
-.pragma pack(push,8)
-
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-ifndef _DEBUG
-else
-endif
-endif
-
-ifndef _DEBUG
-else
-endif
-
-ifdef _WINGDI_
-endif
-
-if defined(_UNICODE)
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-else
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-endif
-
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-
-if defined(_UNICODE)
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-else
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-endif
-
-if defined(_UNICODE)
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-else
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-endif
-
-ifdef _WINGDI_
-ifndef ATLDEVMODEA2W
-endif
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-if defined(_UNICODE)
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-else
-ifndef _ATL_EX_CONVERSION_MACROS_ONLY
-endif
-endif
-endif
-
-.pragma pack(pop)
-
-ifdef _WINGDI_
-endif
-
-ifndef _ATL_NO_PRAGMA_WARNINGS
-endif
 
 endif

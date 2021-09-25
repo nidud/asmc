@@ -4,7 +4,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 include SpecStrings.inc
-_WININET_ equ <>
+define _WININET_
 
 ifdef _WIN64
 _WININET_ALIGN equ 8

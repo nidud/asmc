@@ -1,5 +1,5 @@
 ifndef __CREDSSP_H__
-__CREDSSP_H__ equ <>
+define __CREDSSP_H__
 
 include winapifamily.inc
 

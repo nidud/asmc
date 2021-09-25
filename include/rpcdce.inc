@@ -1,5 +1,5 @@
 ifndef __RPCDCE_H__
-__RPCDCE_H__ equ <>
+define __RPCDCE_H__
 
 ifndef __LIBC_INC
  include libc.inc
@@ -10,7 +10,7 @@ handle_t		typedef RPC_BINDING_HANDLE
 rpc_binding_handle_t	equ <RPC_BINDING_HANDE>
 
 ifndef GUID_DEFINED
-GUID_DEFINED		equ 1
+define GUID_DEFINED
 GUID			STRUC
 Data1			dd ?
 Data2			dw ?
@@ -20,7 +20,7 @@ GUID			ENDS
 endif
 
 ifndef UUID_DEFINED
-UUID_DEFINED		equ 1
+define UUID_DEFINED
 UUID			typedef GUID
 ifndef uuid_t
 uuid_t			equ UUID
@@ -46,7 +46,7 @@ endif
 RPC_IF_HANDLE		typedef ptr
 
 ifndef IFID_DEFINED
-IFID_DEFINED		equ 1
+define IFID_DEFINED
 RPC_IF_ID		STRUC
 Uuid			UUID <>
 VersMajor		dw ?

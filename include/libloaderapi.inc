@@ -1,6 +1,6 @@
 .pragma list(push, 0)
 ifndef _APISETLIBLOADER_
-_APISETLIBLOADER_ equ <>
+define _APISETLIBLOADER_
 
 include apiset.inc
 include apisetcconv.inc

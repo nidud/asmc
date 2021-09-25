@@ -1,5 +1,5 @@
 ifndef _WINDNS_INCLUDED_
-_WINDNS_INCLUDED_ equ <>
+define _WINDNS_INCLUDED_
 .pragma list(push, 0)
 
 ifndef _WINDEF_

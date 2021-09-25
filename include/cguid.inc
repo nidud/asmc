@@ -1,5 +1,5 @@
 ifndef __CGUID_H__
-__CGUID_H__ equ <>
+define __CGUID_H__
 
 externdef GUID_NULL:IID
 externdef IID_IRpcChannel:IID

@@ -1,5 +1,5 @@
 ifndef _INC_DBGINT
-_INC_DBGINT equ <>
+define _INC_DBGINT
 
 ifndef _CRTBLD
 ;;

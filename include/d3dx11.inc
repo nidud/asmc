@@ -3,7 +3,7 @@ ifdef  __D3DX11_INTERNAL__
 endif
 
 ifndef __D3DX11_H__
-__D3DX11_H__ equ <>
+define __D3DX11_H__
 
 include limits.inc
 include float.inc

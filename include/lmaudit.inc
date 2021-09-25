@@ -1,8 +1,8 @@
 ifndef _LMAUDIT_
-_LMAUDIT_ equ <>
+define _LMAUDIT_
 
 ifndef _LMHLOGDEFINED_
-_LMHLOGDEFINED_ equ <>
+define _LMHLOGDEFINED_
 
 HLOG			STRUC
 time			dd ?

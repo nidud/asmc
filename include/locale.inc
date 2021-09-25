@@ -37,7 +37,7 @@ lconv		ENDS
 LPLCONV		typedef ptr lconv
 
 ifndef _CONFIG_LOCALE_SWT
-_CONFIG_LOCALE_SWT equ <>
+define _CONFIG_LOCALE_SWT
 _ENABLE_PER_THREAD_LOCALE	    equ 0x1
 _DISABLE_PER_THREAD_LOCALE	    equ 0x2
 _ENABLE_PER_THREAD_LOCALE_GLOBAL    equ 0x10
@@ -53,11 +53,9 @@ _get_current_locale	proto __cdecl
 _create_locale		proto __cdecl :int_t, :string_t
 
 ifndef _locale_t
-pthreadlocinfo		typedef ptr threadlocinfo
-pthreadmbcinfo		typedef ptr threadmbcinfo
 _locale_tstruct		STRUC
-locinfo			pthreadlocinfo ?
-mbcinfo			pthreadmbcinfo ?
+locinfo			ptr threadlocinfo ?
+mbcinfo			ptr threadmbcinfo ?
 _locale_tstruct		ENDS
 _locale_t		typedef ptr _locale_tstruct
 endif
@@ -70,7 +68,7 @@ __free_locale		proto __cdecl :_locale_t
 endif
 
 ifndef _WLOCALE_DEFINED
-_WLOCALE_DEFINED equ <>
+define _WLOCALE_DEFINED
 _wsetlocale		proto __cdecl :int_t, :wstring_t
 _wcreate_locale		proto __cdecl :int_t, :wstring_t
 endif

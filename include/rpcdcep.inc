@@ -2,7 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef __RPCDCEP_H__
-__RPCDCEP_H__ equ <>
+define __RPCDCEP_H__
 
 RPC_VERSION		STRUC
 MajorVersion		dw ?

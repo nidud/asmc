@@ -3,7 +3,7 @@
 include winnt.inc
 
 ifndef _SIG_ATOMIC_T_DEFINED
-_SIG_ATOMIC_T_DEFINED equ <>
+define _SIG_ATOMIC_T_DEFINED
 sig_atomic_t typedef int_t
 endif
 

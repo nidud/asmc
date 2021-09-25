@@ -1,5 +1,5 @@
 ifndef __RPCNSI_H__
-__RPCNSI_H__ equ <>
+define __RPCNSI_H__
 ifndef __LIBC_INC
  include libc.inc
 endif

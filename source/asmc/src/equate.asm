@@ -18,6 +18,7 @@ include listing.inc
 include input.inc
 include fixup.inc
 include atofloat.inc
+include operator.inc
 
     .data
     maxintvalues int_t -1,0, -1,0,-1,0x7fffffff
@@ -211,6 +212,17 @@ check_number:
                 mov opnd.float_tok,NULL
                 jmp check_float
             .else
+                mov i,0
+                .if ( EvalOperand( &i, tokenarray, 1, &opn2, 0 ) != ERROR )
+                    ;mov opn2.op,opnd.op
+                    mov ecx,tokenarray
+                    add ecx,16
+                    .if ( EvalOperator( &opn2, &opnd, ecx ) != ERROR )
+                        .if ( ParseOperator( tokenarray, opn2.op ) != ERROR )
+                            .return opn2.sym
+                        .endif
+                    .endif
+                .endif
                 asmerr(2026)
             .endif
             .return NULL
@@ -364,29 +376,51 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
     local argbuffer[MAX_LINE_LEN]:char_t
 
     mov ebx,tokenarray
-    mov name,[ebx].string_ptr
+    mov eax,[ebx].string_ptr
+    .if ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_DEFINE )
+        mov eax,[ebx+16].string_ptr
+    .endif
+    mov name,NameSpace(eax, eax)
     mov i,2
     mov cmpvalue,FALSE
     mov edi,SymSearch(name)
     lea esi,[ebx+32]
 
     .switch
+    .case [ebx].tokval == T_DEFINE && [esi].token == T_FINAL
+        ;
+        ; define name
+        ;
+        xor eax,eax
+        mov opnd.l64_l,eax
+        mov opnd.l64_h,eax
+        mov opnd.h64_l,eax
+        mov opnd.h64_h,eax
+        mov opnd.sym,eax
+        dec i
+        jmp check_single_number
+    .case [esi].token == T_STRING && [esi].string_delim == '<'
+        ;
         ; if a literal follows, the equate MUST be(come) a text macro
-      .case [esi].token == T_STRING && [esi].string_delim == '<'
+        ;
         .return SetTextMacro(ebx, edi, name, NULL)
-      .case edi == NULL
-      .case [edi].state == SYM_UNDEFINED
-      .case [edi].state == SYM_EXTERNAL && \
+
+    .case edi == NULL
+        .endc
+    .case [edi].state == SYM_UNDEFINED
+    .case [edi].state == SYM_EXTERNAL && \
           ( [edi].sflags & S_WEAK ) && !( [edi].flag1 & S_ISPROC )
+        ;
         ; It's a "new" equate.
         ; wait with definition until type of equate is clear
+        ;
         .endc
-      .case [edi].state == SYM_TMACRO
+    .case [edi].state == SYM_TMACRO
         .return SetTextMacro(ebx, edi, name, [esi].tokpos)
-      .case !( byte ptr [edi].flags & S_ISEQUATE )
+    .case !( byte ptr [edi].flags & S_ISEQUATE )
         asmerr( 2005, name )
         .return NULL
-      .default
+    .default
         mov eax,Parse_Pass
         .if ( [edi].asmpass == al )
             mov cmpvalue,TRUE
@@ -396,7 +430,7 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
 
     ; try to evaluate the expression
 
-    .if [esi].token == T_NUM && Token_Count == 3
+    .if ( [esi].token == T_NUM && Token_Count == 3 )
 
         mov p,[esi].string_ptr
 
@@ -451,15 +485,15 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
     .else
         mov p,[esi].tokpos
         .if Parse_Pass == PASS_1
-
+            ;
             ; if the expression cannot be evaluated to a numeric value,
             ; it's to become a text macro. The value of this macro will be
             ; the original (unexpanded!) line - that's why it has to be
             ; saved here to argbuffer[].
-
+            ;
             ; v2.32.39 - added error 'missing right parenthesis'
             ; -- '(' triggers multiple lines..
-
+            ;
             mov edx,edi
             mov edi,eax
             xor eax,eax
@@ -577,7 +611,11 @@ CreateConstant endp
 EquDirective proc i:int_t, tokenarray:token_t
 
     mov ecx,tokenarray
-    .if [ecx].token != T_ID
+    mov al,[ecx].token
+    .if ( [ecx].token == T_DIRECTIVE && [ecx].tokval == T_DEFINE )
+        mov al,[ecx+16].token
+    .endif
+    .if ( al != T_ID )
         .return asmerr(2008, [ecx].string_ptr)
     .endif
     .if CreateConstant(ecx)

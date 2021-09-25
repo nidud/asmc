@@ -1,5 +1,5 @@
 ifndef _WRL_CLIENT_H_
-_WRL_CLIENT_H_ equ <>
+define _WRL_CLIENT_H_
 
 include stddef.inc
 include unknwn.inc

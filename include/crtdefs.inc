@@ -15,7 +15,7 @@ endif
 endif
 
 ifndef _INC_CRTDEFS
-_INC_CRTDEFS equ <>
+define _INC_CRTDEFS
 
 ifdef _CRTBLD
 
@@ -152,7 +152,7 @@ endif
 
 ifndef _USE_32BIT_TIME_T
 ifndef _WIN64
-_USE_32BIT_TIME_T equ <>
+define _USE_32BIT_TIME_T
 endif
 endif
 

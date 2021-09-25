@@ -1,5 +1,5 @@
 ifndef _INC_SYSERR
-_INC_SYSERR equ <>
+define _INC_SYSERR
 
 include crtdefs.inc
 include internal.inc

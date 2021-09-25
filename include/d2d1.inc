@@ -1,7 +1,7 @@
 .pragma list(push, 0)
 
 ifndef _D2D1_H_
-_D2D1_H_ equ <>
+define _D2D1_H_
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc

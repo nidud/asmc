@@ -1,0 +1,130 @@
+ifndef __IOSTREAM
+define __IOSTREAM
+
+include conio.inc
+include stdio.inc
+include stdlib.inc
+
+define endl <"\n">
+
+.template ostream
+
+    flags dd ?
+
+    .operator << :dword {
+       .new convbuf[64]:char_t
+        mov ecx,edx
+        _ultoa( ecx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+    .operator << :qword {
+       .new convbuf[64]:char_t
+        mov rcx,rdx
+        _ui64toa( rcx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+    .operator << :sdword {
+       .new convbuf[64]:char_t
+        mov ecx,edx
+        _itoa( ecx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+    .operator << :sqword {
+       .new convbuf[64]:char_t
+        mov rcx,rdx
+        _i64toa( rcx, &convbuf, 10 )
+        _cputs( &convbuf )
+        }
+    .operator << :sbyte {
+        movsx   edx,_1
+        ostream_shl_sdword(rcx, edx)
+        }
+    .operator << :sword {
+        movsx   edx,_1
+        ostream_shl_sdword(rcx, edx)
+        }
+    .operator << :byte {
+        movzx   edx,_1
+        ostream_shl_dword(rcx, edx)
+        }
+    .operator << :word {
+        movzx   edx,_1
+        ostream_shl_dword(rcx, ecx)
+        }
+    .operator << :abs {
+        ostream_shl_sdword(rcx, _1)
+        }
+    .operator << :ptr sbyte {
+        _cputs(_1)
+        }
+    .operator << :ptr word {
+        _cputws(_1)
+        }
+    .ends
+
+.template wostream
+
+    flags dd ?
+
+    .operator << :dword {
+       .new convbuf[64]:wchar_t
+        mov ecx,edx
+        _ultow( ecx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+    .operator << :qword {
+       .new convbuf[64]:wchar_t
+        mov rcx,rdx
+        _ui64tow( rcx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+    .operator << :sdword {
+       .new convbuf[64]:wchar_t
+        mov ecx,edx
+        _itow( ecx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+    .operator << :sqword {
+       .new convbuf[64]:wchar_t
+        mov rcx,rdx
+        _i64tow( rcx, &convbuf, 10 )
+        _cputws( &convbuf )
+        }
+    .operator << :real8 {
+       .new convbuf[64]:wchar_t
+        swprintf( "%f", &convbuf, _1 )
+        _cputws( &convbuf )
+        }
+    .operator << :sbyte {
+        movsx   edx,_1
+        wostream_shl_sdword(rcx, edx)
+        }
+    .operator << :sword {
+        movsx   edx,_1
+        wostream_shl_sdword(rcx, edx)
+        }
+    .operator << :byte {
+        movzx   edx,_1
+        wostream_shl_dword(rcx, edx)
+        }
+    .operator << :word {
+        movzx   edx,_1
+        wostream_shl_dword(rcx, edx)
+        }
+    .operator << :ptr sbyte {
+        _cputs(_1)
+        }
+    .operator << :ptr word {
+        _cputws(_1)
+        }
+    .ends
+
+    .data
+ifdef _UNICODE
+     cstream wostream { 0 }
+     cout ptr wostream cstream
+else
+     cstream ostream { 0 }
+     cout ptr ostream cstream
+endif
+endif

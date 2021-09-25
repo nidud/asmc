@@ -1,5 +1,5 @@
 ifndef __DIRECTXPACKEDVECTOR_INC
-__DIRECTXPACKEDVECTOR_INC equ <>
+define __DIRECTXPACKEDVECTOR_INC
 include DirectXMath.inc
 .pragma list(push, 0)
 

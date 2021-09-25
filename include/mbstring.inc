@@ -1,12 +1,12 @@
 ifndef _INC_MBSTRING
-_INC_MBSTRING equ <>
+define _INC_MBSTRING
 
 include crtdefs.inc
 
 .pragma pack(push, _CRT_PACKING)
 
 ifndef _FILE_DEFINED
-_FILE_DEFINED equ <>
+define _FILE_DEFINED
 _iobuf		STRUC
 _ptr		string_t ?
 _cnt		int_t ?
@@ -23,7 +23,7 @@ endif
 
 ifdef _CRTBLD
 ifndef _THREADMBCINFO
-_THREADMBCINFO equ <>
+define _THREADMBCINFO
 threadmbcinfo	STRUC
 refcount	int_t ?
 mbcodepage	int_t ?
@@ -200,7 +200,7 @@ _MBSTRING_DEFINED equ 1
 endif
 
 ifndef _MBLEADTRAIL_DEFINED
-_MBLEADTRAIL_DEFINED equ <>
+define _MBLEADTRAIL_DEFINED
 _ismbblead	proto __cdecl :uint_t
 _ismbblead_l	proto __cdecl :uint_t, :_locale_t
 _ismbbtrail	proto __cdecl :uint_t

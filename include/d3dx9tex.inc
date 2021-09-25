@@ -1,6 +1,6 @@
 include d3dx9.inc
 ifndef _D3DX9TEX_H
-_D3DX9TEX_H equ <>
+define _D3DX9TEX_H
 
 D3DX_FILTER_NONE	equ 0x00000001
 D3DX_FILTER_POINT	equ 0x00000002

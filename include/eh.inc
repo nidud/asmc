@@ -2,7 +2,7 @@
 include crtdefs.inc
 
 ifndef _INC_EH
-_INC_EH equ <>
+define _INC_EH
 ifndef RC_INVOKED
 
 .pragma pack(push, _CRT_PACKING)

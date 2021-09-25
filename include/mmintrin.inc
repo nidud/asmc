@@ -1,5 +1,5 @@
 ifndef _MMINTRIN_H_INCLUDED
-_MMINTRIN_H_INCLUDED equ <>
+define _MMINTRIN_H_INCLUDED
 .pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc

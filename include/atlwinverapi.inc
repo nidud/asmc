@@ -1,5 +1,5 @@
 ifndef __ATLWINVERAPI_H__
-__ATLWINVERAPI_H__ equ <>
+define __ATLWINVERAPI_H__
 
 include atldef.inc
 include windows.inc

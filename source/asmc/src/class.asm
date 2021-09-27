@@ -61,20 +61,27 @@ ClassProto endp
 
     assume esi:ptr com_item
 
-ClassProto2 proc uses esi edi class:string_t, method:string_t, item:ptr com_item, args:string_t
+ClassProto2 proc uses esi edi ebx class:string_t, method:string_t, item:ptr com_item, args:string_t, this_ptr:string_t
 
   local name[256]:char_t
   local buffer[256]:char_t
+  local this[128]:char_t
 
     mov esi,item
     mov edi,args
+    mov ebx,this_ptr
 
+    .if ( ebx == NULL )
+
+        lea ebx,this
+        tsprintf( ebx, "ptr %s", class )
+    .endif
     tsprintf( &name, "%s_%s", class, method )
     .if ( [esi].method != T_DOT_STATIC )
         .if ( byte ptr [edi] )
-            tsprintf( &buffer, ":ptr %s, %s", class, edi )
+            tsprintf( &buffer, ":%s, %s", ebx, edi )
         .else
-            tsprintf( &buffer, ":ptr %s", class )
+            tsprintf( &buffer, ":%s", ebx )
         .endif
         lea edi,buffer
     .endif
@@ -245,7 +252,7 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:token_t
 
         .if ( strcmp( edi, [esi].com_item.class ) == 0 )
 
-            ClassProto2( edi, edi, esi, [ebx+16].tokpos )
+            ClassProto2( edi, edi, esi, [ebx+16].tokpos, NULL )
             mov constructor,1
             jmp done
         .endif
@@ -560,6 +567,8 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
    .new class[256]      : char_t
    .new token[256]      : char_t
    .new name[512]       : char_t
+   .new this[128]       : char_t
+   .new this_ptr        : string_t
 
     mov ebx,tokenarray
     lea edi,class
@@ -603,16 +612,37 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
       .case T_DOT_STATIC
       .case T_DOT_OPERATOR
 
+        mov this_ptr,NULL
         mov esi,ModuleInfo.ComStack
         mov ecx,CurrStruct
         .if ( !ecx || !esi )
             .return asmerr( 1011 )
         .endif
         mov [esi].com_item.method,eax
+        mov eax,[esi].com_item.sym
+        lea ebx,[ebx+edx+16]
+        .if ( eax == NULL )
+            SymFind( [esi].com_item.class )
+        .endif
+        .if ( eax )
+            movzx eax,[eax].asym.regist[2]
+        .endif
+        .if ( eax )
+            tsprintf( &this, "%r", eax )
+            mov this_ptr,&this
+        .endif
+
         mov langtype,[esi].com_item.langtype
         mov is_vararg,0
 
-        mov ebx,get_param_name( &[ebx+edx+16], &token, &args, &is_id, &context, &langtype )
+        .if ( [ebx].token == T_STRING )
+            .if ( GetOperator(ebx) == 0 )
+                mov this_ptr,[ebx].string_ptr
+                add ebx,16
+            .endif
+        .endif
+
+        mov ebx,get_param_name( ebx, &token, &args, &is_id, &context, &langtype )
         .return .if eax == ERROR
 
         .if context ; { inline code }
@@ -675,7 +705,7 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
                 .else
 
-                    ClassProto2( class_ptr, edi, esi, [ebx].tokpos )
+                    ClassProto2( class_ptr, edi, esi, [ebx].tokpos, this_ptr )
                     .if ( cmd != T_DOT_OPERATOR )
                         inc constructor
                     .endif

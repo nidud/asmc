@@ -9,7 +9,6 @@
     op1     expr <>
     op2     expr <>
     type    int_t ?
-    left    int_t ?
    .ends
 
 GetOperator     proto :ptr asm_tok

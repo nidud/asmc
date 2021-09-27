@@ -186,6 +186,9 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
     .if ( eax && [eax].asym.flag2 & S_CLASS &&
           [eax].asym.flag2 & S_OPERATOR )
         mov type,eax
+        .if ( [eax].asym.regist[2] )
+            inc isptr
+        .endif
     .else
         .return asmerr( 2008, name )
     .endif
@@ -291,6 +294,29 @@ ProcessOperator endp
 
 EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
+    ;
+    ; first argument has to be class::operator
+    ;
+    mov edx,ModuleInfo.tokenarray
+    .if ( [edx].asm_tok.token != T_ID ||
+          [edx+16].asm_tok.token != T_DIRECTIVE ||
+          [edx+16].asm_tok.tokval != T_EQU )
+        .return ERROR
+    .endif
+    .if ( SymFind( [edx].asm_tok.string_ptr ) == NULL )
+        .return ERROR
+    .endif
+    .if ( [eax].asym.mem_type == MT_TYPE )
+        mov eax,[eax].asym.type
+    .endif
+    .if ( [eax].asym.mem_type == MT_PTR )
+        mov eax,[eax].asym.target_type
+    .endif
+    .if ( !eax || !( [eax].asym.flag2 & S_OPERATOR ) )
+        .return ERROR
+    .endif
+
+
     mov esi,opnd1
     mov ecx,[esi].type
     mov eax,[esi].sym
@@ -305,14 +331,15 @@ EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
         mov ecx,eax
     .endif
     .if ( !ecx || !( [ecx].asym.flag2 & S_OPERATOR ) )
-        .return ERROR
+        .if ( [esi].kind != EXPR_REG )
+            .return ERROR
+        .endif
     .endif
     mov [esi].type,ecx
     mov ebx,LclAlloc( opinfo )
    .return ERROR .if ( eax == NULL )
 
     mov [ebx].next,NULL
-    mov [ebx].left,1
     mov [ebx].type,GetOperator(oper)
    .return ERROR .if ( eax == 0 )
 
@@ -324,7 +351,7 @@ EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
         mov [esi].op,eax
         mov [edx].expr.op,NULL
 
-    .elseif ( [esi].op && [ebx].type == T_ADD )
+    .elseif ( [esi].op );&& [ebx].type == T_ADD )
 
         ;
         ; flip operand if +
@@ -345,9 +372,6 @@ EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
             .if ( [eax].asym.flag2 & S_OPERATOR )
                 mov [edx].expr.type,eax
             .endif
-        .endif
-        .if ( [edx].expr.type )
-            mov [ebx].left,0
         .endif
     .endif
 
@@ -372,105 +396,133 @@ EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
 EvalOperator endp
 
-ParseOperator proc uses esi edi ebx tokenarray:token_t, op:ptr opinfo
 
-   .new func[128]:char_t
-   .new args[128]:char_t
-   .new stklvl:string_t = NULL
+GetArgs2 proc private uses esi opnd:ptr expr
 
-    mov ebx,op
-    mov args,0
-    lea edi,args
-    lea esi,func
-    mov ecx,[ebx].op1.type
-    tsprintf( esi, "%s_%r_", [ecx].asym.name, [ebx].type )
-
-    .switch ( [ebx].op2.kind )
-    .case EXPR_FLOAT
-    .case EXPR_CONST
-        mov ecx,[ebx].op2.quoted_string
-        .if ( ecx && [ecx].asm_tok.token == T_STRING )
-            .if ( ModuleInfo.xflag & OPT_WSTRING )
-                strcat( esi, "ptrword" )
-            .else
-                strcat( esi, "ptrsbyte" )
-            .endif
-        .else
-            strcat( esi, "abs" )
-        .endif
-        .endc
-    .default
-        GetType( esi, &[ebx].op2, esi, 0 )
-        .endc
-    .endsw
-    strcat( esi, "(" )
-
-    .switch ( [ebx].op2.kind )
+    mov esi,opnd
+    .switch ( [esi].expr.kind )
     .case EXPR_FLOAT
         .endc
     .case EXPR_CONST
-        tsprintf(edi, "%d", [ebx].op2.value)
+        tsprintf(edi, "%d", [esi].expr.value)
         .endc
     .case EXPR_ADDR
-        mov ecx,[ebx].op2.sym
+        mov ecx,[esi].expr.sym
         .if ( ecx )
             strcpy(edi, [ecx].asym.name)
         .endif
         .endc
     .case EXPR_REG
-        mov edx,[ebx].op2.base_reg
+        mov edx,[esi].expr.base_reg
         tsprintf(edi, "%r", [edx].asm_tok.tokval)
         .endc
     .endsw
+    ret
 
-    mov edx,[ebx].op1.sym
-    mov stklvl,[edx].asym.name
+GetArgs2 endp
 
-    mov esi,strlen(esi)
-    add esi,strlen(edi)
-    add esi,strlen(stklvl)
-    add esi,7
-    and esi,-4
-    sub esp,esi
-    mov ecx,esp
-    mov edx,stklvl
-    mov stklvl,ecx
-    tsprintf( ecx, "%s%s, %s)", &func, edx, edi )
-    mov ebx,[ebx].next
+ParseOperator proc uses esi edi ebx tokenarray:token_t, op:ptr opinfo
 
-    .for ( : ebx : ebx = [ebx].next )
+   .new buffer[256]:char_t
+   .new level:int_t = 0
+   .new name:string_t
+   .new vector:int_t
+   .new type:int_t
 
-        lea edi,args
-        lea ecx,func
-        lea esi,[ebx].op1
-        .if ( [ebx].left == 0 )
-            lea esi,[ebx].op2
+    mov ebx,op
+    .while ( [ebx].next )
+        mov ebx,[ebx].next
+    .endw
+    mov level,eax
+    mov ecx,[ebx].op1.type
+    mov name,[ecx].asym.name
+
+    movzx eax,[ecx].asym.regist
+    movzx edx,[ecx].asym.regist[2]
+    .if ( eax == 0 )
+        mov eax,T_EAX
+        .if ( ModuleInfo.Ofssize == USE64 )
+            mov eax,T_RAX
         .endif
-        mov edx,[esi].expr.type
-        movzx eax,[edx].asym.regist[2]
-        .if ( eax == 0 )
-            mov eax,T_DWORD
-            .if ( ModuleInfo.Ofssize == USE64 )
-                mov eax,T_QWORD
+    .endif
+    .if ( edx == 0 )
+        mov edx,T_DWORD
+        .if ( ModuleInfo.Ofssize == USE64 )
+            mov edx,T_QWORD
+        .endif
+    .endif
+    mov vector,eax
+    mov type,edx
+
+    .for ( ebx = op : ebx : ebx = [ebx].next, level++ )
+
+        lea edi,buffer
+        tsprintf( edi, "%s_%r_", name, [ebx].type )
+
+        .switch ( [ebx].op2.kind )
+        .case EXPR_FLOAT
+        .case EXPR_CONST
+            mov ecx,[ebx].op2.quoted_string
+            .if ( ecx && [ecx].asm_tok.token == T_STRING )
+                .if ( ModuleInfo.xflag & OPT_WSTRING )
+                    strcat( edi, "ptrword" )
+                .else
+                    strcat( edi, "ptrsbyte" )
+                .endif
+            .else
+                strcat( edi, "abs" )
             .endif
-        .endif
-        tsprintf( ecx, "%s_%r_%r(", [edx].asym.name, [ebx].type, eax )
-        mov edx,[esi].expr.sym
-        strcpy( edi, [edx].asym.name )
+            .endc
+        .default
+            GetType( edi, &[ebx].op2, edi, 0 )
+            .endc
+        .endsw
+        strcat( edi, "(" )
+        add edi,strlen(edi)
 
-        mov esi,strlen(esi)
-        add esi,strlen(edi)
-        add esi,strlen(stklvl)
-        add esi,7
-        and esi,-4
-        sub esp,esi
-        mov ecx,esp
-        mov edx,stklvl
-        mov stklvl,ecx
-        tsprintf( ecx, "%s%s, %s)", &func, edi, edx )
+        mov ecx,[ebx].op1.label_tok
+        .if ( ecx == NULL )
+            mov ecx,[ebx].op1.base_reg
+        .endif
+        mov edx,[ebx].op2.label_tok
+        .if ( edx == NULL )
+            mov edx,[ebx].op2.base_reg
+        .endif
+        .if ( ecx && [ecx].asm_tok.hll_flags & T_EXPR )
+
+            .if ( edx )
+                or [edx].asm_tok.hll_flags,T_EXPR
+            .endif
+            add edi,tsprintf( edi, "%r, ", vector )
+            GetArgs2( &[ebx].op2 )
+
+        .elseif ( edx && [edx].asm_tok.hll_flags & T_EXPR )
+
+            .if ( ecx )
+                or [ecx].asm_tok.hll_flags,T_EXPR
+            .endif
+            GetArgs2( &[ebx].op1 )
+            add edi,strlen( edi )
+            tsprintf( edi, ", %r", vector )
+
+        .else
+
+            .if ( edx )
+                or [edx].asm_tok.hll_flags,T_EXPR
+            .endif
+            .if ( ecx )
+                or [ecx].asm_tok.hll_flags,T_EXPR
+            .endif
+
+            GetArgs2(&[ebx].op1)
+            strcat( edi, ", " )
+            add edi,strlen(edi)
+            GetArgs2(&[ebx].op2)
+        .endif
+        strcat( edi, ")" )
+        AddLineQueue( &buffer )
     .endf
-    .if ( stklvl )
-        AddLineQueue( stklvl )
+    .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
     .endif
     .return NOT_ERROR

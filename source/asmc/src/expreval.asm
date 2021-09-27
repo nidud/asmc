@@ -2960,7 +2960,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t,
             .elseif ( !( dl >= T_OP_BRACKET ||
                          dl == T_UNARY_OPERATOR ||
                          dl == T_BINARY_OPERATOR ) ||
-                      dl == T_UNARY_OPERATOR )
+                         dl == T_UNARY_OPERATOR )
 
                 ; v2.26 - added for {k1}{z}..
                 .if ( dl == T_STRING && [esi].string_delim == '{' )

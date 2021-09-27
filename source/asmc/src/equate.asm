@@ -214,7 +214,6 @@ check_number:
             .else
                 mov i,0
                 .if ( EvalOperand( &i, tokenarray, 1, &opn2, 0 ) != ERROR )
-                    ;mov opn2.op,opnd.op
                     mov ecx,tokenarray
                     add ecx,16
                     .if ( EvalOperator( &opn2, &opnd, ecx ) != ERROR )

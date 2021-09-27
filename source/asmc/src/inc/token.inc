@@ -40,6 +40,7 @@ T_HLL_PROC          equ 0x04    ; -- proc(args)
 T_HLL_DELAYED       equ 0x08    ; [0]: delayed
 T_EVEX_OPT          equ 0x10    ; {T_STRING} -- {k1}{z}..
 T_HLL_DBLCOLON      equ 0x20
+T_EXPR              equ 0x40
 
 .template asm_tok watcall
     token               uchar_t ?

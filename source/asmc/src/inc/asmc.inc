@@ -646,5 +646,6 @@ write_options           proto
 ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
 SetMasm510              proto :int_t
 GetType                 proto :string_t, :ptr expr, :string_t, :int_t
+RetLineQueue            proto
 
 endif

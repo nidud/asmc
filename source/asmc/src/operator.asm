@@ -12,6 +12,7 @@ include memalloc.inc
 include lqueue.inc
 include types.inc
 include operator.inc
+include fastpass.inc
 
     .code
 
@@ -162,17 +163,19 @@ GetArgs endp
 
 ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
 
-    .if ( Parse_Pass > PASS_1 )
+   .new type:ptr asym
+   .new name:string_t
+   .new isptr:byte = 0
+
+    .if StoreState == FALSE
         .return NOT_ERROR
     .endif
     .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
     .endif
 
-   .new type:ptr asym
     mov ebx,tokenarray
-   .new name:string_t = [ebx].string_ptr
-   .new isptr:byte = 0
+    mov name,[ebx].string_ptr
 
     .if ( SymFind( eax ) )
         .if ( [eax].asym.mem_type == MT_TYPE )
@@ -236,6 +239,7 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
             .while ( i < n )
 
                .new opnd:expr
+               .new isaddr:int_t = 0
 
                 strcat( edi, "_" )
                 imul ecx,i,16
@@ -255,6 +259,12 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
                     .endif
                     mov i,n
                 .else
+
+                    .if ( [ecx].asm_tok.token == T_RES_ID &&
+                          [ecx].asm_tok.tokval == T_ADDR )
+                        inc i
+                        inc isaddr
+                    .endif
                     .return .if ( EvalOperand( &i, tokenarray, n, &opnd, 0 ) == ERROR )
 
                     .if ( opnd.kind == EXPR_CONST )
@@ -270,7 +280,7 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
                             strcat( edi, "abs" )
                         .endif
                     .else
-                        GetType( edi, &opnd, edi, 0 )
+                        GetType( edi, &opnd, edi, isaddr )
                     .endif
                 .endif
                 imul ecx,i,16
@@ -285,7 +295,7 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
     .if ( ModuleInfo.line_queue.head )
         InsertLineQueue()
     .endif
-    ret
+    .return NOT_ERROR
 
 ProcessOperator endp
 
@@ -345,34 +355,10 @@ EvalOperator proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
     mov edx,opnd2
     mov eax,[edx].expr.op
-
     .if ( eax && [esi].op == NULL )
 
         mov [esi].op,eax
         mov [edx].expr.op,NULL
-
-    .elseif ( [esi].op );&& [ebx].type == T_ADD )
-
-        ;
-        ; flip operand if +
-        ;
-        ; a = b + c * d + e
-        ;
-        ; a = add(e, add(b, mul(c, d)))
-        ;
-
-        .if ( [edx].expr.type == NULL )
-            mov eax,[edx].expr.sym
-            .if ( [eax].asym.mem_type == MT_TYPE )
-                mov eax,[eax].asym.type
-            .endif
-            .if ( [eax].asym.mem_type == MT_PTR )
-                mov eax,[eax].asym.target_type
-            .endif
-            .if ( [eax].asym.flag2 & S_OPERATOR )
-                mov [edx].expr.type,eax
-            .endif
-        .endif
     .endif
 
     lea edi,[ebx].op1

@@ -759,14 +759,12 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         ;
         lea ebx,[ebx+edx+16]
         .if ( [ebx].token == T_STRING )
-            add ebx,16
-            mov vector,[ebx].tokval
-            mov vector[2],0
-            add ebx,32
-            .if ( [ebx-16].token == T_COMMA )
-                mov vector[2],[ebx].tokval
-                add ebx,32
+            mov vector,[ebx+16].tokval
+            .if ( [ebx+2*16].token != T_COMMA )
+                .return asmerr( 2065, "," )
             .endif
+            mov vector[2],[ebx+3*16].tokval
+            add ebx,5*16
         .endif
 
         mov ModuleInfo.ComStack,LclAlloc( com_item )
@@ -865,7 +863,11 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         mov ecx,ModuleInfo.ComStack
         mov esi,[ecx].com_item.sym
         .if ( esi )
-            mov dword ptr [esi].asym.regist,dword ptr vector
+            movzx eax,vector
+            movzx ecx,vector[2]
+            mov [esi].asym.regist[0],ax
+            mov [esi].asym.regist[2],cx
+            or  [esi].asym.sflags,S_ISVECTOR
         .endif
     .endif
     .if close_directive

@@ -131,6 +131,7 @@ S_OPERATOR      equ 0x80
 S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
 S_ISVARARG      equ 0x04
+S_ISVECTOR      equ 0x08
 
 M_ISVARARG      equ 0x01 ; mac_flag
 M_ISFUNC        equ 0x02

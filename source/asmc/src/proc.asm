@@ -2652,18 +2652,25 @@ write_userdef_prologue endp
 
 win64_MoveRegParam proc private uses esi edi i:int_t, size:int_t, param:ptr dsym
 
+  local langtype:byte
+
+    mov ecx,CurrProc
+    mov langtype,[ecx].asym.langtype
+    xor esi,esi
     mov edi,param
+    mov al,[edi].asym.mem_type
+    .if ( al == MT_TYPE )
+        mov edx,[edi].asym.type
+        mov al,[edx].asym.mem_type
+    .endif
     mov ecx,i
     lea edx,[ecx+T_XMM0]
-    xor esi,esi
-    mov eax,CurrProc
-    movzx eax,[eax].asym.langtype
 
-    .if ( [edi].asym.mem_type & MT_FLOAT || [edi].asym.mem_type == MT_YWORD || \
-          ( eax == LANG_VECTORCALL && [edi].asym.mem_type == MT_OWORD ) )
-        .if ( [edi].asym.mem_type == MT_REAL4 || [edi].asym.mem_type == MT_REAL2 )
+    .if ( al & MT_FLOAT || al == MT_YWORD || \
+          ( langtype == LANG_VECTORCALL && al == MT_OWORD ) )
+        .if ( al == MT_REAL4 || al == MT_REAL2 )
             mov esi,T_MOVD
-        .elseif ( [edi].asym.mem_type == MT_REAL8 )
+        .elseif ( al == MT_REAL8 )
             mov esi,T_MOVQ
         .elseif ( [edi].asym.total_size <= 16 )
             mov esi,T_MOVAPS

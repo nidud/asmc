@@ -9,8 +9,17 @@ define endl <"\n">
 
 .template ostream
 
-    flags dd ?
+    flags size_t ?
 
+    .operator << :real8 {
+       .new convbuf[64]:char_t
+        sprintf( &convbuf, &@CStr("%f"), _1 )
+        _cputs( &convbuf )
+        }
+    .operator << :real4 {
+        cvtss2sd _1,_1
+        ostream_shl_real8(rcx, _1)
+        }
     .operator << :dword {
        .new convbuf[64]:char_t
         mov ecx,edx
@@ -64,8 +73,17 @@ define endl <"\n">
 
 .template wostream
 
-    flags dd ?
+    flags size_t ?
 
+    .operator << :real8 {
+       .new convbuf[64]:wchar_t
+        swprintf( &convbuf, &@CStr("%f"), _1 )
+        _cputws( &convbuf )
+        }
+    .operator << :real4 {
+        cvtss2sd _1,_1
+        wostream_shl_real8(rcx, _1)
+        }
     .operator << :dword {
        .new convbuf[64]:wchar_t
         mov ecx,edx
@@ -88,11 +106,6 @@ define endl <"\n">
        .new convbuf[64]:wchar_t
         mov rcx,rdx
         _i64tow( rcx, &convbuf, 10 )
-        _cputws( &convbuf )
-        }
-    .operator << :real8 {
-       .new convbuf[64]:wchar_t
-        swprintf( "%f", &convbuf, _1 )
         _cputws( &convbuf )
         }
     .operator << :sbyte {
@@ -120,6 +133,7 @@ define endl <"\n">
     .ends
 
     .data
+     align size_t
 ifdef _UNICODE
      cstream wostream { 0 }
      cout ptr wostream cstream

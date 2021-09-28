@@ -531,19 +531,25 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         LstWrite( LSTTYPE_STRUCT, si, edi )
     .endif
 
-    ;; to allow direct structure access
-    mov eax,[edi].asym.total_size
-    .switch ( eax )
-    .case 1:  mov [edi].asym.mem_type,MT_BYTE   : .endc
-    .case 2:  mov [edi].asym.mem_type,MT_WORD   : .endc
-    .case 4:  mov [edi].asym.mem_type,MT_DWORD  : .endc
-    .case 6:  mov [edi].asym.mem_type,MT_FWORD  : .endc
-    .case 8
-        mov [edi].asym.mem_type,MT_QWORD
-        .endc
-    .default
-        mov [edi].asym.mem_type,MT_EMPTY
-    .endsw
+    ;
+    ; to allow direct structure access
+    ;
+    .if ( [edi].asym.sflags & S_ISVECTOR )
+
+        movzx eax,[edi].asym.regist[2]
+        mov [edi].asym.mem_type,GetMemtypeSp(eax)
+    .else
+        mov eax,[edi].asym.total_size
+        .switch ( eax )
+        .case 1:  mov [edi].asym.mem_type,MT_BYTE   : .endc
+        .case 2:  mov [edi].asym.mem_type,MT_WORD   : .endc
+        .case 4:  mov [edi].asym.mem_type,MT_DWORD  : .endc
+        .case 6:  mov [edi].asym.mem_type,MT_FWORD  : .endc
+        .case 8:  mov [edi].asym.mem_type,MT_QWORD  : .endc
+        .default
+            mov [edi].asym.mem_type,MT_EMPTY
+        .endsw
+    .endif
 
     ;; reset redefine
     .if ( CurrStruct == NULL )

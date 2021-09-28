@@ -1763,24 +1763,30 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                     mov size,SizeFromMemtype( [edi].mem_type, [edi].Ofssize, [edi].type )
 
                     xor eax,eax
+                    mov cl,[edi].mem_type
+                    .if ( cl == MT_TYPE )
+                        mov ecx,[edi].type
+                        mov cl,[ecx].asym.mem_type
+                    .endif
+
                     .if ( [esi].langtype == LANG_SYSCALL )
                         movzx eax,[edi].regist[0]
                     .elseif ( ebx < 4 )
-                        .if ( [edi].mem_type & MT_FLOAT && size <= 16 )
+                        .if ( cl & MT_FLOAT && size <= 16 )
                             lea eax,[ebx + T_XMM0]
-                        .elseif ( [edi].mem_type == MT_YWORD )
+                        .elseif ( cl == MT_YWORD )
                             lea eax,[ebx + T_YMM0]
-                        .elseif ( [edi].mem_type == MT_ZWORD )
+                        .elseif ( cl == MT_ZWORD )
                             lea eax,[ebx + T_ZMM0]
                         .elseif ( ModuleInfo.Ofssize == USE64 || ebx < stk )
                             movzx eax,win64regs[ebx]
                         .endif
                     .elseif ( ebx < 6 && [esi].langtype == LANG_VECTORCALL )
-                        .if ( [edi].mem_type & MT_FLOAT && size <= 16 )
+                        .if ( cl & MT_FLOAT && size <= 16 )
                             lea eax,[ebx + T_XMM0]
-                        .elseif ( [edi].mem_type == MT_YWORD )
+                        .elseif ( cl == MT_YWORD )
                             lea eax,[ebx + T_YMM0]
-                        .elseif ( [edi].mem_type == MT_ZWORD )
+                        .elseif ( cl == MT_ZWORD )
                             lea eax,[ebx + T_ZMM0]
                         .endif
                     .endif

@@ -18,8 +18,6 @@ include atofloat.inc
 include regno.inc
 include types.inc
 
-RetLineQueue proto
-
     .code
 
     assume ebx:ptr asm_tok

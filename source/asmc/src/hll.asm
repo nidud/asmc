@@ -1138,6 +1138,9 @@ GetParamId proc private uses esi edi id:int_t, sym:asym_t
         .endif
         dec id
     .endw
+    .if ( eax && [eax].asym.mem_type == MT_TYPE )
+        mov eax,[eax].asym.type
+    .endif
     ret
 
 GetParamId endp

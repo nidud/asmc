@@ -603,25 +603,32 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     ; .new q:qword = foo()
 
-    mov edi,strcpy( &cc, " mov " )
+    assume esi:ptr qualified_type
 
-    mov ecx,ti
+    mov esi,ti
+    lea edi,cc
+    mov eax,T_MOV
+    .if ( [esi].mem_type == MT_REAL4 )
+        mov eax,T_MOVSS
+    .elseif ( [esi].mem_type == MT_REAL8 )
+        mov eax,T_MOVSD
+    .endif
+    tsprintf( edi, " %r ", eax )
 
-    .if ( [ecx].qualified_type.size == 8 )
+    .if ( [esi].size == 8 )
 
-        .if ( [ecx].qualified_type.Ofssize == USE32 && flag & T_HLL_PROC &&
-              ( [ecx].qualified_type.mem_type == MT_QWORD ||
-                [ecx].qualified_type.mem_type == MT_SQWORD ) )
+        .if ( [esi].Ofssize == USE32 && flag & T_HLL_PROC &&
+             ( [esi].mem_type == MT_QWORD || [esi].mem_type == MT_SQWORD ) )
 
             strcat( edi, "dword ptr " )
             strcpy( &l2, "mov dword ptr " )
             strcat( strcat( eax, name ), "[4], edx" )
-        .elseif ( [ecx].qualified_type.Ofssize == USE64 && flag & T_HLL_PROC )
+        .elseif ( [esi].Ofssize == USE64 && flag & T_HLL_PROC )
         .elseif ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
             .if ( opndx.kind == EXPR_CONST )
 
-                .if ( [ecx].qualified_type.Ofssize == USE32 ||
+                .if ( [esi].Ofssize == USE32 ||
                       ( [ebx].token != T_STRING && opndx.hvalue > 0 ) )
 
                     AddLineQueueX( " mov dword ptr %s[0], %u", name, opndx.l64_l )
@@ -636,6 +643,8 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     strcat( strcat( edi, name ), ", " )
     xor esi,esi
+
+    assume esi:nothing
 
     .while 1
         .switch [ebx].token

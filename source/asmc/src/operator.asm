@@ -163,9 +163,11 @@ GetArgs endp
 
 ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
 
-   .new type:ptr asym
+   .new class:ptr asym
    .new name:string_t
    .new isptr:byte = 0
+   .new vector:int_t = 0
+   .new type:int_t
 
     .if StoreState == FALSE
         .return NOT_ERROR
@@ -186,12 +188,28 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
             mov eax,[eax].asym.target_type
         .endif
     .endif
-    .if ( eax && [eax].asym.flag2 & S_CLASS &&
-          [eax].asym.flag2 & S_OPERATOR )
-        mov type,eax
-        .if ( [eax].asym.regist[2] )
+
+    .if ( eax && [eax].asym.flag2 & S_CLASS && [eax].asym.flag2 & S_OPERATOR )
+
+        mov class,eax
+        movzx edx,[eax].asym.regist[2]
+        movzx eax,[eax].asym.regist
+        .if ( eax == 0 )
+            mov eax,T_EAX
+            .if ( ModuleInfo.Ofssize == USE64 )
+                mov eax,T_RAX
+            .endif
+        .endif
+        .if ( edx == 0 )
+            mov edx,T_DWORD
+            .if ( ModuleInfo.Ofssize == USE64 )
+                mov edx,T_QWORD
+            .endif
+        .else
             inc isptr
         .endif
+        mov vector,eax
+        mov type,edx
     .else
         .return asmerr( 2008, name )
     .endif
@@ -201,19 +219,33 @@ ProcessOperator proc uses esi edi ebx tokenarray:ptr asm_tok
 
        .new func[128]:char_t
         lea edi,func
-        mov ecx,type
+
+        mov ecx,class
         strcpy( edi, [ecx].asym.name )
         strcat( edi, "_" )
         add edi,strlen( edi )
+
        .break .if ( GetOpType( ebx, edi ) == ERROR )
         mov ebx,eax
+
        .new args[128]:char_t
         lea esi,args
         mov byte ptr [esi],0
+
         .if ( isptr == 0 )
             strcpy( esi, "addr " )
         .endif
-        strcat( esi, name )
+        .if ( name )
+            strcat( esi, name )
+        .else
+            strlen(esi)
+            add eax,esi
+            tsprintf(eax, "%r", vector)
+        .endif
+        .if ( vector )
+            mov name,NULL
+        .endif
+
         .if ( GetArgs( ebx ) )
 
            .new n:int_t

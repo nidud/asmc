@@ -792,6 +792,7 @@ dbgcv::write_type proc uses esi edi ebx sym:ptr asym
 
     mov [esi].asym.cvtyperef,[ebx].currtype
     inc [ebx].currtype
+
     movzx eax,[esi].asym.typekind
     .switch eax
     .case TYPE_UNION
@@ -1265,8 +1266,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             mov leaf,ax
             mov rlctype,FIX_PTR16
         .else
-            mov ecx,esi
-            mov ecx,[ecx].asym.segm
+            mov ecx,[esi].asym.segm
             mov eax,1
             .if ( ( ModuleInfo.cv_opt & CVO_STATICTLS ) && [ecx].seg_info.clsym )
                 mov ecx,[ecx].seg_info.clsym

@@ -229,6 +229,9 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
 
         mov edi,ecx
         AddLineQueueX( " lea %r, %s", ecx, [edx+32].asm_tok.tokpos )
+        .if ( size == 4 && edi == T_RAX )
+            mov edi,T_EAX
+        .endif
 
     .elseif edi > esi && esi < T_EAX
 

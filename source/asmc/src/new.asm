@@ -557,6 +557,8 @@ ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
 
 ClearStruct endp
 
+    assume esi:ptr qualified_type
+
 AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
         tokenarray:token_t, ti:ptr qualified_type
 
@@ -567,7 +569,17 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     inc i
     imul ebx,i,asm_tok
-    add  ebx,tokenarray
+    add ebx,tokenarray
+    mov esi,ti
+
+    mov eax,[esi].symtype
+    .if ( eax && [eax].asym.flag2 & S_OPERATOR )
+
+        AddLineQueueX( " %s %s", name, [ebx-16].tokpos )
+        imul eax,Token_Count,asm_tok
+        add eax,tokenarray
+        .return
+    .endif
 
     mov flag,[ebx].hll_flags
     mov l2,0
@@ -603,9 +615,6 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     ; .new q:qword = foo()
 
-    assume esi:ptr qualified_type
-
-    mov esi,ti
     lea edi,cc
     mov eax,T_MOV
     .if ( [esi].mem_type == MT_REAL4 )

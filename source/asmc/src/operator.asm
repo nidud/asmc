@@ -420,6 +420,8 @@ GetArgs2 proc private uses esi opnd:ptr expr
     mov esi,opnd
     .switch ( [esi].expr.kind )
     .case EXPR_FLOAT
+        mov ecx,[esi].expr.float_tok
+        strcpy(edi, [ecx].asm_tok.string_ptr )
         .endc
     .case EXPR_CONST
         tsprintf(edi, "%d", [esi].expr.value)

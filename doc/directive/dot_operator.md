@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ## .OPERATOR
 
-.OPERATOR [ _name_ | _OP_ ] [[ : _args_ ]] { ... }
+.OPERATOR [ <_type_> ] [ _name_ | _OP_ ] [[ : _args_ ]] { ... }
 
 Declares a inline method type for a Asmc class interface.
 

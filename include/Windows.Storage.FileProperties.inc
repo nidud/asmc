@@ -405,43 +405,14 @@ DEFINE_IIDX(IBasicProperties, "D05D55DB-785E-4A66-BE02-9BEEC58AEA81")
 endif
 
 
-HSTRING_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
+HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr ULONG, :ptr HSTRING
 
-HSTRING_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
-
-
-HSTRING_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
+HSTRING_UserSize64	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr ULONG, :ptr HSTRING
 
 endif

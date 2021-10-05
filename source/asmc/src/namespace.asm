@@ -57,7 +57,7 @@ NameSpaceDirective proc uses esi ebx i:int_t, tokenarray:token_t
         mov eax,esi
         mov esi,ModuleInfo.NspStack
         .while ( [esi].next )
-            mov edi,[esi].next
+            mov esi,[esi].next
         .endw
         mov [esi].next,eax
     .endif

@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### OPTION FLOATFORMAT
 
-**OPTION FLOATFORMAT**:[E|F|G]
+**OPTION FLOATFORMAT**:[E|F|G|X]
 
 This controls the format of float output. The default value is F.
 

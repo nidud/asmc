@@ -494,45 +494,14 @@ DEFINE_IIDX(ISelectableWordsSegmenterFactory, "8C7A7648-6057-4339-BC70-F210010A4
 
 endif
 
+HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr ULONG, :ptr HSTRING
 
-HSTRING_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
-
-
-HSTRING_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HSTRING
-
-HSTRING_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPBYTE,
-		      : ptr HSTRING
-
-HSTRING_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HSTRING
-
+HSTRING_UserSize64	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr ULONG, :ptr HSTRING
 
 endif

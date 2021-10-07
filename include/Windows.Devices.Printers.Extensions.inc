@@ -1,0 +1,172 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.inc>
+endif
+
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Edevices2Eprinters2Eextensions_h__
+define __windows2Edevices2Eprinters2Eextensions_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include windows.foundation.collections.inc
+
+ifndef ____FITypedEventHandler_2_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfiguration_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfigurationSaveRequestedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfiguration_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfigurationSaveRequestedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfiguration_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfigurationSaveRequestedEventArgs, "0363f57a-b7a2-5e20-a156-253423e7ee40")
+
+.comdef __FITypedEventHandler_2_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfiguration_Windows__CDevices__CPrinters__CExtensions__CPrintTaskConfigurationSaveRequestedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+endif
+
+.namespace ABI
+.namespace Windows
+.namespace Devices
+.namespace Printers
+.namespace Extensions
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequestedDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequestedDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintTaskConfigurationSaveRequestedDeferral <L"Windows.Devices.Printers.Extensions.IPrintTaskConfigurationSaveRequestedDeferral">
+
+DEFINE_IIDX(IPrintTaskConfigurationSaveRequestedDeferral, "E959D568-F729-44A4-871D-BD0628696A33")
+
+.comdef IPrintTaskConfigurationSaveRequestedDeferral : public IInspectable
+
+    Complete		proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequest_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequest_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintTaskConfigurationSaveRequest <L"Windows.Devices.Printers.Extensions.IPrintTaskConfigurationSaveRequest">
+
+DEFINE_IIDX(IPrintTaskConfigurationSaveRequest, "EEAF2FCB-621E-4B62-AC77-B281CCE08D60")
+
+.comdef IPrintTaskConfigurationSaveRequest : public IInspectable
+
+    Cancel		proc
+    Save		proc :ptr
+    GetDeferral		proc :ptr
+    get_Deadline	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequestedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfigurationSaveRequestedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintTaskConfigurationSaveRequestedEventArgs <L"Windows.Devices.Printers.Extensions.IPrintTaskConfigurationSaveRequestedEventArgs">
+
+DEFINE_IIDX(IPrintTaskConfigurationSaveRequestedEventArgs, "E06C2879-0D61-4938-91D0-96A45BEE8479")
+
+.comdef IPrintTaskConfigurationSaveRequestedEventArgs : public IInspectable
+
+    get_Request		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfiguration_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintTaskConfiguration_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintTaskConfiguration <L"Windows.Devices.Printers.Extensions.IPrintTaskConfiguration">
+
+DEFINE_IIDX(IPrintTaskConfiguration, "E3C22451-3AA4-4885-9240-311F5F8FBE9D")
+
+.comdef IPrintTaskConfiguration : public IInspectable
+
+    get_PrinterExtensionContext proc :ptr
+    add_SaveRequested	proc :ptr, :ptr
+    remove_SaveRequested proc :EventRegistrationToken
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintNotificationEventDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintNotificationEventDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintNotificationEventDetails <L"Windows.Devices.Printers.Extensions.IPrintNotificationEventDetails">
+
+DEFINE_IIDX(IPrintNotificationEventDetails, "E00E4C8A-4828-4DA1-8BB8-8672DF8515E7")
+
+.comdef IPrintNotificationEventDetails : public IInspectable
+
+    get_PrinterName	proc :ptr
+    get_EventData	proc :ptr
+    put_EventData	proc :HSTRING
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintExtensionContextStatic_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CDevices_CPrinters_CExtensions_CIPrintExtensionContextStatic_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Printers_Extensions_IPrintExtensionContextStatic <L"Windows.Devices.Printers.Extensions.IPrintExtensionContextStatic">
+
+DEFINE_IIDX(IPrintExtensionContextStatic, "E70D9FC1-FF79-4AA4-8C9B-0C93AEDFDE8A")
+
+.comdef IPrintExtensionContextStatic : public IInspectable
+
+    FromDeviceId	proc :HSTRING, :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedDeferral_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedDeferral_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedDeferral <L"Windows.Devices.Printers.Extensions.PrintTaskConfigurationSaveRequestedDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequest_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequest_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequest <L"Windows.Devices.Printers.Extensions.PrintTaskConfigurationSaveRequest">
+endif
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedEventArgs_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintTaskConfigurationSaveRequestedEventArgs <L"Windows.Devices.Printers.Extensions.PrintTaskConfigurationSaveRequestedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfiguration_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintTaskConfiguration_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintTaskConfiguration <L"Windows.Devices.Printers.Extensions.PrintTaskConfiguration">
+endif
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintNotificationEventDetails_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintNotificationEventDetails_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintNotificationEventDetails <L"Windows.Devices.Printers.Extensions.PrintNotificationEventDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintExtensionContext_DEFINED
+define RUNTIMECLASS_Windows_Devices_Printers_Extensions_PrintExtensionContext_DEFINED
+define RuntimeClass_Windows_Devices_Printers_Extensions_PrintExtensionContext <L"Windows.Devices.Printers.Extensions.PrintExtensionContext">
+endif
+
+HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+HSTRING_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+endif

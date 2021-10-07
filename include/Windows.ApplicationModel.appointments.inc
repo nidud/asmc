@@ -110,254 +110,188 @@ DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CAppointments__CAppointment
 endif
 endif
 
-ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentManagerStatics_INTERFACE_DEFINED__
-define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentManagerStatics <L"Windows.ApplicationModel.Appointments.IAppointmentManagerStatics">
-endif
-
 .namespace ABI
-    .namespace Windows
-	.namespace ApplicationModel
-	    .namespace Appointments
+.namespace Windows
+.namespace ApplicationModel
+.namespace Appointments
 
-		.enum AppointmentSensitivity {
-		    AppointmentSensitivity_Public,
-		    AppointmentSensitivity_Private
-		    }
+.enum AppointmentSensitivity {
+    AppointmentSensitivity_Public,
+    AppointmentSensitivity_Private
+    }
 
-		.enum AppointmentBusyStatus {
-		    AppointmentBusyStatus_Busy,
-		    AppointmentBusyStatus_Tentative,
-		    AppointmentBusyStatus_Free,
-		    AppointmentBusyStatus_OutOfOffice,
-		    AppointmentBusyStatus_WorkingElsewhere
-		    }
+.enum AppointmentBusyStatus {
+    AppointmentBusyStatus_Busy,
+    AppointmentBusyStatus_Tentative,
+    AppointmentBusyStatus_Free,
+    AppointmentBusyStatus_OutOfOffice,
+    AppointmentBusyStatus_WorkingElsewhere
+    }
 
-		.enum AppointmentParticipantResponse {
-		    AppointmentParticipantResponse_None,
-		    AppointmentParticipantResponse_Tentative,
-		    AppointmentParticipantResponse_Accepted,
-		    AppointmentParticipantResponse_Declined,
-		    AppointmentParticipantResponse_Unknown
-		    }
+.enum AppointmentParticipantResponse {
+    AppointmentParticipantResponse_None,
+    AppointmentParticipantResponse_Tentative,
+    AppointmentParticipantResponse_Accepted,
+    AppointmentParticipantResponse_Declined,
+    AppointmentParticipantResponse_Unknown
+    }
 
-		.enum AppointmentParticipantRole {
-		    AppointmentParticipantRole_RequiredAttendee,
-		    AppointmentParticipantRole_OptionalAttendee,
-		    AppointmentParticipantRole_Resource
-		    }
+.enum AppointmentParticipantRole {
+    AppointmentParticipantRole_RequiredAttendee,
+    AppointmentParticipantRole_OptionalAttendee,
+    AppointmentParticipantRole_Resource
+    }
 
-		.enum AppointmentRecurrenceUnit {
-		    AppointmentRecurrenceUnit_Daily,
-		    AppointmentRecurrenceUnit_Weekly,
-		    AppointmentRecurrenceUnit_Monthly,
-		    AppointmentRecurrenceUnit_MonthlyOnDay,
-		    AppointmentRecurrenceUnit_Yearly,
-		    AppointmentRecurrenceUnit_YearlyOnDay
-		    }
+.enum AppointmentRecurrenceUnit {
+    AppointmentRecurrenceUnit_Daily,
+    AppointmentRecurrenceUnit_Weekly,
+    AppointmentRecurrenceUnit_Monthly,
+    AppointmentRecurrenceUnit_MonthlyOnDay,
+    AppointmentRecurrenceUnit_Yearly,
+    AppointmentRecurrenceUnit_YearlyOnDay
+    }
 
-		.enum AppointmentDaysOfWeek {
-		    AppointmentDaysOfWeek_None		= 0,
-		    AppointmentDaysOfWeek_Sunday	= 0x1,
-		    AppointmentDaysOfWeek_Monday	= 0x2,
-		    AppointmentDaysOfWeek_Tuesday	= 0x4,
-		    AppointmentDaysOfWeek_Wednesday	= 0x8,
-		    AppointmentDaysOfWeek_Thursday	= 0x10,
-		    AppointmentDaysOfWeek_Friday	= 0x20,
-		    AppointmentDaysOfWeek_Saturday	= 0x40
-		    }
+.enum AppointmentDaysOfWeek {
+    AppointmentDaysOfWeek_None		= 0,
+    AppointmentDaysOfWeek_Sunday	= 0x1,
+    AppointmentDaysOfWeek_Monday	= 0x2,
+    AppointmentDaysOfWeek_Tuesday	= 0x4,
+    AppointmentDaysOfWeek_Wednesday	= 0x8,
+    AppointmentDaysOfWeek_Thursday	= 0x10,
+    AppointmentDaysOfWeek_Friday	= 0x20,
+    AppointmentDaysOfWeek_Saturday	= 0x40
+    }
 
-		.enum AppointmentWeekOfMonth {
-		    AppointmentWeekOfMonth_First,
-		    AppointmentWeekOfMonth_Second,
-		    AppointmentWeekOfMonth_Third,
-		    AppointmentWeekOfMonth_Fourth,
-		    AppointmentWeekOfMonth_Last
-		    }
-	    .endn
-	.endn
-    .endn
-.endn
-
+.enum AppointmentWeekOfMonth {
+    AppointmentWeekOfMonth_First,
+    AppointmentWeekOfMonth_Second,
+    AppointmentWeekOfMonth_Third,
+    AppointmentWeekOfMonth_Fourth,
+    AppointmentWeekOfMonth_Last
+    }
 
 ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentManagerStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentManagerStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentManagerStatics <L"Windows.ApplicationModel.Appointments.IAppointmentManagerStatics">
 
-    .namespace ABI
-	.namespace Windows
-	    .namespace ApplicationModel
-		.namespace Appointments
+DEFINE_IIDX(IAppointmentManagerStatics, "3A30FA01-5C40-499D-B33F-A43050F74FC4")
 
-		    DEFINE_IIDX(IAppointmentManagerStatics, "3A30FA01-5C40-499D-B33F-A43050F74FC4")
+.comdef IAppointmentManagerStatics : public IInspectable
 
-		    .comdef IAppointmentManagerStatics : public IInspectable
+    ShowAddAppointmentAsync proc :ptr, :LONG, :ptr ptr
+    ShowAddAppointmentWithPlacementAsync proc :ptr, :ptr, :ptr, :ptr ptr
+    ShowReplaceAppointmentAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
+    ShowReplaceAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
+    ShowReplaceAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
+    ShowRemoveAppointmentAsync proc :HSTRING, :ptr,	 :ptr ptr
+    ShowRemoveAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
+    ShowRemoveAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
+    ShowTimeFrameAsync proc :ptr, :ptr, :ptr ptr
+   .ends
 
-			ShowAddAppointmentAsync proc :ptr, :LONG, :ptr ptr
-			ShowAddAppointmentWithPlacementAsync proc :ptr, :ptr, :ptr, :ptr ptr
-			ShowReplaceAppointmentAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
-			ShowReplaceAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-			ShowReplaceAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-			ShowRemoveAppointmentAsync proc :HSTRING, :ptr,	 :ptr ptr
-			ShowRemoveAppointmentWithPlacementAsync proc :HSTRING, :ptr, :ptr, :ptr ptr
-			ShowRemoveAppointmentWithPlacementAndDateAsync proc :HSTRING, :ptr, :ptr, :ptr, :ptr ptr
-			ShowTimeFrameAsync proc :ptr, :ptr, :ptr ptr
-		    .ends
-		.endn
-	    .endn
-	.endn
-    .endn
-
-endif
-
-
-ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentParticipant_INTERFACE_DEFINED__
-define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentParticipant <L"Windows.ApplicationModel.Appointments.IAppointmentParticipant">
 endif
 
 ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentParticipant_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentParticipant_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentParticipant <L"Windows.ApplicationModel.Appointments.IAppointmentParticipant">
 
-    .namespace ABI
-	.namespace Windows
-	    .namespace ApplicationModel
-		.namespace Appointments
+DEFINE_IIDX(IAppointmentParticipant, "615E2902-9718-467B-83FB-B293A19121DE")
 
-		    DEFINE_IIDX(IAppointmentParticipant, "615E2902-9718-467B-83FB-B293A19121DE")
+.comdef IAppointmentParticipant : public IInspectable
 
-		    .comdef IAppointmentParticipant : public IInspectable
+    get_DisplayName	proc :ptr HSTRING
+    put_DisplayName	proc :HSTRING
+    get_Address		proc :ptr HSTRING
+    put_Address		proc :HSTRING
+   .ends
 
-			get_DisplayName proc :ptr HSTRING
-			put_DisplayName proc :HSTRING
-			get_Address proc :ptr HSTRING
-			put_Address proc :HSTRING
-
-		    .ends
-		.endn
-	    .endn
-	.endn
-    .endn
-
-endif
-
-ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentInvitee_INTERFACE_DEFINED__
-define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentInvitee <L"Windows.ApplicationModel.Appointments.IAppointmentInvitee">
 endif
 
 ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentInvitee_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentInvitee_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentInvitee <L"Windows.ApplicationModel.Appointments.IAppointmentInvitee">
 
-    .namespace ABI
-	.namespace Windows
-	    .namespace ApplicationModel
-		.namespace Appointments
+DEFINE_IIDX(IAppointmentInvitee, "13BF0796-9842-495B-B0E7-EF8F79C0701D")
 
-		    DEFINE_IIDX(IAppointmentInvitee, "13BF0796-9842-495B-B0E7-EF8F79C0701D")
+.comdef IAppointmentInvitee : public IInspectable
 
-		    .comdef IAppointmentInvitee : public IInspectable
+    get_Role		proc :ptr
+    put_Role		proc :LONG
+    get_Response	proc :ptr
+    put_Response	proc :LONG
+   .ends
 
-			get_Role proc :ptr
-			put_Role proc :LONG
-			get_Response proc :ptr
-			put_Response proc :LONG
-
-		    .ends
-		.endn
-	    .endn
-	.endn
-    .endn
-
-endif
-
-ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentRecurrence_INTERFACE_DEFINED__
-define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentRecurrence <L"Windows.ApplicationModel.Appointments.IAppointmentRecurrence">
 endif
 
 ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentRecurrence_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointmentRecurrence_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Appointments_IAppointmentRecurrence <L"Windows.ApplicationModel.Appointments.IAppointmentRecurrence">
 
-    .namespace ABI
-	.namespace Windows
-	    .namespace ApplicationModel
-		.namespace Appointments
+DEFINE_IIDX(IAppointmentRecurrence, "D87B3E83-15A6-487B-B959-0C361E60E954")
 
-		    DEFINE_IIDX(IAppointmentRecurrence, "D87B3E83-15A6-487B-B959-0C361E60E954")
+.comdef IAppointmentRecurrence : public IInspectable
 
-		    .comdef IAppointmentRecurrence : public IInspectable
+    get_Unit		proc :ptr
+    put_Unit		proc :LONG
+    get_Occurrences	proc :ptr ptr
+    put_Occurrences	proc :ptr
+    get_Until		proc :ptr ptr
+    put_Until		proc :ptr
+    get_Interval	proc :ptr UINT32
+    put_Interval	proc :UINT32
+    get_DaysOfWeek	proc :ptr
+    put_DaysOfWeek	proc :ptr
+    get_WeekOfMonth	proc :ptr
+    put_WeekOfMonth	proc :ptr
+    get_Month		proc :ptr UINT32
+    put_Month		proc :UINT32
+    get_Day		proc :ptr UINT32
+    put_Day		proc :UINT32
+   .ends
 
-			get_Unit	proc :ptr
-			put_Unit	proc :LONG
-			get_Occurrences proc :ptr ptr
-			put_Occurrences proc :ptr
-			get_Until	proc :ptr ptr
-			put_Until	proc :ptr
-			get_Interval	proc :ptr UINT32
-			put_Interval	proc :UINT32
-			get_DaysOfWeek	proc :ptr
-			put_DaysOfWeek	proc :ptr
-			get_WeekOfMonth proc :ptr
-			put_WeekOfMonth proc :ptr
-			get_Month	proc :ptr UINT32
-			put_Month	proc :UINT32
-			get_Day		proc :ptr UINT32
-			put_Day		proc :UINT32
-
-		    .ends
-		.endn
-	    .endn
-	.endn
-    .endn
-
-endif
-
-ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointment_INTERFACE_DEFINED__
-define InterfaceName_Windows_ApplicationModel_Appointments_IAppointment <L"Windows.ApplicationModel.Appointments.IAppointment">
 endif
 
 ifndef ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointment_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CApplicationModel_CAppointments_CIAppointment_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Appointments_IAppointment <L"Windows.ApplicationModel.Appointments.IAppointment">
 
-    .namespace ABI
-	.namespace Windows
-	    .namespace ApplicationModel
-		.namespace Appointments
+DEFINE_IIDX(IAppointment, "DD002F2F-2BDD-4076-90A3-22C275312965")
 
-		    DEFINE_IIDX(IAppointment, "DD002F2F-2BDD-4076-90A3-22C275312965")
+.comdef IAppointment : public IInspectable
 
-		    .comdef IAppointment : public IInspectable
-
-			get_StartTime	proc :ptr
-			put_StartTime	proc :LONG
-			get_Duration	proc :ptr
-			put_Duration	proc :LONG
-			get_Location	proc :ptr HSTRING
-			put_Location	proc :HSTRING
-			get_Subject	proc :ptr HSTRING
-			put_Subject	proc :HSTRING
-			get_Details	proc :ptr HSTRING
-			put_Details	proc :HSTRING
-			get_Reminder	proc :ptr ptr
-			put_Reminder	proc :ptr
-			get_Organizer	proc :ptr ptr
-			put_Organizer	proc :ptr
-			get_Invitees	proc :ptr ptr
-			get_Recurrence	proc :ptr ptr
-			put_Recurrence	proc :ptr
-			get_BusyStatus	proc :ptr
-			put_BusyStatus	proc :LONG
-			get_AllDay	proc :BOOL
-			put_AllDay	proc :BOOL
-			get_Sensitivity proc :ptr
-			put_Sensitivity proc :LONG
-			get_Uri		proc :ptr ptr
-			put_Uri		proc :ptr
-
-		    .ends
-		.endn
-	    .endn
-	.endn
-    .endn
+    get_StartTime	proc :ptr
+    put_StartTime	proc :LONG
+    get_Duration	proc :ptr
+    put_Duration	proc :LONG
+    get_Location	proc :ptr HSTRING
+    put_Location	proc :HSTRING
+    get_Subject		proc :ptr HSTRING
+    put_Subject		proc :HSTRING
+    get_Details		proc :ptr HSTRING
+    put_Details		proc :HSTRING
+    get_Reminder	proc :ptr ptr
+    put_Reminder	proc :ptr
+    get_Organizer	proc :ptr ptr
+    put_Organizer	proc :ptr
+    get_Invitees	proc :ptr ptr
+    get_Recurrence	proc :ptr ptr
+    put_Recurrence	proc :ptr
+    get_BusyStatus	proc :ptr
+    put_BusyStatus	proc :LONG
+    get_AllDay		proc :BOOL
+    put_AllDay		proc :BOOL
+    get_Sensitivity	proc :ptr
+    put_Sensitivity	proc :LONG
+    get_Uri		proc :ptr ptr
+    put_Uri		proc :ptr
+   .ends
 
 endif
 
+.endn
+.endn
+.endn
+.endn
 
 ifndef RUNTIMECLASS_Windows_ApplicationModel_Appointments_Appointment_DEFINED
 define RUNTIMECLASS_Windows_ApplicationModel_Appointments_Appointment_DEFINED

@@ -3429,8 +3429,10 @@ HllExitDir endp
 HllCheckOpen proc
 
     .if ModuleInfo.HllStack
-
         asmerr( 1010, ".if-.repeat-.while" )
+    .endif
+    .if ModuleInfo.NspStack
+        asmerr( 1010, ".namespace" )
     .endif
     ret
 

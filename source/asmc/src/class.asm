@@ -64,8 +64,8 @@ ClassProto endp
 ClassProto2 proc uses esi edi ebx class:string_t, method:string_t, item:ptr com_item, args:string_t, this_ptr:string_t
 
   local name[256]:char_t
-  local buffer[256]:char_t
-  local this[128]:char_t
+  local this[256]:char_t
+  local buffer[512]:char_t
 
     mov esi,item
     mov edi,args
@@ -94,7 +94,7 @@ ClassProto2 endp
 
 AddPublic proc uses esi edi ebx this:ptr com_item, sym:ptr asym
 
-  local q[256]:char_t
+  local q[512]:char_t
 
     mov esi,this
     mov ebx,sym
@@ -134,7 +134,7 @@ AddPublic endp
 
 OpenVtbl proc uses esi ebx this:ptr com_item
 
-  local q[256]:char_t
+  local q[512]:char_t
 
     mov esi,this
     AddLineQueueX( "%sVtbl struct", [esi].class )
@@ -565,9 +565,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
    .new langtype        : int_t
    .new vector[2]       : ushort_t = 0
    .new class[256]      : char_t
-   .new token[256]      : char_t
+   .new token[512]      : char_t
    .new name[512]       : char_t
-   .new this[128]       : char_t
+   .new this[256]       : char_t
    .new this_ptr        : string_t
 
     mov ebx,tokenarray

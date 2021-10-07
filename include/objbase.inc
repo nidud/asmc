@@ -85,7 +85,7 @@ endif
 ifndef DEFINE_GUID
 DEFINE_GUID macro id, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 ifdef __PE__
-_&id& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+define _&id& <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 elseifdef INITGUID
 echo id GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 else

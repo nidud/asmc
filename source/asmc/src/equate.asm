@@ -375,11 +375,12 @@ CreateConstant proc uses esi edi ebx tokenarray:token_t
     local argbuffer[MAX_LINE_LEN]:char_t
 
     mov ebx,tokenarray
-    mov eax,[ebx].string_ptr
     .if ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_DEFINE )
         mov eax,[ebx+16].string_ptr
+    .else
+        NameSpace([ebx].string_ptr, [ebx].string_ptr)
     .endif
-    mov name,NameSpace(eax, eax)
+    mov name,eax
     mov i,2
     mov cmpvalue,FALSE
     mov edi,SymSearch(name)

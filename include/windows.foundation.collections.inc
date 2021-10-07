@@ -1,5 +1,5 @@
 ifndef WINDOWS_FOUNDATION_COLLECTIONS_H
-WINDOWS_FOUNDATION_COLLECTIONS_H equ 1
+define WINDOWS_FOUNDATION_COLLECTIONS_H
 
 include inspectable.inc
 include rpcndr.inc

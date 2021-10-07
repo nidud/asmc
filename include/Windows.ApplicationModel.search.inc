@@ -1,0 +1,445 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.inc>
+endif
+
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Eapplicationmodel2Esearch_h__
+define __windows2Eapplicationmodel2Esearch_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include Windows.Storage.inc
+include windows.foundation.collections.inc
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQueryChangedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQueryChangedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQueryChangedEventArgs, "7ccd7da1-8767-5eef-972d-31d09f1bf308")
+
+.comdef __FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQueryChangedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQuerySubmittedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQuerySubmittedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQuerySubmittedEventArgs, "5f05121b-61a6-5f6b-b007-20816dfe7009")
+
+.comdef __FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneQuerySubmittedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneResultSuggestionChosenEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneResultSuggestionChosenEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneResultSuggestionChosenEventArgs, "ec31e5d4-3b8c-5757-96bf-14096be946cd")
+
+.comdef __FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneResultSuggestionChosenEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneSuggestionsRequestedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneSuggestionsRequestedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneSuggestionsRequestedEventArgs, "95088dc0-6c14-55b8-8a8f-9df1ca44d1d4")
+
+.comdef __FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneSuggestionsRequestedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneVisibilityChangedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneVisibilityChangedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneVisibilityChangedEventArgs, "3975ff72-971b-54b6-9b5f-cc442e2a87f0")
+
+.comdef __FITypedEventHandler_2_Windows__CApplicationModel__CSearch__CSearchPane_Windows__CApplicationModel__CSearch__CSearchPaneVisibilityChangedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+    .ends
+
+endif
+
+.namespace ABI
+.namespace Windows
+.namespace ApplicationModel
+.namespace Search
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQueryLinguisticDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQueryLinguisticDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneQueryLinguisticDetails <L"Windows.ApplicationModel.Search.ISearchPaneQueryLinguisticDetails">
+
+DEFINE_IIDX(ISearchPaneQueryLinguisticDetails, "82FB460E-0940-4B6D-B8D0-642B30989E15")
+
+.comdef ISearchPaneQueryLinguisticDetails : public IInspectable
+
+    get_QueryTextAlternatives proc :ptr
+    get_QueryTextCompositionStart proc :ptr
+    get_QueryTextCompositionLength proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneVisibilityChangedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneVisibilityChangedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneVisibilityChangedEventArgs <L"Windows.ApplicationModel.Search.ISearchPaneVisibilityChangedEventArgs">
+
+DEFINE_IIDX(ISearchPaneVisibilityChangedEventArgs, "3C4D3046-AC4B-49F2-97D6-020E6182CB9C")
+
+.comdef ISearchPaneVisibilityChangedEventArgs : public IInspectable
+
+    get_Visible		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQueryChangedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQueryChangedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneQueryChangedEventArgs <L"Windows.ApplicationModel.Search.ISearchPaneQueryChangedEventArgs">
+
+DEFINE_IIDX(ISearchPaneQueryChangedEventArgs, "3C064FE9-2351-4248-A529-7110F464A785")
+
+.comdef ISearchPaneQueryChangedEventArgs : public IInspectable
+
+    get_QueryText	proc :ptr
+    get_Language	proc :ptr
+    get_LinguisticDetails proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQuerySubmittedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQuerySubmittedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneQuerySubmittedEventArgs <L"Windows.ApplicationModel.Search.ISearchPaneQuerySubmittedEventArgs">
+
+DEFINE_IIDX(ISearchPaneQuerySubmittedEventArgs, "143BA4FC-E9C5-4736-91B2-E8EB9CB88356")
+
+.comdef ISearchPaneQuerySubmittedEventArgs : public IInspectable
+
+    get_QueryText	proc :ptr
+    get_Language	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQuerySubmittedEventArgsWithLinguisticDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneQuerySubmittedEventArgsWithLinguisticDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneQuerySubmittedEventArgsWithLinguisticDetails <L"Windows.ApplicationModel.Search.ISearchPaneQuerySubmittedEventArgsWithLinguisticDetails">
+
+DEFINE_IIDX(ISearchPaneQuerySubmittedEventArgsWithLinguisticDetails, "460C92E5-4C32-4538-A4D4-B6B4400D140F")
+
+.comdef ISearchPaneQuerySubmittedEventArgsWithLinguisticDetails : public IInspectable
+
+    get_LinguisticDetails proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneResultSuggestionChosenEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneResultSuggestionChosenEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneResultSuggestionChosenEventArgs <L"Windows.ApplicationModel.Search.ISearchPaneResultSuggestionChosenEventArgs">
+
+DEFINE_IIDX(ISearchPaneResultSuggestionChosenEventArgs, "C8316CC0-AED2-41E0-BCE0-C26CA74F85EC")
+
+.comdef ISearchPaneResultSuggestionChosenEventArgs : public IInspectable
+
+    get_Tag		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionCollection_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionCollection_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchSuggestionCollection <L"Windows.ApplicationModel.Search.ISearchSuggestionCollection">
+
+DEFINE_IIDX(ISearchSuggestionCollection, "323A8A4B-FBEA-4446-ABBC-3DA7915FDD3A")
+
+.comdef ISearchSuggestionCollection : public IInspectable
+
+    get_Size		proc :ptr
+    AppendQuerySuggestion proc :HSTRING
+    AppendQuerySuggestions proc :ptr
+    AppendResultSuggestion proc :HSTRING, :HSTRING, :HSTRING, :ptr, :HSTRING
+    AppendSearchSeparator proc :HSTRING
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequestDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequestDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneSuggestionsRequestDeferral <L"Windows.ApplicationModel.Search.ISearchPaneSuggestionsRequestDeferral">
+
+DEFINE_IIDX(ISearchPaneSuggestionsRequestDeferral, "A0D009F7-8748-4EE2-AD44-AFA6BE997C51")
+
+.comdef ISearchPaneSuggestionsRequestDeferral : public IInspectable
+
+    Complete		proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequest_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequest_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneSuggestionsRequest <L"Windows.ApplicationModel.Search.ISearchPaneSuggestionsRequest">
+
+DEFINE_IIDX(ISearchPaneSuggestionsRequest, "81B10B1C-E561-4093-9B4D-2AD482794A53")
+
+.comdef ISearchPaneSuggestionsRequest : public IInspectable
+
+    get_IsCanceled	proc :ptr
+    get_SearchSuggestionCollection proc :ptr
+    GetDeferral		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequestedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneSuggestionsRequestedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneSuggestionsRequestedEventArgs <L"Windows.ApplicationModel.Search.ISearchPaneSuggestionsRequestedEventArgs">
+
+DEFINE_IIDX(ISearchPaneSuggestionsRequestedEventArgs, "C89B8A2F-AC56-4460-8D2F-80023BEC4FC5")
+
+.comdef ISearchPaneSuggestionsRequestedEventArgs : public IInspectable
+
+    get_Request		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CILocalContentSuggestionSettings_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CILocalContentSuggestionSettings_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ILocalContentSuggestionSettings <L"Windows.ApplicationModel.Search.ILocalContentSuggestionSettings">
+
+DEFINE_IIDX(ILocalContentSuggestionSettings, "EEAEB062-743D-456E-84A3-23F06F2D15D7")
+
+.comdef ILocalContentSuggestionSettings : public IInspectable
+
+    put_Enabled		proc :boolean
+    get_Enabled		proc :ptr
+    get_Locations	proc :ptr
+    put_AqsFilter	proc :HSTRING
+    get_AqsFilter	proc :ptr
+    get_PropertiesToMatch proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneStatics <L"Windows.ApplicationModel.Search.ISearchPaneStatics">
+
+DEFINE_IIDX(ISearchPaneStatics, "9572ADF1-8F1D-481F-A15B-C61655F16A0E")
+
+.comdef ISearchPaneStatics : public IInspectable
+
+    GetForCurrentView	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneStaticsWithHideThisApplication_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPaneStaticsWithHideThisApplication_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPaneStaticsWithHideThisApplication <L"Windows.ApplicationModel.Search.ISearchPaneStaticsWithHideThisApplication">
+
+DEFINE_IIDX(ISearchPaneStaticsWithHideThisApplication, "00732830-50F1-4D03-99AC-C6644C8ED8B5")
+
+.comdef ISearchPaneStaticsWithHideThisApplication : public IInspectable
+
+    HideThisApplication proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPane_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchPane_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchPane <L"Windows.ApplicationModel.Search.ISearchPane">
+
+DEFINE_IIDX(ISearchPane, "FDACEC38-3700-4D73-91A1-2F998674238A")
+
+.comdef ISearchPane : public IInspectable
+
+    put_SearchHistoryEnabled proc :boolean
+    get_SearchHistoryEnabled proc :ptr
+    put_SearchHistoryContext proc :HSTRING
+    get_SearchHistoryContext proc :ptr
+    put_PlaceholderText proc :HSTRING
+    get_PlaceholderText proc :ptr
+    get_QueryText	proc :ptr
+    get_Language	proc :ptr
+    get_Visible		proc :ptr
+    add_VisibilityChanged proc :ptr, :ptr
+    remove_VisibilityChanged proc :EventRegistrationToken
+    add_QueryChanged	proc :ptr, :ptr
+    remove_QueryChanged proc :EventRegistrationToken
+    add_SuggestionsRequested proc :ptr, :ptr
+    remove_SuggestionsRequested proc :EventRegistrationToken
+    add_QuerySubmitted	proc :ptr, :ptr
+    remove_QuerySubmitted proc :EventRegistrationToken
+    add_ResultSuggestionChosen proc :ptr, :ptr
+    remove_ResultSuggestionChosen proc :EventRegistrationToken
+    SetLocalContentSuggestionSettings proc :ptr
+    ShowOverloadDefault proc
+    ShowOverloadWithQuery proc :HSTRING
+    put_ShowOnKeyboardInput proc :boolean
+    get_ShowOnKeyboardInput proc :ptr
+    TrySetQueryText	proc :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchQueryLinguisticDetailsFactory_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchQueryLinguisticDetailsFactory_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ISearchQueryLinguisticDetailsFactory, "CAC6C3B8-3C64-4DFD-AD9F-479E4D4065A4")
+
+.comdef ISearchQueryLinguisticDetailsFactory : public IInspectable
+
+    CreateInstance	proc :ptr, :UINT32, :UINT32, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchQueryLinguisticDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchQueryLinguisticDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchQueryLinguisticDetails <L"Windows.ApplicationModel.Search.ISearchQueryLinguisticDetails">
+
+DEFINE_IIDX(ISearchQueryLinguisticDetails, "46A1205B-69C9-4745-B72F-A8A4FC8F24AE")
+
+.comdef ISearchQueryLinguisticDetails : public IInspectable
+
+    get_QueryTextAlternatives proc :ptr
+    get_QueryTextCompositionStart proc :ptr
+    get_QueryTextCompositionLength proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionsRequestDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionsRequestDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchSuggestionsRequestDeferral <L"Windows.ApplicationModel.Search.ISearchSuggestionsRequestDeferral">
+
+DEFINE_IIDX(ISearchSuggestionsRequestDeferral, "B71598A9-C065-456D-A845-1ECCEC5DC28B")
+
+.comdef ISearchSuggestionsRequestDeferral : public IInspectable
+
+    Complete		proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionsRequest_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CSearch_CISearchSuggestionsRequest_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Search_ISearchSuggestionsRequest <L"Windows.ApplicationModel.Search.ISearchSuggestionsRequest">
+
+DEFINE_IIDX(ISearchSuggestionsRequest, "4E4E26A7-44E5-4039-9099-6000EAD1F0C6")
+
+.comdef ISearchSuggestionsRequest : public IInspectable
+
+    get_IsCanceled	proc :ptr
+    get_SearchSuggestionCollection proc :ptr
+    GetDeferral		proc :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+.endn
+
+
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQueryLinguisticDetails_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQueryLinguisticDetails_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneQueryLinguisticDetails <L"Windows.ApplicationModel.Search.SearchPaneQueryLinguisticDetails">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneVisibilityChangedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneVisibilityChangedEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneVisibilityChangedEventArgs <L"Windows.ApplicationModel.Search.SearchPaneVisibilityChangedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQueryChangedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQueryChangedEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneQueryChangedEventArgs <L"Windows.ApplicationModel.Search.SearchPaneQueryChangedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQuerySubmittedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneQuerySubmittedEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneQuerySubmittedEventArgs <L"Windows.ApplicationModel.Search.SearchPaneQuerySubmittedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneResultSuggestionChosenEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneResultSuggestionChosenEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneResultSuggestionChosenEventArgs <L"Windows.ApplicationModel.Search.SearchPaneResultSuggestionChosenEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionCollection_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionCollection_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchSuggestionCollection <L"Windows.ApplicationModel.Search.SearchSuggestionCollection">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestDeferral_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestDeferral_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestDeferral <L"Windows.ApplicationModel.Search.SearchPaneSuggestionsRequestDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequest_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequest_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequest <L"Windows.ApplicationModel.Search.SearchPaneSuggestionsRequest">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestedEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPaneSuggestionsRequestedEventArgs <L"Windows.ApplicationModel.Search.SearchPaneSuggestionsRequestedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_LocalContentSuggestionSettings_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_LocalContentSuggestionSettings_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_LocalContentSuggestionSettings <L"Windows.ApplicationModel.Search.LocalContentSuggestionSettings">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPane_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchPane_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchPane <L"Windows.ApplicationModel.Search.SearchPane">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchQueryLinguisticDetails_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchQueryLinguisticDetails_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchQueryLinguisticDetails <L"Windows.ApplicationModel.Search.SearchQueryLinguisticDetails">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionsRequestDeferral_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionsRequestDeferral_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchSuggestionsRequestDeferral <L"Windows.ApplicationModel.Search.SearchSuggestionsRequestDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionsRequest_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Search_SearchSuggestionsRequest_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Search_SearchSuggestionsRequest <L"Windows.ApplicationModel.Search.SearchSuggestionsRequest">
+endif
+
+HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+HSTRING_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+endif

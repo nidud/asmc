@@ -1,0 +1,146 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.inc>
+endif
+
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Eapplicationmodel2Ecalls_h__
+define __windows2Eapplicationmodel2Ecalls_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include windows.foundation.collections.inc
+
+ifndef DEF___FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_IInspectable_USE
+define DEF___FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_IInspectable_USE
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_IInspectable, "addada2a-e5a7-5921-b7e0-17323adf7382")
+
+.comdef _FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_IInspectable : public IUnknown
+
+    _Invoke proc :ptr, :ptr
+    .ends
+
+endif
+
+ifndef DEF___FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs
+define DEF___FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs
+
+ifndef ____FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs, "92f7c40e-e7b9-5f68-98f0-56fb89015806")
+
+.comdef _FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScreenCallUI_Windows__CApplicationModel__CCalls__CLockScreenCallEndRequestedEventArgs : public IUnknown
+
+    _Invoke proc :ptr, :ptr
+    .ends
+
+endif
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndCallDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Calls_ILockScreenCallEndCallDeferral <L"Windows.ApplicationModel.Calls.ILockScreenCallEndCallDeferral">
+endif
+
+.namespace ABI
+.namespace Windows
+.namespace ApplicationModel
+.namespace Calls
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndCallDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndCallDeferral_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ILockScreenCallEndCallDeferral, "2DD7ED0D-98ED-4041-9632-50FF812B773F")
+
+.comdef ILockScreenCallEndCallDeferral : public IInspectable
+
+    Complete proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndRequestedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Calls_ILockScreenCallEndRequestedEventArgs <L"Windows.ApplicationModel.Calls.ILockScreenCallEndRequestedEventArgs">
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndRequestedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallEndRequestedEventArgs_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ILockScreenCallEndRequestedEventArgs, "8190A363-6F27-46E9-AEB6-C0AE83E47DC7")
+
+.comdef ILockScreenCallEndRequestedEventArgs : public IInspectable
+
+    GetDeferral	 proc :ptr
+    get_Deadline proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallUI_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Calls_ILockScreenCallUI <L"Windows.ApplicationModel.Calls.ILockScreenCallUI">
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallUI_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CCalls_CILockScreenCallUI_INTERFACE_DEFINED__
+
+DEFINE_IIDX(ILockScreenCallUI, "C596FD8D-73C9-4A14-B021-EC1C50A3B727")
+
+.comdef ILockScreenCallUI : public IInspectable
+
+    Dismiss		proc
+    add_EndRequested	proc :ptr, :ptr
+    remove_EndRequested proc :EventRegistrationToken
+    add_Closed		proc :ptr, :ptr
+    remove_Closed	proc :EventRegistrationToken
+    get_CallTitle	proc :ptr
+    put_CallTitle	proc :HSTRING
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallEndCallDeferral_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallEndCallDeferral_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Calls_LockScreenCallEndCallDeferral <L"Windows.ApplicationModel.Calls.LockScreenCallEndCallDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallUI_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallUI_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Calls_LockScreenCallUI <L"Windows.ApplicationModel.Calls.LockScreenCallUI">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallEndRequestedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Calls_LockScreenCallEndRequestedEventArgs_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Calls_LockScreenCallEndRequestedEventArgs <L"Windows.ApplicationModel.Calls.LockScreenCallEndRequestedEventArgs">
+endif
+
+HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+HSTRING_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
+HSTRING_UserMarshal64	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING
+HSTRING_UserFree64	proto WINAPI :ptr DWORD, :ptr HSTRING
+
+endif

@@ -9,7 +9,7 @@ include rpc.inc
 include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
+.err <this stub requires an updated version of rpcndr.inc>
 endif
 
 ifndef COM_NO_WINDOWS_H
@@ -28,8 +28,8 @@ include Windows.Data.Text.inc
 include Windows.Storage.inc
 include windows.foundation.collections.inc
 
-ifndef DEF___FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent_USE
-DEF___FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent_USE equ 1
+ifndef ____FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent, "6cdb32ba-2361-57a8-a39d-be1df041bdb8")
 
@@ -39,24 +39,24 @@ DEFINE_IIDX(__FIIterator_1_Windows__CStorage__CSearch__CIIndexableContent, "6cdb
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
     GetMany		proc :SINT, :ptr, :dword
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIIterable_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIIterable_1_Windows__CStorage__CSearch__CIIndexableContent, "4a6edbfe-0c41-5042-ac58-a885a8fc7928")
 
 .comdef __FIIterable_1_Windows__CStorage__CSearch__CIIndexableContent : public IInspectable
 
     First		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIIterator_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
-____FIIterator_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__ equ 1
+define ____FIIterator_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIIterator_1_Windows__CStorage__CSearch__CSortEntry, "520434a2-acf7-58c9-b47a-2741f2fac2c2")
 
@@ -66,24 +66,24 @@ DEFINE_IIDX(__FIIterator_1_Windows__CStorage__CSearch__CSortEntry, "520434a2-acf
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
     GetMany		proc :SINT, :ptr, :dword
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIIterable_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
-____FIIterable_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__ equ 1
+define ____FIIterable_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIIterable_1_Windows__CStorage__CSearch__CSortEntry, "35aff6f9-ef75-5280-bb84-a2bf8317cf35")
 
 .comdef __FIIterable_1_Windows__CStorage__CSearch__CSortEntry : public IInspectable
 
     First		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__ equ 1
+define ____FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent, "f4512416-6bb8-5c6f-b83a-bf8a2788ce9f")
 
@@ -93,12 +93,12 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent, "f4
     get_Size		proc :dword
     IndexOf		proc :ptr, :dword, :ptr
     GetMany		proc :SINT, :SINT, :ptr, :dword
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIVectorView_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
-____FIVectorView_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__ equ 1
+define ____FIVectorView_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIVectorView_1_Windows__CStorage__CSearch__CSortEntry, "823c7604-b37b-5465-a169-29497893cdb9")
 
@@ -108,12 +108,12 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CStorage__CSearch__CSortEntry, "823c7604-b
     get_Size		proc :dword
     IndexOf		proc :ptr, :dword, :ptr
     GetMany		proc :SINT, :SINT, :ptr, :dword
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIVector_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
-____FIVector_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__ equ 1
+define ____FIVector_1_Windows__CStorage__CSearch__CSortEntry_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIVector_1_Windows__CStorage__CSearch__CSortEntry, "d8ea401b-47b3-5254-84f4-eea10c4cf068")
 
@@ -131,12 +131,12 @@ DEFINE_IIDX(__FIVector_1_Windows__CStorage__CSearch__CSortEntry, "d8ea401b-47b3-
     Clear		proc
     GetMany		proc :SINT, :SINT, :ptr, :dword
     ReplaceAll		proc :SINT, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent, "6a29f493-efb7-5fdb-a13e-f2c28b4dab58")
 
@@ -148,7 +148,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CStor
 endif
 
 ifndef ____FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
-____FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CSearch__CIIndexableContent, "919850e1-084b-5f9b-a0a0-50db0cd5da91")
 
@@ -157,12 +157,12 @@ DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CStorage__CSearch__CI
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CSearch__CIndexedState, "b67a3cba-f5f7-5e51-968a-385126d1f918")
 
@@ -174,7 +174,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CSearch__CIn
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CSearch__CIndexedState_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CSearch__CIndexedState, "88694b1f-f380-574d-8a05-4f67bd52cd11")
 
@@ -183,12 +183,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CSearch__CIndexedState, "886
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :LONG
-    .ends
+   .ends
 
 endif
 
 ifndef ____FITypedEventHandler_2_Windows__CStorage__CSearch__CIStorageQueryResultBase_IInspectable_INTERFACE_DEFINED__
-____FITypedEventHandler_2_Windows__CStorage__CSearch__CIStorageQueryResultBase_IInspectable_INTERFACE_DEFINED__ equ 1
+define ____FITypedEventHandler_2_Windows__CStorage__CSearch__CIStorageQueryResultBase_IInspectable_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FITypedEventHandler_2_Windows__CStorage__CSearch__CIStorageQueryResultBase_IInspectable, "4ba22861-00c4-597f-b6bf-3af516f3b870")
 
@@ -199,33 +199,38 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CStorage__CSearch__CIStorageQueryRe
 
 endif
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CDateStackOption {
-    DateStackOption_None	= 0,
-    DateStackOption_Year	= 1,
-    DateStackOption_Month	= 2
+.namespace ABI
+.namespace Windows
+.namespace Storage
+.namespace Search
+
+.enum DateStackOption {
+    DateStackOption_None,
+    DateStackOption_Year,
+    DateStackOption_Month
     }
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CIndexerOption {
-    IndexerOption_UseIndexerWhenAvailable	= 0,
-    IndexerOption_OnlyUseIndexer	= 1,
-    IndexerOption_DoNotUseIndexer	= 2
+.enum IndexerOption {
+    IndexerOption_UseIndexerWhenAvailable,
+    IndexerOption_OnlyUseIndexer,
+    IndexerOption_DoNotUseIndexer
     }
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CFolderDepth {
-    FolderDepth_Shallow = 0,
-    FolderDepth_Deep	= 1
+.enum FolderDepth {
+    FolderDepth_Shallow,
+    FolderDepth_Deep
     }
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery {
-    CommonFileQuery_DefaultQuery	= 0,
-    CommonFileQuery_OrderByName = 1,
-    CommonFileQuery_OrderByTitle	= 2,
-    CommonFileQuery_OrderByMusicProperties	= 3,
-    CommonFileQuery_OrderBySearchRank	= 4,
-    CommonFileQuery_OrderByDate = 5
+.enum CommonFileQuery {
+    CommonFileQuery_DefaultQuery,
+    CommonFileQuery_OrderByName,
+    CommonFileQuery_OrderByTitle,
+    CommonFileQuery_OrderByMusicProperties,
+    CommonFileQuery_OrderBySearchRank,
+    CommonFileQuery_OrderByDate
     }
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery {
+.enum CommonFolderQuery {
     CommonFolderQuery_DefaultQuery	= 0,
     CommonFolderQuery_GroupByYear	= 100,
     CommonFolderQuery_GroupByMonth	= 101,
@@ -241,37 +246,38 @@ endif
     CommonFolderQuery_GroupByType	= 111
     }
 
-.enum __x_ABI_CWindows_CStorage_CSearch_CIndexedState {
-    IndexedState_Unknown	= 0,
-    IndexedState_NotIndexed	= 1,
-    IndexedState_PartiallyIndexed	= 2,
-    IndexedState_FullyIndexed	= 3
+.enum IndexedState {
+    IndexedState_Unknown,
+    IndexedState_NotIndexed,
+    IndexedState_PartiallyIndexed,
+    IndexedState_FullyIndexed
     }
 
-_x_ABI_CWindows_CStorage_CSearch_CSortEntry STRUC
-PropertyName		HSTRING ?
-AscendingOrder		boolean ?
-_x_ABI_CWindows_CStorage_CSearch_CSortEntry ENDS
+.template SortEntry
+    PropertyName	HSTRING ?
+    AscendingOrder	boolean ?
+   .ends
+
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerStatics_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerStatics_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexerStatics, "8C488375-B37E-4C60-9BA8-B760FDA3E59D")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IContentIndexerStatics, "8C488375-B37E-4C60-9BA8-B760FDA3E59D")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIContentIndexerStatics : public IInspectable
+.comdef IContentIndexerStatics : public IInspectable
 
     GetIndexerWithName	proc :HSTRING, :ptr
     GetIndexer		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIIndexableContent_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIIndexableContent_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIIndexableContent_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIIndexableContent, "CCF1A05F-D4B5-483A-B06E-E0DB1EC420E4")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IIndexableContent, "CCF1A05F-D4B5-483A-B06E-E0DB1EC420E4")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIIndexableContent : public IInspectable
+.comdef IIndexableContent : public IInspectable
 
     get_Id		proc :ptr
     put_Id		proc :HSTRING
@@ -280,16 +286,16 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIIndexableContent, "CCF1A05F-D4B5
     put_Stream		proc :ptr
     get_StreamContentType proc :ptr
     put_StreamContentType proc :HSTRING
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexer_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIContentIndexer_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexer_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexer, "B1767F8D-F698-4982-B05F-3A6E8CAB01A2")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IContentIndexer, "B1767F8D-F698-4982-B05F-3A6E8CAB01A2")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIContentIndexer : public IInspectable
+.comdef IContentIndexer : public IInspectable
 
     AddAsync		proc :ptr, :ptr
     UpdateAsync		proc :ptr, :ptr
@@ -298,45 +304,45 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexer, "B1767F8D-F698-4
     DeleteAllAsync	proc :ptr
     RetrievePropertiesAsync proc :HSTRING, :ptr, :ptr
     get_Revision	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIValueAndLanguage_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIValueAndLanguage_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIValueAndLanguage_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIValueAndLanguage, "B9914881-A1EE-4BC4-92A5-466968E30436")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IValueAndLanguage, "B9914881-A1EE-4BC4-92A5-466968E30436")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIValueAndLanguage : public IInspectable
+.comdef IValueAndLanguage : public IInspectable
 
     get_Language	proc :ptr
     put_Language	proc :HSTRING
     get_Value		proc :ptr
     put_Value		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQueryOperations_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQueryOperations_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQueryOperations_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQueryOperations, "28823E10-4786-42F1-9730-792B3566B150")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IContentIndexerQueryOperations, "28823E10-4786-42F1-9730-792B3566B150")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQueryOperations : public IInspectable
+.comdef IContentIndexerQueryOperations : public IInspectable
 
     CreateQueryWithSortOrderAndLanguage proc :HSTRING, :ptr, :ptr, :HSTRING, :ptr
     CreateQueryWithSortOrder proc :HSTRING, :ptr, :ptr, :ptr
     CreateQuery		proc :HSTRING, :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery, "70E3B0F8-4BFC-428A-8889-CC51DA9A7B9D")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IContentIndexerQuery, "70E3B0F8-4BFC-428A-8889-CC51DA9A7B9D")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery : public IInspectable
+.comdef IContentIndexerQuery : public IInspectable
 
     GetCountAsync	proc :ptr
     GetPropertiesAsync	proc :ptr
@@ -344,20 +350,20 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIContentIndexerQuery, "70E3B0F8-4
     GetAsync		proc :ptr
     GetRangeAsync	proc :UINT32, :UINT32, :ptr
     get_QueryFolder	proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptions_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIQueryOptions_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptions_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIQueryOptions, "1E5E46EE-0F45-4838-A8E9-D0479D446C30")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IQueryOptions, "1E5E46EE-0F45-4838-A8E9-D0479D446C30")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIQueryOptions : public IInspectable
+.comdef IQueryOptions : public IInspectable
 
     get_FileTypeFilter	proc :ptr
     get_FolderDepth	proc :ptr
-    put_FolderDepth	proc :__x_ABI_CWindows_CStorage_CSearch_CFolderDepth
+    put_FolderDepth	proc :ABI_Windows_Storage_Search_FolderDepth
     get_ApplicationSearchFilter proc :ptr
     put_ApplicationSearchFilter proc :HSTRING
     get_UserSearchFilter proc :ptr
@@ -365,7 +371,7 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIQueryOptions, "1E5E46EE-0F45-483
     get_Language	proc :ptr
     put_Language	proc :HSTRING
     get_IndexerOption	proc :ptr
-    put_IndexerOption	proc :__x_ABI_CWindows_CStorage_CSearch_CIndexerOption
+    put_IndexerOption	proc :ABI_Windows_Storage_Search_IndexerOption
     get_SortOrder	proc :ptr
     get_GroupPropertyName proc :ptr
     get_DateStackOption proc :ptr
@@ -373,41 +379,41 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIQueryOptions, "1E5E46EE-0F45-483
     LoadFromString	proc :HSTRING
     SetThumbnailPrefetch proc :ptr, :UINT32, :ptr
     SetPropertyPrefetch proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsWithProviderFilter_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsWithProviderFilter_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsWithProviderFilter_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsWithProviderFilter, "5B9D1026-15C4-44DD-B89A-47A59B7D7C4F")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IQueryOptionsWithProviderFilter, "5B9D1026-15C4-44DD-B89A-47A59B7D7C4F")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsWithProviderFilter : public IInspectable
+.comdef IQueryOptionsWithProviderFilter : public IInspectable
 
     get_StorageProviderIdFilter proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsFactory_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsFactory_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsFactory, "032E1F8C-A9C1-4E71-8011-0DEE9D4811A3")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IQueryOptionsFactory, "032E1F8C-A9C1-4E71-8011-0DEE9D4811A3")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIQueryOptionsFactory : public IInspectable
+.comdef IQueryOptionsFactory : public IInspectable
 
-    CreateCommonFileQuery proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery, :ptr, :ptr
-    CreateCommonFolderQuery proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery, :ptr
-    .ends
+    CreateCommonFileQuery proc :ABI_Windows_Storage_Search_CommonFileQuery, :ptr, :ptr
+    CreateCommonFolderQuery proc :ABI_Windows_Storage_Search_CommonFolderQuery, :ptr
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase, "C297D70D-7353-47AB-BA58-8C61425DC54B")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageQueryResultBase, "C297D70D-7353-47AB-BA58-8C61425DC54B")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase : public IInspectable
+.comdef IStorageQueryResultBase : public IInspectable
 
     GetItemCountAsync	proc :ptr
     get_Folder		proc :ptr
@@ -418,89 +424,93 @@ DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageQueryResultBase, "C297D70
     FindStartIndexAsync proc :ptr, :ptr
     GetCurrentQueryOptions proc :ptr
     ApplyNewQueryOptions proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult, "52FDA447-2BAA-412C-B29F-D4B1778EFA1E")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageFileQueryResult, "52FDA447-2BAA-412C-B29F-D4B1778EFA1E")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult : public IInspectable
+.comdef IStorageFileQueryResult : public IInspectable
 
     GetFilesAsync	proc :UINT32, :UINT32, :ptr
     GetFilesAsyncDefaultStartAndCount proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult2_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult2_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult2, "4E5DB9DD-7141-46C4-8BE3-E9DC9E27275C")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageFileQueryResult2, "4E5DB9DD-7141-46C4-8BE3-E9DC9E27275C")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageFileQueryResult2 : public IInspectable
+.comdef IStorageFileQueryResult2 : public IInspectable
 
     GetMatchingPropertiesWithRanges proc :ptr, :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryResult_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryResult_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryResult_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryResult, "6654C911-7D66-46FA-AECF-E4A4BAA93AB8")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageFolderQueryResult, "6654C911-7D66-46FA-AECF-E4A4BAA93AB8")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryResult : public IInspectable
+.comdef IStorageFolderQueryResult : public IInspectable
 
     GetFoldersAsync	proc :UINT32, :UINT32, :ptr
     GetFoldersAsyncDefaultStartAndCount proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageItemQueryResult_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageItemQueryResult_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageItemQueryResult_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageItemQueryResult, "E8948079-9D58-47B8-B2B2-41B07F4795F9")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageItemQueryResult, "E8948079-9D58-47B8-B2B2-41B07F4795F9")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageItemQueryResult : public IInspectable
+.comdef IStorageItemQueryResult : public IInspectable
 
     GetItemsAsync	proc :UINT32, :UINT32, :ptr
     GetItemsAsyncDefaultStartAndCount proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryOperations_INTERFACE_DEFINED__
-____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryOperations_INTERFACE_DEFINED__ equ 1
+define ____x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryOperations_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryOperations, "CB43CCC9-446B-4A4F-BE97-757771BE5203")
+DEFINE_IIDX(ABI_Windows_Storage_Search_IStorageFolderQueryOperations, "CB43CCC9-446B-4A4F-BE97-757771BE5203")
 
-.comdef __x_ABI_CWindows_CStorage_CSearch_CIStorageFolderQueryOperations : public IInspectable
+.comdef IStorageFolderQueryOperations : public IInspectable
 
     GetIndexedStateAsync proc :ptr
     CreateFileQueryOverloadDefault proc :ptr
-    CreateFileQuery	proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery, :ptr
+    CreateFileQuery	proc :ABI_Windows_Storage_Search_CommonFileQuery, :ptr
     CreateFileQueryWithOptions proc :ptr, :ptr
     CreateFolderQueryOverloadDefault proc :ptr
-    CreateFolderQuery	proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery, :ptr
+    CreateFolderQuery	proc :ABI_Windows_Storage_Search_CommonFolderQuery, :ptr
     CreateFolderQueryWithOptions proc :ptr, :ptr
     CreateItemQuery	proc :ptr
     CreateItemQueryWithOptions proc :ptr, :ptr
-    GetFilesAsync	proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery, :UINT32, :UINT32, :ptr
-    GetFilesAsyncOverloadDefaultStartAndCount proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery, :ptr
-    GetFoldersAsync	proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery, :UINT32, :UINT32, :ptr
-    GetFoldersAsyncOverloadDefaultStartAndCount proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery, :ptr
+    GetFilesAsync	proc :ABI_Windows_Storage_Search_CommonFileQuery, :UINT32, :UINT32, :ptr
+    GetFilesAsyncOverloadDefaultStartAndCount proc :ABI_Windows_Storage_Search_CommonFileQuery, :ptr
+    GetFoldersAsync	proc :ABI_Windows_Storage_Search_CommonFolderQuery, :UINT32, :UINT32, :ptr
+    GetFoldersAsyncOverloadDefaultStartAndCount proc :ABI_Windows_Storage_Search_CommonFolderQuery, :ptr
     GetItemsAsync	proc :UINT32, :UINT32, :ptr
     AreQueryOptionsSupported proc :ptr, :ptr
-    IsCommonFolderQuerySupported proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFolderQuery, :ptr
-    IsCommonFileQuerySupported proc :__x_ABI_CWindows_CStorage_CSearch_CCommonFileQuery, :ptr
-    .ends
+    IsCommonFolderQuerySupported proc :ABI_Windows_Storage_Search_CommonFolderQuery, :ptr
+    IsCommonFileQuerySupported proc :ABI_Windows_Storage_Search_CommonFileQuery, :ptr
+   .ends
 
 endif
 
+.endn
+.endn
+.endn
+.endn
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

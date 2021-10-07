@@ -27,8 +27,8 @@ include Windows.Foundation.inc
 include Windows.Storage.Streams.inc
 include windows.foundation.collections.inc
 
-ifndef DEF___FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CBasicProperties_USE
-DEF___FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CBasicProperties_USE equ 1
+ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CBasicProperties_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CBasicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CBasicProperties, "c8659aae-4926-52ad-8f60-d89fe5a8df5f")
 
@@ -40,7 +40,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CBasicProperties_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CBasicProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CBasicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CBasicProperties, "5186131a-4467-504b-977a-0785a8230485")
 
@@ -49,12 +49,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CBasicPrope
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CDocumentProperties, "4452ed4c-642b-501b-9617-7d68b4ac3c66")
 
@@ -66,7 +66,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CDocumentProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CDocumentProperties, "6c86e97c-5699-5700-8d35-d350ad3e4df2")
 
@@ -75,12 +75,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CDocumentPr
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CImageProperties, "c63729bc-e4c3-564c-b137-2cb4f5966a83")
 
@@ -92,7 +92,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CImageProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CImageProperties, "fcd07511-e7f8-5bda-8c04-795a639dae8f")
 
@@ -101,12 +101,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CImagePrope
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CMusicProperties, "d84e1312-d661-5b7f-9566-7421bdedc1ea")
 
@@ -118,7 +118,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CMusicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CMusicProperties, "0d023b76-20a7-56f3-84ab-ce31e6544b71")
 
@@ -127,12 +127,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CMusicPrope
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail, "6d0036f2-a8a8-505d-b042-d087dc1fc1b7")
 
@@ -144,7 +144,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CStorageItemThumbnail, "11c7cc5e-c04e-50e7-a65e-6f6903690c16")
 
@@ -153,12 +153,12 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CStorageIte
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__
-____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFileProperties__CVideoProperties, "43401d34-61ab-5cf2-921f-55b616631d1d")
 
@@ -170,7 +170,7 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CStorage__CFilePropert
 endif
 
 ifndef ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__
-____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__ equ 1
+define ____FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoProperties, "447d4590-d3f9-58bf-ac58-6f9a50839efe")
 
@@ -179,11 +179,16 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoPrope
     put_Completed	proc :ptr
     get_Completed	proc :ptr
     GetResults		proc :ptr
-    .ends
+   .ends
 
 endif
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CPropertyPrefetchOptions {
+.namespace ABI
+.namespace Windows
+.namespace Storage
+.namespace FileProperties
+
+.enum PropertyPrefetchOptions {
     PropertyPrefetchOptions_None	= 0,
     PropertyPrefetchOptions_MusicProperties	= 0x1,
     PropertyPrefetchOptions_VideoProperties	= 0x2,
@@ -192,40 +197,40 @@ endif
     PropertyPrefetchOptions_BasicProperties	= 0x10
     }
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CThumbnailType {
-    ThumbnailType_Image = 0,
-    ThumbnailType_Icon	= 1
+.enum ThumbnailType {
+    ThumbnailType_Image,
+    ThumbnailType_Icon
     }
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CThumbnailMode {
-    ThumbnailMode_PicturesView	= 0,
-    ThumbnailMode_VideosView	= 1,
-    ThumbnailMode_MusicView	= 2,
-    ThumbnailMode_DocumentsView = 3,
-    ThumbnailMode_ListView	= 4,
-    ThumbnailMode_SingleItem	= 5
+.enum ThumbnailMode {
+    ThumbnailMode_PicturesView,
+    ThumbnailMode_VideosView,
+    ThumbnailMode_MusicView,
+    ThumbnailMode_DocumentsView,
+    ThumbnailMode_ListView,
+    ThumbnailMode_SingleItem
     }
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CThumbnailOptions {
+.enum ThumbnailOptions {
     ThumbnailOptions_None	= 0,
     ThumbnailOptions_ReturnOnlyIfCached = 0x1,
     ThumbnailOptions_ResizeThumbnail	= 0x2,
     ThumbnailOptions_UseCurrentScale	= 0x4
     }
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CPhotoOrientation {
-    PhotoOrientation_Unspecified	= 0,
-    PhotoOrientation_Normal	= 1,
-    PhotoOrientation_FlipHorizontal	= 2,
-    PhotoOrientation_Rotate180	= 3,
-    PhotoOrientation_FlipVertical	= 4,
-    PhotoOrientation_Transpose	= 5,
-    PhotoOrientation_Rotate270	= 6,
-    PhotoOrientation_Transverse = 7,
-    PhotoOrientation_Rotate90	= 8
+.enum PhotoOrientation {
+    PhotoOrientation_Unspecified,
+    PhotoOrientation_Normal,
+    PhotoOrientation_FlipHorizontal,
+    PhotoOrientation_Rotate180,
+    PhotoOrientation_FlipVertical,
+    PhotoOrientation_Transpose,
+    PhotoOrientation_Rotate270,
+    PhotoOrientation_Transverse,
+    PhotoOrientation_Rotate90
     }
 
-.enum _x_ABI_CWindows_CStorage_CFileProperties_CVideoOrientation {
+.enum VideoOrientation {
     VideoOrientation_Normal	= 0,
     VideoOrientation_Rotate90	= 90,
     VideoOrientation_Rotate180	= 180,
@@ -233,8 +238,8 @@ endif
     }
 
 
-ifndef __IThumbnailProperties_INTERFACE_DEFINED__
-__IThumbnailProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIThumbnailProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIThumbnailProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IThumbnailProperties, "693DD42F-DBE7-49B5-B3B3-2893AC5D3423")
 
@@ -244,12 +249,12 @@ DEFINE_IIDX(IThumbnailProperties, "693DD42F-DBE7-49B5-B3B3-2893AC5D3423")
     get_OriginalHeight	proc :ptr
     get_ReturnedSmallerCachedSize proc :ptr
     get_Type		proc :ptr
-    .ends
+   .ends
 
 endif
 
-ifndef __IStorageItemExtraProperties_INTERFACE_DEFINED__
-__IStorageItemExtraProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIStorageItemExtraProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIStorageItemExtraProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStorageItemExtraProperties, "C54361B2-54CD-432B-BDBC-4B19C4B470D7")
 
@@ -258,12 +263,12 @@ DEFINE_IIDX(IStorageItemExtraProperties, "C54361B2-54CD-432B-BDBC-4B19C4B470D7")
     RetrievePropertiesAsync proc :ptr, :ptr
     SavePropertiesAsync proc :ptr, :ptr
     SavePropertiesAsyncOverloadDefault proc :ptr
-    .ends
+   .ends
 
 endif
 
-ifndef __IStorageItemContentProperties_INTERFACE_DEFINED__
-__IStorageItemContentProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIStorageItemContentProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIStorageItemContentProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IStorageItemContentProperties, "05294BAD-BC38-48BF-85D7-770E0E2AE0BA")
 
@@ -273,12 +278,12 @@ DEFINE_IIDX(IStorageItemContentProperties, "05294BAD-BC38-48BF-85D7-770E0E2AE0BA
     GetVideoPropertiesAsync proc :ptr
     GetImagePropertiesAsync proc :ptr
     GetDocumentPropertiesAsync proc :ptr
-    .ends
+   .ends
 
 endif
 
-ifndef __IMusicProperties_INTERFACE_DEFINED__
-__IMusicProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIMusicProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIMusicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IMusicProperties, "BC8AAB62-66EC-419A-BC5D-CA65A4CB46DA")
 
@@ -309,12 +314,12 @@ DEFINE_IIDX(IMusicProperties, "BC8AAB62-66EC-419A-BC5D-CA65A4CB46DA")
     get_Writers		proc :ptr
     get_Year		proc :ptr
     put_Year		proc :UINT32
-    .ends
+   .ends
 
 endif
 
-ifndef __IImageProperties_INTERFACE_DEFINED__
-__IImageProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIImageProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIImageProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IImageProperties, "523C9424-FCFF-4275-AFEE-ECDB9AB47973")
 
@@ -337,12 +342,12 @@ DEFINE_IIDX(IImageProperties, "523C9424-FCFF-4275-AFEE-ECDB9AB47973")
     put_CameraModel	proc :HSTRING
     get_Orientation	proc :ptr
     get_PeopleNames	proc :ptr
-    .ends
+   .ends
 
 endif
 
-ifndef __IVideoProperties_INTERFACE_DEFINED__
-__IVideoProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIVideoProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIVideoProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IVideoProperties, "719AE507-68DE-4DB8-97DE-49998C059F2F")
 
@@ -369,12 +374,12 @@ DEFINE_IIDX(IVideoProperties, "719AE507-68DE-4DB8-97DE-49998C059F2F")
     get_Bitrate		proc :ptr
     get_Directors	proc :ptr
     get_Orientation	proc :ptr
-    .ends
+   .ends
 
 endif
 
-ifndef __IDocumentProperties_INTERFACE_DEFINED__
-__IDocumentProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIDocumentProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIDocumentProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IDocumentProperties, "7EAB19BC-1821-4923-B4A9-0AEA404D0070")
 
@@ -386,12 +391,12 @@ DEFINE_IIDX(IDocumentProperties, "7EAB19BC-1821-4923-B4A9-0AEA404D0070")
     get_Keywords	proc :ptr
     get_Comment		proc :ptr
     put_Comment		proc :HSTRING
-    .ends
+   .ends
 
 endif
 
-ifndef __IBasicProperties_INTERFACE_DEFINED__
-__IBasicProperties_INTERFACE_DEFINED__ equ 1
+ifndef ____x_ABI_CWindows_CStorage_CFileProperties_CIBasicProperties_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CStorage_CFileProperties_CIBasicProperties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(IBasicProperties, "D05D55DB-785E-4A66-BE02-9BEEC58AEA81")
 
@@ -400,10 +405,14 @@ DEFINE_IIDX(IBasicProperties, "D05D55DB-785E-4A66-BE02-9BEEC58AEA81")
     get_Size		proc :ptr
     get_DateModified	proc :ptr
     get_ItemDate	proc :ptr
-    .ends
+   .ends
 
 endif
 
+.endn
+.endn
+.endn
+.endn
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

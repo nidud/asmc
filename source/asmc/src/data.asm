@@ -1306,7 +1306,7 @@ data_dir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, type_sym:ptr asy
    .new is_float:int_t = FALSE
    .new o:int_t, idx:int_t
    .new name:string_t
-   .new type[128]:char_t
+   .new type[256]:char_t
 
     imul ebx,i,asm_tok
     add ebx,tokenarray

@@ -45,9 +45,9 @@ endif
 include sal.inc
 
 undef _CRT_PACKING
-_CRT_PACKING equ 8
+define _CRT_PACKING 8
 
-.pragma pack(push, _CRT_PACKING)
+.pragma pack(push, 8)
 
 include vadefs.inc
 

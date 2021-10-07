@@ -25,11 +25,7 @@ include inspectable.inc
 include AsyncInfo.inc
 include EventToken.inc
 include Windows.Foundation.inc
-
 include windows.foundation.collections.inc
-
-ifndef DEF___FIIterator_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIIterator_1_Windows__CUI__CPopups__CIUICommand
 
 ifndef ____FIIterator_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
@@ -46,12 +42,6 @@ DEFINE_IIDX(__FIIterator_1_Windows__CUI__CPopups__CIUICommand, "f45db3d3-7299-57
 
 endif
 
-endif
-
-
-ifndef DEF___FIIterable_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIIterable_1_Windows__CUI__CPopups__CIUICommand
-
 ifndef ____FIIterable_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 
@@ -63,12 +53,6 @@ DEFINE_IIDX(__FIIterable_1_Windows__CUI__CPopups__CIUICommand, "e63de42b-53c3-5e
    .ends
 
 endif
-
-endif
-
-
-ifndef DEF___FIVectorView_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIVectorView_1_Windows__CUI__CPopups__CIUICommand
 
 ifndef ____FIVectorView_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
@@ -84,12 +68,6 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CUI__CPopups__CIUICommand, "ed1165e6-f377-
    .ends
 
 endif
-
-endif
-
-
-ifndef DEF___FIVector_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIVector_1_Windows__CUI__CPopups__CIUICommand
 
 ifndef ____FIVector_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
@@ -114,11 +92,6 @@ DEFINE_IIDX(__FIVector_1_Windows__CUI__CPopups__CIUICommand, "105139a1-dcb8-5f65
 
 endif
 
-endif
-
-ifndef DEF___FIAsyncOperationCompletedHandler_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIAsyncOperationCompletedHandler_1_Windows__CUI__CPopups__CIUICommand
-
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIAsyncOperationCompletedHandler_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 
@@ -131,11 +104,6 @@ DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CUI__CPopups__CIUIComm
 
 endif
 
-endif
-
-ifndef DEF___FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand
-define DEF___FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand
-
 ifndef ____FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 define ____FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand_INTERFACE_DEFINED__
 
@@ -147,8 +115,6 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand, "b8770535-6
     get_Completed proc :ptr ptr
     GetResults proc :ptr ptr
    .ends
-
-endif
 
 endif
 
@@ -189,11 +155,8 @@ DEFINE_IIDX(IUICommandInvokedHandler, "DAF77A4F-C27A-4298-9AC6-2922C45E7DA6")
 endif
 
 ifndef ____x_ABI_CWindows_CUI_CPopups_CIMessageDialog_INTERFACE_DEFINED__
-define InterfaceName_Windows_UI_Popups_IMessageDialog <L"Windows.UI.Popups.IMessageDialog">
-endif
-
-ifndef ____x_ABI_CWindows_CUI_CPopups_CIMessageDialog_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CPopups_CIMessageDialog_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_Popups_IMessageDialog <L"Windows.UI.Popups.IMessageDialog">
 
 DEFINE_IIDX(IMessageDialog, "33F59B01-5325-43AB-9AB3-BDAE440E4121")
 
@@ -216,11 +179,8 @@ DEFINE_IIDX(IMessageDialog, "33F59B01-5325-43AB-9AB3-BDAE440E4121")
 endif
 
 ifndef ____x_ABI_CWindows_CUI_CPopups_CIMessageDialogFactory_INTERFACE_DEFINED__
-define InterfaceName_Windows_UI_Popups_IMessageDialogFactory <L"Windows.UI.Popups.IMessageDialogFactory">
-endif
-
-ifndef ____x_ABI_CWindows_CUI_CPopups_CIMessageDialogFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CPopups_CIMessageDialogFactory_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_Popups_IMessageDialogFactory <L"Windows.UI.Popups.IMessageDialogFactory">
 
 DEFINE_IIDX(IMessageDialogFactory, "2D161777-A66F-4EA5-BB87-793FFA4941F2")
 
@@ -233,11 +193,8 @@ DEFINE_IIDX(IMessageDialogFactory, "2D161777-A66F-4EA5-BB87-793FFA4941F2")
 endif
 
 ifndef ____x_ABI_CWindows_CUI_CPopups_CIUICommand_INTERFACE_DEFINED__
-define InterfaceName_Windows_UI_Popups_IUICommand <L"Windows.UI.Popups.IUICommand">
-endif
-
-ifndef ____x_ABI_CWindows_CUI_CPopups_CIUICommand_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CPopups_CIUICommand_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_Popups_IUICommand <L"Windows.UI.Popups.IUICommand">
 
 DEFINE_IIDX(IUICommand, "4FF93A75-4145-47FF-AC7F-DFF1C1FA5B0F")
 
@@ -254,11 +211,8 @@ DEFINE_IIDX(IUICommand, "4FF93A75-4145-47FF-AC7F-DFF1C1FA5B0F")
 endif
 
 ifndef ____x_ABI_CWindows_CUI_CPopups_CIUICommandFactory_INTERFACE_DEFINED__
-define InterfaceName_Windows_UI_Popups_IUICommandFactory <L"Windows.UI.Popups.IUICommandFactory">
-endif
-
-ifndef ____x_ABI_CWindows_CUI_CPopups_CIUICommandFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CPopups_CIUICommandFactory_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_Popups_IUICommandFactory <L"Windows.UI.Popups.IUICommandFactory">
 
 DEFINE_IIDX(IUICommandFactory, "A21A8189-26B0-4676-AE94-54041BC125E8")
 
@@ -272,11 +226,8 @@ DEFINE_IIDX(IUICommandFactory, "A21A8189-26B0-4676-AE94-54041BC125E8")
 endif
 
 ifndef ____x_ABI_CWindows_CUI_CPopups_CIPopupMenu_INTERFACE_DEFINED__
-define InterfaceName_Windows_UI_Popups_IPopupMenu <L"Windows.UI.Popups.IPopupMenu">
-endif
-
-ifndef ____x_ABI_CWindows_CUI_CPopups_CIPopupMenu_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CPopups_CIPopupMenu_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_Popups_IPopupMenu <L"Windows.UI.Popups.IPopupMenu">
 
 DEFINE_IIDX(IPopupMenu, "4E9BC6DC-880D-47FC-A0A1-72B639E62559")
 

@@ -1807,11 +1807,11 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                         movzx eax,ModuleInfo.Ofssize
                         shl eax,2
                         .if ( ModuleInfo.Ofssize == USE64 )
-                            sprintf( args[ebx*4], "[rsp+%d*%d]", ebx, eax )
+                            tsprintf( args[ebx*4], "[rsp+%d*%d]", ebx, eax )
                         .else
                             mov ecx,ebx
                             sub ecx,stk
-                            sprintf( args[ebx*4], "[esp+%d*%d]", ecx, eax )
+                            tsprintf( args[ebx*4], "[esp+%d*%d]", ecx, eax )
                         .endif
                     .endif
                 .endf

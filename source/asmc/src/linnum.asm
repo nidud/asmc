@@ -86,7 +86,7 @@ AddLinnumDataRef proc uses esi edi ebx srcfile:dword, line_num:dword
             sub eax,[esi].asym.offs
             mov [esi].asym.total_size,eax
         .endif
-        sprintf( &procname, "$$$%05u", procidx )
+        tsprintf( &procname, "$$$%05u", procidx )
         mov dmyproc,SymSearch( &procname )
         mov esi,eax
         ;; in pass 1, create the proc

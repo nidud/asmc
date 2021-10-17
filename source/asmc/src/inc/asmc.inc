@@ -647,5 +647,9 @@ ConvertSectionName      proto :ptr asym, :ptr dword, :string_t
 SetMasm510              proto :int_t
 GetType                 proto :string_t, :ptr expr, :string_t, :int_t
 RetLineQueue            proto
+tprintf                 proto __cdecl :string_t, :vararg
+tsprintf                proto __cdecl :string_t, :string_t, :vararg
+tvsprintf               proto :string_t, :string_t, :ptr
+tvfprintf               proto :ptr FILE, :string_t, :ptr
 
 endif

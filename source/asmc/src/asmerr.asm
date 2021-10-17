@@ -272,12 +272,12 @@ GetCurrOffset proto
     A3011 equ <"too many unwind codes in FRAME procedure">
     A3012 equ <"registers AH-DH may not be used with SPL-DIL or R8-R15">
     A3013 equ <"multiple overrides">
-    A3014 equ <"unknown fixup type: %u at %s.%lX">
+    A3014 equ <"unknown fixup type: %u at %s.%X">
     A3015 equ <"filename parameter must be enclosed in <> or quotes">
     A3016 equ <"literal expected after '='">
     A3017 equ <".SAFESEH argument must be a PROC">
     A3018 equ <"invalid operand for %s : %s">
-    A3019 equ <"invalid fixup type for %s : %u at location %s:%lX">
+    A3019 equ <"invalid fixup type for %s : %u at location %s:%X">
     A3020 equ <"cannot open file : %s">
     A3021 equ <"I/O error closing file : %s">
     A3022 equ <".CASE redefinition : %s(%d) : %s(%d)">
@@ -311,7 +311,7 @@ GetCurrOffset proto
     A8005 equ <"IF[n]DEF expects a plain symbol as argument : %s">
     A8006 equ <"instructions and initialized data not supported in %s segments">
     A8007 equ <"16bit fixup for 32bit label : %s">
-    A8008 equ <"displacement out of range: 0x%I64X">
+    A8008 equ <"displacement out of range: 0x%lX">
     A8009 equ <"no start label defined">
     A8010 equ <"no stack defined">
     A8011 equ <"for -coff leading underscore required for start label: %s">
@@ -428,12 +428,12 @@ print_err proc private uses esi edi ebx erbuf:string_t, format:string_t, args:pt
 
     write_logo()
     mov esi,erbuf
-    vsprintf(esi, format, args)
+    tvsprintf(esi, format, args)
     ;
     ; v2.05: new option -eq
     ;
     .if !Options.no_error_disp
-        printf("%s\n", esi)
+        tprintf("%s\n", esi)
     .endif
     ;
     ; open .err file if not already open and a name is given
@@ -523,9 +523,9 @@ asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
                 mov     edx,[edx].src_item.next
                 .ifz
                     .if ModuleInfo.EndDirFound
-                        sprintf(edi, "%s : ", ecx)
+                        tsprintf(edi, "%s : ", ecx)
                     .else
-                        sprintf(edi, "%s(%u) : ", ecx, eax)
+                        tsprintf(edi, "%s(%u) : ", ecx, eax)
                     .endif
                     .break
                 .endif
@@ -541,7 +541,7 @@ asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
             strcat(edi, eax)
 
             add edi,strlen(edi)
-            sprintf(edi, " A%04u: ", ebx)
+            tsprintf(edi, " A%04u: ", ebx)
 
             xor ecx,ecx
             lea eax,[ebx-1000]
@@ -622,7 +622,7 @@ asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
 
         .until 1
 
-        printf("ASMC : fatal error A1901: %s\n", INTER)
+        tprintf("ASMC : fatal error A1901: %s\n", INTER)
         errexit()
 
     .until 1

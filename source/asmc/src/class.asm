@@ -113,7 +113,7 @@ AddPublic proc uses esi edi ebx this:ptr com_item, sym:ptr asym
                 .else
 
                     strcpy( &q, [ebx].asym.name )
-                    movzx ecx,[ebx].asym.name_size
+                    mov ecx,[ebx].asym.name_size
                     mov word ptr [eax+ecx-4],'_'
 
                     .if SymFind( strcat( eax, [edi].name ) )

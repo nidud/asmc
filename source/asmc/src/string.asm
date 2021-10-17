@@ -285,16 +285,16 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
                     .if Unicode
                         add edx,edx
                     .endif
-                    sprintf( lbuf, "DS%04X[%d]", eax, edx )
+                    tsprintf( lbuf, "DS%04X[%d]", eax, edx )
                 .else
-                    sprintf( lbuf, "DS%04X", eax )
+                    tsprintf( lbuf, "DS%04X", eax )
                 .endif
                 .return 0
             .endif
         .endif
     .endf
 
-    sprintf(lbuf, "DS%04X", edi)
+    tsprintf(lbuf, "DS%04X", edi)
     LclAlloc(&[ebx+str_item+1])
     mov [eax].str_item.count,ebx
     mov [eax].str_item.index,di
@@ -486,14 +486,14 @@ GenerateCString proc uses esi edi ebx i, tokenarray:ptr asm_tok
                     .else
                         lea ecx,@CStr(" %s sbyte %s,0")
                     .endif
-                    sprintf(b_data, ecx, b_label, buffer)
+                    tsprintf(b_data, ecx, b_label, buffer)
                 .else
                     .if Unicode
                         lea ecx,@CStr(" %s dw 0")
                     .else
                         lea ecx,@CStr(" %s sbyte 0")
                     .endif
-                    sprintf(b_data, ecx, b_label)
+                    tsprintf(b_data, ecx, b_label)
                 .endif
             .elseif ModuleInfo.list
                 and ModuleInfo.line_flags,NOT LOF_LISTED
@@ -653,7 +653,7 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
             .endif
             movzx eax,[edx].str_item.index
         .endif
-        sprintf(buffer, "DS%04X", eax)
+        tsprintf(buffer, "DS%04X", eax)
         .return 1
     .endif
 
@@ -706,14 +706,14 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
                     .else
                         lea ecx,@CStr(" %s sbyte %s,0")
                     .endif
-                    sprintf(cursrc, ecx, dlabel, string)
+                    tsprintf(cursrc, ecx, dlabel, string)
                 .else
                     .if Unicode
                         lea ecx,@CStr(" %s dw 0")
                     .else
                         lea ecx,@CStr(" %s sbyte 0")
                     .endif
-                    sprintf(cursrc, ecx, dlabel)
+                    tsprintf(cursrc, ecx, dlabel)
                 .endif
 
                 ; v2.24 skip .data/.code if already in .data segment
@@ -818,14 +818,14 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
                 .if edx == [eax] && ecx == [eax+0x04]
 
                     mov eax,[esi].index
-                    sprintf( buffer, "F%04X", eax )
+                    tsprintf( buffer, "F%04X", eax )
                     .return 1
                 .endif
             .endif
         .endif
     .endf
 
-    sprintf( buffer, "F%04X", edi )
+    tsprintf( buffer, "F%04X", edi )
     .if Parse_Pass == PASS_1
 
         LclAlloc( flt_item+16 )
@@ -857,7 +857,7 @@ CreateFloat proc uses esi edi ebx size:int_t, opnd:expr_t, buffer:string_t
         .case 10
         .case 16
             AddLineQueueX( "%s label real%d", buffer, size )
-            AddLineQueueX( "oword 0x%16lx%16lx", opc.hlvalue, opc.llvalue )
+            AddLineQueueX( "oword 0x%016lx%016lx", opc.hlvalue, opc.llvalue )
             .endc
         .endsw
         AddLineQueue( "_DATA ends" )

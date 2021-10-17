@@ -326,7 +326,7 @@ WriteModule proc private uses esi edi ebx modinfo:ptr module_info
 		    && ( !( [esi].asym.sflags & S_WEAK) || [esi].asym.flags & S_IAT_USED )
 
 		    Mangle(esi, ModuleInfo.stringbufferend)
-		    sprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
+		    tsprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
 			ModuleInfo.stringbufferend,
 			&[ebx].dll_desc.name, [esi].asym.name)
 		    mov ebx,eax
@@ -438,11 +438,11 @@ WritePreprocessedLine proc string:string_t
 	.else
 	    mov ecx,string
 	.endif
-	printf("%s\n", ecx)
+	tprintf("%s\n", ecx)
 	mov PrintEmptyLine,1
     .elseif PrintEmptyLine
 	mov PrintEmptyLine,0
-	printf("\n")
+	tprintf("\n")
     .endif
     ret
 WritePreprocessedLine endp
@@ -1216,12 +1216,13 @@ AssembleModule proc uses esi edi ebx source:string_t
     lea edi,ModuleInfo
     mov ecx,sizeof(ModuleInfo)
     rep stosb
+    mov ModuleInfo.radix,10
     dec eax
     mov prev_written,eax
 
     .if !Options.quiet
 
-	printf(" Assembling: %s\n", source)
+	tprintf(" Assembling: %s\n", source)
     .endif
 
     .if _setjmp(&jmpenv)

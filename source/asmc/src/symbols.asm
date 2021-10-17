@@ -203,7 +203,7 @@ SymAlloc proc uses esi edi name:string_t
     mov esi,name
     mov edi,strlen(esi)
     LclAlloc(&[edi+dsym+1])
-    mov [eax].asym.name_size,di
+    mov [eax].asym.name_size,edi
     mov [eax].asym.mem_type,MT_EMPTY
     lea edx,[eax+dsym]
     mov [eax].asym.name,edx
@@ -264,7 +264,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
 
                 .repeat
 
-                    .if cx == [eax].asym.name_size
+                    .if ecx == [eax].asym.name_size
 
                         mov edi,[eax].asym.name
 
@@ -287,18 +287,18 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
                             mov lsym,edx
                             .return
                         .until 1
-                        movzx ecx,[eax].asym.name_size
+                        mov ecx,[eax].asym.name_size
                     .endif
 
-                    lea edx,[eax].asym.nextitem
-                    mov eax,[edx]
+                    mov edx,eax
+                    mov eax,[eax].asym.nextitem
                 .until !eax
 
             .else
 
                 .repeat
 
-                    .if cx == [eax].asym.name_size
+                    .if ecx == [eax].asym.name_size
 
                         mov edi,[eax].asym.name
 
@@ -325,11 +325,11 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
                             mov lsym,edx
                             .return
                         .endw
-                        movzx ecx,[eax].asym.name_size
+                        mov ecx,[eax].asym.name_size
                     .endif
 
-                    lea edx,[eax].asym.nextitem
-                    mov eax,[edx]
+                    mov edx,eax
+                    mov eax,[eax].asym.nextitem
                 .until !eax
             .endif
 
@@ -351,7 +351,7 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
 
             .repeat
 
-                .if cx == [eax].asym.name_size
+                .if ecx == [eax].asym.name_size
 
                     mov edi,[eax].asym.name
 
@@ -375,18 +375,18 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
                         mov gsym,edx
                         .return
                     .endw
-                    movzx ecx,[eax].asym.name_size
+                    mov ecx,[eax].asym.name_size
                 .endif
 
-                lea edx,[eax].asym.nextitem
-                mov eax,[edx]
+                mov edx,eax
+                mov eax,[eax].asym.nextitem
             .until !eax
 
         .else
 
             .repeat
 
-                .if cx == [eax].asym.name_size
+                .if ecx == [eax].asym.name_size
 
                     mov edi,[eax].asym.name
 
@@ -412,11 +412,11 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
                         mov gsym,edx
                         .return
                     .endw
-                    movzx ecx,[eax].asym.name_size
+                    mov ecx,[eax].asym.name_size
                 .endif
 
-                lea edx,[eax].asym.nextitem
-                mov eax,[edx]
+                mov edx,eax
+                mov eax,[eax].asym.nextitem
             .until !eax
         .endif
     .until 1
@@ -532,7 +532,7 @@ SymAddLocal proc uses esi edi ebx sym:asym_t, name:string_t
     .endif
 
     strlen(esi)
-    mov [ebx].asym.name_size,ax
+    mov [ebx].asym.name_size,eax
     lea edi,[eax+1]
     LclAlloc(edi)
     mov [ebx].asym.name,eax
@@ -675,8 +675,8 @@ else
     add ecx,1
 ;   sprintf(&szDate, "%02u/%02u/%02u", ecx, [esi].tm.tm_mday, eax)
     add eax,2000
-    sprintf(&szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday)
-    sprintf(&szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
+    tsprintf(&szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday)
+    tsprintf(&szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
 endif
     lea esi,tmtab
     .while [esi].tmitem.name

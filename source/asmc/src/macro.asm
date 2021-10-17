@@ -90,7 +90,7 @@ fill_placeholders proc uses esi edi ebx dst:string_t, src:string_t, argc:uint_t,
                 add ebx,localstart
                 sub ebx,argc
                 .if ebx > 0xFFFF
-                    sprintf( edi, "%X", ebx )
+                    tsprintf( edi, "%X", ebx )
                     add edi,ebx
                 .else
                     mov eax,ebx

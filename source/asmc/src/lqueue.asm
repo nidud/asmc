@@ -7,6 +7,7 @@
 ; this queue is used for "generated code".
 ;
 
+include io.inc
 include malloc.inc
 
 include asmc.inc
@@ -67,10 +68,11 @@ AddLineQueue endp
 
 ; Add a line to the current line queue, "printf" format.
 
-tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
+tvsprintf proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
 
   local numbuf[64]:char_t
   local fldwidth:uint_t
+  local sign:byte, char:byte
 
     .for ( esi = fmt, edi = buffer : byte ptr [esi] : )
 
@@ -78,7 +80,28 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
         .if ( al == '%' )
 
             mov fldwidth,0
+            mov sign,0
+            mov char,' '
+            mov ebx,argptr
             lodsb
+            .if ( al == '*' )
+                mov eax,[ebx]
+                add ebx,4
+                .ifs eax < 0
+                    mov sign,'-'
+                    neg eax
+                .endif
+                mov fldwidth,eax
+                lodsb
+            .endif
+            .if ( al == '-' )
+                mov sign,al
+                lodsb
+            .endif
+            .if ( al == '0' )
+                mov char,al
+                lodsb
+            .endif
             .while ( al >= '0' && al <= '9' )
 
                 movsx eax,al
@@ -88,7 +111,7 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
                 mov fldwidth,eax
                 lodsb
             .endw
-            mov ebx,argptr
+
             xor edx,edx
             mov ecx,[ebx]
             add ebx,4
@@ -110,7 +133,15 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
                 mov     esi,eax
                .endc
 
+            .case 'c'
+                .if cl
+                    mov [edi],cl
+                    inc edi
+                .endif
+               .endc
+
             .case 's'
+                mov edx,edi
                 .repeat
                     mov al,[ecx]
                     mov [edi],al
@@ -118,6 +149,19 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
                     inc edi
                 .until !al
                 dec edi
+                .if ( sign || edi == edx )
+
+                    mov ebx,edi
+                    sub ebx,edx
+
+                    .if ( ebx < fldwidth )
+
+                        mov ecx,fldwidth
+                        sub ecx,ebx
+                        mov al,char
+                        rep stosb
+                    .endif
+                .endif
                .endc
 
             .case 'd'
@@ -135,20 +179,26 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
                         inc ebx
                     .endif
                 .endif
+                mov ebx,myltoa( edx::ecx, &numbuf, eax, ebx, FALSE )
 
-                .if ( myltoa( edx::ecx, &numbuf, eax, ebx, FALSE ) < fldwidth )
+                .if ( !sign && ebx < fldwidth )
 
                     mov ecx,fldwidth
-                    sub ecx,eax
-                    mov edx,eax
-                    mov al,'0'
+                    sub ecx,ebx
+                    mov al,char
                     rep stosb
-                    mov eax,edx
                 .endif
-                mov ecx,eax
+                mov ecx,ebx
                 mov edx,esi
                 lea esi,numbuf
                 rep movsb
+                .if ( sign && ebx < fldwidth )
+
+                    mov ecx,fldwidth
+                    sub ecx,ebx
+                    mov al,char
+                    rep stosb
+                .endif
                 mov esi,edx
                 mov al,[esi-1]
 
@@ -173,12 +223,32 @@ tvsprintf proc private uses esi edi ebx buffer:string_t, fmt:string_t, argptr:pt
 
 tvsprintf endp
 
+tvfprintf proc file:ptr FILE, fmt:string_t, argptr:ptr
+
+  local buffer[4096]:char_t
+
+    tvsprintf( &buffer, fmt, argptr )
+    fwrite( &buffer, 1, eax, file )
+    ret
+
+tvfprintf endp
+
 tsprintf proc __cdecl buffer:string_t, fmt:string_t, argptr:vararg
 
     tvsprintf( buffer, fmt, &argptr )
     ret
 
 tsprintf endp
+
+tprintf proc __cdecl fmt:string_t, argptr:vararg
+
+  local buffer[4096]:char_t
+
+    tvsprintf( &buffer, fmt, &argptr )
+    _write( 1, &buffer, eax )
+    ret
+
+tprintf endp
 
 AddLineQueueX proc __cdecl fmt:string_t, argptr:vararg
 

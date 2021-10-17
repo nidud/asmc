@@ -626,13 +626,14 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     .if ( [esi].size == 8 )
 
+        mov edx,[ebx].string_ptr
         .if ( [esi].Ofssize == USE32 && flag & T_HLL_PROC &&
              ( [esi].mem_type == MT_QWORD || [esi].mem_type == MT_SQWORD ) )
 
             strcat( edi, "dword ptr " )
             strcpy( &l2, "mov dword ptr " )
             strcat( strcat( eax, name ), "[4], edx" )
-        .elseif ( [esi].Ofssize == USE64 && flag & T_HLL_PROC )
+        .elseif ( [esi].Ofssize == USE64 && ( flag & T_HLL_PROC || word ptr [edx] == '&' ) )
         .elseif ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
             .if ( opndx.kind == EXPR_CONST )

@@ -33,7 +33,7 @@ define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContact_INTERFAC
 
 DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContact, "a572c173-800a-58bb-ab24-179959df2813")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -48,7 +48,7 @@ define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContact_INTERFAC
 
 DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContact, "63319996-7e0f-552e-872b-7b9adb1f4997")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     First		proc :ptr
    .ends
@@ -60,7 +60,7 @@ define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactAddress_I
 
 DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactAddress, "d9003f84-63df-5c0c-bd1e-2ccdea55e717")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -73,9 +73,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress, "e783287c-e920-5540-9182-c1a6a5f2ad36")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress, "e783287c-e920-5540-9182-c1a6a5f2ad36")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
 
     First		proc :ptr
    .ends
@@ -85,9 +85,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "3ef1863f-c859-5b9d-8e35-20adf102a40d")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "3ef1863f-c859-5b9d-8e35-20adf102a40d")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -100,9 +100,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "35e203b2-5138-5967-80fa-a477ed4c7ddc")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "35e203b2-5138-5967-80fa-a477ed4c7ddc")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
 
     First		proc :ptr
    .ends
@@ -112,9 +112,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate, "5004bf96-5349-5b10-87c6-c76f21f2a1d5")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate, "5004bf96-5349-5b10-87c6-c76f21f2a1d5")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -127,9 +127,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate, "96045d0b-b38b-5d91-8311-4fbc7ad4337d")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate, "96045d0b-b38b-5d91-8311-4fbc7ad4337d")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
 
     First		proc :ptr
    .ends
@@ -139,9 +139,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail, "d64ce66d-2936-5a1e-b8f5-080bb1356022")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail, "d64ce66d-2936-5a1e-b8f5-080bb1356022")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -154,9 +154,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail, "37d0d55f-e136-5b07-8a3a-8110bde33917")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail, "37d0d55f-e136-5b07-8a3a-8110bde33917")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
 
     First		proc :ptr
    .ends
@@ -166,9 +166,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactField, "aa226af5-faa5-5353-871c-538099b7c836")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactField, "aa226af5-faa5-5353-871c-538099b7c836")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -181,9 +181,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactField, "3b012111-c82b-541e-a0c1-37713ed83541")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactField, "3b012111-c82b-541e-a0c1-37713ed83541")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
 
     First		proc :ptr
    .ends
@@ -193,9 +193,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType, "2f6d856a-50d4-5173-abea-db6c6b8fc530")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType, "2f6d856a-50d4-5173-abea-db6c6b8fc530")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -208,9 +208,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType, "384b8b1b-ce8e-5781-b3dc-0776d684f658")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType, "384b8b1b-ce8e-5781-b3dc-0776d684f658")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
 
     First		proc :ptr
    .ends
@@ -220,9 +220,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation, "7b77b895-abee-5501-94db-ce4e48a9a34f")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation, "7b77b895-abee-5501-94db-ce4e48a9a34f")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -235,9 +235,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation, "352762af-17e3-55e0-8be1-6a598a44b5b4")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation, "352762af-17e3-55e0-8be1-6a598a44b5b4")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
 
     First		proc :ptr
    .ends
@@ -247,9 +247,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "65e069e6-28d1-5d57-9fe1-80ff64850e67")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "65e069e6-28d1-5d57-9fe1-80ff64850e67")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -262,9 +262,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "810533b2-28bb-5ed3-ac19-fec8059d7b3c")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "810533b2-28bb-5ed3-ac19-fec8059d7b3c")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
 
     First		proc :ptr
    .ends
@@ -274,9 +274,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "0873df73-ac99-50ef-8673-e78f8a540e2e")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "0873df73-ac99-50ef-8673-e78f8a540e2e")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -289,9 +289,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "17c1cead-56a3-5d93-abf2-14d34d4b9356")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "17c1cead-56a3-5d93-abf2-14d34d4b9356")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
 
     First		proc :ptr
    .ends
@@ -301,9 +301,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField, "a20407d7-6980-5c4f-b993-f1da03994105")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField, "a20407d7-6980-5c4f-b993-f1da03994105")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -316,9 +316,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField, "2a0a41a6-da96-50a5-b8df-e4a8c4fcf86b")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField, "2a0a41a6-da96-50a5-b8df-e4a8c4fcf86b")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
 
     First		proc :ptr
    .ends
@@ -328,9 +328,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone, "603b190e-1fb6-5762-bd8a-f59e952726f7")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone, "603b190e-1fb6-5762-bd8a-f59e952726f7")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -343,9 +343,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone, "4abd089c-49a1-5ba9-80df-53b72dd691ce")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone, "4abd089c-49a1-5ba9-80df-53b72dd691ce")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
 
     First		proc :ptr
    .ends
@@ -355,9 +355,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "2051d4fa-bd46-52eb-b2d0-4eb5dac12157")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "2051d4fa-bd46-52eb-b2d0-4eb5dac12157")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -370,9 +370,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "ae12bd35-93d6-53d8-87c0-49d84c5c6a83")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "ae12bd35-93d6-53d8-87c0-49d84c5c6a83")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
 
     First		proc :ptr
    .ends
@@ -382,9 +382,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite, "91a59fa2-5cc1-564d-bb1d-f52daec136ad")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite, "91a59fa2-5cc1-564d-bb1d-f52daec136ad")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -397,9 +397,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite, "4b03c203-989e-5b97-8fcb-67d661defe76")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite, "4b03c203-989e-5b97-8fcb-67d661defe76")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
 
     First		proc :ptr
    .ends
@@ -409,9 +409,9 @@ endif
 ifndef ____FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 define ____FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField, "c501c1b3-171b-5320-8d84-c3a89a3d4034")
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField, "c501c1b3-171b-5320-8d84-c3a89a3d4034")
 
-.comdef _FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
+.comdef __FIIterator_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
 
     get_Current		proc :ptr
     get_HasCurrent	proc :ptr
@@ -424,9 +424,9 @@ endif
 ifndef ____FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField, "e065edc5-1d23-5be5-9998-2736cd4d5297")
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField, "e065edc5-1d23-5be5-9998-2736cd4d5297")
 
-.comdef _FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
+.comdef __FIIterable_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
 
     First		proc :ptr
    .ends
@@ -436,9 +436,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContact, "9bca75b8-b0fa-5761-b959-381927a5f9d0")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContact, "9bca75b8-b0fa-5761-b959-381927a5f9d0")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -451,9 +451,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress, "e7fabc7d-79c2-5862-859e-959002d7b955")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress, "e7fabc7d-79c2-5862-859e-959002d7b955")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -466,9 +466,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "2687a6f4-5f99-50a1-88d1-5d7cc7c7f236")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "2687a6f4-5f99-50a1-88d1-5d7cc7c7f236")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -481,9 +481,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate, "2743425d-b197-598d-bb80-14fdf0eaa823")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate, "2743425d-b197-598d-bb80-14fdf0eaa823")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -496,9 +496,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail, "8c3e5f9e-825a-5164-90d3-f97f7f88ecb0")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail, "8c3e5f9e-825a-5164-90d3-f97f7f88ecb0")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -511,9 +511,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField, "9c1b3046-f16a-57d7-87a7-eaa2e880d9a9")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField, "9c1b3046-f16a-57d7-87a7-eaa2e880d9a9")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactField : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -526,9 +526,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType, "39d6abda-a00a-5777-8611-82d7c326c18d")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType, "39d6abda-a00a-5777-8611-82d7c326c18d")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -541,9 +541,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "b9e80b52-02cb-5824-95ab-5cca3de394d3")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "b9e80b52-02cb-5824-95ab-5cca3de394d3")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -556,9 +556,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "b65efa04-cda8-597a-8abb-a6e1fe34c00f")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField, "b65efa04-cda8-597a-8abb-a6e1fe34c00f")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInstantMessageField : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -571,9 +571,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "f1f1bdc5-7ffe-5254-89fc-c01559020f9d")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "f1f1bdc5-7ffe-5254-89fc-c01559020f9d")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -586,9 +586,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField, "1febf4ca-48dd-5faf-a2d3-74770d8aa330")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField, "1febf4ca-48dd-5faf-a2d3-74770d8aa330")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactLocationField : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -601,9 +601,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone, "145e78a9-e7f9-5998-802a-dbfc914ccf36")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone, "145e78a9-e7f9-5998-802a-dbfc914ccf36")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -616,9 +616,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "33c5edf9-c1de-528b-aa48-ceb6a1905cc0")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "33c5edf9-c1de-528b-aa48-ceb6a1905cc0")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -631,9 +631,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite, "f677e62f-39c5-57c0-b642-26b143309871")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite, "f677e62f-39c5-57c0-b642-26b143309871")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -646,9 +646,9 @@ endif
 ifndef ____FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 define ____FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField, "1a4c5b35-7ef5-5eea-94c7-fdf1f617aa7e")
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField, "1a4c5b35-7ef5-5eea-94c7-fdf1f617aa7e")
 
-.comdef _FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
+.comdef __FIVectorView_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -661,9 +661,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContact, "945779db-01d2-5839-8a92-7905ec92b28f")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContact, "945779db-01d2-5839-8a92-7905ec92b28f")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -684,9 +684,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress, "d0c298ee-1520-539e-84b3-a25909717d20")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress, "d0c298ee-1520-539e-84b3-a25909717d20")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactAddress : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -707,9 +707,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "2c55fb80-a759-5fae-bc29-9907e0976048")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount, "2c55fb80-a759-5fae-bc29-9907e0976048")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactConnectedServiceAccount : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -730,9 +730,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactDate_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactDate, "3135d944-d914-5a4f-843e-a6d6cb69bcb1")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactDate, "3135d944-d914-5a4f-843e-a6d6cb69bcb1")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactDate : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -753,9 +753,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail, "4ce06787-dea1-559f-a70a-fcbe59dbd3a4")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail, "4ce06787-dea1-559f-a70a-fcbe59dbd3a4")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactEmail : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -776,9 +776,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType, "6fdc2115-1649-54a4-8faa-3049cefb05a4")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType, "6fdc2115-1649-54a4-8faa-3049cefb05a4")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactFieldType : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -799,9 +799,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "ea148f90-bb89-5604-9757-ecd1e7ce5311")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo, "ea148f90-bb89-5604-9757-ecd1e7ce5311")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactJobInfo : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -822,9 +822,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone, "6d1f883a-1f30-5a87-b54a-8e2245ed1001")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone, "6d1f883a-1f30-5a87-b54a-8e2245ed1001")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactPhone : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -845,9 +845,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "cec34450-8143-56e3-933a-d33051b74437")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther, "cec34450-8143-56e3-933a-d33051b74437")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactSignificantOther : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -868,9 +868,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite, "1931848e-e794-5775-b393-4a4518d63b09")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite, "1931848e-e794-5775-b393-4a4518d63b09")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CContactWebsite : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -891,9 +891,9 @@ endif
 ifndef ____FIVector_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 define ____FIVector_1_Windows__CApplicationModel__CContacts__CIContactField_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIVector_1_Windows__CApplicationModel__CContacts__CIContactField, "f9dd472b-4f50-583a-a3aa-b73af54806be")
+DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CContacts__CIContactField, "f9dd472b-4f50-583a-a3aa-b73af54806be")
 
-.comdef _FIVector_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
+.comdef __FIVector_1_Windows__CApplicationModel__CContacts__CIContactField : public IInspectable
 
     GetAt		proc :SINT, :ptr
     get_Size		proc :UINT
@@ -916,7 +916,7 @@ define ____FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CConta
 
 DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContact, "a1d09bee-c181-5419-bd14-8223b95f29a1")
 
-.comdef _FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContact : public IUnknown
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContact : public IUnknown
 
     _Invoke		proc :ptr, :AsyncStatus
     .ends
@@ -926,9 +926,9 @@ endif
 ifndef ____FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 define ____FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact, "857db963-f62c-53c4-a3a0-f6bf0c8fd3d3")
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact, "857db963-f62c-53c4-a3a0-f6bf0c8fd3d3")
 
-.comdef _FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     put_Completed	proc :ptr
     get_Completed	proc :ptr
@@ -940,9 +940,9 @@ endif
 ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation, "c94b8021-508b-589b-93b3-2556cbc73a2f")
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation, "c94b8021-508b-589b-93b3-2556cbc73a2f")
 
-.comdef _FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation : public IUnknown
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CApplicationModel__CContacts__CContactInformation : public IUnknown
 
     _Invoke		proc :ptr, :AsyncStatus
     .ends
@@ -952,9 +952,9 @@ endif
 ifndef ____FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation, "0e51c030-27aa-561f-bbd8-2f57c08fef83")
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation, "0e51c030-27aa-561f-bbd8-2f57c08fef83")
 
-.comdef _FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
+.comdef __FIAsyncOperation_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
 
     put_Completed	proc :ptr
     get_Completed	proc :ptr
@@ -966,9 +966,9 @@ endif
 ifndef ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "059f51aa-64c6-53d5-bd28-76d0e88e3b8f")
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "059f51aa-64c6-53d5-bd28-76d0e88e3b8f")
 
-.comdef _FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IUnknown
+.comdef __FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IUnknown
 
     _Invoke		proc :ptr, :AsyncStatus
     .ends
@@ -978,9 +978,9 @@ endif
 ifndef ____FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 define ____FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "eab8500a-6a6f-5b05-89c2-8dcd66023b3d")
+DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation, "eab8500a-6a6f-5b05-89c2-8dcd66023b3d")
 
-.comdef _FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
+.comdef __FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CContacts__CContactInformation : public IInspectable
 
     put_Completed	proc :ptr
     get_Completed	proc :ptr
@@ -992,9 +992,9 @@ endif
 ifndef ____FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 define ____FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact, "589b0543-eeae-5ca2-a63b-76010c64fccb")
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact, "589b0543-eeae-5ca2-a63b-76010c64fccb")
 
-.comdef _FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IUnknown
+.comdef __FIAsyncOperationCompletedHandler_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IUnknown
 
     _Invoke		proc :ptr, :AsyncStatus
     .ends
@@ -1004,9 +1004,9 @@ endif
 ifndef ____FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 define ____FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact_INTERFACE_DEFINED__
 
-DEFINE_IIDX(_FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact, "0f0ff4e8-d25d-53a8-ba87-1a6b23e4315c")
+DEFINE_IIDX(__FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact, "0f0ff4e8-d25d-53a8-ba87-1a6b23e4315c")
 
-.comdef _FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
+.comdef __FIAsyncOperation_1___FIVector_1_Windows__CApplicationModel__CContacts__CContact : public IInspectable
 
     put_Completed	proc :ptr
     get_Completed	proc :ptr

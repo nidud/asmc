@@ -137,7 +137,7 @@ coff_write_section_table proc uses esi edi ebx modinfo:ptr module_info, cm:ptr c
         .if ( strlen( eax ) <= IMAGE_SIZEOF_SHORT_NAME )
             strncpy( &ish.Name, ebx, IMAGE_SIZEOF_SHORT_NAME )
         .else
-            sprintf( &ish.Name, "/%u", Coff_AllocString( cm, ebx, eax ) )
+            tsprintf( &ish.Name, "/%u", Coff_AllocString( cm, ebx, eax ) )
         .endif
 
         mov ish.SizeOfRawData,[edi].asym.max_offset
@@ -1394,8 +1394,8 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
                     .if ( Options.no_export_decoration == TRUE )
 
-                        movzx eax,[edi].asym.name_size
-                        lea ebx,[ebx+eax+1]
+                        add ebx,[edi].asym.name_size
+                        inc ebx
                     .endif
                 .endif
             .endf
@@ -1439,8 +1439,8 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
                         strlen( &[edx].dll_desc.name )
                         lea ebx,[ebx+eax+9+1]
                         add ebx,Mangle( edi, &buffer )
-                        movzx eax,[edi].asym.name_size
-                        lea ebx,[ebx+eax+1]
+                        add ebx,[edi].asym.name_size
+                        inc ebx
                     .endif
                 .endif
             .endf
@@ -1473,9 +1473,9 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
                 .if ( [ecx].proc_info.flags & PROC_ISEXPORT )
                     Mangle( edi, &buffer )
                     .if ( Options.no_export_decoration == FALSE )
-                        add ebx,sprintf( ebx, "-export:%s ", &buffer )
+                        add ebx,tsprintf( ebx, "-export:%s ", &buffer )
                     .else
-                        add ebx,sprintf( ebx, "-export:%s=%s ", [edi].asym.name, &buffer )
+                        add ebx,tsprintf( ebx, "-export:%s=%s ", [edi].asym.name, &buffer )
                     .endif
                 .endif
             .endf
@@ -1484,9 +1484,9 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
             .for ( edi = [esi].LibQueue.head: edi: edi = [edi].qitem.next )
                 .if ( strchr( &[edi].qitem.value, ' ') && [edi].qitem.value != '"' )
-                    add ebx,sprintf( ebx, "-defaultlib:\"%s\" ", &[edi].qitem.value )
+                    add ebx,tsprintf( ebx, "-defaultlib:\"%s\" ", &[edi].qitem.value )
                 .else
-                    add ebx,sprintf( ebx, "-defaultlib:%s ", &[edi].qitem.value )
+                    add ebx,tsprintf( ebx, "-defaultlib:%s ", &[edi].qitem.value )
                 .endif
             .endf
 
@@ -1494,7 +1494,7 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
             .if ( [esi].start_label )
                 GetStartLabel( esi, &buffer, FALSE )
-                add ebx,sprintf( ebx, "-entry:%s ", &buffer )
+                add ebx,tsprintf( ebx, "-entry:%s ", &buffer )
             .endif
 
             ;; 4. impdefs
@@ -1519,8 +1519,7 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
                         mov byte ptr [ebx],'.'
                         inc ebx
                         memcpy( ebx, [edi].asym.name, [edi].asym.name_size )
-                        movzx eax,[edi].asym.name_size
-                        add ebx,eax
+                        add ebx,[edi].asym.name_size
                         mov byte ptr [ebx],' '
                         inc ebx
                     .endif
@@ -1531,7 +1530,7 @@ coff_create_drectve proc uses esi edi ebx modinfo:ptr module_info, cm:ptr coffmo
 
             .for ( edi = [esi].LinkQueue.head: edi: edi = [edi].qitem.next )
 
-                add ebx,sprintf( ebx, "%s ", &[edi].qitem.value )
+                add ebx,tsprintf( ebx, "%s ", &[edi].qitem.value )
             .endf
         .endif
     .endif

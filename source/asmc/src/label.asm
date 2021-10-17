@@ -39,7 +39,7 @@ GetAnonymousLabel proc buffer:string_t, value:int_t
 
     mov eax,ModuleInfo.anonymous_label
     add eax,value
-    sprintf( buffer, "L&_%04u", eax )
+    tsprintf( buffer, "L&_%04u", eax )
     .return( buffer )
 
 GetAnonymousLabel endp
@@ -80,7 +80,7 @@ CreateLabel proc uses esi edi ebx name:string_t, mem_type:byte, ti:ptr qualified
 
         lea esi,buffer
         inc ModuleInfo.anonymous_label
-        sprintf( esi, "L&_%04u", ModuleInfo.anonymous_label )
+        tsprintf( esi, "L&_%04u", ModuleInfo.anonymous_label )
     .endif
 
     .if ( bLocal )

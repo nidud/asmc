@@ -26,28 +26,28 @@ strfcat proc private uses esi edi ecx edx buffer:string_t, path:string_t, file:s
     lea ecx,[eax-1]
 
     .if esi
-	mov edi,esi ; overwrite buffer
-	repne scasb
-	mov edi,edx
-	not ecx
-	rep movsb
+        mov edi,esi ; overwrite buffer
+        repne scasb
+        mov edi,edx
+        not ecx
+        rep movsb
     .else
-	mov edi,edx ; length of buffer
-	repne scasb
+        mov edi,edx ; length of buffer
+        repne scasb
     .endif
 
     dec edi
     .if edi != edx  ; add slash if missing
-	mov al,[edi-1]
-	.if !( al == '\' || al == '/' )
-	    mov al,'\'
-	    stosb
-	.endif
+        mov al,[edi-1]
+        .if !( al == '\' || al == '/' )
+            mov al,'\'
+            stosb
+        .endif
     .endif
     mov esi,file    ; add file name
     .repeat
-	lodsb
-	stosb
+        lodsb
+        stosb
     .until !eax
     mov eax,edx
     ret
@@ -64,30 +64,30 @@ AssembleSubdir proc private uses esi edi ebx directory:string_t, wild:string_t
     mov rc,0
 
     .if FindFirstFile(strfcat(esi, directory, wild), edi) != -1
-	mov h,eax
-	.repeat
-	    .if !(byte ptr ff.dwFileAttributes & _A_SUBDIR)
-		mov rc,AssembleModule(strfcat(esi, directory, ebx))
-	    .endif
-	.until !FindNextFile(h, edi)
-	FindClose(h)
+        mov h,eax
+        .repeat
+            .if !(byte ptr ff.dwFileAttributes & _A_SUBDIR)
+                mov rc,AssembleModule(strfcat(esi, directory, ebx))
+            .endif
+        .until !FindNextFile(h, edi)
+        FindClose(h)
     .endif
 
     .if Options.process_subdir
-	.if FindFirstFile(strfcat(esi, directory, "*.*"), edi) != -1
-	    mov h,eax
-	    .repeat
-		mov eax,[ebx]
-		and eax,00FFFFFFh
-		.if ff.dwFileAttributes & _A_SUBDIR && ax != '.' && eax != '..'
-		    .if AssembleSubdir(strfcat(esi, directory, ebx), wild)
-			mov rc,eax
-		    .endif
-		.endif
-		FindNextFile(h, edi)
-	    .until !eax
-	    FindClose(h)
-	.endif
+        .if FindFirstFile(strfcat(esi, directory, "*.*"), edi) != -1
+            mov h,eax
+            .repeat
+                mov eax,[ebx]
+                and eax,00FFFFFFh
+                .if ff.dwFileAttributes & _A_SUBDIR && ax != '.' && eax != '..'
+                    .if AssembleSubdir(strfcat(esi, directory, ebx), wild)
+                        mov rc,eax
+                    .endif
+                .endif
+                FindNextFile(h, edi)
+            .until !eax
+            FindClose(h)
+        .endif
     .endif
     mov eax,rc
     ret
@@ -95,15 +95,54 @@ AssembleSubdir proc private uses esi edi ebx directory:string_t, wild:string_t
 AssembleSubdir endp
 
 GeneralFailure proc private signo:int_t
-    mov eax,signo
-    .if eax != SIGTERM
-ifndef __PE__
-	mov eax,pCurrentException
-	PrintContext(
-	    [eax].EXCEPTION_POINTERS.ContextRecord,
-	    [eax].EXCEPTION_POINTERS.ExceptionRecord)
-endif
-	asmerr( 1901 )
+
+    .if ( signo != SIGTERM )
+
+        mov ecx,pCurrentException
+        lea edx,@CStr(
+            "\n"
+            "CONTEXT:\n"
+            "\tException Code: %08X\n"
+            "\tException Flags %08X\n"
+            "\n"
+            "\t\tEAX: %08X EDX: %08X\n"
+            "\t\tEBX: %08X ECX: %08X\n"
+            "\t\tEIP: %08X ESI: %08X\n"
+            "\t\tEBP: %08X EDI: %08X\n"
+            "\t\tESP: %08X\n"
+            "\n"
+            "\tFlags:  0000000000000000\n"
+            "\t        r n oditsz a p c\n"
+            "\n"
+            )
+
+        mov eax,[ecx].EXCEPTION_POINTERS.ContextRecord
+        assume eax:PCONTEXT
+
+        mov eax,[eax].EFlags
+        mov ecx,16
+        .repeat
+            shr eax,1
+            adc byte ptr [edx+ecx+164],0
+        .untilcxz
+
+        mov ecx,pCurrentException
+        mov eax,[ecx].EXCEPTION_POINTERS.ContextRecord
+        mov ecx,[ecx].EXCEPTION_POINTERS.ExceptionRecord
+        tprintf(
+            edx,
+            [ecx].EXCEPTION_RECORD.ExceptionCode,
+            [ecx].EXCEPTION_RECORD.ExceptionFlags,
+            [eax]._Eax,
+            [eax]._Edx,
+            [eax]._Ebx,
+            [eax]._Ecx,
+            [eax]._Eip,
+            [eax]._Esi,
+            [eax]._Ebp,
+            [eax]._Edi,
+            [eax]._Esp)
+        asmerr( 1901 )
     .endif
     close_files()
     exit(1)
@@ -131,47 +170,47 @@ endif
     mov rc,eax
     mov numArgs,eax
     mov numFiles,eax
-    .if !getenv("ASMC")	    ; v2.21 -- getenv() error..
-	lea eax,@CStr("")
+    .if !getenv("ASMC")     ; v2.21 -- getenv() error..
+        lea eax,@CStr("")
     .endif
     mov ecx,__argv
     mov [ecx],eax
 
     .while ParseCmdline(__argv, &numArgs)
 
-	inc numFiles
-	write_logo()
-	lea edi,ff.cFileName
-	mov esi,Options.names[ASM*4]
+        inc numFiles
+        write_logo()
+        lea edi,ff.cFileName
+        mov esi,Options.names[ASM*4]
 
-	.if !Options.process_subdir
-	    .if FindFirstFile(esi, &ff) == -1
-		asmerr(1000, esi)
-		.break
-	    .endif
-	    FindClose(eax)
-	.endif
+        .if !Options.process_subdir
+            .if FindFirstFile(esi, &ff) == -1
+                asmerr(1000, esi)
+                .break
+            .endif
+            FindClose(eax)
+        .endif
 
-	.if !strchr(strcpy(edi, esi), '*')
-	    strchr(edi, '?')
-	.endif
-	.if eax
-	    .if GetFNamePart(edi) > edi
-		dec eax
-	    .endif
-	    mov byte ptr [eax],0
-	    AssembleSubdir(edi, GetFNamePart(esi))
-	.else
-	    AssembleModule(edi)
-	.endif
-	mov rc,eax
+        .if !strchr(strcpy(edi, esi), '*')
+            strchr(edi, '?')
+        .endif
+        .if eax
+            .if GetFNamePart(edi) > edi
+                dec eax
+            .endif
+            mov byte ptr [eax],0
+            AssembleSubdir(edi, GetFNamePart(esi))
+        .else
+            AssembleModule(edi)
+        .endif
+        mov rc,eax
     .endw
 
     CmdlineFini()
     .if !numArgs
-	write_usage()
+        write_usage()
     .elseif !numFiles
-	asmerr(1017)
+        asmerr(1017)
     .endif
     mov eax,1
     sub eax,rc

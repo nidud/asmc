@@ -124,8 +124,8 @@ write_logo proc
 
     .if ( !banner_printed )
 	mov banner_printed,1
-	printf( &cp_logo )
-	printf( "\n%s\n", &cp_copyright )
+	tprintf( &cp_logo )
+	tprintf( "\n%s\n", &cp_copyright )
     .endif
     ret
 
@@ -134,7 +134,7 @@ write_logo endp
 write_usage proc
 
     write_logo()
-    printf( &cp_usage )
+    tprintf( &cp_usage )
     ret
 
 write_usage endp
@@ -142,7 +142,7 @@ write_usage endp
 write_options proc
 
     write_logo()
-    printf( &cp_options )
+    tprintf( &cp_options )
     ret
 
 write_options endp

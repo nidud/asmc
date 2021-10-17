@@ -621,7 +621,7 @@ TypeFromClassName proc uses esi edi s:ptr dsym, clname:ptr asym
         .return( SEGTYPE_CODE )
     .endif
 
-    movzx esi,[edi].asym.name_size
+    mov esi,[edi].asym.name_size
     lea ecx,[esi+1]
     mov edi,_strupr( memcpy( &uname, [edi].asym.name, ecx ) )
 

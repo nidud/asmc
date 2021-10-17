@@ -931,7 +931,7 @@ omf_write_lnames proc private uses esi edi ebx
         xor ecx,ecx
         .if ( esi )
             mov ebx,[esi].qnode.elmt
-            movzx ecx,[ebx].asym.name_size
+            mov ecx,[ebx].asym.name_size
         .endif
 
         lea eax,buffer
@@ -960,7 +960,7 @@ omf_write_lnames proc private uses esi edi ebx
             lea edi,buffer
         .endif
 
-        movzx eax,[ebx].asym.name_size
+        mov eax,[ebx].asym.name_size
         stosb
 
         ; copy 1 byte more - the NULLC - for _strupr()
@@ -973,8 +973,7 @@ omf_write_lnames proc private uses esi edi ebx
             _strupr( edi )
         .endif
 
-        movzx eax,[ebx].asym.name_size
-        add edi,eax ; overwrite the null char
+        add edi,[ebx].asym.name_size ; overwrite the null char
         inc items
 
         ; v2.12: lname_idx fields now set in OMF only
@@ -1536,7 +1535,7 @@ omf_write_pubdef proc private uses esi edi ebx
             .if ( eax )
                 mov ecx,4
             .endif
-            movzx eax,[ebx].asym.name_size
+            mov eax,[ebx].asym.name_size
             add eax,size
             lea eax,[eax+ecx+MANGLE_BYTES+4+4+1+1]
             mov recsize,eax

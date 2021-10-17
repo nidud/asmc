@@ -122,8 +122,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CDevices__CInput__CMouseDevice_Wind
 
 endif
 
-define InterfaceName_Windows_Devices_Input_IMouseCapabilities <L"Windows.Devices.Input.IMouseCapabilities">
-
 .namespace ABI
 .namespace Windows
 .namespace Devices
@@ -154,6 +152,7 @@ define InterfaceName_Windows_Devices_Input_IMouseCapabilities <L"Windows.Devices
 
 ifndef ____x_ABI_CWindows_CDevices_CInput_CIMouseCapabilities_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CDevices_CInput_CIMouseCapabilities_INTERFACE_DEFINED__
+define InterfaceName_Windows_Devices_Input_IMouseCapabilities <L"Windows.Devices.Input.IMouseCapabilities">
 
 DEFINE_IIDX(IMouseCapabilities, "BCA5E023-7DD9-4B6B-9A92-55D43CB38F73")
 

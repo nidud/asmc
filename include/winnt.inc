@@ -2289,6 +2289,10 @@ _Dr3		dd ?
 _Dr6		dd ?
 _Dr7		dd ?
 FloatSave	FLOATING_SAVE_AREA <>
+SegGs		dd ?
+SegFs		dd ?
+SegEs		dd ?
+SegDs		dd ?
 _Edi		dd ?
 _Esi		dd ?
 _Ebx		dd ?

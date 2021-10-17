@@ -22,7 +22,7 @@ VoidMangler proc fastcall sym:asym_t, buffer:string_t
 
     mov edi,edx
     mov esi,[ecx].name
-    movzx eax,[ecx].name_size
+    mov eax,[ecx].name_size
     lea ecx,[eax+1]
     rep movsb
     ret
@@ -35,7 +35,7 @@ UCaseMangler proc fastcall sym:asym_t, buffer:string_t
 
     mov edi,edx
     mov esi,[ecx].name
-    movzx eax,[ecx].name_size
+    mov eax,[ecx].name_size
     lea ecx,[eax+1]
     rep movsb
     mov esi,eax
@@ -51,7 +51,7 @@ UScoreMangler proc fastcall sym:asym_t, buffer:string_t
 
     lea edi,[edx+1]
     mov esi,[ecx].name
-    movzx eax,[ecx].name_size
+    mov eax,[ecx].name_size
     inc eax
     mov ecx,eax
     rep movsb
@@ -69,7 +69,7 @@ StdcallMangler proc fastcall sym:asym_t, buffer:string_t
 
         mov eax,ecx
         mov eax,[eax].dsym.procinfo
-        sprintf( edx, "_%s@%d", [ecx].name, [eax].proc_info.parasize )
+        tsprintf( edx, "_%s@%d", [ecx].name, [eax].proc_info.parasize )
     .else
         jmp UScoreMangler
     .endif
@@ -83,7 +83,7 @@ ms32_decorate proc fastcall sym:asym_t, buffer:string_t
 
     mov eax,ecx
     mov eax,[eax].dsym.procinfo
-    sprintf( edx, "@%s@%u", [ecx].name, [eax].proc_info.parasize )
+    tsprintf( edx, "@%s@%u", [ecx].name, [eax].proc_info.parasize )
     ret
 
 ms32_decorate endp
@@ -120,7 +120,7 @@ ow_decorate proc fastcall sym:asym_t, buffer:string_t
         inc edi
     .endif
     mov esi,[ecx].name
-    movzx ecx,[ecx].name_size
+    mov ecx,[ecx].name_size
     inc ecx
     rep movsb
     dec edi
@@ -140,7 +140,7 @@ ms64_decorate proc fastcall sym:asym_t, buffer:string_t
 
     mov edi,edx
     mov esi,[ecx].name
-    movzx eax,[ecx].name_size
+    mov eax,[ecx].name_size
     lea ecx,[eax+1]
     rep movsb
     ret
@@ -160,10 +160,10 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
     .endif
     .if eax == 0
         strcpy( edi, [ecx].name )
-        movzx eax,[esi].asym.name_size
+        mov eax,[esi].asym.name_size
     .else
         mov eax,[esi].dsym.procinfo
-        sprintf( edi, "%s@@%u", [ecx].name, [eax].proc_info.parasize )
+        tsprintf( edi, "%s@@%u", [ecx].name, [eax].proc_info.parasize )
     .endif
     ret
 
@@ -174,7 +174,7 @@ vect_decorate endp
 Mangle proc uses esi edi sym:asym_t, buffer:string_t
 
     mov ecx,sym
-    mov ax,[ecx].langtype
+    mov al,[ecx].langtype
     and eax,0x0F
     mov esi,VoidMangler
     .switch jmp eax
@@ -226,7 +226,7 @@ SetMangler proc sym:asym_t, langtype:int_t, mangle_type:string_t
     mov eax,langtype
     .if( eax != LANG_NONE )
         mov ecx,sym
-        mov [ecx].langtype,ax
+        mov [ecx].langtype,al
     .endif
     ret
 

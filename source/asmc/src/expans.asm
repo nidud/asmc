@@ -635,14 +635,14 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                     ;; copy spaces behind text macro
                                     .if ( [ebx+16].token != T_FINAL && [ebx+16].token != T_COMMA )
 
-                                        mov     edx,sym
-                                        movzx   esi,[edx].asym.name_size
-                                        add     esi,[ebx].tokpos
-                                        mov     ecx,[ebx+16].tokpos
-                                        sub     ecx,esi
-                                        mov     edi,p
-                                        rep     movsb
-                                        mov     p,edi
+                                        mov edx,sym
+                                        mov esi,[edx].asym.name_size
+                                        add esi,[ebx].tokpos
+                                        mov ecx,[ebx+16].tokpos
+                                        sub ecx,esi
+                                        mov edi,p
+                                        rep movsb
+                                        mov p,edi
                                     .endif
                                     .continue
                                 .endif
@@ -1290,7 +1290,7 @@ ExpandTMacro proc private uses esi edi ebx outbuf:string_t, tokenarray:token_t, 
                         .return( ERROR )
                     .endif
                     mov eax,sym
-                    movzx ecx,[eax].asym.name_size
+                    mov ecx,[eax].asym.name_size
                     add ecx,[ebx].tokpos
                     strcat( edi, ecx )
                     strcpy( outbuf, buffer )

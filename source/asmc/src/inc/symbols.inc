@@ -69,16 +69,10 @@ MT_SPECIAL              equ 0x80 ; bit 7
 MT_SPECIAL_MASK         equ 0xC0 ; bit 6+7
 MT_ADDRESS              equ 0x80 ; bit 7=1, bit 6 = 0
 
-IS_SIGNED macro x
-    mov al,x
+IS_SIGNED proto watcall :byte {
     and al,MT_SPECIAL_MASK
-    .if al == MT_SIGNED
-        mov eax,1
-    .else
-        xor eax,eax
-    .endif
-    exitm<eax>
-    endm
+    retm<(al == MT_SIGNED)>
+    }
 
 ; symbols can be
 ; - "labels" (data or code, internal, external, stack)
@@ -142,6 +136,17 @@ M_PURGED        equ 0x10
 .template asym
     nextitem        ptr asym ?      ; next symbol in hash line
     name            string_t ?      ; symbol name
+    name_size       int_t ?
+    state           uchar_t ?
+    mem_type        uchar_t ?
+    langtype        uchar_t ?
+    flags           uchar_t ?       ; bitfield
+    flag1           uchar_t ?
+    flag2           uchar_t ?
+    segoffsize      uchar_t ?
+    is_far          uchar_t ?
+    type            ptr asym ?      ; set if memtype is MT_TYPE
+
     union
      offs           int_t ?         ; used by SYM_INTERNAL (labels), SYM_TYPE, SYM_STACK, SYM_SEG
      value          int_t ?         ; used by SYM_INTERNAL (equates)
@@ -161,15 +166,6 @@ M_PURGED        equ 0x10
      vtable         ptr asym ?      ; used by SYM_TYPE
      vmacro         ptr asym ?      ; used by SYM_TYPE
     ends
-
-    state           uchar_t ?
-    mem_type        uchar_t ?
-    flags           uchar_t ?       ; bitfield
-    flag1           uchar_t ?
-
-    flag2           uchar_t ?
-    segoffsize      uchar_t ?
-    is_far          uchar_t ?
 
     union
      ;
@@ -195,6 +191,7 @@ M_PURGED        equ 0x10
      ends
      mac_flag       uchar_t ?       ; for SYM_MACRO -- byte
     ends
+
     union
      ;
      ; for SYM_INTERNAL (data labels only), SYM_STRUCT_FIELD
@@ -217,6 +214,7 @@ M_PURGED        equ 0x10
     ; SYM_TMACRO (if it's a register variable for FASTCALL)
     ;
     regist          ushort_t 2 dup(?)
+
     union
      ;
      ; for SYM_INTERNAL, SYM_STRUCT_FIELD, SYM_TYPE, SYM_STACK, SYM_EXTERNAL (comm=1)
@@ -248,9 +246,6 @@ M_PURGED        equ 0x10
       typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
      ends                           ; since the addition of field max_mbr_size.
     ends
-    name_size       ushort_t ?
-    langtype        ushort_t ?
-    type            ptr asym ?      ; set if memtype is MT_TYPE
     union                           ; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
      bp_fixup       ptr fixup ?
      ext_idx        uint_t ?        ; for SYM_EXTERNAL: table index ( for coff and elf )

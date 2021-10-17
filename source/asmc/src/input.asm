@@ -416,11 +416,11 @@ GetCurrSrcPos proc private buffer:string_t
             mov edx,ModuleInfo.FNames
             mov eax,[edx+eax*4]
             .if ModuleInfo.EndDirFound == FALSE
-                lea edx,@CStr("%s(%" I32_SPEC "u) : ")
+                lea edx,@CStr("%s(%u) : ")
             .else
                 lea edx,@CStr("%s : ")
             .endif
-            .return sprintf(buffer, edx, eax, [ecx].line_num)
+            .return tsprintf(buffer, edx, eax, [ecx].line_num)
         .endif
     .endf
     xor eax,eax

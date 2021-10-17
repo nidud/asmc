@@ -668,7 +668,7 @@ endif
         or Options.win64_flags,W64F_SAVEREGPARAMS
         .return
     .case 'ogol'            ;; -logo
-        printf("%s\n", &cp_logo)
+        tprintf("%s\n", &cp_logo)
         exit(0)
 ifndef __ASMC64__
     .case 'zm'              ;; -mz

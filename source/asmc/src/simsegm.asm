@@ -118,7 +118,7 @@ SetSimSeg proc private uses esi edi ebx segm:sim_seg, name:string_t
         mov edx,1
         mov cl,Options.segmentalign
         shl edx,cl
-        sprintf( &calign, "ALIGN(%d)", edx )
+        tsprintf( &calign, "ALIGN(%d)", edx )
         mov pAlignSt,&calign
     .endif
 

@@ -38,8 +38,8 @@ include windows.foundation.collections.inc
     ProcessorArchitecture_X86	= 0,
     ProcessorArchitecture_Arm	= 5,
     ProcessorArchitecture_X64	= 9,
-    ProcessorArchitecture_Neutral	= 11,
-    ProcessorArchitecture_Unknown	= 65535
+    ProcessorArchitecture_Neutral = 11,
+    ProcessorArchitecture_Unknown = 65535
     }
 
 .enum VirtualKeyModifiers {
@@ -52,10 +52,10 @@ include windows.foundation.collections.inc
 
 .enum VirtualKey {
     VirtualKey_None	= 0,
-    VirtualKey_LeftButton	= 1,
-    VirtualKey_RightButton	= 2,
+    VirtualKey_LeftButton = 1,
+    VirtualKey_RightButton = 2,
     VirtualKey_Cancel	= 3,
-    VirtualKey_MiddleButton	= 4,
+    VirtualKey_MiddleButton = 4,
     VirtualKey_XButton1 = 5,
     VirtualKey_XButton2 = 6,
     VirtualKey_Back	= 8,
@@ -66,7 +66,7 @@ include windows.foundation.collections.inc
     VirtualKey_Control	= 17,
     VirtualKey_Menu	= 18,
     VirtualKey_Pause	= 19,
-    VirtualKey_CapitalLock	= 20,
+    VirtualKey_CapitalLock = 20,
     VirtualKey_Kana	= 21,
     VirtualKey_Hangul	= 21,
     VirtualKey_Junja	= 23,
@@ -75,9 +75,9 @@ include windows.foundation.collections.inc
     VirtualKey_Kanji	= 25,
     VirtualKey_Escape	= 27,
     VirtualKey_Convert	= 28,
-    VirtualKey_NonConvert	= 29,
+    VirtualKey_NonConvert = 29,
     VirtualKey_Accept	= 30,
-    VirtualKey_ModeChange	= 31,
+    VirtualKey_ModeChange = 31,
     VirtualKey_Space	= 32,
     VirtualKey_PageUp	= 33,
     VirtualKey_PageDown = 34,
@@ -174,20 +174,20 @@ include windows.foundation.collections.inc
     VirtualKey_F22	= 133,
     VirtualKey_F23	= 134,
     VirtualKey_F24	= 135,
-    VirtualKey_NumberKeyLock	= 144,
+    VirtualKey_NumberKeyLock = 144,
     VirtualKey_Scroll	= 145,
-    VirtualKey_LeftShift	= 160,
-    VirtualKey_RightShift	= 161,
-    VirtualKey_LeftControl	= 162,
-    VirtualKey_RightControl	= 163,
+    VirtualKey_LeftShift = 160,
+    VirtualKey_RightShift = 161,
+    VirtualKey_LeftControl = 162,
+    VirtualKey_RightControl = 163,
     VirtualKey_LeftMenu = 164,
-    VirtualKey_RightMenu	= 165,
+    VirtualKey_RightMenu = 165,
     VirtualKey_GoBack	= 166,
-    VirtualKey_GoForward	= 167,
+    VirtualKey_GoForward = 167,
     VirtualKey_Refresh	= 168,
     VirtualKey_Stop	= 169,
     VirtualKey_Search	= 170,
-    VirtualKey_Favorites	= 171,
+    VirtualKey_Favorites = 171,
     VirtualKey_GoHome	= 172
     }
 

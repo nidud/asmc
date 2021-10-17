@@ -523,7 +523,7 @@ dbgcv::cntproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr counter
     .if ( edx >= LF_NUMERIC )
         add edx,DWORD
     .endif
-    movzx ecx,[edi].asym.name_size
+    mov ecx,[edi].asym.name_size
     lea eax,[ecx+eax+2+1+3]
     and eax,not 3
     add [esi].counters.size,eax
@@ -576,7 +576,7 @@ dbgcv::memberproc proc uses esi edi ebx type:ptr dsym, mbr:ptr asym, cc:ptr coun
         mov edx,sizeof( CV_MEMBER_16t )
     .endif
     add eax,edx
-    movzx ecx,[edi].asym.name_size
+    mov ecx,[edi].asym.name_size
     lea esi,[eax+ecx+2+1+3]
     and esi,not 3
     mov edi,[ebx].flushpt(esi)
@@ -647,8 +647,8 @@ dbgcv::enum_fields proc uses esi edi ebx symb:ptr dsym, enumfunc:cv_enum_func, c
             .new pold:string_t = [edi].sfield.name
             .new tmpname[8]:char_t
 
-            sprintf( &tmpname, "@@%u", ebx )
-            mov [edi].sfield.name_size,ax
+            tsprintf( &tmpname, "@@%u", ebx )
+            mov [edi].sfield.name_size,eax
             inc ebx
             mov [edi].sfield.name,&tmpname
             enumfunc( this, esi, edi, cc )
@@ -786,7 +786,7 @@ dbgcv::write_type proc uses esi edi ebx sym:ptr asym
     ;; WinDbg wants embedded structs to have a name - else it won't allow to "open" it.
     mov eax,9
     .if ( [esi].asym.name_size )
-        movzx eax,[esi].asym.name_size ;; 9 is sizeof("__unnamed")
+        mov eax,[esi].asym.name_size ;; 9 is sizeof("__unnamed")
     .endif
     mov namesize,eax
 
@@ -979,7 +979,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
     mov Ofssize,GetSymOfssize( esi )
     mov len,GetStructLen( esi, al )
 
-    movzx ecx,[esi].asym.name_size
+    mov ecx,[esi].asym.name_size
     add eax,ecx
     inc eax
     mov edi,[ebx].flushps(eax)
@@ -1001,7 +1001,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
         .endif
         mov [edi].UDTSYM_16t.rectyp,dx
         sub eax,sizeof(uint_16)
-        movzx ecx,[esi].asym.name_size
+        mov ecx,[esi].asym.name_size
         add eax,ecx
         mov [edi].UDTSYM_16t.reclen,ax
 
@@ -1025,7 +1025,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             add [ebx].ps,len
             mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
             .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
-                movzx eax,[esi].asym.name_size
+                mov eax,[esi].asym.name_size
                 add eax,len
                 inc eax
                 mov ecx,[ebx].section
@@ -1103,7 +1103,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
 
         .if ( Ofssize == USE16 )
 
-            movzx eax,[esi].asym.name_size
+            mov eax,[esi].asym.name_size
             add eax,sizeof( PROCSYM16 ) - sizeof(uint_16)
             mov [edi].PROCSYM16.reclen,ax
             mov eax,S_LPROC16
@@ -1147,7 +1147,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             .endif
             mov eax,size
             sub eax,sizeof(uint_16)
-            movzx ecx,[esi].asym.name_size
+            mov ecx,[esi].asym.name_size
             add eax,ecx
             mov [edi].PROCSYM32_16t.reclen,ax
             mov [edi].PROCSYM32_16t.rectyp,leaf
@@ -1194,7 +1194,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
 
         .if ( Ofssize == USE16 )
 
-            movzx eax,[esi].asym.name_size
+            mov eax,[esi].asym.name_size
             add eax,sizeof( LABELSYM16 ) - sizeof(uint_16)
             mov [edi].LABELSYM16.reclen,ax
             mov [edi].LABELSYM16.rectyp,S_LABEL16
@@ -1208,7 +1208,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             mov rlctype,FIX_PTR16
             mov ofs,offsetof( LABELSYM16, off )
         .else
-            movzx eax,[esi].asym.name_size
+            mov eax,[esi].asym.name_size
             add eax,sizeof( LABELSYM32 ) - sizeof(uint_16)
             mov [edi].LABELSYM32.reclen,ax
             .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
@@ -1254,7 +1254,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             mov [edi].DATASYM32.typind,eax
             mov ofs,offsetof( DATASYM32, off )
         .endif
-        movzx eax,[esi].asym.name_size
+        mov eax,[esi].asym.name_size
         add eax,size
         sub eax,sizeof(uint_16)
         mov [edi].DATASYM32_16t.reclen,ax
@@ -1335,7 +1335,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
     add [ebx].ps,eax
     mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
     .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
-        movzx eax,[esi].asym.name_size
+        mov eax,[esi].asym.name_size
         add eax,len
         sub eax,ofs
         inc eax
@@ -1371,11 +1371,11 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                         mov len,sizeof( REGSYM_16t ) - 1
                         mov leaf,S_REGISTER_16t
                     .endif
-                    movzx eax,[esi].asym.name_size
+                    mov eax,[esi].asym.name_size
                     add eax,len
                     inc eax
                     mov edx,[ebx].flushps(eax)
-                    movzx eax,[esi].asym.name_size
+                    mov eax,[esi].asym.name_size
                     add eax,len
                     sub eax,sizeof(uint_16)
                     inc eax
@@ -1394,12 +1394,12 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                     .endif
                 .elseif ( Ofssize == USE16 )
                     mov len,sizeof( BPRELSYM16 ) - 1
-                    movzx eax,[esi].asym.name_size
+                    mov eax,[esi].asym.name_size
                     add eax,len
                     inc eax
                     mov edx,[ebx].flushps(eax)
                     mov eax,sizeof( BPRELSYM16 ) - sizeof(uint_16)
-                    add ax,[esi].asym.name_size
+                    add eax,[esi].asym.name_size
                     mov [edx].BPRELSYM16.reclen,ax
                     mov [edx].BPRELSYM16.rectyp,S_BPREL16
                     mov [edx].BPRELSYM16.off,[esi].asym.offs
@@ -1418,11 +1418,11 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                             mov len,sizeof( REGREL32_16t ) - 1
                             mov leaf,S_REGREL32_16t
                         .endif
-                        movzx eax,[esi].asym.name_size
+                        mov eax,[esi].asym.name_size
                         add eax,len
                         inc eax
                         mov edx,[ebx].flushps(eax)
-                        movzx eax,[esi].asym.name_size
+                        mov eax,[esi].asym.name_size
                         add eax,len
                         sub eax,sizeof(uint_16) - 1
                         mov [edx].REGREL32_16t.reclen,ax
@@ -1455,11 +1455,11 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                             mov len,sizeof( BPRELSYM32_16t ) - 1
                             mov leaf,S_BPREL32_16t
                         .endif
-                        movzx eax,[esi].asym.name_size
+                        mov eax,[esi].asym.name_size
                         add eax,len
                         inc eax
                         mov edx,[ebx].flushps(eax)
-                        movzx eax,[esi].asym.name_size
+                        mov eax,[esi].asym.name_size
                         add eax,len
                         sub eax,sizeof(uint_16) - 1
                         mov [edx].BPRELSYM32_16t.reclen,ax
@@ -1477,7 +1477,7 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
                 add [ebx].ps,len
                 mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
                 .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
-                    movzx eax,[esi].asym.name_size
+                    mov eax,[esi].asym.name_size
                     add eax,len
                     inc eax
                     mov ecx,[ebx].section

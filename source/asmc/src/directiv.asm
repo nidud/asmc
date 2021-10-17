@@ -72,7 +72,7 @@ EchoDirective proc i:int_t, tokenarray:token_t
 
             imul eax,i,asm_tok
             add eax,tokenarray
-            printf( "%s\n", [eax+16].asm_tok.tokpos )
+            tprintf( "%s\n", [eax+16].asm_tok.tokpos )
         .endif
     .endif
     mov eax,NOT_ERROR

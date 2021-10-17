@@ -123,7 +123,7 @@ SearchNameInStruct proc uses esi edi ebx tstruct:ptr asym, name:string_t,
                     .break
                 .endif
             .endif
-        .elseif ( di == [ebx].name_size )
+        .elseif ( edi == [ebx].name_size )
             .if ( SymCmpFunc( name, [ebx].name, edi ) == 0 )
                 mov esi,ebx
                 .break
@@ -1399,7 +1399,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             assume edi:ptr sfield
 
             mov ecx,len
-            mov [edi].name_size,cx
+            mov [edi].name_size,ecx
             inc ecx
             mov [edi].name,LclAlloc( ecx )
 

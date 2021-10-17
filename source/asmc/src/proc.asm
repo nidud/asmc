@@ -280,7 +280,7 @@ watc_pcheck proc private uses esi edi ebx p:ptr dsym, paranode:ptr dsym, used:pt
     .endsw
     .if ( [esi].asym.regist[2] )
         mov ebx,GetResWName( [esi].asym.regist[0], NULL )
-        sprintf( &watc_regname, "%s::%s",
+        tsprintf( &watc_regname, "%s::%s",
             GetResWName( [esi].asym.regist[2], &watc_regist ), ebx )
     .elseif ( [esi].asym.regist[0] )
         GetResWName( [esi].asym.regist[0], &watc_regname )
@@ -402,7 +402,7 @@ vc32_return proc private uses edi ebx p:ptr dsym, buffer:string_t
         .if ( ModuleInfo.radix == 10 )
             xor ecx,ecx
         .endif
-        sprintf( eax, "%d%c", ebx, ecx )
+        tsprintf( eax, "%d%c", ebx, ecx )
     .endif
     ret
 
@@ -2045,7 +2045,7 @@ WriteSEHData proc private uses esi edi ebx p:ptr dsym
         .for ( edi = &buffer : esi : esi-- )
 
             lea ebx,[edi+strlen(edi)]
-            sprintf( ebx, "%s 0%xh", pfx, unw_code[esi*2-2].FrameOffset )
+            tsprintf( ebx, "%s 0%xh", pfx, unw_code[esi*2-2].FrameOffset )
 
             mov pfx,&T(",")
             .if ( esi == 1 || strlen( edi ) > 72 )
@@ -2083,7 +2083,7 @@ WriteSEHData proc private uses esi edi ebx p:ptr dsym
         mov unw_segs_defined,3
     .else
         mov segname,segnamebuff
-        sprintf( segname, ".pdata$%04u", GetSegIdx( [edi].asym.segm ) )
+        tsprintf( segname, ".pdata$%04u", GetSegIdx( [edi].asym.segm ) )
         mov simplespec,0
         or  unw_segs_defined,2
     .endif
@@ -2232,8 +2232,8 @@ EndpDir proc uses ebx i:int_t, tokenarray:ptr asm_tok
     mov ecx,CurrProc
     .if ( ecx )
 
-        movzx edx,[ecx].asym.name_size
-        add edx,1
+        mov edx,[ecx].asym.name_size
+        inc edx
         .if ( SymCmpFunc( [ecx].asym.name, [ebx].string_ptr, edx ) == 0 )
             ProcFini( CurrProc )
             mov ecx,1
@@ -2592,7 +2592,7 @@ write_userdef_prologue proc private uses esi edi ebx tokenarray:ptr asm_tok
     ; if -EP is on, emit "prologue: none"
 
     .if ( Options.preprocessor_stdout )
-        printf( "option prologue:none\n" )
+        tprintf( "option prologue:none\n" )
     .endif
 
     lea edi,reglst
@@ -2623,7 +2623,7 @@ write_userdef_prologue proc private uses esi edi ebx tokenarray:ptr asm_tok
         lea ecx,@CStr("")
     .endif
 
-    sprintf( &buffer," (%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>)",
+    tsprintf( &buffer," (%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>)",
              [edi].asym.name, flags, [esi].parasize, [esi].localsize, &reglst, ecx )
 
     mov ebx,Token_Count
@@ -2699,9 +2699,9 @@ win64_GetRegParams proc private uses esi edi ebx varargs:ptr int_t, size:ptr inr
     mov esi,size
     mov edi,param
     mov ecx,CurrProc
-    mov cx,[ecx].asym.langtype
+    mov cl,[ecx].asym.langtype
 
-    .if ( cx == LANG_VECTORCALL )
+    .if ( cl == LANG_VECTORCALL )
         mov dword ptr [esi],16
     .else
         mov dword ptr [esi],8
@@ -3907,7 +3907,7 @@ write_userdef_epilogue proc private uses esi edi ebx flag_iret:int_t, tokenarray
     .if ( [esi].prologuearg )
         mov ecx,[esi].prologuearg
     .endif
-    sprintf( &buffer,"%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>",
+    tsprintf( &buffer,"%s, 0%XH, 0%XH, 0%XH, <<%s>>, <%s>",
             [edi].asym.name, flags, [esi].parasize, [esi].localsize, &reglst, ecx )
 
     mov ecx,Token_Count
@@ -3918,7 +3918,7 @@ write_userdef_epilogue proc private uses esi edi ebx flag_iret:int_t, tokenarray
     ; if -EP is on, emit "epilogue: none"
 
     .if ( Options.preprocessor_stdout )
-        printf( "option epilogue:none\n" )
+        tprintf( "option epilogue:none\n" )
     .endif
 
     RunMacro( dir, i, tokenarray, NULL, 0, &is_exitm )
@@ -4018,7 +4018,7 @@ RetInstr proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, count:int_t
                     .if ( ModuleInfo.radix != 10 )
                         mov al,'t'
                     .endif
-                    sprintf( edi, "%d%c", [esi].parasize, eax )
+                    tsprintf( edi, "%d%c", [esi].parasize, eax )
                 .endif
                 .endc
             .case LANG_SYSCALL
@@ -4035,7 +4035,7 @@ RetInstr proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, count:int_t
                     .if ( ModuleInfo.radix != 10 )
                         mov al,'t'
                     .endif
-                    sprintf( edi, "%d%c", [esi].parasize, eax )
+                    tsprintf( edi, "%d%c", [esi].parasize, eax )
                 .endif
                 .endc
             .endsw

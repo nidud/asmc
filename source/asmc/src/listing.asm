@@ -56,7 +56,7 @@ list_pos uint_t 0 ; current pos in LST file
 define DOTSMAX 32
 dots db " . . . . . . . . . . . . . . . .",0
 
-define szFmtProcStk <"  %s %s        %-17s %s %c %04" I32_SPEC "X">
+define szFmtProcStk <"  %s %s        %-17s %s %c %04X">
 
 ltext macro index, string
   exitm<LS_&index&,>
@@ -204,7 +204,7 @@ endif
 
     .case LSTTYPE_CODE
         mov newofs,GetCurrOffset()
-        sprintf( &ll.buffer, "%08X", oldofs )
+        tsprintf( &ll.buffer, "%08X", oldofs )
         mov ll.buffer[OFSSIZE],' '
 
         .endc .if ( ebx == NULL )
@@ -253,7 +253,7 @@ endif
             add esi,eax
             .while ( idx < 0 && len )
                 lodsb
-                sprintf( edi, "%02X", eax )
+                tsprintf( edi, "%02X", eax )
                 add edi,2
                 inc idx
                 inc oldofs
@@ -269,7 +269,7 @@ endif
 
         .while ( oldofs < newofs && len )
             lodsb
-            sprintf( edi, "%02X", eax )
+            tsprintf( edi, "%02X", eax )
             add edi,2
             inc idx
             inc oldofs
@@ -283,14 +283,14 @@ endif
         mov edi,1
         mov esi,sym
         .if ( [esi].asym.segm && [esi].asym.segm == ebx )
-            sprintf( &ll.buffer, "%08X", GetCurrOffset() )
+            tsprintf( &ll.buffer, "%08X", GetCurrOffset() )
             mov edi,10
         .endif
         mov ll.buffer[edi],'='
         .if ( [esi].asym.value3264 != 0 && ( [esi].asym.value3264 != -1 || [esi].asym.value >= 0 ) )
-            sprintf( &ll.buffer[edi+2], "%-" PREFFMTSTR I64_SPEC "X", [esi].asym.value, [esi].asym.value3264 )
+            tsprintf( &ll.buffer[edi+2], "%-" PREFFMTSTR "lX", [esi].asym.value, [esi].asym.value3264 )
         .else
-            sprintf( &ll.buffer[edi+2], "%-" PREFFMTSTR "X", [esi].asym.value )
+            tsprintf( &ll.buffer[edi+2], "%-" PREFFMTSTR "X", [esi].asym.value )
         .endif
         mov ll.buffer[edi+22],' ' ; v2.25 - binary zero fix -- John Hankinson
         .endc
@@ -318,12 +318,12 @@ endif
         mov oldofs,GetCurrOffset()
         ; no break
     .case LSTTYPE_STRUCT
-        sprintf( &ll.buffer, "%08X", oldofs )
+        tsprintf( &ll.buffer, "%08X", oldofs )
         mov ll.buffer[8],' '
         .endc
     .case LSTTYPE_DIRECTIVE
         .if ( ebx || value )
-            sprintf( &ll.buffer, "%08X", oldofs )
+            tsprintf( &ll.buffer, "%08X", oldofs )
             mov ll.buffer[8],' '
         .endif
         .endc
@@ -344,7 +344,7 @@ endif
             mov ll.buffer[28],'*'
         .endif
         .if ( MacroLevel )
-            mov len,sprintf( &ll.buffer[29], "%u", MacroLevel )
+            mov len,tsprintf( &ll.buffer[29], "%u", MacroLevel )
             mov ll.buffer[29+eax],' '
         .endif
         .if ( srcfile != ModuleInfo.srcfile )
@@ -400,7 +400,7 @@ LstPrintf proc format:string_t, args:vararg
 
     .if ( CurrFile[LST*4] )
 
-        add list_pos,vfprintf( CurrFile[LST*4], format, &args )
+        add list_pos,tvfprintf( CurrFile[LST*4], format, &args )
     .endif
     ret
 
@@ -452,7 +452,7 @@ get_seg_align proc fastcall s:ptr seg_info, buffer:string_t
         mov eax,1
         shl eax,cl
         push buffer
-        sprintf( buffer, "%u", eax )
+        tsprintf( buffer, "%u", eax )
         pop eax
     .endsw
     ret
@@ -475,7 +475,7 @@ get_seg_combine endp
 log_macro proc sym:ptr asym
 
     mov ecx,sym
-    movzx eax,[ecx].asym.name_size
+    mov eax,[ecx].asym.name_size
     mov edx,strings[LS_PROC]
     .if ( [ecx].asym.mac_flag &  M_ISFUNC )
         mov edx,strings[LS_FUNC]
@@ -555,7 +555,7 @@ GetMemtypeString proc uses esi edi ebx sym:ptr asym, buffer:string_t
             ; v2.10: improved pointer TYPEDEF display
 
             .for ( i = [esi].asym.is_ptr: i: i-- )
-                add ebx,sprintf( ebx, "%s %s ", edi, strings[LS_PTR] )
+                add ebx,tsprintf( ebx, "%s %s ", edi, strings[LS_PTR] )
             .endf
 
             ; v2.05: added.
@@ -657,7 +657,7 @@ log_struct proc uses esi edi ebx sym:ptr asym, name:string_t, ofs:int_32
 
             .if ( byte ptr [ecx] || ( [ebx].mem_type == MT_TYPE ) )
 
-                movzx eax,[ebx].name_size
+                mov eax,[ebx].name_size
                 add eax,prefix
                 mov ecx,eax
                 add eax,offset dots
@@ -708,7 +708,7 @@ log_record proc uses esi edi ebx sym:ptr asym
 
     .for ( ebx = [esi].struct_info.head: ebx: ebx = [ebx].next )
 
-        movzx eax,[ebx].name_size
+        mov eax,[ebx].name_size
         add eax,2
         mov ecx,eax
         add eax,offset dots
@@ -742,7 +742,7 @@ log_record proc uses esi edi ebx sym:ptr asym
             lea ecx,[ebx].ivalue
         .endif
         .if ( [edi].asym.total_size > 4 )
-            LstPrintf( "  %s %s      %6X  %7X  %016I64X %s",
+            LstPrintf( "  %s %s      %6X  %7X  %016lX %s",
                 [ebx].name, pdots, [ebx].offs, [ebx].total_size, mask, ecx )
         .else
             LstPrintf( "  %s %s      %6X  %7X  %08X %s",
@@ -763,7 +763,7 @@ log_typedef proc uses esi edi ebx sym:ptr asym
   local pdots:string_t
 
     mov esi,sym
-    movzx ecx,[esi].asym.name_size
+    mov ecx,[esi].asym.name_size
     lea eax,dots[ecx+1]
     .if ( ecx >= DOTSMAX )
         lea eax,@CStr("")
@@ -815,7 +815,7 @@ log_segment proc uses esi edi ebx sym:ptr asym, grp:ptr asym
 
     .if ( [edi].seg_info.sgroup == grp )
 
-        movzx eax,[esi].asym.name_size
+        mov eax,[esi].asym.name_size
         lea ecx,dots[eax+1]
         .if ( eax >= DOTSMAX )
             lea ecx,@CStr("")
@@ -845,7 +845,7 @@ log_segment endp
 log_group proc uses esi edi grp:ptr asym, segs:ptr dsym
 
     mov esi,grp
-    movzx eax,[esi].asym.name_size
+    mov eax,[esi].asym.name_size
     lea ecx,dots[eax+1]
     .if ( eax >= DOTSMAX )
         lea ecx,@CStr("")
@@ -918,7 +918,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
     mov esi,sym
     mov Ofssize,GetSymOfssize( esi )
 
-    movzx eax,[esi].asym.name_size
+    mov eax,[esi].asym.name_size
     lea ecx,dots[eax+1]
     .if ( eax >= DOTSMAX )
         lea ecx,@CStr("")
@@ -1002,7 +1002,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
                 mov edi,[esi].dsym.procinfo
                 .for ( ecx = 1, edi = [edi].proc_info.paralist: ecx < cnt: edi = [edi].dsym.nextparam, ecx++ )
                 .endf
-                movzx eax,[edi].asym.name_size
+                mov eax,[edi].asym.name_size
                 lea ecx,dots[eax+1+2]
                 .if ( eax >= DOTSMAX-2 )
                     lea ecx,@CStr("")
@@ -1029,7 +1029,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
             mov edi,[esi].dsym.procinfo
             .for ( edi = [edi].proc_info.paralist: edi : edi = [edi].dsym.nextparam )
 
-                movzx eax,[edi].asym.name_size
+                mov eax,[edi].asym.name_size
                 lea ecx,dots[eax+1+2]
                 .if ( eax >= DOTSMAX-2 )
                     lea ecx,@CStr("")
@@ -1048,7 +1048,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
         mov edi,[esi].dsym.procinfo
         .for ( edi = [edi].proc_info.locallist: edi : edi = [edi].dsym.nextlocal )
 
-            movzx eax,[edi].asym.name_size
+            mov eax,[edi].asym.name_size
             lea ecx,dots[eax+1+2]
             .if ( eax >= DOTSMAX-2 )
                 lea ecx,@CStr("")
@@ -1056,7 +1056,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
             mov pdots,ecx
 
             .if ( [edi].asym.flag1 & S_ISARRAY )
-                sprintf( &buffer, "%s[%u]", GetMemtypeString( edi, NULL), [edi].asym.total_length )
+                tsprintf( &buffer, "%s[%u]", GetMemtypeString( edi, NULL), [edi].asym.total_length )
             .else
                 strcpy( &buffer, GetMemtypeString( edi, NULL ) )
             .endif
@@ -1082,7 +1082,7 @@ log_proc proc uses esi edi ebx sym:ptr asym
                 .if ( [ebx].asym.state == SYM_STACK || [ebx].asym.state == SYM_TMACRO )
                     .continue
                 .endif
-                movzx eax,[edi].asym.name_size
+                mov eax,[edi].asym.name_size
                 lea ecx,dots[eax+1+2]
                 .if ( eax >= DOTSMAX-2 )
                     lea ecx,@CStr("")
@@ -1113,7 +1113,7 @@ log_symbol proc uses esi edi ebx sym:ptr asym
   local pdots:string_t
 
     mov edi,sym
-    movzx eax,[edi].asym.name_size
+    mov eax,[edi].asym.name_size
     lea ecx,dots[eax+1]
     .if ( eax >= DOTSMAX )
         lea ecx,@CStr("")
@@ -1127,7 +1127,7 @@ log_symbol proc uses esi edi ebx sym:ptr asym
         LstPrintf( "%s %s        ", [edi].asym.name, pdots )
 
         .if ( [edi].asym.flag1 & S_ISARRAY )
-            mov ebx,sprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( edi, NULL ), [edi].asym.total_length )
+            mov ebx,tsprintf( StringBufferEnd, "%s[%u]", GetMemtypeString( edi, NULL ), [edi].asym.total_length )
             LstPrintf( "%-10s ", StringBufferEnd )
         .elseif ( [edi].asym.state == SYM_EXTERNAL && [edi].asym.sflags & S_ISCOM )
             LstPrintf( "%-10s ", strings[LS_COMM] )
@@ -1145,7 +1145,7 @@ log_symbol proc uses esi edi ebx sym:ptr asym
         .elseif ( [edi].asym.mem_type == MT_EMPTY )
             ; also check segment? might be != NULL for equates (var = offset x)
             .if ( [edi].asym.value3264 != 0 && [edi].asym.value3264 != -1 )
-                LstPrintf( " %I64Xh ", [edi].asym.uvalue, [edi].asym.value3264 )
+                LstPrintf( " %lXh ", [edi].asym.uvalue, [edi].asym.value3264 )
             .elseif ( [edi].asym.value3264 < 0 )
                 xor ecx,ecx
                 sub ecx,[edi].asym.uvalue

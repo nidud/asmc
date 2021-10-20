@@ -14,16 +14,15 @@ ifdef USE_COMALLOC
 
     assume edi:ptr sfield
 
-AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
+AssignVTable proc private uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t, i:int_t
 
   local q[256]:char_t
-  local i:int_t
 
     mov esi,sym
 
     .if ( [esi].asym.total_size )
 
-        .for ( i = 0, edx = [esi].dsym.structinfo,
+        .for ( edx = [esi].dsym.structinfo,
                edi = [edx].struct_info.head : edi : edi = [edi].next, i++ )
 
             .if ( [edi].type )
@@ -31,7 +30,7 @@ AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
                 mov edx,[edi].type
                 .if ( [edx].asym.typekind == TYPE_STRUCT )
 
-                    AssignVTable(name, edx, reg)
+                    mov i,AssignVTable(name, edx, reg, i)
 
                 .else
 
@@ -58,13 +57,19 @@ AssignVTable proc uses esi edi ebx name:string_t, sym:ptr dsym, reg:int_t
             .endif
         .endf
     .endif
+    mov eax,i
+    dec eax
     ret
 
 AssignVTable endp
 
     assume ebx:ptr asm_tok
 
+ClearStruct proto :string_t, :asym_t
+
 ComAlloc proc uses esi edi ebx buffer:string_t, tokenarray:token_t
+
+  local name[16]:sbyte
 
     mov ebx,tokenarray
     mov edi,_stricmp([ebx].string_ptr, "@ComAlloc")
@@ -97,18 +102,22 @@ ComAlloc proc uses esi edi ebx buffer:string_t, tokenarray:token_t
     .if ModuleInfo.line_queue.head
         RunLineQueue()
     .endif
-    AddLineQueueX( "malloc(%s + %sVtbl)", [ebx].string_ptr, [ebx].string_ptr )
-    AddLineQueueX( "push %r", &[edi+T_EDI-T_EAX] )
-    AddLineQueueX( "mov %r, %r", &[edi+T_EDX-T_EAX], edi )
-    AddLineQueueX( "mov %r, %r", &[edi+T_EDI-T_EAX], edi )
-    AddLineQueueX( "mov %r, %s shr 2", &[edi+T_ECX-T_EAX], [ebx].string_ptr )
-    AddLineQueue ( "xor eax, eax" )
-    AddLineQueue ( "rep stosd" )
-    AddLineQueueX( "pop %r", &[edi+T_EDI-T_EAX] )
-    AddLineQueueX( "mov %r, %r", edi, &[edi+T_EDX-T_EAX] )
-    AddLineQueueX( "add %r, %s", &[edi+T_EDX-T_EAX], [ebx].string_ptr )
-    AddLineQueueX( "mov [%r], %r", edi, &[edi+T_EDX-T_EAX] )
-    AssignVTable( [ebx].string_ptr, [esi].asym.vtable, &[edi+T_EDX-T_EAX] )
+    AddLineQueueX( "mov %r,malloc(%s + %sVtbl)", &[edi+T_ECX-T_EAX], [ebx].string_ptr, [ebx].string_ptr )
+    mov eax,4
+    .if ( edi == T_RAX )
+        mov eax,8
+    .endif
+    .if ( [esi].asym.total_size > eax )
+
+        tsprintf(&name, "[%r]", &[edi+T_ECX-T_EAX])
+        ClearStruct(&name, esi)
+        AddLineQueueX( "mov %r, %r", edi, &[edi+T_ECX-T_EAX] )
+    .endif
+
+    AddLineQueueX( "add %r, %s", &[edi+T_ECX-T_EAX], [ebx].string_ptr )
+    AddLineQueueX( "mov [%r], %r", edi, &[edi+T_ECX-T_EAX] )
+    AssignVTable( [ebx].string_ptr, [esi].asym.vtable, &[edi+T_ECX-T_EAX], 0 )
+    AddLineQueueX( "lea %r, [%r-%s]", edi, &[edi+T_ECX-T_EAX], [ebx].string_ptr )
     InsertLineQueue()
 
     sub ebx,32

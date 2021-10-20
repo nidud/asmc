@@ -501,7 +501,7 @@ AssignId endp
 
 ; case = {0}
 
-ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
+ClearStruct proc uses esi edi ebx name:string_t, sym:asym_t
 
     AddLineQueueX( " %r %r, %r", T_XOR, T_EAX, T_EAX )
     mov esi,sym
@@ -524,6 +524,13 @@ ClearStruct proc private uses esi edi ebx name:string_t, sym:asym_t
 
                 AddLineQueueX( " mov qword ptr %s[%d], rax", name, ebx )
             .endf
+
+            .if ( edi >= 4 )
+
+                AddLineQueueX( " mov dword ptr %s[%d], eax", name, ebx )
+                sub edi,4
+                add ebx,4
+            .endif
 
             .for ( : edi : edi--, ebx++ )
 

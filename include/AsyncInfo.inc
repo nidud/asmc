@@ -36,9 +36,9 @@ DEFINE_IIDX(IAsyncInfo, "00000036-0000-0000-C000-000000000046")
 
 .comdef IAsyncInfo : public IInspectable
 
-    get_Id		proc :dword
-    get_Status		proc :ptr
-    get_ErrorCode	proc :ptr
+    get_Id		proc :ptr uint_t
+    get_Status		proc :ptr AsyncStatus
+    get_ErrorCode	proc :ptr HRESULT
     Cancel		proc
     Close		proc
    .ends

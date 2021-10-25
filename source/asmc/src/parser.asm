@@ -3269,10 +3269,11 @@ continue:
                     asmerr( 2170 )
                     .endc
                 .default
-                    ;; this error may happen if
-                    ;; CATSTR, SUBSTR, MACRO, ...
-                    ;; aren't at pos 1
-
+                    ;
+                    ; this error may happen if
+                    ; CATSTR, SUBSTR, MACRO, ...
+                    ; aren't at pos 1
+                    ;
                     asmerr(2008, [esi].string_ptr )
                     .endc
                 .endsw
@@ -3322,6 +3323,7 @@ continue:
             .if !IsType( [ebx].string_ptr ) ; added 2.31.44
                 lea esi,@CStr( "invoke " )
             .endif
+
             strcat( strcpy( edi, esi ), [ebx].tokpos )
             mov Token_Count,Tokenize( strcpy( CurrSource, edi ), 0, ebx, TOK_DEFAULT )
             jmp continue

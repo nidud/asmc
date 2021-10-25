@@ -721,6 +721,55 @@ GetFastcallId endp
 
 MacroInline proto :string_t, :int_t, :string_t, :string_t, :int_t
 
+ParseInline proc private uses esi ebx sym:ptr asym, curr:ptr asm_tok, tokenarray:ptr asm_tok
+
+    .if ( Parse_Pass == PASS_1 )
+
+        mov ecx,sym
+        or [ecx].asym.flag2,S_ISINLINE
+
+        xor esi,esi
+        xor eax,eax
+        mov ebx,curr
+        mov ecx,tokenarray
+        add ecx,32
+
+        .if ( [ecx].asm_tok.token == T_RES_ID &&
+              [ecx].asm_tok.tokval >= T_CCALL &&
+              [ecx].asm_tok.tokval <= T_WATCALL )
+            add ecx,16
+        .endif
+
+        .for ( edx = ecx: edx < ebx: edx += 16 )
+            .if ( [edx].asm_tok.token == T_COLON )
+                inc esi
+            .elseif ( edx > ecx && [edx].asm_tok.token == T_COMMA )
+                inc eax
+            .endif
+        .endf
+
+        .if ( eax > esi )
+            inc eax
+            mov esi,eax
+        .endif
+
+        mov [ebx].token,T_FINAL
+        mov eax,[ebx].tokpos
+        mov byte ptr [eax],0
+
+        .if ( [edx-16].asm_tok.token == T_RES_ID && [edx-16].asm_tok.tokval == T_VARARG )
+            mov edx,1
+        .else
+            xor edx,edx
+        .endif
+
+        mov eax,tokenarray
+        MacroInline([eax].asm_tok.string_ptr, esi, [ecx].asm_tok.tokpos, [ebx].string_ptr, edx )
+    .endif
+    ret
+
+ParseInline endp
+
 ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t
 
    .new name:string_t
@@ -1070,45 +1119,14 @@ ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr as
                 .endif
 
                 mov ecx,tokenarray
-                .if ( [ebx].token == T_STRING && [ebx].string_delim == '{' && \
+                .if ( [ebx].token == T_STRING &&
+                      [ebx].string_delim == '{' &&
                       [ecx+16].asm_tok.tokval == T_PROTO )
 
-                    .if ( Parse_Pass == PASS_1 )
+                    ParseInline(p, ebx, tokenarray)
 
-                       .new args:int_t = 0
-                       .new comma:int_t = 0
-
-                        add ecx,32
-                        .if ( [ecx].asm_tok.token == T_RES_ID && \
-                              [ecx].asm_tok.tokval >= T_CCALL && \
-                              [ecx].asm_tok.tokval <= T_WATCALL )
-                             add ecx,16
-                        .endif
-                        .for ( edx = ecx: edx < ebx: edx += 16 )
-                            .if ( [edx].asm_tok.token == T_COLON )
-                                inc args
-                            .elseif ( edx > ecx && [edx].asm_tok.token == T_COMMA )
-                                inc comma
-                            .endif
-                        .endf
-                        mov eax,comma
-                        .if ( eax > args )
-                            inc eax
-                            mov args,eax
-                        .endif
-                        mov [ebx].token,T_FINAL
-                        mov eax,[ebx].tokpos
-                        mov byte ptr [eax],0
-                        .if ( [edx-16].asm_tok.token == T_RES_ID && [edx-16].asm_tok.tokval == T_VARARG )
-                            mov edx,1
-                        .else
-                            xor edx,edx
-                        .endif
-                        mov eax,tokenarray
-                        MacroInline( [eax].asm_tok.string_ptr, args,
-                            [ecx].asm_tok.tokpos, [ebx].string_ptr, edx )
-                    .endif
                 .elseif ( [ebx].token != T_COMMA )
+
                     .return( asmerr( 2065, "," ) )
                 .endif
             .endif
@@ -1568,7 +1586,7 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
             asmerr( 2111, "" )
         .endif
         .if ( [ebx].token == T_STRING && [ebx].string_delim == '{' )
-            or [edi].asym.flag2,S_ISINLINE
+            ParseInline(edi, ebx, tokenarray)
         .endif
 
     .elseif ( [edi].asym.langtype == LANG_NONE )

@@ -1,4 +1,4 @@
-; _FILBUF.ASM--
+; _FILWBUF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,10 +9,12 @@ include io.inc
 
     .code
 
-    option win64:nosave
     assume rsi:LPFILE
 
-_filbuf proc uses rsi rdi fp:LPFILE
+_filwbuf proc uses rsi rdi fp:LPFILE
+
+   .new is_split_character:int_t = 0
+   .new leftover_low_order_byte:byte = 0
 
     mov rsi,rcx
     mov edi,[rsi]._flag
@@ -21,7 +23,7 @@ _filbuf proc uses rsi rdi fp:LPFILE
 
     .return .if !(edi & _IOREAD or _IOWRT or _IORW) || edi & _IOSTRG
 
-    .if edi & _IOWRT
+    .if ( edi & _IOWRT )
 
         or [rsi]._flag,_IOERR
         .return
@@ -35,14 +37,19 @@ _filbuf proc uses rsi rdi fp:LPFILE
         _getbuf(rsi)
         mov edi,[rsi]._flag
     .else
-        mov rax,[rsi]._base
-        mov [rsi]._ptr,rax
+        mov rcx,[rsi]._base
+        .if ( [rsi]._cnt == 1 )
+            mov is_split_character,1
+            mov al,[rcx]
+            mov leftover_low_order_byte,al
+        .endif
+        mov [rsi]._ptr,rcx
     .endif
 
     _read([rsi]._file, [rsi]._base, [rsi]._bufsiz)
     mov [rsi]._cnt,eax
 
-    .ifs eax < 1
+    .ifs eax < 2
         .if eax
             mov eax,_IOERR
         .else
@@ -62,23 +69,35 @@ _filbuf proc uses rsi rdi fp:LPFILE
         mov al,[rcx+rax]
         and al,FH_TEXT or FH_EOF
         .if al == FH_TEXT or FH_EOF
-
             or [rsi]._flag,_IOCTRLZ
         .endif
     .endif
 
     mov eax,[rsi]._bufsiz
-    .if eax == _MINIOBUF && edi & _IOMYBUF && !(edi & _IOSETVBUF)
-
+    .if ( eax == _MINIOBUF && edi & _IOMYBUF && !( edi & _IOSETVBUF ) )
         mov [rsi]._bufsiz,_INTIOBUF
     .endif
 
-    dec [rsi]._cnt
-    inc [rsi]._ptr
     mov rcx,[rsi]._ptr
-    movzx eax,byte ptr [rcx-1]
+    .if ( is_split_character )
+
+        ; If the character was split across buffers, we read only one byte
+        ; from the new buffer and or it with the leftover byte from the old
+        ; buffer.
+
+        movzx eax,leftover_low_order_byte
+        mov ah,[rcx]
+        dec [rsi]._cnt
+        inc [rsi]._ptr
+
+    .else
+
+        sub [rsi]._cnt,2
+        add [rsi]._ptr,2
+        movzx eax,word ptr [rcx]
+    .endif
     ret
 
-_filbuf endp
+_filwbuf endp
 
     END

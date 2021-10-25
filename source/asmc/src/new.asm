@@ -701,9 +701,9 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
     .if esi
         asmerr( 2157 )
     .endif
-    AddLineQueueX( edi )
+    AddLineQueue( edi )
     .if l2
-        AddLineQueueX( &l2 )
+        AddLineQueue( &l2 )
     .endif
     mov eax,ebx
     ret

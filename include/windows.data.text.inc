@@ -98,7 +98,7 @@ endif
 ifndef ____FIIterable_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 define ____FIIterable_1_Windows__CData__CText__CTextSegment_INTERFACE_DEFINED__
 
-DEFINE_IIDX(__FIIterator_1_Windows__CData__CText__CTextSegment, "5498f4f3-cee4-5b72-9729-815c4ad7b9dc")
+DEFINE_IIDX(__FIIterable_1_Windows__CData__CText__CTextSegment, "5498f4f3-cee4-5b72-9729-815c4ad7b9dc")
 
 .comdef __FIIterable_1_Windows__CData__CText__CTextSegment : public IInspectable
 

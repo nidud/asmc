@@ -417,8 +417,13 @@ GenerateCString proc uses esi edi ebx i, tokenarray:ptr asm_tok
     mov edi,LineStoreCurr
     add edi,line_item.line
     strcpy(b_line, edi)
-    mov B[edi],';'
-    mov equal,strcmp(eax, [esi].asm_tok.tokpos)
+    .if ( Parse_Pass == PASS_1 )
+        mov B[edi],';'
+        strcmp(eax, [esi].asm_tok.tokpos)
+    .else
+        xor eax,eax
+    .endif
+    mov equal,eax
     mov al,ModuleInfo.line_flags
     mov lineflags,al
 

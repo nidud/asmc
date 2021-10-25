@@ -173,8 +173,12 @@ _setmode	equ <_setmode_nolock>
 _read		equ <_read_nolock>
 _write		equ <_write_nolock>
 _lseeki64	equ <_lseeki64_nolock>
+else
+_setmode	proto __cdecl :int_t, :int_t
 endif
 endif ;; _NOT_CRTL_BUILD_
+else
+_setmode	proto __cdecl :int_t, :int_t
 endif ;; _CRTBLD
 
 _get_osfhandle	proto __cdecl :int_t

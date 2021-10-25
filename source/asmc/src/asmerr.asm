@@ -545,7 +545,7 @@ asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
 
             xor ecx,ecx
             lea eax,[ebx-1000]
-            .while eax > 1000
+            .while eax >= 1000
 
                 add ecx,1
                 sub eax,1000

@@ -90,7 +90,7 @@ DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
     GetMarshalSizeMax	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
     MarshalInterface	proc :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
     UnmarshalInterface	proc :ptr, :REFIID, :ptr
-    ReleaseMarshalData	proc :ptr
+    ReleaseMarshalData proc :ptr
     DisconnectObject	proc :DWORD
     .ends
     LPMARSHAL		typedef ptr IMarshal

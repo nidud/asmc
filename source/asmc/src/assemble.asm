@@ -804,7 +804,7 @@ OnePass proc private uses esi edi
 	mov LineStoreCurr,eax
 	mov esi,eax
 
-	.while	esi && !ModuleInfo.EndDirFound
+	.while esi && !ModuleInfo.EndDirFound
 
 	    set_curr_srcfile([esi].line_item.srcfile, [esi].line_item.lineno)
 
@@ -1276,10 +1276,9 @@ AssembleModule proc uses esi edi ebx source:string_t
 	.break	.if !ModuleInfo.PhaseError && eax == prev_written
 	mov prev_written,eax
 
-	mov eax,Parse_Pass
-	.if eax >= 199
+	.if Parse_Pass >= 199
 
-	    asmerr( 3000, eax )
+	    asmerr( 3000, 200 )
 	.endif
 
 	.if Options.line_numbers

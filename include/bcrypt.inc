@@ -5,6 +5,8 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
+.pragma comment(lib, bcrypt)
+
 ifndef _NTDEF_
 NTSTATUS	typedef LONG
 PNTSTATUS	typedef ptr NTSTATUS

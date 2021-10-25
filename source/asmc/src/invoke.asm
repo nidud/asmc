@@ -18,6 +18,7 @@ include atofloat.inc
 include regno.inc
 include types.inc
 include Indirection.inc
+include fastpass.inc
 
 QueueTestLines proto :string_t
 ExpandHllProc  proto :string_t, :int_t, :ptr asm_tok
@@ -1445,14 +1446,12 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         imul ebx,namepos,asm_tok
         add ebx,tokenarray
         mov ecx,[esi].target_type
-        .if ( [esi].state == SYM_EXTERNAL && \
-                ecx && [ecx].asym.state == SYM_MACRO )
+        .if ( [esi].state == SYM_EXTERNAL &&
+              ecx && [ecx].asym.state == SYM_MACRO )
 
-            mov pmacro,ecx
-            .if ( [ecx].asym.altname == NULL )
-                mov pmacro,NULL
-            .else
-                mov eax,[ecx].asym.altname
+            mov eax,[ecx].asym.altname
+            .if ( eax )
+                mov pmacro,ecx
                 mov [eax],ecx
                 strcpy( &buffer, [ecx].asym.name )
             .endif
@@ -1520,8 +1519,6 @@ InvokeDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
     .endif
-
-    ;; get the number of parameters
 
     mov edx,info
     .for ( ecx = [edx].proc_info.paralist, numParam = 0 : ecx : \

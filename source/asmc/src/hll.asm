@@ -1147,7 +1147,7 @@ GetParamId endp
 
 GetMacroReturn proc private uses esi ebx i:int_t, tokenarray:ptr asm_tok
 
-  local mac_name[128]:char_t
+  local mac_name[512]:char_t
   local opnd:expr
 
     ;

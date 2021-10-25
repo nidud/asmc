@@ -141,6 +141,9 @@ tvsprintf proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
                .endc
 
             .case 's'
+                .if ( ecx == NULL )
+                    lea ecx,@CStr("(null)")
+                .endif
                 mov edx,edi
                 .repeat
                     mov al,[ecx]

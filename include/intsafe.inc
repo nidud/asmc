@@ -100,7 +100,7 @@ C_ASSERT macro e
     endm
 else
 C_ASSERT macro e
-    exitm<1>
+    exitm<>
     endm
 endif
 

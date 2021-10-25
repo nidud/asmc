@@ -136,12 +136,15 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
   local regz:int_t
   local dst:string_t
   local src:string_t
+  local tok:token_t
   local buffer[16]:char_t
   local isfloat:byte
+  local isptr:byte
 
     mov ebx,op1
     mov edi,op2
     mov isfloat,0
+    mov isptr,0
 
     .if ( !( ebx & OP_M_ANY ) || !( edi & OP_M_ANY ) || ModuleInfo.strict_masm_compat == 1 )
 
@@ -156,14 +159,34 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
         mov regz,8
     .endif
 
-    mov size,SizeFromExpression(opnd)
+    mov ecx,tokenarray
+    add ecx,16
+    mov dst,[ecx].asm_tok.tokpos
+    .for ( edx = ecx : [edx].asm_tok.token != T_FINAL : edx += 16 )
+        .if ( [edx].asm_tok.tokval == ecx )
+            .return asmerr( 2070 )
+        .endif
+        .break .if ( [edx].asm_tok.token == T_COMMA )
+    .endf
+    .if ( [edx].asm_tok.token != T_COMMA )
+        .return asmerr( 2070 )
+    .endif
+    mov src,[edx].asm_tok.tokpos
+    mov tok,edx
+    .if ( [edx+16].asm_tok.token == '&' )
+        inc isptr
+    .endif
+
     mov esi,opnd
-    .if SizeFromExpression( &[esi+expr] )
-        .if eax < size
-            mov size,eax
-            ;; added v2.31.50
-        .elseif size == 0 && [esi].expr.mem_type == MT_EMPTY
-            mov size,eax
+    mov size,SizeFromExpression(esi)
+    .if  ( !isptr )
+        .if SizeFromExpression( &[esi+expr] )
+            .if eax < size
+                mov size,eax
+                ;; added v2.31.50
+            .elseif size == 0 && [esi].expr.mem_type == MT_EMPTY
+                mov size,eax
+            .endif
         .endif
     .endif
 
@@ -206,26 +229,13 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:token_t, opnd:ptr
         mov esi,edi
     .endif
 
-    mov ebx,tokenarray
-    add ebx,16
-    mov dst,[ebx].asm_tok.tokpos
-
-    .for ( edx = ebx : [edx].asm_tok.token != T_FINAL : edx += 16 )
-        .if ( [edx].asm_tok.tokval == ecx )
-            .return asmerr( 2070 )
-        .endif
-        .break .if ( [edx].asm_tok.token == T_COMMA )
-    .endf
-    .if ( [edx].asm_tok.token != T_COMMA )
-        .return asmerr( 2070 )
-    .endif
-
-    mov src,[edx].asm_tok.tokpos
+    mov eax,src
     mov bl,[eax]
     mov byte ptr [eax],0
     inc eax
+    mov edx,tok
 
-    .if [edx+16].asm_tok.token == '&'
+    .if ( [edx+16].asm_tok.token == '&' )
 
         mov edi,ecx
         AddLineQueueX( " lea %r, %s", ecx, [edx+32].asm_tok.tokpos )

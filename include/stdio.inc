@@ -34,6 +34,8 @@ _IOFLRTN	equ 0x1000
 _IOCTRLZ	equ 0x2000
 _IOCOMMIT	equ 0x4000
 
+EOF		equ (-1)
+
 ifndef _FILE_DEFINED
 define _FILE_DEFINED
 _iobuf		STRUC SIZE_T
@@ -74,6 +76,7 @@ _iob		equ <[__iob_func()]>
 stdout		equ <[__iob_func()+sizeof(_iobuf)]>
 stderr		equ <[__iob_func()+sizeof(_iobuf)*2]>
 endif
+stdin		equ <_iob>
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID
 sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG
@@ -82,6 +85,7 @@ printf		proto _CDecl :LPSTR, :VARARG
 fprintf		proto _CDecl :LPFILE, :LPSTR, :VARARG
 scanf		proto _CDecl :LPSTR, :VARARG
 puts		proto __cdecl :LPSTR
+getc		proto __cdecl :LPSTR
 fopen		proto __cdecl :LPSTR, :LPSTR
 fopen_s		proto __cdecl :ptr ptr FILE, :LPSTR, :LPSTR
 fclose		proto __cdecl :LPFILE
@@ -164,6 +168,7 @@ _vsnwprintf	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID
 vswprintf	proto __cdecl :ptr wchar_t, :ptr wchar_t, :PVOID
 fwscanf		proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
 swscanf		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+swscanf_s	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
 wscanf		proto _CDecl :ptr wchar_t, :VARARG
 _wfdopen	proto __cdecl :SINT, :ptr wchar_t
 _wfopen		proto __cdecl :ptr wchar_t, :ptr wchar_t

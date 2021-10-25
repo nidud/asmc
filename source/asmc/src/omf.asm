@@ -115,8 +115,11 @@ SymDebParm dbg_section \
 
 
 SymDebSeg dsym_t DBGS_MAX dup(0)
+endif
 
     .code
+
+ifndef __ASMC64__
 
     assume ecx:ptr omf_rec
 

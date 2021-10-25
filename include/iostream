@@ -136,7 +136,7 @@ define endl <"\n">
      align size_t
 ifdef _UNICODE
      cstream wostream { 0 }
-     cout ptr wostream cstream
+     wcout ptr wostream cstream
 else
      cstream ostream { 0 }
      cout ptr ostream cstream

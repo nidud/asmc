@@ -16,8 +16,6 @@ include objidl.inc
 include spellcheck.inc
 include tchar.inc
 
-define nullptr 0
-
 include util.inc
 include spellprint.inc
 include commands.inc

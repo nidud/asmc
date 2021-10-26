@@ -214,6 +214,11 @@ option casemap:none
 size_t typedef SIZE_T
 assert_exit proto
 
+bool	typedef sdword
+define	true	1
+define	false	0
+define	nullptr 0
+
 ifndef _CALLBACK_DEFINED
 define _CALLBACK_DEFINED
 CALLBACKC macro id, arguments:VARARG

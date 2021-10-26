@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DPITutorial", "DPITutorial.vcxproj", "{2ECBAC03-7D79-4D31-AB04-EA7B1D07DDDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2ECBAC03-7D79-4D31-AB04-EA7B1D07DDDB}.Debug|x64.ActiveCfg = Debug|x64
+		{2ECBAC03-7D79-4D31-AB04-EA7B1D07DDDB}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06392426-4B01-495C-9CCA-A33373CFEFF6}
+	EndGlobalSection
+EndGlobal

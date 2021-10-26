@@ -426,19 +426,15 @@ else
 StringCchCat equ <StringCchCatA>
 endif
 StringCchCatA proto fastcall pszDest:STRSAFE_LPSTR, cchDest:size_t, pszSrc:STRSAFE_LPCSTR {
-    .new cchDestLength:size_t
-    .if (SUCCEEDED(StringValidateDestAndLengthA(pszDest, cchDest, &cchDestLength, STRSAFE_MAX_CCH)))
-        add pszDest,cchDestLength
-        sub cchDest,cchDestLength
-        StringCopyWorkerA(pszDest, cchDest, NULL, pszSrc, STRSAFE_MAX_LENGTH)
+    mov r9,pszSrc
+    .if (SUCCEEDED(StringValidateDestAndLengthA(pszDest, cchDest, 0, STRSAFE_MAX_CCH)))
+        StringCopyWorkerA(pszDest, cchDest, NULL, r9, STRSAFE_MAX_LENGTH)
     .endif
     }
 StringCchCatW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszSrc:STRSAFE_LPCWSTR {
-    .new cchDestLength:size_t
-    .if (SUCCEEDED(StringValidateDestAndLengthW(pszDest, cchDest, &cchDestLength, STRSAFE_MAX_CCH)))
-        add pszDest,cchDestLength
-        sub cchDest,cchDestLength
-        StringCopyWorkerW(pszDest, cchDest, NULL, pszSrc, STRSAFE_MAX_LENGTH)
+    mov r9,pszSrc
+    .if (SUCCEEDED(StringValidateDestAndLengthW(pszDest, cchDest, 0, STRSAFE_MAX_CCH)))
+        StringCopyWorkerW(pszDest, cchDest, NULL, r9, STRSAFE_MAX_LENGTH)
     .endif
     }
 endif
@@ -871,46 +867,36 @@ endif ; STRSAFE_LIB
 if defined(STRSAFE_LIB_IMPL) OR NOT defined(STRSAFE_LIB)
 
 StringLengthWorkerA proto fastcall psz:STRSAFE_PCNZCH, cchMax:size_t, pcchLength:ptr size_t {
-    mov r9,cchMax
-    .while (cchMax && (byte ptr [psz] != 0))
+    xor eax,eax
+    mov r10,cchMax
+    .while ( cchMax && ( al != [psz] ) )
         inc psz
         dec cchMax
     .endw
-    xor eax,eax
-    .if (!cchMax)
-        ; the string is longer than cchMax
+    .if !cchMax
+        mov r10,cchMax
         mov eax,STRSAFE_E_INVALID_PARAMETER
     .endif
-    .if (pcchLength)
-        .if (SUCCEEDED(eax))
-            sub r9,cchMax
-            mov [pcchLength],r9
-        .else
-            xor r9d,r9d
-            mov [pcchLength],r9
-        .endif
+    sub r10,cchMax
+    .if pcchLength
+        mov [pcchLength],r10
     .endif
     }
 
-StringLengthWorkerW proto fastcall psz: STRSAFE_PCNZWCH, cchMax: size_t, pcchLength: ptr size_t {
-    mov r9,cchMax
-    .while (cchMax && (word ptr [psz] != 0))
+StringLengthWorkerW proto fastcall psz:STRSAFE_PCNZWCH, cchMax:size_t, pcchLength:ptr size_t {
+    xor eax,eax
+    mov r10,cchMax
+    .while ( cchMax && ( ax != [psz] ) )
         add psz,2
         dec cchMax
     .endw
-    xor eax,eax
-    .if (!cchMax)
-        ; the string is longer than cchMax
+    .if !cchMax
+        mov r10,cchMax
         mov eax,STRSAFE_E_INVALID_PARAMETER
     .endif
-    .if (r8)
-        .if (SUCCEEDED(eax))
-            sub r9,cchMax
-            mov [pcchLength],r9
-        .else
-            xor r9d,r9d
-            mov [pcchLength],r9
-        .endif
+    sub r10,cchMax
+    .if pcchLength
+        mov [pcchLength],r10
     .endif
     }
 
@@ -966,24 +952,28 @@ StringExValidateSrcW proto fastcall ppszSrc:ptr STRSAFE_PCNZWCH, pcchToRead:ptr 
     }
 
 StringValidateDest proto fastcall pszDest:STRSAFE_PCNZCH, cchDest:size_t, cchMax:abs {
-    mov eax,S_OK
-    .if ((cchDest == 0) || (cchDest > cchMax))
-        mov eax,STRSAFE_E_INVALID_PARAMETER
+    xor eax,eax
+    .if rax == pszDest || cchDest > cchMax
+        or eax,STRSAFE_E_INVALID_PARAMETER
     .endif
     }
 
-StringValidateDestAndLengthA proto fastcall pszDest:STRSAFE_LPCSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:size_t {
-    .if (SUCCEEDED(StringValidateDestA(pszDest, cchDest, cchMax)))
-        StringLengthWorkerA(pszDest, cchDest, pcchDestLength)
+StringValidateDestAndLengthA proto fastcall pszDest:STRSAFE_LPCSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:abs {
+    xor eax,eax
+    .if rax == pszDest || cchDest > cchMax
+        mov [pcchDestLength],rax
+        or eax,STRSAFE_E_INVALID_PARAMETER
     .else
-        mov size_t ptr [pcchDestLength],0
+        StringLengthWorkerA(pszDest, cchDest, pcchDestLength)
     .endif
     }
-StringValidateDestAndLengthW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:size_t {
-    .if (SUCCEEDED(StringValidateDestW(pszDest, cchDest, cchMax)))
-        StringLengthWorkerW(pszDest, cchDest, pcchDestLength)
+StringValidateDestAndLengthW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchDestLength:ptr size_t, cchMax:abs {
+    xor eax,eax
+    .if rax == pszDest || cchDest > cchMax
+        mov [pcchDestLength],rax
+        or eax,STRSAFE_E_INVALID_PARAMETER
     .else
-        mov size_t ptr [pcchDestLength],0
+        StringLengthWorkerW(pszDest, cchDest, pcchDestLength)
     .endif
     }
 
@@ -1010,23 +1000,26 @@ StringCopyWorkerA proto fastcall pszDest:STRSAFE_LPSTR, cchDest:size_t, pcchNewD
         mov [pcchNewDestLength],r10
     .endif
     }
-StringCopyWorkerW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchNewDestLength:ptr size_t, pszSrc:STRSAFE_PCNZWCH, cchToCopy:size_t {
+
+StringCopyWorkerW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t,
+        pcchNewDestLength:ptr size_t, pszSrc:STRSAFE_PCNZWCH, cchToCopy:size_t {
+    xor eax,eax
+    xchg rdi,pszDest
+    xchg rsi,pszSrc
     xor r10d,r10d
     mov r11,cchToCopy
-    .while (cchDest && r11 && (word ptr [pszSrc] != 0))
-        mov ax,[pszSrc]
-        mov [pszDest],ax
-        add pszSrc,2
-        add pszDest,2
+    .while (cchDest && r11 && ([rsi] != ax))
+        movsw
         dec cchDest
         dec r11
         inc r10
     .endw
-    mov eax,S_OK
-    .if (cchDest == 0)
+    xchg rdi,pszDest
+    xchg rsi,pszSrc
+    .if rax == cchDest
         sub pszDest,2
         dec r10
-        mov eax,STRSAFE_E_INSUFFICIENT_BUFFER
+        or eax,STRSAFE_E_INSUFFICIENT_BUFFER
     .endif
     mov word ptr [pszDest],0
     .if ( pcchNewDestLength )

@@ -11,11 +11,6 @@ include UIAutomation.inc
 
 include Provider.inc
 
-bool typedef LONG
-
-define false 0
-define true  1
-
 .class CustomButton
 
     m_buttonOn bool ?

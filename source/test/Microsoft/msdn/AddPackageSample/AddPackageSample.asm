@@ -13,8 +13,6 @@ include iostream
 include windows.management.deployment.inc
 include tchar.inc
 
-define nullptr 0
-
 option dllimport:none
 
 .comdef ProgressHandler : public IUnknown

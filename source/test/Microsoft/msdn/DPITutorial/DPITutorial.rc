@@ -1,0 +1,44 @@
+#include "resource.h"
+
+LANGUAGE 9, 1
+
+IDI_DPITUTORIAL  ICON  "res\\DPITUTORIAL.ico"
+IDI_SMALL        ICON  "res\\small.ico"
+
+IDB_BITMAP100  BITMAP  DISCARDABLE  "res\\scaled100.bmp"
+IDB_BITMAP125  BITMAP  DISCARDABLE  "res\\scaled125.bmp"
+IDB_BITMAP150  BITMAP  DISCARDABLE  "res\\scaled150.bmp"
+IDB_BITMAP200  BITMAP  DISCARDABLE  "res\\scaled200.bmp"
+
+IDC_DPITUTORIAL MENU
+
+BEGIN
+    POPUP "&Options"
+    BEGIN
+        MENUITEM  "Increase Font Size (+)"   IDM_FONT_INCREASE
+        MENUITEM  "Decrease Font Size (-)"   IDM_FONT_DECREASE
+        MENUITEM  SEPARATOR
+        MENUITEM  "Rescale on &DPICHANGED"   IDM_RESCALE_ON_DPICHANGED
+        MENUITEM  SEPARATOR
+        MENUITEM  "E&xit"                    IDM_EXIT
+    END
+END
+
+IDC_DPITUTORIAL ACCELERATORS
+BEGIN
+    "R",  IDM_RESCALE_NOW,            ASCII
+    "r",  IDM_RESCALE_NOW,            ASCII
+    "D",  IDM_RESCALE_ON_DPICHANGED,  ASCII
+    "d",  IDM_RESCALE_ON_DPICHANGED,  ASCII
+    "+",  IDM_FONT_INCREASE,          ASCII
+    "=",  IDM_FONT_INCREASE,          ASCII
+    "-",  IDM_FONT_DECREASE,          ASCII
+    "X",  IDM_EXIT,                   ASCII
+    "x",  IDM_EXIT,                   ASCII
+END
+
+STRINGTABLE
+BEGIN
+   IDC_DPITUTORIAL  "DPITUTORIAL"
+   IDS_APP_TITLE    "DPI Awareness Tutorial"
+END

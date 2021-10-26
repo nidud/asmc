@@ -150,6 +150,7 @@ setupapi
 sfc
 shell32
 shfolder
+shcore
 shlwapi
 snmpapi
 spoolss

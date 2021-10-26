@@ -28,65 +28,72 @@ define __APPXPACKAGING_LIBRARY_DEFINED__
 
 APPX_PACKAGE_SETTINGS	STRUC
 forceZip32		BOOL ?
-hashMethod		PVOID ? ; *IUri
+hashMethod		ptr IUri ?
 APPX_PACKAGE_SETTINGS	ENDS
 
-APPX_COMPRESSION_OPTION typedef SDWORD
-APPX_COMPRESSION_OPTION_NONE equ 0
-APPX_COMPRESSION_OPTION_NORMAL equ 1
-APPX_COMPRESSION_OPTION_MAXIMUM equ 2
-APPX_COMPRESSION_OPTION_FAST equ 3
-APPX_COMPRESSION_OPTION_SUPERFAST equ 4
+.enum APPX_COMPRESSION_OPTION {
+    APPX_COMPRESSION_OPTION_NONE	= 0,
+    APPX_COMPRESSION_OPTION_NORMAL	= 1,
+    APPX_COMPRESSION_OPTION_MAXIMUM	= 2,
+    APPX_COMPRESSION_OPTION_FAST	= 3,
+    APPX_COMPRESSION_OPTION_SUPERFAST	= 4
+    }
 
-APPX_FOOTPRINT_FILE_TYPE typedef SDWORD
-APPX_FOOTPRINT_FILE_TYPE_MANIFEST equ 0
-APPX_FOOTPRINT_FILE_TYPE_BLOCKMAP equ 1
-APPX_FOOTPRINT_FILE_TYPE_SIGNATURE equ 2
-APPX_FOOTPRINT_FILE_TYPE_CODEINTEGRITY equ 3
+.enum APPX_FOOTPRINT_FILE_TYPE {
+    APPX_FOOTPRINT_FILE_TYPE_MANIFEST	= 0,
+    APPX_FOOTPRINT_FILE_TYPE_BLOCKMAP	= 1,
+    APPX_FOOTPRINT_FILE_TYPE_SIGNATURE	= 2,
+    APPX_FOOTPRINT_FILE_TYPE_CODEINTEGRITY = 3
+    }
 
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE typedef SDWORD
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE_FIRST equ 0
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE_MANIFEST equ 0
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE_BLOCKMAP equ 1
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE_SIGNATURE equ 2
-APPX_BUNDLE_FOOTPRINT_FILE_TYPE_LAST equ 2
+.enum APPX_BUNDLE_FOOTPRINT_FILE_TYPE {
+    APPX_BUNDLE_FOOTPRINT_FILE_TYPE_FIRST = 0,
+    APPX_BUNDLE_FOOTPRINT_FILE_TYPE_MANIFEST	= 0,
+    APPX_BUNDLE_FOOTPRINT_FILE_TYPE_BLOCKMAP	= 1,
+    APPX_BUNDLE_FOOTPRINT_FILE_TYPE_SIGNATURE	= 2,
+    APPX_BUNDLE_FOOTPRINT_FILE_TYPE_LAST	= 2
+    }
 
-APPX_PACKAGE_ARCHITECTURE typedef SDWORD
-APPX_PACKAGE_ARCHITECTURE_X86 equ 0
-APPX_PACKAGE_ARCHITECTURE_ARM equ 5
-APPX_PACKAGE_ARCHITECTURE_X64 equ 9
-APPX_PACKAGE_ARCHITECTURE_NEUTRAL equ 11
+.enum APPX_PACKAGE_ARCHITECTURE {
+    APPX_PACKAGE_ARCHITECTURE_X86	= 0,
+    APPX_PACKAGE_ARCHITECTURE_ARM	= 5,
+    APPX_PACKAGE_ARCHITECTURE_X64	= 9,
+    APPX_PACKAGE_ARCHITECTURE_NEUTRAL	= 11
+    }
 
-APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE typedef SDWORD
-APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE_APPLICATION equ 0
-APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE_RESOURCE equ 1
+.enum APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE {
+    APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE_APPLICATION = 0,
+    APPX_BUNDLE_PAYLOAD_PACKAGE_TYPE_RESOURCE	 = 1
+    }
 
-APPX_CAPABILITIES	typedef SDWORD
-APPX_CAPABILITY_INTERNET_CLIENT equ 0x1
-APPX_CAPABILITY_INTERNET_CLIENT_SERVER equ 0x2
-APPX_CAPABILITY_PRIVATE_NETWORK_CLIENT_SERVER equ 0x4
-APPX_CAPABILITY_DOCUMENTS_LIBRARY equ 0x8
-APPX_CAPABILITY_PICTURES_LIBRARY equ 0x10
-APPX_CAPABILITY_VIDEOS_LIBRARY equ 0x20
-APPX_CAPABILITY_MUSIC_LIBRARY equ 0x40
-APPX_CAPABILITY_ENTERPRISE_AUTHENTICATION equ 0x80
-APPX_CAPABILITY_SHARED_USER_CERTIFICATES equ 0x100
-APPX_CAPABILITY_REMOVABLE_STORAGE equ 0x200
-APPX_CAPABILITY_APPOINTMENTS equ 0x400
-APPX_CAPABILITY_CONTACTS equ 0x800
+.enum APPX_CAPABILITIES {
+    APPX_CAPABILITY_INTERNET_CLIENT		= 0x1,
+    APPX_CAPABILITY_INTERNET_CLIENT_SERVER	= 0x2,
+    APPX_CAPABILITY_PRIVATE_NETWORK_CLIENT_SERVER = 0x4,
+    APPX_CAPABILITY_DOCUMENTS_LIBRARY		= 0x8,
+    APPX_CAPABILITY_PICTURES_LIBRARY		= 0x10,
+    APPX_CAPABILITY_VIDEOS_LIBRARY		= 0x20,
+    APPX_CAPABILITY_MUSIC_LIBRARY		= 0x40,
+    APPX_CAPABILITY_ENTERPRISE_AUTHENTICATION	= 0x80,
+    APPX_CAPABILITY_SHARED_USER_CERTIFICATES	= 0x100,
+    APPX_CAPABILITY_REMOVABLE_STORAGE		= 0x200,
+    APPX_CAPABILITY_APPOINTMENTS		= 0x400,
+    APPX_CAPABILITY_CONTACTS			= 0x800
+    }
 
-DX_FEATURE_LEVEL	typedef SDWORD
-DX_FEATURE_LEVEL_UNSPECIFIED equ 0
-DX_FEATURE_LEVEL_9	equ 1
-DX_FEATURE_LEVEL_10	equ 2
-DX_FEATURE_LEVEL_11	equ 3
+.enum DX_FEATURE_LEVEL {
+    DX_FEATURE_LEVEL_UNSPECIFIED = 0,
+    DX_FEATURE_LEVEL_9	= 1,
+    DX_FEATURE_LEVEL_10 = 2,
+    DX_FEATURE_LEVEL_11 = 3
+    }
 
 externdef LIBID_APPXPACKAGING:IID
 
 ifndef __IAppxPackageWriter_INTERFACE_DEFINED__
 define __IAppxPackageWriter_INTERFACE_DEFINED__
 
-externdef IID_IAppxPackageWriter:IID
+DEFINE_IIDX(IAppxPackageWriter, "9099e33b-246f-41e4-881a-008eb613f858")
 
 .comdef IAppxPackageWriter : public IUnknown
 
@@ -99,7 +106,7 @@ endif
 ifndef __IAppxPackageReader_INTERFACE_DEFINED__
 define __IAppxPackageReader_INTERFACE_DEFINED__
 
-externdef IID_IAppxPackageReader:IID
+DEFINE_IIDX(IAppxPackageReader, "b5c49650-99bc-481c-9a34-3d53a4106708")
 
 .comdef IAppxPackageReader : public IUnknown
 
@@ -115,7 +122,7 @@ endif
 ifndef __IAppxFile_INTERFACE_DEFINED__
 define __IAppxFile_INTERFACE_DEFINED__
 
-externdef IID_IAppxFile:IID
+DEFINE_IIDX(IAppxFile, "91df827b-94fd-468f-827b-57f41b2f6f2e")
 
 .comdef IAppxFile : public IUnknown
 
@@ -131,7 +138,7 @@ endif
 ifndef __IAppxFilesEnumerator_INTERFACE_DEFINED__
 define __IAppxFilesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxFilesEnumerator:IID
+DEFINE_IIDX(IAppxFilesEnumerator, "f007eeaf-9831-411c-9847-917cdc62d1fe")
 
 .comdef IAppxFilesEnumerator : public IUnknown
 
@@ -145,7 +152,7 @@ endif
 ifndef __IAppxBlockMapReader_INTERFACE_DEFINED__
 define __IAppxBlockMapReader_INTERFACE_DEFINED__
 
-externdef IID_IAppxBlockMapReader:IID
+DEFINE_IIDX(IAppxBlockMapReader, "5efec991-bca3-42d1-9ec2-e92d609ec22a")
 
 .comdef IAppxBlockMapReader : public IUnknown
 
@@ -160,7 +167,7 @@ endif
 ifndef __IAppxBlockMapFile_INTERFACE_DEFINED__
 define __IAppxBlockMapFile_INTERFACE_DEFINED__
 
-externdef IID_IAppxBlockMapFile:IID
+DEFINE_IIDX(IAppxBlockMapFile, "277672ac-4f63-42c1-8abc-beae3600eb59")
 
 .comdef IAppxBlockMapFile : public IUnknown
 
@@ -176,7 +183,7 @@ endif
 ifndef __IAppxBlockMapFilesEnumerator_INTERFACE_DEFINED__
 define __IAppxBlockMapFilesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxBlockMapFilesEnumerator:IID
+DEFINE_IIDX(IAppxBlockMapFilesEnumerator, "02b856a2-4262-4070-bacb-1a8cbbc42305")
 
 .comdef IAppxBlockMapFilesEnumerator : public IUnknown
 
@@ -190,7 +197,7 @@ endif
 ifndef __IAppxBlockMapBlock_INTERFACE_DEFINED__
 define __IAppxBlockMapBlock_INTERFACE_DEFINED__
 
-externdef IID_IAppxBlockMapBlock:IID
+DEFINE_IIDX(IAppxBlockMapBlock, "75cf3930-3244-4fe0-a8c8-e0bcb270b889")
 
 .comdef IAppxBlockMapBlock : public IUnknown
 
@@ -203,7 +210,7 @@ endif
 ifndef __IAppxBlockMapBlocksEnumerator_INTERFACE_DEFINED__
 define __IAppxBlockMapBlocksEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxBlockMapBlocksEnumerator:IID
+DEFINE_IIDX(IAppxBlockMapBlocksEnumerator, "6b429b5b-36ef-479e-b9eb-0c1482b49e16")
 
 .comdef IAppxBlockMapBlocksEnumerator : public IUnknown
 
@@ -217,7 +224,7 @@ endif
 ifndef __IAppxManifestReader_INTERFACE_DEFINED__
 define __IAppxManifestReader_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestReader:IID
+DEFINE_IIDX(IAppxManifestReader, "4e1bd148-55a0-4480-a3d1-15544710637c")
 
 .comdef IAppxManifestReader : public IUnknown
 
@@ -237,7 +244,7 @@ endif
 ifndef __IAppxManifestPackageId_INTERFACE_DEFINED__
 define __IAppxManifestPackageId_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestPackageId:IID
+DEFINE_IIDX(IAppxManifestPackageId, "283ce2d7-7153-4a91-9649-7a0f7240945f")
 
 .comdef IAppxManifestPackageId : public IUnknown
 
@@ -256,7 +263,7 @@ endif
 ifndef __IAppxManifestProperties_INTERFACE_DEFINED__
 define __IAppxManifestProperties_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestProperties:IID
+DEFINE_IIDX(IAppxManifestProperties, "03faf64d-f26f-4b2c-aaf7-8fe7789b8bca")
 
 .comdef IAppxManifestProperties : public IUnknown
 
@@ -269,7 +276,7 @@ endif
 ifndef __IAppxManifestPackageDependency_INTERFACE_DEFINED__
 define __IAppxManifestPackageDependency_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestPackageDependency:IID
+DEFINE_IIDX(IAppxManifestPackageDependency, "e4946b59-733e-43f0-a724-3bde4c1285a0")
 
 .comdef IAppxManifestPackageDependency : public IUnknown
 
@@ -283,7 +290,7 @@ endif
 ifndef __IAppxManifestPackageDependenciesEnumerator_INTERFACE_DEFINED__
 define __IAppxManifestPackageDependenciesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestPackageDependenciesEnumerator:IID
+DEFINE_IIDX(IAppxManifestPackageDependenciesEnumerator, "b43bbcf9-65a6-42dd-bac0-8c6741e7f5a4")
 
 .comdef IAppxManifestPackageDependenciesEnumerator : public IUnknown
 
@@ -297,7 +304,7 @@ endif
 ifndef __IAppxManifestResourcesEnumerator_INTERFACE_DEFINED__
 define __IAppxManifestResourcesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestResourcesEnumerator:IID
+DEFINE_IIDX(IAppxManifestResourcesEnumerator, "de4dfbbd-881a-48bb-858c-d6f2baeae6ed")
 
 .comdef IAppxManifestResourcesEnumerator : public IUnknown
 
@@ -311,7 +318,7 @@ endif
 ifndef __IAppxManifestDeviceCapabilitiesEnumerator_INTERFACE_DEFINED__
 define __IAppxManifestDeviceCapabilitiesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestDeviceCapabilitiesEnumerator:IID
+DEFINE_IIDX(IAppxManifestDeviceCapabilitiesEnumerator, "30204541-427b-4a1c-bacf-655bf463a540")
 
 .comdef IAppxManifestDeviceCapabilitiesEnumerator : public IUnknown
 
@@ -325,7 +332,7 @@ endif
 ifndef __IAppxManifestApplicationsEnumerator_INTERFACE_DEFINED__
 define __IAppxManifestApplicationsEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestApplicationsEnumerator:IID
+DEFINE_IIDX(IAppxManifestApplicationsEnumerator, "9eb8a55a-f04b-4d0d-808d-686185d4847a")
 
 .comdef IAppxManifestApplicationsEnumerator : public IUnknown
 
@@ -339,7 +346,7 @@ endif
 ifndef __IAppxManifestApplication_INTERFACE_DEFINED__
 define __IAppxManifestApplication_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestApplication:IID
+DEFINE_IIDX(IAppxManifestApplication, "5da89bf4-3773-46be-b650-7e744863b7e8")
 
 .comdef IAppxManifestApplication : public IUnknown
 
@@ -352,7 +359,7 @@ endif
 ifndef __IAppxManifestQualifiedResourcesEnumerator_INTERFACE_DEFINED__
 define __IAppxManifestQualifiedResourcesEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestQualifiedResourcesEnumerator:IID
+DEFINE_IIDX(IAppxManifestQualifiedResourcesEnumerator, "8ef6adfe-3762-4a8f-9373-2fc5d444c8d2")
 
 .comdef IAppxManifestQualifiedResourcesEnumerator : public IUnknown
 
@@ -366,7 +373,7 @@ endif
 ifndef __IAppxManifestQualifiedResource_INTERFACE_DEFINED__
 define __IAppxManifestQualifiedResource_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestQualifiedResource:IID
+DEFINE_IIDX(IAppxManifestQualifiedResource, "3b53a497-3c5c-48d1-9ea3-bb7eac8cd7d4")
 
 .comdef IAppxManifestQualifiedResource : public IUnknown
 
@@ -380,7 +387,7 @@ endif
 ifndef __IAppxBundleFactory_INTERFACE_DEFINED__
 define __IAppxBundleFactory_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleFactory:IID
+DEFINE_IIDX(IAppxBundleFactory, "BBA65864-965F-4A5F-855F-F074BDBF3A7B")
 
 .comdef IAppxBundleFactory : public IUnknown
 
@@ -394,7 +401,7 @@ endif
 ifndef __IAppxBundleWriter_INTERFACE_DEFINED__
 define __IAppxBundleWriter_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleWriter:IID
+DEFINE_IIDX(IAppxBundleWriter, "EC446FE8-BFEC-4C64-AB4F-49F038F0C6D2")
 
 .comdef IAppxBundleWriter : public IUnknown
 
@@ -407,7 +414,7 @@ endif
 ifndef __IAppxBundleReader_INTERFACE_DEFINED__
 define __IAppxBundleReader_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleReader:IID
+DEFINE_IIDX(IAppxBundleReader, "DD75B8C0-BA76-43B0-AE0F-68656A1DC5C8")
 
 .comdef IAppxBundleReader : public IUnknown
 
@@ -423,7 +430,7 @@ endif
 ifndef __IAppxBundleManifestReader_INTERFACE_DEFINED__
 define __IAppxBundleManifestReader_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleManifestReader:IID
+DEFINE_IIDX(IAppxBundleManifestReader, "CF0EBBC1-CC99-4106-91EB-E67462E04FB0")
 
 .comdef IAppxBundleManifestReader : public IUnknown
 
@@ -437,7 +444,7 @@ endif
 ifndef __IAppxBundleManifestPackageInfoEnumerator_INTERFACE_DEFINED__
 define __IAppxBundleManifestPackageInfoEnumerator_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleManifestPackageInfoEnumerator:IID
+DEFINE_IIDX(IAppxBundleManifestPackageInfoEnumerator, "F9B856EE-49A6-4E19-B2B0-6A2406D63A32")
 
 .comdef IAppxBundleManifestPackageInfoEnumerator : public IUnknown
 
@@ -451,7 +458,7 @@ endif
 ifndef __IAppxBundleManifestPackageInfo_INTERFACE_DEFINED__
 define __IAppxBundleManifestPackageInfo_INTERFACE_DEFINED__
 
-externdef IID_IAppxBundleManifestPackageInfo:IID
+DEFINE_IIDX(IAppxBundleManifestPackageInfo, "54CD06C1-268F-40BB-8ED2-757A9EBAEC8D")
 
 .comdef IAppxBundleManifestPackageInfo : public IUnknown
 
@@ -468,7 +475,7 @@ endif
 ifndef __IAppxFactory_INTERFACE_DEFINED__
 define __IAppxFactory_INTERFACE_DEFINED__
 
-externdef IID_IAppxFactory:IID
+DEFINE_IIDX(IAppxFactory, "beb94909-e451-438b-b5a7-d79e767b75d8")
 
 .comdef IAppxFactory : public IUnknown
 
@@ -481,13 +488,12 @@ externdef IID_IAppxFactory:IID
 
 endif
 
-externdef CLSID_AppxFactory:CLSID
 DEFINE_GUID(CLSID_AppxFactory, 0x5842a140, 0xff9f, 0x4166, 0x8f, 0x5c, 0x62, 0xf5, 0xb7, 0xb0, 0xc7, 0x81)
 
 ifndef __IAppxManifestReader2_INTERFACE_DEFINED__
 define __IAppxManifestReader2_INTERFACE_DEFINED__
 
-externdef IID_IAppxManifestReader2:IID
+DEFINE_IIDX(IAppxManifestReader2, "d06f67bc-b31d-4eba-a8af-638e73e77b4d")
 
 .comdef IAppxManifestReader2 : public IUnknown
 
@@ -505,13 +511,10 @@ externdef IID_IAppxManifestReader2:IID
 
 endif
 
-externdef CLSID_AppxBundleFactory:CLSID
-
 DEFINE_GUID(CLSID_AppxBundleFactory, 0x378E0446, 0x5384, 0x43B7, 0x88, 0x77, 0xE7, 0xDB, 0xDD, 0x88, 0x34, 0x46)
-endif ;; __APPXPACKAGING_LIBRARY_DEFINED__
 
+endif ;; __APPXPACKAGING_LIBRARY_DEFINED__
 endif ;; (NTDDI GE NTDDI_WIN7)
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
 endif
 .pragma list(pop)

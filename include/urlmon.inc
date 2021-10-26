@@ -12,6 +12,8 @@ include oleidl.inc
 include servprov.inc
 include msxml.inc
 
+.pragma comment(lib, urlmon)
+
 MIDL_user_allocate	proto WINAPI :size_t
 MIDL_user_free		proto WINAPI :PVOID
 
@@ -19,6 +21,7 @@ BINDF_DONTUSECACHE	equ <BINDF_GETNEWESTVERSION>
 BINDF_DONTPUTINCACHE	equ <BINDF_NOWRITECACHE>
 BINDF_NOCOPYDATA	equ <BINDF_PULLDATA>
 PI_DOCFILECLSIDLOOKUP	equ <PI_CLSIDOOKUP>
+
 externdef		IID_IAsyncMoniker:IID
 externdef		CLSID_StdURLMoniker:IID
 externdef		CLSID_HttpProtocol:IID

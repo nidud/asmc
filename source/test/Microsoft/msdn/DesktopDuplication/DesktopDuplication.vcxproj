@@ -9,9 +9,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>AddPackageSample</RootNamespace>
+    <RootNamespace>DesktopDuplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectGuid>{41B6FFD4-8F82-4F42-8AA6-A789D4D8E443}</ProjectGuid>
+    <ProjectGuid>{DD68A034-7C6F-455D-8888-47FF2CE0AD1D}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -41,22 +41,27 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalOptions>/LIBPATH:\Asmc\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
       <IncludePaths>\Asmc\include</IncludePaths>
-      <AdditionalOptions>-D_LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <WCharacterSet>Unicode</WCharacterSet>
+      <AdditionalOptions>-Zp8 %(AdditionalOptions)</AdditionalOptions>
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="AddPackageSample.asm" />
+    <ASMC Include="DesktopDuplication.asm" />
+    <ASMC Include="DisplayManager.asm" />
+    <ASMC Include="DuplicationManager.asm" />
+    <ASMC Include="OutputManager.asm" />
+    <ASMC Include="ThreadManager.asm" />
+    <ASMC Include="PixelShader.asm" />
+    <ASMC Include="VertexShader.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

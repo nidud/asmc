@@ -16,6 +16,79 @@ define __dxgi1_2_h__
 
 include dxgi.inc
 
+ifndef __IDXGIDisplayControl_INTERFACE_DEFINED__
+define __IDXGIDisplayControl_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDXGIDisplayControl, "ea9dbf1a-c88e-4486-854a-98aa0138f30c")
+
+.comdef IDXGIDisplayControl : public IUnknown
+
+    IsStereoEnabled	proc
+    SetStereoEnabled	proc :BOOL
+   .ends
+
+endif
+
+DXGI_OUTDUPL_MOVE_RECT	STRUC
+SourcePoint		POINT <>
+DestinationRect		RECT <>
+DXGI_OUTDUPL_MOVE_RECT	ENDS
+
+DXGI_OUTDUPL_DESC	STRUC
+ModeDesc		DXGI_MODE_DESC <>
+Rotation		DXGI_MODE_ROTATION ?
+DesktopImageInSystemMemory BOOL ?
+DXGI_OUTDUPL_DESC	ENDS
+
+DXGI_OUTDUPL_POINTER_POSITION STRUC
+Position		POINT <>
+Visible			BOOL ?
+DXGI_OUTDUPL_POINTER_POSITION ENDS
+
+.enum DXGI_OUTDUPL_POINTER_SHAPE_TYPE {
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MONOCHROME	= 0x1,
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_COLOR	= 0x2,
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MASKED_COLOR = 0x4
+    }
+
+DXGI_OUTDUPL_POINTER_SHAPE_INFO STRUC
+Type			UINT ?
+Width			UINT ?
+Height			UINT ?
+Pitch			UINT ?
+HotSpot			POINT <>
+DXGI_OUTDUPL_POINTER_SHAPE_INFO ENDS
+
+DXGI_OUTDUPL_FRAME_INFO STRUC
+LastPresentTime		LARGE_INTEGER <>
+LastMouseUpdateTime	LARGE_INTEGER <>
+AccumulatedFrames	UINT ?
+RectsCoalesced		BOOL ?
+ProtectedContentMaskedOut BOOL ?
+PointerPosition		DXGI_OUTDUPL_POINTER_POSITION <>
+TotalMetadataBufferSize UINT ?
+PointerShapeBufferSize	UINT ?
+DXGI_OUTDUPL_FRAME_INFO ENDS
+
+ifndef __IDXGIOutputDuplication_INTERFACE_DEFINED__
+define __IDXGIOutputDuplication_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDXGIOutputDuplication, "191cfac3-a341-470d-b26e-a864f428319c")
+
+.comdef IDXGIOutputDuplication : public IDXGIObject
+
+    GetDesc		proc :ptr DXGI_OUTDUPL_DESC
+    AcquireNextFrame	proc :UINT, :ptr DXGI_OUTDUPL_FRAME_INFO, :ptr ptr IDXGIResource
+    GetFrameDirtyRects	proc :UINT, :ptr RECT, :ptr UINT
+    GetFrameMoveRects	proc :UINT, :ptr DXGI_OUTDUPL_MOVE_RECT, :ptr UINT
+    GetFramePointerShape proc :UINT, :ptr, :ptr UINT, :ptr DXGI_OUTDUPL_POINTER_SHAPE_INFO
+    MapDesktopSurface	proc :ptr DXGI_MAPPED_RECT
+    UnMapDesktopSurface proc
+    ReleaseFrame	proc
+   .ends
+
+endif
+
 .enum DXGI_OFFER_RESOURCE_PRIORITY {
     DXGI_OFFER_RESOURCE_PRIORITY_LOW = 1,
     DXGI_OFFER_RESOURCE_PRIORITY_NORMAL = 2,
@@ -31,6 +104,31 @@ include dxgi.inc
 }
 
 
+ifndef __IDXGISurface2_INTERFACE_DEFINED__
+define __IDXGISurface2_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDXGISurface2, "aba496dd-b617-4cb8-a866-bc44d7eb1fa2")
+
+.comdef IDXGISurface2 : public IDXGISurface1
+
+    GetResource		proc :REFIID, :ptr, :ptr UINT
+   .ends
+
+endif
+
+ifndef __IDXGIResource1_INTERFACE_DEFINED__
+define __IDXGIResource1_INTERFACE_DEFINED__
+
+DEFINE_IIDX(IDXGIResource1, "30961379-4609-4a41-998e-54fe567ee0c1")
+
+.comdef IDXGIResource1 : public IDXGIResource
+
+    CreateSubresourceSurface proc :UINT, :ptr ptr IDXGISurface2
+    CreateSharedHandle	proc :ptr SECURITY_ATTRIBUTES, :DWORD, :LPCWSTR, :ptr HANDLE
+   .ends
+
+endif
+
 ifndef __IDXGIDevice2_INTERFACE_DEFINED__
 define __IDXGIDevice2_INTERFACE_DEFINED__
 
@@ -45,10 +143,20 @@ DEFINE_GUID(IID_IDXGIDevice2, 0x05008617,0xfbfd,0x4051,0xa7,0x90,0x14,0x48,0x84,
 
 endif
 
+DXGI_MODE_DESC1		STRUC
+Width			UINT ?
+Height			UINT ?
+RefreshRate		DXGI_RATIONAL <>
+Format			DXGI_FORMAT ?
+ScanlineOrdering	DXGI_MODE_SCANLINE_ORDER ?
+Scaling			DXGI_MODE_SCALING ?
+Stereo			BOOL ?
+DXGI_MODE_DESC1		ENDS
+
 .enum DXGI_SCALING {
     DXGI_SCALING_STRETCH = 0,
     DXGI_SCALING_NONE = 1
-}
+    }
 
 DXGI_SWAP_CHAIN_DESC1	STRUC
 Width			UINT ?
@@ -64,6 +172,13 @@ AlphaMode		DXGI_ALPHA_MODE ?
 Flags			UINT ?
 DXGI_SWAP_CHAIN_DESC1	ENDS
 DXGI_SWAP_CHAIN_FULLSCREEN_DESC	 STRUC
+RefreshRate		DXGI_RATIONAL <>
+ScanlineOrdering	DXGI_MODE_SCANLINE_ORDER ?
+Scaling			DXGI_MODE_SCALING ?
+Windowed		BOOL ?
+DXGI_SWAP_CHAIN_FULLSCREEN_DESC ENDS
+
+DXGI_SWAP_CHAIN_FULLSCREEN_DESC STRUC
 RefreshRate		DXGI_RATIONAL <>
 ScanlineOrdering	DXGI_MODE_SCANLINE_ORDER ?
 Scaling			DXGI_MODE_SCALING ?
@@ -127,7 +242,7 @@ endif
     DXGI_GRAPHICS_PREEMPTION_TRIANGLE_BOUNDARY = 2,
     DXGI_GRAPHICS_PREEMPTION_PIXEL_BOUNDARY = 3,
     DXGI_GRAPHICS_PREEMPTION_INSTRUCTION_BOUNDARY = 4
-}
+    }
 
 .enum DXGI_COMPUTE_PREEMPTION_GRANULARITY {
     DXGI_COMPUTE_PREEMPTION_DMA_BUFFER_BOUNDARY = 0,
@@ -135,7 +250,7 @@ endif
     DXGI_COMPUTE_PREEMPTION_THREAD_GROUP_BOUNDARY = 2,
     DXGI_COMPUTE_PREEMPTION_THREAD_BOUNDARY = 3,
     DXGI_COMPUTE_PREEMPTION_INSTRUCTION_BOUNDARY = 4
-}
+    }
 
 DXGI_ADAPTER_DESC2	STRUC
 Description		WCHAR 128 dup(?)

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DesktopDuplication", "DesktopDuplication.vcxproj", "{DD68A034-7C6F-455D-8888-47FF2CE0AD1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD68A034-7C6F-455D-8888-47FF2CE0AD1D}.Debug|x64.ActiveCfg = Debug|x64
+		{DD68A034-7C6F-455D-8888-47FF2CE0AD1D}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6452BDD8-6E9A-4D2D-B809-65B75BB2E03A}
+	EndGlobalSection
+EndGlobal

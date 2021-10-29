@@ -85,7 +85,7 @@ printf		proto _CDecl :LPSTR, :VARARG
 fprintf		proto _CDecl :LPFILE, :LPSTR, :VARARG
 scanf		proto _CDecl :LPSTR, :VARARG
 puts		proto __cdecl :LPSTR
-getc		proto __cdecl :LPSTR
+getc		proto __cdecl :LPFILE
 fopen		proto __cdecl :LPSTR, :LPSTR
 fopen_s		proto __cdecl :ptr ptr FILE, :LPSTR, :LPSTR
 fclose		proto __cdecl :LPFILE

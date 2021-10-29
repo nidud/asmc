@@ -1,10 +1,9 @@
 
 ; Implementation of a sample spell checking client
 
-ifdef __CV__
-define _LIBCMT
-.pragma comment(linker,"/DEFAULTLIB:libcmtd.lib")
-.pragma comment(linker,"/DEFAULTLIB:legacy_stdio_definitions.lib")
+ifdef _LIBCMT
+.pragma comment(linker,"/defaultlib:libcmtd")
+.pragma comment(linker,"/defaultlib:legacy_stdio_definitions")
 endif
 define NTDDI_VERSION NTDDI_WIN8
 

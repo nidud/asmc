@@ -134,24 +134,46 @@ LPARAM		typedef LONG_PTR
 LRESULT		typedef LONG_PTR
 
 ifndef NOMINMAX
-NOMINMAX equ <>
 if 0
-ifndef	max
-max	macro a, b
-	if a GT b
-	  exitm <a>
-	endif
-	exitm <b>
-	endm
+min_int proto watcall a:int_t, b:int_t {
+    .ifs ( eax > edx )
+	mov eax,edx
+    .endif
+    }
+max_int proto watcall a:int_t, b:int_t {
+    .ifs ( eax < edx )
+	mov eax,edx
+    .endif
+    }
+min_imm macro a, b
+if (a gt b)
+    exitm<b>
+else
+    exitm<a>
 endif
-ifndef	min
-min	macro a, b
-	if a LT b
-	  exitm <a>
-	endif
-	exitm <b>
-	endm
+    endm
+max_imm macro a, b
+if (a lt b)
+    exitm<b>
+else
+    exitm<a>
 endif
+    endm
+
+max macro a, b
+ifidn typeid(a),<imm>
+    exitm<max_imm(a, b)>
+else
+    exitm<max_int(a, b)>
+endif
+    endm
+min macro a, b
+ifidn typeid(a),<imm>
+    exitm<min_imm(a, b)>
+else
+    exitm<min_int(a, b)>
+endif
+    endm
 endif
 endif
 

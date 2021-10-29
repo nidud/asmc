@@ -1,3 +1,3 @@
 SampleSpellingClient.exe:
-    asmc64 -ws -Fl -Sg -pe $*.asm
+    asmc64 -ws -pe $*.asm
     $@ en-US

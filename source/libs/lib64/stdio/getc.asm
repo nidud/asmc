@@ -8,9 +8,7 @@ include stdio.inc
 
     .code
 
-    option win64:rsp nosave
-
-getc proc fp:LPFILE
+getc proc fp:ptr FILE
 
     dec [rcx]._iobuf._cnt
     .ifl
@@ -24,4 +22,4 @@ getc proc fp:LPFILE
 
 getc endp
 
-    END
+    end

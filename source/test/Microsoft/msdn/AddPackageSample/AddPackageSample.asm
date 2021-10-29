@@ -1,6 +1,5 @@
 
-ifdef __CV__
-define _LIBCMT
+ifdef _LIBCMT
 .pragma comment(linker,"/defaultlib:libcmtd")
 .pragma comment(linker,"/defaultlib:\asmc\lib\x64\combase")
 .pragma comment(linker,"/defaultlib:legacy_stdio_definitions")
@@ -12,6 +11,8 @@ include roapi.inc
 include iostream
 include windows.management.deployment.inc
 include tchar.inc
+
+define nullptr 0
 
 option dllimport:none
 

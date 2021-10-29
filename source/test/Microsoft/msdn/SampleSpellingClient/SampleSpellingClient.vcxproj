@@ -51,7 +51,7 @@
       <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
       <IncludePaths>\Asmc\include</IncludePaths>
-      <AdditionalOptions>-D__CV__ -Zp8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_LIBCMT -Zp8 %(AdditionalOptions)</AdditionalOptions>
       <WCharacterSet>Unicode</WCharacterSet>
     </ASMC>
   </ItemDefinitionGroup>

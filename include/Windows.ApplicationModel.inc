@@ -35,10 +35,10 @@ DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CPackage, "0217f069-025c-
 
 .comdef __FIIterator_1_Windows__CApplicationModel__CPackage : public IInspectable
 
-    get_Current		proc :ptr
-    get_HasCurrent	proc :ptr
-    MoveNext		proc :ptr
-    GetMany		proc :SINT, :ptr, :UINT
+    get_Current		proc :ptr ptr ABI::Windows::ApplicationModel::IPackage
+    get_HasCurrent	proc :ptr boolean
+    MoveNext		proc :ptr boolean
+    GetMany		proc :SINT, :ptr ptr ABI::Windows::ApplicationModel::IPackage, :ptr UINT
    .ends
 
 endif
@@ -50,7 +50,7 @@ DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CPackage, "69ad6aa7-0c49-
 
 .comdef __FIIterable_1_Windows__CApplicationModel__CPackage : public IInspectable
 
-    First		proc :ptr
+    First		proc :ptr ptr __FIIterator_1_Windows__CApplicationModel__CPackage
    .ends
 
 endif
@@ -142,14 +142,14 @@ DEFINE_IIDX(IPackageId, "1ADB665E-37C7-4790-9980-DD7AE74E8BB2")
 
 .comdef IPackageId : public IInspectable
 
-    get_Name		proc :ptr
-    get_Version		proc :ptr
-    get_Architecture	proc :ptr
-    get_ResourceId	proc :ptr
-    get_Publisher	proc :ptr
-    get_PublisherId	proc :ptr
-    get_FullName	proc :ptr
-    get_FamilyName	proc :ptr
+    get_Name		proc :ptr HSTRING
+    get_Version		proc :ptr ABI::Windows::ApplicationModel::PackageVersion
+    get_Architecture	proc :ptr ABI::Windows::System::ProcessorArchitecture
+    get_ResourceId	proc :ptr HSTRING
+    get_Publisher	proc :ptr HSTRING
+    get_PublisherId	proc :ptr HSTRING
+    get_FullName	proc :ptr HSTRING
+    get_FamilyName	proc :ptr HSTRING
    .ends
 
 endif
@@ -162,10 +162,10 @@ DEFINE_IIDX(IPackage, "163C792F-BD75-413C-BF23-B1FE7B95D825")
 
 .comdef IPackage : public IInspectable
 
-    get_Id		proc :ptr
-    get_InstalledLocation proc :ptr
-    get_IsFramework	proc :ptr
-    get_Dependencies	proc :ptr
+    get_Id		proc :ptr ptr ABI::Windows::ApplicationModel::IPackageId
+    get_InstalledLocation proc :ptr ptr ABI::Windows::Storage::IStorageFolder
+    get_IsFramework	proc :ptr boolean
+    get_Dependencies	proc :ptr ptr __FIVectorView_1_Windows__CApplicationModel__CPackage
    .ends
 
 endif

@@ -30,7 +30,7 @@ option dllimport:none
 
 wmain proc argc:int_t, argv:ptr wstring_t
 
-    wcout << "Copyright (c) Microsoft Corporation. All rights reserved." << endl
+    wcout << "Copyright (C) The Asmc Contributors. All Rights Reserved." << endl
     wcout << "AddPackage sample" << endl << endl
 
     .if ( argc < 2 )

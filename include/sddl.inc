@@ -16,6 +16,8 @@ endif
 endif
 endif
 
+.pragma comment(lib, advapi32)
+
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 SDDL_REVISION_1         equ 1

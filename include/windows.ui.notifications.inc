@@ -148,7 +148,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CNotifications__CToastNotifica
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace UI
 .namespace Notifications
@@ -323,7 +322,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastDismissedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastDismissedEventArgs, "3F89D935-D9CB-4538-A0F0-FFE7659938F8")
+DEFINE_IIDX(IToastDismissedEventArgs, "3F89D935-D9CB-4538-A0F0-FFE7659938F8")
 
 .comdef IToastDismissedEventArgs : public IInspectable
 
@@ -335,7 +334,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastFailedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastFailedEventArgs, "35176862-CFD4-44F8-AD64-F500FD896C3B")
+DEFINE_IIDX(IToastFailedEventArgs, "35176862-CFD4-44F8-AD64-F500FD896C3B")
 
 .comdef IToastFailedEventArgs : public IInspectable
 
@@ -347,7 +346,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastActivatedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastActivatedEventArgs, "E3BF92F3-C197-436F-8265-0625824F8DAC")
+DEFINE_IIDX(IToastActivatedEventArgs, "E3BF92F3-C197-436F-8265-0625824F8DAC")
 
 .comdef IToastActivatedEventArgs : public IInspectable
 
@@ -359,7 +358,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CITileUpdateManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_ITileUpdateManagerStatics, "DA159E5D-3EA9-4986-8D84-B09D5E12276D")
+DEFINE_IIDX(ITileUpdateManagerStatics, "DA159E5D-3EA9-4986-8D84-B09D5E12276D")
 
 .comdef ITileUpdateManagerStatics : public IInspectable
 
@@ -374,7 +373,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_ITileUpdater, "0942A48B-1D91-44EC-9243-C1E821C29A20")
+DEFINE_IIDX(ITileUpdater, "0942A48B-1D91-44EC-9243-C1E821C29A20")
 
 .comdef ITileUpdater : public IInspectable
 
@@ -397,7 +396,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CITileUpdater2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_ITileUpdater2, "A2266E12-15EE-43ED-83F5-65B352BB1A84")
+DEFINE_IIDX(ITileUpdater2, "A2266E12-15EE-43ED-83F5-65B352BB1A84")
 
 .comdef ITileUpdater2 : public IInspectable
 
@@ -411,7 +410,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdateManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IBadgeUpdateManagerStatics, "33400FAA-6DD5-4105-AEBC-9B50FCA492DA")
+DEFINE_IIDX(IBadgeUpdateManagerStatics, "33400FAA-6DD5-4105-AEBC-9B50FCA492DA")
 
 .comdef IBadgeUpdateManagerStatics : public IInspectable
 
@@ -426,7 +425,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIBadgeUpdater_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IBadgeUpdater, "B5FA1FD4-7562-4F6C-BFA3-1B6ED2E57F2F")
+DEFINE_IIDX(IBadgeUpdater, "B5FA1FD4-7562-4F6C-BFA3-1B6ED2E57F2F")
 
 .comdef IBadgeUpdater : public IInspectable
 
@@ -442,7 +441,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastNotificationManagerStatics, "50AC103F-D235-4598-BBEF-98FE4D1A3AD4")
+DEFINE_IIDX(IToastNotificationManagerStatics, "50AC103F-D235-4598-BBEF-98FE4D1A3AD4")
 
 .comdef IToastNotificationManagerStatics : public IInspectable
 
@@ -456,7 +455,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastNotifier_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastNotifier, "75927B93-03F3-41EC-91D3-6E5BAC1B38E7")
+DEFINE_IIDX(IToastNotifier, "75927B93-03F3-41EC-91D3-6E5BAC1B38E7")
 
 .comdef IToastNotifier : public IInspectable
 
@@ -473,7 +472,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CITileNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_ITileNotificationFactory, "C6ABDD6E-4928-46C8-BDBF-81A047DEA0D4")
+DEFINE_IIDX(ITileNotificationFactory, "C6ABDD6E-4928-46C8-BDBF-81A047DEA0D4")
 
 .comdef ITileNotificationFactory : public IInspectable
 
@@ -485,7 +484,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CITileNotification_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CITileNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_ITileNotification, "EBAEC8FA-50EC-4C18-B4D0-3AF02E5540AB")
+DEFINE_IIDX(ITileNotification, "EBAEC8FA-50EC-4C18-B4D0-3AF02E5540AB")
 
 .comdef ITileNotification : public IInspectable
 
@@ -501,7 +500,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IBadgeNotificationFactory, "EDF255CE-0618-4D59-948A-5A61040C52F9")
+DEFINE_IIDX(IBadgeNotificationFactory, "EDF255CE-0618-4D59-948A-5A61040C52F9")
 
 .comdef IBadgeNotificationFactory : public IInspectable
 
@@ -513,7 +512,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIBadgeNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IBadgeNotification, "075CB4CA-D08A-4E2F-9233-7E289C1F7722")
+DEFINE_IIDX(IBadgeNotification, "075CB4CA-D08A-4E2F-9233-7E289C1F7722")
 
 .comdef IBadgeNotification : public IInspectable
 
@@ -527,7 +526,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastNotificationFactory, "04124B20-82C6-4229-B109-FD9ED4662B53")
+DEFINE_IIDX(IToastNotificationFactory, "04124B20-82C6-4229-B109-FD9ED4662B53")
 
 .comdef IToastNotificationFactory : public IInspectable
 
@@ -539,7 +538,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IToastNotification, "997E2675-059E-4E60-8B06-1760917C8B80")
+DEFINE_IIDX(IToastNotification, "997E2675-059E-4E60-8B06-1760917C8B80")
 
 .comdef IToastNotification : public IInspectable
 
@@ -559,7 +558,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IScheduledToastNotificationFactory, "E7BED191-0BB9-4189-8394-31761B476FD7")
+DEFINE_IIDX(IScheduledToastNotificationFactory, "E7BED191-0BB9-4189-8394-31761B476FD7")
 
 .comdef IScheduledToastNotificationFactory : public IInspectable
 
@@ -572,7 +571,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIScheduledToastNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IScheduledToastNotification, "79F577F8-0DE7-48CD-9740-9B370490C838")
+DEFINE_IIDX(IScheduledToastNotification, "79F577F8-0DE7-48CD-9740-9B370490C838")
 
 .comdef IScheduledToastNotification : public IInspectable
 
@@ -589,7 +588,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotificationFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IScheduledTileNotificationFactory, "3383138A-98C0-4C3B-BBD6-4A633C7CFC29")
+DEFINE_IIDX(IScheduledTileNotificationFactory, "3383138A-98C0-4C3B-BBD6-4A633C7CFC29")
 
 .comdef IScheduledTileNotificationFactory : public IInspectable
 
@@ -601,7 +600,7 @@ endif
 ifndef ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CUI_CNotifications_CIScheduledTileNotification_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_UI_Notifications_IScheduledTileNotification, "0ABCA6D5-99DC-4C78-A11C-C9E7F86D7EF7")
+DEFINE_IIDX(IScheduledTileNotification, "0ABCA6D5-99DC-4C78-A11C-C9E7F86D7EF7")
 
 .comdef IScheduledTileNotification : public IInspectable
 
@@ -617,7 +616,6 @@ DEFINE_IIDX(ABI_Windows_UI_Notifications_IScheduledTileNotification, "0ABCA6D5-9
 
 endif
 
-.endn
 .endn
 .endn
 .endn

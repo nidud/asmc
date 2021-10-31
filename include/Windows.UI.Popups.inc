@@ -118,7 +118,6 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CUI__CPopups__CIUICommand, "b8770535-6
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace UI
 .namespace Popups
@@ -244,24 +243,11 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_UI_Popups_MessageDialog_DEFINED
-define RUNTIMECLASS_Windows_UI_Popups_MessageDialog_DEFINED
 define RuntimeClass_Windows_UI_Popups_MessageDialog <L"Windows.UI.Popups.MessageDialog">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Popups_UICommand_DEFINED
-define RUNTIMECLASS_Windows_UI_Popups_UICommand_DEFINED
 define RuntimeClass_Windows_UI_Popups_UICommand <L"Windows.UI.Popups.UICommand">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Popups_UICommandSeparator_DEFINED
-define RUNTIMECLASS_Windows_UI_Popups_UICommandSeparator_DEFINED
 define RuntimeClass_Windows_UI_Popups_UICommandSeparator <L"Windows.UI.Popups.UICommandSeparator">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Popups_PopupMenu_DEFINED
-define RUNTIMECLASS_Windows_UI_Popups_PopupMenu_DEFINED
 define RuntimeClass_Windows_UI_Popups_PopupMenu <L"Windows.UI.Popups.PopupMenu">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

@@ -116,7 +116,7 @@ m_csWindowCreate	CRITICAL_SECTION <>
 m_csObjMap		CRITICAL_SECTION <>
 _ATL_MODULE		ENDS
 
-_ATL_SIMPLEMAPENTRY	equ (1)
+_ATL_SIMPLEMAPENTRY	equ 1
 
 _ATL_INTMAP_ENTRY	STRUC
 piid			LPIID ?
@@ -125,50 +125,50 @@ pFunc			_ATL_CREATORARGFUNC ?
 _ATL_INTMAP_ENTRY	ENDS
 
 
-AtlInternalQueryInterface proto ATLAPI \
+AtlInternalQueryInterface proto WINAPI \
 		 pThis: ptr,
 	      pEntries: _ATL_INTMAP_ENTRY,
 		   iid: REFIID,
 	     ppvObject: ptr ptr
 
 
-AtlComPtrAssign proto ATLAPI \
+AtlComPtrAssign proto WINAPI \
 		    pp: ptr ptr IUnknown,
 		    lp: ptr IUnknown
 
-AtlComQIPtrAssign proto ATLAPI \
+AtlComQIPtrAssign proto WINAPI \
 		    pp: ptr ptr IUnknown,
 		    lp: ptr IUnknown,
 		  riid: REFIID
 
-AtlFreeMarshalStream proto ATLAPI \
+AtlFreeMarshalStream proto WINAPI \
 	       pStream: ptr IStream
 
-AtlMarshalPtrInProc proto ATLAPI \
+AtlMarshalPtrInProc proto WINAPI \
 		  pUnk: ptr IUnknown,
 		   iid: ptr IID,
 	      ppStream: ptr ptr IStream
 
-AtlUnmarshalPtr proto ATLAPI \
+AtlUnmarshalPtr proto WINAPI \
 	      pStream: ptr IStream,
 		  iid: ptr IID,
 		ppUnk: ptr ptr IUnknown
 
-AtlWaitWithMessageLoop proto ATLAPI \
+AtlWaitWithMessageLoop proto WINAPI \
 	       hEvent: HANDLE
 
-AtlAdvise proto ATLAPI \
+AtlAdvise proto WINAPI \
 	       pUnkCP: ptr IUnknown,
 		 pUnk: ptr IUnknown,
 		  iid: ptr IID,
 		  pdw: LPDWORD
 
-AtlUnadvise proto ATLAPI \
+AtlUnadvise proto WINAPI \
 	       pUnkCP: ptr IUnknown,
 		  iid: ptr IID,
 		    d: DWORD
 
-AtlSetErrorInfo proto ATLAPI \
+AtlSetErrorInfo proto WINAPI \
 		clsid: ptr CLSID,
 	     lpszDesc: LPCOLESTR,
 	     dwHelpID: DWORD,
@@ -177,45 +177,45 @@ AtlSetErrorInfo proto ATLAPI \
 		 hRes: HRESULT,
 		hInst: HINSTANCE
 
-AtlModuleInit proto ATLAPI \
+AtlModuleInit proto WINAPI \
 		   pM: _ATL_MODULE,
 		    p: _ATL_OBJMAP_ENTRY,
 		    h: HINSTANCE
 
-AtlModuleRegisterClassObjects proto ATLAPI \
+AtlModuleRegisterClassObjects proto WINAPI \
 		   pM: _ATL_MODULE,
 	 dwClsContext: DWORD,
 	      dwFlags: DWORD
 
-AtlModuleRevokeClassObjects proto ATLAPI \
+AtlModuleRevokeClassObjects proto WINAPI \
 		   pM: _ATL_MODULE
 
-AtlModuleGetClassObject proto ATLAPI \
+AtlModuleGetClassObject proto WINAPI \
 		   pM: _ATL_MODULE,
 	       rclsid: REFCLSID,
 		 riid: REFIID,
 		  ppv: ptr LPVOID
 
-AtlModuleTerm proto ATLAPI \
+AtlModuleTerm proto WINAPI \
 		   pM: _ATL_MODULE
 
-AtlModuleRegisterServer proto ATLAPI \
+AtlModuleRegisterServer proto WINAPI \
 		   pM: _ATL_MODULE,
 	  bRegTypeLib: BOOL,
 	       pCLSID: ptr CLSID
 
-AtlModuleUnregisterServer proto ATLAPI \
+AtlModuleUnregisterServer proto WINAPI \
 		   pM: _ATL_MODULE,
 	       pCLSID: ptr CLSID
 
-AtlModuleUpdateRegistryFromResourceD proto ATLAPI \
+AtlModuleUpdateRegistryFromResourceD proto WINAPI \
 		   pM: _ATL_MODULE,
 	      lpszRes: LPCOLESTR,
 	    bRegister: BOOL,
 	  pMapEntries: ptr _ATL_REGMAP_ENTRY,
 		 pReg: ptr IRegistrar
 
-AtlModuleRegisterTypeLib proto ATLAPI \
+AtlModuleRegisterTypeLib proto WINAPI \
 		   pM: _ATL_MODULE,
 	    lpszIndex: LPCOLESTR
 

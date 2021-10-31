@@ -50,7 +50,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CCalls__CLockScr
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace Calls
@@ -101,7 +100,6 @@ DEFINE_IIDX(ILockScreenCallUI, "C596FD8D-73C9-4A14-B021-EC1C50A3B727")
 
 endif
 
-.endn
 .endn
 .endn
 .endn

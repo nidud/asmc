@@ -39,7 +39,6 @@ DEFINE_IIDX(__FIReference_1_Windows__CUI__CColor, "ab8e5d11-b0c1-5a21-95ae-f16bf
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace UI
 
@@ -242,15 +241,8 @@ endif
 
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_UI_ColorHelper_DEFINED
-define RUNTIMECLASS_Windows_UI_ColorHelper_DEFINED
 define RuntimeClass_Windows_UI_ColorHelper <L"Windows.UI.ColorHelper">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Colors_DEFINED
-define RUNTIMECLASS_Windows_UI_Colors_DEFINED
 define RuntimeClass_Windows_UI_Colors <L"Windows.UI.Colors">
-endif
 
 endif

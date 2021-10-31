@@ -1330,8 +1330,8 @@ XSAVE_FORMAT		ENDS
 PXSAVE_FORMAT		typedef ptr XSAVE_FORMAT
 
 XSAVE_AREA_HEADER	STRUC DECLSPEC_ALIGN(8)
-Mask			dd ?
-Reserved		dd 7 dup(?)
+Mask			dq ?
+Reserved		dq 7 dup(?)
 XSAVE_AREA_HEADER	ENDS
 PXSAVE_AREA_HEADER	typedef ptr XSAVE_AREA_HEADER
 
@@ -1409,11 +1409,19 @@ RTL_CONTEXT_CHUNK macro Context, Chunk
 
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 
+C_ASSERT macro exp
+    if (exp)
+	exitm<>
+    else
+	.err<exp>
+    endif
+    endm
 
-;C_ASSERT((XSAVE_FORMAT & (XSAVE_ALIGN - 1)) == 0)
-;C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) & (XSAVE_ALIGN - 1)) == 0)
 
-;C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH == 512 + 64)
+C_ASSERT((XSAVE_FORMAT and (XSAVE_ALIGN - 1)) eq 0)
+C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) and (XSAVE_ALIGN - 1)) eq 0)
+
+C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH eq 512 + 64)
 
 endif
 

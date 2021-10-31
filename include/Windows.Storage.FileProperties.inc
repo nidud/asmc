@@ -183,7 +183,6 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CFileProperties__CVideoPrope
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Storage
 .namespace FileProperties
@@ -409,7 +408,6 @@ DEFINE_IIDX(IBasicProperties, "D05D55DB-785E-4A66-BE02-9BEEC58AEA81")
 
 endif
 
-.endn
 .endn
 .endn
 .endn

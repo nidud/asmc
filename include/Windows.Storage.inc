@@ -540,7 +540,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CStorage__CStorageLibrary_IInspecta
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Storage
 
@@ -611,7 +610,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStreamedFileDataRequestedHandler_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStreamedFileDataRequestedHandler_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStreamedFileDataRequestedHandler, "FEF6A824-2FE1-4D07-A35B-B77C50B5F4CC")
+DEFINE_IIDX(IStreamedFileDataRequestedHandler, "FEF6A824-2FE1-4D07-A35B-B77C50B5F4CC")
 
 .comdef IStreamedFileDataRequestedHandler : public IUnknown
 
@@ -623,7 +622,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIApplicationDataSetVersionHandler_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIApplicationDataSetVersionHandler_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IApplicationDataSetVersionHandler, "A05791E6-CC9F-4687-ACAB-A364FD785463")
+DEFINE_IIDX(IApplicationDataSetVersionHandler, "A05791E6-CC9F-4687-ACAB-A364FD785463")
 
 .comdef IApplicationDataSetVersionHandler : public IUnknown
 
@@ -635,7 +634,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageLibraryStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageLibraryStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageLibraryStatics, "4208A6DB-684A-49C6-9E59-90121EE050D6")
+DEFINE_IIDX(IStorageLibraryStatics, "4208A6DB-684A-49C6-9E59-90121EE050D6")
 
 .comdef IStorageLibraryStatics : public IInspectable
 
@@ -647,7 +646,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageLibrary_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageLibrary_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageLibrary, "1EDD7103-0E5E-4D6C-B5E8-9318983D6A03")
+DEFINE_IIDX(IStorageLibrary, "1EDD7103-0E5E-4D6C-B5E8-9318983D6A03")
 
 .comdef IStorageLibrary : public IInspectable
 
@@ -664,7 +663,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIKnownFoldersStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIKnownFoldersStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IKnownFoldersStatics, "5A2A7520-4802-452D-9AD9-4351ADA7EC35")
+DEFINE_IIDX(IKnownFoldersStatics, "5A2A7520-4802-452D-9AD9-4351ADA7EC35")
 
 .comdef IKnownFoldersStatics : public IInspectable
 
@@ -682,7 +681,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIKnownFoldersPlaylistsStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIKnownFoldersPlaylistsStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IKnownFoldersPlaylistsStatics, "DAD5ECD6-306F-4D6A-B496-46BA8EB106CE")
+DEFINE_IIDX(IKnownFoldersPlaylistsStatics, "DAD5ECD6-306F-4D6A-B496-46BA8EB106CE")
 
 .comdef IKnownFoldersPlaylistsStatics : public IInspectable
 
@@ -694,7 +693,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIKnownFoldersCameraRollStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIKnownFoldersCameraRollStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IKnownFoldersCameraRollStatics, "5D115E66-27E8-492F-B8E5-2F90896CD4CD")
+DEFINE_IIDX(IKnownFoldersCameraRollStatics, "5D115E66-27E8-492F-B8E5-2F90896CD4CD")
 
 .comdef IKnownFoldersCameraRollStatics : public IInspectable
 
@@ -706,7 +705,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIKnownFoldersSavedPicturesStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIKnownFoldersSavedPicturesStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IKnownFoldersSavedPicturesStatics, "055C93EA-253D-467C-B6CA-A97DA1E9A18D")
+DEFINE_IIDX(IKnownFoldersSavedPicturesStatics, "055C93EA-253D-467C-B6CA-A97DA1E9A18D")
 
 .comdef IKnownFoldersSavedPicturesStatics : public IInspectable
 
@@ -718,7 +717,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIDownloadsFolderStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIDownloadsFolderStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IDownloadsFolderStatics, "27862ED0-404E-47DF-A1E2-E37308BE7B37")
+DEFINE_IIDX(IDownloadsFolderStatics, "27862ED0-404E-47DF-A1E2-E37308BE7B37")
 
 .comdef IDownloadsFolderStatics : public IInspectable
 
@@ -733,7 +732,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStreamedFileDataRequest_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStreamedFileDataRequest_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStreamedFileDataRequest, "1673FCCE-DABD-4D50-BEEE-180B8A8191B6")
+DEFINE_IIDX(IStreamedFileDataRequest, "1673FCCE-DABD-4D50-BEEE-180B8A8191B6")
 
 .comdef IStreamedFileDataRequest : public IInspectable
 
@@ -745,7 +744,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFileStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFileStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFileStatics, "5984C710-DAF2-43C8-8BB4-A4D3EACFD03F")
+DEFINE_IIDX(IStorageFileStatics, "5984C710-DAF2-43C8-8BB4-A4D3EACFD03F")
 
 .comdef IStorageFileStatics : public IInspectable
 
@@ -762,7 +761,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageItem_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageItem_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageItem, "4207A996-CA2F-42F7-BDE8-8B10457A7F30")
+DEFINE_IIDX(IStorageItem, "4207A996-CA2F-42F7-BDE8-8B10457A7F30")
 
 .comdef IStorageItem : public IInspectable
 
@@ -783,14 +782,14 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFolder_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFolder_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFolder, "72D1CB78-B3EF-4F75-A80B-6FD9DAE2944B")
+DEFINE_IIDX(IStorageFolder, "72D1CB78-B3EF-4F75-A80B-6FD9DAE2944B")
 
 .comdef IStorageFolder : public IInspectable
 
     CreateFileAsyncOverloadDefaultOptions proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
-    CreateFileAsync	proc :HSTRING, :ABI::Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
+    CreateFileAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
     CreateFolderAsyncOverloadDefaultOptions proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
-    CreateFolderAsync	proc :HSTRING, :ABI::Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
+    CreateFolderAsync	proc :HSTRING, :Windows::Storage::CreationCollisionOption, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
     GetFileAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFile
     GetFolderAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CStorageFolder
     GetItemAsync	proc :HSTRING, :ptr ptr __FIAsyncOperation_1_Windows__CStorage__CIStorageItem
@@ -804,7 +803,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFile_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFile_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFile, "FA3F6186-4214-428C-A64C-14C9AC7315EA")
+DEFINE_IIDX(IStorageFile, "FA3F6186-4214-428C-A64C-14C9AC7315EA")
 
 .comdef IStorageFile : public IInspectable
 
@@ -827,7 +826,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFolderStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFolderStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFolderStatics, "08F327FF-85D5-48B9-AEE9-28511E339F9F")
+DEFINE_IIDX(IStorageFolderStatics, "08F327FF-85D5-48B9-AEE9-28511E339F9F")
 
 .comdef IStorageFolderStatics : public IInspectable
 
@@ -839,7 +838,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageItem2_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageItem2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageItem2, "53F926D2-083C-4283-B45B-81C007237E44")
+DEFINE_IIDX(IStorageItem2, "53F926D2-083C-4283-B45B-81C007237E44")
 
 .comdef IStorageItem2 : public IInspectable
 
@@ -852,7 +851,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageItemProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageItemProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageItemProperties, "86664478-8029-46FE-A789-1C2F3E2FFB5C")
+DEFINE_IIDX(IStorageItemProperties, "86664478-8029-46FE-A789-1C2F3E2FFB5C")
 
 .comdef IStorageItemProperties : public IInspectable
 
@@ -870,7 +869,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageItemProperties2_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageItemProperties2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageItemProperties2, "8E86A951-04B9-4BD2-929D-FEF3F71621D0")
+DEFINE_IIDX(IStorageItemProperties2, "8E86A951-04B9-4BD2-929D-FEF3F71621D0")
 
 .comdef IStorageItemProperties2 : public IInspectable
 
@@ -884,7 +883,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageItemPropertiesWithProvider_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageItemPropertiesWithProvider_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageItemPropertiesWithProvider, "861BF39B-6368-4DEE-B40E-74684A5CE714")
+DEFINE_IIDX(IStorageItemPropertiesWithProvider, "861BF39B-6368-4DEE-B40E-74684A5CE714")
 
 .comdef IStorageItemPropertiesWithProvider : public IInspectable
 
@@ -896,7 +895,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFilePropertiesWithAvailability_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFilePropertiesWithAvailability_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFilePropertiesWithAvailability, "AFCBBE9B-582B-4133-9648-E44CA46EE491")
+DEFINE_IIDX(IStorageFilePropertiesWithAvailability, "AFCBBE9B-582B-4133-9648-E44CA46EE491")
 
 .comdef IStorageFilePropertiesWithAvailability : public IInspectable
 
@@ -908,7 +907,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageProvider_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageProvider_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageProvider, "E705EED4-D478-47D6-BA46-1A8EBE114A20")
+DEFINE_IIDX(IStorageProvider, "E705EED4-D478-47D6-BA46-1A8EBE114A20")
 
 .comdef IStorageProvider : public IInspectable
 
@@ -921,7 +920,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageFolder2_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageFolder2_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageFolder2, "E827E8B9-08D9-4A8E-A0AC-FE5ED3CBBBD3")
+DEFINE_IIDX(IStorageFolder2, "E827E8B9-08D9-4A8E-A0AC-FE5ED3CBBBD3")
 
 .comdef IStorageFolder2 : public IInspectable
 
@@ -933,7 +932,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIFileIOStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIFileIOStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IFileIOStatics, "887411EB-7F54-4732-A5F0-5E43E3B8C2F5")
+DEFINE_IIDX(IFileIOStatics, "887411EB-7F54-4732-A5F0-5E43E3B8C2F5")
 
 .comdef IFileIOStatics : public IInspectable
 
@@ -959,7 +958,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIPathIOStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIPathIOStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IPathIOStatics, "0F2F3758-8EC7-4381-922B-8F6C07D288F3")
+DEFINE_IIDX(IPathIOStatics, "0F2F3758-8EC7-4381-922B-8F6C07D288F3")
 
 .comdef IPathIOStatics : public IInspectable
 
@@ -985,7 +984,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CICachedFileManagerStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CICachedFileManagerStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ICachedFileManagerStatics, "8FFC224A-E782-495D-B614-654C4F0B2370")
+DEFINE_IIDX(ICachedFileManagerStatics, "8FFC224A-E782-495D-B614-654C4F0B2370")
 
 .comdef ICachedFileManagerStatics : public IInspectable
 
@@ -998,7 +997,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemAudioProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemAudioProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemAudioProperties, "3F8F38B7-308C-47E1-924D-8645348E5DB7")
+DEFINE_IIDX(ISystemAudioProperties, "3F8F38B7-308C-47E1-924D-8645348E5DB7")
 
 .comdef ISystemAudioProperties : public IInspectable
 
@@ -1010,7 +1009,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemGPSProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemGPSProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemGPSProperties, "C0F46EB4-C174-481A-BC25-921986F6A6F3")
+DEFINE_IIDX(ISystemGPSProperties, "C0F46EB4-C174-481A-BC25-921986F6A6F3")
 
 .comdef ISystemGPSProperties : public IInspectable
 
@@ -1023,7 +1022,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemImageProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemImageProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemImageProperties, "011B2E30-8B39-4308-BEA1-E8AA61E47826")
+DEFINE_IIDX(ISystemImageProperties, "011B2E30-8B39-4308-BEA1-E8AA61E47826")
 
 .comdef ISystemImageProperties : public IInspectable
 
@@ -1036,7 +1035,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemMediaProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemMediaProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemMediaProperties, "A42B3316-8415-40DC-8C44-98361D235430")
+DEFINE_IIDX(ISystemMediaProperties, "A42B3316-8415-40DC-8C44-98361D235430")
 
 .comdef ISystemMediaProperties : public IInspectable
 
@@ -1053,7 +1052,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemMusicProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemMusicProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemMusicProperties, "B47988D5-67AF-4BC3-8D39-5B89022026A1")
+DEFINE_IIDX(ISystemMusicProperties, "B47988D5-67AF-4BC3-8D39-5B89022026A1")
 
 .comdef ISystemMusicProperties : public IInspectable
 
@@ -1072,7 +1071,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemPhotoProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemPhotoProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemPhotoProperties, "4734FC3D-AB21-4424-B735-F4353A56C8FC")
+DEFINE_IIDX(ISystemPhotoProperties, "4734FC3D-AB21-4424-B735-F4353A56C8FC")
 
 .comdef ISystemPhotoProperties : public IInspectable
 
@@ -1088,7 +1087,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemVideoProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemVideoProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemVideoProperties, "2040F715-67F8-4322-9B80-4FA9FEFB83E8")
+DEFINE_IIDX(ISystemVideoProperties, "2040F715-67F8-4322-9B80-4FA9FEFB83E8")
 
 .comdef ISystemVideoProperties : public IInspectable
 
@@ -1104,7 +1103,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISystemProperties_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISystemProperties_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISystemProperties, "917A71C1-85F3-4DD1-B001-A50BFD21C8D2")
+DEFINE_IIDX(ISystemProperties, "917A71C1-85F3-4DD1-B001-A50BFD21C8D2")
 
 .comdef ISystemProperties : public IInspectable
 
@@ -1128,7 +1127,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIStorageStreamTransaction_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIStorageStreamTransaction_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IStorageStreamTransaction, "F67CF363-A53D-4D94-AE2C-67232D93ACDD")
+DEFINE_IIDX(IStorageStreamTransaction, "F67CF363-A53D-4D94-AE2C-67232D93ACDD")
 
 .comdef IStorageStreamTransaction : public IInspectable
 
@@ -1141,7 +1140,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIApplicationDataStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIApplicationDataStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IApplicationDataStatics, "5612147B-E843-45E3-94D8-06169E3C8E17")
+DEFINE_IIDX(IApplicationDataStatics, "5612147B-E843-45E3-94D8-06169E3C8E17")
 
 .comdef IApplicationDataStatics : public IInspectable
 
@@ -1153,7 +1152,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIApplicationData_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIApplicationData_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IApplicationData, "C3DA6FB7-B744-4B45-B0B8-223A0938D0DC")
+DEFINE_IIDX(IApplicationData, "C3DA6FB7-B744-4B45-B0B8-223A0938D0DC")
 
 .comdef IApplicationData : public IInspectable
 
@@ -1177,7 +1176,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISetVersionRequest_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISetVersionRequest_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISetVersionRequest, "B9C76B9B-1056-4E69-8330-162619956F9B")
+DEFINE_IIDX(ISetVersionRequest, "B9C76B9B-1056-4E69-8330-162619956F9B")
 
 .comdef ISetVersionRequest : public IInspectable
 
@@ -1191,7 +1190,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CISetVersionDeferral_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CISetVersionDeferral_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_ISetVersionDeferral, "033508A2-781A-437A-B078-3F32BADCFE47")
+DEFINE_IIDX(ISetVersionDeferral, "033508A2-781A-437A-B078-3F32BADCFE47")
 
 .comdef ISetVersionDeferral : public IInspectable
 
@@ -1203,7 +1202,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CIApplicationDataContainer_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CIApplicationDataContainer_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_IApplicationDataContainer, "C5AEFD1E-F467-40BA-8566-AB640A441E1D")
+DEFINE_IIDX(IApplicationDataContainer, "C5AEFD1E-F467-40BA-8566-AB640A441E1D")
 
 .comdef IApplicationDataContainer : public IInspectable
 
@@ -1217,7 +1216,6 @@ DEFINE_IIDX(ABI_Windows_Storage_IApplicationDataContainer, "C5AEFD1E-F467-40BA-8
 
 endif
 
-.endn
 .endn
 .endn
 

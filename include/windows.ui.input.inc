@@ -212,7 +212,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CUI__CInput__CGestureRecognizer_Win
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace UI
 .namespace Input
@@ -283,14 +282,14 @@ define InterfaceName_Windows_UI_Input_IEdgeGestureEventArgs <L"Windows.UI.Input.
     }
 
 .template ManipulationDelta
-    Translation		real4 2 dup(?);ABI::Windows::Foundation::Point ?
+    Translation		real4 2 dup(?);Windows::Foundation::Point ?
     Scale		real4 ?
     Rotation		real4 ?
     Expansion		real4 ?
    .ends
 
 .template ManipulationVelocities
-    Linear		real4 2 dup(?);ABI::Windows::Foundation::Point ?
+    Linear		real4 2 dup(?);Windows::Foundation::Point ?
     Angular		real4 ?
     Expansion		real4 ?
    .ends
@@ -694,72 +693,23 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_UI_Input_EdgeGestureEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_EdgeGestureEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_EdgeGestureEventArgs <L"Windows.UI.Input.EdgeGestureEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_EdgeGesture_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_EdgeGesture_DEFINED
 define RuntimeClass_Windows_UI_Input_EdgeGesture <L"Windows.UI.Input.EdgeGesture">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_MouseWheelParameters_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_MouseWheelParameters_DEFINED
 define RuntimeClass_Windows_UI_Input_MouseWheelParameters <L"Windows.UI.Input.MouseWheelParameters">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_GestureRecognizer_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_GestureRecognizer_DEFINED
 define RuntimeClass_Windows_UI_Input_GestureRecognizer <L"Windows.UI.Input.GestureRecognizer">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_TappedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_TappedEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_TappedEventArgs <L"Windows.UI.Input.TappedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_RightTappedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_RightTappedEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_RightTappedEventArgs <L"Windows.UI.Input.RightTappedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_HoldingEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_HoldingEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_HoldingEventArgs <L"Windows.UI.Input.HoldingEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_DraggingEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_DraggingEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_DraggingEventArgs <L"Windows.UI.Input.DraggingEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_ManipulationStartedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_ManipulationStartedEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_ManipulationStartedEventArgs <L"Windows.UI.Input.ManipulationStartedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_ManipulationUpdatedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_ManipulationUpdatedEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_ManipulationUpdatedEventArgs <L"Windows.UI.Input.ManipulationUpdatedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_ManipulationInertiaStartingEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_ManipulationInertiaStartingEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_ManipulationInertiaStartingEventArgs <L"Windows.UI.Input.ManipulationInertiaStartingEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_ManipulationCompletedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_ManipulationCompletedEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_ManipulationCompletedEventArgs <L"Windows.UI.Input.ManipulationCompletedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_CrossSlidingEventArgs_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_CrossSlidingEventArgs_DEFINED
 define RuntimeClass_Windows_UI_Input_CrossSlidingEventArgs <L"Windows.UI.Input.CrossSlidingEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_PointerPoint_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_PointerPoint_DEFINED
 define RuntimeClass_Windows_UI_Input_PointerPoint <L"Windows.UI.Input.PointerPoint">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_PointerPointProperties_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_PointerPointProperties_DEFINED
 define RuntimeClass_Windows_UI_Input_PointerPointProperties <L"Windows.UI.Input.PointerPointProperties">
-endif
-ifndef RUNTIMECLASS_Windows_UI_Input_PointerVisualizationSettings_DEFINED
-define RUNTIMECLASS_Windows_UI_Input_PointerVisualizationSettings_DEFINED
 define RuntimeClass_Windows_UI_Input_PointerVisualizationSettings <L"Windows.UI.Input.PointerVisualizationSettings">
-endif
 
 endif
 

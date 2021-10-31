@@ -79,7 +79,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CStorage__CProvider__CCachedFileUpd
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Storage
 .namespace Provider
@@ -127,7 +126,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CProvider_CICachedFileUpdaterUI_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CProvider_CICachedFileUpdaterUI_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Provider_ICachedFileUpdaterUI, "9E6F41E6-BAF2-4A97-B600-9333F5DF80FD")
+DEFINE_IIDX(ICachedFileUpdaterUI, "9E6F41E6-BAF2-4A97-B600-9333F5DF80FD")
 
 .comdef ICachedFileUpdaterUI : public IInspectable
 
@@ -146,7 +145,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequestedEventArgs_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequestedEventArgs_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Provider_IFileUpdateRequestedEventArgs, "7B0A9342-3905-438D-AAEF-78AE265F8DD2")
+DEFINE_IIDX(IFileUpdateRequestedEventArgs, "7B0A9342-3905-438D-AAEF-78AE265F8DD2")
 
 .comdef IFileUpdateRequestedEventArgs : public IInspectable
 
@@ -158,7 +157,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequest_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequest_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Provider_IFileUpdateRequest, "40C82536-C1FE-4D93-A792-1E736BC70837")
+DEFINE_IIDX(IFileUpdateRequest, "40C82536-C1FE-4D93-A792-1E736BC70837")
 
 .comdef IFileUpdateRequest : public IInspectable
 
@@ -175,7 +174,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequestDeferral_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CProvider_CIFileUpdateRequestDeferral_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Provider_IFileUpdateRequestDeferral, "FFCEDB2B-8ADE-44A5-BB00-164C4E72F13A")
+DEFINE_IIDX(IFileUpdateRequestDeferral, "FFCEDB2B-8ADE-44A5-BB00-164C4E72F13A")
 
 .comdef IFileUpdateRequestDeferral : public IInspectable
 
@@ -187,7 +186,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CProvider_CICachedFileUpdaterStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CProvider_CICachedFileUpdaterStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Provider_ICachedFileUpdaterStatics, "9FC90920-7BCF-4888-A81E-102D7034D7CE")
+DEFINE_IIDX(ICachedFileUpdaterStatics, "9FC90920-7BCF-4888-A81E-102D7034D7CE")
 
 .comdef ICachedFileUpdaterStatics : public IInspectable
 
@@ -196,7 +195,6 @@ DEFINE_IIDX(ABI_Windows_Storage_Provider_ICachedFileUpdaterStatics, "9FC90920-7B
 
 endif
 
-.endn
 .endn
 .endn
 .endn

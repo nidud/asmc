@@ -267,7 +267,6 @@ DEFINE_IIDX(__FIVectorView_1_Windows__CData__CText__CWordSegment, "c706749a-e11d
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Data
 .namespace Text
@@ -499,7 +498,6 @@ DEFINE_IIDX(ISelectableWordsSegmenterFactory, "8C7A7648-6057-4339-BC70-F210010A4
 
 endif
 
-.endn
 .endn
 .endn
 .endn

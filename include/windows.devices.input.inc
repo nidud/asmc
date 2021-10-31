@@ -122,7 +122,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CDevices__CInput__CMouseDevice_Wind
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Devices
 .namespace Input
@@ -269,31 +268,12 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_Devices_Input_PointerDevice_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_PointerDevice_DEFINED
 define RuntimeClass_Windows_Devices_Input_PointerDevice <L"Windows.Devices.Input.PointerDevice">
-endif
-ifndef RUNTIMECLASS_Windows_Devices_Input_MouseDevice_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_MouseDevice_DEFINED
 define RuntimeClass_Windows_Devices_Input_MouseDevice <L"Windows.Devices.Input.MouseDevice">
-endif
-ifndef RUNTIMECLASS_Windows_Devices_Input_MouseEventArgs_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_MouseEventArgs_DEFINED
 define RuntimeClass_Windows_Devices_Input_MouseEventArgs <L"Windows.Devices.Input.MouseEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_Devices_Input_MouseCapabilities_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_MouseCapabilities_DEFINED
 define RuntimeClass_Windows_Devices_Input_MouseCapabilities <L"Windows.Devices.Input.MouseCapabilities">
-endif
-ifndef RUNTIMECLASS_Windows_Devices_Input_KeyboardCapabilities_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_KeyboardCapabilities_DEFINED
 define RuntimeClass_Windows_Devices_Input_KeyboardCapabilities <L"Windows.Devices.Input.KeyboardCapabilities">
-endif
-ifndef RUNTIMECLASS_Windows_Devices_Input_TouchCapabilities_DEFINED
-define RUNTIMECLASS_Windows_Devices_Input_TouchCapabilities_DEFINED
 define RuntimeClass_Windows_Devices_Input_TouchCapabilities <L"Windows.Devices.Input.TouchCapabilities">
-endif
 
 endif

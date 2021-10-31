@@ -82,7 +82,6 @@ DEFINE_IIDX(__FIEventHandler_1_Windows__CApplicationModel__CCore__CUnhandledErro
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace Core
@@ -269,24 +268,11 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Core_CoreApplication_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Core_CoreApplication_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Core_CoreApplication <L"Windows.ApplicationModel.Core.CoreApplication">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Core_CoreApplicationView_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Core_CoreApplicationView_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Core_CoreApplicationView <L"Windows.ApplicationModel.Core.CoreApplicationView">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Core_UnhandledErrorDetectedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Core_UnhandledErrorDetectedEventArgs_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Core_UnhandledErrorDetectedEventArgs <L"Windows.ApplicationModel.Core.UnhandledErrorDetectedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Core_UnhandledError_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Core_UnhandledError_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Core_UnhandledError <L"Windows.ApplicationModel.Core.UnhandledError">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

@@ -66,12 +66,12 @@ wmain proc argc:int_t, argv:ptr wstring_t
             .endif
             .if (SUCCEEDED(hr))
 
-               .new classFactory:ptr ABI::Windows::Foundation::IUriRuntimeClassFactory = nullptr
+               .new classFactory:ptr Windows::Foundation::IUriRuntimeClassFactory = nullptr
                 mov hr,RoGetActivationFactory(foundationUri, &factoryGUI, &classFactory)
             .endif
             .if (SUCCEEDED(hr))
 
-               .new packageUri:ptr ABI::Windows::Foundation::IUriRuntimeClass = nullptr
+               .new packageUri:ptr Windows::Foundation::IUriRuntimeClass = nullptr
                 mov hr,classFactory.CreateUri(inputPackageUri, &packageUri)
             .endif
             .if (SUCCEEDED(hr))
@@ -89,7 +89,7 @@ wmain proc argc:int_t, argv:ptr wstring_t
                 .endif
                 .if (SUCCEEDED(hr))
 
-                  .new packageManager:ptr ABI::Windows::Management::Deployment::IPackageManager = nullptr
+                  .new packageManager:ptr Windows::Management::Deployment::IPackageManager = nullptr
                   .new managerGUI:GUID = {0x9A7D4B65,0x5E8F,0x4FC7,{0xA2,0xE5,0x7F,0x69,0x25,0xCB,0x8B,0x53}}
                    mov hr,activationFactory.QueryInterface(&managerGUI, &packageManager)
                 .endif
@@ -99,7 +99,7 @@ wmain proc argc:int_t, argv:ptr wstring_t
 
                .new deploymentOperation:ptr __FIAsyncOperationWithProgress_2_Windows__CManagement__CDeployment__CDeploymentResult_Windows__CManagement__CDeployment__CDeploymentProgress = nullptr
                 mov hr,packageManager.AddPackageAsync(packageUri, nullptr,
-                        ABI::Windows::Management::Deployment::DeploymentOptions::None, &deploymentOperation)
+                        Windows::Management::Deployment::DeploymentOptions::None, &deploymentOperation)
             .endif
 
             .if (SUCCEEDED(hr))
@@ -124,7 +124,7 @@ wmain proc argc:int_t, argv:ptr wstring_t
                    .new errorMsg:ptr wchar_t = "Unknown"
                    .new errorCode:int_t = 0
 
-                   .new deploymentResult:ptr ABI::Windows::Management::Deployment::IDeploymentResult = nullptr
+                   .new deploymentResult:ptr Windows::Management::Deployment::IDeploymentResult = nullptr
                     mov hr,deploymentOperation.GetResults(&deploymentResult)
                     .if (SUCCEEDED(hr))
 

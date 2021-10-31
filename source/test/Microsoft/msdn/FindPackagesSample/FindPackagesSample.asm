@@ -25,13 +25,13 @@ DisplayHString proc name:ptr wchar_t, hstring:HSTRING, hr:HRESULT
 
 DisplayHString endp
 
-DisplayPackageInfo proc Package:ptr ABI::Windows::ApplicationModel::IPackage
+DisplayPackageInfo proc Package:ptr Windows::ApplicationModel::IPackage
 
    .new hstring:HSTRING
-   .new version:ABI::Windows::ApplicationModel::PackageVersion
-   .new PackageId:ptr ABI::Windows::ApplicationModel::IPackageId = nullptr
+   .new version:Windows::ApplicationModel::PackageVersion
+   .new PackageId:ptr Windows::ApplicationModel::IPackageId = nullptr
    .new isFramework:bool
-   .new StorageFolder:ptr ABI::Windows::Storage::IStorageFolder
+   .new StorageFolder:ptr Windows::Storage::IStorageFolder
 
     .if (SUCCEEDED(Package.get_Id(&PackageId)))
 
@@ -49,7 +49,7 @@ DisplayPackageInfo proc Package:ptr ABI::Windows::ApplicationModel::IPackage
 
         .if (SUCCEEDED(Package.get_InstalledLocation(&StorageFolder)))
 
-            .new pItem:ptr ABI::Windows::Storage::IStorageItem
+            .new pItem:ptr Windows::Storage::IStorageItem
             .new ItemGUI:GUID = {
                 0x4207A996,0xCA2F,0x42F7,{0xBD,0xE8,0x8B,0x10,0x45,0x7A,0x7F,0x30}
                 }
@@ -114,13 +114,13 @@ SidToAccountName proc sidString:LPWSTR, stringSid:LPWSTR
 SidToAccountName endp
 
 DisplayPackageUsers proc \
-        packageManager: ptr ABI::Windows::Management::Deployment::IPackageManager,
-        package:        ptr ABI::Windows::ApplicationModel::IPackage
+        packageManager: ptr Windows::Management::Deployment::IPackageManager,
+        package:        ptr Windows::ApplicationModel::IPackage
 
    .new hstring:HSTRING
    .new Iterator:ptr __FIIterator_1_Windows__CManagement__CDeployment__CPackageUserInformation = nullptr
    .new Iterable:ptr __FIIterable_1_Windows__CManagement__CDeployment__CPackageUserInformation = nullptr
-   .new PackageId:ptr ABI::Windows::ApplicationModel::IPackageId = nullptr
+   .new PackageId:ptr Windows::ApplicationModel::IPackageId = nullptr
    .new hr:HRESULT = package.get_Id(&PackageId)
    .new UserName[256]:wchar_t
 
@@ -137,7 +137,7 @@ DisplayPackageUsers proc \
 
        .new hasCurrent:bool = false
        .new hasNext:bool = false
-       .new userInformation:ptr ABI::Windows::Management::Deployment::IPackageUserInformation
+       .new userInformation:ptr Windows::Management::Deployment::IPackageUserInformation
 
         wcout << "Users: "
 
@@ -195,7 +195,7 @@ wmain proc
         .endif
         .if (SUCCEEDED(hr))
 
-            .new packageManager:ptr ABI::Windows::Management::Deployment::IPackageManager = nullptr
+            .new packageManager:ptr Windows::Management::Deployment::IPackageManager = nullptr
             .new managerGUI:GUID = {
                     0x9A7D4B65,0x5E8F,0x4FC7,{0xA2,0xE5,0x7F,0x69,0x25,0xCB,0x8B,0x53}}
             mov hr,activationFactory.QueryInterface(&managerGUI, &packageManager)
@@ -215,7 +215,7 @@ wmain proc
            .new hasCurrent:bool = false
            .new hasNext:bool = false
            .new packageCount:int_t = 0
-           .new Package:ptr ABI::Windows::ApplicationModel::IPackage
+           .new Package:ptr Windows::ApplicationModel::IPackage
 
             .while 1
 

@@ -93,7 +93,6 @@ DEFINE_IIDX(__FIVector_1_Windows__CApplicationModel__CAppointments__CAppointment
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace Appointments
@@ -271,7 +270,6 @@ DEFINE_IIDX(IAppointment, "DD002F2F-2BDD-4076-90A3-22C275312965")
 
 endif
 
-.endn
 .endn
 .endn
 .endn

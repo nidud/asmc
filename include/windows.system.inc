@@ -30,7 +30,6 @@ include Windows.UI.ViewManagement.inc
 include windows.foundation.collections.inc
 
 
-.namespace ABI
 .namespace Windows
 .namespace System
 
@@ -266,20 +265,10 @@ endif
 
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_System_LauncherUIOptions_DEFINED
-define RUNTIMECLASS_Windows_System_LauncherUIOptions_DEFINED
 define RuntimeClass_Windows_System_LauncherUIOptions <L"Windows.System.LauncherUIOptions">
-endif
-ifndef RUNTIMECLASS_Windows_System_LauncherOptions_DEFINED
-define RUNTIMECLASS_Windows_System_LauncherOptions_DEFINED
 define RuntimeClass_Windows_System_LauncherOptions <L"Windows.System.LauncherOptions">
-endif
-ifndef RUNTIMECLASS_Windows_System_Launcher_DEFINED
-define RUNTIMECLASS_Windows_System_Launcher_DEFINED
 define RuntimeClass_Windows_System_Launcher <L"Windows.System.Launcher">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING

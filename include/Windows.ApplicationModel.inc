@@ -35,10 +35,10 @@ DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CPackage, "0217f069-025c-
 
 .comdef __FIIterator_1_Windows__CApplicationModel__CPackage : public IInspectable
 
-    get_Current		proc :ptr ptr ABI::Windows::ApplicationModel::IPackage
+    get_Current		proc :ptr ptr Windows::ApplicationModel::IPackage
     get_HasCurrent	proc :ptr boolean
     MoveNext		proc :ptr boolean
-    GetMany		proc :SINT, :ptr ptr ABI::Windows::ApplicationModel::IPackage, :ptr UINT
+    GetMany		proc :SINT, :ptr ptr Windows::ApplicationModel::IPackage, :ptr UINT
    .ends
 
 endif
@@ -82,7 +82,6 @@ DEFINE_IIDX(__FIEventHandler_1_Windows__CApplicationModel__CSuspendingEventArgs,
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 
@@ -143,8 +142,8 @@ DEFINE_IIDX(IPackageId, "1ADB665E-37C7-4790-9980-DD7AE74E8BB2")
 .comdef IPackageId : public IInspectable
 
     get_Name		proc :ptr HSTRING
-    get_Version		proc :ptr ABI::Windows::ApplicationModel::PackageVersion
-    get_Architecture	proc :ptr ABI::Windows::System::ProcessorArchitecture
+    get_Version		proc :ptr Windows::ApplicationModel::PackageVersion
+    get_Architecture	proc :ptr Windows::System::ProcessorArchitecture
     get_ResourceId	proc :ptr HSTRING
     get_Publisher	proc :ptr HSTRING
     get_PublisherId	proc :ptr HSTRING
@@ -162,8 +161,8 @@ DEFINE_IIDX(IPackage, "163C792F-BD75-413C-BF23-B1FE7B95D825")
 
 .comdef IPackage : public IInspectable
 
-    get_Id		proc :ptr ptr ABI::Windows::ApplicationModel::IPackageId
-    get_InstalledLocation proc :ptr ptr ABI::Windows::Storage::IStorageFolder
+    get_Id		proc :ptr ptr Windows::ApplicationModel::IPackageId
+    get_InstalledLocation proc :ptr ptr Windows::Storage::IStorageFolder
     get_IsFramework	proc :ptr boolean
     get_Dependencies	proc :ptr ptr __FIVectorView_1_Windows__CApplicationModel__CPackage
    .ends
@@ -217,32 +216,13 @@ endif
 
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_ApplicationModel_SuspendingEventArgs_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_SuspendingEventArgs_DEFINED
 define RuntimeClass_Windows_ApplicationModel_SuspendingEventArgs <L"Windows.ApplicationModel.SuspendingEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_SuspendingDeferral_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_SuspendingDeferral_DEFINED
 define RuntimeClass_Windows_ApplicationModel_SuspendingDeferral <L"Windows.ApplicationModel.SuspendingDeferral">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_SuspendingOperation_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_SuspendingOperation_DEFINED
 define RuntimeClass_Windows_ApplicationModel_SuspendingOperation <L"Windows.ApplicationModel.SuspendingOperation">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_PackageId_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_PackageId_DEFINED
 define RuntimeClass_Windows_ApplicationModel_PackageId <L"Windows.ApplicationModel.PackageId">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Package_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Package_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Package <L"Windows.ApplicationModel.Package">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_DesignMode_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_DesignMode_DEFINED
 define RuntimeClass_Windows_ApplicationModel_DesignMode <L"Windows.ApplicationModel.DesignMode">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING

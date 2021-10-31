@@ -40,7 +40,6 @@ DEFINE_IIDX(__FITypedEventHandler_2_Windows__CApplicationModel__CContacts__CProv
 endif
 
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace Contacts
@@ -103,16 +102,9 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Contacts_Provider_ContactRemovedEventArgs_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Contacts_Provider_ContactRemovedEventArgs_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Contacts_Provider_ContactRemovedEventArgs <L"Windows.ApplicationModel.Contacts.Provider.ContactRemovedEventArgs">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_Contacts_Provider_ContactPickerUI_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_Contacts_Provider_ContactPickerUI_DEFINED
 define RuntimeClass_Windows_ApplicationModel_Contacts_Provider_ContactPickerUI <L"Windows.ApplicationModel.Contacts.Provider.ContactPickerUI">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

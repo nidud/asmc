@@ -88,9 +88,9 @@ endif
 ifndef SORTPP_PASS
 C_ASSERT macro e
 	if e
-	    exitm<__C_ASSERT__[1]>
+	    exitm<>
 	else
-	    exitm<__C_ASSERT__[-1]>
+	    .err<e>
 	endif
 	endm
 else

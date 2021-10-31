@@ -9,8 +9,6 @@ include SimpleDirect2dApplication.inc
 
 wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nCmdShow:SINT
 
-  local vtable:DemoAppVtbl
-
     ; Ignore the return value because we want to run the program even in the
     ; unlikely event that HeapSetInformation fails.
 
@@ -18,7 +16,7 @@ wWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPWSTR, nC
 
     .if (SUCCEEDED(CoInitialize(NULL)))
 
-       .new app:DemoApp(&vtable)
+       .new app:ptr DemoApp()
 
         .if (SUCCEEDED(app.Initialize()))
 
@@ -34,28 +32,9 @@ wWinMain endp
 ; Initialize members.
 ;
 
-DemoApp::DemoApp proc uses rdi vtable:ptr
+DemoApp::DemoApp proc uses rdi
 
-    mov [rcx].DemoApp.lpVtbl,rdx
-    lea rdi,[rcx+8]
-    xor eax,eax
-    mov ecx,(DemoApp - 8) / 8
-    rep stosq
-    mov rdi,rdx
-    for q,<Release,
-           Initialize,
-           RunMessageLoop,
-           CreateDeviceIndependentResources,
-           CreateDeviceResources,
-           CreateGridPatternBrush,
-           DiscardDeviceResources,
-           OnRender,
-           OnResize,
-           LoadResourceBitmap,
-           LoadBitmapFromFile>
-        lea rax,DemoApp_&q
-        stosq
-        endm
+    @ComAlloc(DemoApp)
     ret
 
 DemoApp::DemoApp endp
@@ -175,58 +154,39 @@ DemoApp::Initialize endp
 
 DemoApp::CreateDeviceIndependentResources proc uses rsi
 
-  local hr:HRESULT
-  local pSink:ptr ID2D1GeometrySink
+  .new hr:HRESULT
+  .new pSink:ptr ID2D1GeometrySink = nullptr
 
-    mov pSink,NULL
     mov rdi,rcx
 
     ; Create a Direct2D factory.
 
-    mov hr,D2D1CreateFactory(
-        D2D1_FACTORY_TYPE_SINGLE_THREADED,
-        &IID_ID2D1Factory,
-        NULL,
-        &[rsi].m_pD2DFactory)
+    mov hr,D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &IID_ID2D1Factory,
+            NULL, &[rsi].m_pD2DFactory)
 
     .if (SUCCEEDED(hr))
 
         ; Create WIC factory.
 
-        mov hr,CoCreateInstance(
-            &CLSID_WICImagingFactory,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            &IID_IWICImagingFactory,
-            &[rsi].m_pWICFactory
-            )
+        mov hr,CoCreateInstance(&CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
+                &IID_IWICImagingFactory, &[rsi].m_pWICFactory)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ; Create a DirectWrite factory.
 
-        mov hr,DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            &IID_IDWriteFactory,
-            &[rsi].m_pDWriteFactory
-            )
+        mov hr,DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory,
+                &[rsi].m_pDWriteFactory)
     .endif
 
     .if (SUCCEEDED(hr))
 
         ; Create a DirectWrite text format object.
 
-        mov hr,this.m_pDWriteFactory.CreateTextFormat(
-            L"Verdana",
-            NULL,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            50.0,
-            L"",
-            &[rsi].m_pTextFormat
-            )
+        mov hr,this.m_pDWriteFactory.CreateTextFormat(L"Verdana", NULL,
+                DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+                DWRITE_FONT_STRETCH_NORMAL, 50.0, L"", &[rsi].m_pTextFormat)
     .endif
 
     .if (SUCCEEDED(hr))
@@ -314,8 +274,8 @@ GetSampleFile proc
     mov hr,S_OK
 
     .if InternetOpenUrl(hINet,
-            "https://github.com/microsoft/Windows-classic-samples/raw/master/Samples/"
-            "Win7Samples/multimedia/Direct2D/SimpleDirect2DApplication/sampleImage.jpg",
+            "https://raw.githubusercontent.com/microsoft/Windows-classic-samples/"
+            "main/Samples/Win7Samples/multimedia/Direct2D/SimpleDirect2DApplication/sampleImage.jpg",
             NULL, 0, 0, 0 )
 
         mov hFile,rax
@@ -342,12 +302,11 @@ GetSampleFile endp
 
 DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
-  local hr:HRESULT
-  local rc:RECT
-  local size:D2D1_SIZE_U
+  .new hr:HRESULT = S_OK
+  .new rc:RECT
+  .new size:D2D1_SIZE_U
 
     mov rsi,rcx
-    mov hr,S_OK
 
     .if (![rsi].m_pRenderTarget)
 
@@ -424,14 +383,8 @@ DemoApp::CreateDeviceResources proc uses rsi rdi rbx
 
         .if (SUCCEEDED(hr))
 
-            mov hr,this.LoadBitmapFromFile(
-                [rsi].m_pRenderTarget,
-                [rsi].m_pWICFactory,
-                L".\\sampleImage.jpg",
-                100,
-                0,
-                &[rsi].m_pBitmap
-                )
+            mov hr,this.LoadBitmapFromFile([rsi].m_pRenderTarget, [rsi].m_pWICFactory,
+                    L".\\sampleImage.jpg", 100, 0, &[rsi].m_pBitmap)
         .endif
 
         .if (SUCCEEDED(hr))
@@ -456,36 +409,22 @@ DemoApp::CreateDeviceResources endp
 DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
         ppBitmapBrush:ptr ptr ID2D1BitmapBrush
 
-  local hr:HRESULT
-  local pCompatibleRenderTarget:ptr ID2D1BitmapRenderTarget
-
-    mov hr,S_OK
+  .new hr:HRESULT = S_OK
+  .new pCompatibleRenderTarget:ptr ID2D1BitmapRenderTarget = nullptr
 
     ; Create a compatible render target.
 
-    mov pCompatibleRenderTarget,NULL
     mov rdx,D2D1::SizeF(10.0, 10.0)
-    mov hr,pRenderTarget.CreateCompatibleRenderTarget(
-        rdx,
-        NULL,
-        NULL,
-        D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_NONE,
-        &pCompatibleRenderTarget
-        )
+    mov hr,pRenderTarget.CreateCompatibleRenderTarget(rdx, NULL, NULL,
+            D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_NONE, &pCompatibleRenderTarget)
 
     .if (SUCCEEDED(hr))
 
         ; Draw a pattern.
 
-        .new pGridBrush:ptr ID2D1SolidColorBrush
-        .new color:D3DCOLORVALUE = { 0.93, 0.94, 0.96, 1.0 }
-        mov pGridBrush,NULL
-
-        mov hr,pCompatibleRenderTarget.CreateSolidColorBrush(
-            &color,
-            NULL,
-            &pGridBrush
-            )
+       .new pGridBrush:ptr ID2D1SolidColorBrush = NULL
+       .new color:D3DCOLORVALUE = { 0.93, 0.94, 0.96, 1.0 }
+        mov hr,pCompatibleRenderTarget.CreateSolidColorBrush(&color, NULL, &pGridBrush)
 
         .if (SUCCEEDED(hr))
 
@@ -496,9 +435,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
             ; Retrieve the bitmap from the render target.
 
-           .new pGridBitmap:ptr ID2D1Bitmap
-
-            mov pGridBitmap,NULL
+           .new pGridBitmap:ptr ID2D1Bitmap = NULL
             mov hr,pCompatibleRenderTarget.GetBitmap(&pGridBitmap)
 
             .if (SUCCEEDED(hr))
@@ -509,12 +446,7 @@ DemoApp::CreateGridPatternBrush proc pRenderTarget:ptr ID2D1RenderTarget,
 
                 ; Create the bitmap brush.
 
-                mov hr,this.m_pRenderTarget.CreateBitmapBrush(
-                        pGridBitmap,
-                        r8,
-                        NULL,
-                        ppBitmapBrush
-                        )
+                mov hr,this.m_pRenderTarget.CreateBitmapBrush(pGridBitmap, r8, NULL, ppBitmapBrush)
 
                 pGridBitmap.Release()
             .endif
@@ -654,15 +586,8 @@ DemoApp::OnRender proc uses rsi
         mov r.left, 0.0
         mov r.top,  0.0
 
-        pRT.DrawText(
-            sc_helloWorld,
-            13,
-            [rsi].m_pTextFormat,
-            &r,
-            [rsi].m_pBlackBrush,
-            D2D1_DRAW_TEXT_OPTIONS_NONE,
-            DWRITE_MEASURING_MODE_NATURAL
-            )
+        pRT.DrawText(sc_helloWorld, 13, [rsi].m_pTextFormat, &r, [rsi].m_pBlackBrush,
+                D2D1_DRAW_TEXT_OPTIONS_NONE, DWRITE_MEASURING_MODE_NATURAL)
 
         ;
         ; Reset back to the identity transform

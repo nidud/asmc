@@ -566,7 +566,6 @@ DEFINE_IIDX(__FIAsyncOperation_1_Windows__CStorage__CStreams__CRandomAccessStrea
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Storage
 .namespace Search
@@ -592,7 +591,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIDataReader_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIDataReader_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IDataReader, "E2B50029-B4C1-4314-A4B8-FB813A2F275E")
+DEFINE_IIDX(IDataReader, "E2B50029-B4C1-4314-A4B8-FB813A2F275E")
 
 .comdef IDataReader : public IInspectable
 
@@ -629,7 +628,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIDataReaderFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIDataReaderFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IDataReaderFactory, "D7527847-57DA-4E15-914C-06806699A098")
+DEFINE_IIDX(IDataReaderFactory, "D7527847-57DA-4E15-914C-06806699A098")
 
 .comdef IDataReaderFactory : public IInspectable
 
@@ -641,7 +640,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIDataReaderStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIDataReaderStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IDataReaderStatics, "11FCBFC8-F93A-471B-B121-F379E349313C")
+DEFINE_IIDX(IDataReaderStatics, "11FCBFC8-F93A-471B-B121-F379E349313C")
 
 .comdef IDataReaderStatics : public IInspectable
 
@@ -653,7 +652,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIDataWriter_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIDataWriter_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IDataWriter, "64B89265-D341-4922-B38A-DD4AF8808C4E")
+DEFINE_IIDX(IDataWriter, "64B89265-D341-4922-B38A-DD4AF8808C4E")
 
 .comdef IDataWriter : public IInspectable
 
@@ -691,7 +690,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIDataWriterFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIDataWriterFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IDataWriterFactory, "338C67C2-8B84-4C2B-9C50-7B8767847A1F")
+DEFINE_IIDX(IDataWriterFactory, "338C67C2-8B84-4C2B-9C50-7B8767847A1F")
 
 .comdef IDataWriterFactory : public IInspectable
 
@@ -703,7 +702,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStreamStatics, "524CEDCF-6E29-4CE5-9573-6B753DB66C3A")
+DEFINE_IIDX(IRandomAccessStreamStatics, "524CEDCF-6E29-4CE5-9573-6B753DB66C3A")
 
 .comdef IRandomAccessStreamStatics : public IInspectable
 
@@ -717,7 +716,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIBufferFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIBufferFactory_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IBufferFactory, "71AF914D-C10F-484B-BC50-14BC623B3A27")
+DEFINE_IIDX(IBufferFactory, "71AF914D-C10F-484B-BC50-14BC623B3A27")
 
 .comdef IBufferFactory : public IInspectable
 
@@ -729,7 +728,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIBuffer_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIBuffer_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IBuffer, "905A0FE0-BC53-11DF-8C49-001E4FC686DA")
+DEFINE_IIDX(IBuffer, "905A0FE0-BC53-11DF-8C49-001E4FC686DA")
 
 .comdef IBuffer : public IInspectable
 
@@ -743,7 +742,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIContentTypeProvider_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIContentTypeProvider_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IContentTypeProvider, "97D098A5-3B99-4DE9-88A5-E11D2F50C795")
+DEFINE_IIDX(IContentTypeProvider, "97D098A5-3B99-4DE9-88A5-E11D2F50C795")
 
 .comdef IContentTypeProvider : public IInspectable
 
@@ -755,7 +754,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamReference_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamReference_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStreamReference, "33EE3134-1DD6-4E3A-8067-D1C162E8642B")
+DEFINE_IIDX(IRandomAccessStreamReference, "33EE3134-1DD6-4E3A-8067-D1C162E8642B")
 
 .comdef IRandomAccessStreamReference : public IInspectable
 
@@ -767,7 +766,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIInputStreamReference_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIInputStreamReference_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IInputStreamReference, "43929D18-5EC9-4B5A-919C-4205B0C804B6")
+DEFINE_IIDX(IInputStreamReference, "43929D18-5EC9-4B5A-919C-4205B0C804B6")
 
 .comdef IInputStreamReference : public IInspectable
 
@@ -779,7 +778,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamReferenceStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamReferenceStatics_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStreamReferenceStatics, "857309DC-3FBF-4E7D-986F-EF3B1A07A964")
+DEFINE_IIDX(IRandomAccessStreamReferenceStatics, "857309DC-3FBF-4E7D-986F-EF3B1A07A964")
 
 .comdef IRandomAccessStreamReferenceStatics : public IInspectable
 
@@ -793,7 +792,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIInputStream_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIInputStream_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IInputStream, "905A0FE2-BC53-11DF-8C49-001E4FC686DA")
+DEFINE_IIDX(IInputStream, "905A0FE2-BC53-11DF-8C49-001E4FC686DA")
 
 .comdef IInputStream : public IInspectable
 
@@ -805,7 +804,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIOutputStream_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIOutputStream_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IOutputStream, "905A0FE6-BC53-11DF-8C49-001E4FC686DA")
+DEFINE_IIDX(IOutputStream, "905A0FE6-BC53-11DF-8C49-001E4FC686DA")
 
 .comdef IOutputStream : public IInspectable
 
@@ -818,7 +817,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStream_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStream_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStream, "905A0FE1-BC53-11DF-8C49-001E4FC686DA")
+DEFINE_IIDX(IRandomAccessStream, "905A0FE1-BC53-11DF-8C49-001E4FC686DA")
 
 .comdef IRandomAccessStream : public IInspectable
 
@@ -838,7 +837,7 @@ endif
 ifndef ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamWithContentType_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CStorage_CStreams_CIRandomAccessStreamWithContentType_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStreamWithContentType, "CC254827-4B3D-438F-9232-10C76BC7E038")
+DEFINE_IIDX(IRandomAccessStreamWithContentType, "CC254827-4B3D-438F-9232-10C76BC7E038")
 
 .comdef IRandomAccessStreamWithContentType : public IInspectable
 
@@ -846,7 +845,6 @@ DEFINE_IIDX(ABI_Windows_Storage_Streams_IRandomAccessStreamWithContentType, "CC2
 
 endif
 
-.endn
 .endn
 .endn
 .endn

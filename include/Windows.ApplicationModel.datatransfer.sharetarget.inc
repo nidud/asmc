@@ -27,7 +27,6 @@ include Windows.Foundation.inc
 include Windows.ApplicationModel.DataTransfer.inc
 include windows.foundation.collections.inc
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace DataTransfer
@@ -90,16 +89,9 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_ApplicationModel_DataTransfer_ShareTarget_QuickLink_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_DataTransfer_ShareTarget_QuickLink_DEFINED
 define RuntimeClass_Windows_ApplicationModel_DataTransfer_ShareTarget_QuickLink <L"Windows.ApplicationModel.DataTransfer.ShareTarget.QuickLink">
-endif
-ifndef RUNTIMECLASS_Windows_ApplicationModel_DataTransfer_ShareTarget_ShareOperation_DEFINED
-define RUNTIMECLASS_Windows_ApplicationModel_DataTransfer_ShareTarget_ShareOperation_DEFINED
 define RuntimeClass_Windows_ApplicationModel_DataTransfer_ShareTarget_ShareOperation <L"Windows.ApplicationModel.DataTransfer.ShareTarget.ShareOperation">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr DWORD, :LPBYTE, :ptr HSTRING

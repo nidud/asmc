@@ -624,10 +624,12 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
 
     lea edi,cc
     mov eax,T_MOV
-    .if ( [esi].mem_type == MT_REAL4 )
-        mov eax,T_MOVSS
-    .elseif ( [esi].mem_type == MT_REAL8 )
-        mov eax,T_MOVSD
+    .if ( [ebx].token != T_FLOAT && [ebx].token != '-' )
+        .if ( [esi].mem_type == MT_REAL4 )
+            mov eax,T_MOVSS
+        .elseif ( [esi].mem_type == MT_REAL8 )
+            mov eax,T_MOVSD
+        .endif
     .endif
     tsprintf( edi, " %r ", eax )
 
@@ -652,8 +654,17 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
                     AddLineQueueX( " mov dword ptr %s[4], %u", name, opndx.l64_h )
                     imul eax,i,asm_tok
                     add  eax,tokenarray
-                    .return
+                   .return
                 .endif
+
+            .elseif ( opndx.kind == EXPR_FLOAT )
+
+                AddLineQueueX( " mov dword ptr %s[0], LOW32(%s)", name, [ebx].tokpos )
+                AddLineQueueX( " mov dword ptr %s[4], HIGH32(%s)", name, [ebx].tokpos )
+
+                imul eax,i,asm_tok
+                add  eax,tokenarray
+               .return
             .endif
         .endif
     .endif

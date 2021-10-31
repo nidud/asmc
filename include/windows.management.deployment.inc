@@ -34,7 +34,7 @@ DEFINE_IIDX(__FIIterator_1_Windows__CManagement__CDeployment__CPackageUserInform
 
 .comdef __FIIterator_1_Windows__CManagement__CDeployment__CPackageUserInformation : public IInspectable
 
-    get_Current		proc :ptr ptr ABI::Windows::Management::Deployment::IPackageUserInformation
+    get_Current		proc :ptr ptr Windows::Management::Deployment::IPackageUserInformation
     get_HasCurrent	proc :ptr
     MoveNext		proc :ptr
     GetMany		proc :SINT, :ptr, :dword
@@ -94,7 +94,6 @@ DEFINE_IIDX(__FIAsyncOperationWithProgress_2_Windows__CManagement__CDeployment__
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Management
 .namespace Deployment
@@ -164,7 +163,7 @@ DEFINE_IIDX(IPackageUserInformation, "F6383423-FA09-4CBC-9055-15CA275E2E7E")
 .comdef IPackageUserInformation : public IInspectable
 
     get_UserSecurityId	proc :ptr HSTRING
-    get_InstallState	proc :ptr ABI::Windows::Management::Deployment::PackageInstallState
+    get_InstallState	proc :ptr Windows::Management::Deployment::PackageInstallState
    .ends
 
 endif
@@ -220,20 +219,10 @@ endif
 .endn
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_Management_Deployment_DeploymentResult_DEFINED
-define RUNTIMECLASS_Windows_Management_Deployment_DeploymentResult_DEFINED
 define RuntimeClass_Windows_Management_Deployment_DeploymentResult <L"Windows.Management.Deployment.DeploymentResult">
-endif
-ifndef RUNTIMECLASS_Windows_Management_Deployment_PackageUserInformation_DEFINED
-define RUNTIMECLASS_Windows_Management_Deployment_PackageUserInformation_DEFINED
 define RuntimeClass_Windows_Management_Deployment_PackageUserInformation <L"Windows.Management.Deployment.PackageUserInformation">
-endif
-ifndef RUNTIMECLASS_Windows_Management_Deployment_PackageManager_DEFINED
-define RUNTIMECLASS_Windows_Management_Deployment_PackageManager_DEFINED
 define RuntimeClass_Windows_Management_Deployment_PackageManager <L"Windows.Management.Deployment.PackageManager">
-endif
 
 endif
 

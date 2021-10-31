@@ -59,7 +59,6 @@ DEFINE_IIDX(_FITypedEventHandler_2_Windows__CApplicationModel__CCore__CCoreAppli
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace ApplicationModel
 .namespace Activation
@@ -528,7 +527,6 @@ DEFINE_IIDX(ILockScreenCallActivatedEventArgs, "06F37FBE-B5F2-448B-B13E-E328AC1C
 
 endif
 
-.endn
 .endn
 .endn
 .endn

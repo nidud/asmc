@@ -1719,7 +1719,6 @@ DEFINE_IIDX(__FIReference_1_boolean, "3c00fd60-2950-5939-a21a-2d12c5a01b8a")
 
 endif
 
-.namespace ABI
 .namespace Windows
 .namespace Foundation
 
@@ -1795,7 +1794,7 @@ endif
 ifndef ____x_ABI_CWindows_CFoundation_CIAsyncActionCompletedHandler_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIAsyncActionCompletedHandler_INTERFACE_DEFINED__
 
-DEFINE_IIDX(ABI_Windows_Foundation_IAsyncActionCompletedHandler, "A4ED5C81-76C9-40BD-8BE6-B1D90FB20AE7")
+DEFINE_IIDX(IAsyncActionCompletedHandler, "A4ED5C81-76C9-40BD-8BE6-B1D90FB20AE7")
 
 .comdef IAsyncActionCompletedHandler : public IUnknown
 
@@ -1808,7 +1807,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIUriRuntimeClass_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIUriRuntimeClass_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IUriRuntimeClass <L"Windows.Foundation.IUriRuntimeClass">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IUriRuntimeClass, "9E365E57-48B2-4160-956F-C7385120BBFC")
+DEFINE_IIDX(IUriRuntimeClass, "9E365E57-48B2-4160-956F-C7385120BBFC")
 
 .comdef IUriRuntimeClass : public IInspectable
 
@@ -1837,7 +1836,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIUriRuntimeClassWithAbsoluteCanonicalUri_
 define ____x_ABI_CWindows_CFoundation_CIUriRuntimeClassWithAbsoluteCanonicalUri_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IUriRuntimeClassWithAbsoluteCanonicalUri <L"Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IUriRuntimeClassWithAbsoluteCanonicalUri, "758D9661-221C-480F-A339-50656673F46F")
+DEFINE_IIDX(IUriRuntimeClassWithAbsoluteCanonicalUri, "758D9661-221C-480F-A339-50656673F46F")
 
 .comdef IUriRuntimeClassWithAbsoluteCanonicalUri : public IInspectable
 
@@ -1851,7 +1850,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIUriEscapeStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIUriEscapeStatics_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IUriEscapeStatics <L"Windows.Foundation.IUriEscapeStatics">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IUriEscapeStatics, "C1D432BA-C824-4452-A7FD-512BC3BBE9A1")
+DEFINE_IIDX(IUriEscapeStatics, "C1D432BA-C824-4452-A7FD-512BC3BBE9A1")
 
 .comdef IUriEscapeStatics : public IInspectable
 
@@ -1865,7 +1864,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIUriRuntimeClassFactory_INTERFACE_DEFINED
 define ____x_ABI_CWindows_CFoundation_CIUriRuntimeClassFactory_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IUriRuntimeClassFactory <L"Windows.Foundation.IUriRuntimeClassFactory">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IUriRuntimeClassFactory, "44A9796F-723E-4FDF-A218-033E75B0C084")
+DEFINE_IIDX(IUriRuntimeClassFactory, "44A9796F-723E-4FDF-A218-033E75B0C084")
 
 .comdef IUriRuntimeClassFactory : public IInspectable
 
@@ -1879,7 +1878,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderEntry_INTERFACE_DEFINED
 define ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderEntry_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IWwwFormUrlDecoderEntry <L"Windows.Foundation.IWwwFormUrlDecoderEntry">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IWwwFormUrlDecoderEntry, "125E7431-F678-4E8E-B670-20A9B06C512D")
+DEFINE_IIDX(IWwwFormUrlDecoderEntry, "125E7431-F678-4E8E-B670-20A9B06C512D")
 
 .comdef IWwwFormUrlDecoderEntry : public IInspectable
 
@@ -1893,7 +1892,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderRuntimeClass_INTERFACE_
 define ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderRuntimeClass_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IWwwFormUrlDecoderRuntimeClass <L"Windows.Foundation.IWwwFormUrlDecoderRuntimeClass">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IWwwFormUrlDecoderRuntimeClass, "D45A0451-F225-4542-9296-0E1DF5D254DF")
+DEFINE_IIDX(IWwwFormUrlDecoderRuntimeClass, "D45A0451-F225-4542-9296-0E1DF5D254DF")
 
 .comdef IWwwFormUrlDecoderRuntimeClass : public IInspectable
 
@@ -1906,7 +1905,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderRuntimeClassFactory_INT
 define ____x_ABI_CWindows_CFoundation_CIWwwFormUrlDecoderRuntimeClassFactory_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IWwwFormUrlDecoderRuntimeClassFactory <L"Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IWwwFormUrlDecoderRuntimeClassFactory, "5B8C6B3D-24AE-41B5-A1BF-F0C3D544845B")
+DEFINE_IIDX(IWwwFormUrlDecoderRuntimeClassFactory, "5B8C6B3D-24AE-41B5-A1BF-F0C3D544845B")
 
 .comdef IWwwFormUrlDecoderRuntimeClassFactory : public IInspectable
 
@@ -1919,7 +1918,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIGetActivationFactory_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIGetActivationFactory_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IGetActivationFactory <L"Windows.Foundation.IGetActivationFactory">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IGetActivationFactory, "4EDB8EE2-96DD-49A7-94F7-4607DDAB8E3C")
+DEFINE_IIDX(IGetActivationFactory, "4EDB8EE2-96DD-49A7-94F7-4607DDAB8E3C")
 
 .comdef IGetActivationFactory : public IInspectable
 
@@ -1932,7 +1931,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIClosable_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIClosable_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IClosable <L"Windows.Foundation.IClosable">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IClosable, "30D5A829-7FA4-4026-83BB-D75BAE4EA99E")
+DEFINE_IIDX(IClosable, "30D5A829-7FA4-4026-83BB-D75BAE4EA99E")
 
 .comdef IClosable : public IInspectable
 
@@ -1945,7 +1944,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIPropertyValue_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIPropertyValue_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IPropertyValue <L"Windows.Foundation.IPropertyValue">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IPropertyValue, "4BD682DD-7554-40E9-9A9B-82654EDE7E62")
+DEFINE_IIDX(IPropertyValue, "4BD682DD-7554-40E9-9A9B-82654EDE7E62")
 
 .comdef IPropertyValue : public IInspectable
 
@@ -1996,7 +1995,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIPropertyValueStatics_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIPropertyValueStatics_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IPropertyValueStatics <L"Windows.Foundation.IPropertyValueStatics">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IPropertyValueStatics, "629BDBC8-D932-4FF4-96B9-8D96C5C1E858")
+DEFINE_IIDX(IPropertyValueStatics, "629BDBC8-D932-4FF4-96B9-8D96C5C1E858")
 
 .comdef IPropertyValueStatics : public IInspectable
 
@@ -2047,7 +2046,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIStringable_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIStringable_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IStringable <L"Windows.Foundation.IStringable">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IStringable, "96369F54-8EB6-48F0-ABCE-C1B211E627C3")
+DEFINE_IIDX(IStringable, "96369F54-8EB6-48F0-ABCE-C1B211E627C3")
 
 .comdef IStringable : public IInspectable
 
@@ -2062,7 +2061,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CCollections_CIPropertySet_INTERFACE_DEFIN
 define ____x_ABI_CWindows_CFoundation_CCollections_CIPropertySet_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_Collections_IPropertySet <L"Windows.Foundation.Collections.IPropertySet">
 
-DEFINE_IIDX(ABI_Windows_Foundation_Collections_IPropertySet, "8A43ED9F-F4E6-4421-ACF9-1DAB2986820C")
+DEFINE_IIDX(Collections_IPropertySet, "8A43ED9F-F4E6-4421-ACF9-1DAB2986820C")
 
 .comdef IPropertySet : public IInspectable
 
@@ -2076,7 +2075,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CIAsyncAction_INTERFACE_DEFINED__
 define ____x_ABI_CWindows_CFoundation_CIAsyncAction_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_IAsyncAction <L"Windows.Foundation.IAsyncAction">
 
-DEFINE_IIDX(ABI_Windows_Foundation_IAsyncAction, "5A648006-843A-4DA9-865B-9D26E5DFAD7B")
+DEFINE_IIDX(IAsyncAction, "5A648006-843A-4DA9-865B-9D26E5DFAD7B")
 
 .comdef IAsyncAction : public IInspectable
 
@@ -2089,28 +2088,12 @@ endif
 
 .endn
 .endn
-.endn
 
-ifndef RUNTIMECLASS_Windows_Foundation_WwwFormUrlDecoder_DEFINED
-define RUNTIMECLASS_Windows_Foundation_WwwFormUrlDecoder_DEFINED
 define RuntimeClass_Windows_Foundation_WwwFormUrlDecoder <L"Windows.Foundation.WwwFormUrlDecoder">
-endif
-ifndef RUNTIMECLASS_Windows_Foundation_Uri_DEFINED
-define RUNTIMECLASS_Windows_Foundation_Uri_DEFINED
 define RuntimeClass_Windows_Foundation_Uri <L"Windows.Foundation.Uri">
-endif
-ifndef RUNTIMECLASS_Windows_Foundation_WwwFormUrlDecoderEntry_DEFINED
-define RUNTIMECLASS_Windows_Foundation_WwwFormUrlDecoderEntry_DEFINED
 define RuntimeClass_Windows_Foundation_WwwFormUrlDecoderEntry <L"Windows.Foundation.WwwFormUrlDecoderEntry">
-endif
-ifndef RUNTIMECLASS_Windows_Foundation_PropertyValue_DEFINED
-define RUNTIMECLASS_Windows_Foundation_PropertyValue_DEFINED
 define RuntimeClass_Windows_Foundation_PropertyValue <L"Windows.Foundation.PropertyValue">
-endif
-ifndef RUNTIMECLASS_Windows_Foundation_Collections_PropertySet_DEFINED
-define RUNTIMECLASS_Windows_Foundation_Collections_PropertySet_DEFINED
 define RuntimeClass_Windows_Foundation_Collections_PropertySet <L"Windows.Foundation.Collections.PropertySet">
-endif
 
 HSTRING_UserSize	proto WINAPI :ptr ULONG, :ULONG, :ptr HSTRING
 HSTRING_UserMarshal	proto WINAPI :ptr ULONG, :ptr UCHAR, :ptr HSTRING

@@ -2180,7 +2180,5 @@ DEFINE_IIDX(IApartmentShutdown, "00000034-0000-0000-C000-000000000046")
     .ends
 
 endif
-
 endif
-
 endif

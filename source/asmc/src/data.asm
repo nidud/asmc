@@ -604,11 +604,42 @@ next_item:
         .endif
     .endif
 
+    mov esi,CurrStruct
+    .if ( esi && [esi].asym.typekind == TYPE_RECORD && [ebx].token == T_COLON )
+
+        inc i ; get width
+        mov ecx,_end
+        dec ecx
+        .return .if ( EvalOperand( &i, tokenarray, ecx, &opndx, 0 ) == ERROR )
+        .if ( opndx.kind != EXPR_CONST )
+            .return asmerr( 2026 )
+        .endif
+        mov ecx,opndx.value
+        mov eax,32
+        .if ( ModuleInfo.Ofssize == USE64 )
+            mov eax,64
+        .endif
+        .if ( ecx == 0 )
+            .return asmerr( 2172, [ebx-32].string_ptr )
+        .elseif ( ecx > eax )
+            .return asmerr( 2089, [ebx-32].string_ptr )
+        .endif
+        mov eax,[esi].asym.offs
+        add [esi].asym.offs,ecx
+        mov edx,sym
+        mov [edx].asym.mem_type,MT_BITS
+        mov [edx].asym.offs,eax
+        mov [esi].asym.total_size,no_of_bytes
+        mov no_of_bytes,ecx
+        imul ebx,i,asm_tok
+        add ebx,tokenarray
+    .endif
+
     .if ( [ebx].token == T_QUESTION_MARK )
         mov opndx.kind,EXPR_EMPTY
     .else
         .if ( EvalOperand( &i, tokenarray, _end, &opndx, 0 ) == ERROR )
-            .return( ERROR )
+            .return
         .endif
         imul ebx,i,asm_tok
         add ebx,tokenarray

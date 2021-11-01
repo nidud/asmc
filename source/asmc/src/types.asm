@@ -200,10 +200,13 @@ StructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     imul ecx,i,asm_tok
     add ebx,ecx
 
-    mov typekind,TYPE_STRUCT
+    mov al,TYPE_STRUCT
     .if ( [ebx].tokval == T_UNION )
-        mov typekind,TYPE_UNION
+        mov al,TYPE_UNION
+    .elseif ( [ebx].tokval == T_RECORD )
+        mov al,TYPE_RECORD
     .endif
+    mov typekind,al
 
     mov eax,CurrStruct
     .if ( ( eax == NULL && i != 1 ) || ( eax != NULL && i != 0 ) )
@@ -858,7 +861,8 @@ UpdateStructSize proc sym:ptr asym
 
     mov edx,sym
     mov ecx,CurrStruct
-    .if ( [ecx].asym.typekind == TYPE_UNION )
+    .if ( [ecx].asym.typekind == TYPE_RECORD )
+    .elseif ( [ecx].asym.typekind == TYPE_UNION )
         .if ( [edx].asym.total_size > [ecx].asym.total_size )
             mov [ecx].asym.total_size,[edx].asym.total_size
         .endif
@@ -1265,6 +1269,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     add ebx,ecx
 
     .if ( i != 1 )
+        .return StructDirective( i, tokenarray ) .if ( i == 0 )
         .return( asmerr( 2008, [ebx].string_ptr ) )
     .endif
     mov esi,SymSearch( name )
@@ -1275,9 +1280,9 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             ( [esi].asym.typekind == TYPE_RECORD || \
               [esi].asym.typekind == TYPE_NONE ) )
 
-        ;; v2.04: allow redefinition of record and forward references.
-        ;; the record redefinition may have different initial values,
-        ;; but those new values are IGNORED! ( Masm bug? )
+        ; v2.04: allow redefinition of record and forward references.
+        ; the record redefinition may have different initial values,
+        ; but those new values are IGNORED! ( Masm bug? )
 
         .if ( Parse_Pass == PASS_1 && [esi].asym.typekind == TYPE_RECORD )
             mov oldr,esi

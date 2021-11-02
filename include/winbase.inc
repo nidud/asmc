@@ -409,35 +409,35 @@ PCF_SPECIALCHARS  equ 0x0100
 PCF_16BITMODE	  equ 0x0200
 
 
-SP_PARITY	  equ 0x0001
-SP_BAUD		  equ 0x0002
-SP_DATABITS	  equ 0x0004
-SP_STOPBITS	  equ 0x0008
-SP_HANDSHAKING	  equ 0x0010
-SP_PARITY_CHECK	  equ 0x0020
-SP_RLSD		  equ 0x0040
+SP_PARITY	equ 0x0001
+SP_BAUD		equ 0x0002
+SP_DATABITS	equ 0x0004
+SP_STOPBITS	equ 0x0008
+SP_HANDSHAKING	equ 0x0010
+SP_PARITY_CHECK equ 0x0020
+SP_RLSD		equ 0x0040
 
 
-BAUD_075	  equ 0x00000001
-BAUD_110	  equ 0x00000002
-BAUD_134_5	  equ 0x00000004
-BAUD_150	  equ 0x00000008
-BAUD_300	  equ 0x00000010
-BAUD_600	  equ 0x00000020
-BAUD_1200	  equ 0x00000040
-BAUD_1800	  equ 0x00000080
-BAUD_2400	  equ 0x00000100
-BAUD_4800	  equ 0x00000200
-BAUD_7200	  equ 0x00000400
-BAUD_9600	  equ 0x00000800
-BAUD_14400	  equ 0x00001000
-BAUD_19200	  equ 0x00002000
-BAUD_38400	  equ 0x00004000
-BAUD_56K	  equ 0x00008000
-BAUD_128K	  equ 0x00010000
-BAUD_115200	  equ 0x00020000
-BAUD_57600	  equ 0x00040000
-BAUD_USER	  equ 0x10000000
+BAUD_075	equ 0x00000001
+BAUD_110	equ 0x00000002
+BAUD_134_5	equ 0x00000004
+BAUD_150	equ 0x00000008
+BAUD_300	equ 0x00000010
+BAUD_600	equ 0x00000020
+BAUD_1200	equ 0x00000040
+BAUD_1800	equ 0x00000080
+BAUD_2400	equ 0x00000100
+BAUD_4800	equ 0x00000200
+BAUD_7200	equ 0x00000400
+BAUD_9600	equ 0x00000800
+BAUD_14400	equ 0x00001000
+BAUD_19200	equ 0x00002000
+BAUD_38400	equ 0x00004000
+BAUD_56K	equ 0x00008000
+BAUD_128K	equ 0x00010000
+BAUD_115200	equ 0x00020000
+BAUD_57600	equ 0x00040000
+BAUD_USER	equ 0x10000000
 
 
 DATABITS_5	equ 0x0001
@@ -457,93 +457,89 @@ PARITY_EVEN	equ 0x0400
 PARITY_MARK	equ 0x0800
 PARITY_SPACE	equ 0x1000
 
-COMMPROP		STRUC
-wPacketLength		WORD ?
-wPacketVersion		WORD ?
-dwServiceMask		DWORD ?
-dwReserved1		DWORD ?
-dwMaxTxQueue		DWORD ?
-dwMaxRxQueue		DWORD ?
-dwMaxBaud		DWORD ?
-dwProvSubType		DWORD ?
-dwProvCapabilities	DWORD ?
-dwSettableParams	DWORD ?
-dwSettableBaud		DWORD ?
-wSettableData		WORD ?
-wSettableStopParity	WORD ?
-dwCurrentTxQueue	DWORD ?
-dwCurrentRxQueue	DWORD ?
-dwProvSpec1		DWORD ?
-dwProvSpec2		DWORD ?
-wcProvChar		WORD ?
-COMMPROP		ENDS
+COMMPROP	STRUC
+wPacketLength	WORD ?
+wPacketVersion	WORD ?
+dwServiceMask	DWORD ?
+dwReserved1	DWORD ?
+dwMaxTxQueue	DWORD ?
+dwMaxRxQueue	DWORD ?
+dwMaxBaud	DWORD ?
+dwProvSubType	DWORD ?
+dwProvCapabilities DWORD ?
+dwSettableParams DWORD ?
+dwSettableBaud	DWORD ?
+wSettableData	WORD ?
+wSettableStopParity WORD ?
+dwCurrentTxQueue DWORD ?
+dwCurrentRxQueue DWORD ?
+dwProvSpec1	DWORD ?
+dwProvSpec2	DWORD ?
+wcProvChar	WORD ?
+COMMPROP	ENDS
 
 LPCOMMPROP	typedef ptr COMMPROP
 
 COMMPROP_INITIALIZED equ 0xE73CF52E
 
-COMSTAT_R0 RECORD \
-	coms_fReserved: 25,
-	coms_fTxim:	1,
-	coms_fEof:	1,
-	coms_fXoffSent: 1,
-	coms_fXoffHold: 1,
-	coms_fRlsdHold: 1,
-	coms_fDsrHold:	1,
-	coms_fCtsHold:	1
-
 COMSTAT		STRUC
-r0		COMSTAT_R0 <>
-cbInQue		DWORD ?
-cbOutQue	DWORD ?
+RECORD
+ fCtsHold	dd :  1 ?
+ fDsrHold	dd :  1 ?
+ fRlsdHold	dd :  1 ?
+ fXoffHold	dd :  1 ?
+ fXoffSent	dd :  1 ?
+ fEof		dd :  1 ?
+ fTxim		dd :  1 ?
+ fReserved	dd : 25 ?
+ENDS
+cbInQue		dd ?
+cbOutQue	dd ?
 COMSTAT		ENDS
-
 LPCOMSTAT	typedef COMSTAT
 
-DTR_CONTROL_DISABLE    equ 0x00
-DTR_CONTROL_ENABLE     equ 0x01
-DTR_CONTROL_HANDSHAKE  equ 0x02
+DTR_CONTROL_DISABLE	equ 0x00
+DTR_CONTROL_ENABLE	equ 0x01
+DTR_CONTROL_HANDSHAKE	equ 0x02
 
-RTS_CONTROL_DISABLE    equ 0x00
-RTS_CONTROL_ENABLE     equ 0x01
-RTS_CONTROL_HANDSHAKE  equ 0x02
-RTS_CONTROL_TOGGLE     equ 0x03
+RTS_CONTROL_DISABLE	equ 0x00
+RTS_CONTROL_ENABLE	equ 0x01
+RTS_CONTROL_HANDSHAKE	equ 0x02
+RTS_CONTROL_TOGGLE	equ 0x03
 
-DCB_R0 RECORD \
-    DCB_fDummy:		17, ; Reserved
-    DCB_fAbortOnError:	1,  ; Abort all reads and writes on Error
-    DCB_fRtsControl:	2,  ; Rts Flow control
-    DCB_fNull:		1,  ; Enable Null stripping
-    DCB_fErrorChar:	1,  ; Enable Err Replacement
-    DCB_fInX:		1,  ; Enable input X-ON/X-OFF
-    DCB_fOutX:		1,  ; Enable output X-ON/X-OFF
-    DCB_fTXContinueOnXoff:1,  ; Continue TX when Xoff sent
-    DCB_fDsrSensitivity:1,  ; DSR Sensitivity
-    DCB_fDtrControl:	2,  ; DTR Flow control
-    DCB_fOutxDsrFlow:	1,  ; DSR handshaking on output
-    DCB_fOutxCtsFlow:	1,  ; CTS handshaking on output
-    DCB_fParity:	1,  ; Enable parity checking
-    DCB_fBinary:	1   ; Binary Mode (skip EOF check)
-
-DCB STRUC
-    DCBlength dd ?	; sizeof(DCB)
-    BaudRate  dd ?	; Baudrate at which running
-    R0	      DCB_R0 <>
-    wReserved dw ?	; Not currently used
-    XonLim    dw ?	; Transmit X-ON threshold
-    XoffLim   dw ?	; Transmit X-OFF threshold
-    ByteSize  db ?	; Number of bits/byte, 4-8
-    Parity    db ?	; 0-4=None,Odd,Even,Mark,Space
-    StopBits  db ?	; 0,1,2 = 1, 1.5, 2
-    XonChar   db ?	; Tx and Rx X-ON character
-    XoffChar  db ?	; Tx and Rx X-OFF character
-    ErrorChar db ?	; Error replacement char
-    EofChar   db ?	; End of Input character
-    EvtChar   db ?	; Received Event character
-    wReserved1 dw ?	; Fill for now.
-DCB ENDS
-
-LPDCB typedef ptr DCB
+DCB			STRUC
+DCBlength		dd ?	; sizeof(DCB)
+BaudRate		dd ?	; Baudrate at which running
+RECORD
+ fBinary		dd : 1 ? ; Binary Mode (skip EOF check)
+ fParity		dd : 1 ? ; Enable parity checking
+ fOutxCtsFlow		dd : 1 ? ; CTS handshaking on output
+ fOutxDsrFlow		dd : 1 ? ; DSR handshaking on output
+ fDtrControl		dd : 2 ? ; DTR Flow control
+ fDsrSensitivity	dd : 1 ? ; DSR Sensitivity
+ fTXContinueOnXoff	dd : 1 ? ; Continue TX when Xoff sent
+ fOutX			dd : 1 ? ; Enable output X-ON/X-OFF
+ fInX			dd : 1 ? ; Enable input X-ON/X-OFF
+ fErrorChar		dd : 1 ? ; Enable Err Replacement
+ fNull			dd : 1 ? ; Enable Null stripping
+ fRtsControl		dd : 2 ? ; Rts Flow control
+ fAbortOnError		dd : 1 ? ; Abort all reads and writes on Error
+ fDummy2		dd :17 ? ; Reserved
+ENDS
+wReserved		dw ?	; Not currently used
+XonLim			dw ?	; Transmit X-ON threshold
+XoffLim			dw ?	; Transmit X-OFF threshold
+ByteSize		db ?	; Number of bits/byte, 4-8
+Parity			db ?	; 0-4=None,Odd,Even,Mark,Space
+StopBits		db ?	; 0,1,2 = 1, 1.5, 2
+XonChar			db ?	; Tx and Rx X-ON character
+XoffChar		db ?	; Tx and Rx X-OFF character
+ErrorChar		db ?	; Error replacement char
+EofChar			db ?	; End of Input character
+EvtChar			db ?	; Received Event character
+wReserved1		dw ?	; Fill for now.
+DCB			ENDS
+LPDCB			typedef ptr DCB
 
 COMMTIMEOUTS			STRUC
 ReadIntervalTimeout		dd ? ; Maximum time between read chars.

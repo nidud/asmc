@@ -1004,14 +1004,17 @@ DXVAColorMask macro __bits, __base
     DXVA_VideoChromaSubsampling_Cosited =  DXVA_VideoChromaSubsampling_Horizontally_Cosited or DXVA_VideoChromaSubsampling_Vertically_Cosited or DXVA_VideoChromaSubsampling_Vertically_AlignedChromaPlanes,
     }
 
-DXVA_ExtendedFormat RECORD \
-SampleFormat : 8,
-VideoChromaSubsampling : 4,
-NominalRange : 3,
-VideoTransferMatrix : 3,
-VideoLighting : 4,
-VideoPrimaries : 5,
-VideoTransferFunction : 5
+DXVA_ExtendedFormat	STRUC
+RECORD
+ SampleFormat		dd : 8 ?
+ VideoChromaSubsampling dd : 4 ?
+ NominalRange		dd : 3 ?
+ VideoTransferMatrix	dd : 3 ?
+ VideoLighting		dd : 4 ?
+ VideoPrimaries		dd : 5 ?
+ VideoTransferFunction	dd : 5 ?
+ENDS
+DXVA_ExtendedFormat	ENDS
 
 endif
 

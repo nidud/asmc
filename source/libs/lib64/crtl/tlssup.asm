@@ -28,7 +28,7 @@ __xl_z PIMAGE_TLS_CALLBACK 0
 .CRT$XLZ ENDS
 
 .rdata$T SEGMENT ALIGN(8) 'CONST'
-_tls_used IMAGE_TLS_DIRECTORY64 { _tls_start, _tls_end, _tls_index, __xl_a+8, 0, 0 }
+_tls_used IMAGE_TLS_DIRECTORY64 { _tls_start, _tls_end, _tls_index, __xl_a+8, 0, { 0, 0, 0 } }
 .rdata$T ENDS
 
     end

@@ -2326,31 +2326,28 @@ endif
 ifndef _LDT_ENTRY_DEFINED
 define _LDT_ENTRY_DEFINED
 
-LDT_ENTRY_R0 RECORD \
-	    ldt_BaseHi:		8,
-	    ldt_Granularity:	1,
-	    ldt_ldt_Default_Big:1,
-	    ldt_Reserved_0:	1,
-	    ldt_Sys:		1,
-	    ldt_LimitHi:	4,
-	    ldt_Pres:		1,
-	    ldt_Dpl:		2,
-	    ldt_Type:		5,
-	    ldt_BaseMid:	8
-
 LDT_ENTRY	STRUC
 LimitLow	dw ?
 BaseLow		dw ?
 UNION ;HighWord
-  STRUC ;Bytes
-    BaseMid	db ?
-    Flags1	db ?	; Declare as bytes to avoid alignment
-    Flags2	db ?	; Problems.
-    BaseHi	db ?
-  ENDS
-  STRUC ;Bits
-    r0		LDT_ENTRY_R0 <>
-  ENDS
+ STRUC Bytes
+  BaseMid	db ?
+  Flags1	db ?	; Declare as bytes to avoid alignment
+  Flags2	db ?	; Problems.
+  BaseHi	db ?
+ ENDS
+ RECORD Bits
+  BaseMid	dd : 8 ?
+  Type		dd : 5 ?
+  Dpl		dd : 2 ?
+  Pres		dd : 1 ?
+  LimitHi	dd : 4 ?
+  Sys		dd : 1 ?
+  Reserved_0	dd : 1 ?
+  Default_Big	dd : 1 ?
+  Granularity	dd : 1 ?
+  BaseHi	dd : 8 ?
+ ENDS
 ENDS
 LDT_ENTRY	ENDS
 PLDT_ENTRY	typedef ptr LDT_ENTRY
@@ -3077,32 +3074,29 @@ WOW64_CONTEXT		ENDS
 PWOW64_CONTEXT		typedef ptr WOW64_CONTEXT
 
 .pragma pack(pop)
-if 0
-LDT_ENTRY_R0 RECORD \
-	    ldt_BaseHi:		8,
-	    ldt_Granularity:	1,
-	    ldt_ldt_Default_Big:1,
-	    ldt_Reserved_0:	1,
-	    ldt_Sys:		1,
-	    ldt_LimitHi:	4,
-	    ldt_Pres:		1,
-	    ldt_Dpl:		2,
-	    ldt_Type:		5,
-	    ldt_BaseMid:	8
-endif
+
 WOW64_LDT_ENTRY		STRUC
 LimitLow		dw ?
 BaseLow			dw ?
 UNION ;HighWord
-  STRUC ;Bytes
-    BaseMid		db ?
-    Flags1		db ?	; Declare as bytes to avoid alignment
-    Flags2		db ?	; Problems.
-    BaseHi		db ?
-  ENDS
-  STRUC ;Bits
-    Bits		dd ? ;LDT_ENTRY_R0 <>
-  ENDS
+ STRUC Bytes
+  BaseMid		db ?
+  Flags1		db ?	; Declare as bytes to avoid alignment
+  Flags2		db ?	; Problems.
+  BaseHi		db ?
+ ENDS
+ RECORD Bits
+  BaseMid		dd : 8 ?
+  Type			dd : 5 ?
+  Dpl			dd : 2 ?
+  Pres			dd : 1 ?
+  LimitHi		dd : 4 ?
+  Sys			dd : 1 ?
+  Reserved_0		dd : 1 ?
+  Default_Big		dd : 1 ?
+  Granularity		dd : 1 ?
+  BaseHi		dd : 8 ?
+ ENDS
 ENDS
 WOW64_LDT_ENTRY		ENDS
 PWOW64_LDT_ENTRY	typedef ptr WOW64_LDT_ENTRY
@@ -4432,14 +4426,11 @@ QUOTA_LIMITS_HARDWS_MAX_ENABLE	equ 0x00000004
 QUOTA_LIMITS_HARDWS_MAX_DISABLE equ 0x00000008
 QUOTA_LIMITS_USE_DEFAULT_LIMITS equ 0x00000010
 
-RATE_QUOTA_LIMIT_R0 RECORD \
-	rateql_Reserved0:   25,
-	rateql_RatePercent:  7
-
 RATE_QUOTA_LIMIT		STRUC
 RateData			dd ?
-STRUC
- R0				RATE_QUOTA_LIMIT_R0 <>
+RECORD
+ RatePercent			dd : 7 ?
+ Reserved0			dd : 25 ?
 ENDS
 RATE_QUOTA_LIMIT		ENDS
 PRATE_QUOTA_LIMIT		typedef ptr RATE_QUOTA_LIMIT
@@ -4473,10 +4464,88 @@ PIO_COUNTERS			typedef ptr IO_COUNTERS
 MAX_HW_COUNTERS			equ 16
 THREAD_PROFILING_FLAG_DISPATCH	equ 0x00000001
 
-HARDWARE_COUNTER_TYPE		typedef dword ; enum
-PHARDWARE_COUNTER_TYPE		typedef ptr HARDWARE_COUNTER_TYPE
-PMCCounter			equ 0
-MaxHardwareCounterType		equ 1
+.enum HARDWARE_COUNTER_TYPE {
+    PMCCounter,
+    MaxHardwareCounterType
+    }
+PHARDWARE_COUNTER_TYPE typedef ptr HARDWARE_COUNTER_TYPE
+
+.enum PROCESS_MITIGATION_POLICY {
+    ProcessDEPPolicy,
+    ProcessASLRPolicy,
+    ProcessDynamicCodePolicy,
+    ProcessStrictHandleCheckPolicy,
+    ProcessSystemCallDisablePolicy,
+    ProcessMitigationOptionsMask,
+    ProcessExtensionPointDisablePolicy,
+    ProcessReserved1Policy,
+    ProcessSignaturePolicy,
+    MaxProcessMitigationPolicy
+   }
+PPROCESS_MITIGATION_POLICY typedef ptr PROCESS_MITIGATION_POLICY
+
+
+PROCESS_MITIGATION_ASLR_POLICY	STRUC
+RECORD Flags
+ EnableBottomUpRandomization	dd :  1 ?
+ EnableForceRelocateImages	dd :  1 ?
+ EnableHighEntropy		dd :  1 ?
+ DisallowStrippedImages		dd :  1 ?
+ ReservedFlags			dd : 28 ?
+ENDS
+PROCESS_MITIGATION_ASLR_POLICY	ENDS
+PPROCESS_MITIGATION_ASLR_POLICY typedef ptr PROCESS_MITIGATION_ASLR_POLICY
+
+PROCESS_MITIGATION_DEP_POLICY	STRUC
+RECORD Flags
+ Enable				dd :  1 ?
+ DisableAtlThunkEmulation	dd :  1 ?
+ ReservedFlags			dd : 30 ?
+ENDS
+Permanent			BOOLEAN ?
+PROCESS_MITIGATION_DEP_POLICY	ENDS
+PPROCESS_MITIGATION_DEP_POLICY	typedef ptr PROCESS_MITIGATION_DEP_POLICY
+
+PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY STRUC
+RECORD Flags
+ RaiseExceptionOnInvalidHandleReference dd :  1 ?
+ HandleExceptionsPermanentlyEnabled	dd :  1 ?
+ ReservedFlags				dd : 30 ?
+ENDS
+PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY ENDS
+PPROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY typedef ptr PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY
+
+PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY STRUC
+RECORD Flags
+ DisallowWin32kSystemCalls	dd :  1 ?
+ ReservedFlags			dd : 31 ?
+ENDS
+PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY ENDS
+PPROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY typedef ptr PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY
+
+PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY STRUC
+RECORD Flags
+ DisableExtensionPoints		dd :  1 ?
+ ReservedFlags			dd : 31 ?
+ENDS
+PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY ENDS
+PPROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY typedef ptr PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY
+
+PROCESS_MITIGATION_DYNAMIC_CODE_POLICY STRUC
+RECORD Flags
+ ProhibitDynamicCode		dd :  1 ?
+ ReservedFlags			dd : 31 ?
+ENDS
+PROCESS_MITIGATION_DYNAMIC_CODE_POLICY ENDS
+PPROCESS_MITIGATION_DYNAMIC_CODE_POLICY typedef ptr PROCESS_MITIGATION_DYNAMIC_CODE_POLICY
+
+PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY STRUC
+RECORD Flags
+ MicrosoftSignedOnly		dd :  1 ?
+ ReservedFlags			dd : 31 ?
+ENDS
+PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY ENDS
+PPROCESS_MITIGATION_BINARY_SIGNATURE_POLICY typedef ptr PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY
 
 JOBOBJECT_BASIC_ACCOUNTING_INFORMATION STRUC
 TotalUserTime			LARGE_INTEGER <>
@@ -5632,14 +5701,12 @@ PPROCESSOR_IDLESTATE_INFO typedef ptr PROCESSOR_IDLESTATE_INFO
 PROCESSOR_IDLESTATE_POLICY STRUC
 Revision		dw ?
 UNION Flags
- AsWORD			 dw ?
-if 0
- STRUC
-  AllowScaling : 1	 dw ?
-  Disabled : 1		 dw ?
-  Reserved : 14		 dw ?
+ AsWORD			dw ?
+ RECORD
+  AllowScaling		dw :  1 ?
+  Disabled		dw :  1 ?
+  Reserved		dw : 14 ?
  ENDS
-endif
 ENDS
 PolicyCount		dd ?
 Policy			PROCESSOR_IDLESTATE_INFO PROCESSOR_IDLESTATE_POLICY_COUNT dup(<>)
@@ -5652,17 +5719,18 @@ PO_THROTTLE_DEGRADE	equ 2
 PO_THROTTLE_ADAPTIVE	equ 3
 PO_THROTTLE_MAXIMUM	equ 4
 
-PROCESSOR_POWER_POLICY_INFO  STRUC
+PROCESSOR_POWER_POLICY_INFO STRUC
 TimeCheck		dd ?
 DemoteLimit		dd ?
 PromoteLimit		dd ?
 DemotePercent		db ?
 PromotePercent		db ?
 Spare			db 2 dup(?)
-Flags			dd ?
-;AllowDemotion:1	dd ?
-;AllowPromotion:1	dd ?
-;Reserved:30		dd ?
+RECORD
+ AllowDemotion		dd :  1 ?
+ AllowPromotion		dd :  1 ?
+ Reserved		dd : 30 ?
+ENDS
 PROCESSOR_POWER_POLICY_INFO ENDS
 PPROCESSOR_POWER_POLICY_INFO typedef ptr PROCESSOR_POWER_POLICY_INFO
 
@@ -5670,9 +5738,10 @@ PROCESSOR_POWER_POLICY	STRUC
 Revision		dd ?
 DynamicThrottle		db ?
 Spare			db 3 dup(?)
-Flags			dd ?
-;DisableCStates:1	 dd ?
-;Reserved:31		 dd ?
+RECORD
+ DisableCStates		dd :  1 ?
+ Reserved		dd : 31 ?
+ENDS
 PolicyCount		dd ?
 Policy			PROCESSOR_POWER_POLICY_INFO 3 dup(<>)
 PROCESSOR_POWER_POLICY	ENDS
@@ -5683,18 +5752,16 @@ Revision		dd ?
 MaxThrottle		db ?
 MinThrottle		db ?
 BusyAdjThreshold	db ?
-UNION
+UNION Flags
  Spare			db ?
  UNION
   AsBYTE		db ?
-if 0
-  STRUC Flags
-   NoDomainAccounting:1 db ?
-   IncreasePolicy: 2	db ?
-   DecreasePolicy: 2	db ?
-   Reserved: 3		db ?
+  RECORD
+   NoDomainAccounting	db : 1 ?
+   IncreasePolicy	db : 2 ?
+   DecreasePolicy	db : 2 ?
+   Reserved		db : 3 ?
   ENDS
-endif
  ENDS
 ENDS
 TimeCheck		dd ?
@@ -5705,7 +5772,7 @@ DecreasePercent		dd ?
 PROCESSOR_PERFSTATE_POLICY ENDS
 PPROCESSOR_PERFSTATE_POLICY typedef ptr PROCESSOR_PERFSTATE_POLICY
 
-ADMINISTRATOR_POWER_POLICY  STRUC
+ADMINISTRATOR_POWER_POLICY STRUC
 MinSleep		SYSTEM_POWER_STATE ?
 MaxSleep		SYSTEM_POWER_STATE ?
 MinVideoTimeout		dd ?
@@ -6905,7 +6972,11 @@ EndAddressOfRawData	dq ?
 AddressOfIndex		PDWORD ?
 AddressOfCallBacks	PIMAGE_TLS_CALLBACK ?
 SizeOfZeroFill		dd ?
-Characteristics		dd ?
+RECORD Characteristics
+ Reserved0		dd : 20 ?
+ Alignment		dd :  4 ?
+ Reserved1		dd :  8 ?
+ENDS
 IMAGE_TLS_DIRECTORY64	ENDS
 PIMAGE_TLS_DIRECTORY64	typedef ptr IMAGE_TLS_DIRECTORY64
 
@@ -6915,7 +6986,11 @@ EndAddressOfRawData	dd ?
 AddressOfIndex		PDWORD ?
 AddressOfCallBacks	PIMAGE_TLS_CALLBACK ?
 SizeOfZeroFill		dd ?
-Characteristics		dd ?
+RECORD Characteristics
+ Reserved0		dd : 20 ?
+ Alignment		dd :  4 ?
+ Reserved1		dd :  8 ?
+ENDS
 IMAGE_TLS_DIRECTORY32	ENDS
 PIMAGE_TLS_DIRECTORY32	typedef ptr IMAGE_TLS_DIRECTORY32
 
@@ -6959,149 +7034,164 @@ IMAGE_IMPORT_DESCRIPTOR ENDS
 PIMAGE_IMPORT_DESCRIPTOR typedef ptr IMAGE_IMPORT_DESCRIPTOR
 
 
-IMAGE_BOUND_IMPORT_DESCRIPTOR	STRUC
-TimeDateStamp			dd ?
-OffsetModuleName		dw ?
-NumberOfModuleForwarderRefs	dw ?
-IMAGE_BOUND_IMPORT_DESCRIPTOR	ENDS
-PIMAGE_BOUND_IMPORT_DESCRIPTOR	typedef ptr IMAGE_BOUND_IMPORT_DESCRIPTOR
+IMAGE_BOUND_IMPORT_DESCRIPTOR STRUC
+TimeDateStamp		dd ?
+OffsetModuleName	dw ?
+NumberOfModuleForwarderRefs dw ?
+IMAGE_BOUND_IMPORT_DESCRIPTOR ENDS
+PIMAGE_BOUND_IMPORT_DESCRIPTOR typedef ptr IMAGE_BOUND_IMPORT_DESCRIPTOR
 
-IMAGE_BOUND_FORWARDER_REF	STRUC
-TimeDateStamp			dd ?
-OffsetModuleName		dw ?
-Reserved			dw ?
-IMAGE_BOUND_FORWARDER_REF	ENDS
-PIMAGE_BOUND_FORWARDER_REF	typedef ptr IMAGE_BOUND_FORWARDER_REF
+IMAGE_BOUND_FORWARDER_REF STRUC
+TimeDateStamp		dd ?
+OffsetModuleName	dw ?
+Reserved		dw ?
+IMAGE_BOUND_FORWARDER_REF ENDS
+PIMAGE_BOUND_FORWARDER_REF typedef ptr IMAGE_BOUND_FORWARDER_REF
 
-IMAGE_MIX_ISA_LIMIT		equ 2
+IMAGE_DELAYLOAD_DESCRIPTOR STRUC
+UNION Attributes
+ AllAttributes		dd ?
+ RECORD
+  RvaBased		dd :  1 ?
+  ReservedAttributes	dd : 31 ?
+ ENDS
+ENDS
+DllNameRVA		dd ?
+ModuleHandleRVA		dd ?
+ImportAddressTableRVA	dd ?
+ImportNameTableRVA	dd ?
+BoundImportAddressTableRVA dd ?
+UnloadInformationTableRVA dd ?
+TimeDateStamp		dd ?
+IMAGE_DELAYLOAD_DESCRIPTOR ENDS
+PIMAGE_DELAYLOAD_DESCRIPTOR typedef ptr IMAGE_DELAYLOAD_DESCRIPTOR
 
-IMAGE_STUB_DIRECTORY		STRUC
-SecondaryImportAddressTable	dd ?
-ExpectedISA			dw IMAGE_MIX_ISA_LIMIT dup(?)
-StubAddressTable		dd IMAGE_MIX_ISA_LIMIT dup(?)
-IMAGE_STUB_DIRECTORY		ENDS
-PIMAGE_STUB_DIRECTORY		typedef ptr IMAGE_STUB_DIRECTORY
+IMAGE_MIX_ISA_LIMIT	equ 2
 
-IA64_STUB_NOT_AVAILABLE		equ -1
-IA64_JMPE_MASK			equ 0x00ffffff
-IA64_JMPE_MARKER		equ 0x0035000f
+IMAGE_STUB_DIRECTORY	STRUC
+SecondaryImportAddressTable dd ?
+ExpectedISA		dw IMAGE_MIX_ISA_LIMIT dup(?)
+StubAddressTable	dd IMAGE_MIX_ISA_LIMIT dup(?)
+IMAGE_STUB_DIRECTORY	ENDS
+PIMAGE_STUB_DIRECTORY	typedef ptr IMAGE_STUB_DIRECTORY
 
-IMAGE_RESOURCE_DIRECTORY	STRUC
-Characteristics			dd ?
-TimeDateStamp			dd ?
-MajorVersion			dw ?
-MinorVersion			dw ?
-NumberOfNamedEntries		dw ?
-NumberOfIdEntries		dw ?
-IMAGE_RESOURCE_DIRECTORY	ENDS
-PIMAGE_RESOURCE_DIRECTORY	typedef ptr IMAGE_RESOURCE_DIRECTORY
+IA64_STUB_NOT_AVAILABLE equ -1
+IA64_JMPE_MASK		equ 0x00ffffff
+IA64_JMPE_MARKER	equ 0x0035000f
+
+IMAGE_RESOURCE_DIRECTORY STRUC
+Characteristics		dd ?
+TimeDateStamp		dd ?
+MajorVersion		dw ?
+MinorVersion		dw ?
+NumberOfNamedEntries	dw ?
+NumberOfIdEntries	dw ?
+IMAGE_RESOURCE_DIRECTORY ENDS
+PIMAGE_RESOURCE_DIRECTORY typedef ptr IMAGE_RESOURCE_DIRECTORY
 
 IMAGE_RESOURCE_NAME_IS_STRING	     equ 0x80000000
 IMAGE_RESOURCE_DATA_IS_DIRECTORY     equ 0x80000000
 
-IMAGE_RESOURCE_DIRECTORY_ENTRY_R0 RECORD \
-	irde_NameIsString:	1,
-	irde_NameOffset:	31
-IMAGE_RESOURCE_DIRECTORY_ENTRY_R1 RECORD \
-	irde_DataIsDirectory:	1,
-	irde_OffsetToDirectory: 31
-
 IMAGE_RESOURCE_DIRECTORY_ENTRY STRUC
 UNION
-  r0		dd ? ;IMAGE_RESOURCE_DIRECTORY_ENTRY_R0 <>
-  Name		dd ?
-  Id		dw ?
+ RECORD
+  NameOffset		dd : 31 ?
+  NameIsString		dd :  1 ?
+ ENDS
+ Name			dd ?
+ Id			dw ?
 ENDS
 UNION
-  OffsetToData	dd ?
-  r1		dd ? ;IMAGE_RESOURCE_DIRECTORY_ENTRY_R1 <>
+  OffsetToData		dd ?
+  RECORD
+   OffsetToDirectory	dd : 31 ?
+   DataIsDirectory	dd :  1 ?
+  ENDS
 ENDS
 IMAGE_RESOURCE_DIRECTORY_ENTRY	ENDS
 PIMAGE_RESOURCE_DIRECTORY_ENTRY typedef ptr IMAGE_RESOURCE_DIRECTORY_ENTRY
 
 IMAGE_RESOURCE_DIRECTORY_STRING STRUC
-Length				dw ?
-NameString			db ?
+Length			dw ?
+NameString		db ?
 IMAGE_RESOURCE_DIRECTORY_STRING ENDS
 PIMAGE_RESOURCE_DIRECTORY_STRING typedef ptr IMAGE_RESOURCE_DIRECTORY_STRING
 
-IMAGE_RESOURCE_DIR_STRING_U	STRUC
-Length				dw ?
-NameString			dw ?
-IMAGE_RESOURCE_DIR_STRING_U	ENDS
-PIMAGE_RESOURCE_DIR_STRING_U	typedef ptr IMAGE_RESOURCE_DIR_STRING_U
+IMAGE_RESOURCE_DIR_STRING_U STRUC
+Length			dw ?
+NameString		dw ?
+IMAGE_RESOURCE_DIR_STRING_U ENDS
+PIMAGE_RESOURCE_DIR_STRING_U typedef ptr IMAGE_RESOURCE_DIR_STRING_U
 
-IMAGE_RESOURCE_DATA_ENTRY	STRUC
-OffsetToData			dd ?
-Size				dd ?
-CodePage			dd ?
-Reserved			dd ?
-IMAGE_RESOURCE_DATA_ENTRY	ENDS
-PIMAGE_RESOURCE_DATA_ENTRY	typedef ptr IMAGE_RESOURCE_DATA_ENTRY
+IMAGE_RESOURCE_DATA_ENTRY STRUC
+OffsetToData		dd ?
+Size			dd ?
+CodePage		dd ?
+Reserved		dd ?
+IMAGE_RESOURCE_DATA_ENTRY ENDS
+PIMAGE_RESOURCE_DATA_ENTRY typedef ptr IMAGE_RESOURCE_DATA_ENTRY
 
-IMAGE_LOAD_CONFIG_DIRECTORY	STRUC
-Characteristics			dd ?
-TimeDateStamp			dd ?
-MajorVersion			dw ?
-MinorVersion			dw ?
-GlobalFlagsClear		dd ?
-GlobalFlagsSet			dd ?
-CriticalSectionDefaultTimeout	dd ?
-DeCommitFreeBlockThreshold	dd ?
-DeCommitTotalFreeThreshold	dd ?
-LockPrefixTable			PVOID ?
-MaximumAllocationSize		dd ?
-VirtualMemoryThreshold		dd ?
-ProcessHeapFlags		dd ?
-ProcessAffinityMask		dd ?
-CSDVersion			dw ?
-Reserved1			dw ?
-EditList			PVOID ?
-Reserved			dd ?
-IMAGE_LOAD_CONFIG_DIRECTORY	ENDS
-PIMAGE_LOAD_CONFIG_DIRECTORY	typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY
+IMAGE_LOAD_CONFIG_DIRECTORY STRUC
+Characteristics		dd ?
+TimeDateStamp		dd ?
+MajorVersion		dw ?
+MinorVersion		dw ?
+GlobalFlagsClear	dd ?
+GlobalFlagsSet		dd ?
+CriticalSectionDefaultTimeout dd ?
+DeCommitFreeBlockThreshold dd ?
+DeCommitTotalFreeThreshold dd ?
+LockPrefixTable		PVOID ?
+MaximumAllocationSize	dd ?
+VirtualMemoryThreshold	dd ?
+ProcessHeapFlags	dd ?
+ProcessAffinityMask	dd ?
+CSDVersion		dw ?
+Reserved1		dw ?
+EditList		PVOID ?
+Reserved		dd ?
+IMAGE_LOAD_CONFIG_DIRECTORY ENDS
+PIMAGE_LOAD_CONFIG_DIRECTORY typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY
 
-IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	STRUC
-BeginAddress				dd ?
-EndAddress				dd ?
-UnwindInfoAddress			dd ?
-IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	ENDS
-PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_IA64_RUNTIME_FUNCTION_ENTRY
-
-
-IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY	STRUC
-BeginAddress				dd ?
-EndAddress				dd ?
-ExceptionHandler			dd ?
-HandlerData				dd ?
-PrologEndAddress			dd ?
-IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY	ENDS
-PIMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
-
-IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY	STRUC
-BeginAddress				dq ?
-EndAddress				dq ?
-ExceptionHandler			dq ?
-HandlerData				dq ?
-PrologEndAddress			dq ?
-IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY	ENDS
-
-PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
-IMAGE_AXP64_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
-PIMAGE_AXP64_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
+IMAGE_IA64_RUNTIME_FUNCTION_ENTRY STRUC
+BeginAddress		dd ?
+EndAddress		dd ?
+UnwindInfoAddress	dd ?
+IMAGE_IA64_RUNTIME_FUNCTION_ENTRY ENDS
+PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_IA64_RUNTIME_FUNCTION_ENTRY
 
 
-IMAGE_CE_RUNTIME_FUNCTION_ENTRY_R0 RECORD \
-	icrfe_ExceptionFlag:	1,
-	icrfe_ThirtyTwoBit:	1,
-	icrfe_FuncLen:		22,
-	icrfe_PrologLen:	8
+IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY STRUC
+BeginAddress		dd ?
+EndAddress		dd ?
+ExceptionHandler	dd ?
+HandlerData		dd ?
+PrologEndAddress	dd ?
+IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY ENDS
+PIMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 
-IMAGE_CE_RUNTIME_FUNCTION_ENTRY		STRUC
-FuncStart				dd ?
-r0					IMAGE_CE_RUNTIME_FUNCTION_ENTRY_R0 <>
-IMAGE_CE_RUNTIME_FUNCTION_ENTRY		ENDS
-PIMAGE_CE_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_CE_RUNTIME_FUNCTION_ENTRY
+IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY STRUC
+BeginAddress		dq ?
+EndAddress		dq ?
+ExceptionHandler	dq ?
+HandlerData		dq ?
+PrologEndAddress	dq ?
+IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY ENDS
+
+PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
+IMAGE_AXP64_RUNTIME_FUNCTION_ENTRY typedef IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
+PIMAGE_AXP64_RUNTIME_FUNCTION_ENTRY typedef PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
+
+IMAGE_CE_RUNTIME_FUNCTION_ENTRY STRUC
+FuncStart		dd ?
+RECORD
+ PrologLen		dd :  8 ?
+ FuncLen		dd : 22 ?
+ ThirtyTwoBit		dd :  1 ?
+ ExceptionFlag		dd :  1 ?
+ENDS
+IMAGE_CE_RUNTIME_FUNCTION_ENTRY ENDS
+PIMAGE_CE_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_CE_RUNTIME_FUNCTION_ENTRY
 
 ifdef _IA64_
 IMAGE_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_IA64_RUNTIME_FUNCTION_ENTRY
@@ -7111,17 +7201,17 @@ IMAGE_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 PIMAGE_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 endif
 
-IMAGE_DEBUG_DIRECTORY		STRUC
-Characteristics			dd ?
-TimeDateStamp			dd ?
-MajorVersion			dw ?
-MinorVersion			dw ?
-Type				dd ?
-SizeOfData			dd ?
-AddressOfRawData		dd ?
-PointerToRawData		dd ?
-IMAGE_DEBUG_DIRECTORY		ENDS
-PIMAGE_DEBUG_DIRECTORY		typedef ptr IMAGE_DEBUG_DIRECTORY
+IMAGE_DEBUG_DIRECTORY	STRUC
+Characteristics		dd ?
+TimeDateStamp		dd ?
+MajorVersion		dw ?
+MinorVersion		dw ?
+Type			dd ?
+SizeOfData		dd ?
+AddressOfRawData	dd ?
+PointerToRawData	dd ?
+IMAGE_DEBUG_DIRECTORY	ENDS
+PIMAGE_DEBUG_DIRECTORY	typedef ptr IMAGE_DEBUG_DIRECTORY
 
 IMAGE_DEBUG_TYPE_UNKNOWN	equ 0
 IMAGE_DEBUG_TYPE_COFF		equ 1
@@ -7136,42 +7226,41 @@ IMAGE_DEBUG_TYPE_BORLAND	equ 9
 IMAGE_DEBUG_TYPE_RESERVED10	equ 10
 IMAGE_DEBUG_TYPE_CLSID		equ 11
 
-IMAGE_COFF_SYMBOLS_HEADER	STRUC
-NumberOfSymbols			dd ?
-LvaToFirstSymbol		dd ?
-NumberOfLinenumbers		dd ?
-LvaToFirstLinenumber		dd ?
-RvaToFirstByteOfCode		dd ?
-RvaToLastByteOfCode		dd ?
-RvaToFirstByteOfData		dd ?
-RvaToLastByteOfData		dd ?
-IMAGE_COFF_SYMBOLS_HEADER	ENDS
-PIMAGE_COFF_SYMBOLS_HEADER	typedef ptr IMAGE_COFF_SYMBOLS_HEADER
+IMAGE_COFF_SYMBOLS_HEADER STRUC
+NumberOfSymbols		dd ?
+LvaToFirstSymbol	dd ?
+NumberOfLinenumbers	dd ?
+LvaToFirstLinenumber	dd ?
+RvaToFirstByteOfCode	dd ?
+RvaToLastByteOfCode	dd ?
+RvaToFirstByteOfData	dd ?
+RvaToLastByteOfData	dd ?
+IMAGE_COFF_SYMBOLS_HEADER ENDS
+PIMAGE_COFF_SYMBOLS_HEADER typedef ptr IMAGE_COFF_SYMBOLS_HEADER
 
-FRAME_FPO	equ 0
-FRAME_TRAP	equ 1
-FRAME_TSS	equ 2
-FRAME_NONFPO	equ 3
+FRAME_FPO		equ 0
+FRAME_TRAP		equ 1
+FRAME_TSS		equ 2
+FRAME_NONFPO		equ 3
 
-FPO_DATA_R0	RECORD \
-	fpo_cbFrame:	2,
-	fpo_reserved:	1,
-	fpo_fUseBP:	1,
-	fpo_fHasSEH:	1,
-	fpo_cbRegs:	3,
-	fpo_cbProlog:	8
-
-FPO_DATA	STRUC
-ulOffStart	dd ?
-cbProcSize	dd ?
-cdwLocals	dd ?
-cdwParams	dw ?
-r0		FPO_DATA_R0 <>
-FPO_DATA	ENDS
-PFPO_DATA	typedef ptr FPO_DATA
+FPO_DATA		STRUC
+ulOffStart		dd ?
+cbProcSize		dd ?
+cdwLocals		dd ?
+cdwParams		dw ?
+RECORD
+ cbProlog		dw : 8 ?
+ cbRegs			dw : 3 ?
+ fHasSEH		dw : 1 ?
+ fUseBP			dw : 1 ?
+ reserved		dw : 1 ?
+ cbFrame		dw : 2 ?
+ENDS
+FPO_DATA		ENDS
+PFPO_DATA		typedef ptr FPO_DATA
 SIZEOF_RFPO_DATA	equ 16
 
-IMAGE_DEBUG_MISC_EXENAME	equ 1
+IMAGE_DEBUG_MISC_EXENAME equ 1
 
 IMAGE_DEBUG_MISC	STRUC
 DataType		dd ?
@@ -7200,22 +7289,22 @@ IMAGE_FUNCTION_ENTRY64	ENDS
 PIMAGE_FUNCTION_ENTRY64 typedef ptr IMAGE_FUNCTION_ENTRY64
 
 
-IMAGE_SEPARATE_DEBUG_HEADER	STRUC
-Signature			dw ?
-Flags				dw ?
-Machine				dw ?
-Characteristics			dw ?
-TimeDateStamp			dd ?
-CheckSum			dd ?
-ImageBase			dd ?
-SizeOfImage			dd ?
-NumberOfSections		dd ?
-ExportedNamesSize		dd ?
-DebugDirectorySize		dd ?
-SectionAlignment		dd ?
-Reserved			dd 2 dup(?)
-IMAGE_SEPARATE_DEBUG_HEADER	ENDS
-PIMAGE_SEPARATE_DEBUG_HEADER	typedef ptr IMAGE_SEPARATE_DEBUG_HEADER
+IMAGE_SEPARATE_DEBUG_HEADER STRUC
+Signature		dw ?
+Flags			dw ?
+Machine			dw ?
+Characteristics		dw ?
+TimeDateStamp		dd ?
+CheckSum		dd ?
+ImageBase		dd ?
+SizeOfImage		dd ?
+NumberOfSections	dd ?
+ExportedNamesSize	dd ?
+DebugDirectorySize	dd ?
+SectionAlignment	dd ?
+Reserved		dd 2 dup(?)
+IMAGE_SEPARATE_DEBUG_HEADER ENDS
+PIMAGE_SEPARATE_DEBUG_HEADER typedef ptr IMAGE_SEPARATE_DEBUG_HEADER
 
 NON_PAGED_DEBUG_INFO	STRUC
 Signature		dw ?
@@ -7242,30 +7331,24 @@ IMAGE_SEPARATE_DEBUG_FLAGS_MASK equ 0x8000
 IMAGE_SEPARATE_DEBUG_MISMATCH	equ 0x8000
 
 
-IMAGE_ARCHITECTURE_HEADER_R0 RECORD \
-	iah_int2:	16,
-	iah_AmaskShift: 8,
-	iah_int1:	7,
-	iah_AmaskValue: 1
-IMAGE_ARCHITECTURE_HEADER	STRUC
-r0				IMAGE_ARCHITECTURE_HEADER_R0 <>
-FirstEntryRVA			dd ?
-IMAGE_ARCHITECTURE_HEADER	ENDS
-PIMAGE_ARCHITECTURE_HEADER	typedef ptr IMAGE_ARCHITECTURE_HEADER
+IMAGE_ARCHITECTURE_HEADER STRUC
+RECORD
+ AmaskValue		dd : 1 ?
+ int1			dd : 7 ?
+ AmaskShift		dd : 8 ?
+ int2			dd :16 ?
+ENDS
+FirstEntryRVA		dd ?
+IMAGE_ARCHITECTURE_HEADER ENDS
+PIMAGE_ARCHITECTURE_HEADER typedef ptr IMAGE_ARCHITECTURE_HEADER
 
-IMAGE_ARCHITECTURE_ENTRY	STRUC
-FixupInstRVA			dd ?
-NewInst				dd ?
-IMAGE_ARCHITECTURE_ENTRY	ENDS
-PIMAGE_ARCHITECTURE_ENTRY	typedef ptr IMAGE_ARCHITECTURE_ENTRY
-
-
+IMAGE_ARCHITECTURE_ENTRY STRUC
+FixupInstRVA		dd ?
+NewInst			dd ?
+IMAGE_ARCHITECTURE_ENTRY ENDS
+PIMAGE_ARCHITECTURE_ENTRY typedef ptr IMAGE_ARCHITECTURE_ENTRY
 
 IMPORT_OBJECT_HDR_SIG2	equ 0xffff
-IMPORT_OBJECT_HEADER_R0 RECORD \
-	ioh_Reserved:	11,
-	ioh_NameType:	3,
-	ioh_Type:	2
 
 IMPORT_OBJECT_HEADER	STRUC
 Sig1			dw ?
@@ -7278,55 +7361,62 @@ UNION
   Ordinal		dw ?
   Hint			dw ?
 ENDS
-r0			IMPORT_OBJECT_HEADER_R0 <>
+RECORD
+ Type			dw:2 ?
+ NameType		dw:3 ?
+ Reserved		dw:11 ?
+ENDS
 IMPORT_OBJECT_HEADER	ENDS
 
-IMPORT_OBJECT_TYPE		typedef sdword ; enum
-IMPORT_OBJECT_CODE		equ 0
-IMPORT_OBJECT_DATA		equ 1
-IMPORT_OBJECT_CONST		equ 2
+.enum IMPORT_OBJECT_TYPE {
+    IMPORT_OBJECT_CODE = 0,
+    IMPORT_OBJECT_DATA = 1,
+    IMPORT_OBJECT_CONST = 2
+    }
 
-IMPORT_OBJECT_NAME_TYPE		typedef sdword ; enum
-IMPORT_OBJECT_ORDINAL		equ 0
-IMPORT_OBJECT_NAME		equ 1
-IMPORT_OBJECT_NAME_NO_PREFIX	equ 2
-IMPORT_OBJECT_NAME_UNDECORATE	equ 3
+.enum IMPORT_OBJECT_NAME_TYPE {
+    IMPORT_OBJECT_ORDINAL = 0,
+    IMPORT_OBJECT_NAME = 1,
+    IMPORT_OBJECT_NAME_NO_PREFIX = 2,
+    IMPORT_OBJECT_NAME_UNDECORATE = 3
+    }
 
 ifndef __IMAGE_COR20_HEADER_DEFINED__
 define __IMAGE_COR20_HEADER_DEFINED__
 
-ReplacesCorHdrNumericDefines	typedef sdword ; enum
+.enum ReplacesCorHdrNumericDefines {
 
-    COMIMAGE_FLAGS_ILONLY		equ 0x00000001
-    COMIMAGE_FLAGS_32BITREQUIRED	equ 0x00000002
-    COMIMAGE_FLAGS_IL_LIBRARY		equ 0x00000004
-    COMIMAGE_FLAGS_STRONGNAMESIGNED	equ 0x00000008
-    COMIMAGE_FLAGS_NATIVE_ENTRYPOINT	equ 0x00000010
-    COMIMAGE_FLAGS_TRACKDEBUGDATA	equ 0x00010000
+    COMIMAGE_FLAGS_ILONLY		= 0x00000001,
+    COMIMAGE_FLAGS_32BITREQUIRED	= 0x00000002,
+    COMIMAGE_FLAGS_IL_LIBRARY		= 0x00000004,
+    COMIMAGE_FLAGS_STRONGNAMESIGNED	= 0x00000008,
+    COMIMAGE_FLAGS_NATIVE_ENTRYPOINT	= 0x00000010,
+    COMIMAGE_FLAGS_TRACKDEBUGDATA	= 0x00010000,
 
-    COR_VERSION_MAJOR_V2		equ 2
-    COR_VERSION_MAJOR			equ COR_VERSION_MAJOR_V2
-    COR_VERSION_MINOR			equ 0
-    COR_DELETED_NAME_LENGTH		equ 8
-    COR_VTABLEGAP_NAME_LENGTH		equ 8
+    COR_VERSION_MAJOR_V2		= 2,
+    COR_VERSION_MAJOR			= COR_VERSION_MAJOR_V2,
+    COR_VERSION_MINOR			= 0,
+    COR_DELETED_NAME_LENGTH		= 8,
+    COR_VTABLEGAP_NAME_LENGTH		= 8,
 
-    NATIVE_TYPE_MAX_CB			equ 1
-    COR_ILMETHOD_SECT_SMALL_MAX_DATASIZE equ 0xFF
+    NATIVE_TYPE_MAX_CB			= 1,
+    COR_ILMETHOD_SECT_SMALL_MAX_DATASIZE = 0xFF,
 
-    IMAGE_COR_MIH_METHODRVA		equ 0x01
-    IMAGE_COR_MIH_EHRVA			equ 0x02
-    IMAGE_COR_MIH_BASICBLOCK		equ 0x08
+    IMAGE_COR_MIH_METHODRVA		= 0x01,
+    IMAGE_COR_MIH_EHRVA			= 0x02,
+    IMAGE_COR_MIH_BASICBLOCK		= 0x08,
 
-    COR_VTABLE_32BIT			equ 0x01
-    COR_VTABLE_64BIT			equ 0x02
-    COR_VTABLE_FROM_UNMANAGED		equ 0x04
-    COR_VTABLE_FROM_UNMANAGED_RETAIN_APPDOMAIN	equ 0x08
-    COR_VTABLE_CALL_MOST_DERIVED	equ 0x10
+    COR_VTABLE_32BIT			= 0x01,
+    COR_VTABLE_64BIT			= 0x02,
+    COR_VTABLE_FROM_UNMANAGED		= 0x04,
+    COR_VTABLE_FROM_UNMANAGED_RETAIN_APPDOMAIN = 0x08,
+    COR_VTABLE_CALL_MOST_DERIVED	= 0x10,
 
-    IMAGE_COR_EATJ_THUNK_SIZE		equ 32
+    IMAGE_COR_EATJ_THUNK_SIZE		= 32,
 
-    MAX_CLASS_NAME			equ 1024
-    MAX_PACKAGE_NAME			equ 1024
+    MAX_CLASS_NAME			= 1024,
+    MAX_PACKAGE_NAME			= 1024
+    }
 
 IMAGE_COR20_HEADER	STRUC
 cb			dd ?
@@ -7385,14 +7475,15 @@ STRUC
  Alignment		ULONGLONG ?
  Region			ULONGLONG ?
 ENDS
-STRUC Header8
- R0			ULONGLONG ?
-ENDS
-STRUC Header16
- R0			ULONGLONG ?
-ENDS
-STRUC HeaderX64
- R0			ULONGLONG ?
+STRUC
+ RECORD
+  Depth			dq : 16 ?
+  Sequence		dq : 48 ?
+ ENDS
+ RECORD
+  Reserved		dq :  4 ?
+  NextEntry		dq : 60 ?
+ ENDS
 ENDS
 SLIST_HEADER		ENDS
 PSLIST_HEADER		typedef ptr SLIST_HEADER
@@ -8877,13 +8968,11 @@ ActivationContext	ACTIVATION_CONTEXT ?
 FinalizationCallback	PTP_SIMPLE_CALLBACK ?
 UNION u
  Flags			dd ?
-if 0
- STRUC s
-  LongFunction : 1	dd ?
-  Persistent   : 1	dd ?
-  Private    : 30	dd ?
+ RECORD s
+  LongFunction		dd :  1 ?
+  Persistent		dd :  1 ?
+  Private		dd : 30 ?
  ENDS
-endif
 ENDS
 CallbackPriority	TP_CALLBACK_PRIORITY ?
 Size			dd ?
@@ -8904,13 +8993,11 @@ ActivationContext	ACTIVATION_CONTEXT ?
 FinalizationCallback	PTP_SIMPLE_CALLBACK ?
 UNION u
  Flags			dd ?
-if 0
- STRUC s
-  LongFunction : 1	dd ?
-  Persistent   : 1	dd ?
-  Private    : 30	dd ?
+ RECORD s
+  LongFunction		dd :  1 ?
+  Persistent		dd :  1 ?
+  Private		dd : 30 ?
  ENDS
-endif
 ENDS
 TP_CALLBACK_ENVIRON_V1	ENDS
 PTP_CALLBACK_ENVIRON	typedef ptr TP_CALLBACK_ENVIRON_V1

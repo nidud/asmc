@@ -1,8 +1,9 @@
 # SRCPATH--
+# Default root directories from %AsmcDir%
 #
 # %AsmcDir%\lib is used by MAKE.EXE
 # as !include directory if defined
 #
 lib_dir = %AsmcDir%\lib
-inc_dir = %AsmcDir%\include
+inc_dir = %AsmcDir%\include;%AsmcDir%\include\DirectX;%AsmcDir%\include\winrt
 src_dir = %AsmcDir%\source

@@ -1,0 +1,796 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Enetworking2Ebackgroundtransfer_h__
+define __windows2Enetworking2Ebackgroundtransfer_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include Windows.Security.Credentials.inc
+include Windows.Storage.inc
+include Windows.UI.Notifications.inc
+include Windows.Web.inc
+include windows.foundation.collections.inc
+
+ifndef ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart, "07fbc351-781d-52c7-9558-a453e5703f29")
+
+.comdef __FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart_INTERFACE_DEFINED__
+define ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart, "cf303199-de3b-5dac-a703-6c57d80821c4")
+
+.comdef __FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CBackgroundTransferContentPart : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "2ab61055-2d0a-59cb-8cbd-056f2d7fb454")
+
+.comdef __FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "f6fd69cb-e6e7-56d5-9be6-e0dc4683fa80")
+
+.comdef __FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "caa85133-73d7-5f96-ab2d-fbb4fa00f715")
+
+.comdef __FIIterator_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "79778799-38cc-5b67-9cd0-043fc47a9ef7")
+
+.comdef __FIIterable_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "f87d9755-2a7d-59fc-bc92-b48636f4d955")
+
+.comdef __FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    GetAt		proc :SINT, :ptr
+    get_Size		proc :ptr
+    IndexOf		proc :ptr, :ptr, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "8e96d4b0-f0ae-51cb-b7c4-024251bd16d8")
+
+.comdef __FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    GetAt		proc :SINT, :ptr
+    get_Size		proc :ptr
+    IndexOf		proc :ptr, :ptr, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "b2ff13f1-c743-54f4-bccc-f08e16a87890")
+
+.comdef __FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "781b479c-0207-5d15-a4e5-7837d13bf93d")
+
+.comdef __FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "e86a4f5d-743a-5f18-9d4c-bc8ed5942659")
+
+.comdef __FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    put_Progress	proc :ptr
+    get_Progress	proc :ptr
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "ccd13730-fed3-54e8-8471-096e4b64cadd")
+
+.comdef __FIAsyncOperationProgressHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "79fcae93-53ec-5f66-ab34-826af78ec11a")
+
+.comdef __FIAsyncOperationWithProgressCompletedHandler_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "35ddaefa-db6a-5d0d-ba54-a0728401171e")
+
+.comdef __FIAsyncOperationWithProgress_2_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    put_Progress	proc :ptr
+    get_Progress	proc :ptr
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "1986b372-0ddb-520c-b72d-fb2577e99ff5")
+
+.comdef __FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "ae42cddf-3042-5d92-a01e-643c252b8050")
+
+.comdef __FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "608a29a8-bbc5-5ea3-b3f7-87edc4e7bbbc")
+
+.comdef __FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "3e4c6a3c-48a4-5e22-b29a-3e429469462f")
+
+.comdef __FIAsyncOperation_1___FIVectorView_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "2aa63857-ffaf-5cf6-9b2c-0dc597b60a60")
+
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation, "43ef3a5f-cc7d-566d-a92a-4caa76b92a1f")
+
+.comdef __FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CDownloadOperation : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult, "4f52bfe8-9b0e-5b22-916b-834425b4ab97")
+
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult, "a8dc2a04-3f44-5046-8182-cd0ec147e17d")
+
+.comdef __FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUnconstrainedTransferRequestResult : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "ead68818-0c38-5cde-aec1-c6a7618711f7")
+
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation, "44212ea1-b524-5aee-a320-7199225381d1")
+
+.comdef __FIAsyncOperation_1_Windows__CNetworking__CBackgroundTransfer__CUploadOperation : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+.namespace Windows
+.namespace Networking
+.namespace BackgroundTransfer
+
+.enum BackgroundTransferStatus {
+    BackgroundTransferStatus_Idle	= 0,
+    BackgroundTransferStatus_Running	= 1,
+    BackgroundTransferStatus_PausedByApplication	= 2,
+    BackgroundTransferStatus_PausedCostedNetwork	= 3,
+    BackgroundTransferStatus_PausedNoNetwork	= 4,
+    BackgroundTransferStatus_Completed	= 5,
+    BackgroundTransferStatus_Canceled	= 6,
+    BackgroundTransferStatus_Error	= 7
+    }
+
+.enum BackgroundTransferCostPolicy {
+    BackgroundTransferCostPolicy_Default	= 0,
+    BackgroundTransferCostPolicy_UnrestrictedOnly	= 1,
+    BackgroundTransferCostPolicy_Always = 2
+    }
+
+.enum BackgroundTransferPriority {
+    BackgroundTransferPriority_Default	= 0,
+    BackgroundTransferPriority_High	= 1
+    }
+
+.enum BackgroundTransferBehavior {
+    BackgroundTransferBehavior_Parallel = 0,
+    BackgroundTransferBehavior_Serialized	= 1
+    }
+
+.template BackgroundDownloadProgress
+    BytesReceived		UINT64 ?
+    TotalBytesToReceive		UINT64 ?
+    Status			Windows::Networking::BackgroundTransfer::BackgroundTransferStatus ?
+    HasResponseChanged		boolean ?
+    HasRestarted		boolean ?
+   .ends
+
+.template BackgroundUploadProgress
+    BytesReceived		UINT64 ?
+    BytesSent			UINT64 ?
+    TotalBytesToReceive		UINT64 ?
+    TotalBytesToSend		UINT64 ?
+    Status			Windows::Networking::BackgroundTransfer::BackgroundTransferStatus ?
+    HasResponseChanged		boolean ?
+    HasRestarted		boolean ?
+   .ends
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferBase_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferBase_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferBase <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferBase">
+DEFINE_IIDX(IBackgroundTransferBase, "2A9DA250-C769-458C-AFE8-FEB8D4D3B2EF")
+
+.comdef IBackgroundTransferBase : public IInspectable
+
+    SetRequestHeader	proc :HSTRING, :HSTRING
+    get_ServerCredential proc :ptr
+    put_ServerCredential proc :ptr
+    get_ProxyCredential proc :ptr
+    put_ProxyCredential proc :ptr
+    get_Method		proc :ptr
+    put_Method		proc :HSTRING
+    get_Group		proc :ptr
+    put_Group		proc :HSTRING
+    get_CostPolicy	proc :ptr
+    put_CostPolicy	proc :Windows::Networking::BackgroundTransfer::BackgroundTransferCostPolicy
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUnconstrainedTransferRequestResult_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IUnconstrainedTransferRequestResult <L"Windows.Networking.BackgroundTransfer.IUnconstrainedTransferRequestResult">
+DEFINE_IIDX(IUnconstrainedTransferRequestResult, "4C24B81F-D944-4112-A98E-6A69522B7EBB")
+
+.comdef IUnconstrainedTransferRequestResult : public IInspectable
+
+    get_IsUnconstrained proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderUserConsent_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderUserConsent_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundDownloaderUserConsent <L"Windows.Networking.BackgroundTransfer.IBackgroundDownloaderUserConsent">
+DEFINE_IIDX(IBackgroundDownloaderUserConsent, "5D14E906-9266-4808-BD71-5925F2A3130A")
+
+.comdef IBackgroundDownloaderUserConsent : public IInspectable
+
+    RequestUnconstrainedDownloadsAsync proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderUserConsent_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderUserConsent_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundUploaderUserConsent <L"Windows.Networking.BackgroundTransfer.IBackgroundUploaderUserConsent">
+DEFINE_IIDX(IBackgroundUploaderUserConsent, "3BB384CB-0760-461D-907F-5138F84D44C1")
+
+.comdef IBackgroundUploaderUserConsent : public IInspectable
+
+    RequestUnconstrainedUploadsAsync proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloader_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloader_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundDownloader <L"Windows.Networking.BackgroundTransfer.IBackgroundDownloader">
+DEFINE_IIDX(IBackgroundDownloader, "C1C79333-6649-4B1D-A826-A4B3DD234D0B")
+
+.comdef IBackgroundDownloader : public IInspectable
+
+    CreateDownload	proc :ptr, :ptr, :ptr
+    CreateDownloadFromFile proc :ptr, :ptr, :ptr, :ptr
+    CreateDownloadAsync proc :ptr, :ptr, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloader2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloader2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundDownloader2 <L"Windows.Networking.BackgroundTransfer.IBackgroundDownloader2">
+DEFINE_IIDX(IBackgroundDownloader2, "A94A5847-348D-4A35-890E-8A1EF3798479")
+
+.comdef IBackgroundDownloader2 : public IInspectable
+
+    get_TransferGroup	proc :ptr
+    put_TransferGroup	proc :ptr
+    get_SuccessToastNotification proc :ptr
+    put_SuccessToastNotification proc :ptr
+    get_FailureToastNotification proc :ptr
+    put_FailureToastNotification proc :ptr
+    get_SuccessTileNotification proc :ptr
+    put_SuccessTileNotification proc :ptr
+    get_FailureTileNotification proc :ptr
+    put_FailureTileNotification proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploader_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploader_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundUploader <L"Windows.Networking.BackgroundTransfer.IBackgroundUploader">
+DEFINE_IIDX(IBackgroundUploader, "C595C9AE-CEAD-465B-8801-C55AC90A01CE")
+
+.comdef IBackgroundUploader : public IInspectable
+
+    CreateUpload	proc :ptr, :ptr, :ptr
+    CreateUploadFromStreamAsync proc :ptr, :ptr, :ptr
+    CreateUploadWithFormDataAndAutoBoundaryAsync proc :ptr, :ptr, :ptr
+    CreateUploadWithSubTypeAsync proc :ptr, :ptr, :HSTRING, :ptr
+    CreateUploadWithSubTypeAndBoundaryAsync proc :ptr, :ptr, :HSTRING, :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploader2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploader2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundUploader2 <L"Windows.Networking.BackgroundTransfer.IBackgroundUploader2">
+DEFINE_IIDX(IBackgroundUploader2, "8E0612CE-0C34-4463-807F-198A1B8BD4AD")
+
+.comdef IBackgroundUploader2 : public IInspectable
+
+    get_TransferGroup	proc :ptr
+    put_TransferGroup	proc :ptr
+    get_SuccessToastNotification proc :ptr
+    put_SuccessToastNotification proc :ptr
+    get_FailureToastNotification proc :ptr
+    put_FailureToastNotification proc :ptr
+    get_SuccessTileNotification proc :ptr
+    put_SuccessTileNotification proc :ptr
+    get_FailureTileNotification proc :ptr
+    put_FailureTileNotification proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferOperation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferOperation_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferOperation <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferOperation">
+DEFINE_IIDX(IBackgroundTransferOperation, "DED06846-90CA-44FB-8FB1-124154C0D539")
+
+.comdef IBackgroundTransferOperation : public IInspectable
+
+    get_Guid		proc :ptr
+    get_RequestedUri	proc :ptr
+    get_Method		proc :ptr
+    get_Group		proc :ptr
+    get_CostPolicy	proc :ptr
+    put_CostPolicy	proc :Windows::Networking::BackgroundTransfer::BackgroundTransferCostPolicy
+    GetResultStreamAt	proc :UINT64, :ptr
+    GetResponseInformation proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferOperationPriority_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferOperationPriority_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferOperationPriority <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferOperationPriority">
+DEFINE_IIDX(IBackgroundTransferOperationPriority, "04854327-5254-4B3A-915E-0AA49275C0F9")
+
+.comdef IBackgroundTransferOperationPriority : public IInspectable
+
+    get_Priority	proc :ptr
+    put_Priority	proc :Windows::Networking::BackgroundTransfer::BackgroundTransferPriority
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIDownloadOperation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIDownloadOperation_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IDownloadOperation <L"Windows.Networking.BackgroundTransfer.IDownloadOperation">
+DEFINE_IIDX(IDownloadOperation, "BD87EBB0-5714-4E09-BA68-BEF73903B0D7")
+
+.comdef IDownloadOperation : public IInspectable
+
+    get_ResultFile	proc :ptr
+    get_Progress	proc :ptr
+    StartAsync		proc :ptr
+    AttachAsync		proc :ptr
+    _Pause		proc
+    Resume		proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIDownloadOperation2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIDownloadOperation2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IDownloadOperation2 <L"Windows.Networking.BackgroundTransfer.IDownloadOperation2">
+DEFINE_IIDX(IDownloadOperation2, "A3CCED40-8F9C-4353-9CD4-290DEE387C38")
+
+.comdef IDownloadOperation2 : public IInspectable
+
+    get_TransferGroup	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUploadOperation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUploadOperation_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IUploadOperation <L"Windows.Networking.BackgroundTransfer.IUploadOperation">
+DEFINE_IIDX(IUploadOperation, "3E5624E0-7389-434C-8B35-427FD36BBDAE")
+
+.comdef IUploadOperation : public IInspectable
+
+    get_SourceFile	proc :ptr
+    get_Progress	proc :ptr
+    StartAsync		proc :ptr
+    AttachAsync		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUploadOperation2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIUploadOperation2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IUploadOperation2 <L"Windows.Networking.BackgroundTransfer.IUploadOperation2">
+DEFINE_IIDX(IUploadOperation2, "556189F2-2774-4DF6-9FA5-209F2BFB12F7")
+
+.comdef IUploadOperation2 : public IInspectable
+
+    get_TransferGroup	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderStaticMethods_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderStaticMethods_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundDownloaderStaticMethods <L"Windows.Networking.BackgroundTransfer.IBackgroundDownloaderStaticMethods">
+DEFINE_IIDX(IBackgroundDownloaderStaticMethods, "52A65A35-C64E-426C-9919-540D0D21A650")
+
+.comdef IBackgroundDownloaderStaticMethods : public IInspectable
+
+    GetCurrentDownloadsAsync proc :ptr
+    GetCurrentDownloadsForGroupAsync proc :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderStaticMethods2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundDownloaderStaticMethods2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundDownloaderStaticMethods2 <L"Windows.Networking.BackgroundTransfer.IBackgroundDownloaderStaticMethods2">
+DEFINE_IIDX(IBackgroundDownloaderStaticMethods2, "2FAA1327-1AD4-4CA5-B2CD-08DBF0746AFE")
+
+.comdef IBackgroundDownloaderStaticMethods2 : public IInspectable
+
+    GetCurrentDownloadsForTransferGroupAsync proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderStaticMethods_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderStaticMethods_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundUploaderStaticMethods <L"Windows.Networking.BackgroundTransfer.IBackgroundUploaderStaticMethods">
+DEFINE_IIDX(IBackgroundUploaderStaticMethods, "F2875CFB-9B05-4741-9121-740A83E247DF")
+
+.comdef IBackgroundUploaderStaticMethods : public IInspectable
+
+    GetCurrentUploadsAsync proc :ptr
+    GetCurrentUploadsForGroupAsync proc :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderStaticMethods2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundUploaderStaticMethods2_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundUploaderStaticMethods2 <L"Windows.Networking.BackgroundTransfer.IBackgroundUploaderStaticMethods2">
+DEFINE_IIDX(IBackgroundUploaderStaticMethods2, "E919AC62-EA08-42F0-A2AC-07E467549080")
+
+.comdef IBackgroundUploaderStaticMethods2 : public IInspectable
+
+    GetCurrentUploadsForTransferGroupAsync proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIResponseInformation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIResponseInformation_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IResponseInformation <L"Windows.Networking.BackgroundTransfer.IResponseInformation">
+DEFINE_IIDX(IResponseInformation, "F8BB9A12-F713-4792-8B68-D9D297F91D2E")
+
+.comdef IResponseInformation : public IInspectable
+
+    get_IsResumable	proc :ptr
+    get_ActualUri	proc :ptr
+    get_StatusCode	proc :ptr
+    get_Headers		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferErrorStaticMethods_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferErrorStaticMethods_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferErrorStaticMethods <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferErrorStaticMethods">
+DEFINE_IIDX(IBackgroundTransferErrorStaticMethods, "AAD33B04-1192-4BF4-8B68-39C5ADD244E2")
+
+.comdef IBackgroundTransferErrorStaticMethods : public IInspectable
+
+    GetStatus		proc :INT32, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferContentPart_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferContentPart_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferContentPart <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferContentPart">
+DEFINE_IIDX(IBackgroundTransferContentPart, "E8E15657-D7D1-4ED8-838E-674AC217ACE6")
+
+.comdef IBackgroundTransferContentPart : public IInspectable
+
+    SetHeader		proc :HSTRING, :HSTRING
+    SetText		proc :HSTRING
+    SetFile		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferContentPartFactory_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferContentPartFactory_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferContentPartFactory <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferContentPartFactory">
+DEFINE_IIDX(IBackgroundTransferContentPartFactory, "90EF98A9-7A01-4A0B-9F80-A0B0BB370F8D")
+
+.comdef IBackgroundTransferContentPartFactory : public IInspectable
+
+    CreateWithName	proc :HSTRING, :ptr
+    CreateWithNameAndFileName proc :HSTRING, :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferGroup_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferGroup_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferGroup <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferGroup">
+DEFINE_IIDX(IBackgroundTransferGroup, "D8C3E3E4-6459-4540-85EB-AAA1C8903677")
+
+.comdef IBackgroundTransferGroup : public IInspectable
+
+    get_Name		proc :ptr
+    get_TransferBehavior proc :ptr
+    put_TransferBehavior proc :Windows::Networking::BackgroundTransfer::BackgroundTransferBehavior
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferGroupStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIBackgroundTransferGroupStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IBackgroundTransferGroupStatics <L"Windows.Networking.BackgroundTransfer.IBackgroundTransferGroupStatics">
+DEFINE_IIDX(IBackgroundTransferGroupStatics, "02EC50B2-7D18-495B-AA22-32A97D45D3E2")
+
+.comdef IBackgroundTransferGroupStatics : public IInspectable
+
+    CreateGroup		proc :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIContentPrefetcherTime_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIContentPrefetcherTime_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IContentPrefetcherTime <L"Windows.Networking.BackgroundTransfer.IContentPrefetcherTime">
+DEFINE_IIDX(IContentPrefetcherTime, "E361FD08-132A-4FDE-A7CC-FCB0E66523AF")
+
+.comdef IContentPrefetcherTime : public IInspectable
+
+    get_LastSuccessfulPrefetchTime proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIContentPrefetcher_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CBackgroundTransfer_CIContentPrefetcher_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_BackgroundTransfer_IContentPrefetcher <L"Windows.Networking.BackgroundTransfer.IContentPrefetcher">
+DEFINE_IIDX(IContentPrefetcher, "A8D6F754-7DC1-4CD9-8810-2A6AA9417E11")
+
+.comdef IContentPrefetcher : public IInspectable
+
+    get_ContentUris	proc :ptr
+    put_IndirectContentUri proc :ptr
+    get_IndirectContentUri proc :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_DownloadOperation_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_DownloadOperation_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_DownloadOperation <L"Windows.Networking.BackgroundTransfer.DownloadOperation">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_UnconstrainedTransferRequestResult_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_UnconstrainedTransferRequestResult_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_UnconstrainedTransferRequestResult <L"Windows.Networking.BackgroundTransfer.UnconstrainedTransferRequestResult">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_UploadOperation_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_UploadOperation_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_UploadOperation <L"Windows.Networking.BackgroundTransfer.UploadOperation">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferGroup_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferGroup_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_BackgroundTransferGroup <L"Windows.Networking.BackgroundTransfer.BackgroundTransferGroup">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferContentPart_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferContentPart_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_BackgroundTransferContentPart <L"Windows.Networking.BackgroundTransfer.BackgroundTransferContentPart">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_ResponseInformation_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_ResponseInformation_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_ResponseInformation <L"Windows.Networking.BackgroundTransfer.ResponseInformation">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundDownloader_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundDownloader_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_BackgroundDownloader <L"Windows.Networking.BackgroundTransfer.BackgroundDownloader">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundUploader_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundUploader_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_BackgroundUploader <L"Windows.Networking.BackgroundTransfer.BackgroundUploader">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferError_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_BackgroundTransferError_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_BackgroundTransferError <L"Windows.Networking.BackgroundTransfer.BackgroundTransferError">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_BackgroundTransfer_ContentPrefetcher_DEFINED
+define RUNTIMECLASS_Windows_Networking_BackgroundTransfer_ContentPrefetcher_DEFINED
+define RuntimeClass_Windows_Networking_BackgroundTransfer_ContentPrefetcher <L"Windows.Networking.BackgroundTransfer.ContentPrefetcher">
+endif
+
+endif

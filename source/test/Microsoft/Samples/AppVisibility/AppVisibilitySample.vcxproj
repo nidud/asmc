@@ -51,7 +51,7 @@
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>false</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>\Asmc\include;\Asmc\include\winrt</IncludePaths>
       <AdditionalOptions>-Zp8 %(AdditionalOptions)</AdditionalOptions>
       <WCharacterSet>Unicode</WCharacterSet>
     </ASMC>

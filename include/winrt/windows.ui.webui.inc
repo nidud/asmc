@@ -1,0 +1,375 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Eui2Ewebui_h__
+define __windows2Eui2Ewebui_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include Windows.ApplicationModel.inc
+include Windows.ApplicationModel.Activation.inc
+include Windows.ApplicationModel.Background.inc
+include Windows.Graphics.Printing.inc
+
+.namespace Windows
+.namespace UI
+.namespace WebUI
+
+.enum PrintContent {
+    PrintContent_AllPages   = 0,
+    PrintContent_CurrentPage    = 1,
+    PrintContent_CustomPageRange    = 2,
+    PrintContent_CurrentSelection   = 3
+    }
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIActivatedEventHandler_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIActivatedEventHandler_INTERFACE_DEFINED__
+DEFINE_IIDX(IActivatedEventHandler, "50F1E730-C5D1-4B6B-9ADB-8A11756BE29C")
+
+.comdef IActivatedEventHandler : public IUnknown
+
+    _Invoke             proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIResumingEventHandler_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIResumingEventHandler_INTERFACE_DEFINED__
+DEFINE_IIDX(IResumingEventHandler, "26599BA9-A22D-4806-A728-ACADC1D075FA")
+
+.comdef IResumingEventHandler : public IUnknown
+
+    _Invoke             proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CISuspendingEventHandler_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CISuspendingEventHandler_INTERFACE_DEFINED__
+DEFINE_IIDX(ISuspendingEventHandler, "509C429C-78E2-4883-ABC8-8960DCDE1B5C")
+
+.comdef ISuspendingEventHandler : public IUnknown
+
+    _Invoke             proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CINavigatedEventHandler_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CINavigatedEventHandler_INTERFACE_DEFINED__
+DEFINE_IIDX(INavigatedEventHandler, "7AF46FE6-40CA-4E49-A7D6-DBDB330CD1A3")
+
+.comdef INavigatedEventHandler : public IUnknown
+
+    _Invoke             proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIActivatedDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIActivatedDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IActivatedDeferral <L"Windows.UI.WebUI.IActivatedDeferral">
+DEFINE_IIDX(IActivatedDeferral, "C3BD1978-A431-49D8-A76A-395A4E03DCF3")
+
+.comdef IActivatedDeferral : public IInspectable
+
+    Complete            proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIActivatedOperation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIActivatedOperation_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IActivatedOperation <L"Windows.UI.WebUI.IActivatedOperation">
+DEFINE_IIDX(IActivatedOperation, "B6A0B4BC-C6CA-42FD-9818-71904E45FED7")
+
+.comdef IActivatedOperation : public IInspectable
+
+    GetDeferral         proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIActivatedEventArgsDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIActivatedEventArgsDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IActivatedEventArgsDeferral <L"Windows.UI.WebUI.IActivatedEventArgsDeferral">
+DEFINE_IIDX(IActivatedEventArgsDeferral, "CA6D5F74-63C2-44A6-B97B-D9A03C20BC9B")
+
+.comdef IActivatedEventArgsDeferral : public IInspectable
+
+    get_ActivatedOperation proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUINavigatedEventArgs <L"Windows.UI.WebUI.IWebUINavigatedEventArgs">
+DEFINE_IIDX(IWebUINavigatedEventArgs, "A75841B8-2499-4030-A69D-15D2D9CFE524")
+
+.comdef IWebUINavigatedEventArgs : public IInspectable
+
+    get_NavigatedOperation proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUIBackgroundTaskInstance_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUIBackgroundTaskInstance_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUIBackgroundTaskInstance <L"Windows.UI.WebUI.IWebUIBackgroundTaskInstance">
+DEFINE_IIDX(IWebUIBackgroundTaskInstance, "23F12C25-E2F7-4741-BC9C-394595DE24DC")
+
+.comdef IWebUIBackgroundTaskInstance : public IInspectable
+
+    get_Succeeded       proc :ptr
+    put_Succeeded       proc :boolean
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUIBackgroundTaskInstanceStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUIBackgroundTaskInstanceStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUIBackgroundTaskInstanceStatics <L"Windows.UI.WebUI.IWebUIBackgroundTaskInstanceStatics">
+DEFINE_IIDX(IWebUIBackgroundTaskInstanceStatics, "9C7A5291-19AE-4CA3-B94B-FE4EC744A740")
+
+.comdef IWebUIBackgroundTaskInstanceStatics : public IInspectable
+
+    get_Current         proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedDeferral_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedDeferral_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUINavigatedDeferral <L"Windows.UI.WebUI.IWebUINavigatedDeferral">
+DEFINE_IIDX(IWebUINavigatedDeferral, "D804204D-831F-46E2-B432-3AFCE211F962")
+
+.comdef IWebUINavigatedDeferral : public IInspectable
+
+    Complete            proc
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedOperation_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUINavigatedOperation_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUINavigatedOperation <L"Windows.UI.WebUI.IWebUINavigatedOperation">
+DEFINE_IIDX(IWebUINavigatedOperation, "7A965F08-8182-4A89-AB67-8492E8750D4B")
+
+.comdef IWebUINavigatedOperation : public IInspectable
+
+    GetDeferral         proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIWebUIActivationStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIWebUIActivationStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IWebUIActivationStatics <L"Windows.UI.WebUI.IWebUIActivationStatics">
+DEFINE_IIDX(IWebUIActivationStatics, "351B86BD-43B3-482B-85DB-35D87B517AD9")
+
+.comdef IWebUIActivationStatics : public IInspectable
+
+    add_Activated       proc :ptr, :ptr
+    remove_Activated    proc :EventRegistrationToken
+    add_Suspending      proc :ptr, :ptr
+    remove_Suspending   proc :EventRegistrationToken
+    add_Resuming        proc :ptr, :ptr
+    remove_Resuming     proc :EventRegistrationToken
+    add_Navigated       proc :ptr, :ptr
+    remove_Navigated    proc :EventRegistrationToken
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CUI_CWebUI_CIHtmlPrintDocumentSource_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CUI_CWebUI_CIHtmlPrintDocumentSource_INTERFACE_DEFINED__
+define InterfaceName_Windows_UI_WebUI_IHtmlPrintDocumentSource <L"Windows.UI.WebUI.IHtmlPrintDocumentSource">
+DEFINE_IIDX(IHtmlPrintDocumentSource, "CEA6469A-0E05-467A-ABC9-36EC1D4CDCB6")
+
+.comdef IHtmlPrintDocumentSource : public IInspectable
+
+    get_Content         proc :ptr
+    put_Content         proc :Windows::UI::WebUI::PrintContent
+    get_LeftMargin      proc :ptr
+    put_LeftMargin      proc :FLOAT
+    get_TopMargin       proc :ptr
+    put_TopMargin       proc :FLOAT
+    get_RightMargin     proc :ptr
+    put_RightMargin     proc :FLOAT
+    get_BottomMargin    proc :ptr
+    put_BottomMargin    proc :FLOAT
+    get_EnableHeaderFooter proc :ptr
+    put_EnableHeaderFooter proc :boolean
+    get_ShrinkToFit     proc :ptr
+    put_ShrinkToFit     proc :boolean
+    get_PercentScale    proc :ptr
+    put_PercentScale    proc :FLOAT
+    get_PageRange       proc :ptr
+    TrySetPageRange     proc :HSTRING, :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_UI_WebUI_ActivatedDeferral_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_ActivatedDeferral_DEFINED
+define RuntimeClass_Windows_UI_WebUI_ActivatedDeferral <L"Windows.UI.WebUI.ActivatedDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_ActivatedOperation_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_ActivatedOperation_DEFINED
+define RuntimeClass_Windows_UI_WebUI_ActivatedOperation <L"Windows.UI.WebUI.ActivatedOperation">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUILaunchActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUILaunchActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUILaunchActivatedEventArgs <L"Windows.UI.WebUI.WebUILaunchActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUISearchActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUISearchActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUISearchActivatedEventArgs <L"Windows.UI.WebUI.WebUISearchActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIShareTargetActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIShareTargetActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIShareTargetActivatedEventArgs <L"Windows.UI.WebUI.WebUIShareTargetActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIFileActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIFileActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIFileActivatedEventArgs <L"Windows.UI.WebUI.WebUIFileActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIProtocolActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIProtocolActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIProtocolActivatedEventArgs <L"Windows.UI.WebUI.WebUIProtocolActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIFileOpenPickerActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIFileOpenPickerActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIFileOpenPickerActivatedEventArgs <L"Windows.UI.WebUI.WebUIFileOpenPickerActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIFileSavePickerActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIFileSavePickerActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIFileSavePickerActivatedEventArgs <L"Windows.UI.WebUI.WebUIFileSavePickerActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUICachedFileUpdaterActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUICachedFileUpdaterActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUICachedFileUpdaterActivatedEventArgs <L"Windows.UI.WebUI.WebUICachedFileUpdaterActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactPickerActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactPickerActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactPickerActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactPickerActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIDeviceActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIDeviceActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIDeviceActivatedEventArgs <L"Windows.UI.WebUI.WebUIDeviceActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIPrintTaskSettingsActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIPrintTaskSettingsActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIPrintTaskSettingsActivatedEventArgs <L"Windows.UI.WebUI.WebUIPrintTaskSettingsActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUICameraSettingsActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUICameraSettingsActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUICameraSettingsActivatedEventArgs <L"Windows.UI.WebUI.WebUICameraSettingsActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderAddAppointmentActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderAddAppointmentActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIAppointmentsProviderAddAppointmentActivatedEventArgs <L"Windows.UI.WebUI.WebUIAppointmentsProviderAddAppointmentActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderReplaceAppointmentActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderReplaceAppointmentActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIAppointmentsProviderReplaceAppointmentActivatedEventArgs <L"Windows.UI.WebUI.WebUIAppointmentsProviderReplaceAppointmentActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderRemoveAppointmentActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderRemoveAppointmentActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIAppointmentsProviderRemoveAppointmentActivatedEventArgs <L"Windows.UI.WebUI.WebUIAppointmentsProviderRemoveAppointmentActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderShowTimeFrameActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIAppointmentsProviderShowTimeFrameActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIAppointmentsProviderShowTimeFrameActivatedEventArgs <L"Windows.UI.WebUI.WebUIAppointmentsProviderShowTimeFrameActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactCallActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactCallActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactCallActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactCallActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactMessageActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactMessageActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactMessageActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactMessageActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactMapActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactMapActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactMapActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactMapActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactPostActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactPostActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactPostActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactPostActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIContactVideoCallActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIContactVideoCallActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIContactVideoCallActivatedEventArgs <L"Windows.UI.WebUI.WebUIContactVideoCallActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUILockScreenCallActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUILockScreenCallActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUILockScreenCallActivatedEventArgs <L"Windows.UI.WebUI.WebUILockScreenCallActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIRestrictedLaunchActivatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIRestrictedLaunchActivatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIRestrictedLaunchActivatedEventArgs <L"Windows.UI.WebUI.WebUIRestrictedLaunchActivatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedOperation_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedOperation_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUINavigatedOperation <L"Windows.UI.WebUI.WebUINavigatedOperation">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_SuspendingDeferral_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_SuspendingDeferral_DEFINED
+define RuntimeClass_Windows_UI_WebUI_SuspendingDeferral <L"Windows.UI.WebUI.SuspendingDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_SuspendingOperation_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_SuspendingOperation_DEFINED
+define RuntimeClass_Windows_UI_WebUI_SuspendingOperation <L"Windows.UI.WebUI.SuspendingOperation">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_SuspendingEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_SuspendingEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_SuspendingEventArgs <L"Windows.UI.WebUI.SuspendingEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIBackgroundTaskInstanceRuntimeClass_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIBackgroundTaskInstanceRuntimeClass_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIBackgroundTaskInstanceRuntimeClass <L"Windows.UI.WebUI.WebUIBackgroundTaskInstanceRuntimeClass">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIBackgroundTaskInstance_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIBackgroundTaskInstance_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIBackgroundTaskInstance <L"Windows.UI.WebUI.WebUIBackgroundTaskInstance">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedDeferral_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedDeferral_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUINavigatedDeferral <L"Windows.UI.WebUI.WebUINavigatedDeferral">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUINavigatedEventArgs_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUINavigatedEventArgs <L"Windows.UI.WebUI.WebUINavigatedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_WebUIApplication_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_WebUIApplication_DEFINED
+define RuntimeClass_Windows_UI_WebUI_WebUIApplication <L"Windows.UI.WebUI.WebUIApplication">
+endif
+ifndef RUNTIMECLASS_Windows_UI_WebUI_HtmlPrintDocumentSource_DEFINED
+define RUNTIMECLASS_Windows_UI_WebUI_HtmlPrintDocumentSource_DEFINED
+define RuntimeClass_Windows_UI_WebUI_HtmlPrintDocumentSource <L"Windows.UI.WebUI.HtmlPrintDocumentSource">
+endif
+
+endif

@@ -50,7 +50,7 @@
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>\Asmc\include;\Asmc\include\winrt</IncludePaths>
       <AdditionalOptions>-D_LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <WCharacterSet>Unicode</WCharacterSet>
     </ASMC>

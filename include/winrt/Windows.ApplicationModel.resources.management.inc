@@ -1,0 +1,226 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Eapplicationmodel2Eresources2Emanagement_h__
+define __windows2Eapplicationmodel2Eresources2Emanagement_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include windows.foundation.collections.inc
+
+ifndef ____FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate, "6b6f3ab9-1593-5852-b6bb-17a217e12f9f")
+
+.comdef __FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate, "0fcb4184-1489-5774-9910-bab326bb50f6")
+
+.comdef __FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+define ____FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier, "1a22ebee-7992-5198-972b-054580945741")
+
+.comdef __FIIterator_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+define ____FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier, "e16e0455-7341-55c0-a024-26d9ad43c8cc")
+
+.comdef __FIIterable_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate, "1da243f1-bb95-543e-95c6-5fd196b34b6f")
+
+.comdef __FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate : public IInspectable
+
+    GetAt		proc :SINT, :ptr
+    get_Size		proc :ptr
+    IndexOf		proc :ptr, :ptr, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+define ____FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier, "239ded48-ce04-51f2-b2c9-a5e5ab671b8d")
+
+.comdef __FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceQualifier : public IInspectable
+
+    GetAt		proc :SINT, :ptr
+    get_Size		proc :ptr
+    IndexOf		proc :ptr, :ptr, :ptr
+    GetMany		proc :SINT, :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate, "4f2b3869-d059-5739-906c-9eb2729c2fde")
+
+.comdef __FIAsyncOperationCompletedHandler_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate : public IUnknown
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate, "d2d41b8a-6616-5de8-aaf9-32ae51f67fcb")
+
+.comdef __FIAsyncOperation_1___FIVectorView_1_Windows__CApplicationModel__CResources__CManagement__CIndexedResourceCandidate : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+.namespace Windows
+.namespace ApplicationModel
+.namespace Resources
+.namespace Management
+
+.enum IndexedResourceType {
+    IndexedResourceType_String	= 0,
+    IndexedResourceType_Path	= 1,
+    IndexedResourceType_EmbeddedData	= 2
+    }
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexer_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexer_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Resources_Management_IResourceIndexer <L"Windows.ApplicationModel.Resources.Management.IResourceIndexer">
+DEFINE_IIDX(IResourceIndexer, "2D4CF9A5-E32F-4AB2-8748-96350A016DA3")
+
+.comdef IResourceIndexer : public IInspectable
+
+    IndexFilePath	proc :ptr, :ptr
+    IndexFileContentsAsync proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexerFactory_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexerFactory_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Resources_Management_IResourceIndexerFactory <L"Windows.ApplicationModel.Resources.Management.IResourceIndexerFactory">
+DEFINE_IIDX(IResourceIndexerFactory, "B8DE3F09-31CD-4D97-BD30-8D39F742BC61")
+
+.comdef IResourceIndexerFactory : public IInspectable
+
+    CreateResourceIndexer proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexerFactory2_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIResourceIndexerFactory2_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Resources_Management_IResourceIndexerFactory2 <L"Windows.ApplicationModel.Resources.Management.IResourceIndexerFactory2">
+DEFINE_IIDX(IResourceIndexerFactory2, "6040F18D-D5E5-4B60-9201-CD279CBCFED9")
+
+.comdef IResourceIndexerFactory2 : public IInspectable
+
+    CreateResourceIndexerWithExtension proc :ptr, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIIndexedResourceQualifier_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIIndexedResourceQualifier_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Resources_Management_IIndexedResourceQualifier <L"Windows.ApplicationModel.Resources.Management.IIndexedResourceQualifier">
+DEFINE_IIDX(IIndexedResourceQualifier, "DAE3BB9B-D304-497F-A168-A340042C8ADB")
+
+.comdef IIndexedResourceQualifier : public IInspectable
+
+    get_QualifierName	proc :ptr
+    get_QualifierValue	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIIndexedResourceCandidate_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CApplicationModel_CResources_CManagement_CIIndexedResourceCandidate_INTERFACE_DEFINED__
+define InterfaceName_Windows_ApplicationModel_Resources_Management_IIndexedResourceCandidate <L"Windows.ApplicationModel.Resources.Management.IIndexedResourceCandidate">
+DEFINE_IIDX(IIndexedResourceCandidate, "0E619EF3-FAEC-4414-A9D7-54ACD5953F29")
+
+.comdef IIndexedResourceCandidate : public IInspectable
+
+    get_Type		proc :ptr
+    get_Uri		proc :ptr
+    get_Metadata	proc :ptr
+    get_Qualifiers	proc :ptr
+    get_ValueAsString	proc :ptr
+    GetQualifierValue	proc :HSTRING, :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_IndexedResourceCandidate_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_IndexedResourceCandidate_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Resources_Management_IndexedResourceCandidate <L"Windows.ApplicationModel.Resources.Management.IndexedResourceCandidate">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_ResourceIndexer_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_ResourceIndexer_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Resources_Management_ResourceIndexer <L"Windows.ApplicationModel.Resources.Management.ResourceIndexer">
+endif
+ifndef RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_IndexedResourceQualifier_DEFINED
+define RUNTIMECLASS_Windows_ApplicationModel_Resources_Management_IndexedResourceQualifier_DEFINED
+define RuntimeClass_Windows_ApplicationModel_Resources_Management_IndexedResourceQualifier <L"Windows.ApplicationModel.Resources.Management.IndexedResourceQualifier">
+endif
+
+endif

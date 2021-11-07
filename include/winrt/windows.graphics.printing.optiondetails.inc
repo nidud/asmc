@@ -1,0 +1,339 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Egraphics2Eprinting2Eoptiondetails_h__
+define __windows2Egraphics2Eprinting2Eoptiondetails_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include Windows.Graphics.Printing.inc
+include windows.foundation.collections.inc
+
+ifndef ____FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+define ____FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails, "f5d9c723-a4b1-5fc8-9f78-0b95b716720b")
+
+.comdef __FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails : public IInspectable
+
+    get_Key		proc :ptr
+    get_Value		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterator_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+define ____FIIterator_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterator_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails, "7bef6011-58a1-5523-8e2a-309f8cb1bd39")
+
+.comdef __FIIterator_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails : public IInspectable
+
+    get_Current		proc :ptr
+    get_HasCurrent	proc :ptr
+    MoveNext		proc :ptr
+    GetMany		proc :SINT, :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FIIterable_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+define ____FIIterable_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIIterable_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails, "6770cf39-094f-59c5-8a5d-e3b5dc64db0f")
+
+.comdef __FIIterable_1___FIKeyValuePair_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails : public IInspectable
+
+    First		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FIMapView_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+define ____FIMapView_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIMapView_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails, "79e5168f-702a-5030-bd44-ef23d8887aed")
+
+.comdef __FIMapView_2_HSTRING_Windows__CGraphics__CPrinting__COptionDetails__CIPrintOptionDetails : public IInspectable
+
+    Lookup		proc :HSTRING, :ptr
+    get_Size		proc :ptr
+    HasKey		proc :HSTRING, :ptr
+    Split		proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_IInspectable_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_IInspectable_INTERFACE_DEFINED__
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_IInspectable, "5c88455c-5b59-557c-8064-5e4f3d59a8ec")
+
+.comdef __FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_IInspectable : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionChangedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionChangedEventArgs_INTERFACE_DEFINED__
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionChangedEventArgs, "1b1f456b-8821-592e-b4a7-9b4c3712518e")
+
+.comdef __FITypedEventHandler_2_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionDetails_Windows__CGraphics__CPrinting__COptionDetails__CPrintTaskOptionChangedEventArgs : public IUnknown
+
+    _Invoke		proc :ptr, :ptr
+   .ends
+
+endif
+
+.namespace Windows
+.namespace Graphics
+.namespace Printing
+.namespace OptionDetails
+
+.enum PrintOptionStates {
+    PrintOptionStates_None	= 0,
+    PrintOptionStates_Enabled	= 0x1,
+    PrintOptionStates_Constrained	= 0x2
+    }
+
+.enum PrintOptionType {
+    PrintOptionType_Unknown	= 0,
+    PrintOptionType_Number	= 1,
+    PrintOptionType_Text	= 2,
+    PrintOptionType_ItemList	= 3
+    }
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintOptionDetails">
+DEFINE_IIDX(IPrintOptionDetails, "390686CF-D682-495F-ADFE-D7333F5C1808")
+
+.comdef IPrintOptionDetails : public IInspectable
+
+    get_OptionId	proc :ptr
+    get_OptionType	proc :ptr
+    put_ErrorText	proc :HSTRING
+    get_ErrorText	proc :ptr
+    put_State		proc :Windows::Graphics::Printing::OptionDetails::PrintOptionStates
+    get_State		proc :ptr
+    get_Value		proc :ptr
+    TrySetValue		proc :ptr, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintNumberOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintNumberOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintNumberOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintNumberOptionDetails">
+DEFINE_IIDX(IPrintNumberOptionDetails, "4D01BBAF-645C-4DE9-965F-6FC6BBC47CAB")
+
+.comdef IPrintNumberOptionDetails : public IInspectable
+
+    get_MinValue	proc :ptr
+    get_MaxValue	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTextOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTextOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintTextOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintTextOptionDetails">
+DEFINE_IIDX(IPrintTextOptionDetails, "AD75E563-5CE4-46BC-9918-AB9FAD144C5B")
+
+.comdef IPrintTextOptionDetails : public IInspectable
+
+    get_MaxCharacters	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintItemListOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintItemListOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintItemListOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintItemListOptionDetails">
+DEFINE_IIDX(IPrintItemListOptionDetails, "9A2257BF-FE61-43D8-A24F-A3F6AB7320E7")
+
+.comdef IPrintItemListOptionDetails : public IInspectable
+
+    get_Items		proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintCustomOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintCustomOptionDetails">
+DEFINE_IIDX(IPrintCustomOptionDetails, "E32BDE1C-28AF-4B90-95DA-A3ACF320B929")
+
+.comdef IPrintCustomOptionDetails : public IInspectable
+
+    put_DisplayName	proc :HSTRING
+    get_DisplayName	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomTextOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomTextOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintCustomTextOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintCustomTextOptionDetails">
+DEFINE_IIDX(IPrintCustomTextOptionDetails, "2AD171F8-C8BD-4905-9192-0D75136E8B31")
+
+.comdef IPrintCustomTextOptionDetails : public IInspectable
+
+    put_MaxCharacters	proc :UINT32
+    get_MaxCharacters	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomItemDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomItemDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintCustomItemDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintCustomItemDetails">
+DEFINE_IIDX(IPrintCustomItemDetails, "5704B637-5C3A-449A-AA36-B3291B1192FD")
+
+.comdef IPrintCustomItemDetails : public IInspectable
+
+    get_ItemId		proc :ptr
+    put_ItemDisplayName proc :HSTRING
+    get_ItemDisplayName proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomItemListOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintCustomItemListOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintCustomItemListOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintCustomItemListOptionDetails">
+DEFINE_IIDX(IPrintCustomItemListOptionDetails, "A5FAFD88-58F2-4EBD-B90F-51E4F2944C5D")
+
+.comdef IPrintCustomItemListOptionDetails : public IInspectable
+
+    AddItem		proc :HSTRING, :HSTRING
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionChangedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionChangedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintTaskOptionChangedEventArgs <L"Windows.Graphics.Printing.OptionDetails.IPrintTaskOptionChangedEventArgs">
+DEFINE_IIDX(IPrintTaskOptionChangedEventArgs, "65197D05-A5EE-4307-9407-9ACAD147679C")
+
+.comdef IPrintTaskOptionChangedEventArgs : public IInspectable
+
+    get_OptionId	proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionDetails_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionDetails_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintTaskOptionDetails <L"Windows.Graphics.Printing.OptionDetails.IPrintTaskOptionDetails">
+DEFINE_IIDX(IPrintTaskOptionDetails, "F5720AF1-A89E-42A6-81AF-F8E010B38A68")
+
+.comdef IPrintTaskOptionDetails : public IInspectable
+
+    get_Options		proc :ptr
+    CreateItemListOption proc :HSTRING, :HSTRING, :ptr
+    CreateTextOption	proc :HSTRING, :HSTRING, :ptr
+    add_OptionChanged	proc :ptr, :ptr
+    remove_OptionChanged proc :EventRegistrationToken
+    add_BeginValidation proc :ptr, :ptr
+    remove_BeginValidation proc :EventRegistrationToken
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionDetailsStatic_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CGraphics_CPrinting_COptionDetails_CIPrintTaskOptionDetailsStatic_INTERFACE_DEFINED__
+define InterfaceName_Windows_Graphics_Printing_OptionDetails_IPrintTaskOptionDetailsStatic <L"Windows.Graphics.Printing.OptionDetails.IPrintTaskOptionDetailsStatic">
+DEFINE_IIDX(IPrintTaskOptionDetailsStatic, "135DA193-0961-4B6E-8766-F13B7FBCCD58")
+
+.comdef IPrintTaskOptionDetailsStatic : public IInspectable
+
+    GetFromPrintTaskOptions proc :ptr, :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCopiesOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCopiesOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintCopiesOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintCopiesOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintMediaSizeOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintMediaSizeOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintMediaSizeOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintMediaSizeOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintMediaTypeOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintMediaTypeOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintMediaTypeOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintMediaTypeOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintOrientationOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintOrientationOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintOrientationOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintOrientationOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintQualityOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintQualityOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintQualityOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintQualityOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintColorModeOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintColorModeOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintColorModeOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintColorModeOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintDuplexOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintDuplexOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintDuplexOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintDuplexOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCollationOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCollationOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintCollationOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintCollationOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintStapleOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintStapleOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintStapleOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintStapleOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintHolePunchOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintHolePunchOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintHolePunchOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintHolePunchOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintBindingOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintBindingOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintBindingOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintBindingOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomTextOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomTextOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintCustomTextOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintCustomTextOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomItemDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomItemDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintCustomItemDetails <L"Windows.Graphics.Printing.OptionDetails.PrintCustomItemDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomItemListOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintCustomItemListOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintCustomItemListOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintCustomItemListOptionDetails">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionChangedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionChangedEventArgs_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionChangedEventArgs <L"Windows.Graphics.Printing.OptionDetails.PrintTaskOptionChangedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionDetails_DEFINED
+define RUNTIMECLASS_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionDetails_DEFINED
+define RuntimeClass_Windows_Graphics_Printing_OptionDetails_PrintTaskOptionDetails <L"Windows.Graphics.Printing.OptionDetails.PrintTaskOptionDetails">
+endif
+
+endif

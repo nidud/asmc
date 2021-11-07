@@ -37,6 +37,7 @@ main proc
             mov edi,eax
 
             fprintf(edi,
+                "include libc.inc\n"
                 "include guiddef.inc\n"
                 "PROPERTYKEY STRUC\n"
                 "fmtid   GUID <>\n"

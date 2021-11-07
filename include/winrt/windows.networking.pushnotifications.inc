@@ -1,0 +1,156 @@
+ifndef __REQUIRED_RPCNDR_H_VERSION__
+define __REQUIRED_RPCNDR_H_VERSION__ 500
+endif
+ifndef __REQUIRED_RPCSAL_H_VERSION__
+define __REQUIRED_RPCSAL_H_VERSION__ 100
+endif
+
+include rpc.inc
+include rpcndr.inc
+ifndef __RPCNDR_H_VERSION__
+.err <this stub requires an updated version of rpcndr.h>
+endif
+ifndef COM_NO_WINDOWS_H
+include windows.inc
+include ole2.inc
+endif
+
+ifndef __windows2Enetworking2Epushnotifications_h__
+define __windows2Enetworking2Epushnotifications_h__
+
+include inspectable.inc
+include AsyncInfo.inc
+include EventToken.inc
+include Windows.Foundation.inc
+include Windows.UI.Notifications.inc
+include windows.foundation.collections.inc
+
+ifndef ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_INTERFACE_DEFINED__
+define ____FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel, "cf7c902f-0f0d-5b22-90b1-85141b5816cd")
+
+.comdef __FIAsyncOperationCompletedHandler_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel : public IInspectable
+
+    _Invoke		proc :ptr, :AsyncStatus
+   .ends
+
+endif
+
+ifndef ____FIAsyncOperation_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_INTERFACE_DEFINED__
+define ____FIAsyncOperation_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_INTERFACE_DEFINED__
+DEFINE_IIDX(__FIAsyncOperation_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel, "70945a09-331a-5e40-b854-66b7a3233bab")
+
+.comdef __FIAsyncOperation_1_Windows__CNetworking__CPushNotifications__CPushNotificationChannel : public IInspectable
+
+    put_Completed	proc :ptr
+    get_Completed	proc :ptr
+    GetResults		proc :ptr
+   .ends
+
+endif
+
+ifndef ____FITypedEventHandler_2_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_Windows__CNetworking__CPushNotifications__CPushNotificationReceivedEventArgs_INTERFACE_DEFINED__
+define ____FITypedEventHandler_2_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_Windows__CNetworking__CPushNotifications__CPushNotificationReceivedEventArgs_INTERFACE_DEFINED__
+DEFINE_IIDX(__FITypedEventHandler_2_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_Windows__CNetworking__CPushNotifications__CPushNotificationReceivedEventArgs, "55fa217d-1fc3-5863-b980-7094d4379694")
+
+.comdef __FITypedEventHandler_2_Windows__CNetworking__CPushNotifications__CPushNotificationChannel_Windows__CNetworking__CPushNotifications__CPushNotificationReceivedEventArgs : public IInspectable
+
+    _Invoke		proc :ptr, :ptr
+   .ends
+
+endif
+
+.namespace Windows
+.namespace Networking
+.namespace PushNotifications
+
+.enum PushNotificationType {
+    PushNotificationType_Toast	= 0,
+    PushNotificationType_Tile	= 1,
+    PushNotificationType_Badge	= 2,
+    PushNotificationType_Raw	= 3
+    }
+
+ifndef ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationChannelManagerStatics_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationChannelManagerStatics_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_PushNotifications_IPushNotificationChannelManagerStatics <L"Windows.Networking.PushNotifications.IPushNotificationChannelManagerStatics">
+DEFINE_IIDX(IPushNotificationChannelManagerStatics, "8BAF9B65-77A1-4588-BD19-861529A9DCF0")
+
+.comdef IPushNotificationChannelManagerStatics : public IInspectable
+
+    CreatePushNotificationChannelForApplicationAsync proc :ptr
+    CreatePushNotificationChannelForApplicationAsyncWithId proc :HSTRING, :ptr
+    CreatePushNotificationChannelForSecondaryTileAsync proc :HSTRING, :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationChannel_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationChannel_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_PushNotifications_IPushNotificationChannel <L"Windows.Networking.PushNotifications.IPushNotificationChannel">
+DEFINE_IIDX(IPushNotificationChannel, "2B28102E-EF0B-4F39-9B8A-A3C194DE7081")
+
+.comdef IPushNotificationChannel : public IInspectable
+
+    get_Uri		proc :ptr
+    get_ExpirationTime	proc :ptr
+    Close		proc
+    add_PushNotificationReceived proc :ptr, :ptr
+    remove_PushNotificationReceived proc :EventRegistrationToken
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationReceivedEventArgs_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CPushNotifications_CIPushNotificationReceivedEventArgs_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_PushNotifications_IPushNotificationReceivedEventArgs <L"Windows.Networking.PushNotifications.IPushNotificationReceivedEventArgs">
+DEFINE_IIDX(IPushNotificationReceivedEventArgs, "D1065E0C-36CD-484C-B935-0A99B753CF00")
+
+.comdef IPushNotificationReceivedEventArgs : public IInspectable
+
+    put_Cancel		proc :boolean
+    get_Cancel		proc :ptr
+    get_NotificationType proc :ptr
+    get_ToastNotification proc :ptr
+    get_TileNotification proc :ptr
+    get_BadgeNotification proc :ptr
+    get_RawNotification proc :ptr
+   .ends
+
+endif
+
+ifndef ____x_ABI_CWindows_CNetworking_CPushNotifications_CIRawNotification_INTERFACE_DEFINED__
+define ____x_ABI_CWindows_CNetworking_CPushNotifications_CIRawNotification_INTERFACE_DEFINED__
+define InterfaceName_Windows_Networking_PushNotifications_IRawNotification <L"Windows.Networking.PushNotifications.IRawNotification">
+DEFINE_IIDX(IRawNotification, "1A227281-3B79-42AC-9963-22AB00D4F0B7")
+
+.comdef IRawNotification : public IInspectable
+
+    get_Content		proc :ptr
+   .ends
+
+endif
+
+.endn
+.endn
+.endn
+
+ifndef RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationChannel_DEFINED
+define RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationChannel_DEFINED
+define RuntimeClass_Windows_Networking_PushNotifications_PushNotificationChannel <L"Windows.Networking.PushNotifications.PushNotificationChannel">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationReceivedEventArgs_DEFINED
+define RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationReceivedEventArgs_DEFINED
+define RuntimeClass_Windows_Networking_PushNotifications_PushNotificationReceivedEventArgs <L"Windows.Networking.PushNotifications.PushNotificationReceivedEventArgs">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_PushNotifications_RawNotification_DEFINED
+define RUNTIMECLASS_Windows_Networking_PushNotifications_RawNotification_DEFINED
+define RuntimeClass_Windows_Networking_PushNotifications_RawNotification <L"Windows.Networking.PushNotifications.RawNotification">
+endif
+ifndef RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationChannelManager_DEFINED
+define RUNTIMECLASS_Windows_Networking_PushNotifications_PushNotificationChannelManager_DEFINED
+define RuntimeClass_Windows_Networking_PushNotifications_PushNotificationChannelManager <L"Windows.Networking.PushNotifications.PushNotificationChannelManager">
+endif
+
+endif
+

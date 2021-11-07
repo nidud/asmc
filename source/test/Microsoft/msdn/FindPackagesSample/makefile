@@ -1,4 +1,4 @@
 FindPackagesSample.exe:
-    asmc64 -ws -pe $*.asm
+    asmc64 -I\Asmc\include\winrt -ws -pe $*.asm
     $@
     pause

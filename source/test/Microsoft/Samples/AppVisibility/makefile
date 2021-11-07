@@ -1,3 +1,3 @@
 AppVisibilitySample.exe:
-    asmc64 -pe -ws $*.asm
+    asmc64 -I%AsmcDir%\include\winrt -pe -ws $*.asm
     $@

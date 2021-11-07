@@ -8,7 +8,7 @@ $(lib_dir)\x64\directxmath.lib:
     del *.obj
 
 directx.x64:
-    asmc -q -win64 $*.regress
+    asmc -q -win64 -I$(inc_dir) $*.regress
     linkw sys con_64 f $*
     if not exist $*.exe exit
     $*.exe

@@ -89,7 +89,7 @@
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
-      <IncludePaths>\Asmc\include</IncludePaths>
+      <IncludePaths>\Asmc\include;\Asmc\include\winrt</IncludePaths>
       <WCharacterSet>Unicode</WCharacterSet>
       <IgnoreINCLUDELIB>true</IgnoreINCLUDELIB>
       <AdditionalOptions>-frame -D_LIBCMT %(AdditionalOptions)</AdditionalOptions>

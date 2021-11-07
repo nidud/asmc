@@ -95,7 +95,7 @@ SetupMatrices proc
 
     timeGetTime()
     mov ecx,1000
-    cdq
+    xor edx,edx
     div ecx
     mov iTime,edx
 

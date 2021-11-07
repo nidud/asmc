@@ -1,7 +1,11 @@
+!include srcpath
+
+aflags = -nologo -ws -pe -gui -I$(inc_dir)
+
 CreateDevice.exe:
-    asmc64 -ws -pe -gui CreateDevice.asm
-    asmc64 -ws -pe -gui Vertices.asm
-    asmc64 -ws -pe -gui Matrices.asm
-    asmc64 -ws -pe -gui Lights.asm
-    asmc64 -ws -pe -gui Textures.asm
-    asmc64 -ws -pe -gui Meshes.asm
+    asmc64 $(aflags) CreateDevice.asm
+    asmc64 $(aflags) Vertices.asm
+    asmc64 $(aflags) Matrices.asm
+    asmc64 $(aflags) Lights.asm
+    asmc64 $(aflags) Textures.asm
+    asmc64 $(aflags) Meshes.asm

@@ -144,12 +144,8 @@ define ___ADOCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
 
-.comdef ADOCollection : public IUnknown
+.comdef ADOCollection : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
@@ -175,12 +171,8 @@ define ___Catalog_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Catalog, "00000603-0000-0010-8000-00AA006D2EA4")
 
-.comdef Catalog : public IUnknown
+.comdef Catalog : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Tables		proc :ptr
     get_ActiveConnection proc :ptr
     put_ActiveConnection proc :VARIANT
@@ -201,13 +193,8 @@ define ___Table_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Table, "00000610-0000-0010-8000-00AA006D2EA4")
 
-.comdef Table : public IUnknown
+.comdef Table : public IDispatch
 
-
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Columns		proc :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
@@ -229,12 +216,8 @@ define ___Group25_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Group25, "00000616-0000-0010-8000-00AA006D2EA4")
 
-.comdef Group25 : public IUnknown
+.comdef Group25 : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     GetPermissions	proc :VARIANT, :ObjectTypeEnum, :VARIANT, :ptr
@@ -264,12 +247,8 @@ define ___User25_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_User25, "00000619-0000-0010-8000-00AA006D2EA4")
 
-.comdef User25 : public IUnknown
+.comdef User25 : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     GetPermissions	proc :VARIANT, :ObjectTypeEnum, :VARIANT, :ptr
@@ -300,12 +279,8 @@ define ___Column_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Column, "0000061C-0000-0010-8000-00AA006D2EA4")
 
-.comdef Column : public IUnknown
+.comdef Column : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     get_Attributes	proc :ptr
@@ -335,12 +310,8 @@ define ___Index_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Index, "0000061F-0000-0010-8000-00AA006D2EA4")
 
-.comdef Index : public IUnknown
+.comdef Index : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     get_Clustered	proc :ptr
@@ -362,12 +333,8 @@ define ___Key_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_Key, "00000622-0000-0010-8000-00AA006D2EA4")
 
-.comdef Key : public IUnknown
+.comdef Key : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Name		proc :ptr
     put_Name		proc :BSTR
     get_DeleteRule	proc :ptr
@@ -388,12 +355,8 @@ define __View_INTERFACE_DEFINED__
 
 DEFINE_IIDX(View, "00000613-0000-0010-8000-00AA006D2EA4")
 
-.comdef View : public IUnknown
+.comdef View : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Command		proc :ptr
     put_Command		proc :VARIANT
     putref_Command	proc :ptr
@@ -409,12 +372,8 @@ define __Procedure_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Procedure, "00000625-0000-0010-8000-00AA006D2EA4")
 
-.comdef Procedure : public IUnknown
+.comdef Procedure : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Command		proc :ptr
     put_Command		proc :VARIANT
     putref_Command	proc :ptr
@@ -433,12 +392,8 @@ define __Property_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
 
-.comdef Property : public IUnknown
+.comdef Property : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Value		proc :ptr
     put_Value		proc :VARIANT
     get_Name		proc :ptr
@@ -454,12 +409,8 @@ define __Properties_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
 
-.comdef Properties : public IUnknown
+.comdef Properties : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc

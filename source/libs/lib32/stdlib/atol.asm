@@ -17,7 +17,7 @@ atol proc string:LPSTR
 
         movzx eax,byte ptr [edx]
         inc edx
-        .continue(0) .if al == ' '
+        .continue(0) .if al == ' ' || al == 10
 
         push eax
         .if al == '-' || al == '+'

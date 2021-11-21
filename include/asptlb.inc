@@ -26,12 +26,8 @@ define __IStringList_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IStringList : public IUnknown
+.comdef IStringList : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :VARIANT, :ptr
     get_Count		proc :ptr
     get__NewEnum	proc :ptr
@@ -44,12 +40,8 @@ define __IRequestDictionary_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IRequestDictionary,0xD97A6DA0,0xA85F,0x11df,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IRequestDictionary : public IUnknown
+.comdef IRequestDictionary : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :VARIANT, :ptr
     get__NewEnum	proc :ptr
     get_Count		proc :ptr
@@ -63,12 +55,8 @@ define __IRequest_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IRequest,0xD97A6DA0,0xA861,0x11cf,0x93,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IRequest : public IUnknown
+.comdef IRequest : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :BSTR, :ptr
     get_QueryString	proc :ptr
     get_Form		proc :ptr
@@ -89,12 +77,8 @@ define __IReadCookie_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IReadCookie,0x71EAF260,0x0CE0,0x11D0,0xA5,0x3E,0x00,0xA0,0xC9,0x0C,0x20,0x91)
 
-.comdef IReadCookie : public IUnknown
+.comdef IReadCookie : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :BSTR, :ptr
     get_HasKeys		proc :ptr
     get__NewEnum	proc :ptr
@@ -109,12 +93,8 @@ define __IWriteCookie_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IWriteCookie,0xD97A6DA0,0xA862,0x11cf,0x84,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IWriteCookie : public IUnknown
+.comdef IWriteCookie : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     put_Item		proc :VARIANT, :BSTR
     put_Expires		proc :DATE
     put_Domain		proc :BSTR
@@ -131,12 +111,8 @@ define __IResponse_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IResponse,0xD97A6DA0,0xA864,0x11cf,0x83,0xBE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IResponse : public IUnknown
+.comdef IResponse : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Buffer		proc :ptr
     put_Buffer		proc :VARIANT_BOOL
     get_ContentType	proc :ptr
@@ -179,12 +155,8 @@ define __IVariantDictionary_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IVariantDictionary,0x4a7deb90,0xb069,0x11d0,0xb3,0x73,0x00,0xa0,0xc9,0x0c,0x2b,0xd8)
 
-.comdef IVariantDictionary : public IUnknown
+.comdef IVariantDictionary : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Item		proc :VARIANT, :ptr
     put_Item		proc :VARIANT, :VARIANT
     putref_Item		proc :VARIANT, :VARIANT
@@ -202,12 +174,8 @@ define __ISessionObject_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_ISessionObject,0xD97A6DA0,0xA865,0x11cf,0x83,0xAF,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef ISessionObject : public IUnknown
+.comdef ISessionObject : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_SessionID	proc :ptr
     get_Value		proc :BSTR, :ptr
     put_Value		proc :BSTR, :VARIANT
@@ -232,12 +200,8 @@ define __IApplicationObject_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IApplicationObject,0xD97A6DA0,0xA866,0x11cf,0x83,0xAE,0x10,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IApplicationObject : public IUnknown
+.comdef IApplicationObject : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Value		proc :BSTR, :ptr
     put_Value		proc :BSTR, :VARIANT
     putref_Value	proc :BSTR, :VARIANT
@@ -256,12 +220,8 @@ define __IASPError_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IASPError,0xF5A6893E,0xA0F5,0x11d1,0x8C,0x4B,0x00,0xC0,0x4F,0xC3,0x24,0xA4)
 
-.comdef IASPError : public IUnknown
+.comdef IASPError : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ASPCode		proc :ptr
     get_Number		proc :ptr
     get_Category	proc :ptr
@@ -280,12 +240,8 @@ define __IServer_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IServer,0xD97A6DA0,0xA867,0x11cf,0x83,0xAE,0x01,0xA0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IServer : public IUnknown
+.comdef IServer : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_ScriptTimeout	proc :ptr
     put_ScriptTimeout	proc :sdword
     CreateObject	proc :BSTR, :ptr
@@ -307,12 +263,8 @@ define __IScriptingContext_INTERFACE_DEFINED__
 
 DEFINE_GUID(IID_IScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x00,0xB0,0xC9,0x0C,0x2B,0xD8)
 
-.comdef IScriptingContext : public IUnknown
+.comdef IScriptingContext : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Request		proc :ptr
     get_Response	proc :ptr
     get_Server		proc :ptr

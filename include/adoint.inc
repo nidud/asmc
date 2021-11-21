@@ -624,12 +624,8 @@ define ___ADOCollection_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
 
-.comdef _ADOCollection : public IUnknown
+.comdef _ADOCollection : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
@@ -655,12 +651,8 @@ define ___ADO_INTERFACE_DEFINED__
 
 DEFINE_IIDX(_ADO, "00000534-0000-0010-8000-00AA006D2EA4")
 
-.comdef _ADO : public IUnknown
+.comdef _ADO : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Properties	proc :ptr
    .ends
 
@@ -671,12 +663,8 @@ define __Error_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Error, "00000500-0000-0010-8000-00AA006D2EA4")
 
-.comdef Error : public IUnknown
+.comdef Error : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Number		proc :ptr
     get_Source		proc :ptr
     get_Description	proc :ptr
@@ -693,12 +681,8 @@ define __Errors_INTERFACE_DEFINED__
 
 DEFINE_IIDX(Errors, "00000501-0000-0010-8000-00AA006D2EA4")
 
-.comdef Errors : public IUnknown
+.comdef Errors : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     get_Count		proc :ptr
     _NewEnum		proc :ptr
     Refresh		proc
@@ -830,12 +814,8 @@ define __ConnectionEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_IIDX(ConnectionEvents, "00000400-0000-0010-8000-00AA006D2EA4")
 
-.comdef ConnectionEvents : public IUnknown
+.comdef ConnectionEvents : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
    .ends
 
 endif
@@ -845,12 +825,8 @@ define __RecordsetEvents_DISPINTERFACE_DEFINED__
 
 DEFINE_IIDX(RecordsetEvents, "00000266-0000-0010-8000-00AA006D2EA4")
 
-.comdef RecordsetEvents : public IUnknown
+.comdef RecordsetEvents : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
    .ends
 
 endif

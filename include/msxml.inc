@@ -504,12 +504,8 @@ define __IXMLElementNotificationSink_INTERFACE_DEFINED__
 
 externdef IID_IXMLElementNotificationSink:IID
 
-.comdef IXMLElementNotificationSink : public IUnknown
+.comdef IXMLElementNotificationSink : public IDispatch
 
-    GetTypeInfoCount	proc :ptr
-    GetTypeInfo		proc :UINT, :LCID, :ptr
-    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
-    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     ChildAdded		proc :ptr
    .ends
 

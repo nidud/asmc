@@ -7094,12 +7094,12 @@ IMAGE_RESOURCE_DATA_IS_DIRECTORY     equ 0x80000000
 
 IMAGE_RESOURCE_DIRECTORY_ENTRY STRUC
 UNION
+ Name			dd ?
+ Id			dw ?
  RECORD
   NameOffset		dd : 31 ?
   NameIsString		dd :  1 ?
  ENDS
- Name			dd ?
- Id			dw ?
 ENDS
 UNION
   OffsetToData		dd ?

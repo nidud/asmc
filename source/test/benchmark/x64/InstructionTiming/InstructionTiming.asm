@@ -20,6 +20,9 @@ define max_proc_size 4096
     mem64
     }
 
+    .data
+     arg1 db 4096 dup(4)
+     arg2 db 4096 dup(4)
     .code
 
     align   16
@@ -92,7 +95,7 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
             "mov rdi,rcx\n"
             "mov rsi,rdx\n")
     .endif
-
+    fprintf(fp, "I = 0\n")
     lea r8,@CStr("<rcx,rdx,r8,r9,r10,r11,rax>")
     lea r9,@CStr("<rbx,r12,r13,r14,r15,rcx,rdx,r8,r9,r10,r11,rax>")
     .switch pascal op_1
@@ -122,16 +125,16 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
             fprintf(fp, "op1")
             .endc
         .case mem8
-            fprintf(fp, "byte ptr [rdi]")
+            fprintf(fp, "byte ptr [rdi+I]")
             .endc
         .case mem16
-            fprintf(fp, "word ptr [rdi]")
+            fprintf(fp, "word ptr [rdi+I*2]")
             .endc
         .case mem32
-            fprintf(fp, "dword ptr [rdi]")
+            fprintf(fp, "dword ptr [rdi+I*4]")
             .endc
         .case mem64
-            fprintf(fp, "qword ptr [rdi]")
+            fprintf(fp, "qword ptr [rdi+I*8]")
             .endc
         .endsw
 
@@ -150,16 +153,16 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
                 fprintf(fp, "op2")
                 .endc
             .case mem8
-                fprintf(fp, "byte ptr [rsi]")
+                fprintf(fp, "byte ptr [rsi+I]")
                 .endc
             .case mem16
-                fprintf(fp, "word ptr [rsi]")
+                fprintf(fp, "word ptr [rsi+I*2]")
                 .endc
             .case mem32
-                fprintf(fp, "dword ptr [rsi]")
+                fprintf(fp, "dword ptr [rsi+I*4]")
                 .endc
             .case mem64
-                fprintf(fp, "qword ptr [rsi]")
+                fprintf(fp, "qword ptr [rsi+I*8]")
                 .endc
             .case imm8
                 fprintf(fp, "%d", imm)
@@ -177,16 +180,16 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
                     fprintf(fp, "op2")
                     .endc
                 .case mem8
-                    fprintf(fp, "byte ptr [rsi]")
+                    fprintf(fp, "byte ptr [rsi+I]")
                     .endc
                 .case mem16
-                    fprintf(fp, "word ptr [rsi]")
+                    fprintf(fp, "word ptr [rsi+I*2]")
                     .endc
                 .case mem32
-                    fprintf(fp, "dword ptr [rsi]")
+                    fprintf(fp, "dword ptr [rsi+I*4]")
                     .endc
                 .case mem64
-                    fprintf(fp, "qword ptr [rsi]")
+                    fprintf(fp, "qword ptr [rsi+I*8]")
                     .endc
                 .case imm8
                     fprintf(fp, "%d", imm)
@@ -196,7 +199,14 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
         .endif
     .endif
 
-    fprintf(fp, "\nendm\nendm\nret\nInstruction endp\nend\n")
+    fprintf(fp,
+        "\n"
+        "I = I + 1\n"
+        "endm\n"
+        "endm\n"
+        "ret\n"
+        "Instruction endp\n"
+        "end\n")
     fclose(fp)
    .return true
 
@@ -216,7 +226,6 @@ CALLBACK(PNTESTPROC, :ptr, :ptr)
 
 TestProc proc uses rsi rdi rbx count:dword
 
-  local arg1[512]:byte, arg2[512]:byte
   local p:PNTESTPROC
 
     mov p,&proc_b
@@ -332,6 +341,7 @@ TI proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, op3:Operand, i
     div ecx
     mov ebx,eax
 
+    TestProc(esi)
     mov rdi,TestProc(esi)
     add rdi,TestProc(esi)
     add rdi,TestProc(esi)
@@ -434,25 +444,20 @@ Calibrate proc uses rbx
     .while TestProc(ebx) > 1000000
         sub ebx,5000
     .endw
-    .while eax < 1000000
+    .while TestProc(ebx) < 1000000
         add ebx,5000
-        TestProc(ebx)
     .endw
-    .while eax > 1000000
+    .while TestProc(ebx) > 1000000
         sub ebx,500
-        TestProc(ebx)
     .endw
-    .while eax < 1000000
+    .while TestProc(ebx) < 1000000
         add ebx,500
-        TestProc(ebx)
     .endw
-    .while eax > 1000000
+    .while TestProc(ebx) > 1000000
         sub ebx,50
-        TestProc(ebx)
     .endw
-    .while eax < 1000000
+    .while TestProc(ebx) < 1000000
         add ebx,50
-        TestProc(ebx)
     .endw
     .return ebx
 
@@ -466,10 +471,10 @@ main proc uses rbx
     _mkdir("asm")
     _mkdir("bin")
 
-    .if LoadInstruction("mov", reg64, reg64, None, 0)
+   .if LoadInstruction("mov", reg64, reg64, None, 0)
 
          TimeInstructions(Calibrate())
-    .endif
+  .endif
     ret
 
 main endp

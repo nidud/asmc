@@ -265,7 +265,7 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
 
         .if ( [edi].mem_type == MT_BITS )
             .if ( [ebx].token == T_COMMA || [ebx].token == T_FINAL )
-                .if ( [edi].ivalue[0] )
+                .if ( [edi].ivalue[0] && [edi].ivalue[0] != ':' )
                     mov j,Token_Count
                     inc j
                     mov ecx,Tokenize( &[edi].ivalue, j, tokenarray, TOK_RESCAN )

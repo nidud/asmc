@@ -6224,7 +6224,7 @@ ANON_OBJECT_HEADER_BIGOBJ ENDS
 IMAGE_SIZEOF_SHORT_NAME equ 8
 
 IMAGE_SECTION_HEADER	STRUC
-Name			db IMAGE_SIZEOF_SHORT_NAME dup(?)
+Name			sbyte IMAGE_SIZEOF_SHORT_NAME dup(?)
 UNION Misc
     PhysicalAddress	dd ?
     VirtualSize		dd ?
@@ -6291,7 +6291,7 @@ IMAGE_SCN_SCALE_INDEX	equ 0x00000001
 
 IMAGE_SYMBOL		STRUC WORD
 UNION
-    ShortName		db 8 dup(?)
+    ShortName		sbyte 8 dup(?)
     STRUC
 	_Short		dd ?
 	_Long		dd ?
@@ -6310,7 +6310,7 @@ IMAGE_SIZEOF_SYMBOL	equ 18
 
 IMAGE_SYMBOL_EX		STRUC
 UNION
-    ShortName		db 8 dup(?)
+    ShortName		sbyte 8 dup(?)
     STRUC
 	_Short		dd ?
 	_Long		dd ?
@@ -6519,7 +6519,7 @@ IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY  equ 1
 IMAGE_WEAK_EXTERN_SEARCH_LIBRARY    equ 2
 IMAGE_WEAK_EXTERN_SEARCH_ALIAS	    equ 3
 
-IMAGE_RELOCATION	STRUC
+IMAGE_RELOCATION	STRUC 2
 UNION
     VirtualAddress	dd ?
     RelocCount		dd ?

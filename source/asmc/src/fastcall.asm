@@ -856,15 +856,12 @@ ms64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
 
     .if eax < esi
         mov eax,esi
-    .elseif eax & 1
-        inc eax
     .endif
-    mov  ecx,eax
-    sub  eax,esi
-    shl  eax,3
-    xchg eax,edi
-    mul  esi
-    add  eax,edi
+    mov ecx,eax
+    mul edi
+    .if edi == 8 && ecx & 1
+        add eax,edi
+    .endif
 
     mov edx,pp ; v2.31.24: skip stack alloc if inline
     .if ecx == esi && [edx].asym.flag2 & S_ISINLINE

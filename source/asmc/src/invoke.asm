@@ -71,12 +71,9 @@ SkipTypecast proc private uses esi edi ebx fullparam:string_t, i:int_t, tokenarr
         .if (( [ebx+16].token == T_BINARY_OPERATOR ) && ( [ebx+16].tokval == T_PTR ) )
             add ebx,16
         .else
-            .if ( B[edi] )
-                mov B[edi],' '
-                inc edi
-            .endif
-            mov esi,[ebx].string_ptr
-            mov ecx,[ebx].stringlen
+            mov esi,[ebx].tokpos
+            mov ecx,[ebx+16].tokpos
+            sub ecx,esi
             rep movsb
         .endif
     .endf

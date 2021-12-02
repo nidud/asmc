@@ -2,7 +2,8 @@
 include stdio.inc
 include stdlib.inc
 include direct.inc
-include winbase.inc
+include windows.inc
+include wininet.inc
 include sselevel.inc
 
 define max_proc_size 4096
@@ -38,6 +39,9 @@ define max_proc_size 4096
     arg2 db 4096 dup(4)
     farg db "Instructions.txt"
          db 256-16 dup(0)
+    Assembler db "asmc64.exe"
+         db 256-10 dup(0)
+
     Operands string_t \
      @CStr("imm8"),
      @CStr("reg8"),
@@ -56,6 +60,53 @@ define max_proc_size 4096
 
     align   16
     proc_b  db max_proc_size dup(0xCC)
+
+GetAssembler proc
+
+  local wsaData:WSADATA
+  local hINet:HINTERNET
+  local hFile:HANDLE
+  local dwNumberOfBytesRead:uint_t
+  local fp:LPFILE
+  local buffer[1024]:char_t
+
+    .ifd ( GetFileAttributes("asmc64.exe") != INVALID_FILE_ATTRIBUTES )
+        .return true
+    .endif
+    .if SearchPath( NULL, "asmc64.exe", NULL, 256, &buffer, NULL )
+        strcpy(&Assembler, &buffer )
+       .return true
+    .endif
+
+
+    .ifd WSAStartup(2, &wsaData)
+        printf("WSAStartup failed with error: %d\n", eax)
+        exit(1)
+    .endif
+    .if !InternetOpen("InetURL/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0)
+        perror("InternetOpen()")
+        exit(1)
+    .endif
+    mov hINet,rax
+    .if InternetOpenUrl(hINet, "https://github.com/nidud/asmc/raw/master/bin/asmc64.exe", NULL, 0, 0, 0)
+        mov hFile,rax
+        .if fopen("asmc64.exe", "wb")
+            mov fp,rax
+            .while 1
+                InternetReadFile(hFile, &buffer, 1024, &dwNumberOfBytesRead)
+                .break .if !dwNumberOfBytesRead
+                fwrite(&buffer, dwNumberOfBytesRead, 1, fp)
+            .endw
+            fclose(fp)
+        .else
+            perror("asmc64.exe")
+        .endif
+    .endif
+    InternetCloseHandle(hINet)
+    WSACleanup()
+   .return true
+
+GetAssembler endp
 
 ;-------------------------------------------------------------------------------
 ; Read binary file
@@ -212,7 +263,7 @@ CreateBIN proc name:string_t
 
   local buffer[256]:char_t
 
-    sprintf(&buffer, "asmtobin %s", name)
+    sprintf(&buffer, "%s -q -bin -Fo bin\\%s.bin asm\\%s.asm", &Assembler, name, name)
     system(&buffer)
     ret
 
@@ -518,6 +569,7 @@ main proc argc:int_t, argv:array_t
         strcpy(&farg, [rdx+8])
     .endif
     GetCPU()
+    GetAssembler()
 
     _mkdir("asm")
     _mkdir("bin")

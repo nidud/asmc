@@ -16,11 +16,15 @@ define max_proc_size 4096
     reg32,
     reg64,
     reg128,
+    reg256,
+    reg512,
     mem8,
     mem16,
     mem32,
-    mem128,
     mem64,
+    mem128,
+    mem256,
+    mem512,
     regcl,
     OperandCount
     }
@@ -30,6 +34,7 @@ define max_proc_size 4096
     op1     Operand ?
     op2     Operand ?
     op3     Operand ?
+    op4     Operand ?
     imm     int_t ?
    .ends
 
@@ -37,8 +42,8 @@ define max_proc_size 4096
     align 16
     arg1 db 4096 dup(4)
     arg2 db 4096 dup(4)
-    farg db "Instructions.txt"
-         db 256-16 dup(0)
+    instruction_list string_t nullptr
+    fpout LPFILE nullptr
     Assembler db "asmc64.exe"
          db 256-10 dup(0)
 
@@ -49,11 +54,15 @@ define max_proc_size 4096
      @CStr("reg32"),
      @CStr("reg64"),
      @CStr("reg128"),
+     @CStr("reg256"),
+     @CStr("reg512"),
      @CStr("mem8"),
      @CStr("mem16"),
      @CStr("mem32"),
      @CStr("mem64"),
      @CStr("mem128"),
+     @CStr("mem256"),
+     @CStr("mem512"),
      @CStr("regcl")
 
    .code
@@ -144,7 +153,26 @@ ReadProc proc uses rsi rdi file_name:ptr sbyte
 
 ReadProc endp
 
-CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2:Operand, op_3:Operand, imm:int_t
+PutOperand proc fp:ptr FILE, mac:string_t, op:Operand, imm:int_t, reg:string_t
+
+    .switch pascal r8d
+    .case imm8  : fprintf(rcx, "%d", r9d)
+    .case regcl : fprintf(rcx, "cl")
+    .case mem8  : fprintf(rcx, "byte ptr [%s+I]", reg)
+    .case mem16 : fprintf(rcx, "word ptr [%s+I*2]", reg)
+    .case mem32 : fprintf(rcx, "dword ptr [%s+I*4]", reg)
+    .case mem64 : fprintf(rcx, "qword ptr [%s+I*8]", reg)
+    .case mem128: fprintf(rcx, "oword ptr [%s+I*16]", reg)
+    .case mem256: fprintf(rcx, "yword ptr [%s+I*32]", reg)
+    .case mem512: fprintf(rcx, "zword ptr [%s+I*64]", reg)
+    .default
+        fprintf(rcx, rdx)
+    .endsw
+    ret
+
+PutOperand endp
+
+CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2:Operand, op_3:Operand, op_4:Operand, imm:int_t
 
   local fp:ptr FILE
   local file_name[128]:char_t
@@ -184,63 +212,48 @@ CreateASM proc uses rsi rdi rbx file:string_t, inst:string_t, op_1:Operand, op_2
     .case reg16 : lea r8,@CStr("<cx,dx,r8w,r9w,r10w,r11w,ax>")
     .case reg32 : lea r8,@CStr("<ecx,edx,r8d,r9d,r10d,r11d,eax>")
     .case reg128: lea r8,@CStr("<xmm0,xmm1,xmm2,xmm3,xmm4,xmm5,xmm6>")
+    .case reg256: lea r8,@CStr("<ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6>")
+    .case reg512: lea r8,@CStr("<zmm0,zmm1,zmm2,zmm3,zmm4,zmm5,zmm6>")
     .endsw
     .switch pascal op_2
     .case reg8  : lea r9,@CStr("<bl,r12b,r13b,r14b,r15b,cl,dl,r8b,r9b,r10b,r11b,al>")
     .case reg16 : lea r9,@CStr("<bx,r12w,r13w,r14w,r15w,cx,dx,r8w,r9w,r10w,r11w,ax>")
     .case reg32 : lea r9,@CStr("<ebx,r12d,r13d,r14d,r15d,ecx,edx,r8d,r9d,r10d,r11d,eax>")
     .case reg128: lea r9,@CStr("<xmm0,xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7,xmm6,xmm5,xmm4,xmm3>")
+    .case reg256: lea r9,@CStr("<ymm0,ymm1,ymm2,ymm3,ymm4,ymm5,ymm6,ymm7,ymm6,ymm5,ymm4,ymm3>")
+    .case reg512: lea r9,@CStr("<zmm0,zmm1,zmm2,zmm3,zmm4,zmm5,zmm6,zmm7,zmm6,zmm5,zmm4,zmm3>")
     .endsw
 
     fprintf(fp,
         "for op1,%s\n"
         "for op2,%s\n", r8, r9 )
 
+    .if strcmp(inst, "div")
+        strcmp(inst, "idiv")
+    .endif
+    .if ( eax == 0 )
+        fprintf(fp, "mov edx,0\n")
+    .endif
+
     fprintf(fp, "%s", inst)
     .if ( op_1 )
-
-        lea rdx,@CStr("op1")
-        .switch pascal op_1
-        .case mem8  : lea rdx,@CStr("byte ptr [rdi+I]")
-        .case mem16 : lea rdx,@CStr("word ptr [rdi+I*2]")
-        .case mem32 : lea rdx,@CStr("dword ptr [rdi+I*4]")
-        .case mem64 : lea rdx,@CStr("qword ptr [rdi+I*8]")
-        .case mem128: lea rdx,@CStr("oword ptr [rdi+I*16]")
-        .endsw
-        fprintf(fp, " %s", rdx)
-
+        fprintf(fp, " ")
+        PutOperand(fp, "op1", op_1, imm, "rdi")
         .if ( op_2 )
-
-            .if ( op_2 == imm8 )
-                fprintf(fp, ",%d", imm)
-            .else
-                lea rdx,@CStr("op2")
-                .switch pascal op_2
-                .case regcl : lea rdx,@CStr("cl")
-                .case mem8  : lea rdx,@CStr("byte ptr [rsi+I]")
-                .case mem16 : lea rdx,@CStr("word ptr [rsi+I*2]")
-                .case mem32 : lea rdx,@CStr("dword ptr [rsi+I*4]")
-                .case mem64 : lea rdx,@CStr("qword ptr [rsi+I*8]")
-                .case mem128: lea rdx,@CStr("oword ptr [rdi+I*16]")
-                .endsw
-                fprintf(fp, ",%s", rdx)
-            .endif
-
+            fprintf(fp, ",")
+            PutOperand(fp, "op2", op_2, imm, "rsi")
             .if ( op_3 )
-
-                .if ( op_3 == imm8 )
-                    fprintf(fp, ",%d", imm)
-                .else
-                    lea rdx,@CStr("op2")
-                    .switch pascal op_3
-                    .case regcl : lea rdx,@CStr("cl")
-                    .case mem8  : lea rdx,@CStr("byte ptr [rsi+I]")
-                    .case mem16 : lea rdx,@CStr("word ptr [rsi+I*2]")
-                    .case mem32 : lea rdx,@CStr("dword ptr [rsi+I*4]")
-                    .case mem64 : lea rdx,@CStr("qword ptr [rsi+I*8]")
-                    .case mem128: lea rdx,@CStr("oword ptr [rdi+I*16]")
-                    .endsw
-                    fprintf(fp, ",%s", rdx)
+                fprintf(fp, ",")
+                lea rdx,@CStr("op2")
+                .if ( op_3 == reg32 )
+                    lea rdx,@CStr("eax")
+                .elseif ( op_3 == reg64 )
+                    lea rdx,@CStr("rax")
+                .endif
+                PutOperand(fp, rdx, op_3, imm, "rsi")
+                .if ( op_4 )
+                    fprintf(fp, ",")
+                    PutOperand(fp, "op2", op_4, imm, "rsi")
                 .endif
             .endif
         .endif
@@ -340,7 +353,7 @@ AddOperator proc string:string_t, op:Operand
 
 AddOperator endp
 
-LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Operand, imm:int_t
+LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Operand, op_4:Operand, imm:int_t
 
   local name[128]:char_t
 
@@ -357,11 +370,15 @@ LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Op
             .if ( op_3 )
                 strcat(rsi, "_")
                 AddOperator(rsi, op_3)
+                .if ( op_4 )
+                    strcat(rsi, "_")
+                    AddOperator(rsi, op_4)
+                .endif
             .endif
         .endif
     .endif
 
-    .if CreateASM(rsi, inst, op_1, op_2, op_3, imm) == false
+    .if CreateASM(rsi, inst, op_1, op_2, op_3, op_4, imm) == false
         .return
     .endif
     CreateBIN(rsi)
@@ -373,11 +390,11 @@ LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Op
 
 LoadInstruction endp
 
-TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, op3:Operand, imm:int_t, count:uint_t
+TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, op3:Operand, op4:Operand, imm:int_t, count:uint_t
 
   local buffer[256]:char_t
 
-    .return .if !LoadInstruction(rcx, edx, r8d, r9d, imm)
+    .return .if !LoadInstruction(rcx, edx, r8d, r9d, op4, imm)
 
     sub eax,13
     xor edx,edx
@@ -402,7 +419,7 @@ TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, o
     mov edi,eax
 
     lea rsi,buffer
-    sprintf(rsi, "%-8s", name)
+    sprintf(rsi, "%-12s", name)
 
     .if ( op1 )
         strcat(rsi, " ")
@@ -413,16 +430,23 @@ TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, o
             .if ( op3 )
                 strcat(rsi, ",")
                 AddOperator(rsi, op3)
+                .if ( op4 )
+                    strcat(rsi, ",")
+                    AddOperator(rsi, op4)
+                .endif
             .endif
         .endif
     .endif
-    printf("%-28s %2d %7d\n", rsi, ebx, edi)
+    fprintf(fpout, "%-40s %2d %7d\n", rsi, ebx, edi)
     ret
 
 TimeInstruction endp
 
 strtoop proc string:string_t
     mov eax,[rcx]
+    .if ( ax == 'lc' )
+        .return regcl
+    .endif
     .switch pascal eax
     .case '8mmi': .return imm8
     .case '8ger': .return reg8
@@ -431,7 +455,9 @@ strtoop proc string:string_t
             .return reg16
         .endif
         .return reg128
+    .case '2ger': .return reg256
     .case '3ger': .return reg32
+    .case '5ger': .return reg512
     .case '6ger': .return reg64
     .case '8mem': .return mem8
     .case '1mem'
@@ -439,7 +465,9 @@ strtoop proc string:string_t
             .return mem16
         .endif
         .return mem128
+    .case '2mem': .return mem256
     .case '3mem': .return mem32
+    .case '5mem': .return mem512
     .case '6mem': .return mem64
     .case 'cger': .return regcl
     .endsw
@@ -448,9 +476,9 @@ strtoop endp
 
 TimeInstructions proc uses rsi rdi rbx count:dword
 
-    .new fp:ptr FILE = fopen(&farg, "rt")
+    .new fp:ptr FILE = fopen(instruction_list, "rt")
     .if ( rax == NULL )
-        perror(&farg)
+        perror(instruction_list)
        .return false
     .endif
     .new b[256]:char_t
@@ -464,14 +492,38 @@ TimeInstructions proc uses rsi rdi rbx count:dword
             mov byte ptr [rsi+rax],0
         .endw
         .continue .if ( !eax || byte ptr [rsi] == ';' )
-
+        .if strchr(rsi, ';')
+            mov byte ptr [rax],0
+        .endif
         mov n.name,strtok(rsi, "\t ,")
-        mov n.op1,strtoop(strtok(NULL, "\t ,"))
-        mov n.op2,strtoop(strtok(NULL, "\t ,"))
-        mov n.op3,strtoop(strtok(NULL, "\t ,"))
-        mov n.imm,atol(strtok(NULL, "\t ,"))
-
-        TimeInstruction(n.name, n.op1, n.op2, n.op3, n.imm, count)
+        .if strtok(NULL, "\t ,")
+            mov n.op1,strtoop(rax)
+            .if strtok(NULL, "\t ,")
+                .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
+                    mov n.imm,atol(rax)
+                    mov n.op2,imm8
+                .else
+                    mov n.op2,strtoop(rax)
+                .endif
+                .if strtok(NULL, "\t ,")
+                    .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
+                        mov n.imm,atol(rax)
+                        mov n.op3,imm8
+                    .else
+                        mov n.op3,strtoop(rax)
+                    .endif
+                    .if strtok(NULL, "\t ,")
+                        .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
+                            mov n.imm,atol(rax)
+                            mov n.op4,imm8
+                        .else
+                            mov n.op4,strtoop(rax)
+                        .endif
+                    .endif
+                .endif
+            .endif
+        .endif
+        TimeInstruction(n.name, n.op1, n.op2, n.op3, n.op4, n.imm, count)
     .endw
     fclose(fp)
     ret
@@ -503,25 +555,25 @@ GetCPU proc
         mov [r8+0x0C],edx
     .endf
 
-    .for ( rdx = &cpustring: byte ptr [rdx] == ' ' : rdx++ )
+    .for ( r8 = &cpustring: byte ptr [r8] == ' ' : r8++ )
     .endf
     mov eax,sselevel
-    lea r8,@CStr("SSE2")
+    lea r9,@CStr("SSE2")
     .switch
-    .case eax & SSE_AVX512F: lea r8,@CStr("AVX512") : .endc
-    .case eax & SSE_AVX2:    lea r8,@CStr("AVX2")   : .endc
-    .case eax & SSE_AVX:     lea r8,@CStr("AVX")    : .endc
-    .case eax & SSE_SSE42:   lea r8,@CStr("SSE4.2") : .endc
-    .case eax & SSE_SSE41:   lea r8,@CStr("SSE4.1") : .endc
-    .case eax & SSE_SSSE3:   lea r8,@CStr("SSSE3")  : .endc
-    .case eax & SSE_SSE3:    lea r8,@CStr("SSE3")   : .endc
+    .case eax & SSE_AVX512F: lea r9,@CStr("AVX512") : .endc
+    .case eax & SSE_AVX2:    lea r9,@CStr("AVX2")   : .endc
+    .case eax & SSE_AVX:     lea r9,@CStr("AVX")    : .endc
+    .case eax & SSE_SSE42:   lea r9,@CStr("SSE4.2") : .endc
+    .case eax & SSE_SSE41:   lea r9,@CStr("SSE4.1") : .endc
+    .case eax & SSE_SSSE3:   lea r9,@CStr("SSSE3")  : .endc
+    .case eax & SSE_SSE3:    lea r9,@CStr("SSE3")   : .endc
     .endsw
 
-    printf(
+    fprintf(fpout,
         "%s (%s)\n"
-        "------------------------------------------------\n"
-        "Instr.     Operands         Bytes  Clocks\n"
-        "------------------------------------------------\n", rdx, r8)
+        "------------------------------------------------------\n"
+        "Instr.                 Operands         Bytes  Clocks\n"
+        "------------------------------------------------------\n", r8, r9)
 
     .ifd !VirtualProtect(&proc_b, max_proc_size, PAGE_EXECUTE_READWRITE, &lpflOldProtect)
 
@@ -562,21 +614,44 @@ Calibrate proc uses rbx
 Calibrate endp
 
 
-main proc argc:int_t, argv:array_t
+main proc uses rsi argc:int_t, argv:array_t
 
-    .if ( ecx == 2 )
+    .new fp:ptr FILE = nullptr
 
-        strcpy(&farg, [rdx+8])
+    .if ( ecx < 2 )
+        printf(
+            "Instruction Timing Version 1.04\n"
+            "\n"
+            "Usage: InstructionTiming instruction_list [ output_file ]\n"
+            )
+        exit(1)
     .endif
+    mov instruction_list,[rdx+8]
+
+    .if ( ecx == 3 )
+        mov rsi,[rdx+16]
+        mov fp,fopen(rsi, "wt")
+        mov fpout,rax
+        .if ( rax == NULL )
+            perror(rsi)
+            exit(1)
+        .endif
+    .else
+        mov fpout,&stdout
+    .endif
+
     GetCPU()
     GetAssembler()
 
     _mkdir("asm")
     _mkdir("bin")
 
-    .if LoadInstruction("mov", reg64, reg64, None, 0)
+    .if LoadInstruction("mov", reg64, reg64, None, None, 0)
 
          TimeInstructions(Calibrate())
+    .endif
+    .if ( fp )
+        fclose(fp)
     .endif
     .return 0
 

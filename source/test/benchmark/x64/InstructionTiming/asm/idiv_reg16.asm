@@ -1,11 +1,13 @@
 .code
 Instruction proc uses rsi rdi rbx
-mov edi,2
-mov eax,0xFFFF
-for op1,<cl,dl,r8b,r9b,r10b,r11b,cl>
+mov rdi,rcx
+mov rsi,rdx
+I = 0
+for op1,<cx,dx,r8w,r9w,r10w,r11w,ax>
 for op2,<rbx,r12,r13,r14,r15,rcx,rdx,r8,r9,r10,r11,rax>
 mov edx,0
 idiv di
+I = I + 1
 endm
 endm
 ret

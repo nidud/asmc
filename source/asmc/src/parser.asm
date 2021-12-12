@@ -4037,7 +4037,6 @@ endif
     .endif
 
     ; now call the code generator
-
     codegen(&CodeInfo, oldofs)
     ret
 

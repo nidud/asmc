@@ -63,7 +63,7 @@ define _STAT_DEFINED
     st_ctime    time_t ?
    .ends
 
-.template stat
+.template _stat32
     st_dev      _dev_t ?
     st_ino      _ino_t ?
     st_mode     word ?
@@ -94,7 +94,11 @@ define _STAT_DEFINED
 .pragma pack(pop)
 
 endif
-
+ifdef __UNIX__
+stat proto __cdecl :ptr sbyte, :ptr _stat32
+else
+define stat <_stat32>
 _stat proto __cdecl :ptr sbyte, :ptr stat
+endif
 
 .pragma list(pop)

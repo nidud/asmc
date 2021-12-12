@@ -2845,7 +2845,7 @@ write_default_prologue proc private uses esi edi ebx
     movzx ebx,[edi].asym.langtype
 
     .if ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ModuleInfo.Ofssize == USE64 || \
-          ( ModuleInfo.Ofssize == USE32 && ( ebx == LANG_STDCALL || ebx == LANG_C ) ) ) )
+          ( ModuleInfo.Ofssize == USE32 && ( ebx == LANG_STDCALL || ebx == LANG_C || ebx == LANG_SYSCALL ) ) ) )
         mov cstack,1
     .endif
 
@@ -3620,7 +3620,7 @@ write_default_epilogue proc private uses esi edi ebx
     mov edi,CurrProc
     movzx ecx,[edi].asym.langtype
     .if ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ( ( ecx == LANG_STDCALL || \
-        ecx == LANG_C ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) )
+        ecx == LANG_C || ecx == LANG_SYSCALL ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) )
         inc cstack
     .endif
 

@@ -7,7 +7,14 @@ endif
 
 .pragma comment(lib, libc, msvcrt)
 
-include crtdefs.inc
+ifndef _INTPTR_T_DEFINED
+define _INTPTR_T_DEFINED
+ifdef _WIN64
+intptr_t typedef sqword
+else
+intptr_t typedef sdword
+endif
+endif
 
 _NFILE_		equ 20
 
@@ -106,11 +113,12 @@ M_RDONLY	equ 0x80000000
 M_WRONLY	equ 0x40000000
 M_RDWR		equ M_RDONLY or M_WRONLY
 
-if 0
-open		proto _CDecl :LPSTR, :SINT, :VARARG
-read		proto __cdecl :SINT, :PVOID, :SIZE_T
-close		proto __cdecl :SINT
-filelength	proto __cdecl :SINT
+ifdef __UNIX__
+define _chsize	<ftruncate>
+define _close	<close>
+define _read	<read>
+define _write	<write>
+define _lseek	<lseek>
 endif
 
 _open		proto _CDecl :LPSTR, :SINT, :VARARG

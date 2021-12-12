@@ -44,9 +44,15 @@ _cnt		SINT ?
 _base		LPSTR ?
 _flag		SINT ?
 _file		SINT ?
+ifndef __UNIX__
 _charbuf	SINT ?
+endif
 _bufsiz		SINT ?
+ifdef __UNIX__
+_ungotten	dw ?
+else
 _tmpfname	LPSTR ?
+endif
 _iobuf		ENDS
 FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf

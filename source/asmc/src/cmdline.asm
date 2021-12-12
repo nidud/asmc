@@ -27,6 +27,74 @@ define_name proto :string_t, :string_t
 
 ifdef __ASMC64__
 
+ifdef __UNIX__
+
+Options global_options {
+        0,                      ;; .quiet
+        0,                      ;; .line_numbers
+        0,                      ;; .debug_symbols
+        0,                      ;; .debug_ext
+        FPO_NO_EMULATION,       ;; .floating_point
+        50,                     ;; .error_limit
+        0,                      ;; .no_error_disp
+        2,                      ;; .warning_level
+        0,                      ;; .warning_error
+        0,                      ;; .process_subdir
+        {0,0,0,0,0,0,0,0,0},    ;; .names
+        {0,0,0},                ;; .queues
+        0,                      ;; .no_comment_in_code_rec
+        0,                      ;; .no_opt_farcall
+        0,                      ;; .no_file_entry
+        0,                      ;; .no_static_procs
+        0,                      ;; .no_section_aux_entry
+        0,                      ;; .no_cdecl_decoration
+        STDCALL_FULL,           ;; .stdcall_decoration
+        0,                      ;; .no_export_decoration
+        0,                      ;; .entry_decorated
+        0,                      ;; .write_listing
+        0,                      ;; .write_impdef
+        0,                      ;; .case_sensitive
+        0,                      ;; .convert_uppercase
+        0,                      ;; .preprocessor_stdout
+        0,                      ;; .masm51_compat
+        0,                      ;; .strict_masm_compat
+        0,                      ;; .masm_compat_gencode
+        0,                      ;; .masm8_proc_visibility
+        0,                      ;; .listif
+        0,                      ;; .list_generated_code
+        LM_LISTMACRO,           ;; .list_macro
+        0,                      ;; .do_symbol_listing
+        0,                      ;; .first_pass_listing
+        0,                      ;; .all_symbols_public
+        0,                      ;; .safeseh
+        OFORMAT_ELF,            ;; .output_format
+        SFORMAT_64BIT,          ;; .sub_format
+        LANG_SYSCALL,           ;; .langtype
+        MODEL_FLAT,             ;; ._model
+        P_64 or P_PM,           ;; .cpu
+        FCT_ELF64,              ;; .fctype
+        0,                      ;; .codepage
+        0,                      ;; .ignore_include
+        0,                      ;; .fieldalign
+        0,                      ;; .syntax_check_only
+        OPT_REGAX,              ;; .xflag
+        0,                      ;; .loopalign
+        0,                      ;; .casealign
+        0,                      ;; .epilogueflags
+        4,                      ;; .segmentalign
+        0,                      ;; .pe_subsystem
+        0,                      ;; .win64_flags
+        0,                      ;; .chkstack
+        0,                      ;; .nolib
+        0,                      ;; .masm_keywords
+        0,                      ;; .arch
+        0,                      ;; .frame_auto
+        0,                      ;; .floatformat
+        1,                      ;; .floatdigits
+        4 }                     ;; .flt_size
+
+else
+
 Options global_options {
         0,                      ;; .quiet
         0,                      ;; .line_numbers
@@ -90,6 +158,8 @@ Options global_options {
         0,                      ;; .floatformat
         1,                      ;; .floatdigits
         4 }                     ;; .flt_size
+
+endif
 
 else
 

@@ -1,3 +1,8 @@
+; INSTTIME.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
 include stdio.inc
 include stdlib.inc
@@ -5,12 +10,13 @@ include direct.inc
 include windows.inc
 include wininet.inc
 include sselevel.inc
+include tchar.inc
 
 define max_proc_size 4096
 
 .enum Operand {
     None,
-    imm8,
+    immed,
     reg8,
     reg16,
     reg32,
@@ -48,7 +54,7 @@ define max_proc_size 4096
          db 256-10 dup(0)
 
     Operands string_t \
-     @CStr("imm8"),
+     @CStr("immed"),
      @CStr("reg8"),
      @CStr("reg16"),
      @CStr("reg32"),
@@ -80,6 +86,10 @@ GetAssembler proc
   local buffer[1024]:char_t
 
     .ifd ( GetFileAttributes("asmc64.exe") != INVALID_FILE_ATTRIBUTES )
+        .return true
+    .endif
+    .ifd ( GetFileAttributes("\\asmc\\bin\\asmc64.exe") != INVALID_FILE_ATTRIBUTES )
+        strcpy(&Assembler, "\\asmc\\bin\\asmc64.exe" )
         .return true
     .endif
     .if SearchPath( NULL, "asmc64.exe", NULL, 256, &buffer, NULL )
@@ -156,7 +166,7 @@ ReadProc endp
 PutOperand proc fp:ptr FILE, mac:string_t, op:Operand, imm:int_t, reg:string_t
 
     .switch pascal r8d
-    .case imm8  : fprintf(rcx, "%d", r9d)
+    .case immed : fprintf(rcx, "%d", r9d)
     .case regcl : fprintf(rcx, "cl")
     .case mem8  : fprintf(rcx, "byte ptr [%s+I]", reg)
     .case mem16 : fprintf(rcx, "word ptr [%s+I*2]", reg)
@@ -276,63 +286,36 @@ CreateBIN proc name:string_t
 
   local buffer[256]:char_t
 
-    sprintf(&buffer, "%s -q -bin -Fo bin\\%s.bin asm\\%s.asm", &Assembler, name, name)
+    sprintf(&buffer, "%s -q -bin -Fo tmp\\%s.bin asm\\%s.asm", &Assembler, name, name)
     system(&buffer)
     ret
 
 CreateBIN endp
 
-CALLBACK(PNTESTPROC, :ptr, :ptr)
+TestProc proc uses rsi rdi rbx r12 r13 count:dword
 
-TestProc proc uses rsi rdi rbx count:dword
+    lea rsi,proc_b
+    mov r13,rcx
+    lea r12,arg2
 
-  local p:PNTESTPROC
-
-    mov p,&proc_b
-
-    ; spin up..
-
-    .for ( ebx = 4 : ebx : ebx-- )
-
-        p(&arg1, &arg2)
-    .endf
-
-
-    SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)
+    SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS) ; REALTIME_PRIORITY_CLASS)
 
     xor eax,eax
     cpuid
     rdtsc
     mov edi,eax
-
-    xor eax,eax
-    cpuid
-    .for ecx = count : ecx : ecx -= 1
-    .endf
-
-    xor eax,eax
-    cpuid
-    rdtsc
-    sub eax,edi
-    mov edi,eax
-
-    xor eax,eax
-    cpuid
-    rdtsc
-    mov esi,eax
-    xor rax,rax
-    cpuid
-
-    .for ebx = count : ebx : ebx--
-
-        p(&arg1, &arg2)
-    .endf
+    lea rbx,arg1
+@@:
+    mov  rdx,r12
+    mov  rcx,rbx
+    call rsi
+    sub  r13d,1
+    jnz  @B
 
     xor eax,eax
     cpuid
     rdtsc
     sub eax,edi
-    sub eax,esi
     mov edi,eax
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)
@@ -357,7 +340,7 @@ LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Op
 
   local name[128]:char_t
 
-    mov rsi,strcpy(&name, "bin\\")
+    mov rsi,strcpy(&name, "tmp\\")
     add rsi,4
     strcpy(rsi, inst)
 
@@ -390,9 +373,26 @@ LoadInstruction proc uses rsi inst:string_t, op_1:Operand, op_2:Operand, op_3:Op
 
 LoadInstruction endp
 
+compare proc a:ptr, b:ptr
+
+    xor eax,eax
+    mov ecx,[rcx]
+    mov edx,[rdx]
+    .if edx > ecx
+        inc eax
+    .elseif !ZERO?
+        dec eax
+    .endif
+    ret
+
+compare endp
+
+define TESTCOUNT 5
+
 TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, op3:Operand, op4:Operand, imm:int_t, count:uint_t
 
   local buffer[256]:char_t
+  local size:int_t
 
     .return .if !LoadInstruction(rcx, edx, r8d, r9d, op4, imm)
 
@@ -400,16 +400,18 @@ TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, o
     xor edx,edx
     mov ecx,84
     div ecx
-    mov ebx,eax
-    mov esi,count
+    mov size,eax
 
-    TestProc(esi)
-    mov rdi,TestProc(esi)
-    add rdi,TestProc(esi)
-    add rdi,TestProc(esi)
-    add rdi,TestProc(esi)
-    shr rdi,2
-    mov eax,edi
+    .for ( rdi = &buffer, ebx = 0: ebx < TESTCOUNT: ebx++ )
+
+        TestProc(count)
+        stosd
+    .endf
+
+    lea rsi,buffer
+    qsort(rsi, TESTCOUNT, 4, &compare)
+
+    mov eax,[rsi+8]
     xor edx,edx
     mov ecx,1000000
     div ecx
@@ -437,7 +439,7 @@ TimeInstruction proc uses rsi rdi rbx name:string_t, op1:Operand, op2:Operand, o
             .endif
         .endif
     .endif
-    fprintf(fpout, "%-40s %2d %7d\n", rsi, ebx, edi)
+    fprintf(fpout, "%-40s %2d %7d\n", rsi, size, edi)
     ret
 
 TimeInstruction endp
@@ -448,7 +450,7 @@ strtoop proc string:string_t
         .return regcl
     .endif
     .switch pascal eax
-    .case '8mmi': .return imm8
+    .case 'emmi': .return immed
     .case '8ger': .return reg8
     .case '1ger'
         .if byte ptr [rcx+4] == '6'
@@ -501,21 +503,21 @@ TimeInstructions proc uses rsi rdi rbx count:dword
             .if strtok(NULL, "\t ,")
                 .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
                     mov n.imm,atol(rax)
-                    mov n.op2,imm8
+                    mov n.op2,immed
                 .else
                     mov n.op2,strtoop(rax)
                 .endif
                 .if strtok(NULL, "\t ,")
                     .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
                         mov n.imm,atol(rax)
-                        mov n.op3,imm8
+                        mov n.op3,immed
                     .else
                         mov n.op3,strtoop(rax)
                     .endif
                     .if strtok(NULL, "\t ,")
                         .if ( byte ptr [rax] >= '0' && byte ptr [rax] <= '9' )
                             mov n.imm,atol(rax)
-                            mov n.op4,imm8
+                            mov n.op4,immed
                         .else
                             mov n.op4,strtoop(rax)
                         .endif
@@ -534,11 +536,118 @@ TimeInstructions endp
 ; Startup and CPU detection
 ;-------------------------------------------------------------------------------
 
-GetCPU proc
+GetCPU proc uses rsi rdi rbx
 
   local lpflOldProtect:qword, cpustring[80]:byte
 
-    .ifd !( sselevel & SSE_SSE2 )
+    xor esi,esi
+    xor eax,eax
+    cpuid
+    .if rax
+        .if ah == 5
+            xor     eax,eax
+        .else
+            mov     eax,7
+            xor     ecx,ecx
+            cpuid               ; check AVX2 support
+            xor     eax,eax
+            bt      ebx,5       ; AVX2
+            adc     eax,eax     ; into bit 9
+            push    rax
+            mov     eax,1
+            cpuid
+            pop     rax
+            bt      ecx,28      ; AVX support by CPU
+            adc     eax,eax     ; into bit 8
+            bt      ecx,27      ; XGETBV supported
+            adc     eax,eax     ; into bit 7
+            bt      ecx,20      ; SSE4.2
+            adc     eax,eax     ; into bit 6
+            bt      ecx,19      ; SSE4.1
+            adc     eax,eax     ; into bit 5
+            bt      ecx,9       ; SSSE3
+            adc     eax,eax     ; into bit 4
+            bt      ecx,0       ; SSE3
+            adc     eax,eax     ; into bit 3
+            bt      edx,26      ; SSE2
+            adc     eax,eax     ; into bit 2
+            bt      edx,25      ; SSE
+            adc     eax,eax     ; into bit 1
+            bt      ecx,0       ; MMX
+            adc     eax,eax     ; into bit 0
+            mov     esi,eax
+        .endif
+    .endif
+
+    .if eax & SSE_XGETBV
+
+        xor ecx,ecx
+        xgetbv
+        .if eax & 6 ; AVX support by OS?
+            or esi,SSE_AVXOS
+        .endif
+
+        and eax,0xE0
+        .if eax == 0xE0
+
+            xor ecx,ecx
+            mov eax,7
+            cpuid
+
+            .if ebx & 1 shl 16      ; SSE_AVX512F ?
+
+                xor eax,eax
+                bt  ebx,30          ; SSE_AVX512BW
+                adc eax,eax         ; into bit 28
+                bt  ecx,1           ; SSE_AVX512VBMI
+                adc eax,eax         ; into bit 27
+                bt  ebx,31          ; SSE_AVX512VL
+                adc eax,eax         ; into bit 26
+                bt  edx,2           ; SSE_AVX5124VNNIW
+                adc eax,eax         ; into bit 25
+                bt  edx,3           ; SSE_AVX5124FMAPS
+                adc eax,eax         ; into bit 24
+                bt  ebx,21          ; SSE_AVX512IFMA
+                adc eax,eax         ; into bit 23
+                bt  ebx,17          ; SSE_AVX512DQ
+                adc eax,eax         ; into bit 22
+                bt  edx,8           ; SSE_AVX512VP2INTERSECT
+                adc eax,eax         ; into bit 21
+                bt  ecx,14          ; SSE_AVX512VPOPCNTDQ
+                adc eax,eax         ; into bit 20
+                bt  ecx,12          ; SSE_AVX512BITALG
+                adc eax,eax         ; into bit 19
+                bt  ecx,11          ; SSE_AVX512VNNI
+                adc eax,eax         ; into bit 18
+                bt  ecx,10          ; SSE_AVX512PVPCLMULQDQ
+                adc eax,eax         ; into bit 17
+                bt  ecx,9           ; SSE_AVX512PVAES
+                adc eax,eax         ; into bit 16
+                bt  ecx,8           ; SSE_AVX512PGFNI
+                adc eax,eax         ; into bit 15
+                bt  ecx,6           ; SSE_AVX512VBMI2
+                adc eax,eax         ; into bit 14
+                bt  ebx,28          ; SSE_AVX512CD
+                adc eax,eax         ; into bit 13
+                bt  ebx,27          ; SSE_AVX512ER
+                adc eax,eax         ; into bit 12
+                bt  ebx,26          ; SSE_AVX512PF
+                adc eax,eax         ; into bit 11
+                shl eax,11
+                or  eax,SSE_AVX512F ; into bit 10
+                or  esi,eax
+
+                mov ecx,1
+                mov eax,7
+                cpuid
+                .if ebx & 1 shl 5
+                    or esi,SSE_AVX512BF16
+                .endif
+            .endif
+        .endif
+    .endif
+
+    .ifd !( esi & SSE_SSE2 )
 
         printf("CPU error: Need SSE2 level\n")
         exit(0)
@@ -557,7 +666,7 @@ GetCPU proc
 
     .for ( r8 = &cpustring: byte ptr [r8] == ' ' : r8++ )
     .endf
-    mov eax,sselevel
+    mov eax,esi
     lea r9,@CStr("SSE2")
     .switch
     .case eax & SSE_AVX512F: lea r9,@CStr("AVX512") : .endc
@@ -620,9 +729,7 @@ main proc uses rsi argc:int_t, argv:array_t
 
     .if ( ecx < 2 )
         printf(
-            "Instruction Timing Version 1.04\n"
-            "\n"
-            "Usage: InstructionTiming instruction_list [ output_file ]\n"
+            "Usage: insttime instruction_list [ output_file ]\n"
             )
         exit(1)
     .endif
@@ -644,7 +751,7 @@ main proc uses rsi argc:int_t, argv:array_t
     GetAssembler()
 
     _mkdir("asm")
-    _mkdir("bin")
+    _mkdir("tmp")
 
     .if LoadInstruction("mov", reg64, reg64, None, None, 0)
 
@@ -657,4 +764,4 @@ main proc uses rsi argc:int_t, argv:array_t
 
 main endp
 
-    end
+    end _tstart

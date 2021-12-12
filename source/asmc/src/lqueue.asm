@@ -296,7 +296,6 @@ RunLineQueue proc uses esi edi
             ParseLine( tokenarray )
         .endif
     .endf
-
     dec ModuleInfo.GeneratedCode
     PopInputStatus( &oldstat )
     ret

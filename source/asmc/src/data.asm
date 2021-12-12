@@ -51,6 +51,27 @@ OutputDataBytes macro x, y
 
     option proc:private
 
+llshl proc watcall n:qword, i:int_t
+
+    mov cl,bl
+    .if cl < 64
+        .if cl < 32
+            shld edx,eax,cl
+            shl eax,cl
+        .else
+            and ecx,31
+            mov edx,eax
+            xor eax,eax
+            shl edx,cl
+        .endif
+    .else
+        xor eax,eax
+        xor edx,edx
+    .endif
+    ret
+
+llshl endp
+
 AsmerrSymName proc fastcall error:int_t, sym:ptr asym
 
     lea eax,@CStr("")
@@ -294,10 +315,7 @@ InitStructuredVar proc uses esi edi ebx index:int_t, tokenarray:ptr asm_tok,
                     asmerr( 2071, [edi].name )
                 .endif
             .endif
-            mov eax,dword ptr opndx.llvalue
-            mov edx,dword ptr opndx.llvalue[4]
-            mov ecx,[edi].offs
-            call __llshl
+            llshl(opndx.llvalue, [edi].offs)
             or dword ptr dwRecInit,eax
             or dword ptr dwRecInit[4],edx
 

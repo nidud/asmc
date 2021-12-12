@@ -13,9 +13,13 @@ include symbols.inc
 include input.inc
 include tchar.inc
 
-define CATCHBREAK
+ifdef _WATCOM
+extern _cstart_: byte
+endif
 
 .code
+
+ifndef __UNIX__
 
 strfcat proc private uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
 
@@ -94,9 +98,13 @@ AssembleSubdir proc private uses esi edi ebx directory:string_t, wild:string_t
 
 AssembleSubdir endp
 
+endif
+
 GeneralFailure proc private signo:int_t
 
     .if ( signo != SIGTERM )
+
+ifndef __UNIX__
 
         mov ecx,pCurrentException
         lea edx,@CStr(
@@ -142,6 +150,7 @@ GeneralFailure proc private signo:int_t
             [eax]._Ebp,
             [eax]._Edi,
             [eax]._Esp)
+endif
         asmerr( 1901 )
     .endif
     close_files()
@@ -150,39 +159,48 @@ GeneralFailure proc private signo:int_t
 
 GeneralFailure endp
 
-main proc
+main proc argc:int_t, argv:array_t
 
-  local rc, numArgs, numFiles, ff:WIN32_FIND_DATA
+  .new rc:int_t = 0
+  .new numArgs:int_t = 0
+  .new numFiles:int_t = 0
+ifndef __UNIX__
+  .new ff:WIN32_FIND_DATA
+endif
 
 ifndef DEBUG
     signal(SIGSEGV, GeneralFailure)
 endif
-if CATCHBREAK
+ifndef __UNIX__
     signal(SIGBREAK, GeneralFailure)
 else
     signal(SIGTERM, GeneralFailure)
 endif
+
 ifdef __ASMC64__
     define_name( "_WIN64", "1" )
+ifdef __UNIX__
+    define_name( "_LINUX",   "2" )
+    define_name( "__UNIX__", "1" )
 endif
-
-    xor eax,eax
-    mov rc,eax
-    mov numArgs,eax
-    mov numFiles,eax
+endif
     .if !getenv("ASMC")     ; v2.21 -- getenv() error..
         lea eax,@CStr("")
     .endif
-    mov ecx,__argv
+    mov ecx,argv
     mov [ecx],eax
 
-    .while ParseCmdline(__argv, &numArgs)
+    .while ParseCmdline(argv, &numArgs)
+
+        write_logo()
 
         inc numFiles
-        write_logo()
-        lea edi,ff.cFileName
         mov esi,Options.names[ASM*4]
 
+ifdef __UNIX__
+        AssembleModule(esi)
+else
+        lea edi,ff.cFileName
         .if !Options.process_subdir
             .if FindFirstFile(esi, &ff) == -1
                 asmerr(1000, esi)
@@ -203,6 +221,7 @@ endif
         .else
             AssembleModule(edi)
         .endif
+endif
         mov rc,eax
     .endw
 

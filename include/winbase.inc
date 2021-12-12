@@ -7031,6 +7031,8 @@ MapViewOfFileExNuma proto WINAPI \
 	  nndPreferred: DWORD
 endif
 
+.pragma comment(lib, kernel32)
+
 ;BOOL
 SetPriorityClass proto WINAPI \
 	      hProcess: HANDLE,

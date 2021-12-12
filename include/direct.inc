@@ -10,6 +10,9 @@ _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
+ifdef __UNIX__
+define _getcwd <getcwd>
+endif
 _getdrive	proto __cdecl
 _chdrive	proto __cdecl :SINT
 _chdir		proto __cdecl :LPSTR
@@ -22,7 +25,6 @@ _wmkdir		proto __cdecl :LPWSTR
 _wrmdir		proto __cdecl :LPWSTR
 _wgetcwd	proto __cdecl :LPWSTR, :SINT
 _wgetdcwd	proto __cdecl :SINT, :LPWSTR, :SINT
-
 if not defined(_MSVCRT) or defined(_CRTBLD)
 __allocwpath	proto __cdecl :LPSTR
 endif

@@ -42,8 +42,187 @@ LS_FAR32 equ 0xFF06
 
     .code
 
-    option procalign:4
     option proc:private
+
+llmul proc watcall a:qword, b:qword
+
+    .if ( !edx && !ecx )
+
+        mul ebx
+
+    .else
+
+        push    eax
+        push    edx
+        mul     ecx
+        mov     ecx,eax
+        pop     eax
+        mul     ebx
+        add     ecx,eax
+        pop     eax
+        mul     ebx
+        add     edx,ecx
+
+    .endif
+    ret
+
+llmul endp
+
+ulldiv proc watcall dividend:qword, divisor:qword
+
+    .repeat
+
+        .break .if ecx
+
+        dec ebx
+        .ifnz
+
+            inc ebx
+            .if ebx <= edx
+                mov  ecx,eax
+                mov  eax,edx
+                xor  edx,edx
+                div  ebx        ; edx / ebx
+                xchg ecx,eax
+            .endif
+            div ebx             ; edx:eax / ebx
+            mov ebx,edx
+            mov edx,ecx
+            xor ecx,ecx
+        .endif
+        ret
+    .until 1
+
+    .repeat
+
+        .break .if ecx < edx
+        .ifz
+            .if ebx <= eax
+                sub eax,ebx
+                mov ebx,eax
+                xor ecx,ecx
+                xor edx,edx
+                mov eax,1
+                ret
+            .endif
+        .endif
+        xor  ecx,ecx
+        xor  ebx,ebx
+        xchg ebx,eax
+        xchg ecx,edx
+        ret
+
+    .until 1
+
+    push ebp
+    push esi
+    push edi
+
+    xor ebp,ebp
+    xor esi,esi
+    xor edi,edi
+
+    .repeat
+
+        add ebx,ebx
+        adc ecx,ecx
+        .ifnc
+            inc ebp
+            .continue(0) .if ecx < edx
+            .ifna
+                .continue(0) .if ebx <= eax
+            .endif
+            add esi,esi
+            adc edi,edi
+            dec ebp
+            .break .ifs
+        .endif
+        .while 1
+            rcr ecx,1
+            rcr ebx,1
+            sub eax,ebx
+            sbb edx,ecx
+            cmc
+            .continue(0) .ifc
+            .repeat
+                add esi,esi
+                adc edi,edi
+                dec ebp
+                .break(1) .ifs
+                shr ecx,1
+                rcr ebx,1
+                add eax,ebx
+                adc edx,ecx
+            .untilb
+            adc esi,esi
+            adc edi,edi
+            dec ebp
+            .break(1) .ifs
+        .endw
+        add eax,ebx
+        adc edx,ecx
+    .until 1
+    mov ebx,eax
+    mov ecx,edx
+    mov eax,esi
+    mov edx,edi
+    pop edi
+    pop esi
+    pop ebp
+    ret
+
+ulldiv endp
+
+alldiv proc watcall dividend:qword, divisor:qword
+
+    or edx,edx          ; hi word of dividend signed ?
+    .ifns
+        or ecx,ecx      ; hi word of divisor signed ?
+        .ifns
+            jmp ulldiv
+        .endif
+        neg ecx
+        neg ebx
+        sbb ecx,0
+        ulldiv()
+        neg edx
+        neg eax
+        sbb edx,0
+        ret
+    .endif
+    neg edx
+    neg eax
+    sbb edx,0
+    or ecx,ecx
+    .ifs
+        neg ecx
+        neg ebx
+        sbb ecx,0
+        ulldiv()
+        neg ecx
+        neg ebx
+        sbb ecx,0
+        ret
+    .endif
+    ulldiv()
+    neg ecx
+    neg ebx
+    sbb ecx,0
+    neg edx
+    neg eax
+    sbb edx,0
+    ret
+
+alldiv endp
+
+allrem proc watcall dividend:qword, divisor:qword
+
+    alldiv()
+    mov eax,ebx
+    mov edx,ecx
+    ret
+
+allrem endp
 
 noasmerr proc __cdecl msg:int_t, args:vararg
 
@@ -1804,11 +1983,7 @@ minus_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
         .endif
         mov [ecx].kind,EXPR_ADDR
         push ecx
-        push -1
-        push -1
-        push [edx].hvalue
-        push [edx].value
-        call __llmul
+        llmul([edx].llvalue, -1)
         pop ecx
         mov [ecx].value,eax
         mov [ecx].hvalue,edx
@@ -2310,11 +2485,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
         MakeConst(esi)
         MakeConst(edi)
         .if [esi].kind == EXPR_CONST && [edi].kind == EXPR_CONST
-            push [esi].hvalue
-            push [esi].value
-            push [edi].hvalue
-            push [edi].value
-            call __llmul
+            llmul([edi].llvalue, [esi].llvalue)
             mov [esi].value,eax
             mov [esi].hvalue,edx
         .elseif check_both( esi, edi, EXPR_REG, EXPR_CONST )
@@ -2355,11 +2526,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .if [edi].value == 0 && [edi].hvalue == 0
             .return( fnasmerr( 2169 ) )
         .endif
-        push [edi].hvalue
-        push [edi].value
-        push [esi].hvalue
-        push [esi].value
-        call __lldiv
+        alldiv( [esi].llvalue, [edi].llvalue )
         mov [esi].value,eax
         mov [esi].hvalue,edx
         .endc
@@ -2603,11 +2770,7 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:token_t
                 mov [esi].h64_h,edx
                 .endc
             .endif
-            push [edi].l64_h
-            push [edi].l64_l
-            push [esi].l64_h
-            push [esi].l64_l
-            call _allrem
+            allrem([esi].llvalue, [edi].llvalue)
             mov  [esi].l64_l,eax
             mov  [esi].l64_h,edx
             .endc

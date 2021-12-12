@@ -7,6 +7,7 @@
 include malloc.inc
 include io.inc
 include setjmp.inc
+
 include asmc.inc
 include parser.inc
 include segment.inc
@@ -36,6 +37,12 @@ include listing.inc
 public	jmpenv
 extern	MacroLocals:dword
 
+ifdef __UNIX__
+define OBJ_EXT <'o.'>
+else
+define OBJ_EXT <'jbo.'>
+endif
+
 conv_section	STRUC
 len		dd ?
 flags		dd ?
@@ -44,12 +51,11 @@ dst		dd ?
 conv_section	ENDS
 
 .data?
-
 ModuleInfo	module_info <>
 LinnumQueue	qdesc <>
-jmpenv		_JUMP_BUFFER <>
 
 .data
+jmpenv		ptr _JUMP_BUFFER 0
 
 Parse_Pass	dd 0
 write_to_file	dd 0
@@ -70,10 +76,10 @@ cp_bss2		db ".bss",0
     align 4
 
 formatoptions	label format_options
-format_options	< bin_init,  0000h, <"BIN",0,0,0>>
-format_options	< omf_init,  0000h, <"OMF",0,0,0>>
-format_options	< coff_init, 0E12h, <"COFF", 0,0>>
-format_options	< elf_init,  0F00h, <"ELF",0,0,0>>
+format_options	<bin_init,  0000h, <"BIN",0,0,0>>
+format_options	<omf_init,  0000h, <"OMF",0,0,0>>
+format_options	<coff_init, 0E12h, <"COFF", 0,0>>
+format_options	<elf_init,  0F00h, <"ELF",0,0,0>>
 
 cst		label conv_section
 		dd 5, CSF_GRPCHK, cp_text1, cp_text2
@@ -81,7 +87,7 @@ cst		label conv_section
 		dd 5, CSF_GRPCHK, cp_const, cp_rdata
 		dd 4,	       0, cp_bss1,  cp_bss2
 stt		db SEGTYPE_CODE,SEGTYPE_DATA,SEGTYPE_DATA,SEGTYPE_BSS
-filetypes	dd 'msa.','jbo.','tsl.','rre.','nib.','exe.'
+filetypes	dd 'msa.',OBJ_EXT,'tsl.','rre.','nib.','exe.'
 currentftype	dd 0,0
 remove_obj	dd 0
 
@@ -1200,7 +1206,7 @@ RewindToWin64 proc private
 	.endif
 	mov Options.sub_format,SFORMAT_64BIT
 	mov remove_obj,1
-	longjmp( &jmpenv, 1 )
+	longjmp( jmpenv, 1 )
     .endif
     ret
 
@@ -1209,6 +1215,7 @@ RewindToWin64 endp
 AssembleModule proc uses esi edi ebx source:string_t
 
   local curr_written, prev_written
+  local __env:_JUMP_BUFFER
 
     xor eax,eax
     mov MacroLocals,eax
@@ -1225,7 +1232,9 @@ AssembleModule proc uses esi edi ebx source:string_t
 	tprintf(" Assembling: %s\n", source)
     .endif
 
-    .if _setjmp(&jmpenv)
+    lea eax,__env
+    mov jmpenv,eax
+    .if _setjmp(eax)
 
 	.if eax == 1
 

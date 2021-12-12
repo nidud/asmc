@@ -58,12 +58,15 @@ pBase       dd 0        ; start list of 512 kB blocks; to be moved to ModuleInfo
 pCurr       dd 0        ; points into current block; to be moved to ModuleInfo.g
 currfree    dd 0        ; free memory left in current block; to be moved to ModuleInfo.g
 heaplen     dd 0x80000  ; total memory usage
+ifndef __UNIX__
 hProcessHeap dd 0
-
+endif
 .code
 
 MemInit proc
+ifndef __UNIX__
     mov hProcessHeap,GetProcessHeap()
+endif
     mov pBase,0
     mov currfree,0
     ret
@@ -74,7 +77,11 @@ MemFini proc uses ebx
     .while ebx
         mov eax,ebx
         mov ebx,[ebx]
+ifndef __UNIX__
         HeapFree(hProcessHeap, 0, eax)
+else
+        free(eax)
+endif
     .endw
     mov pBase,ebx
     ret
@@ -83,7 +90,9 @@ MemFini endp
 .pragma warning(disable: 6004)
 
 LclAlloc proc fastcall size
-
+ifdef __UNIX__
+    push edi
+endif
     mov eax,pCurr
     add ecx,ALIGNMENT-1
     and ecx,-ALIGNMENT
@@ -95,7 +104,19 @@ LclAlloc proc fastcall size
         .endif
         mov currfree,ecx
         add ecx,ALIGNMENT
+ifdef __UNIX__
+        mov edi,ecx
+        .if malloc(ecx)
+
+            mov ecx,edi
+            mov edx,eax
+            mov edi,eax
+            xor eax,eax
+            rep stosb
+            mov eax,edx
+else
         .if HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, ecx)
+endif
             mov ecx,pBase
             mov [eax],ecx
             mov pBase,eax
@@ -107,6 +128,9 @@ LclAlloc proc fastcall size
     .endif
     sub currfree,ecx
     add pCurr,ecx
+ifdef __UNIX__
+    pop edi
+endif
     ret
 
 LclAlloc endp
@@ -120,6 +144,30 @@ MemAlloc proc fastcall len
     ret
 
 MemAlloc endp
+
+    option stackbase:esp
+
+alloca proc byte_count:UINT
+
+    mov     ecx,[esp]   ; return address
+    mov     eax,[esp+4] ; size to probe
+    add     esp,8
+@@:
+    cmp     eax,_PAGESIZE_
+    jb      @F
+    sub     esp,_PAGESIZE_
+    or      dword ptr [esp],0
+    sub     eax,_PAGESIZE_
+    jmp     @B
+@@:
+    sub     esp,eax
+    and     esp,-16     ; align 16
+    mov     eax,esp
+    sub     esp,4
+    or      dword ptr [esp],0
+    jmp     ecx
+
+alloca endp
 
     end
 

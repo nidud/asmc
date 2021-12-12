@@ -58,29 +58,31 @@ if FILESEQ
 FileSeq     qdesc <>
 endif
 
-;; buffer for source lines
-;; since the lines are sometimes concatenated
-;; the buffer must be a multiple of MAX_LINE_LEN
+; buffer for source lines
+; since the lines are sometimes concatenated
+; the buffer must be a multiple of MAX_LINE_LEN
 
 srclinebuffer string_t 0
 
-;; string buffer - token strings and other stuff are stored here.
-;; must be a multiple of MAX_LINE_LEN since it is used for string expansion.
+; string buffer - token strings and other stuff are stored here.
+; must be a multiple of MAX_LINE_LEN since it is used for string expansion.
 
 token_stringbuf string_t 0 ;; start token string buffer
 
-;; fixme: add '|| defined(__CYGWIN__)' ?
+
 ifdef __UNIX__
 INC_PATH_DELIM      equ <':'>
 INC_PATH_DELIM_STR  equ <":">
 DIR_SEPARATOR       equ <'/'>
 filecmp             equ <strcmp>
 ISPC macro x
-    exitm<( x == '/' )>
+    exitm<(x == '/')>
     endm
-ISABS macro x
-    exitm<( *x == '/' )>
-    endm
+ISABS proto watcall x:ptr {
+    cmp  byte ptr [eax],'/'
+    mov  eax,0
+    setz al
+    }
 else
 INC_PATH_DELIM      equ <';'>
 INC_PATH_DELIM_STR  equ <";">
@@ -89,10 +91,7 @@ filecmp             equ <_stricmp>
 ISPC macro x
     exitm<(x == '/' || x == '\' || x == ':')>
     endm
-ISABS macro x
-  ifdif <x>,<eax>
-    mov eax,x
-  endif
+ISABS proto watcall x:ptr {
     mov cl,[eax+2]
     mov eax,[eax]
     .if ( al == '/' || al == '\' || ( al &&  ah == ':' && ( cl == '/' || cl == '\' ) ) )
@@ -100,8 +99,7 @@ ISABS macro x
     .else
         xor eax,eax
     .endif
-    exitm<eax>
-    endm
+    }
 endif
 
     .code
@@ -270,14 +268,7 @@ my_fgets proc private uses esi edi ebx buffer:string_t, max:int_t, fp:LPFILE
     add esi,edi
     mov ebx,fp
 
-    dec [ebx]._iobuf._cnt
-    .ifl
-        _filbuf(ebx)
-    .else
-        inc [ebx]._iobuf._ptr
-        mov eax,[ebx]._iobuf._ptr
-        movzx eax,byte ptr [eax-1]
-    .endif
+    fgetc(ebx)
     .while edi < esi
         .switch eax
         .case CR
@@ -302,14 +293,7 @@ endif
         .default
             stosb
         .endsw
-        dec [ebx]._iobuf._cnt
-        .ifl
-            _filbuf(ebx)
-        .else
-            inc [ebx]._iobuf._ptr
-            mov eax,[ebx]._iobuf._ptr
-            movzx eax,byte ptr [eax-1]
-        .endif
+        fgetc(ebx)
     .endw
     asmerr(2039)
     mov byte ptr [edi-1],0

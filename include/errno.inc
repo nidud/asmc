@@ -10,14 +10,17 @@ include winerror.inc
 ifndef _CRT_ERRNO_DEFINED
 define _CRT_ERRNO_DEFINED
 _errno		proto __cdecl
-if defined(_LINUX)
+ifdef __UNIX__
 __set_errno proto :int_t
 _set_errno equ <__set_errno>
 else
 _set_errno	proto __cdecl :int_t
 endif
 _get_errno	proto __cdecl :ptr int_t
-if defined(_WIN64) or defined(_MSVCRT)
+ifdef __UNIX__
+__get_errno_ptr proto __cdecl
+errno		equ <errno_t ptr [__get_errno_ptr()]>
+elseif defined(_WIN64) or defined(_MSVCRT)
 errno		equ <errno_t ptr [_errno()]>
 else
 externdef	errno:errno_t

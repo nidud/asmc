@@ -18,7 +18,7 @@ include listing.inc
 
 warning_disable proto id:int_t
 
-extern jmpenv:_JUMP_BUFFER
+extern jmpenv:ptr _JUMP_BUFFER
 
 print_source_nesting_structure proto
 GetCurrOffset proto
@@ -474,7 +474,7 @@ errexit proc private
 
     .if ModuleInfo.curr_fname[ASM*4]
 
-        longjmp(&jmpenv, 3)
+        longjmp(jmpenv, 3)
     .endif
 
     mov eax,ModuleInfo.curr_file[OBJ*4]

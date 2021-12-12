@@ -3046,19 +3046,24 @@ MAKE_SCODE macro sev,fac,code
 	exitm <((sev shl 31) or (fac shl 16) or (code))>
 	endm
 
-define FACILITY_NT_BIT		       0x10000000
+define FACILITY_NT_BIT 0x10000000
 
 HRESULT_FROM_WIN32R proto watcall hr:sdword {
-    .if ( eax )
-	and eax,0x0000FFFF
-	or  eax,(FACILITY_WIN32 shl 16) or 0x80000000
+    and eax,0x0000FFFF
+    .ifnz
+	or eax,(FACILITY_WIN32 shl 16) or 0x80000000
     .endif
     }
 HRESULT_FROM_WIN32 macro x
-    if x
-	exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
+    ifidn typeid(x),<imm>
+	if x
+	    exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
+	else
+	    exitm<0>
+	endif
+    else
+	exitm<HRESULT_FROM_WIN32R(x)>
     endif
-    exitm<0>
     endm
 
 HRESULT_FROM_NT macro x

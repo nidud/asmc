@@ -652,16 +652,22 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 .endif
 
                 mov edx,[edi].expr.value
-                or  edx,[edi].expr.hvalue
-
                 .ifs ebx > 0
                     mov esi,T_LOWWORD
-                    mov edx,[edi].expr.value
+                    .if ( ModuleInfo.Ofssize > USE16 )
+                        mov esi,T_LOW32
+                    .endif
                 .elseif !ebx && reg[4]
                     mov esi,T_HIGHWORD
-                    mov edx,[edi].expr.hvalue
+                    .if ( ModuleInfo.Ofssize > USE16 )
+                        mov edx,[edi].expr.hvalue
+                        mov esi,T_HIGH32
+                    .endif
                 .else
                     mov esi,T_NULL
+                    .if ( ModuleInfo.Ofssize > USE16 )
+                        or edx,[edi].expr.hvalue
+                    .endif
                 .endif
                 .if ( eax == 0 || edx == 0 )
                     .if ( ModuleInfo.Ofssize )

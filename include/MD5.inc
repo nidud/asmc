@@ -14,6 +14,14 @@
     digest   db 16 dup(?)
    .ends
 
-MD5Init      proto WINAPI :ptr MD5_CTX
-MD5Update    proto WINAPI :ptr MD5_CTX, :ptr byte, :dword
-MD5Final     proto WINAPI :ptr MD5_CTX
+ifdef __UNIX__
+NTAPI equ <syscall>
+elseifdef _WIN64
+NTAPI equ <fastcall>
+else
+NTAPI equ <stdcall>
+endif
+
+MD5Init      proto NTAPI :ptr MD5_CTX
+MD5Update    proto NTAPI :ptr MD5_CTX, :ptr byte, :dword
+MD5Final     proto NTAPI :ptr MD5_CTX

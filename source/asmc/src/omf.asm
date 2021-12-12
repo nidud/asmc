@@ -1336,10 +1336,13 @@ endif
 omf_write_comdef endp
 
 GetFileTimeStamp proc private filename:string_t
-
+ifdef __UNIX__
+  local statbuf:_stat32
+    .if ( stat( filename, &statbuf ) != 0 )
+else
   local statbuf:stat
-
     .if ( _stat( filename, &statbuf ) != 0 )
+endif
         .return( 0 )
     .endif
     .return( statbuf.st_mtime )
@@ -1748,16 +1751,8 @@ if TRUNCATE
     ; won't become shorter anymore.
 
     mov size,ftell( CurrFile[OBJ*4] )
-
-ifdef __UNIX__
-    mov fh,fileno( CurrFile[OBJ*4] )
-    .if ( ftruncate( fh, size ) )
-        ;; gcc warns if return value of ftruncate() is "ignored"
-    .endif
-else
     mov fh,_fileno( CurrFile[OBJ*4] )
     _chsize( fh, size )
-endif
 endif
 
     ; write SEGDEF records. Since these reco rds contain the segment's length,

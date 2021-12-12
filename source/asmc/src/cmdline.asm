@@ -653,6 +653,8 @@ endif
         mov Options.no_error_disp,1
         .return
     .case '6fle'            ;; -elf64
+if defined(__ASMC64__) and defined(__UNIX__)
+else
         mov Options.output_format,OFORMAT_ELF
         define_name( "_LINUX",   "2" )
         define_name( "__UNIX__", "1" )
@@ -662,6 +664,7 @@ ifndef __ASMC64__
 else
         mov Options.langtype,LANG_SYSCALL
         mov Options.fctype,FCT_ELF64
+endif
 endif
         .return
     .case 'orre'            ;; -errorReport:

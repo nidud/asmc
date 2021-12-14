@@ -95,7 +95,7 @@ FindToken proc private uses esi edi token:string_t, table:ptr, size:int_t
     mov esi,table
     .for ( edi = 0 : edi < size : edi++ )
         lodsd
-        .if ( _stricmp( eax, token ) == 0 )
+        .if ( tstricmp( eax, token ) == 0 )
             .return( edi )
         .endif
     .endf
@@ -617,13 +617,13 @@ TypeFromClassName proc uses esi edi s:ptr dsym, clname:ptr asym
         .return( SEGTYPE_UNDEF )
     .endif
 
-    .if ( _stricmp( [edi].asym.name, GetCodeClass() ) == 0 )
+    .if ( tstricmp( [edi].asym.name, GetCodeClass() ) == 0 )
         .return( SEGTYPE_CODE )
     .endif
 
     mov esi,[edi].asym.name_size
     lea ecx,[esi+1]
-    mov edi,_strupr( memcpy( &uname, [edi].asym.name, ecx ) )
+    mov edi,tstrupr( memcpy( &uname, [edi].asym.name, ecx ) )
 
     .switch( esi )
     .case 5
@@ -1324,7 +1324,7 @@ SortSegments proc uses esi edi ebx type:int_t
                 .if ( [ebx].seg_info.lname_idx > [ecx].seg_info.lname_idx )
                     mov swap,TRUE
                 .elseif ( [ebx].seg_info.lname_idx == [ecx].seg_info.lname_idx )
-                    .ifs ( _stricmp( [edi].asym.name, [edx].asym.name ) > 0 )
+                    .ifs ( tstricmp( [edi].asym.name, [edx].asym.name ) > 0 )
                         mov swap,TRUE
                     .endif
                 .endif

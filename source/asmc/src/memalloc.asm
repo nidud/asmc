@@ -6,8 +6,9 @@
 
 include malloc.inc
 include string.inc
+ifndef __UNIX__
 include winbase.inc
-
+endif
 include asmc.inc
 ;
 ; what items are stored in the heap?

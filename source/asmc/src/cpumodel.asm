@@ -89,7 +89,7 @@ FindToken proc private uses esi edi token:string_t, table:ptr string_t, size:int
 
     .for( esi = table, edi = 0: edi < size: edi++ )
         lodsd
-        .if ( _stricmp( eax, token ) == 0 )
+        .if ( tstricmp( eax, token ) == 0 )
             .return( edi )
         .endif
     .endf

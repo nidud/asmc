@@ -176,7 +176,7 @@ GetTypeId proc uses esi edi ebx buffer:string_t, tokenarray:token_t
 
     .while [ebx].token != T_FINAL
         .if [ebx].token == T_ID
-            .if !_stricmp([ebx].string_ptr, "typeid")
+            .if !tstricmp([ebx].string_ptr, "typeid")
 
                 mov eax,[ebx].string_ptr
                 mov byte ptr [eax],'?'

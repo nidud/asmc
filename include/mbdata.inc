@@ -27,39 +27,37 @@ endif
 
 ifndef _THREADLOCALEINFO
 define _THREADLOCALEINFO
-
 ifndef LPSHORT
-LPINT			typedef ptr sdword
-LPSHORT			typedef ptr sword
+LPINT	typedef ptr sdword
+LPSHORT typedef ptr sword
 endif
-locrefcount		STRUC
-locale			LPSTR ?
-wlocale			LPWSTR ?
-refcount		LPINT ?
-wrefcount		LPINT ?
-locrefcount		ENDS
-
-threadlocinfo		STRUC
-refcount		SINT ?
-lc_codepage		dd ?
-lc_collate_cp		dd ?
-lc_time_cp		dd ?
-lc_category		locrefcount 6 dup(<>)
-lc_clike		SINT ?
-mb_cur_max		SINT ?
-lconv_intl_refcount	LPINT ?
-lconv_num_refcount	LPINT ?
-lconv_mon_refcount	LPINT ?
-lconvp			PVOID ?
-ctype1_refcount		LPINT ?
-ctype1			LPSHORT ?
-pctype			LPSHORT ?
-pclmap			LPSTR ?
-pcumap			LPSTR ?
-lc_time_curr		ptr_t ?
-locale_name		LPWSTR 6 dup(?)
-threadlocinfo		ENDS
-pthreadlocinfo		typedef ptr threadlocinfo
+.template locrefcount
+    locale		LPSTR ?
+    wlocale		LPWSTR ?
+    refcount		LPINT ?
+    wrefcount		LPINT ?
+   .ends
+.template threadlocinfo
+    refcount		SINT ?
+    lc_codepage		UINT ?
+    lc_collate_cp	UINT ?
+    lc_time_cp		UINT ?
+    lc_category		locrefcount 6 dup(<>)
+    lc_clike		SINT ?
+    mb_cur_max		SINT ?
+    lconv_intl_refcount LPINT ?
+    lconv_num_refcount	LPINT ?
+    lconv_mon_refcount	LPINT ?
+    lconvp		PVOID ?
+    ctype1_refcount	LPINT ?
+    ctype1		LPSHORT ?
+    pctype		LPSHORT ?
+    pclmap		LPSTR ?
+    pcumap		LPSTR ?
+    lc_time_curr	ptr __lc_time_data ?
+    locale_name		LPWSTR ? 6 dup(?)
+   .ends
+    pthreadmbcinfo	typedef ptr threadmbcinfo
 endif
 
 externdef		__mbcodepage:int_t
@@ -67,87 +65,6 @@ externdef		__ismbcodepage:int_t
 externdef		__mbulinfo:ushort_t
 externdef		__ptmbcinfo:pthreadmbcinfo
 __updatetmbcinfo	proto __cdecl
-
-_ISMBCP			equ <__ismbcodepage NOT = 0>
-_ISNOTMBCP		equ <__ismbcodepage EQ 0>
-
-_ISMBCP_MT macro p
-	exitm<.err>
-	endm
-_ISNOTMBCP_MT macro p
-	exitm<.err>
-	endm
-
-_ismbbtruelead macro _lb,_ch
-	exitm<.err>
-	endm
-
-_mbbisupper macro _c
-	exitm<.err>
-	endm
-_mbbislower macro _c
-	exitm<.err>
-	endm
-
-_mbbtolower macro _c
-	exitm<.err>
-	endm
-_mbbtoupper macro _c
-	exitm<.err>
-	endm
-
-_ismbbtruelead_l macro _lb,_ch,p
-	exitm<.err>
-	endm
-_mbbisupper_l macro _c, p
-	exitm<.err>
-	endm
-_mbbislower_l macro _c, p
-	exitm<.err>
-	endm
-_mbbtolower_l macro _c, p
-	exitm<.err>
-	endm
-_mbbtoupper_l macro _c, p
-	exitm<.err>
-	endm
-
-_MBUPPERLOW1		equ <__mbulinfo[0]>
-_MBUPPERHIGH1		equ <__mbulinfo[1]>
-_MBCASEDIFF1		equ <__mbulinfo[2]>
-
-_MBUPPERLOW2		equ <__mbulinfo[3]>
-_MBUPPERHIGH2		equ <__mbulinfo[4]>
-_MBCASEDIFF2		equ <__mbulinfo[5]>
-
-_MBUPPERLOW1_MT macro p
-	exitm<.err>
-	endm
-_MBUPPERHIGH1_MT macro p
-	exitm<.err>
-	endm
-_MBCASEDIFF1_MT macro p
-	exitm<.err>
-	endm
-
-_MBUPPERLOW2_MT macro p
-	exitm<.err>
-	endm
-_MBUPPERHIGH2_MT macro p
-	exitm<.err>
-	endm
-_MBCASEDIFF2_MT macro p
-	exitm<.err>
-	endm
-
-ifndef _WIN32
-_MBLOWERLOW1		equ <__mbulinfo[6]>
-_MBLOWERHIGH1		equ <__mbulinfo[7]>
-_MBLOWERLOW2		equ <__mbulinfo[8]>
-_MBLOWERHIGH2		equ <__mbulinfo[9]>
-_MBDIGITLOW		equ <__mbulinfo[10]>
-_MBDIGITHIGH		equ <__mbulinfo[11]>
-endif
 
 _MBHIRALOW		equ 0x829f
 _MBHIRAHIGH		equ 0x82f1

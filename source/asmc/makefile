@@ -4,7 +4,6 @@
 # Libraries used:
 #  ../libs/import/ - kernel32.lib
 #  ../libs/lib32/  - libc.lib
-#  ../libs/crypt/  - crypt.lib
 #
 
 !include srcpath
@@ -24,7 +23,6 @@ objects = \
     src\assemble.obj \
     src\assert.obj \
     src\assume.obj \
-    src\atofloat.obj \
     src\backptch.obj \
     src\bin.obj \
     src\branch.obj \
@@ -78,7 +76,7 @@ objects = \
     src\pragma.obj \
     src\preproc.obj \
     src\proc.obj \
-    src\regno.obj \
+    src\qfloat.obj \
     src\reswords.obj \
     src\return.obj \
     src\safeseh.obj \

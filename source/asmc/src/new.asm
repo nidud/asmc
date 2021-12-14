@@ -10,7 +10,7 @@ include asmc.inc
 include proc.inc
 include hllext.inc
 include expreval.inc
-include atofloat.inc
+include qfloat.inc
 include fastpass.inc
 
 externdef list_pos:uint_t

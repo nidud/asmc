@@ -1911,6 +1911,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
         .if [ebx].hll_flags & T_HLL_PROC
             .return .if LKRenderHllProc(dst, j, tokenarray) == ERROR
         .endif
+
         mov al,[ebx].token
         .if al == T_CL_BRACKET
             dec brcount
@@ -2794,7 +2795,7 @@ local   rc:         int_t,
             ; optimisation: if line at 'test' label is just a jump,
             ; dont create label and don't jump!
             ;
-            .if _memicmp( edi, "jmp", 3 )
+            .if tmemicmp( edi, "jmp", 3 )
 
                 mov [esi].labels[LTEST],GetHllLabel()
                 AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LTEST*4], &buff ) )

@@ -5,10 +5,7 @@ ifndef __LIBC_INC
 endif
 
 .pragma comment(lib, libc, msvcrt)
-
-include crtdefs.inc
-
-.pragma pack(push, _CRT_PACKING)
+.pragma pack(push, size_t)
 
 ifndef _WCHAR_T_DEFINED
 define _WCHAR_T_DEFINED
@@ -27,10 +24,10 @@ endif
 
 ifndef _TIME_T_DEFINED
 define _TIME_T_DEFINED		;; avoid multiple def's of time_t
-ifdef _USE_32BIT_TIME_T
-time_t typedef __time32_t	;; time value
+ifdef _WIN64
+time_t typedef int64_t
 else
-time_t typedef __time64_t	;; time value
+time_t typedef long_t
 endif
 endif
 
@@ -103,14 +100,6 @@ tm_isdst	SINT ?	;; daylight savings time flag
 tm		ENDS
 endif
 
-ifndef _TIME_T_DEFINED
-define _TIME_T_DEFINED
-ifdef _WIN64
-time_t		typedef sqword
-else
-time_t		typedef sdword
-endif
-endif
 LPTIME		typedef ptr time_t
 
 asctime		proto __cdecl :ptr tm
@@ -137,18 +126,16 @@ _strdate	equ <strdate>
 _strtime	equ <strtime>
 
 ifndef _WTIME_DEFINED
-
+define _WTIME_DEFINED
 _wasctime	proto __cdecl :ptr tm
 _wctime		proto __cdecl :ptr time_t
 wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
 _wstrdate	proto __cdecl :ptr wchar_t
 _wstrtime	proto __cdecl :ptr wchar_t
-
-_WTIME_DEFINED	equ 1
 endif
 
+ifndef __UNIX__
 if not defined(_MSVCRT) or defined(_CRTBLD)
-
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
 externdef	_timezone:DWORD
@@ -175,7 +162,7 @@ ftimetostr	proto __cdecl :LPSTR, :LPFILETIME
 TDateToString	proto __cdecl :ptr sbyte, :time_t
 SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
-
+endif
 endif
 .pragma pack(pop)
 .pragma list(pop)

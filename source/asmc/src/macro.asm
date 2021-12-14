@@ -386,7 +386,6 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_
             ;; now see if it has a default value or is required
             .if [ebx].token == T_COLON
                 add ebx,16
-                mov edx,mac
                 .if [ebx].token == T_DIRECTIVE && [ebx].dirtype == DRT_EQUALSGN
                     add ebx,16
                     ;; allowed syntax is parm:=<literal>
@@ -406,12 +405,13 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_
                     mov esi,edx
                     mov edi,eax
                     add ebx,16
-                .elseif !_stricmp( [ebx].string_ptr, "REQ" )
+                .elseif !tstricmp( [ebx].string_ptr, "REQ" )
                     ;; required parameter
                     mov [esi].required,TRUE
                     add ebx,16
                 .elseif( [ebx].token == T_RES_ID && [ebx].tokval == T_VARARG )
                     ;; more parameters can follow
+                    mov edx,mac
                     or [edx].asym.mac_flag,M_ISVARARG
                     .if ( [ebx+16].token != T_FINAL )
                         asmerr( 2129 )
@@ -425,10 +425,12 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_
                         asmerr( 2143 )
                         .break
                     .endif
+                    mov edx,mac
                     or [edx].asym.mac_flag,M_LABEL
                     add ebx,16
-                .elseif !_stricmp( [ebx].string_ptr, "VARARGML" )
+                .elseif !tstricmp( [ebx].string_ptr, "VARARGML" )
                     ;; more parameters can follow, multi lines possible
+                    mov edx,mac
                     or [edx].asym.mac_flag,M_ISVARARG or M_MULTILINE
                     .if [ebx+16].token != T_FINAL
                         asmerr( 2129 )

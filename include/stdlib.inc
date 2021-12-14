@@ -1,41 +1,111 @@
-.pragma list(push, 0)
 ifndef __STDLIB_INC
 define __STDLIB_INC
+include libc.inc
 
-include crtdefs.inc
+ifndef _ERRNO_T_DEFINED
+define _ERRNO_T_DEFINED
+errno_t typedef sdword
+endif
+
+ifndef _INTPTR_T_DEFINED
+define _INTPTR_T_DEFINED
+ifdef _WIN64
+intptr_t typedef sqword
+else
+intptr_t typedef sdword
+endif
+endif
+
+ifndef _UINTPTR_T_DEFINED
+define _UINTPTR_T_DEFINED
+ifdef _WIN64
+uintptr_t typedef qword
+else
+uintptr_t typedef dword
+endif
+endif
+
+ifndef _THREADLOCALEINFO
+define _THREADLOCALEINFO
+ifndef LPSHORT
+LPINT	typedef ptr sdword
+LPSHORT typedef ptr sword
+endif
+.template locrefcount
+    locale		LPSTR ?
+    wlocale		LPWSTR ?
+    refcount		LPINT ?
+    wrefcount		LPINT ?
+   .ends
+.template threadlocinfo
+    refcount		SINT ?
+    lc_codepage		UINT ?
+    lc_collate_cp	UINT ?
+    lc_time_cp		UINT ?
+    lc_category		locrefcount 6 dup(<>)
+    lc_clike		SINT ?
+    mb_cur_max		SINT ?
+    lconv_intl_refcount LPINT ?
+    lconv_num_refcount	LPINT ?
+    lconv_mon_refcount	LPINT ?
+    lconvp		PVOID ?
+    ctype1_refcount	LPINT ?
+    ctype1		LPSHORT ?
+    pctype		LPSHORT ?
+    pclmap		LPSTR ?
+    pcumap		LPSTR ?
+    lc_time_curr	ptr __lc_time_data ?
+    locale_name		LPWSTR 6 dup(?)
+   .ends
+    pthreadlocinfo	typedef ptr threadlocinfo
+endif
+
+ifndef _locale_t
+.template _locale_tstruct
+    locinfo		ptr threadlocinfo ?
+    mbcinfo		ptr threadmbcinfo ?
+   .ends
+   _locale_t		typedef ptr _locale_tstruct
+endif
+
+ifndef __STDC_WANT_SECURE_LIB__
+define __STDC_WANT_SECURE_LIB__ 1
+endif
+
 include limits.inc
 
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _ONEXIT_T_DEFINED
 define _ONEXIT_T_DEFINED
+
 ifndef _M_CEE_PURE
 CALLBACKC(_onexit_t)
 else
 CALLBACKC(_onexit_t)
 _onexit_m_t typedef _onexit_t
 endif
+
 ifdef _M_CEE_MIXED
 CALLBACKC(_onexit_m_t)
 endif
+
 if not __STDC__
 onexit_t typedef _onexit_t
 endif
+
 endif
 
 ifndef _DIV_T_DEFINED
 define _DIV_T_DEFINED
-
 _div_t		struct
 quot		int_t ?
 rem		int_t ?
 _div_t		ends
-
 _ldiv_t		struct
 quot		long_t ?
 rem		long_t ?
 _ldiv_t		ends
-
 _lldiv_t	struct
 quot		int64_t ?
 rem		int64_t ?
@@ -46,7 +116,6 @@ ifndef _CRT_DOUBLE_DEC
 define _CRT_DOUBLE_DEC
 
 ifndef _LDSUPPORT
-
 .pragma pack(push, 4)
 _LDOUBLE struct
     ld	db 10 dup(?)
@@ -94,7 +163,7 @@ endif
 __MB_CUR_MAX macro ptloci
 	exitm<ptloci.mb_cur_max>
 	endm
-endif
+endif ; _CRTBLD
 if defined(_WIN64) or defined(_MSVCRT)
 MB_CUR_MAX equ <___mb_cur_max_func()>
 else
@@ -108,7 +177,7 @@ __mb_cur_max equ <[__p___mb_cur_max()]>
 endif
 ___mb_cur_max_func proto __cdecl
 ___mb_cur_max_l_func proto __cdecl :_locale_t
-endif
+endif ; MB_CUR_MAX
 
 _MAX_PATH		equ 260
 _MAX_DRIVE		equ 3
@@ -137,7 +206,6 @@ endif
 
 ifndef _M_CEE_PURE
 CALLBACKC(_invalid_parameter_handler, :wstring_t, :wstring_t, :wstring_t, :uint_t, :uintptr_t)
-
 _set_invalid_parameter_handler proto __cdecl :_invalid_parameter_handler
 _get_invalid_parameter_handler proto __cdecl
 endif
@@ -172,13 +240,11 @@ __sys_nerr	proto __cdecl
 _dosmaperr	proto __cdecl :ulong_t
 
 if defined (_DLL) and defined (_M_IX86)
-;ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 __p___argc	proto __cdecl
 __p___argv	proto __cdecl
 __p___wargv	proto __cdecl
 __p__environ	proto __cdecl
 __p__wenviron	proto __cdecl
-;endif
 __p__pgmptr	proto __cdecl
 __p__wpgmptr	proto __cdecl
 ifdef _CRTBLD
@@ -205,6 +271,14 @@ externdef	_wenviron:warray_t
 externdef	_pgmptr:string_t
 externdef	_wpgmptr:wstring_t
 ifdef _CRTBLD
+ifndef _DEFINE_SET_FUNCTION
+_DEFINE_SET_FUNCTION macro _FuncName, _Type, _VarName
+_FuncName proto watcall _Value:_Type {
+    mov _VarName,_Value
+    }
+exitm<>
+endm
+endif
 _DEFINE_SET_FUNCTION(_set_pgmptr, string_t, _pgmptr)
 _DEFINE_SET_FUNCTION(_set_wpgmptr, wstring_t, _wpgmptr)
 endif
@@ -253,6 +327,7 @@ abs		proto __cdecl :int_t
 labs		proto __cdecl :long_t
 llabs		proto __cdecl :int64_t
 _abs64		proto __cdecl :int64_t
+
 ifdef _M_CEE
 _atexit_m_appdomain proto __cdecl :ptr_t
 ifdef _M_CEE_MIXED
@@ -262,7 +337,7 @@ _atexit_m macro _Function
 	exitm<_atexit_m_appdomain(_Function)>
 	endm
 endif
-endif ;; defined (_M_CEE)
+endif ; _M_CEE
 
 ifdef _M_CEE_PURE
 _atexit_m macro _Function
@@ -271,6 +346,7 @@ _atexit_m macro _Function
 else
 atexit		proto __cdecl :ptr_t
 endif
+
 atof		proto __cdecl :string_t
 _atof_l		proto __cdecl :string_t, :_locale_t
 atoi		proto __cdecl :string_t
@@ -307,7 +383,6 @@ if __STDC_WANT_SECURE_LIB__
 getenv_s	proto __cdecl :ptr size_t, :string_t, :size_t, :string_t
 endif
 _dupenv_s	proto __cdecl :array_t, :ptr size_t, :string_t
-endif
 
 _itoa_s		proto __cdecl :int_t, :string_t, :size_t, :int_t
 _i64toa_s	proto __cdecl :int64_t, :string_t, :size_t, :int_t
@@ -434,8 +509,6 @@ wcstold		proto __cdecl :wstring_t, :warray_t
 _wcstold_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
 wcstof		proto __cdecl :wstring_t, :warray_t
 _wcstof_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
-
-ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 
 _wgetenv	proto __cdecl :wstring_t
 _wgetenv_s	proto __cdecl :ptr size_t, :wstring_t, :size_t, :wstring_t
@@ -567,13 +640,10 @@ __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-
 setargv		proto __cdecl :ptr, :string_t
 setwargv	proto __cdecl :ptr, :ptr wchar_t
 _atoi128	proto __cdecl :string_t
 qsort4		proto :ptr, :size_t, :LPQSORTCMD
-
 endif
 
-endif
-.pragma list(pop)
+endif ; __STDLIB_INC

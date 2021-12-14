@@ -871,8 +871,8 @@ get_special_symbol proc fastcall uses esi edi ebx buf:token_t , p:ptr line_statu
         ; operator - it will cause a 'operator expected' error msg later.
         ; the tokens are stored as one- or two-byte sized "strings".
         ;
-        mov edx,eax
         strchr("=!<>&|", eax)
+        mov edx,[edi]
 
         .if eax && [esi].flags2 & DF_CEXPR
 

@@ -53,11 +53,11 @@ _get_current_locale	proto __cdecl
 _create_locale		proto __cdecl :int_t, :string_t
 
 ifndef _locale_t
-_locale_tstruct		STRUC
-locinfo			ptr threadlocinfo ?
-mbcinfo			ptr threadmbcinfo ?
-_locale_tstruct		ENDS
-_locale_t		typedef ptr _locale_tstruct
+.template _locale_tstruct
+    locinfo		ptr threadlocinfo ?
+    mbcinfo		ptr threadmbcinfo ?
+   .ends
+   _locale_t		typedef ptr _locale_tstruct
 endif
 _free_locale		proto __cdecl :_locale_t
 

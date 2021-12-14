@@ -72,11 +72,11 @@ ComAlloc proc uses esi edi ebx buffer:string_t, tokenarray:token_t
   local name[16]:sbyte
 
     mov ebx,tokenarray
-    mov edi,_stricmp([ebx].string_ptr, "@ComAlloc")
+    mov edi,tstricmp([ebx].string_ptr, "@ComAlloc")
     .if edi
         .while [ebx].token != T_FINAL
             .if [ebx].token == T_ID
-                mov edi,_stricmp([ebx].string_ptr, "@ComAlloc")
+                mov edi,tstricmp([ebx].string_ptr, "@ComAlloc")
                 .break .if !eax
             .endif
             add ebx,16

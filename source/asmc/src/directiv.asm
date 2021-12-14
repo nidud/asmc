@@ -470,7 +470,7 @@ SegOrderDirective proc i:int_t, tokenarray:token_t
     .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF || \
         ( Options.output_format == OFORMAT_BIN && ModuleInfo.sub_format == SFORMAT_PE ) )
         .if ( Parse_Pass == PASS_1 )
-            asmerr( 3006, _strupr( [eax].asm_tok.string_ptr ) )
+            asmerr( 3006, tstrupr( [eax].asm_tok.string_ptr ) )
         .endif
     .else
         mov ModuleInfo.segorder,GetSflagsSp( [eax].asm_tok.tokval )

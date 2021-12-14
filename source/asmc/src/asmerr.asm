@@ -575,7 +575,7 @@ asmerr proc __cdecl uses esi edi ebx edx ecx value:int_t, args:vararg
                     lodsd
                     .break .if !eax
 
-                    .if _stricmp(eax, ebx) == 0
+                    .if tstricmp(eax, ebx) == 0
 
                         strcpy(&masm, ebx)
                         mov args,strcat(eax, " -- use option /Znk for Masm keywords" )

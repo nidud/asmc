@@ -1360,7 +1360,7 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
     mov ebx,tokenarray.tokptr(i)
     .if ( [ebx].token == T_ID || [ebx].token == T_DIRECTIVE )
         mov token,[ebx].string_ptr
-        .if ( _stricmp( eax, "PRIVATE") == 0 )
+        .if ( tstricmp( eax, "PRIVATE") == 0 )
             .if ( IsPROC )  ; v2.11: ignore PRIVATE for PROTO
                 and [edi].asym.flags,not S_ISPUBLIC
 
@@ -1373,13 +1373,13 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
                 and [esi].flags,not PROC_ISEXPORT
             .endif
             inc i
-        .elseif ( _stricmp( token, "PUBLIC" ) == 0 )
+        .elseif ( tstricmp( token, "PUBLIC" ) == 0 )
             .if ( IsPROC )
                 or  [edi].asym.flags,S_ISPUBLIC
                 and [esi].flags,not PROC_ISEXPORT
             .endif
             inc i
-        .elseif ( _stricmp(token, "EXPORT") == 0 )
+        .elseif ( tstricmp(token, "EXPORT") == 0 )
             .if ( IsPROC )  ;; v2.11: ignore EXPORT for PROTO
                 or [edi].asym.flags,S_ISPUBLIC
                 or [esi].flags,PROC_ISEXPORT
@@ -1429,9 +1429,9 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
 
                 .if ( [ebx].token == T_ID )
 
-                    .if ( _stricmp( [ebx].string_ptr, "FORCEFRAME") == 0 )
+                    .if ( tstricmp( [ebx].string_ptr, "FORCEFRAME") == 0 )
                         or [esi].flags,PROC_FORCEFRAME
-                    .elseif ( ModuleInfo.Ofssize != USE64 && (_stricmp( [ebx].string_ptr, "LOADDS") == 0 ) )
+                    .elseif ( ModuleInfo.Ofssize != USE64 && (tstricmp( [ebx].string_ptr, "LOADDS") == 0 ) )
                         .if ( ModuleInfo._model == MODEL_FLAT )
                             asmerr( 8014 )
                         .else

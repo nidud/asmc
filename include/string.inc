@@ -6,6 +6,12 @@ ifndef __LIBC_INC
 endif
 .pragma comment(lib, libc, msvcrt)
 
+ifdef __UNIX__
+define _stricmp <strcasecmp>
+define _memicmp <strncasecmp>
+define _strdup <strdup>
+endif
+
 memchr		proto __cdecl :ptr, :int_t, :size_t
 memcpy		proto __cdecl :ptr, :ptr, :size_t
 memmove		proto __cdecl :ptr, :ptr, :size_t

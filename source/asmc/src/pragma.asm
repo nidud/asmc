@@ -388,7 +388,7 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
                 .new u[256]:char_t
 
-                _strupr( strcpy( &u, esi ) )
+                tstrupr( strcpy( &u, esi ) )
                 .while ( strchr( eax, '-' ) )
                     mov byte ptr [eax],'_'
                 .endw

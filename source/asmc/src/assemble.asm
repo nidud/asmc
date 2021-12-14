@@ -872,7 +872,7 @@ get_module_name proc private uses esi edi
     ; as part of a segment name in certain memory models.
     ;
     lea esi,ModuleInfo.name
-    _strupr(esi)
+    tstrupr(esi)
     xor eax,eax
     .while 1
 	lodsb

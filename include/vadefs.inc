@@ -2,8 +2,8 @@ ifndef _INC_VADEFS
 define _INC_VADEFS
 .pragma list(push, 0)
 
-define _CRT_PACKING 8
-.pragma pack(push, 8)
+define _CRT_PACKING size_t
+.pragma pack(push, _CRT_PACKING)
 
 ifndef _UINTPTR_T_DEFINED
 define _UINTPTR_T_DEFINED

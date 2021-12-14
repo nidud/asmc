@@ -87,7 +87,7 @@ else
 INC_PATH_DELIM      equ <';'>
 INC_PATH_DELIM_STR  equ <";">
 DIR_SEPARATOR       equ <'\'>
-filecmp             equ <_stricmp>
+filecmp             equ <tstricmp>
 ISPC macro x
     exitm<(x == '/' || x == '\' || x == ':')>
     endm

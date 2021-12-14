@@ -39,7 +39,7 @@ UCaseMangler proc fastcall sym:asym_t, buffer:string_t
     lea ecx,[eax+1]
     rep movsb
     mov esi,eax
-    _strupr( edx )
+    tstrupr( edx )
     mov eax,esi
     ret
 
@@ -155,7 +155,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
     .if !( [ecx].flag1 & S_ISPROC )
         xor eax,eax
     .else
-        _stricmp( [ecx].name, "main" )
+        tstricmp( [ecx].name, "main" )
         mov ecx,esi
     .endif
     .if eax == 0

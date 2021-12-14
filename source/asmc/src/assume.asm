@@ -343,7 +343,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         assume edi:ptr assume_info
 
         .if ( [ebx].token == T_ID )
-            .if !_stricmp( [ebx].string_ptr, &szNothing )
+            .if !tstricmp( [ebx].string_ptr, &szNothing )
 
                 AssumeInit(-1)
                 inc i
@@ -390,7 +390,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
 
         ;; check for ERROR and NOTHING */
 
-        .if !_stricmp( [ebx].string_ptr, &szError )
+        .if !tstricmp( [ebx].string_ptr, &szError )
             .if ( segtable )
                 mov [edi].is_flat,FALSE
                 mov [edi].error,TRUE
@@ -404,7 +404,7 @@ AssumeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
             .endif
             mov [edi].symbol,NULL
             inc i
-        .elseif( !_stricmp( [ebx].string_ptr, &szNothing ))
+        .elseif( !tstricmp( [ebx].string_ptr, &szNothing ))
             .if ( segtable )
                 mov [edi].is_flat,FALSE
                 mov [edi].error,FALSE

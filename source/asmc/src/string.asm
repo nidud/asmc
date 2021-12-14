@@ -20,7 +20,7 @@ include fastpass.inc
 include listing.inc
 include segment.inc
 include lqueue.inc
-include quadmath.inc
+include qfloat.inc
 
 externdef list_pos:DWORD
 
@@ -45,6 +45,92 @@ index       int_t ?
 flt_item    ends
 
     .code
+
+tstrupr proc string:string_t
+
+    mov ecx,string
+    .while 1
+
+        mov al,[ecx]
+        .break .if !al
+
+        sub al,'a'
+        cmp al,'Z' - 'A' + 1
+        sbb al,al
+        and al,'a' - 'A'
+        xor [ecx],al
+        inc ecx
+    .endw
+    mov eax,string
+    ret
+tstrupr endp
+
+tmemicmp proc uses esi edi s1:string_t, s2:string_t, l:size_t
+
+    mov esi,s1
+    mov edi,s2
+    mov ecx,l
+lupe:
+    and ecx,ecx
+    jz  done
+    sub ecx,1
+    mov al,[esi]
+    cmp al,[edi]
+    lea esi,[esi+1]
+    lea edi,[edi+1]
+    jz  lupe
+
+    mov ah,[edi-1]
+    sub ax,'AA'
+    cmp al,'Z'-'A' + 1
+    sbb dl,dl
+    and dl,'a'-'A'
+    cmp ah,'Z'-'A' + 1
+    sbb dh,dh
+    and dh,'a'-'A'
+    add ax,dx
+    add ax,'AA'
+    cmp al,ah
+    jz  lupe
+
+    sbb ecx,ecx
+    sbb ecx,-1
+done:
+    mov eax,ecx
+    ret
+tmemicmp endp
+
+tstricmp proc uses esi dst:string_t, src:string_t
+
+    mov edx,dst
+    mov esi,src
+    mov eax,-1
+lupe:
+    test al,al
+    jz  toend
+    mov al,[esi]
+    cmp al,[edx]
+    lea esi,[esi+1]
+    lea edx,[edx+1]
+    je  lupe
+    mov ah,[edx-1]
+    sub ax,'AA'
+    cmp al,'Z'-'A'+1
+    sbb cl,cl
+    and cl,'a'-'A'
+    cmp ah,'Z'-'A'+1
+    sbb ch,ch
+    and ch,'a'-'A'
+    add ax,cx
+    add ax,'AA'
+    cmp ah,al
+    je  lupe
+    sbb al,al
+    sbb al,-1
+toend:
+    movsx eax,al
+    ret
+tstricmp endp
 
     B equ <byte ptr>
     W equ <word ptr>
@@ -591,7 +677,7 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
 
     ; find first instance of macro in line
 
-    mov edi,_stricmp([ebx].string_ptr, "@CStr")
+    mov edi,tstricmp([ebx].string_ptr, "@CStr")
 
     .if edi
 
@@ -599,7 +685,7 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
 
             .if [ebx].token == T_ID
 
-                .break .if !_stricmp([ebx].string_ptr, "@CStr")
+                .break .if !tstricmp([ebx].string_ptr, "@CStr")
             .endif
             add ebx,16
         .endw
@@ -732,7 +818,7 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
                 .if ebx
-                    .if _stricmp( [ebx].name, "_DATA" )
+                    .if tstricmp( [ebx].name, "_DATA" )
                         inc esi
                         AddLineQueue( ".data" )
                     .endif
@@ -743,7 +829,7 @@ CString proc private uses esi edi ebx buffer:string_t, tokenarray:token_t
                 .endif
                 AddLineQueue( cursrc )
                 .if esi
-                    .if !_stricmp( [ebx].name, "CONST" )
+                    .if !tstricmp( [ebx].name, "CONST" )
                         AddLineQueue( ".const" )
                     .elseif esi == 2
                         AddLineQueue( ".data" )

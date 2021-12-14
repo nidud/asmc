@@ -737,7 +737,7 @@ omf_write_export proc private uses esi edi ebx
             .endif
             ; v2.11: case mapping was missing
             .if ( ModuleInfo.convert_uppercase )
-                _strupr( &[edi+3] )
+                tstrupr( &[edi+3] )
             .endif
 if MAX_ID_LEN gt 255
             .if ( len > 255 )
@@ -973,7 +973,7 @@ omf_write_lnames proc private uses esi edi ebx
         ; lnames are converted for casemaps ALL and NOTPUBLIC
 
         .if ( ModuleInfo.case_sensitive == FALSE )
-            _strupr( edi )
+            tstrupr( edi )
         .endif
 
         add edi,[ebx].asym.name_size ; overwrite the null char
@@ -1090,7 +1090,7 @@ if MAX_ID_LEN gt 255
             .endif
 endif
             .if ( ModuleInfo.convert_uppercase )
-                _strupr( &buffer )
+                tstrupr( &buffer )
             .endif
 
             mov eax,rec_size
@@ -1262,7 +1262,7 @@ endif
             ; v2.11: case mapping was missing
 
             .if ( ModuleInfo.convert_uppercase )
-                _strupr( &buffer )
+                tstrupr( &buffer )
             .endif
 
             mov varsize,SizeFromMemtype( [esi].asym.mem_type, ModuleInfo.Ofssize, [esi].asym.type )
@@ -1507,7 +1507,7 @@ omf_write_pubdef proc private uses esi edi ebx
                     mov len,Mangle( sym, edi )
                     mov [edi-1],al
                     .if ( ModuleInfo.case_sensitive == FALSE )
-                        _strupr( edi )
+                        tstrupr( edi )
                     .endif
                     mov ecx,len
                     inc ecx
@@ -1560,7 +1560,7 @@ if MAX_ID_LEN gt MAX_ID_LEN_OMF
 endif
             mov len,eax
             .if ( ModuleInfo.convert_uppercase )
-                _strupr( edi )
+                tstrupr( edi )
             .endif
             mov curr_seg,[ebx].asym.segm
             mov curr32,is32

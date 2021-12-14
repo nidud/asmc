@@ -7,14 +7,19 @@
 include io.inc
 include stdlib.inc
 include signal.inc
+ifndef __UNIX__
 include winbase.inc
+endif
 include asmc.inc
 include symbols.inc
 include input.inc
-include tchar.inc
 
-ifdef _WATCOM
+ifdef __UNIX__
+ifdef __WATCOM__
 extern _cstart_: byte
+endif
+.data
+_pgmptr string_t 0
 endif
 
 .code
@@ -159,7 +164,7 @@ endif
 
 GeneralFailure endp
 
-main proc argc:int_t, argv:array_t
+main proc uses esi edi argc:int_t, argv:array_t
 
   .new rc:int_t = 0
   .new numArgs:int_t = 0
@@ -180,14 +185,18 @@ endif
 ifdef __ASMC64__
     define_name( "_WIN64", "1" )
 ifdef __UNIX__
-    define_name( "_LINUX",   "2" )
     define_name( "__UNIX__", "1" )
+    define_name( "_LINUX",   "2" )
 endif
 endif
     .if !getenv("ASMC")     ; v2.21 -- getenv() error..
         lea eax,@CStr("")
     .endif
     mov ecx,argv
+ifdef __UNIX__
+    mov edx,[ecx]
+    mov _pgmptr,edx
+endif
     mov [ecx],eax
 
     .while ParseCmdline(argv, &numArgs)
@@ -237,5 +246,5 @@ endif
 
 main endp
 
-    end _tstart
+    end
 

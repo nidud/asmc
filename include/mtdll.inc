@@ -41,7 +41,7 @@ __FINALLY		equ <>;}__finally{
 __END_TRY_FINALLY	equ <>;}
 
 ifndef _THREADMBCINFO
-_THREADMBCINFO		equ <>
+define _THREADMBCINFO
 threadmbcinfo		STRUC
 refcount		SINT ?
 mbcodepage		SINT ?
@@ -66,8 +66,7 @@ LC_STR_TYPE		equ 1
 LC_WSTR_TYPE		equ 2
 
 ifndef _SETLOC_STRUCT_DEFINED
-_SETLOC_STRUCT_DEFINED equ <>
-
+define _SETLOC_STRUCT_DEFINED
 _is_ctype_compatible	STRUC
 id			dd ?
 is_clike		SINT ?

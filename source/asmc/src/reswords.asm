@@ -568,7 +568,7 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
 
     .if ( ResWordTable[ebx*8].len == length )
 
-        .return .if !_memicmp( &newname, ResWordTable[ebx*8].name, length )
+        .return .if !tmemicmp( &newname, ResWordTable[ebx*8].name, length )
     .endif
 
     RemoveResWord( ebx )
@@ -745,7 +745,7 @@ IsKeywordDisabled proc uses ebx name:string_t, len:int_t
         mov ecx,ResWordTable[ebx*8].name
         mov eax,len
         .if byte ptr [ecx+eax] == 0
-            .return(TRUE) .if !_memicmp( name, ecx, eax )
+            .return(TRUE) .if !tmemicmp( name, ecx, eax )
         .endif
     .endf
     mov eax,FALSE

@@ -74,7 +74,7 @@ RenderCase proc uses esi edi ebx hll:ptr hll_item, case:ptr hll_item, buffer:str
         mov BYTE PTR [eax],0
         add eax,2
         push    eax
-        AddLineQueueX( " cmp %s, %s", [esi].condlines, edx )
+        AddLineQueueX( " cmp %s, %s", [esi].condlines, [ebx].hll_item.condlines )
         mov edi,GetHllLabel()
         LQJumpLabel( T_JB, edi )
         pop eax
@@ -82,7 +82,7 @@ RenderCase proc uses esi edi ebx hll:ptr hll_item, case:ptr hll_item, buffer:str
         LQJumpLabel( T_JBE, [ebx].hll_item.labels[LSTART*4] )
         LQAddLabelId(edi)
     .else
-        AddLineQueueX( " cmp %s, %s", [esi].condlines, edx )
+        AddLineQueueX( " cmp %s, %s", [esi].condlines, [ebx].hll_item.condlines )
         LQJumpLabel( T_JE, [ebx].hll_item.labels[LSTART*4] )
     .endif
     ret
@@ -433,11 +433,12 @@ RenderMultiCase proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, buffer:ptr 
           .case T_COMMA
             .endc .if edi
 
-            mov edx,[ebx].tokpos
-            mov BYTE PTR [edx],0
+            mov edi,[ebx].tokpos
+            mov BYTE PTR [edi],0
             strcpy( buffer, [esi].tokpos )
             lea esi,[ebx+16]
-            mov BYTE PTR [edx],','
+            mov BYTE PTR [edi],','
+            xor edi,edi
 
             inc result
             AddLineQueueX( " .case %s", buffer )
@@ -530,7 +531,7 @@ endif
             .endif
 ifndef __ASMC64__
         .else
-            .if _stricmp( "al", ebx )
+            .if tstricmp( "al", ebx )
 
                 AddLineQueueX( " mov al, %s", ebx )
             .endif
@@ -547,7 +548,7 @@ ifndef __ASMC64__
             .if eax & HLLF_ARGMEM
 
                 AddLineQueueX( " mov %r, word ptr %s", edx, ebx )
-            .elseif _stricmp( ebx, &buffer )
+            .elseif tstricmp( ebx, &buffer )
 
                 AddLineQueueX( " mov %r,%s", edx, ebx )
             .endif
@@ -568,7 +569,7 @@ ifndef __ASMC64__
         .if ModuleInfo.Ofssize == USE32
             .if eax & HLLF_ARGMEM
                 AddLineQueueX( " mov %r, dword ptr %s", edx, ebx )
-            .elseif _stricmp( ebx, &buffer )
+            .elseif tstricmp( ebx, &buffer )
                 AddLineQueueX( " mov %r, %s", edx, ebx )
             .endif
         .elseif eax & HLLF_ARGMEM
@@ -809,14 +810,14 @@ ifndef __ASMC64__
                 .endif
                 .if [esi].flags & HLLF_ARGREG
                     .if ModuleInfo.xflag & OPT_REGAX
-                        .if _stricmp("ax", ebx)
+                        .if tstricmp("ax", ebx)
                             AddLineQueueX( " mov ax, %s", ebx )
                         .endif
                         AddLineQueue(" xchg ax, bx")
                     .else
                         AddLineQueue(" push bx")
                         AddLineQueue(" push ax")
-                        .if _stricmp("bx", ebx)
+                        .if tstricmp("bx", ebx)
                             AddLineQueueX(" mov bx, %s", ebx)
                         .endif
                     .endif
@@ -902,7 +903,7 @@ else
                 ModuleInfo.xflag & OPT_REGAX
 endif
 
-                .if !_memicmp( ebx, "r11", 3 )
+                .if !tmemicmp( ebx, "r11", 3 )
 
                     asmerr( 2008, "register r11 overwritten by .SWITCH" )
                 .endif
@@ -957,7 +958,7 @@ endif
                         GetSwitchArg( T_RAX, [esi].flags, ebx )
                     .else
                         AddLineQueue(" push rax")
-                        .if _memicmp(ebx, "rax", 3)
+                        .if tmemicmp(ebx, "rax", 3)
                             AddLineQueueX(" mov rax, %s", ebx)
                         .endif
                     .endif
@@ -1201,7 +1202,7 @@ ifndef __ASMC64__
     .if cl == USE16
 
         .if ModuleInfo.xflag & OPT_REGAX
-            .if _stricmp( "ax", ebx )
+            .if tstricmp( "ax", ebx )
                 AddLineQueueX( " mov ax, %s", ebx )
             .endif
             AddLineQueue ( " xchg ax, bx" )
@@ -1213,7 +1214,7 @@ ifndef __ASMC64__
             AddLineQueue( " push ax" )
             AddLineQueue( " push bx" )
             AddLineQueue( " push ax" )
-            .if _stricmp( "bx", ebx )
+            .if tstricmp( "bx", ebx )
                 AddLineQueueX( " mov bx, %s", ebx )
             .endif
             AddLineQueue ( " add bx, bx" )
@@ -1237,7 +1238,7 @@ ifndef __ASMC64__
 else
     .if ModuleInfo.xflag & OPT_REGAX
 endif
-        .ifd !_memicmp( ebx, "r11", 3 )
+        .ifd !tmemicmp( ebx, "r11", 3 )
 
             asmerr( 2008, "register r11 overwritten by .SWITCH" )
         .endif
@@ -1253,7 +1254,7 @@ endif
     .else
         AddLineQueue( " push rax" )
         AddLineQueue( " push rdx" )
-        .if _memicmp( ebx, "rax", 3 )
+        .if tmemicmp( ebx, "rax", 3 )
             AddLineQueueX( " mov rax, %s", ebx )
         .endif
         AddLineQueueX( " lea rdx, %s", &l_exit )

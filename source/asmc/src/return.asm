@@ -12,7 +12,7 @@ include asmc.inc
 include proc.inc
 include hllext.inc
 include parser.inc
-include atofloat.inc
+include qfloat.inc
 
     .code
 

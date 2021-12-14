@@ -26,7 +26,7 @@ include tokenize.inc
 include macro.inc
 include condasm.inc
 include listing.inc
-include fltintrn.inc
+include qfloat.inc
 include lqueue.inc
 
 public MacroLocals
@@ -936,7 +936,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                 .while islspace( [esi] )
                                     inc esi
                                 .endw
-                                .if !_memicmp( esi, [ebx+16].string_ptr, len )
+                                .if !tmemicmp( esi, [ebx+16].string_ptr, len )
                                     mov ecx,len ;; label found!
                                     .break .if !is_valid_id_char( [esi+ecx]  )
                                 .endif

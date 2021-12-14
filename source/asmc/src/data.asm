@@ -11,7 +11,6 @@
 
 include malloc.inc
 include float.inc
-include crtl.inc
 
 include asmc.inc
 include memalloc.inc
@@ -26,7 +25,7 @@ include fastpass.inc
 include tokenize.inc
 include macro.inc
 include omf.inc
-include atofloat.inc
+include qfloat.inc
 
 segm_override proto :ptr expr, :ptr code_info
 extern SegOverride:ptr asym

@@ -127,7 +127,7 @@ ContextDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
         .for ( esi = 0, edi = -1: esi < lengthof(typetab): esi++ )
 
-            .if ( _stricmp( contextnames[esi*4], [ebx].string_ptr ) == 0 )
+            .if ( tstricmp( contextnames[esi*4], [ebx].string_ptr ) == 0 )
                 mov edi,typetab[esi*4]
                 .break
             .endif

@@ -103,7 +103,7 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
     .while ( [ebx].token != T_FINAL )
         mov esi,[ebx].string_ptr
-        _strupr( esi )
+        tstrupr( esi )
         .for ( edi = 0 : edi < TABITEMS : edi++ )
             .break .if ( !strcmp( esi, optiontab[edi*4] ) )
         .endf
@@ -172,13 +172,13 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             mov ModuleInfo.NoSignExtend,TRUE
         .case OP_CASEMAP
             .break .if ( [ebx].token != T_ID )
-            .if ( !_stricmp( esi, "NONE" ) )
+            .if ( !tstricmp( esi, "NONE" ) )
                 mov ModuleInfo.case_sensitive,TRUE                 ;; -Cx
                 mov ModuleInfo.convert_uppercase,FALSE
-            .elseif ( !_stricmp( esi, "NOTPUBLIC" ) )
+            .elseif ( !tstricmp( esi, "NOTPUBLIC" ) )
                 mov ModuleInfo.case_sensitive,FALSE                ;; -Cp
                 mov ModuleInfo.convert_uppercase,FALSE
-            .elseif ( !_stricmp( esi, "ALL" ) )
+            .elseif ( !tstricmp( esi, "ALL" ) )
                 mov ModuleInfo.case_sensitive,FALSE                ;; -Cu
                 mov ModuleInfo.convert_uppercase,TRUE
             .else
@@ -189,11 +189,11 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .case OP_PROC ;; PRIVATE | PUBLIC | EXPORT
             .switch ( [ebx].token )
             .case T_ID
-                .if ( !_stricmp( esi, "PRIVATE" ) )
+                .if ( !tstricmp( esi, "PRIVATE" ) )
                     mov ModuleInfo.procs_private,TRUE
                     mov ModuleInfo.procs_export,FALSE
                     inc i
-                .elseif ( !_stricmp( esi, "EXPORT" ) )
+                .elseif ( !tstricmp( esi, "EXPORT" ) )
                     mov ModuleInfo.procs_private,FALSE
                     mov ModuleInfo.procs_export,TRUE
                     inc i
@@ -231,9 +231,9 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .if ( ModuleInfo.proc_prologue )
                 mov ModuleInfo.proc_prologue,NULL
             .endif
-            .if ( !_stricmp( esi, "NONE" ) )
+            .if ( !tstricmp( esi, "NONE" ) )
                 mov ModuleInfo.prologuemode,PEM_NONE
-            .elseif ( !_stricmp( esi, "PROLOGUEDEF" ) )
+            .elseif ( !tstricmp( esi, "PROLOGUEDEF" ) )
                 mov ModuleInfo.prologuemode,PEM_DEFAULT
             .else
                 mov ModuleInfo.prologuemode,PEM_MACRO
@@ -245,13 +245,13 @@ OptionDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .if ( [ebx].token != T_ID )
                 .return( asmerr( 2008, [ebx].tokpos ) )
             .endif
-            .if ( !_stricmp( esi, "FLAGS" ) )
+            .if ( !tstricmp( esi, "FLAGS" ) )
                 mov ModuleInfo.epilogueflags,1
             .else
                 mov ModuleInfo.proc_epilogue,NULL
-                .if ( !_stricmp( esi, "NONE" ) )
+                .if ( !tstricmp( esi, "NONE" ) )
                     mov ModuleInfo.epiloguemode,PEM_NONE
-                .elseif ( !_stricmp( esi, "EPILOGUEDEF" ) )
+                .elseif ( !tstricmp( esi, "EPILOGUEDEF" ) )
                     mov ModuleInfo.epiloguemode,PEM_DEFAULT
                 .else
                     mov ModuleInfo.epiloguemode,PEM_MACRO
@@ -328,10 +328,10 @@ endif
             .endf
             inc i
         .case OP_SETIF2
-            .if ( !_stricmp( esi, "TRUE" ) )
+            .if ( !tstricmp( esi, "TRUE" ) )
                 mov ModuleInfo.setif2,TRUE
                 inc i
-            .elseif ( !_stricmp( esi, "FALSE" ) )
+            .elseif ( !tstricmp( esi, "FALSE" ) )
                 mov ModuleInfo.setif2,FALSE
                 inc i
             .endif
@@ -340,11 +340,11 @@ endif
             ; default is GROUP.
             ; determines result of OFFSET operator fixups if .model isn't set.
             ;
-            .if ( !_stricmp( esi, "GROUP" ) )
+            .if ( !tstricmp( esi, "GROUP" ) )
                 mov ModuleInfo.offsettype,OT_GROUP
-            .elseif ( !_stricmp( esi, "FLAT" ) )
+            .elseif ( !tstricmp( esi, "FLAT" ) )
                 mov ModuleInfo.offsettype,OT_FLAT
-            .elseif ( !_stricmp( esi, "SEGMENT" ) )
+            .elseif ( !tstricmp( esi, "SEGMENT" ) )
                 mov ModuleInfo.offsettype,OT_SEGMENT
             .else
                 .break
@@ -363,11 +363,11 @@ endif
                 .else
                     mov ModuleInfo.defOfssize,USE32
                 .endif
-            .elseif ( [ebx].token == T_ID && _stricmp( esi, "USE16" ) == 0 )
+            .elseif ( [ebx].token == T_ID && tstricmp( esi, "USE16" ) == 0 )
                 mov ModuleInfo.defOfssize,USE16
-            .elseif ( [ebx].token == T_ID && _stricmp( esi, "USE32" ) == 0 )
+            .elseif ( [ebx].token == T_ID && tstricmp( esi, "USE32" ) == 0 )
                 mov ModuleInfo.defOfssize,USE32
-            .elseif ( [ebx].token == T_ID && _stricmp( esi, "USE64" ) == 0 )
+            .elseif ( [ebx].token == T_ID && tstricmp( esi, "USE64" ) == 0 )
                 mov ModuleInfo.defOfssize,USE64
             .else
                 .break
@@ -427,11 +427,11 @@ endif
                 .endif
             .endif
         .case OP_FRAME ;; AUTO | NOAUTO | ADD -- default is NOAUTO
-            .if ( !_stricmp( esi, "AUTO" ) )
+            .if ( !tstricmp( esi, "AUTO" ) )
                 or ModuleInfo.frame_auto,1
             .elseif ( [ebx].tokval == T_ADD )
                 mov ModuleInfo.frame_auto,3
-            .elseif ( !_stricmp( esi, "NOAUTO" ) )
+            .elseif ( !tstricmp( esi, "NOAUTO" ) )
                 mov ModuleInfo.frame_auto,0
             .else
                 .break
@@ -504,19 +504,19 @@ endif
                                 or ModuleInfo.win64_flags,W64F_AUTOSTACKSP
                             .endif
                             or  ModuleInfo.win64_flags,W64F_STACKALIGN16
-                        .elseif ( !_stricmp( esi, "NOALIGN" ) )
+                        .elseif ( !tstricmp( esi, "NOALIGN" ) )
                             and ModuleInfo.win64_flags,not W64F_STACKALIGN16
-                        .elseif ( !_stricmp( esi, "SAVE" ) )
+                        .elseif ( !tstricmp( esi, "SAVE" ) )
                             or  ModuleInfo.win64_flags,W64F_SAVEREGPARAMS
-                        .elseif ( !_stricmp( esi, "NOSAVE" ) )
+                        .elseif ( !tstricmp( esi, "NOSAVE" ) )
                             and ModuleInfo.win64_flags,not W64F_SAVEREGPARAMS
-                        .elseif ( !_stricmp( esi, "AUTO" ) )
+                        .elseif ( !tstricmp( esi, "AUTO" ) )
                             or  ModuleInfo.win64_flags,W64F_AUTOSTACKSP
-                        .elseif ( !_stricmp( esi, "NOAUTO" ) )
+                        .elseif ( !tstricmp( esi, "NOAUTO" ) )
                             and ModuleInfo.win64_flags,not W64F_AUTOSTACKSP
                         .elseif ( edi == T_FRAME )
                             mov ModuleInfo.frame_auto,3
-                        .elseif ( !_stricmp( esi, "NOFRAME" ) )
+                        .elseif ( !tstricmp( esi, "NOFRAME" ) )
                             mov ModuleInfo.frame_auto,0
                         .else
                             .return( asmerr( 2026 ) )
@@ -527,7 +527,7 @@ endif
                 .endw
             .endif
         .case OP_DLLIMPORT
-            .if ( [ebx].token == T_ID && ( _stricmp( esi, "NONE" ) == 0 ) )
+            .if ( [ebx].token == T_ID && ( tstricmp( esi, "NONE" ) == 0 ) )
                 mov ModuleInfo.CurrDll,NULL
             .elseif ( [ebx].token == T_STRING && [ebx].string_delim == '<' )
                 .if ( Parse_Pass == PASS_1 )
@@ -540,7 +540,7 @@ endif
                         .repeat
                             .for ( edi = &ModuleInfo.DllQueue: dlldesc_t ptr [edi] : edi = [edi] )
                                 mov ecx,[edi]
-                                .if ( _stricmp( &[ecx].dll_desc.name, esi ) == 0 )
+                                .if ( tstricmp( &[ecx].dll_desc.name, esi ) == 0 )
                                     mov esi,[edi]
                                     .break(1)
                                 .endif
@@ -578,26 +578,26 @@ endif
             InitStackBase( [ebx].tokval )
             inc i
         .case OP_CSTACK ;; ON | OFF
-            .if ( !_stricmp( esi, "ON" ) )
+            .if ( !tstricmp( esi, "ON" ) )
                 or  ModuleInfo.xflag,OPT_CSTACK
-            .elseif ( !_stricmp( esi, "OFF" ) )
+            .elseif ( !tstricmp( esi, "OFF" ) )
                 and ModuleInfo.xflag,not OPT_CSTACK
             .else
                 .break
             .endif
             inc i
         .case OP_SWITCH ;; C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS
-            .if ( !_stricmp( esi, "C" ) )
+            .if ( !tstricmp( esi, "C" ) )
                 and ModuleInfo.xflag,not OPT_PASCAL
-            .elseif ( !_stricmp( esi, "PASCAL" ) )
+            .elseif ( !tstricmp( esi, "PASCAL" ) )
                 or  ModuleInfo.xflag,OPT_PASCAL
-            .elseif ( !_stricmp( esi, "TABLE" ) )
+            .elseif ( !tstricmp( esi, "TABLE" ) )
                 and ModuleInfo.xflag,not OPT_NOTABLE
-            .elseif ( !_stricmp( esi, "NOTABLE" ) )
+            .elseif ( !tstricmp( esi, "NOTABLE" ) )
                 or  ModuleInfo.xflag,OPT_NOTABLE
-            .elseif ( !_stricmp( esi, "REGAX" ) )
+            .elseif ( !tstricmp( esi, "REGAX" ) )
                 or  ModuleInfo.xflag,OPT_REGAX
-            .elseif ( !_stricmp( esi, "NOREGS" ) )
+            .elseif ( !tstricmp( esi, "NOREGS" ) )
                 and ModuleInfo.xflag,not OPT_REGAX
             .else
                 .break
@@ -608,9 +608,9 @@ endif
         .case OP_CASEALIGN ;; 0|1|2|4|8|16
             .return .if SetAlignment( &i, tokenarray, MAX_CASE_ALIGN, &ModuleInfo.casealign ) == ERROR
         .case OP_WSTRING ;; ON | OFF
-            .if ( !_stricmp( esi, "ON" ) )
+            .if ( !tstricmp( esi, "ON" ) )
                 or  ModuleInfo.xflag,OPT_WSTRING
-            .elseif ( !_stricmp( esi, "OFF" ) )
+            .elseif ( !tstricmp( esi, "OFF" ) )
                 and ModuleInfo.xflag,not OPT_WSTRING
             .else
                 .break
@@ -627,13 +627,13 @@ endif
                 .return( asmerr( 2026 ) )
             .endif
         .case OP_FLOATFORMAT ; : <e|f|g>
-            .if ( !_stricmp( esi, "E" ) )
+            .if ( !tstricmp( esi, "E" ) )
                 mov ModuleInfo.floatformat,'e'
-            .elseif ( !_stricmp( esi, "F" ) )
+            .elseif ( !tstricmp( esi, "F" ) )
                 mov ModuleInfo.floatformat,0
-            .elseif ( !_stricmp( esi, "G" ) )
+            .elseif ( !tstricmp( esi, "G" ) )
                 mov ModuleInfo.floatformat,'g'
-            .elseif ( !_stricmp( esi, "X" ) )
+            .elseif ( !tstricmp( esi, "X" ) )
                 mov ModuleInfo.floatformat,'x'
             .else
                 .break

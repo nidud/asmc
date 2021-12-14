@@ -537,8 +537,8 @@ MacroInline proc uses esi edi ebx name:string_t, count:int_t, args:string_t, inl
     .if edi == 0
         AddLineQueue( "exitm<>" )
     .else
-        .if _memicmp( edi, "exitm", 5 )
-            _memicmp( edi, "retm", 4 )
+        .if tmemicmp( edi, "exitm", 5 )
+            tmemicmp( edi, "retm", 4 )
         .endif
         .if eax
             AddLineQueue( "exitm<>" )

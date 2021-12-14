@@ -11,14 +11,6 @@ include input.inc
 externdef cp_logo:sbyte
 externdef banner_printed:byte
 
-if defined(__UNIX__) or defined(__CYGWIN__)
-HANDLECTRLZ     equ 0
-SWITCHCHAR      equ 0
-else
-HANDLECTRLZ     equ 1
-SWITCHCHAR      equ 1
-endif
-
 define_name proto :string_t, :string_t
 
     .data
@@ -1092,7 +1084,7 @@ ParseCmdline proc uses esi edi ebx cmdline:ptr string_t, numargs:ptr int_t
             mov ebx,getnextcmdstring(esi)
             .endc
         .case '-'
-if SWITCHCHAR
+ifndef __UNIX__
         .case '/'
 endif
             inc ebx

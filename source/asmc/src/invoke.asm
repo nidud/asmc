@@ -14,17 +14,17 @@ include segment.inc
 include listing.inc
 include mangle.inc
 include proc.inc
-include atofloat.inc
-include regno.inc
+include qfloat.inc
 include types.inc
 include Indirection.inc
 include fastpass.inc
 
-QueueTestLines proto :string_t
-ExpandHllProc  proto :string_t, :int_t, :ptr asm_tok
-GetSegmentPart proto :ptr expr, :string_t, :string_t
-fastcall_init  proto
-GetFastcallId  proto :int_t
+QueueTestLines  proto :string_t
+ExpandHllProc   proto :string_t, :int_t, :ptr asm_tok
+GetSegmentPart  proto :ptr expr, :string_t, :string_t
+fastcall_init   proto
+GetFastcallId   proto :int_t
+get_regname     proto :int_t, :int_t
 
 define NUMQUAL
 

@@ -13,6 +13,7 @@ _MAX_EXT	equ 256
 ifdef __UNIX__
 define _getcwd <getcwd>
 endif
+
 _getdrive	proto __cdecl
 _chdrive	proto __cdecl :SINT
 _chdir		proto __cdecl :LPSTR

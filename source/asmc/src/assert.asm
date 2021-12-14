@@ -72,7 +72,7 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 .endif
             .endif
 
-            .if !_stricmp(edi, "CODE")
+            .if !tstricmp(edi, "CODE")
 
                 .if !(ModuleInfo.xflag & OPT_ASSERT)
 
@@ -82,14 +82,14 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 .endc
             .endif
 
-            .if !_stricmp(edi, "ENDS")
+            .if !tstricmp(edi, "ENDS")
                 ;
                 ; Converted to ENDIF in Tokenize()
                 ;
                 .endc
             .endif
 
-            .if !_stricmp(edi, "PUSH")
+            .if !tstricmp(edi, "PUSH")
 
                 mov al,ModuleInfo.xflag
                 mov ecx,assert_stid
@@ -101,7 +101,7 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 .endc
             .endif
 
-            .if !_stricmp(edi, "POP")
+            .if !tstricmp(edi, "POP")
 
                 mov ecx,assert_stid
                 mov al,assert_stack[ecx]
@@ -113,22 +113,22 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
                 .endc
             .endif
 
-            .if !_stricmp(edi, "ON")
+            .if !tstricmp(edi, "ON")
 
                 or  ModuleInfo.xflag,OPT_ASSERT
                 .endc
             .endif
-            .if !_stricmp(edi, "OFF")
+            .if !tstricmp(edi, "OFF")
 
                 and ModuleInfo.xflag,NOT OPT_ASSERT
                 .endc
             .endif
-            .if !_stricmp(edi, "PUSHF")
+            .if !tstricmp(edi, "PUSHF")
 
                 or  ModuleInfo.xflag,OPT_PUSHF
                 .endc
             .endif
-            .if !_stricmp(edi, "POPF")
+            .if !tstricmp(edi, "POPF")
 
                 and ModuleInfo.xflag,NOT OPT_PUSHF
                 .endc

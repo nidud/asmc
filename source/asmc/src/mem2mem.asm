@@ -13,7 +13,7 @@ include lqueue.inc
 include segment.inc
 include expreval.inc
 include hllext.inc
-include atofloat.inc
+include qfloat.inc
 
 
     .code

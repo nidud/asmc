@@ -31,7 +31,7 @@ include omf.inc
 include omfspec.inc
 include condasm.inc
 include extern.inc
-include atofloat.inc
+include qfloat.inc
 include reswords.inc
 include Indirection.inc
 include operator.inc
@@ -3361,7 +3361,7 @@ continue:
     ;; instruction prefix?
 
     .if ( i == 0 && [ebx].dirtype == '{' )
-        .if ( !_stricmp( [ebx].string_ptr, "evex" ) )
+        .if ( !tstricmp( [ebx].string_ptr, "evex" ) )
             mov CodeInfo.evex,1
             inc i
             add esi,16

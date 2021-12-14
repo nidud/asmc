@@ -276,7 +276,7 @@ endif
             inc i
             add ebx,16
             .if ( [ebx].token == T_ID && \
-                ( _stricmp( [ebx].string_ptr, szNonUnique ) == 0 ) )
+                ( tstricmp( [ebx].string_ptr, szNonUnique ) == 0 ) )
                 ;; currently NONUNIQUE is ignored
                 asmerr( 8017, szNonUnique )
                 inc i

@@ -181,7 +181,7 @@ check_dif proc private string1:string_t, string2:string_t, sensitive:int_t
     .if ( sensitive )
         strcmp( string1, string2 )
     .else
-        _stricmp( string1, string2 )
+        tstricmp( string1, string2 )
     .endif
     ret
 check_dif endp

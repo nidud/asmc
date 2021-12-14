@@ -1,6 +1,8 @@
 .pragma list(push, 0)
 
+ifndef __UNIX__
 include winnt.inc
+endif
 
 ifndef _SIG_ATOMIC_T_DEFINED
 define _SIG_ATOMIC_T_DEFINED
@@ -64,6 +66,7 @@ raise	proto __cdecl :int_t
     ExceptionCollidedUnwind
     }
 
+ifndef __UNIX__
 ifndef _MSVCRT
 
  externdef pCurrentException:PEXCEPTION_POINTERS
@@ -73,6 +76,7 @@ ifndef _MSVCRT
  ifdef _WIN64
   ExceptionHandler proto __cdecl :PEXCEPTION_RECORD, :LPDWORD, :PCONTEXT, :LPDWORD
  endif
+endif
 endif
 
 .pragma list(pop)

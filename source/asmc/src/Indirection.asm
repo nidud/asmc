@@ -14,8 +14,7 @@ include segment.inc
 include listing.inc
 include mangle.inc
 include proc.inc
-include atofloat.inc
-include regno.inc
+include qfloat.inc
 include types.inc
 
     .code

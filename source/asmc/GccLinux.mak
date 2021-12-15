@@ -1,3 +1,4 @@
+# Makefile for Asmc Linux using GCC
 
 AFLAGS = -nologo -nolib -Zp4 -elf -Cs -I../../include -Isrc/inc
 ifdef X64
@@ -6,6 +7,8 @@ BIN = asmc64
 else
 BIN = asmc
 endif
+
+all: $(BIN) clean
 
 OBJS =	src/asmc.o \
 	src/asmerr.o \
@@ -79,84 +82,17 @@ OBJS =	src/asmc.o \
 	src/types.o \
 	src/undef.o
 
-LOBJS = asmc.o \
-	asmerr.o \
-	assemble.o \
-	assert.o \
-	assume.o \
-	backptch.o \
-	bin.o \
-	branch.o \
-	class.o \
-	cmdline.o \
-	codegen.o \
-	coff.o \
-	com.o \
-	condasm.o \
-	context.o \
-	cpumodel.o \
-	data.o \
-	dbgcv.o \
-	directiv.o \
-	elf.o \
-	end.o \
-	enum.o \
-	equate.o \
-	expans.o \
-	expreval.o \
-	extern.o \
-	fastcall.o \
-	fastpass.o \
-	fixup.o \
-	for.o \
-	fpfixup.o \
-	hll.o \
-	Indirection.o \
-	input.o \
-	invoke.o \
-	label.o \
-	linnum.o \
-	listing.o \
-	logo.o \
-	loop.o \
-	lqueue.o \
-	ltype.o \
-	macro.o \
-	mangle.o \
-	mem2mem.o \
-	memalloc.o \
-	namespace.o \
-	new.o \
-	omf.o \
-	omffixup.o \
-	omfint.o \
-	operator.o \
-	option.o \
-	parser.o \
-	posndir.o \
-	pragma.o \
-	preproc.o \
-	proc.o \
-	qfloat.o \
-	reswords.o \
-	return.o \
-	safeseh.o \
-	segment.o \
-	simsegm.o \
-	string.o \
-	switch.o \
-	symbols.o \
-	tokenize.o \
-	typeid.o \
-	types.o \
-	undef.o
-
 .SUFFIXES:
 .SUFFIXES: .asm .o
 
 .asm.o:
-	../../bin/asmc $(AFLAGS) $<
+	../../bin/asmc $(AFLAGS) -Fo $*.o $<
 
 $(BIN): $(OBJS)
-	gcc -o $@ $(LOBJS)
+	gcc -m32 -o $@ $^
 
+clean:
+	rm -f $(OBJS)
+
+install:
+	install $(BIN) /usr/local/bin

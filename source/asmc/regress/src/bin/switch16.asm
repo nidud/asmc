@@ -97,7 +97,7 @@ p1	endp
 	  .case foo( cx )
 	.endsw
 
-define	equ 10
+$define equ 10
 $label:
 	.switch cx
 	  .case 1
@@ -109,7 +109,7 @@ $label:
 	  .case $label - 1
 	  .case offset $label
 	  .case offset mem64
-	  .case define
+	  .case $define
 	  .case 4 XOR 1
 	  .case ((NOT -7) + ('c' SHL 8))
 	  .case 1..8

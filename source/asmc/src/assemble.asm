@@ -6,7 +6,6 @@
 
 include malloc.inc
 include io.inc
-include setjmp.inc
 
 include asmc.inc
 include parser.inc
@@ -34,7 +33,11 @@ include proc.inc
 include expreval.inc
 include listing.inc
 
+define _JBLEN 6
+longjmp proto :ptr, :int_t
+_setjmp proto :ptr
 public	jmpenv
+
 extern	MacroLocals:dword
 
 ifdef __UNIX__
@@ -53,9 +56,9 @@ conv_section	ENDS
 .data?
 ModuleInfo	module_info <>
 LinnumQueue	qdesc <>
+jmpenv		db _JBLEN*size_t dup(?)
 
 .data
-jmpenv		ptr _JUMP_BUFFER 0
 
 Parse_Pass	dd 0
 write_to_file	dd 0
@@ -1206,7 +1209,7 @@ RewindToWin64 proc private
 	.endif
 	mov Options.sub_format,SFORMAT_64BIT
 	mov remove_obj,1
-	longjmp( jmpenv, 1 )
+	longjmp( &jmpenv, 1 )
     .endif
     ret
 
@@ -1215,7 +1218,6 @@ RewindToWin64 endp
 AssembleModule proc uses esi edi ebx source:string_t
 
   local curr_written, prev_written
-  local __env:_JUMP_BUFFER
 
     xor eax,eax
     mov MacroLocals,eax
@@ -1232,9 +1234,7 @@ AssembleModule proc uses esi edi ebx source:string_t
 	tprintf(" Assembling: %s\n", source)
     .endif
 
-    lea eax,__env
-    mov jmpenv,eax
-    .if _setjmp(eax)
+    .if _setjmp(&jmpenv)
 
 	.if eax == 1
 

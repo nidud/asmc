@@ -1,6 +1,6 @@
 # Makefile for Asmc Linux using GCC
 
-AFLAGS = -nologo -nolib -Zp4 -elf -Cs -I../../include -Isrc/inc
+AFLAGS = -nologo -nolib -Zp4 -elf -Cs -Isrc/inc -I../../include
 ifdef X64
 AFLAGS += -D__ASMC64__
 BIN = asmc64

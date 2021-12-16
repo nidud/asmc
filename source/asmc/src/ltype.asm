@@ -145,5 +145,154 @@ _ltype	label byte
 
 	db 257 - ($ - offset _ltype) dup(0)
 
-	END
+	.code
+
+tmemicmp::
+
+	push	esi
+	push	edi
+	mov	esi,[esp+12]
+	mov	edi,[esp+16]
+	mov	eax,[esp+20]
+@@:
+	test	eax,eax
+	jz	@F
+
+	mov	cl,[esi]
+	mov	dl,[edi]
+	inc	esi
+	inc	edi
+	dec	eax
+	cmp	cl,dl
+	je	@B
+
+	mov	ch,cl
+	sub	cl,'a'
+	cmp	cl,'Z'-'A'+1
+	sbb	cl,cl
+	and	cl,'a'-'A'
+	add	cl,ch
+
+	mov	dh,dl
+	sub	dl,'a'
+	cmp	dl,'Z'-'A'+1
+	sbb	dl,dl
+	and	dl,'a'-'A'
+	add	dl,dh
+
+	cmp	cl,dl
+	je	@B
+
+	sbb	eax,eax
+	sbb	eax,-1
+@@:
+	pop	edi
+	pop	esi
+	ret
+
+	align	4
+
+tstricmp::
+
+	push	esi
+	push	edi
+	mov	esi,[esp+12]
+	mov	edi,[esp+16]
+	mov	eax,1
+@@:
+	test	al,al
+	jz	@F
+
+	mov	al,[esi]
+	mov	cl,[edi]
+	inc	esi
+	inc	edi
+	cmp	al,cl
+	je	@B
+
+	mov	dl,al
+	sub	al,'a'
+	cmp	al,'Z'-'A'+1
+	sbb	al,al
+	and	al,'a'-'A'
+	xor	al,dl
+
+	mov	dl,cl
+	sub	cl,'a'
+	cmp	cl,'Z'-'A'+1
+	sbb	cl,cl
+	and	cl,'a'-'A'
+	xor	cl,dl
+
+	cmp	al,cl
+	je	@B
+
+	sbb	eax,eax
+	sbb	eax,-1
+@@:
+	pop	edi
+	pop	esi
+	ret
+
+	align	4
+
+tstrupr::
+
+	mov	ecx,[esp+4]
+@@:
+	mov	al,[ecx]
+	test	al,al
+	jz	@F
+
+	sub	al,'a'
+	cmp	al,'Z'-'A'+1
+	sbb	al,al
+	and	al,'a'-'A'
+	xor	[ecx],al
+	inc	ecx
+	jmp	@B
+@@:
+	mov	eax,[esp+4]
+	ret
+
+.template JMPBUF
+	_ebp	dd ?
+	_ebx	dd ?
+	_edi	dd ?
+	_esi	dd ?
+	_esp	dd ?
+	_eip	dd ?
+	.ends
+
+	assume	eax:ptr JMPBUF
+
+_setjmp::
+
+	mov	eax,[esp+4]
+	mov	[eax]._ebp,ebp
+	mov	[eax]._ebx,ebx
+	mov	[eax]._edi,edi
+	mov	[eax]._esi,esi
+	mov	[eax]._esp,esp
+	mov	ecx,[esp]
+	mov	[eax]._eip,ecx
+	xor	eax,eax
+	ret
+
+	assume	edx:ptr JMPBUF
+
+longjmp::
+
+	mov	edx,[esp+4]
+	mov	eax,[esp+8]
+	mov	ebp,[edx]._ebp
+	mov	ebx,[edx]._ebx
+	mov	edi,[edx]._edi
+	mov	esi,[edx]._esi
+	mov	esp,[edx]._esp
+	mov	ecx,[edx]._eip
+	mov	[esp],ecx
+	ret
+
+	end
 

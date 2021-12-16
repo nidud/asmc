@@ -8,7 +8,6 @@ include io.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
-include setjmp.inc
 include limits.inc
 
 include asmc.inc
@@ -18,8 +17,9 @@ include listing.inc
 
 warning_disable proto id:int_t
 
-extern jmpenv:ptr _JUMP_BUFFER
+externdef jmpenv:byte
 
+longjmp proto :ptr, :int_t
 print_source_nesting_structure proto
 GetCurrOffset proto
 
@@ -474,7 +474,7 @@ errexit proc private
 
     .if ModuleInfo.curr_fname[ASM*4]
 
-        longjmp(jmpenv, 3)
+        longjmp(&jmpenv, 3)
     .endif
 
     mov eax,ModuleInfo.curr_file[OBJ*4]

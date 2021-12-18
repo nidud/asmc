@@ -9,7 +9,7 @@ include limits.inc
 
     .code
 
-vswprintf proc uses ecx string:LPWSTR, format:LPWSTR, vargs:PVOID
+vswprintf proc string:LPWSTR, format:LPWSTR, vargs:PVOID
 
   local o:_iobuf
 

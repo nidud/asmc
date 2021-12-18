@@ -111,10 +111,10 @@ ConvertSectionName proc uses esi edi ebx sym:ptr asym, pst:ptr dword, buffer:str
 	    mov ebx,esi
 	    add esi,1
 	    shl ebx,4
-	    mov edx,cst[ebx].len
 
-	    .if !memcmp( [edi].asym.name, cst[ebx].src, edx )
+	    .if !memcmp( [edi].asym.name, cst[ebx].src, cst[ebx].len )
 
+		mov edx,cst[ebx].len
 		add edx,[edi].asym.name
 		mov al,[edx]
 		.continue .if al && ( al != '$' || cst[ebx].flags & CSF_GRPCHK )
@@ -135,7 +135,10 @@ ConvertSectionName proc uses esi edi ebx sym:ptr asym, pst:ptr dword, buffer:str
 		mov eax,cst[ebx].dst
 		.if byte ptr [edx]
 
-		    strcat(strcpy(buffer, eax), edx)
+		    push edx
+		    strcpy(buffer, eax)
+		    pop edx
+		    strcat(eax, edx)
 		.endif
 		.break(1)
 	    .endif
@@ -354,24 +357,28 @@ WriteModule endp
 
 add_cmdline_tmacros proc private uses esi edi ebx
 
-    push ebp
-    mov	 ebp,esp
+    local size:dword
 
     mov edi,Options.queues[OPTQ_MACRO*4]
     .while edi
+
 	lea esi,[edi].qitem.value
+
 	.if !strchr(esi, '=')
+
 	    strlen(esi)
 	    lea ebx,[esi+eax]
+
 	.else
+
 	    mov ebx,eax
-	    mov edx,ebx
-	    sub edx,esi
-	    inc edx
-	    memcpy(alloca(edx), esi, edx)
+	    sub eax,esi
+	    inc eax
+	    mov size,eax
+	    mov esi,memcpy(alloca(eax), esi, size)
+	    mov edx,size
 	    mov byte ptr [eax+edx-1],0
 	    inc ebx
-	    mov esi,eax
 	.endif
 
 	xor ecx,ecx
@@ -402,9 +409,8 @@ add_cmdline_tmacros proc private uses esi edi ebx
 	mov [eax].asym.string_ptr,ebx
 	mov edi,[edi].qitem.next
     .endw
-    mov esp,ebp
-    pop ebp
     ret
+
 add_cmdline_tmacros endp
 
 add_incpaths proc private uses esi

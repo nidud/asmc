@@ -1049,8 +1049,8 @@ CV_IS_INTERNAL_PTR proto watcall type:CV_PRIMITIVE {
     data  db CV_ZEROLEN dup(?)
 
     .inline NextType {
-	movzx eax,[ecx].TYPTYPE.len
-	lea eax,[ecx+eax+sizeof(WORD)]
+	movzx eax,[rcx].TYPTYPE.len
+	lea rax,[rcx+rax+sizeof(WORD)]
 	}
     .ends
 

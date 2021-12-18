@@ -9,7 +9,7 @@ include limits.inc
 
     .code
 
-vsprintf proc uses ecx string:LPSTR, format:LPSTR, vargs:PVOID
+vsprintf proc string:LPSTR, format:LPSTR, vargs:PVOID
 
   local o:_iobuf
 

@@ -8,7 +8,7 @@ include errno.inc
 
     .code
 
-_set_errno proc uses eax value:int_t
+_set_errno proc value:int_t
 
     mov eax,value
     mov errno,eax

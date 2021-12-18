@@ -115,7 +115,11 @@ __cvtq_sd proc uses esi edi ebx x:ptr, q:ptr
         .endif
     .endif
     .if ebx
+        mov esi,eax
+        mov edi,edx
         _set_errno(ebx)
+        mov eax,esi
+        mov edx,edi
     .endif
     mov ebx,x
     mov [ebx],eax

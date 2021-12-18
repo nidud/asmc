@@ -4,31 +4,37 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+   .code
 
-	option stackbase:esp
+    option dotname
 
-strrchr proc uses edi string:LPSTR, char:int_t
+strrchr::
 
-	mov	edi,string
-	xor	eax,eax
-	mov	ecx,-1
-	repne	scasb
-	not	ecx
-	dec	edi
-	mov	al,byte ptr char
-	std
-	repne	scasb
-	cld
-	mov	al,0
-	jne	@F
-	lea	eax,[edi+1]
-@@:
-	test	eax,eax
-	ret
+    mov     edx,[esp+4]
+    movzx   ecx,byte ptr [esp+8]
+    xor     eax,eax
+.0: cmp     cl,[edx]
+    je      .5
+.1: cmp     ch,[edx]
+    je      .4
+    cmp     cl,[edx+1]
+    je      .6
+.2: cmp     ch,[edx+1]
+    je      .4
+    cmp     cl,[edx+2]
+    je      .7
+.3: cmp     ch,[edx+2]
+    je      .4
+    add     edx,3
+    jmp     .0
+.4: ret
+.5: mov     eax,edx
+    jmp     .1
+.6: lea     eax,[edx+1]
+    jmp     .2
+.7: lea     eax,[edx+2]
+    jmp     .3
 
-strrchr endp
-
-	END
+    end

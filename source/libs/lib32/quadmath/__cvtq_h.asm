@@ -63,8 +63,8 @@ __cvtq_h proc uses ebx x:ptr, q:ptr
                 ;
                 ; underflow
                 ;
-                mov eax,0x00010000
                 _set_errno(ERANGE)
+                mov eax,0x00010000
                 .break
             .endif
 
@@ -72,10 +72,10 @@ __cvtq_h proc uses ebx x:ptr, q:ptr
                 ;
                 ; overflow
                 ;
+                _set_errno(ERANGE)
                 mov eax,0x7BFF0000 shl 1
                 shl bx,1
                 rcr eax,1
-                _set_errno(ERANGE)
                 .break
             .endif
 
@@ -86,7 +86,9 @@ __cvtq_h proc uses ebx x:ptr, q:ptr
             rcr  eax,1
 
             .break .ifs cx || eax >= HFLT_MIN
+            mov ebx,eax
             _set_errno(ERANGE)
+            mov eax,ebx
             .break
         .endif
         and eax,edx

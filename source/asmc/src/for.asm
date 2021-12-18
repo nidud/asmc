@@ -492,7 +492,7 @@ ForDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
             strlen( ebx )
             inc eax
-            push    eax
+            push eax
             LclAlloc( eax )
             pop ecx
             mov [esi].condlines,eax

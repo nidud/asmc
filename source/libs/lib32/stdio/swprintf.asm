@@ -9,7 +9,7 @@ include limits.inc
 
     .code
 
-swprintf proc c uses ecx string:LPWSTR, format:LPWSTR, argptr:VARARG
+swprintf proc c string:LPWSTR, format:LPWSTR, argptr:VARARG
 
   local o:_iobuf
 

@@ -284,8 +284,8 @@ if DETECTCTRLZ
             ;; no break
 endif
         .case -1
-            mov byte ptr [edi],0
             xor eax,eax
+            mov [edi],al
             .if edi > buffer
                 mov eax,buffer
             .endif

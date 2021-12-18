@@ -4,66 +4,63 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-strncpy PROC USES edi esi edx dst:LPSTR, src:LPSTR, count:SIZE_T
-	mov	edi,dst
-	mov	esi,src
-	mov	ecx,count
-	test	ecx,ecx		; filler..
-	jz	toend
-	cmp	ecx,4
-	jb	tail
-	mov	eax,[esi]
-	lea	edx,[eax-01010101h]
-	not	eax
-	and	edx,eax
-	and	edx,80808080h
-	jnz	tail
-	mov	eax,edi		; align 4
-	neg	eax
-	and	eax,11B
-	mov	edx,[esi]	; copy the first 4 bytes
-	mov	[edi],edx
-	add	edi,eax		; add leading bytes
-	add	esi,eax		;
-	sub	ecx,eax
-	jmp	start
-	ALIGN	16
-lupe:
-	sub	ecx,4
-	mov	eax,[esi]	; copy 4 bytes
-	mov	[edi],eax
-	add	edi,4
-	add	esi,4
-start:
-	cmp	ecx,4
-	jb	tail
-	mov	eax,[esi]
-	lea	edx,[eax-01010101h]
-	not	eax
-	and	edx,eax
-	and	edx,80808080h
-	jz	lupe
-	ALIGN	8
-tail:
-	test	ecx,ecx
-	jz	toend
-@@:
-	mov	al,[esi]
-	mov	[edi],al
-	dec	ecx
-	jz	toend
-	inc	edi
-	inc	esi
-	test	al,al
-	jnz	@B
-	rep	stosb
-toend:
-	mov	eax,dst
-	ret
-strncpy ENDP
+    option dotname
 
-	END
+strncpy::
+
+    push    esi
+    push    edi
+    mov     edi,[esp+12]
+    mov     esi,[esp+16]
+    mov     ecx,[esp+20]
+    cmp     ecx,4
+    jb      .2
+    mov     eax,[esi]
+    lea     edx,[eax-0x01010101]
+    not     eax
+    and     edx,eax
+    and     edx,0x80808080
+    jnz     .2
+    mov     eax,edi     ; align 4
+    neg     eax
+    and     eax,3
+    mov     edx,[esi]   ; copy the first 4 bytes
+    mov     [edi],edx
+    add     edi,eax     ; add leading bytes
+    add     esi,eax     ;
+    sub     ecx,eax
+    jmp     .1
+.0: sub     ecx,4
+    mov     eax,[esi]   ; copy 4 bytes
+    mov     [edi],eax
+    add     edi,4
+    add     esi,4
+.1: cmp     ecx,4
+    jb      .2
+    mov     eax,[esi]
+    lea     edx,[eax-0x01010101]
+    not     eax
+    and     edx,eax
+    and     edx,0x80808080
+    jz      .0
+.2: test    ecx,ecx
+    jz      .4
+.3: mov     al,[esi]
+    mov     [edi],al
+    dec     ecx
+    jz      .4
+    inc     edi
+    inc     esi
+    test    al,al
+    jnz     .3
+    rep     stosb
+.4: mov     eax,[esp+12]
+    pop     edi
+    pop     esi
+    ret
+
+    end

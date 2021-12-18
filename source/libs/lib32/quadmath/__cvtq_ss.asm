@@ -57,24 +57,26 @@ __cvtq_ss proc uses ebx x:ptr, q:ptr
                 ;
                 ; underflow
                 ;
-                xor eax,eax
                 _set_errno(ERANGE)
+                xor eax,eax
             .else
                 .ifs cx >= 0x00FF
                     ;
                     ; overflow
                     ;
+                    _set_errno(ERANGE)
                     mov eax,0x7F800000 shl 1
                     shl bx,1
                     rcr eax,1
-                    _set_errno(ERANGE)
                 .else
                     shl eax,1
                     shrd eax,ecx,8
                     shl bx,1
                     rcr eax,1
                     .ifs !cx && eax < DDFLT_MIN
+                        mov ebx,eax
                         _set_errno(ERANGE)
+                        mov eax,ebx
                     .endif
                 .endif
             .endif

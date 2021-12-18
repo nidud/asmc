@@ -23,13 +23,13 @@ __cvth_q proc x:ptr, h:ptr
             add cx,Q_EXPBIAS-H_EXPBIAS
         .else
             or cx,0x7FE0
-            .if (eax & 0x7FFFFFFF)
+            .if ( eax & 0x7FFFFFFF )
                 ;
                 ; Invalid exception
                 ;
+                _set_errno(EDOM)
                 mov ecx,0xFFFF
                 mov eax,0x40000000 ; QNaN
-                _set_errno(EDOM)
             .else
                 xor eax,eax
             .endif

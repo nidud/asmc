@@ -4,76 +4,34 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option dotname
 
-strchr	proc uses esi edi ebx string:LPSTR, char:int_t
+strchr::
 
-	movzx	eax,BYTE PTR char
-	imul	ebx,eax,01010101h
-	mov	edi,string
+    mov     eax,[esp+4]
+    movzx   ecx,byte ptr [esp+8]
+.3: cmp     cl,[eax]
+    je      .0
+    cmp     ch,[eax]
+    je      .4
+    cmp     cl,[eax+1]
+    je      .1
+    cmp     ch,[eax+1]
+    je      .4
+    cmp     cl,[eax+2]
+    je      .2
+    cmp     ch,[eax+2]
+    je      .4
+    add     eax,3
+    jmp     .3
+.4: xor     eax,eax
+    ret
+.2: inc     eax
+.1: inc     eax
+.0: ret
 
-	mov	eax,edi
-	neg	eax
-	and	eax,3
-	jz	loop_4
-
-	cmp	bl,[edi]
-	je	exit_0
-	cmp	ah,[edi]
-	je	exit_NULL
-
-	cmp	bl,[edi+1]
-	je	exit_1
-	cmp	ah,[edi+1]
-	je	exit_NULL
-
-	cmp	bl,[edi+2]
-	je	exit_2
-	cmp	ah,[edi+2]
-	je	exit_NULL
-
-	lea	edi,[edi+eax]
-
-	ALIGN	4
-loop_4:
-	mov	esi,[edi]
-	add	edi,4
-	lea	ecx,[esi-01010101h]
-	not	esi
-	and	ecx,esi
-	and	ecx,80808080h
-	not	esi
-	xor	esi,ebx
-	lea	eax,[esi-01010101h]
-	not	esi
-	and	eax,esi
-	and	eax,80808080h
-	or	ecx,eax
-	jz	loop_4
-	bsf	ecx,ecx
-	shr	ecx,3
-	lea	eax,[ecx+edi-4]
-	cmp	[eax],bl
-	je	toend
-exit_NULL:
-	xor	eax,eax
-	ALIGN	4
-toend:
-	test	eax,eax
-	ret
-exit_0:
-	mov	eax,edi
-	jmp	toend
-exit_1:
-	lea	eax,[edi+1]
-	jmp	toend
-exit_2:
-	lea	eax,[edi+2]
-	jmp	toend
-strchr	endp
-
-	END
+    end

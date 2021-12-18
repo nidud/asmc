@@ -33,19 +33,21 @@ fwrite proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
     .while edi
 
-        mov edx,[ebx]._cnt
-        .if [ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
+        mov ecx,[ebx]._cnt
+        .if [ebx]._flag & _IOMYBUF or _IOYOURBUF && ecx
 
-            .if edi < edx
+            .if edi < ecx
 
-                mov edx,edi
+                mov ecx,edi
             .endif
-            memcpy([ebx]._ptr, esi, edx)
 
-            sub edi,edx
-            sub [ebx]._cnt,edx
-            add [ebx]._ptr,edx
-            add esi,edx
+            sub edi,ecx
+            sub [ebx]._cnt,ecx
+            mov edx,edi
+            mov edi,[ebx]._ptr
+            add [ebx]._ptr,ecx
+            rep movsb
+            mov edi,edx
 
         .elseif edi >= bufsize
 

@@ -10,7 +10,7 @@ include crtl.inc
 
     .code
 
-memxchg proc uses esi edi edx dst:LPSTR, src:LPSTR, count:SIZE_T
+memxchg proc uses esi edi dst:LPSTR, src:LPSTR, count:SIZE_T
 
     mov edi,dst
     mov esi,src

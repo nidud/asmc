@@ -8,7 +8,7 @@ include string.inc
 
     .code
 
-wcsncmp proc uses esi edi edx s1:LPWSTR, s2:LPWSTR, count:SIZE_T
+wcsncmp proc uses esi edi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
 
     mov ecx,count
     .if ecx

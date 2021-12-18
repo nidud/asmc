@@ -4,49 +4,52 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
     .code
 
-    option stackbase:esp
+_memicmp::
 
-_memicmp proc uses esi edi s1:ptr, s2:ptr, l:SIZE_T
+    push    esi
+    push    edi
+    mov     esi,[esp+12]
+    mov     edi,[esp+16]
+    mov     eax,[esp+20]
+@@:
+    test    eax,eax
+    jz      @F
 
-    mov esi,s1
-    mov edi,s2
-    mov ecx,l
+    mov     cl,[esi]
+    mov     dl,[edi]
+    inc     esi
+    inc     edi
+    dec     eax
+    cmp     cl,dl
+    je      @B
 
-lupe:
+    mov     ch,cl
+    sub     cl,'a'
+    cmp     cl,'Z'-'A'+1
+    sbb     cl,cl
+    and     cl,'a'-'A'
+    xor     cl,ch
 
-    and ecx,ecx
-    jz  done
+    mov     dh,dl
+    sub     dl,'a'
+    cmp     dl,'Z'-'A'+1
+    sbb     dl,dl
+    and     dl,'a'-'A'
+    xor     dl,dh
 
-    sub ecx,1
-    mov al,[esi]
-    cmp al,[edi]
-    lea esi,[esi+1]
-    lea edi,[edi+1]
-    jz  lupe
+    cmp     cl,dl
+    je      @B
 
-    mov ah,[edi-1]
-    sub ax,'AA'
-    cmp al,'Z'-'A' + 1
-    sbb dl,dl
-    and dl,'a'-'A'
-    cmp ah,'Z'-'A' + 1
-    sbb dh,dh
-    and dh,'a'-'A'
-    add ax,dx
-    add ax,'AA'
-    cmp al,ah
-    jz  lupe
-
-    sbb ecx,ecx
-    sbb ecx,-1
-done:
-    mov eax,ecx
+    sbb     eax,eax
+    sbb     eax,-1
+@@:
+    pop     edi
+    pop     esi
     ret
 
-_memicmp ENDP
+    end
 
-    END

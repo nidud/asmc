@@ -276,9 +276,11 @@ ParseCString proc private uses esi edi ebx lbuf:string_t, buffer:string_t, strin
                 add edx,eax ; to end of string
                 sub edx,ebx
             .endif
+            push edx
+            memcmp( sbuf, edx, ebx )
+            pop edx
 
-            .if !memcmp( sbuf, edx, ebx )
-
+            .if !eax
                 movzx eax,[esi].index
                 sub edx,[esi].string
                 .if edx

@@ -9,7 +9,7 @@ include limits.inc
 
     .code
 
-sprintf proc c uses ecx string:LPSTR, format:LPSTR, argptr:VARARG
+sprintf proc c string:LPSTR, format:LPSTR, argptr:VARARG
 
   local o:_iobuf
 

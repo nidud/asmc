@@ -11,7 +11,7 @@ include string.inc
 
     .code
 
-wcstok proc uses edx ebx s1:LPWSTR, s2:LPWSTR
+wcstok proc uses ebx s1:LPWSTR, s2:LPWSTR
 
     mov eax,s1
     .if eax

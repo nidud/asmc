@@ -94,7 +94,7 @@ write_multi_char proc private uses edi char, num:dword, f:LPFILE, pnumwritten:PV
 
 write_multi_char endp
 
-_output proc public uses edx ecx esi edi ebx fp:LPFILE, format:string_t, arglist:ptr
+_output proc public uses esi edi ebx fp:LPFILE, format:string_t, arglist:ptr
 
   local charsout            : int_t,
         hexoff              : uint_t,

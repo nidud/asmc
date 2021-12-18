@@ -4,25 +4,28 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-strcat	proc uses esi edi s1:LPSTR, s2:LPSTR
-	mov	edi,s1
-	mov	esi,s2
-	xor	eax,eax
-	or	ecx,-1
-	repnz	scasb
-	dec	edi
-	.repeat
-		mov al,[esi]
-		mov [edi],al
-		add esi,1
-		add edi,1
-	.until !al
-	mov	eax,s1
-	ret
-strcat	ENDP
+strcat::
 
-	END
+    mov     edx,[esp+4]
+    xor     eax,eax
+    or      ecx,-1
+    xchg    edx,edi
+    repnz   scasb
+    dec     edi
+    xchg    edx,edi
+    mov     ecx,[esp+8]
+@@:
+    mov     al,[ecx]
+    mov     [edx],al
+    inc     ecx
+    inc     edx
+    test    al,al
+    jnz     @B
+    mov     eax,[esp+4]
+    ret
+
+    end

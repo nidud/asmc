@@ -4,22 +4,19 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-	option cstack:off
-	option stackbase:esp
+memset::
 
-memset	proc uses edi dst:ptr, char:SINT, count:SIZE_T
+    mov     edx,edi
+    mov     edi,[esp+4]
+    mov     eax,[esp+8]
+    mov     ecx,[esp+12]
+    rep     stosb
+    mov     edi,edx
+    mov     eax,[esp+4]
+    ret
 
-	mov edi,dst
-	mov eax,char
-	mov ecx,count
-	rep stosb
-	mov eax,dst
-	ret
-
-memset	endp
-
-	END
+    end

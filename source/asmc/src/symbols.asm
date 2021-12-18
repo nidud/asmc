@@ -122,7 +122,7 @@ define_name proc string:string_t, value:string_t
 define_name endp
 
 SymSetCmpFunc proc
-    mov SymCmpFunc,_memicmp
+    mov SymCmpFunc,tmemicmp
     .if ModuleInfo.case_sensitive
         mov SymCmpFunc,memcmp
     .endif

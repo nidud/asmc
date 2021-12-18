@@ -2995,6 +2995,7 @@ evaluate proc uses esi edi ebx opnd1:expr_t, i:ptr int_t,
                     fnasmerr( 2157 )
                     mov eax,[edi].sym
                     .if ( ( [ebx].token == T_COMMA ) && eax && [eax].asym.state == SYM_UNDEFINED )
+
                         fnasmerr( 2006, [eax].asym.name )
                     .endif
                 .endif

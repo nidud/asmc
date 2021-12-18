@@ -4,42 +4,51 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
 	.code
 
-	option stackbase:esp
+_stricmp::
 
-_stricmp proc uses esi edi ecx dst:LPSTR, src:LPSTR
-	mov	edi,dst
-	mov	esi,src
-	mov	eax,-1
-	ALIGN	16
-lupe:
+	push	esi
+	push	edi
+	mov	esi,[esp+12]
+	mov	edi,[esp+16]
+	mov	eax,1
+@@:
 	test	al,al
-	jz	toend
+	jz	@F
+
 	mov	al,[esi]
-	cmp	al,[edi]
-	lea	esi,[esi+1]
-	lea	edi,[edi+1]
-	je	lupe
-	mov	ah,[edi-1]
-	sub	ax,'AA'
+	mov	cl,[edi]
+	inc	esi
+	inc	edi
+	cmp	al,cl
+	je	@B
+
+	mov	dl,al
+	sub	al,'a'
 	cmp	al,'Z'-'A'+1
+	sbb	al,al
+	and	al,'a'-'A'
+	xor	al,dl
+
+	mov	dl,cl
+	sub	cl,'a'
+	cmp	cl,'Z'-'A'+1
 	sbb	cl,cl
 	and	cl,'a'-'A'
-	cmp	ah,'Z'-'A'+1
-	sbb	ch,ch
-	and	ch,'a'-'A'
-	add	ax,cx
-	add	ax,'AA'
-	cmp	ah,al
-	je	lupe
-	sbb	al,al
-	sbb	al,-1
-toend:
-	movsx	eax,al
-	ret
-_stricmp ENDP
+	xor	cl,dl
 
-	END
+	cmp	al,cl
+	je	@B
+
+	sbb	eax,eax
+	sbb	eax,-1
+@@:
+	pop	edi
+	pop	esi
+	ret
+
+	end
+

@@ -27,8 +27,12 @@ __cvtss_q proc x:ptr, f:ptr
                 ;
                 ; Invalid exception
                 ;
-                or eax,0x40000000 ; QNaN
+                push eax
+                push ecx
                 _set_errno(EDOM)
+                pop ecx
+                pop eax
+                or  eax,0x40000000 ; QNaN
             .endif
         .endif
         or eax,0x80000000

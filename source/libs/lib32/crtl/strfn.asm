@@ -10,11 +10,9 @@
 
 include crtl.inc
 
-    option stackbase:esp
-
     .code
 
-strfn proc uses edx ecx path:LPSTR
+strfn proc path:LPSTR
 
     mov ecx,path
 

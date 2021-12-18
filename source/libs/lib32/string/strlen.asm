@@ -4,47 +4,40 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option dotname
 
-strlen	PROC string:LPSTR
+strlen::
 
-	mov	eax,string
-	mov	ecx,string
-	push	edx
-	and	ecx,3
-	jz	L2
-	sub	eax,ecx
-	shl	ecx,3
-	mov	edx,-1
-	shl	edx,cl
-	not	edx
-	or	edx,[eax]
-	lea	ecx,[edx-01010101h]
-	not	edx
-	and	ecx,edx
-	and	ecx,80808080h
-	jnz	L3
-L1:
-	add	eax,4
-L2:
-	mov	edx,[eax]
-	lea	ecx,[edx-01010101h]
-	not	edx
-	and	ecx,edx
-	and	ecx,80808080h
-	jz	L1
-L3:
-	pop	edx
-	bsf	ecx,ecx
-	shr	ecx,3
-	add	eax,ecx
-	sub	eax,string
-	ret
+    mov     eax,[esp+4]
+    mov     ecx,eax
+    and     ecx,3
+    jz      .1
+    sub     eax,ecx
+    shl     ecx,3
+    mov     edx,-1
+    shl     edx,cl
+    not     edx
+    or      edx,[eax]
+    lea     ecx,[edx-0x01010101]
+    not     edx
+    and     ecx,edx
+    and     ecx,0x80808080
+    jnz     .2
+.0: add     eax,4
+.1: mov     edx,[eax]
+    lea     ecx,[edx-0x01010101]
+    not     edx
+    and     ecx,edx
+    and     ecx,0x80808080
+    jz      .0
+.2: bsf     ecx,ecx
+    shr     ecx,3
+    add     eax,ecx
+    sub     eax,[esp+4]
+    ret
 
-strlen	endp
-
-	END
+    end

@@ -30,7 +30,9 @@ __cvtq_i64 proc q:ptr
 
     .elseif eax > 62 + Q_EXPBIAS
 
+        push ecx
         _set_errno(ERANGE)
+        pop ecx
         xor eax,eax
         .if cx & 0x8000
             mov edx,INT_MIN

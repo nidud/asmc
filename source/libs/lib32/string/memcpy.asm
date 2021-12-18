@@ -4,34 +4,34 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include string.inc
+include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+memmove::
+memcpy::
 
-memmove PROC dst:ptr, src:ptr, count:SIZE_T
-memmove ENDP
+    push    esi
+    push    edi
+    mov     eax,[esp+12] ; -- return value
+    mov     esi,[esp+16]
+    mov     ecx,[esp+20]
 
-memcpy proc uses esi edi dst:ptr, src:ptr, count:SIZE_T
-
-	mov	eax,dst ; -- return value
-	mov	esi,src
-	mov	ecx,count
-
-	mov	edi,eax
-	cmp	eax,esi
-	ja	@F
-	rep	movsb
-	ret
+    mov     edi,eax
+    cmp     eax,esi
+    ja      @F
+    rep     movsb
+    pop     edi
+    pop     esi
+    ret
 @@:
-	lea	esi,[esi+ecx-1]
-	lea	edi,[edi+ecx-1]
-	std
-	rep	movsb
-	cld
-	ret
+    lea     esi,[esi+ecx-1]
+    lea     edi,[edi+ecx-1]
+    std
+    rep     movsb
+    cld
+    pop     edi
+    pop     esi
+    ret
 
-memcpy	endp
-
-	END
+    end

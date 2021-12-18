@@ -651,7 +651,7 @@ tsprintf                proto __cdecl :string_t, :string_t, :vararg
 tvsprintf               proto :string_t, :string_t, :ptr
 tvfprintf               proto :ptr FILE, :string_t, :ptr
 tstrupr                 proto :string_t
-tmemicmp                proto :string_t, :string_t, :size_t
+tmemicmp                proto :ptr, :ptr, :size_t
 tstricmp                proto :string_t, :string_t
 
 endif

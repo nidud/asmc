@@ -11,7 +11,7 @@ include string.inc
 
     .code
 
-strtok proc uses edx ebx s1:LPSTR, s2:LPSTR
+strtok proc uses ebx s1:LPSTR, s2:LPSTR
 
     mov eax,s1
     .if eax

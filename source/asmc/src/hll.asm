@@ -79,9 +79,9 @@ define CHARS_OR    ('|' + ( '|' shl 8 ))
 
     .code
 
-GetCOp proc fastcall private item:ptr asm_tok
+GetCOp proc fastcall private uses edi item:ptr asm_tok
 
-    mov edx,[ecx].asm_tok.string_ptr
+    mov edi,[ecx].asm_tok.string_ptr
     xor eax,eax
     .if [ecx].asm_tok.token == T_STRING
 
@@ -91,7 +91,7 @@ GetCOp proc fastcall private item:ptr asm_tok
     .switch
 
       .case eax == 2
-        mov ax,[edx]
+        mov ax,[edi]
         .switch eax
           .case CHARS_EQ:  .return COP_EQ
           .case CHARS_NE:  .return COP_NE
@@ -103,7 +103,7 @@ GetCOp proc fastcall private item:ptr asm_tok
         .endc
 
       .case eax == 1
-        mov al,[edx]
+        mov al,[edi]
         .switch eax
           .case '>': .return COP_GT
           .case '<': .return COP_LT
@@ -117,9 +117,9 @@ GetCOp proc fastcall private item:ptr asm_tok
         ;
         ; a valid "flag" string must end with a question mark
         ;
-      .case B[edx + strlen(edx) - 1] == '?'
+      .case B[edi + strlen(edi) - 1] == '?'
 
-        mov ecx,[edx]
+        mov ecx,[edi]
         and ecx,not 0x20202020
 
         .switch eax
@@ -128,17 +128,17 @@ GetCOp proc fastcall private item:ptr asm_tok
             .return COP_SIGN .if ecx == "NGIS"
             .endc
           .case 6
-            mov al,[edx+4]
+            mov al,[edi+4]
             and eax,not 0x20
             .return COP_CARRY .if eax == "Y" && ecx == "RRAC"
             .endc
           .case 7
-            mov ax,[edx+4]
+            mov ax,[edi+4]
             and eax,not 0x2020
             .return COP_PARITY .if eax == "YT" && ecx == "IRAP"
             .endc
           .case 9
-            mov eax,[edx+4]
+            mov eax,[edi+4]
             and eax,not 20202020h
             .return COP_OVERFLOW .if eax == "WOLF" && ecx == "REVO"
             .endc
@@ -2439,13 +2439,13 @@ CheckCXZLines proc private uses esi edi ebx p
                     ;
                     ; 2 chars, to replace "jmp" by "loope"
                     ;
-                    mov edx,2
+                    mov edi,2
                 .elseif ebx == 1 && (al == 'z' || ax == 'zn')
                     ;
                     ; 3 chars, to replace "jz"/"jnz" by
                     ; "loopz"/"loopnz"
                     ;
-                    mov edx,3
+                    mov edi,3
                 .else
                     ; anything else is "too complex"
                     mov ebx,3
@@ -2457,10 +2457,11 @@ CheckCXZLines proc private uses esi edi ebx p
 
                     add esi,eax
                     mov cl,[esi]
-                    mov [esi+edx],cl
+                    mov [esi+edi],cl
                     sub esi,eax
                     dec eax
                 .endw
+                xor edi,edi
 
                 mov eax,"pool"
                 mov [esi],eax

@@ -917,7 +917,7 @@ PurgeDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         add ebx,tokenarray
 
         .if [ebx].token != T_ID
-            .return asmerr(2008, [ebx].string_ptr )
+            .return asmerr( 2008, [ebx].string_ptr )
         .endif
         mov esi,SymSearch( [ebx].string_ptr )
         .if eax == NULL

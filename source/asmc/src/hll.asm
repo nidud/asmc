@@ -1737,9 +1737,11 @@ LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray
     mov name,edi
     mov edx,ecx
     lea edi,b
-    lea esi,@CStr("invoke ")
-    mov ecx,7
-    rep movsb
+    mov eax,'ovni'
+    stosd
+    mov eax,' ek'
+    stosd
+    dec edi
 
     .if ( edx && [edx].asym.state == SYM_TYPE && [edx].asym.typekind == TYPE_STRUCT )
 
@@ -1983,8 +1985,15 @@ done:
 
         .if !eax
 
-            strcpy( esi, "call" )
-            strcat( esi, &[esi+6] )
+            lea edx,b
+            mov eax,'llac'
+            mov [edx],eax
+            mov ecx,edi
+            lea edi,[edx+4]
+            lea esi,[edx+6]
+            sub ecx,esi
+            inc ecx
+            rep movsb
         .endif
     .endif
 

@@ -4,9 +4,7 @@ include class.inc
 
 main proc
 
-  local p:LPCLASS
-
-    Class::Class(&p, "Hello Class!" )
+   .new p:ptr Class("Hello Class!")
 
     p.Print()
     p.Release()

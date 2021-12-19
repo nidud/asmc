@@ -3,18 +3,6 @@ include malloc.inc
 include string.inc
 include iconfig.inc
 
-    .data
-
-    virtual_table label qword
-        dq IConfig_Release
-        dq IConfig_Read
-        dq IConfig_Write
-        dq IConfig_Find
-        dq IConfig_Create
-        dq IConfig_Delete
-        dq IConfig_GetValue
-        dq IConfig_Unlink
-
     .code
 
     option cstack:on
@@ -24,23 +12,9 @@ include iconfig.inc
 
 IConfig::IConfig proc
 
-    .repeat
-        .if !rdi
-
-            .break .if !malloc( sizeof(IConfig) )
-            mov rdi,rax
-        .endif
-        lea rax,virtual_table
-        mov [rdi].lpVtbl,rax
-        xor eax,eax
-        mov [rdi]._next,rax
-        mov [rdi]._name,rax
-        mov [rdi]._list,rax
-        mov [rdi].flags,eax
-        lea rax,strcmp
-        mov [rdi].Compare,rax
-        mov rax,rdi
-    .until 1
+    @ComAlloc(IConfig)
+    lea rdx,strcmp
+    mov [rax].IConfig.Compare,rdx
     ret
 
 IConfig::IConfig endp
@@ -321,7 +295,7 @@ IConfig::Delete proc SectionName:LPSTR
 
 IConfig::Delete endp
 
-IConfig::Unlink proc Parent:LPICONFIG
+IConfig::Unlink proc Parent:ptr IConfig
 
     mov rax,[rdi]._next
     mov [rsi].IConfig._next,rax

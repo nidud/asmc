@@ -1,4 +1,4 @@
 test:
-	../../asmc -I../../inc -elf64 test.asm
+	asmc64 -I../../../../include test.asm
 	gcc -o test test.o
 

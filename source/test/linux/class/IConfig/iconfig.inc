@@ -1,11 +1,11 @@
 ifndef __ICONFIG_INC
-__ICONFIG_INC equ <>
+define __ICONFIG_INC
 include libc.inc
 
-_I_BASE     equ 0x01
-_I_SECTION  equ 0x02
-_I_ENTRY    equ 0x04
-_I_COMMENT  equ 0x08
+define _I_BASE     0x01
+define _I_SECTION  0x02
+define _I_ENTRY    0x04
+define _I_COMMENT  0x08
 
 .class IConfig
 
@@ -13,11 +13,12 @@ _I_COMMENT  equ 0x08
     _name           LPSTR ?
     union
       value         LPSTR ?
-      _list         LPICONFIG ?
+      _list         ptr IConfig ?
     ends
-    _next           LPICONFIG ?
+    _next           ptr IConfig ?
     Compare         proc local :LPSTR, :LPSTR
 
+    IConfig         proc
     Release         proc
     Read            proc :LPSTR
     Write           proc :LPSTR
@@ -25,8 +26,7 @@ _I_COMMENT  equ 0x08
     Create          proc :LPSTR, :VARARG
     Delete          proc :LPSTR
     GetValue        proc :LPSTR, :LPSTR
-    Unlink          proc :LPICONFIG
-
-    .ends
+    Unlink          proc :ptr IConfig
+   .ends
 
 endif

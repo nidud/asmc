@@ -4,42 +4,31 @@ include class.inc
 
     .code
 
-    assume rdi:LPCLASS
-
 Class::Release proc
+
     free(this)
     ret
+
 Class::Release endp
 
 Class::Print proc
-    mov rsi,[rdi].string
+
+    mov rsi,[rdi].Class.string
     printf( "%s\n", rsi )
     ret
+
 Class::Print endp
 
-Class::Class proc uses r12 s:string_t
+Class::Class proc uses rbx r12 s:string_t
 
-  local p:LPSTR
+    mov r12,s
+    mov rbx,this
 
-    mov p,s
-    mov r12,this
-
-    .if malloc( sizeof(Class) + sizeof(ClassVtbl) )
-
-        mov rdi,rax
-        add rax,sizeof(Class)
-        mov [rdi],rax
-        lea rcx,Class_Release
-        mov [rax],rcx
-        lea rcx,Class_Print
-        mov [rax+8],rcx
-        mov rax,p
-        mov [rdi].string,rax
-        mov rax,rdi
-        .if r12
-            mov [r12],rax
-        .endif
+    @ComAlloc(Class)
+    .if rbx
+        mov [rbx],rax
     .endif
+    mov [rax].Class.string,r12
     ret
 
 Class::Class endp

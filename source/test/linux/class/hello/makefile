@@ -1,5 +1,5 @@
 test:
-	../../../asmc -I../../../inc -elf64 test.asm
-	../../../asmc -I../../../inc -elf64 class.asm
+	asmc64 -I../../../../../include test.asm
+	asmc64 -I../../../../../include class.asm
 	gcc -o test test.o class.o
 

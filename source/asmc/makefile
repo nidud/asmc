@@ -6,106 +6,102 @@
 #  ../libs/lib32/  - libc.lib
 #
 
-!include srcpath
+NAME = asmc
+SRCP = x86
+FLAG = -Zp4 -coff
 
-ASMC = ..\..\bin\asmc
-LINK = ..\..\bin\linkw
-LFLAGS = op map libp $(lib_dir) symt _cstart lib crypt
-AFLAGS = -q -Zp4 -coff -Cs -I$(srcpath)\src\h -I$(inc_dir)
-!ifdef ASMC64
-AFLAGS += -D__ASMC64__
+!ifdef x64
+SRCP = x64
+FLAG = -frame -Zp8 -win64
 !endif
 
-srcpath = $(src_dir)\asmc
-objects = \
-    src\asmc.obj \
-    src\asmerr.obj \
-    src\assemble.obj \
-    src\assert.obj \
-    src\assume.obj \
-    src\backptch.obj \
-    src\bin.obj \
-    src\branch.obj \
-    src\class.obj \
-    src\cmdline.obj \
-    src\codegen.obj \
-    src\coff.obj \
-    src\com.obj \
-    src\condasm.obj \
-    src\context.obj \
-    src\cpumodel.obj \
-    src\data.obj \
-    src\dbgcv.obj \
-    src\directiv.obj \
-    src\elf.obj \
-    src\end.obj \
-    src\enum.obj \
-    src\equate.obj \
-    src\expans.obj \
-    src\expreval.obj \
-    src\extern.obj \
-    src\fastcall.obj \
-    src\fastpass.obj \
-    src\fixup.obj \
-    src\for.obj \
-    src\fpfixup.obj \
-    src\hll.obj \
-    src\Indirection.obj \
-    src\input.obj \
-    src\invoke.obj \
-    src\label.obj \
-    src\linnum.obj \
-    src\listing.obj \
-    src\logo.obj \
-    src\loop.obj \
-    src\lqueue.obj \
-    src\ltype.obj \
-    src\macro.obj \
-    src\mangle.obj \
-    src\mem2mem.obj \
-    src\memalloc.obj \
-    src\namespace.obj \
-    src\new.obj \
-    src\omf.obj \
-    src\omffixup.obj \
-    src\omfint.obj \
-    src\operator.obj \
-    src\option.obj \
-    src\parser.obj \
-    src\posndir.obj \
-    src\pragma.obj \
-    src\preproc.obj \
-    src\proc.obj \
-    src\qfloat.obj \
-    src\reswords.obj \
-    src\return.obj \
-    src\safeseh.obj \
-    src\segment.obj \
-    src\simsegm.obj \
-    src\string.obj \
-    src\switch.obj \
-    src\symbols.obj \
-    src\tokenize.obj \
-    src\typeid.obj \
-    src\types.obj \
-    src\undef.obj
+!ifdef ASMC64
+NAME = asmc64
+FLAG += -DASMC64
+!endif
 
-all: targets
+OBJS =  asmc.obj        \
+        asmerr.obj      \
+        assemble.obj    \
+        assert.obj      \
+        assume.obj      \
+        backptch.obj    \
+        bin.obj         \
+        branch.obj      \
+        class.obj       \
+        cmdline.obj     \
+        codegen.obj     \
+        coff.obj        \
+        com.obj         \
+        condasm.obj     \
+        context.obj     \
+        cpumodel.obj    \
+        data.obj        \
+        dbgcv.obj       \
+        directiv.obj    \
+        elf.obj         \
+        end.obj         \
+        enum.obj        \
+        equate.obj      \
+        expans.obj      \
+        expreval.obj    \
+        extern.obj      \
+        fastcall.obj    \
+        fastpass.obj    \
+        fixup.obj       \
+        for.obj         \
+        fpfixup.obj     \
+        hll.obj         \
+        Indirection.obj \
+        input.obj       \
+        invoke.obj      \
+        label.obj       \
+        linnum.obj      \
+        listing.obj     \
+        logo.obj        \
+        loop.obj        \
+        lqueue.obj      \
+        ltype.obj       \
+        macro.obj       \
+        mangle.obj      \
+        mem2mem.obj     \
+        memalloc.obj    \
+        namespace.obj   \
+        new.obj         \
+        omf.obj         \
+        omffixup.obj    \
+        omfint.obj      \
+        operator.obj    \
+        option.obj      \
+        parser.obj      \
+        posndir.obj     \
+        pragma.obj      \
+        preproc.obj     \
+        proc.obj        \
+        qfloat.obj      \
+        reswords.obj    \
+        return.obj      \
+        safeseh.obj     \
+        segment.obj     \
+        simsegm.obj     \
+        string.obj      \
+        switch.obj      \
+        symbols.obj     \
+        tokenize.obj    \
+        typeid.obj      \
+        types.obj       \
+        undef.obj
 
-{$(srcpath)}.asm.obj:
-    $(ASMC) $(AFLAGS) $<
+{$(SRCP)}.asm.obj:
+        ..\..\bin\asmc $(FLAG) -q -Cs -Iinc -I..\..\include $<
 
-asmc.exe: $(objects)
-    $(LINK) name $@ $(LFLAGS) file { *.obj }
-    del *.obj
+$(NAME).exe: $(OBJS)
+        ..\..\bin\linkw @<<
+libpath ..\..\lib\$(SRCP)
+name    $@
+symt    _cstart
+option  q, stack=0x300000 com stack=0x200000
+file    { *.obj }
+<<
+        del *.obj
 
-asmc64.exe: $(objects)
-    $(LINK) name $@ $(LFLAGS) file { *.obj }
-    del *.obj
-
-targets:
-    echo output:
-    echo asmc.exe
-    make asmc.exe
-    echo asmc64.exe
-    make ASMC64=1 asmc64.exe

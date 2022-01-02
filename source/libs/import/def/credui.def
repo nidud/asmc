@@ -1,6 +1,0 @@
-SspiGetCredUIContext@20
-SspiIsPromptingNeeded@4
-SspiPromptForCredentialsA@32
-SspiPromptForCredentialsW@32
-SspiUnmarshalCredUIContext@12
-SspiUpdateCredentials@16

@@ -14,9 +14,7 @@ memchr::
     repnz   scasb
     lea     rax,[rdi-1]
     mov     rdi,r8
-    .ifnz
-        xor eax,eax
-    .endif
+    cmovnz  rax,rcx
     ret
 
-    END
+    end

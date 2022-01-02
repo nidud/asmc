@@ -13,7 +13,7 @@ include quadmath.inc
 
     .code
 
-strtod proc uses esi edi ebx nptr:string_t, endptr:string_t
+strtod proc uses esi edi ebx nptr:string_t, endptr:array_t
 
     mov esi,_strtoflt(nptr)
     lea ebx,[esi].STRFLT.mantissa

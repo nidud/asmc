@@ -30,6 +30,7 @@ externdef __xt_z:ptr
 	db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
 cstart::
+_cstart::
 
 mainCRTStartup proc
 

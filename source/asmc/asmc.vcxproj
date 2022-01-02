@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>asmc</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{0040DBA9-EC22-43D3-B298-73504F3072B3}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="asmc.props" />
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>\Asmc\lib\x64</AdditionalLibraryDirectories>
+    </Link>
+    <ASMC>
+      <WarningLevel>2</WarningLevel>
+      <GenerateDebugInformation>8</GenerateDebugInformation>
+      <IncludePaths>inc;\asmc\include</IncludePaths>
+      <AdditionalOptions>/Zp8 /Cs /frame %(AdditionalOptions)</AdditionalOptions>
+    </ASMC>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ASMC Include="x64\asmc.asm" />
+    <ASMC Include="x64\asmerr.asm" />
+    <ASMC Include="x64\assemble.asm" />
+    <ASMC Include="x64\assert.asm" />
+    <ASMC Include="x64\assume.asm" />
+    <ASMC Include="x64\backptch.asm" />
+    <ASMC Include="x64\bin.asm" />
+    <ASMC Include="x64\branch.asm" />
+    <ASMC Include="x64\class.asm" />
+    <ASMC Include="x64\cmdline.asm" />
+    <ASMC Include="x64\codegen.asm" />
+    <ASMC Include="x64\coff.asm" />
+    <ASMC Include="x64\com.asm" />
+    <ASMC Include="x64\condasm.asm" />
+    <ASMC Include="x64\context.asm" />
+    <ASMC Include="x64\cpumodel.asm" />
+    <ASMC Include="x64\data.asm" />
+    <ASMC Include="x64\dbgcv.asm" />
+    <ASMC Include="x64\directiv.asm" />
+    <ASMC Include="x64\elf.asm" />
+    <ASMC Include="x64\end.asm" />
+    <ASMC Include="x64\enum.asm" />
+    <ASMC Include="x64\equate.asm" />
+    <ASMC Include="x64\expans.asm" />
+    <ASMC Include="x64\expreval.asm" />
+    <ASMC Include="x64\extern.asm" />
+    <ASMC Include="x64\fastcall.asm" />
+    <ASMC Include="x64\fastpass.asm" />
+    <ASMC Include="x64\fixup.asm" />
+    <ASMC Include="x64\for.asm" />
+    <ASMC Include="x64\fpfixup.asm" />
+    <ASMC Include="x64\hll.asm" />
+    <ASMC Include="x64\Indirection.asm" />
+    <ASMC Include="x64\input.asm" />
+    <ASMC Include="x64\invoke.asm" />
+    <ASMC Include="x64\label.asm" />
+    <ASMC Include="x64\linnum.asm" />
+    <ASMC Include="x64\listing.asm" />
+    <ASMC Include="x64\logo.asm" />
+    <ASMC Include="x64\loop.asm" />
+    <ASMC Include="x64\lqueue.asm" />
+    <ASMC Include="x64\ltype.asm" />
+    <ASMC Include="x64\macro.asm" />
+    <ASMC Include="x64\mangle.asm" />
+    <ASMC Include="x64\mem2mem.asm" />
+    <ASMC Include="x64\memalloc.asm" />
+    <ASMC Include="x64\namespace.asm" />
+    <ASMC Include="x64\new.asm" />
+    <ASMC Include="x64\omf.asm" />
+    <ASMC Include="x64\omffixup.asm" />
+    <ASMC Include="x64\omfint.asm" />
+    <ASMC Include="x64\operator.asm" />
+    <ASMC Include="x64\option.asm" />
+    <ASMC Include="x64\parser.asm" />
+    <ASMC Include="x64\posndir.asm" />
+    <ASMC Include="x64\pragma.asm" />
+    <ASMC Include="x64\preproc.asm" />
+    <ASMC Include="x64\proc.asm" />
+    <ASMC Include="x64\qfloat.asm" />
+    <ASMC Include="x64\reswords.asm" />
+    <ASMC Include="x64\return.asm" />
+    <ASMC Include="x64\safeseh.asm" />
+    <ASMC Include="x64\segment.asm" />
+    <ASMC Include="x64\simsegm.asm" />
+    <ASMC Include="x64\string.asm" />
+    <ASMC Include="x64\switch.asm" />
+    <ASMC Include="x64\symbols.asm" />
+    <ASMC Include="x64\tokenize.asm" />
+    <ASMC Include="x64\typeid.asm" />
+    <ASMC Include="x64\types.asm" />
+    <ASMC Include="x64\undef.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="asmc.targets" />
+  </ImportGroup>
+</Project>

@@ -1699,20 +1699,6 @@ _TEXT	macro x
 	endm
 endif
 
-ifndef _WIN64
-ifndef _REGS6432
-    rax equ <eax>
-    rbx equ <ebx>
-    rcx equ <ecx>
-    rdx equ <edx>
-    rdi equ <edi>
-    rsi equ <esi>
-    rbp equ <ebp>
-    rsp equ <esp>
-_REGS6432 equ 1
-endif
-endif
-
 ifdef __PE__
 
 ifdef _WIN64

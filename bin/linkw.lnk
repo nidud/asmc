@@ -9,7 +9,7 @@ end
 system begin 386
     option  osname='Windows NT character-mode'
     option  map
-    libpath %AsmCDir%\lib
+    libpath %AsmCDir%\lib\x86
     library libc,kernel32,user32
     format  windows nt
     runtime console=4.0
@@ -18,7 +18,7 @@ end
 # Win32 console application
 system begin con_32
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32
     symt    _cstart
     format  windows pe ^
@@ -28,7 +28,7 @@ end
 # using msvcrt
 system begin dcon_32
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library msvcrt,kernel32,user32
     format  windows pe ^
     runtime console=4.0
@@ -37,7 +37,7 @@ end
 # Win32 console debug application
 system begin con_32D
     option  quiet, cvp
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32
     symt    _cstart
     format  windows pe ru con debug c ^
@@ -47,7 +47,7 @@ end
 # Win32 console application Open Watcom
 system begin watcom_c
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32
     symt    _cstart_
     format  windows pe ^
@@ -57,7 +57,7 @@ end
 # Win32 console Unicode application
 system begin con_32W
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32
     symt    _wcstart
     format  windows pe ^
@@ -105,7 +105,7 @@ end
 # Win32 gui application
 system begin gui_32
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32,gdi32
     symt    _WinStart
     format  windows pe ru win ^
@@ -115,7 +115,7 @@ end
 # Win32 gui Unicode application
 system begin gui_32W
     option  quiet
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32,gdi32
     symt    _wWinStart
     format  windows pe ru win ^
@@ -143,7 +143,7 @@ system begin gui_64W
 end
 
 system begin dll_32
-    libpath %ASMCDIR%\lib
+    libpath %ASMCDIR%\lib\x86
     format windows pe dll ^
     library libc,kernel32,user32,gdi32
     runtime windows=4.0
@@ -156,7 +156,7 @@ system begin dll_64
 end
 
 system begin dos
-    libpath %AsmCDir%\source\lib16\lib
+    libpath %AsmCDir%\lib\dos
     library cl
     format  dos ^
 end

@@ -1,7 +1,7 @@
 ifndef __LIBC_INC
 define __LIBC_INC
 ;
-; Master include file for the Asmc RTL library.
+; Master include file for the Asmc Run Time library.
 ;
 define __STDC__
 define __LIBC__ 232
@@ -178,7 +178,7 @@ uint32_t	typedef dword
 uint64_t	typedef qword
 uint128_t	typedef oword
 
-ifdef DEBUG
+ifdef __DEBUG__
 .template array_type
     base string_t ?
     argv string_t 7 dup(?)
@@ -218,6 +218,30 @@ bool	typedef sdword
 define	true	1
 define	false	0
 define	nullptr 0
+
+ifndef _REGS6432
+define _REGS6432
+ifndef _WIN64
+define rax <eax>
+define rdx <edx>
+define rbx <ebx>
+define rcx <ecx>
+define rdi <edi>
+define rsi <esi>
+define rbp <ebp>
+define rsp <esp>
+endif
+endif
+
+ifndef UNREFERENCED_PARAMETER
+UNREFERENCED_PARAMETER macro P
+if defined(__DEBUG__) and defined(_WIN64)
+    exitm<lea rax,P>
+else
+    exitm<>
+endif
+    endm
+endif
 
 ifndef _CALLBACK_DEFINED
 define _CALLBACK_DEFINED

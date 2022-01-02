@@ -4,7 +4,6 @@ regress:
     for %%f in (*.obj) do call :test_file %%f
     exit
     :test_file
-    #\vc\bin\link /debug /subsystem:console /libpath:\Asmc\lib %~n1.obj
     linkw sys con_32 file %~n1.obj
     if not exist %~n1.exe exit
     %~n1

@@ -12,11 +12,11 @@ asmc -logo
 echo.
 echo AsmcDir: %AsmcDir%
 
-if not exist %~dp0lib\user32.lib (
+if not exist %~dp0lib\x86\user32.lib (
     choice /c YN /M "32-bit Import Libraries Missing: Build them now"
     if not errorlevel 2 call :ImportLibraries32
 )
-if not exist %~dp0lib\libc.lib (
+if not exist %~dp0lib\x86\libc.lib (
     choice /c YN /M "32-bit Runtime Library Missing: Build it now"
     if not errorlevel 2 call :BuildCRT32
 )
@@ -61,14 +61,14 @@ echo.
 goto end
 
 :ImportLibraries32
-cd %AsmcDir%\source\libs\import
+cd %AsmcDir%\lib\x86
 make
 cd %AsmcDir%
 echo.
 goto end
 
 :ImportLibraries64
-cd %AsmcDir%\source\libs\import\x64
+cd %AsmcDir%\lib\x64
 make
 cd %AsmcDir%
 echo.

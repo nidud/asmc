@@ -1847,15 +1847,16 @@ LOCALE_TRANSIENT_KEYBOARD4 equ 0x2c00
 
 LOCALE_UNASSIGNED_LCID	equ LOCALE_CUSTOM_UNSPECIFIED
 
-if NOT defined(lint)
+ifndef UNREFERENCED_PARAMETER
+ifdef __DEBUG__
 UNREFERENCED_PARAMETER macro P
-	exitm<(P)>
+	exitm<lea rax,P>
 	endm
 DBG_UNREFERENCED_PARAMETER macro P
-	exitm<(P)>
+	exitm<lea rax,P>
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
-	exitm<(V)>
+	exitm<lea rax,P>
 	endm
 else
 UNREFERENCED_PARAMETER macro P
@@ -1867,6 +1868,7 @@ DBG_UNREFERENCED_PARAMETER macro P
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
 	exitm<>
 	endm
+endif
 endif
 
 if (_MSC_VER GT 1200)

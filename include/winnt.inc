@@ -1207,22 +1207,29 @@ LOCALE_INVARIANT	equ MAKELCID(MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_
 
 
 
-ifndef lint
+ifndef UNREFERENCED_PARAMETER
+ifdef __DEBUG__
 UNREFERENCED_PARAMETER macro P
+	exitm<lea rax,P>
 	endm
 DBG_UNREFERENCED_PARAMETER macro P
+	exitm<lea rax,P>
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
+	exitm<lea rax,P>
 	endm
 else
 UNREFERENCED_PARAMETER macro P
+	exitm<>
 	endm
 DBG_UNREFERENCED_PARAMETER macro P
+	exitm<>
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
+	exitm<>
 	endm
 endif
-
+endif
 
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>

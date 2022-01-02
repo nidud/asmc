@@ -15,7 +15,7 @@ include stdlib.inc
 include io.inc
 include tchar.inc
 
-__MAKE__        equ 109
+__MAKE__        equ 111
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -53,6 +53,7 @@ option_a        db 1 ; build all targets (always set)
 option_d        db 0 ; debug - echo progress of work
 option_h        db 0 ; do not print program header
 option_s        db 0 ; silent mode (do not print commands)
+option_I        db 0 ; Ignore exit codes from commands
 
 symbol_count    dd 0
 symbol_table    dd 0
@@ -1511,11 +1512,11 @@ build_object proc uses esi edi ebx object:string_t
         system(esi)
         dec eax
         .if eax || eax != errorlevel
-
-            perror(edi)
-            exit(1)
+            .if ( !option_I )
+                perror(edi)
+                exit(1)
+            .endif
         .endif
-
     .endif
     ret
 
@@ -1685,7 +1686,7 @@ build_target proc uses esi edi ebx target:target_t
         .endif
         remove(&responsefile)
         remove(&commandfile)
-        .if edi
+        .if ( edi && !option_I )
             perror("Make execution terminated")
             exit(1)
         .endif
@@ -1871,7 +1872,7 @@ install proc uses esi edi ebx
         "set AsmcDir=%s\n"
         "set PATH=%s\\bin;%%PATH%%\n"
         "set INCLUDE=%s\\include;%%INCLUDE%%\n", esi, esi, esi)
-    fprintf(ebx, "set LIB=%s\\lib;%%LIB%%\n", esi)
+    fprintf(ebx, "set LIB=%s\\lib\\x86;%%LIB%%\n", esi)
     fclose(ebx)
     .return .if !fopen(strfcat(edi, esi, "bin\\envars64.bat"), "wt")
     mov ebx,eax
@@ -1931,7 +1932,11 @@ main proc argc:int_t, argv:array_t
             .case 'h': inc option_h: .endc
             .case 's': inc option_s: .endc
             .case 'I'
-                strcpy(&includepath, &[ebx+2])
+                .if ( byte ptr [ebx+2] == 0 )
+                    inc option_I
+                .else
+                    strcpy(&includepath, &[ebx+2])
+                .endif
                 .endc
 
             .case 'f'
@@ -1959,12 +1964,13 @@ main proc argc:int_t, argv:array_t
                 printf(
                     "Usage: MAKE [-/options] [macro=text] [target(s)]\n"
                     " Options:\n"
-                    "  -a   build all targets (always set)\n"
-                    "  -d   debug - echo progress of work\n"
-                    "  -f#  full pathname of make file\n"
-                    "  -h   do not print program header\n"
-                    "  -I#  set include path\n"
-                    "  -s   silent mode (do not print commands)\n\n"
+                    "  -a       Build all targets (always set)\n"
+                    "  -d       Debug - echo progress of work\n"
+                    "  -f#      Full pathname of make file\n"
+                    "  -h       Do not print program header\n"
+                    "  -I       Ignore exit codes from commands\n"
+                    "  -I#      Set include path\n"
+                    "  -s       Suppress executed-commands display\n\n"
                 )
                 .return 0
             .endsw

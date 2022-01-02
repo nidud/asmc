@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+      <AvailableItemName Include="ASMC">
+        <Targets>_ASMC</Targets>
+      </AvailableItemName>
+  </ItemGroup>
+  <PropertyGroup>
+    <ComputeLinkInputsTargets>
+      $(ComputeLinkInputsTargets);
+      ComputeASMCOutput;
+    </ComputeLinkInputsTargets>
+    <ComputeLibInputsTargets>
+      $(ComputeLibInputsTargets);
+      ComputeASMCOutput;
+    </ComputeLibInputsTargets>
+  </PropertyGroup>
+  <UsingTask
+    TaskName="ASMC"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
+  </UsingTask>
+
+  <Target Name="_WriteAsmcTlogs"
+          Condition="'@(ASMC)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <ASMC Remove="@(ASMC)" Condition="'%(ASMC.ExcludedFromBuild)' == 'true' or '%(ASMC.ObjectFileName)' == ''" />
+    </ItemGroup>
+    <ItemGroup Condition="'@(ASMC)' != ''">
+      <_AsmcReadTlog Include="^%(ASMC.FullPath);%(ASMC.AdditionalDependencies)" />
+      <_AsmcWriteTlog Include="^%(ASMC.FullPath);$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '%(ASMC.ObjectFileName)'))" />
+    </ItemGroup>
+
+    <WriteLinesToFile
+      Condition="'@(_AsmcReadTlog)' != ''"
+      File="$(TLogLocation)Asmc.read.1u.tlog"
+      Lines="@(_AsmcReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(_AsmcWriteTlog)' != ''"
+      File="$(TLogLocation)Asmc.write.1u.tlog"
+      Lines="@(_AsmcWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+
+    <ItemGroup>
+      <_AsmcReadTlog Remove="@(_AsmcReadTlog)" />
+      <_AsmcWriteTlog Remove="@(_AsmcWriteTlog)" />
+    </ItemGroup>
+  </Target>
+
+  <Target
+    Name="_ASMC"
+    BeforeTargets="$(ASMCBeforeTargets)"
+    AfterTargets="$(ASMCAfterTargets)"
+    Condition="'@(ASMC)' != ''"
+    Outputs="%(ASMC.ObjectFileName)"
+    Inputs="%(ASMC.Identity);%(ASMC.AdditionalDependencies);$(MSBuildProjectFile)"
+    DependsOnTargets="_WriteAsmcTlogs;_SelectedFiles">
+    <ItemGroup Condition="'@(SelectedFiles)' != ''">
+      <ASMC Remove="@(ASMC)" Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <Message
+      Importance="High"
+      Text="%(ASMC.ExecutionDescription)" />
+    <ASMC
+      Condition="'@(ASMC)' != '' and '%(ASMC.ExcludedFromBuild)' != 'true'"
+      CommandLineTemplate="%(ASMC.CommandLineTemplate)"
+      NoLogo="%(ASMC.NoLogo)"
+      GeneratePreprocessedSourceListing="%(ASMC.GeneratePreprocessedSourceListing)"
+      ListAllAvailableInformation="%(ASMC.ListAllAvailableInformation)"
+      UseSafeExceptionHandlers="%(ASMC.UseSafeExceptionHandlers)"
+      AddFirstPassListing="%(ASMC.AddFirstPassListing)"
+      EnableAssemblyGeneratedCodeListing="%(ASMC.EnableAssemblyGeneratedCodeListing)"
+      DisableSymbolTable="%(ASMC.DisableSymbolTable)"
+      EnableFalseConditionalsInListing="%(ASMC.EnableFalseConditionalsInListing)"
+      TreatWarningsAsErrors="%(ASMC.TreatWarningsAsErrors)"
+      MakeAllSymbolsPublic="%(ASMC.MakeAllSymbolsPublic)"
+      GenerateDebugInformation="%(ASMC.GenerateDebugInformation)"
+      EnableMASM51Compatibility="%(ASMC.EnableMASM51Compatibility)"
+      PerformSyntaxCheckOnly="%(ASMC.PerformSyntaxCheckOnly)"
+      IgnoreINCLUDELIB="%(ASMC.IgnoreINCLUDELIB)"
+      WCharacterSet="%(ASMC.WCharacterSet)"
+      ObjectFileName="%(ASMC.ObjectFileName)"
+      PreprocessorDefinitions="%(ASMC.PreprocessorDefinitions)"
+      ForseIncludeFile="%(ASMC.ForseIncludeFile)"
+      AssembledCodeListingFile="%(ASMC.AssembledCodeListingFile)"
+      IncludePaths="%(ASMC.IncludePaths)"
+      BrowseFile="%(ASMC.BrowseFile)"
+      PreserveIdentifierCase="%(ASMC.PreserveIdentifierCase)"
+      WarningLevel="%(ASMC.WarningLevel)"
+      PackAlignmentBoundary="%(ASMC.PackAlignmentBoundary)"
+      CallingConvention="%(ASMC.CallingConvention)"
+      ErrorReporting="%(ASMC.ErrorReporting)"
+      AdditionalOptions="%(ASMC.AdditionalOptions)"
+      Inputs="%(ASMC.Identity)" />
+  </Target>
+  <Target
+    Name="ComputeASMCOutput"
+    Condition="'@(ASMC)' != ''">
+    <ItemGroup>
+      <Link Include="@(ASMC->Metadata('ObjectFileName')->Distinct()->ClearMetadata())" Condition="'%(ASMC.ExcludedFromBuild)' != 'true'"/>
+      <Lib Include="@(ASMC->Metadata('ObjectFileName')->Distinct()->ClearMetadata())" Condition="'%(ASMC.ExcludedFromBuild)' != 'true'"/>
+    </ItemGroup>
+  </Target>
+</Project>

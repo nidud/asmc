@@ -14,86 +14,85 @@ include tchar.inc
 
 _tmain proc argc:int_t, argv:array_t
 
-  local fname[ 256]:TCHAR
-  local finfo[1024]:TCHAR
+    .new fname[ 256]:TCHAR
+    .new finfo[1024]:TCHAR
 
-    .repeat
+    .if ( ecx != 2 ) ; argc
 
-        .if ecx != 2 ; argc
+        _tprintf( "EXE Version 1.01 Public Domain\n\nUsage: EXE <filename>[.exe]\n\n" )
+        .return( 1 )
+    .endif
 
-            _tprintf( "EXE Version 1.0 Public Domain\n\nUsage: EXE <filename>[.exe]\n\n" )
-            mov eax,1
-            .break
-        .endif
+    mov rdi,[rdx+size_t] ; argv[1]
+    .ifd ( SearchPath( ".", rdi, ".exe", 256, &fname, NULL ) == 0 )
 
-        mov rdi,[rdx+8] ; argv[1]
-        .if !SearchPath( NULL, rdi, ".exe", 256, &fname, NULL )
+        SearchPath( NULL, rdi, ".exe", 256, &fname, NULL )
+    .endif
 
-            _tprintf( "File not found: %s\n", rdi )
-            mov eax,1
-            .break
-        .endif
+    .if ( eax == 0 )
 
-        lea rdi,fname
-        .if _topen( rdi, O_RDONLY or O_BINARY, 0 ) == -1
+        _tprintf( "File not found: %s\n", rdi )
+        .return( 1 )
+    .endif
 
-            _tperror(rdi)
-            mov eax,1
-            .break
-        .endif
+    lea rdi,fname
+    .ifd ( _topen( rdi, O_RDONLY or O_BINARY, 0 ) == -1 )
 
-        mov ebx,eax
-        lea rsi,finfo
+        _tperror(rdi)
+        .return( 1 )
+    .endif
 
-        _read( ebx, rsi, 1024 )
-        _close( ebx )
-        _tprintf( "\n%s:\n Machine:", rdi )
+    mov ebx,eax
+    lea rsi,finfo
 
-        mov eax,[rsi].IMAGE_DOS_HEADER.e_lfanew
-        add rsi,rax
+    _read( ebx, rsi, 1024 )
+    _close( ebx )
+    _tprintf( "\n%s:\n Machine:", rdi )
 
-        .if ( [rsi].IMAGE_NT_HEADERS.FileHeader.Machine == IMAGE_FILE_MACHINE_I386 )
+    mov eax,[rsi].IMAGE_DOS_HEADER.e_lfanew
+    add rsi,rax
 
-            _tprintf( "\tI386\n ImageBase:\t%08X\n", [rsi].IMAGE_NT_HEADERS32.OptionalHeader.ImageBase )
+    .if ( [rsi].IMAGE_NT_HEADERS.FileHeader.Machine == IMAGE_FILE_MACHINE_I386 )
 
-        .else
+        _tprintf( "\tI386\n ImageBase:\t%08X\n", [rsi].IMAGE_NT_HEADERS32.OptionalHeader.ImageBase )
+        .return( 0 )
+    .endif
 
-            _tprintf( "\t\tAMD64\n ImageBase:\t\t%016llX\n", [rsi].IMAGE_NT_HEADERS64.OptionalHeader.ImageBase )
+    _tprintf( "\t\tAMD64\n ImageBase:\t\t%016llX\n", [rsi].IMAGE_NT_HEADERS64.OptionalHeader.ImageBase )
 
-            lea rdi,@CStr( "No"  )
-            lea rbx,@CStr( "Yes" )
-            mov rax,rdi
-            .if ( [rsi].IMAGE_NT_HEADERS64.FileHeader.Characteristics & IMAGE_FILE_LARGE_ADDRESS_AWARE )
-                mov rax,rbx
-            .endif
-            _tprintf( " Large address aware:\t%s\n", rax )
+    lea rdi,@CStr( "No"  )
+    lea rbx,@CStr( "Yes" )
+    mov rax,rdi
+    .if ( [rsi].IMAGE_NT_HEADERS64.FileHeader.Characteristics & IMAGE_FILE_LARGE_ADDRESS_AWARE )
+        mov rax,rbx
+    .endif
+    _tprintf( " Large address aware:\t%s\n", rax )
 
-            movzx esi,[rsi].IMAGE_NT_HEADERS64.OptionalHeader.DllCharacteristics
-            mov rax,rdi
-            .if ( esi & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE )
-                mov rax,rbx
-            .endif
-            _tprintf( " ASLR:\t\t\t%s\t/DYNAMICBASE\n", rax )
-            mov rax,rdi
-            .if ( esi & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA )
-                mov rax,rbx
-            .endif
-            _tprintf( " ASLR^2:\t\t%s\t/HIGHENTROPYVA\n", rax )
-            mov rax,rdi
-            .if ( esi & IMAGE_DLLCHARACTERISTICS_NX_COMPAT )
-                mov rax,rbx
-            .endif
-            _tprintf( " DEP:\t\t\t%s\t/NXCOMPAT\n", rax )
-            mov rax,rdi
-            .if ( esi & IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE )
-                mov rax,rbx
-            .endif
-            _tprintf( " TS Aware:\t\t%s\t/GS\n\n", rax )
-        .endif
+    movzx esi,[rsi].IMAGE_NT_HEADERS64.OptionalHeader.DllCharacteristics
+    mov rax,rdi
+    .if ( esi & IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE )
+        mov rax,rbx
+    .endif
+    _tprintf( " ASLR:\t\t\t%s\t/DYNAMICBASE\n", rax )
 
-    .until 1
-    xor eax,eax
-    ret
+    mov rax,rdi
+    .if ( esi & IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA )
+        mov rax,rbx
+    .endif
+    _tprintf( " ASLR^2:\t\t%s\t/HIGHENTROPYVA\n", rax )
+
+    mov rax,rdi
+    .if ( esi & IMAGE_DLLCHARACTERISTICS_NX_COMPAT )
+        mov rax,rbx
+    .endif
+    _tprintf( " DEP:\t\t\t%s\t/NXCOMPAT\n", rax )
+
+    mov rax,rdi
+    .if ( esi & IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE )
+        mov rax,rbx
+    .endif
+    _tprintf( " TS Aware:\t\t%s\t/GS\n\n", rax )
+    .return( 0 )
 
 _tmain endp
 

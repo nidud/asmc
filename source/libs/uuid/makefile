@@ -1,7 +1,7 @@
 !include srcpath
 
 AFLAGS = -I$(inc_dir)
-UUID32 = $(lib_dir)\uuid.lib
+UUID32 = $(lib_dir)\x86\uuid.lib
 UUID64 = $(lib_dir)\x64\uuid.lib
 
 all: list.exe $(UUID32) $(UUID64) clean

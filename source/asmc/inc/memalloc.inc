@@ -8,8 +8,18 @@ define __MEMALLOC_INC
 
 LclAlloc proto fastcall :uint_t
 MemAlloc proto fastcall :uint_t
+
 MemFree macro m
-    exitm<free(m)>
+if defined(__UNIX__) and defined(_WIN64)
+    push    rsi
+    push    rdi
+    free(m)
+    pop     rdi
+    pop     rsi
+else
+    free(m)
+endif
+    exitm<>
     endm
 LclFree macro p
     exitm<>

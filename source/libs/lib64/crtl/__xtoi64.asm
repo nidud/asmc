@@ -9,9 +9,11 @@
 ; 2017-10-18 - created
 ;
 
+include crtl.inc
+
     .code
 
-__xtoi64::
+__xtoi64 proc string:string_t
 
     xor eax,eax
     xor edx,edx
@@ -38,5 +40,7 @@ __xtoi64::
 
     .endw
     ret
+
+__xtoi64 endp
 
     end

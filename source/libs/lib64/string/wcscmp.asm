@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-wcscmp::
+    option win64:rsp noauto nosave
+
+wcscmp proc a:wstring_t, b:wstring_t
 
     mov eax,0xFF
 
@@ -25,4 +29,6 @@ wcscmp::
     movsx eax,al
     ret
 
-    END
+wcscmp endp
+
+    end

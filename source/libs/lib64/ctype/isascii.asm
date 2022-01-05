@@ -4,14 +4,18 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include ctype.inc
+
     .code
 
-isascii::
+isascii proc c:int_t
 
     mov     eax,ecx
     and     eax,0x80
     setz    al
     ret
+
+isascii endp
 
     end
 

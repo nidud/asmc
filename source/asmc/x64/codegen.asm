@@ -60,7 +60,7 @@ PREFIX_GS       equ 0x65
 ; the F2/F3/66 byte before a segment prefix, even if the
 ; F2/F3/66 byte is a "mantadory prefix".
 
-output_opc proc uses rdi rbx r12
+output_opc proc __ccall uses rdi rbx r12
 
   local vex     :byte
   local evex    :byte
@@ -1086,7 +1086,7 @@ output_opc proc uses rdi rbx r12
 
 output_opc endp
 
-output_data proc uses rdi rbx determinant:int_t, index:int_t
+output_data proc __ccall uses rdi rbx determinant:int_t, index:int_t
 
 ; output address displacement and immediate data;
 
@@ -1256,7 +1256,7 @@ output_data proc uses rdi rbx determinant:int_t, index:int_t
 
 output_data endp
 
-check_3rd_operand proc uses rdi rbx
+check_3rd_operand proc __ccall uses rdi rbx
 
     mov   rdi,[rsi].pinstr
     movzx eax,[rdi].opclsidx
@@ -1328,7 +1328,7 @@ check_3rd_operand proc uses rdi rbx
 
 check_3rd_operand endp
 
-output_3rd_operand proc uses rdi rbx
+output_3rd_operand proc __ccall uses rdi rbx
 
     mov   rdi,[rsi].pinstr
     movzx eax,[rdi].opclsidx
@@ -1358,7 +1358,7 @@ output_3rd_operand proc uses rdi rbx
     ret
 output_3rd_operand endp
 
-match_phase_3 proc uses rdi rbx opnd1:int_t
+match_phase_3 proc __ccall uses rdi rbx opnd1:int_t
 ;;
 ;; - this routine will look up the assembler opcode table and try to match
 ;;   the second operand with what we get;
@@ -1650,7 +1650,7 @@ match_phase_3 endp
 
     assume rdi:fixup_t
 
-add_bytes proc uses rdi index:int_t
+add_bytes proc __ccall uses rdi index:int_t
 
     imul eax,index,opnd_item
     mov  rdi,[rsi].opnd[rax].InsFixup
@@ -1674,7 +1674,7 @@ add_bytes endp
 
     assume rdi:instr_t
 
-check_operand_2 proc uses rdi rbx opnd1:int_t
+check_operand_2 proc __ccall uses rdi rbx opnd1:int_t
 ;
 ; check if a second operand has been entered.
 ; If yes, call match_phase_3();
@@ -1754,7 +1754,7 @@ check_operand_2 endp
 ;; - if one is found then it will call check_operand_2() to determine
 ;;   if further operands also match; else, it must be error.
 
-codegen proc public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint_t
+codegen proc __ccall public uses rsi rdi rbx CodeInfo:ptr code_info, oldofs:uint_t
 
   local evex:byte
 

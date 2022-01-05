@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_strrev::
+    option win64:rsp noauto
+
+_strrev proc string:string_t
 
     .for ( rax=rcx, rdx=rcx : byte ptr [rdx] : rdx++ )
 
@@ -20,5 +24,6 @@ _strrev::
         mov [rdx],r8b
     .endf
     ret
+_strrev endp
 
     end

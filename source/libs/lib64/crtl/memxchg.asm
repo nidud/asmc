@@ -4,11 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include crtl.inc
+
     .code
 
-memxchg::
-
-    option loopalign:4
+memxchg proc a:string_t, b:string_t, z:size_t
 
     .while( r8 >= 8 )
 
@@ -29,8 +29,8 @@ memxchg::
         mov [rdx+r8],al
 
     .endw
+    .return( rcx )
 
-    mov rax,rcx
-    ret
+memxchg endp
 
     end

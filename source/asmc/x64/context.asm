@@ -111,7 +111,7 @@ endif
     assume rbx:ptr asm_tok
     assume r14:ptr context
 
-ContextDirective proc uses rsi rdi rbx r12 r13 r14 i:int_t, tokenarray:ptr asm_tok
+ContextDirective proc __ccall uses rsi rdi rbx r12 r13 r14 i:int_t, tokenarray:ptr asm_tok
 
     imul ebx,ecx,asm_tok
     add rbx,rdx
@@ -263,7 +263,7 @@ ContextDirective endp
 
     assume rdi:ptr context
 
-ContextSaveState proc uses rsi rdi rbx
+ContextSaveState proc __ccall uses rsi rdi rbx
 
     .for ( ecx = 0, rdx = contextStack : rdx : ecx++, rdx = [rdx].context.next )
     .endf
@@ -284,7 +284,7 @@ ContextSaveState endp
 
 ; restore context status
 
-ContextRestoreState proc private uses rsi rdi rbx
+ContextRestoreState proc __ccall private uses rsi rdi rbx
 
     .for ( ebx = cntsavedContexts : ebx : ebx-- )
         .if ( contextFree )
@@ -309,7 +309,7 @@ ContextRestoreState endp
 
 ; init context, called once per pass
 
-ContextInit proc pass:int_t
+ContextInit proc __ccall pass:int_t
 
     ; if ContextStack isn't NULL, then at least one PUSHCONTEXT
     ; didn't have a matching POPCONTEXT. No need to reset it to NULL -

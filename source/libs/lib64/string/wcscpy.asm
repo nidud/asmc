@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-wcscpy::
+    option win64:rsp noauto nosave
+
+wcscpy proc dst:wstring_t, src:wstring_t
 
     mov rax,rcx
     xor ecx,ecx
@@ -16,5 +20,7 @@ wcscpy::
         add ecx,2
     .until !r8w
     ret
+
+wcscpy endp
 
     end

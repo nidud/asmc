@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-strncmp::
+    option win64:rsp noauto
+
+strncmp proc a:string_t, b:string_t, count:size_t
 
     .repeat
 
@@ -30,4 +34,6 @@ strncmp::
     .until 1
     ret
 
-    END
+strncmp endp
+
+    end

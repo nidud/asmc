@@ -285,11 +285,11 @@ getfilearg endp
 ;; this is called for cmdline options -D, -I and -Fi
 ;;
 
-queue_item proc uses rsi i:int_t, string:string_t
+queue_item proc __ccall uses rsi i:int_t, string:string_t
 
     mov rsi,MemAlloc( &[ tstrlen( string ) + sizeof( qitem )] )
     mov [rsi].qitem.next,NULL
-    strcpy( &[rsi].qitem.value, string )
+    tstrcpy( &[rsi].qitem.value, string )
 
     mov ecx,i
     lea rdx,Options
@@ -306,22 +306,21 @@ queue_item proc uses rsi i:int_t, string:string_t
 queue_item endp
 
 
-get_fname proc uses rsi rdi rbx r12 type:int_t, token:string_t
+get_fname proc __ccall uses rsi rdi rbx r12 type:int_t, token:string_t
 
   local name[_MAX_PATH]:char_t
   local default:string_t
 
-    mov rdx,token
     .if ( B[rdx] == '=' )
         inc rdx
     .endif
     mov rsi,rdx
-    mov ebx,type
+    mov ebx,ecx
     mov rdi,GetFNamePart(rdx)
-    ;;
-    ;; If name's ending with a '\' (or '/' in Unix), it's supposed
-    ;; to be a directory name only.
-    ;;
+    ;
+    ; If name's ending with a '\' (or '/' in Unix), it's supposed
+    ; to be a directory name only.
+    ;
     lea r12,DefaultDir
     .if ( B[rdi] == 0 )
 
@@ -329,25 +328,25 @@ get_fname proc uses rsi rdi rbx r12 type:int_t, token:string_t
 
             mov rcx,[r12+rbx*string_t]
             .if ( rcx )
-                free(rcx)
+                MemFree(rcx)
             .endif
-            mov [r12+rbx*string_t],strcpy(malloc(&[tstrlen(token)+1]), rsi)
+            mov [r12+rbx*string_t],tstrcpy(MemAlloc(&[tstrlen(token)+1]), rsi)
         .endif
         .return
     .endif
     mov name[0],0
     mov rdx,[r12+rbx*string_t]
     .if rsi == rdi && ebx < NUM_FILE_TYPES && rdx
-        strcpy(&name, rdx)
+        tstrcpy(&name, rdx)
     .endif
-    strcat(&name, rsi)
+    tstrcat(&name, rsi)
 
     mov eax,type
     lea rdx,Options
     lea rdi,[rdx].global_options.names[rax*8]
-    free([rdi])
-    mov [rdi],malloc(&[tstrlen(&name)+1])
-    strcpy([rdi], &name)
+    MemFree([rdi])
+    mov [rdi],MemAlloc(&[tstrlen(&name)+1])
+    tstrcpy([rdi], &name)
     ret
 
 get_fname endp
@@ -365,9 +364,9 @@ set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
         mov rdi,rdx
         lea rax,Options
         lea rdi,[rax].global_options.names[rcx*8]
-        free( [rsi] )
-        mov [rsi],malloc( &[tstrlen( rdi ) + 1] )
-        strcpy( [rsi], rdi )
+        MemFree( [rsi] )
+        mov [rsi],MemAlloc( &[tstrlen( rdi ) + 1] )
+        tstrcpy( [rsi], rdi )
     .else
         asmerr( 1006, rdx )
     .endif
@@ -381,17 +380,20 @@ set_option_n_name endp
 ;; so check if it is a file and, if yes, read it.
 ;;
 
-ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
-
+ifdef __UNIX__
+ReadParamFile proc fastcall uses rsi rdi rbx r12 r13 name:string_t
+else
+ReadParamFile proc fastcall uses rbx r12 r13 name:string_t
+endif
    .new fp:ptr FILE
 
-    mov rsi,rcx
-    xor edi,edi
-    mov fp,fopen(rsi, "rb")
+    mov r12,rcx
+    xor r13,r13
+    mov fp,fopen(r12, "rb")
 
     .if eax == NULL
 
-        asmerr(1000, rsi)
+        asmerr(1000, r12)
         .return(NULL)
     .endif
 
@@ -400,26 +402,26 @@ ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
 
         mov rbx,ftell( fp )
         rewind( fp )
-        mov rdi,MemAlloc( &[rbx+1] )
-        fread( rdi, 1, ebx, fp )
-        mov B[rdi+rbx],0
+        mov r13,MemAlloc( &[rbx+1] )
+        fread( r13, 1, ebx, fp )
+        mov B[r13+rbx],0
     .endif
 
     fclose(fp)
-    .return(NULL) .if ( ebx == 0 )
-    .return(rdi)
+   .return(NULL) .if ( ebx == 0 )
+   .return(r13)
 
 ReadParamFile endp
 
 
-;;
-;; get a "name"
-;; type=@ : filename ( -Fd, -Fi, -Fl, -Fo, -Fw, -I )
-;; type=$ : (macro) identifier [=value] ( -D, -nc, -nd, -nm, -nt )
-;; type=0 : something else ( -0..-10 )
-;;
+;
+; get a "name"
+; type=@ : filename ( -Fd, -Fi, -Fl, -Fo, -Fw, -I )
+; type=$ : (macro) identifier [=value] ( -D, -nc, -nd, -nm, -nt )
+; type=0 : something else ( -0..-10 )
+;
 
-GetNameToken proc uses rsi rdi rbx dst:string_t, string:string_t, max:int_t, type:char_t
+GetNameToken proc __ccall uses rsi rdi rbx dst:string_t, string:string_t, max:int_t, type:char_t
 
    .new equatefound:int_t = FALSE
 
@@ -510,7 +512,7 @@ cpu_option int_t \
 
 endif
 
-ProcessOption proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
+ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
 
     local i:int_t
     local j:int_t
@@ -653,6 +655,7 @@ endif
     .case '6fle'            ;; -elf64
 if defined(ASMC64) and defined(__UNIX__)
 else
+        or  Options.xflag,OPT_REGAX
         mov Options.output_format,OFORMAT_ELF
         define_name( "_LINUX",   "2" )
         define_name( "__UNIX__", "1" )
@@ -1059,7 +1062,7 @@ ProcessOption endp
 
     option proc:public
 
-ParseCmdline proc uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int_t
+ParseCmdline proc __ccall uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int_t
 
   local paramfile[_MAX_PATH]:char_t
 
@@ -1105,7 +1108,15 @@ endif
             mov [rsi],GetNameToken(&paramfile, rbx, sizeof(paramfile)-1, '@')
             xor ebx,ebx
             .if paramfile[0]
+ifdef __UNIX__
+                push rsi
+                push rdi
+endif
                 mov rbx,getenv(&paramfile)
+ifdef __UNIX__
+                pop rdi
+                pop rsi
+endif
             .endif
             .if !rbx
                 mov rbx,ReadParamFile(&paramfile)
@@ -1114,33 +1125,34 @@ endif
         .default ;; collect  file name
             mov rbx,GetNameToken(&paramfile, rbx, sizeof(paramfile) - 1, '@')
             mov Options.names[ASM*8],MemAlloc(&[tstrlen(&paramfile)+1])
-            strcpy(Options.names[ASM*8], &paramfile)
+            tstrcpy(Options.names[ASM*8], &paramfile)
             inc dword ptr [rdi]
             mov [rsi],rbx
             .return(Options.names[ASM*8])
         .endsw
     .endf
     mov [rsi],rbx
-    .return(NULL)
+   .return(NULL)
+
 ParseCmdline endp
 
 
-CmdlineFini proc uses rsi rdi rbx
+CmdlineFini proc __ccall uses r12 r13 rbx
 
   local q:ptr qitem
   local x:ptr qitem
   local p:ptr char_t
 
     xor ebx,ebx
-    lea rsi,DefaultDir
-    lea rdi,Options
+    lea r12,DefaultDir
+    lea r13,Options
 
     .while ebx < NUM_FILE_TYPES
 
         xor eax,eax
-        mov rcx,[rsi+rbx*8]
-        mov [rsi+rbx*8],rax
-        mov [rdi].global_options.names[rbx*8],rax
+        mov rcx,[r12+rbx*8]
+        mov [r12+rbx*8],rax
+        mov [r13].global_options.names[rbx*8],rax
         free(rcx)
         inc ebx
     .endw
@@ -1149,11 +1161,11 @@ CmdlineFini proc uses rsi rdi rbx
     .while ebx < OPTQ_LAST
 
         lea rdx,Options
-        mov rdi,[rdx].global_options.queues[rbx*8]
-        .while rdi
-            mov rsi,[rdi].qitem.next
-            free(rdi)
-            mov rdi,rsi
+        mov r13,[rdx].global_options.queues[rbx*8]
+        .while r13
+            mov r12,[r13].qitem.next
+            free(r13)
+            mov r13,r12
         .endw
         lea rdx,Options
         mov [rdx].global_options.queues[rbx*8],NULL

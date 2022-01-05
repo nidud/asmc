@@ -21,6 +21,7 @@ The macros listed in the following table.
 | **\_\_AVX512DQ\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
 | **\_\_AVX512F\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
 | **\_\_AVX512VL\_\_** | Defined as 1 when the /arch:AVX512 option is set. Otherwise, undefined. |
+| **\_\_DEBUG\_\_** | Defined as 1 when the /Zi option is set. Otherwise, undefined. |
 | **\_\_GUI\_\_** | Defined as 1 when the /gui option is set. Otherwise, undefined. |
 | **\_\_JWASM\_\_** | Defined as an integer literal value 212 that represents the compatible version of JWasm. This macro is always defined. |
 | **\_LINUX** | Defined as 1 when the /elf option is set and 2 when the /elf64 option is set. Otherwise, undefined. |

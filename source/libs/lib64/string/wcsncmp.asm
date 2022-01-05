@@ -4,13 +4,15 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-wcsncmp::
+    option win64:rsp noauto
 
-    push    rsi
-    push    rdi
-    xchg    rcx,r8
+wcsncmp proc uses rsi rdi a:wstring_t, b:wstring_t, z:size_t
+
+    xchg rcx,r8
 
     .if rcx
 
@@ -31,10 +33,8 @@ wcsncmp::
             sbb ecx,-1
         .endif
     .endif
+    .return(ecx)
 
-    mov     eax,ecx
-    pop     rdi
-    pop     rsi
-    ret
+wcsncmp endp
 
-    END
+    end

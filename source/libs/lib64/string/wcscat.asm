@@ -4,24 +4,31 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-wcscat::
+    option win64:rsp noauto
 
-    mov rax,rcx
-    xor r8d,r8d
+wcscat proc dst:wstring_t, src:wstring_t
 
-    .while [rcx] != r8w
-
-        add rcx,2
-    .endw
-
-    .repeat
-        mov r8w,[rdx]
-        mov [rcx],r8w
-        add rcx,2
-        add rdx,2
-    .until !r8d
+    mov     rax,rcx
+    xor     r8d,r8d
+@@:
+    cmp     r8w,[rcx]
+    je      @F
+    add     rcx,2
+    jmp     @B
+@@:
+    mov     r8w,[rdx]
+    mov     [rcx],r8w
+    add     rcx,2
+    add     rdx,2
+    test    r8d,r8d
+    jnz     @B
     ret
 
+wcscat endp
+
     end
+

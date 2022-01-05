@@ -26,7 +26,7 @@ define TYPEOPT 0
 
 CurrStruct ptr dsym 0
 redef_struct ptr dsym 0
-;; text constants for 'Non-benign <x> redefinition' error msg
+; text constants for 'Non-benign <x> redefinition' error msg
 define szStructure <"structure">
 define szRecord <"record">
 
@@ -34,7 +34,7 @@ define szNonUnique <"NONUNIQUE">
 
 .code
 
-TypesInit proc
+TypesInit proc __ccall
 
     mov CurrStruct,NULL
     mov redef_struct,NULL
@@ -42,21 +42,21 @@ TypesInit proc
 
 TypesInit endp
 
-;; create a SYM_TYPE symbol.
-;; <sym> must be NULL or of state SYM_UNDEFINED.
-;; <name> and <global> are only used if <sym> is NULL.
-;; <name> might be an empty string.
+; create a SYM_TYPE symbol.
+; <sym> must be NULL or of state SYM_UNDEFINED.
+; <name> and <global> are only used if <sym> is NULL.
+; <name> might be an empty string.
 
-CreateTypeSymbol proc uses rsi rdi sym:ptr asym, name:string_t, global:int_t
+CreateTypeSymbol proc __ccall uses rsi rdi sym:ptr asym, name:string_t, global:int_t
 
-    mov rsi,sym
+    mov rsi,rcx
     .if ( rsi )
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
     .else
-        .if ( global )
-            SymCreate( name )
+        .if ( r8d )
+            SymCreate( rdx )
         .else
-            SymAlloc( name )
+            SymAlloc( rdx )
         .endif
         mov rsi,rax
     .endif
@@ -72,16 +72,17 @@ CreateTypeSymbol proc uses rsi rdi sym:ptr asym, name:string_t, global:int_t
         mov [rdi].struct_info.flags,0
     .endif
     .return( rsi )
+
 CreateTypeSymbol endp
 
-;; search a name in a struct's fieldlist
+; search a name in a struct's fieldlist
 
     assume rbx:ptr sfield
 
-SearchNameInStruct proc uses rsi rdi rbx tstruct:ptr asym, name:string_t,
-    poffset:ptr uint_32, level:int_t
+SearchNameInStruct proc __ccall uses rsi rdi rbx tstruct:ptr asym, name:string_t,
+        poffset:ptr uint_32, level:int_t
 
-    mov edi,tstrlen( name )
+    mov edi,tstrlen( rdx )
     xor esi,esi
 
     mov rcx,tstruct
@@ -139,21 +140,18 @@ SearchNameInStruct proc uses rsi rdi rbx tstruct:ptr asym, name:string_t,
 
 SearchNameInStruct endp
 
-;; check if a struct has changed
+; check if a struct has changed
 
     assume rdi:ptr sfield
 
-AreStructsEqual proc private uses rdi rbx newstr:ptr dsym, oldstr:ptr dsym
+AreStructsEqual proc __ccall private uses rdi rbx newstr:ptr dsym, oldstr:ptr dsym
 
-    mov rax,oldstr
-    mov rcx,[rax].dsym.structinfo
-    mov rbx,[rcx].struct_info.head
-
-    mov rax,newstr
-    mov rcx,[rax].dsym.structinfo
+    mov rax,[rdx].dsym.structinfo
+    mov rbx,[rax].struct_info.head
+    mov rcx,[rcx].dsym.structinfo
     mov rdi,[rcx].struct_info.head
 
-    ;; kind of structs must be identical
+    ; kind of structs must be identical
     .if ( [rbx].typekind != [rdi].typekind )
         .return( FALSE )
     .endif
@@ -162,7 +160,7 @@ AreStructsEqual proc private uses rdi rbx newstr:ptr dsym, oldstr:ptr dsym
         .if ( !rdi )
             .return( FALSE )
         .endif
-        ;; for global member names, don't check the name if it's ""
+        ; for global member names, don't check the name if it's ""
         mov rax,[rdi].name
 
         .if ( ModuleInfo.oldstructs && byte ptr [rax] == 0 )
@@ -190,7 +188,7 @@ AreStructsEqual endp
     assume rbx:ptr asm_tok
     assume rdi:nothing
 
-StructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+StructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local alignment:uint_t
   local offs:uint_t
@@ -200,9 +198,9 @@ StructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; for embedded structs, the directive must be at pos 0,
     ; an identifier is optional then.
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov rsi,[rbx].string_ptr
-    imul ecx,i,asm_tok
+    imul ecx,ecx,asm_tok
     add rbx,rcx
 
     mov al,TYPE_STRUCT
@@ -226,7 +224,7 @@ StructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     inc i ; go past STRUCT/UNION
     add rbx,asm_tok
 
-    .if ( i == 1 ) ;; embedded struct?
+    .if ( i == 1 ) ; embedded struct?
         ; scan for the optional name
         lea rsi,@CStr("")
 if ANYNAME
@@ -250,12 +248,12 @@ endif
         ; forward references aren't accepted, but EXPF_NOUNDEF isn't used here!
 
         .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
-            ;; an empty expression is accepted
+            ; an empty expression is accepted
             mov rcx,opndx.sym
             .if ( opndx.kind == EXPR_EMPTY )
 
             .elseif ( opndx.kind != EXPR_CONST )
-                ;; v2.09: better error msg
+                ; v2.09: better error msg
                 .if ( rcx && [rcx].asym.state == SYM_UNDEFINED )
                     asmerr( 2006, [rcx].asym.name )
                 .else
@@ -435,14 +433,15 @@ endif
 
 StructDirective endp
 
-;; handle ENDS directive when a struct/union definition is active
+; handle ENDS directive when a struct/union definition is active
 
-EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+EndstructDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov rdi,CurrStruct ;; cannot be NULL
+    mov rdi,CurrStruct ; cannot be NULL
 
-    ;; if pass is > 1 just do minimal work
+    ; if pass is > 1 just do minimal work
     .if ( Parse_Pass > PASS_1 )
+
         mov [rdi].asym.offs,0
         mov ebx,[rdi].asym.total_size
         mov CurrStruct,[rdi].dsym.next
@@ -458,7 +457,7 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     ; syntax is either "<name> ENDS" (i=1) or "ENDS" (i=0).
     ; first case must be top level (next=NULL), latter case must NOT be top level (next!=NULL)
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     .if ( ( i == 1 && [rdi].dsym.next == NULL ) || \
           ( i == 0 && [rdi].dsym.next != NULL ) )
 
@@ -477,7 +476,7 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
     .endif
 
-    inc i ;; go past ENDS
+    inc i ; go past ENDS
     imul ecx,i,asm_tok
     add rbx,rcx
 
@@ -497,9 +496,9 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov [rdi].asym.total_size,eax
     .endif
 
-    ;; Pad bytes at the end of the structure.
+    ; Pad bytes at the end of the structure.
 
-    ;; v2.02: this is to be done in any case, whether -Zg is set or not
+    ; v2.02: this is to be done in any case, whether -Zg is set or not
     movzx edx,[rsi].struct_info.alignment
     .if ( edx > 1 )
         mov eax,[rdi].asym.max_mbr_size
@@ -520,10 +519,10 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     and [rsi].struct_info.flags,not SI_ISOPEN
     or  [rdi].asym.flags,S_ISDEFINED
 
-    ;; if there's a negative offset, size will be wrong!
+    ; if there's a negative offset, size will be wrong!
     mov esi,[rdi].asym.total_size
 
-    ;; reset offset, it's just used during the definition
+    ; reset offset, it's just used during the definition
     mov [rdi].asym.offs,0
 
     mov CurrStruct,[rdi].dsym.next
@@ -564,7 +563,7 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endsw
     .endif
 
-    ;; reset redefine
+    ; reset redefine
     .if ( CurrStruct == NULL )
         .if ( redef_struct )
             .if ( AreStructsEqual( rdi, redef_struct ) == FALSE )
@@ -589,7 +588,7 @@ EndstructDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .return( NOT_ERROR )
 EndstructDirective endp
 
-;; v2.06: new function to check fields of anonymous struct members
+; v2.06: new function to check fields of anonymous struct members
 
     assume rdi:ptr sfield
 
@@ -617,17 +616,17 @@ CheckAnonymousStruct proc fastcall private uses rdi type_ptr:ptr dsym
 
 CheckAnonymousStruct endp
 
-;; CreateStructField() - creates a symbol of state SYM_STRUCT_FIELD.
-;; this function is called in pass 1 only.
-;; - loc: initializer index location, -1 means no initializer (is an embedded struct)
-;; - name: field name, may be NULL
-;; - mem_type: mem_type of item
-;; - vartype: user-defined type of item if memtype is MT_TYPE
-;; - size: size of type - used for alignment only
+; CreateStructField() - creates a symbol of state SYM_STRUCT_FIELD.
+; this function is called in pass 1 only.
+; - loc: initializer index location, -1 means no initializer (is an embedded struct)
+; - name: field name, may be NULL
+; - mem_type: mem_type of item
+; - vartype: user-defined type of item if memtype is MT_TYPE
+; - size: size of type - used for alignment only
 
     assume rsi:ptr struct_info
 
-CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
+CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
         name:string_t, mem_type:byte, vartype:ptr asym, size:uint_t
 
   local offs:int_32
@@ -638,9 +637,9 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
     mov s,[rcx].dsym.structinfo
     mov offs,[rcx].asym.offs
 
-    .if ( name )
+    .if ( r8 )
 
-        mov len,tstrlen( name )
+        mov len,tstrlen( r8 )
         .if( eax > MAX_ID_LEN )
             asmerr(2043)
             .return( NULL )
@@ -651,7 +650,7 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
             .return( NULL )
         .endif
     .else
-        ;; v2.06: check fields of anonymous struct member
+        ; v2.06: check fields of anonymous struct member
         mov rcx,vartype
         .if ( rcx && \
             ( [rcx].asym.typekind == TYPE_STRUCT || \
@@ -720,7 +719,7 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
         mov rdi,rdx
     .endif
 
-    ;; create the struct field symbol
+    ; create the struct field symbol
 
     mov [rdi].name_size,len
     .if ( eax )
@@ -754,8 +753,8 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
         mov [rsi].tail,rdi
     .endif
 
-    ;; v2.0: for STRUCTs, don't use the struct's size for alignment calculations,
-    ;; instead use the size of the "max" member!
+    ; v2.0: for STRUCTs, don't use the struct's size for alignment calculations,
+    ; instead use the size of the "max" member!
 
     mov rcx,vartype
     .if ( mem_type == MT_TYPE && \
@@ -764,13 +763,13 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
         mov size,[rcx].asym.max_mbr_size
     .endif
 
-    ;; align the field if an alignment argument was given
+    ; align the field if an alignment argument was given
 
     movzx eax,[rsi].alignment
 
     .if ( eax > 1 )
 
-        ;; if it's the first field to add, use offset of the parent's current field
+        ; if it's the first field to add, use offset of the parent's current field
 
         mov ecx,size
 
@@ -795,8 +794,8 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
 
         .endif
 
-        ;; adjust the struct's current offset + size.
-        ;; The field's size is added in UpdateStructSize()
+        ; adjust the struct's current offset + size.
+        ; The field's size is added in UpdateStructSize()
 
         mov rcx,CurrStruct
         .if ( [rcx].asym.typekind != TYPE_UNION )
@@ -812,7 +811,7 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
     .endif
     mov [rdi].offs,offs
 
-    ;; if -Zm is on, create a global symbol
+    ; if -Zm is on, create a global symbol
 
     mov rdx,name
     .if ( ModuleInfo.oldstructs == TRUE && byte ptr [rdx] )
@@ -825,10 +824,10 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
             mov rcx,rax
             mov [rcx].asym.mem_type,mem_type
             mov [rcx].asym.type,vartype
-            mov [rcx].asym.offs,offs ;; added v2.0
+            mov [rcx].asym.offs,offs ; added v2.0
 
-            ;; v2.01: must be the full offset.
-            ;; (there's still a problem if alignment is > 1!)
+            ; v2.01: must be the full offset.
+            ; (there's still a problem if alignment is > 1!)
 
             mov rdx,CurrStruct
             .for ( rdx = [rdx].dsym.next : rdx : rdx = [rdx].dsym.next )
@@ -841,16 +840,16 @@ CreateStructField proc uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_tok,
 
 CreateStructField endp
 
-;; called by AlignDirective() if ALIGN/EVEN has been found inside
-;; a struct. It's already verified that <value> is a power of 2.
+; called by AlignDirective() if ALIGN/EVEN has been found inside
+; a struct. It's already verified that <value> is a power of 2.
 
-AlignInStruct proc value:int_t
+AlignInStruct proc __ccall value:int_t
 
+    mov edx,ecx
     mov rcx,CurrStruct
     .if ( [rcx].asym.typekind != TYPE_UNION )
 
         mov eax,[rcx].asym.offs
-        mov edx,value
         lea eax,[rax+rdx-1]
         neg edx
         and eax,edx
@@ -864,12 +863,12 @@ AlignInStruct proc value:int_t
 
 AlignInStruct endp
 
-;; called by data_dir() when a structure field has been created.
+; called by data_dir() when a structure field has been created.
 
 
-UpdateStructSize proc sym:ptr asym
+UpdateStructSize proc __ccall sym:ptr asym
 
-    mov rdx,sym
+    mov rdx,rcx
     mov rcx,CurrStruct
     .if ( [rcx].asym.typekind == TYPE_RECORD )
     .elseif ( [rcx].asym.typekind == TYPE_UNION )
@@ -885,57 +884,56 @@ UpdateStructSize proc sym:ptr asym
     ret
 UpdateStructSize endp
 
-;; called if ORG occurs inside STRUCT/UNION definition
+; called if ORG occurs inside STRUCT/UNION definition
 
-SetStructCurrentOffset proc offs:int_t
+SetStructCurrentOffset proc __ccall offs:int_t
 
-    mov rcx,CurrStruct
-    .if ( [rcx].asym.typekind == TYPE_UNION )
+    mov rdx,CurrStruct
+    .if ( [rdx].asym.typekind == TYPE_UNION )
         .return( asmerr( 2200 ) )
     .endif
-    mov [rcx].asym.offs,offs
-    ;; if an ORG is inside the struct, it cannot be instanced anymore
-    mov rdx,[rcx].dsym.structinfo
-    or [rdx].struct_info.flags,SI_ORGINSIDE
-    .ifs ( offs > [rcx].asym.total_size )
-        mov [rcx].asym.total_size,offs
+    mov [rdx].asym.offs,ecx
+    ; if an ORG is inside the struct, it cannot be instanced anymore
+    mov rax,[rdx].dsym.structinfo
+    or [rax].struct_info.flags,SI_ORGINSIDE
+    .ifs ( ecx > [rdx].asym.total_size )
+        mov [rdx].asym.total_size,edx
     .endif
     .return( NOT_ERROR )
 
 SetStructCurrentOffset endp
 
-;; get a qualified type.
-;; Used by
-;; - TYPEDEF
-;; - PROC/PROTO params and LOCALs
-;; - EXTERNDEF
-;; - EXTERN
-;; - LABEL
-;; - ASSUME for GPRs
+; get a qualified type.
+; Used by
+; - TYPEDEF
+; - PROC/PROTO params and LOCALs
+; - EXTERNDEF
+; - EXTERN
+; - LABEL
+; - ASSUME for GPRs
 
     assume rsi:ptr qualified_type
     assume rdi:nothing
 
-GetQualifiedType proc uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_tok,
+GetQualifiedType proc __ccall uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_tok,
         pti:ptr qualified_type
 
-    mov rcx,pi
    .new type:int_t
    .new tmp:int_t
    .new mem_type:byte
    .new i:int_t = [rcx]
    .new distance:int_t = FALSE
 
-    imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    imul ebx,eax,asm_tok
+    add  rbx,rdx
     mov  rdx,rbx
 
-    ;; convert PROC token to a type qualifier
+    ; convert PROC token to a type qualifier
 
     .for ( : [rbx].token != T_FINAL && [rbx].token != T_COMMA : rbx += asm_tok )
         .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROC )
             mov [rbx].token,T_STYPE
-            ;; v2.06: avoid to use ST_PROC
+            ; v2.06: avoid to use ST_PROC
             mov cl,ModuleInfo._model
             mov eax,1
             shl eax,cl
@@ -949,12 +947,12 @@ GetQualifiedType proc uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_tok,
     .endf
     mov rbx,rdx
 
-    ;; with NEAR/FAR, there are several syntax variants allowed:
-    ;; 1. NEARxx | FARxx
-    ;; 2. PTR NEARxx | FARxx
-    ;; 3. NEARxx | FARxx PTR [<type>]
+    ; with NEAR/FAR, there are several syntax variants allowed:
+    ; 1. NEARxx | FARxx
+    ; 2. PTR NEARxx | FARxx
+    ; 3. NEARxx | FARxx PTR [<type>]
 
-    ;; read qualified type
+    ; read qualified type
 
     mov rsi,pti
     .for ( type = ERROR : [rbx].token == T_STYPE || [rbx].token == T_BINARY_OPERATOR : rbx += asm_tok )
@@ -1001,7 +999,7 @@ GetQualifiedType proc uses rsi rdi rbx pi:ptr int_t, tokenarray:ptr asm_tok,
             .elseif ( [rdi].asym.state != SYM_TYPE )
                 .return( asmerr( 2004, [rbx].string_ptr ) )
             .else
-                ;; if it's a typedef, simplify the info
+                ; if it's a typedef, simplify the info
                 .if ( [rdi].asym.typekind == TYPE_TYPEDEF )
                     add [rsi].is_ptr,[rdi].asym.is_ptr
                     .if ( [rdi].asym.is_ptr == 0 )
@@ -1109,23 +1107,23 @@ GetQualifiedType endp
 ; TYPEDEF directive. Syntax is:
 ; <type name> TYPEDEF [proto|[far|near [ptr]]<qualified type>]
 
-CreateType proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, pp:ptr asym
+CreateType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, pp:ptr asym
 
   local ti:qualified_type
 
-    mov rdi,SymSearch( name )
+    mov rdi,SymSearch( r8 )
     .if ( rdi == NULL || [rdi].asym.state == SYM_UNDEFINED )
         mov rdi,CreateTypeSymbol( rdi, name, TRUE )
         .if ( rdi == NULL )
             .return( ERROR )
         .endif
 if TYPEOPT
-        ;; release the structinfo data extension
+        ; release the structinfo data extension
         mov [rdi].dsym.structinfo,NULL
 endif
     .else
-        ;; MASM allows to have the TYPEDEF included multiple times
-        ;; but the types must be identical!
+        ; MASM allows to have the TYPEDEF included multiple times
+        ; but the types must be identical!
         .if ( ( [rdi].asym.state != SYM_TYPE ) || \
               ( [rdi].asym.typekind != TYPE_TYPEDEF && \
                 [rdi].asym.typekind != TYPE_NONE ) )
@@ -1145,10 +1143,10 @@ endif
     imul ebx,i,asm_tok
     add  rbx,tokenarray
 
-    ;; PROTO is special
+    ; PROTO is special
     .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_PROTO )
 
-        ;; v2.04: added check if prototype is set already
+        ; v2.04: added check if prototype is set already
         .if ( [rdi].asym.target_type == NULL && [rdi].asym.mem_type == MT_EMPTY )
             CreateProc( NULL, "", SYM_TYPE )
         .elseif ( [rdi].asym.mem_type == MT_PROC )
@@ -1163,13 +1161,13 @@ endif
         assume rsi:nothing
         mov [rdi].asym.mem_type,MT_PROC
         mov [rdi].asym.Ofssize,[rsi].asym.segoffsize
-        ;; v2.03: set value of field total_size (previously was 0)
+        ; v2.03: set value of field total_size (previously was 0)
         mov eax,2
         mov cl,[rdi].asym.Ofssize
         shl eax,cl
         mov [rdi].asym.total_size,eax
         .if ( [rsi].asym.mem_type != MT_NEAR )
-            mov [rdi].asym.is_far,1 ;; v2.04: added
+            mov [rdi].asym.is_far,1 ; v2.04: added
             add [rdi].asym.total_size,2
         .endif
         mov [rdi].asym.target_type,rsi
@@ -1184,15 +1182,15 @@ endif
     mov ti.symtype,NULL
     mov ti.Ofssize,ModuleInfo.Ofssize
 
-    ;; "empty" type is ok for TYPEDEF
+    ; "empty" type is ok for TYPEDEF
     .if ( [rbx].token == T_FINAL || [rbx].token == T_COMMA )
         ;
     .elseifd ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
         .return
     .endif
 
-    ;; if type did exist already, check for type conflicts
-    ;; v2.05: this code has been rewritten
+    ; if type did exist already, check for type conflicts
+    ; v2.05: this code has been rewritten
 
     .if ( [rdi].asym.mem_type != MT_EMPTY )
 
@@ -1257,12 +1255,12 @@ TypedefDirective proc i:int_t, tokenarray:ptr asm_tok
 
 TypedefDirective endp
 
-;; RECORD directive
-;; syntax: <label> RECORD <bitfield_name>:<size>[,...]
-;; defines a RECORD type (state=SYM_TYPE).
-;; the memtype will be MT_BYTE, MT_WORD, MT_DWORD [, MT_QWORD in 64-bit].
+; RECORD directive
+; syntax: <label> RECORD <bitfield_name>:<size>[,...]
+; defines a RECORD type (state=SYM_TYPE).
+; the memtype will be MT_BYTE, MT_WORD, MT_DWORD [, MT_QWORD in 64-bit].
 
-RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
    .new name:string_t
    .new newr:ptr dsym
@@ -1276,9 +1274,9 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new opndx:expr
    .new offs:uint_t
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov name,[rbx].string_ptr
-    imul ecx,i,asm_tok
+    imul ecx,ecx,asm_tok
     add rbx,rcx
 
     .if ( i != 1 )
@@ -1314,11 +1312,11 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     mov newr,rsi
     mov [rsi].asym.typekind,TYPE_RECORD
 
-    inc i ;; go past RECORD
+    inc i ; go past RECORD
     add rbx,asm_tok
 
-    mov cntBits,0 ;; counter for total of bits in record
-    ;; parse bitfields
+    mov cntBits,0 ; counter for total of bits in record
+    ; parse bitfields
     .repeat
         .if ( [rbx].token != T_ID )
             asmerr( 2008, [rbx].string_ptr )
@@ -1336,7 +1334,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .break
         .endif
         inc i
-        ;; get width
+        ; get width
         .break .ifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
 
         .if ( opndx.kind != EXPR_CONST )
@@ -1359,7 +1357,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         mov count,0
 
-        ;; is there an initializer? ('=')
+        ; is there an initializer? ('=')
 
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -1370,12 +1368,12 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov init_loc,rbx
             .for( : [rbx].token != T_FINAL && [rbx].token != T_COMMA: i++, rbx += asm_tok )
             .endf
-            ;; no value?
+            ; no value?
             .if ( rcx == rbx )
                 asmerr( 2008, [rdi].asm_tok.tokpos )
                 .break
             .endif
-            ;; v2.09: initial values of record redefinitions are ignored!
+            ; v2.09: initial values of record redefinitions are ignored!
             .if ( oldr == NULL )
                 mov rax,[rbx].tokpos
                 sub rax,[rcx].asm_tok.tokpos
@@ -1383,7 +1381,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        ;; record field names are global! (Masm design flaw)
+        ; record field names are global! (Masm design flaw)
 
         mov rsi,SymSearch( [rdi].asm_tok.string_ptr )
         mov def,TRUE
@@ -1394,7 +1392,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 [rsi].asym.total_size != opndx.value )
                 asmerr( 2007, szRecord, [rdi].asm_tok.string_ptr )
                 inc redef_err
-                mov def,FALSE ;; v2.06: added
+                mov def,FALSE ; v2.06: added
             .endif
         .else
             .if ( rsi )
@@ -1403,7 +1401,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        .if ( def ) ;; v2.06: don't add field if there was an error
+        .if ( def ) ; v2.06: don't add field if there was an error
 
             mov rsi,[rdi].asm_tok.string_ptr
             add cntBits,opndx.value
@@ -1472,7 +1470,7 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     .until ( i >= Token_Count )
 
-    ;; now calc size in bytes and set the bit positions
+    ; now calc size in bytes and set the bit positions
     mov rsi,newr
     mov eax,cntBits
     .if ( eax > 16 )
@@ -1505,8 +1503,8 @@ RecordDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             asmerr( 2007, szRecord, [rsi].asym.name )
         .endif
 
-        ;; record can be freed, because the record's fields are global items.
-        ;; And initial values of the new definition are ignored!
+        ; record can be freed, because the record's fields are global items.
+        ; And initial values of the new definition are ignored!
 
         SymFree( newr )
     .endif

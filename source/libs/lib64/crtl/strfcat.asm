@@ -3,13 +3,13 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+include crtl.inc
 
     .code
 
-strfcat::
+strfcat proc dst:string_t, path:string_t, file:string_t
 
     mov rax,rcx
-
     .if rdx
         .for ( : byte ptr [rdx] : r9b=[rdx], [rcx]=r9b, rdx++, rcx++ )
 
@@ -38,5 +38,7 @@ strfcat::
     .endf
     mov [rcx],dl
     ret
+
+strfcat endp
 
     end

@@ -12,7 +12,7 @@ include string.inc
 include malloc.inc
 
 MAXARGCOUNT equ 256
-MAXARGSIZE  equ 0x8000	; Max argument size: 32K
+MAXARGSIZE  equ 0x8000  ; Max argument size: 32K
 
     .code
 
@@ -22,7 +22,7 @@ setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
   local buffer:string_t
   local char:int_t
 
-    mov buffer,alloca(MAXARGSIZE)
+    mov buffer,malloc(MAXARGSIZE)
     mov rdi,buffer
     mov rsi,cmdline
     mov rdx,argc
@@ -33,61 +33,61 @@ setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
 
     .while al
 
-	xor ecx,ecx	; Add a new argument
-	xor edx,edx	; "quote from start" in EDX - remove
-	mov [rdi],cl
+        xor ecx,ecx     ; Add a new argument
+        xor edx,edx     ; "quote from start" in EDX - remove
+        mov [rdi],cl
 
-	.for : al == ' ' || (al >= 9 && al <= 13) :
-	    lodsb
-	.endf
-	.break .if !al	; end of command string
+        .for : al == ' ' || (al >= 9 && al <= 13) :
+            lodsb
+        .endf
+        .break .if !al  ; end of command string
 
-	.if al == '"'
-	    add edx,1
-	    lodsb
-	.endif
-	.while al == '"' ; ""A" B"
-	    add ecx,1
-	    lodsb
-	.endw
+        .if al == '"'
+            add edx,1
+            lodsb
+        .endif
+        .while al == '"' ; ""A" B"
+            add ecx,1
+            lodsb
+        .endw
 
-	.while al
+        .while al
 
-	    .break .if !edx && !ecx && ( al == ' ' || ( al >= 9 && al <= 13 ) )
+            .break .if !edx && !ecx && ( al == ' ' || ( al >= 9 && al <= 13 ) )
 
-	    .if al == '"'
+            .if al == '"'
 
-		.if ecx
-		    dec ecx
-		.elseif edx
-		    mov al,[rsi]
-		    .break .if ( al == ' ' || ( al >= 9 && al <= 13 ) )
-		    dec edx
-		.else
-		    inc ecx
-		.endif
-	    .else
-		stosb
-	    .endif
-	    lodsb
-	.endw
+                .if ecx
+                    dec ecx
+                .elseif edx
+                    mov al,[rsi]
+                    .break .if ( al == ' ' || ( al >= 9 && al <= 13 ) )
+                    dec edx
+                .else
+                    inc ecx
+                .endif
+            .else
+                stosb
+            .endif
+            lodsb
+        .endw
 
-	xor ecx,ecx
-	mov [rdi],ecx
-	lea rbx,[rdi+1]
-	mov rdi,buffer
-	.break .if cl == [rdi]
+        xor ecx,ecx
+        mov [rdi],ecx
+        lea rbx,[rdi+1]
+        mov rdi,buffer
+        .break .if cl == [rdi]
 
-	mov char,eax
-	sub rbx,rdi
-	memcpy(malloc(rbx), rdi, rbx)
-	mov rdx,argc
-	mov rcx,[rdx]
-	mov argv[rcx*8],rax
-	inc qword ptr [rdx]
-	mov eax,char
+        mov char,eax
+        sub rbx,rdi
+        memcpy(malloc(rbx), rdi, rbx)
+        mov rdx,argc
+        mov rcx,[rdx]
+        mov argv[rcx*8],rax
+        inc qword ptr [rdx]
+        mov eax,char
 
-	.break .if !( ecx < MAXARGCOUNT )
+        .break .if !( ecx < MAXARGCOUNT )
     .endw
 
     xor eax,eax
@@ -96,7 +96,9 @@ setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
     lea rdi,argv
     mov [rdi+rbx*8],rax
     lea rbx,[rbx*8+8]
-    memcpy(malloc(rbx), rdi, rbx)
+    mov rsi,malloc(rbx)
+    free(buffer)
+    memcpy(rsi, rdi, rbx)
     ret
 
 setargv endp

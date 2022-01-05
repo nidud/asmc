@@ -486,7 +486,7 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
 
     .if ( [rsi].mem_type != MT_REAL16 )
 
-        memset( &buffer, 0, sizeof( buffer ) )
+        tmemset( &buffer, 0, sizeof( buffer ) )
         SizeFromMemtype( [rsi].mem_type, USE_EMPTY, NULL )
         .if ( eax > size )
             asmerr( 2156 )
@@ -1356,13 +1356,13 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
     .if ( [rbx].token == T_BINARY_OPERATOR )
 
         mov esi,i
-        strcpy( &type, "ptr?" )
+        tstrcpy( &type, "ptr?" )
         .if ( [rbx+asm_tok].token != T_QUESTION_MARK && [rbx+asm_tok].token != T_NUM )
             inc o
             inc i
             add rbx,asm_tok
             .if ( [rbx].token == T_BINARY_OPERATOR )
-                strcat( &type, "ptr?" )
+                tstrcat( &type, "ptr?" )
                 .if ( [rbx+asm_tok].token != T_QUESTION_MARK && \
                       [rbx+asm_tok].token != T_NUM )
                     inc i
@@ -1372,7 +1372,7 @@ data_dir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, type_sym
             .endif
             .if ( [rbx].token != T_QUESTION_MARK && \
                   [rbx].token != T_NUM )
-                strcat( &type, [rbx].string_ptr )
+                tstrcat( &type, [rbx].string_ptr )
             .endif
         .endif
         .ifd ( CreateType( esi, tokenarray, &type, &type_sym ) == ERROR )

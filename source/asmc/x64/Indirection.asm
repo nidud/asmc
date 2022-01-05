@@ -21,9 +21,9 @@ include types.inc
 
     assume rbx:ptr asm_tok
 
-SkipSQBackets proc private uses rbx tok:ptr asm_tok
+SkipSQBackets proc __ccall private uses rbx tok:ptr asm_tok
 
-    .for ( rbx = tok,
+    .for ( rbx = rcx,
            edx = 0, ; brackets
            ecx = 1, ; SQ-brackets
            rbx +=asm_tok : ecx && [rbx].token != T_FINAL : rbx += asm_tok )
@@ -48,9 +48,9 @@ SkipSQBackets proc private uses rbx tok:ptr asm_tok
 
 SkipSQBackets endp
 
-GetSQBackets proc private uses rsi rdi tok:ptr asm_tok, buffer:string_t
+GetSQBackets proc __ccall private uses rsi rdi tok:ptr asm_tok, buffer:string_t
 
-    .if SkipSQBackets(tok)
+    .if SkipSQBackets(rcx)
 
         mov rcx,[rax].asm_tok.tokpos
         mov rdi,buffer
@@ -64,9 +64,9 @@ GetSQBackets proc private uses rsi rdi tok:ptr asm_tok, buffer:string_t
 
 GetSQBackets endp
 
-FindDotSymbol proc uses rsi rdi rbx tok:ptr asm_tok
+FindDotSymbol proc __ccall uses rsi rdi rbx tok:ptr asm_tok
 
-    mov rbx,tok
+    mov rbx,rcx
 
     .while ( [rbx-asm_tok].token != T_COMMA && [rbx-asm_tok].token != T_DIRECTIVE )
         sub rbx,asm_tok
@@ -106,15 +106,15 @@ FindDotSymbol proc uses rsi rdi rbx tok:ptr asm_tok
 
 FindDotSymbol endp
 
-AssignPointer proc uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
+AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
         pclass:ptr asym, langtype:int_t, pmacro:ptr asym
 
   local buffer[128]:sbyte
   local vreg:int_t
   local vtable:byte
 
-    mov rbx,tok
-    mov rsi,sym
+    mov rbx,r8
+    mov rsi,rcx
 
     .if ( rsi == NULL )
         .if ( [rbx].token == T_REG )
@@ -221,15 +221,15 @@ AssignPointer endp
 
 ifdef USE_INDIRECTION
 
-HandleIndirection proc uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm_tok, pos:int_t
+HandleIndirection proc __ccall uses rsi rdi rbx sym:ptr asym, tokenarray:ptr asm_tok, pos:int_t
 
   local reg:uint_t
   local inst:uint_t
   local dest:uint_t
   local buffer[128]:sbyte
 
-    mov rbx,tokenarray
-    .if ( pos )
+    mov rbx,rdx
+    .if ( r8d )
         mov inst,[rbx-asm_tok].tokval    ; cmp p.p.p, expr
     .else
         mov inst,[rbx-3*asm_tok].tokval  ; cmp reg, p.p.p

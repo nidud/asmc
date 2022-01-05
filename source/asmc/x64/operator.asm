@@ -16,9 +16,9 @@ include fastpass.inc
 
     .code
 
-GetOperator proc token:token_t
+GetOperator proc __ccall token:token_t
 
-    mov rdx,token
+    mov rdx,rcx
     mov ecx,asm_tok
     mov rax,[rdx].asm_tok.tokpos
     mov eax,[rax]
@@ -57,9 +57,9 @@ GetOperator proc token:token_t
 
 GetOperator endp
 
-GetOpType proc uses rbx oper:token_t, string:string_t
+GetOpType proc __ccall uses rbx oper:token_t, string:string_t
 
-    mov rbx,oper
+    mov rbx,rcx
     .if ( GetOperator(rbx) == 0 )
         .return ERROR
     .endif
@@ -77,10 +77,10 @@ GetOpType endp
 
     assume rbx:token_t
 
-OperatorParam proc uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
+OperatorParam proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
 
-    mov rbx,tokenarray
-    mov rdi,strcat( param, "_" )
+    mov rbx,rcx
+    mov rdi,tstrcat( param, "_" )
     add rdi,tstrlen(rdi)
 
     .while ( [rbx].token == T_BINARY_OPERATOR && [rbx].tokval == T_PTR )
@@ -101,7 +101,7 @@ OperatorParam proc uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
     or  eax,0x202020
     .if ( eax == 'sba' )
 
-        strcat(rdi, "abs")
+        tstrcat(rdi, "abs")
        .return
     .endif
 
@@ -121,13 +121,13 @@ OperatorParam proc uses rsi rdi rbx tokenarray:ptr asm_tok, param:string_t
 
     mov rsi,ti.symtype
     .if ( rsi && [rsi].asym.state == SYM_TYPE )
-        strcat(rdi, [rsi].asym.name)
+        tstrcat(rdi, [rsi].asym.name)
     .endif
     ret
 
 OperatorParam endp
 
-GetArgs proc private uses rsi rbx tokenarray:ptr asm_tok
+GetArgs proc __ccall private uses rsi rbx tokenarray:ptr asm_tok
 
     mov rsi,rbx
     .for ( : [rbx].token != T_FINAL : rbx += asm_tok )
@@ -163,13 +163,15 @@ GetArgs proc private uses rsi rbx tokenarray:ptr asm_tok
 
 GetArgs endp
 
-ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
+ProcessOperator proc __ccall uses rsi rdi rbx tokenarray:ptr asm_tok
 
    .new class:ptr asym
    .new name:string_t
    .new isptr:byte = 0
    .new vector:int_t = 0
    .new type:int_t
+
+    mov rbx,rcx
 
     .if StoreState == FALSE
         .return NOT_ERROR
@@ -178,7 +180,6 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
         RunLineQueue()
     .endif
 
-    mov rbx,tokenarray
     mov name,[rbx].string_ptr
 
     .if ( SymFind( rax ) )
@@ -223,8 +224,8 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
         lea rdi,func
 
         mov rcx,class
-        strcpy( rdi, [rcx].asym.name )
-        strcat( rdi, "_" )
+        tstrcpy( rdi, [rcx].asym.name )
+        tstrcat( rdi, "_" )
         add rdi,tstrlen( rdi )
 
        .break .ifd ( GetOpType( rbx, rdi ) == ERROR )
@@ -235,10 +236,10 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
         mov byte ptr [rsi],0
 
         .if ( isptr == 0 )
-            strcpy( rsi, "addr " )
+            tstrcpy( rsi, "addr " )
         .endif
         .if ( name )
-            strcat( rsi, name )
+            tstrcat( rsi, name )
         .else
             tstrlen(rsi)
             add rax,rsi
@@ -263,7 +264,7 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
             mov i,ecx
             add eax,ecx
             mov n,eax
-            strcat( rsi, ", " )
+            tstrcat( rsi, ", " )
             mov rdi,rsi
             mov rsi,[rbx].tokpos
             imul ebx,n,asm_tok
@@ -280,7 +281,7 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
                .new opnd:expr
                .new isaddr:int_t = 0
 
-                strcat( rdi, "_" )
+                tstrcat( rdi, "_" )
                 imul ecx,i,asm_tok
                 add rcx,tokenarray
                 mov rax,[rcx].asm_tok.string_ptr
@@ -288,13 +289,13 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
                     mov eax,[rax]
                 .endif
                 .if ( ax == 'L' && [rcx+asm_tok].asm_tok.token == T_STRING )
-                    strcat( rdi, "ptrword" )
+                    tstrcat( rdi, "ptrword" )
                     add i,2
                 .elseif ( [rcx].asm_tok.hll_flags & T_HLL_PROC )
                     .if ( ModuleInfo.Ofssize == USE64 )
-                        strcat( rdi, "qword" )
+                        tstrcat( rdi, "qword" )
                     .else
-                        strcat( rdi, "dword" )
+                        tstrcat( rdi, "dword" )
                     .endif
                     mov i,n
                 .else
@@ -311,12 +312,12 @@ ProcessOperator proc uses rsi rdi rbx tokenarray:ptr asm_tok
                         mov rcx,opnd.quoted_string
                         .if ( rcx && [rcx].asm_tok.token == T_STRING )
                             .if ( ModuleInfo.xflag & OPT_WSTRING )
-                                strcat( rdi, "ptrword" )
+                                tstrcat( rdi, "ptrword" )
                             .else
-                                strcat( rdi, "ptrsbyte" )
+                                tstrcat( rdi, "ptrsbyte" )
                             .endif
                         .else
-                            strcat( rdi, "abs" )
+                            tstrcat( rdi, "abs" )
                         .endif
                     .else
                         GetType( rdi, &opnd, rdi, isaddr )
@@ -341,7 +342,7 @@ ProcessOperator endp
     assume rsi:expr_t
     assume rbx:ptr opinfo
 
-EvalOperator proc uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
+EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
 
     ;
     ; first argument has to be class::operator
@@ -422,13 +423,13 @@ EvalOperator proc uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
 EvalOperator endp
 
 
-GetArgs2 proc private uses rsi opnd:ptr expr
+GetArgs2 proc __ccall private uses rsi opnd:ptr expr
 
-    mov rsi,opnd
+    mov rsi,rcx
     .switch ( [rsi].expr.kind )
     .case EXPR_FLOAT
         mov rcx,[rsi].expr.float_tok
-        strcpy(rdi, [rcx].asm_tok.string_ptr )
+        tstrcpy(rdi, [rcx].asm_tok.string_ptr )
         .endc
     .case EXPR_CONST
         tsprintf(rdi, "%d", [rsi].expr.value)
@@ -436,7 +437,7 @@ GetArgs2 proc private uses rsi opnd:ptr expr
     .case EXPR_ADDR
         mov rcx,[rsi].expr.sym
         .if ( rcx )
-            strcpy(rdi, [rcx].asym.name)
+            tstrcpy(rdi, [rcx].asym.name)
         .endif
         .endc
     .case EXPR_REG
@@ -448,7 +449,7 @@ GetArgs2 proc private uses rsi opnd:ptr expr
 
 GetArgs2 endp
 
-ParseOperator proc uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
+ParseOperator proc __ccall uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
 
    .new buffer[256]:char_t
    .new level:int_t = 0
@@ -456,7 +457,7 @@ ParseOperator proc uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
    .new vector:int_t
    .new type:int_t
 
-    mov rbx,op
+    mov rbx,rdx
     .while ( [rbx].next )
         mov rbx,[rbx].next
     .endw
@@ -492,19 +493,19 @@ ParseOperator proc uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
             mov rcx,[rbx].op2.quoted_string
             .if ( rcx && [rcx].asm_tok.token == T_STRING )
                 .if ( ModuleInfo.xflag & OPT_WSTRING )
-                    strcat( rdi, "ptrword" )
+                    tstrcat( rdi, "ptrword" )
                 .else
-                    strcat( rdi, "ptrsbyte" )
+                    tstrcat( rdi, "ptrsbyte" )
                 .endif
             .else
-                strcat( rdi, "abs" )
+                tstrcat( rdi, "abs" )
             .endif
             .endc
         .default
             GetType( rdi, &[rbx].op2, rdi, 0 )
             .endc
         .endsw
-        strcat( rdi, "(" )
+        tstrcat( rdi, "(" )
         add rdi,tstrlen(rdi)
 
         mov rcx,[rbx].op1.label_tok
@@ -542,11 +543,11 @@ ParseOperator proc uses rsi rdi rbx tokenarray:token_t, op:ptr opinfo
             .endif
 
             GetArgs2(&[rbx].op1)
-            strcat( rdi, ", " )
+            tstrcat( rdi, ", " )
             add rdi,tstrlen(rdi)
             GetArgs2(&[rbx].op2)
         .endif
-        strcat( rdi, ")" )
+        tstrcat( rdi, ")" )
         AddLineQueue( &buffer )
     .endf
     .if ( ModuleInfo.line_queue.head )

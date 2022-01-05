@@ -19,46 +19,46 @@ include fixup.inc
 .data
 
 NopList16 db \
-    3,                  ;; objlen of first NOP pattern
-    0x2E, 0x8b, 0xc0,   ;; MOV AX,AX
-    ;; v2.11: Masm v6+ uses 8B CO; Masm v5 uses 87 DB (xchg bx, bx)
-    0x8b, 0xc0,         ;; MOV AX,AX
-    0x90                ;; NOP
+    3,                  ; objlen of first NOP pattern
+    0x2E, 0x8b, 0xc0,   ; MOV AX,AX
+    ; v2.11: Masm v6+ uses 8B CO; Masm v5 uses 87 DB (xchg bx, bx)
+    0x8b, 0xc0,         ; MOV AX,AX
+    0x90                ; NOP
 
 
-;; 32bit alignment fillers.
-;; For 5 bytes, Masm uses "add eax,dword ptr 0",
-;; which modifies the flags!
+; 32bit alignment fillers.
+; For 5 bytes, Masm uses "add eax,dword ptr 0",
+; which modifies the flags!
 
 
 NopList32 db \
     7,
-    0x8d,0xa4,0x24,0,0,0,0,         ;; lea     esp,[esp+00000000]
-    0x8d,0x80,0,0,0,0,              ;; lea     eax,[eax+00000000]
-    0x2e,0x8d,0x44,0x20,0x00,       ;; lea     eax,cs:[eax+no_index_reg+00H]
-    0x8d,0x44,0x20,0x00,            ;; lea     eax,[eax+no_index_reg+00H]
-    0x8d,0x40,0x00,                 ;; lea     eax,[eax+00H]
-    0x8b,0xff,                      ;; mov     edi,edi
-    0x90                            ;; nop
+    0x8d,0xa4,0x24,0,0,0,0,         ; lea     esp,[esp+00000000]
+    0x8d,0x80,0,0,0,0,              ; lea     eax,[eax+00000000]
+    0x2e,0x8d,0x44,0x20,0x00,       ; lea     eax,cs:[eax+no_index_reg+00H]
+    0x8d,0x44,0x20,0x00,            ; lea     eax,[eax+no_index_reg+00H]
+    0x8d,0x40,0x00,                 ; lea     eax,[eax+00H]
+    0x8b,0xff,                      ; mov     edi,edi
+    0x90                            ; nop
 
 
 NopList64 db \
     7,
-    0x0f,0x1f,0x80,0,0,0,0,         ;; nop dword ptr [rax+0]
-    0x66,0x0f,0x1f,0x44,0,0,        ;; nop word ptr [rax+rax]
-    0x0f,0x1f,0x44,0,0,             ;; nop dword ptr [rax+rax]
-    0x0f,0x1f,0x40,0,               ;; nop dword ptr [rax]
-    0x0f,0x1f,0,                    ;; nop dword ptr [rax]
-    0x66,0x90,                      ;; xchg ax,ax
-    0x90                            ;; nop
+    0x0f,0x1f,0x80,0,0,0,0,         ; nop dword ptr [rax+0]
+    0x66,0x0f,0x1f,0x44,0,0,        ; nop word ptr [rax+rax]
+    0x0f,0x1f,0x44,0,0,             ; nop dword ptr [rax+rax]
+    0x0f,0x1f,0x40,0,               ; nop dword ptr [rax]
+    0x0f,0x1f,0,                    ; nop dword ptr [rax]
+    0x66,0x90,                      ; xchg ax,ax
+    0x90                            ; nop
 
 
-;; just use the 32bit nops for 64bit
+; just use the 32bit nops for 64bit
 NopLists ptr byte NopList16, NopList32, NopList64
 
     .code
 
-OrgDirective proc i:int_t, tokenarray:ptr asm_tok
+OrgDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
   local opndx:expr
 
@@ -85,7 +85,7 @@ OrgDirective proc i:int_t, tokenarray:ptr asm_tok
         .if ( StoreState == FALSE )
             FStoreLine(0)
         .endif
-        ;; v2.04: added
+        ; v2.04: added
         mov rcx,CurrSeg
         mov rcx,[rcx].dsym.seginfo
         .if ( Parse_Pass == PASS_1 && [rcx].seg_info.head )
@@ -105,14 +105,14 @@ OrgDirective proc i:int_t, tokenarray:ptr asm_tok
     .return( asmerr( 2132 ) )
 OrgDirective endp
 
-fill_in_objfile_space proc private uses rsi rdi rbx size:dword
+fill_in_objfile_space proc __ccall private uses rsi rdi rbx size:dword
 
-    ;; emit
-    ;; - nothing ... for BSS
-    ;; - x'00'   ... for DATA
-    ;; - nops    ... for CODE
+    ; emit
+    ; - nothing ... for BSS
+    ; - x'00'   ... for DATA
+    ; - nops    ... for CODE
 
-    ;; v2.04: no output if nothing has been written yet
+    ; v2.04: no output if nothing has been written yet
     mov rdi,CurrSeg
     mov rsi,[rdi].dsym.seginfo
     .if ( [rsi].seg_info.written == FALSE )
@@ -121,10 +121,10 @@ fill_in_objfile_space proc private uses rsi rdi rbx size:dword
 
     .elseif ( [rsi].seg_info.segtype != SEGTYPE_CODE )
 
-        FillDataBytes( 0x00, ecx ) ;; just output nulls
+        FillDataBytes( 0x00, ecx ) ; just output nulls
 
     .else
-        ;; output appropriate NOP type instructions to fill in the gap
+        ; output appropriate NOP type instructions to fill in the gap
         movzx   ebx,ModuleInfo.Ofssize
         lea     rcx,NopLists
         mov     rsi,[rcx+rbx*8]
@@ -136,11 +136,11 @@ fill_in_objfile_space proc private uses rsi rdi rbx size:dword
             sub size,ebx
         .endw
         .return .if ( size == 0 )
-        inc rsi ;; here i is the index into the NOP table
+        inc rsi ; here i is the index into the NOP table
         .fors ( edi = ebx : edi > size : edi-- )
             add rsi,rdi
         .endf
-        ;; i now is the index of the 1st part of the NOP that we want
+        ; i now is the index of the 1st part of the NOP that we want
         .fors ( : edi > 0 : edi--, rsi++ )
             OutputByte( [rsi] )
         .endf
@@ -149,9 +149,9 @@ fill_in_objfile_space proc private uses rsi rdi rbx size:dword
 
 fill_in_objfile_space endp
 
-;; align current offset to value ( alignment is 2^value )
+; align current offset to value ( alignment is 2^value )
 
-AlignCurrOffset proc value:int_t
+AlignCurrOffset proc __ccall value:int_t
     GetCurrOffset()
     mov ecx,value
     mov edx,1
@@ -168,13 +168,13 @@ AlignCurrOffset endp
 
 define align_value <opndx.value>
 
-AlignDirective proc i:int_t, tokenarray:ptr asm_tok
+AlignDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
   local opndx:expr
   local CurrAddr:uint_t
 
-    imul ecx,i,asm_tok
-    add rcx,tokenarray
+    imul ecx,ecx,asm_tok
+    add rcx,rdx
 
     .switch( [rcx].asm_tok.tokval )
     .case T_ALIGN
@@ -184,14 +184,14 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
         .endif
         .if ( opndx.kind == EXPR_CONST )
             ;int_32 power
-            ;; check that the parm is a power of 2
+            ; check that the parm is a power of 2
             .fors ( ecx = 1: ecx < align_value: ecx <<= 1 )
             .endf
             .if ( ecx != align_value )
                 .return( asmerr( 2063, align_value ) )
             .endif
-        .elseif ( opndx.kind == EXPR_EMPTY )  ;; ALIGN without argument?
-            ;; v2.03: special STRUCT handling was missing
+        .elseif ( opndx.kind == EXPR_EMPTY )  ; ALIGN without argument?
+            ; v2.03: special STRUCT handling was missing
             .if ( CurrStruct )
                 mov rcx,CurrStruct
                 mov rcx,[rcx].dsym.structinfo
@@ -215,7 +215,7 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
         .return( asmerr(2008, [rcx].asm_tok.string_ptr ) )
     .endif
 
-    ;; ALIGN/EVEN inside a STRUCT definition?
+    ; ALIGN/EVEN inside a STRUCT definition?
     .if ( CurrStruct )
         .return( AlignInStruct( align_value ))
     .endif
@@ -223,7 +223,7 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
     .if ( StoreState == FALSE )
         FStoreLine(0)
     .endif
-    GetCurrSegAlign(); ;; # of bytes
+    GetCurrSegAlign(); ; # of bytes
     .ifs ( eax <= 0 )
         .return( asmerr( 2034 ) )
     .endif
@@ -232,7 +232,7 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
             asmerr( 2189, align_value )
         .endif
     .endif
-    ;; v2.04: added, Skip backpatching after ALIGN occured
+    ; v2.04: added, Skip backpatching after ALIGN occured
     .if ( Parse_Pass == PASS_1 && CurrSeg )
 
         mov rcx,CurrSeg
@@ -242,8 +242,8 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
             or  [rcx].fixup.fx_flag,FX_ORGOCCURED
         .endif
     .endif
-    ;; find out how many bytes past alignment we are & add the remainder
-    ;; store temp. value
+    ; find out how many bytes past alignment we are & add the remainder
+    ; store temp. value
     mov CurrAddr,GetCurrOffset()
     cdq
     div align_value
@@ -255,6 +255,7 @@ AlignDirective proc i:int_t, tokenarray:ptr asm_tok
         LstWrite( LSTTYPE_DATA, CurrAddr, NULL )
     .endif
     .return( NOT_ERROR )
+
 AlignDirective endp
 
     end

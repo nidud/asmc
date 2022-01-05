@@ -24,7 +24,7 @@ include reswords.inc
     assume rbx:ptr asm_tok
     B equ <byte ptr>
 
-LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local directive:int_t
   local arg_loc:int_t
@@ -35,9 +35,9 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local tmpmacro:dsym
   local buffer[4]:char_t
 
-    inc i ;; skip directive
+    inc i ; skip directive
     imul ebx,i,asm_tok
-    add rbx,tokenarray
+    add rbx,rdx
 
     .if ( ModuleInfo.list == TRUE )
         LstWriteSrcLine()
@@ -47,11 +47,12 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .switch eax
     .case T_WHILE
         mov arg_loc,i
-        ;; no break
+        ; no break
     .case T_REPT
     .case T_REPEAT
-        ;; the expression is "critical", that is, no forward
-        ;; referenced symbols may be used here!
+        ; the expression is "critical", that is, no forward
+        ; referenced symbols may be used here!
+
         EvalOperand( &i, tokenarray, Token_Count, &opnd, EXPF_NOUNDEF )
         imul ebx,i,asm_tok
         add rbx,tokenarray
@@ -61,7 +62,7 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov i,Token_Count
             imul ebx,i,asm_tok
             add rbx,tokenarray
-        .elseif ( opnd.kind != EXPR_CONST ) ;; syntax <REPEAT|WHILE 'A'> is valid!
+        .elseif ( opnd.kind != EXPR_CONST ) ; syntax <REPEAT|WHILE 'A'> is valid!
             asmerr( 2026 )
             mov opnd.value,0
         .elseif ( [rbx].token != T_FINAL )
@@ -70,16 +71,17 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
     .default
-        ;; FOR, FORC, IRP, IRPC
-        ;; get the formal parameter and the argument list
-        ;; the format parameter will become a macro parameter, so it can
-        ;; be a simple T_ID, but also an instruction or something else.
-        ;; v2.02: And it can begin with a '.'!
+
+        ; FOR, FORC, IRP, IRPC
+        ; get the formal parameter and the argument list
+        ; the format parameter will become a macro parameter, so it can
+        ; be a simple T_ID, but also an instruction or something else.
+        ; v2.02: And it can begin with a '.'!
 
         .if ( [rbx].token == T_FINAL )
             .return( asmerr( 2008, [rbx-asm_tok].tokpos ) )
         .endif
-        ;; v2.02: allow parameter name to begin with a '.'
+        ; v2.02: allow parameter name to begin with a '.'
         mov rcx,[rbx].string_ptr
         .if ( !is_valid_id_first_char( [rcx] ) )
             .return( asmerr( 2008, [rbx].tokpos ) )
@@ -94,7 +96,7 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             inc i
             add rbx,asm_tok
 
-            ;; FORC/IRPC accepts anything as "argument list", even nothing!
+            ; FORC/IRPC accepts anything as "argument list", even nothing!
 
             .if ( [rbx].token == T_STRING && [rbx].string_delim == '<' )
 
@@ -113,8 +115,8 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .endw
                 mov B[rdi],NULLC
 
-                ;; v2.02: if there's additional stuff behind the <> literal,
-                ;; it's an error!
+                ; v2.02: if there's additional stuff behind the <> literal,
+                ; it's an error!
 
                 .if ( [rbx+asm_tok].token != T_FINAL )
                     asmerr(2008, [rbx+asm_tok].tokpos )
@@ -123,14 +125,16 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 mov rdi,[rbx].tokpos
                 mov rsi,rdi
-                ;; this is what Masm does: use the string until a space
-                ;; is detected. Anything beyond the space is ignored.
+
+                ; this is what Masm does: use the string until a space
+                ; is detected. Anything beyond the space is ignored.
 
                 .while ( B[rdi] && !( islspace( [rdi] ) ) )
                     inc rdi
                 .endw
                 sub rdi,rsi
-                mov parmstring,alloca( &[rdi+1] )
+                lea ecx,[rdi+1]
+                mov parmstring,alloca( ecx )
                 mov rcx,rdi
                 mov rdi,rax
                 rep movsb
@@ -139,11 +143,11 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .else
 
-            ;; for FOR/IRP, skip everything between the name and the comma!
-            ;; these items will be stored as (first) macro parameter.
-            ;; for example, valid syntax is:
-            ;; FOR xxx,<a, ...>
-            ;; FOR xxx:REQ,<a, ...>
+            ; for FOR/IRP, skip everything between the name and the comma!
+            ; these items will be stored as (first) macro parameter.
+            ; for example, valid syntax is:
+            ; FOR xxx,<a, ...>
+            ; FOR xxx:REQ,<a, ...>
 
             .while ( [rbx].token != T_FINAL && [rbx].token != T_COMMA )
                 inc i
@@ -154,22 +158,22 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
             inc i
             add rbx,asm_tok
-            ;; FOR/IRP accepts a literal enclosed in <> only
+            ; FOR/IRP accepts a literal enclosed in <> only
             .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
                 .return( asmerr( 2008, [rbx].tokpos ) )
             .endif
-            ;; v2.03: also ensure that the literal is the last item
+            ; v2.03: also ensure that the literal is the last item
             .if ( [rbx+asm_tok].token != T_FINAL )
                 .return( asmerr( 2008, [rbx+asm_tok].tokpos ) )
             .endif
-            ;; v2.08: use myalloca() instead of a fixed-length buffer.
-            ;; the loop directives are often nested, they call RunMacro()
-            ;; and hence should be careful with stack usage because of JWASMR!
+            ; v2.08: use myalloca() instead of a fixed-length buffer.
+            ; the loop directives are often nested, they call RunMacro()
+            ; and hence should be careful with stack usage because of JWASMR!
 
             mov parmstring,[rbx].string_ptr
         .endif
-        ;; to run StoreMacro(), tokenarray must be setup correctly.
-        ;; clear contents beginning with the comma!
+        ; to run StoreMacro(), tokenarray must be setup correctly.
+        ; clear contents beginning with the comma!
         dec i
         sub rbx,asm_tok
         mov [rbx].token,T_FINAL
@@ -177,7 +181,7 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         mov i,arg_loc
     .endsw
 
-    ;; now make a temporary macro
+    ; now make a temporary macro
     lea rdi,tmpmacro
     xor eax,eax
     mov ecx,sizeof(tmpmacro)
@@ -195,118 +199,126 @@ LoopDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ReleaseMacroData( rdi )
         .return( ERROR )
     .endif
-    ;; EXITM <> is allowed inside a macro loop.
-    ;; This doesn't make the loop a macro function, reset the bit!
+
+    ; EXITM <> is allowed inside a macro loop.
+    ; This doesn't make the loop a macro function, reset the bit!
 
     and [rdi].asym.mac_flag,not M_ISFUNC
 
-    ;; now run the just created macro in a loop
+    ; now run the just created macro in a loop
 
-    ;; don't run the macro if there are no lines (macroinfo->data == NULL)!
-    ;; this isn't exactly what Masm does; an empty 'WHILE 1'
-    ;; will loop "forever" in Masm,
+    ; don't run the macro if there are no lines (macroinfo->data == NULL)!
+    ; this isn't exactly what Masm does; an empty 'WHILE 1'
+    ; will loop "forever" in Masm,
 
     mov rbx,tokenarray
 
-    .if ( macinfo.lines ) ;; added in v2.01
-    .switch ( directive )
-    .case T_REPEAT
-    .case T_REPT
-        ;; negative repeat counts are accepted and are treated like 0
-        .for ( : [rdi].asym.value < opnd.value : [rdi].asym.value++ )
-            ;; v2.10: Token_Count becomes volatile if MF_NOSAVE is set
-            mov [rbx].token,T_FINAL
-            mov Token_Count,0
-            RunMacro( rdi, 0, rbx, NULL, MF_NOSAVE, &is_exitm )
-            .endc .if ( is_exitm )
-        .endf
-        .endc
-    .case T_WHILE
-        .while ( opnd.kind == EXPR_CONST && opnd.value != 0 )
-            RunMacro( rdi, Token_Count, rbx, NULL, 0, &is_exitm )
-            .endc .if ( is_exitm )
-            mov i,arg_loc
-            .endc .ifd ( EvalOperand( &i, rbx, Token_Count, &opnd, 0 ) == ERROR )
-            inc [rdi].asym.value
-        .endw
-        .endc
-    .case T_FORC
-    .case T_IRPC
-        .for( rsi = parmstring: B[rsi] : rsi++, [rdi].asym.value++ )
-            mov [rbx].token,T_STRING
-            mov [rbx].string_delim,NULLC
-            mov [rbx].string_ptr,&buffer
-            mov [rbx].tokpos,rax;&buffer
-            mov [rbx+asm_tok].token,T_FINAL
-            mov buffer[2],NULLC
-            mov Token_Count,1
-            .if ( B[rsi] == '!' )
-                lodsb
-                mov buffer[0],al
-                mov al,[rsi]
-                mov buffer[1],al
-                .if ( B[rsi] == NULLC ) ;; ensure the macro won't go beyond the 00
-                    dec rsi
+    .if ( macinfo.lines ) ; added in v2.01
+
+        .switch ( directive )
+        .case T_REPEAT
+        .case T_REPT
+            ; negative repeat counts are accepted and are treated like 0
+            .for ( : [rdi].asym.value < opnd.value : [rdi].asym.value++ )
+                ; v2.10: Token_Count becomes volatile if MF_NOSAVE is set
+                mov [rbx].token,T_FINAL
+                mov Token_Count,0
+                RunMacro( rdi, 0, rbx, NULL, MF_NOSAVE, &is_exitm )
+                .endc .if ( is_exitm )
+            .endf
+            .endc
+        .case T_WHILE
+            .while ( opnd.kind == EXPR_CONST && opnd.value != 0 )
+                RunMacro( rdi, Token_Count, rbx, NULL, 0, &is_exitm )
+                .endc .if ( is_exitm )
+                mov i,arg_loc
+                .endc .ifd ( EvalOperand( &i, rbx, Token_Count, &opnd, 0 ) == ERROR )
+                inc [rdi].asym.value
+            .endw
+            .endc
+        .case T_FORC
+        .case T_IRPC
+
+            .for( rsi = parmstring: B[rsi] : rsi++, [rdi].asym.value++ )
+
+                mov [rbx].token,T_STRING
+                mov [rbx].string_delim,NULLC
+                mov [rbx].string_ptr,&buffer
+                mov [rbx].tokpos,rax;&buffer
+                mov [rbx+asm_tok].token,T_FINAL
+                mov buffer[2],NULLC
+                mov Token_Count,1
+                .if ( B[rsi] == '!' )
+                    lodsb
+                    mov buffer[0],al
+                    mov al,[rsi]
+                    mov buffer[1],al
+                    .if ( B[rsi] == NULLC ) ; ensure the macro won't go beyond the 00
+                        dec rsi
+                    .endif
+                    mov [rbx].stringlen,2
+                    mov [rbx+asm_tok].tokpos,&buffer[2]
+                .elseif ( islspace( B[rsi] ) )
+                    mov buffer[0],'!'
+                    mov buffer[1],B[rsi]
+                    mov [rbx].stringlen,2
+                    mov [rbx+asm_tok].tokpos,&buffer[2]
+                .else
+                    mov buffer[0],B[rsi]
+                    mov [rbx].stringlen,1
+                    mov [rbx+asm_tok].tokpos,&buffer[1]
+                    mov buffer[1],NULLC
                 .endif
-                mov [rbx].stringlen,2
-                mov [rbx+asm_tok].tokpos,&buffer[2]
-            .elseif ( islspace( B[rsi] ) )
-                mov buffer[0],'!'
-                mov buffer[1],B[rsi]
-                mov [rbx].stringlen,2
-                mov [rbx+asm_tok].tokpos,&buffer[2]
-            .else
-                mov buffer[0],B[rsi]
-                mov [rbx].stringlen,1
-                mov [rbx+asm_tok].tokpos,&buffer[1]
-                mov buffer[1],NULLC
+                RunMacro( rdi, 0, rbx, NULL, MF_NOSAVE, &is_exitm )
+                .endc .if ( is_exitm )
+            .endf
+            .endc
+        .default ; T_FOR, T_IRP
+            mov esi,Token_Count
+            inc esi
+            mov Token_Count,Tokenize( parmstring, esi, tokenarray, TOK_RESCAN or TOK_NOCURLBRACES )
+
+            imul ebx,eax,asm_tok
+            add rbx,tokenarray
+
+            ; v2.09: if a trailing comma is followed by white space(s), add a blank token
+
+            mov rdx,[rbx-asm_tok].tokpos
+            .if ( esi != Token_Count && [rbx-asm_tok].token == T_COMMA && ( B[rdx+1] ) )
+
+                mov [rbx].token,T_STRING
+                mov [rbx].string_delim,NULLC
+                mov [rbx].stringlen,tstrlen( [rbx].tokpos )
+                mov ecx,[rbx].stringlen
+                add rcx,[rbx].tokpos
+                add rbx,asm_tok
+                mov [rbx].tokpos,rcx
+                inc Token_Count
+                mov [rbx].token,T_FINAL
             .endif
-            RunMacro( rdi, 0, rbx, NULL, MF_NOSAVE, &is_exitm )
-            .endc .if ( is_exitm )
-        .endf
-        .endc
-    .default ;; T_FOR, T_IRP
-        mov esi,Token_Count
-        inc esi
-        mov Token_Count,Tokenize( parmstring, esi, tokenarray, TOK_RESCAN or TOK_NOCURLBRACES )
 
-        imul ebx,eax,asm_tok
-        add rbx,tokenarray
+            ; a FOR/IRP parameter can be a macro function call
+            ; that's why the macro calls must be run synchronously
+            ; v2.05: reset an optional VARARG attribute for the macro
+            ; parameter.
+            ; take care of a trailing comma, this is to make another
+            ; RunMacro() call with a "blank" argument.
 
-        ;; v2.09: if a trailing comma is followed by white space(s), add a blank token
+            and [rdi].asym.mac_flag,not M_ISVARARG
 
-        mov rdx,[rbx-asm_tok].tokpos
-        .if ( esi != Token_Count && [rbx-asm_tok].token == T_COMMA && ( B[rdx+1] ) )
-            mov [rbx].token,T_STRING
-            mov [rbx].string_delim,NULLC
-            mov [rbx].stringlen,tstrlen( [rbx].tokpos )
-            mov ecx,[rbx].stringlen
-            add rcx,[rbx].tokpos
-            add rbx,asm_tok
-            mov [rbx].tokpos,rcx
-            inc Token_Count
-            mov [rbx].token,T_FINAL
-        .endif
+            ; v2.09: flag MF_IGNARGS introduced. This allows RunMacro() to
+            ; parse the full argument and trigger macro expansion if necessary.
+            ; No need anymore to count commas here.
 
-        ;; a FOR/IRP parameter can be a macro function call
-        ;; that's why the macro calls must be run synchronously
-        ;; v2.05: reset an optional VARARG attribute for the macro
-        ;; parameter.
-        ;; take care of a trailing comma, this is to make another
-        ;; RunMacro() call with a "blank" argument.
-
-        and [rdi].asym.mac_flag,not M_ISVARARG
-        ;; v2.09: flag MF_IGNARGS introduced. This allows RunMacro() to
-         ;; parse the full argument and trigger macro expansion if necessary.
-         ;; No need anymore to count commas here.
-        .for ( : esi < Token_Count : esi++, [rdi].asym.value++ )
-            mov esi,RunMacro( rdi, esi, tokenarray, NULL, MF_IGNARGS, &is_exitm )
-            .break .ifs ( esi < 0 || is_exitm )
-        .endf
-    .endsw
+            .for ( : esi < Token_Count : esi++, [rdi].asym.value++ )
+                mov esi,RunMacro( rdi, esi, tokenarray, NULL, MF_IGNARGS, &is_exitm )
+                .break .ifs ( esi < 0 || is_exitm )
+            .endf
+        .endsw
     .endif
     ReleaseMacroData( rdi )
-    .return( NOT_ERROR )
+   .return( NOT_ERROR )
+
 LoopDirective endp
 
     end

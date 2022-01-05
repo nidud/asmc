@@ -9,9 +9,11 @@
 ; 2009-11-03 - created
 ;
 
+include crtl.inc
+
     .code
 
-__xtol::
+__xtol proc string:string_t
 
     xor eax,eax
     xor edx,edx
@@ -37,5 +39,7 @@ __xtol::
 
     .endw
     ret
+
+__xtol endp
 
     end

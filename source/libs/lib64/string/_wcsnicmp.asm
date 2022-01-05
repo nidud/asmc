@@ -3,9 +3,12 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+
+include string.inc
+
     .code
 
-_wcsnicmp::
+_wcsnicmp proc a:wstring_t, b:wstring_t, count:size_t
 
     mov eax,1
 
@@ -36,5 +39,7 @@ _wcsnicmp::
     .until 1
     movsx eax,al
     ret
+
+_wcsnicmp endp
 
     end

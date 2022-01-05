@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_strnicmp::
+    option win64:rsp noauto
+
+_strnicmp proc a:string_t, b:string_t, z:size_t
 
     mov r9,rdx
     mov al,-1
@@ -40,5 +44,7 @@ _strnicmp::
     .until 1
     movsx rax,al
     ret
+
+_strnicmp endp
 
     end

@@ -33,9 +33,9 @@ externdef directive_tab: fpDirective
 ; preprocessor directive or macro procedure is preceded
 ; by a code label.
 
-WriteCodeLabel proc uses rsi rdi rbx r12 r13 line:string_t, tokenarray:token_t
+WriteCodeLabel proc __ccall uses rsi rdi rbx r12 r13 line:string_t, tokenarray:token_t
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     .return asmerr(2008, [rbx].string_ptr) .if ( [rbx].token != T_ID )
 
     ;
@@ -137,7 +137,7 @@ DelayExpand endp
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine proc uses rsi rbx tokenarray:token_t
+PreprocessLine proc __ccall uses rsi rbx tokenarray:token_t
 
     ;
     ; v2.11: GetTextLine() removed - this is now done in ProcessFile()

@@ -318,9 +318,9 @@ GetCurrentSegment proc __ccall private buffer:string_t
     mov rax,ModuleInfo.currseg
     .if rax
         mov rdx,[rax].asym.name
-        strcat( strcpy( rcx, rdx ), " segment" )
+        tstrcat( tstrcpy( rcx, rdx ), " segment" )
     .else
-        strcpy( rcx, ".code" )
+        tstrcpy( rcx, ".code" )
     .endif
     .if ModuleInfo.list
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
@@ -409,7 +409,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
 
     mov edi,line_item.line
     add rdi,LineStoreCurr
-    strcpy(b_line, rdi)
+    tstrcpy(b_line, rdi)
     .if ( Parse_Pass == PASS_1 )
         mov B[rdi],';'
         tstrcmp(rax, [rsi].asm_tok.tokpos)
@@ -453,20 +453,20 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
                 sub r13,rdi
                 tmemcpy( r15, rdi, r13d )
                 mov B[rax+r13],0
-                .if strstr( b_line, rax )
+                .if tstrstr( b_line, rax )
                     mov rdi,rax
                     lea rax,[rdi+r13]
                     tstrstart(rax)
                     .if ecx != ',' && ecx != ')'
-                        .if strrchr( &[rdi+1], '"' )
+                        .if tstrrchr( &[rdi+1], '"' )
                             add rax,1
                         .endif
                     .endif
                     .if rax
-                        strcpy( r15, rax )
-                        strcpy( rdi, "addr " )
-                        strcat( rdi, b_label )
-                        strcat( rdi, r15 )
+                        tstrcpy( r15, rax )
+                        tstrcpy( rdi, "addr " )
+                        tstrcat( rdi, b_label )
+                        tstrcat( rdi, r15 )
                     .endif
                 .endif
             .endif
@@ -497,10 +497,10 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
             mov BYTE PTR [rax],0
 
             mov rax,tokenarray
-            mov r13,strcat(strcat(strcpy(r14, [rax].asm_tok.tokpos), "addr "), b_label)
+            mov r13,tstrcat(tstrcat(tstrcpy(r14, [rax].asm_tok.tokpos), "addr "), b_label)
             mov rsi,ltokstart(rsi)
             .if ecx
-                strcat(strcat(r13, " " ), rsi)
+                tstrcat(tstrcat(r13, " " ), rsi)
             .endif
 
             .if NewString
@@ -512,7 +512,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
                 InsertLineQueue()
             .endif
 
-            strcpy( ModuleInfo.currsource, r14 )
+            tstrcpy( ModuleInfo.currsource, r14 )
             Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
 
             mov ModuleInfo.token_count,eax
@@ -669,9 +669,9 @@ CString proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 buffer:string_t, t
             mov esi,eax
             .if edi
                 ;.if ( ModuleInfo.Ofssize != USE64 )
-                ;    strcpy( buffer, "offset " )
+                ;    tstrcpy( buffer, "offset " )
                 ;.endif
-                strcat( r15, r14 )
+                tstrcat( r15, r14 )
             .else
                 ;
                 ; v2.24 skip return value if @CStr is first token
@@ -1324,7 +1324,7 @@ InStrDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         lea rax,[rsi-1]
         add rcx,rax
 
-        .if strstr( rcx, [rbx].string_ptr )
+        .if tstrstr( rcx, [rbx].string_ptr )
             sub rax,rsi
             add rax,1
         .endif
@@ -1368,7 +1368,7 @@ ComAllocFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokena
 
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
-        strcpy( buffer, [rdx] )
+        tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
 
@@ -1382,7 +1382,7 @@ TypeIdFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenarr
 
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
-        strcpy( buffer, [rdx] )
+        tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
 
@@ -1397,7 +1397,7 @@ CStringFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
 
         mov rdx,mi
         mov rdx,[rdx].macro_instance.parm_array
-        strcpy( buffer, [rdx] )
+        tstrcpy( buffer, [rdx] )
     .endif
     .return( NOT_ERROR )
 
@@ -1472,7 +1472,7 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
         mov ecx,pos
         add rcx,rbx
         dec rcx
-        .if strstr( rcx, rdx )
+        .if tstrstr( rcx, rdx )
             sub rax,rbx
             lea rcx,[rax+1]
             myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )

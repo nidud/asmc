@@ -16,8 +16,8 @@ include types.inc
 include label.inc
 include listing.inc
 
-;; LABELARRAY: syntax extension to LABEL directive:
-;;  <label> LABEL <qualified type>[: index]
+; LABELARRAY: syntax extension to LABEL directive:
+;  <label> LABEL <qualified type>[: index]
 
 
 define LABELARRAY 1
@@ -28,47 +28,48 @@ endif
 
 .code
 
-LabelInit proc
+LabelInit proc __ccall
 
     mov ModuleInfo.anonymous_label,0
     ret
 
 LabelInit endp
 
-GetAnonymousLabel proc buffer:string_t, value:int_t
+GetAnonymousLabel proc __ccall buffer:string_t, value:int_t
 
     mov eax,ModuleInfo.anonymous_label
-    add eax,value
-    tsprintf( buffer, "L&_%04u", eax )
-    .return( buffer )
+    add eax,edx
+    tsprintf( rcx, "L&_%04u", eax )
+   .return( buffer )
 
 GetAnonymousLabel endp
 
-;; define a (code) label.
-;; - name: name of the label; ensured to be a valid identifier
-;; - mem_type: label's memory type
-;; - ti: qualified type pointer, used if memtype is MT_TYPE or MT_PROC
-;; - bLocal: if TRUE, code label is to be defined locally; it's ensured
-;;   that CurrProc is != NULL and ModuleInfo.scoped == TRUE then.
+; define a (code) label.
+; - name: name of the label; ensured to be a valid identifier
+; - mem_type: label's memory type
+; - ti: qualified type pointer, used if memtype is MT_TYPE or MT_PROC
+; - bLocal: if TRUE, code label is to be defined locally; it's ensured
+;   that CurrProc is != NULL and ModuleInfo.scoped == TRUE then.
 
-CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified_type, bLocal:int_t
+CreateLabel proc __ccall uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified_type, bLocal:int_t
 
   local adr:uint_t
   local buffer[20]:char_t
 
     .if ( CurrSeg == NULL )
+
         asmerr( 2034 )
-        .return( NULL )
+       .return( NULL )
     .endif
 
-    ;; v2.06: don't allow a code label (NEAR, FAR, PROC) if CS is
-    ;; assumed ERROR. This was previously checked for labels with
-    ;; trailing colon only [in ParseLine()].
+    ; v2.06: don't allow a code label (NEAR, FAR, PROC) if CS is
+    ; assumed ERROR. This was previously checked for labels with
+    ; trailing colon only [in ParseLine()].
 
     mov al,mem_type
     and al,MT_SPECIAL_MASK
     .if ( al == MT_ADDRESS )
-        .if ( SegAssumeTable[ASSUME_CS*assume_info].error ) ;; CS assumed to ERROR?
+        .if ( SegAssumeTable[ASSUME_CS*assume_info].error ) ; CS assumed to ERROR?
             asmerr( 2108 )
             .return( NULL )
         .endif
@@ -92,12 +93,12 @@ CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified
 
     .if( Parse_Pass == PASS_1 )
         .if( [rdi].asym.state == SYM_EXTERNAL && [rdi].asym.sflags & S_WEAK )
-            ;; don't accept EXTERNDEF for a local label!
+            ; don't accept EXTERNDEF for a local label!
             .if ( [rdi].asym.flag1 & S_ISPROC || ( bLocal && CurrProc ) )
                 asmerr( 2005, name )
                 .return( NULL )
             .endif
-            ;; ensure that type of symbol is compatible!
+            ; ensure that type of symbol is compatible!
             .if ( [rdi].asym.mem_type != MT_EMPTY && [rdi].asym.mem_type != mem_type )
                 asmerr( 2004, rsi )
             .endif
@@ -109,8 +110,8 @@ CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified
             asmerr(2005, rsi )
             .return( NULL )
         .endif
-        ;; add the label to the linked list attached to curr segment
-        ;; this allows to reduce the number of passes (see fixup.c)
+        ; add the label to the linked list attached to curr segment
+        ; this allows to reduce the number of passes (see fixup.c)
 
         mov rcx,CurrSeg
         mov rcx,[rcx].dsym.seginfo
@@ -118,14 +119,14 @@ CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified
         mov [rdi].dsym.next,[rcx].seg_info.label_list
         mov [rcx].seg_info.label_list,rdi
 
-        ;; a possible language type set by EXTERNDEF must be kept!
+        ; a possible language type set by EXTERNDEF must be kept!
         .if ( [rdi].asym.langtype == LANG_NONE )
             mov [rdi].asym.langtype,ModuleInfo.langtype
         .endif
 
         assume rbx:ptr qualified_type
         mov rbx,ti
-        ;; v2.05: added to accept type prototypes
+        ; v2.05: added to accept type prototypes
         .if ( mem_type == MT_PROC )
             .if ( !( [rdi].asym.flag1 & S_ISPROC ) )
                 CreateProc( rdi, NULL, SYM_INTERNAL )
@@ -149,14 +150,14 @@ CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified
             .endif
         .endif
     .else
-        ;; save old offset
+        ; save old offset
         mov adr,[rdi].asym.offs
     .endif
 
     or [rdi].asym.flags,S_ISDEFINED
-    ;; v2.05: the label may be "data" - due to the way struct initialization
-    ;; is handled. Then fields first_size and first_length must not be
-    ;; touched!
+    ; v2.05: the label may be "data" - due to the way struct initialization
+    ; is handled. Then fields first_size and first_length must not be
+    ; touched!
 
     .if ( !( [rdi].asym.flag1 & S_ISDATA ) )
         mov [rdi].asym.asmpass,Parse_Pass
@@ -171,20 +172,20 @@ CreateLabel proc uses rsi rdi rbx name:string_t, mem_type:byte, ti:ptr qualified
 
 CreateLabel endp
 
-;; LABEL directive.
-;; syntax: <label_name> LABEL <qualified type>
+; LABEL directive.
+; syntax: <label_name> LABEL <qualified type>
 
-LabelDirective proc uses rbx i:int_t, tokenarray:ptr asm_tok
+LabelDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
   local ti:qualified_type
 if LABELARRAY
   local length:uint_32
 endif
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
     assume rbx:ptr asm_tok
-    .if ( i != 1 ) ;; LABEL must be preceded by an ID
+    .if ( ecx != 1 ) ; LABEL must be preceded by an ID
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
 
@@ -204,11 +205,11 @@ endif
 if LABELARRAY
     mov length,-1
 endif
-    ;; v2.10: first if()-block is to handle all address types ( MT_NEAR, MT_FAR and MT_PROC )
+    ; v2.10: first if()-block is to handle all address types ( MT_NEAR, MT_FAR and MT_PROC )
     mov al,ti.mem_type
     and al,MT_SPECIAL_MASK
     .if (  al == MT_ADDRESS )
-        ;; dont allow near16/far16/near32/far32 if size won't match
+        ; dont allow near16/far16/near32/far32 if size won't match
         .if ( ti.Ofssize != USE_EMPTY && ModuleInfo.Ofssize != ti.Ofssize )
             .return( asmerr( 2098 ) )
         .endif
@@ -237,20 +238,20 @@ endif
     .endif
 
     .if ( [rbx].token != T_FINAL )
-        .return( asmerr( 2008, [rbx].tokpos ) ) ;; v2.10: display tokpos
+        .return( asmerr( 2008, [rbx].tokpos ) ) ; v2.10: display tokpos
     .endif
 
     .if ( ModuleInfo.list )
         LstWrite( LSTTYPE_LABEL, 0, NULL )
     .endif
 
-    ;; v2.08: if label is a DATA label, set total_size and total_length
+    ; v2.08: if label is a DATA label, set total_size and total_length
     mov rbx,tokenarray
     .if ( CreateLabel( [rbx].string_ptr, ti.mem_type, &ti, FALSE ) )
 
-        ;; sym->isdata must be 0, else the LABEL directive was generated within data_item()
-        ;; and fields total_size & total_length must not be modified then!
-        ;; v2.09: data_item() no longer creates LABEL directives.
+        ; sym->isdata must be 0, else the LABEL directive was generated within data_item()
+        ; and fields total_size & total_length must not be modified then!
+        ; v2.09: data_item() no longer creates LABEL directives.
 
         mov rcx,rax
         mov al,[rcx].asym.mem_type
@@ -275,6 +276,7 @@ endif
         .return( NOT_ERROR )
     .endif
     .return( ERROR )
+
 LabelDirective endp
 
     end

@@ -42,7 +42,7 @@ _tzset endp
 
 _isindst proc uses rsi rdi rbx tb:ptr tm
 
-    mov rsi,tb
+    mov rsi,rcx
     xor eax,eax
     mov ecx,[rsi].tm.tm_mon
     mov edx,[rsi].tm.tm_year

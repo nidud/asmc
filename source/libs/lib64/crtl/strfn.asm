@@ -4,9 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include crtl.inc
+
     .code
 
-strfn::
+strfn proc path:string_t
 
     .for ( rax=rcx, dl=[rcx] : dl : rcx++, dl=[rcx] )
 
@@ -19,5 +21,7 @@ strfn::
         .endif
     .endf
     ret
+
+strfn endp
 
     end

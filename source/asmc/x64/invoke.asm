@@ -44,11 +44,11 @@ elf64regs       uint_8 T_RDI, T_RSI, T_RDX, T_RCX, T_R8, T_R9
     assume rbx:ptr asm_tok
     B equ <byte ptr>
 
-SkipTypecast proc private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
+SkipTypecast proc __ccall private uses rsi rdi rbx fullparam:string_t, i:int_t, tokenarray:ptr asm_tok
 
-    mov  rdi,fullparam
-    imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    mov  rdi,rcx
+    imul ebx,edx,asm_tok
+    add  rbx,r8
     xor  eax,eax
     mov  B[rdi],al
 
@@ -81,7 +81,7 @@ SkipTypecast endp
 ;; psize,asize: size of parameter/argument in bytes.
 ;;
 
-PushInvokeParam proc private uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
+PushInvokeParam proc __ccall private uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok, pproc:ptr dsym,
         curr:ptr dsym, reqParam:int_t, r0flags:ptr uint_8
 
   local currParm:int_t
@@ -101,8 +101,8 @@ PushInvokeParam proc private uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr as
   local t_regax:int_t
   local ParamId:int_t
 
-    imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add  rbx,rdx
 
     .for ( ecx = 0 : ecx <= reqParam : )
 
@@ -274,8 +274,9 @@ ifndef ASMC64
 
             .if curr_cpu < P_186
 
-                AddLineQueueX( " mov ax, offset %s", &fullparam )
-                AddLineQueue( " push ax" )
+                AddLineQueueX(
+                    " mov ax, offset %s\n"
+                    " push ax", &fullparam )
                 mov rcx,r0flags
                 or B[rcx],R0_USED
 
@@ -368,7 +369,7 @@ endif
         .else
             add asize,asize2
         .endif
-        strcpy( &fullparam, [rbx+asm_tok*2].string_ptr )
+        tstrcpy( &fullparam, [rbx+asm_tok*2].string_ptr )
 
         mov opnd.kind,EXPR_REG
         and opnd.flags,not E_INDIRECT
@@ -598,8 +599,9 @@ endif
 
             .if ( asize < 4 && psize > 2 && IS_SIGNED(opnd.mem_type) && curr_cpu >= P_386 )
 
-                AddLineQueueX( " movsx eax, %s", &fullparam )
-                AddLineQueueX( " push %r", r_ax )
+                AddLineQueueX(
+                    " movsx eax, %s\n"
+                    " push %r", &fullparam, r_ax )
 
                 mov rcx,r0flags
                 mov B[rcx],R0_USED ;; reset R0_H_CLEARED
@@ -612,8 +614,9 @@ endif
 
                     .if ( psize == 1 && !( [rdi].asym.sflags & S_ISVARARG ) )
 
-                        AddLineQueueX( " mov al, %s", &fullparam )
-                        AddLineQueueX( " push %r", t_regax )
+                        AddLineQueueX(
+                            " mov al, %s\n"
+                            " push %r", &fullparam, t_regax )
 ifndef ASMC64
                     .elseif ( pushsize == 2 ) ;; 16-bit code?
 
@@ -653,8 +656,9 @@ ifndef ASMC64
 
                             .if ( psize == 4 )
 
-                                AddLineQueue( "cwd" )
-                                AddLineQueue( " push dx" )
+                                AddLineQueue(
+                                    " cwd\n"
+                                    " push dx" )
                                 mov rcx,r0flags
                                 or B[rcx],R2_USED
                             .endif
@@ -668,8 +672,9 @@ endif
 
                             mov ecx,T_MOVZX
                         .endif
-                        AddLineQueueX( " %r eax, %s", ecx, &fullparam )
-                        AddLineQueueX( " push %r", r_ax )
+                        AddLineQueueX(
+                            " %r eax, %s\n"
+                            " push %r", ecx, &fullparam, r_ax )
                     .endif
 
                     mov rcx,r0flags
@@ -683,8 +688,9 @@ endif
 
                         .if ( pushsize == 8 )
 
-                            AddLineQueueX(" mov ax, %s", &fullparam )
-                            AddLineQueue(" push rax" )
+                            AddLineQueueX(
+                                " mov ax, %s\n"
+                                " push rax", &fullparam )
                             mov rcx,r0flags
                             mov B[rcx],R0_USED ;; reset R0_H_CLEARED
 ifndef ASMC64
@@ -709,8 +715,9 @@ endif
 
                             mov ecx,T_MOVZX
                         .endif
-                        AddLineQueueX( " %r eax, %s", ecx, &fullparam )
-                        AddLineQueueX( " push %r", r_ax )
+                        AddLineQueueX(
+                            " %r eax, %s\n"
+                            " push %r", ecx, &fullparam, r_ax )
                         mov rcx,r0flags
                         or B[rcx],R0_USED
                     .endif
@@ -721,8 +728,9 @@ endif
 
                     .if ( pushsize == 8 )
 
-                        AddLineQueueX( " mov eax, %s", &fullparam )
-                        AddLineQueue ( " push rax" )
+                        AddLineQueueX(
+                            " mov eax, %s\n"
+                            " push rax", &fullparam )
                         mov rcx,r0flags
                         or B[rcx],R0_USED
                         .endc
@@ -734,13 +742,15 @@ endif
 
                         .if ( pushsize > 2 )
 
-                            AddLineQueueX( " mov al, byte ptr %s[2]", &fullparam )
-                            AddLineQueue ( " shl eax, 16" )
-                            AddLineQueueX( " mov ax, word ptr %s", &fullparam )
-                            AddLineQueueX( " push %r", r_ax )
+                            AddLineQueueX(
+                                " mov al, byte ptr %s[2]\n"
+                                " shl eax, 16\n"
+                                " mov ax, word ptr %s\n"
+                                " push %r", &fullparam, &fullparam, r_ax )
                         .else
-                            AddLineQueueX( " push word ptr %s[2]", &fullparam )
-                            AddLineQueueX( " push word ptr %s", &fullparam )
+                            AddLineQueueX(
+                                " push word ptr %s[2]\n"
+                                " push word ptr %s", &fullparam, &fullparam )
                         .endif
                     .else
 
@@ -755,17 +765,19 @@ endif
 
                 .if ( psize > 2 && ( curr_cpu >= P_386 ) )
 
-                    AddLineQueueX( " movsx eax, %s", &fullparam )
-                    AddLineQueueX( " push %r", r_ax )
+                    AddLineQueueX(
+                        " movsx eax, %s\n"
+                        " push %r", &fullparam, r_ax )
                     mov rcx,r0flags
                     mov B[rcx],R0_USED ;; reset R0_H_CLEARED
 ifndef ASMC64
                 .elseif ( pushsize == 2 && psize > 2 )
 
-                    AddLineQueueX( " mov ax, %s", &fullparam )
-                    AddLineQueue ( " cwd" )
-                    AddLineQueue ( " push dx" )
-                    AddLineQueue ( " push ax" )
+                    AddLineQueueX(
+                        " mov ax, %s\n"
+                        " cwd\n"
+                        " push dx\n"
+                        " push ax", &fullparam )
                     mov rcx,r0flags
                     mov B[rcx],R0_USED or R2_USED
 endif
@@ -897,8 +909,9 @@ ifndef ASMC64
 
                                 AddLineQueueX( " mov ax, %s", &fullparam )
                             .endif
-                            AddLineQueue( " cwd" )
-                            AddLineQueue( " push dx" )
+                            AddLineQueue(
+                                " cwd\n"
+                                " push dx" )
                             mov reg,T_AX
 
                         .endif
@@ -1210,14 +1223,16 @@ endif
 
                             mov rcx,r0flags
                             or B[rcx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%lx", opnd.llvalue )
-                            AddLineQueue( " push rax" )
+                            AddLineQueueX(
+                                " mov rax, 0x%lx\n"
+                                " push rax", opnd.llvalue )
 ifndef ASMC64
                         .else
 
                             mov ebx,T_PUSHD
-                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.llvalue )
-                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.llvalue )
+                            AddLineQueueX(
+                                " pushd high32 (0x%lx)\n"
+                                " pushd low32 (0x%lx)", opnd.llvalue,  opnd.llvalue )
 endif
                         .endif
                         jmp skip_push
@@ -1229,10 +1244,11 @@ ifndef ASMC64
                         .if Ofssize == USE32
 
                             mov ebx,T_PUSHD
-                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.hlvalue )
-                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.hlvalue )
-                            AddLineQueueX( " pushd high32 (0x%lx)", opnd.llvalue )
-                            AddLineQueueX( " pushd low32 (0x%lx)",  opnd.llvalue )
+                            AddLineQueueX(
+                                " pushd high32 (0x%lx)\n"
+                                " pushd low32 (0x%lx)\n"
+                                " pushd high32 (0x%lx)\n"
+                                " pushd low32 (0x%lx)", opnd.hlvalue,  opnd.hlvalue, opnd.llvalue,  opnd.llvalue )
                             jmp skip_push
                         .endif
 endif
@@ -1243,8 +1259,9 @@ endif
 
                             mov rcx,r0flags
                             or B[rcx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%lx", opnd.hlvalue )
-                            AddLineQueue( " push rax" )
+                            AddLineQueueX(
+                                " mov rax, 0x%lx\n"
+                                " push rax", opnd.hlvalue )
                         .endif
 
                         .if ( opnd.l64_h == 0 || opnd.l64_h == -1 )
@@ -1254,8 +1271,9 @@ endif
 
                             mov rcx,r0flags
                             or B[rcx],R0_USED
-                            AddLineQueueX( " mov rax, 0x%lx", opnd.llvalue )
-                            AddLineQueue( " push rax" )
+                            AddLineQueueX(
+                                " mov rax, 0x%lx\n"
+                                " push rax", opnd.llvalue )
                         .endif
                         jmp skip_push
 
@@ -1303,7 +1321,7 @@ PushInvokeParam endp
 
 ;; generate a call for a prototyped procedure
 
-InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
+InvokeDirective proc __ccall uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
 
   local sym:ptr asym
   local pproc:ptr dsym
@@ -1447,7 +1465,7 @@ InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
             .if ( rax )
                 mov pmacro,rcx
                 mov [rax],rcx
-                strcpy( &buffer, [rcx].asym.name )
+                tstrcpy( &buffer, [rcx].asym.name )
             .endif
 
         .elseif ( [rbx].token == T_OP_SQ_BRACKET && \
@@ -1463,10 +1481,10 @@ InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
                     .if ( [rdi].asym.flag2 & S_VMACRO )
 
                         mov pmacro,[rdi].asym.vmacro
-                        strcpy( &buffer, [rax].asym.name )
+                        tstrcpy( &buffer, [rax].asym.name )
                     .else
                          mov rcx,[rax].asym.class
-                        strcat( strcat( strcpy( &buffer, [rcx].asym.name ), "_" ), [rdi].asym.name )
+                        tstrcat( tstrcat( tstrcpy( &buffer, [rcx].asym.name ), "_" ), [rdi].asym.name )
                         mov pmacro,SymSearch(rax)
                     .endif
 
@@ -1684,13 +1702,13 @@ InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
     .endif
 
     mov p,StringBufferEnd
-    strcpy( p, " call " )
+    tstrcpy( p, " call " )
     add p,6
 
     .if ( !pmacro && [rsi].state == SYM_EXTERNAL && [rsi].dll )
 
        .new iatname:ptr = p
-        strcpy( p, ModuleInfo.imp_prefix )
+        tstrcpy( p, ModuleInfo.imp_prefix )
         add p,tstrlen( p )
         add p,Mangle( rsi, p )
         inc namepos
@@ -1723,8 +1741,8 @@ InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
             mov rcx,StringBufferEnd
             inc rcx
             mov p,rcx
-            strcpy( p, &buffer )
-            strcat( p, "( " )
+            tstrcpy( p, &buffer )
+            tstrcat( p, "( " )
             add p,tstrlen(p)
 
             .if ( fastcall_id )
@@ -1824,37 +1842,37 @@ InvokeDirective proc uses rsi rdi rbx r12 r13 i:int_t, tokenarray:ptr asm_tok
                 .if ( [rbx].token != T_FINAL )
 
                     .if ( [rdi].flag2 & S_ISSTATIC )
-                        strcat( p, [rbx+asm_tok*2].tokpos )
+                        tstrcat( p, [rbx+asm_tok*2].tokpos )
                     .else
-                        strcat( p, [rbx+asm_tok].tokpos )
+                        tstrcat( p, [rbx+asm_tok].tokpos )
                     .endif
                 .endif
 
             .elseif ( [rdx].proc_info.flags & PROC_HAS_VARARG )
 
                 .if ( [rbx+asm_tok].tokval == T_ADDR && [rdi].flag1 & S_METHOD )
-                    strcat( p, [rbx+asm_tok*2].tokpos )
+                    tstrcat( p, [rbx+asm_tok*2].tokpos )
                 .else
-                    strcat( p, [rbx+asm_tok].tokpos )
+                    tstrcat( p, [rbx+asm_tok].tokpos )
                 .endif
            .else
                 mov r12,rsi
                 mov esi,1
                 .if ( [rdi].flag2 & S_ISSTATIC )
-                    strcat( p, [rbx+asm_tok*2].string_ptr )
+                    tstrcat( p, [rbx+asm_tok*2].string_ptr )
                     mov esi,0
                 .else
-                    strcat( p, args[0] )
+                    tstrcat( p, args[0] )
                 .endif
                 .for ( : esi < cnt: esi++ )
-                    strcat( p, ", " )
+                    tstrcat( p, ", " )
                     .if ( args[rsi*8] )
-                        strcat( p, args[rsi*8] )
+                        tstrcat( p, args[rsi*8] )
                     .endif
                 .endf
                 mov rsi,r12
             .endif
-            strcat( p, ")" )
+            tstrcat( p, ")" )
 
         .endif
 

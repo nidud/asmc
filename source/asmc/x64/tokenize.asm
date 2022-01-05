@@ -450,7 +450,7 @@ continue:
                                 add tdst,rax
                             .endif
 
-                            strcpy( rsi, rdi )
+                            tstrcpy( rsi, rdi )
                             mov rdi,tdst
                             mov r13d,tcount
                             jmp continue
@@ -864,7 +864,7 @@ get_special_symbol proc fastcall uses rsi rdi rbx r12 buf:token_t , p:ptr line_s
         ; operator - it will cause a 'operator expected' error msg later.
         ; the tokens are stored as one- or two-byte sized "strings".
         ;
-        strchr("=!<>&|", eax)
+        tstrchr("=!<>&|", eax)
         mov edx,[rdi]
 
         .if rax && [rsi].flags2 & DF_CEXPR
@@ -1334,7 +1334,7 @@ StartComment proc fastcall p:string_t
 
         mov ModuleInfo.inside_comment,cl
         inc rax
-        .if strchr(rax, ecx)
+        .if tstrchr(rax, ecx)
 
             mov ModuleInfo.inside_comment,0
         .endif
@@ -1479,7 +1479,7 @@ Tokenize proc fastcall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:
             mov p.output,token_stringbuf
             .if ModuleInfo.inside_comment
 
-                .if strchr( p.start, ModuleInfo.inside_comment )
+                .if tstrchr( p.start, ModuleInfo.inside_comment )
 
                     mov ModuleInfo.inside_comment,0
                 .endif
@@ -1507,7 +1507,7 @@ Tokenize proc fastcall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:
                 .endw
 
                 mov p.input,rsi
-                mov ModuleInfo.CurrComment,strcpy( commentbuffer, rsi )
+                mov ModuleInfo.CurrComment,tstrcpy( commentbuffer, rsi )
                 mov B[rsi],0
             .endif
 
@@ -1533,7 +1533,7 @@ Tokenize proc fastcall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:
 
                             .if ( ecx )
 
-                                strcpy( p.input, rdi )
+                                tstrcpy( p.input, rdi )
                                 tstrlen( p.start )
 
                                 .if ( eax >= ModuleInfo.max_line_len )

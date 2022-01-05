@@ -10,7 +10,7 @@ include io.inc
 
 _access proc fname:LPSTR, amode:UINT
 
-    .if getfattr(rcx) != -1
+    .ifd getfattr(rcx) != -1
         .if amode == 2 && eax & _A_RDONLY
             mov eax,-1
         .else

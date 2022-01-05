@@ -23,7 +23,7 @@ public CurrEnum
     assume rbx:ptr asm_tok
     assume rsi:ptr asym
 
-EnumDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local name:string_t
   local opndx:expr
@@ -35,7 +35,7 @@ EnumDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .return NOT_ERROR .if ( Parse_Pass > PASS_1 )
 
     mov rc,NOT_ERROR
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov rsi,CurrEnum
     mov eax,[rbx].tokval
 

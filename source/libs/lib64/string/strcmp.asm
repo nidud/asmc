@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-strcmp::
+    option win64:rsp noauto
+
+strcmp proc a:string_t, b:string_t
 
     xor rax,rax
 @@:
@@ -45,4 +49,6 @@ zero_0:
     jnz done
     ret
 
-    END
+strcmp endp
+
+    end

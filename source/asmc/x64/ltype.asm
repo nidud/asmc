@@ -147,173 +147,6 @@ _ltype byte 0,          ; -1 EOF
     option dotname
     option win64:rsp noauto nosave
 
-tmemcpy proc fastcall uses rdi dst:ptr, src:ptr, z:uint_t
-
-    mov     rax,rcx ; -- return value
-    xchg    rsi,rdx
-    mov     ecx,r8d
-    mov     rdi,rax
-    rep     movsb
-    mov     rsi,rdx
-    ret
-
-tmemcpy endp
-
-tmemmove proc fastcall uses rsi rdi dst:ptr, src:ptr, z:uint_t
-
-    mov     rax,rcx ; -- return value
-    mov     rsi,rdx
-    mov     ecx,r8d
-    mov     rdi,rax
-    cmp     rax,rsi
-    ja      .0
-    rep     movsb
-    jmp     .1
-.0:
-    lea     rsi,[rsi+rcx-1]
-    lea     rdi,[rdi+rcx-1]
-    std
-    rep     movsb
-    cld
-.1:
-    ret
-
-tmemmove endp
-
-tstrlen proc fastcall string:string_t
-
-    push    rcx
-    xorps   xmm0,xmm0
-.0:
-    movups  xmm1,[rcx]
-    pcmpeqb xmm1,xmm0
-    pmovmskb eax,xmm1
-    add     rcx,16
-    test    eax,eax
-    jz      .0
-    bsf     eax,eax
-    lea     rax,[rax+rcx-16]
-    pop     rcx
-    sub     rax,rcx
-    ret
-
-tstrlen endp
-
-tstrcmp proc fastcall a:string_t, b:string_t
-
-    mov     eax,1
-.0:
-    test    al,al
-    jz      .1
-    mov     al,[rcx]
-    inc     rdx
-    inc     rcx
-    cmp     al,[rdx-1]
-    je      .0
-    sbb     eax,eax
-    sbb     eax,-1
-.1:
-    ret
-
-tstrcmp endp
-
-tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:size_t
-
-    mov     rdi,rcx
-    mov     rsi,rdx
-    mov     ecx,r8d
-    xor     eax,eax
-    repe    cmpsb
-    je      .0
-    sbb     eax,eax
-    sbb     eax,-1
-.0:
-    ret
-
-tmemcmp endp
-
-tmemicmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:size_t
-
-    mov     rsi,rcx
-    mov     rdi,rdx
-    mov     eax,r8d
-.0:
-    test    eax,eax
-    jz      .1
-
-    mov     cl,[rsi]
-    mov     dl,[rdi]
-    inc     rsi
-    inc     rdi
-    dec     eax
-    cmp     cl,dl
-    je      .0
-
-    mov     ch,cl
-    sub     cl,'a'
-    cmp     cl,'Z'-'A'+1
-    sbb     cl,cl
-    and     cl,'a'-'A'
-    xor     cl,ch
-
-    mov     dh,dl
-    sub     dl,'a'
-    cmp     dl,'Z'-'A'+1
-    sbb     dl,dl
-    and     dl,'a'-'A'
-    xor     dl,dh
-
-    cmp     cl,dl
-    je      .0
-
-    sbb     eax,eax
-    sbb     eax,-1
-.1:
-    ret
-
-tmemicmp endp
-
-tstricmp proc fastcall uses rsi rdi a:string_t, b:string_t
-
-    mov     rsi,rcx
-    mov     rdi,rdx
-    mov     eax,1
-.0:
-    test    al,al
-    jz      .1
-
-    mov     al,[rsi]
-    mov     cl,[rdi]
-    inc     rsi
-    inc     rdi
-    cmp     al,cl
-    je      .0
-
-    mov     dl,al
-    sub     al,'a'
-    cmp     al,'Z'-'A'+1
-    sbb     al,al
-    and     al,'a'-'A'
-    xor     al,dl
-
-    mov     dl,cl
-    sub     cl,'a'
-    cmp     cl,'Z'-'A'+1
-    sbb     cl,cl
-    and     cl,'a'-'A'
-    xor     cl,dl
-
-    cmp     al,cl
-    je      .0
-
-    sbb     eax,eax
-    sbb     eax,-1
-.1:
-    ret
-
-tstricmp endp
-
-
 tstrupr proc fastcall string:string_t
 
     push     rcx
@@ -364,6 +197,361 @@ tstrstartr proc watcall string:string_t
     ret
 
 tstrstartr endp
+
+ifndef __UNIX__
+memcpy::
+endif
+tmemcpy proc fastcall uses rdi dst:ptr, src:ptr, z:uint_t
+
+    mov     rax,rcx ; -- return value
+    xchg    rsi,rdx
+    mov     ecx,r8d
+    mov     rdi,rax
+    rep     movsb
+    mov     rsi,rdx
+    ret
+
+tmemcpy endp
+
+tmemmove proc fastcall uses rsi rdi dst:ptr, src:ptr, z:uint_t
+
+    mov     rax,rcx ; -- return value
+    mov     rsi,rdx
+    mov     ecx,r8d
+    mov     rdi,rax
+    cmp     rax,rsi
+    ja      .0
+    rep     movsb
+    jmp     .1
+.0:
+    lea     rsi,[rsi+rcx-1]
+    lea     rdi,[rdi+rcx-1]
+    std
+    rep     movsb
+    cld
+.1:
+    ret
+
+tmemmove endp
+
+tmemset proc fastcall uses rdi dst:ptr, char:int_t, count:uint_t
+
+    mov     rdi,rcx
+    mov     al,dl
+    mov     ecx,r8d
+    mov     r8,rdi
+    rep     stosb
+    mov     rax,r8
+    ret
+
+tmemset endp
+
+ifndef __UNIX__
+strlen::
+endif
+tstrlen proc fastcall uses rdi string:string_t
+
+    mov     rdi,rcx
+    mov     ecx,-1
+    xor     eax,eax
+    repnz   scasb
+    not     ecx
+    dec     ecx
+    mov     eax,ecx
+    ret
+
+tstrlen endp
+
+ifndef __UNIX__
+strchr::
+endif
+tstrchr proc fastcall string:string_t, char:int_t
+
+    xor     eax,eax
+.0:
+    mov     dh,[rcx]
+    test    dh,dh
+    jz      .1
+    cmp     dh,dl
+    cmovz   rax,rcx
+    lea     rcx,[rcx+1]
+    jnz     .0
+.1:
+    ret
+
+tstrchr endp
+
+ifndef __UNIX__
+strrchr::
+endif
+tstrrchr proc fastcall string:string_t, char:int_t
+
+    xor     eax,eax
+.0:
+    mov     dh,[rcx]
+    test    dh,dh
+    jz      .1
+    cmp     dh,dl
+    cmovz   rax,rcx
+    add     rcx,1
+    jmp     .0
+.1:
+    ret
+
+tstrrchr endp
+
+ifndef __UNIX__
+strcpy::
+endif
+tstrcpy proc fastcall dst:ptr, src:ptr
+
+    mov     r9,rcx
+    mov     al,[rdx]
+    mov     [rcx],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+1]
+    mov     [rcx+1],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+2]
+    mov     [rcx+2],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+3]
+    mov     [rcx+3],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+4]
+    mov     [rcx+4],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+5]
+    mov     [rcx+5],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+6]
+    mov     [rcx+6],al
+    test    al,al
+    jz      .2
+
+    mov     al,[rdx+7]
+    mov     [rcx+7],al
+    test    al,al
+    jz      .2
+
+    add     rdx,8
+    add     rcx,8
+    mov     r10,0x8080808080808080
+    mov     r11,0x0101010101010101
+.0:
+    mov     rax,[rdx]
+    mov     r8,rax
+    sub     r8,r11
+    not     rax
+    and     r8,rax
+    not     rax
+    and     r8,r10
+    jnz     .1
+    mov     [rcx],rax
+    add     rcx,8
+    add     rdx,8
+    jmp     .0
+.1:
+    mov     [rcx],al
+    test    al,al
+    jz      .2
+
+    mov     [rcx+1],ah
+    test    ah,ah
+    jz      .2
+
+    shr     rax,16
+    mov     [rcx+2],al
+    test    al,al
+    jz      .2
+
+    mov     [rcx+3],ah
+    test    ah,ah
+    jz      .2
+
+    shr     rax,16
+    add     rcx,4
+    jmp     .1
+.2:
+    mov     rax,r9
+    ret
+
+tstrcpy endp
+
+tstrncpy proc fastcall dst:string_t, src:string_t, count:int_t
+
+    mov     r10,rdi
+    mov     rdi,rcx
+    mov     r11,rcx
+    mov     ecx,r8d
+.0:
+    test    ecx,ecx
+    jz      .2
+    dec     ecx
+    mov     al,[rdx]
+    mov     [rdi],al
+    add     rdx,1
+    add     rdi,1
+    test    al,al
+    jnz     .0
+.1:
+    rep     stosb
+.2:
+    mov     rdi,r10
+    mov     rax,r11
+    ret
+
+tstrncpy endp
+
+tstrcat proc fastcall dst:ptr, src:ptr
+
+    mov     r8,rcx
+    xor     eax,eax
+.0:
+    cmp     al,[rcx]
+    je      .1
+    add     rcx,1
+    jmp     .0
+.1:
+    cmp     ah,[rdx]
+    je      .2
+    mov     al,[rdx]
+    mov     [rcx],al
+    add     rdx,1
+    add     rcx,1
+    jmp     .1
+.2:
+    mov     [rcx],ah
+    mov     rax,r8
+    ret
+
+tstrcat endp
+
+tstrcmp proc fastcall a:string_t, b:string_t
+
+    mov     eax,1
+.0:
+    test    al,al
+    jz      .1
+    mov     al,[rcx]
+    inc     rdx
+    inc     rcx
+    cmp     al,[rdx-1]
+    je      .0
+    sbb     eax,eax
+    sbb     eax,-1
+.1:
+    ret
+
+tstrcmp endp
+
+tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:size_t
+
+    mov     rdi,rcx
+    mov     rsi,rdx
+    mov     ecx,r8d
+    xor     eax,eax
+    repe    cmpsb
+    je      .0
+    sbb     eax,eax
+    sbb     eax,-1
+.0:
+    ret
+
+tmemcmp endp
+
+tmemicmp proc fastcall dst:ptr, src:ptr, size:size_t
+.0:
+    test    r8d,r8d
+    jz      .1
+    dec     r8d
+    mov     al,[rcx+r8]
+    cmp     al,[rdx+r8]
+    je      .0
+    mov     ah,al
+    mov     al,[rdx+r8]
+    or      eax,0x2020
+    cmp     ah,al
+    je      .0
+    sbb     r8d,r8d
+    sbb     r8d,-1
+.1:
+    mov     eax,r8d
+    ret
+
+tmemicmp endp
+
+tstricmp proc fastcall a:string_t, b:string_t
+
+    mov     eax,1
+    xor     r8d,r8d
+.0:
+    test    al,al
+    jz      .1
+    mov     al,[rcx]
+    cmp     al,[rdx]
+    lea     rdx,[rdx+1]
+    lea     rcx,[rcx+1]
+    je      .0
+    mov     ah,[rdx-1]
+    or      eax,0x2020
+    cmp     al,ah
+    je      .0
+    sbb     r8d,r8d
+    sbb     r8d,-1
+.1:
+    mov     eax,r8d
+    ret
+
+tstricmp endp
+
+tstrstr proc fastcall uses rsi rdi rbx dst:string_t, src:string_t
+
+    mov rdi,rcx
+    mov rbx,rdx
+
+    .if tstrlen(rbx)
+
+        mov rsi,rax
+        .if tstrlen(rdi)
+
+            mov rcx,rax
+            xor eax,eax
+            dec rsi
+
+            .repeat
+                mov al,[rbx]
+                repne scasb
+                mov al,0
+                .break .ifnz
+                .if rsi
+                    .break .if rcx < rsi
+                    mov rdx,rsi
+                    .repeat
+                        mov al,[rbx+rdx]
+                        .continue(01) .if al != [rdi+rdx-1]
+                        dec rdx
+                    .untilz
+                .endif
+                lea rax,[rdi-1]
+            .until 1
+        .endif
+    .endif
+    ret
+
+tstrstr endp
 
     end
 

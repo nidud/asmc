@@ -208,7 +208,11 @@ tvsprintf proc __ccall uses rsi rdi rbx r12 r13 buffer:string_t, format:string_t
 
 tvsprintf endp
 
+ifdef __UNIX__
+tvfprintf proc __ccall uses rsi rdi file:ptr FILE, format:string_t, argptr:ptr
+else
 tvfprintf proc __ccall file:ptr FILE, format:string_t, argptr:ptr
+endif
 
   local buffer[4096]:char_t
 
@@ -230,7 +234,11 @@ tsprintf proc __ccall buffer:string_t, format:string_t, argptr:vararg
 
 tsprintf endp
 
+ifdef __UNIX__
+tprintf proc __ccall uses rsi rdi format:string_t, argptr:vararg
+else
 tprintf proc __ccall format:string_t, argptr:vararg
+endif
 
   local buffer[4096]:char_t
 
@@ -332,7 +340,7 @@ RunLineQueue proc __ccall uses rsi rdi
 
         mov rdi,[rsi].lq_line.next
 
-        strcpy( CurrSource, &[rsi].lq_line.line )
+        tstrcpy( CurrSource, &[rsi].lq_line.line )
         MemFree( rsi )
 
         .if PreprocessLine( tokenarray )
@@ -359,7 +367,7 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
 
         mov rdi,[rsi].lq_line.next
 
-        strcpy( CurrSource, &[rsi].lq_line.line )
+        tstrcpy( CurrSource, &[rsi].lq_line.line )
         MemFree( rsi )
 
         .if PreprocessLine( tokenarray )

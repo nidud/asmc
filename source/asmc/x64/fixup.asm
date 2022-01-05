@@ -27,7 +27,7 @@ extern SegOverride:ptr asym
 
 .code
 
-CreateFixup proc uses rsi rdi rbx sym:ptr asym, type:fixup_types, options:fixup_options
+CreateFixup proc __ccall uses rsi rdi rbx sym:ptr asym, type:fixup_types, options:fixup_options
 
 ;
 ; called when an instruction operand or a data item is relocatable:
@@ -90,9 +90,9 @@ CreateFixup endp
 
 ; remove a fixup from the segment's fixup queue
 
-FreeFixup proc uses rbx fixp:ptr fixup
+FreeFixup proc __ccall uses rbx fixp:ptr fixup
 
-    mov rbx,fixp
+    mov rbx,rcx
     .if ( Parse_Pass == PASS_1 )
         mov rcx,[rbx].def_seg
         .if ( rcx )
@@ -120,9 +120,9 @@ FreeFixup endp
 ; symbol has type SYM_SEG/SYM_GRP.
 ;
 
-SetFixupFrame proc uses rsi rdi sym:ptr asym, ign_grp:char_t
+SetFixupFrame proc __ccall uses rsi rdi sym:ptr asym, ign_grp:char_t
 
-    mov rsi,sym
+    mov rsi,rcx
     .if ( rsi )
         .switch ( [rsi].asym.state )
         .case SYM_INTERNAL
@@ -159,10 +159,10 @@ SetFixupFrame endp
 ; they no longer exist when store_fixup() is called.
 ;
 
-store_fixup proc uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
+store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
 
-    mov rbx,fixp
-    mov rsi,pdata
+    mov rbx,rcx
+    mov rsi,r8
 
     mov [rbx].offs,[rsi]
     mov [rbx].nextrlc,NULL

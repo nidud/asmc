@@ -4,23 +4,30 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-strcat::
+    option win64:rsp noauto
 
-    push rcx
-    xor eax,eax
-    .while [rcx] != al
-        inc rcx
-    .endw
-    .while [rdx] != ah
-        mov al,[rdx]
-        mov [rcx],al
-        inc rcx
-        inc rdx
-    .endw
-    mov [rcx],ah
-    pop rax
+strcat proc dst:string_t, src:string_t
+
+    mov     rax,rcx
+    xor     r8d,r8d
+@@:
+    cmp     r8b,[rcx]
+    je      @F
+    add     rcx,1
+    jmp     @B
+@@:
+    mov     r8b,[rdx]
+    mov     [rcx],r8b
+    add     rcx,1
+    add     rdx,1
+    test    r8d,r8d
+    jnz     @B
     ret
+
+strcat endp
 
     end

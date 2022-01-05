@@ -18,7 +18,7 @@ include qfloat.inc
 
     assume rbx:ptr asm_tok
 
-GetValue proc private uses rsi rdi rbx \
+GetValue proc __ccall private uses rsi rdi rbx \
         i           : ptr int_t,
         tokenarray  : ptr asm_tok,
         type        : ptr asm_tok,
@@ -98,7 +98,7 @@ GetValue endp
 
 CreateFloat proto __ccall :int_t, :expr_t, :string_t
 
-AssignValue proc private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr asm_tok, type:ptr asm_tok, count:int_t
+AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr asm_tok, type:ptr asm_tok, count:int_t
 
   local opnd        : expr
   local reg         : int_t
@@ -139,7 +139,7 @@ AssignValue proc private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr asm_tok, t
         mov  rdi,rax
         mov  rsi,rdx
     .else
-        strcpy( rdi, [rbx].string_ptr )
+        tstrcpy( rdi, [rbx].string_ptr )
     .endif
 
     mov address,0
@@ -348,7 +348,7 @@ AssignValue endp
 
     assume rsi:ptr hll_item
 
-ReturnDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ReturnDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local count       : int_t
   local retval      : int_t

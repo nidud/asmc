@@ -3218,9 +3218,9 @@ continue:
 
         ; break label: macro/hll lines
 
-        strcpy( rdi, [rbx+asm_tok*2].tokpos )
-        strcpy( CurrSource, [rbx].string_ptr )
-        strcat( CurrSource, [rbx+asm_tok].string_ptr )
+        tstrcpy( rdi, [rbx+asm_tok*2].tokpos )
+        tstrcpy( CurrSource, [rbx].string_ptr )
+        tstrcat( CurrSource, [rbx+asm_tok].string_ptr )
 
         mov Token_Count,Tokenize( CurrSource, 0, rbx, TOK_DEFAULT )
 
@@ -3232,7 +3232,7 @@ continue:
 
         ; parse macro or hll function
 
-        strcpy(CurrSource, rdi)
+        tstrcpy(CurrSource, rdi)
         mov Token_Count,Tokenize(CurrSource, 0, rbx, TOK_DEFAULT)
 
         ExpandLine(CurrSource, rbx)
@@ -3478,8 +3478,8 @@ continue:
                 lea rsi,@CStr( "invoke " )
             .endif
 
-            strcat( strcpy( rdi, rsi ), [rbx].tokpos )
-            mov Token_Count,Tokenize( strcpy( CurrSource, rdi ), 0, rbx, TOK_DEFAULT )
+            tstrcat( tstrcpy( rdi, rsi ), [rbx].tokpos )
+            mov Token_Count,Tokenize( tstrcpy( CurrSource, rdi ), 0, rbx, TOK_DEFAULT )
             jmp continue
 
         .elseif ( i != 0 || [rbx].dirtype != '{' )
@@ -3725,7 +3725,7 @@ continue:
                 mov rdi,rdx
                 NewDirective(i, tokenarray)
                 .if Parse_Pass > PASS_1
-                    mov Token_Count,Tokenize(strcpy(CurrSource, buffer), 0, tokenarray, TOK_DEFAULT)
+                    mov Token_Count,Tokenize(tstrcpy(CurrSource, buffer), 0, tokenarray, TOK_DEFAULT)
                     .return ParseLine(tokenarray)
                 .endif
                 .return NOT_ERROR
@@ -4215,7 +4215,7 @@ ProcessFile proc __ccall tokenarray:ptr asm_tok
         and eax,0x00FFFFFF
         .if eax == 0xBFBBEF
             lea rax,[rcx+3]
-            strcpy(rcx, rax)
+            tstrcpy(rcx, rax)
         .endif
         .repeat
             .if PreprocessLine( ModuleInfo.tokenarray )

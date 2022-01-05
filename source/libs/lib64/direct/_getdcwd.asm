@@ -14,14 +14,15 @@ include winbase.inc
 
 _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
 
-    mov rdi,alloca(r8d)
+  local dirbuf[_MAX_PATH*2]
 
+    lea rdi,dirbuf
     ;
     ; GetCurrentDirectory only works for the default drive
     ;
     .if !drive ; 0 = default, 1 = 'a:', 2 = 'b:', etc.
 
-        GetCurrentDirectory( maxlen, rdi )
+        GetCurrentDirectory( sizeof(dirbuf), rdi )
     .else
         ;
         ; Not the default drive - make sure it's valid.
@@ -41,12 +42,12 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
         lea rax,[rcx+0x002E3A40] ; 'X:.'
         lea rcx,drive
         mov [rcx],eax
-        GetFullPathName(rcx, maxlen, rdi, 0)
+        GetFullPathName(rcx, sizeof(dirbuf), rdi, 0)
     .endif
     ;
     ; API call failed, or buffer not large enough
     ;
-    .if eax > maxlen
+    .if ( eax > maxlen )
 
         _set_errno(ERANGE)
         .return 0
@@ -59,7 +60,6 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
             inc eax
             .return .if !malloc(eax)
             mov rcx,rax
-
         .endif
         strcpy(rcx, rdi)
     .endif

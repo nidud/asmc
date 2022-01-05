@@ -4,10 +4,15 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_stricmp::
+    option win64:rsp noauto
+
 strcasecmp::
+
+_stricmp proc a:string_t, b:string_t
 
     mov r8,rdx
     mov rax,-1
@@ -39,5 +44,7 @@ strcasecmp::
     .until 1
     movsx rax,al
     ret
+
+_stricmp endp
 
     end

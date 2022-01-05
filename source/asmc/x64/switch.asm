@@ -13,12 +13,12 @@ include asmc.inc
 include token.inc
 include hllext.inc
 
+.pragma warning(disable: 6004)
+
     .code
 
     option proc: private
     assume rsi:  ptr hll_item
-
-.pragma warning(disable: 6004)
 
 LQAddLabelIdBuffer proc __ccall id:uint_t, buffer:string_t
 
@@ -69,7 +69,7 @@ RenderCase proc __ccall uses rsi rdi rbx r12 hll:ptr hll_item, case:ptr hll_item
 
         LQJumpLabel( T_JMP, [rbx].hll_item.labels[LSTART*4] )
 
-    .elseif strchr(rcx, '.') && BYTE PTR [rax+1] == '.'
+    .elseif tstrchr(rcx, '.') && BYTE PTR [rax+1] == '.'
 
         mov BYTE PTR [rax],0
         lea r12,[rax+2]
@@ -417,7 +417,7 @@ RenderMultiCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, buf
 
             mov rdi,[rbx].tokpos
             mov BYTE PTR [rdi],0
-            strcpy( buffer, [rsi].tokpos )
+            tstrcpy( buffer, [rsi].tokpos )
             lea rsi,[rbx+asm_tok]
             mov BYTE PTR [rdi],','
             xor edi,edi
@@ -646,7 +646,7 @@ else
     mov r_dw,T_DD
     mov r_size,4
 endif
-    strcpy( &l_start, rdi )
+    tstrcpy( &l_start, rdi )
 
     ; flip exit to default if exist
 
@@ -750,7 +750,7 @@ endif
 
         .if [rsi].flags & HLLF_NOTEST && [rsi].flags & HLLF_JTABLE
 
-            strcpy( &l_jtab, &l_start )
+            tstrcpy( &l_jtab, &l_start )
             AddLineQueueX( "MIN%s equ %d", rax, min )
         .else
             lea rcx,l_jtab
@@ -775,9 +775,10 @@ endif
 
             .if ( [rsi].flags & HLLF_JTDATA )
 
-                AddLineQueueX( ".data" )
-                AddLineQueueX( "ALIGN 4" )
-                AddLineQueueX( "DT%s label dword", &l_jtab )
+                AddLineQueueX(
+                    ".data\n"
+                    "ALIGN 4\n"
+                    "DT%s label dword", &l_jtab )
 
             .elseif cl == USE64
 
@@ -800,8 +801,9 @@ ifndef ASMC64
                         .endif
                         AddLineQueue(" xchg ax, bx")
                     .else
-                        AddLineQueue(" push bx")
-                        AddLineQueue(" push ax")
+                        AddLineQueue(
+                            " push bx\n"
+                            " push ax" )
                         .ifd tstricmp("bx", rbx)
                             AddLineQueueX(" mov bx, %s", rbx)
                         .endif
@@ -822,16 +824,18 @@ ifndef ASMC64
                 .endif
                 AddLineQueue(" add bx, bx")
                 .if ModuleInfo.xflag & OPT_REGAX
-                    AddLineQueueX(" mov bx, cs:[bx+%s]", &l_jtab)
-                    AddLineQueue (" xchg ax, bx")
-                    AddLineQueue (" jmp ax")
+                    AddLineQueueX(
+                        " mov bx, cs:[bx+%s]\n"
+                        " xchg ax, bx\n"
+                        " jmp ax", &l_jtab )
                 .else
-                    AddLineQueueX(" mov ax, cs:[bx+%s]", &l_jtab)
-                    AddLineQueue (" mov bx, sp")
-                    AddLineQueue (" mov ss:[bx+4], ax")
-                    AddLineQueue (" pop ax")
-                    AddLineQueue (" pop bx")
-                    AddLineQueue (" retn")
+                    AddLineQueueX(
+                        " mov ax, cs:[bx+%s]\n"
+                        " mov bx, sp\n"
+                        " mov ss:[bx+4], ax\n"
+                        " pop ax\n"
+                        " pop bx\n"
+                        " retn", &l_jtab )
                 .endif
 
             .elseif cl == USE32
@@ -856,8 +860,9 @@ ifndef ASMC64
                         AddLineQueueX(" mov eax, [eax*4+%s-(%d*4)]", &l_jtab, min)
                     .endif
                     .if !( ModuleInfo.xflag & OPT_REGAX )
-                        AddLineQueue(" xchg eax, [esp]")
-                        AddLineQueue(" retn")
+                        AddLineQueue(
+                            " xchg eax, [esp]\n"
+                            " retn"  )
                     .endif
                 .else
                     .if use_index
@@ -872,9 +877,10 @@ ifndef ASMC64
                         .if ModuleInfo.xflag & OPT_REGAX
                             AddLineQueueX(" jmp [%s*4+%s]", rbx, &l_jtab)
                         .else
-                            AddLineQueueX(" mov %s, [%s*4+%s]", rbx, rbx, &l_jtab)
-                            AddLineQueueX(" xchg %s, [esp]", rbx)
-                            AddLineQueue (" retn")
+                            AddLineQueueX(
+                                " mov %s, [%s*4+%s]\n"
+                                " xchg %s, [esp]\n"
+                                " retn", rbx, rbx, &l_jtab, rbx )
                         .endif
                     .else
                         AddLineQueueX(" jmp [%s*4+%s-(%d*4)]", rbx, &l_jtab, min)
@@ -884,20 +890,21 @@ ifndef ASMC64
             .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [rsi].flags & HLLF_ARGREG && \
                 ModuleInfo.xflag & OPT_REGAX
 else
-            .if ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [rsi].flags & HLLF_ARGREG && \
-                ModuleInfo.xflag & OPT_REGAX
+            .if ( ( edx <= ( UINT_MAX / 8 ) ) && !use_index &&
+                  ( [rsi].flags & HLLF_ARGREG ) && ( ModuleInfo.xflag & OPT_REGAX ) )
 endif
 
                 .ifd !tmemicmp( rbx, "r11", 3 )
 
                     asmerr( 2008, "register r11 overwritten by .SWITCH" )
                 .endif
-                AddLineQueueX( " lea r11, %s", l_exit )
-                AddLineQueue ( " push rax" )
-                AddLineQueueX( " mov eax, [%s*4+r11-(%d*4)+(%s-%s)]", rbx, min, &l_jtab, l_exit )
-                AddLineQueue ( " sub r11, rax" )
-                AddLineQueue ( " pop rax" )
-                AddLineQueue ( " jmp r11" )
+                AddLineQueueX(
+                    " lea r11, %s\n"
+                    " push rax\n"
+                    " mov eax, [%s*4+r11-(%d*4)+(%s-%s)]\n"
+                    " sub r11, rax\n"
+                    " pop rax\n"
+                    " jmp r11", l_exit, rbx, min, &l_jtab, l_exit )
 
             .else
 
@@ -929,13 +936,15 @@ endif
                         .if ( eax < ( UINT_MAX / 8 ) )
                             AddLineQueueX( " mov eax, [r11+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
                         .else
-                            AddLineQueueX( " sub rax, %d", eax )
-                            AddLineQueueX( " mov eax, [r11+rax*4+(%s-%s)]", &l_jtab, l_exit )
+                            AddLineQueueX(
+                                " sub rax, %d\n"
+                                " mov eax, [r11+rax*4+(%s-%s)]", eax, &l_jtab, l_exit )
                         .endif
                     .endif
-                    AddLineQueue( " sub r11, rax" )
-                    AddLineQueue( " pop rax" )
-                    AddLineQueue( " jmp r11" )
+                    AddLineQueue(
+                        " sub r11, rax\n"
+                        " pop rax\n"
+                        " jmp r11" )
 
                 .else
 
@@ -947,8 +956,9 @@ endif
                             AddLineQueueX(" mov rax, %s", rbx)
                         .endif
                     .endif
-                    AddLineQueue ( " push rdx" )
-                    AddLineQueueX( " lea rdx, %s", l_exit )
+                    AddLineQueueX(
+                        " push rdx\n"
+                        " lea rdx, %s", l_exit )
                     .if use_index
                         .if dist < 256
                             AddLineQueueX( " movzx eax, byte ptr [rdx+rax-(%d)+(IT%s-%s)]", min, &l_jtab, l_exit )
@@ -961,22 +971,25 @@ endif
                         .if ( eax < ( UINT_MAX / 8 ) )
                             AddLineQueueX( " mov eax, [rdx+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
                         .else
-                            AddLineQueueX( " sub rax, %d", eax )
-                            AddLineQueueX( " mov eax, [rdx+rax*4+(%s-%s)]", &l_jtab, l_exit )
+                            AddLineQueueX(
+                                " sub rax, %d\n"
+                                " mov eax, [rdx+rax*4+(%s-%s)]", eax, &l_jtab, l_exit )
                         .endif
                     .endif
-                    AddLineQueue( " sub rdx, rax" )
-                    AddLineQueue( " mov rax, [rsp+8]" )
-                    AddLineQueue( " mov [rsp+8], rdx" )
-                    AddLineQueue( " pop rdx" )
-                    AddLineQueue( " retn" )
+                    AddLineQueue(
+                        " sub rdx, rax\n"
+                        " mov rax, [rsp+8]\n"
+                        " mov [rsp+8], rdx\n"
+                        " pop rdx\n"
+                        " retn" )
                 .endif
             .endif
             ;
             ; Create the jump table
             ;
-            AddLineQueueX( "ALIGN %d", r_size )
-            AddLineQueueX( "%s%s", &l_jtab, LABELQUAL )
+            AddLineQueueX(
+                "ALIGN %d\n"
+                "%s%s", r_size, &l_jtab, LABELQUAL )
 
         .endif
 
@@ -1189,25 +1202,28 @@ ifndef ASMC64
             .ifd tstricmp( "ax", rbx )
                 AddLineQueueX( " mov ax, %s", rbx )
             .endif
-            AddLineQueue ( " xchg ax, bx" )
-            AddLineQueue ( " add bx, bx" )
-            AddLineQueueX( " mov bx, cs:[bx+%s]", rdi )
-            AddLineQueue ( " xchg ax, bx" )
-            AddLineQueue ( " jmp ax" )
+            AddLineQueueX(
+                " xchg ax, bx\n"
+                " add bx, bx\n"
+                " mov bx, cs:[bx+%s]\n"
+                " xchg ax, bx\n"
+                " jmp ax", rdi )
         .else
-            AddLineQueue( " push ax" )
-            AddLineQueue( " push bx" )
-            AddLineQueue( " push ax" )
+            AddLineQueue(
+                " push ax\n"
+                " push bx\n"
+                " push ax" )
             .ifd tstricmp( "bx", rbx )
                 AddLineQueueX( " mov bx, %s", rbx )
             .endif
-            AddLineQueue ( " add bx, bx" )
-            AddLineQueueX( " mov ax, cs:[bx+%s]", rdi )
-            AddLineQueue ( " mov bx, sp" )
-            AddLineQueue ( " mov ss:[bx+4], ax" )
-            AddLineQueue ( " pop ax" )
-            AddLineQueue ( " pop bx" )
-            AddLineQueue ( " retn" )
+            AddLineQueueX(
+                " add bx, bx\n"
+                " mov ax, cs:[bx+%s]\n"
+                " mov bx, sp\n"
+                " mov ss:[bx+4], ax\n"
+                " pop ax\n"
+                " pop bx\n"
+                " retn", rdi )
         .endif
 
     .elseif cl == USE32
@@ -1229,25 +1245,27 @@ endif
         .if ( [rsi].flags & HLLF_ARG3264 )
             mov byte ptr [rbx],'r'
         .endif
-        AddLineQueueX( " lea r11, %s", &l_exit )
-        AddLineQueueX( " sub r11, [%s*8+r11-(MIN%s*8)+(%s-%s)]", rbx, rdi, rdi, &l_exit )
-        AddLineQueue ( " jmp r11" )
+        AddLineQueueX(
+            " lea r11, %s\n"
+            " sub r11, [%s*8+r11-(MIN%s*8)+(%s-%s)]\n"
+            " jmp r11", &l_exit, rbx, rdi, rdi, &l_exit )
         .if ( [rsi].flags & HLLF_ARG3264 )
             mov byte ptr [rbx],'e'
         .endif
     .else
-        AddLineQueue( " push rax" )
-        AddLineQueue( " push rdx" )
+        AddLineQueue(
+            " push rax\n"
+            " push rdx" )
         .ifd tmemicmp( rbx, "rax", 3 )
             AddLineQueueX( " mov rax, %s", rbx )
         .endif
-        AddLineQueueX( " lea rdx, %s", &l_exit )
-        AddLineQueueX( " mov eax, [rdx+rax*4-(MIN%s*4)+(%s-%s)]", rdi, rdi, &l_exit )
-        AddLineQueue ( " sub rdx, rax" )
-        AddLineQueue ( " mov rax, [rsp+8]" )
-        AddLineQueue ( " mov [rsp+8], rdx" )
-        AddLineQueue ( " pop rdx" )
-        AddLineQueue ( " retn" )
+        AddLineQueueX(
+            " lea rdx, %s\n"
+            " sub rdx, [rdx+rax*8-(MIN%s*8)+(%s-%s)]\n"
+            " mov rax, [rsp+8]\n"
+            " mov [rsp+8], rdx\n"
+            " pop rdx\n"
+            " retn", &l_exit, rdi, rdi, &l_exit )
     .endif
     ret
 
@@ -1478,7 +1496,7 @@ endif
 
 SwitchStart endp
 
-SwitchEnd proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SwitchEnd proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t,
         l_exit[16]:char_t ; exit or default label
@@ -1565,7 +1583,7 @@ SwitchEnd proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
 SwitchEnd endp
 
-SwitchExit proc uses rsi rdi rbx r12 r12 r14 i:int_t, tokenarray:ptr asm_tok
+SwitchExit proc __ccall uses rsi rdi rbx r12 r12 r14 i:int_t, tokenarray:ptr asm_tok
 
   local rc:     int_t,
         cmd:    int_t,
@@ -2009,7 +2027,7 @@ SwitchExit endp
 
     option proc: public
 
-SwitchDirective proc uses rbx i:int_t, tokenarray:ptr asm_tok
+SwitchDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
     imul eax,i,asm_tok
     add rax,tokenarray

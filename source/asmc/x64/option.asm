@@ -26,8 +26,8 @@ extern sym_Interface:ptr asym
 endif
 extern token_stringbuf:ptr
 
-UpdateStackBase  proto :ptr asym, :ptr
-UpdateProcStatus proto :ptr asym, :ptr
+UpdateStackBase  proto __ccall :ptr asym, :ptr
+UpdateProcStatus proto __ccall :ptr asym, :ptr
 
 opt macro value
     exitm<OP_&value&,>
@@ -72,11 +72,11 @@ InitStackBase endp
 
     assume rbx:ptr asm_tok
 
-SetAlignment proc private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t, dest:ptr byte
+SetAlignment proc __ccall private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t, dest:ptr byte
 
   local opnd:expr
 
-    .return .ifd ( EvalOperand( i, tokenarray, Token_Count, &opnd, EXPF_NOUNDEF ) == ERROR )
+    .return .ifd ( EvalOperand( rcx, rdx, Token_Count, &opnd, EXPF_NOUNDEF ) == ERROR )
     .if ( opnd.kind != EXPR_CONST )
         .return( asmerr( 2026 ) )
     .endif
@@ -95,7 +95,7 @@ SetAlignment proc private i:ptr int_t, tokenarray:ptr asm_tok, max:int_t, dest:p
     .return( NOT_ERROR )
 SetAlignment endp
 
-OptionDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
    .new opnd:expr
    .new idx:int_t = -1
@@ -242,7 +242,7 @@ OptionDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .else
                 mov ModuleInfo.prologuemode,PEM_MACRO
                 mov ModuleInfo.proc_prologue,LclAlloc( &[tstrlen( rsi ) + 1] )
-                strcpy( ModuleInfo.proc_prologue, rsi )
+                tstrcpy( ModuleInfo.proc_prologue, rsi )
             .endif
             inc i
         .case OP_EPILOGUE
@@ -260,7 +260,7 @@ OptionDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 .else
                     mov ModuleInfo.epiloguemode,PEM_MACRO
                     mov ModuleInfo.proc_epilogue,LclAlloc( &[tstrlen( rsi ) + 1] )
-                    strcpy( ModuleInfo.proc_epilogue, rsi )
+                    tstrcpy( ModuleInfo.proc_epilogue, rsi )
                 .endif
             .endif
             inc i
@@ -560,7 +560,7 @@ endif
                             mov rdi,rax
                             mov [rdi].dll_desc.next,NULL
                             mov [rdi].dll_desc.cnt,0
-                            strcpy( &[rdi].dll_desc.name, rsi )
+                            tstrcpy( &[rdi].dll_desc.name, rsi )
                             lea rax,@CStr( "__imp_" )
                             .if ( ModuleInfo.defOfssize != USE64 )
                                 inc rax

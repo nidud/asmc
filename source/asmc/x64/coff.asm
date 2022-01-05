@@ -149,7 +149,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
         ;; followed by a number in ascii which is the offset for the string table
 
         .if ( tstrlen( rax ) <= IMAGE_SIZEOF_SHORT_NAME )
-            strncpy( &ish.Name, rbx, IMAGE_SIZEOF_SHORT_NAME )
+            tstrncpy( &ish.Name, rbx, IMAGE_SIZEOF_SHORT_NAME )
         .else
             tsprintf( &ish.Name, "/%u", Coff_AllocString( cm, rbx, eax ) )
         .endif
@@ -313,10 +313,17 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
             imul eax,eax,sizeof( IMAGE_LINENUMBER )
             add esi,eax
         .endif
-
+ifdef __UNIX__
+        push rsi
+        push rdi
+endif
         .ifd ( fwrite( &ish, 1, sizeof( ish ), CurrFile[OBJ*8] ) != sizeof( ish ) )
             WriteError()
         .endif
+ifdef __UNIX__
+        pop rdi
+        pop rsi
+endif
     .endf
     .return( NOT_ERROR )
 
@@ -438,13 +445,18 @@ CRC32Comdat endp
 ; - aliases (weak externals)
 
 
+ifdef __UNIX__
+coff_write_symbol proc __ccall uses rsi rdi name:string_t, strpos:dword, value:dword,
+        section:dword, type:dword, storageclass:dword, aux:dword
+else
 coff_write_symbol proc __ccall name:string_t, strpos:dword, value:dword,
         section:dword, type:dword, storageclass:dword, aux:dword
+endif
 
   local sym:IMAGE_SYMBOL
 
     .if ( rcx )
-        strncpy( &sym.N.ShortName, rcx, IMAGE_SIZEOF_SHORT_NAME )
+        tstrncpy( &sym.N.ShortName, rcx, IMAGE_SIZEOF_SHORT_NAME )
     .else
         mov sym.N.LongName[0],0
         mov sym.N.LongName[4],strpos
@@ -462,10 +474,13 @@ coff_write_symbol proc __ccall name:string_t, strpos:dword, value:dword,
 coff_write_symbol endp
 
 
+ifdef __UNIX__
+coff_write_aux proc __ccall uses rsi rdi sym:ptr, name:string_t
+else
 coff_write_aux proc __ccall sym:ptr, name:string_t
-
+endif
     .if ( rdx )
-        strncpy( rcx, rdx, IMAGE_AUX_SYMBOL )
+        tstrncpy( rcx, rdx, IMAGE_AUX_SYMBOL )
     .endif
     .ifd ( fwrite( sym, 1, IMAGE_AUX_SYMBOL, CurrFile[OBJ*8] ) != IMAGE_AUX_SYMBOL )
         WriteError()
@@ -510,7 +525,7 @@ GetStartLabel proc __ccall uses rsi rdi modinfo:ptr module_info, buffer:string_t
                 inc rdi
             .endif
         .endif
-        tstrlen( strcpy( rsi, rdi ) )
+        tstrlen( tstrcpy( rsi, rdi ) )
         add eax,8 ; == size of " -entry:"
     .endif
     ret
@@ -612,7 +627,7 @@ endif
 
         .if ( Options.no_section_aux_entry == FALSE || [rsi].comdatselection )
 
-            memset( &ias, 0, sizeof(ias) )
+            tmemset( &ias, 0, sizeof(ias) )
             mov ias.Section.Length,[rdi].asym.max_offset
             mov eax,[rsi].num_relocs
             .if ( eax > 0xffff )
@@ -674,7 +689,7 @@ endif
 
         .if ( !( [rdi].asym.sflags & S_ISCOM ) && [rdi].asym.altname )
 
-            memset( &ias, 0, sizeof(ias) )
+            tmemset( &ias, 0, sizeof(ias) )
             mov rcx,[rdi].asym.altname
             mov ias.Sym.TagIndex,[rcx].asym.ext_idx
 
@@ -803,7 +818,7 @@ endif
                 IMAGE_SYM_TYPE_NULL, IMAGE_SYM_CLASS_WEAK_EXTERNAL, 1 )
         inc cntSymbols
 
-        memset( &ias, 0, sizeof(ias) )
+        tmemset( &ias, 0, sizeof(ias) )
 
         ;; v2.04b: adjusted to new field <substitute>
 
@@ -1008,9 +1023,11 @@ SetSymbolIndices endp
 
 
 ; write fixups for a section.
-
+ifdef __UNIX__
+coff_write_fixup proc __ccall uses rsi rdi adr:uint_32, index:uint_32, type:uint_16
+else
 coff_write_fixup proc __ccall adr:uint_32, index:uint_32, type:uint_16
-
+endif
   local ir:IMAGE_RELOCATION
 
     mov ir.VirtualAddress,ecx
@@ -1042,13 +1059,13 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
         mov ecx,[rdi].seg_info.num_relocs
         inc ecx
         coff_write_fixup( ecx, 0,
-                IMAGE_REL_I386_ABSOLUTE ) ;; doesn't matter if 32- or 64-bit
+                IMAGE_REL_I386_ABSOLUTE ) ; doesn't matter if 32- or 64-bit
         add offs,sizeof( IMAGE_RELOCATION )
     .endif
 
     assume rbx:ptr fixup
 
-    mov [rdi].seg_info.num_relocs,0 ;; reset counter
+    mov [rdi].seg_info.num_relocs,0 ; reset counter
 
     .for ( rbx = [rdi].seg_info.head: rbx: rbx = [rbx].nextrlc )
 
@@ -1060,13 +1077,13 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             .switch ( al )
             .case FIX_VOID
                 .continue
-            .case FIX_RELOFF32  ;; 32bit offset
-                ;; translated to IMAGE_REL_AMD64_REL32_[1|2|3|4|5]
+            .case FIX_RELOFF32  ; 32bit offset
+                ; translated to IMAGE_REL_AMD64_REL32_[1|2|3|4|5]
                 movzx ecx,[rbx].addbytes
                 sub ecx,4
                 add ecx,IMAGE_REL_AMD64_REL32
                 .endc
-            .case FIX_OFF32     ;; 32bit offset
+            .case FIX_OFF32     ; 32bit offset
                 mov ecx,IMAGE_REL_AMD64_ADDR32
                 .endc
             .case FIX_OFF32_IMGREL
@@ -1075,10 +1092,10 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             .case FIX_OFF32_SECREL
                 mov ecx,IMAGE_REL_AMD64_SECREL
                 .endc
-            .case FIX_OFF64     ;; 64bit offset
+            .case FIX_OFF64     ; 64bit offset
                 mov ecx,IMAGE_REL_AMD64_ADDR64
                 .endc
-            .case FIX_SEG       ;; segment fixup
+            .case FIX_SEG       ; segment fixup
                 mov ecx,IMAGE_REL_AMD64_SECTION ;; ???
                 .endc
             .endsw
@@ -1088,16 +1105,16 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             .switch ( al )
             .case FIX_VOID
                 .continue
-            .case FIX_RELOFF16  ;; 16bit offset
+            .case FIX_RELOFF16  ; 16bit offset
                 mov ecx,IMAGE_REL_I386_REL16
                 .endc
-            .case FIX_OFF16     ;; 16bit offset
+            .case FIX_OFF16     ; 16bit offset
                 mov ecx,IMAGE_REL_I386_DIR16
                 .endc
-            .case FIX_RELOFF32  ;; 32bit offset
+            .case FIX_RELOFF32  ; 32bit offset
                 mov ecx,IMAGE_REL_I386_REL32
                 .endc
-            .case FIX_OFF32     ;; 32bit offset
+            .case FIX_OFF32     ; 32bit offset
                 mov ecx,IMAGE_REL_I386_DIR32
                 .endc
             .case FIX_OFF32_IMGREL
@@ -1106,14 +1123,14 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             .case FIX_OFF32_SECREL
                 mov ecx,IMAGE_REL_I386_SECREL
                 .endc
-            .case FIX_SEG       ;; segment fixup
+            .case FIX_SEG       ; segment fixup
                 mov ecx,IMAGE_REL_I386_SECTION ;; ???
                 .endc
             .endsw
 
         .endif
 
-        .if ( !ecx ) ;; v2.03: skip this fixup
+        .if ( !ecx ) ; v2.03: skip this fixup
 
             mov rcx,section
             asmerr( 3014, [rbx].type, [rcx].asym.name, [rbx].locofs )
@@ -1132,8 +1149,8 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
             mov [rbx].sym,[rbx].segment_var
             mov rcx,rax
 
-        .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) && \
-                   !( [rcx].asym.flags & S_ISPUBLIC ) && \
+        .elseif ( ( [rcx].asym.state == SYM_INTERNAL ) &&
+                   !( [rcx].asym.flags & S_ISPUBLIC ) &&
                    !( [rcx].asym.flag1 & S_INCLUDED ) )
 
             or [rcx].asym.flag1,S_INCLUDED
@@ -1162,9 +1179,11 @@ coff_write_fixups proc __ccall uses rsi rdi rbx section:ptr dsym, poffset:ptr ui
 coff_write_fixups endp
 
 ; write section data
-
+ifdef __UNIX__
+coff_write_data proc __ccall uses rsi rdi rbx r12 r13 modinfo:ptr module_info, cm:ptr coffmod
+else
 coff_write_data proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr coffmod
-
+endif
   .new section:ptr dsym
   .new offs:uint_32 = 0 ; offset within section contents
   .new i:int_t
@@ -1218,13 +1237,17 @@ coff_write_data proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr co
 
         .continue .if ( [rsi].combine == COMB_STACK && [rsi].bytes_written == 0 )
         .continue .if ( [rsi].segtype == SEGTYPE_BSS )
-
+ifdef __UNIX__
+        mov r12,rsi
+        mov r13,rdi
+endif
         .if ( ebx )
             add offs,ebx
             .if ((offs & 1) && [rsi].head )
                 inc offs
                 inc ebx
             .endif
+
             .if ( [rsi].CodeBuffer == NULL )
                 fseek( CurrFile[OBJ*8], ebx, SEEK_CUR )
             .else
@@ -1235,14 +1258,20 @@ coff_write_data proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr co
 
                 .if ( [rsi].start_loc )
                     fseek( CurrFile[OBJ*8], [rsi].start_loc, SEEK_CUR )
+ifdef __UNIX__
+                    mov rsi,r12
+endif
                     sub ebx,[rsi].start_loc
                 .endif
-
-                .if ( fwrite( [rsi].CodeBuffer, 1, ebx, CurrFile[OBJ*8] ) != rbx )
+                mov rax,[rsi].CodeBuffer
+                .if ( fwrite( rax, 1, ebx, CurrFile[OBJ*8] ) != rbx )
                     WriteError()
                 .endif
             .endif
-
+ifdef __UNIX__
+            mov rsi,r12
+            mov rdi,r13
+endif
             coff_write_fixups( rdi, &offs, &index )
         .endif
 
@@ -1319,10 +1348,17 @@ coff_write_data proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr co
                 inc [rcx].debug_info.line_numbers
                 mov [rcx].debug_info.end_line,[rsi].number
 
+ifdef __UNIX__
+                mov r12,rsi
+                mov r13,rdi
+endif
                 .ifd ( fwrite( &il, 1, sizeof(il), CurrFile[OBJ*8] ) != sizeof(il) )
                     WriteError()
                 .endif
-
+ifdef __UNIX__
+                mov rsi,r12
+                mov rdi,r13
+endif
                 add offs,sizeof(il)
                 inc line_numbers
             .endf
@@ -1335,8 +1371,7 @@ coff_write_data proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr co
 
     mov rbx,cm
     mov [rbx].size_data,offs
-
-    .return( NOT_ERROR )
+   .return( NOT_ERROR )
 
 coff_write_data endp
 
@@ -1431,7 +1466,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
                 ; a space, add 2 bytes to enclose it
 
                 .if ( [rdi].qitem.value != '"' )
-                    .if ( strchr( &[rdi].qitem.value, ' ') )
+                    .if ( tstrchr( &[rdi].qitem.value, ' ') )
                         add rbx,2
                     .endif
                 .endif
@@ -1503,7 +1538,7 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
             ; 2. libraries
 
             .for ( rdi = [rsi].LibQueue.head: rdi: rdi = [rdi].qitem.next )
-                .if ( strchr( &[rdi].qitem.value, ' ') && [rdi].qitem.value != '"' )
+                .if ( tstrchr( &[rdi].qitem.value, ' ') && [rdi].qitem.value != '"' )
                     add rbx,tsprintf( rbx, "-defaultlib:\"%s\" ", &[rdi].qitem.value )
                 .else
                     add rbx,tsprintf( rbx, "-defaultlib:%s ", &[rdi].qitem.value )
@@ -1528,13 +1563,13 @@ coff_create_drectve proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:pt
                     mov rdx,[rdi].asym.dll
                     .if [rdx].dll_desc.name
 
-                        strcpy( rbx, "-import:" )
+                        tstrcpy( rbx, "-import:" )
                         add rbx,8
                         add rbx,Mangle( rdi, rbx )
                         mov byte ptr [rbx],'='
                         inc rbx
                         mov rcx,[rdi].asym.dll
-                        strcpy( rbx, &[rcx].dll_desc.name )
+                        tstrcpy( rbx, &[rcx].dll_desc.name )
                         add rbx,tstrlen( rbx )
                         mov byte ptr [rbx],'.'
                         inc rbx
@@ -1565,13 +1600,16 @@ coff_create_drectve endp
 ; Write current object module in COFF format.
 ; This function is called AFTER all assembly passes have been done.
 ;
-
+ifdef __UNIX__
+coff_write_module proc __ccall uses rsi rdi rbx r12 r13 modinfo:ptr module_info
+else
 coff_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
+endif
 
   local cm:coffmod
   local ifh:IMAGE_FILE_HEADER
 
-    memset( &cm, 0, sizeof( cm ) )
+    tmemset( &cm, 0, sizeof( cm ) )
     mov cm.size,sizeof( uint_32 )
 
     ; get value for .file symbol
@@ -1676,6 +1714,10 @@ coff_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
         mov ifh.Machine,IMAGE_FILE_MACHINE_I386
     .endif
     mov ifh.NumberOfSections,[rsi].num_segs
+ifdef __UNIX__
+    mov r12,rsi
+    mov r13,rdi
+endif
     time(&ifh.TimeDateStamp)
     mov ifh.SizeOfOptionalHeader,0
     mov ifh.Characteristics,0
@@ -1683,7 +1725,10 @@ coff_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
     ; position behind coff file header
 
     fseek( CurrFile[OBJ*8], sizeof( ifh ), SEEK_SET )
-
+ifdef __UNIX__
+    mov rsi,r12
+    mov rdi,r13
+endif
     coff_write_section_table( rsi, &cm )
     coff_write_data( rsi, &cm )
     mov ifh.NumberOfSymbols,coff_write_symbols( rsi, &cm )
@@ -1702,8 +1747,13 @@ coff_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
     assume rbx:ptr stringitem
     .for ( rbx = cm.head : rbx : rbx = [rbx].next )
         inc tstrlen( &[rbx].string )
+ifdef __UNIX__
+        mov r13,rax
+        .if ( fwrite( &[rbx].string, 1, r13d, CurrFile[OBJ*8] ) != r13 )
+else
         mov edi,eax
         .if ( fwrite( &[rbx].string, 1, edi, CurrFile[OBJ*8] ) != rdi )
+endif
             WriteError()
         .endif
     .endf

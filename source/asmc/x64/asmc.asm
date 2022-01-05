@@ -167,8 +167,13 @@ endif
 
 GeneralFailure endp
 
+ifdef __UNIX__
+main proc _argc:int_t, _argv:array_t
+  .new argc:int_t = _argc
+  .new argv:array_t = _argv
+else
 main proc frame:ExceptionHandler argc:int_t, argv:array_t
-
+endif
   .new rc:int_t = 0
   .new numArgs:int_t = 0
   .new numFiles:int_t = 0
@@ -221,8 +226,8 @@ else
             FindClose(rax)
         .endif
 
-        .if !strchr(strcpy(rdi, rsi), '*')
-            strchr(rdi, '?')
+        .if !tstrchr(tstrcpy(rdi, rsi), '*')
+            tstrchr(rdi, '?')
         .endif
         .if rax
             .if GetFNamePart(rdi) > rdi

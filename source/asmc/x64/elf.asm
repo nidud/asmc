@@ -143,7 +143,7 @@ cst conv_section \
 
     assume rdi:ptr conv_section
 
-ElfConvertSectionName proc private uses rsi rdi rbx sym:ptr asym, buffer:string_t
+ElfConvertSectionName proc __ccall private uses rsi rdi rbx sym:ptr asym, buffer:string_t
 
     mov rsi,[rcx].asym.name
     .for ( rdi = &cst, ebx = 0: ebx < lengthof(cst): ebx++, rdi += conv_section )
@@ -153,7 +153,7 @@ ElfConvertSectionName proc private uses rsi rdi rbx sym:ptr asym, buffer:string_
                 .return( [rdi].dst )
             .elseif ( ( [rdi].flags & CSF_GRPCHK ) && byte ptr [rsi+rdx] == '$' )
                 add rsi,rdx
-                .return( strcat( strcpy( buffer, [rdi].dst ), rsi ) )
+                .return( tstrcat( tstrcpy( buffer, [rdi].dst ), rsi ) )
             .endif
         .endif
     .endf
@@ -165,7 +165,7 @@ ElfConvertSectionName endp
 
 ; get number of sections that have relocations
 
-get_num_reloc_sections proc private
+get_num_reloc_sections proc __ccall private
 
     .for ( eax = 0, rcx = SymTables[TAB_SEG*symbol_queue].head: rcx: rcx = [rcx].dsym.next )
         mov rdx,[rcx].dsym.seginfo
@@ -184,14 +184,14 @@ get_num_reloc_sections endp
 
 ifndef ASMC64
 
-set_symtab32 proc private uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshead:ptr localname
+set_symtab32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshead:ptr localname
 
    .new len:uint_32
    .new strsize:uint_32 = 1
    .new p32:ptr Elf32_Sym
    .new buffer[MAX_ID_LEN + MANGLE_BYTES + 1]:char_t
 
-    mov rbx,em
+    mov rbx,rcx
     imul esi,entries,sizeof( Elf32_Sym )
     mov [rbx].internal_segs[OSYMTAB_IDX].size,esi
     mov [rbx].internal_segs[OSYMTAB_IDX].data,LclAlloc( esi )
@@ -365,13 +365,13 @@ endif
     assume rbx:ptr elfmod
     assume rdi:ptr Elf64_Sym
 
-set_symtab64 proc private uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshead:ptr localname
+set_symtab64 proc __ccall private uses rsi rdi rbx em:ptr elfmod, entries:uint_t, localshead:ptr localname
 
    .new len:uint_32
    .new strsize:uint_32 = 1
    .new buffer[MAX_ID_LEN + MANGLE_BYTES + 1]:char_t
 
-    mov rbx,em
+    mov rbx,rcx
     imul esi,entries,sizeof( Elf64_Sym )
     mov [rbx].internal_segs[OSYMTAB_IDX].size,esi
     mov [rbx].internal_segs[OSYMTAB_IDX].data,LclAlloc( esi )
@@ -550,7 +550,7 @@ set_symtab64 endp
     tail ptr localname ?
    .ends
 
-set_symtab_values proc private uses rsi rdi rbx em:ptr elfmod
+set_symtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
 
    .new entries:int_32
    .new strsize:int_32
@@ -563,7 +563,7 @@ set_symtab_values proc private uses rsi rdi rbx em:ptr elfmod
     ; - n entries for local symbols
     ; - m entries for global symbols
 
-    mov rbx,em
+    mov rbx,rcx
 
     ; symbol table starts with 1 NULL entry + 1 file entry
 
@@ -668,7 +668,7 @@ endif
     mov [rbx].internal_segs[OSTRTAB_IDX].size,strsize
     mov [rbx].internal_segs[OSTRTAB_IDX].data,LclAlloc( strsize )
 if 0 ; zero alloc..
-    memset( rax, 0, strsize )
+    tmemset( rax, 0, strsize )
 endif
     lea rdi,[rax+1]
     mov rsi,[rbx].srcname
@@ -717,7 +717,7 @@ set_symtab_values endp
     assume rbx:nothing
     assume rdi:nothing
 
-set_shstrtab_values proc private uses rsi rdi rbx em:ptr elfmod
+set_shstrtab_values proc __ccall private uses rsi rdi rbx em:ptr elfmod
 
    .new size:dword = 1 ; the first byte at offset 0 is the NULL section name
    .new buffer[MAX_ID_LEN+1]:char_t
@@ -780,7 +780,7 @@ set_shstrtab_values proc private uses rsi rdi rbx em:ptr elfmod
         .else
             ElfConvertSectionName( rsi, &buffer )
         .endif
-        strcpy( rdi, rax )
+        tstrcpy( rdi, rax )
         lea rdi,[rdi+tstrlen( rdi ) + 1]
     .endf
 
@@ -790,7 +790,7 @@ set_shstrtab_values proc private uses rsi rdi rbx em:ptr elfmod
 
         imul ecx,esi,intsegparm
         lea rdx,internal_segparms
-        strcpy( rdi, [rdx+rcx].intsegparm.name )
+        tstrcpy( rdi, [rdx+rcx].intsegparm.name )
         lea rdi,[rdi+tstrlen( rdi ) + 1]
     .endf
 
@@ -802,9 +802,9 @@ set_shstrtab_values proc private uses rsi rdi rbx em:ptr elfmod
         .if ( [rcx].seg_info.head )
 
             .if ( ModuleInfo.defOfssize == USE64 )
-                strcpy( rdi, ".rela" )
+                tstrcpy( rdi, ".rela" )
             .else
-                strcpy( rdi, ".rel" )
+                tstrcpy( rdi, ".rel" )
             .endif
             add rdi,tstrlen(rdi)
 
@@ -814,7 +814,7 @@ set_shstrtab_values proc private uses rsi rdi rbx em:ptr elfmod
             .else
                 ElfConvertSectionName(rsi, &buffer)
             .endif
-            strcpy( rdi, rax )
+            tstrcpy( rdi, rax )
             lea rdi,[rdi+tstrlen(rdi)+1]
         .endif
     .endf
@@ -856,8 +856,11 @@ Get_Alignment endp
 
 ifndef ASMC64
 
-elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elfmod, fileoffset:dword
-
+ifdef __UNIX__
+elf_write_section_table32 proc __ccall private uses rsi rdi rbx r12 r13 modinfo:ptr module_info, em:ptr elfmod, fileoffset:dword
+else
+elf_write_section_table32 proc __ccall private uses rbx r12 r13 modinfo:ptr module_info, em:ptr elfmod, fileoffset:dword
+endif
    .new shdr32:Elf32_Shdr
 
     add fileoffset,0xF
@@ -865,11 +868,11 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; set contents and size of internal .shstrtab section
 
-    set_shstrtab_values( em )
+    set_shstrtab_values( rdx )
 
     ; write the NULL entry
 
-    memset( &shdr32, 0, sizeof( shdr32) )
+    tmemset( &shdr32, 0, sizeof( shdr32) )
 
     ; write the empty NULL entry
 
@@ -880,21 +883,21 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
     ; use p to scan strings (=section names) of .shstrtab
 
     mov rbx,em
-    mov rdi,[rbx].internal_segs[OSHSTRTAB_IDX].data
-    inc rdi ; skip 'name' of NULL entry
+    mov r13,[rbx].internal_segs[OSHSTRTAB_IDX].data
+    inc r13 ; skip 'name' of NULL entry
 
     ; write the section headers defined in the module,
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        memset( &shdr32, 0, sizeof(shdr32) )
+        tmemset( &shdr32, 0, sizeof(shdr32) )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr32.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi) + 1]
+        lea r13,[r13+tstrlen(r13) + 1]
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         .if ( [rcx].seg_info.info ) ; v2.07:added; v2.12: highest priority
             mov shdr32.sh_type,SHT_NOTE
         .else
@@ -911,7 +914,7 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
                 mov shdr32.sh_flags,SHF_WRITE or SHF_ALLOC
                 .if ( [rcx].seg_info.clsym )
                     mov rcx,[rcx].seg_info.clsym
-                    .if ( strcmp( [rcx].asym.name, "CONST" ) == 0 )
+                    .if ( tstrcmp( [rcx].asym.name, "CONST" ) == 0 )
                         mov shdr32.sh_flags,SHF_ALLOC ; v2.07: added
                     .endif
                 .endif
@@ -919,16 +922,16 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
         .endif
 
         mov shdr32.sh_offset,fileoffset ; start of section in file
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.fileoffset,eax ; save the offset in the segment
-        mov shdr32.sh_size,[rsi].asym.max_offset
-        mov shdr32.sh_addralign,Get_Alignment(rsi)
+        mov shdr32.sh_size,[r12].asym.max_offset
+        mov shdr32.sh_addralign,Get_Alignment(r12)
 
         .if ( fwrite( &shdr32, 1, sizeof(shdr32), CurrFile[OBJ*8] ) != sizeof(shdr32) )
             WriteError()
         .endif
-        get_relocation_count(rsi)
-        mov rcx,[rsi].dsym.seginfo
+        get_relocation_count(r12)
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.num_relocs,eax
 
         ; v2.12: don't adjust fileoffset for SHT_NOBITS sections.
@@ -948,27 +951,27 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; write headers of internal sections
 
-    memset( &shdr32, 0, sizeof(shdr32) )
+    tmemset( &shdr32, 0, sizeof(shdr32) )
 
-    .for ( esi = 0: esi < NUM_INTSEGS: esi++ )
+    .for ( r12d = 0: r12d < NUM_INTSEGS: r12d++ )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr32.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi)+1]
+        lea r13,[r13+tstrlen(r13)+1]
 
-        imul ecx,esi,intsegparm
+        imul ecx,r12d,intsegparm
         lea rdx,internal_segparms
         mov shdr32.sh_type,[rdx+rcx].intsegparm.type
         mov shdr32.sh_offset,fileoffset ; start of section in file
 
-        imul ecx,esi,intseg
+        imul ecx,r12d,intseg
         mov [rbx].internal_segs[rcx].fileoffset,fileoffset
         mov shdr32.sh_size,[rbx].internal_segs[rcx].size
 
         ; section .symtab is special
 
-        .if ( esi == SYMTAB_IDX )
+        .if ( r12d == SYMTAB_IDX )
             mov rcx,modinfo
             mov eax,[rcx].module_info.num_segs
             add eax,1 + STRTAB_IDX
@@ -993,23 +996,23 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; write headers of reloc sections
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         .continue .if ( [rcx].seg_info.head == NULL )
 
-        memset( &shdr32, 0, sizeof( shdr32 ) )
+        tmemset( &shdr32, 0, sizeof( shdr32 ) )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr32.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi)+1]
+        lea r13,[r13+tstrlen(r13)+1]
         mov shdr32.sh_type,SHT_REL
         mov shdr32.sh_offset,fileoffset ; start of section in file
 
         ; save the file offset in the slot reserved for ELF relocs
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.reloc_offset,eax
 
         ; size of section in file
@@ -1025,7 +1028,7 @@ elf_write_section_table32 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
         ;; set info to the src section index
 
-        mov shdr32.sh_info,GetSegIdx( [rsi].asym.segm )
+        mov shdr32.sh_info,GetSegIdx( [r12].asym.segm )
         mov shdr32.sh_addralign,4
         mov shdr32.sh_entsize,sizeof( Elf32_Rel )
 
@@ -1044,8 +1047,11 @@ elf_write_section_table32 endp
 endif
 
 ; write ELF64 section table.
-
-elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elfmod, fileoffset:uint_t
+ifdef __UNIX__
+elf_write_section_table64 proc __ccall private uses rsi rdi rbx r12 r13 modinfo:ptr module_info, em:ptr elfmod, fileoffset:uint_t
+else
+elf_write_section_table64 proc __ccall private uses rbx r12 r13 modinfo:ptr module_info, em:ptr elfmod, fileoffset:uint_t
+endif
 
    .new shdr64:Elf64_Shdr
 
@@ -1054,11 +1060,11 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; set contents and size of internal .shstrtab section
 
-    set_shstrtab_values( em )
+    set_shstrtab_values( rdx )
 
     ; write the NULL entry
 
-    memset( &shdr64, 0, sizeof( shdr64) )
+    tmemset( &shdr64, 0, sizeof( shdr64) )
 
     ; write the empty NULL entry
 
@@ -1069,21 +1075,21 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
     ; use p to scan strings (=section names) of .shstrtab
 
     mov rbx,em
-    mov rdi,[rbx].internal_segs[OSHSTRTAB_IDX].data
-    inc rdi ; skip 'name' of NULL entry
+    mov r13,[rbx].internal_segs[OSHSTRTAB_IDX].data
+    inc r13 ; skip 'name' of NULL entry
 
     ; write the section headers defined in the module
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        memset( &shdr64, 0, sizeof(shdr64) )
+        tmemset( &shdr64, 0, sizeof(shdr64) )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr64.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi)+1]
+        lea r13,[r13+tstrlen(r13)+1]
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         .if ( [rcx].seg_info.info == TRUE ) ; v2.07:added; v2.12: highest priority
             mov shdr64.sh_type,SHT_NOTE
         .else
@@ -1100,7 +1106,7 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
                 mov dword ptr shdr64.sh_flags[0],SHF_WRITE or SHF_ALLOC
                 .if ( [rcx].seg_info.clsym )
                     mov rcx,[rcx].seg_info.clsym
-                    .if ( strcmp( [rcx].asym.name, "CONST" ) == 0 )
+                    .if ( tstrcmp( [rcx].asym.name, "CONST" ) == 0 )
                         mov dword ptr shdr64.sh_flags[0],SHF_ALLOC ; v2.07: added
                     .endif
                 .endif
@@ -1108,16 +1114,16 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
         .endif
 
         mov dword ptr shdr64.sh_offset,fileoffset ; start of section in file
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.fileoffset,eax ; save the offset in the segment
-        mov dword ptr shdr64.sh_size,[rsi].asym.max_offset
-        mov dword ptr shdr64.sh_addralign,Get_Alignment(rsi)
+        mov dword ptr shdr64.sh_size,[r12].asym.max_offset
+        mov dword ptr shdr64.sh_addralign,Get_Alignment(r12)
 
         .if ( fwrite( &shdr64, 1, sizeof(shdr64), CurrFile[OBJ*8] ) != sizeof(shdr64) )
             WriteError()
         .endif
-        get_relocation_count(rsi)
-        mov rcx,[rsi].dsym.seginfo
+        get_relocation_count(r12)
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.num_relocs,eax
 
         ; v2.12: don't adjust fileoffset for SHT_NOBITS sections
@@ -1135,27 +1141,27 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; write headers of internal sections
 
-    memset( &shdr64, 0, sizeof(shdr64) )
+    tmemset( &shdr64, 0, sizeof(shdr64) )
 
-    .for ( esi = 0: esi < NUM_INTSEGS: esi++ )
+    .for ( r12d = 0: r12d < NUM_INTSEGS: r12d++ )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr64.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi)+1]
+        lea r13,[r13+tstrlen(r13)+1]
 
-        imul ecx,esi,intsegparm
+        imul ecx,r12d,intsegparm
         lea rdx,internal_segparms
         mov shdr64.sh_type,[rdx+rcx].intsegparm.type
         mov dword ptr shdr64.sh_offset[0],fileoffset ; start of section in file
 
-        imul ecx,esi,intseg
+        imul ecx,r12d,intseg
         mov [rbx].internal_segs[rcx].fileoffset,eax
         mov dword ptr shdr64.sh_size[0],[rbx].internal_segs[rcx].size
 
         ; section .symtab is special
 
-        .if ( esi == SYMTAB_IDX )
+        .if ( r12d == SYMTAB_IDX )
             mov rcx,modinfo
             mov eax,[rcx].module_info.num_segs
             add eax,1 + STRTAB_IDX
@@ -1180,24 +1186,24 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
     ; write headers of reloc sections
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         .continue .if ( [rcx].seg_info.head == NULL )
 
-        memset( &shdr64, 0, sizeof(shdr64) )
+        tmemset( &shdr64, 0, sizeof(shdr64) )
 
-        mov rax,rdi
+        mov rax,r13
         sub rax,[rbx].internal_segs[OSHSTRTAB_IDX].data
         mov shdr64.sh_name,eax
-        lea rdi,[rdi+tstrlen(rdi)+1]
+        lea r13,[r13+tstrlen(r13)+1]
 
         mov shdr64.sh_type,SHT_RELA ; v2.05: changed REL to RELA
         mov dword ptr shdr64.sh_offset,fileoffset ; start of section in file
 
         ; save the file offset in the slot reserved for ELF relocs
 
-        mov rcx,[rsi].dsym.seginfo
+        mov rcx,[r12].dsym.seginfo
         mov [rcx].seg_info.reloc_offset,eax
 
         ; size of section in file
@@ -1213,7 +1219,7 @@ elf_write_section_table64 proc private uses rsi rdi rbx modinfo:ptr module_info,
 
         ; set info to the src section index
 
-        mov shdr64.sh_info,GetSegIdx( [rsi].asym.segm )
+        mov shdr64.sh_info,GetSegIdx( [r12].asym.segm )
         mov dword ptr shdr64.sh_addralign,4
         mov dword ptr shdr64.sh_entsize,sizeof( Elf64_Rela )
 
@@ -1233,13 +1239,16 @@ elf_write_section_table64 endp
 
     assume rsi:ptr fixup
 
-write_relocs32 proc private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsym
+ifdef __UNIX__
+write_relocs32 proc __ccall private uses rsi rdi rbx r12 r13 em:ptr elfmod, curr:ptr dsym
+else
+write_relocs32 proc __ccall private uses rsi rdi rbx em:ptr elfmod, curr:ptr dsym
+endif
 
    .new elftype:byte
    .new reloc32:Elf32_Rel
 
-    mov rbx,em
-    mov rdx,curr
+    mov rbx,rcx
     mov rcx,[rdx].dsym.seginfo
 
     .for ( rsi = [rcx].seg_info.head: rsi: rsi = [rsi].nextrlc )
@@ -1272,9 +1281,17 @@ endif
 
         mov rcx,[rsi].sym
         mov reloc32.r_info,ELF32_R_INFO( [rcx].asym.ext_idx, elftype )
+ifdef __UNIX__
+        mov r12,rsi
+        mov r13,rdi
+endif
         .ifd ( fwrite( &reloc32, 1, sizeof(reloc32), CurrFile[OBJ*8] ) != sizeof(reloc32) )
             WriteError()
         .endif
+ifdef __UNIX__
+        mov rsi,r12
+        mov rdi,r13
+endif
     .endf
     ret
 
@@ -1282,11 +1299,15 @@ write_relocs32 endp
 
 ; write 1 section's relocations (64-bit)
 
-write_relocs64 proc private uses rsi rdi rbx curr:ptr dsym
+ifdef __UNIX__
+write_relocs64 proc __ccall private uses rsi rdi rbx r12 r13 curr:ptr dsym
+else
+write_relocs64 proc __ccall private uses rsi rdi rbx curr:ptr dsym
+endif
 
    .new reloc64:Elf64_Rela ; v2.05: changed to Rela
 
-    mov rdx,curr
+    mov rdx,rcx
     mov rcx,[rdx].dsym.seginfo
 
     .for ( rsi = [rcx].seg_info.head: rsi: rsi = [rsi].nextrlc )
@@ -1323,9 +1344,17 @@ write_relocs64 proc private uses rsi rdi rbx curr:ptr dsym
         .endsw
         mov dword ptr reloc64.r_info[0],ebx
         mov dword ptr reloc64.r_info[4],edi
+ifdef __UNIX__
+        mov r12,rsi
+        mov r13,rdi
+endif
         .if ( fwrite( &reloc64, 1, sizeof( reloc64 ), CurrFile[OBJ*8] ) != sizeof(reloc64) )
             WriteError()
         .endif
+ifdef __UNIX__
+        mov rsi,r12
+        mov rdi,r13
+endif
     .endf
     ret
 
@@ -1336,21 +1365,25 @@ write_relocs64 endp
     assume rdi:nothing
     assume rsi:nothing
 
-elf_write_data proc private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elfmod
+ifdef __UNIX__
+elf_write_data proc __ccall private uses rsi rdi r12 r13 rbx modinfo:ptr module_info, em:ptr elfmod
+else
+elf_write_data proc __ccall private uses r12 r13 rbx modinfo:ptr module_info, em:ptr elfmod
+endif
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        mov rdi,[rsi].dsym.seginfo
-        mov ebx,[rsi].asym.max_offset
-        sub ebx,[rdi].seg_info.start_loc
-        .if ( [rdi].seg_info.segtype != SEGTYPE_BSS && ebx )
-            .if ( [rdi].seg_info.CodeBuffer == NULL )
+        mov r13,[r12].dsym.seginfo
+        mov ebx,[r12].asym.max_offset
+        sub ebx,[r13].seg_info.start_loc
+        .if ( [r13].seg_info.segtype != SEGTYPE_BSS && ebx )
+            .if ( [r13].seg_info.CodeBuffer == NULL )
                 fseek( CurrFile[OBJ*8], ebx, SEEK_CUR )
             .else
-                mov ecx,[rdi].seg_info.fileoffset
-                add ecx,[rdi].seg_info.start_loc
+                mov ecx,[r13].seg_info.fileoffset
+                add ecx,[r13].seg_info.start_loc
                 fseek( CurrFile[OBJ*8], ecx, SEEK_SET )
-                .if ( fwrite( [rdi].seg_info.CodeBuffer, 1, ebx, CurrFile[OBJ*8] ) != rbx )
+                .if ( fwrite( [r13].seg_info.CodeBuffer, 1, ebx, CurrFile[OBJ*8] ) != rbx )
                     WriteError()
                 .endif
             .endif
@@ -1360,12 +1393,12 @@ elf_write_data proc private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elf
     ; write internal sections
 
     mov rbx,em
-    .for ( esi = 0: esi < NUM_INTSEGS: esi++ )
-        imul edi,esi,intseg
-        .if ( [rbx].internal_segs[rdi].data )
-            fseek( CurrFile[OBJ*8], [rbx].internal_segs[rdi].fileoffset, SEEK_SET )
-            fwrite( [rbx].internal_segs[rdi].data, 1, [rbx].internal_segs[rdi].size, CurrFile[OBJ*8] )
-            .if ( eax != [rbx].internal_segs[rdi].size )
+    .for ( r12d = 0: r12d < NUM_INTSEGS: r12d++ )
+        imul r13d,r12d,intseg
+        .if ( [rbx].internal_segs[r13].data )
+            fseek( CurrFile[OBJ*8], [rbx].internal_segs[r13].fileoffset, SEEK_SET )
+            fwrite( [rbx].internal_segs[r13].data, 1, [rbx].internal_segs[r13].size, CurrFile[OBJ*8] )
+            .if ( eax != [rbx].internal_segs[r13].size )
                 WriteError()
             .endif
         .endif
@@ -1373,16 +1406,16 @@ elf_write_data proc private uses rsi rdi rbx modinfo:ptr module_info, em:ptr elf
 
     ; write reloc sections content
 
-    .for ( rsi = SymTables[TAB_SEG*symbol_queue].head : rsi : rsi = [rsi].dsym.next )
+    .for ( r12 = SymTables[TAB_SEG*symbol_queue].head : r12 : r12 = [r12].dsym.next )
 
-        mov rdi,[rsi].dsym.seginfo
-        .if ( [rdi].seg_info.num_relocs )
-            fseek( CurrFile[OBJ*8], [rdi].seg_info.reloc_offset, SEEK_SET )
+        mov r13,[r12].dsym.seginfo
+        .if ( [r13].seg_info.num_relocs )
+            fseek( CurrFile[OBJ*8], [r13].seg_info.reloc_offset, SEEK_SET )
             mov rcx,modinfo
             .if ( [rcx].module_info.defOfssize == USE64 )
-                write_relocs64( rsi )
+                write_relocs64( r12 )
             .else
-                write_relocs32( rbx, rsi )
+                write_relocs32( rbx, r12 )
             .endif
         .endif
     .endf
@@ -1396,18 +1429,22 @@ elf_write_data endp
 
 ; write ELF module
 
-elf_write_module proc private uses rsi modinfo:ptr module_info
+ifdef __UNIX__
+elf_write_module proc __ccall private uses rsi rdi r12 modinfo:ptr module_info
+else
+elf_write_module proc __ccall private uses r12 modinfo:ptr module_info
+endif
 
    .new em:elfmod
 
-    memset( &em, 0, sizeof( em ) )
+    tmemset( &em, 0, sizeof( em ) )
 
-    mov rsi,CurrFName[ASM*8]
-    lea rdx,[rsi+tstrlen(rsi)]
+    mov r12,CurrFName[ASM*8]
+    lea rdx,[r12+tstrlen(r12)]
 
     ; the path part is stripped. todo: check if this is ok to do
 
-    .while ( rdx > rsi )
+    .while ( rdx > r12 )
 
         .break .if ( byte ptr [rdx-1] == '\' )
         .break .if ( byte ptr [rdx-1] == '/' )
@@ -1419,16 +1456,16 @@ elf_write_module proc private uses rsi modinfo:ptr module_info
 
     fseek( CurrFile[OBJ*8], 0, SEEK_SET )
 
-    mov rsi,modinfo
+    mov r12,modinfo
 ifndef ASMC64
-    .switch ( [rsi].module_info.defOfssize )
+    .switch ( [r12].module_info.defOfssize )
     .case USE64
 endif
         tmemcpy( &em.ehdr64.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN )
         mov em.ehdr64.e_ident[EI_CLASS],ELFCLASS64
         mov em.ehdr64.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr64.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr64.e_ident[EI_OSABI],[rsi].module_info.elf_osabi
+        mov em.ehdr64.e_ident[EI_OSABI],[r12].module_info.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1447,11 +1484,11 @@ endif
         ; - n .rela<xxx> sections
 
         get_num_reloc_sections()
-        add eax,[rsi].module_info.num_segs
+        add eax,[r12].module_info.num_segs
         add eax,1 + 3
         mov em.ehdr64.e_shnum,ax
 
-        mov eax,[rsi].module_info.num_segs
+        mov eax,[r12].module_info.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr64.e_shstrndx,ax ; set index of .shstrtab section
 
@@ -1461,7 +1498,7 @@ endif
         movzx eax,em.ehdr64.e_shnum
         mul em.ehdr64.e_shentsize
         add eax,sizeof( Elf64_Ehdr )
-        elf_write_section_table64( rsi, &em, eax )
+        elf_write_section_table64( r12, &em, eax )
 
 ifndef ASMC64
 
@@ -1471,7 +1508,7 @@ ifndef ASMC64
         mov em.ehdr32.e_ident[EI_CLASS],ELFCLASS32
         mov em.ehdr32.e_ident[EI_DATA],ELFDATA2LSB
         mov em.ehdr32.e_ident[EI_VERSION],EV_CURRENT
-        mov em.ehdr32.e_ident[EI_OSABI],[rsi].module_info.elf_osabi
+        mov em.ehdr32.e_ident[EI_OSABI],[r12].module_info.elf_osabi
 
         ; v2.07: set abiversion to 0
 
@@ -1490,11 +1527,11 @@ ifndef ASMC64
         ; - n .rel<xxx> entries
 
         get_num_reloc_sections()
-        add eax,[rsi].module_info.num_segs
+        add eax,[r12].module_info.num_segs
         add eax,1 + 3
         mov em.ehdr32.e_shnum,ax
 
-        mov eax,[rsi].module_info.num_segs
+        mov eax,[r12].module_info.num_segs
         add eax,1 + SHSTRTAB_IDX
         mov em.ehdr32.e_shstrndx,ax ; set index of .shstrtab section
 
@@ -1504,19 +1541,18 @@ ifndef ASMC64
         movzx eax,em.ehdr32.e_shnum
         mul em.ehdr32.e_shentsize
         add eax,sizeof( Elf32_Ehdr )
-        elf_write_section_table32( rsi, &em, eax )
+        elf_write_section_table32( r12, &em, eax )
     .endsw
 endif
-    elf_write_data( rsi, &em )
-    .return( NOT_ERROR )
+    elf_write_data( r12, &em )
+   .return( NOT_ERROR )
 
 elf_write_module endp
 
 ; format-specific init.
 ; called once per module.
 
-elf_init proc modinfo:ptr module_info
-    mov rcx,modinfo
+elf_init proc __ccall modinfo:ptr module_info
     mov [rcx].module_info.elf_osabi,ELFOSABI_LINUX
     mov [rcx].module_info.WriteModule,&elf_write_module
     ret

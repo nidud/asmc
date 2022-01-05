@@ -18,7 +18,9 @@ include fixup.inc
 include dbgcv.inc
 include linnum.inc
 
+ifndef __UNIX__
 define USEMD5
+endif
 
 extern CV8Label:ptr asym
 
@@ -1354,7 +1356,7 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
             mov eax,1
             .if ( ( ModuleInfo.cv_opt & CVO_STATICTLS ) && [rcx].seg_info.clsym )
                 mov rcx,[rcx].seg_info.clsym
-                .if ( strcmp( [rcx].asym.name, "TLS" ) == 0 )
+                .if ( tstrcmp( [rcx].asym.name, "TLS" ) == 0 )
                     mov ecx,S_LTHREAD32_16t
                     .if ( [rsi].asym.flags & S_ISPUBLIC )
                         mov ecx,S_GTHREAD32_16t
@@ -2054,8 +2056,8 @@ cv_write_debug_tables proc __ccall uses rsi rdi rbx symbols:ptr dsym, types:ptr 
 
             mov eax,[rsi]
             .if ( al != '\' && al != '.' && ah != ':' )
-                strcpy( objname, "\\" )
-                strcat( objname, rsi )
+                tstrcpy( objname, "\\" )
+                tstrcat( objname, rsi )
                 mov rsi,cv.currdir
             .endif
 
@@ -2256,8 +2258,8 @@ endif
         mov rdi,CurrFName[OBJ*8]
         mov eax,[rdi]
         .if ( al != '\' && al != '.' && ah != ':' )
-            strcpy( objname, "\\" )
-            strcat( objname, rdi )
+            tstrcpy( objname, "\\" )
+            tstrcat( objname, rdi )
             mov rdi,cv.currdir
        .endif
         mov len,tstrlen( rdi )
@@ -2274,7 +2276,7 @@ endif
 
         mov rdi,cv.ps
         mov [rdi].COMPILESYM3.rectyp,S_COMPILE3
-        strcpy( &[rdi].COMPILESYM3.verSz, szCVCompiler )
+        tstrcpy( &[rdi].COMPILESYM3.verSz, szCVCompiler )
         mov [rdi].COMPILESYM3.reclen,sizeof(COMPILESYM3) + sizeof(@CStr(0)) - 2
         add cv.ps,sizeof(COMPILESYM3) + sizeof(@CStr(0))
 

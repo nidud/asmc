@@ -52,7 +52,9 @@ assert_exit proc
 
     mov rax,rsp
     pop rdx
-
+ifdef __DEBUG__
+    pop rdx
+endif
     printf( &regs, rdx, _ax, r8, rbx, r9, _cx, r10, _dx, r11, rsi, r12, rdi, r13,
         rbp, r14, rax, r15, rdx )
     _getch()

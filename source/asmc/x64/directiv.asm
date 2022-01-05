@@ -42,7 +42,7 @@ CCALLBACK(fpDirective, :int_t, :token_t)
 
 .data
 
-;; table of function addresses for directives
+; table of function addresses for directives
 res macro token, function
 exitm<fpDirective function>
 endm
@@ -68,8 +68,8 @@ StubDir endp
 
 EchoDirective proc fastcall i:int_t, tokenarray:token_t
 
-    .if ( Parse_Pass == PASS_1 ) ;; display in pass 1 only
-        .if ( Options.preprocessor_stdout == FALSE ) ;; don't print to stdout if -EP is on!
+    .if ( Parse_Pass == PASS_1 ) ; display in pass 1 only
+        .if ( Options.preprocessor_stdout == FALSE ) ; don't print to stdout if -EP is on!
 
             imul eax,ecx,asm_tok
             add rax,rdx
@@ -86,7 +86,7 @@ EchoDirective endp
 ; is located becomes the "source" directory, that is, it is searched
 ; FIRST if further INCLUDE directives are found inside the included file.
 
-IncludeDirective proc i:int_t, tokenarray:token_t
+IncludeDirective proc __ccall i:int_t, tokenarray:token_t
 
     .if ( CurrFile[LST*8] )
         LstWriteSrcLine()
@@ -122,43 +122,43 @@ IncludeDirective proc i:int_t, tokenarray:token_t
         .endf
     .endif
     .if SearchFile( rcx, TRUE )
-        ProcessFile( tokenarray ) ;; v2.11: process the file synchronously
+        ProcessFile( tokenarray ) ; v2.11: process the file synchronously
     .endif
     mov eax,NOT_ERROR
     ret
 
 IncludeDirective endp
 
-IncludeLibrary proc uses rbx name:string_t
+IncludeLibrary proc __ccall uses rbx name:string_t
 
     ;struct qitem *q;
 
-    ;; old approach, <= 1.91: add lib name to global namespace
-    ;; new approach, >= 1.92: check lib table, if entry is missing, add it
-    ;; Masm doesn't map cases for the paths. So if there is
-    ;; includelib <kernel32.lib>
-    ;; includelib <KERNEL32.LIB>
-    ;; then 2 defaultlib entries are added. If this is to be changed for
-    ;; JWasm, activate the _stricmp() below.
+    ; old approach, <= 1.91: add lib name to global namespace
+    ; new approach, >= 1.92: check lib table, if entry is missing, add it
+    ; Masm doesn't map cases for the paths. So if there is
+    ; includelib <kernel32.lib>
+    ; includelib <KERNEL32.LIB>
+    ; then 2 defaultlib entries are added. If this is to be changed for
+    ; JWasm, activate the _stricmp() below.
 
     .for ( rbx = ModuleInfo.LibQueue.head: rbx: rbx = [rbx].qitem.next )
 
-        .return(&[rbx].qitem.value) .if ( strcmp(&[rbx].qitem.value, name) == 0 )
+        .return(&[rbx].qitem.value) .if ( tstrcmp(&[rbx].qitem.value, name) == 0 )
     .endf
 
     mov rbx,LclAlloc( &[tstrlen( name ) + sizeof( qitem )] )
-    strcpy( &[rbx].qitem.value, name )
+    tstrcpy( &[rbx].qitem.value, name )
     QEnqueue( &ModuleInfo.LibQueue, rbx )
     lea rax,[rbx].qitem.value
     ret
 
 IncludeLibrary endp
 
-;; directive INCLUDELIB
+; directive INCLUDELIB
 
     assume rbx:token_t
 
-IncludeLibDirective proc uses rbx i:int_t, tokenarray:token_t
+IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
     mov eax,NOT_ERROR
 
@@ -167,7 +167,7 @@ IncludeLibDirective proc uses rbx i:int_t, tokenarray:token_t
 
     inc  i ; skip the directive
     imul ebx,i,asm_tok
-    add  rbx,tokenarray
+    add  rbx,rdx
 
     ; v2.03: library name may be just a "number"
 
@@ -201,20 +201,22 @@ IncludeLibDirective proc uses rbx i:int_t, tokenarray:token_t
 IncludeLibDirective endp
 
 ; INCBIN directive
-
-IncBinDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
-
+ifdef __UNIX__
+IncBinDirective proc __ccall uses rsi rsi rbx r12 r13 i:int_t, tokenarray:token_t
+else
+IncBinDirective proc __ccall uses rsi rsi rbx i:int_t, tokenarray:token_t
+endif
   local opndx:expr
 
     inc i ; skip the directive
     imul ebx,i,asm_tok
-    add rbx,tokenarray
+    add rbx,rdx
 
     .return asmerr(1017) .if ( [rbx].token == T_FINAL )
 
     .if ( [rbx].token == T_STRING )
 
-        ;; v2.08: use string buffer to avoid buffer overflow if string is > FILENAME_MAX
+        ; v2.08: use string buffer to avoid buffer overflow if string is > FILENAME_MAX
         mov rdi,StringBufferEnd
         .if ( [rbx].string_delim == '"' || [rbx].string_delim == "'" )
 
@@ -283,9 +285,24 @@ IncBinDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; transfer file content to the current segment.
 
-        xchg rax,rsi
-        .if rax
+ifdef __UNIX__
+        mov r12,rsi
+        mov r13,rdi
+        .if rsi
+            fseek( r12, rax, SEEK_SET ) ; fixme: use fseek64()
+        .endif
 
+        .for ( : r13 : r13-- )
+
+            mov ebx,fgetc(r12)
+            .if ebx == -1   ; EOF
+                .break .if feof(r12)
+            .endif
+            OutputByte(bl)
+        .endf
+        fclose(r12)
+else
+        .if rsi
             fseek( rsi, rax, SEEK_SET ) ; fixme: use fseek64()
         .endif
 
@@ -298,9 +315,9 @@ IncBinDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             OutputByte(bl)
         .endf
         fclose(rsi)
+endif
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 IncBinDirective endp
 
@@ -320,28 +337,28 @@ IncBinDirective endp
     assume rsi:asym_t
     assume rdi:asym_t
 
-AliasDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     local subst:string_t
 
     inc i ; go past ALIAS
     imul ebx,i,asm_tok
-    add rbx,tokenarray
+    add rbx,rdx
 
     .return asmerr(2051) .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
 
-    ;; check syntax. note that '=' is T_DIRECTIVE && DRT_EQUALSGN
+    ; check syntax. note that '=' is T_DIRECTIVE && DRT_EQUALSGN
     .return( asmerr(2008, [rbx+asm_tok].string_ptr) ) \
         .if ( [rbx+asm_tok].token != T_DIRECTIVE || [rbx+asm_tok].dirtype != DRT_EQUALSGN )
     .return asmerr(2051) .if ( [rbx+asm_tok*2].token != T_STRING || [rbx+asm_tok*2].string_delim != '<' )
     mov subst,[rbx+asm_tok*2].string_ptr
     .return asmerr(2008, [rbx+asm_tok*3].string_ptr) .if ( [rbx+asm_tok*3].token != T_FINAL )
 
-    ;; make sure <alias_name> isn't defined elsewhere
+    ; make sure <alias_name> isn't defined elsewhere
     mov rsi,SymSearch([rbx].string_ptr)
     .if ( rsi == NULL || [rsi].state == SYM_UNDEFINED )
 
-        ;; v2.04b: adjusted to new field <substitute>
+        ; v2.04b: adjusted to new field <substitute>
         mov rdi,SymSearch(subst)
         .if ( rdi == NULL )
             mov rdi,SymCreate(subst)
@@ -359,21 +376,21 @@ AliasDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         mov [rsi].state,SYM_ALIAS
         mov [rsi].substitute,rdi
-        ;; v2.10: copy language type of alias
+        ; v2.10: copy language type of alias
         mov [rsi].langtype,[rdi].langtype
-        sym_add_table(&SymTables[TAB_ALIAS*symbol_queue], rsi) ;; add ALIAS
-        .return(NOT_ERROR)
+        sym_add_table(&SymTables[TAB_ALIAS*symbol_queue], rsi) ; add ALIAS
+       .return(NOT_ERROR)
     .endif
     xor eax,eax
     .if ( [rsi].state != SYM_ALIAS )
         inc eax
     .else
         mov rdi,[rsi].substitute
-        strcmp( [rdi].name, subst )
+        tstrcmp( [rdi].name, subst )
     .endif
     .return( asmerr(2005, [rsi].name) ) .if eax
-    ;; for COFF+ELF, make sure <actual_name> is "global" (EXTERNAL or
-    ;; public INTERNAL). For OMF, there's no check at all. */
+    ; for COFF+ELF, make sure <actual_name> is "global" (EXTERNAL or
+    ; public INTERNAL). For OMF, there's no check at all. */
     .if ( Parse_Pass != PASS_1 )
         .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
             mov rdi,[rsi].substitute
@@ -385,22 +402,21 @@ AliasDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             .endif
         .endif
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 AliasDirective endp
 
-;; the NAME directive is ignored in Masm v6
+; the NAME directive is ignored in Masm v6
 
     assume rdx:token_t
 
-NameDirective proc i:int_t, tokenarray:token_t
+NameDirective proc __ccall i:int_t, tokenarray:token_t
 
     .return(NOT_ERROR) .if ( Parse_Pass != PASS_1 )
 
     inc i ; skip directive
-    imul edx,i,asm_tok
-    add rdx,tokenarray
+    imul ecx,i,asm_tok
+    add rdx,rcx
 
     ; improper use of NAME is difficult to see since it is a nop
     ; therefore some syntax checks are implemented:
@@ -417,34 +433,36 @@ NameDirective proc i:int_t, tokenarray:token_t
           [rdx].tokval == T_UNION   ||
           [rdx].tokval == T_TYPEDEF ||
           [rdx].tokval == T_RECORD ) ) || [rdx].token == T_COLON )
+
         .return( asmerr(2008, [rdx-asm_tok].tokpos) )
     .endif
 
     ; don't touch Option fields! if anything at all, ModuleInfo.name may be modified.
     ; However, since the directive is ignored by Masm, nothing is done.
 
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 NameDirective endp
 
 ; .RADIX directive, value must be between 2 .. 16
 
-RadixDirective proc uses rbx i:int_t, tokenarray:token_t
+RadixDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
 
   local opndx:expr
 
     ; to get the .radix parameter, enforce radix 10 and retokenize!
-    mov bl,ModuleInfo.radix
-    mov ModuleInfo.radix,10
-    inc i ;; skip directive token
-    imul ecx,i,asm_tok
-    add rcx,tokenarray
 
-    Tokenize([rcx].asm_tok.tokpos, i, tokenarray, TOK_RESCAN)
+    mov  bl,ModuleInfo.radix
+    mov  ModuleInfo.radix,10
+    inc  i ; skip directive token
+    imul ecx,i,asm_tok
+    add  rcx,rdx
+
+    Tokenize( [rcx].asm_tok.tokpos, i, tokenarray, TOK_RESCAN )
     mov ModuleInfo.radix,bl
 
     ; v2.11: flag NOUNDEF added - no forward ref possible
+
     .return .ifd EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
     .return asmerr(2026) .if ( opndx.kind != EXPR_CONST )
 
@@ -466,12 +484,12 @@ RadixDirective proc uses rbx i:int_t, tokenarray:token_t
 
 RadixDirective endp
 
-;; DOSSEG, .DOSSEG, .ALPHA, .SEQ directives
+; DOSSEG, .DOSSEG, .ALPHA, .SEQ directives
 
-SegOrderDirective proc i:int_t, tokenarray:token_t
+SegOrderDirective proc __ccall i:int_t, tokenarray:token_t
 
-    imul eax,i,asm_tok
-    add rax,tokenarray
+    imul eax,ecx,asm_tok
+    add rax,rdx
 
     .if ( [rax+asm_tok].asm_tok.token != T_FINAL )
         .return( asmerr(2008, [rax+asm_tok].asm_tok.tokpos ) )
@@ -484,8 +502,7 @@ SegOrderDirective proc i:int_t, tokenarray:token_t
     .else
         mov ModuleInfo.segorder,GetSflagsSp( [rax].asm_tok.tokval )
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 SegOrderDirective endp
 

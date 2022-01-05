@@ -137,8 +137,11 @@ omf_InitRec endp
 
     assume rcx:nothing
 
+ifdef __UNIX__
+timet2dostime proc __ccall private uses rsi rdi x:time_t
+else
 timet2dostime proc __ccall private x:time_t
-
+endif
     .if ( localtime( &x ) )
 
         mov rcx,rax
@@ -666,8 +669,11 @@ endif
 ;; called when a new path is started
 ;; the OMF "path 2" records (LEDATA, FIXUP, LINNUM ) are written in all passes.
 
+if defined(__UNIX__) and not defined(ASMC64)
+omf_set_filepos proc __ccall uses rsi rdi
+else
 omf_set_filepos proc __ccall
-
+endif
 ifndef ASMC64
     fseek( CurrFile[OBJ*8], end_of_header, SEEK_SET )
 endif
@@ -731,7 +737,7 @@ omf_write_export proc __ccall private uses rsi rdi rbx
             .if ( Options.no_export_decoration == FALSE )
                 mov len,Mangle( rsi, &[rdi+3] )
             .else
-                strcpy( &[rdi+3], [rsi].asym.name )
+                tstrcpy( &[rdi+3], [rsi].asym.name )
                 mov len,[rsi].asym.name_size
             .endif
             ; v2.11: case mapping was missing
@@ -1334,11 +1340,12 @@ endif
 
 omf_write_comdef endp
 
-GetFileTimeStamp proc __ccall private filename:string_t
 ifdef __UNIX__
+GetFileTimeStamp proc __ccall private uses rsi rdi filename:string_t
   local statbuf:_stat32
     .if ( stat( filename, &statbuf ) != 0 )
 else
+GetFileTimeStamp proc __ccall private filename:string_t
   local statbuf:stat
     .if ( _stat( filename, &statbuf ) != 0 )
 endif
@@ -1723,8 +1730,11 @@ omf_write_debug_tables endp
 ; since the OMF records are written "on the fly",
 ; the "normal" section contents are already written at this time.
 
+ifdef __UNIX__
+omf_write_module proc __ccall private uses rsi rdi modinfo:ptr module_info
+else
 omf_write_module proc __ccall private modinfo:ptr module_info
-
+endif
 if TRUNCATE
   local fh:int_t
   local size:uint_32
@@ -1771,8 +1781,11 @@ endif
 omf_write_module endp
 
 ; write OMF header info after pass 1
-
+ifdef __UNIX__
+omf_write_header_initial proc __ccall private uses rsi rdi modinfo:ptr module_info
+else
 omf_write_header_initial proc __ccall private modinfo:ptr module_info
+endif
 
   local ext_idx:uint_16
 
@@ -1828,7 +1841,8 @@ omf_write_header_initial proc __ccall private modinfo:ptr module_info
         omf_end_of_pass1()
     .endif
     mov end_of_header,ftell( CurrFile[OBJ*8] )
-    .return( NOT_ERROR )
+   .return( NOT_ERROR )
+
 omf_write_header_initial endp
 endif
 

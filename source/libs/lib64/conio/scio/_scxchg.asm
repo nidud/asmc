@@ -13,20 +13,22 @@ _scxchg proc uses rsi rdi rbx rc:TRECT, buffer:PCHAR_INFO
 
     mov     rdi,rdx
     movzx   ebx,rc.col
-    movzx   eax,rc.row
+    movzx   ecx,rc.row
     mul     ebx
-    mov     ebx,eax
-    shl     eax,2
-    mov     rsi,alloca(eax)
+    mov     ebx,ecx
+    shl     ecx,2
+    mov     rsi,malloc(ecx)
 
     .if _scread(rc, rsi)
-
         _scwrite(rc, rdi)
-
+        mov rdx,rsi
         mov ecx,ebx
         rep movsd
+        mov rsi,rdx
     .endif
-    ret
+    mov ebx,eax
+    free(rsi)
+   .return(ebx)
 
 _scxchg endp
 

@@ -4,9 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_wcsrev::
+_wcsrev proc string:wstring_t
 
     .for ( rax=rcx, rdx=rcx : word ptr [rdx] : rdx += 2 )
 
@@ -20,5 +22,7 @@ _wcsrev::
         mov [rdx],r8w
     .endf
     ret
+
+_wcsrev endp
 
     end

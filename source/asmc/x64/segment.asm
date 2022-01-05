@@ -90,7 +90,7 @@ min_cpu         dw P_86, P_386, P_64
 
 ; find token in a string table
 
-FindToken proc private uses rsi rdi token:string_t, table:ptr, size:int_t
+FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr, size:int_t
 
     mov rsi,rdx
     .for ( edi = 0 : edi < size : edi++ )
@@ -105,7 +105,7 @@ FindToken endp
 
 ; set value of $ symbol
 
-UpdateCurPC proc sym:ptr asym, p:ptr
+UpdateCurPC proc __ccall sym:ptr asym, p:ptr
 
     mov rdx,CurrStruct
     .if ( rdx )
@@ -128,7 +128,7 @@ UpdateCurPC proc sym:ptr asym, p:ptr
 
 UpdateCurPC endp
 
-AddLnameItem proc private sym:ptr asym
+AddLnameItem proc __ccall private sym:ptr asym
     QAddItem( &ModuleInfo.LnameQueue, rcx )
     ret
 AddLnameItem endp
@@ -138,7 +138,7 @@ AddLnameItem endp
 ; SYM_GRP: group names
 ; SYM_CLASS_LNAME : class names
 
-FreeLnameQueue proc private uses rsi rdi
+FreeLnameQueue proc __ccall private uses rsi rdi
 
     .for ( rdi = ModuleInfo.LnameQueue.head: rdi: rdi = rsi )
         mov rsi,[rdi].qnode.next
@@ -157,7 +157,7 @@ FreeLnameQueue endp
 ; set CS assume entry whenever current segment is changed.
 ; Also updates values of text macro @CurSeg.
 
-UpdateCurrSegVars proc private uses rsi rdi
+UpdateCurrSegVars proc __ccall private uses rsi rdi
 
     mov rcx,symCurSeg
     mov rdi,CurrSeg
@@ -204,7 +204,7 @@ push_seg proc fastcall private s:ptr dsym
 
 push_seg endp
 
-pop_seg proc private
+pop_seg proc __ccall private
 
     ; Pop a segment out of the current segment stack
 
@@ -222,7 +222,7 @@ pop_seg proc private
 
 pop_seg endp
 
-GetCurrOffset proc
+GetCurrOffset proc __ccall
 
     mov rax,CurrSeg
     .if rax
@@ -233,7 +233,7 @@ GetCurrOffset proc
 
 GetCurrOffset endp
 
-GetCurrSegAlign proc
+GetCurrSegAlign proc __ccall
 
     mov rax,CurrSeg
     .return .if ( rax == NULL )
@@ -249,7 +249,7 @@ GetCurrSegAlign proc
 
 GetCurrSegAlign endp
 
-CreateGroup proc private uses rdi name:string_t
+CreateGroup proc __ccall private uses rdi name:string_t
 
     mov rdi,SymSearch( rcx )
 
@@ -280,7 +280,7 @@ CreateGroup proc private uses rdi name:string_t
 
 CreateGroup endp
 
-CreateSegment proc private uses rdi s:ptr dsym, name:string_t, add_global:int_t
+CreateSegment proc __ccall private uses rdi s:ptr dsym, name:string_t, add_global:int_t
 
     mov rdi,rcx
     .if ( rcx == NULL )
@@ -297,7 +297,7 @@ CreateSegment proc private uses rdi s:ptr dsym, name:string_t, add_global:int_t
     .if ( rdi )
         mov [rdi].asym.state,SYM_SEG
         mov [rdi].dsym.seginfo,LclAlloc( sizeof( seg_info ) )
-        mov rcx,memset( rax, 0, sizeof( seg_info ) )
+        mov rcx,tmemset( rax, 0, sizeof( seg_info ) )
         mov [rcx].seg_info.Ofssize,ModuleInfo.defOfssize
         mov [rcx].seg_info.alignment,4 ; this is PARA (2^4)
         mov [rcx].seg_info.combine,COMB_INVALID
@@ -326,7 +326,7 @@ CreateSegment endp
 
     assume rbx:ptr asm_tok
 
-GrpDir proc uses rsi rsi rdi i:int_t, tokenarray:ptr asm_tok
+GrpDir proc __ccall uses rsi rsi rdi i:int_t, tokenarray:ptr asm_tok
 
   local name:string_t
 
@@ -449,7 +449,7 @@ GrpDir endp
 
 ; get/set value of predefined symbol @WordSize
 
-UpdateWordSize proc sym:ptr asym, p:ptr
+UpdateWordSize proc __ccall sym:ptr asym, p:ptr
 
     mov [rcx].asym.value,CurrWordSize
     ret
@@ -459,7 +459,7 @@ UpdateWordSize endp
 
 ; called by SEGMENT and ENDS directives
 
-SetOfssize proc
+SetOfssize proc __ccall
 
     mov rcx,CurrSeg
     .if ( rcx == NULL )
@@ -517,7 +517,7 @@ endif
 
 CloseSeg endp
 
-DefineFlatGroup proc
+DefineFlatGroup proc __ccall
 
     mov rax,ModuleInfo.flat_grp
     .if ( rax == NULL )
@@ -533,7 +533,7 @@ DefineFlatGroup proc
 
 DefineFlatGroup endp
 
-GetSegIdx proc sym:ptr asym
+GetSegIdx proc __ccall sym:ptr asym
 
     ; get idx to sym's segment
 
@@ -546,7 +546,7 @@ GetSegIdx proc sym:ptr asym
 
 GetSegIdx endp
 
-GetGroup proc sym:ptr asym
+GetGroup proc __ccall sym:ptr asym
 
     ; get a symbol's group
     .if ( GetSegm( rcx ) != NULL )
@@ -557,7 +557,7 @@ GetGroup proc sym:ptr asym
 
 GetGroup endp
 
-GetSymOfssize proc sym:ptr asym
+GetSymOfssize proc __ccall sym:ptr asym
 
     ; get sym's offset size (64=2, 32=1, 16=0)
 
@@ -587,7 +587,7 @@ GetSymOfssize proc sym:ptr asym
 
 GetSymOfssize endp
 
-SetSymSegOfs proc uses rdi sym:ptr asym
+SetSymSegOfs proc __ccall uses rdi sym:ptr asym
 
     mov rdi,rcx
     mov [rdi].asym.segm,CurrSeg
@@ -598,7 +598,7 @@ SetSymSegOfs endp
 
 ; get segment type from alignment, combine type or class name
 
-TypeFromClassName proc uses rsi rdi s:ptr dsym, clname:ptr asym
+TypeFromClassName proc __ccall uses rsi rdi s:ptr dsym, clname:ptr asym
 
   local uname[MAX_ID_LEN+1]:char_t
 
@@ -659,7 +659,7 @@ TypeFromClassName endp
 ; search a class item by name.
 ; the classes aren't stored in the symbol table!
 
-FindClass proc private uses rsi rdi name:string_t, len:int_t
+FindClass proc __ccall private uses rsi rdi name:string_t, len:int_t
 
     .for ( rdi = ModuleInfo.LnameQueue.head: rdi: rdi = [rdi].qnode.next )
         mov rsi,[rdi].qnode.sym
@@ -705,7 +705,7 @@ CreateClassLname endp
 ; set the segment's class. report an error if the class has been set
 ; already and the new value differs.
 
-SetSegmentClass proc private s:ptr dsym, name:string_t
+SetSegmentClass proc __ccall private s:ptr dsym, name:string_t
 
     .if ( CreateClassLname( rdx ) == NULL )
         .return( ERROR )
@@ -720,10 +720,10 @@ SetSegmentClass endp
 ; CreateIntSegment(), used for internally defined segments:
 ; codeview debugging segments, COFF .drectve, COFF .sxdata
 
-CreateIntSegment proc uses rdi name:string_t, classname:string_t, alignment:byte, Ofssize:byte, add_global:int_t
+CreateIntSegment proc __ccall uses rdi name:string_t, classname:string_t, alignment:byte, Ofssize:byte, add_global:int_t
 
     .if ( add_global )
-        SymSearch( name )
+        SymSearch( rcx )
         .if ( rax == NULL || [rax].asym.state == SYM_UNDEFINED )
             CreateSegment( rax, name, add_global )
         .elseif ( [rax].asym.state != SYM_SEG )
@@ -758,7 +758,7 @@ CreateIntSegment endp
 
 ; ENDS directive
 
-EndsDir proc uses rbx i:int_t, tokenarray:ptr asm_tok
+EndsDir proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
     mov rbx,rdx
     .if ( CurrStruct != NULL )
@@ -788,7 +788,7 @@ EndsDir endp
 
 ; SEGMENT directive if pass is > 1
 
-SetCurrSeg proc private uses rdi rbx i:int_t, tokenarray:ptr asm_tok
+SetCurrSeg proc __ccall private uses rdi rbx i:int_t, tokenarray:ptr asm_tok
 
     mov rbx,rdx
     mov rdi,SymSearch( [rbx].string_ptr )
@@ -813,7 +813,7 @@ endif
 
 SetCurrSeg endp
 
-UnlinkSeg proc private dir:ptr dsym
+UnlinkSeg proc __ccall private dir:ptr dsym
 
     .for ( rdx = SymTables[TAB_SEG*symbol_queue].head, r8 = NULL : rdx : r8 = rdx, rdx = [rdx].dsym.next )
         .if ( rdx == rcx )
@@ -839,7 +839,7 @@ UnlinkSeg endp
 
 ; SEGMENT directive
 
-SegmentDir proc uses rsi rdi rbx r12 i:int_t, tokenarray:ptr asm_tok
+SegmentDir proc __ccall uses rsi rdi rbx r12 i:int_t, tokenarray:ptr asm_tok
 
    .new is_old:char_t = FALSE
    .new token:string_t
@@ -1289,7 +1289,7 @@ SegmentDir endp
 
     assume rbx:nothing
 
-SortSegments proc uses rsi rdi rbx type:int_t
+SortSegments proc __ccall uses rsi rdi rbx type:int_t
 
     .new changed:int_t = TRUE
     .new swap:int_t
@@ -1351,7 +1351,7 @@ SortSegments endp
 
 ; END directive has been found.
 
-SegmentModuleExit proc uses rdi
+SegmentModuleExit proc __ccall uses rdi
 
     .if ( ModuleInfo._model != MODEL_NONE )
         ModelSimSegmExit()
@@ -1375,14 +1375,14 @@ SegmentModuleExit endp
 
 ; this is called once per module after the last pass is finished
 
-SegmentFini proc
+SegmentFini proc __ccall
     FreeLnameQueue()
     ret
 SegmentFini endp
 
 ; init. called for each pass
 
-SegmentInit proc uses rsi rdi rbx pass:int_t
+SegmentInit proc __ccall uses rsi rdi rbx pass:int_t
 
    .new curr:ptr dsym
    .new i:uint_32
@@ -1477,7 +1477,7 @@ SegmentInit proc uses rsi rdi rbx pass:int_t
 
 SegmentInit endp
 
-SegmentSaveState proc
+SegmentSaveState proc __ccall
 
     mov saved_CurrSeg,CurrSeg
     mov saved_stkindex,stkindex

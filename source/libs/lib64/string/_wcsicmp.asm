@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_wcsicmp::
+    option win64:rsp noauto
+
+_wcsicmp proc a:wstring_t, b:wstring_t
 
     mov r8,rdx
     mov rax,-1
@@ -34,5 +38,7 @@ _wcsicmp::
     .until 1
     movsx rax,al
     ret
+
+_wcsicmp endp
 
     end

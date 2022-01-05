@@ -26,15 +26,15 @@ include omfspec.inc
     OFF_LINSYM
     }
 
-;; fields cmd, reclen and buffer must be consecutive
+; fields cmd, reclen and buffer must be consecutive
 
 .pragma pack( push, 1 )
 
 .template outbuff
 
-    in_buf      dd ? ;; number of bytes in buffer
-    cmd         db ? ;; record cmd
-    reclen      dw ? ;; record length
+    in_buf      dd ? ; number of bytes in buffer
+    cmd         db ? ; record cmd
+    reclen      dw ? ; record length
     buffer      db OBJ_BUFFER_SIZE dup(?)
    .ends
 
@@ -43,16 +43,16 @@ include omfspec.inc
     .data
 
 func_index db \
-    OFF_THEADR, 0,          0,          0,         ;; 80 THEADR, LHEADR, PEDATA, PIDATA
-    OFF_COMENT, OFF_MODEND, OFF_MISC,   0,         ;; 88 COMENT, MODEND, EXTDEF, TYPDEF
-    OFF_PUBDEF, 0,          OFF_LINNUM, OFF_MISC,  ;; 90 PUBDEF, LOCSYM, LINNUM, LNAMES
-    OFF_SEGDEF, OFF_MISC,   OFF_MISC32, 0,         ;; 98 SEGDEF, GRPDEF, FIXUP,  ???
-    OFF_LEDATA, OFF_LEDATA, 0,          0,         ;; A0 LEDATA, LIDATA, LIBHED, LIBNAM
-    0,          0,          0,          0,         ;; A8 LIBLOC, LIBDIC, ???,    ???
-    OFF_MISC,   OFF_MISC32, OFF_MISC,   OFF_PUBDEF,;; B0 COMDEF, BAKPAT, LEXTDEF,LPUBDEF
-    OFF_MISC,   0,          OFF_MISC,   0,         ;; B8 LCOMDEF,???,    CEXTDEF,???
-    0,          OFF_COMDAT, OFF_LINSYM, OFF_MISC,  ;; C0 ???,    COMDAT, LINSYM, ALIAS
-    OFF_MISC32, OFF_MISC                           ;; C8 NBKPAT, LLNAMES
+    OFF_THEADR, 0,          0,          0,         ; 80 THEADR, LHEADR, PEDATA, PIDATA
+    OFF_COMENT, OFF_MODEND, OFF_MISC,   0,         ; 88 COMENT, MODEND, EXTDEF, TYPDEF
+    OFF_PUBDEF, 0,          OFF_LINNUM, OFF_MISC,  ; 90 PUBDEF, LOCSYM, LINNUM, LNAMES
+    OFF_SEGDEF, OFF_MISC,   OFF_MISC32, 0,         ; 98 SEGDEF, GRPDEF, FIXUP,  ???
+    OFF_LEDATA, OFF_LEDATA, 0,          0,         ; A0 LEDATA, LIDATA, LIBHED, LIBNAM
+    0,          0,          0,          0,         ; A8 LIBLOC, LIBDIC, ???,    ???
+    OFF_MISC,   OFF_MISC32, OFF_MISC,   OFF_PUBDEF,; B0 COMDEF, BAKPAT, LEXTDEF,LPUBDEF
+    OFF_MISC,   0,          OFF_MISC,   0,         ; B8 LCOMDEF,???,    CEXTDEF,???
+    0,          OFF_COMDAT, OFF_LINSYM, OFF_MISC,  ; C0 ???,    COMDAT, LINSYM, ALIAS
+    OFF_MISC32, OFF_MISC                           ; C8 NBKPAT, LLNAMES
 
 
     .code
@@ -120,15 +120,15 @@ PutBase proc watcall private uses rdi base:ptr base_info
     ret
 PutBase endp
 
-;; call a function - bit 0 of command is always 0
+; call a function - bit 0 of command is always 0
 
-omf_write_record proc uses rsi rdi rbx objr:ptr omf_rec
+omf_write_record proc __ccall uses rsi rdi rbx objr:ptr omf_rec
 
   local o:outbuff
 
     mov     o.in_buf,0
     lea     rbx,o
-    mov     rsi,objr
+    mov     rsi,rcx
     movzx   ecx,[rsi].command
     sub     ecx,CMD_MIN_CMD
     shr     ecx,1
@@ -137,7 +137,7 @@ omf_write_record proc uses rsi rdi rbx objr:ptr omf_rec
 
     .switch eax
     .case OFF_UNEXP
-        asmerr( 1901 ) ;; Internal Assembler Error
+        asmerr( 1901 ) ; Internal Assembler Error
     .case OFF_MISC
         ;
         ; For 16-bit records which are the same under Intel and MS OMFs
@@ -341,9 +341,9 @@ omf_write_record proc uses rsi rdi rbx objr:ptr omf_rec
         add o.in_buf,ecx
         rep movsb
     .else
-        ;; this "shouldn't happen".
+        ; this "shouldn't happen".
 
-        asmerr( 1901 ) ;; Internal Assembler Error
+        asmerr( 1901 ) ; Internal Assembler Error
     .endif
 
 write_end:
@@ -354,7 +354,7 @@ write_end:
     ; - writes the contents of the buffer(cmd, length, contents, checksum)
     ;
     mov eax,o.in_buf
-    inc eax            ;; add 1 for checksum byte
+    inc eax            ; add 1 for checksum byte
     mov o.reclen,ax
     add al,ah
     add al,o.cmd
@@ -366,7 +366,7 @@ write_end:
         inc rdx
     .endf
     neg al
-    mov [rdx],al ;; store chksum in buffer
+    mov [rdx],al ; store chksum in buffer
     ;
     ; write buffer + 4 extra bytes (1 cmd, 2 length, 1 chksum)
     ;

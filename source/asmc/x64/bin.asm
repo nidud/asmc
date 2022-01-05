@@ -180,7 +180,7 @@ pe64def IMAGE_PE_HEADER64 {
     assume rbx:ptr calc_param
     assume rdi:ptr seg_info
 
-CalcOffset proc uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
+CalcOffset proc __ccall uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
 
   local alignment:uint_32
   local alignbytes:uint_32
@@ -277,7 +277,7 @@ CalcOffset proc uses rsi rdi rbx curr:ptr dsym, cp:ptr calc_param
         .if ( rax )
             .if ( rax != ModuleInfo.flat_grp )
                 mov [rdi].start_loc,0
-            .elseif ( strchr( [rsi].asym.name, '$' ) )
+            .elseif ( tstrchr( [rsi].asym.name, '$' ) )
                 mov [rdi].start_loc,0
             .endif
         .endif
@@ -338,7 +338,7 @@ CalcOffset endp
 
     assume rbx:ptr fixup
 
-GetSegRelocs proc uses rsi rdi rbx r12 pDst:ptr uint_16
+GetSegRelocs proc __ccall uses rsi rdi rbx r12 pDst:ptr uint_16
 
    .new count:int_t = 0
     mov r12,rcx
@@ -424,7 +424,7 @@ GetSegRelocs endp
 ; memimage=FALSE: get size without uninitialized segments (BSS and STACK)
 ; memimage=TRUE: get full size
 
-GetImageSize proc uses rsi rdi rbx memimage:int_t
+GetImageSize proc __ccall uses rsi rdi rbx memimage:int_t
 
     .new first:uint_32 = TRUE
 
@@ -465,7 +465,7 @@ GetImageSize endp
 ;
 ; handle the fixups contained in a segment
 
-DoFixup proc uses rsi rdi rbx r12 r13 r14 r15 curr:ptr dsym, _cp:ptr calc_param
+DoFixup proc __ccall uses rsi rdi rbx r12 r13 r14 r15 curr:ptr dsym, _cp:ptr calc_param
 
   local value:uint_32
   local value64:uint_64
@@ -534,7 +534,7 @@ DoFixup proc uses rsi rdi rbx r12 r13 r14 r15 curr:ptr dsym, _cp:ptr calc_param
                 ; If yes, search the segment without suffix.
                 ;
 
-                .if ( strchr( [r13].asym.name, '$' ) )
+                .if ( tstrchr( [r13].asym.name, '$' ) )
 
                     sub rax,[r13].asym.name
                     mov edx,eax
@@ -793,7 +793,7 @@ DoFixup endp
     assume rbx:nothing
     assume rdi:nothing
 
-pe_create_MZ_header proc uses rsi modinfo:ptr module_info
+pe_create_MZ_header proc __ccall uses rsi modinfo:ptr module_info
 
     mov rsi,rcx
     .if ( Parse_Pass == PASS_1 )
@@ -820,8 +820,7 @@ pe_create_MZ_header proc uses rsi modinfo:ptr module_info
             "int 21h\n"
             "@@:\n"
             "db 'This is a PE executable',0Dh,0Ah,'$'\n"
-            "%s1 ends",
-            hdrname, hdrattr, hdrname )
+            "%s1 ends", hdrname, hdrattr, hdrname )
 
         RunLineQueue()
         .if SymSearch( hdrname "1" )
@@ -837,7 +836,7 @@ pe_create_MZ_header endp
 
 ; get/set value of @pe_file_flags variable
 
-set_file_flags proc sym:ptr asym, opnd:ptr expr
+set_file_flags proc __ccall sym:ptr asym, opnd:ptr expr
 
    .return .if !SymSearch( hdrname "2" )
 
@@ -859,7 +858,7 @@ set_file_flags endp
 
     assume rsi:ptr seg_info
 
-pe_create_PE_header proc public uses rsi rdi rbx
+pe_create_PE_header proc __ccall public uses rsi rdi rbx
 
     .if ( Parse_Pass == PASS_1 )
         .if ( ModuleInfo._model != MODEL_FLAT )
@@ -916,8 +915,10 @@ endif
         mov [rsi].segtype,SEGTYPE_HDR
         mov [rsi].CodeBuffer,LclAlloc( ebx )
         mov rbx,tmemcpy( rax, rdi, ebx )
-        time( &[rbx].IMAGE_PE_HEADER32.FileHeader.TimeDateStamp )
-        CreateVariable( "@pe_file_flags", [rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics )
+        lea rcx,[rbx].IMAGE_PE_HEADER32.FileHeader.TimeDateStamp
+        movzx ebx,[rdi].IMAGE_PE_HEADER32.FileHeader.Characteristics
+        time( rcx )
+        CreateVariable( "@pe_file_flags", ebx )
         .if rax
             or [rax].asym.flags,S_PREDEFINED
             lea rcx,set_file_flags
@@ -931,7 +932,7 @@ pe_create_PE_header endp
 
 define CHAR_READONLY ( IMAGE_SCN_MEM_READ shr 24 )
 
-pe_create_section_table proc uses rsi rdi rbx
+pe_create_section_table proc __ccall uses rsi rdi rbx
 
    .new objtab:ptr dsym
    .new bCreated:int_t = FALSE
@@ -968,17 +969,17 @@ pe_create_section_table proc uses rsi rdi rbx
                     mov [rsi].segtype,SEGTYPE_CDATA
                 .elseif ( [rsi].clsym )
                     mov rcx,[rsi].clsym
-                    .ifd ( strcmp( [rcx].asym.name, "CONST" ) == 0 )
+                    .ifd ( tstrcmp( [rcx].asym.name, "CONST" ) == 0 )
                         mov [rsi].segtype,SEGTYPE_CDATA
                     .endif
                 .endif
             .elseif ( [rsi].segtype == SEGTYPE_UNDEF )
                 mov rbx,[rdi].asym.name
-                .ifd ( memcmp( rbx, ".rsrc", 5 ) == 0 )
+                .ifd ( tmemcmp( rbx, ".rsrc", 5 ) == 0 )
                     .if ( B[rbx+5] == 0 || B[rbx+5] == '$' )
                         mov [rsi].segtype,SEGTYPE_RSRC
                     .endif
-                .elseifd ( strcmp( rbx, ".reloc" ) == 0 )
+                .elseifd ( tstrcmp( rbx, ".reloc" ) == 0 )
                     mov [rsi].segtype,SEGTYPE_RELOC
                 .endif
             .endif
@@ -1023,10 +1024,14 @@ idx     dd ?
 expitem ends
 
 compare_exp proc p1:ptr expitem, p2:ptr expitem
+ifdef __UNIX__
+    mov rcx,rdi
+    mov rdx,rsi
+endif
     .return( tstrcmp( [rcx].expitem.name, [rdx].expitem.name ) )
 compare_exp endp
 
-pe_emit_export_data proc uses rsi rdi rbx
+pe_emit_export_data proc __ccall uses rsi rdi rbx
 
   local timedate:int_32
   local cnt:int_t
@@ -1152,7 +1157,7 @@ pe_emit_export_data endp
 ; .idata$6: strings
 ;
 
-pe_emit_import_data proc uses rsi rdi rbx
+pe_emit_import_data proc __ccall uses rsi rdi rbx
 
     .new type:int_t = 0
     .new ptrtype:int_t = T_QWORD
@@ -1181,14 +1186,14 @@ endif
 
             .new name[256]:char_t
 
-            mov rsi,strcpy(&name, &[rbx].name)
+            mov rsi,tstrcpy(&name, &[rbx].name)
 
             ; avoid '.' and '-' in IDs
 
-            .while ( strchr( rsi, '.') )
+            .while ( tstrchr( rsi, '.') )
                 mov B[rax],'_'
             .endw
-            .while ( strchr( rsi, '-') )
+            .while ( tstrchr( rsi, '-') )
 
                 mov B[rax],'_'
             .endw
@@ -1321,7 +1326,7 @@ pe_get_characteristics endp
     assume rbx:ptr fixup
     assume rsi:ptr seg_info
 
-pe_set_base_relocs proc uses rsi rdi rbx reloc:ptr dsym
+pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:ptr dsym
 
   .new cnt1:int_t = 0
   .new cnt2:int_t = 0
@@ -1475,7 +1480,7 @@ endif
 
     assume rbx:nothing
 
-pe_set_values proc uses rsi rdi rbx cp:ptr calc_param
+pe_set_values proc __ccall uses rsi rdi rbx cp:ptr calc_param
 
     .new i:int_t
     .new falign:int_t
@@ -1666,7 +1671,7 @@ endif
             .endif
             mov secname,rax
             mov rcx,section
-            strncpy( &[rcx].Name, secname, sizeof ( IMAGE_SECTION_HEADER.Name ) )
+            tstrncpy( &[rcx].Name, secname, sizeof ( IMAGE_SECTION_HEADER.Name ) )
 
             mov rcx,section
             .if ( [rsi].segtype != SEGTYPE_BSS )
@@ -1887,9 +1892,9 @@ pe_set_values endp
 ; v2.11: this function is called when the END directive has been found.
 ; Previously the code was run inside EndDirective() directly.
 
-pe_enddirhook proc modinfo:ptr module_info
+pe_enddirhook proc __ccall modinfo:ptr module_info
 
-    pe_create_MZ_header( modinfo )
+    pe_create_MZ_header( rcx )
     pe_emit_export_data()
     mov rcx,modinfo
     .if ( [rcx].module_info.DllQueue )
@@ -1902,9 +1907,11 @@ pe_enddirhook endp
 
 ; write section contents
 ; this is done after the last step only!
-
-bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
-
+ifdef __UNIX__
+bin_write_module proc __ccall uses rsi rdi rbx r12 r13 modinfo:ptr module_info
+else
+bin_write_module proc __ccall uses rsi rdi rbx modinfo:ptr module_info
+endif
     .new curr:ptr dsym
     .new size:uint_32
     .new sizetotal:uint_32
@@ -1960,7 +1967,7 @@ bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
     mov cp.fileoffset,eax
     .if ( eax )
         mov hdrbuf,LclAlloc( eax )
-        memset( rax, 0, cp.sizehdr )
+        tmemset( rax, 0, cp.sizehdr )
     .endif
     mov cp.entryoffset,-1
 
@@ -2136,7 +2143,7 @@ bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
 
     assume rdi:nothing
 
-    .if( CurrFile[LST*8] )
+    .if ( CurrFile[LST*8] )
 
         ; go to EOF
 
@@ -2204,9 +2211,16 @@ bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
         LstNL()
 
         .if ( size && [rsi].CodeBuffer )
-
+ifdef __UNIX__
+            mov r13,rdi
+            mov r12,rsi
+            fseek( CurrFile[OBJ*8], [rsi].fileoffset, SEEK_SET )
+            fwrite( [r12].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*8] )
+            mov rdi,r13
+else
             fseek( CurrFile[OBJ*8], [rsi].fileoffset, SEEK_SET )
             fwrite( [rsi].CodeBuffer, 1, size, CurrFile[OBJ*8] )
+endif
             .if ( eax != size )
                 WriteError()
             .endif
@@ -2224,7 +2238,7 @@ bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
             and eax,size
             sub ecx,eax
             mov size,ecx
-            memset( alloca(ecx), 0, size )
+            tmemset( alloca(ecx), 0, size )
             fwrite( rax, 1, size, CurrFile[OBJ*8] )
         .endif
     .endif
@@ -2248,7 +2262,7 @@ bin_write_module proc uses rsi rdi rbx modinfo:ptr module_info
 
 bin_write_module endp
 
-bin_check_external proc modinfo:ptr module_info
+bin_check_external proc __ccall modinfo:ptr module_info
 
     .for ( rdx = SymTables[TAB_EXT*symbol_queue].head : rdx : rdx = [rdx].dsym.next )
         .if ( !( [rdx].asym.sflags & S_WEAK ) || [rdx].asym.flags & S_USED )
@@ -2261,9 +2275,9 @@ bin_check_external proc modinfo:ptr module_info
 
 bin_check_external endp
 
-bin_init proc public uses rsi rdi rbx modinfo:ptr module_info
+bin_init proc __ccall public uses rsi rdi rbx modinfo:ptr module_info
 
-    mov rbx,modinfo
+    mov rbx,rcx
     mov [rbx].WriteModule,&bin_write_module
     mov [rbx].Pass1Checks,&bin_check_external
     mov al,[rbx].sub_format

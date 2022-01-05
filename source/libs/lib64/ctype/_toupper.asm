@@ -4,13 +4,17 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include ctype.inc
+
     .code
 
-_toupper::
+_toupper proc c:int_t
 
     movzx   eax,cl
     sub     al,'a'-'A'
     ret
+
+_toupper endp
 
     end
 

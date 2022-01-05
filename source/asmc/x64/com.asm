@@ -14,11 +14,11 @@ ifdef USE_COMALLOC
 
     assume rdi:ptr sfield
 
-AssignVTable proc private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_t, i:int_t
+AssignVTable proc __ccall private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_t, i:int_t
 
   local q[256]:char_t
 
-    mov rsi,sym
+    mov rsi,rdx
 
     .if ( [rsi].asym.total_size )
 
@@ -34,10 +34,10 @@ AssignVTable proc private uses rsi rdi rbx name:string_t, sym:ptr dsym, reg:int_
 
                 .else
 
-                    strcat( strcpy( &q, name ), "_" )
+                    tstrcat( tstrcpy( &q, name ), "_" )
 
                     mov ebx,1
-                    .if ( SymFind( strcat( rax, [rdi].name ) ) )
+                    .if ( SymFind( tstrcat( rax, [rdi].name ) ) )
                         .if ( [rax].asym.state == SYM_MACRO || [rax].asym.state == SYM_TMACRO )
                             xor ebx,ebx
                         .endif
@@ -67,11 +67,11 @@ AssignVTable endp
 
 ClearStruct proto __ccall :string_t, :asym_t
 
-ComAlloc proc uses rsi rdi rbx buffer:string_t, tokenarray:token_t
+ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
 
   local name[16]:sbyte
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov edi,tstricmp([rbx].string_ptr, "@ComAlloc")
     .if edi
         .while [rbx].token != T_FINAL

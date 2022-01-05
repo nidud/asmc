@@ -543,7 +543,7 @@ AddResWord endp
 
 ; remove a reserved word from the hash table.
 
-RemoveResWord proc private token:int_t
+RemoveResWord proc __ccall private token:int_t
 
     mov     r9d,ecx
     lea     r11,ResWordTable
@@ -813,7 +813,7 @@ DisableKeyword proc fastcall uses rdi rbx token:uint_t
 
 DisableKeyword endp
 
-EnableKeyword proc token:uint_t
+EnableKeyword proc __ccall token:uint_t
 
     lea r11,ResWordTable
     mov edx,ecx
@@ -847,7 +847,7 @@ EnableKeyword endp
 
 ;; check if a keyword is in the list of disabled words.
 
-IsKeywordDisabled proc uses rdi rbx name:string_t, len:int_t
+IsKeywordDisabled proc __ccall uses rdi rbx name:string_t, len:int_t
 
     movzx edi,Removed.Head
     .for ( : edi : )
@@ -870,7 +870,7 @@ IsKeywordDisabled endp
 ; get current name of a reserved word.
 ; max size is 255.
 
-GetResWName proc resword:uint_t, buff:string_t
+GetResWName proc __ccall resword:uint_t, buff:string_t
 
     .data?
     intbuff char_t 256 dup(?)
@@ -899,7 +899,7 @@ GetResWName endp
 ;; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
 ;; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
 
-ResWordsInit proc uses rsi rdi rbx
+ResWordsInit proc __ccall uses rsi rdi rbx
 
     ; exit immediately if table is already initialized
 
@@ -944,7 +944,7 @@ ResWordsInit endp
     assume rsi:ptr rename_node
     assume rdi:ptr rename_node
 
-ResWordsFini proc uses rsi rdi rbx
+ResWordsFini proc __ccall uses rsi rdi rbx
 
     ; restore renamed keywords.
     ; the keyword has to removed ( and readded ) from the hash table,

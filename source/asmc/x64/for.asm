@@ -15,9 +15,9 @@ include hllext.inc
 
     .code
 
-strtrim proc private string:string_t
+strtrim proc __ccall private string:string_t
 
-    .if tstrlen( string )
+    .if tstrlen( rcx )
 
         mov ecx,eax
         add rcx,string
@@ -33,9 +33,8 @@ strtrim proc private string:string_t
 
 strtrim endp
 
-GetCondition proc private string:ptr sbyte
+GetCondition proc __ccall private string:ptr sbyte
 
-    mov rcx,string
     mov al,[rcx]
 
     .while al == ' ' || al == 9
@@ -86,41 +85,41 @@ GetCondition proc private string:ptr sbyte
 
 GetCondition ENDP
 
-Assignopc proc private uses rdi buffer:string_t, opc1:string_t, opc2:string_t, string:string_t
+Assignopc proc __ccall private uses rdi buffer:string_t, opc1:string_t, opc2:string_t, string:string_t
 
-    mov rdi,buffer
+    mov rdi,rcx
 
-    .if ( opc1 )
-        strcat( rdi, opc1 )
+    .if ( rdx )
+        tstrcat( rdi, rdx )
         strtrim( rdi )
-        strcat( rdi, " " )
+        tstrcat( rdi, " " )
     .endif
     .if ( opc2 )
-        strcat( rdi, opc2 )
+        tstrcat( rdi, opc2 )
         strtrim( rdi );
         .if ( opc1 && string )
-            strcat( rdi, "," )
+            tstrcat( rdi, "," )
         .endif
         .if ( string )
-            strcat( rdi, " " )
+            tstrcat( rdi, " " )
         .endif
     .endif
     .if ( string )
-        strcat( rdi, string )
+        tstrcat( rdi, string )
         strtrim( rdi )
     .endif
-    strcat( rdi, "\n" )
+    tstrcat( rdi, "\n" )
     mov eax,1
     ret
 
 Assignopc endp
 
-ParseAssignment proc private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:ptr asm_tok
+ParseAssignment proc __ccall private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:ptr asm_tok
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
-    mov rdi,buffer
-    mov rbx,tokenarray
+    mov rdi,rcx
+    mov rbx,rdx
 
     assume rbx:ptr asm_tok
     assume rsi:ptr asm_tok
@@ -305,13 +304,13 @@ ParseAssignment proc private uses rsi rdi rbx buffer:ptr sbyte, tokenarray:ptr a
 
 ParseAssignment endp
 
-RenderAssignment proc private uses rsi rdi rbx dest:ptr sbyte,
+RenderAssignment proc __ccall private uses rsi rdi rbx dest:ptr sbyte,
     source:ptr sbyte, tokenarray:ptr asm_tok
 
   local buffer[MAX_LINE_LEN]:char_t
   local tokbuf[MAX_LINE_LEN]:char_t
 
-    mov rdi,source
+    mov rdi,rdx
     lea rsi,buffer
     ;
     ; <expression1>, <expression2>, ..., [: | 0]
@@ -320,19 +319,19 @@ RenderAssignment proc private uses rsi rdi rbx dest:ptr sbyte,
 
         mov rbx,rcx ; next expression
         mov rdi,rdx ; this expression
-        Tokenize( strcpy( &tokbuf, rdi ), 0, tokenarray, TOK_DEFAULT )
+        Tokenize( tstrcpy( &tokbuf, rdi ), 0, tokenarray, TOK_DEFAULT )
         mov Token_Count,eax
 
         .break .ifd ExpandHllProc( rsi, 0, tokenarray ) == ERROR
 
         .if byte ptr [rsi] ; function calls expanded
 
-            strcat( strcat( dest, rsi ), "\n" )
+            tstrcat( tstrcat( dest, rsi ), "\n" )
             mov byte ptr [rsi],0
         .endif
 
         .break .if !ParseAssignment( rsi, tokenarray )
-        strcat( strcat( dest, rsi ), "\n" )
+        tstrcat( tstrcat( dest, rsi ), "\n" )
         mov rdi,rbx
     .endw
     mov rax,dest
@@ -344,7 +343,7 @@ RenderAssignment endp
     assume  rbx:ptr asm_tok
     assume  rsi:ptr hll_item
 
-ForDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local rc:int_t,
         cmd:uint_t,
@@ -356,7 +355,7 @@ ForDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         tokbuf[MAX_LINE_LEN]:char_t
 
     mov rc,NOT_ERROR
-    mov rbx,tokenarray
+    mov rbx,rdx
     lea rdi,buffer
 
     imul eax,i,asm_tok
@@ -438,18 +437,18 @@ ForDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             add rbx,asm_tok
         .endif
 
-        .if !strchr(strcpy(rdi, [rbx].tokpos), ':')
+        .if !tstrchr(tstrcpy(rdi, [rbx].tokpos), ':')
 
             .return asmerr(2206)
         .endif
         .if BYTE PTR [rax+1] == "'"
-            .return asmerr(2206) .if !strchr(&[rax+1], ':')
+            .return asmerr(2206) .if !tstrchr(&[rax+1], ':')
         .endif
 
         mov BYTE PTR [rax],0
         inc rax
         mov p,tstrstart(rax)
-        .if !strchr(rax, ':')
+        .if !tstrchr(rax, ':')
 
             .return asmerr( 2206 )
         .endif
@@ -464,7 +463,7 @@ ForDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .if [rbx-asm_tok].token == T_OP_BRACKET
 
-            .if strrchr(q, ')')
+            .if tstrrchr(q, ')')
 
                 mov BYTE PTR [rax],0
                 strtrim(q)
@@ -498,7 +497,7 @@ ForDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             mov q,rcx
             mov rdi,rdx
-            Tokenize(strcat(strcpy(&tokbuf, ".if "), rdi), 0, tokenarray, TOK_DEFAULT)
+            Tokenize( tstrcat( tstrcpy(&tokbuf, ".if " ), rdi ), 0, tokenarray, TOK_DEFAULT )
             mov ModuleInfo.token_count,eax
 
             mov i,1

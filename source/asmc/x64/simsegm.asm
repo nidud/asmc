@@ -55,12 +55,12 @@ SegmCombine string_t \
 
 .code
 
-SimGetSegName proc segno:sim_seg
+SimGetSegName proc __ccall segno:sim_seg
     lea rax,SegmNames
     .return( [rax+rcx*string_t] )
 SimGetSegName endp
 
-GetCodeClass proc
+GetCodeClass proc __ccall
     ; option -nc set?
     .if ( Options.names[OPTN_CODE_CLASS*8] )
         .return( Options.names[OPTN_CODE_CLASS*8] )
@@ -90,7 +90,7 @@ AddToDgroup endp
 
 ; generate code to close the current segment
 
-close_currseg proc private
+close_currseg proc __ccall private
 
     mov rcx,CurrSeg
     .if ( rcx )
@@ -100,10 +100,10 @@ close_currseg proc private
 
 close_currseg endp
 
-;; translate a simplified segment directive to
-;; a standard segment directive line
+; translate a simplified segment directive to
+; a standard segment directive line
 
-SetSimSeg proc private uses rsi rdi rbx segm:sim_seg, name:string_t
+SetSimSeg proc __ccall private uses rsi rdi rbx segm:sim_seg, name:string_t
 
     .new pAlign:string_t = "WORD"
     .new pAlignSt:string_t = "PARA"
@@ -113,7 +113,7 @@ SetSimSeg proc private uses rsi rdi rbx segm:sim_seg, name:string_t
     .new pFmt:string_t
     .new pClass:string_t
 
-    ;; v2.24 /Sp[n] Set segment alignment
+    ; v2.24 /Sp[n] Set segment alignment
 
     .if ( Options.segmentalign != 4 )
 
@@ -169,14 +169,14 @@ SetSimSeg proc private uses rsi rdi rbx segm:sim_seg, name:string_t
             mov pFmt,&T("%s %r")
         .else
             or ModuleInfo.simseg_init,bl
-            ;; v2.05: if segment exists already, use the current attribs.
-            ;; This allows a better mix of full and simplified segment
-            ;; directives. Masm behaves differently: the attributes
-            ;; of the simplified segment directives have highest priority.
+            ; v2.05: if segment exists already, use the current attribs.
+            ; This allows a better mix of full and simplified segment
+            ; directives. Masm behaves differently: the attributes
+            ; of the simplified segment directives have highest priority.
 
             .if ( Parse_Pass == PASS_1 )
                 SymSearch( rdi )
-                ;; v2.12: check 'isdefined' member instead of 'lname_idx'
+                ; v2.12: check 'isdefined' member instead of 'lname_idx'
                 .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.flags & S_ISDEFINED )
                     or ModuleInfo.simseg_defd,bl
                 .endif
@@ -187,10 +187,10 @@ SetSimSeg proc private uses rsi rdi rbx segm:sim_seg, name:string_t
         .endif
     .else
         SymSearch( rdi )
-        ;; v2.04: testing for state SYM_SEG isn't enough. The segment
-        ;; might have been "defined" by a GROUP directive. Additional
-        ;; check for segment's lname index is needed.
-        ;; v2.12: check 'isdefined' member instead of 'lname_idx'
+        ; v2.04: testing for state SYM_SEG isn't enough. The segment
+        ; might have been "defined" by a GROUP directive. Additional
+        ; check for segment's lname index is needed.
+        ; v2.12: check 'isdefined' member instead of 'lname_idx'
 
         .if ( rax && [rax].asym.state == SYM_SEG && [rax].asym.flags & S_ISDEFINED )
             mov pFmt,&T("%s %r")
@@ -213,10 +213,10 @@ EndSimSeg endp
 
     assume rbx:ptr asm_tok
 
-SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SimplifiedSegDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
- ;; Handles simplified segment directives:
- ;; .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
+ ; Handles simplified segment directives:
+ ; .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
 
     .new init:char_t
     .new opndx:expr
@@ -226,7 +226,7 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     LstWrite( LSTTYPE_DIRECTIVE, 0, NULL )
 
     xor  edi,edi
-    inc  i ;; get past the directive token
+    inc  i ; get past the directive token
     imul ebx,i,asm_tok
     add  rbx,tokenarray
     mov  esi,GetSflagsSp( [rbx-asm_tok].tokval )
@@ -242,9 +242,9 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .return( ERROR )
         .endif
     .else
-        ;; Masm accepts a name argument for .CODE and .FARDATA[?] only.
-        ;; JWasm also accepts this for .DATA[?] and .CONST unless
-        ;; option -Zne is set.
+        ; Masm accepts a name argument for .CODE and .FARDATA[?] only.
+        ; JWasm also accepts this for .DATA[?] and .CONST unless
+        ; option -Zne is set.
 
         .if ( [rbx].token == T_ID &&
             ( esi == SIM_CODE || esi == SIM_FARDATA || esi == SIM_FARDATA_UN
@@ -263,7 +263,7 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     .if ( esi != SIM_STACK )
-        close_currseg() ;; emit a "xxx ENDS" line to close current seg
+        close_currseg() ; emit a "xxx ENDS" line to close current seg
     .endif
 
     .if ( rdi == NULL )
@@ -276,11 +276,11 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .endif
 
     .switch( esi )
-    .case SIM_CODE ;; .code
+    .case SIM_CODE ; .code
         SetSimSeg( SIM_CODE, rdi )
 
         .if ( ModuleInfo._model == MODEL_TINY )
-            ;; v2.05: add the named code segment to DGROUP
+            ; v2.05: add the named code segment to DGROUP
             .if ( edi )
                 AddToDgroup( SIM_CODE, rdi )
             .endif
@@ -294,37 +294,37 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         AddLineQueueX( "assume cs:%s", rdi )
         .endc
-    .case SIM_STACK ;; .stack
-        ;; if code is generated which does "emit" bytes,
-        ;; the original source line has to be saved.
-        ;; v2.05: must not be done after LstWrite() has been called!
-        ;; Also, there are no longer bytes "emitted".
+    .case SIM_STACK ; .stack
+        ; if code is generated which does "emit" bytes,
+        ; the original source line has to be saved.
+        ; v2.05: must not be done after LstWrite() has been called!
+        ; Also, there are no longer bytes "emitted".
 
         SetSimSeg( SIM_STACK, NULL )
         AddLineQueueX( "ORG 0%xh", opndx.value )
         EndSimSeg( SIM_STACK )
-        ;; add stack to dgroup for some segmented models
+        ; add stack to dgroup for some segmented models
         .if ( !init )
             .if ( ModuleInfo.distance != STACK_FAR )
                 AddToDgroup( SIM_STACK, NULL )
             .endif
         .endif
         .endc
-    .case SIM_DATA    ;; .data
-    .case SIM_DATA_UN ;; .data?
-    .case SIM_CONST   ;; .const
+    .case SIM_DATA    ; .data
+    .case SIM_DATA_UN ; .data?
+    .case SIM_CONST   ; .const
         SetSimSeg( esi, rdi )
         AddLineQueue( "assume cs:ERROR" )
         .if ( rdi || (!init) )
             AddToDgroup( esi, rdi )
         .endif
         .endc
-    .case SIM_FARDATA     ;; .fardata
-    .case SIM_FARDATA_UN  ;; .fardata?
+    .case SIM_FARDATA     ; .fardata
+    .case SIM_FARDATA_UN  ; .fardata?
         SetSimSeg( esi, rdi )
         AddLineQueue( "assume cs:ERROR" )
         .endc
-    .default ;; shouldn't happen
+    .default ; shouldn't happen
         .endc
     .endsw
 
@@ -333,68 +333,67 @@ SimplifiedSegDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
 SimplifiedSegDir endp
 
-;;
- ;; Set default values for .CODE and .DATA segment names.
- ;; Called by ModelDirective(), at Pass 1 only.
+; Set default values for .CODE and .DATA segment names.
+; Called by ModelDirective(), at Pass 1 only.
 
 
-SetModelDefaultSegNames proc uses rsi
+SetModelDefaultSegNames proc __ccall uses rsi
 
-    ;; init segment names with default values
+    ; init segment names with default values
     tmemcpy( &SegmNames, &SegmNamesDef, sizeof(SegmNames) )
 
-    ;; option -nt set?
+    ; option -nt set?
     .if ( Options.names[OPTN_TEXT_SEG*8] )
         mov SegmNames[SIM_CODE*8],LclAlloc( &[tstrlen( Options.names[OPTN_TEXT_SEG*8] ) + 1] )
-        strcpy( SegmNames[SIM_CODE*8], Options.names[OPTN_TEXT_SEG*8] )
+        tstrcpy( SegmNames[SIM_CODE*8], Options.names[OPTN_TEXT_SEG*8] )
     .else
         mov eax,1
         mov cl,ModuleInfo._model
         shl eax,cl
         .if ( eax & SIZE_CODEPTR )
-            ;; for some models, the code segment contains the module name
+            ; for some models, the code segment contains the module name
             mov esi,tstrlen( SegmNamesDef[SIM_CODE*8] )
             add esi,tstrlen( &ModuleInfo.name )
             inc esi
             mov SegmNames[SIM_CODE*8],LclAlloc( esi )
-            strcpy( SegmNames[SIM_CODE*8], &ModuleInfo.name )
-            strcat( SegmNames[SIM_CODE*8], SegmNamesDef[SIM_CODE*8] )
+            tstrcpy( SegmNames[SIM_CODE*8], &ModuleInfo.name )
+            tstrcat( SegmNames[SIM_CODE*8], SegmNamesDef[SIM_CODE*8] )
         .endif
     .endif
 
-    ;; option -nd set?
+    ; option -nd set?
     .if ( Options.names[OPTN_DATA_SEG*8] )
         mov SegmNames[SIM_DATA*8],LclAlloc( &[tstrlen( Options.names[OPTN_DATA_SEG*8] ) + 1] )
-        strcpy( SegmNames[SIM_DATA*8], Options.names[OPTN_DATA_SEG*8] )
+        tstrcpy( SegmNames[SIM_DATA*8], Options.names[OPTN_DATA_SEG*8] )
     .endif
     ret
 SetModelDefaultSegNames endp
 
-;; Called by SetModel() [.MODEL directive].
-;; Initializes simplified segment directives.
-;; and the caller will run RunLineQueue() later.
-;; Called for each pass.
+; Called by SetModel() [.MODEL directive].
+; Initializes simplified segment directives.
+; and the caller will run RunLineQueue() later.
+; Called for each pass.
 
-ModelSimSegmInit proc model:int_t
+ModelSimSegmInit proc __ccall model:int_t
 
   local buffer[20]:char_t
 
-    mov ModuleInfo.simseg_init,0; ;; v2.09: reset init flags
+    mov ModuleInfo.simseg_init,0; ; v2.09: reset init flags
 
-    ;; create default code segment (_TEXT)
+    ; create default code segment (_TEXT)
     SetSimSeg( SIM_CODE, NULL )
     EndSimSeg( SIM_CODE )
 
-    ;; create default data segment (_DATA)
+    ; create default data segment (_DATA)
     SetSimSeg( SIM_DATA, NULL )
     EndSimSeg( SIM_DATA )
 
-    ;; create DGROUP for BIN/OMF if model isn't FLAT
+    ; create DGROUP for BIN/OMF if model isn't FLAT
     .if ( model != MODEL_FLAT && \
         ( Options.output_format == OFORMAT_OMF || Options.output_format == OFORMAT_BIN ))
-        strcpy( &buffer, "%s %r %s" )
+        tstrcpy( &buffer, "%s %r %s" )
         .if ( model == MODEL_TINY )
-            strcat( &buffer, ", %s" )
+            tstrcat( &buffer, ", %s" )
             AddLineQueueX( &buffer, &szDgroup, T_GROUP, SegmNames[SIM_CODE*8], SegmNames[SIM_DATA*8] )
         .else
             AddLineQueueX( &buffer, &szDgroup, T_GROUP, SegmNames[SIM_DATA*8] )
@@ -404,11 +403,11 @@ ModelSimSegmInit proc model:int_t
 
 ModelSimSegmInit endp
 
-;; called when END has been found
+; called when END has been found
 
-ModelSimSegmExit proc
+ModelSimSegmExit proc __ccall
 
-    ;; a model is set. Close current segment if one is open.
+    ; a model is set. Close current segment if one is open.
     .if ( CurrSeg )
         close_currseg()
         RunLineQueue()

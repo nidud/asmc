@@ -172,7 +172,7 @@ GetParmIndex macro x
     retm<rax>
     endm
 
-fastcall_init proc
+fastcall_init proc __ccall
     mov fcscratch,0
     mov WordSize,ModuleInfo.wordsize
     ret
@@ -199,7 +199,7 @@ GetSegmentPart proc __ccall uses rsi rdi rbx opnd:ptr expr, buffer:string_t, ful
         .if [r10].asm_tok.token == T_REG
             mov esi,[r10].asm_tok.tokval
         .else
-            strcpy( rcx, [r10].asm_tok.string_ptr )
+            tstrcpy( rcx, [r10].asm_tok.string_ptr )
         .endif
 
     .elseif rax && [rax].asym.segm
@@ -221,16 +221,16 @@ GetSegmentPart proc __ccall uses rsi rdi rbx opnd:ptr expr, buffer:string_t, ful
                 mov rax,rbx
             .endif
             .if rax
-                strcpy(buffer, [rax].asym.name)
+                tstrcpy(buffer, [rax].asym.name)
             .else
-                strcpy(buffer, "seg ")
-                strcat(buffer, fullparam)
+                tstrcpy(buffer, "seg ")
+                tstrcat(buffer, fullparam)
             .endif
         .endif
     .elseif rax && [rax].asym.state == SYM_STACK
         mov esi,T_SS
     .else
-        strcat(strcpy(rcx, "seg "), fullparam)
+        tstrcat(tstrcpy(rcx, "seg "), fullparam)
     .endif
     mov rax,rsi
     ret
@@ -420,7 +420,7 @@ ms32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
     GetResWName( ebx, &regname )
     inc tstrlen( &regname )
     mov [rsi].asym.string_ptr,LclAlloc(eax)
-    strcpy( [rsi].asym.string_ptr, &regname )
+    tstrcpy( [rsi].asym.string_ptr, &regname )
     inc dword ptr [rdi]
    .return( 1 )
 
@@ -512,16 +512,16 @@ watc_param proc __ccall private uses rsi rdi rbx r12 pp:dsym_t, index:int_t, par
     .endif
     mov size,eax
 
-    .if strchr( rdi, ':' )
+    .if tstrchr( rdi, ':' )
 
-        strcpy( &regs, rdi )
+        tstrcpy( &regs, rdi )
         movzx eax,ModuleInfo.wordsize
         add fcscratch,eax
 
         .for ( rbx = &regs, edi = 0 : edi < 4 : edi++ )
 
             mov [rsi+rdi*8],rbx
-            mov rbx,strchr( rbx, ':' )
+            mov rbx,tstrchr( rbx, ':' )
             .break .if !rbx
             mov byte ptr [rbx],0
             add rbx,2
@@ -808,7 +808,7 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
                 movzx ecx,byte ptr [rcx+rdi+4]
                 GetResWName( ecx, rdx )
                 .if ( edi != 3 )
-                    strcat( &watc_regname, "::" )
+                    tstrcat( &watc_regname, "::" )
                 .endif
             .endf
         .endif
@@ -825,7 +825,7 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
     or [rcx],eax
     inc tstrlen( &watc_regname )
     mov [rsi].asym.string_ptr,LclAlloc( eax )
-    strcpy( rax, &watc_regname )
+    tstrcpy( rax, &watc_regname )
    .return( 1 )
 
 watc_pcheck endp
@@ -1668,7 +1668,7 @@ elf64_param proc __ccall private uses rsi rdi rbx r12 r13 r14 pp:dsym_t, index:i
 
         inc tstrlen(r12)
         mov [r14].name,LclAlloc(eax)
-        strcpy(rax, r12)
+        tstrcpy(rax, r12)
        .return 1
     .endif
 
@@ -2095,7 +2095,7 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
     GetResWName(eax, rdi)
     inc tstrlen(rdi)
     mov [rsi].string_ptr,LclAlloc(eax)
-    strcpy(rax, rdi)
+    tstrcpy(rax, rdi)
    .return TRUE
 
 elf64_pcheck endp
@@ -2311,7 +2311,7 @@ vc32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
     GetResWName( ecx, &regname )
     inc tstrlen( &regname )
     mov [rsi].asym.string_ptr,LclAlloc(eax)
-    strcpy( [rsi].asym.string_ptr, &regname )
+    tstrcpy( [rsi].asym.string_ptr, &regname )
     inc dword ptr [rdi]
    .return( 1 )
 
@@ -2375,7 +2375,7 @@ abs_param proc __ccall private uses rbx pp:dsym_t, index:int_t, param:dsym_t, pa
 
         inc tstrlen(paramvalue)
         mov [rbx].asym.name,LclAlloc(eax)
-        strcpy(rax, paramvalue)
+        tstrcpy(rax, paramvalue)
        .return 1
     .endif
     xor eax,eax

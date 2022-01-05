@@ -16,7 +16,7 @@ include mangle.inc
     option proc:private
     assume rcx:dsym_t
 
-;; VoidMangler: no change to symbol name
+; VoidMangler: no change to symbol name
 
 VoidMangler proc fastcall sym:asym_t, buffer:string_t
 
@@ -29,7 +29,7 @@ VoidMangler proc fastcall sym:asym_t, buffer:string_t
 
 VoidMangler endp
 
-;; UCaseMangler: convert symbol name to upper case
+; UCaseMangler: convert symbol name to upper case
 
 UCaseMangler proc fastcall sym:asym_t, buffer:string_t
 
@@ -45,7 +45,7 @@ UCaseMangler proc fastcall sym:asym_t, buffer:string_t
 
 UCaseMangler endp
 
-;; UScoreMangler: add '_' prefix to symbol name
+; UScoreMangler: add '_' prefix to symbol name
 
 UScoreMangler proc fastcall sym:asym_t, buffer:string_t
 
@@ -60,8 +60,8 @@ UScoreMangler proc fastcall sym:asym_t, buffer:string_t
 
 UScoreMangler endp
 
-;; StdcallMangler: add '_' prefix and '@size' suffix to proc names */
-;;                 add '_' prefix to other symbols */
+; StdcallMangler: add '_' prefix and '@size' suffix to proc names */
+;                 add '_' prefix to other symbols */
 
 StdcallMangler proc fastcall sym:asym_t, buffer:string_t
 
@@ -81,7 +81,7 @@ StdcallMangler proc fastcall sym:asym_t, buffer:string_t
 
 StdcallMangler endp
 
-;; MS FASTCALL 32bit
+; MS FASTCALL 32bit
 
 ms32_decorate proc fastcall sym:asym_t, buffer:string_t
 
@@ -95,15 +95,15 @@ ms32_decorate proc fastcall sym:asym_t, buffer:string_t
 
 ms32_decorate endp
 
-;; flag values used by the OW fastcall name mangler ( changes )
+; flag values used by the OW fastcall name mangler ( changes )
 .enum changes
     NORMAL           = 0,
     USCORE_FRONT     = 1,
     USCORE_BACK      = 2
 
-;; FASTCALL OW style:
-;;  add '_' suffix to proc names and labels
-;;  add '_' prefix to other symbols
+; FASTCALL OW style:
+;  add '_' suffix to proc names and labels
+;  add '_' prefix to other symbols
 
 ow_decorate proc fastcall sym:asym_t, buffer:string_t
 
@@ -141,7 +141,7 @@ ow_decorate proc fastcall sym:asym_t, buffer:string_t
 
 ow_decorate endp
 
-;; MS FASTCALL 64bit
+; MS FASTCALL 64bit
 
 ms64_decorate proc fastcall sym:asym_t, buffer:string_t
 
@@ -166,7 +166,7 @@ vect_decorate proc fastcall sym:asym_t, buffer:string_t
         mov rcx,rsi
     .endif
     .if eax == 0
-        strcpy( rdi, [rcx].name )
+        tstrcpy( rdi, [rcx].name )
         mov eax,[rsi].asym.name_size
     .else
         mov r9,[rsi].dsym.procinfo
@@ -181,7 +181,10 @@ vect_decorate endp
 
     option proc:public
 
-Mangle proc uses rsi rdi sym:asym_t, buffer:string_t
+Mangle proc __ccall uses rsi rdi sym:asym_t, buffer:string_t
+
+    UNREFERENCED_PARAMETER(sym)
+    UNREFERENCED_PARAMETER(buffer)
 
     mov al,[rcx].langtype
     and eax,0x0F
@@ -206,7 +209,7 @@ Mangle proc uses rsi rdi sym:asym_t, buffer:string_t
     .case LANG_WATCALL
         lea rsi,ow_decorate
         .endc
-    .case LANG_FASTCALL ;; registers passing parameters
+    .case LANG_FASTCALL ; registers passing parameters
         .if ( ModuleInfo.Ofssize == USE64 )
             lea rsi,ms64_decorate
         .elseif ( ModuleInfo.fctype == FCT_WATCOMC )
@@ -227,12 +230,12 @@ Mangle proc uses rsi rdi sym:asym_t, buffer:string_t
 
 Mangle endp
 
-;; the "mangle_type" is an extension inherited from OW Wasm
-;; accepted are "C" and "N". It's NULL if MANGLESUPP == 0 (standard)
+; the "mangle_type" is an extension inherited from OW Wasm
+; accepted are "C" and "N". It's NULL if MANGLESUPP == 0 (standard)
 
-SetMangler proc sym:asym_t, langtype:int_t, mangle_type:string_t
+SetMangler proc __ccall sym:asym_t, langtype:int_t, mangle_type:string_t
 
-    .if( edx != LANG_NONE )
+    .if ( edx != LANG_NONE )
         mov [rcx].langtype,dl
     .endif
     ret

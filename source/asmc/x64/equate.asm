@@ -36,10 +36,7 @@ public minintvalues
     assume rdi:asym_t
     assume rbx:token_t
 
-SetValue proc private uses rdi sym:asym_t, opndx:expr_t
-
-    mov rcx,sym
-    mov rdx,opndx
+SetValue proc __ccall private uses rdi sym:asym_t, opndx:expr_t
 
     mov [rcx].state,SYM_INTERNAL
     or  [rcx].flags,S_ISEQUATE or S_ISDEFINED
@@ -116,7 +113,7 @@ SetValue endp
 ; the '=' directive defines an assembly time variable.
 ; this can only be a number (constant or relocatable).
 
-CreateAssemblyTimeVariable proc private uses rsi rdi rbx tokenarray:token_t
+CreateAssemblyTimeVariable proc __ccall private uses rsi rdi rbx tokenarray:token_t
 
     local sym:asym_t
     local name:string_t
@@ -125,7 +122,7 @@ CreateAssemblyTimeVariable proc private uses rsi rdi rbx tokenarray:token_t
     local opn2:expr
 
     mov i,2
-    mov rbx,tokenarray
+    mov rbx,rcx
     mov name,[rbx].string_ptr
     add rbx,2*asm_tok
 
@@ -295,9 +292,8 @@ CreateAssemblyTimeVariable endp
 
     assume rdx:token_t
 
-EqualSgnDirective proc i:int_t, tokenarray:token_t
+EqualSgnDirective proc __ccall i:int_t, tokenarray:token_t
 
-    mov rdx,tokenarray
     .return asmerr(2008, [rdx].string_ptr) .if [rdx].token != T_ID
     .if CreateAssemblyTimeVariable(rdx)
         .if ModuleInfo.list == TRUE
@@ -315,9 +311,9 @@ EqualSgnDirective endp
 ; this is used for some internally generated variables (SIZESTR, INSTR, @Cpu)
 ; NO listing is written! The value is ensured to be max 16-bit wide.
 
-CreateVariable proc uses rdi name:string_t, value:int_t
+CreateVariable proc __ccall uses rdi name:string_t, value:int_t
 
-    mov rdi,SymSearch(name)
+    mov rdi,SymSearch(rcx)
     .if rdi == NULL
         mov rdi,SymCreate(name)
         and [rdi].flag1,not S_ISSAVED
@@ -368,7 +364,7 @@ CreateVariable endp
 
     assume rsi:token_t
 
-CreateConstant proc uses rsi rdi rbx tokenarray:token_t
+CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
 
     local name:         string_t
     local i:            int_t
@@ -378,7 +374,7 @@ CreateConstant proc uses rsi rdi rbx tokenarray:token_t
     local opnd:         expr
     local argbuffer[MAX_LINE_LEN]:char_t
 
-    mov rbx,tokenarray
+    mov rbx,rcx
     .if ( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_DEFINE )
         mov rax,[rbx+asm_tok].string_ptr
     .else
@@ -610,9 +606,9 @@ CreateConstant endp
 
     assume rcx:token_t
 
-EquDirective proc i:int_t, tokenarray:token_t
+EquDirective proc __ccall i:int_t, tokenarray:token_t
 
-    mov rcx,tokenarray
+    mov rcx,rdx
     mov al,[rcx].token
     .if ( [rcx].token == T_DIRECTIVE && [rcx].tokval == T_DEFINE )
         mov al,[rcx+asm_tok].token

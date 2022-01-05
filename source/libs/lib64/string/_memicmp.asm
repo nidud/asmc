@@ -4,10 +4,15 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-_memicmp::
+    option win64:rsp noauto
+
 strncasecmp::
+
+_memicmp proc a:ptr, b:ptr, z:size_t
 
     mov r9,rdx
     .repeat
@@ -40,5 +45,7 @@ strncasecmp::
     .until 1
     mov rax,r8
     ret
+
+_memicmp endp
 
     end

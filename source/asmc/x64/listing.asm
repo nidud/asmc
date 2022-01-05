@@ -96,7 +96,7 @@ define szCount <"count">
     type dw ?
     flags dw ?
     capitems ptr word ?
-    function proc local :ptr asym, :ptr asym, :int_32
+    function proc local __ccall :ptr asym, :ptr asym, :int_32
    .ends
 
 
@@ -192,7 +192,7 @@ endif
     .endif
 
     mov ll.next,NULL
-    memset( &ll.buffer, ' ', sizeof( ll.buffer ) )
+    tmemset( &ll.buffer, ' ', sizeof( ll.buffer ) )
     mov srcfile,get_curr_srcfile()
     mov rbx,CurrSeg
 
@@ -305,7 +305,7 @@ endif
                 mov [rbx].lstleft.next,alloca( sizeof( lstleft ) )
                 mov rbx,rax
                 mov [rbx].lstleft.next,NULL
-                memset( &[rbx].lstleft.buffer, ' ', sizeof( ll.buffer ) )
+                tmemset( &[rbx].lstleft.buffer, ' ', sizeof( ll.buffer ) )
                 lea rdi,[rbx].lstleft.buffer[3]
             .endif
             movsb
@@ -407,8 +407,11 @@ LstPrintf proc __ccall format:string_t, args:vararg
 
 LstPrintf endp
 
+ifdef __UNIX__
+LstNL proc __ccall uses rsi rdi
+else
 LstNL proc __ccall
-
+endif
     .if ( CurrFile[LST*8] )
         fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*8] )
         add list_pos,NLSIZ
@@ -420,12 +423,12 @@ LstNL endp
 ; set the list file's position
 ; this is only needed if generated code is to be
 ; executed BEFORE the original source line is listed.
-
+ifdef __UNIX__
+LstSetPosition proc __ccall uses rsi rdi
+else
 LstSetPosition proc __ccall
-
-    .if ( CurrFile[LST*8] &&
-          Parse_Pass > PASS_1 &&
-          UseSavedState &&
+endif
+    .if ( CurrFile[LST*8] && Parse_Pass > PASS_1 &&  UseSavedState &&
           ModuleInfo.GeneratedCode == 0 )
 
         mov list_pos,LineStoreCurr.get_pos()
@@ -570,9 +573,9 @@ GetMemtypeString proc __ccall uses rsi rdi rbx sym:ptr asym, buffer:string_t
             .if ( [rsi].asym.state == SYM_TYPE && [rsi].asym.typekind == TYPE_TYPEDEF )
                 .if ( [rsi].asym.target_type )
                     mov rcx,[rsi].asym.target_type
-                    strcpy( rbx, [rcx].asym.name )
+                    tstrcpy( rbx, [rcx].asym.name )
                 .elseif ( !( [rsi].asym.ptr_memtype & MT_SPECIAL ) )
-                    strcpy( rbx, SimpleTypeString( [rsi].asym.ptr_memtype ) )
+                    tstrcpy( rbx, SimpleTypeString( [rsi].asym.ptr_memtype ) )
                 .endif
             .endif
             .return( buffer )
@@ -789,12 +792,12 @@ log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
     .if ( [rsi].asym.mem_type == MT_PROC && rbx ) ; typedef proto?
 
         lea rdx,strings
-        strcat( rdi, [rdx+LS_PROC] )
-        strcat( rdi, " " )
+        tstrcat( rdi, [rdx+LS_PROC] )
+        tstrcat( rdi, " " )
         mov rcx,[rbx].asym.name
         .if ( byte ptr [rcx] ) ; the name may be ""
-            strcat( rdi, rcx )
-            strcat( rdi, " ")
+            tstrcat( rdi, rcx )
+            tstrcat( rdi, " ")
         .endif
 
         ; v2.11: target_type has state SYM_TYPE (since v2.09).
@@ -808,9 +811,9 @@ log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
         movzx eax,[rsi].asym.Ofssize
         lea rcx,[rcx+rax*4]
         lea rdx,strings
-        strcat( rdi, [rdx+rcx] )
-        strcat( rdi, " " )
-        strcat( rdi, GetLanguage( [rsi].asym.target_type ) )
+        tstrcat( rdi, [rdx+rcx] )
+        tstrcat( rdi, " " )
+        tstrcat( rdi, GetLanguage( [rsi].asym.target_type ) )
     .else
         mov rdi,GetMemtypeString( rsi, rdi )
     .endif
@@ -1091,7 +1094,7 @@ log_proc proc __ccall uses rsi rdi rbx r12 sym:ptr asym
             .if ( [rdi].asym.flag1 & S_ISARRAY )
                 tsprintf( &buffer, "%s[%u]", GetMemtypeString( rdi, NULL), [rdi].asym.total_length )
             .else
-                strcpy( &buffer, GetMemtypeString( rdi, NULL ) )
+                tstrcpy( &buffer, GetMemtypeString( rdi, NULL ) )
             .endif
             mov rcx,[rsi].dsym.procinfo
             mov rbx,GetResWName( [rcx].proc_info.basereg, NULL )
@@ -1256,12 +1259,15 @@ LstCaption proc __ccall uses rsi caption:string_t, prefNL:int_t
 
 LstCaption endp
 
-compare_syms proc __ccall p1:ptr, p2:ptr
-
+compare_syms proc p1:ptr, p2:ptr
+ifdef __UNIX__
+    mov rcx,[rdi]
+    mov rdx,[rsi]
+else
     mov rcx,[rcx]
     mov rdx,[rdx]
+endif
    .return( tstrcmp( [rcx].asym.name, [rdx].asym.name ) )
-
 compare_syms endp
 
     option proc: public
@@ -1296,14 +1302,13 @@ LstWriteCRef proc __ccall uses rsi rdi rbx r12
 
     ; sort 'em
     qsort( syms, SymCount, sizeof( asym_t ), &compare_syms )
-    memset( &queues, 0, sizeof( queues ) )
+    tmemset( &queues, 0, sizeof( queues ) )
 
     .for ( ebx = 0: ebx < SymCount: ++ebx )
 
         mov rcx,syms
         mov rdi,[rcx+rbx*8]
 
-        ;qdesc *q
         .continue .if !( [rdi].asym.flag1 & S_LIST )
 
         .switch ( [rdi].asym.state )
@@ -1362,10 +1367,11 @@ LstWriteCRef proc __ccall uses rsi rdi rbx r12
     lea r12,cr
 
     .for ( ebx = 0: ebx < lengthof(cr): ebx++ )
-        imul edi,ebx,print_item
-        movzx ecx,[r12+rdi].type
-        imul ecx,ecx,qdesc
-        lea rax,queues
+
+        imul    edi,ebx,print_item
+        movzx   ecx,[r12+rdi].type
+        imul    ecx,ecx,qdesc
+        lea     rax,queues
 
         .if ( [rax+rcx].qdesc.head )
             .if ( [r12+rdi].capitems )
@@ -1543,7 +1549,7 @@ ListMacroDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
 ListMacroDirective endp
 
-LstInit proc __ccall uses rsi
+LstInit proc __ccall uses rsi rdi
 
     mov list_pos,0
 
@@ -1552,9 +1558,9 @@ LstInit proc __ccall uses rsi
         mov list_pos,tstrlen( &cp_logo )
         fwrite( &cp_logo, 1, list_pos, CurrFile[LST*8] )
         LstNL()
-        mov rsi,GetFName( ModuleInfo.srcfile )
-        add list_pos,tstrlen( rsi )
-        fwrite( rsi, 1, eax, CurrFile[LST*8] )
+        mov rdi,GetFName( ModuleInfo.srcfile )
+        add list_pos,tstrlen( rdi )
+        fwrite( rdi, 1, eax, CurrFile[LST*8] )
         LstNL()
     .endif
     ret

@@ -81,7 +81,11 @@ MemFini proc uses rbx
 ifndef __UNIX__
         HeapFree(hProcessHeap, 0, rax)
 else
+        push rsi
+        push rdi
         free(rax)
+        pop rdi
+        pop rsi
 endif
     .endw
     mov pBase,rbx
@@ -90,9 +94,10 @@ MemFini endp
 
 .pragma warning(disable: 6004)
 
-LclAlloc proc fastcall uses rbx size:uint_t
 ifdef __UNIX__
-    push rdi
+LclAlloc proc fastcall uses rsi rdi rbx r12 size:uint_t
+else
+LclAlloc proc fastcall uses rbx size:uint_t
 endif
 
     mov rax,pCurr
@@ -109,10 +114,10 @@ endif
         add ecx,ALIGNMENT
 
 ifdef __UNIX__
-        mov rdi,rcx
+        mov r12,rcx
         .if malloc(ecx)
 
-            mov rcx,rdi
+            mov rcx,r12
             mov rdx,rax
             mov rdi,rax
             xor eax,eax
@@ -131,15 +136,15 @@ endif
     .endif
     sub currfree,ecx
     add pCurr,rcx
-ifdef __UNIX__
-    pop rdi
-endif
     ret
 
 LclAlloc endp
 
-MemAlloc proc fastcall len
-
+ifdef __UNIX__
+MemAlloc proc fastcall uses rsi rdi len:uint_t
+else
+MemAlloc proc fastcall len:uint_t
+endif
     .if !malloc(ecx)
         mov currfree,eax
         asmerr(1901)

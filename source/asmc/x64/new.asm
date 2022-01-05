@@ -49,7 +49,7 @@ ConstructorCall proc __ccall private uses rsi rdi rbx r12 \
         cltype  : ClType,
         cc[256] : char_t            ; class_class
 
-    mov rsi,strcat( strcat( strcpy( &cc, class ), "_" ), class )
+    mov rsi,tstrcat( tstrcat( tstrcpy( &cc, class ), "_" ), class )
 
     SymFind(rsi)
 
@@ -297,11 +297,11 @@ AssignStruct proc __ccall private uses rsi rdi rbx r12 r13 r14 name:string_t, sy
         lea rdi,val
         .if byte ptr [rsi] == '{'
 
-            strcpy( rdi, r12 )
+            tstrcpy( rdi, r12 )
             mov rcx,[rbx].sfield.name
             .if byte ptr [rcx]
-                strcat( rdi, "." )
-                strcat( rdi, [rbx].sfield.name )
+                tstrcat( rdi, "." )
+                tstrcat( rdi, [rbx].sfield.name )
             .endif
             mov rsi,AssignStruct( rdi, [rbx].sfield.type, rsi )
 
@@ -644,9 +644,9 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
         .if ( [rsi].Ofssize == USE32 && flag & T_HLL_PROC &&
              ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
 
-            strcat( rdi, "dword ptr " )
-            strcpy( &l2, "mov dword ptr " )
-            strcat( strcat( rax, name ), "[4], edx" )
+            tstrcat( rdi, "dword ptr " )
+            tstrcpy( &l2, "mov dword ptr " )
+            tstrcat( tstrcat( rax, name ), "[4], edx" )
         .elseif ( [rsi].Ofssize == USE64 && ( flag & T_HLL_PROC || word ptr [rdx] == '&' ) )
         .elseifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
@@ -676,7 +676,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
         .endif
     .endif
 
-    strcat( strcat( rdi, name ), ", " )
+    tstrcat( tstrcat( rdi, name ), ", " )
     xor esi,esi
 
     assume rsi:nothing
@@ -696,23 +696,23 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
             .endc
         .endsw
         .if ( [rbx].token == T_INSTRUCTION )
-            strcat(rdi, " ")
+            tstrcat(rdi, " ")
         .endif
         .if ( !esi && [rbx].token == T_STRING && [rbx].bytval == '"' )
             .if SymSearch( name )
                 .if ( [rax].asym.mem_type & MT_PTR )
-                    strcat(rdi, "&@CStr(")
-                    strcat(rdi, [rbx].string_ptr)
-                    strcat(rdi, ")")
+                    tstrcat(rdi, "&@CStr(")
+                    tstrcat(rdi, [rbx].string_ptr)
+                    tstrcat(rdi, ")")
                     add rbx,asm_tok
                     .break
                 .endif
             .endif
         .endif
-        strcat(rdi, [rbx].string_ptr)
+        tstrcat(rdi, [rbx].string_ptr)
         .if ( [rbx].token == T_INSTRUCTION ) || \
             ( [rbx].token == T_RES_ID && [rbx].tokval == T_ADDR )
-            strcat(rdi, " ")
+            tstrcat(rdi, " ")
         .endif
         add rbx,asm_tok
     .endw

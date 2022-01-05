@@ -423,27 +423,31 @@ NOTE    dq N0000,N0001,N0002,N0003
 
     .code
 
-print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t, args:ptr string_t
+ifdef __UNIX__
+print_err proc __ccall private uses rsi rdi r12 r13 rbx erbuf:string_t, format:string_t, args:ptr string_t
+else
+print_err proc __ccall private uses r12 r13 rbx erbuf:string_t, format:string_t, args:ptr string_t
+endif
 
-    mov rsi,rcx
-    mov rdi,rdx
+    mov r12,rcx
+    mov r13,rdx
     mov rbx,r8
 
     write_logo()
-    tvsprintf( rsi, rdi, rbx )
+    tvsprintf( r12, r13, rbx )
     ;
     ; v2.05: new option -eq
     ;
     .if ( !Options.no_error_disp )
-        tprintf( "%s\n", rsi )
+        tprintf( "%s\n", r12 )
     .endif
     ;
     ; open .err file if not already open and a name is given
     ;
     mov rbx,ModuleInfo.curr_fname[ERR*8]
-    mov rdi,ModuleInfo.curr_file[ERR*8]
+    mov r13,ModuleInfo.curr_file[ERR*8]
 
-    .if ( !rdi && rbx )
+    .if ( !r13 && rbx )
 
         .if fopen( rbx, "w" )
 
@@ -462,17 +466,17 @@ print_err proc __ccall private uses rsi rdi rbx erbuf:string_t, format:string_t,
         .endif
     .endif
 
-    mov rdi,ModuleInfo.curr_file[ERR*8]
-    .if rdi
+    mov r13,ModuleInfo.curr_file[ERR*8]
+    .if r13
 
-        fwrite( rsi, 1, tstrlen(rsi), rdi )
-        fwrite( "\n", 1, 1, rdi )
+        fwrite( r12, 1, tstrlen(r12), r13 )
+        fwrite( "\n", 1, 1, r13 )
 
         .if ( Parse_Pass == PASS_1 && ModuleInfo.curr_file[LST*8] )
 
             GetCurrOffset()
             LstWrite( LSTTYPE_DIRECTIVE, eax, 0 )
-            LstPrintf( "                           %s", rsi )
+            LstPrintf( "                           %s", r12 )
             LstNL()
         .endif
     .endif
@@ -487,10 +491,10 @@ errexit proc __ccall private
         longjmp(&jmpenv, 3)
     .endif
 
-    mov rax,ModuleInfo.curr_file[OBJ*8]
-    .if rax
+    mov rcx,ModuleInfo.curr_file[OBJ*8]
+    .if rcx
 
-        fclose(rax)
+        fclose(rcx)
         remove(ModuleInfo.curr_fname[OBJ*8])
     .endif
     exit(1)
@@ -498,7 +502,7 @@ errexit proc __ccall private
 errexit endp
 
 
-asmerr proc __cdecl uses rsi rdi rbx value:int_t, args:vararg
+asmerr proc __ccall uses rsi rdi rbx value:int_t, args:vararg
 
   local format[512]:byte, erbuf[512]:byte, masm[64]:byte
 
@@ -520,7 +524,7 @@ asmerr proc __cdecl uses rsi rdi rbx value:int_t, args:vararg
 
             .endif
 
-            strcpy(rdi, "ASMC : ")
+            tstrcpy(rdi, "ASMC : ")
             mov rdx,ModuleInfo.src_stack
 
             .while rdx
@@ -548,7 +552,7 @@ asmerr proc __cdecl uses rsi rdi rbx value:int_t, args:vararg
             .else
                 lea rax,@CStr("warning")
             .endif
-            strcat(rdi, rax)
+            tstrcat(rdi, rax)
 
             add rdi,tstrlen(rdi)
             tsprintf(rdi, " A%04u: ", ebx)
@@ -575,7 +579,7 @@ asmerr proc __cdecl uses rsi rdi rbx value:int_t, args:vararg
             .break .if rsi == rdx
 
             lea rdi,format
-            strcat(rdi, rsi)
+            tstrcat(rdi, rsi)
 
             .if ebx == 2006
 
@@ -589,8 +593,8 @@ asmerr proc __cdecl uses rsi rdi rbx value:int_t, args:vararg
 
                     .ifd tstricmp(rax, rbx) == 0
 
-                        strcpy(&masm, rbx)
-                        mov args,strcat(rax, " -- use option /Znk for Masm keywords" )
+                        tstrcpy(&masm, rbx)
+                        mov args,tstrcat(rax, " -- use option /Znk for Masm keywords" )
                         .break
                     .endif
                 .endw

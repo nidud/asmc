@@ -1259,7 +1259,7 @@ _fltunpack endp
     assume rcx: nothing
     assume rdi: ptr STRFLT
 
-_fltsetflags proc uses rsi rdi fp:ptr STRFLT, string:string_t, flags:uint_t
+_fltsetflags proc __ccall uses rsi rdi fp:ptr STRFLT, string:string_t, flags:uint_t
 
     mov rdi,rcx
     mov rsi,rdx
@@ -2371,7 +2371,7 @@ __addq proc fastcall dest:ptr, src:ptr
   local a:STRFLT
   local b:STRFLT
 
-    _fltunpack(&a, dest)
+    _fltunpack(&a, rcx)
     _fltunpack(&b, src)
     _fltadd(&a, &b)
     _fltpackfp(dest, &a)
@@ -2384,7 +2384,7 @@ __subq proc fastcall dest:ptr, src:ptr
   local a:STRFLT
   local b:STRFLT
 
-    _fltunpack(&a, dest)
+    _fltunpack(&a, rcx)
     _fltunpack(&b, src)
     _fltsub(&a, &b)
     _fltpackfp(dest, &a)
@@ -2397,7 +2397,7 @@ __mulq proc fastcall dest:ptr, src:ptr
   local a:STRFLT
   local b:STRFLT
 
-    _fltunpack(&a, dest)
+    _fltunpack(&a, rcx)
     _fltunpack(&b, src)
     _fltmul(&a, &b)
     _fltpackfp(dest, &a)
@@ -2410,7 +2410,7 @@ __divq proc fastcall dest:ptr, src:ptr
   local a:STRFLT
   local b:STRFLT
 
-    _fltunpack(&a, dest)
+    _fltunpack(&a, rcx)
     _fltunpack(&b, src)
     _fltdiv(&a, &b)
     _fltpackfp(dest, &a)
@@ -2482,7 +2482,7 @@ __cvth_q proc fastcall q:ptr, h:ptr
                 ;
                 ; Invalid exception
                 ;
-                _set_errno(EDOM)
+                mov qerrno,EDOM
                 mov ecx,0xFFFF
                 mov edx,0x40000000 ; QNaN
             .else
@@ -3103,7 +3103,7 @@ atofloat proc fastcall _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftyp
                 .if ( Parse_Pass == PASS_1 )
                     asmerr( 7004 )
                 .endif
-                memset( _out, 0, size )
+                tmemset( _out, 0, size )
             .endsw
             .if qerrno
                 asmerr( 2071 )
@@ -3151,7 +3151,7 @@ atofloat proc fastcall _out:ptr, inp:string_t, size:uint_t, negative:int_t, ftyp
             .if ( Parse_Pass == PASS_1 )
                 asmerr( 7004 )
             .endif
-            memset( _out, 0, size )
+            tmemset( _out, 0, size )
         .endsw
     .endif
     ret

@@ -27,12 +27,12 @@ include operator.inc
 
     option proc: private
 
-ClassProto proc uses rsi rdi class:string_t, langtype:int_t, args:string_t, type:int_t
+ClassProto proc __ccall uses rsi rdi class:string_t, langtype:int_t, args:string_t, type:int_t
 
   local pargs[1024]:char_t
 
     lea rdi,pargs ; default args :abs=<val>
-    mov rsi,args
+    mov rsi,r8
     lea rcx,[rdi+1023]
     mov al,1
 
@@ -61,14 +61,15 @@ ClassProto endp
 
     assume rsi:ptr com_item
 
-ClassProto2 proc uses rsi rdi rbx class:string_t, method:string_t, item:ptr com_item, args:string_t, this_ptr:string_t
+ClassProto2 proc __ccall uses rsi rdi rbx class:string_t, method:string_t,
+        item:ptr com_item, args:string_t, this_ptr:string_t
 
   local name[256]:char_t
   local this[256]:char_t
   local buffer[512]:char_t
 
-    mov rsi,item
-    mov rdi,args
+    mov rsi,r8
+    mov rdi,r9
     mov rbx,this_ptr
 
     .if ( rbx == NULL )
@@ -92,12 +93,12 @@ ClassProto2 endp
 
     assume rdi:ptr sfield
 
-AddPublic proc uses rsi rdi rbx this:ptr com_item, sym:ptr asym
+AddPublic proc __ccall uses rsi rdi rbx this:ptr com_item, sym:ptr asym
 
   local q[512]:char_t
 
-    mov rsi,this
-    mov rbx,sym
+    mov rsi,rcx
+    mov rbx,rdx
 
     .if ( [rbx].asym.total_size && Parse_Pass == 0 )
 
@@ -112,11 +113,11 @@ AddPublic proc uses rsi rdi rbx this:ptr com_item, sym:ptr asym
                     AddPublic(rsi, rdx)
                 .else
 
-                    strcpy( &q, [rbx].asym.name )
+                    tstrcpy( &q, [rbx].asym.name )
                     mov ecx,[rbx].asym.name_size
                     mov word ptr [rax+rcx-4],'_'
 
-                    .if SymFind( strcat( rax, [rdi].name ) )
+                    .if SymFind( tstrcat( rax, [rdi].name ) )
 
                         mov rdx,[rax].asym.name
                         .if [rax].asym.state == SYM_TMACRO
@@ -132,18 +133,18 @@ AddPublic proc uses rsi rdi rbx this:ptr com_item, sym:ptr asym
 
 AddPublic endp
 
-OpenVtbl proc uses rsi rbx this:ptr com_item
+OpenVtbl proc __ccall uses rsi rbx this:ptr com_item
 
   local q[512]:char_t
 
-    mov rsi,this
+    mov rsi,rcx
     AddLineQueueX( "%sVtbl struct", [rsi].class )
 
     ; v2.30.32 - : public class
 
     mov rdx,[rsi].publsym
     .return 0 .if !rdx
-    .return 1 .if !SymFind( strcat( strcpy( &q, [rdx].asym.name ), "Vtbl" ) )
+    .return 1 .if !SymFind( tstrcat( tstrcpy( &q, [rdx].asym.name ), "Vtbl" ) )
 
     mov rbx,rax
     xor eax,eax
@@ -161,13 +162,13 @@ OpenVtbl endp
     assume rdi:nothing
     assume rbx:ptr asm_tok
 
-get_param_name proc uses rsi rdi rbx tokenarray:token_t, token:string_t,
+get_param_name proc __ccall uses rsi rdi rbx tokenarray:token_t, token:string_t,
         count:ptr int_t, isid:ptr int_t, context:ptr string_t, langtype:ptr int_t
 
    .new operator:byte = 0
 
-    mov rdi,token
-    mov rbx,tokenarray
+    mov rdi,rdx
+    mov rbx,rcx
     mov rsi,[rbx].tokpos
     xor eax,eax
     mov rcx,context
@@ -180,7 +181,7 @@ get_param_name proc uses rsi rdi rbx tokenarray:token_t, token:string_t,
         .if ( [rbx].token != T_ID )
             .return asmerr( 1011 )
         .endif
-        strcpy( rdi, [rbx].string_ptr )
+        tstrcpy( rdi, [rbx].string_ptr )
         mov rcx,isid
         inc dword ptr [rcx]
         add rbx,asm_tok
@@ -222,7 +223,7 @@ get_param_name endp
 
     option proc: public
 
-ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+ProcType proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local retval:int_t
   local name:string_t
@@ -249,7 +250,7 @@ ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov langtype,[rsi].com_item.langtype
         mov rdi,NameSpace( name, name )
 
-        .if ( strcmp( rdi, [rsi].com_item.class ) == 0 )
+        .if ( tstrcmp( rdi, [rsi].com_item.class ) == 0 )
 
             ClassProto2( rdi, rdi, rsi, [rbx+asm_tok].tokpos, NULL )
             mov constructor,1
@@ -292,13 +293,13 @@ ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
     tsprintf( &T$, "T$%04X", ModuleInfo.class_label )
     tsprintf( &P$, "P$%04X", ModuleInfo.class_label )
 
-    strcat( strcpy( rdi, &T$ ), " typedef proto" )
+    tstrcat( tstrcpy( rdi, &T$ ), " typedef proto" )
 
     .if ( rsi && [rsi].com_item.cmd == T_DOT_COMDEF )
 
         .if ( ModuleInfo.Ofssize == USE32 && ModuleInfo.langtype != LANG_STDCALL )
 
-            strcat(rdi, " stdcall")
+            tstrcat(rdi, " stdcall")
         .endif
     .endif
 
@@ -317,15 +318,15 @@ ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( [rbx+asm_tok].token == T_FINAL || esi || \
                 ( [rbx].token != T_COLON && [rbx+asm_tok].token != T_COLON ) )
 
-                strcat(rdi, " ")
-                strcat(rdi, [rbx].string_ptr)
+                tstrcat(rdi, " ")
+                tstrcat(rdi, [rbx].string_ptr)
                 add rbx,asm_tok
 
             .elseif !esi && langtype
 
                 GetResWName(langtype, &language)
-                strcat(rdi, " ")
-                strcat(rdi, &language)
+                tstrcat(rdi, " ")
+                tstrcat(rdi, &language)
             .endif
             xor esi,esi
         .endif
@@ -346,8 +347,8 @@ ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if ecx
 
             GetResWName(ecx, &language)
-            strcat(rdi, " ")
-            strcat(rdi, &language)
+            tstrcat(rdi, " ")
+            tstrcat(rdi, &language)
         .endif
     .endif
 
@@ -362,25 +363,25 @@ ProcType proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     .if ( IsCom && !rax )
 
-        strcat(rdi, " :ptr")
+        tstrcat(rdi, " :ptr")
         mov rax,ModuleInfo.ComStack
         .if ( rax )
 
             .if ( [rax].com_item.cmd == T_DOT_CLASS )
 
-                strcat(rdi, " ")
+                tstrcat(rdi, " ")
                 mov rax,ModuleInfo.ComStack
-                strcat(rdi, [rax].com_item.class)
+                tstrcat(rdi, [rax].com_item.class)
             .endif
         .endif
 
         .if rsi
-            strcat(rdi, ",")
+            tstrcat(rdi, ",")
         .endif
     .endif
     .if rsi
-        strcat(rdi, " ")
-        strcat(rdi, [rbx].tokpos)
+        tstrcat(rdi, " ")
+        tstrcat(rdi, [rbx].tokpos)
     .endif
 
     AddLineQueue( rdi )
@@ -397,9 +398,9 @@ done:
 
     .if ( constructor )
 
-        strcpy( buffer, rdi )
-        strcat( rax, "_" )
-        strcat( rax, rdi )
+        tstrcpy( buffer, rdi )
+        tstrcat( rax, "_" )
+        tstrcat( rax, rdi )
         .if SymFind( rax )
             or [rax].asym.flag1,S_METHOD
         .endif
@@ -409,7 +410,7 @@ done:
 
 ProcType endp
 
-ParseMacroArgs proc private uses rsi rdi rbx buffer:string_t, count:int_t, args:string_t
+ParseMacroArgs proc __ccall private uses rsi rdi rbx buffer:string_t, count:int_t, args:string_t
 
     ; :abs, name:ptr, x:abs=<val>, ...
 
@@ -430,7 +431,7 @@ ParseMacroArgs proc private uses rsi rdi rbx buffer:string_t, count:int_t, args:
             mov byte ptr [rdi],0
         .endif
 
-        .if strchr(rbx, ',')
+        .if tstrchr(rbx, ',')
             inc rax
         .else
             tstrlen(rbx)
@@ -438,7 +439,7 @@ ParseMacroArgs proc private uses rsi rdi rbx buffer:string_t, count:int_t, args:
         .endif
         xchg rbx,rax
 
-        .if strchr(rax, '=')
+        .if tstrchr(rax, '=')
 
             .if rax < rbx
 
@@ -463,7 +464,7 @@ ParseMacroArgs proc private uses rsi rdi rbx buffer:string_t, count:int_t, args:
 
 ParseMacroArgs endp
 
-MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inline:string_t, vargs:int_t
+MacroInline proc __ccall uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inline:string_t, vargs:int_t
 
   local buf[512]:char_t
   local mac[512]:char_t
@@ -471,7 +472,7 @@ MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inl
 
     .return 0 .if ( Parse_Pass > PASS_1 )
 
-    strcpy( &buf, args )
+    tstrcpy( &buf, r8 )
 
     mov mac,0
     lea rdi,mac
@@ -495,9 +496,9 @@ MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inl
         ; .static name this, [name1]:type, ... { ... }
         ; args: this, _1, _2, ...
 
-        lea rdi,[strcpy( rdi, "this" ) + 4]
+        lea rdi,[tstrcpy( rdi, "this" ) + 4]
         .if count > 1
-            lea rdi,[strcpy(rdi, ", ") + 2]
+            lea rdi,[tstrcpy(rdi, ", ") + 2]
             mov rdi,ParseMacroArgs( rdi, count, &buf )
             sub rdi,2
             mov byte ptr [rdi],0
@@ -506,7 +507,7 @@ MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inl
 
     .if vargs
 
-        strcpy( rdi, ":vararg" )
+        tstrcpy( rdi, ":vararg" )
     .endif
 
     AddLineQueueX( "%s macro %s", name, &mac )
@@ -516,7 +517,7 @@ MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inl
         inc rsi
     .endw
 
-    .for ( rdi = 0 : strchr(rsi, 10) : )
+    .for ( rdi = 0 : tstrchr(rsi, 10) : )
 
         mov rbx,rax
         mov byte ptr [rbx],0
@@ -548,7 +549,7 @@ MacroInline proc uses rsi rdi rbx name:string_t, count:int_t, args:string_t, inl
 
 MacroInline endp
 
-ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+ClassDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
    .new rc              : int_t = NOT_ERROR
    .new args            : int_t
@@ -568,10 +569,10 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
    .new this[256]       : char_t
    .new this_ptr        : string_t
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     lea rdi,class
 
-    imul edx,i,asm_tok
+    imul edx,ecx,asm_tok
     mov eax,[rbx+rdx].tokval
     mov cmd,eax
     inc i
@@ -593,10 +594,10 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
         AddLineQueueX( "%s ends", [rsi].asym.name )
         mov rdx,[rdi].com_item.publsym
         .if rdx
-            .if !strcmp([rdi].com_item.class, [rsi].asym.name)
+            .if !tstrcmp([rdi].com_item.class, [rsi].asym.name)
 
                 mov rdx,[rdi].com_item.publsym
-                .if SymFind( strcat( strcpy( &class, [rdx].asym.name ), "Vtbl" ) )
+                .if SymFind( tstrcat( tstrcpy( &class, [rdx].asym.name ), "Vtbl" ) )
 
                     OpenVtbl(rdi)
                     AddLineQueueX( "%sVtbl ends", [rsi].asym.name )
@@ -673,7 +674,7 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             asmerr( 2008, [rbx].tokpos )
         .endif
 
-        mov rdi,strcpy( &name, &token )
+        mov rdi,tstrcpy( &name, &token )
         mov rcx,[rsi].com_item.class
         mov class_ptr,rcx
 
@@ -683,7 +684,7 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rcx,[rcx].asym.name
         .endif
 
-        mov vtable,SymFind( strcat( strcpy( &class, rcx ), "Vtbl" ) )
+        mov vtable,SymFind( tstrcat( tstrcpy( &class, rcx ), "Vtbl" ) )
         .if ( rax == NULL )
             mov rax,CurrStruct
         .endif
@@ -694,7 +695,7 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .if ( !SearchNameInStruct( rcx, rdi, 0, 0 ) || !vtable )
 
-                strcmp(rdi, class_ptr) ; constructor ?
+                tstrcmp(rdi, class_ptr) ; constructor ?
 
                 .if ( rax && [rsi].com_item.method != T_DOT_OPERATOR )
 
@@ -779,7 +780,7 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         ; v2.32.20 - removed typedefs
 
-        strcpy( rdi, rsi )
+        tstrcpy( rdi, rsi )
 
         add rbx,asm_tok
         .if ( [rbx].token == T_ID )
@@ -875,14 +876,14 @@ ClassDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
 ClassDirective endp
 
-ClassInit proc
+ClassInit proc __ccall
 
     mov ModuleInfo.class_label,0 ; init class label counter
     ret
 
 ClassInit endp
 
-ClassCheckOpen proc
+ClassCheckOpen proc __ccall
 
     .if ModuleInfo.ComStack
 

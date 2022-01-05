@@ -49,7 +49,7 @@ externdef list_pos:uint_t
 ; the status is then restored in further passes,
 ; and the precompiled lines are used for assembly then.
 ;
-SaveState proc private
+SaveState proc __ccall private
     xor eax,eax
     mov modstate.head,rax
     mov modstate.tail,rax
@@ -71,7 +71,7 @@ SaveState proc private
     ret
 SaveState endp
 
-StoreLine proc uses rsi rdi rbx sline:string_t, flags:int_t, lst_position:uint_t
+StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_position:uint_t
 
     xor eax,eax
     .return .if ( eax != NoLineStore )
@@ -147,7 +147,7 @@ StoreLine endp
 ; an error has been detected in pass one. it should be
 ; reported in pass 2, so ensure that a full source scan is done then
 ;
-SkipSavedState proc
+SkipSavedState proc __ccall
     mov UseSavedState,0
     ret
 SkipSavedState endp
@@ -162,9 +162,9 @@ SkipSavedState endp
 ; - it is changed
 ; - it was defined when StoreState() is called
 ;
-SaveVariableState proc uses rsi rdi sym:asym_t
+SaveVariableState proc __ccall uses rsi rdi sym:asym_t
 
-    mov rsi,sym
+    mov rsi,rcx
     or  [rsi].asym.flag1,S_ISSAVED
     mov rdi,LclAlloc(equ_item)
     mov [rdi].equ_item.next,0
@@ -187,7 +187,7 @@ SaveVariableState proc uses rsi rdi sym:asym_t
     ret
 SaveVariableState endp
 
-RestoreState proc
+RestoreState proc __ccall
 
     .if modstate.init
 
@@ -229,7 +229,7 @@ RestoreState proc
 
 RestoreState endp
 
-FastpassInit proc
+FastpassInit proc __ccall
 
     xor eax,eax
     mov StoreState,eax

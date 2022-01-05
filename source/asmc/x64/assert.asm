@@ -22,7 +22,7 @@ MAXSAVESTACK equ 124
     assume rbx: ptr asm_tok
     assume rsi: ptr hll_item
 
-AssertDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local rc:int_t,cmd:uint_t,
         buff[16]:char_t,
@@ -63,8 +63,9 @@ AssertDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 .if SymFind(rdi)
 
-                    free(ModuleInfo.assert_proc)
-                    _strdup(rdi)
+                    MemFree(ModuleInfo.assert_proc)
+                    inc tstrlen(rdi)
+                    tstrcpy(MemAlloc(eax), rdi)
                     mov ModuleInfo.assert_proc,rax
                     .endc
                 .endif
@@ -145,7 +146,7 @@ AssertDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
         .endif
 
         imul edx,i,asm_tok
-        strcpy( &cmdstr, [rbx+rdx].tokpos )
+        tstrcpy( &cmdstr, [rbx+rdx].tokpos )
 
         .if ModuleInfo.xflag & OPT_PUSHF
 
@@ -205,7 +206,7 @@ AssertDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
         AddLineQueue ("db @CatStr(!\",\%\@FileName,<(>,\%@Line,<): >,!\")")
 
         lea rbx,cmdstr
-        .while strchr(rbx, '"')
+        .while tstrchr(rbx, '"')
 
             mov byte ptr [rax],0
             xchg rbx,rax
@@ -245,9 +246,7 @@ AssertDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         RunLineQueue()
     .endif
-
-    mov eax,rc
-    ret
+    .return( rc )
 
 AssertDirective endp
 

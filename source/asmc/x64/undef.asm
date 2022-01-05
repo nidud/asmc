@@ -15,13 +15,13 @@ include parser.inc
 
     assume rbx:ptr asm_tok
 
-UndefDirective proc uses rsi rbx i:int_t, tokenarray:ptr asm_tok
+UndefDirective proc __ccall uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov  esi,i
+    mov  esi,ecx
     inc  esi ;; skip directive
 
     imul ebx,esi,asm_tok
-    add  rbx,tokenarray
+    add  rbx,rdx
 
     .repeat
 
@@ -52,7 +52,6 @@ UndefDirective proc uses rsi rbx i:int_t, tokenarray:ptr asm_tok
 
         .endif
     .until ( esi >= Token_Count )
-
     .return( NOT_ERROR )
 
 UndefDirective endp

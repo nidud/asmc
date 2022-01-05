@@ -4,21 +4,27 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-memcmp::
+    option win64:rsp noauto
 
-    xchg rsi,rdx
-    xchg rdi,rcx
-    xchg rcx,r8
-    xor  rax,rax
-    repe cmpsb
-    .ifnz
-        sbb al,al
-        sbb al,-1
-    .endif
-    mov rdi,r8
-    mov rsi,rdx
+memcmp proc a:ptr, b:ptr, count:size_t
+
+    xchg    rsi,rdx
+    xchg    rdi,rcx
+    xchg    rcx,r8
+    xor     rax,rax
+    repe    cmpsb
+    jz      @F
+    sbb     al,al
+    sbb     al,-1
+@@:
+    mov     rdi,r8
+    mov     rsi,rdx
     ret
+
+memcmp endp
 
     END

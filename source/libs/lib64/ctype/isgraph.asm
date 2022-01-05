@@ -4,9 +4,11 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include ctype.inc
+
     .code
 
-isgraph::
+isgraph proc c:int_t
 
     mov eax,ecx
     .if al < 0x21 || al >= 0x7F
@@ -14,5 +16,7 @@ isgraph::
         xor eax,eax
     .endif
     ret
+
+isgraph endp
 
     end

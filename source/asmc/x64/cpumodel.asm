@@ -85,9 +85,9 @@ sym_Model     ptr asym 0 ; numeric. requires model
 
 ;; find token in a string table
 
-FindToken proc private uses rsi rdi token:string_t, table:ptr string_t, size:int_t
+FindToken proc __ccall private uses rsi rdi token:string_t, table:ptr string_t, size:int_t
 
-    .for( rsi = table, edi = 0: edi < size: edi++ )
+    .for( rsi = rdx, edi = 0: edi < size: edi++ )
         lodsq
         .ifd ( tstricmp( rax, token ) == 0 )
             .return( edi )
@@ -98,7 +98,7 @@ FindToken endp
 
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
 
-    .if CreateVariable( name, value )
+    .if CreateVariable( rcx, edx )
         or [rax].asym.flags,S_PREDEFINED
     .endif
     ret
@@ -130,7 +130,7 @@ SetDefaultOfssize endp
 ;; Win64 only:
 ;; - @ReservedStack (numeric)
 
-SetModel proc private uses rsi rdi rbx
+SetModel proc __ccall private uses rsi rdi rbx
 
     ;; if model is set, it disables OT_SEGMENT of -Zm switch
 
@@ -251,7 +251,7 @@ SetModel endp
 
     assume rbx:ptr asm_tok
 
-ModelDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ModelDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local distance:byte
   local language:byte
@@ -390,10 +390,10 @@ ModelDirective endp
 ;; OTOH, .MMX/.XMM won't automatically enable .586/.686 ( Masm does! )
 
 
-SetCPU proc newcpu:cpu_info
+SetCPU proc __ccall newcpu:cpu_info
 
+    mov edx,ecx
     mov ecx,ModuleInfo.curr_cpu
-    mov edx,newcpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
 
@@ -508,10 +508,10 @@ SetCPU endp
 ;; .[2|3]87,
 ;; .NO87, .MMX, .K3D, .XMM directives.
 
-CpuDirective proc uses rbx i:int_t, tokenarray:ptr asm_tok
+CpuDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
 
     mov edx,GetSflagsSp( [rbx].tokval )
     add rbx,asm_tok
@@ -528,16 +528,16 @@ else
 
 AddPredefinedConstant proc fastcall private name:string_t, value:int_t
 
-    .if CreateVariable( name, value )
+    .if CreateVariable( rcx, edx )
         or [rax].asym.flags,S_PREDEFINED
     .endif
     ret
 AddPredefinedConstant endp
 
-SetCPU proc newcpu:cpu_info
+SetCPU proc __ccall newcpu:cpu_info
 
+    mov edx,ecx
     mov ecx,ModuleInfo.curr_cpu
-    mov edx,newcpu
 
     .if ( edx == P_86 || ( edx & P_CPU_MASK ) )
 

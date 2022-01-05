@@ -120,7 +120,7 @@ endif
 
 .code
 
-write_logo proc
+write_logo proc __ccall
 
     .if ( !banner_printed )
 	mov banner_printed,1
@@ -131,7 +131,7 @@ write_logo proc
 
 write_logo endp
 
-write_usage proc
+write_usage proc __ccall
 
     write_logo()
     tprintf( &cp_usage )
@@ -139,7 +139,7 @@ write_usage proc
 
 write_usage endp
 
-write_options proc
+write_options proc __ccall
 
     write_logo()
     tprintf( &cp_options )

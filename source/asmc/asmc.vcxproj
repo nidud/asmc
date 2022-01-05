@@ -39,6 +39,9 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>\Asmc\lib\x64</AdditionalLibraryDirectories>
+      <Profile>true</Profile>
+      <StackCommitSize>0x200000</StackCommitSize>
+      <StackReserveSize>0x300000</StackReserveSize>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>

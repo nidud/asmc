@@ -49,11 +49,11 @@ define mangle_type NULL
 ; create external.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-CreateExternal proc private uses rsi sym:ptr asym, name:string_t, weak:char_t
+CreateExternal proc __ccall private uses rsi sym:ptr asym, name:string_t, weak:char_t
 
-    mov rsi,sym
+    mov rsi,rcx
     .if ( rsi == NULL )
-        mov rsi,SymCreate( name )
+        mov rsi,SymCreate( rdx )
     .else
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
     .endif
@@ -74,11 +74,11 @@ CreateExternal endp
 ; create communal.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-CreateComm proc private uses rsi sym:ptr asym, name:string_t
+CreateComm proc __ccall private uses rsi sym:ptr asym, name:string_t
 
-    mov rsi,sym
+    mov rsi,rcx
     .if ( rsi == NULL )
-        mov rsi,SymCreate( name )
+        mov rsi,SymCreate( rdx )
     .else
         sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
     .endif
@@ -100,9 +100,9 @@ CreateComm endp
 
     assume rbx:ptr asm_tok
 
-CreateProto proc private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, langtype:byte
+CreateProto proc __ccall private uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, name:string_t, langtype:byte
 
-    mov rsi,SymSearch(name)
+    mov rsi,SymSearch(r8)
 
     ; the symbol must be either NULL or state
     ; - SYM_UNDEFINED
@@ -171,7 +171,7 @@ CreateProto endp
 
 ; externdef [ attr ] symbol:type [, symbol:type,...]
 
-ExterndefDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ExterndefDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local token:string_t
   local langtype:byte
@@ -392,9 +392,9 @@ ExterndefDirective endp
 ; <name> PROTO <params> is semantically identical to:
 ; EXTERNDEF <name>: PROTO <params>
 
-ProtoDirective proc uses rbx i:int_t, tokenarray:ptr asm_tok
+ProtoDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     .if ( Parse_Pass != PASS_1 )
 
         ; v2.04: set the "defined" flag
@@ -423,9 +423,9 @@ ProtoDirective endp
 ; also used to create 16-bit floating-point fixups.
 ; sym must be NULL or of state SYM_UNDEFINED!
 
-MakeExtern proc name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr asym, Ofssize:byte
+MakeExtern proc __ccall name:string_t, mem_type:byte, vartype:ptr asym, sym:ptr asym, Ofssize:byte
 
-    mov rcx,CreateExternal( sym, name, FALSE )
+    mov rcx,CreateExternal( r9, rcx, FALSE )
     .return .if !eax
     .if ( mem_type == MT_EMPTY )
     .elseif ( Options.masm_compat_gencode == FALSE || mem_type != MT_FAR )
@@ -441,13 +441,13 @@ MakeExtern endp
 
 ; handle optional alternate names in EXTERN directive
 
-HandleAltname proc private uses rsi rdi rbx altname:string_t, sym:ptr asym
+HandleAltname proc __ccall private uses rsi rdi rbx altname:string_t, sym:ptr asym
 
-    mov rsi,sym
+    mov rsi,rdx
 
-    .if ( altname && [rsi].asym.state == SYM_EXTERNAL )
+    .if ( rcx && [rsi].asym.state == SYM_EXTERNAL )
 
-        mov rdi,SymSearch( altname )
+        mov rdi,SymSearch( rcx )
 
         ; altname symbol changed?
 
@@ -505,7 +505,7 @@ HandleAltname endp
 
 ; syntax: EXT[E]RN [lang_type] name (altname) :type [, ...]
 
-ExternDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ExternDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local langtype:byte
   local ti:qualified_type
@@ -730,9 +730,9 @@ ExternDirective endp
 
 ; helper for COMM directive
 
-MakeComm proc private uses rdi name:string_t, sym:ptr asym, size:dword, count:dword, isfar:uchar_t
+MakeComm proc __ccall private uses rdi name:string_t, sym:ptr asym, size:dword, count:dword, isfar:uchar_t
 
-    mov rdi,CreateComm( sym, name )
+    mov rdi,CreateComm( sym, rcx )
     .return .if ( rdi == NULL )
 
     mov [rdi].asym.total_length,count
@@ -768,7 +768,7 @@ MakeComm endp
 ; COMM [langtype] [NEAR|FAR] label:type[:count] [, ... ]
 ; the size & count values must NOT be forward references!
 
-CommDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+CommDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local token:string_t
   local isfar:byte
@@ -930,7 +930,7 @@ CommDirective endp
 
 ; syntax: PUBLIC [lang_type] name [, ...]
 
-PublicDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+PublicDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local token:string_t
   local sym:ptr asym

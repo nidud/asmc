@@ -43,10 +43,10 @@ elseoccured uint_32 0   ;; 2.06: bit field, magnitude must be >= MAX_IF_NESTING
 ;; updates variables <blocknestlevel> and <falseblocknestlevel>.
 ;;
 
-CondPrepare proc directive:int_t
+CondPrepare proc __ccall directive:int_t
 
     option switch:REGAX
-    mov eax,directive
+    mov eax,ecx
     .switch eax
 
     .case T_IF
@@ -176,12 +176,12 @@ check_blank endp
 ;; Are two strings different?
 ;; Used by [ELSE]IFDIF[I] and [ELSE]IFIDN[I]
 
-check_dif proc private string1:string_t, string2:string_t, sensitive:int_t
+check_dif proc __ccall private string1:string_t, string2:string_t, sensitive:int_t
 
-    .if ( sensitive )
-        strcmp( string1, string2 )
+    .if ( r8d )
+        tstrcmp( rcx, rdx )
     .else
-        tstricmp( string1, string2 )
+        tstricmp( rcx, rdx )
     .endif
     ret
 check_dif endp
@@ -189,7 +189,7 @@ check_dif endp
 
     assume rbx:ptr asm_tok
 
-CondAsmDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local opndx:expr
   local directive:int_t
@@ -444,10 +444,10 @@ CondAsmDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
 CondAsmDirective endp
 
-GetErrText proc private uses rbx i:int_t, tokenarray:ptr asm_tok
+GetErrText proc __ccall private uses rbx i:int_t, tokenarray:ptr asm_tok
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
 
     mov rcx,StringBufferEnd
     mov byte ptr [rcx],0
@@ -455,7 +455,7 @@ GetErrText proc private uses rbx i:int_t, tokenarray:ptr asm_tok
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
             TextItemError( rbx )
         .else
-            strcpy( rcx, [rbx].string_ptr )
+            tstrcpy( rcx, [rbx].string_ptr )
         .endif
     .endif
     .return( StringBufferEnd )
@@ -472,7 +472,7 @@ GetErrText endp
 ;; - .err[n]b    text_literal [, <text>]
 ;; - .err[n]def  symbol [, <text>]
 
-ErrorDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local opndx:expr
   local direct:dword
@@ -480,8 +480,8 @@ ErrorDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local erridx:int_t
   local sym:ptr asym
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
     mov edi,[rbx].tokval
 
     inc i ;; go past directive
@@ -706,7 +706,7 @@ ErrorDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .return( NOT_ERROR )
 ErrorDirective endp
 
-CondCheckOpen proc
+CondCheckOpen proc __ccall
 
     .if ( blocknestlevel > 0 )
         asmerr( 1010, "if-else" )
@@ -714,20 +714,20 @@ CondCheckOpen proc
     ret
 CondCheckOpen endp
 
-GetIfNestLevel proc
+GetIfNestLevel proc __ccall
 
     .return( blocknestlevel )
 GetIfNestLevel endp
 
-SetIfNestLevel proc newlevel:int_t
+SetIfNestLevel proc __ccall newlevel:int_t
 
-    mov blocknestlevel,newlevel
+    mov blocknestlevel,ecx
     ret
 SetIfNestLevel endp
 
 ;; init (called once per module)
 
-CondInit proc
+CondInit proc __ccall
     xor eax,eax
     mov CurrIfState,eax
     mov blocknestlevel,eax

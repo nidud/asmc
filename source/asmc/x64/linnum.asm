@@ -25,7 +25,7 @@ lastLineNumber uint_t 0
 
 .code
 
-AddLinnumData proc private uses rsi rdi rbx data:ptr line_num_info
+AddLinnumData proc __ccall private uses rsi rdi rbx data:ptr line_num_info
 
     mov rbx,CurrSeg
     mov rdi,[rbx].dsym.seginfo
@@ -54,19 +54,19 @@ AddLinnumData proc private uses rsi rdi rbx data:ptr line_num_info
 
 AddLinnumData endp
 
-;; store a reference for the current line at the current address
-;; called by
-;; - codegen.output_opc()
-;; - proc.ProcDir() - in COFF, line_num is 0 then
+; store a reference for the current line at the current address
+; called by
+; - codegen.output_opc()
+; - proc.ProcDir() - in COFF, line_num is 0 then
 
-AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
+AddLinnumDataRef proc __ccall uses rsi rdi rbx srcfile:dword, line_num:dword
 
-    ;; COFF line number info is related to functions/procedures. Since
-    ;; assembly allows code lines outside of procs, "dummy" procs must
-    ;; be generated. A dummy proc lasts until
-    ;; - a true PROC is detected or
-    ;; - the source file changes or
-    ;; - the segment/section changes ( added in v2.11 )
+    ; COFF line number info is related to functions/procedures. Since
+    ; assembly allows code lines outside of procs, "dummy" procs must
+    ; be generated. A dummy proc lasts until
+    ; - a true PROC is detected or
+    ; - the source file changes or
+    ; - the segment/section changes ( added in v2.11 )
 
     mov rbx,CurrProc
     mov rsi,dmyproc
@@ -89,19 +89,19 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
         tsprintf( &procname, "$$$%05u", procidx )
         mov dmyproc,SymSearch( &procname )
         mov rsi,rax
-        ;; in pass 1, create the proc
+        ; in pass 1, create the proc
         .if ( rsi == NULL )
             mov dmyproc,CreateProc( NULL, &procname, SYM_INTERNAL )
             mov rsi,rax
-            or [rsi].asym.flag1,S_ISPROC ;; flag is usually set inside ParseProc()
+            or [rsi].asym.flag1,S_ISPROC ; flag is usually set inside ParseProc()
             or [rsi].asym.flag1,S_INCLUDED
             AddPublicData( rsi )
         .else
-            inc procidx ;; for passes > 1, adjust procidx
+            inc procidx ; for passes > 1, adjust procidx
         .endif
 
-        ;; if the symbols isn't a PROC, the symbol name has been used
-        ;; by the user - bad! A warning should be displayed
+        ; if the symbols isn't a PROC, the symbol name has been used
+        ; by the user - bad! A warning should be displayed
 
         .if ( [rsi].asym.flag1 & S_ISPROC )
             SetSymSegOfs( rsi )
@@ -124,7 +124,7 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
 
     mov rdi,LclAlloc( sizeof( line_num_info ) )
     mov [rdi].line_num_info.number,line_num
-    .if ( line_num == 0 ) ;; happens for COFF only
+    .if ( line_num == 0 ) ; happens for COFF only
         mov rcx,CurrProc
         .if ( Parse_Pass == PASS_1 && \
             Options.output_format == OFORMAT_COFF && rcx && !( [rcx].asym.flags & S_ISPUBLIC ) )
@@ -140,7 +140,7 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
         mov eax,srcfile
         shl eax,20
         or [rdi].line_num_info.line_number,eax
-        ;; set the function's size!
+        ; set the function's size!
         mov rsi,dmyproc
         .if ( rsi )
             mov rcx,[rsi].asym.segm
@@ -150,7 +150,7 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
             mov [rsi].asym.total_size,eax
             mov dmyproc,NULL
         .endif
-        ;; v2.11: write a 0x7fff line item if prologue exists
+        ; v2.11: write a 0x7fff line item if prologue exists
         mov rcx,CurrProc
         mov rdx,[rcx].dsym.procinfo
         .if ( ecx && [rdx].proc_info.size_prolog )
@@ -166,15 +166,15 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
     .endif
     mov lastLineNumber,line_num
 
-    ;; v2.11: added, improved multi source support for CV.
-    ;; Also, the size of line number info could have become > 1024,
-    ;; ( even > 4096, thus causing an "internal error in omfint.c" )
+    ; v2.11: added, improved multi source support for CV.
+    ; Also, the size of line number info could have become > 1024,
+    ; ( even > 4096, thus causing an "internal error in omfint.c" )
 
     .if ( Options.output_format == OFORMAT_OMF )
         omf_check_flush( rdi )
     .endif
 
-    ;; v2.10: warning if line-numbers for segments without class code!
+    ; v2.10: warning if line-numbers for segments without class code!
     mov rbx,CurrSeg
     mov rsi,[rbx].dsym.seginfo
     .if ( [rsi].seg_info.linnum_init == FALSE )
@@ -188,7 +188,7 @@ AddLinnumDataRef proc uses rsi rdi rbx srcfile:dword, line_num:dword
 
 AddLinnumDataRef endp
 
-QueueDeleteLinnum proc queue:ptr qdesc
+QueueDeleteLinnum proc __ccall queue:ptr qdesc
 
     .if ( rcx != NULL )
         mov rdx,[rcx].qdesc.head
@@ -200,10 +200,10 @@ QueueDeleteLinnum proc queue:ptr qdesc
 
 QueueDeleteLinnum endp
 
-;; if -Zd is set and there is trailing code not inside
-;; a function, set the dummy function's length now.
+; if -Zd is set and there is trailing code not inside
+; a function, set the dummy function's length now.
 
-LinnumFini proc
+LinnumFini proc __ccall
 
     mov rax,dmyproc
     .if ( rax )
@@ -217,7 +217,7 @@ LinnumFini proc
 
 LinnumFini endp
 
-LinnumInit proc
+LinnumInit proc __ccall
 
     mov lastLineNumber,0
     mov dmyproc,NULL

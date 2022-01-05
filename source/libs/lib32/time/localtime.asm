@@ -27,23 +27,20 @@ localtime proc uses esi edi ptime: LPTIME
         mov eax,esi
         sub eax,_timezone
         mov ltime,eax
-        gmtime(addr ltime)
-        mov ptm,eax
+        mov ptm,gmtime(addr ltime)
 
         .if _daylight
             .if _isindst(ptm)
 
                 add ltime,3600
-                gmtime(addr ltime)
-                mov ptm,eax
+                mov ptm,gmtime(addr ltime)
                 mov [eax].tm.tm_isdst,1
             .endif
         .endif
 
     .else
 
-        gmtime(ptime)
-        mov ptm,eax
+        mov ptm,gmtime(ptime)
         mov esi,eax
         mov eax,[eax].tm.tm_sec
         sub eax,_timezone

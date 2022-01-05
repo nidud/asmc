@@ -209,29 +209,33 @@ FreeFiles endp
 ; the main source file. Also, an END directive might be
 ; simulated if a "too many errors" condition occurs.
 
-    assume rsi:ptr src_item
+    assume r12:ptr src_item
 
-ClearSrcStack proc __ccall uses rsi rdi
+ifdef __UNIX__
+ClearSrcStack proc __ccall uses rsi rdi r12 r13
+else
+ClearSrcStack proc __ccall uses r12 r13
+endif
 
     DeleteLineQueue()
 
     ; dont close the last item (which is the main src file)
 
-    mov rsi,ModuleInfo.src_stack
-    .for( : [rsi].next : rsi = rdi )
-        mov rdi,[rsi].next
-        .if [rsi].type == SIT_FILE
-            fclose([rsi].file)
+    mov r12,ModuleInfo.src_stack
+    .for( : [r12].next : r12 = r13 )
+        mov r13,[r12].next
+        .if [r12].type == SIT_FILE
+            fclose([r12].file)
         .endif
-        mov [rsi].next,SrcFree
-        mov SrcFree,rsi
+        mov [r12].next,SrcFree
+        mov SrcFree,r12
     .endf
-    mov ModuleInfo.src_stack,rsi
+    mov ModuleInfo.src_stack,r12
     ret
 
 ClearSrcStack endp
 
-    assume rsi:nothing
+    assume r12:nothing
 
 ; get/set value of predefined symbol @Line
 
@@ -264,16 +268,23 @@ GetLineNumber endp
 LF equ 10
 CR equ 13
 
-my_fgets proc __ccall private uses rsi rdi rbx r12 buffer:string_t, max:int_t, fp:LPFILE
-
+ifdef __UNIX__
+my_fgets proc __ccall private uses rsi rdi rbx r12 r13 r14 buffer:string_t, max:int_t, fp:LPFILE
+    mov r12,rcx
+    lea r13,[rcx+rdx]
+    mov rbx,r8
+    fgetc(rbx)
+    mov rdi,r12
+else
+my_fgets proc __ccall private uses rdi rbx r12 r13 buffer:string_t, max:int_t, fp:LPFILE
     mov rdi,rcx
     mov r12,rcx
-    mov esi,edx
-    add rsi,rdi
+    lea r13,[rcx+rdx]
     mov rbx,r8
-
     fgetc(rbx)
-    .while rdi < rsi
+endif
+
+    .while rdi < r13
         .switch eax
         .case CR
             .endc ;; don't store CR
@@ -298,11 +309,16 @@ endif
         .default
             stosb
         .endsw
+ifdef __UNIX__
+        mov r14,rdi
+endif
         fgetc(rbx)
+ifdef __UNIX__
+        mov rdi,r14
+endif
     .endw
     asmerr(2039)
     mov byte ptr [rdi-1],0
-
    .return( r12 )
 
 my_fgets endp
@@ -536,10 +552,9 @@ open_file_in_include_path proc __ccall private uses rsi rdi rbx name:string_t, f
         rep movsb
         mov rcx,rdx
         mov file,fopen(rcx, "rb")
-        .break .if rax
+       .break .if rax
     .endf
-    mov rax,file
-    ret
+    .return( file )
 
 open_file_in_include_path endp
 
@@ -595,7 +610,7 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
                         stosb
                     .until !al
                     mov file,fopen(&fullpath, "rb")
-                    .if eax
+                    .if rax
                         lea rax,fullpath
                         mov path,rax
                     .endif
@@ -641,8 +656,7 @@ if FILESEQ
         .endif
 endif
     .endif
-    mov rax,file
-    ret
+    .return( file )
 
 SearchFile endp
 
@@ -708,7 +722,7 @@ endif
                 fill_placeholders(buffer, rdx, [rdi].parmcnt,
                                   [rdi].localstart, [rdi].parm_array )
             .else
-                strcpy(buffer, &[rax].srcline.line)
+                tstrcpy(buffer, &[rax].srcline.line)
             .endif
             inc [rbx].line_num
             .return buffer
@@ -717,8 +731,7 @@ endif
         mov [rbx].next,SrcFree
         mov SrcFree,rbx
     .endif
-    mov eax,NULL ; end of file or macro reached
-    ret
+    .return( NULL ) ; end of file or macro reached
 
 GetTextLine endp
 
@@ -749,9 +762,9 @@ AddStringToIncludePath proc __ccall uses rsi rdi string:string_t
         mov rsi,ModuleInfo.IncludePath
         tstrlen(rsi)
         mov ModuleInfo.IncludePath,MemAlloc(&[rax+rdi+2])
-        strcpy(rax, rsi)
-        strcat(rax, INC_PATH_DELIM_STR)
-        strcat(rax, string)
+        tstrcpy(rax, rsi)
+        tstrcat(rax, INC_PATH_DELIM_STR)
+        tstrcat(rax, string)
         MemFree(rsi)
     .endif
     ret
@@ -793,7 +806,7 @@ PushInputStatus proc __ccall uses rsi oldstat:ptr input_status
         tstrlen(CurrSource)
         add rax,CurrSource
         mov [rsi].CurrComment,rax
-        strcpy(rax, ModuleInfo.CurrComment)
+        tstrcpy(rax, ModuleInfo.CurrComment)
     .else
         mov [rsi].CurrComment,NULL
     .endif
@@ -805,8 +818,7 @@ PushInputStatus proc __ccall uses rsi oldstat:ptr input_status
     add ModuleInfo.tokenarray,rax
     tstrlen(CurrSource)
     mov CurrSource,GetAlignedPointer(CurrSource, eax)
-    mov rax,ModuleInfo.tokenarray
-    ret
+   .return( ModuleInfo.tokenarray )
 
 PushInputStatus endp
 
@@ -819,7 +831,7 @@ PopInputStatus proc __ccall uses rsi newstat:ptr input_status
     mov CurrSource,[rsi].currsource
     .if [rsi].CurrComment
         mov ModuleInfo.CurrComment,commentbuffer
-        strcpy(rax, [rsi].CurrComment)
+        tstrcpy(rax, [rsi].CurrComment)
         mov rax,[rsi].CurrComment
         mov byte ptr [rax],0
     .else

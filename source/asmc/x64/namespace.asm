@@ -28,17 +28,17 @@ NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
         .endif
         mov byte ptr [rdi],0
         .if ( rsi == NULL )
-            strcpy( rdi, rax )
+            tstrcpy( rdi, rax )
         .else
             .repeat
-                strcat( rdi, [rsi].name )
-                strcat( rdi, "_" )
+                tstrcat( rdi, [rsi].name )
+                tstrcat( rdi, "_" )
                 mov rsi,[rsi].next
             .until !rsi
-            strcat( rdi, rbx )
+            tstrcat( rdi, rbx )
         .endif
         .if ( rdi != retval )
-            strcpy( LclAlloc( &[tstrlen( rdi ) + 1] ), rdi )
+            tstrcpy( LclAlloc( &[tstrlen( rdi ) + 1] ), rdi )
         .endif
     .endif
     ret
@@ -47,9 +47,9 @@ NameSpace endp
 
     assume rbx:ptr asm_tok
 
-NameSpaceDirective proc uses rsi rbx i:int_t, tokenarray:token_t
+NameSpaceDirective proc __ccall uses rsi rbx i:int_t, tokenarray:token_t
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov rsi,ModuleInfo.NspStack
     .if ( [rbx].tokval == T_DOT_ENDN )
         .if ( rsi == NULL )
@@ -71,7 +71,7 @@ NameSpaceDirective proc uses rsi rbx i:int_t, tokenarray:token_t
     mov rsi,LclAlloc( &[tstrlen([rbx+asm_tok].string_ptr)+nsp_item+1] )
     mov [rsi].next,NULL
     mov [rsi].name,&[rax+nsp_item]
-    strcpy( [rsi].name, [rbx+asm_tok].string_ptr )
+    tstrcpy( [rsi].name, [rbx+asm_tok].string_ptr )
     .if ( ModuleInfo.NspStack == NULL )
         mov ModuleInfo.NspStack,rsi
     .else

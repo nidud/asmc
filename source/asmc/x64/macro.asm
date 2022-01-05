@@ -27,34 +27,34 @@ include ltype.inc
 
 CCALLBACK(GETLINE, :string_t)
 
-;; a placeholder consists of escape char (0x0a) + index (1 byte).
-;; if this is to change, function fill_placeholders() must
-;; be adjusted!
+; a placeholder consists of escape char (0x0a) + index (1 byte).
+; if this is to change, function fill_placeholders() must
+; be adjusted!
 
 PLACEHOLDER_SIZE equ 2
 
 MAX_PLACEHOLDERS equ 256
 
-;; store empty macro lines, to ensure correct line numbering
+; store empty macro lines, to ensure correct line numbering
 
 STORE_EMPTY_LINES equ 1
 
-;; 1="undefine" macros with PURGE - this isn't Masm-compatible,
-;; and offers no real benefit because the name remains in the namespace.
-;; The macro is marked "undefined" and cannot be invoked anymore.
-;; 0=just delete the macro content.
+; 1="undefine" macros with PURGE - this isn't Masm-compatible,
+; and offers no real benefit because the name remains in the namespace.
+; The macro is marked "undefined" and cannot be invoked anymore.
+; 0=just delete the macro content.
 
 TRUEPURGE equ 0
 
 externdef MacroLocals:int_t
 
-;; the list of macro param + local names is hold temporarily only.
-;; once the names have been replaced by placeholders,
-;; the list is superfluous. What's stored permanently
-;; in the macro item is the number of params and locals only.
+; the list of macro param + local names is hold temporarily only.
+; once the names have been replaced by placeholders,
+; the list is superfluous. What's stored permanently
+; in the macro item is the number of params and locals only.
 
 mname_list struct
-    name    string_t ?  ;; name of param/local
+    name    string_t ?  ; name of param/local
     len     dw ?
 mname_list ends
 
@@ -63,25 +63,25 @@ mname_list ends
 
     .code
 
-;; Replace placeholders in a stored macro source line with values of actual
-;; parameters and locals. A placeholder consists of escape char 0x0a,
-;; followed by a one-byte index field.
+; Replace placeholders in a stored macro source line with values of actual
+; parameters and locals. A placeholder consists of escape char 0x0a,
+; followed by a one-byte index field.
 
-fill_placeholders proc uses rsi rdi rbx dst:string_t, src:string_t, argc:uint_t,
+fill_placeholders proc __ccall uses rsi rdi rbx dst:string_t, src:string_t, argc:uint_t,
         localstart:uint_t, argv:array_t
 
     mov rdi,rcx
 
-    ;; scan the string, replace the placeholders #nn
+    ; scan the string, replace the placeholders #nn
 
     .for( rsi = rdx: byte ptr [rsi]: )
         .if ( byte ptr [rsi] == PLACEHOLDER_CHAR )
             add rsi,2
-            ;; we found a placeholder, get the index part!
+            ; we found a placeholder, get the index part!
             movzx ebx,byte ptr [rsi-1]
-            dec ebx ;; index is one-based!
+            dec ebx ; index is one-based!
 
-            ;; if parmno > argc, then it's a macro local
+            ; if parmno > argc, then it's a macro local
 
             .if ebx >= argc
 
@@ -120,7 +120,7 @@ fill_placeholders proc uses rsi rdi rbx dst:string_t, src:string_t, argc:uint_t,
             .else
                 mov rdx,argv
                 mov rbx,[rdx+rbx*8]
-                .if rbx  ;; actual parameter might be empty (=NULL)
+                .if rbx  ; actual parameter might be empty (=NULL)
                     mov ecx,tstrlen(rbx)
                     xchg rbx,rsi
                     rep movsb
@@ -136,19 +136,19 @@ fill_placeholders proc uses rsi rdi rbx dst:string_t, src:string_t, argc:uint_t,
 
 fill_placeholders endp
 
-replace_parm proc private uses rsi rdi rbx line:string_t, start:string_t, len:int_t, mnames:ptr mname_list
+replace_parm proc __ccall private uses rsi rdi rbx line:string_t, start:string_t, len:int_t, mnames:ptr mname_list
 
-    ;; scan list of macro paras/locals if current word is found.
-    ;; - line: current line
-    ;; - start: start 'current word' in line
-    ;; - len: size current word
-    ;; - mnames: list of macro params+locals
-    ;; if found, the 'current word' is replaced by a placeholder.
-    ;; format of placeholders is <placeholder_char><index>
-    ;; <placeholder_char> is an escape character whose hex-code is
-    ;; "impossible" to occur in a source line, <index> has type uint_8,
-    ;; value 00 isn't used - this restricts the total of parameters
-    ;; and locals for a macro to 255.
+    ; scan list of macro paras/locals if current word is found.
+    ; - line: current line
+    ; - start: start 'current word' in line
+    ; - len: size current word
+    ; - mnames: list of macro params+locals
+    ; if found, the 'current word' is replaced by a placeholder.
+    ; format of placeholders is <placeholder_char><index>
+    ; <placeholder_char> is an escape character whose hex-code is
+    ; "impossible" to occur in a source line, <index> has type uint_8,
+    ; value 00 isn't used - this restricts the total of parameters
+    ; and locals for a macro to 255.
 
     local count:uint_t
 
@@ -161,14 +161,15 @@ replace_parm proc private uses rsi rdi rbx line:string_t, start:string_t, len:in
 
         .if !SymCmpFunc( start, [rbx].name, len )
 
-            ;; found a macro parameter/local!
+            ; found a macro parameter/local!
 
             .if count >= MAX_PLACEHOLDERS
                 asmerr(1005)
                 .break
             .endif
 
-            ;; handle substitution operator '&'
+            ; handle substitution operator '&'
+
             mov rdi,start
             mov esi,len
             add rsi,rdi
@@ -197,18 +198,17 @@ replace_parm proc private uses rsi rdi rbx line:string_t, start:string_t, len:in
                 mov eax,count
                 stosb
 
-                ; v2.10: strcpy should not be used if strings overlap
+                ; v2.10: tstrcpy should not be used if strings overlap
                 tmemmove( rdi, rsi, &[tstrlen(rsi)+1] )
             .endif
-            .return rdi ;; word has been replaced
+            .return rdi ; word has been replaced
         .endif
     .endf
-    xor eax,eax
-    ret
+    .return( 0 )
 
 replace_parm endp
 
-store_placeholders proc private uses rsi rdi rbx line:string_t, mnames:ptr mname_list
+store_placeholders proc __ccall private uses rsi rdi rbx line:string_t, mnames:ptr mname_list
     ;
     ; scan a macro source line for parameter and local names.
     ; - line: the source line
@@ -217,7 +217,7 @@ store_placeholders proc private uses rsi rdi rbx line:string_t, mnames:ptr mname
     ;
   local qlevel:uchar_t
 
-    xor edi,edi ;; number of replacements in this line
+    xor edi,edi ; number of replacements in this line
     xor ebx,ebx
     mov qlevel,bl
 
@@ -235,9 +235,9 @@ store_placeholders proc private uses rsi rdi rbx line:string_t, mnames:ptr mname
                 inc rsi
             .until !is_valid_id_char( [rsi] )
 
-        .elseif ( is_valid_id_char( eax ) || \
-                ( al == '.' && ModuleInfo.dotname && \
-                ( rsi == line || ( cl != ']' && ( !( byte ptr [r8+rcx+1] & _DIGIT or _LABEL ) ) ) ) ) )
+        .elseif ( is_valid_id_char( eax ) ||
+                  ( al == '.' && ModuleInfo.dotname &&
+                  ( rsi == line || ( cl != ']' && ( !( byte ptr [r8+rcx+1] & _DIGIT or _LABEL ) ) ) ) ) )
 
             mov rdx,rsi
             .repeat
@@ -269,7 +269,7 @@ store_placeholders proc private uses rsi rdi rbx line:string_t, mnames:ptr mname
                 ;
                 .if bl == 0
                     movzx eax,byte ptr [rsi+1]
-                    .if strchr( "<>\"'", eax )
+                    .if tstrchr( "<>\"'", eax )
                         inc rsi
                     .endif
                 .endif
@@ -299,14 +299,13 @@ store_placeholders proc private uses rsi rdi rbx line:string_t, mnames:ptr mname
             inc rsi
         .endif
     .endf
-    mov rax,rdi
-    ret
+    .return( rdi )
 
 store_placeholders endp
 
 
-;; store a macro's parameter, local and content list.
-;; i = start index of macro params in token buffer.
+; store a macro's parameter, local and content list.
+; i = start index of macro params in token buffer.
 
     assume rsi:dsym_t
     assume rdi:ptr macro_info
@@ -314,7 +313,7 @@ store_placeholders endp
 
 externdef token_stringbuf:ptr
 
-StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, store_data:int_t
+StoreMacro proc __ccall uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, store_data:int_t
 
   local info:ptr macro_info
   local src:string_t
@@ -326,7 +325,7 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
   local locals_done:int_t
   local ls:line_status
   local tok[2]:asm_tok
-  local mnames[MAX_PLACEHOLDERS]:mname_list ;; there are max 255 placeholders
+  local mnames[MAX_PLACEHOLDERS]:mname_list ; there are max 255 placeholders
   local final:token_t
 
     mov ls.outbuf,token_stringbuf
@@ -363,8 +362,8 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
 
             mov token,[rbx].string_ptr
 
-            ;; Masm accepts reserved words and instructions as parameter
-            ;; names! So just check that the token is a valid id.
+            ; Masm accepts reserved words and instructions as parameter
+            ; names! So just check that the token is a valid id.
 
             .if ( !is_valid_id_first_char( [rax] ) || [rbx].token == T_STRING )
                 asmerr(2008, token )
@@ -376,24 +375,24 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
             mov [rsi].deflt,NULL
             mov [rsi].required,FALSE
 
-            ;; first get the parm. name
+            ; first get the parm. name
             tstrlen( token )
             imul ecx,mindex,mname_list
             mov mnames[rcx].len,ax
             mov mnames[rcx].name,token
             inc mindex
-            mov mnames[rcx+mname_list].name,NULL ;; init next entry
+            mov mnames[rcx+mname_list].name,NULL ; init next entry
             add rbx,asm_tok
 
-            ;; now see if it has a default value or is required
+            ; now see if it has a default value or is required
             .if [rbx].token == T_COLON
                 add rbx,asm_tok
                 .if [rbx].token == T_DIRECTIVE && [rbx].dirtype == DRT_EQUALSGN
                     add rbx,asm_tok
-                    ;; allowed syntax is parm:=<literal>
+                    ; allowed syntax is parm:=<literal>
                     .if [rbx].token != T_STRING || [rbx].string_delim != '<'
                         asmerr( 3016 )
-                        .break ;; return( ERROR );
+                        .break ; return( ERROR );
                     .endif
                     mov eax,[rbx].stringlen
                     inc eax
@@ -408,11 +407,11 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
                     mov rdi,rax
                     add rbx,asm_tok
                 .elseifd !tstricmp( [rbx].string_ptr, "REQ" )
-                    ;; required parameter
+                    ; required parameter
                     mov [rsi].required,TRUE
                     add rbx,asm_tok
                 .elseif( [rbx].token == T_RES_ID && [rbx].tokval == T_VARARG )
-                    ;; more parameters can follow
+                    ; more parameters can follow
                     mov rdx,mac
                     or [rdx].asym.mac_flag,M_ISVARARG
                     .if ( [rbx+asm_tok].token != T_FINAL )
@@ -421,8 +420,8 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
                     .endif
                     add rbx,asm_tok
                 .elseif( [rbx].token == T_DIRECTIVE && [rbx].tokval == T_LABEL && \
-                          ModuleInfo.strict_masm_compat == FALSE ) ;; parm:LABEL?
-                    ;; LABEL attribute for first param only!
+                          ModuleInfo.strict_masm_compat == FALSE ) ; parm:LABEL?
+                    ; LABEL attribute for first param only!
                     .if rsi != [rdi].parmlist
                         asmerr( 2143 )
                         .break
@@ -431,7 +430,7 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
                     or [rdx].asym.mac_flag,M_LABEL
                     add rbx,asm_tok
                 .elseifd !tstricmp( [rbx].string_ptr, "VARARGML" )
-                    ;; more parameters can follow, multi lines possible
+                    ; more parameters can follow, multi lines possible
                     mov rdx,mac
                     or [rdx].asym.mac_flag,M_ISVARARG or M_MULTILINE
                     .if [rbx+asm_tok].token != T_FINAL
@@ -446,12 +445,12 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
             .endif
             .if ( rbx < final && [rbx].token != T_COMMA )
                 asmerr(2008, [rbx].tokpos )
-                .break ;; return( ERROR );
+                .break ; return( ERROR );
             .endif
-            ;; go past comma
+            ; go past comma
             add rbx,asm_tok
 
-        .endf ;; end for()
+        .endf ; end for()
     .endif
 
     mov locals_done,FALSE
@@ -465,10 +464,10 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
 
         mov src,GetLine( ls.start )
         .if rax == NULL
-            asmerr(1008) ;; unmatched macro nesting
+            asmerr(1008) ; unmatched macro nesting
         .endif
 
-        ;; add the macro line to the listing file
+        ; add the macro line to the listing file
         .if ModuleInfo.list
             and ModuleInfo.line_flags,not LOF_LISTED
             LstWrite( LSTTYPE_MACROLINE, 0, ls.start )
@@ -484,7 +483,7 @@ StoreMacro proc uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:token_t, st
         .endw
         mov ls.input,rdx
 
-        ;; skip empty lines!
+        ; skip empty lines!
         .if al == 0 || al == ';'
 if STORE_EMPTY_LINES
             .if store_data
@@ -500,17 +499,19 @@ endif
             .continue
         .endif
 
-        ;; get first token
+        ; get first token
         mov ls.output,StringBufferEnd
         mov ls.flags,TOK_DEFAULT
         mov ls.flags2,0
         mov tok[0].token,T_FINAL
         .return .ifd GetToken( &tok[0], &ls ) == ERROR
 
-        ;; v2.05: GetTextLine() doesn't concat lines anymore.
-        ;; So if a backslash is found in the current source line,
-        ;; tokenize it to get possible concatenated lines.
-        .if strchr( ls.input, '\' )
+        ; v2.05: GetTextLine() doesn't concat lines anymore.
+        ; So if a backslash is found in the current source line,
+        ; tokenize it to get possible concatenated lines.
+
+        .if tstrchr( ls.input, '\' )
+
             mov rdi,ls.input
             mov rdx,rdi
             .while ( byte ptr [rdx] && byte ptr [rdx] != ';' )
@@ -529,10 +530,10 @@ endif
             mov ls.input,rdi
         .endif
 
-        cmp tok[0].token,T_FINAL ;; did GetToken() return EMPTY?
+        cmp tok[0].token,T_FINAL ; did GetToken() return EMPTY?
         je continue_scan
 
-        ;; handle LOCAL directive(s)
+        ; handle LOCAL directive(s)
         .if locals_done == FALSE && tok[0].token == T_DIRECTIVE && tok[0].tokval == T_LOCAL
             .continue .if !store_data
             .for ( :: )
@@ -541,7 +542,7 @@ endif
                     inc rdx
                 .endw
                 mov ls.input,rdx
-                .break .if al == 0 || al == ';' ;; 0 locals are ok
+                .break .if al == 0 || al == ';' ; 0 locals are ok
 
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
@@ -562,7 +563,7 @@ endif
                 imul ecx,mindex,mname_list
                 mov mnames[rcx].len,di
                 mov mnames[rcx].name,rax
-                mov mnames[rcx+mname_list].name,NULL ;; mark end of placeholder array
+                mov mnames[rcx+mname_list].name,NULL ; mark end of placeholder array
                 inc mindex
                 mov rcx,rdi
                 mov rdi,rax
@@ -588,15 +589,15 @@ endif
         .endif
         mov locals_done,TRUE
 
-        ;; handle macro labels, EXITM, ENDM and macro loop directives.
-        ;; this must be done always, even if store_data is false,
-        ;; to find the matching ENDM that terminates the macro.
+        ; handle macro labels, EXITM, ENDM and macro loop directives.
+        ; this must be done always, even if store_data is false,
+        ; to find the matching ENDM that terminates the macro.
 
         mov rdx,ls.input
-        .if ( tok[0].token == T_COLON ) ;; macro label?
+        .if ( tok[0].token == T_COLON ) ; macro label?
 
-            ;; skip leading spaces for macro labels! In RunMacro(),
-            ;; the label search routine expects no spaces before ':'.
+            ; skip leading spaces for macro labels! In RunMacro(),
+            ; the label search routine expects no spaces before ':'.
 
             dec rdx
             mov src,rdx
@@ -615,10 +616,10 @@ endif
                 .if nesting_depth
                     dec nesting_depth
                 .else
-                    .break ;; exit the for() loop
+                    .break ; exit the for() loop
                 .endif
             .elseif tok[0].dirtype == DRT_LOOPDIR
-                inc nesting_depth ;; FOR[C], IRP[C], REP[EA]T, WHILE
+                inc nesting_depth ; FOR[C], IRP[C], REP[EA]T, WHILE
             .endif
         .elseif tok[0].token != T_INSTRUCTION || byte ptr [rdx] == '&'
             ;
@@ -673,18 +674,17 @@ endif
     mov rdx,mac
     or  [rdx].asym.flags,S_ISDEFINED
     and [rdx].asym.mac_flag,not M_PURGED
-    mov eax,NOT_ERROR
-    ret
+   .return( NOT_ERROR )
 
 StoreMacro endp
 
-;; create a macro symbol
+; create a macro symbol
 
     assume rcx:ptr macro_info
 
-CreateMacro proc uses rbx name:string_t
+CreateMacro proc __ccall uses rbx name:string_t
 
-    .if ( SymCreate(name) )
+    .if ( SymCreate(rcx) )
 
         mov [rax].asym.state,SYM_MACRO
         and [rax].asym.mac_flag,not ( M_ISVARARG or M_ISFUNC )
@@ -703,11 +703,11 @@ CreateMacro proc uses rbx name:string_t
 
 CreateMacro endp
 
-;; clear macro data
+; clear macro data
 
-ReleaseMacroData proc mac:dsym_t
+ReleaseMacroData proc __ccall mac:dsym_t
 
-    mov rax,mac
+    mov rax,rcx
     and [rax].asym.mac_flag,not M_ISVARARG
     mov rcx,[rax].dsym.macroinfo
     xor eax,eax
@@ -720,16 +720,18 @@ ReleaseMacroData proc mac:dsym_t
 
 ReleaseMacroData endp
 
-;; MACRO directive: define a macro
-;; i: directive token ( is to be 1 )
+    assume rcx:nothing
+
+; MACRO directive: define a macro
+; i: directive token ( is to be 1 )
 
     assume rsi:dsym_t
 
-MacroDir proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local store_data:int_t
 
-    mov rbx,tokenarray
+    mov rbx,rdx
     mov rdi,[rbx].string_ptr
     mov rsi,SymSearch(rdi)
 
@@ -762,11 +764,11 @@ MacroDir proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
         .else
 
-            ;; the macro was used before it's defined. That's
-            ;; a severe error. Nevertheless define the macro now,
-            ;; error msg 'invalid symbol type in expression' will
-            ;; be displayed in second pass when the (unexpanded)
-            ;; macro name is found by the expression evaluator.
+            ; the macro was used before it's defined. That's
+            ; a severe error. Nevertheless define the macro now,
+            ; error msg 'invalid symbol type in expression' will
+            ; be displayed in second pass when the (unexpanded)
+            ; macro name is found by the expression evaluator.
 
             sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], rsi )
 
@@ -784,10 +786,10 @@ MacroDir proc uses rsi rdi rbx i:int_t, tokenarray:token_t
     mov [rdi].srcfile,get_curr_srcfile()
 
     .if ( ( Parse_Pass == PASS_1 ) || ( [rsi].flags & S_VARIABLE ) )
-        ;; is the macro redefined?
+        ; is the macro redefined?
         .if [rdi].lines != NULL
             ReleaseMacroData(rsi)
-            ;; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
+            ; v2.07: isfunc isn't reset anymore in ReleaseMacroData()
             and [rsi].mac_flag,not M_ISFUNC
             or  byte ptr [rsi].flags,S_VARIABLE
         .endif
@@ -808,7 +810,7 @@ MacroDir endp
     assume rsi:nothing
 
 
-lq_line struct  ;; item of a line queue
+lq_line struct  ; item of a line queue
 next    ptr_t ?
 line    char_t 1 dup(?)
 lq_line ends
@@ -824,7 +826,7 @@ GeLineQueue proc private uses rsi rdi rbx buffer:string_t
 
     mov rsi,rax
     mov LineQueue.head,[rsi].lq_line.next
-    mov rdi,strcpy(buffer, &[rsi].lq_line.line)
+    mov rdi,tstrcpy(buffer, &[rsi].lq_line.line)
     MemFree(rsi)
 
     xor ebx,ebx ; (
@@ -857,7 +859,7 @@ GeLineQueue proc private uses rsi rdi rbx buffer:string_t
             mov rsi,LineQueue.head
             .break .if !rsi
             mov LineQueue.head,[rsi].lq_line.next
-            strcpy(rdi, &[rsi].lq_line.line)
+            tstrcpy(rdi, &[rsi].lq_line.line)
             MemFree(rsi)
             .continue
         .case '{'
@@ -875,13 +877,12 @@ GeLineQueue proc private uses rsi rdi rbx buffer:string_t
             .break
         .endsw
     .endw
-    mov rax,buffer
-    ret
+    .return( buffer )
 
 GeLineQueue endp
 
 
-MacroLineQueue proc
+MacroLineQueue proc __ccall
 
   local oldstat:input_status
   local oldline:GETLINE
@@ -901,17 +902,17 @@ MacroLineQueue proc
 
 MacroLineQueue endp
 
-;; PURGE directive.
-;; syntax: PURGE macro [, macro, ... ]
-;; Masm deletes the macro content, but the symbol name isn't released
-;; and cannot be used for something else.
-;; Text macros cannot be purged, because the PURGE arguments are expanded.
+; PURGE directive.
+; syntax: PURGE macro [, macro, ... ]
+; Masm deletes the macro content, but the symbol name isn't released
+; and cannot be used for something else.
+; Text macros cannot be purged, because the PURGE arguments are expanded.
 
     assume rsi:asym_t
 
-PurgeDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+PurgeDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-    inc i ;; skip directive
+    inc i ; skip directive
 
     .repeat
 
@@ -944,21 +945,20 @@ endif
             inc i
         .endif
     .until i >= Token_Count
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 PurgeDirective endp
 
-;; internal @Environ macro function */
-;; v2.08: ensured no buffer overflow if environment variable is larger than MAX_LINE_LEN */
+; internal @Environ macro function
+; v2.08: ensured no buffer overflow if environment variable is larger than MAX_LINE_LEN
 
-EnvironFunc proc private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
+EnvironFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t, tokenarray:token_t
 
-    mov rax,mi
-    mov rax,[rax].macro_instance.parm_array
-    mov rax,[rax]
-    mov rsi,getenv(rax)
-    mov rdi,buffer
+    mov rbx,rdx
+    mov rax,[rcx].macro_instance.parm_array
+    mov rcx,[rax]
+    mov rsi,getenv(rcx)
+    mov rdi,rbx
     mov byte ptr [rdi],0
     .if rsi
         mov ecx,tstrlen(rsi)
@@ -968,24 +968,23 @@ EnvironFunc proc private uses rsi rdi rbx mi:ptr macro_instance, buffer:string_t
         rep movsb
         mov byte ptr [rdi],0
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 EnvironFunc endp
 
-;; macro initialization
-;; this proc is called once per pass
+; macro initialization
+; this proc is called once per pass
 
-MacroInit proc uses r12 pass:int_t
+MacroInit proc __ccall uses r12 pass:int_t
 
     mov MacroLevel,0
     mov MacroLocals,0 ; added 2.31.45
 
-    .if pass == PASS_1
+    .if ecx == PASS_1
 
         StringInit()
 
-        ;; add @Environ() macro func
+        ; add @Environ() macro func
 
         CreateMacro( "@Environ" )
         or  byte ptr [rax].asym.flags,S_ISDEFINED or S_PREDEFINED
@@ -1000,8 +999,7 @@ MacroInit proc uses r12 pass:int_t
         mov [rax].mparm_list.deflt,NULL
         mov [rax].mparm_list.required,TRUE
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 MacroInit endp
 

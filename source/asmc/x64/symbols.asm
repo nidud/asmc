@@ -629,7 +629,7 @@ SymMakeAllSymbolsPublic endp
 
 SymInit proc fastcall uses rsi rdi rbx
 
-    local time_of_day
+  local time_of_day:time_t
 
     xor eax,eax
     mov SymCount,eax

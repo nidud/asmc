@@ -444,7 +444,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                             myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
                         .elseif ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 )
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
-                                strcpy( StringBufferEnd, "16" )
+                                tstrcpy( StringBufferEnd, "16" )
                             .elseif ( ModuleInfo.floatformat == 'x' )
                                 tsprintf( StringBufferEnd, "%016lX%016lX", opndx.hlvalue, opndx.llvalue )
                             .else
@@ -470,7 +470,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                                 .if ( cvt.sign == -1 )
                                     mov byte ptr [rsi-1],'-'
                                 .else
-                                    strcpy( StringBufferEnd, rsi )
+                                    tstrcpy( StringBufferEnd, rsi )
                                 .endif
                             .endif
                         .endif
@@ -481,9 +481,9 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                             ;
                             imul ebx,i,asm_tok
                             add  rbx,tokenarray
-                            strcat( StringBufferEnd, [rbx].tokpos )
+                            tstrcat( StringBufferEnd, [rbx].tokpos )
                         .endif
-                        strcpy( r12, StringBufferEnd )
+                        tstrcpy( r12, StringBufferEnd )
                     .endif
                     add r12,tstrlen( r12 )
                     .continue
@@ -601,7 +601,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                                 mov rsi,mac
                                 .if ( [rsi].flags & S_PREDEFINED && ( [rdi].autoexp & dx ) )
 
-                                    strcpy( r12, [rax].asym.string_ptr )
+                                    tstrcpy( r12, [rax].asym.string_ptr )
                                     ExpandTMacro( r12, tokenarray, FALSE, 0 )
                                     add r12,tstrlen( r12 )
 
@@ -1069,7 +1069,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                         mov _sp[rax*8],rsi
                         mov rsi,StringBufferEnd
                         mov rax,sym
-                        tstrlen(strcpy(rsi, [rax].asym.string_ptr))
+                        tstrlen(tstrcpy(rsi, [rax].asym.string_ptr))
                         mov StringBufferEnd,GetAlignedPointer(rsi, eax)
                         mov rdi,pIdent
                         mov rc,STRING_EXPANDED
@@ -1245,8 +1245,8 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
                     .endif
                     imul ebx,i,asm_tok
                     add  rbx,tokenarray
-                    strcat( rdi, [rbx].tokpos )
-                    strcpy( outbuf, buffer )
+                    tstrcat( rdi, [rbx].tokpos )
+                    tstrcpy( outbuf, buffer )
                     mov expanded,TRUE
                     ;; is i to be decremented here?
                     .break
@@ -1257,7 +1257,7 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
                     mov rcx,[rbx].tokpos
                     sub rcx,rsi
                     rep movsb
-                    strcpy( rdi, [rax].asym.string_ptr )
+                    tstrcpy( rdi, [rax].asym.string_ptr )
                     mov ecx,level
                     inc ecx
                     .ifd ExpandTMacro( rdi, tokenarray, equmode, ecx ) == ERROR
@@ -1267,8 +1267,8 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
                     mov rax,sym
                     mov edx,[rax].asym.name_size
                     add rdx,[rbx].tokpos
-                    strcat( rdi, rdx )
-                    strcpy( outbuf, buffer )
+                    tstrcat( rdi, rdx )
+                    tstrcpy( outbuf, buffer )
                     mov expanded,TRUE
                     .break
                 .endif
@@ -1528,7 +1528,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
 
                 .elseif [rax].asym.state == SYM_TMACRO
 
-                    strcpy( buffer, [rax].asym.string_ptr )
+                    tstrcpy( buffer, [rax].asym.string_ptr )
                     .ifd ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
                         .return
                     .endif
@@ -2000,7 +2000,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
                         mov ecx,tstrlen(rsi)
                         inc ecx
                         rep movsb
-                        strcpy(string, buffer)
+                        tstrcpy(string, buffer)
                     .endif
 
                     .if ( edi )

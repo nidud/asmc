@@ -92,7 +92,7 @@ MAXSTACK equ 16
 
     assume rbx:token_t
 
-PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
+PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
   local rc:int_t, list_directive:int_t
   local opndx:expr
@@ -106,7 +106,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
     inc i
     imul ebx,i,asm_tok
-    add rbx,tokenarray
+    add rbx,rdx
     .if ( [rbx].token == T_OP_BRACKET || [rbx].token == T_COMMA )
         inc i
         add rbx,asm_tok
@@ -216,7 +216,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
                 mov [rsi].warning.state,al
             .endf
 
-            free(rdx)
+            MemFree(rdx)
             .endc
 
         .endif
@@ -234,7 +234,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             inc edi
             .endc .if edi >= MAXSTACK
             mov WarnCount,edi
-            .endc .if !malloc(wtable_count)
+            .endc .if !MemAlloc(wtable_count)
             lea rcx,WarnStack
             .for ( [rcx+rdi*8-8] = rax,
                    rsi = &pragma_wtable,
@@ -318,12 +318,12 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             ;
 
             mov rsi,[rbx].string_ptr
-            strcpy(&stdlib, rsi)
+            tstrcpy(&stdlib, rsi)
 
             .while ( [rbx+asm_tok].token == T_DOT )
 
-                strcat(&stdlib, [rbx+asm_tok].string_ptr)
-                strcat(&stdlib, [rbx+asm_tok*2].string_ptr)
+                tstrcat(&stdlib, [rbx+asm_tok].string_ptr)
+                tstrcat(&stdlib, [rbx+asm_tok*2].string_ptr)
                 add i,2
                 add rbx,asm_tok*2
             .endw
@@ -331,7 +331,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if ( byte ptr [rsi] == '"' )
 
                 inc rsi
-                .if strchr(strcpy(&stdlib, rsi), '"')
+                .if tstrchr(tstrcpy(&stdlib, rsi), '"')
 
                     mov byte ptr [rax],0
                 .endif
@@ -343,12 +343,12 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
                 add rbx,asm_tok*2
 
                 mov rsi,[rbx].string_ptr
-                strcpy(&dynlib, rsi)
+                tstrcpy(&dynlib, rsi)
 
                 .if ( byte ptr [rsi] == '"' )
 
                     inc rsi
-                    .if strchr(strcpy(&dynlib, rsi), '"')
+                    .if tstrchr(tstrcpy(&dynlib, rsi), '"')
 
                         mov byte ptr [rax],0
                     .endif
@@ -357,7 +357,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             lea rsi,dynlib
             lea rdi,stdlib
-            .if ( strrchr(rsi, '.') )
+            .if ( tstrrchr(rsi, '.') )
 
                 mov ecx,[rax+1]
                 or  ecx,0xFFFFFF
@@ -365,7 +365,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
                     mov byte ptr [rax],0
                 .endif
             .endif
-            .if ( strrchr(rdi, '.') )
+            .if ( tstrrchr(rdi, '.') )
 
                 mov ecx,[rax+1]
                 or  ecx,0xFFFFFF
@@ -389,8 +389,8 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
 
                 .new u[256]:char_t
 
-                tstrupr( strcpy( &u, rsi ) )
-                .while ( strchr( rax, '-' ) )
+                tstrupr( tstrcpy( &u, rsi ) )
+                .while ( tstrchr( rax, '-' ) )
                     mov byte ptr [rax],'_'
                 .endw
 
@@ -442,7 +442,7 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
                 sub rdi,rcx
                 add rdi,qitem
                 mov rdi,LclAlloc( edi )
-                strcpy( &[rdi].qitem.value, &dynlib )
+                tstrcpy( &[rdi].qitem.value, &dynlib )
                 QEnqueue( &ModuleInfo.LinkQueue, rdi )
             .else
                 .while [rbx].token == T_STRING
@@ -644,12 +644,11 @@ PragmaDirective proc uses rsi rdi rbx i:int_t, tokenarray:token_t
             RunLineQueue()
         .endif
     .endif
-    mov eax,rc
-    ret
+    .return( rc )
 
 PragmaDirective endp
 
-PragmaInit proc
+PragmaInit proc __ccall
 
     mov ListCount,0
     mov PackCount,0
@@ -658,7 +657,7 @@ PragmaInit proc
 
 PragmaInit endp
 
-PragmaCheckOpen proc
+PragmaCheckOpen proc __ccall
 
     .if ListCount || PackCount || CrefCount
 
@@ -668,9 +667,9 @@ PragmaCheckOpen proc
 
 PragmaCheckOpen endp
 
-warning_disable proc id:int_t
+warning_disable proc __ccall id:int_t
 
-    .for ( eax = id,
+    .for ( eax = ecx,
            rdx = &pragma_wtable,
            ecx = 0 : ecx < wtable_count : ecx++, rdx += sizeof(warning) )
 
@@ -680,8 +679,7 @@ warning_disable proc id:int_t
             .return
         .endif
     .endf
-    xor eax,eax
-    ret
+    .return( 0 )
 
 warning_disable endp
 

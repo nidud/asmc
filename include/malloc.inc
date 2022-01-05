@@ -65,17 +65,15 @@ endif
 _msize proto __cdecl :ptr
 _resetstkoflw proto __cdecl
 
-if not defined(_MSVCRT) or defined(_CRTBLD)
-_alloca64 proto __cdecl :dword, :dword
 ifdef _WIN64
-alloca macro dwSize:req, ReservedStack:=<@ReservedStack>
-    exitm<_alloca64( dwSize, ReservedStack )>
-    endm
+alloca proto watcall :uint_t {
+    add     eax,16-1 ; assume 16 aligned
+    and     eax,-16
+    sub     rsp,rax
+    lea     rax,[rsp+@ReservedStack]
+    }
 else
-alloca proto __cdecl :dword
-endif
-else
-alloca proto __cdecl :dword
+alloca proto __cdecl :uint_t
 endif
 
 ;;;;;;;;;;;;;;; kernel32

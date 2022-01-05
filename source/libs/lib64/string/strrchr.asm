@@ -4,26 +4,26 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-strrchr::
+    option win64:rsp noauto
 
-    mov	  r8,rdi
-    mov	  rdi,rcx
-    xor	  rax,rax
-    mov	  rcx,-1
-    repne scasb
-    not	  rcx
-    dec	  rdi
-    mov	  al,dl
-    std
-    repne scasb
-    cld
-    mov	  al,0
-    .ifz
-	lea rax,[rdi+1]
-    .endif
-    mov rdi,r8
+strrchr proc string:string_t, chr:int_t
+
+    xor	    eax,eax
+@@:
+    mov	    dh,[rcx]
+    test    dh,dh
+    jz	    @F
+    cmp	    dh,dl
+    cmovz   rax,rcx
+    add	    rcx,1
+    jmp	    @B
+@@:
     ret
 
-    END
+strrchr endp
+
+    end

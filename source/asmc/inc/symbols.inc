@@ -240,7 +240,7 @@ M_PURGED        equ 0x10
      altname        ptr asym ?      ; SYM_EXTERNAL (comm==0): alternative name
      debuginfo      ptr debug_info ?; SYM_INTERNAL (isproc==1): debug info (COFF)
                                     ; SYM_INTERNAL+predefined
-     sfunc_ptr      proc local :ptr asym, :ptr
+     sfunc_ptr      proc local __ccall :ptr asym, :ptr
      struct                         ; SYM_TYPE
       cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
       typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
@@ -289,7 +289,7 @@ M_PURGED        equ 0x10
     bytes_written   uint_t ?    ; initialized bytes in segment
     union
      label_list     asym_t ?    ; linked list of labels in this seg
-     flushfunc      proc local :ptr dsym, :ptr byte, :dword, :ptr
+     flushfunc      proc local __ccall :ptr dsym, :ptr byte, :dword, :ptr
     ends
     head            ptr fixup ? ; fixup queue head
     tail            ptr fixup ? ; fixup queue tail

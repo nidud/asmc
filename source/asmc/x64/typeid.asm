@@ -22,7 +22,7 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
 
     .if ( r8 )
         .if ( rdi != r8 )
-            strcpy(rdi, r8)
+            tstrcpy(rdi, r8)
         .endif
         add rdi,tstrlen(rdi)
     .else
@@ -37,7 +37,7 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         .if ( eax == EXPR_CONST )
             lea rdx,@CStr("imm")
         .endif
-        strcpy( rdi, rdx )
+        tstrcpy( rdi, rdx )
        .return 1
     .endif
 
@@ -100,14 +100,14 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
 
     .if ( [rbx].state == SYM_TYPE && [rbx].typekind == TYPE_STRUCT )
 
-        strcpy(rdi, [rbx].name )
+        tstrcpy(rdi, [rbx].name )
        .return 1
     .endif
 
     .if ( rsi )
         .if ( [rsi].asym.state == SYM_TYPE && [rsi].asym.typekind == TYPE_STRUCT )
 
-            strcpy(rdi, [rsi].asym.name)
+            tstrcpy(rdi, [rsi].asym.name)
            .return 1
         .endif
     .endif
@@ -198,7 +198,7 @@ GetTypeId proc fastcall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     add rbx,asm_tok
     mov id,0
     .if [rbx+asm_tok].token == T_COMMA
-        strcpy( &id, [rbx].string_ptr )
+        tstrcpy( &id, [rbx].string_ptr )
         add rbx,2*asm_tok
     .endif
 

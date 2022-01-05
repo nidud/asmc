@@ -11,32 +11,25 @@ include winnls.inc
 
     .code
 
-__allocwpath PROC USES rsi rdi path:LPSTR
+__allocwpath PROC USES rsi rdi rbx path:LPSTR
 
     mov rsi,rcx
     xor rax,rax
 
     .if MultiByteToWideChar(CP_ACP, eax, rsi, -1, rax, eax)
 
-        mov r10,rax
-        add eax,4
-        shl eax,1
-        mov rdi,alloca(eax)
+        mov ebx,eax
+        lea ecx,[rax*2+8]
+        mov rdi,malloc(ecx)
         add rax,8
 
-        .if MultiByteToWideChar(CP_ACP, 0, rsi, -1, rax, r10d)
+        .if MultiByteToWideChar(CP_ACP, 0, rsi, -1, rax, ebx)
 
             mov rax,0x005C003F005C005C  ; "\\?\"
             mov [rdi],rax
             mov rax,rdi
-            push [rbp+0x18]
-            mov rsi,[rbp+0x10]
-            mov rdi,[rbp+0x08]
-            mov rbp,[rbp]
-            retn
         .endif
     .endif
-    mov rax,rsi
     ret
 
 __allocwpath ENDP

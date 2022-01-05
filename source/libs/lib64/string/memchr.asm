@@ -4,9 +4,13 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
+include string.inc
+
     .code
 
-memchr::
+    option win64:rsp noauto
+
+memchr proc p:ptr, c:int_t, count:size_t
 
     xchg    rcx,rdi
     xchg    rcx,r8
@@ -16,5 +20,7 @@ memchr::
     mov     rdi,r8
     cmovnz  rax,rcx
     ret
+
+memchr endp
 
     end

@@ -129,7 +129,7 @@ ifdef FCT_ELF64
 externdef elf64_regs:byte
 endif
 
-pushitem proc private stk:ptr, elmt:ptr
+pushitem proc __ccall private stk:ptr, elmt:ptr
 
     LclAlloc( sizeof( qnode ) )
     mov rdx,stk
@@ -142,7 +142,7 @@ pushitem proc private stk:ptr, elmt:ptr
 
 pushitem endp
 
-popitem proc private stk:ptr
+popitem proc __ccall private stk:ptr
 
     mov rdx,stk
     mov rcx,[rdx]
@@ -152,7 +152,7 @@ popitem proc private stk:ptr
 
 popitem endp
 
-push_proc proc private p:ptr dsym
+push_proc proc __ccall private p:ptr dsym
     .if ( Parse_Pass == PASS_1 ) ;; get the locals stored so far
         SymGetLocal( p )
     .endif
@@ -160,7 +160,7 @@ push_proc proc private p:ptr dsym
     ret
 push_proc endp
 
-pop_proc proc private
+pop_proc proc __ccall private
     .return( NULL ) .if ( ProcStack == NULL )
     .return( popitem( &ProcStack ) )
 pop_proc endp
@@ -173,7 +173,7 @@ pop_proc endp
 ; type:  qualified type [simple type, structured type, ptr to simple/structured type]
 ;
 
-LocalDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+LocalDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local name  : string_t
   local loc   : ptr dsym
@@ -339,14 +339,12 @@ LocalDir endp
 ; read/write value of @StackBase variable
 ;
 
-UpdateStackBase proc sym:ptr asym, opnd:ptr expr
+UpdateStackBase proc __ccall sym:ptr asym, opnd:ptr expr
 
-    mov rdx,opnd
     .if ( rdx )
         mov StackAdj,[rdx].expr.uvalue
         mov StackAdjHigh,[rdx].expr.hvalue
     .endif
-    mov rcx,sym
     mov [rcx].asym.value,StackAdj
     mov [rcx].asym.value3264,StackAdjHigh
     ret
@@ -357,24 +355,23 @@ UpdateStackBase endp
 ; read value of @ProcStatus variable
 ;
 
-UpdateProcStatus proc sym:ptr asym, opnd:ptr expr
+UpdateProcStatus proc __ccall sym:ptr asym, opnd:ptr expr
 
     xor eax,eax
     .if ( CurrProc )
         mov eax,ProcStatus
     .endif
-    mov rcx,sym
     mov [rcx].asym.value,eax
     ret
+
 UpdateProcStatus endp
 
 ;
 ; Added v2.27
 ;
 
-GetFastcallId proc langtype:int_t
+GetFastcallId proc __ccall langtype:int_t
 
-    mov ecx,langtype
     movzx edx,ModuleInfo.Ofssize
     .if ( ecx == LANG_FASTCALL )
         .if ( edx == USE64 )
@@ -407,17 +404,16 @@ GetFastcallId endp
 
 MacroInline proto :string_t, :int_t, :string_t, :string_t, :int_t
 
-ParseInline proc private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, tokenarray:ptr asm_tok
+ParseInline proc __ccall private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, tokenarray:ptr asm_tok
 
     .if ( Parse_Pass == PASS_1 )
 
-        mov rcx,sym
         or [rcx].asym.flag2,S_ISINLINE
 
         xor esi,esi
         xor eax,eax
-        mov rbx,curr
-        mov rcx,tokenarray
+        mov rbx,rdx
+        mov rcx,r8
         add rcx,2*asm_tok
 
         .if ( [rcx].asm_tok.token == T_RES_ID &&
@@ -456,7 +452,7 @@ ParseInline proc private uses rsi rbx sym:ptr asym, curr:ptr asm_tok, tokenarray
 
 ParseInline endp
 
-ParseParams proc private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t
+ParseParams proc __ccall private uses rsi rdi rbx p:ptr dsym, i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t
 
    .new name:string_t
    .new sym:ptr dsym
@@ -897,7 +893,7 @@ ParseParams endp
 ; 3. if no segment is set, use cpu setting
 ;
 
-ParseProc proc uses rsi rdi rbx p:ptr dsym,
+ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
         i:int_t, tokenarray:ptr asm_tok, IsPROC:int_t, langtype:byte
 
   .new token:string_t
@@ -908,7 +904,7 @@ ParseProc proc uses rsi rdi rbx p:ptr dsym,
   .new oldpublic:int_t
   .new Ofssize:byte
 
-    mov rdi,p
+    mov rdi,rcx
     mov rsi,[rdi].dsym.procinfo
     movzx eax,[rdi].asym.flags
     and eax,S_ISPUBLIC
@@ -916,7 +912,7 @@ ParseProc proc uses rsi rdi rbx p:ptr dsym,
 
     ; set some default values
 
-    .if ( IsPROC )
+    .if ( r9d )
 
         and [rsi].flags,not PROC_ISEXPORT
         .if ( ModuleInfo.procs_export )
@@ -1101,7 +1097,7 @@ ParseProc proc uses rsi rdi rbx p:ptr dsym,
             inc ecx
             mov rcx,LclAlloc( ecx )
             mov [rsi].prologuearg,rcx
-            strcpy( rcx, [rbx].string_ptr )
+            tstrcpy( rcx, [rbx].string_ptr )
 
         .else
 
@@ -1328,11 +1324,11 @@ ParseProc endp
 
     B equ <byte ptr>
 
-CreateProc proc uses rsi rdi sym:ptr asym, name:string_t, state:sym_state
+CreateProc proc __ccall uses rsi rdi sym:ptr asym, name:string_t, state:sym_state
 
-    mov rax,sym
+    mov rax,rcx
     .if ( rax == NULL )
-        mov rdi,name
+        mov rdi,rdx
         .if ( B[rdi] )
             SymCreate( rdi )
         .else
@@ -1399,7 +1395,7 @@ CreateProc endp
 
 ; delete a PROC item
 
-DeleteProc proc uses rsi rdi p:ptr dsym
+DeleteProc proc __ccall uses rsi rdi p:ptr dsym
 
     mov rdi,p
     .if ( [rdi].asym.state == SYM_INTERNAL )
@@ -1421,7 +1417,7 @@ DeleteProc endp
 
 ; PROC directive.
 
-ProcDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
   local sym:ptr dsym
   local ofs:uint_t
@@ -1430,10 +1426,10 @@ ProcDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local is_global:int_t
   local p:ptr proc_info
 
-    mov rbx,tokenarray
+    mov rbx,rdx
 
-    .if ( i != 1 )
-        imul ecx,i,asm_tok
+    .if ( ecx != 1 )
+        imul ecx,ecx,asm_tok
         .return( asmerr( 2008, [rbx+rcx].string_ptr ) )
     .endif
 
@@ -1635,7 +1631,7 @@ ProcDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         ; v2.11: clear all fields
 
-        memset( &unw_info, 0, sizeof( unw_info ) )
+        tmemset( &unw_info, 0, sizeof( unw_info ) )
         .if ( [rsi].exc_handler )
             unw_info.set_Flags(UNW_FLAG_FHANDLER)
         .endif
@@ -1665,11 +1661,11 @@ ProcDir proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
 ProcDir endp
 
-CopyPrototype proc uses rsi rdi p:ptr dsym, src:ptr dsym
+CopyPrototype proc __ccall uses rsi rdi p:ptr dsym, src:ptr dsym
 
-    mov rdi,p
+    mov rdi,rcx
     mov rsi,[rdi].dsym.procinfo
-    mov rcx,src
+    mov rcx,rdx
     .if ( !( [rcx].asym.flag1 & S_ISPROC ) )
         .return( ERROR )
     .endif
@@ -1708,7 +1704,7 @@ CopyPrototype endp
 ; for FRAME procs, write .pdata and .xdata SEH unwind information
 ;
 
-WriteSEHData proc private uses rsi rdi rbx p:ptr dsym
+WriteSEHData proc __ccall private uses rsi rdi rbx p:ptr dsym
 
    .new xdata:ptr dsym
    .new segname:string_t = ".xdata"
@@ -1719,7 +1715,7 @@ WriteSEHData proc private uses rsi rdi rbx p:ptr dsym
    .new segnamebuff[12]:char_t
    .new buffer[128]:char_t
 
-    mov rdi,p
+    mov rdi,rcx
     .if ( endprolog_found == FALSE )
         asmerr( 3007, [rdi].asym.name )
     .endif
@@ -2353,8 +2349,13 @@ write_userdef_prologue proc __ccall private uses rsi rdi rbx tokenarray:ptr asm_
     mov Token_Count,ebx
 
     .if ( Parse_Pass == PASS_1 )
-
+ifdef __UNIX__
+        mov dir,rsi
+endif
         mov ebx,atoi( &buffer )
+ifdef __UNIX__
+        mov rsi,dir
+endif
         sub ebx,[rsi].localsize
         .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
             sub [rdi].asym.offs,ebx
@@ -2413,7 +2414,7 @@ win64_MoveRegParam proc __ccall private uses rsi rdi i:int_t, size:int_t, param:
 
 win64_MoveRegParam endp
 
-win64_GetRegParams proc private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr_t, param:ptr dsym
+win64_GetRegParams proc __ccall private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr_t, param:ptr dsym
 
     mov rsi,size
     mov rdi,param
@@ -2454,7 +2455,7 @@ win64_GetRegParams proc private uses rsi rdi rbx varargs:ptr int_t, size:ptr inr
 
 win64_GetRegParams endp
 
-win64_SaveRegParams proc private uses rsi rdi rbx info:ptr proc_info
+win64_SaveRegParams proc __ccall private uses rsi rdi rbx info:ptr proc_info
 
    .new size:int_t
    .new varargs:int_t
@@ -2530,7 +2531,7 @@ win64_SaveRegParams endp
 ; write prolog code
 ;
 
-write_default_prologue proc private uses rsi rdi rbx
+write_default_prologue proc __ccall private uses rsi rdi rbx
 
    .new info:ptr proc_info
    .new regist:ptr word
@@ -3017,7 +3018,7 @@ write_default_prologue endp
 ; will also work only in those cases!
 ;
 
-SetLocalOffsets proc uses rsi rdi rbx info:ptr proc_info
+SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
 
    .new curr:ptr dsym
    .new cntxmm:int_t = 0
@@ -3181,7 +3182,7 @@ SetLocalOffsets proc uses rsi rdi rbx info:ptr proc_info
 
 SetLocalOffsets endp
 
-write_prologue proc uses rsi rdi tokenarray:ptr asm_tok
+write_prologue proc __ccall uses rsi rdi tokenarray:ptr asm_tok
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
@@ -3241,7 +3242,7 @@ write_prologue proc uses rsi rdi tokenarray:ptr asm_tok
 
 write_prologue endp
 
-pop_register proc private uses rsi rdi regist:ptr word
+pop_register proc __ccall private uses rsi rdi regist:ptr word
 
     ; Pop the register when a procedure ends
 
@@ -3320,7 +3321,7 @@ pop_register endp
 ;  .386   -   -    0   0    -1
 ;  .486   -   -    -   0    -1
 
-write_default_epilogue proc private uses rsi rdi rbx
+write_default_epilogue proc __ccall private uses rsi rdi rbx
 
    .new info:ptr proc_info
    .new sysstack:int_t = 0
@@ -3573,7 +3574,7 @@ write_default_epilogue endp
 ; if a RET/IRET instruction has been found inside a PROC.
 ;
 
-write_userdef_epilogue proc private uses rsi rdi rbx flag_iret:int_t, tokenarray:ptr asm_tok
+write_userdef_epilogue proc __ccall private uses rsi rdi rbx flag_iret:int_t, tokenarray:ptr asm_tok
 
     mov rdi,CurrProc
     mov rsi,[rdi].dsym.procinfo
@@ -3672,7 +3673,7 @@ write_userdef_epilogue endp
 ; it's ensured already that ModuleInfo.proc_epilogue isn't NULL.
 ;
 
-RetInstr proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
+RetInstr proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
 
    .new info:ptr proc_info
    .new is_iret:int_t = FALSE
@@ -3711,7 +3712,7 @@ RetInstr proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
         LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL )
     .endif
 
-    mov rdi,strcpy( &buffer, [rbx].string_ptr )
+    mov rdi,tstrcpy( &buffer, [rbx].string_ptr )
     add rdi,tstrlen( rax )
 
     write_default_epilogue()
@@ -3786,7 +3787,7 @@ RetInstr proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok, count:int_t
         ; v2.04: changed. Now works for both RET nn and IRETx
         ; v2.06: changed. Now works even if RET has ben "renamed"
         ;
-        strcpy( rdi, [rbx].tokpos )
+        tstrcpy( rdi, [rbx].tokpos )
     .endif
     AddLineQueue( &buffer )
     RunLineQueue()
@@ -3798,7 +3799,7 @@ RetInstr endp
 ; init this module. called for every pass.
 ;
 
-ProcInit proc
+ProcInit proc __ccall
 
     mov ProcStack,NULL
     mov CurrProc ,NULL

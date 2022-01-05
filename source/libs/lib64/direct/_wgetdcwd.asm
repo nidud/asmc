@@ -14,9 +14,7 @@ include winbase.inc
 
 _wgetdcwd proc uses rdi drive:SINT, buffer:LPWSTR, maxlen:SINT
 
-    add r8d,r8d
-    mov rdi,alloca(r8d)
-
+    mov rdi,malloc(r8)
     ;
     ; GetCurrentDirectory only works for the default drive
     ;
@@ -32,6 +30,7 @@ _wgetdcwd proc uses rdi drive:SINT, buffer:LPWSTR, maxlen:SINT
         shr eax,cl
         .ifnc
 
+            free(rdi)
             _set_doserrno(ERROR_INVALID_DRIVE)
             _set_errno(EACCES)
             .return 0
@@ -51,21 +50,21 @@ _wgetdcwd proc uses rdi drive:SINT, buffer:LPWSTR, maxlen:SINT
     ;
     ; API call failed, or buffer not large enough
     ;
-    .if eax > maxlen
+    .if ( eax > maxlen )
 
+        free(rdi)
         _set_errno(ERANGE)
         .return 0
 
     .elseif eax
 
+        mov rax,rdi
         mov rcx,buffer
-        .if !rcx
-
-            lea rcx,[rax*2+2]
-            .return .if !malloc(rcx)
-            mov rcx,rax
+        .if rcx
+            strcpy(rcx, rdi)
+            free(rdi)
+            mov rax,buffer
         .endif
-        strcpy(rcx, rdi)
     .endif
     ret
 

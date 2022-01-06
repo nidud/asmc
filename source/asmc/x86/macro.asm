@@ -327,6 +327,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_
   local mnames[MAX_PLACEHOLDERS]:mname_list ;; there are max 255 placeholders
   local final:token_t
 
+    mov ls.tokenarray,tokenarray
     mov ls.outbuf,token_stringbuf
     mov ls.start,alloca( ModuleInfo.max_line_len )
 

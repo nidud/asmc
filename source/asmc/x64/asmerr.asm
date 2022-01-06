@@ -14,9 +14,9 @@ include asmc.inc
 include symbols.inc
 include input.inc
 include listing.inc
+include setjmp.inc
 
 warning_disable proto __ccall :int_t
-longjmp         proto __ccall :ptr, :int_t
 GetCurrOffset   proto __ccall
 print_source_nesting_structure proto __ccall
 

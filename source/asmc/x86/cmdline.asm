@@ -647,6 +647,7 @@ endif
     .case '6fle'            ;; -elf64
 if defined(ASMC64) and defined(__UNIX__)
 else
+        or  Options.xflag,OPT_REGAX
         mov Options.output_format,OFORMAT_ELF
         define_name( "_LINUX",   "2" )
         define_name( "__UNIX__", "1" )

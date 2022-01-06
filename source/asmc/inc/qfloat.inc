@@ -147,6 +147,7 @@ __cvtq_ld   proto __ccall :ptr, :ptr
 quad_resize proto __ccall :ptr expr, :int_t
 _flttostr   proto __ccall :ptr, :ptr FLTINFO, :string_t, :uint_t
 
+_atoqw      proto __ccall :string_t
 _atoow      proto __ccall :string_t, :string_t, :int_t, :int_t
 atofloat    proto __ccall :ptr, :string_t, :uint_t, :int_t, :uchar_t
 

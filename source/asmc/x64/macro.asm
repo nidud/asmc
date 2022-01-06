@@ -328,6 +328,7 @@ StoreMacro proc __ccall uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:tok
   local mnames[MAX_PLACEHOLDERS]:mname_list ; there are max 255 placeholders
   local final:token_t
 
+    mov ls.tokenarray,r8
     mov ls.outbuf,token_stringbuf
     mov ls.start,alloca( ModuleInfo.max_line_len )
 
@@ -819,7 +820,7 @@ LineQueue equ <ModuleInfo.line_queue>
 
 PreprocessLine proto __ccall :ptr asm_tok
 
-GeLineQueue proc private uses rsi rdi rbx buffer:string_t
+GeLineQueue proc __ccall private uses rsi rdi rbx buffer:string_t
 
     mov rax,LineQueue.head
     .return .if !rax

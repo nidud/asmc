@@ -156,7 +156,7 @@ M_PURGED        equ 0x10
      ;
      ; used by SYM_MACRO if predefined==1
      ;
-     func_ptr       proc local :ptr macro_instance, :string_t, :ptr asm_tok
+     func_ptr       proc local __ccall :ptr macro_instance, :string_t, :ptr asm_tok
      classlnameidx  int_t ?         ; used by SYM_CLASS_LNAME
     ends
 

@@ -10,19 +10,19 @@ include asmc.inc
 include memalloc.inc
 include parser.inc
 
-;; .SAFESEH works for coff format only.
-;; syntax is: .SAFESEH handler
-;; <handler> must be a PROC or PROTO
+; .SAFESEH works for coff format only.
+; syntax is: .SAFESEH handler
+; <handler> must be a PROC or PROTO
 
     .code
 
     assume rbx:ptr asm_tok
     assume rdi:ptr qnode
 
-SafeSEHDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
+SafeSEHDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
-    imul ebx,i,asm_tok
-    add rbx,tokenarray
+    imul ebx,ecx,asm_tok
+    add rbx,rdx
 
     .if ( Options.output_format != OFORMAT_COFF )
         .if ( Parse_Pass == PASS_1)
@@ -72,6 +72,7 @@ SafeSEHDirective proc uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .return( asmerr( 2008, [rbx].string_ptr ) )
     .endif
     .return( NOT_ERROR )
+
 SafeSEHDirective endp
 
     end

@@ -124,8 +124,7 @@ IncludeDirective proc __ccall i:int_t, tokenarray:token_t
     .if SearchFile( rcx, TRUE )
         ProcessFile( tokenarray ) ; v2.11: process the file synchronously
     .endif
-    mov eax,NOT_ERROR
-    ret
+    .return( NOT_ERROR )
 
 IncludeDirective endp
 
@@ -195,16 +194,15 @@ IncludeLibDirective proc __ccall uses rbx i:int_t, tokenarray:token_t
     .endif
 
     IncludeLibrary(rcx)
-    mov eax,NOT_ERROR
-    ret
+   .return( NOT_ERROR )
 
 IncludeLibDirective endp
 
 ; INCBIN directive
 ifdef __UNIX__
-IncBinDirective proc __ccall uses rsi rsi rbx r12 r13 i:int_t, tokenarray:token_t
+IncBinDirective proc __ccall uses rsi rdi rbx r12 r13 i:int_t, tokenarray:token_t
 else
-IncBinDirective proc __ccall uses rsi rsi rbx i:int_t, tokenarray:token_t
+IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 endif
   local opndx:expr
 
@@ -339,20 +337,28 @@ IncBinDirective endp
 
 AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
-    local subst:string_t
+  local subst:string_t
 
-    inc i ; go past ALIAS
+    inc  i ; go past ALIAS
     imul ebx,i,asm_tok
-    add rbx,rdx
+    add  rbx,rdx
 
-    .return asmerr(2051) .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
+    .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
+        .return asmerr( 2051 )
+    .endif
 
     ; check syntax. note that '=' is T_DIRECTIVE && DRT_EQUALSGN
-    .return( asmerr(2008, [rbx+asm_tok].string_ptr) ) \
-        .if ( [rbx+asm_tok].token != T_DIRECTIVE || [rbx+asm_tok].dirtype != DRT_EQUALSGN )
-    .return asmerr(2051) .if ( [rbx+asm_tok*2].token != T_STRING || [rbx+asm_tok*2].string_delim != '<' )
+
+    .if ( [rbx+asm_tok].token != T_DIRECTIVE || [rbx+asm_tok].dirtype != DRT_EQUALSGN )
+        .return( asmerr( 2008, [rbx+asm_tok].string_ptr ) )
+    .endif
+    .if ( [rbx+asm_tok*2].token != T_STRING || [rbx+asm_tok*2].string_delim != '<' )
+        .return asmerr( 2051 )
+    .endif
     mov subst,[rbx+asm_tok*2].string_ptr
-    .return asmerr(2008, [rbx+asm_tok*3].string_ptr) .if ( [rbx+asm_tok*3].token != T_FINAL )
+    .if ( [rbx+asm_tok*3].token != T_FINAL )
+        .return asmerr( 2008, [rbx+asm_tok*3].string_ptr )
+    .endif
 
     ; make sure <alias_name> isn't defined elsewhere
     mov rsi,SymSearch([rbx].string_ptr)
@@ -364,9 +370,9 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             mov rdi,SymCreate(subst)
             mov [rdi].state,SYM_UNDEFINED
             sym_add_table(&SymTables[TAB_UNDEF*symbol_queue], rdi)
-        .elseif ( [rdi].state != SYM_UNDEFINED && [rdi].state != SYM_INTERNAL && \
+        .elseif ( [rdi].state != SYM_UNDEFINED && [rdi].state != SYM_INTERNAL &&
                   [rdi].state != SYM_EXTERNAL )
-            .return( asmerr(2217, subst) )
+            .return( asmerr( 2217, subst ) )
         .endif
         .if ( rsi == NULL )
             mov rsi,SymCreate([rbx].string_ptr)
@@ -379,7 +385,7 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         ; v2.10: copy language type of alias
         mov [rsi].langtype,[rdi].langtype
         sym_add_table(&SymTables[TAB_ALIAS*symbol_queue], rsi) ; add ALIAS
-       .return(NOT_ERROR)
+       .return( NOT_ERROR )
     .endif
     xor eax,eax
     .if ( [rsi].state != SYM_ALIAS )
@@ -388,15 +394,19 @@ AliasDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         mov rdi,[rsi].substitute
         tstrcmp( [rdi].name, subst )
     .endif
-    .return( asmerr(2005, [rsi].name) ) .if eax
+    .if eax
+        .return( asmerr( 2005, [rsi].name) )
+    .endif
+
     ; for COFF+ELF, make sure <actual_name> is "global" (EXTERNAL or
     ; public INTERNAL). For OMF, there's no check at all. */
+
     .if ( Parse_Pass != PASS_1 )
         .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
             mov rdi,[rsi].substitute
             .if ( [rdi].state == SYM_UNDEFINED )
                 .return( asmerr(2006, subst) )
-            .elseif ( [rdi].state != SYM_EXTERNAL && \
+            .elseif ( [rdi].state != SYM_EXTERNAL &&
                        ( [rdi].state != SYM_INTERNAL || !( [rdi].flags & S_ISPUBLIC ) ) )
                 .return( asmerr(2217, subst) )
             .endif
@@ -412,11 +422,13 @@ AliasDirective endp
 
 NameDirective proc __ccall i:int_t, tokenarray:token_t
 
-    .return(NOT_ERROR) .if ( Parse_Pass != PASS_1 )
+    .if ( Parse_Pass != PASS_1 )
+        .return( NOT_ERROR )
+    .endif
 
-    inc i ; skip directive
+    inc  i ; skip directive
     imul ecx,i,asm_tok
-    add rdx,rcx
+    add  rdx,rcx
 
     ; improper use of NAME is difficult to see since it is a nop
     ; therefore some syntax checks are implemented:
@@ -434,7 +446,7 @@ NameDirective proc __ccall i:int_t, tokenarray:token_t
           [rdx].tokval == T_TYPEDEF ||
           [rdx].tokval == T_RECORD ) ) || [rdx].token == T_COLON )
 
-        .return( asmerr(2008, [rdx-asm_tok].tokpos) )
+        .return( asmerr( 2008, [rdx-asm_tok].tokpos ) )
     .endif
 
     ; don't touch Option fields! if anything at all, ModuleInfo.name may be modified.

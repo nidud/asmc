@@ -1611,7 +1611,7 @@ endif
 
 omf_write_pubdef endp
 
-omf_write_modend proc private fixp:ptr fixup, displ:uint_32
+omf_write_modend proc __ccall private fixp:ptr fixup, displ:uint_32
 
     local obj:omf_rec
     local buffer[FIX_GEN_MODEND_MAX]:uint_8

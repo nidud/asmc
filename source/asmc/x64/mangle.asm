@@ -60,7 +60,7 @@ UScoreMangler proc fastcall sym:asym_t, buffer:string_t
 
 UScoreMangler endp
 
-; StdcallMangler: add '_' prefix and '@size' suffix to proc names */
+; StdcallMangler: add '_' prefix and '@size' suffix to proc names
 ;                 add '_' prefix to other symbols */
 
 StdcallMangler proc fastcall sym:asym_t, buffer:string_t

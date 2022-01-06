@@ -69,17 +69,20 @@ SegAttrValue label typeinfo
 include segattr.inc
 undef sitem
 
-
+align 4
 grpdefidx   dd 0    ; Number of group definitions
+align 8
 SegStack    dsym_t MAX_SEG_NESTING dup(0) ; stack of open segments
 stkindex    int_t 0 ; current top of stack
 
 ; saved state
+align 8
 saved_CurrSeg   dsym_t 0
 saved_SegStack  ptr dsym_t 0
 saved_stkindex  int_t 0
 
 ; generic byte buffer, used for OMF LEDATA records only
+align 8
 codebuf         db 1024 dup(0)
 buffer_size     dd 0 ; total size of code buffer
 

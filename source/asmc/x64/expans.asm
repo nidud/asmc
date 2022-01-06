@@ -38,8 +38,6 @@ public MacroLocals
 TEVALUE_UNSIGNED equ 1
 MAX_TEXTMACRO_NESTING equ 20
 
-GetMacroLine proto __ccall :ptr macro_instance, :string_t
-
 .data
  MacroLocals int_t 0     ; counter for LOCAL names
  MacroLevel  dd 0        ; current macro nesting level

@@ -1243,7 +1243,7 @@ endif
 
 CreateType endp
 
-TypedefDirective proc i:int_t, tokenarray:ptr asm_tok
+TypedefDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 
     mov rcx,tokenarray
     .if( i != 1 )

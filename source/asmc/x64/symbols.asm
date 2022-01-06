@@ -50,7 +50,7 @@ tmitem              ends
 eqitem              struct
 name                string_t ?
 value               string_t ?
-sfunc_ptr           proc :asym_t, :ptr
+sfunc_ptr           proc __ccall :asym_t, :ptr
 store               symptr_t ?
 eqitem              ends
 

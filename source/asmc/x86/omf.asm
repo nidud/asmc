@@ -1751,7 +1751,11 @@ if TRUNCATE
     ; won't become shorter anymore.
 
     mov size,ftell( CurrFile[OBJ*4] )
+ifdef __UNIX__
+    mov fh,fileno( CurrFile[OBJ*4] )
+else
     mov fh,_fileno( CurrFile[OBJ*4] )
+endif
     _chsize( fh, size )
 endif
 

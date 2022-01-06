@@ -403,7 +403,7 @@ define SIT_MACRO       1
 
 
 .template format_options
-    init            proc local :ptr module_info
+    init            proc local __ccall :ptr module_info
     invalid_fixup_type sword ?
     formatname      char_t 6 dup(?)
    .ends
@@ -520,9 +520,9 @@ define SIT_MACRO       1
     anonymous_label         uint_t ?        ; "anonymous label" counter
     StackBase               ptr asym ?
     ProcStatus              ptr asym ?
-    WriteModule             proc local :ptr module_info
-    EndDirHook              proc local :ptr module_info
-    Pass1Checks             proc local :ptr module_info
+    WriteModule             proc local __ccall :ptr module_info
+    EndDirHook              proc local __ccall :ptr module_info
+    Pass1Checks             proc local __ccall :ptr module_info
     pe_flags                uint_t ?
     max_line_len            uint_t ?
    .ends

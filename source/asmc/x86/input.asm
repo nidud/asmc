@@ -384,9 +384,9 @@ SetLineNumber proc line:uint_t
 
 SetLineNumber endp
 
-;; for error listing, render the current source file and line
-;; this function is also called if pass is > 1,
-;; which is a problem for FASTPASS because the file stack is empty.
+; for error listing, render the current source file and line
+; this function is also called if pass is > 1,
+; which is a problem for FASTPASS because the file stack is empty.
 
     assume ecx:ptr src_item
 
@@ -463,31 +463,27 @@ print_source_nesting_structure endp
 
     assume ebx:nothing
 
-;; Scan the include path for a file!
-;; variable ModuleInfo.g.IncludePath also contains directories set with -I cmdline option.
+; Scan the include path for a file!
+; variable ModuleInfo.g.IncludePath also contains directories set with -I cmdline option.
 
 open_file_in_include_path proc private uses esi edi ebx name:string_t, fullpath:string_t
 
-    local curr:string_t
     local next:string_t
-    local i:int_t
     local namelen:int_t
-    local file:ptr FILE
 
-    mov file,NULL
     mov name,ltokstart(name)
     mov namelen,strlen(eax)
 
-    .for ( ebx = ModuleInfo.IncludePath: ebx: ebx = next )
+    .for ( eax = 0, ebx = ModuleInfo.IncludePath : ebx && !eax : ebx = next )
 
-        xor eax,eax
-        mov ecx,-1
-        mov edi,ebx
-        repnz scasb
-        not ecx
-        dec ecx
-        mov i,ecx
-        mov next,eax
+        mov     ecx,-1
+        mov     edi,ebx
+        repnz   scasb
+        not     ecx
+        dec     ecx
+        mov     edx,ecx
+        mov     next,eax
+
         .ifnz
             mov edi,ebx
             mov eax,INC_PATH_DELIM
@@ -495,84 +491,80 @@ open_file_in_include_path proc private uses esi edi ebx name:string_t, fullpath:
             .ifz
                 mov next,edi ;; skip path delimiter char (; or :)
                 sub edi,ebx
-                dec edi
-                mov i,edi
+                lea edx,[edi-1]
             .endif
         .endif
 
-        ;; v2.06: ignore
-        ;; - "empty" entries in PATH
-        ;; - entries which would cause a buffer overflow
-        mov ecx,i
-        mov eax,ecx
-        add eax,namelen
-        .continue .if ( ecx == 0 || ( eax >= FILENAME_MAX ) )
+        ; v2.06: ignore
+        ; - "empty" entries in PATH
+        ; - entries which would cause a buffer overflow
+
+        xor eax,eax
+        mov ecx,edx
+        mov edx,ecx
+        add edx,namelen
+        .continue .if ( ecx == 0 || ( edx >= FILENAME_MAX ) )
 
         mov edx,fullpath
         mov esi,ebx
         mov edi,edx
         rep movsb
+
         mov al,[edi-1]
-        .if al != '/' && al != '\' && al != ':'
-            mov al,DIR_SEPARATOR
-            stosb
+        .if ( !ISPC( al ) )
+
+            mov byte ptr [edi],DIR_SEPARATOR
+            inc edi
         .endif
+
         mov ecx,namelen
         inc ecx
         mov esi,name
         rep movsb
-        mov file,fopen(edx, "rb")
-        .break .if eax
+        fopen( edx, "rb" )
     .endf
-    mov eax,file
     ret
 
 open_file_in_include_path endp
 
-;; the worker behind the INCLUDE directive. Also used
-;; by INCBIN and the -Fi cmdline option.
-;; the main source file is added in InputInit().
-;; v2.12: _splitpath()/_makepath() removed
+; the worker behind the INCLUDE directive. Also used
+; by INCBIN and the -Fi cmdline option.
+; the main source file is added in InputInit().
+; v2.12: _splitpath()/_makepath() removed
 
     assume ebx:ptr src_item
 
 SearchFile proc uses esi edi ebx path:string_t, queue:int_t
 
     local file:ptr FILE
-    local fl:ptr src_item
-    local fn:string_t
     local isabs:int_t
     local fullpath[FILENAME_MAX]:char_t
-    local fn2:string_t
-    local src:string_t
 
     mov file,NULL
-    mov fn,GetFNamePart(path)
 
-    ;; if no absolute path is given, then search in the directory
-    ;; of the current source file first!
-    ;; v2.11: various changes because field fullpath has been removed.
+    ; if no absolute path is given, then search in the directory
+    ; of the current source file first!
+    ; v2.11: various changes because field fullpath has been removed.
 
     mov isabs,ISABS(path)
 
-    .if ( !isabs )
+    .if ( !eax )
 
         .for ( ebx = ModuleInfo.src_stack: ebx : ebx = [ebx].next )
 
             .if [ebx].type == SIT_FILE
 
-                mov src,GetFName( [ebx].srcfile )
-                mov fn2,GetFNamePart(eax)
-                .if eax != src
+                mov esi,GetFName( [ebx].srcfile )
 
-                    sub eax,src
+                .if ( esi != GetFNamePart( esi ) )
 
-                    ;; v2.10: if there's a directory part, add it to the directory part of the current file.
-                    ;; fixme: check that both parts won't exceed FILENAME_MAX!
-                    ;; fixme: 'path' is relative, but it may contain a drive letter!
+                    sub eax,esi
+
+                    ; v2.10: if there's a directory part, add it to the directory part of the current file.
+                    ; fixme: check that both parts won't exceed FILENAME_MAX!
+                    ; fixme: 'path' is relative, but it may contain a drive letter!
 
                     lea edi,fullpath
-                    mov esi,src
                     mov ecx,eax
                     rep movsb
                     mov esi,path
@@ -591,7 +583,7 @@ SearchFile proc uses esi edi ebx path:string_t, queue:int_t
         .endf
     .endif
 
-    .if file == NULL
+    .if ( file == NULL )
 
         mov fullpath,0
         mov file,fopen(path, "rb")
@@ -599,14 +591,14 @@ SearchFile proc uses esi edi ebx path:string_t, queue:int_t
         ;; if the file isn't found yet and include paths have been set,
         ;; and NO absolute path is given, then search include dirs
 
-        .if file == NULL && ModuleInfo.IncludePath != NULL && !isabs
+        .if ( file == NULL && ModuleInfo.IncludePath != NULL && !isabs )
             .if open_file_in_include_path(path, &fullpath)
                 mov file,eax
                 lea eax,fullpath
                 mov path,eax
             .endif
         .endif
-        .if file == NULL
+        .if ( file == NULL )
             asmerr(1000, path)
         .endif
     .endif

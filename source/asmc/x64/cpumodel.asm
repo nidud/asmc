@@ -225,14 +225,15 @@ SetModel proc __ccall private uses rsi rdi rbx
     mov sym_Model,     AddPredefinedConstant( "@Model", ModuleInfo._model )
     mov sym_Interface, AddPredefinedConstant( "@Interface", ModuleInfo.langtype )
 
-    .if ( ModuleInfo.defOfssize == USE64 && \
-        ( ModuleInfo.fctype == FCT_WIN64 || \
-          ModuleInfo.fctype == FCT_VEC64 || \
-          ModuleInfo.fctype == FCT_ELF64 ) ) ;; v2.28: added
+    .if ( ModuleInfo.defOfssize == USE64 &&
+         ( ModuleInfo.fctype == FCT_WIN64 ||
+           ModuleInfo.fctype == FCT_VEC64 ||
+           ModuleInfo.fctype == FCT_ELF64 ) ) ; v2.28: added
         mov sym_ReservedStack,AddPredefinedConstant( "@ReservedStack", 0 )
     .endif
-    .if ( ModuleInfo.sub_format == SFORMAT_PE || \
-        ( ModuleInfo.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
+    .if ( ModuleInfo.sub_format == SFORMAT_PE ||
+         ( ModuleInfo.sub_format == SFORMAT_64BIT &&
+           Options.output_format == OFORMAT_BIN ) )
         pe_create_PE_header()
     .endif
     ret

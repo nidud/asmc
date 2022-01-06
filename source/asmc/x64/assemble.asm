@@ -1228,23 +1228,6 @@ AssembleFini proc __ccall private
     ret
 AssembleFini endp
 
-RewindToWin64 proc __ccall private
-
-    .if !( Options.output_format == OFORMAT_BIN && Options.sub_format == SFORMAT_NONE )
-
-        .if ( Options.output_format != OFORMAT_BIN )
-            mov Options.output_format,OFORMAT_COFF
-        .else
-            mov Options.langtype,LANG_FASTCALL
-        .endif
-        mov Options.sub_format,SFORMAT_64BIT
-        mov remove_obj,1
-        longjmp( &jmpenv, 1 )
-    .endif
-    ret
-
-RewindToWin64 endp
-
 AssembleModule proc __ccall uses rsi rdi rbx source:string_t
 
   local curr_written, prev_written

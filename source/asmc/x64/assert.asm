@@ -64,9 +64,7 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
                 .if SymFind(rdi)
 
                     MemFree(ModuleInfo.assert_proc)
-                    inc tstrlen(rdi)
-                    tstrcpy(MemAlloc(eax), rdi)
-                    mov ModuleInfo.assert_proc,rax
+                    mov ModuleInfo.assert_proc,MemDup(rdi)
                     .endc
                 .endif
             .endif

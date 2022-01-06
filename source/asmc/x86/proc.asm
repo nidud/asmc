@@ -2736,8 +2736,11 @@ endif
           ModuleInfo.fctype == FCT_VEC64 || ModuleInfo.fctype == FCT_ELF64 ) && \
           ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
 
+        mov eax,CurrProc ; added v2.33.26
         mov ecx,sym_ReservedStack
-        .if ( ModuleInfo.fctype == FCT_ELF64 && [esi].flags & PROC_HAS_VARARG )
+        .if ( ModuleInfo.fctype == FCT_ELF64 &&
+              [esi].flags & PROC_HAS_VARARG &&
+              [eax].asym.langtype == LANG_SYSCALL )
             mov [ecx].asym.value,208
         .endif
         mov resstack,[ecx].asym.value
@@ -2930,8 +2933,12 @@ endif
 
 runqueue:
 
-    .if ( ModuleInfo.Ofssize == USE64 && ModuleInfo.fctype == FCT_ELF64 && \
-         [esi].flags & PROC_HAS_VARARG && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+    ; v2.33.26 - Use proc language
+    mov eax,CurrProc
+    .if ( ModuleInfo.Ofssize == USE64 &&
+          [eax].asym.langtype == LANG_SYSCALL &&
+          [esi].flags & PROC_HAS_VARARG &&
+          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         .for ( ebx = 0, edi = [esi].paralist: edi: edi = [edi].dsym.nextparam, ebx++ )
             .break .if ( ![edi].dsym.nextparam )

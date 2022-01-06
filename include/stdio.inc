@@ -58,10 +58,6 @@ FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
 
-_fileno proto fastcall fp:LPFILE {
-    mov eax,[fp].FILE._file
-    }
-
 if not defined(_MSVCRT) or defined(_CRTBLD)
 ifndef _LINUX
 externdef	_bufin:BYTE
@@ -83,6 +79,11 @@ stdout		equ <[__iob_func()+sizeof(_iobuf)]>
 stderr		equ <[__iob_func()+sizeof(_iobuf)*2]>
 endif
 stdin		equ <_iob>
+
+ifdef __UNIX__
+_fileno		equ <fileno>
+endif
+_fileno		proto __cdecl :LPFILE
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID
 sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG

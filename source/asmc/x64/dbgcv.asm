@@ -1651,7 +1651,7 @@ ifdef USEMD5
     state   dd 4 dup(?)     ; state (ABCD)
     count   dd 2 dup(?)     ; number of bits, modulo 2^64 (lsb first)
     buffer  db 64 dup(?)    ; input buffer
-    digest  db 16 dup(?)    ; added: used in MD5Final(ntdll.dll)
+    digest  dq 16 dup(?)    ; added: used in MD5Final(ntdll.dll)
    .ends
 
 define MD5BUFSIZ 1024*4
@@ -1952,9 +1952,10 @@ calc_md5 proc __ccall uses rsi rdi rbx filename:string_t, sum:ptr byte
     MemFree( rbx )
 
     mov rdi,sum
-    lea rsi,ctx.digest
-    mov ecx,16
-    rep movsb
+    mov rax,ctx.digest
+    mov rdx,ctx.digest[8]
+    mov [rdi],rax
+    mov [rdi+8],rdx
    .return( true )
 
 calc_md5 endp

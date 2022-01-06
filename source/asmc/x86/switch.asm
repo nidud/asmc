@@ -1278,8 +1278,7 @@ endif
         .endif
         AddLineQueueX(
             " lea rdx, %s\n"
-            " mov eax, [rdx+rax*4-(MIN%s*4)+(%s-%s)]\n"
-            " sub rdx, rax\n"
+            " sub rdx, [rdx+rax*8-(MIN%s*8)+(%s-%s)]\n"
             " mov rax, [rsp+8]\n"
             " mov [rsp+8], rdx\n"
             " pop rdx\n"

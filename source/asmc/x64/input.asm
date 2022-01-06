@@ -121,16 +121,15 @@ GetFNamePart endp
 
 GetExtPart proc __ccall fname:string_t
 
-    .for( eax = NULL: byte ptr [rcx]: rcx++ )
+    .for( eax = NULL : byte ptr [rcx] : rcx++ )
         .if byte ptr [rcx] == '.'
             mov rax,rcx
         .elseif ISPC( byte ptr [rcx] )
-            mov eax,NULL
+            xor eax,eax
         .endif
     .endf
-    .if !rax
-        mov rax,rcx
-    .endif
+    test  rax,rax
+    cmovz rax,rcx
     ret
 
 GetExtPart endp
@@ -142,37 +141,27 @@ GetExtPart endp
 ; the array is stored in the standard C heap!
 ; the filenames are stored in the "local" heap.
 
-AddFile proc __ccall private uses rsi rdi rbx r12 name:string_t
+AddFile proc __ccall private uses rsi rbx name:string_t
 
     mov rsi,ModuleInfo.FNames
-    .for ( r12 = rcx, ebx = 0 : ebx < ModuleInfo.cnt_fnames : ebx++ )
-       .return ebx .if !filecmp(r12, [rsi+rbx*8])
+    .for ( ebx = 0 : ebx < ModuleInfo.cnt_fnames : ebx++ )
+        .if ( filecmp( name, [rsi+rbx*string_t] ) == 0 )
+            .return( ebx )
+        .endif
     .endf
 
-    mov eax,ebx
-    and eax,64-1
-    .ifz
-        mov ModuleInfo.FNames,MemAlloc( &[rbx*8+64*8] )
-        .if rsi
-            mov r8,rsi
-            mov rdi,rax
-            mov ecx,ebx
-            rep movsq
-            mov rsi,rax
-            MemFree( r8 )
-        .else
-            mov rsi,rax
+    .if ( !( ebx & 64-1 ) )
+
+        mov ModuleInfo.FNames,MemAlloc( &[rbx*string_t+64*string_t] )
+        .if ( rsi != NULL )
+            tmemcpy( rax, rsi, &[rbx*string_t] )
+            MemFree( rsi )
         .endif
     .endif
+
     inc ModuleInfo.cnt_fnames
-    inc tstrlen(r12)
-    mov edi,eax
-    LclAlloc( eax )
-    mov [rsi+rbx*8],rax
-    mov ecx,edi
-    mov rsi,r12
-    mov rdi,rax
-    rep movsb
+    mov rsi,ModuleInfo.FNames
+    mov [rsi+rbx*string_t],LclDup( name )
    .return( ebx )
 
 AddFile endp
@@ -269,27 +258,32 @@ LF equ 10
 CR equ 13
 
 ifdef __UNIX__
-my_fgets proc __ccall private uses rsi rdi rbx r12 r13 r14 buffer:string_t, max:int_t, fp:LPFILE
-    mov r12,rcx
-    lea r13,[rcx+rdx]
-    mov rbx,r8
-    fgetc(rbx)
-    mov rdi,r12
+my_fgetc proc __ccall uses rsi rdi fp:ptr FILE
+    fgetc(rcx)
+    ret
+my_fgetc endp
 else
-my_fgets proc __ccall private uses rdi rbx r12 r13 buffer:string_t, max:int_t, fp:LPFILE
-    mov rdi,rcx
-    mov r12,rcx
-    lea r13,[rcx+rdx]
-    mov rbx,r8
-    fgetc(rbx)
+my_fgetc equ <fgetc>
 endif
 
-    .while rdi < r13
+my_fgets proc __ccall private uses rsi rdi rbx r12 buffer:string_t, max:int_t, fp:LPFILE
+
+    UNREFERENCED_PARAMETER(buffer)
+    UNREFERENCED_PARAMETER(max)
+    UNREFERENCED_PARAMETER(fp)
+
+    mov rdi,rcx
+    mov r12,rcx
+    lea rsi,[rcx+rdx]
+    mov rbx,r8
+
+    my_fgetc(rbx)
+    .while rdi < rsi
         .switch eax
         .case CR
-            .endc ;; don't store CR
+            .endc ; don't store CR
         .case LF
-            mov byte ptr [rdi],0
+            mov [rdi],ah
             .return( r12 )
 if DETECTCTRLZ
         .case 0x1a
@@ -302,25 +296,17 @@ endif
         .case -1
             xor eax,eax
             mov [rdi],al
-            .if rdi > r12
-                mov rax,r12
-            .endif
-            .return
+            cmp rdi,r12
+            cmova rax,r12
+           .return
         .default
             stosb
         .endsw
-ifdef __UNIX__
-        mov r14,rdi
-endif
-        fgetc(rbx)
-ifdef __UNIX__
-        mov rdi,r14
-endif
+        my_fgetc(rbx)
     .endw
     asmerr(2039)
     mov byte ptr [rdi-1],0
    .return( r12 )
-
 my_fgets endp
 
 if FILESEQ
@@ -495,66 +481,61 @@ print_source_nesting_structure endp
 ; Scan the include path for a file!
 ; variable ModuleInfo.g.IncludePath also contains directories set with -I cmdline option.
 
-open_file_in_include_path proc __ccall private uses rsi rdi rbx name:string_t, fullpath:string_t
+open_file_in_include_path proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 name:string_t, fullpath:string_t
 
-    local curr:string_t
-    local next:string_t
-    local i:int_t
-    local namelen:int_t
-    local file:ptr FILE
+    UNREFERENCED_PARAMETER(name)
+    UNREFERENCED_PARAMETER(fullpath)
 
-    mov file,NULL
-    mov name,ltokstart(rcx)
-    mov namelen,tstrlen(rax)
+    mov r12,rdx ; fullpath
+    mov r13,tstrstart( rcx )
+    mov r14,tstrlen( rax )
 
-    .for ( rbx = ModuleInfo.IncludePath: rbx: rbx = next )
+    .for ( eax = 0, rbx = ModuleInfo.IncludePath : rbx && rax == NULL : rbx = r15 )
 
-        xor eax,eax
-        mov ecx,-1
-        mov rdi,rbx
+        mov   ecx,-1
+        mov   rdi,rbx
         repnz scasb
-        not ecx
-        dec ecx
-        mov i,ecx
-        mov next,rax
+        not   ecx
+        dec   ecx
+        mov   edx,ecx ; len
+        mov   r15,rax ; next
+
         .ifnz
             mov rdi,rbx
-            mov eax,INC_PATH_DELIM
+            mov al,INC_PATH_DELIM
             repnz scasb
             .ifz
-                mov next,rdi ;; skip path delimiter char (; or :)
+                mov r15,rdi ; skip path delimiter char (; or :)
                 sub rdi,rbx
-                dec rdi
-                mov i,edi
+                lea edx,[rdi-1]
             .endif
         .endif
 
-        ;; v2.06: ignore
-        ;; - "empty" entries in PATH
-        ;; - entries which would cause a buffer overflow
-        mov ecx,i
-        mov eax,ecx
-        add eax,namelen
-        .continue .if ( ecx == 0 || ( eax >= FILENAME_MAX ) )
+        ; v2.06: ignore
+        ; - "empty" entries in PATH
+        ; - entries which would cause a buffer overflow
 
-        mov rdx,fullpath
+        xor eax,eax
+        mov ecx,edx
+        lea edx,[r14+rcx]
+        .continue .if ( ecx == 0 || ( edx >= FILENAME_MAX ) )
+
         mov rsi,rbx
-        mov rdi,rdx
+        mov rdi,r12
         rep movsb
         mov al,[rdi-1]
-        .if al != '/' && al != '\' && al != ':'
-            mov al,DIR_SEPARATOR
-            stosb
+
+        .if ( !ISPC( al ) )
+
+            mov byte ptr [rdi],DIR_SEPARATOR
+            inc rdi
         .endif
-        mov ecx,namelen
-        inc ecx
-        mov rsi,name
+        lea ecx,[r14+1]
+        mov rsi,r13
         rep movsb
-        mov rcx,rdx
-        mov file,fopen(rcx, "rb")
-       .break .if rax
+        fopen( r12, "rb" )
     .endf
-    .return( file )
+    ret
 
 open_file_in_include_path endp
 
@@ -565,54 +546,49 @@ open_file_in_include_path endp
 
     assume rbx:ptr src_item
 
-SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
+SearchFile proc __ccall uses rsi rdi rbx r12 r13 r14 r15 path:string_t, queue:int_t
 
-    local file:ptr FILE
-    local fl:ptr src_item
-    local fn:string_t
-    local isabs:int_t
-    local fullpath[FILENAME_MAX]:char_t
-    local fn2:string_t
-    local src:string_t
+  local fullpath[FILENAME_MAX]:char_t
 
-    mov file,NULL
-    mov fn,GetFNamePart(rcx)
+    UNREFERENCED_PARAMETER(path)
+
+    xor r12,r12 ; file
+    mov r13,rcx ; path
+    lea r14,fullpath
 
     ; if no absolute path is given, then search in the directory
     ; of the current source file first!
     ; v2.11: various changes because field fullpath has been removed.
 
-    mov isabs,ISABS(path)
+    mov r15d,ISABS(r13)
 
-    .if ( !isabs )
+    .if ( !eax )
 
         .for ( rbx = ModuleInfo.src_stack: rbx : rbx = [rbx].next )
 
-            .if [rbx].type == SIT_FILE
+            .if ( [rbx].type == SIT_FILE )
 
-                mov src,GetFName( [rbx].srcfile )
-                mov fn2,GetFNamePart(rax)
-                .if rax != src
+                mov rsi,GetFName( [rbx].srcfile )
 
-                    sub rax,src
+                .if ( rsi != GetFNamePart( rsi ) )
+
+                    sub rax,rsi
 
                     ; v2.10: if there's a directory part, add it to the directory part of the current file.
                     ; fixme: check that both parts won't exceed FILENAME_MAX!
                     ; fixme: 'path' is relative, but it may contain a drive letter!
 
-                    lea rdi,fullpath
-                    mov rsi,src
+                    mov rdi,r14
                     mov ecx,eax
                     rep movsb
-                    mov rsi,path
+                    mov rsi,r13
                     .repeat
                         lodsb
                         stosb
                     .until !al
-                    mov file,fopen(&fullpath, "rb")
+                    mov r12,fopen( r14, "rb" )
                     .if rax
-                        lea rax,fullpath
-                        mov path,rax
+                        mov r13,r14
                     .endif
                 .endif
                 .break
@@ -620,43 +596,44 @@ SearchFile proc __ccall uses rsi rdi rbx path:string_t, queue:int_t
         .endf
     .endif
 
-    .if file == NULL
+    .if ( r12 == NULL )
 
         mov fullpath,0
-        mov file,fopen(path, "rb")
+        mov r12,fopen( r13, "rb" )
 
         ; if the file isn't found yet and include paths have been set,
         ; and NO absolute path is given, then search include dirs
 
-        .if file == NULL && ModuleInfo.IncludePath != NULL && !isabs
-            .if open_file_in_include_path(path, &fullpath)
-                mov file,rax
-                lea rax,fullpath
-                mov path,rax
+        .if ( r12 == NULL && ModuleInfo.IncludePath != NULL && !r15d )
+            .if ( open_file_in_include_path( r13, r14 ) )
+
+                mov r12,rax
+                mov r13,r14
             .endif
         .endif
-        .if file == NULL
-            asmerr(1000, path)
+        .if ( r12 == NULL )
+            asmerr( 1000, r13 )
         .endif
     .endif
 
     ; is the file to be added to the file stack?
     ; assembly files usually are, but binary files ( INCBIN ) aren't.
 
-    .if queue
-        mov rbx,PushSrcItem(SIT_FILE, file)
-        AddFile(path)
+    .if ( queue )
+
+        mov rbx,PushSrcItem( SIT_FILE, r12 )
+        AddFile( r13 )
         mov [rbx].srcfile,ax
-        GetFName(eax)
+        GetFName( eax )
         mov rdx,FileCur
         mov [rdx].asym.string_ptr,rax
 if FILESEQ
-        .if Options.line_numbers && Parse_Pass == PASS_1
-            AddFileSeq([rbx].srcfile)
+        .if ( Options.line_numbers && Parse_Pass == PASS_1 )
+            AddFileSeq( [rbx].srcfile )
         .endif
 endif
     .endif
-    .return( file )
+    .return( r12 )
 
 SearchFile endp
 
@@ -670,18 +647,20 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
 
     mov rbx,ModuleInfo.src_stack
 
-    .if [rbx].type == SIT_FILE
+    .if ( [rbx].type == SIT_FILE )
 
         .if my_fgets(rcx, ModuleInfo.max_line_len, [rbx].file)
 
             inc [rbx].line_num
-            .return buffer
+           .return buffer
         .endif
 
         ; don't close and remove main source file
 
-        .if [rbx].next
+        .if ( [rbx].next )
+
             fclose([rbx].file)
+
             mov ModuleInfo.src_stack,[rbx].next
             mov [rbx].next,SrcFree
             mov SrcFree,rbx
@@ -690,7 +669,9 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
         ; update value of @FileCur variable
 
         .for ( rbx = ModuleInfo.src_stack: [rbx].type != SIT_FILE: rbx = [rbx].next )
+
             GetFName([rbx].srcfile)
+
             mov rdx,FileCur
             mov [rdx].asym.string_ptr,rax
         .endf
@@ -740,32 +721,24 @@ GetTextLine endp
 ; the include path is rebuilt for each assembled module.
 ; it is stored in the standard C heap.
 
-AddStringToIncludePath proc __ccall uses rsi rdi string:string_t
+AddStringToIncludePath proc __ccall uses rsi rdi rbx string:string_t
 
-    mov rsi,ltokstart(rcx)
-    mov rdi,rsi
-    mov ecx,-1
-    xor eax,eax
-    repnz scasb
-    not ecx
-    dec ecx
-    .return .ifz
+    mov rsi,tstrstart(rcx)
+    .if ( tstrlen( rsi ) )
 
-    .if ModuleInfo.IncludePath == NULL
-        lea rdi,[rcx+1]
-        mov ModuleInfo.IncludePath,MemAlloc(edi)
-        mov ecx,edi
-        mov rdi,rax
-        rep movsb
-    .else
-        mov edi,ecx
-        mov rsi,ModuleInfo.IncludePath
-        tstrlen(rsi)
-        mov ModuleInfo.IncludePath,MemAlloc(&[rax+rdi+2])
-        tstrcpy(rax, rsi)
-        tstrcat(rax, INC_PATH_DELIM_STR)
-        tstrcat(rax, string)
-        MemFree(rsi)
+        .if ( ModuleInfo.IncludePath == NULL )
+
+            mov ModuleInfo.IncludePath,MemDup( rsi )
+
+        .else
+
+            mov edi,eax
+            mov rbx,ModuleInfo.IncludePath
+            tstrlen( rbx )
+            mov ModuleInfo.IncludePath,MemAlloc( &[rax + rdi + 2] )
+            tstrcat( tstrcat( tstrcpy( rax, rbx ), INC_PATH_DELIM_STR ), rsi )
+            MemFree( rbx )
+        .endif
     .endif
     ret
 
@@ -1012,6 +985,7 @@ InputExtend endp
 InputFini proc __ccall
 
     .if ModuleInfo.IncludePath
+
         MemFree( ModuleInfo.IncludePath )
     .endif
 

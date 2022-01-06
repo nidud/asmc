@@ -17,7 +17,7 @@ include omfspec.inc
 ifndef ASMC64
 
 externdef szNull:char_t
-omf_GetGrpIdx proto :ptr asym
+omf_GetGrpIdx proto __ccall :ptr asym
 
 ; logical data for fixup subrecord creation
 

@@ -738,7 +738,7 @@ CString proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 buffer:string_t, t
 
 CString endp
 
-    option cstack:off
+    ;option cstack:off
     assume rbx:ptr expr, rsi:ptr flt_item
 
 CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string_t

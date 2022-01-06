@@ -73,6 +73,15 @@ endif
     ret
 MemInit endp
 
+ifdef __UNIX__
+MemFree proc fastcall uses rsi rdi p:ptr
+
+    free( rcx )
+    ret
+
+MemFree endp
+endif
+
 MemFini proc uses rbx
     mov rbx,pBase
     .while rbx
@@ -81,11 +90,7 @@ MemFini proc uses rbx
 ifndef __UNIX__
         HeapFree(hProcessHeap, 0, rax)
 else
-        push rsi
-        push rdi
-        free(rax)
-        pop rdi
-        pop rsi
+        MemFree(rax)
 endif
     .endw
     mov pBase,rbx
@@ -145,13 +150,31 @@ MemAlloc proc fastcall uses rsi rdi len:uint_t
 else
 MemAlloc proc fastcall len:uint_t
 endif
-    .if !malloc(ecx)
+
+    .if ( malloc( rcx ) == NULL )
+
         mov currfree,eax
         asmerr(1901)
     .endif
     ret
 
 MemAlloc endp
+
+LclDup proc fastcall string:string_t
+
+    lea rcx,[tstrlen( rcx ) + 1]
+
+   .return( tstrcpy( LclAlloc( ecx ), string ) )
+
+LclDup endp
+
+MemDup proc fastcall string:string_t
+
+    lea rcx,[tstrlen( rcx ) + 1]
+
+   .return( tstrcpy( MemAlloc( ecx ), string ) )
+
+MemDup endp
 
     end
 

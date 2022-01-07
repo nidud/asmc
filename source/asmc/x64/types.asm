@@ -723,14 +723,7 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
 
     mov [rdi].name_size,len
     .if ( eax )
-        mov [rdi].name,LclAlloc( &[rax+1] )
-        mov rsi,name
-        mov ecx,len
-        mov rdx,rdi
-        mov rdi,rax
-        rep movsb
-        mov byte ptr [rdi],0
-        mov rdi,rdx
+        mov [rdi].name,LclDup( name )
     .else
         mov [rdi].name,&@CStr("")
     .endif
@@ -1414,21 +1407,10 @@ RecordDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov rdi,rdx
             assume rdi:ptr sfield
 
-            mov ecx,len
-            mov [rdi].name_size,ecx
-            inc ecx
-            mov [rdi].name,LclAlloc( ecx )
-
-            mov rdx,rdi
-            mov rdi,rax
-            mov ecx,len
-            inc ecx
-            rep movsb
-            mov rdi,rdx
-
+            mov [rdi].name_size,len
+            mov [rdi].name,LclDup( rsi )
             and [rdi].flag1,not S_LIST
-            mov al,ModuleInfo.cref
-            or  [rdi].flag1,al
+            or  [rdi].flag1,ModuleInfo.cref
             mov [rdi].state,SYM_STRUCT_FIELD
             mov [rdi].mem_type,MT_BITS
             mov [rdi].total_size,opndx.value

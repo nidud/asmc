@@ -38,7 +38,7 @@ NameSpace proc watcall uses rsi rdi rbx Name:string_t, retval:string_t
             tstrcat( rdi, rbx )
         .endif
         .if ( rdi != retval )
-            tstrcpy( LclAlloc( &[tstrlen( rdi ) + 1] ), rdi )
+            LclDup( rdi )
         .endif
     .endif
     ret

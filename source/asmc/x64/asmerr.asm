@@ -44,7 +44,7 @@ externdef jmpenv:byte
     A1014 equ <"too many arguments">
     A1015 equ <"statement too complex">
     A1017 equ <"missing source filename">
-    A1901 equ <"Internal Assembler Error">
+    A1018 equ <"Internal Assembler Error : %s(%d)">
 
 ;; Nonfatal Errors
 
@@ -358,7 +358,7 @@ E macro string
     align 8
 
 E0  dq E(A1000),E(A1001),E(A1002),E(INTER),E(INTER),E(A1005),E(A1006),E(A1007),E(A1008),E(A1009),
-       E(A1010),E(A1011),E(A1012),E(INTER),E(INTER),E(INTER),E(INTER),E(A1017)
+       E(A1010),E(A1011),E(A1012),E(INTER),E(INTER),E(INTER),E(INTER),E(A1017),E(A1018)
 E1  dq E(INTER),E(INTER),E(INTER),E(INTER),E(A2004),E(A2005),E(A2006),E(A2007),E(A2008),E(A2009),
        E(A2010),E(A2011),E(A2012),E(A2013),E(A2014),E(A2015),E(A2016),E(INTER),E(A2018),E(A2019),
        E(INTER),E(INTER),E(A2022),E(A2023),E(A2024),E(A2025),E(A2026),E(INTER),E(A2028),E(A2029),

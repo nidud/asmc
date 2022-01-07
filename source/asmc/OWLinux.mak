@@ -11,7 +11,6 @@ name	asmc.
 format	elf runtime linux
 libpath $(watcom)\lib386\linux
 lib	clib3s.lib
-option	map, norelocs, quiet, stack=0x300000
 file { *.obj }
 <<
 	del *.obj
@@ -23,7 +22,6 @@ name	asmc64.
 format	elf runtime linux
 libpath $(watcom)\lib386\linux
 lib	clib3s.lib
-option	norelocs, quiet, stack=0x300000
 file { *.obj }
 <<
 	del *.obj

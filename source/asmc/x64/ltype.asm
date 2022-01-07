@@ -173,7 +173,7 @@ tstrstart proc watcall string:string_t
     movzx   ecx,byte ptr [rax]
     lea     rdx,_ltype
 .0:
-    test    byte ptr[rdx+rcx+1],_SPACE
+    test    byte ptr [rdx+rcx+1],_SPACE
     jz      .1
     inc     rax
     mov     cl,[rax]

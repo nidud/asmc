@@ -150,8 +150,9 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueue( " pushfq" )
-                AddLineQueue( " sub rsp,28h" )
+                AddLineQueue(
+                    " pushfq\n"
+                    " sub rsp,28h" )
             .else
                 AddLineQueue( " pushfd" )
             .endif
@@ -171,22 +172,25 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueue( " add rsp,28h" )
-                AddLineQueue( " popfq" )
+                AddLineQueue(
+                    " add rsp,28h\n"
+                    " popfq" )
             .else
                 AddLineQueue( " popfd" )
             .endif
         .endif
 
-        AddLineQueueX("jmp %s", &buff)
-        AddLineQueueX("%s%s", GetLabelStr([rsi].labels[LTEST*4], rdi), LABELQUAL)
+        AddLineQueueX(
+            "jmp %s\n"
+            "%s%s", &buff, GetLabelStr([rsi].labels[LTEST*4], rdi), LABELQUAL)
 
         .if ModuleInfo.xflag & OPT_PUSHF
 
             .if ModuleInfo.Ofssize == USE64
 
-                AddLineQueue( " add rsp,28h" )
-                AddLineQueue( " popfq" )
+                AddLineQueue(
+                    " add rsp,28h\n"
+                    " popfq" )
             .else
                 AddLineQueue( " popfd" )
             .endif
@@ -220,8 +224,9 @@ AssertDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 
             AddLineQueueX( "db \"%s\"", rbx )
         .endif
-        AddLineQueue("db 0")
-        AddLineQueueX("%s%s", &buff, LABELQUAL)
+        AddLineQueueX(
+            "db 0\n"
+            "%s%s", &buff, LABELQUAL)
         .endc
 
       .case T_DOT_ASSERTD

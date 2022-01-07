@@ -344,8 +344,7 @@ SetModelDefaultSegNames proc __ccall uses rsi
 
     ; option -nt set?
     .if ( Options.names[OPTN_TEXT_SEG*8] )
-        mov SegmNames[SIM_CODE*8],LclAlloc( &[tstrlen( Options.names[OPTN_TEXT_SEG*8] ) + 1] )
-        tstrcpy( SegmNames[SIM_CODE*8], Options.names[OPTN_TEXT_SEG*8] )
+        mov SegmNames[SIM_CODE*8],LclDup( Options.names[OPTN_TEXT_SEG*8] )
     .else
         mov eax,1
         mov cl,ModuleInfo._model
@@ -363,8 +362,7 @@ SetModelDefaultSegNames proc __ccall uses rsi
 
     ; option -nd set?
     .if ( Options.names[OPTN_DATA_SEG*8] )
-        mov SegmNames[SIM_DATA*8],LclAlloc( &[tstrlen( Options.names[OPTN_DATA_SEG*8] ) + 1] )
-        tstrcpy( SegmNames[SIM_DATA*8], Options.names[OPTN_DATA_SEG*8] )
+        mov SegmNames[SIM_DATA*8],LclDup( Options.names[OPTN_DATA_SEG*8] )
     .endif
     ret
 SetModelDefaultSegNames endp

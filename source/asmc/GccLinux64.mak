@@ -89,7 +89,7 @@ OBJS =	x64/asmc.o \
 	../../bin/asmc $(AFLAGS) -Fo $*.o $<
 
 $(BIN): $(OBJS)
-	gcc -o $@ $^
+	gcc -o $@ -z --execstack -z --stacksize=0x20000 $^
 
 clean:
 	rm -f $(OBJS)

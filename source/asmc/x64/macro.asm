@@ -395,17 +395,7 @@ StoreMacro proc __ccall uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:tok
                         asmerr( 3016 )
                         .break ; return( ERROR );
                     .endif
-                    mov eax,[rbx].stringlen
-                    inc eax
-                    mov [rsi].deflt,LclAlloc(eax)
-                    xchg rax,rdi
-                    mov ecx,[rbx].stringlen
-                    inc ecx
-                    mov rdx,rsi
-                    mov rsi,[rbx].string_ptr
-                    rep movsb
-                    mov rsi,rdx
-                    mov rdi,rax
+                    mov [rsi].deflt,LclDup( [rbx].string_ptr )
                     add rbx,asm_tok
                 .elseifd !tstricmp( [rbx].string_ptr, "REQ" )
                     ; required parameter
@@ -478,16 +468,15 @@ StoreMacro proc __ccall uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:tok
 
     continue_scan:
 
-        mov rdx,ls.input
-        .while ( islspace( [rdx] ) )
-            inc rdx
-        .endw
-        mov ls.input,rdx
+        mov ls.input,tstrstart(ls.input)
 
         ; skip empty lines!
-        .if al == 0 || al == ';'
+
+        .if ( cl == 0 || cl == ';' )
+
 if STORE_EMPTY_LINES
             .if store_data
+
                 LclAlloc( srcline )
                 mov [rax].srcline.next,NULL
                 mov [rax].srcline.ph_count,0
@@ -514,19 +503,19 @@ endif
         .if tstrchr( ls.input, '\' )
 
             mov rdi,ls.input
-            mov rdx,rdi
-            .while ( byte ptr [rdx] && byte ptr [rdx] != ';' )
+            mov rax,rdi
+
+            .while ( byte ptr [rax] && byte ptr [rax] != ';' )
+
                 mov ls.flags3,0
                 GetToken( &tok[asm_tok], &ls )
+
                 .if ( ( ls.flags3 & TF3_ISCONCAT ) && ModuleInfo.list )
+
                     and ModuleInfo.line_flags,not LOF_LISTED
                     LstWrite( LSTTYPE_MACROLINE, 0, ls.input )
                 .endif
-                mov rdx,ls.input
-                .while ( islspace( [rdx] ) )
-                    inc rdx
-                .endw
-                mov ls.input,rdx
+                mov ls.input,tstrstart(ls.input)
             .endw
             mov ls.input,rdi
         .endif
@@ -535,18 +524,19 @@ endif
         je continue_scan
 
         ; handle LOCAL directive(s)
-        .if locals_done == FALSE && tok[0].token == T_DIRECTIVE && tok[0].tokval == T_LOCAL
+
+        .if ( locals_done == FALSE && tok[0].token == T_DIRECTIVE && tok[0].tokval == T_LOCAL )
+
             .continue .if !store_data
+
             .for ( :: )
-                mov rdx,ls.input
-                .while ( islspace( [rdx] ) )
-                    inc rdx
-                .endw
-                mov ls.input,rdx
-                .break .if al == 0 || al == ';' ; 0 locals are ok
+
+                mov ls.input,tstrstart(ls.input)
+                .break .if ( cl == 0 || cl == ';' ) ; 0 locals are ok 
 
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
+
                 mov rdx,StringBufferEnd
                 .if ( !is_valid_id_first_char( [rdx] ) )
                     asmerr( 2008, rdx )
@@ -555,10 +545,12 @@ endif
                     asmerr( 7006, rdx )
                 .endif
 
-                .if mindex == ( MAX_PLACEHOLDERS - 1 )
+                .if ( mindex == ( MAX_PLACEHOLDERS - 1 ) )
+
                     asmerr( 1005 )
                     .break
                 .endif
+
                 mov edi,tstrlen(StringBufferEnd)
                 alloca(eax)
                 imul ecx,mindex,mname_list
@@ -574,14 +566,12 @@ endif
                 mov rsi,rdx
                 mov rdi,info
                 inc [rdi].localcnt
-                mov rdx,ls.input
-                .while ( islspace( [rdx] ) )
-                    inc rdx
-                .endw
-                mov ls.input,rdx
-                .if al == ','
+
+                mov ls.input,tstrstart(ls.input)
+
+                .if ( cl == ',' )
                     inc ls.input
-                .elseif ( is_valid_id_first_char( eax ) )
+                .elseif ( is_valid_id_first_char( ecx ) )
                     asmerr( 2008, ls.input )
                     .break
                 .endif
@@ -613,22 +603,23 @@ endif
                         or [rdx].asym.mac_flag,M_ISFUNC
                     .endif
                 .endif
-            .elseif( tok[0].tokval == T_ENDM )
+            .elseif ( tok[0].tokval == T_ENDM )
                 .if nesting_depth
                     dec nesting_depth
                 .else
                     .break ; exit the for() loop
                 .endif
-            .elseif tok[0].dirtype == DRT_LOOPDIR
+            .elseif ( tok[0].dirtype == DRT_LOOPDIR )
                 inc nesting_depth ; FOR[C], IRP[C], REP[EA]T, WHILE
             .endif
-        .elseif tok[0].token != T_INSTRUCTION || byte ptr [rdx] == '&'
+        .elseif ( tok[0].token != T_INSTRUCTION || byte ptr [rdx] == '&' )
             ;
             ; Skip any token != directive or instruction (and no '&' attached)
             ; might be text macro ids, macro function calls,
             ; code labels, ...
             ;
             .for ( :: )
+
                 mov tok[0].token,T_FINAL
                 mov ls.input,ltokstart(ls.input)
                 .break .if cl == 0 || cl == ';'

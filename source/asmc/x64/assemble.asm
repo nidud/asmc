@@ -1145,10 +1145,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx r12 fn:string_t
 
   local path[260]:byte
 
-    tstrlen(fn)
-    inc eax
-    tstrcpy(LclAlloc(eax), fn)
-    mov ModuleInfo.curr_fname[ASM*8],rax
+    mov ModuleInfo.curr_fname[ASM*8],LclDup(rcx)
     GetFNamePart(rax)
     mov rsi,rax
     mov edi,ASM+1
@@ -1182,9 +1179,7 @@ SetFilenames proc __ccall private uses rsi rdi rbx r12 fn:string_t
             cmp byte ptr [rax],0
             je  @B
         .endif
-        tstrlen(rbx)
-        inc eax
-        tstrcpy(LclAlloc(eax), rbx)
+        LclDup(rbx)
         lea rcx,ModuleInfo
         mov [rcx].module_info.curr_fname[rdi*8],rax
         inc edi

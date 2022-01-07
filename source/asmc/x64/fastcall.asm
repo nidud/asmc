@@ -416,11 +416,7 @@ ms32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
         movzx ebx,byte ptr [rdx+rcx]
     .endif
     mov [rsi].asym.regist[0],bx
-
-    GetResWName( ebx, &regname )
-    inc tstrlen( &regname )
-    mov [rsi].asym.string_ptr,LclAlloc(eax)
-    tstrcpy( [rsi].asym.string_ptr, &regname )
+    mov [rsi].asym.string_ptr,LclDup( GetResWName( ebx, &regname ) )
     inc dword ptr [rdi]
    .return( 1 )
 
@@ -823,9 +819,7 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
     mov eax,newflg
     mov rcx,used
     or [rcx],eax
-    inc tstrlen( &watc_regname )
-    mov [rsi].asym.string_ptr,LclAlloc( eax )
-    tstrcpy( rax, &watc_regname )
+    mov [rsi].asym.string_ptr,LclDup( &watc_regname )
    .return( 1 )
 
 watc_pcheck endp
@@ -1666,9 +1660,7 @@ elf64_param proc __ccall private uses rsi rdi rbx r12 r13 r14 pp:dsym_t, index:i
 
     .if ( [r14].mem_type == MT_ABS )
 
-        inc tstrlen(r12)
-        mov [r14].name,LclAlloc(eax)
-        tstrcpy(rax, r12)
+        mov [r14].name,LclDup(r12)
        .return 1
     .endif
 
@@ -2092,10 +2084,7 @@ elf64_pcheck proc __ccall private uses rsi rdi rbx pProc:dsym_t, paranode:dsym_t
     mov [rsi].state,SYM_TMACRO
     mov [rsi].regist[0],ax
     mov [rsi].regist[2],cx
-    GetResWName(eax, rdi)
-    inc tstrlen(rdi)
-    mov [rsi].string_ptr,LclAlloc(eax)
-    tstrcpy(rax, rdi)
+    mov [rsi].string_ptr,LclDup( GetResWName(eax, rdi) )
    .return TRUE
 
 elf64_pcheck endp
@@ -2307,11 +2296,7 @@ vc32_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
     .endif
     mov [rsi].asym.state,SYM_TMACRO
     mov [rsi].asym.regist[0],cx
-
-    GetResWName( ecx, &regname )
-    inc tstrlen( &regname )
-    mov [rsi].asym.string_ptr,LclAlloc(eax)
-    tstrcpy( [rsi].asym.string_ptr, &regname )
+    mov [rsi].asym.string_ptr,LclDup( GetResWName( ecx, &regname ) )
     inc dword ptr [rdi]
    .return( 1 )
 
@@ -2373,9 +2358,7 @@ abs_param proc __ccall private uses rbx pp:dsym_t, index:int_t, param:dsym_t, pa
 
     .if ( [rbx].asym.mem_type == MT_ABS )
 
-        inc tstrlen(paramvalue)
-        mov [rbx].asym.name,LclAlloc(eax)
-        tstrcpy(rax, paramvalue)
+        mov [rbx].asym.name,LclDup( paramvalue )
        .return 1
     .endif
     xor eax,eax

@@ -1856,12 +1856,7 @@ endif
                 tmemcpy(rdi, [rbx].tokpos, eax)
             .endif
 
-            tstrlen(rdi)
-            inc eax
-            mov r12d,eax
-            LclAlloc(eax)
-            mov [rsi].condlines,rax
-            tmemcpy(rax, rdi, r12d)
+            mov [rsi].condlines,LclDup( rdi )
         .endif
 
         mov eax,ModuleInfo.token_count

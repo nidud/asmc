@@ -484,11 +484,7 @@ ForDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
         .if RenderAssignment(rbx, q, tokenarray)
 
-            mov edi,tstrlen(rbx)
-            inc edi
-            LclAlloc(edi)
-            mov [rsi].condlines,rax
-            tmemcpy(rax, rbx, ecx)
+            mov [rsi].condlines,LclDup(rbx)
         .endif
 
         mov rdi,p

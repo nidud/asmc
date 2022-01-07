@@ -2740,12 +2740,7 @@ HllStartDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
             .if eax == NOT_ERROR
 
-                tstrlen(rdi)
-                inc eax
-                mov token,eax
-                LclAlloc(eax)
-                mov [rsi].condlines,rax
-                tmemcpy(rax, rdi, token)
+                mov [rsi].condlines,LclDup(rdi)
             .endif
 
             ; create a jump to test label

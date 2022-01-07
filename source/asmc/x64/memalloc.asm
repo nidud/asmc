@@ -62,7 +62,10 @@ heaplen     dd 0x80000  ; total memory usage
 ifndef __UNIX__
 hProcessHeap HANDLE 0
 endif
-.code
+
+    .code
+
+    option dotname
 
 MemInit proc
 ifndef __UNIX__
@@ -74,12 +77,29 @@ endif
 MemInit endp
 
 ifdef __UNIX__
+
 MemFree proc fastcall uses rsi rdi p:ptr
 
     free( rcx )
     ret
 
 MemFree endp
+
+HeapZeroAlloc proc fastcall uses rsi rdi rbx size:uint_t
+
+    mov ebx,ecx
+    .if malloc( rcx )
+        mov rsi,rax
+        mov rdi,rax
+        mov ecx,ebx
+        xor eax,eax
+        rep stosb
+        mov rax,rsi
+    .endif
+    ret
+
+HeapZeroAlloc endp
+
 endif
 
 MemFini proc uses rbx
@@ -99,49 +119,41 @@ MemFini endp
 
 .pragma warning(disable: 6004)
 
-ifdef __UNIX__
-LclAlloc proc fastcall uses rsi rdi rbx r12 size:uint_t
-else
-LclAlloc proc fastcall uses rbx size:uint_t
-endif
+LclAlloc proc fastcall size:uint_t
 
-    mov rax,pCurr
-    add ecx,ALIGNMENT-1
-    and ecx,-ALIGNMENT
-
-    .if ecx > currfree
-
-        mov ebx,ecx
-        .if ecx <= (BLKSIZE - ALIGNMENT)
-            mov ecx,(BLKSIZE - ALIGNMENT)
-        .endif
-        mov currfree,ecx
-        add ecx,ALIGNMENT
-
-ifdef __UNIX__
-        mov r12,rcx
-        .if malloc(ecx)
-
-            mov rcx,r12
-            mov rdx,rax
-            mov rdi,rax
-            xor eax,eax
-            rep stosb
-            mov rax,rdx
-else
-        .if HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, rcx)
-endif
-            mov rcx,pBase
-            mov [rax],rcx
-            mov pBase,rax
-            add rax,ALIGNMENT
-            mov pCurr,rax
-        .endif
-        mov ecx,ebx
-    .endif
-    sub currfree,ecx
-    add pCurr,rcx
+    mov     rax,pCurr
+    add     ecx,ALIGNMENT-1
+    and     ecx,-ALIGNMENT
+    cmp     ecx,currfree
+    ja      .1
+.0:
+    sub     currfree,ecx
+    add     pCurr,rcx
     ret
+.1:
+    mov     size,ecx
+    mov     eax,(BLKSIZE - ALIGNMENT)
+    cmp     ecx,eax
+    cmovb   ecx,eax
+    mov     currfree,ecx
+    add     ecx,ALIGNMENT
+ifdef __UNIX__
+    HeapZeroAlloc( ecx )
+else
+    HeapAlloc( hProcessHeap, HEAP_ZERO_MEMORY, rcx )
+endif
+    test    rax,rax
+    jz      .2
+    mov     rcx,pBase
+    mov     [rax],rcx
+    mov     pBase,rax
+    add     rax,ALIGNMENT
+    mov     pCurr,rax
+    mov     ecx,size
+    jmp     .0
+.2:
+    asmerr( 1901 )
+    jmp     .0
 
 LclAlloc endp
 

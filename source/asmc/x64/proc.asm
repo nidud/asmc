@@ -1087,6 +1087,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
     ; it must be enclosed in <>
 
     .if ( IsPROC && [rbx].token == T_STRING && [rbx].string_delim == '<' )
+
         mov edi,Token_Count
         inc edi
 
@@ -1098,11 +1099,7 @@ ParseProc proc __ccall uses rsi rdi rbx p:ptr dsym,
 
         .elseif ( ModuleInfo.prologuemode == PEM_MACRO )
 
-            mov ecx,[rbx].stringlen
-            inc ecx
-            mov rcx,LclAlloc( ecx )
-            mov [rsi].prologuearg,rcx
-            tstrcpy( rcx, [rbx].string_ptr )
+            mov [rsi].prologuearg,LclDup( [rbx].string_ptr )
 
         .else
 

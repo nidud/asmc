@@ -241,8 +241,7 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                 mov ModuleInfo.prologuemode,PEM_DEFAULT
             .else
                 mov ModuleInfo.prologuemode,PEM_MACRO
-                mov ModuleInfo.proc_prologue,LclAlloc( &[tstrlen( rsi ) + 1] )
-                tstrcpy( ModuleInfo.proc_prologue, rsi )
+                mov ModuleInfo.proc_prologue,LclDup( rsi )
             .endif
             inc i
         .case OP_EPILOGUE
@@ -259,8 +258,7 @@ OptionDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     mov ModuleInfo.epiloguemode,PEM_DEFAULT
                 .else
                     mov ModuleInfo.epiloguemode,PEM_MACRO
-                    mov ModuleInfo.proc_epilogue,LclAlloc( &[tstrlen( rsi ) + 1] )
-                    tstrcpy( ModuleInfo.proc_epilogue, rsi )
+                    mov ModuleInfo.proc_epilogue,LclDup( rsi )
                 .endif
             .endif
             inc i

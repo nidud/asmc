@@ -14,13 +14,15 @@ include asmc.inc
 include symbols.inc
 include input.inc
 
-ifdef __UNIX__
-ifdef __WATCOM__
+if defined(__UNIX__) and defined(__WATCOM__)
 extern _cstart_: byte
 endif
+
 .data
+ifdef __UNIX__
 _pgmptr string_t 0
 endif
+environ array_t 0
 
 .code
 
@@ -171,8 +173,10 @@ ifdef __UNIX__
 main proc _argc:int_t, _argv:array_t
   .new argc:int_t = _argc
   .new argv:array_t = _argv
+    mov environ,rdx
 else
 main proc frame:ExceptionHandler argc:int_t, argv:array_t
+    mov environ,r8
 endif
   .new rc:int_t = 0
   .new numArgs:int_t = 0
@@ -197,7 +201,7 @@ ifdef __UNIX__
     define_name( "_LINUX",   "2" )
 endif
 endif
-    .if !getenv("ASMC")     ; v2.21 -- getenv() error..
+    .if !tgetenv("ASMC")     ; v2.21 -- getenv() error..
         lea rax,@CStr("")
     .endif
     mov rcx,argv
@@ -253,6 +257,121 @@ endif
     ret
 
 main endp
+
+tgetenv proc fastcall uses rsi rdi rbx enval:string_t
+
+    mov rbx,rcx
+    .ifd tstrlen(rcx)
+
+        mov edi,eax
+        mov rsi,environ
+        lodsq
+
+        .while rax
+
+            .ifd !tmemicmp(rax, rbx, edi)
+
+                mov rax,[rsi-8]
+                add rax,rdi
+
+                .if ( byte ptr [rax] == '=' )
+
+                    .return( &[rax+1] )
+                .endif
+            .endif
+            lodsq
+        .endw
+    .endif
+    ret
+
+tgetenv endp
+
+ifdef __UNIX__
+
+read proc fd:int_t, buf:ptr, count:size_t
+
+    xor eax,eax
+    syscall
+    ret
+
+read endp
+
+write proc fd:int_t, buf:ptr, count:uint_t
+
+    mov eax,1
+    syscall
+    ret
+
+write endp
+
+exit proc error:int_t
+
+    mov eax,60
+    syscall
+    ret
+
+exit endp
+
+endif
+
+    _JUMP_BUFFER    struct
+    _Rbx            dq ?
+    _Rsp            dq ?
+    _Rbp            dq ?
+ifndef __UNIX__
+    _Rsi            dq ?
+    _Rdi            dq ?
+endif
+    _R12            dq ?
+    _R13            dq ?
+    _R14            dq ?
+    _R15            dq ?
+    _Rip            dq ?
+    _JUMP_BUFFER    ends
+
+ifndef __UNIX__
+define reg1 <rcx>
+define reg2 <rdx>
+else
+define reg1 <rdi>
+define reg2 <rsi>
+endif
+
+    assume reg1:ptr _JUMP_BUFFER
+
+_setjmp::
+
+    mov [reg1]._Rbp,rbp
+ifndef __UNIX__
+    mov [reg1]._Rsi,rsi
+    mov [reg1]._Rdi,rdi
+endif
+    mov [reg1]._Rbx,rbx
+    mov [reg1]._R12,r12
+    mov [reg1]._R13,r13
+    mov [reg1]._R14,r14
+    mov [reg1]._R15,r15
+    mov [reg1]._Rsp,rsp
+    mov [reg1]._Rip,[rsp]
+    xor eax,eax
+    ret
+
+longjmp::
+
+    mov rbp,[reg1]._Rbp
+ifndef __UNIX__
+    mov rsi,[reg1]._Rsi
+    mov rdi,[reg1]._Rdi
+endif
+    mov rbx,[reg1]._Rbx
+    mov r12,[reg1]._R12
+    mov r13,[reg1]._R13
+    mov r14,[reg1]._R14
+    mov r15,[reg1]._R15
+    mov rsp,[reg1]._Rsp
+    mov [rsp],[reg1]._Rip
+    mov rax,reg2
+    ret
 
     end
 

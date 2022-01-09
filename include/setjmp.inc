@@ -23,6 +23,22 @@ ifdef _M_IX86
 
 elseifdef _M_X64
 
+ifdef __UNIX__
+
+    _JBLEN equ 8
+    _JUMP_BUFFER	struct
+	_Rbx		dq ?
+	_Rsp		dq ?
+	_Rbp		dq ?
+	_R12		dq ?
+	_R13		dq ?
+	_R14		dq ?
+	_R15		dq ?
+	_Rip		dq ?
+    _JUMP_BUFFER	ends
+
+else
+
     SETJMP_FLOAT128	struct
 	Part		dq 2 dup(?)
     SETJMP_FLOAT128	ends
@@ -56,6 +72,8 @@ elseifdef _M_X64
 	_Xmm14		SETJMP_FLOAT128 <>
 	_Xmm15		SETJMP_FLOAT128 <>
     _JUMP_BUFFER	ends
+
+endif
 
 endif
 

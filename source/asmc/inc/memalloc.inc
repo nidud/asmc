@@ -6,23 +6,17 @@
 ifndef __MEMALLOC_INC
 define __MEMALLOC_INC
 
-LclAlloc proto fastcall :uint_t
 MemAlloc proto fastcall :uint_t
-LclDup   proto fastcall :string_t
-MemDup   proto fastcall :string_t
-
-if defined(__UNIX__) and defined(_WIN64)
+ifdef _WIN64
 MemFree  proto fastcall :ptr
 else
-MemFree macro m
-    free(m)
-    exitm<>
-    endm
-LclFree macro p
-    exitm<>
-    endm
+define MemFree <free>
 endif
-MemInit proto __ccall
-MemFini proto __ccall
+
+LclAlloc    proto fastcall :uint_t
+MemInit     proto __ccall
+MemFini     proto __ccall
+LclDup      proto fastcall :string_t
+MemDup      proto fastcall :string_t
 
 endif

@@ -54,70 +54,107 @@ ALIGNMENT   equ 16
 BLKSIZE     equ 0x80000
 
 .data
-
-pBase       ptr 0       ; start list of 512 kB blocks; to be moved to ModuleInfo.g
-pCurr       ptr 0       ; points into current block; to be moved to ModuleInfo.g
-currfree    dd 0        ; free memory left in current block; to be moved to ModuleInfo.g
-heaplen     dd 0x80000  ; total memory usage
 ifndef __UNIX__
-hProcessHeap HANDLE 0
+hProcessHeap    HANDLE 0
 endif
+pBase           dq 0 ; start list of 512 kB blocks; to be moved to ModuleInfo.g
+pCurr           dq 0 ; points into current block; to be moved to ModuleInfo.g
+currfree        dd 0 ; free memory left in current block; to be moved to ModuleInfo.g
 
     .code
 
     option dotname
 
 MemInit proc
+
+    mov pBase,0
+    mov currfree,0
 ifndef __UNIX__
     mov hProcessHeap,GetProcessHeap()
 endif
-    mov pBase,0
-    mov currfree,0
     ret
+
 MemInit endp
+
+ifdef __UNIX__
+
+define PROT_READ    1
+define PROT_WRITE   2
+define MAP_PRIVATE  2
+define MAP_ANON     0x20
+define MAP_FAILED   (-1)
+define SYS_MMAP     9
+define SYS_MUNMAP   11
+
+MemAlloc proc fastcall uses rsi rdi rbx len:uint_t
+
+    add     ecx,32-1
+    and     ecx,-16
+    mov     ebx,ecx
+    xor     edi,edi
+    mov     rsi,rbx
+    mov     edx,PROT_READ or PROT_WRITE
+    mov     r10d,MAP_PRIVATE or MAP_ANON
+    mov     r8,-1
+    xor     r9d,r9d
+    mov     eax,SYS_MMAP
+    syscall
+    xor     ecx,ecx
+    cmp     rax,MAP_FAILED
+    cmove   rax,rcx
+
+    .if ( rax )
+
+        mov [rax],rbx
+        add rax,16
+
+    .else
+else
+MemAlloc proc fastcall len:uint_t
+
+    .if ( HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, rcx) == NULL )
+endif
+        mov currfree,eax
+        asmerr( 1018 )
+    .endif
+    ret
+
+MemAlloc endp
 
 ifdef __UNIX__
 
 MemFree proc fastcall uses rsi rdi p:ptr
 
-    free( rcx )
+    .if ( rcx )
+
+        lea rdi,[rcx-16]
+        mov rsi,[rdi]
+        mov eax,SYS_MUNMAP
+        syscall
+    .endif
+
+else
+
+MemFree proc fastcall p:ptr
+
+    HeapFree(hProcessHeap, 0, rcx)
+endif
     ret
 
 MemFree endp
 
-HeapZeroAlloc proc fastcall uses rsi rdi rbx size:uint_t
-
-    mov ebx,ecx
-    .if malloc( rcx )
-        mov rsi,rax
-        mov rdi,rax
-        mov ecx,ebx
-        xor eax,eax
-        rep stosb
-        mov rax,rsi
-    .endif
-    ret
-
-HeapZeroAlloc endp
-
-endif
-
 MemFini proc uses rbx
+
     mov rbx,pBase
     .while rbx
-        mov rax,rbx
+        mov rcx,rbx
         mov rbx,[rbx]
-ifndef __UNIX__
-        HeapFree(hProcessHeap, 0, rax)
-else
-        MemFree(rax)
-endif
+        MemFree(rcx)
     .endw
     mov pBase,rbx
     ret
-MemFini endp
 
-.pragma warning(disable: 6004)
+MemFini endp
 
 LclAlloc proc fastcall size:uint_t
 
@@ -137,11 +174,9 @@ LclAlloc proc fastcall size:uint_t
     cmovb   ecx,eax
     mov     currfree,ecx
     add     ecx,ALIGNMENT
-ifdef __UNIX__
-    HeapZeroAlloc( ecx )
-else
-    HeapAlloc( hProcessHeap, HEAP_ZERO_MEMORY, rcx )
-endif
+
+    MemAlloc(ecx)
+
     test    rax,rax
     jz      .2
     mov     rcx,pBase
@@ -152,25 +187,10 @@ endif
     mov     ecx,size
     jmp     .0
 .2:
-    asmerr( 1901 )
-    jmp     .0
+    mov     currfree,eax
+    asmerr( 1018 )
 
 LclAlloc endp
-
-ifdef __UNIX__
-MemAlloc proc fastcall uses rsi rdi len:uint_t
-else
-MemAlloc proc fastcall len:uint_t
-endif
-
-    .if ( malloc( rcx ) == NULL )
-
-        mov currfree,eax
-        asmerr(1901)
-    .endif
-    ret
-
-MemAlloc endp
 
 LclDup proc fastcall string:string_t
 

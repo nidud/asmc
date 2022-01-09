@@ -828,10 +828,7 @@ AllocInput proc __ccall private uses rsi rdi
     imul edi,eax,asm_tok * MAX_MACRO_NESTING
     lea  eax,[rdi+rdx]
     add  eax,esi
-
-    .return .if !LclAlloc( eax )
-
-    mov  srclinebuffer,rax
+    mov  srclinebuffer,LclAlloc( eax )
 
     ; the comment buffer is at the end of the source line buffer
 
@@ -908,9 +905,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
     mov rsi,rcx
     .if ( [rsi].start != rax )
 
-        .return .if !LclAlloc( ModuleInfo.max_line_len )
-
-        mov rbx,rax
+        mov rbx,LclAlloc( ModuleInfo.max_line_len )
         mov rdx,[rsi].start
         sub [rsi].input,rdx
         add [rsi].input,rbx
@@ -924,7 +919,7 @@ InputExtend proc __ccall uses rsi rdi rbx p:ptr line_status
     mov rsi,srclinebuffer
     mov ebx,oldsize
 
-    .return .if !AllocInput()
+    AllocInput()
     ;
     ; copy source line buffer, token buffer, and string buffer
     ;

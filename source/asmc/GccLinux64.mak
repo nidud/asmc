@@ -1,6 +1,6 @@
 # Makefile for Asmc Linux using GCC
 
-AFLAGS = -nologo -nolib -Zp8 -elf64 -Cs -Iinc -I../../include
+AFLAGS = -nologo -nolib -Zp8 -Cs -Iinc -I../../include
 ifdef X64
 AFLAGS += -DASMC64
 BIN = asmc64
@@ -86,10 +86,10 @@ OBJS =	x64/asmc.o \
 .SUFFIXES: .asm .o
 
 .asm.o:
-	../../bin/asmc $(AFLAGS) -Fo $*.o $<
+	asmc64 $(AFLAGS) -Fo $*.o $<
 
 $(BIN): $(OBJS)
-	gcc -o $@ -z --execstack -z --stacksize=0x20000 $^
+	gcc -o $@ $^
 
 clean:
 	rm -f $(OBJS)

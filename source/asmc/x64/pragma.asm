@@ -234,7 +234,7 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             inc edi
             .endc .if edi >= MAXSTACK
             mov WarnCount,edi
-            .endc .if !MemAlloc(wtable_count)
+            MemAlloc(wtable_count)
             lea rcx,WarnStack
             .for ( [rcx+rdi*8-8] = rax,
                    rsi = &pragma_wtable,

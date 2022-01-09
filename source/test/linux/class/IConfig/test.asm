@@ -14,7 +14,7 @@ main proc uses rbx
     [rbx].Create( "Product" )
     [rdi].Create( "Source=AsmcOOP" )
     [rbx].Create( "URL" )
-    [rdi].Create( "UpdateURL=http://masm32.com/board/index.php?topic=7000.0" )
+    [rdi].Create( "UpdateURL=https://github.com/nidud/asmc" )
     [rbx].Find  ( "Version" )
     [rdi].Create( "Package=%d.%d", 4, 0 )
     [rbx].Write ( "test.ini" )

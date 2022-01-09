@@ -4,7 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include ltype.inc
+include asmc.inc
 
     public  _ltype
 
@@ -198,9 +198,6 @@ tstrstartr proc watcall string:string_t
 
 tstrstartr endp
 
-ifndef __UNIX__
-memcpy::
-endif
 tmemcpy proc fastcall uses rdi dst:ptr, src:ptr, z:uint_t
 
     mov     rax,rcx ; -- return value
@@ -246,9 +243,6 @@ tmemset proc fastcall uses rdi dst:ptr, char:int_t, count:uint_t
 
 tmemset endp
 
-ifndef __UNIX__
-strlen::
-endif
 tstrlen proc fastcall uses rdi string:string_t
 
     mov     rdi,rcx
@@ -262,9 +256,6 @@ tstrlen proc fastcall uses rdi string:string_t
 
 tstrlen endp
 
-ifndef __UNIX__
-strchr::
-endif
 tstrchr proc fastcall string:string_t, char:int_t
 
     xor     eax,eax
@@ -281,9 +272,6 @@ tstrchr proc fastcall string:string_t, char:int_t
 
 tstrchr endp
 
-ifndef __UNIX__
-strrchr::
-endif
 tstrrchr proc fastcall string:string_t, char:int_t
 
     xor     eax,eax
@@ -300,10 +288,7 @@ tstrrchr proc fastcall string:string_t, char:int_t
 
 tstrrchr endp
 
-ifndef __UNIX__
-strcpy::
-endif
-tstrcpy proc fastcall dst:ptr, src:ptr
+tstrcpy proc fastcall dst:string_t, src:string_t
 
     mov     r9,rcx
     mov     al,[rdx]
@@ -415,7 +400,7 @@ tstrncpy proc fastcall dst:string_t, src:string_t, count:int_t
 
 tstrncpy endp
 
-tstrcat proc fastcall dst:ptr, src:ptr
+tstrcat proc fastcall dst:string_t, src:string_t
 
     mov     r8,rcx
     xor     eax,eax
@@ -457,7 +442,7 @@ tstrcmp proc fastcall a:string_t, b:string_t
 
 tstrcmp endp
 
-tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:size_t
+tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:uint_t
 
     mov     rdi,rcx
     mov     rsi,rdx
@@ -472,7 +457,7 @@ tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:size_t
 
 tmemcmp endp
 
-tmemicmp proc fastcall dst:ptr, src:ptr, size:size_t
+tmemicmp proc fastcall dst:ptr, src:ptr, size:uint_t
 .0:
     test    r8d,r8d
     jz      .1
@@ -552,6 +537,148 @@ tstrstr proc fastcall uses rsi rdi rbx dst:string_t, src:string_t
     ret
 
 tstrstr endp
+
+    option win64:rbp auto save
+
+memxchg proto fastcall :ptr, :ptr, :int_t {
+
+    .repeat
+        mov rax,[rcx]
+        mov r10,[rdx]
+        mov [rdx],rax
+        mov [rcx],r10
+        sub r8d,8
+    .until r8d < 8
+    }
+
+tqsort proc fastcall uses rsi rdi rbx r12 r13 r14 r15 p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
+
+    .if edx > 1
+
+        lea eax,[rdx-1]
+        mul r8d
+        mov rsi,rcx
+        lea rdi,[rsi+rax]
+        xor r12,r12
+        mov r13d,r8d
+
+        .while 1
+
+            mov ecx,r13d
+            lea rax,[rdi+rcx]   ; middle from (hi - lo) / 2
+            sub rax,rsi
+            .ifnz
+                xor rdx,rdx
+                div rcx
+                shr rax,1
+                mul rcx
+            .endif
+
+            sub rsp,0x20
+
+            lea rbx,[rsi+rax]
+
+            .ifsd compare(rsi, rbx) > 0
+                memxchg(rsi, rbx, r13d)
+            .endif
+            .ifsd compare(rsi, rdi) > 0
+                memxchg(rsi, rdi, r13d)
+            .endif
+            .ifsd compare(rbx, rdi) > 0
+                memxchg(rbx, rdi, r13d)
+            .endif
+
+            mov r14,rsi
+            mov r15,rdi
+
+            .while 1
+
+                add r14,r13
+                .if r14 < rdi
+
+                    .continue .ifsd compare(r14, rbx) <= 0
+                .endif
+
+                .while 1
+
+                    sub r15,r13
+
+                    .break .if r15 <= rbx
+                    .break .ifsd compare(r15, rbx) <= 0
+                .endw
+
+                mov rcx,r15
+                mov rax,r14
+                .break .if rcx < rax
+                memxchg(rcx, rax, r13d)
+
+                .if rbx == r15
+
+                    mov rbx,r14
+                .endif
+            .endw
+
+            add r15,r13
+
+            .while 1
+
+                sub r15,r13
+
+                .break .if r15 <= rsi
+                .break .ifd compare(r15, rbx)
+            .endw
+
+            add rsp,0x20
+
+            mov rdx,r14
+            mov rax,r15
+            sub rax,rsi
+            mov rcx,rdi
+            sub rcx,rdx
+
+            .ifs rax < rcx
+
+                mov rcx,r15
+
+                .if rdx < rdi
+
+                    push rdx
+                    push rdi
+                    inc r12d
+                .endif
+
+                .if rsi < rcx
+
+                    mov rdi,rcx
+                    .continue
+                .endif
+            .else
+                mov rcx,r15
+
+                .if rsi < rcx
+
+                    push rsi
+                    push rcx
+                    inc r12d
+                .endif
+
+                .if rdx < rdi
+
+                    mov rsi,rdx
+                    .continue
+                .endif
+            .endif
+
+            .break .if !r12d
+
+            dec r12d
+            pop rdi
+            pop rsi
+        .endw
+    .endif
+    ret
+
+tqsort endp
 
     end
 

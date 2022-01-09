@@ -1023,11 +1023,7 @@ name    string_t ?
 idx     dd ?
 expitem ends
 
-compare_exp proc p1:ptr expitem, p2:ptr expitem
-ifdef __UNIX__
-    mov rcx,rdi
-    mov rdx,rsi
-endif
+compare_exp proc __ccall p1:ptr expitem, p2:ptr expitem
     .return( tstrcmp( [rcx].expitem.name, [rdx].expitem.name ) )
 compare_exp endp
 
@@ -1079,7 +1075,7 @@ pe_emit_export_data proc __ccall uses rsi rdi rbx
             add rsi,expitem
         .endif
     .endf
-    qsort( pitems, cnt, sizeof( expitem ), &compare_exp )
+    tqsort( pitems, cnt, sizeof( expitem ), &compare_exp )
 
     ;
     ; emit export address table.

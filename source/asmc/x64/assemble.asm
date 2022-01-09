@@ -417,19 +417,16 @@ add_incpaths proc __ccall private uses rsi
 
 add_incpaths endp
 
-ifdef __UNIX__
-CmdlParamsInit proc __ccall private uses rsi rdi pass:int_t
-else
 CmdlParamsInit proc __ccall private pass:int_t
-endif
-    .if ecx == PASS_1
+
+    .if ( ecx == PASS_1 )
 
         add_cmdline_tmacros()
         add_incpaths()
 
         .if !Options.ignore_include
 
-            .if getenv("INCLUDE")
+            .if tgetenv("INCLUDE")
 
                 AddStringToIncludePath(rax)
             .endif

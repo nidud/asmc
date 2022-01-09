@@ -11,7 +11,7 @@ include limits.inc
 
 localtime proc uses rsi rdi ptime: LPTIME
 
-  local ptm:ptr tm, ltime
+  local ptm:ptr tm, ltime:time_t
 
     mov esi,[rcx]
 
@@ -24,7 +24,7 @@ localtime proc uses rsi rdi ptime: LPTIME
 
             mov eax,esi
             sub eax,_timezone
-            mov ltime,eax
+            mov ltime,rax
             mov ptm,gmtime( &ltime )
 
             .break .if !_daylight

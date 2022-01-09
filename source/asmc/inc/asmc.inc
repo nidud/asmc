@@ -683,8 +683,13 @@ tstrncpy                proto fastcall :string_t, :string_t, :int_t
 tstrcmp                 proto fastcall :string_t, :string_t
 tstricmp                proto fastcall :string_t, :string_t
 tstrstr                 proto fastcall :string_t, :string_t
+tgetenv                 proto fastcall :string_t
 
 tstrstart               proto watcall :string_t
 tstrstartr              proto watcall :string_t
+
+CCALLBACK(PQSORTCMD, :ptr, :ptr)
+
+tqsort                  proto fastcall :ptr, :int_t, :int_t, :PQSORTCMD
 
 endif

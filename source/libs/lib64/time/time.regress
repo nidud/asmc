@@ -4,7 +4,7 @@ include time.inc
 
 main proc
 
-  local ltime
+  local ltime:time_t
 
     mov ltime,0x55C9D859
     localtime(&ltime)

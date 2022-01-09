@@ -386,9 +386,7 @@ EvalOperator proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:toke
         .endif
     .endif
     mov [rsi].type,rcx
-    mov ebx,LclAlloc( opinfo )
-   .return ERROR .if ( rax == NULL )
-
+    mov rbx,LclAlloc( opinfo )
     mov [rbx].next,NULL
     mov [rbx].type,GetOperator(oper)
    .return ERROR .if ( rax == 0 )

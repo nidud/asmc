@@ -532,7 +532,7 @@ endif
             .for ( :: )
 
                 mov ls.input,tstrstart(ls.input)
-                .break .if ( cl == 0 || cl == ';' ) ; 0 locals are ok 
+                .break .if ( cl == 0 || cl == ';' ) ; 0 locals are ok
 
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
@@ -738,18 +738,12 @@ MacroDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
             .if [rsi].state == SYM_EXTERNAL && !ModuleInfo.strict_masm_compat
 
                 mov rbx,rdx
-                .if SymAlloc(rdi)
-
-                    mov [rsi].target_type,rax
-                    or  [rsi].flag2,S_ISINLINE
-                    mov rsi,rax
-                    mov [rsi].altname,rbx
-                    and [rsi].mac_flag,not ( M_ISVARARG or M_ISFUNC )
-                    jmp alloc_macroinfo
-                .else
-                    .return asmerr( 2005, rdi )
-                .endif
-                mov rbx,tokenarray
+                mov [rsi].target_type,SymAlloc(rdi)
+                or  [rsi].flag2,S_ISINLINE
+                mov rsi,rax
+                mov [rsi].altname,rbx
+                and [rsi].mac_flag,not ( M_ISVARARG or M_ISFUNC )
+                jmp alloc_macroinfo
             .else
                 .return asmerr( 2005, rdi )
             .endif
@@ -949,7 +943,7 @@ EnvironFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance, buffer:
     mov rbx,rdx
     mov rax,[rcx].macro_instance.parm_array
     mov rcx,[rax]
-    mov rsi,getenv(rcx)
+    mov rsi,tgetenv(rcx)
     mov rdi,rbx
     mov byte ptr [rdi],0
     .if rsi

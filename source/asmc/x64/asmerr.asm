@@ -44,7 +44,7 @@ externdef jmpenv:byte
     A1014 equ <"too many arguments">
     A1015 equ <"statement too complex">
     A1017 equ <"missing source filename">
-    A1018 equ <"Internal Assembler Error : %s(%d)">
+    A1018 equ <"Not enough space">
 
 ;; Nonfatal Errors
 

@@ -1259,14 +1259,9 @@ LstCaption proc __ccall uses rsi caption:string_t, prefNL:int_t
 
 LstCaption endp
 
-compare_syms proc p1:ptr, p2:ptr
-ifdef __UNIX__
-    mov rcx,[rdi]
-    mov rdx,[rsi]
-else
+compare_syms proc __ccall p1:ptr, p2:ptr
     mov rcx,[rcx]
     mov rdx,[rdx]
-endif
    .return( tstrcmp( [rcx].asym.name, [rdx].asym.name ) )
 compare_syms endp
 
@@ -1301,7 +1296,7 @@ LstWriteCRef proc __ccall uses rsi rdi rbx r12
     SymGetAll( syms )
 
     ; sort 'em
-    qsort( syms, SymCount, sizeof( asym_t ), &compare_syms )
+    tqsort( syms, SymCount, sizeof( asym_t ), &compare_syms )
     tmemset( &queues, 0, sizeof( queues ) )
 
     .for ( ebx = 0: ebx < SymCount: ++ebx )

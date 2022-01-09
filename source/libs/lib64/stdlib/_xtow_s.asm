@@ -87,7 +87,17 @@ xtox_s proc private val:qword, buf:wstring_t , sizeInTChars:size_t, radix:uint_t
 
 xtox_s endp
 
-_itow_s::
+_itow_s proc val:long_t, buffer:wstring_t, sizeInTChars:size_t, radix:int_t
+
+    xor eax,eax
+    .ifs (r9d == 10 && ecx < 0)
+        inc eax
+    .endif
+    xtox_s(rcx, rdx, r8, r9d, eax)
+    ret
+
+_itow_s endp
+
 
 _ltow_s proc val:long_t, buffer:wstring_t, sizeInTChars:size_t, radix:int_t
 

@@ -1055,11 +1055,7 @@ ProcessOption endp
 
     option proc:public
 
-ifdef __UNIX__
-ParseCmdline proc __ccall uses rsi rdi rbx r12 r13 cmdline:ptr string_t, numargs:ptr int_t
-else
 ParseCmdline proc __ccall uses r12 r13 rbx cmdline:ptr string_t, numargs:ptr int_t
-endif
 
   local paramfile[_MAX_PATH]:char_t
 
@@ -1106,7 +1102,7 @@ endif
             mov [r12],GetNameToken(&paramfile, rbx, sizeof(paramfile)-1, '@')
             xor ebx,ebx
             .if paramfile[0]
-                mov rbx,getenv(&paramfile)
+                mov rbx,tgetenv(&paramfile)
             .endif
             .if !rbx
                 mov rbx,ReadParamFile(&paramfile)

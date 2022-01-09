@@ -991,9 +991,10 @@ endif
                     .if B[rbx+4] != 0
                         asmerr(1006, rbx)
                     .endif
-                    movzx eax,B[rbx+3]
-                    sub eax,'0'
+                    movzx eax,word ptr [rbx+2]
+                    sub eax,'00'
                     mov Options.debug_ext,al
+                    shr eax,8
                 .endif
                 .if eax == 5
                     mov Options.debug_symbols,2 ;; C11 (vc5.x) 32-bit types

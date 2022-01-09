@@ -11,6 +11,7 @@ ifndef __UNIX__
 include winbase.inc
 endif
 include asmc.inc
+include memalloc.inc
 include symbols.inc
 include input.inc
 
@@ -184,7 +185,7 @@ endif
 ifndef __UNIX__
   .new ff:WIN32_FIND_DATA
 endif
-
+    MemInit()
 ifndef DEBUG
     signal(SIGSEGV, &GeneralFailure)
 endif

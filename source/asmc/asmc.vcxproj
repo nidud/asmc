@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,7 +39,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>\Asmc\lib\x64</AdditionalLibraryDirectories>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
       <StackCommitSize>0x200000</StackCommitSize>
       <StackReserveSize>0x300000</StackReserveSize>
     </Link>

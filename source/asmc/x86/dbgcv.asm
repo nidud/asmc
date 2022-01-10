@@ -247,7 +247,7 @@ GetStructLen proc sym:ptr asym, Ofssize:byte
 if EQUATESYMS
         .if ( [ecx].asym.flags & S_ISEQUATE )
             mov eax,sizeof( CONSTSYM_16t )
-            .if ( [ecx].asym.value >= LF_NUMERIC )
+            .if ( [ecx].asym.value3264 || [ecx].asym.uvalue >= LF_NUMERIC )
                 add eax,2
             .endif
             .return
@@ -267,7 +267,7 @@ endif
 if EQUATESYMS
     .if ( [ecx].asym.flags & S_ISEQUATE )
         mov eax,sizeof( CONSTSYM )
-        .if ( [ecx].asym.value >= LF_NUMERIC )
+        .if ( [ecx].asym.value3264 || [ecx].asym.uvalue >= LF_NUMERIC )
             add eax,2
         .endif
         .return
@@ -980,6 +980,84 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
     mov Ofssize,GetSymOfssize( esi )
     mov len,GetStructLen( esi, al )
 
+if EQUATESYMS
+
+    .if ( [esi].asym.flags & S_ISEQUATE )
+
+        mov edi,LF_SHORT
+        mov eax,[esi].asym.value
+        mov edx,[esi].asym.value3264
+
+        .if ( edx || eax >= LF_NUMERIC )
+            test edx,edx
+            .ifs
+                neg eax
+                neg edx
+                sbb edx,0
+            .endif
+            .if !edx
+                .if eax <= 0xFF
+                    mov edi,LF_CHAR
+                    dec len
+                .elseif eax > 0xFFFF
+                    mov edi,LF_LONG
+                    add len,2
+                .endif
+            .else
+                add len,6
+                mov edi,LF_QUADWORD
+            .endif
+        .endif
+        mov eax,len
+        mov ecx,[esi].asym.name_size
+        lea edx,[eax+ecx+1]
+        mov ecx,[ebx].flushps(edx)
+        xchg edi,ecx
+
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov [edi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
+            mov [edi].CONSTSYM_16t.typind,ST_SHORT
+            lea edx,[edi].CONSTSYM_16t.name
+        .else
+            mov [edi].CONSTSYM.rectyp,S_CONSTANT
+            mov [edi].CONSTSYM.typind,ST_SHORT
+            lea edx,[edi].CONSTSYM.name
+        .endif
+
+        mov eax,[esi].asym.value
+        .if ( [esi].asym.value3264 || eax >= LF_NUMERIC )
+            .if ( ecx == LF_CHAR )
+                mov [edx],al
+                mov eax,ecx
+                mov ecx,ST_CHAR
+            .elseif ( ecx == LF_SHORT )
+                mov [edx],ax
+                mov eax,ecx
+                mov ecx,ST_SHORT
+            .elseif ( ecx == LF_LONG )
+                mov [edx],eax
+                mov eax,ecx
+                mov ecx,ST_LONG
+            .elseif ( ecx == LF_QUADWORD )
+                mov [edx],eax
+                mov eax,[esi].asym.value3264
+                mov [edx+4],eax
+                mov eax,ecx
+                mov ecx,ST_QUAD
+            .endif
+            mov [edi].CONSTSYM_16t.typind,cx
+        .endif
+        mov [edx-2],ax
+        mov eax,len
+        mov ecx,[esi].asym.name_size
+        lea edx,[ecx+eax-2+1]
+        mov [rdi].CONSTSYM.reclen,dx
+        add [ebx].ps,eax
+        mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
+       .return
+    .endif
+endif
+
     mov ecx,[esi].asym.name_size
     add eax,ecx
     inc eax
@@ -1227,42 +1305,6 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             mov rlctype,FIX_PTR32
             mov ofs,offsetof( LABELSYM32, off )
         .endif
-
-if EQUATESYMS
-
-    .elseif ( [esi].asym.flags & S_ISEQUATE )
-
-        mov eax,[esi].asym.name_size
-        mov ecx,len
-        lea eax,[eax+ecx-2+1]
-        mov [edi].CONSTSYM.reclen,ax
-        mov eax,[esi].asym.value
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov [edi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
-            mov [edi].CONSTSYM_16t.typind,ST_ABS
-            .if ( eax >= LF_NUMERIC )
-                lea ecx,[edi].CONSTSYM_16t.name
-                mov [edi].CONSTSYM_16t.value,LF_ULONG
-                mov [ecx],eax
-            .else
-                mov [edi].CONSTSYM_16t.value,ax
-            .endif
-        .else
-            mov [edi].CONSTSYM.rectyp,S_CONSTANT
-            mov [edi].CONSTSYM.typind,ST_ABS
-            .if ( eax >= LF_NUMERIC )
-                lea ecx,[edi].CONSTSYM.name
-                mov [edi].CONSTSYM.value,LF_ULONG
-                mov [ecx],eax
-            .else
-                mov [edi].CONSTSYM.value,ax
-            .endif
-        .endif
-        mov eax,len
-        add [ebx].ps,eax
-        mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
-       .return
-endif
 
     .else
 

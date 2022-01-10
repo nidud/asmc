@@ -256,8 +256,13 @@ GetStructLen proc __ccall sym:ptr asym, Ofssize:byte
         .endif
 if EQUATESYMS
         .if ( [rcx].asym.flags & S_ISEQUATE )
+
+            mov eax,[rcx].asym.value
+            mov edx,[rcx].asym.value3264
+            shl rdx,32
+            or  rdx,rax
             mov eax,sizeof( CONSTSYM_16t )
-            .if ( [rcx].asym.value >= LF_NUMERIC )
+            .if ( rdx >= LF_NUMERIC )
                 add eax,2
             .endif
             .return
@@ -276,8 +281,12 @@ endif
     .endif
 if EQUATESYMS
     .if ( [rcx].asym.flags & S_ISEQUATE )
+        mov eax,[rcx].asym.value
+        mov edx,[rcx].asym.value3264
+        shl rdx,32
+        or  rdx,rax
         mov eax,sizeof( CONSTSYM )
-        .if ( [rcx].asym.value >= LF_NUMERIC )
+        .if ( rdx >= LF_NUMERIC )
             add eax,2
         .endif
         .return
@@ -1070,8 +1079,81 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
     mov Ofssize,GetSymOfssize( rsi )
     mov r14,GetStructLen( rsi, al )
 
+if EQUATESYMS
+
+    .if ( [rsi].asym.flags & S_ISEQUATE )
+
+        mov r12,rdx ; value from GetStructLen()
+        mov r13d,LF_SHORT
+
+        .if ( rdx >= LF_NUMERIC )
+
+            test rdx,rdx
+            .ifs
+                neg rdx
+            .endif
+            .if rdx <= 0xFF
+                mov r13d,LF_CHAR
+                dec r14
+            .elseif rdx > 0xFFFF
+                add r14,2
+                shr rdx,32
+                .ifz
+                    mov r13d,LF_LONG
+                .else
+                    add r14,4
+                    mov r13d,LF_QUADWORD
+                .endif
+            .endif
+        .endif
+
+        mov ecx,[rsi].asym.name_size
+        lea edx,[r14+rcx+1]
+        mov rdi,[rbx].flushps(edx)
+
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov [rdi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
+            mov [rdi].CONSTSYM_16t.typind,ST_SHORT
+            lea rcx,[rdi].CONSTSYM_16t.name
+        .else
+            mov [rdi].CONSTSYM.rectyp,S_CONSTANT
+            mov [rdi].CONSTSYM.typind,ST_SHORT
+            lea rcx,[rdi].CONSTSYM.name
+        .endif
+
+        mov rax,r12
+        .if ( rax >= LF_NUMERIC )
+
+            mov eax,r13d
+            mov edx,ST_SHORT
+            .if ( eax == LF_CHAR )
+                mov [rcx],r12b
+                mov edx,ST_CHAR
+            .elseif ( eax == LF_SHORT )
+                mov [rcx],r12w
+            .elseif ( eax == LF_LONG )
+                mov [rcx],r12d
+                mov edx,ST_LONG
+            .elseif ( eax == LF_QUADWORD )
+                mov [rcx],r12
+                mov edx,ST_QUAD
+            .endif
+            mov [rdi].CONSTSYM_16t.typind,dx
+        .endif
+        mov [rcx-2],ax
+
+        mov eax,[rsi].asym.name_size
+        lea eax,[rax+r14-2+1]
+        mov [rdi].CONSTSYM.reclen,ax
+        add [rbx].ps,r14
+        mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
+       .return
+    .endif
+endif
+
+
     mov ecx,[rsi].asym.name_size
-    lea edx,[rax+rcx+1]
+    lea edx,[r14+rcx+1]
     mov rdi,[rbx].flushps(edx)
 
     .if ( [rsi].asym.state == SYM_TYPE )
@@ -1315,39 +1397,6 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
             mov ofs,offsetof( LABELSYM32, off )
         .endif
 
-if EQUATESYMS
-
-    .elseif ( [rsi].asym.flags & S_ISEQUATE )
-
-        mov eax,[rsi].asym.name_size
-        lea eax,[rax+r14-2+1]
-        mov [rdi].CONSTSYM.reclen,ax
-        mov eax,[rsi].asym.value
-        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
-            mov [rdi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
-            mov [rdi].CONSTSYM_16t.typind,ST_ABS
-            .if ( eax >= LF_NUMERIC )
-                lea rcx,[rdi].CONSTSYM_16t.name
-                mov [rdi].CONSTSYM_16t.value,LF_ULONG
-                mov [rcx],eax
-            .else
-                mov [rdi].CONSTSYM_16t.value,ax
-            .endif
-        .else
-            mov [rdi].CONSTSYM.rectyp,S_CONSTANT
-            mov [rdi].CONSTSYM.typind,ST_ABS
-            .if ( eax >= LF_NUMERIC )
-                lea rcx,[rdi].CONSTSYM.name
-                mov [rdi].CONSTSYM.value,LF_ULONG
-                mov [rcx],eax
-            .else
-                mov [rdi].CONSTSYM.value,ax
-            .endif
-        .endif
-        add [rbx].ps,r14
-        mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
-       .return
-endif
     .else
 
         ; v2.10: set S_GDATA[16|32] if symbol is public

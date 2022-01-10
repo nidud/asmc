@@ -1141,10 +1141,14 @@ if EQUATESYMS
             mov [rdi].CONSTSYM_16t.typind,dx
         .endif
         mov [rcx-2],ax
-
         mov eax,[rsi].asym.name_size
         lea eax,[rax+r14-2+1]
         mov [rdi].CONSTSYM.reclen,ax
+        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+            add eax,2
+            mov rcx,[rbx].section
+            add [rcx].cvsection.length,eax
+        .endif
         add [rbx].ps,r14
         mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
        .return

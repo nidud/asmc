@@ -1053,7 +1053,13 @@ if EQUATESYMS
         lea edx,[ecx+eax-2+1]
         mov [rdi].CONSTSYM.reclen,dx
         add [ebx].ps,eax
+        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+            add edx,2
+            mov ecx,[ebx].section
+            add [ecx].cvsection.length,edx
+        .endif
         mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
+
        .return
     .endif
 endif

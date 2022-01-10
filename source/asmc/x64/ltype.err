@@ -1,6 +1,0 @@
-D:\Asmc\source\asmc\x64\ltype.asm(202) : error A2005: symbol redefinition : memcpy
-D:\Asmc\source\asmc\x64\ltype.asm(250) : error A2005: symbol redefinition : strlen
-D:\Asmc\source\asmc\x64\ltype.asm(266) : error A2005: symbol redefinition : strchr
-D:\Asmc\source\asmc\x64\ltype.asm(285) : error A2005: symbol redefinition : strrchr
-D:\Asmc\source\asmc\x64\ltype.asm(304) : error A2005: symbol redefinition : strcpy
-D:\Asmc\source\asmc\x64\ltype.asm(559) : error A2004: symbol type conflict : PQSORTCMD

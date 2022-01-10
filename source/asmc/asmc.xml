@@ -137,6 +137,10 @@
         Name="8"
         DisplayName="CV8 - C13 (vc7.x) zero terminated names"
         Switch="/Zi8" />
+      <EnumValue
+        Name="38"
+        DisplayName="CV8 - Globals, locals, types and constants"
+        Switch="/Zi38" />
     </EnumProperty>
     <BoolProperty
       Name="EnableMASM51Compatibility"

@@ -1227,11 +1227,46 @@ dbgcv::write_symbol proc uses esi edi ebx sym:ptr asym
             mov rlctype,FIX_PTR32
             mov ofs,offsetof( LABELSYM32, off )
         .endif
+
+if EQUATESYMS
+
+    .elseif ( [esi].asym.flags & S_ISEQUATE )
+
+        mov eax,[esi].asym.name_size
+        mov ecx,len
+        lea eax,[eax+ecx-2+1]
+        mov [edi].CONSTSYM.reclen,ax
+        mov eax,[esi].asym.value
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov [edi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
+            mov [edi].CONSTSYM_16t.typind,ST_ABS
+            .if ( eax >= LF_NUMERIC )
+                lea ecx,[edi].CONSTSYM_16t.name
+                mov [edi].CONSTSYM_16t.value,LF_ULONG
+                mov [ecx],eax
+            .else
+                mov [edi].CONSTSYM_16t.value,ax
+            .endif
+        .else
+            mov [edi].CONSTSYM.rectyp,S_CONSTANT
+            mov [edi].CONSTSYM.typind,ST_ABS
+            .if ( eax >= LF_NUMERIC )
+                lea ecx,[edi].CONSTSYM.name
+                mov [edi].CONSTSYM.value,LF_ULONG
+                mov [ecx],eax
+            .else
+                mov [edi].CONSTSYM.value,ax
+            .endif
+        .endif
+        mov eax,len
+        add [ebx].ps,eax
+        mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
+       .return
+endif
+
     .else
 
-        ;; v2.10: set S_GDATA[16|32] if symbol is public
-
-        ;.new typeref:uint_32
+        ; v2.10: set S_GDATA[16|32] if symbol is public
 
         .if ( [esi].asym.flag1 & S_ISARRAY )
             [ebx].write_array_type( esi, 0, Ofssize )

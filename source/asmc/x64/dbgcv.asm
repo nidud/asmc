@@ -832,6 +832,7 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
     .if ( [rsi].asym.typekind == TYPE_TYPEDEF )
 
         .if ( [rsi].asym.mem_type == MT_PTR )
+
             mov rcx,[rsi].asym.target_type
             .if ( [rsi].asym.ptr_memtype != MT_PROC && rcx && [rcx].asym.cvtyperef == 0 )
                 .if ( [rbx].level == 0 ) ; avoid circles
@@ -1070,9 +1071,8 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
     mov r14,GetStructLen( rsi, al )
 
     mov ecx,[rsi].asym.name_size
-    add eax,ecx
-    inc eax
-    mov rdi,[rbx].flushps(eax)
+    lea edx,[rax+rcx+1]
+    mov rdi,[rbx].flushps(edx)
 
     .if ( [rsi].asym.state == SYM_TYPE )
 
@@ -1280,9 +1280,9 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
 
     .elseif ( [rsi].asym.mem_type == MT_NEAR || [rsi].asym.mem_type == MT_FAR )
 
+        mov eax,[rsi].asym.name_size
         .if ( Ofssize == USE16 )
 
-            mov eax,[rsi].asym.name_size
             add eax,sizeof( LABELSYM16 ) - sizeof(uint_16)
             mov [rdi].LABELSYM16.reclen,ax
             mov [rdi].LABELSYM16.rectyp,S_LABEL16
@@ -1296,7 +1296,7 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
             mov rlctype,FIX_PTR16
             mov ofs,offsetof( LABELSYM16, off )
         .else
-            mov eax,[rsi].asym.name_size
+
             add eax,sizeof( LABELSYM32 ) - sizeof(uint_16)
             mov [rdi].LABELSYM32.reclen,ax
             .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
@@ -1314,6 +1314,40 @@ dbgcv::write_symbol proc __ccall uses rsi rdi rbx r12 r13 r14 sym:ptr asym
             mov rlctype,FIX_PTR32
             mov ofs,offsetof( LABELSYM32, off )
         .endif
+
+if EQUATESYMS
+
+    .elseif ( [rsi].asym.flags & S_ISEQUATE )
+
+        mov eax,[rsi].asym.name_size
+        lea eax,[rax+r14-2+1]
+        mov [rdi].CONSTSYM.reclen,ax
+        mov eax,[rsi].asym.value
+        .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
+            mov [rdi].CONSTSYM_16t.rectyp,S_CONSTANT_16t
+            mov [rdi].CONSTSYM_16t.typind,ST_ABS
+            .if ( eax >= LF_NUMERIC )
+                lea rcx,[rdi].CONSTSYM_16t.name
+                mov [rdi].CONSTSYM_16t.value,LF_ULONG
+                mov [rcx],eax
+            .else
+                mov [rdi].CONSTSYM_16t.value,ax
+            .endif
+        .else
+            mov [rdi].CONSTSYM.rectyp,S_CONSTANT
+            mov [rdi].CONSTSYM.typind,ST_ABS
+            .if ( eax >= LF_NUMERIC )
+                lea rcx,[rdi].CONSTSYM.name
+                mov [rdi].CONSTSYM.value,LF_ULONG
+                mov [rcx],eax
+            .else
+                mov [rdi].CONSTSYM.value,ax
+            .endif
+        .endif
+        add [rbx].ps,r14
+        mov [rbx].ps,SetPrefixName( [rbx].ps, [rsi].asym.name, [rsi].asym.name_size )
+       .return
+endif
     .else
 
         ; v2.10: set S_GDATA[16|32] if symbol is public
@@ -2424,7 +2458,7 @@ endif
     xor esi,esi
     .while ( SymEnum( rsi, &i ) )
         mov rsi,rax
-        .if ( [rsi].asym.state == SYM_TYPE && \
+        .if ( [rsi].asym.state == SYM_TYPE &&
               [rsi].asym.typekind != TYPE_TYPEDEF && [rsi].asym.cvtyperef == 0 )
             cv.write_type( rsi )
         .endif
@@ -2455,9 +2489,7 @@ if EQUATESYMS
 else
             and eax,S_ISEQUATE
 endif
-            .if ( ( Options.debug_symbols == CV_SIGNATURE_C13 && rsi == CV8Label ) \
-                || eax || edx ) ;; EQUates?
-
+            .if ( ( Options.debug_symbols == CV_SIGNATURE_C13 && rsi == CV8Label ) || eax || edx ) ;; EQUates?
                 .endc
             .endif
             cv.write_symbol( rsi )

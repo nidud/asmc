@@ -113,7 +113,7 @@ GetLinnumItems proc __ccall q:ptr qdesc
 
 GetLinnumItems endp
 
-;; write COFF section table
+; write COFF section table
 
     assume rsi:ptr module_info
 
@@ -136,7 +136,8 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
 
         mov segtype,SEGTYPE_UNDEF
 
-        ;; v2.07: prefer ALIAS name if defined.
+        ; v2.07: prefer ALIAS name if defined.
+
         mov rdx,[rdi].dsym.seginfo
         mov rax,[rdx].seg_info.aliasname
         .if ( rax == NULL )
@@ -145,8 +146,8 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
         .endif
         mov rbx,rax
 
-        ;; if section name is longer than 8 chars, a '/' is stored,
-        ;; followed by a number in ascii which is the offset for the string table
+        ; if section name is longer than 8 chars, a '/' is stored,
+        ; followed by a number in ascii which is the offset for the string table
 
         .if ( tstrlen( rax ) <= IMAGE_SIZEOF_SHORT_NAME )
             tstrncpy( &ish.Name, rbx, IMAGE_SIZEOF_SHORT_NAME )
@@ -169,14 +170,14 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
         mov ish.NumberOfLinenumbers,ax
         mov ish.Characteristics,eax
 
-        ;; set field Characteristics; optionally reset PointerToRawData/SizeOfRawData
+        ; set field Characteristics; optionally reset PointerToRawData/SizeOfRawData
 
         mov rdx,[rdi].dsym.seginfo
         assume rdx:ptr seg_info
 
         .if ( [rdx].info )
 
-            ;; v2.09: set "remove" flag for .drectve section, as it was done in v2.06 and earlier
+            ; v2.09: set "remove" flag for .drectve section, as it was done in v2.06 and earlier
             mov rcx,cm
             .if ( rdi == [rcx].coffmod.directives )
                 mov ish.Characteristics, ( IMAGE_SCN_LNK_INFO or IMAGE_SCN_LNK_REMOVE )
@@ -186,7 +187,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
 
         .else
 
-            .if ( [rdx].alignment != MAX_SEGALIGNMENT ) ;; ABS not possible
+            .if ( [rdx].alignment != MAX_SEGALIGNMENT ) ; ABS not possible
 
                 movzx eax,[rdx].alignment
                 inc eax
@@ -219,8 +220,8 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
                 or ish.Characteristics,IMAGE_SCN_CNT_INITIALIZED_DATA or IMAGE_SCN_MEM_READ
             .elseif ( [rdx].segtype == SEGTYPE_BSS || segtype == SEGTYPE_BSS )
 
-                ;; v2.12: if segtype is bss, ensure that seginfo->segtype is also bss; else
-                ;; the segment might be written in coff_write_data().
+                ; v2.12: if segtype is bss, ensure that seginfo->segtype is also bss; else
+                ; the segment might be written in coff_write_data().
 
                 mov [rdx].segtype,SEGTYPE_BSS
                 or  ish.Characteristics,IMAGE_SCN_CNT_UNINITIALIZED_DATA or IMAGE_SCN_MEM_READ or IMAGE_SCN_MEM_WRITE
@@ -234,11 +235,11 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
             .endif
         .endif
 
-        ;; manual characteristics set?
+        ; manual characteristics set?
 
         .if ( [rdx].characteristics )
 
-            and ish.Characteristics,0x1FFFFFF ;; clear the IMAGE_SCN_MEM flags
+            and ish.Characteristics,0x1FFFFFF ; clear the IMAGE_SCN_MEM flags
             movzx eax,[rdx].characteristics
             and eax,0xFE
             shl eax,24
@@ -250,10 +251,10 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
             add esi,ish.SizeOfRawData
         .endif
 
-        ;; set fields PointerToRelocations/NumberOfRelocations; update 'fileoffset'.
-        ;; v2.10: don't use the 16-bit NumberOfRelocations member to count relocs!
-        ;; if the true number of relocs doesn't fit in 16-bits, set the appropriate
-        ;; flag in the section header!
+        ; set fields PointerToRelocations/NumberOfRelocations; update 'fileoffset'.
+        ; v2.10: don't use the 16-bit NumberOfRelocations member to count relocs!
+        ; if the true number of relocs doesn't fit in 16-bits, set the appropriate
+        ; flag in the section header!
 
         assume rcx:ptr fixup
 
@@ -284,7 +285,7 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
             and esi,not 1
             mov ish.PointerToRelocations,esi
 
-            ;; v2.10: handle the "relocs overflow"-case
+            ; v2.10: handle the "relocs overflow"-case
 
             imul eax,[rdx].num_relocs,sizeof( IMAGE_RELOCATION )
             add esi,eax
@@ -296,14 +297,14 @@ coff_write_section_table proc __ccall uses rsi rdi rbx modinfo:ptr module_info, 
                 mov ish.NumberOfRelocations,0xffff
                 or  ish.Characteristics,IMAGE_SCN_LNK_NRELOC_OVFL
 
-                ;; add 1 relocation - the true number of relocations is stored
-                ;; in the first relocation item
+                ; add 1 relocation - the true number of relocations is stored
+                ; in the first relocation item
 
                 add esi,sizeof( IMAGE_RELOCATION )
             .endif
         .endif
 
-        ;; set fields PointerToLinenumbers/NumberOfLinenumbers; update 'fileoffset'
+        ; set fields PointerToLinenumbers/NumberOfLinenumbers; update 'fileoffset'
 
         .if ( [rdx].LinnumQueue && Options.debug_symbols != 4 )
 
@@ -330,10 +331,10 @@ endif
 coff_write_section_table endp
 
 
-;;
-;; get value for field 'type' ( IMAGE_SYM_TYPE_x ) in symbol table.
-;; MS tools use only 0x0 or 0x20.
-;;
+;
+; get value for field 'type' ( IMAGE_SYM_TYPE_x ) in symbol table.
+; MS tools use only 0x0 or 0x20.
+;
     assume rdx:nothing
     assume rcx:ptr asym
 
@@ -420,7 +421,7 @@ CRC32Comdat proc __ccall lpBuffer:ptr byte, dwBufLen:uint_32, dwCRC:uint_32
 
     mov eax,r11d
 
-    .if ( r10 ) ;; v2.11: lpBuffer may be NULL ( uninitialized data segs )
+    .if ( r10 ) ; v2.11: lpBuffer may be NULL ( uninitialized data segs )
         .for ( edx = 0: r9d: r9d-- )
 
             mov dl,[r10]
@@ -902,7 +903,7 @@ SetSymbolIndices proc __ccall uses rsi rdi rbx modinfo:ptr module_info, cm:ptr c
   local lastfile:dword
 
     xor esi,esi
-    mov rbx,cm
+    mov rbx,rdx
 
     mov lastfile,esi
     mov [rbx].lastproc,rsi
@@ -970,8 +971,8 @@ if STATIC_PROCS
 
         .for( rdi = ProcTable : rdi : rdi = [rdi].dsym.nextproc )
 
-            .if ( [rdi].asym.state == SYM_INTERNAL && \
-                  !( [rdi].asym.flags & S_ISPUBLIC ) && \
+            .if ( [rdi].asym.state == SYM_INTERNAL &&
+                  !( [rdi].asym.flags & S_ISPUBLIC ) &&
                   !( [rdi].asym.flag1 & S_INCLUDED ) )
 
                 or [rdi].asym.flag1,S_INCLUDED

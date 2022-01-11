@@ -20,11 +20,11 @@ UncompressedDataSize equ $ - UncompressedData
 
 main proc
 
-    .new CompressorHandle:COMPRESSOR_HANDLE = nullptr
+    .new CompressorHandle:COMPRESSOR_HANDLE = NULL
     .new CompressedDataSize:size_t = 0
     .new CompressedBufferSize:size_t = 400000
     .new CompressedBuffer:ptr byte = malloc(CompressedBufferSize)
-    .ifd CreateCompressor(COMPRESS_ALGORITHM_LZMS, nullptr, &CompressorHandle)
+    .ifd CreateCompressor(COMPRESS_ALGORITHM_LZMS, NULL, &CompressorHandle)
 
         .ifd Compress(CompressorHandle, &UncompressedData, UncompressedDataSize,
                 CompressedBuffer, CompressedBufferSize, &CompressedDataSize)

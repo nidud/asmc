@@ -96,6 +96,8 @@ tvsprintf proc __ccall uses rsi rdi rbx r12 r13 buffer:string_t, format:string_t
                 inc edx
             .endif
             add r12,8
+            mov r8d,16  ; radix
+            xor r9d,r9d ; signed
 
             .switch al
 
@@ -146,25 +148,16 @@ tvsprintf proc __ccall uses rsi rdi rbx r12 r13 buffer:string_t, format:string_t
                .endc
 
             .case 'd'
+                .if !edx
+                    movsxd rcx,ecx
+                .endif
+                test rcx,rcx
+                sets r9b
             .case 'u'
+                mov r8d,10  ; radix
             .case 'x'
             .case 'X'
-                xor r9d,r9d
-                or  al,0x20
-                cmp al,'x'
-                mov eax,16
-                .ifnz
-                    mov eax,10
-                    .if edx
-                        and rcx,rcx
-                    .else
-                        and ecx,ecx
-                    .endif
-                    .ifs
-                        inc r9d
-                    .endif
-                .endif
-                mov r9d,myltoa( rcx, &numbuf, eax, r9d, FALSE )
+                mov r9d,myltoa( rcx, &numbuf, r8d, r9d, FALSE )
 
                 .if ( !bh && r9d < r13d )
 

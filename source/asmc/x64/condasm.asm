@@ -17,35 +17,34 @@ include macro.inc
 include types.inc
 include fastpass.inc
 
-;;
-;; the current if-block can be in one of 3 states:
-;;  state              assembly     possible state change to
-;; ---------------------------------------------------------
-;;  inactive           off          active
-;;  active             on           done
-;;  done               off          -
-;;  --------------------------------------------------------
-;;  up to v2.04, there was a fourth state:
-;;  condition check    on           active, inactive
-;;  it was necessary because lines may have been tokenized multiple times.
-;;
+;
+; the current if-block can be in one of 3 states:
+;  state              assembly     possible state change to
+; ---------------------------------------------------------
+;  inactive           off          active
+;  active             on           done
+;  done               off          -
+;  --------------------------------------------------------
+;  up to v2.04, there was a fourth state:
+;  condition check    on           active, inactive
+;  it was necessary because lines may have been tokenized multiple times.
+;
 .data
 CurrIfState if_state 0
 blocknestlevel int_t 0
 falseblocknestlevel int_t 0
-elseoccured uint_32 0   ;; 2.06: bit field, magnitude must be >= MAX_IF_NESTING
+elseoccured uint_32 0   ; 2.06: bit field, magnitude must be >= MAX_IF_NESTING
 
 .code
 
-;;
-;; this code runs after the first token has been scanned,
-;; if it is a IFx, ELSEx or ENDIF.
-;; updates variables <blocknestlevel> and <falseblocknestlevel>.
-;;
+;
+; this code runs after the first token has been scanned,
+; if it is a IFx, ELSEx or ENDIF.
+; updates variables <blocknestlevel> and <falseblocknestlevel>.
+;
 
 CondPrepare proc __ccall directive:int_t
 
-    option switch:REGAX
     mov eax,ecx
     .switch eax
 
@@ -73,7 +72,7 @@ CondPrepare proc __ccall directive:int_t
         mov eax,1
         shl eax,cl
         not eax
-        and elseoccured,eax ;; v2.06: added
+        and elseoccured,eax ; v2.06: added
         inc blocknestlevel
         .endc
 
@@ -91,10 +90,10 @@ CondPrepare proc __ccall directive:int_t
     .case T_ELSEIFNB
     .case T_ELSEIFNDEF
 
-        .if ( blocknestlevel ) ;; v2.04: do nothing if there was no IFx
+        .if ( blocknestlevel ) ; v2.04: do nothing if there was no IFx
             .endc .if ( falseblocknestlevel > 0 )
 
-            ;; v2.06: check added to detect multiple ELSE branches
+            ; v2.06: check added to detect multiple ELSE branches
 
             mov ecx,blocknestlevel
             dec ecx
@@ -105,9 +104,9 @@ CondPrepare proc __ccall directive:int_t
                 .endc
             .endif
 
-            ;; status may change:
-            ;; inactive -> active
-            ;; active   -> done
+            ; status may change:
+            ; inactive -> active
+            ; active   -> done
 
             mov eax,BLOCK_DONE
             .if ( CurrIfState == BLOCK_INACTIVE )
@@ -115,7 +114,7 @@ CondPrepare proc __ccall directive:int_t
             .endif
             mov CurrIfState,eax
 
-            ;; v2.06: no further ELSEx once ELSE was detected
+            ; v2.06: no further ELSEx once ELSE was detected
 
             .if ( directive == T_ELSE )
 
@@ -136,7 +135,7 @@ CondPrepare proc __ccall directive:int_t
                 .endc
             .endif
             dec blocknestlevel
-            mov CurrIfState,BLOCK_ACTIVE ;; v2.04: added
+            mov CurrIfState,BLOCK_ACTIVE ; v2.04: added
         .else
             asmerr( 1007 )
         .endif
@@ -145,10 +144,10 @@ CondPrepare proc __ccall directive:int_t
     ret
 CondPrepare endp
 
-;; handle [ELSE]IF[N]DEF
-;; <string> is
-;; - the value of a T_ID item!
-;; - "" (item is T_FINAL)
+; handle [ELSE]IF[N]DEF
+; <string> is
+; - the value of a T_ID item!
+; - "" (item is T_FINAL)
 
 check_defd proc fastcall private name:string_t
 
@@ -163,7 +162,7 @@ check_defd proc fastcall private name:string_t
     ret
 check_defd endp
 
-;; handle [ELSE]IF[N]B
+; handle [ELSE]IF[N]B
 
 check_blank proc fastcall private string:string_t
 
@@ -171,10 +170,11 @@ check_blank proc fastcall private string:string_t
         .return FALSE .if ( !islspace( [rcx] ) )
     .endf
     .return( TRUE )
+
 check_blank endp
 
-;; Are two strings different?
-;; Used by [ELSE]IFDIF[I] and [ELSE]IFIDN[I]
+; Are two strings different?
+; Used by [ELSE]IFDIF[I] and [ELSE]IFIDN[I]
 
 check_dif proc __ccall private string1:string_t, string2:string_t, sensitive:int_t
 
@@ -195,16 +195,16 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
   local directive:int_t
 
     .if ( CurrIfState != BLOCK_ACTIVE )
-        .if ( i || ModuleInfo.listif )
+        .if ( ecx || ModuleInfo.listif )
             LstWriteSrcLine()
         .endif
         .return( NOT_ERROR )
     .endif
 
     .if ( ModuleInfo.list == TRUE )
-        .if ( MacroLevel == 0 || \
-            ModuleInfo.list_macro == LM_LISTMACROALL || \
-            ModuleInfo.listif )
+        .if ( MacroLevel == 0 ||
+              ModuleInfo.list_macro == LM_LISTMACROALL ||
+              ModuleInfo.listif )
             LstWriteSrcLine()
         .endif
     .endif
@@ -213,18 +213,18 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     add rbx,tokenarray
     mov eax,[rbx].tokval
 
-    inc i ;; go past IFx, ELSEx, ENDIF
+    inc i ; go past IFx, ELSEx, ENDIF
     add rbx,asm_tok
 
-    ;; check params and call appropriate test routine
+    ; check params and call appropriate test routine
     mov directive,eax
     mov eax,GetSflagsSp(eax)
 
     .switch( eax )
 
-    .case CC_NUMARG ;; [ELSE]IF[E]
+    .case CC_NUMARG ; [ELSE]IF[E]
 
-        ;; no forward reference allowed, symbol must be defined
+        ; no forward reference allowed, symbol must be defined
 
         .ifd ( ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR ) )
 
@@ -242,8 +242,8 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov rdx,opndx.sym
             add opndx.value,[rdx].asym.offs
 
-            ;; v2.07: Masm doesn't accept a relocatable item,
-            ;; so emit at least a warning!
+            ; v2.07: Masm doesn't accept a relocatable item,
+            ; so emit at least a warning!
 
             asmerr( 8020 )
         .else
@@ -260,7 +260,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
         .endc
-    .case CC_LITARG ;;  [ELSE]IFDIF[I], [ELSE]IFIDN[I]
+    .case CC_LITARG ;  [ELSE]IFDIF[I], [ELSE]IFIDN[I]
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
             SymSearch( rsi )
@@ -322,7 +322,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endsw
         .endc
-    .case CC_BLKARG ;; [ELSE]IF[N]B
+    .case CC_BLKARG ; [ELSE]IF[N]B
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
             SymSearch( rsi )
@@ -349,34 +349,35 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
 
-    .case CC_PASS1 ;; [ELSE]IF1
+    .case CC_PASS1 ; [ELSE]IF1
         mov esi,BLOCK_ACTIVE
         .endc
 
-    .case CC_PASS2 ;; [ELSE]IF2
+    .case CC_PASS2 ; [ELSE]IF2
         .if ( ModuleInfo.setif2 == FALSE )
             asmerr( 2061 )
             .endc
         .endif
-        ;; v2.04: changed
+        ; v2.04: changed
         mov esi,BLOCK_ACTIVE
         .endc
 
-    .case CC_SYMARG ;; [ELSE]IF[N]DEF
+    .case CC_SYMARG ; [ELSE]IF[N]DEF
 
         mov esi,BLOCK_INACTIVE
 
-        ;; Masm's implementation works with IDs as arguments only. The rest
-        ;; will return FALSE. However, it's nice to be able to check whether
-        ;; a reserved word is defined or not.
-        ;;
-        ;; v2.0: [ELSE]IF[N]DEF is valid *without* an argument!
+        ; Masm's implementation works with IDs as arguments only. The rest
+        ; will return FALSE. However, it's nice to be able to check whether
+        ; a reserved word is defined or not.
+        ;
+        ; v2.0: [ELSE]IF[N]DEF is valid *without* an argument!
 
         mov al,[rbx].token
 
         .if ( al == T_FINAL )
         .elseif ( al == T_ID  )
-            ;; v2.07: handle structs + members (if -Zne is NOT set)
+
+            ; v2.07: handle structs + members (if -Zne is NOT set)
 
             SymSearch( [rbx].string_ptr )
             .if ( ModuleInfo.strict_masm_compat == FALSE && \
@@ -385,7 +386,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 .repeat
                     add rbx,asm_tok
-                    ;; if it's a structured variable, use its type!
+                    ; if it's a structured variable, use its type!
                     .if ( [rax].asym.state != SYM_TYPE )
                         mov rax,[rax].asym.type
                     .endif
@@ -406,7 +407,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
             add rbx,asm_tok
         .elseif ( al == T_RES_ID && [rbx].tokval == T_FLAT )
-            ;; v2.09: special treatment of FLAT added
+            ; v2.09: special treatment of FLAT added
             mov rax,ModuleInfo.flat_grp
             .if ( rax && [rax].asym.flags & S_ISDEFINED )
                 mov esi,BLOCK_ACTIVE
@@ -430,7 +431,7 @@ CondAsmDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
         .endc
-    .default ;; ELSE and ENDIF
+    .default ; ELSE and ENDIF
         mov esi,BLOCK_ACTIVE
         .endc
     .endsw
@@ -462,15 +463,15 @@ GetErrText proc __ccall private uses rbx i:int_t, tokenarray:ptr asm_tok
 
 GetErrText endp
 
-;; v2.05: the error directives are no longer handled in the
-;; preprocessor, because the errors are displayed in pass 2 only
-;; - .err        [<text>]
-;; - .err<1|2>   [<text>]
-;; - .err<e|nz>  expression [, <text>]
-;; - .errdif[i]  literal1, literal2 [, <text>]
-;; - .erridn[i]  literal1, literal2 [, <text>]
-;; - .err[n]b    text_literal [, <text>]
-;; - .err[n]def  symbol [, <text>]
+; v2.05: the error directives are no longer handled in the
+; preprocessor, because the errors are displayed in pass 2 only
+; - .err        [<text>]
+; - .err<1|2>   [<text>]
+; - .err<e|nz>  expression [, <text>]
+; - .errdif[i]  literal1, literal2 [, <text>]
+; - .erridn[i]  literal1, literal2 [, <text>]
+; - .err[n]b    text_literal [, <text>]
+; - .err[n]def  symbol [, <text>]
 
 ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
@@ -484,15 +485,15 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     add rbx,rdx
     mov edi,[rbx].tokval
 
-    inc i ;; go past directive
+    inc i ; go past directive
     add rbx,asm_tok
 
-    ;; get an expression if necessary
+    ; get an expression if necessary
 
     mov eax,GetSflagsSp(edi)
     .switch( eax )
 
-    .case CC_NUMARG ;; .ERR[E|NZ]
+    .case CC_NUMARG ; .ERR[E|NZ]
 
         .return .ifd ( ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR ) )
 
@@ -525,15 +526,15 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
 
-    .case CC_SYMARG ;; .ERR[N]DEF
+    .case CC_SYMARG ; .ERR[N]DEF
 
-        ;; there's a special handling of these directives in ExpandLine()!
+        ; there's a special handling of these directives in ExpandLine()!
 
         .if ( [rbx].token != T_ID )
             .return( asmerr(2008, [rbx].string_ptr ) )
         .endif
 
-        ;; skip the next param
+        ; skip the next param
 
         .repeat
             add rbx,asm_tok
@@ -542,12 +543,12 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             add rbx,asm_tok*2
         .endif
 
-        ;; should run on pass 2 only!
+        ; should run on pass 2 only!
 
         .endc .if ( Parse_Pass == PASS_1 )
 
-        ;; don't use check_defd()!
-        ;; v2.07: check for structured variables
+        ; don't use check_defd()!
+        ; v2.07: check for structured variables
 
         mov direct,edi
         imul edi,i,asm_tok
@@ -563,7 +564,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
 
                 add rsi,asm_tok*2
 
-                ;; if it's a structured variable, use its type!
+                ; if it's a structured variable, use its type!
 
                 .if ( [rax].asym.state != SYM_TYPE )
                     mov rax,[rax].asym.type
@@ -593,7 +594,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             xor eax,eax
         .endif
 
-        ;; Masm "usually" ignores the optional errtxt!
+        ; Masm "usually" ignores the optional errtxt!
 
         .if ( direct == T_DOT_ERRDEF && rax != NULL )
             asmerr( 2056, StringBufferEnd )
@@ -602,7 +603,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
 
-    .case CC_BLKARG ;; .ERR[N]B
+    .case CC_BLKARG ; .ERR[N]B
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
             .return( TextItemError( rbx ) )
@@ -629,7 +630,7 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         .endc
 
-    .case CC_LITARG ;; .ERRDIF[I], .ERRIDN[I]
+    .case CC_LITARG ; .ERRDIF[I], .ERRIDN[I]
 
         mov rsi,[rbx].string_ptr
         .if ( [rbx].token != T_STRING || [rbx].string_delim != '<' )
@@ -685,12 +686,12 @@ ErrorDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             asmerr( edi, rsi, errmsg, GetErrText( erridx, tokenarray ) )
         .endif
         .endc
-    .case CC_PASS2  ;; .ERR2
+    .case CC_PASS2  ; .ERR2
         .if ( ModuleInfo.setif2 == FALSE )
             .return( asmerr( 2061 ) )
         .endif
-    .case CC_PASS1  ;; .ERR1
-    .default        ;; .ERR
+    .case CC_PASS1  ; .ERR1
+    .default        ; .ERR
         xor ecx,ecx
         .if ( [rbx].token != T_FINAL )
             mov ecx,i
@@ -717,15 +718,17 @@ CondCheckOpen endp
 GetIfNestLevel proc __ccall
 
     .return( blocknestlevel )
+
 GetIfNestLevel endp
 
 SetIfNestLevel proc __ccall newlevel:int_t
 
     mov blocknestlevel,ecx
     ret
+
 SetIfNestLevel endp
 
-;; init (called once per module)
+; init (called once per module)
 
 CondInit proc __ccall
     xor eax,eax

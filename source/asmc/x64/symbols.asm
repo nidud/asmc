@@ -21,22 +21,10 @@ UpdateLineNumber    proto __ccall :asym_t, :ptr
 UpdateWordSize      proto __ccall :asym_t, :ptr
 UpdateCurPC         proto __ccall :asym_t, :ptr
 
-ifdef ASMC64
-HASH_MAGNITUDE      equ 18
-GHASH_TABLE_SIZE    equ 0x4000
-else
-HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
-
-; size of global hash table for symbol table searches. This affects
-; assembly speed.
-
+HASH_MAGNITUDE      equ 15
 GHASH_TABLE_SIZE    equ 0x2000
-endif
 HASH_MASK           equ ( 1 shl HASH_MAGNITUDE ) - 1
-
-; size of local hash table
-
-LHASH_TABLE_SIZE    equ 0x80
+LHASH_TABLE_SIZE    equ 128
 
 USESTRFTIME         equ 0   ; 1=use strftime()
 
@@ -55,19 +43,16 @@ store               symptr_t ?
 eqitem              ends
 
 .data?
-align 16
-SymCmpFunc          StrCmpFunc ?
 gsym                symptr_t ?          ; asym ** pointer into global hash table
 lsym                symptr_t ?          ; asym ** pointer into local hash table
-SymCount            uint_t ?            ; Number of symbols in global table
 szDate              char_t 16 dup(?)    ; value of @Date symbol
 szTime              char_t 16 dup(?)    ; value of @Time symbol
 lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
-                    align 16
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
+SymCmpFunc          StrCmpFunc ?
+SymCount            uint_t ?            ; Number of symbols in global table
 
 .data
-align 4
 symPC asym_t 0  ; the $ symbol
 
 ; table of predefined text macros
@@ -77,11 +62,7 @@ tmtab label tmitem
     ; @Version contains the Masm compatible version
     ; v2.06: value of @Version changed to 800
 
-ifdef ASMC64
     tmitem  <@CStr("@Version"),  @CStr("1000"), 0>
-else
-    tmitem  <@CStr("@Version"),  @CStr("800"), 0>
-endif
     tmitem  <@CStr("@Date"),     szDate,    0>
     tmitem  <@CStr("@Time"),     szTime,    0>
     tmitem  <@CStr("@FileName"), ModuleInfo.name, 0>
@@ -107,9 +88,9 @@ endif
     string_t NULL
 
 _MAX_DYNEQ equ 20
-dyneqcount int_t 0
 dyneqtable string_t _MAX_DYNEQ dup(0)
 dyneqvalue string_t _MAX_DYNEQ dup(0)
+dyneqcount int_t 0
 
     .code
 

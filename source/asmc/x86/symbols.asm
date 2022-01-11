@@ -21,22 +21,10 @@ UpdateLineNumber    proto :asym_t, :ptr
 UpdateWordSize      proto :asym_t, :ptr
 UpdateCurPC         proto :asym_t, :ptr
 
-ifdef ASMC64
-HASH_MAGNITUDE      equ 18
-GHASH_TABLE_SIZE    equ 0x4000
-else
-HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
-
-; size of global hash table for symbol table searches. This affects
-; assembly speed.
-
+HASH_MAGNITUDE      equ 15
 GHASH_TABLE_SIZE    equ 0x2000
-endif
 HASH_MASK           equ ( 1 shl HASH_MAGNITUDE ) - 1
-
-; size of local hash table
-
-LHASH_TABLE_SIZE    equ 0x80
+LHASH_TABLE_SIZE    equ 128
 
 USESTRFTIME         equ 0   ; 1=use strftime()
 
@@ -670,11 +658,9 @@ if USESTRFTIME
     strftime(&szTime, 9, "%T", esi)   ; POSIX time (HH:MM:SS)
 else
     mov eax,[esi].tm.tm_year
-    sub eax,100
+    add eax,2000-100
     mov ecx,[esi].tm.tm_mon
     add ecx,1
-;   sprintf(&szDate, "%02u/%02u/%02u", ecx, [esi].tm.tm_mday, eax)
-    add eax,2000
     tsprintf(&szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday)
     tsprintf(&szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
 endif

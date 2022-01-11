@@ -51,8 +51,8 @@ contextnames string_t \
 
 define NUM_STDREGS 16
 
-;; Masm has a max context nesting level of 10.
-;; JWasm has no restriction currently.
+; Masm has a max context nesting level of 10.
+; JWasm has no restriction currently.
 
 .template assumes_context
     SegAssumeTable assume_info NUM_SEGREGS dup(<>)
@@ -69,24 +69,24 @@ define NUM_STDREGS 16
    .ends
 
 .template cpu_context
-    cpu int_t ?             ;; saved ModuleInfo.cpu
-    curr_cpu cpu_info ?     ;; saved ModuleInfo.curr_cpu
+    cpu int_t ?             ; saved ModuleInfo.cpu
+    curr_cpu cpu_info ?     ; saved ModuleInfo.curr_cpu
    .ends
 
 .template radix_context
-    radix db ?              ;; saved ModuleInfo.radix
+    radix db ?              ; saved ModuleInfo.radix
    .ends
 
 .template alignment_context
-    fieldalign db ?         ;; saved ModuleInfo.fieldalign
-    procalign db ?          ;; saved ModuleInfo.procalign
+    fieldalign db ?         ; saved ModuleInfo.fieldalign
+    procalign db ?          ; saved ModuleInfo.procalign
    .ends
 
 
-;; v2.10: the type-specific data is now declared as a union;
-;; and PUSH|POPCONTEXT ALL will push/pop 4 single items.
-;; all items are equal in size, this made it possible to implement
-;; a "free items" heap.
+; v2.10: the type-specific data is now declared as a union;
+; and PUSH|POPCONTEXT ALL will push/pop 4 single items.
+; all items are equal in size, this made it possible to implement
+; a "free items" heap.
 
 .template context
     next ptr context ?
@@ -106,7 +106,7 @@ endif
 
 .code
 
-;; v2.10: major rewrite of this function
+; v2.10: major rewrite of this function
 
     assume rbx:ptr asm_tok
     assume r14:ptr context
@@ -142,7 +142,7 @@ ContextDirective proc __ccall uses rsi rdi rbx r12 r13 r14 i:int_t, tokenarray:p
             .if ( edi == CONT_ALIGNMENT )
                 .break
             .else
-                and edi,not CONT_ALIGNMENT ;; in case ALIGNMENT is again included in ALL
+                and edi,not CONT_ALIGNMENT ; in case ALIGNMENT is again included in ALL
             .endif
         .endif
 

@@ -54,8 +54,8 @@ OpCls macro op1, op2, op3
 
 
 table label token
-include ../../../asmc/src/inc/directve.inc
-include ../../../asmc/src/inc/instruct.inc
+include ../../../asmc/inc/directve.inc
+include ../../../asmc/inc/instruct.inc
 
 TOKENCOUNT equ ($ - table) / sizeof(token)
 
@@ -80,11 +80,9 @@ print_usage endp
 strfn proc path:string_t
 
     mov rax,rcx
-
     .while byte ptr [rax]
 
         inc rax
-
     .endw
 
     .if rax > rcx
@@ -101,11 +99,8 @@ strfn proc path:string_t
 
             lea rax,[rcx-1]
             .break
-
         .endif
-
     .endw
-
     inc rax
     ret
 
@@ -155,11 +150,8 @@ tally proc uses rsi rdi rbx string:string_t
 
                     inc [rsi].count
                     .break
-
                 .endif
-
             .endf
-
             .break .if !strtok(NULL, "\n\r\t ,!&")
         .endw
     .endif
@@ -350,9 +342,7 @@ main proc argc:SINT, argv:ptr
 
             printf("%6d %s\n", [rsi].count, [rsi].tname)
         .endf
-
         xor eax,eax
-
     .until 1
     ret
 

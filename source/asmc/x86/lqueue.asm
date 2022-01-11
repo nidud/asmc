@@ -97,8 +97,13 @@ tvsprintf proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
                 lodsb
                 mov edx,[ebx]
                 add ebx,4
+            .elseif ( al == 'd' )
+                mov eax,ecx
+                cdq
+                mov eax,'d'
             .endif
             mov argptr,ebx
+            mov ebx,16 ; radix
 
             .switch al
 
@@ -146,20 +151,17 @@ tvsprintf proc uses esi edi ebx buffer:string_t, fmt:string_t, argptr:ptr
                .endc
 
             .case 'd'
+                test edx,edx
+                .ifs
+                    inc bh
+                .endif
             .case 'u'
+                mov bl,10
             .case 'x'
             .case 'X'
-                xor ebx,ebx
-                or  al,0x20
-                cmp al,'x'
-                mov eax,16
-                .ifnz
-                    mov eax,10
-                    and ecx,ecx
-                    .ifs
-                        inc ebx
-                    .endif
-                .endif
+
+                movzx eax,bl
+                shr ebx,8
                 mov ebx,myltoa( edx::ecx, &numbuf, eax, ebx, FALSE )
 
                 .if ( !sign && ebx < fldwidth )

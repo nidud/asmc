@@ -1059,7 +1059,6 @@ if EQUATESYMS
             add [ecx].cvsection.length,edx
         .endif
         mov [ebx].ps,SetPrefixName( [ebx].ps, [esi].asym.name, [esi].asym.name_size )
-
        .return
     .endif
 endif

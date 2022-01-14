@@ -16,6 +16,10 @@ include lqueue.inc
 
 GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         string:string_t, is_addr:int_t
+    
+    UNREFERENCED_PARAMETER(buffer)
+    UNREFERENCED_PARAMETER(opnd)
+    UNREFERENCED_PARAMETER(string)
 
     mov rdi,rcx
     mov rbx,rdx
@@ -46,15 +50,27 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         mov rcx,[rbx].base_reg
         SizeFromRegister( [rcx].asm_tok.tokval )
         xor ecx,ecx
-        .switch pascal eax
-        .case  1: mov ecx,T_BYTE
-        .case  2: mov ecx,T_WORD
-        .case  4: mov ecx,T_DWORD
-        .case  8: mov ecx,T_QWORD
-        .case 16: mov ecx,T_OWORD
-        .case 32: mov ecx,T_YWORD
-        .case 64: mov ecx,T_ZWORD
-        .endsw
+        .if ( eax >= 16 )
+            .switch pascal eax
+            .case 16: mov ecx,T_OWORD
+            .case 32: mov ecx,T_YWORD
+            .case 64: mov ecx,T_ZWORD
+            .endsw
+        .elseif ( [rbx].mem_type != MT_EMPTY && [rbx].mem_type & MT_SIGNED )
+            .switch pascal eax
+            .case  1: mov ecx,T_SBYTE
+            .case  2: mov ecx,T_SWORD
+            .case  4: mov ecx,T_SDWORD
+            .case  8: mov ecx,T_SQWORD
+            .endsw
+        .else
+            .switch pascal eax
+            .case  1: mov ecx,T_BYTE
+            .case  2: mov ecx,T_WORD
+            .case  4: mov ecx,T_DWORD
+            .case  8: mov ecx,T_QWORD
+            .endsw
+        .endif
          GetResWName(ecx, rdi)
         .return 1
     .endif

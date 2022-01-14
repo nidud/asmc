@@ -26,7 +26,7 @@ define TYPEOPT 0
 
 CurrStruct ptr dsym 0
 redef_struct ptr dsym 0
-;; text constants for 'Non-benign <x> redefinition' error msg
+; text constants for 'Non-benign <x> redefinition' error msg
 define szStructure <"structure">
 define szRecord <"record">
 
@@ -42,10 +42,10 @@ TypesInit proc
 
 TypesInit endp
 
-;; create a SYM_TYPE symbol.
-;; <sym> must be NULL or of state SYM_UNDEFINED.
-;; <name> and <global> are only used if <sym> is NULL.
-;; <name> might be an empty string.
+; create a SYM_TYPE symbol.
+; <sym> must be NULL or of state SYM_UNDEFINED.
+; <name> and <global> are only used if <sym> is NULL.
+; <name> might be an empty string.
 
 CreateTypeSymbol proc uses esi edi sym:ptr asym, name:string_t, global:int_t
 
@@ -74,7 +74,7 @@ CreateTypeSymbol proc uses esi edi sym:ptr asym, name:string_t, global:int_t
     .return( esi )
 CreateTypeSymbol endp
 
-;; search a name in a struct's fieldlist
+; search a name in a struct's fieldlist
 
     assume ebx:ptr sfield
 
@@ -98,11 +98,11 @@ SearchNameInStruct proc uses esi edi ebx tstruct:ptr asym, name:string_t,
 
     .for ( : ebx : ebx = [ebx].next )
 
-        ;; recursion: if member has no name, check if it is a structure
-        ;; and scan this structure's fieldlist then
+        ; recursion: if member has no name, check if it is a structure
+        ; and scan this structure's fieldlist then
         mov eax,[ebx].name
         .if ( byte ptr [eax] == 0 )
-            ;; there are 2 cases: an anonymous inline struct ...
+            ; there are 2 cases: an anonymous inline struct ...
             .if ( [ebx].state == SYM_TYPE )
                 .if ( SearchNameInStruct( ebx, name, poffset, level ) )
                     mov esi,eax
@@ -112,7 +112,7 @@ SearchNameInStruct proc uses esi edi ebx tstruct:ptr asym, name:string_t,
                     .endif
                     .break
                 .endif
-            ;; or an anonymous structured field
+            ; or an anonymous structured field
             .elseif ([ebx].mem_type == MT_TYPE )
                 .if ( SearchNameInStruct( [ebx].type, name, poffset, level ) )
                     mov esi,eax
@@ -134,7 +134,7 @@ SearchNameInStruct proc uses esi edi ebx tstruct:ptr asym, name:string_t,
 
 SearchNameInStruct endp
 
-;; check if a struct has changed
+; check if a struct has changed
 
     assume edi:ptr sfield
 
@@ -148,7 +148,7 @@ AreStructsEqual proc private uses edi ebx newstr:ptr dsym, oldstr:ptr dsym
     mov ecx,[eax].dsym.structinfo
     mov edi,[ecx].struct_info.head
 
-    ;; kind of structs must be identical
+    ; kind of structs must be identical
     .if ( [ebx].typekind != [edi].typekind )
         .return( FALSE )
     .endif
@@ -157,7 +157,7 @@ AreStructsEqual proc private uses edi ebx newstr:ptr dsym, oldstr:ptr dsym
         .if ( !edi )
             .return( FALSE )
         .endif
-        ;; for global member names, don't check the name if it's ""
+        ; for global member names, don't check the name if it's ""
         mov eax,[edi].name
 
         .if ( ModuleInfo.oldstructs && byte ptr [eax] == 0 )
@@ -179,8 +179,8 @@ AreStructsEqual proc private uses edi ebx newstr:ptr dsym, oldstr:ptr dsym
 
 AreStructsEqual endp
 
-;; handle STRUCT, STRUC, UNION directives
-;; i = index of directive token
+; handle STRUCT, STRUC, UNION directives
+; i = index of directive token
 
     assume ebx:ptr asm_tok
     assume edi:nothing
@@ -191,9 +191,9 @@ StructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
   local offs:uint_t
   local typekind:byte
 
-    ;; top level structs/unions must have an identifier at pos 0.
-    ;; for embedded structs, the directive must be at pos 0,
-    ;; an identifier is optional then.
+    ; top level structs/unions must have an identifier at pos 0.
+    ; for embedded structs, the directive must be at pos 0,
+    ; an identifier is optional then.
 
     mov ebx,tokenarray
     mov esi,[ebx].string_ptr
@@ -218,15 +218,15 @@ StructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     shl eax,cl
     mov alignment,eax
 
-    inc i ;; go past STRUCT/UNION
+    inc i ; go past STRUCT/UNION
     add ebx,16
 
-    .if ( i == 1 ) ;; embedded struct?
-        ;; scan for the optional name
+    .if ( i == 1 ) ; embedded struct?
+        ; scan for the optional name
         lea esi,@CStr("")
 if ANYNAME
-        ;; the name might be a reserved word!
-        ;; Masm won't allow those.
+        ; the name might be a reserved word!
+        ; Masm won't allow those.
 else
         .if ( [ebx].token == T_ID )
 endif
@@ -236,21 +236,21 @@ endif
         .endif
     .endif
 
-    ;; get an optional alignment argument: 1,2,4,8,16 or 32
+    ; get an optional alignment argument: 1,2,4,8,16 or 32
     .if ( CurrStruct == NULL && [ebx].token != T_FINAL )
 
         .new opndx:expr
 
-        ;; get the optional alignment parameter.
-        ;; forward references aren't accepted, but EXPF_NOUNDEF isn't used here!
+        ; get the optional alignment parameter.
+        ; forward references aren't accepted, but EXPF_NOUNDEF isn't used here!
 
         .if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
-            ;; an empty expression is accepted
+            ; an empty expression is accepted
             mov ecx,opndx.sym
             .if ( opndx.kind == EXPR_EMPTY )
 
             .elseif ( opndx.kind != EXPR_CONST )
-                ;; v2.09: better error msg
+                ; v2.09: better error msg
                 .if ( ecx && [ecx].asym.state == SYM_UNDEFINED )
                     asmerr( 2006, [ecx].asym.name )
                 .else
@@ -271,13 +271,13 @@ endif
         imul ebx,i,asm_tok
         add ebx,tokenarray
 
-        ;; there might also be the NONUNIQUE parameter
+        ; there might also be the NONUNIQUE parameter
         .if ( [ebx].token == T_COMMA )
             inc i
             add ebx,16
             .if ( [ebx].token == T_ID && \
                 ( tstricmp( [ebx].string_ptr, szNonUnique ) == 0 ) )
-                ;; currently NONUNIQUE is ignored
+                ; currently NONUNIQUE is ignored
                 asmerr( 8017, szNonUnique )
                 inc i
                 add ebx,16
@@ -288,16 +288,16 @@ endif
         .return( asmerr( 2008, [ebx].tokpos ) )
     .endif
 
-    ;; does struct have a name?
+    ; does struct have a name?
     .if ( byte ptr [esi] )
         .if ( CurrStruct == NULL )
-            ;; the "top-level" struct is part of the global namespace
+            ; the "top-level" struct is part of the global namespace
             mov edi,SymSearch( esi )
         .else
             mov edi,SearchNameInStruct( CurrStruct, esi, &offs, 0 )
         .endif
     .else
-        mov edi,NULL ;; anonymous struct
+        mov edi,NULL ; anonymous struct
     .endif
 
     .if ( ModuleInfo.list )
@@ -309,11 +309,11 @@ endif
         .endif
     .endif
 
-    ;; if pass is > 1, update struct stack + CurrStruct.offset and exit
+    ; if pass is > 1, update struct stack + CurrStruct.offset and exit
     .if ( Parse_Pass > PASS_1 )
 
-        ;; v2.04 changed. the previous implementation was insecure.
-        ;; See also change in data.c, behind CreateStructField().
+        ; v2.04 changed. the previous implementation was insecure.
+        ; See also change in data.c, behind CreateStructField().
         mov ecx,CurrStruct
         .if ( ecx )
             mov ecx,[ecx].dsym.structinfo
@@ -333,18 +333,18 @@ endif
 
     .if ( edi == NULL )
 
-        ;; embedded or global STRUCT?
+        ; embedded or global STRUCT?
         .if ( CurrStruct == NULL )
             mov edi,CreateTypeSymbol( NULL, esi, TRUE )
         .else
 
-            ;; an embedded struct is split in an anonymous STRUCT type
-            ;; and a struct field with/without name
+            ; an embedded struct is split in an anonymous STRUCT type
+            ; and a struct field with/without name
 
             mov edi,CreateTypeSymbol( NULL, esi, FALSE )
 
-            ;; v2: don't create the struct field here. First the
-            ;; structure must be read in ( because of alignment issues
+            ; v2: don't create the struct field here. First the
+            ; structure must be read in ( because of alignment issues
 
             mov ecx,CurrStruct
             mov ecx,[ecx].dsym.structinfo
@@ -354,7 +354,7 @@ endif
 
     .elseif( [edi].asym.state == SYM_UNDEFINED )
 
-        ;; forward reference
+        ; forward reference
         xor eax,eax
         .if ( CurrStruct == NULL )
             inc eax
@@ -367,14 +367,14 @@ endif
         .case TYPE_STRUCT
         .case TYPE_UNION
 
-            ;; if a struct is redefined as a union ( or vice versa )
-            ;; do accept the directive and just check if the redefinition
-            ;; is compatible (usually it isn't)
+            ; if a struct is redefined as a union ( or vice versa )
+            ; do accept the directive and just check if the redefinition
+            ; is compatible (usually it isn't)
 
             mov redef_struct,edi
             mov edi,CreateTypeSymbol( NULL, esi, FALSE )
             .endc
-        .case TYPE_NONE ;; TYPE_NONE is forward reference
+        .case TYPE_NONE ; TYPE_NONE is forward reference
             .endc
         .default
             .return( asmerr( 2005, [edi].asym.name ) )
@@ -427,13 +427,13 @@ endif
 
 StructDirective endp
 
-;; handle ENDS directive when a struct/union definition is active
+; handle ENDS directive when a struct/union definition is active
 
 EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
-    mov edi,CurrStruct ;; cannot be NULL
+    mov edi,CurrStruct ; cannot be NULL
 
-    ;; if pass is > 1 just do minimal work
+    ; if pass is > 1 just do minimal work
     .if ( Parse_Pass > PASS_1 )
         mov [edi].asym.offs,0
         mov ebx,[edi].asym.total_size
@@ -447,8 +447,8 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .return( NOT_ERROR )
     .endif
 
-    ;; syntax is either "<name> ENDS" (i=1) or "ENDS" (i=0).
-    ;; first case must be top level (next=NULL), latter case must NOT be top level (next!=NULL)
+    ; syntax is either "<name> ENDS" (i=1) or "ENDS" (i=0).
+    ; first case must be top level (next=NULL), latter case must NOT be top level (next!=NULL)
     mov ebx,tokenarray
     .if ( ( i == 1 && [edi].dsym.next == NULL ) || \
           ( i == 0 && [edi].dsym.next != NULL ) )
@@ -461,19 +461,19 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .return( asmerr( 1010, edx ) )
     .endif
 
-    .if ( i == 1 ) ;; an global struct ends with <name ENDS>
+    .if ( i == 1 ) ; an global struct ends with <name ENDS>
         .if ( SymCmpFunc( [ebx].string_ptr, [edi].asym.name, [edi].asym.name_size ) != 0 )
-            ;; names don't match
+            ; names don't match
             .return( asmerr( 1010, [ebx].string_ptr ) )
         .endif
     .endif
 
-    inc i ;; go past ENDS
+    inc i ; go past ENDS
     imul ecx,i,asm_tok
     add ebx,ecx
 
-    ;; v2.07: if ORG was used inside the struct, the struct's size
-    ;; has to be calculated now - there may exist negative offsets.
+    ; v2.07: if ORG was used inside the struct, the struct's size
+    ; has to be calculated now - there may exist negative offsets.
     mov esi,[edi].dsym.structinfo
 
     .if ( [esi].struct_info.flags & SI_ORGINSIDE )
@@ -487,9 +487,9 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         mov [edi].asym.total_size,eax
     .endif
 
-    ;; Pad bytes at the end of the structure.
+    ; Pad bytes at the end of the structure.
 
-    ;; v2.02: this is to be done in any case, whether -Zg is set or not
+    ; v2.02: this is to be done in any case, whether -Zg is set or not
     movzx edx,[esi].struct_info.alignment
     .if ( edx > 1 )
         mov eax,[edi].asym.max_mbr_size
@@ -510,10 +510,10 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     and [esi].struct_info.flags,not SI_ISOPEN
     or  [edi].asym.flags,S_ISDEFINED
 
-    ;; if there's a negative offset, size will be wrong!
+    ; if there's a negative offset, size will be wrong!
     mov esi,[edi].asym.total_size
 
-    ;; reset offset, it's just used during the definition
+    ; reset offset, it's just used during the definition
     mov [edi].asym.offs,0
 
     mov CurrStruct,[edi].dsym.next
@@ -554,7 +554,7 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .endsw
     .endif
 
-    ;; reset redefine
+    ; reset redefine
     .if ( CurrStruct == NULL )
         .if ( redef_struct )
             .if ( AreStructsEqual( edi, redef_struct ) == FALSE )
@@ -579,7 +579,7 @@ EndstructDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     .return( NOT_ERROR )
 EndstructDirective endp
 
-;; v2.06: new function to check fields of anonymous struct members
+; v2.06: new function to check fields of anonymous struct members
 
     assume edi:ptr sfield
 
@@ -607,13 +607,13 @@ CheckAnonymousStruct proc fastcall private uses edi type_ptr:ptr dsym
 
 CheckAnonymousStruct endp
 
-;; CreateStructField() - creates a symbol of state SYM_STRUCT_FIELD.
-;; this function is called in pass 1 only.
-;; - loc: initializer index location, -1 means no initializer (is an embedded struct)
-;; - name: field name, may be NULL
-;; - mem_type: mem_type of item
-;; - vartype: user-defined type of item if memtype is MT_TYPE
-;; - size: size of type - used for alignment only
+; CreateStructField() - creates a symbol of state SYM_STRUCT_FIELD.
+; this function is called in pass 1 only.
+; - loc: initializer index location, -1 means no initializer (is an embedded struct)
+; - name: field name, may be NULL
+; - mem_type: mem_type of item
+; - vartype: user-defined type of item if memtype is MT_TYPE
+; - size: size of type - used for alignment only
 
     assume esi:ptr struct_info
 
@@ -641,7 +641,7 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
             .return( NULL )
         .endif
     .else
-        ;; v2.06: check fields of anonymous struct member
+        ; v2.06: check fields of anonymous struct member
         mov ecx,vartype
         .if ( ecx && \
             ( [ecx].asym.typekind == TYPE_STRUCT || \
@@ -710,7 +710,7 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
         mov edi,edx
     .endif
 
-    ;; create the struct field symbol
+    ; create the struct field symbol
 
     mov [edi].name_size,len
     .if ( eax )
@@ -744,8 +744,8 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
         mov [esi].tail,edi
     .endif
 
-    ;; v2.0: for STRUCTs, don't use the struct's size for alignment calculations,
-    ;; instead use the size of the "max" member!
+    ; v2.0: for STRUCTs, don't use the struct's size for alignment calculations,
+    ; instead use the size of the "max" member!
 
     mov ecx,vartype
     .if ( mem_type == MT_TYPE && \
@@ -754,13 +754,13 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
         mov size,[ecx].asym.max_mbr_size
     .endif
 
-    ;; align the field if an alignment argument was given
+    ; align the field if an alignment argument was given
 
     movzx eax,[esi].alignment
 
     .if ( eax > 1 )
 
-        ;; if it's the first field to add, use offset of the parent's current field
+        ; if it's the first field to add, use offset of the parent's current field
 
         mov ecx,size
 
@@ -785,8 +785,8 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
 
         .endif
 
-        ;; adjust the struct's current offset + size.
-        ;; The field's size is added in UpdateStructSize()
+        ; adjust the struct's current offset + size.
+        ; The field's size is added in UpdateStructSize()
 
         mov ecx,CurrStruct
         .if ( [ecx].asym.typekind != TYPE_UNION )
@@ -802,7 +802,7 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
     .endif
     mov [edi].offs,offs
 
-    ;; if -Zm is on, create a global symbol
+    ; if -Zm is on, create a global symbol
 
     mov edx,name
     .if ( ModuleInfo.oldstructs == TRUE && byte ptr [edx] )
@@ -815,10 +815,10 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
             mov ecx,eax
             mov [ecx].asym.mem_type,mem_type
             mov [ecx].asym.type,vartype
-            mov [ecx].asym.offs,offs ;; added v2.0
+            mov [ecx].asym.offs,offs ; added v2.0
 
-            ;; v2.01: must be the full offset.
-            ;; (there's still a problem if alignment is > 1!)
+            ; v2.01: must be the full offset.
+            ; (there's still a problem if alignment is > 1!)
 
             mov edx,CurrStruct
             .for ( edx = [edx].dsym.next : edx : edx = [edx].dsym.next )
@@ -831,8 +831,8 @@ CreateStructField proc uses esi edi ebx loc:int_t, tokenarray:ptr asm_tok,
 
 CreateStructField endp
 
-;; called by AlignDirective() if ALIGN/EVEN has been found inside
-;; a struct. It's already verified that <value> is a power of 2.
+; called by AlignDirective() if ALIGN/EVEN has been found inside
+; a struct. It's already verified that <value> is a power of 2.
 
 AlignInStruct proc value:int_t
 
@@ -854,7 +854,7 @@ AlignInStruct proc value:int_t
 
 AlignInStruct endp
 
-;; called by data_dir() when a structure field has been created.
+; called by data_dir() when a structure field has been created.
 
 
 UpdateStructSize proc sym:ptr asym
@@ -875,7 +875,7 @@ UpdateStructSize proc sym:ptr asym
     ret
 UpdateStructSize endp
 
-;; called if ORG occurs inside STRUCT/UNION definition
+; called if ORG occurs inside STRUCT/UNION definition
 
 SetStructCurrentOffset proc offs:int_t
 
@@ -884,7 +884,7 @@ SetStructCurrentOffset proc offs:int_t
         .return( asmerr( 2200 ) )
     .endif
     mov [ecx].asym.offs,offs
-    ;; if an ORG is inside the struct, it cannot be instanced anymore
+    ; if an ORG is inside the struct, it cannot be instanced anymore
     mov edx,[ecx].dsym.structinfo
     or [edx].struct_info.flags,SI_ORGINSIDE
     .ifs ( offs > [ecx].asym.total_size )
@@ -894,14 +894,14 @@ SetStructCurrentOffset proc offs:int_t
 
 SetStructCurrentOffset endp
 
-;; get a qualified type.
-;; Used by
-;; - TYPEDEF
-;; - PROC/PROTO params and LOCALs
-;; - EXTERNDEF
-;; - EXTERN
-;; - LABEL
-;; - ASSUME for GPRs
+; get a qualified type.
+; Used by
+; - TYPEDEF
+; - PROC/PROTO params and LOCALs
+; - EXTERNDEF
+; - EXTERN
+; - LABEL
+; - ASSUME for GPRs
 
     assume esi:ptr qualified_type
     assume edi:nothing
@@ -920,12 +920,12 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
     add  ebx,tokenarray
     mov  edx,ebx
 
-    ;; convert PROC token to a type qualifier
+    ; convert PROC token to a type qualifier
 
     .for ( : [ebx].token != T_FINAL && [ebx].token != T_COMMA : ebx += asm_tok )
         .if ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_PROC )
             mov [ebx].token,T_STYPE
-            ;; v2.06: avoid to use ST_PROC
+            ; v2.06: avoid to use ST_PROC
             mov cl,ModuleInfo._model
             mov eax,1
             shl eax,cl
@@ -939,12 +939,12 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
     .endf
     mov ebx,edx
 
-    ;; with NEAR/FAR, there are several syntax variants allowed:
-    ;; 1. NEARxx | FARxx
-    ;; 2. PTR NEARxx | FARxx
-    ;; 3. NEARxx | FARxx PTR [<type>]
+    ; with NEAR/FAR, there are several syntax variants allowed:
+    ; 1. NEARxx | FARxx
+    ; 2. PTR NEARxx | FARxx
+    ; 3. NEARxx | FARxx PTR [<type>]
 
-    ;; read qualified type
+    ; read qualified type
 
     mov esi,pti
     .for ( type = ERROR : [ebx].token == T_STYPE || [ebx].token == T_BINARY_OPERATOR : ebx += asm_tok )
@@ -991,7 +991,7 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
             .elseif ( [edi].asym.state != SYM_TYPE )
                 .return( asmerr( 2004, [ebx].string_ptr ) )
             .else
-                ;; if it's a typedef, simplify the info
+                ; if it's a typedef, simplify the info
                 .if ( [edi].asym.typekind == TYPE_TYPEDEF )
                     add [esi].is_ptr,[edi].asym.is_ptr
                     .if ( [edi].asym.is_ptr == 0 )
@@ -1090,11 +1090,12 @@ GetQualifiedType proc uses esi edi ebx pi:ptr int_t, tokenarray:ptr asm_tok,
     sub eax,tokenarray
     shr eax,4
     mov [ecx],eax
-    .return( NOT_ERROR )
+   .return( NOT_ERROR )
+
 GetQualifiedType endp
 
-;; TYPEDEF directive. Syntax is:
-;; <type name> TYPEDEF [proto|[far|near [ptr]]<qualified type>]
+; TYPEDEF directive. Syntax is:
+; <type name> TYPEDEF [proto|[far|near [ptr]]<qualified type>]
 
 CreateType proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, name:string_t, pp:ptr asym
 
@@ -1107,12 +1108,12 @@ CreateType proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok, name:string_t,
             .return( ERROR )
         .endif
 if TYPEOPT
-        ;; release the structinfo data extension
+        ; release the structinfo data extension
         mov [edi].dsym.structinfo,NULL
 endif
     .else
-        ;; MASM allows to have the TYPEDEF included multiple times
-        ;; but the types must be identical!
+        ; MASM allows to have the TYPEDEF included multiple times
+        ; but the types must be identical!
         .if ( ( [edi].asym.state != SYM_TYPE ) || \
               ( [edi].asym.typekind != TYPE_TYPEDEF && \
                 [edi].asym.typekind != TYPE_NONE ) )
@@ -1132,10 +1133,10 @@ endif
     imul ebx,i,asm_tok
     add  ebx,tokenarray
 
-    ;; PROTO is special
+    ; PROTO is special
     .if ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_PROTO )
 
-        ;; v2.04: added check if prototype is set already
+        ; v2.04: added check if prototype is set already
         .if ( [edi].asym.target_type == NULL && [edi].asym.mem_type == MT_EMPTY )
             CreateProc( NULL, "", SYM_TYPE )
         .elseif ( [edi].asym.mem_type == MT_PROC )
@@ -1150,13 +1151,13 @@ endif
         assume esi:nothing
         mov [edi].asym.mem_type,MT_PROC
         mov [edi].asym.Ofssize,[esi].asym.segoffsize
-        ;; v2.03: set value of field total_size (previously was 0)
+        ; v2.03: set value of field total_size (previously was 0)
         mov eax,2
         mov cl,[edi].asym.Ofssize
         shl eax,cl
         mov [edi].asym.total_size,eax
         .if ( [esi].asym.mem_type != MT_NEAR )
-            mov [edi].asym.is_far,1 ;; v2.04: added
+            mov [edi].asym.is_far,1 ; v2.04: added
             add [edi].asym.total_size,2
         .endif
         mov [edi].asym.target_type,esi
@@ -1166,20 +1167,26 @@ endif
     mov ti.size,0
     mov ti.is_ptr,0
     mov ti.is_far,FALSE
+    mov cl,ModuleInfo._model
+    mov eax,1
+    shl eax,cl
+    .if eax & SIZE_DATAPTR
+        mov ti.is_far,TRUE ; added v2.33.33
+    .endif
     mov ti.mem_type,MT_EMPTY
     mov ti.ptr_memtype,MT_EMPTY
     mov ti.symtype,NULL
     mov ti.Ofssize,ModuleInfo.Ofssize
 
-    ;; "empty" type is ok for TYPEDEF
+    ; "empty" type is ok for TYPEDEF
     .if ( [ebx].token == T_FINAL || [ebx].token == T_COMMA )
         ;
     .elseif ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
         .return
     .endif
 
-    ;; if type did exist already, check for type conflicts
-    ;; v2.05: this code has been rewritten
+    ; if type did exist already, check for type conflicts
+    ; v2.05: this code has been rewritten
 
     .if ( [edi].asym.mem_type != MT_EMPTY )
 
@@ -1244,10 +1251,10 @@ TypedefDirective proc i:int_t, tokenarray:ptr asm_tok
 
 TypedefDirective endp
 
-;; RECORD directive
-;; syntax: <label> RECORD <bitfield_name>:<size>[,...]
-;; defines a RECORD type (state=SYM_TYPE).
-;; the memtype will be MT_BYTE, MT_WORD, MT_DWORD [, MT_QWORD in 64-bit].
+; RECORD directive
+; syntax: <label> RECORD <bitfield_name>:<size>[,...]
+; defines a RECORD type (state=SYM_TYPE).
+; the memtype will be MT_BYTE, MT_WORD, MT_DWORD [, MT_QWORD in 64-bit].
 
 RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
@@ -1301,11 +1308,11 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
     mov newr,esi
     mov [esi].asym.typekind,TYPE_RECORD
 
-    inc i ;; go past RECORD
+    inc i ; go past RECORD
     add ebx,asm_tok
 
-    mov cntBits,0 ;; counter for total of bits in record
-    ;; parse bitfields
+    mov cntBits,0 ; counter for total of bits in record
+    ; parse bitfields
     .repeat
         .if ( [ebx].token != T_ID )
             asmerr( 2008, [ebx].string_ptr )
@@ -1323,7 +1330,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .break
         .endif
         inc i
-        ;; get width
+        ; get width
         .break .if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
 
         .if ( opndx.kind != EXPR_CONST )
@@ -1346,7 +1353,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .endif
         mov count,0
 
-        ;; is there an initializer? ('=')
+        ; is there an initializer? ('=')
 
         imul ebx,i,asm_tok
         add ebx,tokenarray
@@ -1357,12 +1364,12 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             mov init_loc,ebx
             .for( : [ebx].token != T_FINAL && [ebx].token != T_COMMA: i++, ebx += asm_tok )
             .endf
-            ;; no value?
+            ; no value?
             .if ( ecx == ebx )
                 asmerr( 2008, [edi].asm_tok.tokpos )
                 .break
             .endif
-            ;; v2.09: initial values of record redefinitions are ignored!
+            ; v2.09: initial values of record redefinitions are ignored!
             .if ( oldr == NULL )
                 mov eax,[ebx].tokpos
                 sub eax,[ecx].asm_tok.tokpos
@@ -1370,7 +1377,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        ;; record field names are global! (Masm design flaw)
+        ; record field names are global! (Masm design flaw)
 
         mov esi,SymSearch( [edi].asm_tok.string_ptr )
         mov def,TRUE
@@ -1381,7 +1388,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
                 [esi].asym.total_size != opndx.value )
                 asmerr( 2007, szRecord, [edi].asm_tok.string_ptr )
                 inc redef_err
-                mov def,FALSE ;; v2.06: added
+                mov def,FALSE ; v2.06: added
             .endif
         .else
             .if ( esi )
@@ -1390,7 +1397,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .endif
         .endif
 
-        .if ( def ) ;; v2.06: don't add field if there was an error
+        .if ( def ) ; v2.06: don't add field if there was an error
 
             mov esi,[edi].asm_tok.string_ptr
             add cntBits,opndx.value
@@ -1459,7 +1466,7 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
     .until ( i >= Token_Count )
 
-    ;; now calc size in bytes and set the bit positions
+    ; now calc size in bytes and set the bit positions
     mov esi,newr
     mov eax,cntBits
     .if ( eax > 16 )
@@ -1478,8 +1485,8 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         mov [esi].asym.mem_type,MT_BYTE
     .endif
 
-    ;; if the BYTE/WORD/DWORD isn't used fully, shift bits to the right!
-    ;; set the bit position
+    ; if the BYTE/WORD/DWORD isn't used fully, shift bits to the right!
+    ; set the bit position
     mov ecx,[esi].dsym.structinfo
     .for ( edi = [ecx].struct_info.head: edi: edi = [edi].next )
         sub eax,[edi].total_size
@@ -1491,12 +1498,13 @@ RecordDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             asmerr( 2007, szRecord, [esi].asym.name )
         .endif
 
-        ;; record can be freed, because the record's fields are global items.
-        ;; And initial values of the new definition are ignored!
+        ; record can be freed, because the record's fields are global items.
+        ; And initial values of the new definition are ignored!
 
         SymFree( newr )
     .endif
     .return( NOT_ERROR )
+
 RecordDirective endp
 
     end

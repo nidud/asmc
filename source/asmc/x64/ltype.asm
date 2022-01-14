@@ -149,21 +149,19 @@ _ltype byte 0,          ; -1 EOF
 
 tstrupr proc fastcall string:string_t
 
-    push     rcx
+    mov     rax,rcx
 .0:
-    mov     al,[rcx]
-    test    al,al
+    mov     dl,[rcx]
+    test    dl,dl
     jz      .1
-
-    sub     al,'a'
-    cmp     al,'Z'-'A'+1
-    sbb     al,al
-    and     al,'a'-'A'
-    xor     [rcx],al
     inc     rcx
+    cmp     dl,'a'
+    jb      .0
+    cmp     dl,'z'
+    ja      .0
+    and     byte ptr [rcx-1],not 0x20
     jmp     .0
 .1:
-    pop     rax
     ret
 
 tstrupr endp

@@ -134,67 +134,147 @@ LPARAM		typedef LONG_PTR
 LRESULT		typedef LONG_PTR
 
 ifndef NOMINMAX
-if 0
-min_int proto watcall a:int_t, b:int_t {
-    .ifs ( eax > edx )
-	mov eax,edx
+ifndef max
+define max_imm_dword   <max_sdword_sdword>
+define max_imm_sdword  <max_sdword_sdword>
+define max_dword_imm   <max_sdword_imm>
+define max_dword_dword <max_sdword_sdword>
+max_imm_imm macro a,b
+if (a) GT (b)
+	exitm<a>
+endif
+    exitm<b>
+    endm
+max_sdword_imm proto watcall a:sdword, b:abs {
+    .ifs a < b
+	mov a,b
     .endif
     }
-max_int proto watcall a:int_t, b:int_t {
-    .ifs ( eax < edx )
-	mov eax,edx
-    .endif
+max_sdword_sdword proto watcall a:sdword, b:abs {
+    cmp	  a,b
+    cmovl a,b
     }
-min_imm macro a, b
-if (a gt b)
-    exitm<b>
-else
-    exitm<a>
-endif
-    endm
-max_imm macro a, b
-if (a lt b)
-    exitm<b>
-else
-    exitm<a>
-endif
-    endm
-
 max macro a, b
-ifidn typeid(a),<imm>
-    exitm<max_imm(a, b)>
-else
-    exitm<max_int(a, b)>
-endif
+%   exitm<typeid(max_, a)typeid(_, b)(a, b)>
     endm
+endif
+ifndef min
+define min_imm_dword   <min_sdword_sdword>
+define min_imm_sdword  <min_sdword_sdword>
+define min_dword_imm   <min_sdword_imm>
+define min_dword_dword <min_sdword_sdword>
+min_imm_imm macro a, b
+if (a) LT (b)
+    exitm<a>
+endif
+    exitm<b>
+    endm
+min_sdword_imm proto watcall a:sdword, b:abs {
+    .ifs a > b
+	mov a,b
+    .endif
+    }
+min_sdword_sdword proto watcall a:sdword, b:abs {
+    cmp	  a,b
+    cmovg a,b
+    }
 min macro a, b
-ifidn typeid(a),<imm>
-    exitm<min_imm(a, b)>
-else
-    exitm<min_int(a, b)>
-endif
+%   exitm<typeid(min_, a)typeid(_, b)(a, b)>
     endm
 endif
+endif ; NOMINMAX
+
+ifndef MAKEWORD
+define MAKEWORD_imm_dword     <MAKEWORD_dword_dword>
+define MAKEWORD_imm_sdword    <MAKEWORD_dword_dword>
+define MAKEWORD_dword_imm     <MAKEWORD_dword_dword>
+define MAKEWORD_sdword_imm    <MAKEWORD_dword_dword>
+define MAKEWORD_sdword_sdword <MAKEWORD_dword_dword>
+MAKEWORD_imm_imm macro a, b
+    exitm<(((a) AND 0xff) OR (((b) AND 0xff) SHL 8))>
+    endm
+MAKEWORD_dword_dword proto watcall a:dword, b:dword {
+    mov ah,dl
+    retm<ax>
+    }
+MAKEWORD macro a, b
+%   exitm<typeid(MAKEWORD_, a)typeid(_, b)(a, b)>
+    endm
 endif
 
-MAKEWORD macro a, b
-     exitm<((a AND 0xff) OR ((b AND 0xff) SHL 8))>
-     endm
+ifndef MAKELONG
+define MAKELONG_imm_dword     <MAKELONG_dword_dword>
+define MAKELONG_imm_sdword    <MAKELONG_dword_dword>
+define MAKELONG_dword_imm     <MAKELONG_dword_dword>
+define MAKELONG_sdword_imm    <MAKELONG_dword_dword>
+define MAKELONG_sdword_sdword <MAKELONG_dword_dword>
+MAKELONG_imm_imm macro a, b
+    exitm<(((a) AND 0xffff) OR (((b) AND 0xffff) SHL 16))>
+    endm
+MAKELONG_dword_dword proto watcall a:dword, b:dword {
+    xchg eax,edx
+    shld eax,edx,16
+    }
 MAKELONG macro a, b
-     exitm<((a AND 0xffff) OR ((b AND 0xffff) SHL 16))>
-     endm
-LOWORD macro l
-     exitm<(l AND 0xffff)>
-     endm
-HIWORD macro l
-     exitm<((l SHR 16) AND 0xffff)>
-     endm
-LOBYTE macro w
-     exitm<(w AND 0xff)>
-     endm
-HIBYTE macro w
-     exitm<((w SHR 8) AND 0xff)>
-     endm
+%   exitm<typeid(MAKELONG_, a)typeid(_, b)(a, b)>
+    endm
+endif
+
+ifndef LOWORD
+define LOWORD_sdword <LOWORD_dword>
+LOWORD_imm macro l
+    exitm<((((l)) AND 0xffff))>
+    endm
+LOWORD_dword proto watcall a:dword {
+    movzx eax,ax
+    retm<ax>
+    }
+LOWORD macro a, b
+%   exitm<typeid(LOWORD_, a)(a)>
+    endm
+endif
+
+ifndef HIWORD
+define HIWORD_sdword <HIWORD_dword>
+HIWORD_imm macro l
+    exitm<(((((l)) SHR 16) AND 0xffff))>
+    endm
+HIWORD_dword proto watcall a:dword {
+    shr eax,16
+    retm<ax>
+    }
+HIWORD macro a, b
+%   exitm<typeid(HIWORD_, a)(a)>
+    endm
+endif
+
+ifndef LOBYTE
+define LOBYTE_sdword <LOBYTE_dword>
+LOBYTE_imm macro w
+    exitm<((((w)) AND 0xff))>
+    endm
+LOBYTE_dword proto watcall a:dword {
+    movzx eax,al
+    retm<al>
+    }
+LOBYTE macro a, b
+%   exitm<typeid(LOBYTE_, a)(a)>
+    endm
+endif
+
+ifndef HIBYTE
+define HIBYTE_sdword <HIBYTE_dword>
+HIBYTE_imm macro w
+    exitm<(((((w)) SHR 8) AND 0xff))>
+    endm
+HIBYTE_dword proto watcall a:dword {
+    movzx eax,ah
+    retm<al>
+    }
+HIBYTE macro a, b
+%   exitm<typeid(HIBYTE_, a)(a)>
+    endm
+endif
 
 ifndef WIN_INTERNAL
 DECLARE_HANDLE(HWND)

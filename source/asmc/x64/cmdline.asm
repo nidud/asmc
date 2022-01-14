@@ -22,202 +22,202 @@ ifdef ASMC64
 ifdef __UNIX__
 
 Options global_options {
-        0,                      ;; .quiet
-        0,                      ;; .line_numbers
-        0,                      ;; .debug_symbols
-        0,                      ;; .debug_ext
-        FPO_NO_EMULATION,       ;; .floating_point
-        50,                     ;; .error_limit
-        0,                      ;; .no_error_disp
-        2,                      ;; .warning_level
-        0,                      ;; .warning_error
-        0,                      ;; .process_subdir
-        {0,0,0,0,0,0,0,0,0},    ;; .names
-        {0,0,0},                ;; .queues
-        0,                      ;; .no_comment_in_code_rec
-        0,                      ;; .no_opt_farcall
-        0,                      ;; .no_file_entry
-        0,                      ;; .no_static_procs
-        0,                      ;; .no_section_aux_entry
-        0,                      ;; .no_cdecl_decoration
-        STDCALL_FULL,           ;; .stdcall_decoration
-        0,                      ;; .no_export_decoration
-        0,                      ;; .entry_decorated
-        0,                      ;; .write_listing
-        0,                      ;; .write_impdef
-        0,                      ;; .case_sensitive
-        0,                      ;; .convert_uppercase
-        0,                      ;; .preprocessor_stdout
-        0,                      ;; .masm51_compat
-        0,                      ;; .strict_masm_compat
-        0,                      ;; .masm_compat_gencode
-        0,                      ;; .masm8_proc_visibility
-        0,                      ;; .listif
-        0,                      ;; .list_generated_code
-        LM_LISTMACRO,           ;; .list_macro
-        0,                      ;; .do_symbol_listing
-        0,                      ;; .first_pass_listing
-        0,                      ;; .all_symbols_public
-        0,                      ;; .safeseh
-        OFORMAT_ELF,            ;; .output_format
-        SFORMAT_64BIT,          ;; .sub_format
-        LANG_SYSCALL,           ;; .langtype
-        MODEL_FLAT,             ;; ._model
-        P_64 or P_PM,           ;; .cpu
-        FCT_ELF64,              ;; .fctype
-        0,                      ;; .codepage
-        0,                      ;; .ignore_include
-        0,                      ;; .fieldalign
-        0,                      ;; .syntax_check_only
-        OPT_REGAX,              ;; .xflag
-        0,                      ;; .loopalign
-        0,                      ;; .casealign
-        0,                      ;; .epilogueflags
-        4,                      ;; .segmentalign
-        0,                      ;; .pe_subsystem
-        0,                      ;; .win64_flags
-        0,                      ;; .chkstack
-        0,                      ;; .nolib
-        0,                      ;; .masm_keywords
-        0,                      ;; .arch
-        0,                      ;; .frame_auto
-        0,                      ;; .floatformat
-        1,                      ;; .floatdigits
-        4 }                     ;; .flt_size
+        0,                      ; .quiet
+        0,                      ; .line_numbers
+        0,                      ; .debug_symbols
+        0,                      ; .debug_ext
+        FPO_NO_EMULATION,       ; .floating_point
+        50,                     ; .error_limit
+        0,                      ; .no_error_disp
+        2,                      ; .warning_level
+        0,                      ; .warning_error
+        0,                      ; .process_subdir
+        {0,0,0,0,0,0,0,0,0},    ; .names
+        {0,0,0},                ; .queues
+        0,                      ; .no_comment_in_code_rec
+        0,                      ; .no_opt_farcall
+        0,                      ; .no_file_entry
+        0,                      ; .no_static_procs
+        0,                      ; .no_section_aux_entry
+        0,                      ; .no_cdecl_decoration
+        STDCALL_FULL,           ; .stdcall_decoration
+        0,                      ; .no_export_decoration
+        0,                      ; .entry_decorated
+        0,                      ; .write_listing
+        0,                      ; .write_impdef
+        0,                      ; .case_sensitive
+        0,                      ; .convert_uppercase
+        0,                      ; .preprocessor_stdout
+        0,                      ; .masm51_compat
+        0,                      ; .strict_masm_compat
+        0,                      ; .masm_compat_gencode
+        0,                      ; .masm8_proc_visibility
+        0,                      ; .listif
+        0,                      ; .list_generated_code
+        LM_LISTMACRO,           ; .list_macro
+        0,                      ; .do_symbol_listing
+        0,                      ; .first_pass_listing
+        0,                      ; .all_symbols_public
+        0,                      ; .safeseh
+        OFORMAT_ELF,            ; .output_format
+        SFORMAT_64BIT,          ; .sub_format
+        LANG_SYSCALL,           ; .langtype
+        MODEL_FLAT,             ; ._model
+        P_64 or P_PM,           ; .cpu
+        FCT_ELF64,              ; .fctype
+        0,                      ; .codepage
+        0,                      ; .ignore_include
+        0,                      ; .fieldalign
+        0,                      ; .syntax_check_only
+        OPT_REGAX,              ; .xflag
+        0,                      ; .loopalign
+        0,                      ; .casealign
+        0,                      ; .epilogueflags
+        4,                      ; .segmentalign
+        0,                      ; .pe_subsystem
+        0,                      ; .win64_flags
+        0,                      ; .chkstack
+        0,                      ; .nolib
+        0,                      ; .masm_keywords
+        0,                      ; .arch
+        0,                      ; .frame_auto
+        0,                      ; .floatformat
+        1,                      ; .floatdigits
+        4 }                     ; .flt_size
 
 else
 
 Options global_options {
-        0,                      ;; .quiet
-        0,                      ;; .line_numbers
-        0,                      ;; .debug_symbols
-        0,                      ;; .debug_ext
-        FPO_NO_EMULATION,       ;; .floating_point
-        50,                     ;; .error_limit
-        0,                      ;; .no_error_disp
-        2,                      ;; .warning_level
-        0,                      ;; .warning_error
-        0,                      ;; .process_subdir
-        {0,0,0,0,0,0,0,0,0},    ;; .names
-        {0,0,0},                ;; .queues
-        0,                      ;; .no_comment_in_code_rec
-        0,                      ;; .no_opt_farcall
-        0,                      ;; .no_file_entry
-        0,                      ;; .no_static_procs
-        0,                      ;; .no_section_aux_entry
-        0,                      ;; .no_cdecl_decoration
-        STDCALL_FULL,           ;; .stdcall_decoration
-        0,                      ;; .no_export_decoration
-        0,                      ;; .entry_decorated
-        0,                      ;; .write_listing
-        0,                      ;; .write_impdef
-        0,                      ;; .case_sensitive
-        0,                      ;; .convert_uppercase
-        0,                      ;; .preprocessor_stdout
-        0,                      ;; .masm51_compat
-        0,                      ;; .strict_masm_compat
-        0,                      ;; .masm_compat_gencode
-        0,                      ;; .masm8_proc_visibility
-        0,                      ;; .listif
-        0,                      ;; .list_generated_code
-        LM_LISTMACRO,           ;; .list_macro
-        0,                      ;; .do_symbol_listing
-        0,                      ;; .first_pass_listing
-        0,                      ;; .all_symbols_public
-        0,                      ;; .safeseh
-        OFORMAT_COFF,           ;; .output_format
-        SFORMAT_64BIT,          ;; .sub_format
-        LANG_FASTCALL,          ;; .langtype
-        MODEL_FLAT,             ;; ._model
-        P_64 or P_PM,           ;; .cpu
-        FCT_WIN64,              ;; .fctype
-        0,                      ;; .codepage
-        0,                      ;; .ignore_include
-        0,                      ;; .fieldalign
-        0,                      ;; .syntax_check_only
-        OPT_REGAX,              ;; .xflag
-        0,                      ;; .loopalign
-        0,                      ;; .casealign
-        0,                      ;; .epilogueflags
-        4,                      ;; .segmentalign
-        0,                      ;; .pe_subsystem
-        0,                      ;; .win64_flags
-        0,                      ;; .chkstack
-        0,                      ;; .nolib
-        0,                      ;; .masm_keywords
-        0,                      ;; .arch
-        0,                      ;; .frame_auto
-        0,                      ;; .floatformat
-        1,                      ;; .floatdigits
-        4 }                     ;; .flt_size
+        0,                      ; .quiet
+        0,                      ; .line_numbers
+        0,                      ; .debug_symbols
+        0,                      ; .debug_ext
+        FPO_NO_EMULATION,       ; .floating_point
+        50,                     ; .error_limit
+        0,                      ; .no_error_disp
+        2,                      ; .warning_level
+        0,                      ; .warning_error
+        0,                      ; .process_subdir
+        {0,0,0,0,0,0,0,0,0},    ; .names
+        {0,0,0},                ; .queues
+        0,                      ; .no_comment_in_code_rec
+        0,                      ; .no_opt_farcall
+        0,                      ; .no_file_entry
+        0,                      ; .no_static_procs
+        0,                      ; .no_section_aux_entry
+        0,                      ; .no_cdecl_decoration
+        STDCALL_FULL,           ; .stdcall_decoration
+        0,                      ; .no_export_decoration
+        0,                      ; .entry_decorated
+        0,                      ; .write_listing
+        0,                      ; .write_impdef
+        0,                      ; .case_sensitive
+        0,                      ; .convert_uppercase
+        0,                      ; .preprocessor_stdout
+        0,                      ; .masm51_compat
+        0,                      ; .strict_masm_compat
+        0,                      ; .masm_compat_gencode
+        0,                      ; .masm8_proc_visibility
+        0,                      ; .listif
+        0,                      ; .list_generated_code
+        LM_LISTMACRO,           ; .list_macro
+        0,                      ; .do_symbol_listing
+        0,                      ; .first_pass_listing
+        0,                      ; .all_symbols_public
+        0,                      ; .safeseh
+        OFORMAT_COFF,           ; .output_format
+        SFORMAT_64BIT,          ; .sub_format
+        LANG_FASTCALL,          ; .langtype
+        MODEL_FLAT,             ; ._model
+        P_64 or P_PM,           ; .cpu
+        FCT_WIN64,              ; .fctype
+        0,                      ; .codepage
+        0,                      ; .ignore_include
+        0,                      ; .fieldalign
+        0,                      ; .syntax_check_only
+        OPT_REGAX,              ; .xflag
+        0,                      ; .loopalign
+        0,                      ; .casealign
+        0,                      ; .epilogueflags
+        4,                      ; .segmentalign
+        0,                      ; .pe_subsystem
+        0,                      ; .win64_flags
+        0,                      ; .chkstack
+        0,                      ; .nolib
+        0,                      ; .masm_keywords
+        0,                      ; .arch
+        0,                      ; .frame_auto
+        0,                      ; .floatformat
+        1,                      ; .floatdigits
+        4 }                     ; .flt_size
 
 endif
 
 else
 
 Options global_options {
-        0,                      ;; .quiet
-        0,                      ;; .line_numbers
-        0,                      ;; .debug_symbols
-        0,                      ;; .debug_ext
-        FPO_NO_EMULATION,       ;; .floating_point
-        50,                     ;; .error_limit
-        0,                      ;; .no_error_disp
-        2,                      ;; .warning_level
-        0,                      ;; .warning_error
-        0,                      ;; .process_subdir
-        {0,0,0,0,0,0,0,0,0},    ;; .names
-        {0,0,0},                ;; .queues
-        0,                      ;; .no_comment_in_code_rec
-        0,                      ;; .no_opt_farcall
-        0,                      ;; .no_file_entry
-        0,                      ;; .no_static_procs
-        0,                      ;; .no_section_aux_entry
-        0,                      ;; .no_cdecl_decoration
-        STDCALL_FULL,           ;; .stdcall_decoration
-        0,                      ;; .no_export_decoration
-        0,                      ;; .entry_decorated
-        0,                      ;; .write_listing
-        0,                      ;; .write_impdef
-        0,                      ;; .case_sensitive
-        0,                      ;; .convert_uppercase
-        0,                      ;; .preprocessor_stdout
-        0,                      ;; .masm51_compat
-        0,                      ;; .strict_masm_compat
-        0,                      ;; .masm_compat_gencode
-        0,                      ;; .masm8_proc_visibility
-        0,                      ;; .listif
-        0,                      ;; .list_generated_code
-        LM_LISTMACRO,           ;; .list_macro
-        0,                      ;; .do_symbol_listing
-        0,                      ;; .first_pass_listing
-        0,                      ;; .all_symbols_public
-        0,                      ;; .safeseh
-        OFORMAT_OMF,            ;; .output_format
-        SFORMAT_NONE,           ;; .sub_format
-        LANG_NONE,              ;; .langtype
-        MODEL_NONE,             ;; ._model
-        P_86,                   ;; .cpu
-        FCT_MSC,                ;; .fctype
-        0,                      ;; .codepage
-        0,                      ;; .ignore_include
-        0,                      ;; .fieldalign
-        0,                      ;; .syntax_check_only
-        0,                      ;; .xflag
-        0,                      ;; .loopalign
-        0,                      ;; .casealign
-        0,                      ;; .epilogueflags
-        4,                      ;; .segmentalign
-        0,                      ;; .pe_subsystem
-        0,                      ;; .win64_flags
-        0,                      ;; .chkstack
-        0,                      ;; .nolib
-        0,                      ;; .masm_keywords
-        0,                      ;; .arch
-        0,                      ;; .frame_auto
-        0,                      ;; .floatformat
-        1,                      ;; .floatdigits
-        4 }                     ;; .flt_size
+        0,                      ; .quiet
+        0,                      ; .line_numbers
+        0,                      ; .debug_symbols
+        0,                      ; .debug_ext
+        FPO_NO_EMULATION,       ; .floating_point
+        50,                     ; .error_limit
+        0,                      ; .no_error_disp
+        2,                      ; .warning_level
+        0,                      ; .warning_error
+        0,                      ; .process_subdir
+        {0,0,0,0,0,0,0,0,0},    ; .names
+        {0,0,0},                ; .queues
+        0,                      ; .no_comment_in_code_rec
+        0,                      ; .no_opt_farcall
+        0,                      ; .no_file_entry
+        0,                      ; .no_static_procs
+        0,                      ; .no_section_aux_entry
+        0,                      ; .no_cdecl_decoration
+        STDCALL_FULL,           ; .stdcall_decoration
+        0,                      ; .no_export_decoration
+        0,                      ; .entry_decorated
+        0,                      ; .write_listing
+        0,                      ; .write_impdef
+        0,                      ; .case_sensitive
+        0,                      ; .convert_uppercase
+        0,                      ; .preprocessor_stdout
+        0,                      ; .masm51_compat
+        0,                      ; .strict_masm_compat
+        0,                      ; .masm_compat_gencode
+        0,                      ; .masm8_proc_visibility
+        0,                      ; .listif
+        0,                      ; .list_generated_code
+        LM_LISTMACRO,           ; .list_macro
+        0,                      ; .do_symbol_listing
+        0,                      ; .first_pass_listing
+        0,                      ; .all_symbols_public
+        0,                      ; .safeseh
+        OFORMAT_OMF,            ; .output_format
+        SFORMAT_NONE,           ; .sub_format
+        LANG_NONE,              ; .langtype
+        MODEL_NONE,             ; ._model
+        P_86,                   ; .cpu
+        FCT_MSC,                ; .fctype
+        0,                      ; .codepage
+        0,                      ; .ignore_include
+        0,                      ; .fieldalign
+        0,                      ; .syntax_check_only
+        0,                      ; .xflag
+        0,                      ; .loopalign
+        0,                      ; .casealign
+        0,                      ; .epilogueflags
+        4,                      ; .segmentalign
+        0,                      ; .pe_subsystem
+        0,                      ; .win64_flags
+        0,                      ; .chkstack
+        0,                      ; .nolib
+        0,                      ; .masm_keywords
+        0,                      ; .arch
+        0,                      ; .frame_auto
+        0,                      ; .floatformat
+        1,                      ; .floatdigits
+        4 }                     ; .flt_size
 endif
 
     align 4
@@ -229,7 +229,7 @@ endif
 
     option proc:private
 
-;; current cmdline string is done, get the next one!
+; current cmdline string is done, get the next one!
 
 getnextcmdstring proc fastcall uses rsi rdi cmdline:array_t
 
@@ -258,7 +258,7 @@ GetNumber proc fastcall p:string_t
 GetNumber endp
 
 
-getfilearg proc fastcall uses rsi rdi rbx args:array_t, p:string_t ;; -Fo<file> or -Fo <file>
+getfilearg proc fastcall uses rsi rdi rbx args:array_t, p:string_t ; -Fo<file> or -Fo <file>
 
     mov rsi,rdx
     mov rdi,rcx
@@ -280,10 +280,10 @@ getfilearg proc fastcall uses rsi rdi rbx args:array_t, p:string_t ;; -Fo<file> 
 getfilearg endp
 
 
-;;
-;; queue a text macro, include path or "forced" include files.
-;; this is called for cmdline options -D, -I and -Fi
-;;
+;
+; queue a text macro, include path or "forced" include files.
+; this is called for cmdline options -D, -I and -Fi
+;
 
 queue_item proc __ccall uses rsi i:int_t, string:string_t
 
@@ -369,10 +369,10 @@ set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
 set_option_n_name endp
 
 
-;;
-;; A '@' was found in the cmdline. It's not an environment variable,
-;; so check if it is a file and, if yes, read it.
-;;
+;
+; A '@' was found in the cmdline. It's not an environment variable,
+; so check if it is a file and, if yes, read it.
+;
 
 ifdef __UNIX__
 ReadParamFile proc fastcall uses rsi rdi rbx name:string_t
@@ -436,7 +436,7 @@ is_quote:
                 .break
             .endif
 
-            ;; handle the \"" case
+            ; handle the \"" case
 
             .if al == '\' && ah == '"'
 
@@ -448,14 +448,14 @@ is_quote:
 
         .for( : max: max-- )
 
-            ;; v2.10: don't stop for white spaces
+            ; v2.10: don't stop for white spaces
 
             mov al,[rsi]
             .break .if ( al == 0 )
             .break .if ( al == 13 || al == 10 )
 
-            ;; v2.10: don't stop for white spaces if filename
-            ;; is expected and true cmdline is parsed
+            ; v2.10: don't stop for white spaces if filename
+            ; is expected and true cmdline is parsed
 
             .break .if ( ( al == ' ' || al == 9 ) && ( type != '@' ) )
 
@@ -518,8 +518,8 @@ ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_
 
 ifndef ASMC64
 
-    ;; numeric option (-0, -1, ... ) handled separately since
-    ;; the value can be >= 10.
+    ; numeric option (-0, -1, ... ) handled separately since
+    ; the value can be >= 10.
 
     .if ( al >= '0' && al <= '9' )
 
@@ -527,7 +527,7 @@ ifndef ASMC64
 
         .if ( OptValue < lengthof(cpu_option) )
 
-            mov rbx,GetNameToken(rdi, rbx, 16, 0) ;; get optional 'p'
+            mov rbx,GetNameToken(rdi, rbx, 16, 0) ; get optional 'p'
             mov [rsi],rbx
             mov ecx,OptValue
             lea rax,cpu_option
@@ -537,20 +537,39 @@ ifndef ASMC64
             .if ( B[rdi+1] == 'p' && Options.cpu >= P_286 )
                 or Options.cpu,P_PM
             .endif
+            .switch ecx
+            .case 0: define_name( "__86__", "1" )  : .endc
+            .case 1: define_name( "__186__", "1" ) : .endc
+            .case 2: define_name( "__286__", "1" ) : .endc
+            .case 3: define_name( "__386__", "1" ) : .endc
+            .case 4: define_name( "__486__", "1" ) : .endc
+            .case 5: define_name( "__586__", "1" ) : .endc
+            .case 9
+                define_name( "__SSE2__", "1" )
+            .case 8
+                define_name( "__SSE__", "1" )
+            .case 7
+            .case 6
+                define_name( "__686__", "1" )
+                .endc
+            .case 10
+                define_name( "__64__", "1" )
+                .endc
+            .endsw
             .return
         .endif
-        mov rbx,[rsi] ;; v2.11: restore option pointer
+        mov rbx,[rsi] ; v2.11: restore option pointer
     .endif
 endif
 
-    .if al == 'D' ;; -D<name>[=text]
+    .if al == 'D' ; -D<name>[=text]
 
         mov [rsi],GetNameToken(rdi, &[rbx+1], 256, '$')
         queue_item(OPTQ_MACRO, rdi)
        .return
     .endif
 
-    .if al == 'I' ;; -I<file>
+    .if al == 'I' ; -I<file>
 
         mov [rsi],GetNameToken(rdi, &[rbx+1], 256, '@')
         queue_item(OPTQ_INCPATH, rdi)
@@ -567,7 +586,7 @@ endif
     .endif
 
     .switch eax
-    .case 'hcra'        ;; -arch:xx
+    .case 'hcra'        ; -arch:xx
         mov eax,[rdi+4]
         .if al != ':' || ah == 0
             asmerr(1006, rdi)
@@ -601,51 +620,51 @@ endif
         .endsw
         mov Options.arch,bl
         .return
-    .case 'essa'            ;; -assert
+    .case 'essa'            ; -assert
         or Options.xflag,OPT_ASSERT
         .return
-    .case 'otua'            ;; -autostack
+    .case 'otua'            ; -autostack
         or Options.win64_flags,W64F_AUTOSTACKSP
         .return
-    .case 'c'               ;; -c
+    .case 'c'               ; -c
         .return
-    .case 'ffoc'            ;; -coff
+    .case 'ffoc'            ; -coff
         mov Options.output_format,OFORMAT_COFF
         mov Options.sub_format,SFORMAT_NONE
         .return
-    .case 'PE'              ;; -EP
+    .case 'PE'              ; -EP
         mov Options.preprocessor_stdout,1
-    .case 'q'               ;; -q
+    .case 'q'               ; -q
         mov Options.quiet,1
-    .case 'olon'            ;; -nologo
+    .case 'olon'            ; -nologo
         mov banner_printed,1
         .return
-    .case 'nib'             ;; -bin
+    .case 'nib'             ; -bin
         mov Options.output_format,OFORMAT_BIN
         mov Options.sub_format,SFORMAT_NONE
         .return
-    .case 'pC'              ;; -Cp
+    .case 'pC'              ; -Cp
         mov Options.case_sensitive,1
         mov Options.convert_uppercase,0
         .return
-    .case 'sC'              ;; -Cs
+    .case 'sC'              ; -Cs
         or Options.xflag,OPT_CSTACK
         .return
-    .case 'uC'              ;; -Cu
+    .case 'uC'              ; -Cu
         mov Options.case_sensitive,0
         mov Options.convert_uppercase,1
         .return
-    .case 'iuc'             ;; -cui - subsystem:console
+    .case 'iuc'             ; -cui - subsystem:console
         mov Options.pe_subsystem,0
         .return
-    .case 'xC'              ;; -Cx
+    .case 'xC'              ; -Cx
         mov Options.case_sensitive,0
         mov Options.convert_uppercase,0
         .return
-    .case 'qe'              ;; -eq
+    .case 'qe'              ; -eq
         mov Options.no_error_disp,1
         .return
-    .case '6fle'            ;; -elf64
+    .case '6fle'            ; -elf64
 if defined(ASMC64) and defined(__UNIX__)
 else
         or  Options.xflag,OPT_REGAX
@@ -661,7 +680,7 @@ else
 endif
 endif
         .return
-    .case 'orre'            ;; -errorReport:
+    .case 'orre'            ; -errorReport:
         mov rbx,[rsi]
         .while B[rbx]
             inc rbx
@@ -669,61 +688,61 @@ endif
         mov [rsi],rbx
         .return
 ifndef ASMC64
-    .case 'fle'             ;; -elf
+    .case 'fle'             ; -elf
         mov Options.output_format,OFORMAT_ELF
         mov Options.sub_format,SFORMAT_NONE
         define_name( "_LINUX", "1" )
         define_name( "__UNIX__", "1" )
         .return
-    .case '8iPF'            ;; -FPi87
+    .case '8iPF'            ; -FPi87
         mov Options.floating_point,FPO_NO_EMULATION
         .return
-    .case 'iPF'             ;; -Fpi
+    .case 'iPF'             ; -Fpi
         mov Options.floating_point,FPO_EMULATION
         .return
-    .case '0pf'             ;; -fp0
+    .case '0pf'             ; -fp0
         mov Options.cpu,P_87
         .return
-    .case '2pf'             ;; -fp2
+    .case '2pf'             ; -fp2
         mov Options.cpu,P_287
         .return
-    .case '3pf'             ;; -fp3
+    .case '3pf'             ; -fp3
         mov Options.cpu,P_387
         .return
-    .case 'cpf'             ;; -fpc
+    .case 'cpf'             ; -fpc
         mov Options.cpu,P_NO87
         .return
 endif
-    .case 'marf'            ;; -frame
+    .case 'marf'            ; -frame
         .if ( Options.output_format != OFORMAT_BIN )
             mov Options.frame_auto,3
         .endif
         .return
 
 ifndef ASMC64
-    .case 'cG'              ;; -Gc
+    .case 'cG'              ; -Gc
         mov Options.langtype,LANG_PASCAL
         .return
-    .case 'dG'              ;; -Gd
+    .case 'dG'              ; -Gd
         mov Options.langtype,LANG_C
         .return
 endif
-    .case 'eG'              ;; -Ge
+    .case 'eG'              ; -Ge
         mov Options.chkstack,1
         .return
-    .case 'rG'              ;; -Gr
+    .case 'rG'              ; -Gr
         mov Options.langtype,LANG_FASTCALL
         .return
-    .case 'vG'              ;; -Gv
+    .case 'vG'              ; -Gv
         mov Options.langtype,LANG_VECTORCALL
         .return
 ifndef ASMC64
-    .case 'zG'              ;; -Gz
+    .case 'zG'              ; -Gz
         mov Options.langtype,LANG_STDCALL
         define_name( "_STDCALL_SUPPORTED", "1" )
         .return
 endif
-    .case 'iug'             ;; -gui - subsystem:windows
+    .case 'iug'             ; -gui - subsystem:windows
         mov Options.pe_subsystem,1
         define_name( "__GUI__", "1" )
         .return
@@ -731,108 +750,115 @@ endif
     .case 'h'
         write_options()
         exit(1)
-    .case 'emoh'            ;; -homeparams
+    .case 'emoh'            ; -homeparams
         or Options.win64_flags,W64F_SAVEREGPARAMS
         .return
-    .case 'ogol'            ;; -logo
+    .case 'ogol'            ; -logo
         tprintf("%s\n", &cp_logo)
         exit(0)
 ifndef ASMC64
-    .case 'zm'              ;; -mz
+    .case 'zm'              ; -mz
         mov Options.output_format,OFORMAT_BIN
         mov Options.sub_format,SFORMAT_MZ
         .return
-    .case 'cm'              ;; -mc
+    .case 'cm'              ; -mc
         mov Options._model,MODEL_COMPACT
+        define_name( "__COMPACT__", "1" )
         .return
-    .case 'fm'              ;; -mf
+    .case 'fm'              ; -mf
         mov Options._model,MODEL_FLAT
+        define_name( "__FLAT__", "1" )
         .return
-    .case 'hm'              ;; -mh
+    .case 'hm'              ; -mh
         mov Options._model,MODEL_HUGE
+        define_name( "__HUGE__", "1" )
         .return
-    .case 'lm'              ;; -ml
+    .case 'lm'              ; -ml
         mov Options._model,MODEL_LARGE
+        define_name( "__LARGE__", "1" )
         .return
-    .case 'mm'              ;; -mm
+    .case 'mm'              ; -mm
         mov Options._model,MODEL_MEDIUM
+        define_name( "__MEDIUM__", "1" )
         .return
-    .case 'sm'              ;; -ms
+    .case 'sm'              ; -ms
         mov Options._model,MODEL_SMALL
+        define_name( "__SMALL__", "1" )
         .return
-    .case 'tm'              ;; -mt
+    .case 'tm'              ; -mt
         mov Options._model,MODEL_TINY
+        define_name( "__TINY__", "1" )
         .return
 endif
-    .case 'ilon'            ;; -nolib
+    .case 'ilon'            ; -nolib
         mov Options.nolib,TRUE
         define_name( "_MSVCRT", "1" )
         .return
 ifndef ASMC64
-    .case 'fmo'             ;; -omf
+    .case 'fmo'             ; -omf
         mov Options.output_format,OFORMAT_OMF
         mov Options.sub_format,SFORMAT_NONE
         .return
 endif
-    .case 'fp'              ;; -pf
+    .case 'fp'              ; -pf
         mov Options.epilogueflags,1
         .return
-    .case 'ep'              ;; -pe
+    .case 'ep'              ; -pe
         .if ( Options.sub_format != SFORMAT_64BIT )
             mov Options.sub_format,SFORMAT_PE
         .endif
         mov Options.output_format,OFORMAT_BIN
         define_name( "__PE__", "1" )
         .return
-    .case 'r'               ;; -r
+    .case 'r'               ; -r
         mov Options.process_subdir,1
         .return
-    .case 'aS'              ;; -Sa
+    .case 'aS'              ; -Sa
         .return
-    .case 'fS'              ;; -Sf
+    .case 'fS'              ; -Sf
         mov Options.first_pass_listing,1
         .return
-    .case 'gS'              ;; -Sg
+    .case 'gS'              ; -Sg
         mov Options.list_generated_code,1
         .return
-    .case 'nS'              ;; -Sn
+    .case 'nS'              ; -Sn
         mov Options.no_symbol_listing,1
         .return
-    .case 'cats'            ;; -stackalign
+    .case 'cats'            ; -stackalign
         or Options.win64_flags,W64F_STACKALIGN16
         .return
-    .case 'xS'              ;; -Sx
+    .case 'xS'              ; -Sx
         mov Options.listif,1
         .return
-    .case 'pws'         ;; -swp
+    .case 'pws'         ; -swp
         or Options.xflag,OPT_PASCAL
         .return
-    .case 'cws'         ;; -swc
+    .case 'cws'         ; -swc
         and Options.xflag,not OPT_PASCAL
         .return
-    .case 'rws'         ;; -swr
+    .case 'rws'         ; -swr
         or Options.xflag,OPT_REGAX
         .return
-    .case 'nws'         ;; -swn
+    .case 'nws'         ; -swn
         or Options.xflag,OPT_NOTABLE
         .return
-    .case 'tws'         ;; -swt
+    .case 'tws'         ; -swt
         and Options.xflag,not OPT_NOTABLE
         .return
-    .case 'efas'        ;; -safeseh
+    .case 'efas'        ; -safeseh
         mov Options.safeseh,1
         .return
-    .case 'w'           ;; -w
+    .case 'w'           ; -w
         mov Options.warning_level,0
         .return
-    .case 'sw'          ;; -ws
+    .case 'sw'          ; -ws
         or Options.xflag,OPT_WSTRING
         define_name( "_UNICODE", "1" )
         .return
-    .case 'XW'          ;; -WX
+    .case 'XW'          ; -WX
         mov Options.warning_error,1
         .return
-    .case '6niw'        ;; -win64
+    .case '6niw'        ; -win64
 ifndef ASMC64
         .if ( Options.output_format != OFORMAT_BIN )
             mov Options.output_format,OFORMAT_COFF
@@ -847,92 +873,92 @@ ifndef ASMC64
         or  Options.xflag,OPT_REGAX
 endif
         .return
-    .case 'X'           ;; -X
+    .case 'X'           ; -X
         mov Options.ignore_include,1
         .return
 ifndef ASMC64
-    .case 'mcz'         ;; -zcm
+    .case 'mcz'         ; -zcm
         mov Options.no_cdecl_decoration,0
         .return
-    .case 'wcz'         ;; -zcw
+    .case 'wcz'         ; -zcw
         mov Options.no_cdecl_decoration,1
         .return
 endif
-    .case 'fZ'          ;; -Zf
+    .case 'fZ'          ; -Zf
         mov Options.all_symbols_public,1
         .return
 ifndef ASMC64
-    .case '0fz'         ;; -zf0
+    .case '0fz'         ; -zf0
         mov Options.fctype,FCT_MSC
         .return
 endif
-    .case '1fz'         ;; -zf1
+    .case '1fz'         ; -zf1
         mov Options.fctype,FCT_WATCOMC
         .return
-    .case 'gZ'          ;; -Zg
+    .case 'gZ'          ; -Zg
         mov Options.masm_compat_gencode,1
         .return
-    .case 'dZ'          ;; -Zd
+    .case 'dZ'          ; -Zd
         mov Options.line_numbers,1
         .return
-    .case 'clz'         ;; -zlc
+    .case 'clz'         ; -zlc
         mov Options.no_comment_in_code_rec,1
         .return
-    .case 'dlz'         ;; -zld
+    .case 'dlz'         ; -zld
         mov Options.no_opt_farcall,1
         .return
-    .case 'flz'         ;; -zlf
+    .case 'flz'         ; -zlf
         mov Options.no_file_entry,1
         .return
-    .case 'plz'         ;; -zlp
+    .case 'plz'         ; -zlp
         mov Options.no_static_procs,1
         .return
-    .case 'slz'         ;; -zls
+    .case 'slz'         ; -zls
         mov Options.no_section_aux_entry,1
         .return
 ifndef ASMC64
-    .case 'mZ'          ;; -Zm
+    .case 'mZ'          ; -Zm
         mov Options.masm51_compat,1
 endif
-    .case 'enZ'         ;; -Zne
+    .case 'enZ'         ; -Zne
         mov Options.strict_masm_compat,1
         .return
-    .case 'knZ'         ;; -Znk
+    .case 'knZ'         ; -Znk
         mov Options.masm_keywords,1
         .return
-    .case 'sZ'          ;; -Zs
+    .case 'sZ'          ; -Zs
         mov Options.syntax_check_only,1
         .return
 ifndef ASMC64
-    .case '0tz'         ;; -zt0
+    .case '0tz'         ; -zt0
         mov Options.stdcall_decoration,0
         .return
-    .case '1tz'         ;; -zt1
+    .case '1tz'         ; -zt1
         mov Options.stdcall_decoration,1
         .return
-    .case '2tz'         ;; -zt2
+    .case '2tz'         ; -zt2
         mov Options.stdcall_decoration,2
         .return
-    .case '8vZ'         ;; -Zv8
+    .case '8vZ'         ; -Zv8
         mov Options.masm8_proc_visibility,1
         .return
 endif
-    .case 'ezz'         ;; -zze
+    .case 'ezz'         ; -zze
         mov Options.no_export_decoration,1
         .return
-    .case 'szz'         ;; -zzs
+    .case 'szz'         ; -zzs
         mov Options.entry_decorated,1
         .return
     .endsw
 
     mov [rsi],rbx
     mov eax,[rbx]
-    .if al == 'e'       ;; -e<number>
+    .if al == 'e'       ; -e<number>
         mov [rsi],GetNumber(&[rbx+1])
         mov Options.error_limit,OptValue
         .return
     .endif
-    .if al == 'W'       ;; -W<number>
+    .if al == 'W'       ; -W<number>
         mov [rsi],GetNumber(&[rbx+1])
         .if OptValue < 0
             asmerr(8000, rbx)
@@ -948,12 +974,12 @@ endif
     mov j,eax
     mov [rsi],GetNumber(&[rbx+2])
     .switch j
-    .case 'sw'          ;; -ws<number>
+    .case 'sw'          ; -ws<number>
         mov Options.codepage,OptValue
         or  Options.xflag,OPT_WSTRING
         define_name( "_UNICODE", "1" )
         .return
-    .case 'pS'          ;; -Zp<number>
+    .case 'pS'          ; -Zp<number>
         xor ecx,ecx
         .repeat
             mov eax,1
@@ -966,7 +992,7 @@ endif
         dec ecx
         mov Options.segmentalign,cl
         .return
-    .case 'pZ'          ;; -Zp<number>
+    .case 'pZ'          ; -Zp<number>
         xor ecx,ecx
         .repeat
             mov eax,1
@@ -979,7 +1005,7 @@ endif
         dec ecx
         mov Options.fieldalign,cl
         .return
-    .case 'iZ'          ;; -Zi[0|1|2|3]
+    .case 'iZ'          ; -Zi[0|1|2|3]
         define_name( "__DEBUG__", "1" )
         mov Options.line_numbers,1
         mov Options.debug_symbols,1
@@ -997,9 +1023,9 @@ endif
                     shr eax,8
                 .endif
                 .if eax == 5
-                    mov Options.debug_symbols,2 ;; C11 (vc5.x) 32-bit types
+                    mov Options.debug_symbols,2 ; C11 (vc5.x) 32-bit types
                 .elseif eax == 8
-                    mov Options.debug_symbols,4 ;; C13 (vc7.x) zero terminated names
+                    mov Options.debug_symbols,4 ; C13 (vc7.x) zero terminated names
                     mov Options.no_file_entry,1
                 .else
                     asmerr(1006, rbx)
@@ -1014,23 +1040,23 @@ endif
     mov [rsi],GetNameToken(rdi, &[rbx+2], 256, '$')
     mov eax,j
     .switch eax
-    .case 'cn'          ;; -nc<name>
+    .case 'cn'          ; -nc<name>
         .return set_option_n_name(OPTN_CODE_CLASS, rdi)
-    .case 'dn'          ;; -nd<name>
+    .case 'dn'          ; -nd<name>
         .return set_option_n_name(OPTN_DATA_SEG, rdi)
-    .case 'mn'          ;; -nm<name>
+    .case 'mn'          ; -nm<name>
         .return set_option_n_name(OPTN_MODULE_NAME, rdi)
-    .case 'tn'          ;; -nt<name>
+    .case 'tn'          ; -nt<name>
         .return set_option_n_name(OPTN_TEXT_SEG, rdi)
     .endsw
 
     mov [rsi],GetNameToken( rdi, &[rbx+2], 256, '@' )
     mov eax,j
     .switch eax
-    .case 'dF'          ;; -Fd[file]
+    .case 'dF'          ; -Fd[file]
         mov Options.write_impdef,1
         .return get_fname(OPTN_LNKDEF_FN, rdi)
-    .case 'lF'          ;; -Fl[file]
+    .case 'lF'          ; -Fl[file]
         mov Options.write_listing,1
         .return get_fname(OPTN_LST_FN, rdi)
     .endsw
@@ -1039,13 +1065,13 @@ endif
         mov rbx,rax
         mov [rsi],GetNameToken(rdi, rbx, 256, '@')
         mov eax,j
-        .if eax == 'iF'         ;; -Fi<file>
+        .if eax == 'iF'         ; -Fi<file>
             .return queue_item(OPTQ_FINCLUDE, rdi)
         .endif
-        .if eax == 'oF'         ;; -Fo<file>
+        .if eax == 'oF'         ; -Fo<file>
             .return get_fname(OPTN_OBJ_FN, rdi)
         .endif
-        .if eax == 'wF'         ;; -Fw<file>
+        .if eax == 'wF'         ; -Fw<file>
             .return get_fname(OPTN_ERR_FN, rdi)
         .endif
     .endif

@@ -1170,6 +1170,12 @@ endif
     mov ti.size,0
     mov ti.is_ptr,0
     mov ti.is_far,FALSE
+    mov cl,ModuleInfo._model
+    mov eax,1
+    shl eax,cl
+    .if eax & SIZE_DATAPTR
+        mov ti.is_far,TRUE ; added v2.33.33
+    .endif
     mov ti.mem_type,MT_EMPTY
     mov ti.ptr_memtype,MT_EMPTY
     mov ti.symtype,NULL

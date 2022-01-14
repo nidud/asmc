@@ -36,11 +36,11 @@ end
 
 # Win32 console debug application
 system begin con_32D
-    option  quiet, cvp
+    option  cvp
     libpath %ASMCDIR%\lib\x86
     library libc,kernel32,user32
     symt    _cstart
-    format  windows pe ru con debug c ^
+    format  windows pe ru con debug Codeview All ^
     runtime console=4.0
 end
 
@@ -74,20 +74,20 @@ system begin con_64
     runtime console=4.0
 end
 
-# using msvcrt
-system begin dcon_64
-    option  quiet
-    libpath %ASMCDIR%\lib\x64
-    library msvcrt,kernel32,user32
-    format  windows pe ^
-    runtime console=4.0
-end
-
 system begin tcon_64
     option  quiet
     libpath %ASMCDIR%\lib\x64
     library libc,kernel32,user32
     symt    TWinStart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+# using msvcrt
+system begin dcon_64
+    option  quiet
+    libpath %ASMCDIR%\lib\x64
+    library msvcrt,kernel32,user32
     format  windows pe ^
     runtime console=4.0
 end
@@ -146,6 +146,13 @@ system begin dll_32
     libpath %ASMCDIR%\lib\x86
     format windows pe dll ^
     library libc,kernel32,user32,gdi32
+    runtime windows=4.0
+end
+
+system begin ddll_32
+    libpath %ASMCDIR%\lib\x86
+    format windows pe dll ^
+    library msvcrt,kernel32,user32,gdi32
     runtime windows=4.0
 end
 

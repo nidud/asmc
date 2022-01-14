@@ -652,9 +652,9 @@ ParseParams proc private uses esi edi ebx p:ptr dsym, i:int_t, tokenarray:ptr as
             .endif
             mov on,ah
 
-            .if ( ti.mem_type != [edi].asym.mem_type || \
-                ( ti.mem_type == MT_TYPE && tn != to ) || \
-                ( ti.mem_type == MT_PTR && ( ti.is_far != [edi].asym.is_far || on != oo || \
+            .if ( ti.mem_type != [edi].asym.mem_type ||
+                ( ti.mem_type == MT_TYPE && tn != to ) ||
+                ( ti.mem_type == MT_PTR && ( ti.is_far != [edi].asym.is_far || on != oo ||
                  ( !fast_type && ( ti.ptr_memtype != [edi].asym.ptr_memtype || tn != to ) ) ) ) )
                 asmerr( 2111, name )
             .endif

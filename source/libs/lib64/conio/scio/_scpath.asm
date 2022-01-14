@@ -9,15 +9,15 @@ include string.inc
 
     .code
 
-_scpath proc x:int_t, y:int_t, max:int_t, string:string_t
+_scpath proc x:int_t, y:int_t, maxlen:int_t, string:string_t
 
   local b[16]:byte
 
-    .ifd strlen(r9) > max
+    .ifd strlen(r9) > maxlen
 
         lea r10,b
         mov r11,string
-        mov edx,max
+        mov edx,maxlen
         mov ecx,[r11]
         add r11,rax
         sub r11,rdx
@@ -42,9 +42,9 @@ _scpath proc x:int_t, y:int_t, max:int_t, string:string_t
         _scputs(x, y, r10)
     .endif
 
-    mov max,eax
+    mov maxlen,eax
     _scputs(x, y, string)
-    add eax,max
+    add eax,maxlen
     ret
 
 _scpath endp

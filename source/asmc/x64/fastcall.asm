@@ -94,6 +94,7 @@ ELF64_START         equ 1 ; elf64: RDI first param start at bit 6
 
 REGPAR_WIN64        equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64        equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
+REGPAR_WATC         equ 0x000F ; regs 0, 1, 3, 2
 
     .data
 
@@ -111,6 +112,7 @@ watc_regs byte \
 
 watc_regname        char_t 64 dup(0)
 watc_regist         char_t 32 dup(0)
+watc_param_index    db 0, 2, 3, 1
 
 ms64_regs byte \
     T_CL,  T_DL,  T_R8B, T_R9B,
@@ -651,6 +653,15 @@ watc_param proc __ccall private uses rsi rdi rbx r12 pp:dsym_t, index:int_t, par
                     .else
                         AddLineQueueX( " mov %r, %r", esi, edi )
                     .endif
+                    movzx ecx,GetRegNo(edi)
+                    mov eax,1
+                    shl eax,cl
+                    .if eax & REGPAR_WATC
+                        mov rcx,r0used
+                        .if [rcx] & al
+                            asmerr(2133)
+                        .endif
+                    .endif
                 .endif
             .else
                 .if ebx == 0 && reg[8] == NULL
@@ -695,7 +706,14 @@ watc_param proc __ccall private uses rsi rdi rbx r12 pp:dsym_t, index:int_t, par
             .endif
         .endif
     .endf
-    .return TRUE
+    mov ecx,index
+    lea rax,watc_param_index
+    mov cl,[rax+rcx]
+    mov eax,1
+    shl eax,cl
+    mov rcx,r0used
+    or [rcx],al
+   .return TRUE
 
 watc_param endp
 

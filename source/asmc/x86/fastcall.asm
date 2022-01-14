@@ -97,6 +97,7 @@ externdef       size_vararg:int_t           ; size of :VARARG arguments
 
 REGPAR_WIN64    equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64    equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
+REGPAR_WATC     equ 0x000F ; regs 0, 1, 3, 2
 
 ;
 ; table of fastcall types.
@@ -137,6 +138,7 @@ watc_regs64         special_token T_RAX, T_RDX, T_RBX, T_RCX
 watc_regs_qw        special_token T_AX, T_BX, T_CX, T_DX
 watc_regname        char_t 64 dup(0)
 watc_regist         char_t 32 dup(0)
+watc_param_index    db 0, 2, 3, 1
 
 ms32_regs           db T_ECX, T_EDX
 ms32_regs32         special_token T_ECX, T_EDX
@@ -662,6 +664,15 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     .else
                         AddLineQueueX( " mov %r, %r", esi, edi )
                     .endif
+                    movzx ecx,GetRegNo(edi)
+                    mov eax,1
+                    shl eax,cl
+                    .if eax & REGPAR_WATC
+                        mov ecx,r0used
+                        .if [ecx] & al
+                            asmerr(2133)
+                        .endif
+                    .endif
                 .endif
             .else
                 .if ebx == 0 && reg[4] == NULL
@@ -706,6 +717,12 @@ watc_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
             .endif
         .endif
     .endf
+    mov ecx,index
+    mov cl,watc_param_index[ecx]
+    mov eax,1
+    shl eax,cl
+    mov ecx,r0used
+    or [ecx],al
     mov eax,1
     ret
 

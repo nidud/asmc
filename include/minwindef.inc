@@ -73,50 +73,122 @@ LPARAM	typedef LONG_PTR
 LRESULT typedef LONG_PTR
 
 ifndef NOMINMAX
-ifndef max
-define max_imm_dword   <max_sdword_sdword>
-define max_imm_sdword  <max_sdword_sdword>
-define max_dword_imm   <max_sdword_imm>
-define max_dword_dword <max_sdword_sdword>
-max_imm_imm macro a,b
-if (a) GT (b)
-	exitm<a>
-endif
-    exitm<b>
+
+cmovrmx macro a, b, x
+    cmp a,b
+    exitm<cmov&x& a,b>
     endm
-max_sdword_imm proto watcall a:sdword, b:abs {
-    .ifs a < b
-	mov a,b
-    .endif
-    }
-max_sdword_sdword proto watcall a:sdword, b:abs {
-    cmp	  a,b
-    cmovl a,b
-    }
-max macro a, b
-%   exitm<typeid(max_, a)typeid(_, b)(a, b)>
-    endm
-endif
-ifndef min
-define min_imm_dword   <min_sdword_sdword>
-define min_imm_sdword  <min_sdword_sdword>
-define min_dword_imm   <min_sdword_imm>
-define min_dword_dword <min_sdword_sdword>
+
 min_imm_imm macro a, b
 if (a) LT (b)
     exitm<a>
 endif
     exitm<b>
     endm
-min_sdword_imm proto watcall a:sdword, b:abs {
-    .ifs a > b
-	mov a,b
-    .endif
-    }
-min_sdword_sdword proto watcall a:sdword, b:abs {
-    cmp	  a,b
-    cmovg a,b
-    }
+
+max_imm_imm macro a,b
+if (a) GT (b)
+    exitm<a>
+endif
+    exitm<b>
+    endm
+
+min_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, b) }
+min_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, b) }
+min_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, b) }
+min_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, b) }
+min_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, l) }
+min_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, l) }
+min_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, l) }
+min_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, l) }
+min_real4_real4		proto fastcall :real4, :real4  { minss _1, _2 }
+min_real8_real8		proto fastcall :real8, :real8  { minsd _1, _2 }
+
+max_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, a) }
+max_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, a) }
+max_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, a) }
+max_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, a) }
+max_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, g) }
+max_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, g) }
+max_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, g) }
+max_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, g) }
+max_real4_real4		proto fastcall :real4, :real4  { maxss _1, _2 }
+max_real8_real8		proto fastcall :real8, :real8  { maxsd _1, _2 }
+
+min_byte_imm macro a, b
+    exitm<max_byte_byte(b, a)>
+    endm
+min_word_imm macro a, b
+    exitm<max_word_word(b, a)>
+    endm
+min_dword_imm macro a, b
+    exitm<max_dword_dword(b, a)>
+    endm
+min_qword_imm macro a, b
+    exitm<max_qword_qword(b, a)>
+    endm
+min_sbyte_imm macro a, b
+    exitm<max_sbyte_sbyte(b, a)>
+    endm
+min_sword_imm macro a, b
+    exitm<max_sword_sword(b, a)>
+    endm
+min_sdword_imm macro a, b
+    exitm<max_sdword_sdword(b, a)>
+    endm
+min_sqword_imm macro a, b
+    exitm<max_sqword_sqword(b, a)>
+    endm
+
+max_byte_imm macro a, b
+    exitm<min_byte_byte(b, a)>
+    endm
+max_word_imm macro a, b
+    exitm<min_word_word(b, a)>
+    endm
+max_dword_imm macro a, b
+    exitm<min_dword_dword(b, a)>
+    endm
+max_qword_imm macro a, b
+    exitm<min_qword_qword(b, a)>
+    endm
+max_sbyte_imm macro a, b
+    exitm<min_sbyte_sbyte(b, a)>
+    endm
+max_sword_imm macro a, b
+    exitm<min_sword_sword(b, a)>
+    endm
+max_sdword_imm macro a, b
+    exitm<min_sdword_sdword(b, a)>
+    endm
+max_sqword_imm macro a, b
+    exitm<min_sqword_sqword(b, a)>
+    endm
+
+define max_imm_byte	<max_byte_byte>
+define max_imm_word	<max_word_word>
+define max_imm_dword	<max_dword_dword>
+define max_imm_qword	<max_qword_qword>
+define max_imm_sbyte	<max_sbyte_sbyte>
+define max_imm_sword	<max_sword_sword>
+define max_imm_sdword	<max_sdword_sdword>
+define max_imm_sqword	<max_sqword_sqword>
+
+define min_imm_byte	<min_byte_byte>
+define min_imm_word	<min_word_word>
+define min_imm_dword	<min_dword_dword>
+define min_imm_qword	<min_qword_qword>
+define min_imm_sbyte	<min_sbyte_sbyte>
+define min_imm_sword	<min_sword_sword>
+define min_imm_sdword	<min_sdword_sdword>
+define min_imm_sqword	<min_sqword_sqword>
+
+ifndef max
+max macro a, b
+%   exitm<typeid(max_, a)typeid(_, b)(a, b)>
+    endm
+endif
+ifndef min
 min macro a, b
 %   exitm<typeid(min_, a)typeid(_, b)(a, b)>
     endm

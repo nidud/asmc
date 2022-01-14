@@ -22,7 +22,7 @@ bar endp
 
 main proc
 
-    bar( al, bl, cx, dx )     ; extend to 32-bit
+    bar( al, al, dx, dx )     ; extend to 32-bit
     bar( eax, edx, ebx, ecx ) ; nothing done..
     ret
 main endp

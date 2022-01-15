@@ -300,8 +300,8 @@ MAKELONG_dword_dword proto watcall a:dword, b:dword, reg:abs {
 ifdif <a>,<reg>
     mov reg,a
 endif
-    xchg reg,b
-    shld reg,b,16
+    shl reg,16
+    shrd reg,b,16
     }
 MAKELONG macro a, b, reg:=<eax>
 %   exitm<typeid(MAKELONG_, a)typeid(_, b)(a, b, reg)>

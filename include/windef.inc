@@ -155,25 +155,25 @@ endif
     exitm<b>
     endm
 
-min_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, b) }
-min_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, b) }
-min_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, b) }
-min_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, b) }
-min_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, l) }
-min_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, l) }
-min_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, l) }
-min_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, l) }
+min_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, a) }
+min_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, a) }
+min_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, a) }
+min_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, a) }
+min_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, g) }
+min_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, g) }
+min_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, g) }
+min_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, g) }
 min_real4_real4		proto fastcall :real4, :real4  { minss _1, _2 }
 min_real8_real8		proto fastcall :real8, :real8  { minsd _1, _2 }
 
-max_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, a) }
-max_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, a) }
-max_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, a) }
-max_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, a) }
-max_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, g) }
-max_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, g) }
-max_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, g) }
-max_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, g) }
+max_byte_byte		proto watcall :byte,   :byte   { cmovrmx(_1, _2, b) }
+max_word_word		proto watcall :word,   :word   { cmovrmx(_1, _2, b) }
+max_dword_dword		proto watcall :dword,  :dword  { cmovrmx(_1, _2, b) }
+max_qword_qword		proto watcall :qword,  :qword  { cmovrmx(_1, _2, b) }
+max_sbyte_sbyte		proto watcall :sbyte,  :sbyte  { cmovrmx(_1, _2, l) }
+max_sword_sword		proto watcall :sword,  :sword  { cmovrmx(_1, _2, l) }
+max_sdword_sdword	proto watcall :sdword, :sdword { cmovrmx(_1, _2, l) }
+max_sqword_sqword	proto watcall :sqword, :sqword { cmovrmx(_1, _2, l) }
 max_real4_real4		proto fastcall :real4, :real4  { maxss _1, _2 }
 max_real8_real8		proto fastcall :real8, :real8  { maxsd _1, _2 }
 

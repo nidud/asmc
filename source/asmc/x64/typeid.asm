@@ -16,7 +16,7 @@ include lqueue.inc
 
 GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
         string:string_t, is_addr:int_t
-    
+
     UNREFERENCED_PARAMETER(buffer)
     UNREFERENCED_PARAMETER(opnd)
     UNREFERENCED_PARAMETER(string)
@@ -99,7 +99,7 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
     .if ( [rbx].mem_type == MT_TYPE && [rbx].type )
         mov rbx,[rbx].type
     .endif
-    .if ( [rbx].target_type && \
+    .if ( [rbx].target_type &&
           ( [rbx].mem_type == MT_PTR || [rbx].ptr_memtype == MT_TYPE ) )
 
         .if ( [rbx].mem_type == MT_PTR )
@@ -127,11 +127,12 @@ GetType proc fastcall uses rsi rdi rbx buffer:string_t, opnd:ptr expr,
            .return 1
         .endif
     .endif
-
-    .if ( [rbx].state == SYM_INTERNAL || \
-          [rbx].state == SYM_STACK || \
-          [rbx].state == SYM_STRUCT_FIELD || \
-          [rbx].state == SYM_TYPE )
+    mov al,[rbx].state
+    .if ( al == SYM_INTERNAL ||
+          al == SYM_EXTERNAL ||  
+          al == SYM_STACK ||
+          al == SYM_STRUCT_FIELD ||
+          al == SYM_TYPE )
 
         mov cl,[rbx].mem_type
         .switch pascal cl
@@ -232,10 +233,13 @@ GetTypeId proc fastcall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     mov ecx,eax
     mov i,eax
 
-    .for edx = 1 : [rbx].token != T_FINAL : rbx += asm_tok, ecx++
+    .for ( eax = 0, edx = 1 : [rbx].token != T_FINAL : rbx += asm_tok, ecx++ )
         .switch [rbx].token
         .case T_OP_BRACKET
             inc edx
+            .if ( eax == 0 && [rbx-asm_tok].token == T_ID )
+                mov eax,ecx
+            .endif
             .endc
         .case T_CL_BRACKET
             dec edx
@@ -243,8 +247,18 @@ GetTypeId proc fastcall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
             .break
         .endsw
     .endf
-    .return 0 .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
+    mov edi,ecx
+    .if ( eax )
 
+        .return 0 .ifd ( EvalOperand( &i, tokenarray, eax, &opnd, 0 ) == ERROR )
+        xor eax,eax
+        .if ( opnd.mem_type == MT_NEAR )
+            inc eax
+        .endif
+    .endif
+    .if ( !eax )
+        .return 0 .ifd ( EvalOperand( &i, tokenarray, edi, &opnd, 0 ) == ERROR )
+    .endif
     xor ecx,ecx
     .if ( id )
         lea rcx,id

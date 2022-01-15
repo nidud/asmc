@@ -94,7 +94,7 @@ GetType proc uses esi edi ebx buffer:string_t, opnd:ptr expr,
     .if ( [ebx].mem_type == MT_TYPE && [ebx].type )
         mov ebx,[ebx].type
     .endif
-    .if ( [ebx].target_type && \
+    .if ( [ebx].target_type &&
           ( [ebx].mem_type == MT_PTR || [ebx].ptr_memtype == MT_TYPE ) )
 
         .if ( [ebx].mem_type == MT_PTR )
@@ -122,11 +122,12 @@ GetType proc uses esi edi ebx buffer:string_t, opnd:ptr expr,
            .return 1
         .endif
     .endif
-
-    .if ( [ebx].state == SYM_INTERNAL || \
-          [ebx].state == SYM_STACK || \
-          [ebx].state == SYM_STRUCT_FIELD || \
-          [ebx].state == SYM_TYPE )
+    mov al,[ebx].state
+    .if ( al == SYM_INTERNAL ||
+          al == SYM_EXTERNAL ||
+          al == SYM_STACK ||
+          al == SYM_STRUCT_FIELD ||
+          al == SYM_TYPE )
 
         mov cl,[ebx].mem_type
         .switch pascal cl
@@ -225,10 +226,13 @@ GetTypeId proc uses esi edi ebx buffer:string_t, tokenarray:token_t
     mov ecx,eax
     mov i,eax
 
-    .for edx = 1 : [ebx].token != T_FINAL : ebx += 16, ecx++
+    .for ( eax = 0, edx = 1 : [ebx].token != T_FINAL : ebx += 16, ecx++ )
         .switch [ebx].token
         .case T_OP_BRACKET
             inc edx
+            .if ( eax == 0 && [rbx-asm_tok].token == T_ID )
+                mov eax,ecx
+            .endif
             .endc
         .case T_CL_BRACKET
             dec edx
@@ -236,8 +240,18 @@ GetTypeId proc uses esi edi ebx buffer:string_t, tokenarray:token_t
             .break
         .endsw
     .endf
-    .return 0 .if ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
-
+    mov edi,ecx
+    .if ( eax )
+        mov ecx,eax
+        .return 0 .ifd ( EvalOperand( &i, tokenarray, ecx, &opnd, 0 ) == ERROR )
+        xor eax,eax
+        .if ( opnd.mem_type == MT_NEAR )
+            inc eax
+        .endif
+    .endif
+    .if ( !eax )
+        .return 0 .ifd ( EvalOperand( &i, tokenarray, edi, &opnd, 0 ) == ERROR )
+    .endif
     xor ecx,ecx
     .if ( id )
         lea ecx,id

@@ -137,7 +137,8 @@ ifndef NOMINMAX
 
 cmovrmx macro a, b, x
     cmp a,b
-    exitm<cmov&x& a,b>
+    cmov&x& a,b
+    retm<a>
     endm
 
 min_imm_imm macro a, b
@@ -200,6 +201,12 @@ min_sdword_imm macro a, b
 min_sqword_imm macro a, b
     exitm<max_sqword_sqword(b, a)>
     endm
+min_qword_dword macro a, b
+    exitm<min_dword_dword(eax, b)>
+    endm
+min_qword_sdword macro a, b
+    exitm<min_dword_sdword(eax, b)>
+    endm
 
 max_byte_imm macro a, b
     exitm<min_byte_byte(b, a)>
@@ -225,6 +232,12 @@ max_sdword_imm macro a, b
 max_sqword_imm macro a, b
     exitm<min_sqword_sqword(b, a)>
     endm
+max_qword_dword macro a, b
+    exitm<max_dword_dword(eax, b)>
+    endm
+max_qword_sdword macro a, b
+    exitm<max_dword_sdword(eax, b)>
+    endm
 
 define max_imm_byte	<max_byte_byte>
 define max_imm_word	<max_word_word>
@@ -245,14 +258,14 @@ define min_imm_sdword	<min_sdword_sdword>
 define min_imm_sqword	<min_sqword_sqword>
 
 ifndef max
-max macro a, b
+max proto a:abs, b:abs {
 %   exitm<typeid(max_, a)typeid(_, b)(a, b)>
-    endm
+    }
 endif
 ifndef min
-min macro a, b
+min proto a:abs, b:abs {
 %   exitm<typeid(min_, a)typeid(_, b)(a, b)>
-    endm
+    }
 endif
 endif ; NOMINMAX
 

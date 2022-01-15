@@ -1363,7 +1363,8 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
             .endif
 
             mov eax,1
-            .return .if ebx == reg
+            mov ecx,i32
+            .return .if ( ebx == reg || ecx == reg )
             movzx ecx,GetRegNo(reg)
             mov eax,1
             shl eax,cl

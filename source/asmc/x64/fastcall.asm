@@ -1350,7 +1350,8 @@ ms64_param proc __ccall private uses rsi rdi rbx r12 r13 pp:dsym_t, index:int_t,
             .endif
 
             mov eax,1
-            .return .if ebx == reg
+            mov ecx,i32
+            .return .if ( ebx == reg || ecx == reg )
             movzx ecx,GetRegNo(reg)
             mov eax,1
             shl eax,cl

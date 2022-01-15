@@ -293,15 +293,18 @@ define MAKELONG_imm_sdword    <MAKELONG_dword_dword>
 define MAKELONG_dword_imm     <MAKELONG_dword_dword>
 define MAKELONG_sdword_imm    <MAKELONG_dword_dword>
 define MAKELONG_sdword_sdword <MAKELONG_dword_dword>
-MAKELONG_imm_imm macro a, b
+MAKELONG_imm_imm macro a, b, reg
     exitm<(((a) AND 0xffff) OR (((b) AND 0xffff) SHL 16))>
     endm
-MAKELONG_dword_dword proto watcall a:dword, b:dword {
-    xchg eax,edx
-    shld eax,edx,16
+MAKELONG_dword_dword proto watcall a:dword, b:dword, reg:abs {
+ifdif <a>,<reg>
+    mov reg,a
+endif
+    xchg reg,b
+    shld reg,b,16
     }
-MAKELONG macro a, b
-%   exitm<typeid(MAKELONG_, a)typeid(_, b)(a, b)>
+MAKELONG macro a, b, reg:=<eax>
+%   exitm<typeid(MAKELONG_, a)typeid(_, b)(a, b, reg)>
     endm
 endif
 

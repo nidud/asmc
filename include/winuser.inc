@@ -1312,9 +1312,8 @@ LPMSG			typedef ptr MSG
 POINTSTOPOINT proto fastcall pt:ptr POINT, pts:ptr {
 	movsx eax,dx
 	mov   [pt].POINT.x,eax
-	shr   edx,16
-	movsx eax,dx
-	mov   [pt].POINT.y,eax
+	sar   edx,16
+	mov   [pt].POINT.y,edx
 	}
 POINTTOPOINTS proto fastcall pt:ptr POINT {
 	mov   eax,[pt].POINT.y
@@ -1322,11 +1321,13 @@ POINTTOPOINTS proto fastcall pt:ptr POINT {
 	or    eax,[pt].POINT.x
 	}
 
-MAKEWPARAM macro l,h
-	exitm<MAKELONG(l, h)>
+MAKEWPARAM macro l, h, reg:=<eax>
+	MAKELONG(l, h, reg)
+	retm<reg>
 	endm
-MAKELPARAM macro l,h
-	exitm<MAKELONG(l, h)>
+MAKELPARAM macro l, h, reg:=<eax>
+	MAKELONG(l, h, reg)
+	retm<reg>
 	endm
 MAKELRESULT macro l,h
 	exitm<MAKELONG(l, h)>

@@ -1348,6 +1348,21 @@ MAKELRESULT macro l,h
 	endm
 endif
 
+IS_INTRESOURCE macro _r
+	ifidn typeid(_r),<imm>
+	if (((_r) shr 16) eq 0)
+	exitm<1>
+	else
+	exitm<0>
+	endif
+	endif
+	mov	rax,_r
+	shr	rax,16
+	mov	eax,0
+	setz	al
+	retm	<eax>
+	endm
+
 ifndef NOWINOFFSETS
 
 GWL_WNDPROC	    equ (-4)

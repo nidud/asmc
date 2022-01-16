@@ -381,12 +381,19 @@ else
 ATL_MAKEINTRESOURCE equ <ATL_MAKEINTRESOURCEA>
 endif
 ATL_IS_INTRESOURCE macro _r
-if (((_r) shr 16) eq 0)
-    exitm<1>
-else
-    exitm<0>
-endif
-endm
+	ifidn typeid(_r),<imm>
+	if (((_r) shr 16) eq 0)
+	exitm<1>
+	else
+	exitm<0>
+	endif
+	endif
+	mov	rax,_r
+	shr	rax,16
+	mov	eax,0
+	setz	al
+	retm	<eax>
+	endm
 
 ATL_RT_CURSOR		equ ATL_MAKEINTRESOURCE(1)
 ATL_RT_BITMAP		equ ATL_MAKEINTRESOURCE(2)

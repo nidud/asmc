@@ -54,16 +54,16 @@ BLACKNESS	equ 0x00000042
 WHITENESS	equ 0x00FF0062
 
 MAKEROP4 macro fore, back
-  local ra,rb,ta,tb
-    if inl_loadtypes_2(fore, back, ta, tb)
-      exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
-    endif
-    inl_loadargs_2(fore,back,ta,tb,ra,rb)
-    shl edx,8
-    and edx,0xFF000000
-    or	eax,edx
-    retm<eax>
-    endm
+  local ta,tb
+	if inl_loadtypes_2(fore, back, ta, tb)
+	exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
+	endif
+	inl_loadargs_2(fore,back,ta,tb)
+	shl	edx,8
+	and	edx,0xFF000000
+	or	eax,edx
+	retm	<eax>
+	endm
 
 endif
 
@@ -465,54 +465,65 @@ ICM_UNREGISTERICMATCHER equ 6
 ICM_QUERYMATCH		equ 7
 
 GetKValue macro cmyk
-    ifidn typeid(cmyk),<imm>
+	ifidn typeid(cmyk),<imm>
 	exitm<(cmyk)>
-    endif
-    mov	 eax,cmyk
-    retm<al>
-    endm
+	endif
+	mov	eax,cmyk
+	retm	<al>
+	endm
 GetYValue macro cmyk
-    ifidn typeid(cmyk),<imm>
+	ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 8))>
-    endif
-    mov	 eax,cmyk
-    shr	 eax,8
-    retm<al>
-    endm
+	endif
+	mov	eax,cmyk
+	shr	eax,8
+	retm	<al>
+	endm
 GetMValue macro cmyk
-    ifidn typeid(cmyk),<imm>
+	ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 16))>
-    endif
-    mov	 eax,cmyk
-    shr	 eax,16
-    retm<al>
-    endm
+	endif
+	mov	eax,cmyk
+	shr	eax,16
+	retm	<al>
+	endm
 GetCValue macro cmyk
-    ifidn typeid(cmyk),<imm>
+	ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 24))>
-    endif
-    mov	 eax,cmyk
-    shr	 eax,24
-    retm<al>
-    endm
+	endif
+	mov	eax,cmyk
+	shr	eax,24
+	retm	<al>
+	endm
 
 CMYK macro c,m,y,k
-    ifidn typeid(c),<imm>
-     ifidn typeid(m),<imm>
-      ifidn typeid(y),<imm>
-       ifidn typeid(k),<imm>
+	ifidn typeid(c),<imm>
+	ifidn typeid(m),<imm>
+	ifidn typeid(y),<imm>
+	ifidn typeid(k),<imm>
 	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((c)) SHL 24)))>
-       endif
-      endif
-     endif
-    endif
-    mov	 ah,c
-    mov	 al,m
-    shl	 eax,16
-    mov	 ah,y
-    mov	 al,c
-    retm<eax>
-    endm
+	endif
+	endif
+	endif
+	endif
+ifdef _WIN64
+	ifdif <c>,<al>
+	mov	al,c
+	endif
+	shl	eax,8
+	mov	al,m
+	shl	eax,8
+	mov	al,y
+	shl	eax,8
+else
+	mov	ah,c
+	mov	al,m
+	shl	eax,16
+	mov	ah,y
+endif
+	mov	al,k
+	retm	<eax>
+	endm
 
 FXPT16DOT16	typedef LONG
 FXPT2DOT30	typedef LONG

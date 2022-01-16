@@ -473,7 +473,7 @@ GetKValue macro cmyk
 	endm
 GetYValue macro cmyk
 	ifidn typeid(cmyk),<imm>
-	exitm<(((cmyk) SHR 8))>
+	exitm<((cmyk) SHR 8)>
 	endif
 	mov	eax,cmyk
 	shr	eax,8
@@ -481,7 +481,7 @@ GetYValue macro cmyk
 	endm
 GetMValue macro cmyk
 	ifidn typeid(cmyk),<imm>
-	exitm<(((cmyk) SHR 16))>
+	exitm<((cmyk) SHR 16)>
 	endif
 	mov	eax,cmyk
 	shr	eax,16
@@ -489,7 +489,7 @@ GetMValue macro cmyk
 	endm
 GetCValue macro cmyk
 	ifidn typeid(cmyk),<imm>
-	exitm<(((cmyk) SHR 24))>
+	exitm<((cmyk) SHR 24)>
 	endif
 	mov	eax,cmyk
 	shr	eax,24
@@ -501,7 +501,7 @@ CMYK macro c,m,y,k
 	ifidn typeid(m),<imm>
 	ifidn typeid(y),<imm>
 	ifidn typeid(k),<imm>
-	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((c)) SHL 24)))>
+	exitm<(((((k) OR ((y) SHL 8)) OR ((m) SHL 16)) OR ((c) SHL 24)))>
 	endif
 	endif
 	endif
@@ -4913,3 +4913,4 @@ endif
 
 .pragma list(pop)
 endif
+

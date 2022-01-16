@@ -216,17 +216,17 @@ SubclassDialog macro hwndDlg, lpfn
 
 
 SetDlgMsgResult macro hwnd, msg, result
-	if ((msg eq WM_CTLCOLORMSGBOX) or \
-	    (msg eq WM_CTLCOLOREDIT) or \
-	    (msg eq WM_CTLCOLORLISTBOX) or \
-	    (msg eq WM_CTLCOLORBTN) or \
-	    (msg eq WM_CTLCOLORDLG) or \
-	    (msg eq WM_CTLCOLORSCROLLBAR) or \
-	    (msg eq WM_CTLCOLORSTATIC) or \
-	    (msg eq WM_COMPAREITEM) or \
-	    (msg eq WM_VKEYTOITEM) or \
-	    (msg eq WM_CHARTOITEM) or \
-	    (msg eq WM_QUERYDRAGICON) or \
+	if ((msg eq WM_CTLCOLORMSGBOX) or
+	    (msg eq WM_CTLCOLOREDIT) or
+	    (msg eq WM_CTLCOLORLISTBOX) or
+	    (msg eq WM_CTLCOLORBTN) or
+	    (msg eq WM_CTLCOLORDLG) or
+	    (msg eq WM_CTLCOLORSCROLLBAR) or
+	    (msg eq WM_CTLCOLORSTATIC) or
+	    (msg eq WM_COMPAREITEM) or
+	    (msg eq WM_VKEYTOITEM) or
+	    (msg eq WM_CHARTOITEM) or
+	    (msg eq WM_QUERYDRAGICON) or
 	    (msg eq WM_INITDIALOG))
 	   exitm<result>
 	endif

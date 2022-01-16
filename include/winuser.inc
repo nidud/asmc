@@ -1323,20 +1323,26 @@ POINTTOPOINTS proto fastcall pt:ptr POINT {
 
 ifdef _WIN64
 MAKEWPARAM macro l, h, reg:=<r8d>
+	MAKELONG(l, h, reg)
+	retm<reg>
+	endm
 else
 MAKEWPARAM macro l, h, reg:=<eax>
-endif
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm
+endif
 ifdef _WIN64
 MAKELPARAM macro l, h, reg:=<r9d>
-else
-MAKELPARAM macro l, h, reg:=<eax>
-endif
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm
+else
+MAKELPARAM macro l, h, reg:=<eax>
+	MAKELONG(l, h, reg)
+	retm<reg>
+	endm
+endif
 MAKELRESULT macro l,h
 	exitm<MAKELONG(l, h)>
 	endm
@@ -1658,9 +1664,9 @@ endif
 if(_WIN32_WINNT GE 0x0400)
 WHEEL_DELTA		equ 120
 GET_WHEEL_DELTA_WPARAM macro wParam
-    movzx eax,word ptr wParam[2]
-    retm<eax>
-    endm
+	movzx	eax,word ptr wParam[2]
+	retm	<eax>
+	endm
 endif
 if(_WIN32_WINNT GE 0x0400)
 WHEEL_PAGESCROLL	equ (UINT_MAX)
@@ -10717,3 +10723,4 @@ endif
 endif
 
 .pragma pack(pop)
+

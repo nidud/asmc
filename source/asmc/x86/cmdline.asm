@@ -537,22 +537,22 @@ ifndef ASMC64
                 or Options.cpu,P_PM
             .endif
             .switch ecx
-            .case 0: define_name( "__86__", "1" )  : .endc
-            .case 1: define_name( "__186__", "1" ) : .endc
-            .case 2: define_name( "__286__", "1" ) : .endc
-            .case 3: define_name( "__386__", "1" ) : .endc
-            .case 4: define_name( "__486__", "1" ) : .endc
-            .case 5: define_name( "__586__", "1" ) : .endc
+            .case 0: define_name( "__P86__", "1" )  : .endc
+            .case 1: define_name( "__P186__", "1" ) : .endc
+            .case 2: define_name( "__P286__", "1" ) : .endc
+            .case 3: define_name( "__P386__", "1" ) : .endc
+            .case 4: define_name( "__P486__", "1" ) : .endc
+            .case 5: define_name( "__P586__", "1" ) : .endc
             .case 9
                 define_name( "__SSE2__", "1" )
             .case 8
                 define_name( "__SSE__", "1" )
             .case 7
             .case 6
-                define_name( "__686__", "1" )
+                define_name( "__P686__", "1" )
                 .endc
             .case 10
-                define_name( "__64__", "1" )
+                define_name( "__P64__", "1" )
                 .endc
             .endsw
             .return

@@ -43,6 +43,21 @@ MAX_TEXTMACRO_NESTING equ 20
  MacroLevel  dd 0        ; current macro nesting level
 .code
 
+if 0
+MSymSearch proc name:string_t
+    .if SymSearch( rcx )
+        .if ( [rax].asym.state == SYM_EXTERNAL &&
+              [rax].asym.flag2 & S_ISINLINE )
+            mov rcx,[rax].asym.target_type
+            .if ( rcx && [rcx].asym.state == SYM_MACRO )
+                mov rax,rcx
+            .endif
+        .endif
+    .endif
+    ret
+MSymSearch endp
+endif
+
 ; C ltoa() isn't fully compatible since hex digits are lower case.
 ; for JWasm, it's ensured that 2 <= radix <= 16.
 
@@ -322,10 +337,10 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
 
                 .if ( [rbx].token == T_PERCENT )
 
-                    ;; expansion of macro parameters.
-                    ;; if the token behind % is not a text macro or macro function
-                    ;; the expression will be always expanded and evaluated.
-                    ;; Else it is expanded, but only evaluated if
+                    ; expansion of macro parameters.
+                    ; if the token behind % is not a text macro or macro function
+                    ; the expression will be always expanded and evaluated.
+                    ; Else it is expanded, but only evaluated if
 
                     inc idx
                     add rbx,asm_tok
@@ -547,7 +562,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                         add rax,tokenarray
                         mov [rax].asm_tok.lastidx,ebx
 
-                        ;; copy spaces located before the first token
+                        ; copy spaces located before the first token
                         imul ebx,idx,asm_tok
                         add rbx,tokenarray
                         mov rcx,[rbx+asm_tok].tokpos
@@ -559,13 +574,13 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                         .continue
                     .endif
 
-                    ;; macros functions must be expanded always.
-                    ;; text macros are expanded only selectively
+                    ; macros functions must be expanded always.
+                    ; text macros are expanded only selectively
 
-                    .if [rbx].token == T_ID
-                        .if SymSearch([rbx].string_ptr)
+                    .if ( [rbx].token == T_ID )
+                        .if SymSearch( [rbx].string_ptr )
                             mov sym,rax
-                            .if ( [rax].asym.state == SYM_MACRO && [rax].asym.flags & S_ISDEFINED && \
+                            .if ( [rax].asym.state == SYM_MACRO && [rax].asym.flags & S_ISDEFINED &&
                                 [rax].asym.mac_flag & M_ISFUNC && [rbx+asm_tok].token == T_OP_BRACKET )
                                 inc idx
                                 mov idx,RunMacro( sym, idx, tokenarray, r12, 0, &is_exitm2 )
@@ -1048,7 +1063,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                         ; v2.08: no expansion inside quoted strings without &
                         ;
                         mov rdx,pIdent
-                        .continue .if ( quoted_string && \
+                        .continue .if ( quoted_string &&
                             byte ptr [rdx-1] != '&' && byte ptr [rsi] != '&' )
 
                         .if ( substitute )
@@ -1071,6 +1086,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                         mov StringBufferEnd,GetAlignedPointer(rsi, eax)
                         mov rdi,pIdent
                         mov rc,STRING_EXPANDED
+
                     .elseif ( [rax].asym.state == SYM_MACRO && [rax].asym.mac_flag & M_ISFUNC )
 
                         ; expand macro functions.
@@ -1161,7 +1177,7 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
                 .endif
                 movsb
             .endif
-        .endw ;; end while
+        .endw
     .endf
     mov byte ptr [rdi],0
     inc rdi
@@ -1188,10 +1204,10 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
 
 ExpandText endp
 
-;; replace text macros and macro functions by their values, recursively
-;; outbuf in: text macro or macro function value
-;; outbuf out: expanded value
-;; equmode: if 1, don't expand macro functions
+; replace text macros and macro functions by their values, recursively
+; outbuf in: text macro or macro function value
+; outbuf out: expanded value
+; equmode: if 1, don't expand macro functions
 
 ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:token_t, equmode:int_t, level:int_t
 
@@ -1212,10 +1228,12 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
     .endif
 
     .while ( expanded == TRUE )
+
         mov i,old_tokencount
         inc i
         mov Token_Count,Tokenize( outbuf, i, tokenarray, TOK_RESCAN )
         mov expanded,FALSE
+
         .for ( : i < Token_Count: i++ )
 
             imul ebx,i,asm_tok
@@ -1223,10 +1241,10 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
             .if [rbx].token == T_ID
                 mov sym,SymSearch( [rbx].string_ptr )
 
-                ;; expand macro functions
+                ; expand macro functions
 
-                .if ( rax && [rax].asym.state == SYM_MACRO && \
-                      [rax].asym.flags & S_ISDEFINED && [rax].asym.mac_flag & M_ISFUNC && \
+                .if ( rax && [rax].asym.state == SYM_MACRO &&
+                      [rax].asym.flags & S_ISDEFINED && [rax].asym.mac_flag & M_ISFUNC &&
                       [rbx+asm_tok].token == T_OP_BRACKET && equmode == FALSE )
 
                     mov rcx,[rbx].tokpos
@@ -1246,7 +1264,7 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
                     tstrcat( rdi, [rbx].tokpos )
                     tstrcpy( outbuf, buffer )
                     mov expanded,TRUE
-                    ;; is i to be decremented here?
+                    ; is i to be decremented here?
                     .break
                 .elseif ( rax && [rax].asym.state == SYM_TMACRO && [rax].asym.flags & S_ISDEFINED )
 
@@ -1274,18 +1292,17 @@ ExpandTMacro proc __ccall private uses rsi rdi rbx outbuf:string_t, tokenarray:t
         .endf
     .endw
     mov Token_Count,old_tokencount
-    mov eax,NOT_ERROR
-    ret
+   .return( NOT_ERROR )
 
 ExpandTMacro endp
 
-;; rebuild a source line
-;; adjust all "pos" values behind the current pos
-;; - newstring = new value of item i
-;; - i = token buffer index of item to replace
-;; - outbuf = start of source line to rebuild
-;; - oldlen = old length of item i
-;; - pos_line = position of item in source line
+; rebuild a source line
+; adjust all "pos" values behind the current pos
+; - newstring = new value of item i
+; - i = token buffer index of item to replace
+; - outbuf = start of source line to rebuild
+; - oldlen = old length of item i
+; - pos_line = position of item in source line
 
 RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
         tokenarray:token_t, oldlen:uint_t, pos_line:uint_t, addbrackets:int_t
@@ -1306,7 +1323,7 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
     mov rest,eax
     mov rdi,buffer
     mov ecx,eax
-    rep movsb       ;; save content of line behind item
+    rep movsb ; save content of line behind item
 
     mov rdi,[rbx].tokpos
     mov newlen,tstrlen(newstring)
@@ -1364,10 +1381,10 @@ RebuildLine proc __ccall private uses rsi rdi rbx newstring:string_t, i:int_t,
 
 RebuildLine endp
 
-;; expand one token
-;; line: full source line
-;; *pi: index of token in tokenarray
-;; equmode: if 1, dont expand macro functions
+; expand one token
+; line: full source line
+; *pi: index of token in tokenarray
+; equmode: if 1, dont expand macro functions
 
 ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, tokenarray:token_t,
         max:int_t, bracket_flags:int_t, equmode:int_t, buffer:ptr char_t
@@ -1395,9 +1412,9 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
 
         .break .if [rbx].token == T_COMMA
 
-        ;; v2.05: the '%' should only be handled as an operator if addbrackets==TRUE,
-        ;; which means that the current directive is a preprocessor directive and the
-        ;; expected argument is a literal (or text macro).
+        ; v2.05: the '%' should only be handled as an operator if addbrackets==TRUE,
+        ; which means that the current directive is a preprocessor directive and the
+        ; expected argument is a literal (or text macro).
 
         .if [rbx].token == T_PERCENT && addbrackets && evaluate == FALSE
 
@@ -1412,8 +1429,8 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
 
             mov rsi,SymSearch([rbx].string_ptr)
 
-            ;; don't check isdefined flag (which cannot occur in pass one, and this code usually runs
-            ;; in pass one only!
+            ; don't check isdefined flag (which cannot occur in pass one, and this code usually runs
+            ; in pass one only!
 
             .if rax
 
@@ -1494,13 +1511,13 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
 
                     .else
 
-                        ;; a macro proc is expanded at pos 0 or pos 2
-                        ;; (or at pos 1 if sym->label is on)
+                        ; a macro proc is expanded at pos 0 or pos 2
+                        ; (or at pos 1 if sym->label is on)
 
                         mov edx,i
                         mov rcx,tokenarray
-                        .if ( edx == 0 || ( edx == 2 && ( [rcx+asm_tok].asm_tok.token == T_COLON || \
-                             [rcx+asm_tok].asm_tok.token == T_DBL_COLON ) ) || \
+                        .if ( edx == 0 || ( edx == 2 && ( [rcx+asm_tok].asm_tok.token == T_COLON ||
+                             [rcx+asm_tok].asm_tok.token == T_DBL_COLON ) ) ||
                              ( edx == 1 && [rax].asym.mac_flag & M_LABEL ) )
                         .else
                             .continue
@@ -1553,7 +1570,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
         mov rbx,tokenarray
         mov edx,pos
         lea rax,[rdx+1]
-        .if eax == i ;; just a single %?
+        .if eax == i ; just a single %?
             mov opndx.value,0
             mov i,edx
         .else
@@ -1572,13 +1589,14 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
             mov Token_Count,Tokenize( buffer, edi, tokenarray, TOK_RESCAN )
             mov i2,edi
             .ifd EvalOperand( &i2, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR
-                mov opndx.value,0 ;; v2.09: assume value 0, don't return with ERROR
+                mov opndx.value,0 ; v2.09: assume value 0, don't return with ERROR
             .elseif opndx.kind != EXPR_CONST
                 asmerr( 2026 )
-                mov opndx.value,0 ;; assume value 0
+                mov opndx.value,0 ; assume value 0
             .endif
             mov Token_Count,old_tokencount
         .endif
+
 if TEVALUE_UNSIGNED
 
         ; v2.03: Masm compatible: returns an unsigned value
@@ -1591,7 +1609,7 @@ else
         .endif
         myltoa( opndx.llvalue, StringBufferEnd, ModuleInfo.radix, eax, FALSE )
 endif
-        ;; v2.05: get size of string to be "replaced"
+        ; v2.05: get size of string to be "replaced"
 
         mov rsi,pi
         mov esi,[rsi]
@@ -1619,9 +1637,9 @@ endif
 
 ExpandToken endp
 
-;; used by EQU ( may also be used by directives flagged with DF_NOEXPAND
-;; if they have to partially expand their arguments ).
-;; equmode: 1=don't expand macro functions
+; used by EQU ( may also be used by directives flagged with DF_NOEXPAND
+; if they have to partially expand their arguments ).
+; equmode: 1=don't expand macro functions
 
 
 ExpandLineItems proc __ccall uses rsi rdi line:string_t, i:int_t, tokenarray:token_t,
@@ -1650,7 +1668,7 @@ ExpandLineItems proc __ccall uses rsi rdi line:string_t, i:int_t, tokenarray:tok
         .endf
         .break .if edi == NOT_ERROR
 
-        ;; expansion happened, re-tokenize and continue!
+        ; expansion happened, re-tokenize and continue!
         mov Token_Count,Tokenize( line, i, tokenarray, TOK_RESCAN )
         .if esi == MAX_TEXTMACRO_NESTING
             asmerr( 2123 )

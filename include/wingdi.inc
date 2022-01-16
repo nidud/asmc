@@ -53,9 +53,17 @@ DSTINVERT	equ 0x00550009
 BLACKNESS	equ 0x00000042
 WHITENESS	equ 0x00FF0062
 
-MAKEROP4 macro fore,back
-	exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
-	endm
+MAKEROP4 macro fore, back
+  local ra,rb,ta,tb
+    if inl_loadtypes_2(fore, back, ta, tb)
+      exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
+    endif
+    inl_loadargs_2(fore,back,ta,tb,ra,rb)
+    shl edx,8
+    and edx,0xFF000000
+    or	eax,edx
+    retm<eax>
+    endm
 
 endif
 
@@ -457,21 +465,54 @@ ICM_UNREGISTERICMATCHER equ 6
 ICM_QUERYMATCH		equ 7
 
 GetKValue macro cmyk
-	exitm<((cmyk))>
-	endm
+    ifidn typeid(cmyk),<imm>
+	exitm<(cmyk)>
+    endif
+    mov	 eax,cmyk
+    retm<al>
+    endm
 GetYValue macro cmyk
+    ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 8))>
-	endm
+    endif
+    mov	 eax,cmyk
+    shr	 eax,8
+    retm<al>
+    endm
 GetMValue macro cmyk
+    ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 16))>
-	endm
+    endif
+    mov	 eax,cmyk
+    shr	 eax,16
+    retm<al>
+    endm
 GetCValue macro cmyk
+    ifidn typeid(cmyk),<imm>
 	exitm<(((cmyk) SHR 24))>
-	endm
+    endif
+    mov	 eax,cmyk
+    shr	 eax,24
+    retm<al>
+    endm
 
-CMYK macro _c,m,y,k
-	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((_c)) SHL 24)))>
-	endm
+CMYK macro c,m,y,k
+    ifidn typeid(c),<imm>
+     ifidn typeid(m),<imm>
+      ifidn typeid(y),<imm>
+       ifidn typeid(k),<imm>
+	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((c)) SHL 24)))>
+       endif
+      endif
+     endif
+    endif
+    mov	 ah,c
+    mov	 al,m
+    shl	 eax,16
+    mov	 ah,y
+    mov	 al,c
+    retm<eax>
+    endm
 
 FXPT16DOT16	typedef LONG
 FXPT2DOT30	typedef LONG
@@ -1380,13 +1421,40 @@ DEVICE_FONTTYPE		equ 0x002
 TRUETYPE_FONTTYPE	equ 0x004
 
 RGB macro r,g,b
+	ifidn typeid(r),<imm>
+	ifidn typeid(g),<imm>
+	ifidn typeid(b),<imm>
 	exitm<((((r) OR (((g)) SHL 8)) OR (((b)) SHL 16)))>
+	endif
+	endif
+	endif
+	mov	ah,0
+	mov	al,b
+	shl	eax,8
+	mov	al,g
+	shl	eax,8
+	mov	al,r
+	retm	<eax>
 	endm
+
 PALETTERGB macro r,g,b
+	ifidn typeid(r),<imm>
+	ifidn typeid(g),<imm>
+	ifidn typeid(b),<imm>
 	exitm<(0x02000000 OR RGB(r,g,b))>
+	endif
+	endif
+	endif
+	or	RGB(r,g,b),0x02000000
+	retm	<eax>
 	endm
 PALETTEINDEX macro i
+	ifidn typeid(i),<imm>
 	exitm<((0x01000000 OR (i)))>
+	endif
+	mov	eax,i
+	or	eax,0x02000000
+	retm	<eax>
 	endm
 
 PC_RESERVED		equ 0x01

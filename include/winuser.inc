@@ -1321,11 +1321,19 @@ POINTTOPOINTS proto fastcall pt:ptr POINT {
 	or    eax,[pt].POINT.x
 	}
 
+ifdef _WIN64
+MAKEWPARAM macro l, h, reg:=<r8d>
+else
 MAKEWPARAM macro l, h, reg:=<eax>
+endif
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm
+ifdef _WIN64
+MAKELPARAM macro l, h, reg:=<r9d>
+else
 MAKELPARAM macro l, h, reg:=<eax>
+endif
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm

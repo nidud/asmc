@@ -12,14 +12,6 @@ The macros listed in the following table.
 
 | Macros | Meaning |
 |:------ |:------- |
-| **\_\_186\_\_** | Defined as 1 when the /1 option is set. Otherwise, undefined. |
-| **\_\_286\_\_** | Defined as 1 when the /2 option is set. Otherwise, undefined. |
-| **\_\_386\_\_** | Defined as 1 when the /3 option is set. Otherwise, undefined. |
-| **\_\_486\_\_** | Defined as 1 when the /4 option is set. Otherwise, undefined. |
-| **\_\_586\_\_** | Defined as 1 when the /5 option is set. Otherwise, undefined. |
-| **\_\_64\_\_** | Defined as 1 when the /10 option is set. Otherwise, undefined. |
-| **\_\_686\_\_** | Defined as 1 when the /6, /7, /8, or /9 option is set. Otherwise, undefined. |
-| **\_\_86\_\_** | Defined as 1 when the /0 option is set. Otherwise, undefined. |
 | **\_\_ASMC\_\_** | Defined as an integer literal that represents the version of Asmc. This macro is always defined. |
 | **\_\_ASMC64\_\_** | Defined as an integer literal that represents the version of Asmc64. This macro is defined by ASMC64.EXE. |
 | **\_\_AVX\_\_** | Defined as 1 when the /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
@@ -40,6 +32,14 @@ The macros listed in the following table.
 | **\_\_MEDIUM\_\_** | Defined as 1 when the /mm option is set. Otherwise, undefined. |
 | **\_MSVCRT** | Defined as 1 when the /nolib option is set. Otherwise, undefined. |
 | **\_\_PE\_\_** | Defined as 1 when the /pe option is set. Otherwise, undefined. |
+| **\_\_P186\_\_** | Defined as 1 when the /1 option is set. Otherwise, undefined. |
+| **\_\_P286\_\_** | Defined as 1 when the /2 option is set. Otherwise, undefined. |
+| **\_\_P386\_\_** | Defined as 1 when the /3 option is set. Otherwise, undefined. |
+| **\_\_P486\_\_** | Defined as 1 when the /4 option is set. Otherwise, undefined. |
+| **\_\_P586\_\_** | Defined as 1 when the /5 option is set. Otherwise, undefined. |
+| **\_\_P64\_\_** | Defined as 1 when the /10 option is set. Otherwise, undefined. |
+| **\_\_P686\_\_** | Defined as 1 when the /6, /7, /8, or /9 option is set. Otherwise, undefined. |
+| **\_\_P86\_\_** | Defined as 1 when the /0 option is set. Otherwise, undefined. |
 | **\_\_SMALL\_\_** | Defined as 1 when the /ms option is set. Otherwise, undefined. |
 | **\_\_SSE\_\_** | Defined as 1 when the /8, /9, /arch:SSE, /arch:SSE2, /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |
 | **\_\_SSE2\_\_** | Defined as 1 when the /9, /arch:SSE2, /arch:AVX, /arch:AVX2, or /arch:AVX512 options are set. Otherwise, undefined. |

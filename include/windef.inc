@@ -211,7 +211,7 @@ MAKELONG macro a, b, reg:=<eax>
 	inl_loadargs_2(a,b,ta,tb)
 	shl	eax,16
 	shrd	eax,edx,16
-	ifdif <eax>,<reg>
+%	ifdif <reg>,<eax>
 	if ( typeof(reg) eq 8 )
 	movsxd	reg,eax
 	else

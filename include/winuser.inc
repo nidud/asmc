@@ -1322,7 +1322,7 @@ POINTTOPOINTS proto fastcall pt:ptr POINT {
 	}
 
 ifdef _WIN64
-MAKEWPARAM macro l, h, reg:=<r8d>
+MAKEWPARAM macro l, h, reg:=<r8>
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm
@@ -1333,7 +1333,7 @@ MAKEWPARAM macro l, h, reg:=<eax>
 	endm
 endif
 ifdef _WIN64
-MAKELPARAM macro l, h, reg:=<r9d>
+MAKELPARAM macro l, h, reg:=<r9>
 	MAKELONG(l, h, reg)
 	retm<reg>
 	endm
@@ -1344,10 +1344,8 @@ MAKELPARAM macro l, h, reg:=<eax>
 	endm
 endif
 MAKELRESULT macro l,h
-	exitm<MAKELONG(l, h)>
+	exitm<MAKELONG(l, h, rax)>
 	endm
-
-
 endif
 
 ifndef NOWINOFFSETS

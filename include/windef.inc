@@ -212,7 +212,11 @@ MAKELONG macro a, b, reg:=<eax>
 	shl	eax,16
 	shrd	eax,edx,16
 	ifdif <eax>,<reg>
+	if ( typeof(reg) eq 8 )
+	movsxd	reg,eax
+	else
 	mov	reg,eax
+	endif
 	endif
 	retm	<reg>
 	endm

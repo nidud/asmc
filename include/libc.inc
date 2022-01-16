@@ -255,42 +255,4 @@ CALLBACK macro id, arguments:VARARG
     endm
 endif
 
-inl_loadargs_2 macro a, b, t1, t2, r1, r2
-  local func
-    ifidn t1,<imm>
-	t1 textequ t2
-    elseifidn t2,<imm>
-	t2 textequ t1
-    endif
-    ifidn @SubStr(%t1, 1, 3),<ptr>
-	t1 textequ t2
-    elseifidn @SubStr(%t2, 1, 3),<ptr>
-	t2 textequ t1
-    endif
-    ifidn t1,<near>
-	t1 textequ t2
-    elseifidn t2,<near>
-	t2 textequ t1
-    endif
-    func proto watcall :t1, :t2 {
-    ifnb <r1>
-	r1 equ <_1>
-	r2 equ <_2>
-    endif
-	}
-    func(a, b)
-    exitm<>
-    endm
-
-inl_loadtypes_2 macro a, b, t1, t2
-    t1 textequ typeid(a)
-    t2 textequ typeid(b)
-    ifidn t1,<imm>
-     ifidn t2,<imm>
-	exitm<1>
-     endif
-    endif
-    exitm<0>
-    endm
-
 endif

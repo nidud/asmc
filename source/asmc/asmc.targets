@@ -74,6 +74,8 @@
       GeneratePreprocessedSourceListing="%(ASMC.GeneratePreprocessedSourceListing)"
       ListAllAvailableInformation="%(ASMC.ListAllAvailableInformation)"
       UseSafeExceptionHandlers="%(ASMC.UseSafeExceptionHandlers)"
+      GenerateUnwindInformation="%(ASMC.GenerateUnwindInformation)"
+      GenerateCStackFrame="%(ASMC.GenerateCStackFrame)"
       AddFirstPassListing="%(ASMC.AddFirstPassListing)"
       EnableAssemblyGeneratedCodeListing="%(ASMC.EnableAssemblyGeneratedCodeListing)"
       DisableSymbolTable="%(ASMC.DisableSymbolTable)"

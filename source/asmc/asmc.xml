@@ -64,6 +64,20 @@
       Description="Marks the object as either containing no exception handlers or containing exception handlers that are all declared with .SAFESEH.     (/safeseh)"
       Switch="/safeseh" />
     <BoolProperty
+      Name="GenerateUnwindInformation"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate unwind information"
+      Description="Auto adds frame directive for all procedures.    (/frame)"
+      Switch="/frame" />
+    <BoolProperty
+      Name="GenerateCStackFrame"
+      Category="Advanced"
+      HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"
+      DisplayName="Generate C-stack frame"
+      Description="Pushes USES register before the stack frame is created. Use this for dynamic stack allocation.    (/Cs)"
+      Switch="/Cs" />
+    <BoolProperty
       Name="AddFirstPassListing"
       Category="Listing File"
       HelpUrl="https://github.com/nidud/asmc/blob/master/doc/command/readme.md"

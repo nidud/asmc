@@ -138,8 +138,7 @@ GetTyperef proc __ccall uses rsi sym:ptr asym, Ofssize:byte
                 .case 8  : .return ST_UINT8
                 .case 16 : .return ST_UINT8
                 .case 2
-                    ;.if ( [rsi].asym.flag1 & S_ISARRAY && Options.debug_symbols == CV_SIGNATURE_C13 )
-                    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+                    .if ( ModuleInfo.xflag & OPT_WSTRING )
                         .return ST_CHAR16
                     .endif
                     .return ST_UINT2

@@ -1997,12 +1997,15 @@ GET_LPARAM macro wp, lp
 	exitm<(lp)>
 	endm
 
-GET_X_LPARAM macro lp
-	exitm<(LOWORD(lp))>
-	endm
-GET_Y_LPARAM macro lp
-	exitm<(HIWORD(lp))>
-	endm
+GET_X_LPARAM proto watcall lp:LPARAM {
+	LOWORD(eax)
+	retm<eax>
+	}
+
+GET_Y_LPARAM proto watcall lp:LPARAM {
+	HIWORD(eax)
+	retm<eax>
+	}
 
 GET_WM_ACTIVATE_STATE macro wp, lp
 	exitm<LOWORD(wp)>

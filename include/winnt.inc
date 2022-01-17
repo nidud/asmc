@@ -209,7 +209,7 @@ PUNZTCH		typedef PUNZWCH
 PCUNZTCH	typedef PCUNZWCH
 
 __TEXT macro quote
-	exitm<L&quote&>
+	exitm<quote>
 	endm
 
 else ; _UNICODE
@@ -275,33 +275,17 @@ GROUP_AFFINITY		ENDS
 PGROUP_AFFINITY		typedef ptr GROUP_AFFINITY
 
 
-ifdef STRICT
-HANDLE		typedef ptr
-if 0 AND (_MSC_VER GT 1000)
-DECLARE_HANDLE macro h_name
-	exitm<h_name typedef ptr>
-	endm
-else
-DECLARE_HANDLE macro h_name
-&h_name&__ struc
-unused	SINT ?
-&h_name&__ ends
-	exitm<h_name typedef ptr &h_name&__>
-	endm
-endif
-else
-HANDLE	typedef PVOID
-DECLARE_HANDLE macro name
-	exitm<name typedef HANDLE>
-	endm
-endif
+HANDLE	typedef ptr
 PHANDLE typedef ptr HANDLE
-
-
 FCHAR	typedef BYTE
 FSHORT	typedef WORD
 FLONG	typedef DWORD
 
+ifndef DECLARE_HANDLE
+DECLARE_HANDLE macro name
+	exitm<name typedef ptr>
+	endm
+endif
 
 ifndef _HRESULT_DEFINED
 define _HRESULT_DEFINED

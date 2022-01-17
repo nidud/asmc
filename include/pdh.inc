@@ -1145,13 +1145,13 @@ endif
 
 ifdef UNICODE
 ifndef _UNICODE
-_UNICODE equ 1
+define _UNICODE 1
 endif
 endif
 
 ifdef _UNICODE
 ifndef UNICODE
-UNICODE equ 1
+define UNICODE 1
 endif
 endif
 

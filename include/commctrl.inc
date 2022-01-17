@@ -479,7 +479,7 @@ ImageList_SetOverlayImage proto WINAPI \
 	      iOverlay: SINT
 
 ImageList_AddIcon macro himl, hicon
-	exitm<Imageist_ReplaceIcon(himl, -1, hicon)>
+	exitm<ImageList_ReplaceIcon(himl, -1, hicon)>
 	endm
 
 ILD_NORMAL		equ 0x0000
@@ -1262,7 +1262,7 @@ CreateToolbarEx proto WINAPI \
 		   wID: UINT,
 	      nBitmaps: SINT,
 	       hBMInst: HINSTANCE,
-		 wBMID: UINT,
+		 wBMID: UINT_PTR,
 	     lpButtons: LPCTBBUTTON,
 	   iNumButtons: SINT,
 	      dxButton: SINT,
@@ -1321,6 +1321,27 @@ TBSTYLE_TRANSPARENT	equ 0x8000
 TBSTYLE_EX_DRAWDDARROWS equ 0x00000001
 endif
 
+define BTNS_BUTTON     TBSTYLE_BUTTON
+define BTNS_SEP	       TBSTYLE_SEP
+define BTNS_CHECK      TBSTYLE_CHECK
+define BTNS_GROUP      TBSTYLE_GROUP
+define BTNS_CHECKGROUP TBSTYLE_CHECKGROUP
+define BTNS_DROPDOWN   TBSTYLE_DROPDOWN
+define BTNS_AUTOSIZE   TBSTYLE_AUTOSIZE
+define BTNS_NOPREFIX   TBSTYLE_NOPREFIX
+define BTNS_SHOWTEXT   0x0040
+define BTNS_WHOLEDROPDOWN  0x0080
+
+define TBSTYLE_EX_MIXEDBUTTONS		   0x00000008
+define TBSTYLE_EX_HIDECLIPPEDBUTTONS	   0x00000010
+
+define TBSTYLE_EX_MULTICOLUMN		   0x00000002
+define TBSTYLE_EX_VERTICAL		   0x00000004
+
+if (NTDDI_VERSION GE NTDDI_WINXP)
+define TBSTYLE_EX_DOUBLEBUFFER		   0x00000080
+endif
+
 if (_WIN32_IE GE 0x0400)
 NMTBCUSTOMDRAW		STRUC
 nmcd			NMCUSTOMDRAW <>
@@ -1376,7 +1397,7 @@ TB_ADDBITMAP		equ (WM_USER + 19)
 ifdef _WIN32
 TBADDBITMAP		STRUC
 hInst			HINSTANCE ?
-nID			UINT ?
+nID			UINT_PTR ?
 TBADDBITMAP		ENDS
 LPTBADDBITMAP		typedef ptr TBADDBITMAP
 
@@ -1569,9 +1590,9 @@ endif
 
 TBREPLACEBITMAP		STRUC
 hInstOld		HINSTANCE ?
-nIDOld			UINT ?
+nIDOld			UINT_PTR ?
 hInstNew		HINSTANCE ?
-nIDNew			UINT ?
+nIDNew			UINT_PTR ?
 nButtons		SINT ?
 TBREPLACEBITMAP		ENDS
 LPTBREPLACEBITMAP	typedef ptr TBREPLACEBITMAP
@@ -2295,7 +2316,7 @@ TTTOOLINFOA		STRUC
 cbSize			UINT ?
 uFlags			UINT ?
 hwnd			HWND ?
-uId			UINT ?
+uId			UINT_PTR ?
 rect			RECT <>
 hinst			HINSTANCE ?
 lpszText		LPSTR ?
@@ -2313,7 +2334,7 @@ TTTOOLINFOW		STRUC
 cbSize			UINT ?
 uFlags			UINT ?
 hwnd			HWND ?
-uId			UINT ?
+uId			UINT_PTR ?
 rect			RECT <>
 hinst			HINSTANCE ?
 lpszText		LPWSTR ?
@@ -2703,7 +2724,7 @@ MenuHelp proto WINAPI \
 ;BOOL
 ShowHideMenuCtl proto WINAPI \
 		  hWnd: HWND,
-		uFlags: UINT,
+		uFlags: UINT_PTR,
 		lpInfo: LPINT
 
 ;void
@@ -3218,11 +3239,11 @@ INDEXTOSTATEIMAGEMASK macro i
 
 if (_WIN32_IE GE 0x0300)
 I_INDENTCALLBACK	equ (-1)
-LV_ITEMA		equ LVITEMA
-LV_ITEMW		equ LVITEMW
+LV_ITEMA		equ <LVITEMA>
+LV_ITEMW		equ <LVITEMW>
 else
-LVITEMA			equ LV_ITEMA
-LVITEMW			equ LV_ITEMW
+LVITEMA			equ <LV_ITEMA>
+LVITEMW			equ <LV_ITEMW>
 endif
 
 if (_WIN32_WINNT GE 0x0501)
@@ -3313,7 +3334,13 @@ else
 LPSTR_TEXTCALLBACK	equ <LPSTR_TEXTCALLBACKA>
 endif
 
-I_IMAGECALLBACK		equ (-1)
+define I_IMAGECALLBACK	(-1)
+define I_IMAGENONE	(-2)
+
+if (NTDDI_VERSION GE NTDDI_WINXP)
+define I_COLUMNSCALLBACK (-1)
+endif
+
 LVM_GETITEMA		equ (LVM_FIRST + 5)
 LVM_GETITEMW		equ (LVM_FIRST + 75)
 ifdef _UNICODE
@@ -5152,7 +5179,7 @@ TreeView_SetIndent macro hwnd, indent
 
 TVM_GETIMAGELIST	equ (TV_FIRST + 8)
 TreeView_GetImageList macro hwnd, iImage
-	exitm<SNDMSG(hwnd, TVM_GETIMAGEIST, iImage, 0)>
+	exitm<SNDMSG(hwnd, TVM_GETIMAGELIST, iImage, 0)>
 	endm
 
 TVSIL_NORMAL		equ 0
@@ -5160,7 +5187,7 @@ TVSIL_STATE		equ 2
 
 TVM_SETIMAGELIST	equ (TV_FIRST + 9)
 TreeView_SetImageList macro hwnd, himl, iImage
-	exitm<SNDMSG(hwnd, TVM_SETIMAGEIST, iImage, himl)>
+	exitm<SNDMSG(hwnd, TVM_SETIMAGELIST, iImage, himl)>
 	endm
 
 TVM_GETNEXTITEM		equ (TV_FIRST + 10)
@@ -5499,11 +5526,11 @@ NMTREEVIEWW		ENDS
 LPNMTREEVIEWW		typedef ptr NMTREEVIEWW
 
 ifdef _UNICODE
-NMTREEVIEW		equ NMTREEVIEWW
-LPNMTREEVIEW		equ LPNMTREEVIEWW
+NMTREEVIEW		equ <NMTREEVIEWW>
+LPNMTREEVIEW		equ <LPNMTREEVIEWW>
 else
-NMTREEVIEW		equ NMTREEVIEWA
-LPNMTREEVIEW		equ LPNMTREEVIEWA
+NMTREEVIEW		equ <NMTREEVIEWA>
+LPNMTREEVIEW		equ <LPNMTREEVIEWA>
 endif
 
 TVN_SELCHANGINGA	equ (TVN_FIRST-1)
@@ -7964,20 +7991,20 @@ endif
 
 if (_WIN32_WINNT GE 0x0501)
 
-CALLBACK(SUBCLASSPROC, hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, uIdSubclass:LPUINT, dwRefData:LPDWORD)
+CALLBACK(SUBCLASSPROC, hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, uIdSubclass:UINT_PTR, dwRefData:UINT_PTR)
 
 ;BOOL
 SetWindowSubclass proto WINAPI \
 		  hWnd: HWND,
 	   pfnSubclass: SUBCLASSPROC,
-	   uIdSubclass: LPUINT,
+	   uIdSubclass: UINT_PTR,
 	     dwRefData: LPDWORD
 
 ;BOOL
 GetWindowSubclass proto WINAPI \
 		  hWnd: HWND,
 	   pfnSubclass: SUBCLASSPROC,
-	   uIdSubclass: LPUINT,
+	   uIdSubclass: UINT_PTR,
 	    pdwRefData: LPDWORD
 
 ;BOOL

@@ -263,6 +263,12 @@ MAKELONG macro a, b, reg:=<eax>
 endif
 
 ifndef LOWORD
+define LOWORD_sdword <LOWORD_dword>
+define LOWORD_sqword <LOWORD_qword>
+LOWORD_qword proto watcall l:qword {
+	movzx	eax,ax
+	retm	<ax>
+	}
 LOWORD_dword proto watcall l:dword {
 	movzx	eax,ax
 	retm	<ax>
@@ -271,11 +277,17 @@ LOWORD macro l
 	ifidn typeid(l),<imm>
 	exitm<((l) AND 0xffff)>
 	endif
-	exitm<LOWORD_dword(l)>
+%	exitm<typeid(LOWORD_,l)(l)>
 	endm
 endif
 
 ifndef HIWORD
+define HIWORD_sdword <HIWORD_dword>
+define HIWORD_sqword <HIWORD_qword>
+HIWORD_qword proto watcall l:qword {
+	shr	eax,16
+	retm	<ax>
+	}
 HIWORD_dword proto watcall l:dword {
 	shr	eax,16
 	retm	<ax>
@@ -284,11 +296,17 @@ HIWORD macro l
 	ifidn typeid(l),<imm>
 	exitm<(((l) SHR 16) AND 0xffff)>
 	endif
-	exitm<HIWORD_dword(l)>
+%	exitm<typeid(HIWORD_,l)(l)>
 	endm
 endif
 
 ifndef LOBYTE
+define LOBYTE_sdword <LOBYTE_dword>
+define LOBYTE_sqword <LOBYTE_qword>
+LOBYTE_qword proto watcall w:qword {
+	movzx	eax,al
+	retm	<al>
+	}
 LOBYTE_dword proto watcall w:dword {
 	movzx	eax,al
 	retm	<al>
@@ -297,11 +315,17 @@ LOBYTE macro w
 	ifidn typeid(w),<imm>
 	exitm<((w) AND 0xff)>
 	endif
-	exitm<LOBYTE_dword(w)>
+%	exitm<typeid(LOBYTE_,w)(w)>
 	endm
 endif
 
 ifndef HIBYTE
+define HIBYTE_sdword <HIBYTE_dword>
+define HIBYTE_sqword <HIBYTE_qword>
+HIBYTE_qword proto watcall w:qword {
+	movzx	eax,ah
+	retm	<al>
+	}
 HIBYTE_dword proto watcall w:dword {
 	movzx	eax,ah
 	retm	<al>
@@ -310,7 +334,13 @@ HIBYTE macro w
 	ifidn typeid(w),<imm>
 	exitm<(((w) SHR 8) AND 0xff)>
 	endif
-	exitm<HIBYTE_dword(w)>
+%	exitm<typeid(HIBYTE_,w)(w)>
+	endm
+endif
+
+ifndef DECLARE_HANDLE
+DECLARE_HANDLE macro name
+	exitm<name typedef ptr>
 	endm
 endif
 
@@ -521,13 +551,18 @@ LPPOINT		typedef ptr POINT
 POINTL		typedef POINT
 PPOINTL		typedef ptr POINT
 
-tagSIZE		typedef POINT
-PSIZE		typedef ptr POINT
-LPSIZE		typedef ptr POINT
+SIZE		STRUC
+_cx		sdword ?
+cy		sdword ?
+SIZE		ENDS
 
-SIZEL		typedef POINT
-PSIZEL		typedef ptr POINT
-LPSIZEL		typedef ptr POINT
+tagSIZE		typedef SIZE
+PSIZE		typedef ptr SIZE
+LPSIZE		typedef ptr SIZE
+
+SIZEL		typedef SIZE
+PSIZEL		typedef ptr SIZE
+LPSIZEL		typedef ptr SIZE
 
 POINTS		STRUC
 x		sword ?

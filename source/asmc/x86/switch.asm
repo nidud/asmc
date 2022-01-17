@@ -1376,102 +1376,90 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         .if BYTE PTR [edi]
 
             QueueTestLines(edi)
-            or [esi].flags,HLLF_ARGREG
+
+            ; v2.33.38 -- the result may differ from inline RETM<al>
+
+        .endif
+
+        mov ecx,i
+        shl ecx,4
+        mov eax,[ebx+ecx].tokval
+
+        .switch eax
+        .case T_AX .. T_DI
+            or  [esi].flags,HLLF_ARG16
 ifndef ASMC64
             .if ModuleInfo.Ofssize == USE16
-                or [esi].flags,HLLF_ARG16
-            .elseif ModuleInfo.Ofssize == USE32
-                or [esi].flags,HLLF_ARG32
-            .else
+                or [esi].flags,HLLF_ARGREG
+                .if [esi].flags & HLLF_NOTEST
+                    or [esi].flags,HLLF_JTABLE
+                .endif
+            .endif
 endif
-                or [esi].flags,HLLF_ARG64
+        .case T_AL .. T_BH
+            .endc
+        .case T_EAX .. T_EDI
+            or  [esi].flags,HLLF_ARG32
+ifndef ASMC64
+            .if ModuleInfo.Ofssize == USE32
+                or [esi].flags,HLLF_ARGREG
+                .if [esi].flags & HLLF_NOTEST
+                    or [esi].flags,HLLF_JTABLE
+                    .if !( [esi].flags & HLLF_PASCAL )
+                        or [esi].flags,HLLF_JTDATA
+                    .endif
+                .endif
+            .endif
+            .if ModuleInfo.Ofssize == USE64
+endif
+                or [esi].flags,HLLF_ARG3264
+                .if [esi].flags & HLLF_NOTEST
+                    or [esi].flags,HLLF_JTABLE or HLLF_ARGREG
+                .endif
 ifndef ASMC64
             .endif
 endif
-        .else
+            .endc
 
-            mov ecx,i
-            shl ecx,4
-            mov eax,[ebx+ecx].tokval
+        .case T_RAX .. T_R15
+            or  [esi].flags,HLLF_ARG64
+            .if ModuleInfo.Ofssize == USE64
+                or [esi].flags,HLLF_ARGREG
+                .if [esi].flags & HLLF_NOTEST
+                    or [esi].flags,HLLF_JTABLE
+                .endif
+            .endif
+            .endc
 
-            .switch eax
-              .case T_AX .. T_DI
-                or  [esi].flags,HLLF_ARG16
+        .default
+            or [esi].flags,HLLF_ARGMEM
+            push i
+            EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG)
+            pop ecx
+            mov i,ecx
+
+            .if eax != ERROR
+                mov eax,8
 ifndef ASMC64
                 .if ModuleInfo.Ofssize == USE16
-                    or [esi].flags,HLLF_ARGREG
-                    .if [esi].flags & HLLF_NOTEST
-                        or [esi].flags,HLLF_JTABLE
-                    .endif
+                    mov eax,2
+                .elseif ModuleInfo.Ofssize == USE32
+                    mov eax,4
                 .endif
 endif
-              .case T_AL .. T_BH
-                .endc
-
-              .case T_EAX .. T_EDI
-                or  [esi].flags,HLLF_ARG32
-ifndef ASMC64
-                .if ModuleInfo.Ofssize == USE32
-                    or [esi].flags,HLLF_ARGREG
-                    .if [esi].flags & HLLF_NOTEST
-                        or [esi].flags,HLLF_JTABLE
-                        .if !( [esi].flags & HLLF_PASCAL )
-
-                            or [esi].flags,HLLF_JTDATA
-                        .endif
-                    .endif
+                .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
+                    mov ecx,opnd.mbr
+                    mov eax,[ecx].asym.total_size
                 .endif
-                .if ModuleInfo.Ofssize == USE64
-endif
-                    or [esi].flags,HLLF_ARG3264
-                    .if [esi].flags & HLLF_NOTEST
-                        or [esi].flags,HLLF_JTABLE or HLLF_ARGREG
-                    .endif
-ifndef ASMC64
+                .if eax == 2
+                    or [esi].flags,HLLF_ARG16
+                .elseif eax == 4
+                    or [esi].flags,HLLF_ARG32
+                .elseif eax == 8
+                    or [esi].flags,HLLF_ARG64
                 .endif
-endif
-                .endc
-
-              .case T_RAX .. T_R15
-                or  [esi].flags,HLLF_ARG64
-                .if ModuleInfo.Ofssize == USE64
-                    or [esi].flags,HLLF_ARGREG
-                    .if [esi].flags & HLLF_NOTEST
-                        or [esi].flags,HLLF_JTABLE
-                    .endif
-                .endif
-                .endc
-
-              .default
-                or [esi].flags,HLLF_ARGMEM
-                push i
-                EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG)
-                pop ecx
-                mov i,ecx
-
-                .if eax != ERROR
-                    mov eax,8
-ifndef ASMC64
-                    .if ModuleInfo.Ofssize == USE16
-                        mov eax,2
-                    .elseif ModuleInfo.Ofssize == USE32
-                        mov eax,4
-                    .endif
-endif
-                    .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
-                        mov ecx,opnd.mbr
-                        mov eax,[ecx].asym.total_size
-                    .endif
-                    .if eax == 2
-                        or [esi].flags,HLLF_ARG16
-                    .elseif eax == 4
-                        or [esi].flags,HLLF_ARG32
-                    .elseif eax == 8
-                        or [esi].flags,HLLF_ARG64
-                    .endif
-                .endif
-            .endsw
-        .endif
+            .endif
+        .endsw
 
         mov ecx,Token_Count
         shl ecx,4

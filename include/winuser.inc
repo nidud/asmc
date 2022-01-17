@@ -45,15 +45,15 @@ CALLBACK(WNDPROC, :HWND, :UINT, :WPARAM, :LPARAM)
 ifdef STRICT
 
 CALLBACK(DLGPROC, :HWND, :UINT, :WPARAM, :LPARAM)
-CALLBACK(TIMERPROC, :HWND, :UINT, :UINT, :DWORD)
+CALLBACK(TIMERPROC, :HWND, :UINT, :UINT_PTR, :DWORD)
 CALLBACK(GRAYSTRINGPROC, :HDC, :LPARAM, :SINT)
 CALLBACK(WNDENUMPROC, :HWND, :LPARAM)
 CALLBACK(HOOKPROC, :SINT, :WPARAM, :LPARAM)
-CALLBACK(SENDASYNCPROC, :HWND, :UINT, :DWORD, :LRESULT)
+CALLBACK(SENDASYNCPROC, :HWND, :UINT, :ULONG_PTR, :LRESULT)
 CALLBACK(PROPENUMPROCA, :HWND, :LPCSTR, :HANDLE)
 CALLBACK(PROPENUMPROCW, :HWND, :LPCWSTR, :HANDLE)
-CALLBACK(PROPENUMPROCEXA, :HWND, :LPSTR, :HANDLE, :DWORD)
-CALLBACK(PROPENUMPROCEXW, :HWND, :LPWSTR, :HANDLE, :DWORD)
+CALLBACK(PROPENUMPROCEXA, :HWND, :LPSTR, :HANDLE, :ULONG_PTR)
+CALLBACK(PROPENUMPROCEXW, :HWND, :LPWSTR, :HANDLE, :ULONG_PTR)
 CALLBACK(EDITWORDBREAKPROCA, :LPSTR, :SINT, :SINT, :SINT)
 CALLBACK(EDITWORDBREAKPROCW, :LPWSTR, :SINT, :SINT, :SINT)
 
@@ -743,7 +743,7 @@ vkCode			dd ?
 scanCode		dd ?
 flags			dd ?
 time			dd ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 KBDLLHOOKSTRUCT		ENDS
 LPKBDLLHOOKSTRUCT	typedef ptr KBDLLHOOKSTRUCT
 PKBDLLHOOKSTRUCT	typedef ptr KBDLLHOOKSTRUCT
@@ -753,7 +753,7 @@ pt			POINT <>
 mouseData		dd ?
 flags			dd ?
 time			dd ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 MSLLHOOKSTRUCT		ENDS
 LPMSLLHOOKSTRUCT	typedef ptr MSLLHOOKSTRUCT
 PMSLLHOOKSTRUCT		typedef ptr MSLLHOOKSTRUCT
@@ -775,7 +775,7 @@ MOUSEHOOKSTRUCT		STRUC
 pt			POINT <>
 hwnd			HWND ?
 wHitTestCode		UINT ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 MOUSEHOOKSTRUCT		ENDS
 LPMOUSEHOOKSTRUCT	typedef ptr MOUSEHOOKSTRUCT
 PMOUSEHOOKSTRUCT	typedef ptr MOUSEHOOKSTRUCT
@@ -889,7 +889,7 @@ MOUSEMOVEPOINT		STRUC
 x			SINT ?
 y			SINT ?
 time			dd ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 MOUSEMOVEPOINT		ENDS
 PMOUSEMOVEPOINT		typedef ptr MOUSEMOVEPOINT
 LPMOUSEMOVEPOINT	typedef ptr MOUSEMOVEPOINT
@@ -1323,24 +1323,20 @@ POINTTOPOINTS proto fastcall pt:ptr POINT {
 
 ifdef _WIN64
 MAKEWPARAM macro l, h, reg:=<r8>
-	MAKELONG(l, h, reg)
-	retm<reg>
+	exitm<MAKELONG(l, h, reg)>
 	endm
 else
 MAKEWPARAM macro l, h, reg:=<eax>
-	MAKELONG(l, h, reg)
-	retm<reg>
+	exitm<MAKELONG(l, h, reg)>
 	endm
 endif
 ifdef _WIN64
 MAKELPARAM macro l, h, reg:=<r9>
-	MAKELONG(l, h, reg)
-	retm<reg>
+	exitm<MAKELONG(l, h, reg)>
 	endm
 else
 MAKELPARAM macro l, h, reg:=<eax>
-	MAKELONG(l, h, reg)
-	retm<reg>
+	exitm<MAKELONG(l, h, reg)>
 	endm
 endif
 MAKELRESULT macro l,h
@@ -1502,7 +1498,7 @@ WM_COPYDATA		equ 0x004A
 WM_CANCELJOURNAL	equ 0x004B
 
 COPYDATASTRUCT		STRUC
-dwData			dd ?
+dwData			ULONG_PTR ?
 cbData			dd ?
 lpData			PVOID ?
 COPYDATASTRUCT		ENDS
@@ -2411,7 +2407,7 @@ WPF_RESTORETOMAXIMIZED	equ 0x0002
 if(WINVER GE 0x0400)
 NMHDR			STRUC
 hwndFrom		HWND ?
-idFrom			UINT ?
+idFrom			UINT_PTR ?
 code			UINT ?
 NMHDR			ENDS
 LPNMHDR			typedef ptr NMHDR
@@ -2460,7 +2456,7 @@ CtlID			UINT ?
 itemID			UINT ?
 itemWidth		UINT ?
 itemHeight		UINT ?
-itemData		PVOID ?
+itemData		ULONG_PTR ?
 MEASUREITEMSTRUCT	ENDS
 PMEASUREITEMSTRUCT	typedef ptr MEASUREITEMSTRUCT
 LPMEASUREITEMSTRUCT	typedef ptr MEASUREITEMSTRUCT
@@ -2475,7 +2471,7 @@ itemState		UINT ?
 hwndItem		HWND ?
 hDC			HDC ?
 rcItem			RECT <>
-itemData		PVOID ?
+itemData		ULONG_PTR ?
 DRAWITEMSTRUCT		ENDS
 PDRAWITEMSTRUCT		typedef ptr DRAWITEMSTRUCT
 LPDRAWITEMSTRUCT	typedef ptr DRAWITEMSTRUCT
@@ -2485,7 +2481,7 @@ CtlType			UINT ?
 CtlID			UINT ?
 itemID			UINT ?
 hwndItem		HWND ?
-itemData		PVOID ?
+itemData		ULONG_PTR ?
 DELETEITEMSTRUCT	ENDS
 PDELETEITEMSTRUCT	typedef ptr DELETEITEMSTRUCT
 LPDELETEITEMSTRUCT	typedef ptr DELETEITEMSTRUCT
@@ -2495,9 +2491,9 @@ CtlType			UINT ?
 CtlID			UINT ?
 hwndItem		HWND ?
 itemID1			UINT ?
-itemData1		PVOID ?
+itemData1		ULONG_PTR ?
 itemID2			UINT ?
-itemData2		PVOID ?
+itemData2		ULONG_PTR ?
 dwLocaleId		dd ?
 COMPAREITEMSTRUCT	ENDS
 PCOMPAREITEMSTRUCT	typedef ptr COMPAREITEMSTRUCT
@@ -2736,14 +2732,14 @@ SendMessageCallbackA proto WINAPI \
 		wParam: WPARAM,
 		lParam: LPARAM,
       lpResultCallBack: SENDASYNCPROC,
-		dwData: DWORD
+		dwData: ULONG_PTR
 SendMessageCallbackW proto WINAPI \
 		  hWnd: HWND,
 		   Msg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM,
       lpResultCallBack: SENDASYNCPROC,
-		dwData: DWORD
+		dwData: ULONG_PTR
 ifdef _UNICODE
 SendMessageCallback	equ <SendMessageCallbackW>
 else
@@ -3646,7 +3642,7 @@ endif
 ;BOOL
 EndDialog proto WINAPI \
 		  hDlg: HWND,
-	       nResult: SINT
+	       nResult: INT_PTR
 
 ;HWND
 GetDlgItem proto WINAPI \
@@ -4249,7 +4245,7 @@ keybd_event proto WINAPI \
 		   bVk: BYTE,
 		 bScan: BYTE,
 	       dwFlags: DWORD,
-	   dwExtraInfo: DWORD
+	   dwExtraInfo: ULONG_PTR
 
 MOUSEEVENTF_MOVE	equ 0x0001
 MOUSEEVENTF_LEFTDOWN	equ 0x0002
@@ -4276,7 +4272,7 @@ mouse_event proto WINAPI \
 		     x: DWORD,
 		    dy: DWORD,
 		dwData: DWORD,
-	   dwExtraInfo: DWORD
+	   dwExtraInfo: ULONG_PTR
 
 if (_WIN32_WINNT GT 0x0400)
 
@@ -4286,7 +4282,7 @@ dy			LONG ?
 mouseData		dd ?
 dwFlags			dd ?
 time			dd ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 MOUSEINPUT		ENDS
 PMOUSEINPUT		typedef ptr MOUSEINPUT
 LPMOUSEINPUT		typedef ptr MOUSEINPUT
@@ -4296,7 +4292,7 @@ wVk			dw ?
 wScan			dw ?
 dwFlags			dd ?
 time			dd ?
-dwExtraInfo		dd ?
+dwExtraInfo		ULONG_PTR ?
 KEYBDINPUT		ENDS
 PKEYBDINPUT		typedef ptr KEYBDINPUT
 LPKEYBDINPUT		typedef ptr KEYBDINPUT
@@ -4345,7 +4341,7 @@ dwID			dd ?
 dwFlags			dd ?
 dwMask			dd ?
 dwTime			dd ?
-dwExtraInfo		SIZE_T ?
+dwExtraInfo		ULONG_PTR ?
 cxContact		dd ?
 cyContact		dd ?
 TOUCHINPUT		ENDS
@@ -4867,7 +4863,7 @@ USER_TIMER_MINIMUM	equ 0x0000000A
 ;UINT
 SetTimer proto WINAPI \
 		 hWnd : HWND,
-	      nIDEvent: UINT,
+	      nIDEvent: UINT_PTR,
 	       uElapse: UINT,
 	   lpTimerFunc: TIMERPROC
 
@@ -4891,7 +4887,7 @@ endif
 ;BOOL
 KillTimer proto WINAPI \
 		  hWnd: HWND,
-	      uIDEvent: UINT
+	      uIDEvent: UINT_PTR
 
 ;BOOL
 IsWindowUnicode proto WINAPI \
@@ -5275,14 +5271,14 @@ InsertMenuA proto WINAPI \
 		 hMenu: HMENU,
 	     uPosition: UINT,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCSTR
 ;BOOL
 InsertMenuW proto WINAPI \
 		 hMenu: HMENU,
 	     uPosition: UINT,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCWSTR
 ifdef _UNICODE
 InsertMenu		equ <InsertMenuW>
@@ -5294,13 +5290,13 @@ endif
 AppendMenuA proto WINAPI \
 		 hMenu: HMENU,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCSTR
 ;BOOL
 AppendMenuW proto WINAPI \
 		 hMenu: HMENU,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCWSTR
 ifdef _UNICODE
 AppendMenu		equ <AppendMenuW>
@@ -5313,14 +5309,14 @@ ModifyMenuA proto WINAPI \
 		  hMnu: HMENU,
 	     uPosition: UINT,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCSTR
 ;BOOL
 ModifyMenuW proto WINAPI \
 		  hMnu: HMENU,
 	     uPosition: UINT,
 		uFlags: UINT,
-	    uIDNewItem: UINT,
+	    uIDNewItem: UINT_PTR,
 	    lpNewItem : LPCWSTR
 ifdef _UNICODE
 ModifyMenu		equ <ModifyMenuW>
@@ -5415,7 +5411,7 @@ dwStyle			dd ?
 cyMax			UINT ?
 hbrBack			HBRUSH ?
 dwContextHelpID		dd ?
-dwMenuData		dd ?
+dwMenuData		ULONG_PTR ?
 MENUINFO		ENDS
 LPMENUINFO		typedef ptr MENUINFO
 LPCMENUINFO		typedef ptr MENUINFO
@@ -5488,7 +5484,7 @@ wID			UINT ?
 hSubMenu		HMENU ?
 hbmpChecked		HBITMAP ?
 hbmpUnchecked		HBITMAP ?
-dwItemData		dd ?
+dwItemData		ULONG_PTR ?
 dwTypeData		LPSTR ?
 cch			UINT ?
 if (_WIN32_WINNT GE 0x0500)
@@ -5505,7 +5501,7 @@ wID			UINT ?
 hSubMenu		HMENU ?
 hbmpChecked		HBITMAP ?
 hbmpUnchecked		HBITMAP ?
-dwItemData		dd ?
+dwItemData		ULONG_PTR ?
 dwTypeData		LPWSTR ?
 cch			UINT ?
 if (_WIN32_WINNT GE 0x0500)
@@ -5651,7 +5647,7 @@ DROPSTRUCT		STRUC
 hwndSource		HWND ?
 hwndSink		HWND ?
 wFmt			dd ?
-dwData			dd ?
+dwData			ULONG_PTR ?
 ptDrop			POINT <>
 dwControlData		dd ?
 DROPSTRUCT		ENDS
@@ -5673,7 +5669,7 @@ DragObject proto WINAPI \
 		      : HWND,
 		      : HWND,
 		      : UINT,
-		      : DWORD,
+		      : ULONG_PTR,
 		      : HCURSOR
 
 ;BOOL
@@ -6917,6 +6913,54 @@ endif
 
 ifdef _WIN64
 
+GetClassLongPtrA proto WINAPI \
+		  hWnd: HWND,
+		nIndex: SINT
+GetClassLongPtrW proto WINAPI \
+		  hWnd: HWND,
+		nIndex: SINT
+ifdef _UNICODE
+define GetClassLongPtr	<GetClassLongPtrW>
+else
+define GetClassLongPtr	<GetClassLongPtrA>
+endif
+
+SetClassLongPtrA proto WINAPI \
+		  hWnd: HWND,
+		nIndex: SINT,
+	     dwNewLong: LONG_PTR
+SetClassLongPtrW proto WINAPI \
+		  hWnd: HWND,
+		nIndex: SINT,
+	     dwNewLong: LONG_PTR
+ifdef _UNICODE
+define SetClassLongPtr	<SetClassLongPtrW>
+else
+define SetClassLongPtr	<SetClassLongPtrA>
+endif
+
+else
+
+define GetClassLongPtrA <GetClassLongA>
+define GetClassLongPtrW <GetClassLongW>
+ifdef _UNICODE
+define GetClassLongPtr	<GetClassLongPtrW>
+else
+define GetClassLongPtr	<GetClassLongPtrA>
+endif
+
+define SetClassLongPtrA <SetClassLongA>
+define SetClassLongPtrW <SetClassLongW>
+ifdef _UNICODE
+define SetClassLongPtr	<SetClassLongPtrW>
+else
+define SetClassLongPtr	<SetClassLongPtrA>
+endif
+
+endif
+
+ifdef _WIN64
+
 ;LONG_PTR
 GetWindowLongPtrA proto WINAPI \
 		  hWnd: HWND,
@@ -6934,11 +6978,11 @@ endif
 SetWindowLongPtrA proto WINAPI \
 		  hWnd: HWND,
 		nIndex: SINT,
-	     dwNewLong: PLONG
+	     dwNewLong: LONG_PTR
 SetWindowLongPtrW proto WINAPI \
 		  hWnd: HWND,
 		nIndex: SINT,
-	     dwNewLong: PLONG
+	     dwNewLong: LONG_PTR
 ifdef _UNICODE
 SetWindowLongPtr	equ <SetWindowLongPtrW>
 else
@@ -7245,7 +7289,7 @@ MFS_GRAYED		equ 0x00000003
 MFS_DISABLED		equ MFS_GRAYED
 MFS_CHECKED		equ MF_CHECKED
 MFS_HILITE		equ MF_HILITE
-MFS_ENABLED		equ MF_ENABED
+MFS_ENABLED		equ MF_ENABLED
 MFS_UNCHECKED		equ MF_UNCHECKED
 MFS_UNHILITE		equ MF_UNHILITE
 MFS_DEFAULT		equ MF_DEFAULT
@@ -8686,13 +8730,13 @@ WinHelpA proto WINAPI \
 	      hWndMain: HWND,
 	      lpszHelp: LPCSTR,
 	      uCommand: UINT,
-	       dwData : DWORD
+	       dwData : ULONG_PTR
 ;BOOL
 WinHelpW proto WINAPI \
 	      hWndMain: HWND,
 	      lpszHelp: LPCWSTR,
 	      uCommand: UINT,
-	       dwData : DWORD
+	       dwData : ULONG_PTR
 ifdef _UNICODE
 WinHelp			equ <WinHelpW>
 else

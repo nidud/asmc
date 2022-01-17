@@ -1358,100 +1358,82 @@ SwitchStart proc __ccall uses rsi rdi rbx r12 i:int_t, tokenarray:ptr asm_tok
         .if BYTE PTR [rdi]
 
             QueueTestLines(rdi)
-            or [rsi].flags,HLLF_ARGREG
+        .endif
+
+        imul ecx,i,asm_tok
+        mov eax,[rbx+rcx].tokval
+
+        .switch eax
+        .case T_AX .. T_DI
+            or  [rsi].flags,HLLF_ARG16
 ifndef ASMC64
             .if ModuleInfo.Ofssize == USE16
-                or [rsi].flags,HLLF_ARG16
-            .elseif ModuleInfo.Ofssize == USE32
-                or [rsi].flags,HLLF_ARG32
-            .else
+                or [rsi].flags,HLLF_ARGREG
+                .if [rsi].flags & HLLF_NOTEST
+                    or [rsi].flags,HLLF_JTABLE
+                .endif
+            .endif
 endif
-                or [rsi].flags,HLLF_ARG64
+        .case T_AL .. T_BH
+            .endc
+        .case T_EAX .. T_EDI
+            or  [rsi].flags,HLLF_ARG32
+ifndef ASMC64
+            .if ModuleInfo.Ofssize == USE32
+                or [rsi].flags,HLLF_ARGREG
+                .if [rsi].flags & HLLF_NOTEST
+                    or [rsi].flags,HLLF_JTABLE
+                    .if !( [rsi].flags & HLLF_PASCAL )
+                        or [rsi].flags,HLLF_JTDATA
+                    .endif
+                .endif
+            .endif
+            .if ModuleInfo.Ofssize == USE64
+endif
+                or [rsi].flags,HLLF_ARG3264
+                .if [rsi].flags & HLLF_NOTEST
+                    or [rsi].flags,HLLF_JTABLE or HLLF_ARGREG
+                .endif
 ifndef ASMC64
             .endif
 endif
-        .else
-
-            imul ecx,i,asm_tok
-            mov eax,[rbx+rcx].tokval
-
-            .switch eax
-              .case T_AX .. T_DI
-                or  [rsi].flags,HLLF_ARG16
+            .endc
+        .case T_RAX .. T_R15
+            or  [rsi].flags,HLLF_ARG64
+            .if ModuleInfo.Ofssize == USE64
+                or [rsi].flags,HLLF_ARGREG
+                .if [rsi].flags & HLLF_NOTEST
+                    or [rsi].flags,HLLF_JTABLE
+                .endif
+            .endif
+            .endc
+        .default
+            or [rsi].flags,HLLF_ARGMEM
+            mov r12d,i
+            EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG)
+            mov i,r12d
+            .if eax != ERROR
+                mov eax,8
 ifndef ASMC64
                 .if ModuleInfo.Ofssize == USE16
-                    or [rsi].flags,HLLF_ARGREG
-                    .if [rsi].flags & HLLF_NOTEST
-                        or [rsi].flags,HLLF_JTABLE
-                    .endif
+                    mov eax,2
+                .elseif ModuleInfo.Ofssize == USE32
+                    mov eax,4
                 .endif
 endif
-              .case T_AL .. T_BH
-                .endc
-
-              .case T_EAX .. T_EDI
-                or  [rsi].flags,HLLF_ARG32
-ifndef ASMC64
-                .if ModuleInfo.Ofssize == USE32
-                    or [rsi].flags,HLLF_ARGREG
-                    .if [rsi].flags & HLLF_NOTEST
-                        or [rsi].flags,HLLF_JTABLE
-                        .if !( [rsi].flags & HLLF_PASCAL )
-
-                            or [rsi].flags,HLLF_JTDATA
-                        .endif
-                    .endif
+                .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
+                    mov rcx,opnd.mbr
+                    mov eax,[rcx].asym.total_size
                 .endif
-                .if ModuleInfo.Ofssize == USE64
-endif
-                    or [rsi].flags,HLLF_ARG3264
-                    .if [rsi].flags & HLLF_NOTEST
-                        or [rsi].flags,HLLF_JTABLE or HLLF_ARGREG
-                    .endif
-ifndef ASMC64
+                .if eax == 2
+                    or [rsi].flags,HLLF_ARG16
+                .elseif eax == 4
+                    or [rsi].flags,HLLF_ARG32
+                .elseif eax == 8
+                    or [rsi].flags,HLLF_ARG64
                 .endif
-endif
-                .endc
-
-              .case T_RAX .. T_R15
-                or  [rsi].flags,HLLF_ARG64
-                .if ModuleInfo.Ofssize == USE64
-                    or [rsi].flags,HLLF_ARGREG
-                    .if [rsi].flags & HLLF_NOTEST
-                        or [rsi].flags,HLLF_JTABLE
-                    .endif
-                .endif
-                .endc
-
-              .default
-                or [rsi].flags,HLLF_ARGMEM
-                mov r12d,i
-                EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG)
-                mov i,r12d
-
-                .if eax != ERROR
-                    mov eax,8
-ifndef ASMC64
-                    .if ModuleInfo.Ofssize == USE16
-                        mov eax,2
-                    .elseif ModuleInfo.Ofssize == USE32
-                        mov eax,4
-                    .endif
-endif
-                    .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
-                        mov rcx,opnd.mbr
-                        mov eax,[rcx].asym.total_size
-                    .endif
-                    .if eax == 2
-                        or [rsi].flags,HLLF_ARG16
-                    .elseif eax == 4
-                        or [rsi].flags,HLLF_ARG32
-                    .elseif eax == 8
-                        or [rsi].flags,HLLF_ARG64
-                    .endif
-                .endif
-            .endsw
-        .endif
+            .endif
+        .endsw
 
         imul ecx,Token_Count,asm_tok
         .while ( brackets && [rbx+rcx-asm_tok].token == T_CL_BRACKET )

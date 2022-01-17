@@ -1241,7 +1241,7 @@ FW_EXTRABOLD		equ 800
 FW_HEAVY		equ 900
 
 FW_ULTRALIGHT		equ FW_EXTRAIGHT
-FW_REGULAR		equ FW_NORMA
+FW_REGULAR		equ FW_NORMAL
 FW_DEMIBOLD		equ FW_SEMIBOLD
 FW_ULTRABOLD		equ FW_EXTRABOLD
 FW_BLACK		equ FW_HEAVY
@@ -3181,24 +3181,24 @@ GetTextCharacterExtra proto WINAPI :HDC
 GetTextAlign proto WINAPI :HDC
 GetTextColor proto WINAPI :HDC
 
-GetTextExtentPointA proto WINAPI
-GetTextExtentPointW proto WINAPI
+GetTextExtentPointA proto WINAPI :HDC, :LPCSTR, :SINT, :LPSIZE
+GetTextExtentPointW proto WINAPI :HDC, :LPCWSTR, :SINT, :LPSIZE
 ifdef _UNICODE
 GetTextExtentPoint equ <GetTextExtentPointW>
 else
 GetTextExtentPoint equ <GetTextExtentPointA>
 endif
 
-GetTextExtentPoint32A proto WINAPI
-GetTextExtentPoint32W proto WINAPI
+GetTextExtentPoint32A proto WINAPI :HDC, :LPCSTR, :SINT, :LPSIZE
+GetTextExtentPoint32W proto WINAPI :HDC, :LPCWSTR, :SINT, :LPSIZE
 ifdef _UNICODE
 GetTextExtentPoint32 equ <GetTextExtentPoint32W>
 else
 GetTextExtentPoint32 equ <GetTextExtentPoint32A>
 endif
 
-GetTextExtentExPointA proto WINAPI
-GetTextExtentExPointW proto WINAPI
+GetTextExtentExPointA proto WINAPI :HDC, :LPCSTR, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
+GetTextExtentExPointW proto WINAPI :HDC, :LPCWSTR, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
 ifdef _UNICODE
 GetTextExtentExPoint equ <GetTextExtentExPointW>
 else
@@ -3517,6 +3517,7 @@ BLENDFUNCTION		ENDS
 PBLENDFUNCTION		typedef ptr BLENDFUNCTION
 
 AC_SRC_OVER		equ 0x00
+AC_SRC_ALPHA		equ 0x01
 
 AC_SRC_NO_PREMULT_ALPHA equ 0x01
 AC_SRC_NO_ALPHA		equ 0x02

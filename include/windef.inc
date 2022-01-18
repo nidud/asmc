@@ -266,11 +266,11 @@ ifndef LOWORD
 define LOWORD_sdword <LOWORD_dword>
 define LOWORD_sqword <LOWORD_qword>
 LOWORD_qword proto watcall l:qword {
-	movzx	eax,ax
+	movsx	eax,ax
 	retm	<ax>
 	}
 LOWORD_dword proto watcall l:dword {
-	movzx	eax,ax
+	movsx	eax,ax
 	retm	<ax>
 	}
 LOWORD macro l
@@ -285,11 +285,11 @@ ifndef HIWORD
 define HIWORD_sdword <HIWORD_dword>
 define HIWORD_sqword <HIWORD_qword>
 HIWORD_qword proto watcall l:qword {
-	shr	eax,16
+	sar	eax,16
 	retm	<ax>
 	}
 HIWORD_dword proto watcall l:dword {
-	shr	eax,16
+	sar	eax,16
 	retm	<ax>
 	}
 HIWORD macro l
@@ -304,11 +304,11 @@ ifndef LOBYTE
 define LOBYTE_sdword <LOBYTE_dword>
 define LOBYTE_sqword <LOBYTE_qword>
 LOBYTE_qword proto watcall w:qword {
-	movzx	eax,al
+	movsx	eax,al
 	retm	<al>
 	}
 LOBYTE_dword proto watcall w:dword {
-	movzx	eax,al
+	movsx	eax,al
 	retm	<al>
 	}
 LOBYTE macro w
@@ -323,11 +323,11 @@ ifndef HIBYTE
 define HIBYTE_sdword <HIBYTE_dword>
 define HIBYTE_sqword <HIBYTE_qword>
 HIBYTE_qword proto watcall w:qword {
-	movzx	eax,ah
+	movsx	eax,ah
 	retm	<al>
 	}
 HIBYTE_dword proto watcall w:dword {
-	movzx	eax,ah
+	movsx	eax,ah
 	retm	<al>
 	}
 HIBYTE macro w

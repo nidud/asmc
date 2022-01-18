@@ -6,13 +6,13 @@ ifndef _WINDEF_
 endif
 
 ifndef WINVER
-WINVER	equ 0x0500
+define WINVER 0x0500
 endif
 ifndef _WIN32_WINDOWS
-_WIN32_WINDOWS equ WINVER
+define _WIN32_WINDOWS WINVER
 endif
 ifndef _WIN32_WINNT
-_WIN32_WINNT equ _WIN32_WINDOWS
+define _WIN32_WINNT _WIN32_WINDOWS
 endif
 
 ifndef NOGDI
@@ -3524,6 +3524,8 @@ AC_SRC_NO_ALPHA		equ 0x02
 AC_DST_NO_PREMULT_ALPHA equ 0x10
 AC_DST_NO_ALPHA		equ 0x20
 
+.pragma comment(lib, msimg32)
+
 AlphaBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
 AlphaDIBBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
 	:ptr BITMAPINFO, :UINT, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
@@ -3539,6 +3541,8 @@ GRADIENT_FILL_OP_FLAG	equ 0x000000ff
 GradientFill proto WINAPI :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
 
 endif
+
+.pragma comment(lib, gdi32)
 
 ifndef NOMETAFILE
 

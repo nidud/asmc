@@ -9,11 +9,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 include commctrl.inc
 include SpecStrings.inc
 
-ifndef THEMEAPI
-if NOT defined(_UXTHEME_)
-else
-endif
-endif
+.pragma comment(lib, uxtheme)
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 MAX_THEMECOLOR		equ 64

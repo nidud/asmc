@@ -138,10 +138,10 @@ GetTyperef proc __ccall uses rsi sym:ptr asym, Ofssize:byte
                 .case 8  : .return ST_UINT8
                 .case 16 : .return ST_UINT8
                 .case 2
-                    .if ( ModuleInfo.xflag & OPT_WSTRING )
+                    .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
                         .return ST_CHAR16
                     .endif
-                    .return ST_UINT2
+                    .return ST_USHORT;ST_UINT2
                 .endsw
 
             .endif
@@ -517,7 +517,10 @@ dbgcv::write_ptr_type proc __ccall uses rsi rdi rbx r12 sym:ptr asym
             mov eax,CV_PTR_FAR32
         .endif
     .else
-        mov eax,CV_PTR_64
+        mov eax,CV_PTR_NEAR32
+        .if ( Options.debug_symbols == CV_SIGNATURE_C13 )
+            mov eax,CV_PTR_64
+        .endif
     .endif
     .if ( Options.debug_symbols == CV_SIGNATURE_C7 )
         mov [rdi].CV_POINTER_16t.leaf,LF_POINTER_16t

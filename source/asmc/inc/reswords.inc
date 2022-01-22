@@ -25,28 +25,12 @@ RWF_MASK	equ 0xE0 ; TupleType
 
 ; structure of items in the "reserved names" table ResWordTable[]
 
-ifdef _WIN64
-.template ReservedWord
-    next	dw ?		; index next entry (used for hash table)
-    len		db ?		; length of reserved word, i.e. 'AX' = 2
-    flags	db ?		; see enum reservedword_flags
-    name	string_t ?	; reserved word (char[])
-
-   .static entry watcall i:abs, reg:abs=<rax>, rel:abs=<r11> {
-	lea	rel,this
-	imul	eax,i,ReservedWord
-	lea	reg,[rel+rax]
-	}
-   .ends
-else
 ReservedWord	struct
 next		dw ?		; index next entry (used for hash table)
 len		db ?		; length of reserved word, i.e. 'AX' = 2
 flags		db ?		; see enum reservedword_flags
 name		string_t ?	; reserved word (char[])
 ReservedWord	ends
-endif
-
 
 FindResWord		proto fastcall :string_t, :uint_t
 MasmFindResWord		proto __ccall :string_t, :uint_t

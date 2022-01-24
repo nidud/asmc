@@ -628,6 +628,7 @@ ifdef USE_INDIRECTION
                       [eax].asym.ptr_memtype != MT_PROC )
 
                 mov [edi].type,[eax].asym.target_type
+                mov [edi].scale,0x80
 endif
             .else
                 mov [edi].type,NULL
@@ -1922,7 +1923,11 @@ dot_op proc fastcall uses ebx opnd1:expr_t, opnd2:expr_t
             mov [ecx].mbr,ebx
 ifdef USE_INDIRECTION
             .if ( eax && [edx].flags & E_IS_DOT )
-                or [ecx].flags,E_IS_DOT
+                .if ( [ecx].flags & E_EXPLICIT && [edx].scale == 0x80 )
+                    mov [ecx].type,NULL
+                .else
+                    or [ecx].flags,E_IS_DOT
+                .endif
             .endif
 endif
         .endif

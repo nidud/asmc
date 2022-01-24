@@ -36,7 +36,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov edx,r8d
         GdipCreateRegionRgnData(rcx, edx, addr this.nativeRegion)
         }
-    .inline Region_ptr :HRGN, :vararg {
+    .inline Region_ptrHRGN__ :HRGN, :vararg {
         mov rcx,rdx
         GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
         }
@@ -454,7 +454,7 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
     .inline Font_HDC :abs, :abs, :vararg {
         this.typeid(Font_, _2)(_1, _2)
         }
-    .inline Font_ptr :HDC, :HFONT, :vararg {
+    .inline Font_ptrHDC__ :HDC, :HFONT, :vararg {
         .if r8
             .new lf:LOGFONTA
             .new hdc:HDC
@@ -1153,7 +1153,7 @@ endif
         GdipCreateBitmapFromGdiDib(rcx, rdx, addr this.nativeImage)
         }
 
-    .inline Bitmap_ptr :abs, :abs, :vararg {
+    .inline Bitmap_ptrHICON__ :abs, :abs, :vararg {
         mov rcx,_1
         ifb <_2>
             GdipCreateBitmapFromHICON(rcx, addr this.nativeImage)
@@ -1161,11 +1161,11 @@ endif
             this.typeid(Bitmap_ptr_, _2)(_1, _2, _3)
         endif
         }
-    .inline Bitmap_ptr_ptr :HBITMAP, :HPALETTE, :vararg {
+    .inline Bitmap_ptrHBITMAP__ :HBITMAP, :HPALETTE, :vararg {
         mov rdx,r8
         GdipCreateBitmapFromHBITMAP(rcx, rdx, addr this.nativeImage)
         }
-    .inline Bitmap_ptr_ptrword :HINSTANCE, :ptr WCHAR, :vararg {
+    .inline Bitmap_ptrHINSTANCE__ :HINSTANCE, :ptr WCHAR, :vararg {
         mov rdx,r8
         GdipCreateBitmapFromResource(rcx, rdx, addr this.nativeImage)
         }
@@ -1513,196 +1513,44 @@ endif
         }
     .ends
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
 ; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
 ; Metafile(HENHMETAFILE, BOOL = FALSE)
 ; Metafile(WCHAR*)
 ; Metafile(WCHAR*, WmfPlaceableFileHeader*)
-; Metafile(IStream*)
-; Metafile(HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-; Metafile(HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(WCHAR*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(WCHAR*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(WCHAR*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+; Metafile(IStream*)
 ; Metafile(IStream*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(IStream*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(IStream*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
+; Metafile(HDC, EmfType, WCHAR*)
+; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+; Metafile(HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+;
+; Metafile::GetMetafileHeader(HMETAFILE, WmfPlaceableFileHeader*, MetafileHeader*)
+; Metafile::GetMetafileHeader(HENHMETAFILE, MetafileHeader*)
+; Metafile::GetMetafileHeader(WCHAR*, MetafileHeader*)
+; Metafile::GetMetafileHeader(IStream*, MetafileHeader*)
+; Metafile::GetMetafileHeader(MetafileHeader*)
+;
 .template Metafile : public ImageBase
 
     .inline Metafile :abs, :vararg {
-        this.typeid(Metafile_, _1)(_1, _2)
+        typeid(Metafile_, _1)(this, _1, _2)
         mov this.lastResult,eax
-        }
-    .inline Metafile_ptr :abs, :abs, :vararg {
-        this.typeid(Metafile_ptr_, _2)(_1, _2, _3)
-        }
-
-    ; Playback a metafile from a HMETAFILE
-    ; If deleteWmf is TRUE, then when the metafile is deleted,
-    ; the hWmf will also be deleted.  Otherwise, it won't be.
-    ; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
-
-    .inline Metafile_ptr_ptrWmfPlaceableFileHeader :abs, :abs, :abs=<FALSE>, :vararg {
-        GdipCreateMetafileFromWmf(_1, _3, _2, addr this.nativeImage)
-        }
-
-    ; Playback a metafile from a HENHMETAFILE
-    ; If deleteEmf is TRUE, then when the metafile is deleted,
-    ; the hEmf will also be deleted.  Otherwise, it won't be.
-    ; Metafile(HENHMETAFILE, BOOL = FALSE)
-
-    .inline Metafile_ptr_imm :abs, :abs, :abs, :vararg {
-        ifb <_3>
-            ifb <_2>
-                GdipCreateMetafileFromEmf(_1, FALSE, addr this.nativeImage)
-            else
-                GdipCreateMetafileFromEmf(_1, _2, addr this.nativeImage)
-            endif
-        else
-            this.typeid(Metafile_ptr_imm_, _3)(_1, _2, _3, _4)
-        endif
-        }
-
-    ;; Metafile(WCHAR*)
-
-    .inline Metafile_ptrword :abs, :abs, :vararg {
-        ifb <_2>
-            GdipCreateMetafileFromFile(_1, addr this.nativeImage)
-        else
-            this.typeid(Metafile_ptrword_, _2)(_1, _2, _3)
-        endif
-        }
-
-    ; Playback a WMF metafile from a file.
-    ; Metafile(WCHAR*, WmfPlaceableFileHeader*)
-
-    .inline Metafile_ptrword_ptrWmfPlaceableFileHeader :abs, :abs, :vararg {
-        GdipCreateMetafileFromWmfFile(_1, _2, addr this.nativeImage)
-        }
-
-    ; Metafile(IStream*)
-
-    .inline Metafile_ptrIStream :abs, :abs, :vararg {
-        ifb <_2>
-            GdipCreateMetafileFromStream(_1, addr this.nativeImage)
-        else
-            this.typeid(Metafile_ptrIStream_, _2)(_1, _2, _3)
-        endif
-        }
-
-    ; Record a metafile to memory.
-    ; Metafile(HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptr_imm_ptrword :abs, :abs=<EmfTypeEmfPlusDual>, :abs, :vararg {
-        GdipRecordMetafile(_1, _2, NULL, MetafileFrameUnitGdi,  _3, addr this.nativeImage)
-        }
-
-    ; Record a metafile to memory.
-    ; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptr_ptrRectF :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafile(_1, _4, _2, _3, _5, addr this.nativeImage)
-        }
-
-    ;; Record a metafile to memory.
-    ;; Metafile(HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptr_ptrRect :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileI(_1, _4, _2, _3, _5, addr this.nativeImage)
-        }
-
-    .inline Metafile_ptrword_ptr :abs, :abs, :abs, :vararg {
-        ifb <_3>
-            GdipRecordMetafileFileName(_1, _2, EmfTypeEmfPlusDual, NULL, MetafileFrameUnitGdi, NULL, addr this.nativeImage)
-        else
-            this.typeid(Metafile_ptrword_ptr_, _3)(_1, _2, _3, _4)
-        endif
-        }
-
-    ; Metafile(WCHAR*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrword_ptr_imm :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileFileName(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)
-        }
-
-    ; Metafile(WCHAR*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrword_ptr_ptrRectF :abs, :abs, :abs, :abs, :abs, :abs, :vararg {
-        GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
-        }
-
-    ; Metafile(WCHAR*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrword_ptr_ptrRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
-        }
-
-
-    .inline Metafile_ptrIStream_ptr :abs, :abs, :abs, :vararg {
-        this.typeid(Metafile_ptrIStream_ptr_, _3)(_1, _2, _3, _4)
-        }
-
-    ;; Metafile(IStream*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrIStream_ptr_imm :abs, :abs, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileStream(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)
-        }
-
-    ;; Metafile(IStream*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrIStream_ptr_ptrRectF :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileStream(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
-        }
-
-    ;; Metafile(IStream*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-
-    .inline Metafile_ptrIStream_ptr_ptrRect :abs, :abs, :abs, :abs=<MetafileFrameUnitGdi>, :abs=<EmfTypeEmfPlusDual>, :abs=<NULL>, :vararg {
-        GdipRecordMetafileStreamI(_1, _2, _5, _3, _4, _6, addr this.nativeImage)
         }
 
     .inline GetMetafileHeader :abs, :vararg {
-        this.typeid(GetMetafileHeader_, _1)(_1, _2)
+        typeid(Metafile_GetMetafileHeader_, _1)(this, _1, _2)
         this.SetStatus()
         }
-    .inline GetMetafileHeader_ptr :abs, :abs, :vararg {
-        this.typeid(GetMetafileHeader_ptr_, _2)(_1, _2, _3)
-        }
 
-    ;; GetMetafileHeader(HMETAFILE, WmfPlaceableFileHeader*, MetafileHeader*)
-
-    .inline GetMetafileHeader_ptr_ptrWmfPlaceableFileHeader :abs, :abs, :abs, :vararg {
-        GdipGetMetafileHeaderFromWmf(_1, _2, _3)
-        }
-
-    ;; GetMetafileHeader(HENHMETAFILE, MetafileHeader*)
-
-    .inline GetMetafileHeader_ptr_ptrMetafileHeader :abs, :abs, :vararg {
-        GdipGetMetafileHeaderFromEmf(_1, _2)
-        }
-
-    ;; GetMetafileHeader(WCHAR*, MetafileHeader*)
-
-    .inline GetMetafileHeader_ptrword :abs, :abs, :vararg {
-        GdipGetMetafileHeaderFromFile(_1, _2)
-        }
-
-    ;; GetMetafileHeader(IStream*, MetafileHeader*)
-
-    .inline GetMetafileHeader_ptrIStream :abs, :abs, :vararg {
-        GdipGetMetafileHeaderFromStream(_1, _2)
-        }
-
-    ;; GetMetafileHeader(MetafileHeader*)
-
-    .inline GetMetafileHeader_ptrMetafileHeader :abs, :vararg {
-        GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1)
-        }
-
-    ;; Once this method is called, the Metafile object is in an invalid state
-    ;; and can no longer be used.  It is the responsiblity of the caller to
-    ;; invoke DeleteEnhMetaFile to delete this hEmf.
+    ; Once this method is called, the Metafile object is in an invalid state
+    ; and can no longer be used.  It is the responsiblity of the caller to
+    ; invoke DeleteEnhMetaFile to delete this hEmf.
 
     .inline GetHENHMETAFILE :vararg {
 
@@ -1713,20 +1561,20 @@ endif
         mov rax,hEmf
         }
 
-    ;; Used in conjuction with Graphics::EnumerateMetafile to play an EMF+
-    ;; The data must be DWORD aligned if it's an EMF or EMF+.  It must be
-    ;; WORD aligned if it's a WMF.
-    ;; PlayRecord(EmfPlusRecordType, UINT, UINT, BYTE*)
+    ; Used in conjuction with Graphics::EnumerateMetafile to play an EMF+
+    ; The data must be DWORD aligned if it's an EMF or EMF+.  It must be
+    ; WORD aligned if it's a WMF.
+    ; PlayRecord(EmfPlusRecordType, UINT, UINT, BYTE*)
 
     .inline PlayRecord :abs, :abs, :abs, :abs, :vararg {
         GdipPlayMetafileRecord(this.nativeImage, _1, _2, _3, _4)
         this.SetStatus()
         }
 
-    ;; If you're using a printer HDC for the metafile, but you want the
-    ;; metafile rasterized at screen resolution, then use this API to set
-    ;; the rasterization dpi of the metafile to the screen resolution,
-    ;; e.g. 96 dpi or 120 dpi.
+    ; If you're using a printer HDC for the metafile, but you want the
+    ; metafile rasterized at screen resolution, then use this API to set
+    ; the rasterization dpi of the metafile to the screen resolution,
+    ; e.g. 96 dpi or 120 dpi.
 
     .inline SetDownLevelRasterizationLimit :abs, :vararg {
         GdipSetMetafileDownLevelRasterizationLimit(this.nativeImage,  _1)
@@ -1775,6 +1623,106 @@ endif
         mov this.lastResult,eax
         }
     .ends
+
+;
+; Playback a metafile from a HMETAFILE
+; If deleteWmf is TRUE, then when the metafile is deleted,
+; the hWmf will also be deleted.  Otherwise, it won't be.
+;
+Metafile_ptrHMETAFILE__ macro this, _1, _2, _3:=<FALSE>
+    exitm<GdipCreateMetafileFromWmf(_1, _3, _2, addr this.nativeImage)>
+    endm
+;
+; Playback a metafile from a HENHMETAFILE
+; If deleteEmf is TRUE, then when the metafile is deleted,
+; the hEmf will also be deleted.  Otherwise, it won't be.
+;
+Metafile_ptrHENHMETAFILE__ macro this, _1, _2:=<FALSE>
+    exitm<GdipCreateMetafileFromEmf(_1, _2, addr this.nativeImage)>
+    endm
+;
+; Playback a WMF metafile from a file.
+;
+Metafile_ptrword macro this, _1, _2, _3:vararg
+ifb <_2>
+    exitm<GdipCreateMetafileFromFile(_1, addr this.nativeImage)>
+else
+%   exitm<typeid(Metafile_ptrword_, _2)(this, _1, _2, _3)>
+endif
+    endm
+Metafile_ptrword_ptrWmfPlaceableFileHeader macro this, _1, _2, _3
+    exitm<GdipCreateMetafileFromWmfFile(_1, _2, addr this.nativeImage)>
+    endm
+Metafile_ptrword_ptrHDC__ macro this, _1, _2, _3, _4:vararg
+ifb <_3>
+    exitm<GdipRecordMetafileFileName(_1, _2, EmfTypeEmfPlusDual, NULL, MetafileFrameUnitGdi, NULL, addr this.nativeImage)>
+else
+%   exitm<typeid(Metafile_ptrword_HDC_, _3)(this, _1, _2, _3, _4)>
+endif
+    endm
+Metafile_ptrword_HDC_imm macro this, _1, _2, _3:=<EmfTypeEmfPlusDual>, _4:=<NULL>
+    exitm<GdipRecordMetafileFileName(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)>
+    endm
+Metafile_ptrword_HDC_ptrRectF macro this, _1, _2, _3, _4, _5, _6
+    exitm<GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+    endm
+Metafile_ptrword_HDC_ptrRect macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
+    exitm<GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+    endm
+Metafile_ptrIStream macro this, _1, _2, _3, _4:vararg
+ifb <_2>
+    exitm<GdipCreateMetafileFromStream(_1, addr this.nativeImage)>
+else
+%   exitm<typeid(Metafile_IStream_HDC_, _3)(this, _1, _2, _3, _4)>
+endif
+    endm
+Metafile_IStream_HDC_imm macro this, _1, _2, _3:=<EmfTypeEmfPlusDual>, _4:=<NULL>
+    exitm<GdipRecordMetafileStream(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)>
+    endm
+Metafile_IStream_HDC_ptrRectF macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
+    exitm<GdipRecordMetafileStream(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+    endm
+Metafile_IStream_HDC_ptrRect macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
+    exitm<GdipRecordMetafileStreamI(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+    endm
+;
+; Record a metafile to memory.
+;
+Metafile_ptrHDC__ macro this, _1, _2, _3:vararg
+%   exitm<typeid(Metafile_HDC_, _2)(this, _1, _2, _3)>
+    endm
+Metafile_HDC_imm macro this, _1, _2:=<EmfTypeEmfPlusDual>, _3:=<NULL>
+    exitm<GdipRecordMetafile(_1, _2, NULL, MetafileFrameUnitGdi,  _3, addr this.nativeImage)>
+    endm
+Metafile_HDC_ptrRectF macro this, _1, _2, _3:=<MetafileFrameUnitGdi>, _4:=<EmfTypeEmfPlusDual>, _5:=<NULL>
+    exitm<GdipRecordMetafile(_1, _4, _2, _3, _5, addr this.nativeImage)>
+    endm
+Metafile_HDC_ptrRect macro this, _1, _2, _3:=<MetafileFrameUnitGdi>, _4:=<EmfTypeEmfPlusDual>, _5:=<NULL>
+    exitm<GdipRecordMetafileI(_1, _4, _2, _3, _5, addr this.nativeImage)>
+    endm
+
+
+Metafile_GetMetafileHeader_ptrHMETAFILE__ macro this, _1, _2, _3:vararg
+%   exitm<typeid(Metafile_GetMetafileHeader_HMETAFILE_, _2)(this, _1, _2, _3)>
+    endm
+Metafile_GetMetafileHeader_ptrHENHMETAFILE__ macro this, _1, _2, _3:vararg
+%   exitm<typeid(Metafile_GetMetafileHeader_HENHMETAFILE_, _2)(this, _1, _2, _3)>
+    endm
+Metafile_GetMetafileHeader_HMETAFILE_ptrWmfPlaceableFileHeader macro this, _1, _2, _3;, _4:vararg
+    exitm<GdipGetMetafileHeaderFromWmf(_1, _2, _3)>
+    endm
+Metafile_GetMetafileHeader_HENHMETAFILE_ptrMetafileHeader macro this, _1, _2, _3:vararg
+    exitm<GdipGetMetafileHeaderFromEmf(_1, _2)>
+    endm
+Metafile_GetMetafileHeader_ptrword macro this, _1, _2, _3:vararg
+    exitm<GdipGetMetafileHeaderFromFile(_1, _2)>
+    endm
+Metafile_GetMetafileHeader_ptrIStream macro this, _1, _2, _3:vararg
+    exitm<GdipGetMetafileHeaderFromStream(_1, _2)>
+    endm
+Metafile_GetMetafileHeader_ptrMetafileHeader macro this, _1, _2:vararg
+    exitm<GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1)>
+    endm
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

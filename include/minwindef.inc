@@ -8,18 +8,18 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 ifndef NO_STRICT
 ifndef STRICT
-STRICT equ 1
+define STRICT
 endif
 endif
 
 ifdef _MAC
 ifndef _WIN32
-_WIN32 equ 1
+define _WIN32
 endif
 endif
 
 ifndef WIN32
-WIN32  equ 1
+define WIN32
 endif
 
 ifndef BASETYPES
@@ -33,16 +33,16 @@ PUCHAR	typedef ptr byte
 PSZ	typedef ptr sbyte
 endif
 
-MAX_PATH equ 260
+define MAX_PATH 260
 
 ifndef NULL
-NULL	equ 0
+define NULL 0
 endif
 ifndef FALSE
-FALSE	equ 0
+define FALSE 0
 endif
 ifndef TRUE
-TRUE	equ 1
+define TRUE 1
 endif
 
 BOOL	typedef sdword
@@ -72,9 +72,7 @@ WPARAM	typedef UINT_PTR
 LPARAM	typedef LONG_PTR
 LRESULT typedef LONG_PTR
 
-ifndef inl_loadargs_2
-
-inl_loadargs_2 macro a, b, t1, t2, r1, r2
+LOADARGS_2 macro a, b, t1, t2, r1, r2
   local func
     ifidn t1,<imm>
 	t1 textequ t2
@@ -101,7 +99,7 @@ inl_loadargs_2 macro a, b, t1, t2, r1, r2
     exitm<>
     endm
 
-inl_loadtypes_2 macro a, b, t1, t2
+LOADTYPES_2 macro a, b, t1, t2
     t1 textequ typeid(a)
     t2 textequ typeid(b)
     ifidn t1,<imm>
@@ -112,21 +110,21 @@ inl_loadtypes_2 macro a, b, t1, t2
     exitm<0>
     endm
 
-endif
 
 ifndef NOMINMAX
-inl_maxmin macro a, b, x
+
+GETMINMAX macro a, b, x
 
   local ra,rb,ta,tb,signed
 
-    if inl_loadtypes_2(a, b, ta, tb)
+    if LOADTYPES_2(a, b, ta, tb)
       if (a) &x&t (b)
 	exitm<a>
       else
 	exitm<b>
       endif
     endif
-    inl_loadargs_2(a,b,ta,tb,ra,rb)
+    LOADARGS_2(a,b,ta,tb,ra,rb)
     cmp ra,rb
     if ( typeof(ra) lt 4 )
 	ra textequ <eax>
@@ -154,31 +152,33 @@ inl_maxmin macro a, b, x
     endif
     retm<ra>
     endm
+
 ifndef max
 max macro a, b
-%   retm<inl_maxmin(a, b, g)>
+%   retm<GETMINMAX(a, b, g)>
     endm
 endif
+
 ifndef min
 min macro a, b
-%   retm<inl_maxmin(a, b, l)>
+%   retm<GETMINMAX(a, b, l)>
     endm
 endif
+
 endif ; NOMINMAX
 
 ifndef MAKEWORD
 MAKEWORD macro a, b
 	local ta,tb
-	if inl_loadtypes_2(a, b, ta, tb)
+	if LOADTYPES_2(a, b, ta, tb)
 	exitm<(((a) AND 0xff) OR (((b) AND 0xff) SHL 8))>
 	endif
-	inl_loadargs_2(a,b,ta,tb)
+	LOADARGS_2(a,b,ta,tb)
 	mov	ah,dl
 	retm	<ax>
 	endm
 endif
 
-ifndef MAKELONG
 MAKELONG macro a, b, reg:=<eax>
 	local ta,tb
 	ifidn typeid(a),<imm>
@@ -188,7 +188,7 @@ MAKELONG macro a, b, reg:=<eax>
 	endif
 	ta textequ <dword>
 	tb textequ <dword>
-	inl_loadargs_2(a,b,ta,tb)
+	LOADARGS_2(a,b,ta,tb)
 	shl	eax,16
 	shrd	eax,edx,16
 %	ifdif <reg>,<eax>
@@ -200,59 +200,74 @@ MAKELONG macro a, b, reg:=<eax>
 	endif
 	retm	<reg>
 	endm
-endif
 
-ifndef LOWORD
+define LOWORD_sdword <LOWORD_dword>
+define LOWORD_sqword <LOWORD_qword>
+LOWORD_qword proto watcall l:qword {
+	movsx	eax,ax
+	retm	<ax>
+	}
 LOWORD_dword proto watcall l:dword {
-	movzx	eax,ax
+	movsx	eax,ax
 	retm	<ax>
 	}
 LOWORD macro l
 	ifidn typeid(l),<imm>
 	exitm<((l) AND 0xffff)>
 	endif
-	exitm<LOWORD_dword(l)>
+%	exitm<typeid(LOWORD_,l)(l)>
 	endm
-endif
 
-ifndef HIWORD
+define HIWORD_sdword <HIWORD_dword>
+define HIWORD_sqword <HIWORD_qword>
+HIWORD_qword proto watcall l:qword {
+	sar	eax,16
+	retm	<ax>
+	}
 HIWORD_dword proto watcall l:dword {
-	shr	eax,16
+	sar	eax,16
 	retm	<ax>
 	}
 HIWORD macro l
 	ifidn typeid(l),<imm>
 	exitm<(((l) SHR 16) AND 0xffff)>
 	endif
-	exitm<HIWORD_dword(l)>
+%	exitm<typeid(HIWORD_,l)(l)>
 	endm
-endif
 
-ifndef LOBYTE
+define LOBYTE_sdword <LOBYTE_dword>
+define LOBYTE_sqword <LOBYTE_qword>
+LOBYTE_qword proto watcall w:qword {
+	movsx	eax,al
+	retm	<al>
+	}
 LOBYTE_dword proto watcall w:dword {
-	movzx	eax,al
+	movsx	eax,al
 	retm	<al>
 	}
 LOBYTE macro w
 	ifidn typeid(w),<imm>
 	exitm<((w) AND 0xff)>
 	endif
-	exitm<LOBYTE_dword(w)>
+%	exitm<typeid(LOBYTE_,w)(w)>
 	endm
-endif
 
-ifndef HIBYTE
+define HIBYTE_sdword <HIBYTE_dword>
+define HIBYTE_sqword <HIBYTE_qword>
+HIBYTE_qword proto watcall w:qword {
+	movsx	eax,ah
+	retm	<al>
+	}
 HIBYTE_dword proto watcall w:dword {
-	movzx	eax,ah
+	movsx	eax,ah
 	retm	<al>
 	}
 HIBYTE macro w
 	ifidn typeid(w),<imm>
 	exitm<(((w) SHR 8) AND 0xff)>
 	endif
-	exitm<HIBYTE_dword(w)>
+%	exitm<typeid(HIBYTE_,w)(w)>
 	endm
-endif
 
 SPHANDLE	typedef ptr HANDLE
 LPHANDLE	typedef ptr HANDLE
@@ -261,7 +276,12 @@ HLOCAL		typedef HANDLE
 GLOBALHANDLE	typedef HANDLE
 LOCALHANDLE	typedef HANDLE
 
-ifdef _MANAGED
+WPROC_T		typedef PROTO WINAPI
+FARPROC		typedef PTR WPROC_T
+NEARPROC	typedef PTR WPROC_T
+
+ATOM		typedef WORD
+
 DECLARE_HANDLE(HKEY)
 PHKEY typedef ptr HKEY
 DECLARE_HANDLE(HMETAFILE)
@@ -275,7 +295,6 @@ DECLARE_HANDLE(HSTR)
 DECLARE_HANDLE(HTASK)
 DECLARE_HANDLE(HWINSTA)
 DECLARE_HANDLE(HKL)
-endif
 
 ifndef _MAC
 HFILE typedef SDWORD

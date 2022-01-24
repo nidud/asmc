@@ -483,99 +483,30 @@ Reserved		USHORT 3 dup(?)
 GROUP_AFFINITY		ENDS
 PGROUP_AFFINITY		typedef ptr GROUP_AFFINITY
 
+HANDLE	typedef ptr
+PHANDLE typedef ptr HANDLE
+
 ifdef STRICT
-HANDLE		typedef ptr
-if 0 AND (_MSC_VER GT 1000)
-DECLARE_HANDLE macro h_name
-	exitm<h_name typedef ptr>
-	endm
-else
 DECLARE_HANDLE macro h_name
 &h_name&__ struc
 unused	SINT ?
 &h_name&__ ends
 	exitm<h_name typedef ptr &h_name&__>
 	endm
-endif
 else
-HANDLE	typedef PVOID
 DECLARE_HANDLE macro name
 	exitm<name typedef HANDLE>
 	endm
 endif
-PHANDLE typedef ptr HANDLE
 
 FCHAR	typedef UCHAR
 FSHORT	typedef USHORT
 FLONG	typedef ULONG
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ <>
+define _HRESULT_DEFINED
 HRESULT typedef LONG
 endif
-
-ifdef __cplusplus
-EXTERN_C equ <extern "C">
-else
-EXTERN_C equ <extern>
-endif
-
-if defined(_WIN32) OR defined(_MPPC_)
-ifdef _68K_
-STDMETHODCALLTYPE	equ <__cdecl>
-else
-STDMETHODCALLTYPE	equ <__stdcall>
-endif
-STDMETHODVCALLTYPE	equ <__cdecl>
-STDAPICALLTYPE		equ <__stdcall>
-STDAPIVCALLTYPE		equ <__cdecl>
-else
-STDMETHODCALLTYPE	equ <__export __stdcall>
-STDMETHODVCALLTYPE	equ <__export __cdecl>
-STDAPICALLTYPE		equ <__export __stdcall>
-STDAPIVCALLTYPE		equ <__export __cdecl>
-endif
-
-
-STDAPI			equ <EXTERN_C HRESULT STDAPICALLTYPE>
-STDAPI_ macro type
-	exitm<EXTERN_C type STDAPICALLTYPE>
-	endm
-
-STDMETHODIMP		equ <HRESULT STDMETHODCALLTYPE>
-STDMETHODIMP_ macro type
-	exitm<type STDMETHODCALLTYPE>
-	endm
-
-STDOVERRIDEMETHODIMP	equ <__override STDMETHODIMP>
-STDOVERRIDEMETHODIMP_ macro type
-	exitm<__override STDMETHODIMP_(type)>
-	endm
-
-IFACEMETHODIMP		equ <__override STDMETHODIMP>
-IFACEMETHODIMP_ macro type
-	exitm<__override STDMETHODIMP_(type)>
-	endm
-
-STDAPIV			equ <EXTERN_C HRESULT STDAPIVCALLTYPE>
-STDAPIV_ macro type
-	exitm<EXTERN_C type STDAPIVCALLTYPE>
-	endm
-
-STDMETHODIMPV		equ <HRESULT STDMETHODVCALLTYPE>
-STDMETHODIMPV_ macro type
-	exitm<type STDMETHODVCALLTYPE>
-	endm
-
-STDOVERRIDEMETHODIMPV	equ <__override STDMETHODIMPV>
-STDOVERRIDEMETHODIMPV_ macro type
-	exitm<__override STDMETHODIMPV_(type)>
-	endm
-
-IFACEMETHODIMPV		equ <__override STDMETHODIMPV>
-IFACEMETHODIMPV_ macro type
-	exitm<__override STDMETHODIMPV_(type)>
-	endm
 
 OBJ_HANDLE_TAGBITS	equ 0x00000003
 
@@ -592,7 +523,7 @@ PLCID			typedef PULONG
 LANGID			typedef USHORT
 
 ifndef __COMPARTMENT_ID_DEFINED__
-__COMPARTMENT_ID_DEFINED__ equ <>
+define __COMPARTMENT_ID_DEFINED__
 
 .enum {
     UNSPECIFIED_COMPARTMENT_ID = 0,
@@ -652,8 +583,8 @@ ERROR_SEVERITY_WARNING	equ 0x80000000
 ERROR_SEVERITY_ERROR	equ 0xC0000000
 
 ifndef __SECSTATUS_DEFINED__
-__SECSTATUS_DEFINED__ equ <>
-SECURITY_STATUS		typedef LONG
+define __SECSTATUS_DEFINED__
+SECURITY_STATUS typedef LONG
 endif
 
 if 0

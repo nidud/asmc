@@ -19,7 +19,7 @@ public opnd_clstab
 public ResWordTable
 public vex_flags
 
-HASH_TABITEMS equ 1024
+HASH_TABITEMS equ 4096
 
 .pragma list(push, 0)
 
@@ -276,7 +276,7 @@ undef insa
 undef avxins
 undef OpCls
 
-;; table of instruction operand classes
+; table of instruction operand classes
 
 OpCls macro op1, op2, op3
     exitm<opnd_class { { OP_&op1&, OP_&op2& }, OP3_&op3& }>
@@ -285,7 +285,9 @@ opnd_clstab label opnd_class
 include opndcls.inc
 undef OpCls
 
-;; create the strings for all reserved words
+; create the strings for all reserved words
+
+MAX_RESW_LEN = 0 ; skip length > this..
 
 .const
 
@@ -295,22 +297,37 @@ OpCls macro op1, op2, op3
 
 resw_strings label char_t
 res macro tok, string, type, value, bytval, flags, cpu, sflags
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include special.inc
 undef res
 res macro tok, string, value, bytval, flags, cpu, sflags
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include directve.inc
 undef res
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
@@ -318,6 +335,9 @@ insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu
 insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 avxins macro alias, tok, string, cpu, flgs
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include instruct.inc
@@ -405,7 +425,9 @@ undef insn
 undef insa
 undef avxins
 
-align 8
+align 4
+
+max_resw_len dd MAX_RESW_LEN
 
 ;; keywords to be added for 64-bit
 patchtab64 instr_token \
@@ -446,6 +468,7 @@ patchtabr replace_ins \
     { T_VMWRITE - SPECIAL_LAST, T_VMWRITE_I,  T_VMWRITE_I64 }
 
 
+align 8
 
 renamed_keys qdesc { NULL, NULL }
 
@@ -463,6 +486,9 @@ b64bit int_t FALSE ;; resw tables in 64bit mode?
 
 .pragma list(pop)
 
+define FNVPRIME 0x01000193
+define FNVBASE  0x811c9dc5
+
     .code
 
     option dotname
@@ -471,18 +497,48 @@ b64bit int_t FALSE ;; resw tables in 64bit mode?
 get_hash proc fastcall private token:string_t, len:byte
 
     xor     eax,eax
-    and     edx,0xFF
+    test    edx,edx
     jz      .1
+    mov     eax,FNVBASE
+    mov     r8d,edx
 .0:
-    movzx   r8d,byte ptr [rcx]
-    add     rcx,1
-    or      r8b,' '
-    lea     eax,[r8+rax*8]
-    mov     r8d,eax
-    shr     eax,13
-    and     r8d,0x1FFF
-    xor     eax,r8d
-    sub     edx,1
+    mov     rdx,0x2020202020202020
+    or      rdx,[rcx]
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    dec     r8d
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    dec     r8d
+    jz      .1
+    shr     rdx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    dec     r8d
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    dec     r8d
+    jz      .1
+    shr     rdx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    dec     r8d
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    dec     r8d
+    jz      .1
+    shr     rdx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    dec     r8d
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    add     rcx,8
+    dec     r8d
     jnz     .0
 .1:
     and     eax,HASH_TABITEMS-1
@@ -505,12 +561,13 @@ AddResWord proc fastcall private token:int_t
     lea     r11,ResWordTable
     shl     ecx,4
     lea     r9,[r11+rcx]
-    mov     dl,[r9].len
+    movzx   edx,[r9].len
     mov     rcx,[r9].name
     call    get_hash
 
     lea     rcx,resw_table
     lea     r8,[rcx+rax*2]
+    xor     edx,edx
 
     ; sort the items of a line by length!
 
@@ -548,9 +605,10 @@ RemoveResWord proc __ccall private token:int_t
     mov     r9d,ecx
     lea     r11,ResWordTable
     shl     ecx,4
-    mov     dl, [r11+rcx].len
+    movzx   edx,[r11+rcx].len
     mov     rcx,[r11+rcx].name
     call    get_hash
+    xor     edx,edx
 
     lea     rcx,resw_table
     lea     r8,[rcx+rax*2]
@@ -991,53 +1049,110 @@ ResWordsFini endp
 
 FindResWord proc fastcall name:string_t, size:uint_t
 
-    movzx   eax,byte ptr [rcx]
-    or      al,' '
-    mov     r9,rcx
-    mov     r10d,edx
-    mov     ecx,1
-.0:
-    movzx   edx,byte ptr [r9+rcx]
-    or      edx,' '
-    lea     eax,[rdx+rax*8]
-    mov     edx,eax
-    shr     eax,13
-    and     edx,0x1FFF
-    xor     eax,edx
-    add     ecx,1
-    cmp     ecx,r10d
-    jl      .0
-    and     eax,HASH_TABITEMS - 1
+    test    edx,edx
+    jz      .skip
+    cmp     edx,max_resw_len
+    ja      .skip
+    cmp     byte ptr [rcx],'_'
+    je      .skip
 
-    lea     rdx,resw_table
-    lea     r11,ResWordTable
-    mov     ax,[rdx+rax*2]
-    test    eax,eax
-    jz      .4
-.1:
-    mov     ecx,r10d
-    imul    edx,eax,ReservedWord
-    cmp     [r11+rdx].len,cl
-    jne     .3
-    mov     r8,[r11+rdx].name
-.2:
-    test    ecx,ecx
-    jz      .4
-    dec     ecx
-    mov     dl,[r9+rcx]
-    cmp     dl,[r8+rcx]
-    je      .2
+    movzx   eax,byte ptr [rcx]
+    cmp     al,'_'
+    je      .skip
+
+    mov     r8,rcx
+    mov     r9,rcx
+
+    or      al,0x20
+    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    inc     r8
     mov     dh,dl
-    mov     dl,[r8+rcx]
-    or      edx,0x2020
-    cmp     dl,dh
-    je      .2
-.3:
+    dec     dh
+    jz      .1
+.0:
+    mov     rcx,0x2020202020202020
+    or      rcx,[r8]
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    dec     dh
+    jz      .1
+    shr     rcx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    dec     dh
+    jz      .1
+    shr     rcx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    dec     dh
+    jz      .1
+    shr     rcx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,cl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,ch
+    add     r8,8
+    dec     dh
+    jnz     .0
+.1:
+    and     eax,HASH_TABITEMS-1
+    lea     r11,ResWordTable
+    lea     r8,resw_table
+    movzx   eax,word ptr [r8+rax*2]
+    test    eax,eax
+    jz      .done
+.2:
+    imul    ecx,eax,ReservedWord
+    cmp     dl,[r11+rcx].len
+    jne     .next
+    mov     r8,[r11+rcx].name
+    movzx   ecx,dl
+if 0
+.dd:
+    test    ecx,-4
+    jz      .db
+    sub     ecx,4
+    mov     r10d,[r9+rcx]
+    cmp     r10d,[r8+rcx]
+    je      .dd
+    add     ecx,4
+.db:
+    test    ecx,ecx
+    jz      .done
+    dec     ecx
+else
+.db:
+    dec     ecx
+    jz      .done
+endif
+    mov     r10b,[r9+rcx]
+    cmp     r10b,[r8+rcx]
+    je      .db
+    or      r10b,0x20
+    cmp     r10b,[r8+rcx]
+    je      .db
+.next:
     shl     eax,4
     movzx   eax,[r11+rax].next
     test    eax,eax
-    jnz     .1
-.4:
+    jnz     .2
+.skip:
+    xor     eax,eax
+.done:
     ret
 
 FindResWord endp

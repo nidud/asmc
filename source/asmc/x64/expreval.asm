@@ -1211,8 +1211,8 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .if ( [rax].special_item.sflags & SFR_IREG )
                 or [rdi].flags,E_INDIRECT or E_ASSUMECHECK
             .elseif ( [rax].special_item.value & OP_SR )
-                .if( [rbx+asm_tok].token != T_COLON || \
-                   ( ModuleInfo.strict_masm_compat && [rbx+asm_tok*2].token == T_REG ) )
+                .if ( [rbx+asm_tok].token != T_COLON ||
+                      ( ModuleInfo.strict_masm_compat && [rbx+asm_tok*2].token == T_REG ) )
                     .return fnasmerr(2032)
                 .endif
             .else
@@ -1441,17 +1441,14 @@ method_ptr:
             .endf
             mov cl,[rax].asym.mem_type
             mov [rdi].mem_type,cl
+            mov [rdi].type,NULL
             .if ( [rax].asym.state == SYM_TYPE && [rax].asym.typekind != TYPE_TYPEDEF )
                 mov [rdi].type,rax
 ifdef USE_INDIRECTION
-            .elseif ( cl == MT_PTR &&
-                      [rax].asym.is_ptr &&
-                      [rax].asym.ptr_memtype != MT_PROC )
-
+            .elseif ( cl == MT_PTR && [rax].asym.is_ptr && [rax].asym.ptr_memtype != MT_PROC )
                 mov [rdi].type,[rax].asym.target_type
+                mov [rdi].scale,0x80
 endif
-            .else
-                mov [rdi].type,NULL
             .endif
             .endc
         .default
@@ -1853,13 +1850,11 @@ minus_op proc __ccall opnd1:expr_t, opnd2:expr_t
         xchg rdx,rcx
     .endif
     .if [rcx].kind == EXPR_CONST && [rdx].kind == EXPR_CONST
-        sub [rcx].value,[rdx].value
-        sbb [rcx].hvalue,[rdx].hvalue
+        sub [rcx].llvalue,[rdx].llvalue
     .elseif [rcx].kind == EXPR_FLOAT && [rdx].kind == EXPR_FLOAT
         __subq(rcx, rdx)
     .elseif [rcx].kind == EXPR_ADDR && [rdx].kind == EXPR_CONST
-        sub [rcx].value,[rdx].value
-        sbb [rcx].hvalue,[rdx].hvalue
+        sub [rcx].llvalue,[rdx].llvalue
         fix_struct_value(rcx)
     .elseif [rcx].kind == EXPR_ADDR && [rdx].kind == EXPR_ADDR
         fix_struct_value(rcx)
@@ -1870,8 +1865,7 @@ minus_op proc __ccall opnd1:expr_t, opnd2:expr_t
             .return fnasmerr( 2032 )
         .endif
         .if( [rdx].label_tok == NULL )
-            sub [rcx].value,[rdx].value
-            sbb [rcx].hvalue,[rdx].hvalue
+            sub [rcx].llvalue,[rdx].llvalue
             .if( [rdx].flags & E_INDIRECT )
                 or [rcx].flags,E_INDIRECT
             .endif
@@ -1900,8 +1894,8 @@ minus_op proc __ccall opnd1:expr_t, opnd2:expr_t
                 .endif
                 mov [rcx].kind,EXPR_ADDR
             .else
-                sub [rcx].value,[rax].asym.offs
-                sbb [rcx].hvalue,0
+                mov eax,[rax].asym.offs
+                sub [rcx].llvalue,rax
                 sub [rcx].llvalue,[rdx].llvalue
                 mov [rcx].label_tok,NULL
                 mov [rcx].sym,NULL
@@ -2000,22 +1994,20 @@ dot_op proc __ccall uses rsi rdi opnd1:expr_t, opnd2:expr_t
     .elseif [rcx].kind == EXPR_CONST && [rdx].kind == EXPR_ADDR
         .if [rcx].flags & E_IS_TYPE && [rcx].type
             and [rdx].flags,not E_ASSUMECHECK
-            mov [rcx].value,0
-            mov [rcx].hvalue,0
+            mov [rcx].llvalue,0
         .endif
         .if ( ( !ModuleInfo.oldstructs ) && ( !( [rcx].flags & E_IS_TYPE ) && [rcx].mbr == NULL ) )
             .return struct_field_error(rcx)
         .endif
         mov r8,[rcx].mbr
         .if r8 && [r8].asym.state == SYM_TYPE
-            mov [rcx].value,[r8].asym.offs
-            mov [rcx].hvalue,0
+            mov eax,[r8].asym.offs
+            mov [rcx].llvalue,rax
         .endif
         .if [rcx].flags & E_INDIRECT
             or [rdx].flags,E_INDIRECT
         .endif
-        add [rdx].value,[rcx].value
-        adc [rdx].hvalue,[rcx].hvalue
+        add [rdx].llvalue,[rcx].llvalue
         .if [rdx].mbr
             mov [rcx].type,[rdx].type
         .endif
@@ -2029,23 +2021,27 @@ dot_op proc __ccall uses rsi rdi opnd1:expr_t, opnd2:expr_t
             and [rcx].flags,not E_ASSUMECHECK
             ;; v2.37: adjust for type's size only (japheth)
             mov r8,[rdx].type
-            sub [rdx].value,[r8].asym.total_size
-            sbb [rdx].hvalue,0
+            mov eax,[r8].asym.total_size
+            sub [rdx].llvalue,rax
         .endif
         mov r8,[rdx].mbr
         .if r8 && [r8].asym.state == SYM_TYPE
-            mov [rdx].value,[r8].asym.offs
-            mov [rdx].hvalue,0
+            mov eax,[r8].asym.offs
+            mov [rdx].llvalue,rax
         .endif
-        add [rcx].value,[rdx].value
-        adc [rcx].hvalue,[rdx].hvalue
+        add [rcx].value64,[rdx].value64
         mov [rcx].mem_type,[rdx].mem_type
         mov [rcx].type,[rdx].type
         .if r8
             mov [rcx].mbr,r8
 ifdef USE_INDIRECTION
             .if ( rax && [rdx].flags & E_IS_DOT )
-                or [rcx].flags,E_IS_DOT
+                .if ( [rcx].flags & E_EXPLICIT &&
+                      [rdx].scale == 0x80 )
+                    mov [rcx].type,NULL
+                .else
+                    or [rcx].flags,E_IS_DOT
+                .endif
             .endif
 endif
         .endif
@@ -2054,13 +2050,12 @@ endif
         .if [rdx].mbr == NULL && !ModuleInfo.oldstructs
             .return struct_field_error(rcx)
         .endif
+        mov rax,[rdx].llvalue
         .if [rcx].type != NULL
             .if [rcx].mbr != NULL
-                add [rcx].value,[rdx].value
-                adc [rcx].hvalue,[rdx].hvalue
+                add [rcx].llvalue,rax
             .else
-                mov [rcx].value,[rdx].value
-                mov [rcx].hvalue,[rdx].hvalue
+                mov [rcx].llvalue,rax
             .endif
             mov [rcx].mbr,[rdx].mbr
             mov [rcx].mem_type,[rdx].mem_type
@@ -2074,8 +2069,7 @@ endif
                 mov [rcx].type,NULL
             .endif
         .else
-            add [rcx].value,[rdx].value
-            adc [rcx].hvalue,[rdx].hvalue
+            add [rcx].llvalue,rax
             mov [rcx].mbr,[rdx].mbr
             mov [rcx].mem_type,[rdx].mem_type
         .endif
@@ -2233,7 +2227,7 @@ CheckAssume proc __ccall uses rsi rbx opnd:expr_t
     mov rsi,rcx
     .if [rsi].flags & E_EXPLICIT
         mov rbx,[rsi].type
-        .if [rsi].type && [rbx].mem_type == MT_PTR
+        .if rbx && [rbx].mem_type == MT_PTR
             .if [rbx].is_ptr == 1
                 mov [rsi].mem_type,[rbx].ptr_memtype
                 mov [rsi].type,[rbx].target_type
@@ -2529,8 +2523,8 @@ calculate proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, oper:token_t
         .endif
         MakeConst(rsi)
         MakeConst(rdi)
-        .if ( ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST ) || \
-              ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT ) || \
+        .if ( ( [rsi].kind == EXPR_CONST && [rdi].kind == EXPR_CONST ) ||
+              ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_FLOAT ) ||
               ( [rsi].kind == EXPR_FLOAT && [rdi].kind == EXPR_CONST ) )
 
             ; const XX const

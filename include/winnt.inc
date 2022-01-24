@@ -8,18 +8,17 @@ ifndef _WIN32_FUSION
 define _WIN32_FUSION
 endif
 
-ANYSIZE_ARRAY equ 1
+define ANYSIZE_ARRAY 1
 
 .pragma comment(lib, ntdll)
 
 if defined(_WIN64) or defined(_M_ALPHA)
-MAX_NATURAL_ALIGNMENT		equ QWORD
-MEMORY_ALLOCATION_ALIGNMENT	equ 16
+define MAX_NATURAL_ALIGNMENT		8
+define MEMORY_ALLOCATION_ALIGNMENT	16
 else
-MAX_NATURAL_ALIGNMENT		equ DWORD
-MEMORY_ALLOCATION_ALIGNMENT	equ 8
+define MAX_NATURAL_ALIGNMENT		4
+define MEMORY_ALLOCATION_ALIGNMENT	8
 endif
-
 .pragma pack(push, MAX_NATURAL_ALIGNMENT)
 
 TYPE_ALIGNMENT macro t
@@ -67,9 +66,9 @@ endif
 
 ifndef SYSTEM_CACHE_ALIGNMENT_SIZE
 if defined(_AMD64_) or defined(_X86_)
-SYSTEM_CACHE_ALIGNMENT_SIZE equ 64
+define SYSTEM_CACHE_ALIGNMENT_SIZE 64
 else
-SYSTEM_CACHE_ALIGNMENT_SIZE equ 128
+define SYSTEM_CACHE_ALIGNMENT_SIZE 128
 endif
 endif
 
@@ -281,9 +280,16 @@ FCHAR	typedef BYTE
 FSHORT	typedef WORD
 FLONG	typedef DWORD
 
-ifndef DECLARE_HANDLE
+ifdef STRICT
+DECLARE_HANDLE macro h_name
+	&h_name&__ struc
+	unused	   SINT ?
+	&h_name&__ ends
+	exitm<h_name typedef ptr &h_name&__>
+	endm
+else
 DECLARE_HANDLE macro name
-	exitm<name typedef ptr>
+	exitm<name typedef HANDLE>
 	endm
 endif
 
@@ -291,67 +297,6 @@ ifndef _HRESULT_DEFINED
 define _HRESULT_DEFINED
 HRESULT typedef LONG
 endif
-
-
-if defined(_M_IA64) AND NOT defined(MIDL_PASS)
-
-STDMETHODCALLTYPE	equ <fastcall>
-STDMETHODVCALLTYPE	equ <fastcall>
-STDAPICALLTYPE		equ <fastcall>
-STDAPIVCALLTYPE		equ <fastcall>
-
-else
-
-if defined(_WIN32) or defined(_MPPC_)
-ifdef _68K_
-STDMETHODCALLTYPE	equ <c>
-else
-STDMETHODCALLTYPE	equ <stdcall>
-endif
-STDMETHODVCALLTYPE	equ <c>
-STDAPICALLTYPE		equ <stdcall>
-STDAPIVCALLTYPE		equ <c>
-else
-STDMETHODCALLTYPE	equ <stdcall>
-STDMETHODVCALLTYPE	equ <c>
-STDAPICALLTYPE		equ <stdcall>
-STDAPIVCALLTYPE		equ <c>
-endif
-endif
-
-STDAPI			equ <STDAPICALLTYPE>
-STDMETHODIMP		equ <STDMETHODCALLTYPE>
-STDOVERRIDEMETHODIMP	equ <STDMETHODIMP> ; __override
-IFACEMETHODIMP		equ <STDMETHODIMP> ; __override
-STDAPIV			equ <STDAPIVCALLTYPE>
-STDMETHODIMPV		equ <STDMETHODVCALLTYPE>
-STDOVERRIDEMETHODIMPV	equ <STDMETHODIMPV> ; __override
-IFACEMETHODIMPV		equ <STDMETHODIMPV> ; __override
-
-STDAPI_ macro x
-	exitm<x STDAPICALLTYPE>
-	endm
-STDMETHODIMP_ macro x
-	exitm<x STDMETHODCALLTYPE>
-	endm
-STDOVERRIDEMETHODIMP_ macro _type
-	exitm<STDMETHODIMP_(_type)> ; __override
-	endm
-IFACEMETHODIMP_ macro _type
-	exitm<STDMETHODIMP_(_type)> ; __override
-	endm
-STDAPIV_ macro x
-	exitm<x STDAPIVCALLTYPE>
-	endm
-STDMETHODIMPV_ macro x
-	exitm<x STDMETHODVCALLTYPE>
-	endm
-STDOVERRIDEMETHODIMPV_ macro _type
-	exitm<STDMETHODIMPV_(_type)> ; __override
-	endm
-IFACEMETHODIMPV_ macro _type
-	exitm<STDMETHODIMPV_(_type)> ; __override
-	endm
 
 PDWORD		typedef ptr DWORD
 CCHAR		typedef CHAR

@@ -21,10 +21,8 @@ UpdateLineNumber    proto :asym_t, :ptr
 UpdateWordSize      proto :asym_t, :ptr
 UpdateCurPC         proto :asym_t, :ptr
 
-HASH_MAGNITUDE      equ 15
-GHASH_TABLE_SIZE    equ 0x2000
-HASH_MASK           equ ( 1 shl HASH_MAGNITUDE ) - 1
-LHASH_TABLE_SIZE    equ 128
+GHASH_TABLE_SIZE    equ 0x8000
+LHASH_TABLE_SIZE    equ 256
 
 USESTRFTIME         equ 0   ; 1=use strftime()
 
@@ -43,15 +41,15 @@ store               symptr_t ?
 eqitem              ends
 
 .data?
-align 16
+align 4
 SymCmpFunc          StrCmpFunc ?
 gsym                symptr_t ?          ; asym ** pointer into global hash table
 lsym                symptr_t ?          ; asym ** pointer into local hash table
 SymCount            uint_t ?            ; Number of symbols in global table
+align 4
 szDate              char_t 16 dup(?)    ; value of @Date symbol
 szTime              char_t 16 dup(?)    ; value of @Time symbol
 lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
-                    align 16
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
 
 .data
@@ -156,7 +154,12 @@ SymGetLocal endp
 ; - proc: procedure which will become active.
 ; fixme: It might be necessary to reset the "defined" flag
 ; for local labels (not for params and locals!). Low priority!
+
+define FNVPRIME 0x01000193
+define FNVBASE  0x811c9dc5
+
 SymSetLocal proc uses edi psym:asym_t
+
     xor eax,eax
     lea edi,lsym_table
     mov ecx,sizeof(lsym_table) / 4
@@ -164,49 +167,52 @@ SymSetLocal proc uses edi psym:asym_t
     mov ecx,psym
     mov edi,[ecx].dsym.procinfo
     mov edi,[edi].proc_info.labellist
+
     .while edi
+
         mov ecx,[edi].asym.name
-        xor eax,eax
-        movzx edx,BYTE PTR [ecx]
-        .while edx
-            add ecx,1
-            or  edx,0x20
-            shl eax,HASH_MAGNITUDE / 3
-            add eax,edx
-            mov edx,eax
-            and edx,not HASH_MASK
-            xor eax,edx
-            shr edx,HASH_MAGNITUDE
-            xor eax,edx
-            movzx edx,BYTE PTR [ecx]
+        mov eax,FNVBASE
+        mov dl,[ecx]
+        .while dl
+            inc  ecx
+            or   dl,0x20
+            imul eax,eax,FNVPRIME
+            xor  al,dl
+            mov  dl,[ecx]
         .endw
         and eax,LHASH_TABLE_SIZE - 1
         mov lsym_table[eax*4],edi
         mov edi,[edi].dsym.nextll
     .endw
     ret
+
 SymSetLocal endp
 
 SymAlloc proc uses esi edi name:string_t
+
     mov esi,name
     mov edi,strlen(esi)
-    LclAlloc(&[edi+dsym+1])
+    LclAlloc( &[edi+dsym+1] )
+
     mov [eax].asym.name_size,edi
     mov [eax].asym.mem_type,MT_EMPTY
     lea edx,[eax+dsym]
     mov [eax].asym.name,edx
+
     .if ModuleInfo.cref
         or [eax].asym.flag1,S_LIST
     .endif
+
     .if edi
         mov ecx,edi
         mov edi,edx
         rep movsb
     .endif
     ret
-SymAlloc ENDP
 
-.pragma warning(disable: 6004)
+SymAlloc endp
+
+    option dotname
 
 SymFind proc fastcall uses esi edi ebx ebp string:string_t
     ;
@@ -216,200 +222,171 @@ SymFind proc fastcall uses esi edi ebx ebp string:string_t
     ; found and is to be added to the local table, there's no
     ; second scan necessary.
     ;
-    mov esi,ecx
-    xor eax,eax
-    movzx edx,byte ptr [ecx]
+    movzx   eax,byte ptr [ecx]
+    test    eax,eax
+    jz      .done
 
-    .return .if !edx
+    mov     esi,ecx
+    or      al,0x20
+    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    inc     ecx
+    mov     dl,[ecx]
+    test    dl,dl
+    jz      .1
+.0:
+    inc     ecx
+    or      dl,0x20
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    mov     dl,[ecx]
+    test    dl,dl
+    jnz     .0
+.1:
+    sub     ecx,esi
 
-    .repeat
-        add ecx,1
-        or  edx,0x20
-        shl eax,HASH_MAGNITUDE / 3
-        add eax,edx
-        mov edx,eax
-        and edx,not HASH_MASK
-        xor eax,edx
-        shr edx,HASH_MAGNITUDE
-        xor eax,edx
-        movzx edx,BYTE PTR [ecx]
-    .until !edx
+    cmp     CurrProc,0
+    je      .global
 
-    sub ecx,esi
-    mov ebp,eax
+    mov     ebp,eax
+    and     eax,LHASH_TABLE_SIZE - 1
+    lea     edx,lsym_table[eax*4]
+    mov     eax,[edx]
+    test    eax,eax
+    jz      .end_l
 
-    .if CurrProc
+    cmp     ModuleInfo.case_sensitive,0
+    je      .cmp_li
+.cmp_l:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_l
+    mov     edi,[eax].asym.name
+.dd_l:
+    test    ecx,-4
+    jz      .db_l
+    sub     ecx,4
+    mov     ebx,[esi+ecx]
+    cmp     ebx,[edi+ecx]
+    je      .dd_l
+    jmp     .size_l
+.db_l:
+    test    ecx,ecx
+    jz      .exit_l
+    sub     ecx,1
+    mov     bl,[esi+ecx]
+    cmp     bl,[edi+ecx]
+    je      .db_l
+.size_l:
+    mov     ecx,[eax].asym.name_size
+.next_l:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_l
+    jmp     .end_l
+.exit_l:
+    mov     lsym,edx
+    jmp     .done
+.cmp_li:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_li
+    mov     edi,[eax].asym.name
+.dd_li:
+    test    ecx,-4
+    jz      .db_li
+    sub     ecx,4
+    mov     ebx,[esi+ecx]
+    cmp     ebx,[edi+ecx]
+    je      .dd_li
+    add     ecx,4
+.db_li:
+    test    ecx,ecx
+    jz      .exit_l
+    sub     ecx,1
+    mov     bl,[esi+ecx]
+    cmp     bl,[edi+ecx]
+    je      .db_li
+    mov     bh,[edi+ecx]
+    or      ebx,0x2020
+    cmp     bl,bh
+    je      .db_li
+    mov     ecx,[eax].asym.name_size
+.next_li:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_li
+.end_l:
+    mov     lsym,edx
+    mov     eax,ebp
 
-        and eax,LHASH_TABLE_SIZE - 1
-        lea edx,lsym_table[eax*4]
-        mov eax,[edx]
+.global:
 
-        .repeat
-
-            .break .if !eax
-
-            .if ModuleInfo.case_sensitive
-
-                .repeat
-
-                    .if ecx == [eax].asym.name_size
-
-                        mov edi,[eax].asym.name
-
-                        .repeat
-
-                            .if ecx >= 4
-                                sub ecx,4
-                                mov ebx,[esi+ecx]
-                                .break .if ebx != [edi+ecx]
-                                .continue(0)
-                            .endif
-
-                            .while ecx
-
-                                sub ecx,1
-                                mov bl,[esi+ecx]
-                                .break(1) .if bl != [edi+ecx]
-                            .endw
-
-                            mov lsym,edx
-                            .return
-                        .until 1
-                        mov ecx,[eax].asym.name_size
-                    .endif
-
-                    mov edx,eax
-                    mov eax,[eax].asym.nextitem
-                .until !eax
-
-            .else
-
-                .repeat
-
-                    .if ecx == [eax].asym.name_size
-
-                        mov edi,[eax].asym.name
-
-                        .while 1
-
-                            .if ecx >= 4
-
-                                sub ecx,4
-                                mov ebx,[esi+ecx]
-                                .continue(0) .if ebx == [edi+ecx]
-                                add ecx,4
-                            .endif
-
-                            .while ecx
-
-                                sub ecx,1
-                                mov bl,[esi+ecx]
-                                .continue .if bl == [edi+ecx]
-                                mov bh,[edi+ecx]
-                                or ebx,0x2020
-                                .break(1) .if bl != bh
-                            .endw
-
-                            mov lsym,edx
-                            .return
-                        .endw
-                        mov ecx,[eax].asym.name_size
-                    .endif
-
-                    mov edx,eax
-                    mov eax,[eax].asym.nextitem
-                .until !eax
-            .endif
-
-        .until 1
-
-        mov lsym,edx
-        mov eax,ebp
-    .endif
-
-    and eax,GHASH_TABLE_SIZE - 1
-    lea edx,gsym_table[eax*4]
-    mov eax,[edx]
-
-    .repeat
-
-        .break .if !eax
-
-        .if ModuleInfo.case_sensitive
-
-            .repeat
-
-                .if ecx == [eax].asym.name_size
-
-                    mov edi,[eax].asym.name
-
-                    .while 1
-
-                        .if ecx >= 4
-
-                            sub ecx,4
-                            mov ebx,[esi+ecx]
-                            .break .if ebx != [edi+ecx]
-                            .continue(0)
-                        .endif
-
-                        .while ecx
-
-                            sub ecx,1
-                            mov bl,[esi+ecx]
-                            .break(1) .if bl != [edi+ecx]
-                        .endw
-
-                        mov gsym,edx
-                        .return
-                    .endw
-                    mov ecx,[eax].asym.name_size
-                .endif
-
-                mov edx,eax
-                mov eax,[eax].asym.nextitem
-            .until !eax
-
-        .else
-
-            .repeat
-
-                .if ecx == [eax].asym.name_size
-
-                    mov edi,[eax].asym.name
-
-                    .while 1
-
-                        .if ecx >= 4
-
-                            sub ecx,4
-                            mov ebx,[esi+ecx]
-                            .continue(0) .if ebx == [edi+ecx]
-                            add ecx,4
-                        .endif
-
-                        .while ecx
-
-                            sub ecx,1
-                            mov bl,[esi+ecx]
-                            .continue .if bl == [edi+ecx]
-                            mov bh,[edi+ecx]
-                            or ebx,0x2020
-                            .break(1) .if bl != bh
-                        .endw
-                        mov gsym,edx
-                        .return
-                    .endw
-                    mov ecx,[eax].asym.name_size
-                .endif
-
-                mov edx,eax
-                mov eax,[eax].asym.nextitem
-            .until !eax
-        .endif
-    .until 1
-    mov gsym,edx
-    xor eax,eax
+    and     eax,GHASH_TABLE_SIZE - 1
+    lea     edx,gsym_table[eax*4]
+    mov     eax,[edx]
+    test    eax,eax
+    jz      .end_g
+    cmp     ModuleInfo.case_sensitive,0
+    je      .cmp_gi
+.cmp_g:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_g
+    mov     edi,[eax].asym.name
+    mov     ebp,ecx
+.dd_g:
+    test    ebp,-4
+    jz      .db_g
+    sub     ebp,4
+    mov     ebx,[esi+ebp]
+    cmp     ebx,[edi+ebp]
+    je      .dd_g
+    jmp     .next_g
+.db_g:
+    test    ebp,ebp
+    jz      .end_g
+    sub     ebp,1
+    mov     bl,[esi+ebp]
+    cmp     bl,[edi+ebp]
+    je      .db_g
+.next_g:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_g
+    jmp     .end_g
+.cmp_gi:
+    cmp     ecx,[eax].asym.name_size
+    jne     .next_gi
+    mov     edi,[eax].asym.name
+.dd_gi:
+    test    ecx,-4
+    jz      .db_gi
+    sub     ecx,4
+    mov     ebx,[esi+ecx]
+    cmp     ebx,[edi+ecx]
+    je      .dd_gi
+    add     ecx,4
+.db_gi:
+    test    ecx,ecx
+    jz      .end_g
+    sub     ecx,1
+    mov     bl,[esi+ecx]
+    cmp     bl,[edi+ecx]
+    je      .db_gi
+    mov     bh,[edi+ecx]
+    or      ebx,0x2020
+    cmp     bl,bh
+    je      .db_gi
+.size_gi:
+    mov     ecx,[eax].asym.name_size
+.next_gi:
+    mov     edx,eax
+    mov     eax,[eax].asym.nextitem
+    test    eax,eax
+    jnz     .cmp_gi
+.end_g:
+    mov     gsym,edx
+.done:
     ret
 
 SymFind endp

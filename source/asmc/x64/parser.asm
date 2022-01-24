@@ -1412,6 +1412,9 @@ idata_fixup endp
 
 SetPtrMemtype proc __ccall uses rsi rdi rbx r12 CodeInfo:ptr code_info, opndx:expr_t
 
+    UNREFERENCED_PARAMETER(CodeInfo)
+    UNREFERENCED_PARAMETER(opndx)
+
     mov rsi,rcx
     mov rdi,rdx
     xor ebx,ebx
@@ -1421,7 +1424,7 @@ SetPtrMemtype proc __ccall uses rsi rdi rbx r12 CodeInfo:ptr code_info, opndx:ex
         mov r12,[rdi].mbr
     .endif
 
-    .if [rdi].flags & E_EXPLICIT && [rdi].type
+    .if ( [rdi].flags & E_EXPLICIT && [rdi].type )
 
         mov rcx,[rdi].type
         mov ebx,[rcx].asym.total_size
@@ -1657,8 +1660,7 @@ memory_operand proc __ccall uses rsi rdi rbx r12 r13 r14 r15 CodeInfo:ptr code_i
 
     ; v211: use full 64-bit value
 
-    mov [rsi].opnd[rbx].data32l,[rdi].value
-    mov [rsi].opnd[rbx].data32h,[rdi].hvalue
+    mov [rsi].opnd[rbx].data64,[rdi].value64
     mov [rsi].opnd[rbx].type,OP_M
     mov r12,[rdi].sym
 

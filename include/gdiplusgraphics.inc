@@ -20,7 +20,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         this.typeid(Graphics_, _1)(_1, _2)
         mov this.lastResult,eax
         }
-    .inline Graphics_ptr :abs, :vararg {
+    .inline Graphics_ptrHDC__ :abs, :vararg {
         GdipCreateFromHDC(_1, addr this.nativeGraphics)
         }
     .inline Graphics_qword :abs, :vararg {
@@ -1163,7 +1163,7 @@ endif
     ;; that the HRGN is already in device units, so it doesn't transform
     ;; the coordinates in the HRGN.
 
-    .inline SetClip_ptr :abs, :abs=<CombineModeReplace>, :vararg {
+    .inline SetClip_ptrHRGN__ :abs, :abs=<CombineModeReplace>, :vararg {
         GdipSetClipHrgn(this.nativeGraphics, _1, _2)
         }
 

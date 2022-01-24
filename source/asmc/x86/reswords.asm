@@ -19,16 +19,16 @@ public opnd_clstab
 public ResWordTable
 public vex_flags
 
-HASH_TABITEMS equ 1024
+HASH_TABITEMS equ 4096
 
 .pragma list(push, 0)
 
     .data?
 
-;; reserved words hash table
+; reserved words hash table
 resw_table dw HASH_TABITEMS dup(?)
 
-;; define unary operand (LOW, HIGH, OFFSET, ...) type flags
+; define unary operand (LOW, HIGH, OFFSET, ...) type flags
 res macro value, func
     exitm<UOT_&value&,>
     endm
@@ -37,9 +37,9 @@ include unaryop.inc
 }
 undef res
 
-;; v2.06: the following operand combinations are used
-;; inside InstrTable[] only, they don't need to be known
-;; by the parser.
+; v2.06: the following operand combinations are used
+; inside InstrTable[] only, they don't need to be known
+; by the parser.
 
 .enum operand_sets {
     OP_R_MS      = ( OP_R or OP_MS ),
@@ -68,9 +68,9 @@ undef res
     OP_XMM_M64   = ( OP_XMM or OP_M64 ),
     OP_XMM_M128  = ( OP_XMM or OP_M128 ),
 
-;; extended Masm syntax: sometimes Masm accepts 2 mem types
-;; for the memory operand, although the mem access will always
-;; be QWORD/OWORD.
+; extended Masm syntax: sometimes Masm accepts 2 mem types
+; for the memory operand, although the mem access will always
+; be QWORD/OWORD.
 
     OP_MMX_M64_08  = ( OP_MMX or OP_M64  or OP_M08 ),
     OP_MMX_M64_16  = ( OP_MMX or OP_M64  or OP_M16 ),
@@ -122,9 +122,9 @@ undef res
     OP_XMM_MXQDW   = ( OP_XMM or OP_M128 or OP_M64 or OP_M32 or OP_M16 ),
 }
 
-;; v2.06: operand types have been removed from InstrTable[], they
-;; are stored now in their own table, opnd_clstab[], below.
-;; This will allow to add a 4th operand ( AVX ) more effectively.
+; v2.06: operand types have been removed from InstrTable[], they
+; are stored now in their own table, opnd_clstab[], below.
+; This will allow to add a 4th operand ( AVX ) more effectively.
 
 OpCls macro op1, op2, op3
     exitm<OPC_&op1&&op2&&op3&,>
@@ -134,23 +134,23 @@ include opndcls.inc
 }
 undef OpCls
 
-;; the tables to handle "reserved words" are now generated:
-;; 1. InstrTable: contains info for instructions.
-;;    instructions may need multiple rows!
-;; 2. SpecialTable: contains info for reserved words which are
-;;    NOT instructions. One row each.
-;; 3. optable_idx: array of indices for InstrTable.
-;; 4. resw_strings: strings of reserved words. No terminating x'00'!
-;; 5. ResWordTable: array of reserved words (name, name length, flags).
-;;
-;; Each reserved word has a "token" value assigned, which is a short integer.
-;; This integer can be used as index for:
-;; - SpecialTable
-;; - optable_idx ( needs adjustment, better use macro IndexFromToken() )
-;; - ResWordTable
+; the tables to handle "reserved words" are now generated:
+; 1. InstrTable: contains info for instructions.
+;    instructions may need multiple rows!
+; 2. SpecialTable: contains info for reserved words which are
+;    NOT instructions. One row each.
+; 3. optable_idx: array of indices for InstrTable.
+; 4. resw_strings: strings of reserved words. No terminating x'00'!
+; 5. ResWordTable: array of reserved words (name, name length, flags).
+;
+; Each reserved word has a "token" value assigned, which is a short integer.
+; This integer can be used as index for:
+; - SpecialTable
+; - optable_idx ( needs adjustment, better use macro IndexFromToken() )
+; - ResWordTable
 
 
-;; create InstrTable.
+; create InstrTable.
 
     .data
 
@@ -189,7 +189,7 @@ undef insx
 undef insv
 undef insa
 
-;; create SpecialTable.
+; create SpecialTable.
 
 SpecialTable special_item { 0, 0, 0, 0, 0 } ;; dummy entry for T_NULL
 res macro tok, string, type, value, bytval, flags, cpu, sflags
@@ -204,7 +204,7 @@ include directve.inc
 undef res
 
 
-;; define symbolic indices for InstrTable[]
+; define symbolic indices for InstrTable[]
 
 .enum res_idx {
 avxins macro alias, tok, string, cpu, flgs
@@ -246,9 +246,9 @@ undef insv
 undef insa
 }
 
-;; create optable_idx, the index array for InstrTable.
-;; This is needed because instructions often need more than
-;; one entry in InstrTable.
+; create optable_idx, the index array for InstrTable.
+; This is needed because instructions often need more than
+; one entry in InstrTable.
 
 optable_idx label word
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
@@ -276,7 +276,7 @@ undef insa
 undef avxins
 undef OpCls
 
-;; table of instruction operand classes
+; table of instruction operand classes
 
 OpCls macro op1, op2, op3
     exitm<opnd_class { { OP_&op1&, OP_&op2& }, OP3_&op3& }>
@@ -285,7 +285,9 @@ opnd_clstab label opnd_class
 include opndcls.inc
 undef OpCls
 
-;; create the strings for all reserved words
+; create the strings for all reserved words
+
+MAX_RESW_LEN = 0 ; skip length > this..
 
 .const
 
@@ -295,22 +297,37 @@ OpCls macro op1, op2, op3
 
 resw_strings label char_t
 res macro tok, string, type, value, bytval, flags, cpu, sflags
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include special.inc
 undef res
 res macro tok, string, value, bytval, flags, cpu, sflags
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include directve.inc
 undef res
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, vex
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
@@ -318,6 +335,9 @@ insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu
 insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 avxins macro alias, tok, string, cpu, flgs
+if @SizeStr(string) gt MAX_RESW_LEN
+    MAX_RESW_LEN = @SizeStr(string)
+endif
     exitm<db "&string&">
     endm
 include instruct.inc
@@ -331,13 +351,14 @@ undef avxins
 
 size_resw_strings equ $ - resw_strings
 
-;; create the 'reserved words' table (ResWordTable).
-;; this table's entries will be used to create the instruction hash table.
-;; v2.11: RWF_SPECIAL flag removed:
-;; { 0, sizeof(#string)-1, RWF_SPECIAL or flags, NULL },
-.data
-align 8
+; create the 'reserved words' table (ResWordTable).
+; this table's entries will be used to create the instruction hash table.
+; v2.11: RWF_SPECIAL flag removed:
+; { 0, sizeof(#string)-1, RWF_SPECIAL or flags, NULL },
 
+.data
+
+align 8
 ResWordTable ReservedWord { 0, 0, 0, NULL } ;; dummy entry for T_NULL
 res macro tok, string, type, value, bytval, flags, cpu, sflags
     ReservedWord { 0, @SizeStr(string), flags, NULL }
@@ -374,15 +395,15 @@ undef insa
 undef avxins
 ResWordCount equ ($ - ResWordTable) / ReservedWord
 
-;; these is a special 1-byte array for vex-encoded instructions.
-;; it could probably be moved to InstrTable[] (there is an unused byte),
-;; but in fact it's the wrong place, since the content of vex_flags[]
-;; are associated with opcodes, not with instruction variants.
+; these is a special 1-byte array for vex-encoded instructions.
+; it could probably be moved to InstrTable[] (there is an unused byte),
+; but in fact it's the wrong place, since the content of vex_flags[]
+; are associated with opcodes, not with instruction variants.
 
 vex_flags label byte
-    ;; flags for the AVX instructions in instruct.h. The order must
-    ;; be equal to the one in instruct.h! ( this is to be improved.)
-    ;; For a description of the VX_ flags see codegen.h
+    ; flags for the AVX instructions in instruct.h. The order must
+    ; be equal to the one in instruct.h! ( this is to be improved.)
+    ; For a description of the VX_ flags see codegen.h
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
@@ -407,40 +428,42 @@ undef avxins
 
 align 4
 
-;; keywords to be added for 64-bit
+max_resw_len dd MAX_RESW_LEN
+
+; keywords to be added for 64-bit
 patchtab64 instr_token \
-    T_SPL,              ;; add x64 register part of special.h
-    T_FRAME,            ;; add x64 reserved word part of special.h
-    T_DOT_ALLOCSTACK,   ;; add x64 directive part of directve.h (win64)
-    T_JRCXZ,            ;; branch instructions must be grouped together
-    T_CDQE,             ;; add x64 part of instruct.h
-    T_VPEXTRQ           ;; add x64 part of instravx.h
+    T_SPL,              ; add x64 register part of special.h
+    T_FRAME,            ; add x64 reserved word part of special.h
+    T_DOT_ALLOCSTACK,   ; add x64 directive part of directve.h (win64)
+    T_JRCXZ,            ; branch instructions must be grouped together
+    T_CDQE,             ; add x64 part of instruct.h
+    T_VPEXTRQ           ; add x64 part of instravx.h
 
 ;; keywords to be removed for 64-bit
 patchtab32 instr_token \
-    T_TR3,              ;; registers invalid for IA32+
-    T_DOT_SAFESEH,      ;; directives invalid for IA32+
-    T_AAA,              ;; instructions invalid for IA32+
-    T_JCXZ,             ;; 1. branch instructions invalid for IA32+
-    T_LOOPW             ;; 2. branch instructions invalid for IA32+
+    T_TR3,              ; registers invalid for IA32+
+    T_DOT_SAFESEH,      ; directives invalid for IA32+
+    T_AAA,              ; instructions invalid for IA32+
+    T_JCXZ,             ; 1. branch instructions invalid for IA32+
+    T_LOOPW             ; 2. branch instructions invalid for IA32+
 
 
 replace_ins struct
-    tok     dw ?        ;; is an optable_idx[] index
+    tok     dw ?        ; is an optable_idx[] index
     idx32   res_idx ?
     idx64   res_idx ?
 replace_ins ends
 
-;; keyword entries to be changed for 64-bit (see instr64.inc)
+; keyword entries to be changed for 64-bit (see instr64.inc)
 patchtabr replace_ins \
     { T_LGDT - SPECIAL_LAST, T_LGDT_I, T_LGDT_I64 },
     { T_LIDT - SPECIAL_LAST, T_LIDT_I, T_LIDT_I64 },
     { T_CALL - SPECIAL_LAST, T_CALL_I, T_CALL_I64 },
     { T_JMP  - SPECIAL_LAST, T_JMP_I,  T_JMP_I64  },
-    { T_POP  - SPECIAL_LAST, T_POP_I,  T_POP_I64  }, ;; v2.06: added
-    { T_PUSH - SPECIAL_LAST, T_PUSH_I, T_PUSH_I64 }, ;; v2.06: added
-    { T_SLDT - SPECIAL_LAST, T_SLDT_I, T_SLDT_I64 }, ;; with Masm, in 16/32-bit SLDTorSMSWorSTR accept a WORD argument only -
-    { T_SMSW - SPECIAL_LAST, T_SMSW_I, T_SMSW_I64 }, ;; in 64-bit (ML64), 32- and 64-bit registers are also accepted!
+    { T_POP  - SPECIAL_LAST, T_POP_I,  T_POP_I64  }, ; v2.06: added
+    { T_PUSH - SPECIAL_LAST, T_PUSH_I, T_PUSH_I64 }, ; v2.06: added
+    { T_SLDT - SPECIAL_LAST, T_SLDT_I, T_SLDT_I64 }, ; with Masm, in 16/32-bit SLDTorSMSWorSTR accept a WORD argument only -
+    { T_SMSW - SPECIAL_LAST, T_SMSW_I, T_SMSW_I64 }, ; in 64-bit (ML64), 32- and 64-bit registers are also accepted!
     { T_STR  - SPECIAL_LAST, T_STR_I,  T_STR_I64  },
     { T_VMREAD  - SPECIAL_LAST, T_VMREAD_I,   T_VMREAD_I64  },
     { T_VMWRITE - SPECIAL_LAST, T_VMWRITE_I,  T_VMWRITE_I64 }
@@ -449,8 +472,8 @@ patchtabr replace_ins \
 
 renamed_keys qdesc { NULL, NULL }
 
-;; global queue of "disabled" reserved words.
-;; just indices of ResWordTable[] are used.
+; global queue of "disabled" reserved words.
+; just indices of ResWordTable[] are used.
 
 glqueue struct
 Head    dw ?
@@ -459,9 +482,12 @@ glqueue ends
 
 Removed glqueue { 0, 0 }
 
-b64bit int_t FALSE ;; resw tables in 64bit mode?
+b64bit int_t FALSE ; resw tables in 64bit mode?
 
 .pragma list(pop)
+
+define FNVPRIME 0x01000193
+define FNVBASE  0x811c9dc5
 
     .code
 
@@ -472,17 +498,27 @@ get_hash proc fastcall private token:string_t, len:byte
     xor     eax,eax
     test    edx,edx
     jz      .1
+    mov     eax,FNVBASE
 .0:
-    movzx   ebx,byte ptr [ecx]
-    add     ecx,1
-    or      ebx,0x20
-    lea     eax,[ebx+eax*8]
-    mov     ebx,eax
-    and     ebx,not 0x1FFF
-    xor     eax,ebx
-    shr     ebx,13
-    xor     eax,ebx
-    add     dl,-1
+    mov     ebx,[ecx]
+    or      ebx,0x20202020
+    imul    eax,eax,FNVPRIME
+    xor     al,bl
+    dec     edx
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,bh
+    dec     edx
+    jz      .1
+    shr     ebx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,bl
+    dec     edx
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,bh
+    add     ecx,4
+    dec     edx
     jnz     .0
 .1:
     and     eax,HASH_TABITEMS-1
@@ -572,15 +608,15 @@ RemoveResWord endp
 
 rename_node struct
 next        ptr_t ?
-name        string_t ?  ;;  the original name in resw_strings[]
-token       dw ?        ;; is either enum instr_token or enum special_token
+name        string_t ?  ;  the original name in resw_strings[]
+token       dw ?        ; is either enum instr_token or enum special_token
 length      db ?
 rename_node ends
 
-;; Rename a keyword - used by OPTION RENAMEKEYWORD.
-;; - token: keyword to rename
-;; - name: new name of keyword
-;; - length: length of new name
+; Rename a keyword - used by OPTION RENAMEKEYWORD.
+; - token: keyword to rename
+; - name: new name of keyword
+; - length: length of new name
 
     assume edi:ptr rename_node
 
@@ -597,7 +633,7 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
     .endf
     stosb
 
-    ;; v2.11: do nothing if new name matches current name
+    ; v2.11: do nothing if new name matches current name
     mov ebx,token
 
     .if ( ResWordTable[ebx*8].len == length )
@@ -607,8 +643,8 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
 
     RemoveResWord( ebx )
 
-    ;; if it is the first rename action for this keyword,
-    ;; the original name must be saved.
+    ; if it is the first rename action for this keyword,
+    ; the original name must be saved.
 
     lea eax,resw_strings
     lea ecx,[eax+size_resw_strings]
@@ -630,8 +666,8 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
             mov renamed_keys.tail,edi
         .endif
     .else
-        ;; v2.11: search the original name. if the "new" names matches
-        ;; the original name, restore the name pointer
+        ; v2.11: search the original name. if the "new" names matches
+        ; the original name, restore the name pointer
         .for ( edi = renamed_keys.head, esi = NULL: edi: esi = edi )
             .if ( [edi].token == bx )
                 .if ( [edi].length == length )
@@ -656,7 +692,7 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
     .endif
     movzx esi,length
     mov ResWordTable[ebx*8].name,LclAlloc(esi)
-    ;; convert to lowercase?
+    ; convert to lowercase?
     memcpy(ResWordTable[ebx*8].name, &newname, esi)
     mov ResWordTable[ebx*8].len,length
     AddResWord(ebx)
@@ -664,8 +700,8 @@ RenameKeyword proc uses esi edi ebx token:uint_t, name:string_t, length:byte
 
 RenameKeyword endp
 
-;; depending on 64bit on or off, some instructions must be added,
-;; some removed. Currently this is a bit hackish.
+; depending on 64bit on or off, some instructions must be added,
+; some removed. Currently this is a bit hackish.
 
 Set64Bit proc uses esi edi ebx newmode:int_t
 
@@ -770,7 +806,7 @@ EnableKeyword proc uses esi edi ebx token:uint_t
 
 EnableKeyword endp
 
-;; check if a keyword is in the list of disabled words.
+; check if a keyword is in the list of disabled words.
 
 IsKeywordDisabled proc uses ebx name:string_t, len:int_t
 
@@ -788,8 +824,8 @@ IsKeywordDisabled proc uses ebx name:string_t, len:int_t
 IsKeywordDisabled endp
 
 
-;; get current name of a reserved word.
-;; max size is 255.
+; get current name of a reserved word.
+; max size is 255.
 
 GetResWName proc resword:uint_t, buff:string_t
 
@@ -818,28 +854,28 @@ GetResWName proc resword:uint_t, buff:string_t
 GetResWName endp
 
 
-;; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
-;; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
+; ResWordsInit() initializes the reserved words hash array ( resw_table[] )
+; and also the reserved words string pointers ( ResWordTable[].name + ResWordTable[].len )
 
 ResWordsInit proc uses esi edi
 
-    ;; exit immediately if table is already initialized
+    ; exit immediately if table is already initialized
     .return .if ResWordTable[1*8].name
 
-    ;; clear hash table
+    ; clear hash table
     lea edi,resw_table
     mov ecx,sizeof(resw_table)/4
     xor eax,eax
     rep stosd
 
-    ;; currently these flags must be set manually, since the
-    ;; RWF_ flags aren't contained in instravx.h
+    ; currently these flags must be set manually, since the
+    ; RWF_ flags aren't contained in instravx.h
     or ResWordTable[T_VPEXTRQ*8].flags,RWF_X64
     or ResWordTable[T_VPINSRQ*8].flags,RWF_X64
 
-    ;; initialize ResWordTable[].name and .len.
-    ;; add keyword to hash table ( unless it is 64-bit only ).
-    ;; v2.09: start with index = 1, since index 0 is now T_NULL
+    ; initialize ResWordTable[].name and .len.
+    ; add keyword to hash table ( unless it is 64-bit only ).
+    ; v2.09: start with index = 1, since index 0 is now T_NULL
     lea esi,resw_strings
     .for ( edi = 1: edi < ResWordCount: edi++ )
         mov ResWordTable[edi*8].name,esi
@@ -853,27 +889,23 @@ ResWordsInit proc uses esi edi
 
 ResWordsInit endp
 
-;; ResWordsFini() is called once per module
-;; it restores the resword table
+; ResWordsFini() is called once per module
+; it restores the resword table
 
 ResWordsFini proc uses esi edi ebx
-
-    ;int i;
-    ;int next;
-    ;struct rename_node  *rencurr;
 
     assume esi:ptr rename_node
     assume edi:ptr rename_node
 
-    ;; restore renamed keywords.
-    ;; the keyword has to removed ( and readded ) from the hash table,
-    ;; since its position most likely will change.
+    ; restore renamed keywords.
+    ; the keyword has to removed ( and readded ) from the hash table,
+    ; since its position most likely will change.
 
     .for ( edi = renamed_keys.head: edi: )
         mov esi,[edi].next
         movzx ebx,[edi].token
         RemoveResWord(ebx)
-        ;; v2.06: this is the correct name to free
+        ; v2.06: this is the correct name to free
         mov ResWordTable[ebx*8].name,[edi].name
         mov ResWordTable[ebx*8].len,[edi].length
         AddResWord(ebx)
@@ -881,7 +913,7 @@ ResWordsFini proc uses esi edi ebx
     .endf
     mov renamed_keys.head,NULL
 
-    ;; reenter disabled keywords
+    ; reenter disabled keywords
     xor ebx,ebx
     .for ( bx = Removed.Head: ebx != 0: bx = si )
         mov si,ResWordTable[ebx*8].next
@@ -900,272 +932,82 @@ ResWordsFini endp
 
 FindResWord proc fastcall w_name:string_t, w_size:uint_t
 
-    movzx eax,BYTE PTR [ecx]
-    or al,0x20
+    test    edx,edx
+    jz      .skip
+    cmp     edx,max_resw_len
+    ja      .skip
+    cmp     byte ptr [ecx],'_'
+    je      .skip
 
-    .if edx < 8
+    push    edi
+    push    ebx
 
-        .switch jmp edx
+    mov     edi,ecx
+    movzx   eax,byte ptr [ecx]
+    cmp     al,'_'
+    je      .false
 
-          .case 0
-            xor eax,eax
-            ret
-
-          .case 1
-            mov cl,al
-            movzx eax,resw_table[eax*2]
-            .if eax
-                .repeat
-                    .if ResWordTable[eax*8].len == 1
-                        mov edx,ResWordTable[eax*8].name
-                        .break .if cl == [edx]
-                    .endif
-                    movzx eax,ResWordTable[eax*8].next
-                .until !eax
-            .endif
-            ret
-
-          .case 2
-            movzx   edx,BYTE PTR [ecx+1]
-            or      edx,0x20
-            lea     eax,[edx+eax*8]
-            and     eax,HASH_TABITEMS - 1
-            movzx   eax,resw_table[eax*2]
-            movzx   ecx,WORD PTR [ecx]
-            or      ecx,0x2020
-            .if eax
-                .repeat
-                    .if ResWordTable[eax*8].len == 2
-                        mov edx,ResWordTable[eax*8].name
-                        .break .if cx == [edx]
-                    .endif
-                    movzx eax,ResWordTable[eax*8].next
-                .until !eax
-            .endif
-            ret
-
-          .case 3
-
-            movzx   edx,BYTE PTR [ecx+1]
-            or      edx,0x20
-            lea     eax,[edx+eax*8]
-            movzx   edx,BYTE PTR [ecx+2]
-            or      edx,0x20
-            lea     eax,[edx+eax*8]
-            mov     edx,eax
-            and     edx,not 0x1FFF
-            xor     eax,edx
-            shr     edx,13
-            xor     eax,edx
-            and     eax,HASH_TABITEMS - 1
-            movzx   eax,resw_table[eax*2]
-            mov     ecx,[ecx]
-            or      ecx,0x202020
-            and     ecx,0xFFFFFF
-            .if eax
-                .repeat
-                    .if ResWordTable[eax*8].len == 3
-                        mov edx,ResWordTable[eax*8].name
-                        mov edx,[edx]
-                        and edx,0xFFFFFF
-                        .break .if ecx == edx
-                    .endif
-                    movzx eax,ResWordTable[eax*8].next
-                .until !eax
-            .endif
-            ret
-
-          .case 4
-            movzx   edx,BYTE PTR [ecx+1]
-            or      dl,0x20
-            lea     eax,[edx+eax*8]
-            mov     dl,[ecx+2]
-            or      dl,0x20
-            lea     eax,[edx+eax*8]
-            mov     edx,eax
-            and     edx,not 0x1FFF
-            xor     eax,edx
-            shr     edx,13
-            xor     eax,edx
-            movzx   edx,BYTE PTR [ecx+3]
-            or      dl,0x20
-            lea     eax,[edx+eax*8]
-            mov     edx,eax
-            and     edx,not 0x1FFF
-            xor     eax,edx
-            shr     edx,13
-            xor     eax,edx
-            and     eax,HASH_TABITEMS - 1
-            movzx   eax,resw_table[eax*2]
-            mov     ecx,[ecx]
-            or      ecx,0x20202020
-            .if eax
-                .repeat
-                    .if ResWordTable[eax*8].len == 4
-                        mov edx,ResWordTable[eax*8].name
-                        .break .if ecx == [edx]
-                    .endif
-                    movzx eax,ResWordTable[eax*8].next
-                .until !eax
-            .endif
-            ret
-
-          .case 5
-          .case 6
-          .case 7
-            push    edi
-            push    ebx
-            mov     ebx,edx
-            mov     edi,ecx
-            mov ecx,1
-            .repeat
-                movzx edx,BYTE PTR [ecx+edi]
-                or  edx,0x20
-                lea eax,[edx+eax*8]
-                mov edx,eax
-                and edx,not 0x00001FFF
-                xor eax,edx
-                shr edx,13
-                xor eax,edx
-                add ecx,1
-                cmp ecx,ebx
-            .untilnl
-            and    eax,HASH_TABITEMS - 1
-            movzx  eax,resw_table[eax*2]
-            .if eax
-                .repeat
-                    .if ResWordTable[eax*8].len == bl
-                        mov edx,ResWordTable[eax*8].name
-                        mov ecx,[edi]
-                        or  ecx,0x20202020
-                        .if ecx == [edx]
-                            mov cl,[edi+4]
-                            or  cl,0x20
-                            .if cl == [edx+4]
-                                .break .if ebx == 5
-                                mov cl,[edi+5]
-                                or  cl,0x20
-                                .if cl == [edx+5]
-                                    .break .if ebx == 6
-                                    mov cl,[edi+6]
-                                    or  cl,0x20
-                                    .break .if cl == [edx+6]
-                                .endif
-                            .endif
-                        .endif
-                    .endif
-                    movzx eax,ResWordTable[eax*8].next
-                .until !eax
-            .endif
-            pop ebx
-            pop edi
-            ret
-        .endsw
-    .endif
-
-    push esi
-    push edi
-    push ebx
-
-    mov ebx,edx
-    mov edi,ecx
-
-    mov ecx,[edi+1]
-    or  ecx,0x20202020
-
-    movzx edx,cl
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-
-    mov dl,ch
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-
-    shr ecx,16
-    mov dl,cl
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-
-    mov dl,ch
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-
-    mov dl,[edi+5]
-    or  dl,0x20
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-
-    mov dl,[edi+6]
-    or  dl,0x20
-    lea eax,[edx+eax*8]
-    mov esi,eax
-    and esi,not 0x1FFF
-    xor eax,esi
-    shr esi,13
-    xor eax,esi
-    mov ecx,7
-
-    .repeat
-        movzx edx,BYTE PTR [ecx+edi]
-        or  edx,0x20
-        lea eax,[edx+eax*8]
-        mov edx,eax
-        and edx,not 0x1FFF
-        xor eax,edx
-        shr edx,13
-        xor eax,edx
-        add ecx,1
-        cmp ecx,ebx
-    .untilnl
-    and eax,HASH_TABITEMS - 1
-    movzx eax,resw_table[eax*2]
-
-    .if eax
-        .repeat
-            .if ResWordTable[eax*8].len == bl
-                mov esi,ResWordTable[eax*8].name
-                mov ecx,[edi]
-                or  ecx,0x20202020
-                .if ecx == [esi]
-                    mov ecx,[edi+4]
-                    or  ecx,0x20202020
-                    .if ecx == [esi+4]
-                        mov edx,ebx
-                        .repeat
-                            .break(1) .if edx == 8
-                            sub edx,1
-                            mov cl,[edi+edx]
-                            or  cl,0x20
-                        .until cl != [esi+edx]
-                    .endif
-                .endif
-            .endif
-            mov ax,ResWordTable[eax*8].next
-        .until !eax
-    .endif
-    pop ebx
-    pop edi
-    pop esi
+    or      al,0x20
+    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    inc     ecx
+    mov     dh,dl
+    dec     dh
+    jz      .1
+.0:
+    mov     ebx,[ecx]
+    or      ebx,0x20202020
+    imul    eax,eax,FNVPRIME
+    xor     al,bl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,bh
+    dec     dh
+    jz      .1
+    shr     ebx,16
+    imul    eax,eax,FNVPRIME
+    xor     al,bl
+    dec     dh
+    jz      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,bh
+    add     ecx,4
+    dec     dh
+    jnz     .0
+.1:
+    and     eax,HASH_TABITEMS-1
+    movzx   eax,resw_table[eax*2]
+    test    eax,eax
+    jz      .done
+.2:
+    cmp     dl,ResWordTable[eax*8].len
+    jne     .4
+    mov     ebx,ResWordTable[eax*8].name
+    movzx   ecx,dl
+.3:
+    dec     ecx
+    jz      .done
+    mov     dh,[edi+ecx]
+    cmp     dh,[ebx+ecx]
+    je      .3
+    or      dh,0x20
+    cmp     dh,[ebx+ecx]
+    je      .3
+.4:
+    mov     ax,ResWordTable[eax*8].next
+    test    eax,eax
+    jnz     .2
+.done:
+    pop     ebx
+    pop     edi
+    ret
+.false:
+    xor     eax,eax
+    pop     ebx
+    pop     edi
+    ret
+.skip:
+    xor     eax,eax
     ret
 
 FindResWord endp

@@ -21,10 +21,8 @@ UpdateLineNumber    proto __ccall :asym_t, :ptr
 UpdateWordSize      proto __ccall :asym_t, :ptr
 UpdateCurPC         proto __ccall :asym_t, :ptr
 
-HASH_MAGNITUDE      equ 15
-GHASH_TABLE_SIZE    equ 0x2000
-HASH_MASK           equ ( 1 shl HASH_MAGNITUDE ) - 1
-LHASH_TABLE_SIZE    equ 128
+GHASH_TABLE_SIZE    equ 0x8000
+LHASH_TABLE_SIZE    equ 256
 
 USESTRFTIME         equ 0   ; 1=use strftime()
 
@@ -157,6 +155,9 @@ SymGetLocal endp
 ; fixme: It might be necessary to reset the "defined" flag
 ; for local labels (not for params and locals!). Low priority!
 
+define FNVPRIME 0x01000193
+define FNVBASE  0x811c9dc5
+
 SymSetLocal proc fastcall psym:asym_t
 
     xor eax,eax
@@ -174,23 +175,15 @@ SymSetLocal proc fastcall psym:asym_t
     .while r8
 
         mov rcx,[r8].asym.name
-        xor eax,eax
-        movzx edx,BYTE PTR [rcx]
-
-        .while edx
-
-            inc rcx
-            or  edx,0x20
-            shl eax,HASH_MAGNITUDE / 3
-            add eax,edx
-            mov edx,eax
-            and edx,not HASH_MASK
-            xor eax,edx
-            shr edx,HASH_MAGNITUDE
-            xor eax,edx
-            movzx edx,BYTE PTR [rcx]
+        mov eax,FNVBASE
+        mov dl,[rcx]
+        .while dl
+            inc  rcx
+            or   dl,0x20
+            imul eax,eax,FNVPRIME
+            xor  al,dl
+            mov  dl,[rcx]
         .endw
-
         and eax,LHASH_TABLE_SIZE - 1
         mov [r9+rax*8],r8
         mov r8,[r8].dsym.nextll
@@ -239,146 +232,227 @@ SymFind proc fastcall string:string_t
     ; found and is to be added to the local table, there's no
     ; second scan necessary.
     ;
+    movzx   eax,byte ptr [rcx]
+    test    eax,eax
+    jz      .done
+
     mov     r10,rcx
-    xor     eax,eax
-    movzx   edx,byte ptr [rcx]
-
-    .return .if !edx
-
+    or      al,0x20
+    xor     eax,( FNVPRIME * FNVBASE ) and 0xFFFFFFFF
+    inc     rcx
+if 0
+    mov     r8d,1
 .0:
-    add     rcx,1
-    or      edx,0x20
-    shl     eax,HASH_MAGNITUDE / 3
-    add     eax,edx
-    mov     edx,eax
-    and     edx,not HASH_MASK
-    xor     eax,edx
-    shr     edx,HASH_MAGNITUDE
-    xor     eax,edx
-    movzx   edx,BYTE PTR [rcx]
-    test    edx,edx
+    mov     rdx,0x2020202020202020
+    or      rdx,[rcx]
+    cmp     dl,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    inc     r8d
+    cmp     dh,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    inc     r8d
+    shr     rdx,16
+    cmp     dl,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    inc     r8d
+    cmp     dh,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    inc     r8d
+    shr     rdx,16
+    cmp     dl,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    inc     r8d
+    cmp     dh,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    inc     r8d
+    shr     rdx,16
+    cmp     dl,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    inc     r8d
+    cmp     dh,0x20
+    je      .1
+    imul    eax,eax,FNVPRIME
+    xor     al,dh
+    inc     r8d
+    add     rcx,8
+    jmp     .0
+.1:
+else
+    mov     dl,[rcx]
+    test    dl,dl
+    jz      .1
+.0:
+    inc     rcx
+    or      dl,0x20
+    imul    eax,eax,FNVPRIME
+    xor     al,dl
+    mov     dl,[rcx]
+    test    dl,dl
     jnz     .0
-
+.1:
     sub     rcx,r10
-    mov     r11d,eax
-    mov     r9d,ecx
+    mov     r8d,ecx
+endif
 
     cmp     CurrProc,0
-    jz      .global
+    je      .global
 
+    mov     r9d,eax
     and     eax,LHASH_TABLE_SIZE - 1
     lea     rdx,lsym_table
     lea     rdx,[rdx+rax*8]
     mov     rax,[rdx]
     test    rax,rax
-    jz      .endlocal
-.1:
-    cmp     r9d,[rax].asym.name_size
-    jne     .2
-    mov     r8,[rax].asym.name
-.3:
-    cmp     r9d,4
-    jb      .5
-    sub     r9d,4
-    mov     ecx,[r10+r9]
-    cmp     ecx,[r8+r9]
-    je      .3
-    add     r9d,4
-.5:
-    test    r9d,r9d
-    jz      .7
-    sub     r9d,1
-    mov     cl,[r10+r9]
-    cmp     cl,[r8+r9]
-    je      .5
-    add     r9d,1
+    jz      .end_l
     cmp     ModuleInfo.case_sensitive,0
-    jz      .6
-.4:
-    mov     r9d,[rax].asym.name_size
-.2:
+    je      .cmp_li
+.cmp_l:
+    cmp     r8d,[rax].asym.name_size
+    jne     .next_l
+    mov     r11,[rax].asym.name
+.dd_l:
+    test    r8d,-4
+    jz      .db_l
+    sub     r8d,4
+    mov     ecx,[r10+r8]
+    cmp     ecx,[r11+r8]
+    je      .dd_l
+    jmp     .size_l
+.db_l:
+    test    r8d,r8d
+    jz      .exit_l
+    sub     r8d,1
+    mov     cl,[r10+r8]
+    cmp     cl,[r11+r8]
+    je      .db_l
+.size_l:
+    mov     r8d,[rax].asym.name_size
+.next_l:
     mov     rdx,rax
     mov     rax,[rax].asym.nextitem
     test    rax,rax
-    jnz     .1
-    jmp     .endlocal
-.6:
-    test    r9d,r9d
-    jz      .7
-    sub     r9d,1
-    mov     cl,[r10+r9]
+    jnz     .cmp_l
+    jmp     .end_l
+.exit_l:
+    mov     lsym,rdx
+    jmp     .done
+.cmp_li:
+    cmp     r8d,[rax].asym.name_size
+    jne     .next_li
+    mov     r11,[rax].asym.name
+.dd_li:
+    test    r8d,-4
+    jz      .db_li
+    sub     r8d,4
+    mov     ecx,[r10+r8]
+    cmp     ecx,[r11+r8]
+    je      .dd_li
+    add     r8d,4
+.db_li:
+    test    r8d,r8d
+    jz      .exit_l
+    sub     r8d,1
+    mov     cl,[r10+r8]
+    cmp     cl,[r11+r8]
+    je      .db_li
     mov     ch,cl
-    mov     cl,[r8+r9]
+    mov     cl,[r11+r8]
     or      ecx,0x2020
     cmp     cl,ch
-    je      .6
-    jmp     .4
-.7:
+    je      .db_li
+    mov     r8d,[rax].asym.name_size
+.next_li:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .cmp_li
+.end_l:
     mov     lsym,rdx
-    ret
-
-.endlocal:
-
-    mov     lsym,rdx
-    mov     eax,r11d
-
+    mov     eax,r9d
 .global:
-
-    and     eax,GHASH_TABLE_SIZE - 1
+    and     eax,GHASH_TABLE_SIZE-1
     lea     rdx,gsym_table
     lea     rdx,[rdx+rax*8]
     mov     rax,[rdx]
     test    rax,rax
-    jz      .endglobal
-
-.10:
-    cmp     r9d,[rax].asym.name_size
-    jne     .20
-    mov     r8,[rax].asym.name
-.30:
-    cmp     r9d,4
-    jb      .50
+    jz      .end_g
+    cmp     ModuleInfo.case_sensitive,0
+    je      .cmp_gi
+.cmp_g:
+    cmp     r8d,[rax].asym.name_size
+    jne     .next_g
+    mov     r11,[rax].asym.name
+    mov     r9d,r8d
+.dd_g:
+    test    r9d,-4
+    jz      .db_g
     sub     r9d,4
     mov     ecx,[r10+r9]
-    cmp     ecx,[r8+r9]
-    je      .30
-    add     r9d,4
-.50:
+    cmp     ecx,[r11+r9]
+    je      .dd_g
+    jmp     .next_g
+.db_g:
     test    r9d,r9d
-    jz      .70
+    jz      .end_g
     sub     r9d,1
     mov     cl,[r10+r9]
-    cmp     cl,[r8+r9]
-    je      .50
-    add     r9d,1
-    cmp     ModuleInfo.case_sensitive,0
-    jz      .60
-.40:
-    mov     r9d,[rax].asym.name_size
-.20:
+    cmp     cl,[r11+r9]
+    je      .db_g
+.next_g:
     mov     rdx,rax
     mov     rax,[rax].asym.nextitem
     test    rax,rax
-    jnz     .10
-    jmp     .endglobal
-.60:
+    jnz     .cmp_g
+    jmp     .end_g
+.cmp_gi:
+    cmp     r8d,[rax].asym.name_size
+    jne     .next_gi
+    mov     r11,[rax].asym.name
+    mov     r9d,r8d
+.dd_gi:
+    test    r9d,-4
+    jz      .db_gi
+    sub     r9d,4
+    mov     ecx,[r10+r9]
+    cmp     ecx,[r11+r9]
+    je      .dd_gi
+    add     r9d,4
+.db_gi:
     test    r9d,r9d
-    jz      .70
+    jz      .end_g
     sub     r9d,1
     mov     cl,[r10+r9]
+    cmp     cl,[r11+r9]
+    je      .db_gi
     mov     ch,cl
-    mov     cl,[r8+r9]
+    mov     cl,[r11+r9]
     or      ecx,0x2020
     cmp     cl,ch
-    je      .60
-    jmp     .40
-.70:
+    je      .db_gi
+.size_gi:
+    mov     r8d,[rax].asym.name_size
+.next_gi:
+    mov     rdx,rax
+    mov     rax,[rax].asym.nextitem
+    test    rax,rax
+    jnz     .cmp_gi
+.end_g:
     mov     gsym,rdx
-    ret
-
-.endglobal:
-    mov     gsym,rdx
-    xor     eax,eax
+.done:
     ret
 
 SymFind endp

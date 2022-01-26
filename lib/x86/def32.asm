@@ -15,6 +15,7 @@ CreateDefs proc uses esi edi ebx windef:bool
 
     .new line[128]:char_t
     .new dll[64]:char_t
+    .new def[64]:char_t
     .new name[64]:char_t
     .new count:int_t = 0
 
@@ -35,23 +36,17 @@ CreateDefs proc uses esi edi ebx windef:bool
 
         .break .if ( strchr( strcpy( &dll, &[esi+1] ), ']' ) == NULL )
 
-         strcpy( eax, ".def" )
-        .break .if ( fopen( &dll, "wt" ) == NULL )
+         mov byte ptr [eax],0
+         strcpy( strrchr( strcpy( &def, &dll ), '.' ), ".def" )
+
+        .break .if ( fopen( &def, "wt" ) == NULL )
          mov ebx,eax
 
-         mov byte ptr [strrchr(&dll, '.')],0
          _strupr(&dll)
-
          .if ( windef )
             fprintf(ebx,
-                "LIBRARY %s.LIB\n"
+                "LIBRARY %s\n"
                 "EXPORTS\n", &dll)
-         .else
-             .if ( strcmp(&dll, "NTVDM" ) == 0 )
-                strcat(&dll, ".exe")
-             .else
-                strcat(&dll, ".dll")
-            .endif
          .endif
          .while fgets(esi, 128, edi)
 
@@ -107,13 +102,13 @@ main endp
 
     end _tstart
 
-[aclui]
+[aclui.dll]
 CreateSecurityPage@4
 EditSecurity@8
 EditSecurityAdvanced@12
 IID_ISecurityInformation
 
-[activeds]
+[activeds.dll]
 _ADsBuildEnumerator@8
 _ADsBuildVarArrayInt@12
 _ADsBuildVarArrayStr@12
@@ -142,7 +137,7 @@ _ReallocADsMem@12
 _ReallocADsStr@8
 _SecurityDescriptorToBinarySD@40
 
-[advapi32]
+[advapi32.dll]
 AbortSystemShutdownA@4
 AbortSystemShutdownW@4
 AccessCheck@32
@@ -656,7 +651,7 @@ UpdateTraceA@16
 UpdateTraceW@16
 WriteEncryptedFileRaw@12
 
-[authz]
+[authz.dll]
 AuthzAccessCheck@36
 AuthzAddSidsToContext@24
 AuthzCachedAccessCheck@20
@@ -694,7 +689,7 @@ AuthzUnregisterCapChangeNotification@4
 AuthzUnregisterSecurityEventSource@8
 AuthziLogAuditEvent@12
 
-[avrt]
+[avrt.dll]
 AvQuerySystemResponsiveness@8
 AvRevertMmThreadCharacteristics@4
 AvRtCreateThreadOrderingGroup@16
@@ -710,7 +705,7 @@ AvSetMmThreadCharacteristicsA@8
 AvSetMmThreadCharacteristicsW@8
 AvSetMmThreadPriority@8
 
-[bcrypt]
+[bcrypt.dll]
 BCryptAddContextFunction@20
 BCryptCloseAlgorithmProvider@8
 BCryptConfigureContext@12
@@ -761,7 +756,7 @@ BCryptSignHash@32
 BCryptUnregisterConfigChangeNotify@4
 BCryptVerifySignature@28
 
-[cabinet]
+[cabinet.dll]
 CloseCompressor@4
 CloseDecompressor@4
 Compress@24
@@ -789,7 +784,7 @@ ResetDecompressor@4
 SetCompressorInformation@16
 SetDecompressorInformation@16
 
-[clusapi]
+[clusapi.dll]
 AddClusterNode@16
 AddClusterResourceDependency@8
 AddClusterResourceNode@8
@@ -981,7 +976,7 @@ SetClusterResourceDependencyExpression@8
 SetClusterResourceName@8
 SetClusterServiceAccountPassword@20
 
-[comctl32]
+[comctl32.dll]
 CreateMappedBitmap@20
 CreatePropertySheetPageA@4
 CreatePropertySheetPageW@4
@@ -1097,7 +1092,7 @@ TaskDialogIndirect@16
 UninitializeFlatSB@4
 _TrackMouseEvent@4
 
-[comdlg32]
+[comdlg32.dll]
 ChooseColorA@4
 ChooseColorW@4
 ChooseFontA@4
@@ -1120,7 +1115,7 @@ PrintDlgW@4
 ReplaceTextA@4
 ReplaceTextW@4
 
-[credui]
+[credui.dll]
 SspiGetCredUIContext@20
 SspiIsPromptingNeeded@4
 SspiPromptForCredentialsA@32
@@ -1128,7 +1123,7 @@ SspiPromptForCredentialsW@32
 SspiUnmarshalCredUIContext@12
 SspiUpdateCredentials@16
 
-[crypt32]
+[crypt32.dll]
 CertAddCRLContextToStore@16
 CertAddCRLLinkToStore@16
 CertAddCTLContextToStore@16
@@ -1353,7 +1348,7 @@ PFXImportCertStore@12
 PFXIsPFXBlob@4
 PFXVerifyPassword@12
 
-[cryptui]
+[cryptui.dll]
 ACUIProviderInvokeUI@4
 CertSelectionGetSerializedBlob@12
 CommonInit@0
@@ -1411,7 +1406,7 @@ LocalEnrollNoDS@92
 RetrievePKCS7FromCA@28
 WizardFree@4
 
-[cryptxml]
+[cryptxml.dll]
 CryptXmlAddObject@24
 CryptXmlClose@4
 CryptXmlCreateReference@36
@@ -1432,13 +1427,13 @@ CryptXmlSetHMACSecret@12
 CryptXmlSign@32
 CryptXmlVerifySignature@12
 
-[dbgeng]
+[dbgeng.dll]
 DebugConnect
 DebugConnectWide
 DebugCreate
 DebugCreateEx
 
-[dbghelp]
+[dbghelp.dll]
 DbgHelpCreateUserDump@12
 DbgHelpCreateUserDumpW@12
 EnumDirTree@24
@@ -1626,7 +1621,7 @@ UnDecorateSymbolName@16
 UnDecorateSymbolNameW@16
 UnmapDebugInformation@4
 
-[dhcpcsvc]
+[dhcpcsvc.dll]
 DhcpCApiCleanup@0
 DhcpCApiInitialize@4
 DhcpDeRegisterParamChange@12
@@ -1635,7 +1630,7 @@ DhcpRemoveDNSRegistrations@0
 DhcpRequestParams@44
 DhcpUndoRequestParams@16
 
-[dnsapi]
+[dnsapi.dll]
 DnsAcquireContextHandle_A@12
 DnsAcquireContextHandle_W@12
 DnsExtractRecordsFromMessage_UTF8@12
@@ -1669,7 +1664,7 @@ DnsValidateServerStatus@12
 DnsWriteQuestionToBuffer_UTF8@24
 DnsWriteQuestionToBuffer_W@24
 
-[dsuiext]
+[dsuiext.dll]
 CheckDsPolicy@8
 DsBrowseForContainerA@4
 DsBrowseForContainerW@4
@@ -1704,7 +1699,7 @@ StringDPA_InsertStringA@12
 StringDPA_InsertStringW@12
 StringFromSearchColumn@8
 
-[dwmapi]
+[dwmapi.dll]
 DwmAttachMilContent@4
 DwmDefWindowProc@20
 DwmDetachMilContent@4
@@ -1736,14 +1731,14 @@ DwmTransitionOwnedWindow@8
 DwmUnregisterThumbnail@4
 DwmUpdateThumbnailProperties@8
 
-[elscore]
+[elscore.dll]
 MappingDoAction@12
 MappingFreePropertyBag@4
 MappingFreeServices@4
 MappingGetServices@12
 MappingRecognizeText@24
 
-[evr]
+[evr.dll]
 MFCreateDXSurfaceBuffer@16
 MFCreateVideoMixer@16
 MFCreateVideoMixerAndPresenter@24
@@ -1755,7 +1750,7 @@ MFCreateVideoSampleFromSurface@8
 MFGetPlaneSize@16
 MFIsFormatYUV@4
 
-[gdi32]
+[gdi32.dll]
 AbortDoc@4
 AbortPath@4
 AddFontMemResourceEx@16
@@ -2175,7 +2170,7 @@ XLATEOBJ_hGetColorTransform@4
 XLATEOBJ_iXlate@8
 XLATEOBJ_piVector@4
 
-[glu32]
+[glu32.dll]
 gluBeginCurve@4
 gluBeginPolygon@4
 gluBeginSurface@4
@@ -2229,7 +2224,7 @@ gluTessProperty@16
 gluTessVertex@12
 gluUnProject@48
 
-[glut32]
+[glut32.dll]
 __glutCreateMenuWithExit@8
 __glutCreateWindowWithExit@8
 __glutGetFCB@4
@@ -2350,7 +2345,7 @@ glutWireTeapot@8
 glutWireTetrahedron@0
 glutWireTorus@24
 
-[gpedit]
+[gpedit.dll]
 BrowseForGPO@4
 CreateGPOLink@12
 CreateRSOPQuery@8
@@ -2363,7 +2358,7 @@ ImportRSoPData@8
 RunRSOPQuery@12
 SetSysvolSecurityFromDSSecurity@12
 
-[httpapi]
+[httpapi.dll]
 HttpAddFragmentToCache@20
 HttpAddUrl@12
 HttpAddUrlToUrlGroup@24
@@ -2404,7 +2399,7 @@ HttpWaitForDemandStart@8
 HttpWaitForDisconnect@16
 HttpWaitForDisconnectEx@20
 
-[icm32]
+[icm32.dll]
 CMCheckColors@20
 CMCheckColorsInGamut@16
 CMCheckRGBs@36
@@ -2427,11 +2422,11 @@ CMTranslateRGB@16
 CMTranslateRGBs@36
 CMTranslateRGBsExt@44
 
-[icmui]
+[icmui.dll]
 SetupColorMatchingA@4
 SetupColorMatchingW@4
 
-[imagehlp]
+[imagehlp.dll]
 BindImage@12
 BindImageEx@20
 CheckSumMappedFile@16
@@ -2565,7 +2560,7 @@ UnmapDebugInformation@4
 UpdateDebugInfoFile@16
 UpdateDebugInfoFileEx@20
 
-[imm32]
+[imm32.dll]
 ImmAssociateContext@8
 ImmAssociateContextEx@12
 ImmConfigureIMEA@16
@@ -2630,7 +2625,7 @@ ImmSimulateHotKey@8
 ImmUnregisterWordA@16
 ImmUnregisterWordW@16
 
-[iphlpapi]
+[iphlpapi.dll]
 AddIPAddress@20
 AllocateAndGetTcpExTableFromStack@20
 AllocateAndGetUdpExTableFromStack@20
@@ -2729,7 +2724,7 @@ SetPerTcpConnectionEStats@24
 SetTcpEntry@4
 UnenableRouter@8
 
-[kernel32]
+[kernel32.dll]
 AcquireSRWLockExclusive@4
 AcquireSRWLockShared@4
 ActivateActCtx@8
@@ -3846,7 +3841,7 @@ lstrcpynW@12
 lstrlenA@4
 lstrlenW@4
 
-[ktmw32]
+[ktmw32.dll]
 ClearAllSavepointsTransaction@4
 ClearSavepointTransaction@8
 CommitComplete@8
@@ -3903,7 +3898,7 @@ SetResourceManagerCompletionPort@12
 SetTransactionInformation@20
 SinglePhaseReject@8
 
-[loadperf]
+[loadperf.dll]
 BackupPerfRegistryToFileW@8
 InstallPerfDllA@12
 InstallPerfDllW@12
@@ -3919,7 +3914,7 @@ UnloadPerfCounterTextStringsW@8
 UpdatePerfNameFilesA@16
 UpdatePerfNameFilesW@16
 
-[lz32]
+[lz32.dll]
 CopyLZFile@8
 GetExpandedNameA@8
 GetExpandedNameW@8
@@ -3933,7 +3928,7 @@ LZRead@12
 LZSeek@12
 LZStart@0
 
-[mapi32]
+[mapi32.dll]
 MAPIAddress@44
 MAPIDeleteMail@20
 MAPIDetails@20
@@ -3947,7 +3942,7 @@ MAPISaveMail@24
 MAPISendDocuments@20
 MAPISendMail@20
 
-[mf]
+[mf.dll]
 AppendPropVariant@8
 ConvertPropVariant@8
 CopyPropertyStore@12
@@ -4026,7 +4021,7 @@ MFShutdownObject@4
 MFTranscodeGetAudioOutputAvailableTypes@16
 MergePropertyStore@12
 
-[mfplat]
+[mfplat.dll]
 CreatePropertyStore@4
 MFAddPeriodicCallback@12
 MFAllocateSerialWorkQueue@8
@@ -4169,17 +4164,17 @@ MFValidateMediaTypeSize@24
 MFWrapMediaType@16
 MFllMulDiv@32
 
-[mfplay]
+[mfplay.dll]
 MFPCreateMediaPlayer@24
 
-[mfreadwrite]
+[mfreadwrite.dll]
 MFCreateSinkWriterFromMediaSink@12
 MFCreateSinkWriterFromURL@16
 MFCreateSourceReaderFromByteStream@12
 MFCreateSourceReaderFromMediaSource@12
 MFCreateSourceReaderFromURL@12
 
-[mgmtapi]
+[mgmtapi.dll]
 SnmpMgrClose@4
 SnmpMgrCtl@28
 SnmpMgrGetTrap@24
@@ -4190,7 +4185,7 @@ SnmpMgrRequest@20
 SnmpMgrStrToOid@8
 SnmpMgrTrapListen@4
 
-[mpr]
+[mpr.dll]
 MultinetGetConnectionPerformanceA@8
 MultinetGetConnectionPerformanceW@8
 WNetAddConnection2A@16
@@ -4234,7 +4229,7 @@ WNetRestoreConnectionW@8
 WNetUseConnectionA@32
 WNetUseConnectionW@32
 
-[mprapi]
+[mprapi.dll]
 MprAdminBufferFree@4
 MprAdminConnectionClearStats@8
 MprAdminConnectionEnum@28
@@ -4347,7 +4342,7 @@ MprSetupIpInIpInterfaceFriendlyNameDelete@8
 MprSetupIpInIpInterfaceFriendlyNameEnum@12
 MprSetupIpInIpInterfaceFriendlyNameFree@4
 
-[msacm32]
+[msacm32.dll]
 acmDriverAddA@20
 acmDriverAddW@20
 acmDriverClose@8
@@ -4391,7 +4386,7 @@ acmStreamReset@8
 acmStreamSize@16
 acmStreamUnprepareHeader@12
 
-[mscms]
+[mscms.dll]
 AssociateColorProfileWithDeviceA@12
 AssociateColorProfileWithDeviceW@12
 CheckBitmapBits@36
@@ -4464,7 +4459,7 @@ WcsSetDefaultRenderingIntent@8
 WcsSetUsePerUserProfiles@12
 WcsTranslateColors@40
 
-[msi]
+[msi.dll]
 DllGetVersion@4
 Migrate10CachedPackagesA@16
 Migrate10CachedPackagesW@16
@@ -4756,12 +4751,12 @@ MsiViewGetErrorA@12
 MsiViewGetErrorW@12
 MsiViewModify@12
 
-[msimg32]
+[msimg32.dll]
 AlphaBlend@44
 GradientFill@24
 TransparentBlt@44
 
-[msvcrt]
+[msvcrt.dll]
 _CIacos
 _CIasin
 _CIatan
@@ -6101,7 +6096,7 @@ wprintf_s
 wscanf
 wscanf_s
 
-[mswsock]
+[mswsock.dll]
 AcceptEx@32
 EnumProtocolsA@12
 EnumProtocolsW@12
@@ -6119,7 +6114,7 @@ SetServiceW@24
 TransmitFile@28
 WSARecvEx@16
 
-[msxml6]
+[msxml6.dll]
 CLSID_DOMDocument2
 CLSID_DOMDocument60
 CLSID_FreeThreadedDOMDocument60
@@ -6228,7 +6223,7 @@ LIBID_MSXML2
 LIBID_MXR
 LIBID_XMLPSR
 
-[ncrypt]
+[ncrypt.dll]
 NCryptCreatePersistedKey@24
 NCryptDecrypt@32
 NCryptDeleteKey@8
@@ -6254,7 +6249,7 @@ NCryptSignHash@32
 NCryptTranslateHandle@24
 NCryptVerifySignature@28
 
-[netapi32]
+[netapi32.dll]
 DsAddressToSiteNamesA@16
 DsAddressToSiteNamesExA@20
 DsAddressToSiteNamesExW@20
@@ -6435,14 +6430,14 @@ RxNetAccessGetUserPerms@16
 RxNetAccessSetInfo@20
 RxRemoteApi
 
-[normaliz]
+[normaliz.dll]
 IdnToAscii@20
 IdnToNameprepUnicode@20
 IdnToUnicode@20
 IsNormalizedString@12
 NormalizeString@20
 
-[ntdll]
+[ntdll.dll]
 @RtlUlongByteSwap@4
 @RtlUlonglongByteSwap@8
 @RtlUshortByteSwap@4
@@ -6886,7 +6881,7 @@ MD5Init@4
 MD5Update@12
 MD5Final@4
 
-[ntdsapi]
+[ntdsapi.dll]
 DsAddCloneDCW@28
 DsAddSidHistoryA@32
 DsAddSidHistoryW@32
@@ -7003,7 +6998,7 @@ DsaopExecuteScript@24
 DsaopPrepareScript@16
 DsaopUnBind@4
 
-[ntvdm]
+[ntvdm.exe]
 BlockWOWIdle@4
 CurrentMonitorTeb
 DBGNotifyDebugged@4
@@ -7167,7 +7162,7 @@ setSP@4
 setSS@4
 setZF@4
 
-[odbc32]
+[odbc32.dll]
 ODBCGetTryWaitValue@0
 ODBCSetTryWaitValue@4
 SQLAllocConnect@8
@@ -7324,7 +7319,7 @@ SQLTablesA@36
 SQLTablesW@36
 SQLTransact@12
 
-[odbccp32]
+[odbccp32.dll]
 SQLConfigDataSource@16
 SQLConfigDataSourceW@16
 SQLConfigDriver@28
@@ -7377,7 +7372,7 @@ SQLWriteFileDSNW@16
 SQLWritePrivateProfileString@16
 SQLWritePrivateProfileStringW@16
 
-[oldnames]
+[oldnames.dll]
 access
 cabs
 cgets
@@ -7492,7 +7487,7 @@ y0
 y1
 yn
 
-[ole32]
+[ole32.dll]
 BindMoniker@16
 CLSIDFromProgID@8
 CLSIDFromProgIDEx@8
@@ -7696,7 +7691,7 @@ WriteClassStg@8
 WriteClassStm@8
 WriteFmtUserTypeStg@12
 
-[oleacc]
+[oleacc.dll]
 AccessibleChildren@20
 AccessibleObjectFromEvent@20
 AccessibleObjectFromPoint@16
@@ -7713,7 +7708,7 @@ LresultFromObject@12
 ObjectFromLresult@16
 WindowFromAccessibleObject@8
 
-[oleaut32]
+[oleaut32.dll]
 BstrFromVector@8
 ClearCustData@4
 CreateDispTypeInfo@12
@@ -8093,7 +8088,7 @@ VariantTimeToDosDateTime@16
 VariantTimeToSystemTime@12
 VectorFromBstr@8
 
-[olecli32]
+[olecli32.dll]
 OleActivate@24
 OleClone@20
 OleClose@4
@@ -8150,7 +8145,7 @@ OleSetTargetDevice@8
 OleUnlockServer@4
 OleUpdate@4
 
-[oledlg]
+[oledlg.dll]
 OleUIAddVerbMenuA@36
 OleUIAddVerbMenuW@36
 OleUIBusyA@4
@@ -8175,7 +8170,7 @@ OleUIPromptUserW
 OleUIUpdateLinksA@16
 OleUIUpdateLinksW@16
 
-[opengl32]
+[opengl32.dll]
 glAccum@8
 glAlphaFunc@8
 glAreTexturesResident@12
@@ -8532,7 +8527,7 @@ wglUseFontBitmapsW@16
 wglUseFontOutlinesA@32
 wglUseFontOutlinesW@32
 
-[p2p]
+[p2p.dll]
 PeerCollabAddContact@8
 PeerCollabAsyncInviteContact@20
 PeerCollabAsyncInviteEndpoint@16
@@ -8645,7 +8640,7 @@ PeerPnrpUpdateRegistration@8
 PeerSSPAddCredentials@12
 PeerSSPRemoveCredentials@4
 
-[pdh]
+[pdh.dll]
 PdhAddCounterA@16
 PdhAddCounterW@16
 PdhAddEnglishCounterA@16
@@ -8757,7 +8752,7 @@ PdhVbUpdateLog@8
 PdhVerifySQLDBA@4
 PdhVerifySQLDBW@4
 
-[powrprof]
+[powrprof.dll]
 CallNtPowerInformation@20
 CanUserWritePwrScheme@0
 DeletePwrScheme@4
@@ -8835,7 +8830,7 @@ WriteGlobalPwrPolicy@4
 WriteProcessorPwrScheme@8
 WritePwrScheme@16
 
-[psapi]
+[psapi.dll]
 EmptyWorkingSet@4
 EnumDeviceDrivers@12
 EnumPageFilesA@8
@@ -8864,7 +8859,7 @@ InitializeProcessForWsWatch@4
 QueryWorkingSet@12
 QueryWorkingSetEx@12
 
-[rasapi32]
+[rasapi32.dll]
 RasClearConnectionStatistics@4
 RasClearLinkStatistics@8
 RasConnectionNotificationA@12
@@ -8950,7 +8945,7 @@ RasUpdateConnection@8
 RasValidateEntryNameA@8
 RasValidateEntryNameW@8
 
-[rasdlg]
+[rasdlg.dll]
 RasDialDlgA@16
 RasDialDlgW@16
 RasEntryDlgA@12
@@ -8958,7 +8953,7 @@ RasEntryDlgW@12
 RasPhonebookDlgA@12
 RasPhonebookDlgW@12
 
-[resutils]
+[resutils.dll]
 CloseClusterCryptProvider@4
 ClusWorkerCheckTerminate@4
 ClusWorkerCreate@12
@@ -9063,7 +9058,7 @@ ResUtilVerifyPropertyTable@24
 ResUtilVerifyResourceService@4
 ResUtilVerifyService@4
 
-[rpcns4]
+[rpcns4.dll]
 I_GetDefaultEntrySyntax@0
 I_RpcNsGetBuffer@4
 I_RpcNsNegotiateTransferSyntax@4
@@ -9128,7 +9123,7 @@ RpcNsProfileEltInqNextW@20
 RpcNsProfileEltRemoveA@20
 RpcNsProfileEltRemoveW@20
 
-[rpcrt4]
+[rpcrt4.dll]
 CStdStubBuffer_AddRef@4
 CStdStubBuffer_Connect@8
 CStdStubBuffer_CountRefs@4
@@ -9660,7 +9655,7 @@ UuidIsNil@8
 UuidToStringA@8
 UuidToStringW@8
 
-[rstrtmgr]
+[rstrtmgr.dll]
 RmAddFilter@20
 RmCancelCurrentTask@4
 RmEndSession@4
@@ -9674,7 +9669,7 @@ RmRestart@12
 RmShutdown@12
 RmStartSession@12
 
-[rtm]
+[rtm.dll]
 BestMatchInTable@12
 CheckTable@4
 CreateTable@8
@@ -9793,7 +9788,7 @@ RtmWriteAddressFamilyConfig@12
 RtmWriteInstanceConfig@8
 SearchInTable@20
 
-[rtutils]
+[rtutils.dll]
 LogErrorA@16
 LogErrorW@16
 LogEventA@16
@@ -9838,14 +9833,14 @@ TraceRegisterExW@8
 TraceVprintfExA@16
 TraceVprintfExW@16
 
-[scarddlg]
+[scarddlg.dll]
 GetOpenCardNameA@4
 GetOpenCardNameW@4
 SCardDlgExtendedError@0
 SCardUIDlgSelectCardA@4
 SCardUIDlgSelectCardW@4
 
-[secur32]
+[secur32.dll]
 AcceptSecurityContext@36
 AcquireCredentialsHandleA@36
 AcquireCredentialsHandleW@36
@@ -9936,12 +9931,12 @@ TranslateNameA@20
 TranslateNameW@20
 VerifySignature@16
 
-[sensapi]
+[sensapi.dll]
 IsDestinationReachableA@8
 IsDestinationReachableW@8
 IsNetworkAlive@4
 
-[sensorsapi]
+[sensorsapi.dll]
 ALL_POWERSCHEMES_GUID
 CLSID_Sensor
 CLSID_SensorCollection
@@ -10196,7 +10191,7 @@ SENSOR_TYPE_UNKNOWN
 SENSOR_TYPE_VOLTAGE
 USER_POLICY_PRESENT_GUID
 
-[setupapi]
+[setupapi.dll]
 CM_Delete_Device_Interface_KeyA@8
 CM_Delete_Device_Interface_KeyW@8
 CM_Delete_Device_Interface_Key_ExA@12
@@ -10549,7 +10544,7 @@ SetupWriteTextLog
 SetupWriteTextLogError
 SetupWriteTextInfLine@20
 
-[sfc]
+[sfc.dll]
 SRSetRestorePoint@8
 SRSetRestorePointA@8
 SRSetRestorePointW@8
@@ -10569,7 +10564,7 @@ SfpDeleteCatalog@8
 SfpInstallCatalog@12
 SfpVerifyFile@12
 
-[shell32]
+[shell32.dll]
 AssocCreateForClasses@16
 AssocGetDetailsOfPropKey@20
 CDefFolderMenu_Create2@36
@@ -10816,7 +10811,7 @@ StgMakeUniqueName@20
 Win32DeleteFile@4
 WriteCabinetState@4
 
-[shlwapi]
+[shlwapi.dll]
 AssocCreate@24
 AssocGetPerceivedType@16
 AssocIsDangerous@4
@@ -11178,7 +11173,7 @@ wnsprintfW
 wvnsprintfA@16
 wvnsprintfW@16
 
-[snmpapi]
+[snmpapi.dll]
 SnmpSvcGetUptime@0
 SnmpSvcSetLogLevel@4
 SnmpSvcSetLogType@4
@@ -11206,7 +11201,7 @@ SnmpUtilVarBindFree@4
 SnmpUtilVarBindListCpy@8
 SnmpUtilVarBindListFree@4
 
-[sti]
+[sti.dll]
 MigrateRegisteredSTIAppsForWIAEvents@16
 RegSTIforWia@16
 SelectDeviceDialog2@4
@@ -11214,7 +11209,7 @@ StiCreateInstance@16
 StiCreateInstanceA@16
 StiCreateInstanceW@16
 
-[tapi32]
+[tapi32.dll]
 GetTapi16CallbackMsg@8
 LAddrParamsInited@4
 LOpenDialAsst@16
@@ -11239,7 +11234,7 @@ NonAsyncEventThread@0
 TAPIWndProc@16
 TUISPIDLLCallback@16
 
-[traffic]
+[traffic.dll]
 TcAddFilter@12
 TcAddFlow@20
 TcCloseInterface@4
@@ -11263,7 +11258,7 @@ TcSetFlowW@16
 TcSetInterface@16
 TcSetSocketFlow@8
 
-[urlmon]
+[urlmon.dll]
 AsyncInstallDistributionUnit@36
 CoGetClassObjectFromURL@40
 CoInternetCombineIUri@20
@@ -11342,7 +11337,7 @@ UrlMkGetSessionOption@20
 UrlMkSetSessionOption@16
 WriteHitLogging@4
 
-[user32]
+[user32.dll]
 ActivateKeyboardLayout@8
 AddClipboardFormatListener@4
 AdjustWindowRect@12
@@ -12085,7 +12080,7 @@ wsprintfW
 wvsprintfA@12
 wvsprintfW@12
 
-[userenv]
+[userenv.dll]
 CreateEnvironmentBlock@12
 CreateProfile@16
 DeleteProfileA@12
@@ -12124,7 +12119,7 @@ RsopSetPolicySettingStatus@20
 UnloadUserProfile@8
 UnregisterGPNotification@4
 
-[usp10]
+[usp10.dll]
 ScriptApplyDigitSubstitution@12
 ScriptApplyLogicalWidth@36
 ScriptBreak@16
@@ -12166,7 +12161,7 @@ ScriptSubstituteSingleGlyph@36
 ScriptTextOut@56
 ScriptXtoCP@36
 
-[uxtheme]
+[uxtheme.dll]
 BeginBufferedAnimation@32
 BeginBufferedPaint@20
 BufferedPaintClear@8
@@ -12238,7 +12233,7 @@ SetThemeAppProperties@4
 SetWindowTheme@12
 SetWindowThemeAttribute@16
 
-[version]
+[version.dll]
 GetFileVersionInfoA@16
 GetFileVersionInfoExW@20
 GetFileVersionInfoSizeA@8
@@ -12254,7 +12249,7 @@ VerLanguageNameW@12
 VerQueryValueA@16
 VerQueryValueW@16
 
-[virtdisk]
+[virtdisk.dll]
 AddVirtualDiskParent@8
 AttachVirtualDisk@24
 BreakMirrorVirtualDisk@4
@@ -12277,7 +12272,7 @@ ResizeVirtualDisk@16
 SetVirtualDiskInformation@8
 SetVirtualDiskMetadata@16
 
-[webservices]
+[webservices.dll]
 WsAbandonCall@12
 WsAbandonMessage@12
 WsAbortChannel@8
@@ -12472,7 +12467,7 @@ WsWriteXmlBufferToBytes@36
 WsWriteXmlnsAttribute@20
 WsXmlStringEquals@12
 
-[winbio]
+[winbio.dll]
 WinBioAcquireFocus@0
 WinBioAsyncEnumBiometricUnits@8
 WinBioAsyncEnumDatabases@8
@@ -12533,7 +12528,7 @@ WinBioVerifyAndReleaseTicket@28
 WinBioVerifyWithCallback@20
 WinBioWait@4
 
-[winfax]
+[winfax.dll]
 FaxAbort@8
 FaxAccessCheck@8
 FaxClose@4
@@ -12591,7 +12586,7 @@ FaxStartPrintJobA@16
 FaxStartPrintJobW@16
 FaxUnregisterServiceProviderW@4
 
-[winhttp]
+[winhttp.dll]
 SvchostPushServiceGlobals@4
 WinHttpAddRequestHeaders@16
 WinHttpAutoProxySvcMain@8
@@ -12635,7 +12630,7 @@ WinHttpWebSocketSend@16
 WinHttpWebSocketShutdown@16
 WinHttpWriteData@16
 
-[wininet]
+[wininet.dll]
 CommitUrlCacheEntryA@44
 CommitUrlCacheEntryW@44
 CreateMD5SSOHash@16
@@ -12814,7 +12809,7 @@ UnlockUrlCacheEntryFileA@8
 UnlockUrlCacheEntryFileW@8
 UnlockUrlCacheEntryStream@8
 
-[winmm]
+[winmm.dll]
 CloseDriver@12
 DefDriverProc@20
 DrvGetModuleHandle@4
@@ -12980,7 +12975,7 @@ waveOutSetVolume@8
 waveOutUnprepareHeader@12
 waveOutWrite@12
 
-[winscard]
+[winscard.dll]
 SCardAccessStartedEvent@0
 SCardAddReaderToGroupA@12
 SCardAddReaderToGroupW@12
@@ -13043,7 +13038,207 @@ SCardTransmit@28
 SCardWriteCacheA@24
 SCardWriteCacheW@24
 
-[wintrust]
+[winspool.drv]
+ADVANCEDSETUPDIALOG@16
+AbortPrinter@4
+AddFormA@12
+AddFormW@12
+AddJobA@20
+AddJobW@20
+AddMonitorA@12
+AddMonitorW@12
+AddPortA@12
+AddPortExA@16
+AddPortExW@16
+AddPortW@12
+AddPrintProcessorA@16
+AddPrintProcessorW@16
+AddPrintProvidorA@12
+AddPrintProvidorW@12
+AddPrinterA@12
+AddPrinterConnection2A@16
+AddPrinterConnection2W@16
+AddPrinterConnectionA@4
+AddPrinterConnectionW@4
+AddPrinterDriverA@12
+AddPrinterDriverExA@16
+AddPrinterDriverExW@4
+AddPrinterDriverW@12
+AddPrinterW@12
+AdvancedDocumentPropertiesA@20
+AdvancedDocumentPropertiesW@20
+AdvancedSetupDialog@16
+ClosePrinter@4
+CloseSpoolFileHandle@8
+CommitSpoolData@12
+ConfigurePortA@12
+ConfigurePortW@12
+ConnectToPrinterDlg@8
+ConvertAnsiDevModeToUnicodeDevmode@16
+ConvertUnicodeDevModeToAnsiDevmode@16
+CorePrinterDriverInstalledA@44
+CorePrinterDriverInstalledW@44
+CreatePrintAsyncNotifyChannel@24
+CreatePrinterIC@8
+DEVICECAPABILITIES@20
+DEVICEMODE@16
+DeleteFormA@8
+DeleteFormW@8
+DeleteJobNamedProperty@12
+DeleteMonitorA@12
+DeleteMonitorW@12
+DeletePortA@12
+DeletePortW@12
+DeletePrintProcessorA@12
+DeletePrintProcessorW@12
+DeletePrintProvidorA@12
+DeletePrintProvidorW@12
+DeletePrinter@4
+DeletePrinterConnectionA@4
+DeletePrinterConnectionW@4
+DeletePrinterDataA@8
+DeletePrinterDataExA@12
+DeletePrinterDataExW@12
+DeletePrinterDataW@8
+DeletePrinterDriverA@12
+DeletePrinterDriverExA@20
+DeletePrinterDriverExW@20
+DeletePrinterDriverPackageA@12
+DeletePrinterDriverPackageW@12
+DeletePrinterDriverW@12
+DeletePrinterIC@4
+DeletePrinterKeyA@8
+DeletePrinterKeyW@8
+DevQueryPrint@12
+DevQueryPrintEx@4
+DeviceCapabilities@20
+DeviceCapabilitiesA@20
+DeviceCapabilitiesW@20
+DeviceMode@16
+DevicePropertySheets@8
+DocumentEvent@28
+DocumentPropertiesA@24
+DocumentPropertiesW@24
+DocumentPropertySheets@8
+EXTDEVICEMODE@32
+EndDocPrinter@4
+EndPagePrinter@4
+EnumFormsA@24
+EnumFormsW@24
+EnumJobNamedProperties@16
+EnumJobsA@32
+EnumJobsW@32
+EnumMonitorsA@24
+EnumMonitorsW@24
+EnumPortsA@24
+EnumPortsW@24
+EnumPrintProcessorDatatypesA@28
+EnumPrintProcessorDatatypesW@28
+EnumPrintProcessorsA@28
+EnumPrintProcessorsW@28
+EnumPrinterDataA@36
+EnumPrinterDataExA@24
+EnumPrinterDataExW@24
+EnumPrinterDataW@36
+EnumPrinterDriversA@28
+EnumPrinterDriversW@28
+EnumPrinterKeyA@20
+EnumPrinterKeyW@20
+EnumPrintersA@28
+EnumPrintersW@28
+ExtDeviceMode@32
+FindClosePrinterChangeNotification@4
+FindFirstPrinterChangeNotification@16
+FindNextPrinterChangeNotification@16
+FlushPrinter@20
+FreePrintNamedPropertyArray@8
+FreePrintPropertyValue@4
+FreePrinterNotifyInfo@4
+GetCorePrinterDriversA@20
+GetCorePrinterDriversW@20
+GetDefaultPrinterA@8
+GetDefaultPrinterW@8
+GetFormA@24
+GetFormW@24
+GetJobA@24
+GetJobNamedPropertyValue@16
+GetJobW@24
+GetPrintExecutionData@4
+GetPrintOutputInfo@16
+GetPrintProcessorDirectoryA@24
+GetPrintProcessorDirectoryW@24
+GetPrinterA@20
+GetPrinterDataA@24
+GetPrinterDataExA@28
+GetPrinterDataExW@28
+GetPrinterDataW@24
+GetPrinterDriver2A@28
+GetPrinterDriver2W@28
+GetPrinterDriverA@24
+GetPrinterDriverDirectoryA@24
+GetPrinterDriverDirectoryW@24
+GetPrinterDriverPackagePathA@28
+GetPrinterDriverPackagePathW@28
+GetPrinterDriverW@24
+GetPrinterW@20
+GetSpoolFileHandle@4
+InstallPrinterDriverFromPackageA@20
+InstallPrinterDriverFromPackageW@20
+IsValidDevmodeA@8
+IsValidDevmodeW@8
+OpenPrinter2A@16
+OpenPrinter2W@16
+OpenPrinterA@12
+OpenPrinterW@12
+PerfClose@16
+PerfCollect@16
+PerfOpen@4
+PlayGdiScriptOnPrinterIC@24
+PrinterMessageBoxA@24
+PrinterMessageBoxW@24
+PrinterProperties@8
+QueryColorProfile@24
+QueryRemoteFonts@12
+QuerySpoolMode@12
+ReadPrinter@16
+RegisterForPrintAsyncNotifications@24
+ReportJobProcessingProgress@16
+ResetPrinterA@8
+ResetPrinterW@8
+ScheduleJob@8
+SeekPrinter@24
+SetDefaultPrinterA@4
+SetDefaultPrinterW@4
+SetFormA@16
+SetFormW@16
+SetJobA@20
+SetJobNamedProperty@12
+SetJobW@20
+SetPortA@16
+SetPortW@16
+SetPrinterA@16
+SetPrinterDataA@20
+SetPrinterDataExA@24
+SetPrinterDataExW@24
+SetPrinterDataW@20
+SetPrinterW@16
+SetSplwow64AppCompat@4
+SplDriverUnloadComplete@4
+SpoolerDevQueryPrintW@20
+SpoolerPrinterEvent@20
+StartDocDlgA@8
+StartDocDlgW@8
+StartDocPrinterA@12
+StartDocPrinterW@12
+StartPagePrinter@4
+UnRegisterForPrintAsyncNotifications@4
+UploadPrinterDriverPackageA@28
+UploadPrinterDriverPackageW@28
+WaitForPrinterChange@8
+WritePrinter@16
+XcvDataW@32
+
+[wintrust.dll]
 AddPersonalTrustDBPages@12
 CatalogCompactHashDatabase@16
 CryptCATAdminAcquireContext2@20
@@ -13174,7 +13369,7 @@ WintrustRemoveActionID@4
 WintrustSetDefaultIncludePEPageHashes@4
 WintrustSetRegPolicyFlags@4
 
-[wldap32]
+[wldap32.dll]
 LdapGetLastError
 LdapMapErrorToWin32
 LdapUTF8ToUnicode
@@ -13419,7 +13614,7 @@ ldap_value_freeA
 ldap_value_freeW
 ldap_value_free_len
 
-[ws2_32]
+[ws2_32.dll]
 FreeAddrInfoEx@4
 FreeAddrInfoExW@4
 FreeAddrInfoW@4
@@ -13560,7 +13755,7 @@ setsockopt@20
 shutdown@8
 socket@12
 
-[wscapi]
+[wscapi.dll]
 CLSID_WSCProductList
 IID_IWSCProductList
 IID_IWscProduct
@@ -13572,7 +13767,7 @@ WscRegisterForChanges@16
 WscRegisterForUserNotifications@0
 WscUnRegisterChanges@4
 
-[wsnmp32]
+[wsnmp32.dll]
 SnmpCancelMsg@8
 SnmpCleanup@0
 SnmpCleanupEx@0
@@ -13623,7 +13818,7 @@ SnmpStrToContext@8
 SnmpStrToEntity@8
 SnmpStrToOid@8
 
-[wsock32]
+[wsock32.dll]
 AcceptEx@32
 EnumProtocolsA@12
 EnumProtocolsW@12
@@ -13688,7 +13883,7 @@ setsockopt@20
 shutdown@8
 socket@12
 
-[wtsapi32]
+[wtsapi32.dll]
 WTSCloseServer@4
 WTSConnectSessionA@16
 WTSConnectSessionW@16

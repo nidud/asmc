@@ -60,6 +60,7 @@ targets = \
 	normaliz.lib	\
 	ntdll.lib	\
 	ntdsapi.lib	\
+	ntvdm.lib	\
 	odbc32.lib	\
 	odbccp32.lib	\
 	oldnames.lib	\
@@ -106,6 +107,7 @@ targets = \
 	wininet.lib	\
 	winmm.lib	\
 	winscard.lib	\
+	winspool.lib	\
 	wintrust.lib	\
 	wldap32.lib	\
 	ws2_32.lib	\

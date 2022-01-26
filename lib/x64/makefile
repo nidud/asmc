@@ -39,8 +39,8 @@ targets = \
 	d2d1.lib	\
 	d3d11.lib	\
 	d3d9.lib	\
-	d3dcompiler_43.lib	\
-	d3dcompiler_47.lib	\
+	d3dcompiler_43.lib \
+	d3dcompiler_47.lib \
 	davclnt.lib	\
 	dbgeng.lib	\
 	dbghelp.lib	\
@@ -90,7 +90,7 @@ targets = \
 	ktmw32.lib	\
 	loadperf.lib	\
 	lz32.lib	\
-	Magnification.lib	\
+	Magnification.lib \
 	mapi32.lib	\
 	mf.lib		\
 	mfplat.lib	\
@@ -145,7 +145,7 @@ targets = \
 	rpcns4.lib	\
 	rpcrt4.lib	\
 	rstrtmgr.lib	\
-	rtm.lib \
+	rtm.lib		\
 	rtutils.lib	\
 	samlib.lib	\
 	samsrv.lib	\
@@ -171,7 +171,7 @@ targets = \
 	t2embed.lib	\
 	tapi32.lib	\
 	traffic.lib	\
-	UIAutomationCore.lib	\
+	UIAutomationCore.lib \
 	urlmon.lib	\
 	user32.lib	\
 	userenv.lib	\
@@ -183,11 +183,12 @@ targets = \
 	webservices.lib \
 	wer.lib		\
 	winbio.lib	\
-	Windows.storage.lib	\
+	Windows.storage.lib \
 	winhttp.lib	\
 	wininet.lib	\
 	winmm.lib	\
 	winscard.lib	\
+	winspool.lib	\
 	wintrust.lib	\
 	wldap32.lib	\
 	ws2_32.lib	\

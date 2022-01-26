@@ -44,7 +44,7 @@ CreateDefs proc uses esi edi ebx windef:bool
 
          .if ( windef )
             fprintf(ebx,
-                "LIBRARY %s.DLL\n"
+                "LIBRARY %s.LIB\n"
                 "EXPORTS\n", &dll)
          .else
              .if ( strcmp(&dll, "NTVDM" ) == 0 )

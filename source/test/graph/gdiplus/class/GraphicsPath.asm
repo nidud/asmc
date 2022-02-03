@@ -38,6 +38,13 @@ main proc
     local pGraphics:ptr Graphics
     local pFontFamily:ptr FontFamily
 
+    local point:Point
+    local pointF:PointF
+    local rect:Rect
+    local rectF:RectF
+    local size:Size
+    local sizeF:SizeF
+
   .new p:GraphicsPath()
 
     p.Release()
@@ -58,16 +65,22 @@ main proc
 
     p.AddLine(1, 2, 3, 4)
     p.AddLine(0.0, 0.0, 0.0, 0.0)
+    p.AddLine(point, point)
+    p.AddLine(pointF, pointF)
 
     p.AddLines(pPointF, 0)
     p.AddLines(pPoint, 0)
 
     p.AddArc(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     p.AddArc(0, 0, 0, 0, 0.0, 0.0)
+    p.AddArc(rect, 0.0, 0.0)
+    p.AddArc(rectF, 0.0, 0.0)
 
     p.AddBezier(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    p.AddBezier(pointF, pointF, pointF, pointF)
     p.AddBeziers(pPointF, 0)
     p.AddBezier(0, 0, 0, 0, 0, 0, 0, 0)
+    p.AddBezier(point, point, point, point)
     p.AddBeziers(pPoint, 0)
 
     p.AddCurve(pPointF, 0)
@@ -82,46 +95,54 @@ main proc
     p.AddClosedCurve(pPoint, 0)
     p.AddClosedCurve(pPoint, 0, 0.0)
 
-    p.AddRectangle(pRectF)
+    p.AddRectangle(rectF)
     p.AddRectangles(pRectF, 0)
-    p.AddRectangle(pRect)
+    p.AddRectangle(rect)
     p.AddRectangles(pRect, 0)
 
     p.AddEllipse(0, 0, 0, 0)
+    p.AddEllipse(rect)
     p.AddEllipse(0.0, 0.0, 0.0, 0.0)
+    p.AddEllipse(rectF)
 
     p.AddPie(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    p.AddPie(rectF, 0.0, 0.0)
     p.AddPie(0, 0, 0, 0, 0.0, 0.0)
+    p.AddPie(rect, 0.0, 0.0)
 
     p.AddPolygon(pPointF, 0)
     p.AddPolygon(pPoint, 0)
 
     p.AddPath(pGraphicsPath, 0)
-    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pPointF, pStringFormat)
-    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pPoint, pStringFormat)
-    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pRectF, pStringFormat)
-    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pRect, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, pointF, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, point, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, rectF, pStringFormat)
+    p.AddString(pWCHAR, 0, pFontFamily, 0, 0.0, rect, pStringFormat)
 
     p.Transform(NULL)
-    p.GetBounds(pRectF, NULL, NULL)
-    p.GetBounds(pRect, NULL, NULL)
+    ;p.GetBounds(pRectF, NULL, NULL)
+    ;p.GetBounds(pRect, NULL, NULL)
+    p.Flatten()
     p.Flatten(NULL, 0.0)
+    p.Widen(NULL)
     p.Widen(NULL, NULL, 0.0)
+    p.Outline()
     p.Outline(NULL, 0.0)
-    p.Warp(NULL, 0, NULL, NULL, 0, 0.0)
+    p.Warp(NULL, 0, rect)
+    p.Warp(NULL, 0, rect, NULL, 0, 0.0)
     p.GetPointCount()
     p.GetPathTypes(NULL, 0)
     p.GetPathPoints(pPointF, 0)
     p.GetPathPoints(pPoint, 0)
     p.GetLastStatus()
-    p.IsVisible(0, 0, NULL)
-    p.IsVisible(0.0, 0.0, NULL)
-    p.IsVisible(NULL, NULL)
-    p.IsVisible(NULL, NULL)
-    p.IsOutlineVisible(0, 0, NULL, NULL)
-    p.IsOutlineVisible(0.0, 0.0, NULL, NULL)
-    p.IsOutlineVisible(NULL, NULL, NULL)
-    p.IsOutlineVisible(NULL, NULL, NULL)
+    ;p.IsVisible(0, 0, NULL)
+    ;p.IsVisible(0.0, 0.0, NULL)
+    ;p.IsVisible(NULL, NULL)
+    ;p.IsVisible(NULL, NULL)
+    ;p.IsOutlineVisible(0, 0, NULL, NULL)
+    ;p.IsOutlineVisible(0.0, 0.0, NULL, NULL)
+    ;p.IsOutlineVisible(NULL, NULL, NULL)
+    ;p.IsOutlineVisible(NULL, NULL, NULL)
     ret
 
 main endp

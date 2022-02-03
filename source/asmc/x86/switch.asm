@@ -219,7 +219,11 @@ RemoveVal endp
 
 GetCaseValue proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok, dcount:uint_t, scount:uint_t
 
-  local i, opnd:expr
+  .new i:int_t, opnd:expr
+  .new oldtok:string_t
+
+    mov edx,tokenarray
+    mov oldtok,[edx].asm_tok.tokpos
 
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
@@ -257,7 +261,7 @@ GetCaseValue proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok, dco
         mov esi,[esi].caselist
     .endw
 
-    Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+    Tokenize( oldtok, 0, tokenarray, TOK_DEFAULT )
     mov ModuleInfo.token_count,eax
 
     mov eax,dcount

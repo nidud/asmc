@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"Restore">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
    .new state1:GraphicsState
@@ -33,8 +38,9 @@ OnPaint macro hdc
     g.Restore(state1)
     g.DrawEllipse(&bluePen, 0, 0, 100, 20)
     g.Release()
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

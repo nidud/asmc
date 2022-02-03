@@ -14,14 +14,7 @@ main proc
   .new b:CharacterRange()
   .new b:CharacterRange(1)
   .new b:CharacterRange(1, 2)
-  .new p:ptr CharacterRange()
-  .new p:ptr CharacterRange(1)
-  .new p:ptr CharacterRange(1, 2)
-
-    CharacterRange()
-    CharacterRange(1)
-    CharacterRange(1, 2)
-    CharacterRange(&b)
+  .new b:CharacterRange(b)
     ret
 
 main endp

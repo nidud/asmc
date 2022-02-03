@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"TranslateClip">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
     .new g:Graphics(hdc)
     .new b:SolidBrush(White)
@@ -10,7 +15,7 @@ OnPaint macro hdc
     .new r:RectF(40.0, 20.0, 100.0, 100.0)
 
     ; Set clipping region of graphics to rectangle
-    g.SetClip(&r, CombineModeReplace)
+    g.SetClip(r, CombineModeReplace)
 
     ; Translate clipping region
     g.TranslateClip(50, 50)
@@ -20,9 +25,9 @@ OnPaint macro hdc
 
     b.Release()
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
 
 include Graphics.inc
 

@@ -19,7 +19,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
 
 ;; Input structure for GdiplusStartup()
 
-.template GdiplusStartupInput
+.template GdiplusStartupInput fastcall
 
     GdiplusVersion              UINT ?              ;; Must be 1  (or 2 for the Ex version)
     DebugEventCallback          DebugEventProc ?    ;; Ignored on free builds
@@ -47,7 +47,7 @@ CALLBACK(NotificationUnhookProc, :ULONG_PTR)
 
 if (GDIPVER GE 0x0110)
 
-.template GdiplusStartupInputEx : public GdiplusStartupInput
+.template GdiplusStartupInputEx fastcall : public GdiplusStartupInput
 
     StartupParameters SINT ?
 
@@ -89,7 +89,7 @@ GdiplusShutdown proto WINAPI \
                  token: ULONG_PTR
 
 
-.template GdiPlus
+.template GdiPlus fastcall
 
     GdiplusVersion              UINT ?
     DebugEventCallback          DebugEventProc ?
@@ -107,8 +107,8 @@ GdiplusShutdown proto WINAPI \
         mov this.StartupParameters,0
         GdiplusStartup(addr this.Token, addr this, NULL)
         }
-    .inline Release {
-        GdiplusShutdown([this].GdiPlus.Token)
+    .static Release {
+        GdiplusShutdown(this.Token)
         }
     .ends
 

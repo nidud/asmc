@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"ResetClip">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
 
@@ -9,7 +14,7 @@ OnPaint macro hdc
 
    .new r:Rect(100, 50, 200, 120)
 
-    g.SetClip(&r)
+    g.SetClip(r)
 
    .new blackPen:Pen(White, 2.0)
 
@@ -33,8 +38,9 @@ OnPaint macro hdc
 
     g.FillEllipse(&blueBrush, 160, 150, 100, 60)
     g.Release()
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

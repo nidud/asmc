@@ -1,9 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusgraphics/nf-gdiplusgraphics-graphics-measurecharacterranges
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"MeasureCharacterRanges">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
 
@@ -58,28 +64,27 @@ OnPaint macro hdc
 
     ;; Get the regions that correspond to the ranges within the string when
     ;; layout rectangle A is used. Then draw the string, and show the regions.
-
-    g.MeasureCharacterRanges(string, -1, &myFont, &layoutRect_A, &strFormat, count, pCharRangeRegions)
-    g.DrawString(string, -1, &myFont, &layoutRect_A, &strFormat, &blueBrush)
-    g.DrawRectangle(&blackPen, &layoutRect_A)
+    g.MeasureCharacterRanges(string, -1, &myFont, layoutRect_A, &strFormat, count, pCharRangeRegions)
+    g.DrawString(string, -1, &myFont, layoutRect_A, &strFormat, &blueBrush)
+    g.DrawRectangle(&blackPen, layoutRect_A)
 
     .for ( i = 0: i < count: i++)
-        imul r8d,i,Region
-        add  r8,pCharRangeRegions
-        g.FillRegion(&redBrush, r8)
+        imul eax,i,Region
+        add  rax,pCharRangeRegions
+        g.FillRegion(&redBrush, rax)
     .endf
 
     ;; Get the regions that correspond to the ranges within the string when
     ;; layout rectangle B is used. Then draw the string, and show the regions.
 
-    g.MeasureCharacterRanges(string, -1, &myFont, &layoutRect_B, &strFormat, count, pCharRangeRegions)
-    g.DrawString(string, -1, &myFont, &layoutRect_B, &strFormat, &blueBrush)
-    g.DrawRectangle(&blackPen, &layoutRect_B)
+    g.MeasureCharacterRanges(string, -1, &myFont, layoutRect_B, &strFormat, count, pCharRangeRegions)
+    g.DrawString(string, -1, &myFont, layoutRect_B, &strFormat, &blueBrush)
+    g.DrawRectangle(&blackPen, layoutRect_B)
 
     .for ( i = 0: i < count: i++ )
-        imul r8d,i,Region
-        add  r8,pCharRangeRegions
-        g.FillRegion(&redBrush, r8)
+        imul eax,i,Region
+        add  rax,pCharRangeRegions
+        g.FillRegion(&redBrush, rax)
     .endf
 
     ;; Get the regions that correspond to the ranges within the string when
@@ -88,22 +93,24 @@ OnPaint macro hdc
 
     strFormat.SetFormatFlags(StringFormatFlagsMeasureTrailingSpaces)
 
-    g.MeasureCharacterRanges(string, -1, &myFont, &layoutRect_C, &strFormat, count, pCharRangeRegions)
-    g.DrawString(string, -1, &myFont, &layoutRect_C, &strFormat, &blueBrush)
-    g.DrawRectangle(&blackPen, &layoutRect_C)
+    g.MeasureCharacterRanges(string, -1, &myFont, layoutRect_C, &strFormat, count, pCharRangeRegions)
+    g.DrawString(string, -1, &myFont, layoutRect_C, &strFormat, &blueBrush)
+    g.DrawRectangle(&blackPen, layoutRect_C)
 
     .for ( i = 0: i < count: i++ )
-        imul r8d,i,Region
-        add   r8,pCharRangeRegions
-        g.FillRegion(&redBrush, r8)
+        imul eax,i,Region
+        add  rax,pCharRangeRegions
+        g.FillRegion(&redBrush, rax)
     .endf
 
     ;; Delete memory for the range regions.
 
     GdipFree(pCharRangeRegions)
     g.Release()
-    exitm<>
-    endm
+
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

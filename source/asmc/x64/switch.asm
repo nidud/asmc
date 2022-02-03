@@ -203,7 +203,8 @@ RemoveVal endp
 GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_tok,
         dcount:ptr uint_t, scount:ptr uint_t
 
-  local i, opnd:expr
+  .new i, opnd:expr
+  .new oldtok:string_t = [rdx].asm_tok.tokpos
 
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
@@ -240,7 +241,7 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
         mov rsi,[rsi].caselist
     .endw
 
-    Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
+    Tokenize( oldtok, 0, tokenarray, TOK_DEFAULT )
     mov ModuleInfo.token_count,eax
 
     mov rax,dcount

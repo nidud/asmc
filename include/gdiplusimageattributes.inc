@@ -4,182 +4,125 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-.template ImageAttributes
+.template ImageAttributes fastcall
 
     GpImageAttributes typedef ImageAttributes
 
     nativeImageAttr ptr_t ?
     lastResult      Status ?
 
-    .inline ImageAttributes :abs, :vararg {
+    .static ImageAttributes :abs, :abs {
         mov this.nativeImageAttr,NULL
-        ifb <_1>
+      ifb <_1>
             GdipCreateImageAttributes(addr this.nativeImageAttr)
-        else
-            this.typeid(ImageAttributes_, _1)(_1, _2)
-        endif
+      else
+        mov this.nativeImageAttr,_1
+        mov this.lastResult,_2
+      endif
         mov this.lastResult,eax
         }
 
-    .inline ImageAttributes_ptrImageAttributes :ptr ImageAttributes, :Status, :vararg {
-        mov this.nativeImageAttr,rdx
-        mov this.lastResult,r8d
+    .static Release {
+        GdipDisposeImageAttributes(this.nativeImageAttr)
         }
 
-    .inline Release {
-        GdipDisposeImageAttributes([this].ImageAttributes.nativeImageAttr)
+    .static SetNativeImageAttr :ptr ImageAttributes {
+        mov this.nativeImageAttr,_1
         }
 
-    .inline SetNativeImageAttr :ptr ImageAttributes {
-        mov [this].ImageAttributes.nativeImageAttr,_1
+    .static SetStatus watcall :size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
-        mov this.lastResult,eax
-        }
-
-    .inline Clone :vararg {
-
-        .new clone:ImageAttributes
-
-        GdipCloneImageAttributes(this.nativeImageAttr, &clone)
+    .static Clone {
+       .new clone:ImageAttributes
+        this.SetStatus(GdipCloneImageAttributes(this.nativeImageAttr, &clone))
         mov clone.lastResult,eax
-        this.SetStatus()
         lea rax,clone
         }
 
-    .inline SetToIdentity :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesToIdentity(this.nativeImageAttr, _1)
-        this.SetStatus()
+    .static SetToIdentity :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesToIdentity(this.nativeImageAttr, _1))
         }
-
-    .inline Reset :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipResetImageAttributes(this.nativeImageAttr, _1)
-        this.SetStatus()
+    .static Reset :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipResetImageAttributes(this.nativeImageAttr, _1))
         }
-
-    .inline SetColorMatrix :abs, :abs=<ColorMatrixFlagsDefault>, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _3, TRUE, _1, NULL, _2)
-        this.SetStatus()
+    .static SetColorMatrix :abs, :abs=<ColorMatrixFlagsDefault>, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _3, TRUE, _1, NULL, _2))
         }
-
-    .inline ClearColorMatrix :abs=<ColorMatrixFlagsDefault>, :vararg {
-        GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _1, FALSE, NULL, NULL, ColorMatrixFlagsDefault)
-        this.SetStatus()
+    .static ClearColorMatrix :abs=<ColorMatrixFlagsDefault> {
+        this.SetStatus(GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _1, FALSE, NULL, NULL, ColorMatrixFlagsDefault))
         }
-
-    .inline SetColorMatrices :abs, :abs, :abs=<ColorAdjustTypeDefault>, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _4, TRUE, _1, _2, _3)
-        this.SetStatus()
+    .static SetColorMatrices :abs, :abs, :abs=<ColorAdjustTypeDefault>, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _4, TRUE, _1, _2, _3))
         }
-
-    .inline ClearColorMatrices :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _1, FALSE, NULL, NULL, ColorMatrixFlagsDefault)
-        this.SetStatus()
+    .static ClearColorMatrices :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesColorMatrix(this.nativeImageAttr, _1, FALSE, NULL, NULL, ColorMatrixFlagsDefault))
         }
-
-    .inline SetThreshold :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesThreshold(this.nativeImageAttr, _2, TRUE, _1)
-        this.SetStatus()
+    .static SetThreshold :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesThreshold(this.nativeImageAttr, _2, TRUE, _1))
         }
-
-    .inline ClearThreshold :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesThreshold(this.nativeImageAttr, _1, FALSE, 0.0)
-        this.SetStatus()
+    .static ClearThreshold :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesThreshold(this.nativeImageAttr, _1, FALSE, 0.0))
         }
-
-    .inline SetGamma :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesGamma(this.nativeImageAttr, _2, TRUE, _1)
-        this.SetStatus()
+    .static SetGamma :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesGamma(this.nativeImageAttr, _2, TRUE, _1))
         }
-
-    .inline ClearGamma :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesGamma(this.nativeImageAttr, _1, FALSE, 0.0)
-        this.SetStatus()
+    .static ClearGamma :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesGamma(this.nativeImageAttr, _1, FALSE, 0.0))
         }
-
-    .inline SetNoOp :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesNoOp(this.nativeImageAttr, _1, TRUE)
-        this.SetStatus()
+    .static SetNoOp :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesNoOp(this.nativeImageAttr, _1, TRUE))
         }
-
-    .inline ClearNoOp :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesNoOp(this.nativeImageAttr, _1, FALSE)
-        this.SetStatus()
+    .static ClearNoOp :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesNoOp(this.nativeImageAttr, _1, FALSE))
         }
-
-    .inline SetColorKey :abs, :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorKeys(this.nativeImageAttr, _3, TRUE, _1, _2)
-        this.SetStatus()
+    .static SetColorKey :abs, :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesColorKeys(this.nativeImageAttr, _3, TRUE, _1, _2))
         }
-
-    .inline ClearColorKey :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesColorKeys(this.nativeImageAttr, _1, FALSE, NULL, NULL)
-        this.SetStatus()
+    .static ClearColorKey :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesColorKeys(this.nativeImageAttr, _1, FALSE, NULL, NULL))
         }
-
-    .inline SetOutputChannel :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesOutputChannel(this.nativeImageAttr, _2, TRUE, _1)
-        this.SetStatus()
+    .static SetOutputChannel :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesOutputChannel(this.nativeImageAttr, _2, TRUE, _1))
         }
-
-    .inline ClearOutputChannel :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesOutputChannel(this.nativeImageAttr, _1, FALSE, ColorChannelFlagsLast)
-        this.SetStatus()
+    .static ClearOutputChannel :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesOutputChannel(this.nativeImageAttr, _1, FALSE, ColorChannelFlagsLast))
         }
-
-    .inline SetOutputChannelColorProfile :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesOutputChannelColorProfile(this.nativeImageAttr, _2, TRUE, _1)
-        this.SetStatus()
+    .static SetOutputChannelColorProfile :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesOutputChannelColorProfile(this.nativeImageAttr, _2, TRUE, _1))
         }
-
-    .inline ClearOutputChannelColorProfile :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesOutputChannelColorProfile(this.nativeImageAttr, _1, FALSE, NULL)
-        this.SetStatus()
+    .static ClearOutputChannelColorProfile :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesOutputChannelColorProfile(this.nativeImageAttr, _1, FALSE, NULL))
         }
-
-    .inline SetRemapTable :abs, :abs, :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesRemapTable(this.nativeImageAttr, _3, TRUE, _1, _2)
-        this.SetStatus()
+    .static SetRemapTable :abs, :abs, :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesRemapTable(this.nativeImageAttr, _3, TRUE, _1, _2))
         }
-
-    .inline ClearRemapTable :abs=<ColorAdjustTypeDefault>, :vararg {
-        GdipSetImageAttributesRemapTable(this.nativeImageAttr, _1, FALSE, 0, NULL)
-        this.SetStatus()
+    .static ClearRemapTable :abs=<ColorAdjustTypeDefault> {
+        this.SetStatus(GdipSetImageAttributesRemapTable(this.nativeImageAttr, _1, FALSE, 0, NULL))
         }
-
-    .inline SetBrushRemapTable :abs, :abs, :vararg {
+    .static SetBrushRemapTable :abs, :abs {
         this.SetRemapTable(_1, _2, ColorAdjustTypeBrush)
         }
-
-    .inline ClearBrushRemapTable :vararg {
+    .static ClearBrushRemapTable {
         this.ClearRemapTable(ColorAdjustTypeBrush)
         }
-
-    .inline SetWrapMode :abs, :ptr Color, :abs=<FALSE>, :vararg {
-        GdipSetImageAttributesWrapMode(this.nativeImageAttr, _1, [r8].Color.Argb, _3)
-        this.SetStatus()
+    .static SetWrapMode :abs, :ptr Color, :abs=<FALSE> {
+        this.SetStatus(GdipSetImageAttributesWrapMode(this.nativeImageAttr, _1, [_2].Color.Argb, _3))
         }
 
     ;; The flags of the palette are ignored.
 
-    .inline GetAdjustedPalette :abs, :abs, :vararg {
-        GdipGetImageAttributesAdjustedPalette(this.nativeImageAttr, _1, _2)
-        this.SetStatus()
+    .static GetAdjustedPalette :abs, :abs {
+        this.SetStatus(GdipGetImageAttributesAdjustedPalette(this.nativeImageAttr, _1, _2))
         }
 
-    .inline GetLastStatus {
-        mov eax,[this].ImageAttributes.lastResult
-        mov [this].ImageAttributes.lastResult,Ok
+    .static GetLastStatus {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
         }
-
     .ends
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

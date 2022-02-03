@@ -28,10 +28,7 @@ main proc
     p.FromFile(NULL, FALSE)
     p.FromStream(NULL, FALSE)
 
-    p.Clone(1, 2, 3, 4, 0)
-    p.Clone(1.0, 2.0, 3.0, 4.0, 0)
-    p.Clone(pRect, 0)
-    p.Clone(pRectF, 0)
+    p.Clone()
 
     p.Save(pWCHAR, NULL, 0)
     p.Save(pIStream, NULL, NULL)
@@ -78,7 +75,6 @@ if (GDIPVER GE 0x0110)
     p.GetItemData(NULL)
     p.SetAbort(NULL)
 endif
-
     p.SetNativeImage(NULL)
     p.SetStatus(0)
     p.GetLastStatus()

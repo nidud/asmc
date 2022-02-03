@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"DrawCurve">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
    .new p:Pen(Red)
@@ -14,14 +19,16 @@ OnPaint macro hdc
    .new ii:Point( 50,  50)
 
     g.DrawLines(&p, &ii, 7)
-    p.New(Green)
+    p.Release()
+
+   .new p:Pen(Green)
     g.DrawCurve(&p, &ii, 7)
 
     p.Release()
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
 
 include Graphics.inc
 

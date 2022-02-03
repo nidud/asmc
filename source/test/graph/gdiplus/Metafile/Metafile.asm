@@ -47,11 +47,11 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local ps:PAINTSTRUCT
 
-    .switch edx
+    .switch message
 
     .case WM_PAINT
 
-        BeginPaint(rcx, &ps)
+        BeginPaint(hWnd, &ps)
 
         .if MetafileCreated == FALSE
 
@@ -74,10 +74,10 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         PostQuitMessage(0)
         .endc
     .case WM_CHAR
-        .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
+        .gotosw(WM_DESTROY) .if word ptr wParam == VK_ESCAPE
         .endc
     .default
-        .return DefWindowProc(rcx, edx, r8, r9)
+        .return DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
     xor eax,eax
     ret
@@ -97,7 +97,7 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.lpszMenuName,    rax
     mov wc.hIcon,           rax
     mov wc.hIconSm,         rax
-    mov wc.hInstance,       rcx
+    mov wc.hInstance,       hInstance
     mov wc.lpfnWndProc,     &WndProc
     mov wc.lpszClassName,   &@CStr("Metafile2")
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)

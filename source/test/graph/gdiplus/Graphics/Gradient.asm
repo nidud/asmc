@@ -1,21 +1,30 @@
 ;
 ; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusgraphics/nf-gdiplusgraphics-graphics-drawstring(constwchar_int_constfont_constpointf__constbrush)
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"Gradient">
 
-OnPaint macro hdc
+    .code
 
-       .new g:Graphics(hdc)
-       .new x:Point(0, 0)
-       .new y:Point(ps.rcPaint.right, ps.rcPaint.bottom)
-       .new b:LinearGradientBrush(&x, &y, Red, Blue)
+    assume rbx:ptr PAINTSTRUCT
 
-        g.FillRectangle(&b, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom)
-        b.Release()
-        g.Release()
+OnPaint proc uses rbx hdc:HDC, ps:ptr PAINTSTRUCT
 
-    exitm<>
-    endm
+    mov rbx,ps
+   .new g:Graphics(hdc)
+   .new x:Point(0, 0)
+   .new y:Point([rbx].rcPaint.right, [rbx].rcPaint.bottom)
+   .new b:LinearGradientBrush(x, y, Red, Blue)
+
+    g.FillRectangle(&b, 0, 0, [rbx].rcPaint.right, [rbx].rcPaint.bottom)
+    b.Release()
+    g.Release()
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

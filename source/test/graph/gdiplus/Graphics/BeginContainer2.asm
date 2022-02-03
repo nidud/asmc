@@ -1,9 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusgraphics/nf-gdiplusgraphics-graphics-begincontainer(inconstrectf__inconstrectf__inunit)
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"BeginContainer2">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
 
@@ -17,7 +23,7 @@ OnPaint macro hdc
 
    .new container:GraphicsContainer
 
-    mov container,g.BeginContainer(&destRect, &srcRect, UnitPixel)
+    mov container,g.BeginContainer(destRect, srcRect, UnitPixel)
 
     ;; Fill an ellipse in the container.
 
@@ -38,8 +44,9 @@ OnPaint macro hdc
     g.FillEllipse(&blueBrush, 0, 0, 100, 60)
 
     g.Release()
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

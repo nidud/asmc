@@ -1,20 +1,14 @@
 
-include windows.inc
-include gdiplus.inc
-include tchar.inc
-
-    .code
-
-WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc WINAPI hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
   local ps:PAINTSTRUCT
 
-    .switch edx
+    .switch message
 
     .case WM_PAINT
 
-        BeginPaint(rcx, &ps)
-        OnPaint(rax)
+        BeginPaint(hWnd, &ps)
+        OnPaint(ps.hdc, &ps)
         EndPaint(hWnd, &ps)
         .endc
 
@@ -22,17 +16,16 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         PostQuitMessage(0)
         .endc
     .case WM_CHAR
-        .gotosw(WM_DESTROY) .if r8d == VK_ESCAPE
+        .gotosw(WM_DESTROY) .if word ptr wParam == VK_ESCAPE
         .endc
     .default
-        .return DefWindowProc(rcx, edx, r8, r9)
+        .return DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
-    xor eax,eax
-    ret
+    .return( 0 )
 
 WndProc endp
 
-_tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
+_tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
   local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
 
@@ -45,7 +38,7 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
     mov wc.lpszMenuName,    rax
     mov wc.hIcon,           rax
     mov wc.hIconSm,         rax
-    mov wc.hInstance,       rcx
+    mov wc.hInstance,       hInstance
     mov wc.lpfnWndProc,     &WndProc
     mov wc.lpszClassName,   &@CStr(CLASSNAME)
     mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
@@ -56,7 +49,9 @@ _tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, n
                 CW_USEDEFAULT, CW_USEDEFAULT, 600,400, NULL, NULL, hInstance, 0)
 
             mov hwnd,rax
-
+ifdef __HWND__
+            mov g_hwnd,rax
+endif
            ;; Initialize GDI+.
            .new gdiplus:GdiPlus()
 

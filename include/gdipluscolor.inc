@@ -199,7 +199,7 @@ define __GDIPLUS_COLOR_H
         exitm<((Color and not AlphaMask) or (Alpha shl AlphaShift))>
         endm
 
-.template Color
+.template Color fastcall
 
     Argb ARGB ?
 
@@ -208,84 +208,88 @@ define __GDIPLUS_COLOR_H
     ;;
     ;; Color values are not premultiplied.
 
-    .inline Color :abs, :vararg {
+    .static Color :abs, :abs, :abs, :abs {
         ifb <_1>
             mov eax,Black
-        else
-            this.typeid(Color_, _1)(_1, _2)
-        endif
-        mov this.Argb,eax
-        }
-
-    .inline Color_imm :abs, :abs, :abs, :abs, :vararg {
-        ifb <_2>
+        elseifb <_2>
             mov eax,_1
         elseifb <_4>
             mov eax,MakeARGB(255, _1, _2, _3)
         else
             mov eax,MakeARGB(_1, _2, _3, _4)
         endif
+        mov this.Argb,eax
         }
 
-    .inline GetAlpha :vararg {
-        mov     eax,this.Argb
-        shr     eax,AlphaShift
-        and     eax,0xFF
+    .static GetAlpha {
+        mov eax,this.Argb
+        shr eax,AlphaShift
+        and eax,0xFF
         }
-    .inline GetA :vararg { this.GetAlpha() }
-
-    .inline GetRed :vararg {
-        mov     eax,this.Argb
-        shr     eax,RedShift
-        and     eax,0xFF
-        }
-    .inline GetR :vararg { this.GetRed() }
-
-    .inline GetGreen :vararg {
-        mov     eax,this.Argb
-        shr     eax,GreenShift
-        and     eax,0xFF
-        }
-    .inline GetG :vararg { this.GetGreen() }
-
-    .inline GetBlue :vararg {
-        mov     eax,this.Argb
-        shr     eax,BlueShift
-        and     eax,0xFF
-        }
-    .inline GetB :vararg { this.GetBlue() }
-
-    .inline GetValue :vararg {
-        mov     eax,this.Argb
-        }
-    .inline SetValue :vararg {
-        mov     this.Argb,_1
+    .static GetA {
+        this.GetAlpha()
         }
 
-    .inline SetFromCOLORREF :abs, :vararg {
-        mov     edx,_1
-        mov     eax,_1
-        and     eax,255 shl GreenShift
-        or      eax,255 shl AlphaShift
-        mov     r8d,edx
-        and     edx,255
-        shl     edx,RedShift
-        shr     r8d,RedShift
-        or      eax,edx
-        mov     al,r8b
-        mov     this.Argb,eax
+    .static GetRed {
+        mov eax,this.Argb
+        shr eax,RedShift
+        and eax,0xFF
         }
-    .inline ToCOLORREF :vararg {
-        mov     eax,this.Argb
-        shr     eax,RedShift
-        and     eax,255
-        mov     edx,this.Argb
-        and     edx,255 shl GreenShift
-        or      eax,edx
-        mov     edx,this.Argb
-        and     edx,255
-        shl     edx,16
-        or      eax,edx
+    .static GetR {
+        this.GetRed()
+        }
+
+    .static GetGreen {
+        mov eax,this.Argb
+        shr eax,GreenShift
+        and eax,0xFF
+        }
+    .static GetG {
+        this.GetGreen()
+        }
+
+    .static GetBlue {
+        mov eax,this.Argb
+        shr eax,BlueShift
+        and eax,0xFF
+        }
+    .static GetB {
+        this.GetBlue()
+        }
+
+    .static GetValue {
+        mov eax,this.Argb
+        }
+
+    .static SetValue :abs {
+        mov this.Argb,_1
+        }
+
+    .static SetFromCOLORREF :abs {
+        mov edx,_1
+        mov eax,_1
+        and eax,255 shl GreenShift
+        or  eax,255 shl AlphaShift
+        mov ecx,edx
+        and edx,255
+        shl edx,RedShift
+        shr ecx,RedShift
+        or  eax,edx
+        mov al,cl
+        mov this.Argb,eax
+        }
+
+    .static ToCOLORREF {
+        mov eax,this.Argb
+        shr eax,RedShift
+        and eax,255
+        mov edx,this.Argb
+        and edx,255 shl GreenShift
+        or  eax,edx
+        mov edx,this.Argb
+        and edx,255
+        shl edx,16
+        or  eax,edx
         }
 
     .ends

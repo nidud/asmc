@@ -1,12 +1,20 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"DrawIcon">
 
-OnPaint macro hdc
+    .data
+    g_hwnd HANDLE 0
+    define __HWND__
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
     .new g:Graphics(hdc)
     .new hIcon:HICON
 
-    .if ExtractIcon(hWnd, @CatStr(<!">, @Environ(HOMEDRIVE),<!">) "\\Windows\\regedit.exe", 2)
+    .if ExtractIcon(g_hwnd, "C:\\Windows\\regedit.exe", 2)
 
         mov hIcon,rax
 
@@ -17,9 +25,9 @@ OnPaint macro hdc
         DestroyIcon(hIcon)
     .endif
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
 
 include Graphics.inc
 

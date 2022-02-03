@@ -1,9 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusgraphics/nf-gdiplusgraphics-graphics-getsmoothingmode
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"GetSmoothingMode">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
 
@@ -15,7 +21,7 @@ OnPaint macro hdc
    .new mode:SmoothingMode
 
     ;; Draw an ellipse.
-    g.DrawEllipse(&p, &r)
+    g.DrawEllipse(&p, r)
 
     ;; Get the smoothing mode.
     mov mode,g.GetSmoothingMode()
@@ -35,11 +41,12 @@ OnPaint macro hdc
    .new p:Pen(Red, 3.0)
    .new r:Rect(220, 0, 200, 100)
 
-    g.DrawEllipse(&p, &r)
+    g.DrawEllipse(&p, r)
 
     g.Release()
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

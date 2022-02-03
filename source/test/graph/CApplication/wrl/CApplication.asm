@@ -253,7 +253,7 @@ CApplication::Update proc uses rsi rdi rbx Visible:BOOL
     mov eax,[rdi].m_launchcnt
     add al,'0'
     mov dword ptr t,eax
-    g.DrawString( &t, 1, &f, &pt, NULL, &b)
+    g.DrawString( &t, 1, &f, pt, NULL, &b)
 
     b.Release()
     f.Release()

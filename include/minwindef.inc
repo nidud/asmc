@@ -72,6 +72,27 @@ WPARAM	typedef UINT_PTR
 LPARAM	typedef LONG_PTR
 LRESULT typedef LONG_PTR
 
+LOADARGPTRAX macro a
+  local func
+    func proto watcall :ptr {}
+    func(a)
+    retm<rax>
+    endm
+
+LOADARGPTRDX macro a
+  local func
+    func proto fastcall :abs, :ptr {}
+    func(0, a)
+    retm<rdx>
+    endm
+
+LOADARGPTRCX macro a
+  local func
+    func proto fastcall :ptr {}
+    func(a)
+    retm<rcx>
+    endm
+
 LOADARGS_2 macro a, b, t1, t2, r1, r2
   local func
     ifidn t1,<imm>

@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"DrawEllipse">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
    .new c:GraphicsPath()
@@ -9,15 +14,15 @@ OnPaint macro hdc
    .new i:Rect(0, 0, 200, 200)
    .new f:RectF(30.0, 20.0, 150.0, 150.0)
 
-    g.DrawEllipse(&p, &f)
-    g.DrawEllipse(&p, &i)
+    g.DrawEllipse(&p, f)
+    g.DrawEllipse(&p, i)
 
     p.Release()
     c.Release()
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
 
 include Graphics.inc
 

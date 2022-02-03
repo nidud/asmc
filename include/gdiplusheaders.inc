@@ -5,93 +5,81 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-.template Region
+; Region();
+; Region(RectF& rect);
+; Region(Rect& rect);
+; Region(GraphicsPath* path);
+; Region(BYTE* regionData, IN INT size);
+; Region(HRGN hRgn);
+; static Region* FromHRGN(IN HRGN hRgn);
+
+.template Region fastcall
 
     nativeRegion    ptr_t ?
     lastResult      Status ?
     scratch         int_t ?
 
-    .inline Region :abs, :vararg {
-        ifb <_1>
-            GdipCreateRegion(addr this.nativeRegion)
-        else
-            this.typeid(Region_, _1)(_1, _2)
-        endif
+    .static Region :abs, :abs {
+    ifb <_1>
+        GdipCreateRegion(addr this.nativeRegion)
+    elseifnb <_2>
+        GdipCreateRegionRgnData(_1, _2, addr this.nativeRegion)
+    elseifidn <Rect>,typeid(_1)
+        GdipCreateRegionRectI(addr _1, addr this.nativeRegion)
+    elseifidn <RectF>,typeid(_1)
+        GdipCreateRegionRect(addr _1, addr this.nativeRegion)
+    elseifidn <ptrRect>,typeid(_1)
+        GdipCreateRegionRectI(_1, addr this.nativeRegion)
+    elseifidn <ptrRectF>,typeid(_1)
+        GdipCreateRegionRect(_1, addr this.nativeRegion)
+    elseifidn <ptrGraphicsPath>,typeid(_1)
+        LOADARGPTRCX(_1)
+        GdipCreateRegionPath([rcx].GraphicsPath.nativePath, addr this.nativeRegion)
+    elseifidn <ptrHRGN__>,typeid(_1)
+        GdipCreateRegionHrgn(_1, addr this.nativeRegion)
+    elseifidn <ptrRegion>,typeid(_1)
+        LOADARGPTRCX(_1)
+        this.SetNativeRegion([rcx].Region.nativeRegion)
+        mov eax,Ok
+    endif
         mov this.lastResult,eax
         }
-    .inline Region_ptrRect :ptr Rect, :vararg {
-        mov rcx,rdx
-        GdipCreateRegionRectI(rcx, addr this.nativeRegion)
-        }
-    .inline Region_ptrRectF :ptr RectF, :vararg {
-        mov rcx,rdx
-        GdipCreateRegionRect(rcx, addr this.nativeRegion)
-        }
-    .inline Region_ptrGraphicsPath :ptr GraphicsPath, :vararg {
-        mov rcx,[rdx].GraphicsPath.nativePath
-        GdipCreateRegionPath(rcx, addr this.nativeRegion)
-        }
-    .inline Region_ptrbyte :ptr BYTE, :int_t, :vararg {
-        mov rcx,rdx
-        mov edx,r8d
-        GdipCreateRegionRgnData(rcx, edx, addr this.nativeRegion)
-        }
-    .inline Region_ptrHRGN__ :HRGN, :vararg {
-        mov rcx,rdx
-        GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
-        }
-    .inline Region_ptrRegion :ptr Region, :vararg {
-        this.SetNativeRegion([rdx].Region.nativeRegion)
+
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
-    .inline FromHRGN :HRGN, :vararg {
-        mov rcx,rdx
-        GdipCreateRegionHrgn(rcx, addr this.nativeRegion)
-        this.SetStatus()
+    .static FromHRGN :abs {
+        this.SetStatus(GdipCreateRegionHrgn(_1, addr this.nativeRegion))
         }
 
-    .inline Release :vararg {
+    .static Release {
         GdipDeleteRegion(this.nativeRegion)
         }
-
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
-        mov this.lastResult,eax
+    .static SetNativeRegion :ptr Region {
+        mov this.nativeRegion,_1
         }
 
-    .inline SetNativeRegion :ptr Region, :vararg {
-        mov this.nativeRegion,rdx
-        }
-
-    .inline Clone :vararg {
-
-        .new clone:Region
-
-        GdipCloneRegion(this.nativeRegion, addr clone.nativeRegion)
-        clone.SetStatus()
+    .static Clone {
+      local clone
+       .new clone:Region
+        clone.SetStatus(GdipCloneRegion(this.nativeRegion, addr clone.nativeRegion))
         lea rax,clone
         }
 
-    .inline MakeInfinite :vararg {
-        GdipSetInfinite(this.nativeRegion)
-        this.SetStatus()
+    .static MakeInfinite {
+        this.SetStatus(GdipSetInfinite(this.nativeRegion))
         }
 
-    .inline MakeEmpty :vararg {
-        GdipSetEmpty(this.nativeRegion)
-        this.SetStatus()
+    .static MakeEmpty {
+        this.SetStatus(GdipSetEmpty(this.nativeRegion))
         }
 
-    .inline GetDataSize :vararg {
+    .static GetDataSize {
         mov this.scratch,eax
-        GdipGetRegionDataSize(this.nativeRegion, addr this.scratch)
-        this.SetStatus()
+        this.SetStatus(GdipGetRegionDataSize(this.nativeRegion, addr this.scratch))
         mov eax,this.scratch
         }
 
@@ -100,196 +88,169 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;; sizeFilled - if not NULL, this is an OUT param that says how many bytes
     ;;              of data were written to the buffer.
 
-    .inline GetData :abs, :abs, :abs, :vararg {
-        GdipGetRegionData(this.nativeRegion, _1, _2, _3)
+    .static GetData buffer:abs, bufferSize:abs, sizeFilled:abs {
+        this.SetStatus(GdipGetRegionData(this.nativeRegion, buffer, bufferSize, sizeFilled))
+        }
+
+    Region_Combine macro this, _1, mode
+      ifidn <Rect>,typeid(_1)
+        this.SetStatus(GdipCombineRegionRectI(this.nativeRegion, addr _1, mode))
+      elseifidn <RectF>,typeid(_1)
+        this.SetStatus(GdipCombineRegionRect(this.nativeRegion, addr _1, mode))
+      elseifidn <ptrGraphicsPath>,typeid(_1)
+        LOADARGPTRDX(_1)
+        this.SetStatus(GdipCombineRegionPath(this.nativeRegion, [rdx].GraphicsPath.nativePath, mode))
+      elseifidn <ptrRegion>,typeid(_1)
+        LOADARGPTRDX(_1)
+        this.SetStatus(GdipCombineRegionRegion(this.nativeRegion, [rdx].Region.nativeRegion, mode))
+      else
+        .err <error _1>
+      endif
+        this.SetStatus()
+        exitm<>
+        endm
+
+    .static Intersect :abs {
+        Region_Combine(this, _1, CombineModeIntersect)
+        }
+    .static _Union :abs {
+        Region_Combine(this, _1, CombineModeUnion)
+        }
+    .static _Xor :abs {
+        Region_Combine(this, _1, CombineModeXor)
+        }
+    .static Exclude :abs {
+        Region_Combine(this, _1, CombineModeExclude)
+        }
+    .static Complement :abs {
+        Region_Combine(this, _1, CombineModeComplement)
+        }
+
+    .static Translate x:abs, y:abs {
+        typeid(Region_Translate_, x)(this, x, y)
         this.SetStatus()
         }
 
-region_combine macro token, name, mode
-    .inline token :abs, :vararg {
-        this.typeid(&name&_, _1)(_1, _2)
-        this.SetStatus()
-        }
-    .inline &name&_ptrRect :abs, :vararg {
-        GdipCombineRegionRectI(this.nativeRegion, _1, mode)
-        }
-    .inline &name&_ptrRectF :abs, :vararg {
-        GdipCombineRegionRect(this.nativeRegion, _1, mode)
-        }
-    .inline &name&_ptrGraphicsPath :ptr GraphicsPath, :vararg {
-        GdipCombineRegionPath(this.nativeRegion, [rdx].GraphicsPath.nativePath, mode)
-        }
-    .inline &name&_ptrRegion :ptr Region, :vararg {
-        GdipCombineRegionRegion(this.nativeRegion, [rdx].Region.nativeRegion, mode)
-        }
-    exitm<>
-    endm
-    region_combine(Intersect,   Intersect,  CombineModeIntersect)
-    region_combine(_Union,      Union,      CombineModeUnion)
-    region_combine(_Xor,        Xor,        CombineModeXor)
-    region_combine(Exclude,     Exclude,    CombineModeExclude)
-    region_combine(Complement,  Complement, CombineModeComplement)
-
-    .inline Translate :abs, :vararg {
-        this.typeid(Translate_, _1)(_1, _2)
-        this.SetStatus()
-        }
-    .inline Translate_flt :abs, :abs, :vararg {
-        GdipTranslateRegion(this.nativeRegion, _1, _2)
-        }
-    .inline Translate_imm :abs, :abs, :vararg {
-        GdipTranslateRegionI(this.nativeRegion, _1, _2)
+    .static Transform :ptr Matrix {
+        this.SetStatus(GdipTransformRegion(this.nativeRegion, [_1].Matrix.nativeMatrix))
         }
 
-    .inline Transform :ptr Matrix, :vararg {
-        GdipTransformRegion(this.nativeRegion, [rdx].Matrix.nativeMatrix)
+    .static GetBounds :abs, :ptr Graphics {
+        typeid(Region_GetBounds_, _1)(_1, _2, this)
         this.SetStatus()
         }
 
-    .inline GetBounds :abs, :vararg {
-        this.typeid(GetBounds_, _1)(_1, _2)
-        this.SetStatus()
-        }
-    .inline GetBounds_ptrRect :ptr Rect, :ptr Graphics, :vararg {
-        xchg rdx,r8
-        GdipGetRegionBoundsI(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
-        }
-    .inline GetBounds_ptrRectF :ptr RectF, :ptr Graphics, :vararg {
-        xchg rdx,r8
-        GdipGetRegionBounds(this.nativeRegion, [rdx].Graphics.nativeGraphics, r8)
-        }
-
-    .inline GetHRGN :ptr Graphics, :vararg {
-        GdipGetRegionHRgn(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
-        this.SetStatus()
+    .static GetHRGN :ptr Graphics {
+        this.SetStatus(GdipGetRegionHRgn(this.nativeRegion, [_1].Graphics.nativeGraphics, addr this.scratch))
         mov eax,this.scratch
         }
 
-    .inline IsEmpty :ptr Graphics, :vararg {
-        GdipIsEmptyRegion(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
-        this.SetStatus()
+    .static IsEmpty :ptr Graphics {
+        this.SetStatus(GdipIsEmptyRegion(this.nativeRegion, [_1].Graphics.nativeGraphics, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline IsInfinite :ptr Graphics, :vararg {
-        GdipIsInfiniteRegion(this.nativeRegion, [rdx].Graphics.nativeGraphics, addr this.scratch)
-        this.SetStatus()
+
+    .static IsInfinite :ptr Graphics {
+        this.SetStatus(GdipIsInfiniteRegion(this.nativeRegion, [_1].Graphics.nativeGraphics, addr this.scratch))
         mov eax,this.scratch
         }
 
     .inline IsVisible :abs, :vararg {
-        this.typeid(IsVisible_, _1)(_1, _2)
-        this.SetStatus()
-        mov eax,this.scratch
-        }
-    .inline IsVisible_ptrRect :ptr Rect, :ptr Graphics, :vararg {
-        .if r8
-            mov r8,[r8].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionRectI(this.nativeRegion, [rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, r8, addr this.scratch)
-        }
-    .inline IsVisible_ptrRectF :ptr RectF, :ptr Graphics, :vararg {
-        .if r8
-            mov r8,[r8].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionRect(this.nativeRegion, [rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, r8, addr this.scratch)
-        }
-    .inline IsVisible_ptrPoint :ptr Point, :ptr Graphics, :vararg {
-        .if r8
-            mov r8,[r8].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionPointI(this.nativeRegion, [rdx].Point.X, [rdx].Point.Y, r8, addr this.scratch)
-        }
-    .inline IsVisible_ptrPointF :ptr PointF, :ptr Graphics, :vararg {
-        .if r8
-            mov r8,[r8].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionPoint(this.nativeRegion, [rdx].PointF.X, [rdx].PointF.Y, r8, addr this.scratch)
-        }
-
-    ; IsVisible(INT, INT, ...)
-    .inline IsVisible_imm :abs, :abs, :abs, :vararg {
-        ifb <_3>
-            ; IsVisible(INT, INT)
-            GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, NULL, addr this.scratch)
-        else
-            this.typeid(IsVisible_imm_, _3)(_1, _2, _3, _4)
-        endif
-        }
-    ; IsVisible(INT, INT, Graphics*)
-    .inline IsVisible_imm_ptrGraphics :abs, :abs, :ptr Graphics, :vararg {
-        .if r9
-            mov r9,[r9].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, r9, addr this.scratch)
-        }
-    ; IsVisible(INT, INT, INT, INT, Graphics*)
-    .inline IsVisible_imm_imm :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
-        mov r10,[rsp+8*5]
-        .if r10
-            mov r10,[r10].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionRectI(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
-        }
-    .inline IsVisible_dword  :vararg { this.IsVisible_imm(_1) }
-    .inline IsVisible_sdword :vararg { this.IsVisible_imm(_1) }
-
-    ; IsVisible(REAL, REAL, ...)
-    .inline IsVisible_flt :abs, :abs, :abs, :vararg {
-        ifb <_3>
-            ; IsVisible(REAL, REAL)
-            GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, NULL, addr this.scratch)
-        else
-            this.typeid(IsVisible_flt_, _3)(_1, _2, _3, _4)
-        endif
-        }
-    ; IsVisible(REAL, REAL, Graphics*)
-    .inline IsVisible_flt_ptrGraphics :abs, :abs, :ptr Graphics, :vararg {
-        .if r9
-            mov r9,[r9].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, r9, addr this.scratch)
-        }
-    ; IsVisible(REAL, REAL, REAL, REAL, Graphics*)
-    .inline IsVisible_flt_flt :abs, :abs, :abs, :abs, :ptr Graphics, :vararg {
-        mov r10,[rsp+8*5]
-        .if r10
-            mov r10,[r10].Graphics.nativeGraphics
-        .endif
-        GdipIsVisibleRegionRect(this.nativeRegion, _1, _2, _3, _4, r10, addr this.scratch)
-        }
-    .inline IsVisible_oword :vararg { this.IsVisible_flt(_1) }
-    .inline IsVisible_real4 :vararg { this.IsVisible_flt(_1) }
-
-    .inline Equals :ptr Region, :ptr Graphics, :vararg {
-        GdipIsEqualRegion(this.nativeRegion, [rdx].Region.nativeRegion, [r8].Graphics.nativeGraphics, addr this.scratch)
-        this.SetStatus()
-        }
-
-    .inline GetRegionScansCount :ptr Matrix, :vararg {
-        GdipGetRegionScansCount(this.nativeRegion,  addr this.scratch, [rdx].Matrix.nativeMatrix)
+        typeid(Region_IsVisible_, _1)(this, _1, _2)
         this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetRegionScans :abs, :abs, :vararg {
-        this.typeid(GetRegionScans_, _2)(_1, _2, _3)
+    .static Equals :ptr Region, :ptr Graphics {
+        this.SetStatus(GdipIsEqualRegion(this.nativeRegion, [_1].Region.nativeRegion, [_2].Graphics.nativeGraphics, addr this.scratch))
+        }
+
+    .static GetRegionScansCount :ptr Matrix {
+        this.SetStatus(GdipGetRegionScansCount(this.nativeRegion,  addr this.scratch, [_1].Matrix.nativeMatrix))
+        mov eax,this.scratch
+        }
+
+    .static GetRegionScans :ptr Matrix, :abs, :abs {
+      ifidn <RectF>,typeid(_2)
+        GdipGetRegionScans(this.nativeRegion, addr _2, _3, [_1].Matrix.nativeMatrix)
+      elseifidn <Rect>,typeid(_2)
+        GdipGetRegionScansI(this.nativeRegion, addr _2, _3, [_1].Matrix.nativeMatrix)
+      else
+        .err <error _2>
+      endif
         this.SetStatus()
         }
-    .inline GetRegionScans_ptrRectF :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
-        xchg r9,rdx
-        xchg r8,rdx
-        GdipGetRegionScans(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
-        }
-    .inline GetRegionScans_ptrRect :ptr Matrix, :ptr Rect, :ptr int_t, :vararg {
-        xchg r9,rdx
-        xchg r8,rdx
-        GdipGetRegionScansI(this.nativeRegion, rdx, r8, [r9].Matrix.nativeMatrix)
-        }
-    .inline GetLastStatus :vararg {
+
+    .static GetLastStatus {
         mov eax,this.lastResult
         mov this.lastResult,Ok
         }
     .ends
+
+define Region_Translate_flt   <Region_Translate_real4>
+define Region_Translate_oword <Region_Translate_real4>
+define Region_Translate_imm   <Region_Translate_sdword>
+define Region_Translate_dword <Region_Translate_sdword>
+
+Region_Translate_real4 macro this, x, y
+    exitm<GdipTranslateRegion(this.nativeRegion, x, y)>
+    endm
+Region_Translate_sdword macro this, x, y
+    exitm<GdipTranslateRegionI(this.nativeRegion, x, y)>
+    endm
+
+Region_GetBounds_ptrRect proto fastcall rect:abs, g:abs, this:abs {
+    GdipGetRegionBoundsI(this.nativeRegion, [rdx].Graphics.nativeGraphics, rect)
+    }
+Region_GetBounds_ptrRectF proto fastcall rect:abs, g:abs, this:abs {
+    GdipGetRegionBounds(this.nativeRegion, [rdx].Graphics.nativeGraphics, rect)
+    }
+
+define Region_IsVisible_flt   <Region_IsVisible_real4>
+define Region_IsVisible_oword <Region_IsVisible_real4>
+define Region_IsVisible_imm   <Region_IsVisible_sdword>
+define Region_IsVisible_dword <Region_IsVisible_sdword>
+
+Region_IsVisible_real4 macro this, x, y, width:=<NULL>, height, g:=<NULL>
+ifb <height>
+    .if LOADARGPTRCX(width)
+        mov rcx,[rcx].Graphics.nativeGraphics
+    .endif
+    exitm<GdipIsVisibleRegionPoint(this.nativeRegion, x, y, rcx, addr this.scratch)>
+else
+    .if LOADARGPTRCX(g)
+        mov rcx,[rcx].Graphics.nativeGraphics
+    .endif
+    exitm<GdipIsVisibleRegionRect(this.nativeRegion, x, y, width, height, rcx, addr this.scratch)>
+endif
+    endm
+
+Region_IsVisible_sdword macro this, x, y, width:=<NULL>, height, g:=<NULL>
+ifb <height>
+    .if LOADARGPTRCX(width)
+        mov rcx,[rcx].Graphics.nativeGraphics
+    .endif
+    exitm<GdipIsVisibleRegionPointI(this.nativeRegion, x, y, rcx, addr this.scratch)>
+else
+    .if LOADARGPTRCX(g)
+        mov rcx,[rcx].Graphics.nativeGraphics
+    .endif
+    exitm<GdipIsVisibleRegionRectI(this.nativeRegion, x, y, width, height, rcx, addr this.scratch)>
+endif
+    endm
+
+Region_IsVisible_PointF macro this, point, g:=<NULL>
+    exitm<Region_IsVisible_real4(this, point.X, point.Y, g)>
+    endm
+Region_IsVisible_Point macro this, point, g:=<NULL>
+    exitm<Region_IsVisible_sdword(this, point.X, point.Y, g)>
+    endm
+Region_IsVisible_RectF macro this, rect, g:=<NULL>
+    exitm<Region_IsVisible_real4(this, rect.X, rect.Y, rect.Width, rect.Height, g)>
+    endm
+Region_IsVisible_Rect macro this, rect, g:=<NULL>
+    exitm<Region_IsVisible_sdword(this, rect.X, rect.Y, rect.Width, rect.Height, g)>
+    endm
 
 ;;--------------------------------------------------------------------------
 ;; FontFamily
@@ -300,64 +261,49 @@ region_combine macro token, name, mode
 ;;
 ;;--------------------------------------------------------------------------
 
-.template FontFamily
+.template FontFamily fastcall
 
     nativeFamily    ptr_t ?
     lastResult      Status ?
     scratch         int_t ?
 
-    .inline FontFamily :abs, :vararg {
-        ifb <_1>
-            mov eax,Ok
-            mov this.nativeFamily,NULL
-        else
-            this.typeid(FontFamily_, _1)(_1, _2)
-        endif
-        mov this.lastResult,eax
-        }
-    .inline FontFamily_ptrword :ptr word, :abs, :vararg {
-        mov rcx,rdx
-        ifb <_2>
-            xor edx,edx
-        else
-            mov rdx,_2
-        endif
-        .if rdx
+    .static FontFamily :abs, :abs=<0> {
+      ifb <_1>
+        mov eax,Ok
+        mov this.nativeFamily,NULL
+      elseifidn <ptrword>,typeid(_1)
+        .if LOADARGPTRDX(_2)
             mov rdx,[rdx].FontCollection.nativeFontCollection
         .endif
-        GdipCreateFontFamilyFromName(rcx, rdx, addr this.nativeFamily)
-        }
-    .inline FontFamily_ptrFontFamily :ptr FontFamily, :vararg {
+        GdipCreateFontFamilyFromName(_1, rdx, addr this.nativeFamily)
+      else
         mov this.nativeFamily,_1
-        mov this.lastResult,Ok
-        }
-
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
+        mov this.lastResult,_2
+      endif
         mov this.lastResult,eax
         }
 
-    .inline Release {
-        GdipDeleteFontFamily([this].FontFamily.nativeFamily)
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
-    .inline GenericSansSerif :vararg {
+    .static Release {
+        GdipDeleteFontFamily(this.nativeFamily)
+        }
+
+    .static GenericSansSerif {
         GdipGetGenericFontFamilySansSerif(addr this.nativeFamily)
         mov this.lastResult,eax
         }
 
-    .inline GenericSerif :vararg {
+    .static GenericSerif {
         GdipGetGenericFontFamilySerif(addr this.nativeFamily)
         mov this.lastResult,eax
         }
 
-    .inline GenericMonospace :vararg {
+    .static GenericMonospace {
         GdipGetGenericFontFamilyMonospace(addr this.nativeFamily)
         mov this.lastResult,eax
         }
@@ -367,49 +313,45 @@ region_combine macro token, name, mode
         this.SetStatus()
         }
 
-    .inline Clone :vararg {
-
-        .new clone:FontFamily
-
+    .static Clone {
+      local clone
+       .new clone:FontFamily
         GdipCloneRegion(this.nativeFamily, addr clone.nativeFamily)
         clone.SetStatus()
         lea rax,clone
         }
 
-    .inline IsAvailable :vararg {
-        mov     ecx,1
+    .static IsAvailable {
         xor     eax,eax
         cmp     rax,this.nativeFamily
-        cmovnz  eax,ecx
+        setnz   al
         }
 
-    .inline IsStyleAvailable :abs, :vararg {
-        GdipIsStyleAvailable(this.nativeFamily, _1, addr this.scratch)
-        this.SetStatus()
+    .static IsStyleAvailable :abs {
+        this.SetStatus(GdipIsStyleAvailable(this.nativeFamily, _1, addr this.scratch))
         .if eax
             mov this.scratch,FALSE
         .endif
         mov eax,this.scratch
         }
 
-    .inline GetEmHeight :abs, :vararg {
-        GdipGetEmHeight(this.nativeFamily, _1, addr this.scratch)
-        this.SetStatus()
-        }
-    .inline GetCellAscent :abs, :vararg {
-        GdipGetCellAscent(this.nativeFamily, _1, addr this.scratch)
-        this.SetStatus()
-        }
-    .inline GetCellDescent :abs, :vararg {
-        GdipGetCellDescent(this.nativeFamily, _1, addr this.scratch)
-        this.SetStatus()
-        }
-    .inline GetLineSpacing :abs, :vararg {
-        GdipGetLineSpacing(this.nativeFamily, _1, addr this.scratch)
-        this.SetStatus()
+    .static GetEmHeight :abs {
+        this.SetStatus(GdipGetEmHeight(this.nativeFamily, _1, addr this.scratch))
         }
 
-    .inline GetLastStatus :vararg {
+    .static GetCellAscent :abs {
+        this.SetStatus(GdipGetCellAscent(this.nativeFamily, _1, addr this.scratch))
+        }
+
+    .static GetCellDescent :abs {
+        this.SetStatus(GdipGetCellDescent(this.nativeFamily, _1, addr this.scratch))
+        }
+
+    .static GetLineSpacing :abs {
+        this.SetStatus(GdipGetLineSpacing(this.nativeFamily, _1, addr this.scratch))
+        }
+
+    .static GetLastStatus {
         mov eax,this.lastResult
         mov this.lastResult,Ok
         }
@@ -436,193 +378,135 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;;
 ;;--------------------------------------------------------------------------
 
-.template Font
+.template Font fastcall
 
     nativeFont  ptr_t ?
     lastResult  Status ?
     scratch     int_t ?
 
-    .inline Font :abs, :abs, :vararg {
-        ifb <_2>
-            GdipCreateFontFromDC(_1, addr this.nativeFont)
-        else
-            this.typeid(Font_, _1)(_1, _2, _3)
-        endif
-        mov this.lastResult,eax
-        }
-
-    .inline Font_HDC :abs, :abs, :vararg {
-        this.typeid(Font_, _2)(_1, _2)
-        }
-    .inline Font_ptrHDC__ :HDC, :HFONT, :vararg {
-        .if r8
-            .new lf:LOGFONTA
-            .new hdc:HDC
-             mov hdc,rdx
-             mov rcx,r8
-            .if GetObjectA(rcx, LOGFONTA, addr lf)
-                GdipCreateFontFromLogfontA(hdc, addr lf, addr this.nativeFont)
-            .else
-                GdipCreateFontFromDC(hdc, addr this.nativeFont)
-            .endif
+    .static Font :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL> {
+      ifb <_2>
+        GdipCreateFontFromDC(_1, addr this.nativeFont)
+      elseifidn <ptrLOGFONTA>,typeid(_2)
+        GdipCreateFontFromLogfontA(_1, _2, addr this.nativeFont)
+      elseifidn <ptrLOGFONTW>,typeid(_2)
+        GdipCreateFontFromLogfontW(_1, _2, addr this.nativeFont)
+      elseifidn <ptrHFONT__>,typeid(_2)
+        .new lf:LOGFONTA
+        .new hdc:HDC =_1
+        .ifd GetObjectA(_2, LOGFONTA, addr lf)
+            GdipCreateFontFromLogfontA(hdc, addr lf, addr this.nativeFont)
         .else
-            mov rcx,rdx
-            GdipCreateFontFromDC(rcx, addr this.nativeFont)
+            GdipCreateFontFromDC(hdc, addr this.nativeFont)
         .endif
-        }
-    .inline Font_ptrLOGFONTW :HDC, :ptr LOGFONTW, :vararg {
-        mov rcx,rdx
-        .if r8
-            mov rdx,r8
-            GdipCreateFontFromLogfontW(rcx, rdx, addr this.nativeFont)
-        .else
-            GdipCreateFontFromDC(rcx, addr this.nativeFont)
-        .endif
-        }
-    .inline Font_ptrLOGFONTA :HDC, :ptr LOGFONTA, :vararg {
-        mov rcx,rdx
-        .if r8
-            mov rdx,r8
-            GdipCreateFontFromLogfontA(rcx, rdx, addr this.nativeFont)
-        .else
-            GdipCreateFontFromDC(rcx, addr this.nativeFont)
-        .endif
-        }
-    .inline Font_ptrFontFamily :ptr FontFamily, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :vararg {
-        mov rcx,rdx
-        .if ecx
+      elseifidn <ptrFontFamily>,typeid(_1)
+        .if LOADARGPTRCX(_1)
             mov rcx,[rcx].FontFamily.nativeFamily
         .endif
         GdipCreateFont(rcx, _2, _3, _4, addr this.nativeFont)
-        }
-
-    .inline Font_ptrword :abs, :abs, :abs=<FontStyleRegular>, :abs=<UnitPoint>, :abs=<NULL>, :vararg {
-
-        .new emSize:REAL
-
-        mov emSize,_2
-
-        .new family:FontFamily(_1, _5)
-
+      elseifidn <ptrword>,typeid(_1)
+       .new emSize:REAL = _2
+       .new family:FontFamily(_1, _5)
         mov this.lastResult,eax
-
         .repeat
-
             .if eax != Ok
-
                 family.GenericSansSerif()
                 .break.if eax != Ok
             .endif
-
             GdipCreateFont(family.nativeFamily, emSize, _3, _4, addr this.nativeFont)
-
             .if eax != Ok
-
                 mov this.lastResult,eax
-
                 family.GenericSansSerif()
                 .break.if eax != Ok
-
                 GdipCreateFont(family.nativeFamily, emSize, _3, _4, addr this.nativeFont)
             .endif
         .until 1
-        }
-
-
-    .inline Font_ptrFont :ptr Font, :Status {
-        mov [this].Font.nativeFamily,_1
-        mov [this].Font.lastResult,_2
-        }
-
-    .inline Release {
-        GdipDeleteFont([this].Font.nativeFont)
-        }
-
-    .inline SetNativeFont :ptr Font {
-        mov [this].Font.nativeFont,_1
-        }
-
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
+      elseifidn <ptrFont>,typeid(_1)
+        mov this.nativeFamily,_1
+        mov this.lastResult,Ok
+      else
+        .err <_2>
+      endif
         mov this.lastResult,eax
         }
 
-    .inline GetLogFontA :ptr Graphics, :abs, :vararg {
-        .if rdx
-            mov rdx,[rdx].Graphics.nativeGraphics
-        .endif
-        GdipGetLogFontA(this.nativeFont, rdx, _2)
-        this.SetStatus()
-        }
-    .inline GetLogFontW :ptr Graphics, :abs, :vararg {
-        .if rdx
-            mov rdx,[rdx].Graphics.nativeGraphics
-        .endif
-        GdipGetLogFontW(this.nativeFont, rdx, _2)
-        this.SetStatus()
+    .static Release {
+        GdipDeleteFont(this.nativeFont)
         }
 
-    .inline Clone :vararg {
+    .static SetNativeFont :ptr Font {
+        mov this.nativeFont,_1
+        }
 
-        .new clone:Font
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
+        }
 
-        GdipCloneFont(this.nativeFont, addr clone.nativeFont)
-        clone.SetStatus()
+    .static GetLogFontA :ptr Graphics, :abs {
+        .if _1
+            mov _1,[_1].Graphics.nativeGraphics
+        .endif
+        this.SetStatus(GdipGetLogFontA(this.nativeFont, _1, _2))
+        }
+
+    .static GetLogFontW :ptr Graphics, :abs {
+        .if _1
+            mov _1,[_1].Graphics.nativeGraphics
+        .endif
+        this.SetStatus(GdipGetLogFontW(this.nativeFont, _1, _2))
+        }
+
+    .static Clone {
+       .new clone:Font
+        clone.SetStatus(GdipCloneFont(this.nativeFont, addr clone.nativeFont))
         lea rax,clone
         }
 
-    .inline IsAvailable {
+    .static IsAvailable {
         xor eax,eax
-        .if rax != [this].Font.nativeFont
-            inc eax
-        .endif
+        cmp rax,this.nativeFont
+        setnz al
         }
-    .inline GetStyle :vararg {
-        GdipGetFontStyle(this.nativeFont, addr this.scratch)
-        this.SetStatus()
+
+    .static GetStyle {
+        this.SetStatus(GdipGetFontStyle(this.nativeFont, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline GetSize :vararg {
-        GdipGetFontSize(this.nativeFont, addr this.scratch)
-        this.SetStatus()
+
+    .static GetSize {
+        this.SetStatus(GdipGetFontSize(this.nativeFont, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline GetUnit :vararg {
-        GdipGetFontUnit(this.nativeFont, addr this.scratch)
-        this.SetStatus()
+
+    .static GetUnit {
+        this.SetStatus(GdipGetFontUnit(this.nativeFont, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline GetLastStatus :vararg {
+
+    .static GetLastStatus {
         this.SetStatus()
         }
 
-    .inline GetHeight :abs, :vararg {
-        this.typeid(GetHeight_, _1)(_1, _2)
-        this.SetStatus()
-        mov eax,this.scratch
-        }
-    .inline GetHeight_ptrGraphics :ptr Graphics, :vararg {
-        .if rdx
+    .static GetHeight :abs {
+      ifidn <ptrGraphics>,typeid(_1)
+        .if LOADARGPTRDX(_1)
             mov rdx,[rdx].Graphics.nativeGraphics
         .endif
-        GdipGetFontHeight(this.nativeFont, rdx, addr this.scratch)
-        }
-    .inline GetHeight_flt :abs, :vararg {
-        GdipGetFontHeightGivenDPI(this.nativeFont, _1, addr this.scratch)
+        this.SetStatus(GdipGetFontHeight(this.nativeFont, rdx, addr this.scratch))
+      else
+        this.SetStatus(GdipGetFontHeightGivenDPI(this.nativeFont, _1, addr this.scratch))
+      endif
+        mov eax,this.scratch
         }
 
-    .inline GetFamily :ptr FontFamily, :vararg {
+    .static GetFamily :ptr FontFamily {
         mov eax,InvalidParameter
-        .if rdx
-            .new fontfamily:ptr FontFamily
-            mov fontfamily,rdx
-            .ifd GdipGetFamily(this.nativeFont, addr [rdx].FontFamily.nativeFamily)
+        .if _1
+           .new fontfamily:ptr FontFamily
+            mov fontfamily,_1
+            .ifd GdipGetFamily(this.nativeFont, addr [_1].FontFamily.nativeFamily)
                 mov rdx,fontfamily
                 mov [rdx].FontFamily.lastResult,eax
             .endif
@@ -636,139 +520,97 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;; Font Collection
 ;;--------------------------------------------------------------------------
 
-.template FontCollection
+.template FontCollection fastcall
 
     nativeFontCollection    ptr_t ?
     lastResult              Status ?
 
-    .inline FontCollection {
-        mov [this].FontCollection.nativeFontCollection,NULL
-        }
-    .inline Release {}
-
-    .inline SetStatus :abs {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,[this].FontCollection.lastResult
-        mov [this].FontCollection.lastResult,eax
+    .static FontCollection {
+        mov this.nativeFontCollection,NULL
         }
 
-    .inline GetFamilyCount {
+    .static Release {}
 
-        .new numFound:int_t
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
+        }
 
-        mov numFound,0
-        GdipGetFontCollectionFamilyCount([this].FontCollection.nativeFontCollection, &numFound)
+    .static GetFamilyCount {
+       .new numFound:int_t = 0
+        GdipGetFontCollectionFamilyCount(this.nativeFontCollection, addr numFound)
         mov eax,numFound
         }
 
-    .inline GetFamilies :int_t, :ptr FontFamily, :ptr int_t {
-
+    .static GetFamilies :int_t, :ptr FontFamily, :abs {
+      local nativeFamilyList, numSought, gpfamilies, numFound, fontcollection, i
+       .new nativeFamilyList:ptr ptr FontFamily
+       .new numSought:int_t = _1
+       .new gpfamilies:ptr FontFamily = _2
+       .new numFound:ptr int_t
+       .new fontcollection:ptr FontCollection
+       .new i:int_t
+        mov numFound,LOADARGPTRAX(_3)
         .repeat
-
-            .ifs (edx <= 0 || r8 == NULL || r9 == NULL)
-
+            .ifs ( numSought <= 0 || gpfamilies == NULL || numFound == NULL)
                 mov eax,InvalidParameter
-                mov [this].FontCollection.lastResult,eax
-                .break
+                mov this.lastResult,eax
+               .break
             .endif
-
-            mov dword ptr [r9],0
-
-            .new nativeFamilyList:ptr ptr FontFamily
-            .new numSought:int_t
-            .new gpfamilies:ptr FontFamily
-            .new numFound:ptr int_t
-            .new fontcollection:ptr FontCollection
-            .new count:int_t
-
-            mov fontcollection,rcx
-            mov nativeFamilyList,rsi
-            mov gpfamilies,rdi
-            mov numFound,rbx
-
-            mov rbx,r9
-            mov rdi,r8
-            mov numSought,edx
-            mov rsi,GdipAlloc( &[rdx*8] )
-            mov rcx,fontcollection
-
-            .if rax == NULL
-
+            mov dword ptr [rax],0
+            imul ecx,numSought,size_t
+            mov nativeFamilyList,GdipAlloc(rcx)
+            .if ( rax == NULL )
                 mov eax,OutOfMemory
-                mov [rcx].FontCollection.lastResult,eax
-                mov rsi,nativeFamilyList
-                mov rdi,gpfamilies
-                mov rbx,numFound
-
-                .break
+                mov this.lastResult,eax
+               .break
             .endif
-
-            .ifd !GdipGetFontCollectionFamilyList([rcx].FontCollection.nativeFontCollection, numSought, rsi, rbx)
-
-                mov count,[rbx]
-                .for ebx = 0: ebx < count: ebx++
-
-                    imul ecx,ebx,8
-                    imul edx,ebx,FontFamily
-
-                    GdipCloneFontFamily([rsi+rcx], addr [rdi+rdx].FontFamily.nativeFamily)
+            .ifd ( GdipGetFontCollectionFamilyList(this.nativeFontCollection, numSought, rax, numFound) == Ok )
+                .for ( i = 0 : : i++ )
+                    mov rax,numFound
+                    mov eax,[rax]
+                    .break .if eax <= i
+                    imul ecx,i,size_t
+                    imul edx,i,FontFamily
+                    add  rcx,nativeFamilyList
+                    add  rdx,gpfamilies
+                    GdipCloneFontFamily([rcx], addr [rdx].FontFamily.nativeFamily)
                 .endf
                 xor eax,eax
             .endif
-            mov fontcollection,rax
-            GdipFree(rsi)
-            mov rax,fontcollection
-            mov rsi,nativeFamilyList
-            mov rdi,gpfamilies
-            mov rbx,numFound
+            GdipFree(nativeFamilyList)
         .until 1
         }
 
-    .inline GetLastStatus {
-        mov eax,[this].FontCollection.lastResult
-        mov [this].FontCollection.lastResult,Ok
+    .static GetLastStatus {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
         }
     .ends
 
 
-.template InstalledFontCollection : public FontCollection
+.template InstalledFontCollection fastcall : public FontCollection
 
-    .inline InstalledFontCollection {
-        FontCollection_FontCollection(this)
+    .static InstalledFontCollection {
+        mov this.nativeFontCollection,NULL
         }
     .ends
 
 
-.template PrivateFontCollection : public FontCollection
+.template PrivateFontCollection fastcall : public FontCollection
 
-    .inline PrivateFontCollection {
-        FontCollection_FontCollection(this)
+    .static PrivateFontCollection {
+        mov this.nativeFontCollection,NULL
         }
-
-    .inline AddFontFile :ptr WCHAR {
-
-       .new fontcollection:ptr FontCollection
-
-        mov fontcollection,this
-        .ifd GdipPrivateAddFontFile([this].FontCollection.nativeFontCollection, rdx)
-            mov rcx,fontcollection
-            mov [rcx].FontCollection.lastResult,eax
+    .static AddFontFile :ptr WCHAR {
+        .ifd GdipPrivateAddFontFile(this.nativeFontCollection, _1)
+            mov this.lastResult,eax
         .endif
         }
-
-    .inline AddMemoryFont :ptr, :int_t {
-
-       .new fontcollection:ptr FontCollection
-
-        mov fontcollection,this
-        .ifd GdipPrivateAddMemoryFont([this].FontCollection.nativeFontCollection, rdx, r8d)
-            mov rcx,fontcollection
-            mov [rcx].FontCollection.lastResult,eax
+    .static AddMemoryFont :ptr, :int_t {
+        .ifd GdipPrivateAddMemoryFont(this.nativeFontCollection, _1, _2)
+            mov this.lastResult,eax
         .endif
         }
     .ends
@@ -778,241 +620,214 @@ externdef GenericMonospaceFontFamilyBuffer  :FontFamily
 ;; Abstract base class for Image and Metafile
 ;;--------------------------------------------------------------------------
 
-.template ImageBase
+.template ImageBase fastcall
 
     nativeImage     ptr_t ?
     lastResult      Status ?
     scratch         int_t ?
 
-    .inline Release :vararg {
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
+        }
+
+    .static Release {
         GdipDisposeImage(this.nativeImage)
         }
 
-    .inline Save :abs, :vararg {
-        this.typeid(Save_, _1)(_1, _2)
+    .static Save filename:abs, clsidEncoder:abs, encoderParams:abs=<NULL> {
+    ifidn <ptrIStream>,typeid(filename)
+        GdipSaveImageToStream(this.nativeImage, filename, clsidEncoder, encoderParams)
+    else
+        GdipSaveImageToFile(this.nativeImage, filename, clsidEncoder, encoderParams)
+    endif
         this.SetStatus()
-        }
-    .inline Save_ptrword :abs, :abs, :abs=<0>, :vararg {
-        GdipSaveImageToFile(this.nativeImage, _1, _2, _3)
-        }
-    .inline Save_ptrIStream :abs, :abs, :abs=<0>, :vararg {
-        GdipSaveImageToStream(this.nativeImage, _1, _2, _3)
         }
 
-    .inline SaveAdd :abs, :vararg {
-        this.typeid(SaveAdd_, _1)(_1, _2)
-        this.SetStatus()
-        }
-    .inline SaveAdd_ptrEncoderParameters :vararg {
-        GdipSaveAdd(this.nativeImage, _1)
-        this.SetStatus()
-        }
-    .inline SaveAdd_ptrImage :ptr Image, :ptr EncoderParameters, :vararg {
+    .static SaveAdd newImage:abs, encoderParams:abs {
+    ifb <encoderParams>
+        GdipSaveAdd(this.nativeImage, newImage)
+    else
         mov eax,InvalidParameter
-        .if rdx
-            mov rdx,[rdx].Image.nativeImage
-            GdipSaveAddImage(this.nativeImage, rdx, r8)
+        .if LOADARGPTRDX(newImage)
+            GdipSaveAddImage(this.nativeImage, [rdx].Image.nativeImage, encoderParams)
         .endif
-        this.SetStatus()
+    endif
         }
 
-    .inline GetType :vararg {
+    .static GetType {
         mov this.scratch,ImageTypeUnknown
         GdipGetImageType(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetPhysicalDimension :ptr SizeF, :vararg {
+    .static GetPhysicalDimension size:ptr SizeF {
         mov eax,InvalidParameter
-        .if rdx
-            GdipGetImageDimension(this.nativeImage, &[rdx].SizeF.Width, &[rdx].SizeF.Height)
+        .if size
+            GdipGetImageDimension(this.nativeImage, &[size].SizeF.Width, &[size].SizeF.Height)
         .endif
         this.SetStatus()
         }
 
-    .inline GetBounds :vararg {
-        GdipGetImageBounds(this.nativeImage, _1)
-        this.SetStatus()
+    .static GetBounds srcRect:abs, srcUnit:abs {
+        this.SetStatus(GdipGetImageBounds(this.nativeImage, srcRect, srcUnit))
         }
 
-    .inline GetWidth :vararg {
+    .static GetWidth {
         mov this.scratch,0
         GdipGetImageWidth(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetHeight :vararg {
+    .static GetHeight {
         mov this.scratch,0
         GdipGetImageHeight(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetHorizontalResolution :vararg {
+    .static GetHorizontalResolution {
         mov this.scratch,0
         GdipGetImageHorizontalResolution(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         movss xmm0,this.scratch
         }
 
-    .inline GetVerticalResolution :vararg {
+    .static GetVerticalResolution {
         mov this.scratch,0
         GdipGetImageVerticalResolution(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         movss xmm0,this.scratch
         }
 
-    .inline GetFlags :vararg {
+    .static GetFlags {
         mov this.scratch,0
         GdipGetImageFlags(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetRawFormat :vararg {
-        GdipGetImageRawFormat(this.nativeImage, _1)
-        this.SetStatus()
+    .static GetRawFormat format:abs {
+        this.SetStatus(GdipGetImageRawFormat(this.nativeImage, format))
         }
 
-    .inline GetPixelFormat :vararg {
+    .static GetPixelFormat {
         GdipGetImagePixelFormat(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetPaletteSize :vararg {
+    .static GetPaletteSize {
         mov this.scratch,0
         GdipGetImagePaletteSize(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
 
-    .inline GetPalette :vararg {
-        GdipGetImagePalette(this.nativeImage, _1)
-        this.SetStatus()
-        }
-    .inline SetPalette :vararg {
-        GdipSetImagePalette(this.nativeImage, _1)
-        this.SetStatus()
+    .static GetPalette palette:abs, size:abs {
+        this.SetStatus(GdipGetImagePalette(this.nativeImage, palette, size))
         }
 
-    .inline GetThumbnailImage :abs, :abs, :abs=<0>, :abs=<0>, :vararg {
+    .static SetPalette palette:abs {
+        this.SetStatus(GdipSetImagePalette(this.nativeImage, palette))
+        }
 
-        .new thumbimage:Image
-
-        GdipGetImageThumbnail(this.nativeImage, _1, _2, addr thumbimage.nativeImage, _3, _4)
+    .static GetThumbnailImage thumbWidth:abs, thumbHeight:abs, callback:abs=<NULL>, callbackData:abs=<NULL> {
+       .new thumbimage:Image
+        GdipGetImageThumbnail(this.nativeImage, thumbWidth, thumbHeight, addr thumbimage.nativeImage, callback, callbackData)
         mov thumbimage.lastResult,eax
         lea rax,thumbimage
         }
 
-    .inline GetFrameDimensionsCount :vararg {
+    .static GetFrameDimensionsCount {
         mov this.scratch,0
         GdipImageGetFrameDimensionsCount(this.nativeImage, addr this.scratch)
-        this.SetStatus()
         mov eax,this.scratch
         }
-    .inline GetFrameDimensionsList :vararg {
-        GdipImageGetFrameDimensionsList(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static GetFrameDimensionsList dimensionIDs:abs, count:abs {
+        this.SetStatus(GdipImageGetFrameDimensionsList(this.nativeImage, dimensionIDs, count))
         }
-    .inline GetFrameCount :vararg {
+
+    .static GetFrameCount dimensionID:abs {
         mov this.scratch,0
-        GdipImageGetFrameCount(this.nativeImage, _1, addr this.scratch)
-        this.SetStatus()
+        this.SetStatus(GdipImageGetFrameCount(this.nativeImage, dimensionID, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline SelectActiveFrame :vararg {
-        GdipImageSelectActiveFrame(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static SelectActiveFrame dimensionID:abs, frameIndex:abs {
+        this.SetStatus(GdipImageSelectActiveFrame(this.nativeImage, dimensionID, frameIndex))
         }
-    .inline RotateFlip :vararg {
-        GdipImageRotateFlip(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static RotateFlip rotateFlipType:abs {
+        this.SetStatus(GdipImageRotateFlip(this.nativeImage, rotateFlipType))
         }
-    .inline GetPropertyCount :vararg {
+
+    .static GetPropertyCount {
         mov this.scratch,0
-        GdipGetPropertyCount(this.nativeImage, addr this.scratch)
-        this.SetStatus()
+        this.SetStatus(GdipGetPropertyCount(this.nativeImage, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline GetPropertyIdList :vararg {
-        GdipGetPropertyIdList(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static GetPropertyIdList numOfProperty:abs, list:abs {
+        this.SetStatus(GdipGetPropertyIdList(this.nativeImage, numOfProperty, list))
         }
-    .inline GetPropertyItemSize :vararg {
+
+    .static GetPropertyItemSize propId:abs {
         mov this.scratch,0
-        GdipGetPropertyItemSize(this.nativeImage, _1, addr this.scratch)
+        GdipGetPropertyItemSize(this.nativeImage, propId, addr this.scratch)
         mov eax,this.scratch
         }
-    .inline GetPropertyItem :vararg {
-        GdipGetPropertyItem(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static GetPropertyItem propId:abs, propSize:abs, buffer:abs {
+        this.SetStatus(GdipGetPropertyItem(this.nativeImage, propId, propSize, buffer))
         }
-    .inline GetPropertySize :vararg {
-        GdipGetPropertySize(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static GetPropertySize totalBufferSize:abs, numProperties:abs {
+        this.SetStatus(GdipGetPropertySize(this.nativeImage, totalBufferSize, numProperties))
         }
-    .inline GetAllPropertyItems :abs, :abs, :ptr PropertyItem, :vararg {
+
+    .static GetAllPropertyItems totalBufferSize:abs, numProperties:abs, allItems:abs {
         mov eax,InvalidParameter
-        .if r9
-            GdipGetAllPropertyItems(this.nativeImage, _1, _2, r9)
+        .if LOADARGPTRCX(allItems)
+            GdipGetAllPropertyItems(this.nativeImage, totalBufferSize, numProperties, rcx)
         .endif
         this.SetStatus()
         }
-    .inline RemovePropertyItem :vararg {
-        GdipRemovePropertyItem(this.nativeImage, _1)
-        this.SetStatus()
-        }
-    .inline SetPropertyItem :vararg {
-        GdipSetPropertyItem(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static RemovePropertyItem propId:abs {
+        this.SetStatus(GdipRemovePropertyItem(this.nativeImage, propId))
         }
 
-    .inline GetEncoderParameterListSize :vararg {
+    .static SetPropertyItem item:abs {
+        this.SetStatus(GdipSetPropertyItem(this.nativeImage, item))
+        }
+
+    .static GetEncoderParameterListSize clsidEncoder:abs {
         mov this.scratch,0
-        GdipGetEncoderParameterListSize(this.nativeImage, _1, addr this.scratch)
+        GdipGetEncoderParameterListSize(this.nativeImage, clsidEncoder, addr this.scratch)
         mov eax,this.scratch
         }
-    .inline GetEncoderParameterList :vararg {
-        GdipGetEncoderParameterList(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static GetEncoderParameterList clsidEncoder:abs, size:abs, buffer:abs {
+        this.SetStatus(GdipGetEncoderParameterList(this.nativeImage, clsidEncoder, size, buffer))
         }
+
 if (GDIPVER GE 0x0110)
-    .inline FindFirstItem :vararg {
-        GdipFindFirstImageItem(this.nativeImage, _1)
-        this.SetStatus()
+    .static FindFirstItem :abs {
+        this.SetStatus(GdipFindFirstImageItem(this.nativeImage, _1))
         }
-    .inline FindNextItem :vararg {
-        GdipFindNextImageItem(this.nativeImage, _1)
-        this.SetStatus()
+    .static FindNextItem :abs {
+        this.SetStatus(GdipFindNextImageItem(this.nativeImage, _1))
         }
-    .inline GetItemData :vararg {
-        GdipGetImageItemData(this.nativeImage, _1)
-        this.SetStatus()
+    .static GetItemData :abs {
+        this.SetStatus(GdipGetImageItemData(this.nativeImage, _1))
         }
-    .inline SetAbort :vararg {
-        GdipImageSetAbort(this.nativeImage, _1)
-        this.SetStatus()
+    .static SetAbort :abs {
+        this.SetStatus(GdipImageSetAbort(this.nativeImage, _1))
         }
 endif
 
-    .inline SetNativeImage :ptr Image, :vararg {
-        mov this.nativeImage,rdx
+    .static SetNativeImage :ptr Image {
+        mov this.nativeImage,_1
         }
 
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
-        mov this.lastResult,eax
-        }
-    .inline GetLastStatus :vararg {
+    .static GetLastStatus {
         mov eax,this.lastResult
         mov this.lastResult,Ok
         }
@@ -1023,45 +838,48 @@ endif
 ; Image(WCHAR*, BOOL = FALSE)
 ; Image(IStream*, BOOL = FALSE)
 
-.template Image : public ImageBase
+.template Image fastcall : public ImageBase
 
-    .inline Image :abs, :vararg {
+    .static Image filename:abs, useEmbeddedColorManagement:abs=<FALSE> {
         mov this.nativeImage,NULL
-        this.typeid(Image_, _1)(_1, _2)
-        mov this.lastResult,eax
-        }
-    .inline Image_ptrword :ptr WCHAR, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
-        if _2
-            GdipLoadImageFromFileICM(rcx, addr this.nativeImage)
+      ifidn <ptrIStream>,typeid(filename)
+        if useEmbeddedColorManagement
+            GdipLoadImageFromStreamICM(filename, addr this.nativeImage)
         else
-            GdipLoadImageFromFile(rcx, addr this.nativeImage)
+            GdipLoadImageFromStream(filename, addr this.nativeImage)
         endif
-        }
-    .inline Image_ptrIStream :ptr IStream, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
-        if _2
-            GdipLoadImageFromStreamICM(rcx, addr this.nativeImage)
+      else
+        if useEmbeddedColorManagement
+            GdipLoadImageFromFileICM(filename, addr this.nativeImage)
         else
-            GdipLoadImageFromStream(rcx, addr this.nativeImage)
+            GdipLoadImageFromFile(filename, addr this.nativeImage)
         endif
-        }
-    .inline FromFile :vararg {
-        this.Image_ptrword(_1)
-        mov this.lastResult,eax
-        }
-    .inline FromStream :vararg {
-        this.Image_ptrIStream(_1)
+      endif
         mov this.lastResult,eax
         }
 
-    .inline Clone :vararg {
+    .static FromFile filename:abs, useEmbeddedColorManagement:abs=<FALSE> {
+      if useEmbeddedColorManagement
+        GdipLoadImageFromFileICM(filename, addr this.nativeImage)
+      else
+        GdipLoadImageFromFile(filename, addr this.nativeImage)
+      endif
+        mov this.lastResult,eax
+        }
 
+    .static FromStream stream:abs, useEmbeddedColorManagement:abs=<FALSE> {
+        if useEmbeddedColorManagement
+            GdipLoadImageFromStreamICM(stream, addr this.nativeImage)
+        else
+            GdipLoadImageFromStream(stream, addr this.nativeImage)
+        endif
+        mov this.lastResult,eax
+        }
+
+    .static Clone {
        .new clone:Image
-
         GdipCloneImage(this.nativeImage, addr clone.nativeImage)
         mov clone.lastResult,eax
-        this.SetStatus()
         lea rax,clone
         }
     .ends
@@ -1079,267 +897,169 @@ endif
 ; Bitmap(HICON)
 ; Bitmap(HINSTANCE, WCHAR*)
 
-.template Bitmap : public ImageBase
+.template Bitmap fastcall : public ImageBase
 
-    .inline Bitmap :abs, :vararg {
-        ifb <_1>
-            mov this.nativeImage,NULL
-            mov this.lastResult,NotImplemented
-        else
-            this.typeid(Bitmap_, _1)(_1, _2)
-            mov this.lastResult,eax
-        endif
-        }
-    .inline Bitmap_ptrword :ptr WCHAR, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
+    .static Bitmap :abs, :abs=<FALSE>, :abs=<PixelFormat32bppARGB>, :abs, :abs {
+    ifb <_1>
+        mov this.nativeImage,NULL
+        mov this.lastResult,NotImplemented
+    elseifidn <ptrword>,typeid(_1)
         if _2
-            GdipCreateBitmapFromFileICM(rcx, addr this.nativeImage)
+            GdipCreateBitmapFromFileICM(_1, addr this.nativeImage)
         else
-            GdipCreateBitmapFromFile(rcx, addr this.nativeImage)
+            GdipCreateBitmapFromFile(_1, addr this.nativeImage)
         endif
-        }
-    .inline Bitmap_ptrIStream :ptr IStream, :abs=<FALSE>, :vararg {
-        mov rcx,rdx
+    elseifidn <ptrIStream>,typeid(_1)
         if _2
-            GdipCreateBitmapFromStreamICM(rcx, addr this.nativeImage)
+            GdipCreateBitmapFromStreamICM(_1, addr this.nativeImage)
         else
-            GdipCreateBitmapFromStream(rcx, addr this.nativeImage)
+            GdipCreateBitmapFromStream(_1, addr this.nativeImage)
         endif
-        }
-
-    .inline Bitmap_imm :abs, :abs, :abs, :vararg {
-        this.typeid(Bitmap_imm_, _3)(_1, _2, _3, _4)
-        }
-    .inline Bitmap_sdword :abs, :abs, :abs, :vararg {
-        this.typeid(Bitmap_imm_, _3)(_1, _2, _3, _4)
-        }
-    .inline Bitmap_dword :abs, :abs, :abs, :vararg {
-        this.typeid(Bitmap_dword_, _3)(_1, _2, _3, _4)
-        }
-    .inline Bitmap_imm_imm :abs, :abs, :abs, :abs, :vararg {
-        ifb <_4>
-            GdipCreateBitmapFromScan0(_1, _2, 0, _3, NULL, addr this.nativeImage)
-        else
-            GdipCreateBitmapFromScan0(_1, _2, _3, _4, _5, addr this.nativeImage)
-        endif
-        }
-    .inline Bitmap_imm_dword :abs, :abs, :abs, :abs, :vararg {
-        this.Bitmap_imm_imm(_1, _2, _3, _4, _5)
-        }
-
-    .inline Bitmap_dword_dword :abs, :abs, :abs, :abs, :vararg {
-        mov ecx,_1
-        mov edx,_2
-        mov r8d,_3
-        ifb <_4>
-            GdipCreateBitmapFromScan0(ecx, edx, 0, r8d, NULL, addr this.nativeImage)
-        else
-            GdipCreateBitmapFromScan0(ecx, edx, r8d, _4, _5, addr this.nativeImage)
-        endif
-        }
-    .inline Bitmap_imm_ptrGraphics :int_t, :int_t, :ptr Graphics, :vararg {
-        mov ecx,edx
-        mov edx,r8d
-        mov r8,r9
-        GdipCreateBitmapFromGraphics(ecx, edx, [r8].Graphics.nativeGraphics, addr this.nativeImage)
-        }
-    .inline Bitmap_ptrIDirectDrawSurface7 :ptr IDirectDrawSurface7, :vararg {
-        mov rcx,rdx
-        GdipCreateBitmapFromDirectDrawSurface(rcx, addr this.nativeImage)
-        }
-    .inline Bitmap_ptrBITMAPINFO :ptr BITMAPINFO, :ptr, :vararg {
-        mov rcx,rdx
-        mov rdx,r8
-        GdipCreateBitmapFromGdiDib(rcx, rdx, addr this.nativeImage)
-        }
-
-    .inline Bitmap_ptrHICON__ :abs, :abs, :vararg {
-        mov rcx,_1
-        ifb <_2>
-            GdipCreateBitmapFromHICON(rcx, addr this.nativeImage)
-        else
-            this.typeid(Bitmap_ptr_, _2)(_1, _2, _3)
-        endif
-        }
-    .inline Bitmap_ptrHBITMAP__ :HBITMAP, :HPALETTE, :vararg {
-        mov rdx,r8
-        GdipCreateBitmapFromHBITMAP(rcx, rdx, addr this.nativeImage)
-        }
-    .inline Bitmap_ptrHINSTANCE__ :HINSTANCE, :ptr WCHAR, :vararg {
-        mov rdx,r8
-        GdipCreateBitmapFromResource(rcx, rdx, addr this.nativeImage)
-        }
-
-    undef Bitmap_FromFile
-    .inline FromFile :vararg {
-        this.Bitmap_ptrword(_1)
+    elseifidn <ptrIDirectDrawSurface7>,typeid(_1)
+        GdipCreateBitmapFromDirectDrawSurface(_1, addr this.nativeImage)
+    elseifidn <ptrHICON__>,typeid(_1)
+        GdipCreateBitmapFromHICON(_1, addr this.nativeImage)
+    elseifidn <ptrBITMAPINFO>,typeid(_1)
+        GdipCreateBitmapFromGdiDib(_1, _2, addr this.nativeImage)
+    elseifidn <ptrHINSTANCE__>,typeid(_1)
+        GdipCreateBitmapFromResource(_1, _2, addr this.nativeImage)
+    elseifidn <ptrHBITMAP__>,typeid(_1)
+        GdipCreateBitmapFromHBITMAP(_1, _2, addr this.nativeImage)
+    elseifidn <ptrGraphics>,typeid(_3)
+        LOADARGPTRCX(_3)
+        GdipCreateBitmapFromGraphics(_1, _2, [rcx].Graphics.nativeGraphics, addr this.nativeImage)
+    elseifb <_4>
+        GdipCreateBitmapFromScan0(_1, _2, 0, _3, NULL, addr this.nativeImage)
+    else
+        GdipCreateBitmapFromScan0(_1, _2, _3, _4, _5, addr this.nativeImage)
+    endif
         mov this.lastResult,eax
         }
 
-    .inline FromStream :vararg {
-        this.Bitmap_ptrIStream(_1)
+    .static FromFile filename:abs, useEmbeddedColorManagement:abs=<FALSE> {
+        if useEmbeddedColorManagement
+            GdipCreateBitmapFromFileICM(filename, addr this.nativeImage)
+        else
+            GdipCreateBitmapFromFile(filename, addr this.nativeImage)
+        endif
         mov this.lastResult,eax
         }
 
-    .inline Clone :abs, :vararg {
-        this.typeid(Clone_, _1)(_1, _2)
+    .static FromStream stream:abs, useEmbeddedColorManagement:abs=<FALSE> {
+        if useEmbeddedColorManagement
+            GdipCreateBitmapFromStreamICM(stream, addr this.nativeImage)
+        else
+            GdipCreateBitmapFromStream(stream, addr this.nativeImage)
+        endif
+        mov this.lastResult,eax
         }
 
-    .inline Clone_imm :abs, :abs, :abs, :abs, :abs, :vararg {
-
-       .new clone:Bitmap
-
-        mov ecx,_1
-        GdipCloneBitmapAreaI(ecx, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+    .static Clone :abs, :abs, :abs, :abs, :abs {
+       .new clone:Image
+    ifidn <sdword>,typeid(_1)
+        GdipCloneBitmapAreaI(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+    elseifidn <imm>,typeid(_1)
+        GdipCloneBitmapAreaI(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+    elseifidn <real4>,typeid(_1)
+        GdipCloneBitmapArea(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+    elseifidn <flt>,typeid(_1)
+        GdipCloneBitmapArea(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+    elseifidn <RectF>,typeid(_1)
+        GdipCloneBitmapArea(_1.X, _1.Y, _1.Width, _1.Height, _2, this.nativeImage, addr clone.nativeImage)
+    elseifidn <Rect>,typeid(_1)
+        GdipCloneBitmapAreaI(_1.X, _1.Y, _1.Width, _1.Height, _2, this.nativeImage, addr clone.nativeImage)
+    else
+        .err <_1>
+    endif
         mov clone.lastResult,eax
         lea rax,clone
         }
 
-    .inline Clone_ptrRect :ptr Rect, :abs, :vararg {
-        this.Clone_imm([rdx].Rect.X, [rdx].Rect.Y, [rdx].Rect.Width, [rdx].Rect.Height, _2)
+    .static LockBits rect:abs, flags:abs, format:abs, lockedBitmapData:abs {
+        this.SetStatus(GdipBitmapLockBits(this.nativeImage, rect, flags, format, lockedBitmapData))
         }
 
-    .inline Clone_flt :abs, :abs, :abs, :abs, :abs, :vararg {
-
-       .new clone:Bitmap
-
-        GdipCloneBitmapArea(_1, _2, _3, _4, r10d, this.nativeImage, addr clone.nativeImage)
-        mov clone.lastResult,eax
-        lea rax,clone
-        }
-    .inline Clone_ptrRectF :ptr RectF, :abs, :vararg {
-        this.Clone_flt([rdx].RectF.X, [rdx].RectF.Y, [rdx].RectF.Width, [rdx].RectF.Height, _2)
+    .static UnlockBits lockedBitmapData:abs {
+        this.SetStatus(GdipBitmapUnlockBits(this.nativeImage, lockedBitmapData))
         }
 
-    .inline LockBits :vararg {
-        GdipBitmapLockBits(this.nativeImage, _1)
-        this.SetStatus()
+    .static GetPixel x:abs, y:abs, color:abs {
+        this.SetStatus(GdipBitmapGetPixel(this.nativeImage, x, y, color))
         }
 
-    .inline UnlockBits :vararg {
-        GdipBitmapUnlockBits(this.nativeImage, _1)
-        this.SetStatus()
-        }
-
-    .inline GetPixel :abs, :abs, :ptr Color, :vararg {
-        GdipBitmapGetPixel(this.nativeImage, _1, _2, r9)
-        this.SetStatus()
-        }
-
-    .inline SetPixel :vararg {
-        GdipBitmapSetPixel(this.nativeImage, _1)
-        this.SetStatus()
+    .static SetPixel x:abs, y:abs, color:abs {
+        this.SetStatus(GdipBitmapSetPixel(this.nativeImage, x, y, color))
         }
 
 if (GDIPVER GE 0x0110)
-    .inline ConvertFormat :vararg {
-        GdipBitmapConvertFormat(this.nativeImage, _1)
-        this.SetStatus()
+
+    .static ConvertFormat format:abs, dithertype:abs, palettetype:abs, palette:abs, alphaThresholdPercent:abs {
+        this.SetStatus(GdipBitmapConvertFormat(this.nativeImage, format, dithertype, palettetype, palette, alphaThresholdPercent))
         }
 
     ;; The palette must be allocated and count must be set to the number of
     ;; entries in the palette. If there are not enough, the API will fail.
 
-    .inline InitializePalette :ptr ColorPalette,  ;; Palette to initialize.
-                                :abs,               ;; palette enumeration type.
-                                :abs,               ;; how many optimal colors
-                                :abs,               ;; add a transparent color to the palette.
-                                :ptr Bitmap,        ;; optional bitmap for median cut.
-                                :vararg {
-        mov rcx,rdx
-        mov rax,[rsp+8*5]
-        .if rax
+    .static InitializePalette :abs,  ;; Palette to initialize.
+                              :abs,  ;; palette enumeration type.
+                              :abs,  ;; how many optimal colors
+                              :abs,  ;; add a transparent color to the palette.
+                              :abs { ;; optional bitmap for median cut.
+        .if LOADARGPTRAX(_3)
             mov rax,[rax].Image.nativeImage
         .endif
-        GdipInitializePalette(rcx, _2, _3, _4, rax)
-        this.SetStatus()
+        this.SetStatus(GdipInitializePalette(_1, _2, _3, _4, rax))
         }
 
-    .inline ApplyEffect :abs, :vararg {
-        this.typeid(ApplyEffect_, _1)(_1, _2)
-        }
+    ; ApplyEffect(Effect *effect, RECT *ROI);
+    ; ApplyEffect(Bitmap **inputs, INT numInputs, Effect *effect, RECT *ROI, RECT *outputRect, Bitmap **output);
 
-    .inline ApplyEffect_ptrEffect :ptr Effect, :ptr RECT, :vararg {
-
-       .new effect:ptr Effect
-       .new ROI:ptr RECT
-
-        mov effect,rdx
-        mov ROI,r8
-
-        .if [rdx].Effect.auxData
-
-            GdipFree([rdx].Effect.auxData)
-            mov rdx,effect
-            mov [rdx].Effect.auxData,NULL
-            mov [rdx].Effect.auxDataSize,0
+    .static ApplyEffect inputs:ptr, numInputs:abs, effect:abs, ROI:abs, outputRect:abs, output:abs {
+      local s,d,b,outputNative,nativeInputs
+       .new s:ptr = rsi
+       .new d:ptr = rdi
+        mov rdi,rcx
+    ifb <effect>
+        mov rsi,LOADARGPTRAX(numInputs) ; ROI
+        .if [rdi].Effect.auxData
+            GdipFree([rdi].Effect.auxData)
+            mov [rdi].Effect.auxData,NULL
+            mov [rdi].Effect.auxDataSize,0
         .endif
-        GdipBitmapApplyEffect(this.nativeImage, [rdx].Effect.nativeEffect, ROI,\
-                [rdx].Effect.useAuxData, &[rdx].Effect.auxData,  &[rdx].Effect.auxDataSize)
-        }
-
-    .inline ApplyEffect_ptrBitmap :ptr ptr Bitmap, :int_t, :ptr Effect, :ptr RECT, :ptr RECT, :ptr ptr Bitmap {
-
+        GdipBitmapApplyEffect(this.nativeImage, [rdi].Effect.nativeEffect, rsi,
+            [rdi].Effect.useAuxData, &[rdi].Effect.auxData, &[rdi].Effect.auxDataSize)
+    else
+       .new b:ptr = rbx
+        mov ebx,numInputs
+        mov rsi,LOADARGPTRAX(effect)
         .repeat
-
-            .ifs _2 < 0
-
-                mov eax,InvalidParameter
-                .break
+            .ifs ebx < 0
+                mov ebx,InvalidParameter
+               .break
             .endif
-
-            .new inputs:ptr ptr Bitmap
-            .new numInputs:SINT
-            .new effect:ptr Effect
-            .new ROI:ptr RECT               ;; optional parameter.
-            .new outputRect:ptr RECT        ;; optional parameter.
-            .new output:ptr ptr Bitmap
-            .new status:Status
-
-            .new outputNative:ptr Bitmap
+            .new outputNative:ptr Bitmap = NULL
             .new nativeInputs:ptr ptr Bitmap
-
-            mov inputs,_1
-            mov numInputs,_2
-            mov effect,_3
-            mov ROI,_4
-            mov outputRect,_5
-            mov output,_6
-
-            mov outputNative,NULL
-            mov nativeInputs,GdipAlloc(&[_2*size_t])
-
+            mov nativeInputs,GdipAlloc(&[rbx*size_t])
             .if rax == NULL
-
                 mov eax,OutOfMemory
-                .break
+               .break
             .endif
-
-            .for (rdx = rax, r8 = inputs, ecx = 0: ecx < numInputs: ecx++)
-
-                mov [rdx+rcx*8],[r8+rcx*8].Bitmap.nativeImage
+            .for ( rdx = rax, ecx = 0 : ecx < ebx : ecx++ )
+                mov [rdx+rcx*size_t],[rdi+rcx*size_t].Bitmap.nativeImage
             .endf
-
-            mov r8,effect
-            .if [r8].Effect.auxData
-
-                GdipFree([r8].Effect.auxData)
-                mov r8,effect
-                mov [r8].Effect.auxData,NULL
-                mov [r8].Effect.auxDataSize,0
+            .if [rsi].Effect.auxData
+                GdipFree([rsi].Effect.auxData)
+                mov [rsi].Effect.auxData,NULL
+                mov [rsi].Effect.auxDataSize,0
             .endif
-
-            GdipBitmapCreateApplyEffect( nativeInputs, numInputs, [r8].Effect.nativeEffect,\
-                ROI, outputRect, &outputNative, [r8].Effect.useAuxData,\
-                &[r8].Effect.auxData, &[r8].Effect.auxDataSize )
-
-            mov status,eax
+            mov ebx,GdipBitmapCreateApplyEffect(nativeInputs, numInputs, [rsi].Effect.nativeEffect,
+                        ROI, outputRect, &outputNative, [rsi].Effect.useAuxData,
+                        &[rsi].Effect.auxData, &[rsi].Effect.auxDataSize)
             .if eax == Ok && outputNative
                 .if GdipAlloc(Bitmap) == NULL
-
                     GdipDisposeImage(outputNative)
                     mov eax,OutOfMemory
-                    .break
+                   .break
                 .endif
                 mov rdx,output
                 mov [rdx],rax
@@ -1351,83 +1071,71 @@ if (GDIPVER GE 0x0110)
                 mov [rdx],rax
             .endif
             GdipFree(nativeInputs)
-            mov eax,status
+            mov eax,ebx
         .until 1
+        mov rbx,b
+    endif
+        mov rsi,s
+        mov rdi,d
         }
 
-    .inline GetHistogram :abs, :abs, :abs, :abs, :abs, :abs {
-        GdipBitmapGetHistogram([this].Image.nativeImage, _1, _2, _3, _4, _5, _6)
+    .static GetHistogram format:abs, NumberOfEntries:abs, channel0:abs, channel1:abs, channel2:abs, channel3:abs {
+        GdipBitmapGetHistogram(this.nativeImage, format, NumberOfEntries, channel0, channel1, channel2, channel3)
         }
-
-    .inline GetHistogramSize :abs, :abs {
-        GdipBitmapGetHistogramSize(_1, _2)
+    .static GetHistogramSize format:abs, NumberOfEntries:abs {
+        GdipBitmapGetHistogramSize(format, NumberOfEntries)
         }
 endif
 
-    .inline SetResolution :vararg {
-        GdipBitmapSetResolution(this.nativeImage, _1)
-        this.SetStatus()
+    .static SetResolution xdpi:abs, ydpi:abs {
+        this.SetStatus(GdipBitmapSetResolution(this.nativeImage, xdpi, ydpi))
         }
-
-    .inline GetHBITMAP :ARGB, :ptr HBITMAP, :vararg {
-        xchg rdx,r8
-        GdipCreateHBITMAPFromBitmap(this.nativeImage, rdx, r8d)
-        this.SetStatus()
+    .static GetHBITMAP colorBackground:abs, hbmReturn:abs {
+        this.SetStatus(GdipCreateHBITMAPFromBitmap(this.nativeImage, hbmReturn, colorBackground))
         }
-
-    .inline GetHICON :ptr HICON, :vararg {
-        GdipCreateHICONFromBitmap(this.nativeImage, rdx)
-        this.SetStatus()
+    .static GetHICON hicon:abs {
+        this.SetStatus(GdipCreateHICONFromBitmap(this.nativeImage, hicon))
         }
-
     .ends
     GpBitmap typedef Bitmap
 
 
-.template CustomLineCap
-
-    GpCustomLineCap typedef CustomLineCap
+;
+; CustomLineCap(GraphicsPath* fillPath, GraphicsPath* strokePath, LineCap baseCap = LineCapFlat, REAL baseInset = 0);
+;
+.template CustomLineCap fastcall
 
     nativeCap   ptr_t ?
     lastResult  Status ?
     scratch     int_t ?
 
-    .inline CustomLineCap :ptr GraphicsPath, :ptr GraphicsPath, :abs, :abs, :vararg {
-        mov rcx,rdx
-        mov rdx,r8
+    .static CustomLineCap :ptr GraphicsPath, :ptr GraphicsPath, :abs=<LineCapFlat>, :abs=<0.0> {
         .if rcx
-            mov rcx,[rcx]
+            mov rcx,[rcx].GraphicsPath.nativePath
         .endif
         .if rdx
-            mov rdx,[rdx]
+            mov rdx,[rdx].GraphicsPath.nativePath
         .endif
-        GdipCreateCustomLineCap([rcx].GraphicsPath.nativePath, [rdx].GraphicsPath.nativePath, _3, _4, addr this.nativeCap)
+        GdipCreateCustomLineCap(rcx, rdx, _3, _4, addr this.nativeCap)
         mov this.lastResult,eax
         }
 
-    .inline Release {
-        GdipDeleteCustomLineCap([this].CustomLineCap.nativeCap)
+    .static Release {
+        GdipDeleteCustomLineCap(this.nativeCap)
         }
 
-    .inline SetNativeCap :ptr CustomLineCap {
-        mov [this].CustomLineCap.nativeCap,_1
+    .static SetNativeCap :ptr CustomLineCap {
+        mov this.nativeCap,_1
         }
 
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
-        mov this.lastResult,eax
+    .static SetStatus watcall state:size_t {
+        test    eax,eax
+        cmovz   eax,this.lastResult
+        mov     this.lastResult,eax
         }
 
-    .inline Clone :vararg {
-
+    .static Clone {
        .new clone:CustomLineCap
-
         GdipCloneCustomLineCap(this.nativeCap, addr clone.nativeCap)
         mov clone.lastResult,eax
         lea rax,clone
@@ -1435,81 +1143,57 @@ endif
 
     ;; This changes both the start and end cap.
 
-    .inline SetStrokeCap :abs, :vararg {
-        this.SetStrokeCaps(_1, _1)
+    .static SetStrokeCap strokeCap:abs {
+        this.SetStrokeCaps(strokeCap, strokeCap)
         }
-
-    .inline SetStrokeCaps  :abs, :abs, :vararg {
-        GdipSetCustomLineCapStrokeCaps(this.nativeCap, _1, _2)
-        this.SetStatus()
+    .static SetStrokeCaps  startCap:abs, endCap:abs {
+        this.SetStatus(GdipSetCustomLineCapStrokeCaps(this.nativeCap, startCap, endCap))
         }
-
-    .inline GetStrokeCaps :abs, :abs, :vararg {
-        GdipGetCustomLineCapStrokeCaps(this.nativeCap, _1, _2)
-        this.SetStatus()
+    .static GetStrokeCaps startCap:abs, endCap:abs {
+        this.SetStatus(GdipGetCustomLineCapStrokeCaps(this.nativeCap, startCap, endCap))
         }
-    .inline SetStrokeJoin :abs, :vararg {
-        GdipSetCustomLineCapStrokeJoin(this.nativeCap, _1)
-        this.SetStatus()
+    .static SetStrokeJoin lineJoin:abs {
+        this.SetStatus(GdipSetCustomLineCapStrokeJoin(this.nativeCap, lineJoin))
         }
-    .inline GetStrokeJoin :vararg {
-        GdipGetCustomLineCapStrokeJoin(this.nativeCap, addr this.scratch)
-        this.SetStatus()
+    .static GetStrokeJoin {
+        this.SetStatus(GdipGetCustomLineCapStrokeJoin(this.nativeCap, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline SetBaseCap :abs, :vararg {
-        GdipSetCustomLineCapBaseCap(this.nativeCap, _1)
-        this.SetStatus()
+    .static SetBaseCap baseCap:abs {
+        this.SetStatus(GdipSetCustomLineCapBaseCap(this.nativeCap, baseCap))
         }
-    .inline GetBaseCap :vararg {
-        GdipGetCustomLineCapBaseCap(this.nativeCap, addr this.scratch)
-        this.SetStatus()
+    .static GetBaseCap {
+        this.SetStatus(GdipGetCustomLineCapBaseCap(this.nativeCap, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline SetBaseInset :abs, :vararg {
-        GdipSetCustomLineCapBaseInset(this.nativeCap, _1)
-        this.SetStatus()
+    .static SetBaseInset inset:abs {
+        this.SetStatus(GdipSetCustomLineCapBaseInset(this.nativeCap, inset))
         }
-    .inline GetBaseInset :vararg {
-        GdipGetCustomLineCapBaseInset(this.nativeCap, addr this.scratch)
-        this.SetStatus()
+    .static GetBaseInset {
+        this.SetStatus(GdipGetCustomLineCapBaseInset(this.nativeCap, addr this.scratch))
         mov eax,this.scratch
         }
-    .inline SetWidthScale :abs, :vararg {
-        GdipSetCustomLineCapWidthScale(this.nativeCap, _1)
-        this.SetStatus()
+    .static SetWidthScale widthScale:abs {
+        this.SetStatus(GdipSetCustomLineCapWidthScale(this.nativeCap, widthScale))
         }
-    .inline GetWidthScale :vararg {
-        GdipGetCustomLineCapWidthScale(this.nativeCap, addr this.scratch)
-        this.SetStatus()
+    .static GetWidthScale {
+        this.SetStatus(GdipGetCustomLineCapWidthScale(this.nativeCap, addr this.scratch))
         mov eax,this.scratch
         }
 
-    .inline GetLastStatus {
-        mov eax,[this].CustomLineCap.lastResult
-        mov [this].CustomLineCap.lastResult,Ok
+    .static GetLastStatus {
+        mov eax,this.lastResult
+        mov this.lastResult,Ok
         }
     .ends
+    GpCustomLineCap typedef CustomLineCap
 
 
-.template CachedBitmap
+.template CachedBitmap fastcall : public ImageBase
 
-    nativeCachedBitmap ptr_t ?
-    lastResult      Status ?
-
-    .inline CachedBitmap :ptr Bitmap, :ptr Graphics, :vararg {
-        mov rcx,rdx
-        mov rdx,r8
-        GdipCreateCachedBitmap([rcx].Bitmap.nativeImage, [rdx].Graphics.nativeGraphics, addr this.nativeCachedBitmap)
+    .static CachedBitmap :ptr Bitmap, :ptr Graphics {
+        GdipCreateCachedBitmap([_1].Bitmap.nativeImage, [_2].Graphics.nativeGraphics, addr this.nativeImage)
         mov this.lastResult,eax
-        }
-    .inline Release {
-        GdipDeleteCachedBitmap([this].CachedBitmap.nativeCachedBitmap)
-        }
-
-    .inline GetLastStatus {
-        mov eax,[this].CachedBitmap.lastResult
-        mov [this].CachedBitmap.lastResult,Ok
         }
     .ends
 
@@ -1536,7 +1220,7 @@ endif
 ; Metafile::GetMetafileHeader(IStream*, MetafileHeader*)
 ; Metafile::GetMetafileHeader(MetafileHeader*)
 ;
-.template Metafile : public ImageBase
+.template Metafile fastcall : public ImageBase
 
     .inline Metafile :abs, :vararg {
         typeid(Metafile_, _1)(this, _1, _2)
@@ -1552,12 +1236,9 @@ endif
     ; and can no longer be used.  It is the responsiblity of the caller to
     ; invoke DeleteEnhMetaFile to delete this hEmf.
 
-    .inline GetHENHMETAFILE :vararg {
-
-        .new hEmf:HENHMETAFILE
-
-        GdipGetHemfFromMetafile(this.nativeImage, &hEmf)
-        this.SetStatus()
+    .static GetHENHMETAFILE {
+       .new hEmf:HENHMETAFILE
+        this.SetStatus(GdipGetHemfFromMetafile(this.nativeImage, &hEmf))
         mov rax,hEmf
         }
 
@@ -1566,9 +1247,8 @@ endif
     ; WORD aligned if it's a WMF.
     ; PlayRecord(EmfPlusRecordType, UINT, UINT, BYTE*)
 
-    .inline PlayRecord :abs, :abs, :abs, :abs, :vararg {
-        GdipPlayMetafileRecord(this.nativeImage, _1, _2, _3, _4)
-        this.SetStatus()
+    .static PlayRecord recordType:abs, flags:abs, dataSize:abs, data:abs {
+        this.SetStatus(GdipPlayMetafileRecord(this.nativeImage, recordType, flags, dataSize, data))
         }
 
     ; If you're using a printer HDC for the metafile, but you want the
@@ -1576,52 +1256,27 @@ endif
     ; the rasterization dpi of the metafile to the screen resolution,
     ; e.g. 96 dpi or 120 dpi.
 
-    .inline SetDownLevelRasterizationLimit :abs, :vararg {
-        GdipSetMetafileDownLevelRasterizationLimit(this.nativeImage,  _1)
-        this.SetStatus()
+    .static SetDownLevelRasterizationLimit metafileRasterizationLimitDpi:abs {
+        this.SetStatus(GdipSetMetafileDownLevelRasterizationLimit(this.nativeImage,  metafileRasterizationLimitDpi))
         }
 
-    .inline GetDownLevelRasterizationLimit :vararg {
+    .static GetDownLevelRasterizationLimit {
         mov this.scratch,0
-        GdipGetMetafileDownLevelRasterizationLimit(this.nativeImage, addr this.scratch)
-        this.SetStatus()
+        this.SetStatus(GdipGetMetafileDownLevelRasterizationLimit(this.nativeImage, addr this.scratch))
         mov eax,this.scratch
         }
 
-    .inline EmfToWmfBits :abs, :abs, :abs, :abs, :abs, :vararg {
-        GdipEmfToWmfBits(_1, _2, _3, _4, _5)
-        this.SetStatus()
+    .static EmfToWmfBits hemf:abs, cbData16:abs, pData16:abs, iMapMode:abs=<MM_ANISOTROPIC>, eFlags:abs=<EmfToWmfBitsFlagsDefault> {
+        this.SetStatus(GdipEmfToWmfBits(hemf, cbData16, pData16, iMapMode, eFlags))
         }
 
 if (GDIPVER GE 0x0110)
-
     .inline ConvertToEmfPlus :ptr Graphics, :abs, :vararg {
-        mov rcx,rdx
-        this.typeid(ConvertToEmfPlus_, _2)(rdx, _2, _3)
+        mov rcx,[_1].Graphics.nativeGraphics
+        typeid(Metafile_ConvertToEmfPlus_, _2)(this, rcx, _2, _3)
         this.SetStatus()
         }
-
-    .inline ConvertToEmfPlus_ptrsdword :abs, :vararg {
-        GdipConvertToEmfPlus([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
-        }
-    .inline ConvertToEmfPlus_ptrword :abs, :vararg {
-        GdipConvertToEmfPlusToFile([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
-        }
-    .inline ConvertToEmfPlus_ptrIStream :abs, :vararg {
-        GdipConvertToEmfPlusToStream([rcx].Graphics.nativeGraphics, this.nativeImage, _2, addr this.nativeImage)
-        }
 endif
-
-    .inline SetStatus :vararg {
-        ifnb <_1>
-         ifdif <_1>,<eax>
-            mov eax,_1
-         endif
-        endif
-        test eax,eax
-        cmovz eax,this.lastResult
-        mov this.lastResult,eax
-        }
     .ends
 
 ;
@@ -1722,6 +1377,20 @@ Metafile_GetMetafileHeader_ptrIStream macro this, _1, _2, _3:vararg
     endm
 Metafile_GetMetafileHeader_ptrMetafileHeader macro this, _1, _2:vararg
     exitm<GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1)>
+    endm
+
+; ConvertToEmfPlus(Graphics* refGraphics, INT* conversionFailureFlag = NULL, EmfType emfType = EmfTypeEmfPlusOnly, WCHAR* description = NULL );
+; ConvertToEmfPlus(Graphics* refGraphics, WCHAR* filename, INT* conversionFailureFlag = NULL, EmfType emfType = EmfTypeEmfPlusOnly, WCHAR* description = NULL);
+; ConvertToEmfPlus(Graphics* refGraphics, IStream* stream, INT* conversionFailureFlag = NULL, EmfType emfType = EmfTypeEmfPlusOnly, WCHAR* description = NULL);
+
+Metafile_ConvertToEmfPlus_ptrsdword macro this, g, conversionFailureFlag:=<NULL>, emfType:=<EmfTypeEmfPlusOnly>, description:=<NULL>
+    exitm<GdipConvertToEmfPlus(g, this.nativeImage, conversionFailureFlag, emfType, description, addr this.nativeImage)>
+    endm
+Metafile_ConvertToEmfPlus_ptrword macro this, g, filename, conversionFailureFlag:=<NULL>, emfType:=<EmfTypeEmfPlusOnly>, description:=<NULL>
+    exitm<GdipConvertToEmfPlusToFile(g, this.nativeImage, filename, conversionFailureFlag, emfType, description, addr this.nativeImage)>
+    endm
+Metafile_ConvertToEmfPlus_ptrIStream macro this, g, stream, conversionFailureFlag:=<NULL>, emfType:=<EmfTypeEmfPlusOnly>, description:=<NULL>
+    exitm<GdipConvertToEmfPlusToStream(g, this.nativeImage, stream, conversionFailureFlag, emfType, description, addr this.nativeImage)>
     endm
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

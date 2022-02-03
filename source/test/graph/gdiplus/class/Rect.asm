@@ -20,16 +20,14 @@ main proc
   local rect:Rect
   local pRect:ptr Rect
 
+  local r:Rect
+  local a:Rect
+  local b:Rect
+
   .new b:Rect()
   .new b:Rect(1)
-  .new b:Rect(1, 2)
-  .new p:ptr Rect()
-  .new p:ptr Rect(1)
-  .new p:ptr Rect(1, 2)
-
-    Rect()
-    Rect(1)
-    Rect(1, 2, 3, 4)
+  .new b:Rect(1, 2, 3, 4)
+  .new b:Rect(point, size)
 
     b.Clone()
     b.GetLocation(pPoint)
@@ -40,40 +38,18 @@ main proc
     b.GetRight()
     b.GetBottom()
     b.IsEmptyArea()
-    b.Equals(pRect)
+    b.Equals(rect)
     b.Contains(x, y)
-    b.Contains(pPoint)
-    b.Contains(pRect)
+    b.Contains(point)
+
     b.Inflate(x, y)
     b.Inflate(pPoint)
-    b.Intersect(pRect)
-    b.Intersect(pRect, pRect)
+    b.Intersect(rect)
+    b.Intersect(a, b)
     b.IntersectsWith(pRect)
-    b._Union(pRect, pRect)
-    b._Offset(pPoint)
+    b._Union(a, b)
+    b._Offset(point)
     b._Offset(x, y)
-
-    p.Clone()
-    p.GetLocation(pPoint)
-    p.GetSize(pSize)
-    p.GetBounds(pRect)
-    p.GetLeft()
-    p.GetTop()
-    p.GetRight()
-    p.GetBottom()
-    p.IsEmptyArea()
-    p.Equals(pRect)
-    p.Contains(x, y)
-    p.Contains(pPoint)
-    p.Contains(pRect)
-    p.Inflate(x, y)
-    p.Inflate(pPoint)
-    p.Intersect(pRect)
-    p.Intersect(pRect, pRect)
-    p.IntersectsWith(pRect)
-    p._Union(pRect, pRect)
-    p._Offset(pPoint)
-    p._Offset(x, y)
     ret
 
 main endp

@@ -15,33 +15,13 @@ main proc
   local y       : real4
   local point   : PointF
   local size    : SizeF
-  local pPoint  : ptr PointF
-  local pSize   : ptr SizeF
 
    .new b       : PointF()
    .new b       : PointF(1.0)
    .new b       : PointF(1.0, 2.0)
    .new b       : PointF(x, y)
-   .new b       : PointF(pSize)
-   .new b       : PointF(pPoint)
-
-   .new p       : ptr PointF()
-   .new p       : ptr PointF(1.0)
-   .new p       : ptr PointF(1.0, 2.0)
-   .new p       : ptr PointF(x, y)
-   .new p       : ptr PointF(pSize)
-   .new p       : ptr PointF(pPoint)
-
-    PointF      ()
-    PointF      (1.0)
-    PointF      (1.0, 2.0)
-    PointF      (x, y)
-    PointF      (pSize)
-    PointF      (pPoint)
-
-    b.Equals    (pPoint)
-
-    p.Equals    (pPoint)
+   .new b       : PointF(size)
+   .new b       : PointF(point)
     ret
 
 main endp

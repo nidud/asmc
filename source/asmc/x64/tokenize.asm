@@ -182,6 +182,9 @@ get_string proc fastcall uses rsi rdi rbx r12 r13 buf:ptr asm_tok, p:ptr line_st
             maxlen:     uint_t,
             maxl_1:     uint_t
 
+    UNREFERENCED_PARAMETER(buf)
+    UNREFERENCED_PARAMETER(p)
+
     mov     r12,rdx
     mov     rbx,rcx
     mov     rsi,[r12].input
@@ -550,7 +553,10 @@ get_string endp
     assume r12:nothing
     assume rsi:ptr line_status
 
-get_special_symbol proc fastcall uses rsi rdi rbx r12 buf:token_t , p:ptr line_status
+get_special_symbol proc fastcall uses rsi rdi rbx r12 buf:token_t, p:ptr line_status
+
+    UNREFERENCED_PARAMETER(buf)
+    UNREFERENCED_PARAMETER(p)
 
     mov rbx,rcx
     mov rsi,rdx
@@ -933,6 +939,9 @@ get_special_symbol endp
 
 get_number proc fastcall uses rsi rdi rbx r12 buf:token_t, p:ptr line_status
 
+    UNREFERENCED_PARAMETER(buf)
+    UNREFERENCED_PARAMETER(p)
+
     mov rbx,rcx
     mov rsi,rdx
     mov rdx,[rsi].input
@@ -1143,6 +1152,9 @@ get_number endp
 
 get_id_in_backquotes proc fastcall uses rsi rdi rbx buf:token_t, p:ptr line_status
 
+    UNREFERENCED_PARAMETER(buf)
+    UNREFERENCED_PARAMETER(p)
+
     mov rbx,rcx
     inc [rdx].input
     mov rsi,[rdx].input
@@ -1351,6 +1363,10 @@ StartComment endp
     assume rdx:ptr line_status
 
 GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
+
+    UNREFERENCED_PARAMETER(tokenarray)
+    UNREFERENCED_PARAMETER(p)
+
     ;
     ; get one token.
     ; possible return values: NOT_ERROR, ERROR, EMPTY.
@@ -1460,6 +1476,11 @@ GetToken ENDP
 Tokenize proc fastcall uses rsi rdi rbx line:string_t, start:uint_t, tokenarray:token_t, flags:uint_t
 
   local rc, p:line_status
+
+    UNREFERENCED_PARAMETER(line)
+    UNREFERENCED_PARAMETER(start)
+    UNREFERENCED_PARAMETER(tokenarray)
+    UNREFERENCED_PARAMETER(flags)
 
     mov p.input,rcx
     mov p.start,rcx

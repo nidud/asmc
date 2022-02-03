@@ -24,7 +24,14 @@ main proc
     local pUINT:ptr UINT
     local pINT:ptr SINT
 
+    local rectf:RectF
+    local rect:Rect
+    local point:Point
+    local pointf:PointF
+
     .new p:Region()
+    .new p:Region(rectf)
+    .new p:Region(rect)
     .new p:Region(pRectF)
     .new p:Region(pRect)
     .new p:Region(pGraphicsPath)
@@ -41,28 +48,28 @@ main proc
     p.GetDataSize()
     p.GetData(pBYTE, 0, pUINT)
 
-    p.Intersect(pRect)
-    p.Intersect(pRectF)
+    p.Intersect(rect)
+    p.Intersect(rectf)
     p.Intersect(pGraphicsPath)
     p.Intersect(pRegion)
 
-    p._Union(pRect)
-    p._Union(pRectF)
+    p._Union(rect)
+    p._Union(rectf)
     p._Union(pGraphicsPath)
     p._Union(pRegion)
 
-    p._Xor(pRect)
-    p._Xor(pRectF)
+    p._Xor(rect)
+    p._Xor(rectf)
     p._Xor(pGraphicsPath)
     p._Xor(pRegion)
 
-    p.Exclude(pRect)
-    p.Exclude(pRectF)
+    p.Exclude(rect)
+    p.Exclude(rectf)
     p.Exclude(pGraphicsPath)
     p.Exclude(pRegion)
 
-    p.Complement(pRect)
-    p.Complement(pRectF)
+    p.Complement(rect)
+    p.Complement(rectf)
     p.Complement(pGraphicsPath)
     p.Complement(pRegion)
 
@@ -77,24 +84,24 @@ main proc
 
     p.IsVisible(0, 0)
     p.IsVisible(0, 0, pGraphics)
-    p.IsVisible(pPoint)
-    p.IsVisible(pPoint, pGraphics)
+    p.IsVisible(point)
+    p.IsVisible(point, pGraphics)
     p.IsVisible(0.0, 0.0)
     p.IsVisible(0.0, 0.0, pGraphics)
-    p.IsVisible(pPointF)
-    p.IsVisible(pPointF, pGraphics)
+    p.IsVisible(pointf)
+    p.IsVisible(pointf, pGraphics)
     p.IsVisible(0, 0, 0, 0, pGraphics)
-    p.IsVisible(pRect)
-    p.IsVisible(pRect, pGraphics)
+    p.IsVisible(rect)
+    p.IsVisible(rect, pGraphics)
     p.IsVisible(0.0, 0.0, 0.0, 0.0)
     p.IsVisible(0.0, 0.0, 0.0, 0.0, pGraphics)
-    p.IsVisible(pRectF)
-    p.IsVisible(pRectF, pGraphics)
+    p.IsVisible(rectf)
+    p.IsVisible(rectf, pGraphics)
 
     p.Equals(pRegion, pGraphics)
     p.GetRegionScansCount(pMatrix)
-    p.GetRegionScans(pMatrix, pRectF, pINT)
-    p.GetRegionScans(pMatrix, pRect, pINT)
+    p.GetRegionScans(pMatrix, rectf, pINT)
+    p.GetRegionScans(pMatrix, rect, pINT)
     p.GetLastStatus()
     p.SetStatus()
     p.SetStatus(1)

@@ -13,11 +13,11 @@ include gdiplus.inc
 main proc
 
   .new a:Pen(Blue)
+  .new b:Pen
 
-    ;Pen(Blue, 2.0)
     a.Release()
 
-;    a.Clone()
+    a.Clone(b)
     a.SetWidth(1.0)
     a.GetWidth()
     a.SetLineCap(0, 1, 2)
@@ -47,8 +47,8 @@ main proc
     a.GetPenType()
     a.SetColor(NULL)
     a.SetBrush(NULL)
-    a.GetColor(NULL)
-    ;a.GetBrush()
+    a.GetColor()
+    a.GetBrush()
     a.GetDashStyle()
     a.SetDashStyle(0)
     a.GetDashOffset()

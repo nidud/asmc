@@ -12,17 +12,6 @@ include gdiplus.inc
 
 main proc
 
-; Bitmap(WCHAR*, BOOL = FALSE)
-; Bitmap(IStream*, BOOL = FALSE)
-; Bitmap(INT, INT, INT, PixelFormat, BYTE*)
-; Bitmap(INT, INT, PixelFormat = PixelFormat32bppARGB)
-; Bitmap(INT, INT, Graphics*)
-; Bitmap(IDirectDrawSurface7*)
-; Bitmap(BITMAPINFO*, VOID*)
-; Bitmap(HBITMAP, HPALETTE)
-; Bitmap(HICON)
-; Bitmap(HINSTANCE, WCHAR*)
-
     local wc:ptr word
     local pi:ptr Image
     local IS:ptr IStream
@@ -34,20 +23,31 @@ main proc
     local hI:HINSTANCE
     local hp:HPALETTE
     local b:Bitmap
-    local rc:ptr Rect
-    local rf:ptr RectF
+    local rc:Rect
+    local rf:RectF
     local pE:ptr EncoderParameters
     local sc:ptr Size
     local sf:ptr SizeF
     local pEffect:ptr Effect
     local pBitmap:ptr Bitmap
 
+    ; Bitmap(WCHAR*, BOOL = FALSE)
+    ; Bitmap(IStream*, BOOL = FALSE)
+    ; Bitmap(INT, INT, INT, PixelFormat, BYTE*)
+    ; Bitmap(INT, INT, PixelFormat = PixelFormat32bppARGB)
+    ; Bitmap(INT, INT, Graphics*)
+    ; Bitmap(IDirectDrawSurface7*)
+    ; Bitmap(BITMAPINFO*, VOID*)
+    ; Bitmap(HBITMAP, HPALETTE)
+    ; Bitmap(HICON)
+    ; Bitmap(HINSTANCE, WCHAR*)
+
     .new p:Bitmap(wc)
     .new p:Bitmap(IS)
     .new p:Bitmap(ID)
     .new p:Bitmap(0,0,0,0,0)
     .new p:Bitmap(i,0,0,0,0)
-    .new p:Bitmap(edx,r8d,r9d,0,0)
+    .new p:Bitmap(ecx,edx,0,0,0)
     .new p:Bitmap(hb, hp)
     .new p:Bitmap(hi)
     .new p:Bitmap(hI, wc)
@@ -56,6 +56,11 @@ main proc
 
     p.FromFile(NULL, FALSE)
     p.FromStream(NULL, FALSE)
+
+    ; Clone(Rect& rect, PixelFormat format);
+    ; Clone(INT x, INT y, INT width, INT height, PixelFormat format);
+    ; Clone(RectF& rect, PixelFormat format);
+    ; Clone(REAL x, REAL y, REAL width, REAL height, PixelFormat format);
 
     p.Clone(1, 2, 3, 4, 0)
     p.Clone(1.0, 2.0, 3.0, 4.0, 0)
@@ -114,7 +119,6 @@ endif
     p.ConvertFormat(0, 0, 0, NULL, 0.0)
     p.InitializePalette(NULL, 0, 0, 0, NULL)
 
-
     p.ApplyEffect(pEffect, NULL)
     p.ApplyEffect(pBitmap, 0, NULL, NULL, NULL, NULL)
 
@@ -123,7 +127,6 @@ endif
     p.SetResolution(0.0, 0.0)
     p.GetHBITMAP(NULL, NULL)
     p.GetHICON(NULL)
-
     ret
 
 main endp

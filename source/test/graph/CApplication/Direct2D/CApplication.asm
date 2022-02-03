@@ -31,7 +31,7 @@ ErrorMessage proc hr:HRESULT, format:LPTSTR, args:vararg
     swprintf(&message, "%s\n\nError code: %08X\n\n%s", &buffer, hr, szMessage)
     MessageBox(NULL, &message, "Error", MB_OK or MB_ICONERROR)
     LocalFree(szMessage)
-    .return hr
+   .return hr
 
 ErrorMessage endp
 
@@ -369,8 +369,7 @@ CApplication::OnClose endp
 CApplication::OnDestroy proc
 
     PostQuitMessage(0)
-
-    .return 0
+   .return 0
 
 CApplication::OnDestroy endp
 
@@ -378,8 +377,6 @@ CApplication::OnDestroy endp
 ; Handles the WM_PAINT message
 
     assume rcx:nothing
-
-
     assume rsi:ptr object
 
 CApplication::InitObjects proc uses rsi rdi rbx

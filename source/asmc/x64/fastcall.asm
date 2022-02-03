@@ -443,6 +443,12 @@ endif
 
 watc_fcstart proc __ccall private pp: dsym_t, numparams:int_t, start:int_t,
         tokenarray: token_t, value: ptr int_t
+
+    ; v2.33.25: add *this to fcscratch
+    .if [rcx].asym.flag2 & S_ISINLINE && [rcx].asym.flag2 & S_ISSTATIC
+        movzx eax,ModuleInfo.wordsize
+        add fcscratch,eax
+    .endif
     mov eax,1
     ret
 
@@ -450,7 +456,7 @@ watc_fcstart endp
 
 watc_fcend proc __ccall private pp:dsym_t, numparams:int_t, value:int_t
 
-    mov rax,pp
+    mov rax,rcx
     movzx edx,ModuleInfo.Ofssize
     lea rcx,stackreg
     mov ecx,[rcx+rdx*4]

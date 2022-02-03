@@ -1,9 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/dotnet/api/system.drawing.graphics.drawbezier?view=dotnet-plat-ext-3.1
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"DrawBeziers">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
    .new c:GraphicsPath()
@@ -26,15 +32,18 @@ OnPaint macro hdc
    .new ff:PointF(100.0, 100.0)
 
     g.DrawBeziers(&p, &ff, 7)
-    p.New(Red)
+    p.Release()
+
+   .new p:Pen(Red)
     g.DrawBeziers(&p, &ii, 7)
 
     p.Release()
     c.Release()
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
+
 
 include Graphics.inc
 

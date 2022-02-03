@@ -1,12 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/windows/win32/api/gdiplusgraphics/nf-gdiplusgraphics-graphics-gethalftonepalette
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"GetHalftonePalette">
 
-OnPaint macro _hdc
+    .code
 
-   .new hdc:HDC
-    mov hdc,rax
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new image:Image(L"..\\ImageAttributes\\Mosaic.png")
    .new g:Graphics(hdc)
@@ -15,7 +18,7 @@ OnPaint macro _hdc
     g.Release()
 
    .new hPalette:HPALETTE
-    mov hPalette,Graphics_GetHalftonePalette()
+    mov hPalette,g.GetHalftonePalette()
 
     SelectPalette(hdc, hPalette, FALSE)
     RealizePalette(hdc)
@@ -25,8 +28,9 @@ OnPaint macro _hdc
     g.DrawImage(&image, 300, 10)
     g.Release()
     DeleteObject(hPalette)
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

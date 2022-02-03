@@ -34,13 +34,15 @@ main proc
     local pRect:ptr Rect
     local pMatrix:ptr Matrix
     local pImageAttributes:ptr ImageAttributes
+    local rectF:RectF
+    local rect:Rect
 
     .new p:TextureBrush(pImage)
     .new p:TextureBrush(pImage, 0)
-    .new p:TextureBrush(pImage, 0, pRectF)
-    .new p:TextureBrush(pImage, pRectF, pImageAttributes)
-    .new p:TextureBrush(pImage, pRect, pImageAttributes)
-    .new p:TextureBrush(pImage, 0, pRect)
+    .new p:TextureBrush(pImage, 0, rectF)
+    .new p:TextureBrush(pImage, rectF, pImageAttributes)
+    .new p:TextureBrush(pImage, rect, pImageAttributes)
+    .new p:TextureBrush(pImage, 0, rect)
     .new p:TextureBrush(pImage, 0, 0, 0, 0, 0)
     .new p:TextureBrush(pImage, 0, 0.0, 0.0, 0.0, 0.0)
 

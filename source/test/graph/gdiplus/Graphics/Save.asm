@@ -1,9 +1,15 @@
 ;
 ; https://docs.microsoft.com/en-us/dotnet/api/system.drawing.graphics.save?view=dotnet-plat-ext-3.1
 ;
+include windows.inc
+include gdiplus.inc
+include tchar.inc
+
 CLASSNAME equ <"Save">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
     .new g:Graphics(hdc)
     .new s:GraphicsState
@@ -29,9 +35,9 @@ OnPaint macro hdc
     r.Release()
     b.Release()
     g.Release()
+    ret
 
-    exitm<>
-    endm
+OnPaint endp
 
 include Graphics.inc
 

@@ -1,7 +1,12 @@
+include windows.inc
+include gdiplus.inc
+include tchar.inc
 
 CLASSNAME equ <"TransformPoints">
 
-OnPaint macro hdc
+    .code
+
+OnPaint proc hdc:HDC, ps:ptr PAINTSTRUCT
 
    .new g:Graphics(hdc)
    .new pen:Pen(White)
@@ -14,7 +19,7 @@ OnPaint macro hdc
     ;; Draw a line that connects the two points.
     ;; No transformation has been performed yet.
 
-    g.DrawLine(&pen, &p1, &p2)
+    g.DrawLine(&pen, p1, p2)
 
     ;; Set the world transformation of the Graphics object.
 
@@ -32,10 +37,11 @@ OnPaint macro hdc
     ;; Draw a line that connects the transformed points.
 
     g.ResetTransform()
-    g.DrawLine(&pen, &p1, &p2)
+    g.DrawLine(&pen, p1, p2)
     g.Release()
-    exitm<>
-    endm
+    ret
+
+OnPaint endp
 
 include Graphics.inc
 

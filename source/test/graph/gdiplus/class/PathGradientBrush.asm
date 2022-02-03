@@ -23,6 +23,8 @@ main proc
     local pRectF:ptr RectF
     local pRect:ptr Rect
     local pMatrix:ptr Matrix
+    local pointF:PointF
+    local point:Point
 
    .new p:PathGradientBrush(pGraphicsPath)
    .new p:PathGradientBrush(pPointF, 0)
@@ -43,8 +45,8 @@ main proc
 
     p.GetCenterPoint(pPointF)
     p.GetCenterPoint(pPoint)
-    p.SetCenterPoint(pPointF)
-    p.SetCenterPoint(pPoint)
+    p.SetCenterPoint(pointF)
+    p.SetCenterPoint(point)
 
     p.GetRectangle(pRectF)
     p.GetRectangle(pRect)

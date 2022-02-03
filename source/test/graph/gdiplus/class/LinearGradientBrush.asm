@@ -27,14 +27,19 @@ main proc
     local pREAL:ptr REAL
     local pMatrix:ptr Matrix
 
-   .new p:LinearGradientBrush(pPointF, pPointF, argb, argb)
-   .new p:LinearGradientBrush(pPoint, pPoint, argb, argb)
-   .new p:LinearGradientBrush(pRectF, argb, argb, 0)
-   .new p:LinearGradientBrush(pRect, argb, argb, 0)
-   .new p:LinearGradientBrush(pRectF, argb, argb, 0.0)
-   .new p:LinearGradientBrush(pRectF, argb, argb, 0.0, 0)
-   .new p:LinearGradientBrush(pRect, argb, argb, 0.0)
-   .new p:LinearGradientBrush(pRect, argb, argb, 0.0, 0)
+    local pointF:PointF
+    local point:Point
+    local rectF:RectF
+    local rect:Rect
+
+   .new p:LinearGradientBrush(pointF, pointF, argb, argb)
+   .new p:LinearGradientBrush(point, point, argb, argb)
+   .new p:LinearGradientBrush(rectF, argb, argb, 0)
+   .new p:LinearGradientBrush(rect, argb, argb, 0)
+   .new p:LinearGradientBrush(rectF, argb, argb, 0.0)
+   .new p:LinearGradientBrush(rectF, argb, argb, 0.0, 0)
+   .new p:LinearGradientBrush(rect, argb, argb, 0.0)
+   .new p:LinearGradientBrush(rect, argb, argb, 0.0, 0)
 
 
     p.Release()

@@ -15,33 +15,13 @@ main proc
   local y       : int_t
   local point   : Point
   local size    : Size
-  local pPoint  : ptr Point
-  local pSize   : ptr Size
 
    .new b       : Size()
    .new b       : Size(1)
    .new b       : Size(1, 2)
    .new b       : Size(x, y)
-   .new b       : Size(pSize)
-   .new b       : Size(pPoint)
-
-   .new p       : ptr Size()
-   .new p       : ptr Size(1)
-   .new p       : ptr Size(1, 2)
-   .new p       : ptr Size(x, y)
-   .new p       : ptr Size(pSize)
-   .new p       : ptr Size(pPoint)
-
-    Size        ()
-    Size        (1)
-    Size        (1, 2)
-    Size        (x, y)
-    Size        (pSize)
-    Size        (pPoint)
-
-    b.Equals    (pPoint)
-
-    p.Equals    (pPoint)
+   .new b       : Size(size)
+   .new b       : Size(point)
     ret
 
 main endp

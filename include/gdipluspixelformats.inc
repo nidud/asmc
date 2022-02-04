@@ -135,7 +135,7 @@ endif ;;(GDIPVER >= 0x0110)
     PaletteFlagsHalftone    = 0x0004
     }
 
-.template ColorPalette
+.template ColorPalette fastcall
 
     Flags       UINT ?
     Count       UINT ?

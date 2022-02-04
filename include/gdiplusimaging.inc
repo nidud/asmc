@@ -46,10 +46,9 @@ DEFINE_GUID(CodecIImageBytes,0x025d1823,0x6c7d,0x447b,0xbb, 0xdb, 0xa3, 0xcb, 0x
     CountBytes	proc :ptr
     LockBytes	proc :UINT, :ULONG, :ptr
     UnlockBytes proc :ptr, :UINT, :ULONG
+   .ends
 
-    .ends
-
-.template ImageCodecInfo
+ImageCodecInfo		STRUC
     Clsid		CLSID <>
     FormatID		GUID <>
     CodecName		LPWSTR ?
@@ -63,7 +62,7 @@ DEFINE_GUID(CodecIImageBytes,0x025d1823,0x6c7d,0x447b,0xbb, 0xdb, 0xa3, 0xcb, 0x
     SigSize		dd ?
     SigPattern		LPSTR ?
     SigMask		LPSTR ?
-    .ends
+ImageCodecInfo		ENDS
 
 .enum ImageCodecFlags {
     ImageCodecFlagsEncoder	      = 0x00000001,

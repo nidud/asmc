@@ -23,23 +23,25 @@ main proc
     local pBYTE:ptr BYTE
     local pGraphics:ptr Graphics
     local pINT:ptr sdword
+    local rect:Rect
+    local rectF:RectF
 
     .new p:Metafile(hWmf, pWmfPlaceableFileHeader, FALSE)
     .new p:Metafile(hEmf, FALSE)
     .new p:Metafile(pWCHAR)
     .new p:Metafile(pWCHAR, pWmfPlaceableFileHeader)
     .new p:Metafile(pWCHAR, hdc, 0, pWCHAR)
-    .new p:Metafile(pWCHAR, hdc, pRectF, 0, 0, pWCHAR)
-    .new p:Metafile(pWCHAR, hdc, pRect, 0, 0, pWCHAR)
+    .new p:Metafile(pWCHAR, hdc, rectF, 0, 0, pWCHAR)
+    .new p:Metafile(pWCHAR, hdc, rect, 0, 0, pWCHAR)
 
     .new p:Metafile(pIStream)
     .new p:Metafile(pIStream, hdc, 0, pWCHAR)
-    .new p:Metafile(pIStream, hdc, pRectF, 0, 0, pWCHAR)
-    .new p:Metafile(pIStream, hdc, pRect, 0, 0, pWCHAR)
+    .new p:Metafile(pIStream, hdc, rectF, 0, 0, pWCHAR)
+    .new p:Metafile(pIStream, hdc, rect, 0, 0, pWCHAR)
 
     .new p:Metafile(hdc, 0, pWCHAR)
-    .new p:Metafile(hdc, pRectF, 0, 0, pWCHAR)
-    .new p:Metafile(hdc, pRect, 0, 0, pWCHAR)
+    .new p:Metafile(hdc, rectF, 0, 0, pWCHAR)
+    .new p:Metafile(hdc, rect, 0, 0, pWCHAR)
 
     p.Release()
     p.GetMetafileHeader(hWmf, pWmfPlaceableFileHeader, pMetafileHeader)

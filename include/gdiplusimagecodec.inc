@@ -8,25 +8,21 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 ;; Codec Management APIs
 ;;--------------------------------------------------------------------------
 
-GetImageDecodersSize proto :ptr UINT, :ptr UINT {
-
+GetImageDecodersSize proto fastcall :abs, :abs {
     GdipGetImageDecodersSize(_1, _2)
-}
+    }
 
-GetImageDecoders proto :UINT, :UINT, :ptr ImageCodecInfo {
-
+GetImageDecoders proto fastcall :abs, :abs, :abs {
     GdipGetImageDecoders(_1, _2, _3)
-}
+    }
 
-GetImageEncodersSize proto :ptr UINT, :ptr UINT {
-
+GetImageEncodersSize proto fastcall :abs, :abs {
     GdipGetImageEncodersSize(_1, _2)
-}
+    }
 
-GetImageEncoders proto :UINT, :UINT, :ptr ImageCodecInfo {
-
+GetImageEncoders proto fastcall :abs, :abs, :abs {
     GdipGetImageEncoders(_1, _2, _3)
-}
+    }
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 

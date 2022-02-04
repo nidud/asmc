@@ -92,7 +92,7 @@ adjustValue             SINT ?
 ColorCurveParams        ENDS
 
 GdipCreateEffect proto WINAPI \
-                  guid: ptr GUID,
+                  guid: GUID,
                 effect: ptr
 GdipDeleteEffect proto WINAPI \
                 effect: ptr
@@ -162,7 +162,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
                 BlurEffectGuid GUID _BlurEffectGuid
             .code
         endif
-        GdipCreateEffect(addr BlurEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(BlurEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters parameters:abs {
@@ -180,7 +180,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
                 SharpenEffectGuid GUID _SharpenEffectGuid
             .code
         endif
-        GdipCreateEffect(addr SharpenEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(SharpenEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -198,7 +198,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
                 RedEyeCorrectionEffectGuid GUID _RedEyeCorrectionEffectGuid
             .code
         endif
-        GdipCreateEffect(addr RedEyeCorrectionEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(RedEyeCorrectionEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :ptr RedEyeCorrectionParams {
@@ -221,7 +221,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
                 BrightnessContrastEffectGuid GUID _BrightnessContrastEffectGuid
             .code
         endif
-        GdipCreateEffect(addr BrightnessContrastEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(BrightnessContrastEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -239,7 +239,7 @@ ifndef _GDIPLUSEFFECTS_EXCLUDEOBJECTS
                 HueSaturationLightnessEffectGuid GUID _HueSaturationLightnessEffectGuid
             .code
         endif
-        GdipCreateEffect(addr HueSaturationLightnessEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(HueSaturationLightnessEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -257,7 +257,7 @@ ifndef __Levels_INTERFACE_DEFINED__
                 LevelsEffectGuid GUID _LevelsEffectGuid
             .code
         endif
-        GdipCreateEffect(addr LevelsEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(LevelsEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -275,7 +275,7 @@ endif
                 TintEffectGuid GUID _TintEffectGuid
             .code
         endif
-        GdipCreateEffect(addr TintEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(TintEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -293,7 +293,7 @@ endif
                 ColorBalanceEffectGuid GUID _ColorBalanceEffectGuid
             .code
         endif
-        GdipCreateEffect(addr ColorBalanceEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(ColorBalanceEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -311,7 +311,7 @@ endif
                 ColorMatrixEffectGuid GUID _ColorMatrixEffectGuid
             .code
         endif
-        GdipCreateEffect(addr ColorMatrixEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(ColorMatrixEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -329,7 +329,7 @@ endif
                 ColorLUTEffectGuid GUID _ColorLUTEffectGuid
             .code
         endif
-        GdipCreateEffect(addr ColorLUTEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(ColorLUTEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {
@@ -347,7 +347,7 @@ endif
                 ColorCurveEffectGuid GUID _ColorCurveEffectGuid
             .code
         endif
-        GdipCreateEffect(addr ColorCurveEffectGuid, addr this.nativeEffect)
+        GdipCreateEffect(ColorCurveEffectGuid, addr this.nativeEffect)
         }
 
     .static SetParameters :abs {

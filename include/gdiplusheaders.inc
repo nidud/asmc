@@ -126,18 +126,30 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         Region_Combine(this, _1, CombineModeComplement)
         }
 
+    ; Translate(REAL dx, REAL dy);
+    ; Translate(INT dx, INT dy);
+
     .static Translate x:abs, y:abs {
-        typeid(Region_Translate_, x)(this, x, y)
-        this.SetStatus()
+      if GDIType(x) eq GDI_Real
+        this.SetStatus(GdipTranslateRegion(this.nativeRegion, x, y))
+      else
+        this.SetStatus(GdipTranslateRegionI(this.nativeRegion, x, y))
+      endif
         }
 
     .static Transform :ptr Matrix {
         this.SetStatus(GdipTransformRegion(this.nativeRegion, [_1].Matrix.nativeMatrix))
         }
 
+    ; GetBounds(Rect* rect, Graphics* g)
+    ; GetBounds(RectF* rect, Graphics* g)
+
     .static GetBounds :abs, :ptr Graphics {
-        typeid(Region_GetBounds_, _1)(_1, _2, this)
-        this.SetStatus()
+      ifidn <ptrRectF>,typeid(_1)
+        this.SetStatus(GdipGetRegionBounds(this.nativeRegion, [_2].Graphics.nativeGraphics, _1))
+      else
+        this.SetStatus(GdipGetRegionBoundsI(this.nativeRegion, [_2].Graphics.nativeGraphics, _1))
+      endif
         }
 
     .static GetHRGN :ptr Graphics {
@@ -155,8 +167,52 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov eax,this.scratch
         }
 
-    .inline IsVisible :abs, :vararg {
-        typeid(Region_IsVisible_, _1)(this, _1, _2)
+    ; IsVisible(INT x, INT y, Graphics* g = NULL)
+    ; IsVisible(Point& point, Graphics* g = NULL)
+    ; IsVisible(REAL x, REAL y, Graphics* g = NULL)
+    ; IsVisible(PointF& point, Graphics* g = NULL)
+    ; IsVisible(INT x, INT y, INT width, INT height, Graphics* g)
+    ; IsVisible(Rect& rect, Graphics* g = NULL)
+    ; IsVisible(REAL x, REAL y, REAL width, REAL height, Graphics* g = NULL)
+    ; IsVisible(RectF& rect, Graphics* g = NULL)
+
+    .static IsVisible :abs, :abs=<NULL>, :abs=<NULL>, :abs, :abs=<NULL> {
+      local type
+       type = GDIType(_1)
+      if ( (type eq GDI_RectF) or (type eq GDI_Rect) or (type eq GDI_PointF) or (type eq GDI_Point) )
+        .if LOADARGPTRCX(_2)
+            mov rcx,[rcx].Graphics.nativeGraphics
+        .endif
+       if type eq GDI_RectF
+        GdipIsVisibleRegionRect(this.nativeRegion, _1.X, _1.Y, _1.Width, _1.Height, rcx, addr this.scratch)
+       elseif type eq GDI_Rect
+        GdipIsVisibleRegionRectI(this.nativeRegion, _1.X, _1.Y, _1.Width, _1.Height, rcx, addr this.scratch)
+       elseif type eq GDI_PointF
+        GdipIsVisibleRegionPoint(this.nativeRegion, _1.X, _1.Y, rcx, addr this.scratch)
+       elseif type eq GDI_Point
+        GdipIsVisibleRegionPointI(this.nativeRegion, _1.X, _1.Y, rcx, addr this.scratch)
+       endif
+      else
+       ifb <_4>
+        .if LOADARGPTRCX(_3)
+            mov rcx,[rcx].Graphics.nativeGraphics
+        .endif
+        if type eq GDI_Real
+         GdipIsVisibleRegionPoint(this.nativeRegion, _1, _2, rcx, addr this.scratch)
+        else
+         GdipIsVisibleRegionPointI(this.nativeRegion, _1, _2, rcx, addr this.scratch)
+        endif
+       else
+        .if LOADARGPTRCX(_5)
+            mov rcx,[rcx].Graphics.nativeGraphics
+        .endif
+        if type eq GDI_Real
+         GdipIsVisibleRegionRect(this.nativeRegion, _1, _2, _3, _4, rcx, addr this.scratch)
+        else
+         GdipIsVisibleRegionRectI(this.nativeRegion, _1, _2, _3, _4, rcx, addr this.scratch)
+        endif
+       endif
+      endif
         this.SetStatus()
         mov eax,this.scratch
         }
@@ -186,71 +242,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         mov this.lastResult,Ok
         }
     .ends
-
-define Region_Translate_flt   <Region_Translate_real4>
-define Region_Translate_oword <Region_Translate_real4>
-define Region_Translate_imm   <Region_Translate_sdword>
-define Region_Translate_dword <Region_Translate_sdword>
-
-Region_Translate_real4 macro this, x, y
-    exitm<GdipTranslateRegion(this.nativeRegion, x, y)>
-    endm
-Region_Translate_sdword macro this, x, y
-    exitm<GdipTranslateRegionI(this.nativeRegion, x, y)>
-    endm
-
-Region_GetBounds_ptrRect proto fastcall rect:abs, g:abs, this:abs {
-    GdipGetRegionBoundsI(this.nativeRegion, [rdx].Graphics.nativeGraphics, rect)
-    }
-Region_GetBounds_ptrRectF proto fastcall rect:abs, g:abs, this:abs {
-    GdipGetRegionBounds(this.nativeRegion, [rdx].Graphics.nativeGraphics, rect)
-    }
-
-define Region_IsVisible_flt   <Region_IsVisible_real4>
-define Region_IsVisible_oword <Region_IsVisible_real4>
-define Region_IsVisible_imm   <Region_IsVisible_sdword>
-define Region_IsVisible_dword <Region_IsVisible_sdword>
-
-Region_IsVisible_real4 macro this, x, y, width:=<NULL>, height, g:=<NULL>
-ifb <height>
-    .if LOADARGPTRCX(width)
-        mov rcx,[rcx].Graphics.nativeGraphics
-    .endif
-    exitm<GdipIsVisibleRegionPoint(this.nativeRegion, x, y, rcx, addr this.scratch)>
-else
-    .if LOADARGPTRCX(g)
-        mov rcx,[rcx].Graphics.nativeGraphics
-    .endif
-    exitm<GdipIsVisibleRegionRect(this.nativeRegion, x, y, width, height, rcx, addr this.scratch)>
-endif
-    endm
-
-Region_IsVisible_sdword macro this, x, y, width:=<NULL>, height, g:=<NULL>
-ifb <height>
-    .if LOADARGPTRCX(width)
-        mov rcx,[rcx].Graphics.nativeGraphics
-    .endif
-    exitm<GdipIsVisibleRegionPointI(this.nativeRegion, x, y, rcx, addr this.scratch)>
-else
-    .if LOADARGPTRCX(g)
-        mov rcx,[rcx].Graphics.nativeGraphics
-    .endif
-    exitm<GdipIsVisibleRegionRectI(this.nativeRegion, x, y, width, height, rcx, addr this.scratch)>
-endif
-    endm
-
-Region_IsVisible_PointF macro this, point, g:=<NULL>
-    exitm<Region_IsVisible_real4(this, point.X, point.Y, g)>
-    endm
-Region_IsVisible_Point macro this, point, g:=<NULL>
-    exitm<Region_IsVisible_sdword(this, point.X, point.Y, g)>
-    endm
-Region_IsVisible_RectF macro this, rect, g:=<NULL>
-    exitm<Region_IsVisible_real4(this, rect.X, rect.Y, rect.Width, rect.Height, g)>
-    endm
-Region_IsVisible_Rect macro this, rect, g:=<NULL>
-    exitm<Region_IsVisible_sdword(this, rect.X, rect.Y, rect.Width, rect.Height, g)>
-    endm
 
 ;;--------------------------------------------------------------------------
 ;; FontFamily
@@ -956,21 +947,15 @@ endif
 
     .static Clone :abs, :abs, :abs, :abs, :abs {
        .new clone:Image
-    ifidn <sdword>,typeid(_1)
-        GdipCloneBitmapAreaI(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
-    elseifidn <imm>,typeid(_1)
-        GdipCloneBitmapAreaI(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
-    elseifidn <real4>,typeid(_1)
-        GdipCloneBitmapArea(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
-    elseifidn <flt>,typeid(_1)
-        GdipCloneBitmapArea(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
-    elseifidn <RectF>,typeid(_1)
+      ifidn <RectF>,typeid(_1)
         GdipCloneBitmapArea(_1.X, _1.Y, _1.Width, _1.Height, _2, this.nativeImage, addr clone.nativeImage)
-    elseifidn <Rect>,typeid(_1)
+      elseifidn <Rect>,typeid(_1)
         GdipCloneBitmapAreaI(_1.X, _1.Y, _1.Width, _1.Height, _2, this.nativeImage, addr clone.nativeImage)
-    else
-        .err <_1>
-    endif
+      elseif GDIType(_1) eq GDI_Real
+        GdipCloneBitmapArea(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+      else
+        GdipCloneBitmapAreaI(_1, _2, _3, _4, _5, this.nativeImage, addr clone.nativeImage)
+      endif
         mov clone.lastResult,eax
         lea rax,clone
         }
@@ -1199,37 +1184,103 @@ endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
+; Playback a metafile from a HMETAFILE
+; If deleteWmf is TRUE, then when the metafile is deleted,
+; the hWmf will also be deleted.  Otherwise, it won't be.
+;
 ; Metafile(HMETAFILE, WmfPlaceableFileHeader*, BOOL = FALSE)
+;
+; Playback a metafile from a HENHMETAFILE
+; If deleteEmf is TRUE, then when the metafile is deleted,
+; the hEmf will also be deleted.  Otherwise, it won't be.
+;
 ; Metafile(HENHMETAFILE, BOOL = FALSE)
+;
+; Playback a WMF metafile from a file.
+;
 ; Metafile(WCHAR*)
 ; Metafile(WCHAR*, WmfPlaceableFileHeader*)
 ; Metafile(WCHAR*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-; Metafile(WCHAR*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-; Metafile(WCHAR*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+; Metafile(WCHAR*, HDC, RectF&, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+; Metafile(WCHAR*, HDC, Rect&, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+
 ; Metafile(IStream*)
 ; Metafile(IStream*, HDC, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(IStream*, HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
 ; Metafile(IStream*, HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+;
+; Record a metafile to memory.
+;
 ; Metafile(HDC, EmfType, WCHAR*)
-; Metafile(HDC, RectF*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-; Metafile(HDC, Rect*, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
-;
-; Metafile::GetMetafileHeader(HMETAFILE, WmfPlaceableFileHeader*, MetafileHeader*)
-; Metafile::GetMetafileHeader(HENHMETAFILE, MetafileHeader*)
-; Metafile::GetMetafileHeader(WCHAR*, MetafileHeader*)
-; Metafile::GetMetafileHeader(IStream*, MetafileHeader*)
-; Metafile::GetMetafileHeader(MetafileHeader*)
-;
+; Metafile(HDC, RectF&, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+; Metafile(HDC, Rect&, MetafileFrameUnit = MetafileFrameUnitGdi, EmfType = EmfTypeEmfPlusDual, WCHAR* = NULL)
+
 .template Metafile fastcall : public ImageBase
 
-    .inline Metafile :abs, :vararg {
-        typeid(Metafile_, _1)(this, _1, _2)
+    .static Metafile :abs, :abs, :abs, :abs, :abs, :abs {
+      ifidn <ptrHMETAFILE__>,typeid(_1)
+       Metafile_HMETAFILE(this, _1, _2, _3)
+      elseifidn <ptrHENHMETAFILE__>,typeid(_1)
+       Metafile_HENHMETAFILE(this, _1, _2)
+      elseifidn <ptrword>,typeid(_1)
+       ifb <_2>
+        GdipCreateMetafileFromFile(_1, addr this.nativeImage)
+       elseifb <_3>
+        Metafile_WCHAR_HDC_EmfType(this, _1, _2)
+       elseifidn <ptrWmfPlaceableFileHeader>,typeid(_2)
+        GdipCreateMetafileFromWmfFile(_1, _2, addr this.nativeImage)
+       elseifidn <RectF>,typeid(_3)
+        Metafile_WCHAR_HDC_RectF(this, _1, _2, _3, _4, _5, _6)
+       elseifidn <Rect>,typeid(_3)
+        Metafile_WCHAR_HDC_Rect(this, _1, _2, _3, _4, _5, _6)
+       else
+        Metafile_WCHAR_HDC_EmfType(this, _1, _2, _3, _4)
+       endif
+      elseifidn <ptrIStream>,typeid(_1)
+       ifb <_2>
+        GdipCreateMetafileFromStream(_1, addr this.nativeImage)
+       elseifidn <RectF>,typeid(_3)
+        Metafile_IStream_HDC_RectF(this, _1, _2, _3, _4, _5, _6)
+       elseifidn <Rect>,typeid(_3)
+        Metafile_IStream_HDC_Rect(this, _1, _2, _3, _4, _5, _6)
+       else
+        Metafile_IStream_HDC_EmfType(this, _1, _2, _3, _4)
+       endif
+      elseifidn <ptrHDC__>,typeid(_1)
+       ifb <_4>
+        Metafile_HDC_EmfType(this, _1, _2, _3)
+       elseifidn <RectF>,typeid(_2)
+        Metafile_HDC_RectF(this, _1, _2, _3, _4, _5)
+       elseifidn <Rect>,typeid(_2)
+        Metafile_HDC_Rect(this, _1, _2, _3, _4, _5)
+       else
+        .err <_2>
+       endif
+      endif
         mov this.lastResult,eax
         }
 
-    .inline GetMetafileHeader :abs, :vararg {
-        typeid(Metafile_GetMetafileHeader_, _1)(this, _1, _2)
-        this.SetStatus()
+
+    ; Metafile::GetMetafileHeader(HMETAFILE, WmfPlaceableFileHeader*, MetafileHeader*)
+    ; Metafile::GetMetafileHeader(HENHMETAFILE, MetafileHeader*)
+    ; Metafile::GetMetafileHeader(WCHAR*, MetafileHeader*)
+    ; Metafile::GetMetafileHeader(IStream*, MetafileHeader*)
+    ; Metafile::GetMetafileHeader(MetafileHeader*)
+
+    .static GetMetafileHeader :abs, :abs, :abs {
+      ifidn <ptrHMETAFILE__>,typeid(_1)
+        GdipGetMetafileHeaderFromWmf(_1, _2, _3)
+      elseifidn <ptrHENHMETAFILE__>,typeid(_1)
+        GdipGetMetafileHeaderFromEmf(_1, _2)
+      elseifidn <ptrword>,typeid(_1)
+        GdipGetMetafileHeaderFromFile(_1, _2)
+      elseifidn <ptrIStream>,typeid(_1)
+        GdipGetMetafileHeaderFromStream(_1, _2)
+      elseifidn <ptrMetafileHeader>,typeid(_1)
+        this.SetStatus(GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1))
+      else
+        .err <_1>
+      endif
         }
 
     ; Once this method is called, the Metafile object is in an invalid state
@@ -1271,7 +1322,7 @@ endif
         }
 
 if (GDIPVER GE 0x0110)
-    .inline ConvertToEmfPlus :ptr Graphics, :abs, :vararg {
+    .static ConvertToEmfPlus :ptr Graphics, :abs, :abs, :abs, :abs {
         mov rcx,[_1].Graphics.nativeGraphics
         typeid(Metafile_ConvertToEmfPlus_, _2)(this, rcx, _2, _3)
         this.SetStatus()
@@ -1279,104 +1330,38 @@ if (GDIPVER GE 0x0110)
 endif
     .ends
 
-;
-; Playback a metafile from a HMETAFILE
-; If deleteWmf is TRUE, then when the metafile is deleted,
-; the hWmf will also be deleted.  Otherwise, it won't be.
-;
-Metafile_ptrHMETAFILE__ macro this, _1, _2, _3:=<FALSE>
-    exitm<GdipCreateMetafileFromWmf(_1, _3, _2, addr this.nativeImage)>
+Metafile_WCHAR_HDC_EmfType macro this, fileName, referenceHdc, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileFileName(fileName, referenceHdc, type, NULL, MetafileFrameUnitGdi, description, addr this.nativeImage)>
     endm
-;
-; Playback a metafile from a HENHMETAFILE
-; If deleteEmf is TRUE, then when the metafile is deleted,
-; the hEmf will also be deleted.  Otherwise, it won't be.
-;
-Metafile_ptrHENHMETAFILE__ macro this, _1, _2:=<FALSE>
-    exitm<GdipCreateMetafileFromEmf(_1, _2, addr this.nativeImage)>
+Metafile_WCHAR_HDC_RectF macro this, fileName, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileFileName(fileName, referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-;
-; Playback a WMF metafile from a file.
-;
-Metafile_ptrword macro this, _1, _2, _3:vararg
-ifb <_2>
-    exitm<GdipCreateMetafileFromFile(_1, addr this.nativeImage)>
-else
-%   exitm<typeid(Metafile_ptrword_, _2)(this, _1, _2, _3)>
-endif
+Metafile_WCHAR_HDC_Rect macro this, fileName, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileFileNameI(fileName, referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-Metafile_ptrword_ptrWmfPlaceableFileHeader macro this, _1, _2, _3
-    exitm<GdipCreateMetafileFromWmfFile(_1, _2, addr this.nativeImage)>
+Metafile_IStream_HDC_EmfType macro this, stream, referenceHdc, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileStream(stream, referenceHdc, type, NULL, MetafileFrameUnitGdi, description, addr this.nativeImage)>
     endm
-Metafile_ptrword_ptrHDC__ macro this, _1, _2, _3, _4:vararg
-ifb <_3>
-    exitm<GdipRecordMetafileFileName(_1, _2, EmfTypeEmfPlusDual, NULL, MetafileFrameUnitGdi, NULL, addr this.nativeImage)>
-else
-%   exitm<typeid(Metafile_ptrword_HDC_, _3)(this, _1, _2, _3, _4)>
-endif
+Metafile_IStream_HDC_RectF macro this, stream, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileStream(stream, referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-Metafile_ptrword_HDC_imm macro this, _1, _2, _3:=<EmfTypeEmfPlusDual>, _4:=<NULL>
-    exitm<GdipRecordMetafileFileName(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)>
+Metafile_IStream_HDC_Rect macro this, stream, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileStreamI(stream, referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-Metafile_ptrword_HDC_ptrRectF macro this, _1, _2, _3, _4, _5, _6
-    exitm<GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+Metafile_HDC_EmfType macro this, referenceHdc, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafile(referenceHdc, type, NULL, MetafileFrameUnitGdi, description, addr this.nativeImage)>
     endm
-Metafile_ptrword_HDC_ptrRect macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
-    exitm<GdipRecordMetafileFileName(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
+Metafile_HDC_RectF macro this, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafile(referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-Metafile_ptrIStream macro this, _1, _2, _3, _4:vararg
-ifb <_2>
-    exitm<GdipCreateMetafileFromStream(_1, addr this.nativeImage)>
-else
-%   exitm<typeid(Metafile_IStream_HDC_, _3)(this, _1, _2, _3, _4)>
-endif
+Metafile_HDC_Rect macro this, referenceHdc, frameRect, frameUnit:=<MetafileFrameUnitGdi>, type:=<EmfTypeEmfPlusDual>, description:=<NULL>
+    exitm<GdipRecordMetafileI(referenceHdc, type, addr frameRect, frameUnit, description, addr this.nativeImage)>
     endm
-Metafile_IStream_HDC_imm macro this, _1, _2, _3:=<EmfTypeEmfPlusDual>, _4:=<NULL>
-    exitm<GdipRecordMetafileStream(_1, _2, _3, NULL, MetafileFrameUnitGdi, _4, addr this.nativeImage)>
+Metafile_HMETAFILE macro this, hWmf, wmfPlaceableFileHeader, deleteWmf:=<FALSE>
+    exitm<GdipCreateMetafileFromWmf(hWmf, deleteWmf, wmfPlaceableFileHeader, addr this.nativeImage)>
     endm
-Metafile_IStream_HDC_ptrRectF macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
-    exitm<GdipRecordMetafileStream(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
-    endm
-Metafile_IStream_HDC_ptrRect macro this, _1, _2, _3, _4:=<MetafileFrameUnitGdi>, _5:=<EmfTypeEmfPlusDual>, _6:=<NULL>
-    exitm<GdipRecordMetafileStreamI(_1, _2, _5, _3, _4, _6, addr this.nativeImage)>
-    endm
-;
-; Record a metafile to memory.
-;
-Metafile_ptrHDC__ macro this, _1, _2, _3:vararg
-%   exitm<typeid(Metafile_HDC_, _2)(this, _1, _2, _3)>
-    endm
-Metafile_HDC_imm macro this, _1, _2:=<EmfTypeEmfPlusDual>, _3:=<NULL>
-    exitm<GdipRecordMetafile(_1, _2, NULL, MetafileFrameUnitGdi,  _3, addr this.nativeImage)>
-    endm
-Metafile_HDC_ptrRectF macro this, _1, _2, _3:=<MetafileFrameUnitGdi>, _4:=<EmfTypeEmfPlusDual>, _5:=<NULL>
-    exitm<GdipRecordMetafile(_1, _4, _2, _3, _5, addr this.nativeImage)>
-    endm
-Metafile_HDC_ptrRect macro this, _1, _2, _3:=<MetafileFrameUnitGdi>, _4:=<EmfTypeEmfPlusDual>, _5:=<NULL>
-    exitm<GdipRecordMetafileI(_1, _4, _2, _3, _5, addr this.nativeImage)>
-    endm
-
-
-Metafile_GetMetafileHeader_ptrHMETAFILE__ macro this, _1, _2, _3:vararg
-%   exitm<typeid(Metafile_GetMetafileHeader_HMETAFILE_, _2)(this, _1, _2, _3)>
-    endm
-Metafile_GetMetafileHeader_ptrHENHMETAFILE__ macro this, _1, _2, _3:vararg
-%   exitm<typeid(Metafile_GetMetafileHeader_HENHMETAFILE_, _2)(this, _1, _2, _3)>
-    endm
-Metafile_GetMetafileHeader_HMETAFILE_ptrWmfPlaceableFileHeader macro this, _1, _2, _3;, _4:vararg
-    exitm<GdipGetMetafileHeaderFromWmf(_1, _2, _3)>
-    endm
-Metafile_GetMetafileHeader_HENHMETAFILE_ptrMetafileHeader macro this, _1, _2, _3:vararg
-    exitm<GdipGetMetafileHeaderFromEmf(_1, _2)>
-    endm
-Metafile_GetMetafileHeader_ptrword macro this, _1, _2, _3:vararg
-    exitm<GdipGetMetafileHeaderFromFile(_1, _2)>
-    endm
-Metafile_GetMetafileHeader_ptrIStream macro this, _1, _2, _3:vararg
-    exitm<GdipGetMetafileHeaderFromStream(_1, _2)>
-    endm
-Metafile_GetMetafileHeader_ptrMetafileHeader macro this, _1, _2:vararg
-    exitm<GdipGetMetafileHeaderFromMetafile(this.nativeImage, _1)>
+Metafile_HENHMETAFILE macro this, hEmf, deleteEmf:=<FALSE>
+    exitm<GdipCreateMetafileFromEmf(hEmf, deleteEmf, addr this.nativeImage)>
     endm
 
 ; ConvertToEmfPlus(Graphics* refGraphics, INT* conversionFailureFlag = NULL, EmfType emfType = EmfTypeEmfPlusOnly, WCHAR* description = NULL );

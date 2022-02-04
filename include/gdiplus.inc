@@ -11,7 +11,7 @@ endif
 
 .pragma comment(lib, gdiplus)
 
-.pragma pack(push, 8)
+.pragma pack(push, size_t)
 
 include GdiplusMem.inc
 include GdiplusBase.inc

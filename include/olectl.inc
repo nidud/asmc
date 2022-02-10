@@ -8,7 +8,7 @@ ifdef _MAC
 include macocidl.inc
 else
 if NOT defined(RC_INVOKED)
-.pragma pack(push, 8)
+include pshpack8.inc
 endif
 include ocidl.inc
 endif
@@ -386,8 +386,7 @@ LP_VGACOLOR		equ 0x02
 LP_COLOR		equ 0x04
 
 if NOT defined(_MAC) AND NOT defined(RC_INVOKED)
-;pragma pack()
-.pragma pack(pop)
+include poppack.inc
 endif
 
 endif ;; NOT (defined(__MKTYPLIB__) AND NOT defined(__midl))

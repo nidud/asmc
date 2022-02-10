@@ -5,7 +5,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-.pragma pack(push, 8)
+include pshpack8.inc
 
 ;ifndef WIN32
 ;WIN32 equ 100
@@ -520,7 +520,7 @@ OleConvertOLESTREAMToIStorageEx proto WINAPI \
 	       pdwSize: LPDWORD,
 	       pmedium: LPSTGMEDIUM
 
-.pragma pack(pop)
+include poppack.inc
 
 endif
 .pragma list(pop)

@@ -43,7 +43,7 @@ LPSHORT			typedef ptr sword
 LPUSHORT		typedef ptr word
 LPULONG			typedef ptr dword
 
-.pragma pack(push, 8)
+.pragma pack(push, size_t)
 
 CAC			STRUC
 cElems			ULONG ?

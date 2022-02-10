@@ -29,7 +29,7 @@ include propidl.inc
 include transact.inc
 include winapifamily.inc
 
-if defined(_WIN64) OR defined(_ARM_)
+ifdef _WIN64
 .pragma pack(push, 8)
 else
 .pragma pack(push, 2)

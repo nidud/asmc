@@ -50,19 +50,19 @@ NetWkstaTransportAdd proto WINAPI \
 
 ;NET_API_STATUS
 NetWkstaTransportDel proto WINAPI \
-   servername OPTIONAL: LMSTR,
+	    servername: LMSTR,
 	 transportname: LMSTR,
 		 ucond: DWORD
 
 ;NET_API_STATUS
 NetWkstaTransportEnum proto WINAPI \
-   servername OPTIONAL: LMSTR,
+	    servername: LMSTR,
 		 level: DWORD,
 		bufptr: ptr LPBYTE,
 	    prefmaxlen: DWORD,
 	   entriesread: LPDWORD,
 	  totalentries: LPDWORD,
- resumehandle OPTIONAL: LPDWORD
+	  resumehandle: LPDWORD
 
 WKSTA_INFO_100		STRUC
 wki100_platform_id	dd ?

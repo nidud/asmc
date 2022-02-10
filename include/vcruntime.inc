@@ -1,6 +1,5 @@
 ifndef _VCRUNTIME_H
 define _VCRUNTIME_H
-.pragma list(push, 0)
 include sal.inc
 include vadefs.inc
 
@@ -132,7 +131,7 @@ if defined(_CRT_SECURE_DEPRECATE_MEMORY) and not defined(_CRT_SECURE_WARNINGS_ME
 endif
 
 ifndef _CRT_INSECURE_DEPRECATE_MEMORY
-     _CRT_INSECURE_DEPRECATE_MEMORY macro _Replacement
+    _CRT_INSECURE_DEPRECATE_MEMORY macro _Replacement
     ifdef _CRT_SECURE_WARNINGS_MEMORY
         _CRT_INSECURE_DEPRECATE(_Replacement)
     endif
@@ -165,5 +164,4 @@ ifndef _VCRT_BUILD
         endm
 endif
 
-.pragma list(pop)
 endif

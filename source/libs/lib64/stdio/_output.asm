@@ -52,8 +52,6 @@ NUMSTATES       equ (ST_TYPE + 1)
 endif
 
 externdef __lookuptable:byte
-externdef __nullstring:byte
-externdef __wnullstring:byte
 
     .code
 
@@ -371,7 +369,7 @@ _output proc public uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr_t
                         mov ecx,INT_MAX
                     .endif
                     .if !rax
-                        lea rax,__nullstring
+                        lea rax,@CStr("(null)")
                         and esi,not (FL_LONG or FL_WIDECHAR)
                     .endif
                     mov text,rax

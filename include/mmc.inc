@@ -183,7 +183,7 @@ MMC_CONSOLE_VERB	typedef SDWORD
 MMC_VERB__dummy_	equ 0
 endif
 
-.pragma pack(push, 8)
+include pshpack8.inc
 
 MMCBUTTON		STRUC
 nBitmap			SINT ?
@@ -194,7 +194,7 @@ lpButtonText		LPOLESTR ?
 lpTooltipText		LPOLESTR ?
 MMCBUTTON		ENDS
 
-.pragma pack(pop)
+include poppack.inc
 
 LPMMCBUTTON		typedef ptr MMCBUTTON
 

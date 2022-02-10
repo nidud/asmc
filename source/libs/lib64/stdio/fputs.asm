@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-fputs proc uses rdi rdi rbx string:LPSTR, fp:LPFILE
+fputs proc uses rsi rdi rbx string:LPSTR, fp:LPFILE
 
     mov rbx,rcx
     mov edi,_stbuf(rdx)

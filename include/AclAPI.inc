@@ -176,7 +176,7 @@ endif
 FreeInheritedFromArray proto WINAPI \
          pInheritArray: PINHERITED_FROMW,
                 AceCnt: USHORT,
-     pfnArray OPTIONAL: PFN_OBJECT_MGR_FUNCTS
+              pfnArray: PFN_OBJECT_MGR_FUNCTS
 
 
 ;DWORD

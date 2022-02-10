@@ -7,9 +7,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <RootNamespace>csmcmd</RootNamespace>
+    <RootNamespace>FileOperationSample</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{807764B1-7067-49EC-BA6B-CEF2436C0356}</ProjectGuid>
+    <ProjectGuid>{2E180605-41A3-4CB1-A763-F532C31F120C}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -43,6 +43,8 @@
       <AssembledCodeListingFile>$(IntDir)\%(filename).lst</AssembledCodeListingFile>
       <GenerateDebugInformation>8</GenerateDebugInformation>
       <WCharacterSet>Unicode</WCharacterSet>
+      <GenerateUnwindInformation>true</GenerateUnwindInformation>
+      <GenerateCStackFrame>true</GenerateCStackFrame>
     </ASMC>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -50,15 +52,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <EntryPointSymbol>wcstart</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ASMC Include="csmcmd.asm" />
-    <ASMC Include="cmdline.asm" />
-    <ClInclude Include="csmcmd.inc">
-      <FileType>Document</FileType>
-    </ClInclude>
+    <ASMC Include="FileOperationSample.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

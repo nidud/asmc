@@ -72,6 +72,21 @@ WPARAM	typedef UINT_PTR
 LPARAM	typedef LONG_PTR
 LRESULT typedef LONG_PTR
 
+LOADARGTYPEAX macro a
+  local func,t
+    t textequ typeid(a)
+    ifidn t,<imm>
+	t textequ <dword>
+    elseifidn @SubStr(%t, 1, 3),<ptr>
+	t textequ <ptr>
+    elseifidn t,<near>
+	t textequ <ptr>
+    endif
+    func proto watcall :t {}
+    func(a)
+    retm<rax>
+    endm
+
 LOADARGPTRAX macro a
   local func
     func proto watcall :ptr {}

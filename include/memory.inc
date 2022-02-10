@@ -3,11 +3,6 @@ define _INC_MEMORY
 
 include crtdefs.inc
 
-ifndef _CONST_RETURN
-define _CONST_RETURN
-endif
-_WConst_return equ _CONST_RETURN
-
 .pragma comment(lib, libc, msvcrt)
 
 ifndef _CRT_MEMORY_DEFINED
@@ -17,7 +12,7 @@ memchr		proto __cdecl :ptr, :int_t, :size_t
 _memicmp	proto __cdecl :ptr, :ptr, :size_t
 _memicmp_l	proto __cdecl :ptr, :ptr, :size_t, :_locale_t
 memcmp		proto __cdecl :ptr, :ptr, :size_t
-_CRT_INSECURE_DEPRECATE_MEMORY(memcpy_s)
+;_CRT_INSECURE_DEPRECATE_MEMORY(memcpy_s)
 memcpy		proto __cdecl :ptr, :ptr, :size_t
 if __STDC_WANT_SECURE_LIB__
 memcpy_s	proto __cdecl :ptr, :rsize_t, :ptr, :rsize_t

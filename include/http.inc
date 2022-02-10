@@ -1117,7 +1117,7 @@ HttpQueryServerSessionProperty proto WINAPI \
 	      Property: HTTP_SERVER_PROPERTY,
   pPropertyInformation: PVOID,
 PropertyInformationLength: ULONG,
-pReturnLength OPTIONAL: PULONG
+	 pReturnLength: PULONG
 
 
 ;ULONG
@@ -1186,7 +1186,7 @@ HttpQueryUrlGroupProperty proto WINAPI \
 	      Property: HTTP_SERVER_PROPERTY,
   pPropertyInformation: PVOID,
 PropertyInformationLength: ULONG,
-pReturnLength OPTIONAL: PULONG
+	 pReturnLength: PULONG
 
 
 endif ;; _WIN32_WINNT GE 0x0600

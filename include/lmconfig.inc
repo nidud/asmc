@@ -12,7 +12,7 @@ NetConfigGet proto WINAPI \
 
 ;NET_API_STATUS
 NetConfigGetAll proto WINAPI \
-       server OPTIONAL: LPCWSTR,
+		server: LPCWSTR,
 	     component: LPCWSTR,
 		bufptr: ptr LPBYTE
 

@@ -7,7 +7,7 @@
 ;; Specifies that the minimum required platform is Windows 7
 
 ifndef _WIN32_WINNT
-_WIN32_WINNT equ _WIN32_WINNT_WIN7
+define _WIN32_WINNT 0x0601
 endif
 
 include stdio.inc

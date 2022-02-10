@@ -1254,7 +1254,7 @@ dwTickCountDeadline	dd ?
 dwTrackFlags		dd ?
 dwClassContext		dd ?
 locale			LCID ?
-pServerInfo		LPCOSERVERINFO ?
+pServerInfo		ptr COSERVERINFO ?
 BIND_OPTS2		ENDS
 LPBIND_OPTS2		typedef ptr BIND_OPTS2
 
@@ -1266,7 +1266,7 @@ dwTickCountDeadline	dd ?
 dwTrackFlags		dd ?
 dwClassContext		dd ?
 locale			LCID ?
-pServerInfo		LPCOSERVERINFO ?
+pServerInfo		ptr COSERVERINFO ?
 hwnd			HWND ?
 BIND_OPTS3		ENDS
 LPBIND_OPTS3		typedef ptr BIND_OPTS3

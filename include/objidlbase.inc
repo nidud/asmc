@@ -43,7 +43,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 COSERVERINFO		STRUC
 dwReserved1		dd ?
 pwszName		LPWSTR ?
-pAuthInfo		LPCOAUTHINFO ?
+pAuthInfo		ptr COAUTHINFO ?
 dwReserved2		dd ?
 COSERVERINFO		ENDS
 
@@ -186,7 +186,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
 MULTI_QI		STRUC
 pIID			LPIID ?
-pItf			LPIUnknown ?
+pItf			ptr IUnknown ?
 hr			HRESULT ?
 MULTI_QI		ENDS
 
@@ -290,13 +290,13 @@ define __IStream_INTERFACE_DEFINED__
 STATSTG			STRUC
 pwcsName		LPOLESTR ?
 type			dd ?
-cbSize			ULARGE_INTEGER ?
+cbSize			ULARGE_INTEGER <>
 mtime			FILETIME <>
 ctime			FILETIME <>
 atime			FILETIME <>
 grfMode			dd ?
 grfLocksSupported	dd ?
-clsid			CLSID ?
+clsid			CLSID <>
 grfStateBits		dd ?
 reserved		dd ?
 STATSTG			ENDS
@@ -345,12 +345,12 @@ define __IRpcChannelBuffer_INTERFACE_DEFINED__
 RPCOLEDATAREP		typedef ULONG
 
 RPCOLEMESSAGE		STRUC
-reserved1		LPvoid ?
+reserved1		LPVOID ?
 dataRepresentation	RPCOLEDATAREP ?
-Buffer			LPvoid ?
+Buffer			LPVOID ?
 cbBuffer		ULONG ?
 iMethod			ULONG ?
-reserved2		LPvoid 5 dup(?)
+reserved2		LPVOID 5 dup(?)
 rpcFlags		ULONG ?
 RPCOLEMESSAGE		ENDS
 
@@ -522,7 +522,7 @@ define __IClientSecurity_INTERFACE_DEFINED__
 SOLE_AUTHENTICATION_SERVICE STRUC
 dwAuthnSvc		dd ?
 dwAuthzSvc		dd ?
-pPrincipalName		LPOLECHAR ?
+pPrincipalName		ptr OLECHAR ?
 hr			HRESULT ?
 SOLE_AUTHENTICATION_SERVICE ENDS
 
@@ -560,7 +560,7 @@ PSOLE_AUTHENTICATION_INFO typedef ptr SOLE_AUTHENTICATION_INFO
 
 SOLE_AUTHENTICATION_LIST STRUC
 cAuthInfo		dd ?
-aAuthInfo		LPSOLE_AUTHENTICATION_INFO ?
+aAuthInfo		ptr SOLE_AUTHENTICATION_INFO ?
 SOLE_AUTHENTICATION_LIST ENDS
 
 PSOLE_AUTHENTICATION_LIST typedef ptr SOLE_AUTHENTICATION_LIST

@@ -597,7 +597,7 @@ DemoApp::OnPaint proc uses rsi hWnd:HWND
             movss rcClient.Height,xmm0
 
             ;; Render the Bitmap
-            graphics.DrawImage(&[rsi].m_pGdiPlusBitmap, &rcClient)
+            graphics.DrawImage(&[rsi].m_pGdiPlusBitmap, rcClient)
 
             mov lRet,0
         .endif

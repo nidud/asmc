@@ -7,6 +7,10 @@ include stdarg.inc
 include specstrings.inc
 include winapifamily.inc
 
+if not defined(STRSAFE_LIB) and not defined(_WIN64)
+define STRSAFE_LIB
+endif
+
 define ALIGNMENT_MACHINE 1
 
 ifndef _HRESULT_DEFINED
@@ -604,17 +608,63 @@ else
 StringCchPrintf equ <StringCchPrintfA>
 endif
 StringCchPrintfA proto fastcall pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argList:vararg {
-    .if (SUCCEEDED(StringValidateDestA(pszDest, cchDest, STRSAFE_MAX_CCH)))
-        StringVPrintfWorkerA(pszDest, cchDest, NULL, pszFormat, &argList)
-    .elseif ( cchDest )
-        mov byte ptr [pszDest],0
+  local i
+   .new pszDest:STRSAFE_LPSTR = rcx
+   .new cchMax:size_t = rdx
+    .if (SUCCEEDED(StringValidateDestA(rcx, rdx, STRSAFE_MAX_CCH)))
+        lea r9,[rsp+4*8] ; should be 5 but if extended the unwind info will be off..
+        i = 0
+        for q,<argList>
+            mov [r9+i*8],LOADARGTYPEAX(q)
+            i = i + 1
+            endm
+        inc rdx
+        _vsnprintf(rcx, rdx, r8, r9)
+        mov rcx,cchMax
+        inc ecx
+        mov rdx,pszDest
+        .ifs ( ( eax < 0 ) || ( eax > ecx ) )
+            mov byte ptr [rdx+rcx],0
+            mov eax,STRSAFE_E_INSUFFICIENT_BUFFER
+        .elseif ( eax == ecx )
+            mov byte ptr [rdx+rcx],0
+            mov eax,S_OK
+        .else
+            mov rcx,rax
+            mov eax,S_OK
+        .endif
+    .elseif ( rdx )
+        mov byte ptr [rcx],0
     .endif
     }
-StringCchPrintfW proto fastcall pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszFormat:STRSAFE_LPCWSTR, argList:vararg {
-    .if (SUCCEEDED(StringValidateDestW(pszDest, cchDest, STRSAFE_MAX_CCH)))
-        StringVPrintfWorkerW(pszDest, cchDest, NULL, pszFormat, &argList)
-    .elseif ( cchDest )
-        mov byte ptr [pszDest],0
+StringCchPrintfW proto fastcall :STRSAFE_LPWSTR, cchDest:size_t, pszFormat:STRSAFE_LPCWSTR, argList:vararg {
+  local i
+   .new pszDest:STRSAFE_LPSTR = rcx
+   .new cchMax:size_t = rdx
+    .if (SUCCEEDED(StringValidateDestW(rcx, rdx, STRSAFE_MAX_CCH)))
+        lea r9,[rsp+4*8] ; should be 5 but if extended the unwind info will be off..
+        i = 0
+        for q,<argList>
+            mov [r9+i*8],LOADARGTYPEAX(q)
+            i = i + 1
+            endm
+        inc rdx
+        _vsnwprintf(rcx, rdx, r8, r9)
+        mov rcx,cchMax
+        inc ecx
+        mov rdx,pszDest
+        .ifs ( ( eax < 0 ) || ( eax > ecx ) )
+            mov word ptr [rdx+rcx*2],0
+            mov eax,STRSAFE_E_INSUFFICIENT_BUFFER
+        .elseif ( eax == ecx )
+            mov word ptr [rdx+rcx*2],0
+            mov eax,S_OK
+        .else
+            mov rcx,rax
+            mov eax,S_OK
+        .endif
+    .elseif ( rdx )
+        mov word ptr [rcx],0
     .endif
     }
 endif
@@ -1038,11 +1088,12 @@ StringVPrintfWorkerA proto fastcall :STRSAFE_LPSTR, cchDest:size_t, :ptr size_t,
     mov rax,cchDest
     dec rax
     mov cchMax,rax
+    mov rax,pszFormat
 
 if (STRSAFE_USE_SECURE_CRT eq 1) and not defined(STRSAFE_LIB_IMPL)
-    mov retval,_vsnprintf_s(pszDest, cchDest, cchMax, pszFormat, argList)
+    mov retval,_vsnprintf_s(pszDest, cchDest, cchMax, rax, argList)
 else
-    mov retval,_vsnprintf(pszDest, cchMax, pszFormat, argList)
+    mov retval,_vsnprintf(pszDest, cchMax, rax, argList)
 endif
     mov rdx,pszDest
     .if ((retval < 0) || (rax > cchMax))
@@ -1074,11 +1125,11 @@ StringVPrintfWorkerW proto fastcall :STRSAFE_LPWSTR, cchDest:size_t, :ptr size_t
     mov rax,cchDest
     dec rax
     mov cchMax,rax
-
+    mov rax,pszFormat
 if (STRSAFE_USE_SECURE_CRT eq 1) and not defined(STRSAFE_LIB_IMPL)
-    mov retval,_vsnwprintf_s(pszDest, cchDest, cchMax, pszFormat, argList)
+    mov retval,_vsnwprintf_s(pszDest, cchDest, cchMax, rax, argList)
 else
-    mov retval,_vsnwprintf(pszDest, cchMax, pszFormat, argList)
+    mov retval,_vsnwprintf(pszDest, cchMax, rax, argList)
 endif
     mov rdx,pszDest
     .if ((retval < 0) || (rax > cchMax))

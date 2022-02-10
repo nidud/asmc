@@ -6,7 +6,7 @@ include atldef.inc
 include windows.inc
 include ole2.inc
 
-.pragma pack(push,8)
+.pragma pack(push,_ATL_PACKING)
 
 ifndef _ATL_STACK_MARGIN
 if defined(_M_IX86)

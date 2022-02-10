@@ -7072,6 +7072,8 @@ else
 IsBadStringPtr equ <IsBadStringPtrA>
 endif
 
+.pragma comment(lib, Advapi32)
+
 LookupAccountSidA proto WINAPI \
 	  lpSystemName: LPCSTR,
 		   Sid: PSID,
@@ -7168,6 +7170,8 @@ endif
 
 AllocateLocallyUniqueId proto WINAPI \
 		  Luid: PLUID
+
+.pragma comment(lib, kernel32)
 
 BuildCommDCBA proto WINAPI \
 		 lpDef: LPCSTR,

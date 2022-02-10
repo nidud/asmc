@@ -12,7 +12,7 @@ NetApiBufferFree proto WINAPI \
 
 ;NET_API_STATUS
 NetApiBufferReallocate proto WINAPI \
-    OldBuffer OPTIONAL: LPVOID,
+             OldBuffer: LPVOID,
           NewByteCount: DWORD,
              NewBuffer: ptr LPVOID
 

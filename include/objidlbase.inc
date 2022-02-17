@@ -279,7 +279,7 @@ DEFINE_IIDX(ISequentialStream, "0c733a30-2a1c-11ce-ade5-00aa0044773d")
 .comdef ISequentialStream : public IUnknown
 
     Read		proc :ptr, :ULONG, :ptr
-    Write		proc
+    Write		proc :ptr, :ULONG, :ptr ULONG
    .ends
 
 endif

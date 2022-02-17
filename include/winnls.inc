@@ -1,637 +1,744 @@
-.pragma list(push, 0)
-ifndef __WINNLS_INC
-define __WINNLS_INC
+ifndef _WINNLS_
+define _WINNLS_
 
-ifndef __LIBC_INC
- include libc.inc
-endif
-ifndef _WINDEF_
- include windef.inc
-endif
+include winapifamily.inc
 
 .pragma comment(lib, kernel32)
 
-ifndef LPSYSTEMTIME
-SYSTEMTIME	STRUC
-wYear		dw ?
-wMonth		dw ?
-wDayOfWeek	dw ?
-wDay		dw ?
-wHour		dw ?
-wMinute		dw ?
-wSecond		dw ?
-wMilliseconds	dw ?
-SYSTEMTIME	ENDS
-LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
+ifndef NOAPISET
+include datetimeapi.inc
+include libloaderapi.inc
+endif
+
+ifndef NONLS
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+ifdef _MAC
+include macwin32.inc
+endif
+
+define MAX_LEADBYTES		12
+define MAX_DEFAULTCHAR		2
+
+define HIGH_SURROGATE_START	0xd800
+define HIGH_SURROGATE_END	0xdbff
+define LOW_SURROGATE_START	0xdc00
+define LOW_SURROGATE_END	0xdfff
+
+
+define MB_PRECOMPOSED		0x00000001
+define MB_COMPOSITE		0x00000002
+define MB_USEGLYPHCHARS		0x00000004
+define MB_ERR_INVALID_CHARS	0x00000008
+
+define WC_COMPOSITECHECK	0x00000200
+define WC_DISCARDNS		0x00000010
+define WC_SEPCHARS		0x00000020
+define WC_DEFAULTCHAR		0x00000040
+if (WINVER GE 0x0600)
+define WC_ERR_INVALID_CHARS	0x00000080
+endif
+
+if(WINVER GE 0x0500)
+define WC_NO_BEST_FIT_CHARS	0x00000400
+endif
+
+define CT_CTYPE1		0x00000001
+define CT_CTYPE2		0x00000002
+define CT_CTYPE3		0x00000004
+
+define C1_UPPER			0x0001
+define C1_LOWER			0x0002
+define C1_DIGIT			0x0004
+define C1_SPACE			0x0008
+define C1_PUNCT			0x0010
+define C1_CNTRL			0x0020
+define C1_BLANK			0x0040
+define C1_XDIGIT		0x0080
+define C1_ALPHA			0x0100
+define C1_DEFINED		0x0200
+define C2_LEFTTORIGHT		0x0001
+define C2_RIGHTTOLEFT		0x0002
+
+define C2_EUROPENUMBER		0x0003
+define C2_EUROPESEPARATOR	0x0004
+define C2_EUROPETERMINATOR	0x0005
+define C2_ARABICNUMBER		0x0006
+define C2_COMMONSEPARATOR	0x0007
+
+define C2_BLOCKSEPARATOR	0x0008
+define C2_SEGMENTSEPARATOR	0x0009
+define C2_WHITESPACE		0x000A
+define C2_OTHERNEUTRAL		0x000B
+
+define C2_NOTAPPLICABLE		0x0000
+
+define C3_NONSPACING		0x0001
+define C3_DIACRITIC		0x0002
+define C3_VOWELMARK		0x0004
+define C3_SYMBOL		0x0008
+
+define C3_KATAKANA		0x0010
+define C3_HIRAGANA		0x0020
+define C3_HALFWIDTH		0x0040
+define C3_FULLWIDTH		0x0080
+define C3_IDEOGRAPH		0x0100
+define C3_KASHIDA		0x0200
+define C3_LEXICAL		0x0400
+define C3_HIGHSURROGATE		0x0800
+define C3_LOWSURROGATE		0x1000
+
+define C3_ALPHA			0x8000
+
+define C3_NOTAPPLICABLE		0x0000
+
+
+define NORM_IGNORECASE		0x00000001
+define NORM_IGNORENONSPACE	0x00000002
+define NORM_IGNORESYMBOLS	0x00000004
+
+define LINGUISTIC_IGNORECASE	0x00000010
+define LINGUISTIC_IGNOREDIACRITIC 0x00000020
+
+define NORM_IGNOREKANATYPE	0x00010000
+define NORM_IGNOREWIDTH		0x00020000
+define NORM_LINGUISTIC_CASING	0x08000000
+
+define MAP_FOLDCZONE		0x00000010
+define MAP_PRECOMPOSED		0x00000020
+define MAP_COMPOSITE		0x00000040
+define MAP_FOLDDIGITS		0x00000080
+
+if(WINVER GE 0x0500)
+define MAP_EXPAND_LIGATURES	0x00002000
+endif
+
+define LCMAP_LOWERCASE		0x00000100
+define LCMAP_UPPERCASE		0x00000200
+if (WINVER GE _WIN32_WINNT_WIN7)
+define LCMAP_TITLECASE		0x00000300
+endif
+
+define LCMAP_SORTKEY		0x00000400
+define LCMAP_BYTEREV		0x00000800
+
+define LCMAP_HIRAGANA		0x00100000
+define LCMAP_KATAKANA		0x00200000
+define LCMAP_HALFWIDTH		0x00400000
+define LCMAP_FULLWIDTH		0x00800000
+
+define LCMAP_LINGUISTIC_CASING	0x01000000
+
+define LCMAP_SIMPLIFIED_CHINESE 0x02000000
+define LCMAP_TRADITIONAL_CHINESE 0x04000000
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+define LCMAP_SORTHANDLE		0x20000000
+define LCMAP_HASH		0x00040000
+endif
+
+define FIND_STARTSWITH		0x00100000
+define FIND_ENDSWITH		0x00200000
+define FIND_FROMSTART		0x00400000
+define FIND_FROMEND		0x00800000
+
+define LGRPID_INSTALLED		0x00000001
+define LGRPID_SUPPORTED		0x00000002
+
+define LCID_INSTALLED		0x00000001
+define LCID_SUPPORTED		0x00000002
+define LCID_ALTERNATE_SORTS	0x00000004
+
+if (WINVER GE _WIN32_WINNT_VISTA)
+define LOCALE_ALL		0
+define LOCALE_WINDOWS		0x00000001
+define LOCALE_SUPPLEMENTAL	0x00000002
+define LOCALE_ALTERNATE_SORTS	0x00000004
+define LOCALE_REPLACEMENT	0x00000008
+endif
+if (WINVER GE _WIN32_WINNT_WIN7)
+define LOCALE_NEUTRALDATA	0x00000010
+define LOCALE_SPECIFICDATA	0x00000020
+endif
+
+define CP_INSTALLED		0x00000001
+define CP_SUPPORTED		0x00000002
+
+define SORT_STRINGSORT		0x00001000
+
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+define SORT_DIGITSASNUMBERS	0x00000008
+endif
+
+define CSTR_LESS_THAN		1
+define CSTR_EQUAL		2
+define CSTR_GREATER_THAN	3
+
+
+define CP_ACP			0
+define CP_OEMCP			1
+define CP_MACCP			2
+define CP_THREAD_ACP		3
+define CP_SYMBOL		42
+
+define CP_UTF7			65000
+define CP_UTF8			65001
+
+define CTRY_DEFAULT		0
+
+define CTRY_ALBANIA		355
+define CTRY_ALGERIA		213
+define CTRY_ARGENTINA		54
+define CTRY_ARMENIA		374
+define CTRY_AUSTRALIA		61
+define CTRY_AUSTRIA		43
+define CTRY_AZERBAIJAN		994
+define CTRY_BAHRAIN		973
+define CTRY_BELARUS		375
+define CTRY_BELGIUM		32
+define CTRY_BELIZE		501
+define CTRY_BOLIVIA		591
+define CTRY_BRAZIL		55
+define CTRY_BRUNEI_DARUSSALAM	673
+define CTRY_BULGARIA		359
+define CTRY_CANADA		2
+define CTRY_CARIBBEAN		1
+define CTRY_CHILE		56
+define CTRY_COLOMBIA		57
+define CTRY_COSTA_RICA		506
+define CTRY_CROATIA		385
+define CTRY_CZECH		420
+define CTRY_DENMARK		45
+define CTRY_DOMINICAN_REPUBLIC	1
+define CTRY_ECUADOR		593
+define CTRY_EGYPT		20
+define CTRY_EL_SALVADOR		503
+define CTRY_ESTONIA		372
+define CTRY_FAEROE_ISLANDS	298
+define CTRY_FINLAND		358
+define CTRY_FRANCE		33
+define CTRY_GEORGIA		995
+define CTRY_GERMANY		49
+define CTRY_GREECE		30
+define CTRY_GUATEMALA		502
+define CTRY_HONDURAS		504
+define CTRY_HONG_KONG		852
+define CTRY_HUNGARY		36
+define CTRY_ICELAND		354
+define CTRY_INDIA		91
+define CTRY_INDONESIA		62
+define CTRY_IRAN		981
+define CTRY_IRAQ		964
+define CTRY_IRELAND		353
+define CTRY_ISRAEL		972
+define CTRY_ITALY		39
+define CTRY_JAMAICA		1
+define CTRY_JAPAN		81
+define CTRY_JORDAN		962
+define CTRY_KAZAKSTAN		7
+define CTRY_KENYA		254
+define CTRY_KUWAIT		965
+define CTRY_KYRGYZSTAN		996
+define CTRY_LATVIA		371
+define CTRY_LEBANON		961
+define CTRY_LIBYA		218
+define CTRY_LIECHTENSTEIN	41
+define CTRY_LITHUANIA		370
+define CTRY_LUXEMBOURG		352
+define CTRY_MACAU		853
+define CTRY_MACEDONIA		389
+define CTRY_MALAYSIA		60
+define CTRY_MALDIVES		960
+define CTRY_MEXICO		52
+define CTRY_MONACO		33
+define CTRY_MONGOLIA		976
+define CTRY_MOROCCO		212
+define CTRY_NETHERLANDS		31
+define CTRY_NEW_ZEALAND		64
+define CTRY_NICARAGUA		505
+define CTRY_NORWAY		47
+define CTRY_OMAN		968
+define CTRY_PAKISTAN		92
+define CTRY_PANAMA		507
+define CTRY_PARAGUAY		595
+define CTRY_PERU		51
+define CTRY_PHILIPPINES		63
+define CTRY_POLAND		48
+define CTRY_PORTUGAL		351
+define CTRY_PRCHINA		86
+define CTRY_PUERTO_RICO		1
+define CTRY_QATAR		974
+define CTRY_ROMANIA		40
+define CTRY_RUSSIA		7
+define CTRY_SAUDI_ARABIA	966
+define CTRY_SERBIA		381
+define CTRY_SINGAPORE		65
+define CTRY_SLOVAK		421
+define CTRY_SLOVENIA		386
+define CTRY_SOUTH_AFRICA	27
+define CTRY_SOUTH_KOREA		82
+define CTRY_SPAIN		34
+define CTRY_SWEDEN		46
+define CTRY_SWITZERLAND		41
+define CTRY_SYRIA		963
+define CTRY_TAIWAN		886
+define CTRY_TATARSTAN		7
+define CTRY_THAILAND		66
+define CTRY_TRINIDAD_Y_TOBAGO	1
+define CTRY_TUNISIA		216
+define CTRY_TURKEY		90
+define CTRY_UAE			971
+define CTRY_UKRAINE		380
+define CTRY_UNITED_KINGDOM	44
+define CTRY_UNITED_STATES	1
+define CTRY_URUGUAY		598
+define CTRY_UZBEKISTAN		7
+define CTRY_VENEZUELA		58
+define CTRY_VIET_NAM		84
+define CTRY_YEMEN		967
+define CTRY_ZIMBABWE		263
+
+
+define LOCALE_NOUSEROVERRIDE	0x80000000
+define LOCALE_USE_CP_ACP	0x40000000
+
+if(WINVER GE 0x0400)
+define LOCALE_RETURN_NUMBER	0x20000000
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+define LOCALE_RETURN_GENITIVE_NAMES 0x10000000
+define LOCALE_ALLOW_NEUTRAL_NAMES 0x08000000
 endif
 
 
-MAX_LEADBYTES		equ 12		; 5 ranges, 2 bytes ea., 0 term.
-MAX_DEFAULTCHAR		equ 2		; single or double byte
-
-HIGH_SURROGATE_START	equ 0xd800
-HIGH_SURROGATE_END	equ 0xdbff
-LOW_SURROGATE_START	equ 0xdc00
-LOW_SURROGATE_END	equ 0xdfff
-
-
-MB_PRECOMPOSED		equ 0x00000001	; use precomposed chars
-MB_COMPOSITE		equ 0x00000002	; use composite chars
-MB_USEGLYPHCHARS	equ 0x00000004	; use glyph chars, not ctrl chars
-MB_ERR_INVALID_CHARS	equ 0x00000008	; error for invalid chars
-
-WC_COMPOSITECHECK	equ 0x00000200	; convert composite to precomposed
-WC_DISCARDNS		equ 0x00000010	; discard non-spacing chars
-WC_SEPCHARS		equ 0x00000020	; generate separate chars
-WC_DEFAULTCHAR		equ 0x00000040	; replace w/ default char
-if WINVER GE 0x0600
-WC_ERR_INVALID_CHARS	equ 0x00000080
-endif
-WC_NO_BEST_FIT_CHARS	equ 0x00000400	; do not use best fit chars
-
-CT_CTYPE1		equ 0x00000001	; ctype 1 information
-CT_CTYPE2		equ 0x00000002	; ctype 2 information
-CT_CTYPE3		equ 0x00000004	; ctype 3 information
-
-C1_UPPER		equ 0x0001	  ; upper case
-C1_LOWER		equ 0x0002	  ; lower case
-C1_DIGIT		equ 0x0004	  ; decimal digits
-C1_SPACE		equ 0x0008	  ; spacing characters
-C1_PUNCT		equ 0x0010	  ; punctuation characters
-C1_CNTRL		equ 0x0020	  ; control characters
-C1_BLANK		equ 0x0040	  ; blank characters
-C1_XDIGIT		equ 0x0080	  ; other digits
-C1_ALPHA		equ 0x0100	  ; any linguistic character
-
-C2_LEFTTORIGHT		equ 0x0001	  ; left to right
-C2_RIGHTTOLEFT		equ 0x0002	  ; right to left
-
-C2_EUROPENUMBER		equ 0x0003	  ; European number, digit
-C2_EUROPESEPARATOR	equ 0x0004	  ; European numeric separator
-C2_EUROPETERMINATOR	equ 0x0005	  ; European numeric terminator
-C2_ARABICNUMBER		equ 0x0006	  ; Arabic number
-C2_COMMONSEPARATOR	equ 0x0007	  ; common numeric separator
-
-C2_BLOCKSEPARATOR	equ 0x0008	  ; block separator
-C2_SEGMENTSEPARATOR	equ 0x0009	  ; segment separator
-C2_WHITESPACE		equ 0x000A	  ; white space
-C2_OTHERNEUTRAL		equ 0x000B	  ; other neutrals
-
-C2_NOTAPPLICABLE	equ 0x0000	  ; no implicit directionality
-
-C3_NONSPACING		equ 0x0001	  ; nonspacing character
-C3_DIACRITIC		equ 0x0002	  ; diacritic mark
-C3_VOWELMARK		equ 0x0004	  ; vowel mark
-C3_SYMBOL		equ 0x0008	  ; symbols
-
-C3_KATAKANA		equ 0x0010	  ; katakana character
-C3_HIRAGANA		equ 0x0020	  ; hiragana character
-C3_HALFWIDTH		equ 0x0040	  ; half width character
-C3_FULLWIDTH		equ 0x0080	  ; full width character
-C3_IDEOGRAPH		equ 0x0100	  ; ideographic character
-C3_KASHIDA		equ 0x0200	  ; Arabic kashida character
-C3_LEXICAL		equ 0x0400	  ; lexical character
-
-C3_ALPHA		equ 0x8000	  ; any linguistic char (C1_ALPHA)
-
-C3_NOTAPPLICABLE	equ 0x0000	  ; ctype 3 is not applicable
-
-NORM_IGNORECASE		equ 0x00000001	; ignore case
-NORM_IGNORENONSPACE	equ 0x00000002	; ignore nonspacing chars
-NORM_IGNORESYMBOLS	equ 0x00000004	; ignore symbols
-
-LINGUISTIC_IGNORECASE	equ 0x00000010
-LINGUISTIC_IGNOREDIACRITIC equ 0x00000020
-
-NORM_IGNOREKANATYPE	equ 0x00010000	; ignore kanatype
-NORM_IGNOREWIDTH	equ 0x00020000	; ignore width
-NORM_LINGUISTIC_CASING	equ 0x08000000
-
-
-MAP_FOLDCZONE		equ 0x00000010	; fold compatibility zone chars
-MAP_PRECOMPOSED		equ 0x00000020	; convert to precomposed chars
-MAP_COMPOSITE		equ 0x00000040	; convert to composite chars
-MAP_FOLDDIGITS		equ 0x00000080	; all digits to ASCII 0-9
-
-MAP_EXPAND_LIGATURES	equ 0x00002000	; expand all ligatures
-
-
-LCMAP_LOWERCASE		equ 0x00000100	; lower case letters
-LCMAP_UPPERCASE		equ 0x00000200	; upper case letters
-if WINVER GE 0x0601
-LCMAP_TITLECASE		equ 0x00000300
-endif
-LCMAP_SORTKEY		equ 0x00000400	; WC sort key (normalize)
-LCMAP_BYTEREV		equ 0x00000800	; byte reversal
-
-LCMAP_HIRAGANA		equ 0x00100000	; map katakana to hiragana
-LCMAP_KATAKANA		equ 0x00200000	; map hiragana to katakana
-LCMAP_HALFWIDTH		equ 0x00400000	; map double byte to single byte
-LCMAP_FULLWIDTH		equ 0x00800000	; map single byte to double byte
-
-LCMAP_LINGUISTIC_CASING equ 0x01000000	; use linguistic rules for casing
-
-LCMAP_SIMPLIFIED_CHINESE  equ 0x02000000  ; map traditional chinese to simplified chinese
-LCMAP_TRADITIONAL_CHINESE equ 0x04000000  ; map simplified chinese to traditional chinese
-
-if WINVER GE 0x0602
-LCMAP_SORTHANDLE	equ 0x20000000
-LCMAP_HASH		equ 0x00040000
+define LOCALE_SLOCALIZEDDISPLAYNAME 0x00000002
+if (WINVER GE _WIN32_WINNT_WIN7)
+define LOCALE_SENGLISHDISPLAYNAME 0x00000072
+define LOCALE_SNATIVEDISPLAYNAME 0x00000073
 endif
 
-FIND_STARTSWITH		equ 0x00100000
-FIND_ENDSWITH		equ 0x00200000
-FIND_FROMSTART		equ 0x00400000
-FIND_FROMEND		equ 0x00800000
-
-LGRPID_INSTALLED	equ 0x00000001
-LGRPID_SUPPORTED	equ 0x00000002
-
-LCID_INSTALLED		equ 0x00000001	; installed locale ids
-LCID_SUPPORTED		equ 0x00000002	; supported locale ids
-LCID_ALTERNATE_SORTS	equ 0x00000004	; alternate sort locale ids
-
-if WINVER GE 0x0600
-LOCALE_ALL		equ 0
-LOCALE_WINDOWS		equ 0x00000001
-LOCALE_SUPPLEMENTAL	equ 0x00000002
-LOCALE_ALTERNATE_SORTS	equ 0x00000004
-LOCALE_REPLACEMENT	equ 0x00000008
+if (WINVER GE _WIN32_WINNT_VISTA)
+define LOCALE_SLOCALIZEDLANGUAGENAME 0x0000006f
 endif
-if WINVER GE 0x0601
-LOCALE_NEUTRALDATA	equ 0x00000010
-LOCALE_SPECIFICDATA	equ 0x00000020
+define LOCALE_SENGLISHLANGUAGENAME   0x00001001
+define LOCALE_SNATIVELANGUAGENAME    0x00000004
+
+define LOCALE_SLOCALIZEDCOUNTRYNAME  0x00000006
+define LOCALE_SENGLISHCOUNTRYNAME    0x00001002
+define LOCALE_SNATIVECOUNTRYNAME     0x00000008
+
+define LOCALE_SLANGUAGE		0x00000002
+if (WINVER GE _WIN32_WINNT_VISTA)
+define LOCALE_SLANGDISPLAYNAME	0x0000006f
 endif
+define LOCALE_SENGLANGUAGE	0x00001001
+define LOCALE_SNATIVELANGNAME	0x00000004
+define LOCALE_SCOUNTRY		0x00000006
+define LOCALE_SENGCOUNTRY	0x00001002
+define LOCALE_SNATIVECTRYNAME	0x00000008
 
-CP_INSTALLED		equ 0x00000001	; installed code page ids
-CP_SUPPORTED		equ 0x00000002	; supported code page ids
+define LOCALE_ILANGUAGE		0x00000001
 
-SORT_STRINGSORT		equ 0x00001000	; use string sort method
-if WINVER GE 0x0601
-SORT_DIGITSASNUMBERS	equ 0x00000008
-endif
+define LOCALE_SABBREVLANGNAME	0x00000003
 
-CSTR_LESS_THAN		  equ 1		  ; string 1 less than string 2
-CSTR_EQUAL		  equ 2		  ; string 1 equal to string 2
-CSTR_GREATER_THAN	  equ 3		  ; string 1 greater than string 2
+define LOCALE_ICOUNTRY		0x00000005
+define LOCALE_SABBREVCTRYNAME	0x00000007
+define LOCALE_IGEOID		0x0000005B
 
-CP_ACP			  equ 0		  ; default to ANSI code page
-CP_OEMCP		  equ 1		  ; default to OEM  code page
-CP_MACCP		  equ 2		  ; default to MAC  code page
-CP_THREAD_ACP		  equ 3		  ; current thread's ANSI code page
-CP_SYMBOL		  equ 42	  ; SYMBOL translations
-CP_UTF7			  equ 65000	  ; UTF-7 translation
-CP_UTF8			  equ 65001	  ; UTF-8 translation
+define LOCALE_IDEFAULTLANGUAGE	0x00000009
+define LOCALE_IDEFAULTCOUNTRY	0x0000000A
+define LOCALE_IDEFAULTCODEPAGE	0x0000000B
+define LOCALE_IDEFAULTANSICODEPAGE 0x00001004
+define LOCALE_IDEFAULTMACCODEPAGE 0x00001011
 
-CTRY_DEFAULT		  equ 0
+define LOCALE_SLIST		0x0000000C
+define LOCALE_IMEASURE		0x0000000D
 
-CTRY_ALBANIA		  equ 355	  ; Albania
-CTRY_ALGERIA		  equ 213	  ; Algeria
-CTRY_ARGENTINA		  equ 54	  ; Argentina
-CTRY_AUSTRALIA		  equ 61	  ; Australia
-CTRY_AUSTRIA		  equ 43	  ; Austria
-CTRY_BAHRAIN		  equ 973	  ; Bahrain
-CTRY_BELARUS		  equ 375	  ; Belarus
-CTRY_BELGIUM		  equ 32	  ; Belgium
-CTRY_BELIZE		  equ 501	  ; Belize
-CTRY_BOLIVIA		  equ 591	  ; Bolivia
-CTRY_BRAZIL		  equ 55	  ; Brazil
-CTRY_BRUNEI_DARUSSALAM	  equ 673	  ; Brunei Darussalam
-CTRY_BULGARIA		  equ 359	  ; Bulgaria
-CTRY_CANADA		  equ 2		  ; Canada
-CTRY_CARIBBEAN		  equ 1		  ; Caribbean
-CTRY_CHILE		  equ 56	  ; Chile
-CTRY_COLOMBIA		  equ 57	  ; Colombia
-CTRY_COSTA_RICA		  equ 506	  ; Costa Rica
-CTRY_CROATIA		  equ 385	  ; Croatia
-CTRY_CZECH		  equ 420	  ; Czech Republic
-CTRY_DENMARK		  equ 45	  ; Denmark
-CTRY_DOMINICAN_REPUBLIC	  equ 1		  ; Dominican Republic
-CTRY_ECUADOR		  equ 593	  ; Ecuador
-CTRY_EGYPT		  equ 20	  ; Egypt
-CTRY_EL_SALVADOR	  equ 503	  ; El Salvador
-CTRY_ESTONIA		  equ 372	  ; Estonia
-CTRY_FAEROE_ISLANDS	  equ 298	  ; Faeroe Islands
-CTRY_FINLAND		  equ 358	  ; Finland
-CTRY_FRANCE		  equ 33	  ; France
-CTRY_GERMANY		  equ 49	  ; Germany
-CTRY_GREECE		  equ 30	  ; Greece
-CTRY_GUATEMALA		  equ 502	  ; Guatemala
-CTRY_HONDURAS		  equ 504	  ; Honduras
-CTRY_HONG_KONG		  equ 852	  ; Hong Kong
-CTRY_HUNGARY		  equ 36	  ; Hungary
-CTRY_ICELAND		  equ 354	  ; Iceland
-CTRY_INDIA		  equ 91	  ; India
-CTRY_INDONESIA		  equ 62	  ; Indonesia
-CTRY_IRAN		  equ 981	  ; Iran
-CTRY_IRAQ		  equ 964	  ; Iraq
-CTRY_IRELAND		  equ 353	  ; Ireland
-CTRY_ISRAEL		  equ 972	  ; Israel
-CTRY_ITALY		  equ 39	  ; Italy
-CTRY_JAMAICA		  equ 1		  ; Jamaica
-CTRY_JAPAN		  equ 81	  ; Japan
-CTRY_JORDAN		  equ 962	  ; Jordan
-CTRY_KENYA		  equ 254	  ; Kenya
-CTRY_KUWAIT		  equ 965	  ; Kuwait
-CTRY_LATVIA		  equ 371	  ; Latvia
-CTRY_LEBANON		  equ 961	  ; Lebanon
-CTRY_LIBYA		  equ 218	  ; Libya
-CTRY_LIECHTENSTEIN	  equ 41	  ; Liechtenstein
-CTRY_LITHUANIA		  equ 370	  ; Lithuania
-CTRY_LUXEMBOURG		  equ 352	  ; Luxembourg
-CTRY_MACAU		  equ 853	  ; Macau
-CTRY_MACEDONIA		  equ 389	  ; Republic of Macedonia
-CTRY_MALAYSIA		  equ 60	  ; Malaysia
-CTRY_MEXICO		  equ 52	  ; Mexico
-CTRY_MONACO		  equ 33	  ; Principality of Monaco
-CTRY_MOROCCO		  equ 212	  ; Morocco
-CTRY_NETHERLANDS	  equ 31	  ; Netherlands
-CTRY_NEW_ZEALAND	  equ 64	  ; New Zealand
-CTRY_NICARAGUA		  equ 505	  ; Nicaragua
-CTRY_NORWAY		  equ 47	  ; Norway
-CTRY_OMAN		  equ 968	  ; Oman
-CTRY_PAKISTAN		  equ 92	  ; Islamic Republic of Pakistan
-CTRY_PANAMA		  equ 507	  ; Panama
-CTRY_PARAGUAY		  equ 595	  ; Paraguay
-CTRY_PERU		  equ 51	  ; Peru
-CTRY_PHILIPPINES	  equ 63	  ; Republic of the Philippines
-CTRY_POLAND		  equ 48	  ; Poland
-CTRY_PORTUGAL		  equ 351	  ; Portugal
-CTRY_PRCHINA		  equ 86	  ; People's Republic of China
-CTRY_PUERTO_RICO	  equ 1		  ; Puerto Rico
-CTRY_QATAR		  equ 974	  ; Qatar
-CTRY_ROMANIA		  equ 40	  ; Romania
-CTRY_RUSSIA		  equ 7		  ; Russia
-CTRY_SAUDI_ARABIA	  equ 966	  ; Saudi Arabia
-CTRY_SERBIA		  equ 381	  ; Serbia
-CTRY_SINGAPORE		  equ 65	  ; Singapore
-CTRY_SLOVAK		  equ 421	  ; Slovak Republic
-CTRY_SLOVENIA		  equ 386	  ; Slovenia
-CTRY_SOUTH_AFRICA	  equ 27	  ; South Africa
-CTRY_SOUTH_KOREA	  equ 82	  ; South Korea
-CTRY_SPAIN		  equ 34	  ; Spain
-CTRY_SWEDEN		  equ 46	  ; Sweden
-CTRY_SWITZERLAND	  equ 41	  ; Switzerland
-CTRY_SYRIA		  equ 963	  ; Syria
-CTRY_TAIWAN		  equ 886	  ; Taiwan Region
-CTRY_THAILAND		  equ 66	  ; Thailand
-CTRY_TRINIDAD_Y_TOBAGO	  equ 1		  ; Trinidad y Tobago
-CTRY_TUNISIA		  equ 216	  ; Tunisia
-CTRY_TURKEY		  equ 90	  ; Turkey
-CTRY_UAE		  equ 971	  ; U.A.E.
-CTRY_UKRAINE		  equ 380	  ; Ukraine
-CTRY_UNITED_KINGDOM	  equ 44	  ; United Kingdom
-CTRY_UNITED_STATES	  equ 1		  ; United States
-CTRY_URUGUAY		  equ 598	  ; Uruguay
-CTRY_VENEZUELA		  equ 58	  ; Venezuela
-CTRY_VIET_NAM		  equ 84	  ; Viet Nam
-CTRY_YEMEN		  equ 967	  ; Yemen
-CTRY_ZIMBABWE		  equ 263	  ; Zimbabwe
+define LOCALE_SDECIMAL		0x0000000E
+define LOCALE_STHOUSAND		0x0000000F
+define LOCALE_SGROUPING		0x00000010
+define LOCALE_IDIGITS		0x00000011
+define LOCALE_ILZERO		0x00000012
+define LOCALE_INEGNUMBER	0x00001010
+define LOCALE_SNATIVEDIGITS	0x00000013
 
+define LOCALE_SCURRENCY		0x00000014
+define LOCALE_SINTLSYMBOL	0x00000015
+define LOCALE_SMONDECIMALSEP	0x00000016
+define LOCALE_SMONTHOUSANDSEP	0x00000017
+define LOCALE_SMONGROUPING	0x00000018
+define LOCALE_ICURRDIGITS	0x00000019
+define LOCALE_IINTLCURRDIGITS	0x0000001A
+define LOCALE_ICURRENCY		0x0000001B
+define LOCALE_INEGCURR		0x0000001C
 
-LOCALE_SLOCALIZEDDISPLAYNAME  equ 0x00000002
-if WINVER GE 0x0601
-LOCALE_ALLOW_NEUTRAL_NAMES    equ 0x08000000
-LOCALE_RETURN_GENITIVE_NAMES  equ 0x10000000
+define LOCALE_SDATE		0x0000001D
+define LOCALE_STIME		0x0000001E
+define LOCALE_SSHORTDATE	0x0000001F
+define LOCALE_SLONGDATE		0x00000020
+define LOCALE_STIMEFORMAT	0x00001003
+define LOCALE_IDATE		0x00000021
+define LOCALE_ILDATE		0x00000022
+define LOCALE_ITIME		0x00000023
+define LOCALE_ITIMEMARKPOSN	0x00001005
+define LOCALE_ICENTURY		0x00000024
+define LOCALE_ITLZERO		0x00000025
+define LOCALE_IDAYLZERO		0x00000026
+define LOCALE_IMONLZERO		0x00000027
+define LOCALE_S1159		0x00000028
+define LOCALE_S2359		0x00000029
+
+define LOCALE_ICALENDARTYPE	0x00001009
+define LOCALE_ICALENDAR		0x0000100B
+define LOCALE_IFIRSTDAYOFWEEK	0x0000100C
+define LOCALE_IFIRSTWEEKOFYEAR	0x0000100D
+
+define LOCALE_SDAYNAME1		0x0000002A
+define LOCALE_SDAYNAME2		0x0000002B
+define LOCALE_SDAYNAME3		0x0000002C
+define LOCALE_SDAYNAME4		0x0000002D
+define LOCALE_SDAYNAME5		0x0000002E
+define LOCALE_SDAYNAME6		0x0000002F
+define LOCALE_SDAYNAME7		0x00000030
+define LOCALE_SABBREVDAYNAME1	0x00000031
+define LOCALE_SABBREVDAYNAME2	0x00000032
+define LOCALE_SABBREVDAYNAME3	0x00000033
+define LOCALE_SABBREVDAYNAME4	0x00000034
+define LOCALE_SABBREVDAYNAME5	0x00000035
+define LOCALE_SABBREVDAYNAME6	0x00000036
+define LOCALE_SABBREVDAYNAME7	0x00000037
+define LOCALE_SMONTHNAME1	0x00000038
+define LOCALE_SMONTHNAME2	0x00000039
+define LOCALE_SMONTHNAME3	0x0000003A
+define LOCALE_SMONTHNAME4	0x0000003B
+define LOCALE_SMONTHNAME5	0x0000003C
+define LOCALE_SMONTHNAME6	0x0000003D
+define LOCALE_SMONTHNAME7	0x0000003E
+define LOCALE_SMONTHNAME8	0x0000003F
+define LOCALE_SMONTHNAME9	0x00000040
+define LOCALE_SMONTHNAME10	0x00000041
+define LOCALE_SMONTHNAME11	0x00000042
+define LOCALE_SMONTHNAME12	0x00000043
+define LOCALE_SMONTHNAME13	0x0000100E
+define LOCALE_SABBREVMONTHNAME1 0x00000044
+define LOCALE_SABBREVMONTHNAME2 0x00000045
+define LOCALE_SABBREVMONTHNAME3 0x00000046
+define LOCALE_SABBREVMONTHNAME4 0x00000047
+define LOCALE_SABBREVMONTHNAME5 0x00000048
+define LOCALE_SABBREVMONTHNAME6 0x00000049
+define LOCALE_SABBREVMONTHNAME7 0x0000004A
+define LOCALE_SABBREVMONTHNAME8 0x0000004B
+define LOCALE_SABBREVMONTHNAME9 0x0000004C
+define LOCALE_SABBREVMONTHNAME10 0x0000004D
+define LOCALE_SABBREVMONTHNAME11 0x0000004E
+define LOCALE_SABBREVMONTHNAME12 0x0000004F
+define LOCALE_SABBREVMONTHNAME13 0x0000100F
+
+define LOCALE_SPOSITIVESIGN	0x00000050
+define LOCALE_SNEGATIVESIGN	0x00000051
+define LOCALE_IPOSSIGNPOSN	0x00000052
+define LOCALE_INEGSIGNPOSN	0x00000053
+define LOCALE_IPOSSYMPRECEDES	0x00000054
+define LOCALE_IPOSSEPBYSPACE	0x00000055
+define LOCALE_INEGSYMPRECEDES	0x00000056
+define LOCALE_INEGSEPBYSPACE	0x00000057
+
+if(WINVER GE 0x0400)
+define LOCALE_FONTSIGNATURE	0x00000058
+define LOCALE_SISO639LANGNAME	0x00000059
+define LOCALE_SISO3166CTRYNAME	0x0000005A
 endif
 
-LOCALE_NOUSEROVERRIDE	      equ 0x80000000   ; do not use user overrides
-LOCALE_USE_CP_ACP	      equ 0x40000000   ; use the system ACP
-
-LOCALE_RETURN_NUMBER	      equ 0x20000000   ; return number instead of string
-
-
-LOCALE_ILANGUAGE	      equ 0x00000001   ; language id
-LOCALE_SLANGUAGE	      equ 0x00000002   ; localized name of language
-LOCALE_SENGLANGUAGE	      equ 0x00001001   ; English name of language
-LOCALE_SABBREVLANGNAME	      equ 0x00000003   ; abbreviated language name
-LOCALE_SNATIVELANGNAME	      equ 0x00000004   ; native name of language
-
-LOCALE_ICOUNTRY		      equ 0x00000005   ; country code
-LOCALE_SCOUNTRY		      equ 0x00000006   ; localized name of country
-LOCALE_SENGCOUNTRY	      equ 0x00001002   ; English name of country
-LOCALE_SABBREVCTRYNAME	      equ 0x00000007   ; abbreviated country name
-LOCALE_SNATIVECTRYNAME	      equ 0x00000008   ; native name of country
-
-LOCALE_IDEFAULTLANGUAGE	      equ 0x00000009   ; default language id
-LOCALE_IDEFAULTCOUNTRY	      equ 0x0000000A   ; default country code
-LOCALE_IDEFAULTCODEPAGE	      equ 0x0000000B   ; default oem code page
-LOCALE_IDEFAULTANSICODEPAGE   equ 0x00001004   ; default ansi code page
-LOCALE_IDEFAULTMACCODEPAGE    equ 0x00001011   ; default mac code page
-
-LOCALE_SLIST		      equ 0x0000000C   ; list item separator
-LOCALE_IMEASURE		      equ 0x0000000D   ; 0 = metric, 1 = US
-
-LOCALE_SDECIMAL		      equ 0x0000000E   ; decimal separator
-LOCALE_STHOUSAND	      equ 0x0000000F   ; thousand separator
-LOCALE_SGROUPING	      equ 0x00000010   ; digit grouping
-LOCALE_IDIGITS		      equ 0x00000011   ; number of fractional digits
-LOCALE_ILZERO		      equ 0x00000012   ; leading zeros for decimal
-LOCALE_INEGNUMBER	      equ 0x00001010   ; negative number mode
-LOCALE_SNATIVEDIGITS	      equ 0x00000013   ; native ascii 0-9
-
-LOCALE_SCURRENCY	      equ 0x00000014   ; local monetary symbol
-LOCALE_SINTLSYMBOL	      equ 0x00000015   ; intl monetary symbol
-LOCALE_SMONDECIMALSEP	      equ 0x00000016   ; monetary decimal separator
-LOCALE_SMONTHOUSANDSEP	      equ 0x00000017   ; monetary thousand separator
-LOCALE_SMONGROUPING	      equ 0x00000018   ; monetary grouping
-LOCALE_ICURRDIGITS	      equ 0x00000019   ; # local monetary digits
-LOCALE_IINTLCURRDIGITS	      equ 0x0000001A   ; # intl monetary digits
-LOCALE_ICURRENCY	      equ 0x0000001B   ; positive currency mode
-LOCALE_INEGCURR		      equ 0x0000001C   ; negative currency mode
-
-LOCALE_SDATE		      equ 0x0000001D   ; date separator
-LOCALE_STIME		      equ 0x0000001E   ; time separator
-LOCALE_SSHORTDATE	      equ 0x0000001F   ; short date format string
-LOCALE_SLONGDATE	      equ 0x00000020   ; long date format string
-LOCALE_STIMEFORMAT	      equ 0x00001003   ; time format string
-LOCALE_IDATE		      equ 0x00000021   ; short date format ordering
-LOCALE_ILDATE		      equ 0x00000022   ; long date format ordering
-LOCALE_ITIME		      equ 0x00000023   ; time format specifier
-LOCALE_ITIMEMARKPOSN	      equ 0x00001005   ; time marker position
-LOCALE_ICENTURY		      equ 0x00000024   ; century format specifier (short date)
-LOCALE_ITLZERO		      equ 0x00000025   ; leading zeros in time field
-LOCALE_IDAYLZERO	      equ 0x00000026   ; leading zeros in day field (short date)
-LOCALE_IMONLZERO	      equ 0x00000027   ; leading zeros in month field (short date)
-LOCALE_S1159		      equ 0x00000028   ; AM designator
-LOCALE_S2359		      equ 0x00000029   ; PM designator
-
-LOCALE_ICALENDARTYPE	      equ 0x00001009	  ; type of calendar specifier
-LOCALE_IOPTIONALCALENDAR      equ 0x0000100B	  ; additional calendar types specifier
-LOCALE_IFIRSTDAYOFWEEK	      equ 0x0000100C	  ; first day of week specifier
-LOCALE_IFIRSTWEEKOFYEAR	      equ 0x0000100D	  ; first week of year specifier
-
-LOCALE_SDAYNAME1	      equ 0x0000002A	  ; long name for Monday
-LOCALE_SDAYNAME2	      equ 0x0000002B	  ; long name for Tuesday
-LOCALE_SDAYNAME3	      equ 0x0000002C	  ; long name for Wednesday
-LOCALE_SDAYNAME4	      equ 0x0000002D	  ; long name for Thursday
-LOCALE_SDAYNAME5	      equ 0x0000002E	  ; long name for Friday
-LOCALE_SDAYNAME6	      equ 0x0000002F	  ; long name for Saturday
-LOCALE_SDAYNAME7	      equ 0x00000030	  ; long name for Sunday
-LOCALE_SABBREVDAYNAME1	      equ 0x00000031	  ; abbreviated name for Monday
-LOCALE_SABBREVDAYNAME2	      equ 0x00000032	  ; abbreviated name for Tuesday
-LOCALE_SABBREVDAYNAME3	      equ 0x00000033	  ; abbreviated name for Wednesday
-LOCALE_SABBREVDAYNAME4	      equ 0x00000034	  ; abbreviated name for Thursday
-LOCALE_SABBREVDAYNAME5	      equ 0x00000035	  ; abbreviated name for Friday
-LOCALE_SABBREVDAYNAME6	      equ 0x00000036	  ; abbreviated name for Saturday
-LOCALE_SABBREVDAYNAME7	      equ 0x00000037	  ; abbreviated name for Sunday
-LOCALE_SMONTHNAME1	      equ 0x00000038	  ; long name for January
-LOCALE_SMONTHNAME2	      equ 0x00000039	  ; long name for February
-LOCALE_SMONTHNAME3	      equ 0x0000003A	  ; long name for March
-LOCALE_SMONTHNAME4	      equ 0x0000003B	  ; long name for April
-LOCALE_SMONTHNAME5	      equ 0x0000003C	  ; long name for May
-LOCALE_SMONTHNAME6	      equ 0x0000003D	  ; long name for June
-LOCALE_SMONTHNAME7	      equ 0x0000003E	  ; long name for July
-LOCALE_SMONTHNAME8	      equ 0x0000003F	  ; long name for August
-LOCALE_SMONTHNAME9	      equ 0x00000040	  ; long name for September
-LOCALE_SMONTHNAME10	      equ 0x00000041	  ; long name for October
-LOCALE_SMONTHNAME11	      equ 0x00000042	  ; long name for November
-LOCALE_SMONTHNAME12	      equ 0x00000043	  ; long name for December
-LOCALE_SMONTHNAME13	      equ 0x0000100E	  ; long name for 13th month (if exists)
-LOCALE_SABBREVMONTHNAME1      equ 0x00000044	  ; abbreviated name for January
-LOCALE_SABBREVMONTHNAME2      equ 0x00000045	  ; abbreviated name for February
-LOCALE_SABBREVMONTHNAME3      equ 0x00000046	  ; abbreviated name for March
-LOCALE_SABBREVMONTHNAME4      equ 0x00000047	  ; abbreviated name for April
-LOCALE_SABBREVMONTHNAME5      equ 0x00000048	  ; abbreviated name for May
-LOCALE_SABBREVMONTHNAME6      equ 0x00000049	  ; abbreviated name for June
-LOCALE_SABBREVMONTHNAME7      equ 0x0000004A	  ; abbreviated name for July
-LOCALE_SABBREVMONTHNAME8      equ 0x0000004B	  ; abbreviated name for August
-LOCALE_SABBREVMONTHNAME9      equ 0x0000004C	  ; abbreviated name for September
-LOCALE_SABBREVMONTHNAME10     equ 0x0000004D	  ; abbreviated name for October
-LOCALE_SABBREVMONTHNAME11     equ 0x0000004E	  ; abbreviated name for November
-LOCALE_SABBREVMONTHNAME12     equ 0x0000004F	  ; abbreviated name for December
-LOCALE_SABBREVMONTHNAME13     equ 0x0000100F	  ; abbreviated name for 13th month (if exists)
-
-LOCALE_SPOSITIVESIGN	      equ 0x00000050	  ; positive sign
-LOCALE_SNEGATIVESIGN	      equ 0x00000051	  ; negative sign
-LOCALE_IPOSSIGNPOSN	      equ 0x00000052	  ; positive sign position
-LOCALE_INEGSIGNPOSN	      equ 0x00000053	  ; negative sign position
-LOCALE_IPOSSYMPRECEDES	      equ 0x00000054	  ; mon sym precedes pos amt
-LOCALE_IPOSSEPBYSPACE	      equ 0x00000055	  ; mon sym sep by space from pos amt
-LOCALE_INEGSYMPRECEDES	      equ 0x00000056	  ; mon sym precedes neg amt
-LOCALE_INEGSEPBYSPACE	      equ 0x00000057	  ; mon sym sep by space from neg amt
-
-LOCALE_FONTSIGNATURE	      equ 0x00000058	  ; font signature
-LOCALE_SISO639LANGNAME	      equ 0x00000059	  ; ISO abbreviated language name
-LOCALE_SISO3166CTRYNAME	      equ 0x0000005A	  ; ISO abbreviated country name
-
-LOCALE_IDEFAULTEBCDICCODEPAGE equ 0x00001012	  ; default ebcdic code page
-LOCALE_IPAPERSIZE	      equ 0x0000100A	  ; 0 = letter, 1 = a4, 2 = legal, 3 = a3
-LOCALE_SENGCURRNAME	      equ 0x00001007	  ; english name of currency
-LOCALE_SNATIVECURRNAME	      equ 0x00001008	  ; native name of currency
-LOCALE_SYEARMONTH	      equ 0x00001006	  ; year month format string
-LOCALE_SSORTNAME	      equ 0x00001013	  ; sort name
-LOCALE_IDIGITSUBSTITUTION     equ 0x00001014	  ; 0 = none, 1 = context, 2 = native digit
-
-if WINVER GE 0x0600
-LOCALE_SNAME			equ 0x0000005c
-LOCALE_SDURATION		equ 0x0000005d
-LOCALE_SKEYBOARDSTOINSTALL	equ 0x0000005e
-LOCALE_SSHORTESTDAYNAME1	equ 0x00000060
-LOCALE_SSHORTESTDAYNAME2	equ 0x00000061
-LOCALE_SSHORTESTDAYNAME3	equ 0x00000062
-LOCALE_SSHORTESTDAYNAME4	equ 0x00000063
-LOCALE_SSHORTESTDAYNAME5	equ 0x00000064
-LOCALE_SSHORTESTDAYNAME6	equ 0x00000065
-LOCALE_SSHORTESTDAYNAME7	equ 0x00000066
-LOCALE_SISO639LANGNAME2		equ 0x00000067
-LOCALE_SISO3166CTRYNAME2	equ 0x00000068
-LOCALE_SNAN			equ 0x00000069
-LOCALE_SPOSINFINITY		equ 0x0000006a
-LOCALE_SNEGINFINITY		equ 0x0000006b
-LOCALE_SSCRIPTS			equ 0x0000006c
-LOCALE_SPARENT			equ 0x0000006d
-LOCALE_SCONSOLEFALLBACKNAME	equ 0x0000006e
-LOCALE_SLANGDISPLAYNAME		equ 0x0000006f
-LOCALE_SLOCALIZEDLANGUAGENAME	equ 0x0000006f
+if(WINVER GE 0x0500)
+define LOCALE_IDEFAULTEBCDICCODEPAGE 0x00001012
+define LOCALE_IPAPERSIZE	0x0000100A
+define LOCALE_SENGCURRNAME	0x00001007
+define LOCALE_SNATIVECURRNAME	0x00001008
+define LOCALE_SYEARMONTH	0x00001006
+define LOCALE_SSORTNAME		0x00001013
+define LOCALE_IDIGITSUBSTITUTION 0x00001014
 endif
 
-if WINVER GE 0x0601
-LOCALE_IREADINGLAYOUT		equ 0x00000070
-LOCALE_INEUTRAL			equ 0x00000071
-LOCALE_SENGLISHDISPLAYNAME	equ 0x00000072
-LOCALE_SNATIVEDISPLAYNAME	equ 0x00000073
-LOCALE_INEGATIVEPERCENT		equ 0x00000074
-LOCALE_IPOSITIVEPERCENT		equ 0x00000075
-LOCALE_SPERCENT			equ 0x00000076
-LOCALE_SPERMILLE		equ 0x00000077
-LOCALE_SMONTHDAY		equ 0x00000078
-LOCALE_SSHORTTIME		equ 0x00000079
-LOCALE_SOPENTYPELANGUAGETAG	equ 0x0000007a
-LOCALE_SSORTLOCALE		equ 0x0000007b
+if (WINVER GE 0x0600)
+define LOCALE_SNAME		0x0000005c
+define LOCALE_SDURATION		0x0000005d
+define LOCALE_SKEYBOARDSTOINSTALL 0x0000005e
+define LOCALE_SSHORTESTDAYNAME1 0x00000060
+define LOCALE_SSHORTESTDAYNAME2 0x00000061
+define LOCALE_SSHORTESTDAYNAME3 0x00000062
+define LOCALE_SSHORTESTDAYNAME4 0x00000063
+define LOCALE_SSHORTESTDAYNAME5 0x00000064
+define LOCALE_SSHORTESTDAYNAME6 0x00000065
+define LOCALE_SSHORTESTDAYNAME7 0x00000066
+define LOCALE_SISO639LANGNAME2	0x00000067
+define LOCALE_SISO3166CTRYNAME2 0x00000068
+define LOCALE_SNAN		0x00000069
+define LOCALE_SPOSINFINITY	0x0000006a
+define LOCALE_SNEGINFINITY	0x0000006b
+define LOCALE_SSCRIPTS		0x0000006c
+define LOCALE_SPARENT		0x0000006d
+define LOCALE_SCONSOLEFALLBACKNAME 0x0000006e
 endif
 
-TIME_NOMINUTESORSECONDS equ 0x00000001 ; do not use minutes or seconds
-TIME_NOSECONDS		equ 0x00000002 ; do not use seconds
-TIME_NOTIMEMARKER	equ 0x00000004 ; do not use time marker
-TIME_FORCE24HOURFORMAT	equ 0x00000008 ; always use 24 hour format
-
-
-DATE_SHORTDATE		equ 0x00000001 ; use short date picture
-DATE_LONGDATE		equ 0x00000002 ; use long date picture
-DATE_USE_ALT_CALENDAR	equ 0x00000004 ; use alternate calendar (if any)
-
-DATE_YEARMONTH		equ 0x00000008 ; use year month picture
-DATE_LTRREADING		equ 0x00000010 ; add marks for left to right reading order layout
-DATE_RTLREADING		equ 0x00000020 ; add marks for right to left reading order layout
-if WINVER GE 0x0601
-DATE_AUTOLAYOUT		equ 0x00000040
+if (WINVER GE _WIN32_WINNT_WIN7)
+define LOCALE_IREADINGLAYOUT	0x00000070
+define LOCALE_INEUTRAL		0x00000071
+define LOCALE_INEGATIVEPERCENT	0x00000074
+define LOCALE_IPOSITIVEPERCENT	0x00000075
+define LOCALE_SPERCENT		0x00000076
+define LOCALE_SPERMILLE		0x00000077
+define LOCALE_SMONTHDAY		0x00000078
+define LOCALE_SSHORTTIME	0x00000079
+define LOCALE_SOPENTYPELANGUAGETAG 0x0000007a
+define LOCALE_SSORTLOCALE	0x0000007b
 endif
 
-CAL_NOUSEROVERRIDE	equ LOCALE_NOUSEROVERRIDE
-CAL_USE_CP_ACP		equ LOCALE_USE_CP_ACP
-CAL_RETURN_NUMBER	equ LOCALE_RETURN_NUMBER
-if WINVER GE 0x0601
-CAL_RETURN_GENITIVE_NAMES equ LOCALE_RETURN_GENITIVE_NAMES
+if (WINVER GE _WIN32_WINNT_WIN8)
+endif
+if (WINVER GE _WIN32_WINNT_WINBLUE)
 endif
 
-CAL_ICALINTVALUE	  equ 0x00000001 ; calendar type
-CAL_SCALNAME		  equ 0x00000002 ; native name of calendar
-CAL_IYEAROFFSETRANGE	  equ 0x00000003 ; starting years of eras
-CAL_SERASTRING		  equ 0x00000004 ; era name for IYearOffsetRanges
-CAL_SSHORTDATE		  equ 0x00000005 ; short date format string
-CAL_SLONGDATE		  equ 0x00000006 ; long date format string
-CAL_SDAYNAME1		  equ 0x00000007 ; native name for Monday
-CAL_SDAYNAME2		  equ 0x00000008 ; native name for Tuesday
-CAL_SDAYNAME3		  equ 0x00000009 ; native name for Wednesday
-CAL_SDAYNAME4		  equ 0x0000000a ; native name for Thursday
-CAL_SDAYNAME5		  equ 0x0000000b ; native name for Friday
-CAL_SDAYNAME6		  equ 0x0000000c ; native name for Saturday
-CAL_SDAYNAME7		  equ 0x0000000d ; native name for Sunday
-CAL_SABBREVDAYNAME1	  equ 0x0000000e ; abbreviated name for Monday
-CAL_SABBREVDAYNAME2	  equ 0x0000000f ; abbreviated name for Tuesday
-CAL_SABBREVDAYNAME3	  equ 0x00000010 ; abbreviated name for Wednesday
-CAL_SABBREVDAYNAME4	  equ 0x00000011 ; abbreviated name for Thursday
-CAL_SABBREVDAYNAME5	  equ 0x00000012 ; abbreviated name for Friday
-CAL_SABBREVDAYNAME6	  equ 0x00000013 ; abbreviated name for Saturday
-CAL_SABBREVDAYNAME7	  equ 0x00000014 ; abbreviated name for Sunday
-CAL_SMONTHNAME1		  equ 0x00000015 ; native name for January
-CAL_SMONTHNAME2		  equ 0x00000016 ; native name for February
-CAL_SMONTHNAME3		  equ 0x00000017 ; native name for March
-CAL_SMONTHNAME4		  equ 0x00000018 ; native name for April
-CAL_SMONTHNAME5		  equ 0x00000019 ; native name for May
-CAL_SMONTHNAME6		  equ 0x0000001a ; native name for June
-CAL_SMONTHNAME7		  equ 0x0000001b ; native name for July
-CAL_SMONTHNAME8		  equ 0x0000001c ; native name for August
-CAL_SMONTHNAME9		  equ 0x0000001d ; native name for September
-CAL_SMONTHNAME10	  equ 0x0000001e ; native name for October
-CAL_SMONTHNAME11	  equ 0x0000001f ; native name for November
-CAL_SMONTHNAME12	  equ 0x00000020 ; native name for December
-CAL_SMONTHNAME13	  equ 0x00000021 ; native name for 13th month (if any)
-CAL_SABBREVMONTHNAME1	  equ 0x00000022 ; abbreviated name for January
-CAL_SABBREVMONTHNAME2	  equ 0x00000023 ; abbreviated name for February
-CAL_SABBREVMONTHNAME3	  equ 0x00000024 ; abbreviated name for March
-CAL_SABBREVMONTHNAME4	  equ 0x00000025 ; abbreviated name for April
-CAL_SABBREVMONTHNAME5	  equ 0x00000026 ; abbreviated name for May
-CAL_SABBREVMONTHNAME6	  equ 0x00000027 ; abbreviated name for June
-CAL_SABBREVMONTHNAME7	  equ 0x00000028 ; abbreviated name for July
-CAL_SABBREVMONTHNAME8	  equ 0x00000029 ; abbreviated name for August
-CAL_SABBREVMONTHNAME9	  equ 0x0000002a ; abbreviated name for September
-CAL_SABBREVMONTHNAME10	  equ 0x0000002b ; abbreviated name for October
-CAL_SABBREVMONTHNAME11	  equ 0x0000002c ; abbreviated name for November
-CAL_SABBREVMONTHNAME12	  equ 0x0000002d ; abbreviated name for December
-CAL_SABBREVMONTHNAME13	  equ 0x0000002e ; abbreviated name for 13th month (if any)
+define TIME_NOMINUTESORSECONDS	0x00000001
+define TIME_NOSECONDS		0x00000002
+define TIME_NOTIMEMARKER	0x00000004
+define TIME_FORCE24HOURFORMAT	0x00000008
 
-CAL_SYEARMONTH		equ 0x0000002f ; year month format string
-CAL_ITWODIGITYEARMAX	equ 0x00000030
-if WINVER GE 0x0600
-CAL_SSHORTESTDAYNAME1	equ 0x00000031
-CAL_SSHORTESTDAYNAME2	equ 0x00000032
-CAL_SSHORTESTDAYNAME3	equ 0x00000033
-CAL_SSHORTESTDAYNAME4	equ 0x00000034
-CAL_SSHORTESTDAYNAME5	equ 0x00000035
-CAL_SSHORTESTDAYNAME6	equ 0x00000036
-CAL_SSHORTESTDAYNAME7	equ 0x00000037
-endif
-if WINVER GE 0x0601
-CAL_SMONTHDAY		equ 0x00000038
-CAL_SABBREVERASTRING	equ 0x00000039
+define DATE_SHORTDATE		0x00000001
+define DATE_LONGDATE		0x00000002
+define DATE_USE_ALT_CALENDAR	0x00000004
+
+if(WINVER GE 0x0500)
+define DATE_YEARMONTH		0x00000008
+define DATE_LTRREADING		0x00000010
+define DATE_RTLREADING		0x00000020
 endif
 
-ENUM_ALL_CALENDARS	equ 0xffffffff
+if (WINVER GE _WIN32_WINNT_WIN7)
+define DATE_AUTOLAYOUT		0x00000040
+endif
 
 
-CAL_GREGORIAN		       equ 1
-CAL_GREGORIAN_US	       equ 2
-CAL_JAPAN		       equ 3
-CAL_TAIWAN		       equ 4
-CAL_KOREA		       equ 5
-CAL_HIJRI		       equ 6
-CAL_THAI		       equ 7
-CAL_HEBREW		       equ 8
-CAL_GREGORIAN_ME_FRENCH	       equ 9
-CAL_GREGORIAN_ARABIC	       equ 10
-CAL_GREGORIAN_XLIT_ENGLISH     equ 11
-CAL_GREGORIAN_XLIT_FRENCH      equ 12
+if(WINVER GE 0x0500)
+define CAL_NOUSEROVERRIDE	LOCALE_NOUSEROVERRIDE
+define CAL_USE_CP_ACP		LOCALE_USE_CP_ACP
+define CAL_RETURN_NUMBER	LOCALE_RETURN_NUMBER
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+define CAL_RETURN_GENITIVE_NAMES LOCALE_RETURN_GENITIVE_NAMES
+endif
+
+define CAL_ICALINTVALUE		0x00000001
+define CAL_SCALNAME		0x00000002
+define CAL_IYEAROFFSETRANGE	0x00000003
+define CAL_SERASTRING		0x00000004
+define CAL_SSHORTDATE		0x00000005
+define CAL_SLONGDATE		0x00000006
+define CAL_SDAYNAME1		0x00000007
+define CAL_SDAYNAME2		0x00000008
+define CAL_SDAYNAME3		0x00000009
+define CAL_SDAYNAME4		0x0000000a
+define CAL_SDAYNAME5		0x0000000b
+define CAL_SDAYNAME6		0x0000000c
+define CAL_SDAYNAME7		0x0000000d
+define CAL_SABBREVDAYNAME1	0x0000000e
+define CAL_SABBREVDAYNAME2	0x0000000f
+define CAL_SABBREVDAYNAME3	0x00000010
+define CAL_SABBREVDAYNAME4	0x00000011
+define CAL_SABBREVDAYNAME5	0x00000012
+define CAL_SABBREVDAYNAME6	0x00000013
+define CAL_SABBREVDAYNAME7	0x00000014
+define CAL_SMONTHNAME1		0x00000015
+define CAL_SMONTHNAME2		0x00000016
+define CAL_SMONTHNAME3		0x00000017
+define CAL_SMONTHNAME4		0x00000018
+define CAL_SMONTHNAME5		0x00000019
+define CAL_SMONTHNAME6		0x0000001a
+define CAL_SMONTHNAME7		0x0000001b
+define CAL_SMONTHNAME8		0x0000001c
+define CAL_SMONTHNAME9		0x0000001d
+define CAL_SMONTHNAME10		0x0000001e
+define CAL_SMONTHNAME11		0x0000001f
+define CAL_SMONTHNAME12		0x00000020
+define CAL_SMONTHNAME13		0x00000021
+define CAL_SABBREVMONTHNAME1	0x00000022
+define CAL_SABBREVMONTHNAME2	0x00000023
+define CAL_SABBREVMONTHNAME3	0x00000024
+define CAL_SABBREVMONTHNAME4	0x00000025
+define CAL_SABBREVMONTHNAME5	0x00000026
+define CAL_SABBREVMONTHNAME6	0x00000027
+define CAL_SABBREVMONTHNAME7	0x00000028
+define CAL_SABBREVMONTHNAME8	0x00000029
+define CAL_SABBREVMONTHNAME9	0x0000002a
+define CAL_SABBREVMONTHNAME10	0x0000002b
+define CAL_SABBREVMONTHNAME11	0x0000002c
+define CAL_SABBREVMONTHNAME12	0x0000002d
+define CAL_SABBREVMONTHNAME13	0x0000002e
+
+if(WINVER GE 0x0500)
+define CAL_SYEARMONTH		0x0000002f
+define CAL_ITWODIGITYEARMAX	0x00000030
+endif
+
+if (WINVER GE 0x0600)
+define CAL_SSHORTESTDAYNAME1	0x00000031
+define CAL_SSHORTESTDAYNAME2	0x00000032
+define CAL_SSHORTESTDAYNAME3	0x00000033
+define CAL_SSHORTESTDAYNAME4	0x00000034
+define CAL_SSHORTESTDAYNAME5	0x00000035
+define CAL_SSHORTESTDAYNAME6	0x00000036
+define CAL_SSHORTESTDAYNAME7	0x00000037
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+define CAL_SMONTHDAY		0x00000038
+define CAL_SABBREVERASTRING	0x00000039
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+endif
+
+define ENUM_ALL_CALENDARS	0xffffffff
+
+
+define CAL_GREGORIAN		1
+define CAL_GREGORIAN_US		2
+define CAL_JAPAN		3
+define CAL_TAIWAN		4
+define CAL_KOREA		5
+define CAL_HIJRI		6
+define CAL_THAI			7
+define CAL_HEBREW		8
+define CAL_GREGORIAN_ME_FRENCH	9
+define CAL_GREGORIAN_ARABIC	10
+define CAL_GREGORIAN_XLIT_ENGLISH 11
+define CAL_GREGORIAN_XLIT_FRENCH 12
+define CAL_UMALQURA		23
+
+
+define LGRPID_WESTERN_EUROPE	0x0001
+define LGRPID_CENTRAL_EUROPE	0x0002
+define LGRPID_BALTIC		0x0003
+define LGRPID_GREEK		0x0004
+define LGRPID_CYRILLIC		0x0005
+define LGRPID_TURKIC		0x0006
+define LGRPID_TURKISH		0x0006
+define LGRPID_JAPANESE		0x0007
+define LGRPID_KOREAN		0x0008
+define LGRPID_TRADITIONAL_CHINESE 0x0009
+define LGRPID_SIMPLIFIED_CHINESE 0x000a
+define LGRPID_THAI		0x000b
+define LGRPID_HEBREW		0x000c
+define LGRPID_ARABIC		0x000d
+define LGRPID_VIETNAMESE	0x000e
+define LGRPID_INDIC		0x000f
+define LGRPID_GEORGIAN		0x0010
+define LGRPID_ARMENIAN		0x0011
+
+
+if (WINVER GE 0x0600)
+define MUI_LANGUAGE_ID			0x4
+define MUI_LANGUAGE_NAME		0x8
+define MUI_MERGE_SYSTEM_FALLBACK	0x10
+define MUI_MERGE_USER_FALLBACK		0x20
+define MUI_UI_FALLBACK			MUI_MERGE_SYSTEM_FALLBACK OR MUI_MERGE_USER_FALLBACK
+define MUI_THREAD_LANGUAGES		0x40
+define MUI_CONSOLE_FILTER		0x100
+define MUI_COMPLEX_SCRIPT_FILTER	0x200
+define MUI_RESET_FILTERS		0x001
+define MUI_USER_PREFERRED_UI_LANGUAGES	0x10
+define MUI_USE_INSTALLED_LANGUAGES	0x20
+define MUI_USE_SEARCH_ALL_LANGUAGES	0x40
+define MUI_LANG_NEUTRAL_PE_FILE		0x100
+define MUI_NON_LANG_NEUTRAL_FILE	0x200
+define MUI_MACHINE_LANGUAGE_SETTINGS	0x400
+define MUI_FILETYPE_NOT_LANGUAGE_NEUTRAL 0x001
+define MUI_FILETYPE_LANGUAGE_NEUTRAL_MAIN 0x002
+define MUI_FILETYPE_LANGUAGE_NEUTRAL_MUI 0x004
+define MUI_QUERY_TYPE			0x001
+define MUI_QUERY_CHECKSUM		0x002
+define MUI_QUERY_LANGUAGE_NAME		0x004
+define MUI_QUERY_RESOURCE_TYPES		0x008
+define MUI_FILEINFO_VERSION		0x001
+
+define MUI_FULL_LANGUAGE		0x01
+define MUI_PARTIAL_LANGUAGE		0x02
+define MUI_LIP_LANGUAGE			0x04
+define MUI_LANGUAGE_INSTALLED		0x20
+define MUI_LANGUAGE_LICENSED		0x40
+
+
+define MUI_CALLBACK_ALL_FLAGS		MUI_CALLBACK_FLAG_UPGRADED_INSTALLATION
+
+endif
 
 
 LGRPID			typedef DWORD
 LCTYPE			typedef DWORD
 CALTYPE			typedef DWORD
 CALID			typedef DWORD
-WCHAR			typedef WORD
 
 CPINFO			STRUC
 MaxCharSize		UINT ?
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
-LeadByte		SBYTE MAX_LEADBYTES dup(?)
+DefaultChar		db MAX_DEFAULTCHAR dup(?)
+LeadByte		db MAX_LEADBYTES dup(?)
 CPINFO			ENDS
-LPCPINFO		TYPEDEF PTR CPINFO
+LPCPINFO		typedef ptr CPINFO
 
 CPINFOEXA		STRUC
 MaxCharSize		UINT ?
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
-LeadByte		SBYTE MAX_LEADBYTES dup(?)
+DefaultChar		db MAX_DEFAULTCHAR dup(?)
+LeadByte		db MAX_LEADBYTES dup(?)
 UnicodeDefaultChar	WCHAR ?
 CodePage		UINT ?
-CodePageName		SBYTE MAX_PATH dup(?)
+CodePageName		CHAR MAX_PATH dup(?)
 CPINFOEXA		ENDS
-LPCPINFOEXA		TYPEDEF PTR CPINFOEXA
-
+LPCPINFOEXA		typedef ptr CPINFOEXA
 CPINFOEXW		STRUC
 MaxCharSize		UINT ?
-DefaultChar		SBYTE MAX_DEFAULTCHAR dup(?)
-LeadByte		SBYTE MAX_LEADBYTES dup(?)
+DefaultChar		db MAX_DEFAULTCHAR dup(?)
+LeadByte		db MAX_LEADBYTES dup(?)
 UnicodeDefaultChar	WCHAR ?
 CodePage		UINT ?
 CodePageName		WCHAR MAX_PATH dup(?)
 CPINFOEXW		ENDS
-LPCPINFOEXW		TYPEDEF PTR CPINFOEXW
-
+LPCPINFOEXW		typedef ptr CPINFOEXW
 ifdef _UNICODE
-CPINFOEX	TYPEDEF CPINFOEXW
-LPCPINFOEX	TYPEDEF LPCPINFOEXW
+CPINFOEX		typedef CPINFOEXW
+LPCPINFOEX		typedef LPCPINFOEXW
 else
-CPINFOEX	TYPEDEF CPINFOEXA
-LPCPINFOEX	TYPEDEF LPCPINFOEXA
+CPINFOEX		typedef CPINFOEXA
+LPCPINFOEX		typedef LPCPINFOEXA
 endif
 
-NUMBERFMTA	STRUC
-NumDigits	UINT ?
-LeadingZero	UINT ?
-Grouping	UINT ?
-lpDecimalSep	LPSTR ?
-lpThousandSep	LPSTR ?
-NegativeOrder	UINT ?
-NUMBERFMTA	ENDS
-LPNUMBERFMTA	TYPEDEF PTR NUMBERFMTA
 
-NUMBERFMTW	STRUC
-NumDigits	UINT ?
-LeadingZero	UINT ?
-Grouping	UINT ?
-lpDecimalSep	LPWSTR ?
-lpThousandSep	LPWSTR ?
-NegativeOrder	UINT ?
-NUMBERFMTW	ENDS
-LPNUMBERFMTW	TYPEDEF PTR NUMBERFMTW
-
+NUMBERFMTA		STRUC
+NumDigits		UINT ?
+LeadingZero		UINT ?
+Grouping		UINT ?
+lpDecimalSep		LPSTR ?
+lpThousandSep		LPSTR ?
+NegativeOrder		UINT ?
+NUMBERFMTA		ENDS
+LPNUMBERFMTA		typedef ptr NUMBERFMTA
+NUMBERFMTW		STRUC
+NumDigits		UINT ?
+LeadingZero		UINT ?
+Grouping		UINT ?
+lpDecimalSep		LPWSTR ?
+lpThousandSep		LPWSTR ?
+NegativeOrder		UINT ?
+NUMBERFMTW		ENDS
+LPNUMBERFMTW		typedef ptr NUMBERFMTW
 ifdef _UNICODE
-NUMBERFMT	TYPEDEF NUMBERFMTW
-LPNUMBERFMT	TYPEDEF LPNUMBERFMTW
+NUMBERFMT		typedef NUMBERFMTW
+LPNUMBERFMT		typedef LPNUMBERFMTW
 else
-NUMBERFMT	TYPEDEF NUMBERFMTA
-LPNUMBERFMT	TYPEDEF LPNUMBERFMTA
+NUMBERFMT		typedef NUMBERFMTA
+LPNUMBERFMT		typedef LPNUMBERFMTA
 endif
 
 
@@ -645,8 +752,7 @@ NegativeOrder		UINT ?
 PositiveOrder		UINT ?
 lpCurrencySymbol	LPSTR ?
 CURRENCYFMTA		ENDS
-LPCURRENCYFMTA		TYPEDEF PTR CURRENCYFMTA
-
+LPCURRENCYFMTA		typedef ptr CURRENCYFMTA
 CURRENCYFMTW		STRUC
 NumDigits		UINT ?
 LeadingZero		UINT ?
@@ -657,605 +763,1168 @@ NegativeOrder		UINT ?
 PositiveOrder		UINT ?
 lpCurrencySymbol	LPWSTR ?
 CURRENCYFMTW		ENDS
-LPCURRENCYFMTW		TYPEDEF PTR CURRENCYFMTW
-
-ifdef _UNICODE
-CURRENCYFMT	TYPEDEF CURRENCYFMTW
-LPCURRENCYFMT	TYPEDEF LPCURRENCYFMTW
+LPCURRENCYFMTW		typedef ptr CURRENCYFMTW
+ifdef UNICODE
+CURRENCYFMT		typedef CURRENCYFMTW
+LPCURRENCYFMT		typedef LPCURRENCYFMTW
 else
-CURRENCYFMT	TYPEDEF CURRENCYFMTA
-LPCURRENCYFMT	TYPEDEF LPCURRENCYFMTA
+CURRENCYFMT		typedef CURRENCYFMTA
+LPCURRENCYFMT		typedef LPCURRENCYFMTA
 endif
 
 
-CALLBACKA1	TYPEDEF PROTO :LPSTR
-CALLBACKA2	TYPEDEF PROTO :LPSTR, :CALID
-CALLBACKW1	TYPEDEF PROTO :LPWSTR
-CALLBACKW2	TYPEDEF PROTO :LPWSTR, :CALID
-
-LPCALLBACKA1	TYPEDEF PTR CALLBACKA1
-LPCALLBACKA2	TYPEDEF PTR CALLBACKA2
-LPCALLBACKW1	TYPEDEF PTR CALLBACKW1
-LPCALLBACKW2	TYPEDEF PTR CALLBACKW2
-
-LOCALE_ENUMPROCA	TYPEDEF LPCALLBACKA1
-CODEPAGE_ENUMPROCA	TYPEDEF LPCALLBACKA1
-DATEFMT_ENUMPROCA	TYPEDEF LPCALLBACKA1
-DATEFMT_ENUMPROCEXA	TYPEDEF LPCALLBACKA2
-TIMEFMT_ENUMPROCA	TYPEDEF LPCALLBACKA1
-CALINFO_ENUMPROCA	TYPEDEF LPCALLBACKA1
-CALINFO_ENUMPROCEXA	TYPEDEF LPCALLBACKA2
-
-LOCALE_ENUMPROCW	TYPEDEF LPCALLBACKW1
-CODEPAGE_ENUMPROCW	TYPEDEF LPCALLBACKW1
-DATEFMT_ENUMPROCW	TYPEDEF LPCALLBACKW1
-DATEFMT_ENUMPROCEXW	TYPEDEF LPCALLBACKW2
-TIMEFMT_ENUMPROCW	TYPEDEF LPCALLBACKW1
-CALINFO_ENUMPROCW	TYPEDEF LPCALLBACKW1
-CALINFO_ENUMPROCEXW	TYPEDEF LPCALLBACKW2
-
-ifdef _UNICODE
-LOCALE_ENUMPROC	    equ LOCALE_ENUMPROCW
-CODEPAGE_ENUMPROC   equ CODEPAGE_ENUMPROCW
-DATEFMT_ENUMPROC    equ DATEFMT_ENUMPROCW
-DATEFMT_ENUMPROCEX  equ DATEFMT_ENUMPROCEXW
-TIMEFMT_ENUMPROC    equ TIMEFMT_ENUMPROCW
-CALINFO_ENUMPROC    equ CALINFO_ENUMPROCW
-CALINFO_ENUMPROCEX  equ CALINFO_ENUMPROCEXW
-else
-LOCALE_ENUMPROC	    equ LOCALE_ENUMPROCA
-CODEPAGE_ENUMPROC   equ CODEPAGE_ENUMPROCA
-DATEFMT_ENUMPROC    equ DATEFMT_ENUMPROCA
-DATEFMT_ENUMPROCEX  equ DATEFMT_ENUMPROCEXA
-TIMEFMT_ENUMPROC    equ TIMEFMT_ENUMPROCA
-CALINFO_ENUMPROC    equ CALINFO_ENUMPROCA
-CALINFO_ENUMPROCEX  equ CALINFO_ENUMPROCEXA
-endif
-
-IsValidCodePage proto WINAPI \
-	CodePage:	UINT
-
-GetACP proto WINAPI
-
-GetOEMCP proto WINAPI
-
-GetCPInfo proto WINAPI \
-	CodePage:	UINT,
-	lpCPInfo:	LPCPINFO
-
-GetCPInfoExA proto WINAPI \
-	CodePage:	UINT,
-	dwFlags:	DWORD,
-	lpCPInfoEx:	LPCPINFOEXA
-
-GetCPInfoExW proto WINAPI \
-	CodePage:	UINT,
-	dwFlags:	DWORD,
-	lpCPInfoEx:	LPCPINFOEXW
-
-ifdef _UNICODE
-GetCPInfoEx  equ <GetCPInfoExW>
-else
-GetCPInfoEx  equ <GetCPInfoExA>
-endif
-
-IsDBCSLeadByte proto WINAPI \
-	TestChar:	UINT ; BYTE
-
-IsDBCSLeadByteEx proto WINAPI \
-	CodePage:	UINT,
-	TestChar:	UINT ; BYTE
-
-MultiByteToWideChar proto WINAPI \
-	CodePage:	UINT,
-	dwFlags:	DWORD,
-	lpMultiByteStr: LPSTR,
-	cchMultiByte:	SINT,
-	lpWideCharStr:	LPWSTR,
-	cchWideChar:	SINT
-
-WideCharToMultiByte proto WINAPI \
-	CodePage:		UINT,
-	dwFlags:		DWORD,
-	lpWideCharStr:		LPWSTR,
-	cchWideChar:		SINT,
-	lpMultiByteStr:		LPSTR,
-	cchMultiByte:		SINT,
-	lpDefaultChar:		LPSTR,
-	lpUsedDefaultChar:	LPBOOL
-
-
-CompareStringA proto WINAPI \
-	Locale:		LCID,
-	dwCmpFlags:	DWORD,
-	lpString1:	LPSTR,
-	cchCount1:	SINT,
-	lpString2:	LPSTR,
-	cchCount2:	SINT
-
-CompareStringW proto WINAPI \
-	Locale:		LCID,
-	dwCmpFlags:	DWORD,
-	lpString1:	LPWSTR,
-	cchCount1:	SINT,
-	lpString2:	LPWSTR,
-	cchCount2:	SINT
-
-ifdef _UNICODE
-CompareString  equ <CompareStringW>
-else
-CompareString  equ <CompareStringA>
-endif
-
-;int
-LCMapStringA proto WINAPI \
-	Locale:		LCID,
-	dwMapFlags:	DWORD,
-	lpSrcStr:	LPSTR,
-	cchSrc:		SINT,
-	lpDestStr:	LPSTR,
-	cchDest:	SINT
-;int
-LCMapStringW proto WINAPI \
-	Locale:		LCID,
-	dwMapFlags:	DWORD,
-	lpSrcStr:	LPWSTR,
-	cchSrc:		SINT,
-	lpDestStr:	LPWSTR,
-	cchDest:	SINT
-ifdef _UNICODE
-LCMapString  equ <LCMapStringW>
-else
-LCMapString  equ <LCMapStringA>
-endif
-
-;int
-GetLocaleInfoA proto WINAPI \
-	Locale:		LCID,
-	LCType:		LCTYPE,
-	lpLCData:	LPSTR,
-	cchData:	SINT
-;int
-GetLocaleInfoW proto WINAPI \
-	Locale:		LCID,
-	LCType:		LCTYPE,
-	lpLCData:	LPWSTR,
-	cchData:	SINT
-ifdef _UNICODE
-GetLocaleInfo  equ <GetLocaleInfoW>
-else
-GetLocaleInfo  equ <GetLocaleInfoA>
-endif
-
-SetLocaleInfoA proto WINAPI \
-	Locale:		LCID,
-	LCType:		LCTYPE,
-	lpLCData:	LPSTR
-
-SetLocaleInfoW proto WINAPI \
-	Locale:		LCID,
-	LCType:		LCTYPE,
-	lpLCData:	LPWSTR
-ifdef _UNICODE
-SetLocaleInfo  equ <SetLocaleInfoW>
-else
-SetLocaleInfo  equ <SetLocaleInfoA>
-endif
-;int
-GetTimeFormatA proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpTime:		LPSYSTEMTIME,
-	lpFormat:	LPSTR,
-	lpTimeStr:	LPSTR,
-	cchTime:	SINT
-;int
-GetTimeFormatW proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpTime:		LPSYSTEMTIME,
-	lpFormat:	LPWSTR,
-	lpTimeStr:	LPWSTR,
-	cchTime:	SINT
-ifdef _UNICODE
-GetTimeFormat  equ <GetTimeFormatW>
-else
-GetTimeFormat  equ <GetTimeFormatA>
-endif
-
-;int
-GetDateFormatA proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpDate:		LPSYSTEMTIME,
-	lpFormat:	LPSTR,
-	lpDateStr:	LPSTR,
-	cchDate:	SINT
-GetDateFormatW proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpDate:		LPSYSTEMTIME,
-	lpFormat:	LPWSTR,
-	lpDateStr:	LPWSTR,
-	cchDate:	SINT
-ifdef _UNICODE
-GetDateFormat  equ <GetDateFormatW>
-else
-GetDateFormat  equ <GetDateFormatA>
-endif
-;int
-GetNumberFormatA proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpValue:	LPSTR,
-	lpFormat:	PTR NUMBERFMTA,
-	lpNumberStr:	LPSTR,
-	cchNumber:	SINT
-;int
-GetNumberFormatW proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpValue:	LPWSTR,
-	lpFormat:	PTR NUMBERFMTW,
-	lpNumberStr:	LPWSTR,
-	cchNumber:	SINT
-ifdef _UNICODE
-GetNumberFormat equ <GetNumberFormatW>
-else
-GetNumberFormat equ <GetNumberFormatA>
-endif
-;int
-GetCurrencyFormatA proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpValue:	LPSTR,
-	lpFormat:	PTR CURRENCYFMTA,
-	lpCurrencyStr:	LPSTR,
-	cchCurrency:	SINT
-;int
-GetCurrencyFormatW proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD,
-	lpValue:	LPWSTR,
-	lpFormat:	PTR CURRENCYFMTW,
-	lpCurrencyStr:	LPWSTR,
-	cchCurrency:	SINT
-ifdef _UNICODE
-GetCurrencyFormat equ <GetCurrencyFormatW>
-else
-GetCurrencyFormat equ <GetCurrencyFormatA>
-endif
-;BOOL
-EnumCalendarInfoA proto WINAPI \
-	lpCalInfoEnumProc:	CALINFO_ENUMPROCA,
-	Locale:			LCID,
-	Calendar:		CALID,
-	CalType:		CALTYPE
-;BOOL
-EnumCalendarInfoW proto WINAPI \
-	lpCalInfoEnumProc:	CALINFO_ENUMPROCW,
-	Locale:			LCID,
-	Calendar:		CALID,
-	CalType:		CALTYPE
-ifdef _UNICODE
-EnumCalendarInfo equ <EnumCalendarInfoW>
-else
-EnumCalendarInfo equ <EnumCalendarInfoA>
-endif
-
-;if(WINVER >= equ 0x0500)
-;BOOL
-EnumCalendarInfoExA proto WINAPI \
-	lpCalInfoEnumProcEx:	CALINFO_ENUMPROCEXA,
-	Locale:			LCID,
-	Calendar:		CALID,
-	CalType:		CALTYPE
-;BOOL
-EnumCalendarInfoExW proto WINAPI \
-	lpCalInfoEnumProcEx:	CALINFO_ENUMPROCEXW,
-	Locale:			LCID,
-	Calendar:		CALID,
-	CalType:		CALTYPE
-ifdef _UNICODE
-EnumCalendarInfoEx equ <EnumCalendarInfoExW>
-else
-EnumCalendarInfoEx equ <EnumCalendarInfoExA>
-endif
-;endif /* WINVER >= equ 0x0500 */
-;BOOL
-EnumTimeFormatsA proto WINAPI \
-	lpTimeFmtEnumProc:	TIMEFMT_ENUMPROCA,
-	Locale:			LCID,
-	dwFlags:		DWORD
-;BOOL
-EnumTimeFormatsW proto WINAPI \
-	lpTimeFmtEnumProc:	TIMEFMT_ENUMPROCW,
-	Locale:			LCID,
-	dwFlags:		DWORD
-ifdef _UNICODE
-EnumTimeFormats equ <EnumTimeFormatsW>
-else
-EnumTimeFormats equ <EnumTimeFormatsA>
-endif
-;BOOL
-EnumDateFormatsA proto WINAPI \
-	lpDateFmtEnumProc:	DATEFMT_ENUMPROCA,
-	Locale:			LCID,
-	dwFlags:		DWORD
-;BOOL
-EnumDateFormatsW proto WINAPI \
-	lpDateFmtEnumProc:	DATEFMT_ENUMPROCW,
-	Locale:			LCID,
-	dwFlags:		DWORD
-ifdef _UNICODE
-EnumDateFormats equ <EnumDateFormatsW>
-else
-EnumDateFormats equ <EnumDateFormatsA>
-endif
-
-;if(WINVER >= equ 0x0500)
-;BOOL
-EnumDateFormatsExA proto WINAPI \
-	lpDateFmtEnumProcEx:	DATEFMT_ENUMPROCEXA,
-	Locale:			LCID,
-	dwFlags:		DWORD
-;BOOL
-EnumDateFormatsExW proto WINAPI \
-	lpDateFmtEnumProcEx:	DATEFMT_ENUMPROCEXW,
-	Locale:			LCID,
-	dwFlags:		DWORD
-ifdef _UNICODE
-EnumDateFormatsEx equ <EnumDateFormatsExW>
-else
-EnumDateFormatsEx equ <EnumDateFormatsExA>
-endif
-;endif /* WINVER >= equ 0x0500 */
-;BOOL
-IsValidLocale proto WINAPI \
-	Locale:		LCID,
-	dwFlags:	DWORD
-;LCID
-ConvertDefaultLocale proto WINAPI \
-	Locale:		LCID
-;LCID
-GetThreadLocale proto WINAPI
-;BOOL
-SetThreadLocale proto WINAPI \
-	Locale:		LCID
-;LANGID
-GetSystemDefaultLangID proto WINAPI
-;LANGID
-GetUserDefaultLangID proto WINAPI
-;LCID
-GetSystemDefaultLCID proto WINAPI
-;LCID
-GetUserDefaultLCID proto WINAPI
-
-
-;BOOL
-GetStringTypeExA proto WINAPI \
-	Locale:		LCID,
-	dwInfoType:	DWORD,
-	lpSrcStr:	LPSTR,
-	cchSrc:		SINT,
-	lpCharType:	LPWORD
-GetStringTypeExW proto WINAPI \
-	Locale:		LCID,
-	dwInfoType:	DWORD,
-	lpSrcStr:	LPWSTR,
-	cchSrc:		SINT,
-	lpCharType:	LPWORD
-ifdef _UNICODE
-GetStringTypeEx equ <GetStringTypeExW>
-else
-GetStringTypeEx equ <GetStringTypeExA>
-endif
-
-;BOOL
-GetStringTypeA proto WINAPI \
-	Locale:		LCID,
-	dwInfoType:	DWORD,
-	lpSrcStr:	LPCSTR,
-	cchSrc:		SINT,
-	lpCharType:	LPWORD
-
-GetStringTypeW proto WINAPI \
-	dwInfoType:	DWORD,
-	lpSrcStr:	LPCWSTR,
-	cchSrc:		SINT,
-	lpCharType:	LPWORD
-;int
-FoldStringA proto WINAPI \
-	dwMapFlags:	DWORD,
-	lpSrcStr:	LPSTR,
-	cchSrc:		SINT,
-	lpDestStr:	LPSTR,
-	cchDest:	SINT
-;int
-FoldStringW proto WINAPI \
-	dwMapFlags:	DWORD,
-	lpSrcStr:	LPWSTR,
-	cchSrc:		SINT,
-	lpDestStr:	LPWSTR,
-	cchDest:	SINT
-ifdef _UNICODE
-FoldString equ <FoldStringW>
-else
-FoldString equ <FoldStringA>
-endif
-;BOOL
-EnumSystemLocalesA proto WINAPI \
-	lpLocaleEnumProc:	LOCALE_ENUMPROCA,
-	dwFlags:		DWORD
-;BOOL
-EnumSystemLocalesW proto WINAPI \
-	lpLocaleEnumProc:	LOCALE_ENUMPROCW,
-	dwFlags:		DWORD
-ifdef _UNICODE
-EnumSystemLocales equ <EnumSystemLocalesW>
-else
-EnumSystemLocales equ <EnumSystemLocalesA>
-endif
-;BOOL
-EnumSystemCodePagesA proto WINAPI \
-	lpCodePageEnumProc:	CODEPAGE_ENUMPROCA,
-	dwFlags:		DWORD
-;BOOL
-EnumSystemCodePagesW proto WINAPI \
-	lpCodePageEnumProc:	CODEPAGE_ENUMPROCW,
-	dwFlags:		DWORD
-ifdef _UNICODE
-EnumSystemCodePages equ <EnumSystemCodePagesW>
-else
-EnumSystemCodePages equ <EnumSystemCodePagesA>
-endif
-
-if WINVER GE 0x0600
-
-MUI_LANGUAGE_ID			equ 0x4
-MUI_LANGUAGE_NAME		equ 0x8
-MUI_MERGE_SYSTEM_FALLBACK	equ 0x10
-MUI_MERGE_USER_FALLBACK		equ 0x20
-MUI_UI_FALLBACK			equ MUI_MERGE_SYSTEM_FALLBACK or MUI_MERGE_USER_FALLBACK
-MUI_THREAD_LANGUAGES		equ 0x40
-MUI_CONSOLE_FILTER		equ 0x100
-MUI_COMPLEX_SCRIPT_FILTER	equ 0x200
-MUI_RESET_FILTERS		equ 0x001
-MUI_USER_PREFERRED_UI_LANGUAGES equ 0x10
-MUI_USE_INSTALLED_LANGUAGES	equ 0x20
-MUI_USE_SEARCH_ALL_LANGUAGES	equ 0x40
-MUI_LANG_NEUTRAL_PE_FILE	equ 0x100
-MUI_NON_LANG_NEUTRAL_FILE	equ 0x200
-MUI_MACHINE_LANGUAGE_SETTINGS	equ 0x400
-MUI_FILETYPE_NOT_LANGUAGE_NEUTRAL equ 0x001
-MUI_FILETYPE_LANGUAGE_NEUTRAL_MAIN equ 0x002
-MUI_FILETYPE_LANGUAGE_NEUTRAL_MUI equ 0x004
-MUI_QUERY_TYPE			equ 0x001
-MUI_QUERY_CHECKSUM		equ 0x002
-MUI_QUERY_LANGUAGE_NAME		equ 0x004
-MUI_QUERY_RESOURCE_TYPES	equ 0x008
-MUI_FILEINFO_VERSION		equ 0x001
-
-MUI_FULL_LANGUAGE		equ 0x01
-MUI_PARTIAL_LANGUAGE		equ 0x02
-MUI_LIP_LANGUAGE		equ 0x04
-MUI_LANGUAGE_INSTALLED		equ 0x20
-MUI_LANGUAGE_LICENSED		equ 0x40
-
-MUI_CALLBACK_ALL_FLAGS		equ MUI_CALLBACK_FLAG_UPGRADED_INSTALLATION
-endif
-
-SYSNLS_FUNCTION		typedef SDWORD
-COMPARE_STRING		equ 0x1
-
+.enum SYSNLS_FUNCTION {
+    COMPARE_STRING    =	 0x0001,
+    }
 NLS_FUNCTION		typedef DWORD
 
+
+if (WINVER GE _WIN32_WINNT_WIN8)
 NLSVERSIONINFO		STRUC
-dwNLSVersionInfoSize	DWORD ?
-dwNLSVersion		DWORD ?
-dwDefinedVersion	DWORD ?
-if WINVER GE 0x0602
-dwEffectiveId		DWORD ?
+dwNLSVersionInfoSize	dd ?
+dwNLSVersion		dd ?
+dwDefinedVersion	dd ?
+dwEffectiveId		dd ?
 guidCustomVersion	GUID <>
-endif
 NLSVERSIONINFO		ENDS
 LPNLSVERSIONINFO	typedef ptr NLSVERSIONINFO
+else
+NLSVERSIONINFO		STRUC
+dwNLSVersionInfoSize	dd ?
+dwNLSVersion		dd ?
+dwDefinedVersion	dd ?
+NLSVERSIONINFO		ENDS
+LPNLSVERSIONINFO	typedef ptr NLSVERSIONINFO
+endif
 
 NLSVERSIONINFOEX	STRUC
-dwNLSVersionInfoSize	DWORD ?
-dwNLSVersion		DWORD ?
-dwDefinedVersion	DWORD ?
-dwEffectiveId		DWORD ?
+dwNLSVersionInfoSize	dd ?
+dwNLSVersion		dd ?
+dwDefinedVersion	dd ?
+dwEffectiveId		dd ?
 guidCustomVersion	GUID <>
 NLSVERSIONINFOEX	ENDS
 LPNLSVERSIONINFOEX	typedef ptr NLSVERSIONINFOEX
+
 
 GEOID			typedef LONG
 GEOTYPE			typedef DWORD
 GEOCLASS		typedef DWORD
 
-GEOID_NOT_AVAILABLE	equ -1
-
-SYSGEOTYPE		typedef SDWORD
-GEO_NATION		equ 0x0001
-GEO_LATITUDE		equ 0x0002
-GEO_LONGITUDE		equ 0x0003
-GEO_ISO2		equ 0x0004
-GEO_ISO3		equ 0x0005
-GEO_RFC1766		equ 0x0006
-GEO_LCID		equ 0x0007
-GEO_FRIENDLYNAME	equ 0x0008
-GEO_OFFICIALNAME	equ 0x0009
-GEO_TIMEZONES		equ 0x000a
-GEO_OFFICIALLANGUAGES	equ 0x000b
-GEO_ISO_UN_NUMBER	equ 0x000c
-GEO_PARENT		equ 0x000d
-
-SYSGEOCLASS		typedef SDWORD
-GEOCLASS_NATION		equ 16
-GEOCLASS_REGION		equ 14
-GEOCLASS_ALL		equ 0
+define GEOID_NOT_AVAILABLE -1
 
 
-if WINVER GE 0x0600
-NORM_FORM		typedef SDWORD
-NormalizationOther	equ 0
-NormalizationC		equ 0x1
-NormalizationD		equ 0x2
-NormalizationKC		equ 0x5
-NormalizationKD		equ 0x6
+.enum SYSGEOTYPE {
+    GEO_NATION		= 0x0001,
+    GEO_LATITUDE	= 0x0002,
+    GEO_LONGITUDE	= 0x0003,
+    GEO_ISO2		= 0x0004,
+    GEO_ISO3		= 0x0005,
+    GEO_RFC1766		= 0x0006,
+    GEO_LCID		= 0x0007,
+    GEO_FRIENDLYNAME	= 0x0008,
+    GEO_OFFICIALNAME	= 0x0009,
+    GEO_TIMEZONES	= 0x000A,
+    GEO_OFFICIALLANGUAGES = 0x000B,
+    GEO_ISO_UN_NUMBER	= 0x000C,
+    GEO_PARENT		= 0x000D
+    }
 
-IDN_ALLOW_UNASSIGNED	equ 0x01
-IDN_USE_STD3_ASCII_RULES equ 0x02
-IDN_EMAIL_ADDRESS	equ 0x04
-IDN_RAW_PUNYCODE	equ 0x08
 
-VS_ALLOW_LATIN		equ 0x0001
+.enum SYSGEOCLASS {
+    GEOCLASS_NATION	= 16,
+    GEOCLASS_REGION	= 14,
+    GEOCLASS_ALL	= 0
+    }
 
-GSS_ALLOW_INHERITED_COMMON equ 0x0001
+if (WINVER GE 0x0600)
+
+.enum NORM_FORM {
+    NormalizationOther	= 0,
+    NormalizationC	= 0x1,
+    NormalizationD	= 0x2,
+    NormalizationKC	= 0x5,
+    NormalizationKD	= 0x6
+    }
+
+
+define IDN_ALLOW_UNASSIGNED	   0x01
+define IDN_USE_STD3_ASCII_RULES	   0x02
+define IDN_EMAIL_ADDRESS	   0x04
+define IDN_RAW_PUNYCODE		   0x08
+
+define VS_ALLOW_LATIN		   0x0001
+define GSS_ALLOW_INHERITED_COMMON  0x0001
+
 endif
 
-if WINVER GE 0x0600
 
-LOCALE_NAME_USER_DEFAULT	equ <NULL>
-LOCALE_NAME_INVARIANT		equ <L"">
-LOCALE_NAME_SYSTEM_DEFAULT	equ <L"!x-sys-default-locale">
+ifdef STRICT
+
+CALLBACK(LANGUAGEGROUP_ENUMPROCA, :LGRPID, :LPSTR, :LPSTR, :DWORD, :LONG_PTR)
+CALLBACK(LANGGROUPLOCALE_ENUMPROCA, :LGRPID, :LCID, :LPSTR, :LONG_PTR)
+CALLBACK(UILANGUAGE_ENUMPROCA, :LPSTR, :LONG_PTR)
+CALLBACK(CODEPAGE_ENUMPROCA, :LPSTR)
+CALLBACK(DATEFMT_ENUMPROCA, :LPSTR)
+CALLBACK(DATEFMT_ENUMPROCEXA, :LPSTR, :CALID)
+CALLBACK(TIMEFMT_ENUMPROCA, :LPSTR)
+CALLBACK(CALINFO_ENUMPROCA, :LPSTR)
+CALLBACK(CALINFO_ENUMPROCEXA, :LPSTR, :CALID)
+CALLBACK(LOCALE_ENUMPROCA, :LPSTR)
+CALLBACK(LOCALE_ENUMPROCW, :LPWSTR)
+
+CALLBACK(LANGUAGEGROUP_ENUMPROCW, :LGRPID, :LPWSTR, :LPWSTR, :DWORD, :LONG_PTR)
+CALLBACK(LANGGROUPLOCALE_ENUMPROCW, :LGRPID, :LCID, :LPWSTR, :LONG_PTR)
+CALLBACK(UILANGUAGE_ENUMPROCW, :LPWSTR, :LONG_PTR)
+CALLBACK(CODEPAGE_ENUMPROCW, :LPWSTR)
+CALLBACK(DATEFMT_ENUMPROCW, :LPWSTR)
+CALLBACK(DATEFMT_ENUMPROCEXW, :LPWSTR, :CALID)
+CALLBACK(TIMEFMT_ENUMPROCW, :LPWSTR)
+CALLBACK(CALINFO_ENUMPROCW, :LPWSTR)
+CALLBACK(CALINFO_ENUMPROCEXW, :LPWSTR, :CALID)
+CALLBACK(GEO_ENUMPROC, :GEOID)
+
+else
+
+LANGUAGEGROUP_ENUMPROCA typedef FARPROC
+LANGGROUPLOCALE_ENUMPROCA typedef FARPROC
+UILANGUAGE_ENUMPROCA	typedef FARPROC
+CODEPAGE_ENUMPROCA	typedef FARPROC
+DATEFMT_ENUMPROCA	typedef FARPROC
+DATEFMT_ENUMPROCEXA	typedef FARPROC
+TIMEFMT_ENUMPROCA	typedef FARPROC
+CALINFO_ENUMPROCA	typedef FARPROC
+CALINFO_ENUMPROCEXA	typedef FARPROC
+GEO_ENUMPROC		typedef FARPROC
+LOCALE_ENUMPROCA	typedef FARPROC
+LOCALE_ENUMPROCW	typedef FARPROC
+
+LANGUAGEGROUP_ENUMPROCW typedef FARPROC
+LANGGROUPLOCALE_ENUMPROCW typedef FARPROC
+UILANGUAGE_ENUMPROCW	typedef FARPROC
+CODEPAGE_ENUMPROCW	typedef FARPROC
+DATEFMT_ENUMPROCW	typedef FARPROC
+DATEFMT_ENUMPROCEXW	typedef FARPROC
+TIMEFMT_ENUMPROCW	typedef FARPROC
+CALINFO_ENUMPROCW	typedef FARPROC
+CALINFO_ENUMPROCEXW	typedef FARPROC
+
+endif
+
+ifdef _UNICODE
+
+define LANGUAGEGROUP_ENUMPROC	<LANGUAGEGROUP_ENUMPROCW>
+define LANGGROUPLOCALE_ENUMPROC <LANGGROUPLOCALE_ENUMPROCW>
+define UILANGUAGE_ENUMPROC	<UILANGUAGE_ENUMPROCW>
+define CODEPAGE_ENUMPROC	<CODEPAGE_ENUMPROCW>
+define DATEFMT_ENUMPROC		<DATEFMT_ENUMPROCW>
+define DATEFMT_ENUMPROCEX	<DATEFMT_ENUMPROCEXW>
+define TIMEFMT_ENUMPROC		<TIMEFMT_ENUMPROCW>
+define CALINFO_ENUMPROC		<CALINFO_ENUMPROCW>
+define CALINFO_ENUMPROCEX	<CALINFO_ENUMPROCEXW>
+define LOCALE_ENUMPROC		<LOCALE_ENUMPROCW>
+
+else
+
+define LANGUAGEGROUP_ENUMPROC	<LANGUAGEGROUP_ENUMPROCA>
+define LANGGROUPLOCALE_ENUMPROC <LANGGROUPLOCALE_ENUMPROCA>
+define UILANGUAGE_ENUMPROC	<UILANGUAGE_ENUMPROCA>
+define CODEPAGE_ENUMPROC	<CODEPAGE_ENUMPROCA>
+define DATEFMT_ENUMPROC		<DATEFMT_ENUMPROCA>
+define DATEFMT_ENUMPROCEX	<DATEFMT_ENUMPROCEXA>
+define TIMEFMT_ENUMPROC		<TIMEFMT_ENUMPROCA>
+define CALINFO_ENUMPROC		<CALINFO_ENUMPROCA>
+define CALINFO_ENUMPROCEX	<CALINFO_ENUMPROCEXA>
+define LOCALE_ENUMPROC		<LOCALE_ENUMPROCA>
+
+endif
+
+
+FILEMUIINFO		STRUC
+dwSize			dd ?
+dwVersion		dd ?
+dwFileType		dd ?
+pChecksum		db 16 dup(?)
+pServiceChecksum	db 16 dup(?)
+dwLanguageNameOffset	dd ?
+dwTypeIDMainSize	dd ?
+dwTypeIDMainOffset	dd ?
+dwTypeNameMainOffset	dd ?
+dwTypeIDMUISize		dd ?
+dwTypeIDMUIOffset	dd ?
+dwTypeNameMUIOffset	dd ?
+abBuffer		db 8 dup(?)
+FILEMUIINFO		ENDS
+PFILEMUIINFO		typedef ptr FILEMUIINFO
+
+ifndef NOAPISET
+include stringapiset.inc
+endif
+
+
+
+IS_HIGH_SURROGATE macro wch
+	exitm<(((wch) GE HIGH_SURROGATE_START) AND ((wch) LE HIGH_SURROGATE_END))>
+	endm
+IS_LOW_SURROGATE macro wch
+	exitm<(((wch) GE LOW_SURROGATE_START) AND ((wch) LE LOW_SURROGATE_END))>
+	endm
+IS_SURROGATE_PAIR macro hs, ls
+	exitm<(IS_HIGH_SURROGATE(hs) AND IS_LOW_SURROGATE(ls))>
+	endm
+
+FILEMUIINFO_GET_CULTURE macro pInfo
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MAIN_TYPEIDS macro pInfo
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MAIN_TYPEID macro pInfo,iType
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MAIN_TYPENAMES macro pInfo
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MUI_TYPEIDS macro pInfo
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MUI_TYPEID macro pInfo,iType
+	exitm<.err>
+	endm
+FILEMUIINFO_GET_MUI_TYPENAMES macro pInfo
+	exitm<.err>
+	endm
+
+;BOOL
+IsValidCodePage proto WINAPI \
+	      CodePage: UINT
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+;UINT
+GetACP proto WINAPI
+GetOEMCP proto WINAPI
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+;BOOL
+GetCPInfo proto WINAPI \
+	      CodePage: UINT,
+	      lpCPInfo: LPCPINFO
+
+;BOOL
+GetCPInfoExA proto WINAPI \
+	      CodePage: UINT,
+	       dwFlags: DWORD,
+	    lpCPInfoEx: LPCPINFOEXA
+
+;BOOL
+GetCPInfoExW proto WINAPI \
+	      CodePage: UINT,
+	       dwFlags: DWORD,
+	    lpCPInfoEx: LPCPINFOEXW
+
+ifdef _UNICODE
+define GetCPInfoEx  <GetCPInfoExW>
+else
+define GetCPInfoEx  <GetCPInfoExA>
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+;int
+CompareStringA proto WINAPI \
+		Locale: LCID,
+	    dwCmpFlags: DWORD,
+	     lpString1: PCNZCH,
+	     cchCount1: SINT,
+	     lpString2: PCNZCH,
+	     cchCount2: SINT
+
+ifndef _UNICODE
+define CompareString  <CompareStringA>
+endif
+
+if (WINVER GE 0x0600)
+
+;int
+FindNLSString proto WINAPI \
+		Locale: LCID,
+  dwFindNLSStringFlags: DWORD,
+	lpStringSource: LPCWSTR,
+	     cchSource: SINT,
+	 lpStringValue: LPCWSTR,
+	      cchValue: SINT,
+	     pcchFound: LPINT
+
+
+endif
+
+;int
+LCMapStringW proto WINAPI \
+		Locale: LCID,
+	    dwMapFlags: DWORD,
+	      lpSrcStr: LPCWSTR,
+		cchSrc: SINT,
+	     lpDestStr: LPWSTR,
+	       cchDest: SINT
+
+ifdef _UNICODE
+define LCMapString  <LCMapStringW>
+endif
+
+;int
+LCMapStringA proto WINAPI \
+		Locale: LCID,
+	    dwMapFlags: DWORD,
+	      lpSrcStr: LPCSTR,
+		cchSrc: SINT,
+	     lpDestStr: LPSTR,
+	       cchDest: SINT
+
+ifndef _UNICODE
+define LCMapString  <LCMapStringA>
+endif
+
+;int
+GetLocaleInfoW proto WINAPI \
+		Locale: LCID,
+		LCType: LCTYPE,
+	      lpLCData: LPWSTR,
+	       cchData: SINT
+
+
+ifdef _UNICODE
+define GetLocaleInfo  <GetLocaleInfoW>
+endif
+
+;int
+GetLocaleInfoA proto WINAPI \
+		Locale: LCID,
+		LCType: LCTYPE,
+	      lpLCData: LPSTR,
+	       cchData: SINT
+
+
+ifndef _UNICODE
+define GetLocaleInfo <GetLocaleInfoA>
+endif
+
+;BOOL
+SetLocaleInfoA proto WINAPI \
+		Locale: LCID,
+		LCType: LCTYPE,
+	      lpLCData: LPCSTR
+
+;BOOL
+SetLocaleInfoW proto WINAPI \
+		Locale: LCID,
+		LCType: LCTYPE,
+	      lpLCData: LPCWSTR
+
+ifdef _UNICODE
+define SetLocaleInfo  <SetLocaleInfoW>
+else
+define SetLocaleInfo  <SetLocaleInfoA>
+endif
+
+if (WINVER GE 0x040A)
+
+;int
+GetCalendarInfoA proto WINAPI \
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE,
+	     lpCalData: LPSTR,
+	       cchData: SINT,
+	       lpValue: LPDWORD
+
+;int
+GetCalendarInfoW proto WINAPI \
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE,
+	     lpCalData: LPWSTR,
+	       cchData: SINT,
+	       lpValue: LPDWORD
+
+ifdef _UNICODE
+define GetCalendarInfo	<GetCalendarInfoW>
+else
+define GetCalendarInfo	<GetCalendarInfoA>
+endif
+
+;BOOL
+SetCalendarInfoA proto WINAPI \
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE,
+	     lpCalData: LPCSTR
+
+;BOOL
+SetCalendarInfoW proto WINAPI \
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE,
+	     lpCalData: LPCWSTR
+
+ifdef _UNICODE
+define SetCalendarInfo	<SetCalendarInfoW>
+else
+define SetCalendarInfo	<SetCalendarInfoA>
+endif
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+define MUI_FORMAT_REG_COMPAT  0x0001
+define MUI_FORMAT_INF_COMPAT  0x0002
+define MUI_VERIFY_FILE_EXISTS 0x0004
+define MUI_SKIP_STRING_CACHE  0x0008
+define MUI_IMMUTABLE_LOOKUP   0x0010
+
+;BOOL
+LoadStringByReference proto WINAPI \
+		 Flags: DWORD,
+	      Language: PCWSTR,
+	  SourceString: PCWSTR,
+		Buffer: PWSTR,
+	     cchBuffer: ULONG,
+	     Directory: PCWSTR,
+	 pcchBufferOut: PULONG
+
+endif
+
+;BOOL
+IsDBCSLeadByte proto WINAPI \
+	      TestChar: BYTE
+
+;BOOL
+IsDBCSLeadByteEx proto WINAPI \
+	      CodePage: UINT,
+	      TestChar: BYTE
+
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+if (WINVER GE 0x0600)
+
+;int
+LCIDToLocaleName proto WINAPI \
+		Locale: LCID,
+		lpName: LPWSTR,
+	       cchName: SINT,
+	       dwFlags: DWORD
+
+LocaleNameToLCID proto WINAPI \
+		lpName: LPCWSTR,
+	       dwFlags: DWORD
+
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if (WINVER GE 0x0600)
+
+;int
+GetDurationFormat proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD,
+	    lpDuration: ptr SYSTEMTIME,
+	   ullDuration: ULONGLONG,
+	      lpFormat: LPCWSTR,
+	 lpDurationStr: LPWSTR,
+	   cchDuration: SINT
+
+endif
+
+;int
+GetNumberFormatA proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD,
+	       lpValue: LPCSTR,
+	      lpFormat: ptr NUMBERFMTA,
+	   lpNumberStr: LPSTR,
+	     cchNumber: SINT
+
+;int
+GetNumberFormatW proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD,
+	       lpValue: LPCWSTR,
+	      lpFormat: ptr NUMBERFMTW,
+	   lpNumberStr: LPWSTR,
+	     cchNumber: SINT
+
+ifdef _UNICODE
+define GetNumberFormat	<GetNumberFormatW>
+else
+define GetNumberFormat	<GetNumberFormatA>
+endif
+
+;int
+GetCurrencyFormatA proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD,
+	       lpValue: LPCSTR,
+	      lpFormat: ptr CURRENCYFMTA,
+	 lpCurrencyStr: LPSTR,
+	   cchCurrency: SINT
+
+;int
+GetCurrencyFormatW proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD,
+	       lpValue: LPCWSTR,
+	      lpFormat: ptr CURRENCYFMTW,
+	 lpCurrencyStr: LPWSTR,
+	   cchCurrency: SINT
+
+ifdef _UNICODE
+define GetCurrencyFormat  <GetCurrencyFormatW>
+else
+define GetCurrencyFormat  <GetCurrencyFormatA>
+endif
+
+;BOOL
+EnumCalendarInfoA proto WINAPI \
+     lpCalInfoEnumProc: CALINFO_ENUMPROCA,
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE
+
+;BOOL
+EnumCalendarInfoW proto WINAPI \
+     lpCalInfoEnumProc: CALINFO_ENUMPROCW,
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE
+
+ifdef _UNICODE
+define EnumCalendarInfo	 <EnumCalendarInfoW>
+else
+define EnumCalendarInfo	 <EnumCalendarInfoA>
+endif
+
+if(WINVER GE 0x0500)
+
+;BOOL
+EnumCalendarInfoExA proto WINAPI \
+   lpCalInfoEnumProcEx: CALINFO_ENUMPROCEXA,
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE
+
+;BOOL
+EnumCalendarInfoExW proto WINAPI \
+   lpCalInfoEnumProcEx: CALINFO_ENUMPROCEXW,
+		Locale: LCID,
+	      Calendar: CALID,
+	       CalType: CALTYPE
+
+ifdef _UNICODE
+define EnumCalendarInfoEx  <EnumCalendarInfoExW>
+else
+define EnumCalendarInfoEx  <EnumCalendarInfoExA>
+endif
+endif
+
+;BOOL
+EnumTimeFormatsA proto WINAPI \
+     lpTimeFmtEnumProc: TIMEFMT_ENUMPROCA,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+;BOOL
+EnumTimeFormatsW proto WINAPI \
+     lpTimeFmtEnumProc: TIMEFMT_ENUMPROCW,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+ifdef _UNICODE
+define EnumTimeFormats	<EnumTimeFormatsW>
+else
+define EnumTimeFormats	<EnumTimeFormatsA>
+endif
+
+;BOOL
+EnumDateFormatsA proto WINAPI \
+     lpDateFmtEnumProc: DATEFMT_ENUMPROCA,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+;BOOL
+EnumDateFormatsW proto WINAPI \
+     lpDateFmtEnumProc: DATEFMT_ENUMPROCW,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+ifdef _UNICODE
+define EnumDateFormats	<EnumDateFormatsW>
+else
+define EnumDateFormats	<EnumDateFormatsA>
+endif
+
+if(WINVER GE 0x0500)
+;BOOL
+EnumDateFormatsExA proto WINAPI \
+   lpDateFmtEnumProcEx: DATEFMT_ENUMPROCEXA,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+;BOOL
+EnumDateFormatsExW proto WINAPI \
+   lpDateFmtEnumProcEx: DATEFMT_ENUMPROCEXW,
+		Locale: LCID,
+	       dwFlags: DWORD
+
+ifdef _UNICODE
+define EnumDateFormatsEx  <EnumDateFormatsExW>
+else
+define EnumDateFormatsEx  <EnumDateFormatsExA>
+endif
+endif
+
+if(WINVER GE 0x0500)
+;BOOL
+IsValidLanguageGroup proto WINAPI \
+	 LanguageGroup: LGRPID,
+	       dwFlags: DWORD
+
+endif
+
+;BOOL
+GetNLSVersion proto WINAPI \
+	      Function: NLS_FUNCTION,
+		Locale: LCID,
+  lpVersionInformation: LPNLSVERSIONINFO
+
+
+;BOOL
+IsNLSDefinedString proto WINAPI \
+	      Function: NLS_FUNCTION,
+	       dwFlags: DWORD,
+  lpVersionInformation: LPNLSVERSIONINFO,
+	      lpString: LPCWSTR,
+		cchStr: SINT
+
+;BOOL
+IsValidLocale proto WINAPI \
+		Locale: LCID,
+	       dwFlags: DWORD
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+;int
+GetGeoInfoA proto WINAPI \
+	      Location: GEOID,
+	       GeoType: GEOTYPE,
+	     lpGeoData: LPSTR,
+	       cchData: SINT,
+		LangId: LANGID
+
+;int
+GetGeoInfoW proto WINAPI \
+	      Location: GEOID,
+	       GeoType: GEOTYPE,
+	     lpGeoData: LPWSTR,
+	       cchData: SINT,
+		LangId: LANGID
+
+ifdef _UNICODE
+define GetGeoInfo  <GetGeoInfoW>
+else
+define GetGeoInfo  <GetGeoInfoA>
+endif
+
+;BOOL
+EnumSystemGeoID proto WINAPI \
+	      GeoClass: GEOCLASS,
+	   ParentGeoId: GEOID,
+	 lpGeoEnumProc: GEO_ENUMPROC
+
+
+GetUserGeoID proto WINAPI \
+	      GeoClass: GEOCLASS
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+;BOOL
+SetUserGeoID proto WINAPI \
+		 GeoId: GEOID
+
+ConvertDefaultLocale proto WINAPI \
+		Locale: LCID
+
+GetThreadLocale proto WINAPI
+
+SetThreadLocale proto WINAPI \
+		Locale: LCID
+
+
+if(WINVER GE 0x0500)
+
+GetSystemDefaultUILanguage proto WINAPI
+GetUserDefaultUILanguage proto WINAPI
+endif
+
+GetSystemDefaultLangID proto WINAPI
+GetUserDefaultLangID proto WINAPI
+GetSystemDefaultLCID proto WINAPI
+GetUserDefaultLCID proto WINAPI
+SetThreadUILanguage proto WINAPI \
+		LangId: LANGID
+
+
+if (WINVER GE 0x0600)
+
+GetThreadUILanguage proto WINAPI
+
+;BOOL
+GetProcessPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+       pulNumLanguages: PULONG,
+   pwszLanguagesBuffer: PZZWSTR,
+   pcchLanguagesBuffer: PULONG
+
+;BOOL
+SetProcessPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+   pwszLanguagesBuffer: PCZZWSTR,
+       pulNumLanguages: PULONG
+
+;BOOL
+GetUserPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+       pulNumLanguages: PULONG,
+   pwszLanguagesBuffer: PZZWSTR,
+   pcchLanguagesBuffer: PULONG
+
+;BOOL
+GetSystemPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+       pulNumLanguages: PULONG,
+   pwszLanguagesBuffer: PZZWSTR,
+   pcchLanguagesBuffer: PULONG
+
+;BOOL
+GetThreadPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+       pulNumLanguages: PULONG,
+   pwszLanguagesBuffer: PZZWSTR,
+   pcchLanguagesBuffer: PULONG
+
+;BOOL
+SetThreadPreferredUILanguages proto WINAPI \
+	       dwFlags: DWORD,
+   pwszLanguagesBuffer: PCZZWSTR,
+       pulNumLanguages: PULONG
+
+
+;BOOL
+GetFileMUIInfo proto WINAPI \
+	       dwFlags: DWORD,
+	 pcwszFilePath: PCWSTR,
+	  pFileMUIInfo: PFILEMUIINFO,
+	pcbFileMUIInfo: ptr DWORD
+
+;BOOL
+GetFileMUIPath proto WINAPI \
+	       dwFlags: DWORD,
+	 pcwszFilePath: PCWSTR,
+	  pwszLanguage: ptr PWSTR,
+	  pcchLanguage: PULONG,
+       pwszFileMUIPath: ptr PWSTR,
+       pcchFileMUIPath: PULONG,
+       pululEnumerator: PULONGLONG
+
+;BOOL
+GetUILanguageInfo proto WINAPI \
+	       dwFlags: DWORD,
+	 pwmszLanguage: PCZZWSTR,
+ pwszFallbackLanguages: PZZWSTR,
+ pcchFallbackLanguages: PDWORD,
+	   pAttributes: PDWORD
+
+;BOOL
+NotifyUILanguageChange proto WINAPI \
+	       dwFlags: DWORD,
+     pcwstrNewLanguage: PCWSTR,
+pcwstrPreviousLanguage: PCWSTR,
+	    dwReserved: DWORD,
+	 pdwStatusRtrn: PDWORD
+
+endif
+
+;BOOL
+GetStringTypeExA proto WINAPI \
+		Locale: LCID,
+	    dwInfoType: DWORD,
+	      lpSrcStr: LPCSTR,
+		cchSrc: SINT,
+	    lpCharType: LPWORD
+ifndef _UNICODE
+define GetStringTypeEx	<GetStringTypeExA>
+endif
+
+;BOOL
+GetStringTypeA proto WINAPI \
+		Locale: LCID,
+	    dwInfoType: DWORD,
+	      lpSrcStr: LPCSTR,
+		cchSrc: SINT,
+	    lpCharType: LPWORD
+
+;int
+FoldStringA proto WINAPI \
+	    dwMapFlags: DWORD,
+	      lpSrcStr: LPCSTR,
+		cchSrc: SINT,
+	     lpDestStr: LPSTR,
+	       cchDest: SINT
+
+ifndef _UNICODE
+define FoldString  <FoldStringA>
+endif
+
+if(WINVER GE 0x0500)
+
+;BOOL
+EnumSystemLocalesA proto WINAPI \
+      lpLocaleEnumProc: LOCALE_ENUMPROCA,
+	       dwFlags: DWORD
+
+;BOOL
+EnumSystemLocalesW proto WINAPI \
+      lpLocaleEnumProc: LOCALE_ENUMPROCW,
+	       dwFlags: DWORD
+
+ifdef _UNICODE
+define EnumSystemLocales  <EnumSystemLocalesW>
+else
+define EnumSystemLocales  <EnumSystemLocalesA>
+endif
+
+
+;BOOL
+EnumSystemLanguageGroupsA proto WINAPI \
+lpLanguageGroupEnumProc: LANGUAGEGROUP_ENUMPROCA,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+;BOOL
+EnumSystemLanguageGroupsW proto WINAPI \
+lpLanguageGroupEnumProc: LANGUAGEGROUP_ENUMPROCW,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+ifdef _UNICODE
+define EnumSystemLanguageGroups	 <EnumSystemLanguageGroupsW>
+else
+define EnumSystemLanguageGroups	 <EnumSystemLanguageGroupsA>
+endif
+
+;BOOL
+EnumLanguageGroupLocalesA proto WINAPI \
+lpLangGroupLocaleEnumProc: LANGGROUPLOCALE_ENUMPROCA,
+	 LanguageGroup: LGRPID,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+;BOOL
+EnumLanguageGroupLocalesW proto WINAPI \
+lpLangGroupLocaleEnumProc: LANGGROUPLOCALE_ENUMPROCW,
+	 LanguageGroup: LGRPID,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+ifdef _UNICODE
+define EnumLanguageGroupLocales	 <EnumLanguageGroupLocalesW>
+else
+define EnumLanguageGroupLocales	 <EnumLanguageGroupLocalesA>
+endif
+
+;BOOL
+EnumUILanguagesA proto WINAPI \
+  lpUILanguageEnumProc: UILANGUAGE_ENUMPROCA,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+;BOOL
+EnumUILanguagesW proto WINAPI \
+  lpUILanguageEnumProc: UILANGUAGE_ENUMPROCW,
+	       dwFlags: DWORD,
+		lParam: LONG_PTR
+
+ifdef _UNICODE
+define EnumUILanguages	<EnumUILanguagesW>
+else
+define EnumUILanguages	<EnumUILanguagesA>
+endif
+endif
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+;BOOL
+EnumSystemCodePagesA proto WINAPI \
+    lpCodePageEnumProc: CODEPAGE_ENUMPROCA,
+	       dwFlags: DWORD
+
+;BOOL
+EnumSystemCodePagesW proto WINAPI \
+    lpCodePageEnumProc: CODEPAGE_ENUMPROCW,
+	       dwFlags: DWORD
+
+ifdef _UNICODE
+define EnumSystemCodePages  <EnumSystemCodePagesW>
+else
+define EnumSystemCodePages  <EnumSystemCodePagesA>
+endif
+
+if (WINVER GE 0x0600)
+
+;int
+NormalizeString proto WINAPI \
+	      NormForm: NORM_FORM,
+	   lpSrcString: LPCWSTR,
+	   cwSrcLength: SINT,
+	   lpDstString: LPWSTR,
+	   cwDstLength: SINT
+
+;BOOL
+IsNormalizedString proto WINAPI \
+	      NormForm: NORM_FORM,
+	      lpString: LPCWSTR,
+	      cwLength: SINT
+
+;int
+IdnToAscii proto WINAPI \
+	       dwFlags: DWORD,
+      lpUnicodeCharStr: LPCWSTR,
+	cchUnicodeChar: SINT,
+	lpASCIICharStr: LPWSTR,
+	  cchASCIIChar: SINT
+
+;int
+IdnToNameprepUnicode proto WINAPI \
+	       dwFlags: DWORD,
+      lpUnicodeCharStr: LPCWSTR,
+	cchUnicodeChar: SINT,
+     lpNameprepCharStr: LPWSTR,
+       cchNameprepChar: SINT
+
+;int
+IdnToUnicode proto WINAPI \
+	       dwFlags: DWORD,
+	lpASCIICharStr: LPCWSTR,
+	  cchASCIIChar: SINT,
+      lpUnicodeCharStr: LPWSTR,
+	cchUnicodeChar: SINT
+
+;BOOL
+VerifyScripts proto WINAPI \
+	       dwFlags: DWORD,
+       lpLocaleScripts: LPCWSTR,
+      cchLocaleScripts: SINT,
+	 lpTestScripts: LPCWSTR,
+	cchTestScripts: SINT
+
+;int
+GetStringScripts proto WINAPI \
+	       dwFlags: DWORD,
+	      lpString: LPCWSTR,
+	     cchString: SINT,
+	     lpScripts: LPWSTR,
+	    cchScripts: SINT
+
+
+endif
+
+endif
+
+if (WINVER GE 0x0600)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+
+define LOCALE_NAME_USER_DEFAULT		   NULL
+define LOCALE_NAME_INVARIANT		   <L"">
+define LOCALE_NAME_SYSTEM_DEFAULT	   <L" NOT x-sys-default-locale">
+
+;int
+GetLocaleInfoEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+		LCType: LCTYPE,
+	      lpLCData: LPWSTR,
+	       cchData: SINT
+
+;int
+GetCalendarInfoEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+	      Calendar: CALID,
+	    lpReserved: LPCWSTR,
+	       CalType: CALTYPE,
+	     lpCalData: LPWSTR,
+	       cchData: SINT,
+	       lpValue: LPDWORD
+
+;int
+GetDurationFormatEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+	       dwFlags: DWORD,
+	    lpDuration: ptr SYSTEMTIME,
+	   ullDuration: ULONGLONG,
+	      lpFormat: LPCWSTR,
+	 lpDurationStr: LPWSTR,
+	   cchDuration: SINT
+
+;int
+GetNumberFormatEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+	       dwFlags: DWORD,
+	       lpValue: LPCWSTR,
+	      lpFormat: ptr NUMBERFMTW,
+	   lpNumberStr: LPWSTR,
+	     cchNumber: SINT
+
+;int
+GetCurrencyFormatEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+	       dwFlags: DWORD,
+	       lpValue: LPCWSTR,
+	      lpFormat: ptr CURRENCYFMTW,
+	 lpCurrencyStr: LPWSTR,
+	   cchCurrency: SINT
+
+;int
+GetUserDefaultLocaleName proto WINAPI \
+	  lpLocaleName: LPWSTR,
+	 cchLocaleName: SINT
+
+;int
+GetSystemDefaultLocaleName proto WINAPI \
+	  lpLocaleName: LPWSTR,
+	 cchLocaleName: SINT
+
+;BOOL
+GetNLSVersionEx proto WINAPI \
+	      function: NLS_FUNCTION,
+	  lpLocaleName: LPCWSTR,
+  lpVersionInformation: LPNLSVERSIONINFOEX
+
+
+if (WINVER GE _WIN32_WINNT_WIN8)
+
+;DWORD
+IsValidNLSVersion proto WINAPI \
+	      function: NLS_FUNCTION,
+	  lpLocaleName: LPCWSTR,
+  lpVersionInformation: LPNLSVERSIONINFOEX
+
+endif
+
+;int
+FindNLSStringEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+  dwFindNLSStringFlags: DWORD,
+	lpStringSource: LPCWSTR,
+	     cchSource: SINT,
+	 lpStringValue: LPCWSTR,
+	      cchValue: SINT,
+	     pcchFound: LPINT,
+  lpVersionInformation: LPNLSVERSIONINFO,
+	    lpReserved: LPVOID,
+	    sortHandle: LPARAM
+
+
+;int
+LCMapStringEx proto WINAPI \
+	  lpLocaleName: LPCWSTR,
+	    dwMapFlags: DWORD,
+	      lpSrcStr: LPCWSTR,
+		cchSrc: SINT,
+	     lpDestStr: LPWSTR,
+	       cchDest: SINT,
+  lpVersionInformation: LPNLSVERSIONINFO,
+	    lpReserved: LPVOID,
+	    sortHandle: LPARAM
+
+
+;BOOL
+IsValidLocaleName proto WINAPI \
+	  lpLocaleName: LPCWSTR
+
 
 CALLBACK(CALINFO_ENUMPROCEXEX, :LPWSTR, :CALID, :LPWSTR, :LPARAM)
+
+;BOOL
+EnumCalendarInfoExEx proto WINAPI \
+  pCalInfoEnumProcExEx: CALINFO_ENUMPROCEXEX,
+	  lpLocaleName: LPCWSTR,
+	      Calendar: CALID,
+	    lpReserved: LPCWSTR,
+	       CalType: CALTYPE,
+		lParam: LPARAM
+
+
 CALLBACK(DATEFMT_ENUMPROCEXEX, :LPWSTR, :CALID, :LPARAM)
+
+;BOOL
+EnumDateFormatsExEx proto WINAPI \
+ lpDateFmtEnumProcExEx: DATEFMT_ENUMPROCEXEX,
+	  lpLocaleName: LPCWSTR,
+	       dwFlags: DWORD,
+		lParam: LPARAM
+
+
 CALLBACK(TIMEFMT_ENUMPROCEX, :LPWSTR, :LPARAM)
+
+;BOOL
+EnumTimeFormatsEx proto WINAPI \
+   lpTimeFmtEnumProcEx: TIMEFMT_ENUMPROCEX,
+	  lpLocaleName: LPCWSTR,
+	       dwFlags: DWORD,
+		lParam: LPARAM
+
+
 CALLBACK(LOCALE_ENUMPROCEX, :LPWSTR, :DWORD, :LPARAM)
 
-NormalizeString proto WINAPI :NORM_FORM, :LPCWSTR, :int_t, :LPWSTR, :int_t
-IsNormalizedString proto WINAPI :NORM_FORM, :LPCWSTR, :int_t
-IdnToAscii proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
-IdnToNameprepUnicode proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
-IdnToUnicode proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
+;BOOL
+EnumSystemLocalesEx proto WINAPI \
+    lpLocaleEnumProcEx: LOCALE_ENUMPROCEX,
+	       dwFlags: DWORD,
+		lParam: LPARAM,
+	    lpReserved: LPVOID
 
-VerifyScripts proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPCWSTR, :int_t
-GetStringScripts proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
-GetLocaleInfoEx proto WINAPI :LPCWSTR, :LCTYPE, :LPWSTR, :int_t
-GetCalendarInfoEx proto WINAPI :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPWSTR, :int_t, :LPDWORD
-GetDurationFormatEx proto WINAPI :LPCWSTR, :DWORD, :ptr SYSTEMTIME, :ULONGLONG, :LPCWSTR, :LPWSTR, :int_t
-GetNumberFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr NUMBERFMTW, :LPWSTR, :int_t
-GetCurrencyFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr CURRENCYFMTW, :LPWSTR, :int_t
-GetUserDefaultLocaleName proto WINAPI :LPWSTR, :int_t
-GetSystemDefaultLocaleName proto WINAPI :LPWSTR, :int_t
-GetNLSVersionEx proto WINAPI :NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
-FindNLSStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :int_t, :LPCWSTR, :int_t, :LPINT, :LPNLSVERSIONINFO, :LPVOID, :LPARAM
-LCMapStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t, :LPNLSVERSIONINFO, :LPVOID, :LPARAM
-IsValidLocaleName proto WINAPI :LPCWSTR
-EnumCalendarInfoExEx proto WINAPI :CALINFO_ENUMPROCEXEX, :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPARAM
-EnumDateFormatsExEx proto WINAPI :DATEFMT_ENUMPROCEXEX, :LPCWSTR, :DWORD, :LPARAM
-EnumTimeFormatsEx proto WINAPI :TIMEFMT_ENUMPROCEX, :LPCWSTR, :DWORD, :LPARAM
-EnumSystemLocalesEx proto WINAPI :LOCALE_ENUMPROCEX, :DWORD, :LPARAM, :LPVOID
 endif
-if WINVER GE 0x0601
-ResolveLocaleName proto WINAPI :LPCWSTR, :LPWSTR, :int_t
-endif
-if WINVER GE 0x0602
-IsValidNLSVersion proto WINAPI :NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
-endif
-endif
-.pragma list(pop)
 
+endif
+
+if (WINVER GE _WIN32_WINNT_WIN7)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+;int
+ResolveLocaleName proto WINAPI \
+       lpNameToResolve: LPCWSTR,
+	  lpLocaleName: LPWSTR,
+	 cchLocaleName: SINT
+endif
+endif
+
+endif
+
+endif

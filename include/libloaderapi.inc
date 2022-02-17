@@ -7,11 +7,6 @@ include apisetcconv.inc
 include minwindef.inc
 include minwinbase.inc
 
-;;??
-ifndef _APISET_MINWIN_VERSION
-_APISET_MINWIN_VERSION	equ 0x0100
-endif
-
 ifndef _APISET_LIBLOADER_VER
 ifdef _APISET_MINWIN_VERSION
 if _APISET_MINWIN_VERSION GE 0x0102

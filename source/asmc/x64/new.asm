@@ -583,7 +583,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
     imul ebx,i,asm_tok
     add rbx,r8
     mov rsi,r9
-
+if 0
     mov rax,[rsi].symtype
     .if ( rax && [rax].asym.flag2 & S_OPERATOR )
 
@@ -592,7 +592,7 @@ AssignValue proc __ccall private uses rsi rdi rbx name:string_t, i:int_t,
         add rax,tokenarray
         .return
     .endif
-
+endif
     mov flag,[rbx].hll_flags
     mov l2,0
 

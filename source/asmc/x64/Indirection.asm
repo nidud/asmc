@@ -130,6 +130,7 @@ AssignPointer proc __ccall uses rsi rdi rbx sym:ptr asym, reg:int_t, tok:ptr asm
     mov rdi,pclass
     .if ( rdi && [rdi].asym.flag2 & S_ISVTABLE )
 
+        xor eax,eax
         .switch ( langtype )
         .case LANG_SYSCALL
             mov eax,T_RDI

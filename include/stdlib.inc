@@ -640,8 +640,8 @@ __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-setargv		proto __cdecl :ptr, :string_t
-setwargv	proto __cdecl :ptr, :ptr wchar_t
+setargv		proto __cdecl :ptr int_t, :string_t
+setwargv	proto __cdecl :ptr int_t, :ptr wchar_t
 _atoi128	proto __cdecl :string_t
 qsort4		proto :ptr, :size_t, :LPQSORTCMD
 endif

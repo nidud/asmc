@@ -582,7 +582,7 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
     imul ebx,i,asm_tok
     add ebx,tokenarray
     mov esi,ti
-
+if 0
     mov eax,[esi].symtype
     .if ( eax && [eax].asym.flag2 & S_OPERATOR )
 
@@ -591,7 +591,7 @@ AssignValue proc private uses esi edi ebx name:string_t, i:int_t,
         add eax,tokenarray
         .return
     .endif
-
+endif
     mov flag,[ebx].hll_flags
     mov l2,0
 

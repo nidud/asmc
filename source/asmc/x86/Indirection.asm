@@ -130,6 +130,7 @@ AssignPointer proc uses esi edi ebx sym:ptr asym, reg:int_t, tok:ptr asm_tok,
     mov edi,pclass
     .if ( edi && [edi].asym.flag2 & S_ISVTABLE )
 
+        xor eax,eax
         .switch ( langtype )
         .case LANG_SYSCALL
             mov eax,T_RDI

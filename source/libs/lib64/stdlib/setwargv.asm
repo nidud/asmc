@@ -12,83 +12,93 @@ include string.inc
 include malloc.inc
 
 MAXARGCOUNT equ 256
-MAXARGSIZE  equ 0x8000	; Max argument size: 32K
+MAXARGSIZE  equ 0x8000  ; Max argument size: 32K
 
-	.code
+    .code
 
-setwargv proc uses rsi rdi rbx argc:ptr, cmdline:ptr wchar_t
+setwargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:ptr wchar_t
 
-  local argv[MAXARGCOUNT]:QWORD
-  local buffer:QWORD, tmp:DWORD
+  local argv[MAXARGCOUNT]:string_t
+  local buffer:string_t
+  local i:int_t
 
-    mov buffer,alloca(MAXARGSIZE*2)
-    mov rdi,buffer
-    mov rsi,cmdline
-    mov rdx,argc
-    xor rax,rax
-    mov [rdx],rax
+    UNREFERENCED_PARAMETER(argc)
+    UNREFERENCED_PARAMETER(cmdline)
 
+    mov rsi,rdx
+    mov dword ptr [rcx],0
+    mov buffer,malloc(MAXARGSIZE*2)
+    mov rdi,rax
     lodsw
+
     .while ax
 
-	xor ecx,ecx		; Add a new argument
-	xor edx,edx		; "quote from start" in EDX - remove
-	mov [rdi],cx
+        xor ecx,ecx     ; Add a new argument
+        xor edx,edx     ; "quote from start" in EDX - remove
+        mov [rdi],cx
 
-	.for : ax == ' ' || (ax >= 9 && ax <= 13) :
-	    lodsw
-	.endf
-	.break .if !ax		; end of command string
-	.if ax == '"'
-	    add edx,1
-	    lodsw
-	.endif
-	.while ax == '"'	; ""A" B"
-	    add ecx,1
-	    lodsw
-	.endw
+        .for ( : ax == ' ' || ( ax >= 9 && ax <= 13 ) : )
+            lodsw
+        .endf
+        .break .if !ax  ; end of command string
 
-	.while ax
-	    .break .if !edx && !ecx && (ax == ' ' || (ax >= 9 && ax <= 13))
-	    .if ax == '"'
-		.if ecx
-		    dec ecx
-		.elseif edx
-		    mov ax,[rsi]
-		    .break .if ax == ' '
-		    .break .if ax >= 9 && ax <= 13
-		    dec edx
-		.else
-		    inc ecx
-		.endif
-	    .else
-		stosw
-	    .endif
-	    lodsw
-	.endw
+        .if ax == '"'
+            lodsw
+            inc edx
+        .endif
+        .while ax == '"' ; ""A" B"
+            lodsw
+            inc ecx
+        .endw
 
-	xor ecx,ecx
-	mov [rdi],ecx
-	lea rbx,[rdi+2]
-	mov rdi,buffer
-	.break .if cx == [rdi]
-	mov tmp,eax
-	sub rbx,rdi
-	memcpy(malloc(rbx), rdi, rbx)
-	mov rdx,argc
-	mov rcx,[rdx]
-	mov argv[rcx*8],rax
-	inc qword ptr [rdx]
-	mov eax,tmp
-	.break .if !( ecx < MAXARGCOUNT )
+        .while ax
+
+            .break .if ( !edx && !ecx && ( ax == ' ' || ( ax >= 9 && ax <= 13 ) ) )
+
+            .if ax == '"'
+                .if ecx
+                    dec ecx
+                .elseif edx
+                    mov ax,[rsi]
+                    .break .if ax == ' '
+                    .break .if ax >= 9 && ax <= 13
+                    dec edx
+                .else
+                    inc ecx
+                .endif
+            .else
+                stosw
+            .endif
+            lodsw
+        .endw
+
+        xor ecx,ecx
+        mov [rdi],ecx
+        lea rbx,[rdi+2]
+        mov rdi,buffer
+        .break .if cx == [rdi]
+
+        mov i,eax
+        sub rbx,rdi
+        memcpy(malloc(rbx), rdi, rbx)
+        mov rdx,argc
+        mov ecx,[rdx]
+        mov argv[rcx*8],rax
+        inc dword ptr [rdx]
+        mov eax,i
+
+        .break .if !( ecx < MAXARGCOUNT )
     .endw
+
     xor eax,eax
-    mov rbx,argc
-    mov rbx,[rbx]
+    mov rdx,argc
+    mov ebx,[rdx]
     lea rdi,argv
     mov [rdi+rbx*8],rax
     lea rbx,[rbx*8+8]
-    memcpy(malloc(rbx), rdi, rbx)
+    mov rsi,malloc(rbx)
+    free(buffer)
+    memcpy(rsi, rdi, rbx)
     ret
 
 setwargv endp

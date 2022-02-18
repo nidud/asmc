@@ -11,24 +11,24 @@ include stdlib.inc
 include string.inc
 include malloc.inc
 
-MAXARGCOUNT equ 256
-MAXARGSIZE  equ 0x8000  ; Max argument size: 32K
+define MAXARGCOUNT 256
+define MAXARGSIZE  0x8000  ; Max argument size: 32K
 
     .code
 
-setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
+setargv proc uses rsi rdi rbx argc:ptr int_t, cmdline:string_t
 
   local argv[MAXARGCOUNT]:string_t
   local buffer:string_t
-  local char:int_t
+  local i:int_t
 
+    UNREFERENCED_PARAMETER(argc)
+    UNREFERENCED_PARAMETER(cmdline)
+
+    mov rsi,rdx
+    mov dword ptr [rcx],0
     mov buffer,malloc(MAXARGSIZE)
-    mov rdi,buffer
-    mov rsi,cmdline
-    mov rdx,argc
-    xor eax,eax
-    mov [rdx],rax
-
+    mov rdi,rax
     lodsb
 
     .while al
@@ -37,7 +37,7 @@ setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
         xor edx,edx     ; "quote from start" in EDX - remove
         mov [rdi],cl
 
-        .for : al == ' ' || (al >= 9 && al <= 13) :
+        .for ( : al == ' ' || (al >= 9 && al <= 13) : )
             lodsb
         .endf
         .break .if !al  ; end of command string
@@ -78,21 +78,21 @@ setargv proc uses rsi rdi rbx argc:ptr, cmdline:string_t
         mov rdi,buffer
         .break .if cl == [rdi]
 
-        mov char,eax
+        mov i,eax
         sub rbx,rdi
         memcpy(malloc(rbx), rdi, rbx)
         mov rdx,argc
-        mov rcx,[rdx]
+        mov ecx,[rdx]
         mov argv[rcx*8],rax
-        inc qword ptr [rdx]
-        mov eax,char
+        inc dword ptr [rdx]
+        mov eax,i
 
         .break .if !( ecx < MAXARGCOUNT )
     .endw
 
     xor eax,eax
-    mov rbx,argc
-    mov rbx,[rbx]
+    mov rdx,argc
+    mov ebx,[rdx]
     lea rdi,argv
     mov [rdi+rbx*8],rax
     lea rbx,[rbx*8+8]

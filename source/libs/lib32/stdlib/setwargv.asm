@@ -18,7 +18,7 @@ MAXARGSIZE  equ 0x8000	; Max argument size: 32K
 
 	option	cstack:on
 
-setwargv proc uses esi edi ebx argc:ptr, cmdline:ptr wchar_t
+setwargv proc uses esi edi ebx argc:ptr int_t, cmdline:ptr wchar_t
 
 local argv[MAXARGCOUNT]:DWORD
 local buffer:DWORD

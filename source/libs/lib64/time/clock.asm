@@ -5,35 +5,35 @@
 ;
 
 include time.inc
+include sys/timeb.inc
 include winbase.inc
 
     .data
-    start_tics dq 0
+     __itimeb _timeb { 0, 0, 0, 0 }
 
     .code
 
 clock proc
 
-  local ct:FILETIME
+  local now:_timeb
 
-    GetSystemTimeAsFileTime( &ct )
-    mov rax,qword ptr ct.dwLowDateTime
-    sub rax,start_tics
-    mov ecx,10000
-    xor edx,edx
-    div rcx
+    ; Calculate the difference between the initial time and now.
+
+    _ftime(&now)
+    mov rax,now.time
+    sub rax,__itimeb.time
+    imul rax,rax,CLOCKS_PER_SEC
+    movzx ecx,now.millitm
+    movzx edx,__itimeb.millitm
+    sub ecx,edx
+    add rax,rcx
     ret
 
 clock endp
 
 __inittime proc
 
-  local ct:FILETIME
-
-    GetSystemTimeAsFileTime( &ct )
-    mov rax,qword ptr ct.dwLowDateTime
-    mov start_tics,rax
-    xor eax,eax
+    _ftime(&__itimeb)
     ret
 
 __inittime endp

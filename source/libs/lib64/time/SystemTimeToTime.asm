@@ -1,4 +1,4 @@
-; __STTOTIME.ASM--
+; SYSTEMTIMETOTIME.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -15,8 +15,7 @@ include time.inc
 
     .code
 
-
-__STToTime proc lpSystemTime:LPSYSTEMTIME
+SystemTimeToTime proc lpSystemTime:ptr SYSTEMTIME
 
     movzx   eax,[rcx].SYSTEMTIME.wYear
     sub     eax,DT_BASEYEAR
@@ -42,6 +41,6 @@ __STToTime proc lpSystemTime:LPSYSTEMTIME
     shr     edx,16
     ret
 
-__STToTime endp
+SystemTimeToTime endp
 
-        end
+    END

@@ -67,11 +67,11 @@ copyblock proc private
     mov dword ptr [rdi].size,eax
     mov eax,[rsi].nFileSizeHigh
     mov dword ptr [rdi].size[4],eax
-    __FTToTime( addr [rsi].ftCreationTime )
+    FileTimeToTime( addr [rsi].ftCreationTime )
     mov [rdi].time_create,rax
-    __FTToTime( addr [rsi].ftLastAccessTime )
+    FileTimeToTime( addr [rsi].ftLastAccessTime )
     mov [rdi].time_access,rax
-    __FTToTime( addr [rsi].ftLastWriteTime )
+    FileTimeToTime( addr [rsi].ftLastWriteTime )
     mov [rdi].time_write,rax
     lea rsi,[rsi].cFileName
     lea rdi,[rdi].name

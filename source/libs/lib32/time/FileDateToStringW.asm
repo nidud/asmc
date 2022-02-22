@@ -1,24 +1,22 @@
-; FDATETOSTR.ASM--
+; FILEDATETOSTRINGW.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include time.inc
-include stdio.inc
 include winbase.inc
 
     .code
 
-fdatetostr proc uses ecx edx string:LPSTR, ft:LPFILETIME
+FileDateToStringW proc string:ptr wchar_t, ft:ptr FILETIME
 
-local ftime:FILETIME, stime:SYSTEMTIME
+  local ftime:FILETIME, stime:SYSTEMTIME
 
     FileTimeToLocalFileTime(ft, &ftime)
     FileTimeToSystemTime(&ftime, &stime)
-    SystemDateToString(string, &stime)
+    SystemDateToStringW(string, &stime)
     ret
 
-fdatetostr endp
+FileDateToStringW endp
 
     END

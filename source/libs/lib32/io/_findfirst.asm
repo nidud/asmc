@@ -4,7 +4,6 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include crtl.inc
 include io.inc
 include time.inc
 include winbase.inc
@@ -51,9 +50,9 @@ copyblock:
     mov [edi].attrib,eax
     mov eax,[esi].nFileSizeLow
     mov [edi].size,eax
-    mov [edi].time_create,__FTToTime(&[esi].ftCreationTime)
-    mov [edi].time_access,__FTToTime(&[esi].ftLastAccessTime)
-    mov [edi].time_write, __FTToTime(&[esi].ftLastWriteTime)
+    mov [edi].time_create,FileTimeToTime(&[esi].ftCreationTime)
+    mov [edi].time_access,FileTimeToTime(&[esi].ftLastAccessTime)
+    mov [edi].time_write, FileTimeToTime(&[esi].ftLastWriteTime)
     lea esi,[esi].cFileName
     lea edi,[edi].name
     mov ecx,260/4

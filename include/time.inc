@@ -1,3 +1,5 @@
+ifndef __TIME_INC
+define __TIME_INC
 .pragma list(push, 0)
 
 ifndef __LIBC_INC
@@ -100,6 +102,8 @@ tm_isdst	SINT ?	;; daylight savings time flag
 tm		ENDS
 endif
 
+define CLOCKS_PER_SEC 1000
+
 LPTIME		typedef ptr time_t
 
 asctime		proto __cdecl :ptr tm
@@ -113,6 +117,7 @@ difftime	proto __cdecl :time_t, :time_t
 gmtime		proto __cdecl :ptr time_t
 localtime	proto __cdecl :ptr time_t
 mktime		proto __cdecl :ptr tm
+_mkgmtime	proto __cdecl :ptr tm
 strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
 strdate		proto __cdecl :ptr sbyte
 strtime		proto __cdecl :ptr sbyte
@@ -136,6 +141,7 @@ endif
 
 ifndef __UNIX__
 if not defined(_MSVCRT) or defined(_CRTBLD)
+
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
 externdef	_timezone:DWORD
@@ -144,25 +150,51 @@ externdef	_tzname:LPSTR
 externdef	__dnames:BYTE
 externdef	__mnames:BYTE
 
-__FTToTime	proto __cdecl :LPFILETIME
-__STToTime	proto __cdecl :LPSYSTEMTIME
-__TimeToFT	proto __cdecl :time_t, :LPFILETIME
-__TimeToST	proto __cdecl :time_t, :LPSYSTEMTIME
+DaysInFebruary		proto __cdecl :dword
+DaysInMonth		proto __cdecl :dword, :dword
+GetDayCount		proto __cdecl :dword, :dword, :dword
+GetWeekDay		proto __cdecl :dword, :dword, :dword
 
-DaysInFebruary	proto __cdecl :dword
-DaysInMonth	proto __cdecl :dword, :dword
-GetDayCount	proto __cdecl :dword, :dword, :dword
-GetWeekDay	proto __cdecl :dword, :dword, :dword
+FileTimeToTime		proto __cdecl :ptr FILETIME
+SystemTimeToTime	proto __cdecl :ptr SYSTEMTIME
+TimeToFileTime		proto __cdecl :time_t, :ptr FILETIME
+TimeToSystemTime	proto __cdecl :time_t, :ptr SYSTEMTIME
 
-atotime		proto __cdecl :LPSTR
-atodate		proto __cdecl :LPSTR
-fdatetostr	proto __cdecl :LPSTR, :LPFILETIME
-ftimetostr	proto __cdecl :LPSTR, :LPFILETIME
+StringToSystemTimeA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
+StringToSystemTimeW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
+StringToSystemDateA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
+StringToSystemDateW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
 
-TDateToString	proto __cdecl :ptr sbyte, :time_t
-SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
-SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
+SystemTimeToStringA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
+SystemTimeToStringW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
+SystemDateToStringA	proto __cdecl :ptr char_t,  :ptr SYSTEMTIME
+SystemDateToStringW	proto __cdecl :ptr wchar_t, :ptr SYSTEMTIME
+
+FileTimeToStringA	proto __cdecl :ptr char_t,  :ptr FILETIME
+FileTimeToStringW	proto __cdecl :ptr wchar_t, :ptr FILETIME
+FileDateToStringA	proto __cdecl :ptr char_t,  :ptr FILETIME
+FileDateToStringW	proto __cdecl :ptr wchar_t, :ptr FILETIME
+
+ifdef _UNICODE
+define StringToSystemTime <StringToSystemTimeW>
+define StringToSystemDate <StringToSystemDateW>
+define SystemDateToString <SystemDateToStringW>
+define SystemTimeToString <SystemTimeToStringW>
+define FileTimeToString	  <FileTimeToStringW>
+define FileDateToString	  <FileDateToStringW>
+else
+define StringToSystemTime <StringToSystemTimeA>
+define StringToSystemDate <StringToSystemDateA>
+define SystemDateToString <SystemDateToStringA>
+define SystemTimeToString <SystemTimeToStringA>
+define FileTimeToString	  <FileTimeToStringA>
+define FileDateToString	  <FileDateToStringA>
 endif
+
 endif
+
+endif
+
 .pragma pack(pop)
 .pragma list(pop)
+endif

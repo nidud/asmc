@@ -1,4 +1,4 @@
-; __FTTOTIME.ASM--
+; FILETIMETOTIME.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,16 +9,16 @@ include winbase.inc
 
     .code
 
-__FTToTime proc uses ecx edx ft:LPFILETIME
+FileTimeToTime proc ft:LPFILETIME
 
   local ftime:FILETIME
   local stime:SYSTEMTIME
 
     FileTimeToLocalFileTime(ft, &ftime)
     FileTimeToSystemTime(&ftime, &stime)
-    __STToTime(&stime)
+    SystemTimeToTime(&stime)
     ret
 
-__FTToTime endp
+FileTimeToTime endp
 
     END

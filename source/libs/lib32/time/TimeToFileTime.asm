@@ -1,4 +1,4 @@
-; __TIMETOFT.ASM--
+; TIMETOFILETIME.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,15 +9,14 @@ include winbase.inc
 
     .code
 
-__TimeToFT proc uses edx ecx Time:time_t, lpFileTime:LPFILETIME
+TimeToFileTime proc Time:time_t, lpFileTime:ptr FILETIME
 
-local SystemTime:SYSTEMTIME
+  local SystemTime:SYSTEMTIME
 
-    SystemTimeToFileTime(__TimeToST(Time, &SystemTime), lpFileTime)
+    SystemTimeToFileTime(TimeToSystemTime(Time, &SystemTime), lpFileTime)
     LocalFileTimeToFileTime(lpFileTime, lpFileTime)
-    mov eax,lpFileTime
-    ret
+   .return(lpFileTime)
 
-__TimeToFT endp
+TimeToFileTime endp
 
     END

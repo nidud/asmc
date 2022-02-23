@@ -40,6 +40,8 @@ sfunc_ptr           proc :asym_t, :ptr
 store               symptr_t ?
 eqitem              ends
 
+define _MAX_DYNEQ 20
+
 .data?
 align 4
 SymCmpFunc          StrCmpFunc ?
@@ -51,6 +53,8 @@ szDate              char_t 16 dup(?)    ; value of @Date symbol
 szTime              char_t 16 dup(?)    ; value of @Time symbol
 lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
+dyneqtable          string_t _MAX_DYNEQ dup(?)
+dyneqvalue          string_t _MAX_DYNEQ dup(?)
 
 .data
 align 4
@@ -92,18 +96,30 @@ endif
     eqitem  < @CStr("@WordSize"),  0, UpdateWordSize, 0 > ; must be last (see SymInit())
     string_t NULL
 
-_MAX_DYNEQ equ 20
 dyneqcount int_t 0
-dyneqtable string_t _MAX_DYNEQ dup(0)
-dyneqvalue string_t _MAX_DYNEQ dup(0)
 
     .code
 
-define_name proc string:string_t, value:string_t
-    mov edx,dyneqcount
-    mov dyneqtable[edx*4],string
-    mov dyneqvalue[edx*4],value
-    inc dyneqcount
+FindDefinedName proc private uses esi edi name:string_t
+
+    lea esi,dyneqtable
+    .for ( edi = 0 : edi < dyneqcount : edi++ )
+        lodsd
+        .if !strcmp(name, eax)
+            .return 1
+        .endif
+    .endf
+    .return 0
+
+FindDefinedName endp
+
+define_name proc name:string_t, value:string_t
+    .if !FindDefinedName(name)
+        mov edx,dyneqcount
+        mov dyneqtable[edx*4],name
+        mov dyneqvalue[edx*4],value
+        inc dyneqcount
+    .endif
     ret
 define_name endp
 

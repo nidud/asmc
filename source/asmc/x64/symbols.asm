@@ -40,6 +40,8 @@ sfunc_ptr           proc __ccall :asym_t, :ptr
 store               symptr_t ?
 eqitem              ends
 
+define _MAX_DYNEQ 20
+
 .data?
 gsym                symptr_t ?          ; asym ** pointer into global hash table
 lsym                symptr_t ?          ; asym ** pointer into local hash table
@@ -48,6 +50,8 @@ szTime              char_t 16 dup(?)    ; value of @Time symbol
 lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
 gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
 SymCmpFunc          StrCmpFunc ?
+dyneqtable          string_t _MAX_DYNEQ dup(?)
+dyneqvalue          string_t _MAX_DYNEQ dup(?)
 SymCount            uint_t ?            ; Number of symbols in global table
 
 .data
@@ -85,21 +89,36 @@ endif
     eqitem  < @CStr("@WordSize"),  0, UpdateWordSize, 0 > ; must be last (see SymInit())
     string_t NULL
 
-_MAX_DYNEQ equ 20
-dyneqtable string_t _MAX_DYNEQ dup(0)
-dyneqvalue string_t _MAX_DYNEQ dup(0)
 dyneqcount int_t 0
 
     .code
 
-define_name proc fastcall string:string_t, value:string_t
+FindDefinedName proc fastcall private uses rsi rdi name:string_t
 
-    mov r8d,dyneqcount
-    lea rax,dyneqtable
-    mov [rax+r8*string_t],rcx
-    lea rax,dyneqvalue
-    mov [rax+r8*string_t],rdx
-    inc dyneqcount
+    lea rsi,dyneqtable
+    .for ( edi = 0 : edi < dyneqcount : edi++ )
+        lodsq
+        .if !strcmp(name, rax)
+            .return 1
+        .endif
+    .endf
+    .return 0
+
+FindDefinedName endp
+
+define_name proc fastcall name:string_t, value:string_t
+
+    .if !FindDefinedName(rcx)
+
+        mov ecx,dyneqcount
+        lea rdx,dyneqtable
+        mov rax,name
+        mov [rdx+rcx*string_t],rax
+        lea rdx,dyneqvalue
+        mov rax,value
+        mov [rdx+rcx*string_t],rax
+        inc dyneqcount
+    .endif
     ret
 
 define_name endp

@@ -8,13 +8,13 @@ include ctype.inc
 
     .code
 
-    option win64:rsp
-
 iscntrl proc char:SINT
+
     lea rax,_ctype
     mov al,[rax+rcx*2+2]
     and eax,_CONTROL
     ret
+
 iscntrl endp
 
     end

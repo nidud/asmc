@@ -435,7 +435,7 @@ ENDS
 QUAD ENDS
 PQUAD typedef ptr QUAD
 
-BASETYPES equ 1
+define BASETYPES
 
 UCHAR			typedef BYTE
 USHORT			typedef WORD
@@ -605,7 +605,7 @@ FLOAT128		ENDS
 
 PFLOAT128		typedef ptr FLOAT128
 
-_ULONGLONG_ equ 1
+define _ULONGLONG_
 if ( NOT defined (_MAC) AND ( NOT defined(MIDL_PASS) OR defined(__midl)) AND ( NOT defined(_M_IX86) OR (defined(_INTEGRAL_MAX_BITS) AND _INTEGRAL_MAX_BITS GE 64)))
 LONGLONG		typedef SQWORD
 ULONGLONG		typedef QWORD

@@ -17,7 +17,10 @@ longjmp proc JumpBuffer:jmp_buf, ReturnValue:int_t
 
 longjmp endp
 
-    option win64:rsp noauto
+    option prologue:none
+    option epilogue:none
+    option frame:noauto
+
     assume rcx:ptr _JUMP_BUFFER
 
 _setjmp proc JumpBuffer:jmp_buf

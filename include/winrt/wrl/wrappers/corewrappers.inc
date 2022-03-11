@@ -33,6 +33,22 @@ include wrl\internal.inc
 
     hstr_ HSTRING ?
 
+    .static HString string:abs {
+        if @InStr(1, string, <addr >)
+            WindowsCreateString(string, lengthof(@SubStr(string, 5))-1, addr this.hstr_)
+        else
+            WindowsCreateString(string, wcslen(string), addr this.hstr_)
+        endif
+        }
+    .static Release {
+        WindowsDeleteString(this.hstr_)
+        mov this.hstr_,NULL
+        }
+    .static GetRawBuffer length:abs=<NULL> {
+        WindowsGetStringRawBuffer(this.hstr_, length)
+        }
+
+
     .static Set s:ptr wchar_t, len:dword {
         this.Release()
         WindowsCreateString(s, len, &this.hstr_)
@@ -58,19 +74,10 @@ include wrl\internal.inc
         mov rax,this.hstr_
         }
 
-    .static Release {
-        WindowsDeleteString(this.hstr_)
-        mov this.hstr_,NULL
-        }
-
     .static IsValid {
         xor eax,eax
         cmp rax,this.hstr_
         setnz al
-        }
-
-    .static GetRawBuffer length:ptr dword {
-        WindowsGetStringRawBuffer(this.hstr_, length)
         }
 
     .static CopyTo s:ptr HSTRING {

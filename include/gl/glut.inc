@@ -24,19 +24,6 @@ endif ;; _WIN32
 
 
 ifdef _GLPE
-ifndef _WIN64
-ifndef _REGS6432
-define _REGS6432
-    rax equ <eax>
-    rbx equ <ebx>
-    rcx equ <ecx>
-    rdx equ <edx>
-    rdi equ <edi>
-    rsi equ <esi>
-    rbp equ <ebp>
-    rsp equ <esp>
-endif
-endif
 
     option win64:3
 

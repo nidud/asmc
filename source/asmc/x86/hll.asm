@@ -1114,31 +1114,45 @@ isfnptr:
 
 GetProc endp
 
-GetParamId proc private uses esi edi id:int_t, sym:asym_t
+GetParamId proc private id:int_t, sym:asym_t
 
-    mov edi,sym
-    mov edx,[edi].dsym.procinfo
+    mov edx,sym
+    mov edx,[edx].dsym.procinfo
     mov eax,[edx].proc_info.paralist
-    movzx edi,[edi].asym.langtype
-    .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
-          edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-        .while eax && [eax].dsym.nextparam
-            mov eax,[eax].dsym.nextparam
-        .endw
+    .if ( eax == NULL )
+        .return
     .endif
-    mov esi,eax
-    .while eax && id
-        .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
-              edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-            .for ( eax = [edx].proc_info.paralist : eax && [eax].dsym.nextparam != esi,
-                 : eax = [eax].dsym.nextparam )
-            .endf
-            mov esi,eax
-        .else
-            mov eax,[eax].dsym.nextparam
-        .endif
-        dec id
+    xor ecx,ecx
+    .while ( [eax].dsym.nextparam )
+        mov eax,[eax].dsym.nextparam
+        inc ecx
     .endw
+    .if ( ecx < id )
+        .return NULL
+    .endif
+
+    mov ecx,sym
+    mov cl,[ecx].asym.langtype
+
+    .if ( cl== LANG_STDCALL ||
+          cl == LANG_C ||
+          cl == LANG_SYSCALL ||
+          cl == LANG_VECTORCALL ||
+          ( cl == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+
+        mov ecx,eax
+        .while id
+            .for ( eax = [edx].proc_info.paralist : ecx != [eax].dsym.nextparam : eax = [eax].dsym.nextparam )
+            .endf
+            mov ecx,eax
+            dec id
+        .endw
+    .else
+        .for ( eax = [edx].proc_info.paralist : id : eax = [eax].dsym.nextparam )
+            dec id
+        .endf
+    .endif
+
     .if ( eax && [eax].asym.mem_type == MT_TYPE )
         mov eax,[eax].asym.type
     .endif
@@ -1241,7 +1255,6 @@ GetMacroReturn endp
 
 StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm_tok
 
-  local sym:dsym_t
   local mac:string_t
   local curr:asym_t
   local proc_id:ptr asm_tok ; foo( 1, bar(...), ...)
@@ -1304,14 +1317,16 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm
         shr ecx,4
         .if GetProc( ecx, tokenarray, &opnd )
 
-            mov sym,eax
+            .if ( [eax].asym.mem_type == MT_TYPE )
+                mov eax,[eax].asym.type
+            .endif
             mov ecx,GetParamId( parg_id, eax )
             .if ecx
                 mov eax,[ecx].asym.total_size
                 .switch eax
                   .case 1: mov esi,T_AL : .endc
                   .case 2: mov esi,T_AX : .endc
-                  .case 4:
+                  .case 4
                     mov esi,T_EAX
                     .if ModuleInfo.Ofssize == USE64 && [ecx].asym.mem_type & MT_FLOAT
                         mov esi,T_XMM0
@@ -1329,7 +1344,7 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm
                         mov reg2,T_EAX
                     .endif
                     .endc
-                  .case 16:
+                  .case 16
                     .if [ecx].asym.mem_type & MT_FLOAT
                         mov esi,T_XMM0
                     .elseif ModuleInfo.Ofssize == USE64
@@ -1337,12 +1352,12 @@ StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:ptr asm
                         mov reg2,T_RAX
                     .endif
                     .endc
-                  .case 32:
+                  .case 32
                     .if [ecx].asym.mem_type == MT_YWORD
                         mov esi,T_YMM0
                     .endif
                     .endc
-                  .case 64:
+                  .case 64
                     .if [ecx].asym.mem_type == MT_ZWORD
                         mov esi,T_ZMM0
                     .endif

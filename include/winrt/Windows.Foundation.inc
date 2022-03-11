@@ -2061,7 +2061,7 @@ ifndef ____x_ABI_CWindows_CFoundation_CCollections_CIPropertySet_INTERFACE_DEFIN
 define ____x_ABI_CWindows_CFoundation_CCollections_CIPropertySet_INTERFACE_DEFINED__
 define InterfaceName_Windows_Foundation_Collections_IPropertySet <L"Windows.Foundation.Collections.IPropertySet">
 
-DEFINE_IIDX(Collections_IPropertySet, "8A43ED9F-F4E6-4421-ACF9-1DAB2986820C")
+DEFINE_IIDX(IPropertySet, "8A43ED9F-F4E6-4421-ACF9-1DAB2986820C")
 
 .comdef IPropertySet : public IInspectable
 

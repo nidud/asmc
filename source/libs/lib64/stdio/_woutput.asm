@@ -71,8 +71,6 @@ externdef __lookuptable:byte
 
     .code
 
-    option win64:2
-
 write_char proc private uses rsi wc:SINT, fp:LPFILE, pNumWritten:LPWORD
 
     mov rsi,r8
@@ -115,8 +113,6 @@ write_multi_char proc private uses rsi rdi rbx r12 char:SINT, num:UINT, fp:LPFIL
     ret
 
 write_multi_char endp
-
-    option win64:3
 
 _woutput proc public uses rsi rdi rbx fp:LPFILE, format:wstring_t, arglist:ptr_t
 

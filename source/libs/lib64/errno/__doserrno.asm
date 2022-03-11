@@ -11,8 +11,6 @@ include errno.inc
 
     .code
 
-    option win64:rsp noauto
-
 __doserrno proc
 
     lea rax,DoserrorNoMem

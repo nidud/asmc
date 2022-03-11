@@ -1107,31 +1107,43 @@ isfnptr:
 
 GetProc endp
 
-GetParamId proc __ccall private uses rsi rdi id:int_t, sym:asym_t
+GetParamId proc __ccall private id:int_t, sym:asym_t
 
-    mov rdi,rdx
-    mov rdx,[rdi].dsym.procinfo
-    mov rax,[rdx].proc_info.paralist
-    movzx edi,[rdi].asym.langtype
-    .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
-          edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-        .while rax && [rax].dsym.nextparam
-            mov rax,[rax].dsym.nextparam
-        .endw
+    mov r8,[rdx].dsym.procinfo
+    mov rax,[r8].proc_info.paralist
+    .if ( rax == NULL )
+        .return
     .endif
-    mov rsi,rax
-    .while rax && id
-        .if ( edi == LANG_STDCALL || edi == LANG_C || edi == LANG_SYSCALL || \
-              edi == LANG_VECTORCALL || ( edi == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-            .for ( rax = [rdx].proc_info.paralist : rax && [rax].dsym.nextparam != rsi,
-                 : rax = [rax].dsym.nextparam )
-            .endf
-            mov rsi,rax
-        .else
-            mov rax,[rax].dsym.nextparam
-        .endif
-        dec id
+    xor r9d,r9d
+    .while ( [rax].dsym.nextparam )
+        mov rax,[rax].dsym.nextparam
+        inc r9d
     .endw
+    .if ( r9d < ecx )
+        .return NULL
+    .endif
+
+    mov r9b,[rdx].asym.langtype
+
+    .if ( r9b== LANG_STDCALL ||
+          r9b == LANG_C ||
+          r9b == LANG_SYSCALL ||
+          r9b == LANG_VECTORCALL ||
+          ( r9b == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+
+        mov r9,rax
+        .while ecx
+            .for ( rax = [r8].proc_info.paralist : r9 != [rax].dsym.nextparam : rax = [rax].dsym.nextparam )
+            .endf
+            mov r9,rax
+            dec ecx
+        .endw
+    .else
+        .for ( rax = [r8].proc_info.paralist : ecx : rax = [rax].dsym.nextparam )
+            dec ecx
+        .endf
+    .endif
+
     .if ( rax && [rax].asym.mem_type == MT_TYPE )
         mov rax,[rax].asym.type
     .endif
@@ -1234,7 +1246,6 @@ GetMacroReturn endp
 
 StripSource proc __ccall private uses rsi rdi rbx i:uint_t, e:uint_t, tokenarray:ptr asm_tok
 
-  local sym:dsym_t
   local mac:string_t
   local curr:asym_t
   local proc_id:ptr asm_tok ; foo( 1, bar(...), ...)
@@ -1300,7 +1311,9 @@ StripSource proc __ccall private uses rsi rdi rbx i:uint_t, e:uint_t, tokenarray
 
         .if GetProc( eax, tokenarray, &opnd )
 
-            mov sym,rax
+            .if ( [rax].asym.mem_type == MT_TYPE )
+                mov rax,[rax].asym.type
+            .endif
             mov rcx,GetParamId( parg_id, rax )
             .if rcx
                 mov eax,[rcx].asym.total_size

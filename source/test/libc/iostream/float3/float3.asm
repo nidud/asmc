@@ -17,7 +17,7 @@ include tchar.inc
         }
     .ends
 
-float_add_oword proto :abs, :abs {
+float_add_float proto :abs, :abs {
     ifidn <_2>, <xmm0>
         addss _2,_1
     elseifidn <_1>, <xmm0>
@@ -28,13 +28,13 @@ float_add_oword proto :abs, :abs {
         addss _1,_2
     endif
     }
-float_sub_oword proto :real4, :abs {
+float_sub_float proto :real4, :abs {
     subss _1,_2
     }
-float_mul_oword proto :real4, :abs {
+float_mul_float proto :real4, :abs {
     mulss _1,_2
     }
-float_div_abs proto :real4, :abs {
+float_div_float proto :real4, :abs {
     divss _1,_2
     }
 float_equ_float proto :abs, :abs {
@@ -45,7 +45,9 @@ float_equ_float proto :abs, :abs {
 
 foo proc a:float, b:float, c:float, d:float
 
-   .new n:float = (a + xmm1 * xmm3 - xmm2) / 2.0
+   .new n:float = 2.0
+
+    n = (a + b * d - c) / n
     ret
 
 foo endp

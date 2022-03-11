@@ -12,8 +12,6 @@ _ALIGN  equ 3
 
     .code
 
-    option win64:rsp noauto
-
 __coreleft proc
 
     xor rax,rax         ; RAX: free memory

@@ -8,13 +8,13 @@ include ctype.inc
 
     .code
 
-    option win64:rsp
-
 isleadbyte proc wc:SINT
+
     lea rax,_ctype
     mov ax,[rax+rcx*2+2]
     and eax,_LEADBYTE
     ret
+
 isleadbyte endp
 
     end

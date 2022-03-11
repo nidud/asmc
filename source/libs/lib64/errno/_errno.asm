@@ -11,8 +11,6 @@ include errno.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
 _errno proc
 
     lea rax,ErrnoNoMem

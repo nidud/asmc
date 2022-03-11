@@ -8,8 +8,6 @@ include crtl.inc
 
     .code   ; Test if <ext> == bat | cmd | com | exe
 
-    option win64:rsp nosave
-
 __isexec proc filename:LPSTR
 
     .if strext(rcx)

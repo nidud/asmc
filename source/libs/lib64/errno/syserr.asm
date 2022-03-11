@@ -55,8 +55,6 @@ sys_nerr int_t lengthof(sys_errlist) - 1
 
     .code
 
-    option win64:0
-
 __sys_nerr proc
 
     lea rax,sys_nerr

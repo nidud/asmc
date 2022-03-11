@@ -8,13 +8,13 @@ include ctype.inc
 
     .code
 
-    option win64:rsp
-
 isupper proc char:SINT
+
     lea rax,_ctype
     mov al,[rax+rcx*2+2]
     and eax,_UPPER
     ret
+
 isupper endp
 
     end

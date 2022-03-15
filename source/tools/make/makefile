@@ -1,2 +1,4 @@
 make.exe:
-    asmc -Cs -pe $*.asm
+    asmc -Cs $*.asm
+    linkw system con_32 file $*
+

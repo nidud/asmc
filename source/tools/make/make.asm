@@ -2,6 +2,7 @@
 ; Copyright (c) 2016 GNU General Public License www.gnu.org/licenses
 ;
 ; Change history:
+; 2022-03-16 - removed _get_pgmptr() -- Windows XP (xrayer@)
 ; 2019-11-28 - added %ASMCDIR% if not set
 ; 2017-04-20 - added line-break '\' for targets
 ; 2017-02-25 - added switch -I -- include path
@@ -15,7 +16,7 @@ include stdlib.inc
 include io.inc
 include tchar.inc
 
-__MAKE__        equ 111
+__MAKE__        equ 112
 
 LINEBREAKCH     equ 0x5E ; '^'
 
@@ -1858,13 +1859,12 @@ install proc uses esi edi ebx
 
   local base[_MAX_PATH]:char_t
   local path[_MAX_PATH]:char_t
-  local pgmptr:string_t
 
     lea esi,base
     lea edi,path
-    _get_pgmptr(&pgmptr)
 
-    strpath(strpath(strcpy(esi, pgmptr)))
+    GetModuleFileNameA(0, esi, _MAX_PATH)
+    strpath(strpath(esi))
     .return .if !fopen(strfcat(edi, esi, "bin\\envars32.bat"), "wt")
     mov ebx,eax
     fprintf(eax,

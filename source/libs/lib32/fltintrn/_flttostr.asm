@@ -219,7 +219,7 @@ _flttostr proc uses esi edi ebx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
             _i64toflt(&tmp, edx::eax)
             _fltsub(&flt, &tmp)
             .ifs ( n > 0 )
-                _fltmul(&flt, &EXQ_1E16)
+                _fltmul(&flt, &_fltpowtable[EXTFLOAT*4])
             .endif
         .endif
 

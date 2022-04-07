@@ -215,9 +215,10 @@ _flttostr proc uses rsi rdi rbx q:ptr, cvt:ptr FLTINFO, buf:string_t, flags:uint
 
             mov rsi,_flttoi64(&flt)
             .ifs ( n > 0 )
+
                 _i64toflt(&tmp, rsi)
                 _fltsub(&flt, &tmp)
-                _fltmul(&flt, &EXQ_1E16)
+                _fltmul(&flt, &_fltpowtable[EXTFLOAT*4])
             .endif
         .endif
 

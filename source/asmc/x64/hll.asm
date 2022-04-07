@@ -1239,8 +1239,7 @@ GetMacroReturn proc __ccall private uses rsi rbx i:int_t, tokenarray:ptr asm_tok
    .until 1
    .return .if ( !dl )
    .return .if ( dl == '>' )
-    mov rax,rcx
-    ret
+   .return( rcx )
 
 GetMacroReturn endp
 

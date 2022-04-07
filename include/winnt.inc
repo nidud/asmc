@@ -7842,22 +7842,24 @@ endif
 
 RTL_UMS_VERSION		equ 0x0100
 
-RTL_UMS_THREAD_INFO_CLASS typedef sdword ; enum
+.enum RTL_UMS_THREAD_INFO_CLASS {
+    UmsThreadInvalidInfoClass = 0,
+    UmsThreadUserContext,
+    UmsThreadPriority,
+    UmsThreadAffinity,
+    UmsThreadTeb,
+    UmsThreadIsSuspended,
+    UmsThreadIsTerminated,
+    UmsThreadMaxInfoClass
+    }
 PRTL_UMS_THREAD_INFO_CLASS typedef ptr RTL_UMS_THREAD_INFO_CLASS
-UmsThreadInvalidInfoClass	equ 0
-UmsThreadUserContext		equ 1
-UmsThreadPriority		equ 2
-UmsThreadAffinity		equ 3
-UmsThreadTeb			equ 4
-UmsThreadIsSuspended		equ 5
-UmsThreadIsTerminated		equ 6
-UmsThreadMaxInfoClass		equ 7
 
-RTL_UMS_SCHEDULER_REASON	typedef sdword ; enum
-PRTL_UMS_SCHEDULER_REASON	typedef ptr RTL_UMS_SCHEDULER_REASON
-UmsSchedulerStartup		equ 0
-UmsSchedulerThreadBlocked	equ 1
-UmsSchedulerThreadYield		equ 2
+.enum RTL_UMS_SCHEDULER_REASON {
+    UmsSchedulerStartup = 0,
+    UmsSchedulerThreadBlocked,
+    UmsSchedulerThreadYield,
+    }
+PRTL_UMS_SCHEDULER_REASON typedef ptr RTL_UMS_SCHEDULER_REASON
 
 ;VOID
 CALLBACK(PRTL_UMS_SCHEDULER_ENTRY_POINT, :RTL_UMS_SCHEDULER_REASON, :ULONG_PTR, :PVOID)
@@ -7960,13 +7962,10 @@ CALLBACK(PAPCFUNC, :ULONG_PTR)
 ;LONG
 CALLBACK(PVECTORED_EXCEPTION_HANDLER, ExceptionInfo:ptr EXCEPTION_POINTERS)
 
-HEAP_INFORMATION_CLASS	typedef sdword ; enum _
-HeapCompatibilityInformation	  equ 0
-HeapEnableTerminationOnCorruption equ 1
-
-HEAP_INFORMATION_CLASS	typedef sdword ; enum _
-HeapCompatibilityInformation	  equ 0
-HeapEnableTerminationOnCorruption equ 1
+.enum HEAP_INFORMATION_CLASS {
+    HeapCompatibilityInformation,
+    HeapEnableTerminationOnCorruption
+    }
 
 CALLBACK(WAITORTIMERCALLBACKFUNC, :PVOID, :BOOLEAN)
 CALLBACK(WORKERCALLBACKFUNC, :PVOID)
@@ -7977,6 +7976,7 @@ CALLBACK(PSECURE_MEMORY_CACHE_CALLBACK, :PVOID, :SIZE_T)
 WT_SET_MAX_THREADPOOL_THREADS macro Flags, Limit
 	exitm<(((Flags) OR ((Limit) SHL 16)))>
 	endm
+
 
 WT_EXECUTEDEFAULT		equ 0x00000000
 WT_EXECUTEINIOTHREAD		equ 0x00000001
@@ -7991,18 +7991,18 @@ WT_TRANSFER_IMPERSONATION	equ 0x00000100
 
 ACTIVATION_CONTEXT	typedef ptr
 
-ACTIVATION_CONTEXT_INFO_CLASS typedef sdword ; enum _
-
-    ActivationContextBasicInformation			    equ 1
-    ActivationContextDetailedInformation		    equ 2
-    AssemblyDetailedInformationInActivationContext	    equ 3
-    FileInformationInAssemblyOfAssemblyInActivationContext  equ 4
-    RunlevelInformationInActivationContext		    equ 5
-    CompatibilityInformationInActivationContext		    equ 6
-    ActivationContextManifestResourceName		    equ 7
-    MaxActivationContextInfoClass			    equ 8
-    AssemblyDetailedInformationInActivationContxt	    equ 3
-    FileInformationInAssemblyOfAssemblyInActivationContxt   equ 4
+.enum ACTIVATION_CONTEXT_INFO_CLASS {
+    ActivationContextBasicInformation			    = 1,
+    ActivationContextDetailedInformation		    = 2,
+    AssemblyDetailedInformationInActivationContext	    = 3,
+    FileInformationInAssemblyOfAssemblyInActivationContext  = 4,
+    RunlevelInformationInActivationContext		    = 5,
+    CompatibilityInformationInActivationContext		    = 6,
+    ActivationContextManifestResourceName		    = 7,
+    MaxActivationContextInfoClass,
+    AssemblyDetailedInformationInActivationContxt	    = 3,
+    FileInformationInAssemblyOfAssemblyInActivationContxt   = 4
+    }
 
 ACTIVATIONCONTEXTINFOCLASS equ ACTIVATION_CONTEXT_INFO_CASS
 
@@ -8058,24 +8058,26 @@ ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION ENDS
 PACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
 PCACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
 
-ACTCTX_REQUESTED_RUN_LEVEL typedef sdword ; enum {
-ACTCTX_RUN_LEVEL_UNSPECIFIED	   equ 0
-ACTCTX_RUN_LEVEL_AS_INVOKER	   equ 1
-ACTCTX_RUN_LEVEL_HIGHEST_AVAILABLE equ 2
-ACTCTX_RUN_LEVEL_REQUIRE_ADMIN	   equ 3
-ACTCTX_RUN_LEVEL_NUMBERS	   equ 4
+.enum ACTCTX_REQUESTED_RUN_LEVEL {
+    ACTCTX_RUN_LEVEL_UNSPECIFIED,
+    ACTCTX_RUN_LEVEL_AS_INVOKER,
+    ACTCTX_RUN_LEVEL_HIGHEST_AVAILABLE,
+    ACTCTX_RUN_LEVEL_REQUIRE_ADMIN,
+    ACTCTX_RUN_LEVEL_NUMBERS
+    }
 
-ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION  STRUC
+ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION STRUC
 ulFlags			dd ?
 RunLevel		ACTCTX_REQUESTED_RUN_LEVEL ?
 UiAccess		dd ?
 ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION ENDS
 PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION typedef ptr ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION
 
-ACTCTX_COMPATIBILITY_ELEMENT_TYPE typedef sdword ; enum {
-ACTCTX_COMPATIBILITY_ELEMENT_TYPE_UNKNOWN    equ 0
-ACTCTX_COMPATIBILITY_ELEMENT_TYPE_OS	     equ 1
-ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION equ 2
+.enum ACTCTX_COMPATIBILITY_ELEMENT_TYPE {
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_UNKNOWN,
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_OS,
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION
+    }
 
 COMPATIBILITY_CONTEXT_ELEMENT STRUC
 Id			GUID <>
@@ -8255,6 +8257,9 @@ REG_OPEN_LEGAL_OPTION equ REG_OPTION_RESERVED OR REG_OPTION_BACKUP_RESTORE
 REG_CREATED_NEW_KEY		equ 0x00000001
 REG_OPENED_EXISTING_KEY		equ 0x00000002
 
+define REG_STANDARD_FORMAT     1
+define REG_LATEST_FORMAT       2
+define REG_NO_COMPRESSION      4
 
 REG_WHOLE_HIVE_VOLATILE		equ 0x00000001
 REG_REFRESH_HIVE		equ 0x00000002
@@ -8267,19 +8272,18 @@ REG_HIVE_EXACT_FILE_GROWTH	equ 0x00000080
 REG_HIVE_NO_RM			equ 0x00000100
 REG_HIVE_SINGLE_LOG		equ 0x00000200
 REG_BOOT_HIVE			equ 0x00000400
+REG_LOAD_HIVE_OPEN_HANDLE	equ 0x00000800
+REG_FLUSH_HIVE_FILE_GROWTH	equ 0x00001000
 
-REG_FORCE_UNLOAD	equ 1
+REG_FORCE_UNLOAD		equ 1
 
 REG_NOTIFY_CHANGE_NAME		equ 0x00000001
 REG_NOTIFY_CHANGE_ATTRIBUTES	equ 0x00000002
 REG_NOTIFY_CHANGE_LAST_SET	equ 0x00000004
 REG_NOTIFY_CHANGE_SECURITY	equ 0x00000008
+REG_NOTIFY_THREAD_AGNOSTIC	equ 0x10000000
 
-REG_LEGAL_CHANGE_FILTER equ REG_NOTIFY_CHANGE_NAME   or \
-			REG_NOTIFY_CHANGE_ATTRIBUTES or \
-			REG_NOTIFY_CHANGE_LAST_SET   or \
-			REG_NOTIFY_CHANGE_SECURITY
-
+REG_LEGAL_CHANGE_FILTER		equ 0x1000000F
 
 REG_NONE			equ 0
 REG_SZ				equ 1
@@ -8324,33 +8328,40 @@ SERVICE_ERROR_NORMAL	       equ 0x00000001
 SERVICE_ERROR_SEVERE	       equ 0x00000002
 SERVICE_ERROR_CRITICAL	       equ 0x00000003
 
+.enum CM_SERVICE_NODE_TYPE {
+    DriverType		     = SERVICE_KERNEL_DRIVER,
+    FileSystemType	     = SERVICE_FILE_SYSTEM_DRIVER,
+    Win32ServiceOwnProcess   = SERVICE_WIN32_OWN_PROCESS,
+    Win32ServiceShareProcess = SERVICE_WIN32_SHARE_PROCESS,
+    AdapterType		     = SERVICE_ADAPTER,
+    RecognizerType	     = SERVICE_RECOGNIZER_DRIVER
+    }
 
-    DriverType			equ SERVICE_KERNEL_DRIVER
-    FileSystemType		equ SERVICE_FILE_SYSTEM_DRIVER
-    Win32ServiceOwnProcess	equ SERVICE_WIN32_OWN_PROCESS
-    Win32ServiceShareProcess	equ SERVICE_WIN32_SHARE_PROCESS
-    AdapterType			equ SERVICE_ADAPTER
-    RecognizerType		equ SERVICE_RECOGNIZER_DRIVER
+.enum CM_SERVICE_LOAD_TYPE {
+    BootLoad	= SERVICE_BOOT_START,
+    SystemLoad	= SERVICE_SYSTEM_START,
+    AutoLoad	= SERVICE_AUTO_START,
+    DemandLoad	= SERVICE_DEMAND_START,
+    DisableLoad = SERVICE_DISABLED
+    }
 
-    BootLoad			equ SERVICE_BOOT_START
-    SystemLoad			equ SERVICE_SYSTEM_START
-    AutoLoad			equ SERVICE_AUTO_START
-    DemandLoad			equ SERVICE_DEMAND_START
-    DisableLoad			equ SERVICE_DISABLED
+.enum CM_ERROR_CONTROL_TYPE {
+    IgnoreError	  = SERVICE_ERROR_IGNORE,
+    NormalError	  = SERVICE_ERROR_NORMAL,
+    SevereError	  = SERVICE_ERROR_SEVERE,
+    CriticalError = SERVICE_ERROR_CRITICAL
+    }
 
-    IgnoreError			equ SERVICE_ERROR_IGNORE
-    NormalError			equ SERVICE_ERROR_NORMAL
-    SevereError			equ SERVICE_ERROR_SEVERE
-    CriticalError		equ SERVICE_ERROR_CRITICAL
+define CM_SERVICE_NETWORK_BOOT_LOAD	 0x00000001
+define CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD 0x00000002
+define CM_SERVICE_USB_DISK_BOOT_LOAD	 0x00000004
+define CM_SERVICE_SD_DISK_BOOT_LOAD	 0x00000008
+define CM_SERVICE_USB3_DISK_BOOT_LOAD	 0x00000010
+define CM_SERVICE_MEASURED_BOOT_LOAD	 0x00000020
+define CM_SERVICE_VERIFIER_BOOT_LOAD	 0x00000040
+define CM_SERVICE_WINPE_BOOT_LOAD	 0x00000080
 
-
-CM_SERVICE_NETWORK_BOOT_LOAD		equ 0x00000001
-CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD	equ 0x00000002
-CM_SERVICE_USB_DISK_BOOT_LOAD		equ 0x00000004
-
-
-CM_SERVICE_VALID_PROMOTION_MASK equ CM_SERVICE_NETWORK_BOOT_LOAD OR CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD
-
+define CM_SERVICE_VALID_PROMOTION_MASK	 0x000000FF
 
 TAPE_ERASE_SHORT		equ 0
 TAPE_ERASE_LONG			equ 1
@@ -8561,21 +8572,22 @@ DataBuffer		PVOID ?
 TAPE_WMI_OPERATIONS	ENDS
 PTAPE_WMI_OPERATIONS	typedef ptr TAPE_WMI_OPERATIONS
 
-TAPE_DRIVE_PROBLEM_TYPE		typedef sdword;enum _TAPE_DRIVE_PROBLEM_TYPE {
-TapeDriveProblemNone		equ 0
-TapeDriveReadWriteWarning	equ 1
-TapeDriveReadWriteError		equ 2
-TapeDriveReadWarning		equ 3
-TapeDriveWriteWarning		equ 4
-TapeDriveReadError		equ 5
-TapeDriveWriteError		equ 6
-TapeDriveHardwareError		equ 7
-TapeDriveUnsupportedMedia	equ 8
-TapeDriveScsiConnectionError	equ 9
-TapeDriveTimetoClean		equ 10
-TapeDriveCleanDriveNow		equ 11
-TapeDriveMediaLifeExpired	equ 12
-TapeDriveSnappedTape		equ 13
+.enum TAPE_DRIVE_PROBLEM_TYPE {
+   TapeDriveProblemNone,
+   TapeDriveReadWriteWarning,
+   TapeDriveReadWriteError,
+   TapeDriveReadWarning,
+   TapeDriveWriteWarning,
+   TapeDriveReadError,
+   TapeDriveWriteError,
+   TapeDriveHardwareError,
+   TapeDriveUnsupportedMedia,
+   TapeDriveScsiConnectionError,
+   TapeDriveTimetoClean,
+   TapeDriveCleanDriveNow,
+   TapeDriveMediaLifeExpired,
+   TapeDriveSnappedTape
+   }
 
 ifndef _NTTMAPI_
 define _NTTMAPI_
@@ -8705,54 +8717,55 @@ ENLISTMENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR \
 			ENLISTMENT_GENERIC_WRITE OR \
 			ENLISTMENT_GENERIC_EXECUTE)
 
-TRANSACTION_OUTCOME	typedef sdword;enum _TRANSACTION_OUTCOME {
-TransactionOutcomeUndetermined	equ 1
-TransactionOutcomeCommitted	equ 2
-TransactionOutcomeAborted	equ 3
+.enum TRANSACTION_OUTCOME {
+    TransactionOutcomeUndetermined = 1,
+    TransactionOutcomeCommitted,
+    TransactionOutcomeAborted,
+    }
 
-TRANSACTION_STATE	typedef sdword;enum _TRANSACTION_STATE {
-TransactionStateNormal		equ 1
-TransactionStateIndoubt		equ 2
-TransactionStateCommittedNotify equ 3
+.enum TRANSACTION_STATE {
+    TransactionStateNormal = 1,
+    TransactionStateIndoubt,
+    TransactionStateCommittedNotify,
+    }
 
-
-TRANSACTION_BASIC_INFORMATION  STRUC
+TRANSACTION_BASIC_INFORMATION STRUC
 TransactionId		GUID <>
 State			dd ?
 Outcome			dd ?
 TRANSACTION_BASIC_INFORMATION ENDS
 PTRANSACTION_BASIC_INFORMATION typedef ptr TRANSACTION_BASIC_INFORMATION
 
-TRANSACTIONMANAGER_BASIC_INFORMATION  STRUC
+TRANSACTIONMANAGER_BASIC_INFORMATION STRUC
 TmIdentity		GUID <>
 VirtualClock		LARGE_INTEGER <>
 TRANSACTIONMANAGER_BASIC_INFORMATION ENDS
 PTRANSACTIONMANAGER_BASIC_INFORMATION typedef ptr TRANSACTIONMANAGER_BASIC_INFORMATION
 
-TRANSACTIONMANAGER_LOG_INFORMATION  STRUC
+TRANSACTIONMANAGER_LOG_INFORMATION STRUC
 LogIdentity		GUID <>
 TRANSACTIONMANAGER_LOG_INFORMATION ENDS
 PTRANSACTIONMANAGER_LOG_INFORMATION typedef ptr TRANSACTIONMANAGER_LOG_INFORMATION
 
-TRANSACTIONMANAGER_LOGPATH_INFORMATION	STRUC
+TRANSACTIONMANAGER_LOGPATH_INFORMATION STRUC
 LogPathLength		dd ?
 LogPath			dw ?
 TRANSACTIONMANAGER_LOGPATH_INFORMATION ENDS
 PTRANSACTIONMANAGER_LOGPATH_INFORMATION typedef ptr TRANSACTIONMANAGER_LOGPATH_INFORMATION
 
-TRANSACTIONMANAGER_RECOVERY_INFORMATION	 STRUC
+TRANSACTIONMANAGER_RECOVERY_INFORMATION STRUC
 LastRecoveredLsn	ULONGLONG ?
 TRANSACTIONMANAGER_RECOVERY_INFORMATION ENDS
 PTRANSACTIONMANAGER_RECOVERY_INFORMATION typedef ptr TRANSACTIONMANAGER_RECOVERY_INFORMATION
 
 
-TRANSACTIONMANAGER_OLDEST_INFORMATION  STRUC
+TRANSACTIONMANAGER_OLDEST_INFORMATION STRUC
 OldestTransactionGuid	GUID <>
 TRANSACTIONMANAGER_OLDEST_INFORMATION ENDS
 PTRANSACTIONMANAGER_OLDEST_INFORMATION typedef ptr TRANSACTIONMANAGER_OLDEST_INFORMATION
 
 
-TRANSACTION_PROPERTIES_INFORMATION  STRUC
+TRANSACTION_PROPERTIES_INFORMATION STRUC
 IsolationLevel		dd ?
 IsolationFlags		dd ?
 Timeout			LARGE_INTEGER <>
@@ -8762,7 +8775,7 @@ Description		dw ?
 TRANSACTION_PROPERTIES_INFORMATION ENDS
 PTRANSACTION_PROPERTIES_INFORMATION typedef ptr TRANSACTION_PROPERTIES_INFORMATION
 
-TRANSACTION_BIND_INFORMATION  STRUC
+TRANSACTION_BIND_INFORMATION STRUC
 TmHandle		HANDLE ?
 TRANSACTION_BIND_INFORMATION ENDS
 PTRANSACTION_BIND_INFORMATION typedef ptr TRANSACTION_BIND_INFORMATION
@@ -8773,13 +8786,13 @@ ResourceManagerId	GUID <>
 TRANSACTION_ENLISTMENT_PAIR ENDS
 PTRANSACTION_ENLISTMENT_PAIR typedef ptr TRANSACTION_ENLISTMENT_PAIR
 
-TRANSACTION_ENLISTMENTS_INFORMATION  STRUC
+TRANSACTION_ENLISTMENTS_INFORMATION STRUC
 NumberOfEnlistments	dd ?
 EnlistmentPair		TRANSACTION_ENLISTMENT_PAIR <>
 TRANSACTION_ENLISTMENTS_INFORMATION ENDS
 PTRANSACTION_ENLISTMENTS_INFORMATION typedef ptr TRANSACTION_ENLISTMENTS_INFORMATION
 
-TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION  STRUC
+TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION STRUC
 SuperiorEnlistmentPair	TRANSACTION_ENLISTMENT_PAIR <>
 TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION ENDS
 PTRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION typedef ptr TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION
@@ -8798,28 +8811,28 @@ CompletionKey		ULONG_PTR ?
 RESOURCEMANAGER_COMPLETION_INFORMATION ENDS
 PRESOURCEMANAGER_COMPLETION_INFORMATION typedef ptr RESOURCEMANAGER_COMPLETION_INFORMATION
 
+.enum TRANSACTION_INFORMATION_CLASS {
+    TransactionBasicInformation,
+    TransactionPropertiesInformation,
+    TransactionEnlistmentInformation,
+    TransactionSuperiorEnlistmentInformation,
+    TransactionBindInformation, ; private and deprecated
+    TransactionDTCPrivateInformation ; private and deprecated
+    }
 
-TRANSACTION_INFORMATION_CLASS		typedef sdword;enum _TRANSACTION_INFORMATION_CLASS {
-TransactionBasicInformation		equ 0
-TransactionPropertiesInformation	equ 1
-TransactionEnlistmentInformation	equ 2
-TransactionSuperiorEnlistmentInformation equ 3
-TransactionBindInformation		equ 4	; private and deprecated
-TransactionDTCPrivateInformation	equ 5	; private and deprecated
+.enum TRANSACTIONMANAGER_INFORMATION_CLASS {
+    TransactionManagerBasicInformation,
+    TransactionManagerLogInformation,
+    TransactionManagerLogPathInformation,
+    TransactionManagerRecoveryInformation = 4,
+    TransactionManagerOnlineProbeInformation = 3,
+    TransactionManagerOldestTransactionInformation = 5
+    }
 
-
-TRANSACTIONMANAGER_INFORMATION_CLASS	typedef sdword ; enum _TRANSACTIONMANAGER_INFORMATION_CLASS {
-TransactionManagerBasicInformation	equ 0
-TransactionManagerLogInformation	equ 1
-TransactionManagerLogPathInformation	equ 2
-TransactionManagerRecoveryInformation	equ 4
-TransactionManagerOnlineProbeInformation equ 3
-TransactionManagerOldestTransactionInformation equ 5
-
-RESOURCEMANAGER_INFORMATION_CLASS typedef sdword ; enum _RESOURCEMANAGER_INFORMATION_CLASS {
-ResourceManagerBasicInformation		equ 0
-ResourceManagerCompletionInformation	equ 1
-
+.enum RESOURCEMANAGER_INFORMATION_CLASS {
+    ResourceManagerBasicInformation,
+    ResourceManagerCompletionInformation
+    }
 
 ENLISTMENT_BASIC_INFORMATION STRUC
 EnlistmentId		GUID <>
@@ -8835,10 +8848,11 @@ CrmEnlistmentId		GUID <>
 ENLISTMENT_CRM_INFORMATION ENDS
 PENLISTMENT_CRM_INFORMATION typedef ptr ENLISTMENT_CRM_INFORMATION
 
-ENLISTMENT_INFORMATION_CLASS typedef sdword ; enum _ENLISTMENT_INFORMATION_CLASS {
-EnlistmentBasicInformation	equ 0
-EnlistmentRecoveryInformation	equ 1
-EnlistmentCrmInformation	equ 2
+.enum ENLISTMENT_INFORMATION_CLASS {
+    EnlistmentBasicInformation,
+    EnlistmentRecoveryInformation,
+    EnlistmentCrmInformation
+    }
 
 TRANSACTION_LIST_ENTRY	STRUC
 UOW			UOW <>
@@ -8851,15 +8865,14 @@ TransactionInformation	TRANSACTION_LIST_ENTRY <>
 TRANSACTION_LIST_INFORMATION ENDS
 PTRANSACTION_LIST_INFORMATION typedef ptr TRANSACTION_LIST_INFORMATION
 
-KTMOBJECT_TYPE		typedef sdword; ptr enum _KTMOBJECT_TYPE {
+.enum KTMOBJECT_TYPE {
+    KTMOBJECT_TRANSACTION,
+    KTMOBJECT_TRANSACTION_MANAGER,
+    KTMOBJECT_RESOURCE_MANAGER,
+    KTMOBJECT_ENLISTMENT,
+    KTMOBJECT_INVALID
+    }
 PKTMOBJECT_TYPE		typedef ptr KTMOBJECT_TYPE
-
-KTMOBJECT_TRANSACTION		equ 0
-KTMOBJECT_TRANSACTION_MANAGER	equ 1
-KTMOBJECT_RESOURCE_MANAGER	equ 2
-KTMOBJECT_ENLISTMENT		equ 3
-KTMOBJECT_INVALID		equ 4
-
 
 KTMOBJECT_CURSOR	STRUC
 LastQuery		GUID <>
@@ -8876,12 +8889,13 @@ CALLBACK(PTP_CALLBACK_INSTANCE)
 CALLBACK(PTP_SIMPLE_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID)
 PTP_POOL		typedef ptr TP_POOL
 
-TP_CALLBACK_PRIORITY	typedef sdword;enum
-TP_CALLBACK_PRIORITY_HIGH	equ 0
-TP_CALLBACK_PRIORITY_NORMAL	equ 1
-TP_CALLBACK_PRIORITY_LOW	equ 2
-TP_CALLBACK_PRIORITY_INVALID	equ 3
-
+.enum TP_CALLBACK_PRIORITY {
+    TP_CALLBACK_PRIORITY_HIGH,
+    TP_CALLBACK_PRIORITY_NORMAL,
+    TP_CALLBACK_PRIORITY_LOW,
+    TP_CALLBACK_PRIORITY_INVALID,
+    TP_CALLBACK_PRIORITY_COUNT = TP_CALLBACK_PRIORITY_INVALID
+    }
 
 TP_POOL_STACK_INFORMATION STRUC
 StackReserve		SIZE_T ?

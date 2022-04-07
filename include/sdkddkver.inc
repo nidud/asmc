@@ -4,13 +4,11 @@ define _INC_SDKDDKVER
 
 ifndef WINAPI ; default (API) type
 ifdef _WIN64
-define WINAPI <>
+define WINAPI <fastcall>
 else
 define WINAPI <stdcall>
 endif
 endif
-
-.pragma cref(push, 0)
 
 define _INTEGRAL_MAX_BITS	64
 define _WIN32_WINNT_NT4		0x0400
@@ -172,8 +170,6 @@ define DECLSPEC_DEPRECATED_DDK_LONGHORN DECSPEC_DEPRECATED_DDK_WIN6
 
 endif
 
-.pragma cref(pop)
-
 if NOT defined(_WIN32_WINNT) AND NOT defined(NTDDI_VERSION)
 ifndef PSAPI_VERSION
 define PSAPI_VERSION
@@ -255,7 +251,7 @@ if (((OSVERSION_MASK AND NTDDI_VERSION) EQ NTDDI_WS03) AND NOT (_WIN32_WINNT EQ 
 endif
 
 if (((OSVERSION_MASK AND NTDDI_VERSION) EQ NTDDI_VISTA) AND NOT (_WIN32_WINNT EQ _WIN32_WINNT_VISTA))
-error NTDDI_VERSION setting conflicts with _WIN32_WINNT setting
+.err <NTDDI_VERSION setting conflicts with _WIN32_WINNT setting>
 endif
 
 if ((_WIN32_WINNT LT _WIN32_WINNT_WIN2K) AND (_WIN32_IE GT _WIN32_IE_IE60SP1))

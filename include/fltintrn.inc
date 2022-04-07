@@ -136,34 +136,7 @@ _itoflt		proto __cdecl :ptr STRFLT, :int_t
 _i64toflt	proto __cdecl :ptr STRFLT, :int64_t
 
 
-externdef _fltpowtable	:EXTFLOAT
-
- externdef EXQ_1E1	:EXTFLOAT
- externdef EXQ_1E2	:EXTFLOAT
- externdef EXQ_1E4	:EXTFLOAT
- externdef EXQ_1E8	:EXTFLOAT
- externdef EXQ_1E16	:EXTFLOAT
- externdef EXQ_1E32	:EXTFLOAT
- externdef EXQ_1E64	:EXTFLOAT
- externdef EXQ_1E128	:EXTFLOAT
- externdef EXQ_1E256	:EXTFLOAT
- externdef EXQ_1E512	:EXTFLOAT
- externdef EXQ_1E1024	:EXTFLOAT
- externdef EXQ_1E2048	:EXTFLOAT
- externdef EXQ_1E4096	:EXTFLOAT
- externdef EXQ_1E_1	:EXTFLOAT
- externdef EXQ_1E_2	:EXTFLOAT
- externdef EXQ_1E_4	:EXTFLOAT
- externdef EXQ_1E_8	:EXTFLOAT
- externdef EXQ_1E_16	:EXTFLOAT
- externdef EXQ_1E_32	:EXTFLOAT
- externdef EXQ_1E_64	:EXTFLOAT
- externdef EXQ_1E_128	:EXTFLOAT
- externdef EXQ_1E_256	:EXTFLOAT
- externdef EXQ_1E_512	:EXTFLOAT
- externdef EXQ_1E_1024	:EXTFLOAT
- externdef EXQ_1E_2048	:EXTFLOAT
- externdef EXQ_1E_4096	:EXTFLOAT
+externdef _fltpowtable:EXTFLOAT
 
 endif
 

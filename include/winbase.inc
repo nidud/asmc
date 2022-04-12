@@ -1047,627 +1047,212 @@ POFSTRUCT		TYPEDEF PTR OFSTRUCT
 .pragma(comment(lib, kernel32))
 
 if(_WIN32_WINNT GE 0x0500)
-GetConsoleWindow	proto WINAPI
+GetConsoleWindow proto WINAPI
 else
 CALLBACK(GetConsoleWindow_T)
-externdef		GetConsoleWindow:GetConsoleWindow_T
+externdef GetConsoleWindow:GetConsoleWindow_T
 endif
 
 ifndef NOWINBASEINTERLOCK
 ifndef _NTOS_
-ifdef _M_IA64
 
-InterlockedOr proto :ptr, :long_t {
+InterlockedOr proto fastcall :ptr, :sdword {
     mov	    eax,[rcx]
     lock    or [rcx],edx
     }
-
-;LONG
-InterlockedOrAcquire proto WINAPI \
-	   Destination: LPLONG,
-		 Value: LONG
-
-;LONG
-InterlockedOrRelease proto WINAPI \
-	   Destination: LPLONG,
-		 Value: LONG
-
-InterlockedOr8 proto :ptr, :byte {
+InterlockedOr8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    or [rcx],dl
     }
-
-;char
-InterlockedOr8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-;char
-InterlockedOr8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-
-InterlockedOr16 proto :ptr, :word {
+InterlockedOr16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    or [rcx],dx
     }
-
-;SHORT
-InterlockedOr16Acquire proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-;SHORT
-InterlockedOr16Release proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-InterlockedOr64 proto :ptr, :qword {
+InterlockedOr64 proto fastcall :ptr, :qword {
     mov	    rax,[rcx]
     lock    or [rcx],rdx
     }
 
-;LONGLONG
-InterlockedOr64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-;LONGLONG
-InterlockedOr64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-_InterlockedXor proto :ptr, :long_t {
+InterlockedXor proto fastcall :ptr, :sdword {
     mov	    eax,[rcx]
     lock    or [rcx],edx
     }
-
-;LONG
-InterlockedXorAcquire proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-
-;LONG
-InterlockedXorRelease proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-
-InterlockedXor8 proto :ptr, :byte {
+InterlockedXor8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    xor [rcx],dl
     }
-
-;char
-InterlockedXor8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-
-;char
-InterlockedXor8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-
-InterlockedXor16 proto :ptr, :word {
+InterlockedXor16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    xor [rcx],dx
     }
-
-;SHORT
-InterlockedXor16Acquire proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-;SHORT
-InterlockedXor16Release proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-InterlockedXor64 proto :ptr, :qword {
+InterlockedXor64 proto fastcall :ptr, :qword {
     mov	    rax,[rcx]
     lock    xor [rcx],rdx
     }
 
-;LONGLONG
-InterlockedXor64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-;LONGLONG
-InterlockedXor64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-InterlockedAnd proto :ptr, :long_t {
+InterlockedAnd proto fastcall :ptr, :sdword {
     mov	    eax,[rcx]
     lock    and [rcx],edx
     }
-
-;LONG
-InterlockedAndAcquire proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-
-;LONG
-InterlockedAndRelease proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-
-InterlockedAnd8 proto :ptr, :byte {
+InterlockedAnd8 proto fastcall :ptr, :byte {
     movzx   eax,byte ptr [rcx]
     lock    and [rcx],dl
     }
-
-;char
-InterlockedAnd8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-
-;char
-InterlockedAnd8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: SBYTE
-
-InterlockedAnd16 proto :ptr, :word {
+InterlockedAnd16 proto fastcall :ptr, :word {
     movzx   eax,word ptr [rcx]
     lock    and [rcx],dx
     }
-
-;SHORT
-InterlockedAnd16Acquire proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-;SHORT
-InterlockedAnd16Release proto WINAPI \
-	   Destination: ptr SWORD,
-		 Value: SWORD
-
-InterlockedAnd64 proto :ptr, :qword {
+InterlockedAnd64 proto fastcall :ptr, :qword {
     mov	    rax,[rcx]
     lock    and [rcx],rdx
     }
 
-;LONGLONG
-InterlockedAnd64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-;LONGLONG
-InterlockedAnd64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-
-InterlockedIncrement64 proto :ptr {
+InterlockedIncrement proto fastcall :ptr {
+    lock    inc dword ptr [rcx]
+    mov	    eax,[rcx]
+    }
+InterlockedIncrement64 proto fastcall :ptr {
     lock    inc qword ptr [rcx]
     mov	    rax,[rcx]
     }
 
-InterlockedDecrement64 proto :ptr {
+InterlockedDecrement proto fastcall :ptr {
+    lock    dec dword ptr [rcx]
+    mov	    eax,[rcx]
+    }
+InterlockedDecrement64 proto fastcall :ptr {
     lock dec qword ptr [rcx]
     mov rax,[rcx]
     }
 
-;LONG
-InterlockedIncrementAcquire proto WINAPI \
-		Addend: ptr LONG
+InterlockedCompareExchange proto fastcall :ptr, :sdword, :sdword {
+    mov	    eax,r8d
+    push    [rcx]
+    lock    cmpxchg dword ptr [rcx],edx
+    pop	    rax
+    }
+InterlockedCompareExchange64 proto fastcall :ptr, :qword, :qword {
+    mov	    rax,r8
+    push    [rcx]
+    lock    cmpxchg qword ptr [rcx],rdx
+    pop	    rax
+    }
 
-;LONG
-InterlockedDecrementAcquire proto WINAPI \
-		Addend: ptr LONG
+InterlockedExchange proto fastcall :ptr, :ptr {
+    xchg    [rcx],edx
+    mov	    eax,edx
+    }
+InterlockedExchange64 proto fastcall :ptr, :ptr {
+    xchg    [rcx],rdx
+    mov	    rax,rdx
+    }
+InterlockedExchangePointer proto fastcall :ptr, :ptr {
+    xchg    [rcx],rdx
+    mov	    rax,rdx
+    }
 
-;LONG
-InterlockedIncrementRelease proto WINAPI \
-		Addend: ptr LONG
+InterlockedOrAcquire	equ <InterlockedOr>
+InterlockedOrRelease	equ <InterlockedOr>
+InterlockedOr8Acquire	equ <InterlockedOr8>
+InterlockedOr8Release	equ <InterlockedOr8>
+InterlockedOr16Acquire	equ <InterlockedOr16>
+InterlockedOr16Release	equ <InterlockedOr16>
+InterlockedOr64Acquire	equ <InterlockedOr64>
+InterlockedOr64Release	equ <InterlockedOr64>
 
-;LONG
-InterlockedDecrementRelease proto WINAPI \
-		Addend: ptr LONG
+InterlockedXorAcquire	equ <InterlockedXor>
+InterlockedXorRelease	equ <InterlockedXor>
+InterlockedXor8Acquire	equ <InterlockedXor8>
+InterlockedXor8Release	equ <InterlockedXor8>
+InterlockedXor16Acquire equ <InterlockedXor16>
+InterlockedXor16Release equ <InterlockedXor16>
+InterlockedXor64Acquire equ <InterlockedXor64>
+InterlockedXor64Release equ <InterlockedXor64>
 
-;LONGLONG
-InterlockedExchange64 proto WINAPI \
-		Target: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedAndAcquire	equ <InterlockedAnd>
+InterlockedAndRelease	equ <InterlockedAnd>
+InterlockedAnd8Acquire	equ <InterlockedAnd8>
+InterlockedAnd8Release	equ <InterlockedAnd8>
+InterlockedAnd16Acquire equ <InterlockedAnd16>
+InterlockedAnd16Release equ <InterlockedAnd16>
+InterlockedAnd64Acquire equ <InterlockedAnd64>
+InterlockedAnd64Release equ <InterlockedAnd64>
 
-;LONGLONG
-InterlockedExchangeAcquire64 proto WINAPI \
-		Target: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedIncrementAcquire equ <InterlockedIncrement>
+InterlockedDecrementAcquire equ <InterlockedDecrement>
+InterlockedIncrementRelease equ <InterlockedIncrement>
+InterlockedDecrementRelease equ <InterlockedDecrement>
 
-;LONGLONG
+InterlockedExchangeAcquire64 equ <InterlockedExchange64>
+InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
+InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+InterlockedCompare64ExchangeAcquire128 equ <InterlockedCompare64Exchange128>
+InterlockedCompare64ExchangeRelease128 equ <InterlockedCompare64Exchange128>
+InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
+InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
+
+ifdef _M_IA64
+
 InterlockedExchangeAdd64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 
-InterlockedCompareExchange64 proto :ptr, :qword, :qword {
-    mov	    rax,r8
-    push    [rcx]
-    lock    cmpxchg size_t ptr [rcx],rdx
-    pop	    rax
-    }
-
-;LONGLONG
-InterlockedCompareExchangeAcquire64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      ExChange: LONGLONG,
-	     Comperand: LONGLONG
-
-;LONGLONG
-InterlockedCompareExchangeRelease64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      ExChange: LONGLONG,
-	     Comperand: LONGLONG
-
-;LONG64
 InterlockedCompare64Exchange128 proto WINAPI \
 	   Destination: ptr LONG64,
 	  ExChangeHigh: LONG64,
 	   ExChangeLow: LONG64,
 	     Comperand: LONG64
 
-;LONG64
-InterlockedCompare64ExchangeAcquire128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExChangeHigh: LONG64,
-	   ExChangeLow: LONG64,
-	     Comperand: LONG64
-
-;LONG64
-InterlockedCompare64ExchangeRelease128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExChangeHigh: LONG64,
-	   ExChangeLow: LONG64,
-	     Comperand: LONG64
-
-InterlockedIncrement proto :ptr {
-    lock    inc dword ptr [rcx]
-    mov	    eax,[rcx]
-    }
-
-InterlockedDecrement proto :ptr {
-    lock    dec dword ptr [rcx]
-    mov	    eax,[rcx]
-    }
-
-;LONG
-InterlockedExchange proto WINAPI \
-		Target: ptr LONG,
-		 Value: LONG
-
 ;LONG
 InterlockedExchangeAdd proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 
-InterlockedCompareExchange proto :ptr, :long_t, :long_t {
-    mov	    eax,r8d
-    push    [rcx]
-    lock    cmpxchg dword ptr [rcx],edx
-    pop	    rax
-    }
-
-;LONG
-InterlockedCompareExchangeRelease proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
-
-;LONG
-InterlockedCompareExchangeAcquire proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
-
-InterlockedExchangePointer proto :ptr, :ptr {
-    xchg    [rcx],rdx
-    mov	    rax,rdx
-    }
-
-;PVOID
 InterlockedCompareExchangePointer proto WINAPI \
 	   Destination: PVOID,
 	      ExChange: PVOID,
 	     Comperand: PVOID
 
-;PVOID
-InterlockedCompareExchangePointerAcquire proto WINAPI \
-	   Destination: PVOID,
-	      ExChange: PVOID,
-	     Comperand: PVOID
-
-;PVOID
-InterlockedCompareExchangePointerRelease proto WINAPI \
-	   Destination: PVOID,
-	      ExChange: PVOID,
-	     Comperand: PVOID
-
-
 ifndef MIDL_PASS
-
-ifndef InterlockedAnd
-
-InterlockedAnd proto :ptr, :long_t {
-    mov	    eax,[rcx]
-    lock    and [rcx],edx
-    }
-
-endif
-
-ifndef InterlockedOr
-
-InterlockedOr proto :ptr, :long_t {
-    mov	    eax,[rcx]
-    lock    or [rcx],edx
-    }
-
-endif
-
-ifndef InterlockedXor
-
-InterlockedXor proto :ptr, :long_t {
-    mov	    eax,[rcx]
-    lock    or [rcx],edx
-    }
-
-endif
-
-ifndef InterlockedAnd64
-
-InterlockedAnd64 proto :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    and [rcx],rdx
-    }
-
-endif
-
-ifndef InterlockedOr64
-
-InterlockedOr64 proto :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    or [rcx],rdx
-    }
-
-endif
-
-ifndef InterlockedXor64
-
-InterlockedXor64 proto :ptr, :qword {
-    mov	    rax,[rcx]
-    lock    xor [rcx],rdx
-    }
-
-endif
-
 ifndef InterlockedBitTestAndSet
-InterlockedBitTestAndSet macro Base, Bit
-	endm
+InterlockedBitTestAndSet proto fastcall :ptr, :dword {
+	mov	eax,edx
+	lock	bts [rcx],eax
+	setc	al
+	}
 endif
-
 ifndef InterlockedBitTestAndReset
-InterlockedBitTestAndReset macro Base, Bit
-	endm
+InterlockedBitTestAndReset proto fastcall :ptr, :dword {
+	mov	eax,edx
+	lock	btr [rcx],eax
+	setc	al
+	}
 endif
-
 ifndef InterlockedBitTestAndComplement
 InterlockedBitTestAndComplement macro Base, Bit
 	endm
 endif
-
 endif ; ifndef MIDL_PASS
 
 elseifdef _M_AMD64 ; ifdef _M_IA64
 
-;LONG
-InterlockedAnd proto WINAPI \
-	  Destination: LPLONG,
-		Value: LONG
-
-;LONG
-InterlockedOr proto WINAPI \
-	  Destination: LPLONG,
-		Value: LONG
-
-;LONG
-InterlockedXor proto WINAPI \
-	  Destination: LPLONG,
-		Value: LONG
-
-;LONG
-InterlockedIncrement proto WINAPI \
-	       Addend: LPLONG
-
-;LONG
-InterlockedDecrement proto WINAPI \
-	       Addend: LPLONG
-
-;LONG
-InterlockedExchangeAdd proto WINAPI \
-	       Addend: LPLONG,
-		Value: LONG
-
-;LONG
-InterlockedCompareExchange proto WINAPI \
-	  Destination: LPLONG,
-	     ExChange: LONG,
-	    Comperand: LONG
-
-;PVOID
-InterlockedCompareExchangePointer proto WINAPI \
-	  Destination: PVOID,
-	     ExChange: PVOID,
-	    Comperand: PVOID
-
-;PVOID
-InterlockedExchangePointer proto WINAPI \
-	       Target: PVOID,
-		Value: PVOID
-
-;LONG64
-InterlockedAnd64 proto WINAPI \
-	  Destination: PLONG64,
-		Value: LONG64
-
-;LONG64
-InterlockedOr64 proto WINAPI \
-	  Destination: PLONG64,
-		Value: LONG64
-
-;LONG64
-InterlockedXor64 proto WINAPI \
-	  Destination: ptr LONG64,
-		Value: LONG64
-
-;LONG64
-InterlockedIncrement64 proto WINAPI \
-	       Addend: ptr LONG64
-
-;LONG64
-InterlockedDecrement64 proto WINAPI \
-	       Addend: ptr LONG64
-
-;LONG64
-InterlockedExchange64 proto WINAPI \
-	       Target: ptr LONG64,
-		Value: LONG64
-
-;LONG64
-InterlockedExchangeAdd64 proto WINAPI \
-	       Addend: ptr LONG64,
-		Value: LONG64
-
-;LONG64
-InterlockedCompareExchange64 proto WINAPI \
-	  Destination: ptr LONG64,
-	     ExChange: LONG64,
-	    Comperand: LONG64
-
 if _MSC_FULL_VER GE 140041204
-
-InterlockedAnd8	 equ <_InterlockedAnd8>
-InterlockedOr8	 equ <_InterlockedOr8>
-InterlockedXor8	 equ <_InterlockedXor8>
-InterlockedAnd16 equ <_InterlockedAnd16>
-InterlockedOr16	 equ <_InterlockedOr16>
-InterlockedXor16 equ <_InterlockedXor16>
-
-;char
-InterlockedAnd8 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SBYTE
-
-;char
-InterlockedOr8 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SBYTE
-
-;char
-InterlockedXor8 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SBYTE
-
-;SHORT
-InterlockedAnd16 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SWORD
-
-;SHORT
-InterlockedOr16 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SWORD
-
-;SHORT
-InterlockedXor16 proto WINAPI \
-    Destination: LPSTR,
-	  Value: SWORD
-
 endif ; _MSC_FULL_VER GE 140041204
 
 else ; ifdef _M_IA64
 
-;LONG
-InterlockedIncrement proto WINAPI \
-	      lpAddend: LPLONG
-
-;LONG
-InterlockedDecrement proto WINAPI \
-	      lpAddend: LPLONG
-
-;LONG
-InterlockedExchange proto WINAPI \
-		Target: LPLONG,
-		 Value: LONG
-
-InterlockedExchangePointer macro Target, Value
-	InterlockedExchange(Target, Value)
-	endm
-
-;LONG
-InterlockedExchangeAdd proto WINAPI \
-		Addend: LPLONG,
-		 Value: LONG
-
-;LONG
-InterlockedCompareExchange proto WINAPI \
-	   Destination: LPLONG,
-	      Exchange: LONG,
-	     Comperand: LONG
-
 if (_WIN32_WINNT GE 0x0502)
-;LONGLONG
-InterlockedCompareExchange64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      Exchange: LONGLONG,
-	     Comperand: LONGLONG
 endif
-
 ifndef MIDL_PASS
-
 if (_WIN32_WINNT GE 0x0502)
-;FORCEINLINE
-;LONGLONG
-InterlockedAnd64 macro Destination, Value
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedOr64 macro Destination, Value
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedXor64 macro Destination, Value
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedIncrement64 macro Addend
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedDecrement64 macro Addend
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedExchange64 macro Target, Value
-	endm
-;FORCEINLINE
-;LONGLONG
-InterlockedExchangeAdd64 macro Addend, Value
-	endm
 endif
 endif
 
 InterlockedCompareExchangePointer macro Destination, ExChange, Comperand
 	exitm<InterlockedCompareExchange(Destination, ExChange, Comperand)>
 	endm
-
-InterlockedIncrementAcquire equ <InterlockedIncrement>
-InterlockedIncrementRelease equ <InterlockedIncrement>
-InterlockedDecrementAcquire equ <InterlockedDecrement>
-InterlockedDecrementRelease equ <InterlockedDecrement>
-InterlockedIncrementAcquire equ <InterlockedIncrement>
-InterlockedIncrementRelease equ <InterlockedIncrement>
-InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
-InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
-InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
-InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
 
 endif ; ifdef _M_IA64
 

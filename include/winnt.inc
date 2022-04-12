@@ -1487,100 +1487,131 @@ PF_TEMPORAL_LEVEL_3	equ _MM_HINT_T2
 PF_NON_TEMPORAL_LEVEL_ALL equ _MM_HINT_NTA
 
 
-ReadMxCsr		equ <_mm_getcsr>
-WriteMxCsr		equ <_mm_setcsr>
+_mm_getcsr proto fastcall {
+    stmxcsr [rsp]
+    mov	    eax,[rsp]
+    }
 
-;unsigned int
-_mm_getcsr proto WINAPI
+_mm_setcsr proto fastcall :dword {
+    mov	    [rsp],ecx
+    ldmxcsr [rsp]
+    }
 
-;VOID
-_mm_setcsr proto WINAPI \
-		 MxCsr: UINT
+__int2c proto fastcall {
+    int	    0x2c
+    }
 
-;VOID
-__int2c proto WINAPI
+__getcallerseflags proto fastcall {
+    pushfq
+    pop	    rax
+    }
 
-;FORCEINLINE
-;VOID
-DbgRaiseAssertionFailure macro
-	exitm<__int2c()>
-	endm
+__segmentlimit proto fastcall :dword {
+    mov	    eax,ecx
+    lsl	    eax,eax
+    }
 
+__readpmc proto fastcall :dword {
+    rdpmc
+    shl	    rdx,32
+    or	    rax,rdx
+    }
 
-GetCallersEflags macro
-	exitm<__getcallerseflags()>
-	endm
-
-;unsigned __int32
-__getcallerseflags proto WINAPI
-
-
-GetSegmentLimit equ <__segmentlimit>
-
-;DWORD
-__segmentlimit proto WINAPI \
-	      Selector: DWORD
-
-
-ReadPMC equ <__readpmc>
-
-;DWORD64
-__readpmc proto WINAPI \
-	       Counter: DWORD
+__rdtsc proto fastcall {
+    rdtsc
+    shl	    rdx,32
+    or	    rax,rdx
+    }
 
 
-ReadTimeStampCounter macro
-	exitm<__rdtsc()>
-	endm
+ReadMxCsr		 equ <_mm_getcsr>
+WriteMxCsr		 equ <_mm_setcsr>
+DbgRaiseAssertionFailure equ <__int2c>
+GetCallersEflags	 equ <__getcallerseflags>
+GetSegmentLimit		 equ <__segmentlimit>
+ReadPMC			 equ <__readpmc>
+ReadTimeStampCounter	 equ <__rdtsc>
 
-;DWORD64
-__rdtsc proto WINAPI
 
+__movsb proto fastcall :ptr, :ptr, :sdword {
+    push    rsi
+    push    rdi
+    mov	    rdi,rcx
+    mov	    rsi,rdx
+    mov	    ecx,r8d
+    rep	    movsb
+    pop	    rdi
+    pop	    rsi
+    }
 
-;VOID
-__movsb proto WINAPI \
-	   Destination: PBYTE,
-		Source: ptr BYTE,
-		 Count: SIZE_T
-;VOID
-__movsw proto WINAPI \
-	   Destination: PWORD,
-		Source: ptr WORD,
-		 Count: SIZE_T
-;VOID
-__movsd proto WINAPI \
-	   Destination: PDWORD,
-		Source: ptr DWORD,
-		 Count: SIZE_T
-;VOID
-__movsq proto WINAPI \
-	   Destination: PDWORD64,
-		Source: ptr DWORD64,
-		 Count: SIZE_T
+__movsw proto fastcall :ptr, :ptr, :sdword {
+    push    rsi
+    push    rdi
+    mov	    rdi,rcx
+    mov	    rsi,rdx
+    mov	    ecx,r8d
+    rep	    movsw
+    pop	    rdi
+    pop	    rsi
+    }
 
-;VOID
-__stosb proto WINAPI \
-	   Destination: PBYTE,
-		 Value: BYTE,
-		 Count: SIZE_T
+__movsd proto fastcall :ptr, :ptr, :sdword {
+    push    rsi
+    push    rdi
+    mov	    rdi,rcx
+    mov	    rsi,rdx
+    mov	    ecx,r8d
+    rep	    movsd
+    pop	    rdi
+    pop	    rsi
+    }
 
-;VOID
-__stosw proto WINAPI \
-	   Destination: PWORD,
-		 Value: WORD,
-		 Count: SIZE_T
+__movsq proto fastcall :ptr, :qword, :sdword {
+    push    rsi
+    push    rdi
+    mov	    rdi,rcx
+    mov	    rsi,rdx
+    mov	    ecx,r8d
+    rep	    movsq
+    pop	    rdi
+    pop	    rsi
+    }
 
-;VOID
-__stosd proto WINAPI \
-	   Destination: PDWORD,
-		 Value: DWORD,
-		 Count: SIZE_T
+__stosb proto fastcall :ptr, :byte, :sdword {
+    push    rdi
+    mov	    rdi,rcx
+    mov	    al,dl
+    mov	    ecx,r8d
+    rep	    stosb
+    pop	    rdi
+    }
 
-;VOID
-__stosq proto WINAPI \
-	   Destination: PDWORD64,
-		 Value: DWORD64,
-		 Count: SIZE_T
+__stosw proto fastcall :ptr, :word, :sdword {
+    push    rdi
+    mov	    rdi,rcx
+    mov	    ax,dx
+    mov	    ecx,r8d
+    rep	    stosw
+    pop	    rdi
+    }
+
+__stosd proto fastcall :ptr, :dword, :sdword {
+    push    rdi
+    mov	    rdi,rcx
+    mov	    eax,edx
+    mov	    ecx,r8d
+    rep	    stosd
+    pop	    rdi
+    }
+
+__stosq proto fastcall :ptr, :ptr, :sdword {
+    push    rdi
+    mov	    rdi,rcx
+    mov	    rax,rdx
+    mov	    ecx,r8d
+    rep	    stosd
+    pop	    rdi
+    }
 
 
 MultiplyHigh		equ <__mulh>
@@ -1599,114 +1630,110 @@ __umulh proto WINAPI \
 ShiftLeft128	equ <__shiftleft128>
 ShiftRight128	equ <__shiftright128>
 
-;DWORD64
-__shiftleft128 proto WINAPI \
-	       LowPart: DWORD64,
-	      HighPart: DWORD64,
-		 Shift: BYTE
-;DWORD64
-__shiftright128 proto WINAPI \
-	       LowPart: DWORD64,
-	      HighPart: DWORD64,
-		 Shift: BYTE
+__shiftleft128 proto :qword, :qword, :dword {
+    mov	    rax,rcx
+    mov	    ecx,r8d
+    shld    rdx,rax,cl
+    sal	    rax,cl
+    .if cl & 0xC0
+	.if cl & 0x80
+	    xor eax,eax
+	    xor edx,edx
+	.else
+	    mov rdx,rax
+	    xor eax,eax
+	.endif
+    .endif
+    }
 
+__shiftright128 proto :qword, :qword, :dword {
+    mov	    rax,rcx
+    mov	    ecx,r8d
+    shrd    rdx,rax,cl
+    sar	    rax,cl
+    .if cl & 0xC0
+	.if cl & 0x80
+	    xor eax,eax
+	    xor edx,edx
+	.else
+	    mov rax,rdx
+	    xor rdx,rdx
+	.endif
+    .endif
+    }
 
-Multiply128	equ <_mul128>
-
-;LONG64
-ifndef _M_X64
-_mul128 proto Multiplier: qword, Multiplicand: qword, HighProduct: ptr qword
+ifdef _WIN64
+_mul128 proto fastcall :qword, :qword, :ptr qword {
+    mov rax,rdx
+    mul rcx
+    .if r8
+	mov [r8],rdx
+    .endif
+    }
+else
+_mul128 proto :qword, :qword, :ptr qword
 endif
 
-
+define Multiply128 <_mul128>
 ifndef UnsignedMultiply128
-
-UnsignedMultiply128	equ <_mul128>
-
-;DWORD64
-;_umul128 proto Multiplier: DWORD64, Multiplicand: DWORD64, HighProduct: ptr DWORD64
-
+define UnsignedMultiply128 <_mul128>
+define _umul128 <_mul128>
 endif
 
-;__forceinline
-;LONG64
-Multiply128 proto WINAPI \
-	    Multiplier: LONG64,
-	  Multiplicand: LONG64,
-	   HighProduct: ptr LONG64
+__readgsbyte proto fastcall :ptr {
+    movzx   eax,byte ptr gs:[rcx]
+    }
+__readgsword proto fastcall :ptr {
+    movzx   eax,word ptr gs:[rcx]
+    }
+__readgsdword proto fastcall :ptr {
+    mov	    eax,gs:[rcx]
+    }
+__readgsqword proto fastcall :ptr {
+    mov	    rax,gs:[rcx]
+    }
 
-;__forceinline
-;DWORD64
-UnsignedMultiplyExtract128 proto WINAPI \
-	    Multiplier: LONG64,
-	  Multiplicand: LONG64,
-		 Shift: BYTE
-
-;BYTE
-__readgsbyte proto WINAPI \
-	       _Offset: DWORD
-;WORD
-__readgsword proto WINAPI \
-	       _Offset: DWORD
-;DWORD
-__readgsdword proto WINAPI \
-	       _Offset: DWORD
-;DWORD64
-__readgsqword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__writegsbyte proto WINAPI \
-	       _Offset: DWORD,
-		  Data: BYTE
-;VOID
-__writegsword proto WINAPI \
-	       _Offset: DWORD,
-		  Data: WORD
-;VOID
-__writegsdword proto WINAPI \
-	       _Offset: DWORD,
-		  Data: DWORD
-;VOID
-__writegsqword proto WINAPI \
-	       _Offset: DWORD,
-		  Data: DWORD64
+__writegsbyte proto fastcall :ptr, :byte {
+    mov	    gs:[rcx],dl
+    }
+__writegsword proto fastcall :ptr, :word {
+    mov	    gs:[rcx],dx
+    }
+__writegsdword proto fastcall :ptr, :dword {
+    mov	    gs:[rcx],edx
+    }
+__writegsqword proto fastcall :ptr, :qword {
+    mov	    gs:[rcx],rdx
+    }
 
 
 ifndef _MANAGED
 
-__addgsbyte macro offs, v
-    add byte ptr gs:[offs],v
-    retm<>
-    endm
-__addgsword macro offs, v
-    add word ptr gs:[offs],v
-    retm<>
-    endm
-__addgsdword macro offs, v
-    add dword ptr gs:[offs],v
-    retm<>
-    endm
-__addgsqword macro offs, v
-    add qword ptr gs:[offs],v
-    retm<>
-    endm
+__addgsbyte proto fastcall :ptr, :byte {
+    add	    gs:[rcx],dl
+    }
+__addgsword proto fastcall :ptr, :word {
+    add	    gs:[rcx],dx
+    }
+__addgsdword proto fastcall :ptr, :dword {
+    add	    gs:[rcx],edx
+    }
+__addgsqword proto fastcall :ptr, :qword {
+    add	    gs:[rcx],rdx
+    }
 
-__incgsbyte macro offs, v
-    inc byte ptr gs:[offs],v
-    retm<>
-    endm
-__incgsword macro offs, v
-    inc word ptr gs:[offs],v
-    retm<>
-    endm
-__incgsdword macro offs, v
-    inc dword ptr gs:[offs],v
-    retm<>
-    endm
-__incgsqword macro offs, v
-    inc qword ptr gs:[offs],v
-    retm<>
-    endm
+__incgsbyte proto fastcall :ptr {
+    inc	    byte ptr gs:[rcx]
+    }
+__incgsword proto fastcall :ptr {
+    inc	    word ptr gs:[rcx]
+    }
+__incgsdword proto fastcall :ptr {
+    inc	    dword ptr gs:[rcx]
+    }
+__incgsqword proto fastcall :ptr {
+    inc	    qword ptr gs:[rcx]
+    }
 
 endif
 endif
@@ -1724,9 +1751,7 @@ CONTEXT_FLOATING_POINT	equ (CONTEXT_AMD64 OR 0x8)
 CONTEXT_DEBUG_REGISTERS equ (CONTEXT_AMD64 OR 0x10)
 
 CONTEXT_FULL		equ (CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_FOATING_POINT)
-
 CONTEXT_ALL		equ (CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS OR CONTEXT_FOATING_POINT OR CONTEXT_DEBUG_REGISTERS)
-
 CONTEXT_XSTATE		equ (CONTEXT_AMD64 OR 0x20)
 
 CONTEXT_EXCEPTION_ACTIVE equ 0x8000000
@@ -1740,95 +1765,106 @@ INITIAL_FPCSR		equ 0x027f
 XMM_SAVE_AREA32		typedef XSAVE_FORMAT
 PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT
 
-DECLSPEC_ALIGN(16)
-CONTEXT			STRUC
-P1Home			dd ?
-P2Home			dd ?
-P3Home			dd ?
-P4Home			dd ?
-P5Home			dd ?
-P6Home			dd ?
-ContextFlags		dd ?
-MxCsr			dd ?
-SegCs			dw ?
-SegDs			dw ?
-SegEs			dw ?
-SegFs			dw ?
-SegGs			dw ?
-SegSs			dw ?
-EFlags			dd ?
-_Dr0			dd ?
-_Dr1			dd ?
-_Dr2			dd ?
-_Dr3			dd ?
-_Dr6			dd ?
-_Dr7			dd ?
-_Rax			dd ?
-_Rcx			dd ?
-_Rdx			dd ?
-_Rbx			dd ?
-_Rsp			dd ?
-_Rbp			dd ?
-_Rsi			dd ?
-_Rdi			dd ?
-_R8			dd ?
-_R9			dd ?
-_R10			dd ?
-_R11			dd ?
-_R12			dd ?
-_R13			dd ?
-_R14			dd ?
-_R15			dd ?
-_Rip			dd ?
-UNION
- FltSave		XMM_SAVE_AREA32 <>
- STRUC
-  Header		M128A 2 dup(<>)
-  Legacy		M128A 8 dup(<>)
-  _Xmm0			M128A <>
-  _Xmm1			M128A <>
-  _Xmm2			M128A <>
-  _Xmm3			M128A <>
-  _Xmm4			M128A <>
-  _Xmm5			M128A <>
-  _Xmm6			M128A <>
-  _Xmm7			M128A <>
-  _Xmm8			M128A <>
-  _Xmm9			M128A <>
-  _Xmm10		M128A <>
-  _Xmm11		M128A <>
-  _Xmm12		M128A <>
-  _Xmm13		M128A <>
-  _Xmm14		M128A <>
-  _Xmm15		M128A <>
- ENDS ;DUMMYSTRUCTNAME
-ENDS ;DUMMYUNIONNAME
-VectorRegister		M128A 26 dup(<>)
-VectorControl		dd ?
-DebugControl		dd ?
-LastBranchToRip		dd ?
-LastBranchFromRip	dd ?
-LastExceptionToRip	dd ?
-LastExceptionFromRip	dd ?
+CONTEXT			STRUC 16
+ P1Home			dq ?
+ P2Home			dq ?
+ P3Home			dq ?
+ P4Home			dq ?
+ P5Home			dq ?
+ P6Home			dq ?
+ ContextFlags		dd ?
+ MxCsr			dd ?
+ SegCs			dw ?
+ SegDs			dw ?
+ SegEs			dw ?
+ SegFs			dw ?
+ SegGs			dw ?
+ SegSs			dw ?
+ EFlags			dd ?
+ _Dr0			dq ?
+ _Dr1			dq ?
+ _Dr2			dq ?
+ _Dr3			dq ?
+ _Dr6			dq ?
+ _Dr7			dq ?
+ _Rax			dq ?
+ _Rcx			dq ?
+ _Rdx			dq ?
+ _Rbx			dq ?
+ _Rsp			dq ?
+ _Rbp			dq ?
+ _Rsi			dq ?
+ _Rdi			dq ?
+ _R8			dq ?
+ _R9			dq ?
+ _R10			dq ?
+ _R11			dq ?
+ _R12			dq ?
+ _R13			dq ?
+ _R14			dq ?
+ _R15			dq ?
+ _Rip			dq ?
+ union
+  FltSave		XMM_SAVE_AREA32 <>
+  struct
+   Header		M128A 2 dup(<>)
+   Legacy		M128A 8 dup(<>)
+   _Xmm0		M128A <>
+   _Xmm1		M128A <>
+   _Xmm2		M128A <>
+   _Xmm3		M128A <>
+   _Xmm4		M128A <>
+   _Xmm5		M128A <>
+   _Xmm6		M128A <>
+   _Xmm7		M128A <>
+   _Xmm8		M128A <>
+   _Xmm9		M128A <>
+   _Xmm10		M128A <>
+   _Xmm11		M128A <>
+   _Xmm12		M128A <>
+   _Xmm13		M128A <>
+   _Xmm14		M128A <>
+   _Xmm15		M128A <>
+  ends
+ ends
+ VectorRegister		M128A 26 dup(<>)
+ VectorControl		dq ?
+ DebugControl		dq ?
+ LastBranchToRip	dq ?
+ LastBranchFromRip	dq ?
+ LastExceptionToRip	dq ?
+ LastExceptionFromRip	dq ?
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
 SCOPE_TABLE		typedef SCOPE_TABLE_AMD64
 PSCOPE_TABLE		typedef ptr SCOPE_TABLE_AMD64
 
-RUNTIME_FUNCTION_INDIRECT equ 0x1
-
-RUNTIME_FUNCTION	STRUC
+_IMAGE_RUNTIME_FUNCTION_ENTRY STRUC
 BeginAddress		dd ?
 EndAddress		dd ?
-UnwindData		dd ?
-RUNTIME_FUNCTION	ENDS
-PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
+UNION
+ UnwindInfoAddress	dd ?
+ UnwindData		dd ?
+ENDS
+_IMAGE_RUNTIME_FUNCTION_ENTRY ENDS
 
-UNWIND_HISTORY_TABLE_SIZE equ 12
+RUNTIME_FUNCTION	typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
+PRUNTIME_FUNCTION	typedef ptr _IMAGE_RUNTIME_FUNCTION_ENTRY
+
+define RUNTIME_FUNCTION_INDIRECT 0x1
+
+define UNW_FLAG_NHANDLER       0x0
+define UNW_FLAG_EHANDLER       0x1
+define UNW_FLAG_UHANDLER       0x2
+define UNW_FLAG_CHAININFO      0x4
+
+define UNW_FLAG_NO_EPILOGUE    0x80000000
+
+define UNWIND_HISTORY_TABLE_SIZE 12
 
 UNWIND_HISTORY_TABLE_ENTRY STRUC
-ImageBase		dd ?
+ImageBase		dq ?
 FunctionEntry		PRUNTIME_FUNCTION ?
 UNWIND_HISTORY_TABLE_ENTRY ENDS
 PUNWIND_HISTORY_TABLE_ENTRY typedef ptr UNWIND_HISTORY_TABLE_ENTRY
@@ -1839,36 +1875,35 @@ LocalHint		db ?
 GlobalHint		db ?
 Search			db ?
 Once			db ?
-LowAddress		dd ?
-HighAddress		dd ?
+LowAddress		dq ?
+HighAddress		dq ?
 Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
 
-;PRUNTIME_FUNCTION
-CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
-;DWORD
-CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, Process:HANDLE, TableAddress:PVOID, Entries:PDWORD, :PRUNTIME_FUNCTION)
+
+CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, :qword, :ptr)
+CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, :HANDLE, :ptr, :PDWORD, :PRUNTIME_FUNCTION)
 
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
 
 DISPATCHER_CONTEXT	STRUC
-ControlPc		DWORD64 ?
-ImageBase		DWORD64 ?
+ControlPc		dq ?
+ImageBase		dq ?
 FunctionEntry		PRUNTIME_FUNCTION ?
-EstablisherFrame	DWORD64 ?
-TargetIp		DWORD64 ?
+EstablisherFrame	dq ?
+TargetIp		dq ?
 ContextRecord		PCONTEXT ?
 LanguageHandler		PEXCEPTION_ROUTINE ?
 HandlerData		PVOID ?
 HistoryTable		PUNWIND_HISTORY_TABLE ?
-ScopeIndex		DWORD ?
-Fill0			DWORD ?
+ScopeIndex		dd ?
+Fill0			dd ?
 DISPATCHER_CONTEXT	ENDS
 PDISPATCHER_CONTEXT	typedef ptr DISPATCHER_CONTEXT
 
-CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :PVOID)
-CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :PVOID)
+CALLBACK(PEXCEPTION_FILTER, :ptr EXCEPTION_POINTERS, :ptr)
+CALLBACK(PTERMINATION_HANDLER, :BOOLEAN, :ptr)
 
 ;NTSYSAPI
 ;VOID
@@ -2120,10 +2155,7 @@ ReadPMC equ <__readpmc>
 endif
 
 if _MSC_FULL_VER GE 140040310
-
-ReadTimeStampCounter macro
-	exitm<__rdtsc()>
-	endm
+ReadTimeStampCounter equ <__rdtsc>
 else
 endif
 
@@ -2132,21 +2164,16 @@ endif
 if defined(_X86_) AND defined(_M_IX86) AND NOT defined(MIDL_PASS)
 
 if _MSC_FULL_VER GE 140030222
-;VOID
-DbgRaiseAssertionFailure macro
-	__int2c()
-	endm
+DbgRaiseAssertionFailure equ <__int2c>
 endif
 
 endif
 
 if (_MSC_FULL_VER GE 13012035)
 
-;__inline PVOID
 GetFiberData macro
 	exitm<__readfsdword(0x10)>
 	endm
-;__inline PVOID
 GetCurrentFiber macro
 	exitm<__readfsdword(0x10)>
 	endm
@@ -2615,6 +2642,8 @@ GlobalPointer		ULONGLONG ?
 PLABEL_DESCRIPTOR	ENDS
 PPLABEL_DESCRIPTOR	typedef ptr PLABEL_DESCRIPTOR
 
+RUNTIME_FUNCTION_INDIRECT equ 0x1
+
 RUNTIME_FUNCTION	STRUC
 BeginAddress		dd ?
 EndAddress		dd ?
@@ -2628,7 +2657,7 @@ UNW_FLAG_UHANDLER	equ 0x2
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
-UNWIND_HISTORY_TABLE_ENTRY  STRUC
+UNWIND_HISTORY_TABLE_ENTRY STRUC
 ImageBase		dd ?
 Gp			dd ?
 FunctionEntry		PRUNTIME_FUNCTION ?

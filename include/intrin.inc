@@ -406,6 +406,7 @@ __addgsdword proto fastcall :ptr, :dword {
 __addgsqword proto fastcall :ptr, :qword {
     add     gs:[rcx],rdx
     }
+
 __incgsbyte proto fastcall :ptr {
     inc     byte ptr gs:[rcx]
     }
@@ -418,17 +419,18 @@ __incgsqword proto fastcall :ptr {
 __incgsword proto fastcall :ptr {
     inc     word ptr gs:[rcx]
     }
+
 __readgsbyte proto fastcall :ptr {
     movzx   eax,byte ptr gs:[rcx]
+    }
+__readgsword proto fastcall :ptr {
+    movzx   eax,word ptr gs:[rcx]
     }
 __readgsdword proto fastcall :ptr {
     mov     eax,gs:[rcx]
     }
 __readgsqword proto fastcall :ptr {
     mov     rax,gs:[rcx]
-    }
-__readgsword proto fastcall :ptr {
-    movzx   eax,word ptr gs:[rcx]
     }
 endif
 
@@ -500,21 +502,18 @@ __emulu proto fastcall :int_t, :int_t {
 
 endif
 
-_mul128 proto :qword, :qword, :ptr qword
-
-ifdef __MACHINEX64
+ifdef _WIN64
 
 _mul256 proto :ptr, :ptr, :ptr
 umul256 proto syscall :oword, :oword, :ptr
 
-_mul128 macro Multiplier, Multiplicand, HighProduct
+_mul128 proto fastcall :qword, :qword, :ptr qword {
     mov rax,rdx
     mul rcx
     .if r8
         mov [r8],rdx
     .endif
-    retm <rax>
-    endm
+    }
 
 _mul256 macro Multiplier, Multiplicand, HighProduct
     mov rax,[rcx]
@@ -555,7 +554,8 @@ _mul256 macro Multiplier, Multiplicand, HighProduct
     .endif
     exitm<>
     endm
-
+else
+_mul128 proto :qword, :qword, :ptr qword
 endif
 
 _umul128 equ <_mul128>
@@ -591,11 +591,10 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__getcallerseflags macro
+__getcallerseflags proto fastcall {
     pushfq
     pop     rax
-    retm    <eax>
-    endm
+    }
 
 __halt proto :abs {
     hlt
@@ -634,7 +633,7 @@ __indwordstring proto :int_t, :ptr_t, :int_t {
     pop     rdi
     }
 
-__int2c proto fastcall :abs {
+__int2c proto fastcall {
     int     0x2c
     }
 
@@ -666,7 +665,7 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__movsb proto :ptr, :ptr, :int_t {
+__movsb proto fastcall :ptr, :ptr, :sdword {
     push    rsi
     push    rdi
     mov     rdi,rcx
@@ -677,7 +676,7 @@ __movsb proto :ptr, :ptr, :int_t {
     pop     rsi
     }
 
-__movsw proto :ptr, :ptr, :int_t {
+__movsw proto fastcall :ptr, :ptr, :sdword {
     push    rsi
     push    rdi
     mov     rdi,rcx
@@ -688,7 +687,7 @@ __movsw proto :ptr, :ptr, :int_t {
     pop     rsi
     }
 
-__movsd proto :ptr, :ptr, :int_t {
+__movsd proto fastcall :ptr, :ptr, :sdword {
     push    rsi
     push    rdi
     mov     rdi,rcx
@@ -699,7 +698,7 @@ __movsd proto :ptr, :ptr, :int_t {
     pop     rsi
     }
 
-__stosb proto :ptr, :byte, :int_t {
+__stosb proto fastcall :ptr, :byte, :sdword {
     push    rdi
     mov     rdi,rcx
     mov     al,dl
@@ -708,7 +707,7 @@ __stosb proto :ptr, :byte, :int_t {
     pop     rdi
     }
 
-__stosw proto :ptr, :word, :int_t {
+__stosw proto fastcall :ptr, :word, :sdword {
     push    rdi
     mov     rdi,rcx
     mov     ax,dx
@@ -717,7 +716,7 @@ __stosw proto :ptr, :word, :int_t {
     pop     rdi
     }
 
-__stosd proto :ptr, :dword, :int_t {
+__stosd proto fastcall :ptr, :dword, :sdword {
     push    rdi
     mov     rdi,rcx
     mov     eax,edx
@@ -730,7 +729,7 @@ endif
 
 ifdef __MACHINEX64
 
-__movsq proto :ptr, :qword, :int_t {
+__movsq proto fastcall :ptr, :qword, :sdword {
     push    rsi
     push    rdi
     mov     rdi,rcx
@@ -741,7 +740,7 @@ __movsq proto :ptr, :qword, :int_t {
     pop     rsi
     }
 
-__stosq proto :ptr, :ptr, :int_t {
+__stosq proto fastcall :ptr, :ptr, :sdword {
     push    rdi
     mov     rdi,rcx
     mov     rax,rdx
@@ -830,12 +829,11 @@ endif
 
 ifdef __MACHINEX86_X64
 
-__rdtsc macro
+__rdtsc proto fastcall {
     rdtsc
     shl     rdx,32
     or      rax,rdx
-    retm   <rax>
-    endm
+    }
 
 __rdtscp proto fastcall :ptr {
     push    rdi

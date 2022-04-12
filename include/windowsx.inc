@@ -256,6 +256,14 @@ HANDLE_MSG macro hwnd, message, fn
 	exitm<>
 	endm
 
+HANDLE_WM_COPYDATA macro hwnd, wParam, lParam, fn
+	exitm<fn(hwnd, wParam, lParam)>
+	endm
+
+FORWARD_WM_COPYDATA macro hwnd, hwndFrom, pcds, fn
+	exitm<fn(hwnd, WM_COPYDATA, hwndFrom, pcds)>
+	endm
+
 ;; void Cls_OnCompacting(HWND hwnd, UINT compactRatio)
 HANDLE_WM_COMPACTING macro hwnd, wParam, lParam, fn
 	exitm<fn(hwnd, wParam, 0)>

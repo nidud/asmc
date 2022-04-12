@@ -144,17 +144,15 @@ _MM_FLUSH_ZERO_MASK	equ 0x8000
 _MM_FLUSH_ZERO_ON	equ 0x8000
 _MM_FLUSH_ZERO_OFF	equ 0x0000
 
-_mm_getcsr macro
+_mm_getcsr proto fastcall {
     stmxcsr [rsp]
     mov	    eax,[rsp]
-    retm    <eax>
-    endm
+    }
 
-_mm_setcsr macro reg
-    mov	    [rsp],reg
+_mm_setcsr proto fastcall :dword {
+    mov	    [rsp],ecx
     ldmxcsr [rsp]
-    retm    <eax>
-    endm
+    }
 
 _MM_SET_EXCEPTION_STATE macro mask
     and	    _mm_getcsr(),NOT _MM_EXCEPT_MASK

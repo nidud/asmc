@@ -23,12 +23,13 @@ endif
 ;     _M_IA64
 ;
 ifdef _WIN64
-define _IA64_
-define _M_X64 100
+ifdef _IA64_
 define _M_IA64
-elseifdef _AMD64
+else
 define _AMD64_
 define _M_AMD64 100
+endif
+define _M_X64 100
 else
 define _X86_
 define _M_IX86 600

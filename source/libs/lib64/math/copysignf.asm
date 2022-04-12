@@ -10,7 +10,7 @@ include math.inc
 
     option win64:rsp nosave noauto
 
-copysignf proc number:double, _sign:double
+copysignf proc number:float, _sign:float
 
     pcmpeqw xmm2,xmm2
     psrld   xmm2,1

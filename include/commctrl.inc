@@ -116,10 +116,10 @@ INFOTIPSIZE		equ 1024
 endif
 
 HANDLE_WM_NOTIFY macro hwnd, wParam, lParam, fn
-	exitm<(hwnd, wParam, lParam)>
+	exitm<fn(hwnd, int_t ptr wParam, lParam)>
 	endm
 FORWARD_WM_NOTIFY macro hwnd, idFrom, pnmhdr, fn
-	exitm<(hwnd, WM_NOTIFY, idFrom, pnmhdr)>
+	exitm<fn(hwnd, WM_NOTIFY, int_t ptr (idFrom), pnmhdr)>
 	endm
 
 NM_OUTOFMEMORY		equ (NM_FIRST-1)
@@ -3193,7 +3193,7 @@ ListView_SetBkColor macro hwnd, clrBk
 
 LVM_GETIMAGELIST	equ (LVM_FIRST + 2)
 ListView_GetImageList macro hwnd, iImageList
-	exitm<SNDMSG(hwnd, LVM_GETIMAGELIST, iImageist, 0)>
+	exitm<SNDMSG(hwnd, LVM_GETIMAGELIST, iImageList, 0)>
 	endm
 
 LVSIL_NORMAL		equ 0
@@ -3202,7 +3202,7 @@ LVSIL_STATE		equ 2
 
 LVM_SETIMAGELIST	equ (LVM_FIRST + 3)
 ListView_SetImageList macro hwnd, himl, iImageList
-	exitm<SNDMSG(hwnd, LVM_SETIMAGELIST, iImageist, himl)>
+	exitm<SNDMSG(hwnd, LVM_SETIMAGELIST, iImageList, himl)>
 	endm
 
 LVM_GETITEMCOUNT	equ (LVM_FIRST + 4)
@@ -5762,7 +5762,14 @@ endif
 if (_WIN32_IE GE 0x0300)
 ifndef NOUSEREXCONTROLS
 
-WC_COMBOBOXEX		equ <"ComboBoxEx32">
+define WC_COMBOBOXEXW	<L"ComboBoxEx32">
+define WC_COMBOBOXEXA	<"ComboBoxEx32">
+
+ifdef _UNICODE
+define WC_COMBOBOXEX	<WC_COMBOBOXEXW>
+else
+define WC_COMBOBOXEX	<WC_COMBOBOXEXA>
+endif
 
 CBEIF_TEXT		equ 0x00000001
 CBEIF_IMAGE		equ 0x00000002
@@ -5775,7 +5782,7 @@ CBEIF_DI_SETITEM	equ 0x10000000
 
 COMBOBOXEXITEMA		STRUC
 mask			UINT ?
-iItem			SINT ?
+iItem			INT_PTR ?
 pszText			LPSTR ?
 cchTextMax		SINT ?
 iImage			SINT ?
@@ -5789,7 +5796,7 @@ PCCOMBOEXITEMA		typedef ptr COMBOBOXEXITEMA
 
 COMBOBOXEXITEMW		STRUC
 mask			UINT ?
-iItem			SINT ?
+iItem			INT_PTR ?
 pszText			LPWSTR ?
 cchTextMax		SINT ?
 iImage			SINT ?

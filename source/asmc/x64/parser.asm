@@ -43,8 +43,8 @@ externdef opnd_clstab:opnd_class
 externdef vex_flags:byte
 externdef Frame_Type:byte  ; Frame of current fixup
 externdef Frame_Datum:word ; Frame datum of current fixup
-externdef minintvalues:int64_t
 externdef maxintvalues:int64_t
+externdef minintvalues:int64_t
 
 ADDRSIZE macro s, x
   ifdif <x>,<eax>
@@ -2872,23 +2872,13 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
                 ; addressing only. Reset OP_A flag!
 
                 and [rsi].opnd[OPNI2].type,not OP_A
+
             .elseif [rsi].Ofssize == USE64
 
-                xor eax,eax
-                mov ecx,[rsi].opnd[OPND1].data32l
-                mov edx,[rsi].opnd[OPND1].data32h
-                cmp edx,eax
-                setl al
-                .ifz
-                    cmp ecx,0x80000000
-                    setb al
-                .endif
-                cmp edx,-1
-                .ifz
-                    cmp ecx,0x80000000
-                    setae ah
-                .endif
-                .if eax
+                mov rax,0x80000000
+                mov rdx,0xffffffff80000000
+                .if ( [rsi].opnd[OPND1].data64 < rax ||
+                      [rsi].opnd[OPND1].data64 >= rdx )
 
                     ; for 64bit, opcodes A0-A3 ( direct memory addressing with AL/AX/EAX/RAX )
                     ; are followed by a full 64-bit moffs. This is only used if the offset won't fit
@@ -2901,23 +2891,16 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
         .elseif ( op1 & OP_A ) && ( op2 & OP_M ) ; 2. operand memory reference, 1. AL|AX|EAX|RAX?
 
             .if !( [rsi].flags & CI_ISDIRECT )
+
                 and [rsi].opnd[OPND1].type,not OP_A
+
             .elseif [rsi].Ofssize == USE64
-                xor eax,eax
-                mov ecx,[rsi].opnd[OPNI2].data32l
-                mov edx,[rsi].opnd[OPNI2].data32h
-                cmp edx,eax
-                setl al
-                .ifz
-                    cmp ecx,0x80000000
-                    setb al
-                .endif
-                cmp edx,-1
-                .ifz
-                    cmp ecx,0x80000000
-                    setae ah
-                .endif
-                .if eax
+
+                mov eax,0x80000000
+                mov rdx,0xffffffff80000000
+                .if ( [rsi].opnd[OPNI2].data64 < rax ||
+                      [rsi].opnd[OPNI2].data64 >= rdx )
+
                     and [rsi].opnd[OPND1].type,not OP_A
                 .endif
             .endif

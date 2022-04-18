@@ -869,17 +869,15 @@ ifndef ASMC64
 endif
             mov ebx,IMAGE_PE_HEADER64
             lea rdi,pe64def
-
-            mov dword ptr pe64def.OptionalHeader.ImageBase,0x400000
-            mov dword ptr pe64def.OptionalHeader.ImageBase[4],0
             mov pe64def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_CUI
             .if ( Options.pe_subsystem == 1 )
                 mov pe64def.OptionalHeader.Subsystem,IMAGE_SUBSYSTEM_WINDOWS_GUI
             .endif
+            mov eax,0x400000
             .if ( ModuleInfo.sub_format == SFORMAT_64BIT )
-                mov dword ptr pe64def.OptionalHeader.ImageBase,LOW32(0x140000000)
-                mov dword ptr pe64def.OptionalHeader.ImageBase[4],HIGH32(0x140000000)
+                mov rax,0x140000000
             .endif
+            mov pe64def.OptionalHeader.ImageBase,rax
 ifndef ASMC64
         .else
             mov ebx,IMAGE_PE_HEADER32

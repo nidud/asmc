@@ -607,7 +607,7 @@ StringCchPrintf equ <StringCchPrintfW>
 else
 StringCchPrintf equ <StringCchPrintfA>
 endif
-StringCchPrintfA proto fastcall pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argList:vararg {
+StringCchPrintfA proto fastcall pDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argList:vararg {
   local i
    .new pszDest:STRSAFE_LPSTR = rcx
    .new cchMax:size_t = rdx

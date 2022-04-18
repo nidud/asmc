@@ -1553,26 +1553,25 @@ Static_GetIcon macro hwndCtl, hIcon
 
 ;;***** Button control message APIs *****************************************
 
-Button_Enable macro hwndCtl, fEnable
-	exitm<EnableWindow((hwndCtl), (fEnable))>
-	endm
+Button_Enable proto fastcall hwndCtl:HWND, fEnable:BOOL {
+	EnableWindow(hwndCtl, fEnable)
+	}
 
 Button_GetText macro hwndCtl, lpch, cchMax
 	exitm<GetWindowText((hwndCtl), (lpch), (cchMax))>
 	endm
-Button_GetTextLength macro hwndCtl
-	exitm<GetWindowTextLength(hwndCtl)>
-	endm
-Button_SetText macro hwndCtl, lpsz
-	exitm<SetWindowText((hwndCtl), (lpsz))>
-	endm
-
-Button_GetCheck macro hwndCtl
-	exitm<(SNDMSG((hwndCtl), BM_GETCHECK, 0, 0))>
-	endm
-Button_SetCheck macro hwndCtl, check
-	exitm<(SNDMSG((hwndCtl), BM_SETCHECK, (check), 0))>
-	endm
+Button_GetTextLength proto fastcall hwndCtl:HWND {
+	GetWindowTextLength(hwndCtl)
+	}
+Button_SetText proto fastcall hwndCtl:HWND, lpsz:abs {
+	SetWindowText(hwndCtl, lpsz)
+	}
+Button_GetCheck proto fastcall hwndCtl:HWND {
+	SNDMSG(hwndCtl, BM_GETCHECK, 0, 0)
+	}
+Button_SetCheck proto fastcall hwndCtl:HWND, check:abs {
+	SNDMSG(hwndCtl, BM_SETCHECK, check, 0)
+	}
 
 Button_GetState macro hwndCtl
 	exitm<(SNDMSG((hwndCtl), BM_GETSTATE, 0, 0))>
@@ -1597,9 +1596,9 @@ Edit_GetText macro hwndCtl, lpch, cchMax
 Edit_GetTextLength macro hwndCtl
 	exitm<GetWindowTextLength(hwndCtl)>
 	endm
-Edit_SetText macro hwndCtl, lpsz
-	exitm<SetWindowText((hwndCtl), (lpsz))>
-	endm
+Edit_SetText proto fastcall hwndCtl:HWND, lpsz:abs {
+	SetWindowText(hwndCtl, lpsz)
+	}
 
 Edit_LimitText macro hwndCtl, cchMax
 	exitm<(SNDMSG((hwndCtl), EM_LIMITTEXT, (cchMax), 0))>

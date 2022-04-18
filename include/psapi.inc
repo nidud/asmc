@@ -3,6 +3,8 @@ define _PSAPI_H_
 
 include winapifamily.inc
 
+.pragma comment(lib, psapi)
+
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 LIST_MODULES_DEFAULT	equ 0x0

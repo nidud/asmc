@@ -136,38 +136,22 @@ check_number:
 
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
+        mov rax,opnd.hlvalue
 
         ; v2.08: check added. the number must be 32-bit
 
-        .if dword ptr opnd.hlvalue || dword ptr opnd.hlvalue[4]
-            mov eax,1
-        .else
-            xor eax,eax
+        .if ( !rax )
 
-            movzx ecx,ModuleInfo.Ofssize
-            mov ebx,opnd.value
-            mov edx,opnd.hvalue
-            lea r8,minintvalues
-
-            cmp edx,[r8+rcx*8+4]
-            setl al
-            .ifnl
-                .ifz
-                    cmp ebx,[r8+rcx*8]
-                    setb al
-                .endif
-            .endif
-            lea r8,maxintvalues
-            cmp edx,[r8+rcx*8+4]
-            setg ah
-            .ifng
-                .ifz
-                    cmp ebx,[r8+rcx*8]
-                    seta ah
-                .endif
-            .endif
+            movzx   ecx,ModuleInfo.Ofssize
+            lea     r8,minintvalues
+            mov     rdx,opnd.llvalue
+            cmp     rdx,[r8+rcx*8]
+            setl    al
+            lea     r8,maxintvalues
+            cmp     rdx,[r8+rcx*8]
+            setg    ah
         .endif
-        .if eax
+        .if rax
             EmitConstError(&opnd)
             .return NULL
         .endif
@@ -445,44 +429,29 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
         mov opnd.flags,0
+        mov rax,opnd.hlvalue
+        mov rc,NOT_ERROR
+        inc i
 
         ; v2.08: does it fit in 32-bits
 
-        .if ( opnd.hlvalue )
+        .if ( !rax )
 
-            mov eax,1
-        .else
-            xor eax,eax
-            movzx ecx,ModuleInfo.Ofssize
-            mov esi,opnd.value
-            mov edx,opnd.hvalue
-            lea r8,minintvalues
-            cmp edx,[r8+rcx*8+4]
-            .ifng
-                setnz al
-                .ifz
-                    cmp esi,[r8+rcx*8]
-                    setb al
-                .endif
-            .endif
-            lea r8,maxintvalues
-            cmp edx,[r8+rcx*8+4]
-            .ifnl
-                setnz al
-                .ifz
-                    cmp esi,[r8+rcx*8]
-                    seta al
-                .endif
-            .endif
+            movzx   ecx,ModuleInfo.Ofssize
+            mov     rdx,opnd.llvalue
+            lea     r8,minintvalues
+            cmp     rdx,[r8+rcx*8]
+            setl    al
+            lea     r8,maxintvalues
+            cmp     rdx,[r8+rcx*8]
+            setg    ah
         .endif
-        .if eax == 0
-            mov rc,NOT_ERROR
-            inc i
-        .else
+        .if rax
             .return SetTextMacro( rbx, rdi, name, p )
         .endif
 
     .else
+
         mov p,[rsi].tokpos
         .if Parse_Pass == PASS_1
             ;

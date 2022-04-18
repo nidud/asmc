@@ -304,7 +304,7 @@ write proc fd:int_t, buf:ptr, count:uint_t
     ret
 
 write endp
-
+if 0
 exit proc error:int_t
 
     mov eax,60
@@ -312,7 +312,7 @@ exit proc error:int_t
     ret
 
 exit endp
-
+endif
 endif
 
     _JUMP_BUFFER    struct

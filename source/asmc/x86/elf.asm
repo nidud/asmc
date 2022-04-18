@@ -1290,6 +1290,7 @@ write_relocs64 proc private uses esi edi ebx curr:ptr dsym
         mov dword ptr reloc64.r_offset[4],0
         mov dword ptr reloc64.r_offset[0],[esi].locofs
         movzx eax,[esi].addbytes
+        sub eax,[esi].offs ; added v2.33.46
         neg eax
         cdq
         mov dword ptr reloc64.r_addend[0],eax

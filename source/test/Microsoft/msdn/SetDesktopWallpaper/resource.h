@@ -1,0 +1,11 @@
+#define IDD_MAINDIALOG                  103
+#define IDC_EDIT_WALLPAPER              1000
+#define IDC_BUTTON_BROWSE               1001
+#define IDC_BUTTON_SETWALLPAPER         1002
+#define IDC_RADIO_TILE                  1003
+#define IDC_RADIO_CENTER                1004
+#define IDC_RADIO_STRETCH               1005
+#define IDC_RADIO_FIT                   1006
+#define IDC_RADIO_FILL                  1007
+#define IDC_STATIC_PREVIEW              1008
+#define IDC_STATIC                      -1

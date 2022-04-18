@@ -1314,14 +1314,13 @@ endif
 
         mov rcx,[rsi].sym
         mov edi,[rcx].asym.ext_idx
-        mov dword ptr reloc64.r_offset[4],0
-        mov dword ptr reloc64.r_offset[0],[rsi].locofs
-        movzx eax,[rsi].addbytes
-        neg eax
-        cdq
-        mov dword ptr reloc64.r_addend[0],eax
-        mov dword ptr reloc64.r_addend[4],edx
-
+        mov eax,[rsi].locofs
+        mov reloc64.r_offset,rax
+        mov edx,[rsi].offs
+        movzx rax,[rsi].addbytes
+        sub rax,rdx
+        neg rax
+        mov reloc64.r_addend,rax
         movzx eax,[rsi].type
         .switch ( eax )
         .case FIX_RELOFF32     : mov ebx,R_X86_64_PC32      : .endc

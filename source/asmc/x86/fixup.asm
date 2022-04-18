@@ -185,6 +185,7 @@ store_fixup proc uses esi ebx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
 
             mov eax,[esi]
             .if ( ModuleInfo.defOfssize == USE64 )
+                xor eax,eax ; added v2.33.46 -- @Hello71
             .elseif ( [ebx].type == FIX_RELOFF32 )
                 mov eax,-4
 

@@ -1155,7 +1155,7 @@ define UNICODE 1
 endif
 endif
 
-ifdef UNICODE
+ifdef _UNICODE
 PdhOpenQuery		equ <PdhOpenQueryW>
 PdhAddCounter		equ <PdhAddCounterW>
 if (_WIN32_WINDOWS GE 0x0600 OR _WIN32_WINNT GE 0x0600 OR (defined(NTDDI_VERSION) AND NTDDI_VERSION GE NTDDI_VISTA))

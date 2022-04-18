@@ -2305,8 +2305,8 @@ cmp_types proc __ccall uses rsi rdi rbx opnd1:expr_t, opnd2:expr_t, trueval:int_
             mov rax,[rdx].type_tok
             mov rdi,SymFind([rax].asm_tok.string_ptr)
         .endif
-        .if ( [rsi].is_ptr == [rdi].is_ptr && \
-              [rsi].ptr_memtype == [rdi].ptr_memtype && \
+        .if ( [rsi].is_ptr == [rdi].is_ptr &&
+              [rsi].ptr_memtype == [rdi].ptr_memtype &&
               [rsi].target_type == [rdi].target_type )
             mov eax,trueval
         .else

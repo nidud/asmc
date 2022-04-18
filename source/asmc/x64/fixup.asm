@@ -161,6 +161,9 @@ SetFixupFrame endp
 
 store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_t
 
+    UNREFERENCED_PARAMETER(fixp)
+    UNREFERENCED_PARAMETER(pdata)
+
     mov rbx,rcx
     mov rsi,r8
 
@@ -185,6 +188,13 @@ store_fixup proc __ccall uses rsi rbx fixp:ptr fixup, s:ptr dsym, pdata:ptr int_
 
             mov eax,[rsi]
             .if ( ModuleInfo.defOfssize == USE64 )
+
+                xor eax,eax ; added v2.33.46 - @Hello71
+
+                ; offset added in write_relocs64()
+
+                ; mov [rsi+4],eax ; --> opnd_item.data64
+
             .elseif ( [rbx].type == FIX_RELOFF32 )
                 mov eax,-4
 

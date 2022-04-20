@@ -11,9 +11,9 @@ name	asmc.
 format	elf runtime linux
 libpath $(watcom)\lib386\linux
 lib	clib3s.lib
-file { *.obj }
+file { *.o }
 <<
-	del *.obj
+	del *.o
 
 asmc64:
 	asmc -DASMC64 -D__WATCOM__ -Iinc -nologo -elf -nolib -Zp4 -Cs x86\*.asm
@@ -22,6 +22,6 @@ name	asmc64.
 format	elf runtime linux
 libpath $(watcom)\lib386\linux
 lib	clib3s.lib
-file { *.obj }
+file { *.o }
 <<
-	del *.obj
+	del *.o

@@ -1336,7 +1336,7 @@ endif
             mov ebx,R_X86_64_NONE
             .if ( [rsi].type < FIX_LAST )
                 mov rdx,ModuleInfo.fmtopt
-                asmerr( 3019, [rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
+                asmerr( 3019, &[rdx].format_options.formatname, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .else
                 asmerr( 3014, [rsi].type, [rcx].asym.name, [rsi].locofs )
             .endif

@@ -207,8 +207,12 @@ endif
 
             ; add symbol's offset to the fixup location and fixup's offset
 
-            add [esi],[ecx].asym.offs
-            add [ebx].offs,[ecx].asym.offs
+             mov eax,[ecx].asym.offs ; added v2.33.48
+            .if ( !( Options.output_format == OFORMAT_ELF &&
+                     ModuleInfo.defOfssize == USE64 ) )
+                add [esi],eax
+            .endif
+            add [ebx].offs,eax
 
             ; and save symbol's segment in fixup
 

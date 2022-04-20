@@ -111,11 +111,11 @@ goto end
 goto end
 
 :elf
-%MLBASE% -q -elf -Fo ..\exp\%~n1.obj %1
+%MLBASE% -q -elf -Fo ..\exp\%~n1.o %1
 goto end
 
 :elf64
-%MLBASE% -q -elf64 -Fo ..\exp\%~n1.obj %1
+%MLBASE% -q -elf64 -Fo ..\exp\%~n1.o %1
 goto end
 
 :omfcu

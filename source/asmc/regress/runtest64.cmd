@@ -51,9 +51,9 @@ goto end
 :elf64
 %ASMX% -q -elf64 %1
 if errorlevel 1 goto end
-fcmp %~n1.OBJ ..\exp\%~n1.obj
+fcmp %~n1.o ..\exp\%~n1.o
 if errorlevel 1 goto end
-del %~n1.OBJ
+del %~n1.o
 goto end
 
 :cv8

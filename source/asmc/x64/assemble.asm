@@ -38,12 +38,6 @@ public  jmpenv
 
 extern  MacroLocals:dword
 
-ifdef __UNIX__
-define OBJ_EXT <'o.'>
-else
-define OBJ_EXT <'jbo.'>
-endif
-
 .template conv_section
     len         dd ?
     flags       dd ?
@@ -90,7 +84,6 @@ cst conv_section \
         { 4,          0, cp_bss1,  cp_bss2 }
 
 stt             db SEGTYPE_CODE,SEGTYPE_DATA,SEGTYPE_DATA,SEGTYPE_BSS
-filetypes       dd 'msa.',OBJ_EXT,'tsl.','rre.','nib.','exe.'
 currentftype    dd 0,0
 remove_obj      dd 0
 
@@ -1113,19 +1106,30 @@ close_files endp
 ;
 GetExt proc fastcall private ftype:int_t
 
-    .if ecx == OBJ && Options.output_format == OFORMAT_BIN
-
-        mov ecx,4
-        .if Options.sub_format == SFORMAT_MZ || \
-            Options.sub_format == SFORMAT_PE || \
-            Options.sub_format == SFORMAT_64BIT
-            inc ecx
-        .endif
-    .endif
-    lea rax,filetypes
-    mov ecx,[rax+rcx*4]
     lea rax,currentftype
-    mov [rax],ecx
+    mov edx,'msa.'
+    .switch ecx
+    .case OBJ
+        mov edx,'jbo.'
+        .if Options.output_format == OFORMAT_BIN
+            mov edx,'nib.'
+            .if ( Options.sub_format == SFORMAT_MZ ||
+                  Options.sub_format == SFORMAT_PE ||
+                  Options.sub_format == SFORMAT_64BIT )
+                mov edx,'exe.'
+            .endif
+        .elseif Options.output_format == OFORMAT_ELF
+            and edx,0xFFFF
+        .endif
+        .endc
+    .case LST
+        mov edx,'tsl.'
+        .endc
+    .case ERR
+        mov edx,'rre.'
+        .endc
+    .endsw
+    mov [rax],edx
     ret
 
 GetExt endp

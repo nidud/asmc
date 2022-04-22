@@ -2972,7 +2972,16 @@ runqueue:
         .for ( ebx = 0, rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam, ebx++ )
             .break .if ( ![rdi].dsym.nextparam )
         .endf
-
+        ;
+        ; frame:
+        ;  00 size_locals   dd 8*n
+        ;  04 total_size    dd 8*6
+        ;  08 end_frame     dq frame+sizeof(frame)
+        ;  10 start_frame   dq frame+32
+        ;  18 align16       dq ?
+        ;  20 args          dq 6 rdi..r9
+        ;  50 args          xmmword 8 xmm0..7
+        ;
         AddLineQueueX(
             " mov DWORD PTR [rsp+8], %d\n"
             " mov DWORD PTR [rsp+12], 48", &[rbx*8] )

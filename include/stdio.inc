@@ -44,11 +44,11 @@ _cnt		SINT ?
 _base		LPSTR ?
 _flag		SINT ?
 _file		SINT ?
-ifndef __UNIX__
+if not defined(__UNIX__) or defined(_WIN64)
 _charbuf	SINT ?
 endif
 _bufsiz		SINT ?
-ifdef __UNIX__
+if defined(__UNIX__) and not defined(_WIN64)
 _ungotten	dw ?
 else
 _tmpfname	LPSTR ?
@@ -59,7 +59,7 @@ LPFILE		typedef ptr _iobuf
 endif
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-ifndef _LINUX
+;ifndef _LINUX
 externdef	_bufin:BYTE
 externdef	_iob:_iobuf
 externdef	stdout:_iobuf
@@ -68,7 +68,7 @@ externdef	_osfhnd:HANDLE
 externdef	hStdInput:HANDLE
 externdef	hStdOutput:HANDLE
 externdef	hStdError:HANDLE
-endif
+;endif
 elseifdef _LIBCMT
 _iob		equ <[__acrt_iob_func(0)]>
 stdout		equ <[__acrt_iob_func(1)]>

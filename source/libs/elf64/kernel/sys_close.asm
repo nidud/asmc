@@ -1,20 +1,20 @@
-; SYS_EXIT.ASM--
+; SYS_CLOSE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
+include io.inc
 include linux/kernel.inc
 
 .code
 
-sys_exit proc retval:int_t
+sys_close proc handle:int_t
 
-    mov eax,SYS_EXIT
+    mov eax,SYS_CLOSE
     syscall
     ret
 
-sys_exit endp
+sys_close endp
 
     end

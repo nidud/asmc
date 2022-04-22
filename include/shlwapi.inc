@@ -6,7 +6,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef NOSHLWAPI
-include SpecStrings.inc
+include specstrings.inc
 include objbase.inc
 include shtypes.inc
 

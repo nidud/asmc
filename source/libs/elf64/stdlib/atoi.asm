@@ -1,20 +1,18 @@
-; SYS_EXIT.ASM--
+; ATOI.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
 include stdlib.inc
-include linux/kernel.inc
 
-.code
+    .code
 
-sys_exit proc retval:int_t
+atoi proc string:string_t
 
-    mov eax,SYS_EXIT
-    syscall
+    atol(rdi)
     ret
 
-sys_exit endp
+atoi endp
 
     end

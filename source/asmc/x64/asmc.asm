@@ -7,17 +7,15 @@
 include io.inc
 include stdlib.inc
 include signal.inc
-ifndef __UNIX__
+ifdef __UNIX__
+include direct.inc
+else
 include winbase.inc
 endif
 include asmc.inc
 include memalloc.inc
 include symbols.inc
 include input.inc
-
-if defined(__UNIX__) and defined(__WATCOM__)
-extern _cstart_: byte
-endif
 
 .data
 ifdef __UNIX__
@@ -27,7 +25,155 @@ environ array_t 0
 
 .code
 
-ifndef __UNIX__
+ifdef __UNIX__
+
+cmpwarg proc wild:string_t, path:string_t
+
+    xor eax,eax
+    .while 1
+
+        lodsb
+        mov ah,[rdi]
+        inc rdi
+
+        .if ah == '*'
+
+            .while 1
+                mov ah,[rdi]
+                .if !ah
+                    mov eax,1
+                    .break(1)
+                .endif
+                inc rdi
+                .continue .if ah != '.'
+                xor edx,edx
+                .while al
+                    .if al == ah
+                        mov rdx,rsi
+                    .endif
+                    lodsb
+                .endw
+                mov rsi,rdx
+                .continue(1) .if rdx
+                mov ah,[rdi]
+                inc rdi
+                .continue .if ah == '*'
+                test eax,eax
+                mov  ah,0
+                setz al
+                .break(1)
+            .endw
+
+        .endif
+
+        mov edx,eax
+        xor eax,eax
+        .if !dl
+            .break .if edx
+            inc eax
+            .break
+        .endif
+        .break .if !dh
+        .continue .if dh == '?'
+        .if dh == '.'
+            .continue .if dl == '.'
+            .break
+        .endif
+        .break .if dl == '.'
+        or edx,0x2020
+        .break .if dl != dh
+    .endw
+    ret
+
+cmpwarg endp
+
+.template SourceFile
+    next ptr SourceFile ?
+    file char_t 1 dup(?)
+   .ends
+
+ReadFiles proc uses rbx r12 r13 r14 r15 directory:string_t, wild:string_t, files:ptr SourceFile
+
+   .new cnt:int_t = 0
+   .new dir:ptr DIR
+
+    mov r12,directory
+    mov r13,wild
+    mov r15,files
+
+    .if ( byte ptr [r12] == 0 )
+        mov word ptr [r12],'.'
+    .endif
+    lea r14,[r12+tstrlen(r12)]
+
+    .if opendir(r12) != NULL
+
+        mov dir,rax
+        .while ( readdir(dir) )
+
+            mov rbx,rax
+            .if ( [rbx].dirent.d_type != DT_DIR )
+
+                .if ( cmpwarg(r13, &[rbx].dirent.d_name) )
+
+                    mov word ptr [r14],'/'
+                    tstrcat(r14, &[rbx].dirent.d_name)
+
+                    add tstrlen(r12),SourceFile
+                    .if MemAlloc( eax )
+                        mov [r15].SourceFile.next,rax
+                        mov r15,rax
+                        mov [r15].SourceFile.next,NULL
+                        tstrcpy(&[r15].SourceFile.file, r12)
+                        inc cnt
+                    .endif
+                    mov byte ptr [r14],0
+                .endif
+
+            .elseif ( Options.process_subdir )
+
+                mov eax,dword ptr [rbx].dirent.d_name
+                and eax,0x00FFFFFF
+
+                .if ( ax != '.' && eax != '..' )
+
+                    mov word ptr [r14],'/'
+                    tstrcat(r14, &[rbx].dirent.d_name)
+                    ReadFiles(r12, r13, r15)
+                    add cnt,eax
+                    mov byte ptr [r14],0
+                    .while ( [r15].SourceFile.next )
+                        mov r15,[r15].SourceFile.next
+                    .endw
+                .endif
+            .endif
+        .endw
+        closedir(dir)
+    .endif
+    .return( cnt )
+
+ReadFiles endp
+
+AssembleSubdir proc uses rbx directory:string_t, wild:string_t
+
+    .new rc:int_t = 0
+    .new files:SourceFile = {0}
+    .new cnt:int_t = ReadFiles(directory, wild, &files)
+
+    .for ( rbx = files.next : rbx : )
+
+        .if AssembleModule(&[rbx].SourceFile.file)
+            mov rc,eax
+        .endif
+        mov rcx,rbx
+        mov rbx,[rbx].SourceFile.next
+        MemFree(rcx)
+    .endf
+    .return( rc )
+
+AssembleSubdir endp
+
+else
 
 strfcat proc private buffer:string_t, path:string_t, file:string_t
 
@@ -99,12 +245,12 @@ AssembleSubdir proc private uses rsi rdi rbx directory:string_t, wild:string_t
             FindClose(h)
         .endif
     .endif
-    mov eax,rc
-    ret
+    .return( rc )
 
 AssembleSubdir endp
 
 endif
+
 
 GeneralFailure proc private signo:int_t
 
@@ -182,7 +328,9 @@ endif
   .new rc:int_t = 0
   .new numArgs:int_t = 0
   .new numFiles:int_t = 0
-ifndef __UNIX__
+ifdef __UNIX__
+  .new path[_MAX_PATH]:char_t
+else
   .new ff:WIN32_FIND_DATA
 endif
     MemInit()
@@ -217,33 +365,31 @@ endif
         write_logo()
 
         inc numFiles
-        mov rsi,Options.names[ASM*8]
-
+        mov r12,Options.names[ASM*8]
 ifdef __UNIX__
-        AssembleModule(rsi)
+        lea r13,path
 else
-        lea rdi,ff.cFileName
+        lea r13,ff.cFileName
         .if !Options.process_subdir
-            .ifd FindFirstFile(rsi, &ff) == -1
-                asmerr(1000, rsi)
+            .ifd FindFirstFile(r12, &ff) == -1
+                asmerr(1000, r12)
                 .break
             .endif
             FindClose(rax)
         .endif
-
-        .if !tstrchr(tstrcpy(rdi, rsi), '*')
-            tstrchr(rdi, '?')
+endif
+        .if !tstrchr(tstrcpy(r13, r12), '*')
+            tstrchr(r13, '?')
         .endif
         .if rax
-            .if GetFNamePart(rdi) > rdi
+            .if GetFNamePart(r13) > r13
                 dec rax
             .endif
             mov byte ptr [rax],0
-            AssembleSubdir(rdi, GetFNamePart(rsi))
+            AssembleSubdir(r13, GetFNamePart(r12))
         .else
-            AssembleModule(rdi)
+            AssembleModule(r13)
         .endif
-endif
         mov rc,eax
     .endw
 
@@ -288,7 +434,7 @@ tgetenv proc fastcall uses rsi rdi rbx enval:string_t
 tgetenv endp
 
 ifdef __UNIX__
-
+if 0
 read proc fd:int_t, buf:ptr, count:size_t
 
     xor eax,eax
@@ -304,7 +450,7 @@ write proc fd:int_t, buf:ptr, count:uint_t
     ret
 
 write endp
-if 0
+
 exit proc error:int_t
 
     mov eax,60

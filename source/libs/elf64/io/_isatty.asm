@@ -1,20 +1,20 @@
-; SYS_EXIT.ASM--
+; _ISATTY.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
-include linux/kernel.inc
+include io.inc
 
-.code
+    .code
 
-sys_exit proc retval:int_t
+_isatty proc handle:SINT
 
-    mov eax,SYS_EXIT
-    syscall
+    lea rax,_osfile
+    mov al,[rax+rdi]
+    and eax,FH_DEVICE
     ret
 
-sys_exit endp
+_isatty endp
 
     end

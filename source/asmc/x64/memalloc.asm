@@ -102,18 +102,21 @@ MemAlloc proc fastcall uses rsi rdi rbx len:uint_t
     xor     ecx,ecx
     cmp     rax,MAP_FAILED
     cmove   rax,rcx
-
     .if ( rax )
 
         mov [rax],rbx
         add rax,16
 
     .else
+
 else
+
 MemAlloc proc fastcall len:uint_t
 
     .if ( HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, rcx) == NULL )
+
 endif
+
         mov currfree,eax
         asmerr( 1018 )
     .endif

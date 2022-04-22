@@ -269,6 +269,8 @@
 
 sys_read                proto :int_t, :ptr, :size_t
 sys_write               proto :int_t, :ptr, :size_t
+sys_close               proto :int_t
+sys_lseek               proto :int_t, :size_t, :uint_t
 
 define PROT_READ        0x01
 define PROT_WRITE       0x02

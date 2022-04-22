@@ -1,20 +1,20 @@
-; SYS_EXIT.ASM--
+; SYS_LSEEK.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
+include io.inc
 include linux/kernel.inc
 
 .code
 
-sys_exit proc retval:int_t
+sys_lseek proc fd:int_t, off:size_t, whence:uint_t
 
-    mov eax,SYS_EXIT
+    mov eax,SYS_LSEEK
     syscall
     ret
 
-sys_exit endp
+sys_lseek endp
 
     end

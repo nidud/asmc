@@ -3,7 +3,7 @@ ifndef _WININET_
 ifndef __LIBC_INC
  include libc.inc
 endif
-include SpecStrings.inc
+include specstrings.inc
 define _WININET_
 
 ifdef _WIN64

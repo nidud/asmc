@@ -7,7 +7,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 
 include commctrl.inc
-include SpecStrings.inc
+include specstrings.inc
 
 .pragma comment(lib, uxtheme)
 

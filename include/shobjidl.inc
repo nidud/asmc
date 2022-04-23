@@ -26,8 +26,8 @@ include shtypes.inc
 include comcat.inc
 include propidl.inc
 include prsht.inc
-include propsys.inc ;
-include ObjectArray.inc
+include propsys.inc
+include objectarray.inc
 include sherrors.inc
 
 .pragma comment(lib, shell32)

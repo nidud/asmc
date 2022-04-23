@@ -21,7 +21,7 @@ define __bdaiface_h__
 
 include unknwn.inc
 include strmif.inc
-include BdaTypes.inc
+include bdatypes.inc
 include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

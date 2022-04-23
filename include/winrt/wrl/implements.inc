@@ -7,7 +7,7 @@ ifdef BUILD_WINDOWS
 include winrt.inc
 endif
 include activation.inc
-include WinString.inc
+include winatring.inc
 
 include new.inc
 include weakreference.inc

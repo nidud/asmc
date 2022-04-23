@@ -6,7 +6,7 @@ ifdef BUILD_WINDOWS
 include winrt.inc
 endif
 include activation.inc
-include WinString.inc
+include winstring.inc
 include intrin.inc
 include winapifamily.inc
 

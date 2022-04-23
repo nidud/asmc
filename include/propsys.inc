@@ -22,7 +22,7 @@ include objidl.inc
 include oleidl.inc
 include ocidl.inc
 include shtypes.inc
-include StructuredQueryCondition.inc
+include structuredquerycondition.inc
 include propkeydef.inc
 
 ifndef __IInitializeWithFile_INTERFACE_DEFINED__

@@ -13,38 +13,38 @@ endif
 
 .pragma pack(push, size_t)
 
-include GdiplusMem.inc
-include GdiplusBase.inc
-include GdiplusEnums.inc
-include GdiplusTypes.inc
-include GdiplusInit.inc
-include GdiplusPixelFormats.inc
-include GdiplusColor.inc
-include GdiplusMetaHeader.inc
-include GdiplusImaging.inc
-include GdiplusColorMatrix.inc
+include gdiplusmem.inc
+include gdiplusbase.inc
+include gdiplusenums.inc
+include gdiplustypes.inc
+include gdiplusinit.inc
+include gdipluspixelformats.inc
+include gdipluscolor.inc
+include gdiplusmetaheader.inc
+include gdiplusimaging.inc
+include gdipluscolormatrix.inc
 if (GDIPVER GE 0x0110)
-include GdiplusEffects.inc
+include gdipluseffects.inc
 endif
-include GdiplusGpStubs.inc
-include GdiplusHeaders.inc
-include GdiplusFlat.inc
-include GdiplusImageAttributes.inc
-include GdiplusMatrix.inc
-include GdiplusBrush.inc
-include GdiplusPen.inc
-include GdiplusStringFormat.inc
-include GdiplusPath.inc
-include GdiplusLineCaps.inc
-include GdiplusGraphics.inc
-include GdiplusMetafile.inc
-include GdiplusCachedBitmap.inc
-include GdiplusRegion.inc
-include GdiplusFontCollection.inc
-include GdiplusFontFamily.inc
-include GdiplusFont.inc
-include GdiplusBitmap.inc
-include GdiplusImageCodec.inc
+include gdiplusgpstubs.inc
+include gdiplusheaders.inc
+include gdiplusflat.inc
+include gdiplusimageattributes.inc
+include gdiplusmatrix.inc
+include gdiplusbrush.inc
+include gdipluspen.inc
+include gdiplusstringformat.inc
+include gdipluspath.inc
+include gdipluslinecaps.inc
+include gdiplusgraphics.inc
+include gdiplusmetafile.inc
+include gdipluscachedbitmap.inc
+include gdiplusregion.inc
+include gdiplusfontcollection.inc
+include gdiplusfontfamily.inc
+include gdiplusfont.inc
+include gdiplusbitmap.inc
+include gdiplusimagecodec.inc
 
 .pragma pack(pop)
 endif

@@ -20,8 +20,8 @@ define __documentsource_h__
 
 include oaidl.inc
 include ocidl.inc
-include Inspectable.inc
-include DocumentTarget.inc
+include inspectable.inc
+include documenttarget.inc
 
 if (NTDDI_VERSION GE NTDDI_WIN8)
 

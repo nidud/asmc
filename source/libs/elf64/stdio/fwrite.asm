@@ -104,7 +104,7 @@ fwrite proc uses rbx r12 r13 r14 r15 buf:LPSTR, rsize:SINT, _num:SINT, fp:ptr FI
             mov r13d,eax
         .endif
     .endw
-    mov rax,num
+    mov eax,num
 toend:
     ret
 error:
@@ -113,7 +113,7 @@ break:
     mov edx,count
     mov rax,r12
     sub rax,rdx
-    xor rdx,rdx
+    xor edx,edx
     div size
     jmp toend
 fwrite  endp

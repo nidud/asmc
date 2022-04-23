@@ -22,54 +22,54 @@ define endl <"\n">
         }
     .operator << :dword {
        .new convbuf[64]:char_t
-        mov ecx,edx
+        mov ecx,_1
         _ultoa( ecx, &convbuf, 10 )
         fputs(&convbuf, addr stdout)
         }
     .operator << :qword {
        .new convbuf[64]:char_t
-        mov rcx,rdx
+        mov rcx,_1
         _ui64toa( rcx, &convbuf, 10 )
         fputs(&convbuf, addr stdout)
         }
     .operator << :sdword {
        .new convbuf[64]:char_t
-        mov ecx,edx
+        mov ecx,_1
         _itoa( ecx, &convbuf, 10 )
         fputs(&convbuf, addr stdout)
         }
     .operator << :sqword {
        .new convbuf[64]:char_t
-        mov rcx,rdx
-        _i64toa( rcx, &convbuf, 10 )
+        mov this,_1
+        _i64toa( this, &convbuf, 10 )
         fputs(&convbuf, addr stdout)
         }
     .operator << :sbyte {
         movsx   edx,_1
-        ostream_shl_sdword(rcx, edx)
+        ostream_shl_sdword(this, edx)
         }
     .operator << :sword {
         movsx   edx,_1
-        ostream_shl_sdword(rcx, edx)
+        ostream_shl_sdword(this, edx)
         }
     .operator << :byte {
         movzx   edx,_1
-        ostream_shl_dword(rcx, edx)
+        ostream_shl_dword(this, edx)
         }
     .operator << :word {
         movzx   edx,_1
-        ostream_shl_dword(rcx, ecx)
+        ostream_shl_dword(this, edx)
         }
     .operator << :abs {
-        ostream_shl_sdword(rcx, _1)
+        ostream_shl_sdword(this, _1)
         }
     .operator << :ptr sbyte {
-        mov rcx,_1
-        fputs(rcx, addr stdout)
+        mov this,_1
+        fputs(this, addr stdout)
         }
     .operator << :ptr word {
-        mov rcx,_1
-        fputws(rcx, addr stdout)
+        mov this,_1
+        fputws(this, addr stdout)
         }
     .ends
 
@@ -88,43 +88,43 @@ define endl <"\n">
         }
     .operator << :dword {
        .new convbuf[64]:wchar_t
-        mov ecx,edx
+        mov ecx,_1
         _ultow( ecx, &convbuf, 10 )
         fputws(&convbuf, addr stdout)
         }
     .operator << :qword {
        .new convbuf[64]:wchar_t
-        mov rcx,rdx
+        mov rcx,_1
         _ui64tow( rcx, &convbuf, 10 )
         fputws(&convbuf, addr stdout)
         }
     .operator << :sdword {
        .new convbuf[64]:wchar_t
-        mov ecx,edx
+        mov ecx,_1
         _itow( ecx, &convbuf, 10 )
         fputws(&convbuf, addr stdout)
         }
     .operator << :sqword {
        .new convbuf[64]:wchar_t
-        mov rcx,rdx
+        mov rcx,_1
         _i64tow( rcx, &convbuf, 10 )
         fputws(&convbuf, addr stdout)
         }
     .operator << :sbyte {
         movsx   edx,_1
-        wostream_shl_sdword(rcx, edx)
+        wostream_shl_sdword(this, edx)
         }
     .operator << :sword {
         movsx   edx,_1
-        wostream_shl_sdword(rcx, edx)
+        wostream_shl_sdword(this, edx)
         }
     .operator << :byte {
         movzx   edx,_1
-        wostream_shl_dword(rcx, edx)
+        wostream_shl_dword(this, edx)
         }
     .operator << :word {
         movzx   edx,_1
-        wostream_shl_dword(rcx, edx)
+        wostream_shl_dword(this, edx)
         }
     .operator << :ptr sbyte {
         mov rcx,_1

@@ -1,0 +1,4 @@
+ifndef _GDIPLUSBITMAP_H
+define _GDIPLUSBITMAP_H
+include winapifamily.inc
+endif

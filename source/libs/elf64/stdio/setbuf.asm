@@ -1,20 +1,19 @@
-; SYS_CLOSE.ASM--
+; SETBUF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include io.inc
-include linux/kernel.inc
+include stdio.inc
 
-.code
+    .code
 
-sys_close proc handle:int_t
+setbuf proc fp:LPFILE, buf:LPSTR
 
-    mov eax,SYS_CLOSE
-    syscall
+    xchg rdi,rsi
+    setvbuf(rdi, rsi, _IOFBF, _MINIOBUF)
     ret
 
-sys_close endp
+setbuf endp
 
     end

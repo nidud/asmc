@@ -1,41 +1,49 @@
 .pragma list(push, 0)
 
-_O_RDONLY	equ 0x0000
-_O_WRONLY	equ 0x0001
-_O_RDWR		equ 0x0002
-_O_APPEND	equ 0x0008
+ifdef __UNIX__
+define _O_CREAT		0x0040
+define _O_EXCL		0x0080
+define _O_APPEND	0x0400
+else
+define _O_CREAT		0x0100
+define _O_EXCL		0x0400
+define _O_APPEND	0x0008
+endif
 
-_O_CREAT	equ 0x0100
-_O_TRUNC	equ 0x0200
-_O_EXCL		equ 0x0400
+define _O_RDONLY	0
+define _O_WRONLY	1
+define _O_RDWR		2
 
-_O_TEXT		equ 0x4000
-_O_BINARY	equ 0x8000
-_O_WTEXT	equ 0x10000
-_O_U16TEXT	equ 0x20000
-_O_U8TEXT	equ 0x40000
+define _O_TRUNC		0x0200
+define _O_TEXT		0x4000
+define _O_BINARY	0x8000
+define _O_NOINHERIT	0x0080
+define _O_TEMPORARY	0x0040
+define _O_SHORT_LIVED	0x1000
+define _O_OBTAIN_DIR	0x2000
+define _O_SEQUENTIAL	0x0020
+define _O_RANDOM	0x0010
 
-_O_RAW		equ _O_BINARY
-_O_NOINHERIT	equ 0x0080
-_O_TEMPORARY	equ 0x0040
-_O_SHORT_LIVED	equ 0x1000
-_O_OBTAIN_DIR	equ 0x2000
-_O_SEQUENTIAL	equ 0x0020
-_O_RANDOM	equ 0x0010
+define _O_WTEXT		0x10000
+define _O_U16TEXT	0x20000
+define _O_U8TEXT	0x40000
+define _O_RAW		_O_BINARY
 
-O_RDONLY	equ 0x0000
-O_WRONLY	equ 0x0001
-O_RDWR		equ 0x0002
-O_APPEND	equ 0x0008
-O_RANDOM	equ 0x0010
-O_SEQUENTIAL	equ 0x0020
-O_TEMPORARY	equ 0x0040
-O_NOINHERIT	equ 0x0080
-O_CREAT		equ 0x0100
-O_TRUNC		equ 0x0200
-O_EXCL		equ 0x0400
-O_SHORT_LIVED	equ 0x1000
-O_TEXT		equ 0x4000
-O_BINARY	equ 0x8000
+
+define O_RDONLY		_O_RDONLY
+define O_WRONLY		_O_WRONLY
+define O_RDWR		_O_RDWR
+
+define O_APPEND		_O_APPEND
+define O_RANDOM		_O_RANDOM
+define O_SEQUENTIAL	_O_SEQUENTIAL
+define O_TEMPORARY	_O_TEMPORARY
+define O_NOINHERIT	_O_NOINHERIT
+define O_CREAT		_O_CREAT
+define O_TRUNC		_O_TRUNC
+define O_EXCL		_O_EXCL
+define O_SHORT_LIVED	_O_SHORT_LIVED
+define O_TEXT		_O_TEXT
+define O_BINARY		_O_BINARY
 
 .pragma list(pop)

@@ -40,13 +40,13 @@ ifndef CRTDLL
         ;
         ; do terminators
         ;
-        push rsi
+        push rdi
         push rdx
 
         _initterm(&__xt_a, &__xt_z)
 
         pop rdx
-        pop rsi
+        pop rdi
 endif
     .endif
 

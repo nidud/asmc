@@ -5793,7 +5793,9 @@ e_lfanew		dd ?
 IMAGE_DOS_HEADER	ENDS
 PIMAGE_DOS_HEADER	typedef ptr IMAGE_DOS_HEADER
 
+ifndef __UNIX__
 externdef __ImageBase:IMAGE_DOS_HEADER
+endif
 
 IMAGE_OS2_HEADER	STRUC
 ne_magic		dw ?

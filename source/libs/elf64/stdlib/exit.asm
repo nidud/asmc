@@ -5,13 +5,15 @@
 ;
 
 include stdlib.inc
-include linux/kernel.inc
+
+; worker routine prototype
+doexit proto :int_t, :int_t, :int_t
 
     .code
 
 exit proc retval:int_t
 
-    sys_exit(retval)
+    doexit(retval, 0, 0) ; full term, kill process
     ret
 
 exit endp

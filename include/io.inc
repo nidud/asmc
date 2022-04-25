@@ -115,10 +115,13 @@ M_RDWR		equ M_RDONLY or M_WRONLY
 
 ifdef __UNIX__
 define _chsize	<ftruncate>
+define _open	<open>
 define _close	<close>
 define _read	<read>
 define _write	<write>
 define _lseek	<lseek>
+define _creat	<creat>
+define _isatty	<isatty>
 endif
 
 _open		proto _CDecl :LPSTR, :SINT, :VARARG

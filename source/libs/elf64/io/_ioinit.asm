@@ -17,13 +17,14 @@ include crtl.inc
 
     .code
 
-_ioexit proc uses rsi rdi
 
-    .for ( esi = 3, rdi = &_osfile : esi < _NFILE_ : esi++ )
+_ioexit proc uses rbx r12
 
-        .if BYTE PTR [rdi+rsi] & FH_OPEN
+    .for ( ebx = 3, r12 = &_osfile : ebx < _NFILE_ : ebx++ )
 
-            _close( esi )
+        .if ( byte ptr [r12+rbx] & FH_OPEN )
+
+            close( ebx )
         .endif
     .endf
     ret
@@ -32,4 +33,4 @@ _ioexit endp
 
 .pragma(exit(_ioexit, 2))
 
-    END
+    end

@@ -9,7 +9,7 @@ include io.inc
 
     .code
 
-fclose proc uses rbx r12 fp:LPFILE
+fclose proc uses rbx r12 fp:ptr FILE
 
     mov eax,[rdi]._iobuf._flag
     and eax,_IOREAD or _IOWRT or _IORW
@@ -24,11 +24,11 @@ fclose proc uses rbx r12 fp:LPFILE
 
     xor eax,eax
     mov [rbx]._iobuf._flag,eax
-    mov ecx,[rbx]._iobuf._file
+    mov edi,[rbx]._iobuf._file
     dec eax
     mov [rbx]._iobuf._file,eax
 
-    .if !_close(ecx)
+    .if !close(edi)
 
         mov rax,r12
     .endif

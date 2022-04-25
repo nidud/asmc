@@ -1,4 +1,4 @@
-; _LSEEK.ASM--
+; CLOSE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -10,15 +10,17 @@ include linux/kernel.inc
 
     .code
 
-_lseek proc handle:SINT, offs:QWORD, pos:UINT
+close proc fd:int_t
 
-    .if ( edx == SEEK_SET )
+    .if ( fd < 3 || fd >= _NFILE_ )
 
-        mov esi,esi
+        _set_errno(EBADF)
+        .return(0)
     .endif
-    sys_lseek(edi, rsi, edx)
-    ret
+    lea rcx,_osfile
+    mov byte ptr [rdi+rcx],0
+    .return( sys_close(fd) )
 
-_lseek endp
+close endp
 
     end

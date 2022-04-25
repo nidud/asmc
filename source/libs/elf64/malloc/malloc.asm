@@ -223,7 +223,6 @@ free proc memblock:ptr
 
                         .if ( rdi )
 
-                            sub rdi,HEAP
                             mov rsi,[rdi]
                             sys_munmap(rdi, rsi)
                         .endif
@@ -236,4 +235,4 @@ free proc memblock:ptr
 
 free endp
 
-    END
+    end

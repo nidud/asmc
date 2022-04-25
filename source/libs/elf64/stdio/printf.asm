@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-printf proc uses rbx r12 r13 r14 format:LPSTR, argptr:VARARG
+printf proc uses rbx r12 r13 r14 format:string_t, argptr:vararg
 
     mov r14,rax
     mov r13,rdi

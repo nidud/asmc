@@ -1,4 +1,4 @@
-; _READ.ASM--
+; READ.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -10,7 +10,7 @@ include linux/kernel.inc
 
     .code
 
-_read proc fh:int_t, buf:ptr, cnt:size_t
+read proc fh:int_t, buf:ptr, cnt:size_t
 
     xor eax,eax
     .return .if !cnt            ; nothing to read
@@ -21,6 +21,6 @@ _read proc fh:int_t, buf:ptr, cnt:size_t
     .endif
     .return( sys_read(fh, buf, cnt) )
 
-_read endp
+read endp
 
     end

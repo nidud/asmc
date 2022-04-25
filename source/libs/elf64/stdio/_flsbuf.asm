@@ -9,9 +9,9 @@ include io.inc
 
     .code
 
-    assume r12:LPFILE
+    assume r12:ptr FILE
 
-_flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
+_flsbuf proc uses rbx r12 r13 c:int_t, fp:ptr FILE
 
    .new char:int_t = c
 
@@ -49,12 +49,12 @@ _flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
 
     .if ( !( edi & _IOMYBUF or _IONBF or _IOYOURBUF ) )
 
-        _isatty(ebx)
+        isatty(ebx)
 
         lea r8,stdout
         lea r9,stderr
 
-        .if ( !( ( r12 == r8 || r12 == r9 ) && rax ) )
+        .if ( !( ( r12 == r8 || r12 == r9 ) && eax ) )
 
             _getbuf(r12)
         .endif
@@ -78,7 +78,7 @@ _flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
 
         .ifs ( r13 > rax )
 
-            _write(ebx, [r12]._base, r13d)
+            write(ebx, [r12]._base, r13d)
 
         .else
 
@@ -87,7 +87,7 @@ _flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
 
             .ifs ( ebx > eax && dl & FH_APPEND )
 
-                _lseek(ebx, 0, SEEK_END)
+                lseek(ebx, 0, SEEK_END)
                 xor eax,eax
             .endif
         .endif
@@ -97,7 +97,7 @@ _flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
         mov [rbx],dl
     .else
         inc r13d
-        _write(ebx, addr char, r13d)
+        write(ebx, addr char, r13d)
     .endif
 
     .if ( rax != r13 )
@@ -111,4 +111,4 @@ _flsbuf proc uses rbx r12 r13 c:SINT, fp:LPFILE
 
 _flsbuf endp
 
-    END
+    end

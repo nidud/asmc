@@ -4,14 +4,14 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdio.inc
 include io.inc
+include stdio.inc
 
     .code
 
-    assume r12:LPFILE
+    assume r12:ptr FILE
 
-fflush proc uses rbx r12 r13 r14 fp:LPFILE
+fflush proc uses rbx r12 r13 r14 fp:ptr FILE
 
     mov r12,rdi
     xor r14,r14
@@ -24,7 +24,7 @@ fflush proc uses rbx r12 r13 r14 fp:LPFILE
         mov r13,[r12]._ptr
         sub r13,[r12]._base
         .ifg
-            .ifd _write([r12]._file, [r12]._base, r13d) == r13d
+            .ifd write([r12]._file, [r12]._base, r13d) == r13d
                 mov eax,[r12]._flag
                 .if eax & _IORW
                     and eax,not _IOWRT
@@ -37,8 +37,7 @@ fflush proc uses rbx r12 r13 r14 fp:LPFILE
             .endif
         .endif
     .endif
-    mov rax,[r12]._base
-    mov [r12]._ptr,rax
+    mov [r12]._ptr,[r12]._base
     mov [r12]._cnt,0
     mov rax,r14
     ret

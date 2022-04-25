@@ -1,20 +1,18 @@
-; SYS_EXIT.ASM--
+; _FILENO.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
-include linux/kernel.inc
+include stdio.inc
 
-.code
+    .code
 
-sys_exit proc retval:int_t
+_fileno proc fp:ptr FILE
 
-    mov eax,SYS_EXIT
-    syscall
+    mov eax,[rdi].FILE._file
     ret
 
-sys_exit endp
+_fileno endp
 
     end

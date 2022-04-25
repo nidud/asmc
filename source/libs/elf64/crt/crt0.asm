@@ -7,6 +7,8 @@
 ;
 include stdlib.inc
 
+public  __ImageBase
+
 main      proto __cdecl :dword, :ptr, :ptr
 _initterm proto __cdecl :ptr, :ptr
 
@@ -19,9 +21,11 @@ externdef __xt_a:byte
 externdef __xt_z:byte
 
     .data
-     __argc     int_t 0
-     __argv     array_t 0
-     _environ   array_t 0
+     __argc         int_t 0
+     __argv         array_t 0
+     _environ       array_t 0
+     __ImageBase    size_t 0
+     __ImageRel     size_t IMAGEREL _start
 
     .code
 
@@ -35,6 +39,9 @@ _start proc
     mov __argc,[rsp]
     mov _environ,&[rsp+rax*8+16]
     mov __argv,&[rsp+8]
+    lea rax,_start
+    sub rax,__ImageRel
+    mov __ImageBase,rax
 
     _initterm( &__xi_a, &__xi_z )
     exit( main( __argc, __argv, _environ ) )

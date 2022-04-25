@@ -1,14 +1,15 @@
-; _AMBLKSIZ.ASM--
+; _FMODE.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
+include stdio.inc
+include fcntl.inc
 
-PUBLIC _amblksiz
+PUBLIC	_fmode
 
 	.data
-	_amblksiz dd _HEAP_GROWSIZE - (_GRANULARITY * 2)
+	_fmode	dd O_TEXT
 
 	END

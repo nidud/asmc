@@ -267,11 +267,6 @@
     }
 
 
-sys_read                proto :int_t, :ptr, :size_t
-sys_write               proto :int_t, :ptr, :size_t
-sys_close               proto :int_t
-sys_lseek               proto :int_t, :size_t, :uint_t
-
 define PROT_READ        0x01
 define PROT_WRITE       0x02
 define MAP_PRIVATE      0x02
@@ -281,7 +276,47 @@ define MMAP_FLAGS       (MAP_PRIVATE or MAP_ANONYMOUS)
 define MMAP_PROT        (PROT_READ or PROT_WRITE)
 define MAP_FAILED       (-1)
 
-sys_mmap                proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t
-sys_munmap              proto :ptr, :size_t
-
-sys_exit                proto :int_t
+sys_read proto :int_t, :ptr, :size_t {
+    mov eax,SYS_READ
+    syscall
+    }
+sys_write proto :int_t, :ptr, :size_t {
+    mov eax,SYS_WRITE
+    syscall
+    }
+sys_open proto :string_t, :int_t, :int_t {
+    mov eax,SYS_OPEN
+    syscall
+    }
+sys_creat proto :string_t, :uint_t {
+    mov eax,SYS_CREAT
+    syscall
+    }
+sys_close proto :int_t {
+    mov eax,SYS_CLOSE
+    syscall
+    }
+sys_lseek proto :int_t, :size_t, :uint_t {
+    mov eax,SYS_LSEEK
+    syscall
+    }
+sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
+    add rsi,_GRANULARITY-1
+    and sil,-(_GRANULARITY)
+    mov r10,rcx
+    mov rcx,rsi
+    mov eax,SYS_MMAP
+    syscall
+    }
+sys_munmap proto :ptr, :size_t {
+    mov eax,SYS_MUNMAP
+    syscall
+    }
+sys_ioctl proto :int_t, :int_t, :ptr {
+    mov eax,SYS_IOCTL
+    syscall
+    }
+sys_exit proto :int_t {
+    mov eax,SYS_EXIT
+    syscall
+    }

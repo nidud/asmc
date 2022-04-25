@@ -1,14 +1,12 @@
-; _AMBLKSIZ.ASM--
+; _EXITFLAG.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include malloc.inc
+include internal.inc
 
-PUBLIC _amblksiz
+    .data
+    _exitflag char_t 0
 
-	.data
-	_amblksiz dd _HEAP_GROWSIZE - (_GRANULARITY * 2)
-
-	END
+    end

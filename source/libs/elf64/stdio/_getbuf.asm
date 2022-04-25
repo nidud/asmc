@@ -9,9 +9,9 @@ include malloc.inc
 
     .code
 
-    assume rbx:LPFILE
+    assume rbx:ptr FILE
 
-_getbuf proc uses rbx fp:LPFILE
+_getbuf proc uses rbx fp:ptr FILE
 
     mov rbx,rdi
 
@@ -31,4 +31,4 @@ _getbuf proc uses rbx fp:LPFILE
 
 _getbuf endp
 
-    END
+    end

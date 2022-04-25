@@ -9,7 +9,7 @@ include malloc.inc
 
     .code
 
-_freebuf proc fp:LPFILE
+_freebuf proc fp:ptr FILE
 
     mov eax,[rdi]._iobuf._flag
 

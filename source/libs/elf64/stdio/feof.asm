@@ -1,20 +1,19 @@
-; _ISATTY.ASM--
+; FEOF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include io.inc
+include stdio.inc
 
     .code
 
-_isatty proc handle:SINT
+feof proc stream:LPFILE
 
-    lea rax,_osfile
-    mov al,[rax+rdi]
-    and eax,FH_DEVICE
+    mov eax,[rdi]._iobuf._flag
+    and rax,_IOEOF
     ret
 
-_isatty endp
+feof endp
 
-    end
+    END

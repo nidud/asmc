@@ -43,37 +43,38 @@ endif
  char_t " [ -options ] filelist",10
  char_t 10
 ifdef ASMC64
- char_t "-assert Generate .assert() code            -q, -nologo Suppress copyright message",10
- char_t "-autostack Auto stack space for arguments  -r Recurse subdirectories",10
- char_t "-bin Generate plain binary file            -Sa Maximize source listing",10
- char_t "-Cs Push USER registers before prolouge    -safeseh Assert exception handlers",10
- char_t "-coff Generate COFF format object file     -Sf Generate first pass listing",10
- char_t "-C<p|u|x> Set OPTION CASEMAP               -Sg Display generated code in listing",10
- char_t "-D<name>[=text] Define text macro          -Sn Suppress symbol-table listing",10
- char_t "-e<number> Set error limit number          -Sp[n] Set segment alignment",10
- char_t "-elf64 Generate 64-bit ELF object file     -stackalign Align locals to 16-byte",10
- char_t "-EP Output preprocessed listing to stdout  -swc C .SWITCH (default)",10
- char_t "-eq Don't display error messages           -swn No table in .SWITCH",10
- char_t "-Fd[file] Write import definition file     -swp Pascal .SWITCH (auto .break)",10
- char_t "-Fi<file> Force <file> to be included      -swr Switch uses R11 (default)",10
- char_t "-Fl[file] Generate listing                 -swt Use table in .SWITCH (default)",10
+ char_t "-assert Generate .assert() code            -pf Preserve Flags (Epilogue-Invoke)",10
+ char_t "-autostack Auto stack space for arguments  -q, -nologo Suppress copyright message",10
+ char_t "-bin Generate plain binary file            -r Recurse subdirectories",10
+ char_t "-Cs Push USER registers before prolouge    -Sa Maximize source listing",10
+ char_t "-coff Generate COFF format object file     -safeseh Assert exception handlers",10
+ char_t "-C<p|u|x> Set OPTION CASEMAP               -Sf Generate first pass listing",10
+ char_t "-D<name>[=text] Define text macro          -Sg Display generated code in listing",10
+ char_t "-e<number> Set error limit number          -Sn Suppress symbol-table listing",10
+ char_t "-elf64 Generate 64-bit ELF object file     -Sp[n] Set segment alignment",10
+ char_t "-EP Output preprocessed listing to stdout  -stackalign Align locals to 16-byte",10
+ char_t "-eq Don't display error messages           -swc C .SWITCH (default)",10
+ char_t "-Fd[file] Write import definition file     -swn No table in .SWITCH",10
+ char_t "-Fi<file> Force <file> to be included      -swp Pascal .SWITCH (auto .break)",10
+ char_t "-Fl[file] Generate listing                 -swr Switch uses R11 (default)",10
+ char_t "-fno-pic No position ind. code (default)   -swt Use table in .SWITCH (default)",10
  char_t "-Fo<file> Name object file                 -Sx List false conditionals",10
- char_t "-frame Auto generate unwind information    -w Same as -W0 -WX",10
- char_t "-Fw<file> Set errors file name             -W<number> Set warning level",10
- char_t "-Ge force stack checking for all funcs     -ws Store quoted strings as unicode",10
- char_t "-Gv Use VECTORCALL calling convention      -WX Treat all warnings as errors",10
- char_t "-homeparams Copy Reg. parameters to Stack  -X Ignore INCLUDE environment path",10
- char_t "-I<name> Add include path                  -Zd Add line number debug info",10
- char_t "-logo Print logo string and exit           -Zf Make all symbols public",10
- char_t "-nc<name> Set class name of code segment   -Zg Generate code to match Masm",10
- char_t "-nd<name> Set name of data segment         -Zi[012348] Add symbolic debug info",10
- char_t "-nm<name> Set name of module               -zl<f|p|s> Suppress items in COFF",10
- char_t "-nolib Ignore INCLUDELIB directive.        -Zne Disable non Masm extensions",10
- char_t "-nt<name> Set name of text segment         -Znk Disable non Masm keywords",10
- char_t "-pe Generate PE binary file                -Zp[n] Set structure alignment",10
- char_t " -cui - subsystem:console (default)        -Zs Perform syntax check only",10
- char_t " -gui - subsystem:windows                  -zze No export symbol decoration",10
- char_t "-pf Preserve Flags (Epilogue-Invoke)       -zzs Store name of start address",10
+ char_t "-fpic Generate position independed code    -w Same as -W0 -WX",10
+ char_t "-frame Auto generate unwind information    -W<number> Set warning level",10
+ char_t "-Fw<file> Set errors file name             -ws Store quoted strings as unicode",10
+ char_t "-Ge force stack checking for all funcs     -WX Treat all warnings as errors",10
+ char_t "-Gv Use VECTORCALL calling convention      -X Ignore INCLUDE environment path",10
+ char_t "-homeparams Copy Reg. parameters to Stack  -Zd Add line number debug info",10
+ char_t "-I<name> Add include path                  -Zf Make all symbols public",10
+ char_t "-logo Print logo string and exit           -Zg Generate code to match Masm",10
+ char_t "-nc<name> Set class name of code segment   -Zi[012348] Add symbolic debug info",10
+ char_t "-nd<name> Set name of data segment         -zl<f|p|s> Suppress items in COFF",10
+ char_t "-nm<name> Set name of module               -Zne Disable non Masm extensions",10
+ char_t "-nolib Ignore INCLUDELIB directive.        -Znk Disable non Masm keywords",10
+ char_t "-nt<name> Set name of text segment         -Zp[n] Set structure alignment",10
+ char_t "-pe Generate PE binary file                -Zs Perform syntax check only",10
+ char_t " -cui - subsystem:console (default)        -zze No export symbol decoration",10
+ char_t " -gui - subsystem:windows                  -zzs Store name of start address",10
 else
  char_t "-<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,",10
  char_t " 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64; <p> allows privileged instructions",10

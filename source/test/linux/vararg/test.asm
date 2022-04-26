@@ -2,7 +2,7 @@ include stdio.inc
 
     .code
 
-xsprintf proc buffer:LPSTR, format:LPSTR, argptr:VARARG
+xsprintf proc buffer:string_t, format:string_t, argptr:vararg
 
     vsprintf(buffer, format, rax)
     ret
@@ -11,7 +11,7 @@ xsprintf endp
 
 main proc
 
-  local string[256]:sbyte
+  local string[256]:char_t
   local r0:real8, r1:real8
 
     xsprintf( &string, "const %d.%d\n", 1, 2 )

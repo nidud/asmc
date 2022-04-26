@@ -2,17 +2,13 @@ include stdio.inc
 
     .code
 
-main proc uses rbx r12 argc:SINT, argv:ptr
+main proc uses rbx r12 argc:int_t, argv:array_t
 
-  local arg_count:SINT
-
-    .for (arg_count = argc, ebx = 0,
-        r12 = argv: ebx < arg_count: ebx++, r12 += size_t)
-
-        printf("[%d]: %s\n", ebx, [r12])
+    .new arg_count:int_t = argc
+    .for ( r12 = argv, ebx = 0 : ebx < arg_count : ebx++ )
+        printf("[%d]: %s\n", ebx, [r12+rbx*8])
     .endf
-    xor eax,eax
-    ret
+    .return( 0 )
 
 main endp
 

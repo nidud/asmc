@@ -1,5 +1,5 @@
 ; build:
-; asmc64 test.asm
+; asmc64 -fpic test.asm
 ; gcc -o test test.o `pkg-config --cflags --libs gtk+-3.0`
 
 include stdio.inc
@@ -44,6 +44,7 @@ main endp
 
 exit_prog proc
     gtk_main_quit()
+    ret
 exit_prog endp
 
     end

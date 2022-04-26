@@ -481,6 +481,7 @@ define SIT_MACRO       1
     floatformat             db ?    ; option floatformat:<e|f|g>
     floatdigits             dd ?    ; option floatdigits:<value>
     flt_size                db ?    ; option float:<4|8>
+    pic                     db ?    ; -fpic | -fno-pic
    .ends
 
 .template module_vars
@@ -611,9 +612,10 @@ define SIT_MACRO       1
     assert_proc             string_t ?      ; .assert:<proc/macro name>
     codepage                uint_t ?
     class_label             uint_t ?
+    floatdigits             int_t ?         ; option floatdigits:<value>
     floatformat             db ?            ; option floatformat:<e|f|g>
     flt_size                db ?            ; option float:<4|8>
-    floatdigits             int_t ?         ; option floatdigits:<value>
+    pic                     db ?            ; -fpic | -fno-pic
    .ends
 
 Token_Count             equ <ModuleInfo.token_count>

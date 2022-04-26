@@ -1323,7 +1323,12 @@ endif
         mov reloc64.r_addend,rax
         movzx eax,[rsi].type
         .switch ( eax )
-        .case FIX_RELOFF32     : mov ebx,R_X86_64_PC32      : .endc
+        .case FIX_RELOFF32
+            mov ebx,R_X86_64_PC32
+            .if ( ModuleInfo.pic && [rcx].asym.state == SYM_EXTERNAL )
+                mov ebx,R_X86_64_PLT32
+            .endif
+           .endc
         .case FIX_OFF64        : mov ebx,R_X86_64_64        : .endc
         .case FIX_OFF32_IMGREL : mov ebx,R_X86_64_RELATIVE  : .endc
         .case FIX_OFF32        : mov ebx,R_X86_64_32        : .endc

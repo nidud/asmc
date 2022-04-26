@@ -1,4 +1,3 @@
 test:
-	asmc64 -I../../../../include test.asm
-	asmc64 -I../../../../include getstring.asm
+	asmc64 -fpic -I../../../../include *.asm
 	gcc -o test test.o getstring.o

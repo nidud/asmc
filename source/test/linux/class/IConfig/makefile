@@ -1,4 +1,3 @@
 test:
-	asmc64 -I../../../../../include test.asm
-	asmc64 -I../../../../../include iconfig.asm
+	asmc64 -fpic -I../../../../../include *.asm
 	gcc -o test test.o iconfig.o

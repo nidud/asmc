@@ -1,5 +1,4 @@
 test:
-	asmc64 -I../../../../../include test.asm
-	asmc64 -I../../../../../include class.asm
+	asmc64 -fpic -I../../../../../include *.asm
 	gcc -o test test.o class.o
 

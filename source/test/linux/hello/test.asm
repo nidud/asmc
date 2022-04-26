@@ -1,8 +1,7 @@
-; build:
-; asmc -elf64 test.asm
-; gcc -o test test.o
 
+include io.inc
 include stdio.inc
+include string.inc
 
 .code
 

@@ -36,8 +36,12 @@ DIR		typedef byte
 opendir		proto __cdecl :LPSTR
 readdir		proto __cdecl :ptr DIR
 closedir	proto __cdecl :ptr DIR
+fchdir		proto __cdecl :int_t
 
-define _getcwd <getcwd>
+define _rmdir	<rmdir>
+define _mkdir	<mkdir>
+define _chdir	<chdir>
+define _getcwd	<getcwd>
 endif
 
 _getdrive	proto __cdecl

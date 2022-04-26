@@ -83,7 +83,8 @@ Options global_options {
         0,                      ; .frame_auto
         0,                      ; .floatformat
         1,                      ; .floatdigits
-        4 }                     ; .flt_size
+        4,                      ; .flt_size
+        0 }                     ; .pic
 
 else
 
@@ -149,7 +150,8 @@ Options global_options {
         0,                      ; .frame_auto
         0,                      ; .floatformat
         1,                      ; .floatdigits
-        4 }                     ; .flt_size
+        4,                      ; .flt_size
+        0 }                     ; .pic
 
 endif
 
@@ -217,7 +219,8 @@ Options global_options {
         0,                      ; .frame_auto
         0,                      ; .floatformat
         1,                      ; .floatdigits
-        4 }                     ; .flt_size
+        4,                      ; .flt_size
+        0 }                     ; .pic
 endif
 
     align 4
@@ -717,6 +720,13 @@ ifndef ASMC64
         mov Options.cpu,P_NO87
         .return
 endif
+    .case 'cipf'            ; -fpic
+        mov Options.pic,1
+        .return
+    .case '-onf'            ; -fno-pic
+        mov Options.pic,0
+        .return
+
     .case 'marf'            ; -frame
         .if ( Options.output_format != OFORMAT_BIN )
             mov Options.frame_auto,3

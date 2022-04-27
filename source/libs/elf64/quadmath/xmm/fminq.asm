@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; FMINQ.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,16 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+    option win64:noauto
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+fminq proc A:real16, B:real16
+
+    .ifd cmpq(xmm0, xmm1) == 1
+
+        movaps xmm0,xmm1
+    .endif
     ret
 
-__cvti32_q endp
+fminq endp
 
     end
-

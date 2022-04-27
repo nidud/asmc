@@ -2738,9 +2738,7 @@ endif
 
         mov eax,CurrProc ; added v2.33.26
         mov ecx,sym_ReservedStack
-        .if ( ModuleInfo.fctype == FCT_ELF64 &&
-              [esi].flags & PROC_HAS_VARARG &&
-              [eax].asym.langtype == LANG_SYSCALL )
+        .if ( [esi].flags & PROC_HAS_VARARG && [eax].asym.langtype == LANG_SYSCALL )
             mov [ecx].asym.value,208
         .endif
         mov resstack,[ecx].asym.value

@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; ATAN2QF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,14 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+atan2qf proc Y:real16, X:real16
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+    fldq()
+    fldq(d, xmm1)
+    fpatan
+    fstq()
     ret
 
-__cvti32_q endp
+atan2qf endp
 
     end
-

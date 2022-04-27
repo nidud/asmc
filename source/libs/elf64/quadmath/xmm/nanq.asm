@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; NANQ.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,15 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+    option win64:noauto
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+nanq proc
+
+    mov     rax,0x7FFF000000000001
+    movq    xmm0,rax
+    shufps  xmm0,xmm0,01101000B
     ret
 
-__cvti32_q endp
+nanq endp
 
     end
-

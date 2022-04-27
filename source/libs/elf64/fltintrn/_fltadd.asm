@@ -12,6 +12,7 @@ include fltintrn.inc
 
 _lc_fltadd proc private uses rbx a:ptr STRFLT, b:ptr STRFLT, negate:uint_t
 
+    mov     r8d,edx
     mov     r11,rdi
     mov     rbx,[rsi].STRFLT.mantissa.l
     mov     rdi,[rsi].STRFLT.mantissa.h

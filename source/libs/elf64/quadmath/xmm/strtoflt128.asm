@@ -1,22 +1,20 @@
-; __CVTI32_Q.ASM--
+; STRTOFLT128.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+;
+; strtoflt128() - string to Quadruple float
+;
 include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+strtoflt128 proc string:string_t, endptr:ptr string_t
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+    cvta_q(string, endptr)
     ret
 
-__cvti32_q endp
+strtoflt128 endp
 
     end
-

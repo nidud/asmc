@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; LOG10QF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,15 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+log10qf proc Q:real16
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+    fldq()
+    fldlg2
+    fxch st(1)
+    fyl2x
+    fstq()
     ret
 
-__cvti32_q endp
+log10qf endp
 
     end
-

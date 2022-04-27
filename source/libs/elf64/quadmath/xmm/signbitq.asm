@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; SIGNBITQ.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,16 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+    option win64:noauto
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+signbitq proc V:real16
+
+    shufpd  xmm0,xmm0,1
+    movq    rax,xmm0
+    shufpd  xmm0,xmm0,1
+    shr     rax,63
     ret
 
-__cvti32_q endp
+signbitq endp
 
     end
-

@@ -312,8 +312,36 @@ sys_munmap proto :ptr, :size_t {
     mov eax,SYS_MUNMAP
     syscall
     }
+sys_access proto :string_t, :int_t {
+    mov eax,SYS_ACCESS
+    syscall
+    }
 sys_ioctl proto :int_t, :int_t, :ptr {
     mov eax,SYS_IOCTL
+    syscall
+    }
+sys_getcwd proto :string_t, :int_t {
+    mov eax,SYS_GETCWD
+    syscall
+    }
+sys_chdir proto :string_t {
+    mov eax,SYS_CHDIR
+    syscall
+    }
+sys_chroot proto :string_t {
+    mov eax,SYS_CHROOT
+    syscall
+    }
+sys_fchdir proto :int_t {
+    mov eax,SYS_FCHDIR
+    syscall
+    }
+sys_mkdir proto :string_t {
+    mov eax,SYS_MKDIR
+    syscall
+    }
+sys_rmdir proto :string_t {
+    mov eax,SYS_RMDIR
     syscall
     }
 sys_exit proto :int_t {

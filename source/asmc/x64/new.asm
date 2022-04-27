@@ -634,40 +634,74 @@ endif
             mov eax,T_MOVSS
         .elseif ( [rsi].mem_type == MT_REAL8 )
             mov eax,T_MOVSD
+        .elseif ( [rsi].mem_type == MT_REAL16 )
+            mov eax,T_MOVAPS
         .endif
     .endif
     tsprintf( rdi, " %r ", eax )
 
-    .if ( [rsi].size == 8 )
+    mov eax,[rsi].size
+    .if ( eax >= 8 )
 
         mov rdx,[rbx].string_ptr
-        .if ( [rsi].Ofssize == USE32 && flag & T_HLL_PROC &&
-             ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
+        .if ( eax == 8 &&
+              [rsi].Ofssize == USE32 &&
+              flag & T_HLL_PROC &&
+              ( [rsi].mem_type == MT_QWORD || [rsi].mem_type == MT_SQWORD ) )
 
             tstrcat( rdi, "dword ptr " )
             tstrcpy( &l2, "mov dword ptr " )
             tstrcat( tstrcat( rax, name ), "[4], edx" )
-        .elseif ( [rsi].Ofssize == USE64 && ( flag & T_HLL_PROC || word ptr [rdx] == '&' ) )
+
+        .elseif ( eax == 8 &&
+                  [rsi].Ofssize == USE64 &&
+                  ( flag & T_HLL_PROC || word ptr [rdx] == '&' ) )
+
         .elseifd ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) != ERROR )
 
-            .if ( opndx.kind == EXPR_CONST )
+            mov eax,[rsi].size
+            .if ( eax == 8 && opndx.kind == EXPR_CONST )
 
                 .if ( [rsi].Ofssize == USE32 ||
                       ( [rbx].token != T_STRING && opndx.hvalue > 0 ) )
 
                     AddLineQueueX(
                         " mov dword ptr %s[0], %u\n"
-                        " mov dword ptr %s[4], %u", name, opndx.l64_l, name, opndx.l64_h )
+                        " mov dword ptr %s[4], %u",
+                        name, opndx.l64_l, name, opndx.l64_h )
+
                     imul eax,i,asm_tok
                     add  rax,tokenarray
                    .return
                 .endif
 
-            .elseif ( opndx.kind == EXPR_FLOAT )
+            .elseif ( opndx.kind == EXPR_FLOAT && ( eax == 8 || eax == 10 || eax == 16 ) )
 
-                AddLineQueueX(
-                    " mov dword ptr %s[0], LOW32(%s)\n"
-                    " mov dword ptr %s[4], HIGH32(%s)", name, [rbx].tokpos, name, [rbx].tokpos )
+                .if ( eax == 8 )
+                    AddLineQueueX(
+                        " mov dword ptr %s[0], LOW32(%s)\n"
+                        " mov dword ptr %s[4], HIGH32(%s)",
+                        name, [rbx].tokpos, name, [rbx].tokpos )
+                .elseif ( eax == 10 )
+                     __cvtq_ld(&opndx, &opndx)
+                    AddLineQueueX(
+                        " mov dword ptr %s[0], %u\n"
+                        " mov dword ptr %s[4], %u\n"
+                        " mov word ptr %s[8], %u",
+                        name, opndx.l64_l,
+                        name, opndx.l64_h,
+                        name, opndx.h64_l )
+                .else
+                    AddLineQueueX(
+                        " mov dword ptr %s[0], %u\n"
+                        " mov dword ptr %s[4], %u\n"
+                        " mov dword ptr %s[8], %u\n"
+                        " mov dword ptr %s[12],%u",
+                        name, opndx.l64_l,
+                        name, opndx.l64_h,
+                        name, opndx.h64_l,
+                        name, opndx.h64_h )
+                .endif
 
                 imul eax,i,asm_tok
                 add  rax,tokenarray

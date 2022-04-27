@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; DIVQ.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,13 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+divq proc dest:real16, src:real16
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+    .new a:real16 = xmm0
+    .new b:real16 = xmm1
+    __divq(&a, &b)
     ret
 
-__cvti32_q endp
+divq endp
 
     end
-

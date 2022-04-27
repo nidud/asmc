@@ -1,4 +1,4 @@
-; __CVTI32_Q.ASM--
+; TANQF.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,15 +8,14 @@ include quadmath.inc
 
     .code
 
-__cvti32_q proc uses rbx q:ptr, l:long_t
+tanqf proc Q:real16
 
-    mov rbx,q
-    cvti32_q(l)
-    mov rax,rbx
-    movups [rax],xmm0
+    fldq()
+    fptan
+    fstp st(0)
+    fstq()
     ret
 
-__cvti32_q endp
+tanqf endp
 
     end
-

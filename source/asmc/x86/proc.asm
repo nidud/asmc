@@ -2933,33 +2933,67 @@ runqueue:
 
     ; v2.33.26 - Use proc language
     mov eax,CurrProc
-    .if ( ModuleInfo.Ofssize == USE64 &&
-          [eax].asym.langtype == LANG_SYSCALL &&
-          [esi].flags & PROC_HAS_VARARG &&
-          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+    .if ( ModuleInfo.Ofssize == USE64 && [eax].asym.langtype == LANG_SYSCALL &&
+          [esi].flags & PROC_HAS_VARARG && ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
-        .for ( ebx = 0, edi = [esi].paralist: edi: edi = [edi].dsym.nextparam, ebx++ )
-            .break .if ( ![edi].dsym.nextparam )
+        ; v2.33.53
+        .if ( [esi].regslist && !cstack )
+
+            asmerr( 2008, "User registers inside frame: use -Cs or OPTION CSTACK:ON" )
+        .endif
+
+        ;
+        ; .template valist
+        ;    v_argc          dd ?                ; n*8
+        ;    v_argf          dd ?                ; 6*8+n*16
+        ;    v_end           dq ?                ; &valist+sizeof(valist)
+        ;    v_start         dq ?                ; &v_argv
+        ;    v_stack         dq ?                ; fs:[0x28]
+        ;    v_argv          dq 6 dup(?)         ; rdi..r9
+        ;    v_argx          xmmword 8 dup(?)    ; xmm0..9
+        ;   .ends
+        ;
+        mov edi,[esi].paralist ; skip :vararg...
+        .if ( edi )
+            mov edi,[edi].dsym.nextparam
+        .endif
+        .for ( ebx = 0, cnt = 0 : edi : edi = [edi].dsym.nextparam )
+
+            .if ( [edi].asym.mem_type & MT_FLOAT )
+                inc cnt
+            .else
+                inc ebx
+            .endif
         .endf
 
+        imul ecx,cnt,16
         AddLineQueueX(
-            " mov DWORD PTR [rsp+8], %d\n"
-            " mov DWORD PTR [rsp+12], 48", &[ebx*8] )
+            " mov DWORD PTR [rsp],%d\n"
+            " mov DWORD PTR [rsp+4],48+%d", &[ebx*8], ecx )
         .for ( : ebx < 6: ebx++ )
             movzx ecx,elf64_regs[ebx+18]
             AddLineQueueX( " mov [rsp+%d+32], %r", &[ebx*8], ecx )
         .endf
         AddLineQueueX( ".if al" )
-        .for ( ebx = 0, edi = 80: ebx < 8: ebx++, edi += 16 )
+        imul edi,cnt,16
+        add  edi,0x50
+        .for ( ebx = cnt : ebx < 8 : ebx++, edi += 16 )
             AddLineQueueX( " movaps [rsp+%d], %r", edi, &[ebx+T_XMM0] )
         .endf
-        AddLineQueueX(
-            ".endif\n"
-            " lea rax, [rsp+224]\n"
-            " mov [rsp+16], rax\n"
-            " lea rax, [rsp+32]\n"
-            " mov [rsp+24], rax\n"
-            " lea rax, [rsp+8]" )
+        AddLineQueue( ".endif" )
+        .if ( Options.chkstack )
+            AddLineQueue(
+                " assume fs:nothing\n"
+                " mov rax,fs:[0x28]\n"
+                " assume fs:error\n"
+                " mov [rsp+0x18],rax" )
+        .endif
+        AddLineQueue(
+            " lea rax,[rsp+0xE0]\n"
+            " mov [rsp+0x08],rax\n"
+            " lea rax,[rsp+0x20]\n"
+            " mov [rsp+0x10],rax\n"
+            " mov rax,rsp" )
     .endif
 
     ; special case: generated code runs BEFORE the line.

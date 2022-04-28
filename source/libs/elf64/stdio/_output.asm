@@ -109,9 +109,11 @@ _output proc public uses rbx r12 r13 r14 r15 _fp:LPFILE, format:string_t, arglis
 
     mov fp,_fp
     mov r15,format
-    mov r14d,[arglist]
-    add r14,[arglist+16]
-    lea rbx,[arglist+72]
+
+    mov r14d,[rdx]
+    mov ebx,[rdx+4]
+    add r14,[rdx+16]
+    add rbx,[rdx+16]
 
     xor eax,eax
     mov textlen,eax

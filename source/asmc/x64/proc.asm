@@ -2529,7 +2529,7 @@ win64_SaveRegParams endp
 ; write prolog code
 ;
 
-write_default_prologue proc __ccall private uses rsi rdi rbx
+write_default_prologue proc __ccall private uses rsi rdi rbx r12
 
    .new info:ptr proc_info
    .new regist:ptr word
@@ -2962,43 +2962,73 @@ runqueue:
 
     ; v2.33.26 - Use proc language
     mov rax,CurrProc
-    .if ( ModuleInfo.Ofssize == USE64 &&
-          [rax].asym.langtype == LANG_SYSCALL &&
-          [rsi].flags & PROC_HAS_VARARG &&
-          ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
+    .if ( ModuleInfo.Ofssize == USE64 && [rax].asym.langtype == LANG_SYSCALL &&
+          [rsi].flags & PROC_HAS_VARARG && ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
-        .for ( ebx = 0, rdi = [rsi].paralist: rdi: rdi = [rdi].dsym.nextparam, ebx++ )
-            .break .if ( ![rdi].dsym.nextparam )
+        ; v2.33.53
+        .if ( [rsi].regslist && !cstack )
+
+            asmerr( 2008, "User registers inside frame: use -Cs or OPTION CSTACK:ON" )
+        .endif
+
+        ;
+        ; .template valist
+        ;    v_argc          dd ?                ; n*8
+        ;    v_argf          dd ?                ; 6*8+n*16
+        ;    v_end           dq ?                ; &valist+sizeof(valist)
+        ;    v_start         dq ?                ; &v_argv
+        ;    v_stack         dq ?                ; fs:[0x28]
+        ;    v_argv          dq 6 dup(?)         ; rdi..r9
+        ;    v_argx          xmmword 8 dup(?)    ; xmm0..9
+        ;   .ends
+        ;
+        mov rdi,[rsi].paralist
+        .if ( rdi )
+            mov rdi,[rdi].dsym.nextparam
+        .endif
+        .for ( ebx = 0, r12d = 0 : rdi : rdi = [rdi].dsym.nextparam )
+
+            .if ( [rdi].asym.mem_type & MT_FLOAT )
+                inc r12d
+            .else
+                inc ebx
+            .endif
         .endf
-        ;
-        ; frame:
-        ;  00 size_locals   dd 8*n
-        ;  04 total_size    dd 8*6
-        ;  08 end_frame     dq frame+sizeof(frame)
-        ;  10 start_frame   dq frame+32
-        ;  18 align16       dq ?
-        ;  20 args          dq 6 rdi..r9
-        ;  50 args          xmmword 8 xmm0..7
-        ;
+
+        imul r8d,r12d,16
         AddLineQueueX(
-            " mov DWORD PTR [rsp+8], %d\n"
-            " mov DWORD PTR [rsp+12], 48", &[rbx*8] )
+            " mov DWORD PTR [rsp],%d\n"
+            " mov DWORD PTR [rsp+4],48+%d", &[rbx*8], r8d )
+
         .for ( : ebx < 6: ebx++ )
+
             lea rcx,elf64_regs
             movzx ecx,byte ptr [rcx+rbx+18]
-            AddLineQueueX( " mov [rsp+%d+32], %r", &[rbx*8], ecx )
+            lea edx,[rbx*8+0x20]
+            AddLineQueueX( " mov [rsp+0x%X],%r", edx, ecx )
         .endf
         AddLineQueue( ".if al" )
-        .for ( ebx = 0, edi = 80: ebx < 8: ebx++, edi += 16 )
-            AddLineQueueX( " movaps [rsp+%d], %r", edi, &[rbx+T_XMM0] )
+        mov  ebx,r12d
+        imul edi,ebx,16
+        add  edi,0x50
+        .for ( : ebx < 8 : ebx++, edi += 16 )
+            AddLineQueueX( " movaps [rsp+0x%X],%r", edi, &[rbx+T_XMM0] )
         .endf
+        AddLineQueue( ".endif" )
+        .if ( Options.chkstack )
+            AddLineQueue(
+                " assume fs:nothing\n"
+                " mov rax,fs:[0x28]\n"
+                " assume fs:error\n"
+                " mov [rsp+0x18],rax" )
+        .endif
         AddLineQueue(
-            ".endif\n"
-            " lea rax, [rsp+224]\n"
-            " mov [rsp+16], rax\n"
-            " lea rax, [rsp+32]\n"
-            " mov [rsp+24], rax\n"
-            " lea rax, [rsp+8]" )
+            " lea rax,[rsp+0xE0]\n"
+            " mov [rsp+0x08],rax\n"
+            " lea rax,[rsp+0x20]\n"
+            " mov [rsp+0x10],rax\n"
+            " mov rax,rsp" )
+
     .endif
 
     ; special case: generated code runs BEFORE the line.

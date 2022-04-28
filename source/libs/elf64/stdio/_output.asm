@@ -10,14 +10,6 @@ include limits.inc
 include string.inc
 include fltintrn.inc
 
-;
-; the following should be set depending on the sizes of various types
-;
-LONG_IS_INT     equ 1       ; 1 means long is same size as int
-SHORT_IS_INT    equ 0       ; 1 means short is same size as int
-PTR_IS_INT      equ 1       ; 1 means ptr is same size as int
-PTR_IS_LONG     equ 1       ; 1 means ptr is same size as long
-
 BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
 
 FL_SIGN         equ 0x0001  ; put plus or minus in front
@@ -43,12 +35,6 @@ ST_DOT          equ 4       ; just read '.'
 ST_PRECIS       equ 5       ; just read precision specifier
 ST_SIZE         equ 6       ; just read size specifier
 ST_TYPE         equ 7       ; just read type specifier
-
-ifdef FORMAT_VALIDATIONS
-NUMSTATES       equ (ST_INVALID + 1)
-else
-NUMSTATES       equ (ST_TYPE + 1)
-endif
 
 externdef __lookuptable:byte
 
@@ -76,7 +62,6 @@ write_string proc private uses rbx r12 r13 r14 string:LPSTR, len:UINT, fp:LPFILE
         movzx edi,byte ptr [r13]
         inc r13
         .ifd fputc(edi, r12) == -1
-
             mov [r14],eax
             .break
         .endif
@@ -126,7 +111,7 @@ _output proc public uses rbx r12 r13 r14 r15 _fp:LPFILE, format:string_t, arglis
     mov r15,format
     mov r14d,[arglist]
     add r14,[arglist+16]
-    lea rbx,[arglist+80]
+    lea rbx,[arglist+72]
 
     xor eax,eax
     mov textlen,eax
@@ -282,7 +267,7 @@ _output proc public uses rbx r12 r13 r14 r15 _fp:LPFILE, format:string_t, arglis
 
                 mov eax,edx
 
-                .switch eax
+                .switch rax
 
                   .case 'b'
                     mov rax,r14
@@ -406,7 +391,6 @@ _output proc public uses rbx r12 r13 r14 r15 _fp:LPFILE, format:string_t, arglis
                     .endif
                     mov rdi,rbx
                     add rbx,16
-                    mov rax,[rdi]
                     mov floattype,dl
 
                     mov r8d,r12d
@@ -417,13 +401,13 @@ _output proc public uses rbx r12 r13 r14 r15 _fp:LPFILE, format:string_t, arglis
 
                     .if r12d & FL_LONGDOUBLE
                         or r8d,_ST_LONGDOUBLE
-                        ;_cldcvt(rax, text, edx, r13d, r8d)
+                        _cldcvt(rdi, text, edx, r13d, r8d)
                     .elseif r12d & FL_LONGLONG
                         or r8d,_ST_QUADFLOAT
-                        ;_cqcvt(rax, text, edx, r13d, r8d)
+                        _cqcvt(rdi, text, edx, r13d, r8d)
                     .else
                         or r8d,_ST_DOUBLE
-                        ;_cfltcvt(rdi, text, edx, r13d, r8d)
+                        _cfltcvt(rdi, text, edx, r13d, r8d)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

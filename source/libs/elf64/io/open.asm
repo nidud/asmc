@@ -17,9 +17,9 @@ externdef _fmode:uint_t
 
 open proc path:string_t, oflag:int_t, args:vararg
 
-   .new fh:uint_t
    .new name:string_t
    .new mode:uint_t
+   .new fh:uint_t
 
     mov eax,oflag
     and eax,O_RDONLY or O_WRONLY or O_RDWR

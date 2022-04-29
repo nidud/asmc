@@ -98,7 +98,7 @@ FindDefinedName proc fastcall private uses rsi rdi name:string_t
     lea rsi,dyneqtable
     .for ( edi = 0 : edi < dyneqcount : edi++ )
         lodsq
-        .if !strcmp(name, rax)
+        .if !tstrcmp(name, rax)
             .return 1
         .endif
     .endf

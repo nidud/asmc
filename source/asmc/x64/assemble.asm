@@ -57,7 +57,7 @@ Parse_Pass      dd 0
 write_to_file   dd 0
 
 cp_text1        db "_TEXT",0
-ifdef ASMC64
+if not defined(__UNIX__) and defined(ASMC64)
 cp_text2        db ".text$mn",0
 else
 cp_text2        db ".text",0

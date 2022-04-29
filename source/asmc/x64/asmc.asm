@@ -318,8 +318,8 @@ GeneralFailure endp
 
 ifdef __UNIX__
 main proc _argc:int_t, _argv:array_t
-  .new argc:int_t = _argc
-  .new argv:array_t = _argv
+   .new argc:int_t = _argc
+   .new argv:array_t = _argv
     mov environ,rdx
 else
 main proc frame:ExceptionHandler argc:int_t, argv:array_t

@@ -126,10 +126,6 @@ fmtstk1 string_t \
 
     assume rbx:ptr asm_tok
 
-ifndef ASMC64
-
-endif
-
 ifdef FCT_ELF64
 externdef elf64_regs:byte
 endif

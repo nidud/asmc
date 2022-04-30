@@ -493,7 +493,7 @@ TWindow::PutChar proc uses rdi x:int_t, y:int_t, count:int_t, w:CHAR_INFO
 
 TWindow::PutChar endp
 
-TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, max:int_t, path:string_t
+TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, size:int_t, path:string_t
 
   local pre[16]:char_t
 
@@ -532,7 +532,7 @@ TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, max:int_t, path:string_
 
 TWindow::PutPath endp
 
-TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_t, argptr:vararg
+TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, size:int_t, format:string_t, argptr:vararg
 
   local w:ptr_t
   local highat:byte
@@ -563,7 +563,7 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
     mov     w,rax
     mov     retval,vsprintf(&buffer, format, &argptr)
     mov     rcx,this
-    mov     r11d,max
+    mov     r11d,size
 
     .if !r11d
 
@@ -791,7 +791,7 @@ TWindow::CPutChar proc uses rsi rdi rbx rcx x:int_t, y:int_t, count:int_t, ci:CH
 
 TWindow::CPutChar endp
 
-TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_t, argptr:vararg
+TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, size:int_t, format:string_t, argptr:vararg
 
   local buffer[4096]:char_t
   local ci:CHAR_INFO
@@ -809,14 +809,14 @@ TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, max
     mov     ci,eax
     mov     retval,vsprintf(&buffer, format, &argptr)
 
-    .if max == 0
+    .if size == 0
 
         movzx eax,[rbx].rc.col
         sub eax,x
-        mov max,eax
+        mov size,eax
     .endif
 
-    .for ( rsi = &buffer : byte ptr [rsi] && max : rsi++, max-- )
+    .for ( rsi = &buffer : byte ptr [rsi] && size : rsi++, size-- )
 
         mov eax,ci
         mov al,[rsi]
@@ -827,7 +827,7 @@ TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, max
             mov     sx,x
             movzx   ecx,[rbx].rc.col
             sub     ecx,eax
-            mov     max,ecx
+            mov     size,ecx
             .endc
         .case al == 9
             add     sx,4
@@ -847,7 +847,7 @@ TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, max
 
 TWindow::CPutString endp
 
-TWindow::CPutPath proc uses rsi rdi rbx rcx x:int_t, y:int_t, max:int_t, path:string_t
+TWindow::CPutPath proc uses rsi rdi rbx rcx x:int_t, y:int_t, size:int_t, path:string_t
 
   local pre[16]:char_t
 

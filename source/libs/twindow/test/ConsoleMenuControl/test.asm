@@ -54,11 +54,14 @@ cmain proc hwnd:ptr TWindow, argc:int_t, argv:array_t, environ:array_t
 
     ; Append a Menu item to it
 
-    AppendMenu(rax, MF_STRING, MENU_ID, "ConsoleMenuControl()")
+    .if AppendMenu(rax, MF_STRING, MENU_ID, "ConsoleMenuControl()")
 
-    ; Main message loop
+        ; Main message loop
 
-    hwnd.Register(&WndProc)
+        hwnd.Register(&WndProc)
+    .else
+        hwnd.MessageBox(MB_OK, "AppendMenu()", "Fail to append menu item")
+    .endif
     ret
 
 cmain endp

@@ -45,7 +45,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalOptions>/LIBPATH:..\..\..\..\lib\x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/LIBPATH:..\..\..\..\..\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>

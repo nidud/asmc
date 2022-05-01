@@ -303,16 +303,16 @@ CApplication::OnTimer proc uses rsi rdi rbx
         b.SetCenterColor([rsi].m_color)
         b.SetSurroundColors(&FullTranslucent, &count)
 
-        mov ecx,[rsi].m_radius
+        mov eax,[rsi].m_radius
         mov r8d,[rsi].m_pos.x
-        sub r8d,ecx
+        sub r8d,eax
         mov r9d,[rsi].m_pos.y
-        sub r9d,ecx
+        sub r9d,eax
         add r8d,2
         add r9d,2
-        add ecx,ecx
-        sub ecx,4
-        g.FillEllipse(&b, r8d, r9d, ecx, ecx)
+        add eax,eax
+        sub eax,4
+        g.FillEllipse(&b, r8d, r9d, eax, eax)
         b.Release()
         p.Release()
     .endf

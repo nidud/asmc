@@ -2,7 +2,7 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-include imessagedispatcher.inc
+include IMessageDispatcher.inc
 
 PMessageDispatcher typedef ptr IMessageDispatcher
 

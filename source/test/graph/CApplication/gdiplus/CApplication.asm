@@ -85,7 +85,7 @@ CApplication::ShowApplicationWindow proc uses rdi
 
    .new bSucceeded:BOOL = TRUE
 
-    mov rdi,rcx
+    mov rdi,this
     .if ( [rdi].m_hwnd == NULL )
 
         mov bSucceeded,FALSE
@@ -107,7 +107,7 @@ CApplication::ShowApplicationWindow endp
 
 CApplication::DestroyApplicationWindow proc uses rdi
 
-    mov rdi,rcx
+    mov rdi,this
     .if ( [rdi].m_hwnd != NULL )
 
         .if ( [rdi].m_bitmap )
@@ -124,7 +124,8 @@ CApplication::DestroyApplicationWindow endp
 
 CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
 
-    mov     rdi,rcx
+    mov     rdi,this
+    mov     rdx,lParam
     movzx   eax,dx
     shr     edx,16
     mov     [rdi].m_width,eax
@@ -134,20 +135,19 @@ CApplication::OnSize proc uses rsi rdi rbx lParam:LPARAM
     cmp     eax,edx
     cmova   ecx,edx
     shr     ecx,3
-    mov     r8d,ColorAlpha(Red, 180)
     mov     edx,ColorAlpha(Green, 180)
     mov     eax,ColorAlpha(Blue, 180)
 
-    .for ( r11 = &[rdi].m_obj, ebx = 1: ebx < MAXOBJ+1: ebx++, r11 += sizeof(object) )
+    .for ( rsi = &[rdi].m_obj, ebx = 1: ebx < MAXOBJ+1: ebx++, rsi += sizeof(object) )
 
-        mov [r11].object.m_mov.x,ebx
-        mov [r11].object.m_mov.y,ebx
-        mov [r11].object.m_pos.x,ecx
-        mov [r11].object.m_pos.y,ecx
-        mov [r11].object.m_radius,ecx
-        mov [r11].object.m_color,eax
+        mov [rsi].object.m_mov.x,ebx
+        mov [rsi].object.m_mov.y,ebx
+        mov [rsi].object.m_pos.x,ecx
+        mov [rsi].object.m_pos.y,ecx
+        mov [rsi].object.m_radius,ecx
+        mov [rsi].object.m_color,eax
         mov eax,edx
-        mov edx,r8d
+        mov edx,ColorAlpha(Red, 180)
     .endf
 
     .if ( [rdi].m_bitmap )
@@ -164,7 +164,7 @@ CApplication::OnSize endp
 
 CApplication::OnTimer proc uses rsi rdi rbx
 
-    mov rdi,rcx
+    mov rdi,this
    .return 0 .if ( [rdi].m_bitmap == NULL )
 
    .new hdc:HDC = GetDC([rdi].m_hwnd)
@@ -176,31 +176,32 @@ CApplication::OnTimer proc uses rsi rdi rbx
     g.SetSmoothingMode(SmoothingModeHighQuality)
     g.Clear(ColorAlpha(Black, 230))
 
+   .new i:SINT
    .new count:SINT = 1
    .new FullTranslucent:ARGB = ColorAlpha(Black, 230)
 
-    .for ( rsi = &[rdi].m_obj, ebx = 0: ebx < MAXOBJ: ebx++, rsi += sizeof(object) )
+    .for ( rsi = &[rdi].m_obj, i = 0: i < MAXOBJ: i++, rsi += sizeof(object) )
 
        .new p:GraphicsPath()
-        mov ecx,[rsi].m_radius
+        mov ebx,[rsi].m_radius
         mov edx,[rsi].m_pos.x
-        sub edx,ecx
-        mov r8d,[rsi].m_pos.y
-        sub r8d,ecx
-        add ecx,ecx
-        p.AddEllipse(edx, r8d, ecx, ecx)
+        sub edx,ebx
+        mov eax,[rsi].m_pos.y
+        sub eax,ebx
+        add ebx,ebx
+        p.AddEllipse(edx, eax, ebx, ebx)
 
        .new b:PathGradientBrush(&p)
         b.SetCenterColor([rsi].m_color)
         b.SetSurroundColors(&FullTranslucent, &count)
 
-        mov ecx,[rsi].m_radius
-        mov r8d,[rsi].m_pos.x
-        sub r8d,ecx
-        mov r9d,[rsi].m_pos.y
-        sub r9d,ecx
-        add ecx,ecx
-        g.FillEllipse(&b, r8d, r9d, ecx, ecx)
+        mov ebx,[rsi].m_radius
+        mov edx,[rsi].m_pos.x
+        sub edx,ebx
+        mov eax,[rsi].m_pos.y
+        sub eax,ebx
+        add ebx,ebx
+        g.FillEllipse(&b, edx, eax, ebx, ebx)
         b.Release()
         p.Release()
     .endf
@@ -246,6 +247,8 @@ CApplication::OnTimer endp
 
 CApplication::OnKeyDown proc wParam:WPARAM
 
+    mov rcx,this
+    mov rdx,wParam
     .switch edx
     .case VK_DOWN
         .endc .if ( [rcx].m_obj.m_mov.x == 1 || [rcx].m_obj.m_mov.x == -1 )
@@ -290,6 +293,7 @@ CApplication::OnKeyDown endp
 
 CApplication::OnClose proc
 
+    mov rcx,this
     .if ( [rcx].m_hwnd != NULL )
 
         DestroyWindow( [rcx].m_hwnd )
@@ -321,7 +325,7 @@ CApplication::OnPaint proc uses rdi
    .new ps:PAINTSTRUCT
    .new height:int_t = 0
 
-    mov rdi,rcx
+    mov rdi,this
 
    .new hdc:HDC = BeginPaint([rdi].m_hwnd, &ps)
 
@@ -435,12 +439,13 @@ CApplication::OnPaint proc uses rdi
             mov eax,[rdi].m_rc.right
             sub eax,[rdi].m_rc.left
             shr eax,1
-            mov r8d,[rdi].m_rc.bottom
-            sub r8d,[rdi].m_rc.top
-            shr r8d,1
-            .for ( rdx = &[rdi].m_obj, ecx = 0: ecx < MAXOBJ: ecx++, rdx += sizeof(object) )
+            mov ecx,[rdi].m_rc.bottom
+            sub ecx,[rdi].m_rc.top
+            shr ecx,1
+            .new i:int_t
+            .for ( rdx = &[rdi].m_obj, i = 0: i < MAXOBJ: i++, rdx += sizeof(object) )
                 mov [rdx].object.m_pos.x,eax
-                mov [rdx].object.m_pos.y,r8d
+                mov [rdx].object.m_pos.y,ecx
             .endf
         .endif
     .endif
@@ -451,15 +456,16 @@ CApplication::OnPaint endp
 
 ; Main Window procedure
 
-WindowProc proc hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
+WindowProc proc WINAPI hwnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .if ( edx == WM_CREATE )
+    .if ( message == WM_CREATE )
 
-        SetWindowLongPtr(rcx, GWLP_USERDATA, [r9].CREATESTRUCT.lpCreateParams)
+        mov rdx,lParam
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, [rdx].CREATESTRUCT.lpCreateParams)
         .return 1
     .endif
 
-    .new Application:ptr CApplication = GetWindowLongPtr(rcx, GWLP_USERDATA)
+    .new Application:ptr CApplication = GetWindowLongPtr(hwnd, GWLP_USERDATA)
 
     .switch ( message )
     .case WM_SIZE
@@ -494,7 +500,7 @@ WindowProc endp
 
 CApplication::CreateApplicationWindow proc uses rdi
 
-    mov rdi,rcx
+    mov rdi,this
 
     .new wc:WNDCLASSEX = {
         WNDCLASSEX,                     ; .cbSize
@@ -515,7 +521,7 @@ CApplication::CreateApplicationWindow proc uses rdi
         .return E_FAIL
     .endif
 
-    .new rect:RECT( 0, 0, [rdi].m_width, [rdi].m_height )
+    .new rect:RECT = { 0, 0, [rdi].m_width, [rdi].m_height }
 
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX, FALSE)
 
@@ -555,7 +561,7 @@ CApplication::CApplication proc instance:HINSTANCE
 
 CApplication::CApplication endp
 
-_tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
+_tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, pszCmdLine:LPTSTR, iCmdShow:int_t
 
     .new app:ptr CApplication(hInstance)
     .return app.Run()

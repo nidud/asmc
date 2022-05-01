@@ -11,12 +11,13 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{CFB47F92-2595-41B9-BFA0-23386AA9D8F9}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -44,13 +45,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalOptions>/LIBPATH:..\..\..\..\lib\x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/LIBPATH:..\..\..\..\..\lib\x64 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ASMC>
       <WarningLevel>2</WarningLevel>
       <IgnoreINCLUDELIB>false</IgnoreINCLUDELIB>
       <GenerateDebugInformation>8</GenerateDebugInformation>
-      <IncludePaths>..\..\..\..\include</IncludePaths>
+      <IncludePaths>..\..\..\..\..\include</IncludePaths>
       <WCharacterSet>Unicode</WCharacterSet>
     </ASMC>
   </ItemDefinitionGroup>

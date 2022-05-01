@@ -319,8 +319,7 @@ PFLOAT128	typedef PTR FLOAT128
 
 define _ULONGLONG_
 
-if defined(_M_IA64) AND NOT defined(MIDL_PASS)
-
+if not defined(_M_IX86) or (defined(_INTEGRAL_MAX_BITS) and _INTEGRAL_MAX_BITS GE 64)
 LONGLONG	typedef sqword
 ULONGLONG	typedef qword
 MAXLONGLONG	equ 0x7fffffffffffffff

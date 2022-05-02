@@ -25,7 +25,6 @@ externdef __xt_z:byte
      __argv         array_t 0
      _environ       array_t 0
      __ImageBase    size_t 0
-     __ImageRel     size_t IMAGEREL _start
 
     .code
 
@@ -40,7 +39,7 @@ _start proc
     mov _environ,&[rsp+rax*8+16]
     mov __argv,&[rsp+8]
     lea rax,_start
-    sub rax,__ImageRel
+    sub rax,IMAGEREL _start
     mov __ImageBase,rax
 
     _initterm( &__xi_a, &__xi_z )

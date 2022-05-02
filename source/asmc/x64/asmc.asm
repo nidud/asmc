@@ -433,34 +433,6 @@ tgetenv proc fastcall uses rsi rdi rbx enval:string_t
 
 tgetenv endp
 
-ifdef __UNIX__
-if 0
-read proc fd:int_t, buf:ptr, count:size_t
-
-    xor eax,eax
-    syscall
-    ret
-
-read endp
-
-write proc fd:int_t, buf:ptr, count:uint_t
-
-    mov eax,1
-    syscall
-    ret
-
-write endp
-
-exit proc error:int_t
-
-    mov eax,60
-    syscall
-    ret
-
-exit endp
-endif
-endif
-
     _JUMP_BUFFER    struct
     _Rbx            dq ?
     _Rsp            dq ?

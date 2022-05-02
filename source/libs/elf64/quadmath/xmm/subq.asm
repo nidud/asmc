@@ -10,10 +10,9 @@ include quadmath.inc
 
 subq proc dest:real16, src:real16
 
-    .new a:real16 = xmm0
-    .new b:real16 = xmm1
-    __subq(&a, &b)
-    ret
+    .new a:real16 = dest
+    .new b:real16 = src
+    .return( __subq(&a, &b) )
 
 subq endp
 

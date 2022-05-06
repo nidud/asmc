@@ -27,6 +27,7 @@ The options listed in the following table.
 | **-e**_number_ | Set error limit number. |
 | **-elf** | Generate 32-bit ELF object file. Defines _LINUX(1). |
 | **-elf64** | Generate 64-bit ELF object file. Defines _LINUX(2) and _WIN64. |
+| **-endbr** | Insert ENDBR instruction at function entry. |
 | **-EP** | Generates a preprocessed source listing (sent to STDOUT). See /Sf. |
 | **-eq** | Don't display error messages. |
 | **-Fd**[_file_] | Write import definition file. |
@@ -42,6 +43,7 @@ The options listed in the following table.
 | **-Fw**_filename_ | Set errors file name. |
 | **-Gc** | Specifies use of FORTRAN- or Pascal-style function calling and naming conventions. Same as **OPTION LANGUAGE:PASCAL**. |
 | **-Gd** | Specifies use of C-style function calling and naming conventions. Same as **OPTION LANGUAGE:C**. |
+| **-Gs** | Specifies use of SYSCALL (System V)-style function calling and naming conventions. Same as **OPTION LANGUAGE:SYSCALL**. |
 | **-Ge** | Emit a conditional _chkstk() inside the prologue. |
 | **-gui** | Link switch used with **-pe** -- subsystem:windows. |
 | **-Gv** | Specifies use of VECTORCALL-style function calling and naming conventions. |

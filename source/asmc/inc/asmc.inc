@@ -482,6 +482,7 @@ define SIT_MACRO       1
     floatdigits             dd ?    ; option floatdigits:<value>
     flt_size                db ?    ; option float:<4|8>
     pic                     db ?    ; -fpic | -fno-pic
+    endbr                   db ?    ; -endbr
    .ends
 
 .template module_vars
@@ -616,6 +617,7 @@ define SIT_MACRO       1
     floatformat             db ?            ; option floatformat:<e|f|g>
     flt_size                db ?            ; option float:<4|8>
     pic                     db ?            ; -fpic | -fno-pic
+    endbr                   db ?            ; -endbr
    .ends
 
 Token_Count             equ <ModuleInfo.token_count>

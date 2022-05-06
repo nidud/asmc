@@ -3207,6 +3207,15 @@ write_prologue proc uses esi edi tokenarray:ptr asm_tok
 
     and ProcStatus,not PRST_PROLOGUE_NOT_DONE
 
+    .if ( ModuleInfo.endbr && ModuleInfo.prologuemode != PEM_NONE &&
+          ModuleInfo.langtype == LANG_SYSCALL )
+        .if ( ModuleInfo.Ofssize == USE64 )
+            AddLineQueue( "endbr64" )
+        .elseif ( ModuleInfo.Ofssize == USE32 )
+            AddLineQueue( "endbr32" )
+        .endif
+    .endif
+
     .if ( ( ModuleInfo.fctype == FCT_WIN64 || \
             ModuleInfo.fctype == FCT_VEC64 || \
             ModuleInfo.fctype == FCT_ELF64 ) && \

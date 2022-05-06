@@ -84,7 +84,8 @@ Options global_options {
         0,                      ; .floatformat
         1,                      ; .floatdigits
         4,                      ; .flt_size
-        0 }                     ; .pic
+        0,                      ; .pic
+        0 }                     ; .endbr
 
 else
 
@@ -151,7 +152,8 @@ Options global_options {
         0,                      ; .floatformat
         1,                      ; .floatdigits
         4,                      ; .flt_size
-        0 }                     ; .pic
+        0,                      ; .pic
+        0 }                     ; .endbr
 
 endif
 
@@ -220,7 +222,8 @@ Options global_options {
         0,                      ; .floatformat
         1,                      ; .floatdigits
         4,                      ; .flt_size
-        0 }                     ; .pic
+        0,                      ; .pic
+        0 }                     ; .endbr
 endif
 
     align 4
@@ -668,6 +671,9 @@ endif
         mov Options.case_sensitive,0
         mov Options.convert_uppercase,0
         .return
+    .case 'bdne'            ; -endbr
+        mov Options.endbr,1
+        .return
     .case 'qe'              ; -eq
         mov Options.no_error_disp,1
         .return
@@ -746,6 +752,9 @@ endif
         .return
     .case 'rG'              ; -Gr
         mov Options.langtype,LANG_FASTCALL
+        .return
+    .case 'sG'              ; -Gs
+        mov Options.langtype,LANG_SYSCALL
         .return
     .case 'vG'              ; -Gv
         mov Options.langtype,LANG_VECTORCALL

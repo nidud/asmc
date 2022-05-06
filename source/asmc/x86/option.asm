@@ -640,15 +640,15 @@ endif
             .endif
             inc i
         .case OP_FLOAT ; : <value>
-            mov al,[esi]
-            .if ( al == '4' )
-                mov ModuleInfo.flt_size,4
-            .elseif ( al == '8' )
-                mov ModuleInfo.flt_size,8
+            .return .if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
+            .if ( opnd.kind == EXPR_CONST )
+                .if ( opnd.value != 4 && opnd.value != 8 )
+                    .return( EmitConstError( &opnd ) )
+                .endif
+                mov ModuleInfo.flt_size,opnd.value
             .else
                 .return( asmerr( 2026 ) )
             .endif
-            inc i
         .case OP_FLOATDIGITS ; : <value>
             .return .if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )
             .if ( opnd.kind == EXPR_CONST )

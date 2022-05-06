@@ -783,6 +783,7 @@ dbgcv::write_type proc uses esi edi ebx sym:ptr asym
     mov count.cnt,0
     mov count.size,0
     mov count.ofs,0
+
     mov ecx,[ebx]
     [ebx].enum_fields( esi, [ecx].dbgcvVtbl.cntproc, &count )
 

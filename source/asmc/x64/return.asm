@@ -267,24 +267,22 @@ AssignValue proc __ccall private uses rsi rdi rbx i:ptr int_t, tokenarray:ptr as
                     " movd xmm0, eax", rdi )
                 .return
             .case 4
-                AddLineQueueX(
-                    " mov eax, %s\n"
-                    " movd xmm0, eax", rdi )
-                .return
+                mov op,T_MOVSS
+               .endc
             .case 8
-                AddLineQueueX(
-                    " mov rax, %s\n"
-                    " movq xmm0, rax", rdi )
-                .return
+                mov op,T_MOVSD
+               .endc
             .case 10
                 CreateFloat( 10, &opnd, &buffer )
                 AddLineQueueX( " movaps xmm0, xmmword ptr %s", &buffer )
                 .return
             .case 16
-                CreateFloat( 16, &opnd, &buffer )
-                AddLineQueueX( " movaps xmm0, %s", &buffer )
-                .return
+                mov op,T_MOVAPS
+               .endc
             .endsw
+            mov reg,T_XMM0
+            lea rdi,buffer
+            CreateFloat( eax, &opnd, rdi )
 
         .elseif ( opnd.kind == EXPR_ADDR )
 

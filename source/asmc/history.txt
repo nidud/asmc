@@ -3,7 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.34 - xx xxx 2021
-- added switch -fpic and -fno-pic for Asmc (x64)
+- added endbr32 and endbr64 instructions
+- added switch -fpic and -fno-pic
 - changed .obj to .o for /elf[64]
 - fixed bug in relocation for /elf64 -- @Hello71
 - added directive .namespace and .endn

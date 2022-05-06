@@ -1267,6 +1267,11 @@ insx(SWAPGS, swapgs,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  0,     
 insx(SYSCALL_, syscall, OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x05, 0x00, P_64,     0,0, RWF_X64)
 insx(SYSRET, sysret,    OpCls( NONE,     NONE,       NONE ), F_0F,   0,  no_RM,  0x07, 0x00, P_64,     0,0, RWF_X64)
 
+; Terminate an Indirect Branch in 64-bit Mode
+
+insx(ENDBR64, endbr64,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFA, P_64,     0,0, RWF_X64)
+insa(ENDBR32, endbr32,  OpCls( NONE,     NONE,       NONE ), F_F30F, 0,  0,      0x1E, 0xFB, P_686,    0,0)
+
 ; SSE4.1
 
 insa(BLENDPD, blendpd,  OpCls( XMM,      XMM_M128, I8_U ), F_660F3A, 1,  no_WDS, 0x0D, 0x00, P_686 or P_SSE4, 0,0)

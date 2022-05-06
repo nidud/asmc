@@ -1,53 +1,43 @@
 
-public Rect
+int_t typedef sdword
 
 .class Shape
 
-  width  dd ?
-  height dd ?
+    width       int_t ?
+    height      int_t ?
 
-    setWidth  proc :dword
-    setHeight proc :dword
-    .ends
+    setWidth    proc :int_t
+    setHeight   proc :int_t
+   .ends
 
 .class Rectangle : public Shape
 
-    getArea proc
+    getArea     proc
+   .ends
 
-    .ends
+   .data
+    vtable RectangleVtbl { { Shape_setWidth, Shape_setHeight }, Rectangle_getArea }
+    rect   Rectangle { { vtable, 0, 0 } }
+    Rect   ptr Rectangle rect
 
-    .code
+    public Rect
 
-Shape::setWidth proc Width:dword
+   .code
 
+Shape::setWidth proc Width:int_t
     mov [rcx].Shape.width,edx
     ret
-
 Shape::setWidth endp
 
-Shape::setHeight proc Height:dword
-
+Shape::setHeight proc Height:int_t
     mov [rcx].Shape.height,edx
     ret
-
 Shape::setHeight endp
 
 Rectangle::getArea proc
-
     mov eax,[rcx].Shape.width
     mul [rcx].Shape.height
     ret
-
 Rectangle::getArea endp
-
-    .data
-
-    rc_vtable RectangleVtbl {
-            { Shape_setWidth, Shape_setHeight }, Rectangle_getArea
-        }
-    rectangle Rectangle {
-            { rc_vtable, 0, 0 }
-        }
-    Rect ptr Rectangle rectangle
 
     end

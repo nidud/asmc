@@ -217,10 +217,10 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asm_tok, t
 
         .elseif ( opnd.kind == EXPR_FLOAT )
 
-            .if ( type == NULL && ( ( [ebx].token == T_FLOAT && [ebx].floattype ) || \
-                  ( [ebx].token == T_OP_BRACKET && \
-                    [ebx+16].token == T_FLOAT && \
-                    [ebx+16].floattype && \
+            .if ( type == NULL && ( ( [ebx].token == T_FLOAT && [ebx].floattype ) ||
+                  ( [ebx].token == T_OP_BRACKET &&
+                    [ebx+16].token == T_FLOAT &&
+                    [ebx+16].floattype &&
                     [ebx+32].token == T_CL_BRACKET ) ) )
 
                 ; .return [(] 3F800000r [)] [[ .if ]]
@@ -256,24 +256,23 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asm_tok, t
                     " movd %r, %r", T_AX, edi, T_XMM0, T_EAX )
                 .return
             .case 4
-                AddLineQueueX(
-                    " mov %r, %s\n"
-                    " movd %r, %r", T_EAX, edi, T_XMM0, T_EAX )
-                .return
+                mov op,T_MOVSS
+               .endc
             .case 8
-                AddLineQueueX(
-                    " mov %r, %s\n"
-                    " movq %r, %r", T_RAX, edi, T_XMM0, T_RAX )
-                .return
+                mov op,T_MOVSD
+               .endc
             .case 10
                 CreateFloat( 10, &opnd, &buffer )
                 AddLineQueueX( " movaps %r, xmmword ptr %s", T_XMM0, &buffer )
                 .return
             .case 16
-                CreateFloat( 16, &opnd, &buffer )
-                AddLineQueueX( " movaps %r, %s", T_XMM0, &buffer )
-                .return
+                mov op,T_MOVAPS
+               .endc
             .endsw
+            mov reg,T_XMM0
+            lea edi,buffer
+            lea ecx,opnd
+            CreateFloat( eax, ecx, edi )
 
         .elseif ( opnd.kind == EXPR_ADDR )
 

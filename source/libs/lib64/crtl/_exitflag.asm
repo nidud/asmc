@@ -4,9 +4,9 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include internal.inc
+public _exitflag
 
     .data
-    _exitflag char_t 0
+    _exitflag sbyte 0
 
     end

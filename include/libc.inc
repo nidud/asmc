@@ -253,7 +253,11 @@ CALLBACKC macro id, arguments:VARARG
     exitm <id typedef ptr ?&id&>
     endm
 CALLBACK macro id, arguments:VARARG
+ifdef _WIN64
+    ?&id& typedef proto &arguments
+else
     ?&id& typedef proto WINAPI &arguments
+endif
     exitm <id typedef ptr ?&id&>
     endm
 endif

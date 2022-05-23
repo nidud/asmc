@@ -2963,13 +2963,34 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
             ; is also the case of an "empty" struct or union. The
             ; latter case isn't handled correctly.
 
-            .if op1_size == 0
+            .if ( op1_size == 0 )
+
                 mov eax,op1
                 or  eax,op2
-                .if op1 & OP_M_ANY && op2 & OP_I
-                    lea rcx,@CStr("WORD")
+
+                .if ( op1 & OP_M_ANY && op2 & OP_I )
+
+                    ; changed in v2.33.56
                     mov eax,[rsi].opnd[OPNI2].data32l
-                    .if eax > USHRT_MAX || op2_size == 4
+                    .ifs ( op2_size == 1 || ( op1 == OP_M && !( [rdi+expr].flags & E_EXPLICIT ) &&
+                        !( ( eax < 0 && eax < CHAR_MIN ) || eax > UCHAR_MAX ) ) )
+
+                        mov [rsi].mem_type,MT_BYTE
+                        mov [rsi].opnd[OPNI2].type,OP_I8
+                        lea rcx,@CStr("BYTE")
+                        .if ( op1 == OP_M && !( [rdi+expr].flags & E_EXPLICIT ) )
+                            mov [rsi].opnd[OPND1].type,OP_M08
+                        .endif
+
+                    .elseifs ( op2_size == 2 && !( ( eax < 0 && eax < SHRT_MIN ) || eax > USHRT_MAX ) )
+
+                        mov [rsi].mem_type,MT_WORD
+                        or  [rsi].flags,CI_ISWIDE
+                        mov [rsi].opnd[OPNI2].type,OP_I16
+                        lea rcx,@CStr("WORD")
+
+                    .else
+
                         or [rsi].flags,CI_ISWIDE
                         .if ModuleInfo.Ofssize == USE16 && op2_size > 2 && InWordRange([rsi].opnd[OPNI2].data32l)
                             mov op2_size,2
@@ -2982,15 +3003,8 @@ check_size proc __ccall uses rsi rdi rbx CodeInfo:ptr code_info, opndx:expr_t
                             mov [rsi].opnd[OPNI2].type,OP_I32
                             lea rcx,@CStr("DWORD")
                         .endif
-                    .elseif eax > UCHAR_MAX || op2_size == 2
-                         mov [rsi].mem_type,MT_WORD
-                         or  [rsi].flags,CI_ISWIDE
-                         mov [rsi].opnd[OPNI2].type,OP_I16
-                    .else
-                         mov [rsi].mem_type,MT_BYTE
-                         mov [rsi].opnd[OPNI2].type,OP_I8
-                         lea rcx,@CStr("BYTE")
                     .endif
+
                     .if !( [rdi+expr].flags & E_EXPLICIT )
 
                         ; v2.06: emit warning at pass one if mem op isn't a forward ref

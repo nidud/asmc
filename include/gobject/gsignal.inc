@@ -302,25 +302,25 @@ g_signal_chain_from_overridden_handler proto _CDecl \
 
 
 g_signal_connect macro instance, detailed_signal, c_handler, data
-	exitm<.err>
+	exitm<g_signal_connect_data(instance, detailed_signal, c_handler, data, NULL, 0)>
 	endm
 g_signal_connect_after macro instance, detailed_signal, c_handler, data
-	exitm<.err>
+	exitm<g_signal_connect_data(instance, detailed_signal, c_handler, data, NULL, G_CONNECT_AFTER)>
 	endm
 g_signal_connect_swapped macro instance, detailed_signal, c_handler, data
-	exitm<.err>
+	exitm<g_signal_connect_data(instance, detailed_signal, c_handler, data, NULL, G_CONNECT_SWAPPED)>
 	endm
 g_signal_handlers_disconnect_by_func macro instance, func, data
-	exitm<.err>
+	exitm<g_signal_handlers_disconnect_matched(instance, G_SIGNAL_MATCH_FUNC or G_SIGNAL_MATCH_DATA, 0, 0, NULL, func, data)>
 	endm
 g_signal_handlers_disconnect_by_data macro instance, data
-	exitm<.err>
+	exitm<g_signal_handlers_disconnect_matched(instance, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, data)>
 	endm
 g_signal_handlers_block_by_func macro instance, func, data
-	exitm<.err>
+	exitm<g_signal_handlers_block_matched(instance, G_SIGNAL_MATCH_FUNC or G_SIGNAL_MATCH_DATA, 0, 0, NULL, func, data)>
 	endm
 g_signal_handlers_unblock_by_func macro instance, func, data
-	exitm<.err>
+	exitm<g_signal_handlers_unblock_matched(instance, G_SIGNAL_MATCH_FUNC or G_SIGNAL_MATCH_DATA, 0, 0, NULL, func, data)>
 	endm
 
 ;gboolean

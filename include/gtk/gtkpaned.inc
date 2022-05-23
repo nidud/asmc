@@ -1,115 +1,45 @@
 ifndef __GTK_PANED_H__
-__GTK_PANED_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_PANED_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkcontainer.inc
+include gtk/gtkwidget.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_PANED equ <gtk_paned_get_type>
+define GTK_TYPE_PANED <gtk_paned_get_type>
 GTK_PANED macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PANED, GtkPaned))>
-	endm
-GTK_PANED_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_PANED, GtkPanedClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PANED, GtkPaned))>
+  endm
 GTK_IS_PANED macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PANED))>
-	endm
-GTK_IS_PANED_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_PANED))>
-	endm
-GTK_PANED_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_PANED, GtkPanedClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PANED))>
+  endm
 
+;GtkPaned                typedef _GtkPaned
 
-GtkPaned		STRUC
-container		GtkContainer <>
-priv			ptr_t ?
-GtkPaned		ENDS
+gtk_paned_get_type proto
+gtk_paned_new proto :GtkOrientation
+gtk_paned_set_start_child proto :ptr, :ptr
+gtk_paned_get_start_child proto :ptr
+gtk_paned_set_resize_start_child proto :ptr, :gboolean
+gtk_paned_get_resize_start_child proto :ptr
 
-GtkPanedClass		STRUC
-parent_class		GtkContainerClass <>
-cycle_child_focus	proc :ptr GtkPaned, :gboolean
-toggle_handle_focus	proc :ptr GtkPaned
-move_handle		proc :ptr GtkPaned, :GtkScrollType
-cycle_handle_focus	proc :ptr GtkPaned, :gboolean
-accept_position		proc :ptr GtkPaned
-cancel_position		proc :ptr GtkPaned
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkPanedClass		ENDS
+gtk_paned_set_end_child proto :ptr, :ptr
+gtk_paned_get_end_child proto :ptr
 
+gtk_paned_set_shrink_start_child proto :ptr, :gboolean
+gtk_paned_get_shrink_start_child proto :ptr
 
-;GType
-gtk_paned_get_type proto __cdecl
-;GtkWidget
-gtk_paned_new proto __cdecl \
-	   orientation: GtkOrientation
+gtk_paned_set_resize_end_child proto :ptr, :gboolean
+gtk_paned_get_resize_end_child proto :ptr
 
-;void
-gtk_paned_add1 proto __cdecl \
-		 paned: ptr GtkPaned,
-		 child: ptr GtkWidget
+gtk_paned_set_shrink_end_child proto :ptr, :gboolean
+gtk_paned_get_shrink_end_child proto :ptr
 
-;void
-gtk_paned_add2 proto __cdecl \
-		 paned: ptr GtkPaned,
-		 child: ptr GtkWidget
+gtk_paned_get_position proto :ptr
+gtk_paned_set_position proto :ptr, :sdword
 
-;void
-gtk_paned_pack1 proto __cdecl \
-		 paned: ptr GtkPaned,
-		 child: ptr GtkWidget,
-		resize: gboolean,
-		shrink: gboolean
-
-;void
-gtk_paned_pack2 proto __cdecl \
-		 paned: ptr GtkPaned,
-		 child: ptr GtkWidget,
-		resize: gboolean,
-		shrink: gboolean
-
-
-;gint
-gtk_paned_get_position proto __cdecl \
-		 paned: ptr GtkPaned
-
-;void
-gtk_paned_set_position proto __cdecl \
-		 paned: ptr GtkPaned,
-	      position: gint
-
-
-;GtkWidget
-gtk_paned_get_child1 proto __cdecl \
-		 paned: ptr GtkPaned
-
-;GtkWidget
-gtk_paned_get_child2 proto __cdecl \
-		 paned: ptr GtkPaned
-
-
-;GdkWindow
-gtk_paned_get_handle_window proto __cdecl \
-		 paned: ptr GtkPaned
-
-
-;void
-gtk_paned_set_wide_handle proto __cdecl \
-		 paned: ptr GtkPaned,
-		  wide: gboolean
-
-;gboolean
-gtk_paned_get_wide_handle proto __cdecl \
-		 paned: ptr GtkPaned
-
-G_END_DECLS
+gtk_paned_set_wide_handle proto :ptr, :gboolean
+gtk_paned_get_wide_handle proto :ptr
 
 endif

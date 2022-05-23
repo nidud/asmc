@@ -1451,9 +1451,8 @@ ifndef ASMC64
                     mov eax,4
                 .endif
 endif
-                .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
-                    mov ecx,opnd.mbr
-                    mov eax,[ecx].asym.total_size
+                .if ( opnd.kind == EXPR_ADDR && opnd.mem_type != MT_EMPTY )
+                    SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type )
                 .endif
                 .if eax == 2
                     or [esi].flags,HLLF_ARG16

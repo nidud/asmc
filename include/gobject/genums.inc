@@ -6,8 +6,6 @@ endif
 
 include gobject/gtype.inc
 
-G_BEGIN_DECLS
-
 G_TYPE_IS_ENUM macro type
 	exitm<(G_TYPE_FUNDAMENTAL (type) EQ G_TYPE_ENUM)>
 	endm
@@ -146,7 +144,5 @@ g_flags_complete_type_info proto __cdecl \
 		  info: ptr GTypeInfo,
 	  const_values: ptr GFlagsValue
 
-
-G_END_DECLS
 
 endif

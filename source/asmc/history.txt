@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.34 - xx xxx 2021
+- fixed bug in CodeView 8 (/zi8) for files without code
+- added unwind information (/frame) to /pe 64-bit
 - added switch -Gs -- Use System V calling convention
 - added switch -endbr -- Insert ENDBR instruction at function entry
 - added endbr32 and endbr64 instructions

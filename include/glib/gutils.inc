@@ -112,7 +112,7 @@ g_atexit proto __cdecl :GVoidFunc
 ifdef G_OS_WIN32
 if (defined(__MINGW_H) AND NOT defined(_STDLIB_H_)) OR (defined(_MSC_VER) AND NOT defined(_INC_STDLIB))
 ;int
-atexit proto __cdecl
+atexit proto __cdecl :ptr
 endif
 g_atexit macro func
 	exitm<atexit(func)>

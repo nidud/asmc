@@ -85,7 +85,7 @@ GObject			ENDS
 
 GObjectClass		STRUC
 g_type_class		GTypeClass <>
-construct_properties	ptr_t ?
+construct_properties	ptr GSList ?
 constructor		proc :GType, :quint, :ptr GObjectConstructParam
 set_property		proc :ptr GObject, :guint, :ptr GValue, :ptr GParamSpec
 get_property		proc :ptr GObject, :guint, :ptr GValue, :ptr GParamSpec

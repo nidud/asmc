@@ -150,7 +150,11 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             .for ( ecx = i, edx = ebx : ecx < Token_Count : ecx++, edx += 16 )
                 .break .if [edx].asm_tok.token == T_COMMA
                 .break .if [edx].asm_tok.token == T_FINAL
-                .break .if [edx].asm_tok.token == T_STRING
+                .if [edx].asm_tok.token == T_STRING
+                    ; added v2.33.56
+                    mov eax,[edx].asm_tok.string_ptr
+                   .break .if word ptr [eax] == '}'
+                .endif
             .endf
             .break .if edx == ebx
             mov rc,EvalOperand( &i, tokenarray, ecx, &opndx, 0 )

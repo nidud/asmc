@@ -1,3 +1,6 @@
+ifndef __GTK_AUTOCLEANUPS_INC
+define __GTK_AUTOCLEANUPS_INC
+
 if not defined (__GTK_H_INSIDE__) and  not defined (GTK_COMPILATION)
 .err <"Only <gtk/gtk.h> can be included directly.">
 endif
@@ -202,4 +205,5 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkTreeIter, gtk_tree_iter_free)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkTreeRowReference, gtk_tree_row_reference_free)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkWidgetPath, gtk_widget_path_unref)
 
+endif
 endif

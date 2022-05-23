@@ -1,112 +1,59 @@
 ifndef __GTK_BUILDABLE_H__
-__GTK_BUILDABLE_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_BUILDABLE_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gtk/gtkbuilder.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_BUILDABLE equ <gtk_buildable_get_type>
+define GTK_TYPE_BUILDABLE            <gtk_buildable_get_type>
 GTK_BUILDABLE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BUILDABLE, GtkBuildable))>
-	endm
-GTK_BUILDABLE_CLASS macro obj
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((obj), GTK_TYPE_BUILDABLE, GtkBuildableIface))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BUILDABLE, GtkBuildable))>
+  endm
 GTK_IS_BUILDABLE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_BUILDABLE))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_BUILDABLE))>
+  endm
 GTK_BUILDABLE_GET_IFACE macro obj
-	exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_BUILDABLE, GtkBuildableIface))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_BUILDABLE, GtkBuildableIface))>
+  endm
+
+;GtkBuildable            typedef _GtkBuildable
+;GtkBuildableParseContext typedef _GtkBuildableParseContext
+
+_GtkBuildableParser     struct
+start_element           proc :ptr, :ptr, :ptr, :ptr, :gpointer, :ptr
+end_element             proc :ptr, :ptr, :gpointer, :ptr
+text                    proc :ptr, :ptr, :gsize, :gpointer, :ptr
+error                   proc :ptr, :ptr, :gpointer
+padding                 gpointer 4 dup(?)
+_GtkBuildableParser     ends
+GtkBuildableParser      typedef _GtkBuildableParser
+
+_GtkBuildableIface      struct
+g_iface                 GTypeInterface <>
+set_id                  proc :ptr, :ptr
+get_id                  proc :ptr
+add_child               proc :ptr, :ptr, :ptr, :ptr
+set_buildable_property  proc :ptr, :ptr, :ptr, :ptr
+construct_child         proc :ptr, :ptr, :ptr
+custom_tag_start        proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+custom_tag_end          proc :ptr, :ptr, :ptr, :ptr, :gpointer
+custom_finished         proc :ptr, :ptr, :ptr, :ptr, :gpointer
+parser_finished         proc :ptr, :ptr
+get_internal_child      proc :ptr, :ptr, :ptr
+_GtkBuildableIface      ends
+GtkBuildableIface       typedef _GtkBuildableIface
 
 
-GtkBuildableIface	STRUC
-g_iface			GTypeInterface <>
-set_name		proc :ptr GtkBuildable, :ptr gchar
-get_name		proc :ptr GtkBuildable
-add_child		proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr GObject, :ptr
-set_buildable_property	proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr gchar, :ptr GValue
-construct_child		proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr gchar
-custom_tag_start	proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr GObject, :ptr gchar, :ptr GMarkupParser, :ptr gpointer
-custom_tag_end		proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr GObject, :ptr gchar, :ptr gpointer
-custom_finished		proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr GObject, :ptr gchar, :gpointer
-parser_finished		proc :ptr GtkBuildable, :ptr GtkBuilder
-get_internal_child	proc :ptr GtkBuildable, :ptr GtkBuilder, :ptr gchar
-GtkBuildableIface	ENDS
+gtk_buildable_get_type proto
 
+gtk_buildable_get_buildable_id proto :ptr
 
-;GType
-gtk_buildable_get_type proto __cdecl
-
-;void
-gtk_buildable_set_name proto __cdecl \
-	     buildable: ptr GtkBuildable,
-		  name: ptr gchar
-
-;const
-gtk_buildable_get_name proto __cdecl \
-	     buildable: ptr GtkBuildable
-
-;void
-gtk_buildable_add_child proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		 child: ptr GObject,
-		  type: ptr gchar
-
-;void
-gtk_buildable_set_buildable_property proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		  name: ptr gchar,
-		 value: ptr GValue
-
-;GObject
-gtk_buildable_construct_child proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		  name: ptr gchar
-
-;gboolean
-gtk_buildable_custom_tag_start proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		 child: ptr GObject,
-	       tagname: ptr gchar,
-		parser: ptr GMarkupParser,
-		  data: ptr gpointer
-
-;void
-gtk_buildable_custom_tag_end proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		 child: ptr GObject,
-	       tagname: ptr gchar,
-		  data: ptr gpointer
-
-;void
-gtk_buildable_custom_finished proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-		 child: ptr GObject,
-	       tagname: ptr gchar,
-		  data: gpointer
-
-;void
-gtk_buildable_parser_finished proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder
-
-;GObject
-gtk_buildable_get_internal_child proto __cdecl \
-	     buildable: ptr GtkBuildable,
-	       builder: ptr GtkBuilder,
-	     childname: ptr gchar
-
-
-G_END_DECLS
+gtk_buildable_parse_context_push proto :ptr, :ptr, :gpointer
+gtk_buildable_parse_context_pop proto :ptr
+gtk_buildable_parse_context_get_element proto :ptr
+gtk_buildable_parse_context_get_element_stack proto :ptr
+gtk_buildable_parse_context_get_position proto :ptr, :ptr, :ptr
 
 endif

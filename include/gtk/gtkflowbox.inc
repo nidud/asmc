@@ -1,261 +1,109 @@
 ifndef __GTK_FLOW_BOX_H__
-__GTK_FLOW_BOX_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_FLOW_BOX_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkbin.inc
+include gtk/gtkwidget.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_FLOW_BOX equ <gtk_flow_box_get_type>
+define GTK_TYPE_FLOW_BOX <gtk_flow_box_get_type>
 GTK_FLOW_BOX macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX, GtkFlowBox))>
-	endm
-GTK_FLOW_BOX_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FLOW_BOX, GtkFlowBoxClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX, GtkFlowBox))>
+  endm
 GTK_IS_FLOW_BOX macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FLOW_BOX))>
-	endm
-GTK_IS_FLOW_BOX_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FLOW_BOX))>
-	endm
-GTK_FLOW_BOX_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FLOW_BOX, GtkFlowBoxClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FLOW_BOX))>
+  endm
 
-GtkFlowBox		STRUC
-container		GtkContainer <>
-GtkFlowBox		ENDS
+;GtkFlowBox              typedef _GtkFlowBox
 
-GtkFlowBoxClass		STRUC
-parent_class		GtkContainerClass <>
-child_activated		proc :ptr GtkFlowBox, :ptr GtkFlowBoxChild
-selected_children_changed proc :ptr GtkFlowBox
-activate_cursor_child	proc :ptr GtkFlowBox
-toggle_cursor_child	proc :ptr GtkFlowBox
-move_cursor		proc :ptr GtkFlowBox, :GtkMovementStep, :gint
-select_all		proc :ptr GtkFlowBox
-unselect_all		proc :ptr GtkFlowBox
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-_gtk_reserved5		proc
-_gtk_reserved6		proc
-GtkFlowBoxClass		ENDS
-
-GTK_TYPE_FLOW_BOX_CHILD equ <gtk_flow_box_child_get_type>
+define GTK_TYPE_FLOW_BOX_CHILD <gtk_flow_box_child_get_type>
 GTK_FLOW_BOX_CHILD macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChild))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChild))>
+  endm
 GTK_FLOW_BOX_CHILD_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChildClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChildClass))>
+  endm
 GTK_IS_FLOW_BOX_CHILD macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FLOW_BOX_CHILD))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FLOW_BOX_CHILD))>
+  endm
 GTK_IS_FLOW_BOX_CHILD_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FLOW_BOX_CHILD))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FLOW_BOX_CHILD))>
+  endm
 GTK_FLOW_BOX_CHILD_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), EG_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChildClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), EG_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChildClass))>
+  endm
 
-GtkFlowBoxChild		STRUC
-parent_instance		GtkBin <>
-GtkFlowBoxChild		ENDS
+_GtkFlowBoxChild        struct
+parent_instance         GtkWidget <>
+_GtkFlowBoxChild        ends
+GtkFlowBoxChild         typedef _GtkFlowBoxChild
 
-GtkFlowBoxChildClass	STRUC
-parent_class		GtkBinClass <>
- activate		proc :ptr GtkFlowBoxChild
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-GtkFlowBoxChildClass	ENDS
+_GtkFlowBoxChildClass   struct
+parent_class            GtkWidgetClass <>
+activate                proc :ptr
+padding                 gpointer 8 dup(?)
+_GtkFlowBoxChildClass   ends
+GtkFlowBoxChildClass    typedef _GtkFlowBoxChildClass
 
-CALLBACKC(GtkFlowBoxCreateWidgetFunc, :gpointer, :gpointer)
+CALLBACK(GtkFlowBoxCreateWidgetFunc, :gpointer, :gpointer)
 
-;GType
-gtk_flow_box_child_get_type proto __cdecl
-;GtkWidget*
-gtk_flow_box_child_new proto __cdecl
-;gint
-gtk_flow_box_child_get_index proto __cdecl \
-		 child: ptr GtkFlowBoxChild
+gtk_flow_box_child_get_type proto
+gtk_flow_box_child_new proto
+gtk_flow_box_child_set_child proto :ptr, :ptr
+gtk_flow_box_child_get_child proto :ptr
+gtk_flow_box_child_get_index proto :ptr
+gtk_flow_box_child_is_selected proto :ptr
+gtk_flow_box_child_changed proto :ptr
+gtk_flow_box_get_type proto
+gtk_flow_box_new proto
+gtk_flow_box_bind_model proto :ptr, :ptr, :GtkFlowBoxCreateWidgetFunc, :gpointer, :GDestroyNotify
 
-;gboolean
-gtk_flow_box_child_is_selected proto __cdecl \
-		 child: ptr GtkFlowBoxChild
+gtk_flow_box_set_homogeneous proto :ptr, :gboolean
+gtk_flow_box_get_homogeneous proto :ptr
+gtk_flow_box_set_row_spacing proto :ptr, :guint
+gtk_flow_box_get_row_spacing proto :ptr
 
-;void
-gtk_flow_box_child_changed proto __cdecl \
-		 child: ptr GtkFlowBoxChild
+gtk_flow_box_set_column_spacing proto :ptr, :guint
+gtk_flow_box_get_column_spacing proto :ptr
 
+gtk_flow_box_set_min_children_per_line proto :ptr, :guint
+gtk_flow_box_get_min_children_per_line proto :ptr
 
+gtk_flow_box_set_max_children_per_line proto :ptr, :guint
+gtk_flow_box_get_max_children_per_line proto :ptr
+gtk_flow_box_set_activate_on_single_click proto :ptr, :gboolean
+gtk_flow_box_get_activate_on_single_click proto :ptr
 
-;GType
-gtk_flow_box_get_type proto __cdecl
+gtk_flow_box_prepend proto :ptr, :ptr
+gtk_flow_box_append proto :ptr, :ptr
+gtk_flow_box_insert proto :ptr, :ptr, :sdword
+gtk_flow_box_remove proto :ptr, :ptr
+gtk_flow_box_get_child_at_index proto :ptr, :sdword
 
-;GtkWidget
-gtk_flow_box_new proto __cdecl
+gtk_flow_box_get_child_at_pos proto :ptr, :sdword, :sdword
 
-;void
-gtk_flow_box_bind_model proto __cdecl \
-		   box: ptr GtkFlowBox,
-		 model: ptr GListModel,
-    create_widget_func: GtkFlowBoxCreateWidgetFunc,
-	     user_data: gpointer,
-   user_data_free_func: GDestroyNotify
+CALLBACK(GtkFlowBoxForeachFunc, :ptr, :ptr, :gpointer)
 
+gtk_flow_box_selected_foreach proto :ptr, :GtkFlowBoxForeachFunc, :gpointer
+gtk_flow_box_get_selected_children proto :ptr
+gtk_flow_box_select_child proto :ptr, :ptr
+gtk_flow_box_unselect_child proto :ptr, :ptr
+gtk_flow_box_select_all proto :ptr
+gtk_flow_box_unselect_all proto :ptr
+gtk_flow_box_set_selection_mode proto :ptr, :GtkSelectionMode
+gtk_flow_box_get_selection_mode proto :ptr
+gtk_flow_box_set_hadjustment proto :ptr, :ptr
+gtk_flow_box_set_vadjustment proto :ptr, :ptr
 
-;void
-gtk_flow_box_set_homogeneous proto __cdecl \
-		   box: ptr GtkFlowBox,
-	   homogeneous: gboolean
+CALLBACK(GtkFlowBoxFilterFunc, :ptr, :gpointer)
 
-;gboolean
-gtk_flow_box_get_homogeneous proto __cdecl \
-		   box: ptr GtkFlowBox
+gtk_flow_box_set_filter_func proto :ptr, :GtkFlowBoxFilterFunc, :gpointer, :GDestroyNotify
+gtk_flow_box_invalidate_filter proto :ptr
 
-;void
-gtk_flow_box_set_row_spacing proto __cdecl \
-		   box: ptr GtkFlowBox,
-	       spacing: guint
+CALLBACK(GtkFlowBoxSortFunc, :ptr, :ptr, :gpointer)
 
-;guint
-gtk_flow_box_get_row_spacing proto __cdecl \
-		   box: ptr GtkFlowBox
-
-
-;void
-gtk_flow_box_set_column_spacing proto __cdecl \
-		   box: ptr GtkFlowBox,
-	       spacing: guint
-
-;guint
-gtk_flow_box_get_column_spacing proto __cdecl \
-		   box: ptr GtkFlowBox
-
-
-;void
-gtk_flow_box_set_min_children_per_line proto __cdecl \
-		   box: ptr GtkFlowBox,
-	    n_children: guint
-
-;guint
-gtk_flow_box_get_min_children_per_line proto __cdecl \
-		   box: ptr GtkFlowBox
-
-
-;void
-gtk_flow_box_set_max_children_per_line proto __cdecl \
-		   box: ptr GtkFlowBox,
-	    n_children: guint
-
-;guint
-gtk_flow_box_get_max_children_per_line proto __cdecl \
-		   box: ptr GtkFlowBox
-
-;void
-gtk_flow_box_set_activate_on_single_click proto __cdecl \
-		   box: ptr GtkFlowBox,
-		single: gboolean
-
-;gboolean
-gtk_flow_box_get_activate_on_single_click proto __cdecl \
-		   box: ptr GtkFlowBox
-
-
-;void
-gtk_flow_box_insert proto __cdecl \
-		   box: ptr GtkFlowBox,
-		widget: ptr GtkWidget,
-	      position: gint
-
-;GtkFlowBoxChild
-gtk_flow_box_get_child_at_index proto __cdecl \
-		   box: ptr GtkFlowBox,
-		   idx: gint
-
-
-CALLBACKC(GtkFlowBoxForeachFunc, :ptr GtkFlowBox, :ptr GtkFlowBoxChild, :gpointer)
-
-;void
-gtk_flow_box_selected_foreach proto __cdecl \
-		   box: ptr GtkFlowBox,
-		  func: GtkFlowBoxForeachFunc,
-		  data: gpointer
-
-;GList
-gtk_flow_box_get_selected_children proto __cdecl \
-		   box: ptr GtkFlowBox
-
-;void
-gtk_flow_box_select_child proto __cdecl \
-		   box: ptr GtkFlowBox,
-		 child: ptr GtkFlowBoxChild
-
-;void
-gtk_flow_box_unselect_child proto __cdecl \
-		   box: ptr GtkFlowBox,
-		 child: ptr GtkFlowBoxChild
-
-;void
-gtk_flow_box_select_all proto __cdecl \
-		   box: ptr GtkFlowBox
-
-;void
-gtk_flow_box_unselect_all proto __cdecl \
-		   box: ptr GtkFlowBox
-
-;void
-gtk_flow_box_set_selection_mode proto __cdecl \
-		   box: ptr GtkFlowBox,
-		  mode: GtkSelectionMode
-
-;GtkSelectionMode
-gtk_flow_box_get_selection_mode proto __cdecl \
-		   box: ptr GtkFlowBox
-
-;void
-gtk_flow_box_set_hadjustment proto __cdecl \
-		   box: ptr GtkFlowBox,
-	    adjustment: ptr GtkAdjustment
-
-;void
-gtk_flow_box_set_vadjustment proto __cdecl \
-		   box: ptr GtkFlowBox,
-	    adjustment: ptr GtkAdjustment
-
-
-CALLBACKC(GtkFlowBoxFilterFunc, :ptr GtkFlowBoxChild, :gpointer)
-
-;void
-gtk_flow_box_set_filter_func proto __cdecl \
-		   box: ptr GtkFlowBox,
-	   filter_func: GtkFlowBoxFilterFunc,
-	     user_data: gpointer,
-	       destroy: GDestroyNotify
-
-;void
-gtk_flow_box_invalidate_filter proto __cdecl \
-		   box: ptr GtkFlowBox
-
-
-CALLBACKC(GtkFlowBoxSortFunc, :ptr GtkFlowBoxChild, :ptr GtkFlowBoxChild, :gpointer)
-
-;void
-gtk_flow_box_set_sort_func proto __cdecl \
-		   box: ptr GtkFlowBox,
-	     sort_func: GtkFlowBoxSortFunc,
-	     user_data: gpointer,
-	       destroy: GDestroyNotify
-
-;void
-gtk_flow_box_invalidate_sort proto __cdecl \
-		   box: ptr GtkFlowBox
-
-G_END_DECLS
+gtk_flow_box_set_sort_func proto :ptr, :GtkFlowBoxSortFunc, :gpointer, :GDestroyNotify
+gtk_flow_box_invalidate_sort proto :ptr
 
 endif

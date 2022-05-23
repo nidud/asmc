@@ -1,6 +1,7 @@
 ifndef __GTK_LIST_STORE_H__
-__GTK_LIST_STORE_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_LIST_STORE_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
@@ -8,164 +9,59 @@ include gdk/gdk.inc
 include gtk/gtktreemodel.inc
 include gtk/gtktreesortable.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_LIST_STORE equ <gtk_list_store_get_type>
+define GTK_TYPE_LIST_STORE <gtk_list_store_get_type>
 GTK_LIST_STORE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_STORE, GtkListStore))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_STORE, GtkListStore))>
+  endm
 GTK_LIST_STORE_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_LIST_STORE, GtkListStoreClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_LIST_STORE, GtkListStoreClass))>
+  endm
 GTK_IS_LIST_STORE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_LIST_STORE))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_LIST_STORE))>
+  endm
 GTK_IS_LIST_STORE_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_LIST_STORE))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_LIST_STORE))>
+  endm
 GTK_LIST_STORE_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_LIST_STORE, GtkListStoreClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_LIST_STORE, GtkListStoreClass))>
+  endm
 
-GtkListStore		STRUC
+;GtkListStorePrivate	 typedef _GtkListStorePrivate
+
+_GtkListStore		struct
 parent			GObject <>
-priv			ptr_t ?
-GtkListStore		ENDS
+priv			ptr GtkListStorePrivate ?
+_GtkListStore		ends
+GtkListStore		typedef _GtkListStore
 
-GtkListStoreClass	STRUC
+_GtkListStoreClass	struct
 parent_class		GObjectClass <>
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkListStoreClass	ENDS
+padding			gpointer 8 dup(?)
+_GtkListStoreClass	ends
+GtkListStoreClass	typedef _GtkListStoreClass
 
-;GType
-gtk_list_store_get_type proto __cdecl
-;GtkListStore
-gtk_list_store_new proto _CDecl \
-	     n_columns: gint,
-		      : vararg
 
-;GtkListStore
-gtk_list_store_newv proto __cdecl \
-	     n_columns: gint,
-		 types: ptr GType
-
-;void
-gtk_list_store_set_column_types proto __cdecl \
-	    list_store: ptr GtkListStore,
-	     n_columns: gint,
-		 types: ptr GType
-
-;void
-gtk_list_store_set_value proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-		column: gint,
-		 value: ptr GValue
-
-;void
-gtk_list_store_set proto _CDecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-		      : vararg
-
-;void
-gtk_list_store_set_valuesv proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	       columns: ptr gint,
-		values: ptr GValue,
-	      n_values: gint
-
-;void
-gtk_list_store_set_valist proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      var_args: va_list
-
-;gboolean
-gtk_list_store_remove proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter
-
-;void
-gtk_list_store_insert proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      position: gint
-
-;void
-gtk_list_store_insert_before proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	       sibling: ptr GtkTreeIter
-
-;void
-gtk_list_store_insert_after proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	       sibling: ptr GtkTreeIter
-
-;void
-gtk_list_store_insert_with_values proto _CDecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      position: gint,
-		      : vararg
-
-;void
-gtk_list_store_insert_with_valuesv proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      position: gint,
-	       columns: ptr gint,
-		values: ptr GValue,
-	      n_values: gint
-
-;void
-gtk_list_store_prepend proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter
-
-;void
-gtk_list_store_append proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter
-
-;void
-gtk_list_store_clear proto __cdecl \
-	    list_store: ptr GtkListStore
-
-;gboolean
-gtk_list_store_iter_is_valid proto __cdecl \
-	    list_store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter
-
-;void
-gtk_list_store_reorder proto __cdecl \
-		 store: ptr GtkListStore,
-	     new_order: ptr gint
-
-;void
-gtk_list_store_swap proto __cdecl \
-		 store: ptr GtkListStore,
-		     a: ptr GtkTreeIter,
-		     b: ptr GtkTreeIter
-
-;void
-gtk_list_store_move_after proto __cdecl \
-		 store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      position: ptr GtkTreeIter
-
-;void
-gtk_list_store_move_before proto __cdecl \
-		 store: ptr GtkListStore,
-		  iter: ptr GtkTreeIter,
-	      position: ptr GtkTreeIter
-
-G_END_DECLS
+gtk_list_store_get_type proto
+gtk_list_store_new proto :sdword, :vararg
+gtk_list_store_newv proto :sdword, :ptr
+gtk_list_store_set_column_types proto :ptr, :sdword, :ptr
+gtk_list_store_set_value proto :ptr, :ptr, :sdword, :ptr
+gtk_list_store_set proto :ptr, :ptr, :vararg
+gtk_list_store_set_valuesv proto :ptr, :ptr, :ptr, :ptr, :sdword
+gtk_list_store_set_valist proto :ptr, :ptr, :va_list
+gtk_list_store_remove proto :ptr, :ptr
+gtk_list_store_insert proto :ptr, :ptr, :sdword
+gtk_list_store_insert_before proto :ptr, :ptr, :ptr
+gtk_list_store_insert_after proto :ptr, :ptr, :ptr
+gtk_list_store_insert_with_values proto :ptr, :ptr, :sdword, :vararg
+gtk_list_store_insert_with_valuesv proto :ptr, :ptr, :sdword, :ptr, :ptr, :sdword
+gtk_list_store_prepend proto :ptr, :ptr
+gtk_list_store_append proto :ptr, :ptr
+gtk_list_store_clear proto :ptr
+gtk_list_store_iter_is_valid proto :ptr, :ptr
+gtk_list_store_reorder proto :ptr, :ptr
+gtk_list_store_swap proto :ptr, :ptr, :ptr
+gtk_list_store_move_after proto :ptr, :ptr, :ptr
+gtk_list_store_move_before proto :ptr, :ptr, :ptr
 
 endif

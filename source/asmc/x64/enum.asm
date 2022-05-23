@@ -150,7 +150,11 @@ EnumDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             .for ( ecx = i, rdx = rbx : ecx < Token_Count : ecx++, rdx += asm_tok )
                 .break .if [rdx].asm_tok.token == T_COMMA
                 .break .if [rdx].asm_tok.token == T_FINAL
-                .break .if [rdx].asm_tok.token == T_STRING
+                .if [rdx].asm_tok.token == T_STRING
+                    ; added v2.33.56
+                    mov rax,[rdx].asm_tok.string_ptr
+                   .break .if word ptr [rax] == '}'
+                .endif
             .endf
             .break .if rdx == rbx
             mov rc,EvalOperand( &i, tokenarray, ecx, &opndx, 0 )

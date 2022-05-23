@@ -1,59 +1,47 @@
 ifndef __GTK_PRINT_OPERATION_PREVIEW_H__
-__GTK_PRINT_OPERATION_PREVIEW_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_PRINT_OPERATION_PREVIEW_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-;include cairo.inc
+include cairo.inc
 include gtk/gtkprintcontext.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_PRINT_OPERATION_PREVIEW equ <gtk_print_operation_preview_get_type>
+define GTK_TYPE_PRINT_OPERATION_PREVIEW <gtk_print_operation_preview_get_type>
 GTK_PRINT_OPERATION_PREVIEW macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreview))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreview))>
+  endm
 GTK_IS_PRINT_OPERATION_PREVIEW macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW))>
+  endm
 GTK_PRINT_OPERATION_PREVIEW_GET_IFACE macro obj
-	exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreviewIface))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreviewIface))>
+  endm
 
-GtkPrintOperationPreviewIface STRUC
-g_iface			GTypeInterface <>
-ready			proc :ptr GtkPrintOperationPreview, :ptr GtkPrintContext
-got_page_size		proc :ptr GtkPrintOperationPreview, :ptr GtkPrintContext, :ptr GtkPageSetup
-render_page		proc :ptr GtkPrintOperationPreview, :gint
-is_selected		proc :ptr GtkPrintOperationPreview, :gint
-end_preview		proc :ptr GtkPrintOperationPreview
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-_gtk_reserved5		proc
-_gtk_reserved6		proc
-_gtk_reserved7		proc
-_gtk_reserved8		proc
-GtkPrintOperationPreviewIface ENDS
+;GtkPrintOperationPreview typedef _GtkPrintOperationPreview
 
-;GType
-gtk_print_operation_preview_get_type proto __cdecl
+_GtkPrintOperationPreviewIface struct
+g_iface                 GTypeInterface <>
+ready                   proc :ptr, :ptr
+got_page_size           proc :ptr, :ptr, :ptr
+render_page             proc :ptr, :sdword
+is_selected             proc :ptr, :sdword
+end_preview             proc :ptr
+_gtk_reserved1          proc
+_gtk_reserved2          proc
+_gtk_reserved3          proc
+_gtk_reserved4          proc
+_gtk_reserved5          proc
+_gtk_reserved6          proc
+_gtk_reserved7          proc
+_gtk_reserved8          proc
+_GtkPrintOperationPreviewIface ends
+GtkPrintOperationPreviewIface typedef _GtkPrintOperationPreviewIface
 
-;void
-gtk_print_operation_preview_render_page proto __cdecl \
-	       preview: ptr GtkPrintOperationPreview,
-	       page_nr: gint
-
-;void
-gtk_print_operation_preview_end_preview proto __cdecl \
-	       preview: ptr GtkPrintOperationPreview
-
-;gboolean
-gtk_print_operation_preview_is_selected proto __cdecl \
-	       preview: ptr GtkPrintOperationPreview,
-	       page_nr: gint
-
-G_END_DECLS
+gtk_print_operation_preview_get_type proto
+gtk_print_operation_preview_render_page proto :ptr, :sdword
+gtk_print_operation_preview_end_preview proto :ptr
+gtk_print_operation_preview_is_selected proto :ptr, :sdword
 
 endif

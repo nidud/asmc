@@ -1,5 +1,5 @@
 ifndef __G_NODE_H__
-__G_NODE_H__ equ <>
+define __G_NODE_H__
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif
@@ -24,7 +24,9 @@ include glib/gmem.inc
 
 CALLBACKC(GNodeTraverseFunc, :ptr GNode, :gpointer)
 CALLBACKC(GNodeForeachFunc, :ptr GNode, :gpointer)
+ifndef GCopyFunc
 CALLBACKC(GCopyFunc, :gconstpointer, :gpointer)
+endif
 
 GNode			STRUC
 data			gpointer ?

@@ -1,64 +1,52 @@
 ifndef __GTK_TEXT_TAG_H__
-__GTK_TEXT_TAG_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_TEXT_TAG_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gdk/gdk.inc
 include gtk/gtkenums.inc
 
-GTK_TYPE_TEXT_TAG  equ <gtk_text_tag_get_type>
+;GtkTextIter             typedef _GtkTextIter
+;GtkTextTagTable         typedef _GtkTextTagTable
+
+define GTK_TYPE_TEXT_TAG <gtk_text_tag_get_type>
 GTK_TEXT_TAG macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_TAG, GtkTextTag))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_TAG, GtkTextTag))>
+  endm
 GTK_TEXT_TAG_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_TEXT_TAG, GtkTextTagClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_TEXT_TAG, GtkTextTagClass))>
+  endm
 GTK_IS_TEXT_TAG macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TEXT_TAG))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TEXT_TAG))>
+  endm
 GTK_IS_TEXT_TAG_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TEXT_TAG))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TEXT_TAG))>
+  endm
 GTK_TEXT_TAG_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_TAG, GtkTextTagClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_TAG, GtkTextTagClass))>
+  endm
 
-GtkTextTag		STRUC
-parent_instance		GObject <>
-priv			ptr_t ?
-GtkTextTag		ENDS
+;GtkTextTagPrivate       typedef _GtkTextTagPrivate
 
-GtkTextTagClass		STRUC
-parent_class		GObjectClass <>
-event			proc :ptr GtkTextTag, :ptr GObject, :ptr GdkEvent, :ptr GtkTextIter
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkTextTagClass		ENDS
+_GtkTextTag             struct
+parent_instance         GObject <>
+priv                    ptr GtkTextTagPrivate ?
+_GtkTextTag             ends
+GtkTextTag              typedef _GtkTextTag
 
-;GType
-gtk_text_tag_get_type proto __cdecl
-;GtkTextTag
-gtk_text_tag_new proto __cdecl \
-		  name: ptr gchar
+_GtkTextTagClass        struct
+parent_class            GObjectClass <>
+padding                 gpointer 8 dup(?)
+_GtkTextTagClass        ends
+GtkTextTagClass         typedef _GtkTextTagClass
 
-;gint
-gtk_text_tag_get_priority proto __cdecl \
-		   tag: ptr GtkTextTag
-
-;void
-gtk_text_tag_set_priority proto __cdecl \
-		   tag: ptr GtkTextTag,
-	      priority: gint
-
-;gboolean
-gtk_text_tag_event proto __cdecl \
-		   tag: ptr GtkTextTag,
-	  event_object: ptr GObject,
-		 event: ptr GdkEvent,
-		  iter: ptr GtkTextIter
+gtk_text_tag_get_type proto
+gtk_text_tag_new proto :ptr
+gtk_text_tag_get_priority proto :ptr
+gtk_text_tag_set_priority proto :ptr, :sdword
+gtk_text_tag_changed proto :ptr, :gboolean
 
 endif
 

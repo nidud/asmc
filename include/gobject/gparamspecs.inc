@@ -9,8 +9,6 @@ include gobject/genums.inc
 include gobject/gboxed.inc
 include gobject/gobject.inc
 
-G_BEGIN_DECLS
-
 G_TYPE_PARAM_CHAR	equ <g_param_spec_types[0]>
 G_IS_PARAM_SPEC_CHAR macro pspec
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((pspec), G_TYPE_PARAM_CHAR))>
@@ -563,7 +561,5 @@ ifndef GOBJECT_VAR
 endif
 
 ;GOBJECT_VAR GType *g_param_spec_types;
-
-G_END_DECLS
 
 endif

@@ -344,7 +344,7 @@ _atexit_m macro _Function
 	exitm<_atexit_m_appdomain(_Function)>
 	endm
 else
-atexit		proto __cdecl :ptr_t
+atexit		proto __cdecl :ptr
 endif
 
 atof		proto __cdecl :string_t

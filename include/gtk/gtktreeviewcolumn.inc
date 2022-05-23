@@ -1,6 +1,7 @@
 ifndef __GTK_TREE_VIEW_COLUMN_H__
-__GTK_TREE_VIEW_COLUMN_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_TREE_VIEW_COLUMN_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
@@ -9,24 +10,15 @@ include gtk/gtktreemodel.inc
 include gtk/gtktreesortable.inc
 include gtk/gtkcellarea.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_TREE_VIEW_COLUMN equ <gtk_tree_view_column_get_type>
+define GTK_TYPE_TREE_VIEW_COLUMN <gtk_tree_view_column_get_type>
 GTK_TREE_VIEW_COLUMN macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_VIEW_COLUMN, GtkTreeViewColumn))>
-	endm
-GTK_TREE_VIEW_COLUMN_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_TREE_VIEW_COLUMN, GtkTreeViewColumnClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_VIEW_COLUMN, GtkTreeViewColumn))>
+  endm
 GTK_IS_TREE_VIEW_COLUMN macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_VIEW_COLUMN))>
-	endm
-GTK_IS_TREE_VIEW_COLUMN_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TREE_VIEW_COLUMN))>
-	endm
-GTK_TREE_VIEW_COLUMN_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TREE_VIEW_COLUMN, GtkTreeViewColumnClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_VIEW_COLUMN))>
+  endm
+
+;GtkTreeViewColumn	 typedef _GtkTreeViewColumn
 
 .enum GtkTreeViewColumnSizing {
   GTK_TREE_VIEW_COLUMN_GROW_ONLY,
@@ -34,289 +26,65 @@ GTK_TREE_VIEW_COLUMN_GET_CLASS macro obj
   GTK_TREE_VIEW_COLUMN_FIXED
 }
 
-CALLBACKC(GtkTreeCellDataFunc, :ptr GtkTreeViewColumn, :ptr GtkCellRenderer, :ptr GtkTreeModel, :ptr GtkTreeIter, :gpointer)
 
-GtkTreeViewColumn	STRUC
-parent_instance		GInitiallyUnowned <>
-priv			ptr_t ?
-GtkTreeViewColumn	ENDS
-
-GtkTreeViewColumnClass	STRUC
-parent_class		GInitiallyUnownedClass <>
-clicked			proc :ptr GtkTreeViewColumn
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkTreeViewColumnClass	ENDS
-
-;GType
-gtk_tree_view_column_get_type proto __cdecl
-;GtkTreeViewColumn
-gtk_tree_view_column_new proto __cdecl
-;GtkTreeViewColumn
-gtk_tree_view_column_new_with_area proto __cdecl \
-		  area: ptr GtkCellArea
-
-;GtkTreeViewColumn
-gtk_tree_view_column_new_with_attributes proto _CDecl \
-		 title: ptr gchar,
-		  cell: ptr GtkCellRenderer,
-		      : vararg
-
-;void
-gtk_tree_view_column_pack_start proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		  cell: ptr GtkCellRenderer,
-		expand: gboolean
-
-;void
-gtk_tree_view_column_pack_end proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		  cell: ptr GtkCellRenderer,
-		expand: gboolean
-
-;void
-gtk_tree_view_column_clear proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_add_attribute proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	 cell_renderer: ptr GtkCellRenderer,
-	     attribute: ptr gchar,
-		column: gint
-
-;void
-gtk_tree_view_column_set_attributes proto _CDecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	 cell_renderer: ptr GtkCellRenderer,
-		      : vararg
-
-;void
-gtk_tree_view_column_set_cell_data_func proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	 cell_renderer: ptr GtkCellRenderer,
-		  func: GtkTreeCellDataFunc,
-	     func_data: gpointer,
-	       destroy: GDestroyNotify
-
-;void
-gtk_tree_view_column_clear_attributes proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	 cell_renderer: ptr GtkCellRenderer
-
-;void
-gtk_tree_view_column_set_spacing proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	       spacing: gint
-
-;gint
-gtk_tree_view_column_get_spacing proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_visible proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	       visible: gboolean
-
-;gboolean
-gtk_tree_view_column_get_visible proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_resizable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	     resizable: gboolean
-
-;gboolean
-gtk_tree_view_column_get_resizable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_sizing proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		  type: GtkTreeViewColumnSizing
-
-;GtkTreeViewColumnSizing
-gtk_tree_view_column_get_sizing proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;gint
-gtk_tree_view_column_get_x_offset proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;gint
-gtk_tree_view_column_get_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;gint
-gtk_tree_view_column_get_fixed_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_fixed_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	   fixed_width: gint
-
-;void
-gtk_tree_view_column_set_min_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	     min_width: gint
-
-;gint
-gtk_tree_view_column_get_min_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_max_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	     max_width: gint
-
-;gint
-gtk_tree_view_column_get_max_width proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_clicked proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-
-
-
-;void
-gtk_tree_view_column_set_title proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		 title: ptr gchar
-
-;const
-gtk_tree_view_column_get_title proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_expand proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		expand: gboolean
-
-;gboolean
-gtk_tree_view_column_get_expand proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_clickable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	     clickable: gboolean
-
-;gboolean
-gtk_tree_view_column_get_clickable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_widget proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		widget: ptr GtkWidget
-
-;GtkWidget
-gtk_tree_view_column_get_widget proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_alignment proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		xalign: gfloat
-
-;gfloat
-gtk_tree_view_column_get_alignment proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_reorderable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	   reorderable: gboolean
-
-;gboolean
-gtk_tree_view_column_get_reorderable proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-
-
-
-;void
-gtk_tree_view_column_set_sort_column_id proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	sort_column_id: gint
-
-;gint
-gtk_tree_view_column_get_sort_column_id proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_sort_indicator proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	       setting: gboolean
-
-;gboolean
-gtk_tree_view_column_get_sort_indicator proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_set_sort_order proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		 order: GtkSortType
-
-;GtkSortType
-gtk_tree_view_column_get_sort_order proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-
-
-;void
-gtk_tree_view_column_cell_set_cell_data proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	    tree_model: ptr GtkTreeModel,
-		  iter: ptr GtkTreeIter,
-	   is_expander: gboolean,
-	   is_expanded: gboolean
-
-;void
-gtk_tree_view_column_cell_get_size proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	     cell_area: ptr GdkRectangle,
-	      x_offset: ptr gint,
-	      y_offset: ptr gint,
-		 width: ptr gint,
-		height: ptr gint
-
-;gboolean
-gtk_tree_view_column_cell_is_visible proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;void
-gtk_tree_view_column_focus_cell proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-		  cell: ptr GtkCellRenderer
-
-;gboolean
-gtk_tree_view_column_cell_get_position proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn,
-	 cell_renderer: ptr GtkCellRenderer,
-	      x_offset: ptr gint,
-		 width: ptr gint
-
-;void
-gtk_tree_view_column_queue_resize proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;GtkWidget
-gtk_tree_view_column_get_tree_view proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-;GtkWidget
-gtk_tree_view_column_get_button proto __cdecl \
-	   tree_column: ptr GtkTreeViewColumn
-
-
-G_END_DECLS
-
+CALLBACK(GtkTreeCellDataFunc, :ptr, :ptr, :ptr, :ptr, :gpointer)
+
+gtk_tree_view_column_get_type proto
+gtk_tree_view_column_new proto
+gtk_tree_view_column_new_with_area proto :ptr
+gtk_tree_view_column_new_with_attributes proto :ptr, :ptr, :vararg
+gtk_tree_view_column_pack_start proto :ptr, :ptr, :gboolean
+gtk_tree_view_column_pack_end proto :ptr, :ptr, :gboolean
+gtk_tree_view_column_clear proto :ptr
+gtk_tree_view_column_add_attribute proto :ptr, :ptr, :ptr, :sdword
+gtk_tree_view_column_set_attributes proto :ptr, :ptr, :vararg
+gtk_tree_view_column_set_cell_data_func proto :ptr, :ptr, :GtkTreeCellDataFunc, :gpointer, :GDestroyNotify
+gtk_tree_view_column_clear_attributes proto :ptr, :ptr
+gtk_tree_view_column_set_spacing proto :ptr, :sdword
+gtk_tree_view_column_get_spacing proto :ptr
+gtk_tree_view_column_set_visible proto :ptr, :gboolean
+gtk_tree_view_column_get_visible proto :ptr
+gtk_tree_view_column_set_resizable proto :ptr, :gboolean
+gtk_tree_view_column_get_resizable proto :ptr
+gtk_tree_view_column_set_sizing proto :ptr, :GtkTreeViewColumnSizing
+gtk_tree_view_column_get_sizing proto :ptr
+gtk_tree_view_column_get_x_offset proto :ptr
+gtk_tree_view_column_get_width proto :ptr
+gtk_tree_view_column_get_fixed_width proto :ptr
+gtk_tree_view_column_set_fixed_width proto :ptr, :sdword
+gtk_tree_view_column_set_min_width proto :ptr, :sdword
+gtk_tree_view_column_get_min_width proto :ptr
+gtk_tree_view_column_set_max_width proto :ptr, :sdword
+gtk_tree_view_column_get_max_width proto :ptr
+gtk_tree_view_column_clicked proto :ptr
+
+gtk_tree_view_column_set_title proto :ptr, :ptr
+gtk_tree_view_column_get_title proto :ptr
+gtk_tree_view_column_set_expand proto :ptr, :gboolean
+gtk_tree_view_column_get_expand proto :ptr
+gtk_tree_view_column_set_clickable proto :ptr, :gboolean
+gtk_tree_view_column_get_clickable proto :ptr
+gtk_tree_view_column_set_widget proto :ptr, :ptr
+gtk_tree_view_column_get_widget proto :ptr
+gtk_tree_view_column_set_alignment proto :ptr, :real4
+gtk_tree_view_column_get_alignment proto :ptr
+gtk_tree_view_column_set_reorderable proto :ptr, :gboolean
+gtk_tree_view_column_get_reorderable proto :ptr
+
+gtk_tree_view_column_set_sort_column_id proto :ptr, :sdword
+gtk_tree_view_column_get_sort_column_id proto :ptr
+gtk_tree_view_column_set_sort_indicator proto :ptr, :gboolean
+gtk_tree_view_column_get_sort_indicator proto :ptr
+gtk_tree_view_column_set_sort_order proto :ptr, :GtkSortType
+gtk_tree_view_column_get_sort_order proto :ptr
+
+gtk_tree_view_column_cell_set_cell_data proto :ptr, :ptr, :ptr, :gboolean, :gboolean
+gtk_tree_view_column_cell_get_size proto :ptr, :ptr, :ptr, :ptr, :ptr
+gtk_tree_view_column_cell_is_visible proto :ptr
+gtk_tree_view_column_focus_cell proto :ptr, :ptr
+gtk_tree_view_column_cell_get_position proto :ptr, :ptr, :ptr, :ptr
+gtk_tree_view_column_queue_resize proto :ptr
+gtk_tree_view_column_get_tree_view proto :ptr
+gtk_tree_view_column_get_button proto :ptr
 
 endif

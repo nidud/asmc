@@ -1,84 +1,48 @@
 ifndef __GTK_TREE_SORTABLE_H__
-__GTK_TREE_SORTABLE_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_TREE_SORTABLE_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gtk/gtkenums.inc
 include gtk/gtktreemodel.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_TREE_SORTABLE	equ <gtk_tree_sortable_get_type>
+define GTK_TYPE_TREE_SORTABLE <gtk_tree_sortable_get_type>
 GTK_TREE_SORTABLE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_SORTABLE, GtkTreeSortable))>
-	endm
-GTK_TREE_SORTABLE_CLASS macro obj
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((obj), GTK_TYPE_TREE_SORTABLE, GtkTreeSortableIface))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_SORTABLE, GtkTreeSortable))>
+  endm
 GTK_IS_TREE_SORTABLE macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_SORTABLE))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_SORTABLE))>
+  endm
 GTK_TREE_SORTABLE_GET_IFACE macro obj
-	exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_TREE_SORTABLE, GtkTreeSortableIface))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_TREE_SORTABLE, GtkTreeSortableIface))>
+  endm
 
-GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID equ (-1)
+define GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID (-1)
+define GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID (-2)
 
-GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID equ (-2)
+;GtkTreeSortable         typedef _GtkTreeSortable
 
-CALLBACKC(GtkTreeIterCompareFunc, :ptr GtkTreeModel, :ptr GtkTreeIter, :ptr GtkTreeIter, :gpointer)
+CALLBACK(GtkTreeIterCompareFunc, :ptr, :ptr, :ptr, :gpointer)
 
-GtkTreeSortableIface	STRUC
-g_iface			GTypeInterface <>
-sort_column_changed	proc :ptr GtkTreeSortable
-get_sort_column_id	proc :ptr GtkTreeSortable, :ptr gint, :ptr GtkSortType
-set_sort_column_id	proc :ptr GtkTreeSortable, :gint, :GtkSortType
-set_sort_func		proc :ptr GtkTreeSortable, :gint, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
-set_default_sort_func	proc :ptr GtkTreeSortable, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
-has_default_sort_func	proc :ptr GtkTreeSortable
-GtkTreeSortableIface	ENDS
+_GtkTreeSortableIface   struct
+g_iface                 GTypeInterface <>
+sort_column_changed     proc :ptr
+get_sort_column_id      proc :ptr, :ptr, :ptr
+set_sort_column_id      proc :ptr, :sdword, :GtkSortType
+set_sort_func           proc :ptr, :sdword, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
+set_default_sort_func   proc :ptr, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
+has_default_sort_func   proc :ptr
+_GtkTreeSortableIface   ends
+GtkTreeSortableIface    typedef _GtkTreeSortableIface
 
-
-;GType
-gtk_tree_sortable_get_type proto __cdecl
-
-;void
-gtk_tree_sortable_sort_column_changed proto __cdecl \
-	      sortable: ptr GtkTreeSortable
-
-;gboolean
-gtk_tree_sortable_get_sort_column_id proto __cdecl \
-	      sortable: ptr GtkTreeSortable,
-	sort_column_id: ptr gint,
-		 order: ptr GtkSortType
-
-;void
-gtk_tree_sortable_set_sort_column_id proto __cdecl \
-	      sortable: ptr GtkTreeSortable,
-	sort_column_id: gint,
-		 order: GtkSortType
-
-;void
-gtk_tree_sortable_set_sort_func proto __cdecl \
-	      sortable: ptr GtkTreeSortable,
-	sort_column_id: gint,
-	     sort_func: GtkTreeIterCompareFunc,
-	     user_data: gpointer,
-	       destroy: GDestroyNotify
-
-;void
-gtk_tree_sortable_set_default_sort_func proto __cdecl \
-	      sortable: ptr GtkTreeSortable,
-	     sort_func: GtkTreeIterCompareFunc,
-	     user_data: gpointer,
-	       destroy: GDestroyNotify
-
-;gboolean
-gtk_tree_sortable_has_default_sort_func proto __cdecl \
-	      sortable: ptr GtkTreeSortable
-
-
-G_END_DECLS
+gtk_tree_sortable_get_type proto
+gtk_tree_sortable_sort_column_changed proto :ptr
+gtk_tree_sortable_get_sort_column_id proto :ptr, :ptr, :ptr
+gtk_tree_sortable_set_sort_column_id proto :ptr, :sdword, :GtkSortType
+gtk_tree_sortable_set_sort_func proto :ptr, :sdword, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
+gtk_tree_sortable_set_default_sort_func proto :ptr, :GtkTreeIterCompareFunc, :gpointer, :GDestroyNotify
+gtk_tree_sortable_has_default_sort_func proto :ptr
 
 endif

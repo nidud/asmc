@@ -1,14 +1,24 @@
 ifndef __GDKCONFIG_H__
-__GDKCONFIG_H__ equ <>
-if NOT defined (__GDK_H_INSIDE__) AND NOT defined (GDK_COMPILATION)
+define __GDKCONFIG_H__
+
+if not defined (__GDK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gdk/gdk.h can be included directly.">
 endif
 
 include glib.inc
 
-GDK_WINDOWING_X11       equ 1
-GDK_WINDOWING_BROADWAY  equ 1
-GDK_WINDOWING_WAYLAND   equ 1
-GDK_WINDOWING_MIR       equ 1
+ifdef __UNIX__
+define GDK_WINDOWING_X11
+define GDK_WINDOWING_BROADWAY
+define GDK_WINDOWING_WAYLAND
+define GDK_WINDOWING_MIR
+else
+undef GDK_WINDOWING_X11
+undef GDK_WINDOWING_BROADWAY
+undef GDK_WINDOWING_MACOS
+undef GDK_WINDOWING_WAYLAND
+define GDK_WINDOWING_WIN32
+undef GDK_RENDERING_VULKAN
+endif
 
 endif

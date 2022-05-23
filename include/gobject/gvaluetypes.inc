@@ -1,12 +1,10 @@
 ifndef __G_VALUETYPES_H__
-__G_VALUETYPES_H__ equ <>
+define __G_VALUETYPES_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include gobject/gvalue.inc
-
-G_BEGIN_DECLS
 
 G_VALUE_HOLDS_CHAR macro value
 	exitm<(G_TYPE_CHECK_VALUE_TYPE ((value), G_TYPE_CHAR))>
@@ -238,7 +236,5 @@ g_value_set_string_take_ownership proto __cdecl \
 
 
 gchararray typedef ptr gchar
-
-G_END_DECLS
 
 endif

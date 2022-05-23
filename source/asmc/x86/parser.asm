@@ -2829,13 +2829,33 @@ check_size proc private uses esi edi ebx CodeInfo:ptr code_info, opndx:expr_t
             ;; is also the case of an "empty" struct or union. The
             ;; latter case isn't handled correctly.
 
-            .if op1_size == 0
+            .if ( op1_size == 0 )
+
                 mov eax,op1
                 or  eax,op2
-                .if op1 & OP_M_ANY && op2 & OP_I
-                    lea ecx,@CStr("WORD")
+
+                .if ( op1 & OP_M_ANY && op2 & OP_I )
+
+                    ; changed in v2.33.56
                     mov eax,[esi].opnd[OPNI2].data32l
-                    .if eax > USHRT_MAX || op2_size == 4
+                    .ifs ( op2_size == 1 || ( op1 == OP_M && !( [edi+expr].flags & E_EXPLICIT ) &&
+                        !( ( eax < 0 && eax < CHAR_MIN ) || eax > UCHAR_MAX ) ) )
+
+                        mov [esi].mem_type,MT_BYTE
+                        mov [esi].opnd[OPNI2].type,OP_I8
+                        lea ecx,@CStr("BYTE")
+                        .if ( op1 == OP_M && !( [edi+expr].flags & E_EXPLICIT ) )
+                            mov [esi].opnd[OPND1].type,OP_M08
+                        .endif
+
+                    .elseifs ( op2_size == 2 && !( ( eax < 0 && eax < SHRT_MIN ) || eax > USHRT_MAX ) )
+
+                        mov [esi].mem_type,MT_WORD
+                        or  [esi].flags,CI_ISWIDE
+                        mov [esi].opnd[OPNI2].type,OP_I16
+                        lea ecx,@CStr("WORD")
+
+                    .else
                         or [esi].flags,CI_ISWIDE
                         .if ModuleInfo.Ofssize == USE16 && op2_size > 2 && InWordRange([esi].opnd[OPNI2].data32l)
                             mov op2_size,2
@@ -2848,15 +2868,8 @@ check_size proc private uses esi edi ebx CodeInfo:ptr code_info, opndx:expr_t
                             mov [esi].opnd[OPNI2].type,OP_I32
                             lea ecx,@CStr("DWORD")
                         .endif
-                    .elseif eax > UCHAR_MAX || op2_size == 2
-                         mov [esi].mem_type,MT_WORD
-                         or  [esi].flags,CI_ISWIDE
-                         mov [esi].opnd[OPNI2].type,OP_I16
-                    .else
-                         mov [esi].mem_type,MT_BYTE
-                         mov [esi].opnd[OPNI2].type,OP_I8
-                         lea ecx,@CStr("BYTE")
                     .endif
+
                     .if !( [edi+expr].flags & E_EXPLICIT )
                         ;; v2.06: emit warning at pass one if mem op isn't a forward ref
                         ;; v2.06b: added "undefined" check

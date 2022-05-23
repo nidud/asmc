@@ -1,132 +1,55 @@
 ifndef __GTK_BOX_H__
-__GTK_BOX_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_BOX_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkcontainer.inc
+include gtk/gtkwidget.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_BOX equ <gtk_box_get_type>
+define GTK_TYPE_BOX <gtk_box_get_type>
 GTK_BOX macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BOX, GtkBox))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BOX, GtkBox))>
+  endm
 GTK_BOX_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_BOX, GtkBoxClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_BOX, GtkBoxClass))>
+  endm
 GTK_IS_BOX macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_BOX))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_BOX))>
+  endm
 GTK_IS_BOX_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_BOX))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_BOX))>
+  endm
 GTK_BOX_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BOX, GtkBoxClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BOX, GtkBoxClass))>
+  endm
 
-GtkBox			STRUC
-container		GtkContainer <>
-priv			ptr_t ?
-GtkBox			ENDS
+_GtkBox                 struct
+parent_instance         GtkWidget <>
+_GtkBox                 ends
+GtkBox                  typedef _GtkBox
 
-GtkBoxClass		STRUC
-parent_class		GtkContainerClass <>
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkBoxClass		ENDS
-
-;GType
-gtk_box_get_type proto __cdecl
-;GtkWidget*
-gtk_box_new proto __cdecl \
-	   orientation: GtkOrientation,
-	       spacing: gint
+_GtkBoxClass            struct
+parent_class            GtkWidgetClass <>
+padding                 gpointer 8 dup(?)
+_GtkBoxClass            ends
+GtkBoxClass             typedef _GtkBoxClass
 
 
-;void
-gtk_box_pack_start proto __cdecl \
-		   box: ptr GtkBox,
-		 child: ptr GtkWidget,
-		expand: gboolean,
-		  fill: gboolean,
-	       padding: guint
+gtk_box_get_type proto
+gtk_box_new proto :GtkOrientation, :sdword
+gtk_box_set_homogeneous proto :ptr, :gboolean
+gtk_box_get_homogeneous proto :ptr
+gtk_box_set_spacing proto :ptr, :sdword
+gtk_box_get_spacing proto :ptr
+gtk_box_set_baseline_position proto :ptr, :GtkBaselinePosition
+gtk_box_get_baseline_position proto :ptr
 
-;void
-gtk_box_pack_end proto __cdecl \
-		   box: ptr GtkBox,
-		 child: ptr GtkWidget,
-		expand: gboolean,
-		  fill: gboolean,
-	       padding: guint
+gtk_box_append proto :ptr, :ptr
+gtk_box_prepend proto :ptr, :ptr
+gtk_box_remove proto :ptr, :ptr
 
-
-;void
-gtk_box_set_homogeneous proto __cdecl \
-		   box: ptr GtkBox,
-	   homogeneous: gboolean
-
-;gboolean
-gtk_box_get_homogeneous proto __cdecl \
-		   box: ptr GtkBox
-
-;void
-gtk_box_set_spacing proto __cdecl \
-		   box: ptr GtkBox,
-	       spacing: gint
-
-;gint
-gtk_box_get_spacing proto __cdecl \
-		   box: ptr GtkBox
-
-;void
-gtk_box_set_baseline_position proto __cdecl \
-		   box: ptr GtkBox,
-	      position: GtkBaselinePosition
-
-;GtkBaselinePosition
-gtk_box_get_baseline_position proto __cdecl \
-		   box: ptr GtkBox
-
-
-;void
-gtk_box_reorder_child proto __cdecl \
-		   box: ptr GtkBox,
-		 child: ptr GtkWidget,
-	      position: gint
-
-
-;void
-gtk_box_query_child_packing proto __cdecl \
-		   box: ptr GtkBox,
-		 child: ptr GtkWidget,
-		expand: ptr gboolean,
-		  fill: ptr gboolean,
-	       padding: ptr guint,
-	     pack_type: ptr GtkPackType
-
-;void
-gtk_box_set_child_packing proto __cdecl \
-		   box: ptr GtkBox,
-		 child: ptr GtkWidget,
-		expand: gboolean,
-		  fill: gboolean,
-	       padding: guint,
-	     pack_type: GtkPackType
-
-
-;void
-gtk_box_set_center_widget proto __cdecl \
-		   box: ptr GtkBox,
-		widget: ptr GtkWidget
-
-;GtkWidget
-gtk_box_get_center_widget proto __cdecl \
-		   box: ptr GtkBox
-
-
-G_END_DECLS
+gtk_box_insert_child_after proto :ptr, :ptr, :ptr
+gtk_box_reorder_child_after proto :ptr, :ptr, :ptr
 
 endif

@@ -210,10 +210,10 @@ g_once_impl proto __cdecl \
 
 ;gboolean
 g_once_init_enter proto __cdecl \
-	      location: ptr void
+	      location: ptr
 
 g_once_init_leave proto __cdecl \
-	      location: ptr void,
+	      location: ptr,
 		result: gsize
 
 

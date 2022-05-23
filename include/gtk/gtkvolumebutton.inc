@@ -1,47 +1,26 @@
 ifndef __GTK_VOLUME_BUTTON_H__
-__GTK_VOLUME_BUTTON_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_VOLUME_BUTTON_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gtk/gtkscalebutton.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_VOLUME_BUTTON equ <gtk_volume_button_get_type>
+define GTK_TYPE_VOLUME_BUTTON <gtk_volume_button_get_type>
 GTK_VOLUME_BUTTON macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_VOLUME_BUTTON, GtkVolumeButton))>
-	endm
-GTK_VOLUME_BUTTON_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_VOLUME_BUTTON, GtkVolumeButtonClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_VOLUME_BUTTON, GtkVolumeButton))>
+  endm
 GTK_IS_VOLUME_BUTTON macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_VOLUME_BUTTON))>
-	endm
-GTK_IS_VOLUME_BUTTON_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_VOLUME_BUTTON))>
-	endm
-GTK_VOLUME_BUTTON_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_VOLUME_BUTTON, GtkVolumeButtonClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_VOLUME_BUTTON))>
+  endm
 
-GtkVolumeButton		STRUC
-parent			GtkScaleButton <>
-GtkVolumeButton		ENDS
+_GtkVolumeButton        struct
+parent                  GtkScaleButton <>
+_GtkVolumeButton        ends
+GtkVolumeButton         typedef _GtkVolumeButton
 
-GtkVolumeButtonClass	STRUC
-parent_class		GtkScaleButtonClass <>
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkVolumeButtonClass	ENDS
-
-;GType
-gtk_volume_button_get_type proto __cdecl
-;GtkWidget*
-gtk_volume_button_new proto __cdecl
-
-G_END_DECLS
+gtk_volume_button_get_type proto
+gtk_volume_button_new proto
 
 endif

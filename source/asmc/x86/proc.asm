@@ -1138,8 +1138,9 @@ ParseProc proc uses esi edi ebx p:ptr dsym,
             ;
             ; v2.05: don't accept FRAME for ELF
             ;
-            .if ( Options.output_format != OFORMAT_COFF && \
-                  ModuleInfo.sub_format != SFORMAT_PE )
+            .if ( Options.output_format == OFORMAT_ELF ||
+                  Options.output_format == OFORMAT_OMF ||
+                  ModuleInfo.sub_format == SFORMAT_MZ )
                 .return( asmerr( 3006, GetResWName( T_FRAME, NULL ) ) )
             .endif
             inc i
@@ -1973,7 +1974,9 @@ ExcFrameDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
 
     ; v2.05: accept directives for windows only
 
-    .if ( Options.output_format != OFORMAT_COFF && ModuleInfo.sub_format != SFORMAT_PE )
+    .if ( Options.output_format == OFORMAT_ELF ||
+          Options.output_format == OFORMAT_OMF ||
+          ModuleInfo.sub_format == SFORMAT_MZ )
         .return( asmerr( 3006, GetResWName( [ebx].tokval, NULL ) ) )
     .endif
     .if ( edi == NULL || endprolog_found == TRUE )

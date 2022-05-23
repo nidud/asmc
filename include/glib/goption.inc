@@ -7,8 +7,6 @@ endif
 include glib/gerror.inc
 include glib/gquark.inc
 
-G_BEGIN_DECLS
-
 .enum GOptionFlags {
   G_OPTION_FLAG_NONE		= 0,
   G_OPTION_FLAG_HIDDEN		= 1 shl 0,
@@ -214,7 +212,5 @@ g_option_group_set_translate_func proto __cdecl \
 g_option_group_set_translation_domain proto __cdecl \
 		_group: ptr GOptionGroup,
 		domain: ptr gchar
-
-G_END_DECLS
 
 endif

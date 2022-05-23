@@ -2206,7 +2206,14 @@ endif
         add eax,cvsection + 12
         add lineTable,eax
 
-        .if ( CV8Label )
+        mov rcx,CV8Label ; added v2.33.56
+        xor eax,eax
+        .if ( rcx )
+            mov rcx,[rcx].asym.segm
+            mov rcx,[rcx].dsym.seginfo
+            mov eax,[rcx].seg_info.bytes_written
+        .endif
+        .if ( eax )
 
            .new data:dword = 0
             mov rcx,CreateFixup( CV8Label, FIX_OFF32_SECREL, OPTJ_NONE )

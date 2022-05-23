@@ -1,5 +1,5 @@
 ifndef __G_DATASET_H__
-__G_DATASET_H__ equ <>
+define __G_DATASET_H__
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif
@@ -70,25 +70,6 @@ g_datalist_get_flags proto __cdecl \
 	      datalist: ptr GData
 
 
-g_datalist_id_set_data macro dl, q, d
-	exitm<.err>
-	endm
-g_datalist_id_remove_data macro dl, q
-	exitm<.err>
-	endm
-g_datalist_set_data_full macro dl, k, d, f
-	exitm<.err>
-	endm
-g_datalist_remove_no_notify macro dl, k
-	exitm<.err>
-	endm
-g_datalist_set_data macro dl, k, d
-	exitm<.err>
-	endm
-g_datalist_remove_data macro dl, k
-	exitm<.err>
-	endm
-
 g_dataset_destroy proto __cdecl \
       dataset_location: gconstpointer
 
@@ -119,27 +100,5 @@ g_dataset_foreach proto __cdecl \
       dataset_location: gconstpointer,
 		  func: GDataForeachFunc,
 	     user_data: gpointer
-
-g_dataset_id_set_data macro l, k, d
-	exitm<.err>
-	endm
-g_dataset_id_remove_data macro l, k
-	exitm<.err>
-	endm
-g_dataset_get_data macro l, k
-	exitm<.err>
-	endm
-g_dataset_set_data_full macro l, k, d, f
-	exitm<.err>
-	endm
-g_dataset_remove_no_notify macro l, k
-	exitm<.err>
-	endm
-g_dataset_set_data macro l, k, d
-	exitm<.err>
-	endm
-g_dataset_remove_data macro l, k
-	exitm<.err>
-	endm
 
 endif

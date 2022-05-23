@@ -1,0 +1,10 @@
+ifndef __GTK_PASSWORD_ENTRY_BUFFER_H__
+define __GTK_PASSWORD_ENTRY_BUFFER_H__
+
+include gtk/gtkentrybuffer.inc
+
+define GTK_TYPE_PASSWORD_ENTRY_BUFFER <gtk_password_entry_buffer_get_type>
+
+gtk_password_entry_buffer_new proto
+
+endif

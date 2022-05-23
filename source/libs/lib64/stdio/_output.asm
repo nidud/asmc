@@ -194,12 +194,12 @@ _output proc public uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr_t
 
               .case ST_FLAG
                 movzx   eax,dl
-                .switch eax
-                  .case '+': or esi,FL_SIGN:      .endc ; '+' force sign indicator
-                  .case ' ': or esi,FL_SIGNSP:    .endc ; ' ' force sign or space
-                  .case '#': or esi,FL_ALTERNATE: .endc ; '#' alternate form
-                  .case '-': or esi,FL_LEFT:      .endc ; '-' left justify
-                  .case '0': or esi,FL_LEADZERO:  .endc ; '0' pad with leading zeros
+                .switch pascal eax
+                  .case '+': or esi,FL_SIGN     ; '+' force sign indicator
+                  .case ' ': or esi,FL_SIGNSP   ; ' ' force sign or space
+                  .case '#': or esi,FL_ALTERNATE; '#' alternate form
+                  .case '-': or esi,FL_LEFT     ; '-' left justify
+                  .case '0': or esi,FL_LEADZERO ; '0' pad with leading zeros
                 .endsw
                 .endc
 

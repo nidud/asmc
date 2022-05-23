@@ -1,12 +1,10 @@
 ifndef __G_TYPE_PLUGIN_H__
-__G_TYPE_PLUGIN_H__ equ <>
+define __G_TYPE_PLUGIN_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include gobject/gtype.inc
-
-G_BEGIN_DECLS
 
 G_TYPE_TYPE_PLUGIN equ <g_type_plugin_get_type>
 G_TYPE_PLUGIN macro inst
@@ -62,7 +60,5 @@ g_type_plugin_complete_interface_info proto __cdecl \
 	 instance_type: GType,
 	interface_type: GType,
 		  info: ptr GInterfaceInfo
-
-G_END_DECLS
 
 endif

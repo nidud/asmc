@@ -1,13 +1,11 @@
 ifndef __G_BINDING_H__
-__G_BINDING_H__ equ <>
+define __G_BINDING_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include glib.inc
 include gobject/gobject.inc
-
-G_BEGIN_DECLS
 
 G_TYPE_BINDING_FLAGS	equ <g_binding_flags_get_type>
 
@@ -29,7 +27,7 @@ CALLBACKC(GBindingTransformFunc, :ptr GBinding, \
   G_BINDING_BIDIRECTIONAL  = 1 shl 0,
   G_BINDING_SYNC_CREATE	   = 1 shl 1,
   G_BINDING_INVERT_BOOLEAN = 1 shl 2
-}
+  }
 
 ;GType
 g_binding_flags_get_type proto __cdecl
@@ -90,7 +88,5 @@ g_object_bind_property_with_closures proto __cdecl \
 		 flags: GBindingFlags,
 	  transform_to: ptr GClosure,
 	transform_from: ptr GClosure
-
-G_END_DECLS
 
 endif

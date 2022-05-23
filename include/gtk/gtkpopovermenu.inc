@@ -1,46 +1,33 @@
 ifndef __GTK_POPOVER_MENU_H__
-__GTK_POPOVER_MENU_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_POPOVER_MENU_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gtk/gtkpopover.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_POPOVER_MENU equ <gtk_popover_menu_get_type>
+define GTK_TYPE_POPOVER_MENU <gtk_popover_menu_get_type>
 GTK_POPOVER_MENU macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_POPOVER_MENU, GtkPopoverMenu))>
-	endm
-GTK_POPOVER_MENU_CLASS macro c
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((c), GTK_TYPE_POPOVER_MENU, GtkPopoverMenuClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_POPOVER_MENU, GtkPopoverMenu))>
+  endm
 GTK_IS_POPOVER_MENU macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_POPOVER_MENU))>
-	endm
-GTK_IS_POPOVER_MENU_CLASS macro o
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((o), GTK_TYPE_POPOVER_MENU))>
-	endm
-GTK_POPOVER_MENU_GET_CLASS macro o
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_POPOVER_MENU, GtkPopoverMenuClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_POPOVER_MENU))>
+  endm
 
-GtkPopoverMenuClass	STRUC
-parent_class		GtkPopoverClass <>
-reserved		gpointer 10 dup(?)
-GtkPopoverMenuClass	ENDS
+;GtkPopoverMenu          typedef _GtkPopoverMenu
 
-;GType
-gtk_popover_menu_get_type proto __cdecl
+gtk_popover_menu_get_type proto
+gtk_popover_menu_new_from_model proto :ptr
 
-;GtkWidget
-gtk_popover_menu_new proto __cdecl
+.enum GtkPopoverMenuFlags {
+  GTK_POPOVER_MENU_NESTED = 1 shl 0
+}
 
-;void
-gtk_popover_menu_open_submenu proto __cdecl \
-	       popover: ptr GtkPopoverMenu,
-		  name: ptr gchar
-
-G_END_DECLS
+gtk_popover_menu_new_from_model_full proto :ptr, :GtkPopoverMenuFlags
+gtk_popover_menu_set_menu_model proto :ptr, :ptr
+gtk_popover_menu_get_menu_model proto :ptr
+gtk_popover_menu_add_child proto :ptr, :ptr, :ptr
+gtk_popover_menu_remove_child proto :ptr, :ptr
 
 endif

@@ -1,5 +1,5 @@
 ifndef __G_CLOSURE_H__
-__G_CLOSURE_H__ equ <>
+define __G_CLOSURE_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
@@ -18,7 +18,7 @@ G_CCLOSURE_SWAP_DATA macro cclosure
 	endm
 
 G_CALLBACK macro f
-	exitm<.err>
+	exitm<addr f>
 	endm
 
 CALLBACKC(GCallback)
@@ -33,17 +33,18 @@ notify			GClosureNotify ?
 GClosureNotifyData	ENDS
 
 GClosure		STRUC
-ref_count		guint ?
-;ref_count : 15
-;meta_marshal_nouse : 1
-;n_guards : 1
-;n_fnotifiers : 2
-;n_inotifiers : 8
-;in_inotify : 1
-;floating : 1
-;derivative_flag : 1
-;in_marshal : 1
-;is_invalid : 1
+RECORD
+ ref_count		dd : 15 ?
+ meta_marshal_nouse	dd : 1 ?
+ n_guards		dd : 1 ?
+ n_fnotifiers		dd : 2 ?
+ n_inotifiers		dd : 8 ?
+ in_inotify		dd : 1 ?
+ floating		dd : 1 ?
+ derivative_flag	dd : 1 ?
+ in_marshal		dd : 1 ?
+ is_invalid		dd : 1 ?
+ENDS
 marshal			proc :ptr GClosure, :ptr GValue, :guint, :ptr GValue, :gpointer, :gpointer
 GClosure		ENDS
 

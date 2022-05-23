@@ -1,5 +1,5 @@
 ifndef __G_MAIN_H__
-__G_MAIN_H__ equ <>
+define __G_MAIN_H__
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif

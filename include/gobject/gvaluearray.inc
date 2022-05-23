@@ -1,12 +1,10 @@
 ifndef __G_VALUE_ARRAY_H__
-__G_VALUE_ARRAY_H__ equ <>
+define __G_VALUE_ARRAY_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include gobject/gvalue.inc
-
-G_BEGIN_DECLS
 
 G_TYPE_VALUE_ARRAY	equ <g_value_array_get_type>
 
@@ -59,7 +57,5 @@ g_value_array_sort_with_data proto __cdecl \
 	   value_array: ptr GValueArray,
 	  compare_func: GCompareDataFunc,
 	     user_data: gpointer
-
-G_END_DECLS
 
 endif

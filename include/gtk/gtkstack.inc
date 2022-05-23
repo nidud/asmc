@@ -1,29 +1,32 @@
 ifndef __GTK_STACK_H__
-__GTK_STACK_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_STACK_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkcontainer.inc
+include gtk/gtkwidget.inc
+include gtk/gtkselectionmodel.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_STACK equ <gtk_stack_get_type>
+define GTK_TYPE_STACK <gtk_stack_get_type>
 GTK_STACK macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK, GtkStack))>
-	endm
-GTK_STACK_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_STACK, GtkStackClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK, GtkStack))>
+  endm
 GTK_IS_STACK macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK))>
-	endm
-GTK_IS_STACK_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_STACK))>
-	endm
-GTK_STACK_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_STACK, GtkStackClass))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK))>
+  endm
+
+;GtkStack                typedef _GtkStack
+
+define GTK_TYPE_STACK_PAGE <gtk_stack_page_get_type>
+GTK_STACK_PAGE macro obj
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK_PAGE, GtkStackPage))>
+  endm
+GTK_IS_STACK_PAGE macro obj
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_STACK_PAGE))>
+  endm
+
+;GtkStackPage            typedef _GtkStackPage
 
 .enum GtkStackTransitionType {
   GTK_STACK_TRANSITION_TYPE_NONE,
@@ -45,122 +48,54 @@ GTK_STACK_GET_CLASS macro obj
   GTK_STACK_TRANSITION_TYPE_OVER_UP_DOWN,
   GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP,
   GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT,
-  GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT
+  GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT,
+  GTK_STACK_TRANSITION_TYPE_ROTATE_LEFT,
+  GTK_STACK_TRANSITION_TYPE_ROTATE_RIGHT,
+  GTK_STACK_TRANSITION_TYPE_ROTATE_LEFT_RIGHT
 }
 
-GtkStack		STRUC
-parent_instance		GtkContainer <>
-GtkStack		ENDS
+gtk_stack_page_get_type proto
+gtk_stack_page_get_child proto :ptr
+gtk_stack_page_get_visible proto :ptr
+gtk_stack_page_set_visible proto :ptr, :gboolean
+gtk_stack_page_get_needs_attention proto :ptr
+gtk_stack_page_set_needs_attention proto :ptr, :gboolean
+gtk_stack_page_get_use_underline proto :ptr
+gtk_stack_page_set_use_underline proto :ptr, :gboolean
+gtk_stack_page_get_name proto :ptr
+gtk_stack_page_set_name proto :ptr, :ptr
+gtk_stack_page_get_title proto :ptr
+gtk_stack_page_set_title proto :ptr, :ptr
+gtk_stack_page_get_icon_name proto :ptr
+gtk_stack_page_set_icon_name proto :ptr, :ptr
 
-GtkStackClass		STRUC
-parent_class		GtkContainerClass <>
-GtkStackClass		ENDS
+gtk_stack_get_type proto
 
-;GType
-gtk_stack_get_type proto __cdecl
+gtk_stack_new proto
+gtk_stack_add_child proto :ptr, :ptr
+gtk_stack_add_named proto :ptr, :ptr, :ptr
+gtk_stack_add_titled proto :ptr, :ptr, :ptr, :ptr
+gtk_stack_remove proto :ptr, :ptr
 
-;GtkWidget
-gtk_stack_new proto __cdecl
-;void
-gtk_stack_add_named proto __cdecl \
-		 stack: ptr GtkStack,
-		 child: ptr GtkWidget,
-		  name: ptr gchar
+gtk_stack_get_page proto :ptr, :ptr
+gtk_stack_get_child_by_name proto :ptr, :ptr
+gtk_stack_set_visible_child proto :ptr, :ptr
+gtk_stack_get_visible_child proto :ptr
+gtk_stack_set_visible_child_name proto :ptr, :ptr
+gtk_stack_get_visible_child_name proto :ptr
+gtk_stack_set_visible_child_full proto :ptr, :ptr, :GtkStackTransitionType
+gtk_stack_set_hhomogeneous proto :ptr, :gboolean
+gtk_stack_get_hhomogeneous proto :ptr
+gtk_stack_set_vhomogeneous proto :ptr, :gboolean
+gtk_stack_get_vhomogeneous proto :ptr
+gtk_stack_set_transition_duration proto :ptr, :guint
+gtk_stack_get_transition_duration proto :ptr
+gtk_stack_set_transition_type proto :ptr, :GtkStackTransitionType
+gtk_stack_get_transition_type proto :ptr
+gtk_stack_get_transition_running proto :ptr
+gtk_stack_set_interpolate_size proto :ptr, :gboolean
+gtk_stack_get_interpolate_size proto :ptr
 
-;void
-gtk_stack_add_titled proto __cdecl \
-		 stack: ptr GtkStack,
-		 child: ptr GtkWidget,
-		  name: ptr gchar,
-		 title: ptr gchar
-
-;GtkWidget
-gtk_stack_get_child_by_name proto __cdecl \
-		 stack: ptr GtkStack,
-		  name: ptr gchar
-
-;void
-gtk_stack_set_visible_child proto __cdecl \
-		 stack: ptr GtkStack,
-		 child: ptr GtkWidget
-
-;GtkWidget
-gtk_stack_get_visible_child proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_visible_child_name proto __cdecl \
-		 stack: ptr GtkStack,
-		  name: ptr gchar
-
-;const
-gtk_stack_get_visible_child_name proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_visible_child_full proto __cdecl \
-		 stack: ptr GtkStack,
-		  name: ptr gchar,
-	    transition: GtkStackTransitionType
-
-;void
-gtk_stack_set_homogeneous proto __cdecl \
-		 stack: ptr GtkStack,
-	   homogeneous: gboolean
-
-;gboolean
-gtk_stack_get_homogeneous proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_hhomogeneous proto __cdecl \
-		 stack: ptr GtkStack,
-	  hhomogeneous: gboolean
-
-;gboolean
-gtk_stack_get_hhomogeneous proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_vhomogeneous proto __cdecl \
-		 stack: ptr GtkStack,
-	  vhomogeneous: gboolean
-
-;gboolean
-gtk_stack_get_vhomogeneous proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_transition_duration proto __cdecl \
-		 stack: ptr GtkStack,
-	      duration: guint
-
-;guint
-gtk_stack_get_transition_duration proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_transition_type proto __cdecl \
-		 stack: ptr GtkStack,
-	    transition: GtkStackTransitionType
-
-;GtkStackTransitionType
-gtk_stack_get_transition_type proto __cdecl \
-		 stack: ptr GtkStack
-
-;gboolean
-gtk_stack_get_transition_running proto __cdecl \
-		 stack: ptr GtkStack
-
-;void
-gtk_stack_set_interpolate_size proto __cdecl \
-		 stack: ptr GtkStack,
-      interpolate_size: gboolean
-
-;gboolean
-gtk_stack_get_interpolate_size proto __cdecl \
-		 stack: ptr GtkStack
-
-G_END_DECLS
+gtk_stack_get_pages proto :ptr
 
 endif

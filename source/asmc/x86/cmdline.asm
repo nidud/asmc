@@ -11,153 +11,7 @@ include input.inc
 externdef cp_logo:sbyte
 externdef banner_printed:byte
 
-define_name proto :string_t, :string_t
-
     .data
-
-     B equ <byte ptr>
-
-ifdef ASMC64
-
-ifdef __UNIX__
-
-Options global_options {
-        0,                      ; .quiet
-        0,                      ; .line_numbers
-        0,                      ; .debug_symbols
-        0,                      ; .debug_ext
-        FPO_NO_EMULATION,       ; .floating_point
-        50,                     ; .error_limit
-        0,                      ; .no_error_disp
-        2,                      ; .warning_level
-        0,                      ; .warning_error
-        0,                      ; .process_subdir
-        {0,0,0,0,0,0,0,0,0},    ; .names
-        {0,0,0},                ; .queues
-        0,                      ; .no_comment_in_code_rec
-        0,                      ; .no_opt_farcall
-        0,                      ; .no_file_entry
-        0,                      ; .no_static_procs
-        0,                      ; .no_section_aux_entry
-        0,                      ; .no_cdecl_decoration
-        STDCALL_FULL,           ; .stdcall_decoration
-        0,                      ; .no_export_decoration
-        0,                      ; .entry_decorated
-        0,                      ; .write_listing
-        0,                      ; .write_impdef
-        0,                      ; .case_sensitive
-        0,                      ; .convert_uppercase
-        0,                      ; .preprocessor_stdout
-        0,                      ; .masm51_compat
-        0,                      ; .strict_masm_compat
-        0,                      ; .masm_compat_gencode
-        0,                      ; .masm8_proc_visibility
-        0,                      ; .listif
-        0,                      ; .list_generated_code
-        LM_LISTMACRO,           ; .list_macro
-        0,                      ; .do_symbol_listing
-        0,                      ; .first_pass_listing
-        0,                      ; .all_symbols_public
-        0,                      ; .safeseh
-        OFORMAT_ELF,            ; .output_format
-        SFORMAT_64BIT,          ; .sub_format
-        LANG_SYSCALL,           ; .langtype
-        MODEL_FLAT,             ; ._model
-        P_64 or P_PM,           ; .cpu
-        FCT_ELF64,              ; .fctype
-        0,                      ; .codepage
-        0,                      ; .ignore_include
-        0,                      ; .fieldalign
-        0,                      ; .syntax_check_only
-        OPT_REGAX,              ; .xflag
-        0,                      ; .loopalign
-        0,                      ; .casealign
-        0,                      ; .epilogueflags
-        4,                      ; .segmentalign
-        0,                      ; .pe_subsystem
-        0,                      ; .win64_flags
-        0,                      ; .chkstack
-        0,                      ; .nolib
-        0,                      ; .masm_keywords
-        0,                      ; .arch
-        0,                      ; .frame_auto
-        0,                      ; .floatformat
-        1,                      ; .floatdigits
-        4,                      ; .flt_size
-        0,                      ; .pic
-        0 }                     ; .endbr
-
-else
-
-Options global_options {
-        0,                      ; .quiet
-        0,                      ; .line_numbers
-        0,                      ; .debug_symbols
-        0,                      ; .debug_ext
-        FPO_NO_EMULATION,       ; .floating_point
-        50,                     ; .error_limit
-        0,                      ; .no_error_disp
-        2,                      ; .warning_level
-        0,                      ; .warning_error
-        0,                      ; .process_subdir
-        {0,0,0,0,0,0,0,0,0},    ; .names
-        {0,0,0},                ; .queues
-        0,                      ; .no_comment_in_code_rec
-        0,                      ; .no_opt_farcall
-        0,                      ; .no_file_entry
-        0,                      ; .no_static_procs
-        0,                      ; .no_section_aux_entry
-        0,                      ; .no_cdecl_decoration
-        STDCALL_FULL,           ; .stdcall_decoration
-        0,                      ; .no_export_decoration
-        0,                      ; .entry_decorated
-        0,                      ; .write_listing
-        0,                      ; .write_impdef
-        0,                      ; .case_sensitive
-        0,                      ; .convert_uppercase
-        0,                      ; .preprocessor_stdout
-        0,                      ; .masm51_compat
-        0,                      ; .strict_masm_compat
-        0,                      ; .masm_compat_gencode
-        0,                      ; .masm8_proc_visibility
-        0,                      ; .listif
-        0,                      ; .list_generated_code
-        LM_LISTMACRO,           ; .list_macro
-        0,                      ; .do_symbol_listing
-        0,                      ; .first_pass_listing
-        0,                      ; .all_symbols_public
-        0,                      ; .safeseh
-        OFORMAT_COFF,           ; .output_format
-        SFORMAT_64BIT,          ; .sub_format
-        LANG_FASTCALL,          ; .langtype
-        MODEL_FLAT,             ; ._model
-        P_64 or P_PM,           ; .cpu
-        FCT_WIN64,              ; .fctype
-        0,                      ; .codepage
-        0,                      ; .ignore_include
-        0,                      ; .fieldalign
-        0,                      ; .syntax_check_only
-        OPT_REGAX,              ; .xflag
-        0,                      ; .loopalign
-        0,                      ; .casealign
-        0,                      ; .epilogueflags
-        4,                      ; .segmentalign
-        0,                      ; .pe_subsystem
-        0,                      ; .win64_flags
-        0,                      ; .chkstack
-        0,                      ; .nolib
-        0,                      ; .masm_keywords
-        0,                      ; .arch
-        0,                      ; .frame_auto
-        0,                      ; .floatformat
-        1,                      ; .floatdigits
-        4,                      ; .flt_size
-        0,                      ; .pic
-        0 }                     ; .endbr
-
-endif
-
-else
 
 Options global_options {
         0,                      ; .quiet
@@ -224,14 +78,36 @@ Options global_options {
         4,                      ; .flt_size
         0,                      ; .pic
         0 }                     ; .endbr
-endif
 
-    align 4
+    align size_t
 
      DefaultDir string_t NUM_FILE_TYPES dup(NULL)
      OptValue   int_t 0
 
     .code
+
+init_options proc
+ifdef ASMC64
+    mov Options.sub_format,SFORMAT_64BIT
+    mov Options._model,MODEL_FLAT
+    mov Options.cpu,P_64 or P_PM
+    mov Options.xflag,OPT_REGAX
+    define_name( "_WIN64", "1" )
+ifdef __UNIX__
+    mov Options.output_format,OFORMAT_ELF
+    mov Options.langtype,LANG_SYSCALL
+    mov Options.fctype,FCT_ELF64
+    define_name( "__UNIX__", "1" )
+    define_name( "_LINUX",   "2" )
+else
+    mov Options.output_format,OFORMAT_COFF
+    mov Options.langtype,LANG_FASTCALL
+    mov Options.fctype,FCT_WIN64
+endif
+endif
+    ret
+init_options endp
+
 
     option proc:private
 
@@ -269,15 +145,15 @@ getfilearg proc fastcall uses esi edi ebx args:array_t, p:string_t ; -Fo<file> o
     mov esi,edx
     mov edi,ecx
 
-    .if ( B[esi] == 0 )
+    .if ( byte ptr [esi] == 0 )
         mov ebx,getnextcmdstring(edi)
         .if ( ebx != NULL )
             mov esi,ebx
         .endif
-    .elseif ( B[esi] == '=' )
+    .elseif ( byte ptr [esi] == '=' )
         inc esi
     .endif
-    .if ( B[esi] == 0 )
+    .if ( byte ptr [esi] == 0 )
         asmerr( 1006, [edi] )
         .return NULL
     .endif
@@ -317,7 +193,7 @@ get_fname proc uses esi edi ebx type:int_t, token:string_t
   local default:string_t
 
     mov edx,token
-    .if ( B[edx] == '=' )
+    .if ( byte ptr [edx] == '=' )
         inc edx
     .endif
     mov esi,edx
@@ -328,9 +204,9 @@ get_fname proc uses esi edi ebx type:int_t, token:string_t
     ; to be a directory name only.
     ;
 
-    .if ( B[edi] == 0 )
+    .if ( byte ptr [edi] == 0 )
 
-        .if ( ebx < NUM_FILE_TYPES && B[esi] )
+        .if ( ebx < NUM_FILE_TYPES && byte ptr [esi] )
             .if ( DefaultDir[ebx*string_t] )
                 free( DefaultDir[ebx*string_t] )
             .endif
@@ -357,7 +233,7 @@ get_fname endp
 
 set_option_n_name proc fastcall uses esi edi idx:int_t, name:string_t
 
-    movzx eax,B[edx]
+    movzx eax,byte ptr [edx]
     .if ( al != '.' )
         .if ( !is_valid_id_char( eax ) )
             xor eax,eax
@@ -403,7 +279,7 @@ ReadParamFile proc fastcall uses esi edi ebx name:string_t
         rewind( fp )
         mov edi,MemAlloc( &[ebx+1] )
         fread( edi, 1, ebx, fp )
-        mov B[edi+ebx],0
+        mov byte ptr [edi+ebx],0
     .endif
 
     fclose(fp)
@@ -484,7 +360,7 @@ is_quote:
             movsb
         .endf
     .endif
-    mov B[edi],0
+    mov byte ptr [edi],0
     .return(esi)
 
 GetNameToken endp
@@ -539,7 +415,7 @@ ifndef ASMC64
             mov eax,cpu_option[ecx*4]
             and Options.cpu,not ( P_CPU_MASK or P_EXT_MASK or P_PM )
             or  Options.cpu,eax
-            .if ( B[edi+1] == 'p' && Options.cpu >= P_286 )
+            .if ( byte ptr [edi+1] == 'p' && Options.cpu >= P_286 )
                 or Options.cpu,P_PM
             .endif
             .switch ecx
@@ -695,7 +571,7 @@ endif
         .return
     .case 'orre'            ; -errorReport:
         mov ebx,[esi]
-        .while B[ebx]
+        .while byte ptr [ebx]
             inc ebx
         .endw
         mov [esi],ebx
@@ -1036,11 +912,11 @@ endif
         mov eax,OptValue
         .if eax
             .if eax > CVEX_MAX
-                .if B[ebx+3] != 0
-                    .if B[ebx+4] != 0
+                .if byte ptr [ebx+3] != 0
+                    .if byte ptr [ebx+4] != 0
                         asmerr(1006, ebx)
                     .endif
-                    movzx eax,B[ebx+3]
+                    movzx eax,byte ptr [ebx+3]
                     sub eax,'0'
                     mov Options.debug_ext,al
                 .endif

@@ -1,61 +1,45 @@
 ifndef __GTK_EVENT_CONTROLLER_H__
-__GTK_EVENT_CONTROLLER_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_EVENT_CONTROLLER_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
+
+;GtkEventControllerClass typedef _GtkEventControllerClass
 
 include gdk/gdk.inc
 include gtk/gtktypes.inc
 include gtk/gtkenums.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_EVENT_CONTROLLER equ <gtk_event_controller_get_type>
+define GTK_TYPE_EVENT_CONTROLLER <gtk_event_controller_get_type>
 GTK_EVENT_CONTROLLER macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER, GtkEventController))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER, GtkEventController))>
+  endm
 GTK_EVENT_CONTROLLER_CLASS macro k
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((k), GTK_TYPE_EVENT_CONTROLLER, GtkEventControllerClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((k), GTK_TYPE_EVENT_CONTROLLER, GtkEventControllerClass))>
+  endm
 GTK_IS_EVENT_CONTROLLER macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_EVENT_CONTROLLER))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_EVENT_CONTROLLER))>
+  endm
 GTK_IS_EVENT_CONTROLLER_CLASS macro k
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), GTK_TYPE_EVENT_CONTROLLER))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), GTK_TYPE_EVENT_CONTROLLER))>
+  endm
 GTK_EVENT_CONTROLLER_GET_CLASS macro o
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER, GtkEventControllerClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_EVENT_CONTROLLER, GtkEventControllerClass))>
+  endm
 
-
-;GType
-gtk_event_controller_get_type proto __cdecl
-
-;GtkWidget
-gtk_event_controller_get_widget proto __cdecl \
-	    controller: ptr GtkEventController
-
-
-;gboolean
-gtk_event_controller_handle_event proto __cdecl \
-	    controller: ptr GtkEventController,
-		 event: ptr GdkEvent
-
-;void
-gtk_event_controller_reset proto __cdecl \
-	    controller: ptr GtkEventController
-
-
-;GtkPropagationPhase
-gtk_event_controller_get_propagation_phase proto __cdecl \
-	    controller: ptr GtkEventController
-
-
-;void
-gtk_event_controller_set_propagation_phase proto __cdecl \
-	    controller: ptr GtkEventController,
-		 phase: GtkPropagationPhase
-
-G_END_DECLS
+gtk_event_controller_get_type proto
+gtk_event_controller_get_widget proto :ptr
+gtk_event_controller_reset proto :ptr
+gtk_event_controller_get_propagation_phase proto :ptr
+gtk_event_controller_set_propagation_phase proto :ptr, :GtkPropagationPhase
+gtk_event_controller_get_propagation_limit proto :ptr
+gtk_event_controller_set_propagation_limit proto :ptr, :GtkPropagationLimit
+gtk_event_controller_get_name proto :ptr
+gtk_event_controller_set_name proto :ptr, :ptr
+gtk_event_controller_get_current_event proto :ptr
+gtk_event_controller_get_current_event_time proto :ptr
+gtk_event_controller_get_current_event_device proto :ptr
+gtk_event_controller_get_current_event_state proto :ptr
 
 endif

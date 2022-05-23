@@ -1,67 +1,49 @@
 ifndef __GTK_FIXED_H__
-__GTK_FIXED_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_FIXED_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkcontainer.inc
+include gtk/gtkwidget.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_FIXED equ <gtk_fixed_get_type>
+define GTK_TYPE_FIXED <gtk_fixed_get_type>
 GTK_FIXED macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FIXED, GtkFixed))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FIXED, GtkFixed))>
+  endm
 GTK_FIXED_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FIXED, GtkFixedClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_FIXED, GtkFixedClass))>
+  endm
 GTK_IS_FIXED macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FIXED))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_FIXED))>
+  endm
 GTK_IS_FIXED_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FIXED))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_FIXED))>
+  endm
 GTK_FIXED_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FIXED, GtkFixedClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_FIXED, GtkFixedClass))>
+  endm
 
-GtkFixed		STRUC
-container		GtkContainer <>
-priv			ptr_t ?
-GtkFixed		ENDS
+_GtkFixed               struct
+parent_instance         GtkWidget <>
+_GtkFixed               ends
+GtkFixed                typedef _GtkFixed
 
-GtkFixedClass		STRUC
-parent_class		GtkContainerClass <>
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkFixedClass		ENDS
+_GtkFixedClass          struct
+parent_class            GtkWidgetClass <>
+padding                 gpointer 8 dup(?)
+_GtkFixedClass          ends
+GtkFixedClass           typedef _GtkFixedClass
 
-GtkFixedChild		STRUC
-widget			ptr_t ?
-x			gint ?
-y			gint ?
-GtkFixedChild		ENDS
+gtk_fixed_get_type proto
 
-;GType
-gtk_fixed_get_type proto __cdecl
-;GtkWidget*
-gtk_fixed_new proto __cdecl
-;void
-gtk_fixed_put proto __cdecl \
-		 fixed: ptr GtkFixed,
-		widget: ptr GtkWidget,
-		     x: gint,
-		     y: gint
+gtk_fixed_new proto
+gtk_fixed_put proto :ptr, :ptr, :real8, :real8
+gtk_fixed_remove proto :ptr, :ptr
+gtk_fixed_move proto :ptr, :ptr, :real8, :real8
+gtk_fixed_get_child_position proto :ptr, :ptr, :ptr, :ptr
 
-;void
-gtk_fixed_move proto __cdecl \
-		 fixed: ptr GtkFixed,
-		widget: ptr GtkWidget,
-		     x: gint,
-		     y: gint
-
-G_END_DECLS
+gtk_fixed_set_child_transform proto :ptr, :ptr, :ptr
+gtk_fixed_get_child_transform proto :ptr, :ptr
 
 endif

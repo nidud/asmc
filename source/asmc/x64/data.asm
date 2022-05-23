@@ -312,7 +312,7 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 inc i
             .endif
 
-        .elseif ( [rdi].flag1 & S_ISARRAY && \
+        .elseif ( [rdi].flag1 & S_ISARRAY &&
                   [rbx].token != T_FINAL && [rbx].token != T_COMMA )
 
             .ifd ( InitializeArray( rdi, &i, tokenarray ) == ERROR )
@@ -322,8 +322,8 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
                 .break
             .endif
 
-        .elseif ( [rdi].total_size == [rdi].total_length && \
-                  [rbx].token == T_STRING && [rbx].stringlen > 1 && \
+        .elseif ( [rdi].total_size == [rdi].total_length &&
+                  [rbx].token == T_STRING && [rbx].stringlen > 1 &&
                   ( [rbx].string_delim == '"' || [rbx].string_delim == "'" ) )
 
             ; v2.07: it's a byte type, but no array, string initializer must have true length 1
@@ -351,10 +351,9 @@ InitStructuredVar proc __ccall uses rsi rdi rbx index:int_t, tokenarray:ptr asm_
 
                 ; ignore commas enclosed in () ( might occur inside DUP argument! ).
 
-                .for ( j = i,
-                      rax = rbx,
-                      edx = 0,
+                .for ( j = i, rax = rbx, edx = 0,
                       ecx = 0: [rbx].token != T_FINAL: rbx += asm_tok, i++ )
+
                     .if ( [rbx].token == T_OP_BRACKET )
                         inc edx
                     .elseif ( [rbx].token == T_CL_BRACKET )
@@ -504,6 +503,13 @@ output_float proc __ccall uses rsi opnd:ptr expr, size:dword
 
 output_float endp
 
+    assume rsi:nothing
+    assume rdi:nothing
+
+ifndef __UNIX__
+ MultiByteToWideChar proto :int_t, :int_t, :string_t, :int_t, :ptr word, :int_t
+endif
+
 ;
 ; initialize a data item or struct member;
 ; - start_pos: contains tokenarray[] index [in/out]
@@ -529,20 +535,13 @@ output_float endp
 ; 3. item size is 1 and a quoted string with len > 1 is used as initializer
 ;
 
-ifndef __UNIX__
-MultiByteToWideChar proto WINAPI :int_t, :int_t, :string_t, :int_t, :ptr word, :int_t
-endif
-
-    assume rsi:nothing
-    assume rdi:nothing
-
 data_item proc __ccall uses rsi rdi rbx start_pos:ptr int_t, tokenarray:ptr asm_tok, sym:ptr asym,
         no_of_bytes:uint_32, type_sym:ptr asym, _dup:uint_32,
         inside_struct:int_t, is_float:int_t, first:int_t, _end:int_t
 
     .new i:int_t
     .new string_len:int_t
-    .new total:uint_32 = 0;
+    .new total:uint_32 = 0
     .new initwarn:int_t = FALSE
     .new pchar:string_t
     .new tmp:char_t
@@ -749,7 +748,7 @@ next_item:
             .else
                 inc total
             .endif
-            .if( !inside_struct )
+            .if ( inside_struct == FALSE )
                 SetCurrOffset( CurrSeg, opndx.uvalue, TRUE, TRUE )
             .endif
             inc i
@@ -758,12 +757,11 @@ next_item:
 
         ; warn about initialized data in BSS/AT segments
 
-        .if ( Parse_Pass == PASS_2 && inside_struct == FALSE && \
-              initwarn == FALSE )
+        .if ( Parse_Pass == PASS_2 && inside_struct == FALSE && initwarn == FALSE )
 
             mov rcx,CurrSeg
             mov rcx,[rcx].dsym.seginfo
-            .if ( [rcx].seg_info.segtype == SEGTYPE_BSS || \
+            .if ( [rcx].seg_info.segtype == SEGTYPE_BSS ||
                   [rcx].seg_info.segtype == SEGTYPE_ABS )
 
                 lea rax,@CStr("AT")
@@ -785,7 +783,7 @@ next_item:
             .endif
             .return
         .case EXPR_FLOAT
-            .if ( !inside_struct )
+            .if ( inside_struct == FALSE )
                 output_float( &opndx, no_of_bytes )
             .endif
             inc total
@@ -809,7 +807,7 @@ next_item:
                 ; v2.07: check for empty string for ALL types
 
                 .if ( eax == 0 )
-                    .if ( inside_struct )
+                    .if ( inside_struct == TRUE )
 
                         ; when the struct is declared, it's no error -
                         ; but won't be accepted when the struct is instanced.
@@ -831,9 +829,9 @@ next_item:
                         ; v2.22 - unicode
                         ; v2.23 - use L"Unicode"
 
-                        .if ( inside_struct || !( ( ModuleInfo.strict_masm_compat == 0 ) && \
-                               ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) && \
-                             no_of_bytes == 2 ) )
+                        .if ( inside_struct == TRUE || !( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                              ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
+                              no_of_bytes == 2 ) )
 
                             .return( asmerr( 2071 ) )
                         .endif
@@ -845,9 +843,9 @@ next_item:
                     xor ecx,ecx
                     .if ( no_of_bytes == 1 && eax > 1 )
                         inc ecx
-                    .elseif ( ( ModuleInfo.strict_masm_compat == 0 ) \
-                            && ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) \
-                            && no_of_bytes == 2 && eax > 1 )
+                    .elseif ( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                              ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
+                              no_of_bytes == 2 && eax > 1 )
                         mov ecx,2
                     .endif
                     .if ecx
@@ -862,15 +860,15 @@ next_item:
                     .endif
                 .endif
 
-                .if ( !inside_struct )
+                .if ( inside_struct == FALSE )
 
                     ; anything bigger than a byte must be stored in little-endian
                     ; format -- LSB first
                     ; v2.22 - unicode
                     ; v2.23 - use L"Unicode"
 
-                    .if ( ( ModuleInfo.strict_masm_compat == 0 ) && \
-                          ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) && \
+                    .if ( ( ModuleInfo.strict_masm_compat == 0 ) &&
+                          ( ModuleInfo.xflag & ( OPT_WSTRING or OPT_LSTRING ) ) &&
                             string_len > 1 && no_of_bytes == 2 )
 ifndef __UNIX__
                         mov ecx,string_len
@@ -910,7 +908,7 @@ endif
 
                 ; it's NOT a string
 
-                .if ( !inside_struct )
+                .if ( inside_struct == FALSE )
 
                     ; the evaluator cannot handle types with size > 16.
                     ; so if a (simple) type is larger ( YMMWORD? ),
@@ -998,7 +996,7 @@ endif
 
             ; for STRUCT fields, don't emit anything!
 
-            .endc .if ( inside_struct )
+            .endc .if ( inside_struct == TRUE )
 
             ; determine what type of fixup is to be created
 

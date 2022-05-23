@@ -1,13 +1,11 @@
 ifndef __G_TYPE_MODULE_H__
-__G_TYPE_MODULE_H__ equ <>
+define __G_TYPE_MODULE_H__
 if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include gobject/gobject.inc
 include gobject/genums.inc
-
-G_BEGIN_DECLS
 
 G_TYPE_TYPE_MODULE equ <g_type_module_get_type>
 G_TYPE_MODULE macro module
@@ -141,7 +139,5 @@ g_type_module_register_flags proto __cdecl \
 		  name: ptr gchar,
    const_static_values: ptr GFlagsValue
 
-
-G_END_DECLS
 
 endif

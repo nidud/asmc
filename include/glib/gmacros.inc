@@ -1,250 +1,195 @@
 ifndef __G_MACROS_H__
-__G_MACROS_H__ equ <>
+define __G_MACROS_H__
+
 if NOT defined (__GLIB_H_INSIDE__) AND NOT defined (GLIB_COMPILATION)
 .err <"Only glib.h can be included directly.">
 endif
 
 include stddef.inc
 
-G_GNUC_CHECK_VERSION macro major, minor
-	exitm<.err>
-	endm
-
-G_GNUC_EXTENSION equ 1
-
-G_CAN_INLINE equ 1
-
-ifndef __cplusplus
- ifdef _MSC_VER
-  if (_MSC_VER LT 1900)
-   G_INLINE_DEFINE_NEEDED equ 1
-  endif
- elseif NOT defined(__STDC_VERSION__) OR (__STDC_VERSION__ LT 199900)
-  G_INLINE_DEFINE_NEEDED equ 1
+G_ASMC_CHECK_VERSION macro major, minor
+ifdef __ASMC__
+ if ((__ASMC__ gt (major)) or ((__ASMC__ eq (major)) and ((__ASMC__ mod 100) ge (minor))))
+    exitm<1>
+ else
+    exitm<0>
  endif
-endif
-
-ifdef G_INLINE_DEFINE_NEEDED
- ;undef inline
- ;define inline __inline
-endif
-
-;undef G_INLINE_DEFINE_NEEDED
-
-ifdef G_IMPLEMENT_INLINES
-  ;define G_INLINE_FUNC extern
-  ;undef  G_CAN_INLINE
 else
-  ;define G_INLINE_FUNC static inline
+    exitm<0>
 endif
+    endm
 
-G_GNUC_PURE		equ 1
-G_GNUC_MALLOC		equ 1
-G_GNUC_NULL_TERMINATED	equ 1
+g_macro__has_attribute macro x
+    exitm<g_macro__has_attribute_&x&>
+    endm
 
-ifndef __has_attribute
-__has_attribute macro x
-	exitm<0>
-	endm
-endif
-
-ifndef __has_feature
-__has_feature macro x
-	exitm<0>
-	endm
-endif
-
-ifndef __has_builtin
-__has_builtin macro x
-	exitm<0>
-	endm
-endif
-
-G_GNUC_ALLOC_SIZE macro x
-	exitm<1>
-	endm
-G_GNUC_ALLOC_SIZE2 macro x,y
-	exitm<1>
-	endm
-
-G_GNUC_PRINTF macro format_idx, arg_idx
-	exitm<>
-	endm
-G_GNUC_SCANF macro format_idx, arg_idx
-	exitm<>
-	endm
-G_GNUC_FORMAT macro arg_idx
-	exitm<>
-	endm
-G_GNUC_NORETURN		equ 1
-G_GNUC_CONST		equ 1
-G_GNUC_UNUSED		equ 1
-G_GNUC_NO_INSTRUMENT	equ 1
-G_GNUC_DEPRECATED	equ 1
-
-G_GNUC_DEPRECATED_FOR macro f
-	exitm<G_GNUC_DEPRECATED>
-	endm
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS equ 1
-G_GNUC_END_IGNORE_DEPRECATIONS equ 1
-G_GNUC_MAY_ALIAS equ 1
-G_GNUC_WARN_UNUSED_RESULT equ 1
-
-ifndef G_DISABLE_DEPRECATED
-G_GNUC_FUNCTION		equ <"">
-G_GNUC_PRETTY_FUNCTION	equ <"">
-endif
-
-G_ANALYZER_ANALYZING	equ 0
-G_ANALYZER_NORETURN	equ 1
-
-G_STRINGIFY macro macro_or_string
-	exitm<G_STRINGIFY_ARG (macro_or_string)>
-	endm
-G_STRINGIFY_ARG macro contents
-	exitm<#contents>
-	endm
+define g_macro__has_attribute___pure__                      0 ; G_GNUC_CHECK_VERSION (2, 96)
+define g_macro__has_attribute___malloc__                    0 ; G_GNUC_CHECK_VERSION (2, 96)
+define g_macro__has_attribute___noinline__                  0 ; G_GNUC_CHECK_VERSION (2, 96)
+define g_macro__has_attribute___sentinel__                  0 ; G_GNUC_CHECK_VERSION (4, 0)
+define g_macro__has_attribute___alloc_size__                0 ; G_GNUC_CHECK_VERSION (4, 3)
+define g_macro__has_attribute___format__                    0 ; G_GNUC_CHECK_VERSION (2, 4)
+define g_macro__has_attribute___format_arg__                0 ; G_GNUC_CHECK_VERSION (2, 4)
+define g_macro__has_attribute___noreturn__                  0 ; (G_GNUC_CHECK_VERSION (2, 8) || (0x5110 <= __SUNPRO_C))
+define g_macro__has_attribute___const__                     0 ; G_GNUC_CHECK_VERSION (2, 4)
+define g_macro__has_attribute___unused__                    0 ; G_GNUC_CHECK_VERSION (2, 4)
+define g_macro__has_attribute___no_instrument_function__    0 ; G_GNUC_CHECK_VERSION (2, 4)
+define g_macro__has_attribute_fallthrough                   1 ; G_GNUC_CHECK_VERSION (6, 0)
+define g_macro__has_attribute___deprecated__                0 ; G_GNUC_CHECK_VERSION (3, 1)
+define g_macro__has_attribute_may_alias                     0 ; G_GNUC_CHECK_VERSION (3, 3)
+define g_macro__has_attribute_warn_unused_result            0 ; G_GNUC_CHECK_VERSION (3, 4)
+define g_macro__has_attribute_cleanup                       0;1 ; G_GNUC_CHECK_VERSION (3, 3)
 
 ifndef __GI_SCANNER__
-G_PASTE_ARGS macro identifier1,identifier2
-	exitm<identifier1&identifier2&>
-	endm
-G_PASTE macro identifier1,identifier2
-	exitm<G_PASTE_ARGS (identifier1, identifier2)>
-	endm
-ifdef __COUNTER__
-G_STATIC_ASSERT macro expr
-	exitm<-1>
-	endm
-else
-G_STATIC_ASSERT macro expr
-	exitm<-1>
-	endm
-endif
-G_STATIC_ASSERT_EXPR macro expr
-	exitm<-1>
-	endm
-endif
 
-;G_STRLOC		 equ __FILE__ ":" G_STRINGIFY (__LINE__)
+if g_macro__has_attribute(cleanup)
 
-G_BEGIN_DECLS		equ <>
-G_END_DECLS		equ <>
+_GLIB_AUTOPTR_FUNC_NAME macro TypeName
+    exitm<glib_autoptr_cleanup_&TypeName&>
+    endm
+_GLIB_AUTOPTR_CLEAR_FUNC_NAME macro TypeName
+    exitm<glib_autoptr_clear_&TypeName&>
+    endm
+_GLIB_AUTOPTR_TYPENAME macro TypeName
+    exitm<&TypeName&_autoptr>
+    endm
+_GLIB_AUTOPTR_LIST_FUNC_NAME macro TypeName
+    exitm<glib_listautoptr_cleanup_&TypeName&>
+    endm
+_GLIB_AUTOPTR_LIST_TYPENAME macro TypeName
+    exitm<&TypeName&_listautoptr>
+    endm
+_GLIB_AUTOPTR_SLIST_FUNC_NAME macro TypeName
+    exitm<glib_slistautoptr_cleanup_&TypeName&>
+    endm
+_GLIB_AUTOPTR_SLIST_TYPENAME macro TypeName
+    exitm<&TypeName&_slistautoptr>
+    endm
+_GLIB_AUTOPTR_QUEUE_FUNC_NAME macro TypeName
+    exitm<glib_queueautoptr_cleanup_&TypeName&>
+    endm
+_GLIB_AUTOPTR_QUEUE_TYPENAME macro TypeName
+    exitm<&TypeName&_queueautoptr>
+    endm
+_GLIB_AUTO_FUNC_NAME macro TypeName
+    exitm<glib_auto_cleanup_&TypeName&>
+    endm
+_GLIB_CLEANUP macro func
+    exitm<func>
+    endm
 
-ifndef NULL
-NULL			equ 0
-endif
-ifndef FALSE
-FALSE			equ 0
-endif
-ifndef TRUE
-TRUE			equ 1
-endif
+_GLIB_DEFINE_AUTOPTR_CLEANUP_FUNCS macro TypeName, ParentName, cleanup
 
-if 0
-undef	MAX
-MAX macro a, b
-	exitm<(((a) GT (b)) ? (a) : (b))>
-	endm
+  local clear,queue
 
-undef	MIN
-MIN macro a, b
-	exitm<(((a) LT (b)) ? (a) : (b))>
-	endm
+    _GLIB_AUTOPTR_TYPENAME(TypeName)        typedef ptr TypeName
+    _GLIB_AUTOPTR_LIST_TYPENAME(TypeName)   typedef ptr GList
+    _GLIB_AUTOPTR_SLIST_TYPENAME(TypeName)  typedef ptr GSList
+    _GLIB_AUTOPTR_QUEUE_TYPENAME(TypeName)  typedef ptr GQueue
 
-undef	ABS
-ABS macro a
-	exitm<(((a) LT 0) ? -(a) : (a))>
-	endm
+    clear textequ _GLIB_AUTOPTR_CLEAR_FUNC_NAME(TypeName)
+    queue textequ _GLIB_AUTOPTR_QUEUE_FUNC_NAME(TypeName)
 
-undef	CLAMP
-CLAMP macro x, low, high
-	exitm<(((x) GT (high)) ? (high) : (((x) LT (low)) ? (low) : (x)))>
-	endm
-endif
-G_N_ELEMENTS macro arr
-	exitm<lengthof(arr)>
-	endm
-
-GPOINTER_TO_SIZE macro p
-	exitm<(p)>
-	endm
-GSIZE_TO_POINTER macro s
-	exitm<(s)>
-	endm
-
-G_STRUCT_OFFSET macro struct_type, member
-	exitm<.err>
-	endm
-
-G_STRUCT_MEMBER_P macro struct_p, struct_offset
-	exitm<.err>
-	endm
-G_STRUCT_MEMBER macro member_type, struct_p, struct_offset
-	exitm<.err>
-	endm
-
-if NOT (defined (G_STMT_START) AND defined (G_STMT_END))
-G_STMT_START equ <.repeat>
-G_STMT_END   equ <.until 1>
-endif
-
-ifndef G_DISABLE_DEPRECATED
-G_CONST_RETURN equ <>
-endif
-
-G_LIKELY macro expr
-	exitm<(expr)>
-	endm
-G_UNLIKELY macro expr
-	exitm<(expr)>
-	endm
-
-G_DEPRECATED equ 1
-G_DEPRECATED_FOR macro f
-	exitm<G_DEPRECATED>
-	endm
-
-G_UNAVAILABLE macro maj,min
-	exitm<G_DEPRECATED>
-	endm
-
-ifndef _GLIB_EXTERN
-_GLIB_EXTERN		equ extern
-endif
-
-
-ifdef GLIB_DISABLE_DEPRECATION_WARNINGS
-GLIB_DEPRECATED equ _GLIB_EXTERN
-GLIB_DEPRECATED_FOR macro f
-	exitm<_GLIB_EXTERN>
-	endm
-GLIB_UNAVAILABLE macro maj,min
-	exitm<_GLIB_EXTERN>
-	endm
-else
-GLIB_DEPRECATED equ G_DEPRECATED _GLIB_EXTERN
-GLIB_DEPRECATED_FOR macro f
-	exitm<G_DEPRECATED_FOR(f) _GLIB_EXTERN>
-	endm
-GLIB_UNAVAILABLE macro maj,min
-	exitm<G_UNAVAILABLE(maj,min) _GLIB_EXTERN>
-	endm
-endif
+    clear proto fastcall _ptr:ptr TypeName {
+        .if (_ptr)
+            cleanup(_ptr)
+        .endif
+        }
+    _GLIB_AUTOPTR_FUNC_NAME(TypeName) proto fastcall _ptr:ptr ptr TypeName {
+        clear([_ptr])
+        }
+    _GLIB_AUTOPTR_LIST_FUNC_NAME(TypeName) proto fastcall _l:ptr ptr GList {
+        g_list_free_full([_l], addr cleanup)
+        }
+    _GLIB_AUTOPTR_SLIST_FUNC_NAME(TypeName) proto fastcall _l:ptr ptr GSList {
+        g_slist_free_full([_l], addr cleanup)
+        }
+    queue proto fastcall _q:ptr ptr GQueue {
+        mov rcx,[_q]
+        .if ( rcx )
+            g_queue_free_full(rcx, addr cleanup)
+        .endif
+        }
+    exitm<>
+    endm
 
 _GLIB_DEFINE_AUTOPTR_CHAINUP macro ModuleObjName, ParentName
-	exitm<>
-	endm
-
+    exitm<_GLIB_DEFINE_AUTOPTR_CLEANUP_FUNCS(ModuleObjName, ParentName, _GLIB_AUTOPTR_CLEAR_FUNC_NAME(ParentName))>
+    endm
 G_DEFINE_AUTOPTR_CLEANUP_FUNC macro TypeName, func
-	exitm<>
-	endm
+    exitm<_GLIB_DEFINE_AUTOPTR_CLEANUP_FUNCS(TypeName, TypeName, func)>
+    endm
 G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC macro TypeName, func
-	exitm<>
-	endm
-G_DEFINE_AUTO_CLEANUP_FREE_FUNC macro TypeName, func, none
-	exitm<>
-	endm
+    _GLIB_AUTO_FUNC_NAME(TypeName) proto _ptr:ptr TypeName {
+        func(_ptr)
+        }
+    exitm<>
+    endm
 
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC macro TypeName, func, none
+    local name
+    name textequ _GLIB_AUTO_FUNC_NAME(TypeName)
+    name proto fastcall _ptr:ptr TypeName {
+        mov rcx,[_ptr]
+        .if ( rcx != none )
+            func(rcx)
+        .endif
+        }
+    exitm<>
+    endm
+
+g_autoptr macro TypeName
+    exitm<_GLIB_CLEANUP(_GLIB_AUTOPTR_FUNC_NAME(TypeName))(_GLIB_AUTOPTR_TYPENAME(TypeName))>
+    endm
+g_autolist macro TypeName
+    exitm<_GLIB_CLEANUP(_GLIB_AUTOPTR_LIST_FUNC_NAME(TypeName))(_GLIB_AUTOPTR_LIST_TYPENAME(TypeName))>
+    endm
+g_autoslist macro TypeName
+    exitm<_GLIB_CLEANUP(_GLIB_AUTOPTR_SLIST_FUNC_NAME(TypeName))(_GLIB_AUTOPTR_SLIST_TYPENAME(TypeName))>
+    endm
+g_autoqueue macro TypeName
+    exitm<_GLIB_CLEANUP(_GLIB_AUTOPTR_QUEUE_FUNC_NAME(TypeName))(_GLIB_AUTOPTR_QUEUE_TYPENAME(TypeName))>
+    endm
+g_auto macro TypeName
+    exitm<_GLIB_CLEANUP(_GLIB_AUTO_FUNC_NAME(TypeName))(TypeName)>
+    endm
+g_autofree macro
+    exitm<_GLIB_CLEANUP(g_autoptr_cleanup_generic_gfree)>
+    endm
+
+else
+
+_GLIB_DEFINE_AUTOPTR_CHAINUP macro ModuleObjName, ParentName
+    exitm<>
+    endm
+G_DEFINE_AUTOPTR_CLEANUP_FUNC macro TypeName, func
+    exitm<>
+    endm
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC macro TypeName, func
+    exitm<>
+    endm
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC macro TypeName, func, none
+    exitm<>
+    endm
+endif
+
+else
+
+_GLIB_DEFINE_AUTOPTR_CHAINUP macro ModuleObjName, ParentName
+    exitm<>
+    endm
+G_DEFINE_AUTOPTR_CLEANUP_FUNC macro TypeName, func
+    exitm<>
+    endm
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC macro TypeName, func
+    exitm<>
+    endm
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC macro TypeName, func, none
+    exitm<>
+    endm
+
+endif
+G_N_ELEMENTS macro arr
+    exitm<lengthof(arr)>
+    endm
 endif

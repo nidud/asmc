@@ -14,6 +14,8 @@ include asmc.inc
 include symbols.inc
 include input.inc
 
+init_options proto
+
 ifdef __UNIX__
 ifdef __WATCOM__
 extern _cstart_: byte
@@ -182,13 +184,8 @@ else
     signal(SIGTERM, GeneralFailure)
 endif
 
-ifdef ASMC64
-    define_name( "_WIN64", "1" )
-ifdef __UNIX__
-    define_name( "__UNIX__", "1" )
-    define_name( "_LINUX",   "2" )
-endif
-endif
+    init_options()
+
     .if !getenv("ASMC")     ; v2.21 -- getenv() error..
         lea eax,@CStr("")
     .endif

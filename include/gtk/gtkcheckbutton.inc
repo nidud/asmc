@@ -1,62 +1,58 @@
 ifndef __GTK_CHECK_BUTTON_H__
-__GTK_CHECK_BUTTON_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_CHECK_BUTTON_H__
+
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
 include gtk/gtktogglebutton.inc
 
-G_BEGIN_DECLS
-
-GTK_TYPE_CHECK_BUTTON equ <gtk_check_button_get_type>
+define GTK_TYPE_CHECK_BUTTON                  <gtk_check_button_get_type>
 GTK_CHECK_BUTTON macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CHECK_BUTTON, GtkCheckButton))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CHECK_BUTTON, GtkCheckButton))>
+  endm
 GTK_CHECK_BUTTON_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_CHECK_BUTTON, GtkCheckButtonClass))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_CHECK_BUTTON, GtkCheckButtonClass))>
+  endm
 GTK_IS_CHECK_BUTTON macro obj
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CHECK_BUTTON))>
-	endm
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_CHECK_BUTTON))>
+  endm
 GTK_IS_CHECK_BUTTON_CLASS macro klass
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_CHECK_BUTTON))>
-	endm
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_CHECK_BUTTON))>
+  endm
 GTK_CHECK_BUTTON_GET_CLASS macro obj
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CHECK_BUTTON, GtkCheckButtonClass))>
-	endm
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CHECK_BUTTON, GtkCheckButtonClass))>
+  endm
 
 
-GtkCheckButton		STRUC
-toggle_button		GtkToggleButton <>
-GtkCheckButton		ENDS
+_GtkCheckButton         struct
+parent_instance         GtkWidget <>
+_GtkCheckButton         ends
+GtkCheckButton          typedef _GtkCheckButton
 
-GtkCheckButtonClass	STRUC
-parent_class		GtkToggleButtonClass <>
-draw_indicator		proc :ptr GtkCheckButton, :ptr cairo_t
-_gtk_reserved1		proc
-_gtk_reserved2		proc
-_gtk_reserved3		proc
-_gtk_reserved4		proc
-GtkCheckButtonClass	ENDS
+_GtkCheckButtonClass    struct
+parent_class            GtkWidgetClass <>
+toggled                 proc :ptr
+activate                proc :ptr
+padding                 gpointer 7 dup(?)
+_GtkCheckButtonClass    ends
+GtkCheckButtonClass     typedef _GtkCheckButtonClass
 
-;GType
-gtk_check_button_get_type proto __cdecl
-;GtkWidget*
-gtk_check_button_new proto __cdecl
-;GtkWidget*
-gtk_check_button_new_with_label proto __cdecl \
-		_label: ptr gchar
 
-;GtkWidget*
-gtk_check_button_new_with_mnemonic proto __cdecl \
-		_label: ptr gchar
+gtk_check_button_get_type proto
+gtk_check_button_new proto
+gtk_check_button_new_with_label proto :ptr
+gtk_check_button_new_with_mnemonic proto :ptr
+gtk_check_button_set_inconsistent proto :ptr, :gboolean
+gtk_check_button_get_inconsistent proto :ptr
 
-;void
-_gtk_check_button_get_props proto __cdecl \
-	  check_button: ptr GtkCheckButton,
-	indicator_size: ptr gint,
-     indicator_spacing: ptr gint
-
-G_END_DECLS
+gtk_check_button_get_active proto :ptr
+gtk_check_button_set_active proto :ptr, :gboolean
+gtk_check_button_get_label proto :ptr
+gtk_check_button_set_label proto :ptr, :ptr
+gtk_check_button_set_group proto :ptr, :ptr
+gtk_check_button_get_use_underline proto :ptr
+gtk_check_button_set_use_underline proto :ptr, :gboolean
 
 endif

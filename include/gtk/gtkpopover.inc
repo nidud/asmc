@@ -1,121 +1,63 @@
 ifndef __GTK_POPOVER_H__
-__GTK_POPOVER_H__ equ <>
-if NOT defined (__GTK_H_INSIDE__) AND NOT defined (GTK_COMPILATION)
+define __GTK_POPOVER_H__
+
+if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-include gtk/gtkwindow.inc
+include gtk/gtkwidget.inc
 
-G_BEGIN_DECLS
+define GTK_TYPE_POPOVER <gtk_popover_get_type>
+GTK_POPOVER macro obj
+  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_POPOVER, GtkPopover))>
+  endm
+GTK_POPOVER_CLASS macro klass
+  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_POPOVER, GtkPopoverClass))>
+  endm
+GTK_IS_POPOVER macro obj
+  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_POPOVER))>
+  endm
+GTK_IS_POPOVER_CLASS macro klass
+  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_POPOVER))>
+  endm
+GTK_POPOVER_GET_CLASS macro obj
+  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_POPOVER, GtkPopoverClass))>
+  endm
 
-GTK_TYPE_POPOVER equ <gtk_popover_get_type>
-GTK_POPOVER macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_POPOVER, GtkPopover))>
-	endm
-GTK_POPOVER_CLASS macro c
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((c), GTK_TYPE_POPOVER, GtkPopoverClass))>
-	endm
-GTK_IS_POPOVER macro o
-	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), GTK_TYPE_POPOVER))>
-	endm
-GTK_IS_POPOVER_CLASS macro o
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((o), GTK_TYPE_POPOVER))>
-	endm
-GTK_POPOVER_GET_CLASS macro o
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), GTK_TYPE_POPOVER, GtkPopoverClass))>
-	endm
+_GtkPopover             struct
+parent                  GtkWidget <>
+_GtkPopover             ends
+GtkPopover              typedef _GtkPopover
 
-GtkPopover		STRUC
-parent_instance		GtkBin <>
-priv			ptr_t ?
-GtkPopover		ENDS
+_GtkPopoverClass        struct
+parent_class            GtkWidgetClass <>
+closed                  proc :ptr
+activate_default        proc :ptr
+reserved                gpointer 8 dup(?)
+_GtkPopoverClass        ends
+GtkPopoverClass         typedef _GtkPopoverClass
 
-GtkPopoverClass		STRUC
-parent_class		GtkBinClass <>
-closed			proc :ptr GtkPopover
-reserved		gpointer 10 dup(?)
-GtkPopoverClass		ENDS
-
-;GType
-gtk_popover_get_type proto __cdecl
-
-;GtkWidget
-gtk_popover_new proto __cdecl \
-	   relative_to: ptr GtkWidget
-
-
-;GtkWidget
-gtk_popover_new_from_model proto __cdecl \
-	   relative_to: ptr GtkWidget,
-		 model: ptr GMenuModel
-
-
-;void
-gtk_popover_set_relative_to proto __cdecl \
-	       popover: ptr GtkPopover,
-	   relative_to: ptr GtkWidget
-
-;GtkWidget
-gtk_popover_get_relative_to proto __cdecl \
-	       popover: ptr GtkPopover
-
-
-;void
-gtk_popover_set_pointing_to proto __cdecl \
-	       popover: ptr GtkPopover,
-		  rect: ptr GdkRectangle
-
-;gboolean
-gtk_popover_get_pointing_to proto __cdecl \
-	       popover: ptr GtkPopover,
-		  rect: ptr GdkRectangle
-
-;void
-gtk_popover_set_position proto __cdecl \
-	       popover: ptr GtkPopover,
-	      position: GtkPositionType
-
-;GtkPositionType
-gtk_popover_get_position proto __cdecl \
-	       popover: ptr GtkPopover
-
-
-;void
-gtk_popover_set_modal proto __cdecl \
-	       popover: ptr GtkPopover,
-		 modal: gboolean
-
-;gboolean
-gtk_popover_get_modal proto __cdecl \
-	       popover: ptr GtkPopover
-
-
-;void
-gtk_popover_bind_model proto __cdecl \
-	       popover: ptr GtkPopover,
-		 model: ptr GMenuModel,
-      action_namespace: ptr gchar
-
-
-;void
-gtk_popover_set_transitions_enabled proto __cdecl \
-	       popover: ptr GtkPopover,
-   transitions_enabled: gboolean
-
-;gboolean
-gtk_popover_get_transitions_enabled proto __cdecl \
-	       popover: ptr GtkPopover
-
-
-;void
-gtk_popover_set_default_widget proto __cdecl \
-	       popover: ptr GtkPopover,
-		widget: ptr GtkWidget
-
-;GtkWidget
-gtk_popover_get_default_widget proto __cdecl \
-	       popover: ptr GtkPopover
-
-G_END_DECLS
+gtk_popover_get_type proto
+gtk_popover_new proto
+gtk_popover_set_child proto :ptr, :ptr
+gtk_popover_get_child proto :ptr
+gtk_popover_set_pointing_to proto :ptr, :ptr
+gtk_popover_get_pointing_to proto :ptr, :ptr
+gtk_popover_set_position proto :ptr, :GtkPositionType
+gtk_popover_get_position proto :ptr
+gtk_popover_set_autohide proto :ptr, :gboolean
+gtk_popover_get_autohide proto :ptr
+gtk_popover_set_has_arrow proto :ptr, :gboolean
+gtk_popover_get_has_arrow proto :ptr
+gtk_popover_set_mnemonics_visible proto :ptr, :gboolean
+gtk_popover_get_mnemonics_visible proto :ptr
+gtk_popover_popup proto :ptr
+gtk_popover_popdown proto :ptr
+gtk_popover_set_offset proto :ptr, :sdword, :sdword
+gtk_popover_get_offset proto :ptr, :ptr, :ptr
+gtk_popover_set_cascade_popdown proto :ptr, :gboolean
+gtk_popover_get_cascade_popdown proto :ptr
+gtk_popover_set_default_widget proto :ptr, :ptr
+gtk_popover_present proto :ptr
 
 endif

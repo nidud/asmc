@@ -82,7 +82,6 @@ realloc proc uses rsi rdi pblck:ptr, newsize:size_t
     .endif
 
     mov rsi,r8  ; block
-    mov rdi,rax ; new size
     .if malloc(rax)
 
         mov rcx,[rsi].HEAP.size
@@ -91,7 +90,9 @@ realloc proc uses rsi rdi pblck:ptr, newsize:size_t
         mov rdx,rsi
         mov rdi,rax
         rep movsb
+        mov rsi,rax
         free(rdx)
+        mov rax,rsi
     .endif
     ret
 

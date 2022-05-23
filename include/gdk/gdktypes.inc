@@ -1,153 +1,62 @@
 ifndef __GDK_TYPES_H__
-__GDK_TYPES_H__ equ 1
+define __GDK_TYPES_H__
 
-if NOT defined (__GDK_H_INSIDE__) AND NOT defined (GDK_COMPILATION)
+if not defined (__GDK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gdk/gdk.h can be included directly.">
 endif
 
 include glib.inc
-;include pango/pango.inc
 include glib-object.inc
-;include cairo.inc
+include gio/gio.inc
+include cairo.inc
+include pango/pango.inc
 
 include gdk/gdkconfig.inc
 
-GdkAtom			typedef ptr
+define GDK_CURRENT_TIME     0
 
-GDK_CURRENT_TIME	equ 0
-GDK_PARENT_RELATIVE	equ 1
+ifdef __GI_SCANNER__
 
-;ifdef __GI_SCANNER__
-GdkRectangle		STRUC
-x			int_t ?
-y			int_t ?
-width			int_t ?
-height			int_t ?
-GdkRectangle		ENDS
-;endif
+_GdkRectangle           struct
+x                       sdword ?
+y                       sdword ?
+width                   sdword ?
+height                  sdword ?
+_GdkRectangle           ends
+GdkRectangle            typedef _GdkRectangle
+else
+GdkRectangle            typedef cairo_rectangle_int_t
+endif
 
-GDK_ATOM_TO_POINTER macro atom
-	exitm<(atom)>
-	endm
+GDK_DECLARE_INTERNAL_TYPE macro ModuleObjName, module_obj_name, MODULE, OBJ_NAME, ParentName
+    &module_obj_name&_get_type proto
+    ModuleObjName typedef _&ModuleObjName&
+    &ModuleObjName&Class typedef _&ModuleObjName&Class
+    _GLIB_DEFINE_AUTOPTR_CHAINUP (ModuleObjName, ParentName)
+    G_DEFINE_AUTOPTR_CLEANUP_FUNC (ModuleObjName##Class, g_type_class_unref)
+    &MODULE&_&OBJ_NAME& proto :ptr {
+        G_TYPE_CHECK_INSTANCE_CAST (_1, &module_obj_name&_get_type (), ModuleObjName)
+        }
+    &MODULE&_&OBJ_NAME&_CLASS proto :ptr {
+        G_TYPE_CHECK_CLASS_CAST (_1, &module_obj_name&_get_type (), &ModuleObjName&Class)
+        }
+    &MODULE&_IS_&OBJ_NAME proto :ptr {
+        G_TYPE_CHECK_INSTANCE_TYPE (_1, &module_obj_name&_get_type ())
+        }
+    &MODULE&_IS_&OBJ_NAME&_CLASS :ptr {
+        G_TYPE_CHECK_CLASS_TYPE (_1, &module_obj_name&_get_type ())
+        }
+    &MODULE&_&OBJ_NAME&_GET_CLASS :ptr {
+        G_TYPE_INSTANCE_GET_CLASS (_1, &module_obj_name&_get_type(), &ModuleObjName&Class)
+        }
+  exitm<>
+  endm
 
-GDK_POINTER_TO_ATOM macro p
-	exitm<p>
-	endm
-
-_GDK_MAKE_ATOM macro val
-	exitm<GUINT_TO_POINTER(val)>
-	endm
-
-GDK_NONE		equ _GDK_MAKE_ATOM(0)
-
-.enum GdkByteOrder {
-    GDK_LSB_FIRST,
-    GDK_MSB_FIRST
-}
-
-.enum GdkModifierType {
-    GDK_SHIFT_MASK		  = 1 shl 0,
-    GDK_LOCK_MASK		  = 1 shl 1,
-    GDK_CONTROL_MASK		  = 1 shl 2,
-    GDK_MOD1_MASK		  = 1 shl 3,
-    GDK_MOD2_MASK		  = 1 shl 4,
-    GDK_MOD3_MASK		  = 1 shl 5,
-    GDK_MOD4_MASK		  = 1 shl 6,
-    GDK_MOD5_MASK		  = 1 shl 7,
-    GDK_BUTTON1_MASK		  = 1 shl 8,
-    GDK_BUTTON2_MASK		  = 1 shl 9,
-    GDK_BUTTON3_MASK		  = 1 shl 10,
-    GDK_BUTTON4_MASK		  = 1 shl 11,
-    GDK_BUTTON5_MASK		  = 1 shl 12,
-    GDK_MODIFIER_RESERVED_13_MASK = 1 shl 13,
-    GDK_MODIFIER_RESERVED_14_MASK = 1 shl 14,
-    GDK_MODIFIER_RESERVED_15_MASK = 1 shl 15,
-    GDK_MODIFIER_RESERVED_16_MASK = 1 shl 16,
-    GDK_MODIFIER_RESERVED_17_MASK = 1 shl 17,
-    GDK_MODIFIER_RESERVED_18_MASK = 1 shl 18,
-    GDK_MODIFIER_RESERVED_19_MASK = 1 shl 19,
-    GDK_MODIFIER_RESERVED_20_MASK = 1 shl 20,
-    GDK_MODIFIER_RESERVED_21_MASK = 1 shl 21,
-    GDK_MODIFIER_RESERVED_22_MASK = 1 shl 22,
-    GDK_MODIFIER_RESERVED_23_MASK = 1 shl 23,
-    GDK_MODIFIER_RESERVED_24_MASK = 1 shl 24,
-    GDK_MODIFIER_RESERVED_25_MASK = 1 shl 25,
-    GDK_SUPER_MASK		  = 1 shl 26,
-    GDK_HYPER_MASK		  = 1 shl 27,
-    GDK_META_MASK		  = 1 shl 28,
-    GDK_MODIFIER_RESERVED_29_MASK = 1 shl 29,
-    GDK_RELEASE_MASK		  = 1 shl 30,
-    GDK_MODIFIER_MASK		  = 0x5c001fff
-}
-
-.enum GdkModifierIntent {
-    GDK_MODIFIER_INTENT_PRIMARY_ACCELERATOR,
-    GDK_MODIFIER_INTENT_CONTEXT_MENU,
-    GDK_MODIFIER_INTENT_EXTEND_SELECTION,
-    GDK_MODIFIER_INTENT_MODIFY_SELECTION,
-    GDK_MODIFIER_INTENT_NO_TEXT_INPUT,
-    GDK_MODIFIER_INTENT_SHIFT_GROUP,
-    GDK_MODIFIER_INTENT_DEFAULT_MOD_MASK,
-}
-
-.enum GdkStatus {
-    GDK_OK		= 0,
-    GDK_ERROR		= -1,
-    GDK_ERROR_PARAM	= -2,
-    GDK_ERROR_FILE	= -3,
-    GDK_ERROR_MEM	= -4
-}
-
-.enum GdkGrabStatus {
-    GDK_GRAB_SUCCESS,
-    GDK_GRAB_ALREADY_GRABBED,
-    GDK_GRAB_INVALID_TIME,
-    GDK_GRAB_NOT_VIEWABLE,
-    GDK_GRAB_FROZEN,
-    GDK_GRAB_FAILED
-}
-
-.enum GdkGrabOwnership {
-    GDK_OWNERSHIP_NONE,
-    GDK_OWNERSHIP_WINDOW,
-    GDK_OWNERSHIP_APPLICATION
-}
-
-.enum GdkEventMask {
-    GDK_EXPOSURE_MASK		= 1 shl 1,
-    GDK_POINTER_MOTION_MASK	= 1 shl 2,
-    GDK_POINTER_MOTION_HINT_MASK= 1 shl 3,
-    GDK_BUTTON_MOTION_MASK	= 1 shl 4,
-    GDK_BUTTON1_MOTION_MASK	= 1 shl 5,
-    GDK_BUTTON2_MOTION_MASK	= 1 shl 6,
-    GDK_BUTTON3_MOTION_MASK	= 1 shl 7,
-    GDK_BUTTON_PRESS_MASK	= 1 shl 8,
-    GDK_BUTTON_RELEASE_MASK	= 1 shl 9,
-    GDK_KEY_PRESS_MASK		= 1 shl 10,
-    GDK_KEY_RELEASE_MASK	= 1 shl 11,
-    GDK_ENTER_NOTIFY_MASK	= 1 shl 12,
-    GDK_LEAVE_NOTIFY_MASK	= 1 shl 13,
-    GDK_FOCUS_CHANGE_MASK	= 1 shl 14,
-    GDK_STRUCTURE_MASK		= 1 shl 15,
-    GDK_PROPERTY_CHANGE_MASK	= 1 shl 16,
-    GDK_VISIBILITY_NOTIFY_MASK	= 1 shl 17,
-    GDK_PROXIMITY_IN_MASK	= 1 shl 18,
-    GDK_PROXIMITY_OUT_MASK	= 1 shl 19,
-    GDK_SUBSTRUCTURE_MASK	= 1 shl 20,
-    GDK_SCROLL_MASK		= 1 shl 21,
-    GDK_TOUCH_MASK		= 1 shl 22,
-    GDK_SMOOTH_SCROLL_MASK	= 1 shl 23,
-    GDK_TOUCHPAD_GESTURE_MASK	= 1 shl 24,
-    GDK_ALL_EVENTS_MASK		= 0xFFFFFE
-}
-
-GdkPoint		STRUC
-x			gint ?
-y			gint ?
-GdkPoint		ENDS
-
-GDK_GL_ERROR_NOT_AVAILABLE equ 0
-GDK_GL_ERROR_UNSUPPORTED_FORMAT equ 1
-GDK_GL_ERROR_UNSUPPORTED_PROFILE equ 2
+_GdkKeymapKey           struct
+keycode                 guint ?
+_group                  sdword ?
+level                   sdword ?
+_GdkKeymapKey           ends
+GdkKeymapKey            typedef _GdkKeymapKey
 
 endif

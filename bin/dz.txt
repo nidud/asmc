@@ -1,10 +1,10 @@
 DZ.TXT--
-Copyright (C) 2019 Doszip Developers.
+Copyright (C) 2022 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.59
+Version 3.63
 
-Welcome to Doszip Commander Version 3.59!
+Welcome to Doszip Commander Version 3.63!
 =========================================
 
 
@@ -566,6 +566,7 @@ Welcome to Doszip Commander Version 3.59!
     Alt-C		Toggle Command Line
     Alt-L		Create List File
     Alt-M		Memory Information
+    Alt-O		Setup for Compare Panels and Dirctories
     Alt-P		Load Directory
     Alt-W		Toggle wide view in current Panel
     Alt-X		Quit

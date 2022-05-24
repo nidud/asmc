@@ -45,7 +45,8 @@ define _LABEL       0x40 ; _UPPER + _LOWER + '_'
     T_ERROR,
     T_PRAGMA,
     T_INTERFACE,
-    T_EXTERN
+    T_EXTERN,
+    T_DEFINE_GUID
     }
 
 parseline proto
@@ -644,6 +645,7 @@ getline proc uses rsi rdi buffer:string_t
             .if strstr(rax, "*/")
                 add rax,2
                 strcpy(rdi, rax)
+               .continue .if !strtrim(rsi)
             .else
                 inc comment_section
             .endif
@@ -653,6 +655,7 @@ getline proc uses rsi rdi buffer:string_t
         .endif
         .if strstr(rsi, "//")
             mov byte ptr [rax],0
+            .continue .if !strtrim(rsi)
         .endif
         .if ( stoptions )
             arg_option_s(rsi)
@@ -819,6 +822,12 @@ tokenize proc uses rsi rdi string:string_t
                .return(T_EXTERN)
             .endif
             .endc
+        .case 11
+            .if !memcmp(rdi, "DEFINE_GUID", 11)
+                mov csize,11
+                mov ctoken,T_DEFINE_GUID
+               .return(T_DEFINE_GUID)
+            .endif
         .endsw
         mov csize,eax
         mov ctoken,T_ID
@@ -1020,8 +1029,8 @@ parse_enum proc uses rdi rbx
     mov rbx,nexttok(rdi)
 
     .if ( cl == 0 )
-        .return .if !concat(rdi)
-        mov rbx,strstart(rbx)
+        concat(rdi)
+        mov rbx,tokstart(rbx)
     .endif
 
     or cflags,FL_ENUM
@@ -1035,7 +1044,7 @@ parse_enum proc uses rdi rbx
     .if ( cl == '_' ) ; enum _name { ... } name;
         inc rbx
     .endif
-    oprintf(".%s\n", rbx)
+    oprintf(".enum %s\n", rbx)
     ret
 
 parse_enum endp
@@ -1060,6 +1069,9 @@ parse_ends proc uses rdi rbx
             mov byte ptr [rdi],0
             oprintf(".enum %s {\n%s%s}\n", rbx, filebuf, linebuf)
         .endif
+    .elseif ( cflags & FL_ENUM )
+        and cflags,not FL_ENUM
+        oprintf("}\n")
     .endif
     ret
 
@@ -1231,14 +1243,14 @@ parse_callback proc uses rsi rdi p:string_t
     oprintf("CALLBACK(")
 
     .if !strrchr(rdi, '(')
-        .return errexit(rdi)
+        .return ;errexit(rdi)
     .endif
     mov [rax],0
     mov rsi,tokstart(&[rax+1])
     strip_unsigned(rsi)
 
     .if !strrchr(rdi, ')')
-        .return errexit(rdi)
+        .return ;errexit(rdi)
     .endif
     oprintf("%s", prevtokz(rax, rdi))
     parse_protoargs(rsi, 1)
@@ -1250,6 +1262,7 @@ parse_callback endp
 
 concat_line proc uses rdi rbx buffer:string_t
 
+    mov rdi,rcx
     .while !strrchr(rdi, ';')
         concat(rdi)
     .endw
@@ -1275,7 +1288,9 @@ parse_id proc uses rsi rdi rbx
         .return parse_proto(rdi)
     .endif
 
-    .if ( !rsi && !rbx ) ; macro ?
+    nexttok(rdi)
+
+    .if ( !rsi && !rbx && !cl ) ; macro ?
 
         fgets(tempbuf, MAXLINE, srcfile)
         .if ( !rax || [rax] == 10 )
@@ -1286,7 +1301,7 @@ parse_id proc uses rsi rdi rbx
             .endif
            .return
         .endif
-        tokenize(strcpy(linebuf, tempbuf))
+        tokenize(concat_line(strcpy(linebuf, tempbuf)))
        .return parseline()
     .endif
 
@@ -1302,6 +1317,14 @@ parse_id proc uses rsi rdi rbx
     ret
 
 parse_id endp
+
+
+parse_define_guide proc
+
+    oprintf("%s\n", concat_line(tokpos))
+    ret
+
+parse_define_guide endp
 
 
 ; type name[, name2, ...];
@@ -1723,6 +1746,8 @@ parseline proc
         .return parse_interface()
     .case T_EXTERN
         .return parse_extern()
+    .case T_DEFINE_GUID
+        .return parse_define_guide()
     .endsw
     ret
 parseline endp

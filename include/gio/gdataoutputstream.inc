@@ -7,12 +7,12 @@ endif
 
 include gio/gfilteroutputstream.inc
 
-define G_TYPE_DATA_OUTPUT_STREAM         <g_data_output_stream_get_type>
+define G_TYPE_DATA_OUTPUT_STREAM         <g_data_output_stream_get_type ()>
 G_DATA_OUTPUT_STREAM macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DATA_OUTPUT_STREAM, GDataOutputStream))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DATA_OUTPUT_STREAM, GDataOutputStream)>
   endm
 G_DATA_OUTPUT_STREAM_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_DATA_OUTPUT_STREAM, GDataOutputStreamClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_DATA_OUTPUT_STREAM, GDataOutputStreamClass)>
   endm
 G_IS_DATA_OUTPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_DATA_OUTPUT_STREAM))>

@@ -8,12 +8,12 @@ endif
 include gio/gio.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_STRING_OBJECT <gtk_string_object_get_type>
+define GTK_TYPE_STRING_OBJECT <gtk_string_object_get_type ()>
 
 gtk_string_object_new proto :ptr
 gtk_string_object_get_string proto :ptr
 
-define GTK_TYPE_STRING_LIST <gtk_string_list_get_type>
+define GTK_TYPE_STRING_LIST <gtk_string_list_get_type ()>
 
 gtk_string_list_new proto :ptr
 gtk_string_list_append proto :ptr, :ptr

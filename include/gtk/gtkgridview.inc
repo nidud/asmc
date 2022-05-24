@@ -7,7 +7,7 @@ endif
 
 include gtk/gtklistbase.inc
 
-define GTK_TYPE_GRID_VIEW <gtk_grid_view_get_type>
+define GTK_TYPE_GRID_VIEW <gtk_grid_view_get_type ()>
 GTK_GRID_VIEW macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GRID_VIEW, GtkGridView))>
   endm

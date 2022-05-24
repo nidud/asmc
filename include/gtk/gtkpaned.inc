@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_PANED <gtk_paned_get_type>
+define GTK_TYPE_PANED <gtk_paned_get_type ()>
 GTK_PANED macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PANED, GtkPaned))>
   endm

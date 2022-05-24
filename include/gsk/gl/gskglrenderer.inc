@@ -3,7 +3,7 @@ define __GSK_GL_RENDERER_H__
 
 include gsk/gskrenderer.inc
 
-define GSK_TYPE_GL_RENDERER <gsk_gl_renderer_get_type>
+define GSK_TYPE_GL_RENDERER <gsk_gl_renderer_get_type ()>
 
 GSK_GL_RENDERER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSK_TYPE_GL_RENDERER, GskGLRenderer))>

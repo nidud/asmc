@@ -8,7 +8,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_ASPECT_FRAME            <gtk_aspect_frame_get_type>
+define GTK_TYPE_ASPECT_FRAME <gtk_aspect_frame_get_type ()>
 GTK_ASPECT_FRAME macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ASPECT_FRAME, GtkAspectFrame))>
   endm

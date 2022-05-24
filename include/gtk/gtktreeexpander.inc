@@ -8,7 +8,7 @@ endif
 include gtk/gtktreelistmodel.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_TREE_EXPANDER <gtk_tree_expander_get_type>
+define GTK_TYPE_TREE_EXPANDER <gtk_tree_expander_get_type ()>
 
 gtk_tree_expander_new proto
 gtk_tree_expander_get_child proto :ptr

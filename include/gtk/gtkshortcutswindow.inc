@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwindow.inc
 
-define GTK_TYPE_SHORTCUTS_WINDOW <gtk_shortcuts_window_get_type>
+define GTK_TYPE_SHORTCUTS_WINDOW <gtk_shortcuts_window_get_type ()>
 GTK_SHORTCUTS_WINDOW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SHORTCUTS_WINDOW, GtkShortcutsWindow))>
   endm

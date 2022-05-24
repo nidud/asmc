@@ -11,7 +11,7 @@ include gdk/gdkevents.inc
 include gdk/gdkseat.inc
 include gdk/gdkmonitor.inc
 
-define GDK_TYPE_DISPLAY              <gdk_display_get_type>
+define GDK_TYPE_DISPLAY <gdk_display_get_type ()>
 GDK_DISPLAY macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DISPLAY, GdkDisplay))>
   endm

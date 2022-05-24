@@ -9,7 +9,7 @@ include gdk/gdkversionmacros.inc
 include gdk/gdkrectangle.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_MONITOR           <gdk_monitor_get_type>
+define GDK_TYPE_MONITOR <gdk_monitor_get_type ()>
 GDK_MONITOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_MONITOR, GdkMonitor))>
   endm

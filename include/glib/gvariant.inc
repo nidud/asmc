@@ -471,7 +471,7 @@ GVariantBuilder	    ENDS
     G_VARIANT_PARSE_ERROR_VALUE_EXPECTED,
     G_VARIANT_PARSE_ERROR_RECURSION
     }
-G_VARIANT_PARSE_ERROR	equ <g_variant_parse_error_quark>
+G_VARIANT_PARSE_ERROR	equ (g_variant_parse_error_quark ())
 
 ;GLIB_DEPRECATED_IN_2_38_FOR(g_variant_parse_error_quark)
 

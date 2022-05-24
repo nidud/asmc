@@ -12,7 +12,7 @@ ifndef __GI_SCANNER__
 ifndef PANGO_DISABLE_DEPRECATED
 define PANGO_RENDER_TYPE_NONE <"PangoRenderNone">
 
-define PANGO_TYPE_ENGINE <pango_engine_get_type>
+define PANGO_TYPE_ENGINE <pango_engine_get_type ()>
 PANGO_ENGINE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_ENGINE, PangoEngine))>
   endm
@@ -43,7 +43,7 @@ pango_engine_get_type proto
 
 define PANGO_ENGINE_TYPE_LANG <"PangoEngineLang">
 
-define PANGO_TYPE_ENGINE_LANG <pango_engine_lang_get_type>
+define PANGO_TYPE_ENGINE_LANG <pango_engine_lang_get_type ()>
 PANGO_ENGINE_LANG macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_ENGINE_LANG, PangoEngineLang))>
   endm
@@ -75,7 +75,7 @@ pango_engine_lang_get_type proto
 
 define PANGO_ENGINE_TYPE_SHAPE <"PangoEngineShape">
 
-define PANGO_TYPE_ENGINE_SHAPE <pango_engine_shape_get_type>
+define PANGO_TYPE_ENGINE_SHAPE <pango_engine_shape_get_type ()>
 PANGO_ENGINE_SHAPE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_ENGINE_SHAPE, PangoEngineShape))>
   endm
@@ -148,7 +148,7 @@ _PANGO_MODULE_ENTRY2 macro prefix,func
   exitm<_PANGO_MODULE_ENTRY3(prefix,func)>
   endm
 _PANGO_MODULE_ENTRY3 macro prefix,func
-  exitm<prefix##_script_engine_##func>
+  exitm<&prefix&_script_engine_&func&>
   endm
 else
 PANGO_MODULE_ENTRY macro func

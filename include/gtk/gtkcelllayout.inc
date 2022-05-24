@@ -10,7 +10,7 @@ include gtk/gtkcellarea.inc
 include gtk/gtkbuildable.inc
 include gtk/gtkbuilder.inc
 
-define GTK_TYPE_CELL_LAYOUT            <gtk_cell_layout_get_type>
+define GTK_TYPE_CELL_LAYOUT <gtk_cell_layout_get_type ()>
 GTK_CELL_LAYOUT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CELL_LAYOUT, GtkCellLayout))>
   endm

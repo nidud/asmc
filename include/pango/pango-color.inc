@@ -10,7 +10,7 @@ green			guint16 ?
 blue			guint16 ?
 PangoColor		ENDS
 
-PANGO_TYPE_COLOR	equ <pango_color_get_type>
+define PANGO_TYPE_COLOR <pango_color_get_type ()>
 
 pango_color_get_type proto __cdecl
 

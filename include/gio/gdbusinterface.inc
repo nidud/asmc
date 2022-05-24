@@ -3,15 +3,15 @@ define __G_DBUS_INTERFACE_H__
 
 include gio/giotypes.inc
 
-define G_TYPE_DBUS_INTERFACE         <g_dbus_interface_get_type>
+define G_TYPE_DBUS_INTERFACE         <g_dbus_interface_get_type ()>
 G_DBUS_INTERFACE macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_INTERFACE, GDBusInterface))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_INTERFACE, GDBusInterface)>
   endm
 G_IS_DBUS_INTERFACE macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_DBUS_INTERFACE))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_DBUS_INTERFACE)>
   endm
 G_DBUS_INTERFACE_GET_IFACE macro o
-  exitm<(G_TYPE_INSTANCE_GET_INTERFACE((o), G_TYPE_DBUS_INTERFACE, GDBusInterfaceIface))>
+  exitm<G_TYPE_INSTANCE_GET_INTERFACE((o), G_TYPE_DBUS_INTERFACE, GDBusInterfaceIface)>
   endm
 
 _GDBusInterfaceIface    struct

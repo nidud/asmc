@@ -8,7 +8,7 @@ endif
 include gtk/gtkfilechooser.inc
 include gtk/gtkbox.inc
 
-define GTK_TYPE_FILE_CHOOSER_WIDGET <gtk_file_chooser_widget_get_type>
+define GTK_TYPE_FILE_CHOOSER_WIDGET <gtk_file_chooser_widget_get_type ()>
 GTK_FILE_CHOOSER_WIDGET macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FILE_CHOOSER_WIDGET, GtkFileChooserWidget))>
   endm

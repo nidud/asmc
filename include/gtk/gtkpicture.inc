@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_PICTURE <gtk_picture_get_type>
+define GTK_TYPE_PICTURE <gtk_picture_get_type ()>
 
 gtk_picture_new proto
 gtk_picture_new_for_paintable proto :ptr

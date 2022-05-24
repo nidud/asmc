@@ -3,8 +3,8 @@ define __GTK_GRID_LAYOUT_H__
 
 include gtk/gtklayoutmanager.inc
 
-define GTK_TYPE_GRID_LAYOUT <gtk_grid_layout_get_type>
-define GTK_TYPE_GRID_LAYOUT_CHILD <gtk_grid_layout_child_get_type>
+define GTK_TYPE_GRID_LAYOUT <gtk_grid_layout_get_type ()>
+define GTK_TYPE_GRID_LAYOUT_CHILD <gtk_grid_layout_child_get_type ()>
 
 gtk_grid_layout_new proto
 

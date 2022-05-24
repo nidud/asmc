@@ -8,7 +8,7 @@ endif
 include glib-object.inc
 include gdk-pixbuf/gdk-pixbuf-core.inc
 
-GDK_TYPE_PIXBUF_ANIMATION equ <gdk_pixbuf_animation_get_type>
+define GDK_TYPE_PIXBUF_ANIMATION <gdk_pixbuf_animation_get_type ()>
 GDK_PIXBUF_ANIMATION macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_PIXBUF_ANIMATION, GdkPixbufAnimation))>
 	endm
@@ -16,7 +16,7 @@ GDK_IS_PIXBUF_ANIMATION macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_PIXBUF_ANIMATION))>
 	endm
 
-GDK_TYPE_PIXBUF_ANIMATION_ITER equ <gdk_pixbuf_animation_iter_get_type>
+define GDK_TYPE_PIXBUF_ANIMATION_ITER equ <gdk_pixbuf_animation_iter_get_type ()>
 GDK_PIXBUF_ANIMATION_ITER macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_PIXBUF_ANIMATION_ITER, GdkPixbufAnimationIter))>
 	endm

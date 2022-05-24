@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_APPLICATION                                  <g_application_get_type>
+define G_TYPE_APPLICATION <g_application_get_type ()>
 G_APPLICATION macro inst
   exitm<G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_APPLICATION, GApplication)>
   endm

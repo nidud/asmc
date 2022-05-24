@@ -25,7 +25,7 @@ include gtk/gtkcelleditable.inc
   GTK_CELL_RENDERER_MODE_EDITABLE
 }
 
-define GTK_TYPE_CELL_RENDERER		  <gtk_cell_renderer_get_type>
+define GTK_TYPE_CELL_RENDERER	<gtk_cell_renderer_get_type ()>
 GTK_CELL_RENDERER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CELL_RENDERER, GtkCellRenderer))>
   endm

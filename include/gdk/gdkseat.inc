@@ -10,7 +10,7 @@ include gdk/gdksurface.inc
 include gdk/gdkevents.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_SEAT  <gdk_seat_get_type>
+define GDK_TYPE_SEAT <gdk_seat_get_type ()>
 GDK_SEAT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GDK_TYPE_SEAT, GdkSeat))>
   endm

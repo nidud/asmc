@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_MAP_LIST_MODEL <gtk_map_list_model_get_type>
+define GTK_TYPE_MAP_LIST_MODEL <gtk_map_list_model_get_type ()>
 
 CALLBACK(GtkMapListModelMapFunc, :gpointer, :gpointer)
 

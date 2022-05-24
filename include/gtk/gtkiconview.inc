@@ -11,7 +11,7 @@ include gtk/gtkcellrenderer.inc
 include gtk/gtkcellarea.inc
 include gtk/gtktooltip.inc
 
-define GTK_TYPE_ICON_VIEW <gtk_icon_view_get_type>
+define GTK_TYPE_ICON_VIEW <gtk_icon_view_get_type ()>
 GTK_ICON_VIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ICON_VIEW, GtkIconView))>
   endm

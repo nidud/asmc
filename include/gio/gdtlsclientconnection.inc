@@ -7,7 +7,7 @@ endif
 
 include gio/gdtlsconnection.inc
 
-define G_TYPE_DTLS_CLIENT_CONNECTION                <g_dtls_client_connection_get_type>
+define G_TYPE_DTLS_CLIENT_CONNECTION                <g_dtls_client_connection_get_type ()>
 G_DTLS_CLIENT_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_DTLS_CLIENT_CONNECTION, GDtlsClientConnection))>
   endm

@@ -8,7 +8,7 @@ endif
 include gdk/gdktypes.inc
 include gdk/gdkdisplay.inc
 
-define GDK_TYPE_DISPLAY_MANAGER              <gdk_display_manager_get_type>
+define GDK_TYPE_DISPLAY_MANAGER <gdk_display_manager_get_type ()>
 GDK_DISPLAY_MANAGER macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DISPLAY_MANAGER, GdkDisplayManager))>
   endm

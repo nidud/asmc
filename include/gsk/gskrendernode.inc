@@ -10,13 +10,13 @@ include gsk/gsktypes.inc
 include gsk/gskglshader.inc
 include gtk/css/gtkcss.inc
 
-define GSK_TYPE_RENDER_NODE (gsk_render_node_get_type ())
+define GSK_TYPE_RENDER_NODE <gsk_render_node_get_type ()>
 
 GSK_IS_RENDER_NODE macro obj
   exitm<((obj) != NULL)>
   endm
 
-define GSK_SERIALIZATION_ERROR <gsk_serialization_error_quark>
+define GSK_SERIALIZATION_ERROR <gsk_serialization_error_quark ()>
 
 ;GskRenderNode           typedef _GskRenderNode
 
@@ -57,31 +57,31 @@ gsk_render_node_serialize proto :ptr
 gsk_render_node_write_to_file proto :ptr, :ptr, :ptr
 gsk_render_node_deserialize proto :ptr, :GskParseErrorFunc, :gpointer
 
-define GSK_TYPE_DEBUG_NODE                     <gsk_debug_node_get_type>
-define GSK_TYPE_COLOR_NODE                     <gsk_color_node_get_type>
-define GSK_TYPE_TEXTURE_NODE                   <gsk_texture_node_get_type>
-define GSK_TYPE_LINEAR_GRADIENT_NODE           <gsk_linear_gradient_node_get_type>
-define GSK_TYPE_REPEATING_LINEAR_GRADIENT_NODE <gsk_repeating_linear_gradient_node_get_type>
-define GSK_TYPE_RADIAL_GRADIENT_NODE           <gsk_radial_gradient_node_get_type>
-define GSK_TYPE_REPEATING_RADIAL_GRADIENT_NODE <gsk_repeating_radial_gradient_node_get_type>
-define GSK_TYPE_CONIC_GRADIENT_NODE            <gsk_conic_gradient_node_get_type>
-define GSK_TYPE_BORDER_NODE                    <gsk_border_node_get_type>
-define GSK_TYPE_INSET_SHADOW_NODE              <gsk_inset_shadow_node_get_type>
-define GSK_TYPE_OUTSET_SHADOW_NODE             <gsk_outset_shadow_node_get_type>
-define GSK_TYPE_CAIRO_NODE                     <gsk_cairo_node_get_type>
-define GSK_TYPE_CONTAINER_NODE                 <gsk_container_node_get_type>
-define GSK_TYPE_TRANSFORM_NODE                 <gsk_transform_node_get_type>
-define GSK_TYPE_OPACITY_NODE                   <gsk_opacity_node_get_type>
-define GSK_TYPE_COLOR_MATRIX_NODE              <gsk_color_matrix_node_get_type>
-define GSK_TYPE_REPEAT_NODE                    <gsk_repeat_node_get_type>
-define GSK_TYPE_CLIP_NODE                      <gsk_clip_node_get_type>
-define GSK_TYPE_ROUNDED_CLIP_NODE              <gsk_rounded_clip_node_get_type>
-define GSK_TYPE_SHADOW_NODE                    <gsk_shadow_node_get_type>
-define GSK_TYPE_BLEND_NODE                     <gsk_blend_node_get_type>
-define GSK_TYPE_CROSS_FADE_NODE                <gsk_cross_fade_node_get_type>
-define GSK_TYPE_TEXT_NODE                      <gsk_text_node_get_type>
-define GSK_TYPE_BLUR_NODE                      <gsk_blur_node_get_type>
-define GSK_TYPE_GL_SHADER_NODE                 <gsk_gl_shader_node_get_type>
+define GSK_TYPE_DEBUG_NODE                     <gsk_debug_node_get_type ()>
+define GSK_TYPE_COLOR_NODE                     <gsk_color_node_get_type ()>
+define GSK_TYPE_TEXTURE_NODE                   <gsk_texture_node_get_type ()>
+define GSK_TYPE_LINEAR_GRADIENT_NODE           <gsk_linear_gradient_node_get_type ()>
+define GSK_TYPE_REPEATING_LINEAR_GRADIENT_NODE <gsk_repeating_linear_gradient_node_get_type ()>
+define GSK_TYPE_RADIAL_GRADIENT_NODE           <gsk_radial_gradient_node_get_type ()>
+define GSK_TYPE_REPEATING_RADIAL_GRADIENT_NODE <gsk_repeating_radial_gradient_node_get_type ()>
+define GSK_TYPE_CONIC_GRADIENT_NODE            <gsk_conic_gradient_node_get_type ()>
+define GSK_TYPE_BORDER_NODE                    <gsk_border_node_get_type ()>
+define GSK_TYPE_INSET_SHADOW_NODE              <gsk_inset_shadow_node_get_type ()>
+define GSK_TYPE_OUTSET_SHADOW_NODE             <gsk_outset_shadow_node_get_type ()>
+define GSK_TYPE_CAIRO_NODE                     <gsk_cairo_node_get_type ()>
+define GSK_TYPE_CONTAINER_NODE                 <gsk_container_node_get_type ()>
+define GSK_TYPE_TRANSFORM_NODE                 <gsk_transform_node_get_type ()>
+define GSK_TYPE_OPACITY_NODE                   <gsk_opacity_node_get_type ()>
+define GSK_TYPE_COLOR_MATRIX_NODE              <gsk_color_matrix_node_get_type ()>
+define GSK_TYPE_REPEAT_NODE                    <gsk_repeat_node_get_type ()>
+define GSK_TYPE_CLIP_NODE                      <gsk_clip_node_get_type ()>
+define GSK_TYPE_ROUNDED_CLIP_NODE              <gsk_rounded_clip_node_get_type ()>
+define GSK_TYPE_SHADOW_NODE                    <gsk_shadow_node_get_type ()>
+define GSK_TYPE_BLEND_NODE                     <gsk_blend_node_get_type ()>
+define GSK_TYPE_CROSS_FADE_NODE                <gsk_cross_fade_node_get_type ()>
+define GSK_TYPE_TEXT_NODE                      <gsk_text_node_get_type ()>
+define GSK_TYPE_BLUR_NODE                      <gsk_blur_node_get_type ()>
+define GSK_TYPE_GL_SHADER_NODE                 <gsk_gl_shader_node_get_type ()>
 
 ;GskDebugNode            typedef _GskDebugNode
 ;GskColorNode            typedef _GskColorNode

@@ -5,7 +5,7 @@ if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-define GTK_TYPE_TEXT_MARK <gtk_text_mark_get_type>
+define GTK_TYPE_TEXT_MARK <gtk_text_mark_get_type ()>
 GTK_TEXT_MARK macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GTK_TYPE_TEXT_MARK, GtkTextMark))>
   endm

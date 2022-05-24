@@ -7,7 +7,7 @@ endif
 
 include gdk/gdk.inc
 
-define GTK_TYPE_FLATTEN_LIST_MODEL <gtk_flatten_list_model_get_type>
+define GTK_TYPE_FLATTEN_LIST_MODEL <gtk_flatten_list_model_get_type ()>
 
 gtk_flatten_list_model_new proto :ptr
 gtk_flatten_list_model_set_model proto :ptr, :ptr

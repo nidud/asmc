@@ -3,7 +3,7 @@ define __GTK_SHORTCUT_LABEL_H__
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_SHORTCUT_LABEL <gtk_shortcut_label_get_type>
+define GTK_TYPE_SHORTCUT_LABEL <gtk_shortcut_label_get_type ()>
 GTK_SHORTCUT_LABEL macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SHORTCUT_LABEL, GtkShortcutLabel))>
   endm

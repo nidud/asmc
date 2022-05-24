@@ -4,7 +4,7 @@ define __G_DEBUG_CONTROLLER_DBUS_H__
 include glib.inc
 include glib-object.inc
 
-define G_TYPE_DEBUG_CONTROLLER_DBUS <g_debug_controller_dbus_get_type>
+define G_TYPE_DEBUG_CONTROLLER_DBUS <g_debug_controller_dbus_get_type ()>
 
 _GDebugControllerDBusClass struct
 parent_class            GObjectClass <>

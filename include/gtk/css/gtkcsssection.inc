@@ -9,7 +9,7 @@ include gio/gio.inc
 include gdk/gdkversionmacros.inc
 include gtk/css/gtkcsslocation.inc
 
-define GTK_TYPE_CSS_SECTION <gtk_css_section_get_type>
+define GTK_TYPE_CSS_SECTION <gtk_css_section_get_type ()>
 
 ;GtkCssSection typedef _GtkCssSection
 

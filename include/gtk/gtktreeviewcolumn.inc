@@ -10,7 +10,7 @@ include gtk/gtktreemodel.inc
 include gtk/gtktreesortable.inc
 include gtk/gtkcellarea.inc
 
-define GTK_TYPE_TREE_VIEW_COLUMN <gtk_tree_view_column_get_type>
+define GTK_TYPE_TREE_VIEW_COLUMN <gtk_tree_view_column_get_type ()>
 GTK_TREE_VIEW_COLUMN macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_VIEW_COLUMN, GtkTreeViewColumn))>
   endm

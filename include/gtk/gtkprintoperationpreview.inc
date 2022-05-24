@@ -8,7 +8,7 @@ endif
 include cairo.inc
 include gtk/gtkprintcontext.inc
 
-define GTK_TYPE_PRINT_OPERATION_PREVIEW <gtk_print_operation_preview_get_type>
+define GTK_TYPE_PRINT_OPERATION_PREVIEW <gtk_print_operation_preview_get_type ()>
 GTK_PRINT_OPERATION_PREVIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_OPERATION_PREVIEW, GtkPrintOperationPreview))>
   endm

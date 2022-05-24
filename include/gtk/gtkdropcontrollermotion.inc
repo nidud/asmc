@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkeventcontroller.inc
 
-define GTK_TYPE_DROP_CONTROLLER_MOTION <gtk_drop_controller_motion_get_type>
+define GTK_TYPE_DROP_CONTROLLER_MOTION <gtk_drop_controller_motion_get_type ()>
 GTK_DROP_CONTROLLER_MOTION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_DROP_CONTROLLER_MOTION, GtkDropControllerMotion))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_LOADABLE_ICON            <g_loadable_icon_get_type>
+define G_TYPE_LOADABLE_ICON            <g_loadable_icon_get_type ()>
 G_LOADABLE_ICON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_LOADABLE_ICON, GLoadableIcon))>
   endm

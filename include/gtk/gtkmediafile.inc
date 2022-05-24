@@ -8,7 +8,7 @@ endif
 include gtk/gtkmediastream.inc
 
 define GTK_MEDIA_FILE_EXTENSION_POINT_NAME <"gtk-media-file">
-define GTK_TYPE_MEDIA_FILE <gtk_media_file_get_type>
+define GTK_TYPE_MEDIA_FILE <gtk_media_file_get_type ()>
 
 
 _GtkMediaFileClass      struct

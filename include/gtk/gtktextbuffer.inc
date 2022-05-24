@@ -11,7 +11,7 @@ include gtk/gtktextiter.inc
 include gtk/gtktextmark.inc
 include gtk/gtktextchild.inc
 
-define GTK_TYPE_TEXT_BUFFER <gtk_text_buffer_get_type>
+define GTK_TYPE_TEXT_BUFFER <gtk_text_buffer_get_type ()>
 GTK_TEXT_BUFFER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_BUFFER, GtkTextBuffer))>
   endm

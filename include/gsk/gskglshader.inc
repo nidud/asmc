@@ -10,11 +10,11 @@ include stdarg.inc
 include gsk/gsktypes.inc
 include gsk/gskenums.inc
 
-define GSK_TYPE_SHADER_ARGS_BUILDER <gsk_shader_args_builder_get_type>
+define GSK_TYPE_SHADER_ARGS_BUILDER <gsk_shader_args_builder_get_type ()>
 
 ;GskShaderArgsBuilder    typedef _GskShaderArgsBuilder
 
-define GSK_TYPE_GL_SHADER <gsk_gl_shader_get_type>
+define GSK_TYPE_GL_SHADER <gsk_gl_shader_get_type ()>
 
 gsk_gl_shader_new_from_bytes proto :ptr
 gsk_gl_shader_new_from_resource proto :ptr

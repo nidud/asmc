@@ -8,7 +8,7 @@ endif
 include gio/gicon.inc
 include gio/gemblem.inc
 
-define G_TYPE_EMBLEMED_ICON         <g_emblemed_icon_get_type>
+define G_TYPE_EMBLEMED_ICON         <g_emblemed_icon_get_type ()>
 G_EMBLEMED_ICON macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_EMBLEMED_ICON, GEmblemedIcon))>
   endm

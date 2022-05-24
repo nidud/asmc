@@ -8,8 +8,8 @@ endif
 include gio/gio.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_TREE_LIST_MODEL <gtk_tree_list_model_get_type>
-define GTK_TYPE_TREE_LIST_ROW <gtk_tree_list_row_get_type>
+define GTK_TYPE_TREE_LIST_MODEL <gtk_tree_list_model_get_type ()>
+define GTK_TYPE_TREE_LIST_ROW <gtk_tree_list_row_get_type ()>
 
 CALLBACK(GtkTreeListModelCreateModelFunc, :gpointer, :gpointer)
 

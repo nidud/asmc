@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkselectionmodel.inc
 
-define GTK_TYPE_STACK <gtk_stack_get_type>
+define GTK_TYPE_STACK <gtk_stack_get_type ()>
 GTK_STACK macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK, GtkStack))>
   endm
@@ -18,7 +18,7 @@ GTK_IS_STACK macro obj
 
 ;GtkStack                typedef _GtkStack
 
-define GTK_TYPE_STACK_PAGE <gtk_stack_page_get_type>
+define GTK_TYPE_STACK_PAGE <gtk_stack_page_get_type ()>
 GTK_STACK_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK_PAGE, GtkStackPage))>
   endm

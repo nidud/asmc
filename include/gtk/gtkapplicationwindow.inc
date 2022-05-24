@@ -8,7 +8,7 @@ endif
 include gtk/gtkwindow.inc
 include gtk/gtkshortcutswindow.inc
 
-define GTK_TYPE_APPLICATION_WINDOW            <gtk_application_window_get_type>
+define GTK_TYPE_APPLICATION_WINDOW <gtk_application_window_get_type ()>
 GTK_APPLICATION_WINDOW macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), GTK_TYPE_APPLICATION_WINDOW, GtkApplicationWindow))>
   endm

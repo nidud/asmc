@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_ROOT <gtk_root_get_type>
+define GTK_TYPE_ROOT <gtk_root_get_type ()>
 
 gtk_root_get_display proto :ptr
 gtk_root_set_focus proto :ptr, :ptr

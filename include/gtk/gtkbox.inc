@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_BOX <gtk_box_get_type>
+define GTK_TYPE_BOX <gtk_box_get_type ()>
 GTK_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BOX, GtkBox))>
   endm

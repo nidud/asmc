@@ -9,7 +9,7 @@ include gdk/gdk.inc
 include gtk/gtkeventcontroller.inc
 include gtk/gtkimcontext.inc
 
-define GTK_TYPE_EVENT_CONTROLLER_KEY <gtk_event_controller_key_get_type>
+define GTK_TYPE_EVENT_CONTROLLER_KEY <gtk_event_controller_key_get_type ()>
 GTK_EVENT_CONTROLLER_KEY macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER_KEY, GtkEventControllerKey))>
   endm

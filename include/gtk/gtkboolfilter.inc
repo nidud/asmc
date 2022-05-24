@@ -8,7 +8,7 @@ endif
 include gtk/gtkexpression.inc
 include gtk/gtkfilter.inc
 
-define GTK_TYPE_BOOL_FILTER <gtk_bool_filter_get_type>
+define GTK_TYPE_BOOL_FILTER <gtk_bool_filter_get_type ()>
 
 gtk_bool_filter_new proto :ptr
 

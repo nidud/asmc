@@ -1052,27 +1052,17 @@ ms64_param proc __ccall private uses rsi rdi rbx r12 r13 pp:dsym_t, index:int_t,
     .if ( esi >= 4 )
 
         mov eax,[rdi].expr.kind
-        .if ( eax == EXPR_CONST ||
-              ( eax == EXPR_ADDR &&
-                !( [rdi].expr.flags & E_INDIRECT ) &&
-                [rdi].expr.mem_type == MT_EMPTY &&
-                [rdi].expr.inst != T_OFFSET ) )
+        .if ( eax == EXPR_CONST || ( eax == EXPR_ADDR && !( [rdi].expr.flags & E_INDIRECT ) &&
+              [rdi].expr.mem_type == MT_EMPTY && [rdi].expr.inst != T_OFFSET ) )
 
             ; v2.06: support 64-bit constants for params > 4
 
             xor ecx,ecx
-            mov edx,dword ptr [rdi].expr.value64[4]
-            mov eax,dword ptr [rdi].expr.value64
-            .if edx == 0
-                cmp eax,LONG_MAX
+            mov rax,[rdi].expr.value64
+            .ifs ( rax > LONG_MAX || rax < LONG_MIN )
+                inc ecx
             .endif
-            setg cl
-            .if edx == -1
-                cmp eax,LONG_MIN
-            .endif
-            setl ch
-
-            .if psize == 8 && ( cl || ch )
+            .if ( psize == 8 && ecx ) 
 
                 AddLineQueueX(
                     " mov dword ptr [rsp+%u], low32(%s)\n"
@@ -1094,7 +1084,16 @@ ms64_param proc __ccall private uses rsi rdi rbx r12 r13 pp:dsym_t, index:int_t,
                 .switch ( eax )
                 .case 1: mov ecx,T_BYTE : .endc
                 .case 2: mov ecx,T_WORD : .endc
-                .case 4: mov ecx,T_DWORD: .endc
+                .case 4
+                    ;
+                    ; added v2.33.57 for vararg
+                    ; - this fails for NULL pointers as the upper value is not cleared
+                    ; - the default size is 4
+                    ;
+                    .if ( [rdi].expr.value || !( [rbx].asym.sflags & S_ISVARARG ) )
+                        mov ecx,T_DWORD
+                        .endc
+                    .endif
                 .default
                     mov ecx,T_QWORD
                     .endc

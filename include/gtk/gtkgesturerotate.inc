@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkgesture.inc
 
-define GTK_TYPE_GESTURE_ROTATE <gtk_gesture_rotate_get_type>
+define GTK_TYPE_GESTURE_ROTATE <gtk_gesture_rotate_get_type ()>
 GTK_GESTURE_ROTATE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_ROTATE, GtkGestureRotate))>
   endm

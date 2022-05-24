@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkimcontext.inc
 
-define GTK_TYPE_IM_MULTICONTEXT <gtk_im_multicontext_get_type>
+define GTK_TYPE_IM_MULTICONTEXT <gtk_im_multicontext_get_type ()>
 GTK_IM_MULTICONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_IM_MULTICONTEXT, GtkIMMulticontext))>
   endm

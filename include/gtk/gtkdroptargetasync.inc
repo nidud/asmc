@@ -11,7 +11,7 @@ include gtk/gtkwidget.inc
 ;GtkDropTargetAsyncClass typedef _GtkDropTargetAsyncClass
 
 
-define GTK_TYPE_DROP_TARGET_ASYNC <gtk_drop_target_async_get_type>
+define GTK_TYPE_DROP_TARGET_ASYNC <gtk_drop_target_async_get_type ()>
 GTK_DROP_TARGET_ASYNC macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_DROP_TARGET_ASYNC, GtkDropTargetAsync))>
   endm

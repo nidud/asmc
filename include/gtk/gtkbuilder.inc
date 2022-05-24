@@ -8,7 +8,7 @@ endif
 include gtk/gtkbuilderscope.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_BUILDER <gtk_builder_get_type>
+define GTK_TYPE_BUILDER <gtk_builder_get_type ()>
 GTK_BUILDER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BUILDER, GtkBuilder))>
   endm
@@ -25,7 +25,7 @@ GTK_BUILDER_GET_CLASS macro obj
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BUILDER, GtkBuilderClass))>
   endm
 
-define GTK_BUILDER_ERROR <gtk_builder_error_quark>
+define GTK_BUILDER_ERROR <gtk_builder_error_quark ()>
 
 ;GtkBuilderClass	 typedef _GtkBuilderClass
 

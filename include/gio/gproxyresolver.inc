@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_PROXY_RESOLVER         <g_proxy_resolver_get_type>
+define G_TYPE_PROXY_RESOLVER         <g_proxy_resolver_get_type ()>
 G_PROXY_RESOLVER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_PROXY_RESOLVER, GProxyResolver))>
   endm

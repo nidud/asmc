@@ -3,7 +3,7 @@ define __G_UNIX_CONNECTION_H__
 
 include gio/gio.inc
 
-define G_TYPE_UNIX_CONNECTION                              <g_unix_connection_get_type>
+define G_TYPE_UNIX_CONNECTION                              <g_unix_connection_get_type ()>
 G_UNIX_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_UNIX_CONNECTION, GUnixConnection))>
   endm

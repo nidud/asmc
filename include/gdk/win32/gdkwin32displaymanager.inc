@@ -14,7 +14,7 @@ GdkWin32DisplayManager  typedef GdkDisplayManager
 endif
 ;GdkWin32DisplayManagerClass typedef _GdkWin32DisplayManagerClass
 
-define GDK_TYPE_WIN32_DISPLAY_MANAGER              <gdk_win32_display_manager_get_type>
+define GDK_TYPE_WIN32_DISPLAY_MANAGER <gdk_win32_display_manager_get_type ()>
 GDK_WIN32_DISPLAY_MANAGER macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_DISPLAY_MANAGER, GdkWin32DisplayManager))>
   endm

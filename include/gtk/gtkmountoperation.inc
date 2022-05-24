@@ -5,7 +5,7 @@ if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-define GTK_TYPE_MOUNT_OPERATION <gtk_mount_operation_get_type>
+define GTK_TYPE_MOUNT_OPERATION <gtk_mount_operation_get_type ()>
 GTK_MOUNT_OPERATION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_MOUNT_OPERATION, GtkMountOperation))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_RESOLVER         <g_resolver_get_type>
+define G_TYPE_RESOLVER         <g_resolver_get_type ()>
 G_RESOLVER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_RESOLVER, GResolver))>
   endm
@@ -81,7 +81,7 @@ g_resolver_lookup_records_async proto :ptr, :ptr, :GResolverRecordType, :ptr, :G
 g_resolver_lookup_records_finish proto :ptr, :ptr, :ptr
 g_resolver_free_targets proto :ptr
 
-define G_RESOLVER_ERROR <g_resolver_error_quark>
+define G_RESOLVER_ERROR <g_resolver_error_quark ()>
 g_resolver_error_quark proto
 
 endif

@@ -13,12 +13,12 @@ include unistd.inc
 include sys/types.inc
 endif
 
-define G_TYPE_CREDENTIALS         <g_credentials_get_type>
+define G_TYPE_CREDENTIALS         <g_credentials_get_type ()>
 G_CREDENTIALS macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CREDENTIALS, GCredentials))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CREDENTIALS, GCredentials)>
   endm
 G_CREDENTIALS_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CREDENTIALS, GCredentialsClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CREDENTIALS, GCredentialsClass)>
   endm
 G_CREDENTIALS_GET_CLASS macro o
   exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CREDENTIALS, GCredentialsClass))>

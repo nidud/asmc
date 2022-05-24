@@ -10,7 +10,7 @@ include gtk/gtksortlistmodel.inc
 include gtk/gtkselectionmodel.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_COLUMN_VIEW <gtk_column_view_get_type>
+define GTK_TYPE_COLUMN_VIEW <gtk_column_view_get_type ()>
 GTK_COLUMN_VIEW macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_COLUMN_VIEW, GtkColumnView))>
   endm

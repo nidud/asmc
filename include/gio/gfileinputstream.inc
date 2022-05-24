@@ -7,7 +7,7 @@ endif
 
 include gio/ginputstream.inc
 
-define G_TYPE_FILE_INPUT_STREAM         <g_file_input_stream_get_type>
+define G_TYPE_FILE_INPUT_STREAM         <g_file_input_stream_get_type ()>
 G_FILE_INPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILE_INPUT_STREAM, GFileInputStream))>
   endm

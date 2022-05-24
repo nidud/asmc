@@ -51,7 +51,7 @@ include gdk/gdktoplevellayout.inc
 }
 
 
-define GDK_TYPE_TOPLEVEL <gdk_toplevel_get_type>
+define GDK_TYPE_TOPLEVEL <gdk_toplevel_get_type ()>
 
 gdk_toplevel_present proto :ptr, :ptr
 gdk_toplevel_minimize proto :ptr

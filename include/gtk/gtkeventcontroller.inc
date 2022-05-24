@@ -11,7 +11,7 @@ include gdk/gdk.inc
 include gtk/gtktypes.inc
 include gtk/gtkenums.inc
 
-define GTK_TYPE_EVENT_CONTROLLER <gtk_event_controller_get_type>
+define GTK_TYPE_EVENT_CONTROLLER <gtk_event_controller_get_type ()>
 GTK_EVENT_CONTROLLER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER, GtkEventController))>
   endm

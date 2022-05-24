@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_SOCKET                                       <g_socket_get_type>
+define G_TYPE_SOCKET                                       <g_socket_get_type ()>
 G_SOCKET macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SOCKET, GSocket))>
   endm

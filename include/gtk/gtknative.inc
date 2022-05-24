@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_NATIVE <gtk_native_get_type>
+define GTK_TYPE_NATIVE <gtk_native_get_type ()>
 
 gtk_native_realize proto :ptr
 gtk_native_unrealize proto :ptr

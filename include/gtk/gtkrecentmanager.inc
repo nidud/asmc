@@ -9,8 +9,8 @@ include gdk-pixbuf/gdk-pixbuf.inc
 include gdk/gdk.inc
 include time.inc
 
-define GTK_TYPE_RECENT_INFO			<gtk_recent_info_get_type>
-define GTK_TYPE_RECENT_MANAGER			<gtk_recent_manager_get_type>
+define GTK_TYPE_RECENT_INFO	<gtk_recent_info_get_type ()>
+define GTK_TYPE_RECENT_MANAGER	<gtk_recent_manager_get_type ()>
 GTK_RECENT_MANAGER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_RECENT_MANAGER, GtkRecentManager))>
   endm
@@ -70,7 +70,7 @@ GtkRecentManagerClass	typedef _GtkRecentManagerClass
 }
 
 
-define GTK_RECENT_MANAGER_ERROR <gtk_recent_manager_error_quark>
+define GTK_RECENT_MANAGER_ERROR <gtk_recent_manager_error_quark ()>
 gtk_recent_manager_error_quark proto
 
 gtk_recent_manager_get_type proto

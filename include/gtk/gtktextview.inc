@@ -9,7 +9,7 @@ include gtk/gtkwidget.inc
 include gtk/gtkimcontext.inc
 include gtk/gtktextbuffer.inc
 
-define GTK_TYPE_TEXT_VIEW <gtk_text_view_get_type>
+define GTK_TYPE_TEXT_VIEW <gtk_text_view_get_type ()>
 GTK_TEXT_VIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_VIEW, GtkTextView))>
   endm

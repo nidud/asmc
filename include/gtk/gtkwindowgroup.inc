@@ -7,7 +7,7 @@ endif
 
 include gtkwindow.inc
 
-define GTK_TYPE_WINDOW_GROUP <gtk_window_group_get_type>
+define GTK_TYPE_WINDOW_GROUP <gtk_window_group_get_type ()>
 GTK_WINDOW_GROUP macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GTK_TYPE_WINDOW_GROUP, GtkWindowGroup))>
   endm

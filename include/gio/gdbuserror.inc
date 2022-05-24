@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_DBUS_ERROR <g_dbus_error_quark>
+define G_DBUS_ERROR <g_dbus_error_quark ()>
 
 g_dbus_error_quark proto
 

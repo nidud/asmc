@@ -3,7 +3,7 @@ define __PANGO_RENDERER_H_
 
 include pango/pango-layout.inc
 
-define PANGO_TYPE_RENDERER <pango_renderer_get_type>
+define PANGO_TYPE_RENDERER <pango_renderer_get_type ()>
 PANGO_RENDERER macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_RENDERER, PangoRenderer))>
   endm

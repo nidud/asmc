@@ -9,7 +9,7 @@ include gdk/gdk.inc
 include glib-object.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_TEXT_CHILD_ANCHOR  <gtk_text_child_anchor_get_type>
+define GTK_TYPE_TEXT_CHILD_ANCHOR <gtk_text_child_anchor_get_type ()>
 GTK_TEXT_CHILD_ANCHOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GTK_TYPE_TEXT_CHILD_ANCHOR, GtkTextChildAnchor))>
   endm

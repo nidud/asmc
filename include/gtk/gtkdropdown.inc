@@ -4,7 +4,7 @@ define __GTK_DROP_DOWN_H__
 include gtk/gtkwidget.inc
 include gtk/gtkexpression.inc
 
-define GTK_TYPE_DROP_DOWN <gtk_drop_down_get_type>
+define GTK_TYPE_DROP_DOWN <gtk_drop_down_get_type ()>
 
 gtk_drop_down_new proto :ptr, :ptr
 gtk_drop_down_new_from_strings proto :ptr

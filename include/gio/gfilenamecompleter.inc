@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_FILENAME_COMPLETER         <g_filename_completer_get_type>
+define G_TYPE_FILENAME_COMPLETER         <g_filename_completer_get_type ()>
 G_FILENAME_COMPLETER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILENAME_COMPLETER, GFilenameCompleter))>
   endm

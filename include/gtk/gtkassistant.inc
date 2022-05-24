@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwindow.inc
 
-define GTK_TYPE_ASSISTANT         <gtk_assistant_get_type>
+define GTK_TYPE_ASSISTANT <gtk_assistant_get_type ()>
 GTK_ASSISTANT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_ASSISTANT, GtkAssistant))>
   endm
@@ -26,7 +26,7 @@ GTK_IS_ASSISTANT macro o
 
 ;GtkAssistant            typedef _GtkAssistant
 
-define GTK_TYPE_ASSISTANT_PAGE (gtk_assistant_page_get_type ())
+define GTK_TYPE_ASSISTANT_PAGE <gtk_assistant_page_get_type ()>
 GTK_ASSISTANT_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ASSISTANT_PAGE, GtkAssistantPage))>
   endm

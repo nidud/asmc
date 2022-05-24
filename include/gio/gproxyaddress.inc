@@ -7,7 +7,7 @@ endif
 
 include gio/ginetsocketaddress.inc
 
-define G_TYPE_PROXY_ADDRESS         <g_proxy_address_get_type>
+define G_TYPE_PROXY_ADDRESS         <g_proxy_address_get_type ()>
 G_PROXY_ADDRESS macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_PROXY_ADDRESS, GProxyAddress))>
   endm

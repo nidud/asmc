@@ -18,7 +18,7 @@ include glib/gerror.inc
     G_CONVERT_ERROR_EMBEDDED_NUL
     }
 
-G_CONVERT_ERROR         equ <g_convert_error_quark>
+G_CONVERT_ERROR         equ (g_convert_error_quark ())
 
 ;GQuark
 g_convert_error_quark proto __cdecl

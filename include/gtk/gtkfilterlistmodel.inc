@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gtk/gtkfilter.inc
 
-define GTK_TYPE_FILTER_LIST_MODEL <gtk_filter_list_model_get_type>
+define GTK_TYPE_FILTER_LIST_MODEL <gtk_filter_list_model_get_type ()>
 
 gtk_filter_list_model_new proto :ptr, :ptr
 gtk_filter_list_model_set_filter proto :ptr, :ptr

@@ -43,7 +43,7 @@ RECORD
 ENDS
 _PangoLayoutLine        ends
 
-define PANGO_TYPE_LAYOUT <pango_layout_get_type>
+define PANGO_TYPE_LAYOUT <pango_layout_get_type ()>
 PANGO_LAYOUT macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_LAYOUT, PangoLayout))>
   endm
@@ -155,7 +155,7 @@ pango_layout_get_lines_readonly proto :ptr
 pango_layout_serialize proto :ptr, :PangoLayoutSerializeFlags
 pango_layout_write_to_file proto :ptr, :PangoLayoutSerializeFlags, :ptr, :ptr
 
-define PANGO_LAYOUT_DESERIALIZE_ERROR <pango_layout_deserialize_error_quark>
+define PANGO_LAYOUT_DESERIALIZE_ERROR <pango_layout_deserialize_error_quark ()>
 
 .enum PangoLayoutDeserializeError {
   PANGO_LAYOUT_DESERIALIZE_INVALID,
@@ -174,7 +174,7 @@ pango_layout_deserialize_error_quark proto
 pango_layout_deserialize proto :ptr, :ptr, :PangoLayoutDeserializeFlags, :ptr
 
 
-define PANGO_TYPE_LAYOUT_LINE <pango_layout_line_get_type>
+define PANGO_TYPE_LAYOUT_LINE <pango_layout_line_get_type ()>
 
 pango_layout_line_get_type proto
 
@@ -196,7 +196,7 @@ pango_layout_line_get_pixel_extents proto :ptr, :ptr, :ptr
 
 ;PangoLayoutIter         typedef _PangoLayoutIter
 
-define PANGO_TYPE_LAYOUT_ITER         <pango_layout_iter_get_type>
+define PANGO_TYPE_LAYOUT_ITER         <pango_layout_iter_get_type ()>
 
 pango_layout_iter_get_type proto
 

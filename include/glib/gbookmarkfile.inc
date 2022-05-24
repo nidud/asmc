@@ -9,7 +9,7 @@ include glib/gdatetime.inc
 include glib/gerror.inc
 include time.inc
 
-G_BOOKMARK_FILE_ERROR	equ <g_bookmark_file_error_quark>
+define G_BOOKMARK_FILE_ERROR (g_bookmark_file_error_quark ())
 
 .enum GBookmarkFileError {
     G_BOOKMARK_FILE_ERROR_INVALID_URI,

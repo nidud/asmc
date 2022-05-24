@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktreemodel.inc
 
-define GTK_TYPE_TREE_MODEL_FILTER <gtk_tree_model_filter_get_type>
+define GTK_TYPE_TREE_MODEL_FILTER <gtk_tree_model_filter_get_type ()>
 GTK_TREE_MODEL_FILTER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_MODEL_FILTER, GtkTreeModelFilter))>
   endm

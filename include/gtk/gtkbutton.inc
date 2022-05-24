@@ -7,21 +7,21 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_BUTTON <gtk_button_get_type>
+define GTK_TYPE_BUTTON <gtk_button_get_type ()>
 GTK_BUTTON macro obj
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_BUTTON, GtkButton))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (obj, GTK_TYPE_BUTTON, GtkButton)>
   endm
 GTK_BUTTON_CLASS macro klass
-  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_BUTTON, GtkButtonClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST (klass, GTK_TYPE_BUTTON, GtkButtonClass)>
   endm
 GTK_IS_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_BUTTON))>
   endm
 GTK_IS_BUTTON_CLASS macro klass
-  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_BUTTON))>
+  exitm<G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_BUTTON)>
   endm
 GTK_BUTTON_GET_CLASS macro obj
-  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BUTTON, GtkButtonClass))>
+  exitm<G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_BUTTON, GtkButtonClass)>
   endm
 
 ;GtkButtonPrivate        typedef _GtkButtonPrivate

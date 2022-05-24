@@ -8,7 +8,14 @@ CC += -nolib -D__PE__
 lib = libc
 !endif
 
-objs = hello-world.obj builder.obj action-namespace.obj sunny.obj
+objs = \
+  hello-world.obj \
+  builder.obj \
+  action-namespace.obj \
+  sunny.obj \
+  plugman.obj \
+  drawing.obj \
+  grid-packing.obj
 
 .asm.obj:
     $(CC) $<

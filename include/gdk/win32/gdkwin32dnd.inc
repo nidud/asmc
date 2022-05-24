@@ -7,7 +7,7 @@ endif
 
 include gdk/gdk.inc
 
-define GDK_TYPE_WIN32_DRAG              <gdk_win32_drag_get_type>
+define GDK_TYPE_WIN32_DRAG <gdk_win32_drag_get_type ()>
 GDK_WIN32_DRAG macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_DRAG, GdkWin32Drag))>
   endm

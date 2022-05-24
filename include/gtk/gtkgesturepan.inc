@@ -8,7 +8,7 @@ endif
 include gtk/gtkenums.inc
 include gtk/gtkgesturedrag.inc
 
-define GTK_TYPE_GESTURE_PAN <gtk_gesture_pan_get_type>
+define GTK_TYPE_GESTURE_PAN <gtk_gesture_pan_get_type ()>
 GTK_GESTURE_PAN macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_PAN, GtkGesturePan))>
   endm

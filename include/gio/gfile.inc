@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-G_TYPE_FILE equ <g_file_get_type>
+define G_TYPE_FILE <g_file_get_type ()>
 G_FILE macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_FILE, GFile))>
 	endm

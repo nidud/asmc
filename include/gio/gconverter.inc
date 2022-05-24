@@ -7,17 +7,16 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_CONVERTER            <g_converter_get_type>
+define G_TYPE_CONVERTER            <g_converter_get_type ()>
 G_CONVERTER macro obj
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_CONVERTER, GConverter))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (obj, G_TYPE_CONVERTER, GConverter)>
   endm
 G_IS_CONVERTER macro obj
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_TYPE_CONVERTER))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE (obj, G_TYPE_CONVERTER)>
   endm
 G_CONVERTER_GET_IFACE macro obj
-  exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_CONVERTER, GConverterIface))>
+  exitm<G_TYPE_INSTANCE_GET_INTERFACE (obj, G_TYPE_CONVERTER, GConverterIface)>
   endm
-
 
 _GConverterIface        struct
 g_iface                 GTypeInterface <>

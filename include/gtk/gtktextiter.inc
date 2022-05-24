@@ -16,7 +16,7 @@ include gtk/gtktexttag.inc
 
 ;GtkTextBuffer           typedef _GtkTextBuffer
 
-define GTK_TYPE_TEXT_ITER <gtk_text_iter_get_type>
+define GTK_TYPE_TEXT_ITER <gtk_text_iter_get_type ()>
 
 _GtkTextIter            struct
 dummy1                  gpointer ?

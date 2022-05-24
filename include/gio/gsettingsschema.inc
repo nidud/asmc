@@ -7,7 +7,7 @@ include glib-object.inc
 ;GSettingsSchema         typedef _GSettingsSchema
 ;GSettingsSchemaKey      typedef _GSettingsSchemaKey
 
-define G_TYPE_SETTINGS_SCHEMA_SOURCE                   <g_settings_schema_source_get_type>
+define G_TYPE_SETTINGS_SCHEMA_SOURCE                   <g_settings_schema_source_get_type ()>
 g_settings_schema_source_get_type proto
 
 g_settings_schema_source_get_default proto
@@ -17,7 +17,7 @@ g_settings_schema_source_new_from_directory proto :ptr, :ptr, :gboolean, :ptr
 g_settings_schema_source_lookup proto :ptr, :ptr, :gboolean
 g_settings_schema_source_list_schemas proto :ptr, :gboolean, :ptr, :ptr
 
-define G_TYPE_SETTINGS_SCHEMA                          <g_settings_schema_get_type>
+define G_TYPE_SETTINGS_SCHEMA                          <g_settings_schema_get_type ()>
 g_settings_schema_get_type proto
 
 g_settings_schema_ref proto :ptr
@@ -29,7 +29,7 @@ g_settings_schema_has_key proto :ptr, :ptr
 g_settings_schema_list_keys proto :ptr
 g_settings_schema_list_children proto :ptr
 
-define G_TYPE_SETTINGS_SCHEMA_KEY                      <g_settings_schema_key_get_type>
+define G_TYPE_SETTINGS_SCHEMA_KEY                      <g_settings_schema_key_get_type ()>
 g_settings_schema_key_get_type proto
 
 g_settings_schema_key_ref proto :ptr

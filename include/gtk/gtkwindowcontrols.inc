@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_WINDOW_CONTROLS <gtk_window_controls_get_type>
+define GTK_TYPE_WINDOW_CONTROLS <gtk_window_controls_get_type ()>
 
 gtk_window_controls_new proto :GtkPackType
 gtk_window_controls_get_side proto :ptr

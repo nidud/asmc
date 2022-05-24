@@ -10,7 +10,7 @@ include gtk/gtkenums.inc
 include gtk/gtktypes.inc
 include gtk/gtkborder.inc
 
-define GTK_TYPE_SCROLLABLE <gtk_scrollable_get_type>
+define GTK_TYPE_SCROLLABLE <gtk_scrollable_get_type ()>
 GTK_SCROLLABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj),     GTK_TYPE_SCROLLABLE, GtkScrollable))>
   endm

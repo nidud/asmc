@@ -3,7 +3,7 @@ define __G_MENU_H__
 
 include gio/gmenumodel.inc
 
-define G_TYPE_MENU          <g_menu_get_type>
+define G_TYPE_MENU          <g_menu_get_type ()>
 G_MENU macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_MENU, GMenu))>
   endm
@@ -11,7 +11,7 @@ G_IS_MENU macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU))>
   endm
 
-define G_TYPE_MENU_ITEM     <g_menu_item_get_type>
+define G_TYPE_MENU_ITEM     <g_menu_item_get_type ()>
 G_MENU_ITEM macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_MENU_ITEM, GMenuItem))>
   endm

@@ -9,7 +9,7 @@ include gdk/gdk.inc
 include gtk/gtktreemodel.inc
 include gtk/gtktreesortable.inc
 
-define GTK_TYPE_LIST_STORE <gtk_list_store_get_type>
+define GTK_TYPE_LIST_STORE <gtk_list_store_get_type ()>
 GTK_LIST_STORE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_STORE, GtkListStore))>
   endm

@@ -9,7 +9,7 @@ include gio/giotypes.inc
 
 define G_DEBUG_CONTROLLER_EXTENSION_POINT_NAME <"gio-debug-controller">
 
-define G_TYPE_DEBUG_CONTROLLER             <g_debug_controller_get_type>
+define G_TYPE_DEBUG_CONTROLLER             <g_debug_controller_get_type ()>
 
 G_DEBUG_CONTROLLER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DEBUG_CONTROLLER, GDebugController))>

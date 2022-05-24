@@ -3,7 +3,7 @@ define __GTK_SHORTCUT_H__
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_SHORTCUT <gtk_shortcut_get_type>
+define GTK_TYPE_SHORTCUT <gtk_shortcut_get_type ()>
 
 gtk_shortcut_new proto :ptr, :ptr
 gtk_shortcut_new_with_arguments proto :ptr, :ptr, :ptr, :vararg

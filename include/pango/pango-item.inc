@@ -35,7 +35,7 @@ analysis                PangoAnalysis <>
 _PangoItem              ends
 PangoItem               typedef _PangoItem
 
-define PANGO_TYPE_ITEM <pango_item_get_type>
+define PANGO_TYPE_ITEM <pango_item_get_type ()>
 
 pango_item_get_type proto
 pango_item_new proto

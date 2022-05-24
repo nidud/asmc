@@ -7,12 +7,12 @@ endif
 
 include gio/gbufferedinputstream.inc
 
-define G_TYPE_DATA_INPUT_STREAM         <g_data_input_stream_get_type>
+define G_TYPE_DATA_INPUT_STREAM         <g_data_input_stream_get_type ()>
 G_DATA_INPUT_STREAM macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DATA_INPUT_STREAM, GDataInputStream))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DATA_INPUT_STREAM, GDataInputStream)>
   endm
 G_DATA_INPUT_STREAM_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_DATA_INPUT_STREAM, GDataInputStreamClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_DATA_INPUT_STREAM, GDataInputStreamClass)>
   endm
 G_IS_DATA_INPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_DATA_INPUT_STREAM))>

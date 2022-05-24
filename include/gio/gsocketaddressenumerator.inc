@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_SOCKET_ADDRESS_ENUMERATOR         <g_socket_address_enumerator_get_type>
+define G_TYPE_SOCKET_ADDRESS_ENUMERATOR         <g_socket_address_enumerator_get_type ()>
 G_SOCKET_ADDRESS_ENUMERATOR macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_SOCKET_ADDRESS_ENUMERATOR, GSocketAddressEnumerator))>
   endm

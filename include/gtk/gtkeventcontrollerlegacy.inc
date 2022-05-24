@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkeventcontroller.inc
 
-define GTK_TYPE_EVENT_CONTROLLER_LEGACY  <gtk_event_controller_legacy_get_type>
+define GTK_TYPE_EVENT_CONTROLLER_LEGACY <gtk_event_controller_legacy_get_type ()>
 GTK_EVENT_CONTROLLER_LEGACY macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER_LEGACY, GtkEventControllerLegacy))>
   endm

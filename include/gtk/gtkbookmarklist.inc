@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_BOOKMARK_LIST <gtk_bookmark_list_get_type>
+define GTK_TYPE_BOOKMARK_LIST <gtk_bookmark_list_get_type ()>
 
 gtk_bookmark_list_new proto :ptr, :ptr
 gtk_bookmark_list_get_filename proto :ptr

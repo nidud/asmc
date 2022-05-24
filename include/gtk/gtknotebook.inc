@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_NOTEBOOK <gtk_notebook_get_type>
+define GTK_TYPE_NOTEBOOK <gtk_notebook_get_type ()>
 GTK_NOTEBOOK macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_NOTEBOOK, GtkNotebook))>
   endm
@@ -15,7 +15,7 @@ GTK_IS_NOTEBOOK macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_NOTEBOOK))>
   endm
 
-define GTK_TYPE_NOTEBOOK_PAGE <gtk_notebook_page_get_type>
+define GTK_TYPE_NOTEBOOK_PAGE <gtk_notebook_page_get_type ()>
 GTK_NOTEBOOK_PAGE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_NOTEBOOK_PAGE, GtkNotebookPage))>
   endm

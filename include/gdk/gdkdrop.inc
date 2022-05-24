@@ -9,7 +9,7 @@ include gdk/gdkenums.inc
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-define GDK_TYPE_DROP              <gdk_drop_get_type>
+define GDK_TYPE_DROP <gdk_drop_get_type ()>
 GDK_DROP macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DROP, GdkDrop))>
   endm

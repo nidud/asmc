@@ -246,7 +246,7 @@ pango_attribute_as_font_features proto :ptr
 ;PangoAttrList           typedef _PangoAttrList
 ;PangoAttrIterator       typedef _PangoAttrIterator
 
-define PANGO_TYPE_ATTR_LIST <pango_attr_list_get_type>
+define PANGO_TYPE_ATTR_LIST <pango_attr_list_get_type ()>
 
 pango_attr_list_get_type proto
 

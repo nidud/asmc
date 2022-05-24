@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_APP_LAUNCH_CONTEXT         <gdk_app_launch_context_get_type>
+define GDK_TYPE_APP_LAUNCH_CONTEXT         <gdk_app_launch_context_get_type ()>
 GDK_APP_LAUNCH_CONTEXT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GDK_TYPE_APP_LAUNCH_CONTEXT, GdkAppLaunchContext))>
   endm

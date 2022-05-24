@@ -8,7 +8,7 @@ endif
 include gsk/gskenums.inc
 include gsk/gsktypes.inc
 
-define GSK_TYPE_TRANSFORM <gsk_transform_get_type>
+define GSK_TYPE_TRANSFORM <gsk_transform_get_type ()>
 
 gsk_transform_get_type proto
 gsk_transform_ref proto :ptr

@@ -8,7 +8,7 @@ endif
 include gtk/gtkmediastream.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_VIDEO <gtk_video_get_type>
+define GTK_TYPE_VIDEO <gtk_video_get_type ()>
 
 gtk_video_new proto
 gtk_video_new_for_media_stream proto :ptr

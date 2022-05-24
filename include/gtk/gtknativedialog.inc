@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwindow.inc
 
-define GTK_TYPE_NATIVE_DIALOG <gtk_native_dialog_get_type>
+define GTK_TYPE_NATIVE_DIALOG <gtk_native_dialog_get_type ()>
 
 _GtkNativeDialogClass   struct
 parent_class            GObjectClass <>

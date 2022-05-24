@@ -12,8 +12,8 @@ include gdk/gdkenums.inc
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-define GDK_TYPE_EVENT	       <gdk_event_get_type>
-define GDK_TYPE_EVENT_SEQUENCE <gdk_event_sequence_get_type>
+define GDK_TYPE_EVENT	<gdk_event_get_type ()>
+define GDK_TYPE_EVENT_SEQUENCE <gdk_event_sequence_get_type ()>
 
 GDK_IS_EVENT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_EVENT))>
@@ -23,7 +23,7 @@ GDK_EVENT macro obj
   endm
 
 GDK_IS_EVENT_TYPE macro event, type
-  exitm<<gdk_event_get_event_type>vent)) == (type))>
+  exitm<gdk_event_get_event_type(vent)) == (type))>
   endm
 
 define GDK_PRIORITY_EVENTS     (G_PRIORITY_DEFAULT)
@@ -37,19 +37,19 @@ define GDK_BUTTON_SECONDARY    (3)
 ;GdkEventSequence	typedef _GdkEventSequence
 ;GdkEvent		typedef _GdkEvent
 
-define GDK_TYPE_BUTTON_EVENT <gdk_button_event_get_type>
-define GDK_TYPE_CROSSING_EVENT <gdk_crossing_event_get_type>
-define GDK_TYPE_DELETE_EVENT <gdk_delete_event_get_type>
-define GDK_TYPE_DND_EVENT <gdk_dnd_event_get_type>
-define GDK_TYPE_FOCUS_EVENT <gdk_focus_event_get_type>
-define GDK_TYPE_GRAB_BROKEN_EVENT <gdk_grab_broken_event_get_type>
-define GDK_TYPE_KEY_EVENT <gdk_key_event_get_type>
-define GDK_TYPE_MOTION_EVENT <gdk_motion_event_get_type>
-define GDK_TYPE_PAD_EVENT <gdk_pad_event_get_type>
-define GDK_TYPE_PROXIMITY_EVENT <gdk_proximity_event_get_type>
-define GDK_TYPE_SCROLL_EVENT <gdk_scroll_event_get_type>
-define GDK_TYPE_TOUCH_EVENT <gdk_touch_event_get_type>
-define GDK_TYPE_TOUCHPAD_EVENT <gdk_touchpad_event_get_type>
+define GDK_TYPE_BUTTON_EVENT <gdk_button_event_get_type ()>
+define GDK_TYPE_CROSSING_EVENT <gdk_crossing_event_get_type ()>
+define GDK_TYPE_DELETE_EVENT <gdk_delete_event_get_type ()>
+define GDK_TYPE_DND_EVENT <gdk_dnd_event_get_type ()>
+define GDK_TYPE_FOCUS_EVENT <gdk_focus_event_get_type ()>
+define GDK_TYPE_GRAB_BROKEN_EVENT <gdk_grab_broken_event_get_type ()>
+define GDK_TYPE_KEY_EVENT <gdk_key_event_get_type ()>
+define GDK_TYPE_MOTION_EVENT <gdk_motion_event_get_type ()>
+define GDK_TYPE_PAD_EVENT <gdk_pad_event_get_type ()>
+define GDK_TYPE_PROXIMITY_EVENT <gdk_proximity_event_get_type ()>
+define GDK_TYPE_SCROLL_EVENT <gdk_scroll_event_get_type ()>
+define GDK_TYPE_TOUCH_EVENT <gdk_touch_event_get_type ()>
+define GDK_TYPE_TOUCHPAD_EVENT <gdk_touchpad_event_get_type ()>
 
 ;GdkButtonEvent		typedef _GdkButtonEvent
 ;GdkCrossingEvent	typedef _GdkCrossingEvent

@@ -7,7 +7,7 @@ if not defined (__GTK_H_INSIDE__) and not defined (GTK_COMPILATION)
 .err <"Only gtk/gtk.h can be included directly.">
 endif
 
-define GTK_TYPE_GESTURE_STYLUS <gtk_gesture_stylus_get_type>
+define GTK_TYPE_GESTURE_STYLUS <gtk_gesture_stylus_get_type ()>
 GTK_GESTURE_STYLUS macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_STYLUS, GtkGestureStylus))>
   endm

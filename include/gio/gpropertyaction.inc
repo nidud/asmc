@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_PROPERTY_ACTION                              <g_property_action_get_type>
+define G_TYPE_PROPERTY_ACTION                              <g_property_action_get_type ()>
 G_PROPERTY_ACTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_PROPERTY_ACTION, GPropertyAction))>
   endm

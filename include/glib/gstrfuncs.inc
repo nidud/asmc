@@ -75,7 +75,8 @@ g_ascii_toupper proto :gchar
 g_ascii_digit_value proto :gchar
 g_ascii_xdigit_value proto :gchar
 
-define	 G_STR_DELIMITERS	<"_- or gt lt .">
+define G_STR_DELIMITERS <"_-|!> !<.">
+
 g_strdelimit proto :ptr, :ptr, :gchar
 g_strcanon proto :ptr, :ptr, :gchar
 g_strerror proto :gint
@@ -116,15 +117,19 @@ g_strcasecmp proto :ptr, :ptr
 g_strncasecmp proto :ptr, :ptr, :guint
 g_strdown proto :ptr
 g_strup proto :ptr
+
 g_strdup proto :ptr
+g_strdup_printf proto :ptr, :vararg
+g_strdup_vprintf proto :ptr, :va_list
 g_strndup proto :ptr, :gsize
 g_strnfill proto :gsize, :gchar
 g_strconcat proto :ptr, :vararg
 g_strjoin proto :ptr, :vararg
 
 g_strcompress proto :ptr
-
 g_strescape proto :ptr, :ptr
+g_memdup proto :gconstpointer, :guint
+g_memdup2 proto :gconstpointer, :gsize
 
 GStrv typedef ptr gchar
 g_strsplit proto :ptr, :ptr, :gint
@@ -133,7 +138,6 @@ g_strjoinv proto :ptr, :ptr
 g_strfreev proto :ptr
 g_strdupv proto :ptr
 g_strv_length proto :ptr
-
 g_stpcpy proto :ptr, :ptr
 g_str_to_ascii proto :ptr, :ptr
 g_str_tokenize_and_fold proto :ptr, :ptr, :ptr

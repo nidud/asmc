@@ -8,7 +8,7 @@ endif
 include gdk/gdkglcontext.inc
 include gdk/gdktexture.inc
 
-define GDK_TYPE_GL_TEXTURE <gdk_gl_texture_get_type>
+define GDK_TYPE_GL_TEXTURE <gdk_gl_texture_get_type ()>
 
 GDK_GL_TEXTURE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_GL_TEXTURE, GdkGLTexture))>

@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkrange.inc
 
-define GTK_TYPE_SCALE <gtk_scale_get_type>
+define GTK_TYPE_SCALE <gtk_scale_get_type ()>
 GTK_SCALE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SCALE, GtkScale))>
   endm

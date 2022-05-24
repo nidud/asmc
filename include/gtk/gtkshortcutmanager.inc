@@ -8,7 +8,7 @@ endif
 include gtk/gtkshortcutcontroller.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_SHORTCUT_MANAGER <gtk_shortcut_manager_get_type>
+define GTK_TYPE_SHORTCUT_MANAGER <gtk_shortcut_manager_get_type ()>
 
 _GtkShortcutManagerInterface struct
 g_iface                 GTypeInterface <>

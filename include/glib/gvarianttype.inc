@@ -36,7 +36,7 @@ define G_VARIANT_TYPE_BYTESTRING_ARRAY <"aay">
 define G_VARIANT_TYPE_VARDICT       <"a{sv}">
 
 ifndef G_DISABLE_CHECKS
- define G_VARIANT_TYPE <g_variant_type_checked_>
+ define G_VARIANT_TYPE (g_variant_type_checked_ ())
 else
  G_VARIANT_TYPE macro type_string
     exitm<(type_string)>

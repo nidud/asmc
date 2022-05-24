@@ -8,12 +8,12 @@ endif
 include gio/giotypes.inc
 
 
-define G_TYPE_DATAGRAM_BASED             <g_datagram_based_get_type>
+define G_TYPE_DATAGRAM_BASED             <g_datagram_based_get_type ()>
 G_DATAGRAM_BASED macro inst
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_DATAGRAM_BASED, GDatagramBased))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_DATAGRAM_BASED, GDatagramBased)>
   endm
 G_IS_DATAGRAM_BASED macro inst
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_DATAGRAM_BASED))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_DATAGRAM_BASED)>
   endm
 G_DATAGRAM_BASED_GET_IFACE macro inst
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_DATAGRAM_BASED, GDatagramBasedInterface))>

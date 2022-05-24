@@ -3,7 +3,7 @@ define __G_UNIX_SOCKET_ADDRESS_H__
 
 include gio/gio.inc
 
-define G_TYPE_UNIX_SOCKET_ADDRESS         <g_unix_socket_address_get_type>
+define G_TYPE_UNIX_SOCKET_ADDRESS         <g_unix_socket_address_get_type ()>
 G_UNIX_SOCKET_ADDRESS macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_UNIX_SOCKET_ADDRESS, GUnixSocketAddress))>
   endm

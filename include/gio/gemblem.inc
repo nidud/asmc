@@ -7,7 +7,7 @@ endif
 
 include gio/gioenums.inc
 
-define G_TYPE_EMBLEM         <g_emblem_get_type>
+define G_TYPE_EMBLEM         <g_emblem_get_type ()>
 G_EMBLEM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_EMBLEM, GEmblem))>
   endm

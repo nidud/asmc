@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkdialog.inc
 
-define GTK_TYPE_FONT_CHOOSER_DIALOG <gtk_font_chooser_dialog_get_type>
+define GTK_TYPE_FONT_CHOOSER_DIALOG <gtk_font_chooser_dialog_get_type ()>
 GTK_FONT_CHOOSER_DIALOG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FONT_CHOOSER_DIALOG, GtkFontChooserDialog))>
   endm

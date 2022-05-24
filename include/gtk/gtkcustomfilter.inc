@@ -9,7 +9,7 @@ include gtk/gtkfilter.inc
 
 CALLBACK(GtkCustomFilterFunc, :gpointer, :gpointer)
 
-define GTK_TYPE_CUSTOM_FILTER <gtk_custom_filter_get_type>
+define GTK_TYPE_CUSTOM_FILTER <gtk_custom_filter_get_type ()>
 gtk_custom_filter_new proto :GtkCustomFilterFunc, :gpointer, :GDestroyNotify
 gtk_custom_filter_set_filter_func proto :ptr, :GtkCustomFilterFunc, :gpointer, :GDestroyNotify
 

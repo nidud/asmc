@@ -9,7 +9,7 @@ define __GIO_GIO_H_INSIDE__
 include gio/giotypes.inc
 undef __GIO_GIO_H_INSIDE__
 
-define G_TYPE_SETTINGS_BACKEND                             <g_settings_backend_get_type>
+define G_TYPE_SETTINGS_BACKEND                             <g_settings_backend_get_type ()>
 G_SETTINGS_BACKEND macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SETTINGS_BACKEND, GSettingsBackend))>
   endm

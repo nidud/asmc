@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 include gio/ginitable.inc
 
-define G_TYPE_ASYNC_INITABLE            <g_async_initable_get_type>
+define G_TYPE_ASYNC_INITABLE            <g_async_initable_get_type ()>
 G_ASYNC_INITABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_ASYNC_INITABLE, GAsyncInitable))>
   endm
@@ -19,7 +19,7 @@ G_ASYNC_INITABLE_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_ASYNC_INITABLE, GAsyncInitableIface))>
   endm
 G_TYPE_IS_ASYNC_INITABLE macro type
-  exitm<<g_type_is_a>ype), G_TYPE_ASYNC_INITABLE))>
+  exitm<g_type_is_aype), G_TYPE_ASYNC_INITABLE))>
   endm
 
 _GAsyncInitableIface    struct

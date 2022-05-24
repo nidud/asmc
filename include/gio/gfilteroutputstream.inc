@@ -7,7 +7,7 @@ endif
 
 include gio/goutputstream.inc
 
-define G_TYPE_FILTER_OUTPUT_STREAM         <g_filter_output_stream_get_type>
+define G_TYPE_FILTER_OUTPUT_STREAM         <g_filter_output_stream_get_type ()>
 G_FILTER_OUTPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILTER_OUTPUT_STREAM, GFilterOutputStream))>
   endm

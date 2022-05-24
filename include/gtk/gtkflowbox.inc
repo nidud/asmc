@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_FLOW_BOX <gtk_flow_box_get_type>
+define GTK_TYPE_FLOW_BOX <gtk_flow_box_get_type ()>
 GTK_FLOW_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX, GtkFlowBox))>
   endm
@@ -17,7 +17,7 @@ GTK_IS_FLOW_BOX macro obj
 
 ;GtkFlowBox              typedef _GtkFlowBox
 
-define GTK_TYPE_FLOW_BOX_CHILD <gtk_flow_box_child_get_type>
+define GTK_TYPE_FLOW_BOX_CHILD <gtk_flow_box_child_get_type ()>
 GTK_FLOW_BOX_CHILD macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FLOW_BOX_CHILD, GtkFlowBoxChild))>
   endm

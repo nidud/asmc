@@ -9,7 +9,7 @@ include gio/gio.inc
 include gtk/gtkwidget.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_SORT_LIST_MODEL <gtk_sort_list_model_get_type>
+define GTK_TYPE_SORT_LIST_MODEL <gtk_sort_list_model_get_type ()>
 
 gtk_sort_list_model_new proto :ptr, :ptr
 gtk_sort_list_model_set_sorter proto :ptr, :ptr

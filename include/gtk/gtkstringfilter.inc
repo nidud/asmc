@@ -14,7 +14,7 @@ include gtk/gtkfilter.inc
   GTK_STRING_FILTER_MATCH_MODE_PREFIX
 }
 
-define GTK_TYPE_STRING_FILTER <gtk_string_filter_get_type>
+define GTK_TYPE_STRING_FILTER <gtk_string_filter_get_type ()>
 
 gtk_string_filter_new proto :ptr
 gtk_string_filter_get_search proto :ptr

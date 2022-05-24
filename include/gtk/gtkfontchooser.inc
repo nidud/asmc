@@ -17,7 +17,7 @@ CALLBACK(GtkFontFilterFunc, :ptr, :ptr, :gpointer)
   GTK_FONT_CHOOSER_LEVEL_FEATURES   = 1 shl 3
 }
 
-define GTK_TYPE_FONT_CHOOSER <gtk_font_chooser_get_type>
+define GTK_TYPE_FONT_CHOOSER <gtk_font_chooser_get_type ()>
 GTK_FONT_CHOOSER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FONT_CHOOSER, GtkFontChooser))>
   endm

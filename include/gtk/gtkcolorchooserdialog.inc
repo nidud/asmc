@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkdialog.inc
 
-define GTK_TYPE_COLOR_CHOOSER_DIALOG              <gtk_color_chooser_dialog_get_type>
+define GTK_TYPE_COLOR_CHOOSER_DIALOG <gtk_color_chooser_dialog_get_type ()>
 GTK_COLOR_CHOOSER_DIALOG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_COLOR_CHOOSER_DIALOG, GtkColorChooserDialog))>
   endm

@@ -8,7 +8,7 @@ endif
 include glib-object.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_FILE_FILTER <gtk_file_filter_get_type>
+define GTK_TYPE_FILE_FILTER <gtk_file_filter_get_type ()>
 GTK_FILE_FILTER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FILE_FILTER, GtkFileFilter))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkscalebutton.inc
 
-define GTK_TYPE_VOLUME_BUTTON <gtk_volume_button_get_type>
+define GTK_TYPE_VOLUME_BUTTON <gtk_volume_button_get_type ()>
 GTK_VOLUME_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_VOLUME_BUTTON, GtkVolumeButton))>
   endm

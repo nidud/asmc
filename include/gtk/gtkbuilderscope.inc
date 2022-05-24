@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_BUILDER_SCOPE <gtk_builder_scope_get_type>
+define GTK_TYPE_BUILDER_SCOPE <gtk_builder_scope_get_type ()>
 
 .enum GtkBuilderClosureFlags {
   GTK_BUILDER_CLOSURE_SWAPPED = (1 shl 0)
@@ -24,7 +24,7 @@ _GtkBuilderCScopeClass  struct
 parent_class            GObjectClass <>
 _GtkBuilderCScopeClass  ends
 
-define GTK_TYPE_BUILDER_CSCOPE <gtk_builder_cscope_get_type>
+define GTK_TYPE_BUILDER_CSCOPE <gtk_builder_cscope_get_type ()>
 
 gtk_builder_cscope_new proto
 gtk_builder_cscope_add_callback_symbol proto :ptr, :ptr, :GCallback

@@ -20,7 +20,7 @@ n_infos                 sdword ?
 _GFileAttributeInfoList ends
 GFileAttributeInfoList  typedef _GFileAttributeInfoList
 
-define G_TYPE_FILE_ATTRIBUTE_INFO_LIST <g_file_attribute_info_list_get_type>
+define G_TYPE_FILE_ATTRIBUTE_INFO_LIST <g_file_attribute_info_list_get_type ()>
 g_file_attribute_info_list_get_type proto
 
 g_file_attribute_info_list_new proto

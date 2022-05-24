@@ -4,7 +4,7 @@ define __GTK_ACTIONABLE_H__
 include glib-object.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_ACTIONABLE <gtk_actionable_get_type>
+define GTK_TYPE_ACTIONABLE <gtk_actionable_get_type ()>
 GTK_ACTIONABLE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), GTK_TYPE_ACTIONABLE, GtkActionable))>
   endm

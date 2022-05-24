@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_FILE_INFO         <g_file_info_get_type>
+define G_TYPE_FILE_INFO         <g_file_info_get_type ()>
 G_FILE_INFO macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILE_INFO, GFileInfo))>
   endm
@@ -196,7 +196,7 @@ g_file_info_set_creation_date_time proto :ptr, :ptr
 g_file_info_set_symlink_target proto :ptr, :ptr
 g_file_info_set_sort_order proto :ptr, :gint32
 
-define G_TYPE_FILE_ATTRIBUTE_MATCHER <g_file_attribute_matcher_get_type>
+define G_TYPE_FILE_ATTRIBUTE_MATCHER <g_file_attribute_matcher_get_type ()>
 g_file_attribute_matcher_get_type proto
 
 g_file_attribute_matcher_new proto :ptr

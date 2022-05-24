@@ -7,21 +7,21 @@ endif
 
 include gio/gconverter.inc
 
-define G_TYPE_CHARSET_CONVERTER         <g_charset_converter_get_type>
+define G_TYPE_CHARSET_CONVERTER         <g_charset_converter_get_type ()>
 G_CHARSET_CONVERTER macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CHARSET_CONVERTER, GCharsetConverter))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (o, G_TYPE_CHARSET_CONVERTER, GCharsetConverter)>
   endm
 G_CHARSET_CONVERTER_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CHARSET_CONVERTER, GCharsetConverterClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST(k, G_TYPE_CHARSET_CONVERTER, GCharsetConverterClass)>
   endm
 G_IS_CHARSET_CONVERTER macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_CHARSET_CONVERTER))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_CHARSET_CONVERTER)>
   endm
 G_IS_CHARSET_CONVERTER_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_CHARSET_CONVERTER))>
+  exitm<G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_CHARSET_CONVERTER)>
   endm
 G_CHARSET_CONVERTER_GET_CLASS macro o
-  exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CHARSET_CONVERTER, GCharsetConverterClass))>
+  exitm<G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CHARSET_CONVERTER, GCharsetConverterClass)>
   endm
 
 _GCharsetConverterClass struct

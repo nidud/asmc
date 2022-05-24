@@ -3,7 +3,7 @@ define __GTKCENTERLAYOUT_INC
 
 include gtk/gtklayoutmanager.inc
 
-define GTK_TYPE_CENTER_LAYOUT <gtk_center_layout_get_type>
+define GTK_TYPE_CENTER_LAYOUT <gtk_center_layout_get_type ()>
 
 gtk_center_layout_new proto
 gtk_center_layout_set_orientation proto :ptr, :GtkOrientation

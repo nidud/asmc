@@ -3,7 +3,7 @@ define __GTK_REVEALER_H__
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_REVEALER <gtk_revealer_get_type>
+define GTK_TYPE_REVEALER <gtk_revealer_get_type ()>
 GTK_REVEALER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_REVEALER, GtkRevealer))>
   endm

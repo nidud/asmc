@@ -14,7 +14,7 @@ include glib/gutils.inc
 
 CALLBACKC(GThreadFunc, :gpointer)
 
-G_THREAD_ERROR		equ <g_thread_error_quark>
+G_THREAD_ERROR		equ (g_thread_error_quark ())
 
 g_thread_error_quark proto __cdecl
 

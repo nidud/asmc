@@ -8,7 +8,7 @@ endif
 
 include gtk/gtktogglebutton.inc
 
-define GTK_TYPE_CHECK_BUTTON                  <gtk_check_button_get_type>
+define GTK_TYPE_CHECK_BUTTON <gtk_check_button_get_type ()>
 GTK_CHECK_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CHECK_BUTTON, GtkCheckButton))>
   endm

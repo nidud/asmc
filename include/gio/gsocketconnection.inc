@@ -9,7 +9,7 @@ include glib-object.inc
 include gio/gsocket.inc
 include gio/giostream.inc
 
-define G_TYPE_SOCKET_CONNECTION                            <g_socket_connection_get_type>
+define G_TYPE_SOCKET_CONNECTION                            <g_socket_connection_get_type ()>
 G_SOCKET_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SOCKET_CONNECTION, GSocketConnection))>
   endm

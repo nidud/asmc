@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_LIST_STORE <g_list_store_get_type>
+define G_TYPE_LIST_STORE <g_list_store_get_type ()>
 
 g_list_store_new proto :GType
 g_list_store_insert proto :ptr, :guint, :gpointer

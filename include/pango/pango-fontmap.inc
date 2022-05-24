@@ -5,7 +5,7 @@ include pango/pango-types.inc
 include pango/pango-font.inc
 include pango/pango-fontset.inc
 
-define PANGO_TYPE_FONT_MAP  <pango_font_map_get_type>
+define PANGO_TYPE_FONT_MAP  <pango_font_map_get_type ()>
 PANGO_FONT_MAP macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT_MAP, PangoFontMap))>
   endm

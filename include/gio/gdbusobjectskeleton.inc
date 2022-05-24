@@ -3,7 +3,7 @@ define __G_DBUS_OBJECT_SKELETON_H__
 
 include gio/giotypes.inc
 
-define G_TYPE_DBUS_OBJECT_SKELETON         <g_dbus_object_skeleton_get_type>
+define G_TYPE_DBUS_OBJECT_SKELETON         <g_dbus_object_skeleton_get_type ()>
 G_DBUS_OBJECT_SKELETON macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_OBJECT_SKELETON, GDBusObjectSkeleton))>
   endm

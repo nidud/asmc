@@ -5,7 +5,7 @@ include gtk/gtktypes.inc
 include gtk/gtkenums.inc
 include gtk/gtktypebuiltins.inc
 
-define GTK_TYPE_CONSTRAINT_GUIDE <gtk_constraint_guide_get_type>
+define GTK_TYPE_CONSTRAINT_GUIDE <gtk_constraint_guide_get_type ()>
 
 gtk_constraint_guide_new proto
 

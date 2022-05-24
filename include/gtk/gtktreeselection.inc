@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktreeview.inc
 
-define GTK_TYPE_TREE_SELECTION <gtk_tree_selection_get_type>
+define GTK_TYPE_TREE_SELECTION <gtk_tree_selection_get_type ()>
 GTK_TREE_SELECTION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_SELECTION, GtkTreeSelection))>
   endm

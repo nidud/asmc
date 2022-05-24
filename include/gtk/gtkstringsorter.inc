@@ -8,7 +8,7 @@ endif
 include gtk/gtkexpression.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_STRING_SORTER <gtk_string_sorter_get_type>
+define GTK_TYPE_STRING_SORTER <gtk_string_sorter_get_type ()>
 
 gtk_string_sorter_new proto :ptr
 

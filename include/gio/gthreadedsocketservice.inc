@@ -7,7 +7,7 @@ endif
 
 include gio/gsocketservice.inc
 
-define G_TYPE_THREADED_SOCKET_SERVICE                      <g_threaded_socket_service_get_type>
+define G_TYPE_THREADED_SOCKET_SERVICE                      <g_threaded_socket_service_get_type ()>
 G_THREADED_SOCKET_SERVICE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_THREADED_SOCKET_SERVICE, GThreadedSocketService))>
   endm

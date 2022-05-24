@@ -9,7 +9,7 @@ include gtk/gtkpapersize.inc
 
 ;GtkPrintSettings        typedef _GtkPrintSettings
 
-define GTK_TYPE_PRINT_SETTINGS <gtk_print_settings_get_type>
+define GTK_TYPE_PRINT_SETTINGS <gtk_print_settings_get_type ()>
 GTK_PRINT_SETTINGS macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_SETTINGS, GtkPrintSettings))>
   endm

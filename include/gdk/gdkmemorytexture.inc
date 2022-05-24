@@ -16,7 +16,7 @@ else
 .err <"Unknown byte order for GDK_MEMORY_DEFAULT">
 endif
 
-define GDK_TYPE_MEMORY_TEXTURE <gdk_memory_texture_get_type>
+define GDK_TYPE_MEMORY_TEXTURE <gdk_memory_texture_get_type ()>
 
 GDK_MEMORY_TEXTURE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_MEMORY_TEXTURE, GdkMemoryTexture))>

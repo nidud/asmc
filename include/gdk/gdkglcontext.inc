@@ -13,7 +13,7 @@ include gdk/gdktypes.inc
   GDK_GL_API_GLES = 1 shl 1
 }
 
-define GDK_TYPE_GL_CONTEXT             <gdk_gl_context_get_type>
+define GDK_TYPE_GL_CONTEXT <gdk_gl_context_get_type ()>
 GDK_GL_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_GL_CONTEXT, GdkGLContext))>
   endm
@@ -21,7 +21,7 @@ GDK_IS_GL_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_GL_CONTEXT))>
   endm
 
-define GDK_GL_ERROR       <gdk_gl_error_quark>
+define GDK_GL_ERROR <gdk_gl_error_quark ()>
 
 gdk_gl_error_quark proto
 gdk_gl_context_get_type proto

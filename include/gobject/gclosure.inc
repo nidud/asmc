@@ -1,149 +1,85 @@
 ifndef __G_CLOSURE_H__
 define __G_CLOSURE_H__
-if NOT defined (__GLIB_GOBJECT_H_INSIDE__) AND NOT defined (GOBJECT_COMPILATION)
+
+if not defined (__GLIB_GOBJECT_H_INSIDE__) and not defined (GOBJECT_COMPILATION)
 .err <"Only glib-object.h can be included directly.">
 endif
 
 include gobject/gtype.inc
 
 G_CLOSURE_NEEDS_MARSHAL macro closure
-	exitm<(closure.marshal == NULL)>
-	endm
+  exitm<(( (closure)).marshal eq NULL)>
+  endm
+
 G_CLOSURE_N_NOTIFIERS macro l
-	exitm<.err>
-	endm
+  exitm<(((l).n_guards shl 1) + (l).n_fnotifiers + (l).n_inotifiers)>
+  endm
 
 G_CCLOSURE_SWAP_DATA macro cclosure
-	exitm<.err>
-	endm
+  exitm<(( (cclosure)).derivative_flag)>
+  endm
 
 G_CALLBACK macro f
-	exitm<addr f>
-	endm
-
-CALLBACKC(GCallback)
-CALLBACKC(GClosureNotify, :gpointer, :ptr GClosure)
-CALLBACKC(GClosureMarshal, :ptr GClosure, :ptr GValue, :guint, :ptr GValue, :gpointer, :gpointer)
-CALLBACKC(GVaClosureMarshal, :ptr GClosure, :ptr GValue, :gpointer, :va_list, :gpointer, :int_t, :ptr GType)
+  exitm<addr f>
+  endm
 
 
-GClosureNotifyData	STRUC
-data			gpointer ?
-notify			GClosureNotify ?
-GClosureNotifyData	ENDS
+CALLBACK(GCallback,)
+CALLBACK(GClosureNotify, :gpointer, :ptr)
+CALLBACK(GClosureMarshal, :ptr, :ptr, :guint, :ptr, :gpointer, :gpointer)
+CALLBACK(GVaClosureMarshal, :ptr, :ptr, :gpointer, :va_list, :gpointer, :sdword, :ptr)
 
-GClosure		STRUC
+_GClosureNotifyData     struct
+data                    gpointer ?
+notify                  GClosureNotify ?
+_GClosureNotifyData     ends
+GClosureNotifyData      typedef _GClosureNotifyData
+
+_GClosure               struct
 RECORD
- ref_count		dd : 15 ?
- meta_marshal_nouse	dd : 1 ?
- n_guards		dd : 1 ?
- n_fnotifiers		dd : 2 ?
- n_inotifiers		dd : 8 ?
- in_inotify		dd : 1 ?
- floating		dd : 1 ?
- derivative_flag	dd : 1 ?
- in_marshal		dd : 1 ?
- is_invalid		dd : 1 ?
+ref_count               guint : 15 ?
+meta_marshal_nouse      guint :  1 ?
+n_guards                guint :  1 ?
+n_fnotifiers            guint :  2 ?
+n_inotifiers            guint :  8 ?
+in_inotify              guint :  1 ?
+floating                guint :  1 ?
+derivative_flag         guint :  1 ?
+in_marshal              guint :  1 ?
+is_invalid              guint :  1 ?
 ENDS
-marshal			proc :ptr GClosure, :ptr GValue, :guint, :ptr GValue, :gpointer, :gpointer
-GClosure		ENDS
+marshal                 proc :ptr, :ptr, :guint, :ptr, :gpointer, :gpointer
+data                    gpointer ?
+notifiers               ptr GClosureNotifyData ?
+_GClosure               ends
+GClosure                typedef _GClosure
 
-GCClosure		STRUC
-closure			GClosure <>
-callback		gpointer ?
-GCClosure		ENDS
+_GCClosure              struct
+closure                 GClosure <>
+callback                gpointer ?
+_GCClosure              ends
+GCClosure               typedef _GCClosure
 
-;GClosure*
-g_cclosure_new proto __cdecl \
-	 callback_func: GCallback,
-	     user_data: gpointer,
-	  destroy_data: GClosureNotify
+g_cclosure_new proto :GCallback, :gpointer, :GClosureNotify
+g_cclosure_new_swap proto :GCallback, :gpointer, :GClosureNotify
+g_signal_type_cclosure_new proto :GType, :guint
 
-g_cclosure_new_swap proto __cdecl \
-	 callback_func: GCallback,
-	     user_data: gpointer,
-	  destroy_data: GClosureNotify
+g_closure_ref proto :ptr
+g_closure_sink proto :ptr
+g_closure_unref proto :ptr
 
-g_signal_type_cclosure_new proto __cdecl \
-		 itype: GType,
-	 struct_offset: guint
+g_closure_new_simple proto :guint, :gpointer
+g_closure_add_finalize_notifier proto :ptr, :gpointer, :GClosureNotify
+g_closure_remove_finalize_notifier proto :ptr, :gpointer, :GClosureNotify
+g_closure_add_invalidate_notifier proto :ptr, :gpointer, :GClosureNotify
+g_closure_remove_invalidate_notifier proto :ptr, :gpointer, :GClosureNotify
+g_closure_add_marshal_guards proto :ptr, :gpointer, :GClosureNotify, :gpointer, :GClosureNotify
+g_closure_set_marshal proto :ptr, :GClosureMarshal
+g_closure_set_meta_marshal proto :ptr, :gpointer, :GClosureMarshal
+g_closure_invalidate proto :ptr
+g_closure_invoke proto :ptr, :ptr, :guint, :ptr, :gpointer
 
-
-g_closure_ref proto __cdecl \
-	       closure: ptr GClosure
-
-g_closure_sink proto __cdecl \
-	       closure: ptr GClosure
-
-g_closure_unref proto __cdecl \
-	       closure: ptr GClosure
-
-g_closure_new_simple proto __cdecl \
-	sizeof_closure: guint,
-		  data: gpointer
-
-g_closure_add_finalize_notifier proto __cdecl \
-	       closure: ptr GClosure,
-	   notify_data: gpointer,
-	   notify_func: GClosureNotify
-
-g_closure_remove_finalize_notifier proto __cdecl \
-	       closure: ptr GClosure,
-	   notify_data: gpointer,
-	   notify_func: GClosureNotify
-
-g_closure_add_invalidate_notifier proto __cdecl \
-	       closure: ptr GClosure,
-	   notify_data: gpointer,
-	   notify_func: GClosureNotify
-
-g_closure_remove_invalidate_notifier proto __cdecl \
-	       closure: ptr GClosure,
-	   notify_data: gpointer,
-	   notify_func: GClosureNotify
-
-g_closure_add_marshal_guards proto __cdecl \
-	       closure: ptr GClosure,
-      pre_marshal_data: gpointer,
-    pre_marshal_notify: GClosureNotify,
-     post_marshal_data: gpointer,
-   post_marshal_notify: GClosureNotify
-
-g_closure_set_marshal proto __cdecl \
-	       closure: ptr GClosure,
-	       marshal: GClosureMarshal
-
-g_closure_set_meta_marshal proto __cdecl \
-	       closure: ptr GClosure,
-	  marshal_data: gpointer,
-	  meta_marshal: GClosureMarshal
-
-g_closure_invalidate proto __cdecl \
-	       closure: ptr GClosure
-
-g_closure_invoke proto __cdecl \
-	       closure: ptr GClosure,
-	  return_value: ptr GValue,
-	n_param_values: guint,
-	  param_values: ptr GValue,
-       invocation_hint: gpointer
-
-g_cclosure_marshal_generic proto __cdecl \
-	       closure: ptr GClosure,
-	 return_gvalue: ptr GValue,
-	n_param_values: guint,
-	  param_values: ptr GValue,
-       invocation_hint: gpointer,
-	  marshal_data: gpointer
-
-
-g_cclosure_marshal_generic_va proto __cdecl \
-	       closure: ptr GClosure,
-	  return_value: ptr GValue,
-	      instance: gpointer,
-	     args_list: va_list,
-	  marshal_data: gpointer,
-	      n_params: int_t,
-	   param_types: ptr GType
+g_cclosure_marshal_generic proto :ptr, :ptr, :guint, :ptr, :gpointer, :gpointer
+g_cclosure_marshal_generic_va proto :ptr, :ptr, :gpointer, :va_list, :gpointer, :sdword, :ptr
 
 endif

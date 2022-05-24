@@ -13,12 +13,12 @@ define G_MENU_ATTRIBUTE_ICON <"icon">
 define G_MENU_LINK_SUBMENU <"submenu">
 define G_MENU_LINK_SECTION <"section">
 
-G_TYPE_MENU_MODEL equ <g_menu_model_get_type>
+define G_TYPE_MENU_MODEL <g_menu_model_get_type ()>
 G_MENU_MODEL macro inst
 	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_MODEL, GMenuModel)>
 	endm
 G_MENU_MODEL_CLASS macro class
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((class), G_TYPE_MENU_MODEL, GMenuModelClass))>
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_MODEL, GMenuModelClass)>
 	endm
 G_IS_MENU_MODEL macro inst
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_MODEL))>
@@ -27,7 +27,7 @@ G_IS_MENU_MODEL_CLASS macro class
 	exitm<(G_TYPE_CHECK_CLASS_TYPE ((class), G_TYPE_MENU_MODEL))>
 	endm
 G_MENU_MODEL_GET_CLASS macro inst
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_MENU_MODEL, GMenuModelClass))>
+	exitm<G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_MENU_MODEL, GMenuModelClass)>
 	endm
 
 GMenuModel		STRUC
@@ -100,22 +100,21 @@ g_menu_model_items_changed proto __cdecl \
 
 
 
-G_TYPE_MENU_ATTRIBUTE_ITER equ <g_menu_attribute_iter_get_type>
+define G_TYPE_MENU_ATTRIBUTE_ITER <g_menu_attribute_iter_get_type ()>
 G_MENU_ATTRIBUTE_ITER macro inst
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIter))>
+	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIter)>
 	endm
-
 G_MENU_ATTRIBUTE_ITER_CLASS macro class
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((class), G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass))>
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass)>
 	endm
 G_IS_MENU_ATTRIBUTE_ITER macro inst
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_ATTRIBUTE_ITER))>
 	endm
 G_IS_MENU_ATTRIBUTE_ITER_CLASS macro class
-	exitm<(G_TYPE_CHECK_CLASS_TYPE ((class), G_TYPE_MENU_ATTRIBUTE_ITER))>
+	exitm<G_TYPE_CHECK_CLASS_TYPE (class, G_TYPE_MENU_ATTRIBUTE_ITER)>
 	endm
 G_MENU_ATTRIBUTE_ITER_GET_CLASS macro inst
-	exitm<(G_TYPE_INSTANCE_GET_CLASS ((inst), G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass))>
+	exitm<G_TYPE_INSTANCE_GET_CLASS (inst, G_TYPE_MENU_ATTRIBUTE_ITER, GMenuAttributeIterClass)>
 	endm
 
 
@@ -152,12 +151,12 @@ g_menu_attribute_iter_get_value proto __cdecl \
 
 
 
-G_TYPE_MENU_LINK_ITER equ <g_menu_link_iter_get_type>
+define G_TYPE_MENU_LINK_ITER <g_menu_link_iter_get_type ()>
 G_MENU_LINK_ITER macro inst
-	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_MENU_LINK_ITER, GMenuLinkIter))>
+	exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_MENU_LINK_ITER, GMenuLinkIter)>
 	endm
 G_MENU_LINK_ITER_CLASS macro class
-	exitm<(G_TYPE_CHECK_CLASS_CAST ((class), G_TYPE_MENU_LINK_ITER, GMenuLinkIterClass))>
+	exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_MENU_LINK_ITER, GMenuLinkIterClass)>
 	endm
 G_IS_MENU_LINK_ITER macro inst
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_MENU_LINK_ITER))>

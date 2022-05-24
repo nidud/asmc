@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_DBUS_METHOD_INVOCATION         <g_dbus_method_invocation_get_type>
+define G_TYPE_DBUS_METHOD_INVOCATION         <g_dbus_method_invocation_get_type ()>
 G_DBUS_METHOD_INVOCATION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_METHOD_INVOCATION, GDBusMethodInvocation))>
   endm

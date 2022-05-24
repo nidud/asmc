@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_REMOTE_ACTION_GROUP                          <g_remote_action_group_get_type>
+define G_TYPE_REMOTE_ACTION_GROUP                          <g_remote_action_group_get_type ()>
 G_REMOTE_ACTION_GROUP macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_REMOTE_ACTION_GROUP, GRemoteActionGroup))>
   endm

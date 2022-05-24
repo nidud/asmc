@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_DRAW_CONTEXT             <gdk_draw_context_get_type>
+define GDK_TYPE_DRAW_CONTEXT <gdk_draw_context_get_type ()>
 GDK_DRAW_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_DRAW_CONTEXT, GdkDrawContext))>
   endm

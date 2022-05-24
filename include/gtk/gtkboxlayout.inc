@@ -8,7 +8,7 @@ endif
 include gtk/gtkenums.inc
 include gtk/gtklayoutmanager.inc
 
-define GTK_TYPE_BOX_LAYOUT <gtk_box_layout_get_type>
+define GTK_TYPE_BOX_LAYOUT <gtk_box_layout_get_type ()>
 
 gtk_box_layout_new proto :GtkOrientation
 

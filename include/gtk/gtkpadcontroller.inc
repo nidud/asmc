@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkeventcontroller.inc
 
-define GTK_TYPE_PAD_CONTROLLER <gtk_pad_controller_get_type>
+define GTK_TYPE_PAD_CONTROLLER <gtk_pad_controller_get_type ()>
 GTK_PAD_CONTROLLER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_PAD_CONTROLLER, GtkPadController))>
   endm

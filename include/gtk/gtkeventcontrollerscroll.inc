@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkeventcontroller.inc
 
-define GTK_TYPE_EVENT_CONTROLLER_SCROLL <gtk_event_controller_scroll_get_type>
+define GTK_TYPE_EVENT_CONTROLLER_SCROLL <gtk_event_controller_scroll_get_type ()>
 GTK_EVENT_CONTROLLER_SCROLL macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_EVENT_CONTROLLER_SCROLL, GtkEventControllerScroll))>
   endm

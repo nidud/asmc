@@ -7,7 +7,7 @@ endif
 
 include gio/gsocketconnection.inc
 
-define G_TYPE_TCP_CONNECTION                               <g_tcp_connection_get_type>
+define G_TYPE_TCP_CONNECTION                               <g_tcp_connection_get_type ()>
 G_TCP_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TCP_CONNECTION, GTcpConnection))>
   endm

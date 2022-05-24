@@ -7,7 +7,7 @@ endif
 
 include gio/gsocketaddress.inc
 
-define G_TYPE_NATIVE_SOCKET_ADDRESS         <g_native_socket_address_get_type>
+define G_TYPE_NATIVE_SOCKET_ADDRESS         <g_native_socket_address_get_type ()>
 G_NATIVE_SOCKET_ADDRESS macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_NATIVE_SOCKET_ADDRESS, GNativeSocketAddress))>
   endm

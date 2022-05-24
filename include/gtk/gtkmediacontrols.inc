@@ -8,7 +8,7 @@ endif
 include gtk/gtkmediastream.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_MEDIA_CONTROLS <gtk_media_controls_get_type>
+define GTK_TYPE_MEDIA_CONTROLS <gtk_media_controls_get_type ()>
 
 gtk_media_controls_new proto :ptr
 

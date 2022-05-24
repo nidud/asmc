@@ -7,12 +7,12 @@ endif
 
 include gio/gfilteroutputstream.inc
 
-define G_TYPE_BUFFERED_OUTPUT_STREAM         <g_buffered_output_stream_get_type>
+define G_TYPE_BUFFERED_OUTPUT_STREAM         <g_buffered_output_stream_get_type ()>
 G_BUFFERED_OUTPUT_STREAM macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_BUFFERED_OUTPUT_STREAM, GBufferedOutputStream))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_BUFFERED_OUTPUT_STREAM, GBufferedOutputStream)>
   endm
 G_BUFFERED_OUTPUT_STREAM_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_BUFFERED_OUTPUT_STREAM, GBufferedOutputStreamClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_BUFFERED_OUTPUT_STREAM, GBufferedOutputStreamClass)>
   endm
 G_IS_BUFFERED_OUTPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_BUFFERED_OUTPUT_STREAM))>

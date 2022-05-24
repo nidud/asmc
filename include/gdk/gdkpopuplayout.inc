@@ -23,7 +23,7 @@ include gdk/gdkversionmacros.inc
 
 ;GdkPopupLayout          typedef _GdkPopupLayout
 
-define GDK_TYPE_POPUP_LAYOUT <gdk_popup_layout_get_type>
+define GDK_TYPE_POPUP_LAYOUT <gdk_popup_layout_get_type ()>
 
 gdk_popup_layout_get_type proto
 gdk_popup_layout_new proto :ptr, :GdkGravity, :GdkGravity

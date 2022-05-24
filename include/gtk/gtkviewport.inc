@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_VIEWPORT <gtk_viewport_get_type>
+define GTK_TYPE_VIEWPORT <gtk_viewport_get_type ()>
 GTK_VIEWPORT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_VIEWPORT, GtkViewport))>
   endm

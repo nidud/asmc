@@ -7,7 +7,7 @@ endif
 
 include gio/gfilterinputstream.inc
 
-define G_TYPE_BUFFERED_INPUT_STREAM         <g_buffered_input_stream_get_type>
+define G_TYPE_BUFFERED_INPUT_STREAM         <g_buffered_input_stream_get_type ()>
 G_BUFFERED_INPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_BUFFERED_INPUT_STREAM, GBufferedInputStream))>
   endm

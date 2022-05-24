@@ -14,7 +14,7 @@ include gdk/gdkpopuplayout.inc
 
 ;GdkSurfaceClass         typedef _GdkSurfaceClass
 
-define GDK_TYPE_SURFACE              <gdk_surface_get_type>
+define GDK_TYPE_SURFACE <gdk_surface_get_type ()>
 GDK_SURFACE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_SURFACE, GdkSurface))>
   endm
@@ -49,6 +49,7 @@ gdk_surface_get_height proto :ptr
 gdk_surface_translate_coordinates proto :ptr, :ptr, :ptr, :ptr
 gdk_surface_get_scale_factor proto :ptr
 gdk_surface_get_device_position proto :ptr, :ptr, :ptr, :ptr, :ptr
+gdk_surface_create_similar_surface proto :ptr, :cairo_content_t, :gint, :gint
 gdk_surface_beep proto :ptr
 gdk_surface_queue_render proto :ptr
 gdk_surface_request_layout proto :ptr

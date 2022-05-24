@@ -8,7 +8,7 @@ endif
 include gtk/gtkeventcontroller.inc
 include gtk/gtkenums.inc
 
-define GTK_TYPE_GESTURE <gtk_gesture_get_type>
+define GTK_TYPE_GESTURE <gtk_gesture_get_type ()>
 GTK_GESTURE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE, GtkGesture))>
   endm

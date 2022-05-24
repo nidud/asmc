@@ -8,7 +8,7 @@ endif
 include gtk/gtkgesture.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_GESTURE_ZOOM <gtk_gesture_zoom_get_type>
+define GTK_TYPE_GESTURE_ZOOM <gtk_gesture_zoom_get_type ()>
 GTK_GESTURE_ZOOM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_ZOOM, GtkGestureZoom))>
   endm

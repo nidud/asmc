@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_DBUS_MESSAGE         <g_dbus_message_get_type>
+define G_TYPE_DBUS_MESSAGE         <g_dbus_message_get_type ()>
 G_DBUS_MESSAGE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_MESSAGE, GDBusMessage))>
   endm

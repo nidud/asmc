@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkgesturesingle.inc
 
-define GTK_TYPE_GESTURE_LONG_PRESS <gtk_gesture_long_press_get_type>
+define GTK_TYPE_GESTURE_LONG_PRESS <gtk_gesture_long_press_get_type ()>
 GTK_GESTURE_LONG_PRESS macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_LONG_PRESS, GtkGestureLongPress))>
   endm

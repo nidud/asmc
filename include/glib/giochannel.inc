@@ -16,7 +16,7 @@ include glib/gstring.inc
     G_IO_ERROR_UNKNOWN
     }
 
-G_IO_CHANNEL_ERROR equ <g_io_channel_error_quark>
+G_IO_CHANNEL_ERROR equ (g_io_channel_error_quark ())
 
 .enum GIOChannelError {
     G_IO_CHANNEL_ERROR_FBIG,

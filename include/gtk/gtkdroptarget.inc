@@ -9,7 +9,7 @@ include gtk/gtktypes.inc
 
 ;GtkDropTarget           typedef _GtkDropTarget
 
-define GTK_TYPE_DROP_TARGET <gtk_drop_target_get_type>
+define GTK_TYPE_DROP_TARGET <gtk_drop_target_get_type ()>
 GTK_DROP_TARGET macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_DROP_TARGET, GtkDropTarget))>
   endm

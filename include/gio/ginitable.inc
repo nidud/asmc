@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_INITABLE            <g_initable_get_type>
+define G_TYPE_INITABLE            <g_initable_get_type ()>
 G_INITABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_INITABLE, GInitable))>
   endm

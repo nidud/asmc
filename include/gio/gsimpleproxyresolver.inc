@@ -7,7 +7,7 @@ endif
 
 include gio/gproxyresolver.inc
 
-define G_TYPE_SIMPLE_PROXY_RESOLVER         <g_simple_proxy_resolver_get_type>
+define G_TYPE_SIMPLE_PROXY_RESOLVER         <g_simple_proxy_resolver_get_type ()>
 G_SIMPLE_PROXY_RESOLVER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_SIMPLE_PROXY_RESOLVER, GSimpleProxyResolver))>
   endm

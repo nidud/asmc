@@ -9,7 +9,7 @@ include gtk/gtkcellrenderer.inc
 include gtk/gtkwidget.inc
 include gtk/gtktreemodel.inc
 
-define GTK_TYPE_CELL_AREA                <gtk_cell_area_get_type>
+define GTK_TYPE_CELL_AREA <gtk_cell_area_get_type ()>
 GTK_CELL_AREA macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CELL_AREA, GtkCellArea))>
   endm

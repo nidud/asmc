@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkgesture.inc
 
-define GTK_TYPE_GESTURE_SINGLE <gtk_gesture_single_get_type>
+define GTK_TYPE_GESTURE_SINGLE <gtk_gesture_single_get_type ()>
 GTK_GESTURE_SINGLE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_SINGLE, GtkGestureSingle))>
   endm

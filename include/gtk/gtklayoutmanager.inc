@@ -6,7 +6,7 @@ include gtk/gtktypes.inc
 include gtk/gtkwidget.inc
 include gtk/gtklayoutchild.inc
 
-define GTK_TYPE_LAYOUT_MANAGER <gtk_layout_manager_get_type>
+define GTK_TYPE_LAYOUT_MANAGER <gtk_layout_manager_get_type ()>
 
 _GtkLayoutManagerClass  struct
 parent_class            GObjectClass <>

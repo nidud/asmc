@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_LIST_BOX <gtk_list_box_get_type>
+define GTK_TYPE_LIST_BOX <gtk_list_box_get_type ()>
 GTK_LIST_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_BOX, GtkListBox))>
   endm
@@ -17,7 +17,7 @@ GTK_IS_LIST_BOX macro obj
 
 ;GtkListBox              typedef _GtkListBox
 
-define GTK_TYPE_LIST_BOX_ROW <gtk_list_box_row_get_type>
+define GTK_TYPE_LIST_BOX_ROW <gtk_list_box_row_get_type ()>
 GTK_LIST_BOX_ROW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LIST_BOX_ROW, GtkListBoxRow))>
   endm

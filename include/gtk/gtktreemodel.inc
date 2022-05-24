@@ -8,7 +8,7 @@ endif
 include glib-object.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_TREE_MODEL <gtk_tree_model_get_type>
+define GTK_TYPE_TREE_MODEL <gtk_tree_model_get_type ()>
 GTK_TREE_MODEL macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_MODEL, GtkTreeModel))>
   endm
@@ -19,9 +19,9 @@ GTK_TREE_MODEL_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), GTK_TYPE_TREE_MODEL, GtkTreeModelIface))>
   endm
 
-define GTK_TYPE_TREE_ITER             <gtk_tree_iter_get_type>
-define GTK_TYPE_TREE_PATH             <gtk_tree_path_get_type>
-define GTK_TYPE_TREE_ROW_REFERENCE    <gtk_tree_row_reference_get_type>
+define GTK_TYPE_TREE_ITER <gtk_tree_iter_get_type ()>
+define GTK_TYPE_TREE_PATH <gtk_tree_path_get_type ()>
+define GTK_TYPE_TREE_ROW_REFERENCE <gtk_tree_row_reference_get_type ()>
 
 ;GtkTreePath             typedef _GtkTreePath
 ;GtkTreeRowReference     typedef _GtkTreeRowReference

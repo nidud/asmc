@@ -21,7 +21,7 @@ include gdk-pixbuf/gdk-pixbuf-macros.inc
     }
 
 
-GDK_TYPE_PIXBUF equ <gdk_pixbuf_get_type>
+define GDK_TYPE_PIXBUF <gdk_pixbuf_get_type ()>
 GDK_PIXBUF macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_PIXBUF, GdkPixbuf))>
 	endm
@@ -31,7 +31,7 @@ GDK_IS_PIXBUF macro object
 
 CALLBACKC(GdkPixbufDestroyNotify, :ptr guchar, :gpointer)
 
-GDK_PIXBUF_ERROR equ <gdk_pixbuf_error_quark>
+define GDK_PIXBUF_ERROR <gdk_pixbuf_error_quark ()>
 
 .enum GdkPixbufError {
     GDK_PIXBUF_ERROR_CORRUPT_IMAGE,

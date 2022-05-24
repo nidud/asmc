@@ -8,7 +8,7 @@ endif
 include gtk/gtkfilechooser.inc
 include gtk/gtknativedialog.inc
 
-define GTK_TYPE_FILE_CHOOSER_NATIVE <gtk_file_chooser_native_get_type>
+define GTK_TYPE_FILE_CHOOSER_NATIVE <gtk_file_chooser_native_get_type ()>
 
 gtk_file_chooser_native_new proto :ptr, :ptr, :GtkFileChooserAction, :ptr, :ptr
 gtk_file_chooser_native_get_accept_label proto :ptr

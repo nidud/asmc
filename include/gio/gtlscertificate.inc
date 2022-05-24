@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_TLS_CERTIFICATE            <g_tls_certificate_get_type>
+define G_TYPE_TLS_CERTIFICATE            <g_tls_certificate_get_type ()>
 G_TLS_CERTIFICATE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TLS_CERTIFICATE, GTlsCertificate))>
   endm

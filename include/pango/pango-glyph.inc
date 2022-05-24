@@ -37,7 +37,7 @@ space                   sdword ?
 _PangoGlyphString       ends
 PangoGlyphString        typedef _PangoGlyphString
 
-define PANGO_TYPE_GLYPH_STRING <pango_glyph_string_get_type>
+define PANGO_TYPE_GLYPH_STRING <pango_glyph_string_get_type ()>
 
 pango_glyph_string_get_type proto
 pango_glyph_string_new proto

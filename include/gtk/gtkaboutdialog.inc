@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwindow.inc
 
-define GTK_TYPE_ABOUT_DIALOG            <gtk_about_dialog_get_type>
+define GTK_TYPE_ABOUT_DIALOG <gtk_about_dialog_get_type ()>
 GTK_ABOUT_DIALOG macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GTK_TYPE_ABOUT_DIALOG, GtkAboutDialog))>
   endm

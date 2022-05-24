@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_TASK         <g_task_get_type>
+define G_TYPE_TASK         <g_task_get_type ()>
 G_TASK macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_TASK, GTask))>
   endm

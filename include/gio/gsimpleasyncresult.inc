@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_SIMPLE_ASYNC_RESULT         <g_simple_async_result_get_type>
+define G_TYPE_SIMPLE_ASYNC_RESULT         <g_simple_async_result_get_type ()>
 G_SIMPLE_ASYNC_RESULT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_SIMPLE_ASYNC_RESULT, GSimpleAsyncResult))>
   endm

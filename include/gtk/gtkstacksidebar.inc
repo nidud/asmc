@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkstack.inc
 
-define GTK_TYPE_STACK_SIDEBAR  <gtk_stack_sidebar_get_type>
+define GTK_TYPE_STACK_SIDEBAR <gtk_stack_sidebar_get_type ()>
 GTK_STACK_SIDEBAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_STACK_SIDEBAR, GtkStackSidebar))>
   endm

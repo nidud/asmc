@@ -7,7 +7,7 @@ endif
 
 include gio/giostream.inc
 
-define G_TYPE_TLS_CONNECTION            <g_tls_connection_get_type>
+define G_TYPE_TLS_CONNECTION            <g_tls_connection_get_type ()>
 G_TLS_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TLS_CONNECTION, GTlsConnection))>
   endm
@@ -69,10 +69,10 @@ g_tls_connection_handshake_finish proto :ptr, :ptr, :ptr
 g_tls_connection_get_protocol_version proto :ptr
 g_tls_connection_get_ciphersuite_name proto :ptr
 
-define G_TLS_ERROR <g_tls_error_quark>
+define G_TLS_ERROR <g_tls_error_quark ()>
 g_tls_error_quark proto
 
-define G_TLS_CHANNEL_BINDING_ERROR <g_tls_channel_binding_error_quark>
+define G_TLS_CHANNEL_BINDING_ERROR <g_tls_channel_binding_error_quark ()>
 g_tls_channel_binding_error_quark proto
 g_tls_connection_emit_accept_certificate proto :ptr, :ptr, :GTlsCertificateFlags
 

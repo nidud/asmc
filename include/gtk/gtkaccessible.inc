@@ -9,7 +9,7 @@ include glib-object.inc
 include gtk/gtktypes.inc
 include gtk/gtkenums.inc
 
-define GTK_TYPE_ACCESSIBLE <gtk_accessible_get_type>
+define GTK_TYPE_ACCESSIBLE <gtk_accessible_get_type ()>
 
 gtk_accessible_get_accessible_role proto :ptr
 

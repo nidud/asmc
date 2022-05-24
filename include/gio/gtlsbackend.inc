@@ -9,7 +9,7 @@ include gio/giotypes.inc
 
 define G_TLS_BACKEND_EXTENSION_POINT_NAME <"gio-tls-backend">
 
-define G_TYPE_TLS_BACKEND               <g_tls_backend_get_type>
+define G_TYPE_TLS_BACKEND               <g_tls_backend_get_type ()>
 G_TLS_BACKEND macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_TLS_BACKEND, GTlsBackend))>
   endm

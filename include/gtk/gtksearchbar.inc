@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkeditable.inc
 
-define GTK_TYPE_SEARCH_BAR <gtk_search_bar_get_type>
+define GTK_TYPE_SEARCH_BAR <gtk_search_bar_get_type ()>
 GTK_SEARCH_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SEARCH_BAR, GtkSearchBar))>
   endm

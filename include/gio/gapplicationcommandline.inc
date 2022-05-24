@@ -8,12 +8,12 @@ endif
 include gio/giotypes.inc
 
 
-define G_TYPE_APPLICATION_COMMAND_LINE                     <g_application_command_line_get_type>
+define G_TYPE_APPLICATION_COMMAND_LINE                     <g_application_command_line_get_type ()>
 G_APPLICATION_COMMAND_LINE macro inst
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_APPLICATION_COMMAND_LINE, GApplicationCommandLine))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (inst, G_TYPE_APPLICATION_COMMAND_LINE, GApplicationCommandLine)>
   endm
 G_APPLICATION_COMMAND_LINE_CLASS macro class
-  exitm<(G_TYPE_CHECK_CLASS_CAST ((class), G_TYPE_APPLICATION_COMMAND_LINE, GApplicationCommandLineClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST (class, G_TYPE_APPLICATION_COMMAND_LINE, GApplicationCommandLineClass)>
   endm
 G_IS_APPLICATION_COMMAND_LINE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_APPLICATION_COMMAND_LINE))>

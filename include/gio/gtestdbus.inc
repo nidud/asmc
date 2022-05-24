@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_TEST_DBUS     <g_test_dbus_get_type>
+define G_TYPE_TEST_DBUS     <g_test_dbus_get_type ()>
 G_TEST_DBUS macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_TEST_DBUS, GTestDBus))>
   endm

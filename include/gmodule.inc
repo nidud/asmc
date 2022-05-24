@@ -13,7 +13,7 @@ include glib.inc
 CALLBACK(GModuleCheckInit, :ptr)
 CALLBACK(GModuleUnload, :ptr)
 
-define G_MODULE_ERROR <g_module_error_quark>
+define G_MODULE_ERROR (g_module_error_quark ())
 g_module_error_quark proto
 
 .enum GModuleError {

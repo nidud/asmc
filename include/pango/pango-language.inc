@@ -8,7 +8,7 @@ include pango/pango-types.inc
 include pango/pango-version-macros.inc
 include pango/pango-script.inc
 
-PANGO_TYPE_LANGUAGE equ <pango_language_get_type>
+PANGO_TYPE_LANGUAGE equ <pango_language_get_type ()>
 
 pango_language_get_type proto __cdecl
 pango_language_get_default proto __cdecl

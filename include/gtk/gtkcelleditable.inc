@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_CELL_EDITABLE            <gtk_cell_editable_get_type>
+define GTK_TYPE_CELL_EDITABLE <gtk_cell_editable_get_type ()>
 GTK_CELL_EDITABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CELL_EDITABLE, GtkCellEditable))>
   endm

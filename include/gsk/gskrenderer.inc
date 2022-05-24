@@ -8,7 +8,7 @@ endif
 include gsk/gsktypes.inc
 include gsk/gskrendernode.inc
 
-define GSK_TYPE_RENDERER <gsk_renderer_get_type>
+define GSK_TYPE_RENDERER <gsk_renderer_get_type ()>
 
 GSK_RENDERER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSK_TYPE_RENDERER, GskRenderer))>

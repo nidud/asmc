@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_TLS_INTERACTION         <g_tls_interaction_get_type>
+define G_TYPE_TLS_INTERACTION         <g_tls_interaction_get_type ()>
 G_TLS_INTERACTION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_TLS_INTERACTION, GTlsInteraction))>
   endm

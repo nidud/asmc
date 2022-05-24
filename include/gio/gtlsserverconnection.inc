@@ -7,7 +7,7 @@ endif
 
 include gio/gtlsconnection.inc
 
-define G_TYPE_TLS_SERVER_CONNECTION                <g_tls_server_connection_get_type>
+define G_TYPE_TLS_SERVER_CONNECTION                <g_tls_server_connection_get_type ()>
 G_TLS_SERVER_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TLS_SERVER_CONNECTION, GTlsServerConnection))>
   endm

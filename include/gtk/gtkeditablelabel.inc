@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_EDITABLE_LABEL <gtk_editable_label_get_type>
+define GTK_TYPE_EDITABLE_LABEL <gtk_editable_label_get_type ()>
 
 gtk_editable_label_new proto :ptr
 gtk_editable_label_get_editing proto :ptr

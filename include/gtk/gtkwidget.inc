@@ -13,12 +13,12 @@ include gtk/gtkshortcut.inc
 include gtk/gtkshortcutaction.inc
 include gtk/gtktypes.inc
 
-define GTK_TYPE_WIDGET <gtk_widget_get_type>
+define GTK_TYPE_WIDGET <gtk_widget_get_type ()>
 GTK_WIDGET macro widget
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((widget), GTK_TYPE_WIDGET, GtkWidget))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (widget, GTK_TYPE_WIDGET, GtkWidget)>
   endm
 GTK_WIDGET_CLASS macro klass
-  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_WIDGET, GtkWidgetClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST (klass, GTK_TYPE_WIDGET, GtkWidgetClass)>
   endm
 GTK_IS_WIDGET macro widget
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((widget), GTK_TYPE_WIDGET))>
@@ -27,10 +27,10 @@ GTK_IS_WIDGET_CLASS macro klass
   exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_WIDGET))>
   endm
 GTK_WIDGET_GET_CLASS macro obj
-  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_WIDGET, GtkWidgetClass))>
+  exitm<G_TYPE_INSTANCE_GET_CLASS (obj, GTK_TYPE_WIDGET, GtkWidgetClass)>
   endm
 
-define GTK_TYPE_REQUISITION <gtk_requisition_get_type>
+define GTK_TYPE_REQUISITION <gtk_requisition_get_type ()>
 
 ;GtkWidgetPrivate	 typedef _GtkWidgetPrivate
 ;GtkWidgetClassPrivate	 typedef _GtkWidgetClassPrivate

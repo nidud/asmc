@@ -11,7 +11,7 @@ include gtk/gtkenums.inc
 ;GtkTextIter             typedef _GtkTextIter
 ;GtkTextTagTable         typedef _GtkTextTagTable
 
-define GTK_TYPE_TEXT_TAG <gtk_text_tag_get_type>
+define GTK_TYPE_TEXT_TAG <gtk_text_tag_get_type ()>
 GTK_TEXT_TAG macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_TAG, GtkTextTag))>
   endm

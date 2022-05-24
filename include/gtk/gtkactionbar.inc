@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_ACTION_BAR <gtk_action_bar_get_type>
+define GTK_TYPE_ACTION_BAR <gtk_action_bar_get_type ()>
 GTK_ACTION_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ACTION_BAR, GtkActionBar))>
   endm

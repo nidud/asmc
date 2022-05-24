@@ -17,7 +17,7 @@ include glib/gerror.inc
     G_KEY_FILE_ERROR_INVALID_VALUE
     }
 
-G_KEY_FILE_ERROR equ <g_key_file_error_quark>
+G_KEY_FILE_ERROR equ (g_key_file_error_quark ())
 
 ;GQuark
 g_key_file_error_quark proto __cdecl

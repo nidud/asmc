@@ -7,7 +7,7 @@ endif
 
 include gdk-pixbuf/gdk-pixbuf-animation.inc
 
-GDK_TYPE_PIXBUF_SIMPLE_ANIM equ <gdk_pixbuf_simple_anim_get_type>
+define GDK_TYPE_PIXBUF_SIMPLE_ANIM <gdk_pixbuf_simple_anim_get_type ()>
 GDK_PIXBUF_SIMPLE_ANIM macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_PIXBUF_SIMPLE_ANIM, GdkPixbufSimpleAnim))>
 	endm

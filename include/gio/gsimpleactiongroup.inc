@@ -8,7 +8,7 @@ endif
 include gactiongroup.inc
 include gactionmap.inc
 
-define G_TYPE_SIMPLE_ACTION_GROUP                          <g_simple_action_group_get_type>
+define G_TYPE_SIMPLE_ACTION_GROUP                          <g_simple_action_group_get_type ()>
 G_SIMPLE_ACTION_GROUP macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SIMPLE_ACTION_GROUP, GSimpleActionGroup))>
   endm

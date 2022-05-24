@@ -3,7 +3,7 @@ define __GTK_SINGLE_SELECTION_H__
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_SINGLE_SELECTION <gtk_single_selection_get_type>
+define GTK_TYPE_SINGLE_SELECTION <gtk_single_selection_get_type ()>
 
 gtk_single_selection_new proto :ptr
 gtk_single_selection_get_model proto :ptr

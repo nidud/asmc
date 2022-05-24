@@ -1,9 +1,14 @@
 ifndef __G_LIB_H__
 define __G_LIB_H__
 
+.pragma list(push, 0)
+
 define __GLIB_H_INSIDE__
 
 include libc.inc
+
+.pragma comment(lib, "glib-2.0")
+
 include glib/gtypes.inc
 include glib/gquark.inc
 include glib/gversion.inc
@@ -60,7 +65,7 @@ include glib/gspawn.inc
 include glib/gstrfuncs.inc
 include glib/gstring.inc
 include glib/gstringchunk.inc
-;include glib/gtestutils.inc
+include glib/gtestutils.inc
 include glib/gthread.inc
 include glib/gthreadpool.inc
 include glib/gtimer.inc
@@ -90,4 +95,5 @@ include glib/glib-autocleanups.inc
 
 undef __GLIB_H_INSIDE__
 
+.pragma list(pop)
 endif

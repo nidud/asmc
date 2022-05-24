@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 include gio/gioenums.inc
 
-define G_TYPE_NOTIFICATION         <g_notification_get_type>
+define G_TYPE_NOTIFICATION         <g_notification_get_type ()>
 G_NOTIFICATION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_NOTIFICATION, GNotification))>
   endm

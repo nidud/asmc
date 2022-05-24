@@ -4,7 +4,7 @@ define __GTK_CSS_PROVIDER_H__
 include gio/gio.inc
 include gtk/css/gtkcss.inc
 
-define GTK_TYPE_CSS_PROVIDER         <gtk_css_provider_get_type>
+define GTK_TYPE_CSS_PROVIDER <gtk_css_provider_get_type ()>
 GTK_CSS_PROVIDER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_CSS_PROVIDER, GtkCssProvider))>
   endm

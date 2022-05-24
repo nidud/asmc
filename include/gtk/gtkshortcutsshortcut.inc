@@ -7,7 +7,7 @@ endif
 
 include gdk/gdk.inc
 
-define GTK_TYPE_SHORTCUTS_SHORTCUT <gtk_shortcuts_shortcut_get_type>
+define GTK_TYPE_SHORTCUTS_SHORTCUT <gtk_shortcuts_shortcut_get_type ()>
 GTK_SHORTCUTS_SHORTCUT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SHORTCUTS_SHORTCUT, GtkShortcutsShortcut))>
   endm

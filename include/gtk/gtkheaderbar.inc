@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_HEADER_BAR <gtk_header_bar_get_type>
+define GTK_TYPE_HEADER_BAR <gtk_header_bar_get_type ()>
 GTK_HEADER_BAR macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_HEADER_BAR, GtkHeaderBar))>
   endm

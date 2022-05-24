@@ -9,7 +9,7 @@ include gtk/gtkwidget.inc
 include gtk/gtktreemodel.inc
 include gtk/gtktreeview.inc
 
-define GTK_TYPE_COMBO_BOX <gtk_combo_box_get_type>
+define GTK_TYPE_COMBO_BOX <gtk_combo_box_get_type ()>
 GTK_COMBO_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_COMBO_BOX, GtkComboBox))>
   endm

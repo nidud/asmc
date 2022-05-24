@@ -1,10 +1,13 @@
-
 ifndef CAIRO_H
 define CAIRO_H
+
+.pragma list(push, 0)
 
 include libc.inc
 
 double typedef real8
+
+.pragma comment(lib, cairo)
 
 include cairo-version.inc
 include cairo-features.inc
@@ -846,4 +849,5 @@ cairo_region_xor	proto :ptr cairo_region_t, :ptr cairo_region_t
 cairo_region_xor_rectangle proto :ptr cairo_region_t, :ptr cairo_rectangle_int_t
 cairo_debug_reset_static_data proto
 
+.pragma list(pop)
 endif

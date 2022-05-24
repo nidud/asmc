@@ -9,7 +9,7 @@ include pango/pango-direction.inc
 
 ;PangoContextClass       typedef _PangoContextClass
 
-define PANGO_TYPE_CONTEXT <pango_context_get_type>
+define PANGO_TYPE_CONTEXT <pango_context_get_type ()>
 PANGO_CONTEXT macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_CONTEXT, PangoContext))>
   endm

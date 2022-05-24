@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 include gio/giostream.inc
 
-define G_TYPE_SIMPLE_IO_STREAM                  <g_simple_io_stream_get_type>
+define G_TYPE_SIMPLE_IO_STREAM                  <g_simple_io_stream_get_type ()>
 G_SIMPLE_IO_STREAM macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_SIMPLE_IO_STREAM, GSimpleIOStream))>
   endm

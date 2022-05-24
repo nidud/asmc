@@ -14,7 +14,7 @@ define G_VOLUME_IDENTIFIER_KIND_UUID <"uuid">
 define G_VOLUME_IDENTIFIER_KIND_NFS_MOUNT <"nfs-mount">
 define G_VOLUME_IDENTIFIER_KIND_CLASS <"class">
 
-define G_TYPE_VOLUME            <g_volume_get_type>
+define G_TYPE_VOLUME            <g_volume_get_type ()>
 G_VOLUME macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_VOLUME, GVolume))>
   endm

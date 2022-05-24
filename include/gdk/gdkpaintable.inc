@@ -8,7 +8,7 @@ endif
 include gdk/gdktypes.inc
 include gdk/gdkversionmacros.inc
 
-define GDK_TYPE_PAINTABLE               <gdk_paintable_get_type>
+define GDK_TYPE_PAINTABLE <gdk_paintable_get_type ()>
 
 .enum GdkPaintableFlags {
   GDK_PAINTABLE_STATIC_SIZE = 1 shl 0,

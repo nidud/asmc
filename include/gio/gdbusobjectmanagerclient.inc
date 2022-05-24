@@ -4,7 +4,7 @@ define __G_DBUS_OBJECT_MANAGER_CLIENT_H__
 include gio/giotypes.inc
 
 
-define G_TYPE_DBUS_OBJECT_MANAGER_CLIENT         <g_dbus_object_manager_client_get_type>
+define G_TYPE_DBUS_OBJECT_MANAGER_CLIENT         <g_dbus_object_manager_client_get_type ()>
 G_DBUS_OBJECT_MANAGER_CLIENT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_OBJECT_MANAGER_CLIENT, GDBusObjectManagerClient))>
   endm

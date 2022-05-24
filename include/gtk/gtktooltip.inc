@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwindow.inc
 
-define GTK_TYPE_TOOLTIP <gtk_tooltip_get_type>
+define GTK_TYPE_TOOLTIP <gtk_tooltip_get_type ()>
 GTK_TOOLTIP macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TOOLTIP, GtkTooltip))>
   endm

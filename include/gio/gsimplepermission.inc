@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_SIMPLE_PERMISSION      <g_simple_permission_get_type>
+define G_TYPE_SIMPLE_PERMISSION      <g_simple_permission_get_type ()>
 G_SIMPLE_PERMISSION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SIMPLE_PERMISSION, GSimplePermission))>
   endm

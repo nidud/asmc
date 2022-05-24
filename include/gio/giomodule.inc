@@ -14,7 +14,7 @@ g_io_module_scope_new proto :GIOModuleScopeFlags
 g_io_module_scope_free proto :ptr
 g_io_module_scope_block proto :ptr, :ptr
 
-define G_IO_TYPE_MODULE         <g_io_module_get_type>
+define G_IO_TYPE_MODULE         <g_io_module_get_type ()>
 G_IO_MODULE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_IO_TYPE_MODULE, GIOModule))>
   endm

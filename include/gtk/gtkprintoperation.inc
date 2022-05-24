@@ -13,7 +13,7 @@ include gtk/gtkprintsettings.inc
 include gtk/gtkprintcontext.inc
 include gtk/gtkprintoperationpreview.inc
 
-define GTK_TYPE_PRINT_OPERATION <gtk_print_operation_get_type>
+define GTK_TYPE_PRINT_OPERATION <gtk_print_operation_get_type ()>
 GTK_PRINT_OPERATION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PRINT_OPERATION, GtkPrintOperation))>
   endm
@@ -83,7 +83,7 @@ padding                 gpointer 8 dup(?)
 _GtkPrintOperationClass ends
 GtkPrintOperationClass  typedef _GtkPrintOperationClass
 
-define GTK_PRINT_ERROR <gtk_print_error_quark>
+define GTK_PRINT_ERROR <gtk_print_error_quark ()>
 
 .enum GtkPrintError {
   GTK_PRINT_ERROR_GENERAL,

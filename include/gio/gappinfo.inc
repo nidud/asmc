@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_APP_INFO            <g_app_info_get_type>
+define G_TYPE_APP_INFO            <g_app_info_get_type ()>
 G_APP_INFO macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_APP_INFO, GAppInfo))>
   endm
@@ -18,7 +18,7 @@ G_APP_INFO_GET_IFACE macro obj
   exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((obj), G_TYPE_APP_INFO, GAppInfoIface))>
   endm
 
-define G_TYPE_APP_LAUNCH_CONTEXT         <g_app_launch_context_get_type>
+define G_TYPE_APP_LAUNCH_CONTEXT         <g_app_launch_context_get_type ()>
 G_APP_LAUNCH_CONTEXT macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_APP_LAUNCH_CONTEXT, GAppLaunchContext))>
   endm
@@ -146,7 +146,7 @@ g_app_launch_context_get_display proto :ptr, :ptr, :ptr
 g_app_launch_context_get_startup_notify_id proto :ptr, :ptr, :ptr
 g_app_launch_context_launch_failed proto :ptr, :ptr
 
-define G_TYPE_APP_INFO_MONITOR                             <g_app_info_monitor_get_type>
+define G_TYPE_APP_INFO_MONITOR                             <g_app_info_monitor_get_type ()>
 G_APP_INFO_MONITOR macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_APP_INFO_MONITOR, GAppInfoMonitor))>
   endm

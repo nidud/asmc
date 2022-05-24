@@ -10,7 +10,7 @@ include gio/goutputstream.inc
 include gio/gcancellable.inc
 include gio/gioerror.inc
 
-define G_TYPE_IO_STREAM         <g_io_stream_get_type>
+define G_TYPE_IO_STREAM         <g_io_stream_get_type ()>
 G_IO_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_IO_STREAM, GIOStream))>
   endm

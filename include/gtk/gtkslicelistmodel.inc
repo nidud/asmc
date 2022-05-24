@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_SLICE_LIST_MODEL <gtk_slice_list_model_get_type>
+define GTK_TYPE_SLICE_LIST_MODEL <gtk_slice_list_model_get_type ()>
 
 gtk_slice_list_model_new proto :ptr, :guint, :guint
 gtk_slice_list_model_set_model proto :ptr, :ptr

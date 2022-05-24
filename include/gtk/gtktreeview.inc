@@ -17,7 +17,7 @@ include gtk/gtkentry.inc
   GTK_TREE_VIEW_DROP_INTO_OR_AFTER
 }
 
-define GTK_TYPE_TREE_VIEW <gtk_tree_view_get_type>
+define GTK_TYPE_TREE_VIEW <gtk_tree_view_get_type ()>
 GTK_TREE_VIEW macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_VIEW, GtkTreeView))>
   endm

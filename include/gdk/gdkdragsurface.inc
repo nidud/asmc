@@ -7,7 +7,7 @@ endif
 
 include gdk/gdksurface.inc
 
-define GDK_TYPE_DRAG_SURFACE <gdk_drag_surface_get_type>
+define GDK_TYPE_DRAG_SURFACE <gdk_drag_surface_get_type ()>
 
 gdk_drag_surface_present proto :ptr, :sdword, :sdword
 

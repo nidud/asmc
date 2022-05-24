@@ -5,7 +5,7 @@ include pango/pango.inc
 include cairo.inc
 
 ifdef __GI_SCANNER__
-PANGO_CAIRO_TYPE_FONT equ <pango_cairo_font_get_type>
+define PANGO_CAIRO_TYPE_FONT <pango_cairo_font_get_type ()>
 PANGO_CAIRO_FONT macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), PANGO_CAIRO_TYPE_FONT, PangoCairoFont))>
 	endm
@@ -13,7 +13,7 @@ PANGO_CAIRO_IS_FONT macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PANGO_CAIRO_TYPE_FONT))>
 	endm
 else
-PANGO_TYPE_CAIRO_FONT equ <pango_cairo_font_get_type>
+define PANGO_TYPE_CAIRO_FONT <pango_cairo_font_get_type ()>
 PANGO_CAIRO_FONT macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_CAIRO_FONT, PangoCairoFont))>
 	endm
@@ -23,7 +23,7 @@ PANGO_IS_CAIRO_FONT macro object
 endif
 
 ifdef __GI_SCANNER__
-PANGO_CAIRO_TYPE_FONT_MAP equ <pango_cairo_font_map_get_type>
+define PANGO_CAIRO_TYPE_FONT_MAP <pango_cairo_font_map_get_type ()>
 PANGO_CAIRO_FONT_MAP macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), PANGO_CAIRO_TYPE_FONT_MAP, PangoCairoFontMap))>
 	endm
@@ -31,7 +31,7 @@ PANGO_CAIRO_IS_FONT_MAP macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PANGO_CAIRO_TYPE_FONT_MAP))>
 	endm
 else
-PANGO_TYPE_CAIRO_FONT_MAP equ <pango_cairo_font_map_get_type>
+define PANGO_TYPE_CAIRO_FONT_MAP <pango_cairo_font_map_get_type ()>
 PANGO_CAIRO_FONT_MAP macro object
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_CAIRO_FONT_MAP, PangoCairoFontMap))>
 	endm
@@ -43,9 +43,7 @@ endif
 CALLBACKC(PangoCairoShapeRendererFunc, :ptr cairo_t, :ptr PangoAttrShape, :gboolean, :gpointer)
 
 pango_cairo_font_map_get_type proto __cdecl
-
 pango_cairo_font_map_new proto __cdecl
-
 pango_cairo_font_map_new_for_font_type proto __cdecl \
 	      fonttype: cairo_font_type_t
 

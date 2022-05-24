@@ -7,7 +7,7 @@ endif
 
 include gtkwidget.inc
 
-define GTK_TYPE_CENTER_BOX <gtk_center_box_get_type>
+define GTK_TYPE_CENTER_BOX <gtk_center_box_get_type ()>
 GTK_CENTER_BOX macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CENTER_BOX, GtkCenterBox))>
   endm

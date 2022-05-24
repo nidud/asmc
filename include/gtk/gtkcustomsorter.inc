@@ -8,7 +8,7 @@ endif
 include gtk/gtkexpression.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_CUSTOM_SORTER <gtk_custom_sorter_get_type>
+define GTK_TYPE_CUSTOM_SORTER <gtk_custom_sorter_get_type ()>
 
 gtk_custom_sorter_new proto :GCompareDataFunc, :gpointer, :GDestroyNotify
 gtk_custom_sorter_set_sort_func proto :ptr, :GCompareDataFunc, :gpointer, :GDestroyNotify

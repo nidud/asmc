@@ -22,7 +22,7 @@ include gtk/gtkenums.inc
   GTK_SORTER_CHANGE_MORE_STRICT
 }
 
-define GTK_TYPE_SORTER <gtk_sorter_get_type>
+define GTK_TYPE_SORTER <gtk_sorter_get_type ()>
 
 _GtkSorterClass         struct
 parent_class            GObjectClass <>

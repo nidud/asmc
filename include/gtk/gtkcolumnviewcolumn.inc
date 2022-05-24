@@ -8,7 +8,7 @@ endif
 include gtk/gtkcolumnview.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_COLUMN_VIEW_COLUMN <gtk_column_view_column_get_type>
+define GTK_TYPE_COLUMN_VIEW_COLUMN <gtk_column_view_column_get_type ()>
 GTK_COLUMN_VIEW_COLUMN macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_COLUMN_VIEW_COLUMN, GtkColumnViewColumn))>
   endm

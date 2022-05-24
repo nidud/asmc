@@ -8,12 +8,12 @@ endif
 include gio/gfilteroutputstream.inc
 include gio/gconverter.inc
 
-define G_TYPE_CONVERTER_OUTPUT_STREAM         <g_converter_output_stream_get_type>
+define G_TYPE_CONVERTER_OUTPUT_STREAM         <g_converter_output_stream_get_type ()>
 G_CONVERTER_OUTPUT_STREAM macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CONVERTER_OUTPUT_STREAM, GConverterOutputStream))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CONVERTER_OUTPUT_STREAM, GConverterOutputStream)>
   endm
 G_CONVERTER_OUTPUT_STREAM_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CONVERTER_OUTPUT_STREAM, GConverterOutputStreamClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CONVERTER_OUTPUT_STREAM, GConverterOutputStreamClass)>
   endm
 G_IS_CONVERTER_OUTPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_CONVERTER_OUTPUT_STREAM))>

@@ -8,7 +8,7 @@ endif
 include gio/gio.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_DIRECTORY_LIST <gtk_directory_list_get_type>
+define GTK_TYPE_DIRECTORY_LIST <gtk_directory_list_get_type ()>
 
 gtk_directory_list_new proto :ptr, :ptr
 

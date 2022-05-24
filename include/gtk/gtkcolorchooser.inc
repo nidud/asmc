@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_COLOR_CHOOSER                  <gtk_color_chooser_get_type>
+define GTK_TYPE_COLOR_CHOOSER <gtk_color_chooser_get_type ()>
 GTK_COLOR_CHOOSER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_COLOR_CHOOSER, GtkColorChooser))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_MOUNT_OPERATION         <g_mount_operation_get_type>
+define G_TYPE_MOUNT_OPERATION         <g_mount_operation_get_type ()>
 G_MOUNT_OPERATION macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_MOUNT_OPERATION, GMountOperation))>
   endm

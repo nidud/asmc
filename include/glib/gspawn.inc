@@ -7,7 +7,7 @@ endif
 
 include glib/gerror.inc
 
-define G_SPAWN_ERROR <g_spawn_error_quark>
+define G_SPAWN_ERROR (g_spawn_error_quark ())
 
 .enum GSpawnError {
   G_SPAWN_ERROR_FORK,
@@ -34,7 +34,7 @@ define G_SPAWN_ERROR <g_spawn_error_quark>
 }
 
 
-define G_SPAWN_EXIT_ERROR <g_spawn_exit_error_quark>
+define G_SPAWN_EXIT_ERROR (g_spawn_exit_error_quark ())
 
 
 CALLBACK(GSpawnChildSetupFunc, :gpointer)

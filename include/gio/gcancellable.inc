@@ -7,21 +7,21 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_CANCELLABLE         <g_cancellable_get_type>
+define G_TYPE_CANCELLABLE         <g_cancellable_get_type ()>
 G_CANCELLABLE macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_CANCELLABLE, GCancellable))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST (o, G_TYPE_CANCELLABLE, GCancellable)>
   endm
 G_CANCELLABLE_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_CANCELLABLE, GCancellableClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST(k, G_TYPE_CANCELLABLE, GCancellableClass)>
   endm
 G_IS_CANCELLABLE macro o
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_CANCELLABLE))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE (o, G_TYPE_CANCELLABLE)>
   endm
 G_IS_CANCELLABLE_CLASS macro k
-  exitm<(G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_CANCELLABLE))>
+  exitm<G_TYPE_CHECK_CLASS_TYPE (k, G_TYPE_CANCELLABLE)>
   endm
 G_CANCELLABLE_GET_CLASS macro o
-  exitm<(G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_CANCELLABLE, GCancellableClass))>
+  exitm<G_TYPE_INSTANCE_GET_CLASS (o, G_TYPE_CANCELLABLE, GCancellableClass)>
   endm
 
 

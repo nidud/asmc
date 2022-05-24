@@ -8,7 +8,7 @@ endif
 include gio/gsettingsschema.inc
 include gio/giotypes.inc
 
-define G_TYPE_SETTINGS                                     <g_settings_get_type>
+define G_TYPE_SETTINGS                                     <g_settings_get_type ()>
 G_SETTINGS macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SETTINGS, GSettings))>
   endm

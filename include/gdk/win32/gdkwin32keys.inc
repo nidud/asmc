@@ -22,7 +22,7 @@ GdkWin32Keymap          typedef GdkKeymap
 endif
 GdkWin32KeymapClass     typedef _GdkWin32KeymapClass
 
-define GDK_TYPE_WIN32_KEYMAP              <gdk_win32_keymap_get_type>
+define GDK_TYPE_WIN32_KEYMAP <gdk_win32_keymap_get_type ()>
 GDK_WIN32_KEYMAP macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_KEYMAP, GdkWin32Keymap))>
   endm

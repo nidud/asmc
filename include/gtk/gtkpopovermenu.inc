@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkpopover.inc
 
-define GTK_TYPE_POPOVER_MENU <gtk_popover_menu_get_type>
+define GTK_TYPE_POPOVER_MENU <gtk_popover_menu_get_type ()>
 GTK_POPOVER_MENU macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_POPOVER_MENU, GtkPopoverMenu))>
   endm

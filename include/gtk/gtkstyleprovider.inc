@@ -9,7 +9,7 @@ include gdk/gdk.inc
 include gtk/gtkenums.inc
 include gtk/gtktypes.inc
 
-define GTK_TYPE_STYLE_PROVIDER  <gtk_style_provider_get_type>
+define GTK_TYPE_STYLE_PROVIDER <gtk_style_provider_get_type ()>
 GTK_STYLE_PROVIDER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_STYLE_PROVIDER, GtkStyleProvider))>
   endm

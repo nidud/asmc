@@ -3,7 +3,7 @@ define __G_UNIX_CREDENTIALS_MESSAGE_H__
 
 include gio/gio.inc
 
-define G_TYPE_UNIX_CREDENTIALS_MESSAGE         <g_unix_credentials_message_get_type>
+define G_TYPE_UNIX_CREDENTIALS_MESSAGE         <g_unix_credentials_message_get_type ()>
 G_UNIX_CREDENTIALS_MESSAGE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_UNIX_CREDENTIALS_MESSAGE, GUnixCredentialsMessage))>
   endm

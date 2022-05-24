@@ -3,7 +3,7 @@ define __G_DBUS_OBJECT_PROXY_H__
 
 include gio/giotypes.inc
 
-define G_TYPE_DBUS_OBJECT_PROXY         <g_dbus_object_proxy_get_type>
+define G_TYPE_DBUS_OBJECT_PROXY         <g_dbus_object_proxy_get_type ()>
 G_DBUS_OBJECT_PROXY macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_OBJECT_PROXY, GDBusObjectProxy))>
   endm

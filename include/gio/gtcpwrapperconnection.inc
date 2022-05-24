@@ -8,7 +8,7 @@ endif
 include gio/gtcpconnection.inc
 
 
-define G_TYPE_TCP_WRAPPER_CONNECTION            <g_tcp_wrapper_connection_get_type>
+define G_TYPE_TCP_WRAPPER_CONNECTION            <g_tcp_wrapper_connection_get_type ()>
 G_TCP_WRAPPER_CONNECTION macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TCP_WRAPPER_CONNECTION, GTcpWrapperConnection))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-G_TYPE_DBUS_CONNECTION equ <g_dbus_connection_get_type>
+define G_TYPE_DBUS_CONNECTION <g_dbus_connection_get_type ()>
 G_DBUS_CONNECTION macro o
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_CONNECTION, GDBusConnection))>
 	endm

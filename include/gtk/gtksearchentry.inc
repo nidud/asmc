@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkentry.inc
 
-define GTK_TYPE_SEARCH_ENTRY <gtk_search_entry_get_type>
+define GTK_TYPE_SEARCH_ENTRY <gtk_search_entry_get_type ()>
 GTK_SEARCH_ENTRY macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_SEARCH_ENTRY, GtkSearchEntry))>
   endm

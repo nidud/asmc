@@ -8,7 +8,7 @@ endif
 include gdk/gdkpopuplayout.inc
 include gdk/gdksurface.inc
 
-define GDK_TYPE_POPUP <gdk_popup_get_type>
+define GDK_TYPE_POPUP <gdk_popup_get_type ()>
 
 gdk_popup_present proto :ptr, :sdword, :sdword, :ptr
 gdk_popup_get_surface_anchor proto :ptr

@@ -20,7 +20,7 @@ include gdk/gdk.inc
   GTK_FILTER_CHANGE_MORE_STRICT,
 }
 
-define GTK_TYPE_FILTER <gtk_filter_get_type>
+define GTK_TYPE_FILTER <gtk_filter_get_type ()>
 
 
 _GtkFilterClass         struct

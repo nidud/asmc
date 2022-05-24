@@ -12,7 +12,7 @@ ifdef GDK_RENDERING_VULKAN
 include vulkan/vulkan.inc
 endif
 
-define GDK_TYPE_VULKAN_CONTEXT             <gdk_vulkan_context_get_type>
+define GDK_TYPE_VULKAN_CONTEXT <gdk_vulkan_context_get_type ()>
 GDK_VULKAN_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_VULKAN_CONTEXT, GdkVulkanContext))>
   endm
@@ -20,7 +20,7 @@ GDK_IS_VULKAN_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GDK_TYPE_VULKAN_CONTEXT))>
   endm
 
-define GDK_VULKAN_ERROR                    <gdk_vulkan_error_quark>
+define GDK_VULKAN_ERROR <gdk_vulkan_error_quark ()>
 
 gdk_vulkan_error_quark proto
 

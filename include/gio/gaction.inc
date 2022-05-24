@@ -7,15 +7,15 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_ACTION                                       <g_action_get_type>
+define G_TYPE_ACTION <g_action_get_type ()>
 G_ACTION macro inst
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_ACTION, GAction))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_ACTION, GAction)>
   endm
 G_IS_ACTION macro inst
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_ACTION))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE ((inst), G_TYPE_ACTION)>
   endm
 G_ACTION_GET_IFACE macro inst
-  exitm<(G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_ACTION, GActionInterface))>
+  exitm<G_TYPE_INSTANCE_GET_INTERFACE ((inst), G_TYPE_ACTION, GActionInterface)>
   endm
 
 _GActionInterface       struct

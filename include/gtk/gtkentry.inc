@@ -11,7 +11,7 @@ include gtk/gtkentrybuffer.inc
 include gtk/gtkentrycompletion.inc
 include gtk/gtkimage.inc
 
-define GTK_TYPE_ENTRY <gtk_entry_get_type>
+define GTK_TYPE_ENTRY <gtk_entry_get_type ()>
 GTK_ENTRY macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ENTRY, GtkEntry))>
   endm

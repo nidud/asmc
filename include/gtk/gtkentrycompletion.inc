@@ -12,7 +12,7 @@ include gtk/gtkcellarea.inc
 include gtk/gtktreeviewcolumn.inc
 include gtk/gtktreemodelfilter.inc
 
-define GTK_TYPE_ENTRY_COMPLETION <gtk_entry_completion_get_type>
+define GTK_TYPE_ENTRY_COMPLETION <gtk_entry_completion_get_type ()>
 GTK_ENTRY_COMPLETION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ENTRY_COMPLETION, GtkEntryCompletion))>
   endm

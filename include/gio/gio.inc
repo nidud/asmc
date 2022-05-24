@@ -1,6 +1,9 @@
 ifndef __G_IO_H__
 define __G_IO_H__
 
+.pragma list(push, 0)
+.pragma comment(lib, "gio-2.0")
+
 define __GIO_GIO_H_INSIDE__
 
 include gio/giotypes.inc
@@ -157,4 +160,5 @@ include gio/gio-autocleanups.inc
 
 undef __GIO_GIO_H_INSIDE__
 
+.pragma list(pop)
 endif

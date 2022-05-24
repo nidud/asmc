@@ -11,7 +11,7 @@ include gdk/gdkversionmacros.inc
 
 ;GdkToplevelLayout       typedef _GdkToplevelLayout
 
-define GDK_TYPE_TOPLEVEL_LAYOUT <gdk_toplevel_layout_get_type>
+define GDK_TYPE_TOPLEVEL_LAYOUT <gdk_toplevel_layout_get_type ()>
 
 gdk_toplevel_layout_get_type proto
 gdk_toplevel_layout_new proto

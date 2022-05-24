@@ -14,6 +14,6 @@ gdk_rectangle_equal proto :ptr, :ptr
 gdk_rectangle_contains_point proto :ptr, :sdword, :sdword
 gdk_rectangle_get_type proto
 
-define GDK_TYPE_RECTANGLE <gdk_rectangle_get_type>
+define GDK_TYPE_RECTANGLE <gdk_rectangle_get_type ()>
 
 endif

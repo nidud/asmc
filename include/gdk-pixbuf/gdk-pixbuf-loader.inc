@@ -11,7 +11,7 @@ include gdk-pixbuf/gdk-pixbuf-core.inc
 include gdk-pixbuf/gdk-pixbuf-animation.inc
 include gdk-pixbuf/gdk-pixbuf-io.inc
 
-GDK_TYPE_PIXBUF_LOADER	equ <gdk_pixbuf_loader_get_type>
+define GDK_TYPE_PIXBUF_LOADER <gdk_pixbuf_loader_get_type ()>
 GDK_PIXBUF_LOADER macro obj
 	exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_PIXBUF_LOADER, GdkPixbufLoader))>
 	endm

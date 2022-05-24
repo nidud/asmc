@@ -8,7 +8,7 @@ endif
 include gio/gconverter.inc
 include gio/gfileinfo.inc
 
-define G_TYPE_ZLIB_COMPRESSOR         <g_zlib_compressor_get_type>
+define G_TYPE_ZLIB_COMPRESSOR         <g_zlib_compressor_get_type ()>
 G_ZLIB_COMPRESSOR macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_ZLIB_COMPRESSOR, GZlibCompressor))>
   endm

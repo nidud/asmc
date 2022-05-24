@@ -8,7 +8,7 @@ endif
 include gtk/gtkfilefilter.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_FILE_CHOOSER <gtk_file_chooser_get_type>
+define GTK_TYPE_FILE_CHOOSER <gtk_file_chooser_get_type ()>
 GTK_FILE_CHOOSER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_FILE_CHOOSER, GtkFileChooser))>
   endm
@@ -26,7 +26,7 @@ GTK_IS_FILE_CHOOSER macro obj
 
 gtk_file_chooser_get_type proto
 
-define GTK_FILE_CHOOSER_ERROR <gtk_file_chooser_error_quark>
+define GTK_FILE_CHOOSER_ERROR <gtk_file_chooser_error_quark ()>
 
 .enum GtkFileChooserError {
   GTK_FILE_CHOOSER_ERROR_NONEXISTENT,

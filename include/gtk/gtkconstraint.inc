@@ -6,8 +6,8 @@ include gtk/gtkenums.inc
 
 ;GtkConstraintTarget     typedef _GtkConstraintTarget
 
-define GTK_TYPE_CONSTRAINT_TARGET (gtk_constraint_target_get_type ())
-define GTK_TYPE_CONSTRAINT (gtk_constraint_get_type ())
+define GTK_TYPE_CONSTRAINT_TARGET <gtk_constraint_target_get_type ()>
+define GTK_TYPE_CONSTRAINT <gtk_constraint_get_type ()>
 
 gtk_constraint_new proto :gpointer, :GtkConstraintAttribute, :GtkConstraintRelation, :gpointer, :GtkConstraintAttribute, :real8, :real8, :sdword
 gtk_constraint_new_constant proto :gpointer, :GtkConstraintAttribute, :GtkConstraintRelation, :real8, :sdword

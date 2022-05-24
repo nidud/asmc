@@ -9,7 +9,7 @@ include gio/giotypes.inc
 
 define G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE <"unix-device">
 
-define G_TYPE_DRIVE           <g_drive_get_type>
+define G_TYPE_DRIVE           <g_drive_get_type ()>
 G_DRIVE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_DRIVE, GDrive))>
   endm

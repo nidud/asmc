@@ -8,7 +8,7 @@ endif
 include gtk/gtkexpression.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_TREE_LIST_ROW_SORTER <gtk_tree_list_row_sorter_get_type>
+define GTK_TYPE_TREE_LIST_ROW_SORTER <gtk_tree_list_row_sorter_get_type ()>
 
 gtk_tree_list_row_sorter_new proto :ptr
 gtk_tree_list_row_sorter_get_sorter proto :ptr

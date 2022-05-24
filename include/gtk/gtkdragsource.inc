@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_DRAG_SOURCE <gtk_drag_source_get_type>
+define GTK_TYPE_DRAG_SOURCE <gtk_drag_source_get_type ()>
 GTK_DRAG_SOURCE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_DRAG_SOURCE, GtkDragSource))>
   endm

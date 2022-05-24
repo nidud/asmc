@@ -7,7 +7,7 @@ endif
 
 include gio/gsocketlistener.inc
 
-define G_TYPE_SOCKET_SERVICE                               <g_socket_service_get_type>
+define G_TYPE_SOCKET_SERVICE                               <g_socket_service_get_type ()>
 G_SOCKET_SERVICE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_SOCKET_SERVICE, GSocketService))>
   endm

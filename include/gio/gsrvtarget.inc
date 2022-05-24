@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 
 g_srv_target_get_type proto
-define G_TYPE_SRV_TARGET <g_srv_target_get_type>
+define G_TYPE_SRV_TARGET <g_srv_target_get_type ()>
 
 g_srv_target_new proto :ptr, :guint16, :guint16, :guint16
 g_srv_target_copy proto :ptr

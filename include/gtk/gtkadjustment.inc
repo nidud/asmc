@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtktypes.inc
 
-define GTK_TYPE_ADJUSTMENT                  <gtk_adjustment_get_type>
+define GTK_TYPE_ADJUSTMENT <gtk_adjustment_get_type ()>
 GTK_ADJUSTMENT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ADJUSTMENT, GtkAdjustment))>
   endm

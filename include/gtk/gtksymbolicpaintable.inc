@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_SYMBOLIC_PAINTABLE <gtk_symbolic_paintable_get_type>
+define GTK_TYPE_SYMBOLIC_PAINTABLE <gtk_symbolic_paintable_get_type ()>
 
 _GtkSymbolicPaintableInterface struct
 g_iface                 GTypeInterface <>

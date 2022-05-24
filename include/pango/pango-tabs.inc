@@ -10,7 +10,7 @@ include pango/pango-types.inc
     PANGO_TAB_DECIMAL
     }
 
-PANGO_TYPE_TAB_ARRAY equ <pango_tab_array_get_type>
+define PANGO_TYPE_TAB_ARRAY <pango_tab_array_get_type ()>
 
 pango_tab_array_new proto __cdecl \
 	  initial_size: gint,

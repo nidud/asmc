@@ -7,7 +7,7 @@ define __G_SUBPROCESS_LAUNCHER_H__
 
 include gio/giotypes.inc
 
-define G_TYPE_SUBPROCESS_LAUNCHER         <g_subprocess_launcher_get_type>
+define G_TYPE_SUBPROCESS_LAUNCHER         <g_subprocess_launcher_get_type ()>
 G_SUBPROCESS_LAUNCHER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_SUBPROCESS_LAUNCHER, GSubprocessLauncher))>
   endm

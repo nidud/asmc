@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_LIST_MODEL <g_list_model_get_type>
+define G_TYPE_LIST_MODEL <g_list_model_get_type ()>
 
 _GListModelInterface    struct
 g_iface                 GTypeInterface <>

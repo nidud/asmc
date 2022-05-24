@@ -78,7 +78,7 @@ define PANGO_SCALE_LARGE    (1.2)
 define PANGO_SCALE_X_LARGE  (1.44)
 define PANGO_SCALE_XX_LARGE (1.728)
 
-define PANGO_TYPE_FONT_DESCRIPTION <pango_font_description_get_type>
+define PANGO_TYPE_FONT_DESCRIPTION <pango_font_description_get_type ()>
 
 pango_font_description_get_type proto
 pango_font_description_new proto
@@ -124,7 +124,7 @@ pango_font_description_to_string proto :ptr
 pango_font_description_to_filename proto :ptr
 
 
-define PANGO_TYPE_FONT_METRICS  <pango_font_metrics_get_type>
+define PANGO_TYPE_FONT_METRICS  <pango_font_metrics_get_type ()>
 
 _PangoFontMetrics       struct
 ref_count               guint ?
@@ -152,7 +152,7 @@ pango_font_metrics_get_underline_thickness proto :ptr
 pango_font_metrics_get_strikethrough_position proto :ptr
 pango_font_metrics_get_strikethrough_thickness proto :ptr
 
-define PANGO_TYPE_FONT_FAMILY              <pango_font_family_get_type>
+define PANGO_TYPE_FONT_FAMILY              <pango_font_family_get_type ()>
 PANGO_FONT_FAMILY macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT_FAMILY, PangoFontFamily))>
   endm
@@ -198,7 +198,7 @@ pango_font_family_is_monospace proto :ptr
 pango_font_family_is_variable proto :ptr
 pango_font_family_get_face proto :ptr, :ptr
 
-define PANGO_TYPE_FONT_FACE <pango_font_face_get_type>
+define PANGO_TYPE_FONT_FACE <pango_font_face_get_type ()>
 PANGO_FONT_FACE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT_FACE, PangoFontFace))>
   endm
@@ -244,7 +244,7 @@ pango_font_face_is_synthesized proto :ptr
 
 pango_font_face_get_family proto :ptr
 
-define PANGO_TYPE_FONT  <pango_font_get_type>
+define PANGO_TYPE_FONT  <pango_font_get_type ()>
 PANGO_FONT macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONT, PangoFont))>
   endm

@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_CONTENT_DESERIALIZER         <gdk_content_deserializer_get_type>
+define GDK_TYPE_CONTENT_DESERIALIZER         <gdk_content_deserializer_get_type ()>
 GDK_CONTENT_DESERIALIZER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GDK_TYPE_CONTENT_DESERIALIZER, GdkContentDeserializer))>
   endm

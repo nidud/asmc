@@ -10,7 +10,7 @@ include gio/giotypes.inc
 define G_TLS_DATABASE_PURPOSE_AUTHENTICATE_SERVER <"1.3.6.1.5.5.7.3.1">
 define G_TLS_DATABASE_PURPOSE_AUTHENTICATE_CLIENT <"1.3.6.1.5.5.7.3.2">
 
-define G_TYPE_TLS_DATABASE            <g_tls_database_get_type>
+define G_TYPE_TLS_DATABASE            <g_tls_database_get_type ()>
 G_TLS_DATABASE macro inst
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((inst), G_TYPE_TLS_DATABASE, GTlsDatabase))>
   endm

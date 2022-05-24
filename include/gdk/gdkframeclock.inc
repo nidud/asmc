@@ -7,7 +7,7 @@ endif
 
 include gdk/gdkframetimings.inc
 
-define GDK_TYPE_FRAME_CLOCK            <gdk_frame_clock_get_type>
+define GDK_TYPE_FRAME_CLOCK <gdk_frame_clock_get_type ()>
 GDK_FRAME_CLOCK macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_FRAME_CLOCK, GdkFrameClock))>
   endm

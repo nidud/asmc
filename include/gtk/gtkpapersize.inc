@@ -10,7 +10,7 @@ include gtk/gtkenums.inc
 
 ;GtkPaperSize            typedef _GtkPaperSize
 
-define GTK_TYPE_PAPER_SIZE <gtk_paper_size_get_type>
+define GTK_TYPE_PAPER_SIZE <gtk_paper_size_get_type ()>
 
 define GTK_PAPER_NAME_A3 <"iso_a3">
 define GTK_PAPER_NAME_A4 <"iso_a4">

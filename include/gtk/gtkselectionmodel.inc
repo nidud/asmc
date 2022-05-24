@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_SELECTION_MODEL <gtk_selection_model_get_type>
+define GTK_TYPE_SELECTION_MODEL <gtk_selection_model_get_type ()>
 
 _GtkSelectionModelInterface struct
 g_iface                 GTypeInterface <>

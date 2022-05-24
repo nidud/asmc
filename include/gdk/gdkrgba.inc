@@ -16,7 +16,7 @@ alpha                   real4 ?
 _GdkRGBA                ends
 GdkRGBA                 typedef _GdkRGBA
 
-define GDK_TYPE_RGBA <gdk_rgba_get_type>
+define GDK_TYPE_RGBA <gdk_rgba_get_type ()>
 
 gdk_rgba_get_type proto
 gdk_rgba_copy proto :ptr

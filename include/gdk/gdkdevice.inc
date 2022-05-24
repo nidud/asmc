@@ -10,7 +10,7 @@ include gdk/gdktypes.inc
 include gdk/gdkdevicetool.inc
 include gdk/gdkenums.inc
 
-define GDK_TYPE_DEVICE         <gdk_device_get_type>
+define GDK_TYPE_DEVICE         <gdk_device_get_type ()>
 GDK_DEVICE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GDK_TYPE_DEVICE, GdkDevice))>
   endm

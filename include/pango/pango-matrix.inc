@@ -13,7 +13,7 @@ x0			double ?
 y0			double ?
 PangoMatrix		ENDS
 
-PANGO_TYPE_MATRIX	equ <pango_matrix_get_type>
+define PANGO_TYPE_MATRIX <pango_matrix_get_type ()>
 
 define PANGO_MATRIX_INIT <{ 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 }>
 

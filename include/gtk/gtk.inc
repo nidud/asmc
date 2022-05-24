@@ -1,12 +1,16 @@
 ifndef __GTK_H__
 define __GTK_H__
 
+.pragma list(push, 0)
+
 define __GTK_H_INSIDE__
 
-;include gtk/css/gtkcss.inc
 include gdk/gdk.inc
-;include gsk/gsk.inc
+include gsk/gsk.inc
 
+.pragma comment(lib, "gtk-4")
+
+include gtk/css/gtkcss.inc
 include gtk/gtkaboutdialog.inc
 include gtk/gtkaccelgroup.inc
 include gtk/gtkaccessible.inc
@@ -266,5 +270,6 @@ include gtk/gtk-autocleanups.inc
 
 undef __GTK_H_INSIDE__
 
+.pragma list(pop)
 endif
 

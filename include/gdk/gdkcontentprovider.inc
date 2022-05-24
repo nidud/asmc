@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_CONTENT_PROVIDER            <gdk_content_provider_get_type>
+define GDK_TYPE_CONTENT_PROVIDER            <gdk_content_provider_get_type ()>
 GDK_CONTENT_PROVIDER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_CONTENT_PROVIDER, GdkContentProvider))>
   endm

@@ -7,7 +7,7 @@ endif
 
 include gtk/gtktypes.inc
 
-define GTK_TYPE_BITSET <gtk_bitset_get_type>
+define GTK_TYPE_BITSET <gtk_bitset_get_type ()>
 
 gtk_bitset_get_type proto
 

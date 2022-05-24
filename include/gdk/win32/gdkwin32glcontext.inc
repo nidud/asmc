@@ -7,7 +7,7 @@ endif
 
 include gdk/gdk.inc
 
-define GDK_TYPE_WIN32_GL_CONTEXT		<gdk_win32_gl_context_get_type>
+define GDK_TYPE_WIN32_GL_CONTEXT	<gdk_win32_gl_context_get_type ()>
 GDK_WIN32_GL_CONTEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_WIN32_GL_CONTEXT, GdkWin32GLContext))>
   endm

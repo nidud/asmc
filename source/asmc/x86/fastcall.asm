@@ -1100,15 +1100,25 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, address:i
                     asmerr(2114, &[esi+1])
                 .endif
                 mov eax,psize
+                mov edx,paramvalue
                 .switch ( eax )
                 .case 1: mov ecx,T_BYTE : .endc
                 .case 2: mov ecx,T_WORD : .endc
-                .case 4: mov ecx,T_DWORD: .endc
+                .case 4
+                    ;
+                    ; added v2.33.57 for vararg
+                    ; - this fails for NULL pointers as the upper value is not cleared
+                    ; - the default size is 4
+                    ;
+                    .if ( [edi].expr.value || !( [ebx].asym.sflags & S_ISVARARG ) )
+                        mov ecx,T_DWORD
+                        .endc
+                    .endif
                 .default
                     mov ecx,T_QWORD
                     .endc
                 .endsw
-                AddLineQueueX( " mov %r ptr [rsp+%u], %s", ecx, arg_offset, paramvalue )
+                AddLineQueueX( " mov %r ptr [rsp+%u], %s", ecx, arg_offset, edx )
             .endif
 
         .elseif ( [edi].expr.kind == EXPR_FLOAT )

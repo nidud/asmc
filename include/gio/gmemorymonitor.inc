@@ -9,7 +9,7 @@ include gio/giotypes.inc
 
 define G_MEMORY_MONITOR_EXTENSION_POINT_NAME <"gio-memory-monitor">
 
-define G_TYPE_MEMORY_MONITOR             <g_memory_monitor_get_type>
+define G_TYPE_MEMORY_MONITOR             <g_memory_monitor_get_type ()>
 
 G_MEMORY_MONITOR macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_MEMORY_MONITOR, GMemoryMonitor))>

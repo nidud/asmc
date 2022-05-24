@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_FILE_ENUMERATOR         <g_file_enumerator_get_type>
+define G_TYPE_FILE_ENUMERATOR         <g_file_enumerator_get_type ()>
 G_FILE_ENUMERATOR macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILE_ENUMERATOR, GFileEnumerator))>
   endm

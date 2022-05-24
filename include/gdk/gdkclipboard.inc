@@ -9,7 +9,7 @@ include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 include gio/gio.inc
 
-define GDK_TYPE_CLIPBOARD            <gdk_clipboard_get_type>
+define GDK_TYPE_CLIPBOARD            <gdk_clipboard_get_type ()>
 GDK_CLIPBOARD macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_CLIPBOARD, GdkClipboard))>
   endm

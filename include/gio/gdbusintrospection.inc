@@ -97,13 +97,13 @@ g_dbus_property_info_unref proto :ptr
 g_dbus_arg_info_unref proto :ptr
 g_dbus_annotation_info_unref proto :ptr
 
-define G_TYPE_DBUS_NODE_INFO       <g_dbus_node_info_get_type>
-define G_TYPE_DBUS_INTERFACE_INFO  <g_dbus_interface_info_get_type>
-define G_TYPE_DBUS_METHOD_INFO     <g_dbus_method_info_get_type>
-define G_TYPE_DBUS_SIGNAL_INFO     <g_dbus_signal_info_get_type>
-define G_TYPE_DBUS_PROPERTY_INFO   <g_dbus_property_info_get_type>
-define G_TYPE_DBUS_ARG_INFO        <g_dbus_arg_info_get_type>
-define G_TYPE_DBUS_ANNOTATION_INFO <g_dbus_annotation_info_get_type>
+define G_TYPE_DBUS_NODE_INFO       <g_dbus_node_info_get_type ()>
+define G_TYPE_DBUS_INTERFACE_INFO  <g_dbus_interface_info_get_type ()>
+define G_TYPE_DBUS_METHOD_INFO     <g_dbus_method_info_get_type ()>
+define G_TYPE_DBUS_SIGNAL_INFO     <g_dbus_signal_info_get_type ()>
+define G_TYPE_DBUS_PROPERTY_INFO   <g_dbus_property_info_get_type ()>
+define G_TYPE_DBUS_ARG_INFO        <g_dbus_arg_info_get_type ()>
+define G_TYPE_DBUS_ANNOTATION_INFO <g_dbus_annotation_info_get_type ()>
 
 g_dbus_node_info_get_type proto
 g_dbus_interface_info_get_type proto

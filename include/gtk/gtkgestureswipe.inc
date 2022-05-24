@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkgesturesingle.inc
 
-define GTK_TYPE_GESTURE_SWIPE <gtk_gesture_swipe_get_type>
+define GTK_TYPE_GESTURE_SWIPE <gtk_gesture_swipe_get_type ()>
 GTK_GESTURE_SWIPE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_SWIPE, GtkGestureSwipe))>
   endm

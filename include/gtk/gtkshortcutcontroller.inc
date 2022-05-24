@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkeventcontroller.inc
 
-define GTK_TYPE_SHORTCUT_CONTROLLER <gtk_shortcut_controller_get_type>
+define GTK_TYPE_SHORTCUT_CONTROLLER <gtk_shortcut_controller_get_type ()>
 GTK_SHORTCUT_CONTROLLER macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_SHORTCUT_CONTROLLER, GtkShortcutController))>
   endm

@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 include gio/gdbusintrospection.inc
 
-define G_TYPE_DBUS_PROXY         <g_dbus_proxy_get_type>
+define G_TYPE_DBUS_PROXY         <g_dbus_proxy_get_type ()>
 G_DBUS_PROXY macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_PROXY, GDBusProxy))>
   endm

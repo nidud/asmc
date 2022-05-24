@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_DEVICE_PAD         <gdk_device_pad_get_type>
+define GDK_TYPE_DEVICE_PAD <gdk_device_pad_get_type ()>
 GDK_DEVICE_PAD macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GDK_TYPE_DEVICE_PAD, GdkDevicePad))>
   endm

@@ -9,7 +9,7 @@ include gdk/gdk.inc
 include gtk/gtktreemodel.inc
 include gtk/gtktreesortable.inc
 
-define GTK_TYPE_TREE_MODEL_SORT <gtk_tree_model_sort_get_type>
+define GTK_TYPE_TREE_MODEL_SORT <gtk_tree_model_sort_get_type ()>
 GTK_TREE_MODEL_SORT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_MODEL_SORT, GtkTreeModelSort))>
   endm

@@ -4,7 +4,7 @@ define __GSK_CAIRO_RENDERER_H__
 include cairo.inc
 include gsk/gskrenderer.inc
 
-define GSK_TYPE_CAIRO_RENDERER <gsk_cairo_renderer_get_type>
+define GSK_TYPE_CAIRO_RENDERER <gsk_cairo_renderer_get_type ()>
 
 GSK_CAIRO_RENDERER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GSK_TYPE_CAIRO_RENDERER, GskCairoRenderer))>

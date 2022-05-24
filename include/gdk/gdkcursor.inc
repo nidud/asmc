@@ -8,7 +8,7 @@ endif
 include gdk/gdkversionmacros.inc
 include gdk/gdktypes.inc
 
-define GDK_TYPE_CURSOR              <gdk_cursor_get_type>
+define GDK_TYPE_CURSOR              <gdk_cursor_get_type ()>
 GDK_CURSOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_CURSOR, GdkCursor))>
   endm

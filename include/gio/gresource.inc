@@ -7,9 +7,9 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_RESOURCE <g_resource_get_type>
+define G_TYPE_RESOURCE <g_resource_get_type ()>
 
-define G_RESOURCE_ERROR <g_resource_error_quark>
+define G_RESOURCE_ERROR <g_resource_error_quark ()>
 g_resource_error_quark proto
 
 _GStaticResource        struct

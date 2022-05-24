@@ -7,7 +7,7 @@ endif
 
 include gio/giotypes.inc
 
-define G_TYPE_FILE_ICON         <g_file_icon_get_type>
+define G_TYPE_FILE_ICON         <g_file_icon_get_type ()>
 G_FILE_ICON macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_FILE_ICON, GFileIcon))>
   endm

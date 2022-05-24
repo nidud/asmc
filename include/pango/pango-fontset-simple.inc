@@ -7,7 +7,7 @@ include pango/pango-fontset.inc
 
 include glib-object.inc
 
-define PANGO_TYPE_FONTSET_SIMPLE <pango_fontset_simple_get_type>
+define PANGO_TYPE_FONTSET_SIMPLE <pango_fontset_simple_get_type ()>
 PANGO_FONTSET_SIMPLE macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), PANGO_TYPE_FONTSET_SIMPLE, PangoFontsetSimple))>
   endm

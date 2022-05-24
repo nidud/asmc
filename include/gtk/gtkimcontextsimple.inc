@@ -9,7 +9,7 @@ include gtk/gtkimcontext.inc
 
 define GTK_MAX_COMPOSE_LEN 7
 
-define GTK_TYPE_IM_CONTEXT_SIMPLE <gtk_im_context_simple_get_type>
+define GTK_TYPE_IM_CONTEXT_SIMPLE <gtk_im_context_simple_get_type ()>
 GTK_IM_CONTEXT_SIMPLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_IM_CONTEXT_SIMPLE, GtkIMContextSimple))>
   endm

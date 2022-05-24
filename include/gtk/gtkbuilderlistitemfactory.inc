@@ -7,7 +7,7 @@ endif
 
 include gtk/gtklistitemfactory.inc
 
-define GTK_TYPE_BUILDER_LIST_ITEM_FACTORY <gtk_builder_list_item_factory_get_type>
+define GTK_TYPE_BUILDER_LIST_ITEM_FACTORY <gtk_builder_list_item_factory_get_type ()>
 GTK_BUILDER_LIST_ITEM_FACTORY macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_BUILDER_LIST_ITEM_FACTORY, GtkBuilderListItemFactory))>
   endm

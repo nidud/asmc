@@ -3,7 +3,7 @@ define __GTK_CUSTOM_LAYOUT_H__
 
 include gtk/gtklayoutmanager.inc
 
-define GTK_TYPE_CUSTOM_LAYOUT <gtk_custom_layout_get_type>
+define GTK_TYPE_CUSTOM_LAYOUT <gtk_custom_layout_get_type ()>
 
 CALLBACK(GtkCustomRequestModeFunc, :ptr)
 CALLBACK(GtkCustomMeasureFunc, :ptr, :GtkOrientation, :sdword, :ptr, :ptr, :ptr, :ptr)

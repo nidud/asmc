@@ -1,6 +1,7 @@
 ifndef __STDLIB_INC
 define __STDLIB_INC
 include libc.inc
+.pragma list(push, 0)
 
 ifndef _ERRNO_T_DEFINED
 define _ERRNO_T_DEFINED
@@ -645,5 +646,6 @@ setwargv	proto __cdecl :ptr int_t, :ptr wchar_t
 _atoi128	proto __cdecl :string_t
 qsort4		proto :ptr, :size_t, :LPQSORTCMD
 endif
-
+.pragma list(pop)
 endif ; __STDLIB_INC
+

@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkbutton.inc
 
-define GTK_TYPE_LINK_BUTTON <gtk_link_button_get_type>
+define GTK_TYPE_LINK_BUTTON <gtk_link_button_get_type ()>
 GTK_LINK_BUTTON macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LINK_BUTTON, GtkLinkButton))>
   endm

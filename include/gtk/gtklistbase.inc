@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkselectionmodel.inc
 
-define GTK_TYPE_LIST_BASE <gtk_list_base_get_type>
+define GTK_TYPE_LIST_BASE <gtk_list_base_get_type ()>
 GTK_LIST_BASE macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_LIST_BASE, GtkListBase))>
   endm

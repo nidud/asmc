@@ -9,21 +9,21 @@ include gtk/gtkapplication.inc
 include gtk/gtkaccelgroup.inc
 include gtk/gtkwidget.inc
 
-define GTK_TYPE_WINDOW <gtk_window_get_type>
+define GTK_TYPE_WINDOW <gtk_window_get_type ()>
 GTK_WINDOW macro obj
-  exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_WINDOW, GtkWindow))>
+  exitm<G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_WINDOW, GtkWindow)>
   endm
 GTK_WINDOW_CLASS macro klass
-  exitm<(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_WINDOW, GtkWindowClass))>
+  exitm<G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_WINDOW, GtkWindowClass)>
   endm
 GTK_IS_WINDOW macro obj
-  exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_WINDOW))>
+  exitm<G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_WINDOW)>
   endm
 GTK_IS_WINDOW_CLASS macro klass
-  exitm<(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_WINDOW))>
+  exitm<G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_WINDOW)>
   endm
 GTK_WINDOW_GET_CLASS macro obj
-  exitm<(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_WINDOW, GtkWindowClass))>
+  exitm<G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_WINDOW, GtkWindowClass)>
   endm
 
 ;GtkWindowGroup		 typedef _GtkWindowGroup

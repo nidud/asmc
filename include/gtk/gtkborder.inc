@@ -8,7 +8,7 @@ endif
 include glib-object.inc
 include gdk/gdk.inc
 
-define GTK_TYPE_BORDER <gtk_border_get_type>
+define GTK_TYPE_BORDER <gtk_border_get_type ()>
 
 _GtkBorder              struct
 left                    gint16 ?

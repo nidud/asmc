@@ -8,7 +8,7 @@ endif
 include glib.inc
 include gio/gioenums.inc
 
-G_IO_ERROR equ <g_io_error_quark>
+define G_IO_ERROR <g_io_error_quark ()>
 
 ;GQuark
 g_io_error_quark proto __cdecl

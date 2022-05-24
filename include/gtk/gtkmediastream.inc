@@ -7,7 +7,7 @@ endif
 
 include gdk/gdk.inc
 
-define GTK_TYPE_MEDIA_STREAM <gtk_media_stream_get_type>
+define GTK_TYPE_MEDIA_STREAM <gtk_media_stream_get_type ()>
 
 _GtkMediaStreamClass    struct
 parent_class            GObjectClass <>

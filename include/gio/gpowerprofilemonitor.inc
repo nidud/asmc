@@ -8,7 +8,7 @@ endif
 include gio/giotypes.inc
 
 define G_POWER_PROFILE_MONITOR_EXTENSION_POINT_NAME <"gio-power-profile-monitor">
-define G_TYPE_POWER_PROFILE_MONITOR             <g_power_profile_monitor_get_type>
+define G_TYPE_POWER_PROFILE_MONITOR             <g_power_profile_monitor_get_type ()>
 
 G_POWER_PROFILE_MONITOR macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_POWER_PROFILE_MONITOR, GPowerProfileMonitor))>

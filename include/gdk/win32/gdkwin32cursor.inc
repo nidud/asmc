@@ -12,7 +12,7 @@ include windows.inc
 ;GdkWin32HCursor         typedef _GdkWin32HCursor
 ;GdkWin32HCursorClass    typedef _GdkWin32HCursorClass
 
-define GDK_TYPE_WIN32_HCURSOR              <gdk_win32_hcursor_get_type>
+define GDK_TYPE_WIN32_HCURSOR <gdk_win32_hcursor_get_type ()>
 GDK_WIN32_HCURSOR macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_HCURSOR, GdkWin32HCursor))>
   endm

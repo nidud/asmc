@@ -3,7 +3,7 @@ define __G_WIN32_INPUT_STREAM_H__
 
 include gio/gio.inc
 
-define G_TYPE_WIN32_INPUT_STREAM         <g_win32_input_stream_get_type>
+define G_TYPE_WIN32_INPUT_STREAM <g_win32_input_stream_get_type ()>
 G_WIN32_INPUT_STREAM macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_WIN32_INPUT_STREAM, GWin32InputStream))>
   endm

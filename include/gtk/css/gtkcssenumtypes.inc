@@ -9,9 +9,9 @@ include glib-object.inc
 include gdk/gdkversionmacros.inc
 
 gtk_css_parser_error_get_type proto
-define GTK_TYPE_CSS_PARSER_ERROR <gtk_css_parser_error_get_type>
+define GTK_TYPE_CSS_PARSER_ERROR <gtk_css_parser_error_get_type ()>
 gtk_css_parser_warning_get_type proto
-define GTK_TYPE_CSS_PARSER_WARNING <gtk_css_parser_warning_get_type>
+define GTK_TYPE_CSS_PARSER_WARNING <gtk_css_parser_warning_get_type ()>
 
 endif
 

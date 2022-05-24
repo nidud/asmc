@@ -16,7 +16,7 @@ GdkWin32Display         typedef GdkDisplay
 endif
 ;GdkWin32DisplayClass    typedef _GdkWin32DisplayClass
 
-define GDK_TYPE_WIN32_DISPLAY              <gdk_win32_display_get_type>
+define GDK_TYPE_WIN32_DISPLAY <gdk_win32_display_get_type ()>
 GDK_WIN32_DISPLAY macro object
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WIN32_DISPLAY, GdkWin32Display))>
   endm

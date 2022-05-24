@@ -8,7 +8,7 @@ endif
 include gdk/gdk.inc
 include gtk/gtkenums.inc
 
-define GTK_TYPE_ICON_PAINTABLE <gtk_icon_paintable_get_type>
+define GTK_TYPE_ICON_PAINTABLE <gtk_icon_paintable_get_type ()>
 GTK_ICON_PAINTABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ICON_PAINTABLE, GtkIconPaintable))>
   endm
@@ -16,7 +16,7 @@ GTK_IS_ICON_PAINTABLE macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_ICON_PAINTABLE))>
   endm
 
-define GTK_TYPE_ICON_THEME <gtk_icon_theme_get_type>
+define GTK_TYPE_ICON_THEME <gtk_icon_theme_get_type ()>
 GTK_ICON_THEME macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ICON_THEME, GtkIconTheme))>
   endm
@@ -33,7 +33,7 @@ GTK_IS_ICON_THEME macro obj
   GTK_ICON_LOOKUP_PRELOAD        = 1 shl 2,
   }
 
-define GTK_ICON_THEME_ERROR <gtk_icon_theme_error_quark>
+define GTK_ICON_THEME_ERROR <gtk_icon_theme_error_quark ()>
 
 .enum GtkIconThemeError {
   GTK_ICON_THEME_NOT_FOUND,

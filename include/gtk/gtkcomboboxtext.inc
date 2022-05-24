@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkcombobox.inc
 
-define GTK_TYPE_COMBO_BOX_TEXT                 <gtk_combo_box_text_get_type>
+define GTK_TYPE_COMBO_BOX_TEXT <gtk_combo_box_text_get_type ()>
 GTK_COMBO_BOX_TEXT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_COMBO_BOX_TEXT, GtkComboBoxText))>
   endm

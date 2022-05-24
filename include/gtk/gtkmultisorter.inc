@@ -8,7 +8,7 @@ endif
 include gtk/gtkexpression.inc
 include gtk/gtksorter.inc
 
-define GTK_TYPE_MULTI_SORTER <gtk_multi_sorter_get_type>
+define GTK_TYPE_MULTI_SORTER <gtk_multi_sorter_get_type ()>
 
 gtk_multi_sorter_new proto
 gtk_multi_sorter_append proto :ptr, :ptr

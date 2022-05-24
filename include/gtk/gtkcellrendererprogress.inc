@@ -7,7 +7,7 @@ endif
 
 include gtk/gtkcellrenderer.inc
 
-define GTK_TYPE_CELL_RENDERER_PROGRESS <gtk_cell_renderer_progress_get_type>
+define GTK_TYPE_CELL_RENDERER_PROGRESS <gtk_cell_renderer_progress_get_type ()>
 GTK_CELL_RENDERER_PROGRESS macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CELL_RENDERER_PROGRESS, GtkCellRendererProgress))>
   endm

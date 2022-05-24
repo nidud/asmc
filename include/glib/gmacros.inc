@@ -7,6 +7,13 @@ endif
 
 include stddef.inc
 
+G_STRINGIFY macro macro_or_string
+    exitm<G_STRINGIFY_ARG (macro_or_string)>
+    endm
+G_STRINGIFY_ARG macro contents
+    exitm<@CatStr(<!">, %contents, <!">)>
+    endm
+
 G_ASMC_CHECK_VERSION macro major, minor
 ifdef __ASMC__
  if ((__ASMC__ gt (major)) or ((__ASMC__ eq (major)) and ((__ASMC__ mod 100) ge (minor))))

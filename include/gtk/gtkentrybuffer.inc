@@ -9,7 +9,7 @@ include glib-object.inc
 include gdk/gdk.inc
 
 define GTK_ENTRY_BUFFER_MAX_SIZE        G_MAXUSHORT
-define GTK_TYPE_ENTRY_BUFFER            <gtk_entry_buffer_get_type>
+define GTK_TYPE_ENTRY_BUFFER <gtk_entry_buffer_get_type ()>
 GTK_ENTRY_BUFFER macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ENTRY_BUFFER, GtkEntryBuffer))>
   endm

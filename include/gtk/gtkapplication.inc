@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gio/gio.inc
 
-define GTK_TYPE_APPLICATION            <gtk_application_get_type>
+define GTK_TYPE_APPLICATION            <gtk_application_get_type ()>
 GTK_APPLICATION macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_APPLICATION, GtkApplication))>
   endm

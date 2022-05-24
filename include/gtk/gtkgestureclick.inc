@@ -8,7 +8,7 @@ endif
 include gtk/gtkwidget.inc
 include gtk/gtkgesturesingle.inc
 
-define GTK_TYPE_GESTURE_CLICK <gtk_gesture_click_get_type>
+define GTK_TYPE_GESTURE_CLICK <gtk_gesture_click_get_type ()>
 GTK_GESTURE_CLICK macro o
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_GESTURE_CLICK, GtkGestureClick))>
   endm

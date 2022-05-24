@@ -10,7 +10,7 @@ include gdk/gdkversionmacros.inc
 
 ;GdkSnapshotClass        typedef _GdkSnapshotClass
 
-define GDK_TYPE_SNAPSHOT               <gdk_snapshot_get_type>
+define GDK_TYPE_SNAPSHOT <gdk_snapshot_get_type ()>
 
 GDK_SNAPSHOT macro obj
   exitm<(G_TYPE_CHECK_INSTANCE_CAST ((obj), GDK_TYPE_SNAPSHOT, GdkSnapshot))>

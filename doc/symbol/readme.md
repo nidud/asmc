@@ -72,6 +72,9 @@ The macros listed in the following table.
 | **@FileName** | The base name of the main file being assembled (text macro). |
 | **@FileCur** | The name of the current source file (text macro). |
 | **@Line** | Defined as the integer line number in the current source file. |
+| **__FILE__** | The name of the current source file (string macro). |
+| **__func__** | The name of the current function (string macro). |
+| **__LINE__** | Defined as the integer line number in the current source file. |
 
 ### Macro Functions
 

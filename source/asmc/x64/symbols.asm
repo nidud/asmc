@@ -12,10 +12,13 @@ include macro.inc
 include extern.inc
 include fastpass.inc
 
-public              SymCmpFunc
-externdef           FileCur   :asym_t ; @FileCur symbol
-externdef           LineCur   :asym_t ; @Line symbol
-externdef           symCurSeg :asym_t ; @CurSeg symbol
+public SymCmpFunc
+public strFUNC
+public strFILE
+
+externdef FileCur   :asym_t ; @FileCur symbol
+externdef LineCur   :asym_t ; @Line symbol
+externdef symCurSeg :asym_t ; @CurSeg symbol
 
 UpdateLineNumber    proto __ccall :asym_t, :ptr
 UpdateWordSize      proto __ccall :asym_t, :ptr
@@ -53,6 +56,8 @@ SymCmpFunc          StrCmpFunc ?
 dyneqtable          string_t _MAX_DYNEQ dup(?)
 dyneqvalue          string_t _MAX_DYNEQ dup(?)
 SymCount            uint_t ?            ; Number of symbols in global table
+strFILE             char_t 1024 dup(?)  ; value of __FILE__ symbol
+strFUNC             char_t 256 dup(?)   ; value of __func__ symbol
 
 .data
 symPC asym_t 0  ; the $ symbol
@@ -70,6 +75,12 @@ tmtab label tmitem
     tmitem  <@CStr("@FileName"), ModuleInfo.name, 0>
     tmitem  <@CStr("@FileCur"),  0, FileCur>
 
+    ; added 2.33.58
+
+    tmitem  <@CStr("__FILE__"),  strFILE, 0>
+    tmitem  <@CStr("__LINE__"),  @CStr("@Line"), 0>
+    tmitem  <@CStr("__func__"),  strFUNC, 0>
+
     ; v2.09: @CurSeg value is never set if no segment is ever opened.
     ; this may have caused an access error if a listing was written.
 
@@ -84,9 +95,11 @@ ifdef ASMC64
     eqitem  < @CStr("__ASMC64__"), ASMC_VERSION, 0, 0 >
 endif
     eqitem  < @CStr("__JWASM__"),  212, 0, 0 >
+
     eqitem  < @CStr("$"),          0, UpdateCurPC, symPC >
     eqitem  < @CStr("@Line"),      0, UpdateLineNumber, LineCur >
     eqitem  < @CStr("@WordSize"),  0, UpdateWordSize, 0 > ; must be last (see SymInit())
+
     string_t NULL
 
 dyneqcount int_t 0

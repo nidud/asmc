@@ -19,6 +19,8 @@ public LineCur
 public token_stringbuf
 public commentbuffer
 
+externdef strFILE:sbyte
+
 DETECTCTRLZ equ 1 ;; 1=Ctrl-Z in input stream will skip rest of the file
 
 ;; FILESEQ: if 1, stores a linked list of source files, ordered
@@ -228,6 +230,30 @@ ClearSrcStack proc uses esi edi
 ClearSrcStack endp
 
     assume esi:nothing
+
+UpdateFileCur proc path:string_t
+
+    mov ecx,path
+    mov edx,FileCur
+    mov [edx].asym.string_ptr,ecx
+
+    lea edx,strFILE
+    mov byte ptr [edx],'"'
+    inc edx
+    .while ( byte ptr [ecx] )
+        mov al,[ecx]
+        mov [edx],al
+        inc ecx
+        inc edx
+        .if ( al == '\' )
+            mov [edx],al
+            inc edx
+        .endif
+    .endw
+    mov word ptr [edx],'"'
+    ret
+
+UpdateFileCur endp
 
 ;; get/set value of predefined symbol @Line
 
@@ -609,9 +635,8 @@ SearchFile proc uses esi edi ebx path:string_t, queue:int_t
         mov ebx,PushSrcItem(SIT_FILE, file)
         AddFile(path)
         mov [ebx].srcfile,ax
-        GetFName(eax)
-        mov edx,FileCur
-        mov [edx].asym.string_ptr,eax
+
+        UpdateFileCur(GetFName(eax))
 if FILESEQ
         .if Options.line_numbers && Parse_Pass == PASS_1
             AddFileSeq([ebx].srcfile)
@@ -650,9 +675,7 @@ GetTextLine proc uses esi edi ebx buffer:string_t
         .endif
         ;; update value of @FileCur variable
         .for ( ebx = ModuleInfo.src_stack: [ebx].type != SIT_FILE: ebx = [ebx].next )
-            GetFName([ebx].srcfile)
-            mov edx,FileCur
-            mov [edx].asym.string_ptr,eax
+            UpdateFileCur(GetFName([ebx].srcfile))
         .endf
 if FILESEQ
         .if Options.line_numbers && Parse_Pass == PASS_1
@@ -854,9 +877,7 @@ endif
     AddFile( CurrFName[ASM*4] )
     mov [esi].srcfile,ax
     mov ModuleInfo.srcfile,eax
-    GetFName(eax)
-    mov edx,FileCur
-    mov [edx].asym.string_ptr,eax
+    UpdateFileCur(GetFName(eax))
     ret
 
 InputInit endp

@@ -172,16 +172,7 @@ _CRT_WIDE macro _String
 endif
 
 @FILECUR2W macro
-	local file
-	file textequ <L">
-%	forc x,<@FileCur>
-	    file CatStr file,<x>
-	    ifidn <x>,<\>
-		file CatStr file,<\>
-	    endif
-	    endm
-	file CatStr file,<">
-%	exitm<file>
+	exitm<L&__FILE__&>
 	endm
 
 __FILEW__ equ <@FILECUR2W()>

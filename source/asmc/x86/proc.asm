@@ -42,6 +42,7 @@ define STACKPROBE 1
 
 externdef szDgroup:char_t
 externdef list_pos:uint_t ;; current LST file position
+externdef strFUNC:sbyte
 
 public  ProcStatus
 public  procidx
@@ -1518,8 +1519,10 @@ ProcDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
         ; CurrProc must be set, it's used inside SymFind() and SymLCreate()!
 
         mov CurrProc,edi
+        tsprintf(&strFUNC, "\"%s\"", [edi].asym.name)
         .if ( ParseProc( edi, i, tokenarray, TRUE, ModuleInfo.langtype ) == ERROR )
             mov CurrProc,NULL
+            mov strFUNC,0
             .return( ERROR )
         .endif
 
@@ -1587,6 +1590,7 @@ ProcDir proc uses esi edi ebx i:int_t, tokenarray:ptr asm_tok
             mov ModuleInfo.PhaseError,TRUE
         .endif
         mov CurrProc,edi
+        tsprintf(&strFUNC, "\"%s\"", [rdi].asym.name)
 
         ; check if the exception handler set by FRAME is defined
 
@@ -1894,9 +1898,11 @@ ProcFini proc private uses esi edi p:ptr dsym
 
     mov CurrProc,pop_proc()
     .if ( CurrProc )
+        tsprintf(&strFUNC, "\"%s\"", [eax].asym.name)
         SymSetLocal( CurrProc ) ; restore local symbol table
+    .else
+        mov strFUNC,0
     .endif
-
     mov ProcStatus,0 ; in case there was an empty PROC/ENDP pair
     ret
 
@@ -3826,6 +3832,7 @@ ProcInit proc
 
     mov ProcStack,NULL
     mov CurrProc ,NULL
+    mov strFUNC,0
     mov procidx,1
     mov ProcStatus,0
     ;

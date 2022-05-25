@@ -230,33 +230,23 @@ ifndef G_LOG_DOMAIN
 define G_LOG_DOMAIN 0
 endif
 
-define G_STRFUNC <"__func__">
-
-__FILE__ macro
-  exitm<@CatStr(<!">, %@FileName, <!">)>
-  endm
-
-__LINE__ macro
-  exitm<@CatStr(<!">, %@Line, <!">)>
-  endm
-
 g_error macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 g_message macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 g_critical macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 g_warning macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 g_info macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 g_debug macro args:vararg
-  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, __FILE__(), __LINE__(), G_STRFUNC, args)>
+  exitm<g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, __FILE__, G_STRINGIFY (__LINE__), G_STRFUNC, args)>
   endm
 
 CALLBACKC(GPrintFunc, :ptr gchar)

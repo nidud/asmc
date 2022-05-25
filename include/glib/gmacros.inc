@@ -7,6 +7,8 @@ endif
 
 include stddef.inc
 
+define G_STRFUNC <__func__>
+
 G_STRINGIFY macro macro_or_string
     exitm<G_STRINGIFY_ARG (macro_or_string)>
     endm

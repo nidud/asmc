@@ -43,6 +43,7 @@ define STACKPROBE 1
 
 externdef szDgroup:char_t
 externdef list_pos:uint_t ;; current LST file position
+externdef strFUNC:sbyte
 
 public  ProcStatus
 public  procidx
@@ -1532,8 +1533,10 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         ; CurrProc must be set, it's used inside SymFind() and SymLCreate()!
 
         mov CurrProc,rdi
+        tsprintf(&strFUNC, "\"%s\"", [rdi].asym.name)
         .ifd ( ParseProc( rdi, i, tokenarray, TRUE, ModuleInfo.langtype ) == ERROR )
             mov CurrProc,NULL
+            mov strFUNC,0
             .return( ERROR )
         .endif
 
@@ -1601,6 +1604,7 @@ ProcDir proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
             mov ModuleInfo.PhaseError,TRUE
         .endif
         mov CurrProc,rdi
+        tsprintf(&strFUNC, "\"%s\"", [rdi].asym.name)
 
         ; check if the exception handler set by FRAME is defined
 
@@ -1910,9 +1914,11 @@ ProcFini proc __ccall private uses rsi rdi p:ptr dsym
 
     mov CurrProc,pop_proc()
     .if ( CurrProc )
+        tsprintf(&strFUNC, "\"%s\"", [rax].asym.name)
         SymSetLocal( CurrProc ) ; restore local symbol table
+    .else
+        mov strFUNC,0
     .endif
-
     mov ProcStatus,0 ; in case there was an empty PROC/ENDP pair
     ret
 
@@ -3867,6 +3873,7 @@ ProcInit proc __ccall
 
     mov ProcStack,NULL
     mov CurrProc ,NULL
+    mov strFUNC,0
     mov procidx,1
     mov ProcStatus,0
     ;

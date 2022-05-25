@@ -227,7 +227,7 @@ g_test_trap_assert_stderr_unmatched macro serrpattern
 
 
 g_test_rand_bit macro
-  exitm<(0 != (g_test_rand_int() & (1 << 15)))>
+  exitm<(g_test_rand_int() & (1 shl 15))>
   endm
 g_test_rand_int proto
 g_test_rand_int_range proto :gint32, :gint32

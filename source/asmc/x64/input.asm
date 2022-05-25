@@ -16,8 +16,11 @@ include tokenize.inc
 
 public FileCur
 public LineCur
+
 public token_stringbuf
 public commentbuffer
+
+externdef strFILE:sbyte
 
 DETECTCTRLZ equ 1 ;; 1=Ctrl-Z in input stream will skip rest of the file
 
@@ -225,6 +228,29 @@ endif
 ClearSrcStack endp
 
     assume r12:nothing
+
+UpdateFileCur proc __ccall path:string_t
+
+    mov rdx,FileCur
+    mov [rdx].asym.string_ptr,rcx
+
+    lea rdx,strFILE
+    mov byte ptr [rdx],'"'
+    inc rdx
+    .while ( byte ptr [rcx] )
+        mov al,[rcx]
+        mov [rdx],al
+        inc rcx
+        inc rdx
+        .if ( al == '\' )
+            mov [rdx],al
+            inc rdx
+        .endif
+    .endw
+    mov word ptr [rdx],'"'
+    ret
+
+UpdateFileCur endp
 
 ; get/set value of predefined symbol @Line
 
@@ -624,9 +650,7 @@ SearchFile proc __ccall uses rsi rdi rbx r12 r13 r14 r15 path:string_t, queue:in
         mov rbx,PushSrcItem( SIT_FILE, r12 )
         AddFile( r13 )
         mov [rbx].srcfile,ax
-        GetFName( eax )
-        mov rdx,FileCur
-        mov [rdx].asym.string_ptr,rax
+        UpdateFileCur(GetFName( eax ))
 if FILESEQ
         .if ( Options.line_numbers && Parse_Pass == PASS_1 )
             AddFileSeq( [rbx].srcfile )
@@ -670,10 +694,7 @@ GetTextLine proc __ccall uses rsi rdi rbx buffer:string_t
 
         .for ( rbx = ModuleInfo.src_stack: [rbx].type != SIT_FILE: rbx = [rbx].next )
 
-            GetFName([rbx].srcfile)
-
-            mov rdx,FileCur
-            mov [rdx].asym.string_ptr,rax
+            UpdateFileCur(GetFName([rbx].srcfile))
         .endf
 if FILESEQ
         .if Options.line_numbers && Parse_Pass == PASS_1
@@ -868,9 +889,7 @@ endif
     AddFile( CurrFName[ASM*8] )
     mov [rsi].srcfile,ax
     mov ModuleInfo.srcfile,eax
-    GetFName(eax)
-    mov rdx,FileCur
-    mov [rdx].asym.string_ptr,rax
+    UpdateFileCur(GetFName(eax))
     ret
 
 InputInit endp

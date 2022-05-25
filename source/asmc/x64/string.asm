@@ -1578,7 +1578,7 @@ ifdef USE_COMALLOC
 
 endif
 
-    ; add @TypeId() macro func
+    ; add typeid() macro func
 
     mov rdi,CreateMacro( "typeid" )
     mov [rdi].flags,S_ISDEFINED or S_PREDEFINED

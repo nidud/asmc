@@ -80,6 +80,7 @@ parseline proto
  ctoken     db ?
  clevel     db ?
  cstart     db 0
+ cblank     db 0
 _ltype      db \
   0,
   9 dup(_CONTROL),
@@ -574,6 +575,7 @@ convert endp
 
 oprintf proc format:string_t, args:vararg
 
+    mov cblank,0
     .if ( cflags & FL_STBUF )
 
         mov rcx,strlen(filebuf)
@@ -657,13 +659,14 @@ getline proc uses rsi rdi buffer:string_t
             mov byte ptr [rax],0
             .continue .if !strtrim(rsi)
         .endif
-        .if ( stoptions )
+        strtrim(rsi)
+        .if ( eax && stoptions )
             arg_option_s(rsi)
             arg_option_w(rsi)
             arg_option_f(rsi)
             arg_option_r(rsi)
+            strtrim(rsi)
         .endif
-        strtrim(rsi)
         .return rsi
     .endw
     ret
@@ -819,6 +822,10 @@ tokenize proc uses rsi rdi string:string_t
             .if !memcmp(rdi, "EXTERN_C", 8)
                 mov csize,8
                 mov ctoken,T_EXTERN
+                .if !memcmp(&[rdi+9], "const IID IID_", 14)
+                    mov ctoken,T_INTERFACE
+                    .return(T_INTERFACE)
+                .endif
                .return(T_EXTERN)
             .endif
             .endc
@@ -841,7 +848,16 @@ tokenize endp
 parse_blank proc
 
     .if ( cstart )
-        oprintf("\n")
+        inc cblank
+        .if ( cblank == 1 )
+
+            .if ( cflags & FL_STBUF )
+
+                strcat(filebuf, "\n")
+            .else
+                fprintf(outfile, "\n")
+            .endif
+        .endif
     .endif
     ret
 
@@ -1026,12 +1042,11 @@ parse_define endp
 parse_enum proc uses rdi rbx
 
     mov rdi,tokpos
-    mov rbx,nexttok(rdi)
-
-    .if ( cl == 0 )
+    .if ( !strchr(rdi, '{') )
         concat(rdi)
-        mov rbx,tokstart(rbx)
     .endif
+    mov rbx,nexttok(rdi)
+    nexttok(rbx)
 
     or cflags,FL_ENUM
     .if ( cl == '{' ) ; enum { --> } name;
@@ -1149,7 +1164,12 @@ parse_protoarg proc uses rsi rdi rbx arg:string_t
     mov rdi,tokstart(rcx)
 
     .if ( strchr(rdi, '*') )
+
+        mov bl,[rax+1]
         oprintf(" :ptr")
+        .if ( bl == '*' )
+            oprintf(" ptr")
+        .endif
        .return( 1 )
     .endif
 
@@ -1319,9 +1339,17 @@ parse_id proc uses rsi rdi rbx
 parse_id endp
 
 
-parse_define_guide proc
+parse_define_guide proc uses rdi
 
-    oprintf("%s\n", concat_line(tokpos))
+    mov rdi,tokpos
+    .if strrchr(rdi, ';')
+        mov [rax],0
+    .else
+        .if strrchr(concat_line(rdi), ';')
+            mov [rax],0
+        .endif
+    .endif
+    oprintf("%s\n", rdi)
     ret
 
 parse_define_guide endp
@@ -1370,12 +1398,25 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
         mov [rax],0
     .endif
     mov r14,rax
-    .if strrchr(rdi, '[')
+    .if strchr(rdi, '[')
         mov [rax],0
-        lea rbx,[rax+1]
+        mov rbx,tokstart(&[rax+1])
         .if strchr(rbx, ']')
             mov [rax],0
+            .if [rax+1] == '['
+                mov word ptr [rax],' *'
+                .if strchr(rax, ']')
+                    mov [rax],0
+                    .if [rax+1] == '['
+                        mov word ptr [rax],' *'
+                        .if strchr(rax, ']')
+                            mov [rax],0
+                        .endif
+                    .endif
+                .endif
+            .endif
         .endif
+        strtrim(rbx)
         lea rsi,[rdi+strtrim(rdi)-1]
     .elseif strrchr(rdi, ':')
         mov [rax],0
@@ -1533,6 +1574,9 @@ parse_struct proc uses rsi rdi rbx
         .case T_ENDS
 
             xor ebx,ebx
+            .if !strrchr(rdi, ';')
+                concat(rdi)
+            .endif
             .if strchr(rdi, ',')
                 mov byte ptr [rax],0
                 lea rbx,[rax+1]
@@ -1608,10 +1652,14 @@ parse_struct proc uses rsi rdi rbx
     .if ( !( oldflags & FL_STBUF) )
         and cflags,not FL_STBUF
     .endif
+    lea rdi,name
     .if ( clevel == 0 )
-        oprintf("%-23s %s\n%s", &name, type, rsi)
+        oprintf("%-23s %s\n%s", rdi, type, rsi)
     .else
-        oprintf("%*s%s %s\n%s", ebx, "", type, &name, rsi)
+        .if !memcmp(rdi, "DUMMY", 5)
+            mov name,0
+        .endif
+        oprintf("%*s%s %s\n%s", ebx, "", type, rdi, rsi)
     .endif
     free(rsi)
     ret
@@ -1624,12 +1672,15 @@ parse_struct endp
 
 parse_typedef proc uses rsi rdi rbx
 
+   .new name[256]:char_t
+
     mov rdi,tokpos
     mov rbx,nexttok(rdi)
     .if ( cl == 0 )
-        getline(rbx)
-        mov rbx,strstart(rdi)
+        concat(rdi)
+        mov rbx,tokstart(rbx)
     .endif
+
     .ifd ( toksize(rbx) == 4 )
         .if !memcmp(rbx, "enum", 4)
             mov tokpos,rbx
@@ -1659,29 +1710,96 @@ parse_typedef proc uses rsi rdi rbx
     .endif
 
     mov rsi,prevtokz(rax, rdi)
-    oprintf("%-23s typedef ", rsi)
+    strcpy(&name, rsi)
     mov [rsi],0
+    xor ebx,ebx
+
     .if strchr(rdi, '*')
         mov [rax],0
-        oprintf("ptr ")
+        inc ebx
     .endif
     .if strtrim(rdi)
         mov rdi,prevtokz(&[rdi+rax-1], rdi)
     .endif
-    oprintf("%s\n", rdi)
+
+    lea rsi,name
+    .if strcmp(rsi, rdi)
+        oprintf("%-23s typedef ", rsi)
+        .if ebx
+            oprintf("ptr ")
+        .endif
+        oprintf("%s\n", rdi)
+    .endif
     ret
 
 parse_typedef endp
 
 
-parse_interface proc
+parse_interface proc uses rsi rdi rbx
+
+    mov rdi,tokpos
+    .return .if !strrchr(rdi, ';')
+
+    mov [rax],0
+    strcpy(tempbuf, &[prevtokz(rax, rdi)+4])
+    getline(rdi)
+    getline(rdi)
+    .if memcmp(rdi, "#if defined(__cplusplus) && !defined(CINTERFACE)", 49)
+        .return
+    .endif
+    getline(rdi)
+    getline(rdi)
+    .return .if !strrchr(rdi, '(')
+
+    inc rax
+    oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, rax)
+    getline(rdi)
+    oprintf(".comdef %s\n", tokstart(rdi))
+    getline(rdi) ; {
+    getline(rdi) ; public:
+
+    .while 1
+
+        mov rbx,tokstart(getline(rdi))
+        .break .if ( cl ==  '}' )
+        .continue .if ( cl ==  0 )
+
+        .break .if !strchr(concat_line(rdi), '(')
+
+        lea rbx,[rax+1]
+        mov rsi,prevtokz(rax, rdi)
+        oprintf("    %-19s proc", rsi)
+        parse_protoargs(tokstart(rbx), 0)
+        oprintf("\n")
+    .endw
+    oprintf("   .ends\n")
+    .while memcmp(rdi, "#endif", 6)
+        getline(rdi)
+    .endw
+    getline(rdi)
+    getline(rdi)
+    getline(rdi)
     ret
+
 parse_interface endp
 
 
 parse_extern proc uses rsi rdi rbx
 
     mov rdi,tokpos
+    mov eax,csize
+    mov rbx,tokstart(&[rdi+rax])
+    .if ( ecx == 0 )
+        concat(rdi)
+        mov rbx,tokstart(rbx)
+    .endif
+    .if !memcmp(rbx, "\"C\"{", 4)
+        .return
+    .endif
+    .if !memcmp(rbx, "RPC_IF_HANDLE", 13)
+        .return
+    .endif
+
     concat_line(rdi)
     .if strchr(rdi, ')')
         lea rbx,[rax+1]

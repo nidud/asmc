@@ -83,7 +83,14 @@ hll_item	struct
 next		ptr hll_item ?
 caselist	ptr hll_item ?
 union
+ifdef _WIN64
  value		int64_t ?
+else
+ struct
+  value		int_t ?
+  hvalue	int_t ?
+ ends
+endif
  labels		uint_t 4 dup(?) ; labels for LTEST, LEXIT, LSTART
 ends
 condlines	string_t ?	; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label

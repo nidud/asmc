@@ -15,7 +15,7 @@ include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    100
+define __H2INC__    102
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -869,6 +869,10 @@ parse_blank endp
 parse_if proc uses rdi
 
     mov rdi,tokpos
+    .if !memcmp(rdi, "#ifdef UNICODE", 14)
+        oprintf("ifdef _UNICODE\n")
+       .return
+    .endif
     convert(concatf(rdi))
     oprintf("%s\n", &[rdi+1])
     ret
@@ -1049,7 +1053,7 @@ parse_enum proc uses rdi rbx
     nexttok(rbx)
 
     or cflags,FL_ENUM
-    .if ( cl == '{' ) ; enum { --> } name;
+    .if ( cl == '{' || [rbx] == '{' ) ; enum { --> } name;
         mov rax,filebuf
         mov [rax],0
         or cflags,FL_STBUF
@@ -1508,7 +1512,7 @@ parse_struct_member endp
 
 ; [typedef] <struct|union> [name] {
 
-parse_struct proc uses rsi rdi rbx
+parse_struct proc uses rsi rdi rbx r12
 
     .new name[256]:char_t
     .new type:string_t = "struct"
@@ -1573,6 +1577,7 @@ parse_struct proc uses rsi rdi rbx
             .endc
         .case T_ENDS
 
+           .new enddir:byte = 0
             xor ebx,ebx
             .if !strrchr(rdi, ';')
                 concat(rdi)
@@ -1581,6 +1586,7 @@ parse_struct proc uses rsi rdi rbx
                 mov byte ptr [rax],0
                 lea rbx,[rax+1]
             .elseif strrchr(rdi, ';')
+                inc enddir
                 mov byte ptr [rax],0
                 lea rbx,[rax+1]
             .endif
@@ -1611,7 +1617,10 @@ parse_struct proc uses rsi rdi rbx
 
             .break .if !rbx
             mov rbx,strstart(rbx)
-            .break .if !byte ptr [rbx]
+            .if !byte ptr [rbx]
+                .break .if enddir
+            .endif
+            concat_line(rbx)
 
             .while strchr(rbx, ',')
 
@@ -1619,11 +1628,27 @@ parse_struct proc uses rsi rdi rbx
                 mov rdi,rbx
                 lea rbx,[rax+1]
                 mov rdi,strstart(rdi)
+                .if ( [rdi] == '#' )
+                    prevtok(rbx, rdi)
+                    dec rax
+                    .if ( [rax-1] == ' ' || [rax-1] == '*' )
+                        mov [rax-1],0
+                    .else
+                        mov [rax],0
+                        inc rax
+                    .endif
+                    mov r12,tempbuf
+                    add r12,MAXBUF/2
+                    strcpy(r12, rax)
+                    tokenize(strcpy(linebuf, rdi))
+                    parseline()
+                    mov rdi,strstart(strcpy(rdi, r12))
+                .endif
                 .if strrchr(rdi, '*')
                     mov rdi,rax
                 .endif
                 .if ( byte ptr [rdi] == '*' )
-                    oprintf("%-23s typedef ptr %s\n", &[rdi+1],rsi)
+                    oprintf("%-23s typedef ptr %s\n", &[rdi+1], rsi)
                 .else
                     oprintf("%-23s typedef %s\n", rdi, rsi)
                 .endif
@@ -1793,7 +1818,7 @@ parse_extern proc uses rsi rdi rbx
         concat(rdi)
         mov rbx,tokstart(rbx)
     .endif
-    .if !memcmp(rbx, "\"C\"{", 4)
+    .if ( ecx == '"' )
         .return
     .endif
     .if !memcmp(rbx, "RPC_IF_HANDLE", 13)

@@ -252,7 +252,8 @@ endif
             mov rsi,[rdx].seg_info.CodeBuffer
             add rsi,rax
             .while ( idx < 0 && len )
-                lodsb
+                movzx eax,byte ptr [rsi]
+                inc rsi
                 tsprintf( rdi, "%02X", eax )
                 add rdi,2
                 inc idx
@@ -269,7 +270,8 @@ endif
         add rsi,rax
 
         .while ( oldofs < newofs && len )
-            lodsb
+            movzx eax,byte ptr [rsi]
+            inc rsi
             tsprintf( rdi, "%02X", eax )
             add rdi,2
             inc idx

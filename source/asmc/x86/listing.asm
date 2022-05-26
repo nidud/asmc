@@ -252,7 +252,8 @@ endif
             mov esi,[edx].seg_info.CodeBuffer
             add esi,eax
             .while ( idx < 0 && len )
-                lodsb
+                movzx eax,byte ptr [esi]
+                inc esi
                 tsprintf( edi, "%02X", eax )
                 add edi,2
                 inc idx
@@ -268,7 +269,8 @@ endif
         add esi,idx
 
         .while ( oldofs < newofs && len )
-            lodsb
+            movzx eax,byte ptr [esi]
+            inc esi
             tsprintf( edi, "%02X", eax )
             add edi,2
             inc idx

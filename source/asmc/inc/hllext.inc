@@ -82,7 +82,10 @@ define EOLCHAR 10 ; line termination char in generated source
 hll_item	struct
 next		ptr hll_item ?
 caselist	ptr hll_item ?
-labels		uint_t 4 dup(?) ; labels for LTEST, LEXIT, LSTART
+union
+ value		int64_t ?
+ labels		uint_t 4 dup(?) ; labels for LTEST, LEXIT, LSTART
+ends
 condlines	string_t ?	; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
 cmd		int_t ?		; start cmd (IF, WHILE, REPEAT)
 flags		int_t ?		; v2.08: added

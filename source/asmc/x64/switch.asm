@@ -103,13 +103,13 @@ RenderCCMP endp
 
     assume rcx:ptr hll_item
 
-GetLowCount proc __ccall hll:ptr hll_item, min:int_t, dist:int_t
+GetLowCount proc __ccall hll:ptr hll_item, min:int64_t, dist:int64_t
 
-    add edx,r8d
+    add rdx,r8
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs [rcx].flags & HLLF_TABLE && edx >= [rcx].labels
+        .ifs [rcx].flags & HLLF_TABLE && rdx >= [rcx].value
             add eax,1
         .endif
         mov rcx,[rcx].caselist
@@ -118,13 +118,13 @@ GetLowCount proc __ccall hll:ptr hll_item, min:int_t, dist:int_t
 
 GetLowCount endp
 
-GetHighCount proc __ccall hll:ptr hll_item, max:int_t, dist:int_t
+GetHighCount proc __ccall hll:ptr hll_item, max:int64_t, dist:int64_t
 
-    sub edx,r8d
+    sub rdx,r8
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs [rcx].flags & HLLF_TABLE && edx <= [rcx].labels
+        .ifs [rcx].flags & HLLF_TABLE && rdx <= [rcx].value
             add eax,1
         .endif
         mov rcx,[rcx].caselist
@@ -133,13 +133,13 @@ GetHighCount proc __ccall hll:ptr hll_item, max:int_t, dist:int_t
 
 GetHighCount endp
 
-SetLowCount proc __ccall hll:ptr hll_item, count:ptr int_t, min:int_t, dist:int_t
+SetLowCount proc __ccall hll:ptr hll_item, count:ptr int_t, min:int64_t, dist:int64_t
 
-    add r8d,r9d
+    add r8,r9
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs [rcx].flags & HLLF_TABLE && r8d < [rcx].labels
+        .ifs [rcx].flags & HLLF_TABLE && r8 < [rcx].value
 
             and [rcx].flags,NOT HLLF_TABLE
             dec int_t ptr [rdx]
@@ -152,13 +152,13 @@ SetLowCount proc __ccall hll:ptr hll_item, count:ptr int_t, min:int_t, dist:int_
 
 SetLowCount endp
 
-SetHighCount proc __ccall hll:ptr hll_item, count:ptr int_t, max:int_t, dist:int_t
+SetHighCount proc __ccall hll:ptr hll_item, count:ptr int_t, max:int64_t, dist:int64_t
 
-    sub r8d,r9d
+    sub r8,r9
     xor eax,eax
     mov rcx,[rcx].caselist
     .while rcx
-        .ifs [rcx].flags & HLLF_TABLE && r8d > [rcx].labels
+        .ifs [rcx].flags & HLLF_TABLE && r8 > [rcx].value
 
             and [rcx].flags,NOT HLLF_TABLE
             dec int_t ptr [rdx]
@@ -173,12 +173,12 @@ SetHighCount endp
 
     assume rcx:nothing
 
-GetCaseVal proc __ccall hll:ptr hll_item, val:int_t
+GetCaseVal proc __ccall hll:ptr hll_item, val:int64_t
 
     mov rax,[rcx].hll_item.caselist
     .while rax
 
-        .if [rax].hll_item.flags & HLLF_TABLE && [rax].hll_item.labels == edx
+        .if [rax].hll_item.flags & HLLF_TABLE && [rax].hll_item.value == rdx
 
             .break
         .endif
@@ -189,7 +189,7 @@ GetCaseVal proc __ccall hll:ptr hll_item, val:int_t
 
 GetCaseVal endp
 
-RemoveVal proc __ccall private hll:ptr hll_item, val:int_t
+RemoveVal proc __ccall private hll:ptr hll_item, val:int64_t
 
     .if GetCaseVal()
 
@@ -200,16 +200,27 @@ RemoveVal proc __ccall private hll:ptr hll_item, val:int_t
 
 RemoveVal endp
 
-GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_tok,
+GetCaseValue proc __ccall uses rsi rdi rbx r12 hll:ptr hll_item, tokenarray:ptr asm_tok,
         dcount:ptr uint_t, scount:ptr uint_t
 
-  .new i, opnd:expr
+  .new i:int_t, opnd:expr, size:int_t
   .new oldtok:string_t = [rdx].asm_tok.tokpos
 
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
 
     mov rsi,hll
+    mov eax,[rsi].flags
+    and eax,HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64
+    mov r12b,1
+    .if eax == HLLF_ARG16
+        inc r12b
+    .elseif eax == HLLF_ARG32
+        mov r12b,4
+    .elseif eax == HLLF_ARG64
+        mov r12b,8
+    .endif
+
     mov rsi,[rsi].caselist
 
     .while rsi
@@ -223,16 +234,22 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
             EvalOperand( &i, tokenarray, eax, &opnd, EXPF_NOERRMSG )
             .break .if eax != NOT_ERROR
 
-            mov eax,opnd.uvalue
-            mov edx,opnd.hvalue
+            mov rax,opnd.llvalue
+            .if r12b == 1
+                movsx rax,al
+            .elseif r12b == 2
+                movsx rax,ax
+            .elseif r12b == 4
+                movsxd rax,eax
+            .endif
+
             .if opnd.kind == EXPR_ADDR
 
                 mov rcx,opnd.sym
-                add eax,[rcx].asym.offs
-                xor edx,edx
+                mov edx,[rcx].asym.offs
+                add rax,rdx
             .endif
-            mov [rsi].labels[LTEST*4],eax
-            mov [rsi].labels[LEXIT*4],edx
+            mov [rsi].value,rax
             inc ebx
         .elseif [rsi].condlines
 
@@ -277,42 +294,36 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
 GetCaseValue endp
 
 GetMaxCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item,
-        min:ptr int_t, max:ptr int_t, min_table:ptr int_t, max_table:ptr int_t
+        min:ptr int64_t, max:ptr int64_t, min_table:ptr int_t, max_table:ptr int_t
 
     mov rsi,rcx
     xor edi,edi
-    mov eax,80000000h
-    mov edx,7FFFFFFFh
+    mov rax,_I64_MIN
+    mov rdx,_I64_MAX
     mov rsi,[rsi].caselist
 
     .while rsi
 
         .if [rsi].flags & HLLF_TABLE
 
-            inc edi
-            mov ecx,[rsi].labels
-            .ifs eax <= ecx
-
-                mov eax,ecx
-            .endif
-            .ifs edx >= ecx
-
-                mov edx,ecx
-            .endif
+            inc   edi
+            mov   rcx,[rsi].value
+            cmp   rcx,rax
+            cmovg rax,rcx
+            cmp   rcx,rdx
+            cmovl rdx,rcx
         .endif
         mov rsi,[rsi].caselist
     .endw
 
     .if !edi
-
-        mov eax,edi
-        mov edx,edi
+        xor eax,eax
     .endif
 
     mov rbx,max
     mov rcx,min
-    mov [rbx],eax
-    mov [rcx],edx
+    mov [rbx],rax
+    mov [rcx],rdx
 
     mov rsi,hll
     mov ecx,1
@@ -343,11 +354,12 @@ GetMaxCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item,
     shl eax,cl
     mov [rsi],eax
 
-    mov eax,[rbx]
-    sub eax,edx
+    mov rax,[rbx]
+    sub rax,rdx
     mov ecx,edi
-    add eax,1
+    add rax,1
     ret
+
 GetMaxCaseValue endp
 
     assume rsi:ptr asm_tok
@@ -472,13 +484,13 @@ RenderMultiCase proc __ccall uses rsi rdi rbx hll:ptr hll_item, i:ptr int_t, buf
 
 RenderMultiCase endp
 
-CompareMaxMin proc __ccall reg:string_t, max:int_t, min:int_t, around:string_t
+CompareMaxMin proc __ccall reg:string_t, max:int64_t, min:int64_t, around:string_t
 
     AddLineQueueX(
-        " cmp %s, %d\n"
-        " jl %s\n"
-        " cmp %s, %d\n"
-        " jg %s", rcx, r8d, r9, rcx, edx, r9 )
+        " cmp %s, %ld\n"
+        " jl  %s\n"
+        " cmp %s, %ld\n"
+        " jg  %s", rcx, r8, r9, rcx, rdx, r9 )
     ret
 
 CompareMaxMin endp
@@ -595,9 +607,9 @@ RenderSwitch proc __ccall uses rsi rdi rbx r12 hll:ptr hll_item, tokenarray:ptr 
         ncases:     uint_t, ; number of cases not in table
         min_table:  uint_t,
         max_table:  uint_t,
-        min[2]:     int_t,  ; minimum const value
-        max[2]:     int_t,  ; maximum const value
-        dist:       int_t,  ; max - min
+        min:        int64_t,; minimum const value
+        max:        int64_t,; maximum const value
+        dist:       int64_t,; max - min
         l_start[16]:char_t, ; current start label
         l_jtab[16]: char_t, ; jump table address
         labelx[16]: char_t, ; label symbol
@@ -698,7 +710,7 @@ endif
 
         GetMaxCaseValue( rsi, &min, &max, &min_table, &max_table )
 
-        mov dist,eax
+        mov dist,rax
         mov tcases,ecx
         mov ncases,0
 
@@ -706,7 +718,7 @@ endif
 
         .for ebx = ecx:,
              ebx >= min_table,
-             max > edx,
+             max > rdx,
              eax > max_table: ebx = tcases
 
             GetLowCount ( rsi, min, max_table )
@@ -734,7 +746,7 @@ endif
             add ncases,eax
 
             GetMaxCaseValue( rsi, &min, &max, &min_table, &max_table )
-            mov dist,eax
+            mov dist,rax
             .break .if ebx == tcases
         .endf
 
@@ -742,7 +754,7 @@ endif
         .break .if eax < min_table
 
         mov use_index,0
-        .if eax < dist && ModuleInfo.Ofssize == USE64
+        .if rax < dist && ModuleInfo.Ofssize == USE64
 
             inc use_index
         .endif
@@ -768,7 +780,7 @@ endif
             CompareMaxMin(rbx, max, min, rdi)
         .endif
 
-        mov edx,min
+        mov rdx,min
         mov eax,[rsi].flags
         mov cl,ModuleInfo.Ofssize
 
@@ -888,10 +900,10 @@ ifndef ASMC64
                     .endif
                 .endif
 
-            .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [rsi].flags & HLLF_ARGREG && \
+            .elseifs ( rdx <= ( UINT_MAX / 8 ) ) && !use_index && [rsi].flags & HLLF_ARGREG && \
                 ModuleInfo.xflag & OPT_REGAX
 else
-            .if ( ( edx <= ( UINT_MAX / 8 ) ) && !use_index &&
+            .ifs ( ( rdx <= ( UINT_MAX / 8 ) ) && !use_index &&
                   ( [rsi].flags & HLLF_ARGREG ) && ( ModuleInfo.xflag & OPT_REGAX ) )
 endif
 
@@ -929,17 +941,17 @@ endif
                         .if dist < 256
                             AddLineQueueX( " movzx eax, byte ptr [r11+rax-(%d)+(IT%s-%s)]", min, &l_jtab, l_exit )
                         .else
-                            AddLineQueueX( " movzx eax, word ptr [r11+rax*2-(%d*2)+(IT%s-%s)]", min, &l_jtab, l_exit )
+                            AddLineQueueX( " movzx eax, word ptr [r11+rax*2-(%ld*2)+(IT%s-%s)]", min, &l_jtab, l_exit )
                         .endif
                         AddLineQueueX( " mov eax, [r11+rax*4+(%s-%s)]", &l_jtab, l_exit )
                     .else
-                        mov eax,min
-                        .if ( eax < ( UINT_MAX / 8 ) )
-                            AddLineQueueX( " mov eax, [r11+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
+                        mov rax,min
+                        .ifs ( rax < ( UINT_MAX / 8 ) )
+                            AddLineQueueX( " mov eax, [r11+rax*4-(%ld*4)+(%s-%s)]", rax, &l_jtab, l_exit )
                         .else
                             AddLineQueueX(
-                                " sub rax, %d\n"
-                                " mov eax, [r11+rax*4+(%s-%s)]", eax, &l_jtab, l_exit )
+                                " sub rax, %ld\n"
+                                " mov eax, [r11+rax*4+(%s-%s)]", rax, &l_jtab, l_exit )
                         .endif
                     .endif
                     AddLineQueue(
@@ -968,13 +980,13 @@ endif
                         .endif
                         AddLineQueueX( " mov eax, [rdx+rax*4+(%s-%s)]", &l_jtab, l_exit )
                     .else
-                        mov eax,min
-                        .if ( eax < ( UINT_MAX / 8 ) )
-                            AddLineQueueX( " mov eax, [rdx+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
+                        mov rax,min
+                        .ifs ( rax < ( UINT_MAX / 8 ) )
+                            AddLineQueueX( " mov eax, [rdx+rax*4-(%ld*4)+(%s-%s)]", min, &l_jtab, l_exit )
                         .else
                             AddLineQueueX(
-                                " sub rax, %d\n"
-                                " mov eax, [rdx+rax*4+(%s-%s)]", eax, &l_jtab, l_exit )
+                                " sub rax, %ld\n"
+                                " mov eax, [rdx+rax*4+(%s-%s)]", rax, &l_jtab, l_exit )
                         .endif
                     .endif
                     AddLineQueue(
@@ -1052,12 +1064,12 @@ ifndef ASMC64
                 AddLineQueueX( " %r %s ; .default", r_dw, l_exit )
             .endif
 endif
-            mov eax,max
-            sub eax,min
-            inc eax
+            mov rax,max
+            sub rax,min
+            inc rax
             mov icount,eax
             mov ebx,T_DB
-            .if eax > 256
+            .ifs rax > 256
 
 ifndef ASMC64
                 .if ModuleInfo.Ofssize == USE16
@@ -1075,10 +1087,10 @@ endif
                 ;
                 ; loop from min value
                 ;
-                mov eax,min
-                add eax,ebx
+                mov rax,min
+                add rax,rbx
 
-                .if GetCaseVal( rsi, eax )
+                .if GetCaseVal( rsi, rax )
                     ;
                     ; Unlink block
                     ;
@@ -1098,14 +1110,14 @@ endif
             .endf
             AddLineQueueX( "ALIGN %d", r_size )
         .else
-            .for ebx = 0: ebx < dist: ebx++
+            .for ebx = 0: rbx < dist: ebx++
                 ;
                 ; loop from min value
                 ;
-                mov eax,min
-                add eax,ebx
+                mov rax,min
+                add rax,rbx
 
-                .if GetCaseVal( rsi, eax )
+                .if GetCaseVal( rsi, rax )
                     ;
                     ; Unlink block
                     ;

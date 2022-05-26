@@ -1,2946 +1,3642 @@
 ifndef _WINGDI_
 define _WINGDI_
 .pragma list(push, 0)
-ifndef _WINDEF_
- include windef.inc
+
+include winapifamily.inc
+
+ifdef _MAC
+include macwin32.inc
 endif
 
 ifndef WINVER
 define WINVER 0x0500
-endif
-ifndef _WIN32_WINDOWS
-define _WIN32_WINDOWS WINVER
-endif
-ifndef _WIN32_WINNT
-define _WIN32_WINNT _WIN32_WINDOWS
 endif
 
 ifndef NOGDI
 
 ifndef NORASTEROPS
 
-R2_BLACK	equ 1
-R2_NOTMERGEPEN	equ 2
-R2_MASKNOTPEN	equ 3
-R2_NOTCOPYPEN	equ 4
-R2_MASKPENNOT	equ 5
-R2_NOT		equ 6
-R2_XORPEN	equ 7
-R2_NOTMASKPEN	equ 8
-R2_MASKPEN	equ 9
-R2_NOTXORPEN	equ 10
-R2_NOP		equ 11
-R2_MERGENOTPEN	equ 12
-R2_COPYPEN	equ 13
-R2_MERGEPENNOT	equ 14
-R2_MERGEPEN	equ 15
-R2_WHITE	equ 16
-R2_LAST		equ 16
+define R2_BLACK            1
+define R2_NOTMERGEPEN      2
+define R2_MASKNOTPEN       3
+define R2_NOTCOPYPEN       4
+define R2_MASKPENNOT       5
+define R2_NOT              6
+define R2_XORPEN           7
+define R2_NOTMASKPEN       8
+define R2_MASKPEN          9
+define R2_NOTXORPEN        10
+define R2_NOP              11
+define R2_MERGENOTPEN      12
+define R2_COPYPEN          13
+define R2_MERGEPENNOT      14
+define R2_MERGEPEN         15
+define R2_WHITE            16
+define R2_LAST             16
 
-SRCCOPY		equ 0x00CC0020
-SRCPAINT	equ 0x00EE0086
-SRCAND		equ 0x008800C6
-SRCINVERT	equ 0x00660046
-SRCERASE	equ 0x00440328
-NOTSRCCOPY	equ 0x00330008
-NOTSRCERASE	equ 0x001100A6
-MERGECOPY	equ 0x00C000CA
-MERGEPAINT	equ 0x00BB0226
-PATCOPY		equ 0x00F00021
-PATPAINT	equ 0x00FB0A09
-PATINVERT	equ 0x005A0049
-DSTINVERT	equ 0x00550009
-BLACKNESS	equ 0x00000042
-WHITENESS	equ 0x00FF0062
+define SRCCOPY             0x00CC0020
+define SRCPAINT            0x00EE0086
+define SRCAND              0x008800C6
+define SRCINVERT           0x00660046
+define SRCERASE            0x00440328
+define NOTSRCCOPY          0x00330008
+define NOTSRCERASE         0x001100A6
+define MERGECOPY           0x00C000CA
+define MERGEPAINT          0x00BB0226
+define PATCOPY             0x00F00021
+define PATPAINT            0x00FB0A09
+define PATINVERT           0x005A0049
+define DSTINVERT           0x00550009
+define BLACKNESS           0x00000042
+define WHITENESS           0x00FF0062
+if(WINVER ge 0x0500)
 
-MAKEROP4 macro fore, back
+define NOMIRRORBITMAP               0x80000000
+define CAPTUREBLT                   0x40000000
+endif
+
+MAKEROP4 macro fore,back
   local ta,tb
-	if inl_loadtypes_2(fore, back, ta, tb)
-	exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
-	endif
-	inl_loadargs_2(fore,back,ta,tb)
-	shl	edx,8
-	and	edx,0xFF000000
-	or	eax,edx
-	retm	<eax>
-	endm
+    if inl_loadtypes_2(fore, back, ta, tb)
+        exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
+    endif
+    inl_loadargs_2(fore,back,ta,tb)
+    shl  edx,8
+    and  edx,0xFF000000
+    or   eax,edx
+    retm <eax>
+    endm
 
 endif
 
-GDI_ERROR	equ 0xFFFFFFFF
-HGDI_ERROR	equ 0xFFFFFFFF
-
-ERROR		equ 0
-NULLREGION	equ 1
-SIMPLEREGION	equ 2
-COMPLEXREGION	equ 3
-RGN_ERROR	equ ERROR
-
-RGN_AND		equ 1
-RGN_OR		equ 2
-RGN_XOR		equ 3
-RGN_DIFF	equ 4
-RGN_COPY	equ 5
-RGN_MIN		equ RGN_AND
-RGN_MAX		equ RGN_COPY
-
-BLACKONWHITE	equ 1
-WHITEONBLACK	equ 2
-COLORONCOLOR	equ 3
-HALFTONE	equ 4
-MAXSTRETCHBLTMODE	equ 4
-
-if(WINVER GE 0x0400)
-STRETCH_ANDSCANS	equ BACKONWHITE
-STRETCH_ORSCANS		equ WHITEONBACK
-STRETCH_DELETESCANS	equ COLORONCOLOR
-STRETCH_HALFTONE	equ HAFTONE
-endif
-
-ALTERNATE	equ 1
-WINDING		equ 2
-POLYFILL_LAST	equ 2
-
-TA_NOUPDATECP	equ 0
-TA_UPDATECP	equ 1
-
-TA_LEFT		equ 0
-TA_RIGHT	equ 2
-TA_CENTER	equ 6
-
-TA_TOP		equ 0
-TA_BOTTOM	equ 8
-TA_BASELINE	equ 24
-if (WINVER GE 0x0400)
-TA_RTLREADING	equ 256
-TA_MASK		equ (TA_BASELINE+TA_CENTER+TA_UPDATECP+TA_RTLREADING)
+define GDI_ERROR (0xFFFFFFFF)
+if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
+define HGDI_ERROR (LongToHandle(0xFFFFFFFF))
 else
-TA_MASK		equ (TA_BASEINE+TA_CENTER+TA_UPDATECP)
+define HGDI_ERROR (-1)
 endif
 
-VTA_BASELINE	equ TA_BASEINE
-VTA_LEFT	equ TA_BOTTOM
-VTA_RIGHT	equ TA_TOP
-VTA_CENTER	equ TA_CENTER
-VTA_BOTTOM	equ TA_RIGHT
-VTA_TOP		equ TA_LEFT
+define ERROR               0
+define NULLREGION          1
+define SIMPLEREGION        2
+define COMPLEXREGION       3
+define RGN_ERROR ERROR
 
-ETO_OPAQUE		equ 0x0002
-ETO_CLIPPED		equ 0x0004
-if(WINVER GE 0x0400)
-ETO_GLYPH_INDEX		equ 0x0010
-ETO_RTLREADING		equ 0x0080
-ETO_NUMERICSLOCAL	equ 0x0400
-ETO_NUMERICSLATIN	equ 0x0800
-ETO_IGNORELANGUAGE	equ 0x1000
+define RGN_AND             1
+define RGN_OR              2
+define RGN_XOR             3
+define RGN_DIFF            4
+define RGN_COPY            5
+define RGN_MIN             RGN_AND
+define RGN_MAX             RGN_COPY
+
+define BLACKONWHITE                 1
+define WHITEONBLACK                 2
+define COLORONCOLOR                 3
+define HALFTONE                     4
+define MAXSTRETCHBLTMODE            4
+
+if(WINVER ge 0x0400)
+define STRETCH_ANDSCANS    BLACKONWHITE
+define STRETCH_ORSCANS     WHITEONBLACK
+define STRETCH_DELETESCANS COLORONCOLOR
+define STRETCH_HALFTONE    HALFTONE
 endif
-if (_WIN32_WINNT GE 0x0500)
-ETO_PDY			equ 0x2000
+
+define ALTERNATE                    1
+define WINDING                      2
+define POLYFILL_LAST                2
+
+if(WINVER ge 0x0500)
+define LAYOUT_RTL                         0x00000001
+define LAYOUT_BTT                         0x00000002
+define LAYOUT_VBH                         0x00000004
+define LAYOUT_ORIENTATIONMASK             (LAYOUT_RTL or LAYOUT_BTT or LAYOUT_VBH)
+define LAYOUT_BITMAPORIENTATIONPRESERVED  0x00000008
 endif
 
-ASPECT_FILTERING	equ 0x0001
+define TA_NOUPDATECP                0
+define TA_UPDATECP                  1
 
-DCB_RESET		equ 0x0001
-DCB_ACCUMULATE		equ 0x0002
-DCB_DIRTY		equ DCB_ACCUMULATE
-DCB_SET			equ (DCB_RESET OR DCB_ACCUMULATE)
-DCB_ENABLE		equ 0x0004
-DCB_DISABLE		equ 0x0008
+define TA_LEFT                      0
+define TA_RIGHT                     2
+define TA_CENTER                    6
+
+define TA_TOP                       0
+define TA_BOTTOM                    8
+define TA_BASELINE                  24
+if (WINVER ge 0x0400)
+define TA_RTLREADING                256
+define TA_MASK       (TA_BASELINE+TA_CENTER+TA_UPDATECP+TA_RTLREADING)
+else
+define TA_MASK       (TA_BASELINE+TA_CENTER+TA_UPDATECP)
+endif
+
+define VTA_BASELINE TA_BASELINE
+define VTA_LEFT     TA_BOTTOM
+define VTA_RIGHT    TA_TOP
+define VTA_CENTER   TA_CENTER
+define VTA_BOTTOM   TA_RIGHT
+define VTA_TOP      TA_LEFT
+
+define ETO_OPAQUE                   0x0002
+define ETO_CLIPPED                  0x0004
+if(WINVER ge 0x0400)
+define ETO_GLYPH_INDEX              0x0010
+define ETO_RTLREADING               0x0080
+define ETO_NUMERICSLOCAL            0x0400
+define ETO_NUMERICSLATIN            0x0800
+define ETO_IGNORELANGUAGE           0x1000
+endif
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define ETO_PDY                      0x2000
+endif
+if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
+define ETO_REVERSE_INDEX_MAP        0x10000
+endif
+
+define ASPECT_FILTERING             0x0001
+
+define DCB_RESET       0x0001
+define DCB_ACCUMULATE  0x0002
+define DCB_DIRTY       DCB_ACCUMULATE
+define DCB_SET         (DCB_RESET or DCB_ACCUMULATE)
+define DCB_ENABLE      0x0004
+define DCB_DISABLE     0x0008
 
 ifndef NOMETAFILE
 
-META_SETBKCOLOR		equ 0x0201
-META_SETBKMODE		equ 0x0102
-META_SETMAPMODE		equ 0x0103
-META_SETROP2		equ 0x0104
-META_SETRELABS		equ 0x0105
-META_SETPOLYFILLMODE	equ 0x0106
-META_SETSTRETCHBLTMODE	equ 0x0107
-META_SETTEXTCHAREXTRA	equ 0x0108
-META_SETTEXTCOLOR	equ 0x0209
-META_SETTEXTJUSTIFICATION equ 0x020A
-META_SETWINDOWORG	equ 0x020B
-META_SETWINDOWEXT	equ 0x020C
-META_SETVIEWPORTORG	equ 0x020D
-META_SETVIEWPORTEXT	equ 0x020E
-META_OFFSETWINDOWORG	equ 0x020F
-META_SCALEWINDOWEXT	equ 0x0410
-META_OFFSETVIEWPORTORG	equ 0x0211
-META_SCALEVIEWPORTEXT	equ 0x0412
-META_LINETO		equ 0x0213
-META_MOVETO		equ 0x0214
-META_EXCLUDECLIPRECT	equ 0x0415
-META_INTERSECTCLIPRECT	equ 0x0416
-META_ARC		equ 0x0817
-META_ELLIPSE		equ 0x0418
-META_FLOODFILL		equ 0x0419
-META_PIE		equ 0x081A
-META_RECTANGLE		equ 0x041B
-META_ROUNDRECT		equ 0x061C
-META_PATBLT		equ 0x061D
-META_SAVEDC		equ 0x001E
-META_SETPIXEL		equ 0x041F
-META_OFFSETCLIPRGN	equ 0x0220
-META_TEXTOUT		equ 0x0521
-META_BITBLT		equ 0x0922
-META_STRETCHBLT		equ 0x0B23
-META_POLYGON		equ 0x0324
-META_POLYLINE		equ 0x0325
-META_ESCAPE		equ 0x0626
-META_RESTOREDC		equ 0x0127
-META_FILLREGION		equ 0x0228
-META_FRAMEREGION	equ 0x0429
-META_INVERTREGION	equ 0x012A
-META_PAINTREGION	equ 0x012B
-META_SELECTCLIPREGION	equ 0x012C
-META_SELECTOBJECT	equ 0x012D
-META_SETTEXTALIGN	equ 0x012E
-META_CHORD		equ 0x0830
-META_SETMAPPERFLAGS	equ 0x0231
-META_EXTTEXTOUT		equ 0x0a32
-META_SETDIBTODEV	equ 0x0d33
-META_SELECTPALETTE	equ 0x0234
-META_REALIZEPALETTE	equ 0x0035
-META_ANIMATEPALETTE	equ 0x0436
-META_SETPALENTRIES	equ 0x0037
-META_POLYPOLYGON	equ 0x0538
-META_RESIZEPALETTE	equ 0x0139
-META_DIBBITBLT		equ 0x0940
-META_DIBSTRETCHBLT	equ 0x0b41
-META_DIBCREATEPATTERNBRUSH equ 0x0142
-META_STRETCHDIB		equ 0x0f43
-META_EXTFLOODFILL	equ 0x0548
-META_DELETEOBJECT	equ 0x01f0
-META_CREATEPALETTE	equ 0x00f7
-META_CREATEPATTERNBRUSH equ 0x01F9
-META_CREATEPENINDIRECT	equ 0x02FA
-META_CREATEFONTINDIRECT equ 0x02FB
-META_CREATEBRUSHINDIRECT equ 0x02FC
-META_CREATEREGION	equ 0x06FF
+define META_SETBKCOLOR              0x0201
+define META_SETBKMODE               0x0102
+define META_SETMAPMODE              0x0103
+define META_SETROP2                 0x0104
+define META_SETRELABS               0x0105
+define META_SETPOLYFILLMODE         0x0106
+define META_SETSTRETCHBLTMODE       0x0107
+define META_SETTEXTCHAREXTRA        0x0108
+define META_SETTEXTCOLOR            0x0209
+define META_SETTEXTJUSTIFICATION    0x020A
+define META_SETWINDOWORG            0x020B
+define META_SETWINDOWEXT            0x020C
+define META_SETVIEWPORTORG          0x020D
+define META_SETVIEWPORTEXT          0x020E
+define META_OFFSETWINDOWORG         0x020F
+define META_SCALEWINDOWEXT          0x0410
+define META_OFFSETVIEWPORTORG       0x0211
+define META_SCALEVIEWPORTEXT        0x0412
+define META_LINETO                  0x0213
+define META_MOVETO                  0x0214
+define META_EXCLUDECLIPRECT         0x0415
+define META_INTERSECTCLIPRECT       0x0416
+define META_ARC                     0x0817
+define META_ELLIPSE                 0x0418
+define META_FLOODFILL               0x0419
+define META_PIE                     0x081A
+define META_RECTANGLE               0x041B
+define META_ROUNDRECT               0x061C
+define META_PATBLT                  0x061D
+define META_SAVEDC                  0x001E
+define META_SETPIXEL                0x041F
+define META_OFFSETCLIPRGN           0x0220
+define META_TEXTOUT                 0x0521
+define META_BITBLT                  0x0922
+define META_STRETCHBLT              0x0B23
+define META_POLYGON                 0x0324
+define META_POLYLINE                0x0325
+define META_ESCAPE                  0x0626
+define META_RESTOREDC               0x0127
+define META_FILLREGION              0x0228
+define META_FRAMEREGION             0x0429
+define META_INVERTREGION            0x012A
+define META_PAINTREGION             0x012B
+define META_SELECTCLIPREGION        0x012C
+define META_SELECTOBJECT            0x012D
+define META_SETTEXTALIGN            0x012E
+define META_CHORD                   0x0830
+define META_SETMAPPERFLAGS          0x0231
+define META_EXTTEXTOUT              0x0a32
+define META_SETDIBTODEV             0x0d33
+define META_SELECTPALETTE           0x0234
+define META_REALIZEPALETTE          0x0035
+define META_ANIMATEPALETTE          0x0436
+define META_SETPALENTRIES           0x0037
+define META_POLYPOLYGON             0x0538
+define META_RESIZEPALETTE           0x0139
+define META_DIBBITBLT               0x0940
+define META_DIBSTRETCHBLT           0x0b41
+define META_DIBCREATEPATTERNBRUSH   0x0142
+define META_STRETCHDIB              0x0f43
+define META_EXTFLOODFILL            0x0548
+if(WINVER ge 0x0500)
+define META_SETLAYOUT               0x0149
+endif
+define META_DELETEOBJECT            0x01f0
+define META_CREATEPALETTE           0x00f7
+define META_CREATEPATTERNBRUSH      0x01F9
+define META_CREATEPENINDIRECT       0x02FA
+define META_CREATEFONTINDIRECT      0x02FB
+define META_CREATEBRUSHINDIRECT     0x02FC
+define META_CREATEREGION            0x06FF
 
-if(WINVER GE 0x0400)
-DRAWPATRECT	STRUC
-ptPosition	POINT <>
-ptSize		POINT <>
-wStyle		dw ?
-wPattern	dw ?
-DRAWPATRECT	ENDS
-PDRAWPATRECT	typedef ptr DRAWPATRECT
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if(WINVER ge 0x0400)
+_DRAWPATRECT            struct
+ptPosition              POINT <>
+ptSize                  POINT <>
+wStyle                  WORD ?
+wPattern                WORD ?
+_DRAWPATRECT            ends
+DRAWPATRECT             typedef _DRAWPATRECT
+PDRAWPATRECT            typedef ptr _DRAWPATRECT
 endif
 
 endif
+;.pragma endregion
 
-NEWFRAME		equ 1
-ABORTDOC		equ 2
-NEXTBAND		equ 3
-SETCOLORTABLE		equ 4
-GETCOLORTABLE		equ 5
-FLUSHOUTPUT		equ 6
-DRAFTMODE		equ 7
-QUERYESCSUPPORT		equ 8
-SETABORTPROC		equ 9
-STARTDOC		equ 10
-ENDDOC			equ 11
-GETPHYSPAGESIZE		equ 12
-GETPRINTINGOFFSET	equ 13
-GETSCALINGFACTOR	equ 14
-MFCOMMENT		equ 15
-GETPENWIDTH		equ 16
-SETCOPYCOUNT		equ 17
-SELECTPAPERSOURCE	equ 18
-DEVICEDATA		equ 19
-PASSTHROUGH		equ 19
-GETTECHNOLGY		equ 20
-GETTECHNOLOGY		equ 20
-SETLINECAP		equ 21
-SETLINEJOIN		equ 22
-SETMITERLIMIT		equ 23
-BANDINFO		equ 24
-DRAWPATTERNRECT		equ 25
-GETVECTORPENSIZE	equ 26
-GETVECTORBRUSHSIZE	equ 27
-ENABLEDUPLEX		equ 28
-GETSETPAPERBINS		equ 29
-GETSETPRINTORIENT	equ 30
-ENUMPAPERBINS		equ 31
-SETDIBSCALING		equ 32
-EPSPRINTING		equ 33
-ENUMPAPERMETRICS	equ 34
-GETSETPAPERMETRICS	equ 35
-POSTSCRIPT_DATA		equ 37
-POSTSCRIPT_IGNORE	equ 38
-MOUSETRAILS		equ 39
-GETDEVICEUNITS		equ 42
+endif
 
-GETEXTENDEDTEXTMETRICS	equ 256
-GETEXTENTTABLE		equ 257
-GETPAIRKERNTABLE	equ 258
-GETTRACKKERNTABLE	equ 259
-EXTTEXTOUT		equ 512
-GETFACENAME		equ 513
-DOWNLOADFACE		equ 514
-ENABLERELATIVEWIDTHS	equ 768
-ENABLEPAIRKERNING	equ 769
-SETKERNTRACK		equ 770
-SETALLJUSTVALUES	equ 771
-SETCHARSET		equ 772
+define NEWFRAME                     1
+define ABORTDOC                     2
+define NEXTBAND                     3
+define SETCOLORTABLE                4
+define GETCOLORTABLE                5
+define FLUSHOUTPUT                  6
+define DRAFTMODE                    7
+define QUERYESCSUPPORT              8
+define SETABORTPROC                 9
+define STARTDOC                     10
+define ENDDOC                       11
+define GETPHYSPAGESIZE              12
+define GETPRINTINGOFFSET            13
+define GETSCALINGFACTOR             14
+define MFCOMMENT                    15
+define GETPENWIDTH                  16
+define SETCOPYCOUNT                 17
+define SELECTPAPERSOURCE            18
+define DEVICEDATA                   19
+define PASSTHROUGH                  19
+define GETTECHNOLGY                 20
+define GETTECHNOLOGY                20
+define SETLINECAP                   21
+define SETLINEJOIN                  22
+define SETMITERLIMIT                23
+define BANDINFO                     24
+define DRAWPATTERNRECT              25
+define GETVECTORPENSIZE             26
+define GETVECTORBRUSHSIZE           27
+define ENABLEDUPLEX                 28
+define GETSETPAPERBINS              29
+define GETSETPRINTORIENT            30
+define ENUMPAPERBINS                31
+define SETDIBSCALING                32
+define EPSPRINTING                  33
+define ENUMPAPERMETRICS             34
+define GETSETPAPERMETRICS           35
+define POSTSCRIPT_DATA              37
+define POSTSCRIPT_IGNORE            38
+define MOUSETRAILS                  39
+define GETDEVICEUNITS               42
 
-STRETCHBLT		equ 2048
-GETSETSCREENPARAMS	equ 3072
-QUERYDIBSUPPORT		equ 3073
-BEGIN_PATH		equ 4096
-CLIP_TO_PATH		equ 4097
-END_PATH		equ 4098
-EXT_DEVICE_CAPS		equ 4099
-RESTORE_CTM		equ 4100
-SAVE_CTM		equ 4101
-SET_ARC_DIRECTION	equ 4102
-SET_BACKGROUND_COLOR	equ 4103
-SET_POLY_MODE		equ 4104
-SET_SCREEN_ANGLE	equ 4105
-SET_SPREAD		equ 4106
-TRANSFORM_CTM		equ 4107
-SET_CLIP_BOX		equ 4108
-SET_BOUNDS		equ 4109
-SET_MIRROR_MODE		equ 4110
-OPENCHANNEL		equ 4110
-DOWNLOADHEADER		equ 4111
-CLOSECHANNEL		equ 4112
-POSTSCRIPT_PASSTHROUGH	equ 4115
-ENCAPSULATED_POSTSCRIPT equ 4116
+define GETEXTENDEDTEXTMETRICS       256
+define GETEXTENTTABLE               257
+define GETPAIRKERNTABLE             258
+define GETTRACKKERNTABLE            259
+define EXTTEXTOUT                   512
+define GETFACENAME                  513
+define DOWNLOADFACE                 514
+define ENABLERELATIVEWIDTHS         768
+define ENABLEPAIRKERNING            769
+define SETKERNTRACK                 770
+define SETALLJUSTVALUES             771
+define SETCHARSET                   772
 
-POSTSCRIPT_IDENTIFY	equ 4117
-POSTSCRIPT_INJECTION	equ 4118
+define STRETCHBLT                   2048
+define METAFILE_DRIVER              2049
+define GETSETSCREENPARAMS           3072
+define QUERYDIBSUPPORT              3073
+define BEGIN_PATH                   4096
+define CLIP_TO_PATH                 4097
+define END_PATH                     4098
+define EXT_DEVICE_CAPS              4099
+define RESTORE_CTM                  4100
+define SAVE_CTM                     4101
+define SET_ARC_DIRECTION            4102
+define SET_BACKGROUND_COLOR         4103
+define SET_POLY_MODE                4104
+define SET_SCREEN_ANGLE             4105
+define SET_SPREAD                   4106
+define TRANSFORM_CTM                4107
+define SET_CLIP_BOX                 4108
+define SET_BOUNDS                   4109
+define SET_MIRROR_MODE              4110
+define OPENCHANNEL                  4110
+define DOWNLOADHEADER               4111
+define CLOSECHANNEL                 4112
+define POSTSCRIPT_PASSTHROUGH       4115
+define ENCAPSULATED_POSTSCRIPT      4116
 
-PSIDENT_GDICENTRIC	equ 0
-PSIDENT_PSCENTRIC	equ 1
+define POSTSCRIPT_IDENTIFY          4117
+define POSTSCRIPT_INJECTION         4118
 
-PSINJECTDATA	STRUC
-DataBytes	dd ?
-InjectionPoint	dd ?
-Flags		dd ?
-Reserved	dd ?
-PSINJECTDATA	ENDS
-PPSINJECTDATA	typedef ptr PSINJECTDATA
+define CHECKJPEGFORMAT              4119
+define CHECKPNGFORMAT               4120
 
-PSINJECT_APPEND		equ 0
-PSINJECT_REPLACE	equ 1
+define GET_PS_FEATURESETTING        4121
 
-PSINJECT_BEGINSTREAM	equ 0
-PSINJECT_PSADOBE	equ 1
-PSINJECT_COMMENTS	equ 2
-PSINJECT_BEGINDEFAULTS	equ 3
-PSINJECT_ENDDEFAULTS	equ 4
-PSINJECT_BEGINPROLOG	equ 5
-PSINJECT_ENDPROLOG	equ 6
-PSINJECT_BEGINSETUP	equ 7
-PSINJECT_ENDSETUP	equ 8
-PSINJECT_ENDPAGECOMMENTS	equ 9
-PSINJECT_BEGINPAGESETUP equ 10
-PSINJECT_ENDPAGESETUP	equ 11
-PSINJECT_SHOWPAGE	equ 12
-PSINJECT_PAGETRAILER	equ 13
-PSINJECT_TRAILER	equ 14
-PSINJECT_EOF		equ 15
-PSINJECT_ENDSTREAM	equ 16
-PSINJECT_VMSAVE		equ 17
-PSINJECT_VMRESTORE	equ 18
+define GDIPLUS_TS_QUERYVER          4122
+define GDIPLUS_TS_RECORD            4123
 
-PSINJECT_DOCNEEDEDRES	equ 19
-PSINJECT_DOCSUPPLIEDRES equ 20
+if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
+define MILCORE_TS_QUERYVER_RESULT_FALSE        0x0
+define MILCORE_TS_QUERYVER_RESULT_TRUE  0x7FFFFFFF
+endif
 
-PSINJECT_PAGES		equ 21
-PSINJECT_PAGEORDER	equ 22
-PSINJECT_ORIENTATION	equ 23
-PSINJECT_BOUNDINGBOX	equ 24
-PSINJECT_PAGENUMBER	equ 25
-PSINJECT_PAGEBBOX	equ 26
-PSINJECT_MAX		equ 27
+define SPCLPASSTHROUGH2             4568
 
-QDI_SETDIBITS		equ 1
-QDI_GETDIBITS		equ 2
-QDI_DIBTOSCREEN		equ 4
-QDI_STRETCHDIB		equ 8
+define PSIDENT_GDICENTRIC    0
+define PSIDENT_PSCENTRIC     1
 
-SP_NOTREPORTED		equ 0x4000
-SP_ERROR		equ (-1)
-SP_APPABORT		equ (-2)
-SP_USERABORT		equ (-3)
-SP_OUTOFDISK		equ (-4)
-SP_OUTOFMEMORY		equ (-5)
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-PR_JOBSTATUS		equ 0x0000
+_PSINJECTDATA           struct
+DataBytes               DWORD ?
+InjectionPoint          WORD ?
+PageNumber              WORD ?
+_PSINJECTDATA           ends
+PSINJECTDATA            typedef _PSINJECTDATA
+PPSINJECTDATA           typedef ptr _PSINJECTDATA
 
-OBJ_PEN			equ 1
-OBJ_BRUSH		equ 2
-OBJ_DC			equ 3
-OBJ_METADC		equ 4
-OBJ_PAL			equ 5
-OBJ_FONT		equ 6
-OBJ_BITMAP		equ 7
-OBJ_REGION		equ 8
-OBJ_METAFILE		equ 9
-OBJ_MEMDC		equ 10
-OBJ_EXTPEN		equ 11
-OBJ_ENHMETADC		equ 12
-OBJ_ENHMETAFILE		equ 13
+endif
+;.pragma endregion
 
-MWT_IDENTITY		equ 1
-MWT_LEFTMULTIPLY	equ 2
-MWT_RIGHTMULTIPLY	equ 3
+define PSINJECT_BEGINSTREAM                1
+define PSINJECT_PSADOBE                    2
+define PSINJECT_PAGESATEND                 3
+define PSINJECT_PAGES                      4
 
-MWT_MIN			equ MWT_IDENTITY
-MWT_MAX			equ MWT_RIGHTMULTIPLY
+define PSINJECT_DOCNEEDEDRES               5
+define PSINJECT_DOCSUPPLIEDRES             6
+define PSINJECT_PAGEORDER                  7
+define PSINJECT_ORIENTATION                8
+define PSINJECT_BOUNDINGBOX                9
+define PSINJECT_DOCUMENTPROCESSCOLORS      10
 
-_XFORM_			equ 1
-XFORM			STRUC
-eM11			FLOAT ?
-eM12			FLOAT ?
-eM21			FLOAT ?
-eM22			FLOAT ?
-_eDx			FLOAT ?
-eDy			FLOAT ?
-XFORM			ENDS
-PXFORM			typedef ptr XFORM
-LPXFORM			typedef ptr XFORM
+define PSINJECT_COMMENTS                   11
+define PSINJECT_BEGINDEFAULTS              12
+define PSINJECT_ENDDEFAULTS                13
+define PSINJECT_BEGINPROLOG                14
+define PSINJECT_ENDPROLOG                  15
+define PSINJECT_BEGINSETUP                 16
+define PSINJECT_ENDSETUP                   17
+define PSINJECT_TRAILER                    18
+define PSINJECT_EOF                        19
+define PSINJECT_ENDSTREAM                  20
+define PSINJECT_DOCUMENTPROCESSCOLORSATEND 21
 
-BITMAP			STRUC
-bmType			LONG ?
-bmWidth			LONG ?
-bmHeight		LONG ?
-bmWidthBytes		LONG ?
-bmPlanes		dw ?
-bmBitsPixel		dw ?
-bmBits			LPVOID ?
-BITMAP			ENDS
-PBITMAP			typedef ptr BITMAP
-NPBITMAP		typedef ptr BITMAP
-LPBITMAP		typedef ptr BITMAP
+define PSINJECT_PAGENUMBER                 100
+define PSINJECT_BEGINPAGESETUP             101
+define PSINJECT_ENDPAGESETUP               102
+define PSINJECT_PAGETRAILER                103
+define PSINJECT_PLATECOLOR                 104
 
-RGBTRIPLE		STRUC 1
-rgbtBlue		db ?
-rgbtGreen		db ?
-rgbtRed			db ?
-RGBTRIPLE		ENDS
+define PSINJECT_SHOWPAGE                   105
+define PSINJECT_PAGEBBOX                   106
+define PSINJECT_ENDPAGECOMMENTS            107
 
-RGBQUAD			STRUC
-rgbBlue			db ?
-rgbGreen		db ?
-rgbRed			db ?
-rgbReserved		db ?
-RGBQUAD			ENDS
-LPRGBQUAD		typedef ptr RGBQUAD
+define PSINJECT_VMSAVE                     200
+define PSINJECT_VMRESTORE                  201
 
-if(WINVER GE 0x0400)
+define PSINJECT_DLFONT                     0xdddddddd
 
-CS_ENABLE		equ 0x00000001
-CS_DISABLE		equ 0x00000002
-CS_DELETE_TRANSFORM	equ 0x00000003
+define FEATURESETTING_NUP                  0
+define FEATURESETTING_OUTPUT               1
+define FEATURESETTING_PSLEVEL              2
+define FEATURESETTING_CUSTPAPER            3
+define FEATURESETTING_MIRROR               4
+define FEATURESETTING_NEGATIVE             5
+define FEATURESETTING_PROTOCOL             6
 
-LCS_SIGNATURE		equ 'PSOC'
+if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
+define FEATURESETTING_PRIVATE_BEGIN 0x1000
+define FEATURESETTING_PRIVATE_END   0x1FFF
+endif
 
-LCS_sRGB		equ 'sRGB'
-LCS_WINDOWS_COLOR_SPACE equ 'Win '
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-LCSCSTYPE		typedef LONG
-LCS_CALIBRATED_RGB	equ 0x00000000
-LCS_DEVICE_RGB		equ 0x00000001
-LCS_DEVICE_CMYK		equ 0x00000002
+_PSFEATURE_OUTPUT       struct
+bPageIndependent        BOOL ?
+bSetPageDevice          BOOL ?
+_PSFEATURE_OUTPUT       ends
+PSFEATURE_OUTPUT        typedef _PSFEATURE_OUTPUT
+PPSFEATURE_OUTPUT       typedef ptr _PSFEATURE_OUTPUT
 
-LCSGAMUTMATCH		typedef LONG
-LCS_GM_BUSINESS		equ 0x00000001
-LCS_GM_GRAPHICS		equ 0x00000002
-LCS_GM_IMAGES		equ 0x00000004
-LCS_GM_ABS_COLORIMETRIC equ 0x00000008
+_PSFEATURE_CUSTPAPER    struct
+lOrientation            LONG ?
+lWidth                  LONG ?
+lHeight                 LONG ?
+lWidthOffset            LONG ?
+lHeightOffset           LONG ?
+_PSFEATURE_CUSTPAPER    ends
+PSFEATURE_CUSTPAPER     typedef _PSFEATURE_CUSTPAPER
+PPSFEATURE_CUSTPAPER    typedef ptr _PSFEATURE_CUSTPAPER
 
-CM_OUT_OF_GAMUT		equ 255
-CM_IN_GAMUT		equ 0
+endif
+;.pragma endregion
 
-ICM_ADDPROFILE		equ 1
-ICM_DELETEPROFILE	equ 2
-ICM_QUERYPROFILE	equ 3
-ICM_SETDEFAULTPROFILE	equ 4
-ICM_REGISTERICMATCHER	equ 5
-ICM_UNREGISTERICMATCHER equ 6
-ICM_QUERYMATCH		equ 7
+define PSPROTOCOL_ASCII             0
+define PSPROTOCOL_BCP               1
+define PSPROTOCOL_TBCP              2
+define PSPROTOCOL_BINARY            3
+
+define QDI_SETDIBITS                1
+define QDI_GETDIBITS                2
+define QDI_DIBTOSCREEN              4
+define QDI_STRETCHDIB               8
+
+define SP_NOTREPORTED               0x4000
+define SP_ERROR                     (-1)
+define SP_APPABORT                  (-2)
+define SP_USERABORT                 (-3)
+define SP_OUTOFDISK                 (-4)
+define SP_OUTOFMEMORY               (-5)
+
+define PR_JOBSTATUS                 0x0000
+
+define OBJ_PEN             1
+define OBJ_BRUSH           2
+define OBJ_DC              3
+define OBJ_METADC          4
+define OBJ_PAL             5
+define OBJ_FONT            6
+define OBJ_BITMAP          7
+define OBJ_REGION          8
+define OBJ_METAFILE        9
+define OBJ_MEMDC           10
+define OBJ_EXTPEN          11
+define OBJ_ENHMETADC       12
+define OBJ_ENHMETAFILE     13
+define OBJ_COLORSPACE      14
+
+define GDI_OBJ_LAST        OBJ_COLORSPACE
+
+define MWT_IDENTITY        1
+define MWT_LEFTMULTIPLY    2
+define MWT_RIGHTMULTIPLY   3
+
+define MWT_MIN             MWT_IDENTITY
+define MWT_MAX             MWT_RIGHTMULTIPLY
+
+define _XFORM_
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagXFORM                struct
+eM11                    FLOAT ?
+eM12                    FLOAT ?
+eM21                    FLOAT ?
+eM22                    FLOAT ?
+_eDx                    FLOAT ?
+eDy                     FLOAT ?
+tagXFORM                ends
+XFORM                   typedef tagXFORM
+PXFORM                  typedef ptr tagXFORM
+LPXFORM                 typedef ptr tagXFORM
+
+tagBITMAP               struct
+bmType                  LONG ?
+bmWidth                 LONG ?
+bmHeight                LONG ?
+bmWidthBytes            LONG ?
+bmPlanes                WORD ?
+bmBitsPixel             WORD ?
+bmBits                  LPVOID ?
+tagBITMAP               ends
+BITMAP                  typedef tagBITMAP
+PBITMAP                 typedef ptr tagBITMAP
+NPBITMAP                typedef ptr tagBITMAP
+LPBITMAP                typedef ptr tagBITMAP
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagRGBTRIPLE            struct 1
+rgbtBlue                BYTE ?
+rgbtGreen               BYTE ?
+rgbtRed                 BYTE ?
+tagRGBTRIPLE            ends
+RGBTRIPLE               typedef tagRGBTRIPLE
+PRGBTRIPLE              typedef ptr tagRGBTRIPLE
+NPRGBTRIPLE             typedef ptr tagRGBTRIPLE
+LPRGBTRIPLE             typedef ptr tagRGBTRIPLE
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagRGBQUAD              struct
+rgbBlue                 BYTE ?
+rgbGreen                BYTE ?
+rgbRed                  BYTE ?
+rgbReserved             BYTE ?
+tagRGBQUAD              ends
+RGBQUAD                 typedef tagRGBQUAD
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+LPRGBQUAD               typedef ptr FAR
+endif
+
+if(WINVER ge 0x0400)
+
+define CS_ENABLE                       0x00000001
+define CS_DISABLE                      0x00000002
+define CS_DELETE_TRANSFORM             0x00000003
+
+define LCS_SIGNATURE           'PSOC'
+
+define LCS_sRGB                'sRGB'
+define LCS_WINDOWS_COLOR_SPACE 'Win '
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+LCSCSTYPE               typedef LONG
+
+define LCS_CALIBRATED_RGB              0x00000000
+
+LCSGAMUTMATCH           typedef LONG
+
+define LCS_GM_BUSINESS                 0x00000001
+define LCS_GM_GRAPHICS                 0x00000002
+define LCS_GM_IMAGES                   0x00000004
+define LCS_GM_ABS_COLORIMETRIC         0x00000008
+
+define CM_OUT_OF_GAMUT                 255
+define CM_IN_GAMUT                     0
+
+define ICM_ADDPROFILE                  1
+define ICM_DELETEPROFILE               2
+define ICM_QUERYPROFILE                3
+define ICM_SETDEFAULTPROFILE           4
+define ICM_REGISTERICMATCHER           5
+define ICM_UNREGISTERICMATCHER         6
+define ICM_QUERYMATCH                  7
 
 GetKValue macro cmyk
-	ifidn typeid(cmyk),<imm>
-	exitm<(cmyk)>
-	endif
-	mov	eax,cmyk
-	retm	<al>
-	endm
+ifidn typeid(cmyk),<imm>
+  exitm<(cmyk)>
+endif
+  mov eax,cmyk
+  retm    <al>
+  endm
 GetYValue macro cmyk
-	ifidn typeid(cmyk),<imm>
-	exitm<((cmyk) SHR 8)>
-	endif
-	mov	eax,cmyk
-	shr	eax,8
-	retm	<al>
-	endm
+ifidn typeid(cmyk),<imm>
+  exitm<((cmyk) SHR 8)>
+endif
+  mov eax,cmyk
+  shr eax,8
+  retm    <al>
+  endm
 GetMValue macro cmyk
-	ifidn typeid(cmyk),<imm>
-	exitm<((cmyk) SHR 16)>
-	endif
-	mov	eax,cmyk
-	shr	eax,16
-	retm	<al>
-	endm
+ifidn typeid(cmyk),<imm>
+  exitm<((cmyk) SHR 16)>
+endif
+  mov eax,cmyk
+  shr eax,16
+  retm    <al>
+  endm
 GetCValue macro cmyk
-	ifidn typeid(cmyk),<imm>
-	exitm<((cmyk) SHR 24)>
-	endif
-	mov	eax,cmyk
-	shr	eax,24
-	retm	<al>
-	endm
+ifidn typeid(cmyk),<imm>
+  exitm<((cmyk) SHR 24)>
+endif
+  mov eax,cmyk
+  shr eax,24
+  retm    <al>
+  endm
 
 CMYK macro c,m,y,k
-	ifidn typeid(c),<imm>
-	ifidn typeid(m),<imm>
-	ifidn typeid(y),<imm>
-	ifidn typeid(k),<imm>
-	exitm<(((((k) OR ((y) SHL 8)) OR ((m) SHL 16)) OR ((c) SHL 24)))>
-	endif
-	endif
-	endif
-	endif
+ifidn typeid(c),<imm>
+ifidn typeid(m),<imm>
+ifidn typeid(y),<imm>
+ifidn typeid(k),<imm>
+  exitm<(((((k) OR ((y) SHL 8)) OR ((m) SHL 16)) OR ((c) SHL 24)))>
+endif
+endif
+endif
+endif
 ifdef _WIN64
-	ifdif <c>,<al>
-	mov	al,c
-	endif
-	shl	eax,8
-	mov	al,m
-	shl	eax,8
-	mov	al,y
-	shl	eax,8
-else
-	mov	ah,c
-	mov	al,m
-	shl	eax,16
-	mov	ah,y
+ifdif <c>,<al>
+  mov al,c
 endif
-	mov	al,k
-	retm	<eax>
-	endm
+  shl eax,8
+  mov al,m
+  shl eax,8
+  mov al,y
+  shl eax,8
+else
+  mov ah,c
+  mov al,m
+  shl eax,16
+  mov ah,y
+endif
+  mov al,k
+  retm    <eax>
+  endm
 
-FXPT16DOT16	typedef LONG
-FXPT2DOT30	typedef LONG
-LPFXPT16DOT16	typedef ptr LONG
-LPFXPT2DOT30	typedef ptr LONG
+FXPT16DOT16             typedef LONG
+FXPT2DOT30              typedef LONG
+LPFXPT16DOT16           typedef ptr
+LPFXPT2DOT30            typedef ptr
 
+tagCIEXYZ               struct
+ciexyzX                 FXPT2DOT30 ?
+ciexyzY                 FXPT2DOT30 ?
+ciexyzZ                 FXPT2DOT30 ?
+tagCIEXYZ               ends
+CIEXYZ                  typedef tagCIEXYZ
 
-CIEXYZ			STRUC
-ciexyzX			FXPT2DOT30 ?
-ciexyzY			FXPT2DOT30 ?
-ciexyzZ			FXPT2DOT30 ?
-CIEXYZ			ENDS
-LPCIEXYZ		typedef ptr CIEXYZ
+endif
 
-CIEXYZTRIPLE		STRUC
-ciexyzRed		CIEXYZ <>
-ciexyzGreen		CIEXYZ <>
-ciexyzBlue		CIEXYZ <>
-CIEXYZTRIPLE		ENDS
-LPCIEXYZTRIPLE		typedef ptr CIEXYZTRIPLE
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-LOGCOLORSPACEA		STRUC
-lcsSignature		dd ?
-lcsVersion		dd ?
-lcsSize			dd ?
-lcsCSType		LCSCSTYPE ?
-lcsIntent		LCSGAMUTMATCH ?
-lcsEndpoints		CIEXYZTRIPLE <>
-lcsGammaRed		dd ?
-lcsGammaGreen		dd ?
-lcsGammaBlue		dd ?
-lcsFilename		db MAX_PATH dup(?)
-LOGCOLORSPACEA		ENDS
-LPLOGCOLORSPACEA	typedef ptr LOGCOLORSPACEA
-LOGCOLORSPACEW		STRUC
-lcsSignature		dd ?
-lcsVersion		dd ?
-lcsSize			dd ?
-lcsCSType		LCSCSTYPE ?
-lcsIntent		LCSGAMUTMATCH ?
-lcsEndpoints		CIEXYZTRIPLE <>
-lcsGammaRed		dd ?
-lcsGammaGreen		dd ?
-lcsGammaBlue		dd ?
-lcsFilename		dw MAX_PATH dup(?)
-LOGCOLORSPACEW		ENDS
-LPLOGCOLORSPACEW	typedef ptr LOGCOLORSPACEW
+LPCIEXYZ                typedef ptr FAR
+
+endif
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagICEXYZTRIPLE         struct
+ciexyzRed               CIEXYZ <>
+ciexyzGreen             CIEXYZ <>
+ciexyzBlue              CIEXYZ <>
+tagICEXYZTRIPLE         ends
+CIEXYZTRIPLE            typedef tagICEXYZTRIPLE
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+LPCIEXYZTRIPLE          typedef ptr FAR
+
+endif
+;.pragma endregion
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagLOGCOLORSPACEA       struct
+lcsSignature            DWORD ?
+lcsVersion              DWORD ?
+lcsSize                 DWORD ?
+lcsCSType               LCSCSTYPE ?
+lcsIntent               LCSGAMUTMATCH ?
+lcsEndpoints            CIEXYZTRIPLE <>
+lcsGammaRed             DWORD ?
+lcsGammaGreen           DWORD ?
+lcsGammaBlue            DWORD ?
+lcsFilename             CHAR MAX_PATH dup(?)
+tagLOGCOLORSPACEA       ends
+LOGCOLORSPACEA          typedef tagLOGCOLORSPACEA
+LPLOGCOLORSPACEA        typedef ptr tagLOGCOLORSPACEA
+tagLOGCOLORSPACEW       struct
+lcsSignature            DWORD ?
+lcsVersion              DWORD ?
+lcsSize                 DWORD ?
+lcsCSType               LCSCSTYPE ?
+lcsIntent               LCSGAMUTMATCH ?
+lcsEndpoints            CIEXYZTRIPLE <>
+lcsGammaRed             DWORD ?
+lcsGammaGreen           DWORD ?
+lcsGammaBlue            DWORD ?
+lcsFilename             WCHAR MAX_PATH dup(?)
+tagLOGCOLORSPACEW       ends
+LOGCOLORSPACEW          typedef tagLOGCOLORSPACEW
+LPLOGCOLORSPACEW        typedef ptr tagLOGCOLORSPACEW
 ifdef _UNICODE
-LOGCOLORSPACE		typedef LOGCOLORSPACEW
-LPLOGCOLORSPACE		typedef LPLOGCOLORSPACEW
+LOGCOLORSPACE           typedef LOGCOLORSPACEW
+LPLOGCOLORSPACE         typedef LPLOGCOLORSPACEW
 else
-LOGCOLORSPACE		typedef LOGCOLORSPACEA
-LPLOGCOLORSPACE		typedef LPLOGCOLORSPACEA
-endif
-endif
-
-BITMAPCOREHEADER	STRUC
-bcSize			dd ?
-bcWidth			dw ?
-bcHeight		dw ?
-bcPlanes		dw ?
-bcBitCount		dw ?
-BITMAPCOREHEADER	ENDS
-LPBITMAPCOREHEADER	typedef ptr BITMAPCOREHEADER
-PBITMAPCOREHEADER	typedef ptr BITMAPCOREHEADER
-
-BITMAPINFOHEADER	STRUC
-biSize			dd ?
-biWidth			LONG ?
-biHeight		LONG ?
-biPlanes		dw ?
-biBitCount		dw ?
-biCompression		dd ?
-biSizeImage		dd ?
-biXPelsPerMeter		LONG ?
-biYPelsPerMeter		LONG ?
-biClrUsed		dd ?
-biClrImportant		dd ?
-BITMAPINFOHEADER	ENDS
-LPBITMAPINFOHEADER	typedef ptr BITMAPINFOHEADER
-PBITMAPINFOHEADER	typedef ptr BITMAPINFOHEADER
-
-if(WINVER GE 0x0400)
-BITMAPV4HEADER		STRUC
-bV4Size			dd ?
-bV4Width		LONG ?
-bV4Height		LONG ?
-bV4Planes		dw ?
-bV4BitCount		dw ?
-bV4V4Compression	dd ?
-bV4SizeImage		dd ?
-bV4XPelsPerMeter	LONG ?
-bV4YPelsPerMeter	LONG ?
-bV4ClrUsed		dd ?
-bV4ClrImportant		dd ?
-bV4RedMask		dd ?
-bV4GreenMask		dd ?
-bV4BlueMask		dd ?
-bV4AlphaMask		dd ?
-bV4CSType		dd ?
-bV4Endpoints		CIEXYZTRIPLE <>
-bV4GammaRed		dd ?
-bV4GammaGreen		dd ?
-bV4GammaBlue		dd ?
-BITMAPV4HEADER		ENDS
-LPBITMAPV4HEADER	typedef ptr BITMAPV4HEADER
-PBITMAPV4HEADER		typedef ptr BITMAPV4HEADER
+LOGCOLORSPACE           typedef LOGCOLORSPACEA
+LPLOGCOLORSPACE         typedef LPLOGCOLORSPACEA
 endif
 
-if (WINVER GE 0x0500)
-BITMAPV5HEADER		STRUC
-bV5Size			dd ?
-bV5Width		LONG ?
-bV5Height		LONG ?
-bV5Planes		dw ?
-bV5BitCount		dw ?
-bV5Compression		dd ?
-bV5SizeImage		dd ?
-bV5XPelsPerMeter	LONG ?
-bV5YPelsPerMeter	LONG ?
-bV5ClrUsed		dd ?
-bV5ClrImportant		dd ?
-bV5RedMask		dd ?
-bV5GreenMask		dd ?
-bV5BlueMask		dd ?
-bV5AlphaMask		dd ?
-bV5CSType		dd ?
-bV5Endpoints		CIEXYZTRIPLE <>
-bV5GammaRed		dd ?
-bV5GammaGreen		dd ?
-bV5GammaBlue		dd ?
-bV5Intent		dd ?
-bV5ProfileData		dd ?
-bV5ProfileSize		dd ?
-bV5Reserved		dd ?
-BITMAPV5HEADER		ENDS
-LPBITMAPV5HEADER	typedef ptr BITMAPV5HEADER
-PBITMAPV5HEADER		typedef ptr BITMAPV5HEADER
+endif
+;.pragma endregion
 
-PROFILE_LINKED		equ 'LINK'
-PROFILE_EMBEDDED	equ 'MBED'
 endif
 
-BI_RGB			equ 0
-BI_RLE8			equ 1
-BI_RLE4			equ 2
-BI_BITFIELDS		equ 3
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-BITMAPINFO		STRUC
-bmiHeader		BITMAPINFOHEADER <>
-bmiColors		RGBQUAD <>
-BITMAPINFO		ENDS
-LPBITMAPINFO		typedef ptr BITMAPINFO
-PBITMAPINFO		typedef ptr BITMAPINFO
+tagBITMAPCOREHEADER     struct
+bcSize                  DWORD ?
+bcWidth                 WORD ?
+bcHeight                WORD ?
+bcPlanes                WORD ?
+bcBitCount              WORD ?
+tagBITMAPCOREHEADER     ends
+BITMAPCOREHEADER        typedef tagBITMAPCOREHEADER
+LPBITMAPCOREHEADER      typedef ptr tagBITMAPCOREHEADER
+PBITMAPCOREHEADER       typedef ptr tagBITMAPCOREHEADER
 
-BITMAPCOREINFO		STRUC
-bmciHeader		BITMAPCOREHEADER <>
-bmciColors		RGBTRIPLE <>
-BITMAPCOREINFO		ENDS
-LPBITMAPCOREINFO	typedef ptr BITMAPCOREINFO
-PBITMAPCOREINFO		typedef ptr BITMAPCOREINFO
+endif
+;.pragma endregion
 
-BITMAPFILEHEADER	STRUC 2
-bfType			dw ?
-bfSize			dd ?
-bfReserved1		dw ?
-bfReserved2		dw ?
-bfOffBits		dd ?
-BITMAPFILEHEADER	ENDS
-LPBITMAPFILEHEADER	typedef ptr BITMAPFILEHEADER
-PBITMAPFILEHEADER	typedef ptr BITMAPFILEHEADER
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagBITMAPINFOHEADER     struct
+biSize                  DWORD ?
+biWidth                 LONG ?
+biHeight                LONG ?
+biPlanes                WORD ?
+biBitCount              WORD ?
+biCompression           DWORD ?
+biSizeImage             DWORD ?
+biXPelsPerMeter         LONG ?
+biYPelsPerMeter         LONG ?
+biClrUsed               DWORD ?
+biClrImportant          DWORD ?
+tagBITMAPINFOHEADER     ends
+BITMAPINFOHEADER        typedef tagBITMAPINFOHEADER
+LPBITMAPINFOHEADER      typedef ptr tagBITMAPINFOHEADER
+PBITMAPINFOHEADER       typedef ptr tagBITMAPINFOHEADER
+
+endif
+;.pragma endregion
+
+if(WINVER ge 0x0400)
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+BITMAPV4HEADER          struct
+bV4Size                 DWORD ?
+bV4Width                LONG ?
+bV4Height               LONG ?
+bV4Planes               WORD ?
+bV4BitCount             WORD ?
+bV4V4Compression        DWORD ?
+bV4SizeImage            DWORD ?
+bV4XPelsPerMeter        LONG ?
+bV4YPelsPerMeter        LONG ?
+bV4ClrUsed              DWORD ?
+bV4ClrImportant         DWORD ?
+bV4RedMask              DWORD ?
+bV4GreenMask            DWORD ?
+bV4BlueMask             DWORD ?
+bV4AlphaMask            DWORD ?
+bV4CSType               DWORD ?
+bV4Endpoints            CIEXYZTRIPLE <>
+bV4GammaRed             DWORD ?
+bV4GammaGreen           DWORD ?
+bV4GammaBlue            DWORD ?
+BITMAPV4HEADER          ends
+LPBITMAPV4HEADER        typedef ptr BITMAPV4HEADER
+PBITMAPV4HEADER         typedef ptr BITMAPV4HEADER
+
+endif
+;.pragma endregion
+endif
+
+if (WINVER ge 0x0500)
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+BITMAPV5HEADER          struct
+bV5Size                 DWORD ?
+bV5Width                LONG ?
+bV5Height               LONG ?
+bV5Planes               WORD ?
+bV5BitCount             WORD ?
+bV5Compression          DWORD ?
+bV5SizeImage            DWORD ?
+bV5XPelsPerMeter        LONG ?
+bV5YPelsPerMeter        LONG ?
+bV5ClrUsed              DWORD ?
+bV5ClrImportant         DWORD ?
+bV5RedMask              DWORD ?
+bV5GreenMask            DWORD ?
+bV5BlueMask             DWORD ?
+bV5AlphaMask            DWORD ?
+bV5CSType               DWORD ?
+bV5Endpoints            CIEXYZTRIPLE <>
+bV5GammaRed             DWORD ?
+bV5GammaGreen           DWORD ?
+bV5GammaBlue            DWORD ?
+bV5Intent               DWORD ?
+bV5ProfileData          DWORD ?
+bV5ProfileSize          DWORD ?
+bV5Reserved             DWORD ?
+BITMAPV5HEADER          ends
+LPBITMAPV5HEADER        typedef ptr BITMAPV5HEADER
+PBITMAPV5HEADER         typedef ptr BITMAPV5HEADER
+
+endif
+;.pragma endregion
+
+define PROFILE_LINKED          'LINK'
+define PROFILE_EMBEDDED        'MBED'
+endif
+
+define BI_RGB        0
+define BI_RLE8       1
+define BI_RLE4       2
+define BI_BITFIELDS  3
+define BI_JPEG       4
+define BI_PNG        5
+if (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+endif
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagBITMAPINFO           struct
+bmiHeader               BITMAPINFOHEADER <>
+bmiColors               RGBQUAD 1 dup(<>)
+tagBITMAPINFO           ends
+BITMAPINFO              typedef tagBITMAPINFO
+LPBITMAPINFO            typedef ptr tagBITMAPINFO
+PBITMAPINFO             typedef ptr tagBITMAPINFO
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagBITMAPCOREINFO       struct
+bmciHeader              BITMAPCOREHEADER <>
+bmciColors              RGBTRIPLE 1 dup(<>)
+tagBITMAPCOREINFO       ends
+BITMAPCOREINFO          typedef tagBITMAPCOREINFO
+LPBITMAPCOREINFO        typedef ptr tagBITMAPCOREINFO
+PBITMAPCOREINFO         typedef ptr tagBITMAPCOREINFO
+
+endif
+;.pragma endregion
+
+include pshpack2.inc
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagBITMAPFILEHEADER     struct
+bfType                  WORD ?
+bfSize                  DWORD ?
+bfReserved1             WORD ?
+bfReserved2             WORD ?
+bfOffBits               DWORD ?
+tagBITMAPFILEHEADER     ends
+BITMAPFILEHEADER        typedef tagBITMAPFILEHEADER
+LPBITMAPFILEHEADER      typedef ptr tagBITMAPFILEHEADER
+PBITMAPFILEHEADER       typedef ptr tagBITMAPFILEHEADER
+
+endif
+;.pragma endregion
+
+include poppack.inc
 
 MAKEPOINTS macro l
-	exitm<[l]>
-	endm
+  exitm<[l]>
+  endm
 
-if(WINVER GE 0x0400)
+if(WINVER ge 0x0400)
 ifndef NOFONTSIG
-FONTSIGNATURE		STRUC
-fsUsb			dd 4 dup(?)
-fsCsb			dd 2 dup(?)
-FONTSIGNATURE		ENDS
-PFONTSIGNATURE		typedef ptr FONTSIGNATURE
-LPFONTSIGNATURE		typedef ptr FONTSIGNATURE
 
-CHARSETINFO		STRUC
-ciCharset		UINT ?
-ciACP			UINT ?
-_fs			FONTSIGNATURE <>
-CHARSETINFO		ENDS
-PCHARSETINFO		typedef ptr CHARSETINFO
-NPCHARSETINFO		typedef ptr CHARSETINFO
-LPCHARSETINFO		typedef ptr CHARSETINFO
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-TCI_SRCCHARSET		equ 1
-TCI_SRCCODEPAGE		equ 2
-TCI_SRCFONTSIG		equ 3
+tagFONTSIGNATURE        struct
+fsUsb                   DWORD 4 dup(?)
+fsCsb                   DWORD 2 dup(?)
+tagFONTSIGNATURE        ends
+FONTSIGNATURE           typedef tagFONTSIGNATURE
+PFONTSIGNATURE          typedef ptr tagFONTSIGNATURE
+LPFONTSIGNATURE         typedef ptr tagFONTSIGNATURE
 
-LOCALESIGNATURE		STRUC
-lsUsb			dd 4 dup(?)
-lsCsbDefault		dd 2 dup(?)
-lsCsbSupported		dd 2 dup(?)
-LOCALESIGNATURE		ENDS
-PLOCALESIGNATURE	typedef ptr LOCALESIGNATURE
-LPLOCALESIGNATURE	typedef ptr LOCALESIGNATURE
+tagCHARSETINFO          struct
+ciCharset               UINT ?
+ciACP                   UINT ?
+_fs                     FONTSIGNATURE <>
+tagCHARSETINFO          ends
+CHARSETINFO             typedef tagCHARSETINFO
+PCHARSETINFO            typedef ptr tagCHARSETINFO
+NPCHARSETINFO           typedef ptr tagCHARSETINFO
+LPCHARSETINFO           typedef ptr tagCHARSETINFO
+
+endif
+;.pragma endregion
+
+define TCI_SRCCHARSET  1
+define TCI_SRCCODEPAGE 2
+define TCI_SRCFONTSIG  3
+if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
+define TCI_SRCLOCALE   0x1000
+endif
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagLOCALESIGNATURE      struct
+lsUsb                   DWORD 4 dup(?)
+lsCsbDefault            DWORD 2 dup(?)
+lsCsbSupported          DWORD 2 dup(?)
+tagLOCALESIGNATURE      ends
+LOCALESIGNATURE         typedef tagLOCALESIGNATURE
+PLOCALESIGNATURE        typedef ptr tagLOCALESIGNATURE
+LPLOCALESIGNATURE       typedef ptr tagLOCALESIGNATURE
+
+endif
+;.pragma endregion
 
 endif
 endif
 
 ifndef NOMETAFILE
 
-HANDLETABLE		STRUC
-objectHandle		HGDIOBJ ?
-HANDLETABLE		ENDS
-PHANDLETABLE		typedef ptr HANDLETABLE
-LPHANDLETABLE		typedef ptr HANDLETABLE
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-METARECORD		STRUC
-rdSize			dd ?
-rdFunction		dw ?
-rdParm			dw ?
-METARECORD		ENDS
-PMETARECORD		typedef ptr METARECORD
-LPMETARECORD		typedef ptr METARECORD
+tagHANDLETABLE          struct
+objectHandle            HGDIOBJ 1 dup(?)
+tagHANDLETABLE          ends
+HANDLETABLE             typedef tagHANDLETABLE
+PHANDLETABLE            typedef ptr tagHANDLETABLE
+LPHANDLETABLE           typedef ptr tagHANDLETABLE
 
-METAFILEPICT		STRUC
-mm			LONG ?
-xExt			LONG ?
-yExt			LONG ?
-hMF			HMETAFILE ?
-METAFILEPICT		ENDS
-LPMETAFILEPICT		typedef ptr METAFILEPICT
+tagMETARECORD           struct
+rdSize                  DWORD ?
+rdFunction              WORD ?
+rdParm                  WORD 1 dup(?)
+tagMETARECORD           ends
+METARECORD              typedef tagMETARECORD
 
-METAHEADER		STRUC 2
-mtType			dw ?
-mtHeaderSize		dw ?
-mtVersion		dw ?
-mtSize			dd ?
-mtNoObjects		dw ?
-mtMaxRecord		dd ?
-mtNoParameters		dw ?
-METAHEADER		ENDS
-PMETAHEADER		typedef ptr METAHEADER
-LPMETAHEADER		typedef ptr METAHEADER
-
-ENHMETARECORD		STRUC
-iType			dd ?
-nSize			dd ?
-dParm			dd ?
-ENHMETARECORD		ENDS
-PENHMETARECORD		typedef ptr ENHMETARECORD
-LPENHMETARECORD		typedef ptr ENHMETARECORD
-
-ENHMETAHEADER		STRUC
-iType			dd ?
-nSize			dd ?
-rclBounds		RECTL <>
-rclFrame		RECTL <>
-dSignature		dd ?
-nVersion		dd ?
-nBytes			dd ?
-nRecords		dd ?
-nHandles		dw ?
-sReserved		dw ?
-nDescription		dd ?
-offDescription		dd ?
-nPalEntries		dd ?
-szlDevice		SIZEL <>
-szlMillimeters		SIZEL <>
-if(WINVER GE 0x0400)
-cbPixelFormat		dd ?
-offPixelFormat		dd ?
-bOpenGL			dd ?
 endif
-ENHMETAHEADER		ENDS
-PENHMETAHEADER		typedef ptr ENHMETAHEADER
-LPENHMETAHEADER		typedef ptr ENHMETAHEADER
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+PMETARECORD             typedef ptr UNALIGNED
+
+endif
+;.pragma endregion
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+LPMETARECORD            typedef ptr FAR
+
+tagMETAFILEPICT         struct
+mm                      LONG ?
+xExt                    LONG ?
+yExt                    LONG ?
+hMF                     HMETAFILE ?
+tagMETAFILEPICT         ends
+METAFILEPICT            typedef tagMETAFILEPICT
+LPMETAFILEPICT          typedef ptr tagMETAFILEPICT
+
+endif
+;.pragma endregion
+
+include pshpack2.inc
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagMETAHEADER           struct
+mtType                  WORD ?
+mtHeaderSize            WORD ?
+mtVersion               WORD ?
+mtSize                  DWORD ?
+mtNoObjects             WORD ?
+mtMaxRecord             DWORD ?
+mtNoParameters          WORD ?
+tagMETAHEADER           ends
+METAHEADER              typedef tagMETAHEADER
+PMETAHEADER             typedef ptr UNALIGNED
+LPMETAHEADER            typedef ptr FAR
+
+endif
+;.pragma endregion
+
+include poppack.inc
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagENHMETARECORD        struct
+iType                   DWORD ?
+nSize                   DWORD ?
+dParm                   DWORD 1 dup(?)
+tagENHMETARECORD        ends
+ENHMETARECORD           typedef tagENHMETARECORD
+PENHMETARECORD          typedef ptr tagENHMETARECORD
+LPENHMETARECORD         typedef ptr tagENHMETARECORD
+
+tagENHMETAHEADER        struct
+iType                   DWORD ?
+nSize                   DWORD ?
+rclBounds               RECTL <>
+rclFrame                RECTL <>
+dSignature              DWORD ?
+nVersion                DWORD ?
+nBytes                  DWORD ?
+nRecords                DWORD ?
+nHandles                WORD ?
+sReserved               WORD ?
+nDescription            DWORD ?
+offDescription          DWORD ?
+nPalEntries             DWORD ?
+szlDevice               SIZEL <>
+szlMillimeters          SIZEL <>
+if(WINVER ge 0x0400)
+cbPixelFormat           DWORD ?
+offPixelFormat          DWORD ?
+bOpenGL                 DWORD ?
+endif
+if(WINVER ge 0x0500)
+szlMicrometers          SIZEL <>
+endif
+tagENHMETAHEADER        ends
+ENHMETAHEADER           typedef tagENHMETAHEADER
+PENHMETAHEADER          typedef ptr tagENHMETAHEADER
+LPENHMETAHEADER         typedef ptr tagENHMETAHEADER
+
+endif
+;.pragma endregion
 
 endif
 
 ifndef NOTEXTMETRIC
 
-TMPF_FIXED_PITCH	equ 0x01
-TMPF_VECTOR		equ 0x02
-TMPF_DEVICE		equ 0x08
-TMPF_TRUETYPE		equ 0x04
+define TMPF_FIXED_PITCH    0x01
+define TMPF_VECTOR             0x02
+define TMPF_DEVICE             0x08
+define TMPF_TRUETYPE       0x04
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifdef _UNICODE
-BCHAR	typedef WCHAR
+BCHAR                   typedef WCHAR
 else
-BCHAR	typedef BYTE
+BCHAR                   typedef BYTE
 endif
 
-TEXTMETRICA		STRUC
-tmHeight		LONG ?
-tmAscent		LONG ?
-tmDescent		LONG ?
-tmInternalLeading	LONG ?
-tmExternalLeading	LONG ?
-tmAveCharWidth		LONG ?
-tmMaxCharWidth		LONG ?
-tmWeight		LONG ?
-tmOverhang		LONG ?
-tmDigitizedAspectX	LONG ?
-tmDigitizedAspectY	LONG ?
-tmFirstChar		db ?
-tmLastChar		db ?
-tmDefaultChar		db ?
-tmBreakChar		db ?
-tmItalic		db ?
-tmUnderlined		db ?
-tmStruckOut		db ?
-tmPitchAndFamily	db ?
-tmCharSet		db ?
-TEXTMETRICA		ENDS
-PTEXTMETRICA		typedef ptr TEXTMETRICA
-NPTEXTMETRICA		typedef ptr TEXTMETRICA
-LPTEXTMETRICA		typedef ptr TEXTMETRICA
+endif
+;.pragma endregion
 
-TEXTMETRICW		STRUC
-tmHeight		LONG ?
-tmAscent		LONG ?
-tmDescent		LONG ?
-tmInternalLeading	LONG ?
-tmExternalLeading	LONG ?
-tmAveCharWidth		LONG ?
-tmMaxCharWidth		LONG ?
-tmWeight		LONG ?
-tmOverhang		LONG ?
-tmDigitizedAspectX	LONG ?
-tmDigitizedAspectY	LONG ?
-tmFirstChar		WCHAR ?
-tmLastChar		WCHAR ?
-tmDefaultChar		WCHAR ?
-tmBreakChar		WCHAR ?
-tmItalic		db ?
-tmUnderlined		db ?
-tmStruckOut		db ?
-tmPitchAndFamily	db ?
-tmCharSet		db ?
-TEXTMETRICW		ENDS
-PTEXTMETRICW		typedef ptr TEXTMETRICW
-NPTEXTMETRICW		typedef ptr TEXTMETRICW
-LPTEXTMETRICW		typedef ptr TEXTMETRICW
+ifndef _TEXTMETRIC_DEFINED
+define _TEXTMETRIC_DEFINED
+include pshpack4.inc
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagTEXTMETRICA          struct
+tmHeight                LONG ?
+tmAscent                LONG ?
+tmDescent               LONG ?
+tmInternalLeading       LONG ?
+tmExternalLeading       LONG ?
+tmAveCharWidth          LONG ?
+tmMaxCharWidth          LONG ?
+tmWeight                LONG ?
+tmOverhang              LONG ?
+tmDigitizedAspectX      LONG ?
+tmDigitizedAspectY      LONG ?
+tmFirstChar             BYTE ?
+tmLastChar              BYTE ?
+tmDefaultChar           BYTE ?
+tmBreakChar             BYTE ?
+tmItalic                BYTE ?
+tmUnderlined            BYTE ?
+tmStruckOut             BYTE ?
+tmPitchAndFamily        BYTE ?
+tmCharSet               BYTE ?
+tagTEXTMETRICA          ends
+TEXTMETRICA             typedef tagTEXTMETRICA
+PTEXTMETRICA            typedef ptr tagTEXTMETRICA
+NPTEXTMETRICA           typedef ptr tagTEXTMETRICA
+LPTEXTMETRICA           typedef ptr tagTEXTMETRICA
+tagTEXTMETRICW          struct
+tmHeight                LONG ?
+tmAscent                LONG ?
+tmDescent               LONG ?
+tmInternalLeading       LONG ?
+tmExternalLeading       LONG ?
+tmAveCharWidth          LONG ?
+tmMaxCharWidth          LONG ?
+tmWeight                LONG ?
+tmOverhang              LONG ?
+tmDigitizedAspectX      LONG ?
+tmDigitizedAspectY      LONG ?
+tmFirstChar             WCHAR ?
+tmLastChar              WCHAR ?
+tmDefaultChar           WCHAR ?
+tmBreakChar             WCHAR ?
+tmItalic                BYTE ?
+tmUnderlined            BYTE ?
+tmStruckOut             BYTE ?
+tmPitchAndFamily        BYTE ?
+tmCharSet               BYTE ?
+tagTEXTMETRICW          ends
+TEXTMETRICW             typedef tagTEXTMETRICW
+PTEXTMETRICW            typedef ptr tagTEXTMETRICW
+NPTEXTMETRICW           typedef ptr tagTEXTMETRICW
+LPTEXTMETRICW           typedef ptr tagTEXTMETRICW
 ifdef _UNICODE
-TEXTMETRIC		typedef TEXTMETRICW
-PTEXTMETRIC		typedef PTEXTMETRICW
-NPTEXTMETRIC		typedef NPTEXTMETRICW
-LPTEXTMETRIC		typedef LPTEXTMETRICW
+TEXTMETRIC              typedef TEXTMETRICW
+PTEXTMETRIC             typedef PTEXTMETRICW
+NPTEXTMETRIC            typedef NPTEXTMETRICW
+LPTEXTMETRIC            typedef LPTEXTMETRICW
 else
-TEXTMETRIC		typedef TEXTMETRICA
-PTEXTMETRIC		typedef PTEXTMETRICA
-NPTEXTMETRIC		typedef NPTEXTMETRICA
-LPTEXTMETRIC		typedef LPTEXTMETRICA
+TEXTMETRIC              typedef TEXTMETRICA
+PTEXTMETRIC             typedef PTEXTMETRICA
+NPTEXTMETRIC            typedef NPTEXTMETRICA
+LPTEXTMETRIC            typedef LPTEXTMETRICA
 endif
 
-NTM_REGULAR		equ 0x00000040
-NTM_BOLD		equ 0x00000020
-NTM_ITALIC		equ 0x00000001
+endif
+;.pragma endregion
 
-NTM_NONNEGATIVE_AC	equ 0x00010000
-NTM_OPENTYPE		equ 0x00020000
-NTM_MULTIPLEMASTER	equ 0x00040000
-NTM_MM_INSTANCE		equ 0x00080000
-NTM_TYPE1		equ 0x00100000
-NTM_DSIG		equ 0x00200000
+include poppack.inc
+endif
 
-NEWTEXTMETRICA		STRUC 4
-tmHeight		LONG ?
-tmAscent		LONG ?
-tmDescent		LONG ?
-tmInternalLeading	LONG ?
-tmExternalLeading	LONG ?
-tmAveCharWidth		LONG ?
-tmMaxCharWidth		LONG ?
-tmWeight		LONG ?
-tmOverhang		LONG ?
-tmDigitizedAspectX	LONG ?
-tmDigitizedAspectY	LONG ?
-tmFirstChar		db ?
-tmLastChar		db ?
-tmDefaultChar		db ?
-tmBreakChar		db ?
-tmItalic		db ?
-tmUnderlined		db ?
-tmStruckOut		db ?
-tmPitchAndFamily	db ?
-tmCharSet		db ?
-ntmFlags		dd ?
-ntmSizeEM		UINT ?
-ntmCellHeight		UINT ?
-ntmAvgWidth		UINT ?
-NEWTEXTMETRICA		ENDS
-PNEWTEXTMETRICA		typedef ptr NEWTEXTMETRICA
-NPNEWTEXTMETRICA	typedef ptr NEWTEXTMETRICA
-LPNEWTEXTMETRICA	typedef ptr NEWTEXTMETRICA
+define NTM_REGULAR     0x00000040
+define NTM_BOLD        0x00000020
+define NTM_ITALIC      0x00000001
 
-NEWTEXTMETRICW		STRUC 4
-tmHeight		LONG ?
-tmAscent		LONG ?
-tmDescent		LONG ?
-tmInternalLeading	LONG ?
-tmExternalLeading	LONG ?
-tmAveCharWidth		LONG ?
-tmMaxCharWidth		LONG ?
-tmWeight		LONG ?
-tmOverhang		LONG ?
-tmDigitizedAspectX	LONG ?
-tmDigitizedAspectY	LONG ?
-tmFirstChar		WCHAR ?
-tmLastChar		WCHAR ?
-tmDefaultChar		WCHAR ?
-tmBreakChar		WCHAR ?
-tmItalic		db ?
-tmUnderlined		db ?
-tmStruckOut		db ?
-tmPitchAndFamily	db ?
-tmCharSet		db ?
-ntmFlags		dd ?
-ntmSizeEM		UINT ?
-ntmCellHeight		UINT ?
-ntmAvgWidth		UINT ?
-NEWTEXTMETRICW		ENDS
-PNEWTEXTMETRICW		typedef ptr NEWTEXTMETRICW
-NPNEWTEXTMETRICW	typedef ptr NEWTEXTMETRICW
-LPNEWTEXTMETRICW	typedef ptr NEWTEXTMETRICW
+define NTM_NONNEGATIVE_AC  0x00010000
+define NTM_PS_OPENTYPE     0x00020000
+define NTM_TT_OPENTYPE     0x00040000
+define NTM_MULTIPLEMASTER  0x00080000
+define NTM_TYPE1           0x00100000
+define NTM_DSIG            0x00200000
+
+include pshpack4.inc
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagNEWTEXTMETRICA       struct
+tmHeight                LONG ?
+tmAscent                LONG ?
+tmDescent               LONG ?
+tmInternalLeading       LONG ?
+tmExternalLeading       LONG ?
+tmAveCharWidth          LONG ?
+tmMaxCharWidth          LONG ?
+tmWeight                LONG ?
+tmOverhang              LONG ?
+tmDigitizedAspectX      LONG ?
+tmDigitizedAspectY      LONG ?
+tmFirstChar             BYTE ?
+tmLastChar              BYTE ?
+tmDefaultChar           BYTE ?
+tmBreakChar             BYTE ?
+tmItalic                BYTE ?
+tmUnderlined            BYTE ?
+tmStruckOut             BYTE ?
+tmPitchAndFamily        BYTE ?
+tmCharSet               BYTE ?
+ntmFlags                DWORD ?
+ntmSizeEM               UINT ?
+ntmCellHeight           UINT ?
+ntmAvgWidth             UINT ?
+tagNEWTEXTMETRICA       ends
+NEWTEXTMETRICA          typedef tagNEWTEXTMETRICA
+PNEWTEXTMETRICA         typedef ptr tagNEWTEXTMETRICA
+NPNEWTEXTMETRICA        typedef ptr tagNEWTEXTMETRICA
+LPNEWTEXTMETRICA        typedef ptr tagNEWTEXTMETRICA
+tagNEWTEXTMETRICW       struct
+tmHeight                LONG ?
+tmAscent                LONG ?
+tmDescent               LONG ?
+tmInternalLeading       LONG ?
+tmExternalLeading       LONG ?
+tmAveCharWidth          LONG ?
+tmMaxCharWidth          LONG ?
+tmWeight                LONG ?
+tmOverhang              LONG ?
+tmDigitizedAspectX      LONG ?
+tmDigitizedAspectY      LONG ?
+tmFirstChar             WCHAR ?
+tmLastChar              WCHAR ?
+tmDefaultChar           WCHAR ?
+tmBreakChar             WCHAR ?
+tmItalic                BYTE ?
+tmUnderlined            BYTE ?
+tmStruckOut             BYTE ?
+tmPitchAndFamily        BYTE ?
+tmCharSet               BYTE ?
+ntmFlags                DWORD ?
+ntmSizeEM               UINT ?
+ntmCellHeight           UINT ?
+ntmAvgWidth             UINT ?
+tagNEWTEXTMETRICW       ends
+NEWTEXTMETRICW          typedef tagNEWTEXTMETRICW
+PNEWTEXTMETRICW         typedef ptr tagNEWTEXTMETRICW
+NPNEWTEXTMETRICW        typedef ptr tagNEWTEXTMETRICW
+LPNEWTEXTMETRICW        typedef ptr tagNEWTEXTMETRICW
 ifdef _UNICODE
-NEWTEXTMETRIC		typedef NEWTEXTMETRICW
-PNEWTEXTMETRIC		typedef PNEWTEXTMETRICW
-NPNEWTEXTMETRIC		typedef NPNEWTEXTMETRICW
-LPNEWTEXTMETRIC		typedef LPNEWTEXTMETRICW
+NEWTEXTMETRIC           typedef NEWTEXTMETRICW
+PNEWTEXTMETRIC          typedef PNEWTEXTMETRICW
+NPNEWTEXTMETRIC         typedef NPNEWTEXTMETRICW
+LPNEWTEXTMETRIC         typedef LPNEWTEXTMETRICW
 else
-NEWTEXTMETRIC		typedef NEWTEXTMETRICA
-PNEWTEXTMETRIC		typedef PNEWTEXTMETRICA
-NPNEWTEXTMETRIC		typedef NPNEWTEXTMETRICA
-LPNEWTEXTMETRIC		typedef LPNEWTEXTMETRICA
+NEWTEXTMETRIC           typedef NEWTEXTMETRICA
+PNEWTEXTMETRIC          typedef PNEWTEXTMETRICA
+NPNEWTEXTMETRIC         typedef NPNEWTEXTMETRICA
+LPNEWTEXTMETRIC         typedef LPNEWTEXTMETRICA
 endif
 
-if(WINVER GE 0x0400)
-NEWTEXTMETRICEXA	STRUC
-ntmTm			NEWTEXTMETRICA <>
-ntmFontSig		FONTSIGNATURE <>
-NEWTEXTMETRICEXA	ENDS
-NEWTEXTMETRICEXW	STRUC
-ntmTm			NEWTEXTMETRICW <>
-ntmFontSig		FONTSIGNATURE <>
-NEWTEXTMETRICEXW	ENDS
+endif
+;.pragma endregion
+
+include poppack.inc
+
+if(WINVER ge 0x0400)
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagNEWTEXTMETRICEXA     struct
+ntmTm                   NEWTEXTMETRICA <>
+ntmFontSig              FONTSIGNATURE <>
+tagNEWTEXTMETRICEXA     ends
+NEWTEXTMETRICEXA        typedef tagNEWTEXTMETRICEXA
+tagNEWTEXTMETRICEXW     struct
+ntmTm                   NEWTEXTMETRICW <>
+ntmFontSig              FONTSIGNATURE <>
+tagNEWTEXTMETRICEXW     ends
+NEWTEXTMETRICEXW        typedef tagNEWTEXTMETRICEXW
 ifdef _UNICODE
-NEWTEXTMETRICEX		typedef NEWTEXTMETRICEXW
+NEWTEXTMETRICEX         typedef NEWTEXTMETRICEXW
 else
-NEWTEXTMETRICEX		typedef NEWTEXTMETRICEXA
-endif
-endif
+NEWTEXTMETRICEX         typedef NEWTEXTMETRICEXA
 endif
 
-PELARRAY		STRUC
-paXCount		LONG ?
-paYCount		LONG ?
-paXExt			LONG ?
-paYExt			LONG ?
-paRGBs			db ?
-PELARRAY		ENDS
-PPELARRAY		typedef ptr PELARRAY
-NPPELARRAY		typedef ptr PELARRAY
-LPPELARRAY		typedef ptr PELARRAY
+endif
+;.pragma endregion
+endif
 
-LOGBRUSH		STRUC
-lbStyle			UINT ?
-lbColor			COLORREF ?
-lbHatch			LONG ?
-LOGBRUSH		ENDS
-PLOGBRUSH		typedef ptr LOGBRUSH
-NPLOGBRUSH		typedef ptr LOGBRUSH
-LPLOGBRUSH		typedef ptr LOGBRUSH
+endif
 
-PATTERN			typedef LOGBRUSH
-PPATTERN		typedef ptr PATTERN
-NPPATTERN		typedef ptr PATTERN
-LPPATTERN		typedef ptr PATTERN
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-LOGPEN			STRUC
-lopnStyle		UINT ?
-lopnWidth		POINT <>
-lopnColor		COLORREF ?
-LOGPEN			ENDS
-PLOGPEN			typedef ptr LOGPEN
-NPLOGPEN		typedef ptr LOGPEN
-LPLOGPEN		typedef ptr LOGPEN
+tagPELARRAY             struct
+paXCount                LONG ?
+paYCount                LONG ?
+paXExt                  LONG ?
+paYExt                  LONG ?
+paRGBs                  BYTE ?
+tagPELARRAY             ends
+PELARRAY                typedef tagPELARRAY
+PPELARRAY               typedef ptr tagPELARRAY
+NPPELARRAY              typedef ptr tagPELARRAY
+LPPELARRAY              typedef ptr tagPELARRAY
 
-EXTLOGPEN		STRUC
-elpPenStyle		dd ?
-elpWidth		dd ?
-elpBrushStyle		UINT ?
-elpColor		COLORREF ?
-elpHatch		LONG ?
-elpNumEntries		dd ?
-elpStyleEntry		dd ?
-EXTLOGPEN		ENDS
-PEXTLOGPEN		typedef ptr EXTLOGPEN
-NPEXTLOGPEN		typedef ptr EXTLOGPEN
-LPEXTLOGPEN		typedef ptr EXTLOGPEN
+endif
+;.pragma endregion
 
-PALETTEENTRY		STRUC
-peRed			db ?
-peGreen			db ?
-peBlue			db ?
-peFlags			db ?
-PALETTEENTRY		ENDS
-PPALETTEENTRY		typedef ptr PALETTEENTRY
-LPPALETTEENTRY		typedef ptr PALETTEENTRY
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-LOGPALETTE		STRUC
-palVersion		dw ?
-palNumEntries		dw ?
-palPalEntry		PALETTEENTRY <>
-LOGPALETTE		ENDS
-PLOGPALETTE		typedef ptr LOGPALETTE
-NPLOGPALETTE		typedef ptr LOGPALETTE
-LPLOGPALETTE		typedef ptr LOGPALETTE
+tagLOGBRUSH             struct
+lbStyle                 UINT ?
+lbColor                 COLORREF ?
+lbHatch                 ULONG_PTR ?
+tagLOGBRUSH             ends
+LOGBRUSH                typedef tagLOGBRUSH
+PLOGBRUSH               typedef ptr tagLOGBRUSH
+NPLOGBRUSH              typedef ptr tagLOGBRUSH
+LPLOGBRUSH              typedef ptr tagLOGBRUSH
 
-LF_FACESIZE		equ 32
+tagLOGBRUSH32           struct
+lbStyle                 UINT ?
+lbColor                 COLORREF ?
+lbHatch                 ULONG ?
+tagLOGBRUSH32           ends
+LOGBRUSH32              typedef tagLOGBRUSH32
+PLOGBRUSH32             typedef ptr tagLOGBRUSH32
+NPLOGBRUSH32            typedef ptr tagLOGBRUSH32
+LPLOGBRUSH32            typedef ptr tagLOGBRUSH32
 
-LOGFONTA		STRUC
-lfHeight		LONG ?
-lfWidth			LONG ?
-lfEscapement		LONG ?
-lfOrientation		LONG ?
-lfWeight		LONG ?
-lfItalic		db ?
-lfUnderline		db ?
-lfStrikeOut		db ?
-lfCharSet		db ?
-lfOutPrecision		db ?
-lfClipPrecision		db ?
-lfQuality		db ?
-lfPitchAndFamily	db ?
-lfFaceName		db LF_FACESIZE dup(?)
-LOGFONTA		ENDS
-PLOGFONTA		typedef ptr LOGFONTA
-NPLOGFONTA		typedef ptr LOGFONTA
-LPLOGFONTA		typedef ptr LOGFONTA
-LOGFONTW		STRUC
-lfHeight		LONG ?
-lfWidth			LONG ?
-lfEscapement		LONG ?
-lfOrientation		LONG ?
-lfWeight		LONG ?
-lfItalic		db ?
-lfUnderline		db ?
-lfStrikeOut		db ?
-lfCharSet		db ?
-lfOutPrecision		db ?
-lfClipPrecision		db ?
-lfQuality		db ?
-lfPitchAndFamily	db ?
-lfFaceName		dw LF_FACESIZE dup(?)
-LOGFONTW		ENDS
-PLOGFONTW		typedef ptr LOGFONTW
-NPLOGFONTW		typedef ptr LOGFONTW
-LPLOGFONTW		typedef ptr LOGFONTW
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+PATTERN                 typedef LOGBRUSH
+PPATTERN                typedef ptr PATTERN
+NPPATTERN               typedef ptr NEAR
+LPPATTERN               typedef ptr FAR
+
+endif
+;.pragma endregion
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagLOGPEN               struct
+lopnStyle               UINT ?
+lopnWidth               POINT <>
+lopnColor               COLORREF ?
+tagLOGPEN               ends
+LOGPEN                  typedef tagLOGPEN
+PLOGPEN                 typedef ptr tagLOGPEN
+NPLOGPEN                typedef ptr tagLOGPEN
+LPLOGPEN                typedef ptr tagLOGPEN
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagEXTLOGPEN            struct
+elpPenStyle             DWORD ?
+elpWidth                DWORD ?
+elpBrushStyle           UINT ?
+elpColor                COLORREF ?
+elpHatch                ULONG_PTR ?
+elpNumEntries           DWORD ?
+elpStyleEntry           DWORD 1 dup(?)
+tagEXTLOGPEN            ends
+EXTLOGPEN               typedef tagEXTLOGPEN
+PEXTLOGPEN              typedef ptr tagEXTLOGPEN
+NPEXTLOGPEN             typedef ptr tagEXTLOGPEN
+LPEXTLOGPEN             typedef ptr tagEXTLOGPEN
+
+endif
+;.pragma endregion
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagEXTLOGPEN32          struct
+elpPenStyle             DWORD ?
+elpWidth                DWORD ?
+elpBrushStyle           UINT ?
+elpColor                COLORREF ?
+elpHatch                ULONG ?
+elpNumEntries           DWORD ?
+elpStyleEntry           DWORD 1 dup(?)
+tagEXTLOGPEN32          ends
+EXTLOGPEN32             typedef tagEXTLOGPEN32
+PEXTLOGPEN32            typedef ptr tagEXTLOGPEN32
+NPEXTLOGPEN32           typedef ptr tagEXTLOGPEN32
+LPEXTLOGPEN32           typedef ptr tagEXTLOGPEN32
+
+ifndef _PALETTEENTRY_DEFINED
+define _PALETTEENTRY_DEFINED
+tagPALETTEENTRY         struct
+peRed                   BYTE ?
+peGreen                 BYTE ?
+peBlue                  BYTE ?
+peFlags                 BYTE ?
+tagPALETTEENTRY         ends
+PALETTEENTRY            typedef tagPALETTEENTRY
+PPALETTEENTRY           typedef ptr tagPALETTEENTRY
+LPPALETTEENTRY          typedef ptr tagPALETTEENTRY
+endif
+
+ifndef _LOGPALETTE_DEFINED
+define _LOGPALETTE_DEFINED
+tagLOGPALETTE           struct
+palVersion              WORD ?
+palNumEntries           WORD ?
+palPalEntry             PALETTEENTRY 1 dup(<>)
+tagLOGPALETTE           ends
+LOGPALETTE              typedef tagLOGPALETTE
+PLOGPALETTE             typedef ptr tagLOGPALETTE
+NPLOGPALETTE            typedef ptr tagLOGPALETTE
+LPLOGPALETTE            typedef ptr tagLOGPALETTE
+endif
+
+define LF_FACESIZE         32
+
+tagLOGFONTA             struct
+lfHeight                LONG ?
+lfWidth                 LONG ?
+lfEscapement            LONG ?
+lfOrientation           LONG ?
+lfWeight                LONG ?
+lfItalic                BYTE ?
+lfUnderline             BYTE ?
+lfStrikeOut             BYTE ?
+lfCharSet               BYTE ?
+lfOutPrecision          BYTE ?
+lfClipPrecision         BYTE ?
+lfQuality               BYTE ?
+lfPitchAndFamily        BYTE ?
+lfFaceName              CHAR LF_FACESIZE dup(?)
+tagLOGFONTA             ends
+LOGFONTA                typedef tagLOGFONTA
+PLOGFONTA               typedef ptr tagLOGFONTA
+NPLOGFONTA              typedef ptr tagLOGFONTA
+LPLOGFONTA              typedef ptr tagLOGFONTA
+tagLOGFONTW             struct
+lfHeight                LONG ?
+lfWidth                 LONG ?
+lfEscapement            LONG ?
+lfOrientation           LONG ?
+lfWeight                LONG ?
+lfItalic                BYTE ?
+lfUnderline             BYTE ?
+lfStrikeOut             BYTE ?
+lfCharSet               BYTE ?
+lfOutPrecision          BYTE ?
+lfClipPrecision         BYTE ?
+lfQuality               BYTE ?
+lfPitchAndFamily        BYTE ?
+lfFaceName              WCHAR LF_FACESIZE dup(?)
+tagLOGFONTW             ends
+LOGFONTW                typedef tagLOGFONTW
+PLOGFONTW               typedef ptr tagLOGFONTW
+NPLOGFONTW              typedef ptr tagLOGFONTW
+LPLOGFONTW              typedef ptr tagLOGFONTW
 ifdef _UNICODE
-LOGFONT			typedef LOGFONTW
-PLOGFONT		typedef PLOGFONTW
-NPLOGFONT		typedef NPLOGFONTW
-LPLOGFONT		typedef LPLOGFONTW
+LOGFONT                 typedef LOGFONTW
+PLOGFONT                typedef PLOGFONTW
+NPLOGFONT               typedef NPLOGFONTW
+LPLOGFONT               typedef LPLOGFONTW
 else
-LOGFONT			typedef LOGFONTA
-PLOGFONT		typedef PLOGFONTA
-NPLOGFONT		typedef NPLOGFONTA
-LPLOGFONT		typedef LPLOGFONTA
+LOGFONT                 typedef LOGFONTA
+PLOGFONT                typedef PLOGFONTA
+NPLOGFONT               typedef NPLOGFONTA
+LPLOGFONT               typedef LPLOGFONTA
 endif
 
-LF_FULLFACESIZE		equ 64
+endif
+;.pragma endregion
 
-ENUMLOGFONTA		STRUC
-elfLogFont		LOGFONTA <>
-elfFullName		db LF_FULLFACESIZE dup(?)
-elfStyle		db LF_FACESIZE dup(?)
-ENUMLOGFONTA		ENDS
-LPENUMLOGFONTA		typedef ptr ENUMLOGFONTA
-ENUMLOGFONTW		STRUC
-elfLogFont		LOGFONTW <>
-elfFullName		dw LF_FULLFACESIZE dup(?)
-elfStyle		dw LF_FACESIZE dup(?)
-ENUMLOGFONTW		ENDS
-LPENUMLOGFONTW		typedef ptr ENUMLOGFONTW
+define LF_FULLFACESIZE     64
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagENUMLOGFONTA         struct
+elfLogFont              LOGFONTA <>
+elfFullName             BYTE LF_FULLFACESIZE dup(?)
+elfStyle                BYTE LF_FACESIZE dup(?)
+tagENUMLOGFONTA         ends
+ENUMLOGFONTA            typedef tagENUMLOGFONTA
+ LPENUMLOGFONTA         typedef ptr tagENUMLOGFONTA
+tagENUMLOGFONTW         struct
+elfLogFont              LOGFONTW <>
+elfFullName             WCHAR LF_FULLFACESIZE dup(?)
+elfStyle                WCHAR LF_FACESIZE dup(?)
+tagENUMLOGFONTW         ends
+ENUMLOGFONTW            typedef tagENUMLOGFONTW
+ LPENUMLOGFONTW         typedef ptr tagENUMLOGFONTW
 ifdef _UNICODE
-ENUMLOGFONT		typedef ENUMLOGFONTW
-LPENUMLOGFONT		typedef LPENUMLOGFONTW
+ENUMLOGFONT             typedef ENUMLOGFONTW
+LPENUMLOGFONT           typedef LPENUMLOGFONTW
 else
-ENUMLOGFONT		typedef ENUMLOGFONTA
-LPENUMLOGFONT		typedef LPENUMLOGFONTA
+ENUMLOGFONT             typedef ENUMLOGFONTA
+LPENUMLOGFONT           typedef LPENUMLOGFONTA
 endif
 
-if(WINVER GE 0x0400)
-ENUMLOGFONTEXA		STRUC
-elfLogFont		LOGFONTA <>
-elfFullName		db LF_FULLFACESIZE dup(?)
-elfStyle		db LF_FACESIZE dup(?)
-elfScript		db LF_FACESIZE dup(?)
-ENUMLOGFONTEXA		ENDS
-LPENUMLOGFONTEXA	typedef ptr ENUMLOGFONTEXA
-ENUMLOGFONTEXW		STRUC
-elfLogFont		LOGFONTW <>
-elfFullName		dw LF_FULLFACESIZE dup(?)
-elfStyle		dw LF_FACESIZE dup(?)
-elfScript		dw LF_FACESIZE dup(?)
-ENUMLOGFONTEXW		ENDS
-LPENUMLOGFONTEXW	typedef ptr ENUMLOGFONTEXW
+if(WINVER ge 0x0400)
+tagENUMLOGFONTEXA       struct
+elfLogFont              LOGFONTA <>
+elfFullName             BYTE LF_FULLFACESIZE dup(?)
+elfStyle                BYTE LF_FACESIZE dup(?)
+elfScript               BYTE LF_FACESIZE dup(?)
+tagENUMLOGFONTEXA       ends
+ENUMLOGFONTEXA          typedef tagENUMLOGFONTEXA
+LPENUMLOGFONTEXA        typedef ptr tagENUMLOGFONTEXA
+tagENUMLOGFONTEXW       struct
+elfLogFont              LOGFONTW <>
+elfFullName             WCHAR LF_FULLFACESIZE dup(?)
+elfStyle                WCHAR LF_FACESIZE dup(?)
+elfScript               WCHAR LF_FACESIZE dup(?)
+tagENUMLOGFONTEXW       ends
+ENUMLOGFONTEXW          typedef tagENUMLOGFONTEXW
+LPENUMLOGFONTEXW        typedef ptr tagENUMLOGFONTEXW
 ifdef _UNICODE
-ENUMLOGFONTEX		typedef ENUMLOGFONTEXW
-LPENUMLOGFONTEX		typedef LPENUMLOGFONTEXW
+ENUMLOGFONTEX           typedef ENUMLOGFONTEXW
+LPENUMLOGFONTEX         typedef LPENUMLOGFONTEXW
 else
-ENUMLOGFONTEX		typedef ENUMLOGFONTEXA
-LPENUMLOGFONTEX		typedef LPENUMLOGFONTEXA
+ENUMLOGFONTEX           typedef ENUMLOGFONTEXA
+LPENUMLOGFONTEX         typedef LPENUMLOGFONTEXA
 endif
 endif
 
-OUT_DEFAULT_PRECIS	equ 0
-OUT_STRING_PRECIS	equ 1
-OUT_CHARACTER_PRECIS	equ 2
-OUT_STROKE_PRECIS	equ 3
-OUT_TT_PRECIS		equ 4
-OUT_DEVICE_PRECIS	equ 5
-OUT_RASTER_PRECIS	equ 6
-OUT_TT_ONLY_PRECIS	equ 7
-OUT_OUTLINE_PRECIS	equ 8
-OUT_SCREEN_OUTLINE_PRECIS equ 9
+endif
+;.pragma endregion
 
-CLIP_DEFAULT_PRECIS	equ 0
-CLIP_CHARACTER_PRECIS	equ 1
-CLIP_STROKE_PRECIS	equ 2
-CLIP_MASK		equ 0xf
-CLIP_LH_ANGLES		equ (1 SHL 4)
-CLIP_TT_ALWAYS		equ (2 SHL 4)
-CLIP_EMBEDDED		equ (8 SHL 4)
+define OUT_DEFAULT_PRECIS          0
+define OUT_STRING_PRECIS           1
+define OUT_CHARACTER_PRECIS        2
+define OUT_STROKE_PRECIS           3
+define OUT_TT_PRECIS               4
+define OUT_DEVICE_PRECIS           5
+define OUT_RASTER_PRECIS           6
+define OUT_TT_ONLY_PRECIS          7
+define OUT_OUTLINE_PRECIS          8
+define OUT_SCREEN_OUTLINE_PRECIS   9
+define OUT_PS_ONLY_PRECIS          10
 
-DEFAULT_QUALITY		equ 0
-DRAFT_QUALITY		equ 1
-PROOF_QUALITY		equ 2
-if(WINVER GE 0x0400)
-NONANTIALIASED_QUALITY	equ 3
-ANTIALIASED_QUALITY	equ 4
+define CLIP_DEFAULT_PRECIS     0
+define CLIP_CHARACTER_PRECIS   1
+define CLIP_STROKE_PRECIS      2
+define CLIP_MASK               0xf
+define CLIP_LH_ANGLES          (1 shl 4)
+define CLIP_TT_ALWAYS          (2 shl 4)
+if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
+define CLIP_DFA_DISABLE        (4 shl 4)
+endif
+define CLIP_EMBEDDED           (8 shl 4)
+
+define DEFAULT_QUALITY         0
+define DRAFT_QUALITY           1
+define PROOF_QUALITY           2
+if(WINVER ge 0x0400)
+define NONANTIALIASED_QUALITY  3
+define ANTIALIASED_QUALITY     4
 endif
 
 if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
-CLEARTYPE_QUALITY	equ 5
-CLEARTYPE_NATURAL_QUALITY equ 6
+define CLEARTYPE_QUALITY       5
+define CLEARTYPE_NATURAL_QUALITY       6
 endif
 
-DEFAULT_PITCH		equ 0
-FIXED_PITCH		equ 1
-VARIABLE_PITCH		equ 2
-if(WINVER GE 0x0400)
-MONO_FONT		equ 8
+define DEFAULT_PITCH           0
+define FIXED_PITCH             1
+define VARIABLE_PITCH          2
+if(WINVER ge 0x0400)
+define MONO_FONT               8
 endif
 
-ANSI_CHARSET		equ 0
-DEFAULT_CHARSET		equ 1
-SYMBOL_CHARSET		equ 2
-SHIFTJIS_CHARSET	equ 128
-HANGEUL_CHARSET		equ 129
-HANGUL_CHARSET		equ 129
-GB2312_CHARSET		equ 134
-CHINESEBIG5_CHARSET	equ 136
-OEM_CHARSET		equ 255
-if(WINVER GE 0x0400)
-JOHAB_CHARSET		equ 130
-HEBREW_CHARSET		equ 177
-ARABIC_CHARSET		equ 178
-GREEK_CHARSET		equ 161
-TURKISH_CHARSET		equ 162
-VIETNAMESE_CHARSET	equ 163
-THAI_CHARSET		equ 222
-EASTEUROPE_CHARSET	equ 238
-RUSSIAN_CHARSET		equ 204
+define ANSI_CHARSET            0
+define DEFAULT_CHARSET         1
+define SYMBOL_CHARSET          2
+define SHIFTJIS_CHARSET        128
+define HANGEUL_CHARSET         129
+define HANGUL_CHARSET          129
+define GB2312_CHARSET          134
+define CHINESEBIG5_CHARSET     136
+define OEM_CHARSET             255
+if(WINVER ge 0x0400)
+define JOHAB_CHARSET           130
+define HEBREW_CHARSET          177
+define ARABIC_CHARSET          178
+define GREEK_CHARSET           161
+define TURKISH_CHARSET         162
+define VIETNAMESE_CHARSET      163
+define THAI_CHARSET            222
+define EASTEUROPE_CHARSET      238
+define RUSSIAN_CHARSET         204
 
-MAC_CHARSET		equ 77
-BALTIC_CHARSET		equ 186
+define MAC_CHARSET             77
+define BALTIC_CHARSET          186
 
-FS_LATIN1		equ 0x00000001
-FS_LATIN2		equ 0x00000002
-FS_CYRILLIC		equ 0x00000004
-FS_GREEK		equ 0x00000008
-FS_TURKISH		equ 0x00000010
-FS_HEBREW		equ 0x00000020
-FS_ARABIC		equ 0x00000040
-FS_BALTIC		equ 0x00000080
-FS_VIETNAMESE		equ 0x00000100
-FS_THAI			equ 0x00010000
-FS_JISJAPAN		equ 0x00020000
-FS_CHINESESIMP		equ 0x00040000
-FS_WANSUNG		equ 0x00080000
-FS_CHINESETRAD		equ 0x00100000
-FS_JOHAB		equ 0x00200000
-FS_SYMBOL		equ 0x80000000
+define FS_LATIN1               0x00000001
+define FS_LATIN2               0x00000002
+define FS_CYRILLIC             0x00000004
+define FS_GREEK                0x00000008
+define FS_TURKISH              0x00000010
+define FS_HEBREW               0x00000020
+define FS_ARABIC               0x00000040
+define FS_BALTIC               0x00000080
+define FS_VIETNAMESE           0x00000100
+define FS_THAI                 0x00010000
+define FS_JISJAPAN             0x00020000
+define FS_CHINESESIMP          0x00040000
+define FS_WANSUNG              0x00080000
+define FS_CHINESETRAD          0x00100000
+define FS_JOHAB                0x00200000
+define FS_SYMBOL               0x80000000
 endif
 
-FF_DONTCARE		equ (0 SHL 4)
-FF_ROMAN		equ (1 SHL 4)
-FF_SWISS		equ (2 SHL 4)
-FF_MODERN		equ (3 SHL 4)
-FF_SCRIPT		equ (4 SHL 4)
-FF_DECORATIVE		equ (5 SHL 4)
+define FF_DONTCARE         (0 shl 4)
+define FF_ROMAN            (1 shl 4)
+define FF_SWISS            (2 shl 4)
+define FF_MODERN           (3 shl 4)
+define FF_SCRIPT           (4 shl 4)
+define FF_DECORATIVE       (5 shl 4)
 
-FW_DONTCARE		equ 0
-FW_THIN			equ 100
-FW_EXTRALIGHT		equ 200
-FW_LIGHT		equ 300
-FW_NORMAL		equ 400
-FW_MEDIUM		equ 500
-FW_SEMIBOLD		equ 600
-FW_BOLD			equ 700
-FW_EXTRABOLD		equ 800
-FW_HEAVY		equ 900
+define FW_DONTCARE         0
+define FW_THIN             100
+define FW_EXTRALIGHT       200
+define FW_LIGHT            300
+define FW_NORMAL           400
+define FW_MEDIUM           500
+define FW_SEMIBOLD         600
+define FW_BOLD             700
+define FW_EXTRABOLD        800
+define FW_HEAVY            900
 
-FW_ULTRALIGHT		equ FW_EXTRAIGHT
-FW_REGULAR		equ FW_NORMAL
-FW_DEMIBOLD		equ FW_SEMIBOLD
-FW_ULTRABOLD		equ FW_EXTRABOLD
-FW_BLACK		equ FW_HEAVY
+define FW_ULTRALIGHT       FW_EXTRALIGHT
+define FW_REGULAR          FW_NORMAL
+define FW_DEMIBOLD         FW_SEMIBOLD
+define FW_ULTRABOLD        FW_EXTRABOLD
+define FW_BLACK            FW_HEAVY
 
-PANOSE_COUNT		equ 10
-PAN_FAMILYTYPE_INDEX	equ 0
-PAN_SERIFSTYLE_INDEX	equ 1
-PAN_WEIGHT_INDEX	equ 2
-PAN_PROPORTION_INDEX	equ 3
-PAN_CONTRAST_INDEX	equ 4
-PAN_STROKEVARIATION_INDEX equ 5
-PAN_ARMSTYLE_INDEX	equ 6
-PAN_LETTERFORM_INDEX	equ 7
-PAN_MIDLINE_INDEX	equ 8
-PAN_XHEIGHT_INDEX	equ 9
+define PANOSE_COUNT               10
+define PAN_FAMILYTYPE_INDEX        0
+define PAN_SERIFSTYLE_INDEX        1
+define PAN_WEIGHT_INDEX            2
+define PAN_PROPORTION_INDEX        3
+define PAN_CONTRAST_INDEX          4
+define PAN_STROKEVARIATION_INDEX   5
+define PAN_ARMSTYLE_INDEX          6
+define PAN_LETTERFORM_INDEX        7
+define PAN_MIDLINE_INDEX           8
+define PAN_XHEIGHT_INDEX           9
 
-PAN_CULTURE_LATIN	equ 0
+define PAN_CULTURE_LATIN           0
 
-PANOSE			STRUC
-bFamilyType		db ?
-bSerifStyle		db ?
-bWeight			db ?
-bProportion		db ?
-bContrast		db ?
-bStrokeVariation	db ?
-bArmStyle		db ?
-bLetterform		db ?
-bMidline		db ?
-bXHeight		db ?
-PANOSE			ENDS
-LPPANOSE		typedef ptr PANOSE
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-PAN_ANY			equ 0
-PAN_NO_FIT		equ 1
+tagPANOSE               struct
+bFamilyType             BYTE ?
+bSerifStyle             BYTE ?
+bWeight                 BYTE ?
+bProportion             BYTE ?
+bContrast               BYTE ?
+bStrokeVariation        BYTE ?
+bArmStyle               BYTE ?
+bLetterform             BYTE ?
+bMidline                BYTE ?
+bXHeight                BYTE ?
+tagPANOSE               ends
+PANOSE                  typedef tagPANOSE
+ LPPANOSE               typedef ptr tagPANOSE
 
-PAN_FAMILY_TEXT_DISPLAY equ 2
-PAN_FAMILY_SCRIPT	equ 3
-PAN_FAMILY_DECORATIVE	equ 4
-PAN_FAMILY_PICTORIAL	equ 5
+define PAN_ANY                         0
+define PAN_NO_FIT                      1
 
-PAN_SERIF_COVE		equ 2
-PAN_SERIF_OBTUSE_COVE	equ 3
-PAN_SERIF_SQUARE_COVE	equ 4
-PAN_SERIF_OBTUSE_SQUARE_COVE	equ 5
-PAN_SERIF_SQUARE	equ 6
-PAN_SERIF_THIN		equ 7
-PAN_SERIF_BONE		equ 8
-PAN_SERIF_EXAGGERATED	equ 9
-PAN_SERIF_TRIANGLE	equ 10
-PAN_SERIF_NORMAL_SANS	equ 11
-PAN_SERIF_OBTUSE_SANS	equ 12
-PAN_SERIF_PERP_SANS	equ 13
-PAN_SERIF_FLARED	equ 14
-PAN_SERIF_ROUNDED	equ 15
+define PAN_FAMILY_TEXT_DISPLAY         2
+define PAN_FAMILY_SCRIPT               3
+define PAN_FAMILY_DECORATIVE           4
+define PAN_FAMILY_PICTORIAL            5
 
-PAN_WEIGHT_VERY_LIGHT	equ 2
-PAN_WEIGHT_LIGHT	equ 3
-PAN_WEIGHT_THIN		equ 4
-PAN_WEIGHT_BOOK		equ 5
-PAN_WEIGHT_MEDIUM	equ 6
-PAN_WEIGHT_DEMI		equ 7
-PAN_WEIGHT_BOLD		equ 8
-PAN_WEIGHT_HEAVY	equ 9
-PAN_WEIGHT_BLACK	equ 10
-PAN_WEIGHT_NORD		equ 11
+define PAN_SERIF_COVE                  2
+define PAN_SERIF_OBTUSE_COVE           3
+define PAN_SERIF_SQUARE_COVE           4
+define PAN_SERIF_OBTUSE_SQUARE_COVE    5
+define PAN_SERIF_SQUARE                6
+define PAN_SERIF_THIN                  7
+define PAN_SERIF_BONE                  8
+define PAN_SERIF_EXAGGERATED           9
+define PAN_SERIF_TRIANGLE             10
+define PAN_SERIF_NORMAL_SANS          11
+define PAN_SERIF_OBTUSE_SANS          12
+define PAN_SERIF_PERP_SANS            13
+define PAN_SERIF_FLARED               14
+define PAN_SERIF_ROUNDED              15
 
-PAN_PROP_OLD_STYLE	equ 2
-PAN_PROP_MODERN		equ 3
-PAN_PROP_EVEN_WIDTH	equ 4
-PAN_PROP_EXPANDED	equ 5
-PAN_PROP_CONDENSED	equ 6
-PAN_PROP_VERY_EXPANDED	equ 7
-PAN_PROP_VERY_CONDENSED equ 8
-PAN_PROP_MONOSPACED	equ 9
+define PAN_WEIGHT_VERY_LIGHT           2
+define PAN_WEIGHT_LIGHT                3
+define PAN_WEIGHT_THIN                 4
+define PAN_WEIGHT_BOOK                 5
+define PAN_WEIGHT_MEDIUM               6
+define PAN_WEIGHT_DEMI                 7
+define PAN_WEIGHT_BOLD                 8
+define PAN_WEIGHT_HEAVY                9
+define PAN_WEIGHT_BLACK               10
+define PAN_WEIGHT_NORD                11
 
-PAN_CONTRAST_NONE	equ 2
-PAN_CONTRAST_VERY_LOW	equ 3
-PAN_CONTRAST_LOW	equ 4
-PAN_CONTRAST_MEDIUM_LOW equ 5
-PAN_CONTRAST_MEDIUM	equ 6
-PAN_CONTRAST_MEDIUM_HIGH equ 7
-PAN_CONTRAST_HIGH	equ 8
-PAN_CONTRAST_VERY_HIGH	equ 9
+define PAN_PROP_OLD_STYLE              2
+define PAN_PROP_MODERN                 3
+define PAN_PROP_EVEN_WIDTH             4
+define PAN_PROP_EXPANDED               5
+define PAN_PROP_CONDENSED              6
+define PAN_PROP_VERY_EXPANDED          7
+define PAN_PROP_VERY_CONDENSED         8
+define PAN_PROP_MONOSPACED             9
 
-PAN_STROKE_GRADUAL_DIAG equ 2
-PAN_STROKE_GRADUAL_TRAN equ 3
-PAN_STROKE_GRADUAL_VERT equ 4
-PAN_STROKE_GRADUAL_HORZ equ 5
-PAN_STROKE_RAPID_VERT	equ 6
-PAN_STROKE_RAPID_HORZ	equ 7
-PAN_STROKE_INSTANT_VERT equ 8
+define PAN_CONTRAST_NONE               2
+define PAN_CONTRAST_VERY_LOW           3
+define PAN_CONTRAST_LOW                4
+define PAN_CONTRAST_MEDIUM_LOW         5
+define PAN_CONTRAST_MEDIUM             6
+define PAN_CONTRAST_MEDIUM_HIGH        7
+define PAN_CONTRAST_HIGH               8
+define PAN_CONTRAST_VERY_HIGH          9
 
-PAN_STRAIGHT_ARMS_HORZ	equ 2
-PAN_STRAIGHT_ARMS_WEDGE equ 3
-PAN_STRAIGHT_ARMS_VERT	equ 4
-PAN_STRAIGHT_ARMS_SINGLE_SERIF	equ 5
-PAN_STRAIGHT_ARMS_DOUBLE_SERIF	equ 6
-PAN_BENT_ARMS_HORZ		equ 7
-PAN_BENT_ARMS_WEDGE		equ 8
-PAN_BENT_ARMS_VERT		equ 9
-PAN_BENT_ARMS_SINGLE_SERIF	equ 10
-PAN_BENT_ARMS_DOUBLE_SERIF	equ 11
+define PAN_STROKE_GRADUAL_DIAG         2
+define PAN_STROKE_GRADUAL_TRAN         3
+define PAN_STROKE_GRADUAL_VERT         4
+define PAN_STROKE_GRADUAL_HORZ         5
+define PAN_STROKE_RAPID_VERT           6
+define PAN_STROKE_RAPID_HORZ           7
+define PAN_STROKE_INSTANT_VERT         8
 
-PAN_LETT_NORMAL_CONTACT		equ 2
-PAN_LETT_NORMAL_WEIGHTED	equ 3
-PAN_LETT_NORMAL_BOXED		equ 4
-PAN_LETT_NORMAL_FLATTENED	equ 5
-PAN_LETT_NORMAL_ROUNDED		equ 6
-PAN_LETT_NORMAL_OFF_CENTER	equ 7
-PAN_LETT_NORMAL_SQUARE		equ 8
-PAN_LETT_OBLIQUE_CONTACT	equ 9
-PAN_LETT_OBLIQUE_WEIGHTED	equ 10
-PAN_LETT_OBLIQUE_BOXED		equ 11
-PAN_LETT_OBLIQUE_FLATTENED	equ 12
-PAN_LETT_OBLIQUE_ROUNDED	equ 13
-PAN_LETT_OBLIQUE_OFF_CENTER	equ 14
-PAN_LETT_OBLIQUE_SQUARE		equ 15
+define PAN_STRAIGHT_ARMS_HORZ          2
+define PAN_STRAIGHT_ARMS_WEDGE         3
+define PAN_STRAIGHT_ARMS_VERT          4
+define PAN_STRAIGHT_ARMS_SINGLE_SERIF  5
+define PAN_STRAIGHT_ARMS_DOUBLE_SERIF  6
+define PAN_BENT_ARMS_HORZ              7
+define PAN_BENT_ARMS_WEDGE             8
+define PAN_BENT_ARMS_VERT              9
+define PAN_BENT_ARMS_SINGLE_SERIF     10
+define PAN_BENT_ARMS_DOUBLE_SERIF     11
 
-PAN_MIDLINE_STANDARD_TRIMMED	equ 2
-PAN_MIDLINE_STANDARD_POINTED	equ 3
-PAN_MIDLINE_STANDARD_SERIFED	equ 4
-PAN_MIDLINE_HIGH_TRIMMED	equ 5
-PAN_MIDLINE_HIGH_POINTED	equ 6
-PAN_MIDLINE_HIGH_SERIFED	equ 7
-PAN_MIDLINE_CONSTANT_TRIMMED	equ 8
-PAN_MIDLINE_CONSTANT_POINTED	equ 9
-PAN_MIDLINE_CONSTANT_SERIFED	equ 10
-PAN_MIDLINE_LOW_TRIMMED		equ 11
-PAN_MIDLINE_LOW_POINTED		equ 12
-PAN_MIDLINE_LOW_SERIFED		equ 13
+define PAN_LETT_NORMAL_CONTACT         2
+define PAN_LETT_NORMAL_WEIGHTED        3
+define PAN_LETT_NORMAL_BOXED           4
+define PAN_LETT_NORMAL_FLATTENED       5
+define PAN_LETT_NORMAL_ROUNDED         6
+define PAN_LETT_NORMAL_OFF_CENTER      7
+define PAN_LETT_NORMAL_SQUARE          8
+define PAN_LETT_OBLIQUE_CONTACT        9
+define PAN_LETT_OBLIQUE_WEIGHTED      10
+define PAN_LETT_OBLIQUE_BOXED         11
+define PAN_LETT_OBLIQUE_FLATTENED     12
+define PAN_LETT_OBLIQUE_ROUNDED       13
+define PAN_LETT_OBLIQUE_OFF_CENTER    14
+define PAN_LETT_OBLIQUE_SQUARE        15
 
-PAN_XHEIGHT_CONSTANT_SMALL	equ 2
-PAN_XHEIGHT_CONSTANT_STD	equ 3
-PAN_XHEIGHT_CONSTANT_LARGE	equ 4
-PAN_XHEIGHT_DUCKING_SMALL	equ 5
-PAN_XHEIGHT_DUCKING_STD		equ 6
-PAN_XHEIGHT_DUCKING_LARGE	equ 7
+define PAN_MIDLINE_STANDARD_TRIMMED    2
+define PAN_MIDLINE_STANDARD_POINTED    3
+define PAN_MIDLINE_STANDARD_SERIFED    4
+define PAN_MIDLINE_HIGH_TRIMMED        5
+define PAN_MIDLINE_HIGH_POINTED        6
+define PAN_MIDLINE_HIGH_SERIFED        7
+define PAN_MIDLINE_CONSTANT_TRIMMED    8
+define PAN_MIDLINE_CONSTANT_POINTED    9
+define PAN_MIDLINE_CONSTANT_SERIFED   10
+define PAN_MIDLINE_LOW_TRIMMED        11
+define PAN_MIDLINE_LOW_POINTED        12
+define PAN_MIDLINE_LOW_SERIFED        13
 
-ELF_VENDOR_SIZE		equ 4
+define PAN_XHEIGHT_CONSTANT_SMALL      2
+define PAN_XHEIGHT_CONSTANT_STD        3
+define PAN_XHEIGHT_CONSTANT_LARGE      4
+define PAN_XHEIGHT_DUCKING_SMALL       5
+define PAN_XHEIGHT_DUCKING_STD         6
+define PAN_XHEIGHT_DUCKING_LARGE       7
 
-EXTLOGFONTA		STRUC
-elfLogFont		LOGFONTA <>
-elfFullName		db LF_FULLFACESIZE dup(?)
-elfStyle		db LF_FACESIZE dup(?)
-elfVersion		dd ?
-elfStyleSize		dd ?
-elfMatch		dd ?
-elfReserved		dd ?
-elfVendorId		db ELF_VENDOR_SIZE dup(?)
-elfCulture		dd ?
-elfPanose		PANOSE <>
-EXTLOGFONTA		ENDS
-PEXTLOGFONTA		typedef ptr EXTLOGFONTA
-NPEXTLOGFONTA		typedef ptr EXTLOGFONTA
-LPEXTLOGFONTA		typedef ptr EXTLOGFONTA
-EXTLOGFONTW		STRUC
-elfLogFont		LOGFONTW <>
-elfFullName		dw LF_FULLFACESIZE dup(?)
-elfStyle		dw LF_FACESIZE dup(?)
-elfVersion		dd ?
-elfStyleSize		dd ?
-elfMatch		dd ?
-elfReserved		dd ?
-elfVendorId		db ELF_VENDOR_SIZE dup(?)
-elfCulture		dd ?
-elfPanose		PANOSE <>
-EXTLOGFONTW		ENDS
-PEXTLOGFONTW		typedef ptr EXTLOGFONTW
-NPEXTLOGFONTW		typedef ptr EXTLOGFONTW
-LPEXTLOGFONTW		typedef ptr EXTLOGFONTW
+define ELF_VENDOR_SIZE     4
+
+tagEXTLOGFONTA          struct
+elfLogFont              LOGFONTA <>
+elfFullName             BYTE LF_FULLFACESIZE dup(?)
+elfStyle                BYTE LF_FACESIZE dup(?)
+elfVersion              DWORD ?
+elfStyleSize            DWORD ?
+elfMatch                DWORD ?
+elfReserved             DWORD ?
+elfVendorId             BYTE ELF_VENDOR_SIZE dup(?)
+elfCulture              DWORD ?
+elfPanose               PANOSE <>
+tagEXTLOGFONTA          ends
+EXTLOGFONTA             typedef tagEXTLOGFONTA
+PEXTLOGFONTA            typedef ptr tagEXTLOGFONTA
+NPEXTLOGFONTA           typedef ptr tagEXTLOGFONTA
+LPEXTLOGFONTA           typedef ptr tagEXTLOGFONTA
+tagEXTLOGFONTW          struct
+elfLogFont              LOGFONTW <>
+elfFullName             WCHAR LF_FULLFACESIZE dup(?)
+elfStyle                WCHAR LF_FACESIZE dup(?)
+elfVersion              DWORD ?
+elfStyleSize            DWORD ?
+elfMatch                DWORD ?
+elfReserved             DWORD ?
+elfVendorId             BYTE ELF_VENDOR_SIZE dup(?)
+elfCulture              DWORD ?
+elfPanose               PANOSE <>
+tagEXTLOGFONTW          ends
+EXTLOGFONTW             typedef tagEXTLOGFONTW
+PEXTLOGFONTW            typedef ptr tagEXTLOGFONTW
+NPEXTLOGFONTW           typedef ptr tagEXTLOGFONTW
+LPEXTLOGFONTW           typedef ptr tagEXTLOGFONTW
 ifdef _UNICODE
-EXTLOGFONT		typedef EXTLOGFONTW
-PEXTLOGFONT		typedef PEXTLOGFONTW
-NPEXTLOGFONT		typedef NPEXTLOGFONTW
-LPEXTLOGFONT		typedef LPEXTLOGFONTW
+EXTLOGFONT              typedef EXTLOGFONTW
+PEXTLOGFONT             typedef PEXTLOGFONTW
+NPEXTLOGFONT            typedef NPEXTLOGFONTW
+LPEXTLOGFONT            typedef LPEXTLOGFONTW
 else
-EXTLOGFONT		typedef EXTLOGFONTA
-PEXTLOGFONT		typedef PEXTLOGFONTA
-NPEXTLOGFONT		typedef NPEXTLOGFONTA
-LPEXTLOGFONT		typedef LPEXTLOGFONTA
+EXTLOGFONT              typedef EXTLOGFONTA
+PEXTLOGFONT             typedef PEXTLOGFONTA
+NPEXTLOGFONT            typedef NPEXTLOGFONTA
+LPEXTLOGFONT            typedef LPEXTLOGFONTA
 endif
 
-ELF_VERSION		equ 0
-ELF_CULTURE_LATIN	equ 0
+endif
+;.pragma endregion
 
-RASTER_FONTTYPE		equ 0x0001
-DEVICE_FONTTYPE		equ 0x002
-TRUETYPE_FONTTYPE	equ 0x004
+define ELF_VERSION         0
+define ELF_CULTURE_LATIN   0
+
+define RASTER_FONTTYPE     0x0001
+define DEVICE_FONTTYPE     0x0002
+define TRUETYPE_FONTTYPE   0x0004
 
 RGB macro r,g,b
-	ifidn typeid(r),<imm>
-	ifidn typeid(g),<imm>
-	ifidn typeid(b),<imm>
-	exitm<((((r) OR (((g)) SHL 8)) OR (((b)) SHL 16)))>
-	endif
-	endif
-	endif
-	mov	ah,0
-	mov	al,b
-	shl	eax,8
-	mov	al,g
-	shl	eax,8
-	mov	al,r
-	retm	<eax>
-	endm
+ifidn typeid(r),<imm>
+ifidn typeid(g),<imm>
+ifidn typeid(b),<imm>
+  exitm<((((r) OR (((g)) SHL 8)) OR (((b)) SHL 16)))>
+endif
+endif
+endif
+  mov   ah,0
+  mov   al,b
+  shl   eax,8
+  mov   al,g
+  shl   eax,8
+  mov   al,r
+  retm  <eax>
+  endm
 
 PALETTERGB macro r,g,b
-	ifidn typeid(r),<imm>
-	ifidn typeid(g),<imm>
-	ifidn typeid(b),<imm>
-	exitm<(0x02000000 OR RGB(r,g,b))>
-	endif
-	endif
-	endif
-	or	RGB(r,g,b),0x02000000
-	retm	<eax>
-	endm
+ifidn typeid(r),<imm>
+ifidn typeid(g),<imm>
+ifidn typeid(b),<imm>
+  exitm<(0x02000000 OR RGB(r,g,b))>
+endif
+endif
+endif
+  or    RGB(r,g,b),0x02000000
+  retm  <eax>
+  endm
 PALETTEINDEX macro i
-	ifidn typeid(i),<imm>
-	exitm<((0x01000000 OR (i)))>
-	endif
-	mov	eax,i
-	or	eax,0x02000000
-	retm	<eax>
-	endm
+ifidn typeid(i),<imm>
+  exitm<((0x01000000 OR (i)))>
+endif
+  mov   eax,i
+  or    eax,0x02000000
+  retm  <eax>
+  endm
 
-PC_RESERVED		equ 0x01
-PC_EXPLICIT		equ 0x02
-PC_NOCOLLAPSE		equ 0x04
+define PC_RESERVED     0x01
+define PC_EXPLICIT     0x02
+define PC_NOCOLLAPSE   0x04
 
 GetRValue macro rgb
-	mov	eax,rgb
-	retm	<al>
-	endm
+  mov   eax,rgb
+  retm  <al>
+  endm
 GetGValue macro rgb
-	mov	eax,rgb
-	shr	eax,8
-	retm	<al>
-	endm
+  mov   eax,rgb
+  shr   eax,8
+  retm  <al>
+  endm
 GetBValue macro rgb
-	mov	eax,rgb
-	shr	eax,16
-	retm	<al>
-	endm
+  mov   eax,rgb
+  shr   eax,16
+  retm  <al>
+  endm
 
-TRANSPARENT		equ 1
-OPAQUE			equ 2
-BKMODE_LAST		equ 2
+define TRANSPARENT         1
+define OPAQUE              2
+define BKMODE_LAST         2
 
-GM_COMPATIBLE		equ 1
-GM_ADVANCED		equ 2
-GM_LAST			equ 2
+define GM_COMPATIBLE       1
+define GM_ADVANCED         2
+define GM_LAST             2
 
-PT_CLOSEFIGURE		equ 0x01
-PT_LINETO		equ 0x02
-PT_BEZIERTO		equ 0x04
-PT_MOVETO		equ 0x06
+define PT_CLOSEFIGURE      0x01
+define PT_LINETO           0x02
+define PT_BEZIERTO         0x04
+define PT_MOVETO           0x06
 
-MM_TEXT			equ 1
-MM_LOMETRIC		equ 2
-MM_HIMETRIC		equ 3
-MM_LOENGLISH		equ 4
-MM_HIENGLISH		equ 5
-MM_TWIPS		equ 6
-MM_ISOTROPIC		equ 7
-MM_ANISOTROPIC		equ 8
+define MM_TEXT             1
+define MM_LOMETRIC         2
+define MM_HIMETRIC         3
+define MM_LOENGLISH        4
+define MM_HIENGLISH        5
+define MM_TWIPS            6
+define MM_ISOTROPIC        7
+define MM_ANISOTROPIC      8
 
-MM_MIN			equ MM_TEXT
-MM_MAX			equ MM_ANISOTROPIC
-MM_MAX_FIXEDSCALE	equ MM_TWIPS
+define MM_MIN              MM_TEXT
+define MM_MAX              MM_ANISOTROPIC
+define MM_MAX_FIXEDSCALE   MM_TWIPS
 
-ABSOLUTE		equ 1
-RELATIVE		equ 2
+define ABSOLUTE            1
+define RELATIVE            2
 
-WHITE_BRUSH		equ 0
-LTGRAY_BRUSH		equ 1
-GRAY_BRUSH		equ 2
-DKGRAY_BRUSH		equ 3
-BLACK_BRUSH		equ 4
-NULL_BRUSH		equ 5
-HOLLOW_BRUSH		equ NULL_BRUSH
-WHITE_PEN		equ 6
-BLACK_PEN		equ 7
-NULL_PEN		equ 8
-OEM_FIXED_FONT		equ 10
-ANSI_FIXED_FONT		equ 11
-ANSI_VAR_FONT		equ 12
-SYSTEM_FONT		equ 13
-DEVICE_DEFAULT_FONT	equ 14
-DEFAULT_PALETTE		equ 15
-SYSTEM_FIXED_FONT	equ 16
+define WHITE_BRUSH         0
+define LTGRAY_BRUSH        1
+define GRAY_BRUSH          2
+define DKGRAY_BRUSH        3
+define BLACK_BRUSH         4
+define NULL_BRUSH          5
+define HOLLOW_BRUSH        NULL_BRUSH
+define WHITE_PEN           6
+define BLACK_PEN           7
+define NULL_PEN            8
+define OEM_FIXED_FONT      10
+define ANSI_FIXED_FONT     11
+define ANSI_VAR_FONT       12
+define SYSTEM_FONT         13
+define DEVICE_DEFAULT_FONT 14
+define DEFAULT_PALETTE     15
+define SYSTEM_FIXED_FONT   16
 
-if(WINVER GE 0x0400)
-DEFAULT_GUI_FONT	equ 17
+if(WINVER ge 0x0400)
+define DEFAULT_GUI_FONT    17
 endif
 
-if (_WIN32_WINNT GE 0x0500)
-DC_BRUSH		equ 18
-DC_PEN			equ 19
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define DC_BRUSH            18
+define DC_PEN              19
 endif
 
-if (_WIN32_WINNT GE 0x0500)
-STOCK_LAST		equ 19
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define STOCK_LAST          19
+elseif (WINVER ge 0x0400)
+define STOCK_LAST          17
 else
-if (WINVER GE 0x0400)
-STOCK_LAST		equ 17
-else
-STOCK_LAST		equ 16
-endif
-endif
-CLR_INVALID		equ 0xFFFFFFFF
-
-BS_SOLID		equ 0
-BS_NULL			equ 1
-BS_HOLLOW		equ BS_NULL
-BS_HATCHED		equ 2
-BS_PATTERN		equ 3
-BS_INDEXED		equ 4
-BS_DIBPATTERN		equ 5
-BS_DIBPATTERNPT		equ 6
-BS_PATTERN8X8		equ 7
-BS_DIBPATTERN8X8	equ 8
-BS_MONOPATTERN		equ 9
-
-HS_HORIZONTAL		equ 0
-HS_VERTICAL		equ 1
-HS_FDIAGONAL		equ 2
-HS_BDIAGONAL		equ 3
-HS_CROSS		equ 4
-HS_DIAGCROSS		equ 5
-
-PS_SOLID		equ 0
-PS_DASH			equ 1
-PS_DOT			equ 2
-PS_DASHDOT		equ 3
-PS_DASHDOTDOT		equ 4
-PS_NULL			equ 5
-PS_INSIDEFRAME		equ 6
-PS_USERSTYLE		equ 7
-PS_ALTERNATE		equ 8
-PS_STYLE_MASK		equ 0x0000000F
-
-PS_ENDCAP_ROUND		equ 0x00000000
-PS_ENDCAP_SQUARE	equ 0x00000100
-PS_ENDCAP_FLAT		equ 0x00000200
-PS_ENDCAP_MASK		equ 0x00000F00
-
-PS_JOIN_ROUND		equ 0x00000000
-PS_JOIN_BEVEL		equ 0x00001000
-PS_JOIN_MITER		equ 0x00002000
-PS_JOIN_MASK		equ 0x0000F000
-
-PS_COSMETIC		equ 0x00000000
-PS_GEOMETRIC		equ 0x00010000
-PS_TYPE_MASK		equ 0x000F0000
-
-AD_COUNTERCLOCKWISE	equ 1
-AD_CLOCKWISE		equ 2
-
-DRIVERVERSION		equ 0
-TECHNOLOGY		equ 2
-HORZSIZE		equ 4
-VERTSIZE		equ 6
-HORZRES			equ 8
-VERTRES			equ 10
-BITSPIXEL		equ 12
-PLANES			equ 14
-NUMBRUSHES		equ 16
-NUMPENS			equ 18
-NUMMARKERS		equ 20
-NUMFONTS		equ 22
-NUMCOLORS		equ 24
-PDEVICESIZE		equ 26
-CURVECAPS		equ 28
-LINECAPS		equ 30
-POLYGONALCAPS		equ 32
-TEXTCAPS		equ 34
-CLIPCAPS		equ 36
-RASTERCAPS		equ 38
-ASPECTX			equ 40
-ASPECTY			equ 42
-ASPECTXY		equ 44
-
-if(WINVER GE 0x0500)
-SHADEBLENDCAPS		equ 45
+define STOCK_LAST          16
 endif
 
-LOGPIXELSX		equ 88
-LOGPIXELSY		equ 90
+define CLR_INVALID     0xFFFFFFFF
 
-SIZEPALETTE		equ 104
-NUMRESERVED		equ 106
-COLORRES		equ 108
+define BS_SOLID            0
+define BS_NULL             1
+define BS_HOLLOW           BS_NULL
+define BS_HATCHED          2
+define BS_PATTERN          3
+define BS_INDEXED          4
+define BS_DIBPATTERN       5
+define BS_DIBPATTERNPT     6
+define BS_PATTERN8X8       7
+define BS_DIBPATTERN8X8    8
+define BS_MONOPATTERN      9
 
+define HS_HORIZONTAL       0
+define HS_VERTICAL         1
+define HS_FDIAGONAL        2
+define HS_BDIAGONAL        3
+define HS_CROSS            4
+define HS_DIAGCROSS        5
+define HS_API_MAX          12
 
+define PS_SOLID            0
+define PS_DASH             1
+define PS_DOT              2
+define PS_DASHDOT          3
+define PS_DASHDOTDOT       4
+define PS_NULL             5
+define PS_INSIDEFRAME      6
+define PS_USERSTYLE        7
+define PS_ALTERNATE        8
+define PS_STYLE_MASK       0x0000000F
 
-PHYSICALWIDTH		equ 110
-PHYSICALHEIGHT		equ 111
-PHYSICALOFFSETX		equ 112
-PHYSICALOFFSETY		equ 113
-SCALINGFACTORX		equ 114
-SCALINGFACTORY		equ 115
+define PS_ENDCAP_ROUND     0x00000000
+define PS_ENDCAP_SQUARE    0x00000100
+define PS_ENDCAP_FLAT      0x00000200
+define PS_ENDCAP_MASK      0x00000F00
 
-VREFRESH		equ 116
-DESKTOPVERTRES		equ 117
-DESKTOPHORZRES		equ 118
-BLTALIGNMENT		equ 119
+define PS_JOIN_ROUND       0x00000000
+define PS_JOIN_BEVEL       0x00001000
+define PS_JOIN_MITER       0x00002000
+define PS_JOIN_MASK        0x0000F000
+
+define PS_COSMETIC         0x00000000
+define PS_GEOMETRIC        0x00010000
+define PS_TYPE_MASK        0x000F0000
+
+define AD_COUNTERCLOCKWISE 1
+define AD_CLOCKWISE        2
+
+define DRIVERVERSION 0
+define TECHNOLOGY    2
+define HORZSIZE      4
+define VERTSIZE      6
+define HORZRES       8
+define VERTRES       10
+define BITSPIXEL     12
+define PLANES        14
+define NUMBRUSHES    16
+define NUMPENS       18
+define NUMMARKERS    20
+define NUMFONTS      22
+define NUMCOLORS     24
+define PDEVICESIZE   26
+define CURVECAPS     28
+define LINECAPS      30
+define POLYGONALCAPS 32
+define TEXTCAPS      34
+define CLIPCAPS      36
+define RASTERCAPS    38
+define ASPECTX       40
+define ASPECTY       42
+define ASPECTXY      44
+
+define LOGPIXELSX    88
+define LOGPIXELSY    90
+
+define SIZEPALETTE  104
+define NUMRESERVED  106
+define COLORRES     108
+
+define PHYSICALWIDTH   110
+define PHYSICALHEIGHT  111
+define PHYSICALOFFSETX 112
+define PHYSICALOFFSETY 113
+define SCALINGFACTORX  114
+define SCALINGFACTORY  115
+
+define VREFRESH        116
+define DESKTOPVERTRES  117
+define DESKTOPHORZRES  118
+define BLTALIGNMENT    119
+
+if(WINVER ge 0x0500)
+define SHADEBLENDCAPS  120
+define COLORMGMTCAPS   121
+endif
 
 ifndef NOGDICAPMASKS
 
-DT_PLOTTER		equ 0
-DT_RASDISPLAY		equ 1
-DT_RASPRINTER		equ 2
-DT_RASCAMERA		equ 3
-DT_CHARSTREAM		equ 4
-DT_METAFILE		equ 5
-DT_DISPFILE		equ 6
+define DT_PLOTTER          0
+define DT_RASDISPLAY       1
+define DT_RASPRINTER       2
+define DT_RASCAMERA        3
+define DT_CHARSTREAM       4
+define DT_METAFILE         5
+define DT_DISPFILE         6
 
-CC_NONE			equ 0
-CC_CIRCLES		equ 1
-CC_PIE			equ 2
-CC_CHORD		equ 4
-CC_ELLIPSES		equ 8
-CC_WIDE			equ 16
-CC_STYLED		equ 32
-CC_WIDESTYLED		equ 64
-CC_INTERIORS		equ 128
-CC_ROUNDRECT		equ 256
+define CC_NONE             0
+define CC_CIRCLES          1
+define CC_PIE              2
+define CC_CHORD            4
+define CC_ELLIPSES         8
+define CC_WIDE             16
+define CC_STYLED           32
+define CC_WIDESTYLED       64
+define CC_INTERIORS        128
+define CC_ROUNDRECT        256
 
-LC_NONE			equ 0
-LC_POLYLINE		equ 2
-LC_MARKER		equ 4
-LC_POLYMARKER		equ 8
-LC_WIDE			equ 16
-LC_STYLED		equ 32
-LC_WIDESTYLED		equ 64
-LC_INTERIORS		equ 128
+define LC_NONE             0
+define LC_POLYLINE         2
+define LC_MARKER           4
+define LC_POLYMARKER       8
+define LC_WIDE             16
+define LC_STYLED           32
+define LC_WIDESTYLED       64
+define LC_INTERIORS        128
 
-PC_NONE			equ 0
-PC_POLYGON		equ 1
-PC_RECTANGLE		equ 2
-PC_WINDPOLYGON		equ 4
-PC_TRAPEZOID		equ 4
-PC_SCANLINE		equ 8
-PC_WIDE			equ 16
-PC_STYLED		equ 32
-PC_WIDESTYLED		equ 64
-PC_INTERIORS		equ 128
-PC_POLYPOLYGON		equ 256
-PC_PATHS		equ 512
+define PC_NONE             0
+define PC_POLYGON          1
+define PC_RECTANGLE        2
+define PC_WINDPOLYGON      4
+define PC_TRAPEZOID        4
+define PC_SCANLINE         8
+define PC_WIDE             16
+define PC_STYLED           32
+define PC_WIDESTYLED       64
+define PC_INTERIORS        128
+define PC_POLYPOLYGON      256
+define PC_PATHS            512
 
-CP_NONE			equ 0
-CP_RECTANGLE		equ 1
-CP_REGION		equ 2
+define CP_NONE             0
+define CP_RECTANGLE        1
+define CP_REGION           2
 
-TC_OP_CHARACTER		equ 0x00000001
-TC_OP_STROKE		equ 0x00000002
-TC_CP_STROKE		equ 0x00000004
-TC_CR_90		equ 0x00000008
-TC_CR_ANY		equ 0x00000010
-TC_SF_X_YINDEP		equ 0x00000020
-TC_SA_DOUBLE		equ 0x00000040
-TC_SA_INTEGER		equ 0x00000080
-TC_SA_CONTIN		equ 0x00000100
-TC_EA_DOUBLE		equ 0x00000200
-TC_IA_ABLE		equ 0x00000400
-TC_UA_ABLE		equ 0x00000800
-TC_SO_ABLE		equ 0x00001000
-TC_RA_ABLE		equ 0x00002000
-TC_VA_ABLE		equ 0x00004000
-TC_RESERVED		equ 0x00008000
-TC_SCROLLBLT		equ 0x00010000
-
-endif
-
-RC_NONE			equ 0
-RC_BITBLT		equ 1
-RC_BANDING		equ 2
-RC_SCALING		equ 4
-RC_BITMAP64		equ 8
-RC_GDI20_OUTPUT		equ 0x0010
-RC_GDI20_STATE		equ 0x0020
-RC_SAVEBITMAP		equ 0x0040
-RC_DI_BITMAP		equ 0x0080
-RC_PALETTE		equ 0x0100
-RC_DIBTODEV		equ 0x0200
-RC_BIGFONT		equ 0x0400
-RC_STRETCHBLT		equ 0x0800
-RC_FLOODFILL		equ 0x1000
-RC_STRETCHDIB		equ 0x2000
-RC_OP_DX_OUTPUT		equ 0x4000
-RC_DEVBITS		equ 0x8000
-
-if(WINVER GE 0x0500)
-
-SB_NONE			equ 0x00000000
-SB_CONST_ALPHA		equ 0x00000001
-SB_PIXEL_ALPHA		equ 0x00000002
-SB_PREMULT_ALPHA	equ 0x00000004
-
-SB_GRAD_RECT		equ 0x00000010
-SB_GRAD_TRI		equ 0x00000020
+define TC_OP_CHARACTER     0x00000001
+define TC_OP_STROKE        0x00000002
+define TC_CP_STROKE        0x00000004
+define TC_CR_90            0x00000008
+define TC_CR_ANY           0x00000010
+define TC_SF_X_YINDEP      0x00000020
+define TC_SA_DOUBLE        0x00000040
+define TC_SA_INTEGER       0x00000080
+define TC_SA_CONTIN        0x00000100
+define TC_EA_DOUBLE        0x00000200
+define TC_IA_ABLE          0x00000400
+define TC_UA_ABLE          0x00000800
+define TC_SO_ABLE          0x00001000
+define TC_RA_ABLE          0x00002000
+define TC_VA_ABLE          0x00004000
+define TC_RESERVED         0x00008000
+define TC_SCROLLBLT        0x00010000
 
 endif
 
-DIB_RGB_COLORS		equ 0
-DIB_PAL_COLORS		equ 1
+define RC_NONE
+define RC_BITBLT           1
+define RC_BANDING          2
+define RC_SCALING          4
+define RC_BITMAP64         8
+define RC_GDI20_OUTPUT     0x0010
+define RC_GDI20_STATE      0x0020
+define RC_SAVEBITMAP       0x0040
+define RC_DI_BITMAP        0x0080
+define RC_PALETTE          0x0100
+define RC_DIBTODEV         0x0200
+define RC_BIGFONT          0x0400
+define RC_STRETCHBLT       0x0800
+define RC_FLOODFILL        0x1000
+define RC_STRETCHDIB       0x2000
+define RC_OP_DX_OUTPUT     0x4000
+define RC_DEVBITS          0x8000
 
-SYSPAL_ERROR		equ 0
-SYSPAL_STATIC		equ 1
-SYSPAL_NOSTATIC		equ 2
-SYSPAL_NOSTATIC256	equ 3
+if(WINVER ge 0x0500)
 
-CBM_INIT		equ 0x04
+define SB_NONE             0x00000000
+define SB_CONST_ALPHA      0x00000001
+define SB_PIXEL_ALPHA      0x00000002
+define SB_PREMULT_ALPHA    0x00000004
 
-FLOODFILLBORDER		equ 0
-FLOODFILLSURFACE	equ 1
+define SB_GRAD_RECT        0x00000010
+define SB_GRAD_TRI         0x00000020
 
-CCHDEVICENAME		equ 32
+define CM_NONE             0x00000000
+define CM_DEVICE_ICM       0x00000001
+define CM_GAMMA_RAMP       0x00000002
+define CM_CMYK_COLOR       0x00000004
 
-CCHFORMNAME		equ 32
+endif
 
-DEVMODEA		STRUC
-dmDeviceName		db CCHDEVICENAME dup(?)
-dmSpecVersion		dw ?
-dmDriverVersion		dw ?
-dmSize			dw ?
-dmDriverExtra		dw ?
-dmFields		dd ?
-UNION
-  STRUC
-    dmOrientation	dw ?
-    dmPaperSize		dw ?
-    dmPaperLength	dw ?
-    dmPaperWidth	dw ?
-  ENDS
-  dmPosition		POINTL <>
-ENDS
-dmScale			dw ?
-dmCopies		dw ?
-dmDefaultSource		dw ?
-dmPrintQuality		dw ?
-dmColor			dw ?
-dmDuplex		dw ?
-dmYResolution		dw ?
-dmTTOption		dw ?
-dmCollate		dw ?
-dmFormName		db CCHFORMNAME dup(?)
-dmLogPixels		dw ?
-dmBitsPerPel		dd ?
-dmPelsWidth		dd ?
-dmPelsHeight		dd ?
-dmDisplayFlags		dd ?
-dmDisplayFrequency	dd ?
-if(WINVER GE 0x0400)
-dmICMMethod		dd ?
-dmICMIntent		dd ?
-dmMediaType		dd ?
-dmDitherType		dd ?
-dmReserved1		dd ?
-dmReserved2		dd ?
-if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
-dmPanningWidth		dd ?
-dmPanningHeight		dd ?
+define DIB_RGB_COLORS      0
+define DIB_PAL_COLORS      1
+
+define SYSPAL_ERROR    0
+define SYSPAL_STATIC   1
+define SYSPAL_NOSTATIC 2
+define SYSPAL_NOSTATIC256 3
+
+define CBM_INIT        0x04
+
+define  FLOODFILLBORDER   0
+define  FLOODFILLSURFACE  1
+
+define CCHDEVICENAME 32
+
+define CCHFORMNAME 32
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+if (_WIN32_WINNT ge ((OSVER(NTDDI_WINXPSP2)) shr 16))
+_devicemodeA            struct
+dmDeviceName            BYTE CCHDEVICENAME dup(?)
+dmSpecVersion           WORD ?
+dmDriverVersion         WORD ?
+dmSize                  WORD ?
+dmDriverExtra           WORD ?
+dmFields                DWORD ?
+union
+ struct
+  dmOrientation         sword ?
+  dmPaperSize           sword ?
+  dmPaperLength         sword ?
+  dmPaperWidth          sword ?
+  dmScale               sword ?
+  dmCopies              sword ?
+  dmDefaultSource       sword ?
+  dmPrintQuality        sword ?
+ ends
+ struct
+  dmPosition            POINTL <>
+  dmDisplayOrientation  DWORD ?
+  dmDisplayFixedOutput  DWORD ?
+ ends
+ends
+dmColor                 sword ?
+dmDuplex                sword ?
+dmYResolution           sword ?
+dmTTOption              sword ?
+dmCollate               sword ?
+dmFormName              BYTE CCHFORMNAME dup(?)
+dmLogPixels             WORD ?
+dmBitsPerPel            DWORD ?
+dmPelsWidth             DWORD ?
+dmPelsHeight            DWORD ?
+union
+ dmDisplayFlags         DWORD ?
+ dmNup                  DWORD ?
+ends
+dmDisplayFrequency      DWORD ?
+if(WINVER ge 0x0400)
+dmICMMethod             DWORD ?
+dmICMIntent             DWORD ?
+dmMediaType             DWORD ?
+dmDitherType            DWORD ?
+dmReserved1             DWORD ?
+dmReserved2             DWORD ?
+if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+dmPanningWidth          DWORD ?
+dmPanningHeight         DWORD ?
 endif
 endif
-DEVMODEA		ENDS
-PDEVMODEA		typedef ptr DEVMODEA
-NPDEVMODEA		typedef ptr DEVMODEA
-LPDEVMODEA		typedef ptr DEVMODEA
-DEVMODEW		STRUC
-dmDeviceName		dw CCHDEVICENAME dup(?)
-dmSpecVersion		dw ?
-dmDriverVersion		dw ?
-dmSize			dw ?
-dmDriverExtra		dw ?
-dmFields		dd ?
-UNION
-  STRUC
-    dmOrientation	dw ?
-    dmPaperSize		dw ?
-    dmPaperLength	dw ?
-    dmPaperWidth	dw ?
-  ENDS
-  dmPosition		POINTL <>
-ENDS
-dmScale			dw ?
-dmCopies		dw ?
-dmDefaultSource		dw ?
-dmPrintQuality		dw ?
-dmColor			dw ?
-dmDuplex		dw ?
-dmYResolution		dw ?
-dmTTOption		dw ?
-dmCollate		dw ?
-dmFormName		dw CCHFORMNAME dup(?)
-dmLogPixels		dw ?
-dmBitsPerPel		dd ?
-dmPelsWidth		dd ?
-dmPelsHeight		dd ?
-dmDisplayFlags		dd ?
-dmDisplayFrequency	dd ?
-if(WINVER GE 0x0400)
-dmICMMethod		dd ?
-dmICMIntent		dd ?
-dmMediaType		dd ?
-dmDitherType		dd ?
-dmReserved1		dd ?
-dmReserved2		dd ?
-if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
-dmPanningWidth		dd ?
-dmPanningHeight		dd ?
+_devicemodeA            ends
+DEVMODEA                typedef _devicemodeA
+PDEVMODEA               typedef ptr _devicemodeA
+NPDEVMODEA              typedef ptr _devicemodeA
+LPDEVMODEA              typedef ptr _devicemodeA
+_devicemodeW            struct
+dmDeviceName            WCHAR CCHDEVICENAME dup(?)
+dmSpecVersion           WORD ?
+dmDriverVersion         WORD ?
+dmSize                  WORD ?
+dmDriverExtra           WORD ?
+dmFields                DWORD ?
+union
+ struct
+  dmOrientation         sword ?
+  dmPaperSize           sword ?
+  dmPaperLength         sword ?
+  dmPaperWidth          sword ?
+  dmScale               sword ?
+  dmCopies              sword ?
+  dmDefaultSource       sword ?
+  dmPrintQuality        sword ?
+ ends
+ struct
+  dmPosition            POINTL <>
+  dmDisplayOrientation  DWORD ?
+  dmDisplayFixedOutput  DWORD ?
+ ends
+ends
+dmColor                 sword ?
+dmDuplex                sword ?
+dmYResolution           sword ?
+dmTTOption              sword ?
+dmCollate               sword ?
+dmFormName              WCHAR CCHFORMNAME dup(?)
+dmLogPixels             WORD ?
+dmBitsPerPel            DWORD ?
+dmPelsWidth             DWORD ?
+dmPelsHeight            DWORD ?
+union
+ dmDisplayFlags         DWORD ?
+ dmNup                  DWORD ?
+ends
+dmDisplayFrequency      DWORD ?
+if(WINVER ge 0x0400)
+dmICMMethod             DWORD ?
+dmICMIntent             DWORD ?
+dmMediaType             DWORD ?
+dmDitherType            DWORD ?
+dmReserved1             DWORD ?
+dmReserved2             DWORD ?
+if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+dmPanningWidth          DWORD ?
+dmPanningHeight         DWORD ?
 endif
 endif
-DEVMODEW		ENDS
-PDEVMODEW		typedef ptr DEVMODEW
-NPDEVMODEW		typedef ptr DEVMODEW
-LPDEVMODEW		typedef ptr DEVMODEW
+_devicemodeW            ends
+DEVMODEW                typedef _devicemodeW
+PDEVMODEW               typedef ptr _devicemodeW
+NPDEVMODEW              typedef ptr _devicemodeW
+LPDEVMODEW              typedef ptr _devicemodeW
 ifdef _UNICODE
-DEVMODE			typedef DEVMODEW
-PDEVMODE		typedef PDEVMODEW
-NPDEVMODE		typedef NPDEVMODEW
-LPDEVMODE		typedef LPDEVMODEW
+DEVMODE                 typedef DEVMODEW
+PDEVMODE                typedef PDEVMODEW
+NPDEVMODE               typedef NPDEVMODEW
+LPDEVMODE               typedef LPDEVMODEW
 else
-DEVMODE			typedef DEVMODEA
-PDEVMODE		typedef PDEVMODEA
-NPDEVMODE		typedef NPDEVMODEA
-LPDEVMODE		typedef LPDEVMODEA
+DEVMODE                 typedef DEVMODEA
+PDEVMODE                typedef PDEVMODEA
+NPDEVMODE               typedef NPDEVMODEA
+LPDEVMODE               typedef LPDEVMODEA
 endif
-
-if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
-DM_SPECVERSION		equ 0x0401
 else
-if (WINVER GE 0x0400)
-DM_SPECVERSION		equ 0x0400
-else
-DM_SPECVERSION		equ 0x0320
+_devicemodeA            struct
+dmDeviceName            BYTE CCHDEVICENAME dup(?)
+dmSpecVersion           WORD ?
+dmDriverVersion         WORD ?
+dmSize                  WORD ?
+dmDriverExtra           WORD ?
+dmFields                DWORD ?
+union
+ struct
+  dmOrientation         sword ?
+  dmPaperSize           sword ?
+  dmPaperLength         sword ?
+  dmPaperWidth          sword ?
+ ends
+ dmPosition             POINTL ?
+ends
+dmScale                 sword ?
+dmCopies                sword ?
+dmDefaultSource         sword ?
+dmPrintQuality          sword ?
+dmColor                 sword ?
+dmDuplex                sword ?
+dmYResolution           sword ?
+dmTTOption              sword ?
+dmCollate               sword ?
+dmFormName              BYTE CCHFORMNAME dup(?)
+dmLogPixels             WORD ?
+dmBitsPerPel            DWORD ?
+dmPelsWidth             DWORD ?
+dmPelsHeight            DWORD ?
+union
+ dmDisplayFlags         DWORD ?
+ dmNup                  DWORD ?
+ends
+dmDisplayFrequency      DWORD ?
+if(WINVER ge 0x0400)
+dmICMMethod             DWORD ?
+dmICMIntent             DWORD ?
+dmMediaType             DWORD ?
+dmDitherType            DWORD ?
+dmReserved1             DWORD ?
+dmReserved2             DWORD ?
+if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+dmPanningWidth          DWORD ?
+dmPanningHeight         DWORD ?
 endif
 endif
-DM_ORIENTATION		equ 0x00000001
-DM_PAPERSIZE		equ 0x00000002
-DM_PAPERLENGTH		equ 0x00000004
-DM_PAPERWIDTH		equ 0x00000008
-DM_SCALE		equ 0x00000010
-if(WINVER GE 0x0500)
-DM_POSITION		equ 0x00000020
-endif
-DM_COPIES		equ 0x00000100
-DM_DEFAULTSOURCE	equ 0x00000200
-DM_PRINTQUALITY		equ 0x00000400
-DM_COLOR		equ 0x00000800
-DM_DUPLEX		equ 0x00001000
-DM_YRESOLUTION		equ 0x00002000
-DM_TTOPTION		equ 0x00004000
-DM_COLLATE		equ 0x00008000
-DM_FORMNAME		equ 0x00010000
-DM_LOGPIXELS		equ 0x00020000
-DM_BITSPERPEL		equ 0x00040000
-DM_PELSWIDTH		equ 0x00080000
-DM_PELSHEIGHT		equ 0x00100000
-DM_DISPLAYFLAGS		equ 0x00200000
-DM_DISPLAYFREQUENCY	equ 0x00400000
-if(WINVER GE 0x0400)
-DM_ICMMETHOD		equ 0x00800000
-DM_ICMINTENT		equ 0x01000000
-DM_MEDIATYPE		equ 0x02000000
-DM_DITHERTYPE		equ 0x04000000
-DM_PANNINGWIDTH		equ 0x08000000
-DM_PANNINGHEIGHT	equ 0x10000000
-endif
-
-DMORIENT_PORTRAIT	equ 1
-DMORIENT_LANDSCAPE	equ 2
-
-DMPAPER_FIRST		equ DMPAPER_LETTER
-DMPAPER_LETTER		equ 1
-DMPAPER_LETTERSMALL	equ 2
-DMPAPER_TABLOID		equ 3
-DMPAPER_LEDGER		equ 4
-DMPAPER_LEGAL		equ 5
-DMPAPER_STATEMENT	equ 6
-DMPAPER_EXECUTIVE	equ 7
-DMPAPER_A3		equ 8
-DMPAPER_A4		equ 9
-DMPAPER_A4SMALL		equ 10
-DMPAPER_A5		equ 11
-DMPAPER_B4		equ 12
-DMPAPER_B5		equ 13
-DMPAPER_FOLIO		equ 14
-DMPAPER_QUARTO		equ 15
-DMPAPER_10X14		equ 16
-DMPAPER_11X17		equ 17
-DMPAPER_NOTE		equ 18
-DMPAPER_ENV_9		equ 19
-DMPAPER_ENV_10		equ 20
-DMPAPER_ENV_11		equ 21
-DMPAPER_ENV_12		equ 22
-DMPAPER_ENV_14		equ 23
-DMPAPER_CSHEET		equ 24
-DMPAPER_DSHEET		equ 25
-DMPAPER_ESHEET		equ 26
-DMPAPER_ENV_DL		equ 27
-DMPAPER_ENV_C5		equ 28
-DMPAPER_ENV_C3		equ 29
-DMPAPER_ENV_C4		equ 30
-DMPAPER_ENV_C6		equ 31
-DMPAPER_ENV_C65		equ 32
-DMPAPER_ENV_B4		equ 33
-DMPAPER_ENV_B5		equ 34
-DMPAPER_ENV_B6		equ 35
-DMPAPER_ENV_ITALY	equ 36
-DMPAPER_ENV_MONARCH	equ 37
-DMPAPER_ENV_PERSONAL	equ 38
-DMPAPER_FANFOLD_US	equ 39
-DMPAPER_FANFOLD_STD_GERMAN equ 40
-DMPAPER_FANFOLD_LGL_GERMAN equ 41
-if(WINVER GE 0x0400)
-DMPAPER_ISO_B4		equ 42
-DMPAPER_JAPANESE_POSTCARD equ 43
-DMPAPER_9X11		equ 44
-DMPAPER_10X11		equ 45
-DMPAPER_15X11		equ 46
-DMPAPER_ENV_INVITE	equ 47
-DMPAPER_RESERVED_48	equ 48
-DMPAPER_RESERVED_49	equ 49
-DMPAPER_LETTER_EXTRA	equ 50
-DMPAPER_LEGAL_EXTRA	equ 51
-DMPAPER_TABLOID_EXTRA	equ 52
-DMPAPER_A4_EXTRA	equ 53
-DMPAPER_LETTER_TRANSVERSE equ 54
-DMPAPER_A4_TRANSVERSE	equ 55
-DMPAPER_LETTER_EXTRA_TRANSVERSE equ 56
-DMPAPER_A_PLUS		equ 57
-DMPAPER_B_PLUS		equ 58
-DMPAPER_LETTER_PLUS	equ 59
-DMPAPER_A4_PLUS		equ 60
-DMPAPER_A5_TRANSVERSE	equ 61
-DMPAPER_B5_TRANSVERSE	equ 62
-DMPAPER_A3_EXTRA	equ 63
-DMPAPER_A5_EXTRA	equ 64
-DMPAPER_B5_EXTRA	equ 65
-DMPAPER_A2		equ 66
-DMPAPER_A3_TRANSVERSE	equ 67
-DMPAPER_A3_EXTRA_TRANSVERSE equ 68
-endif
-
-if(WINVER GE 0x0500)
-DMPAPER_DBL_JAPANESE_POSTCARD	equ 69
-DMPAPER_A6			equ 70
-DMPAPER_JENV_KAKU2		equ 71
-DMPAPER_JENV_KAKU3		equ 72
-DMPAPER_JENV_CHOU3		equ 73
-DMPAPER_JENV_CHOU4		equ 74
-DMPAPER_LETTER_ROTATED		equ 75
-DMPAPER_A3_ROTATED		equ 76
-DMPAPER_A4_ROTATED		equ 77
-DMPAPER_A5_ROTATED		equ 78
-DMPAPER_B4_JIS_ROTATED		equ 79
-DMPAPER_B5_JIS_ROTATED		equ 80
-DMPAPER_JAPANESE_POSTCARD_ROTATED	equ 81
-DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED	equ 82
-DMPAPER_A6_ROTATED		equ 83
-DMPAPER_JENV_KAKU2_ROTATED	equ 84
-DMPAPER_JENV_KAKU3_ROTATED	equ 85
-DMPAPER_JENV_CHOU3_ROTATED	equ 86
-DMPAPER_JENV_CHOU4_ROTATED	equ 87
-DMPAPER_B6_JIS			equ 88
-DMPAPER_B6_JIS_ROTATED		equ 89
-DMPAPER_12X11			equ 90
-DMPAPER_JENV_YOU4		equ 91
-DMPAPER_JENV_YOU4_ROTATED	equ 92
-DMPAPER_P16K			equ 93
-DMPAPER_P32K			equ 94
-DMPAPER_P32KBIG			equ 95
-DMPAPER_PENV_1			equ 96
-DMPAPER_PENV_2			equ 97
-DMPAPER_PENV_3			equ 98
-DMPAPER_PENV_4			equ 99
-DMPAPER_PENV_5			equ 100
-DMPAPER_PENV_6			equ 101
-DMPAPER_PENV_7			equ 102
-DMPAPER_PENV_8			equ 103
-DMPAPER_PENV_9			equ 104
-DMPAPER_PENV_10			equ 105
-DMPAPER_P16K_ROTATED		equ 106
-DMPAPER_P32K_ROTATED		equ 107
-DMPAPER_P32KBIG_ROTATED		equ 108
-DMPAPER_PENV_1_ROTATED		equ 109
-DMPAPER_PENV_2_ROTATED		equ 110
-DMPAPER_PENV_3_ROTATED		equ 111
-DMPAPER_PENV_4_ROTATED		equ 112
-DMPAPER_PENV_5_ROTATED		equ 113
-DMPAPER_PENV_6_ROTATED		equ 114
-DMPAPER_PENV_7_ROTATED		equ 115
-DMPAPER_PENV_8_ROTATED		equ 116
-DMPAPER_PENV_9_ROTATED		equ 117
-DMPAPER_PENV_10_ROTATED		equ 118
-endif
-
-if (WINVER GE 0x0500)
-DMPAPER_LAST		equ DMPAPER_PENV_10_ROTATED
-else
-if (WINVER GE 0x0400)
-DMPAPER_LAST		equ DMPAPER_A3_EXTRA_TRANSVERSE
-else
-DMPAPER_LAST		equ DMPAPER_FANFOLD_LGL_GERMAN
+_devicemodeA            ends
+DEVMODEA                typedef _devicemodeA
+PDEVMODEA               typedef ptr _devicemodeA
+NPDEVMODEA              typedef ptr _devicemodeA
+LPDEVMODEA              typedef ptr _devicemodeA
+_devicemodeW            struct
+dmDeviceName            WCHAR CCHDEVICENAME dup(?)
+dmSpecVersion           WORD ?
+dmDriverVersion         WORD ?
+dmSize                  WORD ?
+dmDriverExtra           WORD ?
+dmFields                DWORD ?
+union
+ struct
+  dmOrientation         sword ?
+  dmPaperSize           sword ?
+  dmPaperLength         sword ?
+  dmPaperWidth          sword ?
+ ends
+ dmPosition             POINTL ?
+ends
+dmScale                 sword ?
+dmCopies                sword ?
+dmDefaultSource         sword ?
+dmPrintQuality          sword ?
+dmColor                 sword ?
+dmDuplex                sword ?
+dmYResolution           sword ?
+dmTTOption              sword ?
+dmCollate               sword ?
+dmFormName              WCHAR CCHFORMNAME dup(?)
+dmLogPixels             WORD ?
+dmBitsPerPel            DWORD ?
+dmPelsWidth             DWORD ?
+dmPelsHeight            DWORD ?
+union
+ dmDisplayFlags         DWORD ?
+ dmNup                  DWORD ?
+ends
+dmDisplayFrequency      DWORD ?
+if(WINVER ge 0x0400)
+dmICMMethod             DWORD ?
+dmICMIntent             DWORD ?
+dmMediaType             DWORD ?
+dmDitherType            DWORD ?
+dmReserved1             DWORD ?
+dmReserved2             DWORD ?
+if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+dmPanningWidth          DWORD ?
+dmPanningHeight         DWORD ?
 endif
 endif
-DMPAPER_USER		equ 256
-
-DMBIN_FIRST		equ DMBIN_UPPER
-DMBIN_UPPER		equ 1
-DMBIN_ONLYONE		equ 1
-DMBIN_LOWER		equ 2
-DMBIN_MIDDLE		equ 3
-DMBIN_MANUAL		equ 4
-DMBIN_ENVELOPE		equ 5
-DMBIN_ENVMANUAL		equ 6
-DMBIN_AUTO		equ 7
-DMBIN_TRACTOR		equ 8
-DMBIN_SMALLFMT		equ 9
-DMBIN_LARGEFMT		equ 10
-DMBIN_LARGECAPACITY	equ 11
-DMBIN_CASSETTE		equ 14
-DMBIN_FORMSOURCE	equ 15
-DMBIN_LAST		equ DMBIN_FORMSOURCE
-
-DMBIN_USER		equ 256
-
-DMRES_DRAFT		equ (-1)
-DMRES_LOW		equ (-2)
-DMRES_MEDIUM		equ (-3)
-DMRES_HIGH		equ (-4)
-
-DMCOLOR_MONOCHROME	equ 1
-DMCOLOR_COLOR		equ 2
-
-DMDUP_SIMPLEX		equ 1
-DMDUP_VERTICAL		equ 2
-DMDUP_HORIZONTAL	equ 3
-
-DMTT_BITMAP		equ 1
-DMTT_DOWNLOAD		equ 2
-DMTT_SUBDEV		equ 3
-if(WINVER GE 0x0400)
-DMTT_DOWNLOAD_OUTLINE	equ 4
-endif
-
-DMCOLLATE_FALSE		equ 0
-DMCOLLATE_TRUE		equ 1
-
-DMDISPLAYFLAGS_TEXTMODE equ 0x00000004
-
-if(WINVER GE 0x0400)
-DMICMMETHOD_NONE	equ 1
-DMICMMETHOD_SYSTEM	equ 2
-DMICMMETHOD_DRIVER	equ 3
-DMICMMETHOD_DEVICE	equ 4
-
-DMICMMETHOD_USER	equ 256
-
-DMICM_SATURATE		equ 1
-DMICM_CONTRAST		equ 2
-DMICM_COLORIMETRIC	equ 3
-DMICM_ABS_COLORIMETRIC	equ 4
-
-DMICM_USER		equ 256
-
-DMMEDIA_STANDARD	equ 1
-DMMEDIA_TRANSPARENCY	equ 2
-DMMEDIA_GLOSSY		equ 3
-DMMEDIA_USER		equ 256
-DMDITHER_NONE		equ 1
-DMDITHER_COARSE		equ 2
-DMDITHER_FINE		equ 3
-DMDITHER_LINEART	equ 4
-DMDITHER_ERRORDIFFUSION equ 5
-DMDITHER_RESERVED6	equ 6
-DMDITHER_RESERVED7	equ 7
-DMDITHER_RESERVED8	equ 8
-DMDITHER_RESERVED9	equ 9
-DMDITHER_GRAYSCALE	equ 10
-DMDITHER_USER		equ 256
-endif
-
-DISPLAY_DEVICEA		STRUC
-cb			dd ?
-DeviceName		SBYTE 32 dup(?)
-DeviceString		SBYTE 128 dup(?)
-StateFlags		dd ?
-DeviceID		SBYTE 128 dup(?)
-DeviceKey		SBYTE 128 dup(?)
-DISPLAY_DEVICEA		ENDS
-PDISPLAY_DEVICEA	typedef ptr DISPLAY_DEVICEA
-LPDISPLAY_DEVICEA	typedef ptr DISPLAY_DEVICEA
-
-DISPLAY_DEVICEW		STRUC
-cb			dd ?
-DeviceName		dw 32 dup(?)
-DeviceString		dw 128 dup(?)
-StateFlags		dd ?
-DeviceID		dw 128 dup(?)
-DeviceKey		dw 128 dup(?)
-DISPLAY_DEVICEW		ENDS
-PDISPLAY_DEVICEW	typedef ptr DISPLAY_DEVICEW
-LPDISPLAY_DEVICEW	typedef ptr DISPLAY_DEVICEW
-
+_devicemodeW            ends
+DEVMODEW                typedef _devicemodeW
+PDEVMODEW               typedef ptr _devicemodeW
+NPDEVMODEW              typedef ptr _devicemodeW
+LPDEVMODEW              typedef ptr _devicemodeW
 ifdef _UNICODE
-DISPLAY_DEVICE		typedef DISPLAY_DEVICEW
-PDISPLAY_DEVICE		typedef PDISPLAY_DEVICEW
-LPDISPLAY_DEVICE	typedef LPDISPLAY_DEVICEW
+DEVMODE                 typedef DEVMODEW
+PDEVMODE                typedef PDEVMODEW
+NPDEVMODE               typedef NPDEVMODEW
+LPDEVMODE               typedef LPDEVMODEW
 else
-DISPLAY_DEVICE		typedef DISPLAY_DEVICEA
-PDISPLAY_DEVICE		typedef PDISPLAY_DEVICEA
-LPDISPLAY_DEVICE	typedef LPDISPLAY_DEVICEA
+DEVMODE                 typedef DEVMODEA
+PDEVMODE                typedef PDEVMODEA
+NPDEVMODE               typedef NPDEVMODEA
+LPDEVMODE               typedef LPDEVMODEA
+endif
 endif
 
-DISPLAY_DEVICE_ATTACHED_TO_DESKTOP equ 0x00000001
-DISPLAY_DEVICE_MULTI_DRIVER	equ 0x00000002
-DISPLAY_DEVICE_PRIMARY_DEVICE	equ 0x00000004
-DISPLAY_DEVICE_MIRRORING_DRIVER equ 0x00000008
-DISPLAY_DEVICE_VGA_COMPATIBLE	equ 0x00000010
+endif
+;.pragma endregion
+
+if (WINVER ge 0x0500) or (_WIN32_WINNT ge _WIN32_WINNT_NT4)
+define DM_SPECVERSION 0x0401
+elseif (WINVER ge 0x0400)
+define DM_SPECVERSION 0x0400
+else
+define DM_SPECVERSION 0x0320
+endif
+
+define DM_ORIENTATION          0x00000001
+define DM_PAPERSIZE            0x00000002
+define DM_PAPERLENGTH          0x00000004
+define DM_PAPERWIDTH           0x00000008
+define DM_SCALE                0x00000010
+if(WINVER ge 0x0500)
+define DM_POSITION             0x00000020
+define DM_NUP                  0x00000040
+endif
+if(WINVER ge 0x0501)
+define DM_DISPLAYORIENTATION   0x00000080
+endif
+define DM_COPIES               0x00000100
+define DM_DEFAULTSOURCE        0x00000200
+define DM_PRINTQUALITY         0x00000400
+define DM_COLOR                0x00000800
+define DM_DUPLEX               0x00001000
+define DM_YRESOLUTION          0x00002000
+define DM_TTOPTION             0x00004000
+define DM_COLLATE              0x00008000
+define DM_FORMNAME             0x00010000
+define DM_LOGPIXELS            0x00020000
+define DM_BITSPERPEL           0x00040000
+define DM_PELSWIDTH            0x00080000
+define DM_PELSHEIGHT           0x00100000
+define DM_DISPLAYFLAGS         0x00200000
+define DM_DISPLAYFREQUENCY     0x00400000
+if(WINVER ge 0x0400)
+define DM_ICMMETHOD            0x00800000
+define DM_ICMINTENT            0x01000000
+define DM_MEDIATYPE            0x02000000
+define DM_DITHERTYPE           0x04000000
+define DM_PANNINGWIDTH         0x08000000
+define DM_PANNINGHEIGHT        0x10000000
+endif
+if(WINVER ge 0x0501)
+define DM_DISPLAYFIXEDOUTPUT   0x20000000
+endif
+
+define DMORIENT_PORTRAIT   1
+define DMORIENT_LANDSCAPE  2
+
+define DMPAPER_FIRST                DMPAPER_LETTER
+define DMPAPER_LETTER               1
+define DMPAPER_LETTERSMALL          2
+define DMPAPER_TABLOID              3
+define DMPAPER_LEDGER               4
+define DMPAPER_LEGAL                5
+define DMPAPER_STATEMENT            6
+define DMPAPER_EXECUTIVE            7
+define DMPAPER_A3                   8
+define DMPAPER_A4                   9
+define DMPAPER_A4SMALL             10
+define DMPAPER_A5                  11
+define DMPAPER_B4                  12
+define DMPAPER_B5                  13
+define DMPAPER_FOLIO               14
+define DMPAPER_QUARTO              15
+define DMPAPER_10X14               16
+define DMPAPER_11X17               17
+define DMPAPER_NOTE                18
+define DMPAPER_ENV_9               19
+define DMPAPER_ENV_10              20
+define DMPAPER_ENV_11              21
+define DMPAPER_ENV_12              22
+define DMPAPER_ENV_14              23
+define DMPAPER_CSHEET              24
+define DMPAPER_DSHEET              25
+define DMPAPER_ESHEET              26
+define DMPAPER_ENV_DL              27
+define DMPAPER_ENV_C5              28
+define DMPAPER_ENV_C3              29
+define DMPAPER_ENV_C4              30
+define DMPAPER_ENV_C6              31
+define DMPAPER_ENV_C65             32
+define DMPAPER_ENV_B4              33
+define DMPAPER_ENV_B5              34
+define DMPAPER_ENV_B6              35
+define DMPAPER_ENV_ITALY           36
+define DMPAPER_ENV_MONARCH         37
+define DMPAPER_ENV_PERSONAL        38
+define DMPAPER_FANFOLD_US          39
+define DMPAPER_FANFOLD_STD_GERMAN  40
+define DMPAPER_FANFOLD_LGL_GERMAN  41
+if(WINVER ge 0x0400)
+define DMPAPER_ISO_B4              42
+define DMPAPER_JAPANESE_POSTCARD   43
+define DMPAPER_9X11                44
+define DMPAPER_10X11               45
+define DMPAPER_15X11               46
+define DMPAPER_ENV_INVITE          47
+define DMPAPER_RESERVED_48         48
+define DMPAPER_RESERVED_49         49
+define DMPAPER_LETTER_EXTRA        50
+define DMPAPER_LEGAL_EXTRA         51
+define DMPAPER_TABLOID_EXTRA       52
+define DMPAPER_A4_EXTRA            53
+define DMPAPER_LETTER_TRANSVERSE   54
+define DMPAPER_A4_TRANSVERSE       55
+define DMPAPER_LETTER_EXTRA_TRANSVERSE 56
+define DMPAPER_A_PLUS              57
+define DMPAPER_B_PLUS              58
+define DMPAPER_LETTER_PLUS         59
+define DMPAPER_A4_PLUS             60
+define DMPAPER_A5_TRANSVERSE       61
+define DMPAPER_B5_TRANSVERSE       62
+define DMPAPER_A3_EXTRA            63
+define DMPAPER_A5_EXTRA            64
+define DMPAPER_B5_EXTRA            65
+define DMPAPER_A2                  66
+define DMPAPER_A3_TRANSVERSE       67
+define DMPAPER_A3_EXTRA_TRANSVERSE 68
+endif
+
+if(WINVER ge 0x0500)
+define DMPAPER_DBL_JAPANESE_POSTCARD 69
+define DMPAPER_A6                  70
+define DMPAPER_JENV_KAKU2          71
+define DMPAPER_JENV_KAKU3          72
+define DMPAPER_JENV_CHOU3          73
+define DMPAPER_JENV_CHOU4          74
+define DMPAPER_LETTER_ROTATED      75
+define DMPAPER_A3_ROTATED          76
+define DMPAPER_A4_ROTATED          77
+define DMPAPER_A5_ROTATED          78
+define DMPAPER_B4_JIS_ROTATED      79
+define DMPAPER_B5_JIS_ROTATED      80
+define DMPAPER_JAPANESE_POSTCARD_ROTATED 81
+define DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED 82
+define DMPAPER_A6_ROTATED          83
+define DMPAPER_JENV_KAKU2_ROTATED  84
+define DMPAPER_JENV_KAKU3_ROTATED  85
+define DMPAPER_JENV_CHOU3_ROTATED  86
+define DMPAPER_JENV_CHOU4_ROTATED  87
+define DMPAPER_B6_JIS              88
+define DMPAPER_B6_JIS_ROTATED      89
+define DMPAPER_12X11               90
+define DMPAPER_JENV_YOU4           91
+define DMPAPER_JENV_YOU4_ROTATED   92
+define DMPAPER_P16K                93
+define DMPAPER_P32K                94
+define DMPAPER_P32KBIG             95
+define DMPAPER_PENV_1              96
+define DMPAPER_PENV_2              97
+define DMPAPER_PENV_3              98
+define DMPAPER_PENV_4              99
+define DMPAPER_PENV_5              100
+define DMPAPER_PENV_6              101
+define DMPAPER_PENV_7              102
+define DMPAPER_PENV_8              103
+define DMPAPER_PENV_9              104
+define DMPAPER_PENV_10             105
+define DMPAPER_P16K_ROTATED        106
+define DMPAPER_P32K_ROTATED        107
+define DMPAPER_P32KBIG_ROTATED     108
+define DMPAPER_PENV_1_ROTATED      109
+define DMPAPER_PENV_2_ROTATED      110
+define DMPAPER_PENV_3_ROTATED      111
+define DMPAPER_PENV_4_ROTATED      112
+define DMPAPER_PENV_5_ROTATED      113
+define DMPAPER_PENV_6_ROTATED      114
+define DMPAPER_PENV_7_ROTATED      115
+define DMPAPER_PENV_8_ROTATED      116
+define DMPAPER_PENV_9_ROTATED      117
+define DMPAPER_PENV_10_ROTATED     118
+endif
+
+if (WINVER ge 0x0500)
+define DMPAPER_LAST                DMPAPER_PENV_10_ROTATED
+elseif (WINVER ge 0x0400)
+define DMPAPER_LAST                DMPAPER_A3_EXTRA_TRANSVERSE
+else
+define DMPAPER_LAST                DMPAPER_FANFOLD_LGL_GERMAN
+endif
+
+define DMPAPER_USER                256
+
+define DMBIN_FIRST         DMBIN_UPPER
+define DMBIN_UPPER         1
+define DMBIN_ONLYONE       1
+define DMBIN_LOWER         2
+define DMBIN_MIDDLE        3
+define DMBIN_MANUAL        4
+define DMBIN_ENVELOPE      5
+define DMBIN_ENVMANUAL     6
+define DMBIN_AUTO          7
+define DMBIN_TRACTOR       8
+define DMBIN_SMALLFMT      9
+define DMBIN_LARGEFMT      10
+define DMBIN_LARGECAPACITY 11
+define DMBIN_CASSETTE      14
+define DMBIN_FORMSOURCE    15
+define DMBIN_LAST          DMBIN_FORMSOURCE
+
+define DMBIN_USER          256
+
+define DMRES_DRAFT         (-1)
+define DMRES_LOW           (-2)
+define DMRES_MEDIUM        (-3)
+define DMRES_HIGH          (-4)
+
+define DMCOLOR_MONOCHROME  1
+define DMCOLOR_COLOR       2
+
+define DMDUP_SIMPLEX    1
+define DMDUP_VERTICAL   2
+define DMDUP_HORIZONTAL 3
+
+define DMTT_BITMAP     1
+define DMTT_DOWNLOAD   2
+define DMTT_SUBDEV     3
+if(WINVER ge 0x0400)
+define DMTT_DOWNLOAD_OUTLINE 4
+endif
+
+define DMCOLLATE_FALSE  0
+define DMCOLLATE_TRUE   1
+
+if(WINVER ge 0x0501)
+define DMDO_DEFAULT    0
+define DMDO_90         1
+define DMDO_180        2
+define DMDO_270        3
+
+define DMDFO_DEFAULT   0
+define DMDFO_STRETCH   1
+define DMDFO_CENTER    2
+endif
+
+define DM_INTERLACED           0x00000002
+define DMDISPLAYFLAGS_TEXTMODE 0x00000004
+
+define DMNUP_SYSTEM        1
+define DMNUP_ONEUP         2
+
+if(WINVER ge 0x0400)
+define DMICMMETHOD_NONE    1
+define DMICMMETHOD_SYSTEM  2
+define DMICMMETHOD_DRIVER  3
+define DMICMMETHOD_DEVICE  4
+
+define DMICMMETHOD_USER  256
+
+define DMICM_SATURATE          1
+define DMICM_CONTRAST          2
+define DMICM_COLORIMETRIC       3
+define DMICM_ABS_COLORIMETRIC   4
+
+define DMICM_USER        256
+
+define DMMEDIA_STANDARD      1
+define DMMEDIA_TRANSPARENCY  2
+define DMMEDIA_GLOSSY        3
+
+define DMMEDIA_USER        256
+
+define DMDITHER_NONE       1
+define DMDITHER_COARSE     2
+define DMDITHER_FINE       3
+define DMDITHER_LINEART    4
+define DMDITHER_ERRORDIFFUSION 5
+define DMDITHER_RESERVED6      6
+define DMDITHER_RESERVED7      7
+define DMDITHER_RESERVED8      8
+define DMDITHER_RESERVED9      9
+define DMDITHER_GRAYSCALE  10
+
+define DMDITHER_USER     256
+endif
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+_DISPLAY_DEVICEA        struct
+cb                      DWORD ?
+DeviceName              CHAR 32 dup(?)
+DeviceString            CHAR 128 dup(?)
+StateFlags              DWORD ?
+DeviceID                CHAR 128 dup(?)
+DeviceKey               CHAR 128 dup(?)
+_DISPLAY_DEVICEA        ends
+DISPLAY_DEVICEA         typedef _DISPLAY_DEVICEA
+PDISPLAY_DEVICEA        typedef ptr _DISPLAY_DEVICEA
+LPDISPLAY_DEVICEA       typedef ptr _DISPLAY_DEVICEA
+_DISPLAY_DEVICEW        struct
+cb                      DWORD ?
+DeviceName              WCHAR 32 dup(?)
+DeviceString            WCHAR 128 dup(?)
+StateFlags              DWORD ?
+DeviceID                WCHAR 128 dup(?)
+DeviceKey               WCHAR 128 dup(?)
+_DISPLAY_DEVICEW        ends
+DISPLAY_DEVICEW         typedef _DISPLAY_DEVICEW
+PDISPLAY_DEVICEW        typedef ptr _DISPLAY_DEVICEW
+LPDISPLAY_DEVICEW       typedef ptr _DISPLAY_DEVICEW
+ifdef _UNICODE
+DISPLAY_DEVICE          typedef DISPLAY_DEVICEW
+PDISPLAY_DEVICE         typedef PDISPLAY_DEVICEW
+LPDISPLAY_DEVICE        typedef LPDISPLAY_DEVICEW
+else
+DISPLAY_DEVICE          typedef DISPLAY_DEVICEA
+PDISPLAY_DEVICE         typedef PDISPLAY_DEVICEA
+LPDISPLAY_DEVICE        typedef LPDISPLAY_DEVICEA
+endif
+
+endif
+;.pragma endregion
+
+define DISPLAY_DEVICE_ATTACHED_TO_DESKTOP      0x00000001
+define DISPLAY_DEVICE_MULTI_DRIVER             0x00000002
+define DISPLAY_DEVICE_PRIMARY_DEVICE           0x00000004
+define DISPLAY_DEVICE_MIRRORING_DRIVER         0x00000008
+define DISPLAY_DEVICE_VGA_COMPATIBLE           0x00000010
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
-DISPLAY_DEVICE_REMOVABLE	equ 0x00000020
+define DISPLAY_DEVICE_REMOVABLE                0x00000020
 endif
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-ISPLAY_DEVICE_ACC_DRIVER	equ 0x00000040
+define DISPLAY_DEVICE_ACC_DRIVER               0x00000040
 endif
-DISPLAY_DEVICE_MODESPRUNED	equ 0x08000000
+define DISPLAY_DEVICE_MODESPRUNED              0x08000000
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
-DISPLAY_DEVICE_REMOTE		equ 0x04000000
-DISPLAY_DEVICE_DISCONNECT	equ 0x02000000
+define DISPLAY_DEVICE_REMOTE                   0x04000000
+define DISPLAY_DEVICE_DISCONNECT               0x02000000
 endif
-DISPLAY_DEVICE_TS_COMPATIBLE	equ 0x00200000
+define DISPLAY_DEVICE_TS_COMPATIBLE            0x00200000
 if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
-DISPLAY_DEVICE_UNSAFE_MODES_ON	equ 0x00080000
+define DISPLAY_DEVICE_UNSAFE_MODES_ON          0x00080000
 endif
+
 if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
-DISPLAY_DEVICE_ACTIVE		equ 0x00000001
-DISPLAY_DEVICE_ATTACHED		equ 0x00000002
+define DISPLAY_DEVICE_ACTIVE              0x00000001
+define DISPLAY_DEVICE_ATTACHED            0x00000002
 endif
 
 if(WINVER ge 0x0601)
 
-DISPLAYCONFIG_MAXPATH equ 1024
+define DISPLAYCONFIG_MAXPATH 1024
 
-;if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-DISPLAYCONFIG_RATIONAL	STRUC
-Numerator		UINT32 ?
-Denominator		UINT32 ?
-DISPLAYCONFIG_RATIONAL	ENDS
+DISPLAYCONFIG_RATIONAL  struct
+Numerator               UINT32 ?
+Denominator             UINT32 ?
+DISPLAYCONFIG_RATIONAL  ends
 
 .enum DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY {
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER		    = -1,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15		    =  0,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO		    =  1,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO	    =  2,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO	    =  3,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI			    =  4,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI		    =  5,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS		    =  6,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN		    =  8,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI			    =  9,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER                   = -1,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15                    =  0,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO                  =  1,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO         =  2,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO         =  3,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI                     =  4,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI                    =  5,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS                    =  6,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN                   =  8,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI                     =  9,
     DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL    = 10,
     DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED    = 11,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL	    = 12,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED	    = 13,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE		    = 14,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST		    = 15,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL		    = 0x80000000,
-    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32	    = 0xFFFFFFFF
-    }
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL            = 12,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED            = 13,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE              = 14,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST                = 15,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL                = 0x80000000,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32            = 0xFFFFFFFF
+}
 
 .enum DISPLAYCONFIG_SCANLINE_ORDERING {
-    DISPLAYCONFIG_SCANLINE_ORDERING_UNSPECIFIED			= 0,
-    DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE			= 1,
-    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED			= 2,
-    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_UPPERFIELDFIRST	= DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED,
-    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST	= 3,
-    DISPLAYCONFIG_SCANLINE_ORDERING_FORCE_UINT32		= 0xFFFFFFFF
-    }
+    DISPLAYCONFIG_SCANLINE_ORDERING_UNSPECIFIED                 = 0,
+    DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE                 = 1,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED                  = 2,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_UPPERFIELDFIRST  = DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST  = 3,
+    DISPLAYCONFIG_SCANLINE_ORDERING_FORCE_UINT32                = 0xFFFFFFFF
+}
 
-DISPLAYCONFIG_2DREGION	STRUC
-x			UINT32 ?
-y			UINT32 ?
-DISPLAYCONFIG_2DREGION	ENDS
+DISPLAYCONFIG_2DREGION  struct
+_cx                     UINT32 ?
+cy                      UINT32 ?
+DISPLAYCONFIG_2DREGION  ends
 
-DISPLAYCONFIG_VIDEO_SIGNAL_INFO STRUC
-pixelRate		UINT64 ?
-hSyncFreq		DISPLAYCONFIG_RATIONAL <>
-vSyncFreq		DISPLAYCONFIG_RATIONAL <>
-activeSize		DISPLAYCONFIG_2DREGION <>
-totalSize		DISPLAYCONFIG_2DREGION <>
-;UNION
-; STRUC AdditionalSignalInfo
-;  videoStandard : 16	UINT32 ?
-;  vSyncFreqDivider : 6 UINT32 ?
-;  reserved : 10		UINT32 ?
-; ENDS
- videoStandard		UINT32 ?
-;ENDS
-scanLineOrdering	DISPLAYCONFIG_SCANLINE_ORDERING ?
-DISPLAYCONFIG_VIDEO_SIGNAL_INFO ENDS
+DISPLAYCONFIG_VIDEO_SIGNAL_INFO struct
+pixelRate               UINT64 ?
+hSyncFreq               DISPLAYCONFIG_RATIONAL <>
+vSyncFreq               DISPLAYCONFIG_RATIONAL <>
+activeSize              DISPLAYCONFIG_2DREGION <>
+totalSize               DISPLAYCONFIG_2DREGION <>
+union
+ record AdditionalSignalInfo
+  videoStandard         UINT32 : 16 ?
+  vSyncFreqDivider      UINT32 :  6 ?
+  reserved              UINT32 : 10 ?
+ ends
+ videoStandard          UINT32 ?
+ends
+scanLineOrdering        DISPLAYCONFIG_SCANLINE_ORDERING ?
+DISPLAYCONFIG_VIDEO_SIGNAL_INFO ends
 
 .enum DISPLAYCONFIG_SCALING {
-    DISPLAYCONFIG_SCALING_IDENTITY		    = 1,
-    DISPLAYCONFIG_SCALING_CENTERED		    = 2,
-    DISPLAYCONFIG_SCALING_STRETCHED		    = 3,
+    DISPLAYCONFIG_SCALING_IDENTITY                  = 1,
+    DISPLAYCONFIG_SCALING_CENTERED                  = 2,
+    DISPLAYCONFIG_SCALING_STRETCHED                 = 3,
     DISPLAYCONFIG_SCALING_ASPECTRATIOCENTEREDMAX    = 4,
-    DISPLAYCONFIG_SCALING_CUSTOM		    = 5,
-    DISPLAYCONFIG_SCALING_PREFERRED		    = 128,
-    DISPLAYCONFIG_SCALING_FORCE_UINT32		    = 0xFFFFFFFF
-    }
+    DISPLAYCONFIG_SCALING_CUSTOM                    = 5,
+    DISPLAYCONFIG_SCALING_PREFERRED                 = 128,
+    DISPLAYCONFIG_SCALING_FORCE_UINT32              = 0xFFFFFFFF
+}
 
 .enum DISPLAYCONFIG_ROTATION {
-    DISPLAYCONFIG_ROTATION_IDENTITY	= 1,
-    DISPLAYCONFIG_ROTATION_ROTATE90	= 2,
-    DISPLAYCONFIG_ROTATION_ROTATE180	= 3,
-    DISPLAYCONFIG_ROTATION_ROTATE270	= 4,
+    DISPLAYCONFIG_ROTATION_IDENTITY     = 1,
+    DISPLAYCONFIG_ROTATION_ROTATE90     = 2,
+    DISPLAYCONFIG_ROTATION_ROTATE180    = 3,
+    DISPLAYCONFIG_ROTATION_ROTATE270    = 4,
     DISPLAYCONFIG_ROTATION_FORCE_UINT32 = 0xFFFFFFFF
-    }
+}
 
 .enum DISPLAYCONFIG_MODE_INFO_TYPE {
     DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE = 1,
     DISPLAYCONFIG_MODE_INFO_TYPE_TARGET = 2,
     DISPLAYCONFIG_MODE_INFO_TYPE_FORCE_UINT32 = 0xFFFFFFFF
-    }
+}
 
 .enum DISPLAYCONFIG_PIXELFORMAT {
-    DISPLAYCONFIG_PIXELFORMAT_8BPP	    = 1,
-    DISPLAYCONFIG_PIXELFORMAT_16BPP	    = 2,
-    DISPLAYCONFIG_PIXELFORMAT_24BPP	    = 3,
-    DISPLAYCONFIG_PIXELFORMAT_32BPP	    = 4,
-    DISPLAYCONFIG_PIXELFORMAT_NONGDI	    = 5,
+    DISPLAYCONFIG_PIXELFORMAT_8BPP          = 1,
+    DISPLAYCONFIG_PIXELFORMAT_16BPP         = 2,
+    DISPLAYCONFIG_PIXELFORMAT_24BPP         = 3,
+    DISPLAYCONFIG_PIXELFORMAT_32BPP         = 4,
+    DISPLAYCONFIG_PIXELFORMAT_NONGDI        = 5,
     DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32  = 0xffffffff
-    }
+}
 
-DISPLAYCONFIG_SOURCE_MODE STRUC
-width			UINT32 ?
-height			UINT32 ?
-pixelFormat		DISPLAYCONFIG_PIXELFORMAT ?
-position		POINTL <>
-DISPLAYCONFIG_SOURCE_MODE ENDS
+DISPLAYCONFIG_SOURCE_MODE struct
+width                   UINT32 ?
+height                  UINT32 ?
+pixelFormat             DISPLAYCONFIG_PIXELFORMAT ?
+position                POINTL <>
+DISPLAYCONFIG_SOURCE_MODE ends
 
-DISPLAYCONFIG_TARGET_MODE STRUC
-targetVideoSignalInfo	DISPLAYCONFIG_VIDEO_SIGNAL_INFO <>
-DISPLAYCONFIG_TARGET_MODE ENDS
+DISPLAYCONFIG_TARGET_MODE struct
+targetVideoSignalInfo   DISPLAYCONFIG_VIDEO_SIGNAL_INFO <>
+DISPLAYCONFIG_TARGET_MODE ends
 
-DISPLAYCONFIG_MODE_INFO STRUC
-infoType		DISPLAYCONFIG_MODE_INFO_TYPE ?
-id			UINT32 ?
-adapterId		LUID <>
-UNION
- targetMode		DISPLAYCONFIG_TARGET_MODE <>
- sourceMode		DISPLAYCONFIG_SOURCE_MODE <>
-ENDS
-DISPLAYCONFIG_MODE_INFO ENDS
+DISPLAYCONFIG_MODE_INFO struct
+infoType                DISPLAYCONFIG_MODE_INFO_TYPE ?
+id                      UINT32 ?
+adapterId               LUID <>
+union
+ targetMode             DISPLAYCONFIG_TARGET_MODE <>
+ sourceMode             DISPLAYCONFIG_SOURCE_MODE <>
+ends
+DISPLAYCONFIG_MODE_INFO ends
 
-DISPLAYCONFIG_PATH_MODE_IDX_INVALID equ 0xffffffff
+define DISPLAYCONFIG_PATH_MODE_IDX_INVALID     0xffffffff
 
-DISPLAYCONFIG_PATH_SOURCE_INFO STRUC
-adapterId		LUID <>
-id			UINT32 ?
-modeInfoIdx		UINT32 ?
-statusFlags		UINT32 ?
-DISPLAYCONFIG_PATH_SOURCE_INFO ENDS
+DISPLAYCONFIG_PATH_SOURCE_INFO struct
+adapterId               LUID <>
+id                      UINT32 ?
+modeInfoIdx             UINT32 ?
+statusFlags             UINT32 ?
+DISPLAYCONFIG_PATH_SOURCE_INFO ends
 
-DISPLAYCONFIG_SOURCE_IN_USE equ 0x00000001
+define DISPLAYCONFIG_SOURCE_IN_USE     0x00000001
 
-DISPLAYCONFIG_PATH_TARGET_INFO STRUC
-adapterId		LUID <>
-id			UINT32 ?
-modeInfoIdx		UINT32 ?
-outputTechnology	DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
-rotation		DISPLAYCONFIG_ROTATION ?
-scaling			DISPLAYCONFIG_SCALING ?
-refreshRate		DISPLAYCONFIG_RATIONAL <>
-scanLineOrdering	DISPLAYCONFIG_SCANLINE_ORDERING ?
-targetAvailable		BOOL ?
-statusFlags		UINT32 ?
-DISPLAYCONFIG_PATH_TARGET_INFO ENDS
+DISPLAYCONFIG_PATH_TARGET_INFO struct
+adapterId               LUID <>
+id                      UINT32 ?
+modeInfoIdx             UINT32 ?
+outputTechnology        DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
+rotation                DISPLAYCONFIG_ROTATION ?
+scaling                 DISPLAYCONFIG_SCALING ?
+refreshRate             DISPLAYCONFIG_RATIONAL <>
+scanLineOrdering        DISPLAYCONFIG_SCANLINE_ORDERING ?
+targetAvailable         BOOL ?
+statusFlags             UINT32 ?
+DISPLAYCONFIG_PATH_TARGET_INFO ends
 
-DISPLAYCONFIG_TARGET_IN_USE			    equ 0x00000001
-DISPLAYCONFIG_TARGET_FORCIBLE			    equ 0x00000002
-DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_BOOT	    equ 0x00000004
-DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_PATH	    equ 0x00000008
-DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_SYSTEM	    equ 0x00000010
+define DISPLAYCONFIG_TARGET_IN_USE                         0x00000001
+define DISPLAYCONFIG_TARGET_FORCIBLE                       0x00000002
+define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_BOOT       0x00000004
+define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_PATH       0x00000008
+define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_SYSTEM     0x00000010
 
-DISPLAYCONFIG_PATH_INFO STRUC
-sourceInfo		DISPLAYCONFIG_PATH_SOURCE_INFO <>
-targetInfo		DISPLAYCONFIG_PATH_TARGET_INFO <>
-flags			UINT32 ?
-DISPLAYCONFIG_PATH_INFO ENDS
+DISPLAYCONFIG_PATH_INFO struct
+sourceInfo              DISPLAYCONFIG_PATH_SOURCE_INFO <>
+targetInfo              DISPLAYCONFIG_PATH_TARGET_INFO <>
+flags                   UINT32 ?
+DISPLAYCONFIG_PATH_INFO ends
 
-DISPLAYCONFIG_PATH_ACTIVE	equ 0x00000001
+define DISPLAYCONFIG_PATH_ACTIVE       0x00000001
 
 .enum DISPLAYCONFIG_TOPOLOGY_ID {
-      DISPLAYCONFIG_TOPOLOGY_INTERNAL	    = 0x00000001,
-      DISPLAYCONFIG_TOPOLOGY_CLONE	    = 0x00000002,
-      DISPLAYCONFIG_TOPOLOGY_EXTEND	    = 0x00000004,
-      DISPLAYCONFIG_TOPOLOGY_EXTERNAL	    = 0x00000008,
+      DISPLAYCONFIG_TOPOLOGY_INTERNAL       = 0x00000001,
+      DISPLAYCONFIG_TOPOLOGY_CLONE          = 0x00000002,
+      DISPLAYCONFIG_TOPOLOGY_EXTEND         = 0x00000004,
+      DISPLAYCONFIG_TOPOLOGY_EXTERNAL       = 0x00000008,
       DISPLAYCONFIG_TOPOLOGY_FORCE_UINT32   = 0xFFFFFFFF
-      }
+}
 
 .enum DISPLAYCONFIG_DEVICE_INFO_TYPE {
-      DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME		    = 1,
-      DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME		    = 2,
+      DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME             = 1,
+      DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME             = 2,
       DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE   = 3,
-      DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME	    = 4,
-      DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE	    = 5,
-      DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE	    = 6,
-      DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32		    = 0xFFFFFFFF
-      }
+      DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME            = 4,
+      DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE      = 5,
+      DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE        = 6,
+      DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32                = 0xFFFFFFFF
+}
 
-;endif
+endif
+;.pragma endregion
 
-;if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-DISPLAYCONFIG_DEVICE_INFO_HEADER STRUC
-type				DISPLAYCONFIG_DEVICE_INFO_TYPE ?
-size				UINT32 ?
-adapterId			LUID <>
-id				UINT32 ?
-DISPLAYCONFIG_DEVICE_INFO_HEADER ENDS
+DISPLAYCONFIG_DEVICE_INFO_HEADER struct
+type                    DISPLAYCONFIG_DEVICE_INFO_TYPE ?
+size                    UINT32 ?
+adapterId               LUID <>
+id                      UINT32 ?
+DISPLAYCONFIG_DEVICE_INFO_HEADER ends
 
-;endif
+endif
+;.pragma endregion
 
-;if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-DISPLAYCONFIG_SOURCE_DEVICE_NAME STRUC
-header				DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-viewGdiDeviceName		WCHAR CCHDEVICENAME dup(?)
-DISPLAYCONFIG_SOURCE_DEVICE_NAME ENDS
+DISPLAYCONFIG_SOURCE_DEVICE_NAME struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+viewGdiDeviceName       WCHAR CCHDEVICENAME dup(?)
+DISPLAYCONFIG_SOURCE_DEVICE_NAME ends
 
-DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS STRUC
-value				UINT32 ?
-DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS ENDS
+DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS struct
+union
+ record
+  friendlyNameFromEdid  UINT32 :  1 ?
+  friendlyNameForced    UINT32 :  1 ?
+  edidIdsValid          UINT32 :  1 ?
+  reserved              UINT32 : 29 ?
+ ends
+ value                  UINT32 ?
+ends
+DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS ends
 
-DISPLAYCONFIG_TARGET_DEVICE_NAME STRUC
-header				DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-flags				DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS <>
-outputTechnology		DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
-edidManufactureId		UINT16 ?
-edidProductCodeId		UINT16 ?
-connectorInstance		UINT32 ?
-monitorFriendlyDeviceName	WCHAR 64 dup(?)
-monitorDevicePath		WCHAR 128 dup(?)
-DISPLAYCONFIG_TARGET_DEVICE_NAME ENDS
+DISPLAYCONFIG_TARGET_DEVICE_NAME struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+flags                   DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS <>
+outputTechnology        DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
+edidManufactureId       UINT16 ?
+edidProductCodeId       UINT16 ?
+connectorInstance       UINT32 ?
+monitorFriendlyDeviceNameW CHAR 64 dup(?)
+monitorDevicePath       WCHAR 128 dup(?)
+DISPLAYCONFIG_TARGET_DEVICE_NAME ends
 
-DISPLAYCONFIG_TARGET_PREFERRED_MODE STRUC
-header				DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-width				UINT32 ?
-height				UINT32 ?
-targetMode			DISPLAYCONFIG_TARGET_MODE <>
-DISPLAYCONFIG_TARGET_PREFERRED_MODE ENDS
+DISPLAYCONFIG_TARGET_PREFERRED_MODE struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+width                   UINT32 ?
+height                  UINT32 ?
+targetMode              DISPLAYCONFIG_TARGET_MODE <>
+DISPLAYCONFIG_TARGET_PREFERRED_MODE ends
 
-DISPLAYCONFIG_ADAPTER_NAME	STRUC
-header				DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-adapterDevicePath		WCHAR 128 dup(?)
-DISPLAYCONFIG_ADAPTER_NAME	ENDS
+DISPLAYCONFIG_ADAPTER_NAME struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+adapterDevicePath       WCHAR 128 dup(?)
+DISPLAYCONFIG_ADAPTER_NAME ends
 
-DISPLAYCONFIG_TARGET_BASE_TYPE	STRUC
-header			DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-baseOutputTechnology	DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
-DISPLAYCONFIG_TARGET_BASE_TYPE	ENDS
+DISPLAYCONFIG_TARGET_BASE_TYPE struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+baseOutputTechnology    DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
+DISPLAYCONFIG_TARGET_BASE_TYPE ends
 
-DISPLAYCONFIG_SET_TARGET_PERSISTENCE STRUC
-header			DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-value			UINT32 ?
-DISPLAYCONFIG_SET_TARGET_PERSISTENCE ENDS
+DISPLAYCONFIG_SET_TARGET_PERSISTENCE struct
+header                  DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+union
+ record
+  bootPersistenceOn     UINT32 :  1 ?
+  reserved              UINT32 : 31 ?
+ ends
+ value                  UINT32 ?
+ends
+DISPLAYCONFIG_SET_TARGET_PERSISTENCE ends
 
-;endif
+endif
+;.pragma endregion
 
-QDC_ALL_PATHS			equ 0x00000001
-QDC_ONLY_ACTIVE_PATHS		equ 0x00000002
-QDC_DATABASE_CURRENT		equ 0x00000004
+define QDC_ALL_PATHS                   0x00000001
+define QDC_ONLY_ACTIVE_PATHS           0x00000002
+define QDC_DATABASE_CURRENT            0x00000004
 
-SDC_TOPOLOGY_INTERNAL		equ 0x00000001
-SDC_TOPOLOGY_CLONE		equ 0x00000002
-SDC_TOPOLOGY_EXTEND		equ 0x00000004
-SDC_TOPOLOGY_EXTERNAL		equ 0x00000008
-SDC_TOPOLOGY_SUPPLIED		equ 0x00000010
-SDC_USE_DATABASE_CURRENT	equ (SDC_TOPOLOGY_INTERNAL | SDC_TOPOLOGY_CLONE | SDC_TOPOLOGY_EXTEND | SDC_TOPOLOGY_EXTERNAL)
+define SDC_TOPOLOGY_INTERNAL           0x00000001
+define SDC_TOPOLOGY_CLONE              0x00000002
+define SDC_TOPOLOGY_EXTEND             0x00000004
+define SDC_TOPOLOGY_EXTERNAL           0x00000008
+define SDC_TOPOLOGY_SUPPLIED           0x00000010
+define SDC_USE_DATABASE_CURRENT        (SDC_TOPOLOGY_INTERNAL or SDC_TOPOLOGY_CLONE or SDC_TOPOLOGY_EXTEND or SDC_TOPOLOGY_EXTERNAL)
 
-SDC_USE_SUPPLIED_DISPLAY_CONFIG equ 0x00000020
-SDC_VALIDATE			equ 0x00000040
-SDC_APPLY			equ 0x00000080
-SDC_NO_OPTIMIZATION		equ 0x00000100
-SDC_SAVE_TO_DATABASE		equ 0x00000200
-SDC_ALLOW_CHANGES		equ 0x00000400
-SDC_PATH_PERSIST_IF_REQUIRED	equ 0x00000800
-SDC_FORCE_MODE_ENUMERATION	equ 0x00001000
-SDC_ALLOW_PATH_ORDER_CHANGES	equ 0x00002000
+define SDC_USE_SUPPLIED_DISPLAY_CONFIG 0x00000020
+define SDC_VALIDATE                    0x00000040
+define SDC_APPLY                       0x00000080
+define SDC_NO_OPTIMIZATION             0x00000100
+define SDC_SAVE_TO_DATABASE            0x00000200
+define SDC_ALLOW_CHANGES               0x00000400
+define SDC_PATH_PERSIST_IF_REQUIRED    0x00000800
+define SDC_FORCE_MODE_ENUMERATION      0x00001000
+define SDC_ALLOW_PATH_ORDER_CHANGES    0x00002000
 
+endif
 
-endif ;; WINVER >= 0x0601
+define RDH_RECTANGLES  1
 
-RDH_RECTANGLES		equ 1
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-RGNDATAHEADER		STRUC
-dwSize			dd ?
-iType			dd ?
-nCount			dd ?
-nRgnSize		dd ?
-rcBound			RECT <>
-RGNDATAHEADER		ENDS
-PRGNDATAHEADER		typedef ptr RGNDATAHEADER
+_RGNDATAHEADER          struct
+dwSize                  DWORD ?
+iType                   DWORD ?
+nCount                  DWORD ?
+nRgnSize                DWORD ?
+rcBound                 RECT <>
+_RGNDATAHEADER          ends
+RGNDATAHEADER           typedef _RGNDATAHEADER
+PRGNDATAHEADER          typedef ptr _RGNDATAHEADER
 
-RGNDATA			STRUC
-rdh			RGNDATAHEADER <>
-Buffer			db ?
-RGNDATA			ENDS
-PRGNDATA		typedef ptr RGNDATA
-NPRGNDATA		typedef ptr RGNDATA
-LPRGNDATA		typedef ptr RGNDATA
+_RGNDATA                struct
+rdh                     RGNDATAHEADER <>
+Buffer                  sbyte 1 dup(?)
+_RGNDATA                ends
+RGNDATA                 typedef _RGNDATA
+PRGNDATA                typedef ptr _RGNDATA
+NPRGNDATA               typedef ptr _RGNDATA
+LPRGNDATA               typedef ptr _RGNDATA
 
-ABC			STRUC
-abcA			dd ?
-abcB			dd ?
-abcC			dd ?
-ABC			ENDS
-PABC			typedef ptr ABC
-NPABC			typedef ptr ABC
-LPABC			typedef ptr ABC
+endif
+;.pragma endregion
 
-ABCFLOAT		STRUC
-abcfA			FLOAT ?
-abcfB			FLOAT ?
-abcfC			FLOAT ?
-ABCFLOAT		ENDS
-PABCFLOAT		typedef ptr ABCFLOAT
-NPABCFLOAT		typedef ptr ABCFLOAT
-LPABCFLOAT		typedef ptr ABCFLOAT
+define SYSRGN  4
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+_ABC                    struct
+abcA                    sdword ?
+abcB                    UINT ?
+abcC                    sdword ?
+_ABC                    ends
+ABC                     typedef _ABC
+PABC                    typedef ptr _ABC
+NPABC                   typedef ptr _ABC
+LPABC                   typedef ptr _ABC
+
+_ABCFLOAT               struct
+abcfA                   FLOAT ?
+abcfB                   FLOAT ?
+abcfC                   FLOAT ?
+_ABCFLOAT               ends
+ABCFLOAT                typedef _ABCFLOAT
+PABCFLOAT               typedef ptr _ABCFLOAT
+NPABCFLOAT              typedef ptr _ABCFLOAT
+LPABCFLOAT              typedef ptr _ABCFLOAT
+
+endif
+;.pragma endregion
 
 ifndef NOTEXTMETRIC
 
-OUTLINETEXTMETRICA	STRUC
-otmSize			UINT ?
-otmTextMetrics		TEXTMETRICA <>
-otmFiller		db ?
-otmPanoseNumber		PANOSE <>
-otmfsSelection		UINT ?
-otmfsType		UINT ?
-otmsCharSlopeRise	SINT ?
-otmsCharSlopeRun	SINT ?
-otmItalicAngle		SINT ?
-otmEMSquare		UINT ?
-otmAscent		SINT ?
-otmDescent		SINT ?
-otmLineGap		UINT ?
-otmsCapEmHeight		UINT ?
-otmsXHeight		UINT ?
-otmrcFontBox		RECT <>
-otmMacAscent		SINT ?
-otmMacDescent		SINT ?
-otmMacLineGap		UINT ?
-otmusMinimumPPEM	UINT ?
-otmptSubscriptSize	POINT <>
-otmptSubscriptOffset	POINT <>
-otmptSuperscriptSize	POINT <>
-otmptSuperscriptOffset	POINT <>
-otmsStrikeoutSize	UINT ?
-otmsStrikeoutPosition	SINT ?
-otmsUnderscoreSize	SINT ?
-otmsUnderscorePosition	SINT ?
-otmpFamilyName		PSTR ?
-otmpFaceName		PSTR ?
-otmpStyleName		PSTR ?
-otmpFullName		PSTR ?
-OUTLINETEXTMETRICA	ENDS
-POUTLINETEXTMETRICA	typedef ptr OUTLINETEXTMETRICA
-NPOUTLINETEXTMETRICA	typedef ptr OUTLINETEXTMETRICA
-LPOUTLINETEXTMETRICA	typedef ptr OUTLINETEXTMETRICA
-OUTLINETEXTMETRICW	STRUC
-otmSize			UINT ?
-otmTextMetrics		TEXTMETRICW <>
-otmFiller		db ?
-otmPanoseNumber		PANOSE <>
-otmfsSelection		UINT ?
-otmfsType		UINT ?
-otmsCharSlopeRise	SINT ?
-otmsCharSlopeRun	SINT ?
-otmItalicAngle		SINT ?
-otmEMSquare		UINT ?
-otmAscent		SINT ?
-otmDescent		SINT ?
-otmLineGap		UINT ?
-otmsCapEmHeight		UINT ?
-otmsXHeight		UINT ?
-otmrcFontBox		RECT <>
-otmMacAscent		SINT ?
-otmMacDescent		SINT ?
-otmMacLineGap		UINT ?
-otmusMinimumPPEM	UINT ?
-otmptSubscriptSize	POINT <>
-otmptSubscriptOffset	POINT <>
-otmptSuperscriptSize	POINT <>
-otmptSuperscriptOffset	POINT <>
-otmsStrikeoutSize	UINT ?
-otmsStrikeoutPosition	SINT ?
-otmsUnderscoreSize	SINT ?
-otmsUnderscorePosition	SINT ?
-otmpFamilyName		PSTR ?
-otmpFaceName		PSTR ?
-otmpStyleName		PSTR ?
-otmpFullName		PSTR ?
-OUTLINETEXTMETRICW	ENDS
-POUTLINETEXTMETRICW	typedef ptr OUTLINETEXTMETRICW
-NPOUTLINETEXTMETRICW	typedef ptr OUTLINETEXTMETRICW
-LPOUTLINETEXTMETRICW	typedef ptr OUTLINETEXTMETRICW
-ifdef _UNICODE
-OUTLINETEXTMETRIC	typedef OUTLINETEXTMETRICW
-POUTLINETEXTMETRIC	typedef POUTLINETEXTMETRICW
-NPOUTLINETEXTMETRIC	typedef NPOUTLINETEXTMETRICW
-LPOUTLINETEXTMETRIC	typedef LPOUTLINETEXTMETRICW
-else
-OUTLINETEXTMETRIC	typedef OUTLINETEXTMETRICA
-POUTLINETEXTMETRIC	typedef POUTLINETEXTMETRICA
-NPOUTLINETEXTMETRIC	typedef NPOUTLINETEXTMETRICA
-LPOUTLINETEXTMETRIC	typedef LPOUTLINETEXTMETRICA
-endif
+ifdef _MAC
+include pshpack4.inc
 endif
 
-POLYTEXTA		STRUC
-x			SINT ?
-y			SINT ?
-n			UINT ?
-lpstr			LPCSTR ?
-uiFlags			UINT ?
-_rcl			RECT <>
-pdx			LPDWORD ?
-POLYTEXTA		ENDS
-PPOLYTEXTA		typedef ptr POLYTEXTA
-NPPOLYTEXTA		typedef ptr POLYTEXTA
-LPPOLYTEXTA		typedef ptr POLYTEXTA
-POLYTEXTW		STRUC
-x			SINT ?
-y			SINT ?
-n			UINT ?
-lpstr			LPCWSTR ?
-uiFlags			UINT ?
-_rcl			RECT <>
-pdx			LPDWORD ?
-POLYTEXTW		ENDS
-PPOLYTEXTW		typedef ptr POLYTEXTW
-NPPOLYTEXTW		typedef ptr POLYTEXTW
-LPPOLYTEXTW		typedef ptr POLYTEXTW
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+_OUTLINETEXTMETRICA     struct
+otmSize                 UINT ?
+otmTextMetrics          TEXTMETRICA <>
+otmFiller               BYTE ?
+otmPanoseNumber         PANOSE <>
+otmfsSelection          UINT ?
+otmfsType               UINT ?
+otmsCharSlopeRise       sdword ?
+otmsCharSlopeRun        sdword ?
+otmItalicAngle          sdword ?
+otmEMSquare             UINT ?
+otmAscent               sdword ?
+otmDescent              sdword ?
+otmLineGap              UINT ?
+otmsCapEmHeight         UINT ?
+otmsXHeight             UINT ?
+otmrcFontBox            RECT <>
+otmMacAscent            sdword ?
+otmMacDescent           sdword ?
+otmMacLineGap           UINT ?
+otmusMinimumPPEM        UINT ?
+otmptSubscriptSize      POINT <>
+otmptSubscriptOffset    POINT <>
+otmptSuperscriptSize    POINT <>
+otmptSuperscriptOffset  POINT <>
+otmsStrikeoutSize       UINT ?
+otmsStrikeoutPosition   sdword ?
+otmsUnderscoreSize      sdword ?
+otmsUnderscorePosition  sdword ?
+otmpFamilyName          PSTR ?
+otmpFaceName            PSTR ?
+otmpStyleName           PSTR ?
+otmpFullName            PSTR ?
+_OUTLINETEXTMETRICA     ends
+OUTLINETEXTMETRICA      typedef _OUTLINETEXTMETRICA
+POUTLINETEXTMETRICA     typedef ptr _OUTLINETEXTMETRICA
+NPOUTLINETEXTMETRICA    typedef ptr _OUTLINETEXTMETRICA
+LPOUTLINETEXTMETRICA    typedef ptr _OUTLINETEXTMETRICA
+_OUTLINETEXTMETRICW     struct
+otmSize                 UINT ?
+otmTextMetrics          TEXTMETRICW <>
+otmFiller               BYTE ?
+otmPanoseNumber         PANOSE <>
+otmfsSelection          UINT ?
+otmfsType               UINT ?
+otmsCharSlopeRise       sdword ?
+otmsCharSlopeRun        sdword ?
+otmItalicAngle          sdword ?
+otmEMSquare             UINT ?
+otmAscent               sdword ?
+otmDescent              sdword ?
+otmLineGap              UINT ?
+otmsCapEmHeight         UINT ?
+otmsXHeight             UINT ?
+otmrcFontBox            RECT <>
+otmMacAscent            sdword ?
+otmMacDescent           sdword ?
+otmMacLineGap           UINT ?
+otmusMinimumPPEM        UINT ?
+otmptSubscriptSize      POINT <>
+otmptSubscriptOffset    POINT <>
+otmptSuperscriptSize    POINT <>
+otmptSuperscriptOffset  POINT <>
+otmsStrikeoutSize       UINT ?
+otmsStrikeoutPosition   sdword ?
+otmsUnderscoreSize      sdword ?
+otmsUnderscorePosition  sdword ?
+otmpFamilyName          PSTR ?
+otmpFaceName            PSTR ?
+otmpStyleName           PSTR ?
+otmpFullName            PSTR ?
+_OUTLINETEXTMETRICW     ends
+OUTLINETEXTMETRICW      typedef _OUTLINETEXTMETRICW
+POUTLINETEXTMETRICW     typedef ptr _OUTLINETEXTMETRICW
+NPOUTLINETEXTMETRICW    typedef ptr _OUTLINETEXTMETRICW
+LPOUTLINETEXTMETRICW    typedef ptr _OUTLINETEXTMETRICW
 ifdef _UNICODE
-POLYTEXT		typedef POLYTEXTW
-PPOLYTEXT		typedef PPOLYTEXTW
-NPPOLYTEXT		typedef NPPOLYTEXTW
-LPPOLYTEXT		typedef LPPOLYTEXTW
+OUTLINETEXTMETRIC       typedef OUTLINETEXTMETRICW
+POUTLINETEXTMETRIC      typedef POUTLINETEXTMETRICW
+NPOUTLINETEXTMETRIC     typedef NPOUTLINETEXTMETRICW
+LPOUTLINETEXTMETRIC     typedef LPOUTLINETEXTMETRICW
 else
-POLYTEXT		typedef POLYTEXTA
-PPOLYTEXT		typedef PPOLYTEXTA
-NPPOLYTEXT		typedef NPPOLYTEXTA
-LPPOLYTEXT		typedef LPPOLYTEXTA
+OUTLINETEXTMETRIC       typedef OUTLINETEXTMETRICA
+POUTLINETEXTMETRIC      typedef POUTLINETEXTMETRICA
+NPOUTLINETEXTMETRIC     typedef NPOUTLINETEXTMETRICA
+LPOUTLINETEXTMETRIC     typedef LPOUTLINETEXTMETRICA
 endif
 
-FIXED			STRUC
+endif
+;.pragma endregion
+
+ifdef _MAC
+include poppack.inc
+endif
+
+endif
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+tagPOLYTEXTA            struct
+x                       sdword ?
+y                       sdword ?
+n                       UINT ?
+lpstr                   LPCSTR ?
+uiFlags                 UINT ?
+_rcl                    RECT <>
+pdx                     ptr sdword ?
+tagPOLYTEXTA            ends
+POLYTEXTA               typedef tagPOLYTEXTA
+PPOLYTEXTA              typedef ptr tagPOLYTEXTA
+NPPOLYTEXTA             typedef ptr tagPOLYTEXTA
+LPPOLYTEXTA             typedef ptr tagPOLYTEXTA
+tagPOLYTEXTW            struct
+x                       sdword ?
+y                       sdword ?
+n                       UINT ?
+lpstr                   LPCWSTR ?
+uiFlags                 UINT ?
+_rcl                    RECT <>
+pdx                     ptr sdword ?
+tagPOLYTEXTW            ends
+POLYTEXTW               typedef tagPOLYTEXTW
+PPOLYTEXTW              typedef ptr tagPOLYTEXTW
+NPPOLYTEXTW             typedef ptr tagPOLYTEXTW
+LPPOLYTEXTW             typedef ptr tagPOLYTEXTW
+ifdef _UNICODE
+POLYTEXT                typedef POLYTEXTW
+PPOLYTEXT               typedef PPOLYTEXTW
+NPPOLYTEXT              typedef NPPOLYTEXTW
+LPPOLYTEXT              typedef LPPOLYTEXTW
+else
+POLYTEXT                typedef POLYTEXTA
+PPOLYTEXT               typedef PPOLYTEXTA
+NPPOLYTEXT              typedef NPPOLYTEXTA
+LPPOLYTEXT              typedef LPPOLYTEXTA
+endif
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+_FIXED                  struct
 ifndef _MAC
-fract			dw ?
-value			dw ?
+fract                   WORD ?
+value                   sword ?
 else
-value			dw ?
-fract			dw ?
+value                   sword ?
+fract                   WORD ?
 endif
-FIXED			ENDS
+_FIXED                  ends
+FIXED                   typedef _FIXED
 
-MAT2			STRUC
-eM11			FIXED <>
-eM12			FIXED <>
-eM21			FIXED <>
-eM22			FIXED <>
-MAT2			ENDS
-LPMAT2			typedef ptr MAT2
+_MAT2                   struct
+eM11                    FIXED <>
+eM12                    FIXED <>
+eM21                    FIXED <>
+eM22                    FIXED <>
+_MAT2                   ends
+MAT2                    typedef _MAT2
+LPMAT2                  typedef ptr _MAT2
 
-GLYPHMETRICS		STRUC
-gmBlackBoxX		UINT ?
-gmBlackBoxY		UINT ?
-gmptGlyphOrigin		POINT <>
-gmCellIncX		dw ?
-gmCellIncY		dw ?
-GLYPHMETRICS		ENDS
-LPGLYPHMETRICS		typedef ptr GLYPHMETRICS
+_GLYPHMETRICS           struct
+gmBlackBoxX             UINT ?
+gmBlackBoxY             UINT ?
+gmptGlyphOrigin         POINT <>
+gmCellIncX              sword ?
+gmCellIncY              sword ?
+_GLYPHMETRICS           ends
+GLYPHMETRICS            typedef _GLYPHMETRICS
+LPGLYPHMETRICS          typedef ptr _GLYPHMETRICS
 
-GGO_METRICS		equ 0
-GGO_BITMAP		equ 1
-GGO_NATIVE		equ 2
-GGO_BEZIER		equ 3
+endif
+;.pragma endregion
 
-if(WINVER GE 0x0400)
-GGO_GRAY2_BITMAP	equ 4
-GGO_GRAY4_BITMAP	equ 5
-GGO_GRAY8_BITMAP	equ 6
-GGO_GLYPH_INDEX		equ 0x0080
+define GGO_METRICS        0
+define GGO_BITMAP         1
+define GGO_NATIVE         2
+define GGO_BEZIER         3
+
+if(WINVER ge 0x0400)
+define  GGO_GRAY2_BITMAP   4
+define  GGO_GRAY4_BITMAP   5
+define  GGO_GRAY8_BITMAP   6
+define  GGO_GLYPH_INDEX    0x0080
 endif
 
-TT_POLYGON_TYPE		equ 24
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define  GGO_UNHINTED       0x0100
+endif
 
-TT_PRIM_LINE		equ 1
-TT_PRIM_QSPLINE		equ 2
-TT_PRIM_CSPLINE		equ 3
+define TT_POLYGON_TYPE   24
 
-POINTFX			STRUC
-x			FIXED <>
-y			FIXED <>
-POINTFX			ENDS
-LPPOINTFX		typedef ptr POINTFX
+define TT_PRIM_LINE       1
+define TT_PRIM_QSPLINE    2
+define TT_PRIM_CSPLINE    3
 
-TTPOLYCURVE		STRUC
-wType			dw ?
-cpfx			dw ?
-apfx			POINTFX <>
-TTPOLYCURVE		ENDS
-LPTTPOLYCURVE		typedef ptr TTPOLYCURVE
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-TTPOLYGONHEADER		STRUC
-cb			dd ?
-dwType			dd ?
-pfxStart		POINTFX <>
-TTPOLYGONHEADER		ENDS
-LPTTPOLYGONHEADER	typedef ptr TTPOLYGONHEADER
+tagPOINTFX              struct
+x                       FIXED <>
+y                       FIXED <>
+tagPOINTFX              ends
+POINTFX                 typedef tagPOINTFX
+LPPOINTFX               typedef ptr tagPOINTFX
 
-if(WINVER GE 0x0400)
-GCP_DBCS		equ 0x0001
-GCP_REORDER		equ 0x0002
-GCP_USEKERNING		equ 0x0008
-GCP_GLYPHSHAPE		equ 0x0010
-GCP_LIGATE		equ 0x0020
-GCP_DIACRITIC		equ 0x0100
-GCP_KASHIDA		equ 0x0400
-GCP_ERROR		equ 0x8000
-FLI_MASK		equ 0x103B
+tagTTPOLYCURVE          struct
+wType                   WORD ?
+cpfx                    WORD ?
+apfx                    POINTFX 1 dup(<>)
+tagTTPOLYCURVE          ends
+TTPOLYCURVE             typedef tagTTPOLYCURVE
+LPTTPOLYCURVE           typedef ptr tagTTPOLYCURVE
 
-GCP_JUSTIFY		equ 0x00010000
-FLI_GLYPHS		equ 0x00040000
-GCP_CLASSIN		equ 0x00080000
-GCP_MAXEXTENT		equ 0x00100000
-GCP_JUSTIFYIN		equ 0x00200000
-GCP_DISPLAYZWG		equ 0x00400000
-GCP_SYMSWAPOFF		equ 0x00800000
-GCP_NUMERICOVERRIDE	equ 0x01000000
-GCP_NEUTRALOVERRIDE	equ 0x02000000
-GCP_NUMERICSLATIN	equ 0x04000000
-GCP_NUMERICSLOCAL	equ 0x08000000
+tagTTPOLYGONHEADER      struct
+cb                      DWORD ?
+dwType                  DWORD ?
+pfxStart                POINTFX <>
+tagTTPOLYGONHEADER      ends
+TTPOLYGONHEADER         typedef tagTTPOLYGONHEADER
+LPTTPOLYGONHEADER       typedef ptr tagTTPOLYGONHEADER
 
-GCPCLASS_LATIN		equ 1
-GCPCLASS_HEBREW		equ 2
-GCPCLASS_ARABIC		equ 2
-GCPCLASS_NEUTRAL	equ 3
-GCPCLASS_LOCALNUMBER	equ 4
-GCPCLASS_LATINNUMBER	equ 5
-GCPCLASS_LATINNUMERICTERMINATOR equ 6
-GCPCLASS_LATINNUMERICSEPARATOR	equ 7
-GCPCLASS_NUMERICSEPARATOR	equ 8
-GCPCLASS_PREBOUNDLTR	equ 0x80
-GCPCLASS_PREBOUNDRTL	equ 0x40
-GCPCLASS_POSTBOUNDLTR	equ 0x20
-GCPCLASS_POSTBOUNDRTL	equ 0x10
+endif
+;.pragma endregion
 
-GCPGLYPH_LINKBEFORE	equ 0x8000
-GCPGLYPH_LINKAFTER	equ 0x4000
+if(WINVER ge 0x0400)
+define GCP_DBCS           0x0001
+define GCP_REORDER        0x0002
+define GCP_USEKERNING     0x0008
+define GCP_GLYPHSHAPE     0x0010
+define GCP_LIGATE         0x0020
+define GCP_DIACRITIC      0x0100
+define GCP_KASHIDA        0x0400
+define GCP_ERROR          0x8000
+define FLI_MASK           0x103B
 
-GCP_RESULTSA		STRUC
-lStructSize		dd ?
-lpOutString		LPSTR ?
-lpOrder			LPDWORD ?
-lpDx			LPDWORD ?
-lpCaretPos		LPDWORD ?
-lpClass			LPSTR ?
-lpGlyphs		LPWSTR ?
-nGlyphs			UINT ?
-nMaxFit			SINT ?
-GCP_RESULTSA		ENDS
-LPGCP_RESULTSA		typedef ptr GCP_RESULTSA
-GCP_RESULTSW		STRUC
-lStructSize		dd ?
-lpOutString		LPWSTR ?
-lpOrder			LPDWORD ?
-lpDx			LPDWORD ?
-lpCaretPos		LPDWORD ?
-lpClass			LPSTR ?
-lpGlyphs		LPWSTR ?
-nGlyphs			UINT ?
-nMaxFit			SINT ?
-GCP_RESULTSW		ENDS
-LPGCP_RESULTSW		typedef ptr GCP_RESULTSW
+define GCP_JUSTIFY        0x00010000
+define FLI_GLYPHS         0x00040000
+define GCP_CLASSIN        0x00080000
+define GCP_MAXEXTENT      0x00100000
+define GCP_JUSTIFYIN      0x00200000
+define GCP_DISPLAYZWG      0x00400000
+define GCP_SYMSWAPOFF      0x00800000
+define GCP_NUMERICOVERRIDE 0x01000000
+define GCP_NEUTRALOVERRIDE 0x02000000
+define GCP_NUMERICSLATIN   0x04000000
+define GCP_NUMERICSLOCAL   0x08000000
+
+define GCPCLASS_LATIN                  1
+define GCPCLASS_HEBREW                 2
+define GCPCLASS_ARABIC                 2
+define GCPCLASS_NEUTRAL                3
+define GCPCLASS_LOCALNUMBER            4
+define GCPCLASS_LATINNUMBER            5
+define GCPCLASS_LATINNUMERICTERMINATOR 6
+define GCPCLASS_LATINNUMERICSEPARATOR  7
+define GCPCLASS_NUMERICSEPARATOR       8
+define GCPCLASS_PREBOUNDLTR         0x80
+define GCPCLASS_PREBOUNDRTL         0x40
+define GCPCLASS_POSTBOUNDLTR        0x20
+define GCPCLASS_POSTBOUNDRTL        0x10
+
+define GCPGLYPH_LINKBEFORE          0x8000
+define GCPGLYPH_LINKAFTER           0x4000
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+tagGCP_RESULTSA         struct
+lStructSize             DWORD ?
+lpOutString             LPSTR ?
+lpOrder                 ptr FAR ?
+lpDx                    ptr FAR ?
+lpCaretPos              ptr FAR ?
+lpClass                 LPSTR ?
+lpGlyphs                LPWSTR ?
+nGlyphs                 UINT ?
+nMaxFit                 sdword ?
+tagGCP_RESULTSA         ends
+GCP_RESULTSA            typedef tagGCP_RESULTSA
+LPGCP_RESULTSA          typedef ptr tagGCP_RESULTSA
+tagGCP_RESULTSW         struct
+lStructSize             DWORD ?
+lpOutString             LPWSTR ?
+lpOrder                 ptr FAR ?
+lpDx                    ptr FAR ?
+lpCaretPos              ptr FAR ?
+lpClass                 LPSTR ?
+lpGlyphs                LPWSTR ?
+nGlyphs                 UINT ?
+nMaxFit                 sdword ?
+tagGCP_RESULTSW         ends
+GCP_RESULTSW            typedef tagGCP_RESULTSW
+ LPGCP_RESULTSW         typedef ptr tagGCP_RESULTSW
 ifdef _UNICODE
-GCP_RESULTS		typedef GCP_RESULTSW
-LPGCP_RESULTS		typedef LPGCP_RESULTSW
+GCP_RESULTS             typedef GCP_RESULTSW
+LPGCP_RESULTS           typedef LPGCP_RESULTSW
 else
-GCP_RESULTS		typedef GCP_RESULTSA
-LPGCP_RESULTS		typedef LPGCP_RESULTSA
+GCP_RESULTS             typedef GCP_RESULTSA
+LPGCP_RESULTS           typedef LPGCP_RESULTSA
 endif
+
+endif
+;.pragma endregion
 endif
 
-RASTERIZER_STATUS	STRUC
-nSize			dw ?
-wFlags			dw ?
-nLanguageID		dw ?
-RASTERIZER_STATUS	ENDS
-LPRASTERIZER_STATUS	typedef ptr RASTERIZER_STATUS
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-TT_AVAILABLE		equ 0x0001
-TT_ENABLED		equ 0x0002
+_RASTERIZER_STATUS      struct
+nSize                   sword ?
+wFlags                  sword ?
+nLanguageID             sword ?
+_RASTERIZER_STATUS      ends
+RASTERIZER_STATUS       typedef _RASTERIZER_STATUS
+LPRASTERIZER_STATUS     typedef ptr _RASTERIZER_STATUS
 
-PIXELFORMATDESCRIPTOR	STRUC
-nSize			dw ?
-nVersion		dw ?
-dwFlags			dd ?
-iPixelType		db ?
-cColorBits		db ?
-cRedBits		db ?
-cRedShift		db ?
-cGreenBits		db ?
-cGreenShift		db ?
-cBlueBits		db ?
-cBlueShift		db ?
-cAlphaBits		db ?
-cAlphaShift		db ?
-cAccumBits		db ?
-cAccumRedBits		db ?
-cAccumGreenBits		db ?
-cAccumBlueBits		db ?
-cAccumAlphaBits		db ?
-cDepthBits		db ?
-cStencilBits		db ?
-cAuxBuffers		db ?
-iLayerType		db ?
-bReserved		db ?
-dwLayerMask		dd ?
-dwVisibleMask		dd ?
-dwDamageMask		dd ?
-PIXELFORMATDESCRIPTOR	ENDS
-PPIXELFORMATDESCRIPTOR	typedef ptr PIXELFORMATDESCRIPTOR
-LPPIXELFORMATDESCRIPTOR typedef ptr PIXELFORMATDESCRIPTOR
+endif
+;.pragma endregion
 
-PFD_TYPE_RGBA		equ 0
-PFD_TYPE_COLORINDEX	equ 1
+define TT_AVAILABLE    0x0001
+define TT_ENABLED      0x0002
 
-PFD_MAIN_PLANE		equ 0
-PFD_OVERLAY_PLANE	equ 1
-PFD_UNDERLAY_PLANE	equ (-1)
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-PFD_DOUBLEBUFFER	equ 0x00000001
-PFD_STEREO		equ 0x00000002
-PFD_DRAW_TO_WINDOW	equ 0x00000004
-PFD_DRAW_TO_BITMAP	equ 0x00000008
-PFD_SUPPORT_GDI		equ 0x00000010
-PFD_SUPPORT_OPENGL	equ 0x00000020
-PFD_GENERIC_FORMAT	equ 0x00000040
-PFD_NEED_PALETTE	equ 0x00000080
-PFD_NEED_SYSTEM_PALETTE equ 0x00000100
-PFD_SWAP_EXCHANGE	equ 0x00000200
-PFD_SWAP_COPY		equ 0x00000400
-PFD_SWAP_LAYER_BUFFERS	equ 0x00000800
-PFD_GENERIC_ACCELERATED equ 0x00001000
-PFD_SUPPORT_DIRECTDRAW	equ 0x00002000
+tagPIXELFORMATDESCRIPTOR struct
+nSize                   WORD ?
+nVersion                WORD ?
+dwFlags                 DWORD ?
+iPixelType              BYTE ?
+cColorBits              BYTE ?
+cRedBits                BYTE ?
+cRedShift               BYTE ?
+cGreenBits              BYTE ?
+cGreenShift             BYTE ?
+cBlueBits               BYTE ?
+cBlueShift              BYTE ?
+cAlphaBits              BYTE ?
+cAlphaShift             BYTE ?
+cAccumBits              BYTE ?
+cAccumRedBits           BYTE ?
+cAccumGreenBits         BYTE ?
+cAccumBlueBits          BYTE ?
+cAccumAlphaBits         BYTE ?
+cDepthBits              BYTE ?
+cStencilBits            BYTE ?
+cAuxBuffers             BYTE ?
+iLayerType              BYTE ?
+bReserved               BYTE ?
+dwLayerMask             DWORD ?
+dwVisibleMask           DWORD ?
+dwDamageMask            DWORD ?
+tagPIXELFORMATDESCRIPTOR ends
+PIXELFORMATDESCRIPTOR   typedef tagPIXELFORMATDESCRIPTOR
+PPIXELFORMATDESCRIPTOR  typedef ptr tagPIXELFORMATDESCRIPTOR
+LPPIXELFORMATDESCRIPTOR typedef ptr tagPIXELFORMATDESCRIPTOR
 
-PFD_DEPTH_DONTCARE	equ 0x20000000
-PFD_DOUBLEBUFFER_DONTCARE	equ 0x40000000
-PFD_STEREO_DONTCARE	equ 0x80000000
+endif
+;.pragma endregion
+
+define PFD_TYPE_RGBA        0
+define PFD_TYPE_COLORINDEX  1
+
+define PFD_MAIN_PLANE       0
+define PFD_OVERLAY_PLANE    1
+define PFD_UNDERLAY_PLANE   (-1)
+
+define PFD_DOUBLEBUFFER            0x00000001
+define PFD_STEREO                  0x00000002
+define PFD_DRAW_TO_WINDOW          0x00000004
+define PFD_DRAW_TO_BITMAP          0x00000008
+define PFD_SUPPORT_GDI             0x00000010
+define PFD_SUPPORT_OPENGL          0x00000020
+define PFD_GENERIC_FORMAT          0x00000040
+define PFD_NEED_PALETTE            0x00000080
+define PFD_NEED_SYSTEM_PALETTE     0x00000100
+define PFD_SWAP_EXCHANGE           0x00000200
+define PFD_SWAP_COPY               0x00000400
+define PFD_SWAP_LAYER_BUFFERS      0x00000800
+define PFD_GENERIC_ACCELERATED     0x00001000
+define PFD_SUPPORT_DIRECTDRAW      0x00002000
+define PFD_DIRECT3D_ACCELERATED    0x00004000
+define PFD_SUPPORT_COMPOSITION     0x00008000
+
+define PFD_DEPTH_DONTCARE          0x20000000
+define PFD_DOUBLEBUFFER_DONTCARE   0x40000000
+define PFD_STEREO_DONTCARE         0x80000000
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 ifdef STRICT
-ifndef NOTEXTMETRIC
-CALLBACK(OLDFONTENUMPROCA, :LPLOGFONTA, :LPTEXTMETRICA, :DWORD, :LPARAM)
-CALLBACK(OLDFONTENUMPROCW, :LPLOGFONTW, :LPTEXTMETRICW, :DWORD, :LPARAM)
+
+if not defined(NOTEXTMETRIC)
+CALLBACK(OLDFONTENUMPROCA, :ptr, :ptr, :DWORD, :LPARAM)
+CALLBACK(OLDFONTENUMPROCW, :ptr, :ptr, :DWORD, :LPARAM)
 ifdef _UNICODE
-OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
+define OLDFONTENUMPROC  <OLDFONTENUMPROCW>
 else
-OLDFONTENUMPROC equ <OLDFONTENUMPROCA>
+define OLDFONTENUMPROC  <OLDFONTENUMPROCA>
 endif
 else
-CALLBACK(OLDFONTENUMPROCA, :LPLOGFONTA, :PVOID, :DWORD, :LPARAM)
-CALLBACK(OLDFONTENUMPROCW, :LPLOGFONTW, :PVOID, :DWORD, :LPARAM)
+CALLBACK(OLDFONTENUMPROCA, :ptr, :ptr, :DWORD, :LPARAM)
+CALLBACK(OLDFONTENUMPROCW, :ptr, :ptr, :DWORD, :LPARAM)
 ifdef _UNICODE
-OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
+define OLDFONTENUMPROC  <OLDFONTENUMPROCW>
 else
-OLDFONTENUMPROC equ <OLDFONTENUMPROCA>
+define OLDFONTENUMPROC  <OLDFONTENUMPROCA>
 endif
 endif
 
-FONTENUMPROCA	typedef OLDFONTENUMPROCA
-FONTENUMPROCW	typedef OLDFONTENUMPROCW
+FONTENUMPROCA           typedef OLDFONTENUMPROCA
+FONTENUMPROCW           typedef OLDFONTENUMPROCW
 ifdef _UNICODE
-FONTENUMPROC	typedef FONTENUMPROCW
+FONTENUMPROC            typedef FONTENUMPROCW
 else
-FONTENUMPROC	typedef FONTENUMPROCA
+FONTENUMPROC            typedef FONTENUMPROCA
 endif
-CALLBACK(GOBJENUMPROC, :PVOID, :LPARAM)
-CALLBACK(LINEDDAPROC, :SINT, :SINT, :LPARAM)
+
+CALLBACK(GOBJENUMPROC, :LPVOID, :LPARAM)
+CALLBACK(LINEDDAPROC, :sdword, :sdword, :LPARAM)
 else
-OLDFONTENUMPROC typedef FARPROC
-FONTENUMPROCA	typedef FARPROC
-FONTENUMPROCW	typedef FARPROC
+OLDFONTENUMPROC         typedef FARPROC
+FONTENUMPROCA           typedef FARPROC
+FONTENUMPROCW           typedef FARPROC
 ifdef _UNICODE
-FONTENUMPROC	typedef FONTENUMPROCW
+FONTENUMPROC            typedef FONTENUMPROCW
 else
-FONTENUMPROC	typedef FONTENUMPROCA
+FONTENUMPROC            typedef FONTENUMPROCA
 endif
-GOBJENUMPROC	typedef FARPROC
-LINEDDAPROC	typedef FARPROC
+GOBJENUMPROC            typedef FARPROC
+LINEDDAPROC             typedef FARPROC
+endif
+
 endif
 
 .pragma comment(lib, gdi32)
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 AddFontResourceA proto WINAPI :LPCSTR
 AddFontResourceW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-AddFontResource equ <AddFontResourceW>
+define AddFontResource  <AddFontResourceW>
 else
-AddFontResource equ <AddFontResourceA>
+define AddFontResource  <AddFontResourceA>
 endif
 
-;BOOL
-AnimatePalette	proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-Arc		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-BitBlt		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :DWORD
-CancelDC	proto WINAPI :HDC
-Chord		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-ChoosePixelFormat proto WINAPI :HDC, :LPPIXELFORMATDESCRIPTOR
-;HMETAFILE
-CloseMetaFile	proto WINAPI :HDC
-;int
-CombineRgn	proto WINAPI :HRGN, :HRGN, :HRGN, :SINT
-;HMETAFILE
-CopyMetaFileA	proto WINAPI :HMETAFILE, :LPCSTR
-CopyMetaFileW	proto WINAPI :HMETAFILE, :LPCWSTR
+AnimatePalette proto WINAPI :HPALETTE, :UINT, :UINT, :ptr
+Arc proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
+BitBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :DWORD
+CancelDC proto WINAPI :HDC
+Chord proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
+ChoosePixelFormat proto WINAPI :HDC, :ptr
+CloseMetaFile proto WINAPI :HDC
+CombineRgn proto WINAPI :HRGN, :HRGN, :HRGN, :sdword
+CopyMetaFileA proto WINAPI :HMETAFILE, :LPCSTR
+CopyMetaFileW proto WINAPI :HMETAFILE, :LPCWSTR
 ifdef _UNICODE
-CopyMetaFile equ <CopyMetaFileW>
+define CopyMetaFile  <CopyMetaFileW>
 else
-CopyMetaFile equ <CopyMetaFileA>
+define CopyMetaFile  <CopyMetaFileA>
 endif
-CreateBitmap	proto WINAPI :SINT, :SINT, :UINT, :UINT, :PVOID
-CreateBitmapIndirect proto WINAPI :LPBITMAP
-CreateBrushIndirect proto WINAPI :LPLOGBRUSH
-CreateCompatibleBitmap proto WINAPI :HDC, :SINT, :SINT
-CreateDiscardableBitmap proto WINAPI :HDC, :SINT, :SINT
+CreateBitmap proto WINAPI :sdword, :sdword, :UINT, :UINT, :ptr
+CreateBitmapIndirect proto WINAPI :ptr
+CreateBrushIndirect proto WINAPI :ptr
+CreateCompatibleBitmap proto WINAPI :HDC, :sdword, :sdword
+CreateDiscardableBitmap proto WINAPI :HDC, :sdword, :sdword
 CreateCompatibleDC proto WINAPI :HDC
-CreateDCA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
-CreateDCW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
+CreateDCA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :ptr
+CreateDCW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
 ifdef _UNICODE
-CreateDC equ <CreateDCW>
+define CreateDC  <CreateDCW>
 else
-CreateDC equ <CreateDCA>
+define CreateDC  <CreateDCA>
 endif
-CreateDIBitmap proto WINAPI :HDC, :LPBITMAPINFOHEADER, :DWORD, :PVOID, :LPBITMAPINFO, :UINT
+CreateDIBitmap proto WINAPI :HDC, :ptr, :DWORD, :ptr, :ptr, :UINT
 CreateDIBPatternBrush proto WINAPI :HGLOBAL, :UINT
-CreateDIBPatternBrushPt proto WINAPI :PVOID , :UINT
-CreateEllipticRgn proto WINAPI :SINT, :SINT, :SINT, :SINT
-CreateEllipticRgnIndirect proto WINAPI :LPRECT
-CreateFontIndirectA proto WINAPI :LPLOGFONTA
-CreateFontIndirectW proto WINAPI :LPLOGFONTW
+CreateDIBPatternBrushPt proto WINAPI :ptr, :UINT
+CreateEllipticRgn proto WINAPI :sdword, :sdword, :sdword, :sdword
+CreateEllipticRgnIndirect proto WINAPI :ptr
+CreateFontIndirectA proto WINAPI :ptr
+CreateFontIndirectW proto WINAPI :ptr
 ifdef _UNICODE
-CreateFontIndirect equ <CreateFontIndirectW>
+define CreateFontIndirect  <CreateFontIndirectW>
 else
-CreateFontIndirect equ <CreateFontIndirectA>
+define CreateFontIndirect  <CreateFontIndirectA>
 endif
-CreateFontA proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
-	:DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCSTR
-CreateFontW proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
-	:DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCWSTR
+CreateFontA proto WINAPI :sdword, :sdword, :sdword, :sdword, :sdword, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCSTR
+CreateFontW proto WINAPI :sdword, :sdword, :sdword, :sdword, :sdword, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCWSTR
 ifdef _UNICODE
-CreateFont equ <CreateFontW>
+define CreateFont  <CreateFontW>
 else
-CreateFont equ <CreateFontA>
+define CreateFont  <CreateFontA>
 endif
 
-CreateHatchBrush proto WINAPI :SINT, :COLORREF
-CreateICA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
-CreateICW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
+CreateHatchBrush proto WINAPI :sdword, :COLORREF
+CreateICA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :ptr
+CreateICW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
 ifdef _UNICODE
-CreateIC equ <CreateICW>
+define CreateIC  <CreateICW>
 else
-CreateIC equ <CreateICA>
+define CreateIC  <CreateICA>
 endif
 CreateMetaFileA proto WINAPI :LPCSTR
 CreateMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-CreateMetaFile equ <CreateMetaFileW>
+define CreateMetaFile  <CreateMetaFileW>
 else
-CreateMetaFile equ <CreateMetaFileA>
+define CreateMetaFile  <CreateMetaFileA>
 endif
-CreatePalette proto WINAPI :LPLOGPALETTE
-CreatePen proto WINAPI :SINT, :SINT, :COLORREF
-CreatePenIndirect proto WINAPI :LPLOGPEN
-CreatePolyPolygonRgn proto WINAPI :LPPOINT, :PVOID, :SINT, :SINT
+CreatePalette proto WINAPI :ptr
+CreatePen proto WINAPI :sdword, :sdword, :COLORREF
+CreatePenIndirect proto WINAPI :ptr
+CreatePolyPolygonRgn proto WINAPI :ptr, :ptr, :sdword, :sdword
 CreatePatternBrush proto WINAPI :HBITMAP
-CreateRectRgn proto WINAPI :SINT, :SINT, :SINT, :SINT
-CreateRectRgnIndirect proto WINAPI :LPRECT
-CreateRoundRectRgn proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+CreateRectRgn proto WINAPI :sdword, :sdword, :sdword, :sdword
+CreateRectRgnIndirect proto WINAPI :ptr
+CreateRoundRectRgn proto WINAPI :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
 CreateScalableFontResourceA proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :LPCSTR
 CreateScalableFontResourceW proto WINAPI :DWORD, :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
-CreateScalableFontResource equ <CreateScalableFontResourceW>
+define CreateScalableFontResource  <CreateScalableFontResourceW>
 else
-CreateScalableFontResource equ <CreateScalableFontResourceA>
+define CreateScalableFontResource  <CreateScalableFontResourceA>
 endif
 CreateSolidBrush proto WINAPI :COLORREF
 
@@ -2950,143 +3646,156 @@ DeleteObject proto WINAPI :HGDIOBJ
 DescribePixelFormat proto WINAPI :HDC, :SINT, :UINT, :LPPIXELFORMATDESCRIPTOR
 
 CALLBACK(LPFNDEVMODE, :HWND, :HMODULE, :LPDEVMODE, :LPSTR, :LPSTR, :LPDEVMODE, :LPSTR, :UINT)
+
 CALLBACK(LPFNDEVCAPS, :LPSTR, :LPSTR, :UINT, :LPSTR, :LPDEVMODE)
 
-DM_UPDATE		equ 1
-DM_COPY			equ 2
-DM_PROMPT		equ 4
-DM_MODIFY		equ 8
+endif
+;.pragma endregion
 
-DM_IN_BUFFER		equ DM_MODIFY
-DM_IN_PROMPT		equ DM_PROMPT
-DM_OUT_BUFFER		equ DM_COPY
-DM_OUT_DEFAULT		equ DM_UPDATE
+define DM_UPDATE           1
+define DM_COPY             2
+define DM_PROMPT           4
+define DM_MODIFY           8
 
-DC_FIELDS		equ 1
-DC_PAPERS		equ 2
-DC_PAPERSIZE		equ 3
-DC_MINEXTENT		equ 4
-DC_MAXEXTENT		equ 5
-DC_BINS			equ 6
-DC_DUPLEX		equ 7
-DC_SIZE			equ 8
-DC_EXTRA		equ 9
-DC_VERSION		equ 10
-DC_DRIVER		equ 11
-DC_BINNAMES		equ 12
-DC_ENUMRESOLUTIONS	equ 13
-DC_FILEDEPENDENCIES	equ 14
-DC_TRUETYPE		equ 15
-DC_PAPERNAMES		equ 16
-DC_ORIENTATION		equ 17
-DC_COPIES		equ 18
-if(WINVER GE 0x0400)
-DC_BINADJUST		equ 19
-DC_EMF_COMPLIANT	equ 20
-DC_DATATYPE_PRODUCED	equ 21
-DC_COLLATE		equ 22
-DC_MANUFACTURER		equ 23
-DC_MODEL		equ 24
+define DM_IN_BUFFER        DM_MODIFY
+define DM_IN_PROMPT        DM_PROMPT
+define DM_OUT_BUFFER       DM_COPY
+define DM_OUT_DEFAULT      DM_UPDATE
+
+define DC_FIELDS           1
+define DC_PAPERS           2
+define DC_PAPERSIZE        3
+define DC_MINEXTENT        4
+define DC_MAXEXTENT        5
+define DC_BINS             6
+define DC_DUPLEX           7
+define DC_SIZE             8
+define DC_EXTRA            9
+define DC_VERSION          10
+define DC_DRIVER           11
+define DC_BINNAMES         12
+define DC_ENUMRESOLUTIONS  13
+define DC_FILEDEPENDENCIES 14
+define DC_TRUETYPE         15
+define DC_PAPERNAMES       16
+define DC_ORIENTATION      17
+define DC_COPIES           18
+if(WINVER ge 0x0400)
+define DC_BINADJUST            19
+define DC_EMF_COMPLIANT        20
+define DC_DATATYPE_PRODUCED    21
+define DC_COLLATE              22
+define DC_MANUFACTURER         23
+define DC_MODEL                24
 endif
 
-if (WINVER GE 0x0500)
-DC_COLORDEVICE		equ 23
-DC_NUP			equ 24
-DC_PERSONALITY		equ 25
-DC_PRINTRATE		equ 26
-DC_PRINTRATEUNIT	equ 27
-PRINTRATEUNIT_PPM	equ 1
-PRINTRATEUNIT_CPS	equ 2
-PRINTRATEUNIT_LPM	equ 3
-PRINTRATEUNIT_IPM	equ 4
-DC_PRINTERMEM		equ 28
-DC_MEDIAREADY		equ 29
+if(WINVER ge 0x0500)
+define DC_PERSONALITY          25
+define DC_PRINTRATE            26
+define DC_PRINTRATEUNIT        27
+define   PRINTRATEUNIT_PPM     1
+define   PRINTRATEUNIT_CPS     2
+define   PRINTRATEUNIT_LPM     3
+define   PRINTRATEUNIT_IPM     4
+define DC_PRINTERMEM           28
+define DC_MEDIAREADY           29
+define DC_STAPLE               30
+define DC_PRINTRATEPPM         31
+define DC_COLORDEVICE          32
+define DC_NUP                  33
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define DC_MEDIATYPENAMES       34
+define DC_MEDIATYPES           35
+endif
 endif
 
-DCTT_BITMAP		equ 0x0000001
-DCTT_DOWNLOAD		equ 0x0000002
-DCTT_SUBDEV		equ 0x0000004
-if(WINVER GE 0x0400)
-DCTT_DOWNLOAD_OUTLINE	equ 0x0000008
+define DCTT_BITMAP             0x0000001
+define DCTT_DOWNLOAD           0x0000002
+define DCTT_SUBDEV             0x0000004
+if(WINVER ge 0x0400)
+define DCTT_DOWNLOAD_OUTLINE   0x0000008
 
-DCBA_FACEUPNONE		equ 0x0000
-DCBA_FACEUPCENTER	equ 0x0001
-DCBA_FACEUPLEFT		equ 0x0002
-DCBA_FACEUPRIGHT	equ 0x0003
-DCBA_FACEDOWNNONE	equ 0x0100
-DCBA_FACEDOWNCENTER	equ 0x0101
-DCBA_FACEDOWNLEFT	equ 0x0102
-DCBA_FACEDOWNRIGHT	equ 0x0103
+define DCBA_FACEUPNONE       0x0000
+define DCBA_FACEUPCENTER     0x0001
+define DCBA_FACEUPLEFT       0x0002
+define DCBA_FACEUPRIGHT      0x0003
+define DCBA_FACEDOWNNONE     0x0100
+define DCBA_FACEDOWNCENTER   0x0101
+define DCBA_FACEDOWNLEFT     0x0102
+define DCBA_FACEDOWNRIGHT    0x0103
 endif
 
-if 0
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 .pragma comment(lib, winspool)
 
-DeviceCapabilitiesA proto WINAPI :LPCSTR, :LPCSTR, :WORD, :LPSTR, :LPDEVMODEA
-DeviceCapabilitiesW proto WINAPI :LPCWSTR, :LPCWSTR, :WORD, :LPWSTR, :LPDEVMODEW
+DeviceCapabilitiesA proto WINAPI :LPCSTR, :LPCSTR, :WORD, :LPSTR, :ptr
+DeviceCapabilitiesW proto WINAPI :LPCWSTR, :LPCWSTR, :WORD, :LPWSTR, :ptr
 ifdef _UNICODE
-DeviceCapabilities equ <DeviceCapabilitiesW>
+define DeviceCapabilities  <DeviceCapabilitiesW>
 else
-DeviceCapabilities equ <DeviceCapabilitiesA>
-endif
+define DeviceCapabilities  <DeviceCapabilitiesA>
 endif
 
 .pragma comment(lib, gdi32)
 
 DrawEscape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR
-Ellipse proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
+Ellipse proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword
 
-if(WINVER GE 0x0400)
+if(WINVER ge 0x0400)
 EnumFontFamiliesExA proto WINAPI :HDC, :LPLOGFONTA, :FONTENUMPROCA, :LPARAM, :DWORD
 EnumFontFamiliesExW proto WINAPI :HDC, :LPLOGFONTW, :FONTENUMPROCW, :LPARAM, :DWORD
 ifdef _UNICODE
-EnumFontFamiliesEx equ <EnumFontFamiliesExW>
+define EnumFontFamiliesEx  <EnumFontFamiliesExW>
 else
-EnumFontFamiliesEx equ <EnumFontFamiliesExA>
+define EnumFontFamiliesEx  <EnumFontFamiliesExA>
 endif
 endif
 
 EnumFontFamiliesA proto WINAPI :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
 EnumFontFamiliesW proto WINAPI :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
 ifdef _UNICODE
-EnumFontFamilies equ <EnumFontFamiliesW>
+define EnumFontFamilies  <EnumFontFamiliesW>
 else
-EnumFontFamilies equ <EnumFontFamiliesA>
+define EnumFontFamilies  <EnumFontFamiliesA>
 endif
 EnumFontsA proto WINAPI :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
 EnumFontsW proto WINAPI :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
 ifdef _UNICODE
-EnumFonts equ <EnumFontsW>
+define EnumFonts  <EnumFontsW>
 else
-EnumFonts equ <EnumFontsA>
+define EnumFonts  <EnumFontsA>
 endif
 
 ifdef STRICT
-EnumObjects proto WINAPI :HDC, :SINT, :GOBJENUMPROC, :LPARAM
+EnumObjects proto WINAPI :HDC, :sdword, :GOBJENUMPROC, :LPARAM
 else
-EnumObjects proto WINAPI :HDC, :SINT, :GOBJENUMPROC, :LPVOID
+EnumObjects proto WINAPI :HDC, :sdword, :GOBJENUMPROC, :LPVOID
 endif
 
 EqualRgn proto WINAPI :HRGN, :HRGN
 Escape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :LPVOID
 ExtEscape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :SINT, :LPSTR
-ExcludeClipRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
-ExtCreateRegion proto WINAPI :LPXFORM, :DWORD, :LPRGNDATA
-ExtFloodFill proto WINAPI :HDC, :SINT, :SINT, :COLORREF, :UINT
+ExcludeClipRect proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword
+ExtCreateRegion proto WINAPI :ptr, :DWORD, :ptr
+ExtFloodFill proto WINAPI :HDC, :sdword, :sdword, :COLORREF, :UINT
 FillRgn proto WINAPI :HDC, :HRGN, :HBRUSH
-FloodFill proto WINAPI :HDC, :SINT, :SINT, :COLORREF
-FrameRgn proto WINAPI :HDC, :HRGN, :HBRUSH, :SINT, :SINT
+FloodFill proto WINAPI :HDC, :sdword, :sdword, :COLORREF
+FrameRgn proto WINAPI :HDC, :HRGN, :HBRUSH, :sdword, :sdword
 GetROP2 proto WINAPI :HDC
 GetAspectRatioFilterEx proto WINAPI :HDC, :LPSIZE
 GetBkColor proto WINAPI :HDC
 
-if (_WIN32_WINNT GE 0x0500)
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
 GetDCBrushColor proto WINAPI :HDC
 GetDCPenColor proto WINAPI :HDC
 endif
 
 GetBkMode proto WINAPI :HDC
+
 GetBitmapBits proto WINAPI :HBITMAP, :LONG, :LPVOID
+
 GetBitmapDimensionEx proto WINAPI :HBITMAP, :LPSIZE
 GetBoundsRect proto WINAPI :HDC, :LPRECT, :UINT
 
@@ -3095,450 +3804,561 @@ GetBrushOrgEx proto WINAPI :HDC, :LPPOINT
 GetCharWidthA proto WINAPI :HDC, :UINT, :UINT, :LPINT
 GetCharWidthW proto WINAPI :HDC, :UINT, :UINT, :LPINT
 ifdef _UNICODE
-GetCharWidth equ <GetCharWidthW>
+define GetCharWidth  <GetCharWidthW>
 else
-GetCharWidth equ <GetCharWidthA>
+define GetCharWidth  <GetCharWidthA>
 endif
 GetCharWidth32A proto WINAPI :HDC, :UINT, :UINT, :LPINT
 GetCharWidth32W proto WINAPI :HDC, :UINT, :UINT, :LPINT
 ifdef _UNICODE
-GetCharWidth32 equ <GetCharWidth32W>
+define GetCharWidth32  <GetCharWidth32W>
 else
-GetCharWidth32 equ <GetCharWidth32A>
+define GetCharWidth32  <GetCharWidth32A>
 endif
 GetCharWidthFloatA proto WINAPI :HDC, :UINT, :UINT, :PFLOAT
 GetCharWidthFloatW proto WINAPI :HDC, :UINT, :UINT, :PFLOAT
 ifdef _UNICODE
-GetCharWidthFloat equ <GetCharWidthFloatW>
+define GetCharWidthFloat  <GetCharWidthFloatW>
 else
-GetCharWidthFloat equ <GetCharWidthFloatA>
+define GetCharWidthFloat  <GetCharWidthFloatA>
 endif
+
 GetCharABCWidthsA proto WINAPI :HDC, :UINT, :UINT, :LPABC
 GetCharABCWidthsW proto WINAPI :HDC, :UINT, :UINT, :LPABC
 ifdef _UNICODE
-GetCharABCWidths equ <GetCharABCWidthsW>
+define GetCharABCWidths  <GetCharABCWidthsW>
 else
-GetCharABCWidths equ <GetCharABCWidthsA>
+define GetCharABCWidths  <GetCharABCWidthsA>
 endif
+
 GetCharABCWidthsFloatA proto WINAPI :HDC, :UINT, :UINT, :LPABCFLOAT
 GetCharABCWidthsFloatW proto WINAPI :HDC, :UINT, :UINT, :LPABCFLOAT
 ifdef _UNICODE
-GetCharABCWidthsFloat equ <GetCharABCWidthsFloatW>
+define GetCharABCWidthsFloat  <GetCharABCWidthsFloatW>
 else
-GetCharABCWidthsFloat equ <GetCharABCWidthsFloatA>
+define GetCharABCWidthsFloat  <GetCharABCWidthsFloatA>
 endif
 GetClipBox proto WINAPI :HDC, :LPRECT
 GetClipRgn proto WINAPI :HDC, :HRGN
 GetMetaRgn proto WINAPI :HDC, :HRGN
 GetCurrentObject proto WINAPI :HDC, :UINT
 GetCurrentPositionEx proto WINAPI :HDC, :LPPOINT
-GetDeviceCaps proto WINAPI :HDC, :SINT
+GetDeviceCaps proto WINAPI :HDC, :sdword
 GetDIBits proto WINAPI :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
 GetFontData proto WINAPI :HDC, :DWORD, :DWORD, :LPVOID, :DWORD
+
 GetGlyphOutlineA proto WINAPI :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
 GetGlyphOutlineW proto WINAPI :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
 ifdef _UNICODE
-GetGlyphOutline equ <GetGlyphOutlineW>
+define GetGlyphOutline  <GetGlyphOutlineW>
 else
-GetGlyphOutline equ <GetGlyphOutlineA>
+define GetGlyphOutline  <GetGlyphOutlineA>
 endif
+
 GetGraphicsMode proto WINAPI :HDC
 GetMapMode proto WINAPI :HDC
 GetMetaFileBitsEx proto WINAPI :HMETAFILE, :UINT, :LPVOID
 GetMetaFileA proto WINAPI :LPCSTR
 GetMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-GetMetaFile equ <GetMetaFileW>
+define GetMetaFile  <GetMetaFileW>
 else
-GetMetaFile equ <GetMetaFileA>
+define GetMetaFile  <GetMetaFileA>
 endif
 GetNearestColor proto WINAPI :HDC, :COLORREF
 GetNearestPaletteIndex proto WINAPI :HPALETTE, :COLORREF
 GetObjectType proto WINAPI :HGDIOBJ
 
 ifndef NOTEXTMETRIC
+
 GetOutlineTextMetricsA proto WINAPI :HDC, :UINT, :LPOUTLINETEXTMETRICA
 GetOutlineTextMetricsW proto WINAPI :HDC, :UINT, :LPOUTLINETEXTMETRICW
 ifdef _UNICODE
-GetOutlineTextMetrics equ <GetOutlineTextMetricsW>
+define GetOutlineTextMetrics  <GetOutlineTextMetricsW>
 else
-GetOutlineTextMetrics equ <GetOutlineTextMetricsA>
+define GetOutlineTextMetrics  <GetOutlineTextMetricsA>
 endif
+
 endif
 
 GetPaletteEntries proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-GetPixel proto WINAPI :HDC, :SINT, :SINT
+GetPixel proto WINAPI :HDC, :sdword, :sdword
 GetPixelFormat proto WINAPI :HDC
 GetPolyFillMode proto WINAPI :HDC
 GetRasterizerCaps proto WINAPI :LPRASTERIZER_STATUS, :UINT
+
+GetRandomRgn proto WINAPI :HDC, :HRGN, :SINT
 GetRegionData proto WINAPI :HRGN, :DWORD, :LPRGNDATA
 GetRgnBox proto WINAPI :HRGN, :LPRECT
-GetStockObject proto WINAPI :SINT
+GetStockObject proto WINAPI :sdword
 GetStretchBltMode proto WINAPI :HDC
 GetSystemPaletteEntries proto WINAPI :HDC, :UINT, :UINT, :LPPALETTEENTRY
+
 GetSystemPaletteUse proto WINAPI :HDC
 GetTextCharacterExtra proto WINAPI :HDC
 GetTextAlign proto WINAPI :HDC
 GetTextColor proto WINAPI :HDC
 
-GetTextExtentPointA proto WINAPI :HDC, :LPCSTR, :SINT, :LPSIZE
-GetTextExtentPointW proto WINAPI :HDC, :LPCWSTR, :SINT, :LPSIZE
+GetTextExtentPointA proto WINAPI :HDC, :LPCSTR, :sdword, :LPSIZE
+GetTextExtentPointW proto WINAPI :HDC, :LPCWSTR, :sdword, :LPSIZE
 ifdef _UNICODE
-GetTextExtentPoint equ <GetTextExtentPointW>
+define GetTextExtentPoint  <GetTextExtentPointW>
 else
-GetTextExtentPoint equ <GetTextExtentPointA>
+define GetTextExtentPoint  <GetTextExtentPointA>
 endif
 
-GetTextExtentPoint32A proto WINAPI :HDC, :LPCSTR, :SINT, :LPSIZE
-GetTextExtentPoint32W proto WINAPI :HDC, :LPCWSTR, :SINT, :LPSIZE
+GetTextExtentPoint32A proto WINAPI :HDC, :LPCSTR, :sdword, :LPSIZE
+GetTextExtentPoint32W proto WINAPI :HDC, :LPCWSTR, :sdword, :LPSIZE
 ifdef _UNICODE
-GetTextExtentPoint32 equ <GetTextExtentPoint32W>
+define GetTextExtentPoint32  <GetTextExtentPoint32W>
 else
-GetTextExtentPoint32 equ <GetTextExtentPoint32A>
+define GetTextExtentPoint32  <GetTextExtentPoint32A>
 endif
 
-GetTextExtentExPointA proto WINAPI :HDC, :LPCSTR, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
-GetTextExtentExPointW proto WINAPI :HDC, :LPCWSTR, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
+GetTextExtentExPointA proto WINAPI :HDC, :LPCSTR, :sdword, :sdword, :LPINT, :LPINT, :LPSIZE
+GetTextExtentExPointW proto WINAPI :HDC, :LPCWSTR, :sdword, :sdword, :LPINT, :LPINT, :LPSIZE
 ifdef _UNICODE
-GetTextExtentExPoint equ <GetTextExtentExPointW>
+define GetTextExtentExPoint  <GetTextExtentExPointW>
 else
-GetTextExtentExPoint equ <GetTextExtentExPointA>
+define GetTextExtentExPoint  <GetTextExtentExPointA>
 endif
-if(WINVER GE 0x0400)
+
+if(WINVER ge 0x0400)
 GetTextCharset proto WINAPI :HDC
 GetTextCharsetInfo proto WINAPI :HDC, :LPFONTSIGNATURE, :DWORD
-TranslateCharsetInfo proto WINAPI :LPDWORD, :LPCHARSETINFO, :DWORD
+TranslateCharsetInfo proto WINAPI :ptr, :LPCHARSETINFO, :DWORD
 GetFontLanguageInfo proto WINAPI :HDC
-GetCharacterPlacementA proto WINAPI :HDC, :LPCSTR, :SINT, :SINT, :LPGCP_RESULTSA, :DWORD
-GetCharacterPlacementW proto WINAPI :HDC, :LPCWSTR, :SINT, :SINT, :LPGCP_RESULTSW, :DWORD
+GetCharacterPlacementA proto WINAPI :HDC, :LPCSTR, :sdword, :sdword, :LPGCP_RESULTSA, :DWORD
+GetCharacterPlacementW proto WINAPI :HDC, :LPCWSTR, :sdword, :sdword, :LPGCP_RESULTSW, :DWORD
 ifdef _UNICODE
-GetCharacterPlacement equ <GetCharacterPlacementW>
+define GetCharacterPlacement  <GetCharacterPlacementW>
 else
-GetCharacterPlacement equ <GetCharacterPlacementA>
+define GetCharacterPlacement  <GetCharacterPlacementA>
 endif
 endif
 
-if (_WIN32_WINNT GE 0x0500)
+endif
+;.pragma endregion
 
-WCRANGE			STRUC
-wcLow			WCHAR ?
-cGlyphs			USHORT ?
-WCRANGE			ENDS
-PWCRANGE		typedef ptr WCRANGE
-LPWCRANGE		typedef ptr WCRANGE
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
 
-GLYPHSET		STRUC
-cbThis			dd ?
-flAccel			dd ?
-cGlyphsSupported	dd ?
-cRanges			dd ?
-ranges			WCRANGE <>
-GLYPHSET		ENDS
-PGLYPHSET		typedef ptr GLYPHSET
-LPGLYPHSET		typedef ptr GLYPHSET
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-GS_8BIT_INDICES		equ 0x00000001
-GGI_MARK_NONEXISTING_GLYPHS	equ 0X0001
+tagWCRANGE              struct
+wcLow                   WCHAR ?
+cGlyphs                 USHORT ?
+tagWCRANGE              ends
+WCRANGE                 typedef tagWCRANGE
+PWCRANGE                typedef ptr tagWCRANGE
+LPWCRANGE               typedef ptr tagWCRANGE
+
+tagGLYPHSET             struct
+cbThis                  DWORD ?
+flAccel                 DWORD ?
+cGlyphsSupported        DWORD ?
+cRanges                 DWORD ?
+ranges                  WCRANGE 1 dup(<>)
+tagGLYPHSET             ends
+GLYPHSET                typedef tagGLYPHSET
+PGLYPHSET               typedef ptr tagGLYPHSET
+LPGLYPHSET              typedef ptr tagGLYPHSET
+
+define GS_8BIT_INDICES     0x00000001
+
+define GGI_MARK_NONEXISTING_GLYPHS  0
 
 GetFontUnicodeRanges proto WINAPI :HDC, :LPGLYPHSET
 GetGlyphIndicesA proto WINAPI :HDC, :LPCSTR, :SINT, :LPWORD, :DWORD
 GetGlyphIndicesW proto WINAPI :HDC, :LPCWSTR, :SINT, :LPWORD, :DWORD
 ifdef _UNICODE
-GetGlyphIndices equ <GetGlyphIndicesW>
+define GetGlyphIndices  <GetGlyphIndicesW>
 else
-GetGlyphIndices equ <GetGlyphIndicesA>
+define GetGlyphIndices  <GetGlyphIndicesA>
 endif
-GetTextExtentPointI proto WINAPI :HDC, :LPWORD, :SINT, :LPSIZE
-GetTextExtentExPointI proto WINAPI :HDC, :LPWORD, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
+GetTextExtentPointI proto WINAPI :HDC, :LPWORD, :sdword, :LPSIZE
+GetTextExtentExPointI proto WINAPI :HDC, :LPWORD, :sdword, :sdword, :LPINT, :LPINT, :LPSIZE
+
 GetCharWidthI proto WINAPI :HDC, :UINT, :UINT, :LPWORD, :LPINT
 GetCharABCWidthsI proto WINAPI :HDC, :UINT , :UINT , :LPWORD, :LPABC
 
-STAMP_DESIGNVECTOR	equ (0x8000000 + 'd' + ('v' SHL 8))
-STAMP_AXESLIST		equ (0x8000000 + 'a' + ('l' SHL 8))
-MM_MAX_NUMAXES		equ 16
+define STAMP_DESIGNVECTOR  (0x8000000 + 'd' + ('v' shl 8))
+define STAMP_AXESLIST      (0x8000000 + 'a' + ('l' shl 8))
+define MM_MAX_NUMAXES      16
 
-DESIGNVECTOR		STRUC
-dvReserved		dd ?
-dvNumAxes		dd ?
-dvValues		dd MM_MAX_NUMAXES dup(?)
-DESIGNVECTOR		ENDS
-PDESIGNVECTOR		typedef ptr DESIGNVECTOR
-LPDESIGNVECTOR		typedef ptr DESIGNVECTOR
+tagDESIGNVECTOR         struct
+dvReserved              DWORD ?
+dvNumAxes               DWORD ?
+dvValues                LONG MM_MAX_NUMAXES dup(?)
+tagDESIGNVECTOR         ends
+DESIGNVECTOR            typedef tagDESIGNVECTOR
+PDESIGNVECTOR           typedef ptr tagDESIGNVECTOR
+LPDESIGNVECTOR          typedef ptr tagDESIGNVECTOR
 
-AddFontResourceExA proto WINAPI :LPCSTR, :DWORD, :LPDESIGNVECTOR
-AddFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :LPDESIGNVECTOR
+AddFontResourceExA proto WINAPI :LPCSTR, :DWORD, :PVOID
+AddFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :PVOID
 ifdef _UNICODE
-AddFontResourceEx equ <AddFontResourceExW>
+define AddFontResourceEx  <AddFontResourceExW>
 else
-AddFontResourceEx equ <AddFontResourceExA>
+define AddFontResourceEx  <AddFontResourceExA>
 endif
-RemoveFontResourceExA proto WINAPI :LPCSTR, :DWORD, :LPDESIGNVECTOR
-RemoveFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :LPDESIGNVECTOR
+RemoveFontResourceExA proto WINAPI :LPCSTR, :DWORD, :PVOID
+RemoveFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :PVOID
 ifdef _UNICODE
-RemoveFontResourceEx equ <RemoveFontResourceExW>
+define RemoveFontResourceEx  <RemoveFontResourceExW>
 else
-RemoveFontResourceEx equ <RemoveFontResourceExA>
+define RemoveFontResourceEx  <RemoveFontResourceExA>
 endif
-AddFontMemResourceEx proto WINAPI :PVOID, :DWORD, :LPDESIGNVECTOR, :PVOID
+AddFontMemResourceEx proto WINAPI :PVOID, :DWORD, :PVOID, :ptr
+
 RemoveFontMemResourceEx proto WINAPI :HANDLE
+define FR_PRIVATE     0x10
+define FR_NOT_ENUM    0x20
 
-FR_PRIVATE		equ 0x10
-FR_NOT_ENUM		equ 0x20
+define MM_MAX_AXES_NAMELEN 16
 
-MM_MAX_AXES_NAMELEN	equ 16
-
-AXISINFOA		STRUC
-axMinValue		LONG ?
-axMaxValue		LONG ?
-axAxisName		db MM_MAX_AXES_NAMELEN dup(?)
-AXISINFOA		ENDS
-PAXISINFOA		typedef ptr AXISINFOA
-LPAXISINFOA		typedef ptr AXISINFOA
-AXISINFOW		STRUC
-axMinValue		LONG ?
-axMaxValue		LONG ?
-axAxisName		dw MM_MAX_AXES_NAMELEN dup(?)
-AXISINFOW		ENDS
-PAXISINFOW		typedef ptr AXISINFOW
-LPAXISINFOW		typedef ptr AXISINFOW
+tagAXISINFOA            struct
+axMinValue              LONG ?
+axMaxValue              LONG ?
+axAxisName              BYTE MM_MAX_AXES_NAMELEN dup(?)
+tagAXISINFOA            ends
+AXISINFOA               typedef tagAXISINFOA
+PAXISINFOA              typedef ptr tagAXISINFOA
+LPAXISINFOA             typedef ptr tagAXISINFOA
+tagAXISINFOW            struct
+axMinValue              LONG ?
+axMaxValue              LONG ?
+axAxisName              WCHAR MM_MAX_AXES_NAMELEN dup(?)
+tagAXISINFOW            ends
+AXISINFOW               typedef tagAXISINFOW
+PAXISINFOW              typedef ptr tagAXISINFOW
+LPAXISINFOW             typedef ptr tagAXISINFOW
 ifdef _UNICODE
-AXISINFO		typedef AXISINFOW
-PAXISINFO		typedef PAXISINFOW
-LPAXISINFO		typedef LPAXISINFOW
+AXISINFO                typedef AXISINFOW
+PAXISINFO               typedef PAXISINFOW
+LPAXISINFO              typedef LPAXISINFOW
 else
-AXISINFO		typedef AXISINFOA
-PAXISINFO		typedef PAXISINFOA
-LPAXISINFO		typedef LPAXISINFOA
+AXISINFO                typedef AXISINFOA
+PAXISINFO               typedef PAXISINFOA
+LPAXISINFO              typedef LPAXISINFOA
 endif
 
-AXESLISTA		STRUC
-axlReserved		dd ?
-axlNumAxes		dd ?
-axlAxisInfo		AXISINFOA MM_MAX_NUMAXES dup(<>)
-AXESLISTA		ENDS
-PAXESLISTA		typedef ptr AXESLISTA
-LPAXESLISTA		typedef ptr AXESLISTA
-AXESLISTW		STRUC
-axlReserved		dd ?
-axlNumAxes		dd ?
-axlAxisInfo		AXISINFOW MM_MAX_NUMAXES dup(<>)
-AXESLISTW		ENDS
-PAXESLISTW		typedef ptr AXESLISTW
-LPAXESLISTW		typedef ptr AXESLISTW
+tagAXESLISTA            struct
+axlReserved             DWORD ?
+axlNumAxes              DWORD ?
+axlAxisInfo             AXISINFOA MM_MAX_NUMAXES dup(<>)
+tagAXESLISTA            ends
+AXESLISTA               typedef tagAXESLISTA
+PAXESLISTA              typedef ptr tagAXESLISTA
+LPAXESLISTA             typedef ptr tagAXESLISTA
+tagAXESLISTW            struct
+axlReserved             DWORD ?
+axlNumAxes              DWORD ?
+axlAxisInfo             AXISINFOW MM_MAX_NUMAXES dup(<>)
+tagAXESLISTW            ends
+AXESLISTW               typedef tagAXESLISTW
+PAXESLISTW              typedef ptr tagAXESLISTW
+LPAXESLISTW             typedef ptr tagAXESLISTW
 ifdef _UNICODE
-AXESLIST		typedef AXESLISTW
-PAXESLIST		typedef PAXESLISTW
-LPAXESLIST		typedef LPAXESLISTW
+AXESLIST                typedef AXESLISTW
+PAXESLIST               typedef PAXESLISTW
+LPAXESLIST              typedef LPAXESLISTW
 else
-AXESLIST		typedef AXESLISTA
-PAXESLIST		typedef PAXESLISTA
-LPAXESLIST		typedef LPAXESLISTA
+AXESLIST                typedef AXESLISTA
+PAXESLIST               typedef PAXESLISTA
+LPAXESLIST              typedef LPAXESLISTA
 endif
 
-ENUMLOGFONTEXDVA	STRUC
-elfEnumLogfontEx	ENUMLOGFONTEXA <>
-elfDesignVector		DESIGNVECTOR <>
-ENUMLOGFONTEXDVA	ENDS
-PENUMLOGFONTEXDVA	typedef ptr ENUMLOGFONTEXDVA
-LPENUMLOGFONTEXDVA	typedef ptr ENUMLOGFONTEXDVA
-ENUMLOGFONTEXDVW	STRUC
-elfEnumLogfontEx	ENUMLOGFONTEXW <>
-elfDesignVector		DESIGNVECTOR <>
-ENUMLOGFONTEXDVW	ENDS
-PENUMLOGFONTEXDVW	typedef ptr ENUMLOGFONTEXDVW
-LPENUMLOGFONTEXDVW	typedef ptr ENUMLOGFONTEXDVW
+tagENUMLOGFONTEXDVA     struct
+elfEnumLogfontEx        ENUMLOGFONTEXA <>
+elfDesignVector         DESIGNVECTOR <>
+tagENUMLOGFONTEXDVA     ends
+ENUMLOGFONTEXDVA        typedef tagENUMLOGFONTEXDVA
+PENUMLOGFONTEXDVA       typedef ptr tagENUMLOGFONTEXDVA
+LPENUMLOGFONTEXDVA      typedef ptr tagENUMLOGFONTEXDVA
+tagENUMLOGFONTEXDVW     struct
+elfEnumLogfontEx        ENUMLOGFONTEXW <>
+elfDesignVector         DESIGNVECTOR <>
+tagENUMLOGFONTEXDVW     ends
+ENUMLOGFONTEXDVW        typedef tagENUMLOGFONTEXDVW
+PENUMLOGFONTEXDVW       typedef ptr tagENUMLOGFONTEXDVW
+LPENUMLOGFONTEXDVW      typedef ptr tagENUMLOGFONTEXDVW
 ifdef _UNICODE
-ENUMLOGFONTEXDV		typedef ENUMLOGFONTEXDVW
-PENUMLOGFONTEXDV	typedef PENUMLOGFONTEXDVW
-LPENUMLOGFONTEXDV	typedef LPENUMLOGFONTEXDVW
+ENUMLOGFONTEXDV         typedef ENUMLOGFONTEXDVW
+PENUMLOGFONTEXDV        typedef PENUMLOGFONTEXDVW
+LPENUMLOGFONTEXDV       typedef LPENUMLOGFONTEXDVW
 else
-ENUMLOGFONTEXDV		typedef ENUMLOGFONTEXDVA
-PENUMLOGFONTEXDV	typedef PENUMLOGFONTEXDVA
-LPENUMLOGFONTEXDV	typedef LPENUMLOGFONTEXDVA
+ENUMLOGFONTEXDV         typedef ENUMLOGFONTEXDVA
+PENUMLOGFONTEXDV        typedef PENUMLOGFONTEXDVA
+LPENUMLOGFONTEXDV       typedef LPENUMLOGFONTEXDVA
 endif
 
-CreateFontIndirectExA proto WINAPI :LPENUMLOGFONTEXDVA
-CreateFontIndirectExW proto WINAPI :LPENUMLOGFONTEXDVW
+CreateFontIndirectExA proto WINAPI :ptr
+CreateFontIndirectExW proto WINAPI :ptr
 ifdef _UNICODE
-CreateFontIndirectEx equ <CreateFontIndirectExW>
+define CreateFontIndirectEx  <CreateFontIndirectExW>
 else
-CreateFontIndirectEx equ <CreateFontIndirectExA>
+define CreateFontIndirectEx  <CreateFontIndirectExA>
 endif
 
 ifndef NOTEXTMETRIC
-ENUMTEXTMETRICA		STRUC
-etmNewTextMetricEx	NEWTEXTMETRICEXA <>
-etmAxesList		AXESLISTA <>
-ENUMTEXTMETRICA		ENDS
-PENUMTEXTMETRICA	typedef ptr ENUMTEXTMETRICA
-LPENUMTEXTMETRICA	typedef ptr ENUMTEXTMETRICA
-ENUMTEXTMETRICW		STRUC
-etmNewTextMetricEx	NEWTEXTMETRICEXW <>
-etmAxesList		AXESLISTW <>
-ENUMTEXTMETRICW		ENDS
-PENUMTEXTMETRICW	typedef ptr ENUMTEXTMETRICW
-LPENUMTEXTMETRICW	typedef ptr ENUMTEXTMETRICW
+tagENUMTEXTMETRICA      struct
+etmNewTextMetricEx      NEWTEXTMETRICEXA <>
+etmAxesList             AXESLISTA <>
+tagENUMTEXTMETRICA      ends
+ENUMTEXTMETRICA         typedef tagENUMTEXTMETRICA
+PENUMTEXTMETRICA        typedef ptr tagENUMTEXTMETRICA
+LPENUMTEXTMETRICA       typedef ptr tagENUMTEXTMETRICA
+tagENUMTEXTMETRICW      struct
+etmNewTextMetricEx      NEWTEXTMETRICEXW <>
+etmAxesList             AXESLISTW <>
+tagENUMTEXTMETRICW      ends
+ENUMTEXTMETRICW         typedef tagENUMTEXTMETRICW
+PENUMTEXTMETRICW        typedef ptr tagENUMTEXTMETRICW
+LPENUMTEXTMETRICW       typedef ptr tagENUMTEXTMETRICW
 ifdef _UNICODE
-ENUMTEXTMETRIC		typedef ENUMTEXTMETRICW
-PENUMTEXTMETRIC		typedef PENUMTEXTMETRICW
-LPENUMTEXTMETRIC	typedef LPENUMTEXTMETRICW
+ENUMTEXTMETRIC          typedef ENUMTEXTMETRICW
+PENUMTEXTMETRIC         typedef PENUMTEXTMETRICW
+LPENUMTEXTMETRIC        typedef LPENUMTEXTMETRICW
 else
-ENUMTEXTMETRIC		typedef ENUMTEXTMETRICA
-PENUMTEXTMETRIC		typedef PENUMTEXTMETRICA
-LPENUMTEXTMETRIC	typedef LPENUMTEXTMETRICA
+ENUMTEXTMETRIC          typedef ENUMTEXTMETRICA
+PENUMTEXTMETRIC         typedef PENUMTEXTMETRICA
+LPENUMTEXTMETRIC        typedef LPENUMTEXTMETRICA
 endif
 endif
+
 endif
+;.pragma endregion
+
+endif
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 GetViewportExtEx proto WINAPI :HDC, :LPSIZE
 GetViewportOrgEx proto WINAPI :HDC, :LPPOINT
 GetWindowExtEx proto WINAPI :HDC, :LPSIZE
 GetWindowOrgEx proto WINAPI :HDC, :LPPOINT
 
-IntersectClipRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
+IntersectClipRect proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword
 InvertRgn proto WINAPI :HDC, :HRGN
-LineDDA proto WINAPI :SINT, :SINT, :SINT, :SINT, :LINEDDAPROC, :LPARAM
-LineTo proto WINAPI :HDC, :SINT, :SINT
+LineDDA proto WINAPI :sdword, :sdword, :sdword, :sdword, :LINEDDAPROC, :LPARAM
+LineTo proto WINAPI :HDC, :sdword, :sdword
+MaskBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :HBITMAP, :sdword, :sdword, :DWORD
+PlgBlt proto WINAPI :HDC, :ptr, :HDC, :sdword, :sdword, :sdword, :sdword, :HBITMAP, :sdword, :sdword
 
-MaskBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT,
-	:HDC, :SINT, :SINT, :HBITMAP, :SINT, :SINT, :DWORD
-PlgBlt proto WINAPI :HDC, :LPPOINT, :HDC, :SINT, :SINT, :SINT,
-	:SINT, :HBITMAP, :SINT, :SINT
-OffsetClipRgn proto WINAPI :HDC, :SINT, :SINT
-OffsetRgn proto WINAPI :HRGN, :SINT, :SINT
-PatBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
-Pie proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+OffsetClipRgn proto WINAPI :HDC, :sdword, :sdword
+OffsetRgn proto WINAPI :HRGN, :sdword, :sdword
+PatBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :DWORD
+Pie proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
 PlayMetaFile proto WINAPI :HDC, :HMETAFILE
 PaintRgn proto WINAPI :HDC, :HRGN
-PolyPolygon proto WINAPI :HDC, :LPPOINT, :LPINT, :SINT
-PtInRegion proto WINAPI :HRGN, :SINT, :SINT
-PtVisible proto WINAPI :HDC, :SINT, :SINT
-RectInRegion proto WINAPI :HRGN, :LPRECT
-RectVisible proto WINAPI :HDC, :LPRECT
-Rectangle proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
-RestoreDC proto WINAPI :HDC, :SINT
-ResetDCA proto WINAPI :HDC, :LPDEVMODEA
-ResetDCW proto WINAPI :HDC, :LPDEVMODEW
+PolyPolygon proto WINAPI :HDC, :ptr, :ptr, :sdword
+PtInRegion proto WINAPI :HRGN, :sdword, :sdword
+PtVisible proto WINAPI :HDC, :sdword, :sdword
+RectInRegion proto WINAPI :HRGN, :ptr
+RectVisible proto WINAPI :HDC, :ptr
+Rectangle proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword
+RestoreDC proto WINAPI :HDC, :sdword
+ResetDCA proto WINAPI :HDC, :ptr
+ResetDCW proto WINAPI :HDC, :ptr
 ifdef _UNICODE
-ResetDC equ <ResetDCW>
+define ResetDC  <ResetDCW>
 else
-ResetDC equ <ResetDCA>
+define ResetDC  <ResetDCA>
 endif
 RealizePalette proto WINAPI :HDC
 RemoveFontResourceA proto WINAPI :LPCSTR
 RemoveFontResourceW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-RemoveFontResource equ <RemoveFontResourceW>
+define RemoveFontResource  <RemoveFontResourceW>
 else
-RemoveFontResource equ <RemoveFontResourceA>
+define RemoveFontResource  <RemoveFontResourceA>
 endif
-RoundRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+RoundRect proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
 ResizePalette proto WINAPI :HPALETTE, :UINT
 
 SaveDC proto WINAPI :HDC
 SelectClipRgn proto WINAPI :HDC, :HRGN
-ExtSelectClipRgn proto WINAPI :HDC, :HRGN, :SINT
+ExtSelectClipRgn proto WINAPI :HDC, :HRGN, :sdword
 SetMetaRgn proto WINAPI :HDC
 SelectObject proto WINAPI :HDC, :HGDIOBJ
 SelectPalette proto WINAPI :HDC, :HPALETTE, :BOOL
 SetBkColor proto WINAPI :HDC, :COLORREF
 
-if (_WIN32_WINNT GE 0x0500)
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
 SetDCBrushColor proto WINAPI :HDC, :COLORREF
 SetDCPenColor proto WINAPI :HDC, :COLORREF
 endif
 
-SetBkMode proto WINAPI :HDC, :SINT
-SetBitmapBits proto WINAPI :HBITMAP, :DWORD, :LPVOID
+SetBkMode proto WINAPI :HDC, :sdword
 
-SetBoundsRect proto WINAPI :HDC, :LPRECT, :UINT
-SetDIBits proto WINAPI :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
-SetDIBitsToDevice proto WINAPI :HDC, :SINT, :SINT, :DWORD, :DWORD, :SINT,
-	:SINT, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
+SetBitmapBits proto WINAPI :HBITMAP, :DWORD, :ptr
 
+SetBoundsRect proto WINAPI :HDC, :ptr, :UINT
+SetDIBits proto WINAPI :HDC, :HBITMAP, :UINT, :UINT, :ptr, :ptr, :UINT
+SetDIBitsToDevice proto WINAPI :HDC, :sdword, :sdword, :DWORD, :DWORD, :sdword, :sdword, :UINT, :UINT, :ptr, :ptr, :UINT
 SetMapperFlags proto WINAPI :HDC, :DWORD
-SetGraphicsMode proto WINAPI :HDC, :SINT
-SetMapMode proto WINAPI :HDC, :SINT
-SetMetaFileBitsEx proto WINAPI :UINT, :LPBYTE
-SetPaletteEntries proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-SetPixel proto WINAPI :HDC, :SINT, :SINT, :COLORREF
-SetPixelV proto WINAPI :HDC, :SINT, :SINT, :COLORREF
-SetPixelFormat proto WINAPI :HDC, :SINT, :LPPIXELFORMATDESCRIPTOR
-SetPolyFillMode proto WINAPI :HDC, :SINT
-StretchBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
-SetRectRgn proto WINAPI :HRGN, :SINT, :SINT, :SINT, :SINT
-StretchDIBits proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :PVOID,
-	:LPBITMAPINFO, :UINT, :DWORD
-SetROP2 proto WINAPI :HDC, :SINT
-SetStretchBltMode proto WINAPI :HDC, :SINT
+SetGraphicsMode proto WINAPI :HDC, :sdword
+SetMapMode proto WINAPI :HDC, :sdword
+
+if(WINVER ge 0x0500)
+SetLayout proto WINAPI :HDC, :DWORD
+GetLayout proto WINAPI :HDC
+endif
+
+SetMetaFileBitsEx proto WINAPI :UINT, :ptr
+SetPaletteEntries proto WINAPI :HPALETTE, :UINT, :UINT, :ptr
+SetPixel proto WINAPI :HDC, :sdword, :sdword, :COLORREF
+SetPixelV proto WINAPI :HDC, :sdword, :sdword, :COLORREF
+SetPixelFormat proto WINAPI :HDC, :sdword, :ptr
+SetPolyFillMode proto WINAPI :HDC, :sdword
+StretchBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :sdword, :sdword, :DWORD
+SetRectRgn proto WINAPI :HRGN, :sdword, :sdword, :sdword, :sdword
+StretchDIBits proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :ptr, :ptr, :UINT, :DWORD
+SetROP2 proto WINAPI :HDC, :sdword
+SetStretchBltMode proto WINAPI :HDC, :sdword
 SetSystemPaletteUse proto WINAPI :HDC, :UINT
-SetTextCharacterExtra proto WINAPI :HDC, :SINT
-SetTextColor proto WINAPI :HDC,:COLORREF
+SetTextCharacterExtra proto WINAPI :HDC, :sdword
+SetTextColor proto WINAPI :HDC, :COLORREF
 SetTextAlign proto WINAPI :HDC, :UINT
-SetTextJustification proto WINAPI :HDC, :SINT, :SINT
+SetTextJustification proto WINAPI :HDC, :sdword, :sdword
 UpdateColors proto WINAPI :HDC
 
-if (WINVER GE 0x0400)
+endif
+;.pragma endregion
 
-COLOR16			typedef USHORT
+ifdef  COMBOX_SANDBOX
 
-TRIVERTEX		STRUC
-x			LONG ?
-y			LONG ?
-Red			COLOR16 ?
-Green			COLOR16 ?
-Blue			COLOR16 ?
-Alpha			COLOR16 ?
-TRIVERTEX		ENDS
-PTRIVERTEX		typedef ptr TRIVERTEX
-LPTRIVERTEX		typedef ptr TRIVERTEX
+if (_WIN32_WINNT ge 0x0600)
 
-GRADIENT_TRIANGLE	STRUC
-Vertex1			dd ?
-Vertex2			dd ?
-Vertex3			dd ?
-GRADIENT_TRIANGLE	ENDS
-PGRADIENT_TRIANGLE	typedef ptr GRADIENT_TRIANGLE
-LPGRADIENT_TRIANGLE	typedef ptr GRADIENT_TRIANGLE
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-GRADIENT_RECT		STRUC
-UpperLeft		dd ?
-LowerRight		dd ?
-GRADIENT_RECT		ENDS
-PGRADIENT_RECT		typedef ptr GRADIENT_RECT
-LPGRADIENT_RECT		typedef ptr GRADIENT_RECT
+CALLBACK(GDIMARSHALLOC, :DWORD, :LPVOID)
 
-BLENDFUNCTION		STRUC
-BlendOp			db ?
-BlendFlags		db ?
-SourceConstantAlpha	db ?
-AlphaFormat		db ?
-BLENDFUNCTION		ENDS
-PBLENDFUNCTION		typedef ptr BLENDFUNCTION
+CALLBACK(DDRAWMARSHCALLBACKMARSHAL, :HGDIOBJ, :LPVOID, :ptr)
+CALLBACK(DDRAWMARSHCALLBACKUNMARSHAL, :LPVOID, :ptr, :ptr)
+CALLBACK(DDRAWMARSHCALLBACKRELEASE, :LPVOID)
 
-AC_SRC_OVER		equ 0x00
-AC_SRC_ALPHA		equ 0x01
+define GDIREGISTERDDRAWPACKETVERSION   0x1
 
-AC_SRC_NO_PREMULT_ALPHA equ 0x01
-AC_SRC_NO_ALPHA		equ 0x02
-AC_DST_NO_PREMULT_ALPHA equ 0x10
-AC_DST_NO_ALPHA		equ 0x20
+GDIREGISTERDDRAWPACKET  struct
+dwSize                  DWORD ?
+dwVersion               DWORD ?
+pfnDdMarshal            DDRAWMARSHCALLBACKMARSHAL ?
+pfnDdUnmarshal          DDRAWMARSHCALLBACKUNMARSHAL ?
+pfnDdRelease            DDRAWMARSHCALLBACKRELEASE ?
+GDIREGISTERDDRAWPACKET  ends
+PGDIREGISTERDDRAWPACKET typedef ptr GDIREGISTERDDRAWPACKET
+
+GdiRegisterDdraw proto WINAPI :PGDIREGISTERDDRAWPACKET, :ptr
+
+GdiMarshalSize proto WINAPI :VOID
+GdiMarshal proto WINAPI :DWORD, :HGDIOBJ, :PVOID, :ULONG
+GdiUnmarshal proto WINAPI :PVOID, :ULONG
+
+endif
+;.pragma endregion
+
+endif
+
+endif
+
+if (WINVER ge 0x0400)
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+COLOR16                 typedef USHORT
+
+_TRIVERTEX              struct
+x                       LONG ?
+y                       LONG ?
+Red                     COLOR16 ?
+Green                   COLOR16 ?
+Blue                    COLOR16 ?
+Alpha                   COLOR16 ?
+_TRIVERTEX              ends
+TRIVERTEX               typedef _TRIVERTEX
+PTRIVERTEX              typedef ptr _TRIVERTEX
+LPTRIVERTEX             typedef ptr _TRIVERTEX
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+_GRADIENT_TRIANGLE      struct
+Vertex1                 ULONG ?
+Vertex2                 ULONG ?
+Vertex3                 ULONG ?
+_GRADIENT_TRIANGLE      ends
+GRADIENT_TRIANGLE       typedef _GRADIENT_TRIANGLE
+PGRADIENT_TRIANGLE      typedef ptr _GRADIENT_TRIANGLE
+LPGRADIENT_TRIANGLE     typedef ptr _GRADIENT_TRIANGLE
+
+_GRADIENT_RECT          struct
+UpperLeft               ULONG ?
+LowerRight              ULONG ?
+_GRADIENT_RECT          ends
+GRADIENT_RECT           typedef _GRADIENT_RECT
+PGRADIENT_RECT          typedef ptr _GRADIENT_RECT
+LPGRADIENT_RECT         typedef ptr _GRADIENT_RECT
+
+endif
+;.pragma endregion
+
+;.pragma region Application Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+
+_BLENDFUNCTION          struct
+BlendOp                 BYTE ?
+BlendFlags              BYTE ?
+SourceConstantAlpha     BYTE ?
+AlphaFormat             BYTE ?
+_BLENDFUNCTION          ends
+BLENDFUNCTION           typedef _BLENDFUNCTION
+PBLENDFUNCTION          typedef ptr _BLENDFUNCTION
+
+endif
+;.pragma endregion
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+define AC_SRC_OVER                 0x00
+define AC_SRC_ALPHA                0x01
 
 .pragma comment(lib, msimg32)
 
-AlphaBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
-AlphaDIBBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
-	:ptr BITMAPINFO, :UINT, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
-TransparentBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :UINT
-TransparentDIBits proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
-	:ptr BITMAPINFO, :UINT, :SINT, :SINT, :SINT, :SINT, :SINT, :UINT
+AlphaBlend proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :sdword, :sdword, :BLENDFUNCTION
 
-GRADIENT_FILL_RECT_H	equ 0x00000000
-GRADIENT_FILL_RECT_V	equ 0x00000001
-GRADIENT_FILL_TRIANGLE	equ 0x00000002
-GRADIENT_FILL_OP_FLAG	equ 0x000000ff
+TransparentBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :sdword, :sdword, :UINT
+
+define GRADIENT_FILL_RECT_H    0x00000000
+define GRADIENT_FILL_RECT_V    0x00000001
+define GRADIENT_FILL_TRIANGLE  0x00000002
+define GRADIENT_FILL_OP_FLAG   0x000000ff
 
 GradientFill proto WINAPI :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
+
+endif
+;.pragma endregion
+
+endif
+
+;.pragma region Desktop Family
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+
+GdiAlphaBlend proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :sdword, :sdword, :BLENDFUNCTION
+
+GdiTransparentBlt proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :HDC, :sdword, :sdword, :sdword, :sdword, :UINT
+
+GdiGradientFill proto WINAPI :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
 
 endif
 
@@ -3547,179 +4367,218 @@ endif
 ifndef NOMETAFILE
 
 PlayMetaFileRecord proto WINAPI :HDC, :LPHANDLETABLE, :LPMETARECORD, :UINT
-CALLBACK(MFENUMPROC, :HDC, :LPHANDLETABLE, :LPMETARECORD, :SINT, :LPARAM)
+
+CALLBACK(MFENUMPROC, :HDC, :ptr, :ptr, :sdword, :LPARAM)
 EnumMetaFile proto WINAPI :HDC, :HMETAFILE, :MFENUMPROC, :LPARAM
-CALLBACK(ENHMFENUMPROC, :HDC, :LPHANDLETABLE, :LPENHMETARECORD, :SINT, :LPARAM)
+
+CALLBACK(ENHMFENUMPROC, :HDC, :ptr, :ptr, :sdword, :LPARAM)
+
 CloseEnhMetaFile proto WINAPI :HDC
 CopyEnhMetaFileA proto WINAPI :HENHMETAFILE, :LPCSTR
 CopyEnhMetaFileW proto WINAPI :HENHMETAFILE, :LPCWSTR
 ifdef _UNICODE
-CopyEnhMetaFile equ <CopyEnhMetaFileW>
+define CopyEnhMetaFile  <CopyEnhMetaFileW>
 else
-CopyEnhMetaFile equ <CopyEnhMetaFileA>
+define CopyEnhMetaFile  <CopyEnhMetaFileA>
 endif
-CreateEnhMetaFileA proto WINAPI :HDC, :LPCSTR, :LPRECT, :LPCSTR
-CreateEnhMetaFileW proto WINAPI :HDC, :LPCWSTR, :LPRECT, :LPCWSTR
+CreateEnhMetaFileA proto WINAPI :HDC, :LPCSTR, :ptr, :LPCSTR
+CreateEnhMetaFileW proto WINAPI :HDC, :LPCWSTR, :ptr, :LPCWSTR
 ifdef _UNICODE
-CreateEnhMetaFile equ <CreateEnhMetaFileW>
+define CreateEnhMetaFile  <CreateEnhMetaFileW>
 else
-CreateEnhMetaFile equ <CreateEnhMetaFileA>
+define CreateEnhMetaFile  <CreateEnhMetaFileA>
 endif
 DeleteEnhMetaFile proto WINAPI :HENHMETAFILE
-EnumEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :ENHMFENUMPROC, :LPVOID, :LPRECT
+EnumEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :ENHMFENUMPROC, :LPVOID, :ptr
 GetEnhMetaFileA proto WINAPI :LPCSTR
 GetEnhMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
-GetEnhMetaFile equ <GetEnhMetaFileW>
+define GetEnhMetaFile  <GetEnhMetaFileW>
 else
-GetEnhMetaFile equ <GetEnhMetaFileA>
+define GetEnhMetaFile  <GetEnhMetaFileA>
 endif
 GetEnhMetaFileBits proto WINAPI :HENHMETAFILE, :UINT, :LPBYTE
 GetEnhMetaFileDescriptionA proto WINAPI :HENHMETAFILE, :UINT, :LPSTR
 GetEnhMetaFileDescriptionW proto WINAPI :HENHMETAFILE, :UINT, :LPWSTR
 ifdef _UNICODE
-GetEnhMetaFileDescription equ <GetEnhMetaFileDescriptionW>
+define GetEnhMetaFileDescription  <GetEnhMetaFileDescriptionW>
 else
-GetEnhMetaFileDescription equ <GetEnhMetaFileDescriptionA>
+define GetEnhMetaFileDescription  <GetEnhMetaFileDescriptionA>
 endif
 GetEnhMetaFileHeader proto WINAPI :HENHMETAFILE, :UINT, :LPENHMETAHEADER
 GetEnhMetaFilePaletteEntries proto WINAPI :HENHMETAFILE, :UINT, :LPPALETTEENTRY
+
 GetEnhMetaFilePixelFormat proto WINAPI :HENHMETAFILE, :UINT, :LPPIXELFORMATDESCRIPTOR
 GetWinMetaFileBits proto WINAPI :HENHMETAFILE, :UINT, :LPBYTE, :SINT, :HDC
-PlayEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :LPRECT
-PlayEnhMetaFileRecord proto WINAPI :HDC, :LPHANDLETABLE, :LPENHMETARECORD, :UINT
-SetEnhMetaFileBits proto WINAPI :UINT, :LPBYTE
-SetWinMetaFileBits proto WINAPI :UINT, :LPBYTE, :HDC, :LPMETAFILEPICT
-GdiComment proto WINAPI :HDC, :UINT, :LPBYTE
+PlayEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :ptr
+PlayEnhMetaFileRecord proto WINAPI :HDC, :LPHANDLETABLE, :ptr, :UINT
+
+SetEnhMetaFileBits proto WINAPI :UINT, :ptr
+
+SetWinMetaFileBits proto WINAPI :UINT, :ptr, :HDC, :ptr
+GdiComment proto WINAPI :HDC, :UINT, :ptr
 
 endif
 
 ifndef NOTEXTMETRIC
+
 GetTextMetricsA proto WINAPI :HDC, :LPTEXTMETRICA
 GetTextMetricsW proto WINAPI :HDC, :LPTEXTMETRICW
 ifdef _UNICODE
-GetTextMetrics	equ <GetTextMetricsW>
+define GetTextMetrics  <GetTextMetricsW>
 else
-GetTextMetrics	equ <GetTextMetricsA>
-endif
+define GetTextMetrics  <GetTextMetricsA>
 endif
 
-DIBSECTION		STRUC
-dsBm			BITMAP <>
-dsBmih			BITMAPINFOHEADER <>
-dsBitfields		dd 3 dup(?)
-dshSection		HANDLE ?
-dsOffset		dd ?
-DIBSECTION		ENDS
-LPDIBSECTION		typedef ptr DIBSECTION
-PDIBSECTION		typedef ptr DIBSECTION
+if defined(_M_CEE)
+undef GetTextMetrics
+GetTextMetricsA proto WINAPI :endif, :lptm
+endif
 
-AngleArc proto WINAPI :HDC, :SINT, :SINT, :DWORD, :FLOAT, :FLOAT
-PolyPolyline proto WINAPI :HDC, :LPPOINT, :LPDWORD, :DWORD
+endif
+
+tagDIBSECTION           struct
+dsBm                    BITMAP <>
+dsBmih                  BITMAPINFOHEADER <>
+dsBitfields             DWORD 3 dup(?)
+dshSection              HANDLE ?
+dsOffset                DWORD ?
+tagDIBSECTION           ends
+DIBSECTION              typedef tagDIBSECTION
+LPDIBSECTION            typedef ptr tagDIBSECTION
+PDIBSECTION             typedef ptr tagDIBSECTION
+
+AngleArc proto WINAPI :HDC, :sdword, :sdword, :DWORD, :FLOAT, :FLOAT
+PolyPolyline proto WINAPI :HDC, :ptr, :ptr, :DWORD
 GetWorldTransform proto WINAPI :HDC, :LPXFORM
-SetWorldTransform proto WINAPI :HDC, :LPXFORM
-ModifyWorldTransform proto WINAPI :HDC, :LPXFORM, :DWORD
-CombineTransform proto WINAPI :LPXFORM, :LPXFORM, :LPXFORM
+SetWorldTransform proto WINAPI :HDC, :ptr
+ModifyWorldTransform proto WINAPI :HDC, :ptr, :DWORD
+CombineTransform proto WINAPI :LPXFORM, :ptr, :ptr
+
+GDI_WIDTHBYTES proto watcall bits:LONG {
+  add   eax,31
+  and   eax,not 31
+  shr   eax,3
+  }
+GDI_DIBWIDTHBYTES proto fastcall bi:ptr BITMAPINFOHEADER {
+  movzx eax,[rcx].BITMAPINFOHEADER.biBitCount
+  mul   [rcx].BITMAPINFOHEADER.biWidth
+  GDI_WIDTHBYTES(eax)
+  }
+GDI__DIBSIZE proto fastcall bi:ptr BITMAPINFOHEADER {
+  GDI_DIBWIDTHBYTES(bi)
+  mul   [rcx].BITMAPINFOHEADER.biHeight
+  }
+GDI_DIBSIZE proto fastcall bi:ptr BITMAPINFOHEADER {
+  GDI__DIBSIZE(bi)
+  .if ( [rcx].BITMAPINFOHEADER.biHeight < 0 )
+    imul eax,eax,-1
+  .endif
+  }
+
 CreateDIBSection proto WINAPI :HDC, :LPBITMAPINFO, :UINT, :PVOID, :HANDLE, :DWORD
 GetDIBColorTable proto WINAPI :HDC, :UINT, :UINT, :RGBQUAD
-SetDIBColorTable proto WINAPI :HDC, :UINT, :UINT, :LPRGBQUAD
+SetDIBColorTable proto WINAPI :HDC, :UINT, :UINT, :ptr
 
-CA_NEGATIVE		equ 0x0001
-CA_LOG_FILTER		equ 0x0002
+define CA_NEGATIVE                 0x0001
+define CA_LOG_FILTER               0x0002
 
-ILLUMINANT_DEVICE_DEFAULT equ 0
-ILLUMINANT_A		equ 1
-ILLUMINANT_B		equ 2
-ILLUMINANT_C		equ 3
-ILLUMINANT_D50		equ 4
-ILLUMINANT_D55		equ 5
-ILLUMINANT_D65		equ 6
-ILLUMINANT_D75		equ 7
-ILLUMINANT_F2		equ 8
-ILLUMINANT_MAX_INDEX	equ ILLUMINANT_F2
+define ILLUMINANT_DEVICE_DEFAULT   0
+define ILLUMINANT_A                1
+define ILLUMINANT_B                2
+define ILLUMINANT_C                3
+define ILLUMINANT_D50              4
+define ILLUMINANT_D55              5
+define ILLUMINANT_D65              6
+define ILLUMINANT_D75              7
+define ILLUMINANT_F2               8
+define ILLUMINANT_MAX_INDEX        ILLUMINANT_F2
 
-ILLUMINANT_TUNGSTEN	equ ILLUMINANT_A
-ILLUMINANT_DAYLIGHT	equ ILLUMINANT_C
-ILLUMINANT_FLUORESCENT	equ ILLUMINANT_F2
-ILLUMINANT_NTSC		equ ILLUMINANT_C
+define ILLUMINANT_TUNGSTEN         ILLUMINANT_A
+define ILLUMINANT_DAYLIGHT         ILLUMINANT_C
+define ILLUMINANT_FLUORESCENT      ILLUMINANT_F2
+define ILLUMINANT_NTSC             ILLUMINANT_C
 
-RGB_GAMMA_MIN		equ 02500
-RGB_GAMMA_MAX		equ 65000
+define RGB_GAMMA_MIN               02500
+define RGB_GAMMA_MAX               65000
 
-REFERENCE_WHITE_MIN	equ 6000
-REFERENCE_WHITE_MAX	equ 10000
-REFERENCE_BLACK_MIN	equ 0
-REFERENCE_BLACK_MAX	equ 4000
+define REFERENCE_WHITE_MIN         6000
+define REFERENCE_WHITE_MAX         10000
+define REFERENCE_BLACK_MIN         0
+define REFERENCE_BLACK_MAX         4000
 
-COLOR_ADJ_MIN		equ (-100)
-COLOR_ADJ_MAX		equ 100
+define COLOR_ADJ_MIN               -100
+define COLOR_ADJ_MAX               100
 
-COLORADJUSTMENT		STRUC
-caSize			dw ?
-caFlags			dw ?
-caIlluminantIndex	dw ?
-caRedGamma		dw ?
-caGreenGamma		dw ?
-caBlueGamma		dw ?
-caReferenceBlack	dw ?
-caReferenceWhite	dw ?
-caContrast		dw ?
-caBrightness		dw ?
-caColorfulness		dw ?
-caRedGreenTint		dw ?
-COLORADJUSTMENT		ENDS
-PCOLORADJUSTMENT	typedef ptr COLORADJUSTMENT
-LPCOLORADJUSTMENT	typedef ptr COLORADJUSTMENT
+tagCOLORADJUSTMENT      struct
+caSize                  WORD ?
+caFlags                 WORD ?
+caIlluminantIndex       WORD ?
+caRedGamma              WORD ?
+caGreenGamma            WORD ?
+caBlueGamma             WORD ?
+caReferenceBlack        WORD ?
+caReferenceWhite        WORD ?
+caContrast              SWORD ?
+caBrightness            SWORD ?
+caColorfulness          SWORD ?
+caRedGreenTint          SWORD ?
+tagCOLORADJUSTMENT      ends
+COLORADJUSTMENT         typedef tagCOLORADJUSTMENT
+PCOLORADJUSTMENT        typedef ptr tagCOLORADJUSTMENT
+LPCOLORADJUSTMENT       typedef ptr tagCOLORADJUSTMENT
 
-SetColorAdjustment proto WINAPI :HDC, :LPCOLORADJUSTMENT
+SetColorAdjustment proto WINAPI :HDC, :ptr
 GetColorAdjustment proto WINAPI :HDC, :LPCOLORADJUSTMENT
 CreateHalftonePalette proto WINAPI :HDC
 
 ifdef STRICT
-CALLBACK(ABORTPROC, :HDC, :SINT)
+CALLBACK(ABORTPROC, :HDC, :sdword)
 else
-ABORTPROC	typedef FARPROC
+ABORTPROC               typedef FARPROC
 endif
 
-DOCINFOA		STRUC
-cbSize			SINT ?
-lpszDocName		LPCSTR ?
-lpszOutput		LPCSTR ?
-if (WINVER GE 0x0400)
-lpszDatatype		LPCSTR ?
-fwType			dd ?
+_DOCINFOA               struct
+cbSize                  sdword ?
+lpszDocName             LPCSTR ?
+lpszOutput              LPCSTR ?
+if (WINVER ge 0x0400)
+lpszDatatype            LPCSTR ?
+fwType                  DWORD ?
 endif
-DOCINFOA		ENDS
-LPDOCINFOA		typedef ptr DOCINFOA
-DOCINFOW		STRUC
-cbSize			SINT ?
-lpszDocName		LPCWSTR ?
-lpszOutput		LPCWSTR ?
-if (WINVER GE 0x0400)
-lpszDatatype		LPCWSTR ?
-fwType			dd ?
+_DOCINFOA               ends
+DOCINFOA                typedef _DOCINFOA
+LPDOCINFOA              typedef ptr _DOCINFOA
+_DOCINFOW               struct
+cbSize                  sdword ?
+lpszDocName             LPCWSTR ?
+lpszOutput              LPCWSTR ?
+if (WINVER ge 0x0400)
+lpszDatatype            LPCWSTR ?
+fwType                  DWORD ?
 endif
-DOCINFOW		ENDS
-LPDOCINFOW		typedef ptr DOCINFOW
+_DOCINFOW               ends
+DOCINFOW                typedef _DOCINFOW
+LPDOCINFOW              typedef ptr _DOCINFOW
 ifdef _UNICODE
-DOCINFO			typedef DOCINFOW
-LPDOCINFO		typedef LPDOCINFOW
+DOCINFO                 typedef DOCINFOW
+LPDOCINFO               typedef LPDOCINFOW
 else
-DOCINFO			typedef DOCINFOA
-LPDOCINFO		typedef LPDOCINFOA
+DOCINFO                 typedef DOCINFOA
+LPDOCINFO               typedef LPDOCINFOA
 endif
 
-if(WINVER GE 0x0400)
-DI_APPBANDING		equ 0x00000001
-DI_ROPS_READ_DESTINATION equ 0x00000002
+if(WINVER ge 0x0400)
+define DI_APPBANDING               0x00000001
+define DI_ROPS_READ_DESTINATION    0x00000002
 endif
 
-StartDocA proto WINAPI :HDC, :LPDOCINFOA
-StartDocW proto WINAPI :HDC, :LPDOCINFOW
+StartDocA proto WINAPI :HDC, :ptr
+StartDocW proto WINAPI :HDC, :ptr
 ifdef _UNICODE
-StartDoc equ <StartDocW>
+define StartDoc  <StartDocW>
 else
-StartDoc equ <StartDocA>
+define StartDoc  <StartDocA>
 endif
 EndDoc proto WINAPI :HDC
 StartPage proto WINAPI :HDC
@@ -3728,7 +4587,7 @@ AbortDoc proto WINAPI :HDC
 SetAbortProc proto WINAPI :HDC, :ABORTPROC
 
 AbortPath proto WINAPI :HDC
-ArcTo proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+ArcTo proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
 BeginPath proto WINAPI :HDC
 CloseFigure proto WINAPI :HDC
 EndPath proto WINAPI :HDC
@@ -3737,8 +4596,8 @@ FlattenPath proto WINAPI :HDC
 GetPath proto WINAPI :HDC, :LPPOINT, :LPBYTE, :SINT
 PathToRegion proto WINAPI :HDC
 PolyDraw proto WINAPI :HDC, :LPPOINT, :LPBYTE, :SINT
-SelectClipPath proto WINAPI :HDC, :SINT
-SetArcDirection proto WINAPI :HDC, :SINT
+SelectClipPath proto WINAPI :HDC, :sdword
+SetArcDirection proto WINAPI :HDC, :sdword
 SetMiterLimit proto WINAPI :HDC, :FLOAT, :PFLOAT
 StrokeAndFillPath proto WINAPI :HDC
 StrokePath proto WINAPI :HDC
@@ -3750,136 +4609,140 @@ GetArcDirection proto WINAPI :HDC
 GetObjectA proto WINAPI :HGDIOBJ, :SINT, :LPVOID
 GetObjectW proto WINAPI :HGDIOBJ, :SINT, :LPVOID
 ifdef _UNICODE
-GetObject equ <GetObjectW>
+define GetObject  <GetObjectW>
 else
-GetObject equ <GetObjectA>
+define GetObject  <GetObjectA>
 endif
-MoveToEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
-TextOutA proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :SINT
-TextOutW proto WINAPI :HDC, :SINT, :SINT, :LPCWSTR, :SINT
+
+MoveToEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
+TextOutA proto WINAPI :HDC, :sdword, :sdword, :LPCSTR, :sdword
+TextOutW proto WINAPI :HDC, :sdword, :sdword, :LPCWSTR, :sdword
 ifdef _UNICODE
-TextOut equ <TextOutW>
+define TextOut  <TextOutW>
 else
-TextOut equ <TextOutA>
+define TextOut  <TextOutA>
 endif
 ExtTextOutA proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCSTR, :UINT, :LPINT
 ExtTextOutW proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCWSTR, :UINT, :LPINT
 ifdef _UNICODE
-ExtTextOut equ <ExtTextOutW>
+define ExtTextOut  <ExtTextOutW>
 else
-ExtTextOut equ <ExtTextOutA>
+define ExtTextOut  <ExtTextOutA>
 endif
-PolyTextOutA proto WINAPI :HDC, :LPPOLYTEXTA, :SINT
-PolyTextOutW proto WINAPI :HDC, :LPPOLYTEXTW, :SINT
+PolyTextOutA proto WINAPI :HDC, :ptr, :sdword
+PolyTextOutW proto WINAPI :HDC, :ptr, :sdword
 ifdef _UNICODE
-PolyTextOut equ <PolyTextOutW>
+define PolyTextOut  <PolyTextOutW>
 else
-PolyTextOut equ <PolyTextOutA>
+define PolyTextOut  <PolyTextOutA>
 endif
 
-CreatePolygonRgn proto WINAPI :LPPOINT, :SINT, :SINT
+CreatePolygonRgn proto WINAPI :ptr, :sdword, :sdword
 DPtoLP proto WINAPI :HDC, :LPPOINT, :SINT
 LPtoDP proto WINAPI :HDC, :LPPOINT, :SINT
-Polygon proto WINAPI :HDC, :LPPOINT, :SINT
-Polyline proto WINAPI :HDC, :LPPOINT, :SINT
+Polygon proto WINAPI :HDC, :ptr, :sdword
+Polyline proto WINAPI :HDC, :ptr, :sdword
 
-PolyBezier proto WINAPI :HDC, :LPPOINT, :DWORD
-PolyBezierTo proto WINAPI :HDC, :LPPOINT, :DWORD
-PolylineTo proto WINAPI :HDC, :LPPOINT, :DWORD
+PolyBezier proto WINAPI :HDC, :ptr, :DWORD
+PolyBezierTo proto WINAPI :HDC, :ptr, :DWORD
+PolylineTo proto WINAPI :HDC, :ptr, :DWORD
 
-SetViewportExtEx proto WINAPI :HDC, :SINT, :SINT, :LPSIZE
-SetViewportOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
-SetWindowExtEx proto WINAPI :HDC, :SINT, :SINT, :LPSIZE
-SetWindowOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+SetViewportExtEx proto WINAPI :HDC, :sdword, :sdword, :LPSIZE
+SetViewportOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
+SetWindowExtEx proto WINAPI :HDC, :sdword, :sdword, :LPSIZE
+SetWindowOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
 
-OffsetViewportOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
-OffsetWindowOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
-ScaleViewportExtEx proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
-ScaleWindowExtEx proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
-SetBitmapDimensionEx proto WINAPI :HBITMAP, :SINT, :SINT, :LPSIZE
-SetBrushOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+OffsetViewportOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
+OffsetWindowOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
+ScaleViewportExtEx proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :LPSIZE
+ScaleWindowExtEx proto WINAPI :HDC, :sdword, :sdword, :sdword, :sdword, :LPSIZE
+SetBitmapDimensionEx proto WINAPI :HBITMAP, :sdword, :sdword, :LPSIZE
+SetBrushOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
 
-GetTextFaceA proto WINAPI :HDC, :SINT, :LPSTR
-GetTextFaceW proto WINAPI :HDC, :SINT, :LPWSTR
+GetTextFaceA proto WINAPI :HDC, :sdword, :LPSTR
+GetTextFaceW proto WINAPI :HDC, :sdword, :LPWSTR
 ifdef _UNICODE
-GetTextFace equ <GetTextFaceW>
+define GetTextFace  <GetTextFaceW>
 else
-GetTextFace equ <GetTextFaceA>
+define GetTextFace  <GetTextFaceA>
 endif
 
-FONTMAPPER_MAX		equ 10
+define FONTMAPPER_MAX 10
 
-KERNINGPAIR		STRUC
-wFirst			dw ?
-wSecond			dw ?
-iKernAmount		SINT ?
-KERNINGPAIR		ENDS
-LPKERNINGPAIR		typedef ptr KERNINGPAIR
+tagKERNINGPAIR          struct
+wFirst                  WORD ?
+wSecond                 WORD ?
+iKernAmount             sdword ?
+tagKERNINGPAIR          ends
+KERNINGPAIR             typedef tagKERNINGPAIR
+LPKERNINGPAIR           typedef ptr tagKERNINGPAIR
 
 GetKerningPairsA proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
 GetKerningPairsW proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
 ifdef _UNICODE
-GetKerningPairs equ <GetKerningPairsW>
+define GetKerningPairs  <GetKerningPairsW>
 else
-GetKerningPairs equ <GetKerningPairsA>
+define GetKerningPairs  <GetKerningPairsA>
 endif
 
 GetDCOrgEx proto WINAPI :HDC, :LPPOINT
-FixBrushOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+FixBrushOrgEx proto WINAPI :HDC, :sdword, :sdword, :LPPOINT
 UnrealizeObject proto WINAPI :HGDIOBJ
 
 GdiFlush proto WINAPI
 GdiSetBatchLimit proto WINAPI :DWORD
 GdiGetBatchLimit proto WINAPI
 
-if(WINVER GE 0x0400)
+if(WINVER ge 0x0400)
 
-ICM_OFF			equ 1
-ICM_ON			equ 2
-ICM_QUERY		equ 3
-ICM_DONE_OUTSIDEDC	equ 4
+define ICM_OFF               1
+define ICM_ON                2
+define ICM_QUERY             3
+define ICM_DONE_OUTSIDEDC    4
 
 CALLBACK(ICMENUMPROCA, :LPSTR, :LPARAM)
 CALLBACK(ICMENUMPROCW, :LPWSTR, :LPARAM)
-
 ifdef _UNICODE
-ICMENUMPROC equ <ICMENUMPROCW>
+define ICMENUMPROC  <ICMENUMPROCW>
 else
-ICMENUMPROC equ <ICMENUMPROCA>
+define ICMENUMPROC  <ICMENUMPROCA>
 endif
 
-SetICMMode proto WINAPI :HDC, :SINT
-CheckColorsInGamut proto WINAPI :HDC, :LPVOID, :LPVOID, :DWORD
+SetICMMode proto WINAPI :HDC, :sdword
+CheckColorsInGamut proto WINAPI :HDC, :LPRGBTRIPLE, :LPVOID, :DWORD
+
 GetColorSpace proto WINAPI :HDC
 GetLogColorSpaceA proto WINAPI :HCOLORSPACE, :LPLOGCOLORSPACEA, :DWORD
 GetLogColorSpaceW proto WINAPI :HCOLORSPACE, :LPLOGCOLORSPACEW, :DWORD
 ifdef _UNICODE
-GetLogColorSpace equ <GetLogColorSpaceW>
+define GetLogColorSpace  <GetLogColorSpaceW>
 else
-GetLogColorSpace equ <GetLogColorSpaceA>
+define GetLogColorSpace  <GetLogColorSpaceA>
 endif
+
 CreateColorSpaceA proto WINAPI :LPLOGCOLORSPACEA
 CreateColorSpaceW proto WINAPI :LPLOGCOLORSPACEW
 ifdef _UNICODE
-CreateColorSpace equ <CreateColorSpaceW>
+define CreateColorSpace  <CreateColorSpaceW>
 else
-CreateColorSpace equ <CreateColorSpaceA>
+define CreateColorSpace  <CreateColorSpaceA>
 endif
 SetColorSpace proto WINAPI :HDC, :HCOLORSPACE
 DeleteColorSpace proto WINAPI :HCOLORSPACE
 GetICMProfileA proto WINAPI :HDC, :LPDWORD, :LPSTR
 GetICMProfileW proto WINAPI :HDC, :LPDWORD, :LPWSTR
 ifdef _UNICODE
-GetICMProfile equ <GetICMProfileW>
+define GetICMProfile  <GetICMProfileW>
 else
-GetICMProfile equ <GetICMProfileA>
+define GetICMProfile  <GetICMProfileA>
 endif
+
 SetICMProfileA proto WINAPI :HDC, :LPSTR
 SetICMProfileW proto WINAPI :HDC, :LPWSTR
 ifdef _UNICODE
-SetICMProfile equ <SetICMProfileW>
+define SetICMProfile  <SetICMProfileW>
 else
-SetICMProfile equ <SetICMProfileA>
+define SetICMProfile  <SetICMProfileA>
 endif
 GetDeviceGammaRamp proto WINAPI :HDC, :LPVOID
 SetDeviceGammaRamp proto WINAPI :HDC, :LPVOID
@@ -3887,1033 +4750,1184 @@ ColorMatchToTarget proto WINAPI :HDC, :HDC, :DWORD
 EnumICMProfilesA proto WINAPI :HDC, :ICMENUMPROCA, :LPARAM
 EnumICMProfilesW proto WINAPI :HDC, :ICMENUMPROCW, :LPARAM
 ifdef _UNICODE
-EnumICMProfiles equ <EnumICMProfilesW>
+define EnumICMProfiles  <EnumICMProfilesW>
 else
-EnumICMProfiles equ <EnumICMProfilesA>
+define EnumICMProfiles  <EnumICMProfilesA>
 endif
 UpdateICMRegKeyA proto WINAPI :DWORD, :LPSTR, :LPSTR, :UINT
 UpdateICMRegKeyW proto WINAPI :DWORD, :LPWSTR, :LPWSTR, :UINT
 ifdef _UNICODE
-UpdateICMRegKey equ <UpdateICMRegKeyW>
+define UpdateICMRegKey  <UpdateICMRegKeyW>
 else
-UpdateICMRegKey equ <UpdateICMRegKeyA>
+define UpdateICMRegKey  <UpdateICMRegKeyA>
 endif
+;.pragma deprecated (UpdateICMRegKeyW)
+;.pragma deprecated (UpdateICMRegKeyA)
+
 endif
 
-if (WINVER GE 0x0500)
+if (WINVER ge 0x0500)
 ColorCorrectPalette proto WINAPI :HDC, :HPALETTE, :DWORD, :DWORD
 endif
 
 ifndef NOMETAFILE
 
 ifndef _MAC
-ENHMETA_SIGNATURE	equ 0x464D4520
+define ENHMETA_SIGNATURE       0x464D4520
 else
-ENHMETA_SIGNATURE	equ 0x20454D46
+define ENHMETA_SIGNATURE       0x20454D46
 endif
 
-ENHMETA_STOCK_OBJECT	equ 0x80000000
+define ENHMETA_STOCK_OBJECT    0x80000000
 
-EMR_HEADER		equ 1
-EMR_POLYBEZIER		equ 2
-EMR_POLYGON		equ 3
-EMR_POLYLINE		equ 4
-EMR_POLYBEZIERTO	equ 5
-EMR_POLYLINETO		equ 6
-EMR_POLYPOLYLINE	equ 7
-EMR_POLYPOLYGON		equ 8
-EMR_SETWINDOWEXTEX	equ 9
-EMR_SETWINDOWORGEX	equ 10
-EMR_SETVIEWPORTEXTEX	equ 11
-EMR_SETVIEWPORTORGEX	equ 12
-EMR_SETBRUSHORGEX	equ 13
-EMR_EOF			equ 14
-EMR_SETPIXELV		equ 15
-EMR_SETMAPPERFLAGS	equ 16
-EMR_SETMAPMODE		equ 17
-EMR_SETBKMODE		equ 18
-EMR_SETPOLYFILLMODE	equ 19
-EMR_SETROP2		equ 20
-EMR_SETSTRETCHBLTMODE	equ 21
-EMR_SETTEXTALIGN	equ 22
-EMR_SETCOLORADJUSTMENT	equ 23
-EMR_SETTEXTCOLOR	equ 24
-EMR_SETBKCOLOR		equ 25
-EMR_OFFSETCLIPRGN	equ 26
-EMR_MOVETOEX		equ 27
-EMR_SETMETARGN		equ 28
-EMR_EXCLUDECLIPRECT	equ 29
-EMR_INTERSECTCLIPRECT	equ 30
-EMR_SCALEVIEWPORTEXTEX	equ 31
-EMR_SCALEWINDOWEXTEX	equ 32
-EMR_SAVEDC		equ 33
-EMR_RESTOREDC		equ 34
-EMR_SETWORLDTRANSFORM	equ 35
-EMR_MODIFYWORLDTRANSFORM equ 36
-EMR_SELECTOBJECT	equ 37
-EMR_CREATEPEN		equ 38
-EMR_CREATEBRUSHINDIRECT equ 39
-EMR_DELETEOBJECT	equ 40
-EMR_ANGLEARC		equ 41
-EMR_ELLIPSE		equ 42
-EMR_RECTANGLE		equ 43
-EMR_ROUNDRECT		equ 44
-EMR_ARC			equ 45
-EMR_CHORD		equ 46
-EMR_PIE			equ 47
-EMR_SELECTPALETTE	equ 48
-EMR_CREATEPALETTE	equ 49
-EMR_SETPALETTEENTRIES	equ 50
-EMR_RESIZEPALETTE	equ 51
-EMR_REALIZEPALETTE	equ 52
-EMR_EXTFLOODFILL	equ 53
-EMR_LINETO		equ 54
-EMR_ARCTO		equ 55
-EMR_POLYDRAW		equ 56
-EMR_SETARCDIRECTION	equ 57
-EMR_SETMITERLIMIT	equ 58
-EMR_BEGINPATH		equ 59
-EMR_ENDPATH		equ 60
-EMR_CLOSEFIGURE		equ 61
-EMR_FILLPATH		equ 62
-EMR_STROKEANDFILLPATH	equ 63
-EMR_STROKEPATH		equ 64
-EMR_FLATTENPATH		equ 65
-EMR_WIDENPATH		equ 66
-EMR_SELECTCLIPPATH	equ 67
-EMR_ABORTPATH		equ 68
+define EMR_HEADER                      1
+define EMR_POLYBEZIER                  2
+define EMR_POLYGON                     3
+define EMR_POLYLINE                    4
+define EMR_POLYBEZIERTO                5
+define EMR_POLYLINETO                  6
+define EMR_POLYPOLYLINE                7
+define EMR_POLYPOLYGON                 8
+define EMR_SETWINDOWEXTEX              9
+define EMR_SETWINDOWORGEX              10
+define EMR_SETVIEWPORTEXTEX            11
+define EMR_SETVIEWPORTORGEX            12
+define EMR_SETBRUSHORGEX               13
+define EMR_EOF                         14
+define EMR_SETPIXELV                   15
+define EMR_SETMAPPERFLAGS              16
+define EMR_SETMAPMODE                  17
+define EMR_SETBKMODE                   18
+define EMR_SETPOLYFILLMODE             19
+define EMR_SETROP2                     20
+define EMR_SETSTRETCHBLTMODE           21
+define EMR_SETTEXTALIGN                22
+define EMR_SETCOLORADJUSTMENT          23
+define EMR_SETTEXTCOLOR                24
+define EMR_SETBKCOLOR                  25
+define EMR_OFFSETCLIPRGN               26
+define EMR_MOVETOEX                    27
+define EMR_SETMETARGN                  28
+define EMR_EXCLUDECLIPRECT             29
+define EMR_INTERSECTCLIPRECT           30
+define EMR_SCALEVIEWPORTEXTEX          31
+define EMR_SCALEWINDOWEXTEX            32
+define EMR_SAVEDC                      33
+define EMR_RESTOREDC                   34
+define EMR_SETWORLDTRANSFORM           35
+define EMR_MODIFYWORLDTRANSFORM        36
+define EMR_SELECTOBJECT                37
+define EMR_CREATEPEN                   38
+define EMR_CREATEBRUSHINDIRECT         39
+define EMR_DELETEOBJECT                40
+define EMR_ANGLEARC                    41
+define EMR_ELLIPSE                     42
+define EMR_RECTANGLE                   43
+define EMR_ROUNDRECT                   44
+define EMR_ARC                         45
+define EMR_CHORD                       46
+define EMR_PIE                         47
+define EMR_SELECTPALETTE               48
+define EMR_CREATEPALETTE               49
+define EMR_SETPALETTEENTRIES           50
+define EMR_RESIZEPALETTE               51
+define EMR_REALIZEPALETTE              52
+define EMR_EXTFLOODFILL                53
+define EMR_LINETO                      54
+define EMR_ARCTO                       55
+define EMR_POLYDRAW                    56
+define EMR_SETARCDIRECTION             57
+define EMR_SETMITERLIMIT               58
+define EMR_BEGINPATH                   59
+define EMR_ENDPATH                     60
+define EMR_CLOSEFIGURE                 61
+define EMR_FILLPATH                    62
+define EMR_STROKEANDFILLPATH           63
+define EMR_STROKEPATH                  64
+define EMR_FLATTENPATH                 65
+define EMR_WIDENPATH                   66
+define EMR_SELECTCLIPPATH              67
+define EMR_ABORTPATH                   68
 
-EMR_GDICOMMENT		equ 70
-EMR_FILLRGN		equ 71
-EMR_FRAMERGN		equ 72
-EMR_INVERTRGN		equ 73
-EMR_PAINTRGN		equ 74
-EMR_EXTSELECTCLIPRGN	equ 75
-EMR_BITBLT		equ 76
-EMR_STRETCHBLT		equ 77
-EMR_MASKBLT		equ 78
-EMR_PLGBLT		equ 79
-EMR_SETDIBITSTODEVICE	equ 80
-EMR_STRETCHDIBITS	equ 81
-EMR_EXTCREATEFONTINDIRECTW  equ 82
-EMR_EXTTEXTOUTA		equ 83
-EMR_EXTTEXTOUTW		equ 84
-EMR_POLYBEZIER16	equ 85
-EMR_POLYGON16		equ 86
-EMR_POLYLINE16		equ 87
-EMR_POLYBEZIERTO16	equ 88
-EMR_POLYLINETO16	equ 89
-EMR_POLYPOLYLINE16	equ 90
-EMR_POLYPOLYGON16	equ 91
-EMR_POLYDRAW16		equ 92
-EMR_CREATEMONOBRUSH	equ 93
-EMR_CREATEDIBPATTERNBRUSHPT equ 94
-EMR_EXTCREATEPEN	equ 95
-EMR_POLYTEXTOUTA	equ 96
-EMR_POLYTEXTOUTW	equ 97
+define EMR_GDICOMMENT                  70
+define EMR_FILLRGN                     71
+define EMR_FRAMERGN                    72
+define EMR_INVERTRGN                   73
+define EMR_PAINTRGN                    74
+define EMR_EXTSELECTCLIPRGN            75
+define EMR_BITBLT                      76
+define EMR_STRETCHBLT                  77
+define EMR_MASKBLT                     78
+define EMR_PLGBLT                      79
+define EMR_SETDIBITSTODEVICE           80
+define EMR_STRETCHDIBITS               81
+define EMR_EXTCREATEFONTINDIRECTW      82
+define EMR_EXTTEXTOUTA                 83
+define EMR_EXTTEXTOUTW                 84
+define EMR_POLYBEZIER16                85
+define EMR_POLYGON16                   86
+define EMR_POLYLINE16                  87
+define EMR_POLYBEZIERTO16              88
+define EMR_POLYLINETO16                89
+define EMR_POLYPOLYLINE16              90
+define EMR_POLYPOLYGON16               91
+define EMR_POLYDRAW16                  92
+define EMR_CREATEMONOBRUSH             93
+define EMR_CREATEDIBPATTERNBRUSHPT     94
+define EMR_EXTCREATEPEN                95
+define EMR_POLYTEXTOUTA                96
+define EMR_POLYTEXTOUTW                97
 
-if(WINVER GE 0x0400)
-EMR_SETICMMODE		equ 98
-EMR_CREATECOLORSPACE	equ 99
-EMR_SETCOLORSPACE	equ 100
-EMR_DELETECOLORSPACE	equ 101
-EMR_GLSRECORD		equ 102
-EMR_GLSBOUNDEDRECORD	equ 103
-EMR_PIXELFORMAT equ 104
+if(WINVER ge 0x0400)
+define EMR_SETICMMODE                  98
+define EMR_CREATECOLORSPACE            99
+define EMR_SETCOLORSPACE              100
+define EMR_DELETECOLORSPACE           101
+define EMR_GLSRECORD                  102
+define EMR_GLSBOUNDEDRECORD           103
+define EMR_PIXELFORMAT                104
 endif
 
-if (WINVER GE 0x0500)
-EMR_DRAWESCAPE		equ 105
-EMR_EXTESCAPE		equ 106
-EMR_STARTDOC		equ 107
-EMR_SMALLTEXTOUT	equ 108
-EMR_FORCEUFIMAPPING	equ 109
-EMR_NAMEDESCAPE		equ 110
-EMR_COLORCORRECTPALETTE equ 111
-EMR_SETICMPROFILEA	equ 112
-EMR_SETICMPROFILEW	equ 113
-EMR_ALPHABLEND		equ 114
-EMR_ALPHADIBBLEND	equ 115
-EMR_TRANSPARENTBLT	equ 116
-EMR_TRANSPARENTDIB	equ 117
-EMR_GRADIENTFILL	equ 118
-EMR_SETLINKEDUFIS	equ 119
-EMR_SETTEXTJUSTIFICATION equ 120
+if(WINVER ge 0x0500)
+define EMR_RESERVED_105               105
+define EMR_RESERVED_106               106
+define EMR_RESERVED_107               107
+define EMR_RESERVED_108               108
+define EMR_RESERVED_109               109
+define EMR_RESERVED_110               110
+define EMR_COLORCORRECTPALETTE        111
+define EMR_SETICMPROFILEA             112
+define EMR_SETICMPROFILEW             113
+define EMR_ALPHABLEND                 114
+define EMR_SETLAYOUT                  115
+define EMR_TRANSPARENTBLT             116
+if (_WIN32_WINNT ge _WIN32_WINNT_WIN2K)
+define EMR_RESERVED_117               117
+endif
+define EMR_GRADIENTFILL               118
+define EMR_RESERVED_119               119
+define EMR_RESERVED_120               120
+define EMR_COLORMATCHTOTARGETW        121
+define EMR_CREATECOLORSPACEW          122
 endif
 
-EMR_MIN			equ 1
+define EMR_MIN                          1
 
-if (WINVER GE 0x0500)
-EMR_MAX			equ 120
+if (WINVER ge 0x0500)
+define EMR_MAX                        122
+elseif (WINVER ge 0x0400)
+define EMR_MAX                        104
 else
-if (WINVER GE 0x0400)
-EMR_MAX			equ 104
-else
-EMR_MAX			equ 97
-endif
+define EMR_MAX                         97
 endif
 
-EMR			STRUC
-iType			dd ?
-nSize			dd ?
-EMR			ENDS
-PEMR			typedef ptr EMR
+tagEMR                  struct
+iType                   DWORD ?
+nSize                   DWORD ?
+tagEMR                  ends
+EMR                     typedef tagEMR
+PEMR                    typedef ptr tagEMR
 
-EMRTEXT			STRUC
-ptlReference		POINTL <>
-nChars			dd ?
-offString		dd ?
-fOptions		dd ?
-_rcl			RECTL <>
-offDx			dd ?
-EMRTEXT			ENDS
-PEMRTEXT		typedef ptr EMRTEXT
+tagEMRTEXT              struct
+ptlReference            POINTL <>
+nChars                  DWORD ?
+offString               DWORD ?
+fOptions                DWORD ?
+_rcl                    RECTL <>
+offDx                   DWORD ?
+tagEMRTEXT              ends
+EMRTEXT                 typedef tagEMRTEXT
+PEMRTEXT                typedef ptr tagEMRTEXT
 
-EMRABORTPATH		STRUC
-emr			EMR <>
-EMRABORTPATH		ENDS
-PEMRABORTPATH		typedef ptr EMRABORTPATH
-PEMRBEGINPATH		typedef ptr EMRABORTPATH
-EMRBEGINPATH		typedef EMRABORTPATH
-PEMRENDPATH		typedef ptr EMRABORTPATH
-EMRENDPATH		typedef EMRABORTPATH
-PEMRCLOSEFIGURE		typedef ptr EMRABORTPATH
-EMRCLOSEFIGURE		typedef EMRABORTPATH
-PEMRFLATTENPATH		typedef ptr EMRABORTPATH
-EMRFLATTENPATH		typedef EMRABORTPATH
-PEMRWIDENPATH		typedef ptr EMRABORTPATH
-EMRWIDENPATH		typedef EMRABORTPATH
-PEMRSETMETARGN		typedef ptr EMRABORTPATH
-EMRSETMETARGN		typedef EMRABORTPATH
-PEMRSAVEDC		typedef ptr EMRABORTPATH
-EMRSAVEDC		typedef EMRABORTPATH
-PEMRREALIZEPALETTE	typedef ptr EMRABORTPATH
-EMRREALIZEPALETTE	typedef EMRABORTPATH
+tagABORTPATH            struct
+emr                     EMR <>
+tagABORTPATH            ends
+EMRABORTPATH            typedef tagABORTPATH
+PEMRABORTPATH           typedef ptr tagABORTPATH
+EMRBEGINPATH            typedef tagABORTPATH
+PEMRBEGINPATH           typedef ptr tagABORTPATH
+EMRENDPATH              typedef tagABORTPATH
+PEMRENDPATH             typedef ptr tagABORTPATH
+EMRCLOSEFIGURE          typedef tagABORTPATH
+PEMRCLOSEFIGURE         typedef ptr tagABORTPATH
+EMRFLATTENPATH          typedef tagABORTPATH
+PEMRFLATTENPATH         typedef ptr tagABORTPATH
+EMRWIDENPATH            typedef tagABORTPATH
+PEMRWIDENPATH           typedef ptr tagABORTPATH
+EMRSETMETARGN           typedef tagABORTPATH
+PEMRSETMETARGN          typedef ptr tagABORTPATH
+EMRSAVEDC               typedef tagABORTPATH
+PEMRSAVEDC              typedef ptr tagABORTPATH
+EMRREALIZEPALETTE       typedef tagABORTPATH
+PEMRREALIZEPALETTE      typedef ptr tagABORTPATH
 
-EMRSELECTCLIPPATH	STRUC
-emr			EMR <>
-iMode			dd ?
-EMRSELECTCLIPPATH	ENDS
-PEMRSELECTCLIPPATH	typedef ptr EMRSELECTCLIPPATH
-PEMRSETBKMODE		typedef ptr EMRSELECTCLIPPATH
-EMRSETBKMODE		typedef EMRSELECTCLIPPATH
-PEMRSETMAPMODE		typedef ptr EMRSELECTCLIPPATH
-EMRSETMAPMODE		typedef EMRSELECTCLIPPATH
-PEMRSETPOLYFILLMODE	typedef ptr EMRSELECTCLIPPATH
-EMRSETPOLYFILLMODE	typedef EMRSELECTCLIPPATH
-PEMRSETROP2		typedef ptr EMRSELECTCLIPPATH
-EMRSETROP2		typedef EMRSELECTCLIPPATH
-PEMRSETSTRETCHBLTMODE	typedef ptr EMRSELECTCLIPPATH
-EMRSETSTRETCHBLTMODE	typedef EMRSELECTCLIPPATH
-PEMRSETICMMODE		typedef ptr EMRSELECTCLIPPATH
-EMRSETICMMODE		typedef EMRSELECTCLIPPATH
-PEMRSETTEXTALIGN	typedef ptr EMRSELECTCLIPPATH
-EMRSETTEXTALIGN		typedef EMRSELECTCLIPPATH
-
-EMRSETMITERLIMIT	STRUC
-emr			EMR <>
-eMiterLimit		FLOAT ?
-EMRSETMITERLIMIT	ENDS
-PEMRSETMITERLIMIT	typedef ptr EMRSETMITERLIMIT
-
-EMRRESTOREDC		STRUC
-emr			EMR <>
-iRelative		LONG ?
-EMRRESTOREDC		ENDS
-PEMRRESTOREDC		typedef ptr EMRRESTOREDC
-
-EMRSETARCDIRECTION	STRUC
-emr			EMR <>
-iArcDirection		dd ?
-EMRSETARCDIRECTION	ENDS
-PEMRSETARCDIRECTION	typedef ptr EMRSETARCDIRECTION
-
-EMRSETMAPPERFLAGS	STRUC
-emr			EMR <>
-dwFlags			dd ?
-EMRSETMAPPERFLAGS	ENDS
-PEMRSETMAPPERFLAGS	typedef ptr EMRSETMAPPERFLAGS
-
-EMRSETBKCOLOR		STRUC
-emr			EMR <>
-crColor			COLORREF ?
-EMRSETBKCOLOR		ENDS
-PEMRSETBKCOLOR		typedef ptr EMRSETBKCOLOR
-PEMRSETTEXTCOLOR	typedef ptr EMRSETBKCOLOR
-EMRSETTEXTCOLOR		typedef EMRSETBKCOLOR
-
-EMRSELECTOBJECT		STRUC
-emr			EMR <>
-ihObject		dd ?
-EMRSELECTOBJECT		ENDS
-PEMRSELECTOBJECT	typedef ptr EMRSELECTOBJECT
-PEMRDELETEOBJECT	typedef ptr EMRSELECTOBJECT
-EMRDELETEOBJECT		typedef EMRSELECTOBJECT
-
-if(WINVER GE 0x0400)
-EMRSELECTCOLORSPACE	STRUC
-emr			EMR <>
-ihCS			dd ?
-EMRSELECTCOLORSPACE	ENDS
-PEMRSELECTCOLORSPACE	typedef ptr EMRSELECTCOLORSPACE
-PEMRDELETECOLORSPACE	typedef ptr EMRSELECTCOLORSPACE
-EMRDELETECOLORSPACE	typedef EMRSELECTCOLORSPACE
+tagEMRSELECTCLIPPATH    struct
+emr                     EMR <>
+iMode                   DWORD ?
+tagEMRSELECTCLIPPATH    ends
+EMRSELECTCLIPPATH       typedef tagEMRSELECTCLIPPATH
+PEMRSELECTCLIPPATH      typedef ptr tagEMRSELECTCLIPPATH
+EMRSETBKMODE            typedef tagEMRSELECTCLIPPATH
+PEMRSETBKMODE           typedef ptr tagEMRSELECTCLIPPATH
+EMRSETMAPMODE           typedef tagEMRSELECTCLIPPATH
+PEMRSETMAPMODE          typedef ptr tagEMRSELECTCLIPPATH
+if(WINVER ge 0x0500)
+EMRSETLAYOUT            typedef tagEMRSELECTCLIPPATH
+PEMRSETLAYOUT           typedef ptr tagEMRSELECTCLIPPATH
 endif
-
-EMRSELECTPALETTE	STRUC
-emr			EMR <>
-ihPal			dd ?
-EMRSELECTPALETTE	ENDS
-PEMRSELECTPALETTE	typedef ptr EMRSELECTPALETTE
-
-EMRRESIZEPALETTE	STRUC
-emr			EMR <>
-ihPal			dd ?
-cEntries		dd ?
-EMRRESIZEPALETTE	ENDS
-PEMRRESIZEPALETTE	typedef ptr EMRRESIZEPALETTE
-
-EMRSETPALETTEENTRIES	STRUC
-emr			EMR <>
-ihPal			dd ?
-iStart			dd ?
-cEntries		dd ?
-aPalEntries		PALETTEENTRY <>
-EMRSETPALETTEENTRIES	ENDS
-PEMRSETPALETTEENTRIES	typedef ptr EMRSETPALETTEENTRIES
-
-EMRSETCOLORADJUSTMENT	STRUC
-emr			EMR <>
-ColorAdjustment		COLORADJUSTMENT <>
-EMRSETCOLORADJUSTMENT	ENDS
-PEMRSETCOLORADJUSTMENT	typedef ptr EMRSETCOLORADJUSTMENT
-
-EMRGDICOMMENT		STRUC
-emr			EMR <>
-cbData			dd ?
-Data			db ?
-EMRGDICOMMENT		ENDS
-PEMRGDICOMMENT		typedef ptr EMRGDICOMMENT
-
-EMREOF			STRUC
-emr			EMR <>
-nPalEntries		dd ?
-offPalEntries		dd ?
-nSizeLast		dd ?
-EMREOF			ENDS
-PEMREOF			typedef ptr EMREOF
-
-EMRLINETO		STRUC
-emr			EMR <>
-ptl			POINTL <>
-EMRLINETO		ENDS
-PEMRLINETO		typedef ptr EMRLINETO
-PEMRMOVETOEX		typedef ptr EMRLINETO
-EMRMOVETOEX		typedef EMRLINETO
-
-EMROFFSETCLIPRGN	STRUC
-emr			EMR <>
-ptlOffset		POINTL <>
-EMROFFSETCLIPRGN	ENDS
-PEMROFFSETCLIPRGN	typedef ptr EMROFFSETCLIPRGN
-
-EMRFILLPATH		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-EMRFILLPATH		ENDS
-PEMRFILLPATH		typedef ptr EMRFILLPATH
-PEMRSTROKEANDFILLPATH	typedef ptr EMRFILLPATH
-EMRSTROKEANDFILLPATH	typedef EMRFILLPATH
-PEMRSTROKEPATH		typedef ptr EMRFILLPATH
-EMRSTROKEPATH		typedef EMRFILLPATH
-
-EMREXCLUDECLIPRECT	STRUC
-emr			EMR <>
-rclClip			RECTL <>
-EMREXCLUDECLIPRECT	ENDS
-PEMREXCLUDECLIPRECT	typedef ptr EMREXCLUDECLIPRECT
-PEMRINTERSECTCLIPRECT	typedef ptr EMREXCLUDECLIPRECT
-EMRINTERSECTCLIPRECT	typedef EMREXCLUDECLIPRECT
-
-EMRSETVIEWPORTORGEX	STRUC
-emr			EMR <>
-ptlOrigin		POINTL <>
-EMRSETVIEWPORTORGEX	ENDS
-PEMRSETVIEWPORTORGEX	typedef ptr EMRSETVIEWPORTORGEX
-PEMRSETWINDOWORGEX	typedef ptr EMRSETVIEWPORTORGEX
-EMRSETWINDOWORGEX	typedef EMRSETVIEWPORTORGEX
-PEMRSETBRUSHORGEX	typedef ptr EMRSETVIEWPORTORGEX
-EMRSETBRUSHORGEX	typedef EMRSETVIEWPORTORGEX
-
-EMRSETVIEWPORTEXTEX	STRUC
-emr			EMR <>
-szlExtent		SIZEL <>
-EMRSETVIEWPORTEXTEX	ENDS
-PEMRSETVIEWPORTEXTEX	typedef ptr EMRSETVIEWPORTEXTEX
-PEMRSETWINDOWEXTEX	typedef ptr EMRSETVIEWPORTEXTEX
-EMRSETWINDOWEXTEX	typedef EMRSETVIEWPORTEXTEX
-
-EMRSCALEVIEWPORTEXTEX	STRUC
-emr			EMR <>
-xNum			LONG ?
-xDenom			LONG ?
-yNum			LONG ?
-yDenom			LONG ?
-EMRSCALEVIEWPORTEXTEX	ENDS
-PEMRSCALEVIEWPORTEXTEX	typedef ptr EMRSCALEVIEWPORTEXTEX
-PEMRSCALEWINDOWEXTEX	typedef ptr EMRSCALEVIEWPORTEXTEX
-EMRSCALEWINDOWEXTEX	typedef EMRSCALEVIEWPORTEXTEX
-
-EMRSETWORLDTRANSFORM	STRUC
-emr			EMR <>
-xform			XFORM <>
-EMRSETWORLDTRANSFORM	ENDS
-PEMRSETWORLDTRANSFORM	typedef ptr EMRSETWORLDTRANSFORM
-
-EMRMODIFYWORLDTRANSFORM STRUC
-emr			EMR <>
-xform			XFORM <>
-iMode			dd ?
-EMRMODIFYWORLDTRANSFORM ENDS
-PEMRMODIFYWORLDTRANSFORM typedef ptr EMRMODIFYWORLDTRANSFORM
-
-EMRSETPIXELV		STRUC
-emr			EMR <>
-ptlPixel		POINTL <>
-crColor			COLORREF ?
-EMRSETPIXELV		ENDS
-PEMRSETPIXELV		typedef ptr EMRSETPIXELV
-
-EMREXTFLOODFILL		STRUC
-emr			EMR <>
-ptlStart		POINTL <>
-crColor			COLORREF ?
-iMode			dd ?
-EMREXTFLOODFILL		ENDS
-PEMREXTFLOODFILL	typedef ptr EMREXTFLOODFILL
-
-EMRELLIPSE		STRUC
-emr			EMR <>
-rclBox			RECTL <>
-EMRELLIPSE		ENDS
-PEMRELLIPSE		typedef ptr EMRELLIPSE
-PEMRRECTANGLE		typedef ptr EMRELLIPSE
-EMRRECTANGLE		typedef EMRELLIPSE
-
-EMRROUNDRECT		STRUC
-emr			EMR <>
-rclBox			RECTL <>
-szlCorner		SIZEL <>
-EMRROUNDRECT		ENDS
-PEMRROUNDRECT		typedef ptr EMRROUNDRECT
-
-EMRARC			STRUC
-emr			EMR <>
-rclBox			RECTL <>
-ptlStart		POINTL <>
-ptlEnd			POINTL <>
-EMRARC			ENDS
-PEMRARC			typedef ptr EMRARC
-PEMRARCTO		typedef ptr EMRARC
-EMRARCTO		typedef EMRARC
-PEMRCHORD		typedef ptr EMRARC
-EMRCHORD		typedef EMRARC
-PEMRPIE			typedef ptr EMRARC
-EMRPIE			typedef EMRARC
-
-EMRANGLEARC		STRUC
-emr			EMR <>
-ptlCenter		POINTL <>
-nRadius			dd ?
-eStartAngle		FLOAT ?
-eSweepAngle		FLOAT ?
-EMRANGLEARC		ENDS
-PEMRANGLEARC		typedef ptr EMRANGLEARC
-
-EMRPOLYLINE		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cptl			dd ?
-aptl			POINTL <>
-EMRPOLYLINE		ENDS
-PEMRPOLYLINE		typedef ptr EMRPOLYLINE
-PEMRPOLYBEZIER		typedef ptr EMRPOLYLINE
-PEMRPOLYGON		typedef ptr EMRPOLYLINE
-PEMRPOLYBEZIERTO	typedef ptr EMRPOLYLINE
-PEMRPOLYLINETO		typedef ptr EMRPOLYLINE
-
-EMRPOLYLINE16		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cpts			dd ?
-apts			POINTS <>
-EMRPOLYLINE16		ENDS
-PEMRPOLYLINE16		typedef ptr EMRPOLYLINE16
-PEMRPOLYBEZIER16	typedef ptr EMRPOLYLINE16
-PEMRPOLYGON16		typedef ptr EMRPOLYLINE16
-PEMRPOLYBEZIERTO16	typedef ptr EMRPOLYLINE16
-PEMRPOLYLINETO16	typedef ptr EMRPOLYLINE16
-
-EMRPOLYDRAW		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cptl			dd ?
-aptl			POINTL <>
-abTypes			db ?
-EMRPOLYDRAW		ENDS
-PEMRPOLYDRAW		typedef ptr EMRPOLYDRAW
-
-EMRPOLYDRAW16		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cpts			dd ?
-apts			POINTS <>
-abTypes			db ?
-EMRPOLYDRAW16		ENDS
-PEMRPOLYDRAW16		typedef ptr EMRPOLYDRAW16
-
-EMRPOLYPOLYLINE		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-nPolys			dd ?
-cptl			dd ?
-aPolyCounts		dd ?
-aptl			POINTL <>
-EMRPOLYPOLYLINE		ENDS
-PEMRPOLYPOLYLINE	typedef ptr EMRPOLYPOLYLINE
-PEMRPOLYPOLYGON		typedef ptr EMRPOLYPOLYLINE
-
-EMRPOLYPOLYLINE16	STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-nPolys			dd ?
-cpts			dd ?
-aPolyCounts		dd ?
-apts			POINTS <>
-EMRPOLYPOLYLINE16	ENDS
-PEMRPOLYPOLYLINE16	typedef ptr EMRPOLYPOLYLINE16
-PEMRPOLYPOLYGON16	typedef ptr EMRPOLYPOLYLINE16
-
-EMRINVERTRGN		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cbRgnData		dd ?
-RgnData			db ?
-EMRINVERTRGN		ENDS
-PEMRINVERTRGN		typedef ptr EMRINVERTRGN
-PEMRPAINTRGN		typedef ptr EMRINVERTRGN
-
-EMRFILLRGN		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cbRgnData		dd ?
-ihBrush			dd ?
-RgnData			db ?
-EMRFILLRGN		ENDS
-PEMRFILLRGN		typedef ptr EMRFILLRGN
-
-EMRFRAMERGN		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cbRgnData		dd ?
-ihBrush			dd ?
-szlStroke		SIZEL <>
-RgnData			db ?
-EMRFRAMERGN		ENDS
-PEMRFRAMERGN		typedef ptr EMRFRAMERGN
-
-if (_WIN32_WINNT GE 0x0500)
-
-EMRGRADIENTFILL		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-nVer			dd ?
-nTri			dd ?
-ulMode			ULONG ?
-Ver			TRIVERTEX <>
-EMRGRADIENTFILL		ENDS
-PEMRGRADIENTFILL	typedef ptr EMRGRADIENTFILL
-
-endif
-
-EMREXTSELECTCLIPRGN	STRUC
-emr			EMR <>
-cbRgnData		dd ?
-iMode			dd ?
-RgnData			db ?
-EMREXTSELECTCLIPRGN	ENDS
-PEMREXTSELECTCLIPRGN	typedef ptr EMREXTSELECTCLIPRGN
-
-EMREXTTEXTOUTA		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-iGraphicsMode		dd ?
-exScale			FLOAT ?
-eyScale			FLOAT ?
-emrtext			EMRTEXT <>
-EMREXTTEXTOUTA		ENDS
-EMREXTTEXTOUTW		typedef EMREXTTEXTOUTA
-PEMREXTTEXTOUTA		typedef ptr EMREXTTEXTOUTA
-PEMREXTTEXTOUTW		typedef ptr EMREXTTEXTOUTA
-
-EMRPOLYTEXTOUTA		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-iGraphicsMode		dd ?
-exScale			FLOAT ?
-eyScale			FLOAT ?
-cStrings		LONG ?
-aemrtext		EMRTEXT <>
-EMRPOLYTEXTOUTA		ENDS
-PEMRPOLYTEXTOUTA	typedef ptr EMRPOLYTEXTOUTA
-PEMRPOLYTEXTOUTW	typedef ptr EMRPOLYTEXTOUTW
-
-EMRBITBLT		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-cxDest			LONG ?
-cyDest			LONG ?
-dwRop			dd ?
-xSrc			LONG ?
-ySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-EMRBITBLT		ENDS
-PEMRBITBLT		typedef ptr EMRBITBLT
-
-EMRSTRETCHBLT		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-cxDest			LONG ?
-cyDest			LONG ?
-dwRop			dd ?
-xSrc			LONG ?
-ySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-cxSrc			LONG ?
-cySrc			LONG ?
-EMRSTRETCHBLT		ENDS
-PEMRSTRETCHBLT		typedef ptr EMRSTRETCHBLT
-
-EMRMASKBLT		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-cxDest			LONG ?
-cyDest			LONG ?
-dwRop			dd ?
-xSrc			LONG ?
-ySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-xMask			LONG ?
-yMask			LONG ?
-iUsageMask		dd ?
-offBmiMask		dd ?
-cbBmiMask		dd ?
-offBitsMask		dd ?
-cbBitsMask		dd ?
-EMRMASKBLT		ENDS
-PEMRMASKBLT		typedef ptr EMRMASKBLT
-
-EMRPLGBLT		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-aptlDest		POINTL 3 dup(<>)
-xSrc			LONG ?
-ySrc			LONG ?
-cxSrc			LONG ?
-cySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-xMask			LONG ?
-yMask			LONG ?
-iUsageMask		dd ?
-offBmiMask		dd ?
-cbBmiMask		dd ?
-offBitsMask		dd ?
-cbBitsMask		dd ?
-EMRPLGBLT		ENDS
-PEMRPLGBLT		typedef ptr EMRPLGBLT
-
-EMRSETDIBITSTODEVICE	STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-xSrc			LONG ?
-ySrc			LONG ?
-cxSrc			LONG ?
-cySrc			LONG ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-iUsageSrc		dd ?
-iStartScan		dd ?
-cScans			dd ?
-EMRSETDIBITSTODEVICE	ENDS
-PEMRSETDIBITSTODEVICE	typedef ptr EMRSETDIBITSTODEVICE
-
-EMRSTRETCHDIBITS	STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-xSrc			LONG ?
-ySrc			LONG ?
-cxSrc			LONG ?
-cySrc			LONG ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-iUsageSrc		dd ?
-dwRop			dd ?
-cxDest			LONG ?
-cyDest			LONG ?
-EMRSTRETCHDIBITS	ENDS
-PEMRSTRETCHDIBITS	typedef ptr EMRSTRETCHDIBITS
-
-if (_WIN32_WINNT GE 0x0500)
-
-EMRALPHABLE		STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-cxDest			LONG ?
-cyDest			LONG ?
-dwRop			dd ?
-xSrc			LONG ?
-ySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-cxSrc			LONG ?
-cySrc			LONG ?
-EMRALPHABLE		ENDS
-PEMRALPHABLEND		typedef ptr EMRALPHABLE
-
-EMREMRTRANSPARENTBLT	STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-xDest			LONG ?
-yDest			LONG ?
-cxDest			LONG ?
-cyDest			LONG ?
-dwRop			dd ?
-xSrc			LONG ?
-ySrc			LONG ?
-xformSrc		XFORM <>
-crBkColorSrc		COLORREF ?
-iUsageSrc		dd ?
-offBmiSrc		dd ?
-cbBmiSrc		dd ?
-offBitsSrc		dd ?
-cbBitsSrc		dd ?
-cxSrc			LONG ?
-cySrc			LONG ?
-EMREMRTRANSPARENTBLT	ENDS
-PEMREMRTRANSPARENTBLT	typedef ptr EMREMRTRANSPARENTBLT
-
-endif
-
-EMREXTCREATEFONTINDIRECTW STRUC
-emr			EMR <>
-ihFont			dd ?
-elfw			EXTLOGFONTW <>
-EMREXTCREATEFONTINDIRECTW ENDS
-PEMREXTCREATEFONTINDIRECTW typedef ptr EMREXTCREATEFONTINDIRECTW
-
-
-EMRCREATEPALETTE	STRUC
-emr			EMR <>
-ihPal			dd ?
-lgpl			LOGPALETTE <>
-EMRCREATEPALETTE	ENDS
-PEMRCREATEPALETTE	typedef ptr EMRCREATEPALETTE
-
-if(WINVER GE 0x0400)
-
-EMRCREATECOLORSPACE	STRUC
-emr			EMR <>
-ihCS			dd ?
-lcs			LOGCOLORSPACEW <>
-EMRCREATECOLORSPACE	ENDS
-PEMRCREATECOLORSPACE	typedef ptr EMRCREATECOLORSPACE
-
-endif
-
-EMRCREATEPEN		STRUC
-emr			EMR <>
-ihPen			dd ?
-lopn			LOGPEN <>
-EMRCREATEPEN		ENDS
-PEMRCREATEPEN		typedef ptr EMRCREATEPEN
-
-EMREXTCREATEPEN		STRUC
-emr			EMR <>
-ihPen			dd ?
-offBmi			dd ?
-cbBmi			dd ?
-offBits			dd ?
-cbBits			dd ?
-elp			EXTLOGPEN <>
-EMREXTCREATEPEN		ENDS
-PEMREXTCREATEPEN	typedef ptr EMREXTCREATEPEN
-
-EMRCREATEBRUSHINDIRECT	STRUC
-emr			EMR <>
-ihBrush			dd ?
-lb			LOGBRUSH <>
-EMRCREATEBRUSHINDIRECT	ENDS
-PEMRCREATEBRUSHINDIRECT typedef ptr EMRCREATEBRUSHINDIRECT
-
-EMRCREATEMONOBRUSH	STRUC
-emr			EMR <>
-ihBrush			dd ?
-iUsage			dd ?
-offBmi			dd ?
-cbBmi			dd ?
-offBits			dd ?
-cbBits			dd ?
-EMRCREATEMONOBRUSH	ENDS
-PEMRCREATEMONOBRUSH	typedef ptr EMRCREATEMONOBRUSH
-
-EMRCREATEDIBPATTERNBRUSHPT STRUC
-emr			EMR <>
-ihBrush			dd ?
-iUsage			dd ?
-offBmi			dd ?
-cbBmi			dd ?
-offBits			dd ?
-cbBits			dd ?
-EMRCREATEDIBPATTERNBRUSHPT ENDS
-PEMRCREATEDIBPATTERNBRUSHPT typedef ptr EMRCREATEDIBPATTERNBRUSHPT
-
-EMRFORMAT		STRUC
-dSignature		dd ?
-nVersion		dd ?
-cbData			dd ?
-offData			dd ?
-EMRFORMAT		ENDS
-PEMRFORMAT		typedef ptr EMRFORMAT
-
-EMRGLSRECORD		STRUC
-emr			EMR <>
-cbData			dd ?
-Data			db ?
-EMRGLSRECORD		ENDS
-PEMRGLSRECORD		typedef ptr EMRGLSRECORD
-
-EMRGLSBOUNDEDRECORD	STRUC
-emr			EMR <>
-rclBounds		RECTL <>
-cbData			dd ?
-Data			db ?
-EMRGLSBOUNDEDRECORD	ENDS
-PEMRGLSBOUNDEDRECORD	typedef ptr EMRGLSBOUNDEDRECORD
-
-EMRPIXELFORMAT		STRUC
-emr			EMR <>
-pfd			PIXELFORMATDESCRIPTOR <>
-EMRPIXELFORMAT		ENDS
-PEMRPIXELFORMAT		typedef ptr EMRPIXELFORMAT
-
-SETICMPROFILE_EMBEDED	equ 0x00000001
-
-EMRSETICMPROFILE	STRUC
-emr			EMR <>
-dwFlags			dd ?
-cbName			dd ?
-cbData			dd ?
-Data			db ?
-EMRSETICMPROFILE	ENDS
-PEMRSETICMPROFILE	typedef ptr EMRSETICMPROFILE
-
-GDICOMMENT_IDENTIFIER		equ 0x43494447
-GDICOMMENT_WINDOWS_METAFILE	equ 0x80000001
-GDICOMMENT_BEGINGROUP		equ 0x00000002
-GDICOMMENT_ENDGROUP		equ 0x00000003
-GDICOMMENT_MULTIFORMATS		equ 0x40000004
-EPS_SIGNATURE			equ 0x46535045
+EMRSETPOLYFILLMODE      typedef tagEMRSELECTCLIPPATH
+PEMRSETPOLYFILLMODE     typedef ptr tagEMRSELECTCLIPPATH
+EMRSETROP2              typedef tagEMRSELECTCLIPPATH
+PEMRSETROP2             typedef ptr tagEMRSELECTCLIPPATH
+EMRSETSTRETCHBLTMODE    typedef tagEMRSELECTCLIPPATH
+PEMRSETSTRETCHBLTMODE   typedef ptr tagEMRSELECTCLIPPATH
+EMRSETICMMODE           typedef tagEMRSELECTCLIPPATH
+PEMRSETICMMODE          typedef ptr tagEMRSELECTCLIPPATH
+EMRSETTEXTALIGN         typedef tagEMRSELECTCLIPPATH
+PEMRSETTEXTALIGN        typedef ptr tagEMRSELECTCLIPPATH
+
+tagEMRSETMITERLIMIT     struct
+emr                     EMR <>
+eMiterLimit             FLOAT ?
+tagEMRSETMITERLIMIT     ends
+EMRSETMITERLIMIT        typedef tagEMRSETMITERLIMIT
+PEMRSETMITERLIMIT       typedef ptr tagEMRSETMITERLIMIT
+
+tagEMRRESTOREDC         struct
+emr                     EMR <>
+iRelative               LONG ?
+tagEMRRESTOREDC         ends
+EMRRESTOREDC            typedef tagEMRRESTOREDC
+PEMRRESTOREDC           typedef ptr tagEMRRESTOREDC
+
+tagEMRSETARCDIRECTION   struct
+emr                     EMR <>
+iArcDirection           DWORD ?
+tagEMRSETARCDIRECTION   ends
+EMRSETARCDIRECTION      typedef tagEMRSETARCDIRECTION
+PEMRSETARCDIRECTION     typedef ptr tagEMRSETARCDIRECTION
+
+tagEMRSETMAPPERFLAGS    struct
+emr                     EMR <>
+dwFlags                 DWORD ?
+tagEMRSETMAPPERFLAGS    ends
+EMRSETMAPPERFLAGS       typedef tagEMRSETMAPPERFLAGS
+PEMRSETMAPPERFLAGS      typedef ptr tagEMRSETMAPPERFLAGS
+
+tagEMRSETTEXTCOLOR      struct
+emr                     EMR <>
+crColor                 COLORREF ?
+tagEMRSETTEXTCOLOR      ends
+EMRSETBKCOLOR           typedef tagEMRSETTEXTCOLOR
+PEMRSETBKCOLOR          typedef ptr tagEMRSETTEXTCOLOR
+EMRSETTEXTCOLOR         typedef tagEMRSETTEXTCOLOR
+PEMRSETTEXTCOLOR        typedef ptr tagEMRSETTEXTCOLOR
+
+tagEMRSELECTOBJECT      struct
+emr                     EMR <>
+ihObject                DWORD ?
+tagEMRSELECTOBJECT      ends
+EMRSELECTOBJECT         typedef tagEMRSELECTOBJECT
+PEMRSELECTOBJECT        typedef ptr tagEMRSELECTOBJECT
+EMRDELETEOBJECT         typedef tagEMRSELECTOBJECT
+PEMRDELETEOBJECT        typedef ptr tagEMRSELECTOBJECT
+
+tagEMRSELECTPALETTE     struct
+emr                     EMR <>
+ihPal                   DWORD ?
+tagEMRSELECTPALETTE     ends
+EMRSELECTPALETTE        typedef tagEMRSELECTPALETTE
+PEMRSELECTPALETTE       typedef ptr tagEMRSELECTPALETTE
+
+tagEMRRESIZEPALETTE     struct
+emr                     EMR <>
+ihPal                   DWORD ?
+cEntries                DWORD ?
+tagEMRRESIZEPALETTE     ends
+EMRRESIZEPALETTE        typedef tagEMRRESIZEPALETTE
+PEMRRESIZEPALETTE       typedef ptr tagEMRRESIZEPALETTE
+
+tagEMRSETPALETTEENTRIES struct
+emr                     EMR <>
+ihPal                   DWORD ?
+iStart                  DWORD ?
+cEntries                DWORD ?
+aPalEntries             PALETTEENTRY 1 dup(<>)
+tagEMRSETPALETTEENTRIES ends
+EMRSETPALETTEENTRIES    typedef tagEMRSETPALETTEENTRIES
+PEMRSETPALETTEENTRIES   typedef ptr tagEMRSETPALETTEENTRIES
+
+tagEMRSETCOLORADJUSTMENT struct
+emr                     EMR <>
+ColorAdjustment         COLORADJUSTMENT <>
+tagEMRSETCOLORADJUSTMENT ends
+EMRSETCOLORADJUSTMENT   typedef tagEMRSETCOLORADJUSTMENT
+PEMRSETCOLORADJUSTMENT  typedef ptr tagEMRSETCOLORADJUSTMENT
+
+tagEMRGDICOMMENT        struct
+emr                     EMR <>
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagEMRGDICOMMENT        ends
+EMRGDICOMMENT           typedef tagEMRGDICOMMENT
+PEMRGDICOMMENT          typedef ptr tagEMRGDICOMMENT
+
+tagEMREOF               struct
+emr                     EMR <>
+nPalEntries             DWORD ?
+offPalEntries           DWORD ?
+nSizeLast               DWORD ?
+tagEMREOF               ends
+EMREOF                  typedef tagEMREOF
+PEMREOF                 typedef ptr tagEMREOF
+
+tagEMRLINETO            struct
+emr                     EMR <>
+ptl                     POINTL <>
+tagEMRLINETO            ends
+EMRLINETO               typedef tagEMRLINETO
+PEMRLINETO              typedef ptr tagEMRLINETO
+EMRMOVETOEX             typedef tagEMRLINETO
+PEMRMOVETOEX            typedef ptr tagEMRLINETO
+
+tagEMROFFSETCLIPRGN     struct
+emr                     EMR <>
+ptlOffset               POINTL <>
+tagEMROFFSETCLIPRGN     ends
+EMROFFSETCLIPRGN        typedef tagEMROFFSETCLIPRGN
+PEMROFFSETCLIPRGN       typedef ptr tagEMROFFSETCLIPRGN
+
+tagEMRFILLPATH          struct
+emr                     EMR <>
+rclBounds               RECTL <>
+tagEMRFILLPATH          ends
+EMRFILLPATH             typedef tagEMRFILLPATH
+PEMRFILLPATH            typedef ptr tagEMRFILLPATH
+EMRSTROKEANDFILLPATH    typedef tagEMRFILLPATH
+PEMRSTROKEANDFILLPATH   typedef ptr tagEMRFILLPATH
+EMRSTROKEPATH           typedef tagEMRFILLPATH
+PEMRSTROKEPATH          typedef ptr tagEMRFILLPATH
+
+tagEMREXCLUDECLIPRECT   struct
+emr                     EMR <>
+rclClip                 RECTL <>
+tagEMREXCLUDECLIPRECT   ends
+EMREXCLUDECLIPRECT      typedef tagEMREXCLUDECLIPRECT
+PEMREXCLUDECLIPRECT     typedef ptr tagEMREXCLUDECLIPRECT
+EMRINTERSECTCLIPRECT    typedef tagEMREXCLUDECLIPRECT
+PEMRINTERSECTCLIPRECT   typedef ptr tagEMREXCLUDECLIPRECT
+
+tagEMRSETVIEWPORTORGEX  struct
+emr                     EMR <>
+ptlOrigin               POINTL <>
+tagEMRSETVIEWPORTORGEX  ends
+EMRSETVIEWPORTORGEX     typedef tagEMRSETVIEWPORTORGEX
+PEMRSETVIEWPORTORGEX    typedef ptr tagEMRSETVIEWPORTORGEX
+EMRSETWINDOWORGEX       typedef tagEMRSETVIEWPORTORGEX
+PEMRSETWINDOWORGEX      typedef ptr tagEMRSETVIEWPORTORGEX
+EMRSETBRUSHORGEX        typedef tagEMRSETVIEWPORTORGEX
+PEMRSETBRUSHORGEX       typedef ptr tagEMRSETVIEWPORTORGEX
+
+tagEMRSETVIEWPORTEXTEX  struct
+emr                     EMR <>
+szlExtent               SIZEL <>
+tagEMRSETVIEWPORTEXTEX  ends
+EMRSETVIEWPORTEXTEX     typedef tagEMRSETVIEWPORTEXTEX
+PEMRSETVIEWPORTEXTEX    typedef ptr tagEMRSETVIEWPORTEXTEX
+EMRSETWINDOWEXTEX       typedef tagEMRSETVIEWPORTEXTEX
+PEMRSETWINDOWEXTEX      typedef ptr tagEMRSETVIEWPORTEXTEX
+
+tagEMRSCALEVIEWPORTEXTEX struct
+emr                     EMR <>
+xNum                    LONG ?
+xDenom                  LONG ?
+yNum                    LONG ?
+yDenom                  LONG ?
+tagEMRSCALEVIEWPORTEXTEX ends
+EMRSCALEVIEWPORTEXTEX   typedef tagEMRSCALEVIEWPORTEXTEX
+PEMRSCALEVIEWPORTEXTEX  typedef ptr tagEMRSCALEVIEWPORTEXTEX
+EMRSCALEWINDOWEXTEX     typedef tagEMRSCALEVIEWPORTEXTEX
+PEMRSCALEWINDOWEXTEX    typedef ptr tagEMRSCALEVIEWPORTEXTEX
+
+tagEMRSETWORLDTRANSFORM struct
+emr                     EMR <>
+xform                   XFORM <>
+tagEMRSETWORLDTRANSFORM ends
+EMRSETWORLDTRANSFORM    typedef tagEMRSETWORLDTRANSFORM
+PEMRSETWORLDTRANSFORM   typedef ptr tagEMRSETWORLDTRANSFORM
+
+tagEMRMODIFYWORLDTRANSFORM struct
+emr                     EMR <>
+xform                   XFORM <>
+iMode                   DWORD ?
+tagEMRMODIFYWORLDTRANSFORM ends
+EMRMODIFYWORLDTRANSFORM typedef tagEMRMODIFYWORLDTRANSFORM
+PEMRMODIFYWORLDTRANSFORM typedef ptr tagEMRMODIFYWORLDTRANSFORM
+
+tagEMRSETPIXELV         struct
+emr                     EMR <>
+ptlPixel                POINTL <>
+crColor                 COLORREF ?
+tagEMRSETPIXELV         ends
+EMRSETPIXELV            typedef tagEMRSETPIXELV
+PEMRSETPIXELV           typedef ptr tagEMRSETPIXELV
+
+tagEMREXTFLOODFILL      struct
+emr                     EMR <>
+ptlStart                POINTL <>
+crColor                 COLORREF ?
+iMode                   DWORD ?
+tagEMREXTFLOODFILL      ends
+EMREXTFLOODFILL         typedef tagEMREXTFLOODFILL
+PEMREXTFLOODFILL        typedef ptr tagEMREXTFLOODFILL
+
+tagEMRELLIPSE           struct
+emr                     EMR <>
+rclBox                  RECTL <>
+tagEMRELLIPSE           ends
+EMRELLIPSE              typedef tagEMRELLIPSE
+PEMRELLIPSE             typedef ptr tagEMRELLIPSE
+EMRRECTANGLE            typedef tagEMRELLIPSE
+PEMRRECTANGLE           typedef ptr tagEMRELLIPSE
+
+tagEMRROUNDRECT         struct
+emr                     EMR <>
+rclBox                  RECTL <>
+szlCorner               SIZEL <>
+tagEMRROUNDRECT         ends
+EMRROUNDRECT            typedef tagEMRROUNDRECT
+PEMRROUNDRECT           typedef ptr tagEMRROUNDRECT
+
+tagEMRARC               struct
+emr                     EMR <>
+rclBox                  RECTL <>
+ptlStart                POINTL <>
+ptlEnd                  POINTL <>
+tagEMRARC               ends
+EMRARC                  typedef tagEMRARC
+PEMRARC                 typedef ptr tagEMRARC
+EMRARCTO                typedef tagEMRARC
+PEMRARCTO               typedef ptr tagEMRARC
+EMRCHORD                typedef tagEMRARC
+PEMRCHORD               typedef ptr tagEMRARC
+EMRPIE                  typedef tagEMRARC
+PEMRPIE                 typedef ptr tagEMRARC
+
+tagEMRANGLEARC          struct
+emr                     EMR <>
+ptlCenter               POINTL <>
+nRadius                 DWORD ?
+eStartAngle             FLOAT ?
+eSweepAngle             FLOAT ?
+tagEMRANGLEARC          ends
+EMRANGLEARC             typedef tagEMRANGLEARC
+PEMRANGLEARC            typedef ptr tagEMRANGLEARC
+
+tagEMRPOLYLINE          struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cptl                    DWORD ?
+aptl                    POINTL 1 dup(<>)
+tagEMRPOLYLINE          ends
+EMRPOLYLINE             typedef tagEMRPOLYLINE
+PEMRPOLYLINE            typedef ptr tagEMRPOLYLINE
+EMRPOLYBEZIER           typedef tagEMRPOLYLINE
+PEMRPOLYBEZIER          typedef ptr tagEMRPOLYLINE
+EMRPOLYGON              typedef tagEMRPOLYLINE
+PEMRPOLYGON             typedef ptr tagEMRPOLYLINE
+EMRPOLYBEZIERTO         typedef tagEMRPOLYLINE
+PEMRPOLYBEZIERTO        typedef ptr tagEMRPOLYLINE
+EMRPOLYLINETO           typedef tagEMRPOLYLINE
+PEMRPOLYLINETO          typedef ptr tagEMRPOLYLINE
+
+tagEMRPOLYLINE16        struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cpts                    DWORD ?
+apts                    POINTS 1 dup(<>)
+tagEMRPOLYLINE16        ends
+EMRPOLYLINE16           typedef tagEMRPOLYLINE16
+PEMRPOLYLINE16          typedef ptr tagEMRPOLYLINE16
+EMRPOLYBEZIER16         typedef tagEMRPOLYLINE16
+PEMRPOLYBEZIER16        typedef ptr tagEMRPOLYLINE16
+EMRPOLYGON16            typedef tagEMRPOLYLINE16
+PEMRPOLYGON16           typedef ptr tagEMRPOLYLINE16
+EMRPOLYBEZIERTO16       typedef tagEMRPOLYLINE16
+PEMRPOLYBEZIERTO16      typedef ptr tagEMRPOLYLINE16
+EMRPOLYLINETO16         typedef tagEMRPOLYLINE16
+PEMRPOLYLINETO16        typedef ptr tagEMRPOLYLINE16
+
+tagEMRPOLYDRAW          struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cptl                    DWORD ?
+aptl                    POINTL 1 dup(<>)
+abTypes                 BYTE 1 dup(?)
+tagEMRPOLYDRAW          ends
+EMRPOLYDRAW             typedef tagEMRPOLYDRAW
+PEMRPOLYDRAW            typedef ptr tagEMRPOLYDRAW
+
+tagEMRPOLYDRAW16        struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cpts                    DWORD ?
+apts                    POINTS 1 dup(<>)
+abTypes                 BYTE 1 dup(?)
+tagEMRPOLYDRAW16        ends
+EMRPOLYDRAW16           typedef tagEMRPOLYDRAW16
+PEMRPOLYDRAW16          typedef ptr tagEMRPOLYDRAW16
+
+tagEMRPOLYPOLYLINE      struct
+emr                     EMR <>
+rclBounds               RECTL <>
+nPolys                  DWORD ?
+cptl                    DWORD ?
+aPolyCounts             DWORD 1 dup(?)
+aptl                    POINTL 1 dup(<>)
+tagEMRPOLYPOLYLINE      ends
+EMRPOLYPOLYLINE         typedef tagEMRPOLYPOLYLINE
+PEMRPOLYPOLYLINE        typedef ptr tagEMRPOLYPOLYLINE
+EMRPOLYPOLYGON          typedef tagEMRPOLYPOLYLINE
+PEMRPOLYPOLYGON         typedef ptr tagEMRPOLYPOLYLINE
+
+tagEMRPOLYPOLYLINE16    struct
+emr                     EMR <>
+rclBounds               RECTL <>
+nPolys                  DWORD ?
+cpts                    DWORD ?
+aPolyCounts             DWORD 1 dup(?)
+apts                    POINTS 1 dup(<>)
+tagEMRPOLYPOLYLINE16    ends
+EMRPOLYPOLYLINE16       typedef tagEMRPOLYPOLYLINE16
+PEMRPOLYPOLYLINE16      typedef ptr tagEMRPOLYPOLYLINE16
+EMRPOLYPOLYGON16        typedef tagEMRPOLYPOLYLINE16
+PEMRPOLYPOLYGON16       typedef ptr tagEMRPOLYPOLYLINE16
+
+tagEMRINVERTRGN         struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cbRgnData               DWORD ?
+RgnData                 BYTE 1 dup(?)
+tagEMRINVERTRGN         ends
+EMRINVERTRGN            typedef tagEMRINVERTRGN
+PEMRINVERTRGN           typedef ptr tagEMRINVERTRGN
+EMRPAINTRGN             typedef tagEMRINVERTRGN
+PEMRPAINTRGN            typedef ptr tagEMRINVERTRGN
+
+tagEMRFILLRGN           struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cbRgnData               DWORD ?
+ihBrush                 DWORD ?
+RgnData                 BYTE 1 dup(?)
+tagEMRFILLRGN           ends
+EMRFILLRGN              typedef tagEMRFILLRGN
+PEMRFILLRGN             typedef ptr tagEMRFILLRGN
+
+tagEMRFRAMERGN          struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cbRgnData               DWORD ?
+ihBrush                 DWORD ?
+szlStroke               SIZEL <>
+RgnData                 BYTE 1 dup(?)
+tagEMRFRAMERGN          ends
+EMRFRAMERGN             typedef tagEMRFRAMERGN
+PEMRFRAMERGN            typedef ptr tagEMRFRAMERGN
+
+tagEMREXTSELECTCLIPRGN  struct
+emr                     EMR <>
+cbRgnData               DWORD ?
+iMode                   DWORD ?
+RgnData                 BYTE 1 dup(?)
+tagEMREXTSELECTCLIPRGN  ends
+EMREXTSELECTCLIPRGN     typedef tagEMREXTSELECTCLIPRGN
+PEMREXTSELECTCLIPRGN    typedef ptr tagEMREXTSELECTCLIPRGN
+
+tagEMREXTTEXTOUTA       struct
+emr                     EMR <>
+rclBounds               RECTL <>
+iGraphicsMode           DWORD ?
+exScale                 FLOAT ?
+eyScale                 FLOAT ?
+emrtext                 EMRTEXT <>
+tagEMREXTTEXTOUTA       ends
+EMREXTTEXTOUTA          typedef tagEMREXTTEXTOUTA
+PEMREXTTEXTOUTA         typedef ptr tagEMREXTTEXTOUTA
+EMREXTTEXTOUTW          typedef tagEMREXTTEXTOUTA
+PEMREXTTEXTOUTW         typedef ptr tagEMREXTTEXTOUTA
+
+tagEMRPOLYTEXTOUTA      struct
+emr                     EMR <>
+rclBounds               RECTL <>
+iGraphicsMode           DWORD ?
+exScale                 FLOAT ?
+eyScale                 FLOAT ?
+cStrings                LONG ?
+aemrtext                EMRTEXT 1 dup(<>)
+tagEMRPOLYTEXTOUTA      ends
+EMRPOLYTEXTOUTA         typedef tagEMRPOLYTEXTOUTA
+PEMRPOLYTEXTOUTA        typedef ptr tagEMRPOLYTEXTOUTA
+EMRPOLYTEXTOUTW         typedef tagEMRPOLYTEXTOUTA
+PEMRPOLYTEXTOUTW        typedef ptr tagEMRPOLYTEXTOUTA
+
+tagEMRBITBLT            struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+dwRop                   DWORD ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+tagEMRBITBLT            ends
+EMRBITBLT               typedef tagEMRBITBLT
+PEMRBITBLT              typedef ptr tagEMRBITBLT
+
+tagEMRSTRETCHBLT        struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+dwRop                   DWORD ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+tagEMRSTRETCHBLT        ends
+EMRSTRETCHBLT           typedef tagEMRSTRETCHBLT
+PEMRSTRETCHBLT          typedef ptr tagEMRSTRETCHBLT
+
+tagEMRMASKBLT           struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+dwRop                   DWORD ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+xMask                   LONG ?
+yMask                   LONG ?
+iUsageMask              DWORD ?
+offBmiMask              DWORD ?
+cbBmiMask               DWORD ?
+offBitsMask             DWORD ?
+cbBitsMask              DWORD ?
+tagEMRMASKBLT           ends
+EMRMASKBLT              typedef tagEMRMASKBLT
+PEMRMASKBLT             typedef ptr tagEMRMASKBLT
+
+tagEMRPLGBLT            struct
+emr                     EMR <>
+rclBounds               RECTL <>
+aptlDest                POINTL 3 dup(<>)
+xSrc                    LONG ?
+ySrc                    LONG ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+xMask                   LONG ?
+yMask                   LONG ?
+iUsageMask              DWORD ?
+offBmiMask              DWORD ?
+cbBmiMask               DWORD ?
+offBitsMask             DWORD ?
+cbBitsMask              DWORD ?
+tagEMRPLGBLT            ends
+EMRPLGBLT               typedef tagEMRPLGBLT
+PEMRPLGBLT              typedef ptr tagEMRPLGBLT
+
+tagEMRSETDIBITSTODEVICE struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+iUsageSrc               DWORD ?
+iStartScan              DWORD ?
+cScans                  DWORD ?
+tagEMRSETDIBITSTODEVICE ends
+EMRSETDIBITSTODEVICE    typedef tagEMRSETDIBITSTODEVICE
+PEMRSETDIBITSTODEVICE   typedef ptr tagEMRSETDIBITSTODEVICE
+
+tagEMRSTRETCHDIBITS     struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+iUsageSrc               DWORD ?
+dwRop                   DWORD ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+tagEMRSTRETCHDIBITS     ends
+EMRSTRETCHDIBITS        typedef tagEMRSTRETCHDIBITS
+PEMRSTRETCHDIBITS       typedef ptr tagEMRSTRETCHDIBITS
+
+tagEMREXTCREATEFONTINDIRECTW struct
+emr                     EMR <>
+ihFont                  DWORD ?
+elfw                    EXTLOGFONTW <>
+tagEMREXTCREATEFONTINDIRECTW ends
+EMREXTCREATEFONTINDIRECTW typedef tagEMREXTCREATEFONTINDIRECTW
+PEMREXTCREATEFONTINDIRECTW typedef ptr tagEMREXTCREATEFONTINDIRECTW
+
+tagEMRCREATEPALETTE     struct
+emr                     EMR <>
+ihPal                   DWORD ?
+lgpl                    LOGPALETTE <>
+tagEMRCREATEPALETTE     ends
+EMRCREATEPALETTE        typedef tagEMRCREATEPALETTE
+PEMRCREATEPALETTE       typedef ptr tagEMRCREATEPALETTE
+
+tagEMRCREATEPEN         struct
+emr                     EMR <>
+ihPen                   DWORD ?
+lopn                    LOGPEN <>
+tagEMRCREATEPEN         ends
+EMRCREATEPEN            typedef tagEMRCREATEPEN
+PEMRCREATEPEN           typedef ptr tagEMRCREATEPEN
+
+tagEMREXTCREATEPEN      struct
+emr                     EMR <>
+ihPen                   DWORD ?
+offBmi                  DWORD ?
+cbBmi                   DWORD ?
+offBits                 DWORD ?
+cbBits                  DWORD ?
+elp                     EXTLOGPEN32 <>
+tagEMREXTCREATEPEN      ends
+EMREXTCREATEPEN         typedef tagEMREXTCREATEPEN
+PEMREXTCREATEPEN        typedef ptr tagEMREXTCREATEPEN
+
+tagEMRCREATEBRUSHINDIRECT struct
+emr                     EMR <>
+ihBrush                 DWORD ?
+lb                      LOGBRUSH32 <>
+tagEMRCREATEBRUSHINDIRECT ends
+EMRCREATEBRUSHINDIRECT  typedef tagEMRCREATEBRUSHINDIRECT
+PEMRCREATEBRUSHINDIRECT typedef ptr tagEMRCREATEBRUSHINDIRECT
+
+tagEMRCREATEMONOBRUSH   struct
+emr                     EMR <>
+ihBrush                 DWORD ?
+iUsage                  DWORD ?
+offBmi                  DWORD ?
+cbBmi                   DWORD ?
+offBits                 DWORD ?
+cbBits                  DWORD ?
+tagEMRCREATEMONOBRUSH   ends
+EMRCREATEMONOBRUSH      typedef tagEMRCREATEMONOBRUSH
+PEMRCREATEMONOBRUSH     typedef ptr tagEMRCREATEMONOBRUSH
+
+tagEMRCREATEDIBPATTERNBRUSHPT struct
+emr                     EMR <>
+ihBrush                 DWORD ?
+iUsage                  DWORD ?
+offBmi                  DWORD ?
+cbBmi                   DWORD ?
+offBits                 DWORD ?
+cbBits                  DWORD ?
+tagEMRCREATEDIBPATTERNBRUSHPT ends
+EMRCREATEDIBPATTERNBRUSHPT typedef tagEMRCREATEDIBPATTERNBRUSHPT
+PEMRCREATEDIBPATTERNBRUSHPT typedef ptr tagEMRCREATEDIBPATTERNBRUSHPT
+
+tagEMRFORMAT            struct
+dSignature              DWORD ?
+nVersion                DWORD ?
+cbData                  DWORD ?
+offData                 DWORD ?
+tagEMRFORMAT            ends
+EMRFORMAT               typedef tagEMRFORMAT
+PEMRFORMAT              typedef ptr tagEMRFORMAT
+
+if(WINVER ge 0x0400)
+
+tagEMRGLSRECORD         struct
+emr                     EMR <>
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagEMRGLSRECORD         ends
+EMRGLSRECORD            typedef tagEMRGLSRECORD
+PEMRGLSRECORD           typedef ptr tagEMRGLSRECORD
+
+tagEMRGLSBOUNDEDRECORD  struct
+emr                     EMR <>
+rclBounds               RECTL <>
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagEMRGLSBOUNDEDRECORD  ends
+EMRGLSBOUNDEDRECORD     typedef tagEMRGLSBOUNDEDRECORD
+PEMRGLSBOUNDEDRECORD    typedef ptr tagEMRGLSBOUNDEDRECORD
+
+tagEMRPIXELFORMAT       struct
+emr                     EMR <>
+pfd                     PIXELFORMATDESCRIPTOR <>
+tagEMRPIXELFORMAT       ends
+EMRPIXELFORMAT          typedef tagEMRPIXELFORMAT
+PEMRPIXELFORMAT         typedef ptr tagEMRPIXELFORMAT
+
+tagEMRCREATECOLORSPACE  struct
+emr                     EMR <>
+ihCS                    DWORD ?
+lcs                     LOGCOLORSPACEA <>
+tagEMRCREATECOLORSPACE  ends
+EMRCREATECOLORSPACE     typedef tagEMRCREATECOLORSPACE
+PEMRCREATECOLORSPACE    typedef ptr tagEMRCREATECOLORSPACE
+
+tagEMRSETCOLORSPACE     struct
+emr                     EMR <>
+ihCS                    DWORD ?
+tagEMRSETCOLORSPACE     ends
+EMRSETCOLORSPACE        typedef tagEMRSETCOLORSPACE
+PEMRSETCOLORSPACE       typedef ptr tagEMRSETCOLORSPACE
+EMRSELECTCOLORSPACE     typedef tagEMRSETCOLORSPACE
+PEMRSELECTCOLORSPACE    typedef ptr tagEMRSETCOLORSPACE
+EMRDELETECOLORSPACE     typedef tagEMRSETCOLORSPACE
+PEMRDELETECOLORSPACE    typedef ptr tagEMRSETCOLORSPACE
 
 endif
 
-SwapBuffers proto WINAPI :HDC
+if(WINVER ge 0x0500)
+
+tagEMREXTESCAPE         struct
+emr                     EMR <>
+iEscape                 SINT ?
+cbEscData               SINT ?
+EscData                 BYTE 1 dup(?)
+tagEMREXTESCAPE         ends
+EMREXTESCAPE            typedef tagEMREXTESCAPE
+PEMREXTESCAPE           typedef ptr tagEMREXTESCAPE
+EMRDRAWESCAPE           typedef tagEMREXTESCAPE
+PEMRDRAWESCAPE          typedef ptr tagEMREXTESCAPE
+
+tagEMRNAMEDESCAPE       struct
+emr                     EMR <>
+iEscape                 SINT ?
+cbDriver                SINT ?
+cbEscData               SINT ?
+EscData                 BYTE 1 dup(?)
+tagEMRNAMEDESCAPE       ends
+EMRNAMEDESCAPE          typedef tagEMRNAMEDESCAPE
+PEMRNAMEDESCAPE         typedef ptr tagEMRNAMEDESCAPE
+
+define SETICMPROFILE_EMBEDED           0x00000001
+
+tagEMRSETICMPROFILE     struct
+emr                     EMR <>
+dwFlags                 DWORD ?
+cbName                  DWORD ?
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagEMRSETICMPROFILE     ends
+EMRSETICMPROFILE        typedef tagEMRSETICMPROFILE
+PEMRSETICMPROFILE       typedef ptr tagEMRSETICMPROFILE
+EMRSETICMPROFILEA       typedef tagEMRSETICMPROFILE
+PEMRSETICMPROFILEA      typedef ptr tagEMRSETICMPROFILE
+EMRSETICMPROFILEW       typedef tagEMRSETICMPROFILE
+PEMRSETICMPROFILEW      typedef ptr tagEMRSETICMPROFILE
+
+define CREATECOLORSPACE_EMBEDED        0x00000001
+
+tagEMRCREATECOLORSPACEW struct
+emr                     EMR <>
+ihCS                    DWORD ?
+lcs                     LOGCOLORSPACEW <>
+dwFlags                 DWORD ?
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagEMRCREATECOLORSPACEW ends
+EMRCREATECOLORSPACEW    typedef tagEMRCREATECOLORSPACEW
+PEMRCREATECOLORSPACEW   typedef ptr tagEMRCREATECOLORSPACEW
+
+define COLORMATCHTOTARGET_EMBEDED      0x00000001
+
+tagCOLORMATCHTOTARGET   struct
+emr                     EMR <>
+dwAction                DWORD ?
+dwFlags                 DWORD ?
+cbName                  DWORD ?
+cbData                  DWORD ?
+Data                    BYTE 1 dup(?)
+tagCOLORMATCHTOTARGET   ends
+EMRCOLORMATCHTOTARGET   typedef tagCOLORMATCHTOTARGET
+PEMRCOLORMATCHTOTARGET  typedef ptr tagCOLORMATCHTOTARGET
+
+tagCOLORCORRECTPALETTE  struct
+emr                     EMR <>
+ihPalette               DWORD ?
+nFirstEntry             DWORD ?
+nPalEntries             DWORD ?
+nReserved               DWORD ?
+tagCOLORCORRECTPALETTE  ends
+EMRCOLORCORRECTPALETTE  typedef tagCOLORCORRECTPALETTE
+PEMRCOLORCORRECTPALETTE typedef ptr tagCOLORCORRECTPALETTE
+
+tagEMRALPHABLEND        struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+dwRop                   DWORD ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+tagEMRALPHABLEND        ends
+EMRALPHABLEND           typedef tagEMRALPHABLEND
+PEMRALPHABLEND          typedef ptr tagEMRALPHABLEND
+
+tagEMRGRADIENTFILL      struct
+emr                     EMR <>
+rclBounds               RECTL <>
+nVer                    DWORD ?
+nTri                    DWORD ?
+ulMode                  ULONG ?
+Ver                     TRIVERTEX 1 dup(<>)
+tagEMRGRADIENTFILL      ends
+EMRGRADIENTFILL         typedef tagEMRGRADIENTFILL
+PEMRGRADIENTFILL        typedef ptr tagEMRGRADIENTFILL
+
+tagEMRTRANSPARENTBLT    struct
+emr                     EMR <>
+rclBounds               RECTL <>
+xDest                   LONG ?
+yDest                   LONG ?
+cxDest                  LONG ?
+cyDest                  LONG ?
+dwRop                   DWORD ?
+xSrc                    LONG ?
+ySrc                    LONG ?
+xformSrc                XFORM <>
+crBkColorSrc            COLORREF ?
+iUsageSrc               DWORD ?
+offBmiSrc               DWORD ?
+cbBmiSrc                DWORD ?
+offBitsSrc              DWORD ?
+cbBitsSrc               DWORD ?
+cxSrc                   LONG ?
+cySrc                   LONG ?
+tagEMRTRANSPARENTBLT    ends
+EMRTRANSPARENTBLT       typedef tagEMRTRANSPARENTBLT
+PEMRTRANSPARENTBLT      typedef ptr tagEMRTRANSPARENTBLT
+
+endif
+
+define GDICOMMENT_IDENTIFIER           0x43494447
+define GDICOMMENT_WINDOWS_METAFILE     0x80000001
+define GDICOMMENT_BEGINGROUP           0x00000002
+define GDICOMMENT_ENDGROUP             0x00000003
+define GDICOMMENT_MULTIFORMATS         0x40000004
+define EPS_SIGNATURE                   0x46535045
+define GDICOMMENT_UNICODE_STRING       0x00000040
+define GDICOMMENT_UNICODE_END          0x00000080
+
+endif
 
 .pragma comment(lib, opengl32)
 
 wglCopyContext proto WINAPI :HGLRC, :HGLRC, :UINT
 wglCreateContext proto WINAPI :HDC
-wglCreateLayerContext proto WINAPI :HDC, :SINT
+wglCreateLayerContext proto WINAPI :HDC, :sdword
 wglDeleteContext proto WINAPI :HGLRC
 wglGetCurrentContext proto WINAPI
 wglGetCurrentDC proto WINAPI
-wglGetProcAddres proto WINAPIs :LPCSTR
+wglGetProcAddress proto WINAPI :LPCSTR
 wglMakeCurrent proto WINAPI :HDC, :HGLRC
 wglShareLists proto WINAPI :HGLRC, :HGLRC
 wglUseFontBitmapsA proto WINAPI :HDC, :DWORD, :DWORD, :DWORD
 wglUseFontBitmapsW proto WINAPI :HDC, :DWORD, :DWORD, :DWORD
 ifdef _UNICODE
-wglUseFontBitmaps equ <wglUseFontBitmapsW>
+define wglUseFontBitmaps  <wglUseFontBitmapsW>
 else
-wglUseFontBitmaps equ <wglUseFontBitmapsA>
+define wglUseFontBitmaps  <wglUseFontBitmapsA>
 endif
+SwapBuffers proto WINAPI :HDC
 
-POINTFLOAT		STRUC
-x			FLOAT ?
-y			FLOAT ?
-POINTFLOAT		ENDS
-PPOINTFLOAT		typedef ptr POINTFLOAT
+_POINTFLOAT             struct
+x                       FLOAT ?
+y                       FLOAT ?
+_POINTFLOAT             ends
+POINTFLOAT              typedef _POINTFLOAT
+PPOINTFLOAT             typedef ptr _POINTFLOAT
 
-GLYPHMETRICSFLOAT	STRUC
-gmfBlackBoxX		FLOAT ?
-gmfBlackBoxY		FLOAT ?
-gmfptGlyphOrigin	POINTFLOAT <>
-gmfCellIncX		FLOAT ?
-gmfCellIncY		FLOAT ?
-GLYPHMETRICSFLOAT	ENDS
-PGLYPHMETRICSFLOAT	typedef ptr GLYPHMETRICSFLOAT
-LPGLYPHMETRICSFLOAT	typedef ptr GLYPHMETRICSFLOAT
+_GLYPHMETRICSFLOAT      struct
+gmfBlackBoxX            FLOAT ?
+gmfBlackBoxY            FLOAT ?
+gmfptGlyphOrigin        POINTFLOAT <>
+gmfCellIncX             FLOAT ?
+gmfCellIncY             FLOAT ?
+_GLYPHMETRICSFLOAT      ends
+GLYPHMETRICSFLOAT       typedef _GLYPHMETRICSFLOAT
+PGLYPHMETRICSFLOAT      typedef ptr _GLYPHMETRICSFLOAT
+LPGLYPHMETRICSFLOAT     typedef ptr _GLYPHMETRICSFLOAT
 
-WGL_FONT_LINES		equ 0
-WGL_FONT_POLYGONS	equ 1
-
-wglUseFontOutlinesA proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
-wglUseFontOutlinesW proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
+define WGL_FONT_LINES      0
+define WGL_FONT_POLYGONS   1
+wglUseFontOutlinesA proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :sdword, :LPGLYPHMETRICSFLOAT
+wglUseFontOutlinesW proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :sdword, :LPGLYPHMETRICSFLOAT
 ifdef _UNICODE
-wglUseFontOutlines equ <wglUseFontOutlinesW>
+define wglUseFontOutlines  <wglUseFontOutlinesW>
 else
-wglUseFontOutlines equ <wglUseFontOutlinesA>
+define wglUseFontOutlines  <wglUseFontOutlinesA>
 endif
 
-LAYERPLANEDESCRIPTOR	STRUC
-nSize			dw ?
-nVersion		dw ?
-dwFlags			dd ?
-iPixelType		db ?
-cColorBits		db ?
-cRedBits		db ?
-cRedShift		db ?
-cGreenBits		db ?
-cGreenShift		db ?
-cBlueBits		db ?
-cBlueShift		db ?
-cAlphaBits		db ?
-cAlphaShift		db ?
-cAccumBits		db ?
-cAccumRedBits		db ?
-cAccumGreenBits		db ?
-cAccumBlueBits		db ?
-cAccumAlphaBits		db ?
-cDepthBits		db ?
-cStencilBits		db ?
-cAuxBuffers		db ?
-iLayerPlane		db ?
-bReserved		db ?
-crTransparent		COLORREF ?
-LAYERPLANEDESCRIPTOR	ENDS
-PLAYERPLANEDESCRIPTOR	typedef ptr LAYERPLANEDESCRIPTOR
-LPLAYERPLANEDESCRIPTOR	typedef ptr LAYERPLANEDESCRIPTOR
+tagLAYERPLANEDESCRIPTOR struct
+nSize                   WORD ?
+nVersion                WORD ?
+dwFlags                 DWORD ?
+iPixelType              BYTE ?
+cColorBits              BYTE ?
+cRedBits                BYTE ?
+cRedShift               BYTE ?
+cGreenBits              BYTE ?
+cGreenShift             BYTE ?
+cBlueBits               BYTE ?
+cBlueShift              BYTE ?
+cAlphaBits              BYTE ?
+cAlphaShift             BYTE ?
+cAccumBits              BYTE ?
+cAccumRedBits           BYTE ?
+cAccumGreenBits         BYTE ?
+cAccumBlueBits          BYTE ?
+cAccumAlphaBits         BYTE ?
+cDepthBits              BYTE ?
+cStencilBits            BYTE ?
+cAuxBuffers             BYTE ?
+iLayerPlane             BYTE ?
+bReserved               BYTE ?
+crTransparent           COLORREF ?
+tagLAYERPLANEDESCRIPTOR ends
+LAYERPLANEDESCRIPTOR    typedef tagLAYERPLANEDESCRIPTOR
+PLAYERPLANEDESCRIPTOR   typedef ptr tagLAYERPLANEDESCRIPTOR
+LPLAYERPLANEDESCRIPTOR  typedef ptr tagLAYERPLANEDESCRIPTOR
 
-LPD_DOUBLEBUFFER	equ 0x00000001
-LPD_STEREO		equ 0x00000002
-LPD_SUPPORT_GDI		equ 0x00000010
-LPD_SUPPORT_OPENGL	equ 0x00000020
-LPD_SHARE_DEPTH		equ 0x00000040
-LPD_SHARE_STENCIL	equ 0x00000080
-LPD_SHARE_ACCUM		equ 0x00000100
-LPD_SWAP_EXCHANGE	equ 0x00000200
-LPD_SWAP_COPY		equ 0x00000400
-LPD_TRANSPARENT		equ 0x00001000
+define LPD_DOUBLEBUFFER        0x00000001
+define LPD_STEREO              0x00000002
+define LPD_SUPPORT_GDI         0x00000010
+define LPD_SUPPORT_OPENGL      0x00000020
+define LPD_SHARE_DEPTH         0x00000040
+define LPD_SHARE_STENCIL       0x00000080
+define LPD_SHARE_ACCUM         0x00000100
+define LPD_SWAP_EXCHANGE       0x00000200
+define LPD_SWAP_COPY           0x00000400
+define LPD_TRANSPARENT         0x00001000
 
-LPD_TYPE_RGBA		equ 0
-LPD_TYPE_COLORINDEX	equ 1
+define LPD_TYPE_RGBA        0
+define LPD_TYPE_COLORINDEX  1
 
-WGL_SWAP_MAIN_PLANE	equ 0x00000001
-WGL_SWAP_OVERLAY1	equ 0x00000002
-WGL_SWAP_OVERLAY2	equ 0x00000004
-WGL_SWAP_OVERLAY3	equ 0x00000008
-WGL_SWAP_OVERLAY4	equ 0x00000010
-WGL_SWAP_OVERLAY5	equ 0x00000020
-WGL_SWAP_OVERLAY6	equ 0x00000040
-WGL_SWAP_OVERLAY7	equ 0x00000080
-WGL_SWAP_OVERLAY8	equ 0x00000100
-WGL_SWAP_OVERLAY9	equ 0x00000200
-WGL_SWAP_OVERLAY10	equ 0x00000400
-WGL_SWAP_OVERLAY11	equ 0x00000800
-WGL_SWAP_OVERLAY12	equ 0x00001000
-WGL_SWAP_OVERLAY13	equ 0x00002000
-WGL_SWAP_OVERLAY14	equ 0x00004000
-WGL_SWAP_OVERLAY15	equ 0x00008000
-WGL_SWAP_UNDERLAY1	equ 0x00010000
-WGL_SWAP_UNDERLAY2	equ 0x00020000
-WGL_SWAP_UNDERLAY3	equ 0x00040000
-WGL_SWAP_UNDERLAY4	equ 0x00080000
-WGL_SWAP_UNDERLAY5	equ 0x00100000
-WGL_SWAP_UNDERLAY6	equ 0x00200000
-WGL_SWAP_UNDERLAY7	equ 0x00400000
-WGL_SWAP_UNDERLAY8	equ 0x00800000
-WGL_SWAP_UNDERLAY9	equ 0x01000000
-WGL_SWAP_UNDERLAY10	equ 0x02000000
-WGL_SWAP_UNDERLAY11	equ 0x04000000
-WGL_SWAP_UNDERLAY12	equ 0x08000000
-WGL_SWAP_UNDERLAY13	equ 0x10000000
-WGL_SWAP_UNDERLAY14	equ 0x20000000
-WGL_SWAP_UNDERLAY15	equ 0x40000000
+define WGL_SWAP_MAIN_PLANE     0x00000001
+define WGL_SWAP_OVERLAY1       0x00000002
+define WGL_SWAP_OVERLAY2       0x00000004
+define WGL_SWAP_OVERLAY3       0x00000008
+define WGL_SWAP_OVERLAY4       0x00000010
+define WGL_SWAP_OVERLAY5       0x00000020
+define WGL_SWAP_OVERLAY6       0x00000040
+define WGL_SWAP_OVERLAY7       0x00000080
+define WGL_SWAP_OVERLAY8       0x00000100
+define WGL_SWAP_OVERLAY9       0x00000200
+define WGL_SWAP_OVERLAY10      0x00000400
+define WGL_SWAP_OVERLAY11      0x00000800
+define WGL_SWAP_OVERLAY12      0x00001000
+define WGL_SWAP_OVERLAY13      0x00002000
+define WGL_SWAP_OVERLAY14      0x00004000
+define WGL_SWAP_OVERLAY15      0x00008000
+define WGL_SWAP_UNDERLAY1      0x00010000
+define WGL_SWAP_UNDERLAY2      0x00020000
+define WGL_SWAP_UNDERLAY3      0x00040000
+define WGL_SWAP_UNDERLAY4      0x00080000
+define WGL_SWAP_UNDERLAY5      0x00100000
+define WGL_SWAP_UNDERLAY6      0x00200000
+define WGL_SWAP_UNDERLAY7      0x00400000
+define WGL_SWAP_UNDERLAY8      0x00800000
+define WGL_SWAP_UNDERLAY9      0x01000000
+define WGL_SWAP_UNDERLAY10     0x02000000
+define WGL_SWAP_UNDERLAY11     0x04000000
+define WGL_SWAP_UNDERLAY12     0x08000000
+define WGL_SWAP_UNDERLAY13     0x10000000
+define WGL_SWAP_UNDERLAY14     0x20000000
+define WGL_SWAP_UNDERLAY15     0x40000000
 
-wglDescribeLayerPlane proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPLAYERPLANEDESCRIPTOR
-wglSetLayerPaletteEntries proto WINAPI :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
-wglGetLayerPaletteEntries proto WINAPI :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
-wglRealizeLayerPalette proto WINAPI :HDC, :SINT, :BOOL
+wglDescribeLayerPlane proto WINAPI :HDC, :sdword, :sdword, :UINT, :LPLAYERPLANEDESCRIPTOR
+wglSetLayerPaletteEntries proto WINAPI :HDC, :sdword, :sdword, :sdword, :ptr
+wglGetLayerPaletteEntries proto WINAPI :HDC, :sdword, :sdword, :sdword, :ptr
+wglRealizeLayerPalette proto WINAPI :HDC, :sdword, :BOOL
 wglSwapLayerBuffers proto WINAPI :HDC, :UINT
 
-if (WINVER GE 0x0500)
+if (WINVER ge 0x0500)
 
-WGLSWAP			STRUC
-hdc			HDC ?
-uiFlags			UINT ?
-WGLSWAP			ENDS
-PWGLSWAP		typedef ptr WGLSWAP
-LPWGLSWAP		typedef ptr WGLSWAP
+_WGLSWAP                struct
+hdc                     HDC ?
+uiFlags                 UINT ?
+_WGLSWAP                ends
+WGLSWAP                 typedef _WGLSWAP
+PWGLSWAP                typedef ptr _WGLSWAP
+LPWGLSWAP               typedef ptr _WGLSWAP
 
-WGL_SWAPMULTIPLE_MAX	equ 16
+define WGL_SWAPMULTIPLE_MAX 16
 
-wglSwapMultipleBuffers proto WINAPI :UINT, :LPWGLSWAP
+wglSwapMultipleBuffers proto WINAPI :UINT, :ptr
 
 endif
+
+endif
+;.pragma endregion
+
 endif
 
 .pragma list(pop)

@@ -79,6 +79,8 @@ endif
 
 jmp_buf typedef ptr _JUMP_BUFFER
 
+.pragma comment(lib, libc, msvcrt)
+
 setjmp proto __cdecl :jmp_buf
 _setjmp proto __cdecl :jmp_buf
 longjmp proto __cdecl :jmp_buf, :int_t

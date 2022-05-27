@@ -7,6 +7,7 @@
 include stdio.inc
 include stdlib.inc
 include string.inc
+include io.inc
 include malloc.inc
 include winbase.inc
 include signal.inc
@@ -15,7 +16,7 @@ include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    102
+define __H2INC__    103
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -46,12 +47,105 @@ define _LABEL       0x40 ; _UPPER + _LOWER + '_'
     T_PRAGMA,
     T_INTERFACE,
     T_EXTERN,
+    T_INLINE,
     T_DEFINE_GUID
+    }
+
+.template jmpbuf
+    _bx   dq ?
+    _sp   dq ?
+    _bp   dq ?
+    _si   dq ?
+    _di   dq ?
+    _12   dq ?
+    _13   dq ?
+    _14   dq ?
+    _15   dq ?
+    _ip   dq ?
+   .ends
+
+;
+; Inline functions
+;
+
+    .pragma warning(disable: 8019) ; assume byte..
+
+setjump proto buf:ptr jmpbuf {
+    xor eax,eax
+    mov [rcx].jmpbuf._bp,rbp
+    mov [rcx].jmpbuf._si,rsi
+    mov [rcx].jmpbuf._di,rdi
+    mov [rcx].jmpbuf._bx,rbx
+    mov [rcx].jmpbuf._12,r12
+    mov [rcx].jmpbuf._13,r13
+    mov [rcx].jmpbuf._14,r14
+    mov [rcx].jmpbuf._15,r15
+    mov [rcx].jmpbuf._sp,rsp
+    lea rdx,[rip+4]
+    mov [rcx].jmpbuf._ip,rdx
+    }
+
+longjump proto buf:ptr jmpbuf, retval:int_t {
+
+    mov rbp,[rcx].jmpbuf._bp
+    mov rsi,[rcx].jmpbuf._si
+    mov rdi,[rcx].jmpbuf._di
+    mov rbx,[rcx].jmpbuf._bx
+    mov r12,[rcx].jmpbuf._12
+    mov r13,[rcx].jmpbuf._13
+    mov r14,[rcx].jmpbuf._14
+    mov r15,[rcx].jmpbuf._15
+    mov rsp,[rcx].jmpbuf._sp
+    mov rcx,[rcx].jmpbuf._ip
+    mov eax,edx
+    jmp rcx
+    }
+
+islalpha proto watcall c:byte {
+    retm<([r15+rax+1] & (_UPPER or _LOWER))>
+    }
+isldigit proto watcall c:byte {
+    retm<([r15+rax+1] & _DIGIT)>
+    }
+islalnum proto watcall c:byte {
+    retm<([r15+rax+1] & (_DIGIT or _UPPER or _LOWER))>
+    }
+islpunct proto watcall c:byte {
+    retm<([r15+rax+1] & _PUNCT)>
+    }
+islspace proto watcall c:byte {
+    retm<([r15+rax+1] & _SPACE)>
+    }
+islxdigit proto watcall c:byte {
+    retm<([r15+rax+1] & _HEX)>
+    }
+isid proto watcall c:byte {
+    retm<([r15+rax+1] & (_LABEL or _DIGIT))>
+    }
+isidfirst proto watcall :byte {
+    retm<([r15+rax+1] & _LABEL)>
+    }
+
+tokstart proto watcall string:string_t {
+    movzx ecx,byte ptr [rax]
+    .while ( [r15+rcx+1] & _SPACE )
+        inc rax
+        mov cl,[rax]
+    .endw
+    }
+
+tokstartc proto watcall string:string_t {
+    tokstart(string)
+    xchg rax,rcx
     }
 
 parseline proto
 
 .data
+
+ prgpath    string_t NULL
+ jmpenv     jmpbuf <>
+ ercount    dd 0
 
  banner     db 0
  option_q   db 0            ; -q
@@ -157,49 +251,6 @@ exit_options proc
     exit(0)
 
 exit_options endp
-
-
-    .pragma warning(disable: 8019) ; assume byte..
-
-;
-; String macros
-;
-islalpha proto watcall c:byte {
-    retm<([r15+rax+1] & (_UPPER or _LOWER))>
-    }
-isldigit proto watcall c:byte {
-    retm<([r15+rax+1] & _DIGIT)>
-    }
-islalnum proto watcall c:byte {
-    retm<([r15+rax+1] & (_DIGIT or _UPPER or _LOWER))>
-    }
-islpunct proto watcall c:byte {
-    retm<([r15+rax+1] & _PUNCT)>
-    }
-islspace proto watcall c:byte {
-    retm<([r15+rax+1] & _SPACE)>
-    }
-islxdigit proto watcall c:byte {
-    retm<([r15+rax+1] & _HEX)>
-    }
-isid proto watcall c:byte {
-    retm<([r15+rax+1] & (_LABEL or _DIGIT))>
-    }
-isidfirst proto watcall :byte {
-    retm<([r15+rax+1] & _LABEL)>
-    }
-
-tokstart proto watcall string:string_t {
-    movzx ecx,byte ptr [rax]
-    .while ( [r15+rcx+1] & _SPACE )
-        inc rax
-        mov cl,[rax]
-    .endw
-    }
-tokstartc proto watcall string:string_t {
-    tokstart(string)
-    xchg rax,rcx
-    }
 
 
 strtrim proc string:string_t
@@ -589,6 +640,15 @@ oprintf proc format:string_t, args:vararg
 oprintf endp
 
 
+error proc string:string_t
+
+    inc ercount
+    printf("%s(%d) : error : %s\n", curfile, curline, rcx)
+    ret
+
+error endp
+
+
 errexit proc string:string_t
 
     .if ( srcfile )
@@ -610,10 +670,7 @@ eofexit proc
 
         fprintf(outfile, filebuf)
     .endif
-
-    fclose(srcfile)
-    fclose(outfile)
-    exit(0)
+    longjump(&jmpenv, 1)
     ret
 
 eofexit endp
@@ -828,6 +885,11 @@ tokenize proc uses rsi rdi string:string_t
                 .endif
                .return(T_EXTERN)
             .endif
+            .if !memcmp(rdi, "__inline", 8)
+                mov csize,8
+                mov ctoken,T_INLINE
+               .return(T_INLINE)
+            .endif
             .endc
         .case 11
             .if !memcmp(rdi, "DEFINE_GUID", 11)
@@ -994,7 +1056,7 @@ parse_define proc uses rsi rdi rbx r12
     oprintf("%s macro %s\n", r12, rsi)
 
     .if ( !rbx )
-        errexit(rsi)
+        .return error(rsi)
     .endif
     strcpy(rdi, rbx)
 
@@ -1178,7 +1240,7 @@ parse_protoarg proc uses rsi rdi rbx arg:string_t
     .endif
 
     lea rbx,[rdi+strtrim(rdi)]
-    .if !strcmp(rdi, "void")
+    .if !_stricmp(rdi, "void")
         .return( 0 )
     .endif
 
@@ -1200,16 +1262,24 @@ parse_protoargs proc uses rsi rdi rbx args:string_t, comma:int_t
      mov rdi,rcx
      mov ebx,edx
      .if !strrchr(rdi, ')')
-        .return errexit(rdi)
+        .return error(rdi)
      .endif
      mov [rax],0
 
     .while strchr(rdi, '(')
         mov rsi,rax
-        .if !strchr(rdi, ')')
-            .return errexit(rsi)
+        .for ( rcx = &[rax+1], edx = 1 : [rcx] : rcx++ )
+            .if ( [rcx] == '(' )
+                inc edx
+            .elseif ( [rcx] == ')' )
+                dec edx
+                .break .ifz
+            .endif
+        .endf
+        .if ( [rcx] == ')' )
+            inc rcx
         .endif
-        strcpy(rsi, &[rax+1])
+        strcpy(rsi, rcx)
     .endw
     .while strstr(rdi, "const ")
         mov rsi,rax
@@ -1239,7 +1309,22 @@ parse_protoargs endp
 parse_proto proc uses rsi rdi rbx p:string_t
 
     mov rdi,rcx
-    strrchr(rdi, '(')
+    .if !strrchr(rdi, ')')
+        .return error(rdi)
+    .endif
+
+    .for ( rax--, edx = 1 : rax > rdi : rax-- )
+        .if ( [rax] == ')' )
+            inc edx
+        .elseif ( [rax] == '(' )
+            dec edx
+            .break .ifz
+        .endif
+    .endf
+    .if ( [rax] != '(' )
+        .return error(rdi)
+    .endif
+
     mov [rax],0
     mov rbx,rax
     mov rsi,tokstart(&[rax+1])
@@ -1267,14 +1352,14 @@ parse_callback proc uses rsi rdi p:string_t
     oprintf("CALLBACK(")
 
     .if !strrchr(rdi, '(')
-        .return ;errexit(rdi)
+        .return error(rdi)
     .endif
     mov [rax],0
     mov rsi,tokstart(&[rax+1])
     strip_unsigned(rsi)
 
     .if !strrchr(rdi, ')')
-        .return ;errexit(rdi)
+        .return error(rdi)
     .endif
     oprintf("%s", prevtokz(rax, rdi))
     parse_protoargs(rsi, 1)
@@ -1331,14 +1416,16 @@ parse_id proc uses rsi rdi rbx
 
     .if ( !rsi && rbx )
 
-        .return .if strchr(rdi, ')')
-         nexttok(rdi)
-        .return .if ( cl == '(' )
+        .if strrchr(rdi, ')')
+            .return .if ( [rax+1] == 0 )
+        .endif
+         ;nexttok(rdi)
+        ;.return .if ( cl == '(' )
     .endif
     .if strchr(concat_line(rdi), '(')
         .return parse_proto(rdi)
     .endif
-    ret
+    .return error(rdi)
 
 parse_id endp
 
@@ -1438,8 +1525,8 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
 
     movzx eax,clevel
     dec eax
-    lea ecx,[rax-24]
-    oprintf("%*s%*s", eax, "", ecx, rsi)
+    lea ecx,[rax-23]
+    oprintf("%*s%*s ", eax, "", ecx, rsi)
     mov [rsi],0
 
     ; reduce type to 2: [unsigned] type [*]
@@ -1770,11 +1857,13 @@ parse_interface proc uses rsi rdi rbx
     getline(rdi)
     getline(rdi)
     .if memcmp(rdi, "#if defined(__cplusplus) && !defined(CINTERFACE)", 49)
-        .return
+        .return error(rdi)
     .endif
     getline(rdi)
     getline(rdi)
-    .return .if !strrchr(rdi, '(')
+    .if !strrchr(rdi, '(')
+        .return error(rdi)
+    .endif
 
     inc rax
     oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, rax)
@@ -1854,6 +1943,35 @@ parse_extern proc uses rsi rdi rbx
 parse_extern endp
 
 
+parse_inline proc uses rdi
+
+    mov rdi,tokpos
+    oprintf(";%s\n", rdi)
+
+    .while 1
+
+        .switch tokenize(getline(rdi))
+        .case T_ENDS
+            oprintf(";%s\n", rdi)
+            .break
+        .case T_IF
+            parse_if()
+            .endc
+        .case T_ELSE
+        .case T_UNDEF
+        .case T_ENDIF
+            parse_else()
+            .endc
+        .default
+            oprintf(";%s\n", rdi)
+            .endc
+        .endsw
+    .endw
+    ret
+
+parse_inline endp
+
+
 parseline proc
 
     .switch ctoken
@@ -1891,9 +2009,364 @@ parseline proc
         .return parse_extern()
     .case T_DEFINE_GUID
         .return parse_define_guide()
+    .case T_INLINE
+        .return parse_inline()
     .endsw
     ret
 parseline endp
+
+
+; Command line options
+
+setarg_option proc uses rsi rdi p:ptr string_t, arg:string_t, arg2:string_t
+
+    mov rdi,rcx
+    mov rsi,r8
+    inc stoptions
+
+    .for ( eax = 0, ecx = 0 : rax != [rdi] && ecx < MAXARGS : ecx++, rdi+=8 )
+        .if rsi
+            add rdi,8
+        .endif
+    .endf
+    .if ( ecx == MAXARGS )
+        .return errexit(rdx)
+    .endif
+    mov [rdi],_strdup(rdx)
+    .if rsi
+        mov [rdi+8],_strdup(rsi)
+    .endif
+    ret
+
+setarg_option endp
+
+
+getnextcmdstring proc uses rsi rdi cmdline:array_t
+
+    .for ( rdi = rcx,
+           rsi = &[rdi+string_t] : string_t ptr [rsi] : )
+        movsq
+    .endf
+    movsq
+   .return([rcx])
+
+getnextcmdstring endp
+
+
+get_nametoken proc uses rsi rdi rbx dst:string_t, string:string_t, size:int_t, file:int_t
+
+    mov rsi,rdx ; string
+    mov rdi,rcx ; dst
+    mov ecx,r8d ; max
+    mov al,[rsi]
+    .if al == '"'
+
+        inc rsi
+        .for ( : ecx && [rsi] : ecx-- )
+
+            mov eax,[rsi]
+            .if al == '"'
+
+                inc rsi
+                .break
+            .endif
+
+            ; handle the \"" case
+
+            .if al == '\' && ah == '"'
+
+                inc rsi
+            .endif
+            movsb
+        .endf
+
+    .else
+
+        .for ( : ecx : ecx -- )
+
+            mov al,[rsi]
+            .switch al
+            .case ' '
+            .case '-'
+                .ends .if r9d
+            .case 0
+            .case 13
+            .case 10
+            .case 9
+            .case '/'
+                .break
+            .endsw
+            movsb
+        .endf
+    .endif
+    mov [rdi],0
+   .return(rsi)
+
+get_nametoken endp
+
+
+parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
+
+    mov rsi,rcx
+    mov rdi,rdx
+    mov rbx,[rsi]
+    mov eax,[rbx]
+
+    .switch pascal al
+    .case '?'
+        exit_options()
+    .case 'q'
+        mov option_q,1
+        mov banner,1
+    .case 'n'
+        mov banner,1
+    .case 'm'
+        mov option_m,1
+    .case 'c'
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        mov option_c,_strdup(rdi)
+    .case 'v'
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        mov option_v,_strdup(rdi)
+    .case 'f'
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        setarg_option(&option_f, rdi, NULL)
+    .case 'w'
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        setarg_option(&option_w, rdi, NULL)
+    .case 's'
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        setarg_option(&option_s, rdi, NULL)
+    .case 'r'
+       .new param2[256]:char_t
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        mov rbx,tokstart(rax)
+        .if ( cl == 0 )
+            mov rbx,getnextcmdstring(rsi)
+        .endif
+        mov [rsi],get_nametoken(&param2, rbx, 256-1, 0)
+        setarg_option(&option_r, rdi, &param2)
+    .endsw
+    ret
+
+parse_param endp
+
+
+read_paramfile proc uses rbx name:string_t
+
+    .new path[_MAX_PATH]:char_t
+    .new fp:ptr FILE = fopen(rcx, "rb")
+
+    .if ( rax == NULL )
+        mov fp,fopen(strcat(strcpy(&path, prgpath), name), "rb")
+    .endif
+    .if ( rax == NULL )
+        errexit(name)
+    .endif
+    .new retval:ptr = NULL
+    .if ( fseek( fp, 0, SEEK_END ) == 0 )
+
+        .if ( ftell( fp ) )
+
+            mov ebx,eax
+            mov retval,malloc( &[rax+1] )
+            mov byte ptr [rax+rbx],0
+            rewind( fp )
+            fread( retval, 1, ebx, fp )
+        .endif
+    .endif
+
+    fclose(fp)
+   .return( retval )
+
+read_paramfile endp
+
+
+parse_params proc uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int_t
+
+   .new paramfile[_MAX_PATH]:char_t
+
+    mov rsi,rcx
+    mov rdi,rdx
+    mov rbx,[rsi]
+
+    .for ( : rbx : )
+
+        mov eax,[rbx]
+        .switch al
+        .case 13
+        .case 10
+        .case 9
+        .case ' '
+            inc rbx
+           .endc
+        .case 0
+            mov rbx,getnextcmdstring(rsi)
+           .endc
+        .case '-'
+        .case '/'
+            inc rbx
+            mov [rsi],rbx
+            parse_param(rsi, &paramfile)
+            inc dword ptr [rdi]
+            mov rbx,[rsi]
+           .endc
+        .case '@'
+            inc rbx
+            mov [rsi],get_nametoken(&paramfile, rbx, sizeof(paramfile)-1, 1)
+            xor ebx,ebx
+            .if paramfile[0]
+                mov rbx,getenv(&paramfile)
+            .endif
+            .if !rbx
+                mov rbx,read_paramfile(&paramfile)
+            .endif
+            .endc
+        .default ; collect  file name
+            mov rbx,get_nametoken(&paramfile, rbx, sizeof(paramfile) - 1, 1)
+            mov curfile,_strdup(&paramfile)
+            inc dword ptr [rdi]
+            mov [rsi],rbx
+           .return
+        .endsw
+    .endf
+    mov [rsi],rbx
+   .return(NULL)
+
+parse_params endp
+
+
+get_filename proc path:string_t
+
+    .for ( rax = rcx : [rcx] : rcx++ )
+        .if ( [rcx] == '\' )
+            lea rax,[rcx+1]
+        .endif
+    .endf
+    ret
+
+get_filename endp
+
+
+translate_module proc uses rsi rdi rbx source:string_t
+
+    mov curfile,rcx
+    mov rsi,rcx
+
+    .if ( !fopen(rcx, "rt") )
+
+        perror(rsi)
+       .return( 1 )
+    .endif
+    mov srcfile,rax
+
+    mov linebuf,malloc(MAXBUF)
+    mov filebuf,malloc(MAXBUF)
+    mov tempbuf,malloc(MAXBUF)
+
+    mov rdi,rax
+    .if ( strrchr(strcpy(rdi, rsi), '\') )
+        inc rax
+        strcpy(rdi, rax)
+    .endif
+    .if strrchr(rdi, '.')
+        strcpy(rax, ".inc")
+    .else
+        strcat(rdi, ".inc")
+    .endif
+    .if !fopen(rdi, "wt")
+
+        fclose(srcfile)
+        perror(rdi)
+       .return( 1 )
+    .endif
+    mov outfile,rax
+
+    mov curline,1
+    mov cflags,0
+    mov clevel,0
+    mov cstart,0
+    mov cblank,0
+    mov ercount,0
+
+    .if ( !option_q )
+        printf( " Translating: %s\n", source)
+    .endif
+
+    .if !setjump(&jmpenv)
+
+        .while 1
+            tokenize(getline(linebuf))
+            parseline()
+        .endw
+    .endif
+
+    fclose(srcfile)
+    fclose(outfile)
+    free(linebuf)
+    free(filebuf)
+    free(tempbuf)
+   .return(ercount)
+
+translate_module endp
+
+
+strfcat proc buffer:string_t, path:string_t, file:string_t
+
+    mov rax,rcx
+    .if rdx
+        .for ( : byte ptr [rdx] : r9b=[rdx], [rcx]=r9b, rdx++, rcx++ )
+        .endf
+    .else
+        .for ( : byte ptr [rcx] : rcx++ )
+        .endf
+    .endif
+    lea rdx,[rcx-1]
+    .if rdx > rax
+
+        mov dl,[rdx]
+        .if !( dl == '\' || dl == '/' )
+
+            mov dl,'\'
+            mov [rcx],dl
+            inc rcx
+        .endif
+    .endif
+    .for ( dl=[r8] : dl : [rcx]=dl, r8++, rcx++, dl=[r8] )
+    .endf
+    mov [rcx],dl
+    ret
+
+strfcat endp
+
+
+translate_subdir proc uses rsi rdi rbx directory:string_t, wild:string_t
+
+  local rc, path[_MAX_PATH]:byte, h:HANDLE, ff:WIN32_FIND_DATA
+
+    lea rsi,path
+    lea rdi,ff
+    lea rbx,ff.cFileName
+    mov rc,0
+
+    .ifd FindFirstFile(strfcat(rsi, directory, wild), rdi) != -1
+        mov h,rax
+        .repeat
+            .if !( byte ptr ff.dwFileAttributes & _A_SUBDIR )
+                mov rc,translate_module(strfcat(rsi, directory, rbx))
+            .endif
+        .until !FindNextFile(h, rdi)
+        FindClose(h)
+    .endif
+    .return( rc )
+
+translate_subdir endp
 
 
 define EH_STACK_INVALID    0x08
@@ -2011,129 +2484,64 @@ GeneralFailure proc \
             [r11].CONTEXT._Rsp, [r11].CONTEXT._R15,
             [r11].CONTEXT._Rip, &flags)
 
+        errexit(string)
     .endif
-    errexit(string)
+    printf("error: %s\n", string)
+    exit(0)
 
 GeneralFailure endp
 
 
-setarg_option proc p:ptr string_t, arg:string_t, arg2:string_t
-
-    inc stoptions
-    mov r9,8
-    .if r8
-        add r9,r9
-    .endif
-    .for ( eax = 0, r10d = 0 : rax != [rcx] && r10d < MAXARGS : r10d++, rcx+=r9 )
-    .endf
-    .if ( r10d == MAXARGS )
-        .return errexit(rdx)
-    .endif
-    mov [rcx],rdx
-    .if r8
-        mov [rcx+8],r8
-    .endif
-    ;printf( " strip: %s\n", rdx)
-    ret
-
-setarg_option endp
-
 main proc frame:GeneralFailure argc:int_t, argv:array_t
 
-    .for ( rsi = &[rdx+8], ebx = 1 : ebx < argc : ebx++ )
-
-        lodsq
-        .if ( [rax] == '-' || [rax] == '/' )
-
-            mov dl,[rax+1]
-
-            .switch pascal dl
-            .case '?'
-                exit_options()
-            .case 'q'
-                mov option_q,1
-                mov banner,1
-            .case 'n'
-                mov banner,1
-            .case 'm'
-                mov option_m,1
-            .case 'c'
-                add rax,2
-                mov option_c,rax
-            .case 'v'
-                add rax,2
-                mov option_v,rax
-            .case 'f'
-                add rax,2
-                setarg_option(&option_f, rax, NULL)
-            .case 'w'
-                add rax,2
-                setarg_option(&option_w, rax, NULL)
-            .case 's'
-                add rax,2
-                setarg_option(&option_s, rax, NULL)
-            .case 'r'
-                lea rdx,[rax+2]
-                lodsq
-                inc ebx
-                setarg_option(&option_r, rdx, rax)
-            .endsw
-        .else
-            mov curfile,rax
-        .endif
-    .endf
-
-    write_logo()
-
-    mov rsi,curfile
-    .if ( rsi == NULL )
-        exit_usage()
-    .endif
-
-    .if ( !fopen(rsi, "rt") )
-
-        perror(rsi)
-       .return( 1 )
-    .endif
-
-    mov srcfile,rax
-    mov linebuf,malloc(MAXBUF)
-    mov filebuf,malloc(MAXBUF)
-    mov tempbuf,malloc(MAXBUF)
-
-    mov rdi,rax
-    .if ( strrchr(strcpy(rdi, rsi), '\') )
-        inc rax
-        strcpy(rdi, rax)
-    .endif
-
-    .if strrchr(rdi, '.')
-        strcpy(rax, ".inc")
-    .else
-        strcat(rdi, ".inc")
-    .endif
-    .if !fopen(rdi, "wt")
-
-        fclose(srcfile)
-        perror(rdi)
-       .return( 1 )
-    .endif
-    mov outfile,rax
+    .new num_args:int_t = 0
+    .new num_files:int_t = 0
+    .new ff:WIN32_FIND_DATA
 
     lea r15,_ltype
-    .if ( !option_q )
-        printf( " Translating: %s\n", curfile)
+    mov rsi,rdx
+    mov rdi,[rdx]
+    mov prgpath,rdi
+    .if ( get_filename(rdi) > rdi )
+        mov [rdi],0
+    .else
+        strcpy(rdi, ".\\")
     .endif
+    add argv,8
 
-    .while 1
+    .while parse_params(argv, &num_args)
 
-        tokenize(getline(linebuf))
-        parseline()
+        write_logo()
+
+        inc num_files
+        mov rsi,curfile
+
+        lea rdi,ff.cFileName
+        .ifd FindFirstFile(rsi, &ff) == -1
+            errexit(rsi)
+        .endif
+        FindClose(rax)
+
+        .if !strchr(strcpy(rdi, rsi), '*')
+            strchr(rdi, '?')
+        .endif
+        .if rax
+            .if ( get_filename(rdi) > rdi )
+                dec rax
+            .endif
+            mov [rax],0
+            translate_subdir(rdi, get_filename(rsi))
+        .else
+            translate_module(rdi)
+        .endif
     .endw
 
-    fclose(srcfile)
-    fclose(outfile)
-   .return(0)
+    .if !num_args
+        write_usage()
+    .elseif !num_files
+        printf("error: missing source filename\n")
+    .endif
+    .return(0)
 
 main endp
 

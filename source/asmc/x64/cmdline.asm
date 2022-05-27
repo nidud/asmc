@@ -610,9 +610,7 @@ endif
         .return
 
     .case 'marf'            ; -frame
-        .if ( Options.output_format != OFORMAT_BIN )
-            mov Options.frame_auto,3
-        .endif
+        mov Options.frame_auto,3
         .return
 
 ifndef ASMC64

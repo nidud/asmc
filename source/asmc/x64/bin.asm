@@ -1437,7 +1437,7 @@ pe_set_base_relocs proc __ccall uses rsi rdi rbx reloc:ptr dsym
 
 pe_set_base_relocs endp
 
-GHF macro x
+GHF proto watcall x:abs {
 ifndef ASMC64
  .if ( ModuleInfo.defOfssize == USE64 )
 endif
@@ -1459,8 +1459,7 @@ ifndef ASMC64
   endif
  .endif
 endif
- retm<eax>
- endm
+    }
 
 ; set values in PE header
 ; including data directories:
@@ -1872,8 +1871,7 @@ endif
             mov [rdx][IMAGE_DIRECTORY_ENTRY_EXCEPTION*IMAGE_DATA_DIRECTORY].IMAGE_DATA_DIRECTORY.VirtualAddress,[rsi].start_offset
         .endif
         mov rcx,cp
-        mov dword ptr [rcx].calc_param.imagebase64,GHF( OptionalHeader.ImageBase )
-        mov dword ptr [rcx].calc_param.imagebase64[4],edx
+        mov [rcx].calc_param.imagebase64,GHF( OptionalHeader.ImageBase )
 ifndef ASMC64
     .else
         mov rcx,cp

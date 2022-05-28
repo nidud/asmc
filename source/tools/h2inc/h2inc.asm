@@ -16,7 +16,7 @@ include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    103
+define __H2INC__    104
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -160,6 +160,7 @@ parseline proto
  option_w   string_t MAXARGS dup(NULL)
  option_s   string_t MAXARGS dup(NULL)
  option_r   string_t MAXARGS*2 dup(NULL)
+ option_o   string_t MAXARGS*2 dup(NULL)
 
  tokpos     string_t ?
  linebuf    string_t NULL
@@ -195,7 +196,210 @@ _ltype      db \
   _CONTROL,
 128 dup(0) ; and the rest are 0...
 
-    .code
+T macro s
+% exitm<@CStr("&s&")>
+  endm
+  align 8
+reswords string_t \
+    T(add),
+    T(addr),
+    T(ax),
+    T(bp),
+    T(bx),
+    T(byte),
+    T(ch),
+    T(comment),
+    T(cx),
+    T(di),
+    T(div),
+    T(dr0),
+    T(dr1),
+    T(dr2),
+    T(dr3),
+    T(dr4),
+    T(dr5),
+    T(dr6),
+    T(dr7),
+    T(dword),
+    T(dx),
+    T(eax),
+    T(ebp),
+    T(ebx),
+    T(ecx),
+    T(edi),
+    T(edx),
+    T(eip),
+    T(end),
+    T(enter),
+    T(esi),
+    T(esp),
+    T(fabs),
+    T(far),
+    T(fs),
+    T(group),
+    T(highword),
+    T(if),
+    T(in),
+    T(int),
+    T(invoke),
+    T(lock),
+    T(mm),
+    T(mul),
+    T(near),
+    T(offset),
+    T(out),
+    T(pascal),
+    T(proc),
+    T(push),
+    T(rcl),
+    T(segment),
+    T(si),
+    T(sp),
+    T(st),
+    T(str),
+    T(tbyte),
+    T(wait),
+    T(word),
+    NULL
+
+knownstructs string_t \
+    T(ACE_HEADER),
+    T(AD_GENERAL_PARAMS),
+    T(AD_GUARANTEED),
+    T(BITMAP),
+    T(BITMAPCOREHEADER),
+    T(BITMAPINFOHEADER),
+    T(CERT_ALT_NAME_INFO),
+    T(CERT_NAME_BLOB),
+    T(CERT_PUBLIC_KEY_INFO),
+    T(CERT_RDN_VALUE_BLOB),
+    T(CIEXYZ),
+    T(CIEXYZTRIPLE),
+    T(CLSID),
+    T(CMSG_SIGNED_ENCODE_INFO),
+    T(CMSG_ENVELOPED_ENCODE_INFO),
+    T(COLORADJUSTMENT),
+    T(CONTROL_SERVICE),
+    T(CONVCONTEXT),
+    T(COORD),
+    T(CREATE_PROCESS_DEBUG_INFO),
+    T(CREATE_THREAD_DEBUG_INFO),
+    T(CRL_DIST_POINT_NAME),
+    T(CRYPT_ALGORITHM_IDENTIFIER),
+    T(CRYPT_ATTRIBUTES),
+    T(CRYPT_DATA_BLOB),
+    T(CRYPT_OBJID_BLOB),
+    T(CTL_USAGE),
+    T(DCB),
+    T(DDEML_MSG_HOOK_DATA),
+    T(DESIGNVECTOR),
+    T(ELEMDESC),
+    T(EMR),
+    T(EMRTEXT),
+    T(ENUMLOGFONTEXA),
+    T(ENUMLOGFONTEXW),
+    T(EVENTLOGRECORD),
+    T(EXCEPTION_DEBUG_INFO),
+    T(EXCEPTION_RECORD),
+    T(EXIT_PROCESS_DEBUG_INFO),
+    T(EXIT_THREAD_DEBUG_INFO),
+    T(EXTLOGFONTW),
+    T(EXTLOGPEN),
+    T(FILETIME),
+    T(FIXED),
+    T(FLOATING_SAVE_AREA),
+    T(FLOWSPEC),
+    T(FOCUS_EVENT_RECORD),
+    T(FONTSIGNATURE),
+    T(GUID),
+    T(HARDWAREINPUT),
+    T(IDLDESC),
+    T(IID),
+    T(IMAGE_DATA_DIRECTORY),
+    T(IMAGE_FILE_HEADER),
+    T(IMAGE_OPTIONAL_HEADER32),
+    T(IMAGE_OPTIONAL_HEADER64),
+    T(IMAGE_ROM_OPTIONAL_HEADER),
+    T(IN_ADDR_IPV4),
+    T(IN_ADDR_IPV6),
+    T(KEYBDINPUT),
+    T(KEY_EVENT_RECORD),
+    T(LARGE_INTEGER),
+    T(LIST_ENTRY),
+    T(LOAD_DLL_DEBUG_INFO),
+    T(LOGBRUSH),
+    T(LOGCOLORSPACEW),
+    T(LOGFONTA),
+    T(LOGFONTW),
+    T(LOGPALETTE),
+    T(LOGPEN),
+    T(LUID),
+    T(LUID_AND_ATTRIBUTES),
+    T(MENU_EVENT_RECORD),
+    T(MESSAGE_RESOURCE_BLOCK),
+    T(MOUSEINPUT),
+    T(MOUSE_EVENT_RECORD),
+    T(NEWTEXTMETRICA),
+    T(NEWTEXTMETRICW),
+    T(NEWTEXTMETRICEXA),
+    T(NEWTEXTMETRICEXW),
+    T(NMHDR),
+    T(OUTPUT_DEBUG_STRING_INFO),
+    T(PALETTEENTRY),
+    T(PANOSE),
+    T(PARAMDESC),
+    T(PARAM_BUFFER),
+    T(PIXELFORMATDESCRIPTOR),
+    T(POINT),
+    T(POINTFLOAT),
+    T(POINTFX),
+    T(POINTL),
+    T(POINTS),
+    T(PRINTER_NOTIFY_INFO_DATA),
+    T(QOS_OBJECT_HDR),
+    T(RECT),
+    T(RECTL),
+    T(RGBQUAD),
+    T(RGBTRIPLE),
+    T(RGNDATAHEADER),
+    T(RIP_INFO),
+    T(RSVP_FILTERSPEC_V4),
+    T(RSVP_FILTERSPEC_V4_GPI),
+    T(RSVP_FILTERSPEC_V6),
+    T(RSVP_FILTERSPEC_V6_FLOW),
+    T(RSVP_FILTERSPEC_V6_GPI),
+    T(SECURITY_QUALITY_OF_SERVICE),
+    T(SERVICE_STATUS),
+    T(SID_AND_ATTRIBUTES),
+    T(SID_IDENTIFIER_AUTHORITY),
+    T(SIZEL),
+    T(SMALL_RECT),
+    T(SOCKET_ADDRESS),
+    T(STGMEDIUM),
+    T(SYSTEMTIME),
+    T(TEXTMETRICA),
+    T(TEXTMETRICW),
+    T(TOKEN_SOURCE),
+    T(TRIVERTEX),
+    T(TYPEDESC),
+    T(UNLOAD_DLL_DEBUG_INFO),
+    T(WAVEFORMAT),
+    T(WCRANGE),
+    T(WINDOW_BUFFER_SIZE_RECORD),
+    T(WSABUF),
+    T(WSAPROTOCOLCHAIN),
+    T(XFORM),
+    NULL
+
+define MAXLSTRUCTS 256
+
+.data?
+ reswbuf    char_t 32 dup(?)
+ lstructa   string_t MAXLSTRUCTS dup(?)
+ lstructs   int_t ?
+
+
+.code
 
 write_logo proc
 
@@ -243,6 +447,7 @@ exit_options proc
         "-w<word>        -- Strip word (a valid identifier)\n"
         "-s<string>      -- Strip string\n"
         "-r<old> <new>   -- Replace string\n"
+        "-o<old> <new>   -- Replace output string\n"
         "\n"
         "Note that \"quotes\" are stripped so use -r\"\\\"old\\\"\" \"\\\"new\\\"\" to replase\n"
         "actual \"quoted strings\".\n\n"
@@ -576,6 +781,24 @@ arg_option_r proc uses rdi rbx string:string_t
 arg_option_r endp
 
 
+arg_option_o proc uses rdi rbx string:string_t
+
+    mov rdi,rcx
+    .for ( ebx = 0 : ebx < MAXARGS : ebx++ )
+
+        lea rax,option_o
+        lea rcx,[rbx*8]
+        mov rdx,[rax+rcx*2]
+
+        .break .if !rdx
+        mov r8,[rax+rcx*2+8]
+        strxchg(rdi, rdx, r8)
+    .endf
+    ret
+
+arg_option_o endp
+
+
 operator proc uses rdi rsi rbx r12 string:string_t, token:string_t, new:string_t
 
     mov r12,rcx
@@ -619,6 +842,7 @@ convert proc uses rsi string:string_t
     operator(rsi, "!=", " ne ")
     operator(rsi, "!",  " not ")
     operator(rsi, "~",  " not ")
+    arg_option_o(rsi)
    .return(rsi)
 
 convert endp
@@ -897,6 +1121,14 @@ tokenize proc uses rsi rdi string:string_t
                 mov ctoken,T_DEFINE_GUID
                .return(T_DEFINE_GUID)
             .endif
+            .endc
+        .case 14
+            .if !memcmp(rdi, "DECLARE_HANDLE", 14)
+                mov csize,14
+                mov ctoken,T_DEFINE_GUID
+               .return(T_DEFINE_GUID)
+            .endif
+            .endc
         .endsw
         mov csize,eax
         mov ctoken,T_ID
@@ -1215,7 +1447,9 @@ strip_unsigned proc uses rsi rdi rbx string:string_t
     wordxchg(rdi, "int",         "sdword")
     wordxchg(rdi, "char",        "sbyte")
     wordxchg(rdi, "short",       "sword")
+    wordxchg(rdi, "SHORT",       "sword")
     wordxchg(rdi, "float",       "real4")
+    wordxchg(rdi, "FLOAT",       "real4")
     wordxchg(rdi, "double",      "real8")
     wordxchg(rdi, "...",         "vararg")
     ret
@@ -1449,6 +1683,66 @@ parse_define_guide endp
 ; type name[, name2, ...];
 ; type (*name)(args);
 
+is_struct proc uses rsi rdi rbx string:string_t
+
+    mov rdi,rcx
+    lea rsi,knownstructs
+    .while 1
+        lodsq
+        .break .if !rax
+        .if !strcmp(rax, rdi)
+            .return(1)
+        .endif
+    .endw
+    lea rsi,lstructa
+    .for ( ebx = 0 : ebx < lstructs : ebx++ )
+        lodsq
+        .if !strcmp(rax, rdi)
+            .return(1)
+        .endif
+    .endf
+    .return(0)
+
+is_struct endp
+
+
+push_struct proc name:string_t
+
+    .return .if ( [rcx] == 0 )
+    .if ( lstructs >= MAXLSTRUCTS )
+        .return error("buffer overflow: to many local structures")
+    .endif
+    .return .if is_struct(rcx)
+    .return .if !_strdup(name)
+    lea rdx,lstructa
+    mov ecx,lstructs
+    mov [rdx+rcx*8],rax
+    inc lstructs
+    ret
+
+push_struct endp
+
+
+get_resword proc uses rsi rdi rbx string:string_t
+
+    mov rdi,rcx
+    mov ebx,strlen(rcx)
+    .if ( eax > 8 || eax < 2 )
+        .return(rdi)
+    .endif
+    lea rsi,reswords
+    .while 1
+        lodsq
+        .break .if !rax
+        .if !memcmp(rax, rdi, ebx)
+            .return(strcat(strcpy(&reswbuf, "_"), rdi))
+        .endif
+    .endw
+    .return(rdi)
+
+get_resword endp
+
+
 parse_struct_member proc uses rsi rdi rbx r12 r13 r14
 
     mov rdi,tokpos
@@ -1522,11 +1816,12 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
         mov rsi,strrchr(rdi, ';')
     .endif
     mov rsi,prevtokz(rsi, rdi)
+    mov rdx,get_resword(rsi)
 
     movzx eax,clevel
     dec eax
     lea ecx,[rax-23]
-    oprintf("%*s%*s ", eax, "", ecx, rsi)
+    oprintf("%*s%*s ", eax, "", ecx, rdx)
     mov [rsi],0
 
     ; reduce type to 2: [unsigned] type [*]
@@ -1551,12 +1846,25 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
         mov rdi,rsi
     .endif
 
-    .if rbx
-        oprintf("%s%s %s dup(?)\n", r12, rdi, rbx)
-    .elseif r13
-        oprintf("%s%s : %2s ?\n", r12, rdi, r13)
+    .new isstruct:int_t = 0
+    .if ( [r12] == 0 )
+        mov isstruct,is_struct(rdi)
+    .endif
+
+    .if ( !r13 && isstruct )
+        .if rbx
+            oprintf("%s %s dup(<>)\n", rdi, rbx)
+        .else
+            oprintf("%s <>\n", rdi)
+        .endif
     .else
-        oprintf("%s%s ?\n", r12, rdi)
+        .if rbx
+            oprintf("%s%s %s dup(?)\n", r12, rdi, rbx)
+        .elseif r13
+            oprintf("%s%s : %2s ?\n", r12, rdi, r13)
+        .else
+            oprintf("%s%s ?\n", r12, rdi)
+        .endif
     .endif
 
     .while r14
@@ -1580,12 +1888,20 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
         strtrim(rsi)
         movzx eax,clevel
         dec eax
-        lea ecx,[rax-24]
-        oprintf("%*s%*s", eax, "", ecx, rsi)
-        .if rbx
-            oprintf("%s%s %s dup(?)\n", r12, rdi, rbx)
+        lea ecx,[rax-23]
+        oprintf("%*s%*s ", eax, "", ecx, rsi)
+        .if ( isstruct )
+            .if rbx
+                oprintf("%s %s dup(<>)\n", rdi, rbx)
+            .else
+                oprintf("%s <>\n", rdi)
+            .endif
         .else
-            oprintf("%s%s ?\n", r12, rdi)
+            .if rbx
+                oprintf("%s%s %s dup(?)\n", r12, rdi, rbx)
+            .else
+                oprintf("%s%s ?\n", r12, rdi)
+            .endif
         .endif
     .endw
 
@@ -1767,9 +2083,12 @@ parse_struct proc uses rsi rdi rbx r12
     lea rdi,name
     .if ( clevel == 0 )
         oprintf("%-23s %s\n%s", rdi, type, rsi)
+        push_struct(rdi)
     .else
         .if !memcmp(rdi, "DUMMY", 5)
             mov name,0
+        .else
+            push_struct(rdi)
         .endif
         oprintf("%*s%s %s\n%s", ebx, "", type, rdi, rsi)
     .endif
@@ -2118,10 +2437,16 @@ parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
     .case 'q'
         mov option_q,1
         mov banner,1
+        inc rbx
+        mov [rsi],rbx
     .case 'n'
         mov banner,1
+        inc rbx
+        mov [rsi],rbx
     .case 'm'
         mov option_m,1
+        inc rbx
+        mov [rsi],rbx
     .case 'c'
         inc rbx
         mov [rsi],get_nametoken(rdi, rbx, 256, 0)
@@ -2152,22 +2477,53 @@ parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
         .endif
         mov [rsi],get_nametoken(&param2, rbx, 256-1, 0)
         setarg_option(&option_r, rdi, &param2)
+    .case 'o'
+       .new param2[256]:char_t
+        inc rbx
+        mov [rsi],get_nametoken(rdi, rbx, 256, 0)
+        mov rbx,tokstart(rax)
+        .if ( cl == 0 )
+            mov rbx,getnextcmdstring(rsi)
+        .endif
+        mov [rsi],get_nametoken(&param2, rbx, 256-1, 0)
+        setarg_option(&option_o, rdi, &param2)
     .endsw
     ret
 
 parse_param endp
 
 
+get_filename proc path:string_t
+
+    .for ( rax = rcx : [rcx] : rcx++ )
+        .if ( [rcx] == '\' )
+            lea rax,[rcx+1]
+        .endif
+    .endf
+    ret
+
+get_filename endp
+
+
 read_paramfile proc uses rbx name:string_t
 
-    .new path[_MAX_PATH]:char_t
+    mov rbx,rcx
     .new fp:ptr FILE = fopen(rcx, "rb")
 
     .if ( rax == NULL )
-        mov fp,fopen(strcat(strcpy(&path, prgpath), name), "rb")
+
+       .new path[_MAX_PATH]:char_t
+        lea rbx,path
+        GetModuleFileNameA(0, rbx, _MAX_PATH)
+        .if ( get_filename(rbx) > rbx )
+            mov [rax],0
+        .else
+            strcpy(rbx, ".\\")
+        .endif
+        mov fp,fopen(strcat(rbx, name), "rb")
     .endif
     .if ( rax == NULL )
-        errexit(name)
+        errexit(rbx)
     .endif
     .new retval:ptr = NULL
     .if ( fseek( fp, 0, SEEK_END ) == 0 )
@@ -2242,18 +2598,6 @@ parse_params proc uses rsi rdi rbx cmdline:ptr string_t, numargs:ptr int_t
 parse_params endp
 
 
-get_filename proc path:string_t
-
-    .for ( rax = rcx : [rcx] : rcx++ )
-        .if ( [rcx] == '\' )
-            lea rax,[rcx+1]
-        .endif
-    .endf
-    ret
-
-get_filename endp
-
-
 translate_module proc uses rsi rdi rbx source:string_t
 
     mov curfile,rcx
@@ -2294,6 +2638,7 @@ translate_module proc uses rsi rdi rbx source:string_t
     mov cstart,0
     mov cblank,0
     mov ercount,0
+    mov lstructs,0
 
     .if ( !option_q )
         printf( " Translating: %s\n", source)
@@ -2499,14 +2844,6 @@ main proc frame:GeneralFailure argc:int_t, argv:array_t
     .new ff:WIN32_FIND_DATA
 
     lea r15,_ltype
-    mov rsi,rdx
-    mov rdi,[rdx]
-    mov prgpath,rdi
-    .if ( get_filename(rdi) > rdi )
-        mov [rdi],0
-    .else
-        strcpy(rdi, ".\\")
-    .endif
     add argv,8
 
     .while parse_params(argv, &num_args)

@@ -2,6 +2,16 @@
 -s(DWORD)
 -s(WORD)
 -s(BYTE)
+-s(UINT)
 -s(HANDLE)
+-s(int)
+-s(INT)
+-s(HWND)
+-s(WPARAM)
+-s(LPARAM)
+-s(BOOL)
+-s(HIMAGELIST)
+-s(COLORREF)
+-wCONST
 -w_In_
 -f_Field_range_

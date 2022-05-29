@@ -1,5 +1,6 @@
 ifndef _VCRUNTIME_H
 define _VCRUNTIME_H
+include libc.inc
 include sal.inc
 include vadefs.inc
 

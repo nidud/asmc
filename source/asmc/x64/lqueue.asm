@@ -187,6 +187,11 @@ tvsprintf proc __ccall uses rsi rdi rbx r12 r13 buffer:string_t, format:string_t
                 mov al,'t'
                 stosb
                .endc
+            .case 'p'
+                mov rcx,[r12-8]
+                mov r13d,16
+                mov ebx,'0'
+               .gotosw('X')
             .default
                 stosb
             .endsw

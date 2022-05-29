@@ -758,7 +758,7 @@ log_record proc __ccall uses rsi rdi rbx sym:ptr asym
             lea rcx,[rbx].ivalue
         .endif
         .if ( [rdi].asym.total_size > 4 )
-            LstPrintf( "  %s %s      %6X  %7X  %016lX %s",
+            LstPrintf( "  %s %s      %6X  %7X  %p %s",
                 [rbx].name, pdots, [rbx].offs, [rbx].total_size, mask, rcx )
         .else
             LstPrintf( "  %s %s      %6X  %7X  %08X %s",

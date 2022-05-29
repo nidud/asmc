@@ -16,11 +16,12 @@ include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    104
+define __H2INC__    105
 
 define MAXLINE      512
 define MAXBUF       0x100000
 define MAXARGS      20
+define MAXLSTRUCTS  2048
 
 define FL_STBUF     0x01
 define FL_STRUCT    0x02
@@ -143,7 +144,6 @@ parseline proto
 
 .data
 
- prgpath    string_t NULL
  jmpenv     jmpbuf <>
  ercount    dd 0
 
@@ -151,6 +151,7 @@ parseline proto
  option_q   db 0            ; -q
  option_n   db 0            ; -nologo
  option_m   db 0            ; -nomacro
+ option_b   db 0            ; -b
  stoptions  db 0
 
  align 8
@@ -176,6 +177,7 @@ parseline proto
  clevel     db ?
  cstart     db 0
  cblank     db 0
+ unicode    db 0
 _ltype      db \
   0,
   9 dup(_CONTROL),
@@ -391,8 +393,6 @@ knownstructs string_t \
     T(XFORM),
     NULL
 
-define MAXLSTRUCTS 256
-
 .data?
  reswbuf    char_t 32 dup(?)
  lstructa   string_t MAXLSTRUCTS dup(?)
@@ -442,6 +442,7 @@ exit_options proc
         "-nologo         -- Suppress copyright message\n"
         "-c<string>      -- Specify string (calling convention) for PROTO\n"
         "-v<string>      -- Specify string for PROTO using VARARG\n"
+        "-b              -- Add <brackets> on define <ID>\n"
         "-m              -- Skip empty macro lines followed by a blank\n"
         "-f<functon>     -- Strip functon: -f__attribute__\n"
         "-w<word>        -- Strip word (a valid identifier)\n"
@@ -1165,6 +1166,7 @@ parse_if proc uses rdi
     mov rdi,tokpos
     .if !memcmp(rdi, "#ifdef UNICODE", 14)
         oprintf("ifdef _UNICODE\n")
+        inc unicode
        .return
     .endif
     convert(concatf(rdi))
@@ -1178,6 +1180,9 @@ parse_if endp
 
 parse_else proc
 
+    .if ( ctoken == T_ENDIF )
+        mov unicode,0
+    .endif
     mov rdx,tokpos
     oprintf("%s\n", &[rdx+1])
     ret
@@ -1270,7 +1275,19 @@ parse_define proc uses rsi rdi rbx r12
     .if ( cl != '(' || ( cl == '(' && ( al == ' ' || al == 9 ) ) )
 
         convert(concatf(rdi))
-        .if ( [rsi] == '"' || ( [rsi] == 'L' && [rsi+1] == '"' ) )
+
+        xor ebx,ebx
+        mov eax,[rsi]
+        movzx ecx,al
+        .if ( al == '"' || ( al == 'L' && ah == '"' ) )
+            inc ebx
+        .elseif ( [r15+rcx] & _LABEL )
+            toksize(rsi)
+            .if ( [rsi+rax] == 0 && ( option_b || unicode ) )
+                inc ebx
+            .endif
+        .endif
+        .if ( ebx )
             strcpy(rsi, strcat(strcat(strcpy(tempbuf, "<"), rsi), ">"))
         .endif
         oprintf("%s\n", &[rdi+1])
@@ -1280,6 +1297,7 @@ parse_define proc uses rsi rdi rbx r12
     mov [rsi],0
     inc rsi
     xor ebx,ebx
+
     .if strchr(rsi, ')')
         mov [rax],0
         mov rbx,tokstart(&[rax+1])
@@ -1300,6 +1318,8 @@ parse_define proc uses rsi rdi rbx r12
     .if ( [rdi] == 0 )
         .return exit_macro(rdi)
     .endif
+
+
     ;
     ; macro(arg1, \
     ;       ..., \
@@ -1317,6 +1337,29 @@ parse_define proc uses rsi rdi rbx r12
         concat(rdi)
     .endw
     .if ( [rdi+strlen(rdi)-1] != '\' )
+
+        ; strip <(macro(...))> --> <macro(...)>
+
+        .if ( [rdi] == '(' )
+            mov rbx,tokstart(&[rdi+1])
+            .if isidfirst([rbx])
+                .for ( rdx = rbx, ecx = 1 : [rdx] : rdx++ )
+                    .if ( [rdx] == '(' )
+                        inc ecx
+                    .elseif ( [rdx] == ')' )
+                        dec ecx
+                        .break .ifz
+                    .endif
+                .endf
+                .if ( word ptr [rdx] == ')' )
+                    dec rdx
+                    .if ( rdx != rbx && [rdx] == ')' )
+                        mov [rdx+1],0
+                        strcpy(rdi, rbx)
+                    .endif
+                .endif
+            .endif
+        .endif
         .return exit_macro(rdi)
     .endif
 
@@ -1445,6 +1488,7 @@ strip_unsigned proc uses rsi rdi rbx string:string_t
     wordxchg(rdi, "__int64",     "sqword")
     wordxchg(rdi, "long",        "sdword")
     wordxchg(rdi, "int",         "sdword")
+    wordxchg(rdi, "INT",         "sdword")
     wordxchg(rdi, "char",        "sbyte")
     wordxchg(rdi, "short",       "sword")
     wordxchg(rdi, "SHORT",       "sword")
@@ -1837,7 +1881,14 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
 
     .if strchr(rsi, '*')
         mov [rax],0
-        strtrim(rsi)
+        .if strtrim(rsi) == 4
+            mov eax,[rsi]
+            or  eax,0x20202020
+            .if eax == 'diov'
+                mov [rsi],0
+                lea r12,@CStr("ptr")
+            .endif
+        .endif
     .else
         add r12,4
     .endif
@@ -2051,8 +2102,9 @@ parse_struct proc uses rsi rdi rbx r12
                     mov rdi,rax
                 .endif
                 .if ( byte ptr [rdi] == '*' )
-                    oprintf("%-23s typedef ptr %s\n", &[rdi+1], rsi)
+                    oprintf("%-23s typedef ptr %s\n", tokstart(&[rdi+1]), rsi)
                 .else
+                    push_struct(rdi)
                     oprintf("%-23s typedef %s\n", rdi, rsi)
                 .endif
             .endw
@@ -2066,8 +2118,9 @@ parse_struct proc uses rsi rdi rbx r12
                 mov rdi,rax
             .endif
             .if byte ptr [rdi] == '*'
-                oprintf("%-23s typedef ptr %s\n", addr [rdi+1], rsi)
+                oprintf("%-23s typedef ptr %s\n", tokstart(&[rdi+1]), rsi)
             .else
+                push_struct(rdi)
                 oprintf("%-23s typedef %s\n", rdi, rsi)
             .endif
             .break
@@ -2087,8 +2140,6 @@ parse_struct proc uses rsi rdi rbx r12
     .else
         .if !memcmp(rdi, "DUMMY", 5)
             mov name,0
-        .else
-            push_struct(rdi)
         .endif
         oprintf("%*s%s %s\n%s", ebx, "", type, rdi, rsi)
     .endif
@@ -2443,6 +2494,10 @@ parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
         mov banner,1
         inc rbx
         mov [rsi],rbx
+    .case 'b'
+        mov option_b,1
+        inc rbx
+        mov [rsi],rbx
     .case 'm'
         mov option_m,1
         inc rbx
@@ -2638,7 +2693,7 @@ translate_module proc uses rsi rdi rbx source:string_t
     mov cstart,0
     mov cblank,0
     mov ercount,0
-    mov lstructs,0
+    ;mov lstructs,0 keep structs...
 
     .if ( !option_q )
         printf( " Translating: %s\n", source)
@@ -2720,9 +2775,9 @@ define EH_UNWINDING        0x02
 define EH_EXIT_UNWIND      0x04
 define EH_NESTED_CALL      0x10
 
-GeneralFailure proc \
+_exception_handler proc \
     ExceptionRecord   : PEXCEPTION_RECORD,
-    EstablisherFrame  : ptr dword,
+    EstablisherFrame  : PEXCEPTION_REGISTRATION_RECORD,
     ContextRecord     : PCONTEXT,
     DispatcherContext : LPDWORD
 
@@ -2799,24 +2854,37 @@ GeneralFailure proc \
             adc [rdx+rcx-1],r8b
         .endf
 
+        mov rdx,[r11].CONTEXT._Rip
+        mov rcx,[rdx]
+        bswap rcx
+        xor r8,r8
+        .if ( r9 )
+            mov r8,[r9]
+            mov r9,[r8]
+            bswap r9
+        .endif
+
         printf(
             "This message is created due to unrecoverable error\n"
             "and may contain data necessary to locate it.\n"
             "\n"
-            "\tException Code: %08X\n"
-            "\tException Flags %08X\n"
-            "\n"
-            "\t  regs: RAX: %016lX R8:  %016lX\n"
-            "\t\tRBX: %016lX R9:  %016lX\n"
-            "\t\tRCX: %016lX R10: %016lX\n"
-            "\t\tRDX: %016lX R11: %016lX\n"
-            "\t\tRSI: %016lX R12: %016lX\n"
-            "\t\tRDI: %016lX R13: %016lX\n"
-            "\t\tRBP: %016lX R14: %016lX\n"
-            "\t\tRSP: %016lX R15: %016lX\n"
-            "\t\tRIP: %016lX\n\n"
+            "\tException:   %s\n"
+            "\tCode: \t     %08X\n"
+            "\tFlags:\t     %08X\n"
+            "\tProcessor:\n"
+            "\t\tRAX: %p R8:  %p\n"
+            "\t\tRBX: %p R9:  %p\n"
+            "\t\tRCX: %p R10: %p\n"
+            "\t\tRDX: %p R11: %p\n"
+            "\t\tRSI: %p R12: %p\n"
+            "\t\tRDI: %p R13: %p\n"
+            "\t\tRBP: %p R14: %p\n"
+            "\t\tRSP: %p R15: %p\n"
+            "\t\tRIP: %p *--: %p\n"
+            "\t   Dispatch: %p *--: %p\n"
             "\t     EFlags: %s\n"
-            "\t\t     r n oditsz a p c\n\n",
+            "\t\t     r n oditsz a p c\n",
+            string,
             [r10].EXCEPTION_RECORD.ExceptionCode,
             [r10].EXCEPTION_RECORD.ExceptionFlags,
             [r11].CONTEXT._Rax, [r11].CONTEXT._R8,
@@ -2827,17 +2895,16 @@ GeneralFailure proc \
             [r11].CONTEXT._Rdi, [r11].CONTEXT._R13,
             [r11].CONTEXT._Rbp, [r11].CONTEXT._R14,
             [r11].CONTEXT._Rsp, [r11].CONTEXT._R15,
-            [r11].CONTEXT._Rip, &flags)
+            rdx, rcx, r8, r9, &flags)
 
-        errexit(string)
+        exit(1)
     .endif
-    printf("error: %s\n", string)
-    exit(0)
+    errexit(string)
 
-GeneralFailure endp
+_exception_handler endp
 
 
-main proc frame:GeneralFailure argc:int_t, argv:array_t
+main proc frame:_exception_handler argc:int_t, argv:array_t
 
     .new num_args:int_t = 0
     .new num_files:int_t = 0

@@ -279,22 +279,34 @@ ifndef __UNIX__
             adc [rdx+rcx-1],r8b
         .endf
 
+        mov rdx,[r11].CONTEXT._Rip
+        mov rcx,[rdx]
+        bswap rcx
+        xor r8,r8
+        .if ( r9 )
+            mov r8,[r9]
+            mov r9,[r8]
+            bswap r9
+        .endif
+
         tprintf(
             "This message is created due to unrecoverable error\n"
             "and may contain data necessary to locate it.\n"
             "\n"
-            "\tException Code: %08X\n"
-            "\tException Flags %08X\n"
-            "\n"
-            "\t  regs: RAX: %016lX R8:  %016lX\n"
-            "\t\tRBX: %016lX R9:  %016lX\n"
-            "\t\tRCX: %016lX R10: %016lX\n"
-            "\t\tRDX: %016lX R11: %016lX\n"
-            "\t\tRSI: %016lX R12: %016lX\n"
-            "\t\tRDI: %016lX R13: %016lX\n"
-            "\t\tRBP: %016lX R14: %016lX\n"
-            "\t\tRSP: %016lX R15: %016lX\n"
-            "\t\tRIP: %016lX\n\n"
+            "\tException:   Segment violation\n"
+            "\tCode: \t     %08X\n"
+            "\tFlags:\t     %08X\n"
+            "\tProcessor:\n"
+            "\t\tRAX: %p R8:  %p\n"
+            "\t\tRBX: %p R9:  %p\n"
+            "\t\tRCX: %p R10: %p\n"
+            "\t\tRDX: %p R11: %p\n"
+            "\t\tRSI: %p R12: %p\n"
+            "\t\tRDI: %p R13: %p\n"
+            "\t\tRBP: %p R14: %p\n"
+            "\t\tRSP: %p R15: %p\n"
+            "\t\tRIP: %p *--: %p\n"
+            "\t   Dispatch: %p *--: %p\n"
             "\t     EFlags: %s\n"
             "\t\t     r n oditsz a p c\n\n",
             [r10].EXCEPTION_RECORD.ExceptionCode,
@@ -307,7 +319,7 @@ ifndef __UNIX__
             [r11].CONTEXT._Rdi, [r11].CONTEXT._R13,
             [r11].CONTEXT._Rbp, [r11].CONTEXT._R14,
             [r11].CONTEXT._Rsp, [r11].CONTEXT._R15,
-            [r11].CONTEXT._Rip, &flags)
+            rdx, rcx, r8, r9, &flags)
 
 endif
         asmerr( 1901 )

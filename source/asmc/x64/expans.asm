@@ -459,7 +459,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                             .if ( ( opndx.value == 16 && opndx.h64_h == 0 ) )
                                 tstrcpy( StringBufferEnd, "16" )
                             .elseif ( ModuleInfo.floatformat == 'x' )
-                                tsprintf( StringBufferEnd, "%016lX%016lX", opndx.hlvalue, opndx.llvalue )
+                                tsprintf( StringBufferEnd, "%p%p", opndx.hlvalue, opndx.llvalue )
                             .else
 
                                 mov cvt.expchar,'e'

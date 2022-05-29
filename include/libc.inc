@@ -1,9 +1,9 @@
+.pragma list(push, 0)
 ifndef __LIBC_INC
 define __LIBC_INC
 ;
 ; Master include file for the Asmc Run Time library.
 ;
-.pragma list(push, 0)
 define __STDC__
 define __LIBC__ 233
 ifdef __ASMC__
@@ -262,6 +262,6 @@ endif
     exitm <id typedef ptr ?&id&>
     endm
 endif
-.pragma list(pop)
 endif
+.pragma list(pop)
 

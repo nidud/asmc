@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _WINBASE_
 define _WINBASE_
 ifndef __LIBC_INC
@@ -8606,4 +8607,4 @@ ReadThreadProfilingData proto WINAPI \
 endif ; (_WIN32_WINNT >= 0x0601)
 
 endif
-
+.pragma list(pop)

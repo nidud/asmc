@@ -837,7 +837,7 @@ CreateFloat proc __ccall uses rsi rdi rbx size:int_t, opnd:expr_t, buffer:string
         .case 10
         .case 16
             AddLineQueueX( "%s label real%d", buffer, size )
-            AddLineQueueX( "oword 0x%016lx%016lx", opc.hlvalue, opc.llvalue )
+            AddLineQueueX( "oword 0x%p%p", opc.hlvalue, opc.llvalue )
             .endc
         .endsw
         AddLineQueue( "_DATA ends" )

@@ -74,7 +74,7 @@ ifndef _MSVCRT
 
  PrintContext proto __cdecl :PCONTEXT, :PEXCEPTION_RECORD
  ifdef _WIN64
-  ExceptionHandler proto __cdecl :PEXCEPTION_RECORD, :LPDWORD, :PCONTEXT, :LPDWORD
+  ExceptionHandler proto __cdecl :PEXCEPTION_RECORD, :PEXCEPTION_REGISTRATION_RECORD, :PCONTEXT, :LPDWORD
  endif
 endif
 endif

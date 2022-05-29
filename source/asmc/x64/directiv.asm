@@ -283,6 +283,7 @@ endif
 
         ; transfer file content to the current segment.
 
+        xchg rsi,rax
 ifdef __UNIX__
         mov r12,rsi
         mov r13,rdi

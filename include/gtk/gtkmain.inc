@@ -14,8 +14,6 @@ endif
 
 define GTK_PRIORITY_RESIZE (G_PRIORITY_HIGH_IDLE + 10)
 
-gtk_init proto
-gtk_init_check proto
 gtk_is_initialized proto
 
 ifdef G_OS_WIN32
@@ -29,6 +27,11 @@ gtk_init macro
 gtk_init_check macro
   exitm<gtk_init_check_abi_check (2, sizeof (GtkWindow), sizeof (GtkBox))>
   endm
+
+else
+
+gtk_init proto
+gtk_init_check proto
 
 endif
 

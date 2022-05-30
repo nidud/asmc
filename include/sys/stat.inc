@@ -65,14 +65,23 @@ ifndef _DEV_T_DEFINED
 define _DEV_T_DEFINED
 _dev_t typedef dword
 endif
+
 ifndef _OFF_T_DEFINED
 define _OFF_T_DEFINED
+_off32_t typedef sdword
+_off64_t typedef qword
 ifdef _WIN64
 _off_t typedef qword
 else
 _off_t typedef sdword
 endif
+if not __STDC__
+off_t   typedef _off_t
+off32_t typedef sdword
+off64_t typedef qword
 endif
+endif
+
 ifndef _TIME32_T_DEFINED
 define _TIME32_T_DEFINED
 __time32_t typedef sdword

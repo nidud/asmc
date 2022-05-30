@@ -1,50 +1,46 @@
-; build:
-; asmc64 -fpic test.asm
-; gcc -o test test.o `pkg-config --cflags --libs gtk+-3.0`
-
-include stdio.inc
 include gtk/gtk.inc
 
 .code
 
+print_hello proc widget:ptr GtkWidget, data:gpointer
+
+  g_print("Hello World\n")
+  ret
+
+print_hello endp
+
+activate proc app:ptr GtkApplication, user_data:gpointer
+
+   .new window:ptr GtkWidget = gtk_application_window_new(app)
+    gtk_window_set_title(window, "Window")
+    gtk_window_set_default_size(window, 200, 200)
+
+   .new button:ptr GtkWidget = gtk_button_new_with_label("Hello World")
+    gtk_widget_set_halign(button, GTK_ALIGN_CENTER)
+    gtk_widget_set_valign(button, GTK_ALIGN_CENTER)
+
+    g_signal_connect(button, "clicked", &print_hello, NULL)
+    g_signal_connect_swapped(button, "clicked", &gtk_window_destroy, window)
+
+    gtk_window_set_child(window, button)
+    gtk_widget_show(window)
+    ret
+
+activate endp
+
 main proc _argc:int_t, _argv:array_t
 
-  local argc    :int_t,
-        argv    :array_t,
-        window  :ptr GtkWidget,
-        table   :ptr GtkWidget,
-        tlabel  :ptr GtkWidget,
-        button  :ptr GtkWidget
+   .new argc:int_t = _argc
+   .new argv:array_t = _argv
 
-    mov argc,edi
-    mov argv,rsi
-    .ifd !gtk_init_check(&argc, &argv)
-        perror("gtk_init_check")
-        .return 1
-    .endif
-    .if !gtk_window_new(0)
-        perror("gtk_window_new")
-        .return 1
-    .endif
-    mov window,rax
-    gtk_window_set_title(window, "Hello Linux!")
-    mov table,gtk_table_new(15, 15, 1)
-    gtk_container_add(window, table)
-    mov tlabel,gtk_label_new("Asmc gtk example")
-    gtk_table_attach_defaults(table, tlabel, 1, 8, 3, 7)
-    mov button,gtk_button_new_from_stock("gtk-quit")
-    gtk_table_attach_defaults(table, button, 10, 14, 12, 14)
-    gtk_widget_show_all(window)
-    g_signal_connect_data(window, "delete-event", &exit_prog, 0, 0, 0)
-    g_signal_connect_data(button, "clicked", &exit_prog, 0, 0, 0)
-    gtk_main()
-    ret
+   .new app:ptr GtkApplication = gtk_application_new("org.gtk.example", G_APPLICATION_FLAGS_NONE)
+    g_signal_connect(app, "activate", &activate, NULL)
+
+   .new status:int_t = g_application_run(app, argc, argv)
+    g_object_unref(app)
+
+   .return status
 
 main endp
-
-exit_prog proc
-    gtk_main_quit()
-    ret
-exit_prog endp
 
     end

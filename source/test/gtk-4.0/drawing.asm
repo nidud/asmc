@@ -20,8 +20,9 @@ clear_surface endp
 
 ;; Create a new surface of the appropriate size to store our scribbles
 
-resize_cb proc widget:ptr GtkWidget, width:int_t, height:int_t, data:gpointer
+resize_cb proc pwidget:ptr GtkWidget, width:int_t, height:int_t, data:gpointer
 
+  .new widget:ptr GtkWidget = pwidget
   .if ( surface )
 
       cairo_surface_destroy (surface)
@@ -48,27 +49,34 @@ resize_cb endp
 
 draw_cb proc drawing_area:ptr GtkDrawingArea, cr:ptr cairo_t, width:int_t, height:int_t, data:gpointer
 
-  cairo_set_source_surface (cr, surface, 0.0, 0.0)
-  cairo_paint (cr)
+ .new pc:ptr cairo_t = cr
+  cairo_set_source_surface (pc, surface, 0.0, 0.0)
+  cairo_paint (pc)
   ret
 draw_cb endp
 
 ;; Draw a rectangle on the surface at the given position
 
-draw_brush proc widget:ptr GtkWidget, x:double, y:double
+draw_brush proc pwidget:ptr GtkWidget, _x:double, _y:double
 
   ;; Paint to the surface, where we store our state
 
- .new cr:ptr cairo_t ;= cairo_create (surface)
-
-  movsd xmm1,x
-  movsd xmm2,y
   subsd xmm1,3.0
+ifdef __UNIX__
+  subsd xmm0,3.0
+ .new x:double = xmm0
+ .new y:double = xmm1
+else
   subsd xmm2,3.0
+ .new x:double = xmm1
+ .new y:double = xmm2
+endif
 
-  cairo_rectangle (cr, xmm1, xmm2, 6.0, 6.0)
+ .new widget:ptr GtkWidget = pwidget
+ .new cr:ptr cairo_t = cairo_create (surface)
+
+  cairo_rectangle (cr, x, y, 6.0, 6.0)
   cairo_fill (cr)
-
   cairo_destroy (cr)
 
   ;; Now invalidate the drawing area.
@@ -86,9 +94,15 @@ drag_begin proc gesture:ptr GtkGestureDrag,
                 x:double,
                 y:double,
                 area:ptr GtkWidget
-  movsd start_x,xmm1 ; 0 and 1 in Linux
+ifdef __UNIX__
+  movsd start_x,xmm0
+  movsd start_y,xmm1
+  draw_brush (area, xmm0, xmm1)
+else
+  movsd start_x,xmm1
   movsd start_y,xmm2
   draw_brush (area, xmm1, xmm2)
+endif
   ret
 drag_begin endp
 
@@ -97,11 +111,15 @@ drag_update proc gesture:ptr GtkGestureDrag,
                  x:double,
                  y:double,
                  area:ptr GtkWidget
-  movsd xmm1,start_x
-  addsd xmm1,x
-  movsd xmm2,start_y
-  addsd xmm2,y
+ifdef __UNIX__
+  addsd xmm0,start_x
+  addsd xmm1,start_y
+  draw_brush (area, xmm0, xmm1)
+else
+  addsd xmm1,start_x
+  addsd xmm2,start_y
   draw_brush (area, xmm1, xmm2)
+endif
   ret
 drag_update endp
 
@@ -110,11 +128,15 @@ drag_end proc gesture:ptr GtkGestureDrag,
               x:double,
               y:double,
               area:ptr GtkWidget
-  movsd xmm1,start_x
-  addsd xmm1,x
-  movsd xmm2,start_y
-  addsd xmm2,y
+ifdef __UNIX__
+  addsd xmm0,start_x
+  addsd xmm1,start_y
+  draw_brush (area, xmm0, xmm1)
+else
+  addsd xmm1,start_x
+  addsd xmm2,start_y
   draw_brush (area, xmm1, xmm2)
+endif
   ret
 drag_end endp
 
@@ -135,9 +157,11 @@ close_window proc
 
   .if ( surface )
     cairo_surface_destroy (surface)
+    mov surface,NULL
   .endif
   ret
 close_window endp
+
 
 activate proc app:ptr GtkApplication, user_data:gpointer
 
@@ -152,7 +176,7 @@ activate proc app:ptr GtkApplication, user_data:gpointer
 
   gtk_window_set_child (GTK_WINDOW (window), drawing_area)
 
-  gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (drawing_area), draw_cb, NULL, NULL)
+  gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (drawing_area), G_CALLBACK (draw_cb), NULL, NULL)
 
   g_signal_connect_after (drawing_area, "resize", G_CALLBACK (resize_cb), NULL)
 
@@ -175,14 +199,13 @@ activate proc app:ptr GtkApplication, user_data:gpointer
 activate endp
 
 
-main proc uses rbx r12 argc:int_t, argv:array_t
+main proc c:int_t, v:array_t
 
-  mov ebx,argc
-  mov r12,argv
-
+ .new argc:int_t = c
+ .new argv:array_t = v
  .new app:ptr GtkApplication = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE)
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL)
- .new status:int_t = g_application_run (G_APPLICATION (app), ebx, r12)
+ .new status:int_t = g_application_run (G_APPLICATION (app), argc, argv)
   g_object_unref (app)
 
  .return status

@@ -43,7 +43,6 @@ change_fullscreen_state proc curaction:ptr GSimpleAction,
   .else
     gtk_window_unfullscreen (user_data)
   .endif
-
   g_simple_action_set_state (action, state)
   ret
 change_fullscreen_state endp
@@ -53,7 +52,8 @@ window_copy proc action:ptr GSimpleAction,
                  parameter:ptr GVariant,
                  user_data:gpointer
 
-  .new window:ptr GtkWindow = GTK_WINDOW (user_data)
+  .new data:gpointer = user_data
+  .new window:ptr GtkWindow = GTK_WINDOW (data)
   .new text:ptr GtkTextView = g_object_get_data (window, "plugman-text")
   .new buffer:string_t = gtk_text_view_get_buffer (text)
 
@@ -67,7 +67,8 @@ window_paste proc action:ptr GSimpleAction,
                   parameter:ptr GVariant,
                   user_data:gpointer
 
-  .new window:ptr GtkWindow = GTK_WINDOW (user_data)
+  .new data:gpointer = user_data
+  .new window:ptr GtkWindow = GTK_WINDOW (data)
   .new text:ptr GtkTextView = g_object_get_data (window, "plugman-text")
   .new buffer:string_t = gtk_text_view_get_buffer (text)
 
@@ -79,8 +80,9 @@ window_paste proc action:ptr GSimpleAction,
 window_paste endp
 
 
-new_window proc app:ptr GApplication, file:ptr GFile
+new_window proc app:ptr GApplication, pFile:ptr GFile
 
+ .new file:ptr GFile = pFile
  .new win_entries[3]:GActionEntry = {
     { "copy", &window_copy, NULL, NULL, NULL },
     { "paste", &window_paste, NULL, NULL, NULL },
@@ -189,11 +191,11 @@ quit_app proc uses rbx action:ptr GSimpleAction, parameter:ptr GVariant, user_da
   ret
 quit_app endp
 
-.data
- is_red_plugin_enabled gboolean FALSE
- is_black_plugin_enabled gboolean FALSE
-
-.code
+ .data
+  align 8
+  is_red_plugin_enabled gboolean FALSE
+  is_black_plugin_enabled gboolean FALSE
+ .code
 
 plugin_enabled proc name:string_t
 
@@ -245,13 +247,14 @@ enable_plugin proc plugin_name:string_t
 
  .new action:ptr GAction = g_simple_action_new (name, NULL)
   g_signal_connect (action, "activate", G_CALLBACK (plugin_action), name)
-.new app:ptr = g_application_get_default ()
+
+ .new app:ptr = g_application_get_default ()
   g_action_map_add_action (G_ACTION_MAP (app), action)
   g_print ("Actions of '%s' plugin added\n", name)
   g_object_unref (action)
 
   .new plugin_menu:ptr GMenuModel = find_plugin_menu ()
-  .if (plugin_menu)
+  .if ( plugin_menu )
 
      .new section:ptr GMenu = g_menu_new ()
      .new slabel:string_t = g_strdup_printf ("Turn text %s", name)
@@ -276,6 +279,7 @@ enable_plugin proc plugin_name:string_t
     mov is_black_plugin_enabled,TRUE
   .endif
   ret
+
 enable_plugin endp
 
 
@@ -406,7 +410,6 @@ getout:
   ret
 configure_plugins endp
 
-
 plug_man_startup proc app:ptr GApplication
 
  .new application:ptr GApplication = app
@@ -414,7 +417,6 @@ plug_man_startup proc app:ptr GApplication
     { "about", &show_about, NULL, NULL, NULL },
     { "quit", &quit_app, NULL, NULL, NULL },
     { "plugins", &configure_plugins, NULL, NULL, NULL } }
-
  .new applicationClass:ptr GApplicationClass = G_APPLICATION_CLASS (plug_man_parent_class)
   applicationClass.startup (application)
 
@@ -475,7 +477,7 @@ plug_man_startup proc app:ptr GApplication
  .new object:ptr = gtk_builder_get_object (builder, "menubar")
   gtk_application_set_menubar (GTK_APPLICATION (application), object)
   mov object,gtk_builder_get_object (builder, "plugins")
-  g_object_set_data_full (G_OBJECT (application), "plugin-menu", object, g_object_unref)
+  g_object_set_data_full (G_OBJECT (application), "plugin-menu", object, &g_object_unref)
   g_object_unref (builder)
   ret
 plug_man_startup endp
@@ -512,16 +514,15 @@ plug_man_new proc
                        NULL)
 plug_man_new endp
 
-main proc uses rbx r12 argc:int_t, argv:array_t
+main proc c:int_t, v:array_t
 
-  mov ebx,argc
-  mov r12,argv
-
+ .new argc:int_t = c
+ .new argv:array_t = v
  .new accels[2]:string_t = { "F11", NULL }
  .new plug_man:ptr PlugMan = plug_man_new ()
   gtk_application_set_accels_for_action (GTK_APPLICATION (plug_man),
                                          "win.fullscreen", &accels)
- .new status:int_t = g_application_run (G_APPLICATION (plug_man), ebx, r12)
+ .new status:int_t = g_application_run (G_APPLICATION (plug_man), argc, argv)
   g_object_unref (plug_man)
 
  .return status

@@ -137,8 +137,15 @@ define _STAT_DEFINED
 .pragma pack(pop)
 
 endif
+
 ifdef __UNIX__
-stat proto __cdecl :ptr sbyte, :ptr _stat32
+stati64 typedef _stati64
+stat32  typedef _stat32
+ifdef _WIN64
+stat proto __cdecl :ptr sbyte, :ptr stat64
+else
+stat proto __cdecl :ptr sbyte, :ptr stat32
+endif
 else
 define stat <_stat32>
 _stat proto __cdecl :ptr sbyte, :ptr stat

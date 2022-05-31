@@ -29,10 +29,10 @@ activate proc app:ptr GtkApplication, user_data:gpointer
 
 activate endp
 
-main proc _argc:int_t, _argv:array_t
+main proc c:int_t, v:array_t
 
-   .new argc:int_t = _argc
-   .new argv:array_t = _argv
+   .new argc:int_t = c
+   .new argv:array_t = v
 
    .new app:ptr GtkApplication = gtk_application_new("org.gtk.example", G_APPLICATION_FLAGS_NONE)
     g_signal_connect(app, "activate", &activate, NULL)

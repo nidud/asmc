@@ -69,11 +69,12 @@ action_activated endp
 
 activate proc app:ptr GApplication, user_data:gpointer
 
-  .if (gtk_application_get_windows (GTK_APPLICATION (app)) != NULL)
+  .new application:ptr GApplication = app
+  .if ( gtk_application_get_windows (GTK_APPLICATION (app)) != NULL )
     .return
   .endif
 
- .new win:ptr GtkWidget = gtk_application_window_new (GTK_APPLICATION (app))
+ .new win:ptr GtkWidget = gtk_application_window_new (GTK_APPLICATION (application))
   gtk_window_set_default_size (GTK_WINDOW (win), 200, 300)
 
  .new doc_actions:ptr GSimpleActionGroup = g_simple_action_group_new ()
@@ -101,7 +102,7 @@ activate proc app:ptr GApplication, user_data:gpointer
   g_object_unref (section)
 
  .new button:ptr GtkWidget = gtk_menu_button_new ()
-  gtk_button_set_label (GTK_BUTTON (button), "Menu")
+  gtk_button_set_label (GTK_MENU_BUTTON (button), "Menu")
   gtk_widget_insert_action_group (button, "doc", G_ACTION_GROUP (doc_actions))
   gtk_menu_button_set_menu_model (button, G_MENU_MODEL (button_menu))
   gtk_widget_set_halign (GTK_WIDGET (button), GTK_ALIGN_CENTER)
@@ -117,8 +118,10 @@ activate proc app:ptr GApplication, user_data:gpointer
 activate endp
 
 
-main proc argc:int_t, argv:array_t
+main proc c:int_t, v:array_t
 
+ .new argc:int_t = c
+ .new argv:array_t = v
  .new app:ptr GtkApplication = gtk_application_new ("org.gtk.Example", 0)
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL)
 

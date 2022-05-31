@@ -412,9 +412,9 @@ _G_DEFINE_TYPE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PARENT, flags
 	.return static_g_define_type_id
     &type_name&_get_type endp
     &type_name&_get_type_once proc private
-	mov rcx,TYPE_PARENT
+	mov r10,TYPE_PARENT
 	;mov rcx,g_intern_static_string(@CatStr(<!">, TypeName, <!">))
-	.return g_type_register_static_simple(rcx, @CatStr(<!">, TypeName, <!">), sizeof(&TypeName&Class),
+	.return g_type_register_static_simple(r10, @CatStr(<!">, TypeName, <!">), sizeof(&TypeName&Class),
 	    addr &type_name&_class_intern_init, sizeof(TypeName), addr &type_name&_init, flags)
     &type_name&_get_type_once endp
     exitm<>

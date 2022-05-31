@@ -5,12 +5,10 @@ include glib/gprintf.inc
 
 include sys/stat.inc
 
-if (defined (__MINGW64_VERSION_MAJOR) OR defined (_MSC_VER)) AND NOT defined(_WIN64)
-GStatBuf typedef stat32
-elseif defined(__MINGW64_VERSION_MAJOR) AND defined(_WIN64)
-GStatBuf typedef stat64
+ifndef _WIN64
+GStatBuf typedef _stat32
 else
-GStatBuf typedef stat
+GStatBuf typedef _stati64
 endif
 
 if defined(G_OS_UNIX) AND NOT defined(G_STDIO_WRAP_ON_UNIX)

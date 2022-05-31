@@ -21,12 +21,13 @@ quit_cb endp
 activate proc app:ptr GtkApplication, user_data:gpointer
 
   ;; Construct a GtkBuilder instance and load our UI description
+ .new application:ptr GtkApplication = app
  .new builder:ptr GtkBuilder = gtk_builder_new ()
   gtk_builder_add_from_file (builder, "builder.ui", NULL)
 
   ;; Connect signal handlers to the constructed widgets.
  .new window:ptr GObject = gtk_builder_get_object (builder, "window")
-  gtk_window_set_application (GTK_WINDOW (window), app)
+  gtk_window_set_application (GTK_WINDOW (window), application)
 
  .new button:ptr GObject = gtk_builder_get_object (builder, "button1")
   g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL)
@@ -44,10 +45,10 @@ activate proc app:ptr GtkApplication, user_data:gpointer
 activate endp
 
 
-main proc uses rbx r12 argc:int_t, argv:array_t
+main proc c:int_t, v:array_t
 
-    mov ebx,argc
-    mov r12,argv
+ .new argc:int_t = c
+ .new argv:array_t = v
 ifdef GTK_SRCDIR
   g_chdir (GTK_SRCDIR)
 endif
@@ -55,7 +56,7 @@ endif
  .new app:ptr GtkApplication = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE)
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL)
 
- .new status:int_t = g_application_run (G_APPLICATION (app), ebx, r12)
+ .new status:int_t = g_application_run (G_APPLICATION (app), argc, argv)
   g_object_unref (app)
 
  .return status

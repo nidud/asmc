@@ -35,7 +35,7 @@ new_window proc uses rbx app:ptr GApplication, file:ptr GFile
       .new contents:ptr char_t
       .new length:gsize
 
-      .if (g_file_load_contents (file, NULL, &contents, &length, NULL, NULL))
+      .if ( g_file_load_contents (rbx, NULL, &contents, &length, NULL, NULL) )
 
           .new buffer:ptr GtkTextBuffer
 
@@ -57,8 +57,7 @@ activate proc application:ptr GApplication
 
 activate endp
 
-open proc uses rbx r12 r13 application:ptr GApplication,
-      files:ptr ptr GFile, n_files:int_t, hint:ptr char
+openfiles proc uses rbx r12 r13 application:ptr GApplication, files:ptr ptr GFile, n_files:int_t, hint:ptr char_t
 
    mov r13,application
    mov r12,files
@@ -70,7 +69,7 @@ open proc uses rbx r12 r13 application:ptr GApplication,
   .endf
   ret
 
-open endp
+openfiles endp
 
 MenuButton      typedef GtkApplication
 MenuButtonClass typedef GtkApplicationClass
@@ -81,13 +80,12 @@ G_DEFINE_TYPE (MenuButton, menu_button, GTK_TYPE_APPLICATION)
 
 show_about proc action:ptr GSimpleAction, parameter:ptr GVariant, user_data:gpointer
 
-  xor ecx,ecx
-  gtk_show_about_dialog (rcx,
-                         "program-name", "Sunny",
-                         "title", "About Sunny",
-                         "logo-icon-name", "weather-clear-symbolic",
-                         "comments", "A cheap Bloatpad clone.", rcx)
-  ret
+  .return gtk_show_about_dialog (NULL,
+        "program-name", "Sunny",
+        "title", "About Sunny",
+        "logo-icon-name", "weather-clear-symbolic",
+        "comments", "A cheap Bloatpad clone.", NULL)
+
 show_about endp
 
 
@@ -164,10 +162,11 @@ menu_button_init endp
 
 menu_button_class_init proc class:ptr MenuButtonClass
 
-  mov rcx,G_APPLICATION_CLASS (class)
+ .new button_class:ptr MenuButtonClass = class
+  mov rcx,G_APPLICATION_CLASS (button_class)
   mov [rcx].GApplicationClass.startup,&startup
   mov [rcx].GApplicationClass.activate,&activate
-  mov [rcx].GApplicationClass.open,&open
+  mov [rcx].GApplicationClass.open,&openfiles
   ret
 menu_button_class_init endp
 
@@ -180,8 +179,10 @@ menu_button_new proc
 menu_button_new endp
 
 
-main proc argc:int_t, argv:array_t
+main proc c:int_t, v:array_t
 
+ .new argc:int_t = c
+ .new argv:array_t = v
  .new menu_button:ptr MenuButton = menu_button_new ()
  .new status:int_t = g_application_run (menu_button, argc, argv)
   g_object_unref (menu_button)

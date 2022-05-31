@@ -15,7 +15,8 @@ objs = \
   sunny.obj \
   plugman.obj \
   drawing.obj \
-  grid-packing.obj
+  grid-packing.obj \
+  search-bar.obj
 
 .asm.obj:
     $(CC) $<

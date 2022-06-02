@@ -467,9 +467,19 @@ PragmaDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
         .if !ModuleInfo.dotname
             AddLineQueueX(" %r dotname", T_OPTION)
         .endif
-        lea rsi,@CStr(".CRT$XTA")
-        .if edi == "init"
-            lea rsi,@CStr(".CRT$XIA")
+        .if Options.output_format == OFORMAT_ELF
+
+            ; Note: this will only work with libasmc.a!!
+
+            lea rsi,@CStr(".fini_array")
+            .if edi == "init"
+                lea rsi,@CStr(".init_array")
+            .endif
+        .else
+            lea rsi,@CStr(".CRT$XTA")
+            .if edi == "init"
+                lea rsi,@CStr(".CRT$XIA")
+            .endif
         .endif
 
         mov eax,2

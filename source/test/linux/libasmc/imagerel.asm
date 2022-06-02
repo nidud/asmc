@@ -1,14 +1,14 @@
 
 include stdio.inc
 
+extern __ImageBase:size_t
+
 .code
 
 main proc
 
-    lea rsi,main
-    mov rdx,rsi
-    mov rax,imagerel main
-    sub rsi,rax
+    mov rsi,__ImageBase
+    lea rdx,main
     lea rcx,printf
 
     printf(

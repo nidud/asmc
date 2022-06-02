@@ -4,7 +4,7 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include internal.inc
+include stdlib.inc
 include linux/kernel.inc
 
 _initterm proto __cdecl :ptr _PVFV, :ptr _PIFV
@@ -12,10 +12,9 @@ _initterm proto __cdecl :ptr _PVFV, :ptr _PIFV
 ;;
 ;; pointers to initialization sections
 ;;
-externdef __xi_a:_PIFV
-externdef __xi_z:_PIFV
-externdef __xt_a:_PVFV
-externdef __xt_z:_PVFV
+externdef __fini_array_start:ptr
+externdef __fini_array_end:ptr
+externdef _exitflag:byte
 
     .data
 ;;
@@ -43,7 +42,7 @@ ifndef CRTDLL
         push rdi
         push rdx
 
-        _initterm(&__xt_a, &__xt_z)
+        _initterm(&__fini_array_start, &__fini_array_end)
 
         pop rdx
         pop rdi

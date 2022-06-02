@@ -15,10 +15,8 @@ _initterm proto __cdecl :ptr, :ptr
 ;
 ; pointers to initialization sections
 ;
-externdef __xi_a:byte
-externdef __xi_z:byte
-externdef __xt_a:byte
-externdef __xt_z:byte
+externdef __init_array_start:ptr
+externdef __init_array_end:ptr
 
     .data
      __argc         int_t 0
@@ -39,10 +37,11 @@ _start proc
     mov _environ,&[rsp+rax*8+16]
     mov __argv,&[rsp+8]
     lea rax,_start
-    sub rax,IMAGEREL _start
+    mov rcx,imagerel _start
+    sub rax,rcx
     mov __ImageBase,rax
 
-    _initterm( &__xi_a, &__xi_z )
+    _initterm( &__init_array_start, &__init_array_end )
     exit( main( __argc, __argv, _environ ) )
 
 _start endp

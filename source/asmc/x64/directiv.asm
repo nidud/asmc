@@ -205,7 +205,7 @@ else
 IncBinDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:token_t
 endif
   local opndx:expr
-
+   
     inc i ; skip the directive
     imul ebx,i,asm_tok
     add rbx,rdx

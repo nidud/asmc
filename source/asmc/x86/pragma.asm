@@ -466,9 +466,20 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:token_t
         .if !ModuleInfo.dotname
             AddLineQueueX(" %r dotname", T_OPTION)
         .endif
-        lea esi,@CStr(".CRT$XTA")
-        .if edi == "init"
-            lea esi,@CStr(".CRT$XIA")
+
+        .if Options.output_format == OFORMAT_ELF
+
+            ; Note: this will only work with libasmc.a!!
+
+            lea esi,@CStr(".fini_array")
+            .if edi == "init"
+                lea esi,@CStr(".init_array")
+            .endif
+        .else
+            lea esi,@CStr(".CRT$XTA")
+            .if edi == "init"
+                lea esi,@CStr(".CRT$XIA")
+            .endif
         .endif
 
         mov eax,2

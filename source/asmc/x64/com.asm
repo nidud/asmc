@@ -67,9 +67,9 @@ AssignVTable endp
 
 ClearStruct proto __ccall :string_t, :asym_t
 
-ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
+ComAlloc proc __ccall uses rsi rdi rbx r12 r13 r14 buffer:string_t, tokenarray:token_t
 
-  local name[16]:sbyte
+   .new adr[16]:sbyte
 
     mov rbx,rdx
     mov edi,tstricmp([rbx].string_ptr, "@ComAlloc")
@@ -88,13 +88,19 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ( [rbx-asm_tok].token != T_OP_BRACKET )
         .return 0
     .endif
-    .if ( SymFind( [rbx].string_ptr ) == NULL )
+    mov r12,[rbx].string_ptr
+    .if ( SymFind( r12 ) == NULL )
         .return ERROR
     .endif
     .if ( !( [rax].asym.flag2 & S_VTABLE ) )
         .return 0
     .endif
     mov rsi,rax
+    xor r13,r13
+
+    .if ( [rbx+asm_tok].token == T_COMMA && [rbx+asm_tok*3].token == T_CL_BRACKET )
+        mov r13,[rbx+asm_tok*2].string_ptr
+    .endif
     mov edi,T_EAX
     .if (  ModuleInfo.Ofssize == USE64 )
         mov edi,T_RAX
@@ -102,22 +108,35 @@ ComAlloc proc __ccall uses rsi rdi rbx buffer:string_t, tokenarray:token_t
     .if ModuleInfo.line_queue.head
         RunLineQueue()
     .endif
-    AddLineQueueX( "mov %r,malloc(%s + %sVtbl)", &[rdi+T_ECX-T_EAX], [rbx].string_ptr, [rbx].string_ptr )
+
+    .if ( r13 )
+        AddLineQueueX( "mov %r,malloc(%s)", &[rdi+T_ECX-T_EAX], r12 )
+    .else
+        AddLineQueueX( "mov %r,malloc(%s + %sVtbl)", &[rdi+T_ECX-T_EAX], r12, r12 )
+    .endif
     mov eax,4
     .if ( edi == T_RAX )
         mov eax,8
     .endif
     .if ( [rsi].asym.total_size > eax )
 
-        tsprintf(&name, "[%r]", &[rdi+T_ECX-T_EAX])
-        ClearStruct(&name, rsi)
-        AddLineQueueX( "mov %r, %r", edi, &[rdi+T_ECX-T_EAX] )
+        tsprintf(&adr, "[%r]", &[rdi+T_ECX-T_EAX])
+        ClearStruct(&adr, rsi)
+        .if ( !r13 )
+            AddLineQueueX( "mov %r, %r", edi, &[rdi+T_ECX-T_EAX] )
+        .endif
     .endif
 
-    AddLineQueueX( "add %r, %s", &[rdi+T_ECX-T_EAX], [rbx].string_ptr )
-    AddLineQueueX( "mov [%r], %r", edi, &[rdi+T_ECX-T_EAX] )
-    AssignVTable( [rbx].string_ptr, [rsi].asym.vtable, &[rdi+T_ECX-T_EAX], 0 )
-    AddLineQueueX( "lea %r, [%r-%s]", edi, &[rdi+T_ECX-T_EAX], [rbx].string_ptr )
+    .if ( r13 )
+        AddLineQueueX( "lea %r, %s", edi, r13 )
+        AddLineQueueX( "mov [%r], %r", &[rdi+T_ECX-T_EAX], edi )
+        AddLineQueueX( "mov %r, %r", edi, &[rdi+T_ECX-T_EAX] )
+    .else
+        AddLineQueueX( "add %r, %s", &[rdi+T_ECX-T_EAX], r12 )
+        AddLineQueueX( "mov [%r], %r", edi, &[rdi+T_ECX-T_EAX] )
+        AssignVTable( r12, [rsi].asym.vtable, &[rdi+T_ECX-T_EAX], 0 )
+        AddLineQueueX( "lea %r, [%r-%s]", edi, &[rdi+T_ECX-T_EAX], r12 )
+    .endif
     InsertLineQueue()
 
     sub rbx,asm_tok*2

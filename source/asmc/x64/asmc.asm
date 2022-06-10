@@ -368,6 +368,7 @@ ifdef __UNIX__
     mov _pgmptr,rdx
 endif
     mov [rcx],rax
+    lea r15,_ltype
 
     .while ParseCmdline(argv, &numArgs)
 
@@ -441,65 +442,6 @@ tgetenv proc fastcall uses rsi rdi rbx enval:string_t
     ret
 
 tgetenv endp
-
-    _JUMP_BUFFER    struct
-    _Rbx            dq ?
-    _Rsp            dq ?
-    _Rbp            dq ?
-ifndef __UNIX__
-    _Rsi            dq ?
-    _Rdi            dq ?
-endif
-    _R12            dq ?
-    _R13            dq ?
-    _R14            dq ?
-    _R15            dq ?
-    _Rip            dq ?
-    _JUMP_BUFFER    ends
-
-ifndef __UNIX__
-define reg1 <rcx>
-define reg2 <rdx>
-else
-define reg1 <rdi>
-define reg2 <rsi>
-endif
-
-    assume reg1:ptr _JUMP_BUFFER
-
-_setjmp::
-
-    mov [reg1]._Rbp,rbp
-ifndef __UNIX__
-    mov [reg1]._Rsi,rsi
-    mov [reg1]._Rdi,rdi
-endif
-    mov [reg1]._Rbx,rbx
-    mov [reg1]._R12,r12
-    mov [reg1]._R13,r13
-    mov [reg1]._R14,r14
-    mov [reg1]._R15,r15
-    mov [reg1]._Rsp,rsp
-    mov [reg1]._Rip,[rsp]
-    xor eax,eax
-    ret
-
-longjmp::
-
-    mov rbp,[reg1]._Rbp
-ifndef __UNIX__
-    mov rsi,[reg1]._Rsi
-    mov rdi,[reg1]._Rdi
-endif
-    mov rbx,[reg1]._Rbx
-    mov r12,[reg1]._R12
-    mov r13,[reg1]._R13
-    mov r14,[reg1]._R14
-    mov r15,[reg1]._R15
-    mov rsp,[reg1]._Rsp
-    mov [rsp],[reg1]._Rip
-    mov rax,reg2
-    ret
 
     end
 

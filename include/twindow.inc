@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __TWINDOW_INC
 define __TWINDOW_INC
 include wincon.inc
@@ -6,7 +8,11 @@ ifndef WM_MOUSEWHEEL
 define WM_MOUSEWHEEL 0x020A
 endif
 
-.pragma comment(lib, twindow)
+ifdef _UNICODE
+.pragma comment(lib, TWinW)
+else
+.pragma comment(lib, TWinA)
+endif
 
 .enum ColorAttrib : byte {
 
@@ -45,8 +51,7 @@ endif
     FG_TEXTEDIT,  ; 0x1F
 
     COLOR_COUNT   ; 0x20
-
-}
+    }
 
 .enum WindowType {
 
@@ -62,7 +67,7 @@ endif
     T_SCROLLUP,
     T_SCROLLDOWN,
     T_TEXTBUTTON
-}
+    }
 
 .enum WindowFlags {
 
@@ -75,19 +80,23 @@ endif
     W_COLOR         = 0x40,
     W_TRANSPARENT   = 0x80,
 
-    O_RADIO         = 0x00100, ; Active (*)
-    O_CHECK         = 0x00200, ; Active [x]
-    O_LIST          = 0x00400, ; Linked list item
-    O_SELECT        = 0x00800, ; Select text on activation
-    O_CONTROL       = 0x01000, ; Allow _CONTROL chars
-    O_DEXIT         = 0x02000, ; Close dialog and return 0: Cancel
-    O_PBKEY         = 0x04000, ; Return result if short key used
-    O_DLGED         = 0x08000, ; dialog text -- return Left/Right
-    O_GLOBAL        = 0x10000, ; Item contain global short-key table
-    O_EVENT         = 0x20000, ; Item have local event handler
-    O_CHILD         = 0x40000, ; Item have a child
-    O_STATE         = 0x80000  ; State
-}
+    O_RADIO      = 0x00100, ; Active (*)
+    O_CHECK      = 0x00200, ; Active [x]
+    O_LIST       = 0x00400, ; Linked list item
+    O_SELECT     = 0x00800, ; Select text on activation
+    O_CONTROL    = 0x01000, ; Allow _CONTROL chars
+    O_DEXIT      = 0x02000, ; Close dialog and return 0: Cancel
+    O_PBKEY      = 0x04000, ; Return result if short key used
+    O_DLGED      = 0x08000, ; dialog text -- return Left/Right
+    O_GLOBAL     = 0x10000, ; Item contain global short-key table
+    O_EVENT      = 0x20000, ; Item have local event handler
+    O_CHILD      = 0x40000, ; Item have a child
+    O_STATE      = 0x80000, ; State
+
+    O_MODIFIED  = 0x100000, ; dialog text
+    O_OVERWRITE = 0x200000, ; selected text on paste
+    O_USEBEEP   = 0x400000
+    }
 
 CURSOR_NORMAL   equ 16
 
@@ -99,8 +108,8 @@ MAXSCRLINE      equ 256 ; max screen size
 
 .template TColor
     at          db COLOR_COUNT dup(?)
-.ends
-color_t         typedef ptr TColor
+   .ends
+    color_t     typedef ptr TColor
 
 .template TRect
     x           db ?
@@ -131,8 +140,8 @@ color_t         typedef ptr TColor
         shl     rax,32
         or      rax,rdx
         }
-.ends
-trect_t         typedef ptr TRect
+   .ends
+    trect_t     typedef ptr TRect
 
 
 MTRECT macro x, y, col, row
@@ -146,26 +155,29 @@ TRect::Exchange proto :HANDLE, :PCHAR_INFO
 
 
 .template TRObject
-    flags       dw ?
+    flags       dw ? ; (WindowType-1) + WindowFlags (O_)
     count       db ?
     index       db ?
     rc          TRect <>
-.ends
-robject_t       typedef ptr TRObject
+   .ends
+    robject_t   typedef ptr TRObject
+
 
 .template TResource
     MemSize     dw ?
     dialog      TRObject <>
-.ends
-resource_t      typedef ptr TResource
+   .ends
+    resource_t  typedef ptr TResource
+
 
 .template TMessage
     Next        ptr_t ?
     Message     uint_t ?
     wParam      size_t ?
     lParam      ptr_t ?
-.ends
-message_t       typedef ptr TMessage
+   .ends
+    message_t   typedef ptr TMessage
+
 
 .class TCursor
 
@@ -178,52 +190,47 @@ message_t       typedef ptr TMessage
     Show        proc
     Move        proc :int_t, :int_t
     Release     proc
-.ends
-cursor_t        typedef ptr TCursor
+   .ends
+    cursor_t    typedef ptr TCursor
 
 
 .class TEdit
 
-    base            string_t ?      ; base pointer
-    flags           uint_t ?        ; config
-    xpos            uint_t ?        ; text window x,y
-    ypos            uint_t ?
-    scols           uint_t ?        ; size of screen-line
-    bcols           uint_t ?        ; size of buffer-line
-    xoffs           uint_t ?        ; x offset on screen
-    boffs           uint_t ?        ; base offset - start of screen-line
-    bcount          uint_t ?        ; byte count in line (expanded)
-    clrattrib       uint_t ?        ; clear attrib/char
-    clip_so         uint_t ?        ; Clipboard start offset
-    clip_eo         uint_t ?        ; Clipboard end offset
+    base        LPTSTR ?        ; base pointer
+    flags       uint_t ?        ; config
+    xpos        uint_t ?        ; text window x,y
+    ypos        uint_t ?
+    scols       uint_t ?        ; size of screen-line
+    bcols       uint_t ?        ; size of buffer-line
+    xoffs       uint_t ?        ; x offset on screen
+    boffs       uint_t ?        ; base offset - start of screen-line
+    bcount      uint_t ?        ; byte count in line (expanded)
+    clrattrib   CHAR_INFO <>    ; clear attrib/char
+    clip_so     uint_t ?        ; Clipboard start offset
+    clip_eo     uint_t ?        ; Clipboard end offset
 
-    Release         proc
-    IsSelected      proc
-    ClipSet         proc
-    ClipDel         proc
-    ClipCut         proc :uint_t
-    ClipPaste       proc
-    GetLine         proc
-    SetWinPos       proc :trect_t, :trect_t
-    SetCursor       proc
-
-    .ends
+    TEdit       proc :ptr TWindow, :uint_t
+    Release     proc
+    OnSetFocus  proc :ptr TWindow
+    OnLBDown    proc :ptr TWindow
+    OnChar      proc :ptr TWindow, :WPARAM
+   .ends
     tedit_t     typedef ptr TEdit
 
 
 .template TContext
-union
-  struct
-    State       db ?
-    Flags       db ?
-    x           db ?
-    y           db ?
-    rc          TRect <>
-  ends
-    object      ptr_t ?
-ends
-.ends
-context_t       typedef ptr TContext
+    union
+     struct
+      State     db ?
+      Flags     db ?
+      x         db ?
+      y         db ?
+      rc        TRect <>
+     ends
+     object     tedit_t ?
+    ends
+   .ends
+    context_t   typedef ptr TContext
 
 .pragma pack(pop)
 
@@ -239,11 +246,11 @@ window_t        typedef ptr TWindow
     Console     window_t ?
     ConMode     uint_t ?
     ErrMode     uint_t ?
-    Clipbord    string_t ?
-    ClipSize    uint_t ?
-    State       uint_t ?
-.ends
-class_t         typedef ptr TClass
+;    Clipbord    string_t ?
+;    ClipSize    uint_t ?
+    KeyState    uint_t ?
+   .ends
+    class_t     typedef ptr TClass
 
 CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
 
@@ -281,13 +288,14 @@ CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
     ClrShade        proc
 
     Clear           proc :CHAR_INFO
+    GetChar         proc :int_t, :int_t
     PutFrame        proc :TRect, :int_t, :uchar_t
     PutChar         proc :int_t, :int_t, :int_t, :CHAR_INFO
-    PutString       proc :int_t, :int_t, :ushort_t, :int_t, :string_t, :vararg
-    PutPath         proc :int_t, :int_t, :int_t, :string_t
-    PutCenter       proc :int_t, :int_t, :int_t, :string_t
-    PutTitle        proc :string_t
-    MessageBox      proc :int_t, :string_t, :string_t, :vararg
+    PutString       proc :int_t, :int_t, :ushort_t, :int_t, :LPTSTR, :vararg
+    PutPath         proc :int_t, :int_t, :int_t, :LPTSTR
+    PutCenter       proc :int_t, :int_t, :int_t, :LPTSTR
+    PutTitle        proc :LPTSTR
+    MessageBox      proc :int_t, :LPTSTR, :LPTSTR, :vararg
 
     CursorGet       proc
     CursorSet       proc
@@ -303,7 +311,7 @@ CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
 
     Child           proc :TRect, :uint_t, :uint_t
     Window          proc
-    PushButton      proc :TRect, :uint_t, :string_t
+    PushButton      proc :TRect, :uint_t, :LPTSTR
     GetFocus        proc
     SetFocus        proc :uint_t
     GetItem         proc :uint_t
@@ -315,11 +323,11 @@ CALLBACK(tproc_t, :window_t, :uint_t, :size_t, :ptr_t)
 
     CGetChar        proc :int_t, :int_t
     CPutChar        proc :int_t, :int_t, :int_t, :CHAR_INFO
-    CPutString      proc :int_t, :int_t, :ushort_t, :int_t, :string_t, :vararg
-    CPutPath        proc :int_t, :int_t, :int_t, :string_t
-    CPutCenter      proc :int_t, :int_t, :int_t, :string_t
+    CPutString      proc :int_t, :int_t, :ushort_t, :int_t, :LPTSTR, :vararg
+    CPutPath        proc :int_t, :int_t, :int_t, :LPTSTR
+    CPutCenter      proc :int_t, :int_t, :int_t, :LPTSTR
     CPutBackground  proc :int_t, :int_t, :int_t, :uchar_t
-
-    .ends
+   .ends
 
 endif
+.pragma list(pop)

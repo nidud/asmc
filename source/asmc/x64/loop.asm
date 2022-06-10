@@ -83,7 +83,7 @@ LoopDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         ; v2.02: allow parameter name to begin with a '.'
         mov rcx,[rbx].string_ptr
-        .if ( !is_valid_id_first_char( [rcx] ) )
+        .if ( !isdotlabel( [rcx], ModuleInfo.dotname ) )
             .return( asmerr( 2008, [rbx].tokpos ) )
         .endif
         mov arg_loc,i

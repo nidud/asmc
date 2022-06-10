@@ -401,9 +401,24 @@ _G_DEFINE_TYPE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PARENT, flags
     &TypeName&_private_offset gint 0
    .code
     _G_DEFINE_TYPE_EXTENDED_CLASS_INIT(TypeName, type_name)
+
     &type_name&_get_instance_private proto watcall self:ptr TypeName {
 	mov rax,[self].TypeName.&TypeName&_private_offset
 	}
+
+    &type_name&_get_type_once proc private uses rbx
+	mov rbx,TYPE_PARENT
+	mov rdx,g_intern_static_string(@CatStr(<!">, TypeName, <!">))
+	.return g_type_register_static_simple(
+		rbx,
+		rdx,
+		sizeof(&TypeName&Class),
+		addr &type_name&_class_intern_init,
+		sizeof(TypeName),
+		addr &type_name&_init,
+		flags)
+    &type_name&_get_type_once endp
+
     &type_name&_get_type proc private
 	mov static_g_define_type_id,0
 	.if g_once_init_enter(addr static_g_define_type_id)
@@ -411,12 +426,8 @@ _G_DEFINE_TYPE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PARENT, flags
 	.endif
 	.return static_g_define_type_id
     &type_name&_get_type endp
-    &type_name&_get_type_once proc private
-	mov r10,TYPE_PARENT
-	;mov rcx,g_intern_static_string(@CatStr(<!">, TypeName, <!">))
-	.return g_type_register_static_simple(r10, @CatStr(<!">, TypeName, <!">), sizeof(&TypeName&Class),
-	    addr &type_name&_class_intern_init, sizeof(TypeName), addr &type_name&_init, flags)
-    &type_name&_get_type_once endp
+
+
     exitm<>
     endm
 

@@ -365,8 +365,8 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                         add  rbx,tokenarray
                         .break .if [rbx].token == T_FINAL || [rbx].token == T_COMMA
 
-                        mov rdx,[rbx].string_ptr
-                        .if ( is_valid_id_first_char( [rdx] ) )
+                        mov rcx,[rbx].string_ptr
+                        .if ( isdotlabel( [rcx], ModuleInfo.dotname ) )
 
                             .if ( [rbx+asm_tok].token == T_OP_BRACKET )
 
@@ -922,7 +922,7 @@ RunMacro proc __ccall uses rsi rdi rbx r12 r13 r14 mac:dsym_t, idx:int_t, tokena
                                 .endw
                                 .ifd !tmemicmp(rsi, [rbx+asm_tok].string_ptr, len)
                                     mov ecx,len ;; label found!
-                                    .break .if !is_valid_id_char([rsi+rcx])
+                                    .break .if !islabel([rsi+rcx])
                                 .endif
                             .endif
                         .endf
@@ -1046,13 +1046,13 @@ ExpandText proc __ccall uses rsi rdi rbx line:string_t, tokenarray:token_t, subs
 
         .while ( byte ptr [rsi] )
 
-            .if ( is_valid_id_first_char( [rsi] ) && ( substitute || !quoted_string ) )
+            .if ( isdotlabel( [rsi], ModuleInfo.dotname ) && ( substitute || !quoted_string ) )
 
                 mov pIdent,rdi
                 .repeat
                     stosb
                     inc rsi
-                .until !is_valid_id_char( [rsi] )
+                .until !islabel( [rsi] )
                 mov byte ptr [rdi],0
 
                 mov sym,SymSearch( pIdent )

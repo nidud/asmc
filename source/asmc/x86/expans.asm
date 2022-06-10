@@ -382,8 +382,8 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                         add  ebx,tokenarray
                         .break .if [ebx].token == T_FINAL || [ebx].token == T_COMMA
 
-                        mov edx,[ebx].string_ptr
-                        .if ( is_valid_id_first_char( [edx] ) )
+                        mov eax,[ebx].string_ptr
+                        .if ( isdotlabel( [eax], ModuleInfo.dotname ) )
 
                             .if ( [ebx+16].token == T_OP_BRACKET )
 
@@ -939,7 +939,7 @@ RunMacro proc uses esi edi ebx mac:dsym_t, idx:int_t, tokenarray:token_t,
                                 .endw
                                 .if !tmemicmp( esi, [ebx+16].string_ptr, len )
                                     mov ecx,len ;; label found!
-                                    .break .if !is_valid_id_char( [esi+ecx]  )
+                                    .break .if !islabel( [esi+ecx]  )
                                 .endif
                             .endif
                         .endf
@@ -1062,13 +1062,13 @@ ExpandText proc uses esi edi ebx line:string_t, tokenarray:token_t, substitute:u
 
         .while ( byte ptr [esi] )
 
-            .if ( is_valid_id_first_char( [esi] ) && ( substitute || !quoted_string ) )
+            .if ( isdotlabel( [esi], ModuleInfo.dotname ) && ( substitute || !quoted_string ) )
 
                 mov pIdent,edi
                 .repeat
                     stosb
                     inc esi
-                .until !is_valid_id_char( [esi] )
+                .until !islabel( [esi] )
                 mov byte ptr [edi],0
 
                 mov sym,SymSearch( pIdent )

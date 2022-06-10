@@ -593,7 +593,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:token_t , p:ptr line_statu
         .if eax == 'tuo'    ; %OUT directive?
 
             mov eax,[esi].input
-            .if !is_valid_id_char( [eax+4] )
+            .if !islabel( [eax+4] )
 
                 mov [ebx].token,T_DIRECTIVE
                 mov [ebx].tokval,T_ECHO
@@ -1126,7 +1126,7 @@ endif
         mov [ebx].itemlen,ecx
     .else
         mov [ebx].token,T_BAD_NUM
-        .while ( is_valid_id_char( [edx] ) )
+        .while ( islabel( [edx] ) )
             inc edx
         .endw
     .endif
@@ -1201,7 +1201,7 @@ get_id proc fastcall uses esi edi ebx buf:token_t, p:ptr line_status
     .repeat
         stosb
         inc esi
-    .until !is_valid_id_char( [esi] )
+    .until !islabel( [esi] )
 
     mov ecx,edi
     sub ecx,[edx].output
@@ -1376,7 +1376,7 @@ GetToken proc fastcall tokenarray:token_t, p:ptr line_status
     .switch
       .case isldigit( [eax] )
         jmp get_number
-      .case islabel( eax )
+      .case islabel0( eax )
         jmp get_id
 
       .case ( al == '`' )
@@ -1386,7 +1386,7 @@ GetToken proc fastcall tokenarray:token_t, p:ptr line_status
       .case ( al == '.' )
 
         mov eax,[edx].input
-        .endc .if !is_valid_id_char( [eax+1] )
+        .endc .if !islabel( [eax+1] )
 
         movzx eax,[ecx-16].asm_tok.token
         .if ( [edx].index == 0 || ( eax != T_REG && eax != T_CL_BRACKET && \

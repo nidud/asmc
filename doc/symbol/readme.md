@@ -81,7 +81,7 @@ The macros listed in the following table.
 | | |
 | -------- |:------- |
 | **@CatStr(_string1_[[,_string2_...]])** | Macro function that concatenates one or more strings. Returns a string. |
-| **@ComAlloc(_class_)** | Macro function that allocates a CLASS object. Returns a pointer to the new object. |
+| **@ComAlloc(_class_[[,_vtable_]])** | Macro function that allocates a CLASS object. Returns a pointer to the new object. |
 | **@CStr(_string_\|_index_)** | Macro function that creates a string in the .DATA or .CONST segment. The macro accepts C-escape characters in the string. Strings are added to a stack and reused if duplicated strings are found. The macro returns _string label_. |
 | **@InStr([[_position_]],_string1_,_string2_)** | Macro function that finds the first occurrence of _string2_ in _string1_, beginning at position within string1\. If position does not appear, search begins at start of _string1_. Returns a position integer or 0 if string2 is not found. |
 | **@SizeStr(_string_)** | A macro function that returns the length of the given string. Returns an integer. |

@@ -21,7 +21,7 @@ TRect::Read proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
     mov co,[rcx].Coord()
     mov rc,[rcx].SmallRect()
 
-    .return .ifd ReadConsoleOutput(rdi, rsi, co, 0, &rc)
+    .return .ifd ReadConsoleOutputW(rdi, rsi, co, 0, &rc)
 
     movzx ebx,co.y
     mov   rc.Bottom,rc.Top
@@ -29,7 +29,7 @@ TRect::Read proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 
     .for ( : ebx : ebx--, rc.Bottom++, rc.Top++ )
 
-        .break .ifd !ReadConsoleOutput(rdi, rsi, co, 0, &rc)
+        .break .ifd !ReadConsoleOutputW(rdi, rsi, co, 0, &rc)
 
         movzx ecx,co.x
         shl   ecx,2
@@ -49,7 +49,7 @@ TRect::Write proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
     mov co,[rcx].TRect.Coord()
     mov rc,[rcx].TRect.SmallRect()
 
-    .return .ifd WriteConsoleOutput(rdi, rsi, co, 0, &rc)
+    .return .ifd WriteConsoleOutputW(rdi, rsi, co, 0, &rc)
 
     movzx ebx,co.y
     mov   rc.Bottom,rc.Top
@@ -57,7 +57,7 @@ TRect::Write proc uses rsi rdi rbx h:HANDLE, pc:PCHAR_INFO
 
     .for ( : ebx : ebx--, rc.Bottom++, rc.Top++ )
 
-        .break .ifd !WriteConsoleOutput(rdi, rsi, co, 0, &rc)
+        .break .ifd !WriteConsoleOutputW(rdi, rsi, co, 0, &rc)
 
         movzx ecx,co.x
         shl   ecx,2

@@ -1,8 +1,8 @@
 all: test.exe clean
 
 test.exe:
-    asmc64 -nologo $*.asm
-    linkw sys tcon_64 file $*
+    asmc64 -ws -nologo $*.asm
+    linkw sys tcon_64W file $*
     $@
 
 clean:

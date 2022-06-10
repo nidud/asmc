@@ -1589,10 +1589,12 @@ ifdef USE_COMALLOC
     mov [edi].func_ptr,ComAllocFunc
     mov [edi].mac_flag,M_ISFUNC
     mov esi,[edi].macroinfo
-    mov [esi].parmcnt,1
-    mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) )
+    mov [esi].parmcnt,2
+    mov [esi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
     mov [eax].mparm_list.deflt,NULL
     mov [eax].mparm_list.required,TRUE
+    mov [eax].mparm_list[mparm_list].deflt,NULL
+    mov [eax].mparm_list[mparm_list].required,FALSE
 
 endif
 

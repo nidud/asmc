@@ -93,7 +93,7 @@ endif
 ;;;;;;;;;;;;;;; crtl
 
 ifndef _INTPTR_T_DEFINED
-_INTPTR_T_DEFINED equ <>
+define _INTPTR_T_DEFINED
 ifdef _WIN64
 intptr_t typedef sqword
 else

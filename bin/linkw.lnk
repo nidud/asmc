@@ -77,7 +77,16 @@ end
 system begin tcon_64
     option  quiet
     libpath %ASMCDIR%\lib\x64
-    library libc,kernel32,user32
+    library TWinA,libc,kernel32,user32
+    symt    TWinStart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+system begin tcon_64W
+    option  quiet
+    libpath %ASMCDIR%\lib\x64
+    library TWinW,libc,kernel32,user32
     symt    TWinStart
     format  windows pe ^
     runtime console=4.0

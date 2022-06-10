@@ -21,7 +21,7 @@ EH_NESTED_CALL	    equ 10h
 
 ExceptionHandler proc \
 	ExceptionRecord	  : PEXCEPTION_RECORD,
-	EstablisherFrame  : ptr dword,
+	EstablisherFrame  : PEXCEPTION_REGISTRATION_RECORD,
 	ContextRecord	  : PCONTEXT,
 	DispatcherContext : LPDWORD
 

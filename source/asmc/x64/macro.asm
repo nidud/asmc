@@ -224,7 +224,7 @@ store_placeholders proc __ccall private uses rsi rdi rbx line:string_t, mnames:p
     .for ( rsi = line : byte ptr [rsi] : )
 
         movzx ecx,byte ptr [rsi-1]
-        lea r8,_ltype
+
         .if isldigit( [rsi] )
             ;
             ; skip numbers (they may contain alphas)
@@ -233,16 +233,16 @@ store_placeholders proc __ccall private uses rsi rdi rbx line:string_t, mnames:p
             ;
             .repeat
                 inc rsi
-            .until !is_valid_id_char( [rsi] )
+            .until !islabel( [rsi] )
 
-        .elseif ( is_valid_id_char( eax ) ||
+        .elseif ( islabel( eax ) ||
                   ( al == '.' && ModuleInfo.dotname &&
-                  ( rsi == line || ( cl != ']' && ( !( byte ptr [r8+rcx+1] & _DIGIT or _LABEL ) ) ) ) ) )
+                  ( rsi == line || ( cl != ']' && ( !( byte ptr [r15+rcx+1] & _DIGIT or _LABEL ) ) ) ) ) )
 
             mov rdx,rsi
             .repeat
                 inc rsi
-            .until !is_valid_id_char( [rsi] )
+            .until !islabel( [rsi] )
             ;
             ; v2.08: both a '&' before AND after the name trigger substitution (and disappear)
             ;
@@ -366,7 +366,7 @@ StoreMacro proc __ccall uses rsi rdi rbx r12 mac:dsym_t, i:int_t, tokenarray:tok
             ; Masm accepts reserved words and instructions as parameter
             ; names! So just check that the token is a valid id.
 
-            .if ( !is_valid_id_first_char( [rax] ) || [rbx].token == T_STRING )
+            .if ( !isdotlabel( [rax], ModuleInfo.dotname ) || [rbx].token == T_STRING )
                 asmerr(2008, token )
                 .break
             .elseif ( [rbx].token != T_ID )
@@ -537,12 +537,12 @@ endif
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
 
-                mov rdx,StringBufferEnd
-                .if ( !is_valid_id_first_char( [rdx] ) )
-                    asmerr( 2008, rdx )
+                mov rcx,StringBufferEnd
+                .if ( !isdotlabel( [rcx], ModuleInfo.dotname ) )
+                    asmerr( 2008, rcx )
                     .break
                 .elseif tok[0].token != T_ID
-                    asmerr( 7006, rdx )
+                    asmerr( 7006, rcx )
                 .endif
 
                 .if ( mindex == ( MAX_PLACEHOLDERS - 1 ) )
@@ -571,7 +571,7 @@ endif
 
                 .if ( cl == ',' )
                     inc ls.input
-                .elseif ( is_valid_id_first_char( ecx ) )
+                .elseif ( isdotlabel( ecx, ModuleInfo.dotname ) )
                     asmerr( 2008, ls.input )
                     .break
                 .endif

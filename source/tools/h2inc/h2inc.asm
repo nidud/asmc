@@ -11,12 +11,13 @@ include io.inc
 include malloc.inc
 include winbase.inc
 include signal.inc
-include ctype.inc
+include ltype.inc
+include setjmp.inc
 include tchar.inc
 
     option dllimport:none
 
-define __H2INC__    105
+define __H2INC__    106
 
 define MAXLINE      512
 define MAXBUF       0x100000
@@ -27,7 +28,6 @@ define FL_STBUF     0x01
 define FL_STRUCT    0x02
 define FL_ENUM      0x04
 define FL_TYPEDEF   0x08
-define _LABEL       0x40 ; _UPPER + _LOWER + '_'
 
 .enum token_type {
     T_EOF,
@@ -52,99 +52,11 @@ define _LABEL       0x40 ; _UPPER + _LOWER + '_'
     T_DEFINE_GUID
     }
 
-.template jmpbuf
-    _bx   dq ?
-    _sp   dq ?
-    _bp   dq ?
-    _si   dq ?
-    _di   dq ?
-    _12   dq ?
-    _13   dq ?
-    _14   dq ?
-    _15   dq ?
-    _ip   dq ?
-   .ends
-
-;
-; Inline functions
-;
-
-    .pragma warning(disable: 8019) ; assume byte..
-
-setjump proto buf:ptr jmpbuf {
-    xor eax,eax
-    mov [rcx].jmpbuf._bp,rbp
-    mov [rcx].jmpbuf._si,rsi
-    mov [rcx].jmpbuf._di,rdi
-    mov [rcx].jmpbuf._bx,rbx
-    mov [rcx].jmpbuf._12,r12
-    mov [rcx].jmpbuf._13,r13
-    mov [rcx].jmpbuf._14,r14
-    mov [rcx].jmpbuf._15,r15
-    mov [rcx].jmpbuf._sp,rsp
-    lea rdx,[rip+4]
-    mov [rcx].jmpbuf._ip,rdx
-    }
-
-longjump proto buf:ptr jmpbuf, retval:int_t {
-
-    mov rbp,[rcx].jmpbuf._bp
-    mov rsi,[rcx].jmpbuf._si
-    mov rdi,[rcx].jmpbuf._di
-    mov rbx,[rcx].jmpbuf._bx
-    mov r12,[rcx].jmpbuf._12
-    mov r13,[rcx].jmpbuf._13
-    mov r14,[rcx].jmpbuf._14
-    mov r15,[rcx].jmpbuf._15
-    mov rsp,[rcx].jmpbuf._sp
-    mov rcx,[rcx].jmpbuf._ip
-    mov eax,edx
-    jmp rcx
-    }
-
-islalpha proto watcall c:byte {
-    retm<([r15+rax+1] & (_UPPER or _LOWER))>
-    }
-isldigit proto watcall c:byte {
-    retm<([r15+rax+1] & _DIGIT)>
-    }
-islalnum proto watcall c:byte {
-    retm<([r15+rax+1] & (_DIGIT or _UPPER or _LOWER))>
-    }
-islpunct proto watcall c:byte {
-    retm<([r15+rax+1] & _PUNCT)>
-    }
-islspace proto watcall c:byte {
-    retm<([r15+rax+1] & _SPACE)>
-    }
-islxdigit proto watcall c:byte {
-    retm<([r15+rax+1] & _HEX)>
-    }
-isid proto watcall c:byte {
-    retm<([r15+rax+1] & (_LABEL or _DIGIT))>
-    }
-isidfirst proto watcall :byte {
-    retm<([r15+rax+1] & _LABEL)>
-    }
-
-tokstart proto watcall string:string_t {
-    movzx ecx,byte ptr [rax]
-    .while ( [r15+rcx+1] & _SPACE )
-        inc rax
-        mov cl,[rax]
-    .endw
-    }
-
-tokstartc proto watcall string:string_t {
-    tokstart(string)
-    xchg rax,rcx
-    }
-
 parseline proto
 
 .data
 
- jmpenv     jmpbuf <>
+ jmpenv     _JUMP_BUFFER <>
  ercount    dd 0
 
  banner     db 0
@@ -178,25 +90,7 @@ parseline proto
  cstart     db 0
  cblank     db 0
  unicode    db 0
-_ltype      db \
-  0,
-  9 dup(_CONTROL),
-  5 dup(_SPACE+_CONTROL),
- 18 dup(_CONTROL),
-  _SPACE,
- 15 dup(_PUNCT),
- 10 dup(_DIGIT+_HEX),
-  7 dup(_PUNCT),
-  6 dup(_UPPER+_LABEL+_HEX),
- 20 dup(_UPPER+_LABEL),
-  4 dup(_PUNCT),
-  _PUNCT+_LABEL,
-  _PUNCT,
-  6 dup(_LOWER+_LABEL+_HEX),
- 20 dup(_LOWER+_LABEL),
-  4 dup(_PUNCT),
-  _CONTROL,
-128 dup(0) ; and the rest are 0...
+
 
 T macro s
 % exitm<@CStr("&s&")>
@@ -478,23 +372,12 @@ strtrim proc string:string_t
 strtrim endp
 
 
-strstart proc string:string_t
-
-    .while islspace([rcx])
-        inc rcx
-    .endw
-    xchg rcx,rax
-    ret
-
-strstart endp
-
-
 prevtok proc string:string_t, start:string_t
 
-    .while ( rcx >= rdx && !isid([rcx]) )
+    .while ( rcx >= rdx && !isclabel([rcx]) )
         dec rcx
     .endw
-    .while ( rcx >= rdx && isid([rcx]) )
+    .while ( rcx >= rdx && isclabel([rcx]) )
         dec rcx
     .endw
     inc  rcx
@@ -506,11 +389,11 @@ prevtok endp
 
 prevtokz proc string:string_t, start:string_t
 
-    .while ( rcx >= rdx && !isid([rcx]) )
+    .while ( rcx >= rdx && !isclabel([rcx]) )
         mov [rcx],ah
         dec rcx
     .endw
-    .while ( rcx >= rdx && isid([rcx]) )
+    .while ( rcx >= rdx && isclabel([rcx]) )
         dec rcx
     .endw
     inc  rcx
@@ -523,9 +406,9 @@ prevtokz endp
 nexttok proc string:string_t
 
     .repeat
-        .if ( isid([rcx]) )
+        .if ( isclabel([rcx]) )
             inc rcx
-            .while isid([rcx])
+            .while isclabel([rcx])
                 inc rcx
             .endw
             .break
@@ -535,7 +418,7 @@ nexttok proc string:string_t
         .endif
     .until 1
 
-    tokstart(rcx)
+    ltokstart(rcx)
     ret
 
 nexttok endp
@@ -544,9 +427,9 @@ nexttok endp
 toksize proc string:string_t
 
     mov rdx,rcx
-    .if ( isidfirst([rcx]) )
+    .if ( isclabel0([rcx]) )
         inc rcx
-        .while isid([rcx])
+        .while isclabel([rcx])
             inc rcx
         .endw
     .endif
@@ -599,26 +482,26 @@ striptype proc uses rdi string:string_t
     .while 1
 
         .break .if !strchr(rdi, '(')
-        .ifd ( tokstartc(&[rax+1]) != '(' )
+        .ifd ( ltokstartc(&[rax+1]) != '(' )
             mov rdi,rcx
            .continue
         .endif
         mov rdi,rcx
-        mov rdx,tokstart(&[rcx+1])
+        mov rdx,ltokstart(&[rcx+1])
         .if ( cl == '(' )
             mov rdi,rax
-            mov rdx,tokstart(&[rax+1])
+            mov rdx,ltokstart(&[rax+1])
         .endif
 
-        .ifd ( !isidfirst([rdx]) )
+        .ifd ( !isclabel0([rdx]) )
             mov rdi,rdx
            .continue
         .endif
         inc rdx
-        .while isid([rdx])
+        .while isclabel([rdx])
             inc rdx
         .endw
-        .whiled ( tokstartc(rdx) == '*' )
+        .whiled ( ltokstartc(rdx) == '*' )
             inc rdx
         .endw
         .if ( al != ')' )
@@ -626,7 +509,7 @@ striptype proc uses rdi string:string_t
             .continue
         .endif
         inc rdx
-        .ifd ( tokstartc(rdx) != '(' )
+        .ifd ( ltokstartc(rdx) != '(' )
             lea rdi,[rdx+1]
            .continue
         .endif
@@ -650,8 +533,8 @@ wordxchg proc uses rdi rsi rbx r12 r13 string:string_t, token:string_t, new:stri
 
     .while strstr(r12, token)
         mov rsi,rax
-        .if !isid([rsi-1])
-            .if !isid([rsi+rbx])
+        .if !isclabel([rsi-1])
+            .if !isclabel([rsi+rbx])
                 inc retval
                 mov [rsi],0
                 strcpy(rdi, r12)
@@ -703,7 +586,7 @@ arg_option_f proc uses rsi rdi rbx r12 string:string_t
             inc rdx
         .endif
         add rdx,rbx
-        mov rdx,tokstart(rdx)
+        mov rdx,ltokstart(rdx)
 
         mov al,[rdx]
         .if ( al == '(' )
@@ -810,7 +693,7 @@ operator proc uses rdi rsi rbx r12 string:string_t, token:string_t, new:string_t
 
         mov [rax],0
         lea rsi,[rax+rbx]
-        mov rsi,tokstart(rsi)
+        mov rsi,ltokstart(rsi)
         strtrim(r12)
         strcpy(rdi, r12)
         strcat(rdi, new)
@@ -895,7 +778,7 @@ eofexit proc
 
         fprintf(outfile, filebuf)
     .endif
-    longjump(&jmpenv, 1)
+    longjmp(&jmpenv, 1)
     ret
 
 eofexit endp
@@ -962,7 +845,7 @@ concat proc uses rsi rdi string:string_t
     lea rsi,[rdi+strtrim(rdi)+1]
     mov [rsi-1],' '
     getline(rsi)
-    strcpy(rsi, tokstart(rsi))
+    strcpy(rsi, ltokstart(rsi))
    .return(rdi)
 
 concat endp
@@ -993,7 +876,7 @@ tokenize proc uses rsi rdi string:string_t
 
     .while 1
 
-        mov rdi,tokstart(rsi)
+        mov rdi,ltokstart(rsi)
         mov tokpos,rdi
 
         .if ( [rdi] == 0 )
@@ -1005,7 +888,7 @@ tokenize proc uses rsi rdi string:string_t
         .if ( [rdi] == '#' )
 
             inc rdi
-            mov rdx,tokstart(rdi)
+            mov rdx,ltokstart(rdi)
             .if ( rdx != rdi )
                 strcpy(rdi, rdx)
             .endif
@@ -1236,7 +1119,7 @@ stripchr endp
 parse_include proc uses rdi
 
     mov rdi,tokpos
-    mov rdi,tokstart(&[rdi+8])
+    mov rdi,ltokstart(&[rdi+8])
 
     .if stripchr(rdi, '<')
         stripchr(rdi, '>')
@@ -1268,7 +1151,7 @@ exit_macro endp
 parse_define proc uses rsi rdi rbx r12
 
     mov rdi,tokpos
-    mov r12,tokstart(&[rdi+7])
+    mov r12,ltokstart(&[rdi+7])
     mov rsi,nexttok(rax)
     mov al,[rsi-1]
 
@@ -1300,7 +1183,7 @@ parse_define proc uses rsi rdi rbx r12
 
     .if strchr(rsi, ')')
         mov [rax],0
-        mov rbx,tokstart(&[rax+1])
+        mov rbx,ltokstart(&[rax+1])
     .endif
 
     oprintf("%s macro %s\n", r12, rsi)
@@ -1312,7 +1195,7 @@ parse_define proc uses rsi rdi rbx r12
 
     .while ( [rdi] == '\' )
         getline(rdi)
-        mov rdi,tokstart(rdi)
+        mov rdi,ltokstart(rdi)
     .endw
 
     .if ( [rdi] == 0 )
@@ -1330,7 +1213,7 @@ parse_define proc uses rsi rdi rbx r12
         .break .if !strrchr(rdi, ',')
 
         lea rsi,[rax+1]
-        .break .ifd tokstartc(rsi) != '\'
+        .break .ifd ltokstartc(rsi) != '\'
         .break .if ( [rcx+1] != 0 )
 
         mov [rsi],0
@@ -1341,8 +1224,8 @@ parse_define proc uses rsi rdi rbx r12
         ; strip <(macro(...))> --> <macro(...)>
 
         .if ( [rdi] == '(' )
-            mov rbx,tokstart(&[rdi+1])
-            .if isidfirst([rbx])
+            mov rbx,ltokstart(&[rdi+1])
+            .if isclabel0([rbx])
                 .for ( rdx = rbx, ecx = 1 : [rdx] : rdx++ )
                     .if ( [rdx] == '(' )
                         inc ecx
@@ -1368,11 +1251,11 @@ parse_define proc uses rsi rdi rbx r12
         mov [rdi+rax-1],0
         strtrim(rdi)
         convert(rdi)
-        oprintf("    %s\n", tokstart(rdi))
+        oprintf("    %s\n", ltokstart(rdi))
     .until ( [rdi+strlen(getline(rdi))-1] != '\' )
 
     convert(rdi)
-    oprintf("    %s\n", tokstart(rdi))
+    oprintf("    %s\n", ltokstart(rdi))
    .return exit_macro("")
 
 parse_define endp
@@ -1440,7 +1323,7 @@ strip_unsigned proc uses rsi rdi rbx string:string_t
     .while strstr(rdi, "unsigned")
 
         mov rbx,rax
-        mov rsi,tokstart(&[rax+8])
+        mov rsi,ltokstart(&[rax+8])
         mov ecx,toksize(rax)
         mov eax,[rsi]
         add rsi,rcx
@@ -1505,7 +1388,7 @@ strip_unsigned endp
 
 parse_protoarg proc uses rsi rdi rbx arg:string_t
 
-    mov rdi,tokstart(rcx)
+    mov rdi,ltokstart(rcx)
 
     .if ( strchr(rdi, '*') )
 
@@ -1605,7 +1488,7 @@ parse_proto proc uses rsi rdi rbx p:string_t
 
     mov [rax],0
     mov rbx,rax
-    mov rsi,tokstart(&[rax+1])
+    mov rsi,ltokstart(&[rax+1])
 
     oprintf("%s proto", prevtokz(rbx, rdi))
 
@@ -1633,7 +1516,7 @@ parse_callback proc uses rsi rdi p:string_t
         .return error(rdi)
     .endif
     mov [rax],0
-    mov rsi,tokstart(&[rax+1])
+    mov rsi,ltokstart(&[rax+1])
     strip_unsigned(rsi)
 
     .if !strrchr(rdi, ')')
@@ -1793,7 +1676,7 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
     mov r12d,strip_unsigned(rdi)
 
     .if strchr(rdi, '(')
-        .if ( [tokstart(&[rax+1])] == '*' )
+        .if ( [ltokstart(&[rax+1])] == '*' )
             .if strchr(rax, ')')
                 lea rbx,[rax+1]
                 mov rsi,prevtokz(rax, rdi)
@@ -1807,13 +1690,13 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
                 .elseif ( option_c )
                     oprintf(" %s", option_c)
                 .endif
-                mov rbx,tokstart(rbx)
+                mov rbx,ltokstart(rbx)
                 .if ( cl == '(' )
                     inc rbx
                 .elseif strchr(rbx, '(')
                     lea rbx,[rax+1]
                 .endif
-                parse_protoargs(tokstart(rbx), 0)
+                parse_protoargs(ltokstart(rbx), 0)
                 oprintf("\n")
                .return
             .endif
@@ -1829,7 +1712,7 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
     mov r14,rax
     .if strchr(rdi, '[')
         mov [rax],0
-        mov rbx,tokstart(&[rax+1])
+        mov rbx,ltokstart(&[rax+1])
         .if strchr(rbx, ']')
             mov [rax],0
             .if [rax+1] == '['
@@ -1850,7 +1733,7 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
     .elseif strrchr(rdi, ':')
         mov [rax],0
         lea rsi,[rax-1]
-        mov r13,tokstart(&[rax+1])
+        mov r13,ltokstart(&[rax+1])
         .if strchr(r13, ';')
             mov [rax],0
         .endif
@@ -1920,7 +1803,7 @@ parse_struct_member proc uses rsi rdi rbx r12 r13 r14
 
     .while r14
 
-        mov rsi,tokstart(&[r14+1])
+        mov rsi,ltokstart(&[r14+1])
         mov r14,strchr(rsi, ',')
         .if rax
             mov [rax],0
@@ -1981,7 +1864,7 @@ parse_struct proc uses rsi rdi rbx r12
     mov rbx,nexttok(rdi)
     .if ( cl == 0 )
         concat(rdi)
-        mov rbx,strstart(rbx)
+        mov rbx,ltokstart(rbx)
     .endif
     .if !strchr(rdi, '{')
         .if !strchr(rdi, ';')
@@ -2070,7 +1953,7 @@ parse_struct proc uses rsi rdi rbx r12
             .endif
 
             .break .if !rbx
-            mov rbx,strstart(rbx)
+            mov rbx,ltokstart(rbx)
             .if !byte ptr [rbx]
                 .break .if enddir
             .endif
@@ -2081,7 +1964,7 @@ parse_struct proc uses rsi rdi rbx r12
                 mov byte ptr [rax],0
                 mov rdi,rbx
                 lea rbx,[rax+1]
-                mov rdi,strstart(rdi)
+                mov rdi,ltokstart(rdi)
                 .if ( [rdi] == '#' )
                     prevtok(rbx, rdi)
                     dec rax
@@ -2096,13 +1979,13 @@ parse_struct proc uses rsi rdi rbx r12
                     strcpy(r12, rax)
                     tokenize(strcpy(linebuf, rdi))
                     parseline()
-                    mov rdi,strstart(strcpy(rdi, r12))
+                    mov rdi,ltokstart(strcpy(rdi, r12))
                 .endif
                 .if strrchr(rdi, '*')
                     mov rdi,rax
                 .endif
                 .if ( byte ptr [rdi] == '*' )
-                    oprintf("%-23s typedef ptr %s\n", tokstart(&[rdi+1]), rsi)
+                    oprintf("%-23s typedef ptr %s\n", ltokstart(&[rdi+1]), rsi)
                 .else
                     push_struct(rdi)
                     oprintf("%-23s typedef %s\n", rdi, rsi)
@@ -2113,12 +1996,12 @@ parse_struct proc uses rsi rdi rbx r12
             mov byte ptr [rax],0
             mov rdi,rbx
             lea rbx,[rax+1]
-            mov rdi,strstart(rdi)
+            mov rdi,ltokstart(rdi)
             .if strrchr(rdi, '*')
                 mov rdi,rax
             .endif
             .if byte ptr [rdi] == '*'
-                oprintf("%-23s typedef ptr %s\n", tokstart(&[rdi+1]), rsi)
+                oprintf("%-23s typedef ptr %s\n", ltokstart(&[rdi+1]), rsi)
             .else
                 push_struct(rdi)
                 oprintf("%-23s typedef %s\n", rdi, rsi)
@@ -2160,7 +2043,7 @@ parse_typedef proc uses rsi rdi rbx
     mov rbx,nexttok(rdi)
     .if ( cl == 0 )
         concat(rdi)
-        mov rbx,tokstart(rbx)
+        mov rbx,ltokstart(rbx)
     .endif
 
     .ifd ( toksize(rbx) == 4 )
@@ -2238,13 +2121,13 @@ parse_interface proc uses rsi rdi rbx
     inc rax
     oprintf("DEFINE_IIDX(%s, %s\n\n", tempbuf, rax)
     getline(rdi)
-    oprintf(".comdef %s\n", tokstart(rdi))
+    oprintf(".comdef %s\n", ltokstart(rdi))
     getline(rdi) ; {
     getline(rdi) ; public:
 
     .while 1
 
-        mov rbx,tokstart(getline(rdi))
+        mov rbx,ltokstart(getline(rdi))
         .break .if ( cl ==  '}' )
         .continue .if ( cl ==  0 )
 
@@ -2253,7 +2136,7 @@ parse_interface proc uses rsi rdi rbx
         lea rbx,[rax+1]
         mov rsi,prevtokz(rax, rdi)
         oprintf("    %-19s proc", rsi)
-        parse_protoargs(tokstart(rbx), 0)
+        parse_protoargs(ltokstart(rbx), 0)
         oprintf("\n")
     .endw
     oprintf("   .ends\n")
@@ -2272,10 +2155,10 @@ parse_extern proc uses rsi rdi rbx
 
     mov rdi,tokpos
     mov eax,csize
-    mov rbx,tokstart(&[rdi+rax])
+    mov rbx,ltokstart(&[rdi+rax])
     .if ( ecx == 0 )
         concat(rdi)
-        mov rbx,tokstart(rbx)
+        mov rbx,ltokstart(rbx)
     .endif
     .if ( ecx == '"' )
         .return
@@ -2287,7 +2170,7 @@ parse_extern proc uses rsi rdi rbx
     concat_line(rdi)
     .if strchr(rdi, ')')
         lea rbx,[rax+1]
-        tokstart(rbx)
+        ltokstart(rbx)
         .if ( cl == '_' )
             mov word ptr [rbx],';'
         .endif
@@ -2526,7 +2409,7 @@ parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
        .new param2[256]:char_t
         inc rbx
         mov [rsi],get_nametoken(rdi, rbx, 256, 0)
-        mov rbx,tokstart(rax)
+        mov rbx,ltokstart(rax)
         .if ( cl == 0 )
             mov rbx,getnextcmdstring(rsi)
         .endif
@@ -2536,7 +2419,7 @@ parse_param proc uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
        .new param2[256]:char_t
         inc rbx
         mov [rsi],get_nametoken(rdi, rbx, 256, 0)
-        mov rbx,tokstart(rax)
+        mov rbx,ltokstart(rax)
         .if ( cl == 0 )
             mov rbx,getnextcmdstring(rsi)
         .endif
@@ -2699,7 +2582,7 @@ translate_module proc uses rsi rdi rbx source:string_t
         printf( " Translating: %s\n", source)
     .endif
 
-    .if !setjump(&jmpenv)
+    .if !_setjmp(&jmpenv)
 
         .while 1
             tokenize(getline(linebuf))

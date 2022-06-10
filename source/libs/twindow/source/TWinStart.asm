@@ -31,11 +31,12 @@ TWinStart proc frame
   local retval:int_t
 
     _initterm(&__xi_a, &__xi_z)
-
+ifdef _UNICODE
+    mov retval,cmain( TWindow::TWindow(&hwnd), __argc, __wargv, _wenviron )
+else
     mov retval,cmain( TWindow::TWindow(&hwnd), __argc, __argv, _environ )
-
+endif
     hwnd.Release()
-
     exit( retval )
 
 TWinStart endp

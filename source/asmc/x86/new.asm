@@ -339,7 +339,7 @@ AssignStruct proc private uses esi edi ebx name:string_t, sym:asym_t, string:str
                     dec brackets
                     .endc
                 .endsw
-                .if !is_valid_id_char( eax )
+                .if !islabel( eax )
                     inc edx
                 .endif
                 movsb

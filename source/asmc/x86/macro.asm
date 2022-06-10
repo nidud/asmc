@@ -231,16 +231,16 @@ store_placeholders proc private uses esi edi ebx line:string_t, mnames:ptr mname
             ;
             .repeat
                 inc esi
-            .until !is_valid_id_char( [esi] )
+            .until !islabel( [esi] )
 
-        .elseif ( is_valid_id_char( eax ) || \
+        .elseif ( islabel( eax ) || \
                 ( al == '.' && ModuleInfo.dotname && \
                 ( esi == line || ( cl != ']' && ( !( _ltype[ecx+1] & _DIGIT or _LABEL ) ) ) ) ) )
 
             mov edx,esi
             .repeat
                 inc esi
-            .until !is_valid_id_char( [esi] )
+            .until !islabel( [esi] )
             ;
             ; v2.08: both a '&' before AND after the name trigger substitution (and disappear)
             ;
@@ -365,7 +365,7 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:token_t, store_
             ;; Masm accepts reserved words and instructions as parameter
             ;; names! So just check that the token is a valid id.
 
-            .if ( !is_valid_id_first_char( [eax] ) || [ebx].token == T_STRING )
+            .if ( !isdotlabel( [eax], ModuleInfo.dotname ) || [ebx].token == T_STRING )
                 asmerr(2008, token )
                 .break
             .elseif ( [ebx].token != T_ID )
@@ -544,12 +544,12 @@ endif
 
                 mov ls.output,StringBufferEnd
                 GetToken( &tok[0], &ls )
-                mov edx,StringBufferEnd
-                .if ( !is_valid_id_first_char( [edx] ) )
-                    asmerr( 2008, edx )
+                mov ecx,StringBufferEnd
+                .if ( !isdotlabel( [ecx], ModuleInfo.dotname ) )
+                    asmerr( 2008, ecx )
                     .break
                 .elseif tok[0].token != T_ID
-                    asmerr( 7006, edx )
+                    asmerr( 7006, ecx )
                 .endif
 
                 .if mindex == ( MAX_PLACEHOLDERS - 1 )
@@ -578,7 +578,7 @@ endif
                 mov ls.input,edx
                 .if al == ','
                     inc ls.input
-                .elseif ( is_valid_id_first_char( eax ) )
+                .elseif ( isdotlabel( eax, ModuleInfo.dotname ) )
                     asmerr( 2008, ls.input )
                     .break
                 .endif

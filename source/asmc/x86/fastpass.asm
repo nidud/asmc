@@ -127,7 +127,7 @@ StoreLine proc uses esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
             mov edx,[ecx+1]
             and edx,0xFFFFFF
             or  edx,0x202020
-            .if ( edx != 'tuo' || is_valid_id_char( [ecx+4] ) )
+            .if ( edx != 'tuo' || islabel( [ecx+4] ) )
                 mov byte ptr [ecx],' '
             .endif
         .endif

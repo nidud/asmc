@@ -127,7 +127,7 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
             mov edx,[rcx+1]
             and edx,0xFFFFFF
             or  edx,0x202020
-            .if ( edx != 'tuo' || is_valid_id_char( [rcx+4] ) )
+            .if ( edx != 'tuo' || islabel( [rcx+4] ) )
                 mov byte ptr [rcx],' '
             .endif
         .endif

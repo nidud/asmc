@@ -1,4 +1,4 @@
-_VCRT_ALLOW_INTERNALS equ 1
+define _VCRT_ALLOW_INTERNALS
 
 include vcruntime_internal.inc
 include setjmp.inc

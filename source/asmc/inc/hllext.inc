@@ -59,24 +59,24 @@ define EOLCHAR 10 ; line termination char in generated source
     HLLF_WHILE		= 0x04,
     HLLF_EXPRESSION	= 0x08,
     HLLF_DEFAULT	= 0x10,
-    HLLF_DELAYED	= 0x20,		; set by DelayExpand()
-    HLLF_NOTEST		= 0x40,		; direct jump..
-    HLLF_ARGREG		= 0x80,		; register 16/32/64-bit size_t
-    HLLF_ARGMEM		= 0x0100,	; memory if set, else register
-    HLLF_ARG16		= 0x0200,	; size: 8/16/32/64
-    HLLF_ARG32		= 0x0400,
-    HLLF_ARG64		= 0x0800,
-    HLLF_ARG3264	= 0x1000,	; .switch eax in 64-bit assumend rax
-    HLLF_NUM		= 0x2000,	; .case arg is const
-    HLLF_TABLE		= 0x4000,	; .case is in jump table
-    HLLF_ENDCOCCUR	= 0x8000,	; jmp exit in .case omitted
-    HLLF_IFB		= 0x00010000,	; .ifb proc() --> al
-    HLLF_IFW		= 0x00020000,	; .ifw proc() --> ax
-    HLLF_IFD		= 0x00040000,	; .ifd proc() --> eax
-    HLLF_IFS		= 0x00080000,	; Signed compare --> CMP REG,val
-    HLLF_PASCAL		= 0x00100000,	; .continue(0) [.if]
-    HLLF_JTABLE		= 0x00200000,	; if HLLF_NOTEST direct .case jump
-    HLLF_JTDATA		= 0x00400000	; Jump table in data segment -- HLLF_NOTEST
+    HLLF_DELAYED	= 0x20, ; set by DelayExpand()
+    HLLF_NOTEST		= 0x40, ; direct jump..
+    HLLF_ARGREG		= 0x80, ; register 16/32/64-bit size_t
+    HLLF_ARGMEM	       = 0x100, ; memory if set, else register
+    HLLF_ARG16	       = 0x200, ; size: 8/16/32/64
+    HLLF_ARG32	       = 0x400,
+    HLLF_ARG64	       = 0x800,
+    HLLF_ARG3264      = 0x1000, ; .switch eax in 64-bit assumend rax
+    HLLF_NUM	      = 0x2000, ; .case arg is const
+    HLLF_TABLE	      = 0x4000, ; .case is in jump table
+    HLLF_ENDCOCCUR    = 0x8000, ; jmp exit in .case omitted
+    HLLF_IFB	     = 0x10000, ; .ifb proc() --> al
+    HLLF_IFW	     = 0x20000, ; .ifw proc() --> ax
+    HLLF_IFD	     = 0x40000, ; .ifd proc() --> eax
+    HLLF_IFS	     = 0x80000, ; Signed compare --> CMP REG,val
+    HLLF_PASCAL	    = 0x100000, ; .continue(0) [.if]
+    HLLF_JTABLE	    = 0x200000, ; if HLLF_NOTEST direct .case jump
+    HLLF_JTDATA	    = 0x400000	; Jump table in data segment -- HLLF_NOTEST
     }
 
 hll_item	struct
@@ -96,6 +96,7 @@ ends
 condlines	string_t ?	; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
 cmd		int_t ?		; start cmd (IF, WHILE, REPEAT)
 flags		int_t ?		; v2.08: added
+tokval		int_t ?		; v2.33.67: added
 hll_item	ends
 
 hll_opnd	struct		; v2.08: struct added

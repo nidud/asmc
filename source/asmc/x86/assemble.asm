@@ -348,6 +348,10 @@ WriteModule proc private uses esi edi ebx modinfo:ptr module_info
     ret
 WriteModule endp
 
+is_valid_first_char proto watcall c:byte {
+    retm<(al == '.' || (_ltype[eax+1] & _LABEL))>
+    }
+
 add_cmdline_tmacros proc private uses esi edi ebx
 
     local size:dword
@@ -379,7 +383,7 @@ add_cmdline_tmacros proc private uses esi edi ebx
 	    inc ecx
 	.else
 	    .for ( edx = &[esi+1], al = [edx] : eax: edx++, al = [edx] )
-		.if ( !is_valid_id_char( eax ) )
+		.if ( !islabel( eax ) )
 		    inc ecx
 		    .break
 		.endif
@@ -881,7 +885,7 @@ get_module_name proc private uses esi edi
     .while 1
 	lodsb
 	.break	.if !al
-	.continue .if is_valid_id_char( eax )
+	.continue .if islabel( eax )
 	mov byte ptr [esi-1],'_'
     .endw
     ;

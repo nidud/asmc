@@ -2,22 +2,22 @@
 include stdio.inc
 include twindow.inc
 
-extern IDD_Replace:ptr TResource
+externdef IDD_Replace:ptr TResource
 
-    .code
+   .code
 
     assume rcx:ptr TWindow
 
 WndProc proc private hwnd:ptr TWindow, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .switch edx
-      .case WM_CHAR
+    .case WM_CHAR
         .endc
-      .case WM_CREATE
+    .case WM_CREATE
         [rcx].Show()
-        [rcx].SetFocus(6)
+        [rcx].SetFocus(1)
         .return 0
-      .case WM_CLOSE
+    .case WM_CLOSE
         .if [rcx].GetFocus()
             mov rcx,rax
             [rcx].Send(WM_KILLFOCUS, 0, 0)

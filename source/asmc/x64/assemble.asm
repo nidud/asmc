@@ -348,6 +348,10 @@ endif
 
 WriteModule endp
 
+is_valid_first_char proto watcall c:byte {
+    retm<(al == '.' || (byte ptr [r15+rax+1] & _LABEL))>
+    }
+
 add_cmdline_tmacros proc __ccall private uses r13 r14 rbx r12
 
     mov r14,Options.queues[OPTQ_MACRO*8]
@@ -372,7 +376,7 @@ add_cmdline_tmacros proc __ccall private uses r13 r14 rbx r12
             inc ecx
         .else
             .for ( rdx = &[r13+1], al = [rdx] : eax: rdx++, al = [rdx] )
-                .if ( !is_valid_id_char( eax ) )
+                .if ( !islabel( eax ) )
                     inc ecx
                     .break
                 .endif
@@ -880,7 +884,7 @@ get_module_name proc __ccall private uses rsi rdi
     .while 1
         lodsb
         .break  .if !al
-        .continue .if is_valid_id_char( eax )
+        .continue .if islabel( eax )
         mov byte ptr [rsi-1],'_'
     .endw
     ;

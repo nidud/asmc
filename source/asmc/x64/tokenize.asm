@@ -590,7 +590,7 @@ get_special_symbol proc fastcall uses rsi rdi rbx r12 buf:token_t, p:ptr line_st
         .if eax == 'tuo'    ; %OUT directive?
 
             mov rax,[rsi].input
-            .if !is_valid_id_char( [rax+4] )
+            .if !islabel( [rax+4] )
 
                 mov [rbx].token,T_DIRECTIVE
                 mov [rbx].tokval,T_ECHO
@@ -1126,7 +1126,7 @@ endif
         mov [rbx].itemlen,ecx
     .else
         mov [rbx].token,T_BAD_NUM
-        .while ( is_valid_id_char( [rdx] ) )
+        .while ( islabel( [rdx] ) )
             inc rdx
         .endw
     .endif
@@ -1206,7 +1206,7 @@ get_id proc fastcall uses rsi rdi rbx r12 buf:token_t, p:ptr line_status
     .repeat
         stosb
         inc rsi
-    .until !is_valid_id_char( [rsi] )
+    .until !islabel( [rsi] )
 
     mov rcx,rdi
     sub rcx,[r12].output
@@ -1388,7 +1388,7 @@ GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
     .switch
       .case isldigit( [rax] )
         .return get_number(rcx, rdx)
-      .case islabel( eax )
+      .case islabel0( eax )
         .return get_id(rcx, rdx)
 
       .case ( al == '`' )
@@ -1398,7 +1398,7 @@ GetToken proc fastcall uses rsi rdi rbx tokenarray:token_t, p:ptr line_status
       .case ( al == '.' )
 
         mov rax,[rdx].input
-        .endc .if !is_valid_id_char( [rax+1] )
+        .endc .if !islabel( [rax+1] )
 
         movzx eax,[rcx-asm_tok].asm_tok.token
         .if ( [rdx].index == 0 || ( eax != T_REG && eax != T_CL_BRACKET && \

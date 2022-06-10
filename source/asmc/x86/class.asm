@@ -423,7 +423,7 @@ ParseMacroArgs proc private uses esi edi ebx buffer:string_t, count:int_t, args:
             add edi,tsprintf( edi, "_%u, ", esi )
         .else
 
-            .while is_valid_id_char( [ebx] )
+            .while islabel( [ebx] )
                 stosb
                 inc ebx
             .endw

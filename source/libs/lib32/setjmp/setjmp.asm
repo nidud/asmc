@@ -14,9 +14,6 @@ include setjmp.inc
 
 _setjmp3::
 
-setjmp proc buf:jmp_buf
-setjmp endp
-
 _setjmp proc buf:jmp_buf
 
     mov eax,[esp+4]
@@ -34,7 +31,7 @@ _setjmp endp
 
     assume edx:jmp_buf
 
-longjmp proc c buf:jmp_buf, retval:int_t
+longjmp proc buf:jmp_buf, retval:int_t
 
     mov edx,[esp+4]
     mov eax,[esp+8]

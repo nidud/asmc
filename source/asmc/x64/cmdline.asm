@@ -233,7 +233,7 @@ set_option_n_name proc fastcall uses rsi rdi idx:int_t, name:string_t
     mov rdi,rdx
     movzx eax,byte ptr [rdx]
     .if ( al != '.' )
-        .if ( !is_valid_id_char( eax ) )
+        .if ( !islabel( eax ) )
             xor eax,eax
         .endif
     .endif

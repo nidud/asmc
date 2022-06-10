@@ -235,7 +235,7 @@ set_option_n_name proc fastcall uses esi edi idx:int_t, name:string_t
 
     movzx eax,byte ptr [edx]
     .if ( al != '.' )
-        .if ( !is_valid_id_char( eax ) )
+        .if ( !islabel( eax ) )
             xor eax,eax
         .endif
     .endif

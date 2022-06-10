@@ -160,8 +160,8 @@ ParseCString proc __ccall private uses rsi rdi rbx r12 r13 r14 lbuf:string_t, bu
                     and ecx,55
                     sub eax,ecx
                     movzx ecx,B[rsi+1]
-                    lea r8,_ltype
-                    .if byte ptr [r8+rcx+1] & _HEX
+
+                    .if byte ptr [r15+rcx+1] & _HEX
 
                         add rsi,1
                         shl eax,4
@@ -333,7 +333,7 @@ GetCurrentSegment proc __ccall private buffer:string_t
 
 GetCurrentSegment endp
 
-GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarray:ptr asm_tok
+GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 i:int_t, tokenarray:ptr asm_tok
 
   local rc:             int_t,
         equal:          int_t,
@@ -341,6 +341,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
         b_label:        string_t,
         b_seg:          string_t,
         b_line:         string_t,
+        b_data:         string_t,
         StringOffset:   string_t,
         lineflags:      BYTE,
         brackets:       BYTE,
@@ -399,7 +400,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
     lea eax,[rdi+rdi*2+64*2]
     mov r14,alloca(eax)
     add rax,rdi
-    mov r15,rax
+    mov b_data,rax
     add rax,rdi
     mov b_line,rax
     add rax,rdi
@@ -451,7 +452,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
                 ;
                 mov r13,rsi
                 sub r13,rdi
-                tmemcpy( r15, rdi, r13d )
+                tmemcpy( b_data, rdi, r13d )
                 mov B[rax+r13],0
                 .if tstrstr( b_line, rax )
                     mov rdi,rax
@@ -463,10 +464,10 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
                         .endif
                     .endif
                     .if rax
-                        tstrcpy( r15, rax )
+                        tstrcpy( b_data, rax )
                         tstrcpy( rdi, "addr " )
                         tstrcat( rdi, b_label )
-                        tstrcat( rdi, r15 )
+                        tstrcat( rdi, b_data )
                     .endif
                 .endif
             .endif
@@ -480,14 +481,14 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
                     .else
                         lea rcx,@CStr(" %s sbyte %s,0")
                     .endif
-                    tsprintf(r15, rcx, b_label, r14)
+                    tsprintf(b_data, rcx, b_label, r14)
                 .else
                     .if Unicode
                         lea rcx,@CStr(" %s dw 0")
                     .else
                         lea rcx,@CStr(" %s sbyte 0")
                     .endif
-                    tsprintf(r15, rcx, b_label)
+                    tsprintf(b_data, rcx, b_label)
                 .endif
             .elseif ModuleInfo.list
                 and ModuleInfo.line_flags,NOT LOF_LISTED
@@ -506,7 +507,7 @@ GenerateCString proc __ccall uses rsi rdi rbx r12 r13 r14 r15 i:int_t, tokenarra
             .if NewString
                 GetCurrentSegment(b_seg)
                 AddLineQueue( ".data" )
-                AddLineQueue( r15 )
+                AddLineQueue( b_data )
                 AddLineQueue( "_DATA ends" )
                 AddLineQueue( b_seg )
                 InsertLineQueue()
@@ -553,14 +554,13 @@ GenerateCString endp
 
 ; @CStr() macro
 
-CString proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 buffer:string_t, tokenarray:token_t
+CString proc __ccall private uses rsi rdi rbx r12 r13 r14 buffer:string_t, tokenarray:token_t
 
   local StringOffset:   string_t,
         retval:         int_t,
         Unicode:        byte
 
     mov rbx,rdx
-    mov r15,rcx
     mov edi,ModuleInfo.max_line_len
     lea eax,[rdi*2+32]
     mov r13,alloca(eax)
@@ -638,7 +638,7 @@ CString proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 buffer:string_t, t
             .endif
             movzx eax,[rdx].str_item.index
         .endif
-        tsprintf(r15, "DS%04X", eax)
+        tsprintf(buffer, "DS%04X", eax)
         .return 1
     .endif
 
@@ -671,7 +671,7 @@ CString proc __ccall private uses rsi rdi rbx r12 r13 r14 r15 buffer:string_t, t
                 ;.if ( ModuleInfo.Ofssize != USE64 )
                 ;    tstrcpy( buffer, "offset " )
                 ;.endif
-                tstrcat( r15, r14 )
+                tstrcat( buffer, r14 )
             .else
                 ;
                 ; v2.24 skip return value if @CStr is first token
@@ -1571,10 +1571,12 @@ ifdef USE_COMALLOC
     mov [rdi].func_ptr,&ComAllocFunc
     mov [rdi].mac_flag,M_ISFUNC
     mov rsi,[rdi].macroinfo
-    mov [rsi].parmcnt,1
-    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) )
+    mov [rsi].parmcnt,2
+    mov [rsi].parmlist,LclAlloc( sizeof( mparm_list ) * 2 )
     mov [rax].mparm_list.deflt,NULL
     mov [rax].mparm_list.required,TRUE
+    mov [rax].mparm_list[mparm_list].deflt,NULL
+    mov [rax].mparm_list[mparm_list].required,FALSE
 
 endif
 

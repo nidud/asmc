@@ -337,7 +337,7 @@ AssignStruct proc __ccall private uses rsi rdi rbx r12 r13 r14 name:string_t, sy
                     dec brackets
                     .endc
                 .endsw
-                .if !is_valid_id_char( eax )
+                .if !islabel( eax )
                     inc edx
                 .endif
                 movsb

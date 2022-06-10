@@ -417,12 +417,12 @@ ParseMacroArgs proc __ccall private uses rsi rdi rbx buffer:string_t, count:int_
     .for ( rbx = r8, rdi = rcx, esi = 1 : esi < count : esi++ )
 
         mov rbx,ltokstart(rbx)
-        .if ( cl == ':' || !( byte ptr [r11+rcx+1] & _LABEL) )
+        .if ( cl == ':' || !( byte ptr [r15+rcx+1] & _LABEL) )
 
             add rdi,tsprintf( rdi, "_%u, ", esi )
         .else
 
-            .while is_valid_id_char( [rbx] )
+            .while islabel( [rbx] )
                 stosb
                 inc rbx
             .endw

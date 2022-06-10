@@ -408,10 +408,10 @@ _G_DEFINE_TYPE_EXTENDED_BEGIN macro TypeName, type_name, TYPE_PARENT, flags
 
     &type_name&_get_type_once proc private uses rbx
 	mov rbx,TYPE_PARENT
-	mov rdx,g_intern_static_string(@CatStr(<!">, TypeName, <!">))
+	mov r10,g_intern_static_string(@CatStr(<!">, TypeName, <!">))
 	.return g_type_register_static_simple(
 		rbx,
-		rdx,
+		r10,
 		sizeof(&TypeName&Class),
 		addr &type_name&_class_intern_init,
 		sizeof(TypeName),

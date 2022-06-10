@@ -2137,7 +2137,7 @@ SwitchDirective proc __ccall uses rbx i:int_t, tokenarray:ptr asm_tok
     .endsw
 
     .if ModuleInfo.list
-;        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
     .endif
     .if ModuleInfo.line_queue.head
         RunLineQueue()

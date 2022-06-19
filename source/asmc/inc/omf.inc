@@ -12,11 +12,11 @@ define __OMF_INC
 
 MAX_LEDATA_THRESHOLD equ (1024 - 10)
 
-omf_init            proto __ccall :ptr module_info
-omf_set_filepos     proto __ccall
-omf_OutSelect       proto __ccall :int_t
-omf_FlushCurrSeg    proto __ccall
-omf_check_flush     proto __ccall :ptr line_num_info
+omf_init            proto fastcall :ptr module_info
+omf_set_filepos     proto
+omf_OutSelect       proto fastcall :int_t
+omf_FlushCurrSeg    proto
+omf_check_flush     proto fastcall :ptr line_num_info
 
 endif
 

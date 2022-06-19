@@ -25,8 +25,8 @@ ExpandLiterals		proto __ccall :int_t, :ptr asm_tok
 
 ; functions in macro.asm
 
-CreateMacro		proto __ccall :string_t ; create a macro symbol
-ReleaseMacroData	proto __ccall :ptr dsym
+CreateMacro		proto fastcall :string_t ; create a macro symbol
+ReleaseMacroData	proto fastcall :dsym_t
 fill_placeholders	proto __ccall :string_t, :string_t, :uint_t, :uint_t, :array_t
 SkipCurrentQueue	proto __ccall :ptr asm_tok
 StoreMacro		proto __ccall :ptr dsym, :int_t, :ptr asm_tok, :int_t ;; store macro content

@@ -12,26 +12,26 @@ GetSegm proto fastcall :ptr asym {
     mov rax,[rcx].asym.segm
     }
 
-SetSymSegOfs		proto __ccall :ptr asym
-GetSymOfssize		proto __ccall :ptr asym
+SetSymSegOfs		proto fastcall :ptr asym
+GetSymOfssize		proto fastcall :ptr asym
 
 ; Get current segment's offset
 
-GetCurrOffset		proto __ccall
+GetCurrOffset		proto
 SetCurrOffset		proto __ccall :ptr dsym, :uint_t, :int_t, :int_t
 CreateIntSegment	proto __ccall :string_t, :string_t, :uchar_t, :uchar_t, :int_t
 
 ; get symbol's segment index, from the symbol itself
 
-GetSegIdx		proto __ccall :ptr asym
-SegmentInit		proto __ccall :int_t		; init segments
-SegmentFini		proto __ccall			; exit segments
-GetGroup		proto __ccall :ptr asym
-GetCurrSegAlign		proto __ccall
-SetOfssize		proto __ccall
-TypeFromClassName	proto __ccall :ptr dsym, :ptr asym
-DefineFlatGroup		proto __ccall
-SegmentModuleExit	proto __ccall
+GetSegIdx		proto fastcall :ptr asym
+SegmentInit		proto fastcall :int_t	; init segments
+SegmentFini		proto			; exit segments
+GetGroup		proto fastcall :ptr asym
+GetCurrSegAlign		proto
+SetOfssize		proto
+TypeFromClassName	proto fastcall :ptr dsym, :ptr asym
+DefineFlatGroup		proto
+SegmentModuleExit	proto
 DeleteGroup		proto __ccall :ptr dsym
 
 ; simplified segment functions
@@ -48,7 +48,7 @@ DeleteGroup		proto __ccall :ptr dsym
     }
 
 
-SimGetSegName		proto __ccall :int_t
+SimGetSegName		proto fastcall :int_t
 GetCodeClass		proto __ccall
 ModelSimSegmInit	proto __ccall :int_t
 ModelSimSegmExit	proto __ccall

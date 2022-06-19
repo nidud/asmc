@@ -37,12 +37,12 @@ input_status	ends
 input_t		typedef ptr input_status
 
 GetLineNumber		proto __ccall
-GetFNamePart		proto __ccall :string_t
-GetExtPart		proto __ccall :string_t
+GetFNamePart		proto fastcall :string_t
+GetExtPart		proto fastcall :string_t
 SearchFile		proto __ccall :string_t, :int_t
 GetTextLine		proto __ccall :string_t
-PushMacro		proto __ccall :ptr macro_instance
-SetLineNumber		proto __ccall :uint_t
+PushMacro		proto fastcall :ptr macro_instance
+SetLineNumber		proto fastcall :uint_t
 AddStringToIncludePath	proto __ccall :string_t
 InputInit		proto __ccall
 InputPassInit		proto __ccall
@@ -52,47 +52,13 @@ PushInputStatus		proto __ccall :input_t
 PopInputStatus		proto __ccall :input_t
 ClearSrcStack		proto __ccall
 get_curr_srcfile	proto __ccall
-set_curr_srcfile	proto __ccall :uint_t, :uint_t
-GetFName		proto __ccall :uint_t
+set_curr_srcfile	proto fastcall :uint_t, :uint_t
+GetFName		proto fastcall :uint_t
 
 GetAlignedPointer proto watcall p:ptr, size:int_t {
     add edx,size_t
     and edx,not ( size_t - 1 )
     add rax,rdx
     }
-
-SkipSpace macro reg, base
-    movzx reg,byte ptr [base]
-    .while byte ptr _ltype[reg+1] & _SPACE
-	add base,1
-	ifidni <reg>,<eax>
-	    mov al,[base]
-	else
-	  ifidni <reg>,<ecx>
-	    mov cl,[base]
-	  else
-	    movzx reg,byte ptr [base]
-	  endif
-	endif
-    .endw
-    retm<reg>
-    endm
-
-SkipSpaceR macro reg, base
-    movzx reg,byte ptr [base]
-    .while byte ptr _ltype[reg+1] & _SPACE
-	sub base,1
-      ifidni <reg>,<eax>
-	mov al,[base]
-      else
-       ifidni <reg>,<ecx>
-	mov cl,[base]
-       else
-	movzx reg,byte ptr [base]
-       endif
-      endif
-    .endw
-    retm<reg>
-    endm
 
 endif

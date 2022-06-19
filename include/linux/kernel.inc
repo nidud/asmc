@@ -300,7 +300,7 @@ sys_lseek proto :int_t, :size_t, :uint_t {
     mov eax,SYS_LSEEK
     syscall
     }
-sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
+sys_mmap proto syscall :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     add rsi,_GRANULARITY-1
     and sil,-(_GRANULARITY)
     mov r10,rcx
@@ -308,7 +308,7 @@ sys_mmap proto :ptr, :size_t, :size_t, :size_t, :size_t, :size_t {
     mov eax,SYS_MMAP
     syscall
     }
-sys_munmap proto :ptr, :size_t {
+sys_munmap proto syscall :ptr, :size_t {
     mov eax,SYS_MUNMAP
     syscall
     }

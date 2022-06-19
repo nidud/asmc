@@ -23,7 +23,7 @@ define __LINNUM_INC
 
 LinnumInit          proto __ccall
 LinnumFini          proto __ccall
-QueueDeleteLinnum   proto __ccall :qdesc_t
+QueueDeleteLinnum   proto fastcall :qdesc_t
 
 endif
 

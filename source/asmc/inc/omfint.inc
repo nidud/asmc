@@ -137,7 +137,7 @@ define OBJ_BUFFER_SIZE 0x0FF0
     ends
    .ends
 
-omf_write_record    proto __ccall :ptr omf_rec
+omf_write_record    proto fastcall :ptr omf_rec
 
 define FIX_GEN_MAX          11   ; max size needed for OmfFixGenFix()
 define FIX_GEN_MODEND_MAX   9    ; max size needed for OmfFixGenFixModend()

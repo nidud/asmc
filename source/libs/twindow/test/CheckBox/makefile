@@ -1,6 +1,6 @@
-all: test.exe clean
+all: CheckBox.exe clean
 
-test.exe:
+CheckBox.exe:
     asmc64 -nologo $*.asm
     iddc -win64 DZPanelOptions.IDD
     linkw sys tcon_64 file $*, DZPanelOptions

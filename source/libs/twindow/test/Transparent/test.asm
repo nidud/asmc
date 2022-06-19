@@ -5,7 +5,7 @@ include twindow.inc
 
 cmain proc this:ptr TWindow, argc:int_t, argv:array_t, environ:array_t
 
-    this.Clear(' ')
+;    this.Clear(' ')
     this.PutFrame(MTRECT(9, 9, 13, 3), 0, 0x1F)
     this.PutString(10, 10, 0x1E1F, 0, " &Some &Text ")
     this.Show()

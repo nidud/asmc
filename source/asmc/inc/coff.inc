@@ -41,6 +41,6 @@ define __COFF_INC
     size            dd ?
    .ends
 
-coff_init proto __ccall :ptr module_info
+coff_init proto fastcall :ptr module_info
 
 endif

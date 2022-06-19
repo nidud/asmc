@@ -1,24 +1,28 @@
-res( DOT_LOW,	low_op	   )
-res( DOT_HIGH,	high_op	   )
-res( LOWWORD,	lowword_op )
-res( HIGHWORD,	highword_op)
-res( LOW32,	low32_op   )
-res( HIGH32,	high32_op  )
-res( OFFSET,	offset_op  )
-res( LROFFSET,	offset_op  )
-res( IMAGEREL,	offset_op  )
-res( SECTIONREL, offset_op )
-res( SEG,	seg_op	   )
-res( OPATTR,	opattr_op  )
-res( DOT_TYPE,	opattr_op  )
-res( DOT_SIZE,	sizlen_op  )
-res( SIZEOF,	sizlen_op  )
-res( DOT_LENGTH, sizlen_op  )
-res( LENGTHOF,	sizlen_op  )
-res( SHORT,	short_op   )
-res( DOT_THIS,	this_op	   )
-res( TYPEOF,	type_op	   )
-res( DOT_MASK,	wimask_op  )
-res( DOT_WIDTH, wimask_op  )
-res( LOW64,	low64_op   )
-res( HIGH64,	high64_op  )
+
+.enum unary_operand_types {
+
+    UOT_DOT_LOW,
+    UOT_DOT_HIGH,
+    UOT_LOWWORD,
+    UOT_HIGHWORD,
+    UOT_LOW32,
+    UOT_HIGH32,
+    UOT_OFFSET,
+    UOT_LROFFSET,
+    UOT_IMAGEREL,
+    UOT_SECTIONREL,
+    UOT_SEG,
+    UOT_OPATTR,
+    UOT_DOT_TYPE,
+    UOT_DOT_SIZE,
+    UOT_SIZEOF,
+    UOT_DOT_LENGTH,
+    UOT_LENGTHOF,
+    UOT_SHORT,
+    UOT_DOT_THIS,
+    UOT_TYPEOF,
+    UOT_DOT_MASK,
+    UOT_DOT_WIDTH,
+    UOT_LOW64,
+    UOT_HIGH64
+    }

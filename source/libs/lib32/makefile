@@ -1,6 +1,6 @@
 !include srcpath
 
-AFLAGS	= -coff -Cs -Zi -I$(inc_dir)
+AFLAGS	= -D_CRTBLD -coff -Cs -Zi8 -I$(inc_dir)
 LFLAGS	= -q -b -n -c -fac
 
 target_path = $(lib_dir)\x86

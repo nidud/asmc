@@ -2,17 +2,128 @@
 
 ifndef __TWINDOW_INC
 define __TWINDOW_INC
+
 include wincon.inc
 include winuser.inc
+
 ifndef WM_MOUSEWHEEL
 define WM_MOUSEWHEEL 0x020A
 endif
 
-ifdef _UNICODE
-.pragma comment(lib, TWinW)
-else
+ifndef _UNICODE
+
+define CFTEXT   CF_TEXT
+
+define _tlodsb  <lodsb>
+define _tscasb  <scasb>
+define _tstosb  <stosb>
+define _tal     <al>
+
+_tshr macro reg
+    endm
+_tshl macro reg
+    endm
+
 .pragma comment(lib, TWinA)
+
+.enum BoxDrawing { ; ASCII code page 850
+
+    U_LIGHT_HORIZONTAL          = 'Ä',
+    U_LIGHT_VERTICAL            = '³',
+    U_LIGHT_DOWN_AND_RIGHT      = 'Ú',
+    U_LIGHT_DOWN_AND_LEFT       = '¿',
+    U_LIGHT_UP_AND_RIGHT        = 'À',
+    U_LIGHT_UP_AND_LEFT         = 'Ù',
+    U_LIGHT_VERTICAL_AND_RIGHT  = 'Ã',
+    U_LIGHT_VERTICAL_AND_LEFT   = '´',
+    U_LIGHT_DOWN_AND_HORIZONTAL = 'Â',
+    U_LIGHT_UP_AND_HORIZONTAL   = 'Á',
+
+    U_DOUBLE_HORIZONTAL         = 'Í',
+    U_DOUBLE_VERTICAL           = 'º',
+    U_DOUBLE_DOWN_AND_RIGHT     = 'É',
+    U_DOUBLE_DOWN_AND_LEFT      = '»',
+    U_DOUBLE_UP_AND_RIGHT       = 'È',
+    U_DOUBLE_UP_AND_LEFT        = '¼',
+
+    U_UPPER_HALF_BLOCK          = 'ß', ; Block elements
+    U_LOWER_HALF_BLOCK          = 'Ü',
+    U_FULL_BLOCK                = 'Û',
+    U_LIGHT_SHADE               = '°',
+    U_MEDIUM_SHADE              = '±',
+    U_DARK_SHADE                = '²',
+
+    U_BLACK_RIGHT_POINTER       = 0x10,
+    U_BLACK_LEFT_POINTER        = 0x11,
+    U_BLACK_UP_TRIANGLE         = 0x1E,
+    U_BLACK_DOWN_TRIANGLE       = 0x1F,
+    U_BULLET_OPERATOR           = 0x07,
+    U_MIDDLE_DOT                = 'ú',
+
+    }
+
+else
+
+define CFTEXT   CF_UNICODETEXT
+
+define _tlodsb  <lodsw>
+define _tscasb  <scasw>
+define _tstosb  <stosw>
+define _tal     <ax>
+
+_tshr macro reg
+    shr reg,1
+    endm
+_tshl macro reg
+    shl reg,1
+    endm
+
+.pragma comment(lib, TWinW)
+
+.enum BoxDrawing { ; Unicode
+
+    U_LIGHT_HORIZONTAL          = 0x2500,
+    U_LIGHT_VERTICAL            = 0x2502,
+    U_LIGHT_DOWN_AND_RIGHT      = 0x250C,
+    U_LIGHT_DOWN_AND_LEFT       = 0x2510,
+    U_LIGHT_UP_AND_RIGHT        = 0x2514,
+    U_LIGHT_UP_AND_LEFT         = 0x2518,
+    U_LIGHT_VERTICAL_AND_RIGHT  = 0x251C,
+    U_LIGHT_VERTICAL_AND_LEFT   = 0x2524,
+    U_LIGHT_DOWN_AND_HORIZONTAL = 0x252C,
+    U_LIGHT_UP_AND_HORIZONTAL   = 0x2534,
+
+    U_DOUBLE_HORIZONTAL         = 0x2550,
+    U_DOUBLE_VERTICAL           = 0x2551,
+    U_DOUBLE_DOWN_AND_RIGHT     = 0x2554,
+    U_DOUBLE_DOWN_AND_LEFT      = 0x2557,
+    U_DOUBLE_UP_AND_RIGHT       = 0x255A,
+    U_DOUBLE_UP_AND_LEFT        = 0x255D,
+
+    U_LIGHT_ARC_DOWN_AND_RIGHT  = 0x256D,
+    U_LIGHT_ARC_DOWN_AND_LEFT   = 0x256E,
+    U_LIGHT_ARC_UP_AND_LEFT     = 0x256F,
+    U_LIGHT_ARC_UP_AND_RIGHT    = 0x2570,
+
+    U_UPPER_HALF_BLOCK          = 0x2580, ; Block elements
+    U_LOWER_HALF_BLOCK          = 0x2584,
+    U_FULL_BLOCK                = 0x2588,
+    U_LIGHT_SHADE               = 0x2591,
+    U_MEDIUM_SHADE              = 0x2592,
+    U_DARK_SHADE                = 0x2593,
+
+    U_BLACK_RIGHT_POINTER       = 0x25BA,
+    U_BLACK_LEFT_POINTER        = 0x25C4,
+    U_BLACK_UP_TRIANGLE         = 0x25B2,
+    U_BLACK_DOWN_TRIANGLE       = 0x25BC,
+
+    U_BULLET_OPERATOR           = 0x2219,
+    U_MIDDLE_DOT                = 0x00B7,
+
+    }
+
 endif
+
 
 .enum ColorAttrib : byte {
 

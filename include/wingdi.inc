@@ -5797,6 +5797,9 @@ define wglUseFontBitmaps  <wglUseFontBitmapsW>
 else
 define wglUseFontBitmaps  <wglUseFontBitmapsA>
 endif
+
+.pragma comment(lib, gdi32)
+
 SwapBuffers proto WINAPI :HDC
 
 _POINTFLOAT             struct
@@ -5816,6 +5819,8 @@ _GLYPHMETRICSFLOAT      ends
 GLYPHMETRICSFLOAT       typedef _GLYPHMETRICSFLOAT
 PGLYPHMETRICSFLOAT      typedef ptr _GLYPHMETRICSFLOAT
 LPGLYPHMETRICSFLOAT     typedef ptr _GLYPHMETRICSFLOAT
+
+.pragma comment(lib, opengl32)
 
 define WGL_FONT_LINES      0
 define WGL_FONT_POLYGONS   1

@@ -1,7 +1,7 @@
 ifndef __ERRNO_INC
 define __ERRNO_INC
 ifndef __LIBC_INC
- include libc.inc
+include libc.inc
 endif
 
 ifndef _ERRNO_T_DEFINED
@@ -13,24 +13,25 @@ endif
 
 ifndef _CRT_ERRNO_DEFINED
 define _CRT_ERRNO_DEFINED
-_errno		proto __ctype
-_set_errno	proto __ctype :int_t
-_get_errno	proto __ctype :ptr int_t
+_errno		proto
+_set_errno	proto :int_t
+_get_errno	proto :ptr int_t
 externdef	errno:errno_t
 endif
 
-__doserrno	proto __ctype
-_set_doserrno	proto __ctype :ulong_t
-_get_doserrno	proto __ctype :ptr ulong_t
-__sys_errlist	proto __ctype
+__doserrno	proto
+_set_doserrno	proto :ulong_t
+_get_doserrno	proto :ptr ulong_t
+__sys_errlist	proto
+
 externdef	_doserrno:errno_t
 externdef	_dos_errlist:array_t
 externdef	_sys_errlist:array_t
 externdef	_sys_nerr:int_t
-osmaperr	proto __ctype
 
-__sys_nerr	proto __ctype
-_dosmaperr	proto __ctype :ulong_t
+osmaperr	proto
+__sys_nerr	proto
+_dosmaperr	proto :ulong_t
 
 ENOERR		equ 0
 EPERM		equ 1

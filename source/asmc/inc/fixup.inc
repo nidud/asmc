@@ -93,6 +93,6 @@ CreateFixup	proto __ccall :ptr asym, :fixup_types, :fixup_options
 SetFixupFrame	proto __ccall :ptr asym, :char_t
 FreeFixup	proto __ccall :ptr fixup
 store_fixup	proto __ccall :ptr fixup, :ptr dsym, :ptr int_t
-BackPatch	proto __ccall :ptr asym
+BackPatch	proto fastcall :ptr asym
 
 endif

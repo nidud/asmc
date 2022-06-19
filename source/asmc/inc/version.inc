@@ -1,12 +1,12 @@
 ifndef __INC_VERSION
 define __INC_VERSION
 
-define ASMC_VERSION         233
+define ASMC_VERSION         234
 
 define ASMC_MAJOR_VER       2
-define ASMC_MINOR_VER       33
-define ASMC_SUBMINOR_VER    66
+define ASMC_MINOR_VER       34
+define ASMC_SUBMINOR_VER    0
 
-define ASMC_VERSSTR         <"2.33.66">
+define ASMC_VERSSTR         <"2.34">
 
 endif

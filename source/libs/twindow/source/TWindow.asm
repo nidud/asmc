@@ -347,66 +347,40 @@ TWindow::Child proc uses rdi rbx rcx rc:TRect, id:uint_t, type:uint_t
     .for ( rcx = [rbx].Prev : [rcx].Child : rcx = [rcx].Child )
     .endf
     mov [rcx].Child,rbx
-
-    .return( rbx )
+   .return( rbx )
 
 TWindow::Child endp
 
 
-Char2Unicode proc private
-
-    .switch pascal eax
-    .case 'Ä' : mov ax,0x2500
-    .case '³' : mov ax,0x2502
-    .case 'Ú' : mov ax,0x250C
-    .case '¿' : mov ax,0x2510
-    .case 'À' : mov ax,0x2514
-    .case 'Ù' : mov ax,0x2518
-    .case 'Ã' : mov ax,0x251C
-    .case '´' : mov ax,0x2524
-    .case 'Â' : mov ax,0x252C
-    .case 'Á' : mov ax,0x2534
-    .case 'Í' : mov ax,0x2550
-    .case 'º' : mov ax,0x2551
-    .case 'É' : mov ax,0x2554
-    .case '»' : mov ax,0x2557
-    .case 'È' : mov ax,0x255A
-    .case '¼' : mov ax,0x255D
-    .case 'ß' : mov ax,0x2580
-    .case 'Ü' : mov ax,0x2584
-
-    .endsw
-    ret
-
-Char2Unicode endp
-
-
 UnzipChar proc private
 
-    movzx eax,[rbx].rc.col
-    mul [rbx].rc.row
-    mov ecx,eax
+    movzx   eax,[rbx].rc.col
+    mul     [rbx].rc.row
+    mov     ecx,eax
+
     .repeat
-        movzx eax,byte ptr [rsi]
-        mov dl,[rsi]
-        add rsi,1
-        and dl,0xF0
-        .if dl == 0xF0
+
+        movzx   eax,byte ptr [rsi]
+        mov     dl,[rsi]
+        add     rsi,1
+        and     dl,0xF0
+
+        .if ( dl == 0xF0 )
+
             mov dh,al
             mov dl,[rsi]
             mov al,[rsi+1]
-            Char2Unicode()
             add rsi,2
             and edx,0x0FFF
+
             .repeat
                 mov [rdi],ax
                 add rdi,4
                 dec edx
-                .break .ifz
+               .break .ifz
             .untilcxz
             .break .if !ecx
         .else
-            Char2Unicode()
             mov [rdi],ax
             add rdi,4
         .endif
@@ -624,84 +598,52 @@ TWindow::PutChar proc uses rdi x:int_t, y:int_t, count:int_t, w:CHAR_INFO
         .untilcxz
     .endif
     mov rcx,r9
-    xor eax,eax
-    ret
+   .return(0)
 
 TWindow::PutChar endp
 
 
 TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, size:int_t, path:LPTSTR
 
-  local pre[16]:TCHAR
-
-    UNREFERENCED_PARAMETER(this)
-    UNREFERENCED_PARAMETER(x)
-    UNREFERENCED_PARAMETER(y)
     UNREFERENCED_PARAMETER(size)
 
     mov rsi,path
     mov ebx,r9d
 
-    .ifd _tcslen(rsi) > edi
+    .ifd _tcslen(rsi) > ebx
 
-        lea rcx,pre
-ifdef _UNICODE
-        mov rdx,[rsi]
-        mov r8w,[rsi+2]
-        lea rsi,[rsi+rax*2]
-        lea rax,[rdi*2]
-        sub rsi,rax
-        mov eax,8
-
-        .if r8w == ':'
-            mov [rcx],edx
-            shr rdx,16
-            mov dx,'.'
-            add rcx,4
-            add eax,4
-        .else
-            mov edx,(('/' shl 16) or '.')
+       .new pre[16]:TCHAR
+        mov rcx,rax
+        movzx eax,TCHAR ptr [rsi]
+        movzx edx,TCHAR ptr [rsi+TCHAR]
+        lea rsi,[rsi+rcx*TCHAR]
+        lea rcx,[rbx*TCHAR]
+        sub rsi,rcx
+        lea rdi,pre
+        mov r10,rdi
+        .if ( edx == ':' )  ; "/../"
+            _tstosb         ; "D:/../"
+            mov eax,edx
+            _tstosb
         .endif
-
-        mov r8d,edx
-        shr r8d,16
-        add rsi,rax
-        shr eax,1
-        sub edi,eax
-
-        mov [rcx],r8w
-        mov [rcx+2],dx
-        mov [rcx+4],edx
-        mov word ptr [rcx+8],0
-else
-        mov edx,[rsi]
-        add rsi,rax
-        sub rsi,rdi
-        mov eax,4
-
-        .if dh == ':'
-            mov [rcx],dx
-            shr edx,8
-            mov dl,'.'
-            add rcx,2
-            add eax,2
-        .else
-            mov dx,'/.'
-        .endif
-        add rsi,rax
-        sub edi,eax
-        mov [rcx],dh
-        mov [rcx+1],dl
-        mov [rcx+2],dx
-        mov byte ptr [rcx+4],0
-endif
-        mov rcx,this
+        mov eax,'/'
+        _tstosb
+        mov eax,'.'
+        _tstosb
+        _tstosb
+        mov eax,'/'
+        _tstosb
+        mov rcx,rdi
+        sub rcx,r10
+        xor eax,eax
+        _tstosb
+        add rsi,rcx
+        _tshr ecx
         mov edx,x
-        add x,eax
-        [rcx].PutString(x, y, 0, 6, &pre)
+        add x,ecx
+        this.PutString(edx, y, 0, 6, r10)
     .endif
-    mov rcx,this
-    [rcx].PutString(x, y, 0, ebx, rsi)
+    this.PutString(x, y, 0, ebx, rsi)
     ret
 
 TWindow::PutPath endp
@@ -715,11 +657,8 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, size:int_t, format:LPTSTR
   local buffer[4096]:char_t
   local retval:int_t
 
-    UNREFERENCED_PARAMETER(this)
-    UNREFERENCED_PARAMETER(x)
     UNREFERENCED_PARAMETER(y)
     UNREFERENCED_PARAMETER(at)
-    UNREFERENCED_PARAMETER(size)
 
     mov eax,r9d
     mov attrib,al
@@ -746,7 +685,7 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, size:int_t, format:LPTSTR
     mov     rcx,this
     mov     r11d,size
 
-    .if !r11d
+    .if ( r11d == 0 )
 
         mov r11b,[rcx].rc.col
         sub r11d,x
@@ -758,43 +697,31 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, size:int_t, format:LPTSTR
     shl     r9d,2
     mov     r10,rdx
 
-ifdef _UNICODE
-    .for ( ax = [r8] : ax && r11d : r8 += 2, ax = [r8], r11d-- )
-        .if ax == 10
+    .for ( _tal = [r8] : _tal && r11d : r8 += TCHAR, _tal = [r8], r11d-- )
+
+        .if ( _tal == 10 )
+
             add r10,r9
             mov rdx,r10
             mov r11b,[rcx].rc.col
             sub r11d,x
-        .elseif ax == 9
+
+        .elseif ( _tal == 9 )
+
             add rdx,4*4
-        .elseif ax == '&' && highat
-            add r8,2
+
+        .elseif ( _tal == '&' && highat )
+
+            add r8,TCHAR
             mov al,highat
             mov [rdx+2],al
-            mov ax,[r8]
-            mov [rdx],ax
+            mov _tal,[r8]
+            mov [rdx],_tal
             add rdx,4
+
         .else
-            mov [rdx],ax
-else
-    .for ( al = [r8] : al && r11d : r8++, al = [r8], r11d-- )
-        .if al == 10
-            add r10,r9
-            mov rdx,r10
-            mov r11b,[rcx].rc.col
-            sub r11d,x
-        .elseif al == 9
-            add rdx,4*4
-        .elseif al == '&' && highat
-            inc r8
-            mov al,highat
-            mov [rdx+2],al
-            mov al,[r8]
-            mov [rdx],al
-            add rdx,4
-        .else
-            mov [rdx],al
-endif
+
+            mov [rdx],_tal
             mov al,attrib
             .if al
                 mov [rdx+2],al
@@ -830,12 +757,12 @@ TWindow::PutTitle endp
 
 
 frame_type  struct
-BottomRight db ?
-BottomLeft  db ?
-Vertical    db ?
-TopRight    db ?
-Horizontal  db ?
-TopLeft     db ?
+Vertical    dw ?
+Horizontal  dw ?
+TopLeft     dw ?
+TopRight    dw ?
+BottomLeft  dw ?
+BottomRight dw ?
 Cols        db ?
 Rows        db ?
 frame_type  ends
@@ -848,19 +775,34 @@ TWindow::PutFrame proc uses rsi rdi rcx rc:TRect, type:int_t, Attrib:uchar_t
     UNREFERENCED_PARAMETER(rc)
     UNREFERENCED_PARAMETER(type)
     UNREFERENCED_PARAMETER(Attrib)
-    ;
-    ; https://en.wikipedia.org/wiki/Box-drawing_character
-    ;
+
+    mov ft.Vertical,    U_LIGHT_VERTICAL
+    mov ft.Horizontal,  U_LIGHT_HORIZONTAL
+    mov ft.TopLeft,     U_LIGHT_DOWN_AND_RIGHT
+    mov ft.TopRight,    U_LIGHT_DOWN_AND_LEFT
+    mov ft.BottomLeft,  U_LIGHT_UP_AND_RIGHT
+    mov ft.BottomRight, U_LIGHT_UP_AND_LEFT
+
     .switch pascal r8
-      .case 0 : mov rax,0x0C0010021418 ; ÚÄ¿³ÀÙ
-      .case 1 : mov rax,0x545057515A5D ; ÉÍ»ºÈ¼
-      .case 2 : mov rax,0x2C002C023434 ; ÂÄÂ³ÁÁ
-      .case 3 : mov rax,0x1C0024021C24 ; ÃÄ´³Ã´
-      .default
-        .return 0
+    .case 1
+        mov ft.Vertical,    U_DOUBLE_VERTICAL
+        mov ft.Horizontal,  U_DOUBLE_HORIZONTAL
+        mov ft.TopLeft,     U_DOUBLE_DOWN_AND_RIGHT
+        mov ft.TopRight,    U_DOUBLE_DOWN_AND_LEFT
+        mov ft.BottomLeft,  U_DOUBLE_UP_AND_RIGHT
+        mov ft.BottomRight, U_DOUBLE_UP_AND_LEFT
+    .case 2
+        mov ft.TopLeft,     U_LIGHT_DOWN_AND_HORIZONTAL
+        mov ft.TopRight,    U_LIGHT_DOWN_AND_HORIZONTAL
+        mov ft.BottomLeft,  U_LIGHT_UP_AND_HORIZONTAL
+        mov ft.BottomRight, U_LIGHT_UP_AND_HORIZONTAL
+    .case 3
+        mov ft.TopLeft,     U_LIGHT_VERTICAL_AND_RIGHT
+        mov ft.TopRight,    U_LIGHT_VERTICAL_AND_LEFT
+        mov ft.BottomLeft,  U_LIGHT_VERTICAL_AND_RIGHT
+        mov ft.BottomRight, U_LIGHT_VERTICAL_AND_LEFT
     .endsw
 
-    mov     ft,rax
     movzx   eax,[rcx].rc.col
     mul     dh
     mov     edi,eax
@@ -877,19 +819,18 @@ TWindow::PutFrame proc uses rsi rdi rcx rc:TRect, type:int_t, Attrib:uchar_t
     shl     edx,2
     lea     r8,[rdi+rdx]
     shl     eax,16
-    mov     ah,0x25
-    mov     al,ft.TopLeft
+    mov     ax,ft.TopLeft
     movzx   r9d,ft.Cols
 
     .ifnz
 
         stosd
-        mov     al,ft.Horizontal
+        mov     ax,ft.Horizontal
         movzx   ecx,ft.Cols
         rep     stosd
-        mov     al,ft.TopRight
+        mov     ax,ft.TopRight
         stosd
-        mov     al,ft.Vertical
+        mov     ax,ft.Vertical
 
         .for ( ecx = 0 : cl < ft.Rows : ecx++ )
 
@@ -900,25 +841,25 @@ TWindow::PutFrame proc uses rsi rdi rcx rc:TRect, type:int_t, Attrib:uchar_t
         .endf
 
         mov     rdi,r8
-        mov     al,ft.BottomLeft
+        mov     ax,ft.BottomLeft
         stosd
-        mov     al,ft.Horizontal
+        mov     ax,ft.Horizontal
         movzx   ecx,ft.Cols
         rep     stosd
-        mov     al,ft.BottomRight
+        mov     ax,ft.BottomRight
         stosd
 
     .else
 
         mov [rdi],ax
-        mov al,ft.Horizontal
+        mov ax,ft.Horizontal
         add rdi,4
         .for ( ecx = 0 : ecx < r9d : ecx++, rdi += 4 )
             mov [rdi],ax
         .endf
-        mov al,ft.TopRight
+        mov ax,ft.TopRight
         mov [rdi],ax
-        mov al,ft.Vertical
+        mov ax,ft.Vertical
         .for ( ecx = 0 : cl < ft.Rows : ecx++ )
             mov rdi,r8
             add r8,rdx
@@ -926,14 +867,14 @@ TWindow::PutFrame proc uses rsi rdi rcx rc:TRect, type:int_t, Attrib:uchar_t
             mov [rdi+r9*4+4],ax
         .endf
         mov rdi,r8
-        mov al,ft.BottomLeft
+        mov ax,ft.BottomLeft
         mov [rdi],ax
         add rdi,4
-        mov al,ft.Horizontal
+        mov ax,ft.Horizontal
         .for ( ecx = 0 : ecx < r9d : ecx++, rdi += 4 )
             mov [rdi],ax
         .endf
-        mov al,ft.BottomRight
+        mov ax,ft.BottomRight
         mov [rdi],ax
     .endif
     ret
@@ -964,15 +905,12 @@ TWindow::PutCenter endp
 
 TWindow::CGetChar proc uses rsi rdi rcx x:int_t, y:int_t
 
-  local ci:CHAR_INFO
-  local NumberOfAttrsRead:dword
+   .new ci:CHAR_INFO = {0}
+   .new NumberOfAttrsRead:dword
 
     UNREFERENCED_PARAMETER(this)
     UNREFERENCED_PARAMETER(x)
     UNREFERENCED_PARAMETER(y)
-
-    mov     ci.Attributes,0
-    mov     ci.UnicodeChar,0
 
     mov     rsi,[rcx].Class
     movzx   edi,r8b
@@ -980,7 +918,7 @@ TWindow::CGetChar proc uses rsi rdi rcx x:int_t, y:int_t
     mov     di,dx
 
     ReadConsoleOutputAttribute( [rsi].StdOut, &ci.Attributes,  1, edi, &NumberOfAttrsRead )
-    ReadConsoleOutputCharacterW( [rsi].StdOut, &ci.UnicodeChar, 1, edi, &NumberOfAttrsRead )
+    ReadConsoleOutputCharacter( [rsi].StdOut, &ci.UnicodeChar, 1, edi, &NumberOfAttrsRead )
 
     mov eax,0x00FFFFFF
     and eax,ci
@@ -1008,14 +946,15 @@ TWindow::CPutChar proc uses rsi rdi rbx rcx x:int_t, y:int_t, count:int_t, ci:CH
         FillConsoleOutputAttribute( [rsi].StdOut, ci.Attributes,  ebx, edi, &NumberWritten )
     .endif
     .if ci.UnicodeChar
-        FillConsoleOutputCharacterW( [rsi].StdOut, ci.UnicodeChar, ebx, edi, &NumberWritten )
+        FillConsoleOutputCharacter( [rsi].StdOut, ci.UnicodeChar, ebx, edi, &NumberWritten )
     .endif
     ret
 
 TWindow::CPutChar endp
 
 
-TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, size:int_t, format:LPTSTR, argptr:vararg
+TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, size:int_t,
+        format:LPTSTR, argptr:vararg
 
   local buffer[4096]:char_t
   local ci:CHAR_INFO
@@ -1048,11 +987,7 @@ TWindow::CPutString proc uses rsi rdi rbx rcx x:int_t, y:int_t, at:ushort_t, siz
     .for ( rsi = &buffer : TCHAR ptr [rsi] && size : rsi++, size-- )
 
         mov eax,ci
-ifdef _UNICODE
-        mov ax,[rsi]
-else
-        mov al,[rsi]
-endif
+        mov _tal,[rsi]
         .switch
         .case ax == 10
             inc     y
@@ -1060,7 +995,7 @@ endif
             movzx   ecx,[rbx].rc.col
             sub     ecx,eax
             mov     size,ecx
-            .endc
+           .endc
         .case ax == 9
             add     sx,4
             .endc
@@ -1068,11 +1003,7 @@ endif
             add     rsi,TCHAR
             movzx   eax,highat
             shl     eax,16
-ifdef _UNICODE
-            mov ax,[rsi]
-else
-            mov al,[rsi]
-endif
+            mov     _tal,[rsi]
         .default
             [rbx].CPutChar( sx, y, 1, eax )
             inc     sx
@@ -1085,96 +1016,70 @@ TWindow::CPutString endp
 
 TWindow::CPutPath proc uses rsi rdi rbx rcx x:int_t, y:int_t, size:int_t, path:LPTSTR
 
-  local pre[16]:TCHAR
-
-    UNREFERENCED_PARAMETER(this)
     UNREFERENCED_PARAMETER(size)
 
     mov rsi,[rcx].Class
-    mov rbx,[rsi].Console
-
+    mov this,[rsi].Console
     mov rsi,path
-    mov edi,r9d
+    mov ebx,r9d
 
-    .ifd _tcslen(rsi) > edi
+    .ifd _tcslen(rsi) > ebx
 
-        lea rcx,pre
-
-ifdef _UNICODE
-
-        mov rdx,[rsi]
-        mov r8w,[rsi+2]
-        lea rsi,[rsi+rax*2]
-        lea rax,[rdi*2]
-        sub rsi,rax
-        mov eax,8
-
-        .if r8w == ':'
-            mov [rcx],edx
-            shr rdx,16
-            mov dx,'.'
-            add rcx,4
-            add eax,4
-        .else
-            mov edx,(('/' shl 16) or '.')
+       .new pre[16]:TCHAR
+        mov rcx,rax
+        movzx eax,TCHAR ptr [rsi]
+        movzx edx,TCHAR ptr [rsi+TCHAR]
+        lea rsi,[rsi+rcx*TCHAR]
+        lea rcx,[rbx*TCHAR]
+        sub rsi,rcx
+        lea rdi,pre
+        mov r10,rdi
+        .if ( edx == ':' )  ; "/../"
+            _tstosb         ; "D:/../"
+            mov eax,edx
+            _tstosb
         .endif
-        mov r8d,edx
-        shr r8d,16
-        add rsi,rax
-        shr eax,1
-        sub edi,eax
-        mov [rcx],r8w
-        mov [rcx+2],dx
-        mov [rcx+4],edx
-        mov word ptr [rcx+8],0
-else
-        mov edx,[rsi]
-        add rsi,rax
-        sub rsi,rdi
-        mov eax,4
-
-        .if dh == ':'
-            mov [rcx],dx
-            shr edx,8
-            mov dl,'.'
-            add rcx,2
-            add eax,2
-        .else
-            mov dx,'/.'
-        .endif
-        add rsi,rax
-        sub edi,eax
-        mov [rcx],dh
-        mov [rcx+1],dl
-        mov [rcx+2],dx
-        mov byte ptr [rcx+4],0
-endif
+        mov eax,'/'
+        _tstosb
+        mov eax,'.'
+        _tstosb
+        _tstosb
+        mov eax,'/'
+        _tstosb
+        mov rcx,rdi
+        sub rcx,r10
+        xor eax,eax
+        _tstosb
+        add rsi,rcx
+        _tshr ecx
         mov edx,x
-        add x,eax
-        [rbx].CPutString(edx, y, 0, 6, &pre)
+        add x,ecx
+        this.CPutString(edx, y, 0, 6, r10)
     .endif
-    .return [rbx].CPutString(x, y, 0, edi, rsi)
-
+    .return this.CPutString(x, y, 0, ebx, rsi)
 
 TWindow::CPutPath endp
 
 
-TWindow::CPutCenter proc uses rsi rdi rbx x:int_t, y:int_t, l:int_t, string:LPTSTR
+TWindow::CPutCenter proc uses rsi rdi rcx x:int_t, y:int_t, l:int_t, string:LPTSTR
 
-    UNREFERENCED_PARAMETER(this)
+    UNREFERENCED_PARAMETER(x)
     UNREFERENCED_PARAMETER(l)
 
     mov rsi,[rcx].Class
-    mov rbx,[rsi].Console
+    mov this,[rsi].Console
     mov rsi,string
     mov edi,r9d
-    .return [rbx].CPutPath(x, y, edi, rsi) .ifd _tcslen(rsi) > edi
+
+    .ifd _tcslen(rsi) > edi
+
+        .return this.CPutPath(x, y, edi, rsi)
+    .endif
 
     sub edi,eax
     shr edi,1
-    add x,edi
-    [rbx].CPutString(x, y, 0, eax, rsi)
-    ret
+    add edi,x
+   .return this.CPutString(edi, y, 0, eax, rsi)
 
 TWindow::CPutCenter endp
 
@@ -1199,7 +1104,7 @@ TWindow::CPutBackground proc uses rsi rdi rbx rcx x:int_t, y:int_t, count:int_t,
     mov rsi,[rcx].Class
     .if ReadConsoleOutputAttribute( [rsi].StdOut, &at, ebx, pos, &NumberOfAttrsRead )
 
-        .for rdi = &at, ebx = NumberOfAttrsRead : ebx : ebx--, rdi+=2, pos.x++
+        .for ( rdi = &at, ebx = NumberOfAttrsRead : ebx : ebx--, rdi+=2, pos.x++ )
 
             movzx edx,bg
             shl dl,4
@@ -1239,11 +1144,11 @@ TWindow::PushButton proc uses rsi rdi rbx rcx rc:TRect, id:uint_t, title:LPTSTR
     and     eax,0xF0
     or      al,[rdx+FG_PBSHADE]
     shl     eax,16
-    mov     ax,0x2584 ; 'Ü'
+    mov     ax,U_LOWER_HALF_BLOCK
     mov     [rdi],eax
     lea     rdi,[r11+r8*4+4]
     movzx   ecx,[rbx].rc.col
-    mov     ax,0x2580 ; 'ß'
+    mov     ax,U_UPPER_HALF_BLOCK
     rep     stosd
     lea     rdi,[r11+8]
     movzx   eax,byte ptr [rdx+BG_PUSHBUTTON]
@@ -1254,25 +1159,14 @@ TWindow::PushButton proc uses rsi rdi rbx rcx rc:TRect, id:uint_t, title:LPTSTR
 
     .while 1
 
-ifndef _UNICODE
-        lodsb
-        .break .if !al
-        .if al != '&'
-else
-        lodsw
-        .break .if !ax
-        .if ax != '&'
-endif
+        _tlodsb
+        .break .if !_tal
+        .if _tal != '&'
             stosd
             .continue(0)
         .else
-ifndef _UNICODE
-            lodsb
-            .break .if !al
-else
-            lodsw
-            .break .if !ax
-endif
+            _tlodsb
+            .break .if !_tal
             mov [rdi],ax
             mov [rdi+2],cx
             add rdi,4
@@ -1329,7 +1223,6 @@ TWReadLine proc private uses rsi rdi rbx this:window_t, x:int_t, y:int_t, l:int_
         ReadConsoleOutput(rcx, rsi, r8d, 0, &rc)
         mov rax,rsi
     .endif
-
     mov rcx,rbx
     ret
 
@@ -1450,7 +1343,7 @@ TWindow::Move proc uses rsi rdi rbx r12 x:int_t, y:int_t
 
     .return .if !rax
 
-    .for Direction = 0 : count : count--
+    .for ( Direction = 0 : count : count-- )
 
         movzx esi,[rbx].rc.x
         movzx edi,[rbx].rc.y
@@ -1472,13 +1365,16 @@ TWindow::Move proc uses rsi rdi rbx r12 x:int_t, y:int_t
             .endif
             mov lx,esi
             mov ly,edi
+
             mov ecx,esi
             add ecx,Cols
             mov r8d,Rows
             not r8d
             mov r9,TWReadLine(rbx, ecx, edi, r8d)
             inc [rbx].rc.x
-            .for edx=Rows, rsi=[rbx].Window, rdi=rax : edx : edx--, rdi+=4
+
+            .for ( edx = Rows, rsi = [rbx].Window, rdi = rax : edx : edx--, rdi += 4 )
+
                 mov eax,[rsi]
                 mov r8d,[rdi]
                 mov [rdi],eax
@@ -1494,7 +1390,7 @@ TWindow::Move proc uses rsi rdi rbx r12 x:int_t, y:int_t
             mov r8d,Rows
             not r8d
             TWWriteLine(rbx, lx, ly, r8d, r9)
-            .endc
+           .endc
 
         .case <Left> esi > x
             mov eax,Direction
@@ -1545,7 +1441,7 @@ TWindow::Move proc uses rsi rdi rbx r12 x:int_t, y:int_t
             add ecx,lx
             dec ecx
             TWWriteLine(rbx, ecx, ly, l, r12)
-            .endc
+           .endc
 
         .case <Up> edi > y
             mov Direction,3
@@ -1576,27 +1472,36 @@ TWindow::Move proc uses rsi rdi rbx r12 x:int_t, y:int_t
             .endc
 
         .case <Down> edi < y
+
             mov Direction,3
             mov edx,edi
             add edx,Rows
+
             TWReadLine(rbx, esi, edx, Cols)
+
             inc [rbx].rc.y
             mov r12d,Cols
             shl r12d,2
+
             TWWriteLine(rbx, esi, edi, Cols, memxchg(rax, [rbx].Window, r12))
-            .for esi=Rows, esi--, rdi=[rbx].Window : esi : esi--, rdi+=r12
+
+            .for ( esi = Rows, esi--, rdi = [rbx].Window : esi : esi--, rdi += r12 )
                 memxchg(rdi, &[rdi+r12], r12)
             .endf
             .endc
         .endsw
 
         .if [rbx].Flags & W_TRANSPARENT
+
             mov rdi,[rbx].Window
             mov rsi,wp
             mov eax,Cols
             mul Rows
+
             .for ( ecx = eax, edx = 0 : edx < ecx : edx++ )
+
                 .if ( byte ptr [rsi+rdx*4+2] == 0x08 )
+
                     mov ax,[rdi+rdx*4]
                     mov [rsi+rdx*4],ax
                 .endif
@@ -1753,7 +1658,7 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM
 
     lea rsi,[rcx].Context
     .switch [rcx].Type
-      .case T_NORMAL
+    .case T_NORMAL
         .if ( [rsi].State == 0 )
             mov rcx,[rcx].Child
             .return [rcx].Send(edx, r8, r9) .if rcx
@@ -1766,37 +1671,37 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM
         .endif
         [rcx].SetFocus( [rcx].Index )
         .endc
-      .case T_PUSHBUTTON
+    .case T_PUSHBUTTON
         .return 1 .if ( [rsi].State == 0 )
         mov [rsi].State,0
         ContextRect(rcx)
         movzx edi,ah
         movzx edx,al
         inc edx
-        [rcx].CPutChar( edx, edi, 1, 0x2584 ) ; 'Ü'
+        [rcx].CPutChar( edx, edi, 1, U_LOWER_HALF_BLOCK )
         movzx edx,[rsi].rc.x
         inc edx
         inc edi
-        [rcx].CPutChar( edx, edi, [rsi].rc.col, 0x2580 ) ; 'ß'
+        [rcx].CPutChar( edx, edi, [rsi].rc.col, U_UPPER_HALF_BLOCK )
         xor edx,edx
         test [rcx].Flags,O_DEXIT
         cmovz edx,[rcx].Index
         .return [rcx].PostQuit(edx)
-      .case T_RADIOBUTTON
+    .case T_RADIOBUTTON
         .return 1 .if ( [rsi].State == 0 )
         mov [rsi].State,0
         .endc
-      .case T_CHECKBOX
-      .case T_XCELL
+    .case T_CHECKBOX
+    .case T_XCELL
         ;[rcx].SetFocus( [rcx].Index )
         ;.endc
-      .case T_EDIT
-      .case T_MENU
-      .case T_XHTML
-      .case T_MOUSE
-      .case T_SCROLLUP
-      .case T_SCROLLDOWN
-      .case T_TEXTBUTTON
+    .case T_EDIT
+    .case T_MENU
+    .case T_XHTML
+    .case T_MOUSE
+    .case T_SCROLLUP
+    .case T_SCROLLDOWN
+    .case T_TEXTBUTTON
         .return 1
     .endsw
     .return(0)
@@ -1857,11 +1762,11 @@ OnSetFocus proc uses rsi rdi rbx rcx hwnd:window_t
         movzx edx,al
         mov ebx,' '
         .if [rcx].Context.State == 0
-            mov ebx,0x25BA
+            mov ebx,U_BLACK_RIGHT_POINTER
         .endif
         [rcx].CPutChar(edx, edi, 1, ebx)
         .if [rcx].Context.State == 0
-            mov ebx,0x25C4
+            mov ebx,U_BLACK_LEFT_POINTER
         .endif
         movzx edx,[rcx].Context.rc.x
         add dl,[rcx].Context.rc.col
@@ -1918,7 +1823,7 @@ OnKillFocus proc uses rsi rdi rbx rcx hwnd:window_t
     [rcx].CursorSet()
 
     .switch [rcx].Type
-      .case T_PUSHBUTTON
+    .case T_PUSHBUTTON
         ContextRect(rcx)
         movzx edi,ah
         movzx esi,al
@@ -1926,11 +1831,11 @@ OnKillFocus proc uses rsi rdi rbx rcx hwnd:window_t
         lea rdx,[rdx+rsi-1]
         [rcx].CPutChar(edx, edi, 1, ' ')
         [rcx].CPutChar(esi, edi, 1, ' ')
-        .endc
-      .case T_RADIOBUTTON
-      .case T_CHECKBOX
-        .endc
-      .case T_XCELL
+       .endc
+    .case T_RADIOBUTTON
+    .case T_CHECKBOX
+       .endc
+    .case T_XCELL
         mov rax,[rcx].Window
         .endc .if !rax
         mov edx,[rcx].rc
@@ -1942,15 +1847,15 @@ OnKillFocus proc uses rsi rdi rbx rcx hwnd:window_t
         [rcx].Release()
         xor eax,eax
         mov [rbx].Window,rax
-        .endc
-      .case T_EDIT
-      .case T_MENU
-      .case T_XHTML
-      .case T_MOUSE
-      .case T_SCROLLUP
-      .case T_SCROLLDOWN
-      .case T_TEXTBUTTON
-        .endc
+       .endc
+    .case T_EDIT
+    .case T_MENU
+    .case T_XHTML
+    .case T_MOUSE
+    .case T_SCROLLUP
+    .case T_SCROLLDOWN
+    .case T_TEXTBUTTON
+       .endc
     .endsw
     .return(0)
 
@@ -1966,7 +1871,7 @@ NextItem proc uses rcx hwnd:window_t
     .if rcx == NULL
         mov rcx,[rax].TWindow.Prev
         mov rcx,[rcx].Child
-        .return .if !rcx
+       .return .if !rcx
     .endif
     [rcx].SetFocus([rcx].Index)
     ret
@@ -2002,22 +1907,27 @@ ItemRight proc uses rcx hwnd:window_t
     UNREFERENCED_PARAMETER(hwnd)
 
     .if [rcx].GetFocus()
+
         mov rcx,rax
         mov edx,[rcx].rc
+
         .while 1
+
             .for ( rax = [rcx].Child : rax : rax = [rax].TWindow.Child )
+
                 .break .if !( [rax].TWindow.Flags & O_STATE )
             .endf
             .break .if !rax
+
             mov rcx,rax
             .if ( dl < [rcx].rc.x && dh == [rcx].rc.y )
+
                 [rcx].SetFocus([rcx].Index)
-                .return 0
+               .return 0
             .endif
         .endw
     .endif
-    mov eax,1
-    ret
+    .return(1)
 
 ItemRight endp
 
@@ -2086,43 +1996,58 @@ OnChar proc uses rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM, lParam:LPAR
                .return [rax].TEdit.OnChar(rcx, r8)
 
             .case T_RADIOBUTTON
-                .if r8w == VK_SPACE
+
+                .if ( r8w == VK_SPACE )
+
                     mov rcx,[rcx].Prev
+
                     .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
-                        .if [rcx].Flags & O_RADIO
+
+                        .if ( [rcx].Flags & O_RADIO )
+
                             GetItemRect(rcx)
                             movzx edx,al
                             movzx eax,ah
                             inc edx
                             and [rcx].Flags,not O_RADIO
                             [rcx].CPutChar(edx, eax, 1, ' ')
-                            .break
+                           .break
                         .endif
                     .endf
+
                     GetItemRect(hwnd)
-                    movzx edx,al
-                    movzx eax,ah
-                    inc edx
-                    or  [rcx].Flags,O_RADIO
-                    [rcx].CPutChar(edx, eax, 1, 0x2219)
-                    .return 0
+
+                    movzx   edx,al
+                    movzx   eax,ah
+                    inc     edx
+                    or      [rcx].Flags,O_RADIO
+
+                    [rcx].CPutChar(edx, eax, 1, U_BULLET_OPERATOR)
+                   .return 0
                 .endif
                 .endc
+
             .case T_CHECKBOX
-                .if r8w == VK_SPACE
+
+                .if ( r8w == VK_SPACE )
+
                     GetItemRect(rcx)
-                    movzx edx,al
-                    movzx eax,ah
-                    inc edx
-                    xor [rcx].Flags,O_CHECK
-                    mov r8d,' '
-                    .if [rcx].Flags & O_CHECK
+
+                    movzx   edx,al
+                    movzx   eax,ah
+                    inc     edx
+                    xor     [rcx].Flags,O_CHECK
+                    mov     r8d,' '
+
+                    .if ( [rcx].Flags & O_CHECK )
                         mov r8d,'x'
                     .endif
+
                     [rcx].CPutChar(edx, eax, 1, r8d)
-                    .return 0
+                   .return 0
                 .endif
                 .endc
+
             .case T_PUSHBUTTON
             .case T_XCELL
             .case T_MENU
@@ -2222,8 +2147,9 @@ TWindow::GetItem proc uses rcx id:uint_t
     UNREFERENCED_PARAMETER(this)
     UNREFERENCED_PARAMETER(id)
 
-    test  [rcx].Flags,W_CHILD
+    test [rcx].Flags,W_CHILD
     cmovnz rcx,[rcx].Prev
+
     .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
         .return rcx .if ( edx == [rcx].Index )
     .endf
@@ -2266,8 +2192,7 @@ TWindow::DefWindowProc proc uiMsg:uint_t, wParam:WPARAM, lParam:LPARAM
     .case WM_ENTERIDLE:   OnEnterIdle(rcx)
     .case WM_SETFOCUS:    OnSetFocus(rcx)
     .case WM_KILLFOCUS:   OnKillFocus(rcx)
-    .case WM_LBUTTONDOWN
-        OnLButtonDown(rcx, edx, r8, r9)
+    .case WM_LBUTTONDOWN: OnLButtonDown(rcx, edx, r8, r9)
     .case WM_LBUTTONUP:   OnLButtonUp(rcx, edx, r8, r9)
     .case WM_MOUSEMOVE:   OnMouseMove(rcx, edx, r8, r9)
     .case WM_SYSCHAR:     OnSysChar(rcx, edx, r8, r9)
@@ -2404,8 +2329,7 @@ TWindow::PostQuit proc uses rcx retval:int_t
     test [rcx].Flags,W_CHILD
     cmovnz rcx,[rcx].Prev
     [rcx].Post(WM_QUIT, retval, 0)
-    xor eax,eax
-    ret
+    .return(0)
 
 TWindow::PostQuit endp
 
@@ -2561,8 +2485,7 @@ endif
     [rcx].Send(WM_CLOSE, 0, 0)
     mov rcx,hPrev
     mov [rsi].Instance,rcx
-    mov rax,rbx
-    ret
+   .return(rbx)
 
 TWindow::Register endp
 
@@ -2624,9 +2547,7 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:LPTSTR, format:
             .break .if !_tcschr(rsi, 10)
             mov rdx,rax
             sub rdx,rsi
-ifdef _UNICODE
-            shr edx,1
-endif
+            _tshr edx
             lea rsi,[rax+TCHAR]
             .if edx >= width
                 mov width,edx
@@ -2643,14 +2564,18 @@ endif
 
     mov dl,2
     mov dh,76
-    .if al && al < 70
+
+    .if ( al && al < 70 )
+
         mov dh,al
         add dh,8
         mov dl,80
         sub dl,dh
         shr dl,1
     .endif
-    .if dh < 48
+
+    .if ( dh < 48 )
+
         mov dl,16
         mov dh,48
     .endif
@@ -2663,7 +2588,8 @@ endif
     mov rc.col,dh
     shr eax,16
     add al,7
-    .if ax > size.y
+
+    .if ( ax > size.y )
         mov rc.y,1
     .endif
 
@@ -2680,15 +2606,20 @@ endif
     or  dl,[rsi+FG_DIALOG]
     mov eax,flags
     and eax,0x00000070
+
     .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
+
         mov dl,[rsi+BG_ERROR]
         or  dl,[rsi+FG_DESKTOP]
     .endif
+
     .if !( [rbx].Flags & W_TRANSPARENT )
+
         shl edx,16
         mov dl,' '
         [rbx].Clear(edx)
     .endif
+
     [rbx].PutTitle(rdi)
 
     mov eax,[rbx].rc

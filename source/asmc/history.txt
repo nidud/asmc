@@ -2,7 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.34 - xx xxx 2021
+Changes in 2.35 - xx xxx 2022
+
+Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros
 - fixed bug in CodeView 8 (/zi8) for files without code
 - added unwind information (/frame) to /pe 64-bit

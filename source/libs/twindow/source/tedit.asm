@@ -9,18 +9,6 @@ include malloc.inc
 include ltype.inc
 include tchar.inc
 
-ifdef _UNICODE
-define CFTEXT CF_UNICODETEXT
-define _tscasb <scasw>
-define _tstosb <stosw>
-define _tal <ax>
-else
-define CFTEXT CF_TEXT
-define _tscasb <scasb>
-define _tstosb <stosb>
-define _tal <al>
-endif
-
     .code
 
 strshr proc string:LPTSTR, c:int_t
@@ -343,9 +331,7 @@ event_right proc private uses rbx ti:ptr TEdit
         mov rcx,rax
         mov _tal,[rax]
         mov edx,[rbx].xoffs
-ifdef _UNICODE
-        add edx,edx
-endif
+        _tshl edx
         sub rcx,rdx
         .if _tal
 
@@ -484,9 +470,8 @@ event_nextword proc private uses rbx r15 ti:ptr TEdit
    .return .ifd !lnexttokc(rax)
 
     sub rcx,rdx
-ifdef _UNICODE
-    shr ecx,1
-endif
+    _tshr ecx
+
     mov eax,[rbx].boffs
     add eax,[rbx].xoffs
     add eax,ecx
@@ -525,9 +510,8 @@ event_prevword proc private uses rbx r15 ti:ptr TEdit
     .endif
     lprevtokc(rcx, [rbx].base)
     sub rcx,[rbx].base
-ifdef _UNICODE
-    shr ecx,1
-endif
+    _tshr ecx
+
     .if ( ecx > [rbx].xoffs )
         sub ecx,[rbx].xoffs
         mov [rbx].xoffs,0
@@ -959,7 +943,7 @@ TEdit::TEdit proc uses rsi rdi rbx hwnd:ptr TWindow, bsize:uint_t
     movzx   r8d,[rsi].rc.y
     shr     [rcx].GetChar(edx, r8d),16
     mov     [rbx].clrattrib.Attributes,ax
-    mov     [rbx].clrattrib.UnicodeChar,0xB7
+    mov     [rbx].clrattrib.UnicodeChar,U_MIDDLE_DOT
     mov     [rbx].flags,[rsi].Flags
     ret
 

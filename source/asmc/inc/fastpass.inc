@@ -64,15 +64,14 @@ externdef StoreState:int_t ;; is 1 if states are to be stored in pass one
 
 externdef UseSavedState:int_t
 
-FastpassInit            proto __ccall
-SegmentSaveState        proto __ccall
-AssumeSaveState         proto __ccall
-ContextSaveState        proto __ccall
+FastpassInit            proto
+SegmentSaveState        proto
+AssumeSaveState         proto
+ContextSaveState        proto
 StoreLine               proto __ccall :string_t, :int_t, :uint_t
-SkipSavedState          proto __ccall
-RestoreState            proto __ccall
-SaveVariableState       proto __ccall :ptr asym
-FreeLineStore           proto __ccall
+SkipSavedState          proto
+RestoreState            proto
+SaveVariableState       proto fastcall :ptr asym
 
 FStoreLine proto fastcall flags:abs {
     .if ( Parse_Pass == PASS_1 )

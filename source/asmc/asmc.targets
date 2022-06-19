@@ -95,6 +95,8 @@
       BrowseFile="%(ASMC.BrowseFile)"
       PreserveIdentifierCase="%(ASMC.PreserveIdentifierCase)"
       WarningLevel="%(ASMC.WarningLevel)"
+      ObjectFileTypeCOFF="%(ASMC.ObjectFileTypeCOFF)"
+      ObjectFileTypeOMF="%(ASMC.ObjectFileTypeOMF)"
       PackAlignmentBoundary="%(ASMC.PackAlignmentBoundary)"
       CallingConvention="%(ASMC.CallingConvention)"
       ErrorReporting="%(ASMC.ErrorReporting)"

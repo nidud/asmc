@@ -3,8 +3,12 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
+
 ifndef __ASMC_INC
 define __ASMC_INC
+
+option dotname
 
 include version.inc
 include stdio.inc
@@ -22,6 +26,50 @@ define __ccall <syscall>
 else
 define __ccall <c>
 endif
+endif
+
+ifdef _WIN64
+ifdef __UNIX__
+define _LIN64
+endif
+define .lodsd <lodsq>
+define .stosd <stosq>
+define .movsd <movsq>
+.32 macro upc:vararg
+    endm
+.64 macro upc:vararg
+    upc
+    endm
+.l8 macro mem
+    mov rax,mem
+    endm
+.s8 macro mem
+    mov mem,rax
+    endm
+.z8 macro mem, reg
+    mov mem,reg
+    endm
+else
+define .lodsd <lodsd>
+define .stosd <stosd>
+define .movsd <movsd>
+.32 macro upc:vararg
+    upc
+    endm
+.64 macro upc:vararg
+    endm
+.l8 macro mem
+    mov edx,dword ptr mem[4]
+    mov eax,dword ptr mem
+    endm
+.s8 macro mem
+    mov dword ptr mem,eax
+    mov dword ptr mem[4],edx
+    endm
+.z8 macro mem, reg
+    mov dword ptr mem,reg
+    mov dword ptr mem[4],reg
+    endm
 endif
 
 define USE_COMALLOC
@@ -403,7 +451,7 @@ define SIT_MACRO       1
 
 
 .template format_options
-    init            proc local __ccall :ptr module_info
+    init            proc local fastcall :ptr module_info
     invalid_fixup_type sword ?
     formatname      char_t 6 dup(?)
    .ends
@@ -523,8 +571,8 @@ define SIT_MACRO       1
     StackBase               ptr asym ?
     ProcStatus              ptr asym ?
     WriteModule             proc local __ccall :ptr module_info
-    EndDirHook              proc local __ccall :ptr module_info
-    Pass1Checks             proc local __ccall :ptr module_info
+    EndDirHook              proc local fastcall :ptr module_info
+    Pass1Checks             proc local fastcall :ptr module_info
     pe_flags                uint_t ?
     max_line_len            uint_t ?
    .ends
@@ -688,12 +736,12 @@ tstrcmp                 proto fastcall :string_t, :string_t
 tstricmp                proto fastcall :string_t, :string_t
 tstrstr                 proto fastcall :string_t, :string_t
 tgetenv                 proto fastcall :string_t
+tstrstart               proto fastcall :string_t
 
-tstrstart               proto watcall :string_t
-tstrstartr              proto watcall :string_t
+PQSORTCMDT              typedef proto fastcall :ptr, :ptr
+PQSORTCMD               typedef ptr PQSORTCMDT
 
-CCALLBACK(PQSORTCMD, :ptr, :ptr)
-
-tqsort                  proto fastcall :ptr, :int_t, :int_t, :PQSORTCMD
+tqsort                  proto __ccall :ptr, :int_t, :int_t, :PQSORTCMD
 
 endif
+.pragma list(pop)

@@ -25,10 +25,13 @@ CreateTypeSymbol	proto __ccall :ptr asym, :string_t, :int_t
 SearchNameInStruct	proto __ccall :ptr asym, :string_t, :ptr uint_t, :int_t
 GetQualifiedType	proto __ccall :ptr int_t, :ptr asm_tok, :ptr qualified_type
 CreateStructField	proto __ccall :int_t, :ptr asm_tok, :string_t, :uchar_t, :ptr asym, :uint_t
-UpdateStructSize	proto __ccall :ptr asym
-SetStructCurrentOffset	proto __ccall :int_t
-AlignInStruct		proto __ccall :int_t
-TypesInit		proto __ccall
+UpdateStructSize	proto fastcall :ptr asym
+SetStructCurrentOffset	proto fastcall :int_t
+AlignInStruct		proto fastcall :int_t
+TypesInit		proto
+EndstructDirective	proto __ccall :int_t, :ptr asm_tok
+
 DeleteType macro t
     endm
+
 endif

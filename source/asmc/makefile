@@ -7,11 +7,11 @@
 #
 
 NAME = asmc
-SRCP = x86
+LIBD = x86
 FLAG = -Zp4 -coff
 
 !ifdef x64
-SRCP = x64
+LIBD = x64
 FLAG = -frame -Zp8 -win64
 !endif
 
@@ -92,12 +92,12 @@ OBJS =  asmc.obj        \
         types.obj       \
         undef.obj
 
-{$(SRCP)}.asm.obj:
+{src}.asm.obj:
         ..\..\bin\asmc $(FLAG) -q -Cs -Iinc -I..\..\include $<
 
 $(NAME).exe: $(OBJS)
         ..\..\bin\linkw @<<
-libpath ..\..\lib\$(SRCP)
+libpath ..\..\lib\$(LIBD)
 name    $@
 symt    _cstart
 option  q, stack=0x300000 com stack=0x200000

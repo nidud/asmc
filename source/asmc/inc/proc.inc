@@ -48,7 +48,7 @@ ProcCheckOpen	proto __ccall
 
 GetSegmentPart	proto __ccall :ptr expr, :string_t, :string_t
 fastcall_init	proto __ccall
-GetFastcallId	proto __ccall :int_t
+GetFastcallId	proto fastcall :int_t
 get_regname	proto __ccall :int_t, :int_t
 
 endif

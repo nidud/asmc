@@ -413,19 +413,19 @@ IndexFromToken macro tok
 %   exitm<typeid(IndexFromToken_,tok)(tok)>
     endm
 
-SizeFromMemtype		proto __ccall :uchar_t, :int_t, :ptr asym
-MemtypeFromSize		proto __ccall :int_t, :ptr uchar_t
-SizeFromRegister	proto __ccall :int_t
+SizeFromMemtype		proto fastcall :uchar_t, :int_t, :ptr asym
+MemtypeFromSize		proto fastcall :int_t, :ptr uchar_t
+SizeFromRegister	proto fastcall :int_t
 GetLangType		proto __ccall :ptr int_t, :ptr asm_tok, :ptr uchar_t
-sym_add_table		proto __ccall :ptr symbol_queue, :ptr dsym
-sym_remove_table	proto __ccall :ptr symbol_queue, :ptr dsym
+sym_add_table		proto fastcall :ptr symbol_queue, :ptr dsym
+sym_remove_table	proto fastcall :ptr symbol_queue, :ptr dsym
 sym_ext2int		proto __ccall :ptr asym
-OperandSize		proto __ccall :int_t, :ptr code_info
-set_frame		proto __ccall :ptr asym
-set_frame2		proto __ccall :ptr asym
+OperandSize		proto fastcall :int_t, :ptr code_info
+set_frame		proto fastcall :ptr asym
+set_frame2		proto fastcall :ptr asym
 ParseLine		proto __ccall :ptr asm_tok
 ProcessFile		proto __ccall :ptr asm_tok
 WritePreprocessedLine	proto __ccall :string_t
-parsevex		proto __ccall :string_t, :ptr uchar_t
+parsevex		proto fastcall :string_t, :ptr uchar_t
 
 endif

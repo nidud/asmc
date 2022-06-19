@@ -42,19 +42,19 @@ externdef	StdAssumeTable:assume_info
 
 define NUM_SEGREGS 6
 
-AssumeInit	proto __ccall :int_t ; init assume tables
+AssumeInit	proto fastcall :int_t ; init assume tables
 
 search_assume	proto __ccall :asym_t, :int_t, :int_t
 GetAssume	proto __ccall :asym_t, :asym_t, :int_t, :asym_t
 
-GetOverrideAssume proto __ccall :int_t
-GetStdAssume	proto __ccall :int_t
-GetStdAssumeEx	proto __ccall :int_t
+GetOverrideAssume proto fastcall :int_t
+GetStdAssume	proto fastcall :int_t
+GetStdAssumeEx	proto watcall :int_t
 
-ModelAssumeInit proto __ccall
-SetSegAssumeTable proto __ccall :ptr
-GetSegAssumeTable proto __ccall :ptr
-SetStdAssumeTable proto __ccall :ptr, :ptr stdassume_typeinfo
-GetStdAssumeTable proto __ccall :ptr, :ptr stdassume_typeinfo
+ModelAssumeInit proto
+SetSegAssumeTable proto fastcall :ptr
+GetSegAssumeTable proto fastcall :ptr
+SetStdAssumeTable proto fastcall :ptr, :ptr stdassume_typeinfo
+GetStdAssumeTable proto fastcall :ptr, :ptr stdassume_typeinfo
 
 endif

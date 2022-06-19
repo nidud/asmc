@@ -3,6 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
+.pragma list(push, 0)
 ifndef __SYMBOLS_INC
 define __SYMBOLS_INC
 
@@ -240,7 +241,7 @@ M_PURGED        equ 0x10
      altname        ptr asym ?      ; SYM_EXTERNAL (comm==0): alternative name
      debuginfo      ptr debug_info ?; SYM_INTERNAL (isproc==1): debug info (COFF)
                                     ; SYM_INTERNAL+predefined
-     sfunc_ptr      proc local __ccall :ptr asym, :ptr
+     sfunc_ptr      proc local fastcall :ptr asym, :ptr
      struct                         ; SYM_TYPE
       cvtyperef     ushort_t ?      ; codeview type index (used after assembly steps)
       typekind      ushort_t ?      ; v2.04: moved from first_length, were it didn't work anymore
@@ -485,3 +486,4 @@ SymSetLocal     proto __ccall :ptr asym
 SymGetLocal     proto __ccall :ptr asym
 
 endif
+.pragma list(pop)

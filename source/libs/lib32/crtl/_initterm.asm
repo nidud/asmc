@@ -18,6 +18,10 @@ _initterm proc uses esi edi ebx pfbegin:ptr, pfend:ptr
     mov eax,pfend
     sub eax,ecx
 
+    lea ebx,_initterm
+    mov edx,imagerel _initterm
+    sub ebx,edx
+
     ;; walk the table of function pointers from the bottom up, until
     ;; the end is encountered.  Do not skip the first entry.  The initial
     ;; value of pfbegin points to the first valid entry.  Do not try to
@@ -31,7 +35,7 @@ _initterm proc uses esi edi ebx pfbegin:ptr, pfend:ptr
                ecx += eax : esi < ecx && edx < MAXENTRIES : esi+=8)
 
             mov eax,[esi]
-            .if eax
+            .if ( eax > ebx )
                 stosd
                 mov eax,[esi+4]
                 stosd

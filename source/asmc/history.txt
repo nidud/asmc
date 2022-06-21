@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.35 - xx xxx 2022
+- fixed name conflict with register param and stuct members
 
 Changes in 2.34 - 19 Jun 2022
 - added __FILE__, __LINE__, and __func__ macros

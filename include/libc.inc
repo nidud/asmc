@@ -5,7 +5,7 @@ define __LIBC_INC
 ; Master include file for the Asmc Run Time library.
 ;
 define __STDC__
-define __LIBC__ 233
+define __LIBC__ 234
 ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
 .err <incorrect version. Use the header that matches with the Asmc Assembler.>
@@ -30,21 +30,21 @@ else
 define _AMD64_
 define _M_AMD64 100
 endif
-define _M_X64 100
+define _M_X64	100
 else
 define _X86_
-define _M_IX86 600
+define _M_IX86	600
 endif
 
 ifdef _LINUX
-define _CType  <syscall>
-define _CDecl  <syscall>
-define __cdecl <syscall>
+define _CType	<syscall>
+define _CDecl	<syscall>
+define __cdecl	<syscall>
 elseifdef _STDCALL_SUPPORTED
-define _CDecl  <c>
-define _CType  <stdcall>
-define __cdecl <stdcall>
-define WINAPI  <stdcall>
+define _CDecl	<c>
+define _CType	<stdcall>
+define __cdecl	<stdcall>
+define WINAPI	<stdcall>
 endif
 
 ifdef __PE__	; asmc /pe
@@ -55,25 +55,25 @@ endif
 
 ifndef _CDecl	; vararg (...) type
 ifdef _WIN64
-define _CDecl <fastcall>
+define _CDecl	<fastcall>
 else
-define _CDecl <c>
+define _CDecl	<c>
 endif
 endif
 
 ifndef __cdecl	; libc/msvcrt types
 ifdef _WIN64
-define __cdecl <fastcall>
+define __cdecl	<fastcall>
 else
-define __cdecl <c>
+define __cdecl	<c>
 endif
 endif
 
 ifndef _CType	; default (user) type
 ifdef _WIN64
-define _CType <fastcall>
+define _CType	<fastcall>
 else
-define _CType <c>
+define _CType	<c>
 endif
 endif
 ;

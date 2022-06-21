@@ -2048,7 +2048,6 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new puc:ptr UNWIND_CODE
 
     mov rdi,CurrProc
-    mov rsi,[rdi].dsym.procinfo
     mov rbx,tokenarray.tokptr(i)
 
     ; v2.05: accept directives for windows only
@@ -2061,7 +2060,8 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .if ( rdi == NULL || endprolog_found == TRUE )
         .return( asmerr( 3008 ) )
     .endif
-
+    
+    mov rsi,[rdi].dsym.procinfo
     .if ( !( [rsi].flags & PROC_ISFRAME ) )
         .return( asmerr( 3009 ) )
     .endif

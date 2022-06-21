@@ -260,21 +260,50 @@ define SIZE_CODEPTR 0x70 ; far for MEDIUM, LARGE, HUGE
     }
 
 
+; option -0..10
+
+.enum cpu_type {
+    CPU_86                  ;  0  __P86__
+    CPU_186,                ;  1  __P186__
+    CPU_286,                ;  2  __P286__
+    CPU_386,                ;  3  __P386__
+    CPU_486,                ;  4  __P486__
+    CPU_586,                ;  5  __P586__
+    CPU_686,                ;  6  __P686__
+    CPU_MMX,                ;  7  __P686__
+    CPU_SSE,                ;  8  __SSE__
+    CPU_SSE2,               ;  9  __SSE2__
+    CPU_64                  ; 10  __P64__
+    }
+
+
+; option -arch:[IA32|SSE|SSE2|AVX|AVX2|AVX512]
+
+.enum cpu_architecture {
+    ARCH_IX86_FP,           ; 0  _M_IX86_FP
+    ARCH_SSE,               ; 1  __SSE__
+    ARCH_SSE2,              ; 2  __SSE2__
+    ARCH_AVX,               ; 3  __AVX__
+    ARCH_AVX2,              ; 4  __AVX2__
+    ARCH_AVX512             ; 5  __AVX512F__, __AVX512CD__, __AVX512BW__,
+    }                       ;    __AVX512DQ__ and __AVX512VL__
+
+
 ; the MASM compatible @CPU value flags:
 
 .enum masm_cpu {
-    M_8086      = 0x0001,    ; 8086
-    M_186       = 0x0002,    ; 186
-    M_286       = 0x0004,    ; 286
-    M_386       = 0x0008,    ; 386
-    M_486       = 0x0010,    ; 486
-    M_586       = 0x0020,    ; Pentium
-    M_686       = 0x0040,    ; PPro
+    M_8086      = 0x0001,   ; 8086
+    M_186       = 0x0002,   ; 186
+    M_286       = 0x0004,   ; 286
+    M_386       = 0x0008,   ; 386
+    M_486       = 0x0010,   ; 486
+    M_586       = 0x0020,   ; Pentium
+    M_686       = 0x0040,   ; PPro
     M_CPUMSK    = 0x007F,
-    M_PROT      = 0x0080,    ; protected instructions ok
-    M_8087      = 0x0100,    ; 8087
-    M_287       = 0x0400,    ; 287
-    M_387       = 0x0800     ; 387
+    M_PROT      = 0x0080,   ; protected instructions ok
+    M_8087      = 0x0100,   ; 8087
+    M_287       = 0x0400,   ; 287
+    M_387       = 0x0800    ; 387
     }
 
 .enum segofssize {

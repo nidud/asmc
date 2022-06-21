@@ -33,7 +33,7 @@ include condasm.inc
 include extern.inc
 include qfloat.inc
 include reswords.inc
-include Indirection.inc
+include indirect.inc
 include operator.inc
 
 public SegOverride
@@ -43,8 +43,6 @@ externdef opnd_clstab:opnd_class
 externdef vex_flags:byte
 externdef Frame_Type:byte  ; Frame of current fixup
 externdef Frame_Datum:word ; Frame datum of current fixup
-externdef maxintvalues:int64_t
-externdef minintvalues:int64_t
 
 ADDRSIZE macro s, x
   ifdif <x>,<eax>

@@ -103,7 +103,7 @@ Ofssize		uchar_t ?	; 16,32,64 bit if MT_NEAR, MT_FAR
 flags		uchar_t ?	; bit-flag
 op		ptr opinfo ?
 sym		asym_t ?	; label used
-mbr		dsym_t ?	; struct member
+mbr		asym_t ?	; struct member
 type		asym_t ?	; for DOT operator. Must be last (see TokenAssign)!
 expr		ends
 expr_t		typedef ptr expr

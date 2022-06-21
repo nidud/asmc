@@ -28,6 +28,7 @@ include condasm.inc
 include listing.inc
 include qfloat.inc
 include lqueue.inc
+include types.inc
 
 public MacroLocals
 
@@ -1528,14 +1529,14 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
             ; don't check isdefined flag (which cannot occur in pass one, and this code usually runs
             ; in pass one only!
 
-            .if ( rax )
+            .if ( rsi )
 
-                .if ( [rax].asym.state == SYM_MACRO )
+                .if ( [rsi].asym.state == SYM_MACRO )
 
                     mov ecx,i
                     mov edi,ecx ;; save index of macro name
 
-                    .if ( [rax].asym.mac_flag & M_ISFUNC )
+                    .if ( [rsi].asym.mac_flag & M_ISFUNC )
 
                         ; ignore macro functions without a following '('
 
@@ -1620,7 +1621,7 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         mov rcx,tokenarray
                         .if ( edx == 0 || ( edx == 2 && ( [rcx+asm_tok].asm_tok.token == T_COLON ||
                              [rcx+asm_tok].asm_tok.token == T_DBL_COLON ) ) ||
-                             ( edx == 1 && [rax].asym.mac_flag & M_LABEL ) )
+                             ( edx == 1 && [rsi].asym.mac_flag & M_LABEL ) )
                         .else
                             .continue
                         .endif
@@ -1645,17 +1646,58 @@ ExpandToken proc __ccall private uses rsi rdi rbx line:string_t, pi:ptr int_t, t
                         .return EMPTY ; no further processing
                     .endif
 
-                .elseif [rax].asym.state == SYM_TMACRO
+                .elseif ( [rsi].asym.state == SYM_TMACRO )
 
-                    tstrcpy( buffer, [rax].asym.string_ptr )
-                    .ifd ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR
+                    .if ( [rbx-asm_tok].token == T_DOT )
+
+                        ; v2.34.01 - Name conflict with register param and stuct members
+                        ;
+                        ; This apply to SYSCALL-64, WATCALL-32, and FASTCALL-32
+                        ;
+
+                        mov ecx,i
+                        sub ecx,2
+                        lea rdx,[rbx-asm_tok*2]
+
+                        ; [reg].type.name
+
+                        .while ( [rdx-asm_tok].asm_tok.token == T_DOT )
+
+                            sub ecx,2
+                            lea rdx,[rdx-asm_tok*2]
+                        .endw
+
+                        .if ( [rdx].asm_tok.token == T_CL_SQ_BRACKET )
+
+                            .for ( eax = 0 : rdx > tokenarray : rdx -= asm_tok, ecx-- )
+
+                                .if ( [rdx].asm_tok.token == T_OP_SQ_BRACKET )
+                                    dec eax
+                                   .break .ifz
+                                .elseif ( [rdx].asm_tok.token == T_CL_SQ_BRACKET )
+                                    inc eax
+                                .endif
+                            .endf
+                        .endif
+
+                        mov i2,ecx
+                        .ifd ( EvalOperand( &i2, tokenarray, Token_Count, &opndx, EXPF_NOERRMSG ) != ERROR )
+
+                            .if ( opndx.kind == EXPR_ADDR && opndx.mbr )
+                                .continue
+                            .endif
+                        .endif
+                    .endif
+
+                    tstrcpy( buffer, [rsi].asym.string_ptr )
+                    .ifd ( ExpandTMacro( buffer, tokenarray, equmode, 0 ) == ERROR )
                         .return
                     .endif
 
-                    mov edx,tstrlen([rbx].string_ptr)
+                    mov edx,tstrlen( [rbx].string_ptr )
                     mov rcx,[rbx].tokpos
                     sub rcx,line
-                    .ifd RebuildLine(buffer, i, tokenarray, edx, ecx, addbrackets) == ERROR
+                    .ifd ( RebuildLine( buffer, i, tokenarray, edx, ecx, addbrackets ) == ERROR )
                         .return
                     .endif
                     mov rc,STRING_EXPANDED

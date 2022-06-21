@@ -84,34 +84,88 @@ Options global_options {
      DefaultDir string_t NUM_FILE_TYPES dup(NULL)
      OptValue   int_t 0
 
+     ; array for options -0..10
+
+     cpu_option int_t \
+        P_86,
+        P_186,
+        P_286,
+        P_386,
+        P_486,
+        P_586,
+        P_686,
+        P_686 or P_MMX,
+        P_686 or P_MMX or P_SSE1,
+        P_686 or P_MMX or P_SSE1 or P_SSE2,
+        P_64
+
+
     .code
 
-init_options proc
+    option proc:private
+
+define_cpu proc fastcall cpu:int_t
+
+    .switch ecx
+    .case CPU_64    : define_name( "__P64__", "1" )
+    .case CPU_SSE2  : define_name( "__SSE2__", "1" )
+    .case CPU_SSE   : define_name( "__SSE__", "1" )
+    .case CPU_MMX
+    .case CPU_686   : define_name( "__P686__", "1" )
+    .case CPU_586   : define_name( "__P586__", "1" )
+    .case CPU_486   : define_name( "__P486__", "1" )
+    .case CPU_386   : define_name( "__P386__", "1" )
+    .case CPU_286   : define_name( "__P286__", "1" )
+    .case CPU_186   : define_name( "__P186__", "1" )
+    .case CPU_86    : define_name( "__P86__", "1" )
+    .endsw
+    ret
+
+define_cpu endp
+
+
+set_cpu proc fastcall _cpu:int_t, pm:int_t
+
+    lea rax,cpu_option
+    mov eax,[rax+rcx*int_t]
+
+    and Options.cpu,not ( P_CPU_MASK or P_EXT_MASK or P_PM )
+    or  Options.cpu,eax
+    .if ( edx && Options.cpu >= P_286 )
+        or Options.cpu,P_PM
+    .endif
+    .return define_cpu( ecx )
+
+set_cpu endp
+
+
+init_options proc public
 
 ifdef ASMC64
+
+    set_cpu( CPU_64, 1 )
+    define_name( "_WIN64", "1" )
+
     mov Options.sub_format,SFORMAT_64BIT
     mov Options._model,MODEL_FLAT
-    mov Options.cpu,P_64 or P_PM
     mov Options.xflag,OPT_REGAX
-    define_name( "_WIN64", "1" )
+
 ifdef _LIN64
+    define_name( "__UNIX__", "1" )
+    define_name( "_LINUX",   "2" )
     mov Options.output_format,OFORMAT_ELF
     mov Options.langtype,LANG_SYSCALL
     mov Options.fctype,FCT_ELF64
-    define_name( "__UNIX__", "1" )
-    define_name( "_LINUX",   "2" )
 else
     mov Options.output_format,OFORMAT_COFF
     mov Options.langtype,LANG_FASTCALL
     mov Options.fctype,FCT_WIN64
 endif
+
 endif
     ret
 
 init_options endp
-
-
-    option proc:private
 
 
 ; current cmdline string is done, get the next one!
@@ -368,27 +422,6 @@ is_quote:
 
 GetNameToken endp
 
-ifndef ASMC64
-
-; array for options -0..10
-
-.data
-cpu_option int_t \
-    P_86,
-    P_186,
-    P_286,
-    P_386,
-    P_486,
-    P_586,
-    P_686,
-    P_686 or P_MMX,
-    P_686 or P_MMX or P_SSE1,
-    P_686 or P_MMX or P_SSE1 or P_SSE2,
-    P_64
-
-.code
-
-endif
 
 ProcessOption proc __ccall uses rsi rdi rbx cmdline:ptr string_t, buffer:string_t
 
@@ -408,46 +441,17 @@ ifndef ASMC64
 
     .if ( al >= '0' && al <= '9' )
 
-        mov rbx,GetNumber(rbx)
+        mov rbx,GetNumber( rbx )
 
-        .if ( OptValue < lengthof(cpu_option) )
+        .if ( OptValue < lengthof( cpu_option ) )
 
-            mov rbx,GetNameToken(rdi, rbx, 16, 0) ; get optional 'p'
+            mov rbx,GetNameToken( rdi, rbx, 16, 0 ) ; get optional 'p'
             mov [rsi],rbx
-            mov ecx,OptValue
-            lea rax,cpu_option
-            mov eax,[rax+rcx*int_t]
-            and Options.cpu,not ( P_CPU_MASK or P_EXT_MASK or P_PM )
-            or  Options.cpu,eax
-            .if ( byte ptr [rdi+1] == 'p' && Options.cpu >= P_286 )
-                or Options.cpu,P_PM
+            xor edx,edx
+            .if ( byte ptr [rdi+1] == 'p' )
+                inc edx
             .endif
-
-            .switch ecx
-            .case 10
-                define_name( "__P64__", "1" )
-            .case 9
-                define_name( "__SSE2__", "1" )
-            .case 8
-                define_name( "__SSE__", "1" )
-            .case 7
-            .case 6
-                define_name( "__P686__", "1" )
-            .case 5
-                define_name( "__P586__", "1" )
-            .case 4
-                define_name( "__P486__", "1" )
-            .case 3
-                define_name( "__P386__", "1" )
-            .case 2
-                define_name( "__P286__", "1" )
-            .case 1
-                define_name( "__P186__", "1" )
-            .case 0
-                define_name( "__P86__", "1" )
-                .endc
-            .endsw
-            .return
+            .return set_cpu( OptValue, edx )
         .endif
         mov rbx,[rsi] ; v2.11: restore option pointer
     .endif
@@ -480,34 +484,36 @@ endif
     .case 'hcra'        ; -arch:xx
         mov eax,[rdi+4]
         .if al != ':' || ah == 0
-            asmerr(1006, rdi)
+            asmerr( 1006, rdi )
         .endif
         mov eax,[rdi+5]
         xor ebx,ebx
-        .switch pascal eax
-        .case '5XVA':  mov ebx,5 ; AVX512
-        .case '2XVA':  mov ebx,4 ; AVX2
-        .case 'XVA' :  mov ebx,3 ; AVX
-        .case '2ESS':  mov ebx,2 ; SSE2
-        .case 'ESS' :  mov ebx,1 ; SSE
-        .default
-            asmerr(1006, rdi)
-        .endsw
-        .switch ebx
-        .case 5
+        .switch eax
+        .case '5XVA'    ; -arch:AVX512
             define_name( "__AVX512BW__", "1" )
             define_name( "__AVX512CD__", "1" )
             define_name( "__AVX512DQ__", "1" )
             define_name( "__AVX512F__",  "1" )
             define_name( "__AVX512VL__", "1" )
-        .case 4
+            inc ebx
+        .case '2XVA'    ; -arch:AVX2
             define_name( "__AVX2__", "1" )
-        .case 3
+            inc ebx
+        .case 'XVA'     ; -arch:AVX
             define_name( "__AVX__",  "1" )
-        .case 2
+            inc ebx
+        .case '2ESS'    ; -arch:SSE2
             define_name( "__SSE2__", "1" )
-        .case 1
+            inc ebx
+        .case 'ESS'     ; -arch:SSE
             define_name( "__SSE__",  "1" )
+            inc ebx
+           .endc
+        .case '23AI'    ; -arch:IA32
+            define_name( "_M_IX86_FP",  "1" )
+           .endc
+        .default
+            asmerr( 1006, rdi )
         .endsw
         mov Options.arch,bl
         .return
@@ -559,12 +565,12 @@ endif
         mov Options.no_error_disp,1
         .return
     .case '6fle'            ; -elf64
+        set_cpu( CPU_64, 1 )
         define_name( "__UNIX__", "1" )
         define_name( "_LINUX",   "2" )
         define_name( "_WIN64",   "1" )
         or  Options.xflag,OPT_REGAX
         mov Options._model,MODEL_FLAT
-        mov Options.cpu,P_64 or P_PM
         mov Options.output_format,OFORMAT_ELF
         mov Options.sub_format,SFORMAT_64BIT
         mov Options.langtype,LANG_SYSCALL
@@ -758,6 +764,7 @@ endif
         .return
     .case '6niw'        ; -win64
 ifndef ASMC64
+        set_cpu( CPU_64, 1 )
         .if ( Options.output_format != OFORMAT_BIN )
             mov Options.output_format,OFORMAT_COFF
         .else

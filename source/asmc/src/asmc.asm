@@ -32,10 +32,10 @@ my_environ array_t 0
 
 ifdef __UNIX__
 
-cmpwarg proc __ccall uses rsi rdi wild:string_t, path:string_t
+cmpwarg proc fastcall uses rsi rdi wild:string_t, path:string_t
 
-    mov rdi,wild
-    mov rsi,path
+    mov rdi,rcx
+    mov rsi,rdx
     xor eax,eax
 
     .while 1

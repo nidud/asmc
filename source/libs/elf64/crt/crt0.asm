@@ -33,6 +33,8 @@ externdef __init_array_end:ptr
 _start proc
 
     xor ebp,ebp
+    and spl,-16
+
     mov __argc,[rsp]
     mov _environ,&[rsp+rax*8+16]
     mov __argv,&[rsp+8]

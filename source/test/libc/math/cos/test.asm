@@ -8,7 +8,12 @@ _tmain proc
 
   local x:real8
 
-    movsd x,cos(10.0)
+    cos(10.0)
+ifdef __SSE__
+    movsd x,xmm0
+else
+    fstp x
+endif
     printf("%.14f\n", x)
     ret
 

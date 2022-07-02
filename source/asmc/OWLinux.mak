@@ -5,7 +5,7 @@ watcom = \watcom
 all: asmc asmc64
 
 asmc:
-	asmc -D__WATCOM__ -Iinc -nologo -elf -nolib -Zp4 -Cs src\*.asm
+	asmc -D__WATCOM__ -Iinc -nologo -elf -nolib -Zp4 -Cs ..\libc\fltintrn\*.asm src\*.asm
 	linkw @<<
 name	asmc.
 format	elf runtime linux
@@ -16,7 +16,7 @@ file { *.o }
 	del *.o
 
 asmc64:
-	asmc -DASMC64 -D__WATCOM__ -Iinc -nologo -elf -nolib -Zp4 -Cs src\*.asm
+	asmc -DASMC64 -D__WATCOM__ -Iinc -nologo -elf -nolib -Zp4 -Cs ..\libc\fltintrn\*.asm src\*.asm
 	linkw @<<
 name	asmc64.
 format	elf runtime linux

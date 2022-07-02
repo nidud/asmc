@@ -1,3 +1,36 @@
+;
+;
+; Description:	table of non-instruction reserved words:
+;		- registers,
+;		- predefined types
+;		- operators (unary + binary),
+;		- language types
+;		for directives see directve.inc!
+;		for instructions see instruct.inc!
+;
+;
+; v1.96: items needn't be sorted anymore!
+; The items are stored in structures of type special_item.
+; If an item is inserted, moved or deleted, the project needs
+; a full rebuild.
+;
+;
+; field usage:
+; type	 = RWT_ value	 SpecialTable.type   uint_8
+; value	 =	flags	 SpecialTable.value  unsigned
+; bytval =	value	 SpecialTable.bytval uint_8
+; flags	 = RWF_ flags	 ResWordTable.flags  uint_8
+; cpu	 = cpu	flags	 SpecialTable.cpu    uint_16
+; sflags =		 SpecialTable.sflags unsigned
+;
+; for registers, the 'value' field contains OP_ flags.
+; Since this field has type unsigned, it may be 16-bits wide only.
+; This is no problem, since all register-related flags are in the low word.
+;
+; token str    type	   value    bytval    flags  cpu     sflags
+;
+; registers AH-BH must be consecutive, start with AH and end with BH
+;
 res(AL,	  al,	RWT_REG,    OP_AL,	0,	 0,   P_86,    1)
 res(CL,	  cl,	RWT_REG,    OP_CL,	1,	 0,   P_86,    1)
 res(DL,	  dl,	RWT_REG,    OP_R8,	2,	 0,   P_86,    1)
@@ -24,6 +57,8 @@ res(ESP,  esp,	RWT_REG,    OP_R32,	4,	 0,   P_386,   SFR_SSBASED or SFR_IREG or 
 res(EBP,  ebp,	RWT_REG,    OP_R32,	5,	 0,   P_386,   SFR_SSBASED or SFR_IREG or 4)
 res(ESI,  esi,	RWT_REG,    OP_R32,	6,	 0,   P_386,   SFR_IREG or 4)
 res(EDI,  edi,	RWT_REG,    OP_R32,	7,	 0,   P_386,   SFR_IREG or 4)
+
+; registers ES-GS must be consecutive
 
 res(ES,	  es,	RWT_REG,    OP_SR86,	0,	 0,   P_86,    0)
 res(CS,	  cs,	RWT_REG,    OP_SR86,	1,	 0,   P_86,    0)
@@ -90,11 +125,16 @@ res(DR3,  dr3,	RWT_REG,    OP_RSPEC,	3 or 0x10,	 0,   P_386,   0)
 res(DR6,  dr6,	RWT_REG,    OP_RSPEC,	6 or 0x10,	 0,   P_386,   0)
 res(DR7,  dr7,	RWT_REG,    OP_RSPEC,	7 or 0x10,	 0,   P_386,   0)
 
+; v2.11: add RWF_IA32 to TRx registers
+
 res(TR3,  tr3,	RWT_REG,    OP_RSPEC,	3 or 0x20,RWF_IA32,P_486, 0)
 res(TR4,  tr4,	RWT_REG,    OP_RSPEC,	4 or 0x20,RWF_IA32,P_486, 0)
 res(TR5,  tr5,	RWT_REG,    OP_RSPEC,	5 or 0x20,RWF_IA32,P_486, 0)
 res(TR6,  tr6,	RWT_REG,    OP_RSPEC,	6 or 0x20,RWF_IA32,P_386, 0)
 res(TR7,  tr7,	RWT_REG,    OP_RSPEC,	7 or 0x20,RWF_IA32,P_386, 0)
+
+; for simplicity, all x64 reserved words must be consecutive
+; ( see Set64Bit() in parser.asm ).
 
 res(SPL,  spl,	RWT_REG,    OP_R8,	4, RWF_X64,    P_64,   1)
 res(BPL,  bpl,	RWT_REG,    OP_R8,	5, RWF_X64,    P_64,   1)
@@ -222,6 +262,10 @@ res(ZMM30,zmm30,RWT_REG,    OP_ZMM,    30, RWF_X64,    P_AVX or P_64,  SFR_IREG 
 res(ZMM31,zmm31,RWT_REG,    OP_ZMM,    31, RWF_X64,    P_AVX or P_64,  SFR_IREG or 64)
 
 res(CR8,    cr8,     RWT_REG,	 OP_RSPEC,  8,	  RWF_X64, P_64,    0)
+
+; predefined types. BYTE must be first!
+; token	   str	    type	value	   bytval   flags cpu	  sflags
+
 res(BYTE,   byte,    RWT_STYPE,	 0,	    MT_BYTE,	0, P_86,    USE_EMPTY)
 res(SBYTE,  sbyte,   RWT_STYPE,	 0,	    MT_SBYTE,	0, P_86,    USE_EMPTY)
 res(WORD,   word,    RWT_STYPE,	 0,	    MT_WORD,	0, P_86,    USE_EMPTY)
@@ -243,6 +287,8 @@ res(ZWORD,  zword,   RWT_STYPE,	 0,	    MT_ZMMWORD, 0, P_AVX,   USE_EMPTY)
 res(YMMWORD,ymmword, RWT_STYPE,	 0,	    MT_YMMWORD, 0, P_AVX,   USE_EMPTY)
 res(ZMMWORD,zmmword, RWT_STYPE,	 0,	    MT_ZMMWORD, 0, P_AVX,   USE_EMPTY)
 
+; NEAR must be first, FAR32 must be last, all contiguous
+
 res(NEAR,   near,    RWT_STYPE,	 0,	    MT_NEAR,	0, P_86,    USE_EMPTY)
 res(FAR,    far,     RWT_STYPE,	 0,	    MT_FAR,	0, P_86,    USE_EMPTY)
 res(NEAR16, near16,  RWT_STYPE,	 0,	    MT_NEAR,	0, P_386,   USE16)
@@ -252,15 +298,21 @@ res(FAR32,  far32,   RWT_STYPE,	 0,	    MT_FAR,	0, P_386,   USE32)
 res(MMWORD, mmword,  RWT_STYPE,	 0,	    MT_QWORD,	0, P_586 or P_MMX, USE_EMPTY)
 res(XMMWORD,xmmword, RWT_STYPE,	 0,	    MT_OWORD,	0, P_686 or P_SSE1, USE_EMPTY)
 
+; unary operators. bytval contains priority
+; token	 str	       type	     value   bytval flags cpu  sflags
+
 res(DOT_TYPE,	.type,	      RWT_UNARY_OP, AT_ALL,    14,  0,	 P_86,	UOT_DOT_TYPE )
 res(DOT_HIGH,	.high,	      RWT_UNARY_OP, AT_TLN,	6,  0,	 P_86,	UOT_DOT_HIGH )
 res(HIGH32,	high32,	      RWT_UNARY_OP, AT_CONST  or  AT_FLOAT, 6,	0,	  P_86,	 UOT_HIGH32 )
 res(HIGHWORD,	highword,     RWT_UNARY_OP, AT_CONST,	6,  0,	 P_86,	UOT_HIGHWORD  )
+
+; v2.10: changed AT_TLN to AT_LABEL
+
 res(IMAGEREL,	imagerel,     RWT_UNARY_OP, AT_LABEL,	5,  0,	 P_86,	UOT_IMAGEREL  )
 res(DOT_LENGTH, .length,      RWT_UNARY_OP, AT_LF,	3,  0,	 P_86,	UOT_DOT_LENGTH )
 res(LENGTHOF,	lengthof,     RWT_UNARY_OP, AT_LF,	3,  0,	 P_86,	UOT_LENGTHOF  )
 res(DOT_LOW,	.low,	      RWT_UNARY_OP, AT_TLN,	6,  0,	 P_86,	UOT_DOT_LOW   )
-res(LOW32,	low32,	      RWT_UNARY_OP, AT_TLN  or	AT_FLOAT, 6,  0,	 P_86,	UOT_LOW32 )
+res(LOW32,	low32,	      RWT_UNARY_OP, AT_TLN or AT_FLOAT,6,0,P_86,UOT_LOW32 )
 res(LOWWORD,	lowword,      RWT_UNARY_OP, AT_TLN,	6,  0,	 P_86,	UOT_LOWWORD   )
 res(LROFFSET,	lroffset,     RWT_UNARY_OP, AT_LFN,	5,  0,	 P_86,	UOT_LROFFSET  )
 res(DOT_MASK,	.mask,	      RWT_UNARY_OP, AT_TBF,	3,  0,	 P_86,	UOT_DOT_MASK  )
@@ -274,22 +326,34 @@ res(SIZEOF,	sizeof,	      RWT_UNARY_OP, AT_TLF,	3,  0,	 P_86,	UOT_SIZEOF    )
 res(DOT_THIS,	.this,	      RWT_UNARY_OP, AT_TYPE,	5,  0,	 P_86,	UOT_DOT_THIS  )
 res(TYPEOF,	typeof,	      RWT_UNARY_OP, AT_ALL,	5,  0,	 P_86,	UOT_TYPEOF    )
 res(DOT_WIDTH,	.width,	      RWT_UNARY_OP, AT_TBF,	3,  0,	 P_86,	UOT_DOT_WIDTH )
-res(HIGH64,	high64,	      RWT_UNARY_OP, AT_CONST  or  AT_FLOAT, 6,	0, P_64, UOT_HIGH64 )
-res(LOW64,	low64,	      RWT_UNARY_OP, AT_TLN or AT_FLOAT, 6,  0, P_64, UOT_LOW64 )
+res(HIGH64,	high64,	      RWT_UNARY_OP, AT_CONST or AT_FLOAT,6,0,P_64,UOT_HIGH64 )
+res(LOW64,	low64,	      RWT_UNARY_OP, AT_TLN or AT_FLOAT,6,0,P_64,UOT_LOW64 )
+res(SQRT,	sqrt,	      RWT_UNARY_OP, AT_FLOAT,	6,  0,	 P_86,	UOT_SQRT )
 
-res(EQ,		eq,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(NE,		ne,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(GE,		ge,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(GT,		gt,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(LE,		le,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(LT,		lt,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0)
-res(MOD,	mod,	      RWT_BINARY_OP, 0, 8, 0, P_86, 0)
-res(PTR,	ptr,	      RWT_BINARY_OP, 0, 4, 0, P_86, 0)
+; binary operators. bytval contains priority
+;
+; token	 str	 type		  value	 bytval flags cpu      sflags
+
+res(EQ,		eq,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(NE,		ne,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(GE,		ge,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(GT,		gt,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(LE,		le,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(LT,		lt,	      RWT_BINARY_OP, 0, 10, 0, P_86, 0 )
+res(MOD,	mod,	      RWT_BINARY_OP, 0,	 8, 0, P_86, 0 )
+res(PTR,	ptr,	      RWT_BINARY_OP, 0,	 4, 0, P_86, 0 )
+res(DEFINED,	defined,      RWT_BINARY_OP, 0, 11, 0, P_86, 0 )
+
+; DUP is also a binary operator, but must be handled differently.
+
 res(DUP,	dup,	      RWT_RES_ID, 0, 0, 0, P_86, 0)
 res(ADDR,	addr,	      RWT_RES_ID, 0, 0, 0, P_86, 0)
 res(FLAT,	flat,	      RWT_RES_ID, 0, 0, 0, P_86, 0)
 res(VARARG,	vararg,	      RWT_RES_ID, 0, 0, 0, P_86, 0)
 res(FRAME,	frame,	      RWT_RES_ID, 0, 0, RWF_X64, P_64, 0)
+
+; languages, must be in this order!
+; token	     str	  type	     value bytval	 flags	   cpu	sflags
 
 res(CCALL,	ccall,	      RWT_RES_ID, 0, LANG_C,	      0, P_86, 0)
 res(SYSCALL,	syscall,      RWT_RES_ID, 0, LANG_SYSCALL,    0, P_86, 0)

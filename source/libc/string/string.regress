@@ -1,0 +1,181 @@
+include stdio.inc
+include string.inc
+include winbase.inc
+include assert.inc
+include signal.inc
+
+    .data
+
+s0  db 0
+s1  db "xxxxxxxxxxxxxxxxabcxxxx",0
+s2  db "xxxxxxxxxxxxxxaabcdxxx",0
+s3  db "xxxxxxxxxxxxx  abc",0
+s4  db "xxxxxxxxxxx..a.abc",0
+
+table label size_t
+    size_t  1,'x',s0,0
+    size_t  1, 0 ,s0,s0
+    size_t 24, 0 ,s1,s1+23
+    size_t 24,'x',s1,s1
+    size_t 24,'a',s1,s1+16
+    size_t 24,'b',s1,s1+17
+    size_t 24,'c',s1,s1+18
+    size_t 23,'d',s2,s2+18
+    size_t 19,' ',s3,s3+13
+    size_t 19,'.',s4,s4+11
+    size_t 0
+
+nerror size_t 0
+
+    .code
+
+overlapped proc uses rsi rdi rbx
+
+    .if VirtualAlloc( 0, 4096, MEM_COMMIT, PAGE_READWRITE )
+
+       .new m:ptr = rax
+        mov rbx,rax
+        mov rdi,rax
+        mov rcx,4096
+        mov rax,'x'
+        rep stosb
+        mov rdi,4096
+        mov byte ptr [rbx+4096-1],0
+        lea rax,[rbx+15]
+
+        memchr(rbx, 'y', 4096)
+        memchr(rbx, 'x', 4096)
+        memchr(rbx, 0, 4096)
+
+        .repeat
+            dec rdi
+            inc rbx
+            memchr(rbx, 0, rdi)
+        .until rdi == 4096 - 33
+        VirtualFree( m, 0, MEM_RELEASE )
+    .endif
+    ret
+
+overlapped endp
+
+regress proc uses rsi rdi rbx
+
+    xor rdi,rdi
+    lea rsi,table
+
+    .repeat
+
+        mov rcx,[rsi+size_t*2]
+        mov rdx,[rsi+size_t]
+        mov rax,[rsi]
+
+        memchr(rcx, edx, rax)
+
+        mov rdx,rax
+        mov rcx,[rsi]
+        mov rbx,[rsi+size_t*2]
+        mov rax,[rsi+size_t*3]
+        add rsi,32
+
+        .if ( rax != rdx )
+
+            mov rsi,[rsi-24]
+            printf("\n\ntable %d: eax = %X (%X) memchr(%s, %c, %d)\n",
+                rdi, rdx, rax, rbx, rsi, rcx)
+            inc nerror
+            mov rax,-1
+           .break
+        .endif
+
+        inc rdi
+        mov rax,[rsi]
+    .until !rax
+    mov rax,nerror
+    ret
+
+regress endp
+
+
+main proc
+
+  local buf[4096]:byte
+    lea rdi,buf
+
+    signal(SIGSEGV, &__crtGeneralFailure)
+
+    .assert strlen("1") == 1
+    .assert strcpy(rdi,"abc") == rdi
+    .assert strlen(rdi) == 3
+    .assert strcmp(rdi,"abc") == 0
+    .assert strcmp(rdi,"abc ") == -1
+    .assert _stricmp(rdi,"aBc") == 0
+    .assert _stricmp(rdi,"abc ") == -1
+    .assert strcmp(rdi,"abcd") == -1
+    .assert strcmp(rdi,"ab") == 1
+    .assert memcmp(rdi,rdi,3) == 0
+    .assert memcmp(rdi,"abd",3) == 1
+    .assert memcmp(rdi,"abcd",3) == 0
+    .assert strncmp(rdi,"abc",3) == 0
+    .assert _strnicmp(rdi,"AbC",3) == 0
+    .assert strncmp(rdi,"abc ",4) == -1
+    .assert _strnicmp(rdi,"abc ",4) == -1
+    .assert strcat(rdi,"\\abc") == rdi
+    .assert strcpy(rdi,"%doszip%, C:/doszip, strstr") == rdi
+    lea rsi,[rdi+21]
+    .assert strstr(rdi,"strstr") == rsi
+    sub rsi,2
+    .assert strrchr(rdi,',') == rsi
+    lea rsi,[rdi+8]
+    .assert strchr(rdi,',') == rsi
+    lea rsi,[rdi+511]
+    .assert memset(rdi,'!',512) == rdi
+    .assert memcmp(rsi,"!",1) == 0
+    .assert memset(rdi,0,512) == rdi
+    .assert memcmp(rsi,rdi,1) == 0
+    .assert strcpy(rdi,"String") == rdi
+    .assert _strrev(rdi) == rdi
+    .assert strstr(rdi,"String") == 0
+    .assert _strrev(rdi) == rdi
+    .assert strstr(rdi,"String") == rdi
+
+    .assert wcslen(L"1") == 1
+    .assert wcscpy(rdi,L"abc") == rdi
+    .assert wcslen(rdi) == 3
+    .assertd wcscmp(rdi,L"abc") == 0
+    .assertd wcscmp(rdi,L"abc ") == -1
+    .assertd _wcsicmp(rdi,L"aBc") == 0
+    .assertd _wcsicmp(rdi,L"abc ") == -1
+    .assertd wcscmp(rdi,L"abcd") == -1
+    .assertd wcscmp(rdi,L"ab") == 1
+    .assertd wcsncmp(rdi,L"abc",3) == 0
+    .assertd _wcsnicmp(rdi,L"AbC",3) == 0
+    .assertd wcsncmp(rdi,L"abc ",4) == -1
+    .assertd _wcsnicmp(rdi,L"abc ",4) == -1
+    .assert wcscat(rdi,L"\\abc") == rdi
+    .assert wcscpy(rdi,L"%doszip%, C:/doszip, strstr") == rdi
+    lea rsi,[rdi+42]
+    .assert wcsstr(rdi,L"strstr") == rsi
+    sub rsi,4
+    .assert wcsrchr(rdi,',') == rsi
+    lea rsi,[rdi+16]
+    .assert wcschr(rdi,',') == rsi
+    .assert wcscpy(rdi,L"String") == rdi
+    .assert _wcsrev(rdi) == rdi
+    .assert wcsstr(rdi,L"String") == 0
+    .assert _wcsrev(rdi) == rdi
+    .assert wcsstr(rdi,L"String") == rdi
+
+
+    .assertd _memicmp("abc", "aBc", 3) == 0
+    .assertd _memicmp("bcd", "abc", 3) == 1
+    .assertd _memicmp("abc", "abc ", 4) == -1
+    .assertd _memicmp("abc", "abcd", 4) == -1
+
+    .ifd !regress()
+        overlapped()
+    .endif
+    .return( nerror )
+
+main endp
+
+    end

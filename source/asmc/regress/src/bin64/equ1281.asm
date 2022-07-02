@@ -4,8 +4,9 @@
     ; ADD, SUB, MUL, DIV, MOD, NOT, SAL, SHL, SAR, SHR, AND, OR, XOR
     ;
     ; __float128:
+    ; 2.34.02 - added sqrt
     ;
-    ; +, -, *, /, EQ, NE, LT, LE, GT, GE
+    ; +, -, *, /, EQ, NE, LT, LE, GT, GE, SQRT
     ;
 ifndef __ASMC64__
     .x64
@@ -29,6 +30,9 @@ endif
 
     mov rdx,HIGH64( p )
     mov rax,LOW64 ( p )
+
+    mov rdx,HIGH64( sqrt( p ) )
+    mov rax,LOW64 ( sqrt( p ) )
 
     mov rdx,HIGH64( sqrt_approx( p ) )
     mov rax,LOW64 ( sqrt_approx( p ) )

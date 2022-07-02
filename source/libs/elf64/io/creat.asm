@@ -13,7 +13,7 @@ externdef _fmode:uint_t
 
 .code
 
-creat proc uses rbx path:string_t, mode:uint_t
+creat proc uses rbx path:string_t, mode:int_t
 
     .if ( !path )
 

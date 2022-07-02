@@ -11,18 +11,20 @@ include asmc.inc
 
     .code
 
-memxchg proc fastcall uses rdi rbx a:ptr, b:ptr, size:int_t
-
-.32 mov     ebx,size
-.64 mov     ebx,r8d
-.0:
+memxchg proc fastcall a:ptr, b:ptr, size:int_t
     mov     rax,[rcx]
-    mov     rdi,[rdx]
-    mov     [rdx],rax
-    mov     [rcx],rdi
-    sub     ebx,size_t
-    cmp     ebx,size_t
-    jae     .0
+    xchg    rax,[rdx]
+    mov     [rcx],rax
+ifdef _WIN64
+    cmp     r8d,8
+else
+    cmp     size,4
+endif
+    je      .0
+    mov     rax,[rcx+size_t]
+    xchg    rax,[rdx+size_t]
+    mov     [rcx+size_t],rax
+.0:
     ret
 
 memxchg endp
@@ -30,9 +32,10 @@ memxchg endp
 
 tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
 
-    .32 mov ecx,p
-    .32 mov edx,n
-
+ifndef _WIN64
+    mov ecx,p
+    mov edx,n
+endif
     .if ( edx > 1 )
 
         lea eax,[rdx-1]
@@ -54,7 +57,9 @@ tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
                 mul rcx
             .endif
 
-            .64 sub rsp,0x20
+ifdef _WIN64
+            sub rsp,0x20
+endif
             lea rbx,[rsi+rax]
 
             .ifsd compare(rsi, rbx) > 0
@@ -111,8 +116,9 @@ tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
                 .break .ifd compare(_di, rbx)
             .endw
 
-            .64 add rsp,0x20
-
+ifdef _WIN64
+            add rsp,0x20
+endif
             mov rdx,_si
             mov rax,_di
             sub rax,rsi
@@ -163,7 +169,6 @@ tqsort proc __ccall uses rsi rdi rbx p:ptr, n:int_t, w:int_t, compare:PQSORTCMD
 
 tqsort endp
 
-    option win64:rsp noauto
 
 tstrupr proc fastcall string:string_t
 
@@ -192,8 +197,11 @@ tmemcpy proc fastcall uses rdi dst:ptr, src:ptr, count:uint_t
 
     mov     rax,rcx ; -- return value
     xchg    rsi,rdx
-.32 mov     ecx,count
-.64 mov     ecx,r8d
+ifdef _WIN64
+    mov     ecx,r8d
+else
+    mov     ecx,count
+endif
     mov     rdi,rax
     rep     movsb
     mov     rsi,rdx
@@ -206,8 +214,11 @@ tmemmove proc fastcall uses rsi rdi dst:ptr, src:ptr, count:uint_t
 
     mov     rax,rcx ; -- return value
     mov     rsi,rdx
-.32 mov     ecx,count
-.64 mov     ecx,r8d
+ifdef _WIN64
+    mov     ecx,r8d
+else
+    mov     ecx,count
+endif
     mov     rdi,rax
     cmp     rax,rsi
     ja      .0
@@ -230,8 +241,11 @@ tmemset proc fastcall uses rdi dst:ptr, char:int_t, count:uint_t
     mov     rdi,rcx
     mov     al,dl
     mov     rdx,rcx
-.32 mov     ecx,count
-.64 mov     ecx,r8d
+ifdef _WIN64
+    mov     ecx,r8d
+else
+    mov     ecx,count
+endif
     rep     stosb
     mov     rax,rdx
     ret
@@ -351,11 +365,14 @@ tstrncpy proc fastcall uses rsi rdi dst:string_t, src:string_t, count:int_t
 
     mov     rdi,rcx
     mov     rsi,rcx
-.32 mov     ecx,count
-.64 mov     ecx,r8d
+ifdef _WIN64
+    mov     ecx,r8d
+else
+    mov     ecx,count
+endif
 .0:
     test    ecx,ecx
-    jz      .2
+    jz      .1
     dec     ecx
     mov     al,[rdx]
     mov     [rdi],al
@@ -363,9 +380,8 @@ tstrncpy proc fastcall uses rsi rdi dst:string_t, src:string_t, count:int_t
     add     rdi,1
     test    al,al
     jnz     .0
-.1:
     rep     stosb
-.2:
+.1:
     mov     rax,rsi
     ret
 
@@ -401,7 +417,18 @@ tstrcat proc fastcall uses rdi rbx dst:string_t, src:string_t
     not     eax
     and     edx,0x80808080
     jz      .1
-    mov     [rdi],eax
+    bt      edx,7
+    mov     [rdi],al
+    jc      .3
+    bt      edx,15
+    mov     [rdi+1],ah
+    jc      .3
+    shr     eax,16
+    bt      edx,23
+    mov     [rdi+2],al
+    jc      .3
+    mov     [rdi+3],ah
+.3:
     mov     rax,rbx
     ret
 
@@ -445,10 +472,13 @@ tmemcmp proc fastcall uses rsi rdi dst:ptr, src:ptr, size:uint_t
 tmemcmp endp
 
 
-tmemicmp proc fastcall uses rbx dst:ptr, src:ptr, size:uint_t
+tmemicmp proc fastcall uses rbx dst:ptr, src:ptr, count:uint_t
 
-.32 mov     ebx,size
-.64 mov     ebx,r8d
+ifdef _WIN64
+    mov     ebx,r8d
+else
+    mov     ebx,count
+endif
 
 .0:
     test    ebx,ebx

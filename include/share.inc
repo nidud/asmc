@@ -1,10 +1,9 @@
 .pragma list(push, 0)
 
-SH_COMPAT	equ 0000h
-SH_DENYRW	equ 0010h
-SH_DENYWR	equ 0020h
-SH_DENYRD	equ 0030h
-SH_DENYNONE	equ 0040h
-SH_DENYNO	equ SH_DENYNONE ; MS documentation uses both
+define SH_DENYRW	0x10 ; deny read/write mode
+define SH_DENYWR	0x20 ; deny write mode
+define SH_DENYRD	0x30 ; deny read mode
+define SH_DENYNO	0x40 ; deny none mode
+define SH_SECURE	0x80 ; secure mode
 
 .pragma list(pop)

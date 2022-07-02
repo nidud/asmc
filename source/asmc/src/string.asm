@@ -1541,9 +1541,12 @@ InStrFunc proc __ccall private uses rsi rdi rbx mi:ptr macro_instance,
 
             sub rax,rbx
             lea rcx,[rax+1]
-            .64 myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
-            .32 xor edx,edx
-            .32 myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+ifdef _WIN64
+            myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
+else
+            xor edx,edx
+            myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+endif
         .endif
     .endif
     .return( NOT_ERROR )
@@ -1564,9 +1567,12 @@ SizeStrFunc proc __ccall private mi:ptr macro_instance, buffer:string_t, tokenar
     .if ( rcx )
         mov ecx,tstrlen( rcx )
 
-        .64 myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
-        .32 xor edx,edx
-        .32 myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+ifdef _WIN64
+        myltoa( rcx, buffer, ModuleInfo.radix, FALSE, TRUE )
+else
+        xor edx,edx
+        myltoa( edx::ecx, buffer, ModuleInfo.radix, FALSE, TRUE )
+endif
     .else
 
         mov rdx,buffer

@@ -1,26 +1,10 @@
-include stdio.inc
-include stdlib.inc
 include signal.inc
 
     .code
 
-GeneralFailure proc signo:int_t
-
-    mov eax,signo
-    .if eax != SIGTERM
-        mov eax,pCurrentException
-        PrintContext(
-            [eax].EXCEPTION_POINTERS.ContextRecord,
-            [eax].EXCEPTION_POINTERS.ExceptionRecord )
-    .endif
-    exit( 1 )
-    ret
-
-GeneralFailure endp
-
 main proc
 
-    lea ebx,GeneralFailure
+    lea ebx,__crtGeneralFailure
 
     signal( SIGINT,   ebx ) ; interrupt
     signal( SIGILL,   ebx ) ; illegal instruction - invalid function image

@@ -1374,13 +1374,17 @@ write_relocs64 proc __ccall private uses rsi rdi rbx curr:ptr dsym
         mov rcx,[rsi].sym
         mov edi,[rcx].asym.ext_idx
         mov eax,[rsi].locofs
-        .32 xor edx,edx
+ifndef _WIN64
+        xor edx,edx
+endif
         .s8 reloc64.r_offset
         mov edx,[rsi].offs
         movzx rax,[rsi].addbytes
         sub rax,rdx
         neg rax
-        .32 cdq
+ifndef _WIN64
+        cdq
+endif
         .s8 reloc64.r_addend
 
          movzx eax,[rsi].type

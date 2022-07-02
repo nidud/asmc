@@ -173,8 +173,11 @@ endif
                .endc
 
             .case 'd'
-                .64 test rcx,rcx
-                .32 test edx,edx
+ifdef _WIN64
+                test rcx,rcx
+else
+                test edx,edx
+endif
                 sets bh
             .case 'u'
                 mov bl,10 ; radix
@@ -183,9 +186,11 @@ endif
 
                 movzx eax,bl
                 shr ebx,8
-                .64 mov ebx,myltoa( rcx, &numbuf, eax, ebx, FALSE )
-                .32 mov ebx,myltoa( edx::ecx, &numbuf, eax, ebx, FALSE )
-
+ifdef _WIN64
+                mov ebx,myltoa( rcx, &numbuf, eax, ebx, FALSE )
+else
+                mov ebx,myltoa( edx::ecx, &numbuf, eax, ebx, FALSE )
+endif
                 .if ( !sign && eax < fldwidth )
 
                     mov ecx,fldwidth

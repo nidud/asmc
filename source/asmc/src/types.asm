@@ -734,10 +734,12 @@ CreateStructField proc __ccall uses rsi rdi rbx loc:int_t, tokenarray:ptr asm_to
                     .endif
 
                     mov esi,[rax].asym.uvalue
-                    .32 xor edx,edx
-                    .32 myltoa( edx::esi, edi, ModuleInfo.radix, ecx, TRUE )
-                    .64 myltoa( rsi, rdi, ModuleInfo.radix, ecx, TRUE )
-
+ifdef _WIN64
+                    myltoa( rsi, rdi, ModuleInfo.radix, ecx, TRUE )
+else
+                    xor edx,edx
+                    myltoa( edx::esi, edi, ModuleInfo.radix, ecx, TRUE )
+endif
                     add rdi,tstrlen( rdi )
                     mov al,' '
                     stosb

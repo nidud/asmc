@@ -7,9 +7,13 @@ include tchar.inc
 main proc
 
   local x:real8
-
     sin(1.0)
-    printf("%f\n", xmm0)
+ifdef __SSE__
+    movsd x,xmm0
+else
+    fstp x
+endif
+    printf("%f\n", x)
     ret
 
 main endp

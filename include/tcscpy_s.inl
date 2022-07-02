@@ -1,6 +1,5 @@
 
     .code
-    option win64:nosave
 
 if ( _CHAR eq 2 )
     reg equ <ax>
@@ -9,30 +8,40 @@ else
 endif
 
 _FUNC_PROLOGUE
-_FUNC_NAME proc _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR
+_FUNC_NAME proc uses rsi rdi rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR
+
+ifdef _WIN64
+    mov rsi,r8
+    mov rdi,rcx
+    mov rbx,rdx
+else
+    mov esi,_SRC
+    mov edi,_DEST
+    mov ebx,_SIZE
+endif
 
     .repeat
 
-        _VALIDATE_STRING(rcx, rdx)
-        _VALIDATE_POINTER_RESET_STRING(r8, rcx, rdx)
+        _VALIDATE_STRING( rdi, rbx )
+        _VALIDATE_POINTER_RESET_STRING( rsi, rdi, rbx )
 
-        .fors( --rdx : rdx > 0 : rdx--, rcx += _CHAR, r8 += _CHAR )
+        .fors ( --rbx : rbx > 0 : rbx--, rdi+=_CHAR, rsi+=_CHAR )
 
-            mov reg,[r8]
-            mov [rcx],reg
+            mov reg,[rsi]
+            mov [rdi],reg
             .break .if !reg
         .endf
 
-        .if (rdx == 0)
+        .if ( rbx == 0 )
 
             _RESET_STRING(_DEST, _SIZE)
             _RETURN_BUFFER_TOO_SMALL(_DEST, _SIZE)
         .endif
 if _SECURECRT_FILL_BUFFER
-        mov r8,_SIZE
-        sub r8,rdx
-        inc r8
-        _FILL_STRING(_DEST, _SIZE, r8)
+        mov rcx,_SIZE
+        sub rcx,rbx
+        inc rcx
+        _FILL_STRING(_DEST, _SIZE, rcx)
 endif
         xor eax,eax
 

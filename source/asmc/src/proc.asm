@@ -734,7 +734,7 @@ ifdef _WIN64
                 add rax,rcx
                 [rax].fastcall_conv.paramcheck( p, rdi, &fcint )
 else
-                fastcall_tab[ecx].paramcheck( p, edi, &fcint )  
+                fastcall_tab[ecx].paramcheck( p, edi, &fcint )
 endif
             .endif
             .if ( eax == 0 )
@@ -2060,7 +2060,7 @@ ExcFrameDirective proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     .if ( rdi == NULL || endprolog_found == TRUE )
         .return( asmerr( 3008 ) )
     .endif
-    
+
     mov rsi,[rdi].dsym.procinfo
     .if ( !( [rsi].flags & PROC_ISFRAME ) )
         .return( asmerr( 3009 ) )
@@ -3203,6 +3203,17 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
    .new rspalign:int_t = FALSE
    .new calign:int_t = CurrWordSize
    .new wsize:int_t = CurrWordSize
+   .new cstack:int_t = 0
+
+    mov rdi,CurrProc
+    movzx ebx,[rdi].asym.langtype
+
+    .if ( ModuleInfo.Ofssize == USE64 || ( ModuleInfo.Ofssize == USE32 &&
+            ( ebx == LANG_STDCALL || ebx == LANG_C || ebx == LANG_SYSCALL ) ) )
+        .if ( ModuleInfo.xflag & OPT_CSTACK )
+            inc cstack
+        .endif
+    .endif
 
     .if ( ModuleInfo.fctype == FCT_VEC64 )
         mov wsize,16
@@ -3249,34 +3260,65 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
         .if ( ( [rsi].flags & PROC_FPO || ( [rsi].parasize == 0 && [rsi].locallist == NULL ) ) )
             mov start,CurrWordSize
         .endif
+
         .if ( rspalign )
+
             mov eax,cntstd
             mul wsize
             add eax,start
             mov [rsi].localsize,eax
+
             .if ( cntxmm )
+
                 imul eax,cntxmm,16
-                add [rsi].localsize,eax
-                mov [rsi].localsize,ROUND_UP( [rsi].localsize, 16 )
+                add eax,[rsi].localsize
+                mov [rsi].localsize,ROUND_UP( eax, 16 )
             .endif
         .endif
     .endif
 
-    lea rdx,ModuleInfo
+    ; size of user resisters should be added if SP used as base
+    ; or BP used and registers pushed before BP (option cstack)
+
+    lea   rdx,ModuleInfo
     movzx ecx,[rdx].module_info.Ofssize
-    mov ecx,[rdx].module_info.basereg[rcx*4]
+    mov   ebx,[rdx].module_info.basereg[rcx*4]
+    imul  ecx,cntxmm,16
+    mov   eax,wsize
+    mul   cntstd
+    add   eax,ecx
 
-    .if ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ecx == T_RBP || ecx == T_EBP ) )
+    .if ( eax && cstack )
 
-        imul ecx,cntxmm,16
-        mov eax,wsize
-        mul cntstd
-        add eax,ecx
-        mov regsize,eax
+        .if ( calign == 16 && ebx == T_RSP )
+            ROUND_UP( eax, 16 )
+        .endif
+        .if ( ebx == T_EBP || ebx == T_RBP ) 
+            mov regsize,eax
+        .elseif ( ebx == T_ESP )
+            neg eax
+            mov regsize,eax
+        .endif
     .endif
 
     ; scan the locals list and set member sym.offset
 
+if 0 ; v2.34.02 - optimize local alignment
+    xor ebx,ebx
+    mov rdi,[rsi].locallist
+    .if ( rdi && [rdi].dsym.nextlocal )
+        mov rdi,[rdi].dsym.nextlocal
+        xor eax,eax
+        .if ( [rdi].asym.total_size )
+            mov eax,[rdi].asym.total_size
+            cdq
+            div [rdi].asym.total_length
+        .endif
+        .if ( eax >= wsize )
+            mov ebx,wsize
+        .endif
+    .endif
+endif
     .for ( rdi = [rsi].locallist: rdi: rdi = [rdi].dsym.nextlocal )
 
         xor eax,eax
@@ -3286,13 +3328,30 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
             div [rdi].asym.total_length
         .endif
         mov ecx,eax
+if 0
+        .if ( ecx >= wsize )
+            mov ebx,wsize
+        .endif
+endif
         add [rsi].localsize,[rdi].asym.total_size
         .if ( ecx > calign )
             mov [rsi].localsize,ROUND_UP( [rsi].localsize, calign )
-        .elseif ( ecx ) ;; v2.04: skip if size == 0
+        .elseif ( ecx ) ; v2.04: skip if size == 0
             mov [rsi].localsize,ROUND_UP( [rsi].localsize, ecx )
         .endif
         mov eax,[rsi].localsize
+if 0
+        .if ( ebx && ecx < ebx )
+
+            .if ( regsize > 0 )
+                add eax,ebx
+                sub eax,ecx
+            .endif
+
+            ROUND_UP( eax, ebx )
+            xor ebx,ebx
+        .endif
+endif
         neg eax
         add eax,regsize
         mov [rdi].asym.offs,eax
@@ -3323,6 +3382,7 @@ SetLocalOffsets proc __ccall uses rsi rdi rbx info:ptr proc_info
             mov ebx,ecx
             sub ebx,edi
             sub ebx,start
+
         .else
 
             mov eax,cntstd

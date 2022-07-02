@@ -1,0 +1,183 @@
+include limits.inc
+include errno.inc
+include stdio.inc
+include string.inc
+include quadmath.inc
+include assert.inc
+include signal.inc
+
+    T equ <@CStr>
+
+.template assert fastcall
+
+    lastResult errno_t ?
+
+    .static assert {
+
+        mov this.lastResult,0
+        _set_errno(0)
+        }
+;;;;;;;;
+
+    .static cmpo :ptr, :ptr {
+
+        mov rdi,_1
+        mov rsi,_2
+        mov rax,[rdi]
+        mov rbx,[rsi]
+        mov rdx,[rdi+size_t]
+        mov rcx,[rsi+size_t]
+       .assert( rax == rbx && rdx == rcx )
+ifndef _WIN64
+        mov eax,[edi+8]
+        mov ebx,[esi+8]
+        mov edx,[edi+12]
+        mov ecx,[esi+12]
+       .assert( eax == ebx && edx == ecx )
+endif
+        }
+
+    .static __a :abs, :abs, :abs, :abs {
+        local a, b, r
+        .data
+        align 16
+        a oword _2
+        b oword _3
+        r oword _4
+        .code
+        __&_1&(addr a, addr b)
+        this.cmpo(addr a, addr r)
+        }
+
+    .static addo {
+        this.__a(addo, 0, 0, 0)
+        this.__a(addo, 1, 0, 1)
+        this.__a(addo, 0x7FFFFFFF, 1, 0x80000000)
+        this.__a(addo, 0x7FFFFFFFFFFFFFFF, 1, 0x8000000000000000)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFE, 1, 0xFFFFFFFFFFFFFFFF)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFF, 1, 0x10000000000000000)
+        this.__a(addo, 0xFFFFFFFFFFFFFFFE, 2, 0x10000000000000000)
+        }
+    .static subo {
+        this.__a(subo, 0, 0, 0)
+        this.__a(subo, 1, 0, 1)
+        this.__a(subo, 0x10000000000000000, 0xFFFFFFFFFFFFFFFF, 1)
+        this.__a(subo, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 1, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE)
+        this.__a(subo, 0x80000000000000000000000000000000, 1, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        this.__a(subo, 0x80000000000000000000000000000000, 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 1)
+        this.__a(subo, 0, 1, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
+
+    .static __m :abs, :abs, :abs, :abs=<0> {
+        local a, b, r, o, h
+        .data
+        align 16
+        a oword _1
+        b oword _2
+        r oword _3
+        o oword _4
+        h oword ?
+        .code
+
+        __mulo(addr a, addr b, addr h)
+        this.cmpo(addr a, addr r)
+        this.cmpo(addr h, addr o)
+        }
+
+    .static mulo {
+        this.__m(0, 0, 0, 0)
+        this.__m(2, 0, 0, 0)
+        this.__m(4, 2, 8, 0)
+        this.__m(0x80000000000000000000000000000000, 2, 0, 1)
+        }
+
+    .static __d dividend:abs, divisor:abs, :abs, :abs=<0> {
+        local a, b, d, r, o
+        .data
+        align 16
+        a oword dividend
+        b oword divisor
+        d oword _3
+        r oword _4
+        o oword ?
+        .code
+        __divo(addr a, addr b, addr o)
+        this.cmpo(addr a, addr d)
+        this.cmpo(addr r, addr o)
+        }
+
+    .static divo {
+        this.__d(0, 0, 0)
+        this.__d(1, 0, 0)
+        this.__d(1, 1, 1)
+        this.__d(0x80000000000000000000000000000000, 2, 0x40000000000000000000000000000000)
+        this.__d(0x80000000000000000000000000000000, 10, 0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC, 8)
+        }
+
+    .static __s :abs, :abs, :abs, :abs, :abs {
+        local a, r
+        .data
+        align 16
+        a oword _2
+        r oword _5
+        .code
+        __&_1&(addr a, _3, _4)
+        this.cmpo(addr a, addr r)
+        }
+
+    .static shro {
+        this.__s(shro, 0, 0, 0, 0)
+        this.__s(shro, 2, 1, 32, 1)
+        this.__s(shro, 0x8000000000000000, 1, 64, 0x4000000000000000)
+        this.__s(shro, 0x80000000000000000, 1, 128, 0x40000000000000000)
+        this.__s(shro, 0x80000000000000000000000000000000, 1, 128, 0x40000000000000000000000000000000)
+        }
+
+    .static shlo {
+        this.__s(shlo, 0, 0, 0, 0)
+        this.__s(shlo, 2, 1, 32, 4)
+        this.__s(shlo, 0x4000000000000000, 1, 64, 0x8000000000000000)
+        this.__s(shlo, 0x40000000000000000, 1, 128, 0x80000000000000000)
+        this.__s(shlo, 0x40000000000000000000000000000000, 1, 128, 0x80000000000000000000000000000000)
+        }
+
+    .static saro {
+        this.__s(saro, 0, 0, 0, 0)
+        this.__s(saro, 2, 1, 32, 1)
+        this.__s(saro, 0x80000000, 1, 32, 0xC0000000)
+        this.__s(saro, 0x8000000000000000, 1, 64, 0xC000000000000000)
+        this.__s(saro, 0x80000000000000000, 1, 128, 0x40000000000000000)
+        this.__s(saro, 0x80000000000000000000000000000000, 1, 128, 0xC0000000000000000000000000000000)
+        }
+
+;;;;;;;;
+
+    .static SetStatus {
+        _get_errno(addr this.lastResult)
+        _set_errno(0)
+        }
+    .ends
+
+    .code
+
+main proc
+
+    .new this:assert()
+
+    signal(SIGSEGV, &__crtGeneralFailure)
+
+    ; */+-
+
+    this.mulo()
+    this.divo()
+    this.addo()
+    this.subo()
+    this.shro()
+    this.shlo()
+    this.saro()
+    this.SetStatus()
+    ret
+
+main endp
+
+    end

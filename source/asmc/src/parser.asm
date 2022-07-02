@@ -3782,6 +3782,16 @@ continue:
                 .if ( GetOperator( &[rbx+asm_tok] ) )
                     .return ProcessOperator( tokenarray )
                 .endif
+                .if ( ( [rbx].token == T_BINARY_OPERATOR && [rbx].tokval == T_DEFINED ) ||
+                      ( [rbx].token == T_UNARY_OPERATOR && [rbx].tokval == T_SQRT ) )
+
+                    RemoveResWord( [rbx].tokval )
+                    mov [rbx].token,T_ID
+                    .if PreprocessLine( rbx )
+                        ParseLine( rbx )
+                    .endif
+                    .return
+                .endif
             .endif
             .return asmerr( 2008, [rsi].string_ptr )
         .endif

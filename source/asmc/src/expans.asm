@@ -1052,8 +1052,11 @@ RunMacro endp
 AddTokens proc __ccall private uses rbx tokenarray:token_t, start:int_t, count:int_t, _end:int_t
 
     mov     rbx,tokenarray
-.32 mov     eax,count
-.64 movsxd  rax,count
+ifdef _WIN64
+    movsxd  rax,count
+else
+    mov     eax,count
+endif
     imul    rcx,rax,asm_tok
     mov     edx,start
 
@@ -2103,7 +2106,7 @@ ExpandLine proc __ccall uses rsi rdi rbx string:string_t, tokenarray:token_t
 
                         mov al,[rbx].token
                         mov ah,[rbx+asm_tok*2].token
-                        .if ( [rbx+3*asm_tok].token == T_OP_BRACKET ||
+                        .if ( ( al != T_REG && [rbx+3*asm_tok].token == T_OP_BRACKET ) ||
                               ( al < T_STRING && al > T_REG &&
                                 ah < T_STRING && ah > T_REG ) )
                             inc edi

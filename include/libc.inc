@@ -154,15 +154,57 @@ PTBYTE	typedef ptr byte
 endif
 endif
 
+ifndef _ERRNO_T_DEFINED
+define _ERRNO_T_DEFINED
+errno_t typedef sdword
+endif
+
+;
+; the following should be set depending on the sizes of various types
+;
+
+ifndef LONGDOUBLE_IS_DOUBLE
+define LONGDOUBLE_IS_DOUBLE 0  ; 1 means long double is same as double
+define LONG_IS_INT     1       ; 1 means long is same size as int
+define SHORT_IS_INT    0       ; 1 means short is same size as int
+ifdef _WIN64
+define PTR_IS_INT      0       ; 1 means ptr is same size as int
+define PTR_IS_LONG     0       ; 1 means ptr is same size as long
+else
+define PTR_IS_INT      1
+define PTR_IS_LONG     1
+endif
+endif
+
 ptr_t		typedef ptr
 char_t		typedef sbyte
-short_t		typedef sword
-int_t		typedef sdword
-long_t		typedef sdword
 uchar_t		typedef byte
+if SHORT_IS_INT
+short_t		typedef sdword
+ushort_t	typedef dword
+else
+short_t		typedef sword
 ushort_t	typedef word
+endif
+int_t		typedef sdword
 uint_t		typedef dword
+if LONG_IS_INT
+long_t		typedef sdword
 ulong_t		typedef dword
+else
+long_t		typedef sqword
+ulong_t		typedef qword
+endif
+
+half_t		typedef real2
+float_t		typedef real4
+double_t	typedef real8
+if LONGDOUBLE_IS_DOUBLE
+ldouble_t	typedef real8
+else
+ldouble_t	typedef real10
+endif
+qfloat_t	typedef real16
 
 string_t	typedef ptr sbyte
 ustring_t	typedef ptr byte
@@ -214,7 +256,6 @@ define NULL	0
 
 option casemap:none
 size_t typedef SIZE_T
-assert_exit proto
 
 bool	typedef sdword
 define	true	1

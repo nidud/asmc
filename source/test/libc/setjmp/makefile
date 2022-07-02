@@ -1,5 +1,5 @@
 setjmp.exe:
-    asmc -q $*.asm
+    asmc -q -coff $*.asm
     linkw system con_32 file $*
     $@
     pause
@@ -7,7 +7,7 @@ setjmp.exe:
     linkw system con_64 file $*
     $@
     pause
-    asmc -q -ws $*.asm
+    asmc -q -coff -ws $*.asm
     linkw system con_32W file $*
     $@
     pause

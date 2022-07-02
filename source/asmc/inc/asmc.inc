@@ -35,11 +35,6 @@ endif
 define .lodsd <lodsq>
 define .stosd <stosq>
 define .movsd <movsq>
-.32 macro upc:vararg
-    endm
-.64 macro upc:vararg
-    upc
-    endm
 .l8 macro mem
     mov rax,mem
     endm
@@ -53,11 +48,6 @@ else
 define .lodsd <lodsd>
 define .stosd <stosd>
 define .movsd <movsd>
-.32 macro upc:vararg
-    upc
-    endm
-.64 macro upc:vararg
-    endm
 .l8 macro mem
     mov edx,dword ptr mem[4]
     mov eax,dword ptr mem

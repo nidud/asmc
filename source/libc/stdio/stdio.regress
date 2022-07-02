@@ -1,0 +1,127 @@
+include io.inc
+include stdio.inc
+include stdlib.inc
+include string.inc
+include assert.inc
+include signal.inc
+
+    .code
+
+main proc
+
+  local buffer[4096]:byte
+
+    signal(SIGSEGV, &__crtGeneralFailure)
+
+    lea rdi,buffer
+
+    .assert sprintf(rdi,"hello%c",'!') == 6
+    .assert !strcmp(rdi,"hello!")
+    .assert sprintf(rdi,"%d",1) == 1
+    .assert !strcmp(rdi,"1")
+    .assert sprintf(rdi,"%02d",99) == 2
+    .assert !strcmp(rdi,"99")
+    .assert sprintf(rdi,"%03d",99) == 3
+    .assert !strcmp(rdi,"099")
+    .assert sprintf(rdi,"%x",1) == 1
+    .assert !strcmp(rdi,"1")
+    .assert sprintf(rdi,"%02x",255) == 2
+    .assert !strcmp(rdi,"ff")
+    .assert sprintf(rdi,"%02X",254) == 2
+    .assert !strcmp(rdi,"FE")
+    .assert sprintf(rdi,"%X",0xABCD) == 4
+    .assert !strcmp(rdi,"ABCD")
+    .assert sprintf(rdi,"%X",89ABCDEFh) == 8
+    .assert !strcmp(rdi,"89ABCDEF")
+    .assert sprintf(rdi,"%p",89ABCDEFh) == size_t*2
+ifdef _WIN64
+    .assert !strcmp(rdi,"0000000089ABCDEF")
+else
+    .assert !strcmp(rdi,"89ABCDEF")
+endif
+    .new q:qword = 1123456789ABCDEFh
+    .assert sprintf(rdi,"%016I64X",q) == 16
+    .assert !strcmp(rdi,"1123456789ABCDEF")
+    .assert sprintf(rdi,"%b",1) == 1
+    .assert !strcmp(rdi,"1")
+    .assert sprintf(rdi,"%03b",3) == 3
+    .assert !strcmp(rdi,"011")
+    .assert sprintf(rdi,"%lb",8000h) == 16
+    .assert !strcmp(rdi,"1000000000000000")
+    mov eax,-1
+    .assert sprintf(rdi,"%i",eax) == 2
+    .assert !strcmp(rdi,"-1")
+    .assert sprintf(rdi,"%u",0xFFFFFFFF) == 10
+    .assert !strcmp(rdi,"4294967295")
+    .assert atol("247") == 247
+    .assert fopen("test.fil","w")
+    mov rsi,rax
+    .assert fprintf(rax,"%03u",3) == 3
+    .assert !fclose(rsi)
+    .assert fopen("test.fil","rt") == rsi
+    .assert fread(rdi,3,1,rsi) == 1
+    .assert !fclose(rsi)
+    .assert !strncmp(rdi,"003",3)
+
+    .assert fopen("..\\libc\\test.fil","rt") == rsi
+    .assert !fclose(rsi)
+
+    .assert fopen("test.fil","w")
+    mov rsi,rax
+
+    .assert fwrite("abcdefghijklmnopqr",2,9,rsi) == 9
+    .assert !fseek(rsi,1,SEEK_SET)
+    .assert fwrite("abcdefghijklmnopq",1,17,rsi) == 17
+    .assert !fclose(rsi)
+    .assert fopen("test.fil","rb") == rsi
+    .assert fread(rdi,2,9,rsi) == 9
+    .assert !fclose(rsi)
+    .assert !strncmp(rdi,"aabcdefghijklmnopq",18)
+    .assert !remove("test.fil")
+
+test_f  macro z,r,s,v:VARARG
+    .assert swprintf(rdi,s,v) == z
+    .assert !wcscmp(rdi,r)
+    endm
+
+    test_f 6,L"hello!",L"hello%c",'!'
+    test_f 1,L"1",L"%d",1
+    test_f 2,L"99",L"%02d",99
+    test_f 3,L"099",L"%03d",99
+    test_f 1,L"1",L"%x",1
+    test_f 2,L"ff",L"%02x",255
+    test_f 2,L"FE",L"%02X",254
+    test_f 4,L"ABCD",L"%X",0ABCDh
+    test_f 8,L"89ABCDEF",L"%X",89ABCDEFh
+    test_f 16,L"1123456789ABCDEF",L"%016I64X",q
+ifdef _WIN64
+    test_f 16,L"0000000089ABCDEF",L"%p",89ABCDEFh
+else
+    test_f 8,L"89ABCDEF",L"%p",89ABCDEFh
+endif
+    test_f 1,L"1",L"%b",1
+    test_f 3,L"011",L"%03b",3
+    test_f 16,L"1000000000000000",L"%lb",8000h
+ifdef _WIN64
+    test_f 2,L"-1",L"%lld",0xFFFFFFFFFFFFFFFF
+else
+    test_f 2,L"-1",L"%d",0xFFFFFFFF
+endif
+    test_f 10,L"4294967295",L"%u",0xFFFFFFFF
+
+    .assert _wtol(L"247") == 247
+    .assert _wfopen(L"test.fil",L"w")
+    mov rsi,rax
+    .assert fwprintf(rax,L"%03u",3) == 3
+    .assert !fclose(rsi)
+    .assert _wfopen(L"test.fil",L"rt") == rsi
+    .assert fread(rdi,3,2,rsi) == 2
+    .assert !fclose(rsi)
+    .assert !wcsncmp(rdi,L"003",3)
+    .assert !_wremove(L"test.fil")
+
+    .return( 0 )
+
+main endp
+
+    end

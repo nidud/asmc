@@ -769,6 +769,13 @@ unaryop proc __ccall private uses rsi rdi rbx uot:unary_operand_types,
         mov [rsi].h64_l,0
         mov [rsi].h64_h,0
        .return( NOT_ERROR )
+    .case UOT_SQRT
+        .if ( [rdi].kind != EXPR_FLOAT )
+            .return( fnasmerr( 2176 ) )
+        .endif
+        TokenAssign( rsi, rdi )
+        __sqrtq( rsi )
+        .endc
     .endsw
     .return( NOT_ERROR )
 
@@ -1096,6 +1103,86 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
             .endif
         .endif
         .endc
+
+    .case T_BINARY_OPERATOR
+
+        .if ( i && [rbx].tokval == T_DEFINED && [rbx+asm_tok].token == T_OP_BRACKET )
+
+            add i,2
+            add rbx,asm_tok*2
+            mov [rdi].kind,EXPR_CONST
+            mov [rdi].value,0
+            mov [rdi].hvalue,0
+
+            ; added v2.28.17: defined(...) returns -1
+
+            mov rcx,idx
+            mov eax,i
+
+            .if ( [rbx].token == T_CL_BRACKET )
+
+                mov [rcx],eax
+                dec [rdi].value ; <> -- defined()
+                dec [rdi].hvalue
+               .endc
+            .endif
+
+            .if ( [rbx].token == T_NUM && [rbx+asm_tok].token == T_CL_BRACKET )
+
+                dec [rdi].value ; <> -- defined()
+                dec [rdi].hvalue
+                inc eax
+                mov [rcx],eax
+               .endc
+            .endif
+
+            .if ( [rbx].token == T_ID && [rbx+asm_tok].token == T_CL_BRACKET )
+
+                inc eax
+                mov [rcx],eax
+                .if ( SymFind([rbx].string_ptr) )
+                    .if ( [rax].asym.state != SYM_UNDEFINED )
+
+                        dec [rdi].value ; symbol defined
+                        dec [rdi].hvalue
+                       .endc
+                    .endif
+                .endif
+
+                ; -- symbol not defined --
+
+                .endc .if ( [rbx+asm_tok*2].token == T_FINAL ||
+                            [rbx+asm_tok*2].tokval != T_AND  ||
+                            [rbx-asm_tok*3].tokval == T_NOT )
+
+                ; [not defined(symbol)] - return 0
+
+
+                ; [defined(symbol) and]
+                ; - return 0 and skip rest of line...
+
+                add rbx,asm_tok*3
+                mov edx,i
+                add edx,3
+
+                .for ( ecx = 0: edx < Token_Count: edx++, rbx += asm_tok )
+
+                    .if ( [rbx].token == T_CL_BRACKET )
+
+                        .break .if ( ecx == 0 )
+                        dec ecx
+                    .elseif ( [rbx].token == T_OP_BRACKET )
+                        inc ecx
+                    .endif
+                .endf
+
+                dec edx
+                mov rcx,idx
+                mov [rcx],edx
+               .endc
+            .endif
+        .endif
+
     .case T_ID
         mov rsi,[rbx].string_ptr
         .if ( [rdi].flags & E_IS_DOT )
@@ -1191,90 +1278,6 @@ get_operand proc __ccall uses rsi rdi rbx opnd:expr_t, idx:ptr int_t, tokenarray
                 .endif
 
             .else
-
-                .if ( Options.strict_masm_compat == FALSE && rax == NULL )
-
-                    .ifd ( tstricmp( rsi, "defined" ) == 0 )
-
-                        .if ( i && [rbx+asm_tok].token == T_OP_BRACKET )
-
-                            add i,2
-                            add rbx,asm_tok*2
-                            mov [rdi].kind,EXPR_CONST
-                            mov [rdi].value,0
-                            mov [rdi].hvalue,0
-
-                            ; added v2.28.17: defined(...) returns -1
-
-                            mov rcx,idx
-                            mov eax,i
-
-                            .if ( [rbx].token == T_CL_BRACKET )
-                                mov [rcx],eax
-                                dec [rdi].value ; <> -- defined()
-                                dec [rdi].hvalue
-                               .endc
-                            .endif
-
-                            .if ( [rbx].token == T_NUM &&
-                                  [rbx+asm_tok].token == T_CL_BRACKET )
-
-                                dec [rdi].value ; <> -- defined()
-                                dec [rdi].hvalue
-                                inc eax
-                                mov [rcx],eax
-                               .endc
-                            .endif
-
-                            .if ( [rbx].token == T_ID &&
-                                  [rbx+asm_tok].token == T_CL_BRACKET )
-
-                                inc eax
-                                mov [rcx],eax
-                                .if ( SymFind([rbx].string_ptr) )
-                                    .if ( [rax].asym.state != SYM_UNDEFINED )
-
-                                        dec [rdi].value ; symbol defined
-                                        dec [rdi].hvalue
-                                       .endc
-                                    .endif
-                                .endif
-
-                                ;; -- symbol not defined --
-
-                                .endc .if ( [rbx+asm_tok*2].token == T_FINAL ||
-                                            [rbx+asm_tok*2].tokval != T_AND  ||
-                                            [rbx-asm_tok*3].tokval == T_NOT )
-
-                                    ; [not defined(symbol)] - return 0
-
-
-                                ; [defined(symbol) and]
-                                ; - return 0 and skip rest of line...
-
-                                add rbx,asm_tok*3
-                                mov edx,i
-                                add edx,3
-
-                                .for ( ecx = 0: edx < Token_Count: edx++, rbx += asm_tok )
-
-                                    .if ( [rbx].token == T_CL_BRACKET )
-
-                                        .break .if ( ecx == 0 )
-                                        dec ecx
-                                    .elseif ( [rbx].token == T_OP_BRACKET )
-                                        inc ecx
-                                    .endif
-                                .endf
-
-                                dec edx
-                                mov rcx,idx
-                                mov [rcx],edx
-                               .endc
-                            .endif
-                        .endif
-                    .endif
-                .endif
                 .if ( byte ptr [rsi+1] == '&' )
                     lea rsi,@CStr("@@")
                 .endif

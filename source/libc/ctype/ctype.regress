@@ -1,0 +1,89 @@
+include ctype.inc
+include assert.inc
+include signal.inc
+
+    .code
+
+main proc
+
+    signal(SIGSEGV, &__crtGeneralFailure)
+
+    .assert isspace(' ') == true
+    .assert isspace(9)	 == true
+    .assert isspace(10)	 == true
+    .assert isspace(13)	 == true
+    .assert isspace('a') == false
+    .assert isspace(100) == false
+
+    .assert isupper('A') == true
+    .assert isupper('0') == false
+    .assert isupper('a') == false
+
+    .assert islower('A') == false
+    .assert islower('0') == false
+    .assert islower('a') == true
+
+    .assert isalpha('A') == true
+    .assert isalpha('z') == true
+    .assert isalpha('0') == false
+
+    .assert isascii('9') == true
+    .assert isascii('_') == true
+    .assert isascii(128) == false
+
+    .assert iscntrl(0)	 == true
+    .assert iscntrl(1Fh) == true
+    .assert iscntrl(20h) == false
+
+    .assert isdigit('0') == true
+    .assert isdigit('9') == true
+    .assert isdigit(2)	 == false
+
+    .assert isprint(20h) == true
+    .assert isprint(7Eh) == true
+    .assert isprint(10h) == false
+
+    .assert isgraph(20h) == false
+    .assert isgraph(7Eh) == true
+    .assert isgraph(10h) == false
+
+    .assert ispunct('!') == true
+    .assert ispunct('/') == true
+    .assert ispunct(7Eh) == true
+    .assert ispunct(' ') == false
+
+    .assert isxdigit('0') == true
+    .assert isxdigit('9') == true
+    .assert isxdigit('A') == true
+    .assert isxdigit('f') == true
+    .assert isxdigit('h') == false
+    .assert isxdigit(' ') == false
+
+    .assert toupper('A') == 'A'
+    .assert toupper('a') == 'A'
+    .assert toupper('z') == 'Z'
+    .assert toupper('9') == '9'
+
+    .assert tolower('a') == 'a'
+    .assert tolower('A') == 'a'
+    .assert tolower('Z') == 'z'
+    .assert tolower('9') == '9'
+
+    .assert _tolower('A') == 'a'
+    .assert _tolower('Z') == 'z'
+
+    .assert towupper('A') == 'A'
+    .assert towupper('a') == 'A'
+    .assert towupper('z') == 'Z'
+    .assert towupper('9') == '9'
+
+    .assert towlower('a') == 'a'
+    .assert towlower('A') == 'a'
+    .assert towlower('Z') == 'z'
+    .assert towlower('9') == '9'
+
+    .return( 0 )
+
+main endp
+
+    end

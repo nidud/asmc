@@ -687,7 +687,9 @@ endif
             mov [rcx],eax
            .endc
         .case FIX_OFF64
-            .32 xor edx,edx
+ifndef _WIN64
+            xor edx,edx
+endif
             .if ( ( ModuleInfo.sub_format == SFORMAT_PE && [rdi].Ofssize == USE64 ) ||
                   ModuleInfo.sub_format == SFORMAT_64BIT )
                 .l8 value64
@@ -921,13 +923,17 @@ endif
 
 
             mov eax,0x400000
-            .32 cdq
-
+ifndef _WIN64
+            cdq
+endif
             .if ( ModuleInfo.sub_format == SFORMAT_64BIT )
 
-                .32 mov eax,LOW32(0x140000000)
-                .32 mov edx,HIGH32(0x140000000)
-                .64 mov rax,0x140000000
+ifdef _WIN64
+                mov rax,0x140000000
+else
+                mov eax,LOW32(0x140000000)
+                mov edx,HIGH32(0x140000000)
+endif
             .endif
             .s8 pe64def.OptionalHeader.ImageBase
 

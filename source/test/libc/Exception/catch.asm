@@ -1,12 +1,13 @@
 include windows.inc
+include tchar.inc
 
 catch proto signo:int_t {
-__except:
-    mov eax,signo
-    .if eax
+except:
+    mov eax,ecx
+    .if rcx
         lea rax,@F
         mov [r8].CONTEXT._Rip,rax
-        xor eax,eax
+        mov eax,0
         retn
         @@:
         mov eax,1
@@ -15,7 +16,7 @@ __except:
 
 .code
 
-main proc frame:__except argc:dword
+main proc frame:except argc:int_t
 
     xor eax,eax
     .if ecx > 1
@@ -32,4 +33,4 @@ main proc frame:__except argc:dword
 
 main endp
 
-    end
+    end _tstart

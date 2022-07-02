@@ -125,9 +125,9 @@ define _isatty	<isatty>
 endif
 
 _open		proto _CDecl :LPSTR, :SINT, :VARARG
-_sopen		proto _CDecl :LPSTR, :UINT, :UINT, :VARARG
+_sopen		proto _CDecl :LPSTR, :SINT, :SINT, :VARARG
 _read		proto __cdecl :SINT, :PVOID, :SIZE_T
-_creat		proto __cdecl :LPSTR, :UINT
+_creat		proto __cdecl :LPSTR, :SINT
 _close		proto __cdecl :SINT
 _lseek		proto __cdecl :SINT, :SIZE_T, :UINT
 _write		proto __cdecl :SINT, :PVOID, :UINT
@@ -196,19 +196,12 @@ _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 
 if not defined(_MSVCRT) or defined(_CRTBLD)
-_osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
-_osopenW	proto __cdecl :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
-ifdef _UNICODE
-_osopen		equ <_osopenW>
-else
-_osopen		equ <_osopenA>
-endif
-osread		proto __cdecl :SINT, :PVOID, :SIZE_T
-oswrite		proto __cdecl :SINT, :PVOID, :SIZE_T
 getosfhnd	proto __cdecl :SINT
 osmaperr	proto __cdecl
 getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
+osread		proto __cdecl :int_t, :ptr, :uint_t
+oswrite		proto __cdecl :int_t, :ptr, :uint_t
 endif ; _MSVCRT
 
 endif

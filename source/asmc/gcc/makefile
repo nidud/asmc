@@ -15,11 +15,11 @@ all: asmc asmc64 clean
 
 asmc:
 	chmod u=rwx,go=r $(CC)
-	$(CC) $(flags) ../src/*.asm
+	$(CC) $(flags) ../../libc/fltintrn/*.asm ../src/*.asm
 	gcc $(lpic) -s -o $@ *.o
 
 asmc64:
-	$(CC) -DASMC64 $(flags) ../src/*.asm
+	$(CC) -DASMC64 $(flags) ../../libc/fltintrn/*.asm ../src/*.asm
 	gcc $(lpic) -s -o $@ *.o
 
 clean:

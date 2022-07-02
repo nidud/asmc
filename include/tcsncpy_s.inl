@@ -8,34 +8,42 @@ else
 endif
 
 _FUNC_PROLOGUE
-_FUNC_NAME proc frame _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR, _COUNT:size_t
-
+_FUNC_NAME proc uses rsi rdi rbx _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR, _COUNT:size_t
+ifdef _WIN64
+    mov rsi,r8
+    mov rdi,rcx
+    mov rbx,rdx
+else
+    mov esi,_SRC
+    mov edi,_DEST
+    mov ebx,_SIZE
+endif
     .repeat
 
-        .if (r9 == 0 && rcx == NULL && rdx == 0)
+        .if ( _COUNT == 0 && rdi == NULL && rbx == 0 )
 
-            ;; this case is allowed; nothing to do
+            ; this case is allowed; nothing to do
             _RETURN_NO_ERROR()
         .endif
 
-        ;; validation section
-        _VALIDATE_STRING(rcx, rdx)
-        .if (r9 == 0)
+        ; validation section
+        _VALIDATE_STRING( rdi, rbx )
+        .if ( _COUNT == 0 )
 
-            ;; notice that the source string pointer can be NULL in this case
-            _RESET_STRING(rcx, rdx)
+            ; notice that the source string pointer can be NULL in this case
+            _RESET_STRING( rdi, rbx )
             _RETURN_NO_ERROR()
         .endif
-        _VALIDATE_POINTER_RESET_STRING(r8, rcx, rdx)
+        _VALIDATE_POINTER_RESET_STRING( rsi, rdi, rbx )
 
         ;p = _DEST;
         ;available = _SIZE;
-        .if (r9 == _TRUNCATE)
+        .if ( _COUNT == _TRUNCATE )
 
-            .fors( --rdx : rdx > 0 : rdx--, rcx += _CHAR, r8 += _CHAR )
+            .fors ( --rbx : rbx > 0 : rbx--, rdi += _CHAR, rsi += _CHAR )
 
-                mov reg,[r8]
-                mov [rcx],reg
+                mov reg,[rsi]
+                mov [rdi],reg
                 .break .if !reg
             .endf
 
@@ -43,41 +51,41 @@ _FUNC_NAME proc frame _DEST:ptr _CHAR, _SIZE:size_t, _SRC:ptr _CHAR, _COUNT:size
 
             .ASSERT((!_CrtGetCheckCount() || _COUNT < _SIZE), L"Buffer is too small")
 
-            .fors( --r9, --rdx : rdx > 0 && r9 >  0 : rdx--, r9--, rcx += _CHAR, r8 += _CHAR )
+            .fors( --_COUNT, --rbx : rbx > 0 && _COUNT >  0 : rbx--, _COUNT--, rdi += _CHAR, rsi += _CHAR )
 
-                mov reg,[r8]
-                mov [rcx],reg
+                mov reg,[rsi]
+                mov [rdi],reg
                 .break .if !reg
 
             .endf
 
-            .if (r9 == 0)
+            .if ( _COUNT == 0 )
 
                 xor reg,reg
-                mov [rcx],reg
+                mov [rdi],reg
             .endif
         .endif
 
-        mov rcx,_DEST
-        mov r10,_SIZE
+        mov rdi,_DEST
+        mov rsi,_SIZE
 
-        .if (rdx == 0)
+        .if ( rbx == 0 )
 
-            .if (r9 == _TRUNCATE)
+            .if ( _COUNT == _TRUNCATE )
 
                 xor reg,reg
-                mov [rcx+r10-_CHAR],reg
+                mov [rdi+rsi-_CHAR],reg
                 _RETURN_TRUNCATE()
             .endif
-            _RESET_STRING(rcx, r10)
-            _RETURN_BUFFER_TOO_SMALL(rcx, r10)
+            _RESET_STRING( rdi, rsi )
+            _RETURN_BUFFER_TOO_SMALL( rdi, rsi )
         .endif
 
 if _SECURECRT_FILL_BUFFER
-        mov r8,r10
-        sub r8,rdx
-        inc r8
-        _FILL_STRING(rcx, r10, r8)
+        mov rcx,rsi
+        sub rcx,rbx
+        inc rcx
+        _FILL_STRING( rdi, rsi, rcx )
 endif
         ;_RETURN_NO_ERROR()
         xor eax,eax

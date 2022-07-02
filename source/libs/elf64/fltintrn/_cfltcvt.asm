@@ -6,7 +6,6 @@
 ; _cfltcvt() - Converts double to string
 ;
 include fltintrn.inc
-include quadmath.inc
 
     .code
 

@@ -494,22 +494,22 @@ _itow		proto __cdecl :int_t, :wstring_t, :int_t
 _itow_s		proto __cdecl :int_t, :wstring_t, :size_t, :int_t
 _ltow		proto __cdecl :int_t, :wstring_t, :int_t
 _ltow_s		proto __cdecl :long_t, :wstring_t, :size_t,:int_t
-_ultow		proto __cdecl :ulong_t, :warray_t, :int_t
-_ultow_s	proto __cdecl :ulong_t, :warray_t, :size_t, :int_t
-wcstod		proto __cdecl :wstring_t, :warray_t
-_wcstod_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
-wcstol		proto __cdecl :wstring_t, :warray_t, :int_t
-_wcstol_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
-wcstoll		proto __cdecl :wstring_t, :warray_t, :int_t
-_wcstoll_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
-wcstoul		proto __cdecl :wstring_t, :warray_t, :int_t
-_wcstoul_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
-wcstoull	proto __cdecl :wstring_t, :warray_t, :int_t
-_wcstoull_l	proto __cdecl :wstring_t, :warray_t, :int_t, :_locale_t
-wcstold		proto __cdecl :wstring_t, :warray_t
-_wcstold_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
-wcstof		proto __cdecl :wstring_t, :warray_t
-_wcstof_l	proto __cdecl :wstring_t, :warray_t, :_locale_t
+_ultow		proto __cdecl :ulong_t, :wstring_t, :int_t
+_ultow_s	proto __cdecl :ulong_t, :wstring_t, :size_t, :int_t
+wcstod		proto __cdecl :wstring_t, :wstring_t
+_wcstod_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
+wcstol		proto __cdecl :wstring_t, :wstring_t, :int_t
+_wcstol_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
+wcstoll		proto __cdecl :wstring_t, :wstring_t, :int_t
+_wcstoll_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
+wcstoul		proto __cdecl :wstring_t, :wstring_t, :int_t
+_wcstoul_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
+wcstoull	proto __cdecl :wstring_t, :wstring_t, :int_t
+_wcstoull_l	proto __cdecl :wstring_t, :wstring_t, :int_t, :_locale_t
+wcstold		proto __cdecl :wstring_t, :wstring_t
+_wcstold_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
+wcstof		proto __cdecl :wstring_t, :wstring_t
+_wcstof_l	proto __cdecl :wstring_t, :wstring_t, :_locale_t
 
 _wgetenv	proto __cdecl :wstring_t
 _wgetenv_s	proto __cdecl :ptr size_t, :wstring_t, :size_t, :wstring_t
@@ -643,8 +643,11 @@ __iob_func	proto __cdecl
 if not defined(_MSVCRT) or defined(_CRTBLD)
 setargv		proto __cdecl :ptr int_t, :string_t
 setwargv	proto __cdecl :ptr int_t, :ptr wchar_t
-_atoi128	proto __cdecl :string_t
-qsort4		proto :ptr, :size_t, :LPQSORTCMD
+_atoi128	proto __cdecl :string_t, :ptr int128_t
+_xtoa		proto __cdecl :qword, :string_t, :int_t, :int_t
+_xtow		proto __cdecl :qword, :wstring_t, :int_t, :int_t
+_xtoa_s		proto __cdecl :qword, :string_t, :size_t, :uint_t, :int_t
+_xtow_s		proto __cdecl :qword, :wstring_t, :size_t, :uint_t, :int_t
 endif
 endif ; __STDLIB_INC
 .pragma list(pop)

@@ -11,15 +11,14 @@ include fltintrn.inc
     ;
     ; '#' and precision == 0 means force a decimal point
     ;
-_forcdecpt proc uses rbx buffer:LPSTR
+_forcdecpt proc uses rbx buffer:string_t
 
-    mov rbx,rdi
-    .if !strchr(rdi, '.')
-
-        strcat(rbx, ".0")
+    mov rbx,buffer
+    .if !strchr( rbx, '.' )
+        strcat( rbx, ".0" )
     .endif
     ret
 
 _forcdecpt endp
 
-    END
+    end

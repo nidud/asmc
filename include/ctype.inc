@@ -89,63 +89,6 @@ isxdigit	proto __cdecl :SINT ; hexadecimal digit (0 to 9, A to F, a to f)
 toupper		proto __cdecl :SINT
 tolower		proto __cdecl :SINT
 
-ifdef _WIN64
-
-ctype_inline macro char, flags
-    lea rax,_ctype
-    mov al,[rax+rcx*2+2]
-    and eax,flags
-    retm<eax>
-    endm
-isalnum macro char
-    exitm<ctype_inline(char,_DIGIT or _UPPER or _LOWER)>
-    endm
-isalpha macro char
-    exitm<ctype_inline(char,_UPPER or _LOWER)>
-    endm
-isascii macro char
-    mov eax,ecx
-    and eax,0x80
-    setz al
-    retm<eax>
-    endm
-iscntrl macro char
-    exitm<ctype_inline(char,_CONTROL)>
-    endm
-isdigit macro char
-    exitm<ctype_inline(char,_DIGIT)>
-    endm
-isgraph macro char
-    mov eax,ecx
-    .if al < 0x21 || al >= 0x7F
-	xor eax,eax
-    .endif
-    retm<eax>
-    endm
-islower macro char
-    exitm<ctype_inline(char,_LOWER)>
-    endm
-isprint macro char
-    mov eax,ecx
-    .if al < 0x20 || al >= 0x7F
-	xor eax,eax
-    .endif
-    endm
-ispunct macro char
-    exitm<ctype_inline(char,_PUNCT)>
-    endm
-isspace macro char
-    exitm<ctype_inline(char,_SPACE)>
-    endm
-isupper macro char
-    exitm<ctype_inline(char,_UPPER)>
-    endm
-isxdigit macro char
-    exitm<ctype_inline(char,_HEX)>
-    endm
-
-endif
-
 _isctype	proto __cdecl :SINT, :SINT
 _tolower	proto __cdecl :SINT
 _toupper	proto __cdecl :SINT
@@ -183,4 +126,3 @@ endif
 
 endif
 .pragma list(pop)
-

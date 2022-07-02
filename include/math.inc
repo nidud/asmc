@@ -59,8 +59,8 @@ HUGE_VAL        equ <_HUGE>
 ifndef __assembler  ; Protect from assembler
 ifndef _CRT_ABS_DEFINED
 define _CRT_ABS_DEFINED
-abs     proto __cdecl _X:SINT
-labs    proto __cdecl _X:sdword
+abs     proto __cdecl _X:int_t
+labs    proto __cdecl _X:int_t
 endif
 
 acos    proto __cdecl _X:double
@@ -100,8 +100,8 @@ frexp   proto __cdecl _X:double, _Y:ptr SINT
 _hypot  proto __cdecl _X:double, _Y:double
 _j0     proto __cdecl _X:double
 _j1     proto __cdecl _X:double
-_jn     proto __cdecl _X:SINT, _Y:double
-ldexp   proto __cdecl _X:double, _Y:SINT
+_jn     proto __cdecl _X:int_t, _Y:double
+ldexp   proto __cdecl _X:double, _Y:int_t
 ifndef _CRT_MATHERR_DEFINED
 define _CRT_MATHERR_DEFINED
 _matherr proto __cdecl _Except:ptr _exception
@@ -110,7 +110,7 @@ modf    proto __cdecl _X:double, _Y:ptr double
 
 _y0     proto __cdecl _X:double
 _y1     proto __cdecl _X:double
-_yn     proto __cdecl _X:SINT, _Y:double
+_yn     proto __cdecl _X:int_t, _Y:double
 
 round   proto __cdecl _X:double
 
@@ -120,7 +120,7 @@ endif
 
 ifdef _M_IX86
 
-_set_SSE2_enable proto __cdecl _Flag:SINT
+_set_SSE2_enable proto __cdecl _Flag:int_t
 _hypotf proto __cdecl _X:float, _Y:float
 
 endif
@@ -153,7 +153,7 @@ floorf  proto __cdecl _X:float
 fmodf   proto __cdecl _X:float, _Y:float
 
 _hypotf proto __cdecl _X:float, _Y:float
-ldexpf  proto __cdecl _X:float, _Y:SINT
+ldexpf  proto __cdecl _X:float, _Y:int_t
 
 endif
 

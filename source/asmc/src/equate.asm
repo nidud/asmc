@@ -137,8 +137,9 @@ check_number:
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
         .l8 opnd.hlvalue
-        .32 or eax,edx
-
+ifndef _WIN64
+        or eax,edx
+endif
         ; v2.08: check added. the number must be 32-bit
 
         .if ( !rax )
@@ -389,7 +390,9 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
         ; define name
         ;
         xor eax,eax
-        .32 cdq
+ifndef _WIN64
+        cdq
+endif
         .s8 opnd.llvalue
         .s8 opnd.hlvalue
         mov opnd.sym,rax
@@ -446,8 +449,9 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
         mov opnd.flags,0
 
         .l8 opnd.hlvalue
-        .32 or eax,edx
-
+ifndef _WIN64
+        or eax,edx
+endif
         mov rc,NOT_ERROR
         inc i
 
@@ -555,9 +559,12 @@ CreateConstant proc __ccall uses rsi rdi rbx tokenarray:token_t
 
     imul eax,i,asm_tok
     mov rcx,opnd.sym
-    .64 mov rdx,opnd.hlvalue ; magnitude <= 64 bits?
-    .32 mov edx,dword ptr opnd.hlvalue
-    .32 or  edx,dword ptr opnd.hlvalue[4]
+ifdef _WIN64
+    mov rdx,opnd.hlvalue ; magnitude <= 64 bits?
+else
+    mov edx,dword ptr opnd.hlvalue
+    or  edx,dword ptr opnd.hlvalue[4]
+endif
 
     .if ( rc != ERROR && [rbx+rax].token == T_FINAL && opnd.inst == EMPTY &&
           ( ( opnd.kind == EXPR_CONST && rdx == 0 ) ||

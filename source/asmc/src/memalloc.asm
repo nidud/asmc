@@ -115,7 +115,7 @@ else
 
 MemAlloc proc fastcall len:uint_t
 
-    .if ( HeapAlloc(ProcessHeap, HEAP_ZERO_MEMORY, rcx) == NULL )
+    .if ( HeapAlloc( ProcessHeap, HEAP_ZERO_MEMORY, rcx ) == NULL )
 
 endif
 

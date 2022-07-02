@@ -120,8 +120,8 @@ _FPE_MULTIPLE_FAULTS	equ 0x8e
 ;; i.e. change the bits in unMask to have the values they have in unNew,
 ;; leaving other bits unchanged.
 
-_controlfp	proto __cdecl :UINT, :UINT
-_control87	proto __cdecl :UINT, :UINT
+_controlfp	proto __cdecl :uint_t, :uint_t
+_control87	proto __cdecl :uint_t, :uint_t
 
 _clearfp	proto __cdecl ; Clear the FPU status word
 _statusfp	proto __cdecl ; Report the FPU status word
@@ -151,7 +151,7 @@ _chgsign proto __cdecl _X:double
 endif
 
 _logb		proto __cdecl :double
-_scalb		proto __cdecl :double, :SDWORD
+_scalb		proto __cdecl :double, :int_t
 
 _finite		proto __cdecl :double
 _fpclass	proto __cdecl :double

@@ -223,13 +223,21 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
             .l8 opnd.llvalue
             .if ( size == 1 )
                 movsx rax,al
-                .32 cdq
+ifndef _WIN64
+                cdq
+endif
             .elseif ( size == 2 )
                 movsx rax,ax
-                .32 cdq
+ifndef _WIN64
+
+                cdq
+endif
             .elseif ( size == 4 )
-                .64 movsxd rax,eax
-                .32 cdq
+ifdef _WIN64
+                movsxd rax,eax
+else
+                cdq
+endif
             .endif
 
             .if ( opnd.kind == EXPR_ADDR )
@@ -237,10 +245,14 @@ GetCaseValue proc __ccall uses rsi rdi rbx hll:ptr hll_item, tokenarray:ptr asm_
                 mov rcx,opnd.sym
                 mov ecx,[rcx].asym.offs
                 add rax,rcx
-                .32 xor edx,edx
+ifndef _WIN64
+                xor edx,edx
+endif
             .endif
             mov [rsi].value,rax
-            .32 mov [rsi].hvalue,edx
+ifndef _WIN64
+            mov [rsi].hvalue,edx
+endif
             inc ebx
         .elseif ( [rsi].condlines )
 

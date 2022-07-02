@@ -6,7 +6,6 @@
 ; _cldcvt() - Converts long double to string
 ;
 include fltintrn.inc
-include quadmath.inc
 
     .code
 

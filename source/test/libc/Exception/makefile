@@ -17,7 +17,5 @@ test64.exe:
     del $*.obj
 
 catch.exe:
-    asmc64 $*.asm
-    linkw sys con_64 file $*
+    asmc64 -pe -Zp8 -frame $*.asm
     $@ 1
-    del $*.obj

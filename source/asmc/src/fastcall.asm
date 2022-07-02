@@ -1111,8 +1111,11 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
             xor ecx,ecx
             .l8 [rdi].expr.value64
-            .32 .ifs ( ( !edx && eax > LONG_MAX ) || ( edx < 0 && eax < LONG_MIN ) )
-            .64 .ifs ( rax > LONG_MAX || rax < LONG_MIN )
+ifdef _WIN64
+            .ifs ( rax > LONG_MAX || rax < LONG_MIN )
+else
+            .ifs ( ( !edx && eax > LONG_MAX ) || ( edx < 0 && eax < LONG_MIN ) )
+endif
                 inc ecx
             .endif
             .if ( psize == 8 && ecx )

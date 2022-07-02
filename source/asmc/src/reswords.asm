@@ -600,7 +600,7 @@ AddResWord endp
 
 ; remove a reserved word from the hash table.
 
-RemoveResWord proc __ccall private token:int_t
+RemoveResWord proc fastcall token:int_t
 
     mov     r9d,ecx
     lea     r11,ResWordTable
@@ -1234,7 +1234,7 @@ AddResWord endp
 
 ; remove a reserved word from the hash table.
 
-RemoveResWord proc fastcall private uses esi edi ebx token:int_t
+RemoveResWord proc fastcall uses esi edi ebx token:int_t
 
     mov     edi,ecx
     lea     esi,ResWordTable

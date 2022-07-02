@@ -404,8 +404,9 @@ AssignStruct proc __ccall private uses rsi rdi rbx name:string_t, sym:asym_t, st
                             mov     ecx,eax
                             rep     movsb
                             mov     rsi,rsp
-
-                            .64 sub rsp,@ReservedStack
+ifdef _WIN64
+                            sub     rsp,@ReservedStack
+endif
                            .continue(0)
 
                         .else

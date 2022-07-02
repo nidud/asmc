@@ -1336,8 +1336,13 @@ StripSource proc __ccall private uses rsi rdi rbx i:int_t, e:int_t, tokenarray:p
                             mov esi,T_RAX
                         .endif
                     .else
-                        mov esi,T_EDX
-                        mov reg2,T_EAX
+                        .if ( [rbx-asm_tok].token == T_DBL_COLON )
+                            ; reg::func()
+                            mov esi,T_EAX
+                        .else
+                            mov esi,T_EDX
+                            mov reg2,T_EAX
+                        .endif
                     .endif
                     .endc
                   .case 16

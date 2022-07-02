@@ -24,5 +24,6 @@
     UOT_DOT_MASK,
     UOT_DOT_WIDTH,
     UOT_LOW64,
-    UOT_HIGH64
+    UOT_HIGH64,
+    UOT_SQRT
     }

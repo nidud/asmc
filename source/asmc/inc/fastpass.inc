@@ -16,7 +16,6 @@ define __FASTPASS_INC
    .ends
 
 .template line_item
-
     next            ptr line_item ?
     prev            ptr line_item ?
     lineno          uint_t ? ; 20:12 = srcfile
@@ -24,13 +23,6 @@ define __FASTPASS_INC
     macro_level     uint_t ?
     list_pos        uint_t ? ; position .LST file
     line            char_t 1 dup(?)
-
-    .inline get_pos fastcall {
-        mov eax,[this].line_item.list_pos
-        }
-    .inline get_line fastcall {
-        lea rax,[this].line_item.line
-        }
    .ends
 
 externdef LineStoreCurr:ptr line_item

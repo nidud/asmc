@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.35 - xx xxx 2022
+- added separate list section for -Sf
+- fixed bug in listing output
+- @Date symbol (back) to MM/DD/YY
 - fixed name conflict with register param and stuct members
 - added sqrt operator
 

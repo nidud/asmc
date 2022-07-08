@@ -53,7 +53,7 @@ The macros listed in the following table.
 
 | | |
 | -------- |:------- |
-| **@Date** | The compilation date of the current source file. The date is a constant length string literal of the form yyyy-mm-dd. |
+| **@Date** | The compilation date of the current source file. The date is a constant length string literal of the form mm/dd/yy. |
 | **@Time** | The system time in 24-hour hh:mm:ss format (text macro). |
 
 ### Environment Information

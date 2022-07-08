@@ -15,6 +15,8 @@ include fastpass.inc
 public SymCmpFunc
 public strFUNC
 public strFILE
+public szDate
+public szTime
 
 externdef FileCur   :asym_t ; @FileCur symbol
 externdef LineCur   :asym_t ; @Line symbol
@@ -964,9 +966,12 @@ else
     sub edx,100
     mov ecx,[rsi].tm.tm_mon
     add ecx,1
-;   sprintf(&szDate, "%02u/%02u/%02u", ecx, [rsi].tm.tm_mday, eax)
+if 1 ; changed in v2.34
+    tsprintf( &szDate, "%02u/%02u/%02u", ecx, [rsi].tm.tm_mday, edx )
+else
     add edx,2000
     tsprintf( &szDate, "%u-%02u-%02u", edx, ecx, [rsi].tm.tm_mday )
+endif
     tsprintf( &szTime, "%02u:%02u:%02u", [rsi].tm.tm_hour, [rsi].tm.tm_min, [rsi].tm.tm_sec )
 endif
 

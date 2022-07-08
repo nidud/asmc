@@ -38,6 +38,8 @@ endif
 externdef LastCodeBufSize:int_t
 externdef basereg:special_token
 externdef cp_logo:char_t
+externdef szDate:char_t
+externdef szTime:char_t
 
 public list_pos
 
@@ -170,14 +172,21 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
 
     .if ( ( Parse_Pass > PASS_1 ) && UseSavedState )
         .if ( ModuleInfo.GeneratedCode == 0 )
+
+            mov rcx,LineStoreCurr
             .if ( !( ModuleInfo.line_flags & LOF_SKIPPOS ) )
-                mov list_pos,LineStoreCurr.get_pos()
+
+                .if ( Parse_Pass == PASS_2 && Options.first_pass_listing )
+                    mov [rcx].line_item.list_pos,list_pos
+                .else
+                    mov list_pos,[rcx].line_item.list_pos
+                .endif
             .endif
 if USELSLINE
             ; either use CurrSource + CurrComment or LineStoreCurr->line
             ; (see assemble.asm, OnePass())
 
-            mov pSrcline,LineStoreCurr.get_line()
+            mov pSrcline,&[rcx].line_item.line
             .if ( ModuleInfo.CurrComment ) ; if comment was removed, readd it!
 
                 mov rbx,rax
@@ -206,11 +215,7 @@ endif
         mov ll.buffer[OFSSIZE],' '
 
         .endc .if ( rbx == NULL )
-        .if ( Parse_Pass > PASS_1 && Options.first_pass_listing )
-            .endc
-        .elseif ( Parse_Pass == PASS_1 )
-;            .endc
-        .endif
+        .endc .if ( Parse_Pass == PASS_1 && Options.first_pass_listing == FALSE )
 
         mov len,CODEBYTES
         lea rdi,ll.buffer[OFSSIZE+2]
@@ -436,7 +441,8 @@ LstSetPosition proc __ccall uses rsi rdi
 
     .if ( CurrFile[LST*size_t] && Parse_Pass > PASS_1 &&  UseSavedState && ModuleInfo.GeneratedCode == 0 )
 
-        mov list_pos,LineStoreCurr.get_pos()
+        mov rcx,LineStoreCurr
+        mov list_pos,[rcx].line_item.list_pos
         fseek( CurrFile[LST*size_t], list_pos, SEEK_SET )
         or ModuleInfo.line_flags,LOF_SKIPPOS
     .endif
@@ -1638,19 +1644,18 @@ ListMacroDirective proc __ccall i:int_t, tokenarray:ptr asm_tok
 ListMacroDirective endp
 
 
-LstInit proc __ccall uses rsi rdi
+LstInit proc __ccall
 
-    mov list_pos,0
-
+    .if ( Parse_Pass == PASS_1 )
+        mov list_pos,0
+    .endif
     .if ( Options.write_listing )
-
-        mov list_pos,tstrlen( &cp_logo )
-        fwrite( &cp_logo, 1, list_pos, CurrFile[LST*size_t] )
-        LstNL()
-        mov rdi,GetFName( ModuleInfo.srcfile )
-        add list_pos,tstrlen( rdi )
-        fwrite( rdi, 1, eax, CurrFile[LST*size_t] )
-        LstNL()
+        mov rdx,GetFName( ModuleInfo.srcfile )
+        .if ( Parse_Pass == PASS_1 && Options.first_pass_listing )
+            LstPrintf("%s  %s %s - First Pass\n%s\n", &cp_logo, &szDate, &szTime, rdx)
+        .else
+            LstPrintf("%s  %s %s\n%s\n", &cp_logo, &szDate, &szTime, rdx)
+        .endif
     .endif
     ret
 

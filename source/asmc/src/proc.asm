@@ -2728,7 +2728,7 @@ write_default_prologue proc __ccall private uses rsi rdi rbx
     .endif
 
     .if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
-          ( ebx == LANG_FASTCALL || ebx == LANG_VECTORCALL ) )
+          ( ebx == LANG_FASTCALL || ebx == LANG_VECTORCALL ) && Parse_Pass > PASS_1 )
         .if ( !( [rdi].asym.sflags & S_STKUSED ) && ![rsi].locallist )
             inc leaf
             .if ( !( [rdi].asym.sflags & ( S_ARGUSED or S_LOCALGPR ) ) &&
@@ -3192,7 +3192,8 @@ runqueue:
     ; problem: the size of code above changes in pass 2..
 
     .if ( ModuleInfo.list && UseSavedState )
-        .if ( Parse_Pass == PASS_1 )
+        .if ( ( Parse_Pass == PASS_2 && Options.first_pass_listing ) ||
+              Parse_Pass == PASS_1 )
             mov [rsi].prolog_list_pos,list_pos
         .else
             mov list_pos,[rsi].prolog_list_pos
@@ -3215,7 +3216,7 @@ runqueue:
         mov ebx,[rcx].line_item.list_pos
         mov [rcx].line_item.list_pos,list_pos
 
-        .if ( ebx > list_pos ) ; remove dublicated code
+        .if ( ebx > list_pos && !Options.first_pass_listing ) ; remove dublicated code
 
             mov rcx,[rcx].line_item.next
             .if ( rcx && [rcx].line_item.list_pos > ebx )

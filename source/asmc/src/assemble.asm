@@ -866,8 +866,7 @@ OnePass proc __ccall private uses rsi rdi
     mov ModuleInfo.EndDirFound,al
     mov ModuleInfo.PhaseError,al
     LinnumInit()
-    .if ModuleInfo.line_queue.head
-
+    .if ( ModuleInfo.line_queue.head )
         RunLineQueue()
     .endif
 
@@ -914,8 +913,7 @@ endif
     .endif
 
     LinnumFini()
-    .if Parse_Pass == PASS_1
-
+    .if ( Parse_Pass == PASS_1 )
         PassOneChecks()
     .endif
     ClearSrcStack()
@@ -1422,13 +1420,19 @@ AssembleModule proc __ccall uses rsi rdi rbx source:string_t
             omf_set_filepos()
         .endif
 
-        .if ( !UseSavedState && ModuleInfo.curr_file[LST*string_t] )
-
-            rewind( ModuleInfo.curr_file[LST*string_t] )
-            LstInit()
-        .endif
-
         inc Parse_Pass
+        .if ( ModuleInfo.curr_file[LST*string_t] )
+
+            .if ( !UseSavedState )
+
+                rewind( ModuleInfo.curr_file[LST*string_t] )
+                LstInit()
+
+            .elseif ( Parse_Pass == PASS_2 && Options.first_pass_listing )
+
+                LstInit()
+            .endif
+        .endif
     .endw
 
     .if ( Parse_Pass > PASS_1 && write_to_file )

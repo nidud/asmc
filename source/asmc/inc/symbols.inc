@@ -127,6 +127,9 @@ S_ISCOM         equ 0x01 ; sflags
 S_WEAK          equ 0x02
 S_ISVARARG      equ 0x04
 S_ISVECTOR      equ 0x08
+S_STKUSED       equ 0x10 ; proc: call stack used
+S_ARGUSED       equ 0x20 ; proc: stack arg used
+S_LOCALGPR      equ 0x40 ; proc: xmm reg saved to local stack
 
 M_ISVARARG      equ 0x01 ; mac_flag
 M_ISFUNC        equ 0x02

@@ -116,7 +116,7 @@ endif
         mov  [rsi].tm.tm_wday,edx
         add  [rsi].tm.tm_mday,edi
 
-        mov eax,[esi].tm.tm_mday
+        mov eax,[rsi].tm.tm_mday
         .ifs ( eax <= 0 )
 
             add [rsi].tm.tm_mday,32

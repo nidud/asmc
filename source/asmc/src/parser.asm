@@ -3458,12 +3458,9 @@ ParseLine proc __ccall uses rsi rdi rbx tokenarray:token_t
   local buffer:ptr char_t
 
     mov rbx,tokenarray
-
     .if ( CurrEnum && [rbx].token == T_ID )
-
         .return EnumDirective( 0, rbx )
     .endif
-
     mov buffer,NULL ; v2.32 - may not be used..
 
 continue:
@@ -4453,8 +4450,8 @@ endif
             ; this is to be improved - by a new flag in struct instr_item.
 
             ; added v2.31.32
-            movzx eax,CodeInfo.token
 
+            movzx eax,CodeInfo.token
             .if ( eax < VEX_START && eax >= T_ADDPD && j > 1 && opndx[expr].kind == EXPR_CONST )
                 mov rdx,opndx[expr].quoted_string
                 .if rdx

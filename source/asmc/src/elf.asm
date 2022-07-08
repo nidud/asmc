@@ -1660,7 +1660,7 @@ elf_write_module endp
 
 elf_init proc fastcall modinfo:ptr module_info
 
-    mov [rcx].module_info.elf_osabi,ELFOSABI_LINUX
+    mov [rcx].module_info.elf_osabi,ELFOSABI_SYSV
     mov [rcx].module_info.WriteModule,&elf_write_module
     ret
 

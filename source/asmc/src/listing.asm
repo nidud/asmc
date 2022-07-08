@@ -135,22 +135,20 @@ cr print_item \
 
 LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
 
-  local newofs:uint_t
-  local sym:ptr asym
-  local len:int_t
-  local len2:int_t
-  local idx:int_t
-  local srcfile:int_t
-  local p1:string_t
-  local p2:string_t
-  local pSrcline:string_t
-  local pll:ptr lstleft
-  local ll:lstleft
+   .new newofs:uint_t
+   .new sym:ptr asym = value
+   .new len:int_t
+   .new len2:int_t
+   .new idx:int_t
+   .new srcfile:int_t
+   .new p1:string_t
+   .new p2:string_t
+   .new pSrcline:string_t
+   .new pll:ptr lstleft
+   .new ll:lstleft
 
-    mov sym,value
-
-    .if ( ModuleInfo.list == FALSE ||
-          CurrFile[LST*size_t] == NULL || ( ModuleInfo.line_flags & LOF_LISTED ) )
+    .if ( ModuleInfo.list == FALSE || CurrFile[LST*size_t] == NULL ||
+          ( ModuleInfo.line_flags & LOF_LISTED ) )
         .return
     .endif
     .if ( ModuleInfo.GeneratedCode && ( ModuleInfo.list_generated_code == FALSE ) )
@@ -168,30 +166,25 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
     .endif
 
     or ModuleInfo.line_flags,LOF_LISTED
-
     mov pSrcline,CurrSource
 
     .if ( ( Parse_Pass > PASS_1 ) && UseSavedState )
-
         .if ( ModuleInfo.GeneratedCode == 0 )
-
             .if ( !( ModuleInfo.line_flags & LOF_SKIPPOS ) )
-
                 mov list_pos,LineStoreCurr.get_pos()
-
-if USELSLINE
-                ; either use CurrSource + CurrComment or LineStoreCurr->line
-                ; (see assemble.asm, OnePass())
-
-                mov pSrcline,LineStoreCurr.get_line()
-                .if ( ModuleInfo.CurrComment ) ; if comment was removed, readd it!
-
-                    mov rbx,rax
-                    mov byte ptr [rbx+tstrlen(rax)],';'
-                    mov ModuleInfo.CurrComment,NULL
-                .endif
-endif
             .endif
+if USELSLINE
+            ; either use CurrSource + CurrComment or LineStoreCurr->line
+            ; (see assemble.asm, OnePass())
+
+            mov pSrcline,LineStoreCurr.get_line()
+            .if ( ModuleInfo.CurrComment ) ; if comment was removed, readd it!
+
+                mov rbx,rax
+                mov byte ptr [rbx+tstrlen(rax)],';'
+                mov ModuleInfo.CurrComment,NULL
+            .endif
+endif
         .endif
         fseek( CurrFile[LST*size_t], list_pos, SEEK_SET )
     .endif
@@ -213,10 +206,10 @@ endif
         mov ll.buffer[OFSSIZE],' '
 
         .endc .if ( rbx == NULL )
-        .if ( Options.first_pass_listing )
-            .endc .if ( Parse_Pass > PASS_1 )
-        .elseif ( Parse_Pass == PASS_1 )  ; changed v1.96
+        .if ( Parse_Pass > PASS_1 && Options.first_pass_listing )
             .endc
+        .elseif ( Parse_Pass == PASS_1 )
+;            .endc
         .endif
 
         mov len,CODEBYTES
@@ -356,20 +349,16 @@ endif
         .endc
     .endsw
 
-    .if ( Parse_Pass == PASS_1 || UseSavedState == FALSE )
-        mov idx,sizeof( ll.buffer )
-        .if ( ModuleInfo.GeneratedCode )
-            mov ll.buffer[28],'*'
-        .endif
-        .if ( MacroLevel )
-            mov len,tsprintf( &ll.buffer[29], "%u", MacroLevel )
-            mov ll.buffer[29+rax],' '
-        .endif
-        .if ( srcfile != ModuleInfo.srcfile )
-            mov ll.buffer[30],'C'
-        .endif
-    .else
-        mov idx,OFSSIZE + 2 + 2 * CODEBYTES
+    mov idx,sizeof( ll.buffer )
+    .if ( ModuleInfo.GeneratedCode )
+        mov ll.buffer[28],'*'
+    .endif
+    .if ( MacroLevel )
+        mov len,tsprintf( &ll.buffer[29], "%u", MacroLevel )
+        mov ll.buffer[rax+29],' '
+    .endif
+    .if ( srcfile != ModuleInfo.srcfile )
+        mov ll.buffer[30],'C'
     .endif
     fwrite( &ll.buffer, 1, idx, CurrFile[LST*size_t] )
 
@@ -384,16 +373,14 @@ endif
     add list_pos,eax
 
     ; write source and comment part
-
-    .if ( Parse_Pass == PASS_1 || UseSavedState == FALSE )
-        .if ( len )
-            fwrite( pSrcline, 1, len, CurrFile[LST*size_t] )
-        .endif
-        .if ( len2 )
-            fwrite( ModuleInfo.CurrComment, 1, len2, CurrFile[LST*size_t] )
-        .endif
-        fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+    .if ( len )
+        fwrite( pSrcline, 1, len, CurrFile[LST*size_t] )
     .endif
+    .if ( len2 )
+        fwrite( ModuleInfo.CurrComment, 1, len2, CurrFile[LST*size_t] )
+    .endif
+    fwrite( NLSTR, 1, NLSIZ, CurrFile[LST*size_t] )
+
 
     ; write optional additional lines.
     ; currently works in pass one only.
@@ -1323,7 +1310,7 @@ log_symbol proc __ccall uses rsi rdi rbx sym:ptr asym
         mov rdx,[rdx+LS_ALIAS]
         LstPrintf( "%s %s        %s  %s", [rdi].asym.name, pdots, rdx, [rcx].asym.name )
         LstNL()
-        .endc
+       .endc
     .endsw
     ret
 

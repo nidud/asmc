@@ -16,6 +16,7 @@ include parser.inc
 include types.inc
 include assume.inc
 include fastpass.inc
+include proc.inc
 
 define B <BYTE PTR>
 define W <WORD PTR>
@@ -1988,8 +1989,17 @@ done:
             .endif
         .endif
 
-        .if !rax
+        .if ( rax == NULL ) ; convert INVOKE to CALL
 
+            .if ( rcx && ( [rcx].asym.langtype == LANG_FASTCALL || 
+                  [rcx].asym.langtype == LANG_VECTORCALL ) &&
+                  ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) 
+                
+                mov rdx,CurrProc
+                .if ( rdx )
+                    or [rdx].asym.sflags,S_STKUSED
+                .endif
+            .endif
             lea rdx,b
             mov eax,'llac'
             mov [rdx],eax

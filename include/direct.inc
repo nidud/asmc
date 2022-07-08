@@ -57,6 +57,6 @@ _wrmdir		proto __cdecl :LPWSTR
 _wgetcwd	proto __cdecl :LPWSTR, :SINT
 _wgetdcwd	proto __cdecl :SINT, :LPWSTR, :SINT
 if not defined(_MSVCRT) or defined(_CRTBLD)
-__allocwpath	proto __cdecl :LPSTR
+__copy_path_to_wide_string proto __cdecl :ptr char_t, :ptr ptr wchar_t
 endif
 .pragma list(pop)

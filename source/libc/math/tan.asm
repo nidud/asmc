@@ -10,19 +10,18 @@ include math.inc
 tan proc x:double
 ifdef __SSE__
   local d:double
-
     movsd d,xmm0
     fld   d
 else
     fld   x
 endif
     fptan
+    fstp    st(0)
 ifdef __SSE__
     fstp  d
     movsd xmm0,d
 endif
     ret
-
 tan endp
 
     end

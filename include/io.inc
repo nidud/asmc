@@ -71,7 +71,7 @@ time_create	time_t ?	; File creation time
 time_access	time_t ?	; Last access time
 time_write	time_t ?	; Last modification time
 size		size_t ?
-name		db 260 dup(?)
+name		char_t 260 dup(?)
 _finddata_t	ENDS
 
 ifndef _WFINDDATA_T_DEFINED
@@ -137,8 +137,8 @@ _eof		proto __cdecl :SINT
 _chsize		proto __cdecl :SINT, :SIZE_T
 _filelength	proto __cdecl :SINT
 _findfirst	proto __cdecl :LPSTR, :PTR _finddata_t
-_findnext	proto __cdecl :HANDLE, :PTR _finddata_t
-_findclose	proto __cdecl :HANDLE
+_findnext	proto __cdecl :intptr_t, :PTR _finddata_t
+_findclose	proto __cdecl :intptr_t
 _tell		proto __cdecl :SINT
 _lseeki64	proto __cdecl :SINT, :QWORD, :UINT
 remove		proto __cdecl :LPSTR
@@ -150,7 +150,7 @@ _waccess	proto __cdecl :ptr wchar_t, :SINT
 _wchmod		proto __cdecl :ptr wchar_t, :SINT
 _wcreat		proto __cdecl :ptr wchar_t, :SINT
 _wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
-_wfindnext	proto __cdecl :SINT, :ptr _wfinddata_t
+_wfindnext	proto __cdecl :intptr_t, :ptr _wfinddata_t
 _wunlink	proto __cdecl :ptr wchar_t
 _wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG

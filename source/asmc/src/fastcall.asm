@@ -58,8 +58,8 @@ elf64_fcstart       proto __ccall private :dsym_t, :int_t, :int_t, :token_t, :pt
 elf64_fcend         proto __ccall private :dsym_t, :int_t, :int_t
 elf64_param         proto __ccall private :dsym_t, :int_t, :dsym_t, :int_t, :ptr expr, :string_t, :ptr byte
 elf64_pcheck        proto __ccall private :dsym_t, :dsym_t, :ptr int_t
+elf64_const         proto __ccall private :uint_t, :uint_t, :qword, :string_t, :uint_t
 
-get_register        proto __ccall private :int_t, :int_t
 abs_param           proto __ccall private :dsym_t, :int_t, :dsym_t, :string_t
 checkregoverwrite   proto __ccall private :expr_t, :ptr byte, :ptr dword, :ptr byte, :dword
 GetPSize            proto __ccall private :int_t, :asym_t, :expr_t
@@ -92,7 +92,8 @@ REGPAR_WIN64        equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64        equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
 REGPAR_WATC         equ 0x000F ; regs 0, 1, 3, 2
 
-    .data
+
+.data
 
 ;
 ; table of fastcall types.
@@ -100,21 +101,19 @@ REGPAR_WATC         equ 0x000F ; regs 0, 1, 3, 2
 ; also see table in mangle.asm!
 ;
 
-watc_regs byte \
-    T_AL,  T_DL,  T_BL,  T_CL,
-    T_AX,  T_DX,  T_BX,  T_CX,
-    T_EAX, T_EDX, T_EBX, T_ECX,
-    T_RAX, T_RDX, T_RBX, T_RCX
+watc_regs byte      T_AL,  T_DL,  T_BL,  T_CL,
+                    T_AX,  T_DX,  T_BX,  T_CX,
+                    T_EAX, T_EDX, T_EBX, T_ECX,
+                    T_RAX, T_RDX, T_RBX, T_RCX
 
 watc_regname        char_t 64 dup(0)
 watc_regist         char_t 32 dup(0)
 watc_param_index    db 0, 2, 3, 1
 
-ms64_regs byte \
-    T_CL,  T_DL,  T_R8B, T_R9B,
-    T_CX,  T_DX,  T_R8W, T_R9W,
-    T_ECX, T_EDX, T_R8D, T_R9D,
-    T_RCX, T_RDX, T_R8,  T_R9
+ms64_regs byte      T_CL,  T_DL,  T_R8B, T_R9B,
+                    T_CX,  T_DX,  T_R8W, T_R9W,
+                    T_ECX, T_EDX, T_R8D, T_R9D,
+                    T_RCX, T_RDX, T_R8,  T_R9
 
 ms32_regs           db T_ECX, T_EDX
 ms16_regs           db T_AX, T_DX, T_BX
@@ -801,18 +800,28 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
 
     xor eax,eax
     .return .if ( [rdi].proc_info.flags & PROC_HAS_VARARG )
-    .return .if ( ebx != 1 && ebx != 2 && ebx != 4 && ebx != 8 )
+    .if ( ebx != 1 && ebx != 2 && ebx != 4 && ebx != 8 )
+        .if ( ebx != 16 || Ofssize != USE64 || [rsi].asym.mem_type != MT_OWORD )
+            .return
+        .endif
+    .endif
 
     ; v2.05: rewritten. The old code didn't allow to "fill holes"
+    ; v2.34: added 64-bit handling
 
-    .if ( ebx == 8 && Ofssize == USE32 )
-        mov edx,15
-        mov ecx,4
-        .if Ofssize
+    mov al,Ofssize
+    .if ( ebx == 16 && al == USE64 )
+        mov edx,3
+        mov ecx,2
+    .elseif ( ebx == 8 && al < USE64 )
+        .if ( al == USE16 )
+            mov edx,15
+            mov ecx,4
+        .elseif ( al == USE32 )
             mov edx,3
             mov ecx,2
         .endif
-    .elseif ( ebx == 4 && Ofssize == USE16 )
+    .elseif ( ebx == 4 && al == USE16 )
         mov edx,3
         mov ecx,2
     .else
@@ -879,6 +888,14 @@ watc_pcheck proc __ccall private uses rsi rdi rbx p:ptr dsym, paranode:ptr dsym,
                 .endif
             .endf
         .endif
+        .endc
+    .case 16
+        .if ( Ofssize == USE64 && [rsi].asym.mem_type == MT_OWORD )
+            mov al,[rcx+12]
+            mov [rsi].asym.regist[0],ax
+            mov al,[rcx+13]
+            mov [rsi].asym.regist[2],ax
+        .endif
     .endsw
     .if ( [rsi].asym.regist[2] )
         mov rbx,GetResWName( [rsi].asym.regist[0], NULL )
@@ -909,22 +926,9 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
     tokenarray:token_t, value:ptr int_t
 
     ; v2.29: reg::reg id to fcscratch
+    ; v2.34: changed to paralist
 
     mov rbx,pp
-    imul edx,start,asm_tok
-    add rdx,tokenarray
-
-    .for ( eax = 0 : [rdx].asm_tok.token != T_FINAL : rdx += asm_tok )
-        .if ( [rdx].asm_tok.token == T_REG && [rdx+asm_tok].asm_tok.token == T_DBL_COLON )
-            add rdx,asm_tok*2
-            inc eax
-        .endif
-    .endf
-    .if eax
-        dec eax
-        mov fcscratch,eax
-    .endif
-
     mov eax,numparams
     mov esi,4
     mov edi,8
@@ -951,9 +955,22 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
 
     .else ; v2.31.22: extend call stack to 6 * [32|64]
 
-        .for ( rdx = [rdx].proc_info.paralist : rdx : rdx = [rdx].dsym.prev )
+        .for ( ecx = eax, rdx = [rdx].proc_info.paralist : rdx : ecx--, rdx = [rdx].dsym.prev )
 
-            .if [rdx].asym.total_size > edi
+            .if ( [rdx].asym.mem_type == MT_OWORD && !( [rdx].asym.sflags & S_ISVECTOR ) )
+
+                ; __int128 register index++
+                ;
+                ; - rdx::rcx, r9::r8 -- +2 (0, 1)
+                ; - rcx, r8::rdx, r9 -- +1 (1)
+                ; - rcx, rdx, r9::r8 -- +1 (2)
+
+                .if ( ecx < 4 && esi == 4 )
+                    inc fcscratch
+                .endif
+            .endif
+
+            .if ( [rdx].asym.total_size > edi )
 
                 .switch ( [rdx].asym.mem_type )
                 .case MT_REAL10
@@ -972,7 +989,6 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
         .endf
     .endif
     mov WordSize,edi
-
     .if ( eax < esi )
         mov eax,esi
     .endif
@@ -991,6 +1007,10 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
 
     .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
+        mov rdx,CurrProc
+        .if ( rdx )
+            or [rdx].asym.sflags,S_STKUSED
+        .endif
         mov rdx,sym_ReservedStack
         .if ( eax > [rdx].asym.value )
             mov [rdx].asym.value,eax
@@ -1039,6 +1059,7 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
    .new destroyed:int_t = FALSE
    .new arg_offset:uint_t
    .new vector_call:byte = FALSE
+   .new int128_arg:byte = FALSE
 
     mov rdi,opnd
     mov eax,index
@@ -1051,7 +1072,9 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     .endif
 
     mov rbx,param
-    .return .if abs_param( rsi, index, rbx, paramvalue )
+    .if abs_param( rsi, index, rbx, paramvalue )
+        .return
+    .endif
 
     mov psize,GetPSize(address, rbx, rdi)
     checkregoverwrite( rdi, regs_used, &reg, &destroyed, REGPAR_WIN64 )
@@ -1068,6 +1091,9 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
     .endif
     mov rdx,rbx
     mov esi,index
+    .if ( !esi && fcscratch )
+        dec fcscratch
+    .endif
     add esi,fcscratch
     mov eax,psize
 
@@ -1083,7 +1109,7 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
             .elseif ( vector_call && esi < 6 && ( [rbx].asym.mem_type & MT_FLOAT ||
                       [rbx].asym.mem_type == MT_YWORD || [rbx].asym.mem_type == MT_OWORD ) )
 
-                .return CheckXMM( reg, paramvalue, regs_used, rbx, rdi, esi )
+                .return CheckXMM( reg, paramvalue, regs_used, rbx, rdi, index )
             .endif
             mov ebx,T_RAX
         .endif
@@ -1092,17 +1118,48 @@ ms64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:d
 
         ; v2.31.24 xmm to r64 -- vararg
 
+        mov rdx,param
         .if ( psize == 16 && ( GetValueSp(reg) & OP_XMM ) )
-            AddLineQueueX( " movq %r, %r", ebx, reg )
+
+          AddLineQueueX( " movq %r, %r", ebx, reg )
+
+        ; v2.34.03 split register args for OWORD
+
+        .elseif ( psize == 16 && [rdx].asym.mem_type == MT_OWORD && !vector_call )
+
+            .if ( [rdi].expr.kind == EXPR_REG && !( [rdi].expr.flags & E_INDIRECT ) )
+
+                mov rbx,[rdi].expr.base_reg
+                mov ecx,[rbx].asm_tok.tokval
+                .if ( [rbx-asm_tok].asm_tok.token == T_DBL_COLON )
+                    mov edx,[rbx-asm_tok*2].asm_tok.tokval
+                    AddLineQueueX(
+                        " mov [rsp+%u], %r\n"
+                        " mov [rsp+%u+8], %r", arg_offset, ecx, arg_offset, edx )
+                .else
+                    AddLineQueueX(
+                        " mov [rsp+%u], %r\n"
+                        " mov qword ptr [rsp+%u+8], 0", arg_offset, ecx, arg_offset )
+                .endif
+            .else
+                AddLineQueueX(
+                    " mov %r, qword ptr %s\n"
+                    " mov [rsp+%u], %r\n"
+                    " mov %r, qword ptr %s[8]\n"
+                    " mov [rsp+%u+8], %r",
+                    ebx, paramvalue, arg_offset, ebx, ebx, paramvalue, arg_offset, ebx )
+            .endif
+            .return( 1 )
         .else
             AddLineQueueX( " lea %r, %s", ebx, paramvalue )
         .endif
-        AddLineQueueX( " mov [%r+%u], %r", T_RSP, arg_offset, ebx )
-       .return 1
+        AddLineQueueX( " mov [rsp+%u], %r", arg_offset, ebx )
+       .return( 1 )
     .endif
 
     .if ( esi >= 4 )
 
+        mov esi,index
         mov eax,[rdi].expr.kind
         .if ( eax == EXPR_CONST || ( eax == EXPR_ADDR && !( [rdi].expr.flags & E_INDIRECT ) &&
               [rdi].expr.mem_type == MT_EMPTY && [rdi].expr.inst != T_OFFSET ) )
@@ -1262,12 +1319,20 @@ endif
         .return 1
     .endif
 
-    .if ( ( [rbx].asym.mem_type & MT_FLOAT ) ||
-          ( [rbx].asym.mem_type == MT_YWORD ) ||
-          ( [rbx].asym.mem_type == MT_OWORD &&
-            ( vector_call || [rbx].asym.sflags & S_ISVECTOR ) ) )
+    .if ( ( [rbx].asym.mem_type & MT_FLOAT ) || ( [rbx].asym.mem_type == MT_YWORD ) ||
+          ( [rbx].asym.mem_type == MT_OWORD && ( vector_call || [rbx].asym.sflags & S_ISVECTOR ) ) )
 
+        mov esi,index
         .return CheckXMM( reg, paramvalue, regs_used, rbx, rdi, esi )
+
+    .elseif ( psize == 16 && [rbx].asym.mem_type == MT_OWORD &&
+              !vector_call && !( [rbx].asym.sflags & S_ISVECTOR ) )
+
+        mov int128_arg,TRUE
+        .if fcscratch
+            dec fcscratch
+            dec esi
+        .endif
     .endif
 
     mov ecx,[rdi].expr.kind
@@ -1276,44 +1341,50 @@ endif
     .if ( ecx == EXPR_REG && !( [rdi].expr.flags & E_INDIRECT ) )
 
         mov rax,[rdi].expr.base_reg
-        .if ( [rax+asm_tok].asm_tok.token == T_DBL_COLON )
+        .if ( [rax-asm_tok].asm_tok.token == T_DBL_COLON )
 
             ; case <reg>::<reg>
 
-            mov ebx,[rax+asm_tok*2].asm_tok.tokval
-            .if fcscratch
-                dec fcscratch
-            .endif
+            mov ebx,[rax-asm_tok*2].asm_tok.tokval
         .endif
     .endif
 
     mov reg_64,ebx
     mov eax,psize
 
-    .if ( address || ( !ebx && eax > 8 ) ) ; psize > 8 shouldn't happen!
+    .if ( !int128_arg && ( address || ( !ebx && eax > 8 ) ) ) ; psize > 8 shouldn't happen!
 
-        .if eax >= 4
-            .if eax > 4
+        .if ( eax >= 4 )
+
+            .if ( eax > 4 )
                 mov eax,4
             .else
                 xor eax,eax
             .endif
+
             lea rcx,ms64_regs
             add rax,rcx
             movzx ecx,byte ptr [rsi+rax+2*4]
+
             .if ( psize == 16 && ( GetValueSp(reg) & OP_XMM ) )
+
                 .if ( [rdx].asym.mem_type == MT_OWORD )
+
                     ; v2.33.07 :oword <-- xmm reg
+
                     lea ecx,[rsi+T_XMM0]
                     .if ( ecx != reg )
                         AddLineQueueX( " movaps %r, %r", ecx, reg )
                     .endif
                     .return 1
                 .else
+
                     ; v2.31.24 xmm to r64 -- vararg
+
                     AddLineQueueX( " movq %r, %r", ecx, reg )
                 .endif
             .else
+
                 AddLineQueueX( " lea %r, %s", ecx, paramvalue )
             .endif
         .else
@@ -1331,37 +1402,37 @@ endif
     .endif
 
     mov rdx,[rdi].expr.sym
-
     .switch
-    .case ecx == EXPR_REG
-
-        ; register argument
-
+    .case ( ecx == EXPR_REG ) ; register argument
         mov eax,8
-        .endc .if ( [rdi].expr.flags & E_INDIRECT )
-        mov rax,[rdi].expr.base_reg
-        mov eax,[rax].asm_tok.tokval
-        mov reg,eax
-        SizeFromRegister(eax)
+        .if !( [rdi].expr.flags & E_INDIRECT )
+            mov rax,[rdi].expr.base_reg
+            mov eax,[rax].asm_tok.tokval
+            mov reg,eax
+            SizeFromRegister(eax)
+        .elseif ( int128_arg )
+            add eax,8
+        .endif
         .endc
-    .case ecx == EXPR_CONST
-        .if [rdi].expr.hvalue
+    .case ( ecx == EXPR_CONST )
+        .if ( [rdi].expr.hvalue )
             mov psize,8 ; extend const value to 64
         .endif
         ; drop
-    .case ecx == EXPR_FLOAT
+    .case ( ecx == EXPR_FLOAT )
         mov eax,psize
-        .endc
-    .case [rdi].expr.mem_type != MT_EMPTY
+       .endc
+    .case ( [rdi].expr.mem_type != MT_EMPTY )
         SizeFromMemtype( [rdi].expr.mem_type, USE64, [rdi].expr.type )
-        .endc
-    .case ecx == EXPR_ADDR && ( !rdx || [rdx].asym.state == SYM_UNDEFINED )
+       .endc
+    .case ( ecx == EXPR_ADDR && ( !rdx || [rdx].asym.state == SYM_UNDEFINED ) )
         mov eax,psize
-        .endc
+       .endc
     .default
         mov eax,4
-        .endc .if ( [rdi].expr.inst != T_OFFSET )
-        mov eax,8
+        .if ( [rdi].expr.inst == T_OFFSET )
+            mov eax,8
+        .endif
     .endsw
     mov size,eax
 
@@ -1403,28 +1474,36 @@ endif
             ; case <reg>::<reg>
 
             .if ( reg_64 )
-                .if ( ebx != reg_64 )
-                    AddLineQueueX( " mov %r, %r", ebx, reg_64 )
-                .endif
-                lea rcx,ms64_regs
-                movzx ebx,byte ptr [rcx+rsi+3*4+1]
+
                 .if ( ebx != reg )
                     AddLineQueueX( " mov %r, %r", ebx, reg )
+                .endif
+
+                lea rcx,ms64_regs
+                movzx ebx,byte ptr [rcx+rsi+3*4+1]
+                .if ( ebx != reg_64 )
+                    AddLineQueueX( " mov %r, %r", ebx, reg_64 )
                 .endif
                 .return 1
             .endif
 
             mov eax,1
             mov ecx,i32
-            .return .if ( ebx == reg || ecx == reg )
+            .if ( ebx == reg || ecx == reg )
+                .return
+            .endif
+
             movzx ecx,GetRegNo( reg )
             mov eax,1
             shl eax,cl
-            .if eax & REGPAR_WIN64
+
+            .if ( eax & REGPAR_WIN64 )
+
                 lea ecx,[GetParmIndex(ecx)+RPAR_START]
                 mov eax,1
                 shl eax,cl
                 mov rdx,regs_used
+
                 .if ( [rdx] & al )
                     asmerr( 2133 )
                 .endif
@@ -1435,8 +1514,10 @@ endif
     ; v2.11: allow argument extension
 
     mov eax,size
-    .if eax < psize
-        .if eax == 4
+    .if ( eax < psize )
+
+        .if ( eax == 4 )
+
             .if IS_SIGNED([rdi].expr.mem_type)
                 AddLineQueueX( " movsxd %r, %s", ebx, paramvalue )
             .else
@@ -1451,16 +1532,44 @@ endif
             .endif
             AddLineQueueX( " %r %r, %s", ecx, ebx, paramvalue )
         .endif
+
     .else
+
         mov rdx,paramvalue
         .if ( word ptr [rdx] == "0" ||
               ( [rdi].expr.kind == EXPR_CONST && [rdi].expr.value == 0 ) )
 
             AddLineQueueX( " xor %r, %r", i32, i32 )
 
+            .if ( int128_arg )
+
+                lea rcx,ms64_regs
+                .if ( [rdi].expr.h64_l == 0 && [rdi].expr.h64_h == 0 )
+
+                    movzx ecx,byte ptr [rcx+rsi+2*4+1]
+                    AddLineQueueX( " xor %r, %r", ecx, ecx )
+
+                .else
+
+                    movzx ecx,byte ptr [rcx+rsi+3*4+1]
+                    movzx eax,[rdi].expr.flags
+                    and   eax,E_NEGATIVE
+                    elf64_const( ecx, T_HIGH64, [rdi].expr.hlvalue, paramvalue, eax )
+                .endif
+            .endif
+
         .elseif ( [rdi].expr.kind == EXPR_CONST && [rdi].expr.hvalue == 0 )
 
             AddLineQueueX( " mov %r, %s", i32, rdx )
+
+            .if ( int128_arg )
+
+                lea   rcx,ms64_regs
+                movzx ecx,byte ptr [rcx+rsi+3*4+1]
+                movzx eax,[rdi].expr.flags
+                and   eax,E_NEGATIVE
+                elf64_const( ecx, T_HIGH64, [rdi].expr.hlvalue, paramvalue, eax )
+            .endif
 
         .elseif ( ecx && [rdi].expr.kind == EXPR_ADDR ) ; added v2.29
 
@@ -1484,7 +1593,9 @@ endif
                     sub ebx,T_R8D-T_R8W
                 .endif
                 AddLineQueueX( " mov %r, word ptr %s", ebx, paramvalue )
+
             .else
+
                 AddLineQueueX( " mov %r, dword ptr %s", i32, rdx )
                 .if ( size == 5 )
                     AddLineQueueX(" mov al, byte ptr %s[4]", paramvalue )
@@ -1500,10 +1611,22 @@ endif
                     " shl rax,32\n"
                     " or  %r,rax", rbx )
             .endif
+
+        .elseif ( int128_arg && ( [rdi].expr.kind == EXPR_ADDR || ; added v2.34
+                ( [rdi].expr.kind == EXPR_REG && ( [rdi].expr.flags & E_INDIRECT ) ) ) )
+
+            lea   rcx,ms64_regs
+            movzx ecx,byte ptr [rcx+rsi+3*4+1]
+            AddLineQueueX(
+                " mov %r, qword ptr %s\n"
+                " mov %r, qword ptr %s[8]",
+                ebx, paramvalue, ecx, paramvalue )
+
         .else
 
             mov rdx,pp
             mov rcx,[rdi].expr.sym
+
             .if ( rcx && index == 0 && [rdi].expr.mbr && [rdi].expr.kind == EXPR_ADDR &&
                   [rdi].expr.flags == E_INDIRECT && [rcx].asym.is_ptr && [rdx].asym.flag1 & S_METHOD )
 
@@ -1935,9 +2058,10 @@ elf64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:
 
                 ; case <reg>::<reg>
 
-                .if ( psize == 16 && size == 8 && [rax+asm_tok].asm_tok.token == T_DBL_COLON )
+                .if ( psize == 16 && size == 8 && [rax-asm_tok].asm_tok.token == T_DBL_COLON )
 
-                    mov ecx,[rax+asm_tok*2].asm_tok.tokval
+                    mov ecx,[rax].asm_tok.tokval
+                    mov reg,[rax-asm_tok*2].asm_tok.tokval
                     .if ( ebx != ecx )
                         AddLineQueueX( " mov %r, %r", ebx, ecx )
                     .endif
@@ -2713,7 +2837,7 @@ endif
 CheckXMM endp
 
 
-get_register proc __ccall private reg:int_t, size:int_t
+get_register proc __ccall reg:int_t, size:int_t
 
     lea  rcx,SpecialTable
     imul eax,reg,special_item

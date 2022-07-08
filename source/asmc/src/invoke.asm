@@ -387,11 +387,7 @@ endif
         mov opnd.kind,EXPR_REG
         and opnd.flags,not E_INDIRECT
         mov opnd.sym,NULL
-        .if ( asize2 != 8 )
-            mov opnd.base_reg,&[rbx+asm_tok*2] ; for error msg 'eax overwritten...'
-        .else
-            mov opnd.base_reg,rbx
-        .endif
+        mov opnd.base_reg,&[rbx+asm_tok*2] ; for error msg 'eax overwritten...'
 
     .else
 
@@ -1338,7 +1334,6 @@ skip_push:
     .return( NOT_ERROR )
 
 PushInvokeParam endp
-
 
 ; generate a call for a prototyped procedure
 

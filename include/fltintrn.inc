@@ -118,6 +118,7 @@ define M_ACC2		2.640647263387478295711248440058223113730493441
 define M_ACC3		4.287372893578830648645201991089526317058943389
 define M_ACC4		5.534907817649887676220380749279383354399213359
 define INFINITY		7FFF0000000000000000000000000000r
+define MINFINITY	0FFFF0000000000000000000000000000r
 define NAN		0FFFF8000000000000000000000000000r
 
 
@@ -215,13 +216,14 @@ __cmpq		proto __ccall A:ptr qfloat_t, B:ptr qfloat_t
 
 __sqrtq		proto __ccall A:ptr qfloat_t
 
+_cqcvt		proto __cdecl :ptr real16, :string_t, :int_t, :int_t, :int_t
+_cldcvt		proto __cdecl :ptr real10, :string_t, :int_t, :int_t, :int_t
+_cfltcvt	proto __cdecl :ptr real8, :string_t, :int_t, :int_t, :int_t
+_cropzeros	proto __cdecl :string_t
+_forcdecpt	proto __cdecl :string_t
+
 _flttostr	proto __ccall :ptr, :ptr FLTINFO, :string_t, :uint_t
-_cqcvt		proto __ccall :ptr real16, :string_t, :int_t, :int_t, :int_t
-_cldcvt		proto __ccall :ptr real10, :string_t, :int_t, :int_t, :int_t
-_cfltcvt	proto __ccall :ptr real8, :string_t, :int_t, :int_t, :int_t
 _strtoflt	proto __ccall :string_t
-_forcdecpt	proto __ccall :string_t
-_cropzeros	proto __ccall :string_t
 _fltsetflags	proto __ccall :ptr STRFLT, :string_t, :uint_t
 _destoflt	proto __ccall :ptr STRFLT, :string_t
 _fltunpack	proto __ccall :ptr STRFLT, :ptr

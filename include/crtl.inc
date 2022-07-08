@@ -19,8 +19,6 @@ externdef       OldErrorMode:dword
 __isexec        proto __cdecl :string_t
 __setenvp       proto __cdecl :string_t
 __wsetenvp      proto __cdecl :wstring_t
-__initialize    proto __cdecl :ptr, :ptr
-__allocwpath    proto __cdecl :string_t
 __coreleft      proto __cdecl
 
 strfn           proto __cdecl :string_t
@@ -28,8 +26,7 @@ strext          proto __cdecl :string_t
 strfcat         proto __cdecl :string_t, :string_t, :string_t
 memxchg         proto __cdecl :string_t, :string_t, :size_t
 
-__xtol          proto __cdecl :string_t
-__xtoi64        proto __cdecl :string_t
+__copy_path_to_wide_string proto __cdecl :ptr char_t, :ptr ptr wchar_t
 
 ; GCC
 

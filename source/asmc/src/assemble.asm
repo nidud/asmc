@@ -34,6 +34,8 @@ include proc.inc
 include expreval.inc
 include listing.inc
 
+define USELSLINE 1 ; must match switch in listing.asm!
+
 public  jmpenv
 extern  MacroLocals:dword
 
@@ -878,21 +880,27 @@ OnePass proc __ccall private uses rsi rdi
 
         .while ( rsi && !ModuleInfo.EndDirFound )
 
+if ( USELSLINE eq 0 )
+            strcpy( CurrSource, &[rsi].line_item.line )
+endif
             set_curr_srcfile([rsi].line_item.srcfile, [rsi].line_item.lineno)
-
             mov ModuleInfo.line_flags,0
             mov MacroLevel,[rsi].line_item.macro_level
             mov ModuleInfo.CurrComment,0
-            Tokenize(&[rsi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT)
-            mov ModuleInfo.token_count,eax
-            .if eax
-
+if USELSLINE
+            .ifd ( Tokenize( &[rsi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT ) )
+else
+            .ifd ( Tokenize( CurrSource, 0, ModuleInfo.tokenarray, TOK_DEFAULT ) )
+endif
+                mov Token_Count,eax
                 ParseLine(ModuleInfo.tokenarray)
             .endif
             mov rsi,[rsi].line_item.next
             mov LineStoreCurr,rsi
         .endw
+
     .else
+
         mov rsi,Options.queues[OPTQ_FINCLUDE*size_t]
         .while rsi
             lea rax,[rsi].qitem.value

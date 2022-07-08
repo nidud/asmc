@@ -29,7 +29,6 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
         mov eax,_ST_G
     .endif
     mov cvt.flags,eax
-    mov cvt.ndigits,precision
 
     xor ecx,ecx
     .if ( eax & _ST_E or _ST_G )
@@ -37,6 +36,7 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
     .endif
     mov cvt.scale,ecx
     mov cvt.expwidth,3
+    mov cvt.ndigits,precision
 
     ; make space for '-' sign
 

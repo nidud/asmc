@@ -17,16 +17,12 @@ if not exist %~dp0lib\x86\user32.lib (
     if not errorlevel 2 call :ImportLibraries32
 )
 if not exist %~dp0lib\x86\libc.lib (
-    choice /c YN /M "32-bit Runtime Library Missing: Build it now"
-    if not errorlevel 2 call :BuildCRT32
+    choice /c YN /M "Runtime Library Missing: Build it now"
+    if not errorlevel 2 call :BuildCRT
 )
 if not exist %~dp0lib\x64\user32.lib (
     choice /c YN /M "64-bit Import Libraries Missing: Build them now"
     if not errorlevel 2 call :ImportLibraries64
-)
-if not exist %~dp0lib\x64\libc.lib (
-    choice /c YN /M "64-bit Runtime Library Missing: Build it now"
-    if not errorlevel 2 call :BuildCRT64
 )
 
 echo.
@@ -39,15 +35,8 @@ dz -cmd -nologo
 )
 goto end
 
-:BuildCRT32
-cd %AsmcDir%\source\libs\lib32
-make
-cd %AsmcDir%
-echo.
-goto end
-
-:BuildCRT64
-cd %AsmcDir%\source\libs\lib64
+:BuildCRT
+cd %AsmcDir%\source\libc
 make
 cd %AsmcDir%
 echo.

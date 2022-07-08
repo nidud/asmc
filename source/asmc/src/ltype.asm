@@ -169,7 +169,6 @@ endif
 
 tqsort endp
 
-
 tstrupr proc fastcall string:string_t
 
     mov rdx,rcx

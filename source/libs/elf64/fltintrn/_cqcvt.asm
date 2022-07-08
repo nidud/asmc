@@ -29,7 +29,6 @@ _cqcvt proc uses rbx q:ptr real16, buffer:string_t, ch_type:int_t, precision:int
         mov eax,_ST_G
     .endif
     mov cvt.flags,eax
-    mov cvt.ndigits,precision
 
     xor ebx,ebx
     .if eax & _ST_E or _ST_G
@@ -37,6 +36,7 @@ _cqcvt proc uses rbx q:ptr real16, buffer:string_t, ch_type:int_t, precision:int
     .endif
     mov cvt.scale,ebx
     mov cvt.expwidth,3
+    mov cvt.ndigits,precision
 
     mov rbx,buffer
 

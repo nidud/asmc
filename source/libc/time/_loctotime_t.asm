@@ -18,7 +18,7 @@ ifndef _WIN64
     mov edx,month
 endif
     or  eax,-1
-    lea ebx,[ecx-1900]
+    lea ebx,[rcx-1900]
 
     .repeat
 

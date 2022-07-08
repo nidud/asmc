@@ -1008,7 +1008,7 @@ ms64_fcstart proc __ccall private uses rsi rdi rbx pp:dsym_t, numparams:int_t, s
     .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         mov rdx,CurrProc
-        .if ( rdx )
+        .if ( eax && rdx )
             or [rdx].asym.sflags,S_STKUSED
         .endif
         mov rdx,sym_ReservedStack

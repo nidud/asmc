@@ -22,8 +22,6 @@ include segment.inc
 include lqueue.inc
 include qfloat.inc
 
-externdef list_pos:DWORD
-
 GetTypeId proto __ccall :string_t, :ptr asm_tok
 
 ; Stact for "quoted strings" and floats
@@ -357,9 +355,9 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
    .new StringOffset:   string_t
    .new buffer:         string_t
    .new q:              string_t
+   .new line_store:     ptr line_item
    .new NewString:      int_t
    .new size:           int_t
-   .new lineflags:      BYTE
    .new brackets:       BYTE
    .new Unicode:        BYTE
 
@@ -424,21 +422,17 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
     add rax,64
     mov b_label,rax
 
+    mov line_store,LineStoreCurr
     mov edi,line_item.line
-    add rdi,LineStoreCurr
+    add rdi,rax
     tstrcpy( b_line, rdi )
 
     .if ( Parse_Pass == PASS_1 )
-
-        mov B[rdi],';'
         tstrcmp( rax, [rsi].asm_tok.tokpos )
     .else
         xor eax,eax
     .endif
-
     mov equal,eax
-    mov al,ModuleInfo.line_flags
-    mov lineflags,al
 
     .while ( [rbx].asm_tok.token != T_FINAL )
 
@@ -521,19 +515,26 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
                     .endif
                     tsprintf(b_data, rcx, b_label)
                 .endif
-            .elseif ( ModuleInfo.list )
-                and ModuleInfo.line_flags,NOT LOF_LISTED
             .endif
 
             mov rax,q
             mov rax,[rax].asm_tok.tokpos
+            mov di,[rax]
             mov B[rax],0
             mov rax,tokenarray
 
             tstrcat( tstrcat( tstrcpy( buffer, [rax].asm_tok.tokpos ), "addr " ), b_label )
+
+            mov rax,q
+            mov rax,[rax].asm_tok.tokpos
+            mov [rax],di
+
             mov rsi,ltokstart( rsi )
             .if ecx
-                tstrcat( tstrcat( buffer, " " ), rsi )
+                .if ( ecx != ')' )
+                    tstrcat( buffer, " " )
+                .endif
+                tstrcat( buffer, rsi )
             .endif
 
             .if ( NewString )
@@ -570,16 +571,11 @@ GenerateCString proc __ccall uses rsi rdi rbx i:int_t, tokenarray:ptr asm_tok
         .endif
         add rbx,asm_tok
     .endw
-
+    mov rdx,b_line
     .if ( equal == 0 )
-        StoreLine( ModuleInfo.currsource, list_pos, 0 )
-    .else
-        mov ebx,ModuleInfo.GeneratedCode
-        mov ModuleInfo.GeneratedCode,0
-        StoreLine( b_line, list_pos, 0 )
-        mov ModuleInfo.GeneratedCode,ebx
+        mov rdx,ModuleInfo.currsource
     .endif
-    mov ModuleInfo.line_flags,lineflags
+    UpdateLine( line_store, rdx )
    .return( rc )
 
 GenerateCString endp

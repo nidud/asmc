@@ -61,6 +61,7 @@ SegmentSaveState        proto
 AssumeSaveState         proto
 ContextSaveState        proto
 StoreLine               proto __ccall :string_t, :int_t, :uint_t
+UpdateLine              proto __ccall :ptr line_item, :string_t
 SkipSavedState          proto
 RestoreState            proto
 SaveVariableState       proto fastcall :ptr asym

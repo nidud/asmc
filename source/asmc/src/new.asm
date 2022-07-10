@@ -13,8 +13,6 @@ include expreval.inc
 include qfloat.inc
 include fastpass.inc
 
-externdef list_pos:uint_t
-
 SIZE_DATAPTR    equ 0x68
 
 SymLCreate      proto __ccall :string_t

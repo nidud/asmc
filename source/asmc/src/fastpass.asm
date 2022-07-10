@@ -143,6 +143,21 @@ StoreLine proc __ccall uses rsi rdi rbx sline:string_t, flags:int_t, lst_positio
 StoreLine endp
 
 
+UpdateLine proc __ccall uses rdi rbx ls:ptr line_item, line:string_t
+
+    mov rcx,ls
+    mov [rcx].line_item.line,0
+    mov bl,ModuleInfo.line_flags
+    mov ModuleInfo.line_flags,0
+    mov edi,ModuleInfo.GeneratedCode
+    mov ModuleInfo.GeneratedCode,0
+    StoreLine( line, 0, 0 )
+    mov ModuleInfo.GeneratedCode,edi
+    mov ModuleInfo.line_flags,bl
+    ret
+
+UpdateLine endp
+
 ; an error has been detected in pass one. it should be
 ; reported in pass 2, so ensure that a full source scan is done then
 ;

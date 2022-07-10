@@ -1520,10 +1520,6 @@ macro_args:
         tstrcat( rsi, [rbx+rdi].tokpos )
     .endif
 
-    .if ModuleInfo.list
-        LstSetPosition()
-    .endif
-
     tstrcpy(ModuleInfo.currsource, rsi)
     Tokenize(rax, 0, rdi, TOK_DEFAULT)
     mov ModuleInfo.token_count,eax
@@ -1991,10 +1987,10 @@ done:
 
         .if ( rax == NULL ) ; convert INVOKE to CALL
 
-            .if ( rcx && ( [rcx].asym.langtype == LANG_FASTCALL || 
+            .if ( rcx && ( [rcx].asym.langtype == LANG_FASTCALL ||
                   [rcx].asym.langtype == LANG_VECTORCALL ) &&
-                  ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) 
-                
+                  ModuleInfo.Ofssize == USE64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+
                 mov rdx,CurrProc
                 .if ( rdx )
                     or [rdx].asym.sflags,S_STKUSED

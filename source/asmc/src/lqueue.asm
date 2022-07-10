@@ -357,17 +357,16 @@ RunLineQueue proc __ccall uses rsi rdi
     ; v2.11: line queues are no longer pushed onto the file stack.
     ; Instead, the queue is processed directly here.
 
-    .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : rsi = rdi )
-
-        mov rdi,[rsi].lq_line.next
+    .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : )
 
         tstrcpy( CurrSource, &[rsi].lq_line.line )
-        MemFree( rsi )
-
         .if PreprocessLine( tokenarray )
 
             ParseLine( tokenarray )
         .endif
+        mov rcx,rsi
+        mov rsi,[rsi].lq_line.next
+        MemFree( rcx )
     .endf
     dec ModuleInfo.GeneratedCode
     PopInputStatus( &oldstat )
@@ -385,19 +384,17 @@ InsertLineQueue proc __ccall uses rsi rdi rbx
     mov tokenarray,PushInputStatus( &oldstat )
 
     mov ModuleInfo.GeneratedCode,0
-    .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : rsi = rdi )
-
-        mov rdi,[rsi].lq_line.next
+    .for ( rsi = LineQueue.head, LineQueue.head = NULL : rsi : )
 
         tstrcpy( CurrSource, &[rsi].lq_line.line )
-        MemFree( rsi )
-
         .if PreprocessLine( tokenarray )
 
             ParseLine( tokenarray )
         .endif
+        mov rcx,rsi
+        mov rsi,[rsi].lq_line.next
+        MemFree( rcx )
     .endf
-
     mov ModuleInfo.GeneratedCode,ebx
     PopInputStatus( &oldstat )
     ret

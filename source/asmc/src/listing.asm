@@ -171,6 +171,7 @@ LstWrite proc __ccall uses rsi rdi rbx type:lsttype, oldofs:uint_t, value:ptr
     mov pSrcline,CurrSource
 
     .if ( ( Parse_Pass > PASS_1 ) && UseSavedState )
+
         .if ( ModuleInfo.GeneratedCode == 0 )
 
             mov rcx,LineStoreCurr
@@ -215,7 +216,7 @@ endif
         mov ll.buffer[OFSSIZE],' '
 
         .endc .if ( rbx == NULL )
-        .endc .if ( Parse_Pass == PASS_1 && Options.first_pass_listing == FALSE )
+        .endc .if ( Parse_Pass == PASS_1 );&& Options.first_pass_listing == FALSE )
 
         mov len,CODEBYTES
         lea rdi,ll.buffer[OFSSIZE+2]
@@ -854,7 +855,7 @@ log_typedef proc __ccall uses rsi rdi rbx sym:ptr asym
         .endif
 
         movzx eax,[rsi].asym.Ofssize
-        lea rcx,[rcx+rax*4]
+        lea rcx,[rcx+rax*size_t]
         lea rdx,strings
 
         tstrcat( rdi, [rdx+rcx] )
@@ -1651,11 +1652,13 @@ LstInit proc __ccall
     .endif
     .if ( Options.write_listing )
         mov rdx,GetFName( ModuleInfo.srcfile )
+        lea rcx,@CStr("%s  %s %s\n%s\n")
         .if ( Parse_Pass == PASS_1 && Options.first_pass_listing )
-            LstPrintf("%s  %s %s - First Pass\n%s\n", &cp_logo, &szDate, &szTime, rdx)
-        .else
-            LstPrintf("%s  %s %s\n%s\n", &cp_logo, &szDate, &szTime, rdx)
+            lea rcx,@CStr("%s  %s %s - First Pass\n%s\n")
+        .elseif ( Options.first_pass_listing )
+            lea rcx,@CStr("\n%s  %s %s\n%s\n\n")
         .endif
+        LstPrintf( rcx, &cp_logo, &szDate, &szTime, rdx )
     .endif
     ret
 

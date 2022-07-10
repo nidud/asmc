@@ -2932,7 +2932,7 @@ endif
     ; default processing. if no params/locals are defined, continue
 
     .if ( !( [rsi].flags & ( PROC_FORCEFRAME or PROC_STACKPARAM or PROC_HAS_VARARG ) ) &&
-          [rsi].localsize == 0 && sysstack == 0 && resstack == 0 && [rsi].regslist == NULL )
+          ![rsi].locallist && ![rsi].localsize && !sysstack && !resstack && ![rsi].regslist )
 
         .return( NOT_ERROR )
     .endif

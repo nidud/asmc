@@ -2317,12 +2317,12 @@ ifdef _LIN64
 endif
             fseek( CurrFile[OBJ*string_t], [rsi].fileoffset, SEEK_SET )
 ifdef _LIN64
-            mov rsi,_rsi
-endif
-            fwrite( [rsi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
-ifdef _LIN64
+            mov rdi,_rsi
+            fwrite( [rdi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
             mov rsi,_rsi
             mov rdi,_rdi
+else
+            fwrite( [rsi].seg_info.CodeBuffer, 1, size, CurrFile[OBJ*string_t] )
 endif
             .if ( eax != size )
                 WriteError()

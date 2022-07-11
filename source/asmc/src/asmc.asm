@@ -9,6 +9,8 @@ include stdlib.inc
 include signal.inc
 ifdef __UNIX__
 include direct.inc
+define __USE_GNU
+include ucontext.inc
 else
 include winbase.inc
 endif
@@ -301,7 +303,53 @@ GeneralFailure proc private signo:int_t
 
     .if ( signo != SIGTERM )
 
-ifndef __UNIX__
+ifdef _LIN64
+    assume rbx:ptr mcontext_t
+    mov rbx,rdx
+    add rbx,ucontext_t.uc_mcontext
+    lea rdi,@CStr(
+            "\n"
+            "This message is created due to unrecoverable error\n"
+            "and may contain data necessary to locate it.\n"
+            "\n"
+            "Code:\t%08X\n"
+            "Errno:  %08X\n"
+            "\n"
+            "\tRAX: %016llX R8:  %016llX\n"
+            "\tRBX: %016llX R9:  %016llX\n"
+            "\tRCX: %016llX R10: %016llX\n"
+            "\tRDX: %016llX R11: %016llX\n"
+            "\tRSI: %016llX R12: %016llX\n"
+            "\tRDI: %016llX R13: %016llX\n"
+            "\tRBP: %016llX R14: %016llX\n"
+            "\tRSP: %016llX R15: %016llX\n"
+            "\tRIP: %016llX %016llX\n\n"
+            "\tEFL: 0000000000000000\n"
+            "\t     r n oditsz a p c\n\n")
+
+    mov rax,[rbx].gregs[REG_EFL*8]
+    mov ecx,16
+    .repeat
+        shr eax,1
+        adc byte ptr [rdi+rcx+sizeof(@CStr(0))-43],0
+    .untilcxz
+    mov rcx,[rbx].gregs[REG_RIP*8]
+    mov rdx,[rcx]
+
+    printf( rdi,
+            [rsi].siginfo_t.si_code,
+            [rsi].siginfo_t.si_errno,
+            [rbx].gregs[REG_RAX*8], [rbx].gregs[REG_R8*8],
+            [rbx].gregs[REG_RBX*8], [rbx].gregs[REG_R9*8],
+            [rbx].gregs[REG_RCX*8], [rbx].gregs[REG_R10*8],
+            [rbx].gregs[REG_RDX*8], [rbx].gregs[REG_R11*8],
+            [rbx].gregs[REG_RSI*8], [rbx].gregs[REG_R12*8],
+            [rbx].gregs[REG_RDI*8], [rbx].gregs[REG_R13*8],
+            [rbx].gregs[REG_RBP*8], [rbx].gregs[REG_R14*8],
+            [rbx].gregs[REG_RSP*8], [rbx].gregs[REG_R15*8],
+            rcx, rdx )
+    assume rbx:nothing
+elseifndef __UNIX__
         __crtGeneralFailure( signo )
 endif
         asmerr( 1901 )
@@ -326,8 +374,11 @@ endif
     mov my_environ,environ
 
 ifdef __UNIX__
-  .new buffer[_MAX_PATH]:char_t
-  .new path:string_t = &buffer
+   .new buffer[_MAX_PATH]:char_t
+   .new path:string_t = &buffer
+ifdef _LIN64
+   .new action:sigaction_t
+endif
 else
   .new ff:WIN32_FIND_DATA
   .new path:string_t = &ff.cFileName
@@ -335,6 +386,11 @@ endif
 
     MemInit()
 
+ifdef _LIN64
+    mov action.sa_sigaction,&GeneralFailure
+    mov action.sa_flags,SA_SIGINFO
+    sigaction(SIGSEGV, &action, NULL)
+else
 ifndef DEBUG
     signal(SIGSEGV, &GeneralFailure)
 endif
@@ -343,7 +399,7 @@ ifndef __UNIX__
 else
     signal(SIGTERM, &GeneralFailure)
 endif
-
+endif
     init_options()
 
     .if !tgetenv( "ASMC" )     ; v2.21 -- getenv() error..

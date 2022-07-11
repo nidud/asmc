@@ -304,7 +304,9 @@ GeneralFailure proc private signo:int_t
     .if ( signo != SIGTERM )
 
 ifdef _LIN64
+
     assume rbx:ptr mcontext_t
+
     mov rbx,rdx
     add rbx,ucontext_t.uc_mcontext
     lea rdi,@CStr(
@@ -312,18 +314,16 @@ ifdef _LIN64
             "This message is created due to unrecoverable error\n"
             "and may contain data necessary to locate it.\n"
             "\n"
-            "Code:\t%08X\n"
-            "Errno:  %08X\n"
-            "\n"
-            "\tRAX: %016llX R8:  %016llX\n"
-            "\tRBX: %016llX R9:  %016llX\n"
-            "\tRCX: %016llX R10: %016llX\n"
-            "\tRDX: %016llX R11: %016llX\n"
-            "\tRSI: %016llX R12: %016llX\n"
-            "\tRDI: %016llX R13: %016llX\n"
-            "\tRBP: %016llX R14: %016llX\n"
-            "\tRSP: %016llX R15: %016llX\n"
-            "\tRIP: %016llX %016llX\n\n"
+            "\tRAX: %p R8:  %p\n"
+            "\tRBX: %p R9:  %p\n"
+            "\tRCX: %p R10: %p\n"
+            "\tRDX: %p R11: %p\n"
+            "\tRSI: %p R12: %p\n"
+            "\tRDI: %p R13: %p\n"
+            "\tRBP: %p R14: %p\n"
+            "\tRSP: %p R15: %p\n"
+            "\tRIP: %p %p\n"
+            "\t     %p %p\n\n"
             "\tEFL: 0000000000000000\n"
             "\t     r n oditsz a p c\n\n")
 
@@ -335,10 +335,10 @@ ifdef _LIN64
     .untilcxz
     mov rcx,[rbx].gregs[REG_RIP*8]
     mov rdx,[rcx]
+    mov r10,[rcx-8]
+    mov r11,[rcx+8]
 
-    printf( rdi,
-            [rsi].siginfo_t.si_code,
-            [rsi].siginfo_t.si_errno,
+    tprintf( rdi,
             [rbx].gregs[REG_RAX*8], [rbx].gregs[REG_R8*8],
             [rbx].gregs[REG_RBX*8], [rbx].gregs[REG_R9*8],
             [rbx].gregs[REG_RCX*8], [rbx].gregs[REG_R10*8],
@@ -347,8 +347,10 @@ ifdef _LIN64
             [rbx].gregs[REG_RDI*8], [rbx].gregs[REG_R13*8],
             [rbx].gregs[REG_RBP*8], [rbx].gregs[REG_R14*8],
             [rbx].gregs[REG_RSP*8], [rbx].gregs[REG_R15*8],
-            rcx, rdx )
+            rcx, rdx, r10, r11 )
+
     assume rbx:nothing
+
 elseifndef __UNIX__
         __crtGeneralFailure( signo )
 endif

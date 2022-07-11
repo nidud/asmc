@@ -105,6 +105,9 @@ tvsprintf proc __ccall uses rsi rdi rbx buffer:string_t, format:string_t, argptr
 
             .if ( al == 'l' )
                 lodsb
+                .if ( al == 'l' )
+                    lodsb
+                .endif
 ifdef _WIN64
                 mov rcx,[rbx]
             .elseif ( al == 's' )

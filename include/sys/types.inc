@@ -44,6 +44,9 @@ uid_t   typedef __uid_t
 define __uid_t_defined
 endif
 
+__pid_t typedef sdword
+pid_t   typedef sdword
+
 __useconds_t typedef sdword
 useconds_t   typedef __useconds_t
 

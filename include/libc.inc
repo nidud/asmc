@@ -238,6 +238,15 @@ array_t		typedef ptr ptr sbyte
 warray_t	typedef ptr ptr word
 endif
 
+ifndef _INTPTR_T_DEFINED
+define _INTPTR_T_DEFINED
+ifdef _WIN64
+intptr_t	typedef sqword
+else
+intptr_t	typedef sdword
+endif
+endif
+
 SINT		typedef sdword
 UINT		typedef dword
 ULONG		typedef dword

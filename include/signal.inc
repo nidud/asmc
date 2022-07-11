@@ -1,6 +1,10 @@
 .pragma list(push, 0)
+ifndef __SIGNAL_INC
+define __SIGNAL_INC
 
-ifndef __UNIX__
+ifdef __UNIX__
+include sys/types.inc
+else
 include winnt.inc
 endif
 
@@ -56,6 +60,86 @@ raise	proto __cdecl :int_t
     ExceptionCollidedUnwind
     }
 
+ifdef __UNIX__
+
+define _NSIG		64
+ifdef _AMD64_
+define _NSIG_WORDS	16
+else
+define _NSIG_WORDS	2
+endif
+
+ifndef ____sigset_t_defined
+define ____sigset_t_defined
+sigset_t		struct
+sig			intptr_t _NSIG_WORDS dup(?)
+sigset_t		ends
+endif
+sighandler_t		typedef sigfunc_t
+
+define SIG_BLOCK	0
+define SIG_UNBLOCK	1
+define SIG_SETMASK	2
+
+define SA_NOCLDSTOP	0x00000001
+define SA_NOCLDWAIT	0x00000002
+define SA_SIGINFO	0x00000004
+define SA_RESTORER	0x04000000
+define SA_ONSTACK	0x08000000
+define SA_RESTART	0x10000000
+define SA_INTERRUPT	0x20000000
+define SA_NODEFER	0x40000000
+define SA_RESETHAND	0x80000000
+
+define SA_NOMASK	SA_NODEFER
+define SA_ONESHOT	SA_RESETHAND
+
+ifndef ____sigval_t_defined
+define ____sigval_t_defined
+sigval			union
+sival_int		int_t ?
+sival_ptr		ptr_t ?
+sigval			ends
+sigval_t		typedef sigval
+endif
+
+ifndef __siginfo_t_defined
+define __siginfo_t_defined
+siginfo_t		struct
+si_signo		int_t ?
+si_errno		int_t ?
+si_code			int_t ?
+si_pid			pid_t ?
+si_uid			uid_t ?
+si_addr			ptr_t ?
+si_status		int_t ?
+si_band			long_t ?
+si_value		sigval_t <>
+siginfo_t		ends
+endif
+
+sigaction_t		struct size_t
+union
+ sa_handler		sighandler_t ?
+ sa_sigaction		proc :int_t, :ptr siginfo_t, :ptr
+ends
+sa_flags		int_t ?
+sa_restorer		proc
+sa_mask			sigset_t <>
+sigaction_t		ends
+
+ifdef _AMD64_
+define SYS_RT_SIGACTION 13
+sys_rt_sigaction proto syscall :int_t, :ptr sigaction_t, :ptr sigaction_t {
+    mov eax,SYS_RT_SIGACTION
+    mov r10,sigaction_t
+    syscall
+    }
+endif
+sigaction proto __cdecl :int_t, :ptr sigaction_t, :ptr sigaction_t
+
+endif ; __UNIX__
+
 ifndef __UNIX__
 ifndef _MSVCRT
 __crtPrintContext   proto __cdecl
@@ -63,4 +147,5 @@ __crtGeneralFailure proto __cdecl :int_t
 endif
 endif
 
+endif
 .pragma list(pop)

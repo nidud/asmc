@@ -1972,7 +1972,7 @@ elf64_param proc __ccall private uses rsi rdi rbx pp:dsym_t, index:int_t, param:
 
             SizeFromMemtype( [rdi].mem_type, USE64, [rdi].type )
 
-        .elseif ( ecx == EXPR_ADDR && [rdx].asym.state == SYM_UNDEFINED )
+        .elseif ( ecx == EXPR_ADDR && ( !rdx || [rdx].asym.state == SYM_UNDEFINED ) )
 
             mov eax,psize
 

@@ -550,7 +550,7 @@ RGBQUAD                 typedef tagRGBQUAD
 endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-LPRGBQUAD               typedef ptr FAR
+LPRGBQUAD               typedef ptr
 endif
 
 if(WINVER ge 0x0400)
@@ -665,7 +665,7 @@ endif
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-LPCIEXYZ                typedef ptr FAR
+LPCIEXYZ                typedef ptr
 
 endif
 
@@ -684,7 +684,7 @@ endif
 ;.pragma region Desktop Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-LPCIEXYZTRIPLE          typedef ptr FAR
+LPCIEXYZTRIPLE          typedef ptr
 
 endif
 ;.pragma endregion
@@ -994,7 +994,7 @@ endif
 ;.pragma region Application Family
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 
-LPMETARECORD            typedef ptr FAR
+LPMETARECORD            typedef ptr
 
 tagMETAFILEPICT         struct
 mm                      LONG ?
@@ -1024,7 +1024,7 @@ mtNoParameters          WORD ?
 tagMETAHEADER           ends
 METAHEADER              typedef tagMETAHEADER
 PMETAHEADER             typedef ptr UNALIGNED
-LPMETAHEADER            typedef ptr FAR
+LPMETAHEADER            typedef ptr
 
 endif
 ;.pragma endregion
@@ -1342,8 +1342,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 PATTERN                 typedef LOGBRUSH
 PPATTERN                typedef ptr PATTERN
-NPPATTERN               typedef ptr NEAR
-LPPATTERN               typedef ptr FAR
+NPPATTERN               typedef ptr
+LPPATTERN               typedef ptr
 
 endif
 ;.pragma endregion
@@ -3382,9 +3382,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 tagGCP_RESULTSA         struct
 lStructSize             DWORD ?
 lpOutString             LPSTR ?
-lpOrder                 ptr FAR ?
-lpDx                    ptr FAR ?
-lpCaretPos              ptr FAR ?
+lpOrder                 ptr ?
+lpDx                    ptr ?
+lpCaretPos              ptr ?
 lpClass                 LPSTR ?
 lpGlyphs                LPWSTR ?
 nGlyphs                 UINT ?
@@ -3395,9 +3395,9 @@ LPGCP_RESULTSA          typedef ptr tagGCP_RESULTSA
 tagGCP_RESULTSW         struct
 lStructSize             DWORD ?
 lpOutString             LPWSTR ?
-lpOrder                 ptr FAR ?
-lpDx                    ptr FAR ?
-lpCaretPos              ptr FAR ?
+lpOrder                 ptr ?
+lpDx                    ptr ?
+lpCaretPos              ptr ?
 lpClass                 LPSTR ?
 lpGlyphs                LPWSTR ?
 nGlyphs                 UINT ?

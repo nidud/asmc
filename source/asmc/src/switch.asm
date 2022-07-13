@@ -1028,6 +1028,7 @@ endif
                                 ebx, rcx, table_addr, base_addr )
                         .endif
                         xor ecx,ecx
+                        mov ebx,T_RAX
                     .endif
                     GetJumpDist( table_type, ebx, rcx, table_addr, base_addr )
                     AddLineQueue(
@@ -1080,6 +1081,7 @@ endif
                                 ebx, rcx, table_addr, base_addr )
                         .endif
                         xor ecx,ecx
+                        mov ebx,T_RAX
                     .endif
                     GetJumpDist( table_type, ebx, rcx, table_addr, base_addr )
                     AddLineQueue(

@@ -21,13 +21,11 @@ Cs_OFF	PROC USES rsi rdi rbx a1, a2, a3, a4
 ;	push	rsi
 ;	push	rdi
 ;	push	rbx
-;	sub	rsp,8 + @ReservedStack
-	sub	rsp,rax
+	sub	rsp,rax ; fails..
 	mov	ecx,a1	; [rbp+10H]
 	mov	edx,a2	; [rbp+18H]
 	mov	r8d,a3	; [rbp+20H]
 	mov	r9d,a4	; [rbp+28H]
-;	add	rsp,8 + @ReservedStack
 ;	pop	rbx
 ;	pop	rdi
 ;	pop	rsi
@@ -48,7 +46,6 @@ Cs_ON	PROC USES rsi rdi rbx a1, a2, a3, a4
 ;	push	rbx
 ;	push	rbp
 ;	mov	rbp,rsp
-;	sub	rsp,8 + @ReservedStack
 	sub	rsp,rax
 	mov	ecx,a1	; [rbp+28H]
 	mov	edx,a2	; [rbp+30H]
@@ -90,13 +87,11 @@ Cs_RSP PROC USES rsi rdi rbx a1, a2, a3, a4
 ;	push	rsi
 ;	push	rdi
 ;	push	rbx
-;	sub	rsp,0 + @ReservedStack
-	sub	rsp,rax
+	sub	rsp,rax ; fails..
 	mov	ecx,a1	; [rsp+40H]
 	mov	edx,a2	; [rsp+48H]
 	mov	r8d,a3	; [rsp+50H]
 	mov	r9d,a4	; [rsp+58H]
-;	add	rsp,0 + @ReservedStack
 ;	pop	rbx
 ;	pop	rdi
 ;	pop	rsi

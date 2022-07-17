@@ -39,7 +39,8 @@ ifdef _WIN64
             "\tRDI: %p R13: %p\n"
             "\tRBP: %p R14: %p\n"
             "\tRSP: %p R15: %p\n"
-            "\tRIP: %p %p\n\n"
+            "\tRIP: %p %p\n"
+            "\t     %p %p\n\n"
             "\tEFL: 0000000000000000\n"
             "\t     r n oditsz a p c\n\n" )
 else
@@ -72,6 +73,8 @@ ifdef _WIN64
 
     mov rdx,[rbx].CONTEXT._Rip
     mov rcx,[rdx]
+    mov r10,[rdx-8]
+    mov r11,[rdx+8]
 
     printf( rdi,
             [rsi].EXCEPTION_RECORD.ExceptionCode,
@@ -84,7 +87,7 @@ ifdef _WIN64
             [rbx].CONTEXT._Rdi, [rbx].CONTEXT._R13,
             [rbx].CONTEXT._Rbp, [rbx].CONTEXT._R14,
             [rbx].CONTEXT._Rsp, [rbx].CONTEXT._R15,
-            rdx, rcx )
+            rdx, rcx, r10, r11 )
 else
 
     mov edx,[ebx].CONTEXT._Eip

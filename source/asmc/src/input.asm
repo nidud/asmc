@@ -186,6 +186,7 @@ AddFile endp
 
 GetFName proc fastcall index:uint_t
 
+    and ecx,0xFFFF
     mov rax,ModuleInfo.FNames
     mov rax,[rax+rcx*size_t]
     ret

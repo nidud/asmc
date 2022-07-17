@@ -1725,9 +1725,9 @@ omf_write_modend endp
 
 ; this callback function is called during codeview debug info generation
 
-omf_cv_flushfunc proc __ccall private uses rsi rdi rbx s:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
+omf_cv_flushfunc proc __ccall private uses rsi rdi rbx segm:ptr dsym, curr:ptr uint_8, size:dword, pv:ptr
 
-    mov rcx,s
+    mov rcx,segm
     mov rcx,[rcx].dsym.seginfo
     mov rdi,[rcx].seg_info.CodeBuffer
 
@@ -1741,7 +1741,7 @@ omf_cv_flushfunc proc __ccall private uses rsi rdi rbx s:ptr dsym, curr:ptr uint
         mov eax,[rcx].seg_info.start_loc
         add rax,rbx
         mov [rcx].seg_info.current_loc,eax
-        omf_write_ledata( curr )
+        omf_write_ledata( segm )
 
        .return( rdi )
     .endif

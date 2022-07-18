@@ -381,7 +381,7 @@ CoffGetClass endp
 
 GetFileAuxEntries proc __ccall file:uint_16, fname:ptr string_t
 
-    GetFName( ecx )
+    GetFName( file )
 
     .if ( fname )
 

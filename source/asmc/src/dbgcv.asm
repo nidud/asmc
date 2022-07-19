@@ -1138,7 +1138,7 @@ if EQUATESYMS
             mov [rdi].CONSTSYM_16t.typind,cx
         .endif
 
-        mov [rcx-2],ax
+        mov [rdx-2],ax
         mov eax,len
         mov ecx,[rsi].asym.name_size
         lea edx,[rax+rcx-2+1]

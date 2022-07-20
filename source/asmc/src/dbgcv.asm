@@ -840,8 +840,24 @@ dbgcv::write_type proc __ccall uses rsi rdi rbx sym:ptr asym
                 .endif
             .endif
             mov [rsi].asym.cvtyperef,[rbx].write_ptr_type( rsi )
+            .return
+        .endif
+
+        ; v2.34.15: added for struct typedefs
+
+        .if ( [rsi].asym.mem_type == MT_TYPE && [rsi].asym.type )
+
+            mov rdi,rsi
+            .while ( [rdi].asym.type )
+                mov rdi,[rdi].asym.type
+            .endw
+            .if ( [rdi].asym.cvtyperef == 0 )
+                [rbx].write_type( rdi )
+            .endif
+            mov [rsi].asym.cvtyperef,[rdi].asym.cvtyperef
         .endif
         .return
+
     .elseif ( [rsi].asym.typekind == TYPE_NONE )
         .return
     .endif

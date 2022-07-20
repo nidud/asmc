@@ -3603,7 +3603,7 @@ continue:
             .else
 
                 mov sym,IsType( [rbx].string_ptr )
-                .if ( eax == NULL )
+                .if ( rax == NULL )
 
                     inc i
                     add rsi,asm_tok
@@ -3616,7 +3616,7 @@ continue:
                     .elseif ( [rbx+asm_tok].token == T_ID )
                         IsType( [rbx+asm_tok].string_ptr )
                     .endif
-                    .if ( eax )
+                    .if ( rax )
                         inc i
                         add rsi,asm_tok
                     .endif

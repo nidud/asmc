@@ -213,7 +213,7 @@ getline proc private uses rdi rbx ti:ptr TEdit
     .if rax
         mov     rbx,rcx
         mov     rdi,rax
-        mov     edx,[rcx].boffs     ; terminate line
+        mov     edx,[rcx].bcols     ; terminate line
         xor     eax,eax             ; set length of line
         mov     [rdi+rdx*TCHAR-TCHAR],_tal
         mov     ecx,-1

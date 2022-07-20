@@ -1591,8 +1591,6 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPAR
     .switch [rcx].Type
     .case T_NORMAL
         .if ( eax > 1 )
-            mov rcx,[rcx].Child
-            .return [rcx].Send(WM_LBUTTONDOWN, r8, r9) .if rcx
             .return TRUE
         .endif
         mov [rsi].State,1
@@ -1660,8 +1658,6 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM
     .switch [rcx].Type
     .case T_NORMAL
         .if ( [rsi].State == 0 )
-            mov rcx,[rcx].Child
-            .return [rcx].Send(edx, r8, r9) .if rcx
             .return 1
         .endif
         mov [rsi].State,0
@@ -1677,15 +1673,17 @@ OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM
         ContextRect(rcx)
         movzx edi,ah
         movzx edx,al
-        inc edx
+        add dl,[rsi].rc.col
         [rcx].CPutChar( edx, edi, 1, U_LOWER_HALF_BLOCK )
         movzx edx,[rsi].rc.x
         inc edx
         inc edi
         [rcx].CPutChar( edx, edi, [rsi].rc.col, U_UPPER_HALF_BLOCK )
         xor edx,edx
-        test [rcx].Flags,O_DEXIT
-        cmovz edx,[rcx].Index
+        .if !( [rcx].Flags & O_DEXIT )
+            mov edx,[rcx].Index
+            inc edx
+        .endif
         .return [rcx].PostQuit(edx)
     .case T_RADIOBUTTON
         .return 1 .if ( [rsi].State == 0 )
@@ -1983,10 +1981,11 @@ OnChar proc uses rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:WPARAM, lParam:LPAR
 
             .if ( r8w == VK_RETURN )
 
-                xor     edx,edx
-                test    [rcx].Flags,O_DEXIT
-                cmovz   edx,eax
-               .return  [rcx].PostQuit(edx)
+                xor edx,edx
+                .if !( [rcx].Flags & O_DEXIT )
+                    lea edx,[rax+1]
+                .endif
+                .return( [rcx].PostQuit(edx) )
             .endif
 
             .switch [rcx].Type
@@ -2272,7 +2271,7 @@ TWindow::Send proc uses rsi rdi rbx rcx uiMsg:uint_t, wParam:WPARAM, lParam:LPAR
     .for ( rsi = r8, rdi = r9, eax = 1 : rbx : )
 
         .if ( [rbx].Flags & W_WNDPROC )
-            .break .ifd ( [rbx].WndProc(rbx, uiMsg, rsi, rsi) != 1 )
+            .break .ifd ( [rbx].WndProc(rbx, uiMsg, rsi, rdi) != 1 )
         .endif
         .if ( [rbx].Flags & W_CHILD && [rbx].Child )
             mov rbx,[rbx].Child
@@ -2482,7 +2481,7 @@ endif
     .endw
     mov rbx,[rdi].TMessage.wParam
     Dispatch(rcx, rdi)
-    [rcx].Send(WM_CLOSE, 0, 0)
+    [rcx].Send(WM_CLOSE, rbx, 0)
     mov rcx,hPrev
     mov [rsi].Instance,rcx
    .return(rbx)
@@ -2765,9 +2764,8 @@ TWindow::SetConsole proc uses rsi rbx rcx cols:int_t, rows:int_t
     UNREFERENCED_PARAMETER(cols)
     UNREFERENCED_PARAMETER(rows)
 
-    mov rsi,[rcx].Class
-    mov rcx,[rsi].Console
-
+    mov     rsi,[rcx].Class
+    mov     rcx,[rsi].Console
     movzx   eax,[rcx].rc.x
     mov     bz.x,dx
     mov     bz.y,r8w
@@ -2776,6 +2774,7 @@ TWindow::SetConsole proc uses rsi rbx rcx cols:int_t, rows:int_t
     dec     eax
     mov     rc.Right,ax
     movzx   eax,[rcx].rc.y
+    mov     rc.Top,ax
     add     eax,r8d
     dec     eax
     mov     rc.Bottom,ax

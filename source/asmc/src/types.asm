@@ -809,12 +809,17 @@ endif
 
     ; v2.0: for STRUCTs, don't use the struct's size for alignment calculations,
     ; instead use the size of the "max" member!
+    ; v2.34.14: alias types were skipped...
 
     mov rcx,vartype
-    .if ( mem_type == MT_TYPE && ( [rcx].asym.typekind == TYPE_STRUCT ||
-          [rcx].asym.typekind == TYPE_UNION ) )
+    .if ( mem_type == MT_TYPE )
 
-        mov size,[rcx].asym.max_mbr_size
+        .while ( [rcx].asym.type )
+            mov rcx,[rcx].asym.type
+        .endw
+        .if ( [rcx].asym.typekind == TYPE_STRUCT || [rcx].asym.typekind == TYPE_UNION )
+            mov size,[rcx].asym.max_mbr_size
+        .endif
     .endif
 
     ; align the field if an alignment argument was given

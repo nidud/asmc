@@ -62,6 +62,8 @@ raise	proto __cdecl :int_t
 
 ifdef __UNIX__
 
+.pragma pack(push, size_t)
+
 define _NSIG		64
 ifdef _AMD64_
 define _NSIG_WORDS	16
@@ -118,7 +120,7 @@ si_value		sigval_t <>
 siginfo_t		ends
 endif
 
-sigaction_t		struct size_t
+sigaction_t		struct
 union
  sa_handler		sighandler_t ?
  sa_sigaction		proc :int_t, :ptr siginfo_t, :ptr
@@ -129,22 +131,21 @@ sa_mask			sigset_t <>
 sigaction_t		ends
 
 ifdef _AMD64_
-define SYS_RT_SIGACTION 13
 sys_rt_sigaction proto syscall :int_t, :ptr sigaction_t, :ptr sigaction_t {
-    mov eax,SYS_RT_SIGACTION
-    mov r10,sigaction_t
+    mov eax,13
+    mov r10,_NSIG / 8
     syscall
     }
 endif
 sigaction proto __cdecl :int_t, :ptr sigaction_t, :ptr sigaction_t
 
+.pragma pack(pop)
+
 endif ; __UNIX__
 
-ifndef __UNIX__
 ifndef _MSVCRT
 __crtPrintContext   proto __cdecl
 __crtGeneralFailure proto __cdecl :int_t
-endif
 endif
 
 endif

@@ -1427,7 +1427,7 @@ NPLOGPALETTE            typedef ptr tagLOGPALETTE
 LPLOGPALETTE            typedef ptr tagLOGPALETTE
 endif
 
-define LF_FACESIZE         32
+define LF_FACESIZE      32
 
 tagLOGFONTA             struct
 lfHeight                LONG ?

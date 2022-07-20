@@ -357,8 +357,6 @@ window_t        typedef ptr TWindow
     Console     window_t ?
     ConMode     uint_t ?
     ErrMode     uint_t ?
-;    Clipbord    string_t ?
-;    ClipSize    uint_t ?
     KeyState    uint_t ?
    .ends
     class_t     typedef ptr TClass

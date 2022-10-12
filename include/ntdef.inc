@@ -4,47 +4,19 @@ define _NTDEF_
 include ctype.inc
 include winapifamily.inc
 
-ifndef NOTHING
-NOTHING equ <>
-endif
-
-ifndef CRITICAL
-CRITICAL equ <>
-endif
-
 ifndef ANYSIZE_ARRAY
-ANYSIZE_ARRAY equ 1
+define ANYSIZE_ARRAY 1
 endif
 
 include specstrings.inc
 include kernelspecs.inc
 
-if defined(_M_MRX000) AND NOT (defined(MIDL_PASS) OR defined(RC_INVOKED)) AND defined(ENABLE_RESTRICTED)
-RESTRICTED_POINTER equ <__restrict>
-else
-RESTRICTED_POINTER equ <>
-endif
-
-if defined(_M_MRX000) OR defined(_M_ALPHA) OR defined(_M_PPC) OR defined(_M_IA64) OR defined(_M_AMD64) OR defined(_M_ARM)
-ALIGNMENT_MACHINE equ 1
-UNALIGNED equ <__unaligned>
-if defined(_WIN64)
-UNALIGNED64 equ <__unaligned>
-else
-UNALIGNED64 equ <>
-endif
-else
-undef ALIGNMENT_MACHINE
-UNALIGNED   equ <>
-UNALIGNED64 equ <>
-endif
-
 if defined(_WIN64) OR defined(_M_ALPHA)
-MAX_NATURAL_ALIGNMENT equ sizeof(ULONGLONG)
-MEMORY_ALLOCATION_ALIGNMENT equ 16
+define MAX_NATURAL_ALIGNMENT	   8
+define MEMORY_ALLOCATION_ALIGNMENT 16
 else
-MAX_NATURAL_ALIGNMENT equ sizeof(ULONG)
-MEMORY_ALLOCATION_ALIGNMENT equ 8
+define MAX_NATURAL_ALIGNMENT	   4
+define MEMORY_ALLOCATION_ALIGNMENT 8
 endif
 
 ifdef __cplusplus
@@ -79,6 +51,7 @@ endif
 elseif NOT defined(RC_INVOKED)
 .err <"No Target Architecture">
 endif
+
 if defined(_WIN64)
 PROBE_ALIGNMENT32 macro _s
 	exitm<TYPE_ALIGNMENT( ULONG )>
@@ -101,145 +74,14 @@ endif
 
 include basetsd.inc
 
-ifndef CONST
-CONST equ <>
-endif
-
-if (defined(_M_IX86) OR defined(_M_IA64) OR defined(_M_AMD64) OR defined(_M_ARM)) AND NOT defined(MIDL_PASS)
-DECLSPEC_IMPORT equ <__declspec(dllimport)>
-else
-DECLSPEC_IMPORT equ <>
-endif
-
-ifndef DECLSPEC_NORETURN
-if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
-DECLSPEC_NORETURN equ <__declspec(noreturn)>
-else
-DECLSPEC_NORETURN equ <>
-endif
-endif
-
-ifndef DECLSPEC_NOTHROW
-if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
-DECLSPEC_NOTHROW equ <__declspec(nothrow)>
-else
-DECLSPEC_NOTHROW equ <>
-endif
-endif
-
-ifndef DECLSPEC_ALIGN
-DECLSPEC_ALIGN macro x
-if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
-	exitm<__declspec(align(x))>
-endif
-	endm
-endif
-
 ifndef SYSTEM_CACHE_ALIGNMENT_SIZE
 if defined(_AMD64_) OR defined(_X86_)
-SYSTEM_CACHE_ALIGNMENT_SIZE equ 64
+define SYSTEM_CACHE_ALIGNMENT_SIZE 64
 else
-SYSTEM_CACHE_ALIGNMENT_SIZE equ 128
+define SYSTEM_CACHE_ALIGNMENT_SIZE 128
 endif
 endif
 
-ifndef DECLSPEC_CACHEALIGN
-DECLSPEC_CACHEALIGN equ DECLSPEC_ALIGN(SYSTEM_CACHE_ALIGNMENT_SIZE)
-endif
-
-ifndef DECLSPEC_UUID
-DECLSPEC_UUID macro x
-if (_MSC_VER GE 1100) AND defined (__cplusplus)
-	exitm<__declspec(uuid(x))>
-endif
-	endm
-endif
-
-ifndef DECLSPEC_NOVTABLE
-if (_MSC_VER GE 1100) AND defined(__cplusplus)
-DECLSPEC_NOVTABLE equ <__declspec(novtable)>
-else
-DECLSPEC_NOVTABLE equ 1
-endif
-endif
-
-ifndef DECLSPEC_SELECTANY
-if (_MSC_VER GE 1100)
-DECLSPEC_SELECTANY equ <__declspec(selectany)>
-else
-DECLSPEC_SELECTANY equ 1
-endif
-endif
-
-ifndef NOP_FUNCTION
-if (_MSC_VER GE 1210)
-NOP_FUNCTION equ <__noop>
-else
-NOP_FUNCTION equ <>
-endif
-endif
-
-ifndef DECLSPEC_ADDRSAFE
-if (_MSC_VER GE 1200) AND (defined(_M_ALPHA) OR defined(_M_AXP64))
-DECLSPEC_ADDRSAFE equ <__declspec(address_safe)>
-else
-DECLSPEC_ADDRSAFE equ <>
-endif
-endif
-
-ifndef DECLSPEC_NOINLINE
-if (_MSC_VER GE 1300)
-DECLSPEC_NOINLINE equ <__declspec(noinline)>
-else
-DECLSPEC_NOINLINE equ <>
-endif
-endif
-
-ifndef DECLSPEC_SAFEBUFFERS
-if (_MSC_VER GE 1300)
-DECLSPEC_SAFEBUFFERS equ <__declspec(safebuffers)>
-else
-DECLSPEC_SAFEBUFFERS equ <>
-endif
-endif
-
-ifndef DECLSPEC_GUARDIGNORE
-if (_MSC_FULL_VER GE 170065501)
-DECLSPEC_GUARDIGNORE equ <__declspec(guard(ignore))>
-else
-DECLSPEC_GUARDIGNORE equ <>
-endif
-endif
-
-ifndef DECLSPEC_GUARDNOCF
-if (_MSC_FULL_VER GE 170065501)
-DECLSPEC_GUARDNOCF equ <__declspec(guard(nocf))>
-else
-DECLSPEC_GUARDNOCF equ <>
-endif
-endif
-
-ifndef FORCEINLINE
-if (_MSC_VER GE 1200)
-FORCEINLINE equ <__forceinline>
-else
-FORCEINLINE equ <__inline>
-endif
-endif
-
-CFORCEINLINE   equ <FORCEINLINE>
-STKFORCEINLINE equ <FORCEINLINE>
-ICEFORCEINLINE equ <FORCEINLINE>
-
-ifndef DECLSPEC_DEPRECATED
-if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
-DECLSPEC_DEPRECATED equ <__declspec(deprecated)>
-DEPRECATE_SUPPORTED equ <>
-else
-DECLSPEC_DEPRECATED equ <>
-undef  DEPRECATE_SUPPORTED
-endif
-endif
 
 ifdef DEPRECATE_DDK_FUNCTIONS
 ifdef _NTDDK_
@@ -267,24 +109,6 @@ __cdecl equ <>
 NTAPI	equ <>
 endif
 
-if NOT defined(_M_CEE_PURE)
-NTAPI_INLINE equ <NTAPI>
-else
-NTAPI_INLINE equ <>
-endif
-
-if NOT defined(_NTSYSTEM_)
-NTSYSAPI     equ <DECLSPEC_IMPORT>
-NTSYSCALLAPI equ <DECLSPEC_IMPORT>
-else
-NTSYSAPI equ 1
-if defined(_NTDLLBUILD_)
-NTSYSCALLAPI equ <>
-else
-NTSYSCALLAPI equ <DECLSPEC_ADDRSAFE>
-endif
-
-endif
 
 ifndef VOID
 VOID  equ <>
@@ -294,10 +118,6 @@ LONG  typedef sdword
 if NOT defined(MIDL_PASS)
 SINT  typedef sdword
 endif
-endif
-
-ifndef _MAC
-else
 endif
 
 PWCH			typedef ptr WCHAR
@@ -677,7 +497,14 @@ PDWORDLONG		typedef ptr DWORDLONG
 PHYSICAL_ADDRESS	typedef LARGE_INTEGER
 PPHYSICAL_ADDRESS	typedef ptr LARGE_INTEGER
 
-if defined(MIDL_PASS) OR defined(RC_INVOKED) OR defined(_M_CEE_PURE) OR defined(_68K_) OR defined(_MPPC_) OR defined(_M_IA64) OR defined(_M_AMD64) OR defined(_M_ARM)
+if defined(MIDL_PASS)	OR \
+   defined(RC_INVOKED)	OR \
+   defined(_M_CEE_PURE) OR \
+   defined(_68K_)	OR \
+   defined(_MPPC_)	OR \
+   defined(_M_IA64)	OR \
+   defined(_M_AMD64)	OR \
+   defined(_M_ARM)
 
 Int32x32To64 proto fastcall :int_t, :int_t {
 	movsx	rax, ecx
@@ -855,7 +682,7 @@ Flink			ptr_t ?
 Blink			ptr_t ?
 LIST_ENTRY		ENDS
 PLIST_ENTRY		typedef ptr LIST_ENTRY
-RESTRICTED_POINTER PRLIST_ENTRY typedef ptr LIST_ENTRY
+PRLIST_ENTRY		typedef ptr LIST_ENTRY
 
 SINGLE_LIST_ENTRY	STRUC
 Next			ptr_t ?
@@ -901,36 +728,15 @@ Next			ULONG ?
 SINGLE_LIST_ENTRY32	ENDS
 PSINGLE_LIST_ENTRY32	typedef ptr SINGLE_LIST_ENTRY32
 
-ifndef __inline
-ifdef _WIN64
-__inline equ <fastcall>
-else
-__inline equ <watcall>
-endif
-endif
 
 ifndef MIDL_PASS
-ListEntry32To64 proto __inline :PLIST_ENTRY32, :PLIST_ENTRY64 {
-ifdef _WIN64
+ListEntry32To64 proto fastcall :PLIST_ENTRY32, :PLIST_ENTRY64 {
 	mov [_2].LIST_ENTRY64.Flink,[_1].LIST_ENTRY32.Flink
 	mov [_2].LIST_ENTRY64.Blink,[_1].LIST_ENTRY32.Blink
-else
-	mov ecx,eax
-	mov dword ptr [_2].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
-	mov dword ptr [_2].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
-endif
 	}
-ListEntry64To32 proto __inline :PLIST_ENTRY64, :PLIST_ENTRY32 {
-ifdef _WIN64
+ListEntry64To32 proto fastcall :PLIST_ENTRY64, :PLIST_ENTRY32 {
 	mov [_2].LIST_ENTRY32.Flink,[_1].LIST_ENTRY64.Flink
 	mov [_2].LIST_ENTRY32.Blink,[_1].LIST_ENTRY64.Blink
-else
-	mov ecx,eax
-	mov dword ptr [_2].LIST_ENTRY64.Flink[4],0
-	mov dword ptr [_2].LIST_ENTRY64.Blink[4],0
-	mov dword ptr [_2].LIST_ENTRY64.Flink,[ecx].LIST_ENTRY32.Flink
-	mov dword ptr [_2].LIST_ENTRY64.Blink,[ecx].LIST_ENTRY32.Blink
-endif
 	}
 endif
 
@@ -980,7 +786,7 @@ SecurityDescriptor	ULONG64 ?
 SecurityQualityOfService ULONG64 ?
 OBJECT_ATTRIBUTES64	ENDS
 POBJECT_ATTRIBUTES64	typedef ptr OBJECT_ATTRIBUTES64
-PCOBJECT_ATTRIBUTES64	typedef ptr CONST OBJECT_ATTRIBUTES64
+PCOBJECT_ATTRIBUTES64	typedef ptr OBJECT_ATTRIBUTES64
 
 OBJECT_ATTRIBUTES32	STRUC
 Length			ULONG ?
@@ -991,7 +797,7 @@ SecurityDescriptor	ULONG ?
 SecurityQualityOfService ULONG ?
 OBJECT_ATTRIBUTES32	ENDS
 POBJECT_ATTRIBUTES32	typedef ptr OBJECT_ATTRIBUTES32
-PCOBJECT_ATTRIBUTES32	typedef ptr CONST OBJECT_ATTRIBUTES32
+PCOBJECT_ATTRIBUTES32	typedef ptr OBJECT_ATTRIBUTES32
 
 
 OBJECT_ATTRIBUTES	STRUC
@@ -1003,9 +809,9 @@ SecurityDescriptor	PVOID ?
 SecurityQualityOfService PVOID ?
 OBJECT_ATTRIBUTES	ENDS
 POBJECT_ATTRIBUTES	typedef ptr OBJECT_ATTRIBUTES
-PCOBJECT_ATTRIBUTES	typedef ptr CONST OBJECT_ATTRIBUTES
+PCOBJECT_ATTRIBUTES	typedef ptr OBJECT_ATTRIBUTES
 
-InitializeObjectAttributes proto __inline :ptr, :abs, :abs, :abs, :abs {
+InitializeObjectAttributes proto fastcall :ptr, :abs, :abs, :abs, :abs {
     mov [_1].OBJECT_ATTRIBUTES.Length,sizeof( OBJECT_ATTRIBUTES )
     mov [_1].OBJECT_ATTRIBUTES.RootDirectory,_4
     mov [_1].OBJECT_ATTRIBUTES.Attributes,_3

@@ -303,13 +303,16 @@ GeneralFailure proc private signo:int_t
 
     .if ( signo != SIGTERM )
 
-ifdef _LIN64
+if defined(_WIN64) or not defined(__UNIX__)
 
-    assume rbx:ptr mcontext_t
+ifdef __UNIX__
+        assume rbx:ptr mcontext_t
+else
+        assume rbx:ptr CONTEXT
+endif
 
-    mov rbx,rdx
-    add rbx,ucontext_t.uc_mcontext
-    lea rdi,@CStr(
+ifdef _WIN64
+        lea rdi,@CStr(
             "\n"
             "This message is created due to unrecoverable error\n"
             "and may contain data necessary to locate it.\n"
@@ -325,34 +328,80 @@ ifdef _LIN64
             "\tRIP: %p %p\n"
             "\t     %p %p\n\n"
             "\tEFL: 0000000000000000\n"
-            "\t     r n oditsz a p c\n\n")
+            "\t     r n oditsz a p c\n\n" )
+else
+        lea edi,@CStr(
+            "\n"
+            "This message is created due to unrecoverable error\n"
+            "and may contain data necessary to locate it.\n"
+            "\n"
+            "\tEAX: %p EDX: %p\n"
+            "\tEBX: %p ECX: %p\n"
+            "\tESI: %p EDI: %p\n"
+            "\tESP: %p EBP: %p\n"
+            "\tEIP: %p %p%p\n"
+            "\t     %p %p\n\n"
+            "\tEFL: 0000000000000000\n"
+            "\t     r n oditsz a p c\n\n" )
+endif
 
-    mov rax,[rbx].gregs[REG_EFL*8]
-    mov ecx,16
-    .repeat
-        shr eax,1
-        adc byte ptr [rdi+rcx+sizeof(@CStr(0))-43],0
-    .untilcxz
-    mov rcx,[rbx].gregs[REG_RIP*8]
-    mov rdx,[rcx]
-    mov r10,[rcx-8]
-    mov r11,[rcx+8]
 
-    tprintf( rdi,
-            [rbx].gregs[REG_RAX*8], [rbx].gregs[REG_R8*8],
-            [rbx].gregs[REG_RBX*8], [rbx].gregs[REG_R9*8],
-            [rbx].gregs[REG_RCX*8], [rbx].gregs[REG_R10*8],
-            [rbx].gregs[REG_RDX*8], [rbx].gregs[REG_R11*8],
-            [rbx].gregs[REG_RSI*8], [rbx].gregs[REG_R12*8],
-            [rbx].gregs[REG_RDI*8], [rbx].gregs[REG_R13*8],
-            [rbx].gregs[REG_RBP*8], [rbx].gregs[REG_R14*8],
-            [rbx].gregs[REG_RSP*8], [rbx].gregs[REG_R15*8],
-            rcx, rdx, r10, r11 )
+ifdef __UNIX__
+        mov rbx,rdx
+        add rbx,ucontext_t.uc_mcontext
+        mov rax,[rbx].gregs[REG_EFL*8]
+else
+        mov rcx,__pxcptinfoptrs()
+        mov rbx,[rcx].EXCEPTION_POINTERS.ContextRecord
+        mov rsi,[rcx].EXCEPTION_POINTERS.ExceptionRecord
+        mov eax,[rbx].EFlags
+endif
+        mov ecx,16
+        .repeat
+            shr eax,1
+            adc byte ptr [rdi+rcx+sizeof(@CStr(0))-43],0
+        .untilcxz
 
-    assume rbx:nothing
-
-elseifndef __UNIX__
-        __crtGeneralFailure( signo )
+ifdef __UNIX__
+        mov rcx,[rbx].gregs[REG_RIP*8]
+        mov rdx,[rcx]
+        mov r10,[rcx-8]
+        mov r11,[rcx+8]
+        tprintf( rdi,
+                [rbx].gregs[REG_RAX*8], [rbx].gregs[REG_R8*8],
+                [rbx].gregs[REG_RBX*8], [rbx].gregs[REG_R9*8],
+                [rbx].gregs[REG_RCX*8], [rbx].gregs[REG_R10*8],
+                [rbx].gregs[REG_RDX*8], [rbx].gregs[REG_R11*8],
+                [rbx].gregs[REG_RSI*8], [rbx].gregs[REG_R12*8],
+                [rbx].gregs[REG_RDI*8], [rbx].gregs[REG_R13*8],
+                [rbx].gregs[REG_RBP*8], [rbx].gregs[REG_R14*8],
+                [rbx].gregs[REG_RSP*8], [rbx].gregs[REG_R15*8],
+                rcx, rdx, r10, r11 )
+elseifdef _WIN64
+        mov rdx,[rbx]._Rip
+        mov rcx,[rdx]
+        mov r10,[rdx-8]
+        mov r11,[rdx+8]
+        tprintf( rdi,
+                [rbx]._Rax, [rbx]._R8,
+                [rbx]._Rbx, [rbx]._R9,
+                [rbx]._Rcx, [rbx]._R10,
+                [rbx]._Rdx, [rbx]._R11,
+                [rbx]._Rsi, [rbx]._R12,
+                [rbx]._Rdi, [rbx]._R13,
+                [rbx]._Rbp, [rbx]._R14,
+                [rbx]._Rsp, [rbx]._R15,
+                rdx, rcx, r10, r11 )
+else
+        mov edx,[ebx]._Eip
+        tprintf( edi,
+                [ebx]._Eax, [ebx]._Edx,
+                [ebx]._Ebx, [ebx]._Ecx,
+                [ebx]._Esi, [ebx]._Edi,
+                [ebx]._Esp, [ebx]._Ebp,
+                edx, [edx+4], [edx], [edx-4], [edx+8] )
+endif
+        assume rbx:nothing
 endif
         asmerr( 1901 )
     .endif

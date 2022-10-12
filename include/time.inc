@@ -150,10 +150,10 @@ externdef	_tzname:LPSTR
 externdef	__dnames:BYTE
 externdef	__mnames:BYTE
 
-DaysInFebruary		proto __cdecl :dword
-DaysInMonth		proto __cdecl :dword, :dword
-GetDayCount		proto __cdecl :dword, :dword, :dword
-GetWeekDay		proto __cdecl :dword, :dword, :dword
+DaysInFebruary		proto __cdecl :uint_t
+DaysInMonth		proto __cdecl :uint_t, :uint_t
+GetDayCount		proto __cdecl :uint_t, :uint_t, :uint_t
+GetWeekDay		proto __cdecl :uint_t, :uint_t, :uint_t
 
 FileTimeToTime		proto __cdecl :ptr FILETIME
 SystemTimeToTime	proto __cdecl :ptr SYSTEMTIME

@@ -217,10 +217,15 @@ MAXSCRLINE      equ 256 ; max screen size
 
 .pragma pack(push, 1)
 
+
 .template TColor
     at          db COLOR_COUNT dup(?)
    .ends
     color_t     typedef ptr TColor
+
+    externdef   TAttributesDefault:TColor
+    externdef   TAttributesTransparent:TColor
+
 
 .template TRect
     x           db ?
@@ -309,8 +314,8 @@ TRect::Exchange proto :HANDLE, :PCHAR_INFO
 
     base        LPTSTR ?        ; base pointer
     flags       uint_t ?        ; config
-    xpos        uint_t ?        ; text window x,y
-    ypos        uint_t ?
+    xpos        uint_t ?        ; window x
+    ypos        uint_t ?        ; window y
     scols       uint_t ?        ; size of screen-line
     bcols       uint_t ?        ; size of buffer-line
     xoffs       uint_t ?        ; x offset on screen

@@ -9,7 +9,7 @@ include malloc.inc
 include crtl.inc
 include twindow.inc
 include tchar.inc
-
+if 0
     .data
     AttributesDefault label byte
         db 0x00,0x0F,0x0F,0x07,0x08,0x00,0x00,0x07,0x08,0x00,0x0A,0x0B,0x00,0x0F,0x0F,0x0F
@@ -17,7 +17,7 @@ include tchar.inc
     AttributesTransparent label byte
         db 0x07,0x07,0x0F,0x07,0x08,0x07,0x07,0x07,0x08,0x0F,0x0A,0x0B,0x0F,0x0B,0x0B,0x0B
         db 0x00,0x00,0x00,0x10,0x30,0x10,0x10,0x00,0x10,0x10,0x00,0x00,0x00,0x00,0x07,0x07
-
+endif
 
     .code
 
@@ -289,7 +289,7 @@ TWindow::Open proc uses rsi rdi rbx rcx rc:TRect, flags:uint_t
 
     .if ( [rcx].Flags & W_TRANSPARENT )
 
-        lea rax,AttributesTransparent
+        lea rax,TAttributesTransparent
         mov [rcx].Color,rax
     .endif
 
@@ -2875,7 +2875,7 @@ TWindow::TWindow proc public uses rsi rdi rbx
     xor eax,eax
     rep stosq
 
-    lea rax,AttributesDefault
+    lea rax,TAttributesDefault
     mov [rbx].Color,rax
     mov rsi,GetStdHandle(STD_OUTPUT_HANDLE)
 

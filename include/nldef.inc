@@ -5,185 +5,252 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-NL_MAX_METRIC_COMPONENT equ ((1 SHL 31) - 1)
+.enum NL_PREFIX_ORIGIN {
+    IpPrefixOriginOther = 0,
+    IpPrefixOriginManual,
+    IpPrefixOriginWellKnown,
+    IpPrefixOriginDhcp,
+    IpPrefixOriginRouterAdvertisement,
+    IpPrefixOriginUnchanged = 1 shl 4
+    }
 
-IpPrefixOriginOther	equ 0
-IpPrefixOriginManual	equ 1
-IpPrefixOriginWellKnown equ 2
-IpPrefixOriginDhcp	equ 3
-IpPrefixOriginRouterAdvertisement equ 4
-IpPrefixOriginUnchanged equ 1 shl 4
+define NlpoOther	       <IpPrefixOriginOther>
+define NlpoManual	       <IpPrefixOriginManual>
+define NlpoWellKnown	       <IpPrefixOriginWellKnown>
+define NlpoDhcp		       <IpPrefixOriginDhcp>
+define NlpoRouterAdvertisement <IpPrefixOriginRouterAdvertisement>
 
-NlpoOther		equ <IpPrefixOriginOther>
-NlpoManual		equ <IpPrefixOriginManual>
-NlpoWellKnown		equ <IpPrefixOriginWellKnown>
-NlpoDhcp		equ <IpPrefixOriginDhcp>
-NlpoRouterAdvertisement equ <IpPrefixOriginRouterAdvertisement>
+.enum NL_SUFFIX_ORIGIN {
+    NlsoOther = 0,
+    NlsoManual,
+    NlsoWellKnown,
+    NlsoDhcp,
+    NlsoLinkLayerAddress,
+    NlsoRandom,
 
-NlsoOther		equ 0
-NlsoManual		equ 1
-NlsoWellKnown		equ 2
-NlsoDhcp		equ 3
-NlsoLinkLayerAddress	equ 4
-NlsoRandom		equ 5
-IpSuffixOriginOther	equ 0
-IpSuffixOriginManual	equ 7
-IpSuffixOriginWellKnown equ 8
-IpSuffixOriginDhcp	equ 9
-IpSuffixOriginLinkLayerAddress equ 10
-IpSuffixOriginRandom	equ 11
-IpSuffixOriginUnchanged equ 1 shl 4
+    IpSuffixOriginOther = 0,
+    IpSuffixOriginManual = 7,
+    IpSuffixOriginWellKnown = 8,
+    IpSuffixOriginDhcp = 9,
+    IpSuffixOriginLinkLayerAddress = 10,
+    IpSuffixOriginRandom = 11,
+    IpSuffixOriginUnchanged = 1 shl 4
+    }
 
-NldsInvalid		equ 0
-NldsTentative		equ 1
-NldsDuplicate		equ 2
-NldsDeprecated		equ 3
-NldsPreferred		equ 4
-IpDadStateInvalid	equ 0
-IpDadStateTentative	equ 6
-IpDadStateDuplicate	equ 7
-IpDadStateDeprecated	equ 8
-IpDadStatePreferred	equ 9
+.enum NL_DAD_STATE {
+    NldsInvalid,
+    NldsTentative,
+    NldsDuplicate,
+    NldsDeprecated,
+    NldsPreferred,
+
+    IpDadStateInvalid = 0,
+    IpDadStateTentative = 6,
+    IpDadStateDuplicate = 7,
+    IpDadStateDeprecated = 8,
+    IpDadStatePreferred = 9
+    }
+
+
+define NL_MAX_METRIC_COMPONENT ((1 shl 31) - 1)
 
 MAKE_ROUTE_PROTOCOL macro suffix, value
-    MIB_IPPROTO_&suffix& equ value
-    PROTO_IP_&suffix&	 equ value
-    exitm<>
+    exitm<MIB_IPPROTO_&suffix& = value, PROTO_IP_&suffix& = value>
     endm
 
-RouteProtocolOther	equ 1
-RouteProtocolLocal	equ 2
-RouteProtocolNetMgmt	equ 3
-RouteProtocolIcmp	equ 4
-RouteProtocolEgp	equ 5
-RouteProtocolGgp	equ 6
-RouteProtocolHello	equ 7
-RouteProtocolRip	equ 8
-RouteProtocolIsIs	equ 9
-RouteProtocolEsIs	equ 10
-RouteProtocolCisco	equ 11
-RouteProtocolBbn	equ 12
-RouteProtocolOspf	equ 13
-RouteProtocolBgp	equ 14
-RouteProtocolIdpr	equ 15
-RouteProtocolEigrp	equ 16
-RouteProtocolDvmrp	equ 17
-RouteProtocolRpl	equ 18
-RouteProtocolDhcp	equ 19
-MAKE_ROUTE_PROTOCOL(OTHER, 19)
-MAKE_ROUTE_PROTOCOL(LOCAL, 20)
-MAKE_ROUTE_PROTOCOL(NETMGMT, 21)
-MAKE_ROUTE_PROTOCOL(ICMP, 22)
-MAKE_ROUTE_PROTOCOL(EGP, 23)
-MAKE_ROUTE_PROTOCOL(GGP, 24)
-MAKE_ROUTE_PROTOCOL(HELLO, 25)
-MAKE_ROUTE_PROTOCOL(RIP, 26)
-MAKE_ROUTE_PROTOCOL(IS_IS, 27)
-MAKE_ROUTE_PROTOCOL(ES_IS, 28)
-MAKE_ROUTE_PROTOCOL(CISCO, 29)
-MAKE_ROUTE_PROTOCOL(BBN, 30)
-MAKE_ROUTE_PROTOCOL(OSPF, 31)
-MAKE_ROUTE_PROTOCOL(BGP, 32)
-MAKE_ROUTE_PROTOCOL(IDPR, 33)
-MAKE_ROUTE_PROTOCOL(EIGRP, 34)
-MAKE_ROUTE_PROTOCOL(DVMRP, 35)
-MAKE_ROUTE_PROTOCOL(RPL, 36)
-MAKE_ROUTE_PROTOCOL(DHCP, 37)
-MAKE_ROUTE_PROTOCOL(NT_AUTOSTATIC, 38)
-MAKE_ROUTE_PROTOCOL(NT_STATIC, 39)
-MAKE_ROUTE_PROTOCOL(NT_STATIC_NON_DOD, 40)
+.enum NL_ROUTE_PROTOCOL {
+    RouteProtocolOther	 = 1,
+    RouteProtocolLocal	 = 2,
+    RouteProtocolNetMgmt = 3,
+    RouteProtocolIcmp	 = 4,
+    RouteProtocolEgp	 = 5,
+    RouteProtocolGgp	 = 6,
+    RouteProtocolHello	 = 7,
+    RouteProtocolRip	 = 8,
+    RouteProtocolIsIs	 = 9,
+    RouteProtocolEsIs	 = 10,
+    RouteProtocolCisco	 = 11,
+    RouteProtocolBbn	 = 12,
+    RouteProtocolOspf	 = 13,
+    RouteProtocolBgp	 = 14,
+    RouteProtocolIdpr	 = 15,
+    RouteProtocolEigrp	 = 16,
+    RouteProtocolDvmrp	 = 17,
+    RouteProtocolRpl	 = 18,
+    RouteProtocolDhcp	 = 19,
 
-endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    MAKE_ROUTE_PROTOCOL(OTHER,	 1),
+    MAKE_ROUTE_PROTOCOL(LOCAL,	 2),
+    MAKE_ROUTE_PROTOCOL(NETMGMT, 3),
+    MAKE_ROUTE_PROTOCOL(ICMP,	 4),
+    MAKE_ROUTE_PROTOCOL(EGP,	 5),
+    MAKE_ROUTE_PROTOCOL(GGP,	 6),
+    MAKE_ROUTE_PROTOCOL(HELLO,	 7),
+    MAKE_ROUTE_PROTOCOL(RIP,	 8),
+    MAKE_ROUTE_PROTOCOL(IS_IS,	 9),
+    MAKE_ROUTE_PROTOCOL(ES_IS,	10),
+    MAKE_ROUTE_PROTOCOL(CISCO,	11),
+    MAKE_ROUTE_PROTOCOL(BBN,	12),
+    MAKE_ROUTE_PROTOCOL(OSPF,	13),
+    MAKE_ROUTE_PROTOCOL(BGP,	14),
+    MAKE_ROUTE_PROTOCOL(IDPR,	15),
+    MAKE_ROUTE_PROTOCOL(EIGRP,	16),
+    MAKE_ROUTE_PROTOCOL(DVMRP,	17),
+    MAKE_ROUTE_PROTOCOL(RPL,	18),
+    MAKE_ROUTE_PROTOCOL(DHCP,	19),
 
+    MAKE_ROUTE_PROTOCOL(NT_AUTOSTATIC,	   10002),
+    MAKE_ROUTE_PROTOCOL(NT_STATIC,	   10006),
+    MAKE_ROUTE_PROTOCOL(NT_STATIC_NON_DOD, 10007)
+    }
+PNL_ROUTE_PROTOCOL typedef ptr NL_ROUTE_PROTOCOL
 
-NlatUnspecified		equ 0
-NlatUnicast		equ 1
-NlatAnycast		equ 2
-NlatMulticast		equ 3
-NlatBroadcast		equ 4
-NlatInvalid		equ 5
+endif
+
+.enum NL_ADDRESS_TYPE {
+    NlatUnspecified,
+    NlatUnicast,
+    NlatAnycast,
+    NlatMulticast,
+    NlatBroadcast,
+    NlatInvalid
+    }
+
+PNL_ADDRESS_TYPE typedef ptr NL_ADDRESS_TYPE
+
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-NL_ROUTE_ORIGIN		typedef SDWORD
-NlroManual		equ 0
-NlroWellKnown		equ 1
-NlroDHCP		equ 2
-NlroRouterAdvertisement equ 3
-Nlro6to4		equ 4
+.enum _NL_ROUTE_ORIGIN {
+    NlroManual,
+    NlroWellKnown,
+    NlroDHCP,
+    NlroRouterAdvertisement,
+    Nlro6to4,
+    }
 
-NL_NEIGHBOR_STATE	typedef SDWORD
-NlnsUnreachable		equ 0
-NlnsIncomplete		equ 1
-NlnsProbe		equ 2
-NlnsDelay		equ 3
-NlnsStale		equ 4
-NlnsReachable		equ 5
-NlnsPermanent		equ 6
-NlnsMaximum		equ 7
+NL_ROUTE_ORIGIN		typedef _NL_ROUTE_ORIGIN
+PNL_ROUTE_ORIGIN	typedef ptr NL_ROUTE_ORIGIN
 
-NL_LINK_LOCAL_ADDRESS_BEHAVIOR typedef SDWORD
-LinkLocalAlwaysOff	equ 0
-LinkLocalDelayed	equ 1
-LinkLocalAlwaysOn	equ 2
-LinkLocalUnchanged	equ -1
+.enum _NL_NEIGHBOR_STATE {
+    NlnsUnreachable,
+    NlnsIncomplete,
+    NlnsProbe,
+    NlnsDelay,
+    NlnsStale,
+    NlnsReachable,
+    NlnsPermanent,
+    NlnsMaximum,
+    }
+NL_NEIGHBOR_STATE	typedef _NL_NEIGHBOR_STATE
+PNL_NEIGHBOR_STATE	typedef ptr NL_NEIGHBOR_STATE
 
-NL_INTERFACE_OFFLOAD_ROD  STRUC
-flags			BOOLEAN ?
-;NlChecksumSupported : 1 BOOLEAN ?
-;NlOptionsSupported : 1	 BOOLEAN ?
-;TlDatagramChecksumSupported : 1 BOOLEAN ?
-;TlStreamChecksumSupported : 1 BOOLEAN ?
-;TlStreamOptionsSupported : 1 BOOLEAN ?
-;FastPathCompatible : 1	 BOOLEAN ?
-;TlLargeSendOffloadSupported : 1 BOOLEAN ?
-;TlGiantSendOffloadSupported : 1 BOOLEAN ?
+
+.enum _NL_LINK_LOCAL_ADDRESS_BEHAVIOR {
+    LinkLocalAlwaysOff = 0,
+    LinkLocalDelayed,
+    LinkLocalAlwaysOn,
+    LinkLocalUnchanged = -1
+    }
+NL_LINK_LOCAL_ADDRESS_BEHAVIOR typedef _NL_LINK_LOCAL_ADDRESS_BEHAVIOR
+
+
+NL_INTERFACE_OFFLOAD_ROD STRUC
+RECORD
+ NlChecksumSupported		BOOLEAN : 1 ?
+ NlOptionsSupported		BOOLEAN : 1 ?
+ TlDatagramChecksumSupported	BOOLEAN : 1 ?
+ TlStreamChecksumSupported	BOOLEAN : 1 ?
+ TlStreamOptionsSupported	BOOLEAN : 1 ?
+ FastPathCompatible		BOOLEAN : 1 ?
+ TlLargeSendOffloadSupported	BOOLEAN : 1 ?
+ TlGiantSendOffloadSupported	BOOLEAN : 1 ?
+ENDS
 NL_INTERFACE_OFFLOAD_ROD ENDS
 PNL_INTERFACE_OFFLOAD_ROD typedef ptr NL_INTERFACE_OFFLOAD_ROD
 
+.enum _NL_ROUTER_DISCOVERY_BEHAVIOR {
+    RouterDiscoveryDisabled = 0,
+    RouterDiscoveryEnabled,
+    RouterDiscoveryDhcp,
+    RouterDiscoveryUnchanged = -1
+    }
+NL_ROUTER_DISCOVERY_BEHAVIOR typedef _NL_ROUTER_DISCOVERY_BEHAVIOR
 
-NL_ROUTER_DISCOVERY_BEHAVIOR typedef SDWORD
-RouterDiscoveryDisabled equ 0
-RouterDiscoveryEnabled	equ 1
-RouterDiscoveryDhcp	equ 2
-RouterDiscoveryUnchanged equ -1
+.enum _NL_BANDWIDTH_FLAG {
+    NlbwDisabled = 0,
+    NlbwEnabled,
+    NlbwUnchanged = -1
+    }
+NL_BANDWIDTH_FLAG	typedef _NL_BANDWIDTH_FLAG
+PNL_BANDWIDTH_FLAG	typedef ptr NL_BANDWIDTH_FLAG
 
-NL_BANDWIDTH_FLAG	typedef SDWORD
-NlbwDisabled		equ 0
-NlbwEnabled		equ 1
-NlbwUnchanged		equ -1
 
-NL_PATH_BANDWIDTH_ROD	STRUC
+_NL_PATH_BANDWIDTH_ROD	STRUC
 Bandwidth		ULONG64 ?
 Instability		ULONG64 ?
 BandwidthPeaked		BOOLEAN ?
-NL_PATH_BANDWIDTH_ROD	ENDS
+_NL_PATH_BANDWIDTH_ROD	ENDS
+NL_PATH_BANDWIDTH_ROD	typedef _NL_PATH_BANDWIDTH_ROD
 PNL_PATH_BANDWIDTH_ROD	typedef ptr NL_PATH_BANDWIDTH_ROD
 
-NL_NETWORK_CATEGORY	typedef SDWORD
-NetworkCategoryPublic	equ 0
-NetworkCategoryPrivate	equ 1
-NetworkCategoryDomainAuthenticated equ 2
-NetworkCategoryUnchanged equ -1
-NetworkCategoryUnknown	equ -1
+.enum _NL_NETWORK_CATEGORY {
+    NetworkCategoryPublic,
+    NetworkCategoryPrivate,
+    NetworkCategoryDomainAuthenticated,
+    NetworkCategoryUnchanged = -1,
+    NetworkCategoryUnknown = -1
+    }
+NL_NETWORK_CATEGORY	typedef _NL_NETWORK_CATEGORY
+PNL_NETWORK_CATEGORY	typedef ptr NL_NETWORK_CATEGORY
 
-NL_INTERFACE_NETWORK_CATEGORY_STATE typedef SDWORD
-NlincCategoryUnknown	equ 0
-NlincPublic		equ 1
-NlincPrivate		equ 2
-NlincDomainAuthenticated equ 3
-NlincCategoryStateMax	equ 4
+.enum _NL_INTERFACE_NETWORK_CATEGORY_STATE {
+    NlincCategoryUnknown = 0,
+    NlincPublic = 1,
+    NlincPrivate = 2,
+    NlincDomainAuthenticated = 3,
+    NlincCategoryStateMax
+    }
+NL_INTERFACE_NETWORK_CATEGORY_STATE  typedef _NL_INTERFACE_NETWORK_CATEGORY_STATE
+PNL_INTERFACE_NETWORK_CATEGORY_STATE typedef ptr NL_INTERFACE_NETWORK_CATEGORY_STATE
 
-NET_IF_CURRENT_SESSION	equ (-1)
+.enum _NL_NETWORK_CONNECTIVITY_LEVEL_HINT {
+    NetworkConnectivityLevelHintUnknown = 0,
+    NetworkConnectivityLevelHintNone,
+    NetworkConnectivityLevelHintLocalAccess,
+    NetworkConnectivityLevelHintInternetAccess,
+    NetworkConnectivityLevelHintConstrainedInternetAccess,
+    NetworkConnectivityLevelHintHidden,
+    }
+NL_NETWORK_CONNECTIVITY_LEVEL_HINT typedef _NL_NETWORK_CONNECTIVITY_LEVEL_HINT
 
-NL_BANDWIDTH_INFORMATION  STRUC
+.enum _NL_NETWORK_CONNECTIVITY_COST_HINT {
+    NetworkConnectivityCostHintUnknown = 0,
+    NetworkConnectivityCostHintUnrestricted,
+    NetworkConnectivityCostHintFixed,
+    NetworkConnectivityCostHintVariable,
+    }
+NL_NETWORK_CONNECTIVITY_COST_HINT typedef _NL_NETWORK_CONNECTIVITY_COST_HINT
+
+_NL_NETWORK_CONNECTIVITY_HINT STRUC
+ConnectivityLevel	NL_NETWORK_CONNECTIVITY_LEVEL_HINT ?
+ConnectivityCost	NL_NETWORK_CONNECTIVITY_COST_HINT ?
+ApproachingDataLimit	BOOLEAN ?
+OverDataLimit		BOOLEAN ?
+Roaming			BOOLEAN ?
+_NL_NETWORK_CONNECTIVITY_HINT ENDS
+NL_NETWORK_CONNECTIVITY_HINT typedef _NL_NETWORK_CONNECTIVITY_HINT
+
+define NET_IF_CURRENT_SESSION (-1)
+
+_NL_BANDWIDTH_INFORMATION STRUC
 Bandwidth		ULONG64 ?
 Instability		ULONG64 ?
 BandwidthPeaked		BOOLEAN ?
-NL_BANDWIDTH_INFORMATION ENDS
+_NL_BANDWIDTH_INFORMATION ENDS
+NL_BANDWIDTH_INFORMATION typedef _NL_BANDWIDTH_INFORMATION
 PNL_BANDWIDTH_INFORMATION typedef ptr NL_BANDWIDTH_INFORMATION
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 endif ;; _NLDEF_
-

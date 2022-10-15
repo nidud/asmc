@@ -20,7 +20,7 @@ endif
 endif
 endif
 
-.pragma comment(lib, combase)
+.pragma comment(lib, combase, "api-ms-win-core-winrt-l1-1-0")
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 

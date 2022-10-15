@@ -139,9 +139,9 @@ DEFINE_DEVPROPKEY macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid
 if defined(__PE__) or defined(__GUID__)
 _&name& equ <{{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}>
 elseifdef INITGUID
-echo name PROPERTYKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
+echo name DEVPROPKEY {{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}},pid}
 else
-externdef name:PROPERTYKEY
+externdef name:DEVPROPKEY
 endif
     exitm<>
     endm

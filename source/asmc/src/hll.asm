@@ -1147,7 +1147,7 @@ GetParamId proc fastcall private uses rsi rdi rbx id:int_t, sym:asym_t
             dec ecx
         .endw
     .else
-        .for ( rax = [rdi].proc_info.paralist : ecx : rax = [rax].dsym.nextparam )
+        .for ( rax = [rsi].proc_info.paralist : ecx : rax = [rax].dsym.nextparam )
             dec ecx
         .endf
     .endif

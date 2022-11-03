@@ -266,6 +266,7 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
 
     printf("hit any key to continue...\r")
     _getch()
+    printf("\n")
     ret
 
 GetCycleCount endp

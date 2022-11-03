@@ -1,11 +1,3 @@
-;
-; asmc -q -bin ?.asm
-; asmc -q -pe %0
-; %~n0.exe
-; del %~n0.exe
-; del *.bin
-; exit /b %errorlevel%
-;
 
 procs  equ <for x,<0,1>> ; add functions to test...
 
@@ -20,7 +12,7 @@ args_x macro a:=<arg1>, b:=<arg2>, r:=<arg3>
 
 include ../timeit.inc
 
-    .data
+.data
 
 m128    dq 2 dup(?)
 arg1    dq 2
@@ -29,16 +21,16 @@ arg3    dd m128
 
 info_0  db "mul",0
 info_1  db "mulx",0
-info_2  db "2.asm",0
-info_3  db "3.asm",0
-info_4  db "4.asm",0
-info_5  db "5.asm",0
-info_6  db "6.asm",0
-info_7  db "7.asm",0
-info_8  db "8.asm",0
-info_9  db "9.asm",0
+info_2  db 0
+info_3  db 0
+info_4  db 0
+info_5  db 0
+info_6  db 0
+info_7  db 0
+info_8  db 0
+info_9  db 0
 
-    .code
+.code
 
 validate_x proc uses esi edi ebx x:dword
 

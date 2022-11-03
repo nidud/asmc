@@ -1,11 +1,3 @@
-;
-; asmc64 -q -bin ?.asm
-; asmc64 -q -pe %0
-; %~n0.exe
-; del %~n0.exe
-; del *.bin
-; exit /b %errorlevel%
-;
 
 procs  equ <for x,<0,1,2,3>> ; add functions to test...
 args_x macro
@@ -27,20 +19,13 @@ str_1   db size_s dup(?)
 align   16
 dst_1   db size_s dup(?)
 
-    .data
-
+.data
 info_0  db "msvcrt.memcpy()",0
 info_1  db "switch 32 SSE",0
 info_2  db "switch 32 AVX",0
 info_3  db "switch 64 AVX",0
-info_4  db "4.asm",0
-info_5  db "5.asm",0
-info_6  db "6.asm",0
-info_7  db "7.asm",0
-info_8  db "8.asm",0
-info_9  db "9.asm",0
 
-    .code
+.code
 
 ;-------------------------------------------------------------------------------
 ; test if the algo actually works..
